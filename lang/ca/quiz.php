@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // quiz.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['acceptederror'] = 'Error acceptat';
@@ -86,9 +86,9 @@ $string['filloutoneanswer'] = 'Heu d\'emplenar almenys una possible resposta. Le
 $string['filloutthreequestions'] = 'Heu d\'emplenar almenys tres preguntes. Les respostes en blanc no es tindran en compte.';
 $string['fillouttwochoices'] = 'Heu d\'emplenar almenys dues opcions. Les opcions en blanc no es tindran en compte.';
 $string['fractionsaddwrong'] = 'Les notes que heu donat no sumen 100%% (sumen $a%%).
-<br />Voleu tornar enrere i corregir aquesta pregunta?';
+<BR />Voleu tornar enrere i corregir aquesta pregunta?';
 $string['fractionsnomax'] = 'Una de les respostes ha de valer 100%%, de manera que sigui
-<br />possible obtenir la qualificació màxima en aquesta pregunta.<br />Voleu tornar enrere i corregir aquesta pregunta?';
+<BR />possible obtenir la qualificació màxima en aquesta pregunta.<BR />Voleu tornar enrere i corregir aquesta pregunta?';
 $string['gift'] = 'Format GIFT';
 $string['gradeaverage'] = 'Nota mitjana';
 $string['gradehighest'] = 'Nota més alta';
@@ -130,7 +130,7 @@ Voleu tornar enrere i arreglar aquesta pregunta?';
 $string['numerical'] = 'Numèrica';
 $string['paragraphquestion'] = 'Tipus de pregunta no compatible: pregunta de paràgraf a la línia $a. Aquesta pregunta s\'ha ignorat.';
 $string['passworderror'] = 'La contrasenya és incorrecta';
-$string['percentcorrect'] = 'Percentatge de correctes';
+$string['percentcorrect'] = 'El percentatge és correcte';
 $string['publish'] = 'Publica';
 $string['publishedit'] = 'Heu de tenir permisos en el curs per afegir o editar preguntes d\'aquesta categoria';
 $string['qti'] = 'Format IMS QTI';
@@ -157,7 +157,7 @@ $string['randomsamatchnumber'] = 'Nombre de preguntes per seleccionar';
 $string['readytosend'] = 'Esteu a punt d\'enviar el qüestionari complet perquè sigui qualificat. Esteu segur que voleu continuar?';
 $string['recentlyaddedquestion'] = 'Pregunta afegida recentment!';
 $string['regrade'] = 'Torna a calcular les qualificacions';
-$string['regradecomplete'] = 'Recalcula les qualificacions';
+$string['regradecomplete'] = 'S\'han recalculat les qualificacions';
 $string['regradecount'] = 'S\'han modificat $a->changed de $a->attempt qualificacions';
 $string['rename'] = 'Canvia el nom';
 $string['report'] = 'Informes';

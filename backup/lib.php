@@ -2,8 +2,6 @@
     //This file contains all the general function needed (file manipulation...)
     //not directly part of the backup/restore utility
 
-    require_once($CFG->dirroot.'/lib/uploadlib.php');
-
     //Sets a name/value pair in backup_config table
     function backup_set_config($name, $value) {
         if (get_field("backup_config", "name", "name", $name)) {
@@ -58,8 +56,7 @@
         global $CFG;
 
         $status = true;
-        //Get files and directories in the temp backup dir witout descend
-        $list = get_directory_list($CFG->dataroot."/temp/backup", "", false, true, true);
+        $list = get_directory_list($CFG->dataroot."/temp/backup", "", false);
         foreach ($list as $file) {
             $file_path = $CFG->dataroot."/temp/backup/".$file;
             $moddate = filemtime($file_path);
@@ -285,21 +282,17 @@
         global $CFG;
 
         if (is_file($from_file)) {
-            //echo "<br />Copying ".$from_file." to ".$to_file;              //Debug
+            //echo "<br>Copying ".$from_file." to ".$to_file;              //Debug
             //$perms=fileperms($from_file);
             //return copy($from_file,$to_file) && chmod($to_file,$perms);
             umask(0000);
-            if (copy($from_file,$to_file) && chmod($to_file,$CFG->directorypermissions)) {
-                clam_log_upload($to_file,null,true);
-                return true;
-            }
-            return false;
+            return copy($from_file,$to_file) && chmod($to_file,$CFG->directorypermissions);
         }
         else if (is_dir($from_file)) {
             return backup_copy_dir($from_file,$to_file);
         }
         else{
-            //echo "<br />Error: not file or dir ".$from_file;               //Debug
+            //echo "<br>Error: not file or dir ".$from_file;               //Debug
             return false;
         }
     }
@@ -309,7 +302,7 @@
         global $CFG;
 
         if (!is_dir($to_file)) {
-            //echo "<br />Creating ".$to_file;                                //Debug
+            //echo "<br>Creating ".$to_file;                                //Debug
             umask(0000);
             $status = mkdir($to_file,$CFG->directorypermissions);
         }

@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This page prints the backup todo list to see everything
 
     //Check login   
@@ -6,13 +6,7 @@
 
     if (!empty($course->id)) {
         if (!isteacheredit($course->id)) {
-            if (empty($to)) {
-                error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
-            } else {
-                if (!isteacheredit($to)) {
-                    error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
-                }
-            }
+            error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     } else {
         if (!isadmin()) {
@@ -58,10 +52,6 @@
     }
 
     //Check other parameters
-    if (!isset($backup_metacourse)) {
-        $backup_metacourse = 1;
-    }
-   
     if (!isset($backup_users)) {
         $backup_users = 1;
     }
@@ -76,10 +66,6 @@
 
     if (!isset($backup_course_files)) {
         $backup_course_files = 2;
-        }
-
-    if (!isset($backup_messages)) {
-        $backup_messages = 1;
     }
 
     if ($count == 0) {
@@ -87,10 +73,15 @@
     }
 ?>
 
-<form name="form" method="post" action="backup.php">
-<table cellpadding="5">
+<form name="form" method="post" action="<?php echo $ME ?>">
+<table cellpadding=5>
 <?php
 
+    //Now print the Backup Name tr
+    echo "<tr>";
+    echo "<td align=\"right\"><P><B>";
+    echo get_string("name").":";
+    echo "</B></td><td>";
     //Calculate the backup string
 
     //Calculate the backup word
@@ -124,37 +115,26 @@
     $backup_name .= userdate(time(),$backup_date_format,99,false);
     //The extension
     $backup_name .= ".zip";
-    //And finally, clean everything
-    $backup_name = clean_filename($backup_name);
+
+    //Add as text field
+    echo "<input type=\"text\" name=\"backup_name\" size=\"40\" value=\"".$backup_name."\">";
+    echo "</td></tr>";
 
     //Calculate the backup unique code to allow simultaneus backups (to define
     //the temp-directory name and records in backup temp tables
     $backup_unique_code = time();
-
-    if (empty($to)) {
-        //Now print the Backup Name tr
-        echo "<tr>";
-        echo "<td align=\"right\"><b>";
-        echo get_string("name").":";
-        echo "</b></td><td>";
-        //Add as text field
-        echo "<input type=\"text\" name=\"backup_name\" size=\"40\" value=\"".$backup_name."\" />";
-        echo "</td></tr>";
+    //Add as hidden name
+    echo "<input type=\"hidden\" name=\"backup_unique_code\" value=\"".$backup_unique_code."\">";
     
-        //Line
-        echo "<tr><td colspan=\"2\"><hr /></td></tr>";
-        
-        //Now print the To Do list
-        echo "<tr>";    
-        echo "<td colspan=\"2\" align=\"center\"><b>";
+    //Line
+    echo "<tr><td colspan=\"2\"><hr noshade size=\"1\"></td></tr>";
 
-    } else {
-        echo '<input type="hidden" name="backup_name" value="'.$backup_name.'" /></b>';
-    }
-
+    //Now print the To Do list
+    echo "<tr>";    
+    echo "<td colspan=\"2\" align=\"center\"><P><B>";
 
     //Here we check if backup_users = None. Then, we switch off every module
-    //user info, user_files, logs and exercises, workshop and messages backups. A Warning is showed to
+    //user info, user_files, logs and exercises and workshop backups. A Warning is showed to
     //inform the user.
     if ($backup_users == 2) {
         if ($allmods = get_records("modules") ) {
@@ -173,19 +153,16 @@
             }
         $backup_user_files = 0;
         $backup_logs = 0;
-        $backup_messages = 0;
         }
-        print_simple_box("<font color=\"red\">".get_string("backupnoneusersinfo")."</font>","center", "70%", '', "20", "noticebox");
-        echo "<hr />";
+        print_simple_box("<font color=\"red\">".get_string("backupnoneusersinfo")."</font>","center", "70%", "$THEME->cellheading", "20", "noticebox");
+        echo "<hr noshade size=\"1\">";
     }
 
-    if (empty($to)) {
-        echo get_string("backupdetails").":";
-        echo "</b></td></tr>";
-    }
+    echo get_string("backupdetails").":";
+    echo "</td></tr>";
 
     //This is tha align to every ingo table                
-    $table->align = array ("left","right");
+    $table->align = array ("LEFT","RIGHT");
 
     if ($allmods = get_records("modules") ) {
         foreach ($allmods as $mod) {
@@ -194,25 +171,25 @@
             //If exists the lib & function
             $var = "exists_".$modname;
             if (isset($$var) && $$var) {
+                //Add hidden fields
+                $var = "backup_".$modname;
+                echo "<input type=\"hidden\" name=\"".$var."\" value=\"".$$var."\">";
+                $var = "backup_user_info_".$modname;
+                echo "<input type=\"hidden\" name=\"".$var."\" value=\"".$$var."\">";
                 $var = "backup_".$modname;
                 //Only if selected
                 if ($$var == 1) {
                     //Print the full tr
                     echo "<tr>";
-                    echo "<td colspan=\"2\">";
-                    //Add hidden fields
-                    $var = "backup_".$modname;
-                    echo "<input type=\"hidden\" name=\"".$var."\" value=\"".$$var."\" />";
-                    $var = "backup_user_info_".$modname;
-                    echo "<input type=\"hidden\" name=\"".$var."\" value=\"".$$var."\" />";
+                    echo "<td colspan=\"2\"><P><B>";
                     //Print the mod name
-                    echo "<b>".get_string("include")." ".get_string("modulenameplural",$modname)." ";
+                    echo "<li>".get_string("include")." ".get_string("modulenameplural",$modname)." ";
                     //Now look for user-data status
                     $backup_user_options[0] = get_string("withoutuserdata"); 
                     $backup_user_options[1] = get_string("withuserdata");
                     $var = "backup_user_info_".$modname;
                     //Print the user info
-                    echo $backup_user_options[$$var]."</b>";
+                    echo $backup_user_options[$$var]."<P>";
                     //Call the check function to show more info
                     $modcheckbackup = $modname."_check_backup_mods";
                     $table->data = $modcheckbackup($id,$$var,$backup_unique_code);
@@ -221,74 +198,69 @@
                 }
             }
         }
-        
+        //Line
+        echo "<tr><td colspan=\"2\"><hr noshade size=\"1\"></td></tr>";
 
-        if (empty($to)) {
-            //Line
-            echo "<tr><td colspan=\"2\"><hr /></td></tr>";
+        //Now print the Users tr
+        echo "<tr>";
+        echo "<td colspan=\"2\"><P><B>";
+        $user_options[0] = get_string("includeallusers");
+        $user_options[1] = get_string("includecourseusers");
+        $user_options[2] = get_string("includenoneusers");
+        echo "<li>".$user_options[$backup_users]."<P>";
+        //Add as hidden name
+        echo "<input type=\"hidden\" name=\"backup_users\" value=\"".$backup_users."\">";
+        //Print info
+        $table->data = user_check_backup($id,$backup_unique_code,$backup_users);  
+        print_table($table); 
+        echo "</td></tr>";
 
-            //Now print the Users tr
-            echo "<tr>";
-            echo "<td colspan=\"2\"><b>";
-            $user_options[0] = get_string("includeallusers");
-            $user_options[1] = get_string("includecourseusers");
-            $user_options[2] = get_string("includenoneusers");
-            echo $user_options[$backup_users].'</b>';
-            //Print info
-            $table->data = user_check_backup($id,$backup_unique_code,$backup_users,$backup_messages);  
-            print_table($table); 
-            echo "</td></tr>";
-            
-        }
-        
         //Now print the Logs tr conditionally
-        if ($backup_logs && empty($to)) {
+        if ($backup_logs) {
             echo "<tr>";
-            echo "<td colspan=\"2\"><b>";
-            echo get_string("includelogentries").'</b>';
+            echo "<td colspan=\"2\"><P><B>";
+            echo "<li>".get_string("includelogentries")."<P>";
             //Print info
             $table->data = log_check_backup($id);
             print_table($table);
             echo "</td></tr>";
         }
+        //Add as hidden name
+        echo "<input type=\"hidden\" name=\"backup_logs\" value=\"".$backup_logs."\">";
 
         //Now print the User Files tr conditionally
         if ($backup_user_files) {
             echo "<tr>";
-            echo "<td colspan=\"2\"><b>";
-            echo get_string("includeuserfiles").'</b>';
+            echo "<td colspan=\"2\"><P><B>";
+            echo "<li>".get_string("includeuserfiles")."<P>";
             //Print info
             $table->data = user_files_check_backup($id,$backup_unique_code);
             print_table($table);
             echo "</td></tr>";
         }
+        //Add as hidden name
+        echo "<input type=\"hidden\" name=\"backup_user_files\" value=\"".$backup_user_files."\">";
 
         //Now print the Course Files tr conditionally
        if ($backup_course_files) {
             echo "<tr>";
-            echo "<td colspan=\"2\"><b>";
-            echo get_string("includecoursefiles").'</b>';
+            echo "<td colspan=\"2\"><P><B>";
+            echo "<li>".get_string("includecoursefiles")."<P>";
             //Print info
             $table->data = course_files_check_backup($id,$backup_unique_code);
             print_table($table);
             echo "</td></tr>";
         }
+        //Add as hidden name
+        echo "<input type=\"hidden\" name=\"backup_course_files\" value=\"".$backup_course_files."\">";
     }
 ?>
 </table>
-<br />
-<center>
-<input type="hidden" name="backup_unique_code" value="<?php p($backup_unique_code) ?>" />
-<input type="hidden" name="backup_metacourse" value="<?php p($backup_metacourse) ?>" />
-<input type="hidden" name="backup_users" value="<?php p($backup_users) ?>" />
-<input type="hidden" name="backup_logs" value="<?php p($backup_logs) ?>" />
-<input type="hidden" name="backup_user_files" value="<?php p($backup_user_files) ?>" />
-<input type="hidden" name="backup_course_files" value="<?php p($backup_course_files) ?>" />
-<input type="hidden" name="backup_messages" value="<?php p($backup_messages) ?>" />
-<input type="hidden" name="to"     value="<?php p($to) ?>" />
-<input type="hidden" name="id"     value="<?php  p($id) ?>" />
-<input type="hidden" name="launch" value="execute" />
-<input type="submit" value="<?php  print_string("continue") ?>" />
-<input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
-</center>
-</form>
+<BR>
+<CENTER>
+<input type="hidden" name=id     value="<?php  p($id) ?>">
+<input type="hidden" name=launch value="execute">
+<input type="submit" value="<?php  print_string("continue") ?>">
+<input type="submit" name=cancel value="<?php  print_string("cancel") ?>">
+</CENTER>
+</FORM>

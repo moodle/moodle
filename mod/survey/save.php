@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
     require_once('../../config.php');
     require_once('lib.php');
@@ -24,7 +24,7 @@
         error("Course is misconfigured");
     }
 
-    require_login($course->id, false, $cm);
+    require_login($course->id);
 
     if (! $survey = get_record("survey", "id", $cm->instance)) {
         error("Survey ID was incorrect");
@@ -39,14 +39,14 @@
 
 
 // Sort through the data and arrange it
-// This is necessary because some of the questions
+// This is necessary because some of the questions 
 // may have two answers, eg Question 1 -> 1 and P1
 
-    $answers = array();
+    $answers = array(); 
 
     foreach ($formdata as $key => $val) {
         if ($key <> "userid" && $key <> "id") {
-            if ( substr($key,0,1) == "q") {
+            if ( substr($key,0,1) == "q") {  
                 $key = substr($key,1);   // keep everything but the 'q'
             }
             if ( substr($key,0,1) == "P") {
@@ -57,7 +57,7 @@
             }
         }
     }
-
+ 
 
 // Now store the data.
 
@@ -89,13 +89,13 @@
     $strsurveys = get_string("modulenameplural", "survey");
     $strsurveysaved = get_string("surveysaved", "survey");
 
-    print_header_simple("$strsurveysaved", "",
-        "<a href=\"index.php?id=$course->id\">$strsurveys</a> -> ".format_string($survey->name)." -> $strsurveysaved", "");
+    print_header_simple("$strsurveysaved", "", 
+        "<a href=\"index.php?id=$course->id\">$strsurveys</a> -> $survey->name -> $strsurveysaved", "");
 
 
     notice(get_string("thanksforanswers","survey", $USER->firstname), "$CFG->wwwroot/course/view.php?id=$course->id");
-
+   
     exit;
-
+    
 
 ?>

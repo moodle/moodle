@@ -94,7 +94,6 @@ class upload_manager {
      */
     function preprocess_files() {
         global $CFG;
-
         foreach ($_FILES as $name => $file) {
             $this->status = true; // only set it to true here so that we can check if this function has been called.
             if (empty($this->inputname) || $name == $this->inputname) { // if we have input name, only process if it matches.
@@ -120,12 +119,12 @@ class upload_manager {
                         }
                         $this->status = false;
                         return false;
-
-                    } else if (count($this->files) == 1) {
-
-                        if (!$this->config->silent and !$this->config->allownull) {
+                    }
+                    else if (count($this->files) == 1) {
+                        if (!$this->config->silent) {
                             notify($this->files[$name]['uploadlog']);
-                        } else {
+                        }
+                        else {
                             $this->notify .= '<br />'. $this->files[$name]['uploadlog'];
                         }
                         $this->status = false;
@@ -419,7 +418,7 @@ class upload_manager {
      * @return string
      */
     function get_errors() {
-        return '<p class="notifyproblem">'. $this->notify .'</p>';
+        return '<p style="color:red;">'. $this->notify .'</p>';
     }
 }
 
@@ -752,15 +751,20 @@ function clam_change_log($oldpath, $newpath, $update=true) {
     global $CFG;
     
     if (!$record = get_record('log', 'info', $oldpath, 'module', 'upload')) {
+        error_log('couldn\'t find record');
         return false;
     }
     $record->info = $newpath;
     if ($update) {
-        update_record('log', $record);
+        if (update_record('log', $record)) {
+            error_log('updated record');
+        }
     }
     else {
         unset($record->id);
-        insert_record('log', $record);
+        if (insert_record('log', $record)) {
+            error_log('inserted record');
+        }
     }
 }
 ?>

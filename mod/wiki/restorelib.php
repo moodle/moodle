@@ -45,35 +45,32 @@
             $wiki->pagename = backup_todb($info['MOD']['#']['PAGENAME']['0']['#']);
             $wiki->wtype = backup_todb($info['MOD']['#']['WTYPE']['0']['#']);
             $wiki->ewikiprinttitle = backup_todb($info['MOD']['#']['EWIKIPRINTTITLE']['0']['#']);
-            $wiki->htmlmode = backup_todb($info['MOD']['#']['HTMLMODE']['0']['#']);
+            $wiki->ewikiallowsafehtml = backup_todb($info['MOD']['#']['HTMLMODE']['0']['#']);
             $wiki->ewikiacceptbinary = backup_todb($info['MOD']['#']['EWIKIACCEPTBINARY']['0']['#']);
-            $wiki->disablecamelcase = backup_todb($info['MOD']['#']['DISABLECAMELCASE']['0']['#']);
-            $wiki->setpageflags = backup_todb($info['MOD']['#']['SETPAGEFLAGS']['0']['#']);
-            $wiki->strippages = backup_todb($info['MOD']['#']['STRIPPAGES']['0']['#']);
-            $wiki->removepages = backup_todb($info['MOD']['#']['REMOVEPAGES']['0']['#']);
-            $wiki->revertchanges = backup_todb($info['MOD']['#']['REVERTCHANGES']['0']['#']);
             $wiki->initialcontent = backup_todb($info['MOD']['#']['INITIALCONTENT']['0']['#']);
             $wiki->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
+
 
             //The structure is equal to the db, so insert the wiki
             $newid = insert_record ("wiki",$wiki);
 
             //Do some output
-            echo "<li>".get_string("modulename","wiki")." \"".format_string(stripslashes($wiki->name),true)."\"</li>";
+            echo "<ul><li>".get_string("modulename","wiki")." \"".$wiki->name."\"<br>";
             backup_flush(300);
 
             if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
-                //Now check if want to restore user data and do it.
-                if ($restore->mods['wiki']->userinfo) {
-                    //Restore wiki_entries
-                    $status = wiki_entries_restore_mods($mod->id,$newid,$info,$restore);
-                }
+                //Restore wiki_entries
+                $status = wiki_entries_restore_mods($mod->id,$newid,$info,$restore);
             } else {
                 $status = false;
             }
+
+            //Finalize ul
+            echo "</ul>";
+
         } else {
             $status = false;
         }
@@ -100,10 +97,12 @@
 
             //We'll need this later!!
             $oldid = backup_todb($ent_info['#']['ID']['0']['#']);
+            $olduserid = backup_todb($ent_info['#']['USERID']['0']['#']);
+            $oldgroupid = backup_todb($ent_info['#']['GROUPID']['0']['#']);
 
             //Now, build the wiki_ENTRIES record structure
             $entry->wikiid = $new_wiki_id;
-            $entry->course = $restore->course_id;
+            $entry->course= $restore->course_id;
             $entry->userid = backup_todb($ent_info['#']['USERID']['0']['#']);
             $entry->groupid = backup_todb($ent_info['#']['GROUPID']['0']['#']);
             $entry->pagename = backup_todb($ent_info['#']['PAGENAME']['0']['#']);
@@ -114,35 +113,38 @@
             if ($user) {
                 $entry->userid = $user->new_id;
             }
-            //We have to recode the groupid field
             $group = backup_getid($restore->backup_unique_code,"group",$entry->groupid);
             if ($group) {
                 $entry->groupid = $group->new_id;
             }
+            //If userinfo was selected, restore the entry
+            if ($restore->mods['wiki']->userinfo) {
+                //The structure is equal to the db, so insert the wiki_entries
+      	        $newid = insert_record ("wiki_entries",$entry);
 
-            //The structure is equal to the db, so insert the wiki_entries
-            $newid = insert_record ("wiki_entries",$entry);
-
-            //Do some output
-            if (($i+1) % 50 == 0) {
-                echo ".";
-                if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+            	//Do some output
+	        if (($i+1) % 50 == 0) {
+      	            echo ".";
+            	    if (($i+1) % 1000 == 0) {
+                        echo "<br>";
+	            }
+      	            backup_flush(300);
                 }
-                backup_flush(300);
-            }
+                if ($newid) {
+      	            //We have the newid, update backup_ids
+                    backup_putid($restore->backup_unique_code,"wiki_entries",$oldid,$newid);
+                    //Get old wiki id from backup_ids
+                    $rec = get_record("backup_ids","backup_code",$restore->backup_unique_code,
+                                                  "table_name","wiki",
+                                                  "new_id",$new_wiki_id);
+                    //Now copy moddata associated files
+                    $status = wiki_restore_files ($rec->old_id, $new_wiki_id, $oldid, $newid, $restore);
 
-            if ($newid) {
-                //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"wiki_entries",$oldid,$newid);
-
-                //Restore wiki_pages
-                $status = wiki_pages_restore_mods($oldid,$newid,$ent_info,$restore);
-
-                //Now copy moddata associated files
-                $status = wiki_restore_files ($old_wiki_id, $new_wiki_id, $oldid, $newid, $restore);
-            } else {
-                $status = false;
+                    //Restore wiki_pages
+                    $status = wiki_pages_restore_mods($oldid,$newid,$ent_info,$restore);
+                } else {
+      	            $status = false;
+	        }
             }
         }
         return $status;
@@ -161,12 +163,12 @@
         //Iterate over pages
         for($i = 0; $i < sizeof($pages); $i++) {
             $pag_info = $pages[$i];
-            //traverse_xmlize($pag_info);                                                                 //Debug
+            //traverse_xmlize($com_info);                                                                 //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
             //We'll need this later!!
-            $oldid = backup_todb($pag_info['#']['ID']['0']['#']);
+            $oldid = backup_todb($pag_info['#']['PAGENAME']['0']['#']."_".$pag_info['#']['VERSION']['0']['#']."_".$pag_info['#']['WIKI']['0']['#']);
 
             //Now, build the wiki_page record structure
             $page->wiki = $new_entry_id;
@@ -175,35 +177,33 @@
             $page->flags = backup_todb($pag_info['#']['FLAGS']['0']['#']);
             $page->content = backup_todb($pag_info['#']['CONTENT']['0']['#']);
             $page->author = backup_todb($pag_info['#']['AUTHOR']['0']['#']);
-            $page->userid = backup_todb($pag_info['#']['USERID']['0']['#']);
             $page->created = backup_todb($pag_info['#']['CREATED']['0']['#']);
             $page->lastmodified = backup_todb($pag_info['#']['LASTMODIFIED']['0']['#']);
-            $page->refs = str_replace("$@LINEFEED@$","\n",backup_todb($pag_info['#']['REFS']['0']['#']));
+            $page->refs = backup_todb($pag_info['#']['REFS']['0']['#']);
             $page->meta = backup_todb($pag_info['#']['META']['0']['#']);
             $page->hits = backup_todb($pag_info['#']['HITS']['0']['#']);
-
-            //We have to recode the userid field
-            $user = backup_getid($restore->backup_unique_code,"user",$page->userid);
-            if ($user) {
-                $page->userid = $user->new_id;
-            }
-            //The structure is equal to the db, so insert the wiki_pages
-            $newid = insert_record ("wiki_pages",$page);
-
+            //The structure is equal to the db, so insert the wiki_comments
+            insert_record ("wiki_pages",$page, false,"pagename");
+#print "<pre>"; print_r($page); print "</pre>";            
+            print ($r?"TRUE":"FALSE")."<br>\n";
+            #$newid = insert_record ("wiki_pages",$page);
+            #if($newid) {
+            #  $newid = backup_todb($pag_info['#']['PAGENAME']['0']['#']."_".$pag_info['#']['VERSION']['0']['#']."_".$new_entry_id);
+            #}
             //Do some output
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                    echo "<br>";
                 }
                 backup_flush(300);
             }
-            if ($newid) {
-                //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"wiki_pages",$oldid,$newid);
-            } else {
-                $status = false;
-            }
+            #if ($newid) {
+            #    //We have the newid, update backup_ids
+            #    backup_putid($restore->backup_unique_code,"wiki_pages",$oldid,$newid);
+            #} else {
+            #    $status = false;
+            #}
         }
         return $status;
     }
@@ -229,7 +229,7 @@
         //Check it exists and create it
         $status = check_dir_exists($moddata_path,true);
 
-        //Now, locate wiki directory
+        //Now, locate forum directory
         if ($status) {
             $wiki_path = $moddata_path."/wiki";
             //Check it exists and create it
@@ -246,14 +246,14 @@
             }
         }
 
-        //If todo, we create the neccesary dirs in course moddata/wiki
+        //If todo, we create the neccesary dirs in course moddata/forum
         if ($status and $todo) {
-            //First this wiki id
+            //First this forum id
             $this_wiki_path = $wiki_path."/".$newwikiid;
             $status = check_dir_exists($this_wiki_path,true);
-            //Now this entry id
+            //Now this post id
             $entry_wiki_path = $this_wiki_path."/".$newentryid;
-            //And now, copy temp_path to entry_wiki_path
+            //And now, copy temp_path to post_forum_path
             $status = backup_copy_file($temp_path, $entry_wiki_path);
         }
 

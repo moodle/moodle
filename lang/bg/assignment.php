@@ -41,7 +41,7 @@ $string['typeuploadsingle'] = 'Качване на единичен файл на сървъра';
 $string['uploadbadname'] = 'Името на този файл съдържаше странни знаци и затова качването му на сървъра се провали.';
 $string['uploadedfiles'] = 'файлове - качени.';
 $string['uploaderror'] = 'При съхраняването на файла на сървъра възникна грешка.';
-$string['uploadfailnoupdate'] = 'Файлът беше качен без проблеми, но обновяването на вашия отговор на заданието се провали.';
+$string['uploadfailnoupdate'] = 'Файлът беше качен без пробелми, но обновяването на вашия отговор на заданието се провали.';
 $string['uploadfiletoobig'] = 'Съжаляваме, но този файл е твърде голям (ограничението е $a байта)';
 $string['uploadnofilefound'] = 'Не беше открит файл! Сигурни ли сте, че избрахте файл, който да качите?';
 $string['uploadnotregistered'] = '\'$a\' беше качен без проблеми, но отговора ви не беше регистриран!';
@@ -49,16 +49,5 @@ $string['uploadsuccess'] = '\'$a\' беше успешно качен на сървъра.';
 $string['viewfeedback'] = 'Преглед на оценките и рецензиите';
 $string['viewsubmissions'] = 'Преглед на изпратените отговори ($a бр)';
 $string['yoursubmission'] = 'Вашият отговор';
-$string['emailteachers'] = "Email alerts to teachers";
-$string['emailteachermail'] = "
-\$a->username has updated their assignment submission 
-for '\$a->assignment'
-
-It is available here:
-
-    \$a->url";
-$string['emailteachermailhtml'] = "\$a->username has updated their assignment submission 
-for <i>'\$a->assignment'</i><br /><br />
-It is <a href=\"\$a->url\">available on the web site</a>.";
 
 ?>

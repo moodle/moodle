@@ -3,128 +3,235 @@
     $no  = get_string("no");
 ?>
 <form method="post" action="module.php" name="form">
-<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>">
 
 <table cellpadding=9 cellspacing=0 >
 <tr valign=top>
     <td colspan = 3 align=center><strong><?php print_string("glossaryleveldefaultsettings","glossary") ?></strong></td>
 </tr>
 <tr valign=top>
-    <td align=right>glossary_entbypage:</td>
+    <td align=right><p>glossary_entbypage:</td>
     <td>
-    <input name=glossary_entbypage type=text size=3 value="<?php p(isset($CFG->glossary_entbypage) ? $CFG->glossary_entbypage : 10) ?>" />
+    <input name=glossary_entbypage type=text size=3 value="<?php p(isset($CFG->glossary_entbypage) ? $CFG->glossary_entbypage : 10) ?>">
     </td>
     <td>
     <?php print_string("entbypage", "glossary") ?>
     </td>
 </tr>
 <tr valign=top>
-    <td align=right>glossary_studentspost:</td>
+    <td align=right><p>glossary_studentspost:</td>
     <td>
-    <select size=1 name=glossary_studentspost>
+    <SELECT size=1 name=glossary_studentspost>
 <?php 
     $yselected = "";
     $nselected = "";
     if ($CFG->glossary_studentspost) {
-        $yselected = " selected=\"selected\" ";
+        $yselected = " SELECTED ";
     } else {
-        $nselected = " selected=\"selected\" ";
+        $nselected = " SELECTED ";
     }
 ?>
-    <option value=1 <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value=0 <?php p($nselected) ?>><?php p($no)?></option>
-    </select>
+    <OPTION value=1 <?php p($yselected) ?>><?php p($yes)?></OPTION>
+    <OPTION value=0 <?php p($nselected) ?>><?php p($no)?></OPTION>
+    </SELECT>
     </td>
     <td>
     <?php print_string("cnfstudentcanpost", "glossary") ?>
     </td>
 </tr>
 <tr valign=top>
-    <td align=right>glossary_dupentries:</td>
+    <td align=right><p>glossary_dupentries:</td>
     <td>
-    <select size=1 name=glossary_dupentries>
+    <SELECT size=1 name=glossary_dupentries>
 <?php 
     $yselected = "";
     $nselected = "";
     if ($CFG->glossary_dupentries) {
-        $yselected = " selected=\"selected\" ";
+        $yselected = " SELECTED ";
     } else {
-        $nselected = " selected=\"selected\" ";
+        $nselected = " SELECTED ";
     }
 ?>
-    <option value=1 <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value=0 <?php p($nselected) ?>><?php p($no)?></option>
-    </select>
+    <OPTION value=1 <?php p($yselected) ?>><?php p($yes)?></OPTION>
+    <OPTION value=0 <?php p($nselected) ?>><?php p($no)?></OPTION>
+    </SELECT>
     </td>
     <td>
     <?php print_string("cnfallowdupentries", "glossary") ?>
     </td>
 </tr>
 <tr valign=top>
-    <td align=right>glossary_allowcomments:</td>
+    <td align=right><p>glossary_allowcomments:</td>
     <td>
-    <select size=1 name=glossary_allowcomments>
+    <SELECT size=1 name=glossary_allowcomments>
 <?php 
     $yselected = "";
     $nselected = "";
     if ($CFG->glossary_allowcomments) {
-        $yselected = " selected=\"selected\" ";
+        $yselected = " SELECTED ";
     } else {
-        $nselected = " selected=\"selected\" ";
+        $nselected = " SELECTED ";
     }
 ?>
-    <option value=1 <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value=0 <?php p($nselected) ?>><?php p($no)?></option>
-    </select>
+    <OPTION value=1 <?php p($yselected) ?>><?php p($yes)?></OPTION>
+    <OPTION value=0 <?php p($nselected) ?>><?php p($no)?></OPTION>
+    </SELECT>
     </td>
     <td>
     <?php print_string("cnfallowcomments", "glossary") ?>
     </td>
 </tr>
 <tr valign=top>
-    <td align=right>glossary_linkbydefault:</td>
+    <td align=right><p>glossary_linkbydefault:</td>
     <td>
-    <select size=1 name=glossary_linkbydefault>
+    <SELECT size=1 name=glossary_linkbydefault>
 <?php 
     $yselected = "";
     $nselected = "";
     if ($CFG->glossary_linkbydefault) {
-        $yselected = " selected=\"selected\" ";
+        $yselected = " SELECTED ";
     } else {
-        $nselected = " selected=\"selected\" ";
+        $nselected = " SELECTED ";
     }
 ?>
-    <option value=1 <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value=0 <?php p($nselected) ?>><?php p($no)?></option>
-    </select>
+    <OPTION value=1 <?php p($yselected) ?>><?php p($yes)?></OPTION>
+    <OPTION value=0 <?php p($nselected) ?>><?php p($no)?></OPTION>
+    </SELECT>
     </td>
     <td>
     <?php print_string("cnflinkglossaries", "glossary") ?>
     </td>
 </tr>
 <tr valign=top>
-    <td align=right>glossary_defaultapproval:</td>
+    <td align=right><p>glossary_defaultapproval:</td>
     <td>
-    <select size=1 name=glossary_defaultapproval>
+    <SELECT size=1 name=glossary_defaultapproval>
 <?php 
     $yselected = "";
     $nselected = "";
     if ($CFG->glossary_defaultapproval) {
-        $yselected = " selected=\"selected\" ";
+        $yselected = " SELECTED ";
     } else {
-        $nselected = " selected=\"selected\" ";
+        $nselected = " SELECTED ";
     }
 ?>
-    <option value=1 <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value=0 <?php p($nselected) ?>><?php p($no)?></option>
-    </select>
+    <OPTION value=1 <?php p($yselected) ?>><?php p($yes)?></OPTION>
+    <OPTION value=0 <?php p($nselected) ?>><?php p($no)?></OPTION>
+    </SELECT>
     </td>
     <td>
     <?php print_string("cnfapprovalstatus", "glossary") ?>
     </td>
 </tr>
 <tr valign=top>
-        <td align=right>glossary_enablerssfeeds:</td>
+    <td colspan = 3 align=center><strong><?php print_string("entryleveldefaultsettings","glossary") ?></strong></td>
+</tr>
+<tr valign=top>
+    <td align=right><p>glossary_linkentries:</td>
+    <td>
+    <SELECT size=1 name=glossary_linkentries>
+<?php 
+    $yselected = "";
+    $nselected = "";
+    if ($CFG->glossary_linkentries) {
+        $yselected = " SELECTED ";
+    } else {
+        $nselected = " SELECTED ";
+    }
+?>
+    <OPTION value=1 <?php p($yselected) ?>><?php p($yes)?></OPTION>
+    <OPTION value=0 <?php p($nselected) ?>><?php p($no)?></OPTION>
+    </SELECT>
+    </td>
+    <td>
+    <?php print_string("cnflinkentry", "glossary") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>glossary_casesensitive:</td>
+    <td>
+    <SELECT size=1 name=glossary_casesensitive>
+<?php 
+    $yselected = "";
+    $nselected = "";
+    if ($CFG->glossary_casesensitive) {
+        $yselected = " SELECTED ";
+    } else {
+        $nselected = " SELECTED ";
+    }
+?>
+    <OPTION value=1 <?php p($yselected) ?>><?php p($yes)?></OPTION>
+    <OPTION value=0 <?php p($nselected) ?>><?php p($no)?></OPTION>
+    </SELECT>
+    </td>
+    <td>
+    <?php print_string("cnfcasesensitive", "glossary") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>glossary_fullmatch:</td>
+    <td>
+    <SELECT size=1 name=glossary_fullmatch>
+<?php 
+    $yselected = "";
+    $nselected = "";
+    if ($CFG->glossary_fullmatch) {
+        $yselected = " SELECTED ";
+    } else {
+        $nselected = " SELECTED ";
+    }
+?>
+    <OPTION value=1 <?php p($yselected) ?>><?php p($yes)?></OPTION>
+    <OPTION value=0 <?php p($nselected) ?>><?php p($no)?></OPTION>
+    </SELECT>
+    </td>
+    <td>
+    <?php print_string("cnffullmatch", "glossary") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td colspan = 3 align=center><a name=formats><strong><?php print_string("displayformatssetup","glossary") ?></strong></td>
+</tr>
+<tr>
+    <td colspan=3 align=center>
+<?php
+
+    //Update and get available formats
+    $recformats = glossary_get_available_formats();
+
+    $formats = array();
+
+    //Take names
+    foreach ($recformats as $format) {
+        $formats[$format->id] = get_string("displayformat$format->name", "glossary");
+    }
+    asort($formats);
+
+    echo '<table cellpadding="5" bgcolor="#FFFFFF" class="generaltab" width="40%" align="center">';
+    foreach ($formats as $formatid=>$formatname) {
+        $recformat = get_record('glossary_formats','id',$formatid);
+        echo '<tr>';
+        echo '<td>' . $formatname . '</td>';
+        $eicon = "<a title=\"" . get_string("edit") . "\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$formatid&mode=edit\"><img border=\"0\" src=\"../pix/t/edit.gif\"></a>";
+        if ( $recformat->visible ) {
+            $vtitle = get_string("hide");
+            $vicon = "hide.gif";
+        } else {
+            $vtitle = get_string("show");
+            $vicon = "show.gif";
+        }
+        $vicon = "<a title=\"" . $vtitle . "\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$formatid&mode=visible\"><img border=\"0\" src=\"../pix/t/" . $vicon . "\"></a>";
+
+        echo '<td align="center" nowrap>' . $eicon . '&nbsp;&nbsp;' . $vicon . '</td>';
+        echo '</tr>';
+    }
+    echo '</table>';
+
+?>
+
+	</td>
+</tr>
+<tr valign=top>
+        <td align=right><p>glossary_enablerssfeeds:</td>
         <td>
     <?php
         if (!isset($CFG->enablerssfeeds) || $CFG->enablerssfeeds == 0) {
@@ -152,117 +259,9 @@
     ?>
     </td>
 </tr>
-<tr valign=top>
-    <td colspan = 3 align=center><strong><?php print_string("entryleveldefaultsettings","glossary") ?></strong></td>
-</tr>
-<tr valign=top>
-    <td align=right>glossary_linkentries:</td>
-    <td>
-    <select size=1 name=glossary_linkentries>
-<?php 
-    $yselected = "";
-    $nselected = "";
-    if ($CFG->glossary_linkentries) {
-        $yselected = " selected=\"selected\" ";
-    } else {
-        $nselected = " selected=\"selected\" ";
-    }
-?>
-    <option value=1 <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value=0 <?php p($nselected) ?>><?php p($no)?></option>
-    </select>
-    </td>
-    <td>
-    <?php print_string("cnflinkentry", "glossary") ?>
-    </td>
-</tr>
-<tr valign=top>
-    <td align=right>glossary_casesensitive:</td>
-    <td>
-    <select size=1 name=glossary_casesensitive>
-<?php 
-    $yselected = "";
-    $nselected = "";
-    if ($CFG->glossary_casesensitive) {
-        $yselected = " selected=\"selected\" ";
-    } else {
-        $nselected = " selected=\"selected\" ";
-    }
-?>
-    <option value=1 <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value=0 <?php p($nselected) ?>><?php p($no)?></option>
-    </select>
-    </td>
-    <td>
-    <?php print_string("cnfcasesensitive", "glossary") ?>
-    </td>
-</tr>
-<tr valign=top>
-    <td align=right>glossary_fullmatch:</td>
-    <td>
-    <select size=1 name=glossary_fullmatch>
-<?php 
-    $yselected = "";
-    $nselected = "";
-    if ($CFG->glossary_fullmatch) {
-        $yselected = " selected=\"selected\" ";
-    } else {
-        $nselected = " selected=\"selected\" ";
-    }
-?>
-    <option value=1 <?php p($yselected) ?>><?php p($yes)?></option>
-    <option value=0 <?php p($nselected) ?>><?php p($no)?></option>
-    </select>
-    </td>
-    <td>
-    <?php print_string("cnffullmatch", "glossary") ?>
-    </td>
-</tr>
-<tr valign=top>
-    <td colspan = 3 align=center><a name=formats><strong><?php print_string("displayformatssetup","glossary") ?></strong></td>
-</tr>
 <tr>
     <td colspan=3 align=center>
-<?php
-
-    //Update and get available formats
-    $recformats = glossary_get_available_formats();
-
-    $formats = array();
-
-    //Take names
-    foreach ($recformats as $format) {
-        $formats[$format->id] = get_string("displayformat$format->name", "glossary");
-    }
-    asort($formats);
-
-    print_simple_box_start('center');
-    foreach ($formats as $formatid=>$formatname) {
-        $recformat = get_record('glossary_formats','id',$formatid);
-        echo '<tr>';
-        echo '<td>' . $formatname . '</td>';
-        $eicon = "<a title=\"" . get_string("edit") . "\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$formatid&mode=edit\"><img border=\"0\" src=\"../pix/t/edit.gif\" alt=\"\" /></a>";
-        if ( $recformat->visible ) {
-            $vtitle = get_string("hide");
-            $vicon = "hide.gif";
-        } else {
-            $vtitle = get_string("show");
-            $vicon = "show.gif";
-        }
-        $vicon = "<a title=\"" . $vtitle . "\" href=\"$CFG->wwwroot/mod/glossary/formats.php?id=$formatid&mode=visible\"><img border=\"0\" src=\"../pix/t/" . $vicon . "\" alt=\"\" /></a>";
-
-        echo '<td align="center" nowrap="nowrap">' . $eicon . '&nbsp;&nbsp;' . $vicon . '</td>';
-        echo '</tr>';
-    }
-    print_simple_box_end();
-
-?>
-
-	</td>
-</tr>
-<tr>
-    <td colspan=3 align=center>
-	<input type="submit" value="<?php print_string("savechanges") ?>" /></td>
+	<input type="submit" value="<?php print_string("savechanges") ?>"></td>
 </tr>
 </table>
 

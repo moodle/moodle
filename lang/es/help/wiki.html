@@ -12,14 +12,14 @@ que se pueden insertar para lograr el formato.</p>
 
 <h3>Formato a nivel de bloques</h3>
 <p>
-Los párrafos se separan por al menos una línea en blanco.
-Para dar formato especial a un párrafo agregue alguno de los siguientes caracteres especiales
+Los párrafos se separan básicamente por al menos una línea en blanco.
+Para dar formato especial a un párrafo agregue alguno de los siguientes caracteres 
 en la primera línea del párrafo seguido de un espacio.
 </p>
 <table>
-  <tr><th>Carácter</th><th>Tipo de bloque</th></tr>
+  <tr><th>Carácter</th><th>Formato</th></tr>
 
-  <tr><td>Ninguno</td><td>Párrafo normal</td></tr>
+  <tr><td>ninguno</td><td>Párrafo normal</td></tr>
 
   <tr><td>&gt;</td><td>Cita</td></tr>
 
@@ -29,65 +29,20 @@ en la primera línea del párrafo seguido de un espacio.
 
   <tr><td>!#</td><td>Encabezado -donde # va de 1 a 6 (el 1 es el mayor)</td></tr>
 
-  <tr><td>Q.</td><td>Se añade estilo de pregunta al párrafo para mejorar la presentación pregunta/respuesta (en el tema)</td></tr>
-
-  <tr><td>A.</td><td>Respuesta (igual que el anterior, pero en respuesta)</td></tr>
-
 </table>
 <h3>Formato de listas</h3>
-
-
-
 <p>Las listas simples se pueden construir fácilmente agregando un carácter especial 
 al comienzo de cada línea, seguido de un espacio.
-
-La lista se cierra con una línea en blanco. Las listas se pueden anidar libremente, y las listas anidadas pueden cambiar el tipo de lista. Las definiciones de listas y los tipos de texto pueden entremezclarse libremente para obtener el efecto deseado.Los caracteres son los siguientes:</p>
-
-
-
-
-
+La lista se cierra con una línea en blanco. De momento no se pueden mezclar ni anidar listas.
+<br />
+Los caracteres son los siguientes:</p>
 <table>
   <tr><th>Carácter</th><th>Resultado</th></tr>
-  <tr><td>*</td><td>Lista sin orden (topos)</td></tr>
-  <tr><td>#</td><td>Lista ordenada (1, 2, 3, etc.)</td></tr>
+  <tr><td>*</td><td>Lista sin orden</td></tr>
+  <tr><td>#</td><td>Lista ordenada (1, 2, 3 etc.)</td></tr>
   <tr><td>:</td><td>Definición de la lista, definición</td></tr>
   <tr><td>;</td><td>Definición de la lista, texto</td></tr>
 </table>  
-
-<p>Ejemplo de listas anidadas:</p>
-
-<p><pre>
-
-  * Primer topo
-
-  * Segundo topo
-
-  ## línea anidada 1
-
-  ## línea anidada 2
-
-  * Tercer topo
-
-</pre></p>
-
-<p>Produce:
-
-<ul><li>Primer topo</li>
-
-  <li>Segundo topo</li>
-
-  <ol><li>línea anidada 1</li>
-
-    <li>línea anidada 2</li></ol>
-
-  <li>Tercer topo
-
-</ul></p>
-
-
-
-
 <h3>Formato de palabras</h3>
 <p>Este formato permite señalar una o más palabras dentro de una frase con un 
 estilo especial. Los caracteres especiales pueden aparecer en cualquier parte de la 
@@ -99,15 +54,15 @@ línea, pero recuerde que el formato no puede cruzar las líneas.
 
   <tr><td>*Hola a todos*</td><td><strong>Hola a todos</strong></td><td>Negritas</td></tr>
 
-  <tr><td>/Hola a todos/</td><td><em>Hola a todos</em></td><td>Énfasis o Cursivas</td></tr>
+  <tr><td>/Hola a todos/</td><td><em>Hola a todos</em></td><td>Cursivas</td></tr>
 
   <tr><td>+Hola a todos+</td><td><ins>Hola a todos</ins></td><td>Subrayado</td></tr>
 
   <tr><td>-Hola a todos-</td><td><del>Hola a todos</del></td><td>Tachado</td></tr>
 
-  <tr><td>Hola a ~todos~</td><td>Hola a <sub>todos</sub></td><td>Subíndice</td></tr>
+  <tr><td>Hola a ~todos~</td><td>Hola a <sub>todos</sub></td><td>Subscript</td></tr>
 
-  <tr><td>Hola a ^todos^</td><td>Hola a <sup>todos</sup></td><td>Índice</td></tr>
+  <tr><td>Hola a ^todos^</td><td>Hola a <sup>todos</sup></td><td>Superscript</td></tr>
 
   <tr><td>"Hola a todos"</td><td><q>Hola a todos</q></td><td>Entrecomillado</td></tr>
 
@@ -119,110 +74,38 @@ línea, pero recuerde que el formato no puede cruzar las líneas.
 
 <h3>Acrónimos</h3>
 <p>La etiqueta de acrónimo se obtiene colocando el acrónimo en mayúsculas seguido
-de la descripción entre paréntesis. No debe dejar espacio entre ambos. Ejemplo:</p>
-
-
-
-<p>HTML(Hypertext Markup Language) <br />   <acronym title="Hypertext Markup Language">HTML</acronym></p>
-
+de la descripción entre paréntesis. No debe dejar espacio entre ambos.
+<br />
+Ejemplo:</p>
+<p>HTML(Hypertext Markup Language) <br />   <acronym title="Hypertext Markup Language">
+HTML</acronym></p>
 
 <h3>Enlaces</h3>
-
-
-
-<p>Los enlaces se pueden colocar en el texto seguidos (sin espacio) por el texto que 
-se desea mostrar entre paréntesis. Ejemplo: </em>http://www.google.com/(Buscar)</em> se convertirá en 
+Los enlaces se pueden colocar en el texto seguidos (sin espacio) por el texto que 
+se desea mostrar entre paréntesis.
+<br />
+Ejemplo: </em>http://www.google.com/(Buscar)</em> 
+<br />
+se convertirá en 
+<br />
 <a href="http://www.google.com/">Buscar</a>.
-
-<p>Los enlaces de correo electrónico se obtienen del mismo modo, e.g.,</p>
-
-<p>nadie@ejemplo.com(Usuario del test) se convertirá en
-
-<a href="mailto:nobody@example.com">Usuario del test</a></p>
-
-
 
 <h3>Enlace a los módulos de Moodle</h3>
 <p>Si conoce el número id (ver ?id=nn al final de la dirección del módulo) y el 
-nombre del mismo, es posible crear un enlace directo a dicho recurso con la siguiente sintaxis:
+nombre del mismo, es posible enlazar directamente al mismo con la siguiente sintaxis:
 <br />
-<p>NombredelModulo:nn(Texto descriptivo)</p>
-<p>Por ejemplo, <em>resource:36(Mi nueva página)</em>   <em>forum:10(Ir al foro)</em></p>
+<p>Nombre:nn(Texto descriptivo)</p>
+<p>Por ejemplo, <em>resource:36(Mi nueva página)</em>   <em>forum:10(ir al foro)</em></p>
 
-<h3>Enlaces a imágenes Moodle</h3>
-
-
-
-<p>En las páginas wiki pueden colocarse gráficos en línea. Usted necesita subir el gráfico y anotar su ruta dentro del área de subida del archivo. Ésta es la sintaxis:</p>
-
-
-
-<p>/<em>..ruta al archivo..</em>(texto alternativo)</p>
-
-
-
-<p>por ejemplo,  /mispics/graphic.jpg(foto del personal)</p>
-
-
-
-<h3>Enlaces a archivos Moodle</h3>
-
-
-
-<p>De modo muy parecido al punto anterior, esta característica posibilita incluir en una página wiki enlaces a archivos previamente subidos. Ésta es la sintaxis:</p>
-
-
-
-<p><b>file:</b><em>..path to file</em>(link text)</p>
-
-
-
-<p>por ejemplo, file:/pdfs/moodle.pdf(Información sobre Moodle)</p>
 
 <h3>Conversión automática</h3>
 
 <p>Muchas funciones de uso común se convierten en su equivalente XHTML automáticamente.
-Las principales son:</p>
+Las principales son:
+</p>
 <ul>
   <li>Los enlaces HTTP se convierten en enlaces activos
   <li> ..., (R), (TM), (C), 1/4, 1/2, 3/4 se convierten en sus respectivos caracteres
   <li> números x números se convierte al símbolo de multiplicar
-  <li>Una línea que comienza con al menos 4 barras se convierte en una línea horizontal
+  <li>Una línea que comienza con al menos 4 diagonales se convierte en una línea horizontal
 </ul>
-
-
-<h3>Revisor ortográfico (Experimental)</h3>
-
-
-
-<p>El formateador wiki puede transformarse en un revisor ortográfico. Si escribe lo siguiente en una línea de texto, todo lo que siga será revisado...</p>
-
-
-
-<pre>
-
-!SPELL:language_code:language_variant
-
-
-
-Ejemplos:
-
-!SPELL:en:british
-
-!SPELL:sp
-
-</pre>
-
-
-
-<p>"language_code" debería reemplazarse por el código apropiado (e.g., EN, ES, etc.), "language_variant" (junto con los dos puntos) es opcional y se refiere a la correspondiente variante idiomática "americana", "británica", o "canadiense" si el código de idioma es EN.</p>
-
-
-
-<p>Cuando la opción está activada, cualquier palabra desconocida quedan resaltada y usted puede ver sugerencias pasando el ratón por encima de ella.</p>
-
-
-
-<p><em>NOTA: La revisión ortográfica usa las librerías <strong>pspell</strong>. Estas librerías, junto con los diccionarios necesarios, deberán estar presentes en su servidor para que el revisor pueda funcionar. No funciona en el entorno Windows.
-
-</em></p>

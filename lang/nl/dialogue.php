@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // dialogue.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['addmynewentries'] = 'Voeg mijn nieuwe boodschappen toe';
@@ -9,29 +9,28 @@ $string['allowmultiple'] = 'Sta meer dan één dialoog met dezelfde persoon toe';
 $string['allowstudentdialogues'] = 'Sta dialoog tussen leerlingen toe';
 $string['close'] = 'Sluit';
 $string['closed'] = 'Gesloten';
-$string['confirmclosure'] = 'Je gaat de dialoog met $a sluiten. Gesloten dialogen kunnen niet meer geopend worden. Als je deze dialoog sluit, kun je hem nog wel bekijken, maar je kunt er niets meer aan toevoegen. Je zult een nieuwe dialoog moeten starten om met deze persoon verder te \"praten\".<br /><br />Ben je er zeker van dat je deze dialoog wil sluiten? ';
+$string['confirmclosure'] = 'Je gaat de dialoog met $a sluiten. Gesloten dialogen kunnen niet meer geopend worden. Als je deze dialoog sluit, kun je hem nog wel bekijken, maar je kunt er niets meer aan toevoegen. Je zult een nieuwe dialoog moeten starten om met deze persoon verder te \"praten\".<br/><br/>Ben je er zeker van dat je deze dialoog wil sluiten? ';
 $string['deleteafter'] = 'Verwijder gesloten dialogen na (dagen)';
 $string['dialogueclosed'] = 'Dialoog gesloten';
 $string['dialogueintro'] = 'Inleiding dialoog';
-$string['dialoguemail'] = '$a->userfrom heeft een nieuwe boodschap in je dialoog gepost voor \'$a->dialoog\'
+$string['dialoguemail'] = '$a->userfrom heeft een niewe boodschap in je dialoog gepost voor \'$a->dialoog\'
 Je kunt het zien verschijnen bij je dialoogboodschap:
 $a->url';
-$string['dialoguemailhtml'] = '$a->userfrom heeft een nieuwe boodschap in je dialoog gepost voor \'<i>$a->dialogue</i>\'<br /><br />
+$string['dialoguemailhtml'] = '$a->userfrom heeft een nieuwe boodschap in je dialoog gepost voor \'<i>$a->dialogue</i>\'<br/><br/>
 Je kunt zien dat het aan jouw <a href=\"$a->url\">dialoog</a> toegevoegd is ';
-$string['dialoguename'] = 'Naam dialoog';
+$string['dialoguename'] = 'Dialoog naam';
 $string['dialogueopened'] = 'Dialoog geopend met $a';
 $string['dialoguewith'] = 'Dialoog met $a';
 $string['everybody'] = 'Iedereen';
 $string['furtherinformation'] = 'Meer informatie';
 $string['lastentry'] = 'Laatste item';
 $string['maildefault'] = 'Standaard e-mail zenden';
-$string['mailnotification'] = 'E-mail notificatie';
 $string['modulename'] = 'Dialoog';
 $string['modulenameplural'] = 'Dialogen';
 $string['namehascloseddialogue'] = '$a heeft de dialoog gesloten';
-$string['newdialogueentries'] = 'Nieuwe dialoogitems';
+$string['newdialogueentries'] = 'Nieuwe dialoog items';
 $string['newentry'] = 'Nieuw item';
-$string['noavailablepeople'] = 'Er is niemand om een dialoog mee te starten';
+$string['noavailablepeople'] = 'Er is niemand om een Dialoog mee te starten';
 $string['nopersonchosen'] = 'Niemand gekozen';
 $string['nosubject'] = 'Geen onderwerp toegevoegd';
 $string['notextentered'] = 'Geen tekst ingevoegd';
@@ -60,9 +59,6 @@ $string['studenttostudent'] = 'Leerling - leerling';
 $string['subject'] = 'Onderwerp';
 $string['subjectadded'] = 'Onderwerp toegevoegd';
 $string['teachertostudent'] = 'Leraar - leerling';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 $string['typefirstentry'] = 'Typ het eerste item hier';
 $string['typefollowup'] = 'Typ de opvolging hier';
 $string['typeofdialogue'] = 'Type dialoog';

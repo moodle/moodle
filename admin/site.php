@@ -1,7 +1,6 @@
-<?php // $Id$
+<?PHP // $Id$
 
     require_once("../config.php");
-    require_once("../course/lib.php");
 
     if ($site = get_site()) {
         require_login();
@@ -13,22 +12,13 @@
 
 /// If data submitted, then process and store.
 
-    if ($form = data_submitted()) {
-
-        if (!empty($USER->id)) {             // Additional identity check
-            if (!confirm_sesskey()) {
-                error(get_string('confirmsesskeybad', 'error'));
-            }
-        }
+	if ($form = data_submitted()) {
 
         validate_form($form, $err);
 
         if (count($err) == 0) {
 
             set_config("frontpage", $form->frontpage);
-            if ($form->frontpage = FRONTPAGETOPICONLY) {
-                $form->numsections = 1;    // Force the topic display for this format
-            }
 
             $form->timemodified = time();
 
@@ -39,17 +29,14 @@
                     error("Serious Error! Could not update the site record! (id = $form->id)");
                 }
             } else {
-                // We are about to create the site "course"
-                require_once($CFG->dirroot.'/lib/blocklib.php');
+                // [pj] We are about to create the site, so let's add some blocks...
+                // calendar_month is included as a Moodle feature advertisement ;-)
+                require_once('../lib/blocklib.php');
+                $form->blockinfo = blocks_get_default_blocks(NULL, 'site_main_menu,admin,course_list:course_summary,calendar_month');
 
-                if ($newid = insert_record('course', $form)) {
-
-                    // Site created, add blocks for it
-                    $page = page_create_object(PAGE_COURSE_VIEW, $newid);
-                    blocks_repopulate_page($page); // Return value not checked because you can always edit later
-
-                    $cat->name = get_string('miscellaneous');
-                    if (insert_record('course_categories', $cat)) {
+                if ($newid = insert_record("course", $form)) {
+                    $cat->name = get_string("miscellaneous");
+                    if (insert_record("course_categories", $cat)) {
                         redirect("$CFG->wwwroot/$CFG->admin/index.php", get_string("changessaved"), 1);
                     } else {
                         error("Serious Error! Could not set up a default course category!");
@@ -81,7 +68,7 @@
         $form->numsections = 0;
         $form->id = "";
         $form->category = 0;
-        $form->format = 'site';  // Only for this course
+        $form->format = "social";
         $form->teacher = get_string("defaultcourseteacher");
         $form->teachers = get_string("defaultcourseteachers");
         $form->student = get_string("defaultcoursestudent");
@@ -112,7 +99,7 @@
     if ($firsttime) {
         print_header();
         print_heading($strsitesettings);
-        print_simple_box(get_string("configintrosite", 'admin'), "center", "50%");
+        print_simple_box(get_string("configintrosite"), "center", "50%");
         echo "<br />";
     } else {
         print_header("$site->shortname: $strsitesettings", "$site->fullname",
@@ -121,22 +108,16 @@
         print_heading($strsitesettings);
     }
 
-    if (empty($USER->id)) {  // New undefined admin user
-        $USER->htmleditor = true;
-        $sesskey = '';
-    } else {
-        $sesskey = $USER->sesskey;
-    }
-    $usehtmleditor = can_use_html_editor();
     $defaultformat = FORMAT_HTML;
+    if ($usehtmleditor = can_use_richtext_editor()) {
+        $onsubmit = "onsubmit=\"copyrichtext(form.summary);\"";
+    } else {
+        $onsubmit = "";
+    }
 
-    print_simple_box_start("center", "");
+    print_simple_box_start("center", "", "$THEME->cellheading");
     include("site.html");
     print_simple_box_end();
-
-    if ($usehtmleditor) { 
-        use_html_editor();
-    }
 
     if (!$firsttime) {
         print_footer();

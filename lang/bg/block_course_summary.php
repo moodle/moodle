@@ -4,6 +4,5 @@
 
 $string['blockname'] = 'Резюме на курса';
 $string['siteinfo'] = 'Информация за сайта';
-$string['pagedescription'] = "Описание на курс/сайт";
 
 ?>

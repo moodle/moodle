@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
 
 if (!isset($CFG->journal_showrecentactivity)) {
@@ -28,7 +28,7 @@ function journal_user_complete($course, $user, $mod, $journal) {
 
         print_simple_box_start();
         if ($entry->modified) {
-            echo "<p><font size=\"1\">".get_string("lastedited").": ".userdate($entry->modified)."</font></p>";
+            echo "<P><FONT SIZE=1>".get_string("lastedited").": ".userdate($entry->modified)."</FONT></P>";
         }
         if ($entry->text) {
             echo format_text($entry->text, $entry->format);
@@ -55,7 +55,7 @@ function journal_user_complete_index($course, $user, $journal, $journalopen, $he
         $entryinfo = "";
     }
 
-    $journal->name = "<a href=\"view.php?id=$journal->coursemodule\">".format_string($journal->name,true)."</a>";
+    $journal->name = "<a href=\"view.php?id=$journal->coursemodule\">$journal->name</a>";
 
     if ($heading) {
         echo "<h3>$heading - $journal->name$entryinfo</h3>";
@@ -66,7 +66,7 @@ function journal_user_complete_index($course, $user, $journal, $journalopen, $he
     print_simple_box_start("left", "90%");
     echo format_text($journal->intro,  $journal->introformat);
     print_simple_box_end();
-    echo "<br clear=\"all\" />";
+    echo "<br clear=all />";
     echo "<br />";
     
     if (isstudent($course->id) or isteacher($course->id)) {
@@ -74,16 +74,16 @@ function journal_user_complete_index($course, $user, $journal, $journalopen, $he
         print_simple_box_start("right", "90%");
     
         if ($journalopen) {
-            echo "<p align=\"right\"><a href=\"edit.php?id=$journal->coursemodule\">";
+            echo "<p align=right><a href=\"edit.php?id=$journal->coursemodule\">";
             echo get_string("edit")."</a></p>";
         } else {
-            echo "<p align=\"right\"><a href=\"view.php?id=$journal->coursemodule\">";
+            echo "<p align=right><a href=\"view.php?id=$journal->coursemodule\">";
             echo get_string("view")."</a></p>";
         }
     
         if ($entry = get_record("journal_entries", "userid", $user->id, "journal", $journal->id)) {
             if ($entry->modified) {
-                echo "<p align=\"center\"><font size=\"1\">".get_string("lastedited").": ".userdate($entry->modified)."</font></p>";
+                echo "<p align=\"center\"><font size=1>".get_string("lastedited").": ".userdate($entry->modified)."</font></p>";
             }
             if ($entry->text) {
                 echo format_text($entry->text, $entry->format);
@@ -97,7 +97,7 @@ function journal_user_complete_index($course, $user, $journal, $journalopen, $he
         }
     
         print_simple_box_end();
-        echo "<br clear=\"all\" />";
+        echo "<br clear=all />";
         echo "<br />";
     }
 
@@ -148,24 +148,22 @@ function journal_cron () {
 
             unset($journalinfo);
             $journalinfo->teacher = fullname($teacher);
-            $journalinfo->journal = format_string($entry->name,true);
+            $journalinfo->journal = "$entry->name";
             $journalinfo->url = "$CFG->wwwroot/mod/journal/view.php?id=$mod->id";
-	    $modnamepl = get_string( 'modulenameplural','journal' );
-            $msubject = get_string( 'mailsubject','journal' );
 
-            $postsubject = "$course->shortname: $msubject: ".format_string($entry->name,true);
-            $posttext  = "$course->shortname -> $modnamepl -> ".format_string($entry->name,true)."\n";
+            $postsubject = "$course->shortname: Journal feedback: $entry->name";
+            $posttext  = "$course->shortname -> Journals -> $entry->name\n";
             $posttext .= "---------------------------------------------------------------------\n";
-            $posttext .= get_string("journalmail", "journal", $journalinfo)."\n";
+            $posttext .= get_string("journalmail", "journal", $journalinfo);
             $posttext .= "---------------------------------------------------------------------\n";
             if ($user->mailformat == 1) {  // HTML
                 $posthtml = "<p><font face=\"sans-serif\">".
                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
                 "<a href=\"$CFG->wwwroot/mod/journal/index.php?id=$course->id\">journals</a> ->".
-                "<a href=\"$CFG->wwwroot/mod/journal/view.php?id=$mod->id\">".format_string($entry->name,true)."</a></font></p>";
-                $posthtml .= "<hr /><font face=\"sans-serif\">";
+                "<a href=\"$CFG->wwwroot/mod/journal/view.php?id=$mod->id\">$entry->name</a></font></p>";
+                $posthtml .= "<hr><font face=\"sans-serif\">";
                 $posthtml .= "<p>".get_string("journalmailhtml", "journal", $journalinfo)."</p>";
-                $posthtml .= "</font><hr />";
+                $posthtml .= "</font><hr>";
             } else {
               $posthtml = "";
             }
@@ -185,17 +183,17 @@ function journal_cron () {
 function journal_print_recent_activity($course, $isteacher, $timestart) {
     global $CFG;
 
-    if (!empty($CFG->journal_showrecentactivity)) {    // Don't even bother
+    if (empty($CFG->journal_showrecentactivity)) {    // Don't even bother
         return false;
     }
 
     $content = false;
     $journals = NULL;
 
-    if (!$logs = get_records_select('log', 'time > \''.$timestart.'\' AND '.
-                                           'course = \''.$course->id.'\' AND '.
-                                           'module = \'journal\' AND '.
-                                           '(action = \'add entry\' OR action = \'update entry\')', 'time ASC')){
+    if (!$logs = get_records_select("log", "time > '$timestart' AND ".
+                                           "course = '$course->id' AND ".
+                                           "module = 'journal' AND ".
+                                           "(action = 'add entry' OR action = 'update entry')", "time ASC")){
         return false;
     }
 
@@ -214,17 +212,21 @@ function journal_print_recent_activity($course, $isteacher, $timestart) {
             if (!isset($journals[$log->info])) {
                 $journals[$log->info] = $j_log_info;
                 $journals[$log->info]->time = $log->time;
-                $journals[$log->info]->url = str_replace('&', '&amp;', $log->url);
+                $journals[$log->info]->url = $log->url;
             }
         }
     }
 
     if ($journals) {
         $content = true;
-        print_headline(get_string('newjournalentries', 'journal').':');
+        $strftimerecent = get_string("strftimerecent");
+        print_headline(get_string("newjournalentries", "journal").":");
         foreach ($journals as $journal) {
-            print_recent_activity_note($journal->time, $journal, $isteacher, $journal->name,
-                                       $CFG->wwwroot.'/mod/journal/'.$journal->url);
+            $date = userdate($journal->time, $strftimerecent);
+            echo "<p><font size=1>$date - ".fullname($journal)."<br />";
+            echo "\"<a href=\"$CFG->wwwroot/mod/journal/$journal->url\">";
+            echo "$journal->name";
+            echo "</a>\"</font></p>";
         }
     }
  
@@ -271,13 +273,13 @@ function journal_get_participants($journalid) {
     global $CFG;
 
     //Get students
-    $students = get_records_sql("SELECT DISTINCT u.id, u.id
+    $students = get_records_sql("SELECT DISTINCT u.*
                                  FROM {$CFG->prefix}user u,
                                       {$CFG->prefix}journal_entries j
                                  WHERE j.journal = '$journalid' and
                                        u.id = j.userid");
     //Get teachers
-    $teachers = get_records_sql("SELECT DISTINCT u.id, u.id
+    $teachers = get_records_sql("SELECT DISTINCT u.*
                                  FROM {$CFG->prefix}user u,
                                       {$CFG->prefix}journal_entries j
                                  WHERE j.journal = '$journalid' and
@@ -314,7 +316,8 @@ function journal_get_users_done($journal) {
 
     // make sure it works on the site course
     $select = "s.course = '$journal->course' AND";
-    if ($journal->course == SITEID) {
+    $site = get_site();
+    if ($journal->course == $site->id) {
         $select = '';
     }
 
@@ -366,7 +369,8 @@ function journal_count_entries($journal, $groupid=0) {
     
         // make sure it works on the site course
         $select = "s.course = '$journal->course' AND";
-        if ($journal->course == SITEID) {
+        $site = get_site();
+        if ($journal->course == $site->id) {
             $select = '';
         }
 
@@ -426,44 +430,44 @@ function journal_print_user_entry($course, $user, $entry, $teachers, $grades) {
         $colour = $THEME->cellheading;
     }
 
-    echo "\n<table border=\"1\" cellspacing=\"0\" valign=\"top\" cellpadding=\"10\">";
+    echo "\n<TABLE BORDER=1 CELLSPACING=0 valign=top cellpadding=10>";
         
-    echo "\n<tr>";
-    echo "\n<td rowspan=\"2\" bgcolor=\"$THEME->body\" width=\"35\" valign=\"top\">";
+    echo "\n<TR>";
+    echo "\n<TD ROWSPAN=2 BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
     print_user_picture($user->id, $course->id, $user->picture);
-    echo "</td>";
-    echo "<td nowrap=\"nowrap\" width=\"100%\" bgcolor=\"$colour\">".fullname($user);
+    echo "</TD>";
+    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$colour\">".fullname($user);
     if ($entry) {
-        echo "&nbsp;&nbsp;<font size=\"1\">".get_string("lastedited").": ".userdate($entry->modified)."</font>";
+        echo "&nbsp;&nbsp;<FONT SIZE=1>".get_string("lastedited").": ".userdate($entry->modified)."</FONT>";
     }
-    echo "</tr>";
+    echo "</TR>";
 
-    echo "\n<tr><td width=\"100%\" bgcolor=\"$THEME->cellcontent\">";
+    echo "\n<TR><TD WIDTH=100% BGCOLOR=\"$THEME->cellcontent\">";
     if ($entry) {
         echo format_text($entry->text, $entry->format);
     } else {
         print_string("noentry", "journal");
     }
-    echo "</td></tr>";
+    echo "</TD></TR>";
 
     if ($entry) {
-        echo "\n<tr>";
-        echo "<td width=\"35\" valign=\"top\">";
+        echo "\n<TR>";
+        echo "<TD WIDTH=35 VALIGN=TOP>";
         if (!$entry->teacher) {
             $entry->teacher = $USER->id;
         }
         print_user_picture($entry->teacher, $course->id, $teachers[$entry->teacher]->picture);
-        echo "<td bgcolor=\"$colour\">".get_string("feedback").":";
+        echo "<TD BGCOLOR=\"$colour\">".get_string("feedback").":";
         choose_from_menu($grades, "r$entry->id", $entry->rating, get_string("nograde")."...");
         if ($entry->timemarked) {
-            echo "&nbsp;&nbsp;<font size=\"1\">".userdate($entry->timemarked)."</font>";
+            echo "&nbsp;&nbsp;<FONT SIZE=1>".userdate($entry->timemarked)."</FONT>";
         }
-        echo "<br /><textarea name=\"c$entry->id\" rows=\"12\" cols=\"60\" wrap=\"virtual\">";
+        echo "<BR><TEXTAREA NAME=\"c$entry->id\" ROWS=12 COLS=60 WRAP=virtual>";
         p($entry->comment);
-        echo "</textarea><br />";
-        echo "</td></tr>";
+        echo "</TEXTAREA><BR>";
+        echo "</TD></TR>";
     }
-    echo "</table><br clear=\"all\" />\n";
+    echo "</TABLE><BR CLEAR=ALL>\n";
 }
 
 
@@ -518,37 +522,35 @@ function journal_delete_instance($id) {
 function journal_print_feedback($course, $entry, $grades) {
     global $CFG, $THEME;
 
-    if (! $teacher = get_record('user', 'id', $entry->teacher)) {
-        error('Weird journal error');
+    if (! $teacher = get_record("user", "id", $entry->teacher)) {
+        error("Weird journal error");
     }
 
-    echo '<table cellspacing="0" align="center" class="feedbackbox">';
+    echo "\n<TABLE BORDER=0 CELLPADDING=1 CELLSPACING=1 ALIGN=CENTER><TR><TD BGCOLOR=#888888>";
+    echo "\n<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 VALIGN=TOP>";
 
-    echo '<tr>';
-    echo '<td class="left picture">';
+    echo "\n<TR>";
+    echo "\n<TD ROWSPAN=3 BGCOLOR=\"$THEME->body\" WIDTH=35 VALIGN=TOP>";
     print_user_picture($teacher->id, $course->id, $teacher->picture);
-    echo '</td>';
-    echo '<td class="entryheader">';
-    echo '<span class="author">'.fullname($teacher).'</span>';
-    echo '&nbsp;&nbsp;<span class="time">'.userdate($entry->timemarked).'</span>';
-    echo '</tr>';
+    echo "</TD>";
+    echo "<TD NOWRAP WIDTH=100% BGCOLOR=\"$THEME->cellheading\">".fullname($teacher);
+    echo "&nbsp;&nbsp;<FONT SIZE=2><I>".userdate($entry->timemarked)."</I>";
+    echo "</TR>";
 
-    echo '<tr>';
-    echo '<td class="left side">&nbsp;</td>';
-    echo '<td class="entrycontent">';
+    echo "\n<TR><TD WIDTH=100% BGCOLOR=\"$THEME->cellcontent\">";
 
-    echo '<div class="grade">';
-    
-    if (!empty($entry->rating) and !empty($grades[$entry->rating])) {
-        echo get_string('grade').': ';
+    echo "<P ALIGN=RIGHT><FONT SIZE=-1><I>";
+    if ($grades[$entry->rating]) {
+        echo get_string("grade").": ";
         echo $grades[$entry->rating];
     } else {
-        print_string('nograde');
+        print_string("nograde");
     }
-    echo '</div>';
+    echo "</I></FONT></P>";
 
     echo format_text($entry->comment);
-    echo '</td></tr></table>';
+    echo "</TD></TR></TABLE>";
+    echo "</TD></TR></TABLE>";
 }
 
 ?>

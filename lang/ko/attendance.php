@@ -1,5 +1,6 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+      // attendance.php - created with Moodle 1.1.1 (2003091111)
+
 
 $string['absentlong'] = 'A 결석';
 $string['absentshort'] = 'A';
@@ -44,7 +45,7 @@ $string['norolls'] = '이 배움터에 출석부가 없읍니다.';
 $string['notes'] = '예외적인 정보';
 $string['notesfor'] = '예외적인 정보';
 $string['noviews'] = '죄송합니다, 당신 계정에 관한 자료가 없습니다.';
-$string['of'] = 'of (~의)';
+$string['of'] = 'of';
 $string['pages'] = '쪽';
 $string['presentlong'] = 'P 출석';
 $string['presentshort'] = 'P';
@@ -56,11 +57,6 @@ $string['takeroll'] = '오늘의 명단을 보겠습니까?';
 $string['tardiesperabsence'] = '지각 몇 번을 결석으로 인정할까요';
 $string['tardylong'] = 'T 지각';
 $string['tardyshort'] = 'T';
-$string['teacheredit'] = '줄석함';
-$string['thischarset'] = 'euc-kr';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '&#54620;&#44397;&#50612;';
-$string['teacheredit'] = '줄석함';
 $string['thursday'] = '목요일';
 $string['tuesday'] = '화';
 $string['viewall'] = '보기: 모든 참석자 명단';

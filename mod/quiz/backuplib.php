@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This php script contains all the stuff to backup/restore
     //quiz mods
 
@@ -9,26 +9,26 @@
     //                           quiz                                                      quiz_categories
     //                        (CL,pk->id)                                                   (CL,pk->id)
     //                            |                                                              |
-    //           -------------------------------------------------------------------             |
-    //           |                        |                    |                   |             |.......................................
-    //           |                        |                    |                   |             |                                      .
-    //           |                        |                    |                   |             |                                      .
-    //      quiz_attempts        quiz_grades       quiz_question_grades   quiz_question_versions  |    ----quiz_question_datasets----    .
-    // (UL,pk->id, fk->quiz) (UL,pk->id,fk->quiz)  (CL,pk->id,fk->quiz)    (CL,pk->id,fk->quiz)  |    |  (CL,pk->id,fk->question,  |    .
-    //             |                                              |                      .       |    |   fk->dataset_definition)  |    .             
-    //             |                                              |                      .       |    |                            |    .
-    //             |                                              |                      .       |    |                            |    .
-    //             |                                              |                      .       |    |                            |    .
-    //       quiz_responses                                       |                      quiz_questions                       quiz_dataset_definitions 
+    //             -----------------------------------------------                               |
+    //             |                        |                    |                               |.......................................
+    //             |                        |                    |                               |                                      .
+    //             |                        |                    |                               |                                      .
+    //        quiz_attempts          quiz_grades         quiz_question_grades                    |    ----quiz_question_datasets----    .
+    //   (UL,pk->id, fk->quiz)   (UL,pk->id,fk->quiz)    (CL,pk->id,fk->quiz)                    |    |  (CL,pk->id,fk->question,  |    .
+    //             |                                              |                              |    |   fk->dataset_definition)  |    .             
+    //             |                                              |                              |    |                            |    .
+    //             |                                              |                              |    |                            |    .
+    //             |                                              |                              |    |                            |    .
+    //       quiz_responses                                       |                        quiz_questions                     quiz_dataset_definitions 
     //  (UL,pk->id, fk->attempt)----------------------------------------------------(CL,pk->id,fk->category,files)            (CL,pk->id,fk->category)   
     //                                                                                           |                                      |
     //                                                                                           |                                      |
     //                                                                                           |                                      |
     //                                                                                           |                               quiz_dataset_items
     //                                                                                           |                            (CL,pk->id,fk->definition) 
-    //                                                                                           |                    
-    //                                                                                           |                    
-    //                                                                                           |                    
+    //                                                                                           |                              
+    //                                                                                           |                              
+    //                                                                                           |                              
     //             --------------------------------------------------------------------------------------------------------------
     //             |             |              |              |                       |                  |                     |    
     //             |             |              |              |                       |                  |                     |
@@ -86,7 +86,6 @@
 
     // 2.-Standard module backup (Invoked via quiz_backup_mods). It includes this tables:
     //     - quiz
-    //     - quiz_question_versions
     //     - quiz_question_grades
     //     - quiz_attempts
     //     - quiz_grades
@@ -120,8 +119,6 @@
                 fwrite($bf,full_tag("INFO",4,false,$category->info));
                 fwrite($bf,full_tag("PUBLISH",4,false,$category->publish));
                 fwrite($bf,full_tag("STAMP",4,false,$category->stamp));
-                fwrite($bf,full_tag("PARENT",4,false,$category->parent));
-                fwrite($bf,full_tag("SORTORDER",4,false,$category->sortorder));
                 //Now, backup their questions
                 $status = quiz_backup_question($bf,$preferences,$category->id);
                 //End category
@@ -162,7 +159,6 @@
                 fwrite ($bf,full_tag("QTYPE",6,false,$question->qtype));
                 fwrite ($bf,full_tag("STAMP",6,false,$question->stamp));
                 fwrite ($bf,full_tag("VERSION",6,false,$question->version));
-                fwrite ($bf,full_tag("HIDDEN",6,false,$question->hidden));
                 //Now, depending of the qtype, call one function or other
                 if ($question->qtype == "1") {
                     $status = quiz_backup_shortanswer($bf,$preferences,$question->id);
@@ -192,7 +188,7 @@
                 if ($counter % 10 == 0) {
                     echo ".";            
                     if ($counter % 200 == 0) {
-                        echo "<br />";
+                        echo "<br>";
                     }
                     backup_flush(300);
                 }
@@ -423,7 +419,6 @@
                 fwrite ($bf,full_tag("TOLERANCE",$level+1,false,$calculated->tolerance));
                 fwrite ($bf,full_tag("TOLERANCETYPE",$level+1,false,$calculated->tolerancetype));
                 fwrite ($bf,full_tag("CORRECTANSWERLENGTH",$level+1,false,$calculated->correctanswerlength));
-                fwrite ($bf,full_tag("CORRECTANSWERFORMAT",$level+1,false,$calculated->correctanswerformat));
                 //Now backup numerical_units
                 $status = quiz_backup_numerical_units($bf,$preferences,$question,7);
                 //Now backup required dataset definitions and items...
@@ -584,9 +579,7 @@
                 fwrite ($bf,full_tag("FEEDBACK",4,false,$quiz->feedback));
                 fwrite ($bf,full_tag("CORRECTANSWERS",4,false,$quiz->correctanswers));
                 fwrite ($bf,full_tag("GRADEMETHOD",4,false,$quiz->grademethod));
-                fwrite ($bf,full_tag("DECIMALPOINTS",4,false,$quiz->decimalpoints));
                 fwrite ($bf,full_tag("REVIEW",4,false,$quiz->review));
-                fwrite ($bf,full_tag("QUESTIONSPERPAGE",4,false,$quiz->questionsperpage));
                 fwrite ($bf,full_tag("SHUFFLEQUESTIONS",4,false,$quiz->shufflequestions));
                 fwrite ($bf,full_tag("SHUFFLEANSWERS",4,false,$quiz->shuffleanswers));
                 fwrite ($bf,full_tag("QUESTIONS",4,false,$quiz->questions));
@@ -597,11 +590,8 @@
                 fwrite ($bf,full_tag("TIMELIMIT",4,false,$quiz->timelimit));
                 fwrite ($bf,full_tag("PASSWORD",4,false,$quiz->password));
                 fwrite ($bf,full_tag("SUBNET",4,false,$quiz->subnet));
-                fwrite ($bf,full_tag("POPUP",4,false,$quiz->popup));
                 //Now we print to xml question_grades (Course Level)
                 $status = backup_quiz_question_grades($bf,$preferences,$quiz->id);
-                //Now we print to xml question_versions (Course Level)
-                $status = backup_quiz_question_versions($bf,$preferences,$quiz->id);
                 //if we've selected to backup users info, then execute:
                 //    - backup_quiz_grades
                 //    - backup_quiz_attempts
@@ -643,37 +633,6 @@
             }
             //Write end tag
             $status =fwrite ($bf,end_tag("QUESTION_GRADES",4,true));
-        }
-        return $status;
-    }
-
-    //Backup quiz_question_versions contents (executed from quiz_backup_mods)
-    function backup_quiz_question_versions ($bf,$preferences,$quiz) {
-
-        global $CFG;
-
-        $status = true;
-
-        $quiz_question_versions = get_records("quiz_question_versions","quiz",$quiz,"id");
-        //If there are question_versions
-        if ($quiz_question_versions) {
-            //Write start tag
-            $status =fwrite ($bf,start_tag("QUESTION_VERSIONS",4,true));
-            //Iterate over each question_version
-            foreach ($quiz_question_versions as $que_ver) {
-                //Start question version
-                $status =fwrite ($bf,start_tag("QUESTION_VERSION",5,true));
-                //Print question_version contents
-                fwrite ($bf,full_tag("ID",6,false,$que_ver->id));
-                fwrite ($bf,full_tag("OLDQUESTION",6,false,$que_ver->oldquestion));
-                fwrite ($bf,full_tag("NEWQUESTION",6,false,$que_ver->newquestion));
-                fwrite ($bf,full_tag("USERID",6,false,$que_ver->userid));
-                fwrite ($bf,full_tag("TIMESTAMP",6,false,$que_ver->timestamp));
-                //End question version
-                $status =fwrite ($bf,end_tag("QUESTION_VERSION",5,true));
-            }
-            //Write end tag
-            $status =fwrite ($bf,end_tag("QUESTION_VERSIONS",4,true));
         }
         return $status;
     }
@@ -762,7 +721,6 @@
                 //Print response contents
                 fwrite ($bf,full_tag("ID",8,false,$response->id));
                 fwrite ($bf,full_tag("QUESTION",8,false,$response->question));
-                fwrite ($bf,full_tag("ORIGINALQUESTION",8,false,$response->originalquestion));
                 fwrite ($bf,full_tag("ANSWER",8,false,$response->answer));
                 fwrite ($bf,full_tag("GRADE",8,false,$response->grade));
                 //End response

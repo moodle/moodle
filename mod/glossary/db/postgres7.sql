@@ -21,7 +21,6 @@ CREATE TABLE prefix_glossary (
      showalphabet int2 NOT NULL default '1',
      showall int2 NOT NULL default '1',
      allowcomments int2 NOT NULL default '0',
-     allowprintview int2 NOT NULL default '1',
      usedynalink int2 NOT NULL default '1',
      defaultapproval int2 NOT NULL default '1',
      globalglossary int2 NOT NULL default '0',
@@ -37,9 +36,6 @@ CREATE TABLE prefix_glossary (
      timemodified int4 NOT NULL default '0',
      PRIMARY KEY  (id)
 );
-
-CREATE INDEX prefix_glossary_course_idx ON prefix_glossary (course);
-
 
 #
 # Table structure for table `glossary_entries`
@@ -64,10 +60,6 @@ CREATE TABLE prefix_glossary_entries (
      PRIMARY KEY(id)
 );
 
-CREATE INDEX prefix_glossary_entries_glossaryid_idx ON prefix_glossary_entries (glossaryid);
-CREATE INDEX prefix_glossary_entries_userid_idx ON prefix_glossary_entries (userid);
-CREATE INDEX prefix_glossary_entries_concept_idx ON prefix_glossary_entries (concept);
-
 #
 # Table structure for table `glossary_cageories`
 #
@@ -80,8 +72,6 @@ CREATE TABLE prefix_glossary_categories (
      PRIMARY KEY  (id)
 );
 
-CREATE INDEX prefix_glossary_categories_glossaryid_idx ON prefix_glossary_categories (glossaryid);
-
 #
 # Table structure for table `glossary_alias`
 #
@@ -93,8 +83,6 @@ CREATE TABLE prefix_glossary_alias (
      PRIMARY KEY  (id)
 );
 
-CREATE INDEX prefix_glossary_alias_entryid_idx ON prefix_glossary_alias (entryid);
-
 #
 # Table structure for table `glossary_entries_category`
 #
@@ -105,9 +93,6 @@ CREATE TABLE prefix_glossary_entries_categories (
      entryid int4 NOT NULL default '0',
      PRIMARY KEY  (id)
 );
-
-CREATE INDEX prefix_glossary_entries_categories_category_idx ON prefix_glossary_entries_categories (categoryid);
-CREATE INDEX prefix_glossary_entries_categories_entryid_idx ON prefix_glossary_entries_categories (entryid);
 
 #
 # Table structure for table `glossary_comments`
@@ -122,9 +107,6 @@ CREATE TABLE prefix_glossary_comments (
      timemodified int4 NOT NULL default '0',
      PRIMARY KEY  (id)
 );
-
-CREATE INDEX prefix_glossary_comments_entryid_idx ON prefix_glossary_comments (entryid);
-CREATE INDEX prefix_glossary_comments_userid_idx ON prefix_glossary_comments (userid);
 
 #
 # Table structure for table `glossary_formats`
@@ -157,9 +139,6 @@ CREATE TABLE prefix_glossary_ratings (
   PRIMARY KEY  (id)
 );
 
-CREATE INDEX prefix_glossary_ratings_userid_idx ON prefix_glossary_ratings (userid);
-CREATE INDEX prefix_glossary_ratings_entryid_idx ON prefix_glossary_ratings (entryid);
-
 #
 # Dumping data for table `log_display`
 #
@@ -177,4 +156,3 @@ INSERT INTO prefix_log_display VALUES ('glossary', 'add comment', 'glossary', 'n
 INSERT INTO prefix_log_display VALUES ('glossary', 'update comment', 'glossary', 'name');
 INSERT INTO prefix_log_display VALUES ('glossary', 'delete comment', 'glossary', 'name');
 INSERT INTO prefix_log_display VALUES ('glossary', 'approve entry', 'glossary', 'name');
-INSERT INTO prefix_log_display VALUES ('glossary', 'view entry', 'glossary_entries', 'concept');

@@ -1,4 +1,4 @@
-<p align="center"><b>Importeren van "Course Test Manager" bestanden</b></p>
+<p align=center><b>Importeren van "Course Test Manager" bestanden</b></p>
 
 <p>Course Test Manager is een "End of Lifetime" software pakket van Course Technology. 
 Het wordt niet langer actief ontwikkeld door Course Technology. Het is vervangen door een nieuwe testbeheerder, ExamView
@@ -14,7 +14,7 @@ als de "System Database".</li>
 in CTM. Het zit in een map 1 niveau onder de CTM installatiemap.</li>
 </ul>
 
-<p>Het importproces is verschillend, afhankelijk van je installatie van  Moodle: op Windows of op Linux.
+</p>Het importproces is verschillend, afhankelijk van je installatie van  Moodle: op Windows of op Linux.
 Gelijk op welk platform Moodle loopt, je moet een Windowssysteem (2000 of xp) in hetzelfde netwerk hebben om de 
 Access databank op te zetten terwijl je de testen importeert.</p>
 
@@ -26,18 +26,18 @@ bestand upload. Moodle zal het in elk geval vinden.</li>
 <li>Maak je test en ga naar "importeer vragen uit bestand". Upload de ctm.mdb databank als het te importeren bestand. 
 Als je dit juist gedaan hebt, dan zie je een volgend scherm dat het je mogelijk maakt een subcategorie van vragen
 te importeren vanuit de databank. De reden van deze stap is dat CTM testen soms een erg groot aantal gecategoriseerde
-bestanden bevat, gebaseerd op de hoofdstukken van een boek of de delen van een cursus.</li>
+bestanden bevat, gebaseerd op de hoofdstukken van een boek of de delen van een cursus.<li>
 </ol>
 
 <p>Het proces op een  <b>Linuxgebaseerd</b> Moodle systeem heeft een third-party software component nodig, namelijk
-<a href="http://odbcsock.sourceforge.net/" target="_blank"><b>ODBC Socket Server</b></a>.  Om de CTM-databank te kunnen
+<a href="http://odbcsock.sourceforge.net/" target="_new"><b>ODBC Socket Server</b></a>.  Om de CTM-databank te kunnen
 importeren op Linux, moet je dit kleine netwerkprogramma eerst installeren op het Windowssysteem waarop de
 CTM-databanken staan. Volg de installatie-instructies, geschreven in de ODBC Socket Server Installatie <b>niet</b>.
 Ze zijn veel moeilijker dan nodig! Volg beter deze instructies om het programma te installeren op je 
-Windowssysteem:</p>
+Windowssysteem:</P>
 
 <ol><li>Unzip op het Windowssysteem de bestanden die je gedownload hebt van
-<a href="http://odbcsock.sourceforge.net/" target="_blank">deze site</a>.</li>
+<a href="http://odbcsock.sourceforge.net/" target="_new">deze site</a>.</li>
 <li>Kopieer ODBCSocketServer.exe naar een permanente plaats, zoals je systeemmap
 (waarschijnlijk C:\WINNT\ of C:\Windows) of je Program Files map. </li> 
 
@@ -47,7 +47,7 @@ Je kunt dit door door deze opdracht te typen in Start-&gt;Uitvoeren... of aan ee
 
 <li>Open de Service Manager door te gaan naar, ofwel 
 Start-&gt;Instellingen-&gt;Configuratiescherm-&gt;Systeembeheer-&gt;Services of door met je muis rechts te klikken
-op <b>Mijn Computer</b>, kies <b>Beheren</b>, kies dan <b>Services en toepassingen-&gt;Services</b> van het rechter 
+op <b>Mijn Computer</b>, kies <b>Beheren</b>, kies dan <B>Services en toepassingen-&gt;Services</b> van het rechter 
 paneel.  Je kunt het Servicebeheer ook vinden door <b>services.msc</b> te typen in Start-&gt;Uitvoeren... 
 </li>
 
@@ -63,7 +63,7 @@ importeren zich bevinden. Noteer het volledige lokale pad naar deze bestanden, n
 het IP-adres van de Windowsserver. Deze informatie zul je nodig hebben tijdens het importproces.</li>
 
 <li>Nu kun je de testen importeren in Moodle. Maak je test en ga naar het "importeer vragen uit bestand" proces.
-  <b>VANAF HIER IS HET ANDERS VOOR LINUX - </b>
+  <B>VANAF HIER IS HET ANDERS VOOR LINUX - </B>
 JE MOET EEN DUMMYBESTAND GEVEN IN HET UPLOADVELD OM HET IMPORTPROCES TE STARTEN. DIT BESTAND <b>ZAL NIET</b>
 BEHANDELD WORDEN, HET HOUDT ALLEEN MAAR DE PLAATS VAST VOOR HET IMPORTFORMULIER. JE ZULT EEN PLAATS KRIJGEN OM
 DE INFORMATIE OVER DE WINDOWSSERVER TE GEVEN.
@@ -76,7 +76,7 @@ ALS JE DEZE STAP KRIJGT ZONDER FOUTMELDINGEN, DAT HEB JE DE SOCKETSERVER JUIST G
 IN MOODLE TE IMPORTEREN!</li>
 </ol>
 
-<p>Als je foutmeldingen krijgt tijdens dit proces, dan vindt je deze technische informatie misschien nuttig.
+<P>Als je foutmeldingen krijgt tijdens dit proces, dan vindt je deze technische informatie misschien nuttig.
 De ODBC Socket server gebruikt poort 9628 om een socket te openen en een XML query te sturen om een XML resultaattabel
 te krijgen. De importeermodule overloopt dat XML bestand en gebruikt het net zoals ik een lokale query gebruik
 om te importeren.

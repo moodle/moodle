@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // countries.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // countries.php - created with Moodle 1.4 development (2004072901)
 
 
 $string['AD'] = 'Andorra';
@@ -242,8 +242,5 @@ $string['ZA'] = 'Zuid-Afrika';
 $string['ZM'] = 'Zambië';
 $string['ZR'] = 'Zaïre';
 $string['ZW'] = 'Zimbabwe';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 
 ?>

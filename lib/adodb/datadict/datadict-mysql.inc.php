@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -20,7 +20,6 @@ class ADODB2_mysql extends ADODB_DataDict {
 	var $dropTable = 'DROP TABLE IF EXISTS %s'; // requires mysql 3.22 or later
 	
 	var $dropIndex = 'DROP INDEX %s ON %s';
-	var $renameColumn = 'ALTER TABLE %s CHANGE COLUMN %s %s %s';	// needs column-definition!
 	
 	function MetaType($t,$len=-1,$fieldobj=false)
 	{
@@ -29,7 +28,6 @@ class ADODB2_mysql extends ADODB_DataDict {
 			$t = $fieldobj->type;
 			$len = $fieldobj->max_length;
 		}
-		$is_serial = is_object($fieldobj) && $fieldobj->primary_key && $fieldobj->auto_increment;
 		
 		$len = -1; // mysql max_length is not accurate
 		switch (strtoupper($t)) {
@@ -67,11 +65,11 @@ class ADODB2_mysql extends ADODB_DataDict {
 			return 'F';
 			
 		case 'INT': 
-		case 'INTEGER': return $is_serial ? 'R' : 'I';
-		case 'TINYINT': return $is_serial ? 'R' : 'I1';
-		case 'SMALLINT': return $is_serial ? 'R' : 'I2';
-		case 'MEDIUMINT': return $is_serial ? 'R' : 'I4';
-		case 'BIGINT':  return $is_serial ? 'R' : 'I8';
+		case 'INTEGER': return (!empty($fieldobj->primary_key)) ? 'R' : 'I';
+		case 'TINYINT': return (!empty($fieldobj->primary_key)) ? 'R' : 'I1';
+		case 'SMALLINT': return (!empty($fieldobj->primary_key)) ? 'R' : 'I2';
+		case 'MEDIUMINT': return (!empty($fieldobj->primary_key)) ? 'R' : 'I4';
+		case 'BIGINT':  return (!empty($fieldobj->primary_key)) ? 'R' : 'I8';
 		default: return 'N';
 		}
 	}
@@ -93,10 +91,10 @@ class ADODB2_mysql extends ADODB_DataDict {
 		case 'L': return 'TINYINT';
 		
 		case 'R':
-		case 'I4':
 		case 'I': return 'INTEGER';
 		case 'I1': return 'TINYINT';
 		case 'I2': return 'SMALLINT';
+		case 'I4': return 'MEDIUMINT';
 		case 'I8': return 'BIGINT';
 		
 		case 'F': return 'DOUBLE';

@@ -1,11 +1,10 @@
-<?php // $Id$
+<?PHP // $Id$
 
 function quiz_upgrade($oldversion) {
 // This function does anything necessary to upgrade
 // older versions to match current functionality
 
     global $CFG;
-    include_once("$CFG->dirroot/mod/quiz/locallib.php");
 
     if ($oldversion < 2003010100) {
         execute_sql(" ALTER TABLE {$CFG->prefix}quiz ADD review integer DEFAULT '0' NOT NULL AFTER `grademethod` ");
@@ -127,7 +126,7 @@ function quiz_upgrade($oldversion) {
                 $questions = get_records("quiz_questions","stamp",$duplicate->id);
                 $add = 1;
                 foreach ($questions as $question) {
-                    echo "Changing question id $question->id stamp to ".$duplicate->id.$add."<br />";
+                    echo "Changing question id $question->id stamp to ".$duplicate->id.$add."<br>";
                     set_field("quiz_questions","stamp",$duplicate->id.$add,"id",$question->id);
                     $add++;
                 }
@@ -225,114 +224,7 @@ function quiz_upgrade($oldversion) {
 
         modify_database ( "", "COMMIT;");
     }
-
-    if ($oldversion < 2004111400) {
-        table_column("quiz_responses", "answer", "answer", "text", "", "", "", "not null");
-    }
-
-    if ($oldversion < 2004111700) {
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_course_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_answers_question_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_attempts_quiz_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_attempts_userid_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_calculated_answer_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_categories_course_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_dataset_definitions_category_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_grades_quiz_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_grades_userid_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_numerical_question_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_numerical_units_question_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_question_grades_quiz_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_question_grades_question_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_questions_category_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_randomsamatch_question_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_responses_attempt_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}quiz_responses_question_idx;",false);
-
-        modify_database('','CREATE INDEX prefix_quiz_course_idx ON prefix_quiz (course);');
-        modify_database('','CREATE INDEX prefix_quiz_answers_question_idx ON prefix_quiz_answers (question);');
-        modify_database('','CREATE INDEX prefix_quiz_attempts_quiz_idx ON prefix_quiz_attempts (quiz);');
-        modify_database('','CREATE INDEX prefix_quiz_attempts_userid_idx ON prefix_quiz_attempts (userid);');
-        modify_database('','CREATE INDEX prefix_quiz_calculated_answer_idx ON prefix_quiz_calculated (answer);');
-        modify_database('','CREATE INDEX prefix_quiz_categories_course_idx ON prefix_quiz_categories (course);');
-        modify_database('','CREATE INDEX prefix_quiz_dataset_definitions_category_idx ON prefix_quiz_dataset_definitions (category);');
-        modify_database('','CREATE INDEX prefix_quiz_grades_quiz_idx ON prefix_quiz_grades (quiz);');
-        modify_database('','CREATE INDEX prefix_quiz_grades_userid_idx ON prefix_quiz_grades (userid);');
-        modify_database('','CREATE INDEX prefix_quiz_numerical_question_idx ON prefix_quiz_numerical (question);');
-        modify_database('','CREATE INDEX prefix_quiz_numerical_units_question_idx ON prefix_quiz_numerical_units (question);');
-        modify_database('','CREATE INDEX prefix_quiz_question_grades_quiz_idx ON prefix_quiz_question_grades (quiz);');
-        modify_database('','CREATE INDEX prefix_quiz_question_grades_question_idx ON prefix_quiz_question_grades (question);');
-        modify_database('','CREATE INDEX prefix_quiz_questions_category_idx ON prefix_quiz_questions (category);');
-        modify_database('','CREATE INDEX prefix_quiz_randomsamatch_question_idx ON prefix_quiz_randomsamatch (question);');
-        modify_database('','CREATE INDEX prefix_quiz_responses_attempt_idx ON prefix_quiz_responses (attempt);');
-        modify_database('','CREATE INDEX prefix_quiz_responses_question_idx ON prefix_quiz_responses (question);');
-    }
-
-    if ($oldversion < 2004112300) { //try and clean up an old mistake - try and bring us up to what is in postgres7.sql today.
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_attemptonlast_datasets DROP CONSTRAINT category;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_attemptonlast_datasets DROP CONSTRAINT {$CFG->prefix}quiz_attemptonlast_datasets_category_userid;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_attemptonlast_datasets DROP CONSTRAINT {$CFG->prefix}quiz_category_userid_unique;",false);
-        modify_database('','ALTER TABLE prefix_quiz_attemptonlast_datasets ADD CONSTRAINT prefix_quiz_category_userid_unique UNIQUE (category,userid);');
-    }
-
-    if ($oldversion < 2004120501) {
-        table_column("quiz_calculated", "", "correctanswerformat", "integer", "10", "", "0", "not null", "correctanswerlength");
-    }
-
-    if ($oldversion < 2004121400) {  // New field to determine popup window behaviour
-        table_column("quiz", "", "popup", "integer", "4", "", "0", "not null", "subnet");
-    }
-
-    if ($oldversion < 2005010201) {
-        table_column('quiz_categories', '', 'parent');
-        table_column('quiz_categories', '', 'sortorder', 'integer', '10', '', '999');
-    }
-
-    if ($oldversion < 2005010300) {
-        table_column("quiz", "", "questionsperpage", "integer", "10", "", "0", "not null", "review");
-    }
-
-    if ($oldversion < 2005012700) {
-        table_column('quiz_grades', 'grade', 'grade', 'real', 2, '');
-    }
-
-    if ($oldversion < 2005021400) {
-        table_column("quiz", "", "decimalpoints", "integer", "4", "", "2", "not null", "grademethod");
-    }
-
-    if($oldversion < 2005022800) {
-        table_column('quiz_questions', '', 'hidden', 'integer', '1', 'unsigned', '0', 'not null', 'version');
-        table_column('quiz_responses', '', 'originalquestion', 'integer', '10', 'unsigned', '0', 'not null', 'question');
-        modify_database ('', "CREATE TABLE prefix_quiz_question_version (
-                              id SERIAL PRIMARY KEY,
-                              quiz integer NOT NULL default '0',
-                              oldquestion integer NOT NULL default '0',
-                              newquestion integer NOT NULL default '0',
-                              userid integer NOT NULL default '0',
-                              timestamp integer NOT NULL default '0');");
-    }
-
-    if ($oldversion < 2005032000) {
-        execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('quiz', 'editquestions', 'quiz', 'name') ");
-    }
-
-    if ($oldversion < 2005032300) {
-        modify_database ('', 'ALTER TABLE prefix_quiz_question_version RENAME TO prefix_quiz_question_versions;');
-    }
-
-    if ($oldversion < 2005041200) { // replace wiki-like with markdown
-        include_once( "$CFG->dirroot/lib/wiki_to_markdown.php" );
-        $wtm = new WikiToMarkdown();
-        $sql = "select course from {$CFG->prefix}quiz_categories, {$CFG->prefix}quiz_questions ";
-        $sql .= "where {$CFG->prefix}quiz_category.id = {$CFG->prefix}quiz_questions.category ";
-        $sql .= "and {$CFG->prefix}quiz_questions.id = ";
-        $wtm->update( 'quiz_questions', 'questiontext', 'questiontextformat', $sql );
-    }
-
-    if ($oldversion < 2005041300) {
-        modify_database('', "UPDATE prefix_quiz_questions SET hidden = '1' WHERE qtype ='".RANDOM."';");
-    }
-
+    
     return true;
 }
 

@@ -2,30 +2,31 @@
 
 <p>Eerst deze opmerking: <strong>Het is gewoonlijk niet nodig om gebruikers in bulk te importeren</strong> - om je onderhoudstaken te beperken, kun je beter eerst manieren verkennen die geen manueel onderhoud vragen, zoals connectie met externe databanken of gebruikers zelf accounts laten aanmaken. Meer over dit onderwerp in het authenticatiedeel van de beheermenu's.</p>
 
-<p>Als je echt een reeks gebruikers wil importeren vanuit een tekstbestand, dan moeten je tekstbestanden als volgt opgemaakt worden:</p>
+<p>Als je echt wil meerdere gebruikers importeren vanuit een tekstbestand, dan moeten je tekstbestanden als volgt opgemaakt worden:</p>
 
 <ul>
   <li>Elke lijn van het bestand moet één record bevatten</li>
   <li>Elke record is een datareeks, gescheiden door komma's</li>
-  <li>Het eerste record van het bestand is speciaal: het bevat de lijst met veldnamen. Dit bepaalt de opmaak van de rest van het bestand.
+  <li>Het eerste record van het bestand is speciaal: het bevat de lijst veldnamen. Dit bepaalt de opmaak van de rest van het bestand.
     <blockquote>
       <p><strong>Vereiste veldnamen:</strong> deze velden moeten in de eerste record staan en voor elke gebruiker bepaald zijn</p>
-      <p>
-      <tt>username, password, firstname, lastname, email</tt></p>
-      <p><strong>Standaardveldnamen:</strong> deze zijn optioneel - als ze niet bijgevoegd worden, dan worden de waarden van de allereerste beheerder</p>
-      <p><tt>institution, department, city, country, lang, timezone</tt> </p>
+      <p></p>
+      <font color="#990000" face="Courier New, Courier, mono">username, password, firstname, lastname, email</font></p>
+</p>
+      <p><strong>Standaard veldnamen:</strong> deze zijn optioneel - als ze niet bijgevoegd worden, dan worden de waarden van de allereerste beheerder</p>
+      <p><font color="#990000" face="Courier New, Courier, mono">institution, department, city, country, lang, timezone</font> </p>
       <p><strong>Optionele veldnamen: </strong>deze zijn allemaal volledig optioneel. De <i>course names</i> zijn de &quot;verkorte namen&quot; van de vakken - als ze opgegeven worden, dan zal de gebruiker lid worden van die vakken.  Groepnamen moeten geassocieerd worden bij het overeenstemmende vak, bv. group1 bij course1, enz.
 </p>
-      <p> <tt>idnumber, icq, phone1, phone2, address, url, description, mailformat, maildisplay, htmleditor, autosubscribe, course1, course2, course3, course4, course5,  group1, group2, group3, group4, group5.
-</tt></p>
+      <p> <font color="#990000" face="Courier New, Courier, mono">idnumber, icq, phone1, phone2, address, url, description, mailformat, maildisplay, htmleditor, autosubscribe, course1, course2, course3, course4, course5,  group1, group2, group3, group4, group5.
+</font></p>
     </blockquote>
     </li>
-  <li>Komma's in de gegevens mag je als , noteren. Het script zal automatisch de komma juist terugplaatsen. </li>
+  <li>Komma's in de gegevens mag je als , noteren. Het script zal automatisch de komma juist terugplaatsen. 
   <li>Voor Boolse velden gebruik je 0 voor onwaar en 1 voor waar. </li>
 </ul>
   
   
 <p>Hier krijg je een voorbeeld van een geldig bestand om te importeren:</p>
-<p><tt>username, password, firstname, lastname, email, lang, idnumber, maildisplay, course1<br />
-jonest, verysecret, Tom, Jones, jonest@someplace.edu, en, 3663737, 1, Intro101<br />
-reznort, somesecret, Trent, Reznor, reznort@someplace.edu, en_us, 6736733, 0, Advanced202</tt></p>
+<p><font size="-1" face="Courier New, Courier, mono">username, password, firstname, lastname, email, lang, idnumber, maildisplay, course1<br>
+jonest, verysecret, Tom, Jones, jonest@someplace.edu, en, 3663737, 1, Intro101<br>
+reznort, somesecret, Trent, Reznor, reznort@someplace.edu, en_us, 6736733, 0, Advanced202</font></p>

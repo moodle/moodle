@@ -5,33 +5,39 @@
 
     $nomoodlecookie = true;     // Because it interferes with caching
 
-    require_once('../../config.php');
-    require_once($CFG->libdir.'/filelib.php');
+    require_once("../../config.php");
 
-    $CFG->texfilterdir = 'filter/tex';
-    $CFG->teximagedir  = 'filter/tex';
+    $CFG->texfilterdir = "filter/tex";
+    $CFG->teximagedir = "filter/tex";
 
+    error_reporting(E_ALL);
 
-    $cmd    = '';               // Initialise these variables
-    $status = '';
-
-    //error_reporting(E_ALL);
-
-    $relativepath = get_file_argument('pix.php');
-
-    $args = explode('/', trim($relativepath, '/'));
-
-    if (count($args) == 1) {
-        $image    = $args[0];
-        $pathname = $CFG->dataroot.'/'.$CFG->teximagedir.'/'.$image;
+    $lifetime = 86400;
+    if (isset($file)) {     // workaround for situations where / syntax doesn't work
+        $pathinfo = '/' . $file;
     } else {
-        error('No valid arguments supplied');
+        $pathinfo = get_slash_arguments("pix.php");
     }
+
+    if (! $args = parse_slash_arguments($pathinfo)) {
+        error("No valid arguments supplied");
+    }
+
+    $numargs = count($args);
+
+    if ($numargs == 1) {
+        $image  = $args[0];
+        $pathname = "$CFG->dataroot/$CFG->teximagedir/$image";
+        $filetype = "image/gif";
+    } else {
+        error("No valid arguments supplied");
+    }
+
 
     if (!file_exists($pathname)) {
         $md5 = str_replace('.gif','',$image);
-        if ($texcache = get_record('cache_filters', 'filter', 'tex', 'md5key', $md5)) {
-            if (!file_exists($CFG->dataroot.'/'.$CFG->teximagedir)) {
+        if ($texcache = get_record("cache_filters", "filter", "tex", "md5key", $md5)) {
+            if (!file_exists("$CFG->dataroot/$CFG->teximagedir")) {
                 make_upload_directory($CFG->teximagedir);
             }
 
@@ -45,34 +51,29 @@
                 $texexp = str_replace('"','\"',$texexp);
                 $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.exe";
                 $cmd = str_replace(' ','^ ',$cmd);
-                $cmd .= " ++ -e  \"$pathname\" -- \"$texexp\"";
+                $cmd .= " ++ -e  \"$pathname\" \"$texexp\"";
             } else if (is_executable("$CFG->dirroot/$CFG->texfilterdir/mimetex")) {   /// Use the custom binary
 
-                $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname -- ". escapeshellarg($texexp);
-
+                $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname ". escapeshellarg($texexp);
+                
             } else {                                                           /// Auto-detect the right TeX binary
                 switch (PHP_OS) {
 
                     case "Linux":
-                        $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.linux\" -e \"$pathname\" -- ". escapeshellarg($texexp);
+                        $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.linux\" -e \"$pathname\" ". escapeshellarg($texexp);
                     break;
 
                     case "Darwin":
-                        $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin\" -e \"$pathname\" -- ". escapeshellarg($texexp);
+                        $cmd = "\"$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin\" -e \"$pathname\" ". escapeshellarg($texexp);
                     break;
 
                     default:      /// Nothing was found, so tell them how to fix it.
-                        if ($CFG->debug > 7) {
-                            echo "Make sure you have an appropriate MimeTeX binary here:\n\n";
-                            echo "    $CFG->dirroot/$CFG->texfilterdir/mimetex\n\n";
-                            echo "and that it has the right permissions set on it as executable program.\n\n";
-                            echo "You can get the latest binaries for your ".PHP_OS." platform from: \n\n";
-                            echo "    http://moodle.org/download/mimetex/";
-                        } else {
-                            echo "Mimetex executable was not found,\n";
-                            echo "Please turn on debug mode in site configuration to see more info here.";
-                        }
-                        die;
+                        echo "Make sure you have an appropriate MimeTeX binary here:\n\n"; 
+                        echo "    $CFG->dirroot/$CFG->texfilterdir/mimetex\n\n";
+                        echo "and that it has the right permissions set on it as executable program.\n\n";
+                        echo "You can get the latest binaries for your ".PHP_OS." platform from: \n\n";
+                        echo "    http://moodle.org/download/mimetex/";
+                        exit;
                     break;
                 }
             }
@@ -81,16 +82,20 @@
     }
 
     if (file_exists($pathname)) {
-        send_file($pathname, $image);
+        $lastmodified = filemtime($pathname);
+        header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
+        header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
+        header("Cache-control: max_age = $lifetime"); // a day
+        header("Pragma: ");
+        header("Content-disposition: inline; filename=$image");
+        header("Content-length: ".filesize($pathname));
+        header("Content-type: $filetype");
+        readfile("$pathname");
     } else {
-        if ($CFG->debug > 7) {
-            echo "The shell command<br />$cmd<br />returned status = $status<br />\n";
-            echo "Image not found!<br />";
-            echo "Please try the <a href=\"$CFG->wwwroot/$CFG->texfilterdir/texdebug.php\">debugging script</a>";
-        } else {
-            echo "Image not found!<br />";
-            echo "Please try the <a href=\"$CFG->wwwroot/$CFG->texfilterdir/texdebug.php\">debugging script</a><br />";
-            echo "Please turn on debug mode in site configuration to see more info here.";
-        }
+        echo "The shell command<br>$cmd<br>returned status = $status<br>\n";
+        echo "Image not found!<br>";
+        echo "Please try the <a href=\"$CFG->wwwroot/$CFG->texfilterdir/texdebug.php\">debugging script</a>";
     }
+
+    exit;
 ?>

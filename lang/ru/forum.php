@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004080300)
+      // forum.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['addanewdiscussion'] = 'Добавить тему для обсуждения';
@@ -17,10 +17,10 @@ $string['configlongpost'] = 'Любое сообщение превышающее этот размер (исключение
 $string['configmanydiscussions'] = 'Максимальное количество обсуждений, показываемое на одной странице';
 $string['configmaxbytes'] = 'Максимальный размер по умолчанию для всех вложений всех форумов на данном сайте (это связано с ограничениями в курсе и другими локальными настройками)';
 $string['configshortpost'] = 'Любое сообщение меньшее этого размер (исключение - HTML) считать маленьким.';
-$string['couldnotadd'] = '<b>Сообщение не добавлено из-за неизвестной ошибки</b>';
+$string['couldnotadd'] = '<B>Сообщение не добавлено из-за неизвестной ошибки</B>';
 $string['couldnotdeleteratings'] = 'Удаление невозможно: данное сообщение уже было оценено';
 $string['couldnotdeletereplies'] = 'Удаление невозможно: на данное сообщение уже были ответы';
-$string['couldnotupdate'] = '<b>Сообщение не обновлено из-за неизвестной ошибки</b>';
+$string['couldnotupdate'] = '<B>Сообщение не обновлено из-за неизвестной ошибки</B>';
 $string['delete'] = 'Удалить';
 $string['deleteddiscussion'] = 'Тема для обсуждения была удалена';
 $string['deletedpost'] = 'Сообщение было удалено';
@@ -35,10 +35,9 @@ $string['discussthistopic'] = 'Обсудить эту тему';
 $string['eachuserforum'] = 'Каждый посылает одну тему';
 $string['edit'] = 'Редактировать';
 $string['editing'] = 'Редактирование';
-$string['emptymessage'] = 'Произошла ошибка при обработке Вашего сообщения. Вероятнее всего, вы оставили его пустым или превысили допустимый размер вложения.  <br /><b>Сообщение не было сохранено.</b>';
+$string['emptymessage'] = 'Произошла ошибка при обработке Вашего сообщения. Вероятнее всего, вы оставили его пустым или превысили допустимый размер вложения.  <BR><B>Сообщение не было сохранено.</B>';
 $string['everyonecanchoose'] = 'Все могут подписаться на этот форум';
 $string['everyoneissubscribed'] = 'Все подписаны на этот форум';
-$string['existingsubscribers'] = 'Текущие подписчики';
 $string['forcesubscribe'] = 'Подписать всех на этот форум';
 $string['forcesubscribeq'] = 'Обязательная подписка';
 $string['forum'] = 'Форум';
@@ -65,7 +64,7 @@ $string['modulename'] = 'Форум';
 $string['modulenameplural'] = 'Форумы';
 $string['more'] = 'еще';
 $string['movethisdiscussionto'] = 'Переместить обсуждение в ...';
-$string['namenews'] = 'Новостной форум';
+$string['namenews'] = 'Новости форума';
 $string['namesocial'] = 'Общий форум';
 $string['nameteacher'] = 'Учительский форум';
 $string['newforumposts'] = 'Новые сообщения форума';
@@ -86,7 +85,7 @@ $string['openmode1'] = 'Спрашивать нельзя, отвечать можно';
 $string['openmode2'] = 'И спрашивать, и отвечать можно';
 $string['parent'] = 'Показ родителя';
 $string['parentofthispost'] = 'Родитель этого сообщения';
-$string['postadded'] = 'Ваше сообщение добавлено.<br />У вас есть $a для внесения изменений';
+$string['postadded'] = 'Ваше сообщение добавлено.<P>У вас есть $a для внесения изменений';
 $string['postincontext'] = 'В контексте';
 $string['postmailinfo'] = 'Это копия сообщения с $a. Чтобы ответить на него на сайте - проследуйте по этой ссылке: ';
 $string['postrating1'] = 'В основном обсуждаются частности';
@@ -95,7 +94,6 @@ $string['postrating3'] = 'Представляет хорошо связанную область знаний';
 $string['posts'] = 'Сообщения';
 $string['posttoforum'] = 'Отправить в форум';
 $string['postupdated'] = 'Ваше сообщение было изменено';
-$string['potentialsubscribers'] = 'Потенциальные подписчики';
 $string['processingpost'] = 'Обрабатывается сообщение $a...';
 $string['prune'] = 'Отделить';
 $string['prunedpost'] = 'Из сообщения было создано новон обсуждение';
@@ -142,8 +140,6 @@ $string['subscriptions'] = 'Подписки';
 $string['unsubscribe'] = 'Аннулировать подписку';
 $string['unsubscribed'] = 'Не подписаны';
 $string['unsubscribeshort'] = 'Отписать';
-$string['yesforever'] = 'Да, всегда';
-$string['yesinitially'] = 'Да, только в первый раз';
 $string['youratedthis'] = 'Ваша оценка сохранена';
 $string['yournewtopic'] = 'Тема для обсуждений';
 $string['yourreply'] = 'Ваш ответ';

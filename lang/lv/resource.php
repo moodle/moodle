@@ -26,7 +26,7 @@ $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a
 $string['exampleurl'] = 'http://www.example.com/somedirectory/somefile.html';
 $string['fetchclienterror'] = 'K¶þda tika atrasta ar jþsu tïkla klientu, cen¹oties atjaunot màjas lapu (iespºjams nepareiza URL).';
 $string['fetcherror'] = 'K¶þda tika atrasta brïdï cen¹oties atajunot màjas lapu.';
-$string['fetchservererror'] = 'Tika atrasta k¶þda ar tàlvadïbas serveri, kad mº»inàja iegþt web lapu (iespºjams programmas k¶þda).';
+$string['fetchservererror'] = 'Tika atrasta k¶þda ar tàlvadïbas serveri, kad mº»inàja iegþt web lapu (iespºjams programmas k¶þda). </p>';
 $string['filename'] = 'Faila nosaukums';
 $string['filtername'] = 'Resursot auto-saites';
 $string['fulltext'] = 'Pilns teksts';
@@ -48,7 +48,7 @@ $string['newwidth'] = 'Loga platums (pikse¶os)';
 $string['newwindow'] = 'Jauns logs';
 $string['newwindowopen'] = 'Ràdït resursu jaunà, izleco¹à logà';
 $string['note'] = 'Piezïme';
-$string['notefile'] = 'Lai aug¹upielàdºtu vairàkus failus kursà lietojat <a href=\"$a\" >Failu Mened¾eri</a>.';
+$string['notefile'] = 'Lai aug¹upielàdºtu vairàkus failus kursà lietojat <A HREF=$a >Failu Mened¾eri</A>.';
 $string['notypechosen'] = 'Jums jàizvºlas tips. Lietojiet back pogu, lai atgrieztos un mº»inàtu vºlreiz.';
 $string['popupresource'] = '©im resursam bþtu jàparàdàs izlºco¹ajam logam.';
 $string['popupresourcelink'] = 'Ja es to neizdarïju, noklik¹óiniet ¹eit: $a';

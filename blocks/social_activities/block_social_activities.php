@@ -1,13 +1,15 @@
 <?php //$Id$
 
-class block_social_activities extends block_list {
-    function init(){
+class CourseBlock_social_activities extends MoodleBlock {
+    function CourseBlock_social_activities ($course) {
         $this->title = get_string('blockname','block_social_activities');
+        $this->content_type = BLOCK_TYPE_LIST;
+        $this->course = $course;
         $this->version = 2004041800;
     }
 
     function applicable_formats() {
-        return array('course-view-social' => true);
+        return array('social' => true);
     }
 
     function get_content() {
@@ -16,17 +18,14 @@ class block_social_activities extends block_list {
         if ($this->content !== NULL) {
             return $this->content;
         }
+        if (empty($this->course)) {
+            return '';
+        }
 
-        $this->content = new stdClass;
+        $this->content = New object;
         $this->content->items = array();
         $this->content->icons = array();
         $this->content->footer = '';
-
-        if (empty($this->instance)) {
-            return $this->content;
-        }
-
-        $course = get_record('course', 'id', $this->instance->pageid);
 
         // To make our day, we start with an ugly hack
         global $sections, $mods, $modnames;
@@ -34,11 +33,11 @@ class block_social_activities extends block_list {
         $section = $sections[0];
         // That wasn't so bad, was it?
 
-        $groupbuttons = $course->groupmode;
-        $groupbuttonslink = (!$course->groupmodeforce);
-        $isteacher = isteacher($this->instance->pageid);
-        $isediting = isediting($this->instance->pageid);
-        $ismoving = ismoving($this->instance->pageid);
+        $groupbuttons = $this->course->groupmode;
+        $groupbuttonslink = (!$this->course->groupmodeforce);
+        $isteacher = isteacher($this->course->id);
+        $isediting = isediting($this->course->id);
+        $ismoving = ismoving($this->course->id);
         if ($ismoving) {
             $strmovehere = get_string('movehere');
             $strmovefull = strip_tags(get_string('movefull', '', "'$USER->activitycopyname'"));
@@ -46,11 +45,11 @@ class block_social_activities extends block_list {
             $stractivityclipboard = $USER->activitycopyname;
         }
 
-        $modinfo = unserialize($course->modinfo);
+        $modinfo = unserialize($this->course->modinfo);
         $editbuttons = '';
 
         if ($ismoving) {
-            $this->content->icons[] = '&nbsp;<img align="bottom" src="'.$CFG->pixpath.'/t/move.gif" height="11" width="11" alt=\"\" />';
+            $this->content->icons[] = '&nbsp;<img align="bottom" src="'.$CFG->pixpath.'/t/move.gif" height="11" width="11">';
             $this->content->items[] = $USER->activitycopyname.'&nbsp;(<a href="'.$CFG->wwwroot.'/course/mod.php?cancelcopy=true">'.$strcancel.'</a>)';
         }
 
@@ -64,7 +63,7 @@ class block_social_activities extends block_list {
                 if ($isediting && !$ismoving) {
                     if ($groupbuttons) {
                         if (! $mod->groupmodelink = $groupbuttonslink) {
-                            $mod->groupmode = $course->groupmode;
+                            $mod->groupmode = $this->course->groupmode;
                         }
 
                     } else {
@@ -79,12 +78,14 @@ class block_social_activities extends block_list {
                         if ($mod->id == $USER->activitycopy) {
                             continue;
                         }
-                        $this->content->items[] = '<a title="'.$strmovefull.'" href="'.$CFG->wwwroot.'/course/mod.php?moveto='.$mod->id.'&amp;sesskey='.$USER->sesskey.'">'.
-                            '<img height="16" width="80" src="'.$CFG->pixpath.'/movehere.gif" alt="'.$strmovehere.'" border="0" /></a>';
+                        $this->content->items[] = '<a title="'.$strmovefull.'" href="'.$CFG->wwwroot.'/course/mod.php?moveto='.$mod->id.'">'.
+                            '<img height="16" width="80" src="'.$CFG->pixpath.'/movehere.gif" alt="'.$strmovehere.'" border="0"></a>';
                         $this->content->icons[] = '';
                     }
                     $instancename = urldecode($modinfo[$modnumber]->name);
-                    $instancename = format_string($instancename, true, $this->instance->pageid);
+                    if (!empty($CFG->filterall)) {
+                        $instancename = filter_text('<nolink>'.$instancename.'</nolink>', $this->course->id);
+                    }
                     $linkcss = $mod->visible ? '' : ' class="dimmed" ';
                     if (!empty($modinfo[$modnumber]->extra)) {
                         $extra = urldecode($modinfo[$modnumber]->extra);
@@ -103,21 +104,21 @@ class block_social_activities extends block_list {
                     } else {
                         $this->content->items[] = '<a title="'.$mod->modfullname.'" '.$linkcss.' '.$extra.
                             ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.$instancename.'</a>'.$editbuttons;
-                        $this->content->icons[] = '<img src="'.$icon.'" height="16" width="16" alt="'.$mod->modfullname.'" />';
+                        $this->content->icons[] = '<img src="'.$icon.'" height="16" width="16" alt="'.$mod->modfullname.'">';
                     }
                 }
             }
         }
 
         if ($ismoving) {
-            $this->content->items[] = '<a title="'.$strmovefull.'" href="'.$CFG->wwwroot.'/course/mod.php?movetosection='.$section->id.'&amp;sesskey='.$USER->sesskey.'">'.
-                                      '<img height="16" width="80" src="'.$CFG->pixpath.'/movehere.gif" alt="'.$strmovehere.'" border="0" /></a>';
+            $this->content->items[] = '<a title="'.$strmovefull.'" href="'.$CFG->wwwroot.'/course/mod.php?movetosection='.$section->id.'">'.
+                                      '<img height="16" width="80" src="'.$CFG->pixpath.'/movehere.gif" alt="'.$strmovehere.'" border="0"></a>';
             $this->content->icons[] = '';
         }
 
         if ($isediting && $modnames) {
             $this->content->footer = '<div style="text-align: right;">'.
-                print_section_add_menus($course, 0, $modnames, true, true).'</div>';
+                print_section_add_menus($this->course, 0, $modnames, true, true).'</div>';
         } else {
             $this->content->footer = '';
         }

@@ -3,7 +3,7 @@
 
 
 $string['auth_dbdescription'] = '該方法使用一個外部資料庫來檢驗使用者名和密碼是否有效。如果是一個新帳號，該帳號其他欄位的資訊將一起複製到本系統中。';
-$string['auth_dbextrafields'] = '這些欄位是可選的。你在此指定的<b>外部資料庫欄位</b>將預先填入本系統的使用者資料庫中。<br />如果你留空不填，將使用系統預設值。<br />無論以上哪種情況，使用者在登錄後都可以改寫這些欄位。';
+$string['auth_dbextrafields'] = '這些欄位是可選的。你在此指定的<B>外部資料庫欄位</B>將預先填入本系統的使用者資料庫中。<P>如果你留空不填，將使用系統預設值。<P>無論以上哪種情況，使用者在登錄後都可以改寫這些欄位。';
 $string['auth_dbfieldpass'] = '包含密碼的欄位名稱';
 $string['auth_dbfielduser'] = '包含帳號名稱的欄位名稱';
 $string['auth_dbhost'] = '資料庫所在主機';
@@ -12,7 +12,7 @@ $string['auth_dbpass'] = '密碼與帳號名稱相符合';
 $string['auth_dbpasstype'] = '指定密碼欄位所用的格式。MD5編碼可用於與其他通用WEB應用如PostNuke相聯接';
 $string['auth_dbtable'] = '資料庫中資料表名稱';
 $string['auth_dbtitle'] = '使用外界資料庫';
-$string['auth_dbtype'] = '資料庫格式 (進一步說明請參見<A 資料庫類型（詳情請看<a href=\"../lib/adodb/readme.htm#drivers\">ADOdb幫助文檔</a>）';
+$string['auth_dbtype'] = '資料庫格式 (進一步說明請參見<A 資料庫類型（詳情請看<A HREF=../lib/adodb/readme.htm#drivers>ADOdb幫助文檔</A>）';
 $string['auth_dbuser'] = '可讀取資料庫的使用者名稱';
 $string['auth_emaildescription'] = '以電子郵件確認帳號是系統預設認證方式.  當使用者申請帳號時, 選擇帳號名稱與密碼, 系統將以電子郵件送出確認訊息. 申請者須閱讀電子郵件後按下內容內確認連結後啟動帳號使用權. 以上動作只要一次即可,之後可要帳號名稱與密碼相符便可登入.';
 $string['auth_emailtitle'] = '電子郵件確認';
@@ -33,7 +33,7 @@ $string['auth_ldap_update_userinfo'] = '從LDAP向本系統更新使用者資訊
 $string['auth_ldap_user_attribute'] = '用於命名/搜索使用者的屬性。通常為‘cn’。';
 $string['auth_ldap_version'] = '你目前LDAP 伺服器的使用版本';
 $string['auth_ldapdescription'] = '該方法利用一個外部的LDAP伺服器進行身份驗證。 如果使用者名和密碼是有效的，本系統據此在資料庫中創建一個新使用者。 該模組可以從LDAP中讀取使用者屬性，並把指定的欄位預先填入本系統資料庫。 此後的登錄只需檢驗使用者名和密碼。';
-$string['auth_ldapextrafields'] = '這些欄位是可選的。你可以在此指定這些<b>LDAP欄位</b>複製到本系統的資料庫中。 <br />如果你不選，將使用本系統預設值。<br />無論以上何種情況，使用者在登錄之後都可以修改這些欄位。';
+$string['auth_ldapextrafields'] = '這些欄位是可選的。你可以在此指定這些<B>LDAP欄位</B>複製到本系統的資料庫中。 <P>如果你不選，將使用本系統預設值。<P>無論以上何種情況，使用者在登錄之後都可以修改這些欄位。';
 $string['auth_ldaptitle'] = '使用一個LDAP伺服器';
 $string['auth_manualdescription'] = '該方法不允許使用者以任何方式創建帳號。所有帳號只能由管理員手工創建。';
 $string['auth_manualtitle'] = '只允許手工添加帳號';

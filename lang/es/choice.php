@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.5 unstable development (2004083000)
+      // choice.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['allowupdate'] = 'Permitir la actualización de la consulta';
@@ -9,7 +9,6 @@ $string['choiceclose'] = 'Hasta';
 $string['choicename'] = 'Título de la consulta';
 $string['choiceopen'] = 'Abrir';
 $string['choicetext'] = 'Pregunta a responder';
-$string['havetologin'] = 'Debe entrar antes de remitir su elección';
 $string['modulename'] = 'Consulta';
 $string['modulenameplural'] = 'Consultas';
 $string['mustchooseone'] = 'Debe elegir una respuesta antes de guardar. No se ha guardado nada.';

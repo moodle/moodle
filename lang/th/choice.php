@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.4.2 (2004083125)
+      // choice.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['allowupdate'] = 'อนุญาตให้โพลล์มีการอัพเดท';
@@ -9,13 +9,11 @@ $string['choiceclose'] = 'จนกระทั่ง';
 $string['choicename'] = 'ชื่อของโพลล์';
 $string['choiceopen'] = 'เปิด';
 $string['choicetext'] = 'ข้อความ';
-$string['havetologin'] = 'คุณต้องล็อกอินเข้าสุ่ระบบก่อนที่จะออกความเห็นในโพลล์ได้';
 $string['modulename'] = 'โพลล์';
 $string['modulenameplural'] = 'โพลล์';
 $string['mustchooseone'] = 'คุณต้องตอบคำถามก่อนทำการบันทึกค่ะ ขณะนี้ยังไม่ได้บันทึกคำตอบ';
 $string['notanswered'] = 'ยังไม่ได้ตอบ';
 $string['notopenyet'] = 'ขออภัยค่ะกิจกรรมนี้ยังไม่เปิดใช้งานจนกว่า $a';
-$string['parentlanguage'] = 'en';
 $string['privacy'] = 'แสดงผลแบบลับ';
 $string['publish'] = 'สามารถดูผลลัพธ์ของโพลล์ได้';
 $string['publishafteranswer'] = 'แสดงผลลัพธ์หลังจากที่นักเรียนเลือกคำตอบ';
@@ -28,9 +26,6 @@ $string['responses'] = 'ตอบกลับ';
 $string['responsesto'] = 'ตอบกลับ $a';
 $string['savemychoice'] = 'บันทึกผลการเลือก';
 $string['showunanswered'] = 'แสดงคอลัมน์สำหรับผู้ไม่ตอบคำถาม';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
 $string['timerestrict'] = 'ไม่ให้ทำโพลล์ในช่วงเวลาต่อไปนี้';
 $string['viewallresponses'] = 'ดูเสียงตอบรับทั้งหมด $a คน';
 

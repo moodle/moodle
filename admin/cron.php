@@ -11,12 +11,9 @@
 /// eg   wget -q -O /dev/null 'http://moodle.somewhere.edu/admin/cron.php'
 /// or   php /web/moodle/admin/cron.php 
 
+    $FULLME = "cron";
+
     $starttime = microtime();
-
-/// The following is a hack necessary to allow this script to work well 
-/// from the command line.
-
-    define('FULLME', 'cron');
     
 /// The current directory in PHP version 4.3.0 and above isn't necessarily the
 /// directory of the script when run from the command line. The require_once()
@@ -102,6 +99,19 @@
         }
         flush();
     
+    
+        /// Delete duplicate enrolments (don't know what causes these yet - expired sessions?)
+    
+        if ($users = get_records_select("user_students", "userid > 0 GROUP BY course, userid ".
+                                        "HAVING count(*) > 1", "", "*,count(*)")) {
+            foreach ($users as $user) {
+               delete_records_select("user_students", "userid = '$user->userid' ".
+                                     "AND course = '$user->course' AND id <> '$user->id'");
+            }
+        }
+        flush();
+    
+    
         /// Delete old logs to save space (this might need a timer to slow it down...)
     
         if (!empty($CFG->loglifetime)) {  // value in days
@@ -118,17 +128,10 @@
         }
         flush();
 
-        if (!empty($CFG->langcache)) {
-            get_list_of_languages();
-        }
-        flush();
-
         if (!empty($CFG->notifyloginfailures)) {
             notify_login_failures();
         }
         flush();
-
-        sync_metacourses();
 
     } // End of occasional clean-up tasks
 
@@ -141,7 +144,7 @@
         //Execute backup's cron
         //Perhaps a long time and memory could help in large sites
         @set_time_limit(0);
-        raise_memory_limit("128M");
+        ini_set("memory_limit","56M");
         if (file_exists("$CFG->dirroot/backup/backup_scheduled.php") and
             file_exists("$CFG->dirroot/backup/backuplib.php") and
             file_exists("$CFG->dirroot/backup/lib.php") and
@@ -161,13 +164,15 @@
     }
 
     if (!empty($CFG->enablerssfeeds)) {  //Defined in admin/variables page
-        include_once("$CFG->libdir/rsslib.php");
-        mtrace("Running rssfeeds if required...");
+        if (file_exists("$CFG->dirroot/rss/rsslib.php")) {
+            include_once("$CFG->dirroot/rss/rsslib.php");
+            mtrace("Running rssfeeds if required...");
 
-        if ( ! cron_rss_feeds()) {
-            mtrace("Something went wrong while generating rssfeeds!!!");
-        } else {
-            mtrace("Rssfeeds finished");
+            if ( ! cron_rss_feeds()) {
+                mtrace("Something went wrong while generating rssfeeds!!!");
+            } else {
+                mtrace("Rssfeeds finished");
+            }
         }
     }
 

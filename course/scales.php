@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
       // Allows a creator to edit custom scales, and also display help about scales
 
     require_once("../config.php");
@@ -39,14 +39,11 @@
     $stroptions = get_string("action");
     $strtype = get_string("group");
 
-    /// init this here so we can pass it by reference to every call to site_scale_used to avoid getting the courses out of the db over and over again
-    $courses = array();
-
     /// If scale data is being submitted, then save it and continue
 
     $errors = NULL;
 
-    if ($action == 'sendform' and confirm_sesskey()) {
+    if ($action == 'sendform') {
         if ($form = data_submitted()) {
             if (empty($form->name)) {
                 $errors[$scaleid]->name = true;
@@ -101,8 +98,8 @@
             error("Scale ID was incorrect");
         }
 
-        //        $scales_course_uses = course_scale_used($course->id,$scale->id);
-        //        $scales_site_uses = site_scale_used($scale->id,$courses);
+        $scales_course_uses = course_scale_used($course->id,$scale->id);
+        $scales_site_uses = site_scale_used($scale->id);
         $scalemenu = make_menu_from_list($scale->scale);
 
         print_header("$course->shortname: $strscales", "$course->fullname",
@@ -127,9 +124,6 @@
 
     //If action is edit or new, show the form
     if ($action == "edit" || $action == "new") {
-
-        $sesskey = !empty($USER->id) ? $USER->sesskey : '';
-
         //Check for teacher edit
         if (! isteacheredit($course->id)) {
             error("Only editing teachers can modify scales !");
@@ -149,7 +143,7 @@
             
         //Calculate the uses
         if ($scale->courseid == 0) {
-            $scale_uses = site_scale_used($scale->id,$courses);
+            $scale_uses = site_scale_used($scale->id);
         } else {
             $scale_uses = course_scale_used($course->id,$scale->id);
         }
@@ -182,37 +176,37 @@
             $scale->description = $form->description;
         }
         echo "<form method=\"post\" action=\"scales.php\" name=\"form$scale->id\">";
-        echo "<table cellpadding=\"9\" cellspacing=\"0\" align=\"center\" class=\"generalbox\">";
-        echo "<tr valign=\"top\">";
+        echo "<table cellpadding=9 cellspacing=0 align=center class=generalbox>";
+        echo "<tr valign=top>";
         if (!empty($errors[$scale->id]->name)) {
             $class = "class=\"highlight\"";
         } else {
             $class = "";
         }
-        echo "<td align=\"right\"><b>$strname:</b></td>";
-        echo "<td $class><input type=\"text\" name=\"name\" size=\"50\" value=\"".s($scale->name)."\" />";
+        echo "<td align=\"right\"><p><b>$strname:</b></p></td>";
+        echo "<td $class><input type=\"text\" name=\"name\" size=\"50\" value=\"".s($scale->name)."\">";
         echo "</td>";
         echo "</tr>";
-        echo "<tr valign=\"top\">";
+        echo "<tr valign=top>";
         if (!empty($errors[$scale->id]->scalescale)) {
             $class = "class=\"highlight\"";
         } else {
             $class = "";
         }
-        echo "<td align=\"right\"><b>$strscale:</b></td>";
-        echo "<td $class><textarea name=\"scalescale\" cols=\"50\" rows=\"2\" wrap=\"virtual\">".s($scale->scale)."</textarea>";
+        echo "<td align=\"right\"><p><b>$strscale:</b></p></td>";
+        echo "<td $class><textarea name=\"scalescale\" cols=50 rows=2 wrap=virtual>".s($scale->scale)."</textarea>";
         echo "</td>";
         echo "</tr>";
-        echo "<tr valign=\"top\">";
-        echo "<td align=\"right\"><b>$strdescription:</b>";
+        echo "<tr valign=top>";
+        echo "<td align=\"right\"><p><b>$strdescription:</b></p>";
         helpbutton("text", $strhelptext);
         echo "</td>";
-        echo "<td><textarea name=\"description\" cols=\"50\" rows=\"8\" wrap=\"virtual\">".s($scale->description)."</textarea>";
+        echo "<td><textarea name=\"description\" cols=50 rows=8 wrap=virtual>".s($scale->description)."</textarea>";
         echo "</td>";
         echo "</tr>";
         echo "<tr>";
         if ($scale->id) {
-            echo "<tr valign=\"top\">";
+            echo "<tr valign=top>";
             echo "<td align=\"right\">";
             echo "</td>";
             echo "<td>".get_string("usedinnplaces","",$scale_uses);
@@ -220,13 +214,12 @@
             echo "</tr>";
         }
         echo "<tr>";
-        echo "<td colspan=\"2\" align=\"center\">";
-        echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
-        echo "<input type=\"hidden\" name=\"sesskey\" value=\"$sesskey\" />";
-        echo "<input type=\"hidden\" name=\"courseid\" value=\"$scale->courseid\" />";
-        echo "<input type=\"hidden\" name=\"scaleid\" value=\"$scale->id\" />";
-        echo "<input type=\"hidden\" name=\"action\" value=\"sendform\" />";
-        echo "<input type=\"submit\" name=\"save\" value=\"$strsavechanges\" />";
+        echo "<td colspan=2 align=\"center\">";
+        echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\">";
+        echo "<input type=\"hidden\" name=\"courseid\" value=\"$scale->courseid\">";
+        echo "<input type=\"hidden\" name=\"scaleid\" value=\"$scale->id\">";
+        echo "<input type=\"hidden\" name=\"action\" value=\"sendform\">";
+        echo "<input type=\"submit\" name=\"save\" value=\"$strsavechanges\">";
         echo "</td></tr></table>";
         echo "</form>";
         echo "<br />";
@@ -237,7 +230,7 @@
     }
 
     //If action is delete, do it
-    if ($action == "delete" and confirm_sesskey()) {
+    if ($action == "delete") {
         //Check for teacher edit
         if (! isteacheredit($course->id)) {
             error("Only editing teachers can delete scales !");
@@ -249,7 +242,7 @@
 
         //Calculate the uses
         if ($scale->courseid == 0) {
-            $scale_uses = site_scale_used($scale->id,$courses);
+            $scale_uses = site_scale_used($scale->id);
         } else {
             $scale_uses = course_scale_used($course->id,$scale->id);
         }
@@ -270,7 +263,7 @@
     }
 
     //If action is down or up, do it
-    if (($action == "down" || $action == "up") and confirm_sesskey()) {
+    if ($action == "down" || $action == "up" ) {
         //Check for teacher edit
         if (! isadmin()) {
             error("Only administrators can move scales",$CFG->wwwroot.'/course/scales.php?id='.$course->id);
@@ -282,7 +275,7 @@
 
         //Calculate the uses
         if ($scale->courseid == 0) {
-            $scale_uses = site_scale_used($scale->id,$courses);
+            $scale_uses = site_scale_used($scale->id);
         } else {
             $scale_uses = course_scale_used($course->id,$scale->id);
         }
@@ -384,7 +377,7 @@
 /// Print out the main page
 
     print_header("$course->shortname: $strscales", "$course->fullname", 
-                 "<a href=\"view.php?id=$course->id\">$course->shortname</a> 
+                 "<a href=\"view.php?id=$course->id\">$course->shortname</A> 
                   -> $strscales");
 
     print_heading_with_help($strscales, "scales");
@@ -422,6 +415,12 @@
     if ($scales) {
         //Calculate the base path
         $path = "$CFG->wwwroot/course";
+        //Calculate pixpath
+        if (empty($THEME->custompix)) {
+            $pixpath = "$path/../pix";
+        } else {
+            $pixpath = "$path/../theme/$CFG->theme/pix";
+        }
 
         $data = array();
         $incustom = true;
@@ -433,11 +432,11 @@
                 $data[] = $line;
             }
             $line = array();
-            $line[] = "<a target=\"scale\" title=\"$scale->name\" href=\"$CFG->wwwroot/course/scales.php?id=$course->id&amp;scaleid=$scale->id&amp;action=details\" "."onclick=\"return openpopup('/course/scales.php?id=$course->id\&amp;scaleid=$scale->id&amp;action=details', 'scale', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">".$scale->name."</a><br /><font size=\"-1\">".str_replace(",",", ",$scale->scale)."</font>";
+            $line[] = "<a target=\"scale\" title=\"$scale->name\" href=\"$CFG->wwwroot/course/scales.php?id=$course->id&scaleid=$scale->id&action=details\" "."onClick=\"return openpopup('/course/scales.php?id=$course->id\&scaleid=$scale->id&action=details', 'scale', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">".$scale->name."</a><br><font size=\"-1\">".str_replace(",",", ",$scale->scale)."</font>";
             if (!empty($scale->courseid)) {
                 $scales_uses = course_scale_used($course->id,$scale->id);
             } else {
-                $scales_uses = site_scale_used($scale->id,$courses);
+                $scales_uses = site_scale_used($scale->id);
             }
             $line[] = $scales_uses;
             if ($incustom) {
@@ -447,18 +446,18 @@
             }
             $buttons = "";
             if (empty($scales_uses) && ($incustom || isadmin())) {
-                $buttons .= "<a title=\"$stredit\" href=\"$path/scales.php?id=$course->id&amp;scaleid=$scale->id&amp;action=edit\"><img".
-                            " src=\"$CFG->pixpath/t/edit.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
+                $buttons .= "<a title=\"$stredit\" href=\"$path/scales.php?id=$course->id&scaleid=$scale->id&action=edit\"><img".
+                            " src=\"$pixpath/t/edit.gif\" hspace=2 height=11 width=11 border=0></a> ";
                 if ($incustom && isadmin()) {
-                    $buttons .= "<a title=\"$strdown\" href=\"$path/scales.php?id=$course->id&amp;scaleid=$scale->id&amp;action=down&amp;sesskey=$USER->sesskey\"><img".
-                                " src=\"$CFG->pixpath/t/down.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
+                    $buttons .= "<a title=\"$strdown\" href=\"$path/scales.php?id=$course->id&scaleid=$scale->id&action=down\"><img".
+                                " src=\"$pixpath/t/down.gif\" hspace=2 height=11 width=11 border=0></a> ";
                 }
                 if (!$incustom && isadmin()) {
-                    $buttons .= "<a title=\"$strup\" href=\"$path/scales.php?id=$course->id&amp;scaleid=$scale->id&amp;action=up&amp;sesskey=$USER->sesskey\"><img".
-                                " src=\"$CFG->pixpath/t/up.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
+                    $buttons .= "<a title=\"$strup\" href=\"$path/scales.php?id=$course->id&scaleid=$scale->id&action=up\"><img".
+                                " src=\"$pixpath/t/up.gif\" hspace=2 height=11 width=11 border=0></a> ";
                 }
-                $buttons .= "<a title=\"$strdelete\" href=\"$path/scales.php?id=$course->id&amp;scaleid=$scale->id&amp;action=delete&amp;sesskey=$USER->sesskey\"><img".
-                            " src=\"$CFG->pixpath/t/delete.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
+                $buttons .= "<a title=\"$strdelete\" href=\"$path/scales.php?id=$course->id&scaleid=$scale->id&action=delete\"><img".
+                            " src=\"$pixpath/t/delete.gif\" hspace=2 height=11 width=11 border=0></a> ";
             }
             $line[] = $buttons;
             
@@ -466,7 +465,7 @@
         }
         $head = $strscale.",".$stractivities.",".$strtype.",".$stroptions;
         $table->head = explode(",",$head);
-        $size = "50%,20%,20%,10%";
+        $size = "50%,20$,20%,10%";
         $table->size = explode(",",$size);
         $align = "left,center,center,center";
         $table->align = explode(",",$align);

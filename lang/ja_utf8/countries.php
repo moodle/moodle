@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // countries.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // countries.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
 $string['AD'] = 'アンドラ公国';
@@ -70,7 +70,7 @@ $string['ES'] = 'スペイン';
 $string['ET'] = 'エチオピア連邦民主共和国';
 $string['FI'] = 'フィンランド共和国';
 $string['FJ'] = 'フィジー共和国';
-$string['FK'] = 'フォークランド ( マルビナス ) 諸島';
+$string['FK'] = 'フォークランド(マルビナス)諸島';
 $string['FM'] = 'ミクロネシア連邦';
 $string['FO'] = 'フェロー諸島';
 $string['FR'] = 'フランス共和国';

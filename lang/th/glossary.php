@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4.2 (2004083125)
+      // glossary.php - created with Moodle 1.4 development (2004072901)
 
 
 $string['addcomment'] = 'เพิ่มเติมความคิดเห็น';
@@ -47,8 +47,8 @@ $string['commentdeleted'] = 'ความคิดเห็นนี้ถูกลบออก';
 $string['comments'] = 'ความคิดเห็น';
 $string['commentson'] = 'แสดงความคิดเห็นเมื่อ';
 $string['commentupdated'] = 'ความคิดเห็นถูกเพิ่มเติม';
-$string['concept'] = 'คำศัพท์';
-$string['concepts'] = 'คำศัพท์';
+$string['concept'] = 'คอนเซปต์';
+$string['concepts'] = 'คอนเซปต์';
 $string['configenablerssfeeds'] = 'ตรงนี้ใช้สำหรับเปิดให้การป้อนข้อมูลแบบ RSS เกิดขึ้นได้ในทุกหมวดคำศัพท์  คุณยังจะต้องเปิดการป้อนข้อมูลเองในการตั้งค่าของแต่ละหมวดคำศัพท์';
 $string['currentglossary'] = 'อภิธานศัพท์ปัจจุบัน';
 $string['dateview'] = 'เลือกโดยดูจากวันที่';
@@ -71,7 +71,6 @@ $string['displayformatfullwithoutauthor'] = 'เต็มรูปแบบไม่รวมชื่อผู้เขียน';
 $string['displayformats'] = 'รูปแบบนำเสนอ';
 $string['displayformatssetup'] = 'การตั้งค่ารูปแบบนำเสนอ';
 $string['duplicateentry'] = 'มีศัพท์คำนี้แล้ว';
-$string['editalways'] = 'แก้ไขได้ตลอด';
 $string['editcategories'] = 'แก้ไขประเภทคำศัพท์';
 $string['editentry'] = 'แก้ไขคำศัพท์';
 $string['editingcomment'] = 'แก้ไขความคิดเห็น';
@@ -85,14 +84,12 @@ $string['entrydeleted'] = 'คำศัพท์ถูกลบ';
 $string['entryexported'] = 'ส่งออกคำศัพท์สำเร็จแล้ว';
 $string['entryishidden'] = '(คำศัพท์นี้ถูกซ่อนอยู่)';
 $string['entryleveldefaultsettings'] = 'การตั้งค่าระดับคำศัพท์';
-$string['entrysaved'] = 'บันทึกคำศัพท์แล้ว';
-$string['entryupdated'] = 'อัพเดทคำศัพท์แล้ว';
 $string['entryusedynalink'] = 'ควรลิงก์คำศัพท์นี้อัตโนมัติ';
-$string['explainaddentry'] = 'เพิ่มคำศัพท์ใหม่ <br /> ต้องใส่คอนเซปต์และความหมาย';
+$string['explainaddentry'] = 'เพิ่มคำศัพท์ใหม่ <br> ต้องใส่คอนเซปต์และความหมาย';
 $string['explainall'] = 'แสดงคำศัพท์ทั้งหมดในหน้าเดียว';
 $string['explainalphabet'] = 'เลือกดูโดยใช้ดัชนีคำศัพท์';
-$string['explainexport'] = 'ไฟล์ถูกสร้างขึ้น <br /> ดาวน์โหลดและเก็บไว้ในที่ปลอดภัย  คุณสามารถจะนำไปไว้ในรายวิชาใด ๆ ก็ได้เมื่อคุณต้องการ';
-$string['explainimport'] = 'คุณต้องเลือกไฟล์ที่จะนำมาไว้ และกำหนดหลักการคัดเลือก <br /> ส่งคำสั่งเลือกและตรวจทานผล';
+$string['explainexport'] = 'ไฟล์ถูกสร้างขึ้น <br> ดาวน์โหลดและเก็บไว้ในที่ปลอดภัย  คุณสามารถจะนำไปไว้ในรายวิชาใด ๆ ก็ได้เมื่อคุณต้องการ';
+$string['explainimport'] = 'คุณต้องเลือกไฟล์ที่จะนำมาไว้ และกำหนดหลักการคัดเลือก <p> ส่งคำสั่งเลือกและตรวจทานผล';
 $string['explainspecial'] = 'แสดงคำศัพท์ที่ไม่ได้เริ่มต้นด้วยตัวอักษร';
 $string['exportedentry'] = 'คำศัพท์ที่ถูกส่งออกไป';
 $string['exportedfile'] = 'ไฟล์ที่ถูกส่งออกไป';
@@ -129,7 +126,6 @@ $string['noentry'] = 'ไม่พบคำศัพท์นี้';
 $string['notcategorised'] = 'ไม่อยู่ในประเภทใด';
 $string['numberofentries'] = 'จำนวนคำศัพท์';
 $string['onebyline'] = 'หนึ่งคำต่อบรรทัด';
-$string['parentlanguage'] = 'en';
 $string['printerfriendly'] = 'รูปแบบที่สะดวกต่อการพิมพ์';
 $string['question'] = 'คำถาม';
 $string['rate'] = 'ให้คะแนน';
@@ -157,9 +153,6 @@ $string['sortchronogically'] = 'เรียงจากวันที่';
 $string['special'] = 'พิเศษ';
 $string['standardview'] = 'เลือกโดยตัวอักษร';
 $string['studentcanpost'] = 'นักเรียนสามารถเพิ่มคำศัพท์ได้';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
 $string['totalentries'] = 'จำนวนคำศัพท์ทั้งหมด';
 $string['usedynalink'] = 'ลิงก์ไปที่คำศัพท์อัตโนมัติ';
 $string['waitingapproval'] = 'รอการอนุมัติอยู่';

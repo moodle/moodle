@@ -1,37 +1,43 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
-<title>Moodle Docs: How to use CVS</title>
-<link rel="stylesheet" href="docstyles.css" type="text/css" />
-<meta http-equiv="content-type" content="text/html; charset=windows-1251" />
-<style type="text/css">
-<!--
-style ol {margin-left:40px;}
-.style1 {color: #990000}
-.style3 {color: #990000; font-weight: bold; }
-.style4 {
-	color: #0000CC;
-	font-weight: bold;
-}
--->
+<title>Дакументацыя Moodle : Як карыстацца CVS</title>
+    <link rel="stylesheet" href="../theme/standard/styles.php" type="TEXT/CSS">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-2">
+		<style type="text/css">
+    <!--
+    .sectionheading {
+	  font-size: medium;
+	  font-weight: bold;
+	  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	  border: 1px dotted;
+	  padding: 10px;
+	  background-color: #EEEEEE;
+    }
+    -->
     </style>
 </head>
-<body>
-<h1>Выкарыстанне CVS у мэтах здабыцця і актуалізацыі зыходнага коду (коду крыніцы) Moodle</h1>
-<blockquote> 
+<body bgcolor="#ffffff">
+<h2>Выкарыстанне CVS у мэтах здабыцця і актуалізацыі зыходнага коду (коду крыніцы) Moodle</h2><blockquote> 
   <p>CVS гэта акронім ад Current Versioning System (сістэма актуалізацыі).   Гэта метад захоўвання коду крыніцы, які прымяняецца паўсюдна, паколькі ён захоўвае ўсе версіі файлаў такім чынам, што нічога ніколі не прападае, у той час як актыўнасць розных людзей кантралюецца. Дае таксама магчымасць захавання коду, калі два або больш чалавекі адначасова працуюць з адным файлам. Код крыніцы, а таксама ўсе версіі захоўваюцца на цэнтральным сэрверы (у дадзеным выпадку на <a href="http://www.sf.net/">Sourceforge</a>).
   </p>
 <p>Калі вы захочаце проста атрымаць доступ  да актуальнай версіі Moodle, якая знаходзіцца на сэрверы CVS, толькі з правамі прачытання, Вам гэтая старонка не патрэбна. Проста рухайцеся згодна з інструкцыямі CVS, якія знаходзяцца на <a target="_top" href="http://moodle.org/download">старонцы Moodle - зпампаваць.</a>.</p>
 
-  <p>Каб атрымаць магчымасць карыстацца <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/moodle/moodle/"> архівам CVS Moodle </a> (як <a href="http://sourceforge.net/project/memberlist.php?group_id=30935">праграміст з правам запісу</a>), Вам  перш за ўсё трэба <a href="http://sourceforge.net/account/register.php">зарэгістравацца на сэрверы Sourceforge</a>. На гэтай старонцы паведамляем напрыклад, што ведаем імя карыстальніка <strong><font color="#990000">myusername</font></strong> разам з паролем <strong><font color="#990000">mypassword</font></strong>. Звярніце ўвагу на інструкцыі sourceforge,  якія датычаць <a target="_top" href="http://sourceforge.net/docman/display_doc.php?docid=768&group_id=1#develhomedir">стварэння хатняга каталогу CVS</a>. Там пералічаны дзеянні, якія Вам трэба выканаць адносна кожнага новага рэгістрацыйнага запісу, каб зрабіць магчымай працу з CVS. Коратка : Вы павінны выкарыстаць ssh, каб інтэрактыўна злучыцца з cvs.sourceforge.net.</p>
+  <p>Каб атрымаць магчымасць карыстацца <a href="http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/moodle/moodle/"> архівам CVS Moodle </a> (як <a href="http://sourceforge.net/project/memberlist.php?group_id=30935">праграміст з правам запісу</a>), Вам  перш за ўсё трэба <a href="http://sourceforge.net/account/register.php">зарэгістравацца на сэрверы Sourceforge</a>. На гэтай старонцы паведамляем напрыклад, што ведаем імя карыстальніка
+    <strong><font color="#990000">myusername</font></strong> разам з паролем
+    <strong><font color="#990000">mypassword</font></strong>. Звярніце ўвагу на інструкцыі sourceforge,  якія датычаць <a target="_top" href="http://sourceforge.net/docman/display_doc.php?docid=768&group_id=1#develhomedir">стварэння хатняга каталогу CVS</a>. Там пералічаны дзеянні, якія Вам трэба выканаць адносна кожнага новага рэгістрацыйнага запісу, каб зрабіць магчымай працу з CVS. Коратка : Вы павінны выкарыстаць ssh, каб інтэрактыўна злучыцца з cvs.sourceforge.net.</p>
 
-<p>Пасля таго, як Вы зарэгіструецеся на сэрверы Sourceforge'a, устанавіце кантакт з  (<a 
+Пасля таго, як Вы зарэгіструецеся на сэрверы Sourceforge'a, устанавіце кантакт з  (<a 
   href="http://dougiamas.com/">Martin'ам Dougiamas'ам</a>), каб ён  перадаў Вам правы рабіць запісы ў асобныя каталогі.</p>
+
+
+
   <p>Каб пазбегнуць запыту пра <strong><font color="#990000">mypassword</font></strong> 
     кожны раз,  калі Вы запускаеце даручэнні CVS, прачытайце  <a href="http://sourceforge.net/account/editsshkeys.php">Інструкцыі Sourceforge 
     пра тое, як выкарыстаць ключы аўтарызацыі.</a>. Гэты крок не з’яўляецца абавязковым, але можа ў значнай ступені палегчыць Вам працу з CVS.</p>
+
   <p>Калі Вы ўжо атрымаеце ўсе патрэбныя правы, проста набірайце дзеючы крынічны код і пачынайце працу. Ніжэй пададзены інструкцыі як для сістэмы Unix  так і для Windows.</p>
+
+
   <h3 class="sectionheading">1. Выкарыстанне CVS у асяроддзі Unix</h3>
   <blockquote> 
     <p>CVS нa Sourceforge выкарыстоўвае па прычыне бяспекі транспартную абалонку ssh, таму вам трэба будзе устанавіць адпаведную зменную CVS_RSH асяроддзя ў абалонцы свайго Uniksa:</p>
@@ -44,6 +50,7 @@ style ol {margin-left:40px;}
       <pre><strong>cvs -z3 -d:ext:myusername@cvs.sourceforge.net:/cvsroot/moodle co moodle</strong></pre>
     </blockquote>
     <p>Не імкніцеся знайсці гэту першую каманду CVS у існуючым каталогу Moodel. Замест гэтага пачніце працаваць у новым каталогу. Памятайце, што на кожным кроку у Вас будуць пытацца пра пароль (<strong><font color="#990000">mypassword</font></strong>), хіба што Вы ўстановіце <a href="http://sourceforge.net/account/editsshkeys.php">ключ аўтарызацыі</a></p>
+
     <p>Цяпер Вам патрэбен новы каталог : 'moodle'. Вы можаце змяніць яго назву, або перанесці яго, калі хочаце, у іншае месца. Зайдзіце ў яго :  </p>
     <blockquote> 
       <pre><strong>cd moodle </strong></pre>
@@ -53,6 +60,7 @@ style ol {margin-left:40px;}
       <pre><strong>cvs diff -c config-dist.php
 cvs diff -c lang</strong></pre>
     </blockquote>
+
     <p>Каб атрымаць найбольш новыя ўдасканаленні з сэрвера выкарыстайце: </p>
     <blockquote> 
       <pre><strong>cvs update -dP</strong> </pre>
@@ -60,57 +68,66 @@ cvs diff -c lang</strong></pre>
     <p>Каб пераслаць свае новыя файлы назад на сэрвер, Вам трэба будзе набраць нешта падобнае да: 
     </p>
     <blockquote> 
-      <pre><strong>cd lang/ca cvs commit</strong> </pre>
+      <pre><strong>cd lang/ca 
+cvs commit</strong> </pre>
     </blockquote>
     <p>Тады Вы будзеце запрошаны змясціць свой каментар (у залежнасці ад Вашага кемлівага рэдактара тэксту) ... дадай важны каментар і закрый рэдактар ... файлы будуць перасланыя ў Sourceforge і запісаныя. Гэта ўсё.  </p>
-<p> Каб зэканоміць час, можаш змясціць  прыблізныя параметры ў файле .cvsrc, у Вашым хатнім каталогу. Напрыклад мой уключае :  </p>
+
+    <p> Каб зэканоміць час, можаш змясціць  прыблізныя параметры ў файле .cvsrc, у Вашым хатнім каталогу. Напрыклад мой уключае : 
+
+ </p>
     <blockquote> 
-      <pre><strong>diff -c update -dP</strong> </pre>
+      <pre><strong>diff -c 
+update -dP</strong> </pre>
     </blockquote>
     <p>Каб даведацца больш, набяры 'cvs help'...  </p>
+    <p>&nbsp;</p>
   </blockquote>
   <h3 class="sectionheading">2. Выкарыстанне CVS у асяроддзі Windows</h3>
   <blockquote> 
     <p>Перш за ўсё вам трэба  зпампаваць свежую копію платформы Moodle, выкарыстоўваючы свой рэгістрацыйны запіс праграміста</p>
     <blockquote> 
       <p> 1. Зпампуй TortoiseCVS з  <a href="http://www.tortoisecvs.org/">tortoisecvs.org</a>. 
-        Заладуй яго, а затым зноў запусці свой камп'ютэр.<br />
-        <br />
-        2. Лакалізуй у існуючую або ствары новую тэчку,  у якую ты хочаш скапіяваць Moodle.<br />
-        </ br>
-        3. Націсні правую клавішу мышы на гэтай тэчцы і набяры &quot;<strong>CVS Checkout</strong>&quot; з меню. Павінна адкрыцца  дыялогавае вакно.<br />
-        <br />
+        Заладуй яго, а затым зноў запусці свой камп'ютэр.<br>
+        <br>
+        2. Лакалізуй у існуючую або ствары новую тэчку,  у якую ты хочаш скапіяваць Moodle.<br>
+        <br>
+        3. Націсні правую клавішу мышы на гэтай тэчцы і набяры &quot;<strong>CVS Checkout</strong>&quot; з меню. Павінна адкрыцца  дыялогавае вакно.<br>
+        <br>
         4. Скапіюй гэты тэкст у поле CVSROOT :</p>
       <blockquote> 
         <pre> :ext:<font color="#990000">myusername</font>@cvs.sourceforge.net:/cvsroot/moodle</pre>
       </blockquote>
-      <p><br />
-        5. Клікні на: &quot;<strong>Fetch list...</strong>&quot;.<br />
-        <br />
-        6. З правага боку з’явіцца  спіс модуляў: выберы &quot;<strong>moodle</strong>&quot; з гэтага спіса.<br />
-        <br />
-        7. Клікні на &quot;<strong>OK</strong>&quot; . Павінен пачацца працэс пераносу  Moodle<br />
+      <p><br>
+        5. Клікні на: &quot;<strong>Fetch list...</strong>&quot;.<br>
+        <br>
+        6. З правага боку з’явіцца  спіс модуляў: выберы &quot;<strong>moodle</strong>&quot; з гэтага спіса.<br>
+        <br>
+        7. Клікні на &quot;<strong>OK</strong>&quot; . Павінен пачацца працэс пераносу  Moodle<br>
       </p>
     </blockquote>
     <p>У дыялогавым вакне  павінны з’явіцца назвы перанесеных файлаў, а праз хвіліну Вы ўжо павінны мець поўную версію Moodle. Пазней вы можаце перанесці  навейшыя файлы з сэрвера CVS :</p>
     <blockquote> 
-      <p> 1. Націсні правую клавішу мышы на тэчцы Moodle (або іншай выбранай табой) і выберы &quot;<strong>CVS Update</strong>&quot;. <br />
+      <p> 1. Націсні правую клавішу мышы на тэчцы Moodle (або іншай выбранай табой) і выберы &quot;<strong>CVS Update</strong>&quot;. <br>
       </p>
     </blockquote>
     <p>Калі закончыш мадыфікацыю файлаў (іхні колер зменіцца з зялёнага на чырвоны!) можаш даставіць іх назад на сэрвер такім чынам :</p>
     <blockquote> 
       <p> 1. Націсні правую клавішу мышы на тэчцы Moodle (або іншай, выбранай табой) і выберы 
-        &quot;<strong>CVS Commit...</strong>&quot;.<br />
-        <br />
-        2. У дыялогавым вакне апішы ўведзеныя табой змены.<br />
-        <br />
-        3. Клікні &quot;OK&quot;. Твае змены будуць занесены на сэрвер.<br />
+        &quot;<strong>CVS Commit...</strong>&quot;.<br>
+        <br>
+        2. У дыялогавым вакне апішы ўведзеныя табой змены.<br>
+        <br>
+        3. Клікні &quot;OK&quot;. Твае змены будуць занесены на сэрвер.<br>
       </p>
     </blockquote>
   </blockquote>
+  <p>&nbsp;</p>
   <p align="center">Поспехаў!</p>
+  <p>&nbsp;</p>
 </blockquote>
-<p align="center"><font size="1"><a href="." target="_top">Дакументацыя Moodle</a></font></p>
-<p align="center"><font size="1">Version: $Id$</font></p>
+<p align="CENTER"><font size="1"><a href="." target="_top">Дакументацыя Moodle</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id: features.html,v 1.2 2004/12/08 
+  10:34:19 martin Exp $</font></p>
 </body>
 </html>

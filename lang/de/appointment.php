@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // appointment.php - created with Moodle 1.4.3 (2004083130)
+      // appointment.php - created with Moodle 1.2 development (2004020300)
 
 
 $string['allowresubmit'] = 'Wiederholung zulassen';
@@ -30,7 +30,7 @@ $string['timeend'] = 'Ende des Termins';
 $string['timestart'] = 'Anfang des Termins';
 $string['typeoffline'] = 'Offline Aktivität';
 $string['typeuploadsingle'] = 'Eine einzelne Datei hochladen';
-$string['uploadbadname'] = 'Dieser Dateiname enthält unzulässige Zeichen. Sie kann nicht hochgeladen werden. Bitte benennen Sie die Datei um und versuchen es noch einmal.';
+$string['uploadbadname'] = 'Dieser Dateiname enthält unzulässige Zeichen. Sie kann nicht hochgeladen werden';
 $string['uploadedfiles'] = 'Hochgeladene Dateien';
 $string['uploaderror'] = 'Es ist ein Fehler beim Speichern auf dem Server aufgetreten';
 $string['uploadfailnoupdate'] = 'Datei wurde hochgeladen, konnte aber die vorliegende Arbeit nicht aktualisieren';

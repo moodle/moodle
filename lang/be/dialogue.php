@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.4.3 + (2004083131)
+      // dialogue.php - created with Moodle 1.3.1 + (2004052501)
 
 
 $string['addmynewentries'] = 'Дадаць мае новыя запісы';
@@ -8,7 +8,7 @@ $string['addsubject'] = 'Дадаць Тэму ';
 $string['allowmultiple'] = 'Дазволіць больш за адзін Дыялог ад аднога і таго ж чалавека';
 $string['allowstudentdialogues'] = 'Дазволіць дыялог між студэнтамі';
 $string['close'] = 'Закрыць';
-$string['closed'] = 'Закрыты';
+$string['closed'] = 'Закрыта';
 $string['confirmclosure'] = 'Што Вы думаеце аб закрыцці дыялогу з $a. Закрытыя дыялогі не могуь быць адкрытыя зноўку. Калі Вы закрыеце гэты дыялог, то Вы можаце прагледзець яго, але не зможаце што-небудзь дадаць і Вы можаце пачаць іншы дыялог для працягу абмеркавання з гэтым чалавекам.<br /><br /> Вы ўпэўненыя, што Вы жадаеце закрыцця гэтага дыялогу?';
 $string['deleteafter'] = 'Выдаліць закрытыя Дыялогі пасля (дн.)';
 $string['dialogueclosed'] = 'Дыялог закрыты';
@@ -24,7 +24,6 @@ $string['everybody'] = 'Кожным';
 $string['furtherinformation'] = 'Далейшая Інфармацыя';
 $string['lastentry'] = 'Апошні Ўваход';
 $string['maildefault'] = 'Mail па-змаўчанні';
-$string['mailnotification'] = 'Паведамленне па электроннай пошце';
 $string['modulename'] = 'Дыялог';
 $string['modulenameplural'] = 'Дыялогі';
 $string['namehascloseddialogue'] = '$a закрыў дыялог';

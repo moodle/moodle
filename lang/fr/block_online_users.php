@@ -2,6 +2,6 @@
 
 $string['blockname'] = 'Utilisateurs en ligne';
 $string['periodnminutes'] = '$a dernières minutes';
-$string['configtimetosee'] = 'Nombre de minutes déterminant la période d\'inactivité après laquelle un utilisateur n\'est plus considéré comme étant en ligne.';
+$string['configtimetosee'] = 'Un utilisateur est détecté comme en ligne s\'il est actif durant ce nombre de minutes';
 
 ?>

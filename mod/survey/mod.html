@@ -12,15 +12,15 @@
 ?>
 
 <form name="form" method="post" action="../mod/survey/details.php">
-<table cellpadding="5">
-<tr valign="top">
-    <td align="right"><b><?php  print_string("surveyname", "survey") ?>:</b></td>
+<table cellpadding=5>
+<tr valign=top>
+    <td align=right><P><B><?php  print_string("surveyname", "survey") ?>:</B></P></TD>
     <td>
-        <input type="text" name="name" size="30" value="<?php p($form->name) ?>" alt="<?php  print_string("surveyname", "survey") ?>" />
+        <input type="text" name="name" size=30 value="<?php p($form->name) ?>">
     </td>
 </tr>
 <tr>
-    <td align="right"><b><?php print_string("surveytype", "survey") ?>:</b></td>
+    <td align=right><P><B><?php print_string("surveytype", "survey") ?>:</B></P></TD>
     <td>
     <?php
         if ($options = get_records_menu("survey", "template", 0, "name", "id, name")) {
@@ -35,21 +35,19 @@
     ?>
     </td>
 </tr>
-<?php print_standard_coursemodule_settings($form); ?>
 </table>
-<center>
-<input type="hidden" name="intro"   value="<?php p($form->intro) ?>" />
-<input type="hidden" name="destination"   value="<?php echo "$CFG->wwwroot/course/mod.php" ?>" />
+<CENTER>
+<input type="hidden" name=intro   value="<?php p($form->intro) ?>">
+<input type="hidden" name=destination   value="<?php echo "$CFG->wwwroot/course/mod.php" ?>">
 
-<input type="hidden" name="course"     value="<?php p($form->course) ?>" />
-<input type="hidden" name="sesskey"    value="<?php p($form->sesskey) ?>" />
-<input type="hidden" name="coursemodule"  value="<?php p($form->coursemodule) ?>" />
-<input type="hidden" name="section"       value="<?php p($form->section) ?>" />
-<input type="hidden" name="module"     value="<?php p($form->module) ?>" />
-<input type="hidden" name="modulename" value="<?php p($form->modulename) ?>" />
-<input type="hidden" name="instance"   value="<?php p($form->instance) ?>" />
-<input type="hidden" name="mode"       value="<?php p($form->mode) ?>" />
-<input type="submit" value="<?php print_string("savechanges") ?>" />
-<input type="submit" name="cancel" value="<?php print_string("cancel") ?>" />
-</center>
-</form>
+<input type="hidden" name=course     value="<?php p($form->course) ?>">
+<input type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>">
+<input type="hidden" name=section       value="<?php p($form->section) ?>">
+<input type="hidden" name=module     value="<?php p($form->module) ?>">
+<input type="hidden" name=modulename value="<?php p($form->modulename) ?>">
+<input type="hidden" name=instance   value="<?php p($form->instance) ?>">
+<input type="hidden" name=mode       value="<?php p($form->mode) ?>">
+<input type="submit" value="<?php print_string("savechanges") ?>">
+<input type="submit" name=cancel value="<?php print_string("cancel") ?>">
+</CENTER>
+</FORM>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
+      // forum.php - created with Moodle 1.4 development (2004072500)
 
 
 $string['addanewdiscussion'] = 'Lisää uusi keskustelu';
@@ -12,11 +12,10 @@ $string['anyfile'] = 'Mikä tahansa tiedosto';
 $string['attachment'] = 'Liite';
 $string['bynameondate'] = '$a->name - $a->date';
 $string['configdisplaymode'] = 'Oletusasetus keskustelujen näyttämiselle, jos sellaista ei ole asetettu.';
-$string['configenablerssfeeds'] = 'Tämä mahdollistaa RSS-syötteet eri keskustelualueilta. Sinun pitää vielä erikseen kytkeä RSS päälle niiden keskustelualueiden asetuksesta, joille haluat käyttää RSS-syötteitä.';
-$string['configlongpost'] = 'Tätä pitemmät keskustelut käsitellään pitkinä (HTML koodia ei lasketa mukaan).';
+$string['configenablerssfeeds'] = 'Tämä mahdollistaa RSS syötteet eri  keskustelualueilta. Sinun pitää vielä erikseen kytkeä RSS päälle niiden keskustelualueiden asetuksesta jolla haluat käyttää RSS syötteitä.';
+$string['configlongpost'] = 'Tätä pitemmät keskustelut ovat pitkiä (HTML koodia ei lasketa mukaan).';
 $string['configmanydiscussions'] = 'Samalla sivulla näytettävien keskustelujen suurin määrä';
 $string['configmaxbytes'] = 'Oletusasetus liitetiedoston maksimikoolle koko sivustolla.';
-$string['configreplytouser'] = 'Kun foorumiposti on lähetetty, pitäisikö sen sisältää käyttäjien sähköpostiosoite, jotta vastaanottajat voisivat vastata henkilökohtaisesti ennemmin kuin foorumin kautta? Vaikka asetukseksi valittaisiin kyllä, käyttäjät voivat valita profiilissaan pitävänsä sähköpostiosoitteensa salaisena.';
 $string['configshortpost'] = 'Tätä lyhyemmät keskustelut ovat lyhyitä (HTML koodia ei lasketa mukaan).';
 $string['couldnotadd'] = 'Viestiäsi ei voida lisätä tuntemattoman virheen takia.';
 $string['couldnotdeleteratings'] = 'Valitettavasti viestiä ei voida poistaa, koska se on jo arvioitu';
@@ -43,7 +42,6 @@ $string['editing'] = 'Muokataan';
 $string['emptymessage'] = 'Jotain oli vialla viestissäsi. Ehkä jätit viestisi tyhjäksi tai liitetiedosto oli liian suuri. Muutoksiasi EI tallennettu.';
 $string['everyonecanchoose'] = 'Kaikki voivat tilata tämän keskustelualueen';
 $string['everyoneissubscribed'] = 'Kaikki tilaavat tämän keskustelualueen';
-$string['existingsubscribers'] = 'Nykyiset tilaajat';
 $string['forcesubscribe'] = 'Pakota kaikki tilaajiksi';
 $string['forcesubscribeq'] = 'Pakota kaikki tilaajiksi?';
 $string['forum'] = 'Keskustelualue';
@@ -59,8 +57,6 @@ $string['introsocial'] = 'Avoin keskustelualue vapaalle keskustelulle';
 $string['introteacher'] = 'Opettajien oma keskustelualue';
 $string['lastpost'] = 'Viimeisin viesti';
 $string['learningforums'] = 'Keskustelualueet opiskelulle';
-$string['markread'] = 'Merkitse luetuksi';
-$string['markunread'] = 'Merkitse lukemattomaksi';
 $string['maxattachmentsize'] = 'Liitteen maksimikoko';
 $string['maxtimehaspassed'] = 'Valitettavasti suurin sallittu muokkausaika on ylittynyt tämän ($a) viestin osalta!';
 $string['message'] = 'Viesti';
@@ -93,7 +89,7 @@ $string['openmode1'] = 'Ei keskusteluja, mutta vastaaminen sallitaan';
 $string['openmode2'] = 'Keskustelut ja vastaukset sallitaan';
 $string['parent'] = 'Naytä aiempi';
 $string['parentofthispost'] = 'Tämän viestin alku';
-$string['postadded'] = '<p>Viestisi on lisätty.</p><p>Sinulla $a aikaa muokata viestiä jos haluat muuttaa sitä.</p>';
+$string['postadded'] = 'Viestisi on lisätty.<P>Sinulla $a aikaa muokata viestiä jos haluat muuttaa sitä.';
 $string['postincontext'] = 'Katso tätä viestiä asiayhteydessään';
 $string['postmailinfo'] = 'Tämä on kopio viestistä sivustolla $a.
 Lisätäksesi vastauksen viestiin suoraan sivustolle, klikkaa seuraavaa linkkiä:';
@@ -103,7 +99,6 @@ $string['postrating3'] = 'Suurimmaksi osaksi sosiaalista osaamista';
 $string['posts'] = 'Viestit';
 $string['posttoforum'] = 'Lähetä viesti';
 $string['postupdated'] = 'Viestisi on päivitetty';
-$string['potentialsubscribers'] = 'Mahdolliset tilaajat';
 $string['processingdigest'] = 'Kerätään viestejä käyttäjälle $a';
 $string['processingpost'] = 'Käsitellään viestiä $a';
 $string['prune'] = 'Jaa';
@@ -127,10 +122,10 @@ $string['repliesmany'] = '$a vastausta tähän mennessä';
 $string['repliesone'] = '$a vastaus tähän mennessä';
 $string['reply'] = 'Vastaa';
 $string['replyforum'] = 'Vastaa keskustelualueelle';
-$string['rsssubscriberssdiscussions'] = 'Näytä alueen \"$a\" keskusteluiden RSS-syöte';
-$string['rsssubscriberssposts'] = 'Näytä alueen \"$a\" viestien RSS-syöte';
+$string['rsssubscriberssdiscussions'] = 'Näytä RSS syöte $a keskusteluille';
+$string['rsssubscriberssposts'] = 'Näytä RSS syöte $a viesteille';
 $string['search'] = 'Etsi';
-$string['searchforums'] = 'Etsi viesteistä';
+$string['searchforums'] = 'Etsi keskustelualueilta';
 $string['searcholderposts'] = 'Selaa vanhoja viestejä';
 $string['searchresults'] = 'Haun tulokset';
 $string['sendinratings'] = 'Lähetä viimeisimmät arvioinnit viesteistä';
@@ -151,8 +146,6 @@ $string['subscriptions'] = 'Tilaukset';
 $string['unsubscribe'] = 'Peru tämän keskustelualueen tilaus';
 $string['unsubscribed'] = 'Tilaamaton';
 $string['unsubscribeshort'] = 'Peru tilaus';
-$string['yesforever'] = 'Kyllä, pysyvästi';
-$string['yesinitially'] = 'Kyllä, aluksi';
 $string['youratedthis'] = 'Arvioit tämän';
 $string['yournewtopic'] = 'Uusi keskustelun aihe';
 $string['yourreply'] = 'Vastauksesi';

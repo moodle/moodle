@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
     /////////////////////////////////////////////////////////////////////
     ///// This page offers a way to define category level datasets  /////
@@ -17,7 +17,7 @@
         error("This category doesn't belong to a valid course!");
     }
 
-    require_login($course->id, false);
+    require_login($course->id);
 
     if (!isteacheredit($course->id)) {
         error("Only the teacher can import quiz questions!");
@@ -32,7 +32,7 @@
     $strquestions = get_string("questions", "quiz");
 
     print_header_simple("$strdefinedataset", "$strdefinedataset",
-                 "<a href=\"../../edit.php\">$streditingquiz</a> -> $strdefinedataset");
+                 "<A HREF=\"../../edit.php\">$streditingquiz</A> -> $strdefinedataset");
 
     if ($form = data_submitted()) {   /// Filename
 
@@ -41,7 +41,7 @@
             $definition->name = $name;
             $definition->id   = $form->id[$key];
             $definition->type = $form->type[$key];
-
+            
             if ($definition->id) {
                 if (!update_record('quiz_dataset_definitions', $definition)) {
                     notify("Could not update dataset item definition");
@@ -67,14 +67,14 @@
 
     print_heading_with_help($strdefinedataset, "datasets", "quiz");
 
-    print_simple_box_start("center");
+    print_simple_box_start("center", "", "$THEME->cellheading");
     echo "<form method=\"post\" action=\"categorydatasetdefinitions.php\">";
-    echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
+    echo "<input type=\"hidden\" name=\"category\" value=\"$category->id\"/>";
     if ($question) {
-        echo "<input type=\"hidden\" name=\"question\" value=\"$question\" />";
+        echo "<input type=\"hidden\" name=\"question\" value=\"$question\"/>";
     }
-
-    echo "<table cellpadding=\"5\">";
+    
+    echo "<table cellpadding=5>";
 
     $definitions = get_records('quiz_dataset_definitions',
                                'category',
@@ -86,17 +86,17 @@
             $definition = NULL;
         }
 
-        echo "<tr><td align=\"right\">";
+        echo "<tr><td align=right>";
         print_string("itemdefinition", "quiz");
         echo ":</td><td>";
-        echo "<input name=\"name[]\" type=\"text\" size=\"20\" value=\"$definition->name\" />";
-        echo "<input type=\"hidden\" name=\"id[]\" value=\"$definition->id\" />";
+        echo "<input name=\"name[]\" type=\"text\" size=\"20\" value=\"$definition->name\"/>";
+        echo "<input type=\"hidden\" name=\"id[]\" value=\"$definition->id\"/>";
         echo " </td><td> ";
         choose_from_menu($DATASET_TYPES, 'type[]', $definition->type, '');
         echo "</td></tr>\n";
     }
 
-    echo "<tr><td align=\"CENTER\" colspan=\"3\"><input type=\"submit\" value=\"".get_string("continue")."\" /></td></tr>";
+    echo "<tr><td align=\"CENTER\" colspan=\"3\"><input type=submit value=\"".get_string("continue")."\"></td></tr>";
     echo "</table>";
     echo "</form>";
     print_simple_box_end();

@@ -1,27 +1,26 @@
-<?php //$Id$
+<?PHP //$Id$
     //This php script contains all the stuff to backup/restore
     //forum mods
 
     //This is the "graphical" structure of the forum mod:
     //
-    //                               forum                                      
-    //                            (CL,pk->id)
-    //                                 |
-    //         ---------------------------------------------------        
-    //         |                                                 |
-    //    subscriptions                                  forum_discussions
-    //(UL,pk->id, fk->forum)           ---------------(UL,pk->id, fk->forum)
-    //                                 |                         |
-    //                                 |                         |
-    //                                 |                         |
-    //                                 |                     forum_posts
-    //                                 |-------------(UL,pk->id,fk->discussion,
-    //                                 |                  nt->parent,files) 
-    //                                 |                         |
-    //                                 |                         |
-    //                                 |                         |
-    //                            forum_read                forum_ratings
-    //                       (UL,pk->id,fk->post        (UL,pk->id,fk->post)
+    //                           forum                                      
+    //                        (CL,pk->id)
+    //                            |
+    //             -----------------------------------        
+    //             |                                 |
+    //        subscriptions                    forum_discussions
+    //    (UL,pk->id, fk->forum)             (UL,pk->id, fk->forum)
+    //                                               |
+    //                                               |
+    //                                               |
+    //                                           forum_posts
+    //                             (UL,pk->id,fk->discussion,nt->parent,files) 
+    //                                               |
+    //                                               |
+    //                                               |
+    //                                          forum_ratings
+    //                                      (UL,pk->id,fk->post)
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -72,7 +71,7 @@
                     $forum->scale = -($scale->new_id);
                 }
             }
-
+            
             $forumtobeinserted = true;
             //If the forum is a teacher forum, then we have to look if it exists in destination course
             if ($forum->type == "teacher") {
@@ -91,7 +90,7 @@
             }
 
             //Do some output
-            echo "<li>".get_string("modulename","forum")." \"".format_string(stripslashes($forum->name),true)."\"";
+            echo "<ul><li>".get_string("modulename","forum")." \"".$forum->name."\"<br>";
             backup_flush(300);
 
             if ($newid) {
@@ -106,14 +105,14 @@
                         //Restore forum_discussions
                         $status = forum_discussions_restore_mods ($newid,$info,$restore);
                     }
-                    if ($status) {
-                        //Restore forum_read
-                        $status = forum_read_restore_mods ($newid,$info,$restore);
-                    }
                 }
             } else {
                 $status = false;
             }
+
+            //Finalize ul
+            echo "</ul>";
+
         } else {
             $status = false;
         }
@@ -159,7 +158,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                    echo "<br>";
                 }
                 backup_flush(300);
             }
@@ -233,7 +232,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                    echo "<br>";
                 }
                 backup_flush(300);
             }
@@ -264,89 +263,7 @@
                 $temp_discussion->userid = $discussion->userid;
                 //Update discussion (only firstpost and userid will be changed)
                 $status = update_record("forum_discussions",$temp_discussion);
-                //echo "Updated firstpost ".$old_firstpost." to ".$temp_discussion->firstpost."<br />";                //Debug
-            } else {
-                $status = false;
-            }
-        }
-
-        return $status;
-    }
-
-    //This function restores the forum_read
-    function forum_read_restore_mods($forum_id,$info,$restore) {
-
-        global $CFG;
-
-        $status = true;
-
-        //Get the read array
-        $readposts = $info['MOD']['#']['READPOSTS']['0']['#']['READ'];
-
-        //Iterate over readposts
-        for($i = 0; $i < sizeof($readposts); $i++) {
-            $rea_info = $readposts[$i];
-            //traverse_xmlize($rea_info);                                                                 //Debug
-            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
-            //$GLOBALS['traverse_array']="";                                                              //Debug
-
-            //We'll need this later!!
-            $oldid = backup_todb($rea_info['#']['ID']['0']['#']);
-
-            //Now, build the FORUM_READ record structure
-            $read->forumid = $forum_id;
-            $read->userid = backup_todb($rea_info['#']['USERID']['0']['#']);
-            $read->discussionid = backup_todb($rea_info['#']['DISCUSSIONID']['0']['#']);
-            $read->postid = backup_todb($rea_info['#']['POSTID']['0']['#']);
-            $read->firstread = backup_todb($rea_info['#']['FIRSTREAD']['0']['#']);
-            $read->lastread = backup_todb($rea_info['#']['LASTREAD']['0']['#']);
-
-            //Some recoding and check are performed now
-            $toinsert = true;
-
-            //We have to recode the userid field
-            $user = backup_getid($restore->backup_unique_code,"user",$read->userid);
-            if ($user) {
-                $read->userid = $user->new_id;
-            } else {
-                $toinsert = false;
-            }
-
-            //We have to recode the discussionid field
-            $discussion = backup_getid($restore->backup_unique_code,"forum_discussions",$read->discussionid);
-            if ($discussion) {
-                $read->discussionid = $discussion->new_id;
-            } else {
-                $toinsert = false;
-            }
-
-            //We have to recode the postid field
-            $post = backup_getid($restore->backup_unique_code,"forum_posts",$read->postid);
-            if ($post) {
-                $read->postid = $post->new_id;
-            } else {
-                $toinsert = false;
-            }
-
-            //The structure is equal to the db, so insert the forum_read
-            $newid = 0;
-            if ($toinsert) {
-                $newid = insert_record ("forum_read",$read);
-            }
-
-            //Do some output
-            if (($i+1) % 50 == 0) {
-                echo ".";
-                if (($i+1) % 1000 == 0) {
-                    echo "<br />";
-                }
-                backup_flush(300);
-            }
-
-            if ($newid) {
-                //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"forum_read",$oldid,
-                             $newid);
+                //echo "Updated firstpost ".$old_firstpost." to ".$temp_discussion->firstpost."<br>";                //Debug
             } else {
                 $status = false;
             }
@@ -394,7 +311,7 @@
             if ($user) {
                 $post->userid = $user->new_id;
             }
-
+     
             //The structure is equal to the db, so insert the forum_posts
             $newid = insert_record ("forum_posts",$post);
 
@@ -402,7 +319,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                    echo "<br>";
                 }
                 backup_flush(300);
             }
@@ -446,7 +363,7 @@
                 //Create temp post record
                 $temp_post->id = $post->id;
                 $temp_post->parent = $post->parent;
-                //echo "Updated parent ".$old_parent." to ".$temp_post->parent."<br />";                //Debug
+                //echo "Updated parent ".$old_parent." to ".$temp_post->parent."<br>";                //Debug
                 //Update post (only parent will be changed)
                 $status = update_record("forum_posts",$temp_post);
             }
@@ -474,7 +391,7 @@
 
         //First, locate course's moddata directory
         $moddata_path = $CFG->dataroot."/".$restore->course_id."/".$CFG->moddata;
-
+  
         //Check it exists and create it
         $status = check_dir_exists($moddata_path,true);
 
@@ -549,7 +466,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                    echo "<br>";
                 }
                 backup_flush(300);
             }
@@ -566,56 +483,12 @@
         return $status;
     }
 
-    //This function converts texts in FORMAT_WIKI to FORMAT_MARKDOWN for
-    //some texts in the module
-    function forum_restore_wiki2markdown ($restore) {
-    
-        global $CFG;
-
-        $status = true;
-
-        //Convert forum_posts->message
-        if ($records = get_records_sql ("SELECT p.id, p.message, p.format
-                                         FROM {$CFG->prefix}forum_posts p,
-                                              {$CFG->prefix}forum_discussions d,
-                                              {$CFG->prefix}forum f,
-                                              {$CFG->prefix}backup_ids b
-                                         WHERE d.id = p.discussion AND
-                                               f.id = d.forum AND
-                                               f.course = $restore->course_id AND
-                                               p.format = ".FORMAT_WIKI. " AND
-                                               b.backup_code = $restore->backup_unique_code AND
-                                               b.table_name = 'forum_posts' AND
-                                               b.new_id = p.id")) {
-            foreach ($records as $record) {
-                //Rebuild wiki links
-                $record->message = restore_decode_wiki_content($record->message, $restore);
-                //Convert to Markdown
-                $wtm = new WikiToMarkdown();
-                $record->message = $wtm->convert($record->message, $restore->course_id);
-                $record->format = FORMAT_MARKDOWN;
-                $status = update_record('forum_posts', addslashes_object($record));
-                //Do some output
-                $i++;
-                if (($i+1) % 1 == 0) {
-                    echo ".";
-                    if (($i+1) % 20 == 0) {
-                        echo "<br />";
-                    }
-                    backup_flush(300);
-                }
-            }
-
-        }
-        return $status;
-    }
-
     //This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
     function forum_restore_logs($restore,$log) {
-
+                    
         $status = false;
-
+                    
         //Depending of the action, we recode different things
         switch ($log->action) {
         case "add":
@@ -740,7 +613,7 @@
                     //Get the post record from database
                     $dbpos = get_record("forum_posts","id","$pos->new_id");
                     if ($dbpos) {
-                        $log->url = "discuss.php?d=".$dbpos->discussion."&amp;parent=".$pos->new_id;
+                        $log->url = "discuss.php?d=".$dbpos->discussion."&parent=".$pos->new_id;
                         $log->info = $pos->new_id;
                         $status = true;
                     }
@@ -755,12 +628,12 @@
                     //Get the post record from database
                     $dbpos = get_record("forum_posts","id","$pos->new_id");
                     if ($dbpos) {
-                        $log->url = "discuss.php?d=".$dbpos->discussion."&amp;parent=".$pos->new_id;
+                        $log->url = "discuss.php?d=".$dbpos->discussion."&parent=".$pos->new_id;
                         $log->info = $pos->new_id;
                         $status = true;
                     }
                 }
-            }
+            }   
             break;
         case "delete post":
             if ($log->cmid) {
@@ -775,11 +648,11 @@
             }
             break;
         case "search":
-            $log->url = "search.php?id=".$log->course."&amp;search=".urlencode($log->info);
+            $log->url = "search.php?id=".$log->course."&search=".urlencode($log->info);
             $status = true;
             break;
         default:
-            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
             break;
         }
 
@@ -790,7 +663,7 @@
     }
 
     //Return a content decoded to support interactivities linking. Every module
-    //should have its own. They are called automatically from
+    //should have its own. They are called automatically from 
     //forum_decode_content_links_caller() function in each module
     //in the restore process
     function forum_decode_content_links ($content,$restore) {
@@ -968,12 +841,12 @@
         $status = true;
 
         echo "<ul>";
-
+  
         //FORUM: Decode every POST (message) in the coure
-
+        
         //Check we are restoring forums
         if ($restore->mods['forum']->restore == 1) {
-            echo "<li>".get_string("from")." ".get_string("modulenameplural","forum").'</li>';
+            echo "<li>".get_string("from")." ".get_string("modulenameplural","forum");
             //Get all course posts
             if ($posts = get_records_sql ("SELECT p.id, p.message
                                        FROM {$CFG->prefix}forum_posts p,
@@ -984,7 +857,7 @@
                 $i = 0;   //Counter to send some output to the browser to avoid timeouts
                 foreach ($posts as $post) {
                     //Increment counter
-                    $i++;
+                    $i++; 
                     $content = $post->message;
                     $result = forum_decode_content_links($content,$restore);
                     if ($result != $content) {
@@ -992,14 +865,14 @@
                         $post->message = addslashes($result);
                         $status = update_record("forum_posts",$post);
                         if ($CFG->debug>7) {
-                            echo "<br /><hr />".$content."<br />changed to<br />".$result."<hr /><br />";
+                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
                         }
                     }
                     //Do some output
                     if (($i+1) % 5 == 0) {
                         echo ".";
                         if (($i+1) % 100 == 0) {
-                            echo "<br />";
+                            echo "<br>";
                         }
                         backup_flush(300);
                     }
@@ -1027,14 +900,14 @@
                         $forum->intro = addslashes($result);
                         $status = update_record("forum",$forum);
                         if ($CFG->debug>7) {
-                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
+                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
                         }
                     }
                     //Do some output
                     if (($i+1) % 5 == 0) {
                         echo ".";
                         if (($i+1) % 100 == 0) {
-                            echo "<br />";
+                            echo "<br>";
                         }
                         backup_flush(300);
                     }
@@ -1046,7 +919,7 @@
 
         //Check we are restoring resources
         if ($restore->mods['resource']->restore == 1) {
-            echo "<li>".get_string("from")." ".get_string("modulenameplural","resource").'</li>';
+            echo "<li>".get_string("from")." ".get_string("modulenameplural","resource");
             //Get all course resources
             if ($resources = get_records_sql ("SELECT r.id, r.alltext
                                        FROM {$CFG->prefix}resource r
@@ -1063,14 +936,14 @@
                         $resource->alltext = addslashes($result);
                         $status = update_record("resource",$resource);
                         if ($CFG->debug>7) {
-                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
+                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
                         }
                     }
                     //Do some output
                     if (($i+1) % 5 == 0) {
                         echo ".";
                         if (($i+1) % 100 == 0) {
-                            echo "<br />";
+                            echo "<br>";
                         }
                         backup_flush(300);
                     }
@@ -1098,14 +971,14 @@
                         $resource->summary = addslashes($result);
                         $status = update_record("resource",$resource);
                         if ($CFG->debug>7) {
-                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
+                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
                         }
                     }
                     //Do some output
                     if (($i+1) % 5 == 0) {
                         echo ".";
                         if (($i+1) % 100 == 0) {
-                            echo "<br />";
+                            echo "<br>";
                         }
                         backup_flush(300);
                     }

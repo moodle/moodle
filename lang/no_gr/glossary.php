@@ -87,7 +87,7 @@ $string['explainalphabet'] = 'Bla gjennom ordboken med dette indekset';
 $string['explainexport'] = 'En fil er opprettet.<br /><small>(Se lenken nederst på siden, \'Eksportert fil\'.)</small><br />Last den ned og lagre den. Du kan importere den senere i dette kurs eller i andre kurs.
 
 Last den ned og ';
-$string['explainimport'] = '<b>Du må velge:</b><ul><li>Hvilken fil du vil importere (Klikk \'Bla gjennom...\')</li><li>Til hvilken ordliste den skal (Velg \'Mål\')</li><li>Skal kategorier også importeres (Sett en hake i boksen \'Importer kategorier\')</li><li>Velg det du ønsker nedenfor og klikk \'Lagre endringer\' for å se resultatet.</li></ul>';
+$string['explainimport'] = '<b>Du må velge:</b><li>Hvilken fil du vil importere (Klikk \'Bla gjennom...\')<li>Til hvilken ordliste den skal (Velg \'Mål\')<li>Skal kategorier også importeres (Sett en hake i boksen \'Importer kategorier\')<li>Velg det du ønsker nedenfor og klikk \'Lagre endringer\' for å se resultatet.';
 $string['explainspecial'] = 'Vis oppføringer som starter med andre tegn enn bokstaver';
 $string['exportedentry'] = 'Eksportert oppføring';
 $string['exportedfile'] = 'Eksportert fil';

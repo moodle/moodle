@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This php script contains all the stuff to backup/restore
     //attendance mods
 
@@ -54,7 +54,7 @@
             $newid = insert_record ("attendance",$attendance);
 
             //Do some output     
-            echo "<li>".get_string("modulename","attendance")." \"".$attendance->name."\"</li>";
+            echo "<ul><li>".get_string("modulename","attendance")." \"".$attendance->name."\"<br>";
             backup_flush(300);
 
             if ($newid) {
@@ -69,6 +69,10 @@
             } else {
                 $status = false;
             }
+
+            //Finalize ul        
+            echo "</ul>";
+
         } else {
             $status = false;
         }
@@ -117,7 +121,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                    echo "<br>";
                 }
                 backup_flush(300);
             }

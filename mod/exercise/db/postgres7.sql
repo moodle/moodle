@@ -17,14 +17,8 @@ CREATE TABLE prefix_exercise (
   timemodified INT8  NOT NULL default '0',
   grade INT NOT NULL default '0',
   gradinggrade INT  NOT NULL default '0',
-  showleaguetable INT  NOT NULL default '0',
-  usepassword INT4 NOT NULL default '0',
-  password VARCHAR(32) NOT NULL default ''
-
+  showleaguetable INT  NOT NULL default '0'
 );
-
-CREATE INDEX prefix_exercise_course_idx ON prefix_exercise (course);
-
 # --------------------------------------------------------
 
 #
@@ -42,8 +36,6 @@ CREATE TABLE prefix_exercise_submissions (
   isexercise INT  NOT NULL default '0'
 );
 CREATE INDEX prefix_exercise_submissions_userid_idx ON prefix_exercise_submissions (userid);
-CREATE INDEX prefix_exercise_submissions_exerciseid_idx ON prefix_exercise_submissions (exerciseid);
-
 # --------------------------------------------------------
 
 #
@@ -60,13 +52,12 @@ CREATE TABLE prefix_exercise_assessments (
   grade float NOT NULL default '0',
   gradinggrade INT NOT NULL default '0',
   mailed INT2  NOT NULL default '0',
-  generalcomment text NOT NULL default '',
-  teachercomment text NOT NULL default ''
+  generalcomment text NOT NULL,
+  teachercomment text NOT NULL
   );
 # --------------------------------------------------------
 CREATE INDEX prefix_exercise_assessments_submissionid_idx ON prefix_exercise_assessments (submissionid);
 CREATE INDEX prefix_exercise_assessments_userid_idx ON prefix_exercise_assessments (userid);
-CREATE INDEX prefix_exercise_assessments_exerciseid_idx ON prefix_exercise_assessments (exerciseid);
 
 # Table structure for table exercise_elements
 #
@@ -94,9 +85,6 @@ CREATE TABLE prefix_exercise_rubrics (
   rubricno INT  NOT NULL default '0',
   description text NOT NULL
 );
-
-CREATE INDEX prefix_exercise_rubrics_exerciseid_idx ON prefix_exercise_rubrics (exerciseid);
-
 # --------------------------------------------------------
 
 #
@@ -113,8 +101,6 @@ CREATE TABLE prefix_exercise_grades (
 );
 
 CREATE INDEX prefix_exercise_grades_assessmentid_idx ON prefix_exercise_grades (assessmentid);
-CREATE INDEX prefix_exercise_grades_exerciseid_idx ON prefix_exercise_grades (exerciseid);
-
 # --------------------------------------------------------
 
         

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 beta (2004082300)
+      // quiz.php - created with Moodle 1.4 development (2004080300)
 
 
 $string['acceptederror'] = 'Errore accettato';
@@ -41,11 +41,9 @@ $string['category'] = 'Categoria';
 $string['categoryinfo'] = 'Informazioni sulla categoria';
 $string['categorymove'] = 'La categoria \'$a->name\' contiene $a->count domande. Scegli un\'altra categoria per trasferirle in essa.';
 $string['categorymoveto'] = 'Trasferisci a questa categoria';
-$string['checkanswer'] = 'Controllo';
 $string['choice'] = 'Scelta';
 $string['choices'] = 'Scelte disponibili';
 $string['choosedatasetproperties'] = 'Scegli le caratteristiche dell\'insieme dei dati';
-$string['close'] = 'Chiudi anteprima';
 $string['confirmstartattempt'] = 'Il quiz ha un tempo limite. Sei sicuro di voler iniziare?';
 $string['correctanswer'] = 'Risposta esatta';
 $string['correctanswerformula'] = 'Formula della Risposta Corretta';
@@ -59,7 +57,6 @@ $string['coursetestmanager'] = 'Formato Course Test Manager';
 $string['createmultiple'] = 'Crea domande multiple';
 $string['createnewquestion'] = 'Crea una nuova domanda';
 $string['custom'] = 'Formato personalizzato';
-$string['datasetdefinitions'] = 'Definizioni dell\'insieme di dati riusabili per la categoria $a';
 $string['datasetnumber'] = 'Numero';
 $string['daysavailable'] = 'Giorni disponibili';
 $string['decimals'] = 'con $a';
@@ -87,32 +84,29 @@ $string['editingshortanswer'] = 'Modifica una domanda a risposta breve';
 $string['editingtruefalse'] = 'Modifica una domanda vero/falso';
 $string['editquestions'] = 'Modifica domande';
 $string['errorsdetected'] = '$a errore(i) trovati';
-$string['existingcategory1'] = 'Un letterale da un insieme di letterali esistenti è stato usato anche da altre domande in questa categoria';
-$string['existingcategory2'] = 'Un file da un insieme di file esistenti è stato  usato anche da altre domande in questa categoria ';
-$string['existingcategory3'] = 'Un collegamento da un insieme di collegamenti esistenti è stato usato anche da altre domande in questa categoria';
+$string['existingcategory'] = 'un \".(1==$a ? \'letterale\' :(2==$a ? \'file\' :(3==$a ? \'collegamento\' : $a))).\" da un insieme già esistente di \".(1==$a ? \'letterali\' :(2==$a ? \'files\' : (3==$a ? \'collegamenti\' : $a))).\" che sono anche utilizzati da altre domande di questa categoria';
 $string['exportfilename'] = 'quiz';
 $string['exportname'] = 'Nome del file';
 $string['exportnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['exportquestions'] = 'Esporta domande su file';
 $string['false'] = 'Falso';
 $string['feedback'] = 'Commento';
-$string['file'] = 'File';
 $string['fileformat'] = 'Formato file';
 $string['filloutoneanswer'] = 'Devi fornire almeno una risposta possibile. Le risposte lasciate in bianco non saranno utilizzate utilizzate.';
 $string['filloutthreequestions'] = 'Devi fornire almeno tre domande. Le domande lasciate in bianco non saranno utilizzate.';
 $string['fillouttwochoices'] = 'Devi fornire almeno due scelte. Le scelte lasciate in bianco non saranno utilizzate.';
 $string['forceregeneration'] = 'Forza rigenerazione';
 $string['fractionsaddwrong'] = 'I voti positivi che hai scelto non assommano al 100%% ma solo al $a%%
-<br /> Vuoi tornare indietro e correggere?
+<BR> Vuoi tornare indietro e correggere?
 
-<br />ma solo a $a%%
+<BR>ma solo a $a%%
 
-<br />Vuoi tornare indietro e risolvere la questione?';
+<BR>Vuoi tornare indietro e risolvere la questione?';
 $string['fractionsnomax'] = 'Una delle risposte deve essere 100%%, perchè sia
 
-<br />possibile una votazione piena per questa domanda
-<br /> Vuoi tornare indietro e correggere?
-<br />Vuoi tornare indietro e risolvere la questione?';
+<BR>possibile una votazione piena per questa domanda
+<BR> Vuoi tornare indietro e correggere?
+<BR>Vuoi tornare indietro e risolvere la questione?';
 $string['functiontakesatleasttwo'] = 'La funzione $a deve avere come minimo due argomenti';
 $string['functiontakesnoargs'] = 'La funzione $a non ha argomenti';
 $string['functiontakesonearg'] = 'La funzione $a deve avere un solo argomento';
@@ -132,10 +126,7 @@ $string['importquestions'] = 'Importa domande da file';
 $string['indivresp'] = 'Risposte dei singoli ad ogni elemento';
 $string['introduction'] = 'Introduzione';
 $string['itemanal'] = 'Analisi delle risposte agli elementi';
-$string['itemdefinition'] = 'Definizione';
-$string['link'] = 'Collegamento';
 $string['listitems'] = 'Elenco degli elementi di questo quiz';
-$string['literal'] = 'Letterale';
 $string['loguniform'] = 'numeri, da una distribuzione uniforme';
 $string['marks'] = 'Punti';
 $string['match'] = 'Corrispondenza';
@@ -160,22 +151,19 @@ $string['noattempts'] = 'Nessun tentativo è stato fatto per questo quiz';
 $string['nodataset'] = 'niente - non è un metacarattere';
 $string['nominal'] = 'Nominale';
 $string['nomoreattempts'] = 'Non sono permessi ulteriori tentativi';
-$string['nopossibledatasets'] = 'Insieme dati non accettabile';
 $string['noquestions'] = 'Non sono state aggiunte ancora domande';
 $string['noresponse'] = 'Nessuna risposta';
 $string['noreview'] = 'Non hai il permesso di rivedere questo quiz';
 $string['noreviewuntil'] = 'Non hai il permesso di rivedere questo quiz fino a $a';
 $string['noscript'] = 'I JavaScript devono essere abilitati per poter continuare!';
 $string['notenoughanswers'] = 'Questo tipo di domanda richiede come minimo $a risposte';
-$string['notenoughsubquestions'] = 'Non sono state definite abbastanza sottodomande!<br />Vuoi tornare indietro e correggere questa domanda?';
+$string['notenoughsubquestions'] = 'Non sono state definite abbastanza sottodomande!<br>Vuoi tornare indietro e correggere questa domanda?';
 $string['numerical'] = 'Numerica';
 $string['optional'] = 'opzionale';
 $string['overdue'] = 'in ritardo';
 $string['paragraphquestion'] = 'Domanda paragrafo non supportata alla linea $a. La domanda sarà ignorata';
 $string['passworderror'] = 'La password inserita non è corretta';
 $string['percentcorrect'] = 'Percentuale corretta';
-$string['preview'] = 'Anteprima';
-$string['previewquestion'] = 'Anteprima domanda';
 $string['publish'] = 'Rendere pubblico';
 $string['publishedit'] = 'Devi avere il permesso nel corso sono pubblicate per aggiungere o modificare le domande in questa categoria';
 $string['qti'] = 'Formato IMS QTI';
@@ -261,7 +249,6 @@ $string['webct'] = 'Formato WebCT';
 $string['wildcard'] = 'Metacarattere';
 $string['withsummary'] = 'con Statistiche generali';
 $string['wronggrade'] = 'Punteggio sbagliato (dopo la linea $a):';
-$string['xml'] = 'Formato XML Moodle';
 $string['yourfinalgradeis'] = 'Il tuo voto finale per questo quiz è: $a';
 
 ?>

@@ -1,15 +1,15 @@
 <?PHP //$Id$
 
-class block_course_summary extends block_base {
-    function init() {
-        $this->title = get_string('pagedescription', 'block_course_summary');
-        $this->version = 2004052600;
-    }
-
-    function specialization() {
-        if($this->instance->pagetype == PAGE_COURSE_VIEW && $this->instance->pageid != SITEID) {
-            $this->title = get_string('coursesummary', 'block_course_summary');
+class CourseBlock_course_summary extends MoodleBlock {
+    function CourseBlock_course_summary ($course) {
+        if (empty($course->category)) {   // Site level
+            $this->title = get_string('frontpagedescription');
+        } else {
+            $this->title = get_string('blockname','block_course_summary');
         }
+        $this->content_type = BLOCK_TYPE_TEXT;
+        $this->course = $course;
+        $this->version = 2004052600;
     }
 
     function get_content() {
@@ -19,22 +19,19 @@ class block_course_summary extends block_base {
             return $this->content;
         }
 
-        if (empty($this->instance)) {
+        if (empty($this->course)) {
             return '';
         }
 
-        $course  = get_record('course', 'id', $this->instance->pageid);
-        
         $this->content = New stdClass;
-        $options->noclean = true;    // Don't clean Javascripts etc
-        $this->content->text = format_text($course->summary, FORMAT_HTML, $options);
-        if(isediting($this->instance->pageid)) {
-            if($this->instance->pageid == SITEID) {
-                $editpage = $CFG->wwwroot.'/'.$CFG->admin.'/site.php';
+        $this->content->text = format_text($this->course->summary, FORMAT_HTML);
+        if (isediting($this->course->id)) {
+            if (empty($this->course->category)) {
+                $editpage = $CFG->wwwroot.'/admin/site.php';
             } else {
-                $editpage = $CFG->wwwroot.'/course/edit.php?id='.$this->instance->pageid;
+                $editpage = $CFG->wwwroot.'/course/edit.php?id='.$this->course->id;
             }
-            $this->content->text .= "<div align=\"right\"><a href=\"$editpage\"><img src=\"$CFG->pixpath/t/edit.gif\" alt=\"\" /></a></div>";
+            $this->content->text .= "<div align=\"right\"><a href=\"$editpage\"><img src=\"$CFG->pixpath/t/edit.gif\" /></a></div>";
         }
         $this->content->footer = '';
 

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
+      // assignment.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['allowresubmit'] = 'Tillad gentagelser';
@@ -18,13 +18,6 @@ $string['description'] = 'Beskrivelse';
 $string['duedate'] = 'Afleveringsdato';
 $string['duedateno'] = 'Ingen afleveringsfrist';
 $string['early'] = '$a for tidlig';
-$string['emailteachermail'] = '$a->username har opdateret deres opgaveafleveringer for \'$a->assignment\'
-
-Det kan hentes her:
-$a->url
-';
-$string['emailteachermailhtml'] = '$a->username har opdateret deres opgaveaflevering for <i>\'$a->assignment\'</i><br /><br />Det kan hentes på <a href=\"$a->url\">websiden</a>.';
-$string['emailteachers'] = 'Email advarsel til lærere';
 $string['existingfiledeleted'] = 'Eksisterende fil er blevet slettet: $a';
 $string['failedupdatefeedback'] = 'Mislykkedes at opdatere feedback på aflevering for bruger $a';
 $string['feedback'] = 'Feedback';
@@ -35,7 +28,6 @@ $string['maximumsize'] = 'Maximum størrelse';
 $string['modulename'] = 'Opgave';
 $string['modulenameplural'] = 'Opgaver';
 $string['newsubmissions'] = 'Opgaver afleveret';
-$string['noassignments'] = 'Der er ingen opgaver endnu';
 $string['notgradedyet'] = 'Ikke bedømt endnu';
 $string['notsubmittedyet'] = 'Ikke afleveret endnu';
 $string['overwritewarning'] = 'Advarsel: hvis du uploader igen, vil det erstatte den nuværende version';

@@ -127,7 +127,7 @@ Shumë faleminderit.';
 $string['collesaname'] = 'COLLES (Aktual)';
 $string['collesapintro'] = 'Objektivi i këtij pyetësori është të na ndihmojë ne të kuptojmë se sa kjo njësi që dhamë \'online\' ju ka aftësuar juve ta mësoni.
 
-Seicili nga 24 pohimet më poshtë ju pyet për të karahasuar eksperienën tuaj <b>të preferuar</b> (ideale) dhe atë <b>aktuale</b>në këtë njësi.
+Seicili nga 24 pohimet më poshtë ju pyet për të karahasuar eksperienën tuaj <B>të preferuar</B> (ideale) dhe atë <B>aktuale</B>në këtë njësi.
 
 Nuk ka përgjigje \'drejt\' ose \'gabim\'; ne interesohemi vetëm për opinionin tuaj. Ju sigurojmë se përgjigjet tuaja do të trajtohen me shkallën më të lartë të konfidencialitetit dhe nuk do të ndikojnë në vlerësimin tuaj.
 
@@ -150,7 +150,7 @@ $string['collesm6short'] = 'Interpretimi';
 $string['collesmintro'] = 'Në këtë njësi online...';
 $string['collespintro'] = 'Objektivi i këtij pyetësori është të na ndihmojë ne të kuptojmë se çfarë vlerësoni ju në një eksperiencë mësimi  \'online\' .
 
-Seicili nga 24 pohimet më poshtë ju pyet për të karahasuar eksperienën tuaj <b>të preferuar</b> (ideale)në këtë njësi.
+Seicili nga 24 pohimet më poshtë ju pyet për të karahasuar eksperienën tuaj <B>të preferuar</B> (ideale)në këtë njësi.
 
 Nuk ka përgjigje \'drejt\' ose \'gabim\'; ne interesohemi vetëm për opinionin tuaj. Ju sigurojmë se përgjigjet tuaja do të trajtohen me shkallën më të lartë të konfidencialitetit dhe nuk do të ndikojnë në vlerësimin tuaj.
 

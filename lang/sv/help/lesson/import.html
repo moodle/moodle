@@ -1,18 +1,20 @@
 <p align="center"><b>Att importera nya fr&aring;gor</b></p>
-<p>Den h&auml;r funktionen l&aring;ter Dig importera fr&aring;gor fr&aring;n externa textfiler som 
-&auml;r uppladdade via ett formul&auml;r.</p>
 
-<p>Det finns ett antal filtyper som st&ouml;ds:</p>
+<p>
+Den h&auml;r funktionen l&aring;ter Dig importera fr&aring;gor fr&aring;n externa textfiler som 
+&auml;r uppladdade via ett formul&auml;r.
+
+<p>Det finns ett antal filtyper som st&ouml;ds:
 <p><b>GIFT formatet</b></p>
 <ul>
-<li>GIFT &auml;r det mest helt&auml;ckande formatet som &auml;r tillg&auml;ngligt f&ouml;r att 
+<p>GIFT &auml;r det mest helt&auml;ckande formatet som &auml;r tillg&auml;ngligt f&ouml;r att 
 importera testfr&aring;gor av Moodletyp fr&aring;n en textfil. Det &auml;r utformat f&ouml;r att 
 vara en enkel metod f&ouml;r (distans)l&auml;rare som skriver fr&aring;gor som en textfil.
 Formatet st&ouml;djer Multiple-Choice (flervalsfr&aring;gor), Sant-Falskt, kortsvar, para-ihop och 
 numeriska fr&aring;gor liksom infogande av lucktexter. Du kan blanda olika fr&aring;getyper i en enskild textfil
 och formatet st&ouml;djer ocks&aring; kommentarer till en rad, namn p&aring; fr&aring;gor, &aring;terkoppling och procentviktade
-betyg/omd&ouml;men. H&auml;r nedan &auml;r n&aring;gra exempel:</li>
-<li><pre>
+betyg/omd&ouml;men. H&auml;r nedan &auml;r n&aring;gra exempel:</p>
+<pre>
 Vem &auml;r begravd i Grants grav? {~Grant ~Jefferson =ingen}
 
 Grant &auml;r {~begravd  ~lever} i Grants grav.
@@ -22,16 +24,16 @@ Grant &auml;r begravd i Grants grav.{FALSE}
 Vem &auml;r begravd i Grants grav?{=ingen =inte n&aring;gon alls}
 
 N&auml;r f&ouml;ddes Ulysses S. Grant?{#1822}
-</pre></li>
-</ul>
+</pre>
+
 <p align="right"><a href="help.php?file=formatgift.html&module=quiz">Mer info om "GIFT"-formatet</a></p>
+</ul>
 
 <p><b>Aiken-formatet</b></p>
 <ul>
-<li>Aiken-formatet &auml;r ett mycket enkelt s&auml;tt att skapa flervalsfr&aring;gor
+<p>Aiken-formatet &auml;r ett mycket enkelt s&auml;tt att skapa flervalsfr&aring;gor
 genom att anv&auml;nda ett format som &auml;r mycket tydligt och l&auml;sbart f&ouml;r m&auml;nniskor.
-H&auml;r &auml;r ett exempel p&aring; formatet:
-
+H&auml;r &auml;r ett exempel p&aring; formatet:</p>
 <pre>
 Vad &auml;r avsikten med f&ouml;rsta hj&auml;lpen?
 
@@ -41,12 +43,14 @@ C. Att f&ouml;rebygga ytterligare skador
 D. Att hj&auml;lpa offer som ber om hj&auml;lp
 SVAR: A
 </pre>
-</li>
-</ul>
+
 <p align="right"><a href="help.php?file=formataiken.html&module=quiz">Mer info om  "Aiken"-formatet</a></p>
+</ul>
+
+
 <p><b>Lucktexter</b></p>
 <ul>
-<li>Det h&auml;r formatet st&ouml;djer bara flervalsfr&aring;gor. Varje svar &aring;tskiljs med ett tilde-tecken
+<p>Det h&auml;r formatet st&ouml;djer bara flervalsfr&aring;gor. Varje svar &aring;tskiljs med ett tilde-tecken
  (~), och det korrekta svaret har likhetstecknet (=) som prefix.  H&auml;r &auml;r ett exempel:
 
 <blockquote>
@@ -54,47 +58,57 @@ S&aring; snart vi b&ouml;rjar unders&ouml;ka v&aring;ra kroppar som barn s&aring
 studenter av {=anatomi och fysik ~reflexologi 
 ~vetenskap ~experiment}, och p&aring; ett s&auml;tt f&ouml;rblir vi studenter f&ouml;r resten av livet.
 </blockquote>
-</li>
-</ul>
+
 <p align="right"><a href="help.php?file=formatmissingword.html&module=quiz">Mer info om "Lucktext"-formatet</a></p>
+</ul>
+
 
 <p><b>AON</b></p>
 <ul>
-<li>Det h&auml;r &auml;r samma format som lucktexten f&ouml;rutom det att efter det att 
+<p>Det h&auml;r &auml;r samma format som lucktexten f&ouml;rutom det att efter det att 
 Du har importerat fr&aring;gorna s&aring; omvandlas alla kortsvarsfr&aring;gor fyra &aring;t g&aring;ngen till 
 para-ihop-fr&aring;gor.
-Dessutom s&aring; blandas svaren till flervalsfr&aring;gor slumpm&auml;ssigt under importen.
-Formatet har f&aring;tt sitt namn av en organisation som sponsrade m&aring;nga av 
+</p>
+<p>Dessutom s&aring; blandas svaren till flervalsfr&aring;gor slumpm&auml;ssigt under importen.
+<p>Formatet har f&aring;tt sitt namn av en organisation som sponsrade m&aring;nga av 
 egenskaperna hos testet/&ouml;vningen.
-</li>
+</p>
 </ul>
+
 
 <p><b>Blackboard</b></p>
 <ul>
-<li>Den h&auml;r modulen kan importera fr&aring;gor som &auml;r sparade i Blackboards exportformat.
-Det anv&auml;nder sig av XML-funktioner som kompileras &ouml;ver till Din PHP-kod.</li>
-</ul>
+<p>Den h&auml;r modulen kan importera fr&aring;gor som &auml;r sparade i Blackboards exportformat.
+Det anv&auml;nder sig av XML-funktioner som kompileras &ouml;ver till Din PHP-kod.</p>
+
 <p align="right"><a href="help.php?file=formatblackboard.html&module=quiz">Mer info om "Blackboard"-formatet</a></p>
+</ul>
+
 <p><b>"Course Test Manager"</b></p>
 <ul>
-<li>Den h&auml;r modulen kan importera fr&aring;gor som &auml;r sparade i en testbank av "Course Test Manager"-typ.
+<p>Den h&auml;r modulen kan importera fr&aring;gor som &auml;r sparade i en testbank av "Course Test Manager"-typ.
 Det anv&auml;nder sig av olika s&auml;tt att f&aring; tillg&aring;ng till testbanken (som ligger i en Microsoft Access 
-databas) beroende p&aring; om Moodle k&ouml;rs p&aring; en Windows- eller Linuxserver.
-P&aring; Windows kan Du ladda upp Accessdatabasen precis som Du g&ouml;r med vilken annan importerad datafil som helst.</li>
-<li>P&aring; Linux, m&aring;ste Du st&auml;lla in en windowsmaskin p&aring; samma n&auml;tverk som med databasen av typ "Course Test
-Manager"  och ett program som kallas ODBC Socket Server, som anv&auml;nder XML f&ouml;r att &ouml;verf&ouml;ra data till Moodle p&aring; Linuxservern.</li>
- <li>Var sn&auml;ll och l&auml;s hela hj&auml;lpfilen nedan innan Du anv&auml;nder denna klass av import.</li>
-</ul>
+databas) beroende p&aring; om Moodle k&ouml;rs p&aring; en Windows- eller Linuxserver.</p>
+<p>P&aring; Windows kan Du ladda upp Accessdatabasen precis som Du g&ouml;r med vilken annan importerad datafil som helst.</p>
+<p>P&aring; Linux, m&aring;ste Du st&auml;lla in en windowsmaskin p&aring; samma n&auml;tverk som med databasen av typ "Course Test
+Manager"  och ett program som kallas ODBC Socket Server, som anv&auml;nder XML f&ouml;r att &ouml;verf&ouml;ra data till Moodle p&aring; Linuxservern.</p>
+ <p>Var sn&auml;ll och l&auml;s hela hj&auml;lpfilen nedan innan Du anv&auml;nder denna klass av import.</p>
+
+
 <p align="right"><a href="help.php?file=formatctm.html&module=quiz">Mer info om "CTM"-formatet</a></p>
+</ul>
 
 <p><b>Egen standard</b></p>
 <ul>
-<li>Om Du har skapat ett eget format som Du beh&ouml;ver importera s&aring; kan Du implementera det sj&auml;lv genom att redigera mod/quiz/format/custom.php
-Det &auml;r r&auml;tt lite kod som beh&ouml;vs, bara s&aring; att det g&aring;r att (parse) tolka 
-en enskild fr&aring;ga fr&aring;n en given text.</li>
-</ul>
+<p>Om Du har skapat ett eget format som Du beh&ouml;ver importera s&aring; kan Du implementera det 
+sj&auml;lv genom att redigera mod/quiz/format/custom.php
+
+<p>Det &auml;r r&auml;tt lite kod som beh&ouml;vs, bara s&aring; att det g&aring;r att (parse) tolka 
+en enskild fr&aring;ga fr&aring;n en given text.
 <p align="right"><a href="help.php?file=formatcustom.html&module=quiz">Mer info om formatet
  "Egen standard"</a></p>
+</ul>
+
 
 <p>Det kommer att tillkomma fler format, inklusive WebCT, IMS QTI och vad helst n&aring;gon Moodlare kan komma att bidra med.
    </p>

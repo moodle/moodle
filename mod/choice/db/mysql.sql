@@ -20,17 +20,21 @@ CREATE TABLE prefix_choice (
   name varchar(255) NOT NULL default '',
   text text NOT NULL,
   format tinyint(2) unsigned NOT NULL default '0',
+  answer1 varchar(255) NOT NULL default 'Yes',
+  answer2 varchar(255) NOT NULL default 'No',
+  answer3 varchar(255) default NULL,
+  answer4 varchar(255) default NULL,
+  answer5 varchar(255) default NULL,
+  answer6 varchar(255) default NULL,
   publish tinyint(2) unsigned NOT NULL default '0',
   release tinyint(2) unsigned NOT NULL default '0',
-  display tinyint(4) unsigned NOT NULL default '0',
   allowupdate tinyint(2) unsigned NOT NULL default '0',
-  showunanswered tinyint(2) unsigned NOT NULL default '0',    limitanswers tinyint(2) unsigned NOT NULL default '0',
+  showunanswered tinyint(2) unsigned NOT NULL default '0',
   timeopen int(10) unsigned NOT NULL default '0',
   timeclose int(10) unsigned NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
-  UNIQUE KEY id (id),
-  KEY course (course)
+  UNIQUE KEY id (id)
 ) TYPE=MyISAM COMMENT='Available choices are stored here.';
 
 
@@ -42,31 +46,12 @@ CREATE TABLE prefix_choice (
 
 CREATE TABLE prefix_choice_answers (
   id int(10) unsigned NOT NULL auto_increment,
-  choiceid int(10) unsigned NOT NULL default '0',
+  choice int(10) unsigned NOT NULL default '0',
   userid int(10) unsigned NOT NULL default '0',
-  optionid int(10) NOT NULL default '0',
+  answer tinyint(4) NOT NULL default '0',
   timemodified int(10) NOT NULL default '0',
   PRIMARY KEY  (id),
-  UNIQUE KEY id (id),
-  KEY userid (userid),
-  KEY choiceid (choiceid)
-) TYPE=MyISAM;
-
-
-# --------------------------------------------------------
-
-#
-# Table structure for table `choice_options`
-#
-
-CREATE TABLE prefix_choice_options (
-  id int(10) unsigned NOT NULL auto_increment,
-  choiceid int(10) unsigned NOT NULL default '0',
-  `text` TEXT,    maxanswers int(10) unsigned NULL default '0',
-  timemodified int(10) NOT NULL default '0',
-  PRIMARY KEY  (id),
-  UNIQUE KEY id (id),
-  KEY choiceid (choiceid)
+  UNIQUE KEY id (id)
 ) TYPE=MyISAM;
 
 #

@@ -76,7 +76,7 @@ $string['assignadmins'] = 'Legg til administrator';
 $string['assigncreators'] = 'Legg til kursprodusenter';
 $string['assignstudents'] = 'Meld inn elever';
 $string['assignstudentsnote'] = 'Merk: Du trenger egentlig ikke å bruke denne siden, da elevene kan registrere seg selv på denne kurssiden.';
-$string['assignstudentspass'] = 'Du trenger bare å gi dem nøkkelen til siden, som for denne siden er: \'$a\'.<ul> <li>Merk: Dersom du klikker på pilen til høyre for elevene nedenfor <b>fjerner</b> du dem fra kurset!</li> <li>Bruk søkefeltet til høyre for å <b>legg til</b> elever i kurset. Søk først, og klikk deretter på pilen som peker til venstre for å legge elevene til kurset.</li></ul>';
+$string['assignstudentspass'] = 'Du trenger bare å gi dem nøkkelen til siden, som for denne siden er: \'$a\'. <li>Merk: Dersom du klikker på pilen til høyre for elevene nedenfor <b>fjerner</b> du dem fra kurset! <li>Bruk søkefeltet til høyre for å <b>legg til</b> elever i kurset. Søk først, og klikk deretter på pilen som peker til venstre for å legge elevene til kurset.';
 $string['assignteachers'] = 'Legg til lærer';
 $string['authentication'] = 'Godkjenning';
 $string['autosubscribe'] = 'Få e-postkopier AUTOMATISK fra fora';
@@ -153,7 +153,7 @@ $string['configlongtimenosee'] = 'Elever som ikke er innlogget på lenge slettes 
 $string['configmaxbytes'] = 'Dette bestemmer maks størrelse på opplastede filer på hele nettstedet. Dette er avgrenset til PHP-innstillingen \'upload_max_filesize\' og Apache-innstillingen \'LimitRequestBody\'. Dette setter øvre grense for nærmere innstillinger i hvert kurs og på modulnivå.';
 $string['configmaxeditingtime'] = 'Dette bestemmer tiden man har på å redigere forumposter, journalinnlegg osv. 30 min. er vanligvis passe tid.';
 $string['configopentogoogle'] = 'Dersom du slår på denne vil Google få gå inn på siden som gjest. I tillegg vil brukere som finner siden via et Google-søk automatisk logges inn som gjester. Merk at dette bare gir gjestetilgang til de kursene som allerede har tillatt dette.';
-$string['configproxyhost'] = 'Hvis denne <b>serveren</b> må gjennom en brannmur for å få tilgang til Internett, skriv da inn nødvendig informasjon her. Hvis ikke, la feltene stå blanke.';
+$string['configproxyhost'] = 'Hvis denne <B>serveren</B> må gjennom en brannmur for å få tilgang til Internett, skriv da inn nødvendig informasjon her. Hvis ikke, la feltene stå blanke.';
 $string['configsecureforms'] = 'Moodle kan bruke ett ekstra sikkerhetsnivå når data fra nettskjema skal aksepteres. Hvis dette er slått på vil nettleserens variabel HTTP_REFERER sjekkes opp mot gjeldende skjemaadresse. I noen svært få tilfeller kan dette skape problemer hvis brukeren bruker en brannmur (f.eks. Zonealarm) som er innstilt til å fjerne HTTP_REFERER fra trafikken på nett. Symptomer er at brukeren blir \'stående fast\' i et skjema. Hvis brukerne dine har problemer med (f.eks.) innloggingssiden bør du kanskje slå av denne funksjonen, selv om dette kan gjøre siden din åpnere for \"brute-force password\"-angrep. Hvis du er i tvil, sett denne til \'Ja\'.';
 $string['configsessioncookie'] = 'Dette bestemmer navnet på informasjonskapselen som brukes når brukerne er logget inn i Moodle. Dette er valgfritt, og bare nyttig for å unngå at informasjonskapslene blandes og forstyrres når det er mer enn en kopi av Moodle som kjøres på samme nettsted.';
 $string['configsessiontimeout'] = 'Hvis brukere som er er pålogget på siden er uvirksomme lenge (uten å laste sider) blir de logget ut. (Runden avsluttes.) Denne variablen setter hvor lenge dette skal være.';
@@ -287,10 +287,10 @@ Hvis du ikke du kan klikke på linken, klipp og lim den inn i nettleseren. Dersom
 Med vennelig hilsen \'$a->sitename\' administrator,
 $a->admin';
 $string['emailconfirmationsubject'] = '$a: kontobekreftelse';
-$string['emailconfirmsent'] = '<p>En e-post er nå sendt til deg på adressen <b>$a</b></p>
-<p>Den inneholder informasjon om hvordan du fullfører registreringen.</p>
-<p>Hvis du fortsatt har problemer, vennligst ta kontakt med administrator.</p>
-<p>Dersom du ikke leser denne e-posten, får du IKKE godkjent brukerkontoen din, og du får heller ikke logget deg inn.</p>';
+$string['emailconfirmsent'] = '<P>En e-post er nå sendt til deg på adressen <B>$a</B>
+<P>Den inneholder informasjon om hvordan du fullfører registreringen.
+<P>Hvis du fortsatt har problemer, vennligst ta kontakt med administrator.
+<P>Dersom du ikke leser denne e-posten, får du IKKE godkjent brukerkontoen din, og du får heller ikke logget deg inn.';
 $string['emaildisable'] = 'Denne e-postadressen er koblet ut';
 $string['emaildisplay'] = 'E-postvisning';
 $string['emaildisplaycourse'] = 'Kun medelever og -lærere kan se min e-postadresse';
@@ -314,17 +314,17 @@ Hvis du trenger hjelp, vennligst ta kontakt med administrator,
 $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: bytt passord - bekreftelse';
 $string['emailpasswordconfirmsent'] = 'En e-post er nå sendt til din adresse <b>$a</b>.
-<br />Den inneholder instruksjoner for å fullføre endringen av passord. LES DENNE NØYE!
+<p>Den inneholder instruksjoner for å fullføre endringen av passord. LES DENNE NØYE!
 Hvis du trenger hjelp, vennligst ta kontakt med administrator,
 $a->admin';
-$string['emailpasswordsent'] = '<p>Takk for bekreftelse av passordbytte.</p>
-<p>En e-post med det NYE passordet er sendt til din adresse <b>$a->email</b>.</p>
-<p>Det nye passordet ble automatisk laget - du vil kanskje <a href=$a->link>endre passordet</a> til noe som er lettere å huske.</p>
-<p>Slett denne e-posten når du er ferdig med å bytte passord.</p>';
+$string['emailpasswordsent'] = 'Takk for bekreftelse av passordbytte.
+<p>En e-post med det NYE passordet er sendt til din adresse <b>$a->email</b>.
+<p>Det nye passordet ble automatisk laget - du vil kanskje <a href=$a->link>endre passordet</a> til noe som er lettere å huske.
+<p>Slett denne e-posten når du er ferdig med å bytte passord.';
 $string['enable'] = 'Slå på';
 $string['enrolledincourse'] = 'Har tilgang til kurs \"$a\"';
 $string['enrolledincoursenot'] = 'Har ikke tilgang til kurs \"$a\"';
-$string['enrolmentconfirmation'] = 'Du skal til å melde deg på som elev på et kurs.<br /> Er du sikker på at det er det du vil?';
+$string['enrolmentconfirmation'] = 'Du skal til å melde deg på som elev på et kurs.<br/> Er du sikker på at det er det du vil?';
 $string['enrolmentkey'] = 'Sikkerhetsnøkkel';
 $string['enrolmentkeyfrom'] = 'Dettee kurset krever en \'sikkerhetsnøkkel\'<br />
 dette er et engangspassord du burde ha fått av $a';
@@ -490,18 +490,18 @@ $string['loginas'] = 'Logg inn som';
 $string['loginguest'] = 'Logg inn som gjest';
 $string['loginsite'] = 'Logg inn på kurset';
 $string['loginsteps'] = 'Hei! For å få full tilgang til kursene må du være registrert. Dette gjør du her. Alle kursene har en sikkerhetsnøkkel for at ingen utenom elever skal kunne melde seg på kurs. FØLG DENNE PROSEDYREN NØYE:
-   <ol>
-   <li>Registrer deg som <a href=\"$a\">ny bruker</a>. Du må ha en gyldig e-postadresse for å få gjort dette.</li>
-   <li>En e-post blir sendt til din e-postadresse adresse omgående.</li>
-   <li>Les denne e-posten og klikk på linken som følger med.</li>
-   <li>Din konto vil bli godkjent og du kan logge deg inn.</li>
-   <li>Velg kurs du skal melde deg på.</li>
-   <li>Skriv inn sikkerhetsnøkkelen som du har fått av din lærer.
-   Dette vil melde deg på som elev i faget.</li>
-   <li>Du trenger nå bare å logge deg på med ditt brukernavn og passord for å få tilgang til kurset. NB! Du bruker samme brukerkonto selv om du deltar i flere kurs!</li>
-   </ol>';
-$string['loginstepsnone'] = '<p>Hei!</p><p>For å få full tilgang til kursene må du 
-registrere deg.</p><p> Du må skrive et brukernavn og passord i dette skjemaet. </p><p>Hvis noen allerede har valgt brukernavnet må du prøve på nytt med et annet.</p>';
+   <OL size=2>
+   <LI>Registrer deg som <A HREF=$a>ny bruker</A>. Du må ha en gyldig e-postadresse for å få gjort dette.
+   <LI>En e-post blir sendt til din e-postadresse adresse omgående.
+   <LI>Les denne e-posten og klikk på linken som følger med.
+   <LI>Din konto vil bli godkjent og du kan logge deg inn.
+   <LI>Velg kurs du skal melde deg på.
+   <LI>Skriv inn sikkerhetsnøkkelen som du har fått av din lærer.
+   Dette vil melde deg på som elev i faget.
+   <LI>Du trenger nå bare å logge deg på med ditt brukernavn og passord for å få tilgang til kurset. NB! Du bruker samme brukerkonto selv om du deltar i flere kurs!
+   </OL>';
+$string['loginstepsnone'] = 'Hei!<P>For å få full tilgang til kursene må du 
+registrere deg.<P> Du må skrive et brukernavn og passord i dette skjemaet. <p>Hvis noen allerede har valgt brukernavnet må du prøve på nytt med et annet.';
 $string['loginto'] = 'Logg inn på $a';
 $string['loginusing'] = 'Logg deg inn her ved å bruke ditt brukernavn og passord';
 $string['logout'] = 'Logg ut';
@@ -655,11 +655,11 @@ $string['passwordconfirmchange'] = 'Bekreft passordbytte';
 $string['passwordrecovery'] = 'Ja, hjelp meg å logge inn';
 $string['passwordsdiffer'] = 'Passordene stemmer ikke overens';
 $string['passwordsent'] = 'Passordet er sendt';
-$string['passwordsenttext'] = '   <p>En e-post er sendt til deg på $a->email.</p>
-   <p><b>Vennligst sjekk e-posten din for nytt passord</b></p>
-   <p>Det nye passordet er automatisk generert, så du burde
-   <a href="\$a->link"\>endre det til noe enklere</a>.</p>
-   <p>Slett denne e-posten når du er ferdig med å bytte passord.</p>';
+$string['passwordsenttext'] = '   <P>En e-post er sendt til deg på $a->email.
+   <P><B>Vennligst sjekk e-posten din for nytt passord</B>
+   <P>Det nye passordet er automatisk generert, så du burde
+   <A HREF=$a->link>endre det til noe enklere</A>.
+   <P>Slett denne e-posten når du er ferdig med å bytte passord.';
 $string['people'] = 'Deltakere';
 $string['personalprofile'] = 'Personlig profil';
 $string['phone'] = 'Telefon';
@@ -685,7 +685,7 @@ $string['recentactivity'] = 'Siste aktivitet';
 $string['recentactivityreport'] = 'Full rapport over nylige aktiviteter';
 $string['registration'] = 'Moodleregistrering';
 $string['registrationemail'] = 'E-postmeldinger';
-$string['registrationinfo'] = '<p>Denne siden lar deg registrere din Moodleside hos moodle.org. Registrering er gratis. Hovedfordelen med dette er at du blir lagt til en e-postliste med lite trafikk med viktige beskjeder som sikkerhetsadvarsler og nye versjoner av Moodle. <p>Standard er at din informasjon holdes privat og vil aldri bli videreformidlet til andre. Den eneste årsaken til at vi samler inn denne informasjonen er for brukerstøtte og å lage et statistisk, helhetlig bilde av bruken av Moodle.<p>Hvis du velger dette kan du la navnet på siden, land og adresse bli lagt til listen over Moodlesider. <p>Alle nyregistreringer bekreftes manuelt før de legges ut på listen, men du kan også endre denne informasjonen (og oppføringen på listen over Moodlesider) senere ved å fylle ut dette skjemaet på nytt.</p>';
+$string['registrationinfo'] = '<p>Denne siden lar deg registrere din Moodleside hos moodle.org. Registrering er gratis. Hovedfordelen med dette er at du blir lagt til en e-postliste med lite trafikk med viktige beskjeder som sikkerhetsadvarsler og nye versjoner av Moodle. <p>Standard er at din informasjon holdes privat og vil aldri bli videreformidlet til andre. Den eneste årsaken til at vi samler inn denne informasjonen er for brukerstøtte og å lage et statistisk, helhetlig bilde av bruken av Moodle.<p>Hvis du velger dette kan du la navnet på siden, land og adresse bli lagt til listen over Moodlesider. <p>Alle nyregistreringer bekreftes manuelt før de legges ut på listen, men du kan også endre denne informasjonen (og oppføringen på listen over Moodlesider) senere ved å fylle ut dette skjemaet på nytt.';
 $string['registrationno'] = 'Nei, jeg vil ikke motta e-post';
 $string['registrationsend'] = 'Send informasjon til moodle.org';
 $string['registrationyes'] = 'Ja, gi meg beskjed om viktige tema';
@@ -721,7 +721,7 @@ $string['scheduledbackupstatus'] = 'Planlagt status for sikkerhetskopiering';
 $string['search'] = 'Søk';
 $string['searchagain'] = 'Søk på nytt';
 $string['searchcourses'] = 'Søk etter kurssider';
-$string['searchhelp'] = 'Du kan søke etter flere ord samtidig.<br />ord : finn alle treff på dette ordet i teksten.<br />+ord : bare nøyaktige treff vil vises-<br />-ord : ikke inkluder sider som inneholder dette ordet.';
+$string['searchhelp'] = 'Du kan søke etter flere ord samtidig.<p>ord : finn alle treff på dette ordet i teksten.<br />+ord : bare nøyaktige treff vil vises-<br />-ord : ikke inkluder sider som inneholder dette ordet.';
 $string['searchresults'] = 'Søkeresultater';
 $string['sec'] = 'sek';
 $string['secs'] = 'sek';

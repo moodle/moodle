@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // enrol_flatfile.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+<?PHP // $Id$ 
+      // enrol_flatfile.php - created with Moodle 1.4 aiming-for-beta-soon (2004082100)
 
 
 $string['description'] = 'この方法は、あなたが指定した場所にある特別にフォーマットされたテキストファイルを繰り返しチェックします。ファイルのフォーマットは下記のようになります:
@@ -12,13 +12,10 @@ del, student, 17, CF101
 add, student, 21, CF101, 1091115000, 1091215000
 </pre>';
 $string['enrolname'] = 'フラットファイル';
-$string['filelockedmail'] = 'ファイルベースのユーザ登録で使用しているファイル($a)はcronプロセスによる削除は行われません。通常、ファイルパーミッションの問題により削除されません。Moodleが削除できるようにファイルのパーミッションを変更してください。変更しない場合は、この処理が繰り返し行われます。';
+$string['filelockedmail'] = 'ファイルベースのユーザ登録で使用しているファイル($a)はcronプロセスによる削除は行われません。通常、ファイルパーミッションの問題により削除されません。Moodleが削除出来るようにファイルのパーミッションを変更してください。変更しない場合は、この処理が繰り返し行われます。';
 $string['filelockedmailsubject'] = '重大なエラー:エンロールメントファイル';
 $string['location'] = 'ファイルの場所';
 $string['mailadmin'] = '管理者にメール通知';
 $string['mailusers'] = 'ユーザにメール通知';
-$string['thischarset'] = 'EUC-JP';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Japanese';
 
 ?>

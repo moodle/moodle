@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
 /// Library of functions and constants for attendance module
 
@@ -249,6 +249,15 @@ function attendance_user_complete($course, $user, $mod, $attendance) {
     return true;
 }
 
+function attendance_print_recent_activity($course, $isteacher, $timestart) {
+/// Given a course and a time, this module should find recent activity 
+/// that has occurred in attendance activities and print it out. 
+/// Return true if there was output, or false is there was none.
+
+    global $CFG;
+
+    return false;  //  True if anything was printed, otherwise false 
+}
 
 function attendance_cron () {
 /// Function to be run periodically according to the moodle cron
@@ -345,7 +354,7 @@ function attendance_get_participants($attendanceid) {
     global $CFG;
 
     //Get students
-    $students = get_records_sql("SELECT DISTINCT u.id, u.id
+    $students = get_records_sql("SELECT DISTINCT u.*
                                  FROM {$CFG->prefix}user u,
                                       {$CFG->prefix}attendance_roll a
                                  WHERE a.dayid = '$attendanceid' and
@@ -378,7 +387,8 @@ function attendance_get_course_students($courseid, $sort="u.lastaccess DESC") {
 
     // make sure it works on the site course
     $select = "s.course = '$courseid' AND";
-    if ($courseid == SITEID) {
+    $site = get_site();
+    if ($courseid == $site->id) {
         $select = '';
     }
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,

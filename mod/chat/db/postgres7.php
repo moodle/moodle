@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
 function chat_upgrade($oldversion) {
 // This function does anything necessary to upgrade
@@ -20,35 +20,9 @@ function chat_upgrade($oldversion) {
         modify_database("", "INSERT INTO prefix_log_display VALUES ('chat', 'talk', 'chat', 'name');");
     }
 
-    if ($oldversion < 2004111200) { //drop them first to avoid collisions with upgrades from 1.4.2+
-        execute_sql("DROP INDEX {$CFG->prefix}chat_course_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}chat_messages_chatid_idx;",false); 
-        execute_sql("DROP INDEX {$CFG->prefix}chat_messages_userid_idx;",false); 
-        execute_sql("DROP INDEX {$CFG->prefix}chat_messages_groupid_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}chat_messages_timemodifiedchatid_idx;",false); 
-        execute_sql("DROP INDEX {$CFG->prefix}chat_users_chatid_idx;",false); 
-        execute_sql("DROP INDEX {$CFG->prefix}chat_users_userid_idx;",false); 
-        execute_sql("DROP INDEX {$CFG->prefix}chat_users_groupid_idx;",false); 
-        execute_sql("DROP INDEX {$CFG->prefix}chat_users_lastping_idx;",false);
-
-        modify_database('','CREATE INDEX prefix_chat_course_idx ON prefix_chat(course);');
-        modify_database('','CREATE INDEX prefix_chat_messages_chatid_idx ON prefix_chat_messages (chatid);');
-        modify_database('','CREATE INDEX prefix_chat_messages_userid_idx ON prefix_chat_messages (userid);');
-        modify_database('','CREATE INDEX prefix_chat_messages_groupid_idx ON prefix_chat_messages (groupid);');
-        modify_database('','CREATE INDEX prefix_chat_messages_timemodifiedchatid_idx ON prefix_chat_messages(timestamp,chatid);');
-        modify_database('','CREATE INDEX prefix_chat_users_chatid_idx ON prefix_chat_users (chatid);');
-        modify_database('','CREATE INDEX prefix_chat_users_userid_idx ON prefix_chat_users (userid);');
-        modify_database('','CREATE INDEX prefix_chat_users_groupid_idx ON prefix_chat_users (groupid);');
-        modify_database('','CREATE INDEX prefix_chat_users_lastping_idx ON prefix_chat_users (lastping);');
-    }
-
-    if ($oldversion < 2005020300) {
-        table_column('chat_users', '', 'course', 'integer', '10', 'unsigned', '0', 'not null', '');
-        table_column('chat_users', '', 'lang'  , 'varchar', '10', ''        , '' , 'not null', '');
-    }
-
     return true;
 }
 
 
 ?>
+

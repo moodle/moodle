@@ -1,7 +1,7 @@
 <?PHP // $Id$ 
-      // activitynames.php - created with Moodle 1.4 development (2004081200)
+      // activitynames.php - created with Moodle 1.4 development (2004060400)
 
 
-$string['filtername'] = 'ÇáÑÈØ ÇáÂáí áÃÓãÇÁ ÇáäÔÇØ';
+$string['filtername'] = '&#1575;&#1604;&#1585;&#1576;&#1591; &#1575;&#1604;&#1570;&#1604;&#1610; &#1604;&#1571;&#1587;&#1605;&#1575;&#1569; &#1575;&#1604;&#1606;&#1588;&#1575;&#1591;';
 
 ?>

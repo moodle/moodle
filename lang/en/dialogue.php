@@ -1,4 +1,4 @@
-<?php // $Id$ 
+<?PHP // $Id$ 
       // dialogue.php - created with Moodle 1.2 development (2003111400)
 
 
@@ -14,20 +14,13 @@ $string['deleteafter'] = 'Delete Closed Dialogues after (Days)';
 $string['dialogueclosed'] = 'Dialogue Closed';
 $string['dialogueintro'] = 'Dialogue Introduction';
 $string['dialoguemail'] = '$a->userfrom has posted a new entry in your
-
 dialogue entry for \'$a->dialogue\'
-
-
 
 You can see it appended to your dialogue entry:
 
-
-
     $a->url';
 $string['dialoguemailhtml'] = '$a->userfrom has posted a new entry in your
-
 dialogue entry for \'<i>$a->dialogue</i>\'<br /><br />
-
 You can see it appended to your <a href=\"$a->url\">dialogue</a>.';
 $string['dialoguename'] = 'Dialogue name';
 $string['dialogueopened'] = 'Dialogue opened with $a';
@@ -36,7 +29,6 @@ $string['everybody'] = 'Everybody';
 $string['furtherinformation'] = 'Further Information';
 $string['lastentry'] = 'Last Entry';
 $string['maildefault'] = 'Mail Default';
-$string['mailnotification'] = 'Mail Notification';
 $string['modulename'] = 'Dialogue';
 $string['modulenameplural'] = 'Dialogues';
 $string['namehascloseddialogue'] = '$a has closed dialogue';

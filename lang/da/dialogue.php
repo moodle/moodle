@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // dialogue.php - created with Moodle 1.2 development (2003121500)
 
 
 $string['addmynewentries'] = 'Tilføj mine nye indlæg';
@@ -17,7 +17,7 @@ $string['dialoguemail'] = '$a->userfrom har skrevet en besked til dig i din dial
 
 Du kan se den tilføjet til din dialog:
 $a->url';
-$string['dialoguemailhtml'] = '$a->userfrom har skrevet en besked til dig i din dialog for \'<i>$a->dialogue</i>\' <br /><br />
+$string['dialoguemailhtml'] = '$a->userfrom har skrevet en besked til dig i din dialog for \'<i>$a->dialogue</i>\' <br /><br/>
 Du kan se den tilføjet til din <a href=\"$a->url\">dialog</a>';
 $string['dialoguename'] = 'Dialog navn';
 $string['dialogueopened'] = 'Dialog startet med $a';

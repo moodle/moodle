@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // assignment.php - created with Moodle 1.3 development (2004042600)
 
 
 $string['allowresubmit'] = 'Permitir reenvío';
@@ -18,16 +18,6 @@ $string['description'] = 'Descripción';
 $string['duedate'] = 'Fecha de entrega';
 $string['duedateno'] = 'No hay fecha de entrega';
 $string['early'] = '$a antes';
-$string['emailteachermail'] = '$a->username ha actualizado el envío de su tarea
-para \'$a->assignment\'
-
-Está disponible aquí:
-
-$a->url';
-$string['emailteachermailhtml'] = '$a->username ha actualizado el envío de su tarea
-para <i>\'$a->assignment\'</i><br /><br />
-Está <a href=\"$a->url\">disponible en el sitio web</a>.';
-$string['emailteachers'] = 'Alertas de email a los profesores';
 $string['existingfiledeleted'] = 'Se ha borrado el archivo: $a';
 $string['failedupdatefeedback'] = 'Fallo al actualizar el comentario dirigido a $a';
 $string['feedback'] = 'Comentario';
@@ -38,18 +28,14 @@ $string['maximumsize'] = 'Tamaño máximo';
 $string['modulename'] = 'Tarea';
 $string['modulenameplural'] = 'Tareas';
 $string['newsubmissions'] = 'Tareas enviadas';
-$string['noassignments'] = 'Aún no hay tareas';
 $string['notgradedyet'] = 'No calificado aún';
 $string['notsubmittedyet'] = 'Aún no ha enviado esta tarea';
 $string['overwritewarning'] = 'Advertencia: Si envía un nuevo archivo REEMPLAZARÁ al anterior';
-$string['parentlanguage'] = 'es';
 $string['saveallfeedback'] = 'Guardar todos mis comentarios';
 $string['submissionfeedback'] = 'Comentario sobre la tarea';
 $string['submissions'] = 'Envíos';
 $string['submitassignment'] = 'Envíe su tarea usando este formulario';
 $string['submitted'] = 'Enviada';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
 $string['typeoffline'] = 'Actividad no en línea';
 $string['typeuploadsingle'] = 'Subir un solo archivo';
 $string['uploadbadname'] = 'El nombre contiene caracteres incompatibles y no se pudo subir';

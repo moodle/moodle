@@ -19,10 +19,6 @@
         error("You must be an administrator to use this page.");
     }
 
-    if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
-    }
-
     $primaryadmin = get_admin();
 
 /// If you want any administrator to have the ability to assign admin

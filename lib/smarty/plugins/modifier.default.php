@@ -9,8 +9,8 @@
 /**
  * Smarty default modifier plugin
  *
- * Type:     modifier<br />
- * Name:     default<br />
+ * Type:     modifier<br>
+ * Name:     default<br>
  * Purpose:  designate default value for empty variables
  * @link http://smarty.php.net/manual/en/language.modifier.default.php
  *          default (Smarty online manual)

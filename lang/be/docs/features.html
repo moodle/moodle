@@ -1,146 +1,478 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
+
 <head>
-<title>Moodle Docs: Background</title>
-<link rel="stylesheet" href="docstyles.css" type="text/css" />
- <meta http-equiv="content-type" content="text/html; charset=windows-1251" />
+<meta http-equiv=Content-Type content="text/html; charset=windows-1251">
+<meta name=Generator content="Microsoft Word 10 (filtered)">
+<title>Асноўныя асаблівасці</title>
+
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:Wingdings;
+	panose-1:5 0 0 0 0 0 0 0 0 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0in;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman";}
+h1
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	page-break-after:avoid;
+	font-size:16.0pt;
+	font-family:Arial;}
+h3
+	{margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	page-break-after:avoid;
+	font-size:13.0pt;
+	font-family:Arial;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:56.7pt 42.5pt 56.7pt 85.05pt;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+ ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+
 </head>
+
 <body>
+
+<div class=Section1>
+
 <h1>Асноўныя асаблівасці</h1>
-<blockquote>
-<p>Сістэма з'яўляецца працуючай і ў стане развіцця. На гэтай
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Сістэма з'яўляецца працуючай і ў стане развіцця. На гэтай
 старонцы Вы знойдзеце спіс некаторых магчымасцяў сістэмы:</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
 <h3>У агульных рысах</h3>
-<ul>
-<li>Спраектаваная з улікам дасягненняў сучаснай педагогікі (акцэнт
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal>Спраектаваная з улікам дасягненняў сучаснай педагогікі (акцэнт
      на ўзаемадзеянне паміж вучнямі, абмеркаванні); </li>
-<li>Прыдатная як для навучання на адлегласці, так і для вочнага
-     (запіс на курсы, расклады, журнал)</li>
-<li>Простая, лёгкая, эфектыўная, сумяшчальніная сістэма;</li>
-<li>Простае ладаванне на любую платформу, што якая падтрымлівае PHP. Для працы неабходна толькі адна база дадзеных;</li>
-<li>Поўная абстракцыя базы дадзеных (падтрымлівае MySQL, PostgreSQL, MSSQL, Oracle, Interbase,
+ <li class=MsoNormal>Прыдатная як для навучання на адлегласці, так і для вочнага
+     (запіс на курсы, ра склады, журнал)</li>
+ <li class=MsoNormal>Просты, “лёгкі”, эфектыўны, сумяшчальны web-абалонка;</li>
+ <li class=MsoNormal>Простае ладаванне на любую платформу, што якая падтрымлівае PHP. Для працы неабходна толькі адна база дадзеных;</li>
+ <li class=MsoNormal>Поўная абстракцыя базы дадзеных (падтрымлівае MySQL, PostgreSQL, MSSQL, Oracle, Interbase,
      Foxpro, Access, ADO, Sybase, DB2 і ODBC);
      </li>
-<li>Зроблены акцэнт на абароне (шыфраваныя сесіі SSL, аўтэнтыфікацыя з LDAP-, IMAP-, POP3-, NNTP- сэрвераў). </li>
-</ul>
-<h3>Кіраванне сайтам</h3>
-<ul>
-<li>Модульны, лёгка мадыфікуемы дызайн. </li>
-<li>Далучаемыя моўныя пакеты дазваляюць дамагчыся поўнай
-     лакалізацыі. На дадзены момант падтрымліваюцца  20 моваў (улучна
-     беларуская). </li>
-<li>Добра дакументаваны код пад GPL-ліцэнзіяй
-     – модульны і лёгка мадыфікуецца.  </li>
-</ul>
-<h3>Кіраванне карыстальнікамі</h3>
-<ul>
-<li>Мінімальнае ўмяшальніцтва адміністратара пры захаванні высокай
-бяспекі;</li>
-<li>Простая інтэграцыя з існуючымі сістэмамі аўтэнтыфікацыі:</li>
-<li>На аснове электроннай пошты: студэнт можа стварыць свой рэгістрацыйны запіс. Адрас электроннай скрынкі спраўджываецца спраўджваецца праз
-пацверджанне</li>
-<li>LDAP-метад: акаўнты могуць спраўджвацца на сэрверы. Адміністратар можа даваць указанні, якія палі выкарыстоўваць</li>
-<li>IMAP,POP,NNTP: рэгістрацыйныя запісы спраўджваюцца на паштовым сэрверы або сэрверы навінаў. Падтрымліваюцца SSL і TLS.</li>
-<li>Знешняя база дадзеных: любая база дадзеных, што утрымлівае як мінімум 2 палі, можа выкарыстоўвацца ў якасці знешняй
-крыніцы аўтэнтыфікацыі. </li>
-<li>Настаўнік можа дадаць &quot;кодавае слова&quot; для сваіх
-курсаў, каб прадухіліць наведванне курсаў асобамі звонку. Ён можа перадаваць
-студэнтам ключ падчас асабістай размовы, з дапамогай электроннай пошты і д.п.</li>
-<li>Студэнты могуць рэдагаваць свае рэгістрацыйныя запісы (фотаздымкі, асабістыя 
-дадзеныя, рэквізіты </li>
-<li>Кожны карыстальнік можа пазначыць свой лакальны час, пры гэтым
-усе даты ў сістэме будуць пераведзены для яго на мясцовы час (час паведамленняў у
-форумах, тэрміны выканання заданняў, д.п.).</li>
-</ul>
-<h3>Кіраванне курсамі</h3>
-<ul>
-<li>Падтрымліваюцца розныя структуры курсаў: "каляндарны",
-"форум", "дрэва"</li>
-<li>Багаты набор модуляў-складнікаў для курсаў - Форум, Рабочы сшытак,
-Тэст, Рэсурс, Апытанне, Анкета, Практыкум.</li>
-<li>Змены, што адбыліся на  курсе з часу апошняга ўваходу
-карыстальніка ў сістэму, могуць адлюстроўвацца на першай старонцы курса. </li>
-<li>Амаль усе тэксты, якія набіраюцца, а таксама рэсурсы, паведамленні на форум, запісы ў сшыткі і д.п. - могуць рэдагавацца ўбудаваным 
-RichText-рэдактарам</li>
-<li>Усе адзнакі (з Форумаў, Працоўных сшыткаў, Тэстаў і Заданняў) могуць
-быць сабраныя на адной старонцы (або ў выглядзе файла)</li>
-<li>Даступная поўная справаздача па ўваходах карыстальніка ў сістэму і
-рабоце, з графікамі і дэталямі працы над рознымі модулямі (апошні ўваход,
-колькі разоў прачытана, паведамленні, запісы ў сшытках)</li>
-<li> Электронныя рассылкі навінаў, форумаў, адзнак і каментароў настаўнікаў.</li>
-  </ul>
-<h3>модуль Заданне </h3>
-<ul>
-    <li>Для Заданняў могуць вызначацца тэрміны здачы, максімальная
-     адзнака і фармат адказу;</li>
-    <li>Студэнты могуць запампоўваць адказы на заданне (у зададзеным
-     фармаце) на сэрвер, дзе аўтаматычна занатоўваецца час адказу (настаўнік
-     бачыць, якія работы здадзеныя пасля заканчэння тэрміну);</li>
-    <li>Кожнае заданне можна вылучыць у форум, у якім будзе ўдзельнічаць увесь клас (ставіць адзнакі і каментаваць);</li>
-    <li>Каментары настаўніка дапісваюцца пад заданнем для кожнага студэнта (копіі каментара дасылаюцца электроннай поштай);</li>
-    <li>Настаўнік можа дазволіць студэнтам уносіць змены ў свае адказы, для паўторнай ацэнкі. </li>
-</ul>
-<h3>модуль Апытанне </h3>
-<ul>
-    <li>Можа быць скарыстаны для таго, каб студэнты
-     прагаласавалі за што-небудзь, або для атрымання каментароў ад кожнага
-     студэнта;</li>
-    <li>Настаўнік бачыць вынікі ў выглядзе табліцы вучань - выбар. </li>
-</ul>
-<h3>модуль Форум </h3>
-<ul>
-    <li>Даступныя розныя тыпы форумаў (&quot;толькі для настаўнікаў&quot;, &quot;форум навінаў&quot;, &quot;адкрыты для ўсіх&quot; і інш.)</li>
-    <li>Да кожнага паведамлення далучаецца фотаздымак аўтара</li>
-    <li>Карыстальнік можа выбіраць, ў якім выглядзе яму будуць паказваць паведамленні форума («плоскі»\«дрэва», сарціроўка</li>
-    <li>Карыстальнікі могуць падпісацца на індывідуальныя форумы (будуць атрымліваць паведамленні праз электронную пошту, або настаўнікі могуць у абавязковым парадку падпісаць на форум усіх</li>
-    <li>Настаўнікі могуць забараніць карыстальнікам адказваць у форуме
-(форумы навінаў).</li>
-</ul>
-<h3>модуль Рабочы сшытак </h3>
-<ul>
-    <li>Рабочы сшытак - гэта прыватны кантакт паміж настаўнікам і вучнем</li>
-    <li>Настаўнік можа ацэньваць кожны запіс у сшытку для ўсёй групы адначасова ў зручнай web-абалонцы на адной старонцы</li>
-    <li>Каментар настаўніка дадаецца да запісу ў сшытку, і паведамленне пра гэта дасылаецца праз email.</li>
-</ul>
-<h3>модуль Тэст </h3>
-<ul>
-    <li>Настаўнік можа ў web-абалонцы стварыць
-базу дадзеных, якая ўтрымлівае пытанні для шматразовага выкарыстання ў розных
-тэстах</li>
-    <li>Тэсты аўтаматычна ацэньваюцца (і могуць быць пераацэнены пры змяненні "вартасці" пытанняў)</li>
-    <li>Тэсты могуць мець абмежаванні па часе </li>
-    <li>На выбар настаўніка, тэставанне па адным матэрыяле могуць праводзіцца некалькі разоў, могуць быць паказаныя каментары да адказаў і/або правільныя адказы. </li>
-    <li>Пытанні могуць утрымліваць HTML-тэкст і карцінкі. </li>
-    <li>Пытанні, што прапаноўваюць выбар з варыянтаў адказаў могуць мець як адзін правільны адказ, так і некалькі. </li>
-    <li>Падтрымліваюцца пытанні з адказам  у выглядзе слова або фразы </li>
-    <li>Падтрымліваюцца пытанні, якія маюць альтэрнатыву (дакладна/недакладна) </li>
-</ul>
-<h3>модуль Ресурс </h3>
-<ul>
-    <li>Падтрымлівае любы кантэнт у электронным выглядзе; </li>
-    <li>Файлы могуць быць або запампаваны выкладчыкам і захоўвацца на
-сэрверы, або стварацца &quot;па ходзе п'есы&quot;, выкарыстоўваючы web-формы
-(тэкст або HTML);</li>
-    <li>Тыпы рэсурсаў:</li>
-    <li>HTML-тэкст;</li>
-    <li>Спасылка - спасылка на артыкул у журнале або кнізе;</li>
-    <li>Запампаваны файл - адлюстроўвае любы файл, які Вы запампавалі для курса;</li>
-    <li>Web-спасылка - URL спасылка;</li>
-    <li>Web-старонка - працуе аналагічна Web-спасылцы, за выключэннем таго, што рэсурс адчыняецца ў фрэйме (інтэгруецца з сайтам);</li>
-    <li>Знешняя праграма, якая на ўваходзе прымае інфармацыю аб карыстальніку і курсе.</li>
+ <li class=MsoNormal>Зроблены акцэнт на абароне (шыфраваныя сесіі SSL, аўтэнтыфікацыя з LDAP-, IMAP-, POP3-, NNTP- сэрвераў).
+     </li>
 </ul>
 
-<h3 >модуль Анкета </h3>
-<ul>
-    <li>Убудаваныя анкеты могуць быць скарыстаныя для тэставання класаў;</li>
-    <li>Складаецца онлайнавая справаздача па анкетах, якая ўтрымлівае графікі.</li>
-    <li>Дадзеныя могуць быць зпампаваны ў Excel-фармаце або ў выглядзе CSV-файла;</li>
-    <li>Абалонка анкет прадухіляе частковае запаўненне;</li>
-    <li>Па запаўненні анкеты студэнт можа атрымаць прыведзеныя да сярэдняга паказчыка вынікі агульнага апытання. </li>
-  </ul>
-</blockquote>
-<p align="center"><font size="1"><a href="." target="_top">Дакусентацыя Moodle</a></font></p>
-<p align="center"><font size="1">Version: $Id$</font></p>
+<h3>Кіраванне сайтам</h3>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal>Модульны, лёгка мадыфікуемы дызайн. </li>
+ <li class=MsoNormal>Далучаемыя моўныя пакеты дазваляюць дамагчыся поўнай
+     лакалізацыі. На дадзены момант падтрымліваюцца  20 моваў (улучна
+     беларуская). </li>
+ <li class=MsoNormal>Добра дакументаваны код пад GPL-ліцэнзіяй
+     – модульны і лёгка мадыфікуецца.  </li>
+</ul>
+
+<h3>Кіраванне карыстальнікамі</h3>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Мінімальнае ўмяшальніцтва адміністратара пры захаванні высокай
+бяспекі;</p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Простая інтэграцыя з існуючымі сістэмамі аўтэнтыфікацыі:</p>
+
+<p class=MsoNormal style='margin-left:1.0in;text-indent:-.25in'><span
+style='font-size:11.0pt;font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:11.0pt'>на аснове </span><span style='font-size:11.0pt'>e</span><span style='font-size:11.0pt'>-</span><span
+style='font-size:11.0pt'>mail</span><span style='font-size:11.0pt'>:
+студэнт можа стварыць свой акаўнт. </span><span style='font-size:
+11.0pt'>Email</span><span style='font-size:11.0pt'> адрас спраўджваецца праз
+пацверджанне;</span></p>
+
+<p class=MsoNormal style='margin-left:1.0in;text-indent:-.25in'><span
+style='font-size:11.0pt;font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:11.0pt'>LDAP</span><span
+style='font-size:11.0pt'>-метад: акаўнты могуць спраўджвацца на </span><span
+style='font-size:11.0pt'>LDAP</span><span style='font-size:11.0pt'>
+сэрверы. Адміністратар можа даваць указанні, якія палі выкарыстоўваць;</span></p>
+
+<p class=MsoNormal style='margin-left:1.0in;text-indent:-.25in'><span
+style='font-size:11.0pt;font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span lang=EN-US style='font-size:11.0pt'>IMAP</span><span
+style='font-size:11.0pt'>, </span><span lang=EN-US style='font-size:11.0pt'>POP</span><span
+style='font-size:11.0pt'>3, </span><span lang=EN-US style='font-size:11.0pt'>NNTP</span><span
+style='font-size:11.0pt'>: акаўнты спраўджваюцца на паштовым сэрверы або сэрверы навінаў. Падтрымліваюцца </span><span lang=EN-US style='font-size:11.0pt'>SSL</span><span
+style='font-size:11.0pt'> і </span><span lang=EN-US style='font-size:11.0pt'>TLS</span><span
+style='font-size:11.0pt'>. </span></p>
+
+<p class=MsoNormal style='margin-left:1.0in;text-indent:-.25in'><span
+style='font-size:11.0pt;font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:11.0pt'>Знешняя база дадзеных: любая база
+дадзеных, што утрымлівае як мінімум 2 палі, можа выкарыстоўвацца ў якасці знешняй
+крыніцы аўтэнтыфікацыі. </span></p>
+
+<p class=MsoNormal> </p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Настаўнік можа дадаць &quot;кодавае слова&quot; для сваіх
+курсаў, каб прадухіліць наведванне курсаў асобамі звонку. Ён можа перадаваць
+студэнтам ключ падчас асабістай размовы, з дапамогай <span lang=EN-US>email</span>, д.п. </p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Студэнты могуць рэдагаваць свае акаўнты (фотаздымкі, асабістыя 
+дадзеныя, рэквізіты); </p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Кожны карыстальнік можа пазначыць свой лакальны час, пры гэтым
+усе даты ў сістэме будуць пераведзены для яго на мясцовы час (час паведамленняў у
+форумах, тэрміны выканання заданняў, д.п.).</p>
+
+<h3>Кіраванне курсамі</h3>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Падтрымліваюцца розныя структуры курсаў: «каляндарны»,
+«форум», «дрэва»;</p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Багаты набор модуляў-складнікаў для курсаў - Форум, Сшытак,
+Тэст, Рэсурс, Апытанне, Анкета, Хатняе Заданне;</p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Змены, што адбыліся на  курсе з часу апошняга ўваходу
+карыстальніка ў сістэму, могуць адлюстроўвацца на першай старонцы курса. </p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Амаль усе тэксты, якія набіраюцца, а таксама рэсурсы, паведамленні на форум, запісы ў сшыткі і д.п. - могуць рэдагавацца ўбудаваным <span lang=EN-US>WYSIWYG</span><span
+lang=EN-US> </span><span lang=EN-US>RichText</span>-рэдактарам;</p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Усе адзнакі (з Форумаў, Працоўных сшыткаў, Тэстаў і Заданняў) могуць
+быць сабраныя на адной старонцы (або ў выглядзе файла);</p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Даступная поўная справаздача па ўваходах карыстальніка ў сістэму і
+рабоце, з графікамі і дэталямі працы над рознымі модулямі (апошні ўваход,
+колькі разоў прачытана, паведамленні, запісы ў сшытках); </p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span lang=EN-US>E</span>-<span lang=EN-US>mail</span>-рассылкі
+навінаў, форумаў, адзнак і каментароў настаўнікаў.</p>
+
+<h3><span style='font-weight:normal'>модуль</span> Заданне </h3>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal>Для Заданняў могуць вызначацца тэрміны здачы, максімальная
+     адзнака і фармат адказу;</li>
+ <li class=MsoNormal>Студэнты могуць запампоўваць адказы на заданне (у зададзеным
+     фармаце) на сэрвер, дзе аўтаматычна занатоўваецца час адказу (настаўнік
+     бачыць, якія работы здадзеныя пасля заканчэння тэрміну);</li>
+ <li class=MsoNormal>Кожнае заданне можна вылучыць у форум, у якім будзе ўдзельнічаць увесь клас (ставіць адзнакі і каментаваць);</li>
+ <li class=MsoNormal>Каментары настаўніка дапісваюцца пад заданнем для кожнага
+     студэнта (копіі каментара дасылаюцца электроннай поштай);</li>
+ <li class=MsoNormal>Настаўнік можа дазволіць студэнтам уносіць змены ў свае адказы, для паўторнай ацэнкі. </li>
+</ul>
+
+<h3><span style='font-weight:normal'>модуль</span> Апытанне </h3>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal>Можа быць скарыстаны для таго, каб студэнты
+     прагаласавалі за што-небудзь, або для атрымання каментароў ад кожнага
+     студэнта;</li>
+ <li class=MsoNormal>Настаўнік бачыць вынікі ў выглядзе табліцы вучань - выбар. </li>
+</ul>
+
+<h3><span style='font-weight:normal'>модуль</span> Форум </h3>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Даступныя розныя тыпы форумаў (&quot;толькі для настаўнікаў&quot;,
+&quot;форум навінаў&quot;, &quot;адкрыты для ўсіх&quot; і інш.);</p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Да кожнага паведамлення далучаецца фотаздымак аўтара; </p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Карыстальнік можа выбіраць, ў якім выглядзе яму будуць паказваць
+паведамленні форума («плоскі»\«дрэва», сарціроўка);</p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Карыстальнікі могуць падпісацца на індывідуальныя форумы (будуць
+атрымліваць паведамленні праз <span lang=EN-US>email</span>) або настаўнікі могуць у
+абавязковым парадку падпісаць на форум усіх;</p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Настаўнікі могуць забараніць карыстальнікам адказваць у форуме
+(форумы навінаў).</p>
+
+<h3><span style='font-weight:normal'>модуль</span> Сшытак </h3>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Сшытак - гэта прыватны кантакт паміж настаўнікам і вучнем;</p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Настаўнік можа ацэньваць кожны запіс у сшытку для ўсёй групы
+адначасова ў зручнай <span lang=EN-US>web</span>-абалонцы на адной
+старонцы;</p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Каментар настаўніка дадаецца да запісу ў сшытку, і паведамленне
+пра гэта дасылаецца праз <span lang=EN-US>email</span>. </p>
+
+<h3><span style='font-weight:normal'>модуль</span> Тэст </h3>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Настаўнік можа ў <span lang=EN-US>web</span>-абалонцы стварыць
+базу дадзеных, якая ўтрымлівае пытанні для шматразовага выкарыстання ў розных
+тэстах;</p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Тэсты аўтаматычна ацэньваюцца (і могуць быць пераацэнены пры
+змяненні «вартасці» пытанняў);</p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Тэсты могуць мець абмежаванні па часе; </p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>На выбар настаўніка, тэставанне па адным матэрыяле могуць праводзіцца некалькі разоў, могуць быць паказаныя каментары да адказаў і/або правільныя адказы. </p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Пытанні могуць утрымліваць <span lang=EN-US>HTML</span>-тэкст і
+карцінкі. </p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Пытанні, што прапаноўваюць выбар з варыянтаў адказаў могуць мець
+як адзін правільны адказ, так і некалькі. </p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Падтрымліваюцца пытанні з адказам  у выглядзе слова або фразы </p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Падтрымліваюцца пытанні, якія маюць альтэрнатыву (дакладна/недакладна) </p>
+
+<h3><span style='font-weight:normal'>модуль</span> Ресурс </h3>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Падтрымлівае любы кантэнт у электронным выглядзе; </p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Файлы могуць быць або запампаваны выкладчыкам і захоўвацца на
+сэрверы, або стварацца &quot;«па ходзе п'есы»&quot;, выкарыстоўваючы <span lang=EN-US>web</span>-формы
+(тэкст або <span lang=EN-US>HTML</span>);</p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Тыпы рэсурсаў:</p>
+
+<p class=MsoNormal style='margin-left:1.0in;text-indent:-.25in'><span
+style='font-size:11.0pt;font-family:"Courier New"'>o<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:11.0pt'>HTML-тэкст;</span></p>
+
+<p class=MsoNormal style='margin-left:1.0in;text-indent:-.25in'><span
+style='font-size:11.0pt;font-family:"Courier New"'>o<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:11.0pt'>Спасылка - спасылка на артыкул у
+журнале або кнізе;</span></p>
+
+<p class=MsoNormal style='margin-left:1.0in;text-indent:-.25in'><span
+style='font-size:11.0pt;font-family:"Courier New"'>o<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:11.0pt'>Запампаваны файл - адлюстроўвае любы
+файл, які Вы запампавалі для курса;</span></p>
+
+<p class=MsoNormal style='margin-left:1.0in;text-indent:-.25in'><span
+style='font-size:11.0pt;font-family:"Courier New"'>o<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:11.0pt'>Web-спасылка - URL спасылка;</span></p>
+
+<p class=MsoNormal style='margin-left:1.0in;text-indent:-.25in'><span
+style='font-size:11.0pt;font-family:"Courier New"'>o<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:11.0pt'>Web-старонка - працуе аналагічна
+Web-спасылцы, за выключэннем таго, што рэсурс адчыняецца ў фрэйме
+(інтэгруецца з сайтам);</span></p>
+
+<p class=MsoNormal style='margin-left:1.0in;text-indent:-.25in'><span
+style='font-family:"Courier New"'>o<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><span style='font-size:11.0pt'>Знешняя праграма, якая на ўваходзе прымае 
+інфармацыю аб карыстальніку і курсе.</span></p>
+
+<h3><span style='font-weight:normal'>модуль</span> Анкета </h3>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Убудаваныя анкеты <span lang=EN-US>COLLES</span>, <span
+lang=EN-US>ATTLS</span><span lang=EN-US> </span>могуць быць скарыстаныя для тэставання класаў;</p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Складаецца онлайнавая справаздача па анкетах, якая ўтрымлівае графікі.
+Дадзеныя могуць быць зпампаваны ў <span lang=EN-US>Excel</span>-фармаце або ў выглядзе <span
+lang=EN-US>CSV</span>-файла;</p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Абалонка анкет прадухіляе частковае запаўненне;</p>
+
+<p class=MsoNormal style='margin-left:24.0pt;text-indent:-.25in'><span
+style='font-family:Symbol'>•<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span>Па запаўненні анкеты студэнт можа атрымаць прыведзеныя да сярэдняга паказчыка вынікі агульнага апытання. </p>
+
+<p class=MsoNormal>У сістэму ўбудаваныя  дадатковыя модулі:</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><span lang=EN-US>ADOdb   -  lib/adodb</span></p>
+
+<p class=MsoNormal>Бібліятэка для абстракцыі базы дадзеных<span lang=EN-US> (</span>для падтрымкі баз дадзеных<span lang=EN-US> MySQL, PostgreSQL, MSSQL, Oracle, Interbase,
+Foxpro, Access, ADO, Sybase, DB2 and ODBC).</span></p>
+
+<p class=MsoNormal><span lang=EN-US>Version: 2.50</span></p>
+
+<p class=MsoNormal><span lang=EN-US>Copyright © 2000, 2001 John Lim (jlim@natsoft.com.my)</span></p>
+
+<p class=MsoNormal><span lang=EN-US>License: Dual LGPL and BSD-style</span></p>
+
+<p class=MsoNormal><span lang=EN-US>URL:  {http://php.weblogs.com/adodb}</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><span lang=EN-US>Graph Class   -  lib/graphlib.php </span></p>
+
+<p class=MsoNormal>Бібліятэка для малявання графікаў.</p>
+
+<p class=MsoNormal><span lang=EN-US>Version: 1.6.3 (with modifications)</span></p>
+
+<p class=MsoNormal><span lang=EN-US>Copyright © 2000  Herman Veluwenkamp,
+hermanV@mindless.com</span></p>
+
+<p class=MsoNormal><span lang=EN-US>License: LGPL</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><span lang=EN-US>IP-Atlas  -   lib/ipatlas</span></p>
+
+<p class=MsoNormal><span lang=EN-US>PHP</span>-скрыпт, які паказвае палажэнне <span
+lang=EN-US>IP</span>-адрэсу  на карце.</p>
+
+<p class=MsoNormal><span lang=EN-US>Version: 1.0 (with modifications)</span></p>
+
+<p class=MsoNormal><span lang=EN-US>Copyright © 2002   Ivan Kozik</span></p>
+
+<p class=MsoNormal><span lang=EN-US>License: GNU GPL</span></p>
+
+<p class=MsoNormal><span lang=EN-US>URL: {http://www.xpenguin.com/ip-atlas.php}</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><span lang=EN-US>PHP mailer   -  lib/class.phpmailer.php</span></p>
+
+<p class=MsoNormal>Клас для адпраўкі <span lang=EN-US>email</span>, карыстаючыся
+<span lang=EN-US>Sendmail</span>, <span lang=EN-US>PHP</span><span lang=EN-US> </span><span
+lang=EN-US>mail</span>(), або <span lang=EN-US>SMTP</span>.  Метады, якія базуюцца
+на стандартных <span lang=EN-US>AspEmail</span>(<span lang=EN-US>tm</span>)
+класах.</p>
+
+<p class=MsoNormal><span lang=EN-US>Version 1.60, Created </span><span lang=EN-US>03/30/2002</span></p>
+
+<p class=MsoNormal><span lang=EN-US>Copyright © 2001 Brent R. Matzelle
+&lt;bmatzelle@yahoo.com&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>License: LGPL</span></p>
+
+<p class=MsoNormal><span lang=EN-US>URL:   {http://phpmailer.sourceforge.net}</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>PHP Simple Excel File Generator  -   lib/psxlsgen.php</span></p>
+
+<p class=MsoNormal>Клас для генерацыі простых  <span lang=EN-US>MS</span><span
+lang=EN-US> </span><span lang=EN-US>Excel</span> файлаў (<span lang=EN-US>xls</span>)
+з дапамогай <span lang=EN-US>PHP</span>.</p>
+
+<p class=MsoNormal><span lang=EN-US>Version: 0.3b</span></p>
+
+<p class=MsoNormal><span lang=EN-US>Copyright © 2001  Erol Ozcan
+&lt;eozcan@superonline.com&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>License: GNU LGPL</span></p>
+
+<p class=MsoNormal><span lang=EN-US>URL: {http://psxlsgen.sourceforge.net}</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><span lang=EN-US>Richtext Editor  -   lib/rte</span></p>
+
+<p class=MsoNormal><span lang=EN-US>HTML</span>-рэдактар, убудаваны ў <span
+lang=EN-US>web</span>-браўзэр.</p>
+
+<p class=MsoNormal><span lang=EN-US>Version: 0.30 beta 1 (plus modifications)</span></p>
+
+<p class=MsoNormal><span lang=EN-US>Copyright © 2001 Ramesys (Contracting
+Services) Limited &lt;Austin.France@Ramesys.com&gt; License: GNU LGPL</span></p>
+
+<p class=MsoNormal><span lang=EN-US>URL: {http://richtext.sourceforge.net}</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><span lang=EN-US>SMTP class   -  lib/class.smtp.php</span></p>
+
+<p class=MsoNormal>Клас для злучэння і камунікавання з любым <span
+lang=EN-US>SMTP</span>- сэрверам. </p>
+
+<p class=MsoNormal><span lang=EN-US>It implements all the SMTP functions
+defined in RFC821 except TURN.</span></p>
+
+<p class=MsoNormal><span lang=EN-US>Version: </span><span
+ lang=EN-US>03/26/2001</span><span lang=EN-US> </span></p>
+
+<p class=MsoNormal><span lang=EN-US>Copyright © 2001  Chris Ryan
+&lt;chris@greatbridge.com&gt;</span></p>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+</div>
+
 </body>
+
 </html>

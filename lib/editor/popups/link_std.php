@@ -1,12 +1,11 @@
 <?php // $Id$
     include("../../../config.php");
 
-    $id = required_param('id');
+    $id = $_GET['id'];
 
-    if ($course = get_record("course", "id", $id)) {
-        $isteacher = isteacher($course->id);
-    } else {
-        $isteacher = false;
+    require_variable($id);
+
+    if (!$course = get_record("course", "id", $id)) {
         $course->fullname = "";   // Just to keep display happy, though browsing may fail
     }
 ?>
@@ -14,7 +13,7 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=<?php print_string("thischarset");?>" />
+<meta http-equiv="Content-Type" content="text/html; <?php print_string("thischarset");?>" />
   <title><?php print_string("insertlink","editor");?></title>
   <script language="javascript" type="text/javascript" src="popup.js"></script>
   <script language="javascript" type="text/javascript">
@@ -177,10 +176,7 @@ border-bottom: 1px solid black; letter-spacing: 2px;
 </table>
 
 <div id="buttons">
-  <?php if ($isteacher) {
-            echo "<button type=\"button\" name=\"browse\" onclick=\"return onBrowse();\">".get_string("browse","editor")."...</button>";
-        }
-  ?>
+  <?php print(isteacher($id))? "<button type=\"button\" name=\"browse\" onclick=\"return onBrowse();\">".get_string("browse","editor")."...</button>" : ""; ?>
   <button type="button" name="ok" onclick="return onOK();"><?php print_string("ok","editor");?></button>
   <button type="button" name="cancel" onclick="return onCancel();"><?php print_string("cancel","editor");?></button>
 </div>

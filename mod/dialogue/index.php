@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -31,7 +31,7 @@
     $timenow = time();
 
     $table->head  = array ($strname, $stropendialogues, $strcloseddialogues);
-    $table->align = array ("center", "center", "center");
+    $table->align = array ("CENTER", "CENTER", "CENTER");
  
     foreach ($dialogues as $dialogue) {
 

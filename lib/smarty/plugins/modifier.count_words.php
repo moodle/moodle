@@ -9,8 +9,8 @@
 /**
  * Smarty count_words modifier plugin
  *
- * Type:     modifier<br />
- * Name:     count_words<br />
+ * Type:     modifier<br>
+ * Name:     count_words<br>
  * Purpose:  count the number of words in a text
  * @link http://smarty.php.net/manual/en/language.modifier.count.words.php
  *          count_words (Smarty online manual)

@@ -1,19 +1,18 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
+      // moodle.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['action'] = 'ֱֵַּׁ';
 $string['active'] = 'הװ״';
 $string['activities'] = 'ֳהװ״ֹ';
 $string['activity'] = 'הװַ״';
-$string['activityclipboard'] = 'הÞב ו׀ַ ַבהװַ״: <b>$a</b>';
+$string['activityclipboard'] = 'הÞב ו׀ַ ַבהװַ״: <b>$a</b<=>';
 $string['activityiscurrentlyhidden'] = 'Ú׀ַׁנ ו׀ַ ַבהװַ״ ד־Ýם ַֽבםַנ';
 $string['activitymodule'] = 'זֹֽֿ הװַ״';
 $string['activityreport'] = 'ÊÞׁםׁ ַבהװַ״';
 $string['activityselect'] = 'ֳ־Êׁ ו׀ַ ַבהװַ״ בהÞבו ֵבל דßַה ֳ־ׁ';
 $string['activitysince'] = 'הװַ״ דה׀ $a';
 $string['add'] = 'ֳײÝ';
-$string['addactivity'] = 'ֳײÝ הװַ״';
 $string['addadmin'] = 'ֳײÝ דֿםׁ';
 $string['addcreator'] = 'ֳײÝ דהװֶ דהוּ ַֿׁ׃ם';
 $string['added'] = 'ÊדÊ ֵײַÝֹ $a';
@@ -26,25 +25,21 @@ $string['addingdatatoexisting'] = 'ֵײַÝֹ דÚבזדַÊ בבַֽבם';
 $string['addnewcategory'] = 'ֳײÝ ױהÝ ּֿםֿ';
 $string['addnewcourse'] = 'ֳײÝ דהוּ ַֿׁ׃ם ּֿםֿ';
 $string['addnewuser'] = 'ֳײÝ ד׃Ê־ֿד ּֿםֿ';
-$string['addresource'] = 'ֳײÝ דױֿׁ';
 $string['address'] = 'ַבÚהזַה';
 $string['addstudent'] = 'ֳײÝ ״ַבָ';
-$string['addteacher'] = 'ֳײÝ דÚבד';
+$string['addteacher'] = 'ֳײÝ דֿׁ׃';
 $string['admin'] = 'דֿםׁ ַבדזÞÚ';
 $string['adminhelpaddnewuser'] = 'ֵהװֱַ ֽ׃ַָ ד׃Ê־ֿד ּֿםֿ םֿזםַנ';
 $string['adminhelpassignadmins'] = 'ַבדֱַֿׁ ם׃Ê״םÚזה ַבÞםַד ָּדםÚ ַבÚדבםַÊ Ýם ֵם דßַה Ýם ַבדזÞÚ';
 $string['adminhelpassigncreators'] = 'ַבדהװֶזה ם׃Ê״םÚזה ֵהװֱַ  ַבדהַוּ ַבַֿׁ׃םֹ ַבּֿםֿ זַבÊֿׁם׃ Ýםוַ';
 $string['adminhelpassignstudents'] = 'ֵ׀וָ ֵבל ַבדהוּ ַבַֿׁ׃ם זֳײÝ ַב״בַָ דה Þֶַדֹ ַבדֿםׁ';
-$string['adminhelpassignteachers'] = 'ֳָֻֽ Úה דהוּ ַֿׁ׃ם ֻד ַ׃Ê־ֿד ַבֳÞזהֹ בֵײַÝֹ דÚבדזה';
+$string['adminhelpassignteachers'] = 'ֳָֻֽ Úה דהוּ ַֿׁ׃ם ֻד ַ׃Ê־ֿד ַבֳÞזהֹ בֵײַÝֹ דֿׁ׃םה';
 $string['adminhelpauthentication'] = 'םדßהß ַ׃Ê־ַֿד ֽ׃ַַָÊ ַבד׃Ê־ֿדםה ַבדזּזֹֿ ֳז ַ׃Ê־ַֿד ÞַÚֹֿ ָםַהַÊ ־ַּׁםֹ';
 $string['adminhelpbackup'] = 'ֳÚֿ  ַבה׃־ ַבַֽÊםַ״ם ַבֲבל זדזַÚםֿו';
 $string['adminhelpconfiguration'] = 'ֳÚֿ Úדב זדÙוׁ ַבדזÞÚ';
 $string['adminhelpconfigvariables'] = 'ֳÚֿ ַבדÊÛםַׁÊ ַבÊם Êִֻׁ Úבל Úדבםֹ ַבדזÞÚ ַבÚַדֹ';
 $string['adminhelpcourses'] = 'ÚׁÝ ַבדהַוּ ַבַֿׁ׃םֹ זַבַױהַÝ זÚםה ַװ־ַױ בוד';
-$string['adminhelpeditorsettings'] = 'ÊÚׁםÝ ַבַÚַַֿֿÊ ַבַ׃ַ׃םֹ בדֽׁׁ ַב Êװ Êם ֳד ֵב';
 $string['adminhelpedituser'] = 'ַ׃ÊÚׁײ Þֶַדֹ ֽ׃ַַָÊ ַבד׃Ê־ֿדםה זֽׁׁ ֳם דהוד';
-$string['adminhelpenrolments'] = 'ֵ־Êׁת ״ׁÞף ַֿ־בםֹנ ֳףז ־ַּׁםֹף בב׃ףםת״ףׁףֹ Úבל ַבÊ׃ּםבַÊצ';
-$string['adminhelpfailurelogs'] = 'ÊױÝרֽת ׃ּבַÊף דַֽזבַÊ ַבֿ־זב ַבÝַװבֹ';
 $string['adminhelplanguage'] = 'בדַּׁÚֹ זÊֽׁםׁ ֽׂדֹ ַבבÛֹ ַבַֽבםֹ';
 $string['adminhelplogs'] = 'ַ׃ÊÚַׁײ ׃ּבַÊ ּדםÚ ַבֳהװ״ֹ ַָבדזÞÚ';
 $string['adminhelpmanageblocks'] = 'ַֿׁ ַבßÊב ַבדָֻÊו זֵÚַַֿֿÊוַ';
@@ -59,10 +54,7 @@ $string['adminhelpusers'] = 'ÚׁÝ ד׃Ê־ֿדם דזÞÚß זֳÚֿ ״ׁםÞֹ ַבÊזֻםÞ';
 $string['administration'] = 'ֵַֹֿׁ ַבדזÞÚ';
 $string['administrator'] = 'דֿםׁ';
 $string['administrators'] = 'דֱַֿׁ';
-$string['administratorsall'] = 'ßב ַבדֱַֿׁ';
-$string['administratorsandteachers'] = 'ַבדֱַֿׁ זַבדÚבדזה';
 $string['advancedfilter'] = 'ָֻֽ דÊÞֿד';
-$string['advancedsettings'] = 'ֵÚַַֿֿÊ דÊÞֿדֹ';
 $string['again'] = 'דֹׁ ֳ־ׁל';
 $string['all'] = 'ַבßב';
 $string['allactivities'] = 'ּדםÚ ַבַהװ״ֹ';
@@ -72,10 +64,8 @@ $string['allgroups'] = 'ּדםÚ ַבדּדזÚַÊ';
 $string['alllogs'] = 'ßב דבÝַÊ ַבÊÞַׁםׁ';
 $string['allow'] = 'ַ׃דֽ';
 $string['allowguests'] = 'ם׃דֽ בבד׃Ê־ֿדםה ַבײםזÝ ַָבֿ־זב ֵבל ו׀ַ ַבדהוּ ַבַֿׁ׃ם';
-$string['allowinternal'] = 'ַב׃דַֽ ַָב״ׁÞ ַבַֿ־בםֹ';
 $string['allownot'] = 'בַ Ê׃דֽ';
 $string['allparticipants'] = 'ßב ַבדװַׁßםה';
-$string['allteachers'] = 'ßב ַבדÚבדזה';
 $string['alphabet'] = 'ֳ¡ָ¡Ê¡ֻ¡ּ¡ֽ¡־¡ֿ¡׀¡ׁ¡ׂ¡׃¡װ¡ױ¡ײ¡״¡Ù¡Ú¡Û¡Ý¡Þ¡ß¡ב¡ד¡ה¡וÜ¡ז¡ם¡';
 $string['alphanumerical'] = 'בַ םÞָב ֵבַ ֽׁזÝַ וֶַּםֹ ֳז ֳׁÞַדַ';
 $string['alreadyconfirmed'] = 'Êד Êֳßםֿ ַבÊ׃ּםב ַָבÝÚב';
@@ -89,7 +79,7 @@ $string['assigncreators'] = 'Úםה דהװֶזה';
 $string['assignstudents'] = '׃ּב ״בַָ';
 $string['assignstudentsnote'] = 'דבַֽÙֹ: ָׁדַ בם׃ דה ַבײׁזׁם ַ׃Ê־ַֿד ו׀ו ַבױÝֹֽ¡ ֽםֻ ֳה ַב״בַָ ׃םÞזדזה ָÊ׃ּםב ַב׀ַÊם Ýם ו׀ַ ַבדהוּ ַבַֿׁ׃ם.';
 $string['assignstudentspass'] = 'ָׁדַ דַ םָּ ַבÞםַד ָו וז ֵװÚַׁ ַב״בַָ ָדÝÊַֽ ַבÊ׃ּםב ֵבל ַבדהוּ ַבַֿׁ׃ם¡ זַב׀ם וז:\'$a\'';
-$string['assignteachers'] = 'ÊÚםםה דÚבדזה';
+$string['assignteachers'] = 'ÊÚםםה דֿׁ׃םה';
 $string['authentication'] = 'ÊזֻםÞ';
 $string['autosubscribe'] = 'Ê׃ּםב ֲבל Ýם ַבדהÊֿל';
 $string['autosubscribeno'] = 'בַ: בַ ÊÞד ָÊ׃ּםבם ֲבםַנ Ýם ַבדהÊֿםַÊ';
@@ -100,26 +90,17 @@ $string['backup'] = 'ה׃־ֹ ֵֽÊםַ״םֹ';
 $string['backupcoursefileshelp'] = 'Êדßםה ו׀ו ַב־ַױםֹ ׃ם׃דֽ ֵָײַÝֹ דבÝַÊ ַבדהוּ ַבַֿׁ׃ם ֵבל ַבה׃־ ַבַֽÊםַ״ם ַבֲבל';
 $string['backupdate'] = 'Êַׁם־ ַבה׃־ֹ ַבֵֽÊםַ״םֹ';
 $string['backupdetails'] = 'ÊÝַױםב  ַבה׃־ֹ ַבֵֽÊםַ״םֹ';
-$string['backupfailed'] = 'ָÚײ דהַוּß ַבַֿׁ׃םֹ בד םÊד ֽÝÙוַ';
 $string['backupfilename'] = 'ַ׃ד דבÝ  ַבה׃־ֹ ַבֵֽÊםַ״םֹ';
 $string['backupfinished'] = 'ַבה׃־ ַבֵֽÊםַ״ם Êד ָהַּֽ';
 $string['backupincludemoduleshelp'] = 'ֽֿֿ ׁÛָÊß Ýם ֵײַÝֹ זַֽֿÊ ַבדהוּ דÚ ֳז ָֿזה דÚבזדַÊ ַבד׃Ê־ֿד Ýם ַבה׃־ ַבַֽÊםַ״ם ַבֲבל';
 $string['backupkeephelp'] = 'ßד Úֿֿ ַבה׃־ ַבַֽÊםַ״םֹ ַבֽֿםֻ בßב דהוּ ַֿׁ׃ם ÊׁÛָ ַבַֽÊÝַÙ ָוַ¿(ַבה׃־ ַבÞֿםדֹ ׃Êֽ׀Ý ֲבםַנ';
-$string['backuplogdetailed'] = '׃ּב ÊהÝם׀ם דÝױב';
-$string['backuploglaststatus'] = 'ֳ־ׁ ׃ּב ÊהÝם׀ם';
 $string['backuplogshelp'] = 'בז דßה¡ ׃םÊד ֵײַÝֹ ּדםÚ ׃צּבַÊ ֱֳַֿ ַבדהוּ ַבַֿׁ׃ם ײדה ַבה׃־ ַבַֽÊםַ״ם ַבֲבם.';
 $string['backupnameformat'] = 'הזÚ Êה׃םÞ דבÝ  ַבה׃־ֹ ַבֵֽÊםַ״םֹ';
-$string['backupnoneusersinfo'] = 'בַֽÙ: בÞֿ ÞדÊ ַָ־Êםַׁ ַבה׃־ ַבַֽÊםַ״ם ָֿזה ַ־Êםַׁ ַבד׃Ê־ֿדםה¡ ב׀ַ Ýֳה ּדםÚ ַבזַֽֿÊ Êד Êֽזםבוַ ֵבל \"דÚבזדַÊ ָֿזה ד׃Ê־ֿדםה.\" Ýײבַנ בַֽÙ ֳה זֹֽֿ \" ַבÊדַׁםה\" זזֹֽֿ \"זׁװֹ Úדב\" Ûםׁ דÊ״ַָÞÊַה דÚ ו׀ַ ַבהזÚ דה ַבה׃־ ַבַֽÊםַ״ם¡ ב׀ַ Êד ÊÚ״םבודַ Êדַדַ.';
 $string['backuporiginalname'] = 'ַ׃ד ַבַױבם בדבÝ  ַבה׃־ֹ ַבֵֽÊםַ״םֹ';
-$string['backupsavetohelp'] = 'ַבד׃ַׁ ַבßַדב בבדּבֿ ַב׀ם Êׁםֿ ֳה ÊֽÝÙ Ýם דבÝַÊ ַבה׃־ ַבַֽÊםַ״ם <br /> (ֳÊׁß ÝַׁÛַנ בבֽÝÙ Ýם ַבדּבֿ ַבַÝÊַׁ״ם בבדהוּ ַבַֿׁ׃ם)';
-$string['backuptakealook'] = 'Ýײבַ¡ ַבÞֱַ הÙֹׁ Úבל ׃ּב ַבה׃־ ַבַֽÊםַ״ם Ýם: $a';
-$string['backupuserfileshelp'] = 'ַ־Êׁ בז ßהÊ ÊׁÛָ Ýם ֵײַÝֹ דבÝַÊ ַבד׃Ê־ֿד(דֻב: ױזׁ ַב׃םֹׁ ַב׀ַÊםֹ) ײדה ַבה׃־ ַבַֽÊםַ״ם ַבֲבם';
+$string['backupsavetohelp'] = 'ַבד׃ַׁ ַבßַדב בבדּבֿ ַב׀ם Êׁםֿ ֳה ÊֽÝÙ Ýם דבÝַÊ ַבה׃־ ַבַֽÊםַ״ם <br> (ֳÊׁß ÝַׁÛַנ בבֽÝÙ Ýם ַבדּבֿ ַבַÝÊַׁ״ם בבדהוּ ַבַֿׁ׃ם)';
+$string['backupuserfileshelp'] = 'ַ־Êׁ בז ßהÊ ÊׁÛָ Ýם ֵײַÝֹ דבÝַÊ ַבד׃Ê־ֿד(דֻב: ױזׁ ַבבדֽו ַבװ־ױםֹ) ײדה ַבה׃־ ַבַֽÊםַ״ם ַבֲבם';
 $string['backupusershelp'] = 'ַ־Êׁ בז ßהÊ ÊׁÛָ Ýם ֵײַÝֹ ּדםÚ ַבד׃Ê־ֿדםה Ýם ַב־ַֿד ֳז ַבד׃Ê־ֿדםה ַבד״בזָםה בßב דהוּ ַֿׁ׃ם ÝÞ״';
 $string['backupversion'] = 'ֵױַֿׁ ַבה׃־ֹ ַבֵֽÊםַ״םֹ';
-$string['blockconfiga'] = 'םÊד ֵÚַֿֿ ßÊבֹ ַבÜ $a ';
-$string['blockconfigbad'] = 'בד םÊד Ê״ָםÞ ו׀ו ַבßÊבֹ ָװßב ױֽםֽ בו׀ַ בַ םדßה ÊזÝםׁ זַּוֹ בבֵÚַַֿֿÊ.';
-$string['blockdeleteconfirm'] = 'ֳהÊ ֳףזתװףßתף ֳףהת Êףֽת׀Ýף ַבßÊבֹף \'$ a\' ַָבßַדב . ו׀ַ ׃ףםףֽת׀Ýץ ַָבßַדב ּדםÚ ַבדÚבזדַÊ ַבדÊÚבÞֹ ָו׀ו דה ÞַÚֹֿצ ַבָםַהַÊ. וףבת ֳהÊ דÊֳßרֿ דה ַבֵצ׃תÊצדתַׁׁ Ýם Úדבםֹ ַבֽ׀Ý ו׀ו¿';
-$string['blockdeletefiles'] = 'ּדםÚ ַבדÚבזדַÊ ַבדÊÚבÞֹ ָו׀ו ַבßÊבֹ \'$a->block\' Êד ֽ׀Ýוַ דה ÞַÚֹֿ ַבָםַהַÊ. בֵÊדַד Úדבםֹ ַבֽ׀Ý (זÊּהָ ֵÚַֹֿ ַבÊָֻםÊ ַב׀ַÊם בו׀ו ַבßÊבֹ)¡ םָּ Úבםß ֽ׀Ý דּבֿ ו׀ו ַבßÊבֹ דה ־ַֿד ַבדבÝַÊ $a->directory';
 $string['blocks'] = 'ßÊב';
 $string['blocksetup'] = 'ֵÚַֿֿ ַּֿזב ַבßÊבֹ';
 $string['blocksuccess'] = '$a  Êד ֵÚַֿֿ ַבַּֿזב ָװßב ױֽםֽ';
@@ -141,88 +122,47 @@ $string['checkingsections'] = 'ַבÊֽÞÞ דה דÞַ״Ú';
 $string['checklanguage'] = 'Êֳßֿ ַבבÛֹ';
 $string['choose'] = 'ַ־Êׁ';
 $string['choosecourse'] = 'ַ־Êׁ דהוּ ַֿׁ׃ם';
-$string['chooseenrolmethod'] = '״ׁםÞֹ ַבÊ׃ּםב ַבַ׃ַ׃םֹ';
 $string['chooselivelogs'] = 'ֳז װַוֿ ַבהװַ״ ַבַֽבם';
 $string['chooselogs'] = 'ַ־Êׁ ַבÊÞַׁםׁ ַבÊם Êׁםֿ ַבַ״בַÚ Úבםוַ';
 $string['choosereportfilter'] = 'ַ־Êׁ דהÞֽ בבÊÞׁםׁ ';
 $string['choosetheme'] = 'ַ־Êׁ דÙוׁ ַבדזÞÚ';
 $string['chooseuser'] = 'ַ־Êׁ ד׃Ê־ֿדַ';
 $string['city'] = 'ַבדֿםהֹ/ַבָבֹֿ';
-$string['clambroken'] = 'Þַד דֿםׁ ַבדזÞÚ ָÊÝÚםב Ýֽױ ַבÝםׁז׃ַÊ בבדבÝַÊ ַבדֽדבו זבßה Þַד ֳ־״ֱַ Ýם ֵÚַֿֿ װֶ דַ.<br /> Êֽדםב דבÝß בד םÊד ָהַּֽ. ßדַ Êד ַׁ׃ַב ָׁםֿ ֵבßÊׁזהם בדֿםׁ ַבדזÞÚ בֵװÚַׁו ָ׀בß בםÊדßה דה ÊÚֿםב ַב־״ֱַ.<br /> דה ַבֳÝײב דַֽזבֹ Êֽדםב דבÝß בַֽÞַנ.';
-$string['clamdeletedfile'] = 'Êד ֽ׀Ý בדבÝ';
-$string['clamdeletedfilefailed'] = 'בד םÊד ֽ׀Ý ַבדבÝ';
-$string['clamemailsubject'] = '$a:: ֵװÚַׁ ßבַדֳםÝם';
-$string['clamfailed'] = 'בד םÊדßה ßבַדֳםÝם דה ַבÚדב. ׁ׃ַבֹ ַב־״ֱַ ַבזַֹֿׁ ום $a.והֱַ ַבהַÊּ דה ßבַדֳםÝם.';
-$string['clamlost'] = 'בÞֿ Êד ֵÚַֿֿ דזֿב בÊװÛםב ßבַד Úהֿ Êֽדםב ַבדבÝַÊ¡ זבßה ַבד׃ַׁ ַב׀ם Êד Êׂזםֹֿ בßבַדֳםÝם¡$a¡ Ûםׁ ױֽםֽׂ';
-$string['clamlostandactinglikevirus'] = 'ַָבֵײַÝֹ¡ Êד ֵÚַֿֿ דזֿב Úבל ֳה םÚדב ּדםÚ ַבדבÝַÊ דֻב ַבÝםׁז׃ַÊ Ýם ַֽבֹ Ýװב ßבַדֳםÝם דה ַבÚדב. ו׀ַ םÚהם ַה בה םÊדßה ֳם ״ַבָ דה Êֽדםב ֳם דבÝ ֽÊל םÊד ÊÚֿםב ו׀ו ַבדװßבֹ. ';
-$string['clammovedfile'] = 'בÞֿ Êד הÞב ַבדבÝ ֵבל דּבֿ ַבדּֽׁ ַבױֽם ַב׀ם ֽֿֿÊו¡ ַבדזÞÚ ַבּֿםֿ וז $a';
-$string['clammovedfilebasic'] = 'בÞֿ Êד הÞב ַבדבÝ ֵבל דּבֿ ַבדּֽׁ ַבױֽם.';
-$string['clamquarantinedirfailed'] = 'בד הÊדßה דה הÞב ַבדבÝ ֵבל דּבֿ ַבדּֽׁ ַבױֽם ַבדֽֿֿ¡$a. ÊֽÊַּ Êױֽםֽ ו׀ַ Úהֿדַ Êֽ׀Ý ַבדבÝַÊ ַבÊם ָׁדַ Êßזה דױַָֹ ַָבÝםׁז׃ַÊ.';
-$string['clamunknownerror'] = 'םזּֿ ־״ֱַ Ûםׁ דÚׁזÝ דÚ ßבַדֳםÝם.';
 $string['cleaningtempdata'] = 'הÙÝ ַבדÚבזדַÊ ַבדִÞÊֹ';
 $string['clicktochange'] = 'ַהÞׁ בבÊÛםׁ';
 $string['closewindow'] = 'ֳÛבÞ ו׀ו ַבהַÝ׀ֹ';
 $string['comparelanguage'] = 'Þַׁה זÚֿב ַבבÛֹ ַבַֽבםֹ';
 $string['complete'] = 'ßַדב';
-$string['configallowunenroll'] = 'ֵ׀ַ ֳץÚצֿרף ו׀ַ \"הÚד\" ׃םÊדßה ַב״רבָֹ דה ַה׃ַָֽוד דה ַבדהַוּ ׀ַÊםַץ דÊל םװִַה.Úַֿ ׀בß בַ םÊדßהזַ דה ַבַה׃ַָֽ זםױָֽ ַבÊֽßד Ýם Ê׃ּםבוד דה Þָב ַבדÚבדזה ז ַבדֿםׁםה ÝÞ״.';
-$string['configallusersaresitestudents'] = 'בבֳהװ״ֹ ַבדזײזÚֹ Úבל ַבױÝֹֽ ַבֳזבל דצהת ַבדזÞÚצ¡ וףבת  ׃םÚַדב ßב ַבדװַׁßםה ß״בַָ¿ ֵ׀ַ ßַהÊ ַבֳַָֹּ ָÜ \"הÚד\"¡ וב ׃ם׃דֽ בֳםר ֽ׃ַָ  ַבדץװףַׁףßףֹ ß״ַבָ Ýם Êבß ַבֳהװ״ֹ¿. ֵ׀ַ ßַהÊ ַבֳַָֹּ ָÜ \"בַ\"¡ ד׃ם׃דֽ ÝÞ״ בבדװַׁßםה ַבד׃ּבםםה Ýם Ýם דהוּ ַֿׁ׃ם זַֽֿ Úבל ַבֳÞב Ýױבצ זַֽֿ בבדװַׁßֹ Ýם ַבֳהװ״ֹ ַבדזײזÚֹ Úבל ַבױÝֹֽ ַבֳזבל. ÝÞ״ ַבדֱַֿׁ זַבדÚבדזה ׃םÚַדבזַ ßדÚבדםה בו׀ו ַבֳהװ״ֹ.';
-$string['configautologinguests'] = 'וב ׃ם׃דֽ בׂזַׁ ַבֿ־זב ֲבםַנ ßׂזַׁ בבדהַוּ ַבַֿׁ׃םֹ ַבÊם Ê׃דֽ בבׂזַׁ ַָבֿ־זב.';
-$string['configcachetext'] = 'בבדזַÞÚצ ַבßָםֹׁ ֳףז ַבדזַÞÚצ ַבÊם Ê׃Ê־ֿד דׁװַֽÊף ַבהףױרצ¡ ו׀ַ ַבַÚַֿֿ ׃ם׃ׁÚ ַבֱֳַֿ. ה׃־ ַבהױזױצ ׃ףÊףֽÊÝÙץ Ýם װßבצוד זÊה׃םÞוַ ַבַױבם ־בַב ַבזÞÊצ ַבדֽֿרֿף והַ. ÊױÛםׁ ּֽד ו׀ַ ַבַÚַֿֿ Þֿ םִֿם ֵבל Êָ״ֶֹ ַבֱֳַֿ ָÚײ ַבװרםֱ¡ בßה ֵÚַֹֿֿ ָװßב ßָםֹׁ ַּֿנ Þףֿת םÚתהם ֳה ַבהױזױף ׃Êף׃ÊÛׁÞץ זÞÊַנ ״זםבַנ בםÊד Êֽֿםֻוַ (Úבל ׃ָםב ַבדַֻב םֽױב ו׀ַ דÚ ַָׁ״ַÊ ַבַהÊׁהÊ ַבּֿםֹֿצ).';
-$string['configclamactlikevirus'] = 'Úַדב ַבדבÝַÊ ßÝםׁז׃ַÊ';
-$string['configclamdonothing'] = 'Úַדב ַבדבÝַÊ Úבל ֳהוַ ׃בםדו';
-$string['configclamfailureonupload'] = 'בז ÞדÊ ֵָÚַֿֿ ßבַדÝם בÝֽױ ַבדבÝַÊצ ַבדֽדבֹ¡ זבßה בֳם ׃ָָ דה ַבַ׃ַָָ ַ־ÝÞ Ýם Ýֽױ ַבדבÝַÊ ßםÝ םָּ Úבםו ֳה םÚדב¿  בז ÞדÊ ַָ־Êםַׁ דÚַדבֹ ßב ַבדבÝַÊ Úבל ַהוַ \'דױַָֹ ַָבÝםׁז׃ַÊצ \'¡ ׃םÊד הÞבוַ דַָװֹׁ ֵבל דה״Þֹצ ַבדּֽׁ ַבױֽם¡ ֳףז ֽף׀Ýוַ.   בז ÞדÊ ַָ־Êםַׁ דÚַדבֹ ַבדבÝַÊ Úבל ַהוַ \'בַ ÊֽÊזם Úבל Ýםׁז׃ַÊ\'¡ ׃ףÊףהÊÞבץ ּדםÚ  ַבדבÝַÊ ֵבל ַבדּבֿ ַבדֽֿֿ ָ״ׁםÞֹ ב״ָםÚםֹ. Ýם ֳם דה ַבַֽבÊםה¡ ׃םַֽ״ ַבדֱַֿׁ ֳָה ßבַדÝם Þֿ  ַ־ÝÞ Ýם Úדבו.   בז ÞדÊ ַָ־Êםַׁ דÚַדבֹ ßב ַבדבÝַÊ Úבל ַהוַ \'דױַָֹ ַָבÝםׁז׃ַÊצ \' זב׃ָָ דַ ֳ־ÝÞץ ßבַדÝם Úבל ֳה םÚדב ָװßב ױֽםֽ (Úַֹֿ בÚֿד ַֿ־ַב ַבד׃ַׁ ַבױֽםֽ ßבַדÝם)¡ ßץבר ַבדבÝַÊ ַבÊם ַבדֽדבֹ ׃ףÊףהÊÞבץ ֵבל דה״Þֹצ ַבדּֽׁ ַבױֽם ַבדֹֽֿֿ¡ ֳףז Êֽף׀Ý. ßץהת ֽ׀ַׁנ Ýם ַבÊÚַדב דÚ ו׀ַ ַבֳÚַֿֿ.';
+$string['configallowunenroll'] = 'ֵ׀ַ ֳץÚצֿרף ו׀ַ \"הÚד\" ׃םÊדßה ַב״רבָֹ דה ַה׃ַָֽוד דה ַבדהַוּ ׀ַÊםַץ דÊל םװִַה.Úַֿ ׀בß בַ םÊדßהזַ דה ַבַה׃ַָֽ זםױָֽ ַבÊֽßד Ýם Ê׃ּםבוד דה Þָב ַבדֿׁר׃םה ז ַבדֿםׁםה ÝÞ״.';
 $string['configcountry'] = 'ֵ׀ַ ֳÚֿֿÊ ֿזבֹנ והַ, ׃Êßזה ום ַבֿזבֹ ַבֳÝÊַׁײםֹ בּדםÚ ֽ׃ַַָÊ ַבד׃Ê־ֿדםה ַבּֿםֹֿ. בַ ÊÞד ֵָ־Êםַׁ ַבֿזבֹ ז׀בß בבֵַָּׁ ַבד׃Ê־ֿדםה ַ־Êַַׁבֿזב.';
-$string['configdbsessions'] = 'ֵ׀ַ Êד Êדßםה ו׀ַ ַבֳÚַֿֿ¡ Ýֳהו ׃ףםף׃ÊÚדבץ ÞַÚֹֿף ַבָםַהַÊ בÊ־ףׂתםה דÚבזדַÊצ ַבּב׃ַÊ ַבַֽבםֹצ. ו׀ַ דÝםֿץ ַּֿנ בבדזַÞÚ ַבßָםׁצ ֳףז ַבדזַÞÚ דװÛזבֹ ֳז ַבדזַÞÚ ַבדױדדו Úבל דּדזÚֹ ־ַֿדַÊצ. בֳßֻׁ דה ַבדזַÞÚצ דה ַבֳÝײב ַה ו׀ַ ַבֳÚַֿֿ םץÊתׁףßף דÚ״ב בםÊד ַ׃Ê־ַֿד  Þׁױ ַב־ַֿדף. דץבַֽÙֹ ÊÛםׁ ו׀ַ ַבֳÚַֿֿ ַבֲה ׃םִֿל ֵבל ֵ־ַּׁ ּדםÚ ַבדװַׁßזה Ýם ַבדזÞÚ (ָדַ Ýם ׀בß ֳהÊ).';
 $string['configdebug'] = 'ַ־Êםַׁ ַבÊװÛםב והַ ׃םִֿם ֵבל ׂםַֹֿ Úֿֿ ַבÊֽ׀םַׁÊ ַב־ַױֹ ָ־״ֳ ָם ֵÊװ ָם. ו׀ַ ַבַ־Êםַׁ םÝםֿ ַבד״זׁםה ÝÞ״.';
-$string['configdeleteunconfirmed'] = 'ֵ׀ַ ֳהÊ Êף׃ÊÚדבץ  ַבָׁםֿ ֵבßÊׁזהם בÊֳßםֿ ַבÊ׃ּםב¡ ום ו׀ו ַבÝÊֹׁץ ַבÊם ־בַבוַ םדßה Þָזב ַבׁףֿר דה ַבד׃Ê־ֿדזה. ָÚֿ ו׀ו ַבÝÊֹׁצ¡ ַבֽ׃ַַָÊ ַבÞֿםדֹ זַבÛםׁ דִßֹֿ ׃םÊד ֽ׀Ýוַ.';
-$string['configdigestmailtime'] = 'ַבהַ׃ ַב׀םה םף־Êַׁזהף ֳףהת ם׃Êבדזַ ׁ׃ֶַב ָׁםֿםֹ ֵבßÊׁזהםֹ Ýם װßבצ ַבדב־רױצ ׃ףÊץׁ׃בץ ַָבָׁםֿ ַבֵבßÊׁזהם ױֽםÝֹ ַבדב־רױף ַבםזדםֹף. ו׀ַ ַבֵÚַֿֿ ׃םֽֿֿ ַבזÞÊ ַבםזדם ַב׀ם ׃ףםץׁ׃בץ (׃ÊÊד Úדבםֹ ַבֵׁ׃ַב ָדּֿׁ ַבÊהÝםֿ ַבֲבם בבßזׁה \"corn\" ַבÊַבם).';
-$string['configdisplayloginfailures'] = 'ו׀ַ ׃םÚׁײ דÚבזדַÊ בבד׃Ê־ֿדםה ַבד־Êַׁזה Úה דַֽזבַÊ ַבÊ׃ּםב ַבÝַװבֹ ַבÊם ֽױבÊ ׃ַָÞַ.';
-$string['configenablerssfeeds'] = 'ו׀ַ ַבדÝÊַֽצ ׃ףםץדßרהץ ־ֿדֹ ÊÛ׀םֹ ַבדÚבזדַÊ (RSS) דה ־בַב ַבדזÞÚצ. בׁץִםֹ ֳםר ÊÛםםׁ ׃ףÊףֽÊַּץ Êףדתßםה ־ֿדֹ ÊÛ׀םֹ ַבדÚבזדַÊ (RSS) Ýם ּדםÚ ַבזַֽֿÊצ ֳםײַנ - ֵ׀תוָץ ֵבל ֵÚַַֿֿÊ ַבזַֽֿÊף ÊֽÊ ֵַֹֿׁצ ַבדזÞÚ.';
-$string['configenablerssfeedsdisabled'] = 'ו׀ו ַב־ֿדֹ Ûםׁ דÊזÝׁ בֲה ־ֿדֹ ÊÛ׀םֹ ַבדÚבזדַÊ (RSS) דÚ״בֹ Ýם ßץבר ַבדזÞÚצ. בÊףדתßםה ו׀ו ַב־ֿדֹ ֵ׀תוָץ ֵבל ֵÚַַֿֿÊ ַבדÊÛםרַׁÊף ÊֽÊ ֵַֹֿׁצ ַבדזÞÚ.';
 $string['configerrorlevel'] = 'ַ־Êׁ Úֿֿ Êֽ׀םַׁÊ PHP  ַבÊם Êׁםֿ ֵÙוַׁוַ. ַבדÚֿב ַבÚַֿם וז ֳÝײב ַב־םַַׁÊ Ûַבַָ.';
-$string['configextendedusernamechars'] = 'ו׀ַ ַבֵÚַֿֿ ׃ם׃ףדֽ בב״בַָצ ַ׃Ê־ַֿד ֳם ֽׁזÝ Ýם Ýם ֽÞב ֳ׃דֱַצ ַבד׃Ê־ֿדםה (בַֽÙ ֳה ו׀ו בַ Êץִֻרׁץ Úבל ֳ׃דֶַצוד ַבÝÚבםֹצ). ַבזײÚ ַבֳÝÊַׁײם וז Úֿד ַב׃דַֽ זו׀ַ ׃םָּׁ ַבד׃Ê־ֿדםה ֵָ׃Ê־ַֿד ֽׁזÝ זַׁÞַד ÝÞ״ Úהֿ ֵֿ־ַב ַ׃ד ַ׃Ê־ֿד. ';
-$string['configfilteruploadedfiles'] = 'ףדתßםה ו׀ַ ַבֵÚַֿֿ ׃םּÚב דזֿב Moodle ַבÞםַד ָדץÚףַבףּףֹ ßץבר דבÝַÊ (HTML) ַבֵÊװ Êם ֵד ֵב  זדבÝַÊ ַבהףױרצ ַבדֽדבֹ ז׀בß ֵָ׃Ê־ַֿד ַבדׁװַֽÊצ Þָב Úףׁתײוד Úׁײ Êבß ַבדבÝַÊ.';
 $string['configforcelogin'] = 'Þםַ׃םַ¡ ם׃Ê״םÚ ַבהַ׃ Þֱַֹׁ דֽÊזל ַבױÝֹֽ ַבַזבל בבדזÞÚ זÞזֶַד ַבדהַוּ ַבַֿׁ׃םֹ (בם׃ ַבדהַוּ ַבַֿׁ׃םו ָ׀ַÊוַ) ָֿזה ַבֿ־זב ֵבל ַבדזÞÚ. דßה ו׀ַ ַבַÚַֿֿ בז ßהÊ ÊׁÛָ Ýם ַַָּׁ ַבהַ׃ ַבֿ־זב ֵבל Þָב Úדב ֵל װםֱ.';
-$string['configforceloginforprofiles'] = 'דßה ו׀ַ ַבֵÚַֿֿ בֵּתַָׁ ַבהַ׃צ בֿ־זב ßדװַׁßםה (בם׃זַ ׂזַׁ)  Þָב ַב׃דַֽף בוד בׁץִםֹ ױÝַֽÊ ַב׃םֹׁ ַב׀ַÊםֹ. ֵÝÊַׁײםַנ ו׀ַ ַבֵÚַֿֿ Ûםׁ דדßה (\"־ַ״ֶ\") ז׀בß בÊדßםה ַב״בַָ ַבּֿֿ ַבÞֱַֹׁ Úה דÚבדםה ßץבר דהוּ ַֿׁ׃ם¡ בßה ו׀ַ ֳםײַנ םÚהם ֳהר  ַבָֻֽ ַָ׃Ê־ַֿד דֽׁßַÊ ַבָֻֽ ׃םÙוׁ בבַָֻֽ ַבדÚבזדַÊ ַב־ַױֹ ָוזבֱַ ַבדÚבדזה.';
 $string['configframename'] = 'ײÚ ַ׃ד ַבַ״ַׁ ַב־ַױ ָדזÞÚß והֱַ בÊײדםה דזֿב ײדה ֵ״ַׁ דזÞß¡ זַבַ Êׁß ו׀ַ ַבדÊÛםׁ ßדַ וז \"ַÚבל\".';
 $string['configfullnamedisplay'] = 'ו׀ַ םÚׁרÝ ßםÝםֹ Ùוזׁ ַבֳ׃דֱַ Úהֿדַ םÊד ץÚתׁףײץוַף ַָבßַדב . בדÚÙד ַבדזַÞÚ ַבֳַֽֿםרֹ ַבברÛֹ ַבֵÚַֿֿ ַבֳßֻׁ ÝַÚבםרֹ וז ַבֵÚַֿֿ ַבַÝÊַׁײם \"ַבֳ׃דֱַ ַבֳזבל + בÞָ\", בßהרß Ê׃Ê״םÚ ַה Ê־Êַׁ ֵ־Ýֱַ ַבֳבÞַָ ßברםרנַ, ֳז Êׁßוַ ֽץׂדֹ ַבבÛֹ ַבַֽבםרֹ (בָÚײ ַבברÛַÊ ״ׁÞ ד־ÊבÝֹ) ';
 $string['configgdversion'] = 'Úםה ַבה׃־ֹ ַבÊם Êד Êהױםָוַ דה GD. ַבה׃־ֹ ַבדÚׁזײֹ ַÝÊַׁײםַ ום ַבÊם םÊד ַבßװÝ Úהוַ ֲבםַ. בַ ÊÞד ָÊÛםםׁ ו׀ַ ַבזײÚ ֵבַ ֵ׀ַ ßהÊ דÊדׁ׃ַ.';
 $string['confightmleditor'] = 'ַ־Êׁ דַ ֵ׀ַ ßהÊ Ê׃דֽ ַָ׃Ê־ַֿד דֽׁׁ הױזױ HTML. Úהֿדַ Ê־Êַׁ ַ׃דֽ Ýֵה ו׀ַ ַבדֽׁׁ ׃זÝ םÙוׁ ÝÞ״ Úהֿדַ  םÊד ַ׃Ê־ַֿד דÊױÝֽ דזֶַד (דֻב IE 5.5 ֳז ֳÚבל). זםדßה בבד׃Ê־ֿד ֳבַ ם־Êַׁ ַ׃Ê־ַֿד ַבדֽׁׁ.';
-$string['configidnumber'] = 'ו׀ַ ַב־םַׁ םֽֿֿ ׃זֱַ (ֳ) ַבד׃Ê־ֿדםה בה ם׃ֳבזַ Úה ַׁÞַד וזםַÊוד Úבל ַבֵ״בַÞ¡ (ָ) ַבד׃Ê־ֿדםה ׃ם׃ֳבזַ Úה ַׁÞַד וזםַÊוד זבßה םדßהוד Êׁßוַ ÝַׁÛֹ¡ (ּ) ַבד׃Ê־ֿדםה ׃ם׃ֳבזַ Úה ַׁÞַד וזםַÊוד זבַ םדßהוד Êׁßוַ ÝַׁÛֹ. בז ׃ּב ַבד׃Ê־ֿד ׁÞד וזםÊו ׃םÙוׁ Ýם ַב׃םֹׁ ַב׀ַÊםֹ. ';
+$string['configidnumber'] = 'ו׀ַ ַב־םַׁ םֽֿֿ ׃זֱַ (ֳ) ַבד׃Ê־ֿדםה בה ם׃ֳבזַ Úה ַׁÞַד וזםַÊוד Úבל ַבֵ״בַÞ¡ (ָ) ַבד׃Ê־ֿדםה ׃ם׃ֳבזַ Úה ַׁÞַד וזםַÊוד זבßה םדßהוד Êׁßוַ ÝַׁÛֹ¡ (ּ) ַבד׃Ê־ֿדםה ׃ם׃ֳבזַ Úה ַׁÞַד וזםַÊוד זבַ םדßהוד Êׁßוַ ÝַׁÛֹ. בז ׃ּב ַבד׃Ê־ֿד ׁÞד וזםÊו ׃םÙוׁ Ýם הָ׀Êו ַבװ־ױםֹ. ';
 $string['configintro'] = 'Ýם ו׀ו ַבױÝֹֽ Ê׃Ê״םÚ Êֽֿםֿ Úֿֿ דÊÛםַׁÊ ַבÊßזםה ַבÊם Ê׃ַÚֿ Úבל Úדב Moodle ָװßב ּםֿ Úבל דׂזֿß. בַ ÊÞבÞ ָװֳה ׀בß¡ ÝַבֳזײַÚ ַבַÝÊַׁײםֹ ÊÚדב ָװßב ּםֿ Ýם ַבÛַבָ¡ ßדַ ֳה ַָ׃Ê״ַÚÊß ֳה ÊÛםׁ ו׀ו ַבֵÚַַֿֿÊ בַֽÞַ דה ־בַב ו׀ו ַבױÝֹֽ.';
 $string['configintroadmin'] = 'ו׀ַ ַב־םַׁ םֽֿרֿ ׃זֱַ (ֳ) ַבד׃Ê־ֿדזה בם׃זַ ד״ַבָזהף ָׁÞד וזםרֹ Úבל ַבֵ״בַÞ, ( ָ ) ַבד׃Ê־ֿדזה ד״ַבָזהף ָׁÞד וזםרֹ בßהר םדßה ֳה םÊׁßו ÝַׁÛ ֳז ( ּ ) ַבד׃Ê־ֿדזה ד״ַבָזהף ָׁÞד וזםרֹ ז בַ םדßה ֳה םÊׁßו ÝַׁÛ . ֵ׀ַ ֵÚ״ל ׁÞד וזםֹ ַבד׃Ê־ֿד ׃םץÚתׁףײ Ýם ַבדֹֽ ַבװ־ױםֹ.';
 $string['configintrosite'] = 'דה ־בַב ו׀ו ַבױÝֹֽ Ê׃״םÚ ÊׁÊםָ ַבױÝֹֽ ַבֳזבל בדזÞÚß. Ê׃״םÚ ַבÚזֹֿ בו׀ו ַבױÝֹֽ בÊÛםׁ ַבֵÚַַֿֿÊ Ýם זÞÊ װֶÊ ז׀בß דה ־בַב ַבזַױבֹ \"ֵÚַַֿֿÊ ַבדזÞÚ\" Ýם ַבױÝֹֽ ַבֶׁם׃ו.';
 $string['configlang'] = 'ַ־Êׁ בÛֹ ַÝÊַׁײםֹ בבדזÞÚ ֳָßדבו¡ דÚ ַבÚבד ֳה ַבד׃Ê־ֿדםה בֿםוד ַבÞֹֿׁ Úבל ַ׃Êַָֿב ו׀ו ַבֵÚַַֿֿÊ ֳָ־ׁל בַֽÞַ.';
 $string['configlangdir'] = 'םÊד ״ַָÚֹ דÚÙד ַבבÛַÊ דה ַבם׃ַׁ ֵבל ַבםדםה¡ זבßה ָÚײ ַבבÛַÊ דֻב ַבÚָׁם זַבÚָׁם םÊד ַב״ַָÚֹ דה ַבםדה ֵבל ַבװדַב.';
 $string['configlanglist'] = 'ֵÊׁß ו׀ַ ÝַׁÛ בב׃דַֽ בבד׃Ê־ֿדםה ַה ם־Êַׁזַ בÛֹ דה ַבבÛַÊ ַבÊם ÞדÊ ָÊׂזםֿוַ Úהֿ ÊָֻÊß בדזֿב. זבßה¡ Ê׃״םÚ ֵ־Êױַׁ Þֶַדֹ ַבבÛֹ ז׀בß דה ־בַב Þֶַדֹ ַָבבÛַÊ ַבדׁÛזָ Ýםוַ Úבל ֳה םÝױב ָםה װÝַׁÊ ַבבÛַÊ ָÝַױבֹ. Úבל ׃ָםב ַבדַֻב:  en,es_es,fr,it';
-$string['configlangmenu'] = 'ֳ־Êׁ ֵדַ ֳה ÊÚׁײ Þֶַדֹ ַבבÛֹ ַבÚַדֹ Úבל ַבױÝֹֽ ַבֶׁם׃ֹ זױÝֹֽ ַבֿ־זב ֳז בַ. ו׀ַ בה םִֻׁ Úבל Êדßםה ַבד׃Ê־ֿדםה דה ֵ־Êםַׁ ַבבÛֹ ַבדÝײבֹ בוד Ýם ױÝֹֽ ׃םׁוד ַב׀ַÊםֹ.';
+$string['configlangmenu'] = 'ֳ־Êׁ ֵדַ ֳה ÊÚׁײ Þֶַדֹ ַבבÛֹ ַבÚַדֹ Úבל ַבױÝֹֽ ַבֶׁם׃ֹ זױÝֹֽ ַבֿ־זב ֳז בַ. ו׀ַ בה םִֻׁ Úבל Êדßםה ַבד׃Ê־ֿדםה דה ֵ־Êםַׁ ַבבÛֹ ַבדÝײבֹ בוד Ýם ױÝֹֽ הָ׀Êוד ַבװ־ױםֹ.';
 $string['configlocale'] = 'ַ־Êׁ ַבֳÚַַֿֿÊ ַבדֽבםֹ זַבÊÞזםד בבדזÞÚ ֳָßדבו. דÚ ַבÚבד ֳה ו׀ו ׃םִֻׁ Úבל ַבÊה׃םÞ זבÛֹ ַבÊזַׁם־ . ז׃זÝ ÊֽÊַּ ֵבל Êהױםָ ָםַהַÊ ַבדזÞÚ Úבל הÙַד ַבÊװÛםב ַב־ַױ ָß. ֵ׀ַ ßהÊ בַ ÊÚׁÝ ֳם ַב־םַַׁÊ ֳה׃ָ¡ ֿÚ ַבדßַה ־ַבםַ.';
-$string['configloginhttps'] = 'ÊÝÚםב ו׀ַ  ׃ףםףּתÚבץ דזֿב ֵ׃ÊÚדַבף  ֵÊרױַבף ֵÊװ Êם Êם ָם ֵ׃ (https) ַבֲדה ÝÞ״ בבֿ־זב Úבל ױÝֹֽף ַבֿ־זב ֵבל ַבדזÞÚ  (םדהֽ  ֿ־זב ֲדה)¡ זָÚֿ ׀בß םףׁתּÚץ ֵבל ַב״ָםÚםצ בד׃ַׁ ַבֵÊװ Êם Êם ָם (http) ז׀בß בÊֽ׃םה ׃ׁÚֹצ ַבֱֳַֿ ַבÚַדר.
-Êֽ׀םׁ: ו׀ַ ַבֵÚַֿֿ םÊÊ״בָ ÊÝÚםב ַבÜ ֵÊװ Êם Êם ָם ֵ׃ (https)  Úבל ־ַֿד ַבזםָ- ֵ׀ַ בז בד םץÝÚב ָו׀ַ ַבװßב ׃ÊדהÚ הÝ׃ß דה ַבֿ־זב Úבל דזÞÚß.';
 $string['configloglifetime'] = 'ו׀ַ םֽֿֿדֹֿ ַבÝÊֹׁ ַבÊם Êׁםֿ ־בַבוַ ַבַֽÊÝַÙ ָ׃ּבַÊ ַהװ״ֹ ַבד׃Ê־ֿד. ּדםÚ ַב׃ּבַÊ ַבÊם ַÞֿד דה ו׀ַ ַבÊַׁם־ ׃Êֽ׀Ý ֲבםַ. דה ַבַÝײב ַבַֽÊÝַÙ ַָב׃ּבַÊ ֳ״זב ÝÊׁ דדßהו ָׁדַ Þֿ ÊֽÊַּ ֵבםוַ¡ זבßה ֵ׀ַ ßהÊ ÊÚַהם דה דװַßב Ýם הזÚםֹ ֱֳַֿ ־ַֿד דזÞÚß םדßהß ÊÞבםױ ÝÊֹׁ ַבַֽÊÝַÙ ַָב׃ּבַÊ.';
 $string['configlongtimenosee'] = 'ֵ׀ַ בד םÊד ֿ־זב ַב״בַָ בÝÊֹׁ ״זםבֹ¡ Ý׃םִֿם ׀בß ֵבל ֵבÛֱַ ַװÊַׁßוד דה ֽבÞַÊ ַבַֿׁ׃ֹ ֳÊזדַÊםßםַ. ו׀ַ ַבדÚַדב םֽֿֿ ַבדובֹ ַבׂדהםֹ ב׀בß.';
 $string['configmaxbytes'] = 'ו׀ַ םֽֿֿ ַבּֽד ַבַÞױל בבדבÝַÊ ַבדֽדבו ֵבל ַבדזÞÚ ַָßדבו. ו׀ַ ַבֵÚַֿֿ ם־ײÚ בÊֽֿםַֿÊ (PHP upload_max_filesize ) ז (Apache LimitRequestBody). ב׀בß¡ םÊַׁזֽ ַבֽֿ ַבַÞױל בבָÊַÊ ַבÊל םדßה ַ־Êםַׁוַ בד׃Êזל ַבדהוּ ַבַֿׁ׃ם ֳז ד׃Êזל ַבזֹֽֿ.';
 $string['configmaxeditingtime'] = 'ו׀ַ םÞזד ָÊֽֿםֿ ַבדובֹ ַבׂדהםֹ ַבד״בזָֹ בֵÚַֹֿ Êֽׁםׁ דַׁ׃בַÊ ַבדהÊֿםַÊ זַבֿׁÚבל ַבד׀ßֹׁ¡ ֵב־. זÊÚֿ ÝÊֹׁ 30 ֿÞםÞֹ Þםדֹ דהַ׃ָֹ. ';
-$string['confignoreplyaddress'] = 'Ýם ָÚײ ַבֳֽםַה Êׁ׃ב ׁ׃ֶַב ַבָׁםֿ ַבֵבßÊׁזהםֹ  הםַָֹנ Úףהת ד׃Ê־ֿד דַ (Úבל ׃ָםב דַֻב: - דװַׁßַÊ ַבדהÊֿםַÊ). Úהזַה ַבָׁםֿ ַבֵבßÊׁזהם ַב׀ם ׃ÊÞזד ָÊץֽֿרֿץ והַ ׃ףםßץזהץ ד׃ÊÚדב Ýם ֽÞב \"ַבדׁ׃ב\" ַב׀ם םÙוׁ Ýם ׁ׃ַבֹ ַבָׁםֿ ַבֵבßÊׁזהם ז׀בß Úהֿ Úֿד ַבׁÛָ Ýם Êדßםה ַבד׃Êבדםה בבָׁםֿ דה ַבֵַָֹּ דַָװֹׁ ֵבל ַבדׁ׃ב ַבÝÚבם (Úבל ׃ָםב ַבדַֻב: - Úהֿדַ םף־Êַׁץ ַבד׃Ê־ֿד Úֿד ֵÙוַׁ Úהזַהצ ָׁםֿוד ַבֵבßÊׁזהם).';
-$string['confignotifyloginfailures'] = 'בז Êד Ê׃ּםב ַֽבֹ ַבֿ־זב ַבÝַװבֹ¡ םדßה ֵׁ׃ַב ָׁםֿ ֵבßÊׁזהם ֵװÚַׁם םֽÊזם Úבל ו׀ו ַב׃ּבַÊ. בדה ׃םÊד ֵׁ׃ַב ו׀ַ ַבָׁםֿ ַבֵבßÊׁזהם ַבֵװÚַׁם¿';
-$string['confignotifyloginthreshold'] = 'בז Êד ÊÝÚםב ֵװÚַַׁÊ ַֽבַÊ ַבֿ־זב ַבÝַװבֹ¡ ßד Úֿֿ ַבדַֽזבַÊ בבד׃Ê־ֿד ַבזַֽֿ ֳז בÚהזַה ָׁÊזßזב ַבֵהÊׁהÊ (IP address) ַבזַַֽֿבÊם ׃םÊד ַבֵװÚַׁ Úהוַ¿';
-$string['configopentogoogle'] = 'בז Êד ÊÝÚםב ו׀ַ ַבֳÚַֿֿ¡ ׃םדßה Google דה ַבֿ־זב ֵבל דזÞÚß ßֶַׁׂ. ַָבֵײַÝֹ ֵבל ßב ַב׀םה םָֻֽזה Ýם Google ׃םÊדßהזַ דה ַבֿ־זב ֵלב דזÞÚß ßֶַׁׂםה. בַֽÙ ֳה ֿ־זבוד ׃םßזה ÝÞ״ ֵבל ַדהַוּ ַבַֿׁ׃םֹ ַבÊם Ê׃דֽ ָֿ־זב ַבׂזַׁ.';
-$string['configpathtoclam'] = 'ַבד׃ַׁ בßבַדםÝם. דה ַבדדßה ֳה םßזה
-like /usr/bin/clamscan or /usr/bin/clamdscan
-ÊֽÊַּ בו׀ַ ַבד׃ַׁ בÊװÛםב ßבַדםÝם ';
-$string['configproxyhost'] = 'ֵ׀ַ ßַה <b>ַבדׂזֿ</b> ַָֹּֽ ֵבל ַ׃Ê־ַֿד ßדָםזÊׁ proxy (דֻב הÙַד firewall) בבֿ־זב Úבל ַבֵהÊׁהÊ¡ ÝÚבםß ָßÊַָֹ ַ׃ד  דײםÝ proxy  זַבדהÝ׀ והַ. זֵבַ ÝֿÚ ַבדßַה ־ַבםַ.';
-$string['configquarantinedir'] = 'ֵ׀ַ Êץׁםֿץ ßבַדÝם ֳףהת םהÞב ַבדבÝַÊף דץױףַָֹף ַָבÝםׁז׃ַÊ ֵבל ֿבםב ַבדּֽׁ ױֽם¡ Þד ַָֿ־ַב ַ׃ד ד׃ַׁ ַבֿבםב ָ־ַֿדצ ַבזםָ Úבל ֳה םßזה ַבֿבםב Þַָב בבßÊַָֹ. בז ÊׁßÊ ו׀ַ ַבֽÞב ÝַׁÛַױ¡ ֳףז ֳֿ־בÊ ד׃דל ֿבםב Ûםׁ דזּזֿ ֳז Ûםׁ Þַָב בבßÊַָֹ¡ Ý׃םÊד ֽ׀Ý ּדםÚ ַבדבÝַÊ ַבדױַָֹ ַָבÝםׁז׃ַÊ. בַ ÊÞד ֵָײַÝֹ ַבÚבַדֹ ַבÊַבםֹ Ýם הוַםֹ ַבד׃דל /.';
-$string['configrunclamonupload'] = 'וב ÊׁÛָ ֳה םÞזד ßבַדÝם ָÝֽױ ַבדבÝַÊ ַבדֽדבֹ ֵבל ַבדזÞÚ¿ ׃ÊֽÊַּ ßÊַָֹ ַבד׃ַׁ ַבױֽםֽ בßבַדÝם ֽÊם םÊדßה ַבָׁהַדּ דה Ýֽױ ַבדבÝַÊ (ßבַדÝם Úַָׁ Úה Ýַֽױ Ýםׁז׃ַÊ דַּהם ֵָדßַהß ַבֽױזב Úבםו דצהת http://www.clamav.net/)';
+$string['configproxyhost'] = 'ֵ׀ַ ßַה <B>ַבדׂזֿ</B> ַָֹּֽ ֵבל ַ׃Ê־ַֿד ßדָםזÊׁ proxy (דֻב הÙַד firewall) בבֿ־זב Úבל ַבֵהÊׁהÊ¡ ÝÚבםß ָßÊַָֹ ַ׃ד  דײםÝ proxy  זַבדהÝ׀ והַ. זֵבַ ÝֿÚ ַבדßַה ־ַבםַ.';
 $string['configsecureforms'] = 'םדßה ֳה ם׃Ê־ֿד דזֿב ד׃Êזל ֳדה ֵײַÝםרנַ Úהֿ Þָזב ַבָםַהַÊ דה הדַ׀ּ ַבװָßֹ . ֵ׀ַ דץßרצהף ו׀ַ ׃םÞַׁה דÊÛםׁ דװםַׁבֵÊװ Êם Êם ָם (HTTP_REFERER) בבדÊױÝֽ דÚ  Úהזַה ַבהדז׀ּ ַבַֽבםר . Ýם ַֽבַÊ Þבםבֹ ּֿרנַ ו׀ַ Þֿ ם׃ָרָ דװַßב ֵ׀ַ ßַה ַבד׃Ê־ֿד ם׃Ê־ֿד ַּֿׁ הַׁםר Úבל ׃ָםב ַבדַֻב (Zonealarm) ַÚֿ בהׂÚ דװםַׁבֵÊװ Êם Êם ָם (HTTP_REFERER) דה ַבדׁזׁ. ַבֳÚַׁײ Êßזה ÊזÞÝ ַבהז׀ּ. ֵ׀ַ זַּו ד׃Ê־ֿדזß דװַßב Ýם ױÝֹֽ ַבֿר־זב ( Úבל ׃ָםב ַבדַֻב ) Þֿ Êׁםֿ ֵÚַÞֹ ו׀ַ ַבדßַה, ַָבׁרÛד דה ֳהו Þֿ םÊׁß דזÞÚß ֳßֻׁ ÊÚׁײַנ ֵבל וּדַÊ ßבדֹ ׃ׁ זַבÞזרֹ ַבָּׁםרֹ . ֵ׀ַ ßהÊ דÊַֿֿׁ, ַÊׁß ו׀ו ַבדּדזÚֹ \"הÚד\".';
 $string['configsessioncookie'] = 'ו׀ַ ַבֵÚַֿֿ ם־ױױ ַבַ׃ד ַבד׃Ê־ֿד בבßזßםׂ(cookie) ־בַב ּב׃ַÊ דזֿב. ו׀ַ ַבזײÚ ֵ־Êםַׁם זדÝםֿ בÊּהָ ַבׁÊַָßַÊ ַבÊם Þֿ Êֽױב ֳֻהֱַ ַ׃Ê־ֿד ַßֻׁ דה ה׃־ֹ בדזֿב Úבל הÝ׃ ַבדזÞÚ.';
 $string['configsessiontimeout'] = '׃םÞזד ַבהÙַד ֵָ־ַּׁ ַבד׃Ê־ֿדםה ֲבםַנ Ýם ַֽבֹ Úֿד ÊױÝֽוד ֳז Êֽדבוד בבדבÝַÊ בדֹֿ ׂדהםו. ו׀ַ ַבדÊÛםׁ םֽֿֿ ״זב ַבדֹֿ ַבׂדהםֹ ַבÊל םדßה בבד׃Ê־ֿד ַבָÞֱַ Ýם ַבהÙַד ֿזה ֵם הװַ״.';
-$string['configshowsiteparticipantslist'] = 'ßב ״בַָ זדÚבדזה ַבדזÞÚ ׃םÊד ÊױהםÝוד Ýם Þֶַדֹ ַבדװַׁßםה. בדה ׃ם׃דֽ דװַוֹֿ Þֶַדֹ ַבדװַׁßםה';
-$string['configsitepolicy'] = 'ֵ׀ַ ßַה בֿםß ַÊÝַÞםֹ ַװÊַׁß זַבÊם םָּ Úבל ßב ַבדװַׁßםה ַבדזַÝÞֹ Úבםוַ Þָב ַ׃Ê־ַֿד ַבדזÞÚ¡ ַ׀ה םָּ Úבםß ßÊַַָָֹׁ״ ױÝֹֽ ַבַÊÝַÞםֹ Ýם ו׀ַ ַבֽÞב¡ ֳז Êׁß ַבֽÞב ÝַׁÛַר Ýם ַֽבֹ Úֿד זּזֿ ַÊÝַÞםֹ. םדßה בַָׁ״ ַה םװםׁ ֵבל דּבֿ םֽÊזם Úבםו ַבדבÝ Úבל ׃ָםב ַבדַֻב: http://yoursite/file.php/1/policy.html';
 $string['configslasharguments'] = 'םÊד Êׂזםֿ ַבדבÝַÊ (ַבױזׁ זַבÊֽדםבַÊ¡ ַב־) Úה ״ׁםÞ הױ ם׃Ê־ֿד \'slash arguments\' (זÊדֻב ַב־םַׁ ַבַֻהם והַ). ו׀ַ ַבֳ׃בזָ ם׃דֽ ָÊ־ׂםה דִÞÊ בבדבÝַÊ Ýם Úַׁײ ַבֵהÊׁהÊ ָװßב ֳ׃וב¡ זß׀ַ דׂזַֿÊ proxy ¡ ֵב־. בßה בבֳ׃Ý ָÚײ דׂזַֿÊ PHP בַ Ê׃דֽ ָו׀ַ ַבֳ׃בזָ. ב׀ַ ÝÝם ַֽבֹ הװזֱ דװßבֹ Úהֿ Úׁײ ַבדבÝַÊ ֳז ַבױזׁ ַבדֽדבֹ (דֻב ױזׁ ַבד׃Ê־ֿד) םהױֽ ָזײÚ ו׀ַ ַבדÊÛםׁ Ýם ַב־םַׁ ַבֳזב.';
 $string['configsmtphosts'] = 'ַßÊָ ַבַ׃ד ßַדבַ ב־ַֿד ֳז ־ַֿדַÊ SMTP  ַבדֽבםֹ ַבÊם ׃זÝ ם׃Ê־ֿדוַ ַבדזÞÚ Ýם ֵׁ׃ַב ַבָׁםֿ (דֻב \'mail.a.com\' or \'mail.a.com;mail.b.com\' ). ֵ׀ַ ÊׁßÊו ־ַבםַ¡ ׃זÝ ם׃Ê־ֿד ַבדזÞÚ ַבֳ׃בזָ ַבַÝÊַׁײם Ýם PHP Ýל ֵׁ׃ַב ַבָׁםֿ.';
 $string['configsmtpuser'] = 'ֵ׀ַ ßהÊ Þֿ ÞדÊ ָÊֽֿםֿ דׂזֿ SMTP דה Þָב¡ זםֽÊַּ ַבדׂזֿ ֵבל ַבÊֽÞÞ דה ַבד׃Ê־ֿד¡ Þד ֵָֿ־ַב ַ׃ד ַבד׃Ê־ֿד זßבדֹ ַבדׁזׁ והַ.';
-$string['configteacherassignteachers'] = 'וב םדßה בבדÚבדזה ַבÚַֿםםה ÊÚםה דÚבדםה ַ־ׁםה בבדהוּ ַבַֿׁ׃ם ַב׀ם םÞזד ָÊֿׁם׃ו¿ בז ßַהÊ ַבַַָֹּ \"בַ\" ֵ׀ַ ÝÞ״ דהװִ ַבדהַוּ ַבַֿׁ׃םֹ זַבדֿםׁה ַב׀םה ם׃Ê״םזה ÊÚםםה ַבדÚבדזה.';
-$string['configtimezone'] = 'והֱַ Ê׃Ê״םÚ Êֽֿםֿ ַבדה״Þֹ ַבׂדהםַֹבֳÝÊַׁײםֹ. ַבדה״Þֹ ַבׂדהםֹ ו׀ו ום ÝÞ״ בַÙוַׁ ַבÊַׁם־ - ßב ד׃Ê־ֿד ם׃Ê״םÚ ו׀ַ ַבַÚַֿֿ ז׀בß Úה ״ׁםÞ ַ־Êםַׁ דה״Þֹ ַבׂדהםֹ ֳ־ׁל דה ־בַב ױÝֹֽ ַב׃םֹׁ ַב׀ַÊםֹ. \"זÞÊ ַבדׂזֿ\" והֱַ ׃םּÚב ַבזÞÊ ַבֳÝÊַׁײם בדזֿב וז זÞÊ ַבדׂזֿ¡ זבßה \"זÞÊ ַבדׂזֿ\" Ýם ױÝֹֽ ַב׃םֹׁ ַב׀ַÊםֹ בבד׃Ê־ֿדםה ׃םßזה וז ַבזÞÊ ַבֳÝÊַׁײם.';
+$string['configteacherassignteachers'] = 'וב םדßה בבדֿׁ׃םה ַבÚַֿםםה ÊÚםה דֿׁ׃םה ַ־ׁםה בבדהוּ ַבַֿׁ׃ם ַב׀ם םÞזד ָÊֿׁם׃ו¿ בז ßַהÊ ַבַַָֹּ \"בַ\" ֵ׀ַ ÝÞ״ דהװִ ַבדהַוּ ַבַֿׁ׃םֹ זַבדֿםׁה ַב׀םה ם׃Ê״םזה ÊÚםםה ַבדֿׁ׃םה.';
 $string['configunzip'] = 'Úםה דזײÚ ָׁהַדּ unzip ַב׀ם Ê׃Ê־ֿדו (דÚUnix ÝÞ״). ו׀ַ ַבָׁהַדּ ײׁזׁם בÝß ַבֳׁװםÝַÊ ַבדײÛז״ֹ Úבל ַבדׂזֿ.';
 $string['configuration'] = 'ֵÚַַֿֿÊ ַבדזÞÚ';
 $string['configvariables'] = 'דÊÛםַׁÊ ַבדזÞÚ';
@@ -232,16 +172,12 @@ $string['confirm'] = 'Êֳßםֿ';
 $string['confirmed'] = 'Êד Êֳßםֿ ַבÊ׃ּםב';
 $string['confirmednot'] = 'Ê׃ּםבß בד םֳßֿ ָÚֿ!';
 $string['continue'] = 'ַ׃Êדׁ';
-$string['continuetocourse'] = 'ֳהÞׁ והֱַ בבֿ־זב ֵבל דהוּß ַבַֿׁ׃ם';
 $string['cookiesenabled'] = 'ו׀ַ ַבדÊױÝֽ םָּ ֳה םֿÚד  ַבÜ Cookies ';
-$string['cookiesnotenabled'] = 'ב׃ז ַבֽÙ¡ בד Êדßה ־ַױםֹ ַבßׂßםׂ Ýם דÊױÝֽß.';
 $string['copy'] = 'ה׃־';
 $string['copyingcoursefiles'] = 'ה׃־ דבÝַÊ ַבדהוּ ַבַֿׁ׃ם';
 $string['copyinguserfiles'] = 'ה׃־ דבÝַÊ ַבד׃Ê־ֿד';
 $string['copyingzipfile'] = 'ה׃־ דבÝ דײÛז״';
 $string['copyrightnotice'] = 'דבֽזÙֹ ֽÞזÞ ַב״ָÚ';
-$string['cost'] = 'ַבÞםדֹ';
-$string['costdefault'] = 'ַבÞםדֹ ַבֳÝÊַׁײםֹ';
 $string['country'] = 'ַבֿזבֹ';
 $string['course'] = 'דהוּ ַֿׁ׃ם';
 $string['courseavailable'] = 'ו׀ַ ַבדהוּ ַבַֿׁ׃ם דÊזÝׁ בב״בַָ';
@@ -263,7 +199,6 @@ $string['createaccount'] = 'ֵהװֱַ ַװÊַׁßם ַבּֿםֿ';
 $string['createfolder'] = 'ֵהװֱַ דּבֿ Ýם $a';
 $string['createuserandpass'] = 'דה Ýײבß ׃ּב ַ׃ד ַבד׃Ê־ֿד זßבדֹ ַבדׁזׁ בבֿ־זב ָודַ Ýםדַ ָÚֿ';
 $string['createziparchive'] = 'ֵהװֱַ ֳׁװםÝ דײÛז״';
-$string['creatingblocks'] = 'ֳהװֱַ ßÊבֹ';
 $string['creatingcategoriesandquestions'] = 'ֵהװֱַ ֳױהַÝ זַ׃ֶבֹ';
 $string['creatingcoursemodules'] = 'ֵהװֱַ זֹֽֿ דהוּ ַֿׁ׃ם';
 $string['creatingevents'] = 'ֵהװֱַ ֳַֻֽֿ';
@@ -275,7 +210,6 @@ $string['creatingsections'] = 'ֵהװֱַ דּדזÚַÊ';
 $string['creatingtemporarystructures'] = 'ֵהװֱַ וםַßב דִÞÊֹ';
 $string['creatingusers'] = 'ֵהװֱַ ד׃Ê־ֿדםה';
 $string['creatingxmlfile'] = 'ֵהװֱַ דבÝ XML';
-$string['currency'] = 'Úדבֹ';
 $string['currentcourseadding'] = 'ֵײַÝֹ דÚבזדַÊ בבדהוּ ַבַֿׁ׃ם ַבַֽבם';
 $string['currentcoursedeleting'] = 'ֽ׀Ý ַבדהוּ ַבַֿׁ׃ם ַבַֽבם ֳזבַנ';
 $string['currentlanguage'] = 'ַבבÛֹ ַבַֽבםֹ';
@@ -290,22 +224,19 @@ $string['databasesuccess'] = 'Êד Êֽֿםֻ ÞַÚֹֿ ַבָםַהַÊ ָהַּֽ';
 $string['databaseupgradebackups'] = 'ַבה׃־ ַבֵֽÊםַ״ם בבֵױַֿׁ ַבֲה $a';
 $string['databaseupgradeblocks'] = 'ֵױַֿׁ ַבßÊב ַבַה וז $a';
 $string['databaseupgrades'] = 'Êֽֿםֻ ÞַÚֹֿ ַבָםַהַÊ';
-$string['date'] = 'Êַׁם־';
 $string['datemostrecentfirst'] = 'ַבÊַׁם־ - ַבַֻֽֿ ֳזבַנ';
 $string['datemostrecentlast'] = 'ַבÊַׁם־ - ַבַֻֽֿ ֳ־ַׁנ';
 $string['day'] = 'םזד';
 $string['days'] = 'ֳםַד';
-$string['decodinginternallinks'] = 'ÊװÝםׁ ַבׁזַָ״ ַבַֿ־בםֹ';
 $string['defaultcoursefullname'] = 'ַבַ׃ד ַבßַדב בבדהוּ ַבַֿׁ׃ם 101';
 $string['defaultcourseshortname'] = 'דהוּ 101';
 $string['defaultcoursestudent'] = 'ַב״ַבָ';
 $string['defaultcoursestudents'] = 'ַב״בַָ';
 $string['defaultcoursesummary'] = 'ַßÊָ ÝÞֹׁ ד־Êױֹׁ Êװֽׁ Ýםוַ דזײזÚ ַבדהוּ ַבַֿׁ׃ם';
-$string['defaultcourseteacher'] = 'דÚבד';
-$string['defaultcourseteachers'] = 'דÚבדזה';
+$string['defaultcourseteacher'] = 'ַבדֿׁ׃';
+$string['defaultcourseteachers'] = 'ַבדֿׁ׃זה';
 $string['delete'] = 'ֽ׀Ý';
 $string['deleteall'] = 'ֽ׀Ý ַבßב';
-$string['deletecategorycheck'] = 'וב ַהÊ דÊֳßֿבבÞםַד ָֽ׀Ý ו׀ַ ַבױהÝ Êדַדַ<b>\'a$\'</b>?<br /> ßב דהַוּ ַֿׁ׃םֹ ׃ÊהÞב ֳבל ַבױהÝ ַבֶׁם׃ בז זּֿ ױהÝ ֶׁם׃¡ ֳז ֵבל דהזÚַÊ.';
 $string['deletecheck'] = 'ֽ׀Ý $a ?';
 $string['deletecheckfiles'] = 'וב ֳהÊ דÊֳßֿ Êדַד ַבÞםַד ָÚדבםֹ ֽ׀Ý ו׀ו ַבדבÝַÊ';
 $string['deletecheckfull'] = 'וב ֳהÊ דÊֳßֿ ֳהß Êׁםֿ ֽ׀Ý $a ?';
@@ -323,9 +254,6 @@ $string['deletingexistingcoursedata'] = 'ֽ׀Ý דÚבזדַÊ ַבדהוּ ַבַֿׁ׃ם ַבדזּזֹֿ';
 $string['deletingolddata'] = 'ֽ׀Ý דÚבזדַÊ ַבÞֿםדֹ';
 $string['department'] = 'Þ׃ד';
 $string['description'] = 'ַבזױÝ';
-$string['detailedless'] = 'ÊÝַױםב ֳÞב';
-$string['detailedmore'] = 'ÊÝַױםב ֳßֻׁ';
-$string['directorypaths'] = 'ד׃ַַׁÊ ַבַֿבֹ';
 $string['disable'] = 'ÊÚ״םב';
 $string['displayingfirst'] = 'ÝÞ״ ַבַזב $a->count $a->things ׃םÚׁײ';
 $string['displayingrecords'] = 'Úׁײ $a ַב׃ּבַÊ';
@@ -336,38 +264,17 @@ $string['down'] = 'ֳ׃Ýב';
 $string['downloadexcel'] = 'Êֽדםב Ýם Êה׃םÞ ֵß׃ב';
 $string['downloadtext'] = 'Êֽדםב Ýם ױםÛֹ הױ';
 $string['doyouagree'] = 'וב ÞדÊ ָÞֱַֹׁ ו׀ו ַבװׁז״ זַ׃ÊםÚַָוַ¿';
-$string['duplicate'] = 'ה׃־ ד״ַָÞ';
-$string['duplicatinga'] = 'םÊד ה׃־ ד״ַָÞ: $a';
-$string['duplicatingain'] = 'ה׃־ ד״ַָÞ $ a> whatÝם $ a> in';
-$string['edhelpbgcolor'] = 'ÚׁÝ בזה ־בÝםֹ ַבדֽׁׁ.<br /> ַבÞםד ַבדÊÚַׁÝ Úבםוַ Úבל ׃ָםב ַבדַֻב ום:  #ffffff בבזה ַבֳָםײ.';
-$string['edhelpcleanword'] = 'ו׀ַ ַבֵÚַֿֿ בÊÝÚםב ֳז ÊÚ״םב דׁװֽ ַבÊה׃םÞ ַב־ַױ ָדַßׁז ׃זÝ זֿׁׁ.';
-$string['edhelpenablespelling'] = 'Êדßםה ֳז ÊÚ״ב ַבÊֿÞםÞ ַבֳדבֶַם. Úהֿ ַבÊדßםה <strong>aspell</strong> םָּ ֳה םßזה דָֻÊ Úבל ַבדׂזֿ.';
-$string['edhelpfontfamily'] = '־ַױםֹ Úֶַבֹ ַב־״ז״ ום Úַָֹׁ Úה Þֶַדֹ ÊֽÊזם Úבל ַ׃דֱַ Úֶַבֹ ַב־״ז״ (ֳז/ז)ַ׃דֱַ Úַדֹ. ֳ׃דֱַ Úזֶַב ַב־״ז״ םָּ ַה םÝױב ָםהוַ ָÜ Ýַױבֹ (,)';
-$string['edhelpfontlist'] = 'ÚׁÝ ַב־״ז״ ַבד׃Ê־ֿדֹ Ýם ד׃ֿבֹ ־״ז״ ַבדֽׁׁ';
-$string['edhelpfontsize'] = 'ּֽד ַב־״ ַבֳÝÊַׁ״ם םֽֿֿ ּֽד ַב־״.<br />Valid ַבÞםד Úבל ׃ָםב ַבדַֻב : medium, large, smaller, larger, 10pt, 11px.';
 $string['edit'] = 'ֽׁׁ $a';
 $string['editcoursesettings'] = 'ֽׁׁ ֵÚַַֿֿÊ ַבדהוּ ַבַֿׁ׃ם';
 $string['editfiles'] = 'ֽׁׁ ַבדבÝַÊ';
 $string['editgroupprofile'] = 'Êֽׁםׁ ׃דַÊ ַבדּדזÚֹ';
 $string['editinga'] = 'Êֽׁםׁ $a';
-$string['editingteachershort'] = 'דֽׁׁ';
-$string['editlock'] = 'בַ םדßה Êֽׁםׁ ו׀ו ַבÞםד';
-$string['editmyprofile'] = 'ֽׁׁ דבÝ ׃םׁÊß ַב׀ַÊםֹ';
-$string['editorbgcolor'] = 'בזה ַב־בÝםֹ';
-$string['editorcleanonpaste'] = 'הÙÝ דםßׁז ׃זÝ זֿׁׁ Êװ Êם ֵד ֳב Úהֿ ַבבױÞ';
-$string['editorcommonsettings'] = 'ַבַÚַַֿֿÊ ַבדÊÚַׁÝ Úבםוַ';
-$string['editordefaultfont'] = 'ַב־״ ַבַÝÊַׁײם';
-$string['editorenablespelling'] = 'דßה ַבדֿÞÞ ַבֳדבֶַם';
-$string['editorfontlist'] = 'Þֶַדֹ ַב־״ז״';
-$string['editorfontsize'] = 'ּֽד ַב־״ ַבַÝÊַׁײם';
-$string['editorresettodefaults'] = 'ֵÚַֹֿ ַבÞםד בבזײÚ ַבַÝÊַׁײם';
-$string['editorsettings'] = 'ֵÚַַֿֿÊ ַבדֽׁׁ';
+$string['editmyprofile'] = 'ֽׁׁ דבÝ ַבָםַהַÊ';
 $string['editsummary'] = 'ֽׁׁ דב־ױ';
 $string['editthisactivity'] = 'ÊÚֿםב ו׀ַ ַבהװַ״';
 $string['editthiscategory'] = 'ֽׁׁ ו׀ַ ַבױהÝ';
 $string['edituser'] = 'ֽׁׁ ָםַהַÊ ד׃Ê־ֿד';
 $string['email'] = 'Úהזַה ַבָׁםֿ ַבֵבßÊׁזהם';
-$string['emailactive'] = 'Êד ÊÝÚםב ַבָׁםֿ ַבֵבßÊׁזהם';
 $string['emailagain'] = 'ַבָׁםֿ ַבֵבßÊׁזהם ַֻהםַנ';
 $string['emailconfirm'] = 'Þד ָÊֳßםֿ ַװÊַׁßß';
 $string['emailconfirmation'] = 'דַָֽׁ $a->firstname,
@@ -379,26 +286,18 @@ $string['emailconfirmation'] = 'דַָֽׁ $a->firstname,
 ÊֽםַÊ דה \'$a->sitename\' ַבדֿםׁ,
 $a->admin';
 $string['emailconfirmationsubject'] = '$a Êֳßםֿ ַבֽ׃ַָ:';
-$string['emailconfirmsent'] = '   <p>Êד ֵׁ׃ַב ָׁםֿ ֵבל <b>$a</b></p>
-   <p>זַב׀ם םֽÊזם Úבל ֵׁװַַֿÊ ׃ובֹ ÊÚםהß Úבל ֵÊדַד ַבÊ׃ּםב</p>
-   <p>ֵ׀ַ ַ׃ÊדׁÊ ַבדװַßב ַÊױב ָדֿםׁ ו׀ַ ַבדזÞÚ</p>';
-$string['emaildigest'] = 'ָׁםֿ ֵבßÊׁזהם דב־ױ';
-$string['emaildigestcomplete'] = 'ßַדב (ָׁםֿ ֵבßÊׁזהם םזדם םֽÊזם ßַדב ַבדװַׁßַÊ)';
-$string['emaildigestoff'] = 'ָֿזה דב־ױ (ָׁםֿ ֵבßÊׁזהם זַֽֿ בßב דװַׁßֹ דהÊֿל)';
-$string['emaildigestsubjects'] = 'דזַײםÚ (ָׁםֿ ֵבßÊׁזהם םזדם םֽÊזם Úבל ַבזַײםÚ ÝÞ״)';
+$string['emailconfirmsent'] = '   <P>Êד ֵׁ׃ַב ָׁםֿ ֵבל <B>$a</B>
+   <P>זַב׀ם םֽÊזם Úבל ֵׁװַַֿÊ ׃ובֹ ÊÚםהß Úבל ֵÊדַד ַבÊ׃ּםב
+   <P>ֵ׀ַ ַ׃ÊדׁÊ ַבדװַßב ַÊױב ָדֿםׁ ו׀ַ ַבדזÞÚ';
 $string['emaildisable'] = 'Úהזַה ו׀ַ ַבָׁםֿ ַבֵבßÊׁזהם דÚ״ב';
-$string['emaildisableclick'] = 'ֳהÞׁ והֱַ בÊÚ״םב ֵׁ׃ַב ֳם ָׁםֿ ֵבßÊׁזהם בו׀ַ ַבÚהזַה';
 $string['emaildisplay'] = 'Úׁײ ַבָׁםֿ';
 $string['emaildisplaycourse'] = 'ֵÙוַׁ Úהזַהם ַבָׁםֿם בבדװַׁßםה Ýם ֽבÞַÊ ַֿׁ׃םֹ ֳ־ׁל ÝÞ״';
 $string['emaildisplayno'] = 'ֵ־Ýֱַ Úהזַהם ַבָׁםֿם Úה ַבßב';
 $string['emaildisplayyes'] = 'ֵÙוַׁ Úהזַהם ַבָׁםֿם בבßב';
 $string['emailenable'] = 'Úהזַה ו׀ַ ַבָׁםֿ ַבֵבßÊׁזהם דדßה';
-$string['emailenableclick'] = 'ֳהÞׁ והֱַ בבֵÚַֹֿ Êדßםה ֵׁ׃ַב ַבָׁםֿ ֵבßÊׁזהם בו׀ַ ַבÚהזַה';
 $string['emailexists'] = 'ו׀ַ ַבÚהזַה ַבָׁםֿם דזּזֿ ַָבÝÚב.';
 $string['emailformat'] = 'Êה׃םÞ ַבָׁםֿ';
 $string['emailmustbereal'] = 'בַָֿ ֳה םßזה Úהזַה ָׁםֿß ַבֵבßÊׁזהם ֽÞםÞםַ';
-$string['emailnotallowed'] = 'Úהַזםה ַבָׁםֿ ַבֵבßÊׁזהם בו׀ו ַבדַּבַÊ בַ ם׃דֽ ָוַ ($a)';
-$string['emailonlyallowed'] = 'ו׀ַ ַבָׁםֿ ַבֵבßÊׁזהם בם׃ דה ַבÚהַזםה ַבדױֽׁ בוַ($a)';
 $string['emailpasswordconfirmation'] = 'ֳובַ
 $a->firstname,
 װ־ױ דַ(ָׁדַ ֳהÊ) ״בָÊ ßבדֹ ׃ׁ ּֿםֿבֽ׃ַָß Ýם
@@ -407,42 +306,33 @@ $a->firstname,
 $a->link
 Ýם דÚÙד ַָׁדּ ַ׃ÊÞַָב ַבָׁםֿ ַבֵבßÊׁזה ׃םÙוׁ ו׀ַ ַבÚהזַה ָ־״ ַׁׂÞ הװ״ םßה ַבהÞׁ Úבםו ַָבÝַׁו. Ýם ַֽבֹ Ýװב Úדבםֹ ַבהÞׁ ַָבÝַׁו¡ Þד ָה׃־ ַבÚהזַה ßַדבַ זבױÞֹ Ýם ־ַהֹ ַבÚהזַה ַָבדÊױÝֽ
 Ýם ַֽבֹ ׁÛָÊדß ַבֽױזב Úבל ד׃ַÚֹֿ¡ םדßהß ַבַÊױַב ָדֿםׁ ַבדזÞÚ
-$a->admin';
+$a->admin
+';
 $string['emailpasswordconfirmationsubject'] = '$a ÊÛםׁ ßבדֹ ַבדׁזׁ:';
 $string['emailpasswordconfirmsent'] = 'דה ַבדÝÊׁײ ַהו Þֿ Êד ֵׁ׃ַב ָׁםֿ ֵבßÊׁזהם ֵבל Úהזַה ָׁםֿß ַבֵבßÊׁזהם<b>$a</b>
-<br />םֽÊזם Úבל בÊַßםֿ זֵהוֱַ ÊÛםׁ ßבדֹ ַב׃ׁ
+<p>םֽÊזם Úבל בÊַßםֿ זֵהוֱַ ÊÛםׁ ßבדֹ ַב׃ׁ
 Ýם ַֽבֹ ֽױזב Úבל ױÚזַָÊ Þד ַָבַÊױַב ָדֿםׁ ַבדזÞÚ
 $a->admin';
 $string['emailpasswordsent'] = 'װßׁנַ בÊֳßםֿ ÊÛםםׁ ßבדֹ ַב׃רׁר 
-<br />Êד ֵׁ׃ַב ָׁםֿ ֵבßÊׁזהם ֵבל Úהזַה ָׁםֿß ַבֵבßÊׁזהם םֽÊזם Úבל ßבדֹ ַב׃ׁ ַבּֿםֹֿ
+<p>Êד ֵׁ׃ַב ָׁםֿ ֵבßÊׁזהם ֵבל Úהזַה ָׁםֿß ַבֵבßÊׁזהם םֽÊזם Úבל ßבדֹ ַב׃ׁ ַבּֿםֹֿ
 <b>$a->email</b>
-<br />ßבדֹ ַב׃ׁ ַבּֿםֿ ֵהװֶÊ ֲבםַ¡ ָׁדַ ÊׁÛָ Ýם
-<a href=\"$a->link\">Ûםׁ ßבדֹ ַב׃ׁ ַב־ַױֹ ָß</a>ֵבם װֶ Ê׃Ê״םÚ Ê׀ßׁו';
+<p>ßבדֹ ַב׃ׁ ַבּֿםֿ ֵהװֶÊ ֲבםַ¡ ָׁדַ ÊׁÛָ Ýם
+<a href=$a->link>Ûםׁ ßבדֹ ַב׃ׁ ַב־ַױֹ ָß</a>ֵבם װֶ Ê׃Ê״םÚ Ê׀ßׁו';
 $string['enable'] = 'Êדßםה';
-$string['encryptedcode'] = 'ׁדׂ דװÝׁ';
 $string['enrolledincourse'] = 'ד׃ּב Ýם ַבדהוּ ַבַֿׁ׃ם ';
 $string['enrolledincoursenot'] = 'Ûםׁ ד׃ּב Ýם ַבדהוּ ַבַֿׁ׃ם ';
-$string['enrollfirst'] = 'םָּ Úבםß ַבÊ׃ּםב Ýם דהוּ ַֿׁ׃ם זַֽֿ Úבל ַבַÞב בÊÊדßה דה ַ׃Ê־ַֿד ַהװ״ֹ ַבדזÞÚ';
 $string['enrolmentconfirmation'] = 'ַהÊ Úבל זװß ַבÊ׃ּםב ßÚײז Ýם ו׀ ַבדהוּ ַבַֿׁ׃ם
 <br />וב ֳהÊ דÊֳßֿ דה ׀בß¿';
 $string['enrolmentkey'] = 'דÝÊַֽ ַבÊ׃ּםב';
-$string['enrolmentkeyfrom'] = 'ו׀ַ ַבדהוּ ַבַֿׁ׃ם םÊ״בָ \'דÝÊַֽ Ê׃ּםב\' -  Ýם ַבדֹׁ ַבֳזבל ÝÞ״<br />
+$string['enrolmentkeyfrom'] = 'ו׀ַ ַבדהוּ ַבַֿׁ׃ם םÊ״בָ \'דÝÊַֽ Ê׃ּםב\' -  Ýם ַבדֹׁ ַבֳזבל ÝÞ״<BR>
 ßבדֹ ַבדׁזׁ ַבÊם םÝÊׁײ ֽױזבß Úבםוַ דה $a';
-$string['enrolmentkeyhint'] = 'דÝÊַֽ ַבÊ׃ּםב Ûםׁ ױֽםֽ. םּׁל ֵÚַֹֿ ַבדַֽזבֹ<br />
+$string['enrolmentkeyhint'] = 'דÝÊַֽ ַבÊ׃ּםב Ûםׁ ױֽםֽ. םּׁל ֵÚַֹֿ ַבדַֽזבֹ<BR>
 (ו׀ַ Êבדםֽ - ֵהו םֳָֿ ָÜ \'$a\'';
-$string['enrolmentnew'] = 'Ê׃ּםב ּֿםֿ Ýם $a';
-$string['enrolmentnewuser'] = '$a->user  Þַד ַָבÊ׃ּםב Ýם \"$a->course\"';
-$string['enrolmentnointernal'] = 'ַבÊ׃ּםב ַבםֿזם Ûםׁ דÝÚב ַֽבםַנ';
-$string['enrolmentnotyet'] = 'Ú׀ַׁנ¡ בַ Ê׃Ê״םÚ ַבֿ־זב ֵבל ו׀ַ ַבדהוּ ַבַֿׁ׃ם ֽÊל <br /> $a';
-$string['enrolments'] = 'Ê׃ּםבַÊ';
-$string['enrolperiod'] = 'ÝÊֹׁ ַבÊ׃ּםב';
 $string['entercourse'] = 'ַבֿ־זב ֵבל ו׀ַ ַבדהוּ ַבַֿׁ׃ם';
 $string['enteremailaddress'] = 'ֳֿ־ב Úהזַה ָׁםֿß ַבֵבßÊׁזהם בÊױבß Úבםו ׁ׃ַבֹ ַָ׃ד ַבד׃Ê־ֿד זßבדֹ ַבדׁזׁ.';
-$string['entries'] = 'דֿ־בַÊ';
 $string['error'] = '־״ֱַ';
 $string['errortoomanylogins'] = 'Ú׀ַׁבÞֿ Êַּזֻׂ ַבֽֿ ַבַÞױל בדַֽזבַÊ ַבֿ־זב. ַÚֿ ÊװÛםב ַבדÊױÝֽ.';
 $string['errorwhenconfirming'] = 'בד ÊÊד Úדבםֹ ַבÊַßםֿ ָÚֿ ז׀בß בֽױזב ־״ֱַ דַ. בז ַהß הÞֹׁ Úבל ַבÚהזַה ַבדׁ׃ב ֵבל ָׁםֿ ַבֵבßÊׁזהם בהÞבß ֵבלוהֱַ¡ Êַßֿ דה ַהß הÞֹׁ Úבל ַבÚהזַה ßַדבַ¡ םדßהß ה׃־ זבױÞ ַבÚהזַה בבÞםַד ָÚדבםֹ ַבהÞב ֵבל ַבדזÞÚ ָװßב ֳÝײב';
-$string['everybody'] = 'ַבßב';
 $string['executeat'] = 'הÝ׀ Ýם ַֽבֹ';
 $string['existing'] = 'דזּזֿ';
 $string['existingadmins'] = 'ַבדֱַֿׁ ַבדזּזֿםה';
@@ -451,12 +341,8 @@ $string['existingcourseadding'] = 'ֵײַÝֹ דÚבזדַÊ בדהוּ ַֿׁ׃ם דזּזֿ';
 $string['existingcoursedeleting'] = 'ֽ׀Ý דÚבזדַÊ דה דהוּ ַֿׁ׃ם דזּזֿ';
 $string['existingcreators'] = 'דהװֶזה ַבדהוּ ַבַֿׁ׃ם ַבדזּזֿםה';
 $string['existingstudents'] = 'ַב״בַָ ַבד׃ּבזה';
-$string['existingteachers'] = 'ַבדÚבדזה ַבדזּזֿזה';
-$string['explanation'] = 'װֽׁ / ÊÝ׃םׁ';
-$string['failedloginattempts'] = '$a->attempts ַבַֽזבַÊ ַבֿ־זב ַבÝַװבֹ דה׀ ֳ־ׁ ׂםַֹׁ בß';
-$string['failedloginattemptsall'] = '$a->attempts דַֽזבַÊ ֿ־זב Ýַװבֹ $a->accounts בבֽ׃ַַָÊ';
+$string['existingteachers'] = 'ַבדֿׁ׃זה ַבדזּזֿזה';
 $string['feedback'] = 'ÊÞׁםׁ';
-$string['file'] = 'דבÝ';
 $string['filemissing'] = '$a Ûםׁ דזּזֿ';
 $string['files'] = 'דבÝַÊ';
 $string['filesfolders'] = 'דבÝַÊ / דּבַֿÊ';
@@ -471,12 +357,9 @@ $string['force'] = 'ֵַָּׁ';
 $string['forcedmode'] = 'זײÚ ֵַָּׁם';
 $string['forcelanguage'] = 'ֵַָּׁ ַבבÛֹ';
 $string['forceno'] = 'Úֿד ַבֵַָּׁ';
-$string['forcepasswordchange'] = 'ֵַָּׁ ßבדֹ ַבדׁזׁ';
-$string['forcepasswordchangehelp'] = 'ֳװÚׁ ַבד׃Ê־ֿד ָÊÛםׁ ßבדֹ ַבדׁזׁ Úהֿ ַבֿ־זב בבדזÞÚ ַֻהםַנ';
 $string['forgotten'] = 'וב ה׃םÊ ַ׃ד ַבֿ־זב ֳז ßבדֹ ַבדׁזׁ¿';
 $string['format'] = 'Êה׃םÞ';
 $string['formathtml'] = 'Êה׃םÞ HTML';
-$string['formatmarkdown'] = 'Êה׃םÞ Markdown';
 $string['formatplain'] = 'Êה׃םÞ הױםֹ';
 $string['formatsocial'] = 'Êה׃םÞ ַּÊדַÚם';
 $string['formattext'] = 'Êה׃םÞ ÊבÞֶַםֹ';
@@ -493,14 +376,12 @@ $string['frontpagenews'] = 'ֳÚׁײ ַבÚהַױׁ ַבּֿםֹֿ';
 $string['fulllistofcourses'] = 'ßב ַבדהַוּ ַבַֿׁ׃םֹ';
 $string['fullname'] = 'ַבַ׃ד ßַדבַ';
 $string['fullnamedisplay'] = '$a->ַבַ׃ד ַבַזב $a->ַבַ׃ד ַבַ־םׁ';
-$string['fullprofile'] = 'דבÝ ַב׃םֹׁ ַב׀ַÊםֹ';
+$string['fullprofile'] = 'דבÝ ַבָםַהַÊ ßַדבַ';
 $string['fullsitename'] = 'ַ׃ד ַבדזÞÚ ßַדבַ';
-$string['functiondisabled'] = 'Êבß ַבזÙםÝֹ Ûםׁ דדßהֹ ַֽבםַ';
 $string['gd1'] = 'GD 1.x Êד Êהױםָו';
 $string['gd2'] = 'GD 2.x Êד Êהױםָו';
 $string['gdneed'] = 'בַָֿ דה Êהױםָ GD בִׁםֹ ו׀ַ ַבׁ׃ד';
 $string['gdnot'] = 'בד םÊד Êהױםָ GD';
-$string['go'] = 'ַ׀וָ';
 $string['gpl'] = 'ֽÞזÞ ַב״ָÚ (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)
 ו׀ַ ַבָׁהַדּ דַּהם¡ םדßהß ֵÚַֹֿ ÊזׂםÚו ז/ֳז ÊÚֿםבו ״ָÞַ בװׁז״ ׁ־ױֹ ַבּדוזׁ ַבÚַדֹ GNU General Public License ַבÊם ֳױֿׁÊוַ דִ׃׃ֹ ַבַָׁדּ ַבדַּהםֹ Free Software Foundation ׃זֱַ ַבה׃־ֹ ׁÞד 2 ֳז ֳם ה׃־ֹ ֳ־ׁל Êַבםֹ Ê־Êַׁוַ.
 םÊד ÊזׂםÚ ו׀ַ ַבָׁהַדּ ֱַּׁ ַבֵÝַֹֿ¡ זבַ םÚֿ ו׀ַ ײדַהַ זבז ײדהםַ Úבל דבֶַדֹ ו׀ַ ַבָׁהַדּ בבÊ׃זםÞ ֳז בÛׁײ דÚםה. בדׁםֿ דה ַבדÚבזדַÊ¡ ַּׁÚ ׁ־ױֹ ַבּדוזׁ ַבÚַדֹ GNU General Public License:
@@ -551,9 +432,7 @@ $string['hiddensections'] = 'ַבדזַײםÚ ַבד־Ýםו';
 $string['hiddensectionscollapsed'] = 'ַבֱֳַּׂ ַבדֽÝםֹ  Êד ֵÙוַׁוַ Ýם וםֶֹ דה״זםֹ';
 $string['hiddensectionsinvisible'] = 'ַבֱֳַּׂ ַבדֽÝםֹ Ûםׁ דֶׁםו Êדַדַנ';
 $string['hide'] = 'ֵ־Ýֱַ';
-$string['hideadvancedsettings'] = 'ֵ־Ýֱַ ַבֵÚַַֿֿÊ ַבדÊÞֿדֹ';
 $string['hidepicture'] = 'ֵ־Ýֱַ ַבױזֹׁ';
-$string['hidesettings'] = 'ֵ־Ýֱַ ַבֵÚַַֿֿÊ';
 $string['hits'] = 'הÊֶַּ';
 $string['hitsoncourse'] = 'ֿ־זב ֵבל $a->coursename ָזַ׃״ֹ $a->username';
 $string['hitsoncoursetoday'] = 'הÊֶַּ ַבםזד Ýם  $a->coursename ָזַ׃״ֹ $a->username';
@@ -583,8 +462,6 @@ $string['includeuserfiles'] = 'Êײדםה דבÝַÊ ַבד׃Ê־ֿד';
 $string['institution'] = 'דִ׃׃ֹ';
 $string['invalidemail'] = 'Úהזַה ַבָׁםֿ ַבֵבßÊׁזהם Ûםׁ ױֽםֽ';
 $string['invalidlogin'] = '־״ֳ Ýם ַ׃ד ַבד׃Ê־ֿד ֳז ßבדֹ ַבדׁזׁ¡ םּׁל ֵÚַֹֿ ַבדַֽזבֹ.';
-$string['ip_address'] = 'Úהזַה IP';
-$string['jump'] = 'ֳÞÝׂ';
 $string['jumpto'] = 'ַהÊÞַב ֵבל...';
 $string['keep'] = 'ַֽÝÙ';
 $string['langltr'] = 'ַÊַּו ַבבÛֹ דה ַבװדַב ֵבל ַבםדםה';
@@ -609,32 +486,26 @@ $string['location'] = 'ַבדזÞÚ';
 $string['loggedinas'] = 'Êד ֿ־זבß ָױÝֹ $a';
 $string['loggedinnot'] = 'בד םÊד ֿ־זבß.';
 $string['login'] = 'ֿ־זב';
-$string['login_failure_logs'] = '׃ּבַÊ דַֽזבַÊ ַבֿ־זב ַבÝַװבֹ';
 $string['loginas'] = 'ֿ־זב ָױÝֹ';
 $string['loginguest'] = 'ַבֿ־זב ָױÝֹ ײםÝ';
 $string['loginsite'] = 'ֿ־זב ֵבל ַבדזÞÚ';
 $string['loginsteps'] = 'דַָֽׁ ָß! םדßהß ֵהװֱַ ַװÊַׁß ּֿםֿ Ýם ו׀ַ ַבדזÞÚ ־בַב בֽÙַÊ זַבַÊױַב ַבßַדב ַָבדהַוּ ַבַֿׁ׃םֹ ז׀בß ָÊÊָÚ ַב־״זַÊ ַבÊַבםֹ: 
 
-   <ol>
-   <li>ַדבֳ הדז׀ּ <a href=\"$a\">ֽ׃ַָ ּֿםֿ</a>.</li>
-   <li>Úבל ַבÝזׁ Êױבß ׁ׃ַבֹ Úבל Úהזַהß ַבָׁםֿם.</li>
-   <li>Þד ָÞֱַֹׁ ַבָׁםֿ זַײÛ״ Úבל ַבַָׁ״ֹ ַבדזּזֹֿ ָו.</li>
-   <li>׃םÊד Êֳßםֿ ַװÊַׁßß זם׃דֽ בß ַָבֿ־זב.</li>
-   <li>זַבֲה Þד ַָ־Êםַׁ ַבדהוּ ַבַֿׁ׃ם ַב׀ם ÊׁÛָ ַבדװַׁßֹ Ýםו.</li>
-   <li>דה ַבֲה ÝױַÚַֿ םדßהß ַבֿ־זב Úה ״ׁםÞ ֵֿ־ַב ַ׃ד ַבד׃Ê־ֿד זßבדֹ ַבדׁזׁ (Ýם ַבהדז׀ּ ַבדÞַָב ָו׀ו ַבױÝֹֽ) ¡ זÊ׃Ê״םÚ ַבַÊױַב ַבßַדב ַָבדהוּ ַבַֿׁ׃ם ¡ זÊױב ֵבל ֳם דהוּ ַֿׁ׃ם Êׁםֿ ַבÊ׃ּםב ָו.</li>
-   <li>ֵ׀ַ ״בָ דהß  \'\'דÝÊַֽ ַבÊ׃ּםב\'\' - ַ׃Ê־ֿד ַבדÝÊַֽ ַב׀ם ֳÚ״ַו בß ַבדֿׁ׃. ו׀ַ ׃םּÚבß \'\'Êװַׁß\'\' Ýם ַבדהוּ ַבַֿׁ׃ם.   </li>
-   <li> בַ ֽÙ ֳה ßב דהוּ ַֿׁ׃ם Þֿ םßזה בו ֳםײַ \"דÝÊַֽ Ê׃ּםב\" ׃ÊֽÊַּ ֵבםו בַֽÞַ.</li>
-   </ol>';
-$string['loginstepsnone'] = '<p>דַָֽׁ!</p><p>בבַÊױַב ַבßַדב ַָבדהַוּ ַבַֿׁ׃םֹ ׃ÊֽÊַּ ֵבל ֵהװֱַ ַװÊַׁß ּֿםֿ.</p><p>ßב דַ Úבםß וז Úדב ַ׃ד ד׃Ê־ֿד זßבדֹ דׁזׁ זַ׃Ê־ַֿדודַ Ýם ַבהדז׀ּ ַבדזּזֿ ָו׀ו ַבױÝֹֽ!</p><p>ֵ׀ַ ßַה ַ׃ד ַבד׃Ê־ֿד Þֿ Êד ַ׃Ê־ַֿדו דה Þָב¡ ָּׁ דֹׁ ֳ־ׁל ַ׃דַ ֲ־ׁ.</p>';
+   <OL size=2>
+   <LI>ַדבֳ הדז׀ּ <A HREF=$a>ֽ׃ַָ ּֿםֿ</A>.
+   <LI>Úבל ַבÝזׁ Êױבß ׁ׃ַבֹ Úבל Úהזַהß ַבָׁםֿם.
+   <LI>Þד ָÞֱַֹׁ ַבָׁםֿ זַײÛ״ Úבל ַבַָׁ״ֹ ַבדזּזֹֿ ָו.
+   <LI>׃םÊד Êֳßםֿ ַװÊַׁßß זם׃דֽ בß ַָבֿ־זב.
+   <LI>זַבֲה Þד ַָ־Êםַׁ ַבדהוּ ַבַֿׁ׃ם ַב׀ם ÊׁÛָ ַבדװַׁßֹ Ýםו.
+   <LI>דה ַבֲה ÝױַÚַֿ םדßהß ַבֿ־זב Úה ״ׁםÞ ֵֿ־ַב ַ׃ד ַבד׃Ê־ֿד זßבדֹ ַבדׁזׁ (Ýם ַבהדז׀ּ ַבדÞַָב ָו׀ו ַבױÝֹֽ) ¡ זÊ׃Ê״םÚ ַבַÊױַב ַבßַדב ַָבדהוּ ַבַֿׁ׃ם ¡ זÊױב ֵבל ֳם דהוּ ַֿׁ׃ם Êׁםֿ ַבÊ׃ּםב ָו.
+   <LI>ֵ׀ַ ״בָ דהß  \'\'דÝÊַֽ ַבÊ׃ּםב\'\' - ַ׃Ê־ֿד ַבדÝÊַֽ ַב׀ם ֳÚ״ַו בß ַבדֿׁ׃. ו׀ַ ׃םּÚבß \'\'Êװַׁß\'\' Ýם ַבדהוּ ַבַֿׁ׃ם.   
+   <LI> בַ ֽÙ ֳה ßב דהוּ ַֿׁ׃ם Þֿ םßזה בו ֳםײַ \"דÝÊַֽ Ê׃ּםב\" ׃ÊֽÊַּ ֵבםו בַֽÞַ.
+   </OL>';
+$string['loginstepsnone'] = 'דַָֽׁ!<P>בבַÊױַב ַבßַדב ַָבדהַוּ ַבַֿׁ׃םֹ ׃ÊֽÊַּ ֵבל ֵהװֱַ ַװÊַׁß ּֿםֿ.<P>ßב דַ Úבםß וז Úדב ַ׃ד ד׃Ê־ֿד זßבדֹ דׁזׁ זַ׃Ê־ַֿדודַ Ýם ַבהדז׀ּ ַבדזּזֿ ָו׀ו ַבױÝֹֽ!<P>ֵ׀ַ ßַה ַ׃ד ַבד׃Ê־ֿד Þֿ Êד ַ׃Ê־ַֿדו דה Þָב¡ ָּׁ דֹׁ ֳ־ׁל ַ׃דַ ֲ־ׁ.';
 $string['loginto'] = 'ֿ־זב ֵבל $a';
 $string['loginusing'] = 'ַבֿ־זב ַָ׃ד ַבד׃Ê־ֿד זßבדֹ ַבדׁזׁ';
 $string['logout'] = '־ׁזּ';
 $string['logs'] = 'ÊÞַׁםׁ';
-$string['logtoomanycourses'] = '[<a href = \"$a\"> url \"> ַבדׂםֿ </a>]';
-$string['logtoomanyusers'] = '[<a href = \"$a\"> url \"> ַבדׂםֿ </a>]';
-$string['mailadmins'] = 'ֳֽ״ ַבדֱַֿׁ';
-$string['mailstudents'] = 'ֳֽ״ ַב״בַָ';
-$string['mailteachers'] = 'ֳֽ״ ַבדÚבדזה';
 $string['mainmenu'] = 'ַבÞֶַדֹ ַבֶׁם׃םֹ';
 $string['makeafolder'] = 'ֵהװֱַ דּבֿ';
 $string['makeeditable'] = 'ֵ׀ַ ּÚבÊ \'$a\' Þַָבַ בבÊÚֿםב דה ־בַב Úדבםֹ דׂזֿ ַבֵהÊׁהÊ (דַֻב apache) ֻד Ê׃Ê״םÚ ÊÚֿםב ו׀ַ ַבדבÝ דַָװֹׁ דה ־בַב ו׀ו ַבױÝֹֽ';
@@ -651,7 +522,6 @@ $string['maximumupload'] = 'ַבּֽד ַבֳÞױל בבÊֽדםב';
 $string['maxsize'] = 'ַבֽֿ ַבֳÞױל: $a';
 $string['min'] = 'ַבֽֿ ַבֳֿהל';
 $string['mins'] = 'ַבֳÞב';
-$string['minutes'] = 'ֿÞֶַÞ';
 $string['miscellaneous'] = 'דÊהזÚ';
 $string['missingcategory'] = 'בַָֿ דה ַ־Êםַׁ ױהÝ';
 $string['missingcity'] = 'ַבדֿםהֹ/ַבָבֿ בד םֽֿֿ';
@@ -680,7 +550,6 @@ $string['moduledeletefiles'] = 'ßב ַבָםַהַ ַבדÊÚבÞֹ ָו׀ו ַבזֽֿו \'$a->module\'Þֿ
 $string['modulesetup'] = 'Êהױםָ ַּֿזב ַבזֹֽֿ ַבהד״םֹ';
 $string['modulesuccess'] = '$a Êד Êהױםָ ַבַּֿזב ָװßב ױֽםֽ';
 $string['moodleversion'] = 'ֳױַֿׁ דזֿב';
-$string['more'] = 'ַבדׂםֿ';
 $string['mostrecently'] = 'ַבֳֻֽֿ';
 $string['move'] = 'הÞב';
 $string['movecategoryto'] = 'הÞב ַבױהÝ ֵבל:';
@@ -694,7 +563,6 @@ $string['moveright'] = 'ֳהÞב ֵבל ַבםדםה';
 $string['moveselectedcoursesto'] = 'ֳהÞב ַבדהַוּ ַבַֿׁ׃םֹ ַבד־Êַֹׁ ֵבל';
 $string['movetoanotherfolder'] = 'הÞב ֵבל דּבֿ ֲ־ׁ';
 $string['moveup'] = 'ַבַהÊÞַב ֵבל ֳÚבל';
-$string['mustchangepassword'] = 'ßבדֹ ַבדׁזׁ ַבּֿםֹֿ םָּ ֳה Ê־ÊבÝ Úה ַבßבדֹ ַבַֽבםֹ';
 $string['mustconfirm'] = 'ֳהÊ ÊֽÊַּ ֵבל Êֳßםֿ ַבֿ־זב';
 $string['mycourses'] = 'דהַוּם ַבַֿׁ׃םֹ';
 $string['name'] = 'ַבַ׃ד';
@@ -717,7 +585,8 @@ $string['newpasswordtext'] = 'דַָֽׁ $a->firstname,
    $a->link
 Ýם ֳÛבָ ַָׁדּ ַבָׁםֿ םÙוׁ ׀בß Ýם װßב ַָׁ״ֹ ׁׂÞֱַ¡ זדַ Úבםß ֵבַ ַבײÛ״ Úבםוַ. Ýֵ׀ַ בד םÚדב ׀בß¡ Þד ָÞױ ַבÚהזַה זבױÞו Ýם ־ַהֹ ַבÚהזַה ֳÚבל Úַׁײ ַבֵהÊׁהÊ.
 ÊֽםַÊ דה \'$a->sitename\' ַבדֿםׁ,
-$a->signoff';
+$a->signoff
+';
 $string['newpicture'] = 'ױזֹׁ װ־ױםֹ ּֿםֹֿ';
 $string['newsitem'] = 'ָהֿ ֳ־ַָׁםו';
 $string['newsitems'] = 'ָהזֿ ֳ־ַָׁםו';
@@ -726,45 +595,37 @@ $string['newuser'] = 'ד׃Ê־ֿד ּֿםֿ';
 $string['newusers'] = 'ד׃Ê־ֿדזה ּֿֿ';
 $string['next'] = 'ַבÊַבם';
 $string['no'] = 'בַ';
-$string['nobody'] = 'בַ ֳֽֿ';
 $string['nocoursesfound'] = 'בַ םזּֿ דהוּ ַֿׁ׃ם םֽÊזם Úבל ו׀ו ַבßבדַÊ  \'$a\'';
 $string['nocoursesyet'] = 'בַ Êזּֿ ֽבÞַÊ ַֿׁ׃םֹ בו׀ו ַבÝֶֹ';
 $string['noexistingadmins'] = 'בַ םזּֿדֱַֿׁ¡ ו׀ַ ־״ֱַ ־״םׁ זבה Êׁל ו׀ו ַבׁ׃ַבו ַֻהםַ';
 $string['noexistingcreators'] = 'בַ םזּֿ דהװֶזה';
 $string['noexistingstudents'] = 'בַ םזּֿ ״בַָ';
-$string['noexistingteachers'] = 'בַ םזּֿ דÚבדזה';
+$string['noexistingteachers'] = 'בַ םזּֿ דֿׁ׃זה ֽײזׁ';
 $string['nofilesselected'] = 'בד םÊד ַ־Êםַׁ דבÝַÊ בבÞםַד ָÚדבםֹ ַבֳ׃ÊַּׁÚ';
 $string['nofilesyet'] = 'בד םÊד Êֽדםב ֳם דבÝ בבדהוּ ַב־ַױ ָß';
 $string['nograde'] = 'בַ Êזּֿ ֹּֿׁ';
 $string['noimagesyet'] = 'בד םÊד Êֽדםב ֳם ױזֹׁ בבדהוּ ַב־ַױ ָß ';
 $string['nomorecourses'] = 'בַ םזּֿ ַבדׂםֿ דה ַבדהַוּ ַבַֿׁ׃םֹ ַבדדַֻבֹ';
-$string['nomoreidnumber'] = 'בÊÝַֿם ַבÊÚַׁײ בַ Ê׃Ê־ֿד ׁÞד ÊÚׁםÝ';
 $string['none'] = 'בַ םזּֿ';
 $string['nopotentialadmins'] = 'בַ םזּֿ דֱַֿׁ דֽÊדבזה';
 $string['nopotentialcreators'] = 'בַ םזּֿ דהװֶזה דהוּ ַֿׁ׃ם דֽÊדבזה';
 $string['nopotentialstudents'] = 'בַ םזּֿ ״בַָ דֽÊדבזה';
-$string['nopotentialteachers'] = 'בַ םזּֿ דÚבדזה דֽÊדבזה';
+$string['nopotentialteachers'] = 'בַ םזּֿ דֿׁ׃םה דֽÊדבזה';
 $string['normal'] = 'Úַֿם';
 $string['normalfilter'] = 'ָֻֽ Úַֿם';
 $string['nostudentsfound'] = 'בד םÊד ַבÚֻזׁ Úבל $a';
 $string['nostudentsyet'] = 'בד םÊד Ê׃ּםב ֳם ״בַָ Ýם ו׀ַ ַבדהוּ ַבַֿׁ׃ם ';
 $string['nosuchemail'] = 'בַ םזּֿ דֻב ו׀ַ ַבÚהזַה ַבָׁםֿם';
 $string['notavailable'] = 'Ûםׁ דÊזÝׁ';
-$string['noteachersyet'] = 'בַ םזּֿ דÚבדזה בו׀ַ ַבדהוּ ַבַֿׁ׃ם ';
+$string['noteachersyet'] = 'בַ םזּֿ דֿׁ׃זה Ýם ו׀ַ ַבדהוּ ַבַֿׁ׃ם ';
 $string['notenrolled'] = '$a Ûםׁ ד׃ּב Ýם ו׀ַ ַבדהוּ ַבַֿׁ׃ם';
 $string['noteuserschangednonetocourse'] = 'דבַֽÙֹ:ד״בָ ַ׃ÊַּׁÚ ד׃Ê־ֿדםה ַבדהוּ ַבַֿׁ׃ם Úהֿ ַ׃ÊַּׁÚ דÚבזדַÊ ַבד׃Ê־ֿד. ו׀ַ ַבַÚַֿֿÊד ÊÛםׁ בß';
 $string['nothingnew'] = 'בַ ּֿםֿ דה׀ ֲ־ׁ ׂםַֹׁ בß.';
-$string['noticenewerbackup'] = 'ַבדבÝ ַבַֽÊםַ״ם ו׀ַ Êד ֵהװֶַו ָדזֿב $a->backuprelese ($a->backupversion)זו׀ַ ַבַױַֿׁ דה דזַֿב וז ֳֻֽֿ דה ַבֳױַֿׁ ַבדָֻÊ בֿםß ַבֲה  $a->backuprelese ($a->backupversion). ו׀ַ Þֿ ם׃ָָ ָÚײ ַבÊÚַׁײַÊ בַה ÊזַÝÞ דבÝַÊ ַבה׃־ ַבַֽÊםַ״ם בַ םדßה ײדַהוַ.';
-$string['notifyloginfailuresmessage'] = '$a->time ֵהÊׁ הÊ ָׁזÊזßזב: $a->ip ד׃Ê־ֿד: $a->info';
-$string['notifyloginfailuresmessageend'] = 'Ê׃״םÚ ִׁםֹ ו׀ו ַב׃ּבַÊ Ýם $a /course/log.php?id=1&chooselog=1&modid=site_errors';
-$string['notifyloginfailuresmessagestart'] = 'ו׀ו Þֶַדֹ בדַֽזבַÊ ַבֿ־זב ַבÝַװבֹ ֵבל $a דה׀ ֳ־ׁ ֵַֽ״ֹ בß';
-$string['notifyloginfailuressubject'] = '$a:: ַװÚַׁ דַֽזבַÊ ַבֿ־זב ַבÝַװבֹ.';
 $string['notincluded'] = 'בד םײדה';
 $string['notingroup'] = 'Ú׀ַׁנ¡ םָּ Úבםß ֳה Êßזה Úײזַנ Ýם דּדזÚֹ בÊÊדßה דה דÚַםהֹ ו׀ַ ַבהװַ״';
 $string['nousersmatching'] = 'בד םÚֻׁ Úבל \'$a\' ד׃Ê־ֿדםה דדַֻבםה';
 $string['nousersyet'] = 'בם׃ והַß ד׃Ê־ֿדזה ֽÊל ַבֲה';
 $string['now'] = 'ַבֲה';
-$string['numattempts'] = '$a דַֽזבַÊ ַבֿ־זב ַב־ַ״ֶֹ';
 $string['numberweeks'] = 'Úֿֿ ַבֳ׃ַָםÚ/ַבדזַײםÚ';
 $string['numdays'] = '$a ֳםַד';
 $string['numhours'] = '$a ׃ַÚַÊ';
@@ -781,8 +642,6 @@ $string['order'] = 'ÊׁÊםָ';
 $string['other'] = 'ֳ־ׁ';
 $string['outline'] = 'דב־ױ';
 $string['page'] = 'ױÝֹֽ';
-$string['pageheaderconfigablock'] = 'ֵÚַֿֿ ßÊבֹ Ýם %%fullname%%';
-$string['parentlanguage'] = '<<ַבדÊּׁדזה: ֳ׀ַ ßַהÊ בÛÊß בוַ בÛֹ ֳד זַבÊם םָּ Úבל דזֿב םÊ־ֿד זםזּֿ ָÚײ ַבÊÚַָםׁ דÝÞזֹֿ דה ֽׂדֹ בÛÊß¡ ב׀ַ םָּ Úבםß Êֽֿםֿ ַבׁדׂ והֱַ. בז ÊׁßÊ ו׀ַ ַבֽÞב ÝַׁÛַ ׃םÊד ַ׃Ê־ַֿד ַבבÛֹ ַבֵהּבםׂםֹ. Úבל ׃ָםב ַבדַֻב: nl>>';
 $string['participants'] = 'ַבדװÊׁßזה';
 $string['password'] = 'ßבדֹ ַבדׁזׁ';
 $string['passwordchanged'] = 'Êד ÊÛםםׁ ßבדֹ ַבדׁזׁ';
@@ -790,28 +649,19 @@ $string['passwordconfirmchange'] = 'Êֳßםֿ ÊÛםׁ ßבדֹ ַבדׁזׁ';
 $string['passwordrecovery'] = 'הÚד¡ ׃ַÚֿהם Úבל ַבֿ־זב';
 $string['passwordsdiffer'] = 'ßבדַÊ ַבדׁזׁ בַ ÊÊ״ַָÞ';
 $string['passwordsent'] = 'Êד ֵׁ׃ַב ßבדֹ ַבדׁזׁ';
-$string['passwordsenttext'] = '   <p>Êד ֵׁ׃ַב ׁ׃ַבֹ ֵבל ַבÚהזַה $a->email.</p>
-   <p><b>םּׁל ַבָֻֽ Ýם ַבָׁםֿ Úה ßבדֹ ַבדׁזׁ</b></p>
-   <p>Êד ֵױַֿׁ ßבדֹ דׁזׁ ּֿםֹֿ¡ זָׁדַ ׁÛָÊ Ýם
-   < a href=\"$a->link\">Ýם ÊÛםםׁוַ ֵבל װםֱ ֳָ׃״ דה ׀בß ֽÊל ם׃וב Ê׀ßׁוַ</a>.</p>';
-$string['pathnotexists'] = 'ַבד׃ַׁ Ûםׁ דזּזֿ Ýם ַב־ַֿד';
-$string['pathslasherror'] = 'בַ םדßה ַהוֱַ ַבד׃ַׁ ָÚבַדֹ דֶַבֹ!!';
-$string['paymentinstant'] = 'ַ׃Ê־ֿד ַבׁׂ ַבÊַבם בֿÝÚ ַבׁ׃זד ַבÊ׃ּםב ־בַב ֿÞֶַÞ.';
-$string['paymentrequired'] = 'ו׀ַ ַבדהוּ Ûםׁ דַּהםה ב׀ַ םָּ ֿÝÚ ַבÞםדֹ בבֿ־זב. ';
-$string['paymentsorry'] = 'װßַׁנ בÞםַדß ָֿÝÚ ַבדָבÛ ַבד״בזָ! זבßה ב׃זֱ ַבֽÙ בד םÊד ֽÊל ַבֲה ֵהוֱַ ֱֵַַּׁÊ ַב־ַױֹ ָÊ׃ּםבß¡ ב׀ַ בה ÊÊדßה דה ַבֿ־זב ֵבל ַבדהוּ ַבַֿׁ׃ם \"$a->fullname\". ַבֱַּׁנ ַֽזבת ַבֿ־זב ָײÚֹ ֻזַהם¡ Ýם ַֽבֹ Úֿד Êדßה דה ַבֿ־זב ָÚֿ Úֹֿ דַֽזבַÊ ַבֱַּׁנ ֵַֽ״ֹ$a-> דÚברד ֳףז דֿםׁ ַבדזÞÚף.';
-$string['paymentthanks'] = 'װßַׁנ בÞםַדß ָֿÝÚ ַבדָבÛ ַבדַבם! בÞֿ Êד Ê׃ּםבß Ýם ַבדהוּ ַבַֿׁ׃ם: :<br /> \"$a\"';
+$string['passwordsenttext'] = '   <P>Êד ֵׁ׃ַב ׁ׃ַבֹ ֵבל ַבÚהזַה $a->email.
+   <P><B>םּׁל ַבָֻֽ Ýם ַבָׁםֿ Úה ßבדֹ ַבדׁזׁ</B>
+   <P>Êד ֵױַֿׁ ßבדֹ דׁזׁ ּֿםֹֿ¡ זָׁדַ ׁÛָÊ Ýם
+   <A HREF=$a->link>Ýם ÊÛםםׁוַ ֵבל װםֱ ֳָ׃״ דה ׀בß ֽÊל ם׃וב Ê׀ßׁוַ</A>.';
 $string['people'] = 'ֳװ־ַױ';
-$string['personalprofile'] = 'ַב׃םֹׁ ַב׀ַÊםֹ';
+$string['personalprofile'] = 'דבÝ ַבָםַהַÊ װ־ױם';
 $string['phone'] = 'וַÊÝ';
 $string['phpinfo'] = 'דÚבזדַÊ PHP';
-$string['policyagree'] = 'םָּ ַבדזַÝÞֹ Úבל ו׀ו ַבװׁז״ בבֳ׃Êדַׁׁ Ýם ַ׃Ê־ַֿד ַבדזÞÚ. וב ֳהÊ דזַÝÞ¿';
-$string['policyagreement'] = 'װׁז״ ֵÊÝַÞםֹ ַבדזÞÚ';
-$string['policyagreementclick'] = 'ֳהÞׁ והֱַ בÞֱַֹׁ װׁז״ ֵÊÝַÞםֹ ַבדזÞÚ';
 $string['popupwindow'] = 'ÝÊֽ ַבדבÝ Ýם הַÝ׀ֹ ּֿםֹֿ';
 $string['potentialadmins'] = 'דֱַֿׁ דֽÊדבזה';
 $string['potentialcreators'] = 'דהװֶזה דÊוּ ַֿׁ׃ם דֽÊדבזה';
 $string['potentialstudents'] = '״בַָ דֽÊדבזה';
-$string['potentialteachers'] = 'דÚבדזה דֽÊדבזה';
+$string['potentialteachers'] = 'דֿׁ׃זה דֽÊדבזה';
 $string['preferredlanguage'] = 'ַבבÛֹ ַבדÝײבֹ';
 $string['preview'] = 'דÚַםהֹ';
 $string['previeworchoose'] = 'ַ־Êׁ ַבװßב ַבדהַ׃ָ  בםÙוׁ ַבדזÞÚ ָו';
@@ -829,23 +679,22 @@ $string['recentactivityreport'] = 'ÊÞׁםׁ ßַדב בבהװַ״ ַבַֽבם';
 $string['refreshingevents'] = 'Êֽֿםֻ ַבַַֻֽֿ';
 $string['registration'] = 'Ê׃ּםב דזֿב';
 $string['registrationemail'] = 'ֵװÚַַׁÊ ַבָׁםֿ ַבֵבßÊׁזהם';
-$string['registrationinfo'] = 'דה ־בַב ו׀ו ַבױÝֹֽ םÊד Ê׃ּםב דזÞÚß דÚ moodle.org. ַבÊ׃ּםב דַּהם.
+$string['registrationinfo'] = '<p>דה ־בַב ו׀ו ַבױÝֹֽ םÊד Ê׃ּםב דזÞÚß דÚ moodle.org. ַבÊ׃ּםב דַּהם.
 ַבוֿÝ ַבֶׁם׃ דה ַבÊ׃ּםב וז ַײַÝÊß Ûבל Þֶַדֹ ַבָׁםֿ ַבֵבßÊׁזהם ז׀בß בÊׂזםֿß ָדַ וז ּֿםֿ Ýםדַ םÊÚבÞ ָÞײַםַ ַבַדה זַבַױַַֿׁÊ ַבּֿםֿו בדזֿב
-<br />ֵÝÊַׁײםַ¡ דÚבזדַÊß ׃ÊָÞל ־ַױֹ ז׃ׁםוזבה ÊַָÚ ֳז Ê׃בד בֵל ּוֹ ַ־ׁל. ַב׃ָָ ַבֶׁם׃ דה ÊּדםÚ ו׀ו ַבָםַהַÊ וז בֵÛַׁײ ַבֿÚד ַבÝהם זַבד׃ַÚֿו Ýם ָהֱַ ֵֽױֶַםו Êּ׃ֿ ּדוזׁ דזֿב
-<br />םדßהß ַב׃דַֽ ָהװׁ ַ׃ד דזÞÚß זֿזבÊß Ýם ַבÞֶַדֹ ַבÚַדֹ בבדזַÞÚ ַבד׃Ê־ֿדֹ בדזֿב
-<br />ßב ַבÊ׃ּבַÊ ַבּֿםֿו Êזßֿ םֿזםַ Þָב ַײַÝÊוַ Ûבל ַבÞֶַדֹ¡ זבßה ָדּֿׁ ֵײַÝÊß בבÞֶַדֹ םדßהß Êֽֿםֻ ָםַהַÊ Ê׃ּםבß ֵָÚַֹֿ ַׁ׃ַב ו׀ַ ַבהז׀ּ Ýם ֳם זÞÊ';
+<p>ֵÝÊַׁײםַ¡ דÚבזדַÊß ׃ÊָÞל ־ַױֹ ז׃ׁםוזבה ÊַָÚ ֳז Ê׃בד בֵל ּוֹ ַ־ׁל. ַב׃ָָ ַבֶׁם׃ דה ÊּדםÚ ו׀ו ַבָםַהַÊ וז בֵÛַׁײ ַבֿÚד ַבÝהם זַבד׃ַÚֿו Ýם ָהֱַ ֵֽױֶַםו Êּ׃ֿ ּדוזׁ דזֿב
+<p>םדßהß ַב׃דַֽ ָהװׁ ַ׃ד דזÞÚß זֿזבÊß Ýם ַבÞֶַדֹ ַבÚַדֹ בבדזַÞÚ ַבד׃Ê־ֿדֹ בדזֿב
+<p>ßב ַבÊ׃ּבַÊ ַבּֿםֿו Êזßֿ םֿזםַ Þָב ַײַÝÊוַ Ûבל ַבÞֶַדֹ¡ זבßה ָדּֿׁ ֵײַÝÊß בבÞֶַדֹ םדßהß Êֽֿםֻ ָםַהַÊ Ê׃ּםבß ֵָÚַֹֿ ַׁ׃ַב ו׀ַ ַבהז׀ּ Ýם ֳם זÞÊ';
 $string['registrationno'] = 'בַ: בַ ֳׁםֿ ַ׃Êבַד ָׁםֿ ֵבßÊׁזהם';
 $string['registrationsend'] = 'ֳׁ׃ב דÚבזדַÊ ַבÊ׃ּםב ֵבל moodle.org';
 $string['registrationyes'] = 'הÚד: Ýײבַנ ֵװÚַׁם ַָבדÚבזדַÊ ַבדודֹ';
 $string['removeadmin'] = 'ַ׃ÊָÚַֿ דֿםׁ';
 $string['removecreator'] = 'ַ׃ÊָÚַֿ דהװֶ דהוּ ַֿׁ׃ם';
 $string['removestudent'] = 'ַ׃ÊָÚַֿ ״ַבָ';
-$string['removeteacher'] = 'ַ׃ÊָÚַֿ דÚבד';
+$string['removeteacher'] = 'ַ׃ÊָÚַֿ דֿׁ׃';
 $string['rename'] = 'ÊÛםםׁ ַבַ׃ד';
 $string['renamefileto'] = 'ÊÛםםׁ ַבַ׃ד <b>$a</b> ֵבם';
 $string['required'] = 'דÝׁזײ';
 $string['requireskey'] = 'ו׀ַ ַבדהוּ ַבַֿׁ׃ם ַָֹּֽ ֵבל דÝÊַֽ ַבÊ׃ּםב';
-$string['requirespayment'] = 'ו׀ַ ַבדהוּ ַבַֿׁ׃ם םÊ״בָ ַבֿÝÚ ַבדַבם Þָב ַבַװÊַׁß Ýםו';
 $string['resortcoursesbyname'] = 'ׁÊָ ַבדהַוּ ַבַֿׁ׃םֹ ַָבַ׃ד';
 $string['resources'] = 'ַבדױַֿׁ';
 $string['restore'] = 'ֵ׃ÊַּׁÚ';
@@ -856,10 +705,6 @@ $string['restoreto'] = 'ֳ׃ÊּׁÚ ֵבם';
 $string['returningtosite'] = 'וב ֳהÊ דװÊׁß ַָבÝÚב¿ ַבֿ־זב דה והַ ';
 $string['revert'] = 'Úß׃';
 $string['role'] = 'ַבֿזׁ';
-$string['rss'] = '־ֿדֹ ÊÛ׀םֹ ַבדÚבזדַÊ';
-$string['rssarticles'] = 'Úֿֿ דÞַבַÊ ־ֿדֹ ÊÛ׀םֹ ַבדÚבזדַÊ ַבַֽבםֹ';
-$string['rsserror'] = '־״ֱַ Ýם Þֱַֹׁ דÚבזדַÊ ־ֿדֹ ÊÛ׀םֹ ַבדÚבזדַÊ';
-$string['rsstype'] = '־ֿדֹ ÊÛ׀םֹ ַבדÚבזדַÊ בו׀ַ ַבהװַ״';
 $string['savechanges'] = 'ֽÝÙ ַבÊÛםםַׁÊ';
 $string['saveto'] = 'ֽÝÙ ֵבל';
 $string['scale'] = 'דÞםַ׃';
@@ -874,7 +719,7 @@ $string['scheduledbackupstatus'] = 'ַֽבֹ ַבדזÚֿ ַבדּֿזב בבה׃־ ַבַֽÊםַ״ם';
 $string['search'] = 'ָֻֽ';
 $string['searchagain'] = 'ָֻֽ דֹׁ ֳ־ׁל';
 $string['searchcourses'] = 'ָֻֽ דהַוּ ַֿׁ׃םֹ';
-$string['searchhelp'] = 'Ê׃Ê״םÚ ַבָֽÊ Úה ßבדַÊ דÊÚֹֿֿ Ýם ֲה זַֽֿ <br />word: ֳָֻֽ Úה ו׀ו ַבßבד ײדה ַבהױ. <br />+word: ַבßבדַÊ ַבדÊװַָו Êדַדַ ׃םָֻֽ Úהוַ. <br />word:בַ ÊײםÝ הÊֶַּ ÊֽÊזל Úבל ו׀ו ַבßבדֹ';
+$string['searchhelp'] = 'Ê׃Ê״םÚ ַבָֽÊ Úה ßבדַÊ דÊÚֹֿֿ Ýם ֲה זַֽֿ <p>word: ֳָֻֽ Úה ו׀ו ַבßבד ײדה ַבהױ. <br>+word: ַבßבדַÊ ַבדÊװַָו Êדַדַ ׃םָֻֽ Úהוַ. <br>word:בַ ÊײםÝ הÊֶַּ ÊֽÊזל Úבל ו׀ו ַבßבדֹ';
 $string['searchresults'] = 'הÊֶַּ ַבָֻֽ';
 $string['sec'] = 'ַֻהםֹ';
 $string['secs'] = 'ֻזַהם';
@@ -891,7 +736,6 @@ $string['shortname'] = 'ַבַ׃ד ַבד־Êױׁ';
 $string['shortnametaken'] = 'ו׀ַ ַבַ׃ד ַבד־Êױׁ ד׃Ê־ֿד בדהוּ ַֿׁ׃ם ַ־ׁ ($a)';
 $string['shortsitename'] = 'ַ׃ד ַבדזÞÚ ד־Êױַׁ  (ßבדֹ זַֹֽֿ Úבל ׃ָםב ַבדַֻב)';
 $string['show'] = 'Úׁײ';
-$string['showadvancedsettings'] = 'Úׁײ ַבַÚַַֿֿÊ ַבדÊÞֿדֹ';
 $string['showall'] = 'Úׁײ ַבßב $a';
 $string['showallcourses'] = 'Úׁײ ßב ַבדהַוּ ַבַֿׁ׃םֹ';
 $string['showalltopics'] = 'Úׁײ ßב ַבדזײזÚַÊ';
@@ -902,23 +746,15 @@ $string['showlistofcourses'] = 'Úׁײ Þֶַדֹ ַבדהַוּ ַבַֿׁ׃םֹ';
 $string['showonlytopic'] = 'Úׁײ דזײזÚ ÝÞ״ $a';
 $string['showonlyweek'] = 'Úׁײ ֳ׃ָזÚ ÝÞ״ $a';
 $string['showrecent'] = 'Úׁײ ַבהװַ״ ַבַֽבם';
-$string['showreports'] = 'Úׁײ ÊÞַׁםׁ ַבהװַ״';
-$string['showsettings'] = 'Úׁײ ַבַÚַַֿֿÊ';
+$string['showreports'] = 'ַÚׁײ ÊÞַׁםׁ ַבהװַ״';
 $string['showtheselogs'] = 'Úׁײ ַבÊÞַׁםׁ';
 $string['since'] = 'דה׀';
-$string['sincelast'] = 'דה׀ ֳ־ׁ ֿ־זב';
 $string['site'] = 'ַבדזÞÚ';
-$string['sitedefault'] = 'ַבזײÚ ַבַÝÊַׁײם בבדזÞÚ';
-$string['siteerrors'] = 'ֳ־״ֱַ ַבדזÞÚ';
 $string['sitefiles'] = 'דבÝַÊ ַבדזÞÚ';
 $string['sitelogs'] = 'ÊÞׁםׁ ֳהװ״ֹ ַבדזÞÚ';
 $string['sitenews'] = 'ֳ־ַָׁ ַבדזÞÚ';
-$string['sitepartlist0'] = 'םָּ ֳה Êßזה ֳֽֿ ַבדÚבדזה בÊÊדßה דה ִׁםֹ Þֶַדֹ ַבדװַׁßםה.';
-$string['sitepartlist1'] = 'םָּ ֳה Êßזה ֳֽֿ ַבדÚבדזה בÊÊדßה דה ִׁםֹ Þֶַדֹ ַבדװַׁßםה.';
 $string['sites'] = 'ַבדזַÞÚ';
-$string['sitesection'] = 'Êײדםה דזײזÚ Þ׃ד';
 $string['sitesettings'] = 'ֵÚַַֿֿÊ ַבױÝֹֽ ַבֶׁם׃םֹ';
-$string['siteteachers'] = 'דÚבדםה ַבדזÞÚ';
 $string['size'] = 'ַבּֽד';
 $string['sizeb'] = 'ַָםÊׂ';
 $string['sizegb'] = 'ÛםÛַַָםÊ';
@@ -928,7 +764,6 @@ $string['socialheadline'] = 'ַבדהÊֿל ַבַּÊדַÚם - ֲ־ׁ ַבדזײזÚַÊ';
 $string['someallowguest'] = 'ָÚײ ַבדהַוּ ַבַֿׁ׃םֹ Ê׃דֽ ָזּזֿ ַבײםזÝ';
 $string['someerrorswerefound'] = 'ָÚײ ַבדÚבזדַÊ ÝÞֿÊ ֳז Ûםׁ ױֽםֹֽ¡ ב׀ַ םּׁל ַבהÙׁ Êַבםו בבֽױזב Úבל דׂםֿ דה ַבÊÝַױםב.';
 $string['sortby'] = 'ֵÝׁׂ ָÜ';
-$string['specifyname'] = 'םָּ Úבםß Êֽֿם ַ׃ד';
 $string['startdate'] = 'Êַׁם־ ֱָֿ ַבדהוּ ַבַֿׁ׃ם';
 $string['startsignup'] = 'ֵהװֱַ ַװÊַׁß ּֿםֿ';
 $string['state'] = 'זבַםֹ / דÞַ״Úֹ';
@@ -938,8 +773,6 @@ $string['strftimedateshort'] = '%%d %%B';
 $string['strftimedatetime'] = '%%d %%B %%Y, %%I:%%M %%p';
 $string['strftimedaydate'] = '%%A, %%d %%B %%Y';
 $string['strftimedaydatetime'] = '%%A, %%d %%B %%Y, %%I:%%M %%p';
-$string['strftimedayshort'] = '%%A, %%d %%B';
-$string['strftimedaytime'] = '%%a, %%H:%%M';
 $string['strftimemonthyear'] = '%%B %%Y';
 $string['strftimerecent'] = '%%d %%b, %%H:%%M';
 $string['strftimerecentfull'] = '%%a, %%d %%b %%Y, %%I:%%M %%p';
@@ -947,7 +780,6 @@ $string['strftimetime'] = '%%I:%%M %%p';
 $string['stringsnotset'] = 'בד םÊד ÊÚׁםÝ ַבֵÚַַֿֿÊ ַבÊַבםֹ Ýם $a';
 $string['studentnotallowed'] = 'Ú׀ַׁ! בַ םדßהß ַבֿ־זב Úבל ו׀ו ַבֽבÞֹ ַבַֿׁ׃םֹ ָױÝֹ \'$a\'';
 $string['students'] = '״בַָ';
-$string['studentsandteachers'] = '״בַָ זדÚבדזה';
 $string['subcategories'] = 'ַױהַÝ ÝׁÚםֹ';
 $string['success'] = 'הַּֽ';
 $string['summary'] = 'דב־ױ';
@@ -955,7 +787,7 @@ $string['summaryof'] = 'דב־ױ בÜ  $a';
 $string['supplyinfo'] = 'ֱַָּׁ ֳֿ־ב ָםַהַÊß ַבװ־ױםֹ';
 $string['teacheronly'] = 'דה ֳּב $a ÝÞ״ ';
 $string['teacherroles'] = '$a ֳֿזַׁ';
-$string['teachers'] = 'דÚבדזה';
+$string['teachers'] = 'דֿׁ׃םה';
 $string['textediting'] = 'Úהֿ Êֽׁםׁ ַבהױזױ';
 $string['texteditor'] = 'ַ׃Ê־ֿד הדַ׀ּ ַבֵהÊׁהÊ ַבÞםַ׃םֹ';
 $string['textformat'] = 'Êה׃םÞ הױ Úַֿם';
@@ -965,7 +797,7 @@ $string['themes'] = 'ַבַװßַב';
 $string['themesaved'] = 'Êד ֽÝÙ ַבװßב ַבּֿםֿ';
 $string['thischarset'] = 'windows-1256';
 $string['thisdirection'] = 'rtl';
-$string['thislanguage'] = '&#1593;&#1585;&#1576;&#1610;';
+$string['thislanguage'] = 'Úָׁם';
 $string['time'] = 'ַבזÞÊ';
 $string['timezone'] = 'ַבדה״Þֹ ַבׂדהםֹ';
 $string['to'] = 'ֵבל';
@@ -978,7 +810,6 @@ $string['topichide'] = 'ֳ־Ýֱַ ו׀ַ ַבדזײזÚ דה $a';
 $string['topicoutline'] = 'ד־״״ ַבדזײזÚ';
 $string['topicshow'] = 'Úׁײ ו׀ַ ַבדזײזÚ ֵבל $a';
 $string['total'] = 'דּדזÚ';
-$string['trysearching'] = 'ַֽזב ַבָֻֽ';
 $string['turneditingoff'] = 'ֵםÞַÝ ַבÊֽׁםׁ';
 $string['turneditingon'] = 'ÊװÛםב ַבÊֽׁםׁ';
 $string['undecided'] = 'Ûםׁ דֽֿֿ';
@@ -987,9 +818,7 @@ $string['unenrolallstudents'] = 'ֵבÛֱַ Ê׃ּםב ּדםÚ ַב״בַָ';
 $string['unenrolallstudentssure'] = 'וב ֳהÊ דÊֳßֿ דה ַבÞםַד ֵָבÛֱַ Ê׃ּםב ּדםÚ ַב״בַָ Êדַדַ דה ו׀ַ ַבדהוּ ַבַֿׁ׃ם¿';
 $string['unenrolme'] = 'ֵבÛֱַ Ê׃ּםבם דה $a';
 $string['unenrolsure'] = 'וב ֳהÊ דÊֳßֿ ֳהß Êׁםֿ ֵבÛֱַ ַבÊ׃ּםב $a דה ו׀ַ ַבדהוּ ַבַֿׁ׃ם?';
-$string['unfinished'] = 'בד םהÊום ָÚֿ';
 $string['unknowncategory'] = 'ױהÝ Ûםׁ דÚׁזÝ';
-$string['unlimited'] = 'ָבַ ֽֿזֿ';
 $string['unpacking'] = 'Ýß ַבֽׂדֹ $a';
 $string['unsafepassword'] = 'ßבדֹ דׁזׁ Ûםׁ ֲדהֹ - ָּׁ ֳ־ׁל';
 $string['unusedaccounts'] = 'ַבֽ׃ַַָÊ ַבÊם בַ Ê׃Ê־ֿד בֳßֻׁ דה $a םזדַ םÊד ֵבÛֱַ ַװÊַׁßוַ ֲבםַ';
@@ -998,7 +827,7 @@ $string['unzippingbackup'] = 'Ýß ַבה׃־ֹ ַבֵֽÊםַ״םֹ';
 $string['up'] = 'ֳÚבל';
 $string['update'] = 'Êֽֿםֻ';
 $string['updated'] = 'Êד Êֽֿםֻ $a';
-$string['updatemyprofile'] = 'Êֽֿםֻ ׃םׁÊß ַב׀ַÊםֹ';
+$string['updatemyprofile'] = 'Êֽֿםֻ בדֽו װ־ױםֹ';
 $string['updatesevery'] = 'םÊד ַבÊֽֿםֻ ßב $a ַֻהםו';
 $string['updatethis'] = '״זׁ ו׀ַ $a';
 $string['updatethiscourse'] = 'ֻֽֿ ו׀ַ ַבדהוּ ַבַֿׁ׃ם';
@@ -1006,21 +835,10 @@ $string['updatinga'] = 'Êֽֿםֻ $a';
 $string['updatingain'] = 'Êֽֿםֻ $a->what  Ýם $a->in';
 $string['upload'] = 'Êֽדםב';
 $string['uploadafile'] = 'Êֽדםב דבÝ';
-$string['uploadedfile'] = 'Êד Êֽדםב ַבדבÝ ָהַּֽ';
 $string['uploadedfileto'] = 'Êד Êֽדםב $a->file ֵבל $a->directory';
-$string['uploadedfiletoobig'] = 'Ú׀ַׁ¡ ֳה ּֽד ַבדבÝ ֳדָׁ דדַ וז ד׃דזֽ ָו(ַבֽֿוז$a ַָםÊ)';
-$string['uploadfailednotrecovering'] = 'בÞֿ Ýװב Êֽדםב דבÝß ז׀בß בזּזֿ דװßבֹ Ýם ֳֽֿ ַבדבÝַÊ¡ $a->name. <br /> והֱַ ׃ּב ַבדװַßב: <br />$a->problem<br /> בד םÊד ֽבוַ.';
-$string['uploadfilelog'] = '׃ּב Êֽדםב דבÝ $a';
-$string['uploadformlimit'] = 'ַבדבÝ ַבדֽדב Êַּזׂ ַבֽֿ ַבַÚבל בבּֽד ַבד׃דזֽ ָו דה ־בַב ַבהדז׀ּ.';
-$string['uploadlabel'] = 'ַבÚהזַה:';
 $string['uploadnofilefound'] = 'בד םÚֻׁ Úבל ֳם דבÝ¡ וב ÊֳßֿÊ דה ַ־Êםַׁß בדבÝ בבÞםַד ָÊֽדבו.';
 $string['uploadnotallowed'] = 'ַבÊֽדםב Ûםׁ ד׃דזֽ ָו';
-$string['uploadoldfilesdeleted'] = 'Êד ֽ׀Ý ַבדבÝַÊ ַבÞֿםדֹ ַב־ַױֹ ָß.';
-$string['uploadpartialfile'] = 'Êד Êֽדםב  ֱּׂ דה ַבדבÝ';
 $string['uploadproblem'] = 'ֽױב ־״ֱַ Ûםׁ דÚׁזÝ ֳֻהֱַ Êֽדםב ַבדבÝ. $a(ָׁדַ ּֽד ַבדבÝ ßָםַּֿׁץ?)';
-$string['uploadrenamedchars'] = 'Êד ÊÛםׁ ד׃דל ַבדבÝ דה $a->oldname ֵבל $a->newname ז׀בß בÚֿד ַבÊזַÝÞ ַבד׃דםַÊ. ';
-$string['uploadrenamedcollision'] = 'Êד ÊÛםׁ ד׃דל ַבדבÝ דה $a->oldname ֵבל $a->newname ז׀בß בזּֿ ÊÚַׁײ דÚ ֳ׃ד ַבדבÝ. ';
-$string['uploadserverlimit'] = 'ַבדבÝ ַבדֽדב Êַּזׂ ַבֽֿ ַבַÚבל בבּֽד ַבד׃דזֽ ָו דה ־בַב ַב־ַֿד.';
 $string['uploadthisfile'] = 'Êֽדםב ו׀ַ ַבדבÝ';
 $string['uploadusers'] = 'Êֽדםב ד׃Ê־ֿדזה';
 $string['usedinnplaces'] = 'ַ׃Ê־ֿד Ýם $a ';
@@ -1030,31 +848,16 @@ $string['userdata'] = 'דÚבזדַÊ ַבד׃Ê־ֿד';
 $string['userdeleted'] = 'Êד ֽ׀Ý ַװÊַׁß ו׀ַ ַבד׃Ê־ֿד';
 $string['userdescription'] = 'ַבזױÝ';
 $string['userfiles'] = 'דבÝַÊ ַבד׃Ê־ֿד';
-$string['userlist'] = 'Þֶַדֹ ַבד׃Ê־ֿדםה';
 $string['username'] = 'ַ׃ד ַבד׃Ê־ֿד';
 $string['usernameexists'] = 'ַ׃ד ַבד׃Ê־ֿד דזּזֿ ַָבÝÚב¡ ַ־Êׁ ַ׃דַ ֲ־ׁ';
 $string['usernotconfirmed'] = 'בד םÊדßה דה Êֳßםֿ $a';
-$string['userprofilefor'] = '׃םֹׁ $a ַב׀ַÊםֹ';
+$string['userprofilefor'] = 'ַבבדֹֽ ַבװ־ױםֹ בÜ $a';
 $string['users'] = 'ַבד׃Ê־ֿדזה';
 $string['usersnew'] = 'ד׃Ê־ֿדזה ּֿֿ';
 $string['userzones'] = 'ה״ַÞ ַבד׃Ê־ֿד';
 $string['usingexistingcourse'] = 'ַ׃Ê־ַֿד ַבדהוּ ַבַֿׁ׃ם ַבדזּֿזֿ';
 $string['version'] = 'ֵױַֿׁ';
 $string['view'] = 'דÚַםהו';
-$string['virusfound'] = 'ַבֱַּׁ ַבֳהÊַָו! בÞֿ ַßÊװÝ ßבַדÝם Ýםׁז׃ Ýם ַבדבÝ ַבדֽדב דה Þָב $a->user בבדהוּ ַבַֿׁ׃ם $a->course. והֱַ הÊםֹּ Ýֽױ ַבÝםׁז׃ַÊ. ';
-$string['virusfoundlater'] = 'בÞֿÊד ַßÊװַÝ Ýםׁז׃ Ýם ַבדבÝ ַב׀ם ÞדÊ ָÊֽדםבו זַב׀ם ָד׃דל $a->filename ָÊַׁם־ $a->date בבדהוּ ַבַֿׁ׃ם $a->course. והֱַ דב־ױ בדַ Þֿ ֽױב בדבÝß
-$a->action
-בז ßַה ו׀ַ ַבדבÝ םֽÊזל Úבל Úדב ÊׁÛָ Ê׃בםדֹ¡ םָּ Úבםß ֵÚַֹֿ Êֽדבו דÚ ַבÊֳßֿ דה ׃בדÊו דה ַבÝםׁז׃ַÊ¡ זב׀בß בםÊדßה ַבדÚבד דה ַ׃Êבַדו.';
-$string['virusfoundlateradmin'] = 'ַבֱַּׁ ַבֳהÊַָו! בÞֿÊד ַßÊװַÝ Ýםׁז׃ Ýם ַבדבÝ ַב׀ם ÞדÊ ָÊֽדםבו זַב׀ם ָד׃דל $a->filename ָÊַׁם־ $a->date בבדהוּ ַבַֿׁ׃ם $a->course דה Þָב ַבד׃Ê־ֿד $a->user. והֱַ דב־ױ בדַ Þֿ ֽױב בבדבÝ
-$a->action
-בÞֿ Êד ֵַֽ״ֹ ַבד׃Ê־ֿד.';
-$string['virusfoundlateradminnolog'] = 'ַבֱַּׁ ַבֳהÊַָו! בÞֿ ַßÊװÝ ßבַדÝם Ýםׁז׃ Ýם ַבדבÝ $a->filename. בד ם׃Ê״Ú דזֿב דה ֽב דװßבֹ ַבדבÝ ַבדױַָ ַָבÝםׁז׃.
-והֱַ דב־ױ בדַ Þֿ ֽױב בבדבÝ
-
-$a->action ';
-$string['virusfoundsubject'] = '$a: Êד ַבÚֻזׁ Úבל Ýםׁז׃';
-$string['virusfounduser'] = 'Êד ַßÊװַÝ ֳה ַבדבÝ ַב׀ם ÞדÊ ָÊֽדםבו¡ $a->filename¡ םֽÊזם Úבל Ýםׁז׃! ב׀ַ בד םÊד Êֽדםב דבÝß ֵבל ַבדּבֿ ַבדֽֿֿ.';
-$string['virusplaceholder'] = 'Êד ַßÊװַÝ ַה ו׀ַ ַבדבÝצ ַב׀ם Êד Êֽדםבו ֽÊזם Úבל Ýםׁז׃ ב׀ַ Êד הÞבו ֳז ֽ׀Ýֹ זÊד ַַֽ״ֹ ַבד׃Ê־ֿד ָ׀בß.';
 $string['webpage'] = 'ױÝֹֽ ֵהÊׁהÊ';
 $string['week'] = 'ֳ׃ָזÚ';
 $string['weekhide'] = 'ֳ־Ýֱַ ו׀ַ ַבֳ׃ָזÚ דה $a';
@@ -1062,7 +865,7 @@ $string['weeklyoutline'] = 'ד־״״ ֳ׃ָזÚם';
 $string['weekshow'] = 'Úׁײ ו׀ַ ַבֳ׃ָזÚ בÜ $a';
 $string['welcometocourse'] = 'דַָֽׁ Ýם $a';
 $string['welcometocoursetext'] = 'דַָֽׁ Ýם $a->coursename!
-דה ַבֳװםֱַ ַבÊם םָּ ֳה ÊÝÚבוַ ַָÊֱַֿ ֳה ÊÞזד ָÊÚֿםב ַבױÝֹֽ ַב׃םֹׁ ַב׀ַÊםֹ ־בַב ַבדהוּ ַבַֿׁ׃ם ֽÊל הÚׁÝ ַבדׂםֿ Úהß
+דה ַבֳװםֱַ ַבÊם םָּ ֳה ÊÝÚבוַ ַָÊֱַֿ ֳה ÊÞזד ָÊÚֿםב ַבױÝֹֽ ַבבדֹֽ ַבװ־ױםֹ ־בַב ַבדהוּ ַבַֿׁ׃ם ֽÊל הÚׁÝ ַבדׂםֿ Úהß
  $a->profileurl';
 $string['whattocallzip'] = 'דַ׀ַ Êׁםֿ Ê׃דםֹ ַבדבÝ ַבדײÛז״¿';
 $string['withchosenfiles'] = 'דÚ ַבדבÝַÊ ַבד־Êַֹׁ';
@@ -1074,7 +877,7 @@ $string['wordforstudents'] = 'םװַׁ ֵבל ַב״בַָ ָßבדֹ';
 $string['wordforstudentseg'] = 'דֻבַ: ַב״בַָ¡ ַבדװַׁßזה¡ ַבַֿׁ׃זה¡ ֵב־';
 $string['wordforteacher'] = 'םװַׁ ֵבל ַבדֿׁ׃ ָßבדֹ';
 $string['wordforteachereg'] = 'דֻבַ: ַבדֿׁ׃¡ ַבדַֽײׁ¡ ַבדÚבד¡ ֵב־';
-$string['wordforteachers'] = 'םװַׁ ֵבל ַבדÚבדזה';
+$string['wordforteachers'] = 'םװַׁ ֵבל ַבדֿׁ׃םה';
 $string['wordforteacherseg'] = 'דֻבַ: ַבדֿׁ׃זה¡ ַבדַֽײׁזה¡ ַבדÚבדזה¡ ֵב־';
 $string['writingcategoriesandquestions'] = 'ַבÞםַד ָßÊַָֹ ַבֳױהַÝ זַבַ׃ֶבו';
 $string['writingcoursedata'] = 'ַבÞםַד ָßÊַָֹ דÚבזדַÊ ַבדהוּ ַבַֿׁ׃ם';

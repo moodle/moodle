@@ -68,7 +68,7 @@ if ( empty($INSTALL['language']) and empty($_POST['language']) ) {
 $SESSION->lang = (!empty($_POST['language'])) ? $_POST['language'] : $INSTALL['language'];
 $CFG->dirroot = $INSTALL['dirroot'];
 $CFG->dataroot = $INSTALL['dataroot'];
-$CFG->directorypermissions = 00777;
+$CFG->directorypermissions = 0777;
 
 
 /// Include some moodle libraries
@@ -162,26 +162,26 @@ if ($INSTALL['stage'] == 2) {
     if (($fh = @fopen($INSTALL['dirroot'].'/install.php', 'r')) === false ) {
         $CFG->dirroot = dirname(__FILE__);
         $INSTALL['dirroot'] = dirname(__FILE__);
-        $errormsg .= get_string('dirrooterror', 'install').'<br />';
-    } 
-    if ($fh) fclose($fh);
+        $errormsg = get_string('dirrooterror', 'install');
+    } else {
+        fclose($fh);
             
-    $CFG->dirroot = $INSTALL['dirroot'];
+        $CFG->dirroot = $INSTALL['dirroot'];
 
-    /// check wwwroot
-    if (ini_get('allow_url_fopen')) {
+        /// check wwwroot
         if (($fh = @fopen($INSTALL['wwwroot'].'/install.php', 'r')) === false) {
-            $errormsg .= get_string('wwwrooterror', 'install').'<br />';
+            $errormsg = get_string('wwwrooterror', 'install');
+        } else {
+            fclose($fh);
+
+            /// check dataroot
+            $CFG->dataroot = $INSTALL['dataroot'];
+            if (make_upload_directory('sessions', false) === false ) {
+                $errormsg = get_string('datarooterror', 'install');
+            }            
         }
     }
-    if ($fh) fclose($fh);
-
-    /// check dataroot
-    $CFG->dataroot = $INSTALL['dataroot'];
-    if (make_upload_directory('sessions', false) === false ) {
-        $errormsg = get_string('datarooterror', 'install').'<br />';
-    }
-    if ($fh) fclose($fh); 
+    
 
     if (!empty($errormsg)) $nextstage = 2;
 
@@ -213,34 +213,24 @@ if ($INSTALL['stage'] == 3) {
         }
     }
 
-    if ($INSTALL['dbtype'] == 'mysql') {  /// Check MySQL extension is present
-        if (!extension_loaded('mysql')) {
-            $errormsg = get_string('mysqlextensionisnotpresentinphp', 'install');
-            $nextstage = 3;
-        }
-    }
+    $db = &ADONewConnection($INSTALL['dbtype']);
 
-    if (empty($errormsg)) {
-
-        $db = &ADONewConnection($INSTALL['dbtype']);
-
-        error_reporting(0);  // Hide errors 
-
-        if (! $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname'])) {
-            /// The following doesn't seem to work but we're working on it
-            /// If you come up with a solution for creating a database in MySQL 
-            /// feel free to put it in and let us know
-            if ($dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'])) {
-                switch ($INSTALL['dbtype']) {   /// Try to create a database
-                    case 'mysql':
-                        if ($db->Execute("CREATE DATABASE {$INSTALL['dbname']};")) {
-                            $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname']);
-                        } else {
-                            $errormsg = get_string('dbcreationerror', 'install');
-                            $nextstage = 3;
-                        }
-                        break;
-                }
+    error_reporting(0);  // Hide errors 
+    
+    if (! $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname'])) {
+        /// The following doesn't seem to work but we're working on it
+        /// If you come up with a solution for creating a database in MySQL 
+        /// feel free to put it in and let us know
+        if ($dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'])) {
+            switch ($INSTALL['dbtype']) {   /// Try to create a database
+                case 'mysql':
+                    if ($db->Execute("CREATE DATABASE {$INSTALL['dbname']};")) {
+                        $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname']);
+                    } else {
+                        $errormsg = get_string('dbcreationerror', 'install');
+                        $nextstage = 3;
+                    }
+                break;
             }
         }
     }
@@ -262,9 +252,7 @@ if ($INSTALL['stage'] == 3) {
 /// If we can open a file then we know that the admin name is correct.
 
 if ($nextstage == 4 or $INSTALL['stage'] == 4) {
-    if (!ini_get('allow_url_fopen')) {
-        $nextstage = ($goforward) ? 5 : 3;
-    } else if (($fh = @fopen($INSTALL['wwwroot'].'/'.$INSTALL['admindirname'].'/site.html', 'r')) !== false) {
+    if (($fh = @fopen($INSTALL['wwwroot'].'/'.$INSTALL['admindirname'].'/site.html', 'r')) !== false) {
         $nextstage = ($goforward) ? 5 : 3;
         fclose($fh);
     } else {
@@ -292,8 +280,8 @@ if ($nextstage == 5) {
     $str .= "\r\n";
 
     $str .= '$CFG->dbtype    = \''.$INSTALL['dbtype']."';\r\n";
-    $str .= '$CFG->dbhost    = \''.addslashes($INSTALL['dbhost'])."';\r\n";
-    if (!empty($INSTALL['dbname'])) {
+    $str .= '$CFG->dbhost    = \''.$INSTALL['dbhost']."';\r\n";
+    if ($INSTALL['dbtype'] == 'mysql') {
         $str .= '$CFG->dbname    = \''.$INSTALL['dbname']."';\r\n";
         $str .= '$CFG->dbuser    = \''.$INSTALL['dbuser']."';\r\n";
         $str .= '$CFG->dbpass    = \''.$INSTALL['dbpass']."';\r\n";
@@ -305,10 +293,9 @@ if ($nextstage == 5) {
     $str .= '$CFG->wwwroot   = \''.$INSTALL['wwwroot']."';\r\n";
     $str .= '$CFG->dirroot   = \''.$INSTALL['dirroot']."';\r\n";
     $str .= '$CFG->dataroot  = \''.$INSTALL['dataroot']."';\r\n";
-    $str .= '$CFG->admin     = \''.$INSTALL['admindirname']."';\r\n";
     $str .= "\r\n";
 
-    $str .= '$CFG->directorypermissions = 00777;  // try 02777 on a server in Safe Mode'."\r\n";
+    $str .= '$CFG->directorypermissions = 0777;'."\r\n";
     $str .= "\r\n";
 
     $str .= 'require_once("$CFG->dirroot/lib/setup.php");'."\r\n";
@@ -337,7 +324,7 @@ if ($nextstage == 5) {
 
 <html dir="<?php echo (get_string('this_direction') == 'rtl') ? 'rtl' : 'ltr' ?>">
 <head>
-<link rel="shortcut icon" href="theme/standard/favicon.ico" />
+<link rel="shortcut icon" href="http://moodle.dougiamas.net/theme/standard/favicon.ico" />
 <title>Moodle Install</title>
 <meta http-equiv="content-type" content="text/html; charset=<?php print_string('thischarset') ?>" />
 <?php css_styles() ?>
@@ -358,7 +345,7 @@ if (isset($_GET['help'])) {
 <table class="main" align="center" cellpadding="3" cellspacing="0">
     <tr>
         <td class="td_mainlogo">
-            <p class="p_mainlogo"><img src="pix/moodlelogo-med.gif" width="240" height="60" alt=\"\"></p>
+            <p class="p_mainlogo"><img src="pix/moodlelogo-med.gif" width="240" height="60"></p>
         </td>
         <td class="td_mainlogo" valign="bottom">
             <p class="p_mainheader"><?php print_string('installation', 'install') ?></p>
@@ -558,7 +545,7 @@ function form_table($nextstage = 0, $formaction = "install.php") {
             <tr>
                 <td class="td_left"><p><?php print_string('password') ?></p></td>
                 <td class="td_right">
-                    <input type="password" size="40" name="dbpass" value="<?php echo $INSTALL['dbpass'] ?>" />
+                    <input type="text" size="40" name="dbpass" value="<?php echo $INSTALL['dbpass'] ?>" />
                 </td>
             </tr>
             <tr>
@@ -636,7 +623,7 @@ function install_helpbutton($url, $title='') {
     }
     echo "<a href=\"javascript: void(0)\">";
     echo "<img src=\"./pix/help.gif\" height=\"17\" width=\"22\" alt=\"$title\"";
-    echo "border=\"0\" align=\"middle\" title=\"$title\" ";
+    echo "border=\"0\" align=\"absmiddle\" title=\"$title\" ";
     echo "onClick=\"return window.open('$url', 'Help', 'menubar=0,location=0,scrollbars,resizable,width=500,height=400')\">";
     echo "</a>\n";
 }

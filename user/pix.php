@@ -5,26 +5,45 @@
 
     $nomoodlecookie = true;     // Because it interferes with caching
 
-    require_once('../config.php');
-    require_once($CFG->libdir.'/filelib.php');
+    require_once("../config.php");
 
-    $relativepath = get_file_argument('pix.php');
+    $lifetime = 86400;
 
-    $args = explode('/', trim($relativepath, '/'));
+    if (isset($file)) {     // workaround for situations where / syntax doesn't work
+        $pathinfo = $file;
 
-    if (count($args) == 2) {
-        $userid   = (integer)$args[0];
-        $image    = $args[1];
-        $pathname = $CFG->dataroot.'/users/'.$userid.'/'.$image;
     } else {
-        $image    = 'f1.png';
-        $pathname = $CFG->dirroot.'/pix/u/f1.png';
+        $pathinfo = get_slash_arguments("pix.php");
     }
 
-    if (file_exists($pathname) and !is_dir($pathname)) {
-        send_file($pathname, $image);
-    } else {
-        header('HTTP/1.0 404 not found');
-        error(get_string('filenotfound', 'error')); //this is not displayed on IIS??
+    if (! $args = parse_slash_arguments($pathinfo)) {
+        error("No valid arguments supplied");
     }
+
+    $numargs = count($args);
+
+    if ($numargs == 2) {
+        $userid = (integer)$args[0];
+        $image  = $args[1];
+        $pathname = "$CFG->dataroot/users/$userid/$image";
+        $filetype = "image/jpeg";
+    } else {
+        $pathname = "$CFG->dirroot/pix/u/f1.png";
+        $filetype = "image/png";
+    }
+
+    $lastmodified = filemtime($pathname);
+
+    if (file_exists($pathname)) {
+        header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
+        header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
+        header("Cache-control: max_age = $lifetime"); // a day
+        header("Pragma: ");
+        header("Content-disposition: inline; filename=$image");
+        header("Content-length: ".filesize($pathname));
+        header("Content-type: $filetype");
+        readfile("$pathname");
+    }
+
+    exit;
 ?>

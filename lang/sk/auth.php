@@ -3,7 +3,7 @@
 
 
 $string['auth_dbdescription'] = "Táto metóda vyu¾íva externú databázovú tabuµku na kontrolu platnosti daného u¾ívateµského mena a hesla. Ak je to nové konto mô¾u by» do prostredia Moodle prenesené informácie aj z inýcho políèok.";
-$string['auth_dbextrafields'] = "Tieto políèka sú nepovinné. Je tu mo¾nos», aby niektoré u¾ívateµské políèka v prostredí Moodle uvádzali informácie z <b>políèok externých databáz</b>, ktoré tu udáte. <br />Ak tu niè neuvediete, bude uvádzané pôvodné nastavenie.<br />V obidvoch prípadoch bude môc» u¾ívateµ po prihlásení upravova» v¹etky tieto políèka.";
+$string['auth_dbextrafields'] = "Tieto políèka sú nepovinné. Je tu mo¾nos», aby niektoré u¾ívateµské políèka v prostredí Moodle uvádzali informácie z <B>políèok externých databáz</B>, ktoré tu udáte. <P>Ak tu niè neuvediete, bude uvádzané pôvodné nastavenie.<P>V obidvoch prípadoch bude môc» u¾ívateµ po prihlásení upravova» v¹etky tieto políèka.";
 $string['auth_dbfieldpass'] = "Názov políèka obsahujúceho heslá";
 $string['auth_dbfielduser'] = "Názov políèka obsahujúceho u¾ívateµské mená";
 $string['auth_dbhost'] = "Poèítaè hos»ujúci databázový server";
@@ -12,7 +12,7 @@ $string['auth_dbpass'] = "Heslo pre uvedeného u¾ívateµa";
 $string['auth_dbpasstype'] = "©pecifkujte formát, ktorý pou¾íva políèko pre heslo. MD5 ¹ifrovanie je vhodné pre pripojenie k ïal¹ím be¾ným web aplikáciám ako PostNuke";
 $string['auth_dbtable'] = "Názov tabuµky v databáze";
 $string['auth_dbtitle'] = "Pou¾i» externú databázu";
-$string['auth_dbtype'] = "Databázový typ (bli¾¹ie viï<a href=\"../lib/adodb/readme.htm#drivers\">ADOdb dokumentácia</a> )";
+$string['auth_dbtype'] = "Databázový typ (bli¾¹ie viï<A HREF=../lib/adodb/readme.htm#drivers>ADOdb dokumentácia</A> )";
 $string['auth_dbuser'] = "U¾ívateµské meno s prístupom do databázy len na èítanie.";
 $string['auth_emaildescription'] = "Emailové potvrdzovanie je prednastavený spôsob overovania. Keï sa u¾ívateµ prihlási, vyberie si vlastné nové u¾ívateµské meno a heslo a dostane potvrdzovací email na svoju emailovu adresu. Tento email obsahuje bezpeènostnú linku na stránku, kde mô¾e u¾ívateµ potvrdi» svoje nastavenie. Pri ïal¹ích prihlasovaniach iba skontroluje u¾ívateµské meno a heslo v porovnaní s údajmi ulo¾enými v Moodle databáze.";
 $string['auth_emailtitle'] = "Emailové overovanie";
@@ -36,7 +36,7 @@ $string['auth_ldapdescription'] = "Táto metóda poskytuje overovanie s LDAP serve
 Ak je u¾ívateµské meno a heslo správne, Moodle vytvorí nového u¾ívateµa v svojej databáze. 	  Tento modul doká¾e èíta» u¾ívateµské vlastnosti z LDAP a vyplni» ¾elané políèka v Moodle. 
 
 Pre nasledujúce prihlasovania sa kontrolujú iba u¾ívateµské meno a heslo.";
-$string['auth_ldapextrafields'] = "Tieto políèka sú nepovinné. Je taká mo¾nos», ¾e Moodle u¾ívateµské políèka budú uvádza» informácie z <b>LDAP políèok</b> ,ktoré tu udáte. <br />Ak tu niè neuvediete, informácie z LDAP nebudú prevedené, a namiesto toho bude uvádzané Moodle nastavenie. <br />V obidvoch prípadoch bude môc» u¾ívateµ po prihlásení korigova» v¹etky tieto políèka.";
+$string['auth_ldapextrafields'] = "Tieto políèka sú nepovinné. Je taká mo¾nos», ¾e Moodle u¾ívateµské políèka budú uvádza» informácie z <B>LDAP políèok</B> ,ktoré tu udáte. <P>Ak tu niè neuvediete, informácie z LDAP nebudú prevedené, a namiesto toho bude uvádzané Moodle nastavenie. <P>V obidvoch prípadoch bude môc» u¾ívateµ po prihlásení korigova» v¹etky tieto políèka.";
 $string['auth_ldaptitle'] = "Pou¾i» LDAP server";
 $string['auth_manualdescription'] = "Táto metóda neumo¾òuje u¾ívateµom vytvára» vlastné kontá. V¹etky kontá musí manuálne vytvori» administrátor.";
 $string['auth_manualtitle'] = "Len manuálne kontá";

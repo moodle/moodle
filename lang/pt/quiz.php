@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 unstable development (2004083000)
+      // quiz.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['acceptederror'] = 'Erro aceite';
@@ -10,7 +10,6 @@ $string['addselectedtoquiz'] = 'Adicione as selecções ao mini-teste.';
 $string['aiken'] = 'Formato Aiken';
 $string['allowreview'] = 'Permita a revisão';
 $string['alreadysubmitted'] = 'É provável que já tenha submetido esta tentativa';
-$string['alternativeunits'] = 'Unidades alternativas';
 $string['alwaysavailable'] = 'Sempre disponível';
 $string['answer'] = 'Resposta';
 $string['answerhowmany'] = 'Uma ou mais respostas?';
@@ -40,12 +39,10 @@ $string['category'] = 'Categoria';
 $string['categoryinfo'] = 'Informação da categoria';
 $string['categorymove'] = 'A categoria \'$a->name\' contém $a->count perguntas.  Por favor escolha outra categoria para onde as deslocar.';
 $string['categorymoveto'] = 'Mude-os para esta categoria';
-$string['checkanswer'] = 'Verifique';
 $string['choice'] = 'Escolha';
 $string['choices'] = 'Escolhas disponíveis';
 $string['confirmstartattempt'] = 'O mini-teste tem um tempo limite. Tem certeza que quer iniciar agora?';
 $string['correctanswer'] = 'Resposta correcta';
-$string['correctanswerlength'] = 'Algarismos Significativos';
 $string['correctanswers'] = 'Respostas correctas';
 $string['corrresp'] = 'Resposta correcta';
 $string['countdown'] = 'Contagem decrescente';
@@ -65,7 +62,6 @@ $string['description'] = 'Descrição';
 $string['discrimination'] = 'ìndice discriminante';
 $string['eachattemptbuildsonthelast'] = 'Cada tentativa é construída a partir da última';
 $string['editcategories'] = 'Editar categorias';
-$string['editingcalculated'] = 'A editar uma pergunta  calculada';
 $string['editingdescription'] = 'A editar uma descrição';
 $string['editingmatch'] = 'A editar uma pergunta de resposta exata';
 $string['editingmultianswer'] = 'A editar respostas embebidas (Cloze)';
@@ -85,39 +81,28 @@ $string['exportnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['exportquestions'] = 'Exportar perguntas para ficheiro';
 $string['false'] = 'Falso';
 $string['feedback'] = 'Avaliação';
-$string['file'] = 'ficheiro';
 $string['fileformat'] = 'Formato do ficheiro';
 $string['filloutoneanswer'] = 'Tem que preencher pelo menos uma possível resposta. Respostas em branco não serão consideradas.';
 $string['filloutthreequestions'] = 'Terá que preencher pelo menos três perguntas. Respostas a branco não serão usadas.';
 $string['fillouttwochoices'] = 'Tem que preencher pelo menos duas escolhas. Respostas em branco não serão consideradas.';
 $string['fractionsaddwrong'] = 'As notas positivas que escolheu não somam 100%%
-<br />a soma é em vez $a%%
-<br />quer voltar para traz e corrigi esta pergunta?';
+<BR>a soma é em vez $a%%
+<BR>quer voltar para traz e corrigi esta pergunta?';
 $string['fractionsnomax'] = 'Uma das respostas deve ser 100%% para que seja
-<br />possível obter a cotação máxima nesta pergunta.
-<br />Quer voltar para traz e corrigir esta pergunta?';
-$string['functiontakesatleasttwo'] = 'A função $a tem que ter pelo menos dois argumentos';
-$string['functiontakesnoargs'] = 'A função $a  não aceita argumentos';
-$string['functiontakesonearg'] = 'A função $a exige exactamente um argumento';
-$string['functiontakesoneortwoargs'] = 'A função $a tem que ter ou um ou dois argumentos';
-$string['functiontakestwoargs'] = 'A função $a exige dois argumentos';
-$string['generatevalue'] = 'Gerar um novo valor entre';
-$string['geometric'] = 'Geométrico ';
+<BR>possível obter a cotação máxima nesta pergunta.
+<BR>Quer voltar para traz e corrigir esta pergunta?';
 $string['gift'] = 'Formato GIFT';
 $string['gradeaverage'] = 'Nota média';
 $string['gradehighest'] = 'Nota mais alta';
 $string['grademethod'] = 'Método de avaliação';
 $string['guestsno'] = 'Desculpe, mas os visitantes não podem responder mini-testes';
-$string['illegalformulasyntax'] = 'Sintaxe ilegal de fórmula a partir de \'$a\'';
 $string['imagedisplay'] = 'Imagem a apresentar';
 $string['imagemissing'] = 'Imagem indisponível na linha $a. O nome do ficheiro será ignorado.';
 $string['importquestions'] = 'Importar perguntas num ficheiro';
 $string['indivresp'] = 'Rspostas dos indivíduos a cada item';
 $string['introduction'] = 'Introdução';
 $string['itemanal'] = 'Análise de respostas a item';
-$string['itemdefinition'] = 'Definição';
 $string['listitems'] = 'Listagem de items no mini-teste';
-$string['literal'] = 'Literal';
 $string['marks'] = 'valores';
 $string['match'] = 'Comparando';
 $string['matchanswer'] = 'Comparando resposta';
@@ -132,11 +117,9 @@ $string['modulename'] = 'Mini-teste';
 $string['modulenameplural'] = 'Mini-testes';
 $string['multianswer'] = 'Respostas embebidas (Cloze)';
 $string['multichoice'] = 'Escolha múltipla';
-$string['multiplier'] = 'Multiplicador';
 $string['name'] = 'Nome';
 $string['noanswers'] = 'Nenhuma resposta foi seleccionada!';
 $string['noattempts'] = 'Ainda não fez nenhuma tentativa neste mini-teste';
-$string['nominal'] = 'Nominal';
 $string['nomoreattempts'] = 'Já não pode fazer mais tentativas';
 $string['noquestions'] = 'Nenhuma pergunta tem sido inserida ainda';
 $string['noresponse'] = 'Sem resposta';
@@ -144,12 +127,10 @@ $string['noreview'] = 'Não é permitido rever este mini-teste';
 $string['noreviewuntil'] = 'Não é permitido rever este mini-teste até $a';
 $string['noscript'] = 'O Javascript deverá estar activado para poder continuar! ';
 $string['notenoughanswers'] = 'Esse tipo de pergunta exige pelo menos $a respostas';
-$string['notenoughsubquestions'] = 'Não foram definidas sub-questões suficientes!<br />
+$string['notenoughsubquestions'] = 'Não foram definidas sub-questões suficientes!<br>
 Quer voltar atrás e corrigir a questão?';
 $string['numerical'] = 'Numérica';
-$string['optional'] = 'opcional';
 $string['paragraphquestion'] = 'Na linha $a, não são permitidas perguntas de parágrafo. A pergunta será ignorada.';
-$string['passworderror'] = 'Palavra passe incorrecta';
 $string['percentcorrect'] = 'Por cento certo';
 $string['publish'] = 'Publique';
 $string['publishedit'] = 'Deverá ter as permissões necessárias na respectiva disciplina para poder adicionar ou editar perguntas nessa categoria.';
@@ -179,8 +160,6 @@ $string['recentlyaddedquestion'] = 'Pergunta adicionada recentemente!';
 $string['regrade'] = 'Avaliar novamente todas as tentativas';
 $string['regradecomplete'] = 'Todas as tentativas foram avaliadas novamente';
 $string['regradecount'] = '$a->changed de $a->attempt notas foram modificadas';
-$string['relative'] = 'Relativo';
-$string['remove'] = 'Remover';
 $string['rename'] = 'Renomear';
 $string['report'] = 'Relatórios';
 $string['reportfullstat'] = 'Estatísticas detalhadas';
@@ -190,8 +169,6 @@ $string['reportmulti_resp'] = 'Respostas individuais';
 $string['reportoverview'] = 'Introdução';
 $string['reportregrade'] = 'Reavaliar tentativas';
 $string['reportsimplestat'] = 'Estatísticas simples';
-$string['requirepassword'] = 'Exige palavra passe';
-$string['requirepasswordmessage'] = 'Para poder responder a este teste, precisa saber apalavra chave de acesso.';
 $string['review'] = 'Revisão';
 $string['save'] = 'Gravar';
 $string['savegrades'] = 'Gravar notas';
@@ -207,7 +184,6 @@ $string['showcorrectanswer'] = 'Em avaliação, visualizar respostas correctas?';
 $string['showfeedback'] = 'Mostrar avaliação depois de responder?';
 $string['shuffleanswers'] = 'Respostas misturadas aleatóriamente';
 $string['shufflequestions'] = 'Perguntas misturadas aleatóriamente';
-$string['substitutedby'] = 'será substituído por';
 $string['time'] = 'Tempo';
 $string['timecompleted'] = 'Completo';
 $string['timeleft'] = 'Tempo restante';
@@ -215,22 +191,17 @@ $string['timelimit'] = 'Tempo limite';
 $string['timelimitexeeded'] = 'Lamentamos, mas o tempo limite do mini-teste foi ultrapassado! ';
 $string['timesup'] = 'Terminou o tempo!';
 $string['timetaken'] = 'Tempo gasto';
-$string['tolerance'] = 'Tolerância';
-$string['tolerancetype'] = 'Tipo de tolerância';
 $string['toomanyrandom'] = 'O número de perguntas aleatórias necessárias é superior ao que esta categoria tem! ($a)';
 $string['true'] = 'Verdadeiro';
 $string['truefalse'] = 'Verdadeiro/Falso';
 $string['type'] = 'Tipo';
-$string['unit'] = 'Unidade';
 $string['unknowntype'] = 'Pergunta de algum tipo não admitido na linha $a. A pergunta será ignorada';
-$string['unsupportedformulafunction'] = 'A função $a não é suportada';
 $string['viewallanswers'] = 'Ver $a mini-testes respondidos';
 $string['viewallreports'] = 'Ver os relatórios para $a tentativas';
 $string['warningsdetected'] = 'Foram detectadas $a advertência(s)';
 $string['webct'] = 'Formato WebCT';
 $string['withsummary'] = 'Com sumário de estatísticas';
 $string['wronggrade'] = 'Nota errada (a seguir à linha $a) :';
-$string['xml'] = 'Formato Moodle XML';
 $string['yourfinalgradeis'] = 'A sua nota final neste mini-teste é $a';
 
 ?>

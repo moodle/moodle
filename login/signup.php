@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
     require_once("../config.php");
     require_once("../auth/$CFG->auth/lib.php");
@@ -70,7 +70,7 @@
         $langmenu = popup_form ("$CFG->wwwroot/login/signup.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
     }
 
-    print_header($newaccount, $newaccount, "<a href=\"index.php\">$login</a> -> $newaccount", $focus, "", true, "<div align=\"right\">$langmenu</div>");
+    print_header($newaccount, $newaccount, "<A HREF=\"index.php\">$login</A> -> $newaccount", $focus, "", true, "<div align=right>$langmenu</div>");
     include("signup_form.html");
     print_footer();
 
@@ -126,7 +126,7 @@ function validate_form($user, &$err) {
         $err->email = get_string("invalidemail");
     
     } else if (record_exists("user", "email", $user->email)) {
-        $err->email = get_string("emailexists")." <a href=\"forgot_password.php\">".get_string("newpassword")."?</a>";
+        $err->email = get_string("emailexists")." <A HREF=forgot_password.php>".get_string("newpassword")."?</A>";
     }
     
 
@@ -144,12 +144,6 @@ function validate_form($user, &$err) {
 
     if (empty($user->country)) {
         $err->country = get_string("missingcountry");
-    }
-
-    if (empty($err->email)) {
-        if ($error = email_is_not_allowed($user->email)) {
-            $err->email = $error;
-        }
     }
 
     return;

@@ -50,7 +50,7 @@ $string['newwindowopen'] = 'Amosar este contido nunha nova ventá (popup)';
 $string['note'] = 'Nota';
 $string['notefile'] = 'Para subir máis dun arquivo (e que se poidan ver na listaxe) empregue o
 
-<a href=\"$a\">Administrador de arquivos</a>.';
+<a href=$a >Administrador de arquivos</a>.';
 $string['notypechosen'] = 'Necesita elixir un tipo. Volte atrás e inténteo de novo.';
 $string['popupresource'] = 'Este recurso debe aparecer nunha xanela despregable';
 $string['popupresourcelink'] = 'Se non, prema aquí: $a';

@@ -1,32 +1,21 @@
-<?php // $Id$
+<?PHP // $Id$
       // Names of the documentation files
-      // Files with a definition "-" are treated as spacers
 
-$string['-about'] = "About Moodle";
-$string['intro.html'] = "Introduction";
-$string['background.html'] = "Background";
-$string['philosophy.html'] = "Philosophy";
-$string['licence.html'] = "License";
-$string['features.html'] = "Features";
-$string['release.html'] = "Release Notes";
-$string['future.html'] = "Future";
-$string['credits.html'] = "Credits";
-
-$string['-installation'] = "Administration";
+$string['intro.html'] = "Introduktion";
+$string['background.html'] = "Bakgrund";
+$string['features.html'] = "Det h&auml;r &auml;r Moodle";
+$string['release.html'] = "Om senaste versionen";
 $string['install.html'] = "Installation";
 $string['faq.html'] = "Installation FAQ";
 $string['installamp.html'] = "Apache, MySQL, PHP";
-$string['upgrade.html'] = "Upgrading";
-
-$string['-usage'] = "Using Moodle";
-$string['teacher.html'] = "Teacher Manual";
-$string['other.html'] = "Other Docs";
-
-$string['-development'] = "Development";
-$string['developer.html'] = "Developer Manual";
-$string['coding.html'] = "Coding Guide";
-$string['cvs.html'] = "Using CVS";
-$string['translation.html'] = "Translation";
+$string['upgrade.html'] = "Att uppgradera";
+$string['teacher.html'] = "Manual l&auml;rare";
+$string['developer.html'] = "Manual utvecklare";
+$string['cvs.html'] = "Att anv&auml;nda CVS";
+$string['future.html'] = "Framtid";
+$string['credits.html'] = "Erk&auml;nnanden";
+$string['licence.html'] = "Licens";
+$string['other.html'] = "Andra dokument";
 
 
 ?>

@@ -112,11 +112,11 @@ $string['noassessmentsdone'] = 'No Assessments Done';
 $string['nosubmission'] = 'No Submission';
 $string['nosubmissionsavailableforassessment'] = 'No Submissions available for assessment';
 $string['notavailable'] = 'Not Available';
-$string['noteonassessmentelements'] = 'Note that grading is broken down into a number of \'Assessment Elements\'.<br />
-	This makes the grading easier and more consistent. As teacher you must add these <br />
-	Elements before making the assignment available to students. This is done by<br />
-	clicking on the assignment in the course, if no elements are present you will be asked<br />
-	to add them. You can change the number of elements using the Edit Assignment screen,<br />
+$string['noteonassessmentelements'] = 'Note that grading is broken down into a number of \'Assessment Elements\'.<BR>
+	This makes the grading easier and more consistent. As teacher you must add these <BR>
+	Elements before making the assignment available to students. This is done by<BR>
+	clicking on the assignment in the course, if no elements are present you will be asked<BR>
+	to add them. You can change the number of elements using the Edit Assignment screen,<BR>
 	the elements themselves can be amended from the \"Managing Assessment\" screen. ';
 $string['notgraded'] = 'Not Graded';
 $string['notitlegiven'] = 'No Title Given';
@@ -186,7 +186,7 @@ $string['setoverallocation'] = 'Set Over Allocation Level';
 $string['showgrades'] = 'Show Grades';
 $string['specimenassessmentform'] = 'Specimen Assessment Form';
 $string['standarddeviation'] = 'Standard deviation of Element $a:';
-$string['standarddeviationnote'] = 'Elements with standart deviations of zero or very small values can distort the analysis.<br /> This Element has been excluded from the analysis.';
+$string['standarddeviationnote'] = 'Elements with standart deviations of zero or very small values can distort the analysis.<br/> This Element has been excluded from the analysis.';
 $string['studentassessments'] = '$a Assessments';
 $string['studentgrades'] = '$a Grades';
 $string['studentsubmissions'] = '$a Submissions';
@@ -218,7 +218,7 @@ $string['verypoor'] = 'Very Poor';
 $string['view'] = 'View';
 $string['viewassessmentofteacher'] = 'View Assessment of $a';
 $string['viewotherassessments'] = 'View other Assessments';
-$string['warningonamendingelements'] = 'WARNING: There are submitted assessments. <br />Do NOT change the number
+$string['warningonamendingelements'] = 'WARNING: There are submitted assessments. <BR>Do NOT change the number
  of elements, the scale types or the element weights.';
 $string['weight'] = 'Weight';
 $string['weightederrorcount'] = 'Weighted Error Count: $a';

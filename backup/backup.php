@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This script is used to configure and execute the backup proccess.
 
     //Define some globals for all the script
@@ -9,7 +9,6 @@
     require_once ("$CFG->libdir/blocklib.php");
 
     optional_variable($id);       // course id
-    optional_variable($to); // id of course to import into afterwards.
     optional_variable($cancel);
     optional_variable($launch);
 
@@ -17,13 +16,7 @@
 
     if (!empty($id)) {
         if (!isteacheredit($id)) {
-            if (empty($to)) {
-                error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
-            } else {
-                if (!isteacheredit($to)) {
-                    error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
-                }
-            }
+            error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     } else {
         if (!isadmin()) {
@@ -41,31 +34,26 @@
     
     //Check backup_version
     if ($id) {
-        $linkto = "backup.php?id=".$id.((!empty($to)) ? '&to='.$to : '');
+        $linkto = "backup.php?id=".$id;
     } else {
         $linkto = "backup.php";
     }
     upgrade_backup_db($linkto);
 
     //Get strings
-    if (empty($to)) {
-        $strcoursebackup = get_string("coursebackup");
-    }
-    else {
-        $strcoursebackup = get_string('importdata');
-    }
+    $strcoursebackup = get_string("coursebackup");
     $stradministration = get_string("administration");
 
     //If no course has been selected or cancel button pressed
     if (!$id or $cancel) {
         print_header("$site->shortname: $strcoursebackup", $site->fullname,
-                     "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> -> $strcoursebackup");
+                     "<A HREF=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</A> -> $strcoursebackup");
 
-        if ($courses = get_courses('all','c.shortname','c.id,c.shortname,c.fullname')) {
+        if ($courses = get_courses()) {
             print_heading(get_string("choosecourse"));
-            print_simple_box_start("center");
+            print_simple_box_start("CENTER");
             foreach ($courses as $course) {
-            echo "<a href=\"backup.php?id=$course->id\">$course->fullname ($course->shortname)</a><br />";
+            echo "<A HREF=\"backup.php?id=$course->id\">$course->fullname ($course->shortname)</A><BR>";
             }
             print_simple_box_end();
         } else {
@@ -96,11 +84,11 @@
 
     //Print form     
     print_heading("$strcoursebackup: $course->fullname ($course->shortname)");
-    print_simple_box_start("center");
+    print_simple_box_start("center", "", "$THEME->cellheading");
 
     //Adjust some php variables to the execution of this script
-    @ini_set("max_execution_time","3000");
-    raise_memory_limit("128M");
+    ini_set("max_execution_time","3000");
+    ini_set("memory_limit","80M");
 
     //Call the form, depending the step we are
     if (!$launch) {

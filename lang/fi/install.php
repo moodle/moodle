@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
+      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
-$string['admindirerror'] = 'Yll‰pitohakemisto on m‰‰ritetty v‰‰rin';
-$string['admindirname'] = 'Yll‰pitohakemisto';
+$string['admindirerror'] = 'Yll‰pito hakemisto on m‰‰ritetty v‰‰rin';
+$string['admindirname'] = 'Yll‰pito hakemisto';
 $string['admindirsetting'] = 'Jotkut webpalvelut k‰ytt‰v‰t /admin hakemistoa yll‰pitotarkoituksiin tms. Valitettavasti t‰m‰ on ristiriidassa Moodlen yll‰pitosivujen normaalin paikan kanssa. Voit korjata t‰m‰n nime‰m‰ll‰ asennuksesi yll‰pitohakemiston uudelleen, ja laittamalla uuden nimen t‰h‰n. Esimerkiksi: 
-<br /> <br /><b>moodleadmin</b><br /> <br />
+<br/> <br /><b>moodleadmin</b><br /> <br />
 T‰m‰ korjaa yll‰pito linkit Moodlessa.';
 $string['caution'] = 'Varoitus';
 $string['chooselanguage'] = 'Valitse kieli';
@@ -14,7 +14,7 @@ $string['configfilenotwritten'] = 'Asennus ei pystynyt luomaan automaattisesti c
 $string['configfilewritten'] = 'config.php on luotu.';
 $string['configurationcomplete'] = 'Asetukset suoritettu';
 $string['database'] = 'Tietokanta';
-$string['databasesettings'] = 'Nyt sinun t‰ytyy valita tietokanta miss‰ suurin osa Moodlen tiedoista s‰ilytet‰‰n. T‰m‰n tietokannan t‰ytyy jo valmiiksi olla luotu, kuten myˆs k‰ytt‰j‰nimen ja salasanan, joilla siihen p‰‰st‰‰n. .<br />
+$string['databasesettings'] = 'Nyt sinun t‰ytyy valita tietokanta, miss‰ suurin osa Moodlen tiedoista s‰ilytet‰‰n. T‰m‰n tietokannan t‰ytyy jo valmiiksi olla luotu, kuten myˆs k‰ytt‰j‰nimen ja salasanan, joilla siihen p‰‰st‰‰n. .<br/>
 <br /> <br />
 <b>Tyyppi:</b> mysql or postgres7<br />
 <b>Is‰nt‰:</b> localhost or db.isp.com<br />
@@ -26,9 +26,9 @@ $string['dataroot'] = 'Datahakemisto';
 $string['datarooterror'] = '\"Datahakemistoa\", jonka m‰‰rittelit, ei voitu lˆyt‰‰, eik‰ luoda. Joko korjaa polku, tai luo hakemisto manuaalisesti.';
 $string['dbconnectionerror'] = 'Emme pystyneet kytkeytym‰‰n tiedokantaan, jonka m‰‰rittelit. Tarkista tietokanta asetuksesi.';
 $string['dbcreationerror'] = 'Tietokannan luomisvirhe. Ei pystytty luomaan annettua tietokannan nime‰ tarjotuilla asetuksilla.';
-$string['dbhost'] = 'Palvelin';
-$string['dbpass'] = 'Salasana';
-$string['dbprefix'] = 'Taulukon etumerkki';
+$string['dbhost'] = 'Is‰nt‰ palvelin';
+$string['dbpass'] = 'salasana';
+$string['dbprefix'] = 'taulukon etumerkki';
 $string['dbtype'] = 'Tyyppi';
 $string['directorysettings'] = '<p>Varmista t‰m‰n Moodle asennuksen paikka.</p>
 
@@ -45,11 +45,11 @@ $string['dirroot'] = 'Moodle hakemisto';
 $string['dirrooterror'] = '\"Moodle hakemisto\" asetus n‰ytt‰isi olevan v‰‰r‰-emme voi lˆyt‰‰ Moodle asennusta sielt‰. Arvo alapuolella on nollattu.';
 $string['download'] = 'Lataus';
 $string['fail'] = 'Virhe';
-$string['fileuploads'] = 'Tiedostojen l‰hett‰minen';
+$string['fileuploads'] = 'tiedostojen palvelimeen kopioinnit';
 $string['fileuploadserror'] = 'T‰m‰n pit‰isi olla p‰‰ll‰';
-$string['fileuploadshelp'] = '<p>Tiedostojen l‰hett‰minen ei n‰ytt‰isi olevan k‰ytˆss‰ palvelimellasi.</p>
+$string['fileuploadshelp'] = '<p>Tiedostojen lataus n‰ytt‰‰ olevan tehty toimimattomaksi palvelimellasi.</p>
 
-<p>Moodle voidaan silti asentaa, mutta ilman t‰t‰ kyky‰, et pysty lataamaan kurssitiedostoja tai uuden k‰ytt‰j‰n profiili kuvia.</p>
+<p>Moodle voidaan silti asentaa, mutta ilman t‰t‰ kyky‰, et pysty lataamaan kurssitiedostoja tai uuden k‰ytt‰j‰n profiili kuvia.
 
 <p>Mahdollistaaksesi tiedostojen latauksen sinun (tai systeemisi yll‰pit‰j‰n) t‰ytyy muokata varusohjelmien php.ini tiedosto systeemiisi ja muuttaa asetus <b>file_uploads</b> to \'1\'.</p>';
 $string['gdversion'] = 'GD versio';
@@ -63,7 +63,7 @@ $string['gdversionhelp'] = '<p>Palvelimellasi ei n‰ytt‰isi olevan GD:t‰ asennett
 <p>Windowsin alaisena voit yleens‰ muokata php.ini:‰ ja olla kommentoimatta rivivertailua libgd.dll.</p>';
 $string['installation'] = 'asennus';
 $string['magicquotesruntime'] = 'Magic quotes ajoaika';
-$string['magicquotesruntimeerror'] = 'T‰m‰n pit‰isi olla poissa p‰‰lt‰';
+$string['magicquotesruntimeerror'] = 'T‰m‰n pit‰isi olla kiinni';
 $string['magicquotesruntimehelp'] = '<p>Magic quotes ajoajan pit‰isi olla pois p‰‰lt‰, jotta Moodle voi toimia kunnolla.</p>
 
 <p>Normaalisti se on pois p‰‰lt‰ oletuksena... Katso asetukset
@@ -76,36 +76,39 @@ $string['memorylimit'] = 'Muistiraja';
 $string['memorylimiterror'] = 'PHP muistiraja on asetettu aika alas... Se saattaa aiheuttaa ongelmia myˆhemmin.';
 $string['memorylimithelp'] = '<p>PHP muistiraja palvelimellesi on t‰ll‰ hetkell‰ asetettu $a:han.</p>
 
-<p>T‰m‰ saattaa aiheuttaa Moodlelle muistiongelmia myˆhemmin, varsinkin jos sinulla on paljon mahdollisia moduuleita ja/tai paljon k‰ytt‰ji‰.</p>
+<p>T‰m‰ saattaa aiheuttaa Moodlelle muistiongelmia myˆhemmin, varsinkin jos sinulla on paljon mahdollisia moduuleita ja/tai paljon k‰ytt‰ji‰.
 
 <p>Suosittelemme, ett‰ valitset asetuksiksi PHP:n korkeimmalla mahdollisella raja-arvolla, esimerkiksi 16M.
-On olemassa monia tapoja joilla voit yritt‰‰ tehd‰ t‰m‰n:</p>
+On olemassa monia tapoja joilla voit yritt‰‰ tehd‰ t‰m‰n:
 <ol>
 <li>Jos pystyt, uudelleenk‰‰nn‰ PHP <i>--enable-memory-limit</i>. :ll‰.
-T‰m‰ sallii Moodlen asettaa muistirajan itse.</li>
-<li>Jos sinulla on p‰‰sy php.ini tiedostoosi, voit muuttaa <b>memory_limit</b> setuksen siell‰ johonkin kuten 16M. Jos sinulla ei ole p‰‰syoikeutta, voit kenties pyyt‰‰ yll‰pit‰j‰‰ tekem‰‰n t‰m‰n puolestasi.</li>
+T‰m‰ sallii Moodlen asettaa muistirajan itse.
+<li>Jos sinulla on p‰‰sy php.ini tiedostoosi, voit muuttaa <b>memory_limit</b> setuksen siell‰ johonkin kuten 16M. Jos sinulla ei ole p‰‰syoikeutta, voit kenties pyyt‰‰ yll‰pit‰j‰‰ tekem‰‰n t‰m‰n puolestasi.
 <li>Joillain PHP palvelimilla voit luoda a .htaccess tiedoston Moodle hakemistossa, sis‰lt‰en t‰m‰n rivin:
 <p><blockquote>php_value memory_limit 16M</blockquote></p>
-<p>Kuitenkin, joillain palvelimilla t‰m‰ est‰‰  <b>kaikkia</b> PHP sivuja toimimasta (n‰et virheet, kun katsot sivuja), joten sinun t‰ytyy poistaa .htaccess tiedosto.</p></li>
+<p>Kuitenkin, joillain palvelimilla t‰m‰ est‰‰  <b>kaikkia</b> PHP sivuja toimimasta (n‰et virheet, kun katsot sivuja), joten sinun t‰ytyy poistaa .htaccess tiedosto.
 </ol>';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP:t‰ ei ole kunnolla valittu asetukseksi MySQL laajennuksen kanssa, jotta se voisi kommunikoida MySQL:n kanssa. Tarkista php.ini tiedostosi tai k‰‰nn‰ PHP uudelleen.';
 $string['pass'] = 'Tarkastettu';
 $string['phpversion'] = 'PHP versio';
 $string['phpversionerror'] = 'PHP version t‰ytyy olla v‰hint‰‰n 4.1.0';
 $string['phpversionhelp'] = '<p>Moodle vaatii v‰hint‰‰n PHP version 4.1.0.</p>
-<p>K‰yt‰t parhaillaan versiota $a</p>
-<p>Sinun t‰ytyy p‰ivitt‰‰ PHP tai siirt‰‰ is‰nt‰ uudemman PHP version kanssa!</p>';
-$string['safemode'] = 'Safe mode';
-$string['safemodeerror'] = 'Moodlella saattaa olla ongelmia PHP:n  Safe Moden ollessa p‰‰ll‰';
-$string['safemodehelp'] = '<p>Moodlella saattaa olla lukuisia ongelmia Safe Moden ollessa p‰‰ll‰, joista v‰h‰isin ei ole se, ettei se todenn‰kˆisesti pysty luomaan uusia tiedostoja.</p> 
-<p>Turvatila on yleens‰ aktivoinut paranoidinen web-palvelun pit‰j‰, joten sinun ehk‰ t‰ytyy vaihtaa web-is‰nnˆinti yhtiˆt‰ Moodleasi varten.</p>
+<p>K‰yt‰t parhaillaan versiota $a<p>
+<p>Sinun t‰ytyy p‰ivitt‰‰ PHP tai siirt‰‰ is‰nt‰ uudemman PHP version kanssa!<p>';
+$string['safemode'] = 'turvatila';
+$string['safemodeerror'] = 'Moodlella saattaa olla ongelmia turvatilan ollessa p‰‰ll‰';
+$string['safemodehelp'] = '<p>Moodlella saattaa olla lukuisia ongelmia turvatilan ollessa p‰‰ll‰, joista v‰h‰iosin ei ole se, ettei se todenn‰kˆisesti pysty luomaan uusia tiedostoja.</p> 
+<p>Turvatila on yleens‰ tehnyt toimivaksi paranoidinen julkinen web-is‰nt‰, joten sinun ehk‰ t‰ytyy vaihtaa web-is‰nnˆinti yhtiˆt‰ Moodleasi varten.</p>
 
 <p>Voit yritt‰‰ jatkaa asennusta, mutta varaudu ongelmiin myˆhemmin.</p>';
-$string['sessionautostart'] = 'Istunnon automaattinen aloitus';
+$string['sessionautostart'] = 'istunnon automaattinen aloitus';
 $string['sessionautostarterror'] = 'T‰m‰n pit‰isi olla pois p‰‰lt‰';
 $string['sessionautostarthelp'] = '<p>Moodle vaatii istuntotukea, eik‰ toimi ilman sit‰.</p>
 
 <p>istunto voidaan mahdollistaa php.ini tiedostossa... Etsi istuntoa varten.auto_start parameter.</p>';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Suomi';
 $string['wwwroot'] = 'Web-osoite';
 $string['wwwrooterror'] = 'Web-osoite ei n‰ytt‰isi olevan voimassa- t‰m‰ Moodle asennus ei n‰ytt‰isi olevan siell‰.';
 

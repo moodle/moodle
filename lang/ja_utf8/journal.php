@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // journal.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+<?php // $Id$ 
+      // journal.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['alwaysopen'] = '常に利用可能';
@@ -21,7 +21,6 @@ $string['journalquestion'] = '日誌質問';
 $string['journalrating1'] = '不満足';
 $string['journalrating2'] = '満足';
 $string['journalrating3'] = '素晴らしい';
-$string['mailsubject'] = '日誌フィードバック';
 $string['modulename'] = '日誌';
 $string['modulenameplural'] = '日誌';
 $string['newjournalentries'] = '新規日誌';
@@ -33,6 +32,9 @@ $string['overallrating'] = '総体的評価';
 $string['rate'] = '評価';
 $string['saveallfeedback'] = '全ての評価を保存する';
 $string['startoredit'] = '日誌を編集する';
+$string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 $string['viewallentries'] = '$a 件の日誌エントリを表示する';
 
 ?>

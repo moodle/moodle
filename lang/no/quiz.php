@@ -76,11 +76,11 @@ $string['filloutoneanswer'] = 'Du må skrive minst et riktig svar. Svarfelter som
 $string['filloutthreequestions'] = 'Du må fylle ut minst 3 spørsmål. Ikke utfylte spørsmål blir ikke brukt.';
 $string['fillouttwochoices'] = 'Du må gi minst to valg. Felter som er blanke vil ikke bli brukt.';
 $string['fractionsaddwrong'] = 'Karakterene du har satt går ikke opp 100%%
-<br />De går opp til $a%%
-<br />Vil du gå tilbake og endre dette?';
+<BR>De går opp til $a%%
+<BR>Vil du gå tilbake og endre dette?';
 $string['fractionsnomax'] = 'Et av svarene burde være 100%%, slik at det er 
-<br />mulig å få høyeste karakter.
-<br />Vil du gå tilbake og endre dette?';
+<BR>mulig å få høyeste karakter.
+<BR>Vil du gå tilbake og endre dette?';
 $string['gift'] = 'GIFT-format';
 $string['gradeaverage'] = 'Gjennomsnittelig karakter';
 $string['gradehighest'] = 'Høyeste karakter';
@@ -108,7 +108,7 @@ $string['noquestions'] = 'Ingen spørsmål er lagt til enda';
 $string['noresponse'] = 'Ingen respons';
 $string['noreview'] = 'Du har ikke tillatelse til å lese disse svarene';
 $string['noreviewuntil'] = 'Du får ikke se svarene før $a';
-$string['notenoughsubquestions'] = 'Det er ikke definert nok mange delspørsmål!<br />Vil du gå tilbake og endre dette?';
+$string['notenoughsubquestions'] = 'Det er ikke definert nok mange delspørsmål!<br>Vil du gå tilbake og endre dette?';
 $string['numerical'] = 'Numerisk';
 $string['percentcorrect'] = 'Prosent riktig';
 $string['publish'] = 'Publiser';

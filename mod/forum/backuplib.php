@@ -1,27 +1,26 @@
-<?php //$Id$
+<?PHP //$Id$
     //This php script contains all the stuff to backup/restore
     //forum mods
 
     //This is the "graphical" structure of the forum mod:
     //
-    //                               forum                                      
-    //                            (CL,pk->id)
-    //                                 |
-    //         ---------------------------------------------------        
-    //         |                                                 |
-    //    subscriptions                                  forum_discussions
-    //(UL,pk->id, fk->forum)           ---------------(UL,pk->id, fk->forum)
-    //                                 |                         |
-    //                                 |                         |
-    //                                 |                         |
-    //                                 |                     forum_posts
-    //                                 |-------------(UL,pk->id,fk->discussion,
-    //                                 |                  nt->parent,files) 
-    //                                 |                         |
-    //                                 |                         |
-    //                                 |                         |
-    //                            forum_read                forum_ratings
-    //                       (UL,pk->id,fk->post        (UL,pk->id,fk->post)
+    //                           forum                                      
+    //                        (CL,pk->id)
+    //                            |
+    //             -----------------------------------        
+    //             |                                 |
+    //        subscriptions                    forum_discussions
+    //    (UL,pk->id, fk->forum)             (UL,pk->id, fk->forum)
+    //                                               |
+    //                                               |
+    //                                               |
+    //                                           forum_posts
+    //                             (UL,pk->id,fk->discussion,nt->parent,files) 
+    //                                               |
+    //                                               |
+    //                                               |
+    //                                          forum_ratings
+    //                                      (UL,pk->id,fk->post)
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -68,9 +67,6 @@
                     $status = backup_forum_subscriptions($bf,$preferences,$forum->id);
                     if ($status) {
                         $status = backup_forum_discussions($bf,$preferences,$forum->id);
-                    }
-                    if ($status) {
-                        $status = backup_forum_read($bf,$preferences,$forum->id);
                     }
                 }
                 //End mod
@@ -146,38 +142,6 @@
             }
             //Write end tag
             $status =fwrite ($bf,end_tag("DISCUSSIONS",4,true));
-        }
-        return $status;
-    }
-
-    //Backup forum_read contents (executed from forum_backup_mods)     
-    function backup_forum_read ($bf,$preferences,$forum) {     
-
-        global $CFG;
-
-        $status = true;
-
-        $forum_read = get_records("forum_read","forumid",$forum,"id");
-        //If there are read
-        if ($forum_read) {
-            //Write start tag
-            $status =fwrite ($bf,start_tag("READPOSTS",4,true));
-            //Iterate over each read
-            foreach ($forum_read as $for_rea) {
-                //Start read
-                $status =fwrite ($bf,start_tag("READ",5,true));
-                //Print forum_read contents
-                fwrite ($bf,full_tag("ID",6,false,$for_rea->id));
-                fwrite ($bf,full_tag("USERID",6,false,$for_rea->userid));
-                fwrite ($bf,full_tag("DISCUSSIONID",6,false,$for_rea->discussionid));
-                fwrite ($bf,full_tag("POSTID",6,false,$for_rea->postid));
-                fwrite ($bf,full_tag("FIRSTREAD",6,false,$for_rea->firstread));
-                fwrite ($bf,full_tag("LASTREAD",6,false,$for_rea->lastread));
-                //End read
-                $status =fwrite ($bf,end_tag("READ",5,true));
-            }
-            //Write end tag
-            $status =fwrite ($bf,end_tag("READPOSTS",4,true));
         }
         return $status;
     }

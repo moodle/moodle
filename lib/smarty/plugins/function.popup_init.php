@@ -9,8 +9,8 @@
 /**
  * Smarty {popup_init} function plugin
  *
- * Type:     function<br />
- * Name:     popup_init<br />
+ * Type:     function<br>
+ * Name:     popup_init<br>
  * Purpose:  initialize overlib
  * @link http://smarty.php.net/manual/en/language.function.popup.init.php {popup_init}
  *          (Smarty online manual)

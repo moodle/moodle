@@ -1,168 +1,84 @@
-<?php
-
+<?PHP
     if (!isset($config->auth_fchost)) {
-
         $config->auth_fchost = "127.0.0.1";
-
     }
-
     if (!isset($config->auth_fcfppport)) {
-
         $config->auth_fcfppport = "3333";
-
     }
-
     if (!isset($config->auth_fcuserid)) {
-
         $config->auth_fcuserid = "fcMoodle";
-
     }
-
     if (!isset($config->auth_fcpasswd)) {
-
         $config->auth_fcpasswd = "";
-
     }    
-
     if (!isset($config->auth_fccreators)) {
-
         $config->auth_fccreators = "";
-
     }   
-
 ?>
 
-
-
-<tr valign="top" class="required">
-
-	<td align="right">auth_fchost:</td>
-
-	<td>
-
-        <input name="auth_fchost" type="text" size="30" value="<?php echo $config->auth_fchost?>" />
-
+<TR valign="top" BGCOLOR="<?php echo $THEME->cellheading2 ?>">
+	<TD ALIGN=RIGHT><P>auth_fchost:</TD>
+	<TD>
+        <INPUT name=auth_fchost TYPE=text SIZE=30 VALUE="<?php echo $config->auth_fchost?>">
 	<?php  if (isset($err["auth_fchost"])) formerr($err["auth_fchost"]); ?>
-
-	</td>
-
-    <td>
-
+	</TD>
+    <TD>
     <?php  print_string("auth_fchost","auth") ?>
+    </TD>
+</TR>
 
-    </td>
-
-</tr>
-
-
-
-<tr valign="top" class="required">
-
-	<td align="right">auth_fcfppport:</td>
-
-	<td>
-
-        <input name="auth_fcfppport" type="text" size="30" value="<?php echo $config->auth_fcfppport?>" />
-
+<TR valign="top" BGCOLOR="<?php echo $THEME->cellheading2 ?>">
+	<TD ALIGN=RIGHT><P>auth_fcfppport:</TD>
+	<TD>
+        <INPUT name=auth_fcfppport TYPE=text SIZE=30 VALUE="<?php echo $config->auth_fcfppport?>">
 	<?php  if (isset($err["auth_fcfppport"])) formerr($err["auth_fchost"]); ?>
-
-	</td>
-
-    <td>
-
+	</TD>
+    <TD>
     <?php  print_string("auth_fcfppport","auth") ?>
+    </TD>
+</TR>
 
-    </td>
-
-</tr>
-
-
-
-<tr valign="top" class="required">
-
-	<td align="right">auth_fcuserid:</td>
-
-	<td>
-
-        <input name="auth_fcuserid" type="text" size="30" maxlength="15" value="<?php echo $config->auth_fcuserid?>" />
-
+<TR valign="top" BGCOLOR="<?php echo $THEME->cellheading2 ?>">
+	<TD ALIGN=RIGHT><P>auth_fcuserid:</TD>
+	<TD>
+        <INPUT name=auth_fcuserid TYPE=text SIZE=30 MAXLENGTH=15 VALUE="<?php echo $config->auth_fcuserid?>">
 	<?php  if (isset($err["auth_fcuserid"])) formerr($err["auth_fcuserid"]); ?>
-
-	</td>
-
-    <td>
-
+	</TD>
+    <TD>
     <?php  print_string("auth_fcuserid","auth") ?>
+    </TD>
+</TR>
 
-    </td>
-
-</tr>
-
-
-
-<tr valign="top" class="required">
-
-	<td align="right">auth_fcpasswd:</td>
-
-	<td>
-
-        <input name="auth_fcpasswd" type="password" size="30" maxlength="12" value="<?php echo $config->auth_fcpasswd?>" />
-
+<TR valign="top" BGCOLOR="<?php echo $THEME->cellheading2 ?>">
+	<TD ALIGN=RIGHT><P>auth_fcpasswd:</TD>
+	<TD>
+        <INPUT name=auth_fcpasswd TYPE=password SIZE=30 MAXLENGTH=12 VALUE="<?php echo $config->auth_fcpasswd?>">
 	<?php  if (isset($err["auth_fcpasswd"])) formerr($err["auth_fcpasswd"]); ?>
-
-	</td>
-
-    <td>
-
+	</TD>
+    <TD>
     <?php  print_string("auth_fcpasswd","auth") ?>
+    </TD>
+</TR>
 
-    </td>
-
-</tr>
-
-
-
-<tr valign="top" class="required">
-
-	<td align="right">auth_fccreators:</td>
-
-	<td>
-
-        <input name="auth_fccreators" type="text" size="30" value="<?php echo $config->auth_fccreators?>" />
-
+<TR valign="top" BGCOLOR="<?php echo $THEME->cellheading2 ?>">
+	<TD ALIGN=RIGHT><P>auth_fccreators:</TD>
+	<TD>
+        <INPUT name=auth_fccreators TYPE=text SIZE=30 VALUE="<?php echo $config->auth_fccreators?>">
 	<?php  if (isset($err["auth_fccreators"])) formerr($err["auth_fccreators"]); ?>
-
-	</td>
-
-    <td>
-
+	</TD>
+    <TD>
     <?php  print_string("auth_fccreators","auth") ?>
-
-    </td>
-
-</tr>
+    </TD>
+</TR>
 
 
-
-
-
-<tr valign="top">
-
-	<td align="right"><?php  print_string("instructions", "auth") ?>:</td>
-
-	<td>
-
-    <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
-
-    </td>
-
-    <td>
-
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><?php  print_string("instructions", "auth") ?>:</TD>
+	<TD>
+    <TEXTAREA NAME=auth_instructions COLS=30 ROWS=10 WRAP=virtual><?php  p($config->auth_instructions) ?></TEXTAREA> 
+    </TD>
+    <TD>
     <?php  print_string("authinstructions","auth") ?>
-
     <?php  helpbutton("text", get_string("helptext")) ?>
-
-    </td>
-
-</tr>
-
+    </TD>
+</TR>

@@ -3,7 +3,7 @@
 
 
 $string['auth_dbdescription'] = '该方法使用一个外部数据库来检验用户名和密码是否有效。如果是一个新帐号，该帐号其它字段的信息将一起复制到本系统中。';
-$string['auth_dbextrafields'] = '这些字段是可选的。你在此指定的<b>外部数据库字段</b>将预先填入本系统的用户数据库中。<br />如果你留空不填，将使用系统默认值。<br />无论以上哪种情况，用户在登录后都可以改写这些字段。';
+$string['auth_dbextrafields'] = '这些字段是可选的。你在此指定的<B>外部数据库字段</B>将预先填入本系统的用户数据库中。<P>如果你留空不填，将使用系统默认值。<P>无论以上哪种情况，用户在登录后都可以改写这些字段。';
 $string['auth_dbfieldpass'] = '含有密码的字段名';
 $string['auth_dbfielduser'] = '含有用户名的字段名';
 $string['auth_dbhost'] = '数据库所在的主机。';
@@ -12,7 +12,7 @@ $string['auth_dbpass'] = '与上面的用户名匹配的密码';
 $string['auth_dbpasstype'] = '指定密码字段所用的格式。MD5编码可用于与其它通用WEB应用如PostNuke相联接';
 $string['auth_dbtable'] = '数据库中的表单名';
 $string['auth_dbtitle'] = '使用一个外部数据库';
-$string['auth_dbtype'] = '数据库类型（详情请看<a href=\"../lib/adodb/readme.htm#drivers\">ADOdb帮助文档</a>）';
+$string['auth_dbtype'] = '数据库类型（详情请看<A HREF=../lib/adodb/readme.htm#drivers>ADOdb帮助文档</A>）';
 $string['auth_dbuser'] = '对该数据库具有读权限的用户名';
 $string['auth_emaildescription'] = '电子邮件确认是默认的身份验证方法。用户注册时可以选用自己的用户名和密码，然后有一封确认信件发送到该用户的电子邮箱。该信件中有一个安全的链接指向用户确认帐号的页面。以后的登录就只根据本系统的数据库中储存的信息检验用户名和密码。';
 $string['auth_emailtitle'] = '基于电子邮件的身份验证';
@@ -38,7 +38,7 @@ $string['auth_ldapdescription'] = '该方法利用一个外部的LDAP服务器进行身份验证。
                                   该模块可以从LDAP中读取用户属性，并把指定的字段预先填入本系统数据库。 
 
                                   此后的登录只需检验用户名和密码。';
-$string['auth_ldapextrafields'] = '这些字段是可选的。你可以在此指定这些<b>LDAP字段</b>复制到本系统的数据库中。 <br />如果你不选，将使用本系统默认值。<br />无论以上何种情况，用户在登录之后都可以修改这些字段。';
+$string['auth_ldapextrafields'] = '这些字段是可选的。你可以在此指定这些<B>LDAP字段</B>复制到本系统的数据库中。 <P>如果你不选，将使用本系统默认值。<P>无论以上何种情况，用户在登录之后都可以修改这些字段。';
 $string['auth_ldaptitle'] = '使用一个LDAP服务器';
 $string['auth_manualdescription'] = '该方法不允许用户以任何方式创建帐号。所有帐号只能由管理员手工创建。';
 $string['auth_manualtitle'] = '只允许手工添加帐号';

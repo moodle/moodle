@@ -132,7 +132,7 @@ Molte Grazie.';
 $string['collesaname'] = 'COLLES (Attuale)';
 $string['collesapintro'] = 'L\'obiettivo di questo sondaggio è di aiutarci a comprendere come lo svolgimento online di questa unità ti sia stato utile nell\'apprendimento.
 
-Ciascuna delle seguenti 24 domande sotto ti chiede di confrontare la tua esperienza <b>preferita</b>(ideale) e quella <b>attuale</b> di questa unità.
+Ciascuna delle seguenti 24 domande sotto ti chiede di confrontare la tua esperienza <B>preferita</B>(ideale) e quella <B>attuale</B> di questa unità.
 
 Non ci sono risposte \'giuste\' o risposte \'errate\'; siamo interessati alla tua opinione. Garantiamo che le tue risposte saranno trattate con il massimo grado di riservatezza e non influenzeranno la tua valutazione.
 
@@ -155,7 +155,7 @@ $string['collesm6short'] = 'Cumunicazione';
 $string['collesmintro'] = 'In questa unità online...';
 $string['collespintro'] = 'L\'obiettivo di questo sondaggio è di aiutarci a comprendere come lo svolgimento online di questa unità ti sia stato utile nell\'apprendimento.
 
-Ciascuna delle seguenti 24 domande sotto ti chiede di confrontare la tua esperienza <b>preferita</b>(ideale) e quella <b>attuale</b> di questa unità.
+Ciascuna delle seguenti 24 domande sotto ti chiede di confrontare la tua esperienza <B>preferita</B>(ideale) e quella <B>attuale</B> di questa unità.
 
 Non ci sono risposte \'giuste\' o risposte \'errate\'; siamo interessati alla tua opinione. Garantiamo che le tue risposte saranno trattate con il massimo grado di riservatezza e non influenzeranno la tua valutazione.
 

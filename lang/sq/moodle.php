@@ -156,7 +156,7 @@ $string['configlongtimenosee'] = 'Nëse studentët nuk kanë hyrë për një kohë të g
 $string['configmaxbytes'] = 'Ky specifikon dimensionin maksimal të skedarëve që dërgohen për këtë site. Ky kufizim imponohet nga funksioni PHP: upload_max_filesize dhe  i Apache: LimitRequestBody. Dimensioni maksimal mund të zgjidhet në nivel kusesh ose nivel modulesh. ';
 $string['configmaxeditingtime'] = 'Ky parametër specifikon kohën komplete që përdoruesit kanë në disposicion për të modifikuar mesazhet e tyre, për të futur në ditar, për  feedback, etj. Normalisht, 30 është një vlerë e mirë.';
 $string['configopentogoogle'] = 'Nëse aktivizoni këtë veti, Google mund të hyjë në site-in tuaj si vizitor. Nga ana tjetër, ai që mbrin në site-in tuaj nëpërmjet Google do të logohet automatikisht si një vizitor (Guest). Vini re se kjo veti e bën transparent hyrjen në kurset tuaja.';
-$string['configproxyhost'] = 'Nëse ky <b>server</b> ka nevojë të përdori një kompjuter proxy (psh një \"firewall\"-mur mbrojtës) për të hyrë në Internet, atëhere duhet treguar emri i këtij proxy (hostname) dhe numri i portës hyrëse. Në rast të kundërt, lere bosh këtë fushë.';
+$string['configproxyhost'] = 'Nëse ky <B>server</B> ka nevojë të përdori një kompjuter proxy (psh një \"firewall\"-mur mbrojtës) për të hyrë në Internet, atëhere duhet treguar emri i këtij proxy (hostname) dhe numri i portës hyrëse. Në rast të kundërt, lere bosh këtë fushë.';
 $string['configsecureforms'] = 'Moodle mund të përdori një nivel të fundit të sigurisë kur pranon të dhëna nga forma web. Nëse kjo është e aktivizuar, variabli HTTP_REFERER i brauzerit konfrontohet me adresën e formës aktuale. Në shumë pak raste kjo mund të shkaktojë probleme nëse përdoruesi po përdor një \"firewall\" (psh. Zonealarm) të konfiguruar për të kontrolluar HTTP_REFERER nga trafiku i tij web. Një nga siptomat është \'ngecja\' në një formë. Nëse përdoruesit kanë patur probleme me faqen e hyrjes (login) atëhere mund ta disaktivizosh këtë veti, megjithatë kjo mund ta ekspozojë site-in tuaj nga sulmet keqëdashëse. Nëse ke dyshime lere atë \'Po\'.';
 $string['configsessioncookie'] = 'Kjo veti personalizon emrin e \"cookie\" të përdorura për sesionet e Moodle. Kjo veti është  opsionale, dhe mund të përdoret vetëm nëse ekzekutohen më shumë se një kopje e Moodle në të njëjtin site web.';
 $string['configsessiontimeout'] = 'Nëse personat e loguar në këtë site janë inaktivë prej shumë kohësh (pa ngarkuar faqe) do të mbyllet automatikisht sesioni i tyre. Ky variabël specifikon se sa duhet të jetë kjo kohë.';
@@ -285,9 +285,12 @@ Për të konfirmuar llogarinë e re duhet të klikosh në këtë link:
   $a->link
 Në shumicën e programeve të postës elektronike ky duhet të shfaqet si një link blu i cili mund të klikohet. Nëse kjo nuk funksionon atëherë kopjo adresën në fushën e adresës në krye të shfletuesit(browser) tuaj. Nëse keni nevojë për ndihmë ju lutem kontaktoni administratorin e site-it $a->admin';
 $string['emailconfirmationsubject'] = '$a: konfirmo llogarinë';
-$string['emailconfirmsent'] = '<p>Një email është dërguar në adresën tënde<b>$a</b></p>
-<p> Ai përmban udhëzime për të përfunduar rregjistrimin.</p>
-<p> Nëse vazhdon të kesh probleme kontakto administratorin e site-it.</p>';
+$string['emailconfirmsent'] = '<P>Një email është dërguar në adresën tënde<B>$a</B>
+
+<P> Ai përmban udhëzime për të përfunduar rregjistrimin.
+
+<P> Nëse vazhdon të kesh probleme kontakto administratorin e site-it.
+';
 $string['emaildisable'] = 'Kjo adresë email është ç\'aktivizuar.';
 $string['emaildisplay'] = 'Trego Email';
 $string['emaildisplaycourse'] = 'Lejo vetëm pjesëtarë të tjerë të kursit të shohi emailin tim';
@@ -313,21 +316,23 @@ Në shumicën e programeve të postës elektronike ky duhet të shfaqet si një link b
 Nëse keni nevojë për ndihmë ju lutem kontaktoni administratorin e site-it 
 $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: Konfirmo ndryshimin e fjalëkalimit';
-$string['emailpasswordconfirmsent'] = '<p>Një email do të të dërgohet në adresën tënde te <b>$a</b>.</p>
+$string['emailpasswordconfirmsent'] = 'Një email do të të dërgohet në adresën tënde te <b>$a</b>.
+
 <p>Ai përmban udhëzime të thjeshta për të konfirmuar dhe përfunduar ndryshimin e fjalëkalimit.
+
 Nëse vazhdon të kesh vështirësi kontakto administratorin e site-it.</p>';
-$string['emailpasswordsent'] = '<p>Faleminderit që konfirmove ndryshimin e fjalëkalimit .</p>
+$string['emailpasswordsent'] = 'Faleminderit që konfirmove ndryshimin e fjalëkalimit .
 
 <p>Një email që përmban fjalëkalimin e ri do të dërgohet në adresën tënde <b>$a->email</b>.</p>
 
-<p>Fjalëkalimi i ri u gjenerua automatikisht- nëse do<a href=\"a->link\"> ndrysho fjalëkalimin</a> në diçka më të lehtë për të mbajtur mend.</p>';
+<p>Fjalëkalimi i ri u gjenerua automatikisht- nëse do<a href=$a->link> ndrysho fjalëkalimin</a> në diçka më të lehtë për të mbajtur mend.';
 $string['enable'] = 'Aktivizo';
 $string['enrolledincourse'] = 'I rregistruar në kursin \"$a\"';
 $string['enrolledincoursenot'] = 'Jo i rregjistruar në kursin \"$a\"';
 $string['enrolmentconfirmation'] = 'Je duke u rregjistruar si anëtar i këtij kursi.<br /> Je i sigurt që do të vazhdosh?';
 $string['enrolmentkey'] = 'Çelësi i rregjistrimit';
-$string['enrolmentkeyfrom'] = 'Ky kurs kërkon një \'çelës  rregjistrimi\'- një fjalëkalim që përdoret vetëm njëherë -<br /> që duhet ta kesh marrë nga $a';
-$string['enrolmentkeyhint'] = 'Ky çelës rregjistrimi është i pasaktë, ju lutem provoni përsëri.<br />
+$string['enrolmentkeyfrom'] = 'Ky kurs kërkon një \'çelës  rregjistrimi\'- një fjalëkalim që përdoret vetëm njëherë -<BR> që duhet ta kesh marrë nga $a';
+$string['enrolmentkeyhint'] = 'Ky çelës rregjistrimi është i pasaktë, ju lutem provoni përsëri.<BR>
 
 (Questo è un suggerimento - essa inizia con \'$a\'';
 $string['entercourse'] = 'Kliko këtu për të hyrë në këtë kurs';
@@ -496,28 +501,28 @@ Seicili kurs nga kurset mund të ketë një çelës hyrjeje, që përdoret vetëm vetëm 
 
 Këto janë hapat për hapjen e llogarisë tuaj:
 
-<ol>
+<OL size=2>
 
-<li>Plotëso formularin <a href=\"$a\">Përdorues i Ri</a> me të dhënat tuaja.</li>
+<LI>Plotëso formularin <A HREF=$a>Përdorues i Ri</A> me të dhënat tuaja.
 
-<li>Një email do të dërgohet tek adresa juaj e postës elektronike.</li>
+<LI>Një email do të dërgohet tek adresa juaj e postës elektronike.
 
-<li>Lexo email-in dhe kliko mbi link-un që ai përmban.</li>
+<LI>Lexo email-in dhe kliko mbi link-un që ai përmban.
 
-<li>Regjistrimi juaj do të konfirmohet dhe do të jesh i njohur nga sistemi si përdorues i regjistruar.</li>
+<LI>Regjistrimi juaj do të konfirmohet dhe do të jesh i njohur nga sistemi si përdorues i regjistruar.
 
-<li>Tashmë, zgjidh kursin në të cilin dëshiron të marrwsh pjesë.</li>
+<LI>Tashmë, zgjidh kursin në të cilin dëshiron të marrwsh pjesë.
 
-<li>Nëse të kërkohet një &quot;çelës hyrjeje &quot; - kërkojani
+<LI>Nëse të kërkohet një &quot;çelës hyrjeje &quot; - kërkojani
 
-atë mësuesit. Ky çelës do t\'ju  &quot;regjistrojë&quot; tek kursi.</li>
+atë mësuesit. Ky çelës do t\'ju  &quot;regjistrojë&quot; tek kursi.
 
-<li>Tashmë mund të marrësh pjesë plotësisht tek kursi. Qysh nga ky moment ke nevojë vetëm
+<LI>Tashmë mund të marrësh pjesë plotësisht tek kursi. Qysh nga ky moment ke nevojë vetëm
 
 emrin tënd të përdorusit (username) dhe fjalëkalimin (password) tënd (në këtë formë të kësaj faqeje)
 
-për të patur akses tek kursi në të cilin je regjistruar. </li>  </ol>';
-$string['loginstepsnone'] = '<p>Njatjeta!</p> <p> Për një akses të plotë tek kurset do të duhet të krijosh një llogari.</p><p> Dmth duhet të krijosh një emërpërdoruesi (username) dhe një fjalëkalimi (password) dhe t\'i përdorësh këto në formularin e kësaj faqeje</p><p> Nëse dikush e ka zgjedhur tashmë emrin tënd të përdoruesit (username), atëhere duhet të riprovosh duke zgjedhur njëemërpërdoruesi të ndryshëm.</p>';
+për të patur akses tek kursi në të cilin je regjistruar.   </OL>';
+$string['loginstepsnone'] = 'Njatjeta! <P> Për një akses të plotë tek kurset do të duhet të krijosh një llogari.<P> Dmth duhet të krijosh një emërpërdoruesi (username) dhe një fjalëkalimi (password) dhe t\'i përdorësh këto në formularin e kësaj faqeje<P> Nëse dikush e ka zgjedhur tashmë emrin tënd të përdoruesit (username), atëhere duhet të riprovosh duke zgjedhur njëemërpërdoruesi të ndryshëm.';
 $string['loginto'] = 'Login në $a';
 $string['loginusing'] = 'Hyr këtu duke përdorur emrin tënd të përdoruesit dhe fjalëkalimin tënd';
 $string['logout'] = 'Dil';
@@ -670,17 +675,17 @@ $string['passwordconfirmchange'] = 'Konfirmo ndryshimin e fjalëkalimit';
 $string['passwordrecovery'] = 'Po, më ndihmo për login-in';
 $string['passwordsdiffer'] = 'Këto fjalëkalime nuk përputhen';
 $string['passwordsent'] = 'Fjalëkalimi u dërgua';
-$string['passwordsenttext'] = '<p>Një email është dërguar te $a->email.</p>
-<p><b> Ju lutem kontrollo postën për të marrë    password-in e ri</b></p>
-<p> Password-i i ri është gjeneruar automatikisht, prandaj mund të shkosh te
-<a href=\"$a->link\"> për ta ndryshuar atë në një të thjeshtë që mbahet mend lehtë</a>.</p>
-<p><b>Kontrollo kutinë tënde postare për të parë  password-in e ri</b></p>
+$string['passwordsenttext'] = '<P>Një email është dërguar te $a->email.
+<P><B> Ju lutem kontrollo postën për të marrë    password-in e ri</B>
+<P> Password-i i ri është gjeneruar automatikisht, prandaj mund të shkosh te
+<A HREF=$a->link> për ta ndryshuar atë në një të thjeshtë që mbahet mend lehtë</A>.
+<P><B>Kontrollo kutinë tënde postare për të parë  password-in e ri</B>
 
-<p>Password-i i ri është gjeneruar automatikisht, prandaj shko tek ky link 
+<P>Password-i i ri është gjeneruar automatikisht, prandaj shko tek ky link 
 
- <a href=\"$a->link\">
+ <A HREF=$a->link> 
 
-për ta ndryshuar me një tjetër për ty, më të  lehtë për tu mbajtur mend</a>.</p> ';
+për ta ndryshuar me një tjetër për ty, më të  lehtë për tu mbajtur mend</A>.';
 $string['people'] = 'Personat';
 $string['personalprofile'] = 'Profili personal';
 $string['phone'] = 'Telefoni';
@@ -712,7 +717,7 @@ $string['registrationinfo'] = '<p>Kjo faqe të lejon të regjistrosh site-in tend 
 
 <p>Nëse dëshiron, mund të lejosh në emër të site-it tënd, që URL e këtij site të shtohet në listën e publikuar në site-et e Moodle.</p>
 
-<p>Të gjitha regjistrimet e reja verifikohen manualisht para se të shtohen në listë, por pasi të jenë shtuar në listë mund të azhurnohen kur do ta ridërgosh këtë formë.</p>';
+<p>Të gjitha regjistrimet e reja verifikohen manualisht para se të shtohen në listë, por pasi të jenë shtuar në listë mund të azhurnohen kur do ta ridërgosh këtë formë.';
 $string['registrationno'] = 'Jo,nuk dua të marr email';
 $string['registrationsend'] = 'Dërgoja informacionet e rregjistrimit moodle.org';
 $string['registrationyes'] = 'Po, më dërgoni informacione mbi gjërat e rëndësishme';
@@ -748,7 +753,7 @@ $string['scheduledbackupstatus'] = 'Gjëndja e backup-eve të programuar';
 $string['search'] = 'Kërko';
 $string['searchagain'] = 'Kërko përsëri';
 $string['searchcourses'] = 'Kërko kurse';
-$string['searchhelp'] = 'Ju mund të kërkoni për disa fjalë njëherësh.<br />fjala : gjej çdo ndodhje të kësaj fjale në tekst.<br />+fjala : vetëm fjalët që janë ekzaktëshit si fjala e kërkuar do të gjenden.<br />-fjala : nuk i përfshin rezultatet që përmbajnë këtë fjalë.';
+$string['searchhelp'] = 'Ju mund të kërkoni për disa fjalë njëherësh.<p>fjala : gjej çdo ndodhje të kësaj fjale në tekst.</br>+fjala : vetëm fjalët që janë ekzaktëshit si fjala e kërkuar do të gjenden.</br>-fjala : nuk i përfshin rezultatet që përmbajnë këtë fjalë.';
 $string['searchresults'] = 'Resultatet e kërkimit';
 $string['sec'] = 'sekondë';
 $string['secs'] = 'sekonda';

@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This file contains all the code needed to execute scheduled backups
 
 //This function is executed via moodle cron
@@ -54,31 +54,9 @@ function schedule_backup_cron() {
         $status = false;
     }
 
-    //Delete old_entries from backup tables
-    if ($status) {
-        mtrace("    Deleting old data");
-        $status = backup_delete_old_data();
-    }
-
     //Now we get a list of courses in the server
     if ($status) {
         mtrace("    Checking courses");
-        //First of all, we delete everything from backup tables related to deleted courses
-        mtrace("        Skipping deleted courses");
-        $skipped = 0;
-        if ($bckcourses = get_records('backup_courses')) {
-            foreach($bckcourses as $bckcourse) {
-                //Search if it exists
-                if (!$exists = get_record('course', 'id', "$bckcourse->courseid")) {
-                    //Doesn't exist, so delete from backup tables
-                    delete_records('backup_courses', 'courseid', "$bckcourse->courseid");
-                    delete_records('backup_log', 'courseid', "$bckcourse->courseid");
-                    $skipped++;
-                }
-            }
-        }
-        mtrace("            $skipped courses");
-        //Now process existing courses
         $courses = get_records("course");
         //For each course, we check (insert, update) the backup_course table
         //with needed data
@@ -101,25 +79,20 @@ function schedule_backup_cron() {
                 }
                 //Now we backup every course with nextstarttime < now
                 if ($backup_course->nextstarttime > 0 && $backup_course->nextstarttime < $now) {
+                    //Set laststarttime
+                    $starttime = time();
+                    set_field("backup_courses","laststarttime",$starttime,"courseid",$backup_course->courseid);
+                    //Launch backup
+                    $course_status = schedule_backup_launch_backup($course,$starttime);
                     //We have to send a email because we have included at least one backup
                     $emailpending = true;
-                    //Only make the backup if laststatus isn't 2-UNFINISHED (uncontrolled error)
-                    if ($backup_course->laststatus != 2) {
-                        //Set laststarttime
-                        $starttime = time();
-                        set_field("backup_courses","laststarttime",$starttime,"courseid",$backup_course->courseid);
-                        //Set course status to unfinished, the process will reset it
-                        set_field("backup_courses","laststatus","2","courseid",$backup_course->courseid);
-                        //Launch backup
-                        $course_status = schedule_backup_launch_backup($course,$starttime);
-                        //Set lastendtime
-                        set_field("backup_courses","lastendtime",time(),"courseid",$backup_course->courseid);
-                        //Set laststatus
-                        if ($course_status) {
-                            set_field("backup_courses","laststatus","1","courseid",$backup_course->courseid);
-                        } else {
-                            set_field("backup_courses","laststatus","0","courseid",$backup_course->courseid);
-                        }
+                    //Set lastendtime
+                    set_field("backup_courses","lastendtime",time(),"courseid",$backup_course->courseid);
+                    //Set laststatus
+                    if ($course_status) {
+                        set_field("backup_courses","laststatus","1","courseid",$backup_course->courseid);
+                    } else {
+                        set_field("backup_courses","laststatus","0","courseid",$backup_course->courseid);
                     }
                 }
 
@@ -144,49 +117,25 @@ function schedule_backup_cron() {
         delete_records_select("backup_log", "laststarttime < '$loglifetime'");
     }
 
-    //Send email to admin if necessary
+    //Send email to admin
     if ($emailpending) {
         mtrace("    Sending email to admin");
         $message = "";
-
-        //Get info about the status of courses
-        $count_all = count_records('backup_courses');
-        $count_ok = count_records('backup_courses','laststatus','1');
-        $count_error = count_records('backup_courses','laststatus','0');
-        $count_unfinished = count_records('backup_courses','laststatus','2');
-
-        //Build the message text
-        //Summary
-        $message .= get_string('summary')."\n";
-        $message .= "==================================================\n";
-        $message .= "  ".get_string('courses').": ".$count_all."\n";
-        $message .= "  ".get_string('ok').": ".$count_ok."\n";
-        $message .= "  ".get_string('error').": ".$count_error."\n";
-        $message .= "  ".get_string('unfinished').": ".$count_unfinished."\n\n";
-
-        //Reference
-        if ($count_error != 0 || $count_unfinished != 0) {
-            $message .= "  ".get_string('backupfailed')."\n\n";
-            $dest_url = $CFG->wwwroot.'/backup/log.php';
-            $message .= "  ".get_string('backuptakealook','',$dest_url)."\n\n";
-            //Set message priority
-            $admin->priority = 1;
-            //Reset unfinished to error
-            set_field('backup_courses','laststatus','0','laststatus','2');
-        } else {
-            $message .= "  ".get_string('backupfinished')."\n";
+        //Build the message text (future versions should handle html messages too!!)
+        $logs = get_records_select ("backup_log","laststarttime >= '$now'","id");
+        if ($logs) {
+            $currentcourse = 1;
+            foreach ($logs as $log) {
+                if ($currentcourse != $log->courseid) {
+                    $message .= "\n==================================================\n\n";
+                    $currentcourse = $log->courseid;
+                }
+                $message .= userdate($log->time,"%T",$admin->timezone)." ".$log->info."\n";
+            }
         }
-
-        //Build the message subject
-        $site = get_site();
-        $prefix = $site->shortname.": ";
-        if ($count_error != 0 || $count_unfinished != 0) {
-            $prefix .= "[".strtoupper(get_string('error'))."] ";
-        } 
-        $subject = $prefix.get_string("scheduledbackupstatus");
-
         //Send the message
-        email_to_user($admin,$admin,$subject,$message);
+        $site = get_site();
+        email_to_user($admin,$admin,"$site->shortname: ".get_string("scheduledbackupstatus"),$message);
     }
     
 
@@ -212,7 +161,6 @@ function schedule_backup_launch_backup($course,$starttime = 0) {
         schedule_backup_log($starttime,$course->id,"  Phase 2: Executing and copying:");
         $status = schedule_backup_course_execute($preferences,$starttime);
     }
-
     if ($status && $preferences) {
         //Only if the backup_sche_keep is set
         if ($preferences->backup_keep) {
@@ -220,7 +168,6 @@ function schedule_backup_launch_backup($course,$starttime = 0) {
             $status = schedule_backup_course_delete_old_files($preferences,$starttime);
         }
     }
-
     if ($status && $preferences) {
         mtrace("            End backup OK");
         schedule_backup_log($starttime,$course->id,"End backup course $course->fullname - OK");
@@ -240,7 +187,7 @@ function schedule_backup_log($starttime,$courseid,$message) {
         $log->courseid = $courseid;
         $log->time = time();
         $log->laststarttime = $starttime;
-        $log->info = addslashes($message);
+        $log->info = $message;
     
         insert_record ("backup_log",$log);
     }
@@ -309,9 +256,6 @@ function schedule_backup_course_configure($course,$starttime = 0) {
         if (!isset($backup_config->backup_sche_withuserdata)) {
             $backup_config->backup_sche_withuserdata = 1;
         }
-        if (!isset($backup_config->backup_sche_metacourse)) {
-            $backup_config->backup_sche_metacourse = 1;
-        }
         if (!isset($backup_config->backup_sche_users)) {
             $backup_config->backup_sche_users = 1;
         }
@@ -323,9 +267,6 @@ function schedule_backup_course_configure($course,$starttime = 0) {
         }
         if (!isset($backup_config->backup_sche_coursefiles)) {
             $backup_config->backup_sche_coursefiles = 1;
-        }
-        if (!isset($backup_config->backup_sche_messages)) {
-            $backup_config->backup_sche_messages = 1;
         }
         if (!isset($backup_config->backup_sche_active)) {
             $backup_config->backup_sche_active = 0;
@@ -389,12 +330,10 @@ function schedule_backup_course_configure($course,$starttime = 0) {
     
     //Convert other parameters
     if ($status) {
-        $preferences->backup_metacourse = $backup_config->backup_sche_metacourse;
         $preferences->backup_users = $backup_config->backup_sche_users;
         $preferences->backup_logs = $backup_config->backup_sche_logs;
         $preferences->backup_user_files = $backup_config->backup_sche_userfiles;
         $preferences->backup_course_files = $backup_config->backup_sche_coursefiles;
-        $preferences->backup_messages = $backup_config->backup_sche_messages;
         $preferences->backup_course = $course->id;
         $preferences->backup_destination = $backup_config->backup_sche_destination;
         $preferences->backup_keep = $backup_config->backup_sche_keep;
@@ -435,15 +374,11 @@ function schedule_backup_course_configure($course,$starttime = 0) {
         $backup_name .= userdate(time(),$backup_date_format,99,false);
         //The extension
         $backup_name .= ".zip";
-        //And finally, clean everything
-        $backup_name = clean_filename($backup_name);
 
         //Calculate the string to match the keep preference
         $keep_name = $backup_word."-";
         //The shortname
         $keep_name .= strtolower($backup_shortname)."-";
-        //And finally, clean everything
-        $keep_name = clean_filename($keep_name);
  
         $preferences->backup_name = $backup_name;
         $preferences->keep_name = $keep_name;
@@ -484,7 +419,7 @@ function schedule_backup_course_configure($course,$starttime = 0) {
     //Now calculate the users
     if ($status) {
         schedule_backup_log($starttime,$course->id,"    calculating users");
-        user_check_backup($course->id,$backup_unique_code,$preferences->backup_users,$preferences->backup_messages);  
+        user_check_backup($course->id,$backup_unique_code,$preferences->backup_users);  
     }
 
     //Now calculate the logs
@@ -550,6 +485,12 @@ function schedule_backup_course_execute($preferences,$starttime = 0) {
         $status = clear_backup_dir($preferences->backup_unique_code);
     }
 
+    //Delete old_entries from backup tables
+    if ($status) {
+        schedule_backup_log($starttime,$preferences->backup_course,"    cleaning old data");
+        $status = backup_delete_old_data();
+    }
+
     //Create the moodle.xml file
     if ($status) {
         schedule_backup_log($starttime,$preferences->backup_course,"    creating backup file");
@@ -568,18 +509,6 @@ function schedule_backup_course_execute($preferences,$starttime = 0) {
             $status = backup_course_start($backup_file,$preferences);
         }
 
-        //Metacourse information
-        if ($status && $preferences->backup_metacourse) {
-            schedule_backup_log($starttime,$preferences->backup_course,"      metacourse info");
-            $status = backup_course_metacourse($backup_file,$preferences);
-        }
-
-        //Block info
-        if ($status) {
-            schedule_backup_log($starttime,$preferences->backup_course,"      blocks info");
-            $status = backup_course_blocks($backup_file,$preferences);
-        }
-
         //Section info
         if ($status) {
             schedule_backup_log($starttime,$preferences->backup_course,"      sections info");
@@ -590,15 +519,6 @@ function schedule_backup_course_execute($preferences,$starttime = 0) {
         if ($status) {
             schedule_backup_log($starttime,$preferences->backup_course,"      user info");
             $status = backup_user_info($backup_file,$preferences);
-        }
-
-        //If we have selected to backup messages and we are
-        //doing a SITE backup, let's do it
-        if ($status && $preferences->backup_messages && $preferences->backup_course == SITEID) {
-            schedule_backup_log($starttime,$preferences->backup_course,"      messages");
-            if (!$status = backup_messages($backup_file,$preferences)) {
-                notify("An error occurred while backing up messages");
-            }
         }
 
         //If we have selected to backup quizzes, backup categories and

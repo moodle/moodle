@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -18,7 +18,7 @@
         error("Course module is incorrect");
     }
 
-    require_login($course->id, false, $cm);
+    require_login($course->id);
 
     add_to_log($course->id, "dialogue", "view", "view.php?id=$cm->id", $dialogue->id, $cm->id);
 
@@ -37,10 +37,10 @@
                  "", "", true,
                   update_module_button($cm->id, $course->id, $strdialogue), navmenu($course, $cm));
 
-    // ...and if necessary set default action
-
+    // ...and if necessary set default action 
+    
     optional_variable($action);
-
+    
     if (!isguest()) { // it's a teacher or student
         if (!$cm->visible and isstudent($course->id)) {
             $action = 'notavailable';
@@ -52,7 +52,7 @@
     else { // it's a guest, oh no!
         $action = 'notavailable';
     }
-
+    
 
 
 /*********************** dialogue not available (for gusets mainly)***********************/
@@ -63,8 +63,8 @@
 
     /************ view **************************************************/
     elseif ($action == 'view') {
-
-        print_simple_box(format_text($dialogue->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
+    
+        print_simple_box( format_text($dialogue->intro) , "center");
         echo "<br />";
         // get some stats
         $countneedingrepliesself = dialogue_count_needing_replies_self($dialogue, $USER);
@@ -84,12 +84,12 @@
                 $pane =1;
             }
         }
-
+ 
         // override pane setting if teacher has changed group
         if (isset($_GET['group'])) {
             $pane = 0;
         }
-
+         
         // set up tab table
         $tabs->names[0] = get_string("pane0", "dialogue");
         if ($countneedingrepliesself == 1) {
@@ -101,22 +101,22 @@
             $tabs->names[2] = get_string("pane2one", "dialogue");
         } else {
             $tabs->names[2] = get_string("pane2", "dialogue", $countneedingrepliesother);
-        }
+        } 
         if ($countclosed == 1) {
             $tabs->names[3] = get_string("pane3one", "dialogue");
         } else {
             $tabs->names[3] = get_string("pane3", "dialogue", $countclosed);
         }
 
-        $tabs->urls[0] = "view.php?id=$cm->id&amp;pane=0";
-        $tabs->urls[1] = "view.php?id=$cm->id&amp;pane=1";
-        $tabs->urls[2] = "view.php?id=$cm->id&amp;pane=2";
-        $tabs->urls[3] = "view.php?id=$cm->id&amp;pane=3";
+        $tabs->urls[0] = "view.php?id=$cm->id&pane=0";
+        $tabs->urls[1] = "view.php?id=$cm->id&pane=1";
+        $tabs->urls[2] = "view.php?id=$cm->id&pane=2";
+        $tabs->urls[3] = "view.php?id=$cm->id&pane=3";
         $tabs->highlight = $pane;
         dialogue_print_tabbed_heading($tabs);
-        echo "<br />\n";
-
-
+        echo "<br/><center>\n";
+        
+       
         switch ($pane) {
             case 0:
                 if (isteacher($course->id)) {
@@ -136,19 +136,20 @@
 
                 if ($names = dialogue_get_available_users($dialogue)) {
                     print_simple_box_start("center");
+                    echo "<center>";
                     echo "<form name=\"startform\" method=\"post\" action=\"dialogues.php\">\n";
-                    echo "<input type=\"hidden\" name=\"id\"value=\"$cm->id\"/ />\n";
-                    echo "<input type=\"hidden\" name=\"action\" value=\"openconversation\"/ />\n";
-                    echo "<table align=\"center\" border=\"0\"><tr>\n";
+                    echo "<input type=\"hidden\" name=\"id\"value=\"$cm->id\">\n";
+                    echo "<input type=\"hidden\" name=\"action\" value=\"openconversation\">\n";
+                    echo "<table border=\"0\"><tr>\n";
                     echo "<td align=\"right\"><b>".get_string("openadialoguewith", "dialogue").
                         " : </b></td>\n";
                     echo "<td>";
-
+                    
                     choose_from_menu($names, "recipientid");
                     echo "</td></tr>\n";
                     echo "<tr><td align=\"right\"><b>".get_string("subject", "dialogue")." : </b></td>\n";
-                    echo "<td><input type=\"text\" size=\"50\" maxsize=\"100\" name=\"subject\"
-                        value=\"\" /></td></tr>\n";
+                    echo "<td><input type=\"text\" size=\"50\" maxsize=\"100\" name=\"subject\" 
+                        value=\"\"></td></tr>\n";
                     echo "<tr><td colspan=\"2\" align=\"center\" valign=\"top\"><i>".
                         get_string("typefirstentry", "dialogue")."</i></td></tr>\n";
                     echo "<tr><td valign=\"top\" align=\"right\">\n";
@@ -159,8 +160,9 @@
                     use_html_editor();
                     echo "</td></tr>";
                     echo "<tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"".
-                        get_string("opendialogue","dialogue")."\"/></td></tr>\n";
+                        get_string("opendialogue","dialogue")."\"></td></tr>\n";
                     echo "</table></form>\n";
+                    echo "</center>";
                     print_simple_box_end();
                 } else {
                     print_heading(get_string("noavailablepeople", "dialogue"));
@@ -179,7 +181,7 @@
                 dialogue_list_conversations_closed($dialogue, $USER);
         }
     }
-
+        
     /*************** no man's land **************************************/
     else {
         error("Fatal Error: Unknown Action: ".$action."\n");

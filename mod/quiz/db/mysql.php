@@ -1,11 +1,10 @@
-<?php // $Id$
+<?PHP // $Id$
 
 function quiz_upgrade($oldversion) {
 // This function does anything necessary to upgrade
 // older versions to match current functionality
 
     global $CFG;
-    include_once("$CFG->dirroot/mod/quiz/locallib.php");
 
     if ($oldversion < 2002101800) {
         execute_sql(" ALTER TABLE `quiz_attempts` ".
@@ -172,7 +171,7 @@ function quiz_upgrade($oldversion) {
                 $questions = get_records("quiz_questions","stamp",$duplicate->id);
                 $add = 1;
                 foreach ($questions as $question) {
-                    echo "Changing question id $question->id stamp to ".$duplicate->id.$add."<br />";
+                    echo "Changing question id $question->id stamp to ".$duplicate->id.$add."<br>";
                     set_field("quiz_questions","stamp",$duplicate->id.$add,"id",$question->id);
                     $add++;
                 }
@@ -267,89 +266,7 @@ function quiz_upgrade($oldversion) {
                                KEY `question` (`question`)
                 ) TYPE=MyISAM COMMENT='Options for questions of type calculated'; ");
     }
-
-    if ($oldversion < 2004111400) {
-        table_column("quiz_responses", "answer", "answer", "text", "", "", "", "not null");
-    }
-
-    if ($oldversion < 2004111700) {
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz DROP INDEX course;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_calculated DROP INDEX answer;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_categories DROP INDEX course;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_dataset_definitions DROP INDEX category;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_numerical DROP INDEX question;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_numerical_units DROP INDEX question;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}quiz_questions DROP INDEX category;",false);
-
-        modify_database('','ALTER TABLE prefix_quiz ADD INDEX course (course);');
-        modify_database('','ALTER TABLE prefix_quiz_calculated ADD INDEX answer (answer);');
-        modify_database('','ALTER TABLE prefix_quiz_categories ADD INDEX course (course);');
-        modify_database('','ALTER TABLE prefix_quiz_dataset_definitions ADD INDEX category (category);');
-        modify_database('','ALTER TABLE prefix_quiz_numerical ADD INDEX question (question);');
-        modify_database('','ALTER TABLE prefix_quiz_numerical_units ADD INDEX question (question);');
-        modify_database('','ALTER TABLE prefix_quiz_questions ADD INDEX category (category);');
-    }
-
-    if ($oldversion < 2004120501) {
-        table_column("quiz_calculated", "", "correctanswerformat", "integer", "10", "", "2", "not null", "correctanswerlength");
-    }
-
-    if ($oldversion < 2004121400) {  // New field to determine popup window behaviour
-        table_column("quiz", "", "popup", "integer", "4", "", "0", "not null", "subnet");
-    }
-
-    if ($oldversion < 2005010201) {
-        table_column('quiz_categories', '', 'parent');
-        table_column('quiz_categories', '', 'sortorder', 'integer', '10', '', '999');
-    }
-
-    if ($oldversion < 2005010300) {
-        table_column("quiz", "", "questionsperpage", "integer", "10", "", "0", "not null", "review");
-    }
-
-    if ($oldversion < 2005012700) {
-        table_column('quiz_grades', 'grade', 'grade', 'real', 2, '');
-    }
-
-    if ($oldversion < 2005021400) {
-        table_column("quiz", "", "decimalpoints", "integer", "4", "", "2", "not null", "grademethod");
-    }
-
-    if($oldversion < 2005022800) {
-        table_column('quiz_questions', '', 'hidden', 'integer', '1', 'unsigned', '0', 'not null', 'version');
-        table_column('quiz_responses', '', 'originalquestion', 'integer', '10', 'unsigned', '0', 'not null', 'question');
-        modify_database ('', "CREATE TABLE `prefix_quiz_question_version` (
-                              `id` int(10) unsigned NOT NULL auto_increment,
-                              `quiz` int(10) unsigned NOT NULL default '0',
-                              `oldquestion` int(10) unsigned NOT NULL default '0',
-                              `newquestion` int(10) unsigned NOT NULL default '0',
-                              `userid` int(10) unsigned NOT NULL default '0',
-                              `timestamp` int(10) unsigned NOT NULL default '0',
-                              PRIMARY KEY  (`id`)
-                            ) TYPE=MyISAM COMMENT='The mapping between old and new versions of a question';");
-    }
-
-    if ($oldversion < 2005032000) {
-        execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('quiz', 'editquestions', 'quiz', 'name') ");
-    }
-
-    if ($oldversion < 2005032300) {
-        modify_database ('', 'ALTER TABLE prefix_quiz_question_version RENAME prefix_quiz_question_versions;');
-    }
-
-    if ($oldversion < 2005041200) { // replace wiki-like with markdown
-        include_once( "$CFG->dirroot/lib/wiki_to_markdown.php" );
-        $wtm = new WikiToMarkdown();
-        $sql = "select course from {$CFG->prefix}quiz_categories, {$CFG->prefix}quiz_questions ";
-        $sql .= "where {$CFG->prefix}quiz_category.id = {$CFG->prefix}quiz_questions.category ";
-        $sql .= "and {$CFG->prefix}quiz_questions.id = ";
-        $wtm->update( 'quiz_questions', 'questiontext', 'questiontextformat', $sql );
-    }
-
-    if ($oldversion < 2005041304) {
-        modify_database('', "UPDATE prefix_quiz_questions SET hidden = '1' WHERE qtype ='".RANDOM."';");
-    }
-
+    
     return true;
 }
 

@@ -70,14 +70,14 @@ $string['filloutthreequestions'] = "Musíte vyplni» aspoò tri otázky. Nevyplnené 
 $string['fillouttwochoices'] = "Musíte uvies» aspoò dve mo¾nosti. Nevyplnené mo¾nosti nebudú pou¾ité.";
 $string['fractionsaddwrong'] = "Kladné známky, ktoré ste uviedli nemajú súèet 100%%
 
-<br />ale ich súèet je \$a%%
+<BR>ale ich súèet je \$a%%
 
-<br />Chcete ís» spä» a opravi» túto otázku?";
+<BR>Chcete ís» spä» a opravi» túto otázku?";
 $string['fractionsnomax'] = "Jedna z odpovedí musí by» 100%%, aby bolo
 
-<br />mo¾né získa» plný poèet za túto otázku.
+<BR>mo¾né získa» plný poèet za túto otázku.
 
-<br />Chcete ís» spä» a opravi» túto otázku?";
+<BR>Chcete ís» spä» a opravi» túto otázku?";
 $string['gradeaverage'] = "Priemerná známka";
 $string['gradehighest'] = "Najvy¹¹ia známka";
 $string['grademethod'] = "Metóda známkovania";
@@ -103,7 +103,7 @@ $string['nomoreattempts'] = "Nie je povolené viac pokusov";
 $string['noquestions'] = "Zatiaµ neboli pridané otázky";
 $string['noreview'] = "Nemáte oprávnenie prehliada» tento test";
 $string['noreviewuntil'] = "Nemáte oprávnenie prehliada» tento test do \$a";
-$string['notenoughsubquestions'] = "Nebolo definované dos» podotázok (mo¾ností).<br />
+$string['notenoughsubquestions'] = "Nebolo definované dos» podotázok (mo¾ností).<br>
 
 Chcete sa vráti» a opravi» túto otázku?";
 $string['numerical'] = "Poradový";

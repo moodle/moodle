@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021800)
+<?php // $Id$ 
+      // attendance.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['absentlong'] = '欠席';
@@ -19,16 +19,15 @@ $string['defaultgrade'] = 'デフォルトで出席簿を評価する';
 $string['defaulthoursinclass'] = 'デフォルトの出席簿では何時間出席する必要があるか';
 $string['defaultmaxgrade'] = '皆勤の場合のデフォルト最大評価';
 $string['defaultstudentstatus'] = '出席簿のデフォルト学生出席状態';
-$string['downloadexcelfull'] = 'エクセルシートのダウンロード';
-$string['downloadexceltotals'] = 'エクセルシート(概要 )のダウンロード';
-$string['downloadtextfull'] = 'テキストレポートのダウンロード';
-$string['downloadtexttotals'] = 'テキストレポート( 概要 )のダウンロード';
+$string['downloadexcelfull'] = 'フル・エクセルシートをダウンロードする';
+$string['downloadexceltotals'] = 'サマリー・エクセルシートをダウンロードする';
+$string['downloadtextfull'] = 'フル・テキストレポートをダウンロードする';
+$string['downloadtexttotals'] = 'サマリー・テキストレポートをダウンロードする';
 $string['dynamicsection'] = '日付を元に週を決定';
 $string['dynamicsectionmulti'] = '出席簿を週に自動的に設置する';
 $string['dynsectionshort'] = '自動設置';
 $string['endbeforestart'] = '設置終了日が設置開始日の前にあります';
 $string['endmulti'] = '出席簿設置終了日';
-$string['for'] = ' ';
 $string['friday'] = '金';
 $string['gradeshort'] = '評定済み';
 $string['gradevalue'] = '出席を評定する';
@@ -45,7 +44,6 @@ $string['norolls'] = 'このコースには出席簿はありません';
 $string['notes'] = '備考';
 $string['notesfor'] = '備考';
 $string['noviews'] = '申し訳ございません、あなたのデータはありません';
-$string['of'] = '/';
 $string['pages'] = 'ページ';
 $string['presentlong'] = '出席';
 $string['presentshort'] = '出';
@@ -58,13 +56,16 @@ $string['tardiesperabsence'] = '何回の遅刻を1回の欠席とするか';
 $string['tardylong'] = '遅刻';
 $string['tardyshort'] = '遅';
 $string['teacheredit'] = '出席を取る';
+$string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 $string['thursday'] = '木';
 $string['tuesday'] = '火';
 $string['viewall'] = '全ての出席簿を表示';
 $string['viewmulti'] = 'レポートを複数ページに表示する';
 $string['viewone'] = 'レポートの全ページを表示する';
 $string['viewsection'] = 'このセクションの全出席簿を表示する';
-$string['viewtable'] = 'レポートを1つのテーブルに表示する';
+$string['viewtable'] = 'レポートを一つのテーブルに表示する';
 $string['viewweek'] = 'カレンダー週の全出席簿を表示';
 $string['wednesday'] = '水';
 $string['weekmodulename'] = '先週の全出席簿';

@@ -1,100 +1,33 @@
 <P ALIGN=CENTER><B>Importowanie nowych pytañ</B></P>
+<P>Ta funkcja pozwala Ci na importowanie pytañ z zewnêtrznych plików tekstowych, wczytuj±c je poprzez formê</P>
 
-<P>Ta funkcja pozwala Ci zaimportowaæ pytania z zewnêtrznego pliku tekstowego, przes³anego na serwer za pomoc± formularza.  
+<P>Obs³ugiwane s± nastêpuj±ce formaty plików : <P>
 
-
-<P>Import obs³uguje kilka formatów.
-
-<P><B>Format GIFT</B></P>
-<ul>
-<p>Format GIFT jest najbardziej wszechstronnym formatem. Zosta³ zaprojektowany jako prosta metoda dla nauczycieli tworzacych pytania jako plik tekstowy. GIFT obs³uguje pytania Wielokrotnego wyboru, Prawda-Fa³sz, Krótkie odpowiedzi, Dopasuj odpowied¼, Numeryczne jak i zadania typu "wstaw brakuj±ce s³owo".</p>
-
-<p>Kilka typów pytañ mo¿e byæ u¿yytych w jednym pliku tekstowym. Ponadto format ten zezwala na umieszczanie komentarzy, nazw pytañ, informacji zwrotnych i wa¿enie ocen. </p>
-
-<p>Oto kilka przyk³adów:</p>
-
-<pre>
-CzasNaE-Biznes to?{~codzienna gazeta ~ksi±¿ka =serwis www i e-zin}
-
-CzasNaE-Biznes to {~codzienna gazeta ~ksi±¿ka =serwis www} o marketingu i biznesie.
-
-CzasNaE-Biznes to codzienna gazeta.{FALSE}
-
-CzasNaE-Biznes to?{=serwis www =e-zin}
-
-Kiedy powsta³ CzasNaE-Biznes?{#2000}
-</pre>
-
-<p align=right><a href="help.php?file=formatgift.html&module=quiz">Wiêcej o formacie GIFT</a></p>
-</ul>
-
-<P><B>Format Aiken</B></P>
-<ul>
-<p>Format Akien to bardzo prosty sposób tworzenia pytañ wielokrotnego wyboru u¿ywaj±c ³atwego dla cz³owieka formatu. Oto przyk³ad:</p>
-<pre>
-Jaka jest poprawna odpowied¥ na to pytanie?
-A. Czy to ta odpowied¥?
-B. A mo¿e ta?
-C. A mo¿e jednak ta?
-D. Czy jednak mo¿e ta?
-ANSWER: D
-</pre>
-
-<p align=right><a href="help.php?file=formataiken.html&module=quiz">Wiêcej o formacie "Aiken"</a></p>
-</ul>
-
-
-<P><B>Brakuj±ce s³owo</B></P>
+<B>Brakuj±ce S³owa</B></P>
 <UL>
-<P>Format ten obs³uguje jedynie pytania wielokrotnego wyboru. Kaza odpowied¼ jest oddzielona tylk± (~). Poprawna odpowied¼ jest poprzedzona znakiem równo¶ci (=). Oto przyk³ad:
+<P>Ten format przeznaczony jest jedynie do pytañ wielokrotnego wyboru.
+Ka¿da odpowied¼ jest oddzielana tyld± (~), a prawid³owa odpowied¼ poprzedzona jest znakiem równo¶ci (=). Poni¿ej podano przyk³ad : 
+	<BLOCKQUOTE>Ju¿ wtedy gdy rozpoczynamy odkrywaæ czê¶ci naszego cia³a jako noworodki zostajemy studentami {=anatomii i fizjologii  ~refleksologii ~nauki ~do¶wiadczenia}, i w pewnym sensie pozostajemy studentami przez ca³e ¿ycie.</BLOCKQUOTE>
 
-<BLOCKQUOTE>Bed±c jeszcze niemowlêciami, gdy tylko rozpoczniemy poznawaæ w³asne cia³o, stajemy siê studentami {=anatomii i fizjologii ~prawa ~psychologii}.
-</BLOCKQUOTE>
+<P>Wiêcej informacji: <?php  helpbutton("formatmissingword", "", "quiz") ?></P>
 
-<p align=right><a href="help.php?file=formatmissingword.html&module=quiz">Wiêcej o formacie "Brakuj±ce s³owo"</a></p>
 </UL>
-
-
 <P><B>AON</B></P>
 <UL>
-<P>Jest to inna wersja formatu "Brakuj±ce s³owo". W AON po zaimportowaniu
-pytañ, wszystkie pytania typu krótkie odpowiedzi s± konwertowane po 4 na raz w pytania typu dopasuj odpowied¼.</P>
-<p>Dodatkowo odpowiedzi pytañ wielokrotnego wyboru s± losowo wymieszane.
-<p>Format ten jest nazwany na czej¶æ organizacji, która wspiera³a stworzenie wielu cech quizu.</p>
-</UL>
+<P>Ten format jest identyczny z formatem Brakuj±ce S³owa, z t± ró¿nic±, ¿e po zaimportowaniu pytañ wszystkie pytania typu Krótka Odpowied¼ zmieniane s± czwórkami na pytania typu Dopasuj Odpowiedzi.</P>
 
+<p>Nazwa pochodzi od organizacji która sponsorowa³a rozwój wielu cech quizów</p></UL>
 
-<P><B>Blackboard</B></P>
-<UL>
-<P>Ten modu³ potrafi importowaæ pytania zapisane w formacie eksportowym Blackboard. Opiera siê on o funkcje XML.</P>
+<P><B>Blackboard (Tablica) </B></P>
 
-<p align=right><a href="help.php?file=formatblackboard.html&module=quiz">Wiêcej o formacie "Blackboard"</a></p>
-</UL>
+<UL><P>Ten modu³ umo¿liwia importowanie pytañ zapisanych w formacie eksportowym Blackboard.  Polega on na umieszczaniu funkcji XML w twoim pliku PHP</P>
 
-<P><B> CTM ("Course Test Manager")</B></P>
-<UL>
-<P>Modu³ ten pozwala importowaæ pytania stworzone przy pomocy programu Course Test Manager. Pliki CTM s± zapisane w formacie Microsoft Access, wiêc sposób importowanie zale¿ny jest od tego, czy Moodle dzia³a na Windows czy na Unixie.
-</P>
+<P>Wiêcej informacji: <?php  helpbutton("formatblackboard", "", "quiz")?></P></UL>
 
-<p>W przypadku Windows mo¿esz po prostu zaimportowaæ plik z baz± danych pytañ tak, jak ka¿dy inny plik.
-</p>
-<p>W przypadku Linuxa musisz w³±czyæ maszynê windows w tej samej sieci z zainstalowan± baz± CTM oraz programeme ODBC Socket Server, który prze¶le dane w formacie XML do Moodle.</p>
+<P><B>Niestandardowy</B></P>
+<UL><P>Je¶li masz swój w³asny format, który chcesz zaimportowaæ mo¿esz zaimplementowaæ ten proces samodzielnie edytuj±c mod/quiz/format/custom.php
+<P>Dodaæ musisz jedynie niewielk± ilo¶æ kodu - jedynie tyle ile potrzeba by wyró¿niæ pojedyncze pytanie z danego tekstu.</P>
 
-  <p>Przeczytaj plik pomocy zanim zaczniesz importowaæ w tym formacie.</p>
+<P>Wiêcej informacji: <?php  helpbutton("formatcustom", "", "quiz") ?></P></UL>
 
-
-<p align=right><a href="help.php?file=formatctm.html&module=quiz">Wiêcej o formacie "CTM"</a></p>
-</UL>
-
-<P><B>W³asny format</B></P>
-<UL>
-<P>Je¶li masz swój w³asny format, mo¿esz go uzywaæ, je¶li odpowiednio zmodyfikujesz mod/quiz/format/custom.php
-
-<P>Liczba niezbêdnego nowego kodu jest dosyæ niewielka - tylko tyle aby
-przetworzyæ tekst na pytanie.
-
-<p align=right><a href="help.php?file=formatcustom.html&module=quiz">Wiêcej o W³asnym formacie</a></p>
-</UL>
-
-
-<P>Tworzymy ju¿ nowe formaty: WebCT, IMS QTI i cokolwiek jeszcze zapragn± cz³onkowie spo³eczno¶ci Moodle! </p>
+<P>Planowana jest obs³uga wiêkszej ilo¶ci formatów, wliczaj±c w to WebCT, IMS QTI i wszelkie inne formaty, które mog± dostarczyæ u¿ytkownicy Moodle! </p>

@@ -13,13 +13,10 @@
         error("Site isn't defined!");
     }
 
+
 /// If data submitted, then process and store.
 
-    if ($config = data_submitted()) {
-
-        if (!confirm_sesskey()) {
-            error(get_string('confirmsesskeybad', 'error'));
-        }
+	if ($config = data_submitted()) {  
         print_header();
         foreach ($config as $name => $value) {
             set_config($name, $value);
@@ -32,7 +29,6 @@
 
     require_variable($module);
 
-    $module = clean_filename($module);
 	require_once("$CFG->dirroot/mod/$module/lib.php");
 
 
@@ -48,10 +44,10 @@
 
     print_heading($strmodulename);
 
-    print_simple_box("<center>".get_string("configwarning", 'admin')."</center>", "center", "50%");
+    print_simple_box("<center>".get_string("configwarning")."</center>", "center", "50%");
     echo "<br />";
 
-    print_simple_box_start("center", "");
+    print_simple_box_start("center", "", "$THEME->cellheading");
 	include("$CFG->dirroot/mod/$module/config.html");
     print_simple_box_end();
 

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
+      // moodle.php - created with Moodle 1.2 Beta + (2004030702)
 
 
 $string['action'] = 'Acción';
@@ -143,7 +143,7 @@ $string['configlocale'] = 'Elija la configuración local -esto afectará al format
 $string['configloglifetime'] = 'Este parámetro especifica la cantidad de tiempo durante la que usted quiere guardar la información sobre la actividad del usuario. Los registros que llevan guardados más tiempo del que aquí se indica se borrarán automáticamente. Lo mejor es guardar los registros tanto tiempo como sea posible, para el caso de que pueda necesitarlos, pero si tiene un servidor con mucho tráfico y está sufriendo problemas de rendimiento, preferirá rebajar el tiempo de vida de los registros.';
 $string['configlongtimenosee'] = 'Si los estudiantes no han participado durante este tiempo, serán automáticamente borrados de los cursos. Este parámetro especifica ese límite de tiempo.';
 $string['configmaxeditingtime'] = 'Especifique el tiempo que los participantes tienen para editar sus mensajes. Normalmente 30 minutos es un valor adecuado.';
-$string['configproxyhost'] = 'Si este <b>servidor</b> necesita un proxy (por ejemplo un firewall) para acceder a Internet, indique el nombre del proxy y el puerto.';
+$string['configproxyhost'] = 'Si este <B>servidor</B> necesita un proxy (por ejemplo un firewall) para acceder a Internet, indique el nombre del proxy y el puerto.';
 $string['configsecureforms'] = 'Moodle puede usar un nivel adicional de seguridad al aceptar datos desde formularios Web. Si esto está habilitado, la variable del navegador HTTP_REFERER se contrasta con la dirección actual en el formulario. En algunos pocos casos esto puede causar problemas si el usuario está usando un cortafuegos (ej. Zonealarm) configurado para quitar los HTTP_REFERER de su tráfico web. Síntomas de esto son quedarse \"atascado\" en un formulario. Si sus usuarios están teniendo problemas con la página de inscripción (por ejemplo) debe deshabilitar esta opción, aunque hacerlo dejará su sitio más abierto a la posibilidad de ataques mediante \"fuerza bruta\". Si tiene dudas, deje esto establecido como \'Si\'.';
 $string['configsessiontimeout'] = 'Si una persona ha entrado en este sitio y permanece inactiva durante un largo período de tiempo (sin cargar páginas) automáticamente es puesta fuera del sistema (finaliza su sesión). Esta variable especifica cuanto debe durar ese período de tiempo.';
 $string['configslasharguments'] = 'Los archivos (imágenes, uploads etc.) son proporcionados a través de un script que usa \'slash arguments\' (la segunda opción aquí). Este método carga los archivos más fácilmente en los navegadores, servidores proy, etc. Desafortunadamente, algunos servidores php no permiten este método, por lo que si tiene problemas para subir archivos (como las fotos de los usuarios, p.e.), cambie esta variable a la primera opción.';
@@ -267,9 +267,11 @@ Gracias
 
 $a->admin';
 $string['emailconfirmationsubject'] = '$a: confirmación de cuenta';
-$string['emailconfirmsent'] = 'Hemos enviado un correo electrónico a <b>$a</b>,<br />
-   donde encontrará unas sencillas instrucciones para terminar el proceso.<br />
-   Si encuentra alguna dificultad, por favor contacte con el Administrador del Sistema.';
+$string['emailconfirmsent'] = '   <P>Hemos enviado un correo electrónico a <B>$a</B>,
+
+   <P>donde encontrará unas sencillas instrucciones para terminar el proceso.
+
+   <P>Si encuentra alguna dificultad, por favor contacte con el Administrador del Sistema.';
 $string['emaildisable'] = 'Esta dirección de correo está inhabilitada';
 $string['emaildisplay'] = 'Mostrar correo';
 $string['emaildisplaycourse'] = 'Mostrar mi dirección de correo sólo a mis compañeros de curso';
@@ -293,19 +295,19 @@ Si necesita ayuda, contacte por favor con el administrador del sitio,
 $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: confirmación de cambio de contraseña';
 $string['emailpasswordconfirmsent'] = 'Se debería haber enviado un mensaje a su dirección: <strong>$a</strong>.
-<br />El mensaje contiene instrucciones sencillas para confirmar y completar este cambio de contraseña.
+<p>El mensaje contiene instrucciones sencillas para confirmar y completar este cambio de contraseña.
 Si sigue teniendo problemas, contacte con el administrador del sitio.';
 $string['emailpasswordsent'] = 'Gracias por confirmar el cambio de contraseña.
-<br />Se ha enviado un mensaje que contiene su nueva contraseña a su dirección: <strong>$a->email</strong>.
-<br />La nueva contraseña ha sido generada automáticamente - usted puede
-<a href="$a->link">cambiar esta contraseña</a> por alguna otra más fácil de recordar.';
+<p>Se ha enviado un mensaje que contiene su nueva contraseña a su dirección: <strong>$a->email</strong>.
+<p>La nueva contraseña ha sido generada automáticamente - usted puede
+<a href=$a->link>cambiar esta contraseña</a> por alguna otra más fácil de recordar.';
 $string['enable'] = 'Permitir';
 $string['enrolmentconfirmation'] = 'Está a punto de inscribirse como alumno en este curso. <br />¿Está seguro de que desea hacerlo?';
 $string['enrolmentkey'] = 'Clave de acceso';
-$string['enrolmentkeyfrom'] = 'Este curso requiere el uso de una \'clave de acceso\'. Si ha sido admitido<br />
+$string['enrolmentkeyfrom'] = 'Este curso requiere el uso de una \'clave de acceso\'. Si ha sido admitido<BR>
 
 en él y no le hemos enviado la clave, por favor háganoslo saber.';
-$string['enrolmentkeyhint'] = 'Esta \'clave de acceso\' es incorrecta, por favor inténtelo de nuevo<br />
+$string['enrolmentkeyhint'] = 'Esta \'clave de acceso\' es incorrecta, por favor inténtelo de nuevo<BR>
 
 (Una pista: comienza con \'$a\')';
 $string['entercourse'] = 'Clic aquí para entrar al curso';
@@ -354,10 +356,10 @@ $string['gd1'] = 'GD 1.x está instalado';
 $string['gd2'] = 'GD 2.x está instalado';
 $string['gdneed'] = 'GD debe estar instalado para ver este gráfico';
 $string['gdnot'] = 'GD no está instalado';
-$string['gpl'] = 'Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)<br /> Traducción: Antonio J. Navarro Vergara (http://www.sextaisla.com)
+$string['gpl'] = 'Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)<BR> Traducción: Antonio J. Navarro Vergara (http://www.sextaisla.com)
 Este programa es software gratuito. Ud. puede redistribuirlo y/o modificarlo bajo los términos de GNU General Public License según la publicación de The Free Software Foundation; incluso la versión 2 o alguna posterior.
 
-<br />
+<BR>
 
 Para más detalles vea: http://www.gnu.org/copyleft/gpl.html';
 $string['grade'] = 'Calificación';
@@ -436,15 +438,16 @@ $string['loginas'] = 'Entrar como';
 $string['loginguest'] = 'Entrar como invitado';
 $string['loginsite'] = 'Entrar al sitio';
 $string['loginsteps'] = 'Para tener acceso completo a los cursos necesita crear una cuenta para usted en este sitio web. Además, cada uno de los cursos puede tener una clave de acceso que necesitará para entrar en los mismos. Estos son los pasos a seguir:
-   <ol>
-   <li>Rellene la <a href="$a">Solicitud de alta</a>.</li>
-   <li>El sistema le enviará un correo electrónico para verificar que su dirección es correcta.</li>
-   <li>Lea el correo y confirme su alta.</li>
-   <li>Para entrar en los cursos se le pedirá una \"clave de acceso\", que se le enviará cuando se matricule en los mismos.</li>
-   <li>A partir de ese momento no necesitará utilizar más que su nombre y contraseña.</li>
-   </ol>';
-$string['loginstepsnone'] = 'Hola.<p>Para poder tener acceso completo a los cursos necesita crear
-una cuenta.</p><p>Todo lo que tiene que hacer es inscribirse en esta página.</p>';
+   <OL size=2>
+   <LI>Rellene la <A HREF=$a>Solicitud de alta</A>.
+   <LI>El sistema le enviará un correo electrónico para verificar que su dirección es correcta.
+   <LI>Lea el correo y confirme su alta.
+   <LI>Para entrar en los cursos se le pedirá una &quot;clave de acceso&quot;, que se le enviará cuando se matricule en los mismos.
+   <LI>A partir de ese momento no necesitará utilizar más que su nombre y contraseña.
+   </OL>';
+$string['loginstepsnone'] = 'Hola.<P>Para poder tener acceso completo a los cursos necesita crear
+una cuenta.<P>Todo lo que tiene que hacer es inscribirse en esta página.
+<P>';
 $string['loginto'] = 'Entrar a $a';
 $string['loginusing'] = 'Entre aquí usando su nombre y contraseña';
 $string['logout'] = 'Salir';
@@ -590,10 +593,10 @@ $string['passwordconfirmchange'] = 'Confirmar el cambio de contraseña';
 $string['passwordrecovery'] = 'Sí, ayúdeme a entrar';
 $string['passwordsdiffer'] = 'Las contraseñas no coinciden';
 $string['passwordsent'] = 'Se ha enviado la contraseña';
-$string['passwordsenttext'] = '   <p>El sistema ha enviado un correo electrónico a $a->email.</p>
-   <p><b>Revise su correo para recibir una nueva contraseña</b></p>
-   <p>La nueva contraseña se genera automáticamente, por lo que tal vez Ud. desee
-   <a href="$a->link">cambiarla</a> por una que le sea más fácil de recordar.</p>';
+$string['passwordsenttext'] = '   <P>El sistema ha enviado un correo electrónico a $a->email.
+   <P><B>Revise su correo para recibir una nueva contraseña</B>
+   <P>La nueva contraseña se genera automáticamente, por lo que tal vez Ud. desee
+   <A HREF=$a->link>cambiarla</A> por una que le sea más fácil de recordar.';
 $string['people'] = 'Personas';
 $string['personalprofile'] = 'Información personal';
 $string['phone'] = 'Teléfono';
@@ -620,7 +623,7 @@ $string['registrationemail'] = 'Notificaciones por email';
 $string['registrationinfo'] = '<p>Esta página le facilita el registro de su sitio Moodle en moodle.org. El registro es gratuito. El beneficio principal de registrarse es que se le incorporará a una lista de correo de poco volumen pero a la que se envían notificaciones importantes tales como alertas de seguridad y el lanzamiento de nuevas versiones de Moodle.</p>
 <p>Por defecto, su información se mantendrá en privado y nunca será vendida o traspasada a nadie. La única razón para recabar esta información es la de servir de soporte y ayudar a crear una imagen estadística de la comunidad Moodle en su totalidad.</p>
 <p>Usted puede elegir permitir que el nombre de su sitio, país y URL se añadan a la lista pública de Sitios Moodle.</p>
-<p>Todos los nuevos registros se verifican manualmente antes de ser añadidos a la lista, pero una vez que el suyo haya sido añadido usted puede actualizar su registro (y la información en la lista pública) en cualquier momento reenviando este formulario.</p>';
+<p>Todos los nuevos registros se verifican manualmente antes de ser añadidos a la lista, pero una vez que el suyo haya sido añadido usted puede actualizar su registro (y la información en la lista pública) en cualquier momento reenviando este formulario.<p>';
 $string['registrationno'] = 'No, no deseo recibir mensajes por email';
 $string['registrationsend'] = 'Enviar información de registro a Moodle.org';
 $string['registrationyes'] = 'Si, notifíqueme por favor cuestiones importantes';
@@ -653,7 +656,7 @@ $string['scheduledbackupstatus'] = 'Estado de la programación de las Copias de S
 $string['search'] = 'Buscar';
 $string['searchagain'] = 'Volver a buscar';
 $string['searchcourses'] = 'Buscar cursos';
-$string['searchhelp'] = 'Puede buscar muchas palabras al mismo tiempo.<br /> Si coloca una o más palabras, el buscador encuentra todos los mensajes que contengan esa o esas palabras en cualquier lugar.<br /> Si coloca varias palabras separadas por el signo de adición (+) aparecerán los resultados que contengan todas esas palabras en el orden exacto en el que fueron colocadas.<br /> Si coloca un signo de sustracción (-) antes de una palabra se mostrarán todos los mensajes que contengan la o las otras plabras pero que no contengan la palabra antecedida por este signo.';
+$string['searchhelp'] = 'Puede buscar muchas palabras al mismo tiempo.<p> Si coloca una o más palabras, el buscador encuentra todos los mensajes que contengan esa o esas palabras en cualquier lugar.<br /> Si coloca varias palabras separadas por el signo de adición (+) aparecerán los resultados que contengan todas esas palabras en el orden exacto en el que fueron colocadas.<br /> Si coloca un signo de sustracción (-) antes de una palabra se mostrarán todos los mensajes que contengan la o las otras plabras pero que no contengan la palabra antecedida por este signo.';
 $string['searchresults'] = 'Resultados de la búsqueda';
 $string['sec'] = 'segundo';
 $string['secs'] = 'segundos';
@@ -723,8 +726,7 @@ $string['theme'] = 'Entorno';
 $string['themes'] = 'Entornos';
 $string['themesaved'] = 'Se ha grabado el nuevo entorno';
 $string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Espa&#241;ol - Espa&#241;a';
+$string['thislanguage'] = 'Español - España';
 $string['time'] = 'Hora';
 $string['timezone'] = 'Zona horaria';
 $string['to'] = 'A';

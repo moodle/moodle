@@ -1,4 +1,4 @@
-<?php   // $Id$
+<?PHP   // $Id$
 
 //  Collect ratings, store them, then return to where we came from
 
@@ -6,6 +6,9 @@
     require_once("../../config.php");
     require_once("lib.php");
 
+    if (isguest()) {
+        error("Guests are not allowed to rate entries.", $_SERVER["HTTP_REFERER"]);
+    }
 
     require_variable($id);  // The course these ratings are part of
 
@@ -15,28 +18,21 @@
 
     require_login($course->id);
 
-    if (isguest()) {
-        error("Guests are not allowed to rate entries.", $_SERVER["HTTP_REFERER"]);
-    }
-
     if ($data = data_submitted("$CFG->wwwroot/mod/glossary/view.php")) {    // form submitted
 
-        foreach ((array)$data as $entry => $rating) {
+        foreach ($data as $entry => $rating) {
             if ($entry == "id") {
                 continue;
             }
             if ($oldrating = get_record("glossary_ratings", "userid", $USER->id, "entryid", $entry)) {
-                //Check if we must delete the rate
-                if ($rating == -999) {
-                    delete_records('glossary_ratings','userid',$oldrating->userid, 'entryid',$oldrating->entryid);
-                } else if ($rating != $oldrating->rating) {
+                if ($rating != $oldrating->rating) {
                     $oldrating->rating = $rating;
                     $oldrating->time = time();
                     if (! update_record("glossary_ratings", $oldrating)) {
                         error("Could not update an old rating ($entry = $rating)");
                     }
                 }
-            } else if ($rating >= 0) {
+            } else if ($rating) {
                 unset($newrating);
                 $newrating->userid = $USER->id;
                 $newrating->time = time();

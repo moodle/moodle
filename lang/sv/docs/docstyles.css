@@ -1,6 +1,6 @@
+
 body, td, th, li {
     font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-    background-color: #FFFFFF;
 }
 
 th {
@@ -86,9 +86,6 @@ h1 {
 	background-color: #CCCCCC;
 	padding: 5px;
 	font-size: large;
-    border-width: 1px;
-    border-color: #CCCCCC;
-    -moz-border-radius: 10px;
 }
 h2 {
 	font-weight: bold;
@@ -96,9 +93,8 @@ h2 {
 	background-color: #666666;
 	padding: 5px;
 	font-size: medium;
-    border-width: 1px;
-    border-color: #666666;
-    -moz-border-radius: 10px;
+
+
 }
 h3 {
 	font-weight: normal;
@@ -106,7 +102,6 @@ h3 {
 	background-color: #666666;
 	padding: 5px;
 	font-size: medium;
-    -moz-border-radius: 10px;
 }
 .spaced {
 
@@ -116,19 +111,4 @@ h3 {
 ul {
 	margin-top: 10px;
 
-}
-.commandline {
-	font-family: "Courier New", Courier, mono;
-	font-size: x-small;
-	background-color: #FBFBFB;
-	margin: auto auto 20px 30px;
-	padding: 5px;
-	height: auto;
-	width: auto;
-	font-weight: bold;
-	border: 1px solid #999999;
-	white-space: nowrap;
-	display: compact;
-	clear: both;
-	float: none;
 }

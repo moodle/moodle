@@ -1,0 +1,48 @@
+<P ALIGN=CENTER><B>Importar preguntas</B></P>
+
+<P>Esta función permite importar preguntas de arquivos de texto, cargados a través
+dun formulario.<P>Os formatos permitidos son: 
+
+<P><B>Encher o branco</B></P>
+<UL>
+<P>Este formato só soporta preguntas de múltiple opción.
+Cada pregunta sepárase cun til (~), e a resposta correcta precédese cun signo de igual (=). Un
+exemplo:
+<BLOCKQUOTE>Cando comezamos a explorar as partes do noso corpo convertímonos en
+  estudosos de: {=anatomía e fisioloxía ~reflexoloxía 
+~a ciencia ~os experimentos}, e, en certo sentido, seguimos sendo estudantes o
+  resto da vida.
+</BLOCKQUOTE>
+
+<P>Máis información: <? helpbutton("formatmissingword", "", "quiz") ?></P>
+</UL>
+
+
+<P><B>AON</B></P>
+<UL>
+<P>Este é o mesmo caso de encher o branco, excepto que logo de ser importadas, 
+todas as preguntas convírtense en grupos de catro preguntas de seleccionar a correcta.</P>
+<p>Chámase así en honor a unha empresa que impulsou o desenvolvemento de moitas 
+caraterísticas para os cuestionarios.</p>
+</UL>
+
+
+<P><B>Blackboard</B></P>
+<UL>
+<P>Este módulo pode importar preguntas gardadas coa característica de exportar
+preguntas do programa Blackboard. Apóiase na capacidade de compilar funcións 
+XML nos seus correspondentes PHP.</P>
+
+<P>Maior información: <? helpbutton("formatblackboard", "", "quiz") ?></P>
+</UL>
+
+<P><B>Persoal</B></P>
+<UL>
+<P>Se ten o seu propio formato que desexa importar, pode implementalo editando 
+mod/quiz/format/custom.php<P>A cantidade de código novo necesaria é bastante pequena.<P>Maior
+información: <? helpbutton("formatcustom", "", "quiz") ?></P>
+</UL>
+
+
+<P>Máis formatos estanse desenvolvendo, incluíndo WebCT, IMS QTI e calquera outro 
+que os usuarios/as de Moodle queiran aportar.</p>

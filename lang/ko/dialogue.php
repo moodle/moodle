@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // dialogue.php - created with Moodle 1.2 development (2004013100)
 
 
 $string['addmynewentries'] = '»õ ±Û Ãß°¡ÇÏ±â';
@@ -13,10 +13,10 @@ $string['confirmclosure'] = '´ç½ÅÀ¸ $a¿ÍÀÇ ´ëÈ­¸¦ Á¾·á ÇÏ·Á°í ÇÕ´Ï´Ù. ÇÑ¹ø Á¾·áÇ
 $string['deleteafter'] = '(Days) ÈÄ¿¡ Á¾·áµÈ ´ëÈ­¸¦ »èÁ¦ÇÔ';
 $string['dialogueclosed'] = '´ëÈ­ Á¾·áµÊ';
 $string['dialogueintro'] = '´ëÈ­ ¼Ò°³';
-$string['dialoguemail'] = '$a->userfrom °¡ ´ç½Å¿¡°Ô \'$a->dialogue\'ÀÇ ±ÛÀ» ¿Ã·È½À´Ï´Ù.
-¾Æ·¡ÀÇ ÁÖ¼Ò¸¦ Å¬¸¯ÇÏ¸é Ãß°¡µÈ ³»¿ëÀ» º¼ ¼ö ÀÖ½À´Ï´Ù.:
+$string['dialoguemail'] = '$a->userfrom °¡ ´ç½Å¿¡°Ô \'$a->dialogue\'ÀÇ ±ÛÀ» ¿Ã·È½À´Ï´Ù.
+¾Æ·¡ÀÇ ÁÖ¼Ò¸¦ Å¬¸¯ÇÏ¸é Ãß°¡µÈ ³»¿ëÀ» º¼ ¼ö ÀÖ½À´Ï´Ù.:
     $a->url';
-$string['dialoguemailhtml'] = '$a->userfrom °¡ ´ç½Å¿¡°Ô ±ÛÀ» ¿Ã·È½À´Ï´Ù.\'<i>$a->dialogue</i>\'<br /><br />
+$string['dialoguemailhtml'] = '$a->userfrom °¡ ´ç½Å¿¡°Ô ±ÛÀ» ¿Ã·È½À´Ï´Ù.\'<i>$a->dialogue</i>\'<br /><br />
 ¾Æ·¡ÀÇ ÁÖ¼Ò¸¦ Å¬¸¯ÇÏ¸é Ãß°¡µÈ ³»¿ëÀ» º¼ ¼ö ÀÖ½À´Ï´Ù.<a href=\"$a->url\">dialogue</a>.';
 $string['dialoguename'] = '´ëÈ­ ÀÌ¸§';
 $string['dialogueopened'] = '$a ¿¡°Ô ¿­·ÁÁø ´ëÈ­';
@@ -38,10 +38,10 @@ $string['notstarted'] = '¾ÆÁ÷ ÀÌ ´ëÈ­¸¦ ½ÃÀÛÇÏÁö ¾Ê¾Ò½À´Ï´Ù.';
 $string['notyetseen'] = '¾ÆÁ÷ º¸ÀÌÁö ¾ÊÀ½';
 $string['numberofentries'] = '¸ñ·ÏÀÇ ¼ö';
 $string['numberofentriesadded'] = 'Ãß°¡µÈ ¸ñ·ÏÀÇ ¼ö: $a';
-$string['of'] = 'ÀÇ';
-$string['onwrote'] = '¾ğÁ¦ ÀÛ¼ºÇÏ¿´½À´Ï´Ù. ';
-$string['onyouwrote'] = '¾ğÁ¦ ´ç½ÅÀÌ ÀÛ¼ºÇÏ¿´½À´Ï´Ù.';
-$string['open'] = '°³¹æ';
+$string['of'] = 'of';
+$string['onwrote'] = 'On $a wrote';
+$string['onyouwrote'] = 'On $a you wrote';
+$string['open'] = 'Open';
 $string['openadialoguewith'] = '¿Í ´ëÈ­¸¦ ¿­±â';
 $string['opendialogue'] = '´ëÈ­ ¿­±â';
 $string['opendialogueentries'] = '´ëÈ­ ¸ñ·Ï ¿­±â';
@@ -59,9 +59,6 @@ $string['studenttostudent'] = 'ÇĞ»ıÀÌ ÇĞ»ı¿¡°Ô';
 $string['subject'] = 'ÁÖÁ¦';
 $string['subjectadded'] = 'ÁÖÁ¦°¡ Ãß°¡µÊ';
 $string['teachertostudent'] = '±³»ç°¡ ÇĞ»ı¿¡°Ô';
-$string['thischarset'] = 'euc-kr';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['typefirstentry'] = '¿©±â¿¡ Ã¹Â° ±ÛÀ» ¾²¼¼¿ä.';
 $string['typefollowup'] = '¿©±â¿¡ ´ÙÀ½ ³»¿ëÀ» ¾²¼¼¿ä';
 $string['typeofdialogue'] = '´ëÈ­ÀÇ À¯Çü';

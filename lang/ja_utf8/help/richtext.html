@@ -1,38 +1,49 @@
 <p align="center"><b>リッチテキストHTMLエディタに関して</b></p>
 
 <p>利用可能な機能: <b>
-HTMLエディタは利用可能です</b></p>
+<?php  if (!$CFG->htmleditor) {
+       print_string("htmleditordisabledadmin");
+   } else if (!$USER->htmleditor) {
+       print_string("htmleditordisabled");
+   } else if (!can_use_richtext_editor()) {
+       print_string("htmleditordisabledbrowser");
+   } else {
+       print_string("htmleditoravailable");
+   }
+?>
+</b></p>
 
 <p>リッチテキストHTMLエディタはブラウザ上でワードプロセッサの機能を実現します。ここでは直感的にテキストを編集することが可能で、通常のHTMLコードが自動生成されます。
 
-<p>このエディタにはテキストの整形に加えて数多くの便利な機能があります。</p>
+<p>このエディタは、テキストの整形に加えて数多くの便利な機能を提供します。
 
 <p><b>他のアプリケーションからテキストをコピーする</b></p>
 <ul>
 <p>リッチテキストをMicrosoft Word等の他のWindowsアプリケーションからコピー&ペーストすることが
-できます。コピー元のフォーマットはそのまま保持されます。ブラウザのメニューより通常のコピーおよび
-貼り付けを使用してください　(　Control-C and Control-Vを使うこともできます　)。
+できます。コピー元のフォーマットはそのまま保持されます。ブラウザのメニューより通常のコピー及び
+貼り付けを使用してください。(Control-C and Control-Vを使うこともできます)
 </ul>
 
 <p><b>イメージを挿入する<img border="0" hspace="10" src="lib/editor/images/ed_image.gif"></b></p>
 <ul>
-<p>ウェブ上に公開されていて、URLでアクセス可能なイメージを「Insert Image」ボタンを使って挿入することができます。</ul>
+<p>ウェブ上に公開されていて、URLでアクセス可能なイメージを"Insert Image"ボタンを使って挿入することができます。</ul>
 
 <p><b>テーブルを挿入する<img border="0" hspace="10" src="lib/editor/images/insert_table.gif"></b></p>
 <ul>
-<p>テキストにレイアウトを追加する場合は、ツールバーの「Insert Tables」ボタンを使用できます。
+<p>テキストにレイアウトを追加する場合は、ツールバーの"Insert Tables"ボタンを使用できます。
 </ul>
 
 <p><b>リンクを挿入する<img border="0" hspace="10" src="lib/editor/images/ed_link.gif"></b></p>
 <ul>
-<p>新しいリンクを作成する場合は、まずリンクを張りたいテキストを入力してください。そしてそのテキストを選択して、ツールバーのリンクボタンをクリックしてください。リンクしたいURLを入力して完了です!
+<p>新しいリンクを作成する場合は、まずリンクを張りたいテキストを入力してください。そしてそのテキストを選択してツールバーのリンクボタンをクリックしてください。リンクしたいURLを入力して完了です!
 </ul>
 
-<p><b>スマイリー ( 感情表現アイコン ) を挿入する<img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></b></p>
+
+<p><b>スマイリー(感情表現アイコン)を挿入する<img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></b></p>
 <ul>
 <p>テキストにこれらの小さなアイコンを挿入する場合は、ツールバーのスマイリーアイコンをクリック
-してください ( 代わりに該当するコードをテキストに入れることもできます。このコードはスマイリーに
-変換されます。 ) 。
+してください。(代わりに該当するコードをテキストに入れることもできます。このコードはスマイリーに
+変換されます)
 
     <table border="1">
       <tr valign="top">
@@ -146,3 +157,5 @@ HTMLエディタは利用可能です</b></p>
     </table>
 
 </ul>
+
+

@@ -1,67 +1,24 @@
-MOODLE JAPANESE TRANSLATION
-----------------------------------------------------------------------
-STARTED       : November 21, 2002
-LAST MODIFIED : April 15, 2005
+Japanese Translation
+------------------------
+Last Modify:2004/08/24
 
-Thanks to everyone who have supported our translation project!
+[Translators]
+Mitsuhiro Yoshida(http://mitstek.com/)
+Paul Shew(http://ac.shew.jp)
 
+[Credits]
+Timothy Takemoto(http://eigodaigaku.com)
+Thomas N. Robb(http://www.kyoto-su.ac.jp/~trobb/)
+Toshihiro Kita(http://t-kita.net/)
+Minoru Akiyama(http://www.e-learning-service.co.jp/)
+Takahiro Kagoya(https://manabi.jin-ai.ac.jp/moodle/)
 
-[TRANSLATORS]
-----------------------------------------------------------------------
-Mitsuhiro Yoshida ( http://mitstek.com/ )
- Translating whole ja files, translation management.
-
-Paul Shew ( http://ac.shew.jp )
- Translation brushup
- /lang/ja/help/quiz/formatgift.html
-
-Tatsuya Aoyagi
- Translation brushup
- Localization
- /lang/ja/questionnaire.php
- /lang/ja/help/questionnaire
-
-Masataka Nakaue ( http://ldt.stanford.edu/~mnakauye/ )
- /lang/ja/book.php
- /lang/ja/help/book
-
-Hiroto Kagotani ( http://www.infsys.cne.okayama-u.ac.jp/~kagotani/ )
- Translation brushup
- /lang/ja/help/*
-
-
-[CONTRIBUTORS]
-----------------------------------------------------------------------
-Timothy Takemoto ( http://eigodaigaku.com )
- Facilitator of Japanese moodle
- Translation brushup
-
-Thomas N. Robb ( http://www.kyoto-su.ac.jp/~trobb/ )
- Translation brushup
-
-Toshihiro Kita ( http://t-kita.net/ )
- Translation brushup
-
-Minoru Akiyama ( http://www.e-learning-service.co.jp/ )
- Translation brushup
-
-Takahiro Kagoya ( https://manabi.jin-ai.ac.jp/moodle/ )
- Inventor of QUIZ result block, ranking system
- Translation brushup
- Localization
-
-Takahito Kashiwagi ( http://www.supertak.com/ )
- Localization
-
-Naoko Ueda ( http://knowledgestudio.biz/ )
- Translation brushup
-
-----------------------------------------------------------------------
-Any suggestion for Japanese language packs, please do not hesitate
-to post your comments on moodle.org Japanese:
-http://moodle.org/course/view.php?id=14
-
-You can download latest Japanese language packs from:
+All files are written in EUC-JP.
+Any suggestion for Japanese version, feel free to contact Mitsuhiro Yoshida.
+To get newest ja files please access:
 http://moodle.org/download/lang/
 
-
+全てのファイルはEUC-JPで記述されています。
+誤訳・訂正等ございましたらお気軽にご連絡ください。
+最新版の日本語ファイルは下記よりダウンロードしてください。
+http://moodle.org/download/lang/

@@ -1,16 +1,16 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
-    require_once("$CFG->libdir/rsslib.php");
+    require_once("$CFG->dirroot/rss/rsslib.php");
 
-    $id      = optional_param('id', 0, PARAM_INT);        // Course Module ID
-    $f       = optional_param('f', 0, PARAM_INT);         // Forum ID
-    $mode    = optional_param('mode', 0, PARAM_INT);      // Display mode (for single forum)
-    $showall = optional_param('showall', '', PARAM_INT);  // show all discussions on one page
-    $group   = optional_param('group', -1, PARAM_INT);    // choose the current group
-    $page    = optional_param('page', 0, PARAM_INT);      // which page to show
-    $search  = optional_param('search', '');              // search string
+    optional_variable($id);            // Course Module ID
+    optional_variable($f);             // Forum ID
+    optional_variable($mode);          // Display mode (for single forum)
+    optional_variable($search, "");    // search string
+    optional_variable($showall, "");   // show all discussions on one page
+    optional_variable($group, -1);     // choose the current group
+    optional_variable($page, "0");    // which page to show
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
@@ -43,8 +43,6 @@
             $buttontext = update_module_button($cm->id, $course->id, $strforum);
         } else {
             $cm->id = NULL;
-            $cm->visible = 1;
-            $cm->course = $course->id;
             $buttontext = "";
         }
 
@@ -53,11 +51,16 @@
     }
 
     if (!$buttontext) {
-        $buttontext = forum_search_form($course, $search);
+        $buttontext = forum_print_search_form($course, $search, true, "plain");
+    } 
+
+    if ($CFG->forcelogin) {
+        require_login();
     }
 
-    require_course_login($course, true, $cm);
-
+    if ($course->category) {
+        require_login($course->id);
+    } 
     $navigation = "<a href=\"index.php?id=$course->id\">$strforums</a> ->";
 
     if ($forum->type == "teacher") {
@@ -72,10 +75,10 @@
         add_to_log($course->id, "forum", "view forum", "view.php?f=$forum->id", "$forum->id");
     }
 
-    print_header_simple(format_string($forum->name), "",
-                 "$navigation ".format_string($forum->name), "", "", true, $buttontext, navmenu($course, $cm));
+    print_header_simple("$forum->name", "",
+                 "$navigation $forum->name", "", "", true, $buttontext, navmenu($course, $cm));
 
-    if (empty($cm->visible) and !isteacher($course->id)) {
+    if (!$cm->visible and !isteacher($course->id)) {
         notice(get_string("activityiscurrentlyhidden"));
     }
 
@@ -112,20 +115,20 @@
     }
 
 
-    if (!empty($USER->id)) {
-        echo '<td align="right" class="subscription">';
+    if ($USER) {
+        echo '<td align="right">';
         $SESSION->fromdiscussion = "$FULLME";
         if (forum_is_forcesubscribed($forum->id)) {
-            $streveryoneissubscribed = get_string('everyoneissubscribed', 'forum');
-            $strallowchoice = get_string('allowchoice', 'forum');
+            $streveryoneissubscribed = get_string("everyoneissubscribed", "forum");
+            $strallowchoice = get_string("allowchoice", "forum");
             helpbutton("subscription", $streveryoneissubscribed, "forum");
-            echo '&nbsp;<span class="helplink">';
+            echo "<font size=1>";
             if (isteacher($course->id)) {
-                echo "<a title=\"$strallowchoice\" href=\"subscribe.php?id=$forum->id&amp;force=no\">$streveryoneissubscribed</a>";
+                echo "<a title=\"$strallowchoice\" href=\"subscribe.php?id=$forum->id&force=no\">$streveryoneissubscribed</a>";
             } else {
                 echo $streveryoneissubscribed;
             }
-            echo '</span>';
+            echo "</font>";
 
         } else {
             $streveryonecanchoose = get_string("everyonecanchoose", "forum");
@@ -133,14 +136,16 @@
             $strshowsubscribers = get_string("showsubscribers", "forum");
 
             helpbutton("subscription", $streveryonecanchoose, "forum");
-            echo '&nbsp;';
+            echo "<font size=1>";
+
             if (isteacher($course->id)) {
-                echo "<span class=\"helplink\"><a title=\"$strforcesubscribe\" href=\"subscribe.php?id=$forum->id&amp;force=yes\">$streveryonecanchoose</a></span>";
-                echo "<br />";
-                echo "<span class=\"helplink\"><a href=\"subscribers.php?id=$forum->id\">$strshowsubscribers</a></span>";
+                echo "<a title=\"$strforcesubscribe\" href=\"subscribe.php?id=$forum->id&force=yes\">$streveryonecanchoose</a>";
+                echo "</font><br /><font size=1>";
+                echo "<a href=\"subscribers.php?id=$forum->id\">$strshowsubscribers</a>";
             } else {
-                echo '<span class="helplink">'.$streveryonecanchoose.'</span>';
+                echo $streveryonecanchoose;
             }
+            echo "</font>";
 
             if (forum_is_subscribed($USER->id, $forum->id)) {
                 $subtexttitle = get_string("subscribestop", "forum");
@@ -150,27 +155,20 @@
                 $subtext = get_string("subscribe", "forum");
             }
             echo "<br />";
-            echo "<span class=\"helplink\"><a title=\"$subtexttitle\" href=\"subscribe.php?id=$forum->id\">$subtext</a></span>";
+            echo "<font size=1><a title=\"$subtexttitle\" href=\"subscribe.php?id=$forum->id\">$subtext</a></font>";
         }
 
-        echo '</td>';
-    }
+        //If rss are activated at site and forum level and this forum has rss defined, show link
+        if ($CFG->enablerssfeeds && $CFG->forum_enablerssfeeds && $forum->rsstype and $forum->rssarticles) {
+            echo "<br />";
+            if ($forum->rsstype == 1) {
+                $tooltiptext = get_string("rsssubscriberssdiscussions","forum",$forum->name);
+            } else {
+                $tooltiptext = get_string("rsssubscriberssposts","forum",$forum->name);
+            }
+            rss_print_link($course->id, $USER->id, "forum", $forum->id, $tooltiptext);
+        }
 
-    //If rss are activated at site and forum level and this forum has rss defined, show link
-    if (isset($CFG->enablerssfeeds) && isset($CFG->forum_enablerssfeeds) &&
-        $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds && $forum->rsstype and $forum->rssarticles) {
-        echo '</tr><tr><td align="right">';
-        if ($forum->rsstype == 1) {
-            $tooltiptext = get_string("rsssubscriberssdiscussions","forum",format_string($forum->name));
-        } else {
-            $tooltiptext = get_string("rsssubscriberssposts","forum",format_string($forum->name));
-        }
-        if (empty($USER->id)) {
-            $userid = 0;
-        } else {
-            $userid = $USER->id;
-        }
-        rss_print_link($course->id, $userid, "forum", $forum->id, $tooltiptext);
         echo '</td>';
     }
 
@@ -200,7 +198,7 @@
 
         case 'eachuser':
             if (!empty($forum->intro)) {
-                print_simple_box(format_text($forum->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
+                print_simple_box(format_text($forum->intro), 'center');
             }
             echo '<p align="center">';
             if (forum_user_can_post_discussion($forum)) {
@@ -210,32 +208,33 @@
             }
             echo '</p>';
             if (!empty($showall)) {
-                forum_print_latest_discussions($course, $forum, 0, 'header', '', $currentgroup, $groupmode);
+                forum_print_latest_discussions($forum->id, 0, 'header', '', $currentgroup, $groupmode);
             } else {
-                forum_print_latest_discussions($course, $forum, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode, $page);
+                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode, $page);
             }
             break;
 
         case 'teacher':
             if (!empty($showall)) {
-                forum_print_latest_discussions($course, $forum, 0, 'header', '', $currentgroup, $groupmode);
+                forum_print_latest_discussions($forum->id, 0, 'header', '', $currentgroup, $groupmode);
             } else {
-                forum_print_latest_discussions($course, $forum, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode, $page);
+                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode, $page);
             }
             break;
 
         default:
             if (!empty($forum->intro)) {
-                print_simple_box(format_text($forum->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
+                print_simple_box(format_text($forum->intro), 'center');
             }
-            echo '<br />';
+            echo '<p>&nbsp;</p>';
             if (!empty($showall)) {
-                forum_print_latest_discussions($course, $forum, 0, 'header', '', $currentgroup, $groupmode);
+                forum_print_latest_discussions($forum->id, 0, 'header', '', $currentgroup, $groupmode);
             } else {
-                forum_print_latest_discussions($course, $forum, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode, $page);
+                forum_print_latest_discussions($forum->id, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode, $page);
             }
             break;
     }
+
 
     print_footer($course);
 

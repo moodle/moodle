@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // journal.php - created with Moodle 1.2 + (2004032100)
 
 
 $string['alwaysopen'] = 'Altijd geopend';
@@ -11,18 +11,18 @@ $string['entries'] = 'Bijdragen';
 $string['feedbackupdated'] = 'Feedback voor $a bijdragen bijgewerkt';
 $string['journalmail'] = '$a->teacher heeft feedback gepost op je ingestuurde logboek voor \'$a->journal\'
 
-Het is toegevoegd bij je ingestuurde logboek: $a->url';
+Het is toegevoegd bij je ingestuurde logboek: $a->url
+';
 $string['journalmailhtml'] = '$a->teacher heeft feedback gepost op je ingestuurde logboek voor \'<i>$a->journal</i>\'<br /><br />
 Het is toegevoegd bij je  ingestuurde <a href=\"$a->url\">logboek</a>';
-$string['journalname'] = 'Naam logboek';
-$string['journalquestion'] = 'Vraag logboek';
+$string['journalname'] = 'Logboek naam';
+$string['journalquestion'] = 'Logboek vraag';
 $string['journalrating1'] = 'Niet tevreden';
 $string['journalrating2'] = 'Tevreden';
 $string['journalrating3'] = 'Zeer tevreden';
-$string['mailsubject'] = 'Logboek feedback';
 $string['modulename'] = 'Logboek';
 $string['modulenameplural'] = 'Logboeken';
-$string['newjournalentries'] = 'Nieuwe logboekbijdragen';
+$string['newjournalentries'] = 'Nieuwe logboek bijdragen';
 $string['noentry'] = 'Geen bijdrage';
 $string['noratinggiven'] = 'Niet beoordeeld';
 $string['notopenuntil'] = 'Dit logboek wordt geopend op';

@@ -1,17 +1,25 @@
 <p align="center"><b>Inb&auml;ddade svar (en sorts lucktest)</b></p>
-<p>Det h&auml;r &auml;r ett mycket flexibelt format
-som motsvarar det popul&auml;ra lucktestet.</p>
-<p>Fr&aring;gorna best&aring;r av ett stycke text (i Moodle-format).
+
+<p>
+Det h&auml;r &auml;r ett mycket flexibelt format
+som motsvarar det popul&auml;ra lucktestet.
+</p>
+<p>
+Fr&aring;gorna best&aring;r av ett stycke text (i Moodle-format).
 I texten finns olika svar inb&auml;ddade. Det kan vara svar p&aring; flervalsfr&aring;gor,
-kortsvar och numeriska svar.</p>
-<p>F n finns inget grafiskt gr&auml;nssnitt f&ouml;r att skapa dessa 
+kortsvar och numeriska svar.
+</p>
+<p>
+F n finns inget grafiskt gr&auml;nsnitt f&ouml;r att skapa dessa 
 fr&aring;gor. Ist&auml;llet m&aring;ste Du ange fr&aring;geformatet
-genom att anv&auml;nda en textbox eller importera dem fr&aring;n externa filer.</p>   
-<p>H&auml;r &auml;r ett exempel p&aring; en inmatad text som har anv&auml;nts
-f&ouml;r att ange en s&aring;dan fr&aring;ga:</p>
-<form action="#">
+genom att anv&auml;nda en textbox eller importera dem fr&aring;n externa filer.
+</p>   
+<p>
+H&auml;r &auml;r ett exempel p&aring; en inmatad text som har anv&auml;nts
+f&ouml;r att ange en s&aring;dan fr&aring;ga:
+<form>
 <center>
-<textarea rows="15" cols="60">
+<textarea rows="15" cols="60" wrap="virtual">
 Den h&auml;r fr&aring;gan best&aring;r av lite text med ett svar som &auml;r inb&auml;ddat precis h&auml;r {1:MULTICHOICE:Felaktigt svar#Feedback for this wrong answer~Another wrong answer#Feedback for the other wrong answer~=Korrekt svar#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer} och omedelbart efter det s&aring; m&aring;ste Du ta itu med det h&auml;r kortsvaret {1:SHORTANSWER:Felaktigt svar#Feedback for this wrong answer~=Korrekt svar#Feedback for correct answer~%50%Answer that gives half the credit#Feedback for half credit answer} och slutligen har vi ett flyttal {2:NUMERICAL:=23.8:0.1#Feedback for correct answer 23.8~%50%N/A#Feedback for halfcredit answer in the nearby region of the correct answer}.
 
 L&auml;gg m&auml;rke till att adresser som www.moodle.org och smilies :-) fungerar som vanligt:
@@ -23,15 +31,21 @@ Lycka till!
 </center>
 </form>
 
-<p>Det h&auml;r exemplet kommer att visas f&ouml;r studenterna/eleverna/deltagarna/de l&auml;rande s&aring; h&auml;r:</p>
-<form action="#">
-<table align="center" width="90%" class="generalbox" border="0" cellpadding="5" cellspacing="0"><tr><td bgcolor="#FFFFFF" class="generalboxcontent"><table width="100%" cellspacing="10"><tr><td width="100" valign="top"><p align="center"><b>3</b></p><p align="center"><font size="1">8 Betyg</font></p><img height="1" width="100" src="pix/spacer.gif" alt="" /><br />
-</td><td valign="top"><p>Den h&auml;r fr&aring;gan best&aring;r av lite text med ett svar &auml;r inb&auml;ddat precis h&auml;r  <select   name="q4ma1" ><option></option><option value="4" >Felaktigt svar</option><option value="5" >Ett annat felaktigt svar</option><option value="6" >Korrekt svar</option><option value="7" >Svar som ger 50% r&auml;tt</option></select>  och omedelbart efter det s&aring; m&aring;ste Du ta itu med det h&auml;r kortsvaret  <input   name="q4ma2"  value="" type="text" size="8"/>  och slutligen har vi ett flyttal  <input   name="q4ma3"  value="" type="text" size="8"/> .<br />
+<p>
+Det h&auml;r exemplet kommer att visas f&ouml;r studenterna/eleverna/deltagarna/de l&auml;rande s&aring; h&auml;r:
+</p>
+
+
+<form>
+<table align="center" width="90%" class="generalbox" border="0" cellpadding="5" cellspacing="0"><tr><td bgcolor="#FFFFFF" class="generalboxcontent"><table width="100%" cellspacing="10"><tr><td nowrap width="100" valign="top"><p align="center"><b>3</b></p><p align="center"><font size="1">8 Betyg</font></p><img height="1" width="100" src="pix/spacer.gif" alt="" /><br />
+</td><td valign="top"><p>Den h&auml;r fr&aring;gan best&aring;r av lite text med ett svar &auml;r inb&auml;ddat precis h&auml;r  <select   name="q4ma1" ><option></option><option value="4" >Felaktigt svar</option><option value="5" >Ett annat felaktigt svar</option><option value="6" >Korrekt svar</option><option value="7" >Svar som ger 50% r&auml;tt</option></select>  och omedelbart efter det s&aring; m&aring;ste Du ta itu med det h&auml;r kortsvaret  <input   name="q4ma2"  value="" type="TEXT" size="8"/>  och slutligen har vi ett flyttal  <input   name="q4ma3"  value="" type="TEXT" size="8"/> .<br />
 <br />
 L&auml;gg m&auml;rke till att adresser som <a href="http://www.moodle.org" target="newpage">www.moodle.org</a> och smilies <img alt=":-)" width="15" height="15" src="http://server.dougiamas.net/moodle/pix/s/smiley.gif" /> fungerar som vanligt:<br />
 a) Hur bra &auml;r det h&auml;r?  <select   name="q4ma4" ><option></option><option value="13" >Ja</option><option value="14" >Nej</option></select> <br />
-b) Vilket betyg/omd&ouml;me skulle Du ge det?  <input   name="q4ma5"  value="" type="text" size="8"/> <br />
+b) Vilket betyg/omd&ouml;me skulle Du ge det?  <input   name="q4ma5"  value="" type="TEXT" size="8"/> <br />
 <br />
 Lycka till!</p></td></tr></table></td></tr></table>
 </form>
+
 <br />
+

@@ -5,7 +5,7 @@
     require_once($CFG->dirroot.'/calendar/lib.php');
 
     if (isset($SESSION->cal_course_referer)) {
-        if (! $course = get_record('course', 'id', $SESSION->cal_course_referer)) {
+        if (! $course = get_record("course", "id", $SESSION->cal_course_referer)) {
             $course = get_site();
         }
     }
@@ -34,21 +34,18 @@
                     set_user_preference('calendar_startwday', $value);
                 break;
                 case 'maxevents':
-                    if (intval($value) >= 1) {
+                    if ((int)$value >= 1) {
                         set_user_preference('calendar_maxevents', $value);
                     }
                 break;
                 case 'lookahead':
-                    if (intval($value) >= 1) {
+                    if ((int)$value >= 1) {
                         set_user_preference('calendar_lookahead', $value);
                     }
                 break;
-                case 'persistflt':
-                    set_user_preference('calendar_persistflt', intval($value));
-                break;
             }
         }
-        redirect('view.php', get_string('changessaved'), 1);
+        redirect("view.php", get_string("changessaved"), 1);
         exit;
     }
 
@@ -66,20 +63,19 @@
 
 
     print_header("$site->shortname: $strcalendar: $strpreferences", $strcalendar, $navigation,
-                 '', '', true, '', user_login_string($site));
+                 '', '', true, '', '<p class="logininfo">'.user_login_string($site).'</p>');
 
 
     print_heading($strpreferences);
 
-    print_simple_box_start("center");
+    print_simple_box_start("center", "", "$THEME->cellheading");
 
     $prefs->timeformat = get_user_preferences('calendar_timeformat', '');
-    $prefs->startwday  = get_user_preferences('calendar_startwday', CALENDAR_STARTING_WEEKDAY);
-    $prefs->maxevents  = get_user_preferences('calendar_maxevents', CALENDAR_UPCOMING_MAXEVENTS);
-    $prefs->lookahead  = get_user_preferences('calendar_lookahead', CALENDAR_UPCOMING_DAYS);
-    $prefs->persistflt = get_user_preferences('calendar_persistflt', 0);
+    $prefs->startwday = get_user_preferences('calendar_startwday', CALENDAR_STARTING_WEEKDAY);
+    $prefs->maxevents = get_user_preferences('calendar_maxevents', CALENDAR_UPCOMING_MAXEVENTS);
+    $prefs->lookahead = get_user_preferences('calendar_lookahead', CALENDAR_UPCOMING_DAYS);
 
-	include('./preferences.html');
+	include("preferences.html");
     print_simple_box_end();
 
     print_footer($course);

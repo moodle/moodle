@@ -144,13 +144,8 @@ HTMLArea.Config = function () {
           "lefttoright", "righttoleft", "separator",
           "insertorderedlist", "insertunorderedlist", "outdent", "indent", "separator",
           "forecolor", "hilitecolor", "separator",
-          "inserthorizontalrule", "createanchor", "createlink", "unlink", "nolink", "separator",
-          "insertimage", "inserttable",
-          "insertsmile", "insertchar", "search_replace",
-          <?php if (!empty($CFG->aspellpath) && file_exists($CFG->aspellpath) && !empty($CFG->editorspelling)) {
-              echo '"separator","spellcheck",';
-            } ?>
-          "separator", "htmlmode", "separator", "popupeditor"]
+          "inserthorizontalrule", "createanchor", "createlink", "unlink", "insertimage", "inserttable",
+          "insertsmile", "insertchar", "separator", "htmlmode", "separator", "popupeditor" ]
     ];
 
     this.fontname = {
@@ -175,7 +170,6 @@ HTMLArea.Config = function () {
     };
 
     this.formatblock = {
-        "":"",
         "<?php echo $strheading ?> 1": "h1",
         "<?php echo $strheading ?> 2": "h2",
         "<?php echo $strheading ?> 3": "h3",
@@ -214,7 +208,6 @@ HTMLArea.Config = function () {
         createanchor: [ "Create anchor", "ed_anchor.gif", false, function(e) {e.execCommand("createanchor", true);} ],
         createlink: [ "Insert Web Link", "ed_link.gif", false, function(e) {e.execCommand("createlink", true);} ],
         unlink: [ "Remove Link", "ed_unlink.gif", false, function(e) {e.execCommand("unlink");} ],
-        nolink: [ "No link", "ed_nolink.gif", false, function(e) {e.execCommand("nolink");} ],
         insertimage: [ "Insert/Modify Image", "ed_image.gif", false, function(e) {e.execCommand("insertimage");} ],
         inserttable: [ "Insert Table", "insert_table.gif", false, function(e) {e.execCommand("inserttable");} ],
         htmlmode: [ "Toggle HTML Source", "ed_html.gif", true, function(e) {e.execCommand("htmlmode");} ],
@@ -229,12 +222,8 @@ HTMLArea.Config = function () {
         clean: [ "Clean Word HTML", "ed_wordclean.gif", false, function(e) {e.execCommand("killword"); }],
         lefttoright: [ "Direction left to right", "ed_left_to_right.gif", false, function(e) {e.execCommand("lefttoright");} ],
         righttoleft: [ "Direction right to left", "ed_right_to_left.gif", false, function(e) {e.execCommand("righttoleft");} ],
-        <?php if (!empty($CFG->aspellpath) && file_exists($CFG->aspellpath) && !empty($CFG->editorspelling)) {
-            echo 'spellcheck: ["Spell-check", "spell-check.gif", false, spellClickHandler ],'."\n";
-        }?>
         insertsmile: ["Insert Smiley", "em.icon.smile.gif", false, function(e) {e.execCommand("insertsmile");} ],
-        insertchar: [ "Insert Char", "icon_ins_char.gif", false, function(e) {e.execCommand("insertchar");} ],
-        search_replace: [ "Search and replace", "ed_replace.gif", false, function(e) {e.execCommand("searchandreplace");} ]
+        insertchar: [ "Insert Char", "icon_ins_char.gif", false, function(e) {e.execCommand("insertchar");} ]
     };
 
     // initialize tooltips from the I18N module and generate correct image path
@@ -597,40 +586,11 @@ HTMLArea.prototype.generate = function () {
             f.__msh_prevOnSubmit.push(funcref);
         }
         f.onsubmit = function() {
-            // Moodle hack. Bug fix #2736
-            var test = editor.getHTML();
-            test = test.replace(/<br \/>/gi, '');
-            test = test.replace(/\&nbsp\;/gi, '');
-            test = test.trim();
-            //alert(test + test.length);
-            if (test.length < 1) {
-                editor._textArea.value = test.trim();
-            } else {
-                editor._textArea.value = editor.getHTML();
-            }
-            // Moodle hack end.
+            editor._textArea.value = editor.getHTML();
             var a = this.__msh_prevOnSubmit;
             // call previous submit methods if they were there.
             if (typeof a != "undefined") {
-                for (var i = a.length; --i >= 0;) {
-                    a[i]();
-                }
-            }
-        };
-        if (typeof f.onreset == "function") {
-            var funcref = f.onreset;
-            if (typeof f.__msh_prevOnReset == "undefined") {
-                f.__msh_prevOnReset = [];
-            }
-            f.__msh_prevOnReset.push(funcref);
-        }
-        f.onreset = function() {
-            editor.setHTML(editor._textArea.value);
-            editor.updateToolbar();
-            var a = this.__msh_prevOnReset;
-            // call previous reset methods if they were there.
-            if (typeof a != "undefined") {
-                for (var i = a.length; --i >= 0;) {
+                for (var i in a) {
                     a[i]();
                 }
             }
@@ -639,11 +599,9 @@ HTMLArea.prototype.generate = function () {
 
     // add a handler for the "back/forward" case -- on body.unload we save
     // the HTML content into the original textarea.
-    try {
     window.onunload = function() {
         editor._textArea.value = editor.getHTML();
     };
-    } catch(e) {};
 
     // creates & appends the toolbar
     this._createToolbar();
@@ -654,83 +612,12 @@ HTMLArea.prototype.generate = function () {
     if (HTMLArea.is_ie) {  // http://moodle.org/mod/forum/discuss.php?d=8555
         // tricky! set src to local url to turn off SSL security alert
         iframe.src = _editor_url + this.config.popupURL+"blank.html";
-    } else {
-        iframe.src = "about:blank";
     }
-
-    iframe.className = "iframe";
 
     htmlarea.appendChild(iframe);
 
-    var editor = this
-    editor._iframe = iframe;
-    var doc = editor._iframe.contentWindow.document;
-    editor._doc = doc;
+    this._iframe = iframe;
 
-    // Generate iframe content
-    var html = ""
-    if (!editor.config.fullPage) {
-        html = "<html>\n";
-        html += "<head>\n";
-        if (editor.config.baseURL)
-            html += '<base href="' + editor.config.baseURL + '" />';
-        html += '<style type="text/css">\n' + editor.config.pageStyle + "td { border: 1px dotted gray; }</style>\n";
-        html += "</head>\n";
-        html += '<body>\n';
-        html += editor._textArea.value;
-        html = html.replace(/<nolink>/gi, '<span class="nolink">').
-                    replace(/<\/nolink>/gi, '</span>');
-        html += "</body>\n";
-        html += "</html>";
-    } else {
-        html = editor._textArea.value;
-        if (html.match(HTMLArea.RE_doctype)) {
-            editor.setDoctype(RegExp.$1);
-            html = html.replace(HTMLArea.RE_doctype, "");
-        }
-    }
-
-    // Write content to iframe
-    doc.open();
-    doc.write(html);
-    doc.close();
-
-    // The magic: onClick the designMode is set to 'on'
-    // This one is for click on HTMLarea toolbar and else
-    if(HTMLArea.is_gecko) {
-        HTMLArea._addEvents(
-          this._htmlArea,
-          ["mousedown"],
-          function(event) {
-            if(editor.designModeIsOn != true)
-            {
-                editor.designModeIsOn = true;
-                try {
-                  doc.designMode = "on";
-                } catch (e) {
-                  alert(e)
-                };
-            }
-          }
-        );
-
-        // This one is for click in iframe
-        HTMLArea._addEvents(
-          editor._iframe.contentWindow,
-          ["mousedown"],
-          function(event) {
-            if(editor.designModeIsOn != true)
-            {
-                editor.designModeIsOn = true;
-                try {
-                  doc.designMode = "on";
-                } catch (e) {
-                  alert(e)
-                };
-            }
-          }
-        );
-    }
     // creates & appends the status bar, if the case
     this._createStatusBar();
 
@@ -744,7 +631,7 @@ HTMLArea.prototype.generate = function () {
     // size the IFRAME according to user's prefs or initial textarea
     var height = (this.config.height == "auto" ? (this._ta_size.h + "px") : this.config.height);
     height = parseInt(height);
-    var width = (this.config.width == "auto" ? (this._ta_size.w + 52 + "px") : this.config.width);
+    var width = (this.config.width == "auto" ? (this._ta_size.w + 50 + "px") : this.config.width);
     width = parseInt(width);
 
     if (!HTMLArea.is_ie) {
@@ -768,10 +655,56 @@ HTMLArea.prototype.generate = function () {
     textarea.style.width = iframe.style.width;
     textarea.style.height = iframe.style.height;
 
+    // IMPORTANT: we have to allow Mozilla a short time to recognize the
+    // new frame.  Otherwise we get a stupid exception.
+    function initIframe() {
+        var doc = editor._iframe.contentWindow.document;
+        if (!doc) {
+            // Try again..
+            // FIXME: don't know what else to do here.  Normally
+            // we'll never reach this point.
+            if (HTMLArea.is_gecko) {
+                setTimeout(initIframe, 100);
+                return false;
+            } else {
+                alert("ERROR: IFRAME can't be initialized.");
+            }
+        }
+        if (HTMLArea.is_gecko) {
+            // enable editable mode for Mozilla
+            doc.designMode = "on";
+        }
+        editor._doc = doc;
+        if (!editor.config.fullPage) {
+            doc.open();
+            var html = "<html>\n";
+            html += "<head>\n";
+            if (editor.config.baseURL)
+                html += '<base href="' + editor.config.baseURL + '" />';
+            html += "<style>" + editor.config.pageStyle + " td { border: 1px dotted gray; }</style>\n";
+            html += "</head>\n";
+            html += "<body>\n";
+            html += editor._textArea.value;
+            html += "</body>\n";
+            html += "</html>";
+            doc.write(html);
+            doc.close();
+        } else {
+            var html = editor._textArea.value;
+            if (html.match(HTMLArea.RE_doctype)) {
+                editor.setDoctype(RegExp.$1);
+                html = html.replace(HTMLArea.RE_doctype, "");
+            }
+            doc.open();
+            doc.write(html);
+            doc.close();
+        }
+
         if (HTMLArea.is_ie) {
             doc.body.contentEditable = true;
         }
 
+        editor.focusEditor();
         // intercept some events; for updating the toolbar & keyboard handlers
         HTMLArea._addEvents
             (doc, ["keydown", "keypress", "mousedown", "mouseup", "drag"],
@@ -784,23 +717,17 @@ HTMLArea.prototype.generate = function () {
             var plugin = editor.plugins[i].instance;
             if (typeof plugin.onGenerate == "function")
                 plugin.onGenerate();
-        if (typeof plugin.onGenerateOnce == "function") {
-            plugin.onGenerateOnce();
-            plugin.onGenerateOnce = null;
-        }
         }
 
-        // Moodle fix for bug Bug #2521 Too long statusbar line in IE
-        //
-        //setTimeout(function() {
-        //editor.updateToolbar();
-        //}, 250);
+        setTimeout(function() {
+        editor.updateToolbar();
+        }, 250);
 
         if (typeof editor.onGenerate == "function")
             editor.onGenerate();
-
+    };
+    setTimeout(initIframe, 100);
 };
-
 
 // Switches editor mode; parameter can be "textmode" or "wysiwyg".  If no
 // parameter was passed this function toggles between modes.
@@ -839,6 +766,7 @@ HTMLArea.prototype.setMode = function(mode) {
         }
         if (this.config.statusBar) {
             this._statusBar.innerHTML = '';
+            this._statusBar.appendChild(document.createTextNode(HTMLArea.I18N.msg["Path"] + ": "));
             this._statusBar.appendChild(this._statusBarTree);
         }
         break;
@@ -967,10 +895,6 @@ HTMLArea.prototype._wordClean = function() {
             replace(/<\/?div[^>]*>/gi,' ').
             replace(/<\/?pre[^>]*>/gi,' ').
             replace(/<(\/?)(h[1-6]+)[^>]*>/gi,'<$1$2>');
-
-        // Lorenzo Nicola's addition
-        // to get rid off silly word generated tags.
-        D = D.replace(/<!--\[[^\]]*\]-->/gi,' ');
 
         //remove empty tags
         //D = D.replace(/<strong><\/strong>/gi,'').
@@ -1391,17 +1315,14 @@ HTMLArea.prototype._createLink = function(link) {
     if (typeof link == "undefined") {
         link = this.getParentElement();
         if (link && !/^a$/i.test(link.tagName)) {
-            if(link.tagName.toLowerCase() != 'img') {
-                link = null;
-                var sel = this._getSelection();
-                var rng = this._createRange(sel);
-                var len = HTMLArea.is_ie ? rng.text.toString().length : sel.toString().length;
-                if(len < 1) {
-                    alert("<?php print_string("alertnoselectedtext","editor");?>");
-                    return false;
-                }
-            }
             link = null;
+            var sel = this._getSelection();
+            var rng = this._createRange(sel);
+            var len = HTMLArea.is_ie ? rng.text.toString().length : sel.toString().length;
+            if(len < 1) {
+                alert("You must select text first!");
+                return false;
+            }
         }
     }
     if (link) {
@@ -1415,35 +1336,23 @@ HTMLArea.prototype._createLink = function(link) {
         outparam = {
         f_anchors:anchors };
     }
-    this._popupDialog("link_std.php?id=<?php print(isset($id) && !empty($id)) ? $id : ''; ?>", function(param) {
-        if (!param) {
+    this._popupDialog("link_std.php?id=<?php echo $id; ?>", function(param) {
+        if (!param)
             return false;
-        }
         var a = link;
         if (!a) {
             editor._doc.execCommand("createlink", false, param.f_href);
             a = editor.getParentElement();
             var sel = editor._getSelection();
             var range = editor._createRange(sel);
-            /// Removed by PJ and Martin, Moodle bug #1455
-            /// Removed uncommenting since it prevents this function
-            /// to read given attributes for <a> tag such as target, title etc...
-            if (!HTMLArea.is_ie) {
-                try {
-                    a = range.startContainer;
-                    if (!/^a$/i.test(a.tagName)) {
-                        a = a.nextSibling;
-                    }
-                } catch (e) {
-                        alert("Send this message to bug tracker: " + e);
-                }
-            }
-        } else {
-            a.href = param.f_href.trim();
-        }
-        if (!/^a$/i.test(a.tagName)) {
+        //    if (!HTMLArea.is_ie) {           /// Removed by PJ and Martin, Moodle bug #1455
+        //        a = range.startContainer;
+        //        if (!/^a$/i.test(a.tagName))
+        //            a = a.nextSibling;
+        //    }
+        } else a.href = param.f_href.trim();
+        if (!/^a$/i.test(a.tagName))
             return false;
-        }
         a.target = param.f_target.trim();
         a.title = param.f_title.trim();
         editor.selectNodeContents(a);
@@ -1454,9 +1363,6 @@ HTMLArea.prototype._createLink = function(link) {
 // Called when the user clicks on "InsertImage" button.  If an image is already
 // there, it will just modify it's properties.
 HTMLArea.prototype._insertImage = function(image) {
-
-    // Make sure that editor has focus
-    this.focusEditor();
     var editor = this;  // for nested functions
     var outparam = null;
     if (typeof image == "undefined") {
@@ -1475,50 +1381,35 @@ HTMLArea.prototype._insertImage = function(image) {
         f_height : image.height
     };
     this._popupDialog("<?php
-    if(!empty($id)) {
-        if(isteacher($id)) {
-            echo "insert_image.php?id=";
-            print(isset($id) && !empty($id)) ? $id : "";
-        } else {
-            echo "insert_image_std.php?id=";
-            print(isset($id) && !empty($id)) ? $id : "";
-        }
+    if(isteacher($id)) {
+        echo "insert_image.php?id=$id";
     } else {
-        echo "insert_image_std.php?id=";
+        echo "insert_image_std.php?id=$id";
     }?>", function(param) {
         if (!param) {   // user must have pressed Cancel
             return false;
         }
         var img = image;
         if (!img) {
-            var sel = editor._getSelection();
-            var range = editor._createRange(sel);
-                if (HTMLArea.is_ie) {
-                editor._doc.execCommand("insertimage", false, param.f_url);
-                }
-            if (HTMLArea.is_ie) {
-                img = range.parentElement();
-                // wonder if this works...
-                if (img.tagName.toLowerCase() != "img") {
-                    img = img.previousSibling;
-                }
-            } else {
-                // MOODLE HACK: startContainer.perviousSibling
-                // Doesn't work so we'll use createElement and
-                // insertNodeAtSelection
-                //img = range.startContainer.previousSibling;
-                var img = editor._doc.createElement("img");
-                img.setAttribute("src",""+ param.f_url +"");
-                img.setAttribute("alt",""+ param.f_alt +"");
-                editor.insertNodeAtSelection(img);
+        var sel = editor._getSelection();
+        var range = editor._createRange(sel);
+            editor._doc.execCommand("insertimage", false, param.f_url);
+        if (HTMLArea.is_ie) {
+            img = range.parentElement();
+            // wonder if this works...
+            if (img.tagName.toLowerCase() != "img") {
+                img = img.previousSibling;
             }
+        } else {
+            img = range.startContainer.previousSibling;
+        }
         } else {
             img.src = param.f_url;
         }
         for (field in param) {
             var value = param[field];
             switch (field) {
-                case "f_alt"    : img.alt    = value; img.title = value; break;
+                case "f_alt"    : img.alt    = value; break;
                 case "f_border" : img.border = parseInt(value || "0"); break;
                 case "f_align"  : img.align  = value; break;
                 case "f_vert"   : img.vspace = parseInt(value || "0"); break;
@@ -1601,8 +1492,6 @@ HTMLArea.prototype._insertTable = function() {
 
 /// Moodle hack - insertSmile
 HTMLArea.prototype._insertSmile = function() {
-    // Make sure that editor has focus
-    this.focusEditor();
     var sel = this._getSelection();
     var range = this._createRange(sel);
     var editor = this;  // for nested functions
@@ -1652,7 +1541,7 @@ HTMLArea.prototype._createanchor = function () {
     var rng = this._createRange(sel);
     var len = HTMLArea.is_ie ? rng.text.toString().length : sel.toString().length;
     if(len < 1) {
-        alert("<?php print_string("alertnoselectedtext","editor");?>");
+        alert("You must select text first!");
         return false;
     }
     this._popupDialog("createanchor.php", function(objAn) {
@@ -1664,102 +1553,6 @@ HTMLArea.prototype._createanchor = function () {
         str += '</a>';
         editor.insertHTML(str);
     },null);
-};
-
-HTMLArea.prototype._nolinktag = function () {
-
-    var editor = this;
-    var sel = this._getSelection();
-    var rng = this._createRange(sel);
-    var len = HTMLArea.is_ie ? rng.text.toString().length : sel.toString().length;
-
-    if (len < 1) {
-        alert("<?php print_string("alertnoselectedtext","editor");?>");
-        return false;
-    }
-    var str = '<span class="nolink">';
-    str += HTMLArea.is_ie ? rng.text : sel;
-    str += '</span>';
-    editor.insertHTML(str);
-    this.focusEditor();
-
-};
-
-HTMLArea.prototype._searchReplace = function() {
-
-    var editor = this;
-    var selectedtxt = "";
-    var strReplaced = '<?php print_string('itemsreplaced','editor'); ?>';
-    var strNotfound = '<?php print_string('searchnotfound','editor');?>';
-    var ile;
-
-    //in source mode mozilla show errors, try diffrent method
-    if (editor._editMode == "wysiwyg") {
-        selectedtxt = editor.getSelectedHTML();
-    } else {
-        if (HTMLArea.is_ie) {
-            selectedtxt = document.selection.createRange().text;
-        } else {
-            selectedtxt = getMozSelection(editor._textArea);
-        }
-    }
-
-    outparam = {
-        f_search : selectedtxt
-    };
-
-    //Call Search And Replace popup window
-    editor._popupDialog( "searchandreplace.php", function( entity ) {
-        if ( !entity ) {
-            //user must have pressed Cancel
-            return false;
-        }
-        var text = editor.getHTML();
-        var search = entity[0];
-        var replace = entity[1];
-        var delim = entity[2];
-        var regularx = entity[3];
-        var closesar = entity[4];
-        ile = 0;
-        if (search.length < 1) {
-            alert ("Enter a search word! \n search for: " + entity[0]);
-        } else {
-            if (regularx) {
-            var regX = new RegExp (search, delim) ;
-            var text = text.replace ( regX,
-            function (str, n) {
-                // Increment our counter variable.
-                ile++ ;
-                //return replace ;
-                return str.replace( regX, replace) ;
-                }
-            )
-
-            } else {
-                while (text.indexOf(search)>-1) {
-                    pos = text.indexOf(search);
-                    text = "" + (text.substring(0, pos) + replace + text.substring((pos + search.length), text.length));
-                    ile++;
-                }
-            }
-
-            editor.setHTML(text);
-            editor.forceRedraw();
-            if (ile > 0) {
-                alert(ile + ' ' + strReplaced);
-            } else {
-                alert (strNotfound + "\n");
-            }
-        }
-    }, outparam);
-
-    function getMozSelection(txtarea) {
-        var selLength = txtarea.textLength;
-        var selStart = txtarea.selectionStart;
-        var selEnd = txtarea.selectionEnd;
-        if (selEnd==1 || selEnd==2) selEnd=selLength;
-        return (txtarea.value).substring(selStart, selEnd);
-    }
 };
 
 /// Moodle hack's ends
@@ -1811,18 +1604,17 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
         this._createLink();
         break;
         case "unlink": this._removelink(); break;
-        case "nolink": this._nolinktag(); break;
         case "popupeditor":
         // this object will be passed to the newly opened window
         HTMLArea._object = this;
         if (HTMLArea.is_ie) {
             {
-                window.open(this.popupURL("fullscreen.php?id=<?php print(isset($id) && !empty($id)) ? $id : '';?>"), "ha_fullscreen",
+                window.open(this.popupURL("fullscreen.php?id=<?php print($id);?>"), "ha_fullscreen",
                     "toolbar=no,location=no,directories=no,status=no,menubar=no," +
                         "scrollbars=no,resizable=yes,width=800,height=600");
             }
         } else {
-            window.open(this.popupURL("fullscreen.php?id=<?php print(isset($id) && !empty($id)) ? $id : '';?>"), "ha_fullscreen",
+            window.open(this.popupURL("fullscreen.php?id=<?php print($id);?>"), "ha_fullscreen",
                     "toolbar=no,menubar=no,personalbar=no,width=800,height=600," +
                     "scrollbars=no,resizable=yes");
         }
@@ -1838,7 +1630,6 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
         case "insertimage": this._insertImage(); break;
         case "insertsmile": this._insertSmile(); break;
         case "insertchar": this._insertChar(); break;
-        case "searchandreplace": this._searchReplace(); break;
         case "about"    : this._popupDialog("about.html", null, this); break;
         case "showhelp" : window.open(_editor_url + "reference.html", "ha_help"); break;
 
@@ -2180,14 +1971,10 @@ HTMLArea._hasClass = function(el, className) {
 };
 
 HTMLArea.isBlockElement = function(el) {
-
     var blockTags = " body form textarea fieldset ul ol dl li div " +
         "p h1 h2 h3 h4 h5 h6 quote pre table thead " +
         "tbody tfoot tr td iframe address ";
-    try {
     return (blockTags.indexOf(" " + el.tagName.toLowerCase() + " ") != -1);
-    } catch (e) {}
-
 };
 
 HTMLArea.needsClosingTag = function(el) {
@@ -2269,27 +2056,26 @@ HTMLArea.getHTML = function(root, outputRoot, editor) {
                 }
                 html += " " + name + '="' + value + '"';
             }
-            html += closed ? " />\n" : ">";
+            html += closed ? " />" : ">";
         }
         for (i = root.firstChild; i; i = i.nextSibling) {
             html += HTMLArea.getHTML(i, true, editor);
         }
         if (outputRoot && !closed) {
-            html += "</" + root.tagName.toLowerCase() + ">\n";
+            html += "</" + root.tagName.toLowerCase() + ">";
         }
         break;
         case 3: // Node.TEXT_NODE
         // If a text node is alone in an element and all spaces, replace it with an non breaking one
         // This partially undoes the damage done by moz, which translates '&nbsp;'s into spaces in the data element
-        if ( !root.previousSibling && !root.nextSibling && root.data.match(/^\s*$/i) && root.data.length > 1 ) html = '&nbsp;';
+        if ( !root.previousSibling && !root.nextSibling && root.data.match(/^\s*$/i) ) html = '&nbsp;';
         else html = HTMLArea.htmlEncode(root.data);
         break;
         case 8: // Node.COMMENT_NODE
         html = "<!--" + root.data + "-->";
         break;      // skip comments, for now.
     }
-    //html = html.replace(/^\n+/, '');
-    return HTMLArea.formathtml(html);
+    return html;
 };
 
 HTMLArea.prototype.stripBaseURL = function(string) {
@@ -2413,52 +2199,3 @@ HTMLArea.getElementById = function(tag, id) {
             return el;
     return null;
 };
-
-HTMLArea.formathtml = function (html) {
-    // Original idea from FCKeditor
-    // http://www.fckeditor.net/
-    // by Frederico Caldeira Knabben
-
-    var indentchar = '    ';
-    var format     = new Object();
-    format.regex   = new Object();
-
-    format.regex.tagopen  = /\<[^\/](P|DIV|H1|H2|H3|H4|H5|H6|ADDRESS|PRE|OL|UL|LI|TITLE|META|LINK|BASE|SCRIPT|LINK|TD|AREA|OPTION)[^\>]*\>/gi ;
-    format.regex.tagclose = /\<\/{1}(P|DIV|H1|H2|H3|H4|H5|H6|ADDRESS|PRE|OL|UL|LI|TITLE|META|LINK|BASE|SCRIPT|LINK|TD|AREA|OPTION)[^\>]*\>/gi ;
-    format.regex.newlines = /\<(BR|HR)[^\>]\>/gi ;
-    format.regex.tagsmain = /\<\/?(HTML|HEAD|BODY|FORM|TABLE|TBODY|THEAD|TR)[^\>]*\>/gi ;
-    format.regex.splitter = /\s*\n+\s*/g ;
-
-    format.regex.indent = /^\<(HTML|HEAD|BODY|FORM|TABLE|TBODY|THEAD|TR|UL|OL)[ \/\>]/i ;
-    format.regex.unindent = /^\<\/(HTML|HEAD|BODY|FORM|TABLE|TBODY|THEAD|TR|UL|OL)[ \>]/i ;
-    format.regex.inremove = new RegExp( indentchar );
-
-    var formatted  = html.replace( format.regex.tagopen, '\n$&' );
-    formatted      = formatted.replace( format.regex.tagclose, '$&\n' );
-    formatted      = formatted.replace( format.regex.taglines, '$&\n' );
-    formatted      = formatted.replace( format.regex.tagsmain, '\n$&\n' );
-
-    var indentation = '';
-    var tolines = formatted.split(format.regex.splitter);
-    var formatted = '';
-
-    for (var i = 0; i < tolines.length; i++) {
-        var line = tolines[i];
-        if (line.length < 1) {
-            continue;
-        }
-        if (format.regex.unindent.test(line)) {
-            indentation = indentation.replace(format.regex.inremove, '') ;
-        }
-
-        line = line.replace(format.regex.tagopen, '\n$&');
-        line = line.replace(format.regex.tagclose, '$&\n');
-        line = line.replace(format.regex.tagsmain, '$&\n');
-        formatted += indentation + line;
-
-        if (format.regex.indent.test(line)) {
-            indentation += indentchar;
-        }
-    }
-    return formatted;
-}

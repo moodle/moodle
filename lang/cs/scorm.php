@@ -1,11 +1,8 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4 (2004083100)
+      // scorm.php - created with Moodle 1.4 development (2004070800)
 
 
-$string['asset'] = 'Hodnota';
-$string['attr_error'] = '©patná hodnota atributu ($a->attr) ve znaèce $a->tag.';
 $string['autocontinue'] = 'Automatické pokraèování';
-$string['badmanifest'] = 'Chyby v manifestu: viz protokol o chybách';
 $string['browse'] = 'Procházet';
 $string['browsed'] = 'Procházeno';
 $string['browsemode'] = 'Re¾im procházení';
@@ -15,62 +12,29 @@ $string['configframesize'] = 'Velikost horního rámce s navigací v pixelech pøi p
 $string['configpopup'] = 'Má být pøi pøidávání nového balíku SCORM, který mù¾e být otevírán v novém popup oknì, tato mo¾nost implicitnì povolena?';
 $string['configpopupheight'] = 'Jaká má být implicitní vý¹ka nových popup oken';
 $string['configpopupresizable'] = 'Mají mít popup okna implicitnì promìnnou velikost?';
-$string['configpopupscrollbars'] = 'Mají být popup okna implicitnì skrolovatelná?';
-$string['configpopupstatus'] = 'Mají mít popup okna implicitnì stavový pruh?';
-$string['configpopupwidth'] = 'Jaká mý být výchozí ¹íøka nových popup oken?';
 $string['coursepacket'] = 'Balík kurzu';
 $string['coursestruct'] = 'Struktura kurzu';
 $string['datadir'] = 'Chyba souborového systému: Nelze vytvoøit adresáø s daty kurzu';
-$string['domxml'] = 'Externí knihovna DOMXML';
 $string['entercourse'] = 'Vstoupit do SCORM kurzu';
-$string['errorlogs'] = 'Protokol o chybách';
 $string['failed'] = 'Selhalo';
-$string['found'] = 'Manifest nalezen';
-$string['gradeaverage'] = 'Prùmìrný poèet bodù';
-$string['gradehighest'] = 'Nejvy¹¹í poèet bodù';
-$string['grademethod'] = 'Metoda bodování';
-$string['gradesum'] = 'Souhrnný poèet bodù';
-$string['guestsno'] = 'Hostùm není povoleno zobrazení SCORM kurzù';
 $string['incomplete'] = 'Nedokonèeno';
-$string['missing_attribute'] = 'Chybìjící atribut $a->attr ve znaèce $a->tag';
-$string['missing_tag'] = 'Chybìjící znaèka $a->tag';
 $string['mode'] = 'Re¾im';
 $string['modulename'] = 'SCORM';
 $string['modulenameplural'] = 'SCORMy';
-$string['newheight'] = 'Výchozí vý¹ka okna (v pixelech)';
-$string['newresizable'] = 'Povolit zmìnu velikosti okna';
-$string['newscrollbars'] = 'Povolit skrolování v oknì';
-$string['newstatus'] = 'Zobrazovat stavový pruh';
-$string['newwidth'] = 'Výchozí ¹íøka okna (v pixelech)';
-$string['newwindow'] = 'Nové okno';
-$string['newwindowopen'] = 'Zobrazovat tento balíèek SCORM v novém popup oknì';
 $string['next'] = 'Pokraèovat';
-$string['no_attributes'] = 'Znaèka $a->tag musí mít atributy';
-$string['no_children'] = 'Znaèka $a->tag musí mít potomky';
 $string['nomanifest'] = 'Manifest nenalezen';
 $string['noreports'] = '®ádná zpráva k zobrazení';
 $string['normal'] = 'Normální';
-$string['not_corr_type'] = 'Nesoulad typù ve znaèce $a->tag';
 $string['notattempted'] = 'Bez pokusù';
-$string['organizations'] = 'Organizace';
 $string['packagedir'] = 'Chyba souborového systému: Nelze vytvoøit adresáø s balíkem';
 $string['passed'] = 'Pro¹el';
-$string['php5'] = 'PHP 5 (DOMXML nativní knihovna)';
-$string['position_error'] = 'Znaèka $a->tag nemù¾e být potomkem znaèky $a->parent';
 $string['prev'] = 'Pøedchozí';
-$string['regular'] = 'Regulární manifest';
 $string['report'] = 'Zpráva';
 $string['review'] = 'Znovuprohlédnout';
 $string['score'] = 'Skóre';
-$string['syntax'] = 'Chybná syntaxe';
-$string['tag_error'] = 'Neznámá znaèka ($a->tag) s tímto obsahem: $a->value';
-$string['too_many_attributes'] = 'Znaèka $a->tag má pøíli¹ mnoho atributù';
-$string['too_many_children'] = 'Znaèka $a->tag má pøíli¹ mnoho potomkù';
 $string['trackingloose'] = 'UPOZORNÌNÍ: Udáje o prùchodu tímto SCORM balíkem budou ztraceny!';
 $string['validateascorm'] = 'Ovìøit SCORM balík';
 $string['validation'] = 'Výsledek ovìøování';
-$string['validationtype'] = 'Tato vlastnost nastavuje knihovnu DOMXML, která bude pou¾ita pøi ovìøování manifestu SCORM. Nevíte-li, co zvolit, ponechejte zde vybranou odpovìï.';
-$string['versionwarning'] = 'Verze manifestu je star¹í ne¾ 1.3, upozornìní na znaèce $a->tag';
 $string['viewallreports'] = 'Zobrazit zprávy pro $a pokusù';
 
 ?>

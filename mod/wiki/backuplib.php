@@ -41,18 +41,13 @@
                 fwrite ($bf,full_tag("PAGENAME",4,false,$wiki->wtype));
                 fwrite ($bf,full_tag("WTYPE",4,false,$wiki->wtype));
                 fwrite ($bf,full_tag("EWIKIPRINTTITLE",4,false,$wiki->ewikiprinttitle));
-                fwrite ($bf,full_tag("HTMLMODE",4,false,$wiki->htmlmode));
+                fwrite ($bf,full_tag("HTMLMODE",4,false,$wiki->allowsafehtml));
                 fwrite ($bf,full_tag("EWIKIACCEPTBINARY",4,false,$wiki->ewikiacceptbinary));
-                fwrite ($bf,full_tag("DISABLECAMELCASE",4,false,$wiki->disablecamelcase));
-                fwrite ($bf,full_tag("SETPAGEFLAGS",4,false,$wiki->setpageflags));
-                fwrite ($bf,full_tag("STRIPPAGES",4,false,$wiki->strippages));
-                fwrite ($bf,full_tag("REMOVEPAGES",4,false,$wiki->removepages));
-                fwrite ($bf,full_tag("REVERTCHANGES",4,false,$wiki->revertchanges));
                 fwrite ($bf,full_tag("INITIALCONTENT",4,false,$wiki->initialcontent));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$wiki->timemodified));
 
                 //backup entries and pages
-                if ($preferences->mods["wiki"]->userinfo) {
+                if ($preferences->mods["forum"]->userinfo) {
                     $status=backup_wiki_entries($bf,$preferences,$wiki->id, $preferences->mods["wiki"]->userinfo);
                 }
 
@@ -87,33 +82,42 @@
         $wiki_entries = get_records("wiki_entries","wikiid",$wiki,"id");
         //If there are entries
         if ($wiki_entries) {
-            //Write start tag
-            $status =fwrite ($bf,start_tag("ENTRIES",4,true));
+            $dumped_entries = 0;
+
             //Iterate over each entry
             foreach ($wiki_entries as $wik_ent) {
-                //Entry start
-                $status =fwrite ($bf,start_tag("ENTRY",5,true));
+                //Start entry
+                //Print submission contents
+	        if ($userinfo) {
+                    $dumped_entries++;
+                    if ($dumped_entries == 1) {
+                        //Write start tag
+                        $status =fwrite ($bf,start_tag("ENTRIES",4,true));
+                    }
+                    $status =fwrite ($bf,start_tag("ENTRY",5,true));
 
-                fwrite ($bf,full_tag("ID",6,false,$wik_ent->id));
-                fwrite ($bf,full_tag("GROUPID",6,false,$wik_ent->groupid));
-                fwrite ($bf,full_tag("USERID",6,false,$wik_ent->userid));
-                fwrite ($bf,full_tag("PAGENAME",6,false,$wik_ent->pagename));
-                fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$wik_ent->timemodified));
+                    fwrite ($bf,full_tag("ID",6,false,$wik_ent->id));
+                    fwrite ($bf,full_tag("GROUPID",6,false,$wik_ent->groupid));
+                    fwrite ($bf,full_tag("USERID",6,false,$wik_ent->userid));
+                    fwrite ($bf,full_tag("PAGENAME",6,false,$wik_ent->pagename));
+                    fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$wik_ent->timemodified));
 
-                //Now save entry pages
-                $status = backup_wiki_pages($bf,$preferences,$wik_ent->id);
 
-                //Entry end
-                $status =fwrite ($bf,end_tag("ENTRY",5,true));
+                    if ( $userinfo ) {
+                        $status = backup_wiki_pages($bf,$preferences,$wik_ent->id);
+                    }
+
+                    $status =fwrite ($bf,end_tag("ENTRY",5,true));
+                }
             }
-            //Write end tag
-            $status =fwrite ($bf,end_tag("ENTRIES",4,true));
+            if ( $dumped_entries > 0 ) {
+	        //Write end tag
+      	        $status =fwrite ($bf,end_tag("ENTRIES",4,true));
+            }
         }
         return $status;
     }
-
-    //Write wiki_pages contents
-    function backup_wiki_pages ($bf,$preferences,$entryid) {
+   function backup_wiki_pages ($bf,$preferences,$entryid) {
 
         global $CFG;
 
@@ -121,22 +125,18 @@
 
         $pages = get_records("wiki_pages","wiki",$entryid);
         if ($pages) {
-            //Start tag
             $status =fwrite ($bf,start_tag("PAGES",6,true));
-            //Iterate over each page
             foreach ($pages as $page) {
                 $status =fwrite ($bf,start_tag("PAGE",7,true));
 
-                fwrite ($bf,full_tag("ID",8,false,$page->id));
                 fwrite ($bf,full_tag("PAGENAME",8,false,$page->pagename));
                 fwrite ($bf,full_tag("VERSION",8,false,$page->version));
                 fwrite ($bf,full_tag("FLAGS",8,false,$page->flags));
                 fwrite ($bf,full_tag("CONTENT",8,false,$page->content));
                 fwrite ($bf,full_tag("AUTHOR",8,false,$page->author));
-                fwrite ($bf,full_tag("USERID",8,false,$page->userid));
                 fwrite ($bf,full_tag("CREATED",8,false,$page->created));
                 fwrite ($bf,full_tag("LASTMODIFIED",8,false,$page->lastmodified));
-                fwrite ($bf,full_tag("REFS",8,false,str_replace("\n","$@LINEFEED@$",$page->refs)));
+                fwrite ($bf,full_tag("REFS",8,false,$page->refs));
                 fwrite ($bf,full_tag("META",8,false,$page->meta));
                 fwrite ($bf,full_tag("HITS",8,false,$page->hits));
 

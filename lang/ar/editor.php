@@ -1,15 +1,13 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // editor.php - created with Moodle 1.4 development (2004062401)
 
 
 $string['about'] = 'Íæá åÐÇ ÇáãÍÑÑ';
 $string['absbottom'] = 'ÃÓÝá ÇáäÕ';
+$string['absmiddle'] = 'æÓØ ÇáÓØÑ';
 $string['address'] = 'ÚäæÇä';
 $string['alignment'] = 'ãÍÇÐÇÉ';
 $string['alternatetext'] = 'ÇáäÕ ÇáÈÏíá';
-$string['anchorhelp'] = 'íÞæã åÐÇ ÈÃäÔÇÁ ãËÈÊ ÝÞØ¡ íÓÊáÒã Úáíß ÇäÔÇÁ ÇáÑÇÈØ';
-$string['anchorname'] = 'ÇÓã ÇáãËÈÊ';
-$string['anchors'] = 'ãËÈÊÇÊ';
 $string['baseline'] = 'ÇÓÇÓ';
 $string['bold'] = 'ÏÇßä';
 $string['borderthickness'] = 'õÓãß ÇáÇØÇÑ ';
@@ -23,7 +21,6 @@ $string['chooseicon'] = 'ÃÎÊÑ ÃíÞæäå ááÃÏÑÇÌ';
 $string['close'] = 'ãÛáÞ';
 $string['cols'] = 'ÃÚãÏÉ';
 $string['copy'] = 'ÃäÓÎ ÇáãÎÊÇÑ';
-$string['createanchor'] = 'ÃäÔÆ ãËÈÊ';
 $string['createfolder'] = 'ÃäÔÆ ãÌáÏ';
 $string['createlink'] = 'ÃÏÑÇÌ ÑÇÈØ æíÈ';
 $string['cut'] = 'ÞÕ ÇáãÎÊÇÑ';

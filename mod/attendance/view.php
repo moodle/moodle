@@ -9,7 +9,7 @@
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
-        }
+        }   
         if (! $course = get_record("course", "id", $cm->course)) {
             error("Course is misconfigured");
         }
@@ -28,7 +28,7 @@
         }
     }
 
-    require_login($course->id, true, $cm);
+    require_login($course->id);
 
     add_to_log($course->id, "attendance", "view", "view.php?id=$cm->id", $attendance->id, $cm->id);
 
@@ -39,8 +39,8 @@
     $strteacheredit = get_string("teacheredit", "attendance");
 
     print_header_simple($attendance->name, "",
-                 "<a href=index.php?id=$course->id>$strattendances</a> -> $attendance->name",
-                  "", "", true, update_module_button($cm->id, $course->id, $strattendance),
+                 "<A HREF=index.php?id=$course->id>$strattendances</A> -> $attendance->name", 
+                  "", "", true, update_module_button($cm->id, $course->id, $strattendance), 
                   navmenu($course, $cm));
 
 /// Print the main part of the page
@@ -64,21 +64,18 @@
        $sroll[$roll->userid][$roll->hour]->status=$roll->status;
        $sroll[$roll->userid][$roll->hour]->notes=$roll->notes;
      }
-   } else {
-       $sroll = array(); //just to set default value
    }
 
-   // get the list of attendance records for all hours of the given day and
+   // get the list of attendance records for all hours of the given day and 
    // put it in the array for use in the attendance table
     $strviewall = get_string("viewall", "attendance");
     $strviewweek = get_string("viewweek", "attendance");
-    echo '<div class="reportlink">';
+    echo "<p align=\"right\">";
   if (isteacher($course->id)) {
-    echo "<a href=\"teacheredit.php?update=".$cm->id."&amp;return=true\">$strteacheredit</a><br/>";
+    echo "<a href=\"teacheredit.php?update=".$cm->id."&return=true\">$strteacheredit</a><br/>";
   }
   echo "<a href=\"viewall.php?id=".$course->id."\">$strviewall</a><br/>";
-  echo "<a href=\"viewweek.php?scope=week&amp;id=".$attendance->id."\">$strviewweek</a>";
-  echo "</div>";
+  echo "<a href=\"viewweek.php?scope=week&id=".$attendance->id."\">$strviewweek</a><br/></p>";
 
   // this is the wrapper table
   echo "<table align=\"center\" width=\"80\" class=\"generalbox\"".
@@ -120,8 +117,8 @@
   $i=0;
   $A = get_string("absentshort","attendance");
   $T = get_string("tardyshort","attendance");
-  $P = get_string("presentshort","attendance");
-
+  $P = get_string("presentshort","attendance");  
+  
 
   if ($students) foreach ($students as $student) {
     echo "<tr><td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-top: 1px solid;\">".$student->lastname."</td>\n";
@@ -131,8 +128,8 @@
       $abs=$tar=0;
       for($j=1;$j<=$form->hours;$j++) {
       // set the attendance defaults for each student
-          if (isset ($sroll[$student->id][$j]->status) && $sroll[$student->id][$j]->status == 1 ) {$status=$T;$tar++;}
-          elseif (isset ($sroll[$student->id][$j]->status) && $sroll[$student->id][$j]->status == 2 ) {$status=$A;$abs++;}
+          if ($sroll[$student->id][$j]->status == 1) {$status=$T;$tar++;}
+          elseif ($sroll[$student->id][$j]->status == 2) {$status=$A;$abs++;}
         else {$status=$P;}
       echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-left: 1px dotted; border-top: 1px solid;\">".$status."</td>\n";
       } /// for loop
@@ -143,8 +140,8 @@
   }
   /// ending for the table
   echo "</table></td></tr></table>\n";
-
-
+  
+  
   /// print the miscellaneous settings information before the attendance roll
   echo "<center><table align=\"center\" width=\"80\" class=\"generalbox\"".
     "border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr>".

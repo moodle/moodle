@@ -40,13 +40,6 @@ function check_entry($form, $course) {
 /// Override the base config_form() function
 function config_form($frm) {
     global $CFG;
-
-    $vars = array('enrol_flatfilelocation', 'enrol_mailstudents', 'enrol_mailteachers', 'enrol_mailadmins');
-    foreach ($vars as $var) {
-        if (!isset($frm->$var)) {
-            $frm->$var = '';
-        } 
-    }
     include ("$CFG->dirroot/enrol/flatfile/config.html");    
 }
 
@@ -186,7 +179,7 @@ function process_config($config) {
                     switch ($fields[1]) {
                         case "student":
                             if ($fields[0] == "add") {
-                                if (! enrol_student($user->id, $course->id, $fields[4], $fields[5], 'flatfile')) {
+                                if (! enrol_student($user->id, $course->id, $fields[4], $fields[5])) {
                                     $elog = "Error enrolling in course\n";
                                 }
                             } else {
@@ -198,7 +191,7 @@ function process_config($config) {
 
                         case "teacher":
                             if ($fields[0] == "add") {
-                                if (! add_teacher($user->id, $course->id, 0, '', $fields[4], $fields[5], 'flatfile')) {
+                                if (! add_teacher($user->id, $course->id, 0, '', $fields[4], $fields[5])) {
                                     $elog = "Error adding teacher to course\n";
                                 }
                             } else {
@@ -210,7 +203,7 @@ function process_config($config) {
 
                         case "teacheredit":
                             if ($fields[0] == "add") {
-                                if (! add_teacher($user->id, $course->id, 1, '', $fields[4], $fields[5], 'flatfile')) {
+                                if (! add_teacher($user->id, $course->id, 1, '', $fields[4], $fields[5])) {
                                     $elog = "Error adding teacher to course\n";
                                 }
                             } else {
@@ -238,7 +231,7 @@ function process_config($config) {
 
                         if (!empty($CFG->enrol_mailstudents)) {
                             $a->coursename = "$course->fullname";
-                            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id";
+                            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id";
                             email_to_user($user, $teacher, get_string("enrolmentnew", '', $course->shortname), 
                                           get_string('welcometocoursetext', '', $a));
                         }

@@ -79,11 +79,11 @@ $string['fileformat'] = 'Formati i skedarit';
 $string['filloutoneanswer'] = 'Duhet të mbushni të paktën një përgjigje të mundshme. Përgjigjet e lëna bosh nuk do të përdoren.';
 $string['filloutthreequestions'] = 'Duhet të plotësosh të paktën tre pyetje. Pyetjet e lëna bosh nuk do të përdoren.';
 $string['fillouttwochoices'] = 'Duhet të plotsosh të paktën dy zgjedhje. Zgjedhjet e lëna bosh nuk do të përdoren.';
-$string['fractionsaddwrong'] = 'Notat pozitive që ke zgjedhur nuk mblidhen te 100%% <br /> por vetëm te $a%%
-<br /> Do të kthehesh mbrapsht për ta korrigjuar këtë pyetje?
+$string['fractionsaddwrong'] = 'Notat pozitive që ke zgjedhur nuk mblidhen te 100%% <BR> por vetëm te $a%%
+<BR> Do të kthehesh mbrapsht për ta korrigjuar këtë pyetje?
 
 ';
-$string['fractionsnomax'] = 'Njera nga përgjigjet duhet të jetë 100%%, kështu që është<br />e mundur një vlerësim i plotë i kësaj pyetjeje.<br /> Do të kthehesh mbrapsht për ta korrigjuar këtë pyetje?
+$string['fractionsnomax'] = 'Njera nga përgjigjet duhet të jetë 100%%, kështu që është<BR>e mundur një vlerësim i plotë i kësaj pyetjeje.<BR> Do të kthehesh mbrapsht për ta korrigjuar këtë pyetje?
 ';
 $string['gift'] = 'Formati GIFT';
 $string['gradeaverage'] = 'Nota mesatare';
@@ -118,7 +118,7 @@ $string['noquestions'] = 'Akoma nuk është shtuar ndonjë pyetje';
 $string['noresponse'] = 'Asnjë përgjigje';
 $string['noreview'] = 'Nuk lejohet ta rishikosh këtë quiz';
 $string['noreviewuntil'] = 'Nuk ke leje ta rishikosh këtë quiz deri $a';
-$string['notenoughsubquestions'] = 'Nuk janë përcaktuar mjaft nënpyetje!<br />Do t&#9834;7 kthehesh mbrapsht për ta rregulluar këtë pyetje?';
+$string['notenoughsubquestions'] = 'Nuk janë përcaktuar mjaft nënpyetje!<br>Do t&#9834;7 kthehesh mbrapsht për ta rregulluar këtë pyetje?';
 $string['numerical'] = 'Numerike';
 $string['paragraphquestion'] = 'Pyetja paragraf nuk suportohet në rreshtin $a. Pyetja do të injorohet';
 $string['percentcorrect'] = 'Përqindje korekte';

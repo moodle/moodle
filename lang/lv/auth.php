@@ -3,7 +3,7 @@
 
 
 $string['auth_dbdescription'] = '©ï metode izmanto àrºju datu bàzi lietotàja un paroles pàrbaudei. Veidojot jaunu ierakstu, informàcija var tikt kopºta sistºmà.';
-$string['auth_dbextrafields'] = '©ie ir papildus lauki. Jþs varat aizpildït tos ar informàciju no <b>àrºjàs datu bàzes</b>, kas ir noràdïta ¹eit. <br />Ja atstàsiet laukus neaizpildïtus, tad tiks ievietoti noklusºtie dati.<br /> Jebkurà gadïjumà lietotàjs ielogojoties varºs labot ¹os laukus.';
+$string['auth_dbextrafields'] = '©ie ir papildus lauki. Jþs varat aizpildït tos ar informàciju no <B>àrºjàs datu bàzes</b>, kas ir noràdïta ¹eit. <P>Ja atstàsiet laukus neaizpildïtus, tad tiks ievietoti noklusºtie dati.</p> Jebkurà gadïjumà lietotàjs ielogojoties varºs labot ¹os laukus.';
 $string['auth_dbfieldpass'] = 'Paroles lauka nosaukums';
 $string['auth_dbfielduser'] = 'Lietotàjvàrda lauka nosaukums';
 $string['auth_dbhost'] = 'Datu bàzes serveris.';
@@ -12,7 +12,7 @@ $string['auth_dbpass'] = 'Atbilsto¹à lietotàja parole';
 $string['auth_dbpasstype'] = 'Noràdiet paroles lauka tipu.  MD5 kodº¹ana ir vislabàk izmantojamà lai savienotos ar citàm web-pielikumiem, piemºram, PostNuke';
 $string['auth_dbtable'] = 'Tabulas nosaukums datu bàzº';
 $string['auth_dbtitle'] = 'Izmantot àrºju datu bàzi';
-$string['auth_dbtype'] = 'Datu bàzes tips (Skatït <a href=\"../lib/adodb/readme.htm#drivers\">ADOdb dokumentàciju</a>)';
+$string['auth_dbtype'] = 'Datu bàzes tips (Skatït <A HREF=../lib/adodb/readme.htm#drivers>ADOdb dokumentàciju</A>)';
 $string['auth_dbuser'] = 'Lietotàjs tikai ar datu bàzes lasï¹anas tiesïbàm';
 $string['auth_emaildescription'] = 'E-pasta apstiprinàjums ir noklusºtà autentifikàcijas metode. Kad lietotàjs re»istrºjas, uz lietotàja e-pastu tiek nosþtïta apstiprinàjuma vºstule. Vºstule satur nejau¹i izveidotu saiti, kur lietotàjs var apstiprinàt savu re»istràciju. Nàko¹ajàs reizºs, kad lietotàja sistºmas ieie¹anas reizºs, lietotàja vàrds un parole tiek salïdzinàta ar datu bàzi.';
 $string['auth_emailtitle'] = 'E-pasta autentifikàcija';
@@ -35,7 +35,7 @@ $string['auth_ldap_update_userinfo'] = 'Izmainiet lietotàja informàciju (vàrds, 
 $string['auth_ldap_user_attribute'] = 'Atribþts, ko izmanto vàrdam/meklº¹anai. Parasti \'cn\'.';
 $string['auth_ldap_version'] = 'Jþsu serveris lieto LDAP versijas protokolu.';
 $string['auth_ldapdescription'] = '©ï metode piedàvà autentificºties ar LDAP servera palïdzïbu. Ja dotais lietotàjs un parole ir pareizi, sistºma izveido jaunu lietotàju tàs datu bàzº. ©is modulis var nolasït lietotàja atribþtus no LDAP un aizpildït vajadzïgos laukus sistºmà. Pºc tam tiek pàrbaudïts tikai lietotàjvàrds un parole.';
-$string['auth_ldapextrafields'] = '©is ir papildus lauks. Jþs varat aizpildït sistºmas lietotàja laukus ar informàciju no <b>LDAP laukiem</b> ko Jþs noràdàt ¹eit. <br />
+$string['auth_ldapextrafields'] = '©is ir papildus lauks. Jþs varat aizpildït sistºmas lietotàja laukus ar informàciju no <B>LDAP laukiem</B> ko Jþs noràdàt ¹eit. <P>
 Ja atstàsiet ¹os laukus tuk¹us, tad nekas netiks pàrvietots no LDAP uz sistºmu, tiks lietoti noklusºtie uzstàdïjumi. Abos gadïjumos lietotàjs ¹os datus varºs izmainït vºlàk.';
 $string['auth_ldaptitle'] = 'Lietot LDAP serveri';
 $string['auth_manualdescription'] = '©ï metode aizliedz lietotàjiem veidot pa¹iem veikt re»istràciju. Visas re»istràcijas ir jàveic administrºtam lietotàjam.';

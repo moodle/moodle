@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This php script contains all the stuff to backup/restore
     //attendance mods
 

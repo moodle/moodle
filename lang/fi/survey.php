@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
+      // survey.php - created with Moodle 1.3 development (2004032800)
 
 
 $string['actual'] = 'Toteutunut';
@@ -52,22 +52,18 @@ $string['attls9'] = 'Lukiessani kirjaa löydän itseni usein väittelemästä kirjoit
 $string['attls9short'] = 'kyseenalasta kirjoittajat';
 $string['attlsintro'] = 'Tämän kyselyn tarkoituksena on kartoitaa suhtautumistasi ajatteluun ja oppimiseen.
 
-Kyselyyn ei ole olemassa oikeita tai vääriä vastuksia, vain sinun mielipiteesi on kiinnostava. Muista, että vastaukset käsitellään luottamuksellisesti, eivätkä ne vaikuta arvosteluun.';
+Kyselyyn ei ole olemassa oikeita tai vääriä vastuksia, vain sinun mielipiteesi on kiinnostava. Muista, että vastaukset käsitellään luottamuksellisesti, eivätkä ne vaikuta arvosteluun.
+';
 $string['attlsm1'] = 'Asenne ajatteluun ja oppimiseen';
 $string['attlsm2'] = 'Sosiaalinen oppiminen';
 $string['attlsm3'] = 'Eristyvä oppiminen';
 $string['attlsmintro'] = 'Keskustelussa ...';
 $string['attlsname'] = 'ATTLS (kysely asenteista oppimiseen ja ajatteluun, 20 kysymystä)';
 $string['ciq1'] = 'Milloin tunsit olevasi kaikkein sitoutunein opiskeluun?';
-$string['ciq1short'] = 'Sitoutunein';
 $string['ciq2'] = 'Milloin tunsit olevasi kaikkein vähiten sitoutunut opiskeluun?';
-$string['ciq2short'] = 'Vähiten sitoutunut';
 $string['ciq3'] = 'Mikä keskusteluissa ollut asia oli mielestäsi eniten avuksi tai hyödyllinen?';
-$string['ciq3short'] = 'Hyödyllinen hetki';
 $string['ciq4'] = 'Mikä keskusteluissa ollut asia oli mielestäsi hankala tai hämmentävä?';
-$string['ciq4short'] = 'Hämmentävä hetki';
 $string['ciq5'] = 'Mikä tapahtuma yllätti sinua eniten?';
-$string['ciq5short'] = 'Yllättävä hetki';
 $string['ciqintro'] = 'Mieti kurssin aikana sattuneita tapahtumia ja vastaa alla oleviin kysymyksiin.';
 $string['ciqname'] = 'Kriittiset tapahtumat';
 $string['clicktocontinue'] = 'Klikkaa tästä jatkaaksesi';
@@ -91,7 +87,7 @@ $string['colles17'] = 'toisen opiskelijat rohkaisevat minua osallistumaan';
 $string['colles17short'] = 'opiskelija rohkaisevat minua';
 $string['colles18'] = 'toiset opiskelijat kehuvat osallistumiistani';
 $string['colles18short'] = 'opiskelijat kehuvat minua';
-$string['colles19'] = 'toiset opiskelijat arvostavat osallistumistani';
+$string['colles19'] = 'toiset opiskelijat arvostavat osallistumiistani';
 $string['colles19short'] = 'opiskelijat arvostavat minua';
 $string['colles1short'] = 'keskity kiinnostaviin asioihin';
 $string['colles2'] = 'opin asioita, joista on ammatillista hyötyä';
@@ -136,7 +132,9 @@ Jokainen seuravista 24 kysymyksestä pyytää sina vertaamaan <i>ideaalia</i> ja <i
 
 Ei ole olemassa oikeata tai vääriä vastauksia, tahdomme sinun mielipiteesi asioista. Muista, että vastaukset käsitellään luottamuksellisesti, eivätkä ne vaikuta arvosteluun.
 
-Vastaamalla huolellisesti ja ajatuksella autat meitä parantamaan tätä kurssia tulevaisuudessa.';
+Vastaamalla huolellisesti ja ajatuksella autat meitä parantamaan tätä kurssia tulevaisuudessa.
+
+';
 $string['collesapname'] = 'COLLES (Haluttu ja Toteutunut)';
 $string['collesm1'] = 'Relevanssi';
 $string['collesm1short'] = 'Relevanssi';
@@ -156,7 +154,9 @@ $string['collespintro'] = 'Tämän kyselyn tarkoituksena on selvitää, mitä asiaoit
 Jokainen seuraavasta 24 kysymyksestä kysyy sinun  odotuksistasi tältä kurssilta.
 Ei ole olemassa oikeata tai vääriä vastauksia, tahdomme sinun mielipiteesi asioista. Muista että vastaukset käsitellään luottamuksellisesti, eivätkä ne vaikuta arvosteluun.
 
-Vastaamalla huolellisesti ja ajatuksella autat meitä parantamaan tätä kurssia tulevaisuudessa.';
+Vastaamalla huolellisesti ja ajatuksella autat meitä parantamaan tätä kurssia tulevaisuudessa.
+
+';
 $string['collespname'] = 'COLLES haluttu (preferred) ';
 $string['done'] = 'Tehty';
 $string['download'] = 'Lataa';

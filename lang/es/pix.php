@@ -4,11 +4,11 @@
 
 $string['angry'] = 'enojado';
 $string['approve'] = 'aprobación';
-$string['biggrin'] = 'risa';
-$string['blackeye'] = 'ojo amoratado';
+$string['biggrin'] = 'gran sonrisa';
+$string['blackeye'] = 'ojo negro';
 $string['blush'] = 'sonrojado';
 $string['clown'] = 'payaso';
-$string['cool'] = 'estupendo';
+$string['cool'] = 'guay';
 $string['dead'] = 'muerto';
 $string['evil'] = 'diabólico';
 $string['kiss'] = 'beso';
@@ -19,7 +19,7 @@ $string['sleepy'] = 'dormido';
 $string['smiley'] = 'sonrisa';
 $string['surprise'] = 'sorpresa';
 $string['thoughtful'] = 'pensativo';
-$string['tongueout'] = 'lengua fuera';
+$string['tongueout'] = 'lengua';
 $string['wideeyes'] = 'asombro';
 $string['wink'] = 'guiño';
 

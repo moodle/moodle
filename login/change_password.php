@@ -28,38 +28,15 @@
                 error("Can't change guest password!");
             }
             
-            if (is_internal_auth($user->auth)){
-                if (set_field("user", "password", $password, "username", $username)) {
-                    $user->password = $password;
-                } else {
-                    error("Could not set the new password");
-                }
-            } else { // external users
-                // the relevant auth libs should be loaded already 
-                // as validate_form() calls authenticate_user_login()
-                // check that we allow changes through moodle
-                if (!empty($CFG->{'auth_'. $user->auth.'_stdchangepassword'})) {
-                    if (function_exists('auth_user_update_password')){
-                        // note that we pass cleartext password 
-                        if (auth_user_update_password($user->username, $frm->newpassword1)){
-                            $user->password = $password;
-                        } else {
-                            error('Could not set the new password');
-                        }
-                    } else {
-                        error('The authentication module is misconfigured (missing auth_user_update_password)'); 
-                    } 
-                } else {
-                    error("You cannot change your password this way.");
-                }
+            if (set_field("user", "password", $password, "username", $username)) {
+                $user->password = $password;
+            } else {
+                error("Could not set the new password");
             }
-            
+
             $USER = $user;
             $USER->loggedin = true;
             $USER->site = $CFG->wwwroot;   // for added security
-
-            // register success changing password
-            unset_user_preference('auth_forcepasswordchange');
 
             set_moodle_cookie($USER->username);
 
@@ -67,16 +44,17 @@
 
             $strpasswordchanged = get_string("passwordchanged");
 
-            if (!empty($course->id)) {
-                add_to_log($course->id, "user", "change password", "view.php?id=$user->id&amp;course=$course->id", "$user->id");
+            if ($course->id) {
+                add_to_log($course->id, "user", "change password", "view.php?id=$user->id&course=$course->id", "$user->id");
                 $fullname = fullname($USER, true);
                 print_header($strpasswordchanged, $strpasswordchanged,
-                             "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
-                              <a href=\"$CFG->wwwroot/user/index.php?id=$course->id\">".get_string("participants")."</a> ->
-                              <a href=\"$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$course->id\">$fullname</a> -> $strpasswordchanged", $focus);
-                notice($strpasswordchanged, "$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$id");
+                             "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->
+                              <A HREF=\"$CFG->wwwroot/user/index.php?id=$course->id\">".get_string("participants")."</A> ->
+                              <A HREF=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id\">$fullname</A> -> $strpasswordchanged", $focus);
+                notice($strpasswordchanged, "$CFG->wwwroot/user/view.php?id=$USER->id&course=$id");
             } else {
-                add_to_log(SITEID, "user", "change password", "view.php?id=$user->id&amp;course=".SITEID, "$course->id");
+                $site = get_site();
+                add_to_log($site->id, "user", "change password", "view.php?id=$user->id&course=$site->id", "$course->id");
                 print_header($strpasswordchanged, $strpasswordchanged, $strpasswordchanged, "");
                 notice($strpasswordchanged, "$CFG->wwwroot/");
             }
@@ -86,8 +64,11 @@
         }
     }
 
-    // We NEED to set this, because the form assumes it has a value!
-    $frm->id = empty($course->id) ? 0 : $course->id;
+
+
+    if ($course->id) {
+        $frm->id = $id;
+    }
 
     if (empty($frm->username)) {
         $frm->username = get_moodle_cookie();
@@ -103,14 +84,14 @@
     if (!empty($course->id)) {
         $fullname = fullname($USER, true);
         print_header($strchangepassword, $strchangepassword,
-                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
-                      <a href=\"$CFG->wwwroot/user/index.php?id=$course->id\">".get_string("participants")."</a> ->
-                      <a href=\"$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$course->id\">$fullname</a> -> $strchangepassword", $focus);
+                     "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->
+                      <A HREF=\"$CFG->wwwroot/user/index.php?id=$course->id\">".get_string("participants")."</A> ->
+                      <A HREF=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id\">$fullname</A> -> $strchangepassword", $focus);
     } else {
         print_header($strchangepassword, $strchangepassword, $strchangepassword, $focus);
     }
 
-    print_simple_box_start("center");
+    print_simple_box_start("center", "", $THEME->cellheading);
     include("change_password_form.html");
     print_simple_box_end();
     print_footer();
@@ -123,35 +104,24 @@
  *****************************************************************************/
 function validate_form($frm, &$err) {
 
-    if (empty($frm->username)){
+    if (empty($frm->username))
         $err->username = get_string("missingusername");
-    } else {
-        if (empty($frm->password)){
-            $err->password = get_string("missingpassword");
-        } else {  
-            //require non adminusers to give valid password
-            if (!isadmin() && !authenticate_user_login($frm->username, $frm->password)){
-                $err->password = get_string("wrongpassword");
-            }
-        }
-    }
 
-    if (empty($frm->newpassword1)){
+    else if (empty($frm->password))
+        $err->password = get_string("missingpassword");
+
+    else if (!authenticate_user_login($frm->username, $frm->password))
+        $err->password = get_string("wrongpassword");
+
+    if (empty($frm->newpassword1))
         $err->newpassword1 = get_string("missingnewpassword");
-    }
 
-    if (empty($frm->newpassword2)){
+    if (empty($frm->newpassword2))
         $err->newpassword2 = get_string("missingnewpassword");
-    } else {
-        if ($frm->newpassword1 <> $frm->newpassword2) {
-            $err->newpassword2 = get_string("passwordsdiffer");
-        } else {
-            if($frm->password === $frm->newpassword1){
-                $err->newpassword1 = get_string("mustchangepassword");
-            }
-        }
-    }
-    
+
+    else if ($frm->newpassword1 <> $frm->newpassword2)
+        $err->newpassword2 = get_string("passwordsdiffer");
+
     return;
 }
 

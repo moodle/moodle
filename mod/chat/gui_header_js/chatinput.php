@@ -1,46 +1,64 @@
-<?php  // $Id$
+<?php
 
-    $nomoodlecookie = true;     // Session not needed!
+require("../../../config.php");
+require("../lib.php");
 
-    require('../../../config.php');
-    require('../lib.php');
+require_variable($chat_sid);
+optional_variable($groupid);
+optional_variable($chat_pretext, '');
 
-    $chat_sid = required_param('chat_sid', PARAM_ALPHANUM);
+if (!$chatuser = get_record("chat_users", "sid", $chat_sid)) {
+    echo "Not logged in!";
+    die;
+}
 
-    if (!$chatuser = get_record('chat_users', 'sid', $chat_sid)) {
-        error('Not logged in!');
-    }
+if (!$chat = get_record("chat", "id", $chatuser->chatid)) {
+    error("No chat found");
+}
 
-    chat_force_language($chatuser->lang);
-
-    ob_start();
-    ?>
-    <script type="text/javascript">
-    <!--
-    function empty_field_and_submit() {
-        document.sendForm.chat_message.value = document.inputForm.chat_message.value;
-        document.inputForm.chat_message.value = '';
-        document.sendForm.submit();
-        document.inputForm.chat_message.focus();
-        return false;
-    }
-    // -->
-    </script>
-    <?php
-
-    $meta = ob_get_clean();
-    print_header('', '', '', 'inputForm.chat_message', $meta, false);
+require_login($chat->course);
 
 ?>
-    <form action="../empty.php" method="GET" target="empty" name="inputForm"
-          OnSubmit="return empty_field_and_submit()">
-        &gt;&gt;<input type="text" name="chat_message" size="60" value="" />
-        <?php helpbutton('chatting', get_string('helpchatting', 'chat'), 'chat', true, false); ?>
-    </form>
+ 
+<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\">
+<html>
+<head>
+<title>Message Input</title>
 
-    <form action="insert.php" method="GET" target="empty" name="sendForm">
-        <input type="hidden" name="chat_sid" value="<?php echo $chat_sid ?>" />
-        <input type="hidden" name="chat_message" />
-    </form>
+<?php include("$CFG->javascript"); ?>
+
+<script language="Javascript">
+<!--
+scroll_active = true;
+function empty_field_and_submit() {
+    document.fdummy.chat_message.value=document.f.chat_message.value;
+    document.fdummy.submit();
+    document.f.chat_message.value='';
+    document.f.chat_message.focus();
+    return false;
+}
+// -->
+</script>
+</head>
+
+<body bgcolor="<?php echo $THEME->body ?>" 
+      OnLoad="document.f.chat_message.focus();document.f.chat_message.select();">
+
+
+<form action="../insert.php" method="GET" target="empty" name="f" 
+      OnSubmit="return empty_field_and_submit()">
+&gt;&gt;<input type="text" name="chat_message" size="60" value="<?php echo $chat_pretext; ?>">
+<?php helpbutton("chatting", get_string("helpchatting", "chat"), "chat", true, false); ?>
+</form>
+
+<form action="../insert.php" method="GET" target="empty" name="fdummy" 
+      OnSubmit="return empty_field_and_submit()">
+    <input type="hidden" name="chat_sid" value="<?php echo $chat_sid ?>">
+    <input type="hidden" name="groupid" value="<?php echo $groupid ?>">
+    <input type="hidden" name="chat_version" value="header_js">
+    <input type="hidden" name="chat_message">
+</form>
+
 </body>
+
 </html>

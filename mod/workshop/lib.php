@@ -1,14 +1,50 @@
-<?php  // $Id: lib.php,v 1.1 23 Aug 2003
+<?PHP  // $Id: lib.php,v 1.1 23 Aug 2003
 
 // workshop constants and standard Moodle functions plus the workshop functions 
 // called by the standard functions
 
 // see also locallib.php for other non-standard workshop functions
 
-require_once($CFG->libdir.'/filelib.php');
+include_once("$CFG->dirroot/files/mimetypes.php");
 
 /*** Constants **********************************/
 
+$WORKSHOP_TYPE = array (0 => get_string("notgraded", "workshop"),
+                          1 => get_string("accumulative", "workshop"),
+                          2 => get_string("errorbanded", "workshop"),
+                          3 => get_string("criterion", "workshop"),
+                          4 => get_string("rubric", "workshop") );
+
+$WORKSHOP_SHOWGRADES = array (0 => get_string("dontshowgrades", "workshop"),
+                          1 => get_string("showgrades", "workshop") );
+
+$WORKSHOP_SCALES = array( 
+                    0 => array( 'name' => get_string("scaleyes", "workshop"), 'type' => 'radio', 
+                        'size' => 2, 'start' => get_string("yes"), 'end' => get_string("no")),
+                    1 => array( 'name' => get_string("scalepresent", "workshop"), 'type' => 'radio', 
+                        'size' => 2, 'start' => get_string("present", "workshop"), 
+                        'end' => get_string("absent", "workshop")),
+                    2 => array( 'name' => get_string("scalecorrect", "workshop"), 'type' => 'radio', 
+                        'size' => 2, 'start' => get_string("correct", "workshop"), 
+                        'end' => get_string("incorrect", "workshop")), 
+                    3 => array( 'name' => get_string("scalegood3", "workshop"), 'type' => 'radio', 
+                        'size' => 3, 'start' => get_string("good", "workshop"), 
+                        'end' => get_string("poor", "workshop")), 
+                    4 => array( 'name' => get_string("scaleexcellent4", "workshop"), 'type' => 'radio', 
+                        'size' => 4, 'start' => get_string("excellent", "workshop"), 
+                        'end' => get_string("verypoor", "workshop")),
+                    5 => array( 'name' => get_string("scaleexcellent5", "workshop"), 'type' => 'radio', 
+                        'size' => 5, 'start' => get_string("excellent", "workshop"), 
+                        'end' => get_string("verypoor", "workshop")),
+                    6 => array( 'name' => get_string("scaleexcellent7", "workshop"), 'type' => 'radio', 
+                        'size' => 7, 'start' => get_string("excellent", "workshop"), 
+                        'end' => get_string("verypoor", "workshop")),
+                    7 => array( 'name' => get_string("scale10", "workshop"), 'type' => 'selection', 
+                        'size' => 10),
+                    8 => array( 'name' => get_string("scale20", "workshop"), 'type' => 'selection', 
+                            'size' => 20),
+                    9 => array( 'name' => get_string("scale100", "workshop"), 'type' => 'selection', 
+                            'size' => 100)); 
 
 $WORKSHOP_EWEIGHTS = array(  0 => -4.0, 1 => -2.0, 2 => -1.5, 3 => -1.0, 4 => -0.75, 5 => -0.5,  6 => -0.25, 
                              7 => 0.0, 8 => 0.25, 9 => 0.5, 10 => 0.75, 11=> 1.0, 12 => 1.5, 13=> 2.0, 
@@ -17,19 +53,13 @@ $WORKSHOP_EWEIGHTS = array(  0 => -4.0, 1 => -2.0, 2 => -1.5, 3 => -1.0, 4 => -0
 $WORKSHOP_FWEIGHTS = array(  0 => 0, 1 => 0.1, 2 => 0.25, 3 => 0.5, 4 => 0.75, 5 => 1.0,  6 => 1.5, 
                              7 => 2.0, 8 => 3.0, 9 => 5.0, 10 => 7.5, 11=> 10.0, 12=>50.0); 
 
-
-$WORKSHOP_ASSESSMENT_COMPS = array (
-                          0 => array('name' => get_string('verylax', 'workshop'), 'value' => 1),
-                          1 => array('name' => get_string('lax', 'workshop'), 'value' => 0.6),
-                          2 => array('name' => get_string('fair', 'workshop'), 'value' => 0.4),
-                          3 => array('name' => get_string('strict', 'workshop'), 'value' => 0.33),
-                          4 => array('name' => get_string('verystrict', 'workshop'), 'value' => 0.2) );
-
+if (!defined("COMMENTSCALE")) {
+    define("COMMENTSCALE", 20);
+    }
 
 
 /*** Standard Moodle functions ******************
 workshop_add_instance($workshop) 
-workshop_check_dates($workshop)
 workshop_cron () 
 workshop_delete_instance($id) 
 workshop_grades($workshopid) 
@@ -48,74 +78,29 @@ function workshop_add_instance($workshop) {
 // of the new instance.
 
     $workshop->timemodified = time();
-
-    $workshop->submissionstart = make_timestamp($workshop->submissionstartyear, 
-            $workshop->submissionstartmonth, $workshop->submissionstartday, $workshop->submissionstarthour, 
-            $workshop->submissionstartminute);
-
-    $workshop->assessmentstart = make_timestamp($workshop->assessmentstartyear, 
-            $workshop->assessmentstartmonth, $workshop->assessmentstartday, $workshop->assessmentstarthour, 
-            $workshop->assessmentstartminute);
-
-    $workshop->submissionend = make_timestamp($workshop->submissionendyear, 
-            $workshop->submissionendmonth, $workshop->submissionendday, $workshop->submissionendhour, 
-            $workshop->submissionendminute);
-
-    $workshop->assessmentend = make_timestamp($workshop->assessmentendyear, 
-            $workshop->assessmentendmonth, $workshop->assessmentendday, $workshop->assessmentendhour, 
-            $workshop->assessmentendminute);
-
-    $workshop->releasegrades = make_timestamp($workshop->releaseyear, 
-            $workshop->releasemonth, $workshop->releaseday, $workshop->releasehour, 
-            $workshop->releaseminute);
     
-    if (!workshop_check_dates($workshop)) {
-        return get_string('invaliddates', 'workshop');
-    }
+    $workshop->deadline = make_timestamp($workshop->deadlineyear, 
+            $workshop->deadlinemonth, $workshop->deadlineday, $workshop->deadlinehour, 
+            $workshop->deadlineminute);
 
     if ($returnid = insert_record("workshop", $workshop)) {
 
         $event = NULL;
-        $event->name        = get_string('submissionstartevent','workshop', $workshop->name);
+        $event->name        = $workshop->name;
         $event->description = $workshop->description;
         $event->courseid    = $workshop->course;
         $event->groupid     = 0;
         $event->userid      = 0;
         $event->modulename  = 'workshop';
         $event->instance    = $returnid;
-        $event->eventtype   = 'submissionstart';
-        $event->timestart   = $workshop->submissionstart;
+        $event->eventtype   = 'deadline';
+        $event->timestart   = $workshop->deadline;
         $event->timeduration = 0;
-        add_event($event);
 
-        $event->name        = get_string('submissionendevent','workshop', $workshop->name);
-        $event->eventtype   = 'submissionend';
-        $event->timestart   = $workshop->submissionend;
-        add_event($event);
-
-        $event->name        = get_string('assessmentstartevent','workshop', $workshop->name);
-        $event->eventtype   = 'assessmentstart';
-        $event->timestart   = $workshop->assessmentstart;
-        add_event($event);
-
-        $event->name        = get_string('assessmentendevent','workshop', $workshop->name);
-        $event->eventtype   = 'assessmentend';
-        $event->timestart   = $workshop->assessmentend;
         add_event($event);
     }
 
     return $returnid;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// returns true if the dates are valid, false otherwise
-function workshop_check_dates($workshop) {
-    // allow submission and assessment to start on the same date and to end on the same date
-    // but enforce non-empty submission period and non-empty assessment period.
-    return ($workshop->submissionstart < $workshop->submissionend and
-            $workshop->submissionstart <= $workshop->assessmentstart and
-            $workshop->assessmentstart < $workshop->assessmentend and
-            $workshop->submissionend <= $workshop->assessmentend);
 }
 
 
@@ -125,22 +110,13 @@ function workshop_cron () {
 
     global $CFG, $USER;
     
-    // if there any ungraded assessments run the grading routine
-    if ($workshops = get_records("workshop")) {
-        foreach ($workshops as $workshop) {
-            // automatically grade assessments if workshop has examples and/or peer assessments
-            if ($workshop->gradingstrategy and ($workshop->ntassessments or $workshop->nsassessments)) {
-                workshop_grade_assessments($workshop);
-            }
-        }
-    }
-    $timenow = time();
-    
     // Find all workshop notifications that have yet to be mailed out, and mails them
-    $cutofftime = $timenow - $CFG->maxeditingtime;
+    $cutofftime = time() - $CFG->maxeditingtime;
 
     // look for new assessments
     if ($assessments = workshop_get_unmailed_assessments($cutofftime)) {
+        $timenow = time();
+
         foreach ($assessments as $assessment) {
 
             echo "Processing workshop assessment $assessment->id\n";
@@ -201,26 +177,25 @@ function workshop_cron () {
                     " ".fullname($assessmentowner)."\n";
             }
             // "The comments and grade can be seen in the workshop assignment '$workshop->name'
-            // I have taken the following line out because the info is repeated below.
-            // $msg .= get_string("mail2", "workshop", $workshop->name)."\n\n";
+            $msg .= get_string("mail2", "workshop", $workshop->name)."\n\n";
     
-            $postsubject = "$course->shortname: $strworkshops: ".format_string($workshop->name,true);
-            $posttext  = "$course->shortname -> $strworkshops -> ".format_string($workshop->name,true)."\n";
+            $postsubject = "$course->shortname: $strworkshops: $workshop->name";
+            $posttext  = "$course->shortname -> $strworkshops -> $workshop->name\n";
             $posttext .= "---------------------------------------------------------------------\n";
             $posttext .= $msg;
-            // "The comments and grade can be seen in ..."
-            $posttext .= get_string("mail2", "workshop", 
-                format_string($workshop->name,true).",   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id")."\n";
+            // "You can see it in your workshop assignment"
+            $posttext .= get_string("mail3", "workshop").":\n";
+            $posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id\n";
             $posttext .= "---------------------------------------------------------------------\n";
             if ($sendto->mailformat == 1) {  // HTML
-                $posthtml = "<p><font face=\"sans-serif\">".
-                    "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
-                    "<a href=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
-                    "<a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">".format_string($workshop->name,true)."</a></font></p>";
-                $posthtml .= "<hr><font face=\"sans-serif\">";
-                $posthtml .= "<p>$msg</p>";
-                $posthtml .= "<p>".get_string("mail2", "workshop",
-                    " <a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">".format_string($workshop->name,true)."</a>")."</p></font><hr>";
+                $posthtml = "<P><FONT FACE=sans-serif>".
+                    "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
+                    "<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
+                    "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A></FONT></P>";
+                $posthtml .= "<HR><FONT FACE=sans-serif>";
+                $posthtml .= "<P>$msg</P>";
+                $posthtml .= "<P>".get_string("mail3", "workshop").
+                    " <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A>.</P></FONT><HR>";
             } else {
                 $posthtml = "";
             }
@@ -291,25 +266,25 @@ function workshop_cron () {
             // "The assignment \"$submission->title\" is a revised piece of work. "
             $msg = get_string("mail8", "workshop", $submission->title)."\n";
             // "Please assess it in the workshop assignment '$workshop->name'
-            // $msg .= get_string("mail9", "workshop", $workshop->name)."\n\n";
+            $msg .= get_string("mail9", "workshop", $workshop->name)."\n\n";
     
-            $postsubject = "$course->shortname: $strworkshops: ".format_string($workshop->name,true);
-            $posttext  = "$course->shortname -> $strworkshops -> ".format_string($workshop->name,true)."\n";
+            $postsubject = "$course->shortname: $strworkshops: $workshop->name";
+            $posttext  = "$course->shortname -> $strworkshops -> $workshop->name\n";
             $posttext .= "---------------------------------------------------------------------\n";
             $posttext .= $msg;
-            // "Please assess it in ..."
-            $posttext .= get_string("mail9", "workshop", 
-                           format_string($workshop->name,true).", $CFG->wwwroot/mod/workshop/view.php?id=$cm->id")."\n";
+            // "You can assess it in your workshop assignment"
+            $posttext .= get_string("mail10", "workshop").":\n";
+            $posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id\n";
             $posttext .= "---------------------------------------------------------------------\n";
             if ($sendto->mailformat == 1) {  // HTML
-                $posthtml = "<p><font face=\"sans-serif\">".
-                  "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
-                  "<a href=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
-                  "<a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">".format_string($workshop->name,true)."</a></font></p>";
-                $posthtml .= "<hr><font face=\"sans-serif\">";
-                $posthtml .= "<p>$msg</p>";
-                $posthtml .= "<p>".get_string("mail9", "workshop",
-                  " <a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">".format_string($workshop->name,true)."</a>").'</p></font><hr>';
+                $posthtml = "<P><FONT FACE=sans-serif>".
+                  "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
+                  "<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
+                  "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A></FONT></P>";
+                $posthtml .= "<HR><FONT FACE=sans-serif>";
+                $posthtml .= "<P>$msg</P>";
+                $posthtml .= "<P>".get_string("mail3", "workshop").
+                  " <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A>.</P></FONT><HR>";
             } 
             else {
               $posthtml = "";
@@ -386,45 +361,45 @@ function workshop_cron () {
                 // "A comment has been added to the assignment \"$submission->title\" by
                 if (isstudent($course->id, $assessmentowner->id)) {
                     $msg = get_string("mail4", "workshop", $submission->title)." a $course->student.\n";
-                }
+                    }
                 else {
                     $msg = get_string("mail4", "workshop", $submission->title)." ".fullname($assessmentowner)."\n";
-                }
+                    }
                 // "The new comment can be seen in the workshop assignment '$workshop->name'
-                // $msg .= get_string("mail5", "workshop", $workshop->name)."\n\n";
+                $msg .= get_string("mail5", "workshop", $workshop->name)."\n\n";
     
-                $postsubject = "$course->shortname: $strworkshops: ".format_string($workshop->name,true);
-                $posttext  = "$course->shortname -> $strworkshops -> ".format_string($workshop->name,true)."\n";
+                $postsubject = "$course->shortname: $strworkshops: $workshop->name";
+                $posttext  = "$course->shortname -> $strworkshops -> $workshop->name\n";
                 $posttext .= "---------------------------------------------------------------------\n";
                 $posttext .= $msg;
-                // "The new comment can be seen in ..."
-                $posttext .= get_string("mail5", "workshop",
-                    format_string($workshop->name,true).",   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id")."\n";
+                // "You can see it in your workshop assignment"
+                $posttext .= get_string("mail3", "workshop").":\n";
+                $posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id\n";
                 $posttext .= "---------------------------------------------------------------------\n";
                 if ($sendto->mailformat == 1) {  // HTML
-                    $posthtml = "<p><font face=\"sans-serif\">".
-                    "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
-                    "<a href=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
-                    "<a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">".format_string($workshop->name,true)."</a></font></p>";
-                    $posthtml .= "<hr><font face=\"sans-serif\">";
-                    $posthtml .= "<p>$msg</p>";
-                    $posthtml .= "<p>".get_string("mail5", "workshop",
-                        " <a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">".format_string($workshop->name,true)."</a>")
-                        ."</p></font><hr>";
-                } 
+                    $posthtml = "<P><FONT FACE=sans-serif>".
+                    "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
+                    "<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
+                    "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A></FONT></P>";
+                    $posthtml .= "<HR><FONT FACE=sans-serif>";
+                    $posthtml .= "<P>$msg</P>";
+                    $posthtml .= "<P>".get_string("mail3", "workshop").
+                        " <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A>
+                        .</P></FONT><HR>";
+                    } 
                 else {
                     $posthtml = "";
-                }
+                    }
     
                 if (!$teacher = get_teacher($course->id)) {
                     echo "Error: can not find teacher for course $course->id!\n";
-                }
+                    }
                     
                 if (! email_to_user($sendto, $teacher, $postsubject, $posttext, $posthtml)) {
                     echo "Error: workshop cron: Could not send out mail for id $submission->id to user 
                         $sendto->id ($sendto->email)\n";
+                    }
                 }
-            }
             // see if the assessor needs to to told
             if ($comment->userid != $assessment->userid) {
                 $USER->lang = $assessmentowner->lang;
@@ -432,51 +407,142 @@ function workshop_cron () {
                 // "A comment has been added to the assignment \"$submission->title\" by
                 if (isstudent($course->id, $submissionowner->id)) {
                     $msg = get_string("mail4", "workshop", $submission->title)." a $course->student.\n";
-                }
+                    }
                 else {
                     $msg = get_string("mail4", "workshop", $submission->title).
                         " ".fullname($submissionowner)."\n";
-                }
+                    }
                 // "The new comment can be seen in the workshop assignment '$workshop->name'
-                // $msg .= get_string("mail5", "workshop", $workshop->name)."\n\n";
+                $msg .= get_string("mail5", "workshop", $workshop->name)."\n\n";
     
-                $postsubject = "$course->shortname: $strworkshops: ".format_string($workshop->name,true);
-                $posttext  = "$course->shortname -> $strworkshops -> ".format_string($workshop->name,true)."\n";
+                $postsubject = "$course->shortname: $strworkshops: $workshop->name";
+                $posttext  = "$course->shortname -> $strworkshops -> $workshop->name\n";
                 $posttext .= "---------------------------------------------------------------------\n";
                 $posttext .= $msg;
-                // "The new comment can be seen in ..."
-                $posttext .= get_string("mail5", "workshop",
-                    format_string($workshop->name,true).",  $CFG->wwwroot/mod/workshop/view.php?id=$cm->id")."\n";
+                // "You can see it in your workshop assignment"
+                $posttext .= get_string("mail3", "workshop").":\n";
+                $posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id\n";
                 $posttext .= "---------------------------------------------------------------------\n";
                 if ($sendto->mailformat == 1) {  // HTML
-                    $posthtml = "<p><font face=\"sans-serif\">".
-                    "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
-                    "<a href=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
-                    "<a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">".format_string($workshop->name,true)."</a></font></p>";
-                    $posthtml .= "<hr><font face=\"sans-serif\">";
-                    $posthtml .= "<p>$msg</p>";
-                    $posthtml .= "<p>".get_string("mail5", "workshop",
-                        " <a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">".format_string($workshop->name,true)."</a>")
-                        ."</p></font><hr>";
-                } 
+                    $posthtml = "<P><FONT FACE=sans-serif>".
+                    "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
+                    "<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
+                    "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A></FONT></P>";
+                    $posthtml .= "<HR><FONT FACE=sans-serif>";
+                    $posthtml .= "<P>$msg</P>";
+                    $posthtml .= "<P>".get_string("mail3", "workshop").
+                        " <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A>.</P></FONT><HR>";
+                    } 
                 else {
                     $posthtml = "";
-                }
+                    }
     
                 if (!$teacher = get_teacher($course->id)) {
                     echo "Error: can not find teacher for course $course->id!\n";
-                }
+                    }
                     
                 if (! email_to_user($sendto, $teacher, $postsubject, $posttext, $posthtml)) {
                     echo "Error: workshop cron: Could not send out mail for id $submission->id to user 
                         $sendto->id ($sendto->email)\n";
-                }
+                    }
                 if (! set_field("workshop_comments", "mailed", "1", "id", "$comment->id")) {
                     echo "Could not update the mailed field for comment id $comment->id\n";
+                    }
                 }
             }
         }
+
+
+    // look for new gradings
+    if ($assessments = workshop_get_unmailed_graded_assessments($cutofftime)) {
+        $timenow = time();
+
+        foreach ($assessments as $assessment) {
+
+            echo "Processing workshop assessment $assessment->id (graded)\n";
+            
+            // only process the entry once
+            if (! set_field("workshop_assessments", "mailed", "1", "id", "$assessment->id")) {
+                echo "Could not update the mailed field for id $assessment->id\n";
+            }
+
+            if (! $submission = get_record("workshop_submissions", "id", "$assessment->submissionid")) {
+                echo "Could not find submission $assessment->submissionid\n";
+                continue;
+            }
+
+            if (! $workshop = get_record("workshop", "id", $submission->workshopid)) {
+                echo "Could not find workshop id $submission->workshopid\n";
+                continue;
+            }
+            if (! $course = get_record("course", "id", $workshop->course)) {
+                error("Could not find course id $workshop->course");
+                continue;
+            }
+            if (! $cm = get_coursemodule_from_instance("workshop", $workshop->id, $course->id)) {
+                error("Course Module ID was incorrect");
+                continue;
+            }
+            if (! $submissionowner = get_record("user", "id", "$submission->userid")) {
+                echo "Could not find user $submission->userid\n";
+                continue;
+            }
+            if (! $assessmentowner = get_record("user", "id", "$assessment->userid")) {
+                echo "Could not find user $assessment->userid\n";
+                continue;
+            }
+            if (! isstudent($course->id, $submissionowner->id) and !isteacher($course->id, 
+                        $submissionowner->id)) {
+                continue;  // Not an active participant
+            }
+            if (! isstudent($course->id, $assessmentowner->id) and !isteacher($course->id, 
+                        $assessmentowner->id)) {
+                continue;  // Not an active participant
+            }
+
+            $strworkshops = get_string("modulenameplural", "workshop");
+            $strworkshop  = get_string("modulename", "workshop");
+
+            // it's a grading tell the assessment owner
+            $USER->lang = $assessmentowner->lang;
+            $sendto = $assessmentowner;
+            // Your assessment of the assignment \"$submission->title\" has by reviewed
+            $msg = get_string("mail6", "workshop", $submission->title).".\n";
+            // The comments given by the $course->teacher can be seen in the Workshop Assignment 
+            $msg .= get_string("mail7", "workshop", $course->teacher)." '$workshop->name'.\n\n";
+
+            $postsubject = "$course->shortname: $strworkshops: $workshop->name";
+            $posttext  = "$course->shortname -> $strworkshops -> $workshop->name\n";
+            $posttext .= "---------------------------------------------------------------------\n";
+            $posttext .= $msg;
+            // "You can see it in your workshop assignment"
+            $posttext .= get_string("mail3", "workshop").":\n";
+            $posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id\n";
+            $posttext .= "---------------------------------------------------------------------\n";
+            if ($sendto->mailformat == 1) {  // HTML
+                $posthtml = "<P><FONT FACE=sans-serif>".
+                    "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
+                    "<A HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</A> ->".
+                    "<A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A></FONT></P>";
+                $posthtml .= "<HR><FONT FACE=sans-serif>";
+                $posthtml .= "<P>$msg</P>";
+                $posthtml .= "<P>".get_string("mail3", "workshop").
+                    " <A HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</A>.</P></FONT><HR>";
+            } else {
+              $posthtml = "";
+            }
+
+            if (!$teacher = get_teacher($course->id)) {
+                echo "Error: can not find teacher for course $course->id!\n";
+                }
+                
+            if (! email_to_user($sendto, $teacher, $postsubject, $posttext, $posthtml)) {
+                echo "Error: workshop cron: Could not send out mail for id $submission->id to user 
+                    $sendto->id ($sendto->email)\n";
+            }
+        }
     }
+
     return true;
 }
 
@@ -495,10 +561,6 @@ function workshop_delete_instance($id) {
     $result = true;
 
     if (! delete_records("workshop_comments", "workshopid", "$workshop->id")) {
-        $result = false;
-    }
-
-    if (! delete_records("workshop_stockcomments", "workshopid", "$workshop->id")) {
         $result = false;
     }
 
@@ -533,50 +595,24 @@ function workshop_delete_instance($id) {
 ///////////////////////////////////////////////////////////////////////////////
 function workshop_grades($workshopid) {
 /// Must return an array of grades, indexed by user, and a max grade.
-/// only returns grades once assessment has started
-/// returns nothing if workshop is not graded
-    global $CFG;
+/// only retruns grades in phase 6
+global $CFG;
 
-    $return = null;
     if ($workshop = get_record("workshop", "id", $workshopid)) {
-        if (($workshop->assessmentstart < time()) and $workshop->gradingstrategy) {
-            if ($students = get_course_students($workshop->course)) {
-                foreach ($students as $student) {
-                    if ($workshop->wtype) {
-                        $gradinggrade = workshop_gradinggrade($workshop, $student);
-                    } else { // ignore grading grades for simple assignments
-                        $gradinggrade = 0;
-                    }
-                    $bestgrade = 0;
-                    if ($submissions = workshop_get_user_submissions($workshop, $student)) {
-                        foreach ($submissions as $submission) {
-                            if (!$submission->late) {
-                                $grade = workshop_submission_grade($workshop, $submission);
-                            } else {
-                                $grade = 0.01;
-                            }
-                            if ($grade > $bestgrade) {
-                                $bestgrade = $grade;
-                            }
-                        }
-                    }
-                    $return->grades[$student->id] = $gradinggrade + $bestgrade;
+        if ($workshop->phase == 6) {
+            if ($bestsubmissions = get_records_sql("SELECT userid, max(finalgrade) finalgrade FROM
+                    {$CFG->prefix}workshop_submissions WHERE workshopid = $workshopid GROUP
+                    BY userid")) {
+                foreach ($bestsubmissions as $bestgrade) {
+                    $return->grades[$bestgrade->userid] = $bestgrade->finalgrade;
                 }
             }
         }
-        // set maximum grade if graded
-        if ($workshop->gradingstrategy) {
-            if ($workshop->wtype) {
-                $return->maxgrade = $workshop->grade + $workshop->gradinggrade;
-            } else { // ignore grading grades for simple assignemnts
-                $return->maxgrade = $workshop->grade;
-            }
-        }
+        $return->maxgrade = $workshop->grade;
     }
     return $return;
 }
 
-//////////////////////////////////////////////////////////////////////////////////////
 function workshop_is_recent_activity($course, $isteacher, $timestart) {//jlw1 added for adding mark to courses with activity in My Moodle
     global $CFG;
 
@@ -622,6 +658,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                 }
             // if we got some "live" ones then output them
             if ($agreecontent) {
+                $strftimerecent = get_string("strftimerecent");
                 print_headline(get_string("workshopagreedassessments", "workshop").":");
                 foreach ($logs as $log) {
                     //Create a temp valid module structure (only need courseid, moduleid)
@@ -629,17 +666,21 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                     $tempmod->id = $log->workshopid;
                     //Obtain the visible property from the instance
                     if (instance_is_visible("workshop",$tempmod)) {
-                        if (!isteacher($course->id, $log->userid)) {  // don't break anonymous rule
-                            $log->firstname = $course->student;
-                            $log->lastname = '';
+                        $date = userdate($log->time, $strftimerecent);
+                        if (isteacher($course->id, $log->userid)) {
+                            echo "<p><font size=1>$date - ".fullname($log)."<br />";
+                            }
+                        else { // don't break anonymous rule
+                            echo "<p><font size=1>$date - A $course->student<br />";
+                            }
+                        echo "\"<a href=\"$CFG->wwwroot/mod/workshop/$log->url\">";
+                        echo "$log->name";
+                        echo "</a>\"</font></p>";
                         }
-                        print_recent_activity_note($log->time, $log, $isteacher, $log->name,
-                                                   $CFG->wwwroot.'/mod/workshop/'.$log->url);
                     }
                 }
             }
         }
-    }
 
     // have a look for new assessments for this user (assess) 
     $assesscontent = false;
@@ -658,6 +699,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                 }
             // if we got some "live" ones then output them
             if ($assesscontent) {
+                $strftimerecent = get_string("strftimerecent");
                 print_headline(get_string("workshopassessments", "workshop").":");
                 foreach ($logs as $log) {
                     //Create a temp valid module structure (only need courseid, moduleid)
@@ -665,17 +707,22 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                     $tempmod->id = $log->workshopid;
                     //Obtain the visible property from the instance
                     if (instance_is_visible("workshop",$tempmod)) {
-                        if (!isteacher($course->id, $log->userid)) {  // don't break anonymous rule
-                            $log->firstname = $course->student;
-                            $log->lastname = '';
+                        $date = userdate($log->time, $strftimerecent);
+                        if (isteacher($course->id, $log->userid)) {
+                            echo "<p><font size=1>$date - ".fullname($log)."<br />";
+                            }
+                        else { // don't break anonymous rule
+                            echo "<p><font size=1>$date - A $course->student<br />";
+                            }
+                        echo "\"<a href=\"$CFG->wwwroot/mod/workshop/$log->url\">";
+                        echo "$log->name";
+                        echo "</a>\"</font></p>";
                         }
-                        print_recent_activity_note($log->time, $log, $isteacher, $log->name,
-                                                   $CFG->wwwroot.'/mod/workshop/'.$log->url);
                     }
                 }
             }
         }
-    }
+
     // have a look for new comments for this user (comment) 
     $commentcontent = false;
     if (!$isteacher) { // teachers only need to see submissions
@@ -693,6 +740,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                 }
             // if we got some "live" ones then output them
             if ($commentcontent) {
+                $strftimerecent = get_string("strftimerecent");
                 print_headline(get_string("workshopcomments", "workshop").":");
                 foreach ($logs as $log) {
                     //Create a temp valid module structure (only need courseid, moduleid)
@@ -700,15 +748,16 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                     $tempmod->id = $log->workshopid;
                     //Obtain the visible property from the instance
                     if (instance_is_visible("workshop",$tempmod)) {
-                        $log->firstname = $course->student;    // Keep anonymous
-                        $log->lastname = '';
-                        print_recent_activity_note($log->time, $log, $isteacher, $log->name,
-                                                   $CFG->wwwroot.'/mod/workshop/'.$log->url);
+                        $date = userdate($log->time, $strftimerecent);
+                        echo "<p><font size=1>$date - A $course->student<br />";
+                        echo "\"<a href=\"$CFG->wwwroot/mod/workshop/$log->url\">";
+                        echo "$log->name";
+                        echo "</a>\"</font></p>";
+                        }
                     }
                 }
             }
         }
-    }
 
     // have a look for new assessment gradings for this user (grade)
     $gradecontent = false;
@@ -726,6 +775,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
             }
         // if we got some "live" ones then output them
         if ($gradecontent) {
+            $strftimerecent = get_string("strftimerecent");
             print_headline(get_string("workshopfeedback", "workshop").":");
             foreach ($logs as $log) {
                 //Create a temp valid module structure (only need courseid, moduleid)
@@ -733,14 +783,15 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                 $tempmod->id = $log->workshopid;
                 //Obtain the visible property from the instance
                 if (instance_is_visible("workshop",$tempmod)) {
-                    $log->firstname = $course->teacher;    // Keep anonymous
-                    $log->lastname = '';
-                    print_recent_activity_note($log->time, $log, $isteacher, $log->name,
-                                               $CFG->wwwroot.'/mod/workshop/'.$log->url);
+                    $date = userdate($log->time, $strftimerecent);
+                    echo "<p><font size=1>$date - $course->teacher<br />";
+                    echo "\"<a href=\"$CFG->wwwroot/mod/workshop/$log->url\">";
+                    echo "$log->name";
+                    echo "</a>\"</font></p>";
+                    }
                 }
             }
         }
-    }
 
     // have a look for new submissions (only show to teachers) (submit)
     $submitcontent = false;
@@ -759,6 +810,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                 }
             // if we got some "live" ones then output them
             if ($submitcontent) {
+                $strftimerecent = get_string("strftimerecent");
                 print_headline(get_string("workshopsubmissions", "workshop").":");
                 foreach ($logs as $log) {
                     //Create a temp valid module structure (only need courseid, moduleid)
@@ -766,13 +818,16 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                     $tempmod->id = $log->workshopid;
                     //Obtain the visible property from the instance
                     if (instance_is_visible("workshop",$tempmod)) {
-                        print_recent_activity_note($log->time, $log, $isteacher, $log->name,
-                                                   $CFG->wwwroot.'/mod/workshop/'.$log->url);
+                        $date = userdate($log->time, $strftimerecent);
+                        echo "<p><font size=1>$date - ".fullname($log)."<br />";
+                        echo "\"<a href=\"$CFG->wwwroot/mod/workshop/$log->url\">";
+                        echo "$log->name";
+                        echo "</a>\"</font></p>";
+                        }
                     }
                 }
             }
         }
-    }
 
     return $agreecontent or $assesscontent or $commentcontent or $gradecontent or $submitcontent;
 }
@@ -798,37 +853,26 @@ function workshop_refresh_events($courseid = 0) {
     $moduleid = get_field('modules', 'id', 'name', 'workshop');
     
     foreach ($workshops as $workshop) {
+        $event = NULL;
+        $event->name        = addslashes($workshop->name);
+        $event->description = addslashes($workshop->description);
+        $event->timestart   = $workshop->deadline;
+
+        if ($event->id = get_field('event', 'id', 'modulename', 'workshop', 'instance', $workshop->id)) {
+            update_event($event);
     
-        $dates = array(
-            'submissionstart' => $workshop->submissionstart,
-            'submissionend' => $workshop->submissionend,
-            'assessmentstart' => $workshop->assessmentstart,
-            'assessmentend' => $workshop->assessmentend
-        );
-        
-        foreach ($dates as $type => $date) {
-        
-            if ($date) {
-                if ($event = get_record('event', 'modulename', 'workshop', 'instance', $workshop->id, 'eventtype', $type)) {
-                    $event->name        = addslashes(get_string($type.'event','workshop', $workshop->name));
-                    $event->description = addslashes($workshop->description);
-                    $event->eventtype   = $type;
-                    $event->timestart   = $date;
-                    update_event($event);
-                } else {
-                    $event->courseid    = $workshop->course;
-                    $event->modulename  = 'workshop';
-                    $event->instance    = $workshop->id; 
-                    $event->name        = addslashes(get_string($type.'event','workshop', $workshop->name));
-                    $event->description = addslashes($workshop->description);
-                    $event->eventtype   = $type;
-                    $event->timestart   = $date;
-                    $event->timeduration = 0;
-                    $event->visible     = get_field('course_modules', 'visible', 'module', $moduleid, 'instance', $workshop->id); 
-                    add_event($event);
-                }
-            }
+        } else {
+            $event->courseid    = $workshop->course;
+            $event->groupid     = 0;
+            $event->userid      = 0;
+            $event->modulename  = 'workshop';
+            $event->instance    = $workshop->id; 
+            $event->eventtype   = 'deadline';
+            $event->timeduration = 0;
+            $event->visible     = get_field('course_modules', 'visible', 'module', $moduleid, 'instance', $workshop->id); 
+            add_event($event);
         }
+
     }
     return true;
 }   
@@ -839,92 +883,32 @@ function workshop_update_instance($workshop) {
 // Given an object containing all the necessary data, 
 // (defined by the form in mod.html) this function 
 // will update an existing instance with new data.
-    global $CFG;
 
     $workshop->timemodified = time();
 
-    $workshop->submissionstart = make_timestamp($workshop->submissionstartyear, 
-            $workshop->submissionstartmonth, $workshop->submissionstartday, $workshop->submissionstarthour, 
-            $workshop->submissionstartminute);
-
-    $workshop->assessmentstart = make_timestamp($workshop->assessmentstartyear, 
-            $workshop->assessmentstartmonth, $workshop->assessmentstartday, $workshop->assessmentstarthour, 
-            $workshop->assessmentstartminute);
-
-    $workshop->submissionend = make_timestamp($workshop->submissionendyear, 
-            $workshop->submissionendmonth, $workshop->submissionendday, $workshop->submissionendhour, 
-            $workshop->submissionendminute);
-
-    $workshop->assessmentend = make_timestamp($workshop->assessmentendyear, 
-            $workshop->assessmentendmonth, $workshop->assessmentendday, $workshop->assessmentendhour, 
-            $workshop->assessmentendminute);
-
-    $workshop->releasegrades = make_timestamp($workshop->releaseyear, 
-            $workshop->releasemonth, $workshop->releaseday, $workshop->releasehour, 
-            $workshop->releaseminute);
-            
-    if (!workshop_check_dates($workshop)) {
-        return get_string('invaliddates', 'workshop');
-    }
-
-    // set the workshop's type
-    $wtype = 0; // 3 phases, no grading grades
-    if ($workshop->includeself or $workshop->ntassessments) $wtype = 1; // 3 phases with grading grades
-    if ($workshop->nsassessments) $wtype = 2; // 5 phases with grading grades 
-    $workshop->wtype = $wtype;
-    
-    // encode password if necessary
-    if (!empty($workshop->password)) {
-        $workshop->password = md5($workshop->password);
-    } else {
-        unset($workshop->password);
-    }
+    $workshop->deadline = make_timestamp($workshop->deadlineyear, 
+            $workshop->deadlinemonth, $workshop->deadlineday, $workshop->deadlinehour, 
+            $workshop->deadlineminute);
 
     $workshop->id = $workshop->instance;
 
     if ($returnid = update_record("workshop", $workshop)) {
 
-        $dates = array(
-            'submissionstart' => $workshop->submissionstart,
-            'submissionend' => $workshop->submissionend,
-            'assessmentstart' => $workshop->assessmentstart,
-            'assessmentend' => $workshop->assessmentend
-        );
-        $moduleid = get_field('modules', 'id', 'name', 'workshop');
-        
-        foreach ($dates as $type => $date) {
-            if ($event = get_record('event', 'modulename', 'workshop', 'instance', $workshop->id, 'eventtype', $type)) {
-                $event->name        = get_string($type.'event','workshop', $workshop->name);
-                $event->description = $workshop->description;
-                $event->eventtype   = $type;
-                $event->timestart   = $date;
-                update_event($event);
-            } else if ($date) {
-                $event = NULL;
-                $event->name        = get_string($type.'event','workshop', $workshop->name);
-                $event->description = $workshop->description;
-                $event->courseid    = $workshop->course;
-                $event->groupid     = 0;
-                $event->userid      = 0;
-                $event->modulename  = 'workshop';
-                $event->instance    = $workshop->instance;
-                $event->eventtype   = $type;
-                $event->timestart   = $date;
-                $event->timeduration = 0;
-                $event->visible     = get_field('course_modules', 'visible', 'module', $moduleid, 'instance', $workshop->id); 
-                add_event($event);
-            }
-        }
-    }
+        $event = NULL;
 
-    if (time() > $workshop->assessmentstart) {
-        // regrade all the submissions...
-        set_field("workshop_submissions", "nassessments", 0, "workshopid", $workshop->id);
-        workshop_grade_assessments($workshop);
+        if ($event->id = get_field('event', 'id', 'modulename', 'workshop', 'instance', $workshop->id)) {
+
+            $event->name        = $workshop->name;
+            $event->description = $workshop->description;
+            $event->timestart   = $workshop->deadline;
+
+            update_event($event);
+        }
     }
 
     return $returnid;
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////
 function workshop_user_complete($course, $user, $mod, $workshop) {
@@ -977,20 +961,20 @@ function workshop_get_participants($workshopid) {
     global $CFG;
 
     //Get students from workshop_submissions
-    $st_submissions = get_records_sql("SELECT DISTINCT u.id, u.id
+    $st_submissions = get_records_sql("SELECT DISTINCT u.*
                                        FROM {$CFG->prefix}user u,
                                             {$CFG->prefix}workshop_submissions s
                                        WHERE s.workshopid = '$workshopid' and
                                              u.id = s.userid");
     //Get students from workshop_assessments
-    $st_assessments = get_records_sql("SELECT DISTINCT u.id, u.id
+    $st_assessments = get_records_sql("SELECT DISTINCT u.*
                                  FROM {$CFG->prefix}user u,
                                       {$CFG->prefix}workshop_assessments a
                                  WHERE a.workshopid = '$workshopid' and
                                        u.id = a.userid");
 
     //Get students from workshop_comments
-    $st_comments = get_records_sql("SELECT DISTINCT u.id, u.id
+    $st_comments = get_records_sql("SELECT DISTINCT u.*
                                    FROM {$CFG->prefix}user u,
                                         {$CFG->prefix}workshop_comments c
                                    WHERE c.workshopid = '$workshopid' and
@@ -1012,200 +996,9 @@ function workshop_get_participants($workshopid) {
     return ($st_submissions);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////
-function workshop_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, 
-                                           $workshop="0", $user="", $groupid="") {
-    // Returns all workshop posts since a given time.  If workshop is specified then
-    // this restricts the results
-
-    global $CFG;
-
-    if ($workshop) {
-        $workshopselect = " AND cm.id = '$workshop'";
-    } else {
-        $workshopselect = "";
-    }
-
-    if ($user) {
-        $userselect = " AND u.id = '$user'";
-    } else {
-        $userselect = "";
-    }
-
-    $posts = get_records_sql("SELECT s.*, u.firstname, u.lastname,
-            u.picture, cm.instance, w.name, cm.section
-            FROM {$CFG->prefix}workshop_submissions s,
-            {$CFG->prefix}user u,
-            {$CFG->prefix}course_modules cm,
-            {$CFG->prefix}workshop w
-            WHERE s.timecreated  > '$sincetime' $workshopselect
-            AND s.userid = u.id $userselect
-            AND w.course = '$courseid' $groupselect
-            AND cm.instance = w.id
-            AND cm.course = w.course
-            AND s.workshopid = w.id
-            ORDER BY s.id");
-
-
-    if (empty($posts)) {
-        return;
-    }
-
-    foreach ($posts as $post) {
-
-        if (empty($groupid) || ismember($groupid, $post->userid)) {
-
-            $tmpactivity = new Object;
-
-            $tmpactivity->type = "workshop";
-            $tmpactivity->defaultindex = $index;
-            $tmpactivity->instance = $post->instance;
-            $tmpactivity->name = $post->name;
-            $tmpactivity->section = $post->section;
-
-            $tmpactivity->content->id = $post->id;
-            $tmpactivity->content->title = $post->title;
-
-            $tmpactivity->user->userid = $post->userid;
-            $tmpactivity->user->fullname = fullname($post);
-            $tmpactivity->user->picture = $post->picture;
-
-            $tmpactivity->timestamp = $post->timecreated;
-            $activities[] = $tmpactivity;
-
-            $index++;
-        }
-    }
-
-    return;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////
-function workshop_print_recent_mod_activity($activity, $course, $detail=false) {
-
-    global $CFG;
-
-    echo '<table border="0" cellpadding="3" cellspacing="0">';
-
-    if (!empty($activity->content->parent)) {
-        $openformat = "<font size=\"2\"><i>";
-        $closeformat = "</i></font>";
-    } else {
-        $openformat = "<b>";
-        $closeformat = "</b>";
-    }
-
-    echo "<tr><td class=\"workshoppostpicture\" width=\"35\" valign=\"top\">";
-    print_user_picture($activity->user->userid, $course, $activity->user->picture);
-    echo "</td><td>$openformat";
-
-    if ($detail) {
-        echo "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
-            "height=\"16\" width=\"16\" alt=\"".strip_tags(format_string($activity->name,true))."\" />  ";
-    }
-    echo "<a href=\"$CFG->wwwroot/mod/workshop/view.php?" 
-        . "#" . $activity->content->id . "\">".$activity->content->title;
-
-    echo "</a>$closeformat";
-
-    echo "<br /><font size=\"2\">";
-    echo "<a href=\"$CFG->wwwroot/user/view.php?id=" . $activity->user->userid . "&amp;course=" . "$course\">"
-        . $activity->user->fullname . "</a>";
-    echo " - " . userdate($activity->timestamp) . "</font></td></tr>";
-    echo "</table>";
-
-    return;
-
-}
-
 
 //////////////////////////////////////////////////////////////////////////////////////
 // Non-standard workshop functions
-///////////////////////////////////////////////////////////////////////////////////////////////
-function workshop_compare_assessments($workshop, $assessment1, $assessment2) {
-    global $WORKSHOP_ASSESSMENT_COMPS, $WORKSHOP_EWEIGHTS;
-    // first get the assignment elements for maxscores...
-    $elementsraw = get_records("workshop_elements", "workshopid", $workshop->id, "elementno ASC");
-    foreach ($elementsraw as $element) {
-        $maxscore[] = $element->maxscore;   // to renumber index 0,1,2...
-        $weight[] = $WORKSHOP_EWEIGHTS[$element->weight];   // get real value and renumber index 0,1,2...
-    }
-    for ($i = 0; $i < 2; $i++) {
-        if ($i) {
-            $rawgrades = get_records("workshop_grades", "assessmentid", $assessment1->id, "elementno ASC");
-        } else {
-            $rawgrades = get_records("workshop_grades", "assessmentid", $assessment2->id, "elementno ASC");
-        }
-        foreach ($rawgrades as $grade) {
-            $grades[$i][] = $grade->grade;
-        }
-    }
-    $sumdiffs = 0;
-    $sumweights = 0;
-    switch ($workshop->gradingstrategy) {
-        case 1 : // accumulative grading and...
-        case 4 : // ...rubic grading
-            for ($i=0; $i < $workshop->nelements; $i++) {
-                $diff = ($grades[0][$i] - $grades[1][$i]) * $weight[$i] / $maxscore[$i];
-                $sumdiffs += $diff * $diff; // use squared distances
-                $sumweights += $weight[$i];
-                }
-            break;
-        case 2 :  // error banded grading
-            // ignore maxscores here, the grades are either 0 or 1,
-            for ($i=0; $i < $workshop->nelements; $i++) {
-                $diff = ($grades[0][$i] - $grades[1][$i]) * $weight[$i];
-                $sumdiffs += $diff * $diff; // use squared distances
-                $sumweights += $weight[$i];
-                }
-            break;
-        case 3 : // criterion grading
-            // here we only need to look at the difference between the "zero" grade elements
-            $diff = ($grades[0][0] - $grades[1][0]) / (count($elementsraw) - 1);
-            $sumdiffs = $diff * $diff;
-            $sumweights = 1;
-            break;
-    }            
-    // convert to a sensible grade (always out of 100)
-    $COMP = (object)$WORKSHOP_ASSESSMENT_COMPS[$workshop->assessmentcomps];
-    $factor = $COMP->value;
-    $gradinggrade = (($factor - ($sumdiffs / $sumweights)) / $factor) * 100;
-    if ($gradinggrade < 0) {
-        $gradinggrade = 0;
-    }
-    return $gradinggrade;
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////
-function workshop_count_assessments($submission) {
-    // Return the (real) assessments for this submission, 
-    $timenow = time();
-   return count_records_select("workshop_assessments", 
-           "submissionid = $submission->id AND timecreated < $timenow");
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////
-function workshop_count_ungraded_assessments($workshop) {
-    // function returns the number of ungraded assessments by students
-    global $CFG;
-    
-    $timenow = time();
-    $n = 0;
-    // get all the cold assessments that have not been graded
-    if ($assessments = get_records_select("workshop_assessments", "workshopid = $workshop->id AND 
-            (timecreated + $CFG->maxeditingtime) < $timenow AND timegraded = 0")) {
-        foreach ($assessments as $assessment) {
-            if (isstudent($workshop->course, $assessment->userid)) {
-                $n++;
-            }
-        }
-    }
-    return $n;
-}
-
-
 //////////////////////////////////////////////////////////////////////////////////////
 function workshop_file_area($workshop, $submission) {
     return make_upload_directory( workshop_file_area_name($workshop, $submission) );
@@ -1223,7 +1016,7 @@ function workshop_file_area_name($workshop, $submission) {
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 function workshop_get_agree_logs($course, $timestart) {
-    // get the "agree" entries for this user (the assessment owner) and add the first and last names 
+    // get the "agree" entries for this user (the assessment owner and add the first and last names 
     // the last two probably wont be used...
     global $CFG, $USER;
     if (empty($USER->id)) {
@@ -1263,28 +1056,6 @@ function workshop_get_assess_logs($course, $timestart) {
                                 AND l.course = $course->id AND l.module = 'workshop' AND l.action = 'assess'
                                 AND a.id = l.info AND s.id = a.submissionid AND s.userid = $USER->id
                                 AND u.id = a.userid AND e.id = a.workshopid");
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////
-function workshop_get_assessments($submission, $all = '', $order = '') {
-    // Return assessments for this submission ordered oldest first, newest last
-    // new assessments made within the editing time are NOT returned unless they
-    // belong to the user or the second argument is set to ALL
-    global $CFG, $USER;
-
-    $timenow = time();
-    if (!$order) {
-        $order = "timecreated DESC";
-    }
-    if ($all != 'ALL') {
-        return get_records_select("workshop_assessments", "(submissionid = $submission->id) AND 
-            ((timecreated < $timenow - $CFG->maxeditingtime) or 
-                ((timecreated < $timenow) AND (userid = $USER->id)))", $order);
-    } else {
-        return get_records_select("workshop_assessments", "submissionid = $submission->id AND 
-            (timecreated < $timenow)", $order);
-    }
 }
 
 
@@ -1349,37 +1120,6 @@ function workshop_get_student_submission($workshop, $user) {
 }
 
 
-//////////////////////////////////////////////////////////////////////////////////////
-function workshop_get_student_submissions($workshop, $order = "title") {
-// Return all  ENROLLED student submissions
-    global $CFG;
-    
-    if ($order == "title") {
-        $order = "s.title";
-        }
-    if ($order == "name") {
-        $order = "a.lastname, a.firstname";
-        }
-    if ($order == "time") {
-        $order = "s.timecreated ASC";
-    }
-    // make sure it works on the site course
-    $select = "u.course = '$workshop->course' AND";
-    $site = get_site();
-    if ($workshop->course == $site->id) {
-        $select = '';
-    }
-
-    return get_records_sql("SELECT s.* FROM {$CFG->prefix}workshop_submissions s, 
-                            {$CFG->prefix}user_students u, {$CFG->prefix}user a 
-                            WHERE $select s.userid = u.userid
-                              AND a.id = u.userid
-                              AND s.workshopid = $workshop->id
-                              AND s.timecreated > 0
-                              ORDER BY $order");
-}
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////
 function workshop_get_submit_logs($course, $timestart) {
     // get the "submit" entries and add the first and last names...
@@ -1400,14 +1140,14 @@ function workshop_get_submit_logs($course, $timestart) {
 
 //////////////////////////////////////////////////////////////////////////////////////
 function workshop_get_unmailed_assessments($cutofftime) {
-    /// Return list of assessments that have not been mailed out
+    /// Return list of (ungraded) assessments that have not been mailed out
     global $CFG;
     return get_records_sql("SELECT a.*, g.course, g.name
                               FROM {$CFG->prefix}workshop_assessments a, {$CFG->prefix}workshop g
                              WHERE a.mailed = 0 
+                               AND a.timegraded = 0
                                AND a.timecreated < $cutofftime 
-                               AND g.id = a.workshopid
-                               AND g.releasegrades < $cutofftime");
+                               AND g.id = a.workshopid");
 }
 
 
@@ -1449,350 +1189,44 @@ function workshop_get_unmailed_resubmissions($cutofftime) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////
-function workshop_get_user_assessments($workshop, $user) {
-// Return all the  user's assessments, newest first, oldest last (hot, warm and cold ones)
-    return get_records_select("workshop_assessments", "workshopid = $workshop->id AND userid = $user->id", 
-                "timecreated DESC");
+function workshop_get_student_submissions($workshop, $order = "title") {
+// Return all  ENROLLED student submissions
+    global $CFG;
+    
+    if ($order == "title") {
+        $order = "s.title";
+        }
+    if ($order == "name") {
+        $order = "a.firstname, a.lastname";
+        }
+    if ($order == "grade") {
+        $order = "$workshop->teacherweight * s.teachergrade + $workshop->peerweight * s.peergrade DESC";
+        }
+
+    // make sure it works on the site course
+    $select = "u.course = '$workshop->course' AND";
+    $site = get_site();
+    if ($workshop->course == $site->id) {
+        $select = '';
+    }
+
+    return get_records_sql("SELECT s.* FROM {$CFG->prefix}workshop_submissions s, 
+                            {$CFG->prefix}user_students u, {$CFG->prefix}user a 
+                            WHERE $select s.userid = u.userid
+                              AND a.id = u.userid
+                              AND s.workshopid = $workshop->id
+                              AND s.timecreated > 0
+                              ORDER BY $order");
 }
 
 
 //////////////////////////////////////////////////////////////////////////////////////
 function workshop_get_user_submissions($workshop, $user) {
     // return real submissions of user newest first, oldest last. Ignores the dummy submissions
-    // which get created to hold the final grades for users that make no submissions
+    // which get created to hold the final grades for users for make no submissions)
     return get_records_select("workshop_submissions", "workshopid = $workshop->id AND 
         userid = $user->id AND timecreated > 0", "timecreated DESC" );
 }
 
-
-//////////////////////////////////////////////////////////////////////////////////////
-function workshop_grade_assessments($workshop, $verbose=false) {
-    global $WORKSHOP_EWEIGHTS;
-    
-    // timeout after 10 minutes
-    @set_time_limit(600);
-
-    $timenow = time();
-    
-    // set minumim value for the variance (of the elements)
-    $minvar = 0.05;
-
-    // check when the standard deviations were calculated
-    $oldtotalassessments = get_field("workshop_elements", "totalassessments", "workshopid", $workshop->id, 
-                "elementno", 0);
-    $totalassessments = count_records("workshop_assessments", "workshopid", $workshop->id);
-    // calculate the std. devs every 10 assessments for low numbers of assessments, thereafter every 100 new assessments
-    if ((($totalassessments < 100) and (($totalassessments - $oldtotalassessments) > 10)) or 
-            (($totalassessments - $oldtotalassessments) > 100)) {
-        // calculate the means for each submission using just the "good" assessments 
-        if ($submissions = get_records("workshop_submissions", "workshopid", $workshop->id)) {
-            foreach ($submissions as $submission) {
-                $nassessments[$submission->id] = 0;
-                if ($assessments = workshop_get_assessments($submission)) {
-                    foreach ($assessments as $assessment) {
-                        // test if assessment is "good", a teacher assessment always "good", but may be weighted out 
-                        if (isteacher($workshop->course, $assessment->userid)) {
-                            if (!$workshop->teacherweight) {
-                                // drop teacher's assessment as weight is zero
-                                continue;
-                            }
-                        } elseif ((!$assessment->gradinggrade and $assessment->timegraded) or 
-                                ($workshop->agreeassessments and !$assessment->timeagreed)) {
-                            // it's a duff assessment, or it's not been agreed
-                            continue;
-                        }
-                        if (isset($num[$submission->id])) {
-                            if (isteacher($workshop->course, $assessment->userid)) {
-                                $num[$submission->id] += $workshop->teacherweight; // weight teacher's assessment
-                            } else {
-                                $num[$submission->id]++; // number of assessments
-                            }
-                            $nassessments[$submission->id]++;
-                        } else {
-                            if (isteacher($workshop->course, $assessment->userid)) {
-                                $num[$submission->id] = $workshop->teacherweight;
-                            } else {
-                                $num[$submission->id] = 1;
-                            }
-                            $nassessments[$submission->id] = 1;
-                        }
-                        for ($i = 0; $i < $workshop->nelements; $i++) {
-                            $grade =  get_field("workshop_grades", "grade",
-                                    "assessmentid", $assessment->id, "elementno", $i);
-                            if (isset($sum[$submission->id][$i])) {
-                                if (isteacher($workshop->course, $assessment->userid)) {
-                                    $sum[$submission->id][$i] += $workshop->teacherweight * $grade; // teacher's grade
-                                } else {
-                                    $sum[$submission->id][$i] += $grade; // student's grade
-                                }
-                            } else { 
-                                if (isteacher($workshop->course, $assessment->userid)) {
-                                    $sum[$submission->id][$i] = $workshop->teacherweight * $grade; // teacher's grade
-                                } else {
-                                    $sum[$submission->id][$i] = $grade; // students's grade
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            if (!isset($num)) { 
-                // no assessments yet
-                return;
-            }
-            reset($num);
-            // calculate the means for each submission
-            $total = 0;
-            foreach ($num as $submissionid => $n) {
-                if ($n) { // stop division by zero
-                    for ($i = 0; $i < $workshop->nelements; $i++) {
-                        $mean[$submissionid][$i] = $sum[$submissionid][$i] / $n;
-                        // echo "Submission: $submissionid; Element: $i; Mean: {$mean[$submissionid][$i]}<br />\n";
-                    }
-                    $total += $n; // weighted total
-                }
-            }
-            if ($verbose) {
-                echo "<p align=\"center\">".get_string("numberofsubmissions", "workshop", count($num))."<br />\n";
-                echo get_string("numberofassessmentsweighted", "workshop", $total)."</p>\n";
-            }
-
-            // now get an estimate of the standard deviation of each element in the assessment
-            // this is just a rough measure, all assessments are included and teacher's assesments are not weighted
-            $n = 0;
-            for ($i = 0; $i < $workshop->nelements; $i++) {
-                $var[$i] = 0;
-            }
-            foreach ($submissions as $submission) {
-                if ($assessments = workshop_get_assessments($submission)) {
-                    foreach ($assessments as $assessment) {
-                        $n++;
-                        for ($i = 0; $i < $workshop->nelements; $i++) {
-                            $grade =  get_field("workshop_grades", "grade",
-                                    "assessmentid", $assessment->id, "elementno", $i);
-                            $temp = $mean[$submission->id][$i] - $grade;
-                            $var[$i] += $temp * $temp;
-                        }
-                    }
-                }
-            }
-            for ($i = 0; $i < $workshop->nelements; $i++) {
-                if ($n > 1) {
-                    $sd[$i] = sqrt($var[$i] / ($n - 1));
-                } else {
-                    $sd[$i] = 0;
-                }
-                set_field("workshop_elements", "stddev", $sd[$i], "workshopid", $workshop->id, "elementno", $i);
-                set_field("workshop_elements", "totalassessments", $totalassessments, "workshopid", $workshop->id,
-                        "elementno", $i);
-                if ($verbose) {
-                    echo get_string("standarddeviationofelement", "workshop", $i+1)." $sd[$i]<br />";
-                    if ($sd[$i] <= $minvar) {
-                        print_string("standarddeviationnote", "workshop")."<br />\n";
-                    }
-                }
-            }
-        } 
-    }
-
-    // this section looks at each submission if the number of assessments made has increased it recalculates the
-    // grading grades for those assessments
-    // first get the assignment elements for the weights and the stddevs...
-    $elementsraw = get_records("workshop_elements", "workshopid", $workshop->id, "elementno ASC");
-    foreach ($elementsraw as $element) {
-        $weight[] = $element->weight;   // to renumber index 0,1,2...
-        $sd[] = $element->stddev;   // to renumber index 0,1,2...
-    }
-
-    unset($num); // may have been used in calculating stddevs
-    unset($sum); // ditto
-    if ($submissions = get_records("workshop_submissions", "workshopid", $workshop->id)) {
-        foreach ($submissions as $submission) {
-            // see if the number of assessments has changed
-            $nassessments = workshop_count_assessments($submission);
-            if ($submission->nassessments <> $nassessments) {
-                // ...if there are three or more assessments calculate the variance of each assessment.
-                // Use the variance to find the "best" assessment. (When there is only one or two assessments they 
-                // are not altered by this routine.)
-                if ($verbose) echo "Processing submission $submission->id ($nassessments asessments)...\n"; 
-                if ($nassessments > 2) {
-                    $num = 0; // weighted number of assessments
-                    for ($i = 0; $i < $workshop->nelements; $i++) {
-                        $sum[$i] = 0; // weighted sum of grades
-                    }
-                    if ($assessments = workshop_get_assessments($submission)) {
-                        // first calculate the mean grades for each element
-                        foreach ($assessments as $assessment) {
-                            // test if assessment is "good", a teacher assessment always "good", but may be weighted out 
-                            if (isteacher($workshop->course, $assessment->userid)) {
-                                if (!$workshop->teacherweight) {
-                                    // drop teacher's assessment as weight is zero
-                                    continue;
-                                }
-                            } elseif ((!$assessment->gradinggrade and $assessment->timegraded) or 
-                                    ($workshop->agreeassessments and !$assessment->timeagreed)) {
-                                // it's a duff assessment, or it's not been agreed
-                                continue;
-                            }
-                            if (isteacher($workshop->course, $assessment->userid)) {
-                                $num += $workshop->teacherweight; // weight teacher's assessment
-                            } else {
-                                $num++; // student assessment just add one
-                            }
-                            for ($i = 0; $i < $workshop->nelements; $i++) {
-                                $grade =  get_field("workshop_grades", "grade",
-                                        "assessmentid", $assessment->id, "elementno", $i);
-                                if (isteacher($workshop->course, $assessment->userid)) {
-                                    $sum[$i] += $workshop->teacherweight * $grade; // teacher's grade
-                                } else {
-                                    $sum[$i] += $grade; // student's grade
-                                }
-                            }
-                        }
-                        if ($num) { // could all the assessments be duff? 
-                            for ($i = 0; $i < $workshop->nelements; $i++) {
-                                $mean[$i] = $sum[$i] / $num;
-                                if ($verbose) echo "Submission: $submission->id; Element: $i; Mean: {$mean[$i]}\n";
-                            }
-                        } else {
-                            continue; // move to the next submission
-                        }
-                        // run through the assessments again to see which is the "best" one (the one
-                        // closest to the mean)
-                        $lowest = 10e9;
-                        foreach ($assessments as $assessment) {
-                            if ($workshop->agreeassessments and !$assessment->timeagreed) {
-                                // ignore assessments that have not been agreed
-                                continue;
-                            }
-                            $var = 0;
-                            for ($i = 0; $i < $workshop->nelements; $i++) {
-                                $grade =  get_field("workshop_grades", "grade",
-                                        "assessmentid", $assessment->id, "elementno", $i);
-                                if ($sd[$i] > $minvar) {
-                                    $temp = ($mean[$i] - $grade) * 
-                                        $WORKSHOP_EWEIGHTS[$weight[$i]] / $sd[$i];
-                                } else {
-                                    $temp = 0;
-                                }
-                                $var += $temp * $temp;
-                            }
-                            // find the "best" assessment of this submission
-                            if ($lowest > $var) {
-                                $lowest = $var;
-                                $bestassessmentid = $assessment->id;
-                            }
-                        }
-
-                        if (!$best = get_record("workshop_assessments", "id", $bestassessmentid)) {
-                            error("Workshop grade assessments: cannot find best assessment");
-                        }
-                        if ($verbose) echo "Best assessment is $bestassessmentid;\n";
-                        foreach ($assessments as $assessment) {
-                            // don't overwrite teacher's grade
-                            if ($assessment->teachergraded) {
-                                continue;
-                            }
-                            if ($assessment->id == $bestassessmentid) { 
-                                // it's the best one, set the grading grade to the maximum 
-                                set_field("workshop_assessments", "gradinggrade", 100, "id", $assessment->id);
-                                set_field("workshop_assessments", "timegraded", $timenow, "id", $assessment->id);
-                            } else {
-                                // it's one of the pack, compare with the best...
-                                $gradinggrade = workshop_compare_assessments($workshop, $best, $assessment);
-                                // ...and save the grade for the assessment 
-                                set_field("workshop_assessments", "gradinggrade", $gradinggrade, "id", $assessment->id);
-                                set_field("workshop_assessments", "timegraded", $timenow, "id", $assessment->id);
-                            }
-                        }
-                    }
-                } else {
-                    // there are less than 3 assessments for this submission
-                    if ($assessments = workshop_get_assessments($submission)) {
-                        foreach ($assessments as $assessment) {
-                            if (!$assessment->timegraded and !$assessment->teachergraded) {
-                                // set the grading grade to the maximum and say it's been graded 
-                                set_field("workshop_assessments", "gradinggrade", 100, "id", $assessment->id);
-                                set_field("workshop_assessments", "timegraded", $timenow, "id", $assessment->id);
-                            }
-                        }
-                    }
-                }       
-                // set the number of assessments for this submission
-                set_field("workshop_submissions", "nassessments", $nassessments, "id", $submission->id);    
-            }
-        }
-    }
-    return;
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////
-function workshop_gradinggrade($workshop, $student) {
-    // returns the current (external) grading grade of the based on their (cold) assessments
-    // (needed as it's called by grade)
-    
-    $gradinggrade = 0;
-    if ($assessments = workshop_get_user_assessments($workshop, $student)) {
-        $n = 0;
-        foreach ($assessments as $assessment) {
-            $gradinggrade += $assessment->gradinggrade;
-            $n++;
-        }
-        if ($n < ($workshop->ntassessments + $workshop->nsassessments)) { // the minimum students should do
-            $n = $workshop->ntassessments + $workshop->nsassessments;
-        }
-        $gradinggrade = $gradinggrade / $n;
-    }
-    return number_format($gradinggrade * $workshop->gradinggrade / 100, 1);
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////
-function workshop_submission_grade($workshop, $submission) {
-    // returns the current (external) grade of the submission based on the "good" (cold) assessments
-    // (needed as it's called by grade)
-    
-    $grade = 0;
-    if ($assessments = workshop_get_assessments($submission)) {
-        $n = 0;
-        foreach ($assessments as $assessment) {
-            if ($workshop->agreeassessments and !$assessment->timeagreed) {
-                // ignore assessments which have not been agreed
-                continue;
-            }
-            if ($assessment->gradinggrade or !$assessment->timegraded) { 
-                // a good assessment (or one that has not been graded yet)
-                if (isteacher($workshop->course, $assessment->userid)) {
-                    $timenow = time();
-                    if ($timenow > $workshop->releasegrades) {
-                        // teacher's grade is available
-                        $grade += $workshop->teacherweight * $assessment->grade;
-                        $n += $workshop->teacherweight;
-                    }
-                } else {
-                    $grade += $assessment->grade;
-                    $n++;
-                }
-            }
-        }
-        if ($n) { // stop division by zero
-            $grade = $grade / $n;
-        }
-    }
-    return number_format($grade * $workshop->grade / 100, 1);
-}
-
-
-/////////////////////////////////////////////////////////////////////////////
-function workshop_fullname($userid, $courseid) {
-    global $CFG;
-    if (!$user = get_record('user', 'id', $userid)) {
-        return '';
-    }
-    return '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$courseid.'">'.
-        fullname($user).'</a>';
-}
 
 ?>

@@ -1,21 +1,21 @@
-<?php //$Id$
+<?PHP //$Id$
     //This php script contains all the stuff to backup/restore
     //scorm mods
 
     //This is the "graphical" structure of the scorm mod:
     //
-    //                      scorm                                      
-    //                   (CL,pk->id)---------------------
+    //                    scorm                                      
+    //                    (CL,pk->id)--------------------
     //                        |				|
     //                        |				|
     //                        |				|
-    //                   scorm_scoes 			|	
-    //             (UL,pk->id, fk->scorm)		|
+    //                scorm_scoes 			|	
+    //            (UL,pk->id, fk->scorm)		|
     //                        |				|
     //                        |				|
     //                        |				|
-    //                scorm_scoes_track			|
-    //  (UL,k->id, fk->scormid, fk->scoid, k->element)---	
+    //                scorm_sco_users 			|
+    //            (UL,pk->id, fk->scormid, fk->scoid)----	
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -45,16 +45,18 @@
                 fwrite ($bf,full_tag("REFERENCE",4,false,$scorm->reference));
                 fwrite ($bf,full_tag("MAXGRADE",4,false,$scorm->reference));
                 fwrite ($bf,full_tag("GRADEMETHOD",4,false,$scorm->reference));
+                fwrite ($bf,full_tag("DATADIR",4,false,$scorm->datadir));
                 fwrite ($bf,full_tag("LAUNCH",4,false,$scorm->launch));
                 fwrite ($bf,full_tag("SUMMARY",4,false,$scorm->summary));
                 fwrite ($bf,full_tag("AUTO",4,false,$scorm->auto));
+                fwrite ($bf,full_tag("POPUP",4,false,$scorm->popup));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$scorm->timemodified));
                 $status = backup_scorm_scoes($bf,$preferences,$scorm->id);
  
-                //if we've selected to backup users info, then execute backup_scorm_scoes_track
+                //if we've selected to backup users info, then execute backup_scorm_sco_users
                 if ($status) {
                     if ($preferences->mods["scorm"]->userinfo) {
-                        $status = backup_scorm_scoes_track($bf,$preferences,$scorm->id);
+                        $status = backup_scorm_sco_users($bf,$preferences,$scorm->id);
                     }
                 }
                 //End mod
@@ -77,7 +79,7 @@
         $status = true;
 
         $scorm_scoes = get_records("scorm_scoes","scorm",$scorm,"id");
-        //If there is scoes
+        //If there is submissions
         if ($scorm_scoes) {
             //Write start tag
             $status =fwrite ($bf,start_tag("SCOES",4,true));
@@ -92,13 +94,9 @@
                 fwrite ($bf,full_tag("PARENT",6,false,$sco->parent));
                 fwrite ($bf,full_tag("IDENTIFIER",6,false,$sco->identifier));
                 fwrite ($bf,full_tag("LAUNCH",6,false,$sco->launch));
-                fwrite ($bf,full_tag("SCORMTYPE",6,false,$sco->scormtype));
+                fwrite ($bf,full_tag("TYPE",6,false,$sco->type));
                 fwrite ($bf,full_tag("TITLE",6,false,$sco->title));
-                fwrite ($bf,full_tag("PREREQUISITES",6,false,$sco->prerequisites));
-                fwrite ($bf,full_tag("MAXTIMEALLOWED",6,false,$sco->maxtimeallowed));
-                fwrite ($bf,full_tag("TIMELIMITACTION",6,false,$sco->timelimitaction));
                 fwrite ($bf,full_tag("DATAFROMLMS",6,false,$sco->datafromlms));
-                fwrite ($bf,full_tag("MASTERYSCORE",6,false,$sco->masteryscore));
                 fwrite ($bf,full_tag("NEXT",6,false,$sco->next));
                 fwrite ($bf,full_tag("PREVIOUS",6,false,$sco->previous));
                 //End sco
@@ -110,33 +108,38 @@
         return $status;
     }
   
-   //Backup scorm_scoes_track contents (executed from scorm_backup_mods)
-    function backup_scorm_scoes_track ($bf,$preferences,$scorm) {
+   //Backup scorm_sco_users contents (executed from scorm_backup_mods)
+    function backup_scorm_sco_users ($bf,$preferences,$scorm) {
 
         global $CFG;
 
         $status = true;
 
-        $scorm_scoes_track = get_records("scorm_scoes_track","scormid",$scorm,"id");
-        //If there is track
-        if ($scorm_scoes_track) {
+        $scorm_sco_users = get_records("scorm_sco_users","scormid",$scorm,"id");
+        //If there is submissions
+        if ($scorm_sco_users) {
             //Write start tag
-            $status =fwrite ($bf,start_tag("SCO_TRACKS",4,true));
+            $status =fwrite ($bf,start_tag("SCO_USERS",4,true));
             //Iterate over each sco
-            foreach ($scorm_scoes_track as $sco_track) {
-                //Start sco track
-                $status =fwrite ($bf,start_tag("SCO_TRACK",5,true));
-                //Print track contents
-                fwrite ($bf,full_tag("ID",6,false,$sco_track->id));
-                fwrite ($bf,full_tag("USERID",6,false,$sco_track->userid));
-                fwrite ($bf,full_tag("SCOID",6,false,$sco_track->scoid));
-                fwrite ($bf,full_tag("ELEMENT",6,false,$sco_track->element));
-                fwrite ($bf,full_tag("VALUE",6,false,$sco_track->value));
-                //End sco track
-                $status =fwrite ($bf,end_tag("SCO_TRACK",5,true));
+            foreach ($scorm_sco_users as $sco_user) {
+                //Start sco
+                $status =fwrite ($bf,start_tag("SCO_USER",5,true));
+                //Print submission contents
+                fwrite ($bf,full_tag("ID",6,false,$sco_user->id));
+                fwrite ($bf,full_tag("USERID",6,false,$sco_user->userid));
+                fwrite ($bf,full_tag("SCOID",6,false,$sco_user->scoid));
+                fwrite ($bf,full_tag("CMI_CORE_LESSON_LOCATION",6,false,$sco_user->cmi_core_lesson_location));
+                fwrite ($bf,full_tag("CMI_CORE_LESSON_STATUS",6,false,$sco_user->cmi_core_lesson_status));
+                fwrite ($bf,full_tag("CMI_CORE_EXIT",6,false,$sco_user->cmi_core_exit));
+                fwrite ($bf,full_tag("CMI_CORE_TOTAL_TIME",6,false,$sco_user->cmi_core_total_time));
+                fwrite ($bf,full_tag("CMI_CORE_SESSION_TIME",6,false,$sco_user->cmi_core_session_time));
+                fwrite ($bf,full_tag("CMI_CORE_SCORE_RAW",6,false,$sco_user->cmi_core_score_raw));
+                fwrite ($bf,full_tag("CMI_SUSPEND_DATA",6,false,$sco_user->cmi_suspend_data));
+                //End sco
+                $status =fwrite ($bf,end_tag("SCO_USER",5,true));
             }
             //Write end tag
-            $status =fwrite ($bf,end_tag("SCO_TRACKS",4,true));
+            $status =fwrite ($bf,end_tag("SCO_USERS",4,true));
         }
         return $status;
     }
@@ -154,7 +157,7 @@
         //Now, if requested, the user_data
         if ($user_data) {
             $info[1][0] = get_string("scoes","scorm");
-            if ($ids = scorm_scoes_track_ids_by_course ($course)) {
+            if ($ids = scorm_sco_users_ids_by_course ($course)) {
                 $info[1][1] = count($ids);
             } else {
                 $info[1][1] = 0;
@@ -199,12 +202,12 @@
     }
    
     //Returns an array of scorm_scoes id
-    function scorm_scoes_track_ids_by_course ($course) {
+    function scorm_sco_users_ids_by_course ($course) {
 
         global $CFG;
 
         return get_records_sql ("SELECT s.id , s.scormid
-                                 FROM {$CFG->prefix}scorm_scoes_track s,
+                                 FROM {$CFG->prefix}scorm_sco_users s,
                                       {$CFG->prefix}scorm a
                                  WHERE a.course = '$course' AND
                                        s.scormid = a.id");

@@ -5,8 +5,14 @@
     if (!isset($sortkey)) {
         $sortkey = '';
     }
-
-    echo '<center>';
+    echo '<p align="center">';
+    $glossary_tCFG->TabTableBGColor = $THEME->cellheading;
+    $glossary_tCFG->ActiveTabColor = $THEME->cellheading;
+    $glossary_tCFG->InactiveTabColor = $THEME->cellcontent2;
+    $glossary_tCFG->InactiveFontColor= $THEME->hidden;
+    $glossary_tCFG->TabTableWidth = "70%";
+    $glossary_tCFG->TabsPerRow = 4;
+    $glossary_tCFG->TabSeparation = 4;
 
     $data[GLOSSARY_STANDARD_VIEW]->caption = get_string("standardview", "glossary");
     $data[GLOSSARY_CATEGORY_VIEW]->caption = get_string("categoryview", "glossary");
@@ -24,17 +30,17 @@
         $data[GLOSSARY_EXPORT_VIEW]->caption = get_string("exportentries", "glossary");
 
         $data[GLOSSARY_IMPORT_VIEW]->link = "import.php?id=$cm->id";
-        $data[GLOSSARY_EXPORT_VIEW]->link = "export.php?id=$cm->id&amp;mode=$mode&amp;hook=$hook";
+        $data[GLOSSARY_EXPORT_VIEW]->link = "export.php?id=$cm->id&mode=$mode&hook=$hook";
 
     }
 
-//    $data[GLOSSARY_DATE_VIEW]->link = "view.php?id=$id&amp;tab=".GLOSSARY_DATE_VIEW;
+//    $data[GLOSSARY_DATE_VIEW]->link = "view.php?id=$id&tab=".GLOSSARY_DATE_VIEW;
 
-    $data[GLOSSARY_DATE_VIEW]->link = "view.php?id=$id&amp;mode=date";
+    $data[GLOSSARY_DATE_VIEW]->link = "view.php?id=$id&mode=date";
 
-    $data[GLOSSARY_STANDARD_VIEW]->link = "view.php?id=$id&amp;mode=letter";
-    $data[GLOSSARY_CATEGORY_VIEW]->link = "view.php?id=$id&amp;mode=cat";
-    $data[GLOSSARY_AUTHOR_VIEW]->link = "view.php?id=$id&amp;mode=author";
+    $data[GLOSSARY_STANDARD_VIEW]->link = "view.php?id=$id&mode=letter";
+    $data[GLOSSARY_CATEGORY_VIEW]->link = "view.php?id=$id&mode=cat";
+    $data[GLOSSARY_AUTHOR_VIEW]->link = "view.php?id=$id&mode=author";
 
 
     if (isteacher($course->id)) {
@@ -43,10 +49,10 @@
 
         $hiddenentries = get_records_select("glossary_entries","glossaryid  = $glossary->id and approved = 0");
         if ($hiddenentries) {
-            $data[GLOSSARY_APPROVAL_VIEW]->caption .= " (" . count($hiddenentries) . " " . get_string("entries","glossary") . ")";
-            $data[GLOSSARY_APPROVAL_VIEW]->link = "view.php?id=$id&amp;tab=".GLOSSARY_APPROVAL_VIEW;
+            $data[GLOSSARY_APPROVAL_VIEW]->caption .= "<br><font size=1>(" . count($hiddenentries) . " " . get_string("entries","glossary") . ")</font>";
+            $data[GLOSSARY_APPROVAL_VIEW]->link = "view.php?id=$id&tab=".GLOSSARY_APPROVAL_VIEW;
 
-            $data[GLOSSARY_APPROVAL_VIEW]->link = "view.php?id=$id&amp;mode=approval";
+            $data[GLOSSARY_APPROVAL_VIEW]->link = "view.php?id=$id&mode=approval";
 
         } elseif ( $tab == GLOSSARY_APPROVAL_VIEW ) {
             $tab = $framebydefault;
@@ -56,12 +62,12 @@
     }
 
 /// printing header of the current tab
-    glossary_print_tabbed_table_start($data, $tab, 4);
+    echo '<center>';
+    glossary_print_tabbed_table_start($data, $tab, $glossary_tCFG);
  
     if (!isset($category)) {
         $category = "";
     }
-
     
     switch ($tab) {
         case GLOSSARY_CATEGORY_VIEW:
@@ -106,5 +112,5 @@
             } 
         break;
     } 
-    echo '<hr />';
+    echo '<hr>';
 ?> 

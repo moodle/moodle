@@ -9,8 +9,8 @@
 /**
  * Smarty escape modifier plugin
  *
- * Type:     modifier<br />
- * Name:     escape<br />
+ * Type:     modifier<br>
+ * Name:     escape<br>
  * Purpose:  Escape the string according to escapement type
  * @link http://smarty.php.net/manual/en/language.modifier.escape.php
  *          escape (Smarty online manual)

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.4 (2004083100)
+      // dialogue.php - created with Moodle 1.2 development (2004020300)
 
 
 $string['addmynewentries'] = 'Dodaj moje nowe dialogi';
@@ -9,13 +9,15 @@ $string['allowmultiple'] = 'Pozwól na wiêcej dialogów z t± sam± osob±';
 $string['allowstudentdialogues'] = 'Pozwól na dialogi student-do-studenta';
 $string['close'] = 'Zamknij';
 $string['closed'] = 'Zamkniête';
-$string['confirmclosure'] = 'Zamierzasz zakoñczyæ dialog z $a. Pamiêtaj, ¿e zakoñczone dialogi nie mog± byæ na nowo otwarte. Je¶li zamkniesz ten dialog, bêdziesz móg³ go obejrzeæ ale nie bêdziesz móg³ dodaæ do niego nowych wpisów, wiêc bêdziesz musia³ rozpocz±æ nowy dialog aby kontynuowaæ \"rozmowê\" z dan± osob±.<br /><br /> Czy jeste¶ pewien, ¿e chcesz zakoñczyæ ten dialog?';
+$string['confirmclosure'] = 'Zamierzasz zakoñczyæ dialog z $a. Pamiêtaj, ¿e zakoñczone dialogi nie mog± byæ na nowo otwarte. Je¶li zamkniesz ten dialog, bêdziesz móg³ go obejrzeæ ale nie bêdziesz móg³ dodaæ do niego nowych wpisów, wiêc bêdziesz musia³ rozpocz±æ nowy dialog aby kontynuowaæ &quot;rozmowê&quot; z dan± osob±.<br /><br /> Czy jeste¶ pewien, ¿e chcesz zakoñczyæ ten dialog?';
 $string['deleteafter'] = 'Usuñ zakoñczone dialogi po (dniach)';
 $string['dialogueclosed'] = 'Dialog zostal zakoñczony';
 $string['dialogueintro'] = 'Wprowadzenie do dialogu';
-$string['dialoguemail'] = '$a->userfrom doda³ nowy wpis do Twojego dialogu \'<i>$a->dialogue</i>\'<br /><br /> ¯eby to zobaczyæ kliknij na ten link: <a href=\"$a->url\"></a>.';
+$string['dialoguemail'] = '$a->userfrom doda³ nowy wpis do Twojego dialogu \'<i>$a->dialogue</i>\'<br /><br /> ¯eby to zobaczyæ kliknij na ten link: <a href=\"$a->url\"></a>.
+';
 $string['dialoguemailhtml'] = '$a->userfrom doda³ nowy wpis do Twojego dialogu \'<i>$a->dialogue</i>\'<br /><br />
-¯eby to zobaczyæ kliknij na ten <a href=\"$a->url\">dialog</a>.';
+¯eby to zobaczyæ kliknij na ten <a href=\"$a->url\">dialog</a>.
+';
 $string['dialoguename'] = 'Nazwa dialogu';
 $string['dialogueopened'] = 'Dialog rozpoczêty z $a';
 $string['dialoguewith'] = 'Dialog z $a';
@@ -36,7 +38,7 @@ $string['notstarted'] = 'Jeszcze nie zacz±³e¶ prowadziæ dialog';
 $string['notyetseen'] = 'Jeszcze nie widzany';
 $string['numberofentries'] = 'Ilo¶æ wpisów';
 $string['numberofentriesadded'] = 'Ilo¶æ dokonanych wpisów: $a';
-$string['of'] = 'z';
+$string['of'] = ' ';
 $string['onwrote'] = '$a napisa³';
 $string['onyouwrote'] = '$a Tobie napisa³';
 $string['open'] = 'Otwórz';

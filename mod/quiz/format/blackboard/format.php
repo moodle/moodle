@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 ////////////////////////////////////////////////////////////////////////////
 /// Blackboard 6.0 Format
 ///
@@ -53,7 +53,7 @@ class quiz_file_format extends quiz_default_format {
     /// readquestion(). 
 
     $text = implode($lines, " ");
-    $xml = xmlize($text, 0);
+    $xml = xmlize($text);
 
     $questions = array();
 

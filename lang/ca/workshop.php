@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // workshop.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['absent'] = 'Absent';
@@ -145,6 +145,8 @@ $string['phase4'] = 'Permet $a avaluacions';
 $string['phase4short'] = 'Avaluacions';
 $string['phase5'] = 'Càlcul de les qualificacions finals';
 $string['phase5short'] = 'Càlcul';
+$string['phase6'] = 'Mostra les qualificacions finals';
+$string['phase6short'] = 'Mostra qualificacions';
 $string['pleaseassesstheseexamplesfromtheteacher'] = 'Sisplau, avalueu aquests exemples del $a';
 $string['pleaseassessthesestudentsubmissions'] = 'Sisplau, avalueu aquestes $a trameses';
 $string['pleaseassessyoursubmissions'] = 'Sisplau, avalueu les vostres trameses';
@@ -175,10 +177,11 @@ $string['scalepresent'] = 'Escala de 2 punts Present/Absent';
 $string['scaleyes'] = 'Escala de 2 punts Sí/No';
 $string['select'] = 'Tria';
 $string['selfassessment'] = 'Autoavaluació';
+$string['setoverallocation'] = 'Especifica el nivell d\'assignació global';
 $string['showgrades'] = 'Mostra qualificacions';
 $string['specimenassessmentform'] = 'Formulari de mostra d\'avaluació';
 $string['standarddeviation'] = 'Desviació estàndard de l\'element $a :';
-$string['standarddeviationnote'] = 'Els elements amb desviacions estàndard de cero o valors molt menuts poden distorisonar l\'anàlisi.<br /> Aquest element ha sigut exclós de l\'anàlisi.';
+$string['standarddeviationnote'] = 'Els elements amb desviacions estàndard de cero o valors molt menuts poden distorisonar l\'anàlisi.<br/> Aquest element ha sigut exclós de l\'anàlisi.';
 $string['studentassessments'] = '$a avaluacions';
 $string['studentgrades'] = '$a qualificacions';
 $string['studentsubmissions'] = '$a trameses';
@@ -199,6 +202,7 @@ $string['teacherscomment'] = 'Comentari del professor';
 $string['teachersgrade'] = 'Qualificació del professor';
 $string['teachersubmissionsforassessment'] = '$a trameses del professor per a avaluació';
 $string['thegradeis'] = 'La qualificació és $a';
+$string['thereisfeedbackfromtheteacher'] = 'Hi ha retroacció del $a';
 $string['theseasessmentsaregradedbytheteacher'] = 'Aquestes avaluacions estan qualificades pel $a';
 $string['timeassessed'] = 'Temps avaluat';
 $string['title'] = 'Títol';
@@ -209,7 +213,7 @@ $string['verypoor'] = 'Molt pobre';
 $string['view'] = 'Veu';
 $string['viewassessmentofteacher'] = 'Veu avaluació de $a';
 $string['viewotherassessments'] = 'Veu altres avaluacions';
-$string['warningonamendingelements'] = 'AVÍS: S\'han tramès avaluacions.<br />NO canvieu el nombre d\'elements, els tipus d\'escala o els pesos dels elements.';
+$string['warningonamendingelements'] = 'AVÍS: S\'han tramès avaluacions.<BR />NO canvieu el nombre d\'elements, els tipus d\'escala o els pesos dels elements.';
 $string['weight'] = 'Pes';
 $string['weightederrorcount'] = 'Recompte d\'errors ponderat: $a';
 $string['weightforbias'] = 'Pes per al biaix';

@@ -1,12 +1,9 @@
 <?PHP // $Id$ 
-      // block_online_users.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // block_online_users.php - created with Moodle 1.3 development (2004050200)
 
 
 $string['blockname'] = 'Online käyttäjät';
 $string['configtimetosee'] = 'Montako minuuttia käyttäjän näytetään olevan online tilassa';
 $string['periodnminutes'] = 'viimeinen $a minuuttia';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Suomi';
 
 ?>

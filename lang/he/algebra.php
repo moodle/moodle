@@ -1,11 +1,7 @@
 <?PHP // $Id$ 
-      // algebra.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // algebra.php - created with Moodle 1.4 development (2004060400)
 
 
-$string['filtername'] = 'כתיב אלגברי';
-$string['parentlanguage'] = 'en';
-$string['thischarset'] = 'ISO-8859-I';
-$string['thisdirection'] = 'rtl';
-$string['thislanguage'] = '&#1506;&#1489;&#1512;&#1497;&#1514;';
+$string['filtername'] = '&#1499;&#1514;&#1497;&#1489; &#1488;&#1500;&#1490;&#1489;&#1512;&#1497;';
 
 ?>

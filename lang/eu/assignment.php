@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.4.1 (2004083101)
+      // assignment.php - created with Moodle 1.4 + (2004083100)
 
 
 $string['allowresubmit'] = 'Berbidalketa baimendu';
@@ -8,7 +8,6 @@ $string['assignmentname'] = 'Zereginaren izena';
 $string['assignmenttype'] = 'Zeregin-mota';
 $string['description'] = 'Deskribapena';
 $string['duedate'] = 'Entregatze-data';
-$string['duedateno'] = 'Entregatze-datarik ez';
 $string['early'] = '$a goiz';
 $string['failedupdatefeedback'] = 'Bidalketei erantzunaren eguneraketak huts egin dut hurrengo erabiltzailearentzat $a';
 $string['feedback'] = 'Erantzuna';
@@ -19,7 +18,6 @@ $string['maximumsize'] = 'Gehienezko tamaina';
 $string['modulename'] = 'Zeregina';
 $string['modulenameplural'] = 'Zereginak';
 $string['newsubmissions'] = 'Zereginak bidalita';
-$string['notgradedyet'] = 'Oraindik notarik jarri gabe';
 $string['notsubmittedyet'] = 'Oraindik bidali gabe';
 $string['overwritewarning'] = 'Oharra: berriz igotzeak zure oraingo bidalketa ORDEZKATUKO du';
 $string['saveallfeedback'] = 'Nire erantzun guztiak gorde';
@@ -38,7 +36,7 @@ $string['uploadnofilefound'] = 'Ez da fitxategirik aurkitu - ziur baten bat auke
 $string['uploadnotregistered'] = '\'$a\' ongi igo da, baina bidalketa ez da erregistratu!';
 $string['uploadsuccess'] = '\'$a\' ongi igo da';
 $string['viewfeedback'] = 'Zereginen kalifikazioak eta erantzunak ikusi';
-$string['viewsubmissions'] = 'Bidalitako zereginak ikusi';
+$string['viewsubmissions'] = '$a bidalitako zereginak ikusi';
 $string['yoursubmission'] = 'Zure bidalketa';
 
 ?>

@@ -16,7 +16,7 @@ $string['dialogueintro'] = 'Вступ у діалог';
 $string['dialoguemail'] = '$a->userfrom відклав всутп до Вашого діалогу через \'$a->dialogue\'
 
 ';
-$string['dialoguemailhtml'] = '$a->userfrom відклав вступ до Вашого діалогу через <i>$a->dialogue</i>\'<br /><br />
+$string['dialoguemailhtml'] = '$a->userfrom відклав вступ до Вашого діалогу через $a->dialogue</i>\'<br /><br />
 Ви можете бачити додати до Вашого діалогу.';
 $string['dialoguename'] = 'Назва діалогу';
 $string['dialogueopened'] = 'Діалог відкритий за допомогою $a';

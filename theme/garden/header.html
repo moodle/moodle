@@ -12,7 +12,7 @@
 <body<?php 
    echo " $bodytags";
    if ($focus) { 
-       echo " onload=\"setfocus()\""; 
+       echo " onload=setfocus()"; 
    } 
    echo " bgcolor=\"$THEME->body\">";
 ?>
@@ -50,11 +50,11 @@
       ?></td>
     </tr>
   </table>
-  <img src="<?php echo $CFG->wwwroot?>/pix/spacer.gif" alt="" height="5" width="1" /><br />
+  <img src="<?php echo $CFG->wwwroot?>/pix/spacer.gif" alt="" height=5 width=1><br>
 
 <?php } else if ($heading) { // If no navigation, but a heading, then print a line  ?>
 
-  <hr size="1" noshade="noshade" />
+  <hr size="1" noshade />
 
 <?php } ?>
 

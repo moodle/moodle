@@ -133,31 +133,22 @@ function print_entry($course) {
 
             print_header($strloginto, $course->fullname, "<a href=\".\">$strcourses</a> -> $strloginto");
             echo "<br />";
-            notice_yesno(get_string("enrolmentconfirmation"), "enrol.php?id=$course->id&amp;confirm=1", $CFG->wwwroot);
+            notice_yesno(get_string("enrolmentconfirmation"), "enrol.php?id=$course->id&confirm=1", $CFG->wwwroot);
             print_footer();
             exit;
 
         } else {
-            if ($course->enrolperiod) {
+            if ($course->enrolperiod == 0) {
+                $timestart = 0;
+                $timeend = 0;
+            } else {
                 $timestart = time();
                 $timeend = time() + $course->enrolperiod;
-            } else {
-                $timestart = $timeend = 0;
             }
 
             if (! enrol_student($USER->id, $course->id, $timestart, $timeend)) {
                 error("An error occurred while trying to enrol you.");
             }
-
-            $subject = get_string("welcometocourse", "", $course->fullname);
-            $a->coursename = $course->fullname;
-            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id";
-            $message = get_string("welcometocoursetext", "", $a);
-            if (! $teacher = get_teacher($course->id)) {
-                $teacher = get_admin();
-            }
-            email_to_user($USER, $teacher, $subject, $message);
-
             add_to_log($course->id, "course", "enrol", "view.php?id=$course->id", "$USER->id");
 
             $USER->student[$course->id] = true;
@@ -179,9 +170,9 @@ function print_entry($course) {
     }
 
 
-    print_header($strloginto, $course->fullname, "<a href=\".\">$strcourses</a> -> $strloginto", "form.password");
+    print_header($strloginto, $course->fullname, "<A HREF=\".\">$strcourses</A> -> $strloginto", "form.password");
 
-    print_course($course, "80%");
+    print_course($course);
 
     include("$CFG->dirroot/enrol/internal/enrol.html");
 
@@ -203,41 +194,21 @@ function print_entry($course) {
 function check_entry($form, $course) {
     global $CFG, $USER, $SESSION, $THEME;
 
-    if (empty($form->password)) {
-        $form->password = '';
-    }
-
-    $groupid = $this->check_group_entry($course->id, $form->password);
-    if (($form->password == $course->password) or ($groupid !== false) ) {
+    if ($form->password == $course->password) {
 
         if (isguest()) {
         
             add_to_log($course->id, "course", "guest", "view.php?id=$course->id", $_SERVER['REMOTE_ADDR']);
             
-        } else {  /// Update or add new enrolment
+        } else if (!record_exists("user_students", "userid", $USER->id, "course", $course->id)) {
 
-            if ($course->enrolperiod) {
-                $timestart = time();
-                $timeend   = $timestart + $course->enrolperiod;
-            } else {
-                $timestart = $timeend = 0;
-            }
-
-            if (! enrol_student($USER->id, $course->id, $timestart, $timeend)) {
+            if (! enrol_student($USER->id, $course->id)) {
                 error("An error occurred while trying to enrol you.");
             }
-
-            if ($groupid !== false) {
-                if (add_user_to_group($groupid, $USER->id)) {
-                    $USER->groupmember[$course->id] = $groupid;
-                } else {
-                    error("An error occurred while trying to add you to a group");
-                }
-            }
-
+            
             $subject = get_string("welcometocourse", "", $course->fullname);
             $a->coursename = $course->fullname;
-            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id&amp;course=$course->id";
+            $a->profileurl = "$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id";
             $message = get_string("welcometocoursetext", "", $a);
             
             if (! $teacher = get_teacher($course->id)) {
@@ -263,25 +234,6 @@ function check_entry($form, $course) {
         $this->errormsg = get_string("enrolmentkeyhint", "", substr($course->password,0,1));
     }
                         
-}
-
-
-/**
-* Check if the given enrolment key matches a group enrolment key for the given course
-*
-* Check if the given enrolment key matches a group enrolment key for the given course
-*
-* @param    courseid  the current course id
-* @param    password  the submitted enrolment key
-*/
-function check_group_entry ($courseid, $password) {
-    $ingroup = false;
-    if ( ($groups = get_groups($courseid)) !== false ) {
-        foreach ($groups as $group) 
-            if ( !empty($group->password) and ($password == $group->password) )
-                $ingroup = $group->id;
-    }
-    return $ingroup;
 }
 
 
@@ -334,11 +286,6 @@ function cron() {
     
     if ($students = get_records_select('user_students', $select)) {
         foreach ($students as $student) {
-            if ($course = get_record('course', 'id', $student->course)) {
-                if (empty($course->enrolperiod)) {   // This overrides student timeend
-                    continue;
-                }
-            }
             unenrol_student($student->userid, $student->course);
         }
     }
@@ -362,16 +309,15 @@ function get_access_icons($course) {
 
     $str = '';
 
-    if (!empty($course->guest)) {
+    if ($course->guest) {
         $strallowguests = get_string("allowguests");
-        $str .= '<a title="'.$strallowguests.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
-        $str .= '<img vspace="4" alt="'.$strallowguests.'" height="16" width="16" border="0" '.
-                'src="'.$CFG->pixpath.'/i/guest.gif" /></a>&nbsp;&nbsp;';
+        $str .= "<a title=\"$strallowguests\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
+        $str .= "<img vspace=4 alt=\"$strallowguests\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/guest.gif\"></a>&nbsp;&nbsp;";
     }
-    if (!empty($course->password)) {
+    if ($course->password) {
         $strrequireskey = get_string("requireskey");
-        $str .= '<a title="'.$strrequireskey.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
-        $str .= '<img vspace="4" alt="'.$strrequireskey.'" height="16" width="16" border="0" src="'.$CFG->pixpath.'/i/key.gif" /></a>';
+        $str .= "<a title=\"$strrequireskey\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
+        $str .= "<img vspace=4 alt=\"$strrequireskey\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/key.gif\"></a>";
     }
 
     return $str;

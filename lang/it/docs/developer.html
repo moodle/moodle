@@ -30,25 +30,25 @@
 <blockquote>
   <p>Dal punto di vista di un amministratore di sistema, Moodle è stato progettato secondo i seguenti criteri:</p>
   <ol>
-    <li><strong>Deve girare sulla più grande varietà di piattaforme possibili</strong><br />
-      <br />La piattaforma applicativa web che gira sulla maggior parte delle piattaforme è PHP combinato con MySQL, e questo è l'ambiente in cui Moodle è stato sviluppato (su Linux, Windows, e Mac OS X). Moodle inoltre usa la libreria ADOdb per l'astrazione del database, il che significa che può utilizzare <a href="http://php.weblogs.com/ADOdb_manual#drivers">più di dieci differenti marche di database</a> (sfortunatamente, però, non può ancora <em><strong>impostare le tabelle</strong></em> su tutti questi database - vedi avanti per ulteriori informazioni). <br />
-      <br />
+    <li><strong>Deve girare sulla più grande varietà di piattaforme possibili</strong><br>
+      <br>La piattaforma applicativa web che gira sulla maggior parte delle piattaforme è PHP combinato con MySQL, e questo è l'ambiente in cui Moodle è stato sviluppato (su Linux, Windows, e Mac OS X). Moodle inoltre usa la libreria ADOdb per l'astrazione del database, il che significa che può utilizzare <a href="http://php.weblogs.com/ADOdb_manual#drivers">più di dieci differenti marche di database</a> (sfortunatamente, però, non può ancora <em><strong>impostare le tabelle</strong></em> su tutti questi database - vedi avanti per ulteriori informazioni). <br>
+      <br>
     </li>
-    <li><strong>Deve essere facile da installare, imparare e modificare</strong><br />
-      <br />I primi prototipi di Moodle (1999) sono stati realizzati usando <a target=_top href="http://www.zope.org/">Zope</a> 
-      - un avanzato web application server di tipo object-oriented . Sfortunatamente ho trovato che, nonostatnte la tecnologia era molto buona, questa aveva una difficoltà di apprendimento eccessiva e non era molto flessibile in termini di amministrazione di sistema. Il linguaggio script PHP, invece, era molto facile da apprendere (specialmente se uno aveva già programmato con altri linguaggi script). Abbastanza presto ho preso la decisione di evitare l'uso di una progettazione di tipo class-oriented, ancora, per rendere il sistema più semplice da capire per i nuovi arrivati. Il riutilizzo del codice è raggiunto mediante librerie di funzioni chiaramente definite e un layout coerente di files script. Il PHP è anche molto facile da installare (l'eseguibile è a disposizione per ogni piattaforma) ed è largamente disponibile al punto che molti servizi di hosting lo prevedono come standard.<br />
-      <br />
+    <li><strong>Deve essere facile da installare, imparare e modificare</strong><br>
+      <br>I primi prototipi di Moodle (1999) sono stati realizzati usando <a target=_top href="http://www.zope.org/">Zope</a> 
+      - un avanzato web application server di tipo object-oriented . Sfortunatamente ho trovato che, nonostatnte la tecnologia era molto buona, questa aveva una difficoltà di apprendimento eccessiva e non era molto flessibile in termini di amministrazione di sistema. Il linguaggio script PHP, invece, era molto facile da apprendere (specialmente se uno aveva già programmato con altri linguaggi script). Abbastanza presto ho preso la decisione di evitare l'uso di una progettazione di tipo class-oriented, ancora, per rendere il sistema più semplice da capire per i nuovi arrivati. Il riutilizzo del codice è raggiunto mediante librerie di funzioni chiaramente definite e un layout coerente di files script. Il PHP è anche molto facile da installare (l'eseguibile è a disposizione per ogni piattaforma) ed è largamente disponibile al punto che molti servizi di hosting lo prevedono come standard.<br>
+      <br>
     </li>
-    <li><strong>Deve essere facile effettuare l'aggiornamento da una versione software alla successiva</strong><br />
-      <br />Moodle conosce la sua versione corrente (come pure le versioni di tutti i moduli plug-in) ed è stato realizzato un meccanismo tale che Moodle stesso può correttamente aggiornare se stesso a nuove versioni (per esempio può rinominare le tabelle del database o aggiungere nuovi campi). Se si una il CVS in ambiente Unix, per esempio, si può scrivere solamente il comando "cvs update -d" e saltare direttamente alla home page del sito per completare l'aggiornamento.<br />
-      <br />
+    <li><strong>Deve essere facile effettuare l'aggiornamento da una versione software alla successiva</strong><br>
+      <br>Moodle conosce la sua versione corrente (come pure le versioni di tutti i moduli plug-in) ed è stato realizzato un meccanismo tale che Moodle stesso può correttamente aggiornare se stesso a nuove versioni (per esempio può rinominare le tabelle del database o aggiungere nuovi campi). Se si una il CVS in ambiente Unix, per esempio, si può scrivere solamente il comando "cvs update -d" e saltare direttamente alla home page del sito per completare l'aggiornamento.<br>
+      <br>
     </li>
-    <li><strong>Deve essere modulare per garantire la propria crescita</strong><br />
-      <br />Moodle ha molte caratteristiche modulari, inclusi i temi grafici, le attività, le lingue utilizzate nell'interfaccia, gli schemi di database e i formati di corso. Questo permette a chiunque di aggiungere nuove funzionalità a quelle di base e/o di distribuirle separatamente. Altre informazioni su questo argomento nella prossima sezione.<br />
-      <br />
+    <li><strong>Deve essere modulare per garantire la propria crescita</strong><br>
+      <br>Moodle ha molte caratteristiche modulari, inclusi i temi grafici, le attività, le lingue utilizzate nell'interfaccia, gli schemi di database e i formati di corso. Questo permette a chiunque di aggiungere nuove funzionalità a quelle di base e/o di distribuirle separatamente. Altre informazioni su questo argomento nella prossima sezione.<br>
+      <br>
     </li>
-    <li><strong>Deve poter essere utilizzato congiuntamente ad altri sistemi</strong><br />
-      <br />Una delle caratteristiche di Moodle è quella di mettere tutti i files di un corso all'interno di un'unica, normale directory del server. Questo permette all'amministratore di sistema di abilitare gli insegnanti a un accesso diretto alle risorse, a livello di file, con strumenti tipo Appletalk, SMB, NFS, FTP, WebDAV e così via. I moduli di autenticazione permettono a Moodle di utilizzare LDAP, IMAP, POP3, NNTP e altri database come fonti per le informazioni degli utenti. Comuque, c'è ancora del lavoro da fare. Future funzionalità già pianificate per Moodle comprendono: importazione e esportazione di dati con l'uso di formati basati su XML (inclusi IMS e SCORM); un ulteriore utilizzo dei fogli di stile per la formattazione dell'interfaccia (in modo tale che Moodle possa essere integrato più facilmente nella grafica di altri siti web).</li>
+    <li><strong>Deve poter essere utilizzato congiuntamente ad altri sistemi</strong><br>
+      <br>Una delle caratteristiche di Moodle è quella di mettere tutti i files di un corso all'interno di un'unica, normale directory del server. Questo permette all'amministratore di sistema di abilitare gli insegnanti a un accesso diretto alle risorse, a livello di file, con strumenti tipo Appletalk, SMB, NFS, FTP, WebDAV e così via. I moduli di autenticazione permettono a Moodle di utilizzare LDAP, IMAP, POP3, NNTP e altri database come fonti per le informazioni degli utenti. Comuque, c'è ancora del lavoro da fare. Future funzionalità già pianificate per Moodle comprendono: importazione e esportazione di dati con l'uso di formati basati su XML (inclusi IMS e SCORM); un ulteriore utilizzo dei fogli di stile per la formattazione dell'interfaccia (in modo tale che Moodle possa essere integrato più facilmente nella grafica di altri siti web).</li>
   </ol>
 </blockquote>
 <p>&nbsp;</p>
@@ -71,7 +71,7 @@
           <li>tizio_update_instance() - istruzioni per aggiornare un'istanza esistente</li>
           <li>tizio_delete_instance() - istruzioni per cancellare un'instance</li>
           <li>tizio_user_outline() - data un'istanza, restituisce un sommario dei contributi di un utente</li>
-          <li>tizio_user_complete() - data un'istanza, stampa i dettagli dei contributi di un utente<br />
+          <li>tizio_user_complete() - data un'istanza, stampa i dettagli dei contributi di un utente<br>
           </li>
           <li>Per evitare possibili conflitti, tutte le funzioni di un modulo devono avere un nome che inizia con tizio_ e ogni costante che viene definita deve cominciare con TIZIO_ </li>
         </ul>
@@ -106,7 +106,7 @@
     <p>Fare attenzione anche al fatto che gli aggiornamenti di Moodle <em>potrebbero</em> modificare leggermente la struttura dei temi, per cui controllare attentamente le note di rilascio di una nuova versione, nel caso si utilizzino temi personalizzati.</p>
     <p>In particolare, da Moodle 2.0 c'è una grafica completamente nuova rispetto alle versioni precedenti, dovuta alle trasformazioni XLS dell'output XML prodotto da Moodle. E' probabile che, per questo motivo, i temi in futuro avranno un formato completamente differente, ma il vantaggio sarà una maggiore possibilità della loro personalizzazione (compresi elementi mobili dentro una pagina).</p>
     <p>Ulteriori considerazioni su questo argomento sul <a target=_top href="http://moodle.org/mod/forum/view.php?id=46">Themes 
-      forum on Using Moodle</a>. Se realizzate un bel tema che pensate possa piacere ed essere usato da altri, fate un 'post' del vostro file zip sul forum dei temi!<br />
+      forum on Using Moodle</a>. Se realizzate un bel tema che pensate possa piacere ed essere usato da altri, fate un 'post' del vostro file zip sul forum dei temi!<br>
     </p>
   </blockquote>
   <h3><a name="languages" id="languages"></a>Lingue</h3>
@@ -122,13 +122,13 @@
       <li>quiz.php - stringhe per il modulo quiz</li>
       <li>resource.php - stringhe per il modulo resource (risorse)</li>
       <li>survey.php - stringhe per il modulo survey (sondaggi)</li>
-      <li>.... più eventuali altri moduli.<br />
-        <br />Una stringa è estratta da questi moduli mediante le funzioni <strong><em>get_string()</em></strong><em> 
-        </em>o<em> <strong>print_string()</strong> </em>. Ogni stringa supporta la sostituzione di variabile, rendendo indipendenti dall'ordine le definizioni nelle varie lingue.<em><br />
-        <br />
+      <li>.... più eventuali altri moduli.<br>
+        <br>Una stringa è estratta da questi moduli mediante le funzioni <strong><em>get_string()</em></strong><em> 
+        </em>o<em> <strong>print_string()</strong> </em>. Ogni stringa supporta la sostituzione di variabile, rendendo indipendenti dall'ordine le definizioni nelle varie lingue.<em><br>
+        <br>
         </em>Per esempio, $strdueby = get_string("assignmentdueby", "assignment", 
-        userdate($date)); <br />
-        <br />Se, in una particolare lingua, una stringa non esiste, allora viene automaticamente presa la sua equivalente in inglese.</li>
+        userdate($date)); <br>
+        <br>Se, in una particolare lingua, una stringa non esiste, allora viene automaticamente presa la sua equivalente in inglese.</li>
     </ul>
     <p><strong>lang/it/help</strong> - contiene le pagine di aiuto (per i popup di help dipendenti dal contesto)</p>
     <blockquote>
@@ -174,8 +174,8 @@
 <blockquote> 
   <blockquote> 
     <blockquote> 
-      <p align="center">Grazie per l'uso di Moodle!<br />
-        <br />
+      <p align="center">Grazie per l'uso di Moodle!<br>
+        <br>
         <a target=_top href="http://dougiamas.com/">Martin Dougiamas</a>, Lead 
         Developer </p>
     </blockquote>

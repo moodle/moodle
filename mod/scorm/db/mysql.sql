@@ -9,13 +9,14 @@ CREATE TABLE prefix_scorm (
   reference varchar(255) NOT NULL default '',
   maxgrade float(3) NOT NULL default '0',
   grademethod tinyint(2) NOT NULL default '0',
+  datadir varchar(255) NOT NULL default '',
   launch int(10) unsigned NOT NULL default 0,
   summary text NOT NULL,
   auto tinyint(1) unsigned NOT NULL default '0',
+  popup varchar(255) NOT NULL default '',
   timemodified int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
-  UNIQUE KEY id (id),
-  KEY course (course)
+  UNIQUE KEY id (id)
 ) TYPE=MyISAM;
 
 CREATE TABLE prefix_scorm_scoes (
@@ -26,34 +27,28 @@ CREATE TABLE prefix_scorm_scoes (
   parent varchar(255) NOT NULL default '',
   identifier varchar(255) NOT NULL default '',
   launch varchar(255) NOT NULL default '',
-  parameters varchar(255) NOT NULL default '',
-  scormtype varchar(5) NOT NULL default '',
+  type varchar(5) NOT NULL default '',
   title varchar(255) NOT NULL default '',
-  prerequisites varchar(200) NOT NULL default '',
-  maxtimeallowed varchar(19) NOT NULL default '',
-  timelimitaction varchar(19) NOT NULL default '',
-  datafromlms varchar(255) NOT NULL default '',
-  masteryscore varchar(200) NOT NULL default '',
+  datafromlms longtext,
   next tinyint(1) unsigned NOT NULL default '0',
   previous tinyint(1) unsigned NOT NULL default '0',
   PRIMARY KEY (id),
-  UNIQUE KEY id (id),
-  KEY scorm (scorm)
+  UNIQUE KEY id (id)
 ) TYPE=MyISAM;
 
-CREATE TABLE prefix_scorm_scoes_track (
+CREATE TABLE prefix_scorm_sco_users (
   id int(10) unsigned NOT NULL auto_increment,
   userid int(10) unsigned NOT NULL default '0',
   scormid int(10) NOT NULL default '0',
   scoid int(10) unsigned NOT NULL default '0',
-  element varchar(255) NOT NULL default '',
-  value longtext NOT NULL default '',
-  PRIMARY KEY  (id),
-  KEY userid (userid),
-  KEY scormid (scormid),
-  KEY scoid (scoid),
-  KEY elemeny (element),
-  UNIQUE track (userid, scormid, scoid, element)
+  cmi_core_lesson_location varchar(255) NOT NULL default '',
+  cmi_core_lesson_status varchar(30) NOT NULL default '',
+  cmi_core_exit varchar(30) NOT NULL default '',
+  cmi_core_total_time varchar(13) NOT NULL default '00:00:00',
+  cmi_core_session_time varchar(13) NOT NULL default '00:00:00',
+  cmi_core_score_raw float(3) NOT NULL default '0',
+  cmi_suspend_data longtext,
+  PRIMARY KEY  (id)
 ) TYPE=MyISAM;
 
 #
@@ -61,6 +56,5 @@ CREATE TABLE prefix_scorm_scoes_track (
 #
 
 INSERT INTO prefix_log_display VALUES ('scorm', 'view', 'scorm', 'name');
-INSERT INTO prefix_log_display VALUES ('scorm', 'review', 'scorm', 'name');
 INSERT INTO prefix_log_display VALUES ('scorm', 'update', 'scorm', 'name');
 INSERT INTO prefix_log_display VALUES ('scorm', 'add', 'scorm', 'name');

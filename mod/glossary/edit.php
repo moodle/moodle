@@ -1,16 +1,16 @@
-<?php // $Id$
+<?PHP // $Id$
 
-require_once('../../config.php');
-require_once('lib.php');
+require_once("../../config.php");
+require_once("lib.php");
 
-global $CFG, $USER;
+global $CFG, $USER, $THEME;
 
 require_variable($id);    // Course Module ID
 optional_variable($e);    // EntryID
 optional_variable($confirm,0);    // proceed. Edit the edtry
 
-$mode = optional_param('mode'); // categories if by category?
-$hook = optional_param('hook'); // CategoryID
+optional_variable($mode);   // categories if by category?
+optional_variable($hook);    // CategoryID
 
 if (! $cm = get_record("course_modules", "id", $id)) {
     error("Course Module ID was incorrect");
@@ -20,7 +20,7 @@ if (! $course = get_record("course", "id", $cm->course)) {
     error("Course is misconfigured");
 }
 
-require_login($course->id, false, $cm);
+require_login($course->id);
 
 if ( isguest() ) {
     error("Guests are not allowed to edit glossaries", $_SERVER["HTTP_REFERER"]);
@@ -28,16 +28,6 @@ if ( isguest() ) {
 
 if (! $glossary = get_record("glossary", "id", $cm->instance)) {
     error("Course module is incorrect");
-}
-
-if ($CFG->dbtype == 'postgres7' ) {
-        $ucase = 'upper';
-} else {
-        $ucase = 'ucase';
-}
-
-if (!$glossary->studentcanpost && !isteacher($glossary->course)) {
-    error("You can't add/edit entries to this glossary!");
 }
 if ( $confirm ) {
     $form = data_submitted();
@@ -51,12 +41,12 @@ if ( $confirm ) {
         $form->fullmatch = 0;
     }
     $timenow = time();
-    //$form->text = clean_text($form->text, $form->format);
+    $form->text = clean_text($form->text, $form->format);
 
     $newentry->course = $glossary->course;
     $newentry->glossaryid = $glossary->id;
 
-    $newentry->concept = clean_text(trim($form->concept));
+    $newentry->concept = trim($form->concept);
     $newentry->definition = $form->text;
     $newentry->format = $form->format;
     $newentry->usedynalink = $form->usedynalink;
@@ -64,29 +54,30 @@ if ( $confirm ) {
     $newentry->fullmatch = $form->fullmatch;
     $newentry->timemodified = $timenow;
     $newentry->approved = 0;
-    $newentry->aliases = "";
     if ( $glossary->defaultapproval or isteacher($course->id) ) {
         $newentry->approved = 1;
     }
 
-    $strglossary = get_string("modulename", "glossary");
-    $strglossaries = get_string("modulenameplural", "glossary");
-    $stredit = get_string("edit");
-
     if ($form->concept == '' or trim($form->text) == '' ) {
         $errors = get_string('fillfields','glossary');
+        $strglossary = get_string("modulename", "glossary");
+        $strglossaries = get_string("modulenameplural", "glossary");
+        $stredit = get_string("edit");
+
         if ($usehtmleditor = can_use_richtext_editor()) {
             $defaultformat = FORMAT_HTML;
+            $onsubmit = "onsubmit=\"copyrichtext(form.text);\"";
         } else {
             $defaultformat = FORMAT_MOODLE;
+            $onsubmit = "";
         }
 
-        print_header_simple(format_string($glossary->name), "",
-             "<a href=\"index.php?id=$course->id\">$strglossaries</a> ->
-              <a href=\"view.php?id=$cm->id\">".format_string($glossary->name,true)."</a> -> $stredit", "form.text",
+        print_header_simple(strip_tags("$glossary->name"), "",
+             "<A HREF=\"index.php?id=$course->id\">$strglossaries</A> ->
+              <A HREF=\"view.php?id=$cm->id\">$glossary->name</A> -> $stredit", "form.text",
               "", true, "", navmenu($course, $cm));
 
-        print_heading(format_string($glossary->name));
+        print_heading($glossary->name);
 
         include("edit.html");
 
@@ -95,25 +86,11 @@ if ( $confirm ) {
     }
 
     if ($e) {
-        //We are updating an entry, so we compare current session user with
-        //existing entry user to avoid some potential problems if secureforms=off
-        //Perhaps too much security? Anyway thanks to skodak (Bug 1823)
-        $old = get_record('glossary_entries', 'id', $e);
-        $ineditperiod = ((time() - $old->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
-        if ( (!$ineditperiod  || $USER->id != $old->userid) and !isteacher($course->id) and $e) {
-            if ( $USER->id != $old->userid ) {
-                error("You can't edit other people's entries!");
-            } elseif (!$ineditperiod) {
-                error("You can't edit this. Time expired!");
-            }
-            die;
-        }
-
         $newentry->id = $e;
 
         $permissiongranted = 1;
         if ( !$glossary->allowduplicatedentries ) {
-            if ($dupentries = get_records("glossary_entries","$ucase(concept)", strtoupper($newentry->concept))) {
+            if ($dupentries = get_records("glossary_entries","UCASE(concept)", strtoupper($newentry->concept))) {
                 foreach ($dupentries as $curentry) {
                     if ( $glossary->id == $curentry->glossaryid ) {
                        if ( $curentry->id != $e ) {
@@ -127,19 +104,16 @@ if ( $confirm ) {
 
         if ( $permissiongranted ) {
             $newentry->attachment = $_FILES["attachment"];
-            if ($newfilename = glossary_add_attachment($newentry, 'attachment')) {
+            if ($newfilename = glossary_add_attachment($newentry, $newentry->attachment)) {
                 $newentry->attachment = $newfilename;
             } else {
                 unset($newentry->attachment);
             }
 
-            if (update_record("glossary_entries", $newentry)) {
-                add_to_log($course->id, "glossary", "update entry", 
-                           "view.php?id=$cm->id&amp;mode=entry&amp;hook=$newentry->id", 
-                           $newentry->id, $cm->id);
-                $redirectmessage = get_string('entryupdated','glossary');
-            } else {
+            if (! update_record("glossary_entries", $newentry)) {
                 error("Could not update your glossary");
+            } else {
+                add_to_log($course->id, "glossary", "update entry", "view.php?id=$cm->id&mode=entry&hook=$newentry->id", $newentry->id,$cm->id);
             }
         } else {
             error("Could not update this glossary entry because this concept already exist.");
@@ -153,25 +127,23 @@ if ( $confirm ) {
 
         $permissiongranted = 1;
         if ( !$glossary->allowduplicatedentries ) {
-            if ($dupentries = get_record("glossary_entries","$ucase(concept)", strtoupper($newentry->concept), "glossaryid", $glossary->id)) {
+            if ($dupentries = get_record("glossary_entries","UCASE(concept)", strtoupper($newentry->concept), "glossaryid", $glossary->id)) {
                 $permissiongranted = 0;
             }
         }
         if ( $permissiongranted ) {
-            if ($newentry->id = insert_record("glossary_entries", $newentry)) {
+            if (! $newentry->id = insert_record("glossary_entries", $newentry)) {
+                error("Could not insert this new entry");
+            } else {
                 $e = $newentry->id;
                 $newentry->attachment = $_FILES["attachment"];
-                if ($newfilename = glossary_add_attachment($newentry, 'attachment')) {
+                if ($newfilename = glossary_add_attachment($newentry, $newentry->attachment)) {
                     $newentry->attachment = $newfilename;
                 } else {
                      unset($newentry->attachment);
                 }
                 set_field("glossary_entries", "attachment", $newfilename, "id", $newentry->id);
-                add_to_log($course->id, "glossary", "add entry", 
-                           "view.php?id=$cm->id&amp;mode=entry&amp;hook=$newentry->id", $newentry->id,$cm->id);
-                $redirectmessage = get_string('entrysaved','glossary');
-            } else {
-                error("Could not insert this new entry");
+                add_to_log($course->id, "glossary", "add entry", "view.php?id=$cm->id&mode=entry&hook=$newentry->id", $newentry->id,$cm->id);
             }
         } else {
             error("Could not insert this glossary entry because this concept already exist.");
@@ -186,27 +158,28 @@ if ( $confirm ) {
         foreach ($form->categories as $category) {
             if ( $category > 0 ) {
                 $newcategory->categoryid = $category;
-                insert_record("glossary_entries_categories",$newcategory, false);
+                insert_record("glossary_entries_categories",$newcategory);
             } else {
                 break;
             }
         }
     }
     if ( isset($form->aliases) ) {
-        if ( $aliases = explode("\n",clean_text($form->aliases)) ) {
+        if ( $aliases = explode("\n",$form->aliases) ) {
             foreach ($aliases as $alias) {
                 $alias = trim($alias);
                 if ($alias) {
                     unset($newalias);
                     $newalias->entryid = $e;
                     $newalias->alias = $alias;
-                    insert_record("glossary_alias",$newalias, false);
+                    insert_record("glossary_alias",$newalias);
                 }
             }
         }
     }
-    redirect("view.php?id=$cm->id&amp;mode=entry&amp;hook=$newentry->id", $redirectmessage);
 
+    redirect("view.php?id=$cm->id&mode=entry&hook=$newentry->id");
+    die;
 } else {
     if ($e) {
         $form = get_record("glossary_entries", "id", $e);
@@ -221,8 +194,6 @@ if ( $confirm ) {
         $newentry->casesensitive = $form->casesensitive;
         $newentry->fullmatch = $form->fullmatch;
         $newentry->aliases = "";
-        $newentry->userid = $form->userid;
-        $newentry->timecreated = $form->timecreated;
 
         if ( $aliases = get_records("glossary_alias","entryid",$e) ) {
             foreach ($aliases as $alias) {
@@ -231,8 +202,6 @@ if ( $confirm ) {
         }
     }
 }
-
-
 //Fill and print the form.
 //We check every field has a default values here!!
 if (!isset($newentry->concept)) {
@@ -265,46 +234,33 @@ if (!isset($newentry->fullmatch)) {
 if (!isset($newentry->definition)) {
     $newentry->definition = "";
 }
-if (!isset($newentry->timecreated)) {
-    $newentry->timecreated = 0;
-}
-if (!isset($newentry->userid)) {
-    $newentry->userid = $USER->id;
-}
 $strglossary = get_string("modulename", "glossary");
 $strglossaries = get_string("modulenameplural", "glossary");
 $stredit = get_string("edit");
 
 if ($usehtmleditor = can_use_richtext_editor()) {
     $defaultformat = FORMAT_HTML;
+    $onsubmit = "onsubmit=\"copyrichtext(form.text);\"";
 } else {
     $defaultformat = FORMAT_MOODLE;
+    $onsubmit = "";
 }
 
-print_header_simple(format_string($glossary->name), "",
-             "<a href=\"index.php?id=$course->id\">$strglossaries</a> ->
-              <a href=\"view.php?id=$cm->id\">".format_string($glossary->name,true)."</a> -> $stredit", "",
+print_header_simple(strip_tags("$glossary->name"), "",
+             "<A HREF=\"index.php?id=$course->id\">$strglossaries</A> ->
+              <A HREF=\"view.php?id=$cm->id\">$glossary->name</A> -> $stredit", "",
               "", true, "", navmenu($course, $cm));
 
-$ineditperiod = ((time() - $newentry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
-if ( (!$ineditperiod  || $USER->id != $newentry->userid) and !isteacher($course->id) and $e) {
-    if ( $USER->id != $newentry->userid ) {
-        error("You can't edit other people's entries!");
-    } elseif (!$ineditperiod) {
-        error("You can't edit this. Time expired!");
-    }
-    die;
-}
-
-    print_heading(format_string($glossary->name));
+    echo '<p align="center"><font size="3"><b>' . stripslashes_safe($glossary->name);
+    echo '</b></font></p>';
 
 /// Info box
 
     if ( $glossary->intro ) {
-        print_simple_box(format_text($glossary->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
+        print_simple_box_start('center','70%');
+        echo format_text($glossary->intro);
+        print_simple_box_end();
     }
-
-    echo '<br />';
 
 /// Tabbed browsing sections
 $tab = GLOSSARY_ADDENTRY_VIEW;
@@ -320,7 +276,6 @@ glossary_print_tabbed_table_end();
     if ($usehtmleditor) {
        use_html_editor("text");
     }
-
 
 print_footer($course);
 

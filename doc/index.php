@@ -2,12 +2,17 @@
 
     require("../config.php");
 
-    $file  = optional_param('file', "", PARAM_FILE);  // docs file to view straight
-    $frame = optional_param('frame', "", PARAM_FILE); // docs file to view in frame
-    $sub   = optional_param('sub', "", PARAM_CLEAN);  // sub-section (named anchor)
+    optional_variable($file, "");     // docs file to view
+    optional_variable($frame, "");    // docs file to view
+    optional_variable($sub, "");      // sub-section (named anchor)
+    optional_variable($lang, "");     // override current language
 
     if ($CFG->forcelogin) {
         require_login();
+    }
+
+    if (!empty($lang)) {
+        $SESSION->lang = $lang;
     }
 
     if (!empty($sub)) {

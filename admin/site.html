@@ -1,20 +1,20 @@
-<form method="post" action="site.php" name="form">
-<table cellpadding="9" cellspacing="0" >
-<tr valign="top">
-    <td align="right"><?php print_string("fullsitename") ?>:</td>
-    <td><input type="text" name="fullname" size="50" maxlength="254" value="<?php p($form->fullname) ?>" alt="<?php print_string("fullsitename") ?>" />
+<form method="post" action="site.php" name="form" <?php echo $onsubmit ?>>
+<table cellpadding=9 cellspacing=0 >
+<tr valign=top>
+    <td align=right><P><?php print_string("fullsitename") ?>:</td>
+    <td><input type="text" name="fullname" size="50" maxlength="254" value="<?php p($form->fullname) ?>">
     <?php if (isset($err["fullname"])) formerr($err["fullname"]); ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right"><?php print_string("shortsitename") ?>:</td>
-    <td><input type="text" name="shortname" size="15" maxlength="15" value="<?php p($form->shortname) ?>" alt="<?php print_string("shortsitename") ?>" />
+<tr valign=top>
+    <td align=right><P><?php print_string("shortsitename") ?>:</td>
+    <td><input type="text" name="shortname" size="15" maxlength="15" value="<?php p($form->shortname) ?>">
     <?php if (isset($err["shortname"])) formerr($err["shortname"]); ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right"><?php print_string("frontpagedescription") ?>:<br />
-     <font size="1">
+<tr valign=top>
+    <td align=right><P><?php print_string("frontpagedescription") ?>:</P><br />
+     <font size=1>
      <?PHP
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
         echo "<br />";
@@ -22,20 +22,19 @@
            helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
         } else {
            helpbutton("html", get_string("helphtml"), "moodle", true, true);
-        }
+        } 
       ?>
       <br />
      </font>
     </td>
     <td><?php  print_textarea($usehtmleditor, 20, 50, 600, 400, "summary", $form->summary); ?></td>
 </tr>
-<tr valign="top">
-        <td align="right"><?php print_string("frontpageformat") ?>:</td>
-        <td><?php
-           $options = array(FRONTPAGENEWS           =>  get_string("frontpagenews"),
-                            FRONTPAGECOURSELIST     =>  get_string("frontpagecourselist"),
-                            FRONTPAGECATEGORYNAMES  =>  get_string("frontpagecategorynames"),
-                            FRONTPAGETOPICONLY      =>  get_string("frontpagetopiconly"));
+<tr valign=top>
+        <td align=right><P><?php print_string("frontpageformat") ?>:</td>
+        <td><?php 
+           $options = array("0"  =>  get_string("frontpagenews"),
+                            "1"  =>  get_string("frontpagecourselist"),
+                            "2"  =>  get_string("frontpagecategorynames"));
            if (count_records("course") > 200) {
                unset($options[1]);
                if ($form->frontpage == 1) {
@@ -46,19 +45,9 @@
         ?>
         </td>
 </tr>
-<tr valign="top">
-    <td align="right"><?php  print_string("sitesection") ?>:</td>
-    <td><?php
-    unset($choices);
-    $choices["0"] = get_string("no");
-    $choices["1"] = get_string("yes");
-    choose_from_menu ($choices, "numsections", $form->numsections, "");
-    ?>
-    </td>
-</tr>
-<tr valign="top">
-        <td align="right"><?php print_string("newsitemsnumber") ?>:</td>
-        <td><?php
+<tr valign=top>
+        <td align=right><p><?php print_string("newsitemsnumber") ?>:</td>
+        <td><?php 
            $newsitem  = get_string("newsitem");
            $newsitems = get_string("newsitems");
            $options = array("0"  =>  "0 $newsitems",
@@ -76,41 +65,56 @@
         ?>
         </td>
 </tr>
-<tr valign="top">
-    <td align="right"><?php print_string("wordforteacher") ?>:</td>
-    <td><input type="text" name="teacher" maxlength="100" size="25" value="<?php p($form->teacher) ?>" alt="<?php print_string("wordforteacher") ?>" />
-    (<?php print_string("wordforteachereg") ?>)
+<tr valign=top>
+    <td align="right"><P><?php  print_string("sitesection") ?>:</td>
+    <td><?php
+    unset($choices);
+    $choices["0"] = get_string("no");
+    $choices["1"] = get_string("yes");
+    choose_from_menu ($choices, "numsections", $form->numsections, "");
+    ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><?php print_string("wordforteacher") ?>:</td>
+    <td><input type="text" name="teacher" maxlength="100" size="25" value="<?php p($form->teacher) ?>">
+    (<?php print_string("wordforteachereg") ?>) 
     <?php if (isset($err["teacher"])) formerr($err["teacher"]); ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right"><?php print_string("wordforteachers") ?>:</td>
-    <td><input type="text" name="teachers" maxlength="100" size="25" value="<?php p($form->teachers) ?>" alt="<?php print_string("wordforteachers") ?>" />
+<tr valign=top>
+    <td align=right><p><?php print_string("wordforteachers") ?>:</td>
+    <td><input type="text" name="teachers" maxlength="100" size="25" value="<?php p($form->teachers) ?>">
     (<?php print_string("wordforteacherseg") ?>)
     <?php if (isset($err["teachers"])) formerr($err["teachers"]); ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right"><?php print_string("wordforstudent") ?>:</td>
-    <td><input type="text" name="student" maxlength="100" size="25" value="<?php p($form->student) ?>" alt="<?php print_string("wordforstudent") ?>" />
-    (<?php print_string("wordforstudenteg") ?>)
+<tr valign=top>
+    <td align=right><p><?php print_string("wordforstudent") ?>:</td>
+    <td><input type="text" name="student" maxlength="100" size="25" value="<?php p($form->student) ?>">
+    (<?php print_string("wordforstudenteg") ?>) 
     <?php if (isset($err["student"])) formerr($err["student"]); ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right"><?php print_string("wordforstudents") ?>:</td>
-    <td><input type="text" name="students" maxlength="100" size="25" value="<?php p($form->students) ?>" alt="<?php print_string("wordforstudents") ?>" />
-    (<?php print_string("wordforstudentseg") ?>)
+<tr valign=top>
+    <td align=right><p><?php print_string("wordforstudents") ?>:</td>
+    <td><input type="text" name="students" maxlength="100" size="25" value="<?php p($form->students) ?>">
+    (<?php print_string("wordforstudentseg") ?>) 
     <?php if (isset($err["students"])) formerr($err["students"]); ?>
     </td>
 </tr>
 <tr>
     <td></td>
-    <td><input type="submit" value="<?php print_string("savechanges") ?>" /></td>
+    <td><input type="submit" value="<?php print_string("savechanges") ?>"></td>
 </tr>
 </table>
-<input type="hidden" name="id" value="<?php p($form->id) ?>" />
-<input type="hidden" name="category" value="<?php p($form->category) ?>" />
-<input type="hidden" name="format" value="<?php p($form->format) ?>" />
-<input type="hidden" name="sesskey" value="<?php p($sesskey) ?>" />
+<input type="hidden" name="id" value="<?php p($form->id) ?>">
+<input type="hidden" name="category" value="<?php p($form->category) ?>">
+<input type="hidden" name="format" value="<?php p($form->format) ?>">
 </form>
+
+<?php 
+   if ($usehtmleditor) { 
+       print_richedit_javascript("form", "summary", "no");
+   }
+?>

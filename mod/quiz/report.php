@@ -1,9 +1,9 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
 // This script uses installed report plugins to print quiz reports
 
     require_once("../../config.php");
-    require_once("locallib.php");
+    require_once("lib.php");
 
     optional_variable($id);    // Course Module ID, or
     optional_variable($q);     // quiz ID
@@ -14,11 +14,11 @@
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
         }
-
+    
         if (! $course = get_record("course", "id", $cm->course)) {
             error("Course is misconfigured");
         }
-
+    
         if (! $quiz = get_record("quiz", "id", $cm->instance)) {
             error("Course module is incorrect");
         }
@@ -35,7 +35,7 @@
         }
     }
 
-    require_login($course->id, false);
+    require_login($course->id);
 
     if (!isteacher($course->id)) {
         error("You are not allowed to use this script");
@@ -45,21 +45,21 @@
 
 /// Print the page header
     if (empty($noheader)) {
-
+    
         $strquizzes = get_string("modulenameplural", "quiz");
         $strquiz  = get_string("modulename", "quiz");
         $strreport  = get_string("report", "quiz");
-
-        print_header_simple(format_string($quiz->name), "",
-                     "<a href=\"index.php?id=$course->id\">$strquizzes</a>
-                      -> <a href=\"view.php?id=$cm->id\">".format_string($quiz->name,true)."</a> -> $strreport",
+    
+        print_header_simple("$quiz->name", "",
+                     "<A HREF=index.php?id=$course->id>$strquizzes</A> 
+                      -> <a href=\"view.php?id=$cm->id\">$quiz->name</a> -> $strreport", 
                      "", "", true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
-
-        print_heading(format_string($quiz->name));
-
+    
+        print_heading($quiz->name);
+    
 
     /// Print list of available quiz reports
-
+    
         $allreports = get_list_of_plugins("mod/quiz/report");
         $reportlist = array ("overview", "regrade");   // Standard reports we want to show first
 
@@ -69,29 +69,23 @@
             }
         }
 
-        $tabs = array();
-        $row  = array();
-        $currenttab = '';
+        echo "<table cellpadding=10 align=center><tr>";
         foreach ($reportlist as $report) {
-            $row[] = new tabobject($report, "report.php?id=$cm->id&amp;mode=$report", 
-                                    get_string("report$report", "quiz"));
+            $strreport = get_string("report$report", "quiz");
             if ($report == $mode) {
-                $currenttab = $report;
+                echo "<td><u>$strreport</u></td>";
+            } else {
+                echo "<td><a href=\"report.php?id=$cm->id&mode=$report\">$strreport</a></td>";
             }
         }
-        $tabs[] = $row;
-
-        print_tabs($tabs, $currenttab);
-
+        echo "</tr></table><hr size=\"1\" noshade=\"noshade\" />";
     }
 
 
 /// Open the selected quiz report and display it
 
-    $mode = clean_filename($mode);
-
     if (! is_readable("report/$mode/report.php")) {
-        error("Report not known (".clean_text($mode).")");
+        error("Report not known ($mode)");
     }
 
     include("report/default.php");  // Parent class

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
 //  Removes a student from a class
 //  This will not delete any of their data from the course, 
@@ -28,7 +28,7 @@
         error("You are not allowed to unenroll");
     }
 
-    if (isset($confirm) and confirm_sesskey()) {
+    if (isset($confirm)) {
 
         if (! unenrol_student($user->id, $course->id)) {
             error("An error occurred while trying to unenrol you.");
@@ -48,7 +48,7 @@
     $strunenrol = get_string("unenrol");
 
     print_header("$course->shortname: $strunenrol", "$course->fullname", 
-                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $strunenrol"); 
+                 "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> $strunenrol"); 
 
     if ($user->id == $USER->id) {
         $strunenrolsure  = get_string("unenrolsure", "", get_string("yourself"));
@@ -56,8 +56,8 @@
         $strunenrolsure = get_string("unenrolsure", "", fullname($user, true));
     }
 
-    notice_yesno ($strunenrolsure, "unenrol.php?id=$id&amp;user=$user->id&amp;confirm=yes&amp;sesskey=$USER->sesskey", "$HTTP_REFERER");
+    notice_yesno ($strunenrolsure, "unenrol.php?id=$id&user=$user->id&confirm=yes", "$HTTP_REFERER");
 
-    print_footer($course);
+    print_footer();
 
 ?>

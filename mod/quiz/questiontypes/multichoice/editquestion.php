@@ -8,7 +8,7 @@
     if (!empty($options->answers)) {
         $answersraw = get_records_list("quiz_answers", "id", $options->answers);
     }
-    for ($i=0 ; $i < QUIZ_MAX_NUMBER_ANSWERS ; $i++) {
+    for ($i=0; $i<QUIZ_MAX_NUMBER_ANSWERS; $i++) {
         $answers[] = "";   // Make answer slots, default as blank
     }
     if (!empty($answersraw)) {
@@ -19,6 +19,6 @@
         }
     }
     print_heading_with_help(get_string("editingmultichoice", "quiz"), "multichoice", "quiz");
-    require("$CFG->dirroot/mod/quiz/questiontypes/multichoice/multichoice.html");
+    require("multichoice.html");
 
 ?>

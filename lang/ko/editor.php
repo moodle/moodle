@@ -1,9 +1,10 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // editor.php - created with Moodle 1.4.2 nearly (2004083121)
 
 
 $string['about'] = '에디터(데이터를 편집할 수 있도록 한 프로그램)에 관하여';
 $string['absbottom'] = '그림의 맨 밑에 Text를 정렬시킨다';
+$string['absmiddle'] = '문자열의 가운데를 이미지의 가운데에 맞춥니다';
 $string['address'] = '인사말';
 $string['alignment'] = '정렬';
 $string['alternatetext'] = '상호 원문';
@@ -88,7 +89,6 @@ $string['textmode'] = '당신은 텍스트 모드상태에 있습니다. 위지윅 모드로 돌아가기
 $string['texttop'] = '문서 상단';
 $string['thischarset'] = 'euc-kr';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['top'] = '상단';
 $string['type'] = '유형';
 $string['underline'] = '밑줄, 설명';

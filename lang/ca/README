@@ -2,17 +2,19 @@ README FOR CATALAN PLUGIN
 -------------------------
 
 
-La traducció de Moodle al català és obra de la comunitat "Moodle en català"
-<http://moodle.org/course/view.php?id=39>. Va ser iniciada en 2002 pel CENT, 
-Centre d'Educació i Noves Tecnologies de la Universitat Jaume I de Castelló, 
-que hi continua donant suport tècnic.
+Traducció de Moodle al català coordinada pel CENT, Centre d'Educació i
+Noves Tecnologies de la Universitat Jaume I de Castelló.
 
-Per actualitzar la traducció de Moodle al català en la vostra instal·lació
-de Moodle, descomprimiu aquest fitxer ca.zip dins del directori lang.
+http://cent.uji.es
+mailto:cent@uji.es
 
-Teniu en compte que la traducció no és completa al 100%.  Podeu col·laborar 
-enviant suggeriments, comentaris o correccions, o fent-vos càrrec de la 
-traducció d'un mòdul complet (i dels fitxers d'ajuda corresponents).
+(Han col·laborat en aquesta traducció: Jordi Adell, Clara Andrés, Puri
+Andrés, Carles Bellver, Fermín Cueva i Joan Queralt Gil.)
+
+Teniu en compte que la traducció no és completa al 100%.  Podeu
+col·laborar enviant suggeriments, comentaris o correccions, o fent-vos
+càrrec de la traducció d'un mòdul (i dels fitxers d'ajuda
+corresponents).
 
 Si us voleu fer càrrec d'un mòdul, els únics requisits són aquests:
 
@@ -25,18 +27,53 @@ Si us voleu fer càrrec d'un mòdul, els únics requisits són aquests:
    http://www.softcatala.org/projectes/eines/guiaestil/guiaestil.htm
    http://www.softcatala.org/projectes/eines/recull/recull.htm
 
-3. Que sigueu (o penseu ser) usuaris habituals del mòdul en qüestió.
+3. Que sigueu usuaris habituals del mòdul en qüestió.
 
-La llista de mòduls i de persones que se'n fan càrrec, i els mòduls encara
-no assignats a ningú, es poden consultar en aquesta pàgina:
+4. Que us comprometeu a mantenir i actualitzar la traducció durant un
+   temps.
 
-http://moodle.org/mod/resource/view.php?id=2945
+La llista de mòduls és la següent. La majoria dels mòduls no assignats
+els tenim igualment traduïts al català, però aquestes traduccions no han
+estat revisades o actualitzades recentment, o manquen les ajudes, etc.
+
+
+MÒDUL              ASSIGNAT A:
+-----              -----------
+
+appointment.php    No assignat
+assignment.php     CENT
+attendance.php     No assignat
+chat.php           CENT
+choice.php         No assignat
+dialogue.php       No assignat
+exercise.php       No assignat
+forum.php          CENT
+glossary.php       No assignat
+journal.php        CENT
+lesson.php         No assignat
+quiz.php           No assignat
+resource.php       CENT
+scheduler.php      No assignat
+scorm.php          CENT
+survey.php                 No assignat
+wiki.php           CENT
+workshop.php       No assignat
+
+admin.php                   CENT
+auth.php                     CENT
+calendar.php       CENT
+countries.php      CENT
+editor.php         CENT
+error.php          CENT
+moodle.php         CENT
+pix.php            CENT
+
+docs/              No assignat
+
 
 
 ----
-Centre d'Educació i Noves Tecnologies (CENT)
-de la Universitat Jaume I de Castelló
+Centre d'Educació i Noves Tecnologies (CENT) de la Universitat Jaume I de Castelló
 http://cent.uji.es
 mailto:cent@uji.es
-
 

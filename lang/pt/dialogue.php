@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.5 unstable development (2004083000)
+      // dialogue.php - created with Moodle 1.2 development (2003122600)
 
 
 $string['addmynewentries'] = 'Adicionar minhas novas entradas';
@@ -9,7 +9,7 @@ $string['allowmultiple'] = 'Permitir mais do que um diálogo com a mesma pessoa';
 $string['allowstudentdialogues'] = 'Permitir diálogos entre alunos';
 $string['close'] = 'Fechar';
 $string['closed'] = 'Fechado';
-$string['confirmclosure'] = 'Esta pronto a fechar um diálogo com $a. Os diálogos fechados já não podem ser abertos novamente. Se fechar este diálogo poderá vê-lo mas não adicionar nada mais, e terá que iniciar um novo diálogo para continuar a \"dialogar\" com esta pessoa.<br /><br />Tem a certeza que quer fechar este diálogo?';
+$string['confirmclosure'] = 'Esta pronto a fechar um diálogo com $a. Os diálogos fechados já não podem ser abertos novamente. Se fechar este diálogo poderá vê-lo mas não adicionar nada mais, e terá que iniciar um novo diálogo para continuar a &quot;dialogar&quot; com esta pessoa.<br /><br />Tem a certeza que quer fechar este diálogo?';
 $string['deleteafter'] = 'Apagar diálogos fechados,  após (dias)';
 $string['dialogueclosed'] = 'Diálogo fechado';
 $string['dialogueintro'] = 'Introdução do diálogo';
@@ -27,7 +27,6 @@ $string['everybody'] = 'Todos';
 $string['furtherinformation'] = 'Mais informações';
 $string['lastentry'] = 'Última entrada';
 $string['maildefault'] = 'Opção de Correio';
-$string['mailnotification'] = 'Notificação por correio electrónico';
 $string['modulename'] = 'Diálogo';
 $string['modulenameplural'] = 'Diálogos';
 $string['namehascloseddialogue'] = '$a fechou o diálogo';

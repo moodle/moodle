@@ -1,29 +1,26 @@
 <?PHP // $Id$ 
-      // pix.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // pix.php - created with Moodle 1.2 development (2004010800)
 
 
-$string['angry'] = 'È­³µ¾î';
-$string['approve'] = 'Âù¼ºÇØ¿ä';
-$string['biggrin'] = '¹æ±ß';
-$string['blackeye'] = '´«ÅÊÀÌ¹ãÅÊÀÌ ';
-$string['blush'] = 'ºÎ²ô·¯¿ö';
-$string['clown'] = '¹Ùº¸';
-$string['cool'] = '¸ÚÁøµ¥,Â¯';
-$string['dead'] = '³ìÃÊ°¡µÊ ,ÇÇ°ïÇØ ';
-$string['evil'] = 'ºÒÄè ';
-$string['kiss'] = 'ÂÉ¿Á';
-$string['mixed'] = '¾îÁö·¯¿ö';
-$string['sad'] = '½½ÆÛ';
-$string['shy'] = 'ºÎ²ô';
-$string['sleepy'] = 'Àá';
-$string['smiley'] = '¹æ±ß';
-$string['surprise'] = '¾ö¸¶¾ß!(´çÈ²)';
-$string['thischarset'] = 'euc-kr';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '&#54620;&#44397;&#50612;';
-$string['thoughtful'] = '»ý°¢¿¡ Àá±è ';
-$string['tongueout'] = '¾Æ½Î';
-$string['wideeyes'] = '³î¶õ(´«ÀÌ ÈÖµÕ±×·¡Áø)';
-$string['wink'] = 'À®Å©';
+$string['angry'] = '&#54868;&#45228;&#50612;';
+$string['approve'] = '&#52268;&#49457;&#54644;&#50836;';
+$string['biggrin'] = '&#51077;&#51012;&#48268;&#47532;&#44256; &#54616;&#54616;&#54616;';
+$string['blackeye'] = '&#47693;&#46308;&#51008;&#45576;(&#45576;&#53489;&#51060;&#48169;&#53489;&#51060;)';
+$string['blush'] = '&#48512;&#45124;&#47084;&#50892;';
+$string['clown'] = '&#45440;&#47532;&#45796;(&#47700;&#47217;)';
+$string['cool'] = '&#51339;&#50500;&#50836;';
+$string['dead'] = '&#51453;&#51008;&#52377;';
+$string['evil'] = '&#50501;&#47560;';
+$string['kiss'] = '&#51900;&#50725;';
+$string['mixed'] = '(&#49696;&#46384;&#50948;&#47196;)&#47672;&#47532;&#44032; &#50612;&#51648;&#47084;&#50892;&#50836;';
+$string['sad'] = '&#49836;&#54140;';
+$string['shy'] = '&#50500;&#51060; &#48512;&#45124;&#47084;&#50892;';
+$string['sleepy'] = '&#51320;&#47140;&#50836;(&#45208;&#47480;&#54644;&#50836;)';
+$string['smiley'] = '&#48120;&#49548;';
+$string['surprise'] = '&#44636;&#51677;&#51060;&#50556;';
+$string['thoughtful'] = '&#47960;&#44620;';
+$string['tongueout'] = '&#47700;&#47217;';
+$string['wideeyes'] = '&#45440;&#46976;(&#45576;&#51060; &#55064;&#46181;&#44536;&#47000;&#51652;)';
+$string['wink'] = '&#50969;&#53356;';
 
 ?>

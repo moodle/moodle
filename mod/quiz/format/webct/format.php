@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$ 
 ///////////////////////////////////////////////////////////////////////////
 //                                                                       //
 // WebCT FORMAT                                                          //
@@ -71,11 +71,11 @@ class quiz_format_webct_modified_calculated_qtype extends quiz_calculated_qtype 
             // function is called from save_question...
             return parent::save_question_options($question, $options);
         }
-
+        
         // function is called from format.php...
-
+        
         $datasetdatas = $question->datasets;
-
+        
         // Set dataset
         $form->dataset = array();
         foreach ($datasetdatas as $datasetname => $notimportant) {
@@ -93,7 +93,7 @@ class quiz_format_webct_modified_calculated_qtype extends quiz_calculated_qtype 
         $this->save_question($question, $form, 'not used', $subtypeoptions);
 
         // Save dataset options and items...
-
+        
         // Get datasetdefinitions
         global $CFG;
         $datasetdefs = get_records_sql(
@@ -102,7 +102,7 @@ class quiz_format_webct_modified_calculated_qtype extends quiz_calculated_qtype 
                         {$CFG->prefix}quiz_question_datasets b
                   WHERE a.id = b.datasetdefinition
                     AND b.question = '$question->id' ");
-
+        
         foreach ($datasetdefs as $datasetdef) {
             $datasetdata = $datasetdatas[$datasetdef->name];
 
@@ -115,7 +115,7 @@ class quiz_format_webct_modified_calculated_qtype extends quiz_calculated_qtype 
                 }
             }
             $datasetdef->itemcount = $item->number - 1;
-
+            
             // Retrieve ->options
             if (is_numeric($datasetdata->min) && is_numeric($datasetdata->max)
                     && $datasetdata->min <= $datasetdata->max) {
@@ -148,7 +148,7 @@ function quiz_format_webct_convert_formula($formula) {
 
     // Remove empty space, as it would cause problems otherwise:
     $formula = str_replace(' ', '', $formula);
-
+    
     // Remove paranthesis after e,E and *10**:
     while (ereg('[0-9.](e|E|\\*10\\*\\*)\\([+-]?[0-9]+\\)', $formula, $regs)) {
         $formula = str_replace(
@@ -162,7 +162,7 @@ function quiz_format_webct_convert_formula($formula) {
         $formula = str_replace(
                 $regs[0], str_replace('*10**', 'e', $regs[0]), $formula);
     }
-
+    
     // Replace other 10** with 1e where possible
     while (ereg('(^|[^0-9.eE])10\\*\\*[+-]?[0-9]+([^0-9.eE]|$)', $formula, $regs)) {
         $formula = str_replace(
@@ -172,14 +172,14 @@ function quiz_format_webct_convert_formula($formula) {
     // Replace all other base**exp with the PHP equivalent function pow(base,exp)
     // (Pretty tricky to exchange an operator with a function)
     while (2 == count($splits = explode('**', $formula, 2))) {
-
+        
         // Find $base
         if (ereg('^(.*[^0-9.eE])?(([0-9]+(\\.[0-9]*)?|\\.[0-9]+)([eE][+-]?[0-9]+)?|\\{[^}]*\\})$',
                 $splits[0], $regs)) {
             // The simple cases
             $base = $regs[2];
             $splits[0] = $regs[1];
-
+            
         } else if (ereg('\\)$', $splits[0])) {
             // Find the start of this parenthesis
             $deep = 1;
@@ -198,7 +198,7 @@ function quiz_format_webct_convert_formula($formula) {
             }
             $base = $regs[2];
             $splits[0] = $regs[1];
-
+            
         } else {
             error("Bad base before **: $splits[0]**");
         }
@@ -209,7 +209,7 @@ function quiz_format_webct_convert_formula($formula) {
             // The simple case
             $exp = $regs[1];
             $splits[1] = $regs[6];
-
+            
         } else if (ereg('^[+-]?[[:alnum:]_]*\\(', $splits[1])) {
             // Find the end of the parenthesis
             $deep = 1;
@@ -235,7 +235,7 @@ function quiz_format_webct_convert_formula($formula) {
     }
 
     // Nothing more is known to need to be converted
-
+    
     return $formula;
 }
 
@@ -279,7 +279,6 @@ class quiz_file_format extends quiz_default_format {
                 if (ereg("^:",$line)) {
                     $answertext = addslashes(trim($answertext));
                     $question->answer[$currentchoice] = $answertext;
-                    $question->subanswers[$currentchoice] = $answertext;
                     unset($answertext);
                 }
                  else {
@@ -367,7 +366,7 @@ class quiz_file_format extends quiz_default_format {
                                     $QuestionOK = FALSE;
                                 }
                                 break;
-
+                                
                             case MULTICHOICE:
                                 if ($question->single) {
                                     if ($maxfraction != 1) {
@@ -399,7 +398,7 @@ class quiz_file_format extends quiz_default_format {
                                 // No problemo
                         }
                     }
-
+                    
                     if ($QuestionOK) {
 
                         $questions[] = $question;    // store it
@@ -445,7 +444,7 @@ class quiz_file_format extends quiz_default_format {
                 // To make us pass the end-of-question sanity checks
                 $question->answer = array('dummy');
                 $question->fraction = array('1.0');
-
+                
                 $currentchoice = -1;
                 $ignore_rest_of_question = FALSE;
                 continue;
@@ -454,7 +453,7 @@ class quiz_file_format extends quiz_default_format {
             if (eregi("^:TYPE:M",$line)) {
                 // Match Question
                 $question->qtype = MATCH;
-                $ignore_rest_of_question = FALSE;         // match question processing is not debugged
+                $ignore_rest_of_question = TRUE;         // match question processing is not debugged
                 continue;
             }
 
@@ -477,7 +476,7 @@ class quiz_file_format extends quiz_default_format {
             }
 
             if (eregi("^:TITLE:(.*)",$line,$webct_options)) {
-                $name = trim($webct_options[1]);
+            	$name = trim($webct_options[1]);
                 if (strlen($name) > 255) {
                     $name = substr($name,0,250)."...";
                     $warnings[] = get_string("questionnametoolong", "quiz", $nLineCounter);
@@ -487,10 +486,10 @@ class quiz_file_format extends quiz_default_format {
             }
 
             if (eregi("^:IMAGE:(.*)",$line,$webct_options)) {
-                $filename = trim($webct_options[1]);
-                if (eregi("^http://",$filename)) {
-                    $question->image = $filename;
-                }
+            	$filename = trim($webct_options[1]);
+            	if (eregi("^http://",$filename)) {
+	                $question->image = $filename;
+            	}
                 continue;
             }
 
@@ -519,20 +518,20 @@ class quiz_file_format extends quiz_default_format {
             }
 
 
-            $bIsHTMLText = eregi(":H$",$line);  // True if next lines are coded in HTML
+            $bIsHTMLText = eregi(":H$",$line);	// True if next lines are coded in HTML
             if (eregi("^:QUESTION",$line)) {
                 $questiontext="";               // Start gathering next lines
                 continue;
             }
 
-            if (eregi("^:ANSWER([0-9]+):([^:]+):([0-9\.\-]+):(.*)",$line,$webct_options)) {      /// SHORTANSWER
+            if (eregi("^:ANSWER([0-9]+):([^:]+):([0-9\.]+):(.*)",$line,$webct_options)) {      /// SHORTANSWER
                 $currentchoice=$webct_options[1];
                 $answertext=$webct_options[2];            // Start gathering next lines
                 $question->fraction[$currentchoice]=($webct_options[3]/100);
                 continue;
             }
 
-            if (eregi("^:ANSWER([0-9]+):([0-9\.\-]+)",$line,$webct_options)) {
+            if (eregi("^:ANSWER([0-9]+):([0-9\.]+)",$line,$webct_options)) {
                 $answertext="";                 // Start gathering next lines
                 $currentchoice=$webct_options[1];
                 $question->fraction[$currentchoice]=($webct_options[2]/100);
@@ -551,7 +550,7 @@ class quiz_file_format extends quiz_default_format {
                 $question->answers[$currentchoice]->tolerancetype = 2; // nominal (units in webct)
                 $question->answers[$currentchoice]->feedback = '';
                 $question->answers[$currentchoice]->correctanswerlength = 4;
-
+                
                 $datasetnames = $qtypecalculated->find_dataset_names($webct_options[1]);
                 foreach ($datasetnames as $datasetname) {
                     $question->datasets[$datasetname]->items = array();
@@ -562,11 +561,10 @@ class quiz_file_format extends quiz_default_format {
             if (eregi("^:L([0-9]+)",$line,$webct_options)) {
                 $answertext="";                 // Start gathering next lines
                 $currentchoice=$webct_options[1];
-                $question->fraction[$currentchoice]=1; 
                 continue;
             }
 
-            if (eregi("^:R([0-9]+)",$line,$webct_options)) {
+            if (eregi("^:R[0-9]+)",$line,$webct_options)) {
                 $responsetext="";                // Start gathering next lines
                 $currentchoice=$webct_options[1];
                 continue;

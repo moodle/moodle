@@ -1,59 +1,44 @@
 <form method="post" action="module.php" name="form">
-<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>">
 
-<table cellpadding="9" cellspacing="0" >
-<tr valign="top">
-	<td align="right">resource_framesize:</td>
+<table cellpadding=9 cellspacing=0 >
+<tr valign=top>
+	<td align=right><p>resource_framesize:</td>
 	<td>
-    <input name="resource_framesize" type="text" size="5" value="<?php p($CFG->resource_framesize) ?>" />
+    <input name=resource_framesize type=text size=5 value="<?php p($CFG->resource_framesize) ?>">
     </td>
     <td>
     <?php print_string("configframesize", "resource") ?>
     </td>
 </tr>
-<tr valign="top">
-	<td align="right">resource_websearch:</td>
+<tr valign=top>
+	<td align=right><p>resource_websearch:</td>
 	<td>
-    <input name="resource_websearch" type="text" size="30" value="<?php p($CFG->resource_websearch) ?>" />
+    <input name=resource_websearch type=text size=30 value="<?php p($CFG->resource_websearch) ?>">
     </td>
     <td>
     <?php print_string("configwebsearch", "resource") ?>
     </td>
 </tr>
-<tr valign="top">
-	<td align="right">resource_defaulturl:</td>
+<tr valign=top>
+	<td align=right><p>resource_defaulturl:</td>
 	<td>
-    <input name="resource_defaulturl" type="text" size="30" value="<?php p($CFG->resource_defaulturl) ?>" />
+    <input name=resource_defaulturl type=text size=30 value="<?php p($CFG->resource_defaulturl) ?>">
     </td>
     <td>
     <?php print_string("configdefaulturl", "resource") ?>
     </td>
 </tr>
-<tr valign="top">
-	<td align="right">resource_secretphrase:</td>
+<tr valign=top>
+	<td align=right><p>resource_secretphrase:</td>
 	<td>
-    <input name="resource_secretphrase" type="text" size="30" value="<?php p($CFG->resource_secretphrase) ?>" />
+    <input name=resource_secretphrase type=text size=30 value="<?php p($CFG->resource_secretphrase) ?>">
     </td>
     <td>
     <?php print_string("configsecretphrase", "resource") ?>
     </td>
 </tr>
-<tr valign="top">
-	<td align="right">resource_allowlocalfiles:</td>
-	<td>
-    <?php
-        unset($choices);
-        $choices["0"] = get_string("no");
-        $choices["1"] = get_string("yes");
-        choose_from_menu ($choices, "resource_allowlocalfiles", $CFG->resource_allowlocalfiles, "");
-    ?>
-    </td>
-    <td>
-    <?php print_string("configallowlocalfiles", "resource") ?>
-    </td>
-</tr>
-<tr valign="top">
-	<td align="right">resource_filterexternalpages:</td>
+<tr valign=top>
+	<td align=right><p>resource_filterexternalpages:</td>
 	<td>
     <?php
         unset($choices);
@@ -66,8 +51,8 @@
     <?php print_string("configfilterexternalpages", "resource") ?>
     </td>
 </tr>
-<tr valign="top">
-	<td align="right">resource_popup:</td>
+<tr valign=top>
+	<td align=right><p>resource_popup:</td>
 	<td>
     <?php
         unset($choices);
@@ -82,11 +67,11 @@
 </tr>
 <?php foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
           $defaultvalue = "resource_popup$optionname";
-          echo "<tr valign=\"top\">";
-	      echo "<td align=\"right\">$defaultvalue:</td>";
+          echo "<tr valign=top>";
+	      echo "<td align=right><p>$defaultvalue:</td>";
 	      echo "<td>";
           if ($optionname == "height" or $optionname == "width") {
-              echo "<input name=$defaultvalue type=\"text\" size=\"5\" value=\"".$CFG->$defaultvalue."\" />";
+              echo "<input name=$defaultvalue type=text size=5 value=\"".$CFG->$defaultvalue."\">";
           } else {
               choose_from_menu ($choices, $defaultvalue, $CFG->$defaultvalue, "");
           }
@@ -97,37 +82,9 @@
           echo "</tr>";
       }
 ?>
-<tr valign="top">
-	<td align="right">resource_windowsettings:</td>
-	<td>
-    <?php
-        unset($choices);
-        $choices["0"] = get_string("hidesettings");
-        $choices["1"] = get_string("showsettings");
-        choose_from_menu ($choices, "resource_windowsettings", $CFG->resource_windowsettings, "");
-    ?>
-    </td>
-    <td>
-    <?php print_string("configwindowsettings", "resource") ?>
-    </td>
-</tr>
-<tr valign="top">
-	<td align="right">resource_parametersettings:</td>
-	<td>
-    <?php
-        unset($choices);
-        $choices["0"] = get_string("hidesettings");
-        $choices["1"] = get_string("showsettings");
-        choose_from_menu ($choices, "resource_parametersettings", $CFG->resource_parametersettings, "");
-    ?>
-    </td>
-    <td>
-    <?php print_string("configparametersettings", "resource") ?>
-    </td>
-</tr>
 <tr>
-    <td colspan="3" align="center">
-	<input type="submit" value="<?php print_string("savechanges") ?>" /></td>
+    <td colspan=3 align=center>
+	<input type="submit" value="<?php print_string("savechanges") ?>"></td>
 </tr>
 </table>
 

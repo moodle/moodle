@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This page prints the restore form to select everything yo want
     //to restore. Form is dinamically buid, depending of "info" object
     //that contains the backup contents and depending of every mod
@@ -67,10 +67,6 @@
     }
 
     //Check other parameters
-    if (!isset($restore_metacourse)) {
-        $restore_metacourse = 1;
-    }
-   
     if (!isset($restore_users)) {
         $restore_users = 1;
     }
@@ -87,10 +83,6 @@
         $restore_course_files = 1;
     }
 
-    if (!isset($restore_messages)) {
-        $restore_messages = 1;
-        }
-
     if (!isset($restore_restoreto)) {
         if (isteacheredit($id) and !isadmin()) {
             $restore_restoreto = 1;
@@ -106,7 +98,7 @@
 
 ?>
 
-<script language="JavaScript" type="text/javascript">
+<SCRIPT LANGUAGE="JavaScript">
 <!--
 function selectItemInMenuByName(formId, menuName, selectIndex ) {
     myForm = document.getElementById(formId)
@@ -121,21 +113,21 @@ function selectItemInMenuByName(formId, menuName, selectIndex ) {
 -->
 </script>
 
-<form name="form1" id="form1" method="post" action="restore.php">
-<table cellpadding="5">
+<form name="form1" id="form1" method="post" action="<?php echo $ME ?>">
+<table cellpadding=5>
 <?php
 
     //First, course destination
     //Print the full tr
     echo "<tr>";
-    echo "<td align=\"right\"><b>";
+    echo "<td align=\"right\"><P><b>";
     echo get_string("restoreto").":</b>";
     echo "</td><td>";
-    if (isteacheredit($id) and !iscreator()) {
+    if (isteacheredit($id) and !isadmin()) {
         $restore_restoreto_options[0] = get_string("currentcoursedeleting");
         $restore_restoreto_options[1] = get_string("currentcourseadding");
     } 
-    if (iscreator()) {
+    if (isadmin()) {
         $restore_restoreto_options[0] = get_string("existingcoursedeleting");
         $restore_restoreto_options[1] = get_string("existingcourseadding");
         $restore_restoreto_options[2] = get_string("newcourse"); 
@@ -143,7 +135,7 @@ function selectItemInMenuByName(formId, menuName, selectIndex ) {
     choose_from_menu($restore_restoreto_options, "restore_restoreto", $restore_restoreto, "");
     echo "</td></tr>";
     //Line
-    echo "<tr><td colspan=\"2\"><hr /></td></tr>";
+    echo "<tr><td colspan=\"2\"><hr noshade size=\"1\"></td></tr>";
     //Now, check modules and info and show posibilities
     if ($allmods = get_records("modules") ) {
         //Print option to select/deselect every "with user info" popup. For Gustav, lol, Eloy :-)
@@ -156,7 +148,7 @@ function selectItemInMenuByName(formId, menuName, selectIndex ) {
              get_string("none")."</a>";
         echo "</font></td>";
         echo "</tr>";
-        echo "<tr><td colspan=\"2\"><hr /></td></tr>";
+        echo "<tr><td colspan=\"2\"><hr noshade size=\"1\"></td></tr>";
         foreach ($allmods as $mod) {
             $modname = $mod->name;
             $modrestore = $modname."_restore_mods";
@@ -170,9 +162,9 @@ function selectItemInMenuByName(formId, menuName, selectIndex ) {
                     if (isset($info->mods[$modname]) && $info->mods[$modname]->backup == "true") {
                         //Print the full tr
                         echo "<tr>";
-                        echo "<td align=\"right\"><b>";
+                        echo "<td align=\"right\"><P><B>";
                         echo get_string("include")." ". get_string("modulenameplural",$modname).":";
-                        echo "</b></td><td>";
+                        echo "</td><td>";
                         $restore_options[0] = get_string("no"); 
                         $restore_options[1] = get_string("yes");
                         choose_from_menu($restore_options, $restore_var, $$restore_var, "");
@@ -185,48 +177,33 @@ function selectItemInMenuByName(formId, menuName, selectIndex ) {
                         } else {
                             //Module haven't userdata
                             echo get_string("withoutuserdata");
-                            echo "<input type=\"hidden\" name=\"$user_info_var\" value=\"0\" />";
+                            echo "<input type=\"hidden\" name=\"$user_info_var\" value=\"0\">";
                         }
                         echo "</td></tr>";
                     } else {
                         //Module isn't restorable
-                        echo "<input type=\"hidden\" name=\"$restore_var\" value=\"0\" />";
-                        echo "<input type=\"hidden\" name=\"$user_info_var\" value=\"0\" />";
+                        echo "<input type=\"hidden\" name=\"$restore_var\" value=\"0\">";
+                        echo "<input type=\"hidden\" name=\"$user_info_var\" value=\"0\">";
                     }
                 } else {
                     //Module isn't restorable
-                    echo "<input type=\"hidden\" name=\"$restore_var\" value=\"0\" />";
-                    echo "<input type=\"hidden\" name=\"$user_info_var\" value=\"0\" />";
+                    echo "<input type=\"hidden\" name=\"$restore_var\" value=\"0\">";
+                    echo "<input type=\"hidden\" name=\"$user_info_var\" value=\"0\">";
                 }
             } else {
                 //Module isn't restorable
-                echo "<input type=\"hidden\" name=\"$restore_var\" value=\"0\" />";
-                echo "<input type=\"hidden\" name=\"$user_info_var\" value=\"0\" />";
+                echo "<input type=\"hidden\" name=\"$restore_var\" value=\"0\">";
+                echo "<input type=\"hidden\" name=\"$user_info_var\" value=\"0\">";
             }
         }
         //Line
-        echo "<tr><td colspan=\"2\"><hr /></td></tr>";
+        echo "<tr><td colspan=\"2\"><hr noshade size=\"1\"></td></tr>";
 
-        //Now print the Metacourse tr
-        echo "<tr>";
-        echo "<td align=\"right\"><b>";
-        echo get_string("metacourse").":";                                               
-        echo "</b></td><td>";
-        //If metacourse are in the backup file, show menu, else fixed to no
-        if ($info->backup_metacourse == "true") {
-            $metacourse_options[0] = get_string("no");
-            $metacourse_options[1] = get_string("yes"); 
-            choose_from_menu($metacourse_options, "restore_metacourse", $restore_metacourse, ""); 
-        } else {
-            echo get_string("no");
-            echo "<input type=\"hidden\" name=\"restore_metacourse\" value=\"0\" />";
-        }
-        echo "</td></tr>";
         //Now print the Users tr
         echo "<tr>";
-        echo "<td align=\"right\"><b>";
+        echo "<td align=\"right\"><P><B>";
         echo get_string("users").":";
-        echo "</b></td><td>";
+        echo "</td><td>";
         //If some user is present in the backup file
         if ($info->backup_users == "all" or $info->backup_users == "course") {
             //If all users are in the backup file
@@ -238,16 +215,16 @@ function selectItemInMenuByName(formId, menuName, selectIndex ) {
             choose_from_menu($user_options, "restore_users", $restore_users, "");
         } else {
             echo get_string("none");
-            echo "<input type=\"hidden\" name=\"restore_users\" value=\"2\" />";
+            echo "<input type=\"hidden\" name=\"restore_users\" value=\"2\">";
 
         }
         echo "</td></tr>";
 
         //Now print the Logs tr
         echo "<tr>";
-        echo "<td align=\"right\"><b>";
+        echo "<td align=\"right\"><P><B>";
         echo get_string("logs").":";                                               
-        echo "</b></td><td>";
+        echo "</td><td>";
         //If logs are in the backup file, show menu, else fixed to no
         if ($info->backup_logs == "true") {
             $log_options[0] = get_string("no");
@@ -255,15 +232,15 @@ function selectItemInMenuByName(formId, menuName, selectIndex ) {
             choose_from_menu($log_options, "restore_logs", $restore_logs, ""); 
         } else {
             echo get_string("no");
-            echo "<input type=\"hidden\" name=\"restore_logs\" value=\"0\" />";
+            echo "<input type=\"hidden\" name=\"restore_logs\" value=\"0\">";
         }
         echo "</td></tr>";
 
         //Now print the User Files tr
         echo "<tr>";
-        echo "<td align=\"right\"><b>";
+        echo "<td align=\"right\"><P><B>";
         echo get_string ("userfiles").":";
-        echo "</b></td><td>";
+        echo "</td><td>";
         //If user files are in the backup file, show menu, else fixed to no
         if ($info->backup_user_files == "true") {
             $user_file_options[0] = get_string("no"); 
@@ -271,17 +248,15 @@ function selectItemInMenuByName(formId, menuName, selectIndex ) {
             choose_from_menu($user_file_options, "restore_user_files", $restore_user_files, "");
         } else {
             echo get_string("no");
-            echo "<input type=\"hidden\" name=\"restore_user_files\" value=\"0\" />";
+            echo "<input type=\"hidden\" name=\"restore_user_files\" value=\"0\">";
         }
         echo "</td></tr>";
 
         //Now print the Course Files tr
         echo "<tr>";
-        echo "<td align=\"right\"><b>";
+        echo "<td align=\"right\"><P><B>";
         echo get_string ("coursefiles").":";
-        echo "</b></td><td>";
-        echo "<input type=\"hidden\" name=\"backup_unique_code\" value=\"$backup_unique_code\" />";
-        echo "<input type=\"hidden\" name=\"file\" value=\"$file\" />";
+        echo "</td><td>";
         //If course files are in the backup file, show menu, else fixed to no
         if ($info->backup_course_files == "true") {
             $course_file_options[0] = get_string("no");
@@ -289,36 +264,19 @@ function selectItemInMenuByName(formId, menuName, selectIndex ) {
             choose_from_menu($course_file_options, "restore_course_files", $restore_course_files, "");
         } else {
             echo get_string("no");
-            echo "<input type=\"hidden\" name=\"restore_course_files\" value=\"0\" />";
+            echo "<input type=\"hidden\" name=\"restore_course_files\" value=\"0\">";
         }
         echo "</td></tr>";
-
-        //Now print the Messages tr
-        echo "<tr>";
-        echo "<td align=\"right\"><b>";
-        
-        //This tr is slighty different. Everything becomes hidden if
-        //we haven't messages is the backup, to avoid confusions to users.
-        //If messages are in the backup file, show menu, else fixed to no and show nothing
-        if ($info->backup_messages == "true") {
-            echo get_string ('messages','message').":";
-            echo "</b></td><td>";
-            $message_options[0] = get_string("no");
-            $message_options[1] = get_string("yes");
-            choose_from_menu($message_options, "restore_messages", $restore_messages, "");
-        } else {
-            echo "&nbsp;</b></td><td>";
-            echo "<input type=\"hidden\" name=\"restore_messages\" value=\"0\" />";
-        }
-        echo "</td></tr>";
+        echo "<input type=\"hidden\" name=\"backup_unique_code\" value=\"$backup_unique_code\">";
+        echo "<input type=\"hidden\" name=\"file\" value=\"$file\">";
     }
 ?>
 </table>
-<br />
-<center>
-<input type="hidden" name="id"     value="<?php  p($id) ?>" />
-<input type="hidden" name="launch" value="check" />
-<input type="submit" value="<?php  print_string("continue") ?>" />
-<input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
-</center>
-</form>
+<BR>
+<CENTER>
+<input type="hidden" name=id     value="<?php  p($id) ?>">
+<input type="hidden" name=launch value="check">
+<input type="submit" value="<?php  print_string("continue") ?>">
+<input type="submit" name=cancel value="<?php  print_string("cancel") ?>">
+</CENTER>
+</FORM>

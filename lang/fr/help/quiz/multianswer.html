@@ -1,99 +1,76 @@
-<!-- $Id$ -->
+<p align="center"><b>Questions Cloze &agrave; r&eacute;ponses int&eacute;gr&eacute;es</b></p>
 
-<p align="center"><strong>Questions Cloze à réponses intégrées</strong></p>
+<p>Ce type de question est tr&egrave;s flexible. Il est analoque au
+format Cloze, assez r&eacute;pandu.</p>
 
-<p>Ce type de question est très flexible. Il est analoque au format Cloze, assez répandu.</p>
+<p>Les questions se composent d'un texte (en format Moodle)
+dans lequel on peut int&eacute;grer des r&eacute;ponses &agrave; choix multiples, des
+r&eacute;ponses courtes ou des r&eacute;ponses num&eacute;riques.</p>
 
-<p>Les questions se composent d'un texte (en format Moodle) dans lequel on peut intégrer des réponses à choix multiples, des réponses courtes ou des réponses numériques.</p>
+<p>Il n'existe &agrave; ce jour pas d'interface graphique pour cr&eacute;er
+de telles questions - vous devez les &eacute;crire directement dans la bo&icirc;te
+de texte ou en les importer &agrave; partir d'un fichier externe. </p>
 
-<p>Il n'existe à ce jour pas d'interface graphique pour créer de telles questions - vous devez les écrire directement dans la boîte de texte ou en les importer à partir d'un fichier externe. </p>
+<p>Voici un exemple de texte qui illustre comment inclure les
+diff&eacute;rents types de r&eacute;ponses attendues&nbsp;:</p>
 
-<p>Voici un exemple de texte qui illustre comment inclure les différents types de réponses attendues&nbsp;:</p>
+<form>
+<center>
+<textarea cols="60" rows="20">Cette question comporte du texte dans lequel on a directement int&eacute;gr&eacute; des r&eacute;ponses &agrave; choix multiples {1:MULTICHOICE:Mauvaise r&eacute;ponse#Feedback pour cette mauvaise r&eacute;ponse~Une autre mauvaise r&eacute;ponse#Feedback pour cette autre mauvaise r&eacute;ponse~=Bonne r&eacute;ponse#Feedback pour la bonne r&eacute;ponse~%50%R&eacute;ponse qui vaut la moiti&eacute; des points#Feedback pour la question qui vaut la moiti&eacute; des points}&nbsp;; vous devez maintenant r&eacute;pondre &agrave; une question courte{1:SHORTANSWER:Mauvaise r&eacute;ponse#Feedback pour cette mauvaise r&eacute;ponse~=Bonne r&eacute;ponse#Feedback pour la bonne r&eacute;ponse~%50%R&eacute;ponse qui vaut la moiti&eacute; des points#Feedback pour la question qui vaut la moiti&eacute; des points}. Nous avons finalement une question qui demande une r&eacute;ponse num&eacute;rique avec point d&eacute;cimal {2:NUMERICAL:=23.8:0.1#Feedback pour la bonne r&eacute;ponse 23.8~%50%N/A#Feedback pour la r&eacute;ponse qui donne la moiti&eacute; des points}.
 
-<form action="#">
-
-<div>
-
-<textarea cols="80" rows="17">Cette question comporte du texte dans lequel on a directement intégré des réponses à choix multiples {1:MULTICHOICE:Mauvaise réponse#Feedback pour cette mauvaise réponse~Une autre mauvaise réponse#Feedback pour cette autre mauvaise réponse~=Bonne réponse#Feedback pour la bonne réponse~%50%Réponse qui vaut la moitié des points#Feedback pour la question qui vaut la moitié des points}&nbsp;; vous devez maintenant répondre à une question courte{1:SHORTANSWER:Mauvaise réponse#Feedback pour cette mauvaise réponse~=Bonne réponse#Feedback pour la bonne réponse~%50%Réponse qui vaut la moitié des points#Feedback pour la question qui vaut la moitié des points}. Nous avons finalement une question qui demande une réponse numérique avec point décimal {2:NUMERICAL:=23.8:0.1#Feedback pour la bonne réponse 23.8~%50%N/A#Feedback pour la réponse qui donne la moitié des points}.
-
-Notez que les adresses URL comme www.moodle.org et les binettes :-) sont correctement interprétées&nbsp;:
-a) Est-ce bien? {:MULTICHOICE:=Oui#Bonne réponse~Non#Votre opinion nous indiffère&nbsp;!}
-b) Quelle note désirez-vous? {3:NUMERICAL:=3:2}</textarea>
-
-</div>
-
+Notez que les adresses URL comme www.moodle.org et les binettes :-) sont correctement interpr&eacute;t&eacute;es&nbsp;:
+a) Est-ce bien? {:MULTICHOICE:=Oui#Bonne r&eacute;ponse~Non#Votre opinion nous indiff&egrave;re&nbsp;!}
+b) Quelle note d&eacute;sirez-vous? {3:NUMERICAL:=3:2}</textarea>
+</center>
 </form>
 
-<p>Cet exemple apparaîtra ainsi aux étudiants&nbsp;:</p>
+<p>Cet exemple appara&icirc;tra ainsi aux &eacute;tudiants&nbsp;:</p>
 
-<form action="#">
-
-<table cellspacing="0" cellpadding="5" border="0" class="generalbox" width="90%">
-
-<tbody>
-
-<tr>
-
-<td class="generalboxcontent">
-
-<table cellspacing="10" width="100%">
-
-<tbody>
-
-<tr>
-
-<td valign="top" width="100" nowrap="nowrap">
-
-<p align="center"><strong>3</strong></p>
-
-<p align="center">8 points</p>
-
-<img alt="" src="pix/spacer.gif" width="100" height="1" />
-
-</td>
-
-<td valign="top">
-
-<p>Cette question comporte du texte dans lequel on a directement intégré des réponses à choix multiples
-<select name="q4ma1">
-<option></option>
-<option value="4">Mauvaise réponse</option>
-<option value="5">Une autre mauvaise réponse</option>
-<option value="6">Bonne réponse</option>
-<option value="7">Réponse qui vaut la moitié des points</option>
-</select>&nbsp;;
-
-vous devez maintenant répondre à une question courte <input size="8" type="text" value="" name="q4ma2" />. Nous avons finalement une question qui demande une réponse numérique avec point décimal <input size="8" type="text" value="" name="q4ma3">.<br /><br />
-
-Notez que les adresses URL comme <a target="newpage" href="http://www.moodle.org">www.moodle.org</a> et les binettes  <img border="0" src="pix/s/smiley.gif" width="15" height="15" />
-sont correctement interprétées:<br />
-
-a) Est-ce bien?
-
-<select name="q4ma4">
-<option></option>
-<option value="13">Oui</option>
-<option value="14">Non</option>
-</select>
-<br />
-b) Quelle note désirez-vous? <input size="8" type="text"
-value="" name="q4ma5">             
-</p>
-
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
-</td>
-
-</tr>
-
-</tbody>
-
-</table>
-
+<form>
+<table cellspacing="0" cellpadding="5" border="0" class="generalbox" width="90%" align="center">
+    <tbody>
+      <tr>
+        <td class="generalboxcontent" bgcolor="#ffffff">
+        <table cellspacing="10" width="100%">
+          <tbody>
+            <tr>
+              <td valign="top" width="100" nowrap="nowrap">
+                <p align="center"><b>3</b></p>
+                <p align="center"><font size="1">8 points</font></p>
+                <img alt="" src="pix/spacer.gif" width="100" height="1">
+              </td>
+              <td valign="top">
+              <p>Cette question comporte du texte dans lequel on a directement int&eacute;gr&eacute; des r&eacute;ponses &agrave; choix multiples
+              <select name="q4ma1">
+              <option></option>
+              <option value="4">Mauvaise r&eacute;ponse</option>
+              <option value="5">Une autre mauvaise r&eacute;ponse</option>
+              <option value="6">Bonne r&eacute;ponse</option>
+              <option value="7">R&eacute;ponse qui vaut la moiti&eacute; des points</option>
+              </select>&nbsp;; vous devez maintenant r&eacute;pondre &agrave; une question courte <input
+              size="8" type="text" value="" name="q4ma2">. Nous avons finalement
+              une question qui demande une r&eacute;ponse num&eacute;rique avec point
+              d&eacute;cimal <input size="8" type="text" value="" name="q4ma3">.<br /><br />
+              Notez que les adresses URL comme <a target="newpage"
+              href="http://www.moodle.org">www.moodle.org</a> et les
+              binettes  <img border="0" src="pix/s/smiley.gif" width="15" height="15">
+              sont correctement interpr&eacute;t&eacute;es:<br />
+              a) Est-ce bien?
+              <select name="q4ma4">
+              <option></option>
+              <option value="13">Oui</option>
+              <option value="14">Non</option>
+              </select>
+              <br />
+              b) Quelle note d&eacute;sirez-vous? <input size="8" type="text"
+              value="" name="q4ma5">             
+              </p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        </td>
+      </tr>
+    </tbody>
+  </table>
 </form>

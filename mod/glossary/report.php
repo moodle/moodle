@@ -1,4 +1,4 @@
-<?php   // $Id$
+<?PHP   // $Id$
 //  For a given entry, shows a report of all the ratings it has
 
     require_once("../../config.php");
@@ -34,30 +34,29 @@
     $strname = get_string("name");
     $strtime = get_string("time");
 
-    print_header("$strratings: $entry->concept");
+    print_header("$strratings: $entry->subject");
 
     if (!$ratings = glossary_get_ratings($entry->id, $sort)) {
-        error("No ratings for this entry: \"$entry->concept\"");
+        error("No ratings for this entry: \"$entry->subject\"");
 
     } else {
-        echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"3\" class=\"generalbox\" width=\"100%\">";
+        echo "<table border=0 cellpadding=3 cellspacing=3 class=generalbox width=100%>";
         echo "<tr>";
         echo "<th>&nbsp;</th>";
-        echo "<th><a href=\"report.php?id=$entry->id&amp;sort=u.firstname\">$strname</a></th>";
-        echo "<th width=\"100%\"><a href=\"report.php?id=$entry->id&amp;sort=r.rating\">$strrating</a></th>";
-        echo "<th><a href=\"report.php?id=$entry->id&amp;sort=r.time\">$strtime</a></th>";
+        echo "<th><a href=report.php?id=$entry->id&sort=u.firstname>$strname</a>";
+        echo "<th width=100%><a href=report.php?id=$entry->id&sort=r.rating>$strrating</a>";
+        echo "<th><a href=report.php?id=$entry->id&sort=r.time>$strtime</a>";
         foreach ($ratings as $rating) {
             if (isteacher($glossary->course, $rating->id)) {
-                echo '<tr class="teacher">';
+                echo "<tr bgcolor=\"$THEME->cellcontent2\">";
             } else {
-                echo '<tr>';
+                echo "<tr bgcolor=\"$THEME->cellcontent\">";
             }
-            echo '<td class="picture">';
+            echo "<td>";
             print_user_picture($rating->id, $glossary->course, $rating->picture);
-            echo '</td>';
-            echo '<td nowrap="nowrap" class="author">'.fullname($rating).'</td>';
-            echo '<td nowrap="nowrap" align="center" class="author">'.$scalemenu[$rating->rating].'</td>';
-            echo '<td nowrap="nowrap" align="center" class="author">'.userdate($rating->time).'</td>';
+            echo '<td nowrap><p><font size="-1">'.fullname($rating).'</p>';
+            echo '<td nowrap align="center"><p><font size="-1">'.$scalemenu[$rating->rating]."</p>";
+            echo '<td nowrap align="center"><p><font size="-1">'.userdate($rating->time)."</p>";
             echo "</tr>\n";
         }
         echo "</table>";

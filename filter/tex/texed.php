@@ -25,16 +25,16 @@
         $pathname = "$CFG->dataroot/$CFG->teximagedir/$image";
         switch (PHP_OS) {
             case "Linux":
-                system("$CFG->dirroot/$CFG->texfilterdir/mimetex.linux -e $pathname -- ". escapeshellarg($texexp) );
+                system("$CFG->dirroot/$CFG->texfilterdir/mimetex.linux -e $pathname ". escapeshellarg($texexp) );
             break;
             case "WINNT":
                 case "WIN32":
                 case "Windows":
                 $texexp = str_replace('"','\"',$texexp);
-            system("$CFG->dirroot/$CFG->texfilterdir/mimetex.exe -e  $pathname -- \"$texexp\"");
+            system("$CFG->dirroot/$CFG->texfilterdir/mimetex.exe -e  $pathname \"$texexp\"");
             break;
             case "Darwin":
-                system("$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin -e $pathname -- ". escapeshellarg($texexp) );
+                system("$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin -e $pathname ". escapeshellarg($texexp) );
             break;
         }
         if (file_exists($pathname)) {
@@ -64,13 +64,13 @@
        <center>
           <form action="texed.php" method="get"
            target="inlineframe">
-             <input type="text" name="formdata" size="50"
+             <input type="text" name="formdata" size=50
                     value="\Large f(x)=\Bigint_{-\infty}^x~e^{-t^2}dt">
              <input type="submit">
-          </form> <br /> <br />
+          </form> <br> <br>
           <iframe name="inlineframe" align="middle" width="80%" height="100">
           &lt;p&gt;Something is wrong...&lt;/p&gt; 
           </iframe>
-       </center> <br />
+       </center> <br>
 </body>
 </html>

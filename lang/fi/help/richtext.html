@@ -1,22 +1,34 @@
-<P align=center><B>HTML-editorin käyttö</B></P>
-
-<P>Richtext HTML-editori tarjoaa tekstinkäsittely -käyttöliittymän upotettuna verkkosivuusi. Tämä mahdollistaa tekstin muokkaamisen intuitiivisesti, ja tuloksena on tavallista HTML-koodia. 
-<P>Tekstin muotoilumahdollisuuden lisäksi tämä editori tarjoaa lukuisia muita ominaisuuksia, jotka saattavat olla hyödyllisiä. 
+<P align=center><B>Richtext HTML-editorista</B></P>
+<P>Saatavuus: <B>
+<?php  if (!$CFG->htmleditor) {
+       print_string("htmleditordisabledadmin");
+   } else if (!$USER->htmleditor) {
+       print_string("htmleditordisabled");
+   } else if (!can_use_richtext_editor()) {
+       print_string("htmleditordisabledbrowser");
+   } else {
+       print_string("htmleditoravailable");
+   }
+?>
+</B>
+</P>
+<P>Richtext HTML-editori tarjoaa tekstinkäsittely -käyttöliittymän upotettuna verkkosivuusi.&nbsp;Tämä mahdollistaa tekstin muokkaamisen intuitiivisesti, ja tuloksena on&nbsp;tavallista HTML-koodia. 
+<P>Tekstin muotoilumahdollisuuden lisäksi tämä editori&nbsp;tarjoaa lukuisia muita ominaisuuksia, jotka saattavat olla hyödyllisiä. 
 <P><B>Tekstin siirtäminen muista ohjelmista</B></P>
 <UL>
-<P>Voit leikata ja liimata muotoiltua tekstiä muista Windows-ohjelmista, kuten Wordista, suoraan tähän editoriin. Muotoilusi pysyvät ennallaan. Käytä selaimesi tavallisia leikkaa ja liimaa -valikkoja (tai Control-C ja Control-V). </P></UL>
-<P><B>Kuvien lisääminen <IMG hspace=10 src="lib/editor/images/ed_image.gif"></B></P>
+<P>Voit leikata ja liimata muotoiltua tekstiä muista Windows-ohjelmista, kuten Wordista, suoraan tähän editoriin. Muotoilusi pysyvät ennallaan. Käytä selaimesi tavallisia leikkaa ja liimaa -valikkoja (tai Control-C&nbsp;ja Control-V). </P></UL>
+<P><B>Kuvien lisääminen&nbsp;<IMG hspace=10 src="lib/editor/images/ed_image.gif"></B></P>
 <UL>
 <P>Jos sinulla on kuvia, jotka on jo julkaistu verkkosivulla, ja joihin pääsee URLn kautta, voit liittää näitä kuvia tekstiisi käyttäen "Lisää kuva" ("Insert Image") painiketta. </P></UL>
-<P><B>Taulukoiden lisääminen <IMG hspace=10  src="lib/editor/images/insert_table.gif"></B></P>
+<P><B>Taulukoiden lisääminen&nbsp;<IMG hspace=10  src="lib/editor/images/insert_table.gif"></B></P>
 <UL>
-<P>Voit lisätä taulukon tekstin asettelemista varten käyttämällä työkalupalkin "Lisää taulukko"  ("Insert Tables") -painiketta. </P></UL>
-<P><B>Linkkien lisääminen <IMG hspace=10 src="lib/editor/images/ed_link.gif"></B></P>
+<P>Voit lisätä taulukon tekstin asettelemista varten käyttämällä työkalupalkin "Lisää taulukko"&nbsp; ("Insert Tables") -painiketta. </P></UL>
+<P><B>Linkkien lisääminen&nbsp;<IMG hspace=10 src="lib/editor/images/ed_link.gif"></B></P>
 <UL>
-<P>Kirjoita ensin teksti, jonka haluat toimivan linkkinä. Valitse kirjoittamasi teksti ja klikkaa linkkipainiketta työkalupalkissa. Kirjoita URL, jonne haluat linkin johtavan. Valmista tuli. </P></UL>
+<P>Kirjoita ensin teksti, jonka haluat toimivan linkkinä. Valitse kirjoittamasi teksti ja klikkaa linkkipainiketta työkalupalkissa. Kirjoita URL, jonne haluat linkin johtavan.&nbsp;Valmista tuli.&nbsp;</P></UL>
 <P><B>Hymiöiden lisääminen <IMG height=15 hspace=10 src="pix/s/smiley.gif"</B></P>
 <UL>
-<P>Jos haluat upottaa näitä pieniä kuvia tekstiisi, paina työkalupalkissa olevaa hymiötä. Esiin tulee valikko, josta voit valita jonkin seuraavista vaihtoehdoista. (Tai kirjoita vastaava koodi suoraan tekstiin ja ohjelma muokkaa sen automaattisesti.) 
+<P>Jos haluat upottaa näitä pieniä&nbsp;kuvia tekstiisi, paina työkalupalkissa olevaa hymiötä. Esiin tulee valikko, josta voit valita jonkin seuraavista vaihtoehdoista. (Tai kirjoita vastaava koodi suoraan tekstiin ja ohjelma&nbsp;muokkaa sen automaattisesti.) 
 <TABLE border=1>
 <TR vAlign=top>
 <TD>
@@ -55,7 +67,7 @@
 <TD noWrap><FONT face=Courier>^-)</FONT></TD></TR>
 <TR>
 <TD><img alt border="0" hspace="10" src="pix/s/wideeyes.gif" width="15" height="15"></TD>
-<TD>suuret silmät</TD>
+<TD>suuret&nbsp;silmät</TD>
 <TD noWrap><FONT face=Courier>8-)</FONT></TD></TR>
 <TR>
 <TD><img alt border="0" hspace="10" src="pix/s/surprise.gif" width="15" height="15"></TD>

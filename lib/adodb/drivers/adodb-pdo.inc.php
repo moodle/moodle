@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim#natsoft.com.my). All rights reserved.
+V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -241,11 +241,10 @@ class ADORecordSet_pdo extends ADORecordSet {
 			$mode = $ADODB_FETCH_MODE;
 		}
 		switch($mode) {
+		default:
+		case ADODB_FETCH_BOTH: $mode = PDO_FETCH_BOTH; break;
 		case ADODB_FETCH_NUM: $mode = PDO_FETCH_NUM; break;
 		case ADODB_FETCH_ASSOC:  $mode = PDO_FETCH_ASSOC; break;
-		
-		case ADODB_FETCH_BOTH: 
-		default: $mode = PDO_FETCH_BOTH; break;
 		}
 		$this->fetchMode = $mode;
 		

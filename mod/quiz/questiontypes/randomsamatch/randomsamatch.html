@@ -1,29 +1,29 @@
-<form name="theform" method="post" action="question.php">
-<center>
-<table cellpadding="5">
-<tr valign="top">
-    <td align="right"><b><?php  print_string("category", "quiz") ?>:</b></td>
-    <td>
-    <?php echo $categories[$question->category]; ?>
-    <input type="hidden" name="category" value="<?php echo "$question->category"; ?>" />
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right"><b><?php  print_string("questionname", "quiz") ?>:</b></td>
-    <td>
-        <?php
+<FORM name="theform" method="post" action="question.php">
+<CENTER>
+<TABLE cellpadding=5>
+<TR valign=top>
+    <TD align=right><P><B><?php  print_string("category", "quiz") ?>:</B></P></TD>
+    <TD>
+    <?PHP echo $categories[$question->category]; ?>
+    <input type="hidden" name="category" value="<?PHP echo "$question->category"; ?>">
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><?php  print_string("questionname", "quiz") ?>:</B></P></TD>
+    <TD>
+        <?PHP
            if (empty($question->name)) {
                $question->name =  get_string("randomsamatch", "quiz");
            }
         ?>
-        <input type="text" name="name" size="40" value="<?php  p($question->name) ?>" />
+        <INPUT type="text" name="name" size=40 value="<?php  p($question->name) ?>">
         <?php  if (isset($err["name"])) formerr($err["name"]); ?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right"><b><?php  print_string("introduction", "quiz") ?>:</b>
+    </TD>
+</TR>
+<tr valign=top>
+    <td align=right><p><b><?php  print_string("introduction", "quiz") ?>:</b></p>
     <br />
-    <font size="1">
+    <p><font SIZE="1">
     <?php
            if ($usehtmleditor) {
                helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
@@ -31,24 +31,26 @@
                helpbutton("text", get_string("helptext"), "moodle", true, true);
            }
     ?>
-    </font>
+    </font></p>
     </td>
     <td>
         <?php  if (isset($err["questiontext"])) {
-               formerr($err["questiontext"]);
+               formerr($err["questiontext"]); 
                echo "<br />";
            }
+
            if (empty($question->questiontext)) {
                $question->questiontext =  get_string("randomsamatchintro", "quiz");
            }
            print_textarea($usehtmleditor, 15, 60, 630, 300, "questiontext", $question->questiontext);
+
            if ($usehtmleditor) {
-               echo '<input type="hidden" name="questiontextformat" value="'.FORMAT_HTML.'" />';
+               echo '<input type="hidden" name="questiontextformat" value="'.FORMAT_HTML.'">';
            } else {
-               echo '<div align="right">';
+               echo "<div align=right>";
                print_string("formattexttype");
                echo ":&nbsp;";
-               if (empty($question->questiontextformat)) {
+               if (!$question->questiontextformat) {
                    $question->questiontextformat = FORMAT_MOODLE;
                }
                choose_from_menu(format_text_menu(), "questiontextformat", $question->questiontextformat, "");
@@ -58,30 +60,32 @@
         ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right"><b><?php  print_string("randomsamatchnumber", "quiz") ?>:</b></td>
-    <td>
-    <?php
+<TR valign=top>
+    <TD align=right><P><B><?php  print_string("randomsamatchnumber", "quiz") ?>:</B></P></TD>
+    <TD>
+    <?php 
         if ($numberavailable < 2) {
-            echo get_string('createfirst', 'quiz');
+            echo "ERROR";
             $maxrandom=2;
         } else if ($numberavailable < 6) {
             $maxrandom = $numberavailable;
         } else {
             $maxrandom = QUIZ_MAX_NUMBER_ANSWERS;
         }
+
         for ($i=2;$i<=$maxrandom;$i++) {
             $menu[$i] = $i;
         }
         choose_from_menu($menu, "choose", "$options->choose", "");
         unset($menu);
      ?>
-    </td>
-</tr>
-<?php
-    $QUIZ_QTYPES[$question->qtype]->print_replacement_options($question, $course, $contextquiz);
-    $QUIZ_QTYPES[$question->qtype]->print_question_form_end($question);
-?>
-</table>
-</center>
-</form>
+    </TD>
+</TR>
+</TABLE>
+
+<INPUT type="hidden" name=id value="<?php  p($question->id) ?>">
+<INPUT type="hidden" name=qtype value="<?php  p($question->qtype) ?>">
+<INPUT type="submit" value="<?php  print_string("savechanges") ?>">
+
+</CENTER>
+</FORM>

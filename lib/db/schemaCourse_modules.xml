@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<schema>
+  <table name="course_modules">
+    <field name="id" type="I" size="10">
+      <KEY/>
+      <AUTOINCREMENT/>
+    </field>
+    <field name="course" type="I" size="10">
+      <NOTNULL/>
+    </field>
+    <field name="module" type="I" size="10">
+      <NOTNULL/>
+    </field>
+    <field name="instance" type="I" size="10">
+      <NOTNULL/>
+    </field>
+    <field name="section" type="I" size="10">
+      <NOTNULL/>
+    </field>
+    <field name="added" type="I" size="10">
+      <NOTNULL/>
+    </field>
+    <field name="deleted" type="L" size="4">
+      <NOTNULL/>
+    </field>
+    <field name="score" type="L" size="4">
+      <NOTNULL/>
+    </field>
+    <field name="indent" type="I" size="5">
+      <NOTNULL/>
+    </field>
+    <field name="visible" type="L" size="1" default="1">
+      <NOTNULL/>
+    </field>
+    <field name="groupmode" type="L" size="4" default="0">
+      <NOTNULL/>
+    </field>
+  </table>
+  <sql>
+    <descr>Insert 1 row for testing only...comment out later</descr>
+    <query platform="postgres|postgres7">
+      insert into course_modules values (1,1,1,1,1,1,1,1,1,1,1)
+    </query>
+    <query platform="mysql">
+      insert into course_modules values (1,1,1,1,1,1,1,1,1,1,1)
+    </query>
+    <query platform="oci8po">
+      insert into course_modules values (1,1,1,1,1,1,1,1,1,1,1)
+    </query>
+  </sql>
+</schema>
+

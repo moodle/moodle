@@ -1,10 +1,6 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-<head>
-</head>
-<body>
-<p align="center"><b>Richtext HTML редактор</b></p>
-<p>Доступность в данный момент: <b>
+<P ALIGN=CENTER><B>Richtext HTML редактор</B></P>
+
+<P>Доступность: <B>
 <?php  if (!$CFG->htmleditor) {
        print_string("htmleditordisabledadmin");
    } else if (!$USER->htmleditor) {
@@ -15,161 +11,149 @@
        print_string("htmleditoravailable");
    }
 ?>
-</b></p>
-<p>Richtext HTML редактор предлагает интерфейс, напоминающий MS WORD и
-встроенный в Web-страницу. Позволяет создавать Web-страницу в
-визуальном режиме и формирует ее HTML-код.
-</p>
-<p>В дополнении к форматированию текста, редактор предлагает ряд
-дополнительных возможностей.
-</p>
-<p><b>Копирование текста через буфер обмена из других программ</b></p>
-<ul>
-  <p>Вы можете вставить текст из других windows-приложений, например из
-MS Word, при этом формат текста будет сохранен. используйте команды
-копирования и вставки в меню "Правка" или Control+C - для копирования и
-Control+V - для вставки. </p>
-</ul>
-<p><b>Вставка картинок <img src="lib/editor/images/ed_image.gif"
- border="0" hspace="10"></b></p>
-<ul>
-  <p>Если Вы хотите вставить картинку, находящуюся на web-сайте и
-доступную через URL, воспользуйтесь кнопкой "Вставить рисунок" ("Insert
-Image"). </p>
-</ul>
-<p><b>Вставка таблиц <img src="lib/editor/images/insert_table.gif"
- border="0" hspace="10"></b></p>
-<ul>
-  <p>Вы можете вставить таблицу в текст, используя кнопку "Вставить
-таблицу" ("Insert Table"). </p>
-</ul>
-<p><b>Вставка ссылки <img src="lib/editor/images/ed_link.gif"
- border="0" hspace="10"></b></p>
-<ul>
-  <p>Для того, чтобы создать web-ссылку наберите текст, выделите его,
-нажмите на кнопку "Вставить ссылку" ("Insert Link") на панели
-инструментов и наберите URL-адрес ссылки. </p>
-</ul>
-<p><b>Вставка "Смайликов" (Эмоции) <img src="pix/s/smiley.gif"
- border="0" height="15" hspace="10" width="15"></b></p>
-<ul>
-  <p>Для вставки маленьких иконок, выражающих эмоции, в текст, нажмите
-на иконку со "смайликом" на панели инструментов. Диалоговое окно
-позволит Вам выбрать нужную картинку (альтернативный способ рисования -
-написать текстовый эквивалент, который позднее автоматически заменится
-графическим аналогом).
-<table border="1" align="center">
-  <tr valign="top">
-    <td>
-    <table border="0" align="center" cellpadding="5">
-    <tr>
-      <td><a href="javascript:inserttext(':-)')"><img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15" alt="" /></a></td>
-      <td>улыбаюсь</td>
-      <td><font face="courier">:-)</td>
-    </tr>
-    <tr>
-      <td><a href="javascript:inserttext(':-D')"><img border="0" hspace="10" src="pix/s/biggrin.gif" width="15" height="15" alt="" /></a></td>
-      <td>смеюсь</td>
-      <td><font face="courier">:-D</td>
-    </tr>
-    <tr>
-      <td><a href="javascript:inserttext(';-)')"><img border="0" hspace="10" src="pix/s/wink.gif" width="15" height="15" alt="" /></a></td>
-      <td>подмигиваю</td>
-      <td><font face="courier">;-)</td>
-    </tr>
-    <tr>
-      <td><a href="javascript:inserttext(':-/')"><img border="0" hspace="10" src="pix/s/mixed.gif" width="15" height="15" alt="" /></a></td>
-      <td>в сметении</td>
-      <td><font face="courier">:-/</td>
-    </tr>
-    <tr>
-      <td><a href="javascript:inserttext('V-.')"><img border="0" hspace="10" src="pix/s/thoughtful.gif" width="15" height="15" alt="" /></a></td>
-      <td>озадаченный</td>
-      <td><font face="courier">V-.</font></td>
-    </tr>
-    <tr>
-      <td><a href="javascript:inserttext(':-P')"><img border="0" hspace="10" src="pix/s/tongueout.gif" width="15" height="15" alt="" /></a></td>
-      <td>показываю язык</td>
-      <td><font face="courier">:-P</td>
-    </tr>
-    <tr>
-      <td><a href="javascript:inserttext('B-)')"><img border="0" hspace="10" src="pix/s/cool.gif" width="15" height="15" alt="" /></a></td>
-      <td>крутой перец</td>
-      <td><font face="courier">B-)</td>
-    </tr>
-    <tr>
-      <td><a href="javascript:inserttext('^-)')"><img border="0" hspace="10" src="pix/s/approve.gif" width="15" height="15" alt="" /></a></td>
-      <td>одобряю</td>
-      <td><font face="courier">^-)</td>
-    </tr>
-    <tr>
-      <td><a href="javascript:inserttext('8-)')"><img border="0" hspace="10" src="pix/s/wideeyes.gif" width="15" height="15" alt="" /></a></td>
-      <td>глаза по полтиннику</td>
-      <td><font face="courier">8-)</td>
-    </tr>
-    <tr>
-      <td><a href="javascript:inserttext('8-o')"><img border="0" hspace="10" src="pix/s/surprise.gif" width="15" height="15" alt="" /></a></td>
-      <td>ошарашен</td>
-      <td><font face="courier">8-o</td>
-    </tr>
-    </table>
-  </td>
-  <td>
-    <table border="0" align="center" cellpadding="5">
-    <tr>
-      <td><a href="javascript:inserttext(':-(')"><img border="0" hspace="10" src="pix/s/sad.gif" width="15" height="15" alt="" /></a></td>
-      <td>растроенный</td>
-      <td><font face="courier">:-(</td>
-    </tr>
-    <tr>
-      <td><a href="javascript:inserttext('8-.')"><img border="0" hspace="10" src="pix/s/shy.gif" width="15" height="15" alt="" /></a></td>
-      <td>стесняюсь</td>
-      <td><font face="courier">8-.</td>
-    </tr>
-    <tr>
-      <td><a href="javascript:inserttext(':-I')"><img border="0" hspace="10" src="pix/s/blush.gif" width="15" height="15" alt="" /></a></td>
-      <td>краснею</td>
-      <td><font face="courier">:-I</td>
-    </tr>
-    <tr>
-      <td><a href="javascript:inserttext(':-X')"><img border="0" hspace="10" src="pix/s/kiss.gif" width="15" height="15" alt="" /></a></td>
-      <td>целую</td>
-      <td><font face="courier">:-X</td>
-    </tr>
-    <tr>
-      <td><a href="javascript:inserttext(':o)')"><img border="0" hspace="10" src="pix/s/clown.gif" width="15" height="15" alt="" /></a></td>
-      <td>клоун</td>
-      <td><font face="courier">:o)</td>
-    </tr>
-    <tr>
-      <td><a href="javascript:inserttext('P-|')"><img border="0" hspace="10" src="pix/s/blackeye.gif" width="15" height="15" alt="" /></a></td>
-      <td>пират</td>
-      <td><font face="courier">P-|</td>
-    </tr>
-    <tr>
-      <td><a href="javascript:inserttext('8-[')"><img border="0" hspace="10" src="pix/s/angry.gif" width="15" height="15" alt="" /></a></td>
-      <td>злюсь</td>
-      <td><font face="courier">8-[</td>
-    </tr>
-    <tr>
-      <td><a href="javascript:inserttext('xx-P')"><img border="0" hspace="10" src="pix/s/dead.gif" width="15" height="15" alt="" /></a></td>
-      <td>помираю</td>
-      <td><font face="courier">xx-P</td>
-    </tr>
-    <tr>
-      <td><a href="javascript:inserttext('|-.')"><img border="0" hspace="10" src="pix/s/sleepy.gif" width="15" height="15" alt="" /></a></td>
-      <td>сплю</td>
-      <td><font face="courier">|-.</td>
-    </tr>
-    <tr>
-      <td><a href="javascript:inserttext('}-]')"><img border="0" hspace="10" src="pix/s/evil.gif" width="15" height="15" alt="" /></a></td>
-      <td>дьявол</td>
-      <td><font face="courier">}-]</td>
-    </tr>
-    </table>
-</table>
+</B></P>
 
-</p>
-</ul>
-</body>
-</html>
+<P>Richtext HTML редактор является программой, напоминающей MS WORD, но встроенной в Ваш браузер.
+
+<P>В дополнении к форматированию текста, редактор предлагает ряд дополнительных возможностей.
+
+<P><B>Копирование текста через буфер обмена из других программ</B></P>
+<UL>
+<P>Вы можете вставить текст из других windows-приложений, при этом формат текста будет сохранен (Control-C - для копирования и Control-V - для вставки).
+
+</UL>
+
+<P><B>Вставка картинок <img border="0" hspace="10" src="lib/editor/images/ed_image.gif"></B></P>
+<UL>
+<P>Если Вы хотите вставить картинку, находящуюся на web-сайте и доступную через URL, воспользуйтесь кнопкой "Вставить картинку"("Insert Image").
+</UL>
+
+<P><B>Вставка таблиц <img border="0" hspace="10" src="lib/editor/images/insert_table.gif"></B></P>
+<UL>
+<P>Вы можете вставить таблицу в текст, используя кнопку "Вставить таблицу" ("Insert Table").  
+</UL>
+
+<P><B>Вставка ссылки <img border="0" hspace="10" src="lib/editor/images/ed_link.gif"></B></P>
+<UL>
+<P>Для того, чтобы создать web-ссылку наберите текст, выделите его, нажмите на кнопку "Ссылка" ("Link") на панели инструментов и наберите URL, на который будет указывать данный текст.
+</UL>
+
+
+<P><B>Вставка "Смайлов" (Эмоции) <img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></B></P>
+<UL>
+<P>Для вставки маленьких иконок, выражающих эмоции, в текст, нажмите на иконку со "смайлом" на панели инструментов. Диалоговое окно позволит Вам выбрать нужную картинку (альтернативный способ рисования - написать текстовый эквивалент, который позднее автоматически заменится графическим аналогом).
+
+    <table border="1">
+      <tr valign="top">
+        <td>
+        <table border="0" align="center" cellpadding="10">
+          <tr>
+            <td><img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></td>
+            <td>smile</td>
+            <td NOWRAP><FONT FACE=Courier>:-)</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/biggrin.gif" width="15" height="15"></td>
+            <td>big grin</td>
+            <td NOWRAP><FONT FACE=Courier>:-D</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/wink.gif" width="15" height="15"></td>
+            <td>wink</td>
+            <td NOWRAP><FONT FACE=Courier>;-)</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/mixed.gif" width="15" height="15"></td>
+            <td>mixed</td>
+            <td NOWRAP><FONT FACE=Courier>:-/</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/thoughtful.gif" width="15" height="15"></td>
+              <td>thoughtful</td>
+              <td NOWRAP><FONT FACE=Courier>V-.</FONT></td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/tongueout.gif" width="15" height="15"></td>
+            <td>tongue out</td>
+            <td NOWRAP><FONT FACE=Courier>:-P</td>
+         </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/cool.gif" width="15" height="15"></td>
+            <td>cool</td>
+            <td NOWRAP><FONT FACE=Courier>B-)</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/approve.gif" width="15" height="15"></td>
+              <td>approve</td>
+              <td NOWRAP><FONT FACE=Courier>^-)</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/wideeyes.gif" width="15" height="15"></td>
+              <td>wide eyes</td>
+              <td NOWRAP><FONT FACE=Courier>8-)</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/surprise.gif" width="15" height="15"></td>
+              <td>surprise</td>
+              <td NOWRAP><FONT FACE=Courier>8-o</td>
+            </tr>
+        </table>
+        </td>
+        <td>
+        <table border="0" align="center" cellpadding="10">
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/sad.gif" width="15" height="15"></td>
+              <td>sad</td>
+              <td NOWRAP><FONT FACE=Courier>:-(</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/shy.gif" width="15" height="15"></td>
+              <td>shy</td>
+              <td NOWRAP><FONT FACE=Courier>8-.</td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/blush.gif" width="15" height="15"></td>
+            <td>blush</td>
+            <td NOWRAP><FONT FACE=Courier>:-I</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/kiss.gif" width="15" height="15"></td>
+              <td>kisses</td>
+              <td NOWRAP><FONT FACE=Courier>:-X</td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/clown.gif" width="15" height="15"></td>
+            <td>clown</td>
+            <td NOWRAP><FONT FACE=Courier>:o)</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/blackeye.gif" width="15" height="15"></td>
+            <td>black eye</td>
+            <td NOWRAP><FONT FACE=Courier>P-|</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/angry.gif" width="15" height="15"></td>
+              <td>angry</td>
+              <td NOWRAP><FONT FACE=Courier>8-[</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/dead.gif" width="15" height="15"></td>
+              <td>dead</td>
+              <td NOWRAP><FONT FACE=Courier>xx-P</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/sleepy.gif" width="15" height="15"></td>
+              <td>sleepy</td>
+              <td NOWRAP><FONT FACE=Courier>|-.</td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/evil.gif" width="15" height="15"></td>
+            <td>evil</td>
+            <td NOWRAP><FONT FACE=Courier>}-]</td>
+          </tr>
+        </table>
+    </table>
+
+</UL>
+
+

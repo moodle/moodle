@@ -1,15 +1,13 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.4.2 (2004083125)
+      // editor.php - created with Moodle 1.4 development (2004072901)
 
 
 $string['about'] = 'เกี่ยวกับเครื่องมือแก้ไข';
 $string['absbottom'] = 'ล่างสุด';
+$string['absmiddle'] = 'ตรงกลาง';
 $string['address'] = 'ที่อยู่';
 $string['alignment'] = 'การจัดหน้า';
 $string['alternatetext'] = 'ข้อความอธิบาย';
-$string['anchorhelp'] = 'ใช้สำหรับสร้าง anchor เท่านั้นคุณจำเป็นต้องสร้างลิงก์แยกต่างหาก';
-$string['anchorname'] = 'ชื่อ Anchor';
-$string['anchors'] = 'Anchors';
 $string['baseline'] = 'รูปอยู่ต่ำกว่านี้';
 $string['bold'] = 'ตัวหนา';
 $string['borderthickness'] = 'ความหนาของขอบ';
@@ -23,7 +21,6 @@ $string['chooseicon'] = 'เลือกไอคอนภาพที่ต้องการแทรก';
 $string['close'] = 'ปิด';
 $string['cols'] = 'คอลัมน์';
 $string['copy'] = 'ก้อปปี้ที่เลือก';
-$string['createanchor'] = 'ชื่อ Anchors';
 $string['createfolder'] = 'สร้างแฟ้ม';
 $string['createlink'] = 'แทรกลิงก์';
 $string['cut'] = 'ตัด';
@@ -70,7 +67,6 @@ $string['notset'] = 'ไม่ได้ตั้งค่า';
 $string['ok'] = 'ตกลง';
 $string['orderedlist'] = 'ลำดับรายการ';
 $string['outdent'] = 'ลดย่อหน้า';
-$string['parentlanguage'] = 'en';
 $string['paste'] = 'วาง';
 $string['path'] = 'path';
 $string['percent'] = 'เปอร์เซ็นต์';
@@ -96,9 +92,6 @@ $string['superscript'] = 'ตัวยก';
 $string['textindicator'] = 'สไตล์ปัจจุบัน';
 $string['textmode'] = 'คุณอยู่ในโหมด text  กดปุ่ม <> เพื่อทำการเปลี่ยนเป็น โหมด WYSIWYG';
 $string['texttop'] = 'ตัวหนังสืออยู่บน';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
 $string['top'] = 'บน';
 $string['type'] = 'ประเภท';
 $string['underline'] = 'ขีดเส้นใต้';

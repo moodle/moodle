@@ -1,15 +1,10 @@
-<?php // $Id$
+<?PHP // $Id$
 
     require_once("../config.php");
     require_once("$CFG->libdir/gdlib.php");
 
-    $id     = optional_param('id',     0,      PARAM_INT);   // user id
-    $course = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
-
-    if (empty($id)) {         // See your own profile by default
-        require_login();
-        $id = $USER->id;
-    }
+    require_variable($id);       // user id
+    require_variable($course);   // course id
 
     if (! $user = get_record("user", "id", $id)) {
         error("User ID was incorrect");
@@ -20,13 +15,13 @@
     }
 
     if ($user->confirmed and user_not_fully_set_up($user)) {
-        // Special case which can only occur when a new account
+        // Special case which can only occur when a new account 
         // has just been created by EXTERNAL authentication
         // This is the only page in Moodle that has the exception
         // so that users can set up their accounts
         $newaccount  = true;
 
-        if (empty($USER->id)) {
+        if (empty($USER)) {
             error("Sessions don't seem to be working on this server!");
         }
 
@@ -35,16 +30,8 @@
         require_login($course->id);
     }
 
-    if ($USER->id <> $user->id) {    // Current user editing someone else's profile
-        if (isadmin()) {             // Current user is an admin
-            if ($mainadmin = get_admin()) {        
-                if ($user->id == $mainadmin->id) {  // Can't edit primary admin
-                    print_error('adminprimarynoedit');
-                }
-            }
-        } else {
-            print_error('onlyeditown');
-        }
+    if ($USER->id <> $user->id and !isadmin()) {
+        error("You can only edit your own information");
     }
 
     if (isguest()) {
@@ -56,75 +43,32 @@
     }
 
 
-    // load the relevant auth libraries
-    if ($user->auth) { 
-        $auth = $user->auth;
-        if (!file_exists("$CFG->dirroot/auth/$auth/lib.php")) {
-            $auth = "manual";    // Can't find auth module, default to internal
-        }
-        require_once("$CFG->dirroot/auth/$auth/lib.php");
-    }
-
-    
 /// If data submitted, then process and store.
 
     if ($usernew = data_submitted()) {
-
-        if (($USER->id <> $usernew->id) && !isadmin()) {
-            error("You can only edit your own information");
-        }
 
         if (isset($USER->username)) {
             check_for_restricted_user($USER->username, "$CFG->wwwroot/course/view.php?id=$course->id");
         }
 
-        // data cleanup 
-        // username is validated in find_form_errors
-        $usernew->country = clean_param($usernew->country, PARAM_ALPHA);
-        $usernew->lang    = clean_param($usernew->lang,    PARAM_FILE);
-        $usernew->url     = clean_param($usernew->url,     PARAM_URL);
-        $usernew->icq     = clean_param($usernew->icq,     PARAM_INT);
-        if (!$usernew->icq) {
-            $usernew->icq = '';
-        }
-        $usernew->skype   = clean_param($usernew->skype,   PARAM_CLEAN);
-        $usernew->yahoo   = clean_param($usernew->yahoo,   PARAM_CLEAN);
-        $usernew->aim   = clean_param($usernew->aim,   PARAM_CLEAN);
-        $usernew->msn   = clean_param($usernew->msn,   PARAM_CLEAN);
-        
-        $usernew->maildisplay   = clean_param($usernew->maildisplay,   PARAM_INT);
-        $usernew->mailformat    = clean_param($usernew->mailformat,    PARAM_INT);
-        $usernew->maildigest    = clean_param($usernew->maildigest,    PARAM_INT);
-        $usernew->autosubscribe = clean_param($usernew->autosubscribe, PARAM_INT);
-        $usernew->htmleditor    = clean_param($usernew->htmleditor,    PARAM_INT);
-        $usernew->emailstop     = clean_param($usernew->emailstop,     PARAM_INT);
-
-        if (isset($usernew->timezone)) {
-            if ($CFG->forcetimezone != 99) { // Don't allow changing this in any way
-                unset($usernew->timezone);
-            } else { // Clean up the data a bit, just in case of injections
-                $usernew->timezone = str_replace(';', '',  $usernew->timezone);
-                $usernew->timezone = str_replace('\'', '', $usernew->timezone);
-            }
-        }
-
         foreach ($usernew as $key => $data) {
-            $usernew->$key = addslashes(clean_text(stripslashes(trim($usernew->$key)), FORMAT_MOODLE));
+            $usernew->$key = clean_text($usernew->$key, FORMAT_MOODLE);
         }
 
-        $usernew->firstname = strip_tags($usernew->firstname);
-        $usernew->lastname  = strip_tags($usernew->lastname);
+        $usernew->firstname = trim(strip_tags($usernew->firstname));
+        $usernew->lastname  = trim(strip_tags($usernew->lastname));
 
         if (isset($usernew->username)) {
-            $usernew->username = moodle_strtolower($usernew->username);
+            $usernew->username = trim(moodle_strtolower($usernew->username));
         }
 
+        if (empty($_FILES['imagefile'])) {
+            $_FILES['imagefile'] = NULL;    // To avoid using uninitialised variable later
+        }
 
-        require_once($CFG->dirroot.'/lib/uploadlib.php');
-        $um = new upload_manager('imagefile',false,false,null,false,0,true,true);
-
-        if (find_form_errors($user, $usernew, $err, $um)) {
-            if (empty($err['imagefile']) && $usernew->picture = save_profile_image($user->id, $um,'users')) {
+        if (find_form_errors($user, $usernew, $err)) {
+            if ($filename = valid_uploaded_file($_FILES['imagefile'])) { 
+                $usernew->picture = save_profile_image($user->id, $filename);
                 set_field('user', 'picture', $usernew->picture, 'id', $user->id);  /// Note picture in DB
             } else {
                 if (!empty($usernew->deletepicture)) {
@@ -133,13 +77,14 @@
                 }
             }
 
-            $usernew->auth = $user->auth;
             $user = $usernew;
 
         } else {
             $timenow = time();
-            
-            if (!$usernew->picture = save_profile_image($user->id,$um,'users')) {
+
+            if ($filename = valid_uploaded_file($_FILES['imagefile'])) { 
+                $usernew->picture = save_profile_image($user->id, $filename);
+            } else {
                 if (!empty($usernew->deletepicture)) {
                     set_field('user', 'picture', 0, 'id', $user->id);  /// Delete picture
                     $usernew->picture = 0;
@@ -147,29 +92,12 @@
                     $usernew->picture = $user->picture;
                 }
             }
-
+    
             $usernew->timemodified = time();
 
             if (isadmin()) {
                 if (!empty($usernew->newpassword)) {
                     $usernew->password = md5($usernew->newpassword);
-                    // update external passwords
-                    if (!empty($CFG->{'auth_'. $user->auth.'_stdchangepassword'})) {
-                        if (function_exists('auth_user_update_password')){
-                            if (!auth_user_update_password($user->username, $usernew->newpassword)){
-                                error('Failed to update password on external auth: ' . $user->auth .
-                                        '. See the server logs for more details.');
-                            }
-                        } else {
-                            error('Your external authentication module is misconfigued!'); 
-                        }
-                    }
-                }
-                // store forcepasswordchange in user's preferences
-                if (!empty($usernew->forcepasswordchange)){
-                    set_user_preference('auth_forcepasswordchange', 1, $user->id);
-                } else {
-                    unset_user_preference('auth_forcepasswordchange', $user->id);
                 }
             } else {
                 if (isset($usernew->newpassword)) {
@@ -181,16 +109,6 @@
             }
 
             if (update_record("user", $usernew)) {
-                if (function_exists("auth_user_update")){
-                    // pass a true $userold here 
-                    auth_user_update($userold, $usernew);
-                };
-
-                 if ($userold->email != $usernew->email) {
-                    set_bounce_count($usernew,true);
-                    set_send_count($usernew,true);
-                }
-
                 add_to_log($course->id, "user", "update", "view.php?id=$user->id&course=$course->id", "");
 
                 if ($user->id == $USER->id) {
@@ -212,16 +130,12 @@
             }
         }
     }
-
+    
 /// Otherwise fill and print the form.
 
     $streditmyprofile = get_string("editmyprofile");
     $strparticipants = get_string("participants");
     $strnewuser = get_string("newuser");
-
-    if (over_bounce_threshold($user) && empty($err['email'])) {
-        $err['email'] = get_string('toomanybounces');
-    }
 
     if (($user->firstname and $user->lastname) or $newaccount) {
         if ($newaccount) {
@@ -231,16 +145,16 @@
         }
         if ($course->category) {
             print_header("$course->shortname: $streditmyprofile", "$course->fullname: $streditmyprofile",
-                        "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a>
-                        -> <a href=\"index.php?id=$course->id\">$strparticipants</a>
-                        -> <a href=\"view.php?id=$user->id&amp;course=$course->id\">$userfullname</a>
+                        "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
+                        -> <A HREF=\"index.php?id=$course->id\">$strparticipants</A>
+                        -> <A HREF=\"view.php?id=$user->id&course=$course->id\">$userfullname</A> 
                         -> $streditmyprofile", "");
         } else {
             if (isset($USER->newadminuser)) {
                 print_header();
             } else {
                 print_header("$course->shortname: $streditmyprofile", "$course->fullname",
-                             "<a href=\"view.php?id=$user->id&amp;course=$course->id\">$userfullname</a>
+                             "<A HREF=\"view.php?id=$user->id&course=$course->id\">$userfullname</A> 
                               -> $streditmyprofile", "");
             }
         }
@@ -254,17 +168,6 @@
                      "<a href=\"$CFG->wwwroot/$CFG->admin/users.php\">$strusers</a> -> $straddnewuser", "");
     }
 
-
-/// Print tabs at top
-/// This same call is made in:
-///     /user/view.php
-///     /user/edit.php
-///     /course/user.php
-    $currenttab = 'editprofile';
-    include('tabs.php');
-
-    
-
     $teacher = strtolower($course->teacher);
     if (!isadmin()) {
         $teacheronly = "(".get_string("teacheronly", "", $teacher).")";
@@ -272,38 +175,20 @@
         $teacheronly = "";
     }
 
+    print_heading( get_string("userprofilefor", "", "$userfullname") );
+
     if (isset($USER->newadminuser)) {
-        print_simple_box(get_string("configintroadmin", 'admin'), "center", "50%");
+        print_simple_box(get_string("configintroadmin"), "center", "50%");
         echo "<br />";
     }
 
-    print_simple_box_start("center");
-
+    print_simple_box_start("center", "", "$THEME->cellheading");
     if (!empty($err)) {
-        echo "<center>";
-        notify(get_string("someerrorswerefound"));
-        echo "</center>";
+       echo "<CENTER>";
+       notify(get_string("someerrorswerefound"));
+       echo "</CENTER>";
     }
-
     include("edit.html");
-
-    if (!isadmin()) {      /// Lock all the locked fields using Javascript
-        $fields = get_user_fieldnames();
-
-        echo '<script type="text/javascript">'."\n";
-        echo '<!--'."\n";
-
-        foreach ($fields as $field) {
-            $configvariable = 'auth_user_'.$field.'_editlock';
-            if (!empty($CFG->$configvariable)) {
-                echo "eval('document.form.$field.disabled=true');\n";
-            }
-        }
-
-        echo '-->'."\n";
-        echo '</script>'."\n";
-    }
-
     print_simple_box_end();
 
     if (!isset($USER->newadminuser)) {
@@ -316,7 +201,7 @@
 
 /// FUNCTIONS ////////////////////
 
-function find_form_errors(&$user, &$usernew, &$err, &$um) {
+function find_form_errors(&$user, &$usernew, &$err) {
     global $CFG;
 
     if (isadmin()) {
@@ -324,7 +209,7 @@ function find_form_errors(&$user, &$usernew, &$err, &$um) {
             $err["username"] = get_string("missingusername");
 
         } else if (record_exists("user", "username", $usernew->username) and $user->username == "changeme") {
-            $err["username"] = get_string("usernameexists");
+                $err["username"] = get_string("usernameexists");
 
         } else {
             if (empty($CFG->extendedusernamechars)) {
@@ -346,9 +231,6 @@ function find_form_errors(&$user, &$usernew, &$err, &$um) {
     if (empty($usernew->email))
         $err["email"] = get_string("missingemail");
 
-    if (over_bounce_threshold($user) && $user->email == $usernew->email) 
-        $err['email'] = get_string('toomanybounces');
-
     if (empty($usernew->description) and !isadmin())
         $err["description"] = get_string("missingdescription");
 
@@ -364,35 +246,12 @@ function find_form_errors(&$user, &$usernew, &$err, &$um) {
     if (empty($usernew->country))
         $err["country"] = get_string("missingcountry");
 
-    if (! validate_email($usernew->email)) {
+    if (! validate_email($usernew->email))
         $err["email"] = get_string("invalidemail");
 
-    } else if ($otheruser = get_record("user", "email", $usernew->email)) {
+    else if ($otheruser = get_record("user", "email", $usernew->email)) {
         if ($otheruser->id <> $user->id) {
             $err["email"] = get_string("emailexists");
-        }
-    }
-
-    if (empty($err["email"]) and !isadmin()) {
-        if ($error = email_is_not_allowed($usernew->email)) {
-            $err["email"] = $error;
-        }
-    }
-
-    if (!$um->preprocess_files()) {
-        $err['imagefile'] = $um->notify;
-    }
-
-    if (!isadmin()) {      /// Make sure that locked fields are not being edited
-        $fields = get_user_fieldnames();
-
-        foreach ($fields as $field) {
-            $configvariable = 'auth_user_'.$field.'_editlock';
-            if (!empty($CFG->$configvariable)) {
-                if ($user->$field !== $usernew->$field) {
-                    $err[$field] = get_string("editlock");
-                }
-            }
         }
     }
 

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
 function assignment_upgrade($oldversion) {
 // This function does anything necessary to upgrade
@@ -98,49 +98,6 @@ function assignment_upgrade($oldversion) {
         include_once("$CFG->dirroot/mod/assignment/lib.php");
         assignment_refresh_events();
     }
-
-    if ($oldversion < 2004111200) { 
-        execute_sql("ALTER TABLE {$CFG->prefix}assignment DROP INDEX course;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}assignment_submissions DROP INDEX assignment;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}assignment_submissions DROP INDEX userid;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}assignment_submissions DROP INDEX mailed;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}assignment_submissions DROP INDEX timemarked;",false);
-
-        modify_database('','ALTER TABLE prefix_assignment ADD INDEX course (course);');
-        modify_database('','ALTER TABLE prefix_assignment_submissions ADD INDEX assignment(assignment);');
-        modify_database('','ALTER TABLE prefix_assignment_submissions ADD INDEX userid (userid);');
-        modify_database('','ALTER TABLE prefix_assignment_submissions ADD INDEX mailed (mailed);');
-        modify_database('','ALTER TABLE prefix_assignment_submissions ADD INDEX timemarked (timemarked);');
-    }
-
-    if ($oldversion < 2005010500) {  // New field for sending out mail to teachers
-        table_column('assignment', '', 'emailteachers', 'integer', '2', 'unsigned', 0, 'not null', 'resubmit');
-    }
-
-    if ($oldversion < 2005041100) { // replace wiki-like with markdown
-        include_once( "$CFG->dirroot/lib/wiki_to_markdown.php" );
-        $wtm = new WikiToMarkdown();
-        $wtm->update( 'assignment','description','format' );
-    }
-
-    if ($oldversion < 2005041400) {  // Add new fields for the new refactored version of assignment
-        table_column('assignment', '', 'timeavailable', 'integer', '10', 'unsigned', 0, 'not null', 'timedue');
-        table_column('assignment', '', 'assignmenttype', 'varchar', '50', '', '', 'not null', 'format');
-        execute_sql("UPDATE {$CFG->prefix}assignment SET assignmenttype = 'offline' WHERE type = '0';");
-        execute_sql("UPDATE {$CFG->prefix}assignment SET assignmenttype = 'uploadsingle' WHERE type = '1';");
-        execute_sql('ALTER TABLE '.$CFG->prefix.'assignment DROP type;');
-    }
-
-    if ($oldversion < 2005041501) {  // Add two new fields for general data handling, 
-                                     // so most assignment types won't need new fields and backups stay simple
-        table_column('assignment_submissions', '', 'data2', 'MEDIUMTEXT', '', '', '', 'not null', 'numfiles');
-        table_column('assignment_submissions', '', 'data1', 'MEDIUMTEXT', '', '', '', 'not null', 'numfiles');
-    }
-
-
-/// These lines ALWAYS need to be here at the end of this file.  Don't mess with them. :-)
-    include_once("$CFG->dirroot/mod/assignment/lib.php");
-    assignment_upgrade_submodules();
 
     return true;
 }

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.5 unstable development (2004090600)
+      // choice.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['allowupdate'] = 'Permet actualitzar la consulta';
@@ -9,7 +9,6 @@ $string['choiceclose'] = 'Fins';
 $string['choicename'] = 'Títol de la consulta';
 $string['choiceopen'] = 'Oberta';
 $string['choicetext'] = 'Text de la consulta';
-$string['havetologin'] = 'Abans de trametre una resposta heu d\'entrar amb el vostre nom d\'usuari i contrasenya.';
 $string['modulename'] = 'Consulta';
 $string['modulenameplural'] = 'Consultes';
 $string['mustchooseone'] = 'Heu de triar una resposta abans de desar. No s\'ha desat res.';

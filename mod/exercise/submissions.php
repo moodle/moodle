@@ -1,4 +1,4 @@
-<?php  // $Id: submissions.php,v 1.0 22 Aug 2003
+<?PHP  // $Id: submissions.php,v 1.0 22 Aug 2003
 
 /*************************************************
     ACTIONS handled are:
@@ -15,7 +15,7 @@
     saveweights
     userconfirmdelete
     userdelete
-
+    
 
 ************************************************/
 
@@ -25,7 +25,7 @@
     require("version.php");
 
     require_variable($id);    // Course Module ID
-
+    
     // get some essential stuff...
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -39,21 +39,21 @@
         error("Course module is incorrect");
     }
 
-    require_login($course->id, false, $cm);
+    require_login($course->id);
 
     $strexercises = get_string("modulenameplural", "exercise");
     $strexercise  = get_string("modulename", "exercise");
     $strsubmissions = get_string("submissions", "exercise");
 
     // ... print the header and...
-    print_header_simple(format_string($exercise->name), "",
-                 "<a href=\"index.php?id=$course->id\">$strexercises</a> ->
-                  <a href=\"view.php?id=$cm->id\">".format_string($exercise->name,true)."</a> -> $strsubmissions",
+    print_header_simple("$exercise->name", "",
+                 "$<A HREF=index.php?id=$course->id>$strexercises</A> -> 
+                  <A HREF=\"view.php?id=$cm->id\">$exercise->name</A> -> $strsubmissions", 
                   "", "", true);
 
     //...get the action!
     require_variable($action);
-
+    
 
     /******************* admin amend title ************************************/
     if ($action == 'adminamendtitle' ) {
@@ -64,29 +64,29 @@
         if (empty($_GET['sid'])) {
             error("Admin Amend Title: submission id missing");
             }
-
+        
         $submission = get_record("exercise_submissions", "id", $_GET['sid']);
         print_heading(get_string("amendtitle", "exercise"));
         ?>
         <form name="amendtitleform" action="submissions.php" method="post">
-        <input type="hidden" name="action" value="adminupdatetitle" />
-        <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
-        <input type="hidden" name="sid" value="<?php echo $_REQUEST['sid'] ?>" />
+        <input type="hidden" name="action" value="adminupdatetitle">
+        <input type="hidden" name="id" value="<?PHP echo $cm->id ?>">
+        <input type="hidden" name="sid" value="<?PHP echo $_REQUEST['sid'] ?>">
         <center>
         <table celpadding="5" border="1">
-        <?php
+        <?PHP
 
         // now get the comment
         echo "<tr valign=\"top\">\n";
-        echo "    <td align=\"right\"><p><b>". get_string("title", "exercise").":</b></p></td>\n";
+        echo "    <td align=\"right\"><P><B>". get_string("title", "exercise").":</b></p></td>\n";
         echo "    <td>\n";
-        echo "        <input type=\"text\" name=\"title\" size=\"60\" maxlength=\"100\" value=\"$submission->title\" />\n";
+        echo "        <input type=\"text\" name=\"title\" size=\"60\" maxlength=\"100\" value=\"$submission->title\">\n";
         echo "    </td></tr></table>\n";
-        echo "<input type=\"submit\" value=\"".get_string("amendtitle", "exercise")."\" />\n";
+        echo "<input type=submit VALUE=\"".get_string("amendtitle", "exercise")."\">\n";
         echo "</center></form>\n";
 
         }
-
+    
 
     /******************* admin clear late (flag) ************************************/
     elseif ($action == 'adminclearlate' ) {
@@ -97,19 +97,19 @@
         if (empty($_GET['sid'])) {
             error("Admin clear late flag: submission id missing");
         }
-
+    
         if (!$submission = get_record("exercise_submissions", "id", $_GET['sid'])) {
             error("Admin clear late flag: can not get submission record");
         }
         if (set_field("exercise_submissions", "late", 0, "id", $_GET['sid'])) {
             print_heading(get_string("clearlateflag", "exercise")." ".get_string("ok"));
         }
-
+        
         add_to_log($course->id, "exercise", "late flag cleared", "view.php?id=$cm->id", "submission $submission->id");
-
-        redirect("submissions.php?id=$cm->id&amp;action=adminlist");
+        
+        redirect("submissions.php?id=$cm->id&action=adminlist");
     }
-
+    
 
     /******************* admin confirm delete ************************************/
     elseif ($action == 'adminconfirmdelete' ) {
@@ -133,10 +133,10 @@
                     "</p>\n";
             }
         }
-        notice_yesno(get_string("confirmdeletionofthisitem","exercise", get_string("submission", "exercise")),
-             "submissions.php?action=admindelete&amp;id=$cm->id&amp;sid=$_GET[sid]", "submissions.php?id=$cm->id&amp;action=adminlist");
+        notice_yesno(get_string("confirmdeletionofthisitem","exercise", get_string("submission", "exercise")), 
+             "submissions.php?action=admindelete&id=$cm->id&sid=$_GET[sid]", "submissions.php?id=$cm->id&action=adminlist");
         }
-
+    
 
     /******************* admin delete ************************************/
     elseif ($action == 'admindelete' ) {
@@ -147,7 +147,7 @@
         if (empty($_GET['sid'])) {
             error("Admin delete: submission id missing");
             }
-
+    
         if (!$submission = get_record("exercise_submissions", "id", $_GET['sid'])) {
             error("Admin delete: can not get submission record");
             }
@@ -167,10 +167,10 @@
         // ..and finally the submitted file
         exercise_delete_submitted_files($exercise, $submission);
         add_to_log($course->id, "exercise", "delete", "view.php?id=$cm->id", "submission $submission->id");
-
-        print_continue("submissions.php?id=$cm->id&amp;action=adminlist");
+        
+        print_continue("submissions.php?id=$cm->id&action=adminlist");
         }
-
+    
 
     /******************* admin (confirm) late flag ************************************/
     elseif ($action == 'adminlateflag' ) {
@@ -185,11 +185,11 @@
             error("Admin confirm late flag: can not get submission record");
             }
 
-        notice_yesno(get_string("clearlateflag","exercise")."?",
-             "submissions.php?action=adminclearlate&amp;id=$cm->id&amp;sid=$_GET[sid]",
-             "submissions.php?id=$cm->id&amp;action=adminlist");
+        notice_yesno(get_string("clearlateflag","exercise")."?", 
+             "submissions.php?action=adminclearlate&id=$cm->id&sid=$_GET[sid]", 
+             "submissions.php?id=$cm->id&action=adminlist");
         }
-
+    
 
     /******************* list all submissions ************************************/
     elseif ($action == 'adminlist' ) {
@@ -197,13 +197,13 @@
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
         }
-
+    
         echo "<p><small>Exercise Version-> $module->version</small></p>";
         exercise_list_submissions_for_admin($exercise);
         print_continue("view.php?id=$cm->id");
-
+        
     }
-
+    
 
     /******************* admin update title ************************************/
     elseif ($action == 'adminupdatetitle' ) {
@@ -214,13 +214,13 @@
         if (empty($_POST['sid'])) {
             error("Admin Update Title: submission id missing");
             }
-
+    
         if (set_field("exercise_submissions", "title", $_POST['title'], "id", $_POST['sid'])) {
             print_heading(get_string("amendtitle", "exercise")." ".get_string("ok"));
             }
-        redirect("submissions.php?id=$cm->id&amp;action=adminlist");
+        redirect("submissions.php?id=$cm->id&action=adminlist");
         }
-
+    
 
     /*************** display final grades (by teacher) ***************************/
     elseif ($action == 'displayfinalgrades') {
@@ -231,21 +231,21 @@
             print_footer($course);
             exit;
         }
-
+        
         // show the final grades as stored in the tables...
         print_heading_with_help(get_string("displayoffinalgrades", "exercise"), "finalgrades", "exercise");
         echo "<center><table border=\"1\" width=\"90%\"><tr>\n";
-        echo "<td><b>".$course->student."</b></td>";
-        echo "<td><b>".get_string("submission", "exercise")."</b></td>";
-        echo "<td align=\"center\"><b>".get_string("gradeforassessment", "exercise")."</b></td>";
-        echo "<td align=\"center\"><b>".get_string("gradeforsubmission", "exercise")."</b></td>";
-        echo "<td align=\"center\"><b>".get_string("overallgrade", "exercise")."</b></td></tr>\n";
+        echo "<td bgcolor=\"$THEME->cellheading2\"><b>".$course->student."</b></td>";
+        echo "<td bgcolor=\"$THEME->cellheading2\"><b>".get_string("submission", "exercise")."</b></td>";
+        echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforassessment", "exercise")."</b></td>";
+        echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("gradeforsubmission", "exercise")."</b></td>";
+        echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>".get_string("overallgrade", "exercise")."</b></td></TR>\n";
         // now the weights
-        echo "<tr><td><b>".get_string("maximumgrade")."</b></td>";
-        echo "<td><b>&nbsp;</b></td>\n";
-        echo "<td align=\"center\"><b>$exercise->gradinggrade</b></td>\n";
-        echo "<td align=\"center\"><b>$exercise->grade</b></td>\n";
-        echo "<td><b>&nbsp;</b></td></tr>\n";
+        echo "<tr><td bgcolor=\"$THEME->cellheading2\"><b>".get_string("maximumgrade")."</b></td>";
+        echo "<td bgcolor=\"$THEME->cellheading2\"><b>&nbsp;</b></td>\n";
+        echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>$exercise->gradinggrade</b></td>\n";
+        echo "<td bgcolor=\"$THEME->cellheading2\" align=\"center\"><b>$exercise->grade</b></td>\n";
+        echo "<td bgcolor=\"$THEME->cellheading2\"><b>&nbsp;</b></td></tr>\n";
         foreach ($users as $user) {
             // check group membership, if necessary
             if ($groupid) {
@@ -270,7 +270,7 @@
                             $gradinggrade = number_format($ownassessment->gradinggrade * $exercise->gradinggrade /
                                     100.0, 1);
                             $grade = number_format($assessment->grade * $exercise->grade / 100.0, 1);
-                            $overallgrade = number_format(($assessment->grade * $exercise->grade / 100.0) +
+                            $overallgrade = number_format(($assessment->grade * $exercise->grade / 100.0) + 
                                 ($ownassessment->gradinggrade * $exercise->gradinggrade / 100.0), 1);
                             if ($submission->late) {
                                 $grade = "<font color=\"red\">(".$grade.")</font>";
@@ -286,7 +286,7 @@
                 }
             }
         }
-        echo "</table><br clear=\"all\" />\n";
+        echo "</table><br clear=\"all\">\n";
         if ($exercise->showleaguetable) {
             exercise_print_league_table($exercise);
             echo "<br />\n";
@@ -308,9 +308,9 @@
             }
         exercise_list_unassessed_student_submissions($exercise, $USER);
         print_continue("view.php?id=$cm->id");
-
+        
         }
-
+    
 
     /******************* list for assessment teacher (submissions) ************************************/
     elseif ($action == 'listforassessmentteacher' ) {
@@ -321,15 +321,15 @@
             }
         exercise_list_unassessed_teacher_submissions($exercise, $USER);
         print_continue("view.php?id=$cm->id");
-
+        
         }
-
+    
 
     /****************** save league table entries and anonimity setting (by teacher) **************/
     elseif ($action == 'saveleaguetable') {
 
         $form = (object)$_POST;
-
+        
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
             }
@@ -340,20 +340,20 @@
         } else {
             $nentries = $form->nentries;
         }
-        // ...and save it
+        // ...and save it 
         set_field("exercise", "showleaguetable", $nentries, "id", "$exercise->id");
-
-        // ...and save the anonimity setting
+        
+        // ...and save the anonimity setting 
         set_field("exercise", "anonymous", $form->anonymous, "id", "$exercise->id");
-
-        redirect("submissions.php?id=$cm->id&amp;action=adminlist", get_string("entriessaved", "exercise"));
+    
+        redirect("submissions.php?id=$cm->id&action=adminlist", get_string("entriessaved", "exercise"));
         }
-
+                
         /*************** save weights (by teacher) ***************************/
     elseif ($action == 'saveweights') {
 
         $form = (object)$_POST;
-
+        
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
             }
@@ -361,31 +361,31 @@
         // save the weights from the form...
         if (isset($form->teacherweight)) {
             $teacherweight = $form->teacherweight;
-            // ...and save them
+            // ...and save them 
             set_field("exercise", "teacherweight", $teacherweight, "id", "$exercise->id");
             }
-
+        
         if (isset($form->gradingweight)) {
             $gradingweight = $form->gradingweight;
-            // ...and save them
+            // ...and save them 
             set_field("exercise", "gradingweight", $gradingweight, "id", "$exercise->id");
             }
-
-        redirect("submissions.php?id=$cm->id&amp;action=adminlist", get_string("weightssaved", "exercise"));
+    
+        redirect("submissions.php?id=$cm->id&action=adminlist", get_string("weightssaved", "exercise"));
         }
-
-
+                
+    
     /******************* user confirm delete ************************************/
     elseif ($action == 'userconfirmdelete' ) {
 
         if (empty($_GET['sid'])) {
             error("User Confirm Delete: submission id missing");
             }
-
-        notice_yesno(get_string("confirmdeletionofthisitem","exercise", get_string("submission", "exercise")),
-             "submissions.php?action=userdelete&amp;id=$cm->id&amp;sid=$_GET[sid]", "view.php?id=$cm->id");
+            
+        notice_yesno(get_string("confirmdeletionofthisitem","exercise", get_string("submission", "exercise")), 
+             "submissions.php?action=userdelete&id=$cm->id&sid=$_GET[sid]", "view.php?id=$cm->id");
         }
-
+    
 
     /******************* user delete ************************************/
     elseif ($action == 'userdelete' ) {
@@ -393,7 +393,7 @@
         if (empty($_GET['sid'])) {
             error("User Delete: submission id missing");
             }
-
+    
         if (!$submission = get_record("exercise_submissions", "id", $_GET['sid'])) {
             error("User Delete: can not get submission record");
             }
@@ -413,10 +413,10 @@
         // ..and finally the submitted file
         exercise_delete_submitted_files($exercise, $submission);
         add_to_log($course->id, "exercise", "delete", "view.php?id=$cm->id", "submission $submission->id");
-
+        
         print_continue("view.php?id=$cm->id");
         }
-
+    
 
     /*************** no man's land **************************************/
 
@@ -428,5 +428,5 @@
 
 
     print_footer($course);
-
+ 
 ?>

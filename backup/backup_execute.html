@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This page prints the backup todo list to see everything
 
     //Check login   
@@ -6,13 +6,7 @@
 
     if (!empty($course->id)) {
         if (!isteacheredit($course->id)) {
-            if (empty($to)) {
-                error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
-            } else {
-                if (!isteacheredit($to)) {
-                    error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
-                }
-            }
+            error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     } else {
         if (!isadmin()) {
@@ -66,11 +60,6 @@
     }
 
     //Check other parameters
-    if (!isset($backup_metacourse)) {
-        $backup_metacourse = 1;
-    }
-    $preferences->backup_metacourse = $backup_metacourse;
-   
     if (!isset($backup_users)) {
         $backup_users = 1;
     }
@@ -91,11 +80,6 @@
     }
     $preferences->backup_course_files = $backup_course_files;
 
-    if (!isset($backup_messages)) {
-        $backup_messages = 1;
-    }
-    $preferences->backup_messages = $backup_messages;
-
     if (!isset($id)) {
         error ("Course not specified");
     }
@@ -104,8 +88,7 @@
     if (!isset($backup_name)) {
         error ("Backup name not specified");
     }
-    //We clean it again (to prevent diacritics entered manually)
-    $preferences->backup_name = clean_filename($backup_name);
+    $preferences->backup_name = $backup_name;
 
     if (!isset($backup_unique_code)) {
         error ("Backup unique code not specified");
@@ -122,29 +105,27 @@
         notice("No backupable modules are installed!");
     }
 
+    //Start the main table
+    echo "<table cellpadding=5>";
 
-    if (empty($to)) {
-        //Start the main table
-        echo "<table cellpadding=\"5\">";
-        
-        //Now print the Backup Name tr
-        echo "<tr>";
-        echo "<td align=\"right\"><b>";
-        echo get_string("name").":";
-        echo "</b></td><td>";
-        echo $preferences->backup_name;
-        echo "</td></tr>";
-        
-        //Start the main tr, where all the backup progress is done
-        echo "<tr>";
-        echo "<td colspan=\"2\">";
-        
-        //Start the main ul
-        echo "<ul>";
-    }
+    //Now print the Backup Name tr
+    echo "<tr>";
+    echo "<td align=\"right\"><P><B>";
+    echo get_string("name").":";
+    echo "</B></td><td>";
+    echo $backup_name;
+    echo "</td></tr>";
+    
+    //Start the main tr, where all the backup progress is done
+    echo "<tr>";
+    echo "<td colspan=\"2\">";
+    
+    //Start the main ul
+    echo "<ul>";
+
     //Check for temp and backup and backup_unique_code directory
     //Create them as needed
-    echo "<li>".get_string("creatingtemporarystructures").'</li>';
+    echo "<li>".get_string("creatingtemporarystructures");
     $status = check_and_create_backup_dir($backup_unique_code);
     //Empty dir
     if ($status) {
@@ -152,7 +133,7 @@
     }
 
     //Delete old_entries from backup tables
-    echo "<li>".get_string("deletingolddata").'</li>';
+    echo "<li>".get_string("deletingolddata");
     $status = backup_delete_old_data();
     if (!$status) {
         error ("An error occurred deleting old backup data");
@@ -163,10 +144,10 @@
         echo "<li>".get_string("creatingxmlfile");
         //Begin a new list to xml contents
         echo "<ul>";
-        echo "<li>".get_string("writingheader").'</li>';
+        echo "<li>".get_string("writingheader");
         //Obtain the xml file (create and open) and print prolog information
         $backup_file = backup_open_xml($backup_unique_code);
-        echo "<li>".get_string("writinggeneralinfo").'</li>';
+        echo "<li>".get_string("writinggeneralinfo");;
         //Prints general info about backup to file
         if ($backup_file) {
             if (!$status = backup_general_info($backup_file,$preferences)) {
@@ -178,28 +159,14 @@
         //Start new ul (for course)
         echo "<ul>";
 
-        echo "<li>".get_string("courseinfo").'</li>';
+        echo "<li>".get_string("courseinfo");
         //Prints course start (tag and general info)
         if ($status) {
             if (!$status = backup_course_start($backup_file,$preferences)) {
                 notify("An error occurred while backing up course start");
             }
         }
-        //Metacourse information
-        if ($status && $preferences->backup_metacourse) {
-            echo "<li>".get_string("metacourse").'</li>';
-            if (!$status = backup_course_metacourse($backup_file,$preferences)) {
-                notify("An error occurred while backing up metacourse info");
-            }
-        }
-        echo "<li>".get_string("blocks").'</li>';
-        //Blocks information
-        if ($status) {
-            if (!$status = backup_course_blocks($backup_file,$preferences)) {
-                notify("An error occurred while backing up course blocks");
-            }
-        }
-        echo "<li>".get_string("sections").'</li>';
+        echo "<li>".get_string("sections");
         //Section info
         if ($status) {
             if (!$status = backup_course_sections($backup_file,$preferences)) {
@@ -208,29 +175,20 @@
         }
 
         //End course contents (close ul)
-        echo "</ul></li>";
+        echo "</ul>";
 
+        echo "<li>".get_string("writinguserinfo");
         //User info
-        if ($status && $preferences->backup_users) {
-            echo "<li>".get_string("writinguserinfo").'</li>';
+        if ($status) {
             if (!$status = backup_user_info($backup_file,$preferences)) {
                 notify("An error occurred while backing up user info");
-            }
-        }
-
-        //If we have selected to backup messages and we are
-        //doing a SITE backup, let's do it
-        if ($status && $preferences->backup_messages && $preferences->backup_course == SITEID) {
-            echo "<li>".get_string("writingmessagesinfo").'</li>';
-            if (!$status = backup_messages($backup_file,$preferences)) {
-                notify("An error occurred while backing up messages");
             }
         }
 
         //If we have selected to backup quizzes, backup categories and
         //questions structure (step 1). See notes on mod/quiz/backuplib.php
         if ($status and $preferences->mods['quiz']->backup) {
-            echo "<li>".get_string("writingcategoriesandquestions").'</li>';
+            echo "<li>".get_string("writingcategoriesandquestions");
             if (!$status = quiz_backup_question_categories($backup_file,$preferences)) {
                 notify("An error occurred while backing up quiz categories");
             }
@@ -239,7 +197,7 @@
         //Print logs if selected
         if ($status) {
             if ($preferences->backup_logs) {  
-                echo "<li>".get_string("writingloginfo").'</li>';
+                echo "<li>".get_string("writingloginfo");
                 if (!$status = backup_log_info($backup_file,$preferences)) {
                     notify("An error occurred while backing up log info");
                 }
@@ -248,7 +206,7 @@
 
         //Print scales info
         if ($status) {
-            echo "<li>".get_string("writingscalesinfo").'</li>';
+            echo "<li>".get_string("writingscalesinfo");
             if (!$status = backup_scales_info($backup_file,$preferences)) {
                 notify("An error occurred while backing up scales");
             }
@@ -256,7 +214,7 @@
 
         //Print groups info
         if ($status) {
-            echo "<li>".get_string("writinggroupsinfo").'</li>';
+            echo "<li>".get_string("writinggroupsinfo");
             if (!$status = backup_groups_info($backup_file,$preferences)) {
                 notify("An error occurred while backing up groups");
             }
@@ -264,7 +222,7 @@
 
         //Print events info
         if ($status) { 
-            echo "<li>".get_string("writingeventsinfo").'</li>';
+            echo "<li>".get_string("writingeventsinfo");
             if (!$status = backup_events_info($backup_file,$preferences)) {
                 notify("An error occurred while backing up events");
             }
@@ -292,14 +250,14 @@
                 //Iterate over modules and call backup
                 foreach ($preferences->mods as $module) {
                     if ($module->backup and $status) {
-                        echo "<li>".get_string("modulenameplural",$module->name).'</li>';
+                        echo "<li>".get_string("modulenameplural",$module->name);
                         if (!$status = backup_module($backup_file,$preferences,$module->name)) {
                             notify("An error occurred while backing up '$module->name'");
                         }
                     }
                 }
                 //Close ul for module list
-                echo "</ul></li>";
+                echo "</ul>";
                 //Close modules tag
                 if (!$status = backup_modules_end ($backup_file,$preferences)) {
                     notify("An error occurred while finishing the module backups");
@@ -319,13 +277,13 @@
         }
 
         //End xml contents (close ul)
-        echo "</ul></li>";
+        echo "</ul>";
     }
     
     //Now, if selected, copy user files
     if ($status) {
         if ($preferences->backup_user_files) {
-            echo "<li>".get_string("copyinguserfiles").'</li>';
+            echo "<li>".get_string("copyinguserfiles");
             if (!$status = backup_copy_user_files ($preferences)) {
                 notify("An error occurred while copying user files");
             }
@@ -335,7 +293,7 @@
     //Now, if selected, copy course files
     if ($status) {
         if ($preferences->backup_course_files) {
-            echo "<li>".get_string("copyingcoursefiles").'</li>';
+            echo "<li>".get_string("copyingcoursefiles");
             if (!$status = backup_copy_course_files ($preferences)) {
                 notify("An error occurred while copying course files");
             }
@@ -344,7 +302,7 @@
 
     //Now, zip all the backup directory contents
     if ($status) {
-        echo "<li>".get_string("zippingbackup").'</li>';
+        echo "<li>".get_string("zippingbackup");
         if (!$status = backup_zip ($preferences)) {
             notify("An error occurred while zipping the backup");
         }
@@ -352,7 +310,7 @@
 
     //Now, copy the zip file to course directory
     if ($status) {
-        echo "<li>".get_string("copyingzipfile").'</li>';
+        echo "<li>".get_string("copyingzipfile");
         if (!$status = copy_zip_to_course_dir ($preferences)) {
             notify("An error occurred while copying the zip file to the course directory");
         }
@@ -360,7 +318,7 @@
 
     //Now, clean temporary data (db and filesystem)
     if ($status) {
-        echo "<li>".get_string("cleaningtempdata").'</li>';
+        echo "<li>".get_string("cleaningtempdata");
         if (!$status = clean_temp_data ($preferences)) {
             notify("An error occurred while cleaning up temporary data");
         }
@@ -380,19 +338,8 @@
                "$CFG->wwwroot/course/view.php?id=$course->id");
     }
 
-    if (empty($to)) {
-        //Print final message
-        print_simple_box(get_string("backupfinished"),"center");
-        print_continue("$CFG->wwwroot/files/index.php?id=".$preferences->backup_course."&amp;wdir=/backupdata");    
-    } else {
-        print_simple_box(get_string('importdataexported'),"CENTER");
-        if (!empty($preferences->backup_destination)) {
-            $filename = $preferences->backup_destination."/".$preferences->backup_name;
-        } else {
-            $filename = $preferences->backup_course."/backupdata/".$preferences->backup_name;
-        }
-        error_log($filename);
-        $SESSION->import_preferences = $preferences;
-        print_continue($CFG->wwwroot.'/course/import.php?id='.$to.'&fromcourse='.$id.'&filename='.$filename);
-    }
+    //Print final message
+    print_simple_box(get_string("backupfinished"),"CENTER");
+    print_continue("$CFG->wwwroot/files/index.php?id=".$preferences->backup_course."&wdir=/backupdata");    
+
 ?>

@@ -132,7 +132,7 @@ Najlepša hvala.';
 $string['collesaname'] = 'COLLES (Dejansko)';
 $string['collesapintro'] = 'Namen te ankete je, da nam pomagate zaznati, kako dobro nam je s to študijsko enoto uspelo omogoèiti vaše uèenje. 
 
-Vsako od 24 izjav primerjajte kot <b>preferirano</b> (idealno) in <b>dejansko<b/> izkušnjo pri tej študijski enoti.
+Vsako od 24 izjav primerjajte kot <B>preferirano</B> (idealno) in <B>dejansko</B> izkušnjo pri tej študijski enoti.
 
 V anketi ni pravilnih in napaènih odgovorov; zanima nas izkljuèno vaše mnenje. Vaše odgovore bomo obravnavali z najvišjo stopnjo zaupnosti. Odgovori v nobenem primeru ne vplivajo na vašo študijsko oceno.
 
@@ -155,7 +155,7 @@ $string['collesm6short'] = 'Interpretacija';
 $string['collesmintro'] = 'V tej študijski enoti...';
 $string['collespintro'] = 'Namen te ankete je, da nam pomagate razumeti vaše izkušnje z online uèenjem.
 
-Vsako od 24 izjav ocenite kot <b>preferirano</b> (idealno) izkušnjo v tej enoti.
+Vsako od 24 izjav ocenite kot <B>preferirano</B> (idealno) izkušnjo v tej enoti.
 
 V anketi ni pravilnih in napaènih odgovorov; zanima nas izkljuèno vaše mnenje. Vaše odgovore bomo obravnavali z najvišjo stopnjo zaupnosti. Odgovori v nobenem primeru ne vplivajo na vašo študijsko oceno.
 

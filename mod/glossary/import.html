@@ -1,45 +1,47 @@
-<form method="post" action="import.php" name="form" enctype="multipart/form-data">
+<form method="POST" action="import.php" name="form" enctype="multipart/form-data">
 <table border="0" cellpadding="3" cellspacing="3" width="100%">
 <tr>
-    <td align="right" valign="top" width="30%"><b><?php print_string("filetoimport","glossary") ?>:</b></td>
+    <td align=right valign=top width="30%"><p><b><?php print_string("filetoimport","glossary") ?>:</b></p></td>
     <td width="70%">
+    <input type="hidden" name="MAX_FILE_SIZE" value="<?php echo get_max_upload_file_size() ?>">
+    <input type="file" name="file" size=40> <br />
     <?php 
-       require_once($CFG->dirroot.'/lib/uploadlib.php');
-       upload_print_form_fragment(1,array('file'),null,false,null,0,0);
        helpbutton("filetoimport", get_string("filetoimport", "glossary"), "glossary"); 
-       echo '&nbsp;';
        print_string("maxsize", "", display_size(get_max_upload_file_size())); 
     ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right" colspan="2">
+<tr valign=top>
+    <td align=right colspan="2">
     <table border="0" cellpadding="0" cellspacing="3" width="100%">
       <tr>
-        <td width="25%" align="right"><?php print_string("destination","glossary") ?>:</td>
+        <td width="25%">
+        <p align="right"><?PHP p(get_string("destination","glossary")) ?>:</td>
         <td width="25%"><select size="1" name="dest">
-        <option selected="selected" value="current"><?php print_string("currentglossary","glossary") ?></option>
-        <option value="new"><?php print_string("newglossary","glossary") ?></option>
-        </select> <?php helpbutton("destination", get_string("destination", "glossary"), "glossary") ?></td>
-        <td width="25%" align="right"><?php print_string("importcategories","glossary") ?>:</td>
-        <td width="25%"><input type="checkbox" name="catsincl" value="1" alt="<?php print_string("importcategories","glossary") ?>" /> <?php helpbutton("importcategories", get_string("importcategories", "glossary"), "glossary") ?></td>
+        <option selected value="current"><?PHP p(get_string("currentglossary","glossary")) ?></option>
+        <option value="new"><?PHP p(get_string("newglossary","glossary")) ?></option>
+        </select> <?PHP helpbutton("destination", get_string("destination", "glossary"), "glossary") ?></td>
+        <td width="25%">
+        <p align="right"><?PHP p(get_string("importcategories","glossary")) ?>:</td>
+        <td width="25%"><input type="checkbox" name="catsincl" value="1"> <?PHP helpbutton("importcategories", get_string("importcategories", "glossary"), "glossary") ?></td>
       </tr>
     </table>
     </td>
 </tr>
 <tr>
-    <td align="right" colspan="2">
+    <td align=right colspan="2">
     <table border="0" cellpadding="3" cellspacing="3" width="100%">
       <tr>
-        <td width="50%" align="right"><input type="submit" value="<?php print_string("savechanges") ?>" /></td>
-        <td width="50%"><input type="reset" value="<?php print_string("revert") ?>" /></td>
+        <td width="50%">
+        <p align="right"><input type="submit" value="<?php print_string("savechanges") ?>"></td>
+        <td width="50%"><input type="reset" value="<?php print_string("revert") ?>"></td>
       </tr>
     </table>
     </td>
 </tr>
 </table>
-<input type="hidden" name="id" value="<?php p($id) ?>" />
-<input type="hidden" name="l" value="<?php p($l) ?>" />
-<input type="hidden" name="lasttab" value="<?php p($lasttab) ?>" />
-<input type="hidden" name="step" value="1" />
+<input type="hidden" name="id" value="<?PHP p($id) ?>">
+<input type="hidden" name="l" value="<?PHP p($l) ?>">
+<input type="hidden" name="lasttab" value="<?PHP p($lasttab) ?>">
+<input type="hidden" name="step" value="1">
 </form> 

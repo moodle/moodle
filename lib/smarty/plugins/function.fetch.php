@@ -9,8 +9,8 @@
 /**
  * Smarty {fetch} plugin
  *
- * Type:     function<br />
- * Name:     fetch<br />
+ * Type:     function<br>
+ * Name:     fetch<br>
  * Purpose:  fetch file, web or ftp data and display results
  * @link http://smarty.php.net/manual/en/language.function.fetch.php {fetch}
  *       (Smarty online manual)

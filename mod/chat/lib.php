@@ -1,8 +1,6 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
 /// Library of functions and constants for module chat
-
-require_once($CFG->libdir.'/pagelib.php');
 
 if (!isset($CFG->chat_refresh_room)) {
     set_config("chat_refresh_room", 5);
@@ -20,7 +18,7 @@ if (!isset($CFG->chat_serverhost)) {
     set_config("chat_serverhost", $_SERVER['HTTP_HOST']);
 }
 if (!isset($CFG->chat_serverip)) {
-    set_config("chat_serverip", '127.0.0.1');
+    set_config("chat_serverip", $_SERVER['SERVER_ADDR']);
 }
 if (!isset($CFG->chat_serverport)) {
     set_config("chat_serverport", 9111);
@@ -29,6 +27,10 @@ if (!isset($CFG->chat_servermax)) {
     set_config("chat_servermax", 100);
 }
 
+define("CHAT_DRAWBOARD", false);  // Look into this later
+
+global $THEME;
+
 // The HTML head for the message window to start with (<!-- nix --> is used to get some browsers starting with output
 $CHAT_HTMLHEAD = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\"><html><head></head>\n<body bgcolor=\"#FFFFFF\">\n\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n";
 
@@ -36,13 +38,13 @@ $CHAT_HTMLHEAD = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\
 $CHAT_HTMLHEAD_JS = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\"><html><head><script language=\"JavaScript\">\n<!--\nfunction move()\n{\nif (scroll_active) window.scroll(1,400000);\nwindow.setTimeout(\"move()\",100);\n}\nscroll_active = true;\nmove();\n//-->\n</script>\n</head>\n<body bgcolor=\"#FFFFFF\" onBlur=\"scroll_active = true\" onFocus=\"scroll_active = false\">\n\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n";
 
 // The HTML code for standard empty pages (e.g. if a user was kicked out)
-$CHAT_HTMLHEAD_OUT = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\"><html><head><title>You are out!</title></head><body bgcolor=\"#FFFFFF\"></body></html>";
+$CHAT_HTMLHEAD_OUT = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\"><html><head><title>You are out!</title></head><body bgcolor=\"$THEME->body\"></body></html>";
 
 // The HTML head for the message input page
-$CHAT_HTMLHEAD_MSGINPUT = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\"><html><head><title>Message Input</title></head><body bgcolor=\"#FFFFFF\">";
+$CHAT_HTMLHEAD_MSGINPUT = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\"><html><head><title>Message Input</title></head><body bgcolor=\"$THEME->body\">";
 
 // The HTML code for the message input page, with JavaScript
-$CHAT_HTMLHEAD_MSGINPUT_JS = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\"><html><head><title>Message Input</title>\n<script language=\"Javascript\">\n<!--\nscroll_active = true;\nfunction empty_field_and_submit()\n{\ndocument.fdummy.arsc_message.value=document.f.arsc_message.value;\ndocument.fdummy.submit();\ndocument.f.arsc_message.focus();\ndocument.f.arsc_message.select();\nreturn false;\n}\n// -->\n</script>\n</head><body bgcolor=\"#FFFFFF\" OnLoad=\"document.f.arsc_message.focus();document.f.arsc_message.select();\">";
+$CHAT_HTMLHEAD_MSGINPUT_JS = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/REC-html40/loose.dtd\"><html><head><title>Message Input</title>\n<script language=\"Javascript\">\n<!--\nscroll_active = true;\nfunction empty_field_and_submit()\n{\ndocument.fdummy.arsc_message.value=document.f.arsc_message.value;\ndocument.fdummy.submit();\ndocument.f.arsc_message.focus();\ndocument.f.arsc_message.select();\nreturn false;\n}\n// -->\n</script>\n</head><body bgcolor=\"$THEME->body\" OnLoad=\"document.f.arsc_message.focus();document.f.arsc_message.select();\">";
 
 // Dummy data that gets output to the browser as needed, in order to make it show output
 $CHAT_DUMMY_DATA = "<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n<!-- nix -->\n";
@@ -113,7 +115,7 @@ function chat_delete_instance($id) {
 /// this function will permanently delete the instance
 /// and any data that depends on it.
 
-    if (! $chat = get_record('chat', 'id', $id)) {
+    if (! $chat = get_record("chat", "id", "$id")) {
         return false;
     }
 
@@ -121,21 +123,8 @@ function chat_delete_instance($id) {
 
     # Delete any dependent records here #
 
-    if (! delete_records('chat', 'id', $chat->id)) {
+    if (! delete_records("chat", "id", "$chat->id")) {
         $result = false;
-    }
-    if (! delete_records('chat_messages', 'chatid', $chat->id)) {
-        $result = false;
-    }
-    if (! delete_records('chat_users', 'chatid', $chat->id)) {
-        $result = false;
-    }
-
-    $pagetypes = page_import_types('mod/chat/');
-    foreach($pagetypes as $pagetype) {
-        if(!delete_records('block_instance', 'pageid', $chat->id, 'pagetype', $pagetype)) {
-            $result = false;
-        }
     }
 
     if (! delete_records('event', 'modulename', 'chat', 'instance', $chat->id)) {
@@ -152,7 +141,6 @@ function chat_user_outline($course, $user, $mod, $chat) {
 /// $return->time = the time they did it
 /// $return->info = a short text description
 
-    $return = NULL;
     return $return;
 }
 
@@ -172,14 +160,13 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
 
     $timeold = time() - $CFG->chat_old_ping;
 
-    $lastpingsearch = ($CFG->chat_method == 'sockets') ? '': 'AND cu.lastping > \''.$timeold.'\'';
-
     if (!$chatusers = get_records_sql("SELECT u.id, cu.chatid, u.firstname, u.lastname
                                         FROM {$CFG->prefix}chat_users as cu,
                                              {$CFG->prefix}chat as ch,
                                              {$CFG->prefix}user as u
                                        WHERE cu.userid = u.id
-                                         AND cu.chatid = ch.id $lastpingsearch
+                                         AND cu.chatid = ch.id
+                                         AND cu.lastping > '$timeold'
                                          AND ch.course = '$course->id'
                                        ORDER BY cu.chatid ASC") ) {
         return false;
@@ -192,32 +179,27 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
     foreach ($chatusers as $chatuser) {
         if ($current != $chatuser->chatid) {
             if ($current) {
-                echo '</ul></div>';  // room
-                $current = 0;
+                echo "</p>";
             }
-            if ($chat = get_record('chat', 'id', $chatuser->chatid)) {
+            if ($chat = get_record("chat", "id", $chatuser->chatid)) {
                 if (!($isteacher or instance_is_visible('chat', $chat))) {  // Chat hidden to students
                     continue;
                 }
                 if (!$outputstarted) {
-                    print_headline(get_string('currentchats', 'chat').':');
+                    print_headline(get_string("currentchats", "chat").":");
                     $outputstarted = true;
                 }
-                echo '<div class="room"><p class="head"><a href="'.$CFG->wwwroot.'/mod/chat/view.php?c='.$chat->id.'">'.format_string($chat->name,true).'</a></p><ul>';
+                echo "<p><font size=1><a href=\"$CFG->wwwroot/mod/chat/view.php?c=$chat->id\">$chat->name</a></font><br />";
             }
             $current = $chatuser->chatid;
         }
-        $fullname = fullname($chatuser, $isteacher);
-        echo '<li class="info name">'.$fullname.'</li>';
+        $fullname = fullname($chatuser);
+        echo "&nbsp;&nbsp;&nbsp;<font size=1>- $fullname</font><br />";
     }
-
-    if ($current) {
-        echo '</ul></div>';  // room
-    }
+    echo "<br />";
 
     return true;
 }
-
 
 function chat_cron () {
 /// Function to be run periodically according to the moodle cron
@@ -256,7 +238,7 @@ function chat_get_participants($chatid, $groupid=0) {
     }
 
     //Get students
-    $students = get_records_sql("SELECT DISTINCT u.id, u.id
+    $students = get_records_sql("SELECT DISTINCT u.*
                                  FROM {$CFG->prefix}user u,
                                       {$CFG->prefix}chat_messages c
                                  WHERE c.chatid = '$chatid' $groupselect
@@ -309,22 +291,6 @@ function chat_refresh_events($courseid = 0) {
     return true;
 }
 
-function chat_force_language($lang) {
-/// This function prepares moodle to operate in given language
-/// usable when $nomoodlecookie = true;
-/// BEWARE: there must be no $course, $USER or $SESSION
-    global $CFG;
-
-    if(!empty($CFG->courselang)) {
-        unset($CFG->courselang);
-    }
-    if(!empty($CFG->locale)) {
-        unset($CFG->locale);
-    }
-    $CFG->lang = $lang;
-    moodle_setlocale();
-}
-
 //////////////////////////////////////////////////////////////////////
 /// Functions that require some SQL
 
@@ -375,52 +341,20 @@ function chat_get_latest_message($chatid, $groupid=0) {
 
 
 //////////////////////////////////////////////////////////////////////
-// login if not already logged in
 
-function chat_login_user($chatid, $version, $groupid, $course) {
+function chat_login_user($chatid, $version="header_js", $groupid=0) {
     global $USER;
-    if (($version != 'sockets') and $chatuser = get_record_select('chat_users', "chatid='$chatid' AND userid='$USER->id' AND groupid='$groupid'")) {
-        $chatuser->version  = $version;
-        $chatuser->ip       = $USER->lastIP;
-        $chatuser->lastping = time();
-        $chatuser->lang     = current_language();
 
-        if (($chatuser->course != $course->id)
-         or ($chatuser->userid != $USER->id)) {
-            return false;
-        }
-        if (!update_record('chat_users', $chatuser)) {
-            return false;
-        }
-    } else {
-        $chatuser->chatid   = $chatid;
-        $chatuser->userid   = $USER->id;
-        $chatuser->groupid  = $groupid;
-        $chatuser->version  = $version;
-        $chatuser->ip       = $USER->lastIP;
-        $chatuser->lastping = $chatuser->firstping = $chatuser->lastmessageping = time();
-        $chatuser->sid      = random_string(32);
-        $chatuser->course   = $course->id; //caching - needed for current_language too
-        $chatuser->lang     = current_language(); //caching - to resource intensive to find out later
+    $chatuser->chatid   = $chatid;
+    $chatuser->userid   = $USER->id;
+    $chatuser->groupid  = $groupid;
+    $chatuser->version  = $version;
+    $chatuser->ip       = $USER->lastIP;
+    $chatuser->lastping = $chatuser->firstping = $chatuser->lastmessageping = time();
+    $chatuser->sid      = random_string(32);
 
-        if (!insert_record('chat_users', $chatuser)) {
-            return false;
-        }
-
-        if ($version == 'sockets') {
-            // do not send 'enter' message, chatd will do it
-        } else {
-            $message->chatid    = $chatuser->chatid;
-            $message->userid    = $chatuser->userid;
-            $message->groupid   = $groupid;
-            $message->message   = 'enter';
-            $message->system    = 1;
-            $message->timestamp = time();
-
-            if (!insert_record('chat_messages', $message)) {
-                error('Could not insert a chat message!');
-            }
-        }
+    if (!insert_record("chat_users", $chatuser)) {
+        return false;
     }
 
     return $chatuser->sid;
@@ -433,20 +367,18 @@ function chat_delete_old_users() {
 
     $timeold = time() - $CFG->chat_old_ping;
 
-    $query = "lastping < '$timeold'";
-
-    if ($oldusers = get_records_select('chat_users', $query) ) {
-        delete_records_select('chat_users', $query);
+    if ($oldusers = get_records_select("chat_users", "lastping < '$timeold'") ) {
+        delete_records_select("chat_users", "lastping < '$timeold'");
         foreach ($oldusers as $olduser) {
-            $message->chatid    = $olduser->chatid;
-            $message->userid    = $olduser->userid;
-            $message->groupid   = $olduser->groupid;
-            $message->message   = 'exit';
-            $message->system    = 1;
+            $message->chatid = $olduser->chatid;
+            $message->userid = $olduser->userid;
+            $message->groupid = $olduser->groupid;
+            $message->message = "exit";
+            $message->system = 1;
             $message->timestamp = time();
 
-            if (!insert_record('chat_messages', $message)) {
-                error('Could not insert a chat message!');
+            if (!insert_record("chat_messages", $message)) {
+                error("Could not insert a chat message!");
             }
         }
     }
@@ -493,23 +425,224 @@ function chat_update_chat_times($chatid=0) {
 }
 
 
-function chat_format_message_manually($message, $courseid, $sender, $currentuser) {
+function chat_browser_detect($HTTP_USER_AGENT) {
+
+ if(eregi("(opera) ([0-9]{1,2}.[0-9]{1,3}){0,1}", $HTTP_USER_AGENT, $match)
+ || eregi("(opera/)([0-9]{1,2}.[0-9]{1,3}){0,1}", $HTTP_USER_AGENT, $match))
+ {
+  $BName = "Opera"; $BVersion=$match[2];
+ }
+ elseif( eregi("(konqueror)/([0-9]{1,2}.[0-9]{1,3})", $HTTP_USER_AGENT, $match) )
+ {
+  $BName = "Konqueror"; $BVersion=$match[2];
+ }
+ elseif( eregi("(lynx)/([0-9]{1,2}.[0-9]{1,2}.[0-9]{1,2})", $HTTP_USER_AGENT, $match) )
+ {
+  $BName = "Lynx"; $BVersion=$match[2];
+ }
+ elseif( eregi("(links) \(([0-9]{1,2}.[0-9]{1,3})", $HTTP_USER_AGENT, $match) )
+ {
+  $BName = "Links"; $BVersion=$match[2];
+ }
+ elseif( eregi("(msie) ([0-9]{1,2}.[0-9]{1,3})", $HTTP_USER_AGENT, $match) )
+ {
+  $BName = "MSIE"; $BVersion=$match[2];
+ }
+ elseif( eregi("(netscape6)/(6.[0-9]{1,3})", $HTTP_USER_AGENT, $match) )
+ {
+  $BName = "Netscape"; $BVersion=$match[2];
+ }
+ elseif( eregi("mozilla/5", $HTTP_USER_AGENT) )
+ {
+  $BName = "Netscape"; $BVersion="Unknown";
+ }
+ elseif( eregi("(mozilla)/([0-9]{1,2}.[0-9]{1,3})", $HTTP_USER_AGENT, $match) )
+ {
+  $BName = "Netscape"; $BVersion=$match[2];
+ }
+ elseif( eregi("w3m", $HTTP_USER_AGENT) )
+ {
+  $BName = "w3m"; $BVersion="Unknown";
+ }
+ else
+ {
+  $BName = "Unknown"; $BVersion="Unknown";
+ }
+
+ if(eregi("linux", $HTTP_USER_AGENT))
+ {
+  $BPlatform = "Linux";
+ }
+ elseif( eregi("win32", $HTTP_USER_AGENT) )
+ {
+  $BPlatform = "Windows";
+ }
+ elseif( (eregi("(win)([0-9]{2})", $HTTP_USER_AGENT, $match) )
+ ||      (eregi("(windows) ([0-9]{2})", $HTTP_USER_AGENT, $match) ))
+ {
+  $BPlatform = "Windows $match[2]";
+ }
+ elseif( eregi("(winnt)([0-9]{1,2}.[0-9]{1,2}){0,1}", $HTTP_USER_AGENT, $match) )
+ {
+  $BPlatform = "Windows NT $match[2]";
+ }
+ elseif( eregi("(windows nt)( ){0,1}([0-9]{1,2}.[0-9]{1,2}){0,1}", $HTTP_USER_AGENT, $match) )
+ {
+  $BPlatform = "Windows NT $match[3]";
+ }
+ elseif( eregi("mac", $HTTP_USER_AGENT) )
+ {
+  $BPlatform = "Macintosh";
+ }
+ elseif( eregi("(sunos) ([0-9]{1,2}.[0-9]{1,2}){0,1}", $HTTP_USER_AGENT, $match) )
+ {
+  $BPlatform = "SunOS $match[2]";
+ }
+ elseif( eregi("(beos) r([0-9]{1,2}.[0-9]{1,2}){0,1}", $HTTP_USER_AGENT, $match) )
+ {
+  $BPlatform = "BeOS $match[2]";
+ }
+ elseif( eregi("freebsd", $HTTP_USER_AGENT) )
+ {
+  $BPlatform = "FreeBSD";
+ }
+ elseif( eregi("openbsd", $HTTP_USER_AGENT) )
+ {
+  $BPlatform = "OpenBSD";
+ }
+ elseif( eregi("irix", $HTTP_USER_AGENT) )
+ {
+  $BPlatform = "IRIX";
+ }
+ elseif( eregi("os/2", $HTTP_USER_AGENT) )
+ {
+  $BPlatform = "OS/2";
+ }
+ elseif( eregi("plan9", $HTTP_USER_AGENT) )
+ {
+  $BPlatform = "Plan9";
+ }
+ elseif( eregi("unix", $HTTP_USER_AGENT)
+ ||      eregi("hp-ux", $HTTP_USER_AGENT) )
+ {
+  $BPlatform = "Unix";
+ }
+ elseif( eregi("osf", $HTTP_USER_AGENT) )
+ {
+  $BPlatform = "OSF";
+ }
+ else
+ {
+  $BPlatform = "Unknown";
+ }
+
+ $return["name"] = $BName;
+ $return["version"] = $BVersion;
+ $return["platform"] = $BPlatform;
+ return $return;
+}
+
+function chat_display_version($version, $browser)
+{
+ GLOBAL $CFG;
+
+ $checked = "";
+ if (($version == "sockets") OR ($version == "push_js"))
+ {
+  $checked = "checked";
+ }
+ if (($version == "sockets" OR $version == "push_js")
+     AND
+     ($browser["name"] == "Lynx"
+      OR
+      $browser["name"] == "Links"
+      OR
+      $browser["name"] == "w3m"
+      OR
+      $browser["name"] == "Konqueror"
+      OR
+      ($browser["name"] == "Netscape" AND substr($browser["version"], 0, 1) == "2")))
+ {
+  $checked = "";
+ }
+ if (($version == "text")
+     AND
+     ($browser["name"] == "Lynx"
+      OR
+      $browser["name"] == "Links"
+      OR
+      $browser["name"] == "w3m"))
+ {
+  $checked = "checked";
+ }
+ if (($version == "header")
+     AND
+     ($browser["name"] == "Konqueror"))
+ {
+  $checked = "checked";
+ }
+ if (($version == "header_js")
+     AND
+     ($browser["name"] == "Netscape" AND substr($browser["version"], 0, 1) == "2"))
+ {
+  $checked = "checked";
+ }
+  ?>
+  <tr>
+   <td valign="top">
+    <input type="radio" name="chat_chatversion" value="<?php echo $version; ?>"<?php echo $checked; ?>>
+   </td>
+   <td valign="top" align="left">
+    <font face="Arial" size="2">
+     <?php echo $chat_lang["gui_".$version]; ?>
+    </font>
+   </td>
+  </tr>
+  <?php
+
+}
+
+function chat_language_override($language) {
+    // Override the highest-ranking language variable from current_language()
+    // And save it so we can restore it again afterwards
+    global $CFG;
+
+    $oldlang = empty($CFG->courselang) ? NULL : $CFG->courselang;
+    $CFG->courselang = $language;
+
+    return $oldlang;
+}
+
+function chat_language_restore($language = NULL) {
+    // Restore the highest-ranking language variable from current_language()
+    global $CFG;
+
+    if(!empty($language)) {
+        $CFG->courselang = $language;
+    }
+}
+
+function chat_format_message_manually($message, $courseid, $sender, $currentuser, $language = NULL) {
     global $CFG;
 
     $output = New stdClass;
-    $output->beep = false;       // by default
-    $output->refreshusers = false; // by default
+    $output->beep = false;   // by default
 
-    // Get some additional info
+    if(empty($language)) {
+        $language = current_language();
+    }
 
-    // But before that :-) let's override get_user_timezone_offset() for this call... messy stuff...
-    // TODO - FIX THIS TO MANAGE NEW TIMEZONES
+    $oldcfglang = chat_language_override($language);
+
+    // Get some additional info now that the language has been correctly set
+
+    // But before that :-) let's override get_user_timezone() for this call... messy stuff...
     $tz = ($currentuser->timezone == 99) ? $CFG->timezone : $currentuser->timezone;
     $message->strtime = userdate($message->timestamp, get_string('strftimemessage', 'chat'), $tz);
 
     $message->picture = print_user_picture($sender->id, 0, $sender->picture, false, true, false);
     if ($courseid) {
-        $message->picture = "<a target=\"_new\" href=\"$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid\">$message->picture</a>";
+        $message->picture = "<a target=\"_new\" href=\"$CFG->wwwroot/user/view.php?id=$sender->id&course=$courseid\">$message->picture</a>";
     }
 
     // Start processing the message
@@ -518,12 +651,12 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         // System event
         $output->text = $message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender));
         $output->html  = '<table><tr><td style="vertical-align: top;">'.$message->picture.'</td><td>';
-        $output->html .= '<font size="2" color="#ccaaaa">'.$output->text.'</font></td></tr></table>';
+        $output->html .= '<font size=2 color="#CCAAAA">'.$output->text.'</font></td></tr></table>';
 
-        if($message->message == 'exit' or $message->message == 'enter') {
-            $output->refreshusers = true; //force user panel refresh ASAP
+        // Don't forget to reset the language before returning!!!
+        if(!empty($oldcfglang)) {
+            $CFG->courselang = $oldcfglang;
         }
-
         return $output;
     }
 
@@ -579,26 +712,31 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
 
     $output->text  = strip_tags($outinfo.': '.$outmain);
 
-    $output->html  = "<table><tr><td valign=\"top\">$message->picture</td><td><font size=\"2\">";
+    $output->html  = "<table><tr><td valign=top>$message->picture</td><td><font size=2>";
     $output->html .= "<font color=\"#888888\">$outinfo</font>";
     if ($outmain) {
         $output->html .= ": $outmain";
     }
     $output->html .= "</font></td></tr></table>";
 
+    // Don't forget to reset the language before returning!!!
+    chat_language_restore($oldcfglang);
+
     return $output;
 }
 
-function chat_format_message($message, $courseid, $currentuser) {
+function chat_format_message($message, $courseid=0) {
 /// Given a message object full of information, this function
 /// formats it appropriately into text and html, then
 /// returns the formatted data.
+
+    global $CFG, $USER;
 
     if (!$user = get_record("user", "id", $message->userid)) {
         return "Error finding user id = $message->userid";
     }
 
-    return chat_format_message_manually($message, $courseid, $user, $currentuser);
+    return chat_format_message_manually($message, $courseid, $user, $USER);
 
 }
 

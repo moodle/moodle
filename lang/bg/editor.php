@@ -8,7 +8,7 @@ $string['absmiddle'] = 'В средата';
 $string['address'] = 'Адрес';
 $string['alignment'] = 'Подравняване';
 $string['alternatetext'] = 'Кратко описание';
-$string['anchorhelp'] = 'Това само създава позиционен маркер (белязка). За да насочите читателите към маркера, трябва да създадете връзка';
+$string['anchorhelp'] = 'Това само създава позиционен маркер (белязка). За да насочите читателите към маркера, трябва да създадете връзка.';
 $string['anchorname'] = 'Име на маркера';
 $string['anchors'] = 'Маркери';
 $string['baseline'] = 'На нивото на текста';
@@ -104,12 +104,5 @@ $string['upload'] = 'Качване';
 $string['vertical'] = 'Вертикално';
 $string['width'] = 'Ширина';
 $string['wordclean'] = 'Оптимизиране на текст, копиран от MS Word';
-$string['texttop'] = "Texttop";
-$string['zip'] = "Zip";
-$string['fontname'] = "Fontname";
-$string['fontsize'] = "Font-size";
-$string['formatblock'] = "Format";
-$string['nolink'] = "Prevent glossary link";
-$string['alertnoselectedtext'] = "You must select text first!";
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.4.3 + (2004083134)
+      // survey.php - created with Moodle 1.3 (2004052500)
 
 
 $string['actual'] = 'Faktisk';
@@ -162,8 +162,8 @@ $string['howlongoptions'] = 'under 1 minut,1-2 minuter,2-3 minuter,3-4 minuter,4
 $string['ifoundthat'] = 'Jag har funnit att';
 $string['introtext'] = 'Introduktionstext';
 $string['ipreferthat'] = 'Jag föredrar att';
-$string['modulename'] = 'Färdig enkät';
-$string['modulenameplural'] = 'Färdiga enkäter';
+$string['modulename'] = 'Enkät';
+$string['modulenameplural'] = 'Enkäter';
 $string['name'] = 'Namn';
 $string['newsurveyresponses'] = 'Nya enkätsvar';
 $string['nobodyyet'] = 'Ingen har genomfört denna enkät';

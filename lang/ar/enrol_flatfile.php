@@ -1,11 +1,7 @@
 <?PHP // $Id$ 
-      // enrol_flatfile.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
+      // enrol_flatfile.php - created with Moodle 1.4 development (2004062401)
 
 
-$string['enrolname'] = 'ãáÝ ãÓØÍ';
-$string['filelockedmailsubject'] = 'ÎØÇÁ ãåã: ãáÝ ÇáÊÓÌíá';
-$string['location'] = 'ãæÞÚ ÇáãáÝ';
-$string['mailadmin'] = 'ÇÍØ ÇáãÏíÑ ÈÇáÈÑíÏ ÇáÅáßÊÑæäí';
-$string['mailusers'] = 'ÇÍØ ÇáãÓÊÎÏã ÈÇáÈÑíÏ ÇáÅáßÊÑæäí';
+$string['filelockedmailsubject'] = '&#1582;&#1591;&#1575;&#1569; &#1605;&#1607;&#1605;: &#1605;&#1604;&#1601; &#1575;&#1604;&#1578;&#1587;&#1580;&#1610;&#1604;';
 
 ?>

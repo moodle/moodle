@@ -1,17 +1,14 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020800)
+      // editor.php - created with Moodle 1.3 (2004052500)
 
 
 $string['about'] = 'Referent a aquest editor';
 $string['absbottom'] = 'Absbottom';
+$string['absmiddle'] = 'Absmiddle';
 $string['address'] = 'Adreça';
-$string['alertnoselectedtext'] = 'Abans heu de seleccionar el text';
 $string['alignment'] = 'Alineació';
 $string['alternatetext'] = 'Text alternatiu';
-$string['anchorhelp'] = 'Només crea l\'àncora. Heu de crear l\'enllaç a mà.';
-$string['anchorname'] = 'Nom de l\'àncora';
-$string['anchors'] = 'Àncores';
-$string['baseline'] = 'Línia base';
+$string['baseline'] = 'Baseline';
 $string['bold'] = 'Negreta';
 $string['borderthickness'] = 'Gruix del contorn';
 $string['bottom'] = 'Bottom';
@@ -24,16 +21,12 @@ $string['chooseicon'] = 'Tria una icona per inserir';
 $string['close'] = 'Tanca';
 $string['cols'] = 'Cols';
 $string['copy'] = 'Copia la selecció';
-$string['createanchor'] = 'Crea àncora';
 $string['createfolder'] = 'Crea una carpeta';
 $string['createlink'] = 'Insereix un enllaç web';
 $string['cut'] = 'Talla la selecció';
 $string['delete'] = 'Suprimeix';
 $string['filebrowser'] = 'Explorador de fitxers';
-$string['fontname'] = 'Nom de la font';
-$string['fontsize'] = 'Mida de la lletra';
 $string['forecolor'] = 'Color de la lletra';
-$string['formatblock'] = 'Format';
 $string['fullscreen'] = 'Editor a pantalla completa';
 $string['heading'] = 'Encapçalament';
 $string['height'] = 'Alçada';
@@ -68,7 +61,6 @@ $string['linkurl'] = 'URL';
 $string['middle'] = 'Centre';
 $string['minimize'] = 'Minimitza l\'editor';
 $string['move'] = 'Mou';
-$string['nolink'] = 'Impedir enllaços automàtics';
 $string['normal'] = 'Normal';
 $string['notimage'] = 'El fitxer seleccionat no és una imatge. Si us plau trieu-ne un altre!';
 $string['notset'] = 'No seleccionat';

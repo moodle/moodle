@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // dialogue.php - created with Moodle 1.2 development (2004012800)
 
 
 $string['addmynewentries'] = 'ÇÖİ ãæÇÏí ÇáÌÏíÏÉ';
@@ -9,16 +9,16 @@ $string['allowmultiple'] = 'ÇáÓãÇÍ áÃßËÑ ãä ÍæÇÑ ãÚ äİÓ ÇáÔÎÕ';
 $string['allowstudentdialogues'] = 'ÇáÓãÇÍ ÈÍæÇÑÇÊ ØÇáÈ -  áØÇáÈ';
 $string['close'] = 'ÇÛáÇŞ';
 $string['closed'] = 'ãÛáŞ';
-$string['confirmclosure'] = 'ÃäÊ Úáì æÔß Ãä ÊÛáŞ ÍæÇÑğÇ ãÚ  $a. ÇáÍæÇÑÇÊ ÇáãÛáŞÉ áÇ íãßä ÅÚÇÏÊ İÊÍåÇ ËÇäíÇğ . ÅĞÇ ÃÛáŞÊ åĞÇ ÇáÍæÇÑ íãßäß Ãä ÊÔÇåÏå áßäø áä ÊÓÊØíÚ ÇáÇÖÇİÉ ÚáíÉ, æ ÓíÌÈ Úáíß Ãä ÊÈÏÃ ÍæÇÑ ÂÎÑ ááÅÓÊãÑÇÑ& quot¡ æÇáÊÍÏË\"¡ åĞÇ ÇáÔøÎÕ . .</ br /><br>åá ÃäÊ ãÊÃßøÏ Ãäøß ÊÑíÏ ÅÛáÇŞ åĞÇ ÇáÍæÇÑ ¿';
+$string['confirmclosure'] = 'ÃäÊ Úáì æÔß Ãä ÊÛáŞ ÍæÇÑğÇ ãÚ  $a. ÇáÍæÇÑÇÊ ÇáãÛáŞÉ áÇ íãßä ÅÚÇÏÊ İÊÍåÇ ËÇäíÇğ . ÅĞÇ ÃÛáŞÊ åĞÇ ÇáÍæÇÑ íãßäß Ãä ÊÔÇåÏå áßäø áä ÊÓÊØíÚ ÇáÇÖÇİÉ ÚáíÉ, æ ÓíÌÈ Úáíß Ãä ÊÈÏÃ ÍæÇÑ ÂÎÑ ááÅÓÊãÑÇÑ& quot¡ æÇáÊÍÏË&quot¡ åĞÇ ÇáÔøÎÕ . .</ br /><br>åá ÃäÊ ãÊÃßøÏ Ãäøß ÊÑíÏ ÅÛáÇŞ åĞÇ ÇáÍæÇÑ ¿';
 $string['deleteafter'] = 'ÇÍĞİ ÇáÍæÇÑÇÊ ÇáãÛáŞÉ ÈÚÏ (ÇíÇã)';
 $string['dialogueclosed'] = 'ÍæÇÑ ãÛáŞ';
 $string['dialogueintro'] = 'ãŞÏãÉ ÍæÇÑ';
-$string['dialoguemail'] = '$a->userfrom ŞÇã ãä ÈÅÖÇİÉ ãÇÏÉ ÌÏíÏÉ áãÇÏÊß ÇáÍæÇÑíÉ $a->dialogue 
-ÊÓÊØÚ ãÔÇåÏÊåÇ ãáÍŞÉ áãÇÏÊß ÇáÍæÇÑíÉ:
-
+$string['dialoguemail'] = '$a->userfrom ŞÇã ãä ÈÅÖÇİÉ ãÇÏÉ ÌÏíÏÉ áãÇÏÊß ÇáÍæÇÑíÉ $a->dialogue 
+ÊÓÊØÚ ãÔÇåÏÊåÇ ãáÍŞÉ áãÇÏÊß ÇáÍæÇÑíÉ:
+
 $a->url';
-$string['dialoguemailhtml'] = '$a->userfrom ŞÇã ãä ÈÅÖÇİÉ ãÇÏÉ ÌÏíÏÉ áãÇÏÊß
-ÇáÍæÇÑíÉ áÜ\'<i>$a->dialogue</i>\'<br /><br />
+$string['dialoguemailhtml'] = '$a->userfrom ŞÇã ãä ÈÅÖÇİÉ ãÇÏÉ ÌÏíÏÉ áãÇÏÊß
+ÇáÍæÇÑíÉ áÜ\'<i>$a->dialogue</i>\'<br /><br />
 ÊÓÊØÚ ãÔÇåÏÊåÇ ãáÍŞÉ <a href=\"$a->url\">áÍæÇÑß</a>.';
 $string['dialoguename'] = 'ÇÓã ÇáÍæÇÑ';
 $string['dialogueopened'] = 'İÊÍ ÇáÍæÇÑ ãÚ $a';
@@ -27,7 +27,6 @@ $string['everybody'] = 'ÌãíÚ ÇáÇÔÎÇÕ';
 $string['furtherinformation'] = 'ãÚáæãÇÊ ÇÎÑì';
 $string['lastentry'] = 'ÇÎÑ ãÇÏÉ';
 $string['maildefault'] = 'ÈÑíÏ ÇİÊÑÇÖí';
-$string['mailnotification'] = 'ÇÔÚÇÑ ÈÑíÏí';
 $string['modulename'] = 'ÍæÇÑ';
 $string['modulenameplural'] = 'ÍæÇÑÇÊ';
 $string['namehascloseddialogue'] = '$a ŞÇã ÈÇÛáŞ ÇáÍæÇÑ';

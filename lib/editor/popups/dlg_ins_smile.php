@@ -5,8 +5,8 @@
 ##
 #################################################################################
 -->
-<?php
-    include('../../../config.php');
+<?php 
+    include('../../../config.php'); 
     $pixpath = "$CFG->pixpath/s";
 
     $fullnames = get_list_of_pixnames();
@@ -31,7 +31,7 @@
                          'dead'       => 'xx-P',
                          'sleepy'     => '|-.',
                          'evil'       => '}-]' );
-
+    
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -54,7 +54,7 @@ function insert(img,text) {
     if (img) {
             var strImage = img;
             var strAlt = text;
-            var imgString = "<img src=\"" + strImage +"\" alt=\"" + strAlt +"\" title=\"" + strAlt +"\" />";
+            var imgString = "<img src=\"" + strImage +"\" alt=\"" + strAlt +"\" />";
     }
   // pass data back to the calling window
   __dlg_close(imgString);
@@ -77,15 +77,15 @@ function cancel() {
       <tr valign="top">
         <td>
         <table border="0">
-<?php
-        $list = array('smiley', 'biggrin', 'wink', 'mixed', 'thoughtful',
+<?php 
+        $list = array('smiley', 'biggrin', 'wink', 'mixed', 'thoughtful', 
                       'tongueout', 'cool', 'approve', 'wideeyes', 'surprise');
         foreach ($list as $image) {
             $name = $fullnames[$image];
             $icon = $emoticons[$image];
             echo '<tr>';
             echo "<td><img alt=\"$name\" border=\"0\" hspace=\"10\" src=\"$pixpath/$image.gif\" ".
-                 " onclick=\"insert('$pixpath/$image.gif','$name')\" width=\"15\" height=\"15\" /></td>";
+                 " onclick=\"insert('$pixpath/$image.gif','$name')\" width=\"15\" height=\"15\"></td>";
             echo "<td>$name</td>";
             echo "<td class=\"smile\">$icon</td>";
             echo "</tr>";
@@ -96,7 +96,7 @@ function cancel() {
         <td>
         <table border="0" align="center">
 
-<?php
+<?php 
         $list = array('sad', 'shy', 'blush', 'kiss', 'clown', 'blackeye',
                       'angry', 'dead', 'sleepy', 'evil');
         foreach ($list as $image) {
@@ -104,7 +104,7 @@ function cancel() {
             $icon = $emoticons[$image];
             echo '<tr>';
             echo "<td><img alt=\"$name\" border=\"0\" hspace=\"10\" src=\"$pixpath/$image.gif\" ".
-                 " onclick=\"insert('$pixpath/$image.gif','$name')\" width=\"15\" height=\"15\" /></td>";
+                 " onclick=\"insert('$pixpath/$image.gif','$name')\" width=\"15\" height=\"15\"></td>";
             echo "<td>$name</td>";
             echo "<td class=\"smile\">$icon</td>";
             echo "</tr>";

@@ -1,8 +1,8 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
-    require_once("$CFG->libdir/rsslib.php");
+    require_once("$CFG->dirroot/rss/rsslib.php");
 
     optional_variable($id);          // course
 
@@ -16,7 +16,13 @@
         }
     }
 
-    require_course_login($course);
+    if ($CFG->forcelogin) {
+        require_login();
+    }
+
+    if ($course->category) {
+        require_login($course->id);
+    }
 
     $currentgroup = get_current_group($course->id);
 
@@ -29,37 +35,31 @@
     $strdescription = get_string("description");
     $strdiscussions = get_string("discussions", "forum");
     $strsubscribed = get_string("subscribed", "forum");
-    $strunreadposts = get_string("unreadposts", "forum");
     $strrss = get_string("rss");
 
-    $searchform = forum_search_form($course);
+    $searchform = forum_print_search_form($course, "", true, "plain");
 
 
-    // Start of the table for General Forums
+    // Build up the tables
 
     $generaltable->head  = array ($strforum, $strdescription, $strdiscussions);
-    $generaltable->align = array ('left', 'left', 'center');
-
-    if ($CFG->forum_trackreadposts) {
-        $generaltable->head[] = $strunreadposts;
-        $generaltable->align[] = 'center';
-    }
+    $generaltable->align = array ("LEFT", "LEFT", "CENTER");
 
     if ($can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin())) {
         $generaltable->head[] = $strsubscribed;
-        $generaltable->align[] = 'center';
+        $generaltable->align[] = "CENTER";
     }
 
-    if ($show_rss = (($can_subscribe || $course->id == SITEID) &&
-                     isset($CFG->enablerssfeeds) && isset($CFG->forum_enablerssfeeds) &&
+    if ($show_rss = ($can_subscribe && isset($CFG->enablerssfeeds) && isset($CFG->forum_enablerssfeeds) &&
                      $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds)) {
         $generaltable->head[] = $strrss;
-        $generaltable->align[] = 'center';
+        $generaltable->align[] = "CENTER";
     }
 
+    $learningtable = $generaltable;   // Headers etc are the same
 
-    // Parse and organise all the forums.  Most forums are course modules but
-    // some special ones are not.  These get placed in the general forums
+    // Parse and organise all the forums.  Most forums are course modules but 
+    // some special ones are not.  These get placed in the general forums 
     // category with the forums in section 0.
 
     $generalforums = array();            // For now
@@ -92,7 +92,7 @@
                         unset($learningforums[$forum->keyreference]);
                     }
                     break;
-                case "teacher":
+                case "teacher": 
                     if (isteacher($course->id)) {
                         $forum->visible = true;
                         $generalforums[] = $forum;
@@ -104,7 +104,7 @@
                         if (isset($forum->keyreference)) {
                             unset($learningforums[$forum->keyreference]);
                         }
-                    }
+                    } 
                     break;
             }
         }
@@ -119,52 +119,21 @@
             } else {
                 $groupmode = NOGROUPS;
             }
-
+                
             if ($groupmode == SEPARATEGROUPS and !isteacheredit($course->id)) {
                 $count = count_records_select("forum_discussions", "forum = '$forum->id' AND (groupid = '$currentgroup' OR groupid = '-1')");
             } else {
                 $count = count_records("forum_discussions", "forum", "$forum->id");
             }
-
-            if ($CFG->forum_trackreadposts) {
-                $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
-//                $unread = forum_tp_count_forum_posts($forum->id, $groupid) -
-//                          forum_tp_count_forum_read_records($USER->id, $forum->id, $groupid);
-                $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
-                if ($unread > 0) {
-                    $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
-                } else {
-                    $unreadlink = '<span class="read"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
-                }
-            }
-
-            $forum->intro = format_text(forum_shorten_post($forum->intro));
+           
+            $forum->intro = forum_shorten_post($forum->intro);
+            replace_smilies($forum->intro);
             $forum->intro = "<span style=\"font-size:x-small;\">$forum->intro</span>";;
 
             if ($forum->visible) {
-                $forumlink = "<a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
+                $forumlink = "<a href=\"view.php?f=$forum->id\">$forum->name</a>";
             } else {
-                $forumlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
-            }
-
-            //If this forum has RSS activated, calculate it
-            $rsslink = '';
-            if ($show_rss) {
-                if ($forum->rsstype and $forum->rssarticles) {
-                    //Calculate the tolltip text
-                    if ($forum->rsstype == 1) {
-                        $tooltiptext = get_string("rsssubscriberssdiscussions","forum",format_string($forum->name));
-                    } else {
-                        $tooltiptext = get_string("rsssubscriberssposts","forum",format_string($forum->name));
-                    }
-                    if (empty($USER->id)) {
-                        $userid = 0;
-                    } else {
-                        $userid = $USER->id;
-                    }
-                    //Get html code for RSS link
-                    $rsslink = rss_get_link($course->id, $userid, "forum", $forum->id, $tooltiptext);
-                }
+                $forumlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">$forum->name</a>";
             }
 
             if ($can_subscribe) {
@@ -173,7 +142,7 @@
                 } else {
                     if ($groupmode and !isteacheredit($course->id) and !mygroupid($course->id)) {
                         $sublink = get_string("no");   // Can't subscribe to a group forum (not in a group)
-                        $forumlink = format_string($forum->name,true);
+                        $forumlink = $forum->name;
                     } else {
                         if (forum_is_subscribed($USER->id, $forum->id)) {
                             $subscribed = get_string("yes");
@@ -185,49 +154,29 @@
                         $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
                     }
                 }
-                $row = array ($forumlink, $forum->intro, "$count");
-                if ($CFG->forum_trackreadposts) {
-                    $row[] = $unreadlink;
+                //If this forum has RSS activated, calculate it
+                if ($show_rss) {
+                    $rsslink = '';
+                    if ($forum->rsstype and $forum->rssarticles) {
+                        //Calculate the tolltip text
+                        if ($forum->rsstype == 1) {
+                            $tooltiptext = get_string("rsssubscriberssdiscussions","forum",$forum->name);
+                        } else {
+                            $tooltiptext = get_string("rsssubscriberssposts","forum",$forum->name);
+                        }
+                        //Get html code for RSS link
+                        $rsslink = rss_get_link($course->id, $USER->id, "forum", $forum->id, $tooltiptext);
+                    }
+                    //Save data
+                    $generaltable->data[] = array ($forumlink, "$forum->intro", "$count", $sublink,$rsslink);
+                } else {
+                    $generaltable->data[] = array ($forumlink, "$forum->intro", "$count", $sublink);
                 }
-                $row[] = $sublink;
-                if (!empty($rsslink)) {
-                    $row[] = $rsslink;
-                }
-                $generaltable->data[] = $row;
             } else {
-                $row = array ($forumlink, $forum->intro, "$count");
-                if ($CFG->forum_trackreadposts) {
-                    $row[] = $unreadlink;
-                }
-                if (!empty($rsslink)) {
-                    $row[] = $rsslink;
-                }
-                $generaltable->data[] = $row;
+                $generaltable->data[] = array ($forumlink, "$forum->intro", "$count");
             }
         }
-    }
-
-
-    // Start of the table for Learning Forums
-    $learningtable->head  = array ($strforum, $strdescription, $strdiscussions);
-    $learningtable->align = array ("left", "left", "center");
-
-    if ($CFG->forum_trackreadposts) {
-        $learningtable->head[] = $strunreadposts;
-        $learningtable->align[] = 'center';
-    }
-
-    if ($can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin())) {
-        $learningtable->head[] = $strsubscribed;
-        $learningtable->align[] = 'center';
-    }
-
-    if ($show_rss = (($can_subscribe || $course->id == SITEID) &&
-                     isset($CFG->enablerssfeeds) && isset($CFG->forum_enablerssfeeds) &&
-                     $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds)) {
-        $learningtable->head[] = $strrss;
-        $learningtable->align[] = 'center';
-    }
+    } 
 
     /// Now let's process the learning forums
 
@@ -235,35 +184,24 @@
         // Add extra field for section number, at the front
         array_unshift($learningtable->head, "");
         array_unshift($learningtable->align, "center");
-
+    
 
         if ($learningforums) {
             $currentsection = "";
 
             foreach ($learningforums as $key => $forum) {
                 $groupmode = groupmode($course, $forum);  /// Can do this because forum->groupmode is defined
-
+                
                 if ($groupmode == SEPARATEGROUPS and !isteacheredit($course->id)) {
                     $count = count_records("forum_discussions", "forum", "$forum->id", "groupid", $currentgroup);
                 } else {
                     $count = count_records("forum_discussions", "forum", "$forum->id");
                 }
-
-                if ($CFG->forum_trackreadposts) {
-                    $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
-//                    $unread = forum_tp_count_forum_posts($forum->id, $groupid) -
-//                              forum_tp_count_forum_read_records($USER->id, $forum->id, $groupid);
-                    $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
-                    if ($unread > 0) {
-                        $unreadlink = '<span class="unread">'.$unread.'</span>';
-                    } else {
-                        $unreadlink = '<span class="read">'.$unread.'</span>';
-                    }
-                }
-
-                $forum->intro = format_text(forum_shorten_post($forum->intro));
+    
+                $forum->intro = forum_shorten_post($forum->intro);
+                replace_smilies($forum->intro);
                 $forum->intro = "<span style=\"font-size:x-small;\">$forum->intro</span>";
-
+    
                 if ($forum->section != $currentsection) {
                     $printsection = $forum->section;
                     if ($currentsection) {
@@ -275,31 +213,11 @@
                 }
 
                 if ($forum->visible) {
-                    $forumlink = "<a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
+                    $forumlink = "<a href=\"view.php?f=$forum->id\">$forum->name</a>";
                 } else {
-                    $forumlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
+                    $forumlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">$forum->name</a>";
                 }
-
-                //If this forum has RSS activated, calculate it
-                $rsslink = '';
-                if ($show_rss) {
-                    if ($forum->rsstype and $forum->rssarticles) {
-                        //Calculate the tolltip text
-                        if ($forum->rsstype == 1) {
-                            $tooltiptext = get_string("rsssubscriberssdiscussions","forum",format_string($forum->name));
-                        } else {
-                            $tooltiptext = get_string("rsssubscriberssposts","forum",format_string($forum->name));
-                        }
-                        if (empty($USER->id)) {
-                            $userid = 0;
-                        } else {
-                            $userid = $USER->id;
-                        }
-                        //Get html code for RSS link
-                        $rsslink = rss_get_link($course->id, $userid, "forum", $forum->id, $tooltiptext);
-                    }
-                }
-
+    
                 if ($can_subscribe) {
                     if (forum_is_forcesubscribed($forum->id)) {
                         $sublink = get_string("yes");
@@ -307,7 +225,7 @@
                         if ($groupmode and !isteacheredit($course->id) and !mygroupid($course->id)) {
                             $sublink = get_string("no");   // Can't subscribe to a group forum (not in a group)
                             if ($groupmode == SEPARATEGROUPS) {
-                                $forumlink = format_string($forum->name,true);
+                                $forumlink = $forum->name;
                             }
                         } else {
                             if (forum_is_subscribed($USER->id, $forum->id)) {
@@ -320,26 +238,26 @@
                             $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
                         }
                     }
-
-                    $row = array ($printsection, $forumlink, $forum->intro, $count);
-                    if ($CFG->forum_trackreadposts) {
-                        $row[] = $unreadlink;
+                    //If this forum has RSS activated, calculate it
+                    if ($show_rss) {
+                        $rsslink = '';
+                        if ($forum->rsstype and $forum->rssarticles) {
+                            //Calculate the tolltip text
+                            if ($forum->rsstype == 1) {
+                                $tooltiptext = get_string("rsssubscriberssdiscussions","forum",$forum->name);
+                            } else {
+                                $tooltiptext = get_string("rsssubscriberssposts","forum",$forum->name);
+                            }
+                            //Get html code for RSS link
+                            $rsslink = rss_get_link($course->id, $USER->id, "forum", $forum->id, $tooltiptext);
+                        }
+                        //Save data
+                        $learningtable->data[] = array ($printsection,$forumlink, "$forum->intro", "$count", $sublink,$rsslink);
+                    } else {
+                        $learningtable->data[] = array ($printsection,$forumlink, "$forum->intro", "$count", $sublink);
                     }
-                    $row[] = $sublink;
-                    if (!empty($rsslink)) {
-                        $row[] = $rsslink;
-                    }
-                    $learningtable->data[] = $row;
-
                 } else {
-                    $row = array ($printsection, $forumlink, $forum->intro, $count);
-                    if ($CFG->forum_trackreadposts) {
-                        $row[] = $unreadlink;
-                    }
-                    if (!empty($rsslink)) {
-                        $row[] = $rsslink;
-                    }
-                    $learningtable->data[] = $row;
+                    $learningtable->data[] = array ($printsection, $forumlink, "$forum->intro", "$count");
                 }
             }
         }
@@ -350,10 +268,10 @@
 
     if ($course->category) {
         print_header("$course->shortname: $strforums", "$course->fullname",
-                    "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> -> $strforums",
+                    "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> -> $strforums",
                     "", "", true, $searchform, navmenu($course));
     } else {
-        print_header("$course->shortname: $strforums", "$course->fullname", "$strforums",
+        print_header("$course->shortname: $strforums", "$course->fullname", "$strforums", 
                     "", "", true, $searchform, navmenu($course));
     }
 

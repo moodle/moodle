@@ -4,7 +4,7 @@
 
 $string['about'] = '關於此編輯器';
 $string['absbottom'] = '正底部';
-$string['middle'] = '正中';
+$string['absmiddle'] = '正中';
 $string['address'] = '地址';
 $string['alignment'] = '位置';
 $string['alternatetext'] = '提示文字';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // dialogue.php - created with Moodle 1.2 development (2003122600)
 
 
 $string['addmynewentries'] = 'Aggiungi i miei nuovi messaggi';
@@ -9,7 +9,7 @@ $string['allowmultiple'] = 'Permetti più di un dialogo con la stessa persona';
 $string['allowstudentdialogues'] = 'Permetti dialoghi studente-studente';
 $string['close'] = 'Termina';
 $string['closed'] = 'Terminato';
-$string['confirmclosure'] = 'Stai per terminare un dialogo con $a. Una volta terminato il dialogo non può essere riiniziato. Se termini questo dialogo potrai visualizzarlo ma non potrai più aggiungere niente, e dovrai iniziare un altro dialogo per continuare a \"parlare\" con questa persona.<br /><br />Sei sicuro di voler terminare questo dialogo? ';
+$string['confirmclosure'] = 'Stai per terminare un dialogo con $a. Una volta terminato il dialogo non può essere riiniziato. Se termini questo dialogo potrai visualizzarlo ma non potrai più aggiungere niente, e dovrai iniziare un altro dialogo per continuare a &quot;parlare&quot; con questa persona.<br /><br />Sei sicuro di voler terminare questo dialogo? ';
 $string['deleteafter'] = 'Cancella i dialoghi terminati dopo (Giorni)';
 $string['dialogueclosed'] = 'Dialogo terminato';
 $string['dialogueintro'] = 'Introduzione dialogo';
@@ -27,7 +27,6 @@ $string['everybody'] = 'Tutti';
 $string['furtherinformation'] = 'Ulteriori informazioni';
 $string['lastentry'] = 'Ultimo messaggio';
 $string['maildefault'] = 'Seganla per email';
-$string['mailnotification'] = 'Notifica tramite mail';
 $string['modulename'] = 'Dialogo';
 $string['modulenameplural'] = 'Dialoghi';
 $string['namehascloseddialogue'] = '$a ha chiuso il dialogo';

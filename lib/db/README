@@ -1,0 +1,15 @@
+Once databases exist, Moodle should support a wide
+variety of databases (because it uses the ADODB library).
+
+Unfortunately, database differences still means that 
+the *creation* of the databases is very different.
+
+This directory (and the db directory in each module) 
+contains SQL code for creating Moodle databases on 
+each type of database.
+
+
+mysql.sql - the main database Moodle is developed with
+
+postgres7.sql - the PostgreSQL schema is still alpha,
+                your feedback is encouraged

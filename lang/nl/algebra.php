@@ -1,10 +1,7 @@
 <?PHP // $Id$ 
-      // algebra.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // algebra.php - created with Moodle 1.2 alpha (2004022200)
 
 
-$string['filtername'] = 'Algebranotatie';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
+$string['filtername'] = 'Algebra notatie';
 
 ?>

@@ -1,11 +1,11 @@
-<?PHP // $Id$
+<?PHP // $Id$ 
       // forum.php - created with Moodle 1.2 Beta + (2004030702)
 
 
 $string['addanewdiscussion'] = 'Añadir un nuevo tema de debate';
 $string['addanewtopic'] = 'Añadir un nuevo tema';
 $string['allowchoice'] = 'Permitir a todos escoger';
-$string['allowdiscussions'] = '¿Puede un $a poner mensajes en este foro?';
+$string['allowdiscussions'] = '¿Puede un $a poner mensages en este foro?';
 $string['allowratings'] = '¿Permitir la calificación de los mensajes?';
 $string['allowsdiscussions'] = 'Este foro permite a todos comenzar un tema de debate';
 $string['anyfile'] = 'Cualquier archivo';
@@ -18,7 +18,7 @@ $string['configshortpost'] = 'Cualquier mensaje de longitud inferior a ésta (sin
 $string['couldnotadd'] = 'No se pudo añadir su mensaje debido a un error desconocido.';
 $string['couldnotdeleteratings'] = 'Lo sentimos, no es posible borrar este ítem debido a que ha sido calificado.';
 $string['couldnotdeletereplies'] = 'Lo sentimos, no es posible borrar este ítem debido a que ya tiene respuestas.';
-$string['couldnotupdate'] = 'No se pudo actualizar su mensaje debido a un error desconocido.';
+$string['couldnotupdate'] = 'No se pudo actualizar su mensage debido a un error desconocido.';
 $string['delete'] = 'Borrar ';
 $string['deleteddiscussion'] = 'El tema de debate ha sido eliminado';
 $string['deletedpost'] = 'El mensaje ha sido eliminado';
@@ -65,7 +65,7 @@ $string['namesocial'] = 'Foro de debate';
 $string['nameteacher'] = 'Foro de profesores';
 $string['newforumposts'] = 'Nuevos mensajes';
 $string['nodiscussions'] = 'No hay temas de debate aún en este foro';
-$string['noguestpost'] = 'Lo sentimos, los invitados no pueden poner mensajes aquí';
+$string['noguestpost'] = 'Lo sentimos, los invitados no pueden poner mensages aquí';
 $string['nomorepostscontaining'] = 'No se han encontrado más mensajes que contengan \'$a\'';
 $string['nonews'] = 'No se ha puesto aún ninguna noticia';
 $string['noposts'] = 'No hay mensajes';
@@ -80,7 +80,7 @@ $string['openmode0'] = 'No permitir debates ni respuestas';
 $string['openmode1'] = 'No permitir debates, pero sí respuestas';
 $string['openmode2'] = 'Permitir debates y respuestas';
 $string['parentofthispost'] = 'Anterior a este mensaje';
-$string['postadded'] = 'Su mensaje se ha colocado con éxito.<br />Tiene $a para editarlo si quiere hacer cualquier cambio.';
+$string['postadded'] = 'Su mensaje se ha colocado con éxito.<P>Tiene $a para editarlo si quiere hacer cualquier cambio.';
 $string['postincontext'] = 'Mira este mensaje en su contexto';
 $string['postmailinfo'] = 'Esta es una copia del mensaje publicado en $a .
 Para responder a este mensaje, haga clic en este enlace:';

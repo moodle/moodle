@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
       // Edit the introduction of a section
 
     require_once("../config.php");
@@ -23,7 +23,7 @@
 
 /// If data submitted, then process and store.
 
-    if ($form = data_submitted() and confirm_sesskey()) {
+    if ($form = data_submitted()) {
 
         $timenow = time();
 
@@ -43,19 +43,17 @@
         $form = $section;
     }
 
-    $form->sesskey = !empty($USER->id) ? $USER->sesskey : '';
-
     $usehtmleditor = can_use_html_editor();
 
     $sectionname = get_string("name$course->format");
     $stredit = get_string("edit", "", " $sectionname $section->section");
 
 	print_header("$course->shortname: $stredit", "$course->fullname", 
-                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
+                 "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
                   -> $stredit");
 
     print_heading(get_string("summaryof", "", "$sectionname $form->section"));
-    print_simple_box_start("center");
+    print_simple_box_start("center", "", "$THEME->cellheading");
     include("editsection.html");
     print_simple_box_end();
 

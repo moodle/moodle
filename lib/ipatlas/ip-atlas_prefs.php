@@ -3,14 +3,10 @@
 include("plotconf.inc"); 
 include("plot.inc"); 
 
-if($CFG->debug > 1) {
-    error_reporting(E_ALL);
+if($warnings == "1") {
+error_reporting(E_ALL);
 } else {
-    error_reporting(E_ERROR);
-}
-
-if (isset($HTTP_GET_VARS["lastquery"])){
-    $HTTP_GET_VARS["lastquery"] = clean_param($HTTP_GET_VARS["lastquery"], PARAM_HOST);
+error_reporting(E_ERROR);
 }
 
 ?>
@@ -23,32 +19,16 @@ if (isset($HTTP_GET_VARS["lastquery"])){
  }
 
 if(isset($HTTP_POST_VARS["button"])) {
-
-// cleanup post data
-$HTTP_POST_VARS["shape"]      = clean_param($HTTP_POST_VARS["shape"], PARAM_ALPHA);
-$HTTP_POST_VARS["color"]      = clean_param($HTTP_POST_VARS["color"], PARAM_ALPHA);
-$HTTP_POST_VARS["color"]      = clean_param($HTTP_POST_VARS["size"],  PARAM_INT);
-$HTTP_POST_VARS["earthimage"] = clean_param($HTTP_POST_VARS["earthimage"], PARAM_FILE);
-$HTTP_POST_VARS["cssdot"]      = clean_param($HTTP_POST_VARS["cssdot"], PARAM_FILE);
-$HTTP_POST_VARS["seldrawmode"] = clean_param($HTTP_POST_VARS["seldrawmode"],PARAM_ALPHA);
-// unset the earth image if we don't have it in our list
- if (!in_array($HTTP_POST_VARS["earthimage"],$earthimages)) {
-     unset($HTTP_POST_VARS["earthimage"]);
- }
-
-
 // save data from the POST
 setcookie ("atlasprefs", "", time() - 36000000);
 setcookie ("atlasprefs", "$HTTP_POST_VARS[shape]:$HTTP_POST_VARS[color]:$HTTP_POST_VARS[size]:$HTTP_POST_VARS[earthimage]:$HTTP_POST_VARS[cssdot]:$HTTP_POST_VARS[seldrawmode]", time() + 36000000, $cookiepath);
 
-$setshape      = $HTTP_POST_VARS["shape"];
-$setcolor      = $HTTP_POST_VARS["color"];
-$setsize       = $HTTP_POST_VARS["size"];
+$setshape = $HTTP_POST_VARS["shape"];
+$setcolor = $HTTP_POST_VARS["color"];
+$setsize = $HTTP_POST_VARS["size"];
 $setearthimage = $HTTP_POST_VARS["earthimage"];
-$setcssdot     = $HTTP_POST_VARS["cssdot"];
+$setcssdot = $HTTP_POST_VARS["cssdot"];
 $setseldrawmode = $HTTP_POST_VARS["seldrawmode"];
-
-
 
  if($setseldrawmode == "1") {
    $drawmode = "GD";
@@ -93,22 +73,22 @@ if(shouldrun($HTTP_SERVER_VARS['HTTP_USER_AGENT'])) {
 
 </head><body>
 
-<b><?php  echo t("IP-Atlas preferences"); ?></b> <?php  echo t("(cookie based)"); ?><br /><br />
+<b><?php  echo t("IP-Atlas preferences"); ?></b> <?php  echo t("(cookie based)"); ?><br><br>
 
 <?php
 if(isset($HTTP_POST_VARS["button"])) {
-print t("Your settings have been saved. You can now try"); ?> <a href="plot.php<?php  if(isset($HTTP_GET_VARS["lastquery"])) { echo "?address=$HTTP_GET_VARS[lastquery]"; } ?>"><?php  print t("plotting something.")."</a>"."<br /><br />";
+print t("Your settings have been saved. You can now try"); ?> <a href="plot.php<?php  if(isset($HTTP_GET_VARS["lastquery"])) { echo "?address=$HTTP_GET_VARS[lastquery]"; } ?>"><?php  print t("plotting something.")."</a>"."<br><br>";
 }
 
 
 ?>
 
-<form action="ip-atlas_prefs.php<?php  if(isset($HTTP_GET_VARS["lastquery"])) { echo "?lastquery=$HTTP_GET_VARS[lastquery]"; } ?>" method="POST">
+<form action="<?php  echo $HTTP_SERVER_VARS['PHP_SELF']; ?><?php  if(isset($HTTP_GET_VARS["lastquery"])) { echo "?lastquery=$HTTP_GET_VARS[lastquery]"; } ?>" method="POST">
 
 <?php  if(istheregd()) {
 echo t("Draw mode (defaults guessed for your browser):"); 
 
-print "<br /><select name=\"seldrawmode\">";
+print "<br><select name=\"seldrawmode\">";
 
 if(!isset($setseldrawmode)) {
   if(shouldrun($HTTP_SERVER_VARS['HTTP_USER_AGENT'])) {
@@ -126,7 +106,7 @@ if($setseldrawmode == "1") {
   echo "<option value=\"0\" selected>CSS";
 }
 
-print "</select><br /><br />";
+print "</select><br><br>";
 
 } else {
 
@@ -136,7 +116,7 @@ print "</select><br /><br />";
 
 ?>
 
-<?php  echo t("Pointer Preferences (the dot that marks lat/lon):"); ?><br />
+<?php  echo t("Pointer Preferences (the dot that marks lat/lon):"); ?><br>
 <?php
 if($drawmode == "GD") {
 print '
@@ -204,7 +184,7 @@ print "<option value=\"$filename\">$curdot";
 
 }
 
-print "</select><br />";
+print "</select><br>";
 
 print '
 <input type="hidden" name="shape" value="Diamond">
@@ -216,11 +196,11 @@ print '
 
 ?>
 
-<br />
+<br>
 
 
 
-<?php  echo t("Other Preferences:") ?><br />
+<?php  echo t("Other Preferences:") ?><br>
 <?php  echo t("Earth Image:") ?>&nbsp;
 <select name="earthimage">
 
@@ -242,11 +222,11 @@ print "<option value=\"$curfile\">$curname";
 ?>
 
 </select>
-<br /><br />
+<br><br>
 <input type="Submit" name="button" value="<?php  echo t("Save") ?>">
 
 <div align="right">
-[ <a href="plot.php<?php  if(isset($HTTP_GET_VARS["lastquery"])) { echo "?address=$HTTP_GET_VARS[lastquery]"; } ?>"><?php  echo t("main") ?></a> ]<br /><br />
+[ <a href="plot.php<?php  if(isset($HTTP_GET_VARS["lastquery"])) { echo "?address=$HTTP_GET_VARS[lastquery]"; } ?>"><?php  echo t("main") ?></a> ]<br><br>
 </div>
 <?php  include("footer.inc"); ?>
 </body></html>

@@ -26,29 +26,22 @@ var $maxparameters = 5;
 */
 function set_parameters() {
     global $USER, $CFG;
-
+    
     if (! empty($this->course->lang)) {
         $CFG->courselang = $this->course->lang;
     }
-
-    if (empty($USER->id)) {   // No need to set up parameters
-        $this->parameters = array();
-        return;
-    }
-
     $site = get_site();
+    
 
     $this->parameters = array(
 
             'label1'          => array('langstr' => get_string('user'),
                                        'value'   => 'optgroup'),
-
+    
             'userid'          => array('langstr' => 'id',
                                        'value'   => $USER->id),
             'userusername'    => array('langstr' => get_string('username'),
                                        'value'   => $USER->username),
-            'userpassword'    => array('langstr' => get_string('password'),
-                                       'value'   => $USER->password),
             'useridnumber'    => array('langstr' => get_string('idnumber'),
                                        'value'   => $USER->idnumber),
             'userfirstname'   => array('langstr' => get_string('firstname'),
@@ -61,10 +54,8 @@ function set_parameters() {
                                        'value'   => $USER->email),
             'usericq'         => array('langstr' => get_string('icqnumber'),
                                        'value'   => $USER->icq),
-            'userphone1'      => array('langstr' => get_string('phone').' 1',
+            'userphone1'      => array('langstr' => get_string('phone'),
                                        'value'   => $USER->phone1),
-            'userphone2'      => array('langstr' => get_string('phone').' 2',
-                                       'value'   => $USER->phone2),
             'userinstitution' => array('langstr' => get_string('institution'),
                                        'value'   => $USER->institution),
             'userdepartment'  => array('langstr' => get_string('department'),
@@ -74,7 +65,7 @@ function set_parameters() {
             'usercity'        => array('langstr' => get_string('city'),
                                        'value'   => $USER->city),
             'usertimezone'    => array('langstr' => get_string('timezone'),
-                                       'value'   => get_user_timezone_offset()),
+                                       'value'   => get_user_timezone()),
             'userurl'         => array('langstr' => get_string('webpage'),
                                        'value'   => $USER->url),
 
@@ -82,7 +73,7 @@ function set_parameters() {
                                        'value'   =>'/optgroup'),
             'label3'          => array('langstr' => get_string('course'),
                                        'value'   => 'optgroup'),
-
+                                                   
             'courseid'        => array('langstr' => 'id',
                                        'value'   => $this->course->id),
             'coursefullname'  => array('langstr' => get_string('fullname'),
@@ -103,27 +94,25 @@ function set_parameters() {
                                        'value'   => $this->course->student),
             'coursestudents'  => array('langstr' => get_string('wordforstudents'),
                                        'value'   => $this->course->students),
-
+                                    
             'label4'          => array('langstr' => "",
                                        'value'   =>'/optgroup'),
             'label5'          => array('langstr' => get_string('miscellaneous'),
                                        'value'   => 'optgroup'),
-
+                                                   
             'lang'            => array('langstr' => get_string('preferredlanguage'),
                                        'value'   => current_language()),
             'sitename'        => array('langstr' => get_string('fullsitename'),
                                        'value'   => $site->fullname),
-            'serverurl'       => array('langstr' => get_string('serverurl', 'resource', $CFG),
-                                       'value'   => $CFG->wwwroot),
             'currenttime'     => array('langstr' => get_string('time'),
                                        'value'   => time()),
             'encryptedcode'   => array('langstr' => get_string('encryptedcode'),
-                                       'value'   => $this->set_encrypted_parameter()),
-
+                                       'value'   => md5($_SERVER['REMOTE_ADDR'].$CFG->resource_secretphrase)),
+                                                   
             'label6'          => array('langstr' => "",
                                        'value'   =>'/optgroup')
             );
-
+                                                   
 }
 
 
@@ -144,7 +133,7 @@ function add_instance($resource) {
             $optionlist[] = $resource->$parametername."=".$resource->$parsename;
         }
     }
-
+    
     $resource->alltext = implode(',', $optionlist);
 
     return parent::add_instance($resource);
@@ -160,7 +149,7 @@ function add_instance($resource) {
 */
 function update_instance($resource) {
     $optionlist = array();
-
+    
     for ($i = 0; $i < $this->maxparameters; $i++) {
         $parametername = "parameter$i";
         $parsename = "parse$i";
@@ -168,7 +157,7 @@ function update_instance($resource) {
             $optionlist[] = $resource->$parametername."=".$resource->$parsename;
         }
     }
-
+    
     $resource->alltext = implode(',', $optionlist);
 
     return parent::update_instance($resource);
@@ -182,20 +171,29 @@ function update_instance($resource) {
 * Output depends on type of file resource.
 *
 * @param    CFG     global object
+* @param    THEME   global object
 */
 function display() {
     global $CFG, $THEME;
 
-/// Set up generic stuff first, including checking for access
-    parent::display();
-
-/// Set up some shorthand variables
-    $cm = $this->cm;
-    $course = $this->course;
-    $resource = $this->resource;
-
-
     $this->set_parameters(); // set the parameters array
+
+    $course = $this->course;      // shortcut
+    $resource = $this->resource;  // shortcut
+
+    $strresource = get_string("modulename", "resource");
+    $strresources = get_string("modulenameplural", "resource");
+    $strlastmodified = get_string("lastmodified");
+
+    if ($course->category) {
+        require_login($course->id);
+        $navigation = "<a target=\"{$CFG->framename}\" href=\"../../course/view.php?id={$course->id}\">{$course->shortname}</a> ->              
+                       <a target=\"{$CFG->framename}\" href=\"index.php?id={$course->id}\">$strresources</a> ->";
+    } else {
+        $navigation = "<a target=\"{$CFG->framename}\" href=\"index.php?id={$course->id}\">$strresources</a> ->";
+    }
+
+
 
 ///////////////////////////////////////////////
 
@@ -204,30 +202,30 @@ function display() {
     /// File displayed embedded in a normal page
     /// File displayed in a popup window
     /// File displayed emebedded in a popup window
-
+            
 
     /// First, find out what sort of file we are dealing with.
-    require_once($CFG->libdir.'/filelib.php');
+    require_once("$CFG->dirroot/files/mimetypes.php");
 
     $querystring = '';
     $resourcetype = '';
     $embedded = false;
     $mimetype = mimeinfo("type", $resource->reference);
-    $pagetitle = strip_tags($course->shortname.': '.format_string($resource->name));
+    $pagetitle = strip_tags($course->shortname.': '.$resource->name);
 
     if ($resource->options != "frame") {
         if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
             $resourcetype = "image";
             $embedded = true;
-
+                
         } else if ($mimetype == "audio/mp3") {    // It's an MP3 audio file
             $resourcetype = "mp3";
             $embedded = true;
-
+                
         } else if (substr($mimetype, 0, 10) == "video/x-ms") {   // It's a Media Player file
             $resourcetype = "mediaplayer";
             $embedded = true;
-
+                
         } else if ($mimetype == "video/quicktime") {   // It's a Quicktime file
             $resourcetype = "quicktime";
             $embedded = true;
@@ -250,7 +248,7 @@ function display() {
         $querystring = implode('&', $querys);
     }
 
-
+    
     /// Set up some variables
 
     $inpopup = !empty($_GET["inpopup"]);
@@ -265,21 +263,7 @@ function display() {
                 $fullurl .= '&'.$querystring;
             }
         }
-
-    } else if ($CFG->resource_allowlocalfiles and (strpos($resource->reference, RESOURCE_LOCALPATH) === 0)) {  // Localpath
-        $localpath = get_user_preferences('resource_localpath', 'D:');
-        $relativeurl = str_replace(RESOURCE_LOCALPATH, $localpath, $resource->reference);
-
-        if ($querystring) {
-            $relativeurl .= '?'.$querystring;
-        }
-
-        $relativeurl = str_replace('\\', '/', $relativeurl);
-        $relativeurl = str_replace(' ', '%20', $relativeurl);
-        $fullurl = 'file:///'.htmlentities($relativeurl);
-        $localpath = true;
-
-    } else {   // Normal uploaded file
+    } else {
         if ($CFG->slasharguments) {
             $relativeurl = "/file.php/{$course->id}/{$resource->reference}";
             if ($querystring) {
@@ -294,33 +278,17 @@ function display() {
         $fullurl = "$CFG->wwwroot$relativeurl";
     }
 
-    /// Print a notice and redirect if we are trying to access a file on a local file system
-    /// and the config setting has been disabled
-    if (!$CFG->resource_allowlocalfiles and (strpos($resource->reference, RESOURCE_LOCALPATH) === 0)) {
-        if ($inpopup) {
-            print_header($pagetitle, $course->fullname);
-        } else {
-            print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
-        }
-        notify(get_string('notallowedlocalfileaccess', 'resource', ''));
-        if ($inpopup) {
-            close_window_button();
-        }
-        print_footer('none');
-        die;
-    }
-
 
     /// Check whether this is supposed to be a popup, but was called directly
 
     if ($resource->popup and !$inpopup) {    /// Make a page and a pop-up window
 
-        print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm));
+        print_header($pagetitle, $course->fullname, "$navigation {$resource->name}", "", "", true, update_module_button($this->cm->id, $course->id, $strresource), navmenu($course, $this->cm));
 
 
-        echo "\n<script language=\"javascript\" type=\"text/javascript\">";
+        echo "\n<script language=\"Javascript\">";
         echo "\n<!--\n";
-        echo "openpopup('/mod/resource/view.php?inpopup=true&id={$cm->id}','resource{$resource->id}','{$resource->popup}');\n";
+        echo "openpopup('/mod/resource/view.php?inpopup=true&id={$this->cm->id}','resource{$resource->id}','{$resource->popup}');\n";
         echo "\n-->\n";
         echo '</script>';
 
@@ -329,9 +297,9 @@ function display() {
             print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions), "center");
         }
 
-        $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&amp;id={$cm->id}\" target=\"resource{$resource->id}\" onclick=\"return openpopup('/mod/resource/view.php?inpopup=true&amp;id={$cm->id}', 'resource{$resource->id}','{$resource->popup}');\">".format_string($resource->name,true)."</a>";
+        $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&id={$this->cm->id}\" target=\"resource{$resource->id}\" onClick=\"return openpopup('/mod/resource/view.php?inpopup=true&id={$this->cm->id}', 'resource{$resource->id}','{$resource->popup}');\">{$resource->name}</a>";
 
-        echo "<p>&nbsp;</p>";
+        echo "<p>&nbsp</p>";
         echo '<p align="center">';
         print_string('popupresource', 'resource');
         echo '<br />';
@@ -346,42 +314,27 @@ function display() {
     /// Now check whether we need to display a frameset
 
     if (empty($_GET['frameset']) and !$embedded and !$inpopup and $resource->options == "frame") {
-        echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
-        echo "<html dir=\"ltr\">\n";
-        echo '<head>';
-        echo '<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />';
-        echo "<title>{$course->shortname}: ".strip_tags(format_string($resource->name,true))."</title></head>\n";
-        echo "<frameset rows=\"$CFG->resource_framesize,*\">";
-        echo "<frame src=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;frameset=top\" />";
-        if (!empty($localpath)) {  // Show it like this so we interpose some HTML
-            echo "<frame src=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;inpopup=true\" />";
-        } else {
-            echo "<frame src=\"$fullurl\" />";
-        }
+        echo "<head><title>{$course->shortname}: {$resource->name}</title></head>\n";
+        echo "<frameset rows=\"$CFG->resource_framesize,*\" border=\"2\">";
+        echo "<frame src=\"view.php?id={$this->cm->id}&type={$resource->type}&frameset=top\">";
+        echo "<frame src=\"$fullurl\">";
         echo "</frameset>";
-        echo "</html>";
         exit;
     }
 
 
     /// We can only get here once per resource, so add an entry to the log
 
-    add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
+    add_to_log($course->id, "resource", "view", "view.php?id={$this->cm->id}", $resource->id, $this->cm->id);
 
 
     /// If we are in a frameset, just print the top of it
 
     if (!empty($_GET['frameset']) and $_GET['frameset'] == "top") {
-        print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
+        print_header($pagetitle, $course->fullname, "$navigation <a target=\"$CFG->framename\" href=\"$fullurl\">{$resource->name}</a>", "", "", true, update_module_button($this->cm->id, $course->id, $strresource), navmenu($course, $this->cm, "parent"));
 
-        $options->para = false;
-        echo '<div class="summary">'.format_text($resource->summary, FORMAT_HTML, $options).'</div>';
-        if (!empty($localpath)) {  // Show some help
-            echo '<div align="right" class="helplink">';
-            link_to_popup_window ('/mod/resource/type/file/localpath.php', get_string('localfile', 'resource'), get_string('localfilehelp','resource'), 400, 500, get_string('localfilehelp', 'resource'));
-            echo '</div>';
-        }
-        echo '</body></html>';
+        echo "<center><font size=-1>".text_to_html($resource->summary, true, false)."</font></center>";
+        echo "</body></html>";
         exit;
     }
 
@@ -394,42 +347,30 @@ function display() {
         if ($inpopup) {
             print_header($pagetitle);
         } else {
-            print_header($pagetitle, $course->fullname, "$this->navigation <a title=\"$strdirectlink\" target=\"$CFG->framename\" href=\"$fullurl\"> ".format_string($resource->name,true)."</a>", "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "self"));
+            print_header($pagetitle, $course->fullname, "$navigation <a title=\"$strdirectlink\" target=\"$CFG->framename\" href=\"$fullurl\"> {$resource->name}</a>", "", "", true, update_module_button($this->cm->id, $course->id, $strresource), navmenu($course, $this->cm, "self"));
 
         }
 
         if ($resourcetype == "image") {
             echo "<center><p>";
-            echo "<img title=\"".strip_tags(format_string($resource->name,true))."\" class=\"resourceimage\" src=\"$fullurl\" alt=\"\" />";
+            echo "<img title=\"{$resource->name}\" class=\"resourceimage\" src=\"$fullurl\">";
             echo "</p></center>";
 
         } else if ($resourcetype == "mp3") {
-            if (!empty($THEME->resource_mp3player_colors)) {
-                $c = $THEME->resource_mp3player_colors;   // You can set this up in your theme/xxx/config.php
-            } else {
-                $c = 'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&'.
-                     'iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&'.
-                     'font=Arial&fontColour=3333FF&buffer=10&waitForPlay=no&autoPlay=yes';
-            }
-            $c .= '&volText='.get_string('vol', 'resource').'&panText='.get_string('pan','resource');
-            $c = htmlentities($c);
-            echo '<div class="mp3player" align="center">';
+            echo "<center><p>";
             echo '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
             echo '        codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
             echo '        width="600" height="70" id="mp3player" align="">';
-            echo '<param name="movie" value="'.$CFG->wwwroot.'/lib/mp3player/mp3player.swf?src='.$fullurl.'">';
-            echo '<param name="quality" value="high">';
-            echo '<param name="bgcolor" value="#333333">';
-            echo '<param name="flashvars" value="'.$c.'&amp;" />';
-            echo '<embed src="'.$CFG->wwwroot.'/lib/mp3player/mp3player.swf?src='.$fullurl.'" ';
-            echo ' quality="high" bgcolor="#333333" width="600" height="70" name="mp3player" ';
+            echo "<param name=movie value=\"$CFG->wwwroot/lib/mp3player/mp3player.swf?src=$fullurl&autostart=yes\">";
+            echo '<param name=quality value=high>';
+            echo '<param name=bgcolor value="#333333">';
+            echo "<embed src=\"$CFG->wwwroot/lib/mp3player/mp3player.swf?src=$fullurl&autostart=yes\" ";
+            echo " quality=high bgcolor=\"#333333\" width=\"600\" height=\"70\" name=\"mp3player\" ";
             echo ' type="application/x-shockwave-flash" ';
-            echo ' flashvars="'.$c.'&amp;" ';
             echo ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
             echo '</embed>';
             echo '</object>';
-            echo '</div>';
-
+            echo "</p></center>";
 
         } else if ($resourcetype == "mediaplayer") {
             echo "<center><p>";
@@ -438,15 +379,15 @@ function display() {
             echo '        standby="Loading Microsoft® Windows® Media Player components..." ';
             echo '        id="msplayer" align="" type="application/x-oleobject">';
             echo "<param name=\"Filename\" value=\"$fullurl\">";
-            echo '<param name="ShowControls" value="true" />';
-            echo '<param name="AutoRewind" value="true" />';
-            echo '<param name="AutoStart" value="true" />';
-            echo '<param name="Autosize" value="true" />';
-            echo '<param name="EnableContextMenu" value="true" />';
-            echo '<param name="TransparentAtStart" value="false" />';
-            echo '<param name="AnimationAtStart" value="false" />';
-            echo '<param name="ShowGotoBar" value="false" />';
-            echo '<param name="EnableFullScreenControls" value="true" />';
+            echo '<param name="ShowControls" value=true />';
+            echo '<param name="AutoRewind" value=true />';
+            echo '<param name="AutoStart" value=true />';
+            echo '<param name="Autosize" value=true />';
+            echo '<param name="EnableContextMenu" value=true />';
+            echo '<param name="TransparentAtStart" value=false />';
+            echo '<param name="AnimationAtStart" value=false />';
+            echo '<param name="ShowGotoBar" value=false />';
+            echo '<param name="EnableFullScreenControls" value=true />';
             echo "\n<embed src=\"$fullurl\" name=\"msplayer\" type=\"$mimetype\" ";
             echo ' ShowControls="1" AutoRewind="1" AutoStart="1" Autosize="0" EnableContextMenu="1"';
             echo ' TransparentAtStart="0" AnimationAtStart="0" ShowGotoBar="0" EnableFullScreenControls="1"';
@@ -463,9 +404,9 @@ function display() {
             echo '        height="450" width="600"';
             echo '        id="quicktime" align="" type="application/x-oleobject">';
             echo "<param name=\"src\" value=\"$fullurl\" />";
-            echo '<param name="autoplay" value="true" />';
-            echo '<param name="loop" value="true" />';
-            echo '<param name="controller" value="true" />';
+            echo '<param name="autoplay" value=true />';
+            echo '<param name="loop" value=true />';
+            echo '<param name="controller" value=true />';
             echo '<param name="scale" value="aspect" />';
             echo "\n<embed src=\"$fullurl\" name=\"quicktime\" type=\"$mimetype\" ";
             echo ' height="450" width="600" scale="aspect"';
@@ -487,17 +428,11 @@ function display() {
             print_spacer(20,20);
             print_footer($course);
         }
-
+    
     } else {              // Display the resource on it's own
-        if (!empty($localpath)) {   // Show a link to help work around browser security
-            echo '<div align="right" class="helplink">';
-            link_to_popup_window ('/mod/resource/type/file/localpath.php', get_string('localfile', 'resource'), get_string('localfilehelp','resource'), 400, 500, get_string('localfilehelp', 'resource'));
-            echo '</div>';
-            echo "<center><p>(<a href=\"$fullurl\">$fullurl</a>)</p></center>";
-        }
         redirect($fullurl);
     }
-
+    
 }
 
 
@@ -519,7 +454,7 @@ function setup($form) {
 
     $this->set_parameters(); // set the parameter array for the form
 
-
+    
     $strfilename = get_string("location");
     $strnote     = get_string("note", "resource");
     $strchooseafile = get_string("chooseafile", "resource");
@@ -533,7 +468,7 @@ function setup($form) {
         $window->$optionname = "";
         $jsoption[] = "\"$optionname\"";
     }
-
+    
     $frameoption = "\"framepage\"";
     $popupoptions = implode(",", $jsoption);
     $jsoption[] = $frameoption;
@@ -555,26 +490,21 @@ function setup($form) {
                 $option = explode('=', trim($rawoption));
                 $optionname = $option[0];
                 $optionvalue = $option[1];
-                if ($optionname == 'height' or $optionname == 'width') {
+                if ($optionname == "height" or $optionname == "width") {
                     $window->$optionname = $optionvalue;
                 } else if ($optionvalue) {
-                    $window->$optionname = 'checked="checked"';
+                    $window->$optionname = "checked";
                 }
             }
         }
     } else {
         foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
             $defaultvalue = "resource_popup$optionname";
-
-            if ($optionname == 'height' or $optionname == 'width') {
-                $window->$optionname = $CFG->$defaultvalue;
-            } else if ($CFG->$defaultvalue) {
-                $window->$optionname = 'checked="checked"';
-            }
+            $window->$optionname = $CFG->$defaultvalue;
         }
 
         $windowtype = ($CFG->resource_popup) ? 'popup' : 'page';
-        if (empty($form->options)) {
+        if (!isset($form->options)) {
             $form->options = 'frame';
             $form->reference = $CFG->resource_defaulturl;
         }
@@ -604,19 +534,6 @@ function setup($form) {
     include("$CFG->dirroot/mod/resource/type/file/file.html");
 
     parent::setup_end();
-}
-
-//backwards compatible with existing resources
-function set_encrypted_parameter() {
-    global $CFG;
-
-    if (!empty($this->resource->reference) && file_exists($CFG->dirroot ."/mod/resource//type/file/externserverfile.php")) {
-        include $CFG->dirroot ."/mod/resource/type/file/externserverfile.php";
-        if (function_exists(extern_server_file)) {
-            return extern_server_file($this->resource->reference);
-        }
-    }
-    return md5($_SERVER['REMOTE_ADDR'].$CFG->resource_secretphrase);
 }
 
 }

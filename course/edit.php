@@ -1,16 +1,14 @@
-<?php // $Id$
+<?PHP // $Id$
       // Edit course settings
 
     require_once("../config.php");
     require_once("lib.php");
     require_once("$CFG->libdir/blocklib.php");
 
-    $id       = (int)optional_param('id', 0);         // course id
-    $category = (int)optional_param('category', 0);   // possible default category
+    optional_variable($id, 0);   // course id
+    optional_variable($category, 0);   // category id
 
     require_login();
-   
-    $disable_meta = false;
 
     if ($id) {
         if (! $course = get_record("course", "id", $id)) {
@@ -19,20 +17,6 @@
 
         if (!isteacheredit($course->id)) {
             error("You do not currently have editing privileges!");
-        }
-        
-        if (course_in_meta($course)) {
-            $disable_meta = get_string('metaalreadyinmeta');
-        }
-        else if ($course->metacourse) {
-            if (count_records("course_meta","parent_course",$course->id) > 0) {
-                $disable_meta = get_string('metaalreadyhascourses');
-            }
-        }
-        else {
-            if (count_records("user_students","course",$course->id) > 0) {
-                $disable_meta = get_string('metaalreadyhasenrolments');
-            }
         }
     } else {  // Admin is creating a new course
 
@@ -48,9 +32,11 @@
     }
 
 
+
+
 /// If data submitted, then process and store.
 
-    if ($form = data_submitted() and confirm_sesskey()) {
+    if ($form = data_submitted()) {
 
         if (empty($course)) {
             check_for_restricted_user($USER->username, "$CFG->wwwroot");
@@ -60,8 +46,6 @@
 
         $form->startdate = make_timestamp($form->startyear, $form->startmonth, $form->startday);
 
-        $form->format = optional_param('format', 'social', PARAM_ALPHA);
-
         validate_form($course, $form, $err);
 
         if (count($err) == 0) {
@@ -70,40 +54,36 @@
 
             if (!empty($course)) {
                 // Test for and remove blocks which aren't appropriate anymore
-                $page = page_create_object(PAGE_COURSE_VIEW, $course->id);
-                blocks_remove_inappropriate($page);
+                $form->blockinfo = $course->blockinfo;
+                block_remove_inappropriate_from_course($form);
 
                 // Update with the new data
-                if (update_record('course', $form)) {
+                if (update_record("course", $form)) {
                     add_to_log($course->id, "course", "update", "edit.php?id=$id", "");
                     fix_course_sortorder();
-                    redirect($page->url_get_full(), get_string('changessaved'));
+                    redirect("view.php?id=$course->id", get_string("changessaved"));
                 } else {
                     error("Serious Error! Could not update the course record! (id = $form->id)");
                 }
             } else {
                 $form->timecreated = time();
 
-                // place at beginning of category
-                fix_course_sortorder();
-                $form->sortorder = get_field_sql("SELECT min(sortorder)-1 FROM {$CFG->prefix}course WHERE category=$form->category");                
-                if (empty($form->sortorder)) {
-                    $form->sortorder = 100;
+                //Create blockinfo default content
+                if ($form->format == "social") {
+                    $form->blockinfo = blocks_get_default_blocks (NULL,"participants,search_forums,calendar_month,calendar_upcoming,social_activities,recent_activity,admin,course_list");
+                } else {
+                    //For topics and weeks formats (default built in the function)
+                    $form->blockinfo = blocks_get_default_blocks();
                 }
 
-                if ($newcourseid = insert_record('course', $form)) {  // Set up new course
-                    
-                    // Setup the blocks
-                    $page = page_create_object(PAGE_COURSE_VIEW, $newcourseid);
-                    blocks_repopulate_page($page); // Return value not checked because you can always edit later
-
+                if ($newcourseid = insert_record("course", $form)) {  // Set up new course
                     $section = NULL;
                     $section->course = $newcourseid;   // Create a default section.
                     $section->section = 0;
                     $section->id = insert_record("course_sections", $section);
 
                     fix_course_sortorder();
-                    add_to_log(SITEID, "course", "new", "view.php?id=$newcourseid", "$form->fullname (ID $newcourseid)");
+                    add_to_log($newcourseid, "course", "new", "view.php?id=$newcourseid", "");
 
                     if (isadmin()) { // Redirect admin to add teachers
                         redirect("teacher.php?id=$newcourseid", get_string("changessaved"));
@@ -122,8 +102,6 @@
 
                         $USER->teacher[$newcourseid] = true;
                         $USER->teacheredit[$newcourseid] = true;
-
-                        fix_course_sortorder();
 
                         redirect("view.php?id=$newcourseid", get_string("changessaved"));
                     }
@@ -209,10 +187,8 @@
                      "<a href=\"index.php\">$strcategories</a> -> $straddnewcourse", $focus);
     }
 
-    $form->sesskey = !empty($USER->id) ? $USER->sesskey : '';
-
     print_heading($streditcoursesettings);
-    print_simple_box_start("center");
+    print_simple_box_start("center", "", "$THEME->cellheading");
     include("edit.html");
     print_simple_box_end();
 

@@ -33,7 +33,7 @@
     
     require_login($course->id);
 
-    add_to_log($course->id, "attendance", "viewweek", "viewweek.php?scope=".$scope."&amp;id=$course->id");
+    add_to_log($course->id, "attendance", "viewweek", "viewweek.php?scope=".$scope."&id=$course->id");
 
  
 if ($attendances) {
@@ -309,26 +309,26 @@ while (($multipage || $onepage) && (!$endonepage)) {
     echo "<p align=\"right\"><a href=\"viewall.php?id=".$course->id."\">";
     echo "$strviewall</a><br />";
     if ($onepage) {  // one page for all tables
-      echo "<a href=\"viewweek.php?scope=".$scope."&amp;id=".$id ."\">";
+      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."\">";
       echo "$strviewmulti</a><br />";
-      echo "<a href=\"viewweek.php?scope=".$scope."&amp;id=".$id ."&amp;onetable=1\">";
+      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&onetable=1\">";
       echo "$strviewtable</a><br />";
     } else if ($onetable) { // one table for all
-      echo "<a href=\"viewweek.php?scope=".$scope."&amp;id=".$id ."\">";
+      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."\">";
       echo "$strviewmulti</a><br />";
-      echo "<a href=\"viewweek.php?scope=".$scope."&amp;id=".$id ."&amp;onepage=1\">";
+      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&onepage=1\">";
       echo "$strviewone</a><br />";
     } else { // multiple pages
-      echo "<a href=\"viewweek.php?scope=".$scope."&amp;id=".$id ."&amp;onepage=1\">";
+      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&onepage=1\">";
       echo "$strviewone</a><br />";
-      echo "<a href=\"viewweek.php?scope=".$scope."&amp;id=".$id ."&amp;onetable=1\">";
+      echo "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&onetable=1\">";
       echo "$strviewtable</a><br />";
     }
     if ($scope=="week") {  // week view for scope
-      echo "<a href=\"viewweek.php?scope=section&amp;id=".$id."\">";
+      echo "<a href=\"viewweek.php?scope=section&id=".$id."\">";
       echo "$strviewsection</a></p>";
     } else { // section view for scope
-      echo "<a href=\"viewweek.php?scope=week&amp;id=".$id."\">";
+      echo "<a href=\"viewweek.php?scope=week&id=".$id."\">";
       echo "$strviewweek</a></p>";
     }
 
@@ -444,31 +444,31 @@ if ($onepage) {$page++; echo "<br /> <br />\n"; }
   if (!$onepage) { attendance_print_pagenav(); }
 
 
-  echo "<center><table border=0 align=CENTER><tr>";
-  echo "<td>";
+  echo "<center><TABLE BORDER=0 ALIGN=CENTER><TR>";
+  echo "<TD>";
   if (($numhours-4) > 255) {
     echo "<form><input type=\"button\" value=\"".get_string("downloadexcelfull", "attendance").
     "\" onclick=\"alert('Sorry, you have more than 251 days on this report.  This will not fit into an Excel Spreadsheet. ".
-    " Please try downloading the report week by week instead.')\" /></form>";
+    " Please try downloading the report week by week instead.')\"></form>";
   } else {
     $options["id"] = "$id";
     $options["download"] = "xls";
     $options["dlsub"] = "all";  
     print_single_button("viewweek.php", $options, get_string("downloadexcelfull", "attendance"));
   }
-  echo "</td><td>";
+  echo "</td><TD>";
   $options["id"] = "$id";
   $options["download"] = "xls";
   $options["dlsub"] = "totals";  
   print_single_button("viewweek.php", $options, get_string("downloadexceltotals", "attendance"));
-  echo "</td><td>";
+  echo "</td><TD>";
   $options["download"] = "txt";
   $options["dlsub"] = "all";  
   print_single_button("viewweek.php", $options, get_string("downloadtextfull", "attendance"));
-  echo "</td><td>";
+  echo "</td><TD>";
   $options["dlsub"] = "totals";  
   print_single_button("viewweek.php", $options, get_string("downloadtexttotals", "attendance"));
-  echo "</td></table></center>";
+  echo "</td></TABLE></center>";
 
 
 
@@ -493,8 +493,8 @@ function attendance_print_pagenav() {
     echo "<tr>";
     if ($minatt!=0) {
     echo "<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">".
-           "<a href=\"viewweek.php?scope=".$scope."&amp;id=".$id ."&amp;pagereport=1&amp;page=".($page-1)."\">&lt;</a>&nbsp;\n";
-           "<a href=\"viewweek.php?scope=".$scope."&amp;id=".$id ."&amp;pagereport=1&amp;page=1\">&lt;&lt;</a></th>\n";
+           "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&pagereport=1&page=".($page-1)."\">&lt;</a>&nbsp;\n";
+           "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&pagereport=1&page=1\">&lt;&lt;</a></th>\n";
     } else {
     echo "<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">&lt;&lt;&nbsp;&lt;</th>\n";
     }
@@ -502,8 +502,8 @@ function attendance_print_pagenav() {
            "$pg $page $of $maxpages</th>\n";
     if ($maxatt!=$numatt) {
       echo "<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">".
-      "<a href=\"viewweek.php?scope=".$scope."&amp;id=".$id ."&amp;pagereport=1&amp;page=". ($page+1)."\">&gt;</a>&nbsp;".
-      "<a href=\"viewweek.php?scope=".$scope."&amp;id=".$id ."&amp;pagereport=1&amp;page=$maxpages\">&gt;&gt;</a></th>";
+      "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&pagereport=1&page=". ($page+1)."\">&gt;</a>&nbsp;".
+      "<a href=\"viewweek.php?scope=".$scope."&id=".$id ."&pagereport=1&page=$maxpages\">&gt;&gt;</a></th>";
     } else {
     echo "<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">&gt;&nbsp;&gt;&gt;</th>\n";
     }
@@ -521,7 +521,7 @@ function attendance_print_header()  {
     $strattendance  = get_string("modulename", "attendance");
     $strweekattendance  = get_string("weekmodulename", "attendance");
     print_header_simple("$strallattendance", "",
-                 "<a href=index.php?id=$course->id>$strattendances</a> -> $strweekattendance", 
+                 "<A HREF=index.php?id=$course->id>$strattendances</A> -> $strweekattendance", 
                   "", "", true, "&nbsp;", 
                   navmenu($course, $cm));
 }

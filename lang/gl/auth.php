@@ -12,7 +12,7 @@ $string['auth_dbpass'] = 'O contrasinal correspondente ao nome de usuario/a ante
 $string['auth_dbpasstype'] = 'Especifique o formato que emprega o campo de contrasinal. A criptografía MD5 é útil para conectar con outras aplicacións web como PostNuke.';
 $string['auth_dbtable'] = 'Nome da táboa na base de datos';
 $string['auth_dbtitle'] = 'Usar unha base de datos externa';
-$string['auth_dbtype'] = 'O tipo de base de datos (Vexa a <a href=\"../lib/adodb/readme.htm#drivers\">documentación de ADOdb</a> para obter máis detalles)';
+$string['auth_dbtype'] = 'O tipo de base de datos (Vexa a <a href=../lib/adodb/readme.htm#drivers>documentación de ADOdb</a> para obter máis detalles)';
 $string['auth_dbuser'] = 'Usuario/a con acceso de lectura á base de datos';
 $string['auth_emaildescription'] = 'A confirmación por correo electrónico é o método de autenticación predeterminado. Cando o usuario/a se inscribe, escollendo o seu propio nome de usuario e contrasinal, envíaselle unha mensaxe electrónica de confirmación ao seu enderezo de correo electrónico. Esta mensaxe contén unha ligazón segura a unha páxina onde o usuario/a pode confirmar a súa conta. As futuras entradas comproban o nome de usuario e contrasinal contra os valores gardados na base de datos de Moodle.';
 $string['auth_emailtitle'] = 'Autenticación baseada en correo electrónico';

@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This script is used to configure and execute the restore proccess.
 
     //Define some globals for all the script
@@ -9,33 +9,20 @@
     require_once ("../course/lib.php");
     require_once ("lib.php");
     require_once ("restorelib.php");
-    require_once ("bb/restore_bb.php");
     require_once("$CFG->libdir/blocklib.php");
-    require_once("$CFG->libdir/wiki_to_markdown.php" );
 
     //Optional
     optional_variable($id);
     optional_variable($file);
     optional_variable($cancel);
     optional_variable($launch);
-    optional_variable($to);
 
     //Check login       
     require_login();
 
-    if (!$to && isset($SESSION->restore->restoreto) && isset($SESSION->restore->importing) && isset($SESSION->restore->course_id)) {
-        $to = $SESSION->restore->course_id;
-    }
-
     if (!empty($id)) {
         if (!isteacheredit($id)) {
-            if (empty($to)) {
-                error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
-            } else {
-                if (!isteacheredit($to)) {
-                    error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
-                }
-            }
+            error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     } else {
         if (!isadmin()) {
@@ -53,24 +40,20 @@
     
     //Check backup_version
     if ($file) {
-        $linkto = "restore.php?id=".$id."&amp;file=".$file;
+        $linkto = "restore.php?id=".$id."&file=".$file;
     } else {
         $linkto = "restore.php";
     }
     upgrade_backup_db($linkto);
 
     //Get strings
-    if (empty($to)) {
-        $strcourserestore = get_string("courserestore");
-    } else {
-        $strcourserestore = get_string("importdata");
-    }
+    $strcourserestore = get_string("courserestore");
     $stradministration = get_string("administration");
 
     //If no file has been selected from the FileManager, inform and end
     if (!$file) {
         print_header("$site->shortname: $strcourserestore", $site->fullname,
-                     "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> -> $strcourserestore");
+                     "<A HREF=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</A> -> $strcourserestore");
         print_heading(get_string("nofilesselected"));
         print_continue("$CFG->wwwroot/$CFG->admin/index.php");
         print_footer();
@@ -80,7 +63,7 @@
     //If cancel has been selected, inform and end
     if ($cancel) {
         print_header("$site->shortname: $strcourserestore", $site->fullname,
-                     "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> -> $strcourserestore");
+                     "<A HREF=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</A> -> $strcourserestore");
         print_heading(get_string("restorecancelled"));
         print_continue("$CFG->wwwroot/$CFG->admin/index.php");
         print_footer();
@@ -107,26 +90,18 @@
                      $strcourserestore");
     }
     //Print form
-    print_heading("$strcourserestore".((empty($to) ? ': '.basename($file) : '')));
-    print_simple_box_start('center');
+    print_heading("$strcourserestore: ".basename($file));
+    print_simple_box_start("center", "", "$THEME->cellheading");
     
     //Adjust some php variables to the execution of this script
-    @ini_set("max_execution_time","3000");
-    raise_memory_limit("memory_limit","128M");
+    ini_set("max_execution_time","3000");
+    ini_set("memory_limit","80M");
 
     //Call the form, depending the step we are
-
-
     if (!$launch) {
         include_once("restore_precheck.html");
     } else if ($launch == "form") {
-        if ($SESSION->restore->importing) {
-            // set up all the config stuff and skip asking the user about it.
-            restore_setup_for_check($SESSION->restore,$backup_unique_code);
-            include_once("restore_execute.html");
-        } else {
-            include_once("restore_form.html");
-        }
+        include_once("restore_form.html");
     } else if ($launch == "check") {
         include_once("restore_check.html");
     } else if ($launch == "execute") {

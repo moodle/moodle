@@ -1,4 +1,4 @@
-<?php // $Id$ 
+<?PHP // $Id$ 
       // appointment.php - created with Moodle 1.0.5 dev (2002092300)
 
 

@@ -1,36 +1,36 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005012800)
+      // journal.php - created with Moodle 1.1.1 (2003091111)
 
 
-$string['alwaysopen'] = 'Mindig nyitva';
-$string['blankentry'] = 'Üres bejegyzés';
-$string['daysavailable'] = 'Hátralévõ napok';
-$string['editingended'] = 'A szerkesztési idõszak lejárt';
-$string['editingends'] = 'A szerkesztési idõszak lejár';
-$string['entries'] = 'Bejegyzések';
-$string['feedbackupdated'] = '$a bejegyzések visszajelzése frissítve';
-$string['journalmail'] = '$a->teacher megjegyzést fûzött a \'$a->journal\'
+$string['alwaysopen'] = "Mindig nyitva";
+$string['blankentry'] = "Üres bejegyzés";
+$string['daysavailable'] = "Elérhetõ napok";
+$string['editingended'] = "A szerkesztési idõszak lejárt";
+$string['editingends'] = "A szerkesztési idõszak lejár";
+$string['entries'] = "Bejegyzések";
+$string['feedbackupdated'] = "\$a bejegyzések visszajelzése frissítve";
+$string['journalmail'] = "\$a->teacher megjegyzét fûzött a '\$a->journal'
  -beli bejegyzéséhez.
-Ezt a bejegyzéshez csatolva megtekintheti a következõ helyen: $a->url';
-$string['journalmailhtml'] = '$a->teacher megjegyzést fûzött a \'<i>$a->journal</i>\'<br />
+Ezt a bejegyzéshez csatolva megtekintheti a következõ helyen: \$a->url";
+$string['journalmailhtml'] = "\$a->teacher megjegyzét fûzött a '<i>\$a->journal</i>'<br />
  -beli bejegyzéséhez.
-Ezt a bejegyzéshez csatolva megtekintheti a következõ helyen: <a href=\"$a->url\">bejegyzés</a>.';
-$string['journalname'] = 'Napló neve';
-$string['journalquestion'] = 'Naplóhoz tartozó kérdés';
-$string['journalrating1'] = 'Elégtelen';
-$string['journalrating2'] = 'Elégséges';
-$string['journalrating3'] = 'Kiváló';
-$string['modulename'] = 'Napló';
-$string['modulenameplural'] = 'Naplók';
-$string['newjournalentries'] = 'Új naplóbejegyzések';
-$string['noentry'] = 'Nincs bejegyzés';
-$string['noratinggiven'] = 'Nincs kategória megadva';
-$string['notopenuntil'] = 'A napló megnyitása ekkor: ';
-$string['notstarted'] = 'Még nem indította el a naplót';
-$string['overallrating'] = 'Átfogó véleményezés';
-$string['rate'] = 'Vélemény';
-$string['saveallfeedback'] = 'Minden visszajelzésem mentése';
-$string['startoredit'] = 'A naplóbejegyzés megkezdése vagy szerkesztése';
-$string['viewallentries'] = '$a naplóbejegyzések megmutatása';
+Ezt a bejegyzéshez csatolva megtekintheti a következõ helyen: <a href=\\\"\$a->url\\\">bejegyzés</a>.";
+$string['journalname'] = "Napló neve";
+$string['journalquestion'] = "Napló kérdés";
+$string['journalrating1'] = "Nem kielégítõ";
+$string['journalrating2'] = "Kielégítõ";
+$string['journalrating3'] = "Kiváló";
+$string['modulename'] = "Napló";
+$string['modulenameplural'] = "Naplók";
+$string['newjournalentries'] = "Új napló bejegyzések";
+$string['noentry'] = "Nincs bejegyzés";
+$string['noratinggiven'] = "Nincs kategória megadva";
+$string['notopenuntil'] = "A napló nincs nyitva eddig: ";
+$string['notstarted'] = "Még nem indította el a naplót";
+$string['overallrating'] = "Átfogó értékelés";
+$string['rate'] = "Értékelés";
+$string['saveallfeedback'] = "Minden visszajelzésem mentése";
+$string['startoredit'] = " A naplóbejegyzését indítása vagy szerkesztése";
+$string['viewallentries'] = "\$a naplóbejegyzések megmutatása";
 
 ?>

@@ -84,7 +84,7 @@ $string['openmode1'] = 'Niè diskusije, odgovori so dovoljeni';
 $string['openmode2'] = 'Diskusije in odgovori so dovoljeni';
 $string['parent'] = 'Prikaži nadrejenega';
 $string['parentofthispost'] = 'Nadrejeni odgovora';
-$string['postadded'] = 'Odgovor je bil dodan.<br />Imate $a èasa za spreminjanje.';
+$string['postadded'] = 'Odgovor je bil dodan.<P>Imate $a èasa za spreminjanje.';
 $string['postincontext'] = 'Prikaži odgovore v kontekstu';
 $string['postmailinfo'] = 'To je kopija sporoèila iz portala $a.
 Za dodajanje odgovora preko tega portala kliknite povezavo:';

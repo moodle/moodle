@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // countries.php - created with Moodle 1.3.3 + (2004052503)
+      // countries.php - created with Moodle 1.2 (2004032000)
 
 
 $string['AD'] = 'Andorra';
@@ -74,7 +74,7 @@ $string['FK'] = 'Falklandi saared (Malviinid)';
 $string['FM'] = 'Mikroneesia Liitvabariik';
 $string['FO'] = 'Fääri saared';
 $string['FR'] = 'Prantsusmaa';
-$string['FX'] = 'France; Metropolitan';
+$string['FX'] = 'France; Metropolitan';  //teadmata
 $string['GA'] = 'Gabon';
 $string['GB'] = 'Suurbritannia';
 $string['GD'] = 'Grenada';
@@ -132,7 +132,7 @@ $string['LS'] = 'Lesotho';
 $string['LT'] = 'Leedu';
 $string['LU'] = 'Luksemburg';
 $string['LV'] = 'Läti';
-$string['LY'] = 'Libyan Arab Jamahiriya';
+$string['LY'] = 'Libyan Arab Jamahiriya'; //teadmata (Liibüa-Araabia Jamahiriya)
 $string['MA'] = 'Maroko';
 $string['MC'] = 'Monaco';
 $string['MD'] = 'Moldova Vabariik';
@@ -142,7 +142,7 @@ $string['MK'] = 'Makedoonia; Endine Jugoslaavia Vabariik';
 $string['ML'] = 'Mali';
 $string['MM'] = 'Myanmar';
 $string['MN'] = 'Mongoolia';
-$string['MO'] = 'Macau';
+$string['MO'] = 'Macau';            //teadmata
 $string['MP'] = 'Põhja-Mariaani saared';
 $string['MQ'] = 'Martinique´i departemang';
 $string['MR'] = 'Mauritaania';
@@ -178,10 +178,10 @@ $string['PM'] = 'Saint Pierre´i ja Miquelon´i territoriaalühendus';
 $string['PN'] = 'Pitcairn';
 $string['PR'] = 'Puertoriiko';
 $string['PT'] = 'Portugal';
-$string['PW'] = 'Palau';
+$string['PW'] = 'Palau';              //teadmata
 $string['PY'] = 'Paraguay';
 $string['QA'] = 'Katar';
-$string['RE'] = 'Reunioni departemang';
+$string['RE'] = 'Reunioni departemang';       
 $string['RO'] = 'Rumeenia';
 $string['RU'] = 'Venemaa';
 $string['RW'] = 'Rwanda';

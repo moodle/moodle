@@ -8,11 +8,11 @@
 /**
  * Smarty {html_select_date} plugin
  *
- * Type:     function<br />
- * Name:     html_select_date<br />
+ * Type:     function<br>
+ * Name:     html_select_date<br>
  * Purpose:  Prints the dropdowns for date selection.
  *
- * ChangeLog:<br />
+ * ChangeLog:<br>
  *           - 1.0 initial release
  *           - 1.1 added support for +/- N syntax for begin
  *                and end year values. (Monte)

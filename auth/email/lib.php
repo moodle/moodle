@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
        // Standard authentication function
 
 function auth_user_login ($username, $password) {

@@ -32,11 +32,9 @@
     $stractive = get_string("active");
     $strinactive = get_string("inactive");
     $strcachetext = get_string("cachetext", "admin");
-    $strconfigcachetext = get_string("configcachetext", 'admin');
+    $strconfigcachetext = get_string("configcachetext");
     $strfilteruploadedfiles = get_string("filteruploadedfiles", "admin");
-    $strfilterall = get_string("filterall", "admin");
-    $strconfigfilteruploadedfiles = get_string("configfilteruploadedfiles", 'admin');
-    $strconfigfilterall = get_string("configfilterall", "admin");
+    $strconfigfilteruploadedfiles = get_string("configfilteruploadedfiles");
 
     print_header("$site->shortname: $strmanagefilters", "$site->fullname", 
                  "<a href=\"index.php\">$stradministration</a> -> ".
@@ -84,23 +82,22 @@
 /// If data submitted, then process and store.
 
     if (!empty($options)) {
-	    if (($config = data_submitted()) && confirm_sesskey()) {  
+	    if ($config = data_submitted()) {  
             unset($config->options);
-            unset($config->sesskey);
             foreach ($config as $name => $value) {
                 set_config($name, $value);
             }
         }
     }
 
-    if (!empty($add) and !empty($uselect) and confirm_sesskey()) {
+    if (!empty($add) and !empty($uselect)) {
         $selectedfilter = $uselect;
         if (!in_array($selectedfilter, $installedfilters)) {
             $installedfilters[] = $selectedfilter;
             set_config("textfilters", implode(',', $installedfilters));
         }
 
-    } else if (!empty($remove) and !empty($iselect) and confirm_sesskey()) {
+    } else if (!empty($remove) and !empty($iselect)) {
         $selectedfilter = $iselect;
         foreach ($installedfilters as $key => $installedfilter) {
             if ($installedfilter == $selectedfilter) {
@@ -109,7 +106,7 @@
         }
         set_config("textfilters", implode(',', $installedfilters));
 
-    } else if ((!empty($up) or !empty($down)) and !empty($iselect) and confirm_sesskey()) {
+    } else if ((!empty($up) or !empty($down)) and !empty($iselect)) {
 
         if (!empty($up)) {
             if ($allfilters[$iselect]) {

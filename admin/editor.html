@@ -1,237 +1,60 @@
-<form method="post" action="editor.php">
-<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
+<form method="post" action="<?php print($_SERVER['PHP_SELF']);?>">
 <table border="0" cellpadding="4" cellspacing="2">
+<tr><td colspan="3"><strong><?php print_string("editorcommonsettings");?></strong></td></tr>
 <tr>
-    <td align="right" valign="top">htmleditor:</td>
-    <td valign="top"> 
-    <?php
-       unset($options);
-       $options[0] = get_string("allownot");
-       $options[1] = get_string("allow");
-       choose_from_menu ($options, "htmleditor", $CFG->htmleditor, "", "", "");
-    ?>
-    </td>
-    <td>
-    <?php print_string('confightmleditor', 'admin') ?>
-    </td>
-</tr>
-<tr>
-    <td align="right" valign="top">editorbackgroundcolor:</td>
-    <td valign="top"><input type="text" name="backgroundcolor" size="10" value="<?php print($CFG->editorbackgroundcolor);?>" /></td>
+    <td align="right" valign="top"><?php print_string("editorbgcolor");?>:</td>
+    <td valign="top"><input type="text" name="backgroundcolor" size="10" value="<?php print($CFG->editorbackgroundcolor);?>"></td>
     <td valign="top"><?php print_string("edhelpbgcolor");?></td>
 </tr>
 <tr>
-    <td align="right" valign="top">editorfontfamily:</td>
-    <td valign="top"><input type="text" name="fontfamily" size="30" value="<?php print($CFG->editorfontfamily);?>" /></td>
+    <td align="right" valign="top"><?php print_string("editordefaultfont");?>:</td>
+    <td valign="top"><input type="text" name="fontfamily" size="30" value="<?php print($CFG->editorfontfamily);?>"></td>
     <td valign="top"><?php print_string("edhelpfontfamily");?></td>
 </tr>
 <tr>
-    <td align="right" valign="top">editorfontsize:</td>
-    <td valign="top"><input type="text" name="fontsize" size="10" value="<?php print($CFG->editorfontsize);?>" /></td>
+    <td align="right" valign="top"><?php print_string("editorfontsize");?>:</td>
+    <td valign="top"><input type="text" name="fontsize" size="10" value="<?php print($CFG->editorfontsize);?>"></td>
     <td valign="top"><?php print_string("edhelpfontsize");?></td>
 </tr>
 <tr>
-    <td align="right" valign="top">editorkillword:</td>
+    <td align="right" valign="top"><?php print_string("editorcleanonpaste");?>:</td>
     <td valign="top"><select name="killword">
-    <option value="1"<?php print(!$CFG->editorkillword)?"":" selected=\"selected\"";?>><?php print_string("yes");?></option>
-    <option value="0"<?php print(!$CFG->editorkillword)?" selected=\"selected\"":"";?>><?php print_string("no");?></option>
+    <option value="1"<?php print(!$CFG->editorkillword)?"":" selected=\"selected\"";?>>Yes</option>
+    <option value="0"<?php print(!$CFG->editorkillword)?" selected=\"selected\"":"";?>>No</option>
     </select></td>
     <td valign="top"><?php print_string("edhelpcleanword");?></td>
 </tr>
 <tr>
-    <td align="right" valign="top">aspellpath:</td>
-    <td valign="top"><input onchange="change_state()" id="aspellpath" type="text" name="aspellpath" size="25" value="<?php print($CFG->aspellpath);?>" /></td>
-    <td valign="top"><?php print_string("edhelpaspellpath");?></td>
-</tr>
-<tr>
-    <td align="right" valign="top">editorspelling:</td>
-    <td valign="top"><select onchange="change_state()" id="spelling" name="spelling"<?php
-    if (empty($CFG->aspellpath)) {
+    <td align="right" valign="top"><?php print_string("editorenablespelling");?>:</td>
+    <td valign="top"><select name="spelling"<?php
+    if(empty($CFG->aspellpath)) {
         echo " disabled=\"disabled\"";
         $CFG->editorspelling = false;
     }
     ?>>
-    <option value="1"<?php print(!$CFG->editorspelling)?"":" selected=\"selected\"";?>><?php print_string("yes");?></option>
-    <option value="0"<?php print(!$CFG->editorspelling)?" selected=\"selected\"":"";?>><?php print_string("no");?></option>
-    </select>
-    <select id="dictionary" name="dictionary"<?php
-    if (empty($CFG->aspellpath)) {
-        echo " disabled=\"disabled\"";
-        $CFG->editordictionary = false;
-    }
-    ?>>
-    <?php
-    if (is_array($dicts)) {
-        foreach ($dicts as $dict) {
-            echo "<option value=\"$dict\"";
-            if (!empty($CFG->editordictionary)) {
-                print ($CFG->editordictionary != $dict) ? "" : " selected=\"selected\"";
-            }
-            echo ">$dict</option>\n";
-        }
-    } else if (is_string($dicts)) {
-        echo '<option value="">'. $dicts .'</option>' . "\n";
-    }
-    ?>
-    </select>
-    </td>
+    <option value="1"<?php print(!$CFG->editorspelling)?"":" selected=\"selected\"";?>>Yes</option>
+    <option value="0"<?php print(!$CFG->editorspelling)?" selected=\"selected\"":"";?>>No</option>
+    </select></td>
     <td valign="top"><?php print_string("edhelpenablespelling");?></td>
 </tr>
-<tr><td colspan="3"><br /><?php print_string("edhelpfontlist");?></td></tr>
+<tr><td colspan="2"><strong><?php print_string("editorfontlist");?></strong></td>
+    <td valign="top"><?php print_string("edhelpfontlist");?></td></tr>
 <?php
-    if(is_array($fontlist)) {
-        foreach($fontlist as $fontkey => $fontvalue) {
+    foreach($fontlist as $fontkey => $fontvalue) {
         ?>
 <tr>
-    <td>&nbsp;</td>
-    <td colspan="2"><input type="text" name="fontname[]" size="15" value="<?php print($fontkey);?>">
-    <input type="text" name="fontnamevalue[]" size="30" value="<?php print($fontvalue);?>" /></td>
+    <td align="right"><input type="text" name="fontname[]" size="15" value="<?php print($fontkey);?>"></td>
+    <td colspan="2"><input type="text" name="fontnamevalue[]" size="30" value="<?php print($fontvalue);?>"></td>
 </tr>
     <?php
-        }
     }
 ?>
 <tr>
-    <td>&nbsp;</td>
-    <td colspan="2"><input type="text" name="fontname[]" size="15" value="" />
-    <input type="text" name="fontnamevalue[]" size="30" value="" /></td>
+    <td align="right"><input type="text" name="fontname[]" size="15" value=""></td>
+    <td colspan="2"><input type="text" name="fontnamevalue[]" size="30" value=""></td>
 </tr>
 <tr>
-    <td valign="top" align="right">editorhidebuttons:</td>
-    <td colspan="2">
-    <?php
-    $buttons = array();
-    if (!empty($CFG->editorhidebuttons)) {
-        $buttons = explode(chr(32), $CFG->editorhidebuttons);
-    }
-    ?>
-    <table border="0" cellpadding="2" cellspacing="1">
-    <tr>
-        <td colspan="12"><input type="checkbox" name="buttons[fontname]"<?php print(in_array("fontname", $buttons)) ? " checked=\"checked\"": "";?> /> <?php print_string("fontname","editor");?>
-        <input type="checkbox" name="buttons[fontsize]"<?php print(in_array("fontsize", $buttons)) ? " checked=\"checked\"": "";?> /> <?php print_string("fontsize","editor");?>
-        <input type="checkbox" name="buttons[formatblock]"<?php print(in_array("formatblock", $buttons)) ? " checked=\"checked\"": "";?> /> <?php print_string("formatblock","editor");?></td>
-    </tr>
-    <tr>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_format_bold.gif" width="18" height="18" alt="<?php print_string("bold","editor");?>" title="<?php print_string("bold","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_format_italic.gif" width="18" height="18" alt="<?php print_string("italic","editor");?>" title="<?php print_string("italic","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_format_underline.gif" width="18" height="18" alt="<?php print_string("underline","editor");?>" title="<?php print_string("underline","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_format_strike.gif" width="18" height="18" alt="<?php print_string("strikethrough","editor");?>" title="<?php print_string("strikethrough","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_format_sub.gif" width="18" height="18" alt="<?php print_string("subscript","editor");?>" title="<?php print_string("subscript","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_format_sup.gif" width="18" height="18" alt="<?php print_string("superscript","editor");?>" title="<?php print_string("superscript","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_copy.gif" width="18" height="18" alt="<?php print_string("copy","editor");?>" title="<?php print_string("copy","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_cut.gif" width="18" height="18" alt="<?php print_string("cut","editor");?>" title="<?php print_string("cut","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_paste.gif" width="18" height="18" alt="<?php print_string("paste","editor");?>" title="<?php print_string("paste","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_wordclean.gif" width="18" height="18" alt="<?php print_string("wordclean","editor");?>" title="<?php print_string("wordclean","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_undo.gif" width="18" height="18" alt="<?php print_string("undo","editor");?>" title="<?php print_string("undo","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_redo.gif" width="18" height="18" alt="<?php print_string("redo","editor");?>" title="<?php print_string("redo","editor");?>" /></td>
-    </tr>
-    <tr>
-        <td><input type="checkbox" name="buttons[bold]"<?php print(in_array("bold", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[italic]"<?php print(in_array("italic", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[underline]"<?php print(in_array("underline", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[strikethrough]"<?php print(in_array("strikethrough", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[subscript]"<?php print(in_array("subscript", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[superscript]"<?php print(in_array("superscript", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[copy]"<?php print(in_array("copy", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[cut]"<?php print(in_array("cut", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[paste]"<?php print(in_array("paste", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[clean]"<?php print(in_array("clean", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[undo]"<?php print(in_array("undo", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[redo]"<?php print(in_array("redo", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-    </tr>
-    <tr>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_align_left.gif" width="18" height="18" alt="<?php print_string("justifyleft","editor");?>" title="<?php print_string("justifyleft","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_align_center.gif" width="18" height="18" alt="<?php print_string("justifycenter","editor");?>" title="<?php print_string("justifycenter","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_align_right.gif" width="18" height="18" alt="<?php print_string("justifyright","editor");?>" title="<?php print_string("justifyright","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_align_justify.gif" width="18" height="18" alt="<?php print_string("justifyfull","editor");?>" title="<?php print_string("justifyfull","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_left_to_right.gif" width="18" height="18" alt="<?php print_string("lefttoright","editor");?>" title="<?php print_string("lefttoright","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_right_to_left.gif" width="18" height="18" alt="<?php print_string("righttoleft","editor");?>" title="<?php print_string("righttoleft","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_list_num.gif" width="18" height="18" alt="<?php print_string("orderedlist","editor");?>" title="<?php print_string("orderedlist","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_list_bullet.gif" width="18" height="18" alt="<?php print_string("unorderedlist","editor");?>" title="<?php print_string("unorderedlist","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_indent_less.gif" width="18" height="18" alt="<?php print_string("outdent","editor");?>" title="<?php print_string("outdent","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_indent_more.gif" width="18" height="18" alt="<?php print_string("indent","editor");?>" title="<?php print_string("indent","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_color_fg.gif" width="18" height="18" alt="<?php print_string("forecolor","editor");?>" title="<?php print_string("forecolor","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_color_bg.gif" width="18" height="18" alt="<?php print_string("hilitecolor","editor");?>" title="<?php print_string("hilitecolor","editor");?>" /></td>
-    </tr>
-    <tr>
-        <td><input type="checkbox" name="buttons[justifyleft]"<?php print(in_array("justifyleft", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[justifycenter]"<?php print(in_array("justifycenter", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[justifyright]"<?php print(in_array("justifyright", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[justifyfull]"<?php print(in_array("justifyfull", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[lefttoright]"<?php print(in_array("lefttoright", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[righttoleft]"<?php print(in_array("righttoleft", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[insertorderedlist]"<?php print(in_array("insertorderedlist", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[insertunorderedlist]"<?php print(in_array("insertunorderedlist", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[outdent]"<?php print(in_array("outdent", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[indent]"<?php print(in_array("indent", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[forecolor]"<?php print(in_array("forecolor", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[hilitecolor]"<?php print(in_array("hilitecolor", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-    </tr>
-    <tr>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_hr.gif" width="18" height="18" alt="<?php print_string("horizontalrule","editor");?>" title="<?php print_string("horizontalrule","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_anchor.gif" width="18" height="18" alt="<?php print_string("createanchor","editor");?>" title="<?php print_string("createanchor","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_link.gif" width="18" height="18" alt="<?php print_string("insertlink","editor");?>" title="<?php print_string("insertlink","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_unlink.gif" width="18" height="18" alt="<?php print_string("removelink","editor");?>" title="<?php print_string("removelink","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_image.gif" width="18" height="18" alt="<?php print_string("insertimage","editor");?>" title="<?php print_string("insertimage","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/insert_table.gif" width="18" height="18" alt="<?php print_string("inserttable","editor");?>" title="<?php print_string("inserttable","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/em.icon.smile.gif" width="18" height="18" alt="<?php print_string("insertsmile","editor");?>" title="<?php print_string("insertsmile","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/icon_ins_char.gif" width="18" height="18" alt="<?php print_string("insertchar","editor");?>" title="<?php print_string("insertchar","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/spell-check.gif" width="18" height="18" alt="<?php print_string("spellcheck","editor");?>" title="<?php print_string("spellcheck","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_html.gif" width="18" height="18" alt="<?php print_string("htmlmode","editor");?>" title="<?php print_string("htmlmode","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/fullscreen_maximize.gif" width="18" height="18" alt="<?php print_string("popupeditor","editor");?>" title="<?php print_string("popupeditor","editor");?>" /></td>
-        <td>&nbsp;</td>
-    </tr>
-    <tr>
-        <td><input type="checkbox" name="buttons[inserthorizontalrule]"<?php print(in_array("inserthorizontalrule", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[createanchor]"<?php print(in_array("createanchor", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[createlink]"<?php print(in_array("createlink", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[unlink]"<?php print(in_array("unlink", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[insertimage]"<?php print(in_array("insertimage", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[inserttable]"<?php print(in_array("inserttable", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[insertsmile]"<?php print(in_array("insertsmile", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[insertchar]"<?php print(in_array("insertchar", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[spellcheck]"<?php print(in_array("spellcheck", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[htmlmode]"<?php print(in_array("htmlmode", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[popupeditor]"<?php print(in_array("popupeditor", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td>&nbsp;</td>
-    </tr>
-    </table>
-    </td>
-</tr>
-<tr>
-    <td colspan="3" align="center"><input type="submit" value="<?php print_string("savechanges");?>" /></td>
+    <td colspan="3" align="center"><input type="submit" value="<?php print_string("savechanges");?>"></td>
 </tr>
 </table>
 </form>
-
-<form method="post" action="<?php print($GLOBALS['ME']);?>">
-<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />
-<center>
-<input type="submit" name="resettodefaults" value="<?php print_string('editorresettodefaults') ?>" />
-</center>
-</form>
-<script language="javascript" type="text/javascript">
-<!--
-
-function change_state () {
-
-    var choice = document.forms[0].spelling;
-    var speller = choice.options[choice.selectedIndex].value;
-    var spellpath = document.forms[0].aspellpath.value;
-
-    if (spellpath == '') {
-        document.forms[0].spelling.disabled = true;
-    } else {
-        document.forms[0].spelling.disabled = false;
-    }
-
-    if (speller != 1) {
-        document.forms[0].dictionary.disabled = true;
-    } else {
-        document.forms[0].dictionary.disabled = false;
-    }
-}
-
-document.onload = change_state();
--->
-</script>

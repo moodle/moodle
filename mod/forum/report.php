@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
 //  For a given post, shows a report of all the ratings it has
 
@@ -38,29 +38,29 @@
     $strname = get_string("name");
     $strtime = get_string("time");
 
-    print_header("$strratings: ".format_string($post->subject));
+    print_header("$strratings: $post->subject");
 
     if (!$ratings = forum_get_ratings($post->id, $sort)) {
-        error("No ratings for this post: \"".format_string($post->subject)."\"");
+        error("No ratings for this post: \"$post->subject\"");
 
     } else {
-        echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"3\" class=\"generalbox\" width=\"100%\">";
+        echo "<table border=0 cellpadding=3 cellspacing=3 class=generalbox width=100%>";
         echo "<tr>";
         echo "<th>&nbsp;</th>";
-        echo "<th><a href=\"report.php?id=$post->id&amp;sort=u.firstname\">$strname</a>";
-        echo "<th width=\"100%\"><a \"href=report.php?id=$post->id&amp;sort=r.rating\">$strrating</a>";
-        echo "<th><a href=\"report.php?id=$post->id&amp;sort=r.time\">$strtime</a>";
+        echo "<th><a href=report.php?id=$post->id&sort=u.firstname>$strname</a>";
+        echo "<th width=100%><a href=report.php?id=$post->id&sort=r.rating>$strrating</a>";
+        echo "<th><a href=report.php?id=$post->id&sort=r.time>$strtime</a>";
         foreach ($ratings as $rating) {
             if (isteacher($discussion->course, $rating->id)) {
-                echo '<tr class="forumpostheadertopic">';
+                echo "<tr bgcolor=\"$THEME->cellcontent2\">";
             } else {
-                echo '<tr class="forumpostheader">';
+                echo "<tr bgcolor=\"$THEME->cellcontent\">";
             }
             echo "<td>";
             print_user_picture($rating->id, $forum->course, $rating->picture);
-            echo '<td nowrap="nowrap"><p><font size="-1">'.fullname($rating).'</p>';
-            echo '<td nowrap="nowrap" align="center"><p><font size="-1">'.$scalemenu[$rating->rating]."</p>";
-            echo '<td nowrap="nowrap" align="center"><p><font size="-1">'.userdate($rating->time)."</p>";
+            echo '<td nowrap><p><font size="-1">'.fullname($rating).'</p>';
+            echo '<td nowrap align="center"><p><font size="-1">'.$scalemenu[$rating->rating]."</p>";
+            echo '<td nowrap align="center"><p><font size="-1">'.userdate($rating->time)."</p>";
             echo "</tr>\n";
         }
         echo "</table>";

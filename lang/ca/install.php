@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // install.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['admindirerror'] = 'El directori d\'administració especificat és incorrecte';
 $string['admindirname'] = 'Directori d\'administració';
-$string['admindirsetting'] = 'Alguns servidors web utilitzen un URL especial /admin per accedir a un tauler de control o quelcom semblant. Malauradament aquesta és també la ubicació estàndard de les pàgines d\'administració de Moodle. Podeu arreglar aquest problema canviant el nom del directori d\'administració de Moodle en la vostra instal·lació i posant el nou nom aquí. Per exemple:<br /> <br /><b>moodleadmin</b><br /> <br />
+$string['admindirsetting'] = 'Alguns servidors web utilitzen un URL especial /admin per accedir a un tauler de control o quelcom semblant. Malauradament aquesta és també la ubicació estàndard de les pàgines d\'administració de Moodle. Podeu arreglar aquest problema canviant el nom del directori d\'administració de Moodle en la vostra instal·lació i posant el nou nom aquí. Per exemple:<br /> <br /><b>moodleadmin</b><br /> <br />
 Això modificarà els enllaços d\'administració de Moodle.';
 $string['caution'] = 'Alerta';
 $string['chooselanguage'] = 'Trieu un idioma';
@@ -14,7 +14,7 @@ $string['configfilewritten'] = 'S\'ha creat amb èxit el fitxer config.php';
 $string['configurationcomplete'] = 'S\'ha completat la configuració';
 $string['database'] = 'Base de dades';
 $string['databasesettings'] = 'Ara heu de configurar la base de dades on s\'emmagatzemaran la major part de les dades de Moodle. Aquesta base de dades s\'ha de crear abans i cal tenir un nom d\'usuari i una contrasenya amb accés a ella.<br />
-<br /> <br />
+<br /> <br />
 <b>Tipus:</b> mysql o postgres7<br />
 <b>Ordinador:</b> p. ex. localhost o db.isp.com<br />
 <b>Nom:</b> nom de la base de dades, p. ex. moodle<br />
@@ -78,12 +78,11 @@ $string['memorylimithelp'] = '<p>El límit de memòria del PHP del vostre servidor
 <p>És recomanable que configureu el PHP amb un límit superior, com ara 16 MB, sempre que sigui possible. Hi ha diverses maneres de fer això:</p>
 <ol>
 <li>Si podeu, recompileu el PHP amb <i>--enable-memory-limit</i>. Això permetrà que Moodle defineixi el límit de memòria per si mateix.</li>
-<li>Si teniu accés al fitxer php.ini, podeu canviar el paràmetre <b>memory_limit</b> a 16M. Si no hi teniu accés podeu demanar al vostre administrador que ho faci ell.</li>
+<li>Si teniu accés al fitxer php.ini, podeu canviar el paràmetre <b>memory_limit</b> a 16M. Si no hi teniu accés podeu demanar al vostre administrador que ho faci ell.
 <li>En alguns servidors PHP podeu crear un fitxer .htaccess dins del directori de Moodle amb aquesta línia:
 <p><blockquote>php_value memory_limit 16M</blockquote></p>
-<p>Tanmateix, en alguns servidors això farà que no funcioni <b>cap</b> pàgina PHP (es visualitzaran errors) en el qual cas hauríeu de suprimir el fitxer .htaccess.</p></li>
+<p>Tanmateix, en alguns servidors això farà que no funcioni <b>cap</b> pàgina PHP (es visualitzaran errors) en el qual cas hauríeu de suprimir el fitxer .htaccess.
 </ol>';
-$string['mysqlextensionisnotpresentinphp'] = 'El PHP no s\'ha configurat correctament amb l\'extensió MySQL per tal que es pugui comunicar amb MySQL. Comproveu el fitxer php.ini o recompileu el PHP.';
 $string['pass'] = 'Correcte';
 $string['phpversion'] = 'Versió PHP';
 $string['phpversionerror'] = 'La versió del PHP ha de ser com a mínim la 4.1.0';

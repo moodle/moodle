@@ -1,30 +1,25 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
+      // resource.php - created with Moodle 1.4 development (2004080300)
 
 
 $string['addresource'] = 'Lisää aineisto';
 $string['chooseafile'] = 'Valitse tai lähetä tiedosto';
-$string['chooseparameter'] = 'Valitse parametri';
 $string['configdefaulturl'] = 'Tätä käytetään esimerkkiosoitteena, kun lisätään uusia URL-osoiteen sisältäviä aineistoja.';
-$string['configfilterexternalpages'] = 'Tämä asetus aiheuttaa kaikkien ulkoisten aineistoiden suodattamisen sivuston suotimien läpi. Tämän toiminnon kytkeminen päälle hidastaa sivustoa, käytä sitä vain, jos et muuta voi.';
+$string['configfilterexternalpages'] = 'Tämä asetus aiheuttaa kaikkien ulkoisten aineistoiden suodattamisen sivuston suotimien läpi. Tämän toiminnon kytkeminen päälle hidastaa sivustoa, kaytä sitä vain, jos et muuta voi.';
 $string['configframesize'] = 'Kun WWW-sivu tai palvelimelle tallennettu tiedosto on osa kehystä, tämä arvo on yläkehyksen koko pikseleinä (sisältää navigointipalkit).';
-$string['configparametersettings'] = 'Tässä voit määritellä oletusarvot asetuksille mitä käytetään uusia resursseja lisätessä. Tämän jälkeen oletusasetukset määräytyvät käyttäjän asetusten mukaan.';
 $string['configpopup'] = 'Jos uusi aineisto on mahdollista näyttää ponnahdusikkunassa, otetetaanko ponnahdusikkuna käyttöön?';
 $string['configpopupdirectories'] = 'Näytetäänkö ponnahdusikkunoissa hakemistolinkit?';
 $string['configpopupheight'] = 'Ponnahdusikkunoiden korkeus?';
 $string['configpopuplocation'] = 'Näytetäänkö ponnahdusikkunoissa sijanti?';
 $string['configpopupmenubar'] = 'Näytetäänkö ponnahdusikkunoissa valikkorivi?';
-$string['configpopupresizable'] = 'Voiko ponnahdusikkunoiden kokoa muuttaa?';
+$string['configpopupresizable'] = 'Voiko ponnahdus ikkunoiden kokoa muuttaa?';
 $string['configpopupscrollbars'] = 'Näytetäänkö ponnahdusikkunoissa vierityspalkit?';
 $string['configpopupstatus'] = 'Näytetäänkö ponnahdusikkunoissa tilarivi?';
 $string['configpopuptoolbar'] = 'Näytetäänkö ponnahdusikkunoissa työkalurivi?';
 $string['configpopupwidth'] = 'Ponnahdusikkunoiden leveys?';
-$string['configsecretphrase'] = 'Tämä määrittää salasanan jota käytetää lähettyjen tietojen salaamiseen.';
 $string['configwebsearch'] = 'Kun lisätää WWW-sivun tai -linkin osoite, tätä osoitetta tarjotaan käyttäjälle etsimisen helpottamiseksi (esimerkiksi sopivan hakukoneen URL).';
-$string['configwindowsettings'] = 'Tässä määritetään oletus arvot Ikkunan asetuksille kun uusia resursseja lisätään ensikerran. Tämän jälkeen oletusasetukset määräytyvät käyttäjän asetusten mukaan.';
 $string['directlink'] = 'Suora linkki tähän tiedostoon';
 $string['directoryinfo'] = 'Kaikki valitun hakemiston tiedostot näytetään';
-$string['display'] = 'Ikkuna';
 $string['editingaresource'] = 'Aineiston muokkaus';
 $string['encryptedcode'] = 'Suojaa koodi';
 $string['example'] = 'Esimerkki';
@@ -55,7 +50,7 @@ $string['newwindow'] = 'Uusi ikkuna';
 $string['newwindowopen'] = 'Näytä linkki uudessa ikkunassa';
 $string['note'] = 'Huomaa';
 $string['notefile'] = 'Lisätäksesi tiedostoja kurssille (jotta ne näkysivät tässä listassa) käytä 
-<a href=\"$a\">Tiedostot</a>-työkalua.';
+<a href=\"$a\">Tiedostot</A>-työkalua.';
 $string['notypechosen'] = 'Sinun pitää valita luettavan aineiston tyyppi.  Käytä selaimen Takaisin-painiketta ja yritä uudelleen.';
 $string['pagedisplay'] = 'Näytä aineisto nykyisessä ikkunassa';
 $string['pagewindow'] = 'Samassa ikkunassa';
@@ -64,20 +59,11 @@ $string['parameters'] = 'Asetukset';
 $string['popupresource'] = 'Tämän aineiston tulee näkyä ponnahdusikkunassa.';
 $string['popupresourcelink'] = 'Jos et vielä klikannut, klikkaa tässä: $a';
 $string['resourcetype'] = 'Aineiston tyyppi';
-$string['resourcetype1'] = 'Referenssi';
-$string['resourcetype2'] = 'Websivu';
-$string['resourcetype3'] = 'Tiedosto';
-$string['resourcetype4'] = 'Teksti';
-$string['resourcetype5'] = 'Weblinkki';
-$string['resourcetype6'] = 'HTML teksti';
-$string['resourcetype7'] = 'Ohjelma';
-$string['resourcetype8'] = 'Wikiteksti';
-$string['resourcetype9'] = 'Hakemisto';
 $string['resourcetypedirectory'] = 'Näytä hakemisto';
 $string['resourcetypefile'] = 'Linkitä  tiedostoon tai web-sivuun';
 $string['resourcetypehtml'] = 'Tee uusi web-sivu';
 $string['resourcetypelabel'] = 'Lisää otsikko';
-$string['resourcetypetext'] = 'Tee uusi tekstisivu';
+$string['resourcetypetext'] = 'Tee uusi teksti-sivu';
 $string['searchweb'] = 'Etsi web-sivua';
 $string['variablename'] = 'Muuttujan nimi';
 

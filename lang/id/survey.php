@@ -127,7 +127,7 @@ Terima Kasih.';
 $string['collesaname'] = 'COLLES (Terbaru)';
 $string['collesapintro'] = 'Kegunaan dari pertanyaan-pertanyaan kuis ini adalah untuk membantu kami mengetahui sampai seberapa baik distribusi online dari bagian ini yang dapat Anda pelajari.
 
-Setiap satu dari 24 pernyataan di bawah meminta Anda untuk membandingkan yang Anda <b>lebih sukai</b> (ideal) dan pengalaman <b>terbaru</b> pada bagian ini.
+Setiap satu dari 24 pernyataan di bawah meminta Anda untuk membandingkan yang Anda <B>lebih sukai</B> (ideal) dan pengalaman <B>terbaru</B> pada bagian ini.
 
 Tidak ada jawaban yang \'benar\' atau \'salah\'; kami hanya tertarik pada opini Anda. Harap Anda yakin bahwa tanggapan Anda akan diperlakukan sangat rahasia, dan tidak akan mempengaruhi penilaian Anda.
 
@@ -150,7 +150,7 @@ $string['collesm6short'] = 'Interpretasi';
 $string['collesmintro'] = 'pada bagian online ini...';
 $string['collespintro'] = 'Kegunaan dari survei ini adalah untuk membantu kami untuk mengetahui apa yang Anda dapatkan dari pengalaman belajar secara online.
 
-Setiap satu dari 24 pernyataan di bawah menanyakan tentang pengalaman yang Anda <b>lebih sukai</b> (ideal) pada bagian ini.
+Setiap satu dari 24 pernyataan di bawah menanyakan tentang pengalaman yang Anda <B>lebih sukai</B> (ideal) pada bagian ini.
 
 Tidak ada jawaban \'benar\' atau \'salah\'; kami hanya tertarik pada opini Anda. Harap Anda yakin bahwa tanggapan Anda akan diperlakukan secara sangat rahasia dan tidak akan memperngaruhi penilaian terhadap Anda.
 

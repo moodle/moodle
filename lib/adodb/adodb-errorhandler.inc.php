@@ -1,6 +1,6 @@
 <?php
 /**
- * @version V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license.
  * Whenever there is any discrepancy between the two licenses,
  * the BSD license will take precedence.
@@ -15,7 +15,7 @@
 // added Claudio Bustos  clbustos#entelchile.net
 if (!defined('ADODB_ERROR_HANDLER_TYPE')) define('ADODB_ERROR_HANDLER_TYPE',E_USER_ERROR); 
 
-if (!defined('ADODB_ERROR_HANDLER')) define('ADODB_ERROR_HANDLER','ADODB_Error_Handler');
+define('ADODB_ERROR_HANDLER','ADODB_Error_Handler');
 
 /**
 * Default Error Handler. This will be called with the following params

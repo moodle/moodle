@@ -1,7 +1,7 @@
-<?php // $Id$
+<?PHP // $Id$
       // Admin-only script to assign teachers to courses
 
-    require_once("../config.php");
+	require_once("../config.php");
 
     define("MAX_USERS_PER_PAGE", 50);
 
@@ -38,7 +38,7 @@
     $strname   = get_string("name");
     $strorder   = get_string("order");
     $strrole   = get_string("role");
-    $stredit   = get_string("editingteachershort");
+    $stredit   = get_string("edit");
     $stryes   = get_string("yes");
     $strno   = get_string("no");
 
@@ -58,7 +58,7 @@
 
 /// Print headers
 
-    print_header("$course->shortname: $strassignteachers", 
+	print_header("$course->shortname: $strassignteachers", 
                  "$course->fullname", 
                  "<a href=\"index.php\">$strcourses</a> -> ".
                  "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> ".
@@ -67,8 +67,7 @@
 
 /// If data submitted, then process and store.
 
-    if ($form = data_submitted() and confirm_sesskey()) {
-        unset ($form->sesskey);
+    if ($form = data_submitted()) {
         $rank = array();
 
         // Peel out all the data from variable names.
@@ -91,12 +90,12 @@
                 error("Could not update teacher entry id = $teacher->id");
             }
         }
-        redirect("teacher.php?id=$course->id", get_string("changessaved"));
-    }
+		redirect("teacher.php?id=$course->id", get_string("changessaved"));
+	}
 
 /// Add a teacher if one is specified
 
-    if (!empty($_GET['add']) and confirm_sesskey()) {
+    if (!empty($_GET['add'])) {
         if (! add_teacher($add, $course->id)) {
             error("Could not add that teacher to this course!");
         }
@@ -104,9 +103,9 @@
 
 /// Remove a teacher if one is specified.
 
-    if (!empty($_GET['remove']) and confirm_sesskey()) {
+    if (!empty($_GET['remove'])) {
         if (! remove_teacher($remove, $course->id)) {
-            error("Could not remove that teacher from this course!");
+            error("Could not add that teacher to this course!");
         }
     }
 
@@ -116,12 +115,12 @@
     print_heading_with_help("$strexistingteachers $parateachers", "teachers");
 
     if (empty($teachers)) {
-        echo "<p align=\"center\">$strnoexistingteachers</a>";
+        echo "<p align=center>$strnoexistingteachers</a>";
         $teacherlist = "";
 
     } else {
 
-        $table->head  = array ("", $strname, $strorder, $strrole, $stredit, "&nbsp;");
+        $table->head  = array ("", $strname, $strorder, $strrole, $stredit, "&nbsp");
         $table->align = array ("right", "left", "center", "center", "center", "center");
         $table->size  = array ("35", "", "", "", "10", "");
     
@@ -137,7 +136,7 @@
 
         $teacherarray = array();
     
-        echo "<form action=\"teacher.php\" method=\"post\">";
+        echo "<form action=teacher.php method=post>";
         foreach ($teachers as $teacher) {
             $teacherarray[] = $teacher->id;
     
@@ -146,28 +145,27 @@
             $authority = choose_from_menu ($ordermenu, "a$teacher->id", $teacher->authority, "", "", "", true);
 
             if ($USER->id == $teacher->id) {
-                $editall = "<input name=\"e$teacher->id\" type=\"hidden\" value=\"1\" />$stryes";
+                $editall = "<input name=\"e$teacher->id\" type=\"hidden\" value=\"1\">$stryes";
             } else {
                 $editall = choose_from_menu ($editmenu, "e$teacher->id", $teacher->editall, "", "", "", true);
             }
     
-            $removelink = "<a href=\"teacher.php?id=$course->id&amp;remove=$teacher->id&amp;sesskey=$USER->sesskey\">$strremoveteacher</a>";
+            $removelink = "<a href=\"teacher.php?id=$course->id&remove=$teacher->id\">$strremoveteacher</a>";
 
             if (!$teacher->role) {
                 $teacher->role = $course->teacher;
             }
     
             $table->data[] = array ($picture, fullname($teacher, true), $authority,
-                                    "<input type=\"text\" name=\"r$teacher->id\" value=\"$teacher->role\" size=\"30\" />",
+                                    "<input type=text name=\"r$teacher->id\" value=\"$teacher->role\" size=30>",
                                     $editall, $removelink);
         }
         $teacherlist = implode(",",$teacherarray);
         unset($teacherarray);
 
         print_table($table);
-        echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
-        echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
-        echo "<center><input type=\"submit\" value=\"".get_string("savechanges")."\" /> ";
+        echo "<input type=hidden name=id value=\"$course->id\">";
+        echo "<center><input type=submit value=\"".get_string("savechanges")."\"> ";
         echo "</center>";
         echo "</form>";
         echo "<br />";
@@ -181,15 +179,15 @@
     $usercount = get_users(false, $search, true, $teacherlist);
 
     if ($usercount == 0) {
-        echo "<p align=\"center\">$strnopotentialteachers</p>";
+        echo "<p align=center>$strnopotentialteachers</p>";
 
     } else if ($usercount > MAX_USERS_PER_PAGE) {
-        echo "<p align=\"center\">$strtoomanytoshow ($usercount) </p>";
+        echo "<p align=center>$strtoomanytoshow ($usercount) </p>";
 
     } else {
 
         if ($search) {
-            echo "<p align=\"center\">($strsearchresults : $search)</p>";
+            echo "<p align=center>($strsearchresults : $search)</p>";
         }
 
         if (!$users = get_users(true, $search, true, $teacherlist)) {
@@ -203,7 +201,7 @@
 
 
         foreach ($users as $user) {
-            $addlink = "<a href=\"teacher.php?id=$course->id&amp;add=$user->id&amp;sesskey=$USER->sesskey\">$straddteacher</a>";
+            $addlink = "<a href=\"teacher.php?id=$course->id&add=$user->id\">$straddteacher</a>";
             $picture = print_user_picture($user->id, $course->id, $user->picture, false, true);
             $table->data[] = array ($picture, fullname($user, true), $user->email, $addlink);
         }
@@ -212,14 +210,14 @@
 
     if ($search or $usercount > MAX_USERS_PER_PAGE) {
         echo "<center>";
-        echo "<form action=\"teacher.php\" method=\"get\">";
-        echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
-        echo "<input type=\"text\" name=\"search\" size=\"20\" />";
-        echo "<input type=\"submit\" value=\"$searchstring\" />";
+        echo "<form action=teacher.php method=get>";
+        echo "<input type=hidden name=id value=\"$course->id\">";
+        echo "<input type=text name=search size=20>";
+        echo "<input type=submit value=\"$searchstring\">";
         echo "</form>";
         echo "</center>";
     }
 
-    print_footer($course);
+    print_footer();
 
 ?>

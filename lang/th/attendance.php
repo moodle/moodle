@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.4.2 (2004083125)
+      // attendance.php - created with Moodle 1.4 development (2004070800)
 
 
+$string['Addmultirolls'] = 'เพิ่มบันทึกการเข้าเรียนหลายวัน';
 $string['absentlong'] = 'ขาดเรียน';
 $string['absentshort'] = 'ขาด';
 $string['addingmultiple'] = 'กำลังเพิ่มบันทึกการเข้าเรียน';
@@ -28,26 +29,30 @@ $string['dynamicsectionmulti'] = 'แสดงบันทึกการเข้าเรียนของนักเรียนอัตโนมัติ';
 $string['dynsectionshort'] = 'ย้ายมาส่วนนี้';
 $string['endbeforestart'] = 'ไม่สามารถระบุวันสุดท้ายก่อนวันเริ่มเรียนไม่ได้';
 $string['endmulti'] = 'วันที่จะมีการเช็คชื่อครั้งสุดท้าย';
+$string['firstname'] = 'ชื่อ';
 $string['for'] = 'เพื่อ';
 $string['friday'] = 'ศุกร์';
 $string['gradeshort'] = 'ให้คะแนน';
 $string['gradevalue'] = 'ให้คะแนนการเข้าเรียน';
 $string['gradevaluemulti'] = 'ให้คะแนนการเข้าเรียน';
+$string['hours'] = 'ชั่วโมง';
 $string['hoursinclass'] = 'จำนวนชั่วโมงที่เรียน';
 $string['hoursineachclass'] = 'จำนวนชั่วโมงสำหรับแต่ละคาบเรียน';
 $string['hoursinfullreport'] = 'จำนวนชั่วโมงสูงสุดที่จะแสดงในหนึ่งหน้ารายงาน';
+$string['idnumber'] = 'เลขประจำตัว';
+$string['lastname'] = 'นามสกุล';
 $string['maxgradeshort'] = 'คะแนนสูงสุด';
 $string['maxgradevalue'] = 'คะแนนเต็มหากเข้าเรียนครบทุกครั้ง';
 $string['modulename'] = 'บันทึกการเข้าเรียน';
 $string['modulenameplural'] = 'บันทึกการเข้าเรียน';
 $string['monday'] = 'จันทร์';
+$string['no'] = 'ไม่';
 $string['norolls'] = 'ไม่มีบันทึกการเข้าเรียนสำหรับรายวิชานี้';
 $string['notes'] = 'ข้อยกเว้น';
 $string['notesfor'] = 'ข้อยกเว้นสำหรับ';
 $string['noviews'] = 'ขออภัยค่ะ ไม่มีข้อมูลของคุณค่ะ';
 $string['of'] = 'จาก';
 $string['pages'] = 'หน้า';
-$string['parentlanguage'] = 'en';
 $string['presentlong'] = 'เข้าเรียน';
 $string['presentshort'] = 'เข้าเรียน';
 $string['saturday'] = 'เสาร์';
@@ -59,10 +64,8 @@ $string['tardiesperabsence'] = 'การเข้าเรียนสายกี่ครั้งจึงจะนับเป็นการขาดเรียน 1
 $string['tardylong'] = 'เข้าสาย';
 $string['tardyshort'] = 'สาย';
 $string['teacheredit'] = 'เช็คชื่อนักเรียน';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
 $string['thursday'] = 'พฤหัส';
+$string['total'] = 'รวม';
 $string['tuesday'] = 'อังคาร';
 $string['viewall'] = 'ดูบันทึกการเข้าเรียนทั้งหมด';
 $string['viewmulti'] = 'ดูรายงานแบบหลายหน้า';
@@ -72,5 +75,6 @@ $string['viewtable'] = 'ดูรายงานทั้งหมดในหนึ่งตาราง';
 $string['viewweek'] = 'ดูบันทึกการเข้าเรียนจากปฏิทินรายสัปดาห์';
 $string['wednesday'] = 'พุธ';
 $string['weekmodulename'] = 'บันทึกการเข้าเรียนทั้งหมดในสัปดาห์ที่ผ่านมา';
+$string['yes'] = 'ใช่';
 
 ?>

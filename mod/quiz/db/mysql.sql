@@ -25,9 +25,7 @@ CREATE TABLE `prefix_quiz` (
   `feedback` tinyint(4) NOT NULL default '0',
   `correctanswers` tinyint(4) NOT NULL default '1',
   `grademethod` tinyint(4) NOT NULL default '1',
-  `decimalpoints` tinyint(4) NOT NULL default '2',
   `review` tinyint(4) NOT NULL default '0',
-  `questionsperpage` int(10) NOT NULL default '0',
   `shufflequestions` tinyint(4) NOT NULL default '0',
   `shuffleanswers` tinyint(4) NOT NULL default '0',
   `questions` text NOT NULL,
@@ -38,9 +36,7 @@ CREATE TABLE `prefix_quiz` (
   `timelimit` int(2) unsigned NOT NULL default '0',
   `password` varchar(255) NOT NULL default '',
   `subnet` varchar(255) NOT NULL default '',
-  `popup` tinyint(4) NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `course` (`course`)
+  PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='Main information about each quiz';
 # --------------------------------------------------------
 
@@ -103,10 +99,8 @@ CREATE TABLE `prefix_quiz_calculated` (
   `tolerance` varchar(20) NOT NULL default '0.0',
   `tolerancetype` int(10) NOT NULL default '1',
   `correctanswerlength` int(10) NOT NULL default '2',
-  `correctanswerformat` int(10) NOT NULL default '2',
   PRIMARY KEY  (`id`),
-  KEY `question` (`question`),
-  KEY `answer` (`answer`)
+  KEY `question` (`question`)
 ) TYPE=MyISAM COMMENT='Options for questions of type calculated';
 # --------------------------------------------------------
 
@@ -121,10 +115,7 @@ CREATE TABLE `prefix_quiz_categories` (
   `info` text NOT NULL,
   `publish` tinyint(4) NOT NULL default '0',
   `stamp` varchar(255) NOT NULL default '',
-  `parent` int(10) unsigned NOT NULL default '0',
-  `sortorder` int(10) unsigned NOT NULL default '999',
-  PRIMARY KEY  (`id`),
-  KEY `course` (`course`)
+  PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='Categories are for grouping questions';
 # --------------------------------------------------------
 
@@ -139,8 +130,7 @@ CREATE TABLE `prefix_quiz_dataset_definitions` (
   `type` int(10) NOT NULL default '0',
   `options` varchar(255) NOT NULL default '',
   `itemcount` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `category` (`category`)
+  PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='Organises and stores properties for dataset items';
 # --------------------------------------------------------
 
@@ -166,7 +156,7 @@ CREATE TABLE `prefix_quiz_grades` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `quiz` int(10) unsigned NOT NULL default '0',
   `userid` int(10) unsigned NOT NULL default '0',
-  `grade` real NOT NULL default '0',
+  `grade` varchar(10) NOT NULL default '0.0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `quiz` (`quiz`),
@@ -243,8 +233,7 @@ CREATE TABLE `prefix_quiz_numerical` (
   `min` varchar(255) NOT NULL default '',
   `max` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`),
-  KEY `answer` (`answer`),
-  KEY `question` (`question`)
+  KEY `answer` (`answer`)
 ) TYPE=MyISAM COMMENT='Options for numerical questions';
 # --------------------------------------------------------
 
@@ -257,8 +246,7 @@ CREATE TABLE `prefix_quiz_numerical_units` (
   `question` int(10) unsigned NOT NULL default '0',
   `multiplier` decimal(40,20) NOT NULL default '1.00000000000000000000',
   `unit` varchar(50) NOT NULL default '',
-  PRIMARY KEY  (`id`),
-  KEY `question` (`question`)
+  PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='Optional unit options for numerical questions';
 # --------------------------------------------------------
 
@@ -291,21 +279,6 @@ CREATE TABLE `prefix_quiz_question_grades` (
 # --------------------------------------------------------
 
 #
-# Table structure for table `quiz_question_versions`
-#
-
-CREATE TABLE `prefix_quiz_question_versions` (
-  `id` int(10) unsigned NOT NULL auto_increment,
-  `quiz` int(10) unsigned NOT NULL default '0',
-  `oldquestion` int(10) unsigned NOT NULL default '0',
-  `newquestion` int(10) unsigned NOT NULL default '0',
-  `userid` int(10) unsigned NOT NULL default '0',
-  `timestamp` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`)
-) TYPE=MyISAM COMMENT='The mapping between old and new versions of a question';
-# --------------------------------------------------------
-
-#
 # Table structure for table `quiz_questions`
 #
 
@@ -320,9 +293,7 @@ CREATE TABLE `prefix_quiz_questions` (
   `qtype` smallint(6) NOT NULL default '0',
   `stamp` varchar(255) NOT NULL default '',
   `version` int(10) NOT NULL default '1',
-  `hidden` int(1) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `category` (`category`)
+  PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='The quiz questions themselves';
 # --------------------------------------------------------
 
@@ -347,8 +318,7 @@ CREATE TABLE `prefix_quiz_responses` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `attempt` int(10) unsigned NOT NULL default '0',
   `question` int(10) unsigned NOT NULL default '0',
-  `originalquestion` int(10) unsigned NOT NULL default '0',
-  `answer` text NOT NULL default '',
+  `answer` varchar(255) NOT NULL default '',
   `grade` varchar(10) NOT NULL default '0.0',
   PRIMARY KEY  (`id`),
   KEY `attempt` (`attempt`),
@@ -391,4 +361,3 @@ INSERT INTO prefix_log_display VALUES ('quiz', 'report', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'attempt', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'submit', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'review', 'quiz', 'name');
-INSERT INTO prefix_log_display VALUES ('quiz', 'editquestions', 'quiz', 'name');

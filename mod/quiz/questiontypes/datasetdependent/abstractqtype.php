@@ -1,10 +1,10 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
 ///////////////////////////////////////////////////////////////
 /// ABSTRACT SUPERCLASS FOR QUSTION TYPES THAT USE DATASETS ///
 ///////////////////////////////////////////////////////////////
 
-require_once($CFG->libdir.'/filelib.php');
+require_once($CFG->dirroot . '/files/mimetypes.php');
 
 define("LITERAL", "1");
 define("FILE", "2");
@@ -360,9 +360,9 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
                 $value = $item->value;
 
             } else {
-                $icon = "<img src=\"$CFG->wwwroot/pix/f/"
+                $icon = "<IMG SRC=\"$CFG->wwwroot/pix/f/"
                         . mimeinfo('icon', $item->value)
-                        . '" height="16" width="16" border="0" alt="File" />';
+                        . '" HEIGHT="16" WIDTH="16" BORDER="0" ALT="File" />';
                 if (substr(strtolower($item->value), 0, 7)=='http://') {
                     $link = $item->value;
                         
@@ -403,7 +403,7 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
     function create_virtual_nameprefix($nameprefix, $datasetinput) {
     // This default implementation is sometimes overridden
         if (!ereg('([0-9]+)' . $this->name() . '$', $nameprefix, $regs)) {
-            error("Wrongly formatted nameprefix $nameprefix");
+            error("Malformed nameprefix $nameprefix");
         }
         $virtualqtype = $this->get_virtual_qtype();
         return $nameprefix . $regs[1] . $virtualqtype->name();
@@ -412,7 +412,7 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
     function extract_response($rawresponse, $nameprefix) {
         if (!ereg('^dataset([;:0-9A-Za-z+/=]+)-(.*)$',
                 $rawresponse->answer, $regs)) {
-            error ("Wrongly formatted raw response answer $rawresponse->answer");
+            error ("Malformated raw response answer $rawresponse->answer");
         }
         
         // Truncate raw response to fit the virtual qtype
@@ -439,7 +439,7 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
 
         // Print hidden field with dataset info
         echo '<input type="hidden" name="' . $nameprefix
-                . '" value="' . $datasetinput . '" />';
+                . '" value="' . $datasetinput . '"/>';
 
         // Forward to the virtual qtype
         unset($question->response[$nameprefix]);

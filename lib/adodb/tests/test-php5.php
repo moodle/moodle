@@ -1,6 +1,6 @@
 <?php
 /*
-  V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -18,30 +18,23 @@ include("$path/../adodb.inc.php");
 echo "<h3>PHP ".PHP_VERSION."</h3>\n";
 try {
 
-$dbt = 'mysql';
+$dbt = 'oci8po';
 
-try {
 switch($dbt) {
 case 'oci8po':
 	$db = NewADOConnection("oci8po");
-	
 	$db->Connect('','scott','natsoft');
 	break;
 default:
 case 'mysql':
 	$db = NewADOConnection("mysql");
-	$db->Connect('localhost','roots','','northwind');
+	$db->Connect('localhost','root','','test');
 	break;
 	
 case 'mysqli':
-	$db = NewADOConnection("mysqli://root:@localhost/northwind");
+	$db = NewADOConnection("mysqli://root:@localhost/test");
 	//$db->Connect('localhost','root','','test');
 	break;
-}
-} catch (exception $e){
-	echo "Connect Failed";
-	adodb_pr($e);
-	die();
 }
 
 $db->debug=1;
@@ -51,19 +44,16 @@ $stmt = $db->Prepare("select * from adoxyz where ?<id and id<?");
 if (!$stmt) echo $db->ErrorMsg(),"\n";
 $rs = $db->Execute($stmt,array(10,20));
 
-echo  "<hr> Foreach Iterator Test (rand=".rand().")<hr>";
 $i = 0;
-foreach($rs as $v) {
+foreach($rs as  $v) {
 	$i += 1;
-	echo "rec $i: "; $s1 = adodb_pr($v,true); $s2 = adodb_pr($rs->fields,true);
-	if ($s1 != $s2 && !empty($v)) {adodb_pr($s1); adodb_pr($s2);}
-	else echo "passed<br>";
+	echo "rec $i: "; adodb_pr($v); adodb_pr($rs->fields);
 	flush();
 }
 
 
 if ($i != $cnt) die("actual cnt is $i, cnt should be $cnt\n");
-else echo "Count $i is correct<br>";
+
 
 $rs = $db->Execute("select bad from badder");
 

@@ -1,10 +1,10 @@
-<?php  // $Id$
+<?PHP  // $Id$
     require_once("../../config.php");
     require_once("lib.php");
 
     optional_variable($concept);
     optional_variable($courseid,0);
-    optional_variable($eid,0); // glossary entry id
+    optional_variable($eid,0);
     optional_variable($displayformat,-1);
 
     if ($CFG->forcelogin) {
@@ -12,30 +12,19 @@
     }
 
     if ($eid) {
-        $entry = get_record("glossary_entries", "id", $eid);
-        $glossary = get_record('glossary','id',$entry->glossaryid);
-        $entry->glossaryname = format_string($glossary->name,true);
-        if (!$cm = get_coursemodule_from_instance("glossary", $glossary->id)) {
-            error("Could not determine which course module this belonged to!");
-        }
-        if (!$cm->visible and !isteacher($cm->course)) {
-            redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
-        }
-        $entry->cmid = $cm->id;
-        $entry->courseid = $cm->course;
-        $entries[] = $entry;
+        $entries[] = get_record("glossary_entries", "id", $eid);
+
     } else if ($concept) {
-        $entries = glossary_get_entries_search($concept, $courseid);
-    } else {
-        error('No valid entry specified');
+        $entries = get_records_sql("select e.* from {$CFG->prefix}glossary_entries e, {$CFG->prefix}glossary g".
+                                  " where e.glossaryid = g.id and".
+                                      " (e.casesensitive != 0 and ucase(concept) = '" . strtoupper(trim($concept)). "' or".
+                                      " e.casesensitive = 0 and concept = '$concept') and".
+                                      " (g.course = $courseid or g.globalglossary) and".
+                                      " e.usedynalink != 0 and g.usedynalink != 0");
     }
 
-    if ($entries) {
-        foreach ($entries as $key => $entry) {
-            //$entries[$key]->footer = "<p align=\"right\">&raquo;&nbsp;<a onClick=\"if (window.opener) {window.opener.location.href='$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid'; return false;} else {openpopup('/mod/glossary/view.php?g=$entry->glossaryid', 'glossary', 'menubar=1,location=1,toolbar=1,scrollbars=1,directories=1,status=1,resizable=1', 0); return false;}\" href=\"$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid\" target=\"_blank\">".format_string($entry->glossaryname,true)."</a></p>";  // Could not get this to work satisfactorily in all cases  - Martin
-            $entries[$key]->footer = "<p align=\"right\">&raquo;&nbsp;<a target=\"_blank\" href=\"$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid\">".format_string($entry->glossaryname,true)."</a></p>";
-            add_to_log($entry->courseid, "glossary", "view entry", "showentry.php?eid=$entry->id", $entry->id, $entry->cmid);
-        }
+    foreach ($entries as $entry) {
+        $glossary = get_record('glossary','id',$entry->glossaryid);
     }
 
     if (!empty($courseid)) {
@@ -49,10 +38,10 @@
 
         $CFG->framename = "newwindow";
         if ($course->category) {
-            print_header(strip_tags("$course->shortname: $strglossaries $strsearch"), "$course->fullname",
+            print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
             "<a target=\"newwindow\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $strglossaries -> $strsearch", "", "", true, "&nbsp;", "&nbsp;");
         } else {
-            print_header(strip_tags("$course->shortname: $strglossaries $strsearch"), "$course->fullname",
+            print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
             "$strglossaries -> $strsearch", "", "", true, "&nbsp;", "&nbsp;");
         }
 
@@ -62,8 +51,8 @@
 
     if ($entries) {
         glossary_print_dynaentry($courseid, $entries, $displayformat);
-    }
-
+    }    
+    
     close_window_button();
 
 ?>

@@ -1,16 +1,9 @@
 <!-- define a new instance of lesson -->
 <!-- It is used from /course/mod.php.  The whole instance is available as $form. -->
 <?php
-require("$CFG->dirroot/mod/lesson/locallib.php");  // for parameter array
-if ($form->mode == "add") {
-    if ($defaults = get_record("lesson_default", "course", $form->course)) {
-        foreach ($defaults as $name => $value) {
-            if (!is_numeric($name)) {
-                $form->$name = $value;
-            }
-        }
-    }
-}
+
+    require_once("$CFG->dirroot/mod/lesson/lib.php");  // for parameter array
+    $nohtmleditorneeded = true;
 
 // set the defaults
     if (empty($form->name)) {
@@ -26,7 +19,7 @@ if ($form->mode == "add") {
         $form->maxanswers = 4;
     }
     if (!isset($form->maxattempts)) {
-        $form->maxattempts = 1;
+        $form->maxattempts = 5;
     }
     if (!isset($form->nextpagedefault)) {
         $form->nextpagedefault = 0;
@@ -38,161 +31,31 @@ if ($form->mode == "add") {
         $form->maxpages = 0;
     }
     if (!isset($form->retake)) {
-        $form->retake = 0;
+        $form->retake = 1;
     }
     if (!isset($form->available)) {
         $form->available = 0;
     }
     if (!isset($form->deadline)) {
-        $currentdate = usergetdate(time());
-        $form->deadline = gmmktime($currentdate["hours"], $currentdate["minutes"], $currentdate["seconds"], $currentdate["mon"]+1, $currentdate["mday"], $currentdate["year"]);
-    }
-    /// CDC-FLAG ///
-    if (!isset($form->usepassword)) {
-        $form->usepassword = 0;
-    }
-    if (!isset($form->custom)) {
-        $form->custom = 1;
-    }
-    if (!isset($form->ongoing)) {
-        $form->ongoing = 0;
-    }
-    if (!isset($form->timed)) {
-        $form->timed = 0;
-    }
-    if (!isset($form->maxtime)) {
-        $form->maxtime = 20;
-    }
-    if (!isset($form->tree)) {
-        $form->tree = 0;
-    }
-    if (!isset($form->slideshow)) {
-        $form->slideshow = 0;
-    }
-    if (!isset($form->width)) {
-        $form->width = 640;
-    }
-    if (!isset($form->height)) {
-        $form->height = 400;
-    }
-    if (!isset($form->bgcolor)) {
-        $form->bgcolor = "#FFFFFF";
-    }
-    if (!isset($form->displayleft)) {
-        $form->displayleft = 0;
-    }
-    if (!isset($form->highscores)) {
-        $form->highscores = 0;
-    }
-    if (!isset($form->maxhighscores)) {
-        $form->maxhighscores = 10;
-    }
-    if (!isset($form->practice)) {
-        $form->practice = 0;
-    }
-    if (!isset($form->review)) {
-        $form->review = 0;
-    }
-    if (!isset($form->lessondefault)) {
-        $form->lessondefault = 0;
-    }
-    if (!isset($form->modattempts)) {
-        $form->modattempts = 0;
+        $form->deadline = 0;
     }
 
-    
-    $form->deleteattempts = "";
-
-    /// CDC-FLAG ///
 ?>
 
-<form name="form" method="post" action="mod.php">
-<center>
+<FORM name="form" method="post" action="<?php echo $ME ?>">
+<CENTER>
+<TABLE cellpadding=5>
+<TR valign=top>
+    <TD align=right><P><B><?php  print_string("name") ?>:</B></P></TD>
+    <TD>
+        <INPUT type="text" name="name" size=30 value="<?php  p($form->name) ?>">
+    </TD>
+</TR>
 
-<table cellpadding="5">
-
-<tr>
-    <td>
-        <?php print_heading(get_string("general", "lesson"), "left", 4); ?>
-    </td><td></td>
-</tr>
-
-<tr valign="top">
-    <td align="right"><b><?php  print_string("name") ?>:</b></td>
-    <td>
-        <!-- //CDC hidden label added. --><label for="name" class="hidden-label">Name</label><input type="text" id="name" name="name" size="30" value="<?php  p($form->name) ?>" />
-    </td>
-</tr>
-
-<tr>
-    <td align="right"><b><?php print_string("timed", "lesson"); ?>:</b></td>
-    <td>
-    <?PHP
-        $options = array(); 
-        $options[0] = get_string("no"); $options[1] = get_string("yes");
-        choose_from_menu($options, "timed", $form->timed, "");
-        helpbutton("timed", get_string("timed", "lesson"), "lesson");
-    ?>
-    </td>
-</tr>
-
-<tr>
-    <td align="right"><b><?php print_string("maxtime", "lesson"); ?>:</b></td>
-    <td>
-        <input type="text" name="maxtime" maxlength="7" size="7" value="<?php  p($form->maxtime) ?>" />
-        <?php helpbutton("maxtime", get_string("maxtime", "lesson"), "lesson"); ?>
-    </td>
-</tr>
-
-<tr valign="top">
-    <td align="right"><b><?php  print_string("maximumnumberofanswersbranches", "lesson") ?>:</b></td>
+<tr valign=top>
+    <td align=right><P><B><?php  print_string("maximumgrade") ?>:</B></P></TD>
     <td>
         <?php
-        $numbers = array();
-        for ($i=20; $i>1; $i--) {
-            $numbers[$i] = $i;
-        }
-        choose_from_menu($numbers, "maxanswers", "$form->maxanswers", "");
-       helpbutton("maxanswers", get_string("maximumnumberofanswersbranches", "lesson"), "lesson");
-        ?>
-    </td>
-</tr>
-
-<tr>
-    <td>
-        <br/><?php print_heading(get_string("gradeoptions", "lesson"), "left", 4); ?>
-    </td><td></td>
-</tr>
-
-<tr>
-    <td align="right"><b><?php  print_string("practice", "lesson"); ?>:</b></td>
-    <td>
-    <?PHP
-        $options = array(); 
-        $options[0] = get_string("no"); $options[1] = get_string("yes");
-        choose_from_menu($options, "practice", $form->practice, "");
-        helpbutton("practice", get_string("practice", "lesson"), "lesson");
-    ?>
-    </td>
-</tr>
-
-<tr>
-    <td align="right"><b><?php  print_string("customscoring", "lesson"); ?>:</b></td>
-    <td>
-    <?PHP
-        $options = array(); 
-        $options[0] = get_string("no"); $options[1] = get_string("yes");
-        choose_from_menu($options, "custom", $form->custom, "");
-        helpbutton("custom", get_string("customscoring", "lesson"), "lesson");
-    ?>
-    </td>
-</tr>
-
-<tr valign="top">
-    <td align="right"><b><?php  print_string("maximumgrade") ?>:</b></td>
-    <td>
-        <?php
-        $grades = array();
         for ($i=100; $i>=0; $i--) {
             $grades[$i] = $i;
         }
@@ -202,77 +65,24 @@ if ($form->mode == "add") {
     </td>
 </tr>
 
-<tr>
-    <td align="right"><b><?php  print_string("canretake", "lesson", $course->student) ?>:</b></td>
-    <td>
-    <?PHP
-        $options = array(); 
-        $options[0] = get_string("no"); $options[1] = get_string("yes");
-        choose_from_menu($options, "retake", $form->retake, "");
-        helpbutton("retake", get_string("canretake", "lesson", $course->student), "lesson");
-    ?>
-    </td>
-</tr>
-
-<tr>
-    <td align="right"><b><?php  print_string("handlingofretakes", "lesson") ?>:</b></td>
-    <td>
-    <?PHP 
-        $options = array();
-        $options[0] = get_string("usemean", "lesson"); $options[1] = get_string("usemaximum", "lesson");
-        choose_from_menu($options, "usemaxgrade", $form->usemaxgrade, "");
-        helpbutton("handlingofretakes", get_string("handlingofretakes", "lesson"), "lesson");
-    ?>
-    </td>
-</tr>
-
-<tr>
-    <td align="right"><b><?php  print_string("ongoing", "lesson"); ?>:</b></td>
-    <td>
-    <?php
-        $options = array();
-        $options[0] = get_string("no"); $options[1] = get_string("yes");
-        choose_from_menu($options, "ongoing", $form->ongoing, "");
-        helpbutton("ongoing", get_string("ongoing", "lesson"), "lesson");
-    ?>
-    </td>
-</tr>
-
-<tr>
-    <td>
-        <br/><?php print_heading(get_string("flowcontrol", "lesson"), "left", 4); ?>
-    </td><td></td>
-</tr>
-
-<tr>
-    <td align="right"><b><?php  print_string("modattempts", "lesson"); ?>:</b></td>
-    <td>
-    <?PHP 
-        $options = array();
-        $options[0] = get_string("no"); $options[1] = get_string("yes");
-        choose_from_menu($options, "modattempts", $form->modattempts, "");
-        helpbutton("modattempts", get_string("modattempts", "lesson"), "lesson");
-    ?>
-    </td>
-</tr>
-
-<tr>
-    <td align="right"><b><?php print_string("displayreview", "lesson"); ?>:</b></td>
-    <td>
-    <?php
-        $options = array();
-        $options[0] = get_string("no"); $options[1] = get_string("yes");
-        choose_from_menu($options, "review", $form->review, "");
-        helpbutton("review", get_string("displayreview", "lesson"), "lesson");
-    ?>
-    </td>
-</tr>
-
-<tr valign="top">
-    <td align="right"><b><?php  print_string("maximumnumberofattempts", "lesson") ?>:</b></td>
+<tr valign=top>
+    <td align=right><P><B><?php  print_string("maximumnumberofanswersbranches", "lesson") ?>:</B></P></TD>
     <td>
         <?php
-        $numbers = array();
+        for ($i=10; $i>1; $i--) {
+            $numbers[$i] = $i;
+        }
+        choose_from_menu($numbers, "maxanswers", "$form->maxanswers", "");
+       helpbutton("maxanswers", get_string("maximumnumberofanswersbranches", "lesson"), "lesson");
+        ?>
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B><?php  print_string("maximumnumberofattempts", "lesson") ?>:</B></P></TD>
+    <td>
+        <?php
+        unset($numbers);
         for ($i=10; $i>0; $i--) {
             $numbers[$i] = $i;
         }
@@ -283,20 +93,20 @@ if ($form->mode == "add") {
 </tr>
 
 <tr>
-    <td align="right"><b><?php  print_string("actionaftercorrectanswer", "lesson") ?>:</b></td>
+    <td align=right><P><B><?php  print_string("actionaftercorrectanswer", "lesson") ?>:</B></P></TD>
     <td>
-    <?php 
+    <?PHP 
         choose_from_menu($LESSON_NEXTPAGE_ACTION, "nextpagedefault", $form->nextpagedefault, "");
         helpbutton("nextpageaction", get_string("actionaftercorrectanswer", "lesson"), "lesson");
     ?>
     </td>
 </tr>
 
-<tr valign="top">
-    <td align="right"><b><?php  print_string("minimumnumberofquestions", "lesson") ?>:</b></td>
+<tr valign=top>
+    <td align=right><P><B><?php  print_string("minimumnumberofquestions", "lesson") ?>:</B></P></TD>
     <td>
         <?php
-        $numbers = array();
+        unset($numbers);
         for ($i=100; $i>=0; $i--) {
             $numbers[$i] = $i;
         }
@@ -306,11 +116,11 @@ if ($form->mode == "add") {
     </td>
 </tr>
 
-<tr valign="top">
-    <td align="right"><b><?php  print_string("numberofpagestoshow", "lesson") ?>:</b></td>
+<tr valign=top>
+    <td align=right><P><B><?php  print_string("numberofpagestoshow", "lesson") ?>:</B></P></TD>
     <td>
         <?php
-        $numbers = array();
+        unset($numbers);
         for ($i=100; $i>=0; $i--) {
             $numbers[$i] = $i;
         }
@@ -321,88 +131,29 @@ if ($form->mode == "add") {
 </tr>
 
 <tr>
-    <td>
-        <br/><?php print_heading(get_string("lessonformating", "lesson"), "left", 4); ?>
-    </td><td></td>
-</tr>
-
-<tr>
-    <td align="right"><b><?php print_string("slideshow", "lesson"); ?>:</b></td>
+    <td align=right><P><B><?php  print_string("canretake", "lesson", $course->student) ?>:</B></P></TD>
     <td>
     <?PHP 
-        $options = array();
         $options[0] = get_string("no"); $options[1] = get_string("yes");
-        choose_from_menu($options, "slideshow", $form->slideshow, "");
-        helpbutton("slideshow", get_string("slideshow", "lesson"), "lesson");
+        choose_from_menu($options, "retake", $form->retake, "");
+        helpbutton("retake", get_string("canretake", "lesson", $course->student), "lesson");
     ?>
     </td>
 </tr>
 
 <tr>
-    <td align="right"><b><?php print_string("slideshowwidth", "lesson"); ?>:</b></td>
-    <td>
-        <input type="text" name="width" maxlength="7" size="7" value="<?php  p($form->width) ?>" />px
-        <?php helpbutton("width", get_string("slideshowwidth", "lesson"), "lesson"); ?>
-    </td>
-</tr>
-
-<tr>
-    <td align="right"><b><?php print_string("slideshowheight", "lesson"); ?>:</b></td>
-    <td>
-        <input type="text" name="height" maxlength="7" size="7" value="<?php  p($form->height) ?>" />px
-        <?php helpbutton("height", get_string("slideshowheight", "lesson"), "lesson"); ?>
-    </td>
-</tr>
-
-<tr>
-    <td align="right"><b><?php print_string("slideshowbgcolor", "lesson"); ?>:</b></td>
-    <td>
-        <input type="text" name="bgcolor" maxlength="7" size="7" value="<?php  p($form->bgcolor) ?>" />
-        <?php helpbutton("bgcolor", get_string("slideshowbgcolor", "lesson"), "lesson"); ?>
-
-    </td>
-</tr>
-
-<tr>
-    <td align="right"><b><?php  print_string("displayleftmenu", "lesson"); ?>:</b></td>
+    <td align=right><P><B><?php  print_string("handlingofretakes", "lesson") ?>:</B></P></TD>
     <td>
     <?PHP 
-        $options = array();
-        $options[0] = get_string("no"); $options[1] = get_string("yes");
-        choose_from_menu($options, "displayleft", $form->displayleft, "");
-        helpbutton("displayleft", get_string("displayleftmenu", "lesson"), "lesson");
+        $options[0] = get_string("usemean", "lesson"); $options[1] = get_string("usemaximum", "lesson");
+        choose_from_menu($options, "usemaxgrade", $form->usemaxgrade, "");
+        helpbutton("handlingofretakes", get_string("handlingofretakes", "lesson"), "lesson");
     ?>
     </td>
 </tr>
 
-<tr>
-    <td>
-        <br/><?php print_heading(get_string("accesscontrol", "lesson"), "left", 4); ?>
-    </td><td></td>
-</tr>
-
-<tr>
-    <td align="right"><b><?php  print_string("usepassword", "lesson"); ?>:</b></td>
-    <td>
-    <?PHP 
-        $options = array();
-        $options[0] = get_string("no"); $options[1] = get_string("yes");
-        choose_from_menu($options, "usepassword", $form->usepassword, "");
-        helpbutton("usepassword", get_string("usepassword", "lesson"), "lesson");
-    ?>
-    </td>
-</tr>
-
-<tr>
-    <td align="right"><b><?php  print_string("password", "lesson"); ?>:</b></td>
-    <td>
-        <input type="text" name="password" size="7" value="" /> <?php echo " (".get_string("leavetokeep").")"; ?>
-        <?php helpbutton("password", get_string("password", "lesson"), "lesson"); ?>
-    </td>
-</tr>
-
-<tr valign="top">
-    <td align="right"><b><?php  print_string("available", "lesson") ?>:</b></td>
+<tr valign=top>
+    <td align=right><P><B><?php  print_string("available", "lesson") ?>:</B></td>
     <td><?php
            print_date_selector("availableday", "availablemonth", "availableyear", $form->available);
            echo "&nbsp;-&nbsp;";
@@ -410,8 +161,8 @@ if ($form->mode == "add") {
     ?></td>
 </tr>
 
-<tr valign="top">
-    <td align="right"><b><?php  print_string("deadline", "lesson") ?>:</b></td>
+<tr valign=top>
+    <td align=right><P><B><?php  print_string("deadline", "lesson") ?>:</B></td>
     <td><?php
            print_date_selector("deadlineday", "deadlinemonth", "deadlineyear", $form->deadline);
            echo "&nbsp;-&nbsp;";
@@ -419,80 +170,15 @@ if ($form->mode == "add") {
     ?></td>
 </tr>
 
-<tr>
-    <td>
-        <br/><?php print_heading(get_string("other", "lesson"), "left", 4); ?>
-    </td><td></td>
-</tr>
-
-<tr>
-    <td align="right"><b><?php print_string("treeview", "lesson"); ?>:</b></td>
-    <td>
-    <?PHP 
-        $options = array();
-        $options[0] = get_string("no"); $options[1] = get_string("yes");
-        choose_from_menu($options, "tree", $form->tree, "");
-        helpbutton("tree", get_string("treeview", "lesson"), "lesson");
-    ?>
-    </td>
-</tr>
-
-<tr>
-    <td align="right"><b><?php print_string("displayhighscores", "lesson"); ?>:</b></td>
-    <td>
-    <?PHP 
-        $options = array();
-        $options[0] = get_string("no"); $options[1] = get_string("yes");
-        choose_from_menu($options, "highscores", $form->highscores, "");
-        helpbutton("highscores", get_string("displayhighscores", "lesson"), "lesson");
-    ?>
-    </td>
-</tr>
-
-<tr>
-    <td align="right"><b><?php print_string("maxhighscores", "lesson"); ?>:</b></td>
-    <td>
-        <input type="text" name="maxhighscores" maxlength="7" size="7" value="<?php  p($form->maxhighscores) ?>" />
-        <?php helpbutton("maxhighscores", get_string("maxhighscores", "lesson"), "lesson"); ?>
-    </td>
-</tr>
-
-<tr>
-    <td align="right"><b><?php print_string("lessondefault", "lesson"); ?>:</b></td>
-    <td>
-    <?PHP 
-        $options = array();
-        $options[0] = get_string("no"); $options[1] = get_string("yes");
-        choose_from_menu($options, "lessondefault", $form->lessondefault, "");
-        helpbutton("lessondefault", get_string("lessondefault", "lesson"), "lesson");
-    ?>
-    </td>
-</tr>
-<?php 
-    if ($form->mode != "add") {
-?>
-<tr>
-    <td align="right"><b><?php  print_string("deleteattempts", "lesson"); ?>:</b></td>
-    <td>
-        <input type="text" name="deleteattempts" size="7" value="" />
-        <?php helpbutton("deleteattempts", get_string("deleteattempts", "lesson"), "lesson"); ?>
-        <input type="hidden" name="deleteattemptsid" value="<?php echo $USER->id; ?>" />
-    </td>
-</tr>
-<?php
-    }  // end if statement  if ($form->mode != "add") {
-?>
-<?php print_visible_setting($form); ?>
-</table>
+</TABLE>
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php  p($form->course) ?>" />
-<input type="hidden" name="sesskey"       value="<?php  p($form->sesskey) ?>" />
-<input type="hidden" name="coursemodule"  value="<?php  p($form->coursemodule) ?>" />
-<input type="hidden" name="section"       value="<?php  p($form->section) ?>" />
-<input type="hidden" name="module"        value="<?php  p($form->module) ?>" />
-<input type="hidden" name="modulename"    value="<?php  p($form->modulename) ?>" />
-<input type="hidden" name="instance"      value="<?php  p($form->instance) ?>" />
-<input type="hidden" name="mode"          value="<?php  p($form->mode) ?>" />
-<input type="submit" value="<?php  print_string("savechanges") ?>" />
-</center>
-</form>
+<INPUT type="hidden" name=course        value="<?php  p($form->course) ?>">
+<INPUT type="hidden" name=coursemodule  value="<?php  p($form->coursemodule) ?>">
+<INPUT type="hidden" name=section       value="<?php  p($form->section) ?>">
+<INPUT type="hidden" name=module        value="<?php  p($form->module) ?>">
+<INPUT type="hidden" name=modulename    value="<?php  p($form->modulename) ?>">
+<INPUT type="hidden" name=instance      value="<?php  p($form->instance) ?>">
+<INPUT type="hidden" name=mode          value="<?php  p($form->mode) ?>">
+<INPUT type="submit" value="<?php  print_string("savechanges") ?>">
+</CENTER>
+</FORM>

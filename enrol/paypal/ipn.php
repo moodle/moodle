@@ -34,7 +34,7 @@
     $custom = explode('-', $data->custom);
     $data->userid           = $custom[0];
     $data->courseid         = $custom[1];
-    $data->payment_gross    = $data->mc_gross;
+    $data->payment_amount   = $data->mc_gross;
     $data->payment_currency = $data->mc_currency;
 
 
@@ -184,7 +184,7 @@
 
 
         } else if (strcmp ($result, "INVALID") == 0) { // ERROR
-            insert_record("enrol_paypal", $data, false);
+            insert_record("enrol_paypal", $data);
             email_paypal_error_to_admin("Received an invalid payment notification!! (Fake payment?)", $data);
         }
     }

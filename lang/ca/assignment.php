@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020800)
+      // assignment.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['allowresubmit'] = 'Permet tornar a trametre';
@@ -18,14 +18,6 @@ $string['description'] = 'Descripció';
 $string['duedate'] = 'Data de venciment';
 $string['duedateno'] = 'Sense data de venciment';
 $string['early'] = '$a aviat';
-$string['emailteachermail'] = '$a->username ha actualitzat la tramesa  de la tasca \"$a->assignment\".
-
-Està disponible aquí:
-
-$a->url';
-$string['emailteachermailhtml'] = '$a->username ha actualitzat la tramesa  de la tasca <i>\"$a->assignment\"</i>.<br /><br />
-Està <a href=\"$a->url\">disponible al web</a>.';
-$string['emailteachers'] = 'Avisa els professors per correu electrònic';
 $string['existingfiledeleted'] = 'S\'ha suprimit el fitxer existent : $a';
 $string['failedupdatefeedback'] = 'Ha fallat l\'actualització de la retroacció en la tasca de l\'usuari $a';
 $string['feedback'] = 'Retroacció';

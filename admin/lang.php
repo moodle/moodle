@@ -20,22 +20,21 @@
     $strlanguage = get_string("language");
     $strcurrentlanguage = get_string("currentlanguage");
     $strmissingstrings = get_string("missingstrings");
-    $streditstrings = get_string("editstrings", 'admin');
-    $stredithelpdocs = get_string("edithelpdocs", 'admin');
+    $strcomparelanguage = get_string("comparelanguage");
     $strthislanguage = get_string("thislanguage");
 
     switch ($mode) {
         case "missing":
-            $navigation = "<a href=\"lang.php\">$strlanguage</a> -> $strmissingstrings";
+            $navigation = "<A HREF=\"lang.php\">$strlanguage</A> -> $strmissingstrings";
             $title = $strmissingstrings;
-            $button = '<form target="'.$CFG->framename.'" method="get" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/lang.php">'.
+            $button = '<form target="'.$CFG->framename.'" method="get" action="'.$CFG->wwwroot.'/admin/lang.php">'.
                       '<input type="hidden" name="mode" value="compare" />'.
-                      '<input type="submit" value="'.$streditstrings.'" /></form>';
+                      '<input type="submit" value="'.$strcomparelanguage.'" /></form>';
             break;
         case "compare":
-            $navigation = "<a href=\"lang.php\">$strlanguage</a> -> $streditstrings";
-            $title = $streditstrings;
-            $button = '<form target="'.$CFG->framename.'" method="get" action="'.$CFG->wwwroot.'/'.$CFG->admin.'/lang.php">'.
+            $navigation = "<A HREF=\"lang.php\">$strlanguage</A> -> $strcomparelanguage";
+            $title = $strcomparelanguage;
+            $button = '<form target="'.$CFG->framename.'" method="get" action="'.$CFG->wwwroot.'/admin/lang.php">'.
                       '<input type="hidden" name="mode" value="missing" />'.
                       '<input type="submit" value="'.$strmissingstrings.'" /></form>';
             break;
@@ -56,17 +55,17 @@
     if (!$mode) {
         $currlang = current_language();
         $langs = get_list_of_languages();
-        echo "<table align=\"center\"><tr><td align=\"right\">";
+        echo "<table align=center><tr><td align=\"right\">";
         echo "<b>$strcurrentlanguage:</b>";
         echo "</td><td>";
-        echo popup_form ("$CFG->wwwroot/$CFG->admin/lang.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
-        echo '</td></tr><tr><td colspan="2">';
-        $options["lang"] = $currentlang;
-        print_single_button("http://moodle.org/download/lang/", $options, get_string("latestlanguagepack"));
+        echo popup_form ("$CFG->wwwroot/admin/lang.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
         echo "</td></tr></table>";
         print_heading("<a href=\"lang.php?mode=missing\">$strmissingstrings</a>");
-        print_heading("<a href=\"lang.php?mode=compare\">$streditstrings</a>");
-        print_heading("<a href=\"langdoc.php\">$stredithelpdocs</a>");
+        print_heading("<a href=\"lang.php?mode=compare\">$strcomparelanguage</a>");
+        echo "<center><hr noshade size=1>";
+        $options["lang"] = $currentlang;
+        print_single_button("http://moodle.org/download/lang/", $options, get_string("latestlanguagepack"));
+        echo "</center>";
         print_footer();
         exit;
     }
@@ -92,7 +91,7 @@
         foreach ($stringfiles as $file) {
             if (!file_exists("$langdir/$file")) {
                 if (!touch("$langdir/$file")) {
-                    echo "<p><font color=\"red\">".get_string("filemissing", "", "$langdir/$file")."</font></p>";
+                    echo "<p><font color=red>".get_string("filemissing", "", "$langdir/$file")."</font></p>";
                     continue;
                 }
             }
@@ -129,7 +128,7 @@
     
         foreach ($files as $filekey => $file) {    // check all the help files.
             if (!file_exists("$langdir/help/$file")) {
-                echo "<p><font color=\"red\">".get_string("filemissing", "", "$langdir/help/$file")."</font></p>";
+                echo "<p><font color=red>".get_string("filemissing", "", "$langdir/help/$file")."</font></p>";
                 $somethingfound = true;
                 continue;
             }
@@ -140,7 +139,7 @@
         }
         foreach ($files as $filekey => $file) {    // check all the docs files.
             if (!file_exists("$langdir/docs/$file")) {
-                echo "<p><font color=\"red\">".get_string("filemissing", "", "$langdir/docs/$file")."</font></p>";
+                echo "<P><FONT COLOR=red>".get_string("filemissing", "", "$langdir/docs/$file")."</FONT></P>";
                 $somethingfound = true;
                 continue;
             }
@@ -155,19 +154,16 @@
     } else if ($mode == "compare") {
 
         if (isset($_POST['currentfile'])){   // Save a file
-            if (!confirm_sesskey()) {
-                error(get_string('confirmsesskeybad', 'error'));
-            }
             $newstrings = $_POST;
             unset($newstrings['currentfile']);
             if (lang_save_file($langdir, $currentfile, $newstrings)) {
                 notify(get_string("changessaved")." ($langdir/$currentfile)", "green");
             } else {
-                error("Could not save the file '$currentfile'!", "lang.php?mode=compare&amp;currentfile=$currentfile");
+                error("Could not save the file '$currentfile'!", "lang.php?mode=compare&currentfile=$currentfile");
             }
         }
 
-        print_heading_with_help($streditstrings, "langedit");
+        print_heading_with_help($strcomparelanguage, "langedit");
 
         print_simple_box_start("center", "80%");
         echo '<center><font size="2">';
@@ -175,7 +171,7 @@
             if ($file == $currentfile) {
                 echo "<b>$file</b> &nbsp; ";
             } else {
-                echo "<a href=\"lang.php?mode=compare&amp;currentfile=$file\">$file</a> &nbsp; ";
+                echo "<a href=\"lang.php?mode=compare&currentfile=$file\">$file</a> &nbsp; ";
             }
         }
         echo '</font></center>';
@@ -186,7 +182,7 @@
 
         if (!file_exists("$langdir/$currentfile")) {
             if (!touch("$langdir/$currentfile")) {
-                echo "<p><font color=\"red\">".get_string("filemissing", "", "$langdir/$currentfile")."</font></p>";
+                echo "<p><font color=red>".get_string("filemissing", "", "$langdir/$currentfile")."</font></p>";
                 continue;
             }
         }
@@ -197,7 +193,7 @@
             fclose($f);
         } else {
             $editable = false;
-            echo "<p><font size=\"1\">".get_string("makeeditable", "", "$langdir/$currentfile")."</font></p>";
+            echo "<p><font size=1>".get_string("makeeditable", "", "$langdir/$currentfile")."</font></p>";
         }
         error_reporting(7);
 
@@ -205,12 +201,6 @@
         unset($string);
         include("$enlangdir/$currentfile");
         $enstring = $string;  
-        if ($currentlang != 'en' and $currentfile == 'moodle.php') {
-            $enstring['thislanguage'] = "<< TRANSLATORS: Specify the name of your language here.  If possible use Unicode Numeric Character References >>";
-            $enstring['thischarset'] = "<< TRANSLATORS: Specify the character set of your language here. Note that all text created while this language is active will be stored using this character set, so don't change it once you have set it. Example: iso-8859-1 >>";
-            $enstring['thisdirection'] = "<< TRANSLATORS: This string specifies the direction of your text, either left-to-right or right-to-left.  Insert either 'ltr' or 'rtl' here. >>";
-            $enstring['parentlanguage'] = "<< TRANSLATORS: If your language has a Parent Language that Moodle should use when strings are missing from your language pack, then specify the code for it here.  If you leave this blank then English will be used.  Example: nl >>";
-        }
         ksort($enstring);
 
         unset($string);
@@ -219,16 +209,16 @@
         if ($editable) {
             echo "<form name=\"$currentfile\" action=\"lang.php\" method=\"post\">";
         }
-        echo "<table width=\"100%\" cellpadding=\"2\" cellspacing=\"3\" border=\"0\" class=\"generalbox\">";
+        echo "<table width=\"100%\" cellpadding=2 cellspacing=3 border=0>";
         foreach ($enstring as $key => $envalue) {
             $envalue = nl2br(htmlspecialchars($envalue));
             $envalue = preg_replace('/(\$a\-\&gt;[a-zA-Z0-9]*|\$a)/', '<b>$0</b>', $envalue);  // Make variables bold. 
             $envalue = str_replace("%%","%",$envalue);
             $envalue = str_replace("\\","",$envalue);              // Delete all slashes
 
-            echo "\n\n".'<tr>';
-            echo '<td dir="ltr" lang="en" width="20%" nowrap="nowrap" valign="top">'.$key.'</td>'."\n";
-            echo '<td dir="ltr" lang="en" width="40%" valign="top">'.$envalue.'</td>'."\n";
+            echo "\n\n<tr>";
+            echo "<td dir=ltr lang=en width=20% bgcolor=\"$THEME->cellheading\" nowrap valign=top>$key</td>\n";
+            echo "<td dir=ltr lang=en width=40% bgcolor=\"$THEME->cellheading\" valign=top>$envalue</td>\n";
 
             $value = $string[$key];
             $value = str_replace("\r","",$value);              // Bad character caused by Windows
@@ -240,10 +230,10 @@
             $value = str_replace(">","&gt;",$value);
             $value = str_replace('"',"&quot;",$value);
 
-            $cellcolour = $value ? '': 'class="highlight"';
+            $cellcolour = $value ? $THEME->cellcontent: $THEME->highlight;
 
             if ($editable) {
-                echo '<td width="40%" '.$cellcolour.' valign="top">'."\n";
+                echo "<td width=40% bgcolor=\"$cellcolour\" valign=top>\n";
                 if (isset($string[$key])) {
                     $valuelen = strlen($value);
                 } else {
@@ -252,29 +242,28 @@
                 $cols=50;
                 if (strstr($value, "\r") or strstr($value, "\n") or $valuelen > $cols) {
                     $rows = ceil($valuelen / $cols);
-                    echo '<textarea name="stringXXX'.$key.'" cols="'.$cols.'" rows="'.$rows.'">'.$value.'</textarea>'."\n";
+                    echo "<textarea name=\"string-$key\" cols=\"$cols\" rows=\"$rows\">$value</textarea>\n";
                 } else {
                     if ($valuelen) {
                         $cols = $valuelen + 2;
                     }
-                    echo '<input type="text" name="stringXXX'.$key.'" value="'.$value.'" size="'.$cols.'" />';
+                    echo "<input type=\"text\" name=\"string-$key\" value=\"$value\" size=\"$cols\"></td>";
                 }
-                echo '</td>';
+                echo "</TD>\n";
 
             } else {
-                echo '<td width="40%" bgcolor="'.$cellcolour.'" valign="top">'.$value.'</td>';
+                echo "<td width=40% bgcolor=\"$cellcolour\" valign=top>$value</td>\n";
             }
         }
         if ($editable) {
-            echo '<tr><td colspan="2">&nbsp;<td><br />';
-            echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
-            echo '    <input type="hidden" name="currentfile" value="'.$currentfile.'" />';
-            echo '    <input type="hidden" name="mode" value="compare" />';
-            echo '    <input type="submit" name="update" value="'.get_string('savechanges').': '.$currentfile.'" />';
-            echo '</td></tr>';
+            echo "<tr><td colspan=2>&nbsp;<td><br />";
+            echo "    <input type=\"hidden\" name=\"currentfile\" value=\"$currentfile\">";
+            echo "    <input type=\"hidden\" name=\"mode\" value=\"compare\">";
+            echo "    <input type=\"submit\" name=\"update\" value=\"".get_string("savechanges").": $currentfile\">";
+            echo "</td></tr>";
         }
-        echo '</table>';
-        echo '</form>'; 
+        echo "</table>";
+        echo "</form>";
 
     }
 
@@ -305,7 +294,7 @@ function lang_save_file($path, $file, $strings) {
     ksort($strings);
 
     foreach ($strings as $key => $value) {
-        list($id, $stringname) = explode('XXX',$key);
+        list($id, $stringname) = explode("-",$key);
         if ($CFG->lang != "zh_hk" and $CFG->lang != "zh_tw") {  // Some MB languages include backslash bytes
             $value = str_replace("\\","",$value);           // Delete all slashes
         }

@@ -1,10 +1,7 @@
-<?php // $Id$ 
-      // block_social_activities.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+<?PHP // $Id$ 
+      // block_social_activities.php - created with Moodle 1.4 development (2004072901)
 
 
 $string['blockname'] = '社会活動';
-$string['thischarset'] = 'EUC-JP';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Japanese';
 
 ?>

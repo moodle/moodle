@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
+      // survey.php - created with Moodle 1.2 (2004032000)
 
 
 $string['actual'] = 'Tegelik';
@@ -10,7 +10,7 @@ $string['allscales'] = 'Kõik skaalad, kõik õpilased';
 $string['alreadysubmitted'] = 'Sa oled selle uurimuse juba esitanud';
 $string['analysisof'] = 'Analüüs $a';
 $string['answers'] = 'Vastused';
-$string['attls1'] = 'Hinnates kellegi ütlusi, keskendun ma tema põhjenduste kvaliteedile, mitte neid esitanud isikule.';
+$string['attls1'] = 'Hinnates kellegi ütlusi keskendun ma tema põhjenduste kvaliteedile, mitte neid esitanud isikule.';
 $string['attls10'] = 'Minu jaoks on tähtis jääda võimalikult objektiivseks, kui midagi analüüsin.';
 $string['attls10short'] = 'jääda objektiivseks';
 $string['attls11'] = 'Vastu vaidlemise asemel püüan inimestega kaasa mõelda.';
@@ -128,7 +128,7 @@ Palju tänu.';
 $string['collesaname'] = 'COLLES (tegelik)';
 $string['collesapintro'] = ' Selle küsitluse eesmärk on aidata meil mõista, kui hästi käesoleva peatüki online edastus aitas teil õppida. 
 
-Kõik allpool esitatud 24 väidet paluvad võrrelda teie <b> eelistatud</b> (ideaalset) ja <b>tegelikku</b> kogemust käesolevas peatükis.
+Kõik allpool esitatud 24 väidet paluvad võrrelda teie <B> eelistatud</B> (ideaalset) ja <B>tegelikku</B> kogemust käesolevas peatükis.
 
 Siin pole \"õigeid\" ja \"valesid\" vastuseid, meid huvitab üksnes teie arvamus
 
@@ -153,7 +153,7 @@ $string['collesm6short'] = 'Tõlgendus';
 $string['collesmintro'] = 'Selles online peatükis...';
 $string['collespintro'] = 'Selle küsitluse eesmärk on aidata meil mõista, kuidas te hindate online õppimiskogemust
 
-Kõik allpool esitatud 24 väidet paluvad võrrelda teie <b> eelistatud</b> (ideaalset) ja <b>tegelikku</b> kogemust käesolevas peatükis.
+Kõik allpool esitatud 24 väidet paluvad võrrelda teie <B> eelistatud</B> (ideaalset) ja <B>tegelikku</B> kogemust käesolevas peatükis.
 
 Siin pole \"õigeid\" ja \"valesid\" vastuseid, meid huvitab üksnes teie arvamus
 Kinnitame, et teie vastused jäävad konfidentsiaalinfoks ja teie hinnet need ei mõjuta 

@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // install.php - created with Moodle 1.4 (2004083100)
 
 
 $string['admindirerror'] = 'Det angivede admin biblioteket er forkert';
 $string['admindirname'] = 'Adminbibliotek';
-$string['admindirsetting'] = 'Nogle få webhoteller bruger /admin som en speciel URL til at administrere webhotellet. Det er et problem da moodle også bruger /admin som standard til administrationssiderne. Hvis det er så kan du omdøbe adminbiblioteket og så angive den nye sti til admin biblioteket her. For eksempel: <br/> <br /><b>moodleadmin</b><br /> <br />
+$string['admindirsetting'] = 'Nogle få webhoteller bruger /admin som en speciel URL til at administrere webhotellet. Det er et problem da moodle også bruger /admin som standard til administrationssiderne. Hvis det er så kan du omdøbe adminbiblioteket og så angive den nye sti til admin biblioteket her. For eksempel: <br/> <br /><b>moodleadmin</b><br /> <br />
 Dette vil rette admin linksene i moodle.';
 $string['caution'] = 'Pas på';
 $string['chooselanguage'] = 'Vælg et sprog';
@@ -14,7 +14,7 @@ $string['configfilewritten'] = 'config.php er blevet oprettet';
 $string['configurationcomplete'] = 'Konfigurationen er færdig.';
 $string['database'] = 'Database';
 $string['databasesettings'] = 'Du skal nu konfigurere databasen hvor det meste af moodles data vil blive gemt. Databaseserveren skal allerede være oprettet og du skal bruge brugernavn og password til en brugerkonto der har rettigheder til at oprette og hente data.<br/>
-<br /> <br />
+<br /> <br />
 <b>Type:</b> mysql eller postgres7<br />
 <b>Vært:</b> f.eks. localhost eller db.isp.com<br />
 <b>Database:</b> database navn, f.eks. moodle<br />
@@ -38,7 +38,7 @@ Angiv den fulde webadresse (URL) hvor moodle kan findes. Hvis sitet kan tilgås f
 Angiv den fulde bibliotekssti til moodleinstallationen. Stien er casesensitiv.</p>
 
 <p><b>Moodle Databibliotek</b>
-Det bibliotek hvor moodle kan gemme uploadede filer. Dette bibliotek skal være læsbar OG SKRIVBAR af den bruger apache kører under, ¨(typisk \'nobody\' eller \'apache\') men det bør ikke være adgang til det direkte fra webserveren.</p>';
+Det bibliotek hvor moodle kan gemme uploadede filer. Dette bibliotek skal være læsbar OG SKRIVBAR af den bruger apache kører under, ¨(typisk \'nobody\' eller \'apache\') men det bør ikke være adgang til det direkte fra webserveren.';
 $string['dirroot'] = 'Moodle bibliotek';
 $string['dirrooterror'] = 'Det angivne moodlebibliotek lader ikke til at være rigtigt - der kan ikke findes en Moodleinstallation. Den nedestående værdi er blevet fjernet.';
 $string['download'] = 'Download';
@@ -47,7 +47,7 @@ $string['fileuploads'] = 'File uploads';
 $string['fileuploadserror'] = 'Denne skulle være aktiveret';
 $string['fileuploadshelp'] = '<p>Filupload lader til at være slået fra på din server.</p>
 
-<p>Moodle kan stadig installeres, men uden uploade kursusfiler og profilbilleder.</p>
+<p>Moodle kan stadig installeres, men uden uploade kursusfiler og profilbilleder.
 
 <p>For at tillade filupload skal du (eller systemadministratoren) rette i php.ini for at ændre indstillingen for <b>fil_uploads</b> til \'1\'.</p>';
 $string['gdversion'] = 'GD version';
@@ -72,17 +72,17 @@ $string['memorylimit'] = 'Hukommelses begrænsning';
 $string['memorylimiterror'] = 'Den tilgængelige hukommelse til PHP er ret lav... Det kan værer at der opstår problemer senere.';
 $string['memorylimithelp'] = '<p>Mængden af hukommelse som PHP kan bruge er sat til $a.</p>
 
-<p>Dette kan forårsage at der opstår problemer senere, især hvis du har mange moduler installeret eller mange brugere.</p>
+<p>Dette kan forårsage at der opstår problemer senere, især hvis du har mange moduler installeret eller mange brugere.
 
 <p>Vi anbefaler at du konfigurere PHP til at kunne bruge mere hukommelse, f.eks. 16Mb. 
-Der er flere måder hvorpå du kan rette det.</p>
+Der er flere måder hvorpå du kan rette det.
 <ol>
 <li>Hvis du har mulighed for det kan du rekompilere PHP med <i>--enable-memory-limit</i>. 
-Dette vil tillade at Moodle selv kan definere hvor meget hukommelse der er brug for.</li>
+Dette vil tillade at Moodle selv kan definere hvor meget hukommelse der er brug for.
 <li>Hvis du har adgang til php.ini filen kan du ændre <b>memory_limit</b> 
-indstillingen så der er minimum 16Mb til rådighed. Hvis du ikke har direkte adgang til den kan du spørge systemadministratoren om han han vil gøre det for dig.</li>
+indstillingen så der er minimum 16Mb til rådighed. Hvis du ikke har direkte adgang til den kan du spørge systemadministratoren om han han vil gøre det for dig.
 <li>På nogle servere kan du oprette en \'.htaccess\' fil, gemme den i moodle biblioteket med linjen <p><blockquote>php_value memory_limit 16M</blockquote></p>
-<p>Det kan dog på nogle servere forårsage en fejl på <b>alle</b> PHPsiderne. i så fald kan du blive nødt til at fjerne \'.htaccess\' filen igen.</p></li>
+<p>Det kan dog på nogle servere forårsage en fejl på <b>alle</b> PHPsiderne. i så fald kan du blive nødt til at fjerne \'.htaccess\' filen igen.
 </ol>';
 $string['pass'] = 'OK';
 $string['phpversion'] = 'PHP version';

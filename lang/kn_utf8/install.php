@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032800)
+      // install.php - created with Moodle 1.4 + (2004083100)
 
 
 $string['admindirerror'] = 'ನೀವು ತಿಳಿಸಿದ ನಿರ್ವಾಹಕ ಕಡತ ಕೋಶ ತಪ್ಪಾಗಿದೆ';
@@ -24,7 +24,10 @@ $string['phpversion'] = 'ಪಿಎಚ್‌ಪಿ ಆವೃತ್ತಿ';
 $string['sessionautostarthelp'] = '<p>ಮೂಡಲ್‌ಗೆ  ಸೆಶನ್ ಸಹಾಯ ಬೇಕು, ಅದಿಲ್ಲದೆ ಮೂಡಲ್ ಕೆಲಸ ಮಾಡುವುದಿಲ್ಲ</p>
 
 <p>Session ಅನ್ನು php.ini ಕಡತವನ್ನು ಸಂಪಾದಿಸಿ ಶಕ್ತಗೊಳಿಸಬಹುದು...
-session.auto_start ಎಂಬ ಶಬ್ದವನ್ನು ನೋಡಿರಿ </p>';
+session.auto_start ಎಂಬ ಶಬ್ದವನ್ನು ನೋಡಿರಿ </ಪ್>';
+$string['thischarset'] = 'utf-8';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'ಕನ್ನಡ';
 $string['wwwroot'] = 'ಅಂತರ್ಜಾಲ ವಿಳಾಸ';
 $string['wwwrooterror'] = 'ಅಂತರ್ಜಾಲ ವಿಳಾಸ ಸರಿಯೆಂದು ತೋರುತ್ತಿಲ್ಲ-Moodle ಅನುಸ್ಥಾಪನೆ ಅಲ್ಲಿ ಇಲ್ಲವೆಂದು ತೋರುತ್ತದೆ';
 

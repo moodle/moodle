@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This php script contains all the stuff to backup/restore
     //dialogue mods
 
@@ -87,13 +87,12 @@
                 fwrite ($bf,full_tag("CTYPE",6,false,$conversation->ctype));
                 fwrite ($bf,full_tag("FORMAT",6,false,$conversation->format));
                 fwrite ($bf,full_tag("SUBJECT",6,false,$conversation->subject));
-               
-                //if we've selected to backup users info, then execute backup_dialogue_entries
-                if ($preferences->mods["dialogue"]->userinfo) {
-                    $status = backup_dialogue_entries($bf,$preferences,$conversation->id);
-                }
                 //End entry
                 $status =fwrite ($bf,end_tag("CONVERSATION",5,true));
+            }
+            //if we've selected to backup users info, then execute backup_dialogue_entries
+            if ($preferences->mods["dialogue"]->userinfo) {
+                $status = backup_dialogue_entries($bf,$preferences,$conversation->id);
              }
  
             //Write end tag

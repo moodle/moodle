@@ -79,7 +79,7 @@ $string['openmode0'] = "®iadne diskusie, ¾iadne reakcie";
 $string['openmode1'] = "®iadne diskusie, ale reakcie sú povolené";
 $string['openmode2'] = "Diskusie a reakcie sú povolené";
 $string['parentofthispost'] = "Autor príspevku";
-$string['postadded'] = "Vá¹ príspevok bol úspe¹ne pridaný.<br />You máte \$a na úpravu, ak chcete urobi» nejaké zmeny.";
+$string['postadded'] = "Vá¹ príspevok bol úspe¹ne pridaný.<P>You máte \$a na úpravu, ak chcete urobi» nejaké zmeny.";
 $string['postincontext'] = "Vidie» tento príspevok v kontexte";
 $string['postmailinfo'] = "Toto je kópia správy poslanej na \$a internetovú stránku.
 

@@ -1,7 +1,9 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // calendar.php - created with Moodle 1.3 (2004052500)
 
 
+$string['april'] = 'Duben';
+$string['august'] = 'Srpen';
 $string['calendar'] = 'Kalendáø';
 $string['calendarheading'] = '$a kalendáø';
 $string['clickhide'] = 'kliknutím se skryje';
@@ -10,6 +12,7 @@ $string['confirmeventdelete'] = 'Jste si jisti, ¾e chcete odstranit tuto událost
 $string['courseevents'] = 'Události kurzu';
 $string['dayview'] = 'Zobrazit den';
 $string['daywithnoevents'] = 'V tento den nejsou ¾ádné události';
+$string['december'] = 'Prosinec';
 $string['default'] = 'Výchozí';
 $string['deleteevent'] = 'Odstranit událost';
 $string['detailedmonthview'] = 'Zobrazit mìsíc podrobnì';
@@ -40,18 +43,26 @@ $string['explain_lookahead'] = 'Tímto nastavujete poèet budoucích dnù, v nich¾ b
 $string['explain_maxevents'] = 'Tímto nastavujete nejvìt¹í mo¾ný poèet zobrazovaných nadcházejících událostí. Pokud zde vyberete velké èíslo, je mo¾né, ¾e seznam nadcházejících událostí bude velmi dlouhý a na obrazovce zabere spoustu místa.';
 $string['explain_startwday'] = 'Vyberte den, od kterého má zaèínat zobrazovaný týden.';
 $string['explain_timeformat'] = 'Mù¾ete si zvolit, zda chcete èas zobrazovat ve 12-hodinovém formátu nebo 24-hodinovém formátu. Zvolíte-li \"výchozí\", bude formát vybrán na základì pou¾itého jazyka va¹ich stránek.';
+$string['february'] = 'Únor';
 $string['fri'] = 'Pá';
 $string['friday'] = 'Pátek';
 $string['globalevents'] = 'Globální události';
 $string['gotocalendar'] = 'Jdi do kalendáøe';
 $string['groupevents'] = 'Skupinové události';
 $string['hidden'] = 'skyto';
+$string['january'] = 'Leden';
+$string['july'] = 'Èervenec';
+$string['june'] = 'Èerven';
 $string['manyevents'] = '$a událostí';
+$string['march'] = 'Bøezen';
+$string['may'] = 'Kvìten';
 $string['mon'] = 'Po';
 $string['monday'] = 'Pondìlí';
 $string['monthlyview'] = 'Zobrazit mìsíce';
 $string['newevent'] = 'Nová událost';
 $string['noupcomingevents'] = '®ádné nadcházející události';
+$string['november'] = 'Listopad';
+$string['october'] = 'Øíjen';
 $string['oneevent'] = '1 událost';
 $string['pref_lookahead'] = 'Vyhlí¾ení nadcházejících událostí';
 $string['pref_maxevents'] = 'Maximum nadcházejících událostí';
@@ -64,8 +75,8 @@ $string['repeatweeksl'] = 'Opakovat ka¾dý týden, vytvoøit celkem';
 $string['repeatweeksr'] = 'událostí';
 $string['sat'] = 'So';
 $string['saturday'] = 'Sobota';
+$string['september'] = 'Záøí';
 $string['shown'] = 'zobrazeno';
-$string['spanningevents'] = 'Probíhající události';
 $string['sun'] = 'Ne';
 $string['sunday'] = 'Nedìle';
 $string['thu'] = 'Èt';

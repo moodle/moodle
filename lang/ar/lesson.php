@@ -1,8 +1,7 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // lesson.php - created with Moodle 1.4 development (2004062401)
 
 
-$string['actionaftercorrectanswer'] = 'ÇáÚãá ÈÚÏ ÇáÇÌÇÈÉ ÇáÕÍíÍÉ';
 $string['addabranchtable'] = 'ÃÖÝ ÌÏæá ÝÑÚí';
 $string['addanendofbranch'] = 'ÃÖÝ äåÇíÉ ÝÑÚ';
 $string['addaquestionpage'] = 'ÃÖÝ ÓÄÇá Åáì ÇáÕÝÍÉ';
@@ -10,11 +9,7 @@ $string['answer'] = 'ÃÌÈ';
 $string['attempt'] = 'ãÍÇæáÉ:  $a';
 $string['attempts'] = 'ãÍÇæáÇÊ';
 $string['available'] = 'ãÊÇÍ ãä';
-$string['averagescore'] = 'ãÊæÓØ ÇáÏÑÌÉ';
-$string['averagetime'] = 'ãÊæÓØ ÇáæÞÊ';
-$string['backtreeview'] = 'ÚæÏÉ áÚÑÖ ÇáÔÌÑÉ';
 $string['branchtable'] = 'ÝÑÚ ÌÏæá';
-$string['cancel'] = 'ÅáÛÇÁ';
 $string['canretake'] = '$a íÓÊØíÚ ÅÚÇÏÉ ÃÎÐ';
 $string['checkbranchtable'] = 'ÊÃßÏ ãä ÝÑÚ ÇáÌÏæá';
 $string['checknavigation'] = 'ÊÃßÏ ãä ÑæÇÈØ ÇáÊäÞá';
@@ -29,37 +24,14 @@ $string['description'] = 'æÕÝ';
 $string['displayofgrade'] = 'ÃÚÑÖ ÇáÏÑÌÉ (ááØáÇÈ ÝÞØ)';
 $string['endofbranch'] = 'äåÇíÉ ÊÝÑÚ';
 $string['endoflesson'] = 'äåÇíÉ ÇáÏÑÓ';
-$string['essay'] = 'ãÞÇáì';
-$string['essayemailsubject'] = 'ÏÑÌÊß ááÓÄÇá $a';
-$string['essays'] = 'ãÞÇáÇÊ';
-$string['essayscore'] = 'ÏÑÌÉ ÇáãÞÇáÉ';
 $string['fileformat'] = 'ÕíÛÉ ãáÝ';
-$string['gobacktolesson'] = 'ÇáÚæÏÉ Åáì ÇáÏÑÓ';
-$string['grade'] = 'ÏÑÌÉ';
-$string['gradeessay'] = 'ÕÍÍ ÇáÇÓÁáÉ ÇáãÞÇáíÉ';
 $string['gradeis'] = 'ÇáÏÑÌÉ åí $a';
 $string['handlingofretakes'] = 'ÇáÊÚÇãá ãÚ ÅÚÇÏ ÇáÃÎÐ';
-$string['havenotgradedyet'] = 'áã ÊÕÍÍ ÈÚÏ';
 $string['here'] = 'åäÇÁ';
-$string['highscore'] = 'ÇáÏÑÌÉ ÇáÞÕæì';
-$string['hightime'] = 'ÇáæÞÊ ÇáÇÞÕì';
 $string['importquestions'] = 'ÇÓÊíÑÇÏ ÇÓÆáÉ';
 $string['jump'] = 'ÞÝÒ';
-$string['jumptsto'] = 'ÇáÞÝÒ Åáì';
-$string['lesson'] = '$a ÏÑÓ';
-$string['lessonclosed'] = 'Êã ÃÛáÇÞ åÐÇ ÇáÏÑÓ Ýí $a';
-$string['lessondefault'] = 'ÇÓÊÎÏã ÅÚÏÇÏÊ åÐÇ ÇáÏÑÓ ßÇÚÏÇÏ ÇÝÊÑÇÖí';
-$string['lessonmenu'] = 'ÞÇÆãÉ ÇáÏÑÓ';
-$string['lessonopen'] = 'ÓíÊã ÇÊÇÍÉ åÐÇ ÇáÏÑÓ Ýí $a';
-$string['loginfail'] = 'ÝÔáÊ ÚãáíÉ ÇáÏÎæá¡ ÇÚÏ ÇáãÍÇæáÉ';
-$string['lowscore'] = 'ÃÞá ÏÑÌÉ ';
-$string['lowtime'] = 'ÃÞá æÞÊ';
-$string['mainmenu'] = 'ÇáÞÇÆãÉ ÇáÑÆíÓíÉ';
-$string['matchesanswer'] = 'ØÇÈÞ ãÚ ÇáÇÌÇÈÉ';
-$string['maxhighscores'] = 'ÚÏÏ ÃÚáì ÏÑÌÇÊ ãÚÑæÖ';
 $string['maximumnumberofanswersbranches'] = 'ÇáÍÏ ÇáÃÞÕì áÚÏÏ ÇáÇÌÇÈÇÊ / ÇáÊÝÑíÚÇÊ';
 $string['maximumnumberofattempts'] = 'ÇáÍÏ ÇáÃÞÕì áÚÏÏ ÇáãÍÇæáÇÊ';
-$string['maxtime'] = 'ÇáæÞÊ ÇáãÍÏÏ (ÏÞÇÆÞ)';
 $string['minimumnumberofquestions'] = 'ÇáÍÏ ÇáÃÞÕì áÚÏÏ ÇáÃÓÆáÉ';
 $string['modulename'] = 'ÏÑÓ';
 $string['modulenameplural'] = 'ÏÑæÓ';

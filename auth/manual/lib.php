@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
        // manual method - Just does a simple check against the database
 
 function auth_user_login ($username, $password) {

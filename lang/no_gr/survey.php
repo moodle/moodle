@@ -114,7 +114,7 @@ Dine nøye gjennomtenkte svar vil hjelpe oss å forbedre måten dette kurset blir p
 Tusen takk.";
 $string['collesapintro'] = "Meningen med denne undersøkelsen er å hjelpe oss å forstå hvor bra nettpresentasjonen av dette kurset ga deg mulighet til å lære. 
 
-Hver av de 24 påstandene under ber deg sammenligne dine <b>ønskede</b> (ideelle) og <b>faktiske</b> erfaringer i dette kurset.
+Hver av de 24 påstandene under ber deg sammenligne dine <B>ønskede</B> (ideelle) og <B>faktiske</B> erfaringer i dette kurset.
 
 Det er ingen 'riktige' eller 'gale' svar; vi er bare interessert i din mening. Dine svar vil bli behandlet konfidensielt og vil ikke påvirke resultatet ditt i kurset.
 
@@ -132,7 +132,7 @@ $string['collesm4short'] = "Lærerstøtte";
 $string['collesmintro'] = "I dette nettkursett...";
 $string['collespintro'] = "Meningen med denne undersøkelsen er å hjelpe oss å forstå hva du finner verdifullt i læring over internett.
 
-Hver av de 24 påstandene under spør etter dine <b>foretrukne</b> (ideelle) erfaringer i dette kurset.
+Hver av de 24 påstandene under spør etter dine <B>foretrukne</B> (ideelle) erfaringer i dette kurset.
 
 Det er ingen 'riktige' eller 'gale' svar; vi er bare interessert i din mening. Svarene vil bli behandlet konfidensielt og vil ikke påvirke dine resultater.
 

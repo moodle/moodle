@@ -1,4 +1,4 @@
-<?php  // $Id$ 
+<?PHP  // $Id$ 
 
 ////////////////////////////////////////////////////////////////////
 /// format.php  - Default format class for file imports/exports.  //
@@ -45,7 +45,7 @@ class quiz_default_format {
         foreach ($questions as $question) {   // Process and store each question
             $count++;
 
-            echo "<hr /><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
+            echo "<hr><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
 
             $question->category = $this->category->id;
             $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
@@ -191,10 +191,7 @@ class quiz_default_format {
         // $questions = get_records("quiz_questions","category",$this->category->id);
         $questions = get_questions_category( $this->category );
 
-        notify("Exporting questions.");
-        if (!count($questions)) {
-            return true;
-        }
+        notify("Exporting ".count($questions)." questions.");
         $count = 0;
 
         // results are first written into string (and then to a file)
@@ -204,12 +201,8 @@ class quiz_default_format {
         // iterate through questions
         foreach($questions as $question) {
           $count++;
-          $qtype = $question->qtype;
-          // ignore random questiond
-          if ($qtype!=RANDOM) {
-              echo "<hr /><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
-              $expout .= $this->writequestion( $question ) . "\n";
-              }
+          echo "<hr><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
+          $expout .= $this->writequestion( $question ) . "\n";
           }
 
         // final pre-process on exported data

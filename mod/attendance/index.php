@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
 /// index.php for attendance module
 /// This page lists all the instances of NEWMODULE in a particular course
@@ -56,10 +56,10 @@
    if ($attendances) foreach ($attendances as $attendance) {
         if (!$attendance->visible) {
             //Show dimmed if the mod is hidden
-            $link = "<a class=\"dimmed\" href=\"view.php?id=$attendance->coursemodule\">$attendance->name</a>";
+            $link = "<A class=\"dimmed\" HREF=\"view.php?id=$attendance->coursemodule\">$attendance->name</A>";
         } else {
             //Show normal if the mod is visible
-            $link = "<a href=\"view.php?id=$attendance->coursemodule\">$attendance->name</a>";
+            $link = "<A HREF=\"view.php?id=$attendance->coursemodule\">$attendance->name</A>";
         }
 
         if ($course->format == "weeks" or $course->format == "topics") {
@@ -69,7 +69,7 @@
         }
     }
 
-    echo "<br />";
+    echo "<BR>";
 
     print_table($table);
 

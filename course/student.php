@@ -1,9 +1,9 @@
-<?php // $Id$
+<?PHP // $Id$
       // Script to assign students to courses
 
     require_once("../config.php");
 
-    define("MAX_USERS_PER_PAGE", 5000);
+    define("MAX_USERS_PER_PAGE", 50);
 
     require_variable($id);         // course id
     optional_variable($add, "");
@@ -16,10 +16,6 @@
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID was incorrect (can't find it)");
-    }
-
-    if ($course->metacourse) {
-        redirect("$CFG->wwwroot/course/importstudents.php?id=$course->id");
     }
 
     require_login($course->id);
@@ -47,9 +43,9 @@
         $strexistingstudents .= " ($course->students)";
     }
 
-    print_header("$course->shortname: $strassignstudents",
-                 "$site->fullname",
-                 "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $strassignstudents",
+    print_header("$course->shortname: $strassignstudents", 
+                 "$site->fullname", 
+                 "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> $strassignstudents", 
                  "studentform.searchtext");
 
 /// Don't allow restricted teachers to even see this page (because it contains
@@ -60,10 +56,10 @@
 /// Print a help notice about the need to use this page
 
     if (!$frm = data_submitted()) {
-        $note = get_string("assignstudentsnote");
+        $note = get_string("assignstudentsnote");   
 
         if ($course->password) {
-            $note .= "<p>".get_string("assignstudentspass", "",
+            $note .= "<p>".get_string("assignstudentspass", "", 
                                       "<a href=\"edit.php?id=$course->id\">$course->password</a>");
         }
         print_simple_box($note, "center", "50%");
@@ -71,7 +67,7 @@
 /// A form was submitted so process the input
 
     } else {
-        if (!empty($frm->add) and !empty($frm->addselect) and confirm_sesskey()) {
+        if (!empty($frm->add) and !empty($frm->addselect)) {
             if ($course->enrolperiod) {
                 $timestart = time();
                 $timeend   = $timestart + $course->enrolperiod;
@@ -83,7 +79,7 @@
                     error("Could not add student with id $addstudent to this course!");
                 }
             }
-        } else if (!empty($frm->remove) and !empty($frm->removeselect) and confirm_sesskey()) {
+        } else if (!empty($frm->remove) and !empty($frm->removeselect)) {
             foreach ($frm->removeselect as $removestudent) {
                 if (! unenrol_student($removestudent, $course->id)) {
                     error("Could not remove student with id $removestudent from this course!");
@@ -113,43 +109,36 @@
         $existinguserarray[] = $teacher->id;
     }
     $existinguserlist = implode(',', $existinguserarray);
-
+    
     unset($existinguserarray);
 
 
 /// Get search results excluding any users already in this course
     if (!empty($frm->searchtext) and $previoussearch) {
-        $searchusers = get_users(true, $frm->searchtext, true, $existinguserlist, 'firstname ASC, lastname ASC',
+        $searchusers = get_users(true, $frm->searchtext, true, $existinguserlist, 'firstname ASC, lastname ASC', 
                                       '', '', 0, 99999, 'id, firstname, lastname, email');
-        $usercount = get_users(false, '', true, $existinguserlist);
+        $usercount = get_users(false, '', true, $studentlist);
     }
-
+    
 /// If no search results then get potential students for this course excluding users already in course
     if (empty($searchusers)) {
-
-        $usercount = get_users(false, '', true, $existinguserlist, 'firstname ASC, lastname ASC', '', '',
-                              0, 99999, 'id, firstname, lastname, email') ;
-        $users = array();
-
-        if ($usercount <= MAX_USERS_PER_PAGE) {
-            $users = get_users(true, '', true, $existinguserlist, 'firstname ASC, lastname ASC', '', '',
-                               0, 99999, 'id, firstname, lastname, email');
+        if (!$users = get_users(true, '', true, $existinguserlist, 'firstname ASC, lastname ASC', '', '', 
+                                0, 99999, 'id, firstname, lastname, email') ) {
+            $users = array();
         }
-
+        $usercount = count($users);
     }
 
 
     $searchtext = (isset($frm->searchtext)) ? $frm->searchtext : "";
     $previoussearch = ($previoussearch) ? '1' : '0';
 
-    print_simple_box_start("center");
-
-    $sesskey = !empty($USER->id) ? $USER->sesskey : '';
+    print_simple_box_start("center", "", "$THEME->cellheading");
 
     include('student.html');
 
     print_simple_box_end();
 
-    print_footer($course);
+    print_footer();
 
 ?>

@@ -13,6 +13,7 @@ $string['courseevents'] = 'Kurstermine';
 $string['dayview'] = 'Tagesansicht';
 $string['daywithnoevents'] = 'Es gibt heute keine Termine';
 $string['december'] = 'Dezember';
+$string['default'];
 $string['deleteevent'] = 'Termin löschen';
 $string['detailedmonthview'] = 'Monatsgesamtansicht';
 $string['durationnone'] = 'Ohne Zeitangabe';

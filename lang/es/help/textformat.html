@@ -1,62 +1,38 @@
 <P ALIGN=CENTER><B>Como dar formato al texto</B></P>
 
-<P>Cuando escribe texto tiene dos formas de darle formato, dependiendo de su habilidad y del navegador que utilice.
+<P>Cuando escribe texto tiene dos formas de darle formato, básicamente 
+depende del navegador que utilice.
 
-<P><B>Normalmente es suficiente dejar los valores por defecto para que todo funcione según lo esperado</B>.
+<P><B>Normalmente Ud. no necesita preocuparse por esto, todo funcionará como 
+es de esperarse
+</B>.
 
 <P><B>1. Formato automático</B></P>
 
 <UL>
-<P>Este formato es el mejor cuando usted utiliza formularios web normales para escribir texto (en lugar del editor de HTML enriquecido). Limítese a teclear normalmente 
+<P>Este formato es el mejor para la comunicación tradicional, teclee normalmente 
 su texto como si redactara un correo electrónico.
-<P>Cuando guarde su texto, Moodle efectuará una serie de operaciones para formatear automáticamente el texto:
+<P>Cuando guarde su texto automáticamente se harán los siguientes cambios:
 
-<P>Por ejemplo, direcciones de Internet tales como
+<P>Direcciones de Internet
    <A HREF="http://moodle.org">http://moodle.org</A> o incluso
    <A HREF="http://www.moodle.org">www.moodle.org</A> 
-	 se convertirán en enlaces.
+	 se convertirán en enlaceas.
 <P>Se mantendrán sus saltos de línea, y las líneas en blanco indicarán un nuevo párrafo.
-<P>Caritas como :-), se transformarán en sus equivalentes gráficos.
-<P>También puede, si lo desea, incrustar código HTML.
-<p align="right"><a href="help.php?file=text.html">Más información sobre el formato automático</a></p>
+<P>Caritas como :-), se cambiarán por sus equivalentes gráficos.
+<P>También puede incrustar código HTML.
+<P ALIGN=RIGHT><?php  helpbutton("text", get_string("helptext")) ?> Más información sobre el formato automático.</P>
 </UL>
 
 <P><B>2. Formato HTML</B></P>
 
 <UL>
-<P>Este formato asume que el texto está escrito en HTML puro.
+<P>Este formato asume que el mensaje está escrito en HTML puro.
 Si está utilizando el editor de HTML, éste será el formato por defecto, el 
 editor creará el código por usted.
-<P>Incluso si noestá utilizando el editor HTML enriquecido, puede usar código HTML directamente 
-en el texto, consiguiendo los resultados esperados.
-<P>A diferencia del formato automático, en este modo no se formateará el texto automáticamente.
-<p align="right"><a href="help.php?file=html.html">Más información sobre HTML en Moodle</a></p>
-<p align="right"><a href="help.php?file=richtext.html">Más información sobre el editor HTML enriquecido</a></p>
-</ul>
-<p><b>3. Formato de texto plano</b></p>
-
-<ul>
-<p>Este formato es útil cuando usted necesita incluir bloques de código HTML que desea se muestren exactamente como los escribió </p>
-
-<p>Lo único que traduce son los espacios y las nuevas líneas, pero el resto del texto permanece intacto.</p>
-</ul>
-
-<p><b>4. Formato de texto Markdown</b></p>
-
-<ul>
-<p>El formato Markdown intenta facilitar al máximo la escritura de páginas XHTML correctamente formateadas utilizando únicamente el texto escrito -más o menos como cuando usted escribe un correo electrónico-.</p>
-
-<p>Resulta muy adecuado para escribir páginas de texto claro con algunas cabeceras y listasa pero sin demasiados enlaces o imágenes.</p>
-
-<p align="right"><a href="help.php?file=markdown.html">Más información sobre el formato Markdown</a></p>
-</ul>
-
-<p><b>5. Formato de texto Wiki</b></p>
-<ul>
-<p>Este formato utiliza códigos especiales para escribir texto conocidos como 'estilo Wiki'. Si usted ya conoce el estilo Wiki de creación de páginas y quiere usarlo en cualquier parte de Moodle, entonces éste es su formato.</p>
-
-<p>Advierta que no es un Wiki <b>real</b>, de modo que usted no puede usar la opción <i>CamelCase</i> para crear nuevas páginas. Tenga en cuenta también que pueden existir algunas otras pequeñas diferencias.</p>
-
-<p align="right"><a href="help.php?file=wiki.html">Más información sobre el formato Wiki</a></p>
-</ul>
-
+<P>Incluso si está utilizando el editor HTML, puede colocar código directamente 
+en el texto.
+<P>A diferencia del formato automático, en este modo no se procesará nada.
+<P ALIGN=RIGHT><?php  helpbutton("html", get_string("helphtml")) ?> Más sobre HTML</P>
+<P ALIGN=RIGHT><?php  helpbutton("richtext", get_string("helprichtext")) ?> Más sobre el editor HTML</P>
+</UL>

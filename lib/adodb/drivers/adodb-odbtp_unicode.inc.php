@@ -1,6 +1,6 @@
 <?php
 /*
-	V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence. See License.txt.
@@ -28,12 +28,35 @@ if (!defined('_ADODB_ODBTP_LAYER')) {
 }
 
 class ADODB_odbtp_unicode extends ADODB_odbtp {
-	var $databaseType = 'odbtp';
+	var $databaseType = "odbtp_unicode";
 	var $_useUnicodeSQL = true;
 
 	function ADODB_odbtp_unicode()
 	{
 		$this->ADODB_odbtp();
+	}
+}
+
+class ADORecordSet_odbtp_unicode extends ADORecordSet_odbtp {
+	var $databaseType = 'odbtp_unicode';
+
+	function ADORecordSet_odbtp_unicode($queryID,$mode=false)
+	{
+		$this->ADORecordSet_odbtp($queryID, $mode);
+	}
+
+	function _initrs()
+	{
+		$this->_numOfFields = @odbtp_num_fields($this->_queryID);
+		if (!($this->_numOfRows = @odbtp_num_rows($this->_queryID)))
+			$this->_numOfRows = -1;
+
+		if ($this->connection->odbc_driver == ODB_DRIVER_JET) {
+			for ($f = 0; $f < $this->_numOfFields; $f++) {
+				if (odbtp_field_bindtype($this->_queryID, $f) == ODB_CHAR)
+					odbtp_bind_field($this->_queryID, $f, ODB_WCHAR);
+			}
+		}
 	}
 }
 ?>

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
 /// Overview report just displays a big table of all the attempts
 

@@ -1,7 +1,7 @@
 <?PHP // $Id$ 
-      // activitynames.php - created with Moodle 1.4.3 + (2004083131)
+      // activitynames.php - created with Moodle 1.3 (2004052500)
 
 
-$string['filtername'] = 'Аўта–спасылка на назву элемента курса';
+$string['filtername'] = 'Аўта – звязванне па персанальнай актыўнасці';
 
 ?>

@@ -45,7 +45,7 @@ $string['newwidth'] = '預設視窗寬度(像素)';
 $string['newwindow'] = '開新視窗';
 $string['newwindowopen'] = '在新視窗打開';
 $string['note'] = '提示';
-$string['notefile'] = '請利用 <a href=\"$a\" >檔案管理</a>上載檔案. 上載的檔案都會顯示在選單中';
+$string['notefile'] = '請利用 <A HREF=$a >檔案管理</A>上載檔案. 上載的檔案都會顯示在選單中';
 $string['notypechosen'] = '請先選擇資源型態. 請回前頁重試一次.';
 $string['popupresource'] = '這個資源應顯示在彈出視窗';
 $string['popupresourcelink'] = '如果未生效，請點選這裡： $a';

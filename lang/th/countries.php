@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // countries.php - created with Moodle 1.4.2 (2004083125)
+      // countries.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['AD'] = 'ÍÑ¹â´ÃÒ';
@@ -177,7 +177,6 @@ $string['PL'] = 'â»áÅ¹´ì';
 $string['PM'] = 'à«¹µì»ÔáÍÃì ÁÔà¡ÅÍ¹';
 $string['PN'] = '¾Ô·á¤Ãì';
 $string['PR'] = 'à»ÍÃìâµÃÔâ¡';
-$string['PS'] = '»ÒàÅÊäµ¹ì';
 $string['PT'] = 'â»µØà¡Ê';
 $string['PW'] = '»ÒÅÑÇ';
 $string['PY'] = '»ÒÃÒ¡ÇÑÂ';
@@ -242,9 +241,5 @@ $string['ZA'] = 'ÍÑ¿ÃÔ¡Òãµé';
 $string['ZM'] = 'á«ÁàºÕÂ';
 $string['ZR'] = 'á«Ãì';
 $string['ZW'] = '«ÔÁºÑºàÇ';
-$string['parentlanguage'] = 'en';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
 
 ?>

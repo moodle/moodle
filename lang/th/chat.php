@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.4.2 (2004083125)
+      // chat.php - created with Moodle 1.4 development (2004072901)
 
 
 $string['beep'] = 'เรียก';
@@ -22,10 +22,6 @@ $string['deletesessionsure'] = 'แน่ใจนะคะว่าต้องการลบการเสวนานี้';
 $string['donotusechattime'] = 'ไม่ระบุเวลาเสวนา';
 $string['enterchat'] = 'คลิกที่นี่เพื่อสนทนา';
 $string['errornousers'] = 'ไม่พบสมาชิก';
-$string['explaingeneralconfig'] = 'ใช้ค่านี้ตลอด';
-$string['explainmethoddaemon'] = 'ใช้ค่านี้เมื่อมีการเลือก chatserver daemon เป็นวิธีการติดต่อกับเซิร์ฟเวอร์';
-$string['explainmethodnormal'] = 'ใช้ค่านี้เมื่อเลือกวิธีปกติในการติดต่อกับเซิร์ฟเวอร์';
-$string['generalconfig'] = 'การตั้งค่าทั่วไป';
 $string['helpchatting'] = 'ช่วยเหลือ';
 $string['idle'] = 'นิ่ง';
 $string['messagebeepseveryone'] = '$a เรียกทุกคน';
@@ -39,9 +35,7 @@ $string['modulename'] = 'ห้องสนทนา';
 $string['modulenameplural'] = 'ห้องสนทนา';
 $string['neverdeletemessages'] = 'ไม่มีการลบข้อความ';
 $string['nextsession'] = 'ตารางการสนทนาครั้งต่อไป';
-$string['noguests'] = 'บุคคลทั่วไปไม่สามารถเข้าสนทนาได้';
 $string['nomessages'] = 'ยังไม่มีข้อความ';
-$string['parentlanguage'] = 'en';
 $string['repeatdaily'] = 'เวลาเดียวกันนี้ทุกวัน';
 $string['repeatnone'] = 'ไม่มีการซ้ำหัวข้อเสวนา  เฉพาะเวลาที่ระบุเท่านั้น';
 $string['repeattimes'] = 'เสวนาเรื่องนี้ซ้ำ';
@@ -51,9 +45,6 @@ $string['seesession'] = 'ดูการเสวนาครั้งนี้';
 $string['sessions'] = 'การเสวนา';
 $string['strftimemessage'] = '%%H:%%M';
 $string['studentseereports'] = 'ทุกคนสามารถดูการเสวนาครั้งที่ผ่านมาได้';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
 $string['viewreport'] = 'ดูการเสวนาครั้งที่ผ่านมา';
 
 ?>

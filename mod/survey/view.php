@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -13,7 +13,7 @@
         error("Course is misconfigured");
     }
 
-    require_login($course->id, false, $cm);
+    require_login($course->id);
 
     if (! $survey = get_record("survey", "id", $cm->instance)) {
         error("Survey ID was incorrect");
@@ -28,8 +28,8 @@
     $strsurveys = get_string("modulenameplural", "survey");
     $strsurvey = get_string("modulename", "survey");
 
-    print_header_simple(format_string($survey->name), "",
-                 "<a href=\"index.php?id=$course->id\">$strsurveys</a> -> ".format_string($survey->name), "", "", true,
+    print_header_simple("$survey->name", "",
+                 "<A HREF=index.php?id=$course->id>$strsurveys</A> -> $survey->name", "", "", true,
                   update_module_button($cm->id, $course->id, $strsurvey), navmenu($course, $cm));
 
 /// Check to see if groups are being used in this survey
@@ -45,8 +45,8 @@
 
     if (isteacher($course->id)) {
         $numusers = survey_count_responses($survey->id, $currentgroup);
-        echo "<div class=\"reportlink\"><a href=\"report.php?id=$cm->id\">".
-              get_string("viewsurveyresponses", "survey", $numusers)."</a></div>";
+        echo "<p align=right><a href=\"report.php?id=$cm->id\">".
+              get_string("viewsurveyresponses", "survey", $numusers)."</A></P>";
     } else if (!$cm->visible) {
         notice(get_string("activityiscurrentlyhidden"));
     }
@@ -67,12 +67,12 @@
             print_heading(get_string("surveycompleted", "survey"));
             print_heading(get_string("peoplecompleted", "survey", $numusers));
             echo "<center>";
-            survey_print_graph("id=$cm->id&amp;sid=$USER->id&amp;group=$currentgroup&amp;type=student.png");
+            survey_print_graph("id=$cm->id&sid=$USER->id&group=$currentgroup&type=student.png");
             echo "</center>";
 
         } else {
 
-            print_simple_box(format_text($survey->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
+            print_simple_box(format_text($survey->intro), "center", "80%");
             print_spacer(30);
 
             $questions = get_records_list("survey_questions", "id", $survey->questions);
@@ -91,7 +91,7 @@
                 }
             }
         }
-
+   
         print_footer($course);
         exit;
     }
@@ -99,10 +99,10 @@
 //  Start the survey form
     add_to_log($course->id, "survey", "view form", "view.php?id=$cm->id", $survey->id, $cm->id);
 
-    echo "<form name=\"form\" method=\"post\" action=\"save.php\">";
-    echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />";
+    echo "<form name=form method=post action=save.php>";
+    echo "<input type=hidden name=id value=$id>";
 
-    print_simple_box(format_text($survey->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
+    print_simple_box(format_text($survey->intro), "center", "80%");
 
 // Get all the major questions and their proper order
     if (! $questions = get_records_list("survey_questions", "id", $survey->questions)) {
@@ -116,7 +116,7 @@
     foreach ($questionorder as $key => $val) {
         $question = $questions["$val"];
         $question->id = $val;
-
+        
         if ($question->type >= 0) {
 
             if ($question->text) {
@@ -153,7 +153,7 @@
 
 <center>
 <br />
-<script type="text/javascript">
+<script>
 <!-- // BEGIN
 function checkform() {
 
@@ -176,14 +176,14 @@ function checkform() {
     }
 }
 
-<?php echo "document.write('<input type=\"button\" value=\"".get_string("clicktocontinuecheck", "survey")."\" onClick=\"checkform()\" />');";  ?>
+<?php echo "document.write('<INPUT TYPE=button VALUE=\"".get_string("clicktocontinuecheck", "survey")."\" onClick=\"checkform()\">');";  ?>
 
 // END -->
-</script>
+</SCRIPT>
 
 <noscript>
     <!-- Without Javascript, no checking is done -->
-    <input type="submit" value="<?php  get_string("clicktocontinue", "survey") ?>" />
+    <input type="submit" value="<?php  get_string("clicktocontinue", "survey") ?>">
 </noscript>
 
 </center>

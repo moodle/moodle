@@ -6,9 +6,9 @@
 
 <P><B>GIFT</B></P>
 <ul>
-<p>GIFT es el formato de importación de preguntas más amigable para Moodle de todos los formatos disponible.  Su diseño permite que los profesores pueden escribir las preguntas en un archivo de texto de forma fácil. Permite preguntas de opción múltiple, Verdadero o Falso, Cortas, Emparejar y numéricas, también permite las preguntas de rellenar huecos 
-insertándolas como  _____ . Se pueden mezclar Varios tipos de preguntas en un solo archivo del texto, y este formato también permite líneas comentarios, los nombres de la pregunta, retroalimentación y los porcentaje-peso (ponderar) calificaciones.  Veamos algunos ejemplos:</p>
-<pre>Who's buried in Grant's tomb?{~Grant ~Jefferson =no one}
+<p>GIFT es el formato de importación de preguntas más amigable para Moodle de todos los formatos disponible.  Su diseño permite que los profesores pueden escribir las preguntas en un archivo de texto de forma fácil. Permite preguntas de opción múltiple, Verdadero o Falso, Cortas, Emparejar y numéricas, también permite las preguntas de rellenar huecos insertandolas como  _____ . Se pueden mezclar Varios tipos de preguntas en un solo archivo del texto, y este formato también permite líneas comentarios, los nombres de la pregunta, retroalimentación y los porcentaje-peso (ponderar) calificaciones.  Veamos algunos ejemplos:</p>
+<pre>
+Who's buried in Grant's tomb?{~Grant ~Jefferson =no one}
 
 Grant is {~buried =entombed ~living} in Grant's tomb.
 
@@ -24,10 +24,10 @@ When was Ulysses S. Grant born?{#1822}
 
 <P><B>Aiken</B></P>
 <ul>
-<p>El formato Aiken es una manera simple de crear preguntas de opción múltiple usando un 
-formato de fácil lectura. Un ejemplo del formato:</p>
-<pre>¿Qué objetivo tienen los primeros auxilios?
-A. Salvar la vida, prevenir más lesiones, mantener el buen estado de salud.
+<p>El formato Aiken es una manera simple de crear preguntas de opción múltiple usando un formate de fácil lectura. Un ejemplo del formato:</p>
+<pre>
+¿Qué objetivo tienen los primerios auxilios?
+A. Salvar la vidad, prevenir más lesiones, mantener el buen estado de salud.
 B. Dar tratamiento médico o sanitario
 C. prevenir más lesiones
 D. Ayudar a las victimas que pedir auxilio
@@ -47,8 +47,7 @@ ANSWER: A
 
 </BLOCKQUOTE>
 
-<p align=right><a href="help.php?file=formatmissingword.html&module=quiz">Más información sobre el formato "Llenar 
-el hueco&quot;</a></p>
+<p align=right><a href="help.php?file=formatmissingword.html&module=quiz">Más información sobre el formato "Missing Word"</a></p>
 </UL>
 
 
@@ -57,8 +56,7 @@ el hueco&quot;</a></p>
 <P>Este es el mismo caso de llenar el hueco, excepto que luego de ser importadas, todas las preguntas se convierten en grupos de cuatro preguntas de seleccionar la correcta.
 </P>
 <p>Además, las respuestas de opción múltiple son mezcladas  aleatoriamente en la importación.
-<p>Se le llama así en honor a una empresa que impulsó el desarrollo de muchas 
-características para los cuestionarios.
+<p>Se le llama así en honor a una empresa que impulsó el desarrollo de muchas caraterísticas para los cuestionarios.
 </p>
 </UL>
 
@@ -72,24 +70,22 @@ características para los cuestionarios.
 
 <P><B>Course Test Manager</B></P>
 <UL>
-<P>Este módulo puede importar las preguntas guardadas en una banco de preguntas de Course Test Manager.  Tenemos varias formas de acceder al banco de preguntas en formato 
-Access de Microsoft, dependiendo si Moodle está funcionando en un servidor de Windows o de Linux:</P>
+<P>Este módulo puede importar las preguntas guardadas en una banco de preguntas de Course Test Manager.  Tenemos varias formas de acceder al banco de preguntas en formato Acces de Microsoft, dependiendo si Moodle está funcionando en un servidor de Windows o de Linux:</P>
 <p>Desde Windows debemos subir la base de datos como cualquier otro archivo para importar sus datos.</p>
-<p>Desde Linux, debemos instalar el software ODBC Socket Server, que utiliza XML para transferir datos a 
-Moodle desde el servidor Linux.</p>  <p>Por favor, lea todo el archivo de ayuda antes de importar este tipo de formato.</p>
+<p>Desde Linux, debemos instalar el software ODBC Socket Server, que utiliza XML para transferir datos a moodle desde el servidor Linux.</p>  <p>Por favor, lea todo el archivo de ayuda antes de importar este tipo de formato.</p>
 
 
 <p align=right><a href="help.php?file=formatctm.html&module=quiz">Más información sobre el formato "CTM"</a></p>
 </UL>
 
-<P><B>Personal</B></P>
+<P><B>Personalizado</B></P>
 <UL>
 <P>Si tiene su propio formato que desea importar, puede implementarlo editando mod/quiz/format/custom.php 
 
 
 <P>La cantidad de código nuevo necesaria es bastante pequeña - será suficiente con analizar una sola pregunta del texto-.
 
-<p align=right><a href="help.php?file=formatcustom.html&module=quiz">Más información sobre el formato "Personal"</a></p>
+<p align=right><a href="help.php?file=formatcustom.html&module=quiz">Más información sobre el formato "Custom"</a></p>
 </UL>
 
 

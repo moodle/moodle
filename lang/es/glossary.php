@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // glossary.php - created with Moodle 1.3 Nearly Ready (2004052000)
 
 
 $string['addcomment'] = 'Agregar comentario';
@@ -10,7 +10,6 @@ $string['allcategories'] = 'Todas las categorías';
 $string['allentries'] = 'TODAS';
 $string['allowcomments'] = 'Permitir comentar las entradas';
 $string['allowduplicatedentries'] = 'Permitir entradas duplicadas';
-$string['allowprintview'] = 'Permitir vista impresión';
 $string['allowratings'] = 'Permitir calificar las entradas';
 $string['answer'] = 'Respuesta';
 $string['approve'] = 'Aprobar';
@@ -62,17 +61,16 @@ $string['deletingnoneemptycategory'] = 'Eliminar una categoría no eliminará las 
 $string['descending'] = '(descendente)';
 $string['destination'] = 'Destino';
 $string['displayformat'] = 'Formato de muestra de entradas';
+$string['displayformat2'] = 'Completo con autor';
+$string['displayformat3'] = 'Enciclopedia';
+$string['displayformat4'] = 'FAQ';
+$string['displayformat5'] = 'Completo sin autor';
+$string['displayformat6'] = 'Lista de entradas';
 $string['displayformatcontinuous'] = 'Continuo sin autor';
-$string['displayformatdictionary'] = 'Simple, estilo diccionario';
-$string['displayformatencyclopedia'] = 'Enciclopedia';
-$string['displayformatentrylist'] = 'Lista de entradas';
-$string['displayformatfaq'] = 'FAQ';
-$string['displayformatfullwithauthor'] = 'Completo con autor';
-$string['displayformatfullwithoutauthor'] = 'Completo sin autor';
+$string['displayformatdefault'] = 'Simple, estilo diccionario';
 $string['displayformats'] = 'Formatos de visualización';
 $string['displayformatssetup'] = 'Ajustar formatos de visualización';
 $string['duplicateentry'] = 'Entrada duplicada';
-$string['editalways'] = 'Editar siempre';
 $string['editcategories'] = 'Editar categorías';
 $string['editentry'] = 'Editar entrada';
 $string['editingcomment'] = 'Editando un comentario';
@@ -86,14 +84,12 @@ $string['entrydeleted'] = 'Entrada borrada';
 $string['entryexported'] = 'Entrada exportada con éxito';
 $string['entryishidden'] = '(esta entrada está oculta)';
 $string['entryleveldefaultsettings'] = 'Ajustes por defecto del nivel de entrada';
-$string['entrysaved'] = 'Esta entrada ha sido guardada';
-$string['entryupdated'] = 'Esta entrada ha sido actualizada';
 $string['entryusedynalink'] = 'Esta entrada será enlazada automáticamente';
-$string['explainaddentry'] = 'Agregar una nueva entrada al glosario actual.<br />Concepto y Definición son campos obligatorios.';
+$string['explainaddentry'] = 'Agregar una nueva entrada al glosario actual.<br>Concepto y Definición son campos obligatorios.';
 $string['explainall'] = 'Muestra TODAS las entradas en una página.';
 $string['explainalphabet'] = 'Navegue por el glosario usando este índice.';
-$string['explainexport'] = 'Se ha generado un archivo.<br />Descárguelo y guárdelo. Podrá importarlo en cualquier momento en éste u otro curso.';
-$string['explainimport'] = 'Debe especificar el archivo a importar y definir el criterio del proceso.<p>Someta su solicitud y revise los resultados.</p>';
+$string['explainexport'] = 'Se ha generado un archivo.<br>Descárguelo y guárdelo. Podrá importarlo en cualquier momento en éste u otro curso.';
+$string['explainimport'] = 'Debe especificar el archivo a importar y definir el criterio del proceso.<p>Someta su solicitud y revise los resultados.';
 $string['explainspecial'] = 'Muestra las entradas que no comienzan con una letra';
 $string['exportedentry'] = 'Entrada exportada';
 $string['exportedfile'] = 'Archivo exportado';
@@ -131,7 +127,6 @@ $string['notcategorised'] = 'No clasificado';
 $string['numberofentries'] = 'Número de entradas';
 $string['onebyline'] = '(uno por línea)';
 $string['printerfriendly'] = 'Versión para impresión';
-$string['printviewnotallowed'] = 'No se permite vista de impresión';
 $string['question'] = 'Pregunta';
 $string['rate'] = 'Calificar';
 $string['rating'] = 'Calificación';

@@ -3,7 +3,7 @@
 
 
 $string['auth_dbdescription'] = 'S to izbiro doloèite eksterno bazo podatkov za preverjanje veljavnosti uporabniškega imena in gesla. Pri novem raèunu za portal (moodle) je možno obstojeèe podatke iz baze prenesti (prekopirati).';
-$string['auth_dbextrafields'] = 'Ta polja so izbirna. Vrednosti polj v portalu lahko vnaprej zapolnite <b>z vrednostmi polj v eksterni bazi</b>. Èe pustite polja prazna, bodo vpisane privzete vrednosti. Po prijavi sme uporabnik spreminjati vsa polja.';
+$string['auth_dbextrafields'] = 'Ta polja so izbirna. Vrednosti polj v portalu lahko vnaprej zapolnite <B>z vrednostmi polj v eksterni bazi</B>. Èe pustite polja prazna, bodo vpisane privzete vrednosti. Po prijavi sme uporabnik spreminjati vsa polja.';
 $string['auth_dbfieldpass'] = 'Stolpec, ki vsebuje geslo';
 $string['auth_dbfielduser'] = 'Stolpec, ki vsebuje uporabniško ime';
 $string['auth_dbhost'] = 'Naziv raèunalnika (podatkovnega strežnika)';
@@ -36,7 +36,7 @@ $string['auth_ldapdescription'] = 'Ta naèin omogoèa avtentikacijo preko strežnik
                                   Èe je vpisano uporabniško ime in geslo veljavno, portal kreira novega uporabnika 
                                   v svoji bazi. Ta modul bere uporabnikove atribute v LDAP in jih napolni v polja portala. 
                                   Pri naslednjih prijavah se preverjajo l ime in geslo.';
-$string['auth_ldapextrafields'] = 'Ta polja so izbirna.  Vnaprej prenesene vrednosti iz <b>LDAP polj</b> doloèite tukajt. <br />Èe pustite polja prazna, se niè ne prenese. Vpisane bodo privzete vrednosti.<br />V vsakem primeru bodo uporabniki smeli spreminjati svoje podatke ob naslednjih prijavah.';
+$string['auth_ldapextrafields'] = 'Ta polja so izbirna.  Vnaprej prenesene vrednosti iz <B>LDAP polj</B> doloèite tukajt. <P>Èe pustite polja prazna, se niè ne prenese. Vpisane bodo privzete vrednosti.<P>V vsakem primeru bodo uporabniki smeli spreminjati svoje podatke ob naslednjih prijavah.';
 $string['auth_ldaptitle'] = 'Uporabi strežnik LDAP';
 $string['auth_manualdescription'] = 'S tem pristopom uporabniki ne morejo kreirali lastnih raèunov. Vse raèune mora roèno kreirati administrator.';
 $string['auth_manualtitle'] = 'Le roèni uporabniški raèuni';

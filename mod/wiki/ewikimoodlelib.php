@@ -32,8 +32,9 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
       */
       # Ugly, but we need to choose which wiki we are about to change/read
      case "GET":
-         $id = "'" . anydb_escape_string($args["id"]) . "'";
+         $id = "'" . mysql_escape_string($args["id"]) . "'";
          ($version = 0 + @$args["version"]) and ($version = "AND (version=$version)") or ($version="");
+
 
          # $result = mysql_query("SELECT * FROM " . EWIKI_DB_TABLE_NAME
          #   . " WHERE (pagename=$id) $version  ORDER BY version DESC  LIMIT 1"
@@ -48,15 +49,9 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
 
          $select="(pagename=$id) AND wiki=".$wiki_entry->id."  $version ";
          $sort="version DESC";
-         if ($result_arr = get_records_select(EWIKI_DB_TABLE_NAME, $select,$sort,"*",0,1)) {
-             //Iterate to get the first (and unique!)
-             foreach ($result_arr as $obj) {
-                 $result_obj = $obj;
-            }
-         }
+         $result_obj=get_records_select(EWIKI_DB_TABLE_NAME, $select,$sort,"*",0,1);
          if($result_obj)  {
-           //Convert to array
-           $r=get_object_vars($result_obj);
+           $r=get_object_vars($result_obj[$args["id"]]);
            $r["id"] = $r["pagename"];
            unset($r["pagename"]);
            $r["meta"] = @unserialize($r["meta"]);
@@ -69,10 +64,10 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
           with "id" index key.
       */
       case "HIT":
-         #mysql_query("UPDATE " . EWIKI_DB_TABLE_NAME . " SET hits=(hits+1) WHERE pagename='" . anydb_escape_string($args["id"]) . "'");
+         #mysql_query("UPDATE " . EWIKI_DB_TABLE_NAME . " SET hits=(hits+1) WHERE pagename='" . mysql_escape_string($args["id"]) . "'");
          # set_field does not work because of the "hits+1" construct
-         #print "DO ".anydb__escape_string($args["id"]); exit;
-         execute_sql("UPDATE " .$CFG->prefix.EWIKI_DB_TABLE_NAME . " SET hits=(hits+1) WHERE pagename='" . anydb_escape_string($args["id"]) . "' and wiki=".$wiki_entry->id, 0);
+         #print "DO ".mysql_escape_string($args["id"]); exit;
+         execute_sql("UPDATE " .$CFG->prefix.EWIKI_DB_TABLE_NAME . " SET hits=(hits+1) WHERE pagename='" . mysql_escape_string($args["id"]) . "' and wiki=".$wiki_entry->id, 0);
          break;
     /*  Stores the $data array into the database, while not overwriting
           existing entries (using WRITE); returns 0 on failure and 1 if
@@ -98,7 +93,7 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
          #   }
          #   $a = ($sql1 ? ', ' : '');
          #   $sql1 .= $a . $index;
-         #   $sql2 .= $a . "'" . anydb_escape_string($value) . "'";
+         #   $sql2 .= $a . "'" . mysql_escape_string($value) . "'";
          #}
 
          #strlen(@$COMMAND) || ($COMMAND = "INSERT");
@@ -107,7 +102,7 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
             if (is_int($index)) {
                continue;
             }
-            $args[$index] =anydb_escape_string($value);
+            $args[$index] =mysql_escape_string($value);
          }
          $args["wiki"]=$wiki_entry->id;
 
@@ -143,7 +138,7 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
            if (strlen($id)) {
             $r[$id] = 0;
             $select .= ($select ? " OR " : "") .
-                    "(pagename='" . anydb_escape_string($id) . "')";
+                    "(pagename='" . mysql_escape_string($id) . "')";
             }
          }
          if($select) {
@@ -181,21 +176,17 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
           e.g. array("flags","meta","lastmodified");
       */
       case "GETALL":
-         switch ($CFG->dbtype) {
-             case 'postgres7':
-                 $sql= "SELECT pagename AS id, ".
-                      implode(", ", $args) .
-                      " FROM ". $CFG->prefix.EWIKI_DB_TABLE_NAME .
-                      " WHERE wiki = ".$wiki_entry->id.
-                      " GROUP BY pagename, ".implode(", ", $args);
-                 break;
-             default:
-                 $sql= "SELECT pagename AS id, ".
-                 implode(", ", $args) .
-                      " FROM ". $CFG->prefix.EWIKI_DB_TABLE_NAME .
-                      " WHERE wiki = ".$wiki_entry->id.
-                      " GROUP BY id, version " ;
-         }
+
+         #$result = mysql_query("SELECT pagename AS id, ".
+         #   implode(", ", $args) .
+         #   " FROM ". EWIKI_DB_TABLE_NAME .
+         #   " GROUP BY id, version DESC"
+         #);
+         $sql= "SELECT pagename AS id, ".
+            implode(", ", $args) .
+            " FROM ". $CFG->prefix.EWIKI_DB_TABLE_NAME .
+            " WHERE wiki = ".$wiki_entry->id.
+            " GROUP BY id, version";
 
          #print "$sql";
          $result=get_records_sql($sql);
@@ -235,24 +226,19 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
          $field = implode("", array_keys($args));
          $content = strtolower(implode("", $args));
          if ($field == "id") { $field = "pagename"; }
-         switch ($CFG->dbtype) {
-            case 'postgres7':
-                $sql= "SELECT pagename AS id, version, flags" .
-                    (EWIKI_DBQUERY_BUFFER && ($field!="pagename") ? ", $field" : "") .
-                    " FROM " . $CFG->prefix.EWIKI_DB_TABLE_NAME .
-                    " WHERE $field ILIKE '%".$content."%'  and wiki=".$wiki_entry->id .
-                    " GROUP BY id, version, flags ". 
-                    (EWIKI_DBQUERY_BUFFER && ($field!="pagename") ? ", $field" : "") ;
-                break;
-            default: 
-                $sql= "SELECT pagename AS id, version, flags" .
-                    (EWIKI_DBQUERY_BUFFER && ($field!="pagename") ? ", $field" : "") .
-                    " FROM " . $CFG->prefix.EWIKI_DB_TABLE_NAME .
-                    " WHERE LOCATE('" . anydb_escape_string($content) . "', LCASE($field))  and wiki=".$wiki_entry->id .
-                    " GROUP BY id, version DESC";
-         }
-         $result=get_records_sql($sql);
 
+         #$result = mysql_query("SELECT pagename AS id, version, flags" .
+         #   (EWIKI_DBQUERY_BUFFER && ($field!="pagename") ? ", $field" : "") .
+         #   " FROM " . EWIKI_DB_TABLE_NAME .
+         #   " WHERE LOCATE('" . mysql_escape_string($content) . "', LCASE($field)) " .
+         #   " GROUP BY id, version DESC"
+         #);
+         $sql= "SELECT pagename AS id, version, flags" .
+            (EWIKI_DBQUERY_BUFFER && ($field!="pagename") ? ", $field" : "") .
+            " FROM " . $CFG->prefix.EWIKI_DB_TABLE_NAME .
+            " WHERE LOCATE('" . mysql_escape_string($content) . "', LCASE($field))  and wiki=".$wiki_entry->id .
+            " GROUP BY id, version DESC";
+         $result=get_records_sql($sql);
          $r = new ewiki_dbquery_result(array("id","version",$field));
          $drop = "";
          #while ($result && ($row = mysql_fetch_array($result, MYSQL_ASSOC))) {
@@ -274,12 +260,12 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
 
 
       case "DELETE":
-         $id = anydb_escape_string($args["id"]);
+         $id = mysql_escape_string($args["id"]);
          $version = $args["version"];
 
          #mysql_query("DELETE FROM " . EWIKI_DB_TABLE_NAME ."
          #   WHERE pagename='$id' AND version=$version");
-         # print "DELETING wiki:".$wiki_entry->id."Pagename: $id Version: $version <br />\n";
+         # print "DELETING wiki:".$wiki_entry->id."Pagename: $id Version: $version <br>\n";
          delete_records(EWIKI_DB_TABLE_NAME,"wiki", $wiki_entry->id,"pagename",$id,"version",$version);
 
          break;
@@ -308,21 +294,3 @@ function ewiki_database_moodle($action, &$args, $sw1, $sw2) {
 
    return($r);
 }
-
-function anydb_escape_string($s) {
-   global $CFG ;
-   $type = ($CFG->dbtype);
-   switch ($CFG->dbtype) {
-        case 'mysql':
-            $s = mysql_escape_string($s);
-            break;
-        case 'postgres7':
-            $s = pg_escape_string($s);
-            break;
-        default:
-            $s = addslashes($s);
-   }
-
-   return($s);
-}
-

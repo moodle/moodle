@@ -1,20 +1,18 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.4.3 (2004083130)
+      // editor.php - created with Moodle 1.3 (2004052500)
 
 
 $string['about'] = 'Über diesen Editor';
 $string['absbottom'] = 'Unten ausrichten';
-$string['address'] = 'Adresse';
+$string['absmiddle'] = 'Position in der Mitte';
+$string['address'] = 'Anschrift';
 $string['alignment'] = 'Anordnung';
 $string['alternatetext'] = 'Alternativer Text';
-$string['anchorhelp'] = 'Hiermit erstellen Sie nur einen Anker. Zusätzlich müssen Sie einen Link manuell erstellen.';
-$string['anchorname'] = 'Name des Ankers';
-$string['anchors'] = 'Anker';
 $string['baseline'] = 'Grundlinie';
 $string['bold'] = 'Fett';
 $string['borderthickness'] = 'Dicke der Ränder';
 $string['bottom'] = 'Ende';
-$string['browse'] = 'Durchsuchen';
+$string['browse'] = 'Surchsuchen';
 $string['cancel'] = 'Abbrechen';
 $string['cellpadding'] = 'Zelle auffüllen';
 $string['cellspacing'] = 'Zellabstand';
@@ -23,16 +21,15 @@ $string['chooseicon'] = 'Wählen Sie ein Icon aus, das eingefügt werden soll';
 $string['close'] = 'Schließen';
 $string['cols'] = 'Reihen';
 $string['copy'] = 'Die Auswahl kopieren';
-$string['createanchor'] = 'Anker erstellen';
 $string['createfolder'] = 'Ordner erstellen';
 $string['createlink'] = 'Einen Link einfügen';
 $string['cut'] = 'Markierung ausschneiden';
 $string['delete'] = 'Löschen';
-$string['filebrowser'] = 'Dateibrowser';
+$string['filebrowser'] = 'Dateienbrowser';
 $string['forecolor'] = 'Farbe der Zeichen';
 $string['fullscreen'] = 'Große Bildschirmanzeige';
 $string['heading'] = 'Kopfbereich';
-$string['height'] = 'Höhe (Pixel)';
+$string['height'] = 'Höhe';
 $string['hilitecolor'] = 'Farbe des Hintergrundes';
 $string['horizontal'] = 'Horizontal';
 $string['horizontalrule'] = 'Horizontale Anordnung';
@@ -42,7 +39,7 @@ $string['indent'] = 'Einzug vergrößern';
 $string['insertchar'] = 'Spezielles Zeichen einfügen';
 $string['insertimage'] = 'Bild einfügen';
 $string['insertlink'] = 'Link einfügen';
-$string['insertsmile'] = 'Smiley einfügen';
+$string['insertsmile'] = 'Smilie einfügen';
 $string['inserttable'] = 'Tabelle einfügen';
 $string['italic'] = 'Kursivschrift';
 $string['justifycenter'] = 'Zentriert';
@@ -93,7 +90,7 @@ $string['strikethrough'] = 'Durchgestrichen';
 $string['subscript'] = 'Tiefgestellt';
 $string['superscript'] = 'Hochgestellt';
 $string['textindicator'] = 'Aktuelle Schrift';
-$string['textmode'] = 'Sie befinden sich zur Zeit im TEXT- Modus. Benutzen Sie die [<>]- Icon, um zurück in den WYSIWYG- MOdus zu wechseln. ';
+$string['textmode'] = 'Sie befinden sich zur Zeit im TEXT- Modus.Benutzen Sie die [<>]- Icon, um zurück in den WYSIWYG- MOdus zu wechseln. ';
 $string['texttop'] = 'Einleitungstext';
 $string['top'] = 'Anfang';
 $string['type'] = 'Typ';
@@ -101,9 +98,9 @@ $string['underline'] = 'Unterstrichen';
 $string['undo'] = 'Rückgängig';
 $string['unorderedlist'] = 'Aufzählungszeichen';
 $string['upload'] = 'Hochladen';
-$string['vertical'] = 'Vertikal';
-$string['width'] = 'Breite (Pixel)';
-$string['wordclean'] = 'Word-Formatierung umwandeln (HTML)';
+$string['vertical'] = 'Höhe';
+$string['width'] = 'Breite';
+$string['wordclean'] = 'HTML-Text';
 $string['zip'] = 'Zip';
 
 ?>

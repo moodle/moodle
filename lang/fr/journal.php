@@ -10,13 +10,12 @@ $string['feedbackupdated'] = 'Feedback mis à jour pour les contributions de $a';
 $string['journalmail'] = '$a->teacher a écrit un feedback au sujet de votre contribution au journal « $a->journal »
 Vous pouvez le consulter en annexe à votre contribution au journal :
 $a->url';
-$string['journalmailhtml'] = '$a->teacher a écrit un feedback au sujet de votre contribution au journal « <em>$a->journal</em> »<br /><br />Vous pouvez le consulter en annexe à votre <a href=\"$a->url\">contribution au journal</a>.';
+$string['journalmailhtml'] = '$a->teacher a écrit un feedback au sujet de votre contribution au journal « <i>$a->journal</i> »<br /><br />Vous pouvez le consulter en annexe à votre <a href=\"$a->url\">contribution au journal</a>.';
 $string['journalname'] = 'Nom du journal';
 $string['journalquestion'] = 'Sujet du journal';
 $string['journalrating1'] = 'Insatisfaisant';
 $string['journalrating2'] = 'Satisfaisant';
 $string['journalrating3'] = 'Excellent';
-$string['mailsubject'] = 'Feedback de journal';
 $string['modulename'] = 'Journal';
 $string['modulenameplural'] = 'Journaux';
 $string['newjournalentries'] = 'Nouvelles contributions au journal';
@@ -28,6 +27,6 @@ $string['overallrating'] = 'Note générale';
 $string['rate'] = 'Note';
 $string['saveallfeedback'] = 'Enregistrer tous mes feedbacks';
 $string['startoredit'] = 'Commencer ou modifier ma contribution';
-$string['viewallentries'] = 'Voir toutes les contributions du journal';
+$string['viewallentries'] = 'Voir toutes les contribution du journal';
 
 ?>

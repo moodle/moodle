@@ -96,7 +96,7 @@ $string['backupkeephelp'] = '你想要为每门课程保存多少最近的备份? (比较旧的一些将
 $string['backuplogshelp'] = '如果使用,课程记录将会被包含在自动备份中';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backuporiginalname'] = '备份名称';
-$string['backupsavetohelp'] = '存放备份文件的位置的完整路径<br />(不填则保存在课程的默认目录)';
+$string['backupsavetohelp'] = '存放备份文件的位置的完整路径<br>(不填则保存在课程的默认目录)';
 $string['backupuserfileshelp'] = '选择自动备份中是否包含用户文件（如用户图片）';
 $string['backupusershelp'] = '选择是否包含所有用户还是只要各个课程需要的用户';
 $string['backupversion'] = '备份版本';
@@ -293,9 +293,9 @@ $string['emailconfirmation'] = ' $a->lastname  ：
 
 $a->admin';
 $string['emailconfirmationsubject'] = '$a ：帐号确认';
-$string['emailconfirmsent'] = '   <p>一封email已经发送到你的地址 <b> $a </b>。
-   </p><p>这封邮件简要说明了你如何完成注册。
-   </p><p>如果你还遇到什么困难，请?屯竟芾碓绷怠?</p>';
+$string['emailconfirmsent'] = '   <P>一封email已经发送到你的地址 <B> $a </B>。
+   <P>这封邮件简要说明了你如何完成注册。
+   <P>如果你还遇到什么困难，请?屯竟芾碓绷怠?';
 $string['emaildisable'] = '这个电子邮件住址无效.';
 $string['emaildisplay'] = 'Email显示';
 $string['emaildisplaycourse'] = '只允许参加同一课程的其他成员看见我的email地址';
@@ -322,22 +322,22 @@ $string['emailpasswordconfirmation'] = '$a->lastname ：
 $string['emailpasswordconfirmationsubject'] = '$a ：确认更改密码';
 $string['emailpasswordconfirmsent'] = '一封email已经发送到你的邮箱<b>$a</b>。
 
-<br />其中有关于如何确认并完成本次密码更改的简单说明。
+<p>其中有关于如何确认并完成本次密码更改的简单说明。
 如果你还是有困难，请联系网站管理员。';
 $string['emailpasswordsent'] = '谢谢你对更改密码做了?啡稀?
 
-<br />你的新密码已经通过email发送到你的邮箱：<b>$a->email</b>
+<p>你的新密码已经通过email发送到你的邮箱：<b>$a->email</b>
 
-<br />这个新密码是自动生成的——你最好到<a href=\"$a->link\">这里</a>改成你自己容易记的密码。';
+<P>这个新密码是自动生成的——你最好到<a href=$a->link>这里</a>改成你自己容易记的密码。';
 $string['enable'] = '使用';
 $string['enrolledincourse'] = '学习课程 \"$a\"';
 $string['enrolledincoursenot'] = '不再学习课程 \"$a\"';
 $string['enrolmentconfirmation'] = '你想学习该课程。确定吗？';
 $string['enrolmentkey'] = '选课密钥';
-$string['enrolmentkeyfrom'] = '该课程需要‘选课密钥’——<br />
+$string['enrolmentkeyfrom'] = '该课程需要‘选课密钥’——<BR>
 
 一个从 $a 获得的一次性密码';
-$string['enrolmentkeyhint'] = '这个选课密钥不正确，请再试一次<br />
+$string['enrolmentkeyhint'] = '这个选课密钥不正确，请再试一次<BR>
 （提示：以\'$a\'开头）';
 $string['entercourse'] = '点击进入该课程';
 $string['enteremailaddress'] = '输入你的email地址以重设密码，
@@ -501,24 +501,24 @@ $string['loginguest'] = '作为访客登录';
 $string['loginsite'] = '登录该站';
 $string['loginsteps'] = '嗨，你好！为了完全访问所有课程，你必须花一两分钟时间申请一个新帐号。各个课程可能还需要一个一次性的“选课密钥”，用过一次以后就不再需要。请按以下步骤进行：
 
-   <ol>
+   <OL size=2>
 
-   <li>填写<A HREF= $a >注册新帐号</A>上的关于个人情况的表单。</li>
+   <LI>填写<A HREF= $a >注册新帐号</A>上的关于个人情况的表单。
 
-   <li>一封email会马上发送到你的信箱中。</li>
+   <LI>一封email会马上发送到你的信箱中。
 
-   <li>阅读这封email，点击信中包含的网页链接。</li>
+   <LI>阅读这封email，点击信中包含的网页链接。
 
-   <li>你的帐号会马上得到确认，而你也将登录到本站中。</li>
+   <LI>你的帐号会马上得到确认，而你也将登录到本站中。
 
-   <li>然后，选择你想选修的课程。</li>
+   <LI>然后，选择你想选修的课程。
 
-   <li>如果系统提示要“选课密钥”，请用你的老师提供给你的密钥。这样才能注册到该课程中。</li>
+   <LI>如果系统提示要“选课密钥”，请用你的老师提供给你的密钥。这样才能注册到该课程中。
 
-   <li>这时你可以完全访问课程。从此后你只需输入你个人的用户名和密码（在本页面的表单中）以登录并进入任一个你已注册的课程。</li>
+   <LI>这时你可以完全访问课程。从此后你只需输入你个人的用户名和密码（在本页面的表单中）以登录并进入任一个你已注册的课程。
 
-   </ol>';
-$string['loginstepsnone'] = '<p>嗨！</p><p>为了完全访问课程你必须申请一个新帐号。</p><p>你所需要做的是创建一个用户名和密码，并在本页面中使用。</p><p>如果别人已经申请了相同的用户名，只好请你委屈一下用别的用户名重试。</p>';
+   </OL>';
+$string['loginstepsnone'] = '嗨！<P>为了完全访问课程你必须申请一个新帐号。<P>你所需要做的是创建一个用户名和密码，并在本页面中使用。<P>如果别人已经申请了相同的用户名，只好请你委屈一下用别的用户名重试。';
 $string['loginto'] = '登录到 $a';
 $string['loginusing'] = '用你的用户名和密码在此登录';
 $string['logout'] = '登离';
@@ -668,13 +668,13 @@ $string['passwordconfirmchange'] = '确认密码更改';
 $string['passwordrecovery'] = '是的，帮我登录吧';
 $string['passwordsdiffer'] = '这些密码不对';
 $string['passwordsent'] = '密码已被发送';
-$string['passwordsenttext'] = '   <p>一封email已经送到你的邮箱 $a->email。</p>
+$string['passwordsenttext'] = '   <P>一封email已经送到你的邮箱 $a->email。
 
-   <p><b>请查收你的email以获取密码。</b></p>
+   <P><B>请查收你的email以获取密码。</B>
 
-   <p>这个新密码是自动生成的，所以你可能需要点击
+   <P>这个新密码是自动生成的，所以你可能需要点击
 
-   <a href=\"$a->link\" >这里</a>改成你自己容易记的密码。</p>';
+   <A HREF= $a->link >这里</A>改成你自己容易记的密码。';
 $string['people'] = '人物';
 $string['personalprofile'] = '个人资料';
 $string['phone'] = '电话';
@@ -736,7 +736,7 @@ $string['scheduledbackupstatus'] = '计划备份状态';
 $string['search'] = '搜索';
 $string['searchagain'] = '再次搜索';
 $string['searchcourses'] = '搜索课程';
-$string['searchhelp'] = '你可以使用多关键字搜索.<br />word :搜索任何包含该关键字的内容.<br />+word :严格匹配.<br />-word :结果中不含该关键词';
+$string['searchhelp'] = '你可以使用多关键字搜索.<p>word :搜索任何包含该关键字的内容.<br>+word :严格匹配.<br>-word :结果中不含该关键词';
 $string['searchresults'] = '搜索结果';
 $string['sec'] = '秒';
 $string['secs'] = '秒';
@@ -813,7 +813,7 @@ $string['themes'] = '主题风格';
 $string['themesaved'] = '新主题风格已保存';
 $string['thischarset'] = 'GB18030';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '&#20013;&#25991;';
+$string['thislanguage'] = '&#33521;&#25991;';
 $string['time'] = '时间';
 $string['timezone'] = '时区';
 $string['to'] = '到';

@@ -1,11 +1,8 @@
-<?php // $Id$ 
-      // webquest.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+<?PHP // $Id$ 
+      // webquest.php - created with Moodle 1.2 development (2003110400)
 
 
-$string['modulename'] = 'Webquest';
-$string['modulenameplural'] = 'Webquest';
-$string['thischarset'] = 'EUC-JP';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Japanese';
+$string['modulename'] = "Webquest";
+$string['modulenameplural'] = "Webquests";
 
 ?>

@@ -1,33 +1,33 @@
 <?PHP //$Id$
 
-class block_search_forums extends block_base {
-    function init() {
+class CourseBlock_search_forums extends MoodleBlock {
+    function CourseBlock_search_forums ($course) {
         $this->title = get_string('search', 'forum');
-        $this->version = 2005030900;
+        $this->content_type = BLOCK_TYPE_TEXT;
+        $this->course = $course;
+        $this->version = 2004041000;
     }
 
     function get_content() {
-        global $CFG;
+        global $USER, $CFG, $SESSION;
+        optional_variable($_GET['cal_m']);
+        optional_variable($_GET['cal_y']);
 
         if($this->content !== NULL) {
             return $this->content;
         }
 
-        $this->content = new stdClass;
-        $this->content->footer = '';
-
-        if (empty($this->instance)) {
-            $this->content->text   = '';
+        if (empty($this->course)) {
+            $this->content = '';
             return $this->content;
         }
 
-        $this->content->text  = '<div class="searchform">';
-        $this->content->text .= '<form name="search" action="'.$CFG->wwwroot.'/mod/forum/search.php" style="display:inline">';
-        $this->content->text .= '<input name="search" type="text" size="18" value="" alt="search" /> ';
-        $this->content->text .= '<input value="'.get_string('searchforums', 'forum').'" type="submit" />';
-        $this->content->text .= helpbutton('search', get_string('search'), 'moodle', true, false, '', true);
-        $this->content->text .= '<input name="id" type="hidden" value="'.$this->instance->pageid.'" />';
-        $this->content->text .= '</form></div>';
+        $this->content = New object;
+        $this->content->text = '';
+        $this->content->footer = '';
+
+        $form = forum_print_search_form($this->course, '', true);
+        $this->content->text = '<div align="center">'.$form.'</div>';
 
         return $this->content;
     }

@@ -1,8 +1,7 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 unstable development (2004083000)
+      // scorm.php - created with Moodle 1.4 development (2004070800)
 
 
-$string['asset'] = 'Asset';
 $string['attr_error'] = 'Valor erróneo para el atributo ($a->attr) en la marca $a->tag.';
 $string['autocontinue'] = 'Continuación automática';
 $string['badmanifest'] = 'Errores manifiestos: ver registro de errores';
@@ -53,7 +52,6 @@ $string['noreports'] = 'No hay informes que mostrar';
 $string['normal'] = 'Normal';
 $string['not_corr_type'] = 'No concuerda el tipo para la marca $a->tag';
 $string['notattempted'] = 'No se ha intentado';
-$string['organizations'] = 'Organizaciones';
 $string['packagedir'] = 'Error del Sistema: No se puede crear el directorio del paquete';
 $string['passed'] = 'Pasado';
 $string['php5'] = 'PHP 5 (librería nativa DOMXML)';
@@ -71,7 +69,7 @@ $string['too_many_children'] = 'La marca $a->tag tiene demasiados hijos';
 $string['trackingloose'] = 'ADVERTENCIA: ¡Los datos de rastreo de este paquete SCORM se perderán!';
 $string['validateascorm'] = 'Validar un paquete SCORM';
 $string['validation'] = 'Resultado de la validación';
-$string['validationtype'] = 'Esta preferencia ajusta la librería DOMXML usada para validar el Manifiesto SCORM. Si no sabe qué hacer, deje la opción seleccionada.';
+$string['validationtype'] = 'Esta preferencia ajustga la librería DOMXML usada para validar el Manifiesto SCORM. Si no sabe qué hacer, deje la opción seleccionada.';
 $string['versionwarning'] = 'La versión de manifiesto es anterior a la 1.3, cuidado con la marca $a->tag';
 $string['viewallreports'] = 'Ver informes de $a intentos';
 

@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This php script contains all the stuff to backup/restore
     //chat mods
 
@@ -52,7 +52,7 @@
             $newid = insert_record ("chat",$chat);
 
             //Do some output     
-            echo "<li>".get_string("modulename","chat")." \"".format_string(stripslashes($chat->name),true)."\"</li>";
+            echo "<ul><li>".get_string("modulename","chat")." \"".$chat->name."\"<br>";
             backup_flush(300);
 
             if ($newid) {
@@ -67,6 +67,10 @@
             } else {
                 $status = false;
             }
+
+            //Finalize ul        
+            echo "</ul>";
+        
         } else {
             $status = false;
         }
@@ -122,7 +126,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                    echo "<br>";
                 }
                 backup_flush(300);
             }
@@ -175,19 +179,8 @@
             $log->url = "index.php?id=".$log->course;
             $status = true;
             break;
-        case "report":
-            if ($log->cmid) {
-                //Get the new_id of the module (to recode the info field)
-                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
-                if ($mod) {
-                    $log->url = "report.php?id=".$log->cmid;
-                    $log->info = $mod->new_id;
-                    $status = true;
-                }
-            }
-            break;
         default:
-            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
             break;
         }
 

@@ -17,7 +17,7 @@ if (isset($_POST["course"]))  {
       $mod = (object)$_POST;
   }
 
-  if (isset($cancel)) {
+  if (isset($cancel)) {  
       if (!empty($SESSION->returnpage)) {
           $return = $SESSION->returnpage;
           unset($SESSION->returnpage);
@@ -40,30 +40,30 @@ if (isset($_POST["course"]))  {
 
 /* // set the information for the new instances
      $attendance->dynsection = !empty($attendance->dynsection) ? 1 : 0;
-     $attendance->day = make_timestamp($attendance->theyear,
-            $attendance->themonth, $attendance->theday);
+     $attendance->day = make_timestamp($attendance->theyear, 
+			$attendance->themonth, $attendance->theday); 
      $attendance->name=userdate($attendance->day, get_string("strftimedate"));
-     if ($attendance->notes) {
-        $attendance->name = $attendance->name . " - " . $attendance->notes;
-     }
+	 if ($attendance->notes) { 
+	 	$attendance->name = $attendance->name . " - " . $attendance->notes;
+	 }
 */
   $curdate = make_timestamp($mod->startyear, $mod->startmonth, $mod->startday);
   $stopdate = make_timestamp($mod->endyear, $mod->endmonth, $mod->endday);
-  $enddate = $curdate + $mod->numsections * 604800;
+  $enddate = $curdate + $mod->numsections * 604800;  
   if ($curdate > $stopdate) {
-    error(get_string("endbeforestart", "attendance"));
-    }
+  	error(get_string("endbeforestart", "attendance"));
+	}
   if ($enddate < $curdate) {
-    error(get_string("startafterend", "attendance"));
-    }
+  	error(get_string("startafterend", "attendance"));
+	}
   if ($stopdate > $enddate) {
       // if stop date is after end of course, just move it to end of course
-            $stopdate = $enddate;
-    }
+			$stopdate = $enddate;
+	}
   while ($curdate <= $stopdate) {
     $mod->day = $curdate;
     $mod->name=userdate($mod->day, get_string("strftimedate"));
-      if (isset($mod->notes)) {$mod->name = $mod->name . " - " . $mod->notes;}
+	  if (isset($mod->notes)) {$mod->name = $mod->name . " - " . $mod->notes;}
     switch(userdate($curdate, "%u")) {
       case 1: if (!empty($mod->mon)) {attendance_add_module($mod);}break;
       case 2: if (!empty($mod->tue)) {attendance_add_module($mod);}break;
@@ -75,7 +75,7 @@ if (isset($_POST["course"]))  {
     } // switch
     $curdate = $curdate + 86400; // add one day to the date
   } // while for days
-
+      
   if (!empty($SESSION->returnpage)) {
       $return = $SESSION->returnpage;
       unset($SESSION->returnpage);
@@ -84,13 +84,13 @@ if (isset($_POST["course"]))  {
       redirect("index.php?id=$mod->course");
   }
   exit;
-
+  
 } else {
 /// -----------------------------------------------------------------------------------
 /// ------------------ SECTION FOR MAKING THE FORM TO BE POSTED -----------------------
 /// -----------------------------------------------------------------------------------
 
-/// @include_once("$CFG->dirroot/mod/attendance/lib.php");
+/// @include_once("$CFG->dirroot/mod/attendance/lib.php"); 
 /// error_reporting(E_ALL);
 
         require_variable($id);
@@ -132,8 +132,8 @@ if (isset($_POST["course"]))  {
 
     if ($course->category) {
         print_header("$course->shortname: $streditinga", "$course->fullname",
-                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
-                      <a href=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</a> ->
+                     "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
+                      <A HREF=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</A> -> 
                       $streditinga", "form.name", "", false);
     } else {
         print_header("$course->shortname: $streditinga", "$course->fullname",
@@ -143,12 +143,12 @@ if (isset($_POST["course"]))  {
     unset($SESSION->modform); // Clear any old ones that may be hanging around.
 
 
-        $icon = "<img align=middle height=16 width=16 src=\"$CFG->modpixpath/$module->name/icon.gif\" alt=\"\" />&nbsp;";
+        $icon = "<img align=absmiddle height=16 width=16 src=\"$CFG->modpixpath/$module->name/icon.gif\">&nbsp;";
 
         print_heading_with_help($pageheading, "mods", $module->name, $icon);
-        print_simple_box_start('center');
+        print_simple_box_start("center", "", "$THEME->cellheading");
 
-
+ 
 /// Print the main part of the page
 
    // adaptation of mod code to view code needs this:
@@ -164,45 +164,45 @@ $form->maxgrade = isset($CFG->attendance_maxgrade)?$CFG->attendance_maxgrade:0;
 $form->hours = isset($CFG->attendance_default_hours)?$CFG->attendance_default_hours:1;
 
 ?>
-<form name="form" method="post" action="add.php">
-<center>
-<input type="submit" value="<?php  print_string("savechanges") ?>" />
-<input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
-<table cellpadding=5>
+<FORM name="form" method="post" action="<?php echo $ME ?>">
+<CENTER>
+<INPUT type="submit" value="<?php  print_string("savechanges") ?>">
+<INPUT type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
+<TABLE cellpadding=5>
 
-<tr valign=top>
-    <td align=right><p><b><?php print_string("startmulti", "attendance") ?>:</b></p></td>
-    <td colspan="3"><?php print_date_selector("startday", "startmonth", "startyear",$course->startdate) ?></td>
-</tr>
-<tr valign=top>
-    <td align=right><p><b><?php print_string("endmulti", "attendance") ?>:</b></p></td>
-    <td colspan="3"><?php print_date_selector("endday", "endmonth", "endyear",$course->enddate) ?></td>
-</tr>
+<TR valign=top>
+    <TD align=right><P><B><?php print_string("startmulti", "attendance") ?>:</B></P></TD>
+    <TD colspan="3"><?php print_date_selector("startday", "startmonth", "startyear",$course->startdate) ?></TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><?php print_string("endmulti", "attendance") ?>:</B></P></TD>
+    <TD colspan="3"><?php print_date_selector("endday", "endmonth", "endyear",$course->enddate) ?></TD>
+</TR>
 
-<tr valign=top>
-    <td align=right><p><b><?php print_string("choosedays", "attendance") ?>:</b></p></td>
-    <td colspan="3">
+<TR valign=top>
+    <TD align=right><P><B><?php print_string("choosedays", "attendance") ?>:</B></P></TD>
+    <TD colspan="3">
     <?php print_string("sunday","attendance"); echo ":"; ?>
-    <input type="checkbox" name="sun" />
+    <input type="checkbox" name="sun" >
     <?php print_string("monday","attendance"); echo ":"; ?>
-    <input type="checkbox" name="mon" checked="checked" />
+    <input type="checkbox" name="mon" "checked">
     <?php print_string("tuesday","attendance"); echo ":"; ?>
-    <input type="checkbox" name="tue" checked="checked" />
+    <input type="checkbox" name="tue" "checked">
     <?php print_string("wednesday","attendance"); echo ":"; ?>
-    <input type="checkbox" name="wed" checked="checked" />
+    <input type="checkbox" name="wed" "checked">
     <?php print_string("thursday","attendance"); echo ":"; ?>
-    <input type="checkbox" name="thu" checked="checked" />
+    <input type="checkbox" name="thu" "checked">
     <?php print_string("friday","attendance"); echo ":"; ?>
-    <input type="checkbox" name="fri" checked="checked" />
+    <input type="checkbox" name="fri" "checked">
     <?php print_string("saturday","attendance"); echo ":"; ?>
-    <input type="checkbox" name="sat" />
+    <input type="checkbox" name="sat" >
 <?php helpbutton("choosedays", get_string("choosedays","attendance"), "attendance");?>
-    </td>
-</tr>
+    </TD>
+</TR>
 
 <tr valign=top>
-    <td align="right"><p><b><?php print_string("dynamicsectionmulti", "attendance") ?>:</b></p></td>
-    <td align="left">
+    <TD align="right"><P><B><?php print_string("dynamicsectionmulti", "attendance") ?>:</B></P></TD>
+    <TD align="left">
 <?php
         $options = array();
         $options[0] = get_string("no");
@@ -210,12 +210,12 @@ $form->hours = isset($CFG->attendance_default_hours)?$CFG->attendance_default_ho
         choose_from_menu($options, "dynsection", "", "");
         helpbutton("dynsection", get_string("dynamicsectionmulti","attendance"), "attendance");
 ?>
-<!--      <input type="checkbox" name="dynsection" <?php echo !empty($form->dynsection) ? 'checked' : '' ?> /> -->
-</td>
+<!--      <input type="checkbox" name="dynsection" <?php echo !empty($form->dynsection) ? 'checked' : '' ?> > -->
+</TD>
 </tr>
 <tr valign=top>
-    <td align="right"><p><b><?php print_string("autoattendmulti", "attendance") ?>:</b></p></td>
-    <td align="left">
+    <TD align="right"><P><B><?php print_string("autoattendmulti", "attendance") ?>:</B></P></TD>
+    <TD align="left">
 <?php
         $options = array();
         $options[0] = get_string("no");
@@ -225,21 +225,21 @@ $form->hours = isset($CFG->attendance_default_hours)?$CFG->attendance_default_ho
 ?>
 
 
-<!--      <input type="checkbox" name="autoattend" <?php echo !empty($form->autoattend) ? 'checked' : '' ?> /> -->
-    </td>
+<!--      <input type="checkbox" name="autoattend" <?php echo !empty($form->autoattend) ? 'checked' : '' ?> > -->
+    </TD>
 </tr>
 <?php // starting with 2 to allow for the nothing value in choose_from_menu to be the default of 1
 for ($i=2;$i<=24;$i++){ $opt[$i] = $i; } ?>
-<tr valign=top>
-    <td align=right><p><b><?php print_string("hoursineachclass", "attendance") ?>:</b></p></td>
-    <td  colspan="3" align="left"><?php choose_from_menu($opt, "hours", $form->hours, "1","","1") ?>
+<TR valign=top>
+    <TD align=right><P><B><?php print_string("hoursineachclass", "attendance") ?>:</B></P></TD>
+    <TD  colspan="3" align="left"><?php choose_from_menu($opt, "hours", $form->hours, "1","","1") ?>
 <?php helpbutton("hours", get_string("hoursinclass","attendance"), "attendance"); ?>
 </td>
 </tr>
 
 <tr valign=top>
-    <td align="right"><p><b><?php print_string("gradevaluemulti", "attendance") ?>:</b></p></td>
-    <td align="left">
+    <TD align="right"><P><B><?php print_string("gradevaluemulti", "attendance") ?>:</B></P></TD>
+    <TD align="left">
 <?php
         $options = array();
         $options[0] = get_string("no");
@@ -248,34 +248,34 @@ for ($i=2;$i<=24;$i++){ $opt[$i] = $i; } ?>
         helpbutton("grade", get_string("gradevalue","attendance"), "attendance");
 ?>
 
-<!--      <input type="checkbox" name="grade" <?php echo !empty($form->grade) ? 'checked' : '' ?> /> -->
-    </td>
+<!--      <input type="checkbox" name="grade" <?php echo !empty($form->grade) ? 'checked' : '' ?> > -->
+    </TD>
 </tr>
 <?php // starting with 2 to allow for the nothing value in choose_from_menu to be the default of 1
 for ($i=0;$i<=100;$i++){ $opt2[$i] = $i; } ?>
-<tr valign=top>
-    <td align=right><p><b><?php print_string("maxgradevalue", "attendance") ?>:</b></p></td>
-    <td  colspan="3" align="left"><?php choose_from_menu($opt2, "maxgrade", $form->maxgrade, "0","","0");
+<TR valign=top>
+    <TD align=right><P><B><?php print_string("maxgradevalue", "attendance") ?>:</B></P></TD>
+    <TD  colspan="3" align="left"><?php choose_from_menu($opt2, "maxgrade", $form->maxgrade, "0","","0"); 
    helpbutton("maxgrade", get_string("maxgradevalue","attendance"), "attendance");
 ?></td>
 </tr>
 
 
-</table>
+</TABLE>
 <!-- These hidden variables are always the same -->
-<input type="hidden" name=course        value="<?php p($form->course) ?>" />
-<input type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>" />
-<input type="hidden" name=section       value="<?php p($form->section) ?>" />
-<input type="hidden" name=module        value="<?php p($form->module) ?>" />
-<input type="hidden" name=modulename    value="<?php p($form->modulename) ?>" />
-<input type="hidden" name=instance      value="<?php p($form->instance) ?>" />
-<input type="hidden" name=mode          value="<?php p($form->mode) ?>" />
-<input type="hidden" name=numsections   value="<?php p($course->numsections) ?>" />
-<br />
-<input type="submit" value="<?php print_string("savechanges") ?>" />
-<input type="submit" name="cancel" value="<?php print_string("cancel") ?>" />
-</center>
-</form>
+<INPUT type="hidden" name=course        value="<?php p($form->course) ?>">
+<INPUT type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>">
+<INPUT type="hidden" name=section       value="<?php p($form->section) ?>">
+<INPUT type="hidden" name=module        value="<?php p($form->module) ?>">
+<INPUT type="hidden" name=modulename    value="<?php p($form->modulename) ?>">
+<INPUT type="hidden" name=instance      value="<?php p($form->instance) ?>">
+<INPUT type="hidden" name=mode          value="<?php p($form->mode) ?>">
+<INPUT type="hidden" name=numsections   value="<?php p($course->numsections) ?>">
+<BR />
+<INPUT type="submit" value="<?php print_string("savechanges") ?>">
+<INPUT type="submit" name="cancel" value="<?php print_string("cancel") ?>">
+</CENTER>
+</FORM>
 
 <?php
     print_simple_box_end();

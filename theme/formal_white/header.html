@@ -1,45 +1,63 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html<?php echo $direction ?>>
 <head>
-    <?php echo $meta ?>
-    <meta name="keywords" content="moodle, <?php echo $title ?> " />
-    <title><?php echo $title ?></title>
-    <link rel="shortcut icon" href="<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>/favicon.ico" />
-    <?php include("$CFG->javascript"); ?>
+<?php echo $meta ?>
+<title><?php echo $title ?></title>
+<meta name="keywords" content="moodle, <?php echo $title ?> " />
+<link rel="stylesheet" type="text/css" href="<?php echo $styles ?>" />
+<link rel="shortcut icon" href="<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>/favicon.ico" />
+<?php include("$CFG->javascript"); ?>
 </head>
 
-<body<?php
-    echo " $bodytags";
-    if ($focus) {
-        echo " onload=\"setfocus()\"";
-    }
-    ?>>
-    
-<div id="page">
+<body<?php 
+   echo " $bodytags";
+   if ($focus) { 
+       echo " onload=setfocus()"; 
+   } 
+   echo " bgcolor=\"$THEME->body\">";
+?>
 
-<?php if ($home) {  // This is what gets printed on the home page only  
-?>
-    <div id="header-home">
-        <div class="headermain"><img src='<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>/logo.jpg' /></div>
-        <div class="headermenu"><?php echo $menu ?></div>
-    </div>
-<?php } else if ($heading) {  // This is what gets printed on any other page with a heading 
-?>
-    <div id="header">
-        <div class="headermain"><img src='<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>/logo_small.jpg' /></div>
-        <div class="headermenu"><?php echo $menu ?></div>
-    </div>
+<?php if ($home) {  // This is what gets printed on the home page only  ?>
+
+  <table width="100%" cellpadding="10" cellspacing="0" border="0" class="headerhome">
+    <tr>
+      <td valign="top" class="headerhomemain">
+	  <img border="0" src="<?php echo "$CFG->wwwroot/theme/$CFG->theme/logo.jpg" ?>">
+	  </td>
+      <td align="right" valign="top" class="headerhomemenu"><?php echo $menu ?></td>
+    </tr>
+  </table>
+
+<?php } else if ($heading) {  // This is what gets printed on any other page with a heading ?>
+
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" class="header">
+    <tr>
+      <td valign="top" class="headermain">
+	  <img border="0" src="<?php echo "$CFG->wwwroot/theme/$CFG->theme/logo_small.jpg" ?>">
+      <td align="right" valign="top" class="headermenu"><?php echo $menu ?></td>
+    </tr>
+  </table>
+
 <?php } ?>
-    <div class="clearer">&nbsp;</div>
+
+
 <?php if ($navigation) { // This is the navigation table with breadcrumbs  ?>
-    <div class="navbar">
-        <div class="breadcrumb"><?php print_navigation("$navigation"); ?></div>
-        <div class="navbutton"><?php echo $button; ?></div>
-    </div>
-<?php } else if ($heading) { // If no navigation, but a heading, then print a line  
-?>
-        <hr size="1" noshade="noshade" />
+
+  <table border="0" cellpadding="3" cellspacing="0" width="100%">
+    <tr>
+      <td bgcolor="<?php echo $THEME->cellheading?>" class="navbar">
+        <?php print_navigation("$navigation"); ?>
+      </td>
+      <td bgcolor="<?php echo $THEME->cellheading?>" class="navbar" align="right" width="20" valign="top"><?php 
+          echo $button;
+      ?></td>
+    </tr>
+  </table>
+  <img src="<?php echo $CFG->wwwroot?>/pix/spacer.gif" alt="" height="5" width="1" /><br />
+
+<?php } else if ($heading) { // If no navigation, but a heading, then print a line  ?>
+
+  <hr size="1" noshade="noshade" />
+
 <?php } ?>
-    <div class="clearer">&nbsp;</div>
-    <!-- END OF HEADER -->
-    <div id="content">
+
+<!-- END OF HEADER -->

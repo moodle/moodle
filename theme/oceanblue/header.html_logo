@@ -1,0 +1,53 @@
+<HTML<?php echo $direction?>>
+<HEAD>
+<TITLE><?php echo $title ?></TITLE>
+<META NAME="keywords" CONTENT="Moodle, <?php echo $title ?> ">
+<?php echo $meta ?>
+<LINK REL="stylesheet" TYPE="text/css" HREF="<?php echo $styles ?>">
+<LINK REL="SHORTCUT ICON" HREF="<?php echo $CFG->wwwroot?>/theme/oceanblue/favicon.ico">
+<?php  include("$CFG->javascript"); ?>
+</HEAD>
+
+<BODY <?php  if ($focus) { echo "onLoad=setfocus()"; } echo " bgcolor=\"$THEME->body\">"; ?>
+
+<?php  if ($home) {  // This is what gets printed on the home page only  ?>
+
+     <TABLE WIDTH=100% CELLPADDING=10 CELLSPACING=0 BORDER=0>
+       <TR>
+         <TD VALIGN=TOP><A HREF="<?php echo $CFG->wwwroot?>" TARGET="<?php echo $CFG->framename?>"><IMG SRC="<?php echo $CFG->wwwroot?>/theme/oceanblue/logo.jpg" ALT="Moodle" BORDER="0"></A></TD>
+         <TD ALIGN=RIGHT VALIGN=TOP><?php echo $menu ?></TD>
+       </TR>
+     </TABLE>
+
+
+<?php  } else if ($heading) {  // This is what gets printed on any other page with a heading ?>
+
+     <TABLE WIDTH=100% CELLPADDING=0 CELLSPACING=0 BORDER=0>
+       <TR>
+         <TD VALIGN=TOP><FONT SIZE=4><B><?php echo $heading?></B></FONT></TD>
+         <TD ALIGN=RIGHT VALIGN=TOP><?php echo $menu ?></TD>
+       </TR>
+     </TABLE>
+
+<?php  } ?>
+
+
+<?php  if ($navigation) { // This is the navigation table with breadcrumbs  ?>
+
+     <TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 WIDTH=100%>
+       <TR>
+         <TD BGCOLOR="<?php echo $THEME->cellheading?>" CLASS="navbar">
+           <FONT SIZE=2><B><?php  print_navigation("$navigation"); ?></B></FONT>
+         </TD>
+         <TD BGCOLOR="<?php echo $THEME->cellheading?>" CLASS="navbar" ALIGN=RIGHT WIDTH=20 VALIGN=TOP><?php echo $button ?></TD>
+       </TR>
+     </TABLE>
+     <IMG SRC="<?php echo $CFG->wwwroot?>/pix/spacer.gif" ALT="" HEIGHT=5 WIDTH=1><BR>
+
+<?php  } else if ($heading) { // If no navigation, but a heading, then print a line  ?>
+
+     <HR SIZE=1 NOSHADE>
+
+<?php  } ?>
+
+<!-- END OF HEADER -->

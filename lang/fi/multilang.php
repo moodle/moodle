@@ -1,10 +1,7 @@
 <?PHP // $Id$ 
-      // multilang.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // multilang.php - created with Moodle 1.2 Beta +++ (2004031300)
 
 
 $string['filtername'] = 'Monikieliset sisällöt';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Suomi';
 
 ?>

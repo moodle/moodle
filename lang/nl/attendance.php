@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // attendance.php - created with Moodle 1.3 development (2004050500)
 
 
 $string['absentlong'] = 'Afwezig';
 $string['absentshort'] = '-';
-$string['addingmultiple'] = 'Verschillende aanwezigheidslijsten toevoegen';
-$string['addmultiple'] = 'Voeg verschillende aanwezigheidslijsten toe';
+$string['addingmultiple'] = 'Meerdere aanwezigheidslijsten toevoegen';
+$string['addmultiple'] = 'Voeg meerdere aanwezigheidslijsten toe';
 $string['allmodulename'] = 'Alle aanwezigheidslijsten';
 $string['auto'] = 'auto';
 $string['autoattend'] = 'Neem automatisch aanwezigheid op, op basis van de logbestanden van gebruikersactiviteit';
@@ -18,7 +18,7 @@ $string['defaultdynamicsection'] = 'Aanwezigheidslijsten standaard naar de juist
 $string['defaultgrade'] = 'Aanwezigheidslijsten standaard op punten zetten';
 $string['defaulthoursinclass'] = 'Standaard aantal uur in een aanwezigheidslijst';
 $string['defaultmaxgrade'] = 'Maximumcijfer voor iemand die nooit afwezig is geweest';
-$string['defaultstudentstatus'] = 'De standaardstatus van een leerling op aanwezigheidslijsten';
+$string['defaultstudentstatus'] = 'De standaard status van een leerling op aanwezigheidslijsten';
 $string['downloadexcelfull'] = 'Download volledig Excel-blad';
 $string['downloadexceltotals'] = 'Download samenvattend Excel-blad';
 $string['downloadtextfull'] = 'Download volledig tekstrapport';
@@ -36,7 +36,7 @@ $string['gradevaluemulti'] = 'Zet deze lijsten op punten';
 $string['hoursinclass'] = 'Aantal uren in een lesperiode';
 $string['hoursineachclass'] = 'Aantal uren in elke lesperiode';
 $string['hoursinfullreport'] = 'Het maximum aantal uren aanwezigheid dat op een afzonderlijke pagina van het een rapport moet staan';
-$string['maxgradeshort'] = 'Maximumcijfer';
+$string['maxgradeshort'] = 'Maximum cijfer';
 $string['maxgradevalue'] = 'Maximale cijferwaarde voor altijd aanwezig';
 $string['modulename'] = 'Aanwezigheid';
 $string['modulenameplural'] = 'Aanwezigheidslijsten';
@@ -46,7 +46,7 @@ $string['notes'] = 'Uitzonderingsinformatie';
 $string['notesfor'] = 'Uitzonderingsinformatie voor';
 $string['noviews'] = 'Sorry, er zijn hier geen gegevens voor je account';
 $string['of'] = 'van';
-$string['pages'] = 'Pagina\"s';
+$string['pages'] = 'Pagina&quot;s';
 $string['presentlong'] = 'Aanwezig';
 $string['presentshort'] = 'A';
 $string['saturday'] = 'Za';
@@ -58,14 +58,11 @@ $string['tardiesperabsence'] = 'Hoe vaak te laat komen telt als één keer afwezig
 $string['tardylong'] = 'Te laat';
 $string['tardyshort'] = 'L';
 $string['teacheredit'] = 'Noteer aanwezigheid';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 $string['thursday'] = 'Do';
 $string['tuesday'] = 'Di';
 $string['viewall'] = 'Toon alle aanwezigheidslijsten';
-$string['viewmulti'] = 'Toon het rapport als meer pagina\'s';
-$string['viewone'] = 'Toon alle pagina\'s van het rapport';
+$string['viewmulti'] = 'Toon het rapport als meerdere pagina&quot;s';
+$string['viewone'] = 'Toon alle pagina&quot;s van het rapport';
 $string['viewsection'] = 'Toon alle aanwezigheidslijsten van deze sectie';
 $string['viewtable'] = 'Toon het rapport als één tabel';
 $string['viewweek'] = 'Toon alle aanwezigheidslijsten van de kalenderweek';

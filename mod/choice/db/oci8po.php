@@ -1,4 +1,4 @@
-<?php 
+<?PHP 
 
 function choice_upgrade($oldversion) {
 // This function does anything necessary to upgrade

@@ -1,0 +1,584 @@
+<form method="post" action="config.php" name="form">
+
+<table cellpadding=9 cellspacing=0 >
+<tr valign=top>
+    <td align=right><p>lang:</td>
+    <td>
+    <?php choose_from_menu (get_list_of_languages(), "lang", $config->lang, "", "", ""); ?>
+    </td>
+    <td>
+    <?php print_string("configlang") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>langmenu:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0] = get_string("no");
+       $options[1] = get_string("yes");
+
+       choose_from_menu ($options, "langmenu", $config->langmenu, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configlangmenu") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>langlist:</td>
+    <td>
+    <input name=langlist type=text size=40 value="<?php p($config->langlist) ?>">
+    </td>
+    <td>
+    <?php print_string("configlanglist") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>locale:</td>
+    <td>
+    <input name=locale type=text size=10 value="<?php p($config->locale) ?>">
+    </td>
+    <td>
+    <?php print_string("configlocale") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>timezone:</td>
+    <td><?php
+       if (abs($config->timezone) > 13) {
+           $config->timezone = 99;
+       }
+       $timenow = time();
+
+       for ($tz = -26; $tz <= 26; $tz++) {
+           $zone = (float)$tz/2.0;
+           $usertime = $timenow + ($tz * 1800);
+           if ($tz == 0) {
+               $timezones["$zone"] = gmstrftime("%a, %I:%M %p", $usertime)." (GMT)";
+           } else if ($tz < 0) {
+               $timezones["$zone"] = gmstrftime("%a, %I:%M %p", $usertime)." (GMT$zone)";
+           } else {
+               $timezones["$zone"] = gmstrftime("%a, %I:%M %p", $usertime)." (GMT+$zone)";
+           }
+       }
+
+       choose_from_menu ($timezones, "timezone", $config->timezone, get_string("serverlocaltime"), "", "99");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configtimezone") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>country:</td>
+    <td><?php choose_from_menu (get_list_of_countries(), "country", $config->country, get_string("selectacountry"), "") ?>
+    </td>
+    <td>
+    <?php print_string("configcountry") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>smtphosts:</td>
+    <td>
+    <input name=smtphosts type=text size=30 value="<?php p($config->smtphosts)?>">
+    </td>
+    <td>
+    <?php print_string("configsmtphosts") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>smtpuser:</td>
+    <td>
+    <input name=smtpuser type=text size=10 value="<?php p($config->smtpuser)?>">
+    </td>
+    <td rowspan=2>
+    <?php print_string("configsmtpuser") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>smtppass:</td>
+    <td>
+    <input name=smtppass type=text size=10 value="<?php p($config->smtppass)?>">
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>noreplyaddress:</td>
+    <td>
+    <input name=noreplyaddress type=text size=30 value="<?php p($config->noreplyaddress)?>">
+    </td>
+    <td>
+    <?php print_string("confignoreplyaddress") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>gdversion:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0] = get_string("gdnot");
+       $options[1] = get_string("gd1");
+       $options[2] = get_string("gd2");
+
+       $installed  = check_gd_version();
+
+       choose_from_menu ($options, "gdversion", $installed, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configgdversion") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>htmleditor:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0] = get_string("allownot");
+       $options[1] = get_string("allow");
+       choose_from_menu ($options, "htmleditor", $config->htmleditor, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("confightmleditor") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>maxeditingtime:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[3600] = get_string("numminutes", "", 60);
+       $options[2700] = get_string("numminutes", "", 45);
+       $options[1800] = get_string("numminutes", "", 30);
+       $options[900]  = get_string("numminutes", "", 15);
+       $options[300]  = get_string("numminutes", "", 5);
+       $options[60]   = get_string("numminutes", "", 1);
+
+       choose_from_menu ($options, "maxeditingtime", $config->maxeditingtime, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configmaxeditingtime") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>longtimenosee:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[1000] = get_string("numdays", "", 1000);
+       $options[365]  = get_string("numdays", "", 365);
+       $options[180]  = get_string("numdays", "", 180);
+       $options[150]  = get_string("numdays", "", 150);
+       $options[120]  = get_string("numdays", "", 120);
+       $options[90]   = get_string("numdays", "", 90);
+       $options[60]   = get_string("numdays", "", 60);
+       $options[30]   = get_string("numdays", "", 30);
+       $options[21]   = get_string("numdays", "", 21);
+       $options[14]   = get_string("numdays", "", 14);
+       $options[7]   = get_string("numdays", "", 7);
+
+       choose_from_menu ($options, "longtimenosee", $config->longtimenosee, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configlongtimenosee") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>deleteunconfirmed:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0]    = get_string("never");
+       $options[168]  = get_string("numdays", "", 7);
+       $options[144]  = get_string("numdays", "", 6);
+       $options[120]  = get_string("numdays", "", 5);
+       $options[96]   = get_string("numdays", "", 4);
+       $options[72]   = get_string("numdays", "", 3);
+       $options[48]   = get_string("numdays", "", 2);
+       $options[24]   = get_string("numdays", "", 1);
+       $options[12]   = get_string("numhours", "", 12);
+       $options[6]    = get_string("numhours", "", 6);
+       $options[1]    = get_string("numhours", "", 1);
+
+       choose_from_menu ($options, "deleteunconfirmed", $config->deleteunconfirmed, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configdeleteunconfirmed") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>loglifetime:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0]    = get_string("neverdeletelogs");
+       $options[1000] = get_string("numdays", "", 1000);
+       $options[365]  = get_string("numdays", "", 365);
+       $options[180]  = get_string("numdays", "", 180);
+       $options[150]  = get_string("numdays", "", 150);
+       $options[120]  = get_string("numdays", "", 120);
+       $options[90]   = get_string("numdays", "", 90);
+       $options[60]   = get_string("numdays", "", 60);
+       $options[30]   = get_string("numdays", "", 30);
+
+       choose_from_menu ($options, "loglifetime", $config->loglifetime, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configloglifetime") ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><p>displayloginfailures:</p></td>
+    <td>
+    <?php
+       unset($options);
+       $options[''] = get_string('nobody');
+       $options['admin'] = get_string('administrators');
+       $options['teacher'] = get_string('administratorsandteachers');
+       $options['everybody'] = get_string('everybody');
+       choose_from_menu($options, "displayloginfailures",$config->displayloginfailures,"","","");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configdisplayloginfailures") ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><p>notifyloginfailures:</p></td>
+    <td>
+    <?php
+       unset($options);
+       $options[''] = get_string('nobody');
+       $options['mainadmin'] = get_string('administrator');
+       $options['alladmins'] = get_string('administratorsall');
+       choose_from_menu($options,"notifyloginfailures",$config->notifyloginfailures,"","","");
+    ?>
+    </td>
+    <td>
+    <?php print_string('confignotifyloginfailures') ?>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><p>notifyloginthreshold:</p></td>
+    <td>
+    <?php
+       unset($options);
+       for ($i=1; $i<=100; $i++) {
+           $options[$i] = "$i";
+       }
+       choose_from_menu($options,"notifyloginthreshold",$config->notifyloginthreshold,"","","");
+    ?>
+    </td>
+    <td>
+    <?php print_string('confignotifyloginthreshold') ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>sessiontimeout:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[14400] = get_string("numhours", "", 4);
+       $options[10800] = get_string("numhours", "", 3);
+       $options[7200]  = get_string("numhours", "", 2);
+       $options[5400]  = get_string("numhours", "", "1.5");
+       $options[3600]  = get_string("numminutes", "", 60);
+       $options[2700]  = get_string("numminutes", "", 45);
+       $options[1800]  = get_string("numminutes", "", 30);
+       $options[900]   = get_string("numminutes", "", 15);
+       $options[300]   = get_string("numminutes", "", 5);
+
+       choose_from_menu ($options, "sessiontimeout", $config->sessiontimeout, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configsessiontimeout") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>sessioncookie:</td>
+    <td>
+    <input name=sessioncookie type=text size=10 value="<?php p($config->sessioncookie)?>">
+    </td>
+    <td>
+    <?php print_string("configsessioncookie") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>zip:</td>
+    <td>
+    <input name=zip type=text size=30 value="<?php p($config->zip) ?>">
+    </td>
+    <td>
+    <?php print_string("configzip") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>unzip:</td>
+    <td>
+    <input name=unzip type=text size=30 value="<?php p($config->unzip) ?>">
+    </td>
+    <td>
+    <?php print_string("configunzip") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>slasharguments:</td>
+    <td>
+    <?php unset($options);
+       $options[0] = "file.php?file=/pic.jpg";
+       $options[1] = "file.php/pic.jpg";
+
+       choose_from_menu ($options, "slasharguments", $config->slasharguments, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configslasharguments") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>proxyhost:</td>
+    <td>
+    <input name=proxyhost type=text size=30 value="<?php p($config->proxyhost) ?>">
+    </td>
+    <td rowspan=2>
+    <?php print_string("configproxyhost") ?>
+    </td>
+</TR>
+<tr valign=top>
+    <td align=right><p>proxyport:</td>
+    <td>
+    <input name=proxyport type=text size=5 value="<?php p($config->proxyport) ?>">
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>debug:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[7]  = get_string("no");
+       $options[15] = get_string("yes");
+
+       choose_from_menu ($options, "debug", $config->debug, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configdebug") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>framename:</td>
+    <td>
+    <?php
+       if (empty($config->framename)) {
+           $config->framename = "_top";
+       }
+    ?>
+    <input name=framename type=text size=15 value="<?php p($config->framename)?>">
+    </td>
+    <td>
+    <?php print_string("configframename") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>secureforms:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0]  = get_string("no");
+       $options[1]  = get_string("yes");
+
+       choose_from_menu ($options, "secureforms", $config->secureforms, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configsecureforms") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>teacherassignteachers:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0]  = get_string("no");
+       $options[1]  = get_string("yes");
+
+       choose_from_menu ($options, "teacherassignteachers", $config->teacherassignteachers, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configteacherassignteachers") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>allowunenroll:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0]  = get_string("no");
+       $options[1]  = get_string("yes");
+
+       choose_from_menu ($options, "allowunenroll", $config->allowunenroll, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configallowunenroll") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>maxbytes:</td>
+    <td>
+    <?php
+       $options = get_max_upload_sizes();
+       choose_from_menu ($options, "maxbytes", $config->maxbytes, "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configmaxbytes") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>fullnamedisplay:</td>
+    <td>
+    <?php
+       unset($options);
+       $options['language']  = get_string('language');
+       $options['firstname lastname']  = get_string('firstname') . ' + ' . get_string('lastname');
+       $options['lastname firstname']  = get_string('lastname') . ' + ' . get_string('firstname');
+       $options['firstname']  = get_string('firstname');
+
+       choose_from_menu ($options, "fullnamedisplay", $config->fullnamedisplay, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configfullnamedisplay") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>extendedusernamechars:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0] = get_string("no");
+       $options[1] = get_string("yes");
+
+       choose_from_menu ($options, "extendedusernamechars", $config->extendedusernamechars, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configextendedusernamechars") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>autologinguests:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0]  = get_string('no');
+       $options[1]  = get_string('yes');
+
+       choose_from_menu ($options, "autologinguests", $config->autologinguests, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configautologinguests") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>forcelogin:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0]  = get_string('no');
+       $options[1]  = get_string('yes');
+
+       choose_from_menu ($options, "forcelogin", $config->forcelogin, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configforcelogin") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>forceloginforprofiles:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0]  = get_string('no');
+       $options[1]  = get_string('yes');
+
+       choose_from_menu ($options, "forceloginforprofiles", $config->forceloginforprofiles, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configforceloginforprofiles") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>opentogoogle:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0] = get_string("no");
+       $options[1] = get_string("yes");
+
+       choose_from_menu ($options, "opentogoogle", $config->opentogoogle, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configopentogoogle") ?>
+    </td>
+</tr>
+
+<tr valign=top>
+        <td align=right><p>enablerssfeeds:</td>
+        <td>
+    <?php
+       unset($options);
+       $options[0] = get_string("no");
+       $options[1] = get_string("yes");
+
+       choose_from_menu ($options, "enablerssfeeds", $config->enablerssfeeds, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php
+        print_string("configenablerssfeeds");
+        //Check for required functions...
+        if(!function_exists('utf8_encode')) {
+            echo "<font color=\"red\"> You need to add XML support to your PHP installation.</font>";
+        }
+    ?>
+    </td>
+</tr>
+
+<tr valign=top>
+        <td align=right><p>digestmailtime:</td>
+        <td>
+    <?php
+        $hours = array();
+        for ($i=0; $i<=23; $i++) {
+            $hours[$i] = sprintf("%02d",$i);
+        }
+        choose_from_menu($hours, 'digestmailtime', $config->digestmailtime, "");
+    ?>
+    </td>
+    <td>
+    <?php
+        print_string('configdigestmailtime');
+    ?>
+    </td>
+</tr>
+
+<tr>
+    <td colspan=3 align=center>
+    <input type="submit" value="<?php print_string("savechanges") ?>"></td>
+</tr>
+</table>
+
+</form>

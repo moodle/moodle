@@ -1,13 +1,9 @@
 <?PHP // $Id$ 
-      // block_online_users.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // block_online_users.php - created with Moodle 1.4 development (2004060400)
 
 
-$string['blockname'] = 'משתמשים מחוברים';
-$string['configtimetosee'] = 'משך זמן בדקות לזיהוי משתמש כמחובר כעת';
-$string['parentlanguage'] = 'en';
-$string['periodnminutes'] = '$a דקות אחרונות';
-$string['thischarset'] = 'ISO-8859-8-I';
-$string['thisdirection'] = 'rtl';
-$string['thislanguage'] = '&#1506;&#1489;&#1512;&#1497;&#1514;';
+$string['blockname'] = '&#1502;&#1513;&#1514;&#1502;&#1513;&#1497;&#1501; &#1502;&#1495;&#1493;&#1489;&#1512;&#1497;&#1501;';
+$string['configtimetosee'] = '&#1502;&#1505;&#1508;&#1512; &#1491;&#1511;&#1493;&#1514; &#1500;&#1492;&#1489;&#1495;&#1497;&#1503; &#1489;&#1502;&#1513;&#1514;&#1502;&#1513; &#1499;&#1502;&#1495;&#1493;&#1489;&#1512;';
+$string['periodnminutes'] = 'a$ &#1491;&#1511;&#1493;&#1514; &#1488;&#1495;&#1512;&#1493;&#1504;&#1493;&#1514;';
 
 ?>

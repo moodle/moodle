@@ -1,5 +1,5 @@
 <?php // $Id$
-      // names of the documentation files
+      // Names of the documentation files
       // Files with a definition "-" are treated as spacers
 
 $string['-about'] = "Over Moodle";

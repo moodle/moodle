@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim#natsoft.com.my). All rights reserved.
+V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -44,49 +44,6 @@ class ADODB_odbc extends ADOConnection {
 		$this->_haserrorfunctions = ADODB_PHPVER >= 0x4050;
 		$this->_has_stupid_odbc_fetch_api_change = ADODB_PHPVER >= 0x4200;
 	}
-	
-		// returns true or false
-	function _connect($argDSN, $argUsername, $argPassword, $argDatabasename)
-	{
-	global $php_errormsg;
-		
-		if (!function_exists('odbc_connect')) return null;
-		
-		if ($this->debug && $argDatabasename && $this->databaseType != 'vfp') {
-			ADOConnection::outp("For odbc Connect(), $argDatabasename is not used. Place dsn in 1st parameter.");
-		}
-		if (isset($php_errormsg)) $php_errormsg = '';
-		if ($this->curmode === false) $this->_connectionID = odbc_connect($argDSN,$argUsername,$argPassword);
-		else $this->_connectionID = odbc_connect($argDSN,$argUsername,$argPassword,$this->curmode);
-		$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
-		if (isset($this->connectStmt)) $this->Execute($this->connectStmt);
-		
-		return $this->_connectionID != false;
-	}
-	
-	// returns true or false
-	function _pconnect($argDSN, $argUsername, $argPassword, $argDatabasename)
-	{
-	global $php_errormsg;
-	
-		if (!function_exists('odbc_connect')) return null;
-		
-		if (isset($php_errormsg)) $php_errormsg = '';
-		$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
-		if ($this->debug && $argDatabasename) {
-			ADOConnection::outp("For odbc PConnect(), $argDatabasename is not used. Place dsn in 1st parameter.");
-		}
-	//	print "dsn=$argDSN u=$argUsername p=$argPassword<br>"; flush();
-		if ($this->curmode === false) $this->_connectionID = odbc_connect($argDSN,$argUsername,$argPassword);
-		else $this->_connectionID = odbc_pconnect($argDSN,$argUsername,$argPassword,$this->curmode);
-		
-		$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
-		if ($this->_connectionID && $this->autoRollback) @odbc_rollback($this->_connectionID);
-		if (isset($this->connectStmt)) $this->Execute($this->connectStmt);
-		
-		return $this->_connectionID != false;
-	}
-
 	
 	function ServerInfo()
 	{
@@ -199,6 +156,48 @@ class ADODB_odbc extends ADOConnection {
 	}
 	
 	
+	// returns true or false
+	function _connect($argDSN, $argUsername, $argPassword, $argDatabasename)
+	{
+	global $php_errormsg;
+		
+		if (!function_exists('odbc_connect')) return null;
+		
+		if ($this->debug && $argDatabasename && $this->databaseType != 'vfp') {
+			ADOConnection::outp("For odbc Connect(), $argDatabasename is not used. Place dsn in 1st parameter.");
+		}
+		if (isset($php_errormsg)) $php_errormsg = '';
+		if ($this->curmode === false) $this->_connectionID = odbc_connect($argDSN,$argUsername,$argPassword);
+		else $this->_connectionID = odbc_connect($argDSN,$argUsername,$argPassword,$this->curmode);
+		$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
+		if (isset($this->connectStmt)) $this->Execute($this->connectStmt);
+		
+		//if ($this->_connectionID) odbc_autocommit($this->_connectionID,true);
+		return $this->_connectionID != false;
+	}
+	
+	// returns true or false
+	function _pconnect($argDSN, $argUsername, $argPassword, $argDatabasename)
+	{
+	global $php_errormsg;
+	
+		if (!function_exists('odbc_connect')) return null;
+		
+		if (isset($php_errormsg)) $php_errormsg = '';
+		$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
+		if ($this->debug && $argDatabasename) {
+			ADOConnection::outp("For odbc PConnect(), $argDatabasename is not used. Place dsn in 1st parameter.");
+		}
+	//	print "dsn=$argDSN u=$argUsername p=$argPassword<br>"; flush();
+		if ($this->curmode === false) $this->_connectionID = odbc_connect($argDSN,$argUsername,$argPassword);
+		else $this->_connectionID = odbc_pconnect($argDSN,$argUsername,$argPassword,$this->curmode);
+		
+		$this->_errorMsg = isset($php_errormsg) ? $php_errormsg : '';
+		if ($this->_connectionID && $this->autoRollback) @odbc_rollback($this->_connectionID);
+		if (isset($this->connectStmt)) $this->Execute($this->connectStmt);
+		
+		return $this->_connectionID != false;
+	}
 
 	function BeginTrans()
 	{	
@@ -275,10 +274,8 @@ class ADODB_odbc extends ADOConnection {
 		$rs = new ADORecordSet_odbc($qid);
 		
 		$ADODB_FETCH_MODE = $savem;
-		if (!$rs) {
-			$false = false;
-			return $false;
-		}
+		if (!$rs) return false;
+		
 		$rs->_has_stupid_odbc_fetch_api_change = $this->_has_stupid_odbc_fetch_api_change;
 		
 		$arr =& $rs->GetArray();
@@ -303,7 +300,6 @@ class ADODB_odbc extends ADOConnection {
 	}
 	
 /*
-See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/odbc/htm/odbcdatetime_data_type_changes.asp
 / SQL data type codes /
 #define	SQL_UNKNOWN_TYPE	0
 #define SQL_CHAR			1
@@ -318,7 +314,6 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/odbc/htm/od
 #define SQL_DATETIME		9
 #endif
 #define SQL_VARCHAR		12
-
 
 / One-parameter shortcuts for date/time data types /
 #if (ODBCVER >= 0x0300)
@@ -345,16 +340,13 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/odbc/htm/od
 		case -4: //image
 			return 'B';
 				
-		case 9:	
 		case 91:
-			return 'D';
-		
-		case 10:
 		case 11:
+			return 'D';
+			
 		case 92:
 		case 93:
-			return 'T';
-			
+		case 9:	return 'T';
 		case 4:
 		case 5:
 		case -6:
@@ -374,7 +366,6 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/odbc/htm/od
 	{
 	global $ADODB_FETCH_MODE;
 	
-		$false = false;
 		if ($this->uCaseTables) $table = strtoupper($table);
 		$schema = '';
 		$this->_findschema($table,$schema);
@@ -420,15 +411,15 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/odbc/htm/od
 			if (empty($qid)) $qid = odbc_columns($this->_connectionID);
 			break;
 		}
-		if (empty($qid)) return $false;
+		if (empty($qid)) return false;
 		
-		$rs =& new ADORecordSet_odbc($qid);
+		$rs = new ADORecordSet_odbc($qid);
 		$ADODB_FETCH_MODE = $savem;
 		
-		if (!$rs) return $false;
+		if (!$rs) return false;
+		
 		$rs->_has_stupid_odbc_fetch_api_change = $this->_has_stupid_odbc_fetch_api_change;
 		$rs->_fetch();
-		
 		$retarr = array();
 		
 		/*
@@ -447,8 +438,8 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/odbc/htm/od
 		11 REMARKS
 		*/
 		while (!$rs->EOF) {
-		//	adodb_pr($rs->fields);
-			if (strtoupper(trim($rs->fields[2])) == $table && (!$schema || strtoupper($rs->fields[1]) == $schema)) {
+			//adodb_pr($rs->fields);
+			if (strtoupper($rs->fields[2]) == $table && (!$schema || strtoupper($rs->fields[1]) == $schema)) {
 				$fld = new ADOFieldObject();
 				$fld->name = $rs->fields[3];
 				$fld->type = $this->ODBCTypes($rs->fields[4]);
@@ -473,7 +464,7 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/odbc/htm/od
 		}
 		$rs->Close(); //-- crashes 4.03pl1 -- why?
 		
-		return empty($retarr) ? $false : $retarr;
+		return $retarr;
 	}
 	
 	function Prepare($sql)
@@ -690,13 +681,11 @@ class ADORecordSet_odbc extends ADORecordSet {
 	{
 		if ($this->_numOfRows != 0 && !$this->EOF) {		
 			$this->_currentRow++;
-			
+			$row = 0;
 			if ($this->_has_stupid_odbc_fetch_api_change)
 				$rez = @odbc_fetch_into($this->_queryID,$this->fields);
-			else {
-				$row = 0;
+			else 
 				$rez = @odbc_fetch_into($this->_queryID,$row,$this->fields);
-			}
 			if ($rez) {
 				if ($this->fetchMode & ADODB_FETCH_ASSOC) {
 					$this->fields =& $this->GetRowAssoc(ADODB_ASSOC_CASE);
@@ -711,13 +700,12 @@ class ADORecordSet_odbc extends ADORecordSet {
 	
 	function _fetch()
 	{
-		
+		$row = 0;
 		if ($this->_has_stupid_odbc_fetch_api_change)
 			$rez = @odbc_fetch_into($this->_queryID,$this->fields,$row);
-		else {
-			$row = 0;
+		else 
 			$rez = @odbc_fetch_into($this->_queryID,$row,$this->fields);
-		}
+		
 		if ($rez) {
 			if ($this->fetchMode & ADODB_FETCH_ASSOC) {
 				$this->fields =& $this->GetRowAssoc(ADODB_ASSOC_CASE);

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
       // Displays all grades for a student in a course
 
     require_once("../config.php");
@@ -53,14 +53,14 @@
                             if (function_exists($gradefunction)) {   // Skip modules without grade function
                                 if ($modgrades = $gradefunction($mod->instance)) {
 
-                                    $image = "<a href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\"".
-                                             "   title=\"$mod->modfullname\">".
-                                             "<img border=\"0\" valign=\"middle\" src=\"../mod/$mod->modname/icon.gif\" ".
-                                             "height=\"16\" width=\"16\" alt=\"$mod->modfullname\" /></a>";
+                                    $image = "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\"".
+                                             "   TITLE=\"$mod->modfullname\">".
+                                             "<IMG BORDER=0 VALIGN=absmiddle SRC=\"../mod/$mod->modname/icon.gif\" ".
+                                             "HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\"></A>";
                                     $columnhtml[] = "$image ".
-                                                 "<a href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
-                                                 format_string($instance->name,true).
-                                                 "</a>";
+                                                 "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
+                                                 "$instance->name".
+                                                 "</A>";
         
                                     if (empty($modgrades->grades[$USER->id])) {
                                         $grades[]  = "";
@@ -88,7 +88,7 @@
 /// OK, we have all the data, now present it to the user
 
     print_header("$course->shortname: $strgrades", "$course->fullname", 
-                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
+                 "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
                   -> $strgrades");
     
     print_heading($strgrades);

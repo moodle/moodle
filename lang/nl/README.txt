@@ -30,16 +30,9 @@ lees dan "Vertalen" (translation.html) in de documentatie.
 
 Als je Moodle in een andere taal wilt vertalen, neem dan contact
 op Martin Dougiamas (martin@dougiamas.com) zodat hij je kan
-helpen!
+helpen! Als 
 
-Voor de Nederlandse vertaling gaat onze dank uit naar alle gebruikers
-die ijverig fouten melden, zodat de vertaling langzaam maar zeker mooi en 
-in correct Nederlands komt te staan. Dank aan Leo Vandijck, Marie Lesy,
- en ongetwijfeld nog enkele anderen die we hier vergeten (stuur gerust
-een mailtje :-)  )
-
-
-Met vriendelijke groet,
+Met vriendelijke groet, namens Martin,
 
 Hans de Zwart
 Koen Roggemans

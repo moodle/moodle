@@ -1,16 +1,15 @@
 <tr valign="top">
-    <td align="right" nowrap="nowrap">
-        <b><?php print_string("resourcetypedirectory", "resource") ?>:</b>
+    <td align="right" nowrap>
+        <p><b><?php print_string("resourcetypedirectory", "resource") ?>:</b></p>
     </td>
     <td>
         <?php choose_from_menu($dirs, "reference", $form->reference, get_string("maindirectory", "resource"), '', '') ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right" nowrap="nowrap">&nbsp;
+<tr valign="top">                                                                                                           <td align="right" nowrap>&nbsp;
     </td>
     <td>
         <p><?php print_string("directoryinfo", "resource") ?></p>
     </td>
 </tr>
-<?php print_visible_setting($form); ?>
+

@@ -1,19 +1,13 @@
-<?php // $Id$ 
-      // questionnaire.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+<?PHP // $Id$ 
+      // questionnaire.php - created with Moodle 1.5 unstable development (2004083000)
 
 
-$string['alreadyfilled'] = 'あなたは既にこのアンケートに回答しています。ありがとうございます。';
-$string['modulename'] = 'アンケート';
-$string['modulenameplural'] = 'アンケート';
-$string['mustcomplete'] = '<b>アンケート結果を保存するためには<i>今</i>このアンケートを完了させる必要があります。別の機会に回答することはできません。</b><br /><br />';
+$string['alreadyfilled'] = 'あなたは既にこの質問に回答しています。ありがとうございます。';
+$string['modulename'] = '質問';
+$string['modulenameplural'] = '質問';
 $string['notavail'] = 'この質問は利用できません。後でお試しください。';
 $string['qmanage'] = '調査の管理';
-$string['qmanagetitle'] = 'Survey Management phpESP';
 $string['qtype'] = 'タイプ';
 $string['questionnaireid'] = '調査';
-$string['respondenttype'] = '記名の有無';
-$string['thischarset'] = 'EUC-JP';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Japanese';
 
 ?>

@@ -1,27 +1,27 @@
-<form name="theform" method="post" action="question.php">
-<center>
-<input type="hidden" name="nextwizardpage" value="<?php p($nextwizardpage)?>" />
+<FORM name="theform" method="post" action="question.php">
+<CENTER>
+<INPUT type="hidden" name="nextwizardpage" value="<?php p($nextwizardpage)?>"/>
 <?php foreach ($calculatedmessages as $message) {formerr("$message<br/>");} ?>
-<table cellpadding="5">
-<tr valign="top">
-    <td align="right"><b><?php  print_string("category", "quiz") ?>:</b></td>
-    <td>
+<TABLE cellpadding=5>
+<TR valign=top>
+    <TD align=right><P><B><?php  print_string("category", "quiz") ?>:</B></P></TD>
+    <TD>
     <?php   quiz_category_select_menu($course->id, true, true, $question->category); ?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right"><b><?php  print_string("questionname", "quiz") ?>:</b></td>
-    <td>
-        <input type="text" name="name" size="50" value="<?php  p($question->name) ?>" alt="<?php  print_string("questionname", "quiz") ?>" />
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><?php  print_string("questionname", "quiz") ?>:</B></P></TD>
+    <TD>
+        <INPUT type="text" name="name" size=50 value="<?php  p($question->name) ?>">
         <?php  if (isset($err["name"])) formerr($err["name"]); ?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right"><b><?php  print_string("question", "quiz") ?>:</b>
+    </TD>
+</TR>
+<tr valign=top>
+    <td align="right"><p><b><?php  print_string("question", "quiz") ?>:</b></p>
     <br />
     <br />
     <br />
-    <span class="editorhelptext">
+    <p><font SIZE="1">
     <?php
            if ($usehtmleditor) {
                helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
@@ -29,7 +29,7 @@
                helpbutton("text", get_string("helptext"), "moodle", true, true);
            }
     ?>
-    </span>
+    </font></p>
     </td>
     <td>
         <?php  if (isset($err["questiontext"])) {
@@ -40,9 +40,9 @@
            print_textarea($usehtmleditor, 20, 60, 630, 300, "questiontext", $question->questiontext);
 
            if ($usehtmleditor) {   /// Trying this out for a while
-               echo '<input type="hidden" name="questiontextformat" value="'.FORMAT_HTML.'" />';
+               echo '<input type="hidden" name="questiontextformat" value="'.FORMAT_HTML.'">';
            } else {
-               echo '<div align="right">';
+               echo "<div align=right>";
                print_string("formattexttype");
                echo ":&nbsp;";
                if (!isset($question->questiontextformat)) {
@@ -55,105 +55,97 @@
         ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right"><b><?php  print_string("imagedisplay", "quiz") ?>:</b></td>
-    <td>
+<TR valign=top>
+    <TD align=right><P><B><?php  print_string("imagedisplay", "quiz") ?>:</B></P></TD>
+    <TD>
     <?php   if (empty($images)) {
             print_string("noimagesyet");
         } else {
             choose_from_menu($images, "image", "$question->image", get_string("none"),"","");
         }
     ?>
-    </td>
-</tr>
+    </TD>
+</TR>
 
-<tr valign="top">
-<td align="right"><b><?php  print_string("correctanswerformula", "quiz") ?>:</b></td>
-    <td>
-    <input align="left" type="text" id="formula0" name="answer[]" size="20" value="<?php  p($answers[0]->answer) ?>" alt="<?php  print_string("correctanswerformula", "quiz") ?>" />&nbsp;&nbsp;
-    <input type="hidden" name="fraction[]" value="1.0" />
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right"><b><?php  print_string("tolerance", "quiz"); ?>:</b></td>
-    <td>
-    <input align="left" type="text" id="tolerance0" name="tolerance[]" size="15" value="<?php  p($answers[0]->tolerance) ?>" alt="<?php  print_string("tolerance", "quiz"); ?>" />&plusmn;
-    </td>
-</tr>
-<tr valign="top">
-<td align="right"><b><?php  print_string("tolerancetype", "quiz"); ?>:</b></td>
-    <td>
+<TR valign=top>
+<TD align=right><P><B><?php  print_string("correctanswerformula", "quiz") ?>:</B></P></TD>
+    <TD>
+    <INPUT align="LEFT" type="text" id="formula0" name="answer[]" size="20" value="<?php  p($answers[0]->answer) ?>"/>&nbsp;&nbsp;
+    <INPUT type="hidden" name="fraction[]" value="1.0"/>
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><?php  print_string("tolerance", "quiz"); ?>:</B></P></TD>
+    <TD>
+    <INPUT align="LEFT" type="text" id=tolerance0" name="tolerance[]" size="15" value="<?php  p($answers[0]->tolerance) ?>" />&plusmn;
+    </TD>
+</TR>
+<TR valign=top>
+<TD align=right><P><B><?php  print_string("tolerancetype", "quiz"); ?>:</B></P></TD>
+    <TD>
     <?php choose_from_menu($qtypeobj->tolerance_types(),
             'tolerancetype[]', $answers[0]->tolerancetype, false); ?>
-    </td>
-</tr>
-<tr valign="top">
-<td align="right"><b><?php  print_string("correctanswershows", "quiz"); ?>:</b></td>
-    <td>
-    <?php choose_from_menu(array('0' => ' 0 ',
-                                 '1' => ' 1 ', '2' => ' 2 ', '3' => ' 3 ',
-                                 '4' => ' 4 ', '5' => ' 5 ', '6' => ' 6 ',
-                                 '7' => ' 7 ', '8' => ' 8 ', '9' => ' 9 '),
+    </TD>
+</TR>
+<TR valign=top>
+<TD align=right><P><B><?php  print_string("correctanswerlength", "quiz"); ?>:</B></P></TD>
+    <TD>
+    <?php choose_from_menu(array('1' => '1', '2' => '2', '3' => '3',
+                                 '4' => '4', '5' => '5', '6' => '6',
+                                 '7' => '7', '8' => '8', '9' => '9',
+                                 '10' => '10'),
                            'correctanswerlength[]',
                            $answers[0]->correctanswerlength, false); ?>
-    <?php choose_from_menu(array('1' => get_string('decimalformat', 'quiz'),
-                                 '2' => get_string('significantfiguresformat', 'quiz')),
-                           'correctanswerformat[]',
-                           $answers[0]->correctanswerformat, false); ?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right"><b><?php  print_string("feedback", "quiz") ?>:</b></td>
-    <td>
-        <textarea name="feedback[]" rows="2" cols="50"><?php  p($answers[0]->feedback) ?></textarea>
-    </td>
-</tr>
-<tr valign="top">
-<td align="right"><b><?php  print_string("unit", "quiz") ?>:</b></td>
-    <td>
-        <input type="hidden" name="multiplier[]" value="1.0" />
-        <input align="left" type="text" id="defaultunit" name="unit[]"
-                size="5" value="<?php  p($units[0]->unit) ?>" 
-                alt="<?php  print_string("unit", "quiz") ?>" />
-        <b>(<?php  print_string("optional", "quiz") ?>)</b>
-    </td>
-</tr>
-<tr valign="top">
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><?php  print_string("feedback", "quiz") ?>:</B></P></TD>
+    <TD>
+        <textarea name="feedback[]" rows=2 cols=50 wrap="virtual"><?php  p($answers[0]->feedback) ?></textarea>
+    </TD>
+</TR>
+<TR valign=top>
+<TD align=right><P><B><?php  print_string("unit", "quiz") ?>:</B></P></TD>
+    <TD>
+        <P><INPUT type="HIDDEN" name="multiplier[]" value="1.0"/>
+        <INPUT align="LEFT" type="text" id="defaultunit" name="unit[]"
+                size="5" value="<?php  p($units[0]->unit) ?>"/>
+        <B>(<?php  print_string("optional", "quiz") ?>)</B></P>
+    </TD>
+</TR>
+<TR valign=top>
 <td></td>
-<td align="left"><b><?php  print_string("alternativeunits", "quiz") ?>:</b></td>
+<TD align=left><P><B><?php  print_string("alternativeunits", "quiz") ?>:</B></P></TD>
 <td></td>
-</tr>
-<?php
+</TR>
+<?PHP
 for ($i=1; $i<count($units); $i++) {
     $unit=$units[$i];
 ?>
-<tr valign="top">
+<TR valign=top>
 <td></td>
-    <td align="left">
-        <b><?php  print_string("multiplier", "quiz") ?>:</b>
-        <input type="text" id="<?php  p("multiplier$i") ?>" size="10"
-                align="right" name="multiplier[]"
-                value="<?php  p($unit->multiplier) ?>" 
-                alt="<?php  print_string("multiplier", "quiz") ?>" />
-        <b>&nbsp;&nbsp;&nbsp;<?php  print_string("unit", "quiz") ?>:</b>
-        <input align="left" type="text" id="<?php  p("unit$i") ?>"
+    <TD align=left>
+        <P><B><?php  print_string("multiplier", "quiz") ?>:</B>
+        <INPUT type="text" id="<?php  p("multiplier$i") ?>" size="10"
+                align="RIGHT" name="multiplier[]"
+                value="<?php  p($unit->multiplier) ?>"/>
+        <B>&nbsp;&nbsp;&nbsp;<?php  print_string("unit", "quiz") ?>:</B>
+        <INPUT align="LEFT" type="text" id="<?php  p("unit$i") ?>"
                 name="unit[]"
-                size="5" value="<?php  p($unit->unit) ?>" 
-                alt="<?php  print_string("unit", "quiz") ?>" />
-    </td>
-</tr>
-<?php
+                size="5" value="<?php  p($unit->unit) ?>"/></P>
+    </TD>
+</TR>
+<?PHP
 } /// END for
 ?>
-</table>
+</TABLE>
 
-<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey; ?>" />
-<input type="hidden" name="id" value="<?php  p($question->id) ?>" />
-<input type="hidden" name="qtype" value="<?php  p($question->qtype) ?>" />
-<input type="submit" onclick="return determineMinAndMax();"  value="<?php  print_string("savechanges") ?>" />
+<input type="hidden" name=id value="<?php  p($question->id) ?>">
+<input type="hidden" name=qtype value="<?php  p($question->qtype) ?>">
+<input type="submit" onClick="return determineMinAndMax();"  value="<?php  print_string("savechanges") ?>">
 </center>
 </form>
-<script language="javascript" type="text/javascript">
+<script language="javascript">
 function determineMinAndMax() {
     // This client-side script will determine the values for min and max
     // based on the input for answer and acceptederror.
@@ -163,17 +155,13 @@ function determineMinAndMax() {
             return false;
             /* It could perhaps be an idea to parse the formula here
              * but as it is necessary at the server anyway, we can
-             * it leave like this for the moment. */
+             * leave like this for the moment. */
             
         } else if (''!=defaultunit.value && !isNaN(defaultunit.value)) {
             alert('<?php  print_string("unitmustnotbenumeric","quiz") ?>');
             return false;
         } else if (isNaN(tolerance0.value)) {
             alert('<?php  print_string("tolerancemustbenumeric","quiz") ?>');
-            return false;
-        } else if ('2' == document.theform['correctanswerformat[]'].value
-                && '0' == document.theform['correctanswerlength[]'].value) {
-            alert('<?php  print_string("zerosignificantfiguresnotallowed","quiz") ?>');
             return false;
         } else {
             return true;

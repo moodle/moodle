@@ -1,12 +1,12 @@
-<?php // $Id$
+<?PHP // $Id$
 
 ////////////////////////////////////////////////////////////////////////////////
 //  Code fragment to define the module version etc.
 //  This fragment is called by /admin/index.php
 ////////////////////////////////////////////////////////////////////////////////
 
-$module->version  = 2005041100;
-$module->requires = 2005021600;  // Requires this Moodle version
+$module->version  = 2004080801;
+$module->requires = 2004073000;  // Requires this Moodle version
 $module->cron     = 0;
 
 ?>

@@ -65,25 +65,60 @@ function moodle_binary_store_file(&$filename, &$id, &$meta, $ext=".bin") {
       return 0;
     }
     
+    $maxbytes = get_max_upload_file_size();
     
     $entry=wiki_get_entry($wiki, $course, $userid, $groupid);
     if(!$entry->id) {
       error("Cannot get entry.");
     }
     
-    require_once($CFG->dirroot.'/lib/uploadlib.php');
-    $um = new upload_manager('upload',false,false,$course,false,0,true,true);
-    if ($um->process_file_uploads("$course->id/$CFG->moddata/wiki/$wiki->id/$entry->id/$ewiki_title")) {
-        $filename = ''; // this to make sure we don't keep processing in the parent function
-        if(!$id) {
-            $newfilename = $um->get_new_filename();
-            $id = EWIKI_IDF_INTERNAL.$newfilename;
-        }
-        return true;
+    $newfile = $_FILES["upload"];
+    if(!$id) {
+      $newfilename = clean_filename($newfile['name']);
+      $id = EWIKI_IDF_INTERNAL.$newfilename;
     }
-    error($um->print_upload_log(true));
+    $dir=make_upload_directory("$course->id/$CFG->moddata/wiki/$wiki->id/$entry->id/$ewiki_title");
+    if ($maxbytes and $newfile['size'] > $maxbytes) {
+        return 0;
+    }
+    if (! $newfilename) {
+        notify("This file had a weird filename and couldn't be uploaded");
+    } else {
+        if (move_uploaded_file($filename, "$dir/$newfilename")) {
+            chmod("$dir/$newfilename", $CFG->directorypermissions);
+            $meta["binary_store"]=$ewiki_title;
+            $filename="";
+            return true;
+        } else {
+            notify("An error happened while saving the file on the server");
+            return false;
+        }
+    }
     return false;
-   
+      
+                   
+/*   if (($meta["size"] >= EWIKI_DB_STORE_MINSIZE) && ($meta["size"] <= EWIKI_DB_STORE_MAXSIZE)) {
+
+      #-- generate internal://md5sum
+      if (empty($id)) {
+         $md5sum = md5_file($filename);
+         $id = EWIKI_IDF_INTERNAL . $md5sum . ".$ext";
+         ewiki_log("generated md5sum '$md5sum' from file content");
+      }
+
+      #-- move file to dest. location
+      $dbfname = EWIKI_DB_STORE_DIRECTORY."/".rawurlencode($id);
+      if (@rename($filename, $dbfname) || copy($filename, $dbfname) && unlink($filename)) {
+         $filename = "";
+         $meta["binary_store"] = 1;
+         return(true);
+      }
+      else {
+         ewiki_log("file store error with '$dbfname'", 0);
+      }
+   }
+
+   return(false);*/
 }
 
 

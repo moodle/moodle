@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4.1 (2004083101)
+      // forum.php - created with Moodle 1.3.3 (2004052503)
 
 
 $string['addanewdiscussion'] = 'Adicionar um novo tópico de discussão';
@@ -12,7 +12,7 @@ $string['anyfile'] = 'Qualquer arquivo';
 $string['attachment'] = 'Anexo';
 $string['bynameondate'] = 'por $a->name - $a->date';
 $string['configdisplaymode'] = 'Modalidade de visualização das discussões predefinida, se uma outra não for configurada.';
-$string['configenablerssfeeds'] = 'Esta opção ativa a possibilidade de gerar alimentadores RSS nos fóruns. É necessário configurar cada fórum para que sejam gerados os alimentadores correspondentes.';
+$string['configenablerssfeeds'] = 'Esta opção ativa a possibilidade de gerar alimentadores RSS nos fóruns. É necessário configurar cada fórum para che sejam gerados os alimentadores correspondentes.';
 $string['configlongpost'] = 'Todas as mensagens maiores que esta dimensão (sem contar o html) são consideradas longas.';
 $string['configmanydiscussions'] = 'Número máximo de discussões mostrado em um fórum, por página.';
 $string['configmaxbytes'] = 'Tamanho máximo predefinido dos anexos de todos os fóruns do site (sujeito aos limites dos cursos e outras configurações locais)';
@@ -43,7 +43,6 @@ $string['editing'] = 'Edição';
 $string['emptymessage'] = 'A sua mensagem não foi enviada. Normalmente isto acontece quando a mensagem ou o campo \"assunto\" estão em branco ou quando o anexo é grande demais. ';
 $string['everyonecanchoose'] = 'Todos podem fazer assinatura';
 $string['everyoneissubscribed'] = 'Todos são assinantes deste fórum';
-$string['existingsubscribers'] = 'Assinantes';
 $string['forcesubscribe'] = 'Obrigar  todos a serem assinantes';
 $string['forcesubscribeq'] = 'Obrigar  todos a serem assinantes?';
 $string['forum'] = 'Fórum';
@@ -91,7 +90,7 @@ $string['openmode1'] = 'Nenhuma discussão, mas são permitidas respostas';
 $string['openmode2'] = 'São permitidas discussões e respostas';
 $string['parent'] = 'Mostrar principal';
 $string['parentofthispost'] = 'Mensagem original';
-$string['postadded'] = 'A sua mensagem foi enviada com sucesso.<br />Você tem $a para fazer alterações.';
+$string['postadded'] = 'A sua mensagem foi enviada com sucesso.<p>Você tem $a para fazer alterações.</p>';
 $string['postincontext'] = 'Veja esta mensagem em seu contexto';
 $string['postmailinfo'] = 'Esta é a cópia de uma mensagem enviada ao fórum do website $a. 
 Clique o link abaixo para consultar as mensagens no site e participar das discussões:';
@@ -101,7 +100,6 @@ $string['postrating3'] = 'Mostra sobretudo saber CONECTADO';
 $string['posts'] = 'Mensagens';
 $string['posttoforum'] = 'Enviar mensagem ao fórum';
 $string['postupdated'] = 'A sua mensagem foi atualizada';
-$string['potentialsubscribers'] = 'Potenciais assinantes';
 $string['processingdigest'] = 'Processando digest para o usuário $a';
 $string['processingpost'] = 'Processando mensagem $a';
 $string['prune'] = 'Interromper';
@@ -149,8 +147,6 @@ $string['subscriptions'] = 'Assinaturas';
 $string['unsubscribe'] = 'Suspender o recebimento de mensagens deste fórum via email';
 $string['unsubscribed'] = 'Cancelado o recebimento de cópias das mensagens via email ';
 $string['unsubscribeshort'] = 'Cancelar assinatura';
-$string['yesforever'] = 'Sim, sempre';
-$string['yesinitially'] = 'Sim, inicialmente';
 $string['youratedthis'] = 'Você avaliou este';
 $string['yournewtopic'] = 'Novo tópico de discussão';
 $string['yourreply'] = 'A sua resposta';

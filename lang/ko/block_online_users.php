@@ -1,12 +1,11 @@
 <?PHP // $Id$ 
-      // block_online_users.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // block_online_users.php - created with Moodle 1.4.2 nearly (2004092000)
 
 
 $string['blockname'] = '온라인 사용자';
 $string['configtimetosee'] = '사용자를 온라인으로 표시하려면 몇 분 전을 기준으로 하겠는가?';
 $string['periodnminutes'] = '최근 $a 분';
-$string['thischarset'] = 'euc-kr';
+$string['thischarset'] = 'EUC-KR';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 
 ?>

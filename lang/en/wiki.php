@@ -1,4 +1,4 @@
-<?php // $Id$ 
+<?PHP // $Id$ 
       // wiki.php - created with Moodle 1.4 alpha (2004081900)
 
 
@@ -8,7 +8,7 @@ $string['allowremovepages'] = 'Allow \'remove pages\'';
 $string['allowrevertchanges'] = 'Allow \'revert mass changes\'';
 $string['allowsetpage'] = 'Allow \'set page flags\'';
 $string['allowstrippages'] = 'Allow \'strip pages\'';
-$string['attachments'] = 'This page has attachments';
+$string['attachments'] = 'Page attachments';
 $string['author'] = 'Author';
 $string['authorfieldpattern'] = 'Author field pattern';
 $string['authorfieldpatternerror'] = 'Please enter an author.';
@@ -84,7 +84,7 @@ $string['html'] = 'HTML-Format';
 $string['htmlmode'] = 'HTML Mode';
 $string['htmlonly'] = 'HTML only';
 $string['index'] = 'Index';
-$string['infoaboutpage'] = 'History for:';
+$string['infoaboutpage'] = 'Information about the page';
 $string['initialcontent'] = 'Choose an Initial Page';
 $string['invalidroot'] = 'You are not authorized to access the current root page so no sitemap can be created.';
 $string['lastchanged'] = 'Last changed on $a';
@@ -130,7 +130,7 @@ $string['plaintext'] = 'Plain Text';
 $string['preview'] = 'Preview';
 $string['readonly'] = 'Read only page';
 $string['refs'] = 'References';
-$string['removenotice'] = 'Note that only unreferenced pages will be listed here. And because the ewiki engine itself does only limited testing if a page is referenced it may miss some of them here.<br />If you however empty a page first, it will get listed here too. Various other database diagnostics are made as well.';
+$string['removenotice'] = 'Note that only unreferenced pages will be listed here. And because the ewiki engine itself does only limited testing if a page is referenced it may miss some of them here.<br>If you however empty a page first, it will get listed here too. Various other database diagnostics are made as well.';
 $string['removepagecheck'] = 'Are you sure that you want to delete these pages ?';
 $string['removepages'] = 'Remove pages';
 $string['removeselectedpages'] = 'Remove selected pages';
@@ -153,13 +153,12 @@ $string['studentadminoptions'] = 'Student admin options';
 $string['submit'] = 'Submit';
 $string['tabattachments'] = 'Attachments';
 $string['tabedit'] = 'Edit';
-$string['tabinfo'] = 'History';
+$string['tabinfo'] = 'Info';
 $string['tablinks'] = 'Links';
 $string['tabview'] = 'View';
 $string['thanksforcontribution'] = 'Thank you for your contribution.';
 $string['thispageisntlinkedfromanywhereelse'] = 'This page isn\'t linked from anywhere else.';
 $string['updatedpages'] = 'Updated pages';
-$string['updatedwikipages'] = 'Updated wiki pages';
 $string['uplerror'] = 'We are sorry, but something went wrong during the file upload.';
 $string['uplinsect'] = 'Upload into';
 $string['uplnewnam'] = 'Save with different filename';

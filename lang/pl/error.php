@@ -1,11 +1,10 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.4 (2004083100)
+      // error.php - created with Moodle 1.2.1 beta (2004032200)
 
 
 $string['coursegroupunknown'] = 'Nie okre¶lono kursu dla grupy $a';
 $string['erroronline'] = 'B³±d na lini $a.';
 $string['fieldrequired'] = '\"$a\" nie mo¿e byæ puste.';
-$string['filenotfound'] = 'Niestety nie mogê znale¼æ pliku';
 $string['groupalready'] = 'U¿ytkownik ju¿ przynale¿y do grupy $a';
 $string['groupunknown'] = 'Grupa $a nie jest przypisana do tego kursu';
 $string['invalidfieldname'] = '\"$a\" nie jest dozwolon± nazw±.';
@@ -16,6 +15,5 @@ $string['restricteduser'] = 'Twoje konto \"$a\" nie daje Tobie uprawnieñ do wyko
 $string['unknowncourse'] = 'Kurs o nazwie \"$a\" nie istnieje.';
 $string['usernotaddederror'] = 'Nieznany b³±d - u¿ytkownik \"$a\" nie zosta³ dodany.';
 $string['usernotaddedregistered'] = 'Y¿ytkownik \"$a\" ju¿ istnieje.';
-$string['usernotavailable'] = 'Szczegó³y tego u¿ytkownika nie s± dla Ciebie dostêpne';
 
 ?>

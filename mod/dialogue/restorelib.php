@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This php script contains all the stuff to backup/restore
     //dialogue mods
 
@@ -57,7 +57,7 @@
             $newid = insert_record ("dialogue",$dialogue);
 
             //Do some output
-            echo "<li>".get_string("modulename","dialogue")." \"".$dialogue->name."\"</li>";
+            echo "<ul><li>".get_string("modulename","dialogue")." \"".$dialogue->name."\"<br>";
             backup_flush(300);
 
             if ($newid) {
@@ -72,6 +72,10 @@
             } else {
                 $status = false;
             }
+
+            //Finalize ul
+            echo "</ul>";
+
         } else {
             $status = false;
         }
@@ -130,7 +134,7 @@
                 if (($i+1) % 50 == 0) {
                     echo ".";
                     if (($i+1) % 1000 == 0) {
-                        echo "<br />";
+                        echo "<br>";
                     }
                     backup_flush(300);
                 }
@@ -178,7 +182,7 @@
                 $olduserid = backup_todb($entry_info['#']['USERID']['0']['#']);
 
                 //Now, build the dialogue_ENTRIES record structure
-                $entry->dialogueid = $new_dialogue_id;
+                $entry->dialogue = $new_dialogue_id;
                 $entry->conversationid = $new_conversation_id;
                 $entry->userid = backup_todb($entry_info['#']['USERID']['0']['#']);
                 $entry->timecreated = backup_todb($entry_info['#']['TIMECREATED']['0']['#']);
@@ -198,7 +202,7 @@
                 if (($i+1) % 50 == 0) {
                     echo ".";
                     if (($i+1) % 1000 == 0) {
-                        echo "<br />";
+                        echo "<br>";
                     }
                     backup_flush(300);
                 }

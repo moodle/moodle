@@ -26,8 +26,6 @@ CREATE TABLE prefix_survey (
   questions varchar(255) default NULL
 );
 
-CREATE INDEX prefix_survey_course_idx ON prefix_survey (course);
-
 #
 # Dumping data for table survey
 #
@@ -37,12 +35,6 @@ INSERT INTO prefix_survey (id, course, template, days, timecreated, timemodified
 INSERT INTO prefix_survey (id, course, template, days, timecreated, timemodified, name, intro, questions) VALUES (3, 0, 0, 0, 985017600, 985017600, 'collesapname', 'collesapintro', '37,38,39,40,41,42,43,44');
 INSERT INTO prefix_survey (id, course, template, days, timecreated, timemodified, name, intro, questions) VALUES (4, 0, 0, 0, 985017600, 985017600, 'attlsname', 'attlsintro', '65,67,68');
 INSERT INTO prefix_survey (id, course, template, days, timecreated, timemodified, name, intro, questions) VALUES (5, 0, 0, 0, 985017600, 985017600, 'ciqname', 'ciqintro', '69,70,71,72,73');
-
-
-# Reset the sequence. doing it this way rather than simply taking out 
-# id from the preceeding sql to avoid missing fks.
-SELECT setval('prefix_survey_id_seq', (select max(id) from prefix_survey));
-
 
 
 
@@ -56,9 +48,6 @@ CREATE TABLE prefix_survey_analysis (
   userid integer NOT NULL default '0',
   notes text NOT NULL default ''
 );
-
-CREATE INDEX prefix_survey_analysis_survey_idx ON prefix_survey_analysis (survey);
-CREATE INDEX prefix_survey_analysis_userid_idx ON prefix_survey_analysis (userid);
 
 #
 # Dumping data for table survey_analysis
@@ -79,10 +68,6 @@ CREATE TABLE prefix_survey_answers (
   answer1 text default NULL,
   answer2 text default NULL
 );
-
-CREATE INDEX prefix_survey_answers_userid_idx ON prefix_survey_answers (userid);
-CREATE INDEX prefix_survey_answers_survey_idx ON prefix_survey_answers (survey);
-CREATE INDEX prefix_survey_answers_question_idx ON prefix_survey_answers (question);
 
 #
 # Dumping data for table survey_answers
@@ -182,12 +167,6 @@ INSERT INTO prefix_survey_questions (id, text, shorttext, multi, intro, type, op
 INSERT INTO prefix_survey_questions (id, text, shorttext, multi, intro, type, options) VALUES (71, 'ciq3', 'ciq3short', '', '', 0, '');
 INSERT INTO prefix_survey_questions (id, text, shorttext, multi, intro, type, options) VALUES (72, 'ciq4', 'ciq4short', '', '', 0, '');
 INSERT INTO prefix_survey_questions (id, text, shorttext, multi, intro, type, options) VALUES (73, 'ciq5', 'ciq5short', '', '', 0, '');
-
-# Reset the sequence. doing it this way rather than simply taking out 
-# id from the preceeding sql to avoid missing fks.
-SELECT setval('prefix_survey_questions_id_seq', (select max(id) from prefix_survey_questions));
-
-
 
 #
 # Dumping data for table log_display

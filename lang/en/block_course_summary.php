@@ -1,6 +1,5 @@
-<?php // $Id$ 
+<?PHP // $Id$ 
 
-$string['coursesummary'] = 'Course Summary';
-$string['pagedescription'] = 'Course/Site Description';
-
+$string['blockname'] = 'Course Summary';
+$string['siteinfo'] = 'Site Information';
 ?>

@@ -1,61 +1,59 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    
-<title>Moodle Docs: Future</title>
-	
-<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
-    
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <title>Moodle Docs: Future</title>
+	<link rel="stylesheet" href="../theme/standard/styles.php" type="TEXT/CSS">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <style type="text/css">
+       DT {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; font-weight: bold;}
+       DD {margin-bottom:1em;} 
+    </style>
 </head>
 
-<body>
+<body bgcolor="#FFFFFF">
 
-<h1>Future</h1>
-<blockquote>
-  <p>As Moodle gains in maturity, its directions are increasingly influenced by 
+<h2>Future</h2>
+
+<p>As Moodle gains in maturity, its directions are increasingly influenced by 
   the community of developers and users. A dynamic database of proposed features 
-  and their status can be found at <a target="_top" href="http://moodle.org/bugs/">moodle.org/bugs</a>. 
+  and their status can be found at <a target=_top href="http://moodle.org/bugs/">moodle.org/bugs</a>. 
   Your <a href="?file=credits.html">contributions</a> in the form of ideas, code, 
   feedback and promotion are all very welcome - see the <a href="?file=developer.html">Developers 
-  manual</a> and the <a href="http://moodle.org/help" target="_top">community forums</a> for more details. You can also pay to have certain features developed sooner- see <a href="http://moodle.com/development/" target="_top">moodle.com/development</a> for information and a quote. </p>
-  <p>Here is the current roadmap of the future, though this is always subject to change depending on <a href="http://moodle.org/donations/" target="_blank">sponsors</a> and <a href="/?file=credits.html">developers</a>. </p>
-  <h3>Version 1.5 - February 2005</h3>
-  <blockquote>
-    <p>Moodle 1.5 aims to make Moodle fully compliant with important web accessibility standards such as WAI (W3C), SENDA (UK) and Section 508 (US).</p>
-    <p>The display code will conform to XHTML Transitional 1.0, and the CSS has also been cleaned up and extended to give designers more complete control over the look and feel of their sites. This release will not yet use templates. </p>
-    <p>There is also a long list of new features such as: </p>
+  manual</a> for more details.</p>
+
+<p>Here is a rough map of the future (subject to change): 
+<dl>
+
+  <dt>Version 1.2 - Late 2003</dt>
+  <dd>The major targets for this version include:
     <ul>
-      <li> Integrated instant Messaging feature for direct communication</li>
-      <li>Big improvements to the Quiz module, including: paged quizzes with a certain number of questions per page; improved interface for building quizzes; heirarchical question categories; </li>
-      <li>New block format, allowing multiple copies of blocks and better block configuration (old third-party blocks need to be upgraded, see the docs in the blocks directory) </li>
-      <li>Extended LDAP integration, so that LDAP can now control course creation, group assignments, user synchronisation etc</li>
-      <li>Certain user fields can be locked by the admin </li>
-      <li>Improved uploading, with support for automated Virus scanning of new documents using ClamAV.</li>
-      <li> Streamlined interface for the Workshop and Lesson modules </li>
-      <li> New Tidy filter to convert all user-supplied texts into XHTML</li>
-      <li> PAM authentication module</li>
-      <li> Sessions can now be stored in the database (useful for Moodle clusters)</li>
-      <li>Site Policy Agreements for users </li>
-      <li>Many  other improvements and bug fixes </li>
+    <li>Support for groups/cohorts within courses</li>
+    <li>New architecture for Enrolments with plugins (similar to the 
+        existing Authentication architecture) so that
+        external systems (eg Student Records, Paypal, LDAP etc) 
+        can control student access within courses</li>
+    <li>Miscellaneous contributed code and bug fixes</li>
     </ul>
-    <p>&nbsp;</p>
-  </blockquote>
-   <h3>Version 1.6 - middle of 2005 </h3>
-   <blockquote>
-    <p>Many of the main pages in this version will be customisable using HTML templates. </p>
-    <p>Support for user blogs (replacing Journals).</p>
-    <p>My Moodle page</p>
-    <p>Improvements in structuring and maintaining the flow of courses </p>
-    <p>&nbsp;</p>
-  </blockquote>
-  <h3>Version 2.0 - later in 2005 </h3>
-  <blockquote>
-    <p>This major release will contain some exciting developments in making Moodle more network-aware, with a natural evolution of Moodle's focus on collaboration. More on this here later. </p>
-  </blockquote>
-</blockquote>
-<p align="center">&nbsp;</p>
-<p align="center"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
-<p align="center"><font size="1">Version: $Id$</font></p>
+  </dd>
+
+<dt>Version 2.0  - Early 2004</dt>
+<dd>This major release will include some major changes in internal structure
+    designed to add flexibility and scalability in many areas.  Among the major 
+    targets are:
+    <ul>
+      <li> Rewritten display layer using XHTML-compatible code and complete implementation 
+           of templates for increased standards-compliance, flexibility and accessibility </li>
+      <li> Wider use of PHP classes in key areas of the Moodle code, to make some 
+           things easier for programmers writing new modules or integrating with 
+           external systems</li>
+      <li> Stronger pedagogical support for both teachers and students </li>
+      <li> New access-control system allowing finely-defined roles and rights</li>
+      <li> Basic support for IMS and SCORM </li>
+      <li> Better integration of Moodle with moodle.org</li>
+      <li> Whatever else comes along :-) </li>
+    </ul>
+</dd>
+</dl>
+
+<p align="CENTER">&nbsp;</p>
+<p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
 </body>

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
     if (!empty($question->id)) {
         $options = get_record("quiz_randomsamatch", "question", $question->id);
     } else {
@@ -6,6 +6,6 @@
     }
     $numberavailable = count_records("quiz_questions", "category", $category->id, "qtype", SHORTANSWER);
     print_heading_with_help(get_string("editingrandomsamatch", "quiz"), "randomsamatch", "quiz");
-    require("$CFG->dirroot/mod/quiz/questiontypes/randomsamatch/randomsamatch.html");
+    require("randomsamatch.html");
 
 ?>

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
       // For most people, just lists the course categories
       // Allows the admin to create, delete and rename course categories
 
@@ -14,7 +14,7 @@
     }
 
     if (isadmin()) {
-        if (isset($_GET['edit']) and confirm_sesskey()) {
+        if (isset($_GET['edit'])) {
             if ($edit == "on") {
                 $USER->categoriesediting = true;
             } else if ($edit == "off") {
@@ -43,15 +43,14 @@
             print_course_search();
         } else {
             $strfulllistofcourses = get_string("fulllistofcourses");
-            print_header("$site->shortname: $strfulllistofcourses", $strfulllistofcourses, $strfulllistofcourses,
-                         '', '', true, update_categories_button());
+            print_header("$site->shortname: $strfulllistofcourses", $strfulllistofcourses, $strfulllistofcourses);
             print_courses(0, "80%");
         }
 
         if (iscreator()) {       // Print link to create a new course
-            echo "<center>";
+            echo "<center><p>";
             print_single_button("edit.php", NULL, get_string("addnewcourse"), "get");
-            echo "</center>";
+            echo "</p></center>";
         }
             
         print_footer();
@@ -85,7 +84,7 @@
 
 
 /// If data for a new category was submitted, then add it
-    if ($form = data_submitted() and confirm_sesskey()) {
+    if ($form = data_submitted()) {
         if (!empty($form->addcategory)) {
             unset($newcategory);
             $newcategory->name = $form->addcategory;
@@ -101,41 +100,33 @@
 
 /// Delete a category if necessary
 
-    if (isset($delete) and confirm_sesskey()) {
+    if (isset($delete)) {
         if ($deletecat = get_record("course_categories", "id", $delete)) {
-            if (!empty($sure) && $sure == md5($deletecat->timemodified)) {
-                /// Send the children categories to live with their grandparent
-                if ($childcats = get_records("course_categories", "parent", $deletecat->id)) {
-                    foreach ($childcats as $childcat) {
-                        if (! set_field("course_categories", "parent", $deletecat->parent, "id", $childcat->id)) {
-                            error("Could not update a child category!", "index.php");
-                        }
+
+            /// Send the children categories to live with their grandparent
+            if ($childcats = get_records("course_categories", "parent", $deletecat->id)) {
+                foreach ($childcats as $childcat) {
+                    if (! set_field("course_categories", "parent", $deletecat->parent, "id", $childcat->id)) {
+                        error("Could not update a child category!", "index.php");
                     }
-                }
-                
-                ///  If the grandparent is a valid (non-zero) category, then 
-                ///  send the children courses to live with their grandparent as well
-                if ($deletecat->parent) {
-                    if ($childcourses = get_records("course", "category", $deletecat->id)) {
-                        foreach ($childcourses as $childcourse) {
-                            if (! set_field("course", "category", $deletecat->parent, "id", $childcourse->id)) {
-                                error("Could not update a child course!", "index.php");
-                            }
-                        }
-                    }
-                }
-                
-                /// Finally delete the category itself
-                if (delete_records("course_categories", "id", $deletecat->id)) {
-                    notify(get_string("categorydeleted", "", $deletecat->name));
                 }
             }
-            else {
-                $strdeletecategorycheck = get_string("deletecategorycheck","",$deletecat->name);
-                notice_yesno("$strdeletecategorycheck",
-                             "index.php?delete=$delete&amp;sure=".md5($deletecat->timemodified)."&amp;sesskey=$USER->sesskey",
-                             "index.php?sesskey=$USER->sesskey");
-                exit();
+
+            ///  If the grandparent is a valid (non-zero) category, then 
+            ///  send the children courses to live with their grandparent as well
+            if ($deletecat->parent) {
+                if ($childcourses = get_records("course", "category", $deletecat->id)) {
+                    foreach ($childcourses as $childcourse) {
+                        if (! set_field("course", "category", $deletecat->parent, "id", $childcourse->id)) {
+                            error("Could not update a child course!", "index.php");
+                        }
+                    }
+                }
+            }
+           
+            /// Finally delete the category itself
+            if (delete_records("course_categories", "id", $deletecat->id)) {
+                notify(get_string("categorydeleted", "", $deletecat->name));
             }
         }
     }
@@ -154,7 +145,7 @@
 
 /// Move a category to a new parent if required
 
-    if (isset($move) and isset($moveto) and confirm_sesskey()) {
+    if (isset($move) and isset($moveto)) {
         if ($tempcat = get_record("course_categories", "id", $move)) {
             if ($tempcat->parent != $moveto) {
                 if (! set_field("course_categories", "parent", $moveto, "id", $tempcat->id)) {
@@ -166,7 +157,7 @@
 
 
 /// Hide or show a category 
-    if ((isset($hide) or isset($show)) and confirm_sesskey()) {
+    if (isset($hide) or isset($show)) {
         if (isset($hide)) {
             $tempcat = get_record("course_categories", "id", $hide);
             $visible = 0;
@@ -187,7 +178,7 @@
 
 /// Move a category up or down
 
-    if ((isset($moveup) or isset($movedown)) and confirm_sesskey()) {
+    if (isset($moveup) or isset($movedown)) {
         
         $swapcategory = NULL;
         $movecategory = NULL;
@@ -246,7 +237,7 @@
     }
 
 /// Find any orphan courses that don't yet have a valid category and set to default
-    if ($courses = get_courses(NULL,NULL,'c.category,c.id,c.sortorder')) {
+    if ($courses = get_courses()) {
         foreach ($courses as $course) {
             if ($course->category and !isset($categories[$course->category])) {
                 set_field("course", "category", $default, "id", $course->id);
@@ -260,9 +251,8 @@
 
     echo "<center>";
     echo "<form name=\"addform\" action=\"index.php\" method=\"post\">";
-    echo "<input type=\"text\" size=\"30\" alt=\"$straddnewcategory\" name=\"addcategory\" />";
-    echo "<input type=\"submit\" value=\"$straddnewcategory\" />";
-    echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
+    echo "<input type=\"text\" size=30 name=\"addcategory\">";
+    echo "<input type=\"submit\" value=\"$straddnewcategory\">";
     echo "</form>";
     echo "</center>";
 
@@ -282,12 +272,11 @@
     $displaylist[0] = get_string("top");
     make_categories_list($displaylist, $parentlist, "");
 
-    echo "<table align=\"center\" border=\"0\" cellspacing=\"2\" cellpadding=\"5\" class=\"generalbox\"><tr>";
+    echo "<table align=\"center\" border=0 cellspacing=2 cellpadding=5 class=\"generalbox\"><tr>";
     echo "<th>$strcategories</th>";
     echo "<th>$strcourses</th>";
     echo "<th>$stredit</th>";
     echo "<th>$strmovecategoryto</th>";
-    echo "</tr>";
 
     print_category_edit(NULL, $displaylist, $parentlist);
 
@@ -309,9 +298,10 @@
 function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $up=false, $down=false) {
 /// Recursive function to print all the categories ready for editing
 
-    global $CFG, $USER;
+    global $THEME, $CFG;
 
     static $str = '';
+    static $pixpath = '';
     
     if (empty($str)) {
         $str->delete   = get_string("delete");
@@ -322,37 +312,47 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
         $str->show     = get_string("show");
     }
     
+    if (empty($pixpath)) {
+        if (empty($THEME->custompix)) {
+            $pixpath = "$CFG->wwwroot/pix";
+        } else {
+            $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
+        }
+    }
+
     if ($category) {
-        echo "<tr><td align=\"left\" nowrap=\"nowrap\">";
+        echo "<tr><td align=\"left\" nowrap=\"nowrap\" bgcolor=\"$THEME->cellcontent\">";
+        echo "<p>";
         for ($i=0; $i<$depth;$i++) {
             echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
         }
         $linkcss = $category->visible ? "" : " class=\"dimmed\" ";
-        echo "<a $linkcss title=\"$str->edit\" href=\"category.php?id=$category->id&amp;edit=on&amp;sesskey=$USER->sesskey\">$category->name</a>";
+        echo "<a $linkcss title=\"$str->edit\" href=\"category.php?id=$category->id&edit=on\">$category->name</a>";
+        echo "</p>";
         echo "</td>";
 
         echo "<td align=\"right\">$category->coursecount</td>";
 
         echo "<td nowrap=\"nowrap\">";    /// Print little icons
 
-        echo "<a title=\"$str->delete\" href=\"index.php?delete=$category->id&amp;sesskey=$USER->sesskey\"><img".
-             " src=\"$CFG->pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
+        echo "<a title=\"$str->delete\" href=\"index.php?delete=$category->id\"><img".
+             " src=\"$pixpath/t/delete.gif\" height=11 width=11 border=0></a> ";
 
         if (!empty($category->visible)) {
-            echo "<a title=\"$str->hide\" href=\"index.php?hide=$category->id&amp;sesskey=$USER->sesskey\"><img".
-                 " src=\"$CFG->pixpath/t/hide.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
+            echo "<a title=\"$str->hide\" href=\"index.php?hide=$category->id\"><img".
+                 " src=\"$pixpath/t/hide.gif\" height=11 width=11 border=0></a> ";
         } else {
-            echo "<a title=\"$str->show\" href=\"index.php?show=$category->id&amp;sesskey=$USER->sesskey\"><img".
-                 " src=\"$CFG->pixpath/t/show.gif\" height=\"11\" width=\"11\" border=\"0\"alt=\"\" /></a> ";
+            echo "<a title=\"$str->show\" href=\"index.php?show=$category->id\"><img".
+                 " src=\"$pixpath/t/show.gif\" height=11 width=11 border=0></a> ";
         }
 
         if ($up) {
-            echo "<a title=\"$str->moveup\" href=\"index.php?moveup=$category->id&amp;sesskey=$USER->sesskey\"><img".
-                 " src=\"$CFG->pixpath/t/up.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
+            echo "<a title=\"$str->moveup\" href=\"index.php?moveup=$category->id\"><img".
+                 " src=\"$pixpath/t/up.gif\" height=11 width=11 border=0></a> ";
         }
         if ($down) {
-            echo "<a title=\"$str->movedown\" href=\"index.php?movedown=$category->id&amp;sesskey=$USER->sesskey\"><img".
-                 " src=\"$CFG->pixpath/t/down.gif\" height=\"11\" width=\"11\" border=\"0\"alt=\"\" /></a> ";
+            echo "<a title=\"$str->movedown\" href=\"index.php?movedown=$category->id\"><img".
+                 " src=\"$pixpath/t/down.gif\" height=11 width=11 border=0></a> ";
         }
         echo "</td>";
 
@@ -364,7 +364,7 @@ function print_category_edit($category, $displaylist, $parentslist, $depth=-1, $
                 unset($tempdisplaylist[$key]);
             }
         }
-        popup_form ("index.php?move=$category->id&amp;sesskey=$USER->sesskey&amp;moveto=", $tempdisplaylist, "moveform$category->id", "$category->parent", "", "", "", false);
+        popup_form ("index.php?move=$category->id&moveto=", $tempdisplaylist, "moveform$category->id", "$category->parent", "", "", "", false);
         echo "</td>";
         echo "</tr>";
     } else {

@@ -1,210 +1,208 @@
-<?PHP // $Id$ 
-      // survey.php - created with Moodle 1.4.4 (2004083140)
+<?PHP // $Id$
+
+#------------------------------------------------------------
+$string['modulename'] = "Anket";
+$string['modulenameplural'] = "Anketler";
+#------------------------------------------------------------
+
+$string['actual'] = "Güncel";
+$string['actualclass'] = "Güncel sýnýf";
+$string['actualstudent'] = "\$a güncel";
+$string['allquestions'] = "Tüm sorular, tüm öðrenciler";
+$string['allscales'] = "Tüm ölçekler, tüm öðrenciler";
+$string['alreadysubmitted'] = "Bu anketi daha önce uyguladýnýz";
+$string['analysisof'] = "\$a çözümlemesi";
+
+$string['attlsname'] = "ATTLS (20 item version)";
+$string['attlsintro'] = "The purpose of this questionnaire is to help us evaluate your attitudes towards thinking and learning.
+
+There are no 'right' or 'wrong' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.";
+
+$string['attls1'] = "In evaluating what someone says, I focus on the quality of their argument, not on the person who's presenting it.";
+$string['attls1short'] = "focus quality of argument";
+$string['attls2'] = "I like playing devil's advocate - arguing the opposite of what someone is saying.";
+$string['attls2short'] = "play devil's advocate";
+$string['attls3'] = "I like to understand where other people are 'coming from', what experiences have led them to feel the way they do.";
+$string['attls3short'] = "where people come from";
+$string['attls4'] = "The most important part of my education has been learning to understand people who are very different to me.";
+$string['attls4short'] = "understand different people";
+$string['attls5'] = "I feel that the best way for me to achieve my own identity is to interact with a variety of other people.";
+$string['attls5short'] = "interact with variety";
+$string['attls6'] = "I enjoy hearing the opinions of people who come from backgrounds different to mine - it helps me to understand how the same things can be seen in such different ways.";
+$string['attls6short'] = "enjoy hearing opinions";
+$string['attls7'] = "I find that I can strengthen my own position through arguing with someone who disagrees with me.";
+$string['attls7short'] = "strengthen by argue";
+$string['attls8'] = "I am always interested in knowing why people say and believe the things they do.";
+$string['attls8short'] = "know why people do";
+$string['attls9'] = "I often find myself arguing with the authors of books that I read, trying to logically figure out why they're wrong.";
+$string['attls9short'] = "argue with authors";
+$string['attls10'] = "It's important for me to remain as objective as possible when I analyze something.";
+$string['attls10short'] = "remain objective";
+$string['attls11'] = "I try to think with people instead of against them.";
+$string['attls11short'] = "think WITH people";
+$string['attls12'] = "I have certain criteria I use in evaluating arguments.";
+$string['attls12short'] = "use criteria to evaluate";
+$string['attls13'] = "I'm more likely to try to understand someone else's opinion that to try to evaluate it.";
+$string['attls13short'] = "try to understand";
+$string['attls14'] = "I try to point out weaknesses in other people's thinking to help them clarify their arguments.";
+$string['attls14short'] = "point out weaknesses";
+$string['attls15'] = "I tend to put myself in other people's shoes when discussing controversial issues, to see why they think the way they do.";
+$string['attls15short'] = "put myself in their shoes";
+$string['attls16'] = "One could call my way of analysing things 'putting them on trial' because I am careful to consider all the evidence.";
+$string['attls16short'] = "putting on trial";
+$string['attls17'] = "I value the use of logic and reason over the incorporation of my own concerns when solving problems.";
+$string['attls17short'] = "i value logic most";
+$string['attls18'] = "I can obtain insight into opinions that differ from mine through empathy.";
+$string['attls18short'] = "insight from empathy";
+$string['attls19'] = "When I encounter people whose opinions seem alien to me, I make a deliberate effort to 'extend' myself into that person, to try to see how they could have those opinions.";
+$string['attls19short'] = "make effort to extend";
+$string['attls20'] = "I spend time figuring out what's 'wrong' with things. For example, I'll look for something in a literary interpretation that isn't argued well enough.";
+$string['attls20short'] = "what's wrong?";
+
+$string['attlsmintro'] = "In discussion ...";
+$string['attlsm1'] = "Attitudes Towards Thinking and Learning";
+$string['attlsm2'] = "Connected Learning";
+$string['attlsm3'] = "Separate Learning";
+$string['clicktocontinue'] = "Click here to continue";
+$string['clicktocontinuecheck'] = "Click here to check and continue";
+
+$string['colles1'] = "my learning focuses on issues that interest me.";
+$string['colles1short'] = "focus on interesting issues";
+$string['colles2'] = "what I learn is important for my professional practice.";
+$string['colles2short'] = "important to my practice";
+$string['colles3'] = "I learn how to improve my professional practice.";
+$string['colles3short'] = "improve my practice";
+$string['colles4'] = "what I learn connects well with my professional practice.";
+$string['colles4short'] = "connects with my practice";
+$string['colles5'] = "I think critically about how I learn.";
+$string['colles5short'] = "I'm critical of my learning";
+$string['colles6'] = "I think critically about my own ideas.";
+$string['colles6short'] = "I'm critical of my own ideas";
+$string['colles7'] = "I think critically about other students' ideas.";
+$string['colles7short'] = "I'm critical of other students";
+$string['colles8'] = "I think critically about ideas in the readings.";
+$string['colles8short'] = "I'm critical of readings";
+$string['colles9'] = "I explain my ideas to other students.";
+$string['colles9short'] = "I explain my ideas";
+$string['colles10'] = "I ask other students to explain their ideas.";
+$string['colles10short'] = "I ask for explanations";
+$string['colles11'] = "other students ask me to explain my ideas.";
+$string['colles11short'] = "I'm asked to explain";
+$string['colles12'] = "other students respond to my ideas.";
+$string['colles12short'] = "students respond to me";
+$string['colles13'] = "the tutor stimulates my thinking.";
+$string['colles13short'] = "tutor stimulates thinking";
+$string['colles14'] = "the tutor encourages me to participate.";
+$string['colles14short'] = "tutor encourages me";
+$string['colles15'] = "the tutor models good discourse.";
+$string['colles15short'] = "tutor models discourse";
+$string['colles16'] = "the tutor models critical self-reflection.";
+$string['colles16short'] = "tutor models self-reflection";
+$string['colles17'] = "other students encourage my participation.";
+$string['colles17short'] = "students encourage me";
+$string['colles18'] = "other students praise my contribution.";
+$string['colles18short'] = "students praise me";
+$string['colles19'] = "other students value my contribution.";
+$string['colles19short'] = "students value me";
+$string['colles20'] = "other students empathise with my struggle to learn.";
+$string['colles20short'] = "students empathise";
+$string['colles21'] = "I make good sense of other students' messages.";
+$string['colles21short'] = "I understand other students";
+$string['colles22'] = "other students make good sense of my messages.";
+$string['colles22short'] = "students understand me";
+$string['colles23'] = "I make good sense of the tutor's messages.";
+$string['colles23short'] = "I understand the tutor";
+$string['colles24'] = "the tutor makes good sense of my messages.";
+$string['colles24short'] = "tutor understands me";
+
+$string['collesaname'] = "COLLES (Actual)";
+$string['collesaintro'] = "The purpose of this survey is to help us understand how well the online delivery of this unit enabled you to learn.
+
+Each one of the 24 statements below asks about your experience in this unit.
+
+There are no 'right' or 'wrong' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.
+
+Your carefully considered responses will help us improve the way this unit is presented online in the future.
+
+Thanks very much.";
+
+$string['collesapname'] = "COLLES (Preferred and Actual)";
+$string['collesapintro'] = "The purpose of this questionnaire is to help us understand how well the online delivery of this unit enabled you to learn. 
+
+Each one of the 24 statements below asks you to compare your <B>preferred</B> (ideal) and <B>actual</B> experience in this unit.
+
+There are no 'right' or 'wrong' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.
+
+Your carefully considered responses will help us improve the way this unit is presented online in the future.
+
+Thanks very much.";
+
+$string['collespname'] = "COLLES (Preferred)";
+$string['collespintro'] = "The purpose of this survey is to help us understand what you value in an online learning experience.
+
+Each one of the 24 statements below asks about your <B>preferred</B> (ideal) experience in this unit.
+
+There are no 'right' or 'wrong' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.
+
+Your carefully considered responses will help us improve the way this unit is presented online in the future.
+
+Thanks very much.";
 
 
-$string['actual'] = 'Gerçek';
-$string['actualclass'] = 'Gerçek sýnýf';
-$string['actualstudent'] = 'Gerçek $a';
-$string['allquestions'] = 'Sýralý tüm sorular, tüm öðrenciler';
-$string['allscales'] = 'Tüm ölçekler, tüm öðrenciler';
-$string['alreadysubmitted'] = 'Bu anketi daha önce uyguladýnýz';
-$string['analysisof'] = '$a çözümlemesi';
-$string['answers'] = 'Yanýtlar';
-$string['attls1'] = 'Birilerinin söylediðini deðerlendirirken, bu düþünceyi sunan kiþiye deðil, düþüncesinin kalitesine odaklanýrým.   ';
-$string['attls10'] = 'Birþeyleri analiz ederken mümkün olduðunca tarafsýz davranmak benim için önemlidir.';
-$string['attls10short'] = 'tarafsýz kal';
-$string['attls11'] = 'Ýnsanlara karþý olmaktansa onlarla birlikte düþünmeye çalýþýrým.';
-$string['attls11short'] = 'insanlarla BÝRLÝKTE düþün';
-$string['attls12'] = 'Düþünceleri deðerlendirirken bazý belirli kriterlerim vardýr. ';
-$string['attls12short'] = 'deðerlendirirken kriter kullan';
-$string['attls13'] = 'Birilerinin düþüncelerini eleþtirmekten çok anlamaya çalýþýrým.';
-$string['attls13short'] = 'anlamaya çalýþ';
-$string['attls14'] = 'Baþkalarýnýn düþüncelerinin zayýflýklarýný bularak, onlarý, düþünceleri konusunda aydýnlatmaya çalýþýrým.';
-$string['attls14short'] = 'zayýflýklarý bul';
-$string['attls15'] = 'Karþýtlýk içeren bir konuyu tartýþýrken, neden böyle düþündüklerini anlamak için kendimi karþýmdakinin yerine koymaya çalýþýrým.';
-$string['attls15short'] = 'kendimi onun yerine koyarým';
-$string['attls16'] = 'Birþeyleri analiz metodum \"bilgileri yargýlamak\" olarak adlandýrýlabilir çünkü ben bütün delilleri dikkatlice incelerim. ';
-$string['attls16short'] = 'bilgileri yargýla';
-$string['attls17'] = 'Problem çözerken düþüncelerimi sebep sonuç mantýðýný üzerine kurarým.';
-$string['attls17short'] = 'mantýk daha önemlidir';
-$string['attls18'] = 'Benimkinden farklý düþüncelerin içyüzünü empati sayesinde anlayabilirim. ';
-$string['attls18short'] = 'empati ile içyüz';
-$string['attls19'] = 'Düþünceleri bana karþýt gelen insanlarý düþündüðümde, kendimi onlara yakýn hissetmeye çalýþarak nasýl bu düþünceye sahip olabildiklerini anlamak için çok çaba harcarým.';
-$string['attls19short'] = 'anlamak için çaba harca';
-$string['attls1short'] = 'düþüncenin kalitesine odaklan';
-$string['attls2'] = 'Birilerinin söylediðinin tersini tartýþýrken \"þeytanýn avukatý\" rolünü oynamayý severim.';
-$string['attls20'] = 'Neyin \"yanlýþ\" gittiðini belirlemek için zaman harcarým. Örneðin; yeterince iyi tartýþýlmamýþ bir konuda araþtýrma yaparým.  ';
-$string['attls20short'] = 'yanlýþ olan nedir?';
-$string['attls2short'] = '\"þeytanýn avukatý\"ný oyna';
-$string['attls3'] = 'Ýnsanlarýn nereden geldiðini ve sahip olduklarý hislere hangi deneyimlerin sebep olduðunu anlamayý severim. ';
-$string['attls3short'] = 'insanlarýn nereden geldiði';
-$string['attls4'] = 'Eðitimimin en önemli parçasý benden çok farklý insanlarý anlamayý öðrenmektir. ';
-$string['attls4short'] = 'farklý insanlarý anla';
-$string['attls5'] = 'Bana öyle geliyor ki; kendi kimliðimi oluþturmak için en iyi yol farklý insanlarla etkileþimde bulunmak.';
-$string['attls5short'] = 'farký kiþilerle etkileþim kur';
-$string['attls6'] = 'Benimkinden farklý bir özgeçmiþe sahip insanlarýn düþüncelerini duymaktan hoþlanýyorum. Bu bana ayný þeylerin nasýl farklý açýlardan görülebileceðini anlamama yardýmcý oluyor.';
-$string['attls6short'] = 'düþünce duymaktan hoþlan';
-$string['attls7'] = 'Benimle ayný fikirde olmayan biriyle tartýþarak kendi düþüncemi güçlendirebileceðimi keþfettim. ';
-$string['attls7short'] = 'tartýþma ile güçlen';
-$string['attls8'] = 'Ýnsanlarýn neyi, neden söylediklerini ve inandýklarýný öðrenmek konusunda her zaman ilgiliyimdir.';
-$string['attls8short'] = 'insanlarýn nedenlerini bil';
-$string['attls9'] = 'Kendimi sýk sýk okuduðum kitaplarýn yazarlarý ile tartýþýrken bulurum ve onlarýn neden hatalý olduklarýný mantýklý bir þekilde ortaya çýkarmaya çalýþýrým. ';
-$string['attls9short'] = 'yazarlarla tartýþ';
-$string['attlsintro'] = 'Bu anketin amacý sizin düþünmeye ve öðrenmeye karþý yaklaþýmlarýnýzý deðerlendirmemize yardým etmektir.
+$string['collesm1']      = "Relevance";
+$string['collesm1short'] = "Relevance";
+$string['collesm2']      = "Reflective Thinking";
+$string['collesm2short'] = "Reflective Thinking";
+$string['collesm3']      = "Interactivity";
+$string['collesm3short'] = "Interactivity";
+$string['collesm4']      = "Tutor Support";
+$string['collesm4short'] = "Tutor Support";
+$string['collesm5']      = "Peer Support";
+$string['collesm5short'] = "Peer Support";
+$string['collesm6']      = "Interpretation";
+$string['collesm6short'] = "Interpretation";
 
-\'Doðru\' ya da \'Yanlýþ\' cevap yoktur. Biz sadece sizin düþüncenizi öðrenmek istiyoruz. Cevaplarýnýzýn tam bir gizlilik içinde deðerlendirileceðinden ve notlarýnýzý etkilemeyeceðinden emin olabilirsiniz. ';
-$string['attlsm1'] = 'Düþünmeye ve Öðrenmeye Karþý Yaklaþýmlar';
-$string['attlsm2'] = 'Birleþtirilmiþ Öðrenme';
-$string['attlsm3'] = 'Ayrý Öðrenme';
-$string['attlsmintro'] = 'BÝR TARTIÞMADA ...';
-$string['attlsname'] = 'Düþünme ve Öðrenme Yaklaþýmlarý (20 maddelik)';
-$string['ciq1'] = 'Bir öðrenci olarak, sýnýfta hangi anda en fazla katýlým gösterirsin?';
-$string['ciq1short'] = 'En fazla katýlým';
-$string['ciq2'] = 'Bir öðrenci olarak, sýnýftan hangi anda en fazla uzaklaþýrsýn?';
-$string['ciq2short'] = 'En uzak';
-$string['ciq3'] = 'Bu forumlardaki herhangi birinden hangi etkinliði en yararlý buluyorsun?';
-$string['ciq3short'] = 'Yararlý an';
-$string['ciq4'] = 'Bu forumlardaki herhangi birinden hangi etkinliði en karýþýk buluyorsun?';
-$string['ciq4short'] = 'Karýþýk an';
-$string['ciq5'] = 'Hangi olay seni en çok þaþýrttý?';
-$string['ciq5short'] = 'Þaþýrtýcý an';
-$string['ciqintro'] = 'Aþaðýdaki sorularý sýnýftaki son olaylarý düþünerek cevaplanýz';
-$string['ciqname'] = 'Önemli Olaylar';
-$string['clicktocontinue'] = 'Devam etmek için buraya týklayýn';
-$string['clicktocontinuecheck'] = 'Kontrol etmek ve devam etmek için buraya týklayýn';
-$string['colles1'] = 'öðrenmem, beni ilgilendiren konulara odaklanýr.';
-$string['colles10'] = 'diðer öðrencilerden düþüncelerini açýklamasýný isterim. ';
-$string['colles10short'] = 'açýklamalar isterim';
-$string['colles11'] = 'diðer öðrenciler benden düþüncelerimi açýklamamý ister.';
-$string['colles11short'] = 'açýklamam istenir';
-$string['colles12'] = 'diðer öðrenciler benim düþüncelerime karþýlýk verir.';
-$string['colles12short'] = 'öðrenciler bana karþýlýk verir';
-$string['colles13'] = 'öðretici, düþünmem için beni harekete geçirir.';
-$string['colles13short'] = 'öðretici, düþünmeyi harekete geçirir';
-$string['colles14'] = 'öðretici, katýlmam için beni cesaretlendirir. ';
-$string['colles14short'] = 'öðretici, beni cesaretlendirir';
-$string['colles15'] = 'öðretici, iyi bir konuþma modeli sergiler.';
-$string['colles15short'] = 'öðretici, konuþma modeli sergiler';
-$string['colles16'] = 'öðretici, kendine eleþtirel yaklaþma modeli sergiler.';
-$string['colles16short'] = 'öðretici, kendine eleþtirel yaklaþýr';
-$string['colles17'] = 'diðer öðrenciler katýlýmým için beni cesaretlendirir. ';
-$string['colles17short'] = 'diðer öðrenciler katýlýmýmý cesaretlendirir.';
-$string['colles18'] = 'diðer öðrenciler benim katkýlarýmý beðenir. ';
-$string['colles18short'] = 'öðrenciler beni beðenir';
-$string['colles19'] = 'diðer öðrenciler benim katkýlarýma deðer verir.';
-$string['colles19short'] = 'öðrenciler bana deðer verir';
-$string['colles1short'] = 'ilginç konulara odaklan';
-$string['colles2'] = 'öðrendiklerim mesleki uygulamalarým için önemlidir.';
-$string['colles20'] = 'diðer öðrenciler benim öðrenme çabama empatik yaklaþýr.';
-$string['colles20short'] = 'öðrenciler empatik yaklaþýr';
-$string['colles21'] = 'diðer öðrencilerin mesajlarýný iyi anlarým.';
-$string['colles21short'] = 'diðer öðrencileri anlarým';
-$string['colles22'] = 'diðer öðrenciler mesajlarýmý iyi anlar.';
-$string['colles22short'] = 'öðrenciler beni anlar';
-$string['colles23'] = 'öðreticinin mesajlarýný iyi anlarým. ';
-$string['colles23short'] = 'öðreticiyi anlarým';
-$string['colles24'] = 'öðretici mesajlarýmý iyi anlar.';
-$string['colles24short'] = 'öðretici beni anlar';
-$string['colles2short'] = 'uygulamalarým için önemlidir';
-$string['colles3'] = 'mesleki uygulamalrýmý nasýl geliþtireceðimi bilirim';
-$string['colles3short'] = 'uygulamalarýmý geliþtiririm ';
-$string['colles4'] = 'öðrendiklerim mesleki uygulamalarýmla sýký sýkýya baðlýdýr.';
-$string['colles4short'] = 'uygulamalarýmla baðlýdýr';
-$string['colles5'] = 'nasýl öðrendiðim konusunda eleþtirel düþünürüm.';
-$string['colles5short'] = 'öðrenmemi eleþtiririm';
-$string['colles6'] = 'kendi düþüncelerim hakkýnda eleþtirel düþünürüm.';
-$string['colles6short'] = 'kendi düþüncelerimi eleþtiririm';
-$string['colles7'] = 'diðer öðrencilerin düþünceleri hakkýnda eleþtirel düþünürüm.';
-$string['colles7short'] = 'diðer öðrencileri eleþtiririm';
-$string['colles8'] = 'okuduklarým hakkýnda eleþtirel düþünürüm.';
-$string['colles8short'] = 'okuduklarýmý eleþtiririm';
-$string['colles9'] = 'düþüncelerimi diðer öðrencilere açýklarým.';
-$string['colles9short'] = 'düþüncelerimi açýklarým';
-$string['collesaintro'] = 'Bu anketin amacý, bu ünitenin çevrimiçi sunumunun öðrenmenize ne kadar katký saðladýðýný anlamamýza yardýmcý olmaktýr. 
+$string['collesmintro'] = "In this online unit...";
 
-Aþaðýdaki 24 cümle sizin bu ünitedeki deneyiminizle ilgili olarak verilmiþtir.  
-
-\'Doðru\' ya da \'Yanlýþ\' cevap yoktur. Biz sadece sizin düþüncenizi öðrenmek istiyoruz. Cevaplarýnýzýn tam bir gizlilik içinde deðerlendirileceðinden ve notlarýnýzý etkilemeyeceðinden emin olabilirsiniz.
-
-Sizin dikkatlice düþünülmüþ cevaplarýnýz, bu ünitenin ileride yapýlacak olan çevrimiçi sunumunu geliþtirmemize yardýmcý olacaktýr. 
-
-Çok teþekkür ederiz. ';
-$string['collesaname'] = 'Yapýsalcý Çevrimiçi Öðrenme Ortamý (Gerçek)';
-$string['collesapintro'] = 'Bu anketin amacý, bu ünitenin çevrimiçi sunumunun öðrenmenize ne kadar katký saðladýðýný anlamamýza yardýmcý olmaktýr. 
-
-Aþaðýdaki 24 cümle sizin <b>istediðiniz</b> (ideal olan) ve <b>gerçekte olan</b> durumu karþýlaþtýrmak için verilmiþtir. 
-
-\'Doðru\' ya da \'Yanlýþ\' cevap yoktur. Biz sadece sizin düþüncenizi öðrenmek istiyoruz. Cevaplarýnýzýn tam bir gizlilik içinde deðerlendirileceðinden ve notlarýnýzý etkilemeyeceðinden emin olabilirsiniz.
-
-Sizin dikkatlice düþünülmüþ cevaplarýnýz, bu ünitenin ileride yapýlacak olan çevrimiçi sunumunu geliþtirmemize yardýmcý olacaktýr. 
-
-Çok teþekkür ederiz. ';
-$string['collesapname'] = 'Yapýsalcý Çevrimiçi Öðrenme Ortamý (Gerçek ve Ýstenilen)';
-$string['collesm1'] = 'Ýlgi';
-$string['collesm1short'] = 'Ýlgi';
-$string['collesm2'] = 'Eleþtirel Düþünce';
-$string['collesm2short'] = 'Eleþtirel Düþünce';
-$string['collesm3'] = 'Etkileþim';
-$string['collesm3short'] = 'Etkileþim';
-$string['collesm4'] = 'Öðretici Desteði';
-$string['collesm4short'] = 'Öðretici Desteði';
-$string['collesm5'] = 'Karþýlýklý Destek';
-$string['collesm5short'] = 'Karþýlýklý Destek';
-$string['collesm6'] = 'Yorumlama';
-$string['collesm6short'] = 'Yorumlama';
-$string['collesmintro'] = 'Bu çevrimiçi ünitede...';
-$string['collespintro'] = 'Bu anketin amacý, bu ünitenin çevrimiçi sunumunun öðrenmenize ne kadar katký saðladýðýný anlamamýza yardýmcý olmaktýr. 
-
-Aþaðýdaki 24 cümle sizin <b>istediðiniz</b> (ideal) durumu belirlemek için verilmiþtir. 
-
-\'Doðru\' ya da \'Yanlýþ\' cevap yoktur. Biz sadece sizin düþüncenizi öðrenmek istiyoruz. Cevaplarýnýzýn tam bir gizlilik içinde deðerlendirileceðinden ve notlarýnýzý etkilemeyeceðinden emin olabilirsiniz.
-
-Sizin dikkatlice düþünülmüþ cevaplarýnýz, bu ünitenin ileride yapýlacak olan çevrimiçi sunumunu geliþtirmemize yardýmcý olacaktýr. 
-
-Çok teþekkür ederiz. ';
-$string['collespname'] = 'Yapýsalcý Çevrimiçi Öðrenme Ortamý (Ýstenilen)';
-$string['done'] = 'Tamamlandý';
-$string['download'] = 'Ýndir';
-$string['downloadexcel'] = 'Verileri Excel olarak indir';
-$string['downloadinfo'] = 'Bu anketten elde edilebilecek ham bilgiyi Excel, SPSS veya benzeri programramlarda analiz etmeye uygun bir þekilde indirebilirsiniz. ';
-$string['downloadtext'] = 'Verileri düz yazý dosyasý olarak indir';
-$string['editingasurvey'] = 'Anket düzenleme';
-$string['guestsnotallowed'] = 'Anketi ziyaretçilerin yanýtlamasýna izin verilmemektedir';
-$string['helpsurveys'] = 'Farklý anket türleriyle ilgili yardým';
-$string['howlong'] = 'Bu anketi tamamlamanýz ne kadar zamanýnýzý aldý?';
-$string['howlongoptions'] = '1 dakikadan az,1-2 dk,2-3 dk,3-4 dk,4-5 dk,5-10 dk,10 dakikadan çok';
-$string['ifoundthat'] = 'Gerçekte olan';
-$string['introtext'] = 'Tanýtým metni';
-$string['ipreferthat'] = 'Ýstediðim';
-$string['modulename'] = 'Anket Formu';
-$string['modulenameplural'] = 'Anket Formlarý';
-$string['name'] = 'Ad';
-$string['newsurveyresponses'] = 'Yeni anket cevaplarý';
-$string['nobodyyet'] = 'Henüz kimse bu anketi tamamlamadý';
-$string['notdone'] = 'Henüz tamamlanmadý';
-$string['notes'] = 'Özel çözümlemeleriniz ve notlarýnýz';
-$string['othercomments'] = 'Baþka bir yorumunuz var mý?';
-$string['peoplecompleted'] = 'Þu ana kadar $a kiþi bu anketi tamamladý';
-$string['preferred'] = 'Ýstenilen';
-$string['preferredclass'] = 'Sýnýfýn istediði';
-$string['preferredstudent'] = '$a istediði';
-$string['question'] = 'Soru';
-$string['questions'] = 'Sorular';
-$string['questionsnotanswered'] = 'Bazý çoktan seçmeli sorular yanýtlanmadý.';
-$string['report'] = 'Anket raporu';
-$string['savednotes'] = 'Notlarýnýz kaydedildi';
-$string['scaleagree5'] = 'Kesinlikle karþý,Oldukça karþý,Ne karþý ne de taraftar,Oldukça taraftar,Tamamen taraftar';
-$string['scales'] = 'Ölçekler';
-$string['scaletimes5'] = 'Hiçbir zaman,Nadiren,Ara sýra,Sýk sýk,Her zaman';
-$string['seemoredetail'] = 'Ayrýntýlarý görmek için týklayýnýz';
-$string['selectedquestions'] = 'Ölçekten seçilen sorular, tüm öðrenciler';
-$string['summary'] = 'Özet';
-$string['surveycompleted'] = 'Bu anketi tamamladýnýz.  Aþaðýdaki grafikte sýnýf ortalamasýna göre özet sonucunuz gösterilmektedir.';
-$string['surveyname'] = 'Anket adý';
-$string['surveysaved'] = 'Anket kaydedildi';
-$string['surveytype'] = 'Anket türü';
-$string['thanksforanswers'] = 'Bu ankete katýldýðýnýz için teþekkür ederiz, $a';
-$string['time'] = 'Süre';
-$string['viewsurveyresponses'] = 'Toplam $a anket sonucunu göster';
+$string['done'] = "Tamamlandý";
+$string['download'] = "Ýndir";
+$string['downloadexcel'] = "Verileri Excel spreadsheet olarak indir";
+$string['downloadinfo'] = "You can download the complete raw data for this survey in a form suitable for analysis in Excel, SPSS or other package.";
+$string['downloadtext'] = "Verileri plain text dosyasý olarak indir";
+$string['editingasurvey'] = "Anket düzenleme";
+$string['helpsurveys'] = "Farklý anket türleriyle ilgili yardým";
+$string['howlong'] = "Bu anketi tamamlamanýz ne kadar zamanýnýzý aldý?";
+$string['howlongoptions'] = "1 dakikadan az,1-2 dk,2-3 dk,3-4 dk,4-5 dk,5-10 dk,10 dakikadan çok";
+$string['ifoundthat'] = "I found that";
+$string['introtext'] = "Tanýtým metni";
+$string['ipreferthat'] = "Tercihim";
+$string['name'] = "Ad";
+$string['newsurveyresponses'] = "Yeni anket cevaplarý";
+$string['nobodyyet'] = "Henüz kimse bu anketi tamamlamadý";
+$string['notdone'] = "Henüz tamamlanmadý";
+$string['notes'] = "Özel çözümlemeleriniz ve notlarýnýz";
+$string['othercomments'] = "Baþka bir yorumunuz var mý?";
+$string['peoplecompleted'] = "Þu ana kadar \$a kiþi bu anketi tamamladý";
+$string['preferred'] = "Tercih";
+$string['preferredclass'] = "Sýnýf tercihi";
+$string['preferredstudent'] = "\$a seçildi";
+$string['question'] = "Soru";
+$string['questions'] = "Sorular";
+$string['questionsnotanswered'] = "Bazý çok seçimlik sorular yanýtlanmadý.";
+$string['report'] = "Anket raporu";
+$string['scales'] = "Ölçekler";
+$string['savednotes'] = "Notlarýnýz kaydedildi";
+$string['scaleagree5'] = "Kesinlikle karþý,Oldukça karþý,Ne karþý ne de taraftar,Oldukça taraftar,Tamamen taraftar";
+$string['scaletimes5'] = "Hiçbir zaman,Nadiren,Ara sýra,Sýk sýk,Her zaman";
+$string['seemoredetail'] = "Ayrýntýlarý görmek için týklayýnýz";
+$string['selectedquestions'] = "Ölçekten seçilen sorular, tüm öðrenciler";
+$string['summary'] = "Özet";
+$string['surveycompleted'] = "Bu anketi tamamladýnýz.  Aþaðýdaki grafikte sýnýf ortalamasýna göre sonuçlarýnýzýn özeti gösterilmektedir.";
+$string['surveyname'] = "Anket adý";
+$string['surveysaved'] = "Anket kaydedildi";
+$string['surveytype'] = "Anket türü";
+$string['thanksforanswers'] = "Bu ankete katýldýðýnýz için teþekkür ederiz, \$a";
+$string['time'] = "Süre";
+$string['viewsurveyresponses'] = "\$a Anketi sonuçlarýný göster";
 
 ?>

@@ -1,81 +1,81 @@
-<?php // $Id$
+<?PHP // $Id$
 
-    require_once('../../config.php');
-    require_once('lib.php');
+    require_once("../../config.php");
+    require_once("lib.php");
 
-    $id = required_param('id', PARAM_INT);   // course
+    require_variable($id);   // course
 
-    if (! $course = get_record('course', 'id', $id)) {
-        error('Course ID is incorrect');
+    if (! $course = get_record("course", "id", $id)) {
+        error("Course ID is incorrect");
     }
 
     require_course_login($course);
 
-    add_to_log($course->id, 'chat', 'view all', "index.php?id=$course->id", '');
+    add_to_log($course->id, "chat", "view all", "index.php?id=$course->id", "");
 
 
 /// Get all required strings
 
-    $strchats = get_string('modulenameplural', 'chat');
-    $strchat  = get_string('modulename', 'chat');
+    $strchats = get_string("modulenameplural", "chat");
+    $strchat  = get_string("modulename", "chat");
 
 
 /// Print the header
 
-    print_header_simple($strchats, '', $strchats, '', '', true, '', navmenu($course));
+    print_header_simple($strchats, "", $strchats, "", "", true, "", navmenu($course));
 
 /// Get all the appropriate data
 
-    if (! $chats = get_all_instances_in_course('chat', $course)) {
-        notice('There are no chats', "../../course/view.php?id=$course->id");
-        die();
+    if (! $chats = get_all_instances_in_course("chat", $course)) {
+        notice("There are no chats", "../../course/view.php?id=$course->id");
+        die;
     }
 
 /// Print the list of instances (your module will probably extend this)
 
-    $timenow  = time();
-    $strname  = get_string('name');
-    $strweek  = get_string('week');
-    $strtopic = get_string('topic');
+    $timenow = time();
+    $strname  = get_string("name");
+    $strweek  = get_string("week");
+    $strtopic  = get_string("topic");
 
-    if ($course->format == 'weeks') {
+    if ($course->format == "weeks") {
         $table->head  = array ($strweek, $strname);
-        $table->align = array ('center', 'left');
-    } else if ($course->format == 'topics') {
+        $table->align = array ("center", "left");
+    } else if ($course->format == "topics") {
         $table->head  = array ($strtopic, $strname);
-        $table->align = array ('center', 'left', 'left', 'left');
+        $table->align = array ("center", "left", "left", "left");
     } else {
         $table->head  = array ($strname);
-        $table->align = array ('left', 'left', 'left');
+        $table->align = array ("left", "left", "left");
     }
 
-    $currentsection = '';
+    $currentsection = "";
     foreach ($chats as $chat) {
         if (!$chat->visible) {
             //Show dimmed if the mod is hidden
-            $link = "<a class=\"dimmed\" href=\"view.php?id=$chat->coursemodule\">".format_string($chat->name,true)."</a>";
+            $link = "<a class=\"dimmed\" href=\"view.php?id=$chat->coursemodule\">$chat->name</a>";
         } else {
             //Show normal if the mod is visible
-            $link = "<a href=\"view.php?id=$chat->coursemodule\">".format_string($chat->name,true)."</a>";
+            $link = "<a href=\"view.php?id=$chat->coursemodule\">$chat->name</a>";
         }
-        $printsection = '';
+        $printsection = "";
         if ($chat->section !== $currentsection) {
             if ($chat->section) {
                 $printsection = $chat->section;
             }
-            if ($currentsection !== '') {
+            if ($currentsection !== "") {
                 $table->data[] = 'hr';
             }
             $currentsection = $chat->section;
         }
-        if ($course->format == 'weeks' or $course->format == 'topics') {
+        if ($course->format == "weeks" or $course->format == "topics") {
             $table->data[] = array ($printsection, $link);
         } else {
             $table->data[] = array ($link);
         }
     }
 
-    echo '<br />';
+    echo "<br />";
 
     print_table($table);
 

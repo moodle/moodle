@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
     require_once("../../config.php");
     require_once("$CFG->libdir/graphlib.php");
@@ -17,7 +17,7 @@
         error("Course is misconfigured");
     }
 
-    require_login($course->id, false, $cm);
+    require_login($course->id);
 
     $groupmode = groupmode($course, $cm);   // Groups are being used
 
@@ -49,8 +49,6 @@
     $strpreferredclass = get_string("preferredclass", "survey");
     $strpreferredstudent = get_string("preferredstudent", "survey", $course->student);
 
-    $virtualscales = false; //set default value for case clauses
-
     switch ($type) {
 
      case "question.png":
@@ -58,7 +56,7 @@
        $question = get_record("survey_questions", "id", $qid);
        $question->text = get_string($question->text, "survey");
        $question->options = get_string($question->options, "survey");
-
+  
        $options = explode(",",$question->options);
 
        while (list($key,) = each($options)) {
@@ -79,7 +77,7 @@
            }
        }
 
-
+       
        $maxbuckets1 = max($buckets1);
        $maxbuckets2 = max($buckets2);
        $maxbuckets = ($maxbuckets1 > $maxbuckets2) ? $maxbuckets1 : $maxbuckets2;
@@ -105,11 +103,11 @@
        } else {
            $graph->y_order = array('answers2');
        }
-
+       
        $graph->parameter['y_axis_gridlines']= $maxbuckets + 1;
        $graph->parameter['y_resolution_left']= 1;
        $graph->parameter['y_decimal_left']  = 0;
-       $graph->parameter['x_axis_angle']    = 20;
+       $graph->parameter['x_axis_angle']    = 0;
        $graph->parameter['shadow']          = 'none';
 
        $graph->draw_stack();
@@ -194,7 +192,7 @@
            $buckets2[$i] = $buckets2[$i] - 1;
        }
 
-
+       
 
        $maxbuckets1 = max($buckets1);
        $maxbuckets2 = max($buckets2);
@@ -205,16 +203,16 @@
 
        $graph->x_data               = $names;
        $graph->y_data['answers1']   = $buckets1;
-       $graph->y_format['answers1'] = array('colour' => 'ltblue', 'line' => 'line',  'point' => 'square',
+       $graph->y_format['answers1'] = array('colour' => 'ltblue', 'line' => 'line',  'point' => 'square', 
                                             'shadow_offset' => 4, 'legend' => $stractual);
        $graph->y_data['answers2']   = $buckets2;
-       $graph->y_format['answers2'] = array('colour' => 'ltorange', 'line' => 'line', 'point' => 'square',
+       $graph->y_format['answers2'] = array('colour' => 'ltorange', 'line' => 'line', 'point' => 'square', 
                                                 'shadow_offset' => 4, 'legend' => $strpreferred);
        $graph->y_data['stdev1']   = $stdev1;
-       $graph->y_format['stdev1'] = array('colour' => 'ltltblue', 'bar' => 'fill',
+       $graph->y_format['stdev1'] = array('colour' => 'ltltblue', 'bar' => 'fill', 
                                             'shadow_offset' => '4', 'legend' => 'none', 'bar_size' => 0.3);
        $graph->y_data['stdev2']   = $stdev2;
-       $graph->y_format['stdev2'] = array('colour' => 'ltltorange', 'bar' => 'fill',
+       $graph->y_format['stdev2'] = array('colour' => 'ltltorange', 'bar' => 'fill', 
                                             'shadow_offset' => '4', 'legend' => 'none', 'bar_size' => 0.2);
        $graph->offset_relation['stdev1'] = 'answers1';
        $graph->offset_relation['stdev2'] = 'answers2';
@@ -234,23 +232,22 @@
        } else {
            $graph->y_order = array('stdev2', 'answers2');
        }
-
+       
        $graph->parameter['y_max_left']= count($options) - 1;
        $graph->parameter['y_axis_gridlines']= count($options);
        $graph->parameter['y_resolution_left']= 1;
        $graph->parameter['y_decimal_left']= 1;
-       $graph->parameter['x_axis_angle']  = 20;
+       $graph->parameter['x_axis_angle']  = 0;
 
        $graph->draw();
 
        break;
 
 
-
+    
      case "overall.png":
 
        $qqq = get_records_list("survey_questions", "id", $survey->questions);
-
 
        foreach ($qqq as $key => $qq) {
            if ($qq->multi) {
@@ -333,7 +330,7 @@
 
            $buckets1[$i] = $buckets1[$i] - 1;         // Hack because there should not be ANY 0 values in the data.
            $buckets2[$i] = $buckets2[$i] - 1;
-
+           
        }
 
        $maxbuckets1 = max($buckets1);
@@ -341,22 +338,22 @@
 
 
        $graph = new graph($SURVEY_GWIDTH,$SURVEY_GHEIGHT);
-       $graph->parameter['title'] = strip_tags(format_string($survey->name,true));
+       $graph->parameter['title'] = "$survey->name";
 
        $graph->x_data               = $names;
 
        $graph->y_data['answers1']   = $buckets1;
-       $graph->y_format['answers1'] = array('colour' => 'ltblue', 'line' => 'line',  'point' => 'square',
+       $graph->y_format['answers1'] = array('colour' => 'ltblue', 'line' => 'line',  'point' => 'square', 
                                             'shadow_offset' => 4, 'legend' => $stractual);
        $graph->y_data['answers2']   = $buckets2;
-       $graph->y_format['answers2'] = array('colour' => 'ltorange', 'line' => 'line', 'point' => 'square',
+       $graph->y_format['answers2'] = array('colour' => 'ltorange', 'line' => 'line', 'point' => 'square', 
                                                 'shadow_offset' => 4, 'legend' => $strpreferred);
 
        $graph->y_data['stdev1']   = $stdev1;
-       $graph->y_format['stdev1'] = array('colour' => 'ltltblue', 'bar' => 'fill',
+       $graph->y_format['stdev1'] = array('colour' => 'ltltblue', 'bar' => 'fill', 
                                             'shadow_offset' => '4', 'legend' => 'none', 'bar_size' => 0.3);
        $graph->y_data['stdev2']   = $stdev2;
-       $graph->y_format['stdev2'] = array('colour' => 'ltltorange', 'bar' => 'fill',
+       $graph->y_format['stdev2'] = array('colour' => 'ltltorange', 'bar' => 'fill', 
                                             'shadow_offset' => '4', 'legend' => 'none', 'bar_size' => 0.2);
        $graph->offset_relation['stdev1'] = 'answers1';
        $graph->offset_relation['stdev2'] = 'answers2';
@@ -374,13 +371,12 @@
        } else {
            $graph->y_order = array('stdev2', 'answers2');
        }
-
+       
        $graph->parameter['y_max_left']= $numoptions - 1;
        $graph->parameter['y_axis_gridlines']= $numoptions;
        $graph->parameter['y_resolution_left']= 1;
        $graph->parameter['y_decimal_left']= 1;
        $graph->parameter['x_axis_angle']  = 0;
-       $graph->parameter['x_inner_padding']  = 6;
 
        $graph->draw();
 
@@ -502,27 +498,27 @@
 
 
        $graph = new graph($SURVEY_GWIDTH,$SURVEY_GHEIGHT);
-       $graph->parameter['title'] = strip_tags(format_string($survey->name,true));
+       $graph->parameter['title'] = "$survey->name";
 
        $graph->x_data               = $names;
 
        $graph->y_data['answers1']   = $buckets1;
-       $graph->y_format['answers1'] = array('colour' => 'ltblue', 'line' => 'line',  'point' => 'square',
+       $graph->y_format['answers1'] = array('colour' => 'ltblue', 'line' => 'line',  'point' => 'square', 
                                             'shadow_offset' => 0.1, 'legend' => $stractualclass);
        $graph->y_data['answers2']   = $buckets2;
-       $graph->y_format['answers2'] = array('colour' => 'ltorange', 'line' => 'line', 'point' => 'square',
+       $graph->y_format['answers2'] = array('colour' => 'ltorange', 'line' => 'line', 'point' => 'square', 
                                                 'shadow_offset' => 0.1, 'legend' => $strpreferredclass);
        $graph->y_data['studanswers1']   = $studbuckets1;
-       $graph->y_format['studanswers1'] = array('colour' => 'blue', 'line' => 'line',  'point' => 'square',
+       $graph->y_format['studanswers1'] = array('colour' => 'blue', 'line' => 'line',  'point' => 'square', 
                                             'shadow_offset' => 4, 'legend' => $stractualstudent);
        $graph->y_data['studanswers2']   = $studbuckets2;
-       $graph->y_format['studanswers2'] = array('colour' => 'orange', 'line' => 'line', 'point' => 'square',
+       $graph->y_format['studanswers2'] = array('colour' => 'orange', 'line' => 'line', 'point' => 'square', 
                                                 'shadow_offset' => 4, 'legend' => $strpreferredstudent);
        $graph->y_data['stdev1']   = $stdev1;
-       $graph->y_format['stdev1'] = array('colour' => 'ltltblue', 'bar' => 'fill',
+       $graph->y_format['stdev1'] = array('colour' => 'ltltblue', 'bar' => 'fill', 
                                             'shadow_offset' => 0.1, 'legend' => 'none', 'bar_size' => 0.3);
        $graph->y_data['stdev2']   = $stdev2;
-       $graph->y_format['stdev2'] = array('colour' => 'ltltorange', 'bar' => 'fill',
+       $graph->y_format['stdev2'] = array('colour' => 'ltltorange', 'bar' => 'fill', 
                                             'shadow_offset' => 0.1, 'legend' => 'none', 'bar_size' => 0.2);
        $graph->offset_relation['stdev1'] = 'answers1';
        $graph->offset_relation['stdev2'] = 'answers2';
@@ -542,12 +538,12 @@
        } else {
            $graph->y_order = array('stdev2', 'answers2', 'studanswers2');
        }
-
+       
        $graph->parameter['y_max_left']= $numoptions - 1;
        $graph->parameter['y_axis_gridlines']= $numoptions;
        $graph->parameter['y_resolution_left']= 1;
        $graph->parameter['y_decimal_left']= 1;
-       $graph->parameter['x_axis_angle']  = 20;
+       $graph->parameter['x_axis_angle']  = 0;
 
        $graph->draw();
        break;
@@ -650,7 +646,7 @@
            $studbuckets2[$i] = $studbuckets2[$i] - 1;
        }
 
-
+       
 
        $maxbuckets1 = max($buckets1);
        $maxbuckets2 = max($buckets2);
@@ -661,22 +657,22 @@
 
        $graph->x_data               = $names;
        $graph->y_data['answers1']   = $buckets1;
-       $graph->y_format['answers1'] = array('colour' => 'ltblue', 'line' => 'line',  'point' => 'square',
+       $graph->y_format['answers1'] = array('colour' => 'ltblue', 'line' => 'line',  'point' => 'square', 
                                             'shadow_offset' => 0.1, 'legend' => $stractualclass);
        $graph->y_data['answers2']   = $buckets2;
-       $graph->y_format['answers2'] = array('colour' => 'ltorange', 'line' => 'line', 'point' => 'square',
+       $graph->y_format['answers2'] = array('colour' => 'ltorange', 'line' => 'line', 'point' => 'square', 
                                                 'shadow_offset' => 0.1, 'legend' => $strpreferredclass);
        $graph->y_data['studanswers1']   = $studbuckets1;
-       $graph->y_format['studanswers1'] = array('colour' => 'blue', 'line' => 'line',  'point' => 'square',
+       $graph->y_format['studanswers1'] = array('colour' => 'blue', 'line' => 'line',  'point' => 'square', 
                                             'shadow_offset' => 4, 'legend' => $stractualstudent);
        $graph->y_data['studanswers2']   = $studbuckets2;
-       $graph->y_format['studanswers2'] = array('colour' => 'orange', 'line' => 'line', 'point' => 'square',
+       $graph->y_format['studanswers2'] = array('colour' => 'orange', 'line' => 'line', 'point' => 'square', 
                                                 'shadow_offset' => 4, 'legend' => $strpreferredstudent);
        $graph->y_data['stdev1']   = $stdev1;
-       $graph->y_format['stdev1'] = array('colour' => 'ltltblue', 'bar' => 'fill',
+       $graph->y_format['stdev1'] = array('colour' => 'ltltblue', 'bar' => 'fill', 
                                             'shadow_offset' => 0.1, 'legend' => 'none', 'bar_size' => 0.3);
        $graph->y_data['stdev2']   = $stdev2;
-       $graph->y_format['stdev2'] = array('colour' => 'ltltorange', 'bar' => 'fill',
+       $graph->y_format['stdev2'] = array('colour' => 'ltltorange', 'bar' => 'fill', 
                                             'shadow_offset' => 0.1, 'legend' => 'none', 'bar_size' => 0.2);
        $graph->offset_relation['stdev1'] = 'answers1';
        $graph->offset_relation['stdev2'] = 'answers2';
@@ -696,12 +692,12 @@
        } else {
            $graph->y_order = array('stdev2', 'answers2', 'studanswers2');
        }
-
+       
        $graph->parameter['y_max_left']= count($options)-1;
        $graph->parameter['y_axis_gridlines']= count($options);
        $graph->parameter['y_resolution_left']= 1;
        $graph->parameter['y_decimal_left']= 1;
-       $graph->parameter['x_axis_angle']  = 20;
+       $graph->parameter['x_axis_angle']  = 0;
 
        $graph->draw();
 
@@ -713,5 +709,5 @@
 
    exit;
 
-
+         
 ?>

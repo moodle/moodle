@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
 function chat_upgrade($oldversion) {
 // This function does anything necessary to upgrade
@@ -37,27 +37,6 @@ function chat_upgrade($oldversion) {
         modify_database("", "INSERT INTO prefix_log_display VALUES ('chat', 'talk', 'chat', 'name');");
     }
 
-    if ($oldversion < 2004111200) {
-        execute_sql("ALTER TABLE {$CFG->prefix}chat DROP INDEX `course`;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}chat_messages DROP INDEX  `chatid`;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}chat_messages DROP INDEX `userid`;",false); 
-        execute_sql("ALTER TABLE {$CFG->prefix}chat_messages DROP INDEX `groupid`;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}chat_users DROP INDEX  `chatid`;",false); 
-        execute_sql("ALTER TABLE {$CFG->prefix}chat_users DROP INDEX  `groupid`;",false);
-
-        modify_database('','ALTER TABLE prefix_chat ADD INDEX `course` (`course`);');
-        modify_database('','ALTER TABLE prefix_chat_messages ADD INDEX  `chatid` (`chatid`);');
-        modify_database('','ALTER TABLE prefix_chat_messages ADD INDEX `userid` (`userid`);');
-        modify_database('','ALTER TABLE prefix_chat_messages ADD INDEX `groupid` (`groupid`);');
-        modify_database('','ALTER TABLE prefix_chat_users ADD INDEX  `chatid` (`chatid`);');
-        modify_database('','ALTER TABLE prefix_chat_users ADD INDEX  `groupid` (`groupid`);');
-    }
-
-    if ($oldversion < 2005020300) {
-        table_column('chat_users', '', 'course', 'integer', '10', 'unsigned', '0', 'not null', '');
-        table_column('chat_users', '', 'lang'  , 'varchar', '10', ''        , '' , 'not null', '');
-    }
-    
     return true;
 }
 

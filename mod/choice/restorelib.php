@@ -1,21 +1,16 @@
-<?php //$Id$
+<?PHP //$Id$
     //This php script contains all the stuff to backup/restore
     //choice mods
 
     //This is the "graphical" structure of the choice mod:
     //
-    //                      choice
-    //                    (CL,pk->id)----------|
-    //                        |                |
-    //                        |                |
-    //                        |                |
-    //                  choice_options         |
-    //             (UL,pk->id, fk->choiceid)   |
-    //                        |                |
-    //                        |                |
-    //                        |                |
-    //                   choice_answers        |
-    //        (UL,pk->id, fk->choiceid, fk->optionid)       
+    //                      choice                                      
+    //                    (CL,pk->id)
+    //                        |
+    //                        |
+    //                        |
+    //                   choice_answers 
+    //               (UL,pk->id, fk->choice)     
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -48,14 +43,18 @@
             $choice->name = backup_todb($info['MOD']['#']['NAME']['0']['#']);
             $choice->text = backup_todb($info['MOD']['#']['TEXT']['0']['#']);
             $choice->format = backup_todb($info['MOD']['#']['FORMAT']['0']['#']);
-            $choice->publish = backup_todb($info['MOD']['#']['PUBLISH']['0']['#']);
-            $choice->release = backup_todb($info['MOD']['#']['RELEASE']['0']['#']);
-            $choice->display = backup_todb($info['MOD']['#']['DISPLAY']['0']['#']);
-            $choice->allowupdate = backup_todb($info['MOD']['#']['ALLOWUPDATE']['0']['#']);
+            $choice->answer1 = backup_todb($info['MOD']['#']['ANSWER1']['0']['#']);
+            $choice->answer2 = backup_todb($info['MOD']['#']['ANSWER2']['0']['#']);
+            $choice->answer3 = backup_todb($info['MOD']['#']['ANSWER3']['0']['#']);
+            $choice->answer4 = backup_todb($info['MOD']['#']['ANSWER4']['0']['#']);
+            $choice->answer5 = backup_todb($info['MOD']['#']['ANSWER5']['0']['#']);
+            $choice->answer6 = backup_todb($info['MOD']['#']['ANSWER6']['0']['#']);
             $choice->showunanswered = backup_todb($info['MOD']['#']['SHOWUNANSWERED']['0']['#']);
-            $choice->limitanswers = backup_todb($info['MOD']['#']['LIMITANSWERS']['0']['#']);
             $choice->timeopen = backup_todb($info['MOD']['#']['TIMEOPEN']['0']['#']);
             $choice->timeclose = backup_todb($info['MOD']['#']['TIMECLOSE']['0']['#']);
+            $choice->publish = backup_todb($info['MOD']['#']['PUBLISH']['0']['#']);
+            $choice->release = backup_todb($info['MOD']['#']['RELEASE']['0']['#']);
+            $choice->allowupdate = backup_todb($info['MOD']['#']['ALLOWUPDATE']['0']['#']);
             $choice->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 
             //To mantain compatibilty, in 1.4 the publish setting meaning has changed. We
@@ -74,152 +73,63 @@
                     $choice->publish--;
                 }
             }
-            
+                
             //The structure is equal to the db, so insert the choice
             $newid = insert_record ("choice",$choice);
-            
+
+            //Do some output     
+            echo "<ul><li>".get_string("modulename","choice")." \"".$choice->name."\"<br>";
+            backup_flush(300);
+
             if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
-                
-                //Check to see how answers (curently choice_options) are stored in the table 
-                //If answer1 - answer6 exist, this is a pre 1.5 version of choice
-                if (isset($info['MOD']['#']['ANSWER1']['0']['#']) || 
-                    isset($info['MOD']['#']['ANSWER2']['0']['#']) || 
-                    isset($info['MOD']['#']['ANSWER3']['0']['#']) || 
-                    isset($info['MOD']['#']['ANSWER4']['0']['#']) || 
-                    isset($info['MOD']['#']['ANSWER5']['0']['#']) || 
-                    isset($info['MOD']['#']['ANSWER6']['0']['#']) ) {
-              
-                    //This is a pre 1.5 choice backup, special work begins
-                    $options = array();
-                    $options[1] = backup_todb($info['MOD']['#']['ANSWER1']['0']['#']);
-                    $options[2] = backup_todb($info['MOD']['#']['ANSWER2']['0']['#']);
-                    $options[3] = backup_todb($info['MOD']['#']['ANSWER3']['0']['#']);
-                    $options[4] = backup_todb($info['MOD']['#']['ANSWER4']['0']['#']);
-                    $options[5] = backup_todb($info['MOD']['#']['ANSWER5']['0']['#']);
-                    $options[6] = backup_todb($info['MOD']['#']['ANSWER6']['0']['#']);
-                
-                    for($i = 1; $i < 7; $i++) { //insert old answers (in 1.4)  as choice_options (1.5) to db.  
-                        if (!empty($options[$i])) {  //make sure this option has something in it!
-                            $option->choiceid = $newid;
-                            $option->text = $options[$i];
-                            $option->timemodified = $choice->timemodified;
-                            $newoptionid = insert_record ("choice_options",$option);
-                            //Save this choice_option to backup_ids
-                            backup_putid($restore->backup_unique_code,"choice_options",$i,$newoptionid);
-                        }
-                    }
-                 } else { //Now we are in a "standard" 1.5 choice, so restore choice_options normally
-                     $status = choice_options_restore_mods($newid,$info,$restore);
-                 }
-
-                 //now restore the answers for this choice.
-                 if ($restore->mods['choice']->userinfo) {
+                //Now check if want to restore user data and do it.
+                if ($restore->mods['choice']->userinfo) {
                     //Restore choice_answers
-                    $status = choice_answers_restore_mods($newid,$info,$restore);     
-                 }                               
+                    $status = choice_answers_restore_mods ($newid,$info,$restore);
+                }
             } else {
                 $status = false;
             }
 
-            //Do some output     
-            echo "<li>".get_string("modulename","choice")." \"".format_string(stripslashes($choice->name),true)."\"</li>";
-            backup_flush(300);
+            //Finalize ul        
+            echo "</ul>";
 
         } else {
             $status = false;
-        }
-        return $status;
-    }
-
-function choice_options_restore_mods($choiceid,$info,$restore) {
-
-        global $CFG;
-
-        $status = true;
-
-        $options = $info['MOD']['#']['OPTIONS']['0']['#']['OPTION'];
-
-        //Iterate over options
-        for($i = 0; $i < sizeof($options); $i++) {
-            $opt_info = $options[$i];
-            //traverse_xmlize($opt_info);                                                                 //Debug
-            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
-            //$GLOBALS['traverse_array']="";                                                              //Debug
-
-            //We'll need this later!!
-            $oldid = backup_todb($opt_info['#']['ID']['0']['#']);
-            $olduserid = backup_todb($opt_info['#']['USERID']['0']['#']);
-
-            //Now, build the CHOICE_OPTIONS record structure
-            $option->choiceid = $choiceid;
-            $option->text = backup_todb($opt_info['#']['TEXT']['0']['#']);
-            $option->maxanswers = backup_todb($opt_info['#']['MAXANSWERS']['0']['#']);
-            $option->timemodified = backup_todb($opt_info['#']['TIMEMODIFIED']['0']['#']);
-
-            //The structure is equal to the db, so insert the choice_options
-            $newid = insert_record ("choice_options",$option);
-
-            //Do some output
-            if (($i+1) % 50 == 0) {
-                echo ".";
-                if (($i+1) % 1000 == 0) {
-                    echo "<br />";
-                }
-                backup_flush(300);
-            }
-
-            if ($newid) {
-                //We have the newid, update backup_ids
-                backup_putid($restore->backup_unique_code,"choice_options",$oldid,
-                             $newid);
-            } else {
-                $status = false;
-            }
         }
 
         return $status;
     }
 
     //This function restores the choice_answers
-    function choice_answers_restore_mods($choiceid,$info,$restore) {
+    function choice_answers_restore_mods($choice_id,$info,$restore) {
 
         global $CFG;
 
         $status = true;
 
+        //Get the answers array
         $answers = $info['MOD']['#']['ANSWERS']['0']['#']['ANSWER'];
 
         //Iterate over answers
         for($i = 0; $i < sizeof($answers); $i++) {
-            $ans_info = $answers[$i];
+            $sub_info = $answers[$i];
             //traverse_xmlize($sub_info);                                                                 //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
             //We'll need this later!!
-            $oldid = backup_todb($ans_info['#']['ID']['0']['#']);
-            $olduserid = backup_todb($ans_info['#']['USERID']['0']['#']);
+            $oldid = backup_todb($sub_info['#']['ID']['0']['#']);
+            $olduserid = backup_todb($sub_info['#']['USERID']['0']['#']);
 
             //Now, build the CHOICE_ANSWERS record structure
-            $answer->choiceid = $choiceid;
-            $answer->userid = backup_todb($ans_info['#']['USERID']['0']['#']);
-            $answer->optionid = backup_todb($ans_info['#']['OPTIONID']['0']['#']);
-            $answer->timemodified = backup_todb($ans_info['#']['TIMEMODIFIED']['0']['#']);
-
-            //If the answer contains CHOICE_ANSWER, it's a pre 1.5 backup
-            if (!empty($ans_info['#']['CHOICE_ANSWER']['0']['#'])) {
-                //optionid was, in pre 1.5 backups, choice_answer
-                $answer->optionid = backup_todb($ans_info['#']['CHOICE_ANSWER']['0']['#']);
-            }
-
-            //We have to recode the optionid field
-            $option = backup_getid($restore->backup_unique_code,"choice_options",$answer->optionid);
-            if ($option) {
-                $answer->optionid = $option->new_id;
-            }
+            $answer->choice = $choice_id;
+            $answer->userid = backup_todb($sub_info['#']['USERID']['0']['#']);
+            $answer->answer = backup_todb($sub_info['#']['CHOICE_ANSWER']['0']['#']);
+            $answer->timemodified = backup_todb($sub_info['#']['TIMEMODIFIED']['0']['#']);
 
             //We have to recode the userid field
             $user = backup_getid($restore->backup_unique_code,"user",$answer->userid);
@@ -234,7 +144,7 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                    echo "<br>";
                 }
                 backup_flush(300);
             }
@@ -250,47 +160,6 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
 
         return $status;
     }
-
-    //This function converts texts in FORMAT_WIKI to FORMAT_MARKDOWN for
-    //some texts in the module
-    function choice_restore_wiki2markdown ($restore) {
-    
-        global $CFG;
-
-        $status = true;
-
-        //Convert choice->text
-        if ($records = get_records_sql ("SELECT c.id, c.text, c.format
-                                         FROM {$CFG->prefix}choice c,
-                                              {$CFG->prefix}backup_ids b
-                                         WHERE c.course = $restore->course_id AND
-                                               c.format = ".FORMAT_WIKI. " AND
-                                               b.backup_code = $restore->backup_unique_code AND
-                                               b.table_name = 'choice' AND
-                                               b.new_id = c.id")) {
-            foreach ($records as $record) {
-                //Rebuild wiki links
-                $record->text = restore_decode_wiki_content($record->text, $restore);
-                //Convert to Markdown
-                $wtm = new WikiToMarkdown();
-                $record->text = $wtm->convert($record->text, $restore->course_id);
-                $record->format = FORMAT_MARKDOWN;
-                $status = update_record('choice', addslashes_object($record));
-                //Do some output
-                $i++;
-                if (($i+1) % 1 == 0) {
-                    echo ".";
-                    if (($i+1) % 20 == 0) {
-                        echo "<br />";
-                    }
-                    backup_flush(300);
-                }
-            }
-
-        }
-        return $status;
-    }
-
     //This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
     function choice_restore_logs($restore,$log) {
@@ -358,19 +227,8 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
             $log->url = "index.php?id=".$log->course;
             $status = true;
             break;
-        case "report":
-            if ($log->cmid) {
-                //Get the new_id of the module (to recode the info field)
-                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
-                if ($mod) {
-                    $log->url = "report.php?id=".$log->cmid;
-                    $log->info = $mod->new_id;
-                    $status = true;
-                }
-            }
-            break;
         default:
-            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
             break;
         }
 

@@ -9,8 +9,8 @@
 /**
  * Smarty regex_replace modifier plugin
  *
- * Type:     modifier<br />
- * Name:     regex_replace<br />
+ * Type:     modifier<br>
+ * Name:     regex_replace<br>
  * Purpose:  regular epxression search/replace
  * @link http://smarty.php.net/manual/en/language.modifier.regex.replace.php
  *          regex_replace (Smarty online manual)

@@ -1,0 +1,1777 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!-- saved from url=(0041)http://localhost/moodle/lib/db/schema.php -->
+<HTML><HEAD>
+<META http-equiv=Content-Type content="text/html; charset=windows-1252">
+<META content="MSHTML 6.00.2800.1276" name=GENERATOR></HEAD>
+<BODY>
+<H2>Moodle lib/db ADODB XML Schema</H2>
+<HR>
+(oci8po): ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD' &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select * from dept &nbsp; <CODE></CODE>
+<HR>
+<PRE>Array
+(
+    [0] =&gt; Array
+        (
+            [0] =&gt; 10
+            [DEPTNO] =&gt; 10
+            [1] =&gt; ACCOUNTING
+            [DNAME] =&gt; ACCOUNTING
+            [2] =&gt; NEW YORK
+            [LOC] =&gt; NEW YORK
+        )
+
+    [1] =&gt; Array
+        (
+            [0] =&gt; 20
+            [DEPTNO] =&gt; 20
+            [1] =&gt; RESEARCH
+            [DNAME] =&gt; RESEARCH
+            [2] =&gt; DALLAS
+            [LOC] =&gt; DALLAS
+        )
+
+    [2] =&gt; Array
+        (
+            [0] =&gt; 30
+            [DEPTNO] =&gt; 30
+            [1] =&gt; SALES
+            [DNAME] =&gt; SALES
+            [2] =&gt; CHICAGO
+            [LOC] =&gt; CHICAGO
+        )
+
+    [3] =&gt; Array
+        (
+            [0] =&gt; 40
+            [DEPTNO] =&gt; 40
+            [1] =&gt; OPERATIONS
+            [DNAME] =&gt; OPERATIONS
+            [2] =&gt; BOSTON
+            [LOC] =&gt; BOSTON
+        )
+
+)
+</PRE>
+<TABLE cols=3 cellPadding=3 border=2>
+  <TBODY>
+  <TR>
+    <TH>Deptno</TH>
+    <TH>DName</TH>
+    <TH>Loc</TH>
+  <TR vAlign=top>
+    <TD align=right>10&nbsp;</TD>
+    <TD>ACCOUNTING</TD>
+    <TD>NEW YORK</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>20&nbsp;</TD>
+    <TD>RESEARCH</TD>
+    <TD>DALLAS</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>30&nbsp;</TD>
+    <TD>SALES</TD>
+    <TD>CHICAGO</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>40&nbsp;</TD>
+    <TD>OPERATIONS</TD>
+    <TD>BOSTON</TD></TR></TBODY></TABLE>
+<HR>
+(oci8po): select value from sys.database_compatible_level &nbsp; <CODE></CODE>
+<HR>
+
+<H3>schemaConfig.xml</H3>
+<HR>
+(oci8po): drop table config &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): drop sequence SEQ_config &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select value from sys.database_compatible_level &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<LI>(config): Insert 1 row for testing only...comment out later 
+<HR>
+(oci8po): CREATE TABLE config ( id DECIMAL(10) NOT NULL, name VARCHAR(255) NOT 
+NULL, value VARCHAR(255) NOT NULL, PRIMARY KEY (id) ) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE SEQUENCE SEQ_config &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE OR REPLACE TRIGGER TRIG_SEQ_config BEFORE insert ON config FOR 
+EACH ROW BEGIN select SEQ_config.nextval into :new.id from dual; END; &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into config values (1, '1', '1') &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into config values (2, '2', '2') &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into config values (3, '3', '3') &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select * from config &nbsp; <CODE></CODE>
+<HR>
+
+<TABLE cols=3 cellPadding=3 border=2>
+  <TBODY>
+  <TR>
+    <TH>id</TH>
+    <TH>name</TH>
+    <TH>value</TH>
+  <TR vAlign=top>
+    <TD align=right>1&nbsp;</TD>
+    <TD>1</TD>
+    <TD>1</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>2&nbsp;</TD>
+    <TD>2</TD>
+    <TD>2</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>3&nbsp;</TD>
+    <TD>3</TD>
+    <TD>3</TD></TR></TBODY></TABLE>
+<H3>schemaCourse.xml</H3>
+<HR>
+(oci8po): select value from sys.database_compatible_level &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<LI>(course): Insert 1 row for testing only...comment out later 
+<HR>
+(oci8po): drop table course &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): drop sequence SEQ_course &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE TABLE course ( id DECIMAL(10) NOT NULL, category DECIMAL(10) 
+NOT NULL, sortorder DECIMAL(10) NOT NULL, password VARCHAR(50) NOT NULL, 
+fullname VARCHAR(254) NOT NULL, shortname VARCHAR(15) NOT NULL, summary 
+VARCHAR(4000), format VARCHAR(15) NOT NULL, showgrades DECIMAL(1) NOT NULL, 
+modinfo VARCHAR(4000), newsitems DECIMAL(3) NOT NULL, teacher VARCHAR(100) NOT 
+NULL, teachers VARCHAR(100) NOT NULL, student VARCHAR(100) NOT NULL, students 
+VARCHAR(100) NOT NULL, guest DECIMAL(3) NOT NULL, startdate DECIMAL(10) NOT 
+NULL, numsections DECIMAL(3) NOT NULL, showrecent DECIMAL(3) NOT NULL, marker 
+DECIMAL(10) NOT NULL, maxbytes DECIMAL(10) NOT NULL, showreports DECIMAL(10) NOT 
+NULL, visible DECIMAL(10) NOT NULL, timecreated DECIMAL(10) NOT NULL, 
+timemodified DECIMAL(10) NOT NULL, PRIMARY KEY (id) ) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE SEQUENCE SEQ_course &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE OR REPLACE TRIGGER TRIG_SEQ_course BEFORE insert ON course FOR 
+EACH ROW BEGIN select SEQ_course.nextval into :new.id from dual; END; &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into course values (1, 1, 1, '1', '1', '1', '1', '1', 1, '1', 
+1, '1', '1', '1', '1', 1, 1, 1, 1, 1, 1, 1, 1, 1, 1) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into course values (2, 2, 2, '2', '2', '2', '2', '2', 2, 2, 2, 
+2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into course values (3, 3, 3, '3', '3', '3', '3', '3', 3, 3, 3, 
+3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select * from course &nbsp; <CODE></CODE>
+<HR>
+
+<TABLE cols=25 cellPadding=3 border=2>
+  <TBODY>
+  <TR>
+    <TH>id</TH>
+    <TH>category</TH>
+    <TH>sortorder</TH>
+    <TH>password</TH>
+    <TH>fullname</TH>
+    <TH>shortname</TH>
+    <TH>summary</TH>
+    <TH>format</TH>
+    <TH>showgrades</TH>
+    <TH>modinfo</TH>
+    <TH>newsitems</TH>
+    <TH>teacher</TH>
+    <TH>teachers</TH>
+    <TH>student</TH>
+    <TH>students</TH>
+    <TH>guest</TH>
+    <TH>startdate</TH>
+    <TH>numsections</TH>
+    <TH>showrecent</TH>
+    <TH>marker</TH>
+    <TH>maxbytes</TH>
+    <TH>showreports</TH>
+    <TH>visible</TH>
+    <TH>timecreated</TH>
+    <TH>timemodified</TH>
+  <TR vAlign=top>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD>1</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD>2</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD>3</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD></TR></TBODY></TABLE>
+<H3>schemaCourse_categories.xml</H3>
+<HR>
+(oci8po): drop table course_categories &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): drop sequence SEQ_course_categories &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select value from sys.database_compatible_level &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<LI>(course_categories): Insert 1 row for testing only...comment out later 
+<HR>
+(oci8po): CREATE TABLE course_categories ( id DECIMAL(10) NOT NULL, name 
+VARCHAR(255) NOT NULL, description VARCHAR(4000), parent DECIMAL(10) NOT NULL, 
+sortorder DECIMAL(10) NOT NULL, coursecount DECIMAL(10) NOT NULL, visible 
+DECIMAL(1) NOT NULL, timemodified DECIMAL(1) NOT NULL, PRIMARY KEY (id) ) &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE SEQUENCE SEQ_course_categories &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE OR REPLACE TRIGGER TRIG_SEQ_course_categories BEFORE insert ON 
+course_categories FOR EACH ROW BEGIN select SEQ_course_categories.nextval into 
+:new.id from dual; END; &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into course_categories values (1, '1', '1', 1, 1, 1, 1, 1) 
+&nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into Course_categories values (2, '2', '2', 2, 2, 2, 2, 2) 
+&nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into Course_categories values (3, '3', '3', 3, 3, 3, 3, 3) 
+&nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select * from Course_categories &nbsp; <CODE></CODE>
+<HR>
+
+<TABLE cols=8 cellPadding=3 border=2>
+  <TBODY>
+  <TR>
+    <TH>id</TH>
+    <TH>name</TH>
+    <TH>description</TH>
+    <TH>parent</TH>
+    <TH>sortorder</TH>
+    <TH>coursecount</TH>
+    <TH>visible</TH>
+    <TH>timemodified</TH>
+  <TR vAlign=top>
+    <TD align=right>1&nbsp;</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>2&nbsp;</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>3&nbsp;</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD></TR></TBODY></TABLE>
+<H3>schemaCourse_display.xml</H3>
+<HR>
+(oci8po): drop table course_display &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): drop sequence SEQ_course_display &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select value from sys.database_compatible_level &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<LI>(course_display): Insert 1 row for testing only...comment out later 
+<HR>
+(oci8po): CREATE TABLE course_display ( id DECIMAL(10) NOT NULL, course 
+DECIMAL(10) NOT NULL, userid DECIMAL(10) NOT NULL, display DECIMAL(10) NOT NULL, 
+PRIMARY KEY (id) ) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE SEQUENCE SEQ_course_display &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE OR REPLACE TRIGGER TRIG_SEQ_course_display BEFORE insert ON 
+course_display FOR EACH ROW BEGIN select SEQ_course_display.nextval into :new.id 
+from dual; END; &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into course_display values (1, 1, 1, 1) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into Course_display values (2, 2, 2, 2) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into Course_display values (3, 3, 3, 3) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select * from Course_display &nbsp; <CODE></CODE>
+<HR>
+
+<TABLE cols=4 cellPadding=3 border=2>
+  <TBODY>
+  <TR>
+    <TH>id</TH>
+    <TH>course</TH>
+    <TH>userid</TH>
+    <TH>display</TH>
+  <TR vAlign=top>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD></TR></TBODY></TABLE>
+<H3>schemaCourse_modules.xml</H3>
+<HR>
+(oci8po): drop table course_modules &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): drop sequence SEQ_course_modules &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select value from sys.database_compatible_level &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<LI>(course_modules): Insert 1 row for testing only...comment out later 
+<HR>
+(oci8po): CREATE TABLE course_modules ( id DECIMAL(10) NOT NULL, course 
+DECIMAL(10) NOT NULL, module DECIMAL(10) NOT NULL, instance DECIMAL(10) NOT 
+NULL, section DECIMAL(10) NOT NULL, added DECIMAL(10) NOT NULL, deleted 
+DECIMAL(1) NOT NULL, score DECIMAL(1) NOT NULL, indent DECIMAL(10) NOT NULL, 
+visible DECIMAL(1) NOT NULL, PRIMARY KEY (id) ) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE SEQUENCE SEQ_course_modules &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE OR REPLACE TRIGGER TRIG_SEQ_course_modules BEFORE insert ON 
+course_modules FOR EACH ROW BEGIN select SEQ_course_modules.nextval into :new.id 
+from dual; END; &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into course_modules values (1, 1, 1, 1, 1, 1, 1, 1, 1, 1) 
+&nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into Course_modules values (2, 2, 2, 2, 2, 2, 2, 2, 2, 2) 
+&nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into Course_modules values (3, 3, 3, 3, 3, 3, 3, 3, 3, 3) 
+&nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select * from Course_modules &nbsp; <CODE></CODE>
+<HR>
+
+<TABLE cols=10 cellPadding=3 border=2>
+  <TBODY>
+  <TR>
+    <TH>id</TH>
+    <TH>course</TH>
+    <TH>module</TH>
+    <TH>instance</TH>
+    <TH>section</TH>
+    <TH>added</TH>
+    <TH>deleted</TH>
+    <TH>score</TH>
+    <TH>indent</TH>
+    <TH>visible</TH>
+  <TR vAlign=top>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD></TR></TBODY></TABLE>
+<H3>schemaCourse_sections.xml</H3>
+<HR>
+(oci8po): drop table course_sections &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): drop sequence SEQ_course_sections &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select value from sys.database_compatible_level &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<LI>(course_sections): Insert 1 row for testing only...comment out later 
+<HR>
+(oci8po): CREATE TABLE course_sections ( id DECIMAL(10) NOT NULL, course 
+DECIMAL(10) NOT NULL, section DECIMAL(10) NOT NULL, summary VARCHAR(4000), 
+sequence VARCHAR(4000), visible DECIMAL(1) NOT NULL, PRIMARY KEY (id) ) &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE SEQUENCE SEQ_course_sections &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE OR REPLACE TRIGGER TRIG_SEQ_course_sections BEFORE insert ON 
+course_sections FOR EACH ROW BEGIN select SEQ_course_sections.nextval into 
+:new.id from dual; END; &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into course_sections values (1, 1, 1, 1, 1, 1) &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into Course_sections values (2, 2, 2, 2, 2, 2) &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into Course_sections values (3, 3, 3, 3, 3, 3) &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select * from Course_sections &nbsp; <CODE></CODE>
+<HR>
+
+<TABLE cols=6 cellPadding=3 border=2>
+  <TBODY>
+  <TR>
+    <TH>id</TH>
+    <TH>course</TH>
+    <TH>section</TH>
+    <TH>summary</TH>
+    <TH>sequence</TH>
+    <TH>visible</TH>
+  <TR vAlign=top>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD align=right>1&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD align=right>2&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD align=right>3&nbsp;</TD></TR></TBODY></TABLE>
+<H3>schemaCourse_groups.xml</H3>
+<HR>
+(oci8po): drop table course_groups &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): drop sequence SEQ_course_groups &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select value from sys.database_compatible_level &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<LI>(course_groups): Insert 1 row for testing only...comment out later 
+<HR>
+(oci8po): CREATE TABLE course_groups ( id DECIMAL(10) NOT NULL, courseid 
+DECIMAL(10) NOT NULL, name VARCHAR(254) NOT NULL, description VARCHAR(4000), 
+lang VARCHAR(10) NOT NULL, picture DECIMAL(10) NOT NULL, timecreated DECIMAL(10) 
+NOT NULL, timemodified DECIMAL(10) NOT NULL, PRIMARY KEY (id) ) &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE SEQUENCE SEQ_course_groups &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE OR REPLACE TRIGGER TRIG_SEQ_course_groups BEFORE insert ON 
+course_groups FOR EACH ROW BEGIN select SEQ_course_groups.nextval into :new.id 
+from dual; END; &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into course_groups values (1, 1, 1, 1, 1, 1, 1, 1) &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into Course_groups values (2, 2, 2, 2, 2, 2, 2, 2) &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into Course_groups values (3, 3, 3, 3, 3, 3, 3, 3) &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select * from Course_groups &nbsp; <CODE></CODE>
+<HR>
+
+<TABLE cols=8 cellPadding=3 border=2>
+  <TBODY>
+  <TR>
+    <TH>id</TH>
+    <TH>courseid</TH>
+    <TH>name</TH>
+    <TH>description</TH>
+    <TH>lang</TH>
+    <TH>picture</TH>
+    <TH>timecreated</TH>
+    <TH>timemodified</TH>
+  <TR vAlign=top>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD></TR></TBODY></TABLE>
+<H3>schemaCourse_groups_members.xml</H3>
+<HR>
+(oci8po): drop table course_groups_members &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): drop sequence SEQ_course_groups_members &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select value from sys.database_compatible_level &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<LI>(course_groups_members): Insert 1 row for testing only...comment out later 
+<HR>
+(oci8po): CREATE TABLE course_groups_members ( id DECIMAL(10) NOT NULL, groupid 
+DECIMAL(10) NOT NULL, userid DECIMAL(10) NOT NULL, timeadded DECIMAL(10) NOT 
+NULL, PRIMARY KEY (id) ) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE SEQUENCE SEQ_course_groups_members &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE OR REPLACE TRIGGER TRIG_SEQ_course_groups_members BEFORE insert 
+ON course_groups_members FOR EACH ROW BEGIN select 
+SEQ_course_groups_members.nextval into :new.id from dual; END; &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into course_groups_members values (1, 1, 1, 1) &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into Course_groups_members values (2, 2, 2, 2) &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into Course_groups_members values (3, 3, 3, 3) &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select * from Course_groups_members &nbsp; <CODE></CODE>
+<HR>
+
+<TABLE cols=4 cellPadding=3 border=2>
+  <TBODY>
+  <TR>
+    <TH>id</TH>
+    <TH>courseid</TH>
+    <TH>name</TH>
+    <TH>description</TH>
+  <TR vAlign=top>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD></TR></TBODY></TABLE>
+<H3>schemaLog.xml</H3>
+<HR>
+(oci8po): drop table log &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): drop sequence SEQ_log &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select value from sys.database_compatible_level &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<LI>(log): Insert 1 row for testing only...comment out later 
+<HR>
+(oci8po): CREATE TABLE log ( id DECIMAL(10) NOT NULL, time DECIMAL(10) NOT NULL, 
+userid DECIMAL(10) NOT NULL, ip VARCHAR(15) NOT NULL, course DECIMAL(10) NOT 
+NULL, module VARCHAR(10) NOT NULL, action VARCHAR(15) NOT NULL, url VARCHAR(100) 
+NOT NULL, info VARCHAR(255) NOT NULL, PRIMARY KEY (id) ) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE SEQUENCE SEQ_log &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE OR REPLACE TRIGGER TRIG_SEQ_log BEFORE insert ON log FOR EACH 
+ROW BEGIN select SEQ_log.nextval into :new.id from dual; END; &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into log values (1, 1, 1, 1, 1, 1, 1, 1, 1) &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into log values (2, 2, 2, 2, 2, 2, 2, 2, 2) &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into log values (3, 3, 3, 3, 3, 3, 3, 3, 3) &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select * from log &nbsp; <CODE></CODE>
+<HR>
+
+<TABLE cols=9 cellPadding=3 border=2>
+  <TBODY>
+  <TR>
+    <TH>id</TH>
+    <TH>time</TH>
+    <TH>userid</TH>
+    <TH>ip</TH>
+    <TH>course</TH>
+    <TH>module</TH>
+    <TH>action</TH>
+    <TH>url</TH>
+    <TH>info</TH>
+  <TR vAlign=top>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD>1</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD>2</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD>3</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD></TR></TBODY></TABLE>
+<H3>schemaLog_display.xml</H3>
+<HR>
+(oci8po): drop table log_display &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): drop sequence SEQ_log_display &nbsp; <CODE></CODE>
+<HR>
+<BR><B>Warning</B>: OCIStmtExecute: ORA-02289: sequence does not exist in 
+<B>C:\Program Files\EasyPHP\www\moodle\lib\adodb\drivers\adodb-oci8.inc.php</B> 
+on line <B>791</B><BR>2289: ORA-02289: sequence does not exist <BR>
+<HR>
+(oci8po): select value from sys.database_compatible_level &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<LI>(log_display): Insert 1 row for testing only...comment out later 
+<HR>
+(oci8po): CREATE TABLE log_display ( module VARCHAR(20) NOT NULL, action 
+VARCHAR(20) NOT NULL, mtable VARCHAR(20) NOT NULL, field VARCHAR(40) NOT NULL ) 
+&nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into log_display values (1, 1, 1, 1) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into log_display values (2, 2, 2, 2) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into log_display values (3, 3, 3, 3) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select * from log_display &nbsp; <CODE></CODE>
+<HR>
+
+<TABLE cols=4 cellPadding=3 border=2>
+  <TBODY>
+  <TR>
+    <TH>id</TH>
+    <TH>time</TH>
+    <TH>userid</TH>
+    <TH>ip</TH>
+  <TR vAlign=top>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD></TR>
+  <TR vAlign=top>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD></TR>
+  <TR vAlign=top>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD></TR></TBODY></TABLE>
+<H3>schemaModules.xml</H3>
+<HR>
+(oci8po): drop table modules &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): drop sequence SEQ_modules &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select value from sys.database_compatible_level &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<LI>(modules): Insert 1 row for testing only...comment out later 
+<HR>
+(oci8po): CREATE TABLE modules ( id DECIMAL(10) NOT NULL, name VARCHAR(20) NOT 
+NULL, version DECIMAL(10) NOT NULL, cron DECIMAL(10) NOT NULL, lastcron 
+DECIMAL(10) NOT NULL, search VARCHAR(255) NOT NULL, visible DECIMAL(1) NOT NULL, 
+PRIMARY KEY (id) ) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE SEQUENCE SEQ_modules &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE OR REPLACE TRIGGER TRIG_SEQ_modules BEFORE insert ON modules 
+FOR EACH ROW BEGIN select SEQ_modules.nextval into :new.id from dual; END; 
+&nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into modules values (1, 1, 1, 1, 1, 1, 1) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into modules values (2, 2, 2, 2, 2, 2, 2) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into modules values (3, 3, 3, 3, 3, 3, 3) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select * from modules &nbsp; <CODE></CODE>
+<HR>
+
+<TABLE cols=7 cellPadding=3 border=2>
+  <TBODY>
+  <TR>
+    <TH>id</TH>
+    <TH>name</TH>
+    <TH>version</TH>
+    <TH>cron</TH>
+    <TH>lastcron</TH>
+    <TH>search</TH>
+    <TH>visible</TH>
+  <TR vAlign=top>
+    <TD align=right>1&nbsp;</TD>
+    <TD>1</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD>1</TD>
+    <TD align=right>1&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>2&nbsp;</TD>
+    <TD>2</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD>2</TD>
+    <TD align=right>2&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>3&nbsp;</TD>
+    <TD>3</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD>3</TD>
+    <TD align=right>3&nbsp;</TD></TR></TBODY></TABLE>
+<H3>schemaScale.xml</H3>
+<HR>
+(oci8po): drop table scale &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): drop sequence SEQ_scale &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select value from sys.database_compatible_level &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<LI>(scale): Insert 1 row for testing only...comment out later 
+<HR>
+(oci8po): CREATE TABLE scale ( id DECIMAL(10) NOT NULL, courseid DECIMAL(10) NOT 
+NULL, userid DECIMAL(10) NOT NULL, name VARCHAR(255) NOT NULL, scale 
+VARCHAR(4000), description VARCHAR(4000), timemodified DECIMAL(10) NOT NULL, 
+PRIMARY KEY (id) ) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE SEQUENCE SEQ_scale &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE OR REPLACE TRIGGER TRIG_SEQ_scale BEFORE insert ON scale FOR 
+EACH ROW BEGIN select SEQ_scale.nextval into :new.id from dual; END; &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into scale values (1, 1, 1, 1, 1, 1, 1) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into scale values (2, 2, 2, 2, 2, 2, 2) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into scale values (3, 3, 3, 3, 3, 3, 3) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select * from scale &nbsp; <CODE></CODE>
+<HR>
+
+<TABLE cols=7 cellPadding=3 border=2>
+  <TBODY>
+  <TR>
+    <TH>id</TH>
+    <TH>courseid</TH>
+    <TH>userid</TH>
+    <TH>name</TH>
+    <TH>scale</TH>
+    <TH>description</TH>
+    <TH>timemodified</TH>
+  <TR vAlign=top>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD align=right>1&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD align=right>2&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD align=right>3&nbsp;</TD></TR></TBODY></TABLE>
+<H3>schemaUser.xml</H3>
+<HR>
+(oci8po): drop table m_user &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): drop sequence SEQ_m_user &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select value from sys.database_compatible_level &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<LI>(m_user): Insert 1 row for testing only...comment out later 
+<HR>
+(oci8po): CREATE TABLE m_user ( id DECIMAL(10) NOT NULL, confirmed DECIMAL(1) 
+NOT NULL, deleted DECIMAL(1) NOT NULL, username VARCHAR(100) NOT NULL, password 
+VARCHAR(32) NOT NULL, idnumber VARCHAR(12) NOT NULL, firstname VARCHAR(20) NOT 
+NULL, lastname VARCHAR(20) NOT NULL, email VARCHAR(100) NOT NULL, icq 
+VARCHAR(15), phone1 VARCHAR(20), phone2 VARCHAR(20), institution VARCHAR(40), 
+department VARCHAR(30), address VARCHAR(70), city VARCHAR(20), country 
+VARCHAR(20), lang VARCHAR(5) NOT NULL, timezone DECIMAL NOT NULL, firstaccess 
+DECIMAL(10) NOT NULL, lastaccess DECIMAL(10) NOT NULL, lastlogin DECIMAL(10) NOT 
+NULL, currentlogin DECIMAL(10) NOT NULL, lastIP VARCHAR(15), secret VARCHAR(15) 
+NOT NULL, picture DECIMAL(1), url VARCHAR(100), description VARCHAR(4000), 
+mailformat DECIMAL(1) NOT NULL, maildisplay DECIMAL(1) NOT NULL, htmleditor 
+DECIMAL(1) NOT NULL, autosubscribe DECIMAL(1) NOT NULL, timemodified DECIMAL(10) 
+NOT NULL, PRIMARY KEY (id) ) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE SEQUENCE SEQ_m_user &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE OR REPLACE TRIGGER TRIG_SEQ_m_user BEFORE insert ON m_user FOR 
+EACH ROW BEGIN select SEQ_m_user.nextval into :new.id from dual; END; &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into m_user values (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
+1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into m_user values (2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 
+2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into m_user values (3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 
+3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select * from m_user &nbsp; <CODE></CODE>
+<HR>
+
+<TABLE cols=33 cellPadding=3 border=2>
+  <TBODY>
+  <TR>
+    <TH>id</TH>
+    <TH>confirmed</TH>
+    <TH>deleted</TH>
+    <TH>m_username</TH>
+    <TH>password</TH>
+    <TH>idnumber</TH>
+    <TH>firstname</TH>
+    <TH>lastname</TH>
+    <TH>email</TH>
+    <TH>icq</TH>
+    <TH>phone1</TH>
+    <TH>phone2</TH>
+    <TH>institution</TH>
+    <TH>department</TH>
+    <TH>address</TH>
+    <TH>city</TH>
+    <TH>country</TH>
+    <TH>lang</TH>
+    <TH>timezone</TH>
+    <TH>firstaccess</TH>
+    <TH>lastaccess</TH>
+    <TH>lastlogin</TH>
+    <TH>currentlogin</TH>
+    <TH>lastIP</TH>
+    <TH>secret</TH>
+    <TH>picture</TH>
+    <TH>url</TH>
+    <TH>description</TH>
+    <TH>mailformat</TH>
+    <TH>maildisplay</TH>
+    <TH>htmleditor</TH>
+    <TH>autosubscribe</TH>
+    <TH>timemodified</TH>
+  <TR vAlign=top>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD>2</TD>
+    <TD>2</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD>3</TD>
+    <TD>3</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD></TR></TBODY></TABLE>
+<H3>schemaUser_admins.xml</H3>
+<HR>
+(oci8po): drop table user_admins &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): drop sequence SEQ_user_admins &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select value from sys.database_compatible_level &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<LI>(user_admins): Insert 1 row for testing only...comment out later 
+<HR>
+(oci8po): CREATE TABLE user_admins ( id DECIMAL(10) NOT NULL, userid DECIMAL(10) 
+NOT NULL, PRIMARY KEY (id) ) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE SEQUENCE SEQ_user_admins &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE OR REPLACE TRIGGER TRIG_SEQ_user_admins BEFORE insert ON 
+user_admins FOR EACH ROW BEGIN select SEQ_user_admins.nextval into :new.id from 
+dual; END; &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into user_admins values (1, 1) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into user_admins values (2, 2) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into user_admins values (3, 3) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select * from user_admins &nbsp; <CODE></CODE>
+<HR>
+
+<TABLE cols=2 cellPadding=3 border=2>
+  <TBODY>
+  <TR>
+    <TH>id</TH>
+    <TH>userid</TH>
+  <TR vAlign=top>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD></TR></TBODY></TABLE>
+<H3>schemaUser_students.xml</H3>
+<HR>
+(oci8po): drop table user_students &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): drop sequence SEQ_user_students &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select value from sys.database_compatible_level &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<LI>(user_students): Insert 1 row for testing only...comment out later 
+<HR>
+(oci8po): CREATE TABLE user_students ( id DECIMAL(10) NOT NULL, userid 
+DECIMAL(10) NOT NULL, course DECIMAL(10) NOT NULL, timestart DECIMAL(10) NOT 
+NULL, timeend DECIMAL(10) NOT NULL, time DECIMAL(10) NOT NULL, timeaccess 
+DECIMAL(10) NOT NULL, PRIMARY KEY (id) ) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE SEQUENCE SEQ_user_students &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE OR REPLACE TRIGGER TRIG_SEQ_user_students BEFORE insert ON 
+user_students FOR EACH ROW BEGIN select SEQ_user_students.nextval into :new.id 
+from dual; END; &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into user_students values (1, 1, 1, 1, 1, 1, 1) &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into user_students values (2, 2, 2, 2, 2, 2, 2) &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into user_students values (3, 3, 3, 3, 3, 3, 3) &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select * from user_students &nbsp; <CODE></CODE>
+<HR>
+
+<TABLE cols=7 cellPadding=3 border=2>
+  <TBODY>
+  <TR>
+    <TH>id</TH>
+    <TH>userid</TH>
+    <TH>course</TH>
+    <TH>timestart</TH>
+    <TH>timeend</TH>
+    <TH>time</TH>
+    <TH>timeaccess</TH>
+  <TR vAlign=top>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD></TR></TBODY></TABLE>
+<H3>schemaUser_teachers.xml</H3>
+<HR>
+(oci8po): drop table user_teachers &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): drop sequence SEQ_user_teachers &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select value from sys.database_compatible_level &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<LI>(user_teachers): Insert 1 row for testing only...comment out later 
+<HR>
+(oci8po): CREATE TABLE user_teachers ( id DECIMAL(10) NOT NULL, userid 
+DECIMAL(10) NOT NULL, course DECIMAL(10) NOT NULL, authority DECIMAL(10) NOT 
+NULL, role VARCHAR(40) NOT NULL, editall DECIMAL(1) NOT NULL, timemodified 
+DECIMAL(10) NOT NULL, timeaccess DECIMAL(10) NOT NULL, PRIMARY KEY (id) ) &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE SEQUENCE SEQ_user_teachers &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE OR REPLACE TRIGGER TRIG_SEQ_user_teachers BEFORE insert ON 
+user_teachers FOR EACH ROW BEGIN select SEQ_user_teachers.nextval into :new.id 
+from dual; END; &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into user_teachers values (1, 1, 1, 1, 1, 1, 1, 1) &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into user_teachers values (2, 2, 2, 2, 2, 2, 2, 2) &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into user_teachers values (3, 3, 3, 3, 3, 3, 3, 3) &nbsp; 
+<CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select * from user_teachers &nbsp; <CODE></CODE>
+<HR>
+
+<TABLE cols=8 cellPadding=3 border=2>
+  <TBODY>
+  <TR>
+    <TH>id</TH>
+    <TH>userid</TH>
+    <TH>course</TH>
+    <TH>authority</TH>
+    <TH>role</TH>
+    <TH>editall</TH>
+    <TH>timemodified</TH>
+    <TH>timeaccess</TH>
+  <TR vAlign=top>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD>1</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD>2</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD>3</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD></TR></TBODY></TABLE>
+<H3>schemaUser_coursecreators.xml</H3>
+<HR>
+(oci8po): drop table user_coursecreators &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): drop sequence SEQ_user_coursecreators &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select value from sys.database_compatible_level &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select lower(table_name), table_type from cat where table_type in 
+('TABLE', 'VIEW') &nbsp; <CODE></CODE>
+<HR>
+
+<LI>(user_coursecreators): Insert 1 row for testing only...comment out later 
+<HR>
+(oci8po): CREATE TABLE user_coursecreators ( id DECIMAL(10) NOT NULL, userid 
+DECIMAL(10) NOT NULL, PRIMARY KEY (id) ) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE SEQUENCE SEQ_user_coursecreators &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): CREATE OR REPLACE TRIGGER TRIG_SEQ_user_coursecreators BEFORE insert 
+ON user_coursecreators FOR EACH ROW BEGIN select SEQ_user_coursecreators.nextval 
+into :new.id from dual; END; &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into user_coursecreators values (1, 1) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into user_coursecreators values (2, 2) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): insert into user_coursecreators values (3, 3) &nbsp; <CODE></CODE>
+<HR>
+
+<HR>
+(oci8po): select * from user_coursecreators &nbsp; <CODE></CODE>
+<HR>
+
+<TABLE cols=2 cellPadding=3 border=2>
+  <TBODY>
+  <TR>
+    <TH>id</TH>
+    <TH>userid</TH>
+  <TR vAlign=top>
+    <TD align=right>1&nbsp;</TD>
+    <TD align=right>1&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>2&nbsp;</TD>
+    <TD align=right>2&nbsp;</TD></TR>
+  <TR vAlign=top>
+    <TD align=right>3&nbsp;</TD>
+    <TD align=right>3&nbsp;</TD></TR></TBODY></TABLE></LI></BODY></HTML>

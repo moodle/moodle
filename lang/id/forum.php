@@ -83,7 +83,7 @@ $string['openmode1'] = 'Tidak ada diskusi, tetapi tanggapan diperbolehkan';
 $string['openmode2'] = 'Diskusi dan tanggapan diperbolehkan';
 $string['parent'] = 'Tampilkan induknya';
 $string['parentofthispost'] = 'Induk posting ini';
-$string['postadded'] = 'Posting Anda sukses ditambahkan.<br />Anda mempunyai $a untuk mengubah jika Anda ingin membuat perubahan.';
+$string['postadded'] = 'Posting Anda sukses ditambahkan.<P>Anda mempunyai $a untuk mengubah jika Anda ingin membuat perubahan.';
 $string['postincontext'] = 'Lihat posting dalam konteks';
 $string['postmailinfo'] = 'Ini adalah kopi dari pesan yang diposting pada website $a.
 Untuk menambahkan tanggapan Anda melalui website, klik pada link ini:';

@@ -50,19 +50,17 @@
         redirect(CALENDAR_URL.'view.php?view=upcoming');
     }
 
-    $action    = required_param('action', PARAM_ALPHA);
-    $eventid   = optional_param('id', 0, PARAM_INT);
-    $eventtype = optional_param('type', 'select', PARAM_ALPHA);
-    $urlcourse = optional_param('course', 0, PARAM_INT);
+    require_variable($_REQUEST['action']);
+    optional_variable($_REQUEST['id']);
+    optional_variable($_REQUEST['type'], 'select');
+    $_REQUEST['id'] = intval($_REQUEST['id']); // Always a good idea, against SQL injections
 
     if(!$site = get_site()) {
         redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
     }
 
-    $strcalendar = get_string('calendar', 'calendar');
-
     $now = usergetdate(time());
-    $nav = calendar_get_link_tag($strcalendar, CALENDAR_URL.'view.php?view=upcoming&amp;', $now['mday'], $now['mon'], $now['year']);
+    $nav = calendar_get_link_tag(get_string('calendar', 'calendar'), CALENDAR_URL.'view.php?view=upcoming&amp;', $now['mday'], $now['mon'], $now['year']);
     $day = intval($now['mday']);
     $mon = intval($now['mon']);
     $yr = intval($now['year']);
@@ -74,23 +72,25 @@
     }
 
     // If a course has been supplied in the URL, change the filters to show that one
-    if($urlcourse > 0 && record_exists('course', 'id', $urlcourse)) {
-        if($urlcourse == SITEID) {
-            // If coming from the site page, show all courses
-            $SESSION->cal_courses_shown = calendar_get_default_courses(true);
-            calendar_set_referring_course(0);
-        }
-        else {
-            // Otherwise show just this one
-            $SESSION->cal_courses_shown = $urlcourse;
-            calendar_set_referring_course($SESSION->cal_courses_shown);
+    if(!empty($_GET['course'])) {
+        if(is_numeric($_GET['course']) && $_GET['course'] > 0 && record_exists('course', 'id', $_GET['course'])) {
+            if($_GET['course'] == 1) {
+                // If coming from the home page, show all courses
+                $SESSION->cal_courses_shown = calendar_get_default_courses(true);
+                calendar_set_referring_course(0);
+            }
+            else {
+                // Otherwise show just this one
+                $SESSION->cal_courses_shown = intval($_GET['course']);
+                calendar_set_referring_course($SESSION->cal_courses_shown);
+            }
         }
     }
 
-    switch($action) {
+    switch($_REQUEST['action']) {
         case 'delete':
             $title = get_string('deleteevent', 'calendar');
-            $event = get_record('event', 'id', $eventid);
+            $event = get_record('event', 'id', $_REQUEST['id']);
             if($event === false) {
                 error('Invalid event');
             }
@@ -101,7 +101,7 @@
 
         case 'edit':
             $title = get_string('editevent', 'calendar');
-            $event = get_record('event', 'id', $eventid);
+            $event = get_record('event', 'id', $_REQUEST['id']);
             if($event === false) {
                 error('Invalid event');
             }
@@ -111,7 +111,8 @@
 
             if($form = data_submitted()) {
 
-                $form->name = strip_tags($form->name,'<lang>');  // Strip all tags, but <lang>
+                $form->name = strip_tags($form->name);  // Strip all tags
+                $form->description = clean_text($form->description , $form->format);   // Clean up any bad tags
 
                 $form->timestart = make_timestamp($form->startyr, $form->startmon, $form->startday, $form->starthr, $form->startmin);
                 if($form->duration == 1) {
@@ -121,7 +122,7 @@
                     }
                 }
                 else if($form->duration == 2) {
-                    $form->timeduration = $form->minutes * MINSECS;
+                    $form->timeduration = $form->minutes * 60;
                 }
                 else {
                     $form->timeduration = 0;
@@ -132,7 +133,6 @@
                     update_record('event', $form);
 
                     /// Log the event update.
-                    $form->name = stripslashes($form->name);  //To avoid double-slashes
                     add_to_log($form->courseid, 'calendar', 'edit', 'event.php?action=edit&amp;id='.$form->id, $form->name);
 
                     // OK, now redirect to day view
@@ -151,7 +151,8 @@
             $form = data_submitted();
             if(!empty($form) && $form->type == 'defined') {
 
-                $form->name = strip_tags($form->name, '<lang>');  // Strip all tags but <lang>
+                $form->name = strip_tags($form->name);  // Strip all tags
+                $form->description = clean_text($form->description , $form->format);   // Clean up any bad tags
 
                 $form->timestart = make_timestamp($form->startyr, $form->startmon, $form->startday, $form->starthr, $form->startmin);
                 if($form->duration == 1) {
@@ -161,7 +162,7 @@
                     }
                 }
                 else if ($form->duration == 2) {
-                    $form->timeduration = $form->minutes * MINSECS;
+                    $form->timeduration = $form->minutes * 60;
                 }
                 else {
                     $form->timeduration = 0;
@@ -177,18 +178,14 @@
                     $eventid = insert_record('event', $form, true);
 
                     /// Log the event entry.
-                    $form->name = stripslashes($form->name);  //To avoid double-slashes
                     add_to_log($form->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventid, $form->name);
 
                     if ($form->repeat) {
                         for($i = 1; $i < $form->repeats; $i++) {
-                            // [pj]
-                            // This will not necessarily work correctly because of DST
                             $form->timestart += 604800;  // add one week
                             /// Get the event id for the log record.
                             $eventid = insert_record('event', $form, true);
                             /// Log the event entry.
-                            $form->name = stripslashes($form->name);  //To avoid double-slashes
                             add_to_log($form->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventid, $form->name);
                         }
                     }
@@ -208,37 +205,42 @@
 
     // Let's see if we are supposed to provide a referring course link
     // but NOT for the "main page" course
-    if($SESSION->cal_course_referer != SITEID &&
+    if($SESSION->cal_course_referer > 1 &&
       ($shortname = get_field('course', 'shortname', 'id', $SESSION->cal_course_referer)) !== false) {
         // If we know about the referring course, show a return link
         $nav = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$SESSION->cal_course_referer.'">'.$shortname.'</a> -> '.$nav;
     }
 
-    print_header($site->shortname.': '.$strcalendar.': '.$title, $strcalendar, $nav.' -> '.$title,
-                 $focus, '', true, '', user_login_string($site));
+    print_header(get_string('calendar', 'calendar').': '.$title, $site->fullname, $nav.' -> '.$title,
+                 $focus, '', true, '', '<p class="logininfo">'.user_login_string($site).'</p>');
 
     echo calendar_overlib_html();
 
-    echo '<table id="calendar">';
-    echo '<tr><td class="maincalendar">';
+    echo '<table border="0" cellpadding="3" cellspacing="0" width="100%"><tr valign="top">';
+    echo '<td valign="top" width="100%">';
 
-    switch($action) {
+    switch($_REQUEST['action']) {
         case 'delete':
-            $confirm = optional_param('confirm', 0, PARAM_INT);
-            if($confirm) {
+            if(!empty($_REQUEST['confirm']) && $_REQUEST['confirm'] == 1) {
                 // Kill it and redirect to day view
-                if(($event = get_record('event', 'id', $eventid)) !== false) {
+                if(($event = get_record('event', 'id', $_REQUEST['id'])) !== false) {
                     /// Log the event delete.
 
-                    delete_records('event', 'id', $eventid);
+                    delete_records('event', 'id', $_REQUEST['id']);
 
                     // pj - fixed the course id problem, but now we have another one:
                     // what to do with the URL?
                     add_to_log($event->courseid, 'calendar', 'delete', '', $event->name);
                 }
 
-                redirect(CALENDAR_URL.'view.php?view=day&cal_d='.$_REQUEST['d'].'&cal_m='.$_REQUEST['m'].'&cal_y='.$_REQUEST['y']);
-
+                if(checkdate($_REQUEST['m'], $_REQUEST['d'], $_REQUEST['y'])) {
+                    // Being a bit paranoid to check this, but it doesn't hurt
+                    redirect(CALENDAR_URL.'view.php?view=day&cal_d='.$_REQUEST['d'].'&cal_m='.$_REQUEST['m'].'&cal_y='.$_REQUEST['y']);
+                }
+                else {
+                    // Redirect to now
+                    redirect(CALENDAR_URL.'view.php?view=day&cal_d='.$now['mday'].'&cal_m='.$now['mon'].'&cal_y='.$now['year']);
+                }
             }
             else {
                 $eventtime = usergetdate($event->timestart);
@@ -246,13 +248,9 @@
                 $d = $eventtime['mday'];
                 $y = $eventtime['year'];
                 // Display confirmation form
-                echo '<div class="header">'.get_string('deleteevent', 'calendar').': '.$event->name.'</div>';
-                echo '<h2>'.get_string('confirmeventdelete', 'calendar').'</h2>';
-                echo '<div class="eventlist">';
-                $event->time = calendar_format_event_time($event, time(), '', false);
-                calendar_print_event($event);
-                echo '</div>';
+                print_side_block_start(get_string('deleteevent', 'calendar').': '.$event->name, array('class' => 'mycalendar'));
                 include('event_delete.html');
+                print_side_block_end();
             }
         break;
 
@@ -265,7 +263,7 @@
                 $form->timeduration = $event->timeduration;
                 $form->id = $event->id;
                 $form->format = $defaultformat;
-                if($event->timeduration > HOURSECS) {
+                if($event->timeduration > 3600) {
                     // More than one hour, so default to normal duration mode
                     $form->duration = 1;
                     $form->minutes = '';
@@ -273,7 +271,7 @@
                 else if($event->timeduration) {
                     // Up to one hour, "minutes" mode probably is better here
                     $form->duration = 2;
-                    $form->minutes = $event->timeduration / MINSECS;
+                    $form->minutes = $event->timeduration / 60;
                 }
                 else {
                     // No duration
@@ -287,8 +285,9 @@
                 $course = $site;
             }
 
-            echo '<div class="header">'.get_string('editevent', 'calendar').'</div>';
+            print_side_block_start(get_string('editevent', 'calendar'), array('class' => 'mycalendar'));
             include('event_edit.html');
+            print_side_block_end();
             if ($usehtmleditor) {
                 use_html_editor("description");
             }
@@ -318,12 +317,12 @@
             calendar_get_allowed_types($allowed);
             if(!$allowed->groups && !$allowed->courses && !$allowed->site) {
                 // Take the shortcut
-                $eventtype = 'user';
+                $_REQUEST['type'] = 'user';
             }
 
             $header = '';
 
-            switch($eventtype) {
+            switch($_REQUEST['type']) {
                 case 'user':
                     $form->name = '';
                     $form->description = '';
@@ -341,10 +340,11 @@
                     $header = get_string('typeuser', 'calendar');
                 break;
                 case 'group':
-                    $groupid = optional_param('groupid', 0, PARAM_INT);
+                    optional_variable($_REQUEST['groupid']);
+                    $groupid = $_REQUEST['groupid'];
                     if(!($group = get_record('groups', 'id', $groupid) )) {
                         calendar_get_allowed_types($allowed);
-                        $eventtype = 'select';
+                        $_REQUEST['type'] = 'select';
                     }
                     else {
                         $form->name = '';
@@ -364,10 +364,11 @@
                     }
                 break;
                 case 'course':
-                    $courseid = optional_param('courseid', 0, PARAM_INT);
+                    optional_variable($_REQUEST['courseid']);
+                    $courseid = $_REQUEST['courseid'];
                     if(!record_exists('course', 'id', $courseid)) {
                         calendar_get_allowed_types($allowed);
-                        $eventtype = 'select';
+                        $_REQUEST['type'] = 'select';
                     }
                     else {
                         $form->name = '';
@@ -414,9 +415,8 @@
                 $header = ' ('.$header.')';
             }
 
-            echo '<div class="header">'.get_string('newevent', 'calendar').$header.'</div>';
-
-            if($eventtype == 'select') {
+            print_side_block_start(get_string('newevent', 'calendar').$header, array('class' => 'mycalendar'));
+            if($_REQUEST['type'] == 'select') {
                 $defaultcourse = $SESSION->cal_course_referer;
                 if(isteacheredit($defaultcourse, $USER->id)) {
                     $defaultgroup = 0;
@@ -424,12 +424,11 @@
                 else {
                     $defaultgroup = user_group($defaultcourse, $USER->id);
                 }
-                $groupid  = optional_param('groupid',  $defaultgroup->id, PARAM_INT);
-                $courseid = optional_param('courseid', $defaultcourse, PARAM_INT);
-                echo '<h2>'.get_string('eventkind', 'calendar').':</h2>';
-                echo '<div id="selecteventtype">';
+                optional_variable($_REQUEST['groupid'], $defaultgroup->id);
+                optional_variable($_REQUEST['courseid'], $defaultcourse);
+                $groupid = $_REQUEST['groupid'];
+                $courseid = $_REQUEST['courseid'];
                 include('event_select.html');
-                echo '</div>';
             }
             else {
                 include('event_new.html');
@@ -437,36 +436,36 @@
                     use_html_editor("description");
                 }
             }
-
+            print_side_block_end();
         break;
     }
     echo '</td>';
 
     // START: Last column (3-month display)
+    echo '<td style="vertical-align: top; width: 180px;">';
 
     $defaultcourses = calendar_get_default_courses();
     calendar_set_filters($courses, $groups, $users, $defaultcourses, $defaultcourses);
+
+    print_side_block_start(get_string('monthlyview', 'calendar'));
     list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
-    
-    echo '<td class="sidecalendar">';
-    echo '<div class="header">'.get_string('monthlyview', 'calendar').'</div>';
-    echo '<div class="filters">';
-    echo calendar_filter_controls('event', 'action='.$action.'&amp;type='.$eventtype.'&amp;id='.$eventid);
-    echo '</div>';
-    
-    echo '<div>';
+
+    echo calendar_filter_controls('event', 'action='.$_REQUEST['action'].'&amp;type='.$_REQUEST['type'].'&amp;id='.$_REQUEST['id']);
+    echo '<p>';
     echo calendar_top_controls('display', array('m' => $prevmon, 'y' => $prevyr));
     echo calendar_get_mini($courses, $groups, $users, $prevmon, $prevyr);
-    echo '</div><div>';
+    echo '</p><p>';
     echo calendar_top_controls('display', array('m' => $mon, 'y' => $yr));
     echo calendar_get_mini($courses, $groups, $users, $mon, $yr);
-    echo '</div><div>';
+    echo '</p><p>';
     echo calendar_top_controls('display', array('m' => $nextmon, 'y' => $nextyr));
     echo calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
-    echo '</div>';
-
+    echo '</p>';
+    print_side_block_end();
+    print_spacer(1, 180);
     echo '</td>';
+
     echo '</tr></table>';
 
     print_footer();
@@ -529,12 +528,24 @@ function calendar_get_allowed_types(&$allowed) {
     $allowed->user = true; // User events always allowed
     $allowed->groups = false; // This may change just below
     $allowed->courses = false; // This may change just below
-    $allowed->site = isteacheredit(SITEID);
+    $allowed->site = isadmin($USER->id);
 
-    if(!empty($SESSION->cal_course_referer) && $SESSION->cal_course_referer != SITEID && isteacheredit($SESSION->cal_course_referer, $USER->id)) {
+    if(!empty($SESSION->cal_course_referer) && $SESSION->cal_course_referer > 1 && isteacheredit($SESSION->cal_course_referer, $USER->id)) {
         $allowed->courses = array($SESSION->cal_course_referer => 1);
         $allowed->groups = get_groups($SESSION->cal_course_referer);
     }
+
+    //[pj]: This was used when we wanted to display all legal choices
+    /*
+    if($allowed->site) {
+        $allowed->courses = get_courses('all', 'c.shortname');
+        $allowed->groups = get_records_sql('SELECT g.*, c.fullname FROM '.$CFG->prefix.'groups g LEFT JOIN '.$CFG->prefix.'course c ON g.courseid = c.id ORDER BY c.shortname');
+    }
+    else if(!empty($USER->teacheredit)) {
+        $allowed->courses = get_records_select('course', 'id != 1 AND id IN ('.implode(',', array_keys($USER->teacheredit)).')');
+        $allowed->groups = get_records_sql('SELECT g.*, c.fullname FROM '.$CFG->prefix.'groups g LEFT JOIN '.$CFG->prefix.'course c ON g.courseid = c.id WHERE g.courseid IN ('.implode(',', array_keys($USER->teacheredit)).')');
+    }
+    */
 }
 
 ?>

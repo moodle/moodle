@@ -1,8 +1,10 @@
 <?PHP //$Id$
 
-class block_login extends block_base {
-    function init() {
+class CourseBlock_login extends MoodleBlock {
+    function CourseBlock_login ($course) {
         $this->title = get_string('login');
+        $this->content_type = BLOCK_TYPE_TEXT;
+        $this->course = $course;
         $this->version = 2004081600;
     }
 
@@ -42,8 +44,7 @@ class block_login extends block_base {
                 $signup = '';
         }
 
-        $username = get_moodle_cookie() === 'nobody' ? '' : get_moodle_cookie();
-
+        $username = get_moodle_cookie();
         if (empty($USER->loggedin)) {
             $this->content->text  = "<form name=\"blocklogin\" method=\"post\"";
             $this->content->text .= " action=\"". $wwwroot ."/login/index.php\">\n";
@@ -69,7 +70,6 @@ class block_login extends block_base {
                                        // And keep the self test happy by
                                        // passing empty string!
         }
-        $this->content->footer = '';
         return $this->content;
     }
 }

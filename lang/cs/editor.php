@@ -1,16 +1,12 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.4 (2004083100)
-
+      // editor.php - created with Moodle 1.3 (2004052500)
 
 $string['about'] = 'O tomto editoru';
 $string['absbottom'] = 'Úplnì dolù (absbottom)';
-$string['middle'] = 'Pøesnì uprostøed (middle)';
+$string['absmiddle'] = 'Pøesnì uprostøed (absmiddle)';
 $string['address'] = 'Adresa';
 $string['alignment'] = 'Zarovnání';
 $string['alternatetext'] = 'Alternativní text';
-$string['anchorhelp'] = 'Tímto vytváøíte pouze návì¹tí. Stále sem musíte ruènì nadefinovat odkaz.';
-$string['anchorname'] = 'Název návì¹tí';
-$string['anchors'] = 'Návì¹tí';
 $string['baseline'] = 'Úèaøí (baseline)';
 $string['bold'] = 'Tuènì';
 $string['borderthickness'] = 'Tlou¹»ka ohranièení';
@@ -24,7 +20,6 @@ $string['chooseicon'] = 'Vyberte ikonu k vlo¾ení';
 $string['close'] = 'Zavøít';
 $string['cols'] = 'Sloupcù';
 $string['copy'] = 'Kopírovat výbìr';
-$string['createanchor'] = 'Vytvoøit návì¹tí';
 $string['createfolder'] = 'Vytvoøit slo¾ku';
 $string['createlink'] = 'Vlo¾it odkaz';
 $string['cut'] = 'Vyjmout výbìr';
@@ -83,8 +78,8 @@ $string['redo'] = 'Opakovat poslední akci';
 $string['removelink'] = 'Odstranit odkaz';
 $string['rename'] = 'Pøejmenovat';
 $string['right'] = 'Vpravo';
-$string['righttoleft'] = 'Zprava doleva';
 $string['rows'] = 'Øádkù';
+$string['righttoleft'] = 'Zprava doleva';
 $string['selectcolor'] = 'Výbìr barvy';
 $string['selection'] = 'Výbìr';
 $string['showhelp'] = 'Nápovìda k pou¾ívání editoru';

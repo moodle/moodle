@@ -3,9 +3,13 @@
 
     require_once("../../config.php");
     require_once("lib.php");
-
+ 
     require_variable($id);     // Course Module ID
     require_variable($url);    // url to fetch
+    
+    if (!empty($CFG->forcelogin)) {
+        require_login();
+    }
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -15,7 +19,9 @@
         error("Course is misconfigured");
     }
 
-    require_course_login($course, true, $cm);
+    if ($course->category) {
+        require_login($course->id);
+    }
 
     if (! $resource = get_record("resource", "id", $cm->instance)) {
         error("Resource ID was incorrect");

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
 /////////////////
 /// NUMERICAL ///
@@ -163,7 +163,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
                     unset($responsenum); // Answer is not numeric
                 }
             } else if (ereg(
-                    '^([+-]?([0-9]+(\\.[0-9]*)?|[.][0-9]+)([eE][-+]?[0-9]+)?)([^0-9].*)?$',
+                    '^(([0-9]+(\\.[0-9]*)?|[.][0-9]+)([eE][-+]?[0-9]+)?)([^0-9].*)?$',
                     $responsenum, $responseparts)) {
                 $responsenum = (float)$responseparts[1];
                 if ($responseparts[5]) {

@@ -141,7 +141,7 @@ $string['configlangdir'] = 'Most languages are printed left-to-right, but some, 
 $string['configlocale'] = 'Choose a sitewide locale - this will affect the format and language of dates. You need to have this locale data installed on your operating system.  (eg en_US or es_ES).  If you do not know what to choose leave it blank.';
 $string['configlongtimenosee'] = 'If students have not logged in for a very long time, then they are automatically unsubscribed from courses.  This parameter specifies that time limit.';
 $string['configmaxeditingtime'] = 'This specifies the amount of time people have to re-edit forum postings, journal feedback etc.  Usually 30 minutes is a good value.';
-$string['configproxyhost'] = 'If this <b>server</b> needs to use a proxy computer (eg a firewall) to access the Internet, then provide the proxy hostname and port here.  Otherwise leave it blank.';
+$string['configproxyhost'] = 'If this <B>server</B> needs to use a proxy computer (eg a firewall) to access the Internet, then provide the proxy hostname and port here.  Otherwise leave it blank.';
 $string['configslasharguments'] = 'Files (images, uploads etc) are provided via a script using slash arguments (the second option here). This method allows files to be more easily cached in web browsers, proxy servers etc.  Unfortunately, some PHP servers do not allow this method, so if you have trouble viewing uploaded files or images (eg user pictures), set this variable to the first option';
 $string['configsmtphosts'] = 'Give the full name of one or more local SMTP servers that Moodle should use to send mail.). If you leave it blank, Moodle will use the PHP default method of sending mail.';
 $string['configsmtpuser'] = 'If you have specified an SMTP server above, and the server requires authentication, then enter the username and password here.';
@@ -271,9 +271,9 @@ $string['emailconfirmation'] = '你好 $a->firstname,
 歡迎你的加入 $a->sitename 系統管理員
 $a->admin 敬上,';
 $string['emailconfirmationsubject'] = '$a :帳號資訊';
-$string['emailconfirmsent'] = '   <p>本系統已經送出電子郵件到 <b>$a</b></p>
-   <p>訊息內容包含如何完成註冊手續.</p>
-   <p>請閱覽你的私人郵件 按下確認連結後 便可登入本系統, 若是有問題請和系統管理者連絡.</p>';
+$string['emailconfirmsent'] = '   <P>本系統已經送出電子郵件到 <B>$a</B>
+   <P>訊息內容包含如何完成註冊手續.
+   <P>請閱覽你的私人郵件 按下確認連結後 便可登入本系統, 若是有問題請和系統管理者連絡.';
 $string['emaildisable'] = '這個電子郵件信箱無法使用';
 $string['emaildisplay'] = '電子郵件訊息';
 $string['emaildisplaycourse'] = '僅允許其他修課成員觀看我的電子郵件';
@@ -282,15 +282,15 @@ $string['emaildisplayyes'] = '允許所有人觀看我的電子郵件';
 $string['emailenable'] = '這個電子郵件信箱可使用';
 $string['emailexists'] = '所輸入電子郵件的使用者已經申請過帳號.';
 $string['emailformat'] = '電子郵件格式';
-$string['emailmustbereal'] = '注意: 沒有輸入電子郵件者,僅能進入需要密碼的課程<br />一旦忘記密碼需找課程教師重新設定密碼';
+$string['emailmustbereal'] = '注意: 沒有輸入電子郵件者,僅能進入需要密碼的課程<BR>一旦忘記密碼需找課程教師重新設定密碼';
 $string['emailpasswordconfirmationsubject'] = '$a :變更密碼資訊';
 $string['enable'] = '啟動';
 $string['enrolledincourse'] = '加入課程!!  $a !!';
 $string['enrolledincoursenot'] = '未加入課程 !! $a !!';
 $string['enrolmentconfirmation'] = '你即將加入成為課程的成員。 <b>你確定要這樣做嗎??</b>';
 $string['enrolmentkey'] = '課程專屬密碼';
-$string['enrolmentkeyfrom'] = '本課程需要 課程專屬密碼 - 僅需輸入一次<br />密碼請向開課教師 $a 索取';
-$string['enrolmentkeyhint'] = '所輸入的課程專屬密碼不正確, 請重新輸入<br />(提示 - 以 $a  起始)';
+$string['enrolmentkeyfrom'] = '本課程需要 課程專屬密碼 - 僅需輸入一次<BR>密碼請向開課教師 $a 索取';
+$string['enrolmentkeyhint'] = '所輸入的課程專屬密碼不正確, 請重新輸入<BR>(提示 - 以 $a  起始)';
 $string['entercourse'] = '按下以進入課程';
 $string['enteremailaddress'] = '請輸入註冊登記的電子郵件 以便系統重新設定個人密嗎 並送到你的電子郵件信箱.';
 $string['error'] = '錯誤';
@@ -459,16 +459,16 @@ $string['loginsite'] = '登入本網站';
 $string['loginsteps'] = '你好! 若要使用本網站功能你必須先在本網站註冊.
    部分課程可能還需要開課教師所設定的專屬密碼
    請遵循以下步驟:
-   <ol>
-   <li>請於 <a href=\"$a\">申請新帳號</a> 表格中輸入個人相關資料.</li>
-   <li>依據指示完成註冊手續,進行登入動作.</li>
-   <li>登入後請選擇想要參加的課程.</li>
-   <br />部分課程開課教師可能會設定專屬密碼, 則需要取得專屬密碼後才能進入(僅需初次進入課程時輸入)
-   進入課程後 未來只需要登入便可再次進入課程, 不需要再輸入課程專屬密碼</li>
-   </ol>';
-$string['loginstepsnone'] = '<p>嗨!<p>需要完成註冊手續才可能進入本課程.</p>
-<p>你需要申請一個 帳號名稱和密碼 以便進行登入系統的動作!</p><p>
-假如你所選定 帳號名稱已經有人先登記 則需要輸入新的名稱.</p>';
+   <OL>
+   <LI>請於 <A HREF=$a>申請新帳號</A> 表格中輸入個人相關資料.
+   <LI>依據指示完成註冊手續,進行登入動作.
+   <LI>登入後請選擇想要參加的課程.
+   <br>部分課程開課教師可能會設定專屬密碼, 則需要取得專屬密碼後才能進入(僅需初次進入課程時輸入)
+   進入課程後 未來只需要登入便可再次進入課程, 不需要再輸入課程專屬密碼
+   </OL>';
+$string['loginstepsnone'] = '嗨!<P>需要完成註冊手續才可能進入本課程.
+<P>你需要申請一個 帳號名稱和密碼 以便進行登入系統的動作!<P>
+假如你所選定 帳號名稱已經有人先登記 則需要輸入新的名稱.';
 $string['loginto'] = '登入 $a';
 $string['loginusing'] = '請輸入 帳號名稱與密碼 進行登入';
 $string['logout'] = '登出';
@@ -621,10 +621,10 @@ $string['passwordconfirmchange'] = '密碼變更確認';
 $string['passwordrecovery'] = '請協助我登入';
 $string['passwordsdiffer'] = '密碼不相符';
 $string['passwordsent'] = '已經送出密碼';
-$string['passwordsenttext'] = '   <p>系統以電子郵件送出資訊到 $a->email.
-   </p><p><b>請閱覽你的郵件以獲得新設定的臨時密碼</b>
-   </p><p>重新登入後可以進入
-   <a href=\"$a->link\"> 修改為你個人偏好的密碼</a>.</p>';
+$string['passwordsenttext'] = '   <P>系統以電子郵件送出資訊到 $a->email.
+   <P><B>請閱覽你的郵件以獲得新設定的臨時密碼</B>
+   <P>重新登入後可以進入
+   <A HREF=$a->link> 修改為你個人偏好的密碼</A>.';
 $string['people'] = '使用者';
 $string['personalprofile'] = '個人紀錄';
 $string['phone'] = '電話';
@@ -798,7 +798,7 @@ $string['user'] = '使用者';
 $string['userconfirmed'] = '確認 $a';
 $string['userdata'] = '使用者資料';
 $string['userdeleted'] = '本使用者帳號已被刪除';
-$string['userdescription'] = '個人簡介：<br />學生請寫:<br />學校/年級/班別<br />老師請寫:<br />畢業學校系級與<br />任教學校及科目';
+$string['userdescription'] = '個人簡介：<BR>學生請寫:<BR>學校/年級/班別<P>老師請寫:<BR>畢業學校系級與<BR>任教學校及科目';
 $string['userfiles'] = '使用者檔案';
 $string['username'] = '帳號名稱';
 $string['usernameexists'] = '帳號名稱重複(已被使用), 請另選新的名稱';

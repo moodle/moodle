@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
     require ("../../config.php");
 
@@ -16,7 +16,7 @@
         error("Course is misconfigured");
     }
 
-    require_login($course->id, false);
+    require_login($course->id);
 
     if (!isteacher($course->id)) {
         error("Sorry, only teachers can see this.");
@@ -26,7 +26,7 @@
         error("Survey ID was incorrect");
     }
 
-    add_to_log($course->id, "survey", "download", "download.php?id=$cm->id&amp;type=$type", "$survey->id", $cm->id);
+    add_to_log($course->id, "survey", "download", "download.php?id=$cm->id&type=$type", "$survey->id", $cm->id);
 
 /// Check to see if groups are being used in this survey
 
@@ -46,7 +46,7 @@
 
     foreach ($order as $key => $qid) {  // Do we have virtual scales?
         $question = $questions[$qid];
-        if ($question->type < 0) {
+        if ($question->type < 0) { 
             $virtualscales = true;
             break;
         }
@@ -65,7 +65,7 @@
         } else {
             $addlist = $qid;
         }
-
+        
         if ($virtualscales && ($question->type < 0)) {        // only use them
             $fullorderlist .= $addlist;
 
@@ -103,7 +103,7 @@
     if (! $aaa = get_records("survey_answers", "survey", "$survey->id", "time ASC")) {
         error("There are no answers for this survey yet.");
     }
-
+   
     foreach ($aaa as $a) {
         if (!$group or isset($users[$a->userid])) {
             if (!$results["$a->userid"]) { // init new array
@@ -125,7 +125,7 @@
         require_once("$CFG->libdir/excel/Workbook.php");
 
         header("Content-type: application/vnd.ms-excel");
-        $downloadfilename = clean_filename("$course->shortname ".strip_tags(format_string($survey->name,true)));
+        $downloadfilename = clean_filename("$course->shortname $survey->name");
         header("Content-Disposition: attachment; filename=$downloadfilename.xls");
         header("Expires: 0");
         header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
@@ -133,7 +133,7 @@
 
         $workbook = new Workbook("-");
         // Creating the first worksheet
-        $myxls =& $workbook->add_worksheet(substr(strip_tags(format_string($survey->name,true)), 0, 31));
+        $myxls =& $workbook->add_worksheet(substr($survey->name, 0, 31));
 
         $header = array("surveyid","surveyname","userid","firstname","lastname","email","idnumber","time", "notes");
         $col=0;
@@ -166,7 +166,7 @@
                 $notes = "No notes made";
             }
             $myxls->write_string($row,$col++,$survey->id);
-            $myxls->write_string($row,$col++,strip_tags(format_text($survey->name,true)));
+            $myxls->write_string($row,$col++,$survey->name);
             $myxls->write_string($row,$col++,$user);
             $myxls->write_string($row,$col++,$u->firstname);
             $myxls->write_string($row,$col++,$u->lastname);
@@ -175,7 +175,7 @@
             $myxls->write_string($row,$col++, userdate($results["$user"]["time"], "%d-%b-%Y %I:%M:%S %p") );
 //          $myxls->write_number($row,$col++,$results["$user"]["time"],$date);
             $myxls->write_string($row,$col++,$notes);
-
+    
             foreach ($order as $key => $qid) {
                 $question = $questions["$qid"];
                 if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
@@ -195,9 +195,9 @@
 
 // Print header to force download
 
-    header("Content-Type: application/download\n");
+    header("Content-Type: application/download\n"); 
 
-    $downloadfilename = clean_filename("$course->shortname ".strip_tags(format_string($survey->name,true)));
+    $downloadfilename = clean_filename("$course->shortname $survey->name");
     header("Content-Disposition: attachment; filename=\"$downloadfilename.txt\"");
 
 // Print names of all the fields
@@ -221,7 +221,7 @@
             error("Error finding student # $user");
         }
         echo $survey->id."\t";
-        echo strip_tags(format_string($survey->name,true))."\t";
+        echo $survey->name."\t";
         echo $user."\t";
         echo $u->firstname."\t";
         echo $u->lastname."\t";

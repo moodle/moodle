@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This php script contains all the stuff to backup/restore
     //exercise mods
 
@@ -68,14 +68,12 @@
             $exercise->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
             $exercise->gradinggrade = backup_todb($info['MOD']['#']['GRADINGGRADE']['0']['#']);
             $exercise->showleaguetable = backup_todb($info['MOD']['#']['SHOWLEAGUETABLE']['0']['#']);
-            $exercise->usepassword = backup_todb($info['MOD']['#']['USEPASSWORD']['0']['#']);
-            $exercise->password = backup_todb($info['MOD']['#']['PASSWORD']['0']['#']);
 
             //The structure is equal to the db, so insert the exercise
             $newid = insert_record ("exercise",$exercise);
 
             //Do some output     
-            echo "<li>".get_string("modulename","exercise")." \"".format_string(stripslashes($exercise->name),true)."\"</li>";
+            echo "<ul><li>".get_string("modulename","exercise")." \"".$exercise->name."\"<br>";
             backup_flush(300);
 
             if ($newid) {
@@ -89,6 +87,10 @@
             } else {
                 $status = false;
             }
+
+            //Finalize ul        
+            echo "</ul>";
+        
         } else {
             $status = false;
         }
@@ -128,7 +130,7 @@
             if (($i+1) % 10 == 0) {
                 echo ".";
                 if (($i+1) % 200 == 0) {
-                    echo "<br />";
+                    echo "<br>";
                 }
                 backup_flush(300);
             }
@@ -176,7 +178,7 @@
                 if (($i+1) % 10 == 0) {
                     echo ".";
                     if (($i+1) % 200 == 0) {
-                        echo "<br />";
+                        echo "<br>";
                     }
                     backup_flush(300);
                 }
@@ -235,7 +237,7 @@
                 if (($i+1) % 50 == 0) {
                     echo ".";
                     if (($i+1) % 1000 == 0) {
-                        echo "<br />";
+                        echo "<br>";
                     }
                     backup_flush(300);
                 }
@@ -307,7 +309,7 @@
                 if (($i+1) % 50 == 0) {
                     echo ".";
                     if (($i+1) % 1000 == 0) {
-                        echo "<br />";
+                        echo "<br>";
                     }
                     backup_flush(300);
                 }
@@ -362,7 +364,7 @@
                 if (($i+1) % 50 == 0) {
                     echo ".";
                     if (($i+1) % 1000 == 0) {
-                        echo "<br />";
+                        echo "<br>";
                     }
                     backup_flush(300);
                 }

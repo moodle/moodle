@@ -69,11 +69,11 @@ $string['filloutoneanswer'] = 'You must fill out at least one possible answer.  
 $string['filloutthreequestions'] = 'You must fill out at least three questions.  Questions left blank will not be used.';
 $string['fillouttwochoices'] = '»«&#1740;œ Õœ«ﬁ· œÊ „Ê—œ —« Å— ò‰&#1740;œ';
 $string['fractionsaddwrong'] = 'The positive grades you have chosen do not add up to 100%%
-<br />Instead, they add up to $a%%
-<br />Do you want to go back and fix this question?';
+<BR>Instead, they add up to $a%%
+<BR>Do you want to go back and fix this question?';
 $string['fractionsnomax'] = 'One of the answers should be 100%%, so that it is
-<br />possible to get a full grade for this question.
-<br />Do you want to go back and fix this question?';
+<BR>possible to get a full grade for this question.
+<BR>Do you want to go back and fix this question?';
 $string['gradeaverage'] = '‰„—Â „ Ê”ÿ';
 $string['gradehighest'] = '»«·« —&#1740;‰ ‰„—Â';
 $string['grademethod'] = '—Ê‘ ‰„—Â œ«œ‰';
@@ -98,7 +98,7 @@ $string['nomoreattempts'] = 'No more attempts are allowed';
 $string['noquestions'] = 'Â‰Ê“ ”∆Ê«·&#1740; «÷«›Â ‰‘œÂ «” ';
 $string['noreview'] = 'You are not allowed to review this quiz';
 $string['noreviewuntil'] = 'You are not allowed to review this quiz until $a';
-$string['notenoughsubquestions'] = 'Not enough sub-questions have been defined!<br />
+$string['notenoughsubquestions'] = 'Not enough sub-questions have been defined!<br>
 Do you want to go back and fix this question?';
 $string['numerical'] = '⁄œœ&#1740;';
 $string['publish'] = '«‰ ‘«—';

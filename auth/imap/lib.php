@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
        // Authentication by looking up an IMAP server
 
 function auth_user_login ($username, $password) {

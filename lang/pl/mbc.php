@@ -3,7 +3,7 @@
 
 
 $string['mustlogin'] = 'Musisz siê zalogowaæ.';
-$string['downloadinstructions'] = 'Aby zapisaæ plik na dysku, kliknij prawym przycickiem na link powy¿ej i wybierz <b>Zapisz element docelowy jako...</b>. <br />Kliknij na link, je¶li chcesz otworzyæ plik w ramce.';
+$string['downloadinstructions'] = 'Aby zapisaæ plik na dysku, kliknij prawym przycickiem na link powy¿ej i wybierz <b>Zapisz element docelowy jako...</b>. <p>Kliknij na link, je¶li chcesz otworzyæ plik w ramce.';
 
 
 

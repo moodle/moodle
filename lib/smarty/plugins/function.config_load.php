@@ -8,8 +8,8 @@
 /**
  * Smarty {config_load} function plugin
  *
- * Type:     function<br />
- * Name:     config_load<br />
+ * Type:     function<br>
+ * Name:     config_load<br>
  * Purpose:  load config file vars
  * @link http://smarty.php.net/manual/en/language.function.config.load.php {config_load}
  *       (Smarty online manual)

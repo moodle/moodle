@@ -26,5 +26,12 @@ añade las palabras Pregunta y Respuesta en el concepto y la definición respectiv
 </blockquote>
 
 <hr>
-<p>Los administradores de Moodle pueden crear nuevos formatos siguiendo las instrucciones que 
-aparecen en el archivo <b>mod/glossary/formats/README.txt</b> de su instalación.</p>
+<p>Los administradores de Moodle pueden crear nuevos formatos como sigue:
+<ol>
+<li> Busque en el mod/glossary/formats... usted debe ver un archivo numerado para cada   
+formato existente.
+<li> Copie uno de éstos y llámelo con otro número N (note que el 0 y el 1 están reservados).
+<li> Edite este archivo para crear su propio formato (requiere cierto conocimiento de PHP).
+<li> Finalmente, inserte una nueva entrada en cada paquete del idioma que usted 
+use llamado <b>displayformatN</b>, y dele un nombre corto pero significativo.
+</ol>

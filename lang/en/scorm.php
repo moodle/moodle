@@ -1,11 +1,10 @@
-<?php // $Id$
+<?PHP // $Id$
 
 #------------------------------------------------------------
 $string['modulename'] = 'Scorm';
 $string['modulenameplural'] = 'Scorms';
 #------------------------------------------------------------
 
-$string['asset'] = 'Asset';
 $string['attr_error'] = 'Bad value for attribute ($a->attr) in tag $a->tag.';
 $string['autocontinue'] = 'Auto-Continue';
 $string['badmanifest'] ='Some manifest errors: see errors log';
@@ -75,7 +74,4 @@ $string['validationtype'] = 'This preference set the DOMXML library used for val
 $string['validateascorm'] = 'Validate a SCORM package';
 $string['versionwarning'] = 'The manifest version is older than 1.3, warning at $a->tag tag';
 $string['viewallreports'] = 'View reports for $a attempts';
-$string['display'] = 'Display';
-$string['expcoll'] = 'Expand/Collide';
-$string['exit'] = 'Exit from SCORM course';
 ?>

@@ -1,16 +1,7 @@
 <?PHP // $Id$ 
-      // enrol_internal.php - created with Moodle 1.4.2 (2004083125)
+      // enrol_internal.php - created with Moodle 1.4 development (2004070800)
 
 
-$string['description'] = 'แบบฟอร์มในการสมัครเป็นนักเรียน มีอยู่ด้วยกันสองแบบด้วยกันคือ
-<ul>
-<li>อาจารย์หรือผู้ดูแลระบบสามารถสมัครสมาชิกเข้าเป็นนักเรียนได้เองผ่านทางเมนูการจัดการระบบ ในส่วนของการจัดการรายวิชาภายในรายวิชานั้น ๆ</li>
-<li>ระบุรหัสผ่านสำหรับรายวิชานั้น ๆ สมาชิกที่ทราบรหัสดังกล่าวสามารถที่จะเข้าไปเป็นนักเรียนภายในรายวิชานั้นได้</li>
-</ul>';
 $string['enrolname'] = 'การเพิ่มสมาชิกภายใน';
-$string['parentlanguage'] = 'en';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
 
 ?>

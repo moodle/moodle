@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
+      // moodle.php - created with Moodle 1.3.1 (2004052501)
 
 
 $string['action'] = 'Darbïba';
@@ -100,7 +100,7 @@ $string['backuplogshelp'] = 'Ja at¶auts, tad kursa ieraksti tiks iek¶auti automà
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backupnoneusersinfo'] = 'Piezïme: Jþs izvºlºjàties veidot rezerves kopijas \"none\" lietotàjiem, tàtad visas modu¶u rezerves kopijas ir pàrslºgtas uz \"whitout user data\" re¾ïmu. Lþdzu ievºrojiet ka \"exercise\" un \"workshop\" modu¶i nav savienojami ar ¹ï veida rezerves kopijàm, rezultàtà tie ir deaktivizºti pilnïbà.';
 $string['backuporiginalname'] = 'Rezerves kopijas nosaukums';
-$string['backupsavetohelp'] = 'Pilna atra¹anàs vieta noràde, kur saglabàt rezervers kopiju<br />(atstàt tukshu, lai saglabàtu ierastajà vietà';
+$string['backupsavetohelp'] = 'Pilna atra¹anàs vieta noràde, kur saglabàt rezervers kopiju<br>(atstàt tukshu, lai saglabàtu ierastajà vietà';
 $string['backupuserfileshelp'] = 'Izvºlieties vai lietotàju faili (piem. profila attºli) tiks iek¶auti automàtiskajàs rezerves kopijàs';
 $string['backupusershelp'] = 'Izvºlieties vai jþs vºlaties iek¶aut visus lietotàjus serverï, vai tikai katram kursam nepiecie¹amos lietotàjus';
 $string['backupversion'] = 'Rezerves kopijas versija';
@@ -141,7 +141,7 @@ $string['complete'] = 'Darïts';
 $string['configallowunenroll'] = 'Ja ¹is ir uzstàdïts uz \'Yes\', tad studentiem ir at¶auts pa¹iem sevi izslºgt no kursiem kad vien vºlas.Cità gadïjumà viñi to darït nevar un ¹o procesu kontrolº tikai skolotàji un administratori.';
 $string['configcachetext'] = 'Dº¶ lielàkàm lapàm vai lapàm kuras izmanto teksta filtrus, ¹is parametrs var visu paàtrinàt. Tekstu kopijas tiks saglabàtas to pàrveidotajà formà, laikà kas ¹eit noteikts. Uzstàdot ¹o pàràk mazu, var visu ievºrojami palºninàt, bet uzstàdot pàràk lielu, teksta atjauno¹ana var aizñemt pàràk ilgu laiku (piem. ar jaunàm saitºm).';
 $string['configcountry'] = 'Ja gribat, ka lietotàjs pats izvºlas valsti, atstàjat ¹o lauku tuk¹u.';
-$string['configdebug'] = 'Ja ieslºgsiet ¹o opciju, tad vairàk PHP k¶þdas tiks izvadïtas. <br /> (©ï opcija ir noderïga izstràdº)';
+$string['configdebug'] = 'Ja ieslºgsiet ¹o opciju, tad vairàk PHP k¶þdas tiks izvadïtas. <br> (©ï opcija ir noderïga izstràdº)';
 $string['configdeleteunconfirmed'] = 'Ja jþs izmantojat e-pasta autentifikàciju, ¹is ir periods, kurà atbilde tiks pieñemta no lietotàjiem. Pºc ¹ï perioda, veci, neapstiprinàti konti tiks izdzºsti.';
 $string['configenablerssfeeds'] = '©ïs slºdzis at¶aus RSS barotni no lapas. Lai manïtu kàdas izmaiñas jums bþs jàat¶auj RSS barotne arï individuàlajos modu¶os - ejiet uz Modu¶u parametriem zem Admina konfiguràcijas';
 $string['configenablerssfeedsdisabled'] = 'Tas nav pieejams, jo RSS barotnes ir neat¶autas visà lapà. Lai tàs at¶autu, ejiet uz Mainïgo parametriem zem Admina konfiguràcijas';
@@ -304,9 +304,9 @@ $a->link
 Ja Jums rodas problºmas sazinieties ar administratoru,
 $a->admin';
 $string['emailconfirmationsubject'] = '$a: konta apstiprinà¹ana';
-$string['emailconfirmsent'] = '   <p>E-pasta vºstule ir nosþtïta uz Jþsu e-pastu: <b>$a</b></p>
-   <p>Tà saturºja instrukcijas, lai varºtu pabeigt re»istràciju.</p>
-   <p>Ja Jums rodas grþtïbas, sazinieties ar administratoru.</p>';
+$string['emailconfirmsent'] = '   <P>E-pasta vºstule ir nosþtïta uz Jþsu e-pastu: <B>$a</B>
+   <P>Tà saturºja instrukcijas, lai varºtu pabeigt re»istràciju.
+   <P>Ja Jums rodas grþtïbas, sazinieties ar administratoru.';
 $string['emaildisable'] = '©ï e-pasta adrese nav pieejama';
 $string['emaildisplay'] = 'Ràdït e-pasta adresi';
 $string['emaildisplaycourse'] = 'At¶aut tikai citiem kursa dalïbniekiem redzºt manu e-pastu';
@@ -328,20 +328,20 @@ Ja Jums rodas grþtïbas, sazinieties ar administratoru,
 $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: paroles maiñas apstiprinà¹ana';
 $string['emailpasswordconfirmsent'] = 'E-pasta vºstule ir nosþtïta uz <b>$a</b>.
-<br />Tà satur instrukcijas, lai varºtu apstiprinàt paroles maiñu.
+<p>Tà satur instrukcijas, lai varºtu apstiprinàt paroles maiñu.
 Ja Jums rodas grþtïbas, sazinaties ar administratoru.';
 $string['emailpasswordsent'] = 'Paroles maiñas apstiprinà¹ana ir veikts.
-<br />E-pasta vºstule ar jauno paroli ir nosþtïta uz: <b>$a->email</b>.
-<br />Jaunà parole ir automàtiski »enerºta, jþs varat
-<a href="\$a->link\">mainït paroli</a> uz vieglàku.';
+<p>E-pasta vºstule ar jauno paroli ir nosþtïta uz: <b>$a->email</b>.
+<p>Jaunà parole ir automàtiski »enerºta, jþs varat
+<a href=$a->link>mainït paroli</a> uz vieglàku.';
 $string['enable'] = 'Iespºjot';
 $string['enrolledincourse'] = 'Re»istrºts kursà ';
 $string['enrolledincoursenot'] = 'Nav re»istrºts kursà ';
 $string['enrolmentconfirmation'] = 'Jþs pieteiks kursam.<br />Vai vºlaties pieteikties?';
 $string['enrolmentkey'] = 'Atslºgas vàrds';
-$string['enrolmentkeyfrom'] = '©im kursam vajag \'atslºgas vàrdu\' - vienreizºju<br />
+$string['enrolmentkeyfrom'] = '©im kursam vajag \'atslºgas vàrdu\' - vienreizºju<BR>
 paroli, ko Jþs sañemsiet no sava skolotàja';
-$string['enrolmentkeyhint'] = 'Atslºgas vàrds nav pareizs<br />
+$string['enrolmentkeyhint'] = 'Atslºgas vàrds nav pareizs<BR>
 (Noràdïjums - tas sàkas ar \'$a\')';
 $string['entercourse'] = 'Spiediet ¹eit, lai ieietu kursà';
 $string['enteremailaddress'] = 'Ievadiet savu e-pastu, lai iegþtu jaunu paroli, kuru nosþtïs Jums pa e-pastu.';
@@ -470,7 +470,7 @@ $string['includecoursefiles'] = 'Ietvert visus kursa failus';
 $string['includecourseusers'] = 'Ietvert visus kursa lietotàjus';
 $string['included'] = 'Ietvºra';
 $string['includelogentries'] = 'Ietvert log failu ierakstus';
-$string['includemodules'] = 'Iek¶aut Modu¶us';
+$string['includemodules'] = 'Iek¶aut Modu¶us';
 $string['includeneededusers'] = 'Ietvert nepiecie¹amos lietotàjus';
 $string['includenoneusers'] = 'Iek¶aut nevienu lietotàju';
 $string['includeuserfiles'] = 'Ietvert lietotàju failus';
@@ -505,17 +505,17 @@ $string['loginas'] = 'Lietotàjs';
 $string['loginguest'] = 'Ieiet kà viesim';
 $string['loginsite'] = 'Ieiet lapà';
 $string['loginsteps'] = 'Lai iegþtu pilnu pieeju kursiem, Jums vajadzºs izveidot jaunu kontu ¹ajà lapà.
-<br />©ïs ir instrukcijas:
-   <ol>
-   <li>Aizpildiet <a href=\"$a\">Jauna lietotàja anketu</a> (formu, kas satur Jþsu datus).</li>
-   <li>Jums tiks nosþtïta e-pasta vºstule.</li>
-   <li>Izlasiet vºstuli un ejiet uz vºstulº noràdïto saiti.</li>
-   <li>Jþsu konts tiks apstiprinàts un sistºma Jþs identificºs.</li>
-   <li>Izvºlieties kursu, kurà vºlaties piedalïties.</li>
-   <li>Ja Jums prasa atslºgas vàrdu, ievadiet vàrdu, ko Jums ir iedevis skolotàjs.</li>
-   <li>Tagad Jums ir pilna pieeja kursam. No ¹ï brï¾a, lai piek¶þtu kursiem, Jums bþs jàlieto Jþsu lietotàjvàrds un parole.</li>
-   </ol>';
-$string['loginstepsnone'] = '<p>Pilnai pieejai Jums vajadzºs izveidot savu kontu.</p><p>Viss kas Jums ir jàdara, ir jàizveido lietotàjvàrds un parole un jàlieto ¹ajà lapà!</p><p>Ja Jþsu izvºlºtais lietotàjvàrds ir aizñemts, tad Jums bþs jàmº»ina vºlreiz ar citu lietotàjvàrdu.</p>';
+<br>©ïs ir instrukcijas:
+   <OL size=2>
+   <LI>Aizpildiet <A HREF=$a>Jauna lietotàja anketu</A> (formu, kas satur Jþsu datus).
+   <LI>Jums tiks nosþtïta e-pasta vºstule.
+   <LI>Izlasiet vºstuli un ejiet uz vºstulº noràdïto saiti.
+   <LI>Jþsu konts tiks apstiprinàts un sistºma Jþs identificºs.
+   <LI>Izvºlieties kursu, kurà vºlaties piedalïties.
+   <LI>Ja Jums prasa atslºgas vàrdu, ievadiet vàrdu, ko Jums ir iedevis skolotàjs.
+   <LI>Tagad Jums ir pilna pieeja kursam. No ¹ï brï¾a, lai piek¶þtu kursiem, Jums bþs jàlieto Jþsu lietotàjvàrds un parole.
+   </OL>';
+$string['loginstepsnone'] = '<P>Pilnai pieejai Jums vajadzºs izveidot savu kontu.<P>Viss kas Jums ir jàdara, ir jàizveido lietotàjvàrds un parole un jàlieto ¹ajà lapà!<P>Ja Jþsu izvºlºtais lietotàjvàrds ir aizñemts, tad Jums bþs jàmº»ina vºlreiz ar citu lietotàjvàrdu.';
 $string['loginto'] = 'Ieiet $a';
 $string['loginusing'] = 'Ieiet lapà';
 $string['logout'] = 'Iziet';
@@ -600,7 +600,8 @@ Ejat uz ¹o saiti, lai mainïtu paroli:
    $a->link
 
 Ar cieñu administrators,
-$a->signoff';
+$a->signoff
+';
 $string['newpicture'] = 'Jauna bilde';
 $string['newsitem'] = 'jaunums';
 $string['newsitems'] = 'jaunumi';
@@ -664,8 +665,8 @@ $string['passwordconfirmchange'] = 'Apstipriniet paroles maiñu';
 $string['passwordrecovery'] = 'Palïdzat tikt lapà';
 $string['passwordsdiffer'] = 'Paroles nesakrït';
 $string['passwordsent'] = 'Parole ir nosþtïta';
-$string['passwordsenttext'] = '   <p>E-pasta vºstule ir nosþtïta uz $a->email.</p>
-   <p>Parole tika automàtiski »enerºta, lai mainïtu uz kaut ko vieglàku <a href=\"$a->link\">spiediet ¹eit</a>.</p>';
+$string['passwordsenttext'] = '   <P>E-pasta vºstule ir nosþtïta uz $a->email.
+   <P>Parole tika automàtiski »enerºta, lai mainïtu uz kaut ko vieglàku <A HREF=$a->link>spiediet ¹eit</A>.';
 $string['people'] = 'Cilvºki';
 $string['personalprofile'] = 'Personïgais profils';
 $string['phone'] = 'Telefona numurs';
@@ -692,10 +693,10 @@ $string['recentactivityreport'] = 'Pilns nesenas aktivitàtes ziñojums...';
 $string['refreshingevents'] = 'Atsvaidzina notikumus';
 $string['registration'] = 'Re»istrº¹anàs sistºmà';
 $string['registrationemail'] = 'E-pasta paziñojums';
-$string['registrationinfo'] = '<p>©ajà saitº Jþs varat re»istrºt savu lapu moodle.org. Re»istràcija ir bezmaksas. Uz Jþsu noràdïto e-pasta adresi tiks sþtïti svarïgi paziñojumi, brïdinàjumi par jauniem \'caurumiem\', un informàcija par jaunàm versijàm.</p>
-<p>Pºc noklusºjuma Jþsu informàcija paliks privàta un netiks izplatïta. ©ï re»istràcija ir domàta, lai bþtu tehniskais atbalsts un radïtos priek¹stats par sistºmas lietotàjiem.</p>
-<p>Ja vºlaties varat pievienot lapas nosaukumu, valsti un URL Moodle publiskajam sarakstam.</p>
-<p>Visas re»istràcijas tiek pàrbaudïtas ar roku, bet kad esat re»istrºjies Jþs varat mainït savus re»istràcijas datus (un publisko sarakstu) jebkurà laikà, vºlreiz aizpildot formu.</p>';
+$string['registrationinfo'] = '<p>©ajà saitº Jþs varat re»istrºt savu lapu moodle.org. Re»istràcija ir bezmaksas. Uz Jþsu noràdïto e-pasta adresi tiks sþtïti svarïgi paziñojumi, brïdinàjumi par jauniem \'caurumiem\', un informàcija par jaunàm versijàm.
+<p>Pºc noklusºjuma Jþsu informàcija paliks privàta un netiks izplatïta. ©ï re»istràcija ir domàta, lai bþtu tehniskais atbalsts un radïtos priek¹stats par sistºmas lietotàjiem.
+<p>Ja vºlaties varat pievienot lapas nosaukumu, valsti un URL Moodle publiskajam sarakstam.
+<p>Visas re»istràcijas tiek pàrbaudïtas ar roku, bet kad esat re»istrºjies Jþs varat mainït savus re»istràcijas datus (un publisko sarakstu) jebkurà laikà, vºlreiz aizpildot formu.';
 $string['registrationno'] = 'Nº, es nevºlos sañemt e-pasta vºstules';
 $string['registrationsend'] = 'Sþtït re»istràciju moodle.org';
 $string['registrationyes'] = 'Jà, informºjiet mani par jauniem izlaidumiem';
@@ -733,7 +734,7 @@ $string['scheduledbackupstatus'] = 'Ieplànots dubultº¹anas statuss';
 $string['search'] = 'Meklºt';
 $string['searchagain'] = 'Meklºt vºlreiz';
 $string['searchcourses'] = 'Meklºt kursus';
-$string['searchhelp'] = 'Jþs varat vienlaicïgi meklºt vairàkus vàrdus.<br />vàrds : atrast vàrdus tekstà.<br />+vàrds : tie¹i ¹àdu vàrdu tekstà.<br />-vàrds : neiek¶aut rezultàtus, kas satur.';
+$string['searchhelp'] = 'Jþs varat vienlaicïgi meklºt vairàkus vàrdus.<p>vàrds : atrast vàrdus tekstà.<br>+vàrds : tie¹i ¹àdu vàrdu tekstà.<br>-vàrds : neiek¶aut rezultàtus, kas satur.';
 $string['searchresults'] = 'Meklº¹anas rezultàti';
 $string['sec'] = 'sekunde';
 $string['secs'] = 'sekundes';
@@ -812,7 +813,7 @@ $string['themes'] = 'Tºmas';
 $string['themesaved'] = 'Jaunà tºma saglabàta';
 $string['thischarset'] = 'ISO-8859-4';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Latvie&#353;u';
+$string['thislanguage'] = 'Latvie¹u';
 $string['time'] = 'Laiks';
 $string['timezone'] = 'Laika josla';
 $string['to'] = 'Kam';

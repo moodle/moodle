@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.4.3 + (2004083134)
+      // attendance.php - created with Moodle 1.3 Beta (2004051100)
 
 
 $string['absentlong'] = 'Frånvarande';
 $string['absentshort'] = 'F';
-$string['addingmultiple'] = 'Lägger till flera närvarolistor';
+$string['addingmultiple'] = 'Lägger till flera närvarolistor...';
 $string['addmultiple'] = 'Lägg till flera närvarolistor';
 $string['allmodulename'] = 'Alla närvarolistor';
 $string['auto'] = 'auto';
@@ -18,13 +18,13 @@ $string['defaultdynamicsection'] = 'Vill Du som standardval flytta närvarolistor
 $string['defaultgrade'] = 'Vill Du som standardval göra det möjligt att bedöma/värdera/betygssätta närvarolistorna?';
 $string['defaulthoursinclass'] = 'Hur många timmar ska det vara som standardval i närvolistan?';
 $string['defaultmaxgrade'] = 'Vilket ska vara standardval för det maximala (betygs)värdet för full närvaro?';
-$string['defaultstudentstatus'] = 'Standardval för den studentens/elevens/deltagarens/den lärandes status på nya närvarolistor';
+$string['defaultstudentstatus'] = 'Standardval för den lärandes status på nya närvarolistor';
 $string['downloadexcelfull'] = 'Ladda ner kompletta kalkylblad (Excel)';
 $string['downloadexceltotals'] = 'Ladda ner sammanfattande kalkylblad (Excel)';
 $string['downloadtextfull'] = 'Ladda ner rapport i fulltext';
 $string['downloadtexttotals'] = 'Ladda ner rapport som sammanfattande text';
 $string['dynamicsection'] = 'Bestäm närvarovecka med utgångspunkt från detta datum';
-$string['dynamicsectionmulti'] = 'Placera  automatiskt listorna i sina respektive sektioner för veckor';
+$string['dynamicsectionmulti'] = 'Placera  automatiskt listorna i sina respektive veckosektioner';
 $string['dynsectionshort'] = 'Dynamiskt flyttad till sektion';
 $string['endbeforestart'] = 'Slutdatum är före startdatum';
 $string['endmulti'] = 'Datum för senaste närvarolista';

@@ -3,9 +3,12 @@
 //  Censorship filtering
 // 
 //  This very simple example of a Text Filter will parse
-//  printed text, blacking out words perceived to be bad
-//  
-//  The list of words is in the lang/xx/moodle.php
+//  printed text, replacing words with other words
+//
+//  To activate this filter, add a line like this to your
+//  list of filters in your Filter configuration:
+//
+//  filter/censor/filter.php
 //
 //////////////////////////////////////////////////////////////
 
@@ -14,17 +17,10 @@
 
 function censor_filter($courseid, $text) {
 
-    static $words;
+    static $search  = array('fuck', 'cunt', 'shit', 'wank', 'cock');
+    static $replace = array('f***', 'c***', 's***', 'w***', 'c***');
 
-    if (empty($words)) {
-        $words = array();
-        $badwords = explode(',', get_string('censorbadwords'));
-        foreach ($badwords as $badword) {
-            $words[] = new filterobject(trim($badword), '<span class="censoredtext">', '</span>', false, false);
-        }
-    }
-
-    return filter_phrases($text, $words);  // Look for all these words in the text
+    return str_ireplace($search, $replace, $text);
 }
 
 

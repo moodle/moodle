@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
 /// Bulk user registration script from a comma separated file
 /// Returns list of users with their user ids
@@ -15,10 +15,6 @@
 
     if (! $site = get_site()) {
         error("Could not find site-level course");
-    }
-
-    if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
     }
 
     if (!$adminuser = get_admin()) {
@@ -56,11 +52,7 @@
 
 /// If a file has been uploaded, then process it
 
-
-    require_once($CFG->dirroot.'/lib/uploadlib.php');
-    $um = new upload_manager('userfile',false,false,null,false,0);
-    if ($um->preprocess_files()) {
-        $filename = $um->files['userfile']['tmp_name'];
+    if ($filename = valid_uploaded_file($_FILES['userfile'])) {
 
         //Fix mac/dos newlines
         $text = my_file_get_contents($filename);
@@ -81,8 +73,7 @@
                                   "department" => 1, 
                                   "city" => 1, 
                                   "country" => 1,
-                                  "lang" => 1,
-                                  "auth" => 1,
+                                  "lang" => 1, 
                                   "timezone" => 1);
         $optional = array("idnumber" => 1, 
                           "icq" => 1, 
@@ -114,7 +105,7 @@
         foreach ($header as $i => $h) {
             $h = trim($h); $header[$i] = $h; // remove whitespace
             if (!($required[$h] or $optionalDefaults[$h] or $optional[$h])) {
-                error(get_string('invalidfieldname', 'error', $h), 'uploaduser.php?sesskey='.$USER->sesskey);
+                error(get_string('invalidfieldname', 'error', $h), 'uploaduser.php');
             }
             if ($required[$h]) {
                 $required[$h] = 2;
@@ -123,7 +114,7 @@
         // check for required fields
         foreach ($required as $key => $value) {
             if ($value < 2) {
-                error(get_string('fieldrequired', 'error', $key), 'uploaduser.php?sesskey='.$USER->sesskey);
+                error(get_string('fieldrequired', 'error', $key), 'uploaduser.php');
             }
         }
         $linenum = 2; // since header is line 1
@@ -148,22 +139,19 @@
                     // check for required values
                     if ($required[$name] and !$value) {
                         error(get_string('missingfield', 'error', $name). " ".
-                              get_string('erroronline', 'error', $linenum) .". ".
-                              get_string('processingstops', 'error'), 
-                              'uploaduser.php?sesskey='.$USER->sesskey);
+                              get_string('erroronline', 'error', $linenum), 
+                              'uploaduser.php');
                     }
                     // password needs to be encrypted
                     else if ($name == "password") {
                         $user->password = md5($value);
-                    }
-                    else if ($name == "username") {
-                        $user->username = addslashes(moodle_strtolower($value));
                     }
                     // normal entry
                     else {
                         $user->{$name} = addslashes($value);
                     }
                 }
+                $user->auth = 'manual';
                 $user->confirmed = 1;
                 $user->timemodified = time();
                 $linenum++;
@@ -178,7 +166,7 @@
                 $addgroup[2] = $user->group3;
                 $addgroup[3] = $user->group4;
                 $addgroup[4] = $user->group5;
-                $courses = get_courses("all",'c.sortorder','c.id,c.shortname,c.fullname,c.sortorder');
+                $courses = get_courses("all");
                 for ($i=0; $i<5; $i++) {
                     $courseid[$i]=0;
                 }
@@ -189,7 +177,7 @@
                         }
                     }
                 }
-                if (get_record("user","username",$username) || !($user->id = insert_record("user", $user))) {
+                if (! $user->id = insert_record("user", $user)) {
                     if (!$user = get_record("user", "username", "changeme")) {   // half finished user from another time
                         //Record not added - probably because user is already registered
                         //In this case, output userid from previous registration
@@ -270,8 +258,7 @@
     echo '<center>';
     echo '<form method="post" enctype="multipart/form-data" action="uploaduser.php">'.
          $strchoose.':<input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'">'.
-         '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'">'.
-         '<input type="file" name="userfile" size="30">'.
+         '<input type="file" name="userfile" size=30>'.
          '<input type="submit" value="'.$struploadusers.'">'.
          '</form></br>';
     echo '</center>';

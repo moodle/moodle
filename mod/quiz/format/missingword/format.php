@@ -1,4 +1,4 @@
-<?php  // $Id$ 
+<?PHP  // $Id$ 
 /// Modified by Tom Robb 12 June 2003 to include percentage and comment insertion
 /// facility.
 
@@ -43,7 +43,7 @@ class quiz_file_format extends quiz_default_format {
         $answerstart = strpos($text, "{");
         if ($answerstart === false) {
             if ($this->displayerrors) {
-                echo "<p>$text<p>Could not find a {";
+                echo "<P>$text<P>Could not find a {";
             }
             return false;
         }
@@ -51,7 +51,7 @@ class quiz_file_format extends quiz_default_format {
         $answerfinish = strpos($text, "}");
         if ($answerfinish === false) {
             if ($this->displayerrors) {
-                echo "<p>$text<p>Could not find a }";
+                echo "<P>$text<P>Could not find a }";
             }
             return false;
         }
@@ -79,7 +79,7 @@ class quiz_file_format extends quiz_default_format {
         switch ($countanswers) {
             case 0:  // invalid question
                 if ($this->displayerrors) {
-                    echo "<p>No answers found in $answertext";
+                    echo "<P>No answers found in $answertext";
                 }
                 return false;
 

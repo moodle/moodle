@@ -93,9 +93,7 @@ CREATE TABLE prefix_chat_users (
   firstping number(10) default '0' not null,
   lastping number(10) default '0' not null,
   lastmessageping number(10) default '0' not null,
-  sid varchar2(32) default '' not null,
-  course number(10) default '0' not null,
-  lang varchar2(10) default '' not null
+  sid varchar2(32) default '' not null
 );
 
 create index userid on prefix_chat_users(userid);

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
 // Display user activity reports for a course
 
@@ -27,7 +27,7 @@
         error("You are not allowed to look at this page");
     }
 
-    add_to_log($course->id, "course", "user report", "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode", "$user->id"); 
+    add_to_log($course->id, "course", "user report", "user.php?id=$course->id&user=$user->id&mode=$mode", "$user->id"); 
 
     $stractivityreport = get_string("activityreport");
     $strparticipants   = get_string("participants");
@@ -40,43 +40,47 @@
 
     if ($course->category) {
         print_header("$course->shortname: $stractivityreport ($mode)", "$course->fullname",
-                 "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
-                  <a href=\"../user/index.php?id=$course->id\">$strparticipants</a> ->
-                  <a href=\"../user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a> -> 
+                 "<A HREF=\"../course/view.php?id=$course->id\">$course->shortname</A> ->
+                  <A HREF=\"../user/index.php?id=$course->id\">$strparticipants</A> ->
+                  <A HREF=\"../user/view.php?id=$user->id&course=$course->id\">$fullname</A> -> 
                   $stractivityreport -> $strmode");
     } else {
         print_header("$course->shortname: $stractivityreport ($mode)", "$course->fullname",
-                 "<a href=\"../user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a> -> 
+                 "<A HREF=\"../user/view.php?id=$user->id&course=$course->id\">$fullname</A> -> 
                   $stractivityreport -> $strmode");
     }
+    print_heading($fullname);
 
+    echo "<table cellpadding=10 align=center><tr>";
+    echo "<td>$stractivityreport: </td>";
 
-/// Print tabs at top
-/// This same call is made in:
-///     /user/view.php
-///     /user/edit.php
-///     /course/user.php
-    $currenttab = $mode;
-    include($CFG->dirroot.'/user/tabs.php');
-
+    foreach ($modes as $listmode) {
+        $strmode = get_string($listmode);
+        if ($mode == $listmode) {
+            echo "<td><u>$strmode</u></td>";
+        } else {
+            echo "<td><a href=user.php?id=$course->id&user=$user->id&mode=$listmode>$strmode</a></td>";
+        }
+    }
+    echo "</tr></table>";
 
     get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
 
     switch ($mode) {
         case "todaylogs" :
-            echo '<div class="graph">';
+            echo "<HR><CENTER>";
             print_log_graph($course, $user->id, "userday.png");
-            echo '</div>';
+            echo "</CENTER>";
             print_log($course, $user->id, usergetmidnight(time()), "l.time DESC", $page, $perpage, 
-                      "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode");
+                      "user.php?id=$course->id&user=$user->id&mode=$mode");
             break;
 
         case "alllogs" :
-            echo '<div class="graph">';
+            echo "<HR><CENTER>";
             print_log_graph($course, $user->id, "usercourse.png");
-            echo '</div>';
+            echo "</CENTER>";
             print_log($course, $user->id, 0, "l.time DESC", $page, $perpage, 
-                      "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode");
+                      "user.php?id=$course->id&user=$user->id&mode=$mode");
             break;
 
         case "outline" :
@@ -89,75 +93,67 @@
                 if (isset($sections[$i])) {   // should always be true
 
                     $section = $sections[$i];
-                    $showsection = (isteacher($course->id) or $section->visible or !$course->hiddensections);
-
-                    if ($showsection) { // prevent hidden sections in user activity. Thanks to Geoff Wilbert!
-
-                        if ($section->sequence) {
-                            echo '<div class="section">';
-                            echo '<h2>';
-                            switch ($course->format) {
-                                case "weeks": print_string("week"); break;
-                                case "topics": print_string("topic"); break;
-                                default: print_string("section"); break;
-                            }
-                            echo " $i</h2>";
-    
-                            echo '<div class="content">';
-
-                            if ($mode == "outline") {
-                                echo "<table cellpadding=\"4\" cellspacing=\"0\">";
-                            }
-
-                            $sectionmods = explode(",", $section->sequence);
-                            foreach ($sectionmods as $sectionmod) {
-                                if (empty($mods[$sectionmod])) {
-                                    continue;
-                                }
-                                $mod = $mods[$sectionmod];
-    
-                                if (empty($mod->visible)) {
-                                    continue;
-                                }
-
-                                $instance = get_record("$mod->modname", "id", "$mod->instance");
-                                $libfile = "$CFG->dirroot/mod/$mod->modname/lib.php";
-
-                                if (file_exists($libfile)) {
-                                    require_once($libfile);
-
-                                    switch ($mode) {
-                                        case "outline":
-                                            $user_outline = $mod->modname."_user_outline";
-                                            if (function_exists($user_outline)) {
-                                                $output = $user_outline($course, $user, $mod, $instance);
-                                                print_outline_row($mod, $instance, $output);
-                                            }
-                                            break;
-                                        case "complete":
-                                            $user_complete = $mod->modname."_user_complete";
-                                            if (function_exists($user_complete)) {
-                                                $image = "<img src=\"../mod/$mod->modname/icon.gif\" ".
-                                                         "height=\"16\" width=\"16\" alt=\"$mod->modfullname\" />";
-                                                echo "<h4>$image $mod->modfullname: ".
-                                                     "<a href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
-                                                     format_string($instance->name,true)."</a></h4>";
-                                                echo "<ul>";
-                                                $user_complete($course, $user, $mod, $instance);
-                                                echo "</ul>";
-                                            }
-                                            break;
-                                        }
-                                    }
-                                }
-    
-                            if ($mode == "outline") {
-                                echo "</table>";
-                                print_simple_box_end();
-                            }
-                            echo '</div>';  // content
-                            echo '</div>';  // section
+        
+                    if ($section->sequence) {
+                        echo "<HR>";
+                        echo "<H2>";
+                        switch ($course->format) {
+                            case "weeks": print_string("week"); break;
+                            case "topics": print_string("topic"); break;
+                            default: print_string("section"); break;
                         }
+                        echo " $i</H2>";
+
+                        echo "<UL>";
+
+                        if ($mode == "outline") {
+                            echo "<TABLE CELLPADDING=4 CELLSPACING=0>";
+                        }
+
+                        $sectionmods = explode(",", $section->sequence);
+                        foreach ($sectionmods as $sectionmod) {
+                            if (empty($mods[$sectionmod])) {
+                                continue;
+                            }
+                            $mod = $mods[$sectionmod];
+                            $instance = get_record("$mod->modname", "id", "$mod->instance");
+                            $libfile = "$CFG->dirroot/mod/$mod->modname/lib.php";
+
+                            if (file_exists($libfile)) {
+                                require_once($libfile);
+
+                                switch ($mode) {
+                                    case "outline":
+                                        $user_outline = $mod->modname."_user_outline";
+                                        if (function_exists($user_outline)) {
+                                            $output = $user_outline($course, $user, $mod, $instance);
+                                            print_outline_row($mod, $instance, $output);
+                                        }
+                                        break;
+                                    case "complete":
+                                        $user_complete = $mod->modname."_user_complete";
+                                        if (function_exists($user_complete)) {
+                                            $image = "<IMG SRC=\"../mod/$mod->modname/icon.gif\" ".
+                                                     "HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
+                                            echo "<H4>$image $mod->modfullname: ".
+                                                 "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
+                                                 "$instance->name</A></H4>";
+                                            echo "<UL>";
+                                            $user_complete($course, $user, $mod, $instance);
+                                            echo "</UL>";
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+
+                        if ($mode == "outline") {
+                            echo "</TABLE>";
+                            print_simple_box_end();
+                        }
+                        echo "</UL>";
+
+                    
                     }
                 }
             }
@@ -169,27 +165,27 @@
 
 
 function print_outline_row($mod, $instance, $result) {
-    $image = "<img src=\"../mod/$mod->modname/icon.gif\" height=\"16\" width=\"16\" alt=\"$mod->modfullname\" />";
+    $image = "<IMG SRC=\"../mod/$mod->modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\">";
 
-    echo "<tr>";
-    echo "<td valign=\"top\">$image</td>";
-    echo "<td valign=\"top\" width=\"300\">";
-    echo "   <a title=\"$mod->modfullname\"";
-    echo "   href=\"../mod/$mod->modname/view.php?id=$mod->id\">".format_string($instance->name,true)."</a></td>";
-    echo "<td>&nbsp;&nbsp;&nbsp;</td>";
-    echo "<td valign=\"top\" bgcolor=\"white\">";
+    echo "<TR>";
+    echo "<TD VALIGN=top>$image</TD>";
+    echo "<TD VALIGN=top width=300>";
+    echo "   <A TITLE=\"$mod->modfullname\"";
+    echo "   HREF=\"../mod/$mod->modname/view.php?id=$mod->id\">$instance->name</A></TD>";
+    echo "<TD>&nbsp;&nbsp;&nbsp;</TD>";
+    echo "<TD VALIGN=top BGCOLOR=white>";
     if (isset($result->info)) {
         echo "$result->info";
     } else {
-        echo "<p align=\"center\">-</p>";
+        echo "<P ALIGN=CENTER>-</P>";
     }
-    echo "</td>";
-    echo "<td>&nbsp;&nbsp;&nbsp;</td>";
+    echo "</TD>";
+    echo "<TD>&nbsp;&nbsp;&nbsp;</TD>";
     if (isset($result->time)) {
         $timeago = format_time(time() - $result->time);
-        echo "<td valign=\"top\" nowrap=\"nowrap\">".userdate($result->time)." ($timeago)</td>";
+        echo "<TD VALIGN=top NOWRAP>".userdate($result->time)." ($timeago)</TD>";
     }
-    echo "</tr>";
+    echo "</TR>";
 }
 
 ?>

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -26,7 +26,7 @@
 
     if ( isset($USER->id) and $allanswers = get_records("choice_answers", "userid", $USER->id)) {
         foreach ($allanswers as $aa) {
-            $answers[$aa->choiceid] = $aa;
+            $answers[$aa->choice] = $aa;
         }
 
     } else {
@@ -38,13 +38,13 @@
 
     if ($course->format == "weeks") {
         $table->head  = array (get_string("week"), get_string("question"), get_string("answer"));
-        $table->align = array ("center", "left", "left");
+        $table->align = array ("CENTER", "LEFT", "LEFT");
     } else if ($course->format == "topics") {
         $table->head  = array (get_string("topic"), get_string("question"), get_string("answer"));
-        $table->align = array ("center", "left", "left");
+        $table->align = array ("CENTER", "LEFT", "LEFT");
     } else {
         $table->head  = array (get_string("question"), get_string("answer"));
-        $table->align = array ("left", "left");
+        $table->align = array ("LEFT", "LEFT");
     }
 
     $currentsection = "";
@@ -55,8 +55,8 @@
         } else {
             $answer = "";
         }
-        if (!empty($answer->optionid)) {
-            $aa = format_string(choice_get_option_text($choice, $answer->optionid));
+        if (!empty($answer->answer)) {
+            $aa = choice_get_answer($choice, $answer->answer);
         } else {
             $aa = "";
         }
@@ -74,10 +74,10 @@
         //Calculate the href
         if (!$choice->visible) {
             //Show dimmed if the mod is hidden
-            $tt_href = "<a class=\"dimmed\" href=\"view.php?id=$choice->coursemodule\">".format_string($choice->name,true)."</a>";
+            $tt_href = "<a class=\"dimmed\" href=\"view.php?id=$choice->coursemodule\">$choice->name</a>";
         } else {
             //Show normal if the mod is visible
-            $tt_href = "<a href=\"view.php?id=$choice->coursemodule\">".format_string($choice->name,true)."</a>";
+            $tt_href = "<a href=\"view.php?id=$choice->coursemodule\">$choice->name</a>";
         }
         if ($course->format == "weeks" || $course->format == "topics") {
             $table->data[] = array ($printsection, $tt_href, $aa);

@@ -35,18 +35,10 @@ function print_entry($course) {
     } else {
 
         print_header($strloginto, $course->fullname, 
-                     "<a href=\"$CFG->wwwroot/course/\">$strcourses</a> -> $strloginto");
+                     "<a href=\"$CFG->wwwroot/courses/\">$strcourses</a> -> $strloginto");
         print_course($course, "80%");
         print_simple_box_start("center");
 
-        //Sanitise some fields before building the PayPal form
-        $coursefullname  = $this->sanitise_for_paypal($course->fullname);
-        $courseshortname = $this->sanitise_for_paypal($course->shortname);
-        $userfullname    = $this->sanitise_for_paypal(fullname($USER));
-        $userfirstname   = $this->sanitise_for_paypal($USER->firstname);
-        $userlastname    = $this->sanitise_for_paypal($USER->lastname);
-        $useraddress     = $this->sanitise_for_paypal($USER->address);
-        $usercity        = $this->sanitise_for_paypal($USER->city);
 
         include("$CFG->dirroot/enrol/paypal/enrol.html");
 
@@ -56,6 +48,13 @@ function print_entry($course) {
     }
 } // end of function print_entry()
 
+
+
+
+/// Override the base check_entry() function
+/// This should never be called for this type of enrolment anyway
+function check_entry($form, $course) {
+}       
 
 
 
@@ -88,12 +87,12 @@ function get_access_icons($course) {
            case 'CAD': $currency = '$'; break;
            case 'GBP': $currency = '&pound;'; break;
            case 'JPY': $currency = '&yen;'; break;
-           case 'AUD': $currency = '$'; break;
            default:    $currency = '$'; break;
         }
         
-        $str .= '<span class="courseboxcost" title="'.$strrequirespayment.'">'.$strcost.': ';
-        $str .= $currency.format_float($cost,2).'</span>';
+        $str .= "<p class=\"coursecost\"><font size=-1>$strcost: ".
+                "<a title=\"$strrequirespayment\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\"></a>";
+        $str .= "$currency".format_float($cost,2).'</a></p>';
         
     }
 
@@ -109,17 +108,8 @@ function config_form($frm) {
                                 'EUR' => 'Euros',
                                 'JPY' => 'Japanese Yen',
                                 'GBP' => 'British Pounds',
-                                'CAD' => 'Canadian Dollars',
-                                'AUD' => 'Australian Dollars'
+                                'CAD' => 'Canadian Dollars'
                              );
-
-    $vars = array('enrol_cost', 'enrol_currency', 'enrol_paypalbusiness', 
-                  'enrol_mailstudents', 'enrol_mailteachers', 'enrol_mailadmins');
-    foreach ($vars as $var) {
-        if (!isset($frm->$var)) {
-            $frm->$var = '';
-        } 
-    }
 
     include("$CFG->dirroot/enrol/paypal/config.html");
 }
@@ -160,38 +150,5 @@ function process_config($config) {
 
 }
 
-//To avoid wrong (for PayPal) characters in sent data
-function sanitise_for_paypal($text) {
-    global $CFG;
-
-    if (!empty($CFG->sanitise_for_paypal)) {
-        //Array of characters to replace (not allowed by PayPal)
-        //Can be expanded as necessary to add other diacritics
-        $replace = array('á' => 'a',        //Spanish characters
-                         'é' => 'e',
-                         'í' => 'i',
-                         'ó' => 'o',
-                         'ú' => 'u',
-                         'Á' => 'A',
-                         'É' => 'E',
-                         'Í' => 'I',
-                         'Ó' => 'O',
-                         'Ú' => 'U',
-                         'ñ' => 'n',
-                         'Ñ' => 'N',
-                         'ü' => 'u',
-                         'Ü' => 'U');
-        $text = strtr($text, $replace);
-    
-        //Make here other sanities if necessary
-
-    }
-
-    return $text;
-
-}
-
 
 } // end of class definition
-
-?>

@@ -1,92 +1,79 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+      // auth.php - created with Moodle 1.2 development (2004010800)
 
-$string['auth_common_settings'] = '일반설정';
-$string['auth_data_mapping'] = '데이타 계획';
-$string['auth_dbdescription'] = '이 방식은 외부의 데이터베이스 테이블을 통해 사용자의 아이디와 비밀번호가 유효한 지 확인합니다. 다른 항목의 정보도 Moodle사의 데이터 베이스에 복사될 수 있도록 설정이 가능합니다.';
-$string['auth_dbextrafields'] = '이 항목들은 선택 사항입니다. 외부 데이타베이스 항목으로부터 Moodle의 사용자 정보 항목으로 채울 수 있습니다. 사용자가 로그인 한 후 이 항목들을 수정할 수 있습니다.';
-$string['auth_dbfieldpass'] = '비밀번호를 포함하는 필드명';
-$string['auth_dbfielduser'] = '사용자 아이디를 포함하는 필드명';
-$string['auth_dbhost'] = '데이타베이스 서버를 호스팅하는 컴퓨터';
-$string['auth_dbname'] = '데이타베이스 자체의 이름';
-$string['auth_dbpass'] = '사용자 아이디와 연결되는 비밀번호';
-$string['auth_dbpasstype'] = '비밀번호 필드의 포멧을 구체적으로 적으세요. PostNuke와 같은 웹 프로그램으로 연결하기 위해서는 MD5 암호화를 사용하는 것이 유용합니다';
-$string['auth_dbtable'] = '데이타베이스의 테이블명';
-$string['auth_dbtitle'] = '외부 데이타베스 사용하기';
-$string['auth_dbtype'] = '데이타베이스 유형(See the <a href=\"../lib/adodb/readme.htm#drivers\">ADOdb documentation</a>)에 대해 자세히 알고 싶으면';
-$string['auth_dbuser'] = '데이타베이스의 읽기 권한을 가진 사용자명';
-$string['auth_editlock'] = '평가부문은 잠겨있습니다.';
-$string['auth_emaildescription'] = '이메일 확인 인증은 기본 인증 방법입니다. 사용자가 가입할 때, 새로운 사용자 아이디와 비밀번호를 선택하면, 사용자의 이메일 계정으로 확인 메일이 보내집니다. 이 메일에는 계정을 활성화할 수 있는 안전한 링크를 포함합니다. 다음 로그인할 경우에는 무들 데이타베이스에 저장된 값을 참고하게 됩니다.';
-$string['auth_emailtitle'] = '이메일 기반 인증';
-$string['auth_fcdescription'] = '이 방법은 정해진 사용자성명인지 그리고 비밀번호가 유효한지 확인하기 위해서 펄스트클래스 서버를 사용합니다.';
-$string['auth_fcfppport'] = '서버 포트(3333이 가장 일반적입니다.)';
-$string['auth_fchost'] = '펄스트클래스 서버 주소. IP 주소나 DNS 이름을 입력하세요';
-$string['auth_fctitle'] = '펄스트클래스 서버를 이용하세요.';
-$string['auth_imapdescription'] = 'IMAP 서버를 사용하여 사용자의 이름과 패스워드의 유용성을 확인합니다';
-$string['auth_imaphost'] = 'IMAP 서버의 주소. DNS 이름을 사용하지 않고 IP주소를 사용합니다.';
-$string['auth_imapport'] = 'IMAP 서버의 포트 숫자를 나타냅니다. 보통 이 숫자는 143이거나 993입니다';
-$string['auth_imaptitle'] = 'IMAP 서버의 사용';
-$string['auth_imaptype'] = 'IMAP 서버의 유형. IMAP 서버는 다른 유형의 인증방법이나 신용방법을 사용 할 수 있습니다. ';
-$string['auth_ldap_bind_dn'] = '만약 당신이 bind-user(운영자급 사용자를 지칭합니다)을 이용하여 사용자들을 찾길 바란다면 이곳에 자세한 것을 기록해야합니다. 예를 들면 \'cn=ldapuser,ou=public,o=org\' 이런 것들이 있습니다.';
-$string['auth_ldap_bind_pw'] = 'Bind-user를 위한 패스워드';
-$string['auth_ldap_bind_settings'] = '설정 확정';
-$string['auth_ldap_contexts'] = '사용자들이 어디에 위치해있는지 나타내는 목록입니다. 다른 종류의 목록들은 예를 들어 \'ou=users,o=org; ou=others,o=org\'게 분류 합니다. ';
-$string['auth_ldap_create_context'] = '만약 당신이 e mail확인으로 사용자를 생성시킬수 있다면 어디서 사용자들이 생성되었는지를 문맥상에 명시하시오. 이 문맥은 보안상의 문제를 막기위해 다른 사용자들과는 다르게 명기되어야 합니다. ldap_context-variable에 작성된 문맥을 포함할 필요가 없습니다. Moodle이 자동적으로 작성된 문맥에서 사용자를 찾아줄 것입니다. ';
-$string['auth_ldap_creators'] = '새로운 코스들을 만드는 사람들의 목록입니다. 보통 \'cn=teachers,ou=staff,o=myorg\'형식으로 사람들을 분류합니다. ';
-$string['auth_ldap_graceattr_desc'] = '선택사항 : ';
-$string['auth_ldap_host_url'] = '\'ldap://ldap.myorg.com/\' 또는  \'ldaps://ldap.myorg.com/\' 식으로 URL상의 LDAP 호스트를 명기합니다. ';
-$string['auth_ldap_login_settings'] = '로그인 설정하기';
-$string['auth_ldap_memberattribute'] = '사용자들이 한 그룹안에 속해 있다면 보통 숫자를 사용하여 사용자를 명기하시오.';
-$string['auth_ldap_passwdexpire_settings'] = 'LDAP 비밀번호의 만료 설정';
-$string['auth_ldap_search_sub'] = 'Subcontext(하위문맥)에서 사용자들을 찾고 싶다면  <> 0값을 넣으세요.';
-$string['auth_ldap_server_settings'] = 'LDAP 서버 설정';
-$string['auth_ldap_update_userinfo'] = 'LDAP에서 Mooddle로 사용자의 정보를 갱신한다.(성, 이름, 주소 등.)  Mapping 정보를 위해 /auth/ldap/attr_mappings.php 이곳을 보십시오. ';
-$string['auth_ldap_user_attribute'] = '이 속성은(보통 \'cn\' 입니다) 사용자들을 찾아내기 위해 이름을 사용합니다. ';
-$string['auth_ldap_user_settings'] = '사용자 검색 설정';
-$string['auth_ldap_version'] = '당신 서버 LDAP 프로토콜 버전을 사용하고 있습니다.';
-$string['auth_ldapdescription'] = '이 방법은 외부 LDAP서버에 대항해 인증을 해 줍니다. 만약 계정과 비밀번호가 유요하다면 Moodle은 데이터베이스 안에 새로운 사용자를 만듭니다. Moodle은 LDAP와 자체 필드에 미리 작성된 사용자의 특성을 읽을 수 있습니다. 로그인 방법을 따라야 계정과 비밀번호가 확인 되어 집니다. ';
-$string['auth_ldapextrafields'] = '이 필드는 선택사항입니다. 당신이 여기에 명시한 LDAP서버에서 정보와 함께 Moodle 사용자 필드를 프리필(pre-fill)을 결정 할 수 있습니다. 만약 당신이 이 필드를 빈 공간으로 남겨둔다면, LDAP서버에서 아무것도 이동이 되지 않으며 Moodle 결점이 대신 사용 되어집니다. 어떠한 경우라도 사용자가 로그인을 한 후, 이 필드의 모든 것을 에디트 할 수 있습니다. ';
-$string['auth_ldaptitle'] = 'LDAP 서버의 사용';
-$string['auth_manualdescription'] = '이 방법은 사용자들이 그들의 계정을 생성하기 위해 다른 모든 방법들을 제거합니다. 모든 계정들은 운영자에 의해 손수 만들어져야 합니다. ';
-$string['auth_manualtitle'] = '직접만든 계정만이 가능합니다. ';
-$string['auth_multiplehosts'] = '여러명의 호스트들은 host1.com;host2.com;host3.com 식으로 명기되어 질 수 있습니다.';
-$string['auth_nntpdescription'] = 'NNPP 서버를 사용하여 사용자의 이름과 패스워드의 유용성을 확인합니다';
-$string['auth_nntphost'] = 'NNPP 서버의 주소. DNS가 아닌 IP 숫자를 사용합니다.';
-$string['auth_nntpport'] = '서버 포트 (119가 가장 무난합니다)';
-$string['auth_nntptitle'] = 'NNPP 서버를 사용합니다. ';
-$string['auth_nonedescription'] = '사용자들은 외부 보안시스템을 거치지 않거나 이메일확인 작업 없이 즉시 계정을 만들 수 있습니다. 하지만 만들기 전에 이 문제가 가져올 수 있는 보안상, 등록상의 문제를 생각해 보시기 바랍니다. ';
-$string['auth_nonetitle'] = '불인증';
-$string['auth_pamtitle'] = 'PAM(';
-$string['auth_passwordisexpired'] = '당신의 비밀번호가 만료되었습니다. 지금 비밀번호를 바꾸시겠습니까?';
-$string['auth_passwordwillexpire'] = '당신의 비밀번호가 $a요일에 만료됩니다. 지금 비밀번호를 바꾸시겠습니까?';
-$string['auth_pop3description'] = 'POP3 서버를 사용하여 사용자의 이름과 패스워드의 유용성을 확인합니다';
-$string['auth_pop3host'] = 'POP3 서버의 주소. DNS가 아닌 IP 숫자를 사용합니다.';
-$string['auth_pop3port'] = '서버 포트 (110이 가장 무난합니다)';
-$string['auth_pop3title'] = 'POP3 서버를 사용합니다.';
-$string['auth_pop3type'] = '서버의 형식. 만약 당신의 서버가 증면된 보안을 사용한다면 POP3cert를 선택하세요.';
-$string['auth_shibbolethtitle'] = '암호';
-$string['auth_updatelocal'] = '내부 데이터의 개정';
-$string['auth_updateremote'] = '외부데이터의 업데이트';
-$string['auth_user_create'] = '만들수 있는 사용자';
-$string['auth_user_creation'] = '새로운 사용자는 외부 인증 소스 혹은 확인되어진 이메일을 통해 계정을 생성할 수 있습니다. 만약 당신이 이것이 가능하다면 사용자 생성을 위한 Moodle의 특별한 옵션을 형성하는 것을 기억하십시오.';
-$string['auth_usernameexists'] = '선택하신 사용자명은 이미 존재합니다. 다른 이름의 사용자명을 선택하세요.';
-$string['authenticationoptions'] = '인증 옵션들';
-$string['authinstructions'] = '이곳에서 당신은 사용자들이 사용하고 있는 계정과 비밀번호의 정보를 제공할수 있습니다. 당신이 작성한 글자들은 로그인 페이지에 나타납니다. 하지만 만약 당신이 이곳을 빈칸으로 놔둔다면 로그인 페이지에 정보가 공개되지 않습니다. ';
-$string['changepassword'] = '패스워드 URL을 바꾼다';
-$string['changepasswordhelp'] = '만약 계정과 비밀번호를 잊어버렸다면 이곳에서 계정과 비밀번호를 찾거나 혹은 바꿀 수 있습니다. 이 형식은 로그인 페이지나 사용자 페이지에서  버튼형식으로 제공되어지지만  이곳을 빈칸으로 놓아둔다면 버튼은 웹페이지에 나타나지 않습니다. ';
-$string['chooseauthmethod'] = '인증 방법 선택하세요:';
-$string['forcechangepassword'] = '암호변경 강요';
-$string['forcechangepassword_help'] = '다음 무들 사용 로그인시 비밀번호를 바꿀 것을 사용자에게 요청합니다.';
-$string['forcechangepasswordfirst_help'] = '사용자에게 무들에 처음 로그인 할 때 비밀번호를 변경할 것을요청합니다.';
-$string['guestloginbutton'] = '손님 접속 버튼';
-$string['instructions'] = '도움말';
-$string['md5'] = 'MD5 인증 ';
-$string['plaintext'] = '단순 텍스트';
-$string['showguestlogin'] = '로그인 페이지에서 손님 로그인 버튼을 보이거나 숨길 수 있습니다.';
-$string['stdchangepassword'] = '비밀번호 페이지를 사용하기';
-$string['thischarset'] = 'euc-kr';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '&#54620;&#44397;&#50612;';
-$string['stdchangepassword'] = '비밀번호 페이지를 사용하기';
+
+$string['auth_dbdescription'] = '&#51060; &#48169;&#48277;&#51008; &#50808;&#48512;&#51032; &#45936;&#51060;&#53552;&#48288;&#51060;&#49828;&#47484; &#44396;&#52629;&#51004;&#47196; &#54616;&#50668; &#49324;&#50857;&#51088;&#51032; &#51060;&#47492;&#44284; &#48708;&#48128;&#48264;&#54840;&#47484; &#54869;&#51064; &#54633;&#45768;&#45796;. &#47564;&#50557; &#49352;&#47196; &#44032;&#51077;&#54620; &#44228;&#51221;&#51060;&#46972;&#47732; &#50668;&#47084; &#54637;&#47785;(fields)&#51032; &#51221;&#48372;&#44032; Moodle&#49324;&#51032; &#45936;&#51060;&#53552;&#48288;&#51060;&#49828;&#47196; &#48373;&#49324;&#46104;&#50612; &#51656; &#49688; &#51080;&#49845;&#45768;&#45796;. 
+';
+$string['auth_dbextrafields'] = 'These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <B>external database fields</B> that you specify here. <P>If you leave these blank, then defaults will be used.<P>In either case, the user will be able to edit all of these fields after they log in.';
+$string['auth_dbfieldpass'] = '&#51060;&#47492;&#51060; &#51080;&#45716; &#54637;&#47785;&#50644; &#48708;&#48128;&#48264;&#54840;&#47484; &#54252;&#54632;&#54616;&#44256; &#51080;&#49845;&#45768;&#45796;.';
+$string['auth_dbfielduser'] = '&#51060;&#47492;&#51060; &#51080;&#45716; &#54637;&#47785;&#50644; &#49324;&#50857;&#51088;&#51032; &#51060;&#47492;&#51012; &#54252;&#54632;&#54616;&#44256; &#51080;&#49845;&#45768;&#45796;. ';
+$string['auth_dbhost'] = '&#54840;&#49828;&#53944; &#52980;&#54504;&#53552; &#45936;&#51060;&#53552; &#49436;&#48260;';
+$string['auth_dbname'] = '&#45936;&#51060;&#53552;&#48288;&#51060;&#49828;&#51032; &#51060;&#47492;';
+$string['auth_dbpass'] = '&#48708;&#48128;&#48264;&#54840;&#45716; &#50526;&#50640; &#51080;&#45716; &#49324;&#50857;&#51088; &#49457;&#47749;&#44284; &#50672;&#44288;&#46104;&#50612;&#51080;&#49845;&#45768;&#45796;';
+$string['auth_dbpasstype'] = '&#48708;&#48128;&#48264;&#54840; &#54637;&#47785;&#51060; &#51060;&#50857;&#46120;&#51012; &#54252;&#47607;(&#54805;&#49885;)&#51004;&#47196; &#47749;&#44592; &#54633;&#45768;&#45796;. MD5&#54805;&#49885;&#51032; &#50516;&#54840;&#54868;&#45716; PostNuke&#50752; &#44057;&#51008; &#51064;&#53552;&#45367;&#49324;&#51032; &#50629;&#47924; &#50672;&#44208;&#50640; &#50976;&#50857;&#54633;&#45768;&#45796;.
+';
+$string['auth_dbtable'] = '&#45936;&#51060;&#53552;&#48288;&#51060;&#49828;&#50504;&#51032; &#47785;&#47197;&#51032; &#51060;&#47492;';
+$string['auth_dbtitle'] = '&#50808;&#48512;&#51032; &#45936;&#51060;&#53552;&#48288;&#51060;&#49828;&#47484; &#49324;&#50857;&#54633;&#45768;&#45796;';
+$string['auth_dbtype'] = '&#45936;&#51060;&#53552;&#48288;&#51060;&#49828; &#51333;&#47448; (&#49464;&#48512;&#51201;&#51064; &#44163;&#51012; &#50896;&#54616;&#49884;&#47732;  <A HREF=../lib/adodb/readme.htm#drivers>ADOdb &#47928;&#49436;</A> &#47484; &#48372;&#49464;&#50836;)';
+$string['auth_dbuser'] = '&#45936;&#51060;&#53552;&#48288;&#51060;&#49828;&#47196; &#44032;&#44592;&#50948;&#54620; &#49324;&#50857;&#51088;&#51032; &#51060;&#47492;&#44284; &#54032;&#46021;';
+$string['auth_emaildescription'] = '&#51060;&#47700;&#51068; &#54869;&#51064;&#51008; &#51077;&#51613;&#46108; &#48169;&#48277;&#51032; &#46356;&#54260;&#53944;&#44050; &#51077;&#45768;&#45796;. &#44032;&#51077;&#51088;&#44032; ID&#50752; &#48708;&#48128;&#48264;&#54840;&#47484; &#51077;&#47141;&#54616;&#50668; &#49324;&#51060;&#53944;&#50640; &#44032;&#51077;&#54664;&#51012; &#49884; &#44536;&#46308;&#51060; &#51077;&#47141;&#54620; &#51060;&#47700;&#51068; &#51452;&#49548;&#47196; &#44032;&#51077;&#54869;&#51064; &#47700;&#51068;&#51012; &#48372;&#45253;&#45768;&#45796;. &#44032;&#51077;&#51088;&#50640;&#44172; &#48372;&#45236;&#51652; &#51060;&#47700;&#51068;&#50644; &#44032;&#51077;&#51088;&#44032; &#44536;&#46308;&#51032; &#44228;&#51221;&#51012; &#54869;&#51064; &#54624; &#49688; &#51080;&#44172;&#45140; &#50672;&#44208;&#54644;&#51452;&#45716; &#51452;&#49548;(&#48372;&#50504;&#46104;&#50612;&#51080;&#51020;)&#44032; &#47553;&#53356;&#44032; &#54364;&#49884;&#46104;&#50612; &#51080;&#49845;&#45768;&#45796;. &#44032;&#51077;&#51088;&#45716; &#54980;&#50640; &#47553;&#53356;&#46108; &#51452;&#49548;&#47196; &#44032;&#51077;&#51088;&#45716; Moodle&#49324; &#45936;&#51060;&#53552;&#48288;&#51060;&#49828;&#50640; &#51200;&#51109;&#46108; &#44032;&#51077;&#51088;&#51032; ID&#50752; &#48708;&#48128;&#48264;&#54840;&#47484; &#54869;&#51064;&#51012; &#50948;&#54644; &#51217;&#49549;&#54644;&#50556; &#54633;&#45768;&#45796;. 
+
+';
+$string['auth_emailtitle'] = '&#51060;&#47700;&#51068;&#50640; &#44592;&#48152;&#51012;&#46164; &#51077;&#51613;';
+$string['auth_imapdescription'] = '&#51060; &#48169;&#48277;&#51008; IMAP &#49436;&#48260;&#47484; &#49324;&#50857;&#54616;&#50668; &#49324;&#50857;&#51088;&#51032; &#51060;&#47492;&#44284; &#48708;&#48128;&#48264;&#54840;&#47484; &#54869;&#51064;&#54633;&#45768;&#45796;.';
+$string['auth_imaphost'] = 'IMAP &#49436;&#48260;&#51032; &#51452;&#49548;. DNS &#51060;&#47492;&#51012; &#49324;&#50857;&#54616;&#51648; &#50506;&#44256; IP&#51452;&#49548;&#47484; &#49324;&#50857;&#54633;&#45768;&#45796;.
+';
+$string['auth_imapport'] = 'IMAP &#49436;&#48260;&#51032; &#54252;&#53944; &#49707;&#51088;&#47484; &#45208;&#53440;&#45253;&#45768;&#45796;. &#48372;&#53685; &#51060; &#49707;&#51088;&#45716; 143&#51060;&#44144;&#45208; 993&#51077;&#45768;&#45796;. 
+';
+$string['auth_imaptitle'] = 'IMAP &#49436;&#48260;&#47484; &#49324;&#50857;&#54633;&#45768;&#45796;. ';
+$string['auth_imaptype'] = 'IMAP &#49436;&#48260;&#51032; &#50976;&#54805;. IMAP &#49436;&#48260;&#45716; &#45796;&#47480; &#50976;&#54805;&#51032; &#51064;&#51613;&#51060;&#45208; &#49888;&#50857;&#51012; &#49324;&#50857; &#54624; &#49688; &#51080;&#49845;&#45768;&#45796;.
+';
+$string['auth_ldap_bind_dn'] = '&#47564;&#50557; &#45817;&#49888;&#51060; &#49324;&#50857;&#51088;&#47484; &#52286;&#44592;&#50948;&#54644; bind user&#47484; &#49324;&#50857;&#54616;&#44600; &#50896;&#54620;&#45796;&#47732; &#50668;&#44592;&#50640; &#47749;&#44592; &#54616;&#49884;&#50836;. &#50696;&#47484; &#46308;&#50612; &#51060;&#47088; &#44163; &#46308;&#51060; &#51080;&#49845;&#45768;&#45796;.\'cn=ldapuser,ou=public,o=org\'';
+$string['auth_ldap_bind_pw'] = 'Bind user&#47484; &#50948;&#54620; &#48708;&#48128;&#48264;&#54840;';
+$string['auth_ldap_contexts'] = 'List of contexts where users are located. Separate different contexts with \';\'. For example: \'ou=users,o=org; ou=others,o=org\'';
+$string['auth_ldap_create_context'] = 'If you enable user creation with email confirmation, specify the context where users are created. This context should be different from other users to prevent security issues. You don\'t need to add this context to ldap_context-variable, Moodle will search for users from this context automatically.';
+$string['auth_ldap_creators'] = 'List of groups whose members are allowed to create new courses. Separate multiple groups with \';\'. Usually something like \'cn=teachers,ou=staff,o=myorg\'';
+$string['auth_ldap_host_url'] = 'Specify LDAP host in URL-form like \'ldap://ldap.myorg.com/\' or \'ldaps://ldap.myorg.com/\' ';
+$string['auth_ldap_memberattribute'] = 'Specify user member attribute, when users belongs to a group. Usually \'member\'';
+$string['auth_ldap_search_sub'] = 'Put value &lt;&gt; 0 if  you like to search users from subcontexts.';
+$string['auth_ldap_update_userinfo'] = 'LDAP&#50640;&#49436; Mooddle&#47196; &#49324;&#50857;&#51088;&#51032; &#51221;&#48372;&#47484; &#44081;&#49888;&#54620;&#45796;.(&#49457;, &#51060;&#47492;, &#51452;&#49548; &#46321;.)  /auth/ldap/attr_mappings.php&#51012; &#51221;&#48372;&#54868; &#51648;&#46020;&#51228;&#51089;&#51012; &#50948;&#54644; &#48372;&#50500;&#50556; &#54620;&#45796;. ';
+$string['auth_ldap_user_attribute'] = 'The attribute used to name/search users. Usually \'cn\'.';
+$string['auth_ldapdescription'] = 'This method provides authentication against an external LDAP server.
+                                  If the given username and password are valid, Moodle creates a new user 
+                                  entry in its database. This module can read user attributes from LDAP and prefill 
+                                  wanted fields in Moodle.  For following logins only the username and 
+                                  password are checked.';
+$string['auth_ldapextrafields'] = 'These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <B>LDAP fields</B> that you specify here. <P>If you leave these fields blank, then nothing will be transferred from LDAP and Moodle defaults will be used instead.<P>In either case, the user will be able to edit all of these fields after they log in.';
+$string['auth_ldaptitle'] = 'LDAP &#49436;&#48260;&#47484; &#49324;&#50857;&#54620;&#45796;.';
+$string['auth_manualdescription'] = '&#51060; &#48169;&#48277;&#51008; &#49324;&#50857;&#51088;&#46308;&#51032; &#44228;&#51221;&#51012; &#47564;&#46308;&#44592; &#50948;&#54644;  &#44600;&#51012; &#51228;&#44144;&#54620;&#45796;. &#47784;&#46304; &#44228;&#51221;&#51008; &#50868;&#50689;&#51088;&#50640; &#51032;&#54644; &#47564;&#46308;&#50612; &#51256;&#50556; &#54620;&#45796;. 
+';
+$string['auth_manualtitle'] = '&#51649;&#51217;&#47564;&#46304; &#44228;&#51221;&#47564; &#54728;&#46973;&#51060; &#46121;&#45768;&#45796;';
+$string['auth_nntpdescription'] = '&#51060; &#48169;&#48277;&#51008; NNPP &#49436;&#48260;&#47484; &#51060;&#50857;&#54616;&#50668; &#49324;&#50857;&#51088;&#51032; &#51060;&#47492;&#44284; &#48708;&#48128;&#48264;&#54840;&#47484; &#54869;&#51064;&#54633;&#45768;&#45796;.';
+$string['auth_nntphost'] = 'NNPP &#49436;&#48260;&#51032; &#51452;&#49548;. DNS &#51060;&#47492;&#51060; &#50500;&#45772; IP &#49707;&#51088;&#47484; &#49324;&#50857;&#54620;&#45796;. 
+';
+$string['auth_nntpport'] = 'Server port (119 is the most common)';
+$string['auth_nntptitle'] = 'NNPP &#49436;&#48260;&#47484; &#49324;&#50857;&#54620;&#45796;. ';
+$string['auth_nonedescription'] = 'Users can sign in and create valid accounts immediately, with no authentication against an external server and no confirmation via email.  Be careful using this option - think of the security and administration problems this could cause.';
+$string['auth_nonetitle'] = '&#48520; &#51064;&#51613;';
+$string['auth_pop3description'] = 'This method uses a POP3 server to check whether a given username and password is valid.';
+$string['auth_pop3host'] = 'The POP3 server address. Use the IP number, not DNS name.';
+$string['auth_pop3port'] = 'Server port (110 is the most common)';
+$string['auth_pop3title'] = 'POP3 &#49436;&#48260;&#47484; &#49324;&#50857;&#54620;&#45796;. ';
+$string['auth_pop3type'] = '&#49436;&#48260;&#51032; &#54805;&#49885;. &#47564;&#50557; &#45817;&#49888;&#51032; &#49436;&#48260;&#44032; &#51613;&#47732;&#46108; &#48372;&#50504;&#51012; &#49324;&#50857;&#54620;&#45796;&#47732; POP3&#47196; &#51613;&#47749;&#46108; &#44163;&#51012; &#49440;&#53469;&#54616;&#49884;&#50724;. 
+';
+$string['auth_user_create'] = '&#47564;&#46308; &#49688; &#51080;&#45716; &#49324;&#50857;&#51088; ';
+$string['auth_user_creation'] = 'New (anonymous) users can create user accounts on the external authentication source and confirmed via email. If you enable this , remember to also configure module-specific options for user creation.';
+$string['auth_usernameexists'] = 'Selected username already exists. Please choose a new one.';
+$string['authenticationoptions'] = '&#51064;&#51613; &#50741;&#49496;&#46308;';
+$string['authinstructions'] = 'Here you can provide instructions for your users, so they know which username and password they should be using.  The text you enter here will appear on the login page.  If you leave this blank then no instructions will be printed.';
+$string['changepassword'] = '&#48708;&#48128;&#48264;&#54840;&#47484; &#48148;&#45001;&#45768;&#45796;.';
+$string['changepasswordhelp'] = 'Here you can specify a location at which your users can recover or change their username/password if they\'ve forgotten it.  This will be provided to users as a button on the login page and their user page.  if you leave this blank the button will not be printed.';
+$string['chooseauthmethod'] = '&#51077;&#51613;&#46108; &#48169;&#48277;&#51012; &#49440;&#53469;&#54620;&#45796;. ';
+$string['guestloginbutton'] = '&#48169;&#47928;&#44061;&#51032; &#47196;&#44536;&#51064; &#48260;&#53948;';
+$string['instructions'] = '&#49444;&#47749;';
+$string['md5'] = 'MD5 &#54805;&#49885;&#51032; &#50516;&#54840;&#54868;';
+$string['plaintext'] = 'Plain text';
+$string['showguestlogin'] = '&#45817;&#49888;&#51008; &#47196;&#44536;&#51064; &#54168;&#51060;&#51648;&#50640; &#48169;&#47928;&#51088; &#47196;&#44536;&#51064; &#48260;&#53948;&#51012; &#49704;&#44592;&#44144;&#45208; &#48372;&#51060;&#44172; &#54624; &#49688; &#51080;&#49845;&#45768;&#45796;. 
+';
 
 ?>

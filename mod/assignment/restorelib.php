@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This php script contains all the stuff to backup/restore
     //assignment mods
 
@@ -44,12 +44,9 @@
             $assignment->description = backup_todb($info['MOD']['#']['DESCRIPTION']['0']['#']);
             $assignment->format = backup_todb($info['MOD']['#']['FORMAT']['0']['#']);
             $assignment->resubmit = backup_todb($info['MOD']['#']['RESUBMIT']['0']['#']);
-            $assignment->emailteachers = backup_todb($info['MOD']['#']['EMAILTEACHERS']['0']['#']);
             $assignment->type = backup_todb($info['MOD']['#']['TYPE']['0']['#']);
-            $assignment->assignmenttype = backup_todb($info['MOD']['#']['ASSIGNMENTTYPE']['0']['#']);
             $assignment->maxbytes = backup_todb($info['MOD']['#']['MAXBYTES']['0']['#']);
             $assignment->timedue = backup_todb($info['MOD']['#']['TIMEDUE']['0']['#']);
-            $assignment->timeavailable = backup_todb($info['MOD']['#']['TIMEAVAILABLE']['0']['#']);
             $assignment->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
             $assignment->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 
@@ -61,19 +58,11 @@
                 }
             }
 
-            if (empty($assignment->assignmenttype)) {   /// Pre 1.5 assignment
-                if ($assignment->type == 1) {
-                    $assignment->assignmenttype = 'uploadsingle';
-                } else {
-                    $assignment->assignmenttype = 'offline';
-                }
-            }
-
             //The structure is equal to the db, so insert the assignment
             $newid = insert_record ("assignment",$assignment);
 
             //Do some output     
-            echo "<li>".get_string("modulename","assignment")." \"".format_string(stripslashes($assignment->name),true)."\"</li>";
+            echo "<ul><li>".get_string("modulename","assignment")." \"".$assignment->name."\"<br>";
             backup_flush(300);
 
             if ($newid) {
@@ -88,6 +77,10 @@
             } else {
                 $status = false;
             }
+
+            //Finalize ul        
+            echo "</ul>";
+        
         } else {
             $status = false;
         }
@@ -122,8 +115,6 @@
             $submission->timecreated = backup_todb($sub_info['#']['TIMECREATED']['0']['#']);
             $submission->timemodified = backup_todb($sub_info['#']['TIMEMODIFIED']['0']['#']);
             $submission->numfiles = backup_todb($sub_info['#']['NUMFILES']['0']['#']);
-            $submission->data1 = backup_todb($sub_info['#']['DATA1']['0']['#']);
-            $submission->data2 = backup_todb($sub_info['#']['DATA2']['0']['#']);
             $submission->grade = backup_todb($sub_info['#']['GRADE']['0']['#']);
             $submission->comment = backup_todb($sub_info['#']['COMMENT']['0']['#']);
             $submission->teacher = backup_todb($sub_info['#']['TEACHER']['0']['#']);
@@ -149,7 +140,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                    echo "<br>";
                 }
                 backup_flush(300);
             }
@@ -225,47 +216,7 @@
         return $status;
     }
 
-    //This function converts texts in FORMAT_WIKI to FORMAT_MARKDOWN for
-    //some texts in the module
-    function assignment_restore_wiki2markdown ($restore) {
-    
-        global $CFG;
-
-        $status = true;
-
-        //Convert assignment->description
-        if ($records = get_records_sql ("SELECT a.id, a.description, a.format
-                                         FROM {$CFG->prefix}assignment a,
-                                              {$CFG->prefix}backup_ids b
-                                         WHERE a.course = $restore->course_id AND
-                                               a.format = ".FORMAT_WIKI. " AND
-                                               b.backup_code = $restore->backup_unique_code AND
-                                               b.table_name = 'assignment' AND
-                                               b.new_id = a.id")) {
-            foreach ($records as $record) {
-                //Rebuild wiki links
-                $record->description = restore_decode_wiki_content($record->description, $restore);
-                //Convert to Markdown
-                $wtm = new WikiToMarkdown();
-                $record->description = $wtm->convert($record->description, $restore->course_id);
-                $record->format = FORMAT_MARKDOWN;
-                $status = update_record('assignment', addslashes_object($record));
-                //Do some output
-                $i++;
-                if (($i+1) % 1 == 0) {
-                    echo ".";
-                    if (($i+1) % 20 == 0) {
-                        echo "<br />";
-                    }
-                    backup_flush(300);
-                }
-            }
-
-        }
-        return $status;
-    }
-
-    //This function returns a log record with all the necessay transformations
+//This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
     function assignment_restore_logs($restore,$log) {
                     
@@ -345,7 +296,7 @@
             }
             break;
         default:
-            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
             break;
         }
 

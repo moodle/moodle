@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
+      // chat.php - created with Moodle 1.2.1 (2004032500)
 
 
 $string['beep'] = 'zile';

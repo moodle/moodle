@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.4 (2004083100)
+      // lesson.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['actionaftercorrectanswer'] = 'Hændelse efter korrekt svar';
@@ -28,7 +28,7 @@ $string['displayofgrade'] = 'Vis bedømmelse (for elev)';
 $string['endofbranch'] = 'Slut på forgræning';
 $string['endoflesson'] = 'Slut på lektion';
 $string['fileformat'] = 'Filformat';
-$string['firstanswershould'] = 'Første svar skal hoppe til \"korrekte\" side';
+$string['firstanswershould'] = 'Første svar skal hoppe til &quot;korrekte&quot; side';
 $string['gradeis'] = 'Vurdering er $a';
 $string['handlingofretakes'] = 'Handling af gentagelser';
 $string['here'] = 'her';
@@ -47,7 +47,6 @@ $string['multipleanswer'] = 'Flere svar';
 $string['nextpage'] = 'Næste side';
 $string['noanswer'] = 'Ingen svar givet';
 $string['noattemptrecordsfound'] = 'Ingen forsøg indgivet: Ingen vurdering givet.';
-$string['nobranchtablefound'] = 'Forgreningstabel ikke fundet';
 $string['normal'] = 'Normal - følg lektionsplan';
 $string['notdefined'] = 'Ikke defineret';
 $string['notitle'] = 'Ingen titel';

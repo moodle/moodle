@@ -1,35 +1,37 @@
-<form method="post" action="event.php">
 <table class="formtable">
+  <form method="post" action="event.php">
+  <p>
+  <input type="hidden" name="action" value="new" />
+  <input type="hidden" name="timestart" value="<?php echo $form->timestart; ?>" />
+  </p>
   <tr>
-  <td>
-  <?php if(!empty($allowed->user)) { ?><div><input type='radio' name='type' value='user' id='type_user' checked='checked' /><label for='type_user'><?php print_string('typeuser', 'calendar') ?></label></div>
-  <?php } ?>
-  <?php if(!empty($allowed->groups)) { ?><div><input type='radio' name='type' value='group' id='type_group' /><label for='type_group'><?php echo get_string('typegroup', 'calendar').' '.get_string('groupfor'); ?></label>
-    <select name='groupid'>
-      <option value=''></option>
-    <?php foreach($allowed->groups as $group) {?>
-      <option value='<?php echo $group->id; ?>' <?php if($group->id == $groupid) echo 'selected="selected"';?>><?php echo $group->name; ?></option>
-    <?php }?>
-    </select>
-    </div>
-  <?php } ?>
-  <?php if(!empty($allowed->courses)) { ?>
-    <div><input type='radio' name='type' value='course' id='type_course' /><input type="hidden" name="courseid" value="<?php echo($courseid) ?>" /><label for='type_course'><?php print_string('typecourse', 'calendar') ?></label></div>
-  <?php } ?>
-  <?php if(!empty($allowed->site)) { ?>
-    <div><input type='radio' name='type' value='site' id='type_site' /><label for='type_site'><?php print_string('typesite', 'calendar') ?></label></div>
-  <?php } ?>
-  </td>
+    <td style="vertical-align: top; text-align: right;"><?php print_string('eventkind', 'calendar'); ?>:</td>
+    <td>
+    <?php if(!empty($allowed->user)) { ?><p><input type='radio' name='type' value='user' id='type_user' checked='checked' /><label for='type_user'><?php print_string('typeuser', 'calendar') ?></label></p>
+    <?php } ?>
+    <?php if(!empty($allowed->groups)) { ?><p><input type='radio' name='type' value='group' id='type_group' /><label for='type_group'><?php echo get_string('typegroup', 'calendar').' '.get_string('groupfor'); ?></label>
+      <select name='groupid'>
+        <option value=''></option>
+      <?php foreach($allowed->groups as $group) {?>
+        <option value='<?php echo $group->id; ?>' <?php if($group->id == $groupid) echo 'selected="selected"';?>><?php echo $group->name; ?></option>
+      <?php }?>
+      </select>
+    <?php } ?>
+    <?php if(!empty($allowed->courses)) { ?>
+      <p><input type='radio' name='type' value='course' id='type_course' /><input type="hidden" name="courseid" value="<?php echo($courseid) ?>" /><label for='type_course'><?php print_string('typecourse', 'calendar') ?></label></p>
+    <?php } ?>
+    <?php if(!empty($allowed->site)) { ?>
+      <p><input type='radio' name='type' value='site' id='type_site' /><label for='type_site'><?php print_string('typesite', 'calendar') ?></label></p>
+    <?php } ?>
+    </td>
   </tr>
   <tr>
-  <td style="text-align: center;">
-    <input type="submit" value=" <?php print_string('ok') ?> " />
-    <input type="button" onclick="document.location.href='view.php?view=upcoming';" value=" <?php print_string('cancel') ?> " />
-  </td>
+    <td>&nbsp;</td>
+    <td>
+      <p><input type="submit" value=" <?php print_string('ok') ?> ">
+      <input type="button" onclick="document.location.href='view.php?view=upcoming';" value=" <?php print_string('cancel') ?> ">
+      </p>
+    </td>
   </tr>
+  </form>
 </table>
-<p>
-<input type="hidden" name="action" value="new" />
-<input type="hidden" name="timestart" value="<?php echo $form->timestart; ?>" />
-</p>
-</form>

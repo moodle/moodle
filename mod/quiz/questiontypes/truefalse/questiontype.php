@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
 /////////////////
 /// TRUEFALSE ///
@@ -122,6 +122,9 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
         } else if ($false->id == $question->response[$nameprefix]) {
            $falsechecked = 'checked="checked"';
         }
+        if ($readonly) {
+            $readonly = ' readonly="readonly" disabled="disabled" ';
+        }
 
         $truecorrect = "";
         $falsecorrect = "";
@@ -134,16 +137,16 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
            }
         }
         $inputname = ' name="'.$nameprefix.'" ';
-        echo "<table align=\"right\" cellpadding=\"5\"><tr><td align=\"right\">$stranswer:&nbsp;&nbsp;</td>";
+        echo "<table align=\"right\" cellpadding=\"5\"><tr><td align=\"right\">$stranswer:&nbsp;&nbsp;";
         echo "<td $truecorrect>";
-        echo "<input $truechecked type=\"radio\" $readonly $inputname value=\"$true->id\" alt=\"".s($true->answer)."\" />$true->answer";
+        echo "<input $truechecked type=\"radio\" $readonly $inputname value=\"$true->id\" />$true->answer";
         echo "</td><td $falsecorrect>";
-        echo "<input $falsechecked type=\"radio\"  $readonly $inputname value=\"$false->id\" alt=\"".s($false->answer)."\" />$false->answer";
-        echo "</td></tr></table><br clear=\"all\" />";// changed from clear=ALL jm
+        echo "<input $falsechecked type=\"radio\"  $readonly $inputname value=\"$false->id\" />$false->answer";
+        echo "</td></tr></table><br clear=\"all\">";// changed from CLEAR=ALL jm
         if ($quiz->feedback && isset($answers[$nameprefix])
                 && $feedback = $answers[$nameprefix]->feedback) {
            quiz_print_comment(
-                    "$feedback");
+                    "<p align=\"right\">$feedback</p>");
         }
     }
 

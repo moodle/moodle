@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // chat.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // chat.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['beep'] = 'ビープ';
@@ -9,8 +9,8 @@ $string['chatreport'] = 'チャットセッション';
 $string['chattime'] = '次回のチャットタイム';
 $string['configmethod'] = '通常のチャットメソッドでは、クライアントは定期的にサーバにアクセスして内容を更新します。このメソッドは設定を必要とせず、どこでも使うことができますが、チャット参加者が多くなればサーバに対する多大な負担が生じます。サーバデーモンを使用する場合は、Unixのシェルアクセスが必要ですが、軽快なチャット環境を提供することができます。';
 $string['configoldping'] = 'ユーザからの応答が無くなってから、どれくらいの時間で退室したと見なしますか?';
-$string['configrefreshroom'] = 'どのくらいのタイミング ( 秒数 ) でチャットルームをリフレッシュしますか?この通知を小さくすればチャットルームはレスポンスが良いように見えますが、多くの人がチャットをする場合、サーバにかかる負担が大きくなります。';
-$string['configrefreshuserlist'] = 'どのくらいのタイミング ( 秒数 ) でユーザリストをリフレッシュしますか?';
+$string['configrefreshroom'] = 'どのくらいのタイミング(秒数)でチャットルームをリフレッシュしますか?この通知を小さくすればチャットルームはレスポンスが良いように見えますが、多くの人がチャットをする場合、サーバにかかる負担が大きくなります。';
+$string['configrefreshuserlist'] = 'どのくらいのタイミング(秒数)でユーザリストをリフレッシュしますか?';
 $string['configserverhost'] = 'サーバデーモンが稼動しているホスト';
 $string['configserverip'] = '上記ホスト名に関するIPアドレス';
 $string['configservermax'] = '最大クライアント数';
@@ -50,6 +50,9 @@ $string['seesession'] = 'このセッションを見る';
 $string['sessions'] = 'チャットセッション';
 $string['strftimemessage'] = '%%H:%%M';
 $string['studentseereports'] = '全ての人が過去のセッションを見ることができる';
+$string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 $string['viewreport'] = '過去のチャットセッションを表示';
 
 ?>

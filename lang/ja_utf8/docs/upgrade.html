@@ -1,13 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Moodle Docs: Upgrading</title>
 	<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 </head>
 
-<body>
+<body bgcolor="#FFFFFF">
 <h1>Moodleのアップグレード</h1>
 
 <blockquote>
@@ -24,11 +21,11 @@
     </blockquote>
 <p><strong>2. データディレクトリ</strong></p>
     <blockquote> 
-<p>アップロードしたコンテンツ ( コース資料や学生の課題 ) が入っていますので、このディレクトリのバックアップは非常に重要です。アップグレードにより、時々データディレクトリ内のディレクトリが、リネームされたり移動される場合があります。</p>
+<p>アップロードしたコンテンツ(コース資料や学生の課題)が入っていますので、このディレクトリのバックアップは非常に重要です。アップグレードにより、時々データディレクトリ内のディレクトリが、リネームされたり移動される場合があります。</p>
     </blockquote>
     <p><strong>3. データベース</strong></p>
     <blockquote> 
-<p>ほとんどの場合Moodleのアップグレードでは、フィールドの追加または変さらによりデータベーステーブルの更新が行われます。それぞれのデータベースシステムでは異なる方法でバックアップを行います。MySQLデータベースでバックアップを取る1つの方法は単一のSQLファイルに「dump」することです。 次の例はUnixコマンドで&quot;moodle&quot;という名称のデータベースをdumpしています:</p>
+<p>ほとんどの場合Moodleのアップグレードでは、フィールドの追加または変更によりデータベーステーブルの更新が行われます。それぞれのデータベースシステムでは異なる方法でバックアップを行います。MySQLデータベースでバックアップを取る1つの方法は単一のSQLファイルに「dump」することです。 次の例はUnixコマンドで&quot;moodle&quot;という名称のデータベースをdumpしています:</p>
       <blockquote>
         <p><font face="Courier New, Courier, mono">mysqldump moodle &gt; moodle-backup-2002-10-26.sql</font></p>
       </blockquote>
@@ -60,7 +57,7 @@
         <p><font face="Courier New, Courier, mono">cvs update -dP</font></p>
       </blockquote>
       <p>新しいディレクトリを作成する必要がある場合は、&quot;d&quot;パラメータを、空のディレクトリを除く場合は、&quot;P&quot;パラメータを使用してください。</p>
-      <p>もし、あなたがMoodleのファイルを編集しているのでしたら、起こりうるコンフリクト ( 衝突 ) に関するメッセージを良く見ておいてください。あなたがカスタマイズしたテーマや、標準的ではないプラグインは変更されません。</p>
+      <p>もし、あなたがMoodleのファイルを編集しているのでしたら、起こりうるコンフリクト(衝突)に関するメッセージを良く見ておいてください。あなたがカスタマイズしたテーマや、標準的ではないプラグインは変更されません。</p>
     </blockquote>
     <p>&nbsp;</p>
   </blockquote>
@@ -72,10 +69,10 @@
       <p><font face="Courier New, Courier, mono">http://example.com/moodle/admin</font></p>
     </blockquote>
     <p>adminでログインしているかどうかは関係ありません。</p>
-    <p>Moodleは新バージョンを検出して、必要なデータベースまたはファイルシステムのアップグレードを行います。もし、アップグレードが正常に行われない場合 ( 非常に稀です ) は、何をする必要があるのか知らせてくれるメッセージが表示されます。</p>
+    <p>Moodleは新バージョンを検出して、必要なデータベースまたはファイルシステムのアップグレードを行います。もし、アップグレードが正常に行われない場合(非常に稀)は、何をする必要があるのか知らせてくれるメッセージが表示されます。</p>
   </blockquote>
   <p>&nbsp; </p>
-  <p>全てが正常 ( エラー無し ) に終了した場合、新しいMoodleを使うことができます。新しい機能をお楽しみください!</p>
+  <p>全てが正常(エラー無しに)に終了した場合、新しいMoodleを使うことができます。新しい機能をお楽しみください!</p>
   <p>もし、アップグレードに問題がある場合は、<a target=_top href="http://moodle.com/">moodle.com</a>の<a target=_top href="http://moodle.com/mod/forum/view.php?id=28">Installation Support Forum</a>に投稿してください。</p>
 </blockquote>
 <p>&nbsp;</p>

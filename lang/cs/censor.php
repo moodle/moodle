@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // censor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // censor.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['filtername'] = 'Slovní cenzura';

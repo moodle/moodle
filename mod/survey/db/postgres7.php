@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
 function survey_upgrade($oldversion) {
 // This function does anything necessary to upgrade
@@ -24,26 +24,6 @@ function survey_upgrade($oldversion) {
         modify_database("", "INSERT INTO prefix_log_display VALUES ('survey', 'update', 'survey', 'name');");
     }
 
-    if ($oldversion < 2004111200) { 
-        execute_sql("DROP INDEX {$CFG->prefix}survey_course_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}survey_analysis_survey_idx;",false); 
-        execute_sql("DROP INDEX {$CFG->prefix}survey_analysis_userid_idx;",false); 
-        execute_sql("DROP INDEX {$CFG->prefix}survey_answers_userid_idx;",false);
-        execute_sql("DROP INDEX {$CFG->prefix}survey_answers_survey_idx;",false); 
-        execute_sql("DROP INDEX {$CFG->prefix}survey_answers_question_idx;",false);
-
-        modify_database('','CREATE INDEX prefix_survey_course_idx ON prefix_survey (course);');
-        modify_database('','CREATE INDEX prefix_survey_analysis_survey_idx ON prefix_survey_analysis (survey);');
-        modify_database('','CREATE INDEX prefix_survey_analysis_userid_idx ON prefix_survey_analysis (userid);');
-        modify_database('','CREATE INDEX prefix_survey_answers_userid_idx ON prefix_survey_answers (userid);');
-        modify_database('','CREATE INDEX prefix_survey_answers_survey_idx ON prefix_survey_answers (survey);');
-        modify_database('','CREATE INDEX prefix_survey_answers_question_idx ON prefix_survey_answers (question);');
-    }
-
-    if ($oldversion < 2005031600) {
-        execute_sql('SELECT setval(\''.$CFG->prefix.'survey_id_seq\', (select max(id) from '.$CFG->prefix.'survey))');
-        execute_sql('SELECT setval(\''.$CFG->prefix.'survey_questions_id_seq\', (select max(id) from '.$CFG->prefix.'survey_questions))');
-    }
     return true;
 }
 

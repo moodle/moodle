@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
 $DIALOGUE_DAYS = array (0 => 0, 7 => 7, 14 => 14, 30 => 30, 150 => 150, 365 => 365 );
 
@@ -85,16 +85,16 @@ function dialogue_cron () {
                 get_string("newentry", "dialogue");
             $posttext  = "$course->shortname -> $strdialogues -> $dialogue->name\n";
             $posttext .= "---------------------------------------------------------------------\n";
-            $posttext .= get_string("dialoguemail", "dialogue", $dialogueinfo)." \n";
+            $posttext .= get_string("dialoguemail", "dialogue", $dialogueinfo);
             $posttext .= "---------------------------------------------------------------------\n";
             if ($userto->mailformat == 1) {  // HTML
                 $posthtml = "<p><font face=\"sans-serif\">".
                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
                 "<a href=\"$CFG->wwwroot/mod/dialogue/index.php?id=$course->id\">dialogues</a> ->".
                 "<a href=\"$CFG->wwwroot/mod/dialogue/view.php?id=$cm->id\">$dialogue->name</a></font></p>";
-                $posthtml .= "<hr /><font face=\"sans-serif\">";
+                $posthtml .= "<hr><font face=\"sans-serif\">";
                 $posthtml .= "<p>".get_string("dialoguemailhtml", "dialogue", $dialogueinfo)."</p>";
-                $posthtml .= "</font><hr />";
+                $posthtml .= "</font><hr>";
             } else {
               $posthtml = "";
             }
@@ -161,15 +161,19 @@ function dialogue_print_recent_activity($course, $isteacher, $timestart) {
         }
         // if we got some "live" ones then output them
         if ($addentrycontent) {
-            print_headline(get_string('newdialogueentries', 'dialogue').':');
+            $strftimerecent = get_string("strftimerecent");
+            print_headline(get_string("newdialogueentries", "dialogue").":");
             foreach ($logs as $log) {
                 //Create a temp valid module structure (only need courseid, moduleid)
                 $tempmod->course = $course->id;
                 $tempmod->id = $log->dialogueid;
                 //Obtain the visible property from the instance
                 if (instance_is_visible("dialogue",$tempmod)) {
-                    print_recent_activity_note($log->time, $log, $isteacher, $log->name,
-                                               $CFG->wwwroot.'/mod/dialogue/'.str_replace('&', '&amp;', $log->url));
+                    $date = userdate($log->time, $strftimerecent);
+                    echo '<p><font size="1">'.$date.' - '.fullname($log).'<br />';
+                    echo "\"<a href=\"$CFG->wwwroot/mod/dialogue/$log->url\">";
+                    echo "$log->name";
+                    echo "</a>\"</font></p>";
                 }
             }
         }
@@ -184,28 +188,66 @@ function dialogue_print_recent_activity($course, $isteacher, $timestart) {
             $tempmod->course = $course->id;
             $tempmod->id = $log->dialogueid;
             //Obtain the visible property from the instance
-            if (instance_is_visible('dialogue',$tempmod)) {
+            if (instance_is_visible("dialogue",$tempmod)) {
                 $opencontent = true;
                 break;
             }
         }
-        // if we got some 'live' ones then output them
+        // if we got some "live" ones then output them
         if ($opencontent) {
-            print_headline(get_string('opendialogueentries', 'dialogue').':');
+            $strftimerecent = get_string("strftimerecent");
+            print_headline(get_string("opendialogueentries", "dialogue").":");
             foreach ($logs as $log) {
                 //Create a temp valid module structure (only need courseid, moduleid)
                 $tempmod->course = $course->id;
                 $tempmod->id = $log->dialogueid;
                 //Obtain the visible property from the instance
-                if (instance_is_visible('dialogue',$tempmod)) {
-                    print_recent_activity_note($log->time, $log, $isteacher, $log->name,
-                                               $CFG->wwwroot.'/mod/dialogue/'.str_replace('&', '&amp;', $log->url));
+                if (instance_is_visible("dialogue",$tempmod)) {
+                    $date = userdate($log->time, $strftimerecent);
+                    echo '<p><font size="1">'.$date.' - '.fullname($log).'<br />';
+                    echo "\"<a href=\"$CFG->wwwroot/mod/dialogue/$log->url\">";
+                    echo "$log->name";
+                    echo "</a>\"</font></p>";
                 }
             }
         }
     }
 
-    return $addentrycontent or $opencontent;
+    // have a look for closed conversations
+    $closedcontent = false;
+    if ($logs = dialogue_get_closed_logs($course, $timestart)) {
+        // got some, see if any belong to a visible module
+        foreach ($logs as $log) {
+            // Create a temp valid module structure (only need courseid, moduleid)
+            $tempmod->course = $course->id;
+            $tempmod->id = $log->dialogueid;
+            //Obtain the visible property from the instance
+            if (instance_is_visible("dialogue",$tempmod)) {
+                $closedcontent = true;
+                break;
+            }
+        }
+        // if we got some "live" ones then output them
+        if ($closedcontent) {
+            $strftimerecent = get_string("strftimerecent");
+            print_headline(get_string("modulenameplural", "dialogue").":");
+            foreach ($logs as $log) {
+                //Create a temp valid module structure (only need courseid, moduleid)
+                $tempmod->course = $course->id;
+                $tempmod->id = $log->dialogueid;
+                //Obtain the visible property from the instance
+                if (instance_is_visible("dialogue",$tempmod)) {
+                    $date = userdate($log->time, $strftimerecent);
+                    echo "<p><font size=1>$date - ".get_string("namehascloseddialogue", "dialogue",
+                        fullname($log))."<br />";
+                    echo "\"<a href=\"$CFG->wwwroot/mod/dialogue/$log->url\">";
+                    echo "$log->name";
+                    echo "</a>\"</font></p>";
+                }
+            }
+        }
+    }
+    return $addentrycontent or $closedcontent;
 }
 
 
@@ -391,7 +433,7 @@ function dialogue_get_open_conversations($course) {
     if (empty($USER->id)) {
         return false;
     }
-    if ($conversations = get_records_sql("SELECT d.name AS dialoguename, c.id, c.dialogueid, c.timemodified, c.lastid
+    if ($conversations = get_records_sql("SELECT d.name dialoguename, c.id, c.dialogueid, c.timemodified, c.lastid
                             FROM {$CFG->prefix}dialogue d, {$CFG->prefix}dialogue_conversations c
                             WHERE d.course = $course->id
                                 AND c.dialogueid = d.id

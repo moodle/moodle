@@ -1,16 +1,7 @@
-<?php // $Id$
+<?PHP // $Id$
 // Logs the user out and sends them to the home page
 
     require_once("../config.php");
-
-    if (isset($USER) and isset($USER->id)) {
-        add_to_log(SITEID, "user", "logout", "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);
-
-        if ($USER->auth == 'cas' && !empty($CFG->cas_enabled)) {
-            require($CFG->dirroot.'/auth/cas/logout.php');
-        }
-    }
-
 
     if (ini_get_bool("register_globals") and check_php_version("4.3.0")) {
         // This method is just to try to avoid silly warnings from PHP 4.3.0

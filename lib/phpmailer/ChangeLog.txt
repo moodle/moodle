@@ -1,22 +1,5 @@
 ChangeLog
 
-Version 1.72 (Wed, May 25 2004)
-* Added Dutch, Swedish, Czech, Norwegian, and Turkish translations.
-* Received: Removed this method because spam filter programs like 
-SpamAssassin reject this header.
-* Fixed error count bug.
-* SetLanguage default is now "language/".
-* Fixed magic_quotes_runtime bug.
-
-Version 1.71 (Tue, Jul 28 2003)
-* Made several speed enhancements
-* Added German and Italian translation files
-* Fixed HELO/AUTH bugs on keep-alive connects
-* Now provides an error message if language file does not load
-* Fixed attachment EOL bug
-* Updated some unclear documentation
-* Added additional tests and improved others
-
 Version 1.70 (Mon, Jun 20 2003)
 * Added SMTP keep-alive support
 * Added IsError method for error detection

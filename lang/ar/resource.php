@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // resource.php - created with Moodle 1.2 development (2004012800)
 
 
 $string['addresource'] = 'ÃÖİ ãæÑÏ';
@@ -19,21 +19,16 @@ $string['configpopuptoolbar'] = 'åá íÌÈ Úáì ÇáäæÇİĞ ÇáÌÏíÏÉ ÇÙåÇÑ ÔÑíØ ÇáÇÏæÇÊ Ç
 $string['configpopupwidth'] = 'ãÇ åæ ÇáÚÑÖ ÇáÇİÊÑÇÖí ááäæÇİĞ ÇáÌÏíÏÉ¿';
 $string['configwebsearch'] = 'ÚäÏ ÅÖÇİÉ URL Úáì åíÆÉ ÕİÍÉ Ãæ ÑÇÈØ¡ ÓíŞÏã åĞÇ ÇáãæŞÚ ßãÓÇÚÏÉ ÇáãÓÊÎÏãíä ÇËäÇÁ ŞíÇãåã ÈÇáÈÍË Úä ÇáÑæÇÈØ ÇáÊÔÚÈíÉ ÇáÊí íÑíÏæäåÇ.';
 $string['directlink'] = 'ÑÈØ ãÈÇÔÑ áåĞÇ Çáãáİ';
-$string['directoryinfo'] = 'ÓíÊã ÅÖåÇÑ ßá ãáİ ÇáãÌáÏ ÇáãÎÊÇÑÉ';
-$string['display'] = 'äÇİĞÉ';
 $string['editingaresource'] = 'ÊÍÑíÑ ãæÑÏ';
-$string['encryptedcode'] = 'ÑãÒ ãÔİÑ';
 $string['example'] = 'ãËÇá';
+$string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
 $string['exampleurl'] = 'http://www.example.com/somedirectory/somefile.html';
 $string['fetchclienterror'] = 'Êã ÇßÊÔÇİ ÎØÇÁ ãä Úãíá ÇáæíÈ ÃËäÇÁ ãÍÇæáÉ ÌáÈ ÇáÕİÍÉ (ãä ÇáãÍÊãá ÎØÇÁ İí URL)';
 $string['fetcherror'] = 'Êã ÇßÊÔÇİ ÎØÇÁ ÃËäÇÁ ãÍÇæáÉ ÌáÈ ÇáÕİÍÉ.';
-$string['fetchservererror'] = 'Êã ÇßÊÔÇİ ÎØÇÁ İí ÇáÎÇÏã ÇáÈÚíÏ ÇËäÇÁ ãÍÇæáÉ ÌáÈ ÇáÕİÍÉ (ãä ÇáãÍÊãá ÎØÇÁ ÈÑãÌí)';
+$string['fetchservererror'] = 'Êã ÇßÊÔÇİ ÎØÇÁ İí ÇáÎÇÏã ÇáÈÚíÏ ÇËäÇÁ ãÍÇæáÉ ÌáÈ ÇáÕİÍÉ (ãä ÇáãÍÊãá ÎØÇÁ ÈÑãÌí) <p/>';
 $string['filename'] = 'ÇÓã Çáãáİ';
-$string['filtername'] = 'ÑÈØ Âáí áÃÓãÇÁ ÇáãæÇÑÏ';
-$string['frameifpossible'] = 'ÖÚ ÇáãæÑÏ İí ÇáÇØÇÑ áÌÚá ÑæÇÈØ ÇáÊäŞá İí ÇáãæŞÚ ÙÇåÑÉ';
 $string['fulltext'] = 'ÇáäÕ ÈÇáßÇãá';
 $string['htmlfragment'] = 'ÔØÑ ãä HTML';
-$string['maindirectory'] = 'ãÌáÏ ÇáãáİÇÊ ÇáÑÆíÓíÉ';
 $string['modulename'] = 'ãæÑÏ';
 $string['modulenameplural'] = 'ãæÇÑÏ';
 $string['neverseen'] = 'ÛíÑ ãÑÆí ãØáŞÇ';
@@ -52,26 +47,16 @@ $string['newwindowopen'] = 'ÃÚÑÖ åĞÇ ÇáãæÑÏ İí äÇİĞå ÌÏíÏå';
 $string['note'] = 'ãáÍæÙÉ';
 $string['notefile'] = 'áÊÍãíá ÇáãáİÇÊ Åáì ÇáÍáŞÉ ÇáÏÑÇÓíÉ (æĞáß áÊÙåÑ İí ÇáŞÇÆãÉ) ÇÓÊÎÏã <a href=\"$a\">File Manager</a>.';
 $string['notypechosen'] = 'áÇÈÏ ãä ÇÎÊíÇÑ äæÚ.  ÇÓÊÎÏã ÒÑ back ááÑÌæÚ æÅÚÇÏÉ ÇáãÍÇæáÉ.';
-$string['pagedisplay'] = 'ÇÚÑÖ åĞÇ ÇáãæÑÏ İí ÇáäÇİĞå ÇáÍÇáíÉ';
-$string['pagewindow'] = 'äİÓ ÇáäÇİĞå';
 $string['popupresource'] = 'áÇ ÈÏ Çä íÙåÑ åĞÇ ÇáãæÑÏ İí äÇİĞå ãÓÊŞáå';
 $string['popupresourcelink'] = 'áæ áã ÊÚãá¡ ÃäŞÑ åäÇÁ: $a';
 $string['resourcetype'] = 'äæÚ ÇáãæÑÏ';
-$string['resourcetype1'] = 'ãÑÌÚ';
-$string['resourcetype2'] = 'ÕİÍÉ ÇäÊÑäÊ';
-$string['resourcetype3'] = 'ÊÍãíá ãáİ';
-$string['resourcetype4'] = 'äÕ';
-$string['resourcetype5'] = 'ÑÇÈØ ÇäÊÑäÊ';
-$string['resourcetype6'] = 'äÕ ÃÊÔ Êí Ãã Åá';
-$string['resourcetype7'] = 'ÈÑäÇãÌ';
-$string['resourcetype8'] = 'äÕ ãÔÇÈÉ áæíßí';
-$string['resourcetype9'] = 'ãÌáÏ';
-$string['resourcetypedirectory'] = 'ÇÚÑÖ ÇáãÌáÏ';
-$string['resourcetypefile'] = 'ÇÑÈØ Èãáİ Ãæ ãæŞÚ';
-$string['resourcetypehtml'] = 'ÃÚÏ ÕİÍÉ æíÈ';
-$string['resourcetypelabel'] = 'ÇÏÑÌ ãáÕŞÉ';
-$string['resourcetypetext'] = 'ÇÚÏ ÕİÍÉ äÕíÉ';
-$string['searchweb'] = 'ÇÈÍË Úä ÕİÍÉ æíÈ';
-$string['variablename'] = 'ÇÓã ÇáãÊÛíÑÇÊ';
+$string['resourcetype1'] = 'ÇáãÑÌÚ';
+$string['resourcetype2'] = 'ÕİÍÉ ÅäÊÑäÊ';
+$string['resourcetype3'] = 'Çáãáİ ÇáĞí Êã ÊÍãíáå';
+$string['resourcetype4'] = 'äÕ ÚÇÏí';
+$string['resourcetype5'] = 'æÕáÉ ÅäÊÑäÊ';
+$string['resourcetype6'] = 'äÕ HTML';
+$string['resourcetype7'] = 'ÇáÈÑäÇãÌ';
+$string['resourcetype8'] = 'äÕ æßí';
 
 ?>

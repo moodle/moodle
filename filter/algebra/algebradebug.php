@@ -61,14 +61,10 @@
 	$output = algebra2tex($algebra);
         $output = refineTeX($output);
       }
-      if (strpos($query,'ShowImage')||strpos($query,'SlashArguments')) {
+      if (strpos($query,'ShowImage')) {
 	$output = algebra2tex($algebra);
         $output = refineTeX($output);
-        if (strpos($query,'ShowImage')) {
-	  tex2image($output, $md5);
-        } else {
-          slasharguments($output, $md5);
-        }
+        tex2image($output, $md5);
       } else {   
         outputText($output);
       }
@@ -94,35 +90,9 @@ function algebra2tex($algebra) {
 
   if ( (PHP_OS == "WINNT") || (PHP_OS == "WIN32") || (PHP_OS == "Windows") ) {
     $algebra = "\"". str_replace('"','\"',$algebra) . "\"";
-    $cmd  = "cd $CFG->dirroot\\$CFG->algebrafilterdirwin & algebra2tex.pl x/2";
-    $test = `$cmd`;
-    if ($test != '\frac{x}{2}') {
-      echo "There is a problem with either Perl or the script algebra2tex.pl<br>";
-      $ecmd = $cmd . " 2>&1";
-      echo `$ecmd` . "<br>\n";
-      echo "The shell command<br>$cmd<br>returned status = $status<br>\n";
-      $commandpath = "$CFG->dirroot\\$CFG->algebrafilterdirwin\\algebra2tex.pl";
-      if (file_exists($commandpath)) {
-	echo "The file permissions of algebra2tex.pl are: " . decoct(fileperms($commandpath)) . "<br>";
-      }
-      die;
-    }
     $cmd  = "cd $CFG->dirroot\\$CFG->algebrafilterdirwin & algebra2tex.pl $algebra";
   } else {      
     $algebra = escapeshellarg($algebra);
-    $cmd  = "cd $CFG->dirroot/$CFG->algebrafilterdir; ./algebra2tex.pl x/2";
-    $test = `$cmd`;
-    if ($test != '\frac{x}{2}') {
-      echo "There is a problem with either Perl or the script algebra2tex.pl<br>";
-      $ecmd = $cmd . " 2>&1";
-      echo `$ecmd` . "<br>\n";
-      echo "The shell command<br>$cmd<br>returned status = $status<br>\n";
-      $commandpath = "$CFG->dirroot/$CFG->algebrafilterdir/algebra2tex.pl";
-      if (file_exists($commandpath)) {
-        echo "The file permissions of algebra2tex.pl are: " . decoct(fileperms($commandpath)) . "<br>";
-      }
-      die;
-    }
     $cmd  = "cd $CFG->dirroot/$CFG->algebrafilterdir; ./algebra2tex.pl $algebra";
   }
   $texexp = `$cmd`;
@@ -197,17 +167,17 @@ function outputText($texexp) {
   echo "</pre></body></html>\n";
 }
 
-function tex2image($texexp, $md5, $return=false) {
+function tex2image($texexp, $md5) {
   global $CFG;
   $error_message1 = "Your system is not configured to run mimeTeX. ";
-  $error_message1 .= "You need to download the appropriate<br /> executable ";
+  $error_message1 .= "You need to download the appropriate<br> executable ";
   $error_message1 .= "from <a href=\"http://moodle.org/download/mimetex/\">";
   $error_message1 .= "http://moodle.org/download/mimetex/</a>, or obtain the ";
-  $error_message1 .= "C source<br /> from <a href=\"http://www.forkosh.com/mimetex.zip\">";
+  $error_message1 .= "C source<br> from <a href=\"http://www.forkosh.com/mimetex.zip\">";
   $error_message1 .= "http://www.forkosh.com/mimetex.zip</a>, compile it and ";
-  $error_message1 .= "put the executable into your<br /> moodle/filter/tex/ directory. ";
-  $error_message1 .= "You also need to edit your moodle/filter/algebra/pix.php file<br />";
-  $error_message1 .= ' by adding the line<br /><pre>       case "' . PHP_OS . "\":\n";
+  $error_message1 .= "put the executable into your<br> moodle/filter/tex/ directory. ";
+  $error_message1 .= "You also need to edit your moodle/filter/algebra/pix.php file<br>";
+  $error_message1 .= ' by adding the line<br><pre>       case "' . PHP_OS . "\":\n";
   $error_message1 .= "           \$cmd = \"\\\\\"\$CFG->dirroot/\$CFG->texfilterdir/";
   $error_message1 .= 'mimetex.' . strtolower(PHP_OS) . "\\\\\" -e \\\\\"\$pathname\\\\\" \". escapeshellarg(\$texexp);";
   $error_message1 .= "</pre>You also need to add this to your algebradebug.php file.";
@@ -254,9 +224,6 @@ function tex2image($texexp, $md5, $return=false) {
        }
        system($cmd, $status);
   }
-  if ($return) {
-           return $image;
-  }
   if ($texexp && file_exists($pathname)) {
            $lastmodified = filemtime($pathname);
            header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
@@ -269,50 +236,32 @@ function tex2image($texexp, $md5, $return=false) {
            readfile("$pathname");
    } else {
            $ecmd = "$cmd 2>&1";
-           echo `$ecmd` . "<br />\n";
-           echo "The shell command<br />$cmd<br />returned status = $status<br />\n";
+           echo `$ecmd` . "<br>\n";
+           echo "The shell command<br>$cmd<br>returned status = $status<br>\n";
            if ($status == 4) {
-             echo "Status corresponds to illegal instruction<br />\n";
+             echo "Status corresponds to illegal instruction<br>\n";
            } else if ($status == 11) {
-             echo "Status corresponds to bus error<br />\n";
+             echo "Status corresponds to bus error<br>\n";
            } else if ($status == 22) {
-             echo "Status corresponds to abnormal termination<br />\n";
+             echo "Status corresponds to abnormal termination<br>\n";
            }
            if (file_exists($commandpath)) {
-              echo "File size of mimetex executable  $commandpath is " . filesize($commandpath) . "<br />";
-              echo "The file permissions are: " . decoct(fileperms($commandpath)) . "<br />";
+              echo "File size of mimetex executable  $commandpath is " . filesize($commandpath) . "<br>";
+              echo "The file permissions are: " . decoct(fileperms($commandpath)) . "<br>";
               if (function_exists("md5_file")) {
-                echo "The md5 checksum of the file is " . md5_file($commandpath) . "<br />";
+                echo "The md5 checksum of the file is " . md5_file($commandpath) . "<br>";
               } else {
                 $handle = fopen($commandpath,"rb");
                 $contents = fread($handle,16384);
                 fclose($handle);
-                echo "The md5 checksum of the first 16384 bytes is " . md5($contents) . "<br />";
+                echo "The md5 checksum of the first 16384 bytes is " . md5($contents) . "<br>";
               }
            } else {
-              echo "mimetex executable $commandpath not found!<br />";
+              echo "mimetex executable $commandpath not found!<br>";
            }
            echo "Image not found!";
    }
 }
-
-function slasharguments($texexp, $md5) {
-  global $CFG;
-  $admin = $CFG->wwwroot . '/' . $CFG->admin . '/config.php';
-  $image = tex2image($texexp,$md5,true);
-  echo "<p>If the following image displays correctly, set your ";
-  echo "<a href=\"$admin\" target=\"_blank\">Administration->Configuration->Variables</a> ";
-  echo "setting for slasharguments to file.php/pic.jpg: ";
-  echo "<img src=\"pix.php/$image\" align=\"absmiddle\"></p>\n";
-  echo "<p>Otherwise set it to file.php?file=pic.jpg ";
-  echo "It should display correctly as ";
-  echo "<img src=\"pix.php?file=$image\" align=\"absmiddle\"></p>\n";
-  echo "<p>If neither equation image displays correctly, please seek ";
-  echo "further help at moodle.org at the ";
-  echo "<a href=\"http://moodle.org/mod/forum/view.php?id=752&username=guest\" target=\"_blank\">";
-  echo "Mathematics Tools Forum</a></p>";
-}
-
 ?>
 
 <html>
@@ -323,7 +272,7 @@ function slasharguments($texexp, $md5) {
           <form action="algebradebug.php" method="get"
            target="inlineframe">
             <center>
-             <input type="text" name="algebra" size="50"
+             <input type="text" name="algebra" size=50
                     value="sin(z)/(x^2+y^2)">
             </center>
            <ol>
@@ -335,18 +284,16 @@ function slasharguments($texexp, $md5) {
                A preliminary translation into TeX will appear in the box below.</li>
            <li>Next click on this button <input type="submit" name="TeXStage2" value="Second Stage Tex Translation">.
                A more refined translation into TeX will appear in the box below.</li>
-           <li>Then click on this button <input type="submit" name="ShowImage" value="Show Image">
+           <li>Finally click on this button <input type="submit" name="ShowImage" value="Show Image">
                to show a graphic image of the algebraic expression.</li>
-           <li>Finally check your slash arguments setting
-               <input type="submit" name="SlashArguments" value="Check Slash Arguments"></li>
            </ol>
-          </form> <br /> <br />
+          </form> <br> <br>
        <center>
           <iframe name="inlineframe" align="middle" width="80%" height="200">
           &lt;p&gt;Something is wrong...&lt;/p&gt; 
           </iframe>
-       </center> <br />
-<hr />
+       </center> <br>
+<hr>
 <a name="help">
 <h2>Debugging Help</h2>
 </a>
@@ -387,7 +334,7 @@ edit your moodle/filter/algebra/pix.php file to add
 <br /><?PHP echo "case &quot;" . PHP_OS . "&quot;:" ;?><br ?> to the list of operating systems
 in the switch (PHP_OS) statement. Windows users may have a problem properly
 unzipping mimetex.exe. Make sure that mimetex.exe is is <b>PRECISELY</b>
-433152 bytes in size. If not, download fresh copy from
+329728 bytes in size. If not, download fresh copy from
 <a href="http://moodle.org/download/mimetex/windows/mimetex.exe">
 http://moodle.org/download/mimetex/windows/mimetex.exe</a>. Lastly check
 the execute permissions on your mimetex binary, as outlined in item 2 above.</li>

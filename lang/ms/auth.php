@@ -3,7 +3,7 @@
 
 
 $string['auth_dbdescription'] = 'Cara ini menggunakan pangkalan data luaran untuk memeriksa samada nama pengguna dan kata laluan yang dimasukkan adalah sah. Jika akaun adalah akaun baru, maka maklumat dari jadual-jadual yang lain juga boleh dimasukkan ke Moodle.';
-$string['auth_dbextrafields'] = 'Ruang-ruang ini adalah pilihan. Anda dapat memilih untuk memasukkan lebih dulu beberapa ruang pengguna dari Moodle dengan maklumat dari <b>ruangan pangkalan data luaran</b> yang anda tentukan disini. <br />Jika anda kosongkan, maka maklumat asal yang akan digunakan.<br />Walau bagaimana pun, pengguna akan dapat mengubah kesemua ruangan ini setelah mereka daftar masuk.';
+$string['auth_dbextrafields'] = 'Ruang-ruang ini adalah pilihan. Anda dapat memilih untuk memasukkan lebih dulu beberapa ruang pengguna dari Moodle dengan maklumat dari <B>ruangan pangkalan data luaran</B> yang anda tentukan disini. <P>Jika anda kosongkan, maka maklumat asal yang akan digunakan.<P>Walau bagaimana pun, pengguna akan dapat mengubah kesemua ruangan ini setelah mereka daftar masuk.';
 $string['auth_dbfieldpass'] = 'Nama dari ruangan yang berisi kata laluan';
 $string['auth_dbfielduser'] = 'Nama dari ruangan yang berisi nama pengguna';
 $string['auth_dbhost'] = 'Komputer yang menyimpan pelayan pangkalan data.';
@@ -12,7 +12,7 @@ $string['auth_dbpass'] = 'Kata laluan sama dengan nama pengguna';
 $string['auth_dbpasstype'] = 'Terangkan format kata laluan itu disimpan. Enkripsi MD5 sangat berguna untuk tujuan penyambungan dengan aplikasi internet yang lain seperti PostNuke';
 $string['auth_dbtable'] = 'Nama jadual pada pangkalan data';
 $string['auth_dbtitle'] = 'Gunakan pangkalan data luaran';
-$string['auth_dbtype'] = 'Jenis pangkalan data (Lihat <a href=\"../lib/adodb/readme.htm#drivers\">Dokumentasi ADOdb</a> untuk keterangannya)';
+$string['auth_dbtype'] = 'Jenis pangkalan data (Lihat <A HREF=../lib/adodb/readme.htm#drivers>Dokumentasi ADOdb</A> untuk keterangannya)';
 $string['auth_dbuser'] = 'Nama pengguna yang mempunyai akses baca untuk pangkalan data';
 $string['auth_emaildescription'] = 'Pengesahan melalui email adalah cara pendaftaran yang biasa. Apabila pengguna mendaftar, memilih nama pengguna baru dan kata laluan mereka sendiri, sebuah email pengesahan akan dikirim ke alamat email pengguna. Email ini megandungi pautan yang selamat untuk ke halaman dimana pengguna dapat mengesahkan keanggotaannya. Daftar masuk yang berikutnya hanya memeriksa nama pengguna dan password yang tersimpan pada pangkalan data Moodle.';
 $string['auth_emailtitle'] = 'Pendaftaran berdasarkan Email';
@@ -35,7 +35,7 @@ $string['auth_ldap_version'] = 'Versi protokol LDAP pada server ini.';
 $string['auth_ldapdescription'] = 'Cara ini melakukan pengesahan melalui pelayan LDAP luaran.
 Jika nama pengguna dan password kata laluan adalah sah, Moodle akan mencipta pengguna baru 
 dalam pangkalan datanyaa. Modul ini dapat membaca atribut pengguna dari LDAP dan memasukkan terlebih dahulu dalam ruangan yang diperlukan oleh Moodle.  Untuk daftar masuk selanjutnya hanya nama pengguna dan kata laluan yang diperiksa.';
-$string['auth_ldapextrafields'] = 'Ruang-ruang ini adalah pilihan. Anda dapat memilih untuk memasukkan terlebih dahulu beberapa ruang pengguna dari Moodle dengan maklumat dari <b>ruangan LDAP</b> yang anda tentukan disini. <br />Jika anda kosongkan, maka tiada maklumat yang akan digunakan.<br />Walau bagaimana pun, pengguna akan dapat mengubah kesemua ruangan ini setelah mereka daftar masuk.';
+$string['auth_ldapextrafields'] = 'Ruang-ruang ini adalah pilihan. Anda dapat memilih untuk memasukkan terlebih dahulu beberapa ruang pengguna dari Moodle dengan maklumat dari <B>ruangan LDAP</B> yang anda tentukan disini. <P>Jika anda kosongkan, maka tiada maklumat yang akan digunakan.<P>Walau bagaimana pun, pengguna akan dapat mengubah kesemua ruangan ini setelah mereka daftar masuk.';
 $string['auth_ldaptitle'] = 'Gunakan pelayan LDAP';
 $string['auth_manualdescription'] = 'Cara ini tidak membenarkan pengguna mandaftarkan diri mereka sendiri. Semua akaun mestilah dicipta oleh penyelenggara.';
 $string['auth_manualtitle'] = 'Akaun manual sahaja';

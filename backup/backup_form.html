@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This page prints the backup form to select everything
 
     //Check login   
@@ -6,13 +6,7 @@
 
     if (!empty($course->id)) {
         if (!isteacheredit($course->id)) {
-            if (empty($to)) {
-                error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
-            } else {
-                if (!isteacheredit($to)) {
-                    error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
-                }
-            }
+            error("You need to be a teacher or admin user to use this page.", "$CFG->wwwroot/login/index.php");
         }
     } else {
         if (!isadmin()) {
@@ -57,10 +51,6 @@
     }
 
     //Check other parameters
-    if (!isset($backup_metacourse)) {
-        $backup_metacourse = 1;
-    }
-
     if (!isset($backup_users)) {
         $backup_users = 1;
     }
@@ -77,18 +67,14 @@
         $backup_course_files = 1;
     }
 
-    if (!isset($backup_messages)) {
-        $backup_messages = 1;
-    }
-
     if ($count == 0) {
         notice("No backupable modules are installed!");
     }
 
 ?>
 
-<form name="form" method="post" action="backup.php">
-<table cellpadding="5">
+<form name="form" method="post" action="<?php echo $ME ?>">
+<table cellpadding=5>
 <?php
     if ($allmods = get_records("modules") ) {
         foreach ($allmods as $mod) {
@@ -99,121 +85,71 @@
             if (isset($$var) && $$var) {
                 //Print the full tr
                 echo "<tr>";
-                echo "<td align=\"right\"><b>";
+                echo "<td align=\"right\"><P><B>";
                 echo get_string("include")." ". get_string("modulenameplural",$modname).":";
-                echo "</b></td><td>";
+                echo "</td><td>";
                 $backup_options[0] = get_string("no"); 
                 $backup_options[1] = get_string("yes");
                 $var = "backup_".$modname;
                 choose_from_menu($backup_options, $var, $$var, "");
+                $backup_user_options[0] = get_string("withoutuserdata"); 
+                $backup_user_options[1] = get_string("withuserdata");
                 $var = "backup_user_info_".$modname;
-                if (empty($to)) {
-                    $backup_user_options[0] = get_string("withoutuserdata"); 
-                    $backup_user_options[1] = get_string("withuserdata");
-                    choose_from_menu($backup_user_options, $var, $$var, "");
-                }
-                else {
-                    echo '<input type="hidden" name="'.$var.'" value="0" />';
-                }
-                echo "</td></tr>"; 
+                choose_from_menu($backup_user_options, $var, $$var, "");
+                echo "</td></tr>";
             }
         }
         //Line
-        echo "<tr><td colspan=\"2\"><hr /></td></tr>";
-        
-        if (empty($to)) {
-            //Now print the Metacourse tr
-            echo "<tr>";
-            echo "<td align=\"right\"><b>";
-            echo get_string ("metacourse").":";
-            echo "</b></td><td>";
-            $meta_options[0] = get_string("no"); 
-            $meta_options[1] = get_string("yes"); 
-            choose_from_menu($meta_options, "backup_metacourse", $backup_metacourse, "");
-            echo "</td></tr>";
-        }
-        else {
-            echo '<input type="hidden" name="backup_metacourse" value="0" />';
-        }
+        echo "<tr><td colspan=\"2\"><hr noshade size=\"1\"></td></tr>";
 
-        if (empty($to)) {
-            //Now print the Users tr
-            echo "<tr>";
-            echo "<td align=\"right\"><b>";
-            echo get_string("users").":";
-            echo "</b></td><td>";
-            $user_options[0] = get_string("all");
-            $user_options[1] = get_string("course");
-            $user_options[2] = get_string("none");
-            choose_from_menu($user_options, "backup_users", $backup_users, "");
-            echo "</td></tr>";
-        }
-        else {
-            echo '<input type="hidden" name="backup_users" value="0" />';
-        }
-        
-        if (empty($to)) {
-            //Now print the Logs tr
-            echo "<tr>";
-            echo "<td align=\"right\"><b>";
-            echo get_string("logs").":";                                               
-            echo "</b></td><td>";
-            $log_options[0] = get_string("no");
-            $log_options[1] = get_string("yes"); 
-            choose_from_menu($log_options, "backup_logs", $backup_logs, ""); 
-            echo "</td></tr>";
-        }
-        else {
-            echo '<input type="hidden" name="backup_logs" value="0" />';
-        }
-	    
-        if (empty($to)) {
-            //Now print the User Files tr
-            echo "<tr>";
-            echo "<td align=\"right\"><b>";
-            echo get_string ("userfiles").":";
-            echo "</b></td><td>";
-            $user_file_options[0] = get_string("no"); 
-            $user_file_options[1] = get_string("yes"); 
-            choose_from_menu($user_file_options, "backup_user_files", $backup_user_files, "");
-            echo "</td></tr>";
-        }
-        else {
-            echo '<input type="hidden" name="backup_user_files" value="0" />';
-        }
+        //Now print the Users tr
+        echo "<tr>";
+        echo "<td align=\"right\"><P><B>";
+        echo get_string("users").":";
+        echo "</td><td>";
+        $user_options[0] = get_string("all");
+        $user_options[1] = get_string("course");
+        $user_options[2] = get_string("none");
+        choose_from_menu($user_options, "backup_users", $backup_users, "");
+        echo "</td></tr>";
+
+        //Now print the Logs tr
+        echo "<tr>";
+        echo "<td align=\"right\"><P><B>";
+        echo get_string("logs").":";                                               
+        echo "</td><td>";
+        $log_options[0] = get_string("no");
+        $log_options[1] = get_string("yes"); 
+        choose_from_menu($log_options, "backup_logs", $backup_logs, ""); 
+        echo "</td></tr>";
+
+        //Now print the User Files tr
+        echo "<tr>";
+        echo "<td align=\"right\"><P><B>";
+        echo get_string ("userfiles").":";
+        echo "</td><td>";
+        $user_file_options[0] = get_string("no"); 
+        $user_file_options[1] = get_string("yes"); 
+        choose_from_menu($user_file_options, "backup_user_files", $backup_user_files, "");
+        echo "</td></tr>";
+
         //Now print the Course Files tr
         echo "<tr>";
-        echo "<td align=\"right\"><b>";
+        echo "<td align=\"right\"><P><B>";
         echo get_string ("coursefiles").":";
-        echo "</b></td><td>";
+        echo "</td><td>";
         $course_file_options[0] = get_string("no");
         $course_file_options[1] = get_string("yes");
         choose_from_menu($course_file_options, "backup_course_files", $backup_course_files, "");
         echo "</td></tr>";
-
-        if (empty($to) && $course->id == SITEID) {
-            //If we are in a SITEID backup print the Messages tr
-            echo "<tr>";
-            echo "<td align=\"right\"><b>";
-            echo get_string ('messages','message').":";
-            echo "</b></td><td>";
-            $mess_options[0] = get_string("no"); 
-            $mess_options[1] = get_string("yes"); 
-            choose_from_menu($mess_options, "backup_messages", $backup_messages, "");
-            echo "</td></tr>";
-        }
-        else {
-            echo '<input type="hidden" name="backup_messages" value="0" />';
-        }
     }
 ?>
 </table>
-<br />
-<center>
-<input type="hidden" name="id"     value="<?php  p($id) ?>" />
-<input type="hidden" name="to"     value="<?php p($to) ?>" />
-<input type="hidden" name="launch" value="check" />
-<input type="submit" value="<?php  print_string("continue") ?>" />
-<input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
-</center>
-</form>
+<BR>
+<CENTER>
+<input type="hidden" name=id     value="<?php  p($id) ?>">
+<input type="hidden" name=launch value="check">
+<input type="submit" value="<?php  print_string("continue") ?>">
+<input type="submit" name=cancel value="<?php  print_string("cancel") ?>">
+</CENTER>
+</FORM>

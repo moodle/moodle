@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.4 (2004083100)
+      // calendar.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['calendar'] = 'Kalendarz';
 $string['calendarheading'] = 'Kalendarz $a';
-$string['clickhide'] = 'ukryj';
-$string['clickshow'] = 'poka¿';
+$string['clickhide'] = 'Ukryj';
+$string['clickshow'] = 'Poka¿';
 $string['confirmeventdelete'] = 'Czy jeste¶ pewien, ¿e chcesz usun±æ ten termin?';
 $string['courseevents'] = 'Terminy kursu';
 $string['dayview'] = 'Widok dnia';
@@ -47,7 +47,7 @@ $string['gotocalendar'] = 'Przejd¼ do kalendarza';
 $string['groupevents'] = 'Terminy grupowe';
 $string['hidden'] = 'ukryty';
 $string['manyevents'] = 'Terminy $a';
-$string['mon'] = 'Pn.';
+$string['mon'] = 'Pn';
 $string['monday'] = 'Poniedzia³ek';
 $string['monthlyview'] = 'Widok miesi±ca';
 $string['newevent'] = 'Nowy termin';

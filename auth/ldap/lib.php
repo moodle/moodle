@@ -1,49 +1,74 @@
-<?PHP  
-/**
- *
- * @author Petri Asikainen
- * @version $Id$
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package moodleauth
+<?PHP  // $Id$
+//CHANGELOG:
+//15.08.2004 Added support for user syncronization
+//24.02.2003 Added support for coursecreators
+//20.02.2003 Added support for user creation
+//12.10.2002 Reformatted source for consistency
+//03.10.2002 First version to CVS
+//29.09.2002 Clean up and splitted code to functions v. 0.02
+//29.09.2002 LDAP authentication functions v. 0.01
+//Distributed under GPL (c)Petri Asikainen 2002-2004
+
+/* README!
+Module is quite complete and  most functinality can be configured from
+configinterfave /admin/auth.php. Some of latest additions/features need to
+be configured by modifying source code.
  
- * LDAPA-authentication functions
- *
- * 30.09.2004 Removed outdated documentation
- * 24.09.2004 Lot of changes:
- *           -Added usertype configuration, this removes need for separate obejcclass and attributename configuration
- *            Overriding values is still supported
- *          
- * 21.09.2004 Added support for multiple ldap-servers.
- *          Theres no nedd to use auth_ldap_bind,
- *          Anymore auth_ldap_connect does this for you
- * 19.09.2004 Lot of changes are coming from Martin Langhoff
- *          Current code is working but can change a lot. Be warned...
- * 15.08.2004 Added support for user syncronization
- * 24.02.2003 Added support for coursecreators
- * 20.02.2003 Added support for user creation
- * 12.10.2002 Reformatted source for consistency
- * 03.10.2002 First version to CVS
- * 29.09.2002 Clean up and splitted code to functions v. 0.02
- * 29.09.2002 LDAP authentication functions v. 0.01
- */
+USER CREATION FEATURE
+User-creation makes posible that your current 
+users can authenticate with existings usernames/password and new users can 
+create own accounts to LDAP-directory. I'm using this feature and new users
+are created to LDAP different context, without rights to other system. When
+user-creation feature is set like that, there's no known security issues.
 
-/**
- * authenticates user againt external userdatabase
- *
- * Returns true if the username and password work
- * and false if they don't
- *
- * @param string  $username
- * @param string  $password
- *
+If you plan to use user creation feature, look function auth_user_create
+and modify it for your needs.
+You have to change all hardcoded attribute values to fit your LDAP-server.
+
+I write ldap-module on Novell E-directory / Linux & Solaris , 
+so all default values are for it.
+
+LDAP USER SYNCRONIZATION
+
+BACKUP
+This is first version of usersync so backup your database, if you like to test this feature!
+
+BINARY FIELDS
+I'm testing this against Novell eDirectory where guid field is binary
+so I have to use bin2hex() in function auth_get_users (), If your guid field is not binary
+comment that line out.
+
+EXISTING USERS
+For existing systems there no way to figure out is account from ldap or not.
+So sysadmin,  you have to update 'auth' and 'guid' fields for your existing ldap-users by hand (or scripting)
+If your users usernamed are stabile, you can use auth_get_users() for this.
+
+AUTOMATING SYNCRONIZATION
+Right now moodle does not automaticly run auth_sync_users() so you have to create
+your own script like:
+auth/ldap/cron.php
+<?
+    require_once("../../config.php");
+    require_once("../../course/lib.php");
+    require_once('../../lib/blocklib.php');
+    require_once("../../mod/resource/lib.php");
+    require_once("lib.php");
+    require_once("../../mod/forum/lib.php");
+    auth_sync_users();
+?>
+
+Usersync is quite heavy process, it could be good idea to place that script outside of webroot and run it  with cron.
+                            
+
+Any feedback is wellcome,
+
+Petri Asikainen paca@sci.fi
+
+
 */
-
-// LDAP functions are reused by other auth libs
-if (!defined('AUTH_LDAP_NAME')) {
-    define('AUTH_LDAP_NAME', 'ldap');
-}
-
 function auth_user_login ($username, $password) {
+/// Returns true if the username and password work
+/// and false if they don't
 
     global $CFG;
 
@@ -51,195 +76,128 @@ function auth_user_login ($username, $password) {
         return false;
     }
  
-    // CAS-supplied auth tokens override LDAP auth
-    if ($CFG->auth == "cas" && !empty($CFG->cas_enabled)) {
-        return cas_ldap_auth_user_login($username, $password);
-    }
+    $ldap_connection = auth_ldap_connect();
 
-    $ldapconnection = auth_ldap_connect();
-
-    if ($ldapconnection) {
-        $ldap_user_dn = auth_ldap_find_userdn($ldapconnection, $username);
+    if ($ldap_connection) {
+        $ldap_user_dn = auth_ldap_find_userdn($ldap_connection, $username);
       
         //if ldap_user_dn is empty, user does not exist
         if(!$ldap_user_dn){
-            ldap_close($ldapconnection);
+            ldap_close($ldap_connection);
             return false;
         }
 
         // Try to bind with current username and password
-        $ldap_login = @ldap_bind($ldapconnection, $ldap_user_dn, $password);
-        ldap_close($ldapconnection);
+        $ldap_login = @ldap_bind($ldap_connection, $ldap_user_dn, $password);
+        ldap_close($ldap_connection);
         if ($ldap_login) {
             return true;
         }
     } else {
-        @ldap_close($ldapconnection);
+        @ldap_close($ldap_connection);
         error("LDAP-module cannot connect to server: $CFG->ldap_host_url");
     }
     return false;
 }
 
-/**
- * reads userinformation from ldap and return it in array()
- *
- * Read user information from external database and returns it as array().
- * Function should return all information available. If you are saving
- * this information to moodle user-table you should honor syncronization flags
- *
- * @param string $username username
- * @return array
- */
+
+ 
 function auth_get_userinfo($username){
+/// reads userinformation from ldap and return it in array()
     global $CFG;
-    $ldapconnection=auth_ldap_connect();
+
     $config = (array)$CFG;
     $attrmap = auth_ldap_attributes();
    
+    $ldap_connection=auth_ldap_connect();
+
     $result = array();
     $search_attribs = array();
   
-    foreach ($attrmap as $key=>$values) {
-        if (!is_array($values)) {
-            $values = array($values);
-        }
-        foreach ($values as $value) {
-            if (!in_array($value, $search_attribs)) {
-                array_push($search_attribs, $value);
-            }    
-        }
+    foreach ($attrmap as $key=>$value) {
+        if (!in_array($value, $search_attribs)) {
+            array_push($search_attribs, $value);
+        }    
     }
 
-    $user_dn = auth_ldap_find_userdn($ldapconnection, $username);
+    $user_dn = auth_ldap_find_userdn($ldap_connection, $username);
 
-    if (empty($CFG->ldap_objectclass)) {        // Can't send empty filter
+    if (! isset($CFG->ldap_objectclass)) {
         $CFG->ldap_objectclass="objectClass=*";
     }
   
-    $user_info_result = ldap_read($ldapconnection,$user_dn,$CFG->ldap_objectclass, $search_attribs);
+    $user_info_result = ldap_read($ldap_connection,$user_dn,$CFG->ldap_objectclass, $search_attribs);
 
     if ($user_info_result) {
-        $user_entry = ldap_get_entries($ldapconnection, $user_info_result);
-        foreach ($attrmap as $key=>$values){
-            if (!is_array($values)) {
-                $values = array($values);
-            }
-            foreach ($values as $value) {
-                if(isset($user_entry[0][strtolower($value)][0])){
-                    $result[$key]=addslashes(stripslashes(utf8_decode($user_entry[0][strtolower($value)][0])));
-                }
+        $user_entry = ldap_get_entries($ldap_connection, $user_info_result);
+        foreach ($attrmap as $key=>$value){
+            if(isset($user_entry[0][strtolower($value)][0])){
+                $result[$key]=$user_entry[0][strtolower($value)][0];
             }
         }
+        $result['guid']='ldap';
     }
 
-    @ldap_close($ldapconnection);
+    @ldap_close($ldap_connection);
     
     return $result;
 }
 
-/**
- * reads userinformation from ldap and return it in an object
- *
- * @param string $username username
- * @return array
- */
-function auth_get_userinfo_asobj($username){
-    $user_array = truncate_userinfo(auth_get_userinfo($username));
-    $user = new object;
-    foreach($user_array as $key=>$value){
-        $user->{$key} = $value;
-    }
-    return $user;
-}
-
-/**
- * returns all usernames from external database
- *
- * auth_get_userlist returns all usernames from external database
- *
- * @return array 
- */
 function auth_get_userlist () {
     global $CFG;
-    auth_ldap_init();
     return auth_ldap_get_userlist("($CFG->ldap_user_attribute=*)");
 }
-/**
- * checks if user exists on external db
- */
 function auth_user_exists ($username) {
    global $CFG; 
-   auth_ldap_init();
    //returns true if given usernname exist on ldap
    $users = auth_ldap_get_userlist("($CFG->ldap_user_attribute=$username)");
    return count($users); 
 }
 
-/**
- * creates new user on external database
- *
- * auth_user_create() creates new user on external database
- * By using information in userobject
- * Use auth_user_exists to prevent dublicate usernames
- *
- * @param mixed $userobject  Moodle userobject
- * @param mixed $plainpass   Plaintext password
- */
 function auth_user_create ($userobject,$plainpass) {
+//create new user to ldap
+//use auth_user_exists to prevent dublicate usernames
+//return true if user is created, false on error
 	global $CFG;
-    $ldapconnection = auth_ldap_connect();
     $attrmap = auth_ldap_attributes();
+    $ldapconnect = auth_ldap_connect();
+    $ldapbind = auth_ldap_bind($ldapconnect);
     
     $newuser = array();
      
-    foreach ($attrmap as $key=>$values){
-        if (!is_array($values)) {
-            $values = array($values);
-        }
-        foreach ($values as $value) {
-            if(!empty($userobject->$key) ){
+    foreach ($attrmap as $key=>$value){
+            if(isset($userobject->$key) ){
                 $newuser[$value]=utf8_encode($userobject->$key);
             }
-        }
     }
     
     //Following sets all mandatory and other forced attribute values
-    //User should be creted as login disabled untill email confirmation is processed
-    //Feel free to add your user type and send patches to paca@sci.fi to add them 
-    //Moodle distribution
-
-    switch ($CFG->ldap_user_type)  {
-        case 'edir':
+    //this should be moved to config inteface ASAP
     $newuser['objectClass']= array("inetOrgPerson","organizationalPerson","person","top");
     $newuser['uniqueId']= $userobject->username;
     $newuser['logindisabled']="TRUE";
     $newuser['userpassword']=$plainpass;
-        default:
-           error('auth: ldap auth_user_create() does not support selected usertype (..yet)');
-    }
+    unset($newuser[country]);
         
-    $uadd = ldap_add($ldapconnection, $CFG->ldap_user_attribute."=$userobject->username,".$CFG->ldap_create_context, $newuser);
+    $uadd = ldap_add($ldapconnect, $CFG->ldap_user_attribute."=$userobject->username,".$CFG->ldap_create_context, $newuser);
 
-    ldap_close($ldapconnection);
+    ldap_close($ldapconnect);
     return $uadd;
     
 }
 
-/*/
- * 
- * auth_get_users() returns userobjects from external database
- *
- * Function returns users from external databe as Moodle userobjects
- * If filter is not present it should return ALL users in external database
- * 
- * @param mixed $filter substring of username
- * @returns array of userobjects 
- */
-function auth_get_users($filter='*', $dontlistcreated=false) {
+function auth_get_users($filter='*') {
+//returns all userobjects from external database
     global $CFG;
 
-    $ldapconnection = auth_ldap_connect();
     $fresult = array();
+    $ldap_connection = auth_ldap_connect();
+
+    auth_ldap_bind($ldap_connection);
+
+    if (! isset($CFG->ldap_objectclass)) {
+        $CFG->ldap_objectclass="objectClass=*";
+    }
 
     if ($filter=="*") {
        $filter = "(&(".$CFG->ldap_user_attribute."=*)(".$CFG->ldap_objectclass."))";
@@ -247,7 +205,7 @@ function auth_get_users($filter='*', $dontlistcreated=false) {
 
     $contexts = explode(";",$CFG->ldap_contexts);
  
-    if (!empty($CFG->ldap_create_context) and empty($dontlistcreated)){
+    if (!empty($CFG->ldap_create_context)){
           array_push($contexts, $CFG->ldap_create_context);
     }
 
@@ -255,38 +213,28 @@ function auth_get_users($filter='*', $dontlistcreated=false) {
    
     $search_attribs = array();
   
-    foreach ($attrmap as $key=>$values) {
-        if (!is_array($values)) {
-            $values = array($values);
-        }
-        foreach ($values as $value) {
-            if (!in_array($value, $search_attribs)) {
-                array_push($search_attribs, $value);
-            }   
-        } 
+    foreach ($attrmap as $key=>$value) {
+        if (!in_array($value, $search_attribs)) {
+            array_push($search_attribs, $value);
+        }    
     }
 
 
     foreach ($contexts as $context) {
-        
-        $context = trim($context);
-        if (empty($context)) {
-            continue;
-        }
 
         if ($CFG->ldap_search_sub) {
             //use ldap_search to find first user from subtree
-            $ldap_result = ldap_search($ldapconnection, $context,
+            $ldap_result = ldap_search($ldap_connection, $context,
                                        $filter,
                                        $search_attribs);
         } else {
             //search only in this context
-            $ldap_result = ldap_list($ldapconnection, $context,
+            $ldap_result = ldap_list($ldap_connection, $context,
                                      $filter,
                                      $search_attribs);
         }
 
-        $users = auth_ldap_get_entries($ldapconnection, $ldap_result);
+        $users = auth_ldap_get_entries($ldap_connection, $ldap_result);
 
         //add found users to list
         foreach ($users as $ldapuser=>$attribs) {
@@ -299,7 +247,7 @@ function auth_get_users($filter='*', $dontlistcreated=false) {
             //quick way to get around binarystrings
             $user->guid=bin2hex($user->guid);
             //add authentication source stamp 
-            $user->auth = AUTH_LDAP_NAME;
+            $user->auth='ldap';
             $fresult[$user->username]=$user;
 
         }
@@ -308,180 +256,65 @@ function auth_get_users($filter='*', $dontlistcreated=false) {
     return $fresult;
 }
 
-/**
- * return number of days to user password expires
- *
- * If userpassword does not expire it should return 0. If password is already expired
- * it should return negative value.
- *
- * @param mixed $username username
- * @return integer
- */
-function auth_password_expire($username) {
-    global $CFG ;
-    $result = false;
-    
-    $ldapconnection = auth_ldap_connect();
-    $user_dn = auth_ldap_find_userdn($ldapconnection, $username);
-    $search_attribs = array($CFG->ldap_expireattr);
-    $sr = ldap_read($ldapconnection, $user_dn, 'objectclass=*', $search_attribs);
-    if ($sr)  {
-        $info=auth_ldap_get_entries($ldapconnection, $sr);
-        if ( empty($info[0][strtolower($CFG->ldap_expireattr)][0])) {
-            //error_log("ldap: no expiration value".$info[0][$CFG->ldap_expireattr]);
-            // no expiration attribute, password does not expire
-            $result = 0;
-        } else {
-            $now = time();
-            $expiretime = auth_ldap_expirationtime2unix($info[0][strtolower($CFG->ldap_expireattr)][0]);
-            if ($expiretime > $now) {
-                $result = ceil(($expiretime - $now) / DAYSECS);
-            } else {
-                $result = floor(($expiretime - $now) / DAYSECS);
-            }    
-        }
-    } else {    
-        error_log("ldap: auth_password_expire did't find expiration time!.");
-    }    
-
-    //error_log("ldap: auth_password_expire user $user_dn expires in $result days!");
-    return $result;
-}
-
-/**
- * syncronizes user fron external db to moodle user table
- *
- * Sync shouid be done by using idnumber attribute, not username.
- * You need to pass firstsync parameter to function to fill in
- * idnumbers if they dont exists in moodle user table.
- * 
- * Syncing users removes (disables) users that dont exists anymore in external db.
- * Creates new users and updates coursecreator status of users. 
- * 
- * @param mixed $firstsync  Optional: set to true to fill idnumber fields if not filled yet
- */
-function auth_sync_users ($bulk_insert_records = 1000, $do_updates=1) {
+function auth_sync_users () {
 //Syncronizes userdb with ldap
 //This will add, rename 
-/// OPTIONAL PARAMETERS
-/// $bulk_insert_records = 1 // will insert $bulkinsert_records per insert statement
-///                         valid only with $unsafe. increase to a couple thousand for
-///                         blinding fast inserts -- but test it: you may hit mysqld's 
-///                         max_allowed_packet limit.
-/// $do_updates = 1 // will do pull in data updates from ldap if relevant
-
-
     global $CFG ;
-
-    // configure a temp table 
-    print "Configuring temp table\n";    
-    if(strtolower($CFG->dbtype) === 'mysql'){
-        // help old mysql versions cope with large temp tables
-        execute_sql('SET SQL_BIG_TABLES=1', false); 
-        execute_sql('CREATE TEMPORARY TABLE ' . $CFG->prefix .'extuser (idnumber VARCHAR(12), PRIMARY KEY (idnumber)) TYPE=MyISAM',false); 
-    } elseif (strtolower($CFG->dbtype) === 'postgres7'){
-        $bulk_insert_records = 1; // no support for multiple sets of values
-        execute_sql('CREATE TEMPORARY TABLE '.$CFG->prefix.'extuser (idnumber VARCHAR(12), PRIMARY KEY (idnumber))',false); 
-    }
-
-        
-    print "connecting to ldap\n";
-    $ldapconnection = auth_ldap_connect();
-
-    ////
-    //// get user's list from ldap to sql in a scalable fashion
-    ////
-    // prepare some data we'll need
-    if (! empty($CFG->ldap_objectclass)) {
-        $CFG->ldap_objectclass="objectClass=*";
-    }
-
-    $filter = "(&(".$CFG->ldap_user_attribute."=*)(".$CFG->ldap_objectclass."))";
-
-    $contexts = explode(";",$CFG->ldap_contexts);
- 
-    if (!empty($CFG->ldap_create_context)){
-          array_push($contexts, $CFG->ldap_create_context);
-    }
-
-    $fresult = array();
-    $count = 0;
-    foreach ($contexts as $context) {
-        $context = trim($context);
-        if (empty($context)) {
-            continue;
-        }
-        begin_sql();
-        if ($CFG->ldap_search_sub) {
-            //use ldap_search to find first user from subtree
-            $ldap_result = ldap_search($ldapconnection, $context,
-                                       $filter,
-                                       array($CFG->ldap_user_attribute));
+    $users = auth_get_users();
+    $usedguids = Array();
+    
+    foreach ($users as $user) {
+        $usedguids[] = $user->guid; //we will need all used guids later
+        //update modified time
+        $user->modified = time();
+        //All users are confirmed
+        $user->confirmed = 1;
+        // if user does not exist create it
+        if (!record_exists('user','auth', 'ldap', 'guid', $user->guid)) {
+            if (insert_record ('user',$user)) {
+                echo "inserted user $user->username with guid $user->guid \n";
+            } else {
+                echo "error inserting user $user->username with guid $user->guid \n";
+            }
+            continue ;
         } else {
-            //search only in this context
-            $ldap_result = ldap_list($ldapconnection, $context,
-                                     $filter,
-                                     array($CFG->ldap_user_attribute));
+           //update username
+           set_field('user', 'username', $user->username , 'auth', 'ldap', 'guid', $user->guid);
+           //no id-information in ldap so get now
+           $userid = get_field('user', 'id', 'auth', 'ldap', 'guid', $user->guid);
+
+           if (auth_iscreator($user->username)) {
+                 if (! record_exists("user_coursecreators", "userid", $userid)) {
+                      $cdata['userid']=$userid;
+                      $creator = insert_record("user_coursecreators",$cdata);
+                      if (! $creator) {
+                          error("Cannot add user to course creators.");
+                      }
+                  }
+            } else {
+                 if ( record_exists("user_coursecreators", "userid", $userid)) {
+                      $creator = delete_records("user_coursecreators", "userid", $userid);
+                      if (! $creator) {
+                          error("Cannot remove user from course creators.");
+                      }
+                 }
+            }
         }
+    }    
+    
+    //find nonexisting users from moodles userdb
+    $sql = "SELECT * FROM ".$CFG->prefix."user WHERE deleted = '0' AND auth = 'ldap' AND guid  NOT IN ('".implode('\' , \'',$usedguids)."');" ;
+    $result = get_records_sql($sql);
 
-        $entry = ldap_first_entry($ldapconnection, $ldap_result);
-        do {
-            $value = ldap_get_values_len($ldapconnection, $entry,$CFG->ldap_user_attribute);
-            $value = $value[0];
-            $count++;
-            array_push($fresult, $value);
-            if(count($fresult) >= $bulk_insert_records){
-                auth_ldap_bulk_insert($fresult);
-                //print var_dump($fresult);
-                $fresult=array();
-            }         
-        }
-        while ($entry = ldap_next_entry($ldapconnection, $entry));
-        
-        // insert any remaining users and release mem
-        if(count($fresult)){
-            auth_ldap_bulk_insert($fresult);
-            $fresult=array();
-        }
-        commit_sql();
-    }
-    // free mem
-    $ldap_results = 0;
-
-    /// preserve our user database
-    /// if the temp table is empty, it probably means that something went wrong, exit
-    /// so as to avoid mass deletion of users; which is hard to undo
-    $count = get_record_sql('SELECT COUNT(idnumber) AS count, 1 FROM ' . $CFG->prefix .'extuser');
-    $count = $count->{'count'};
-    if($count < 1){
-        print "Did not get any users from LDAP -- error? -- exiting\n";
-        exit;
-    }
-
-    ////
-    //// User removal
-    ////
-    // find users in DB that aren't in ldap -- to be removed!
-    // this is still not as scalable
-    $sql = 'SELECT u.id, u.username 
-            FROM ' . $CFG->prefix .'user u LEFT JOIN ' . $CFG->prefix .'extuser e 
-                    ON u.idnumber = e.idnumber 
-            WHERE u.auth=\'' . AUTH_LDAP_NAME . '\' AND u.deleted=\'0\' AND e.idnumber IS NULL';
-    //print($sql);            
-    $remove_users = get_records_sql($sql); 
-
-    if (!empty($remove_users)){
-        print "User entries to remove: ". count($remove_users) . "\n";
-
-        begin_sql();
-        foreach ($remove_users as $user) {
+    if (!empty($result)){
+        foreach ($result as $user) {
             //following is copy pasted from admin/user.php
             //maybe this should moved to function in lib/datalib.php
             unset($updateuser);
             $updateuser->id = $user->id;
             $updateuser->deleted = "1";
-            //$updateuser->username = "$user->username".time();  // Remember it just in case
-            //$updateuser->email = "";               // Clear this field to free it up
+            $updateuser->username = "$user->email.".time();  // Remember it just in case
+            $updateuser->email = "";               // Clear this field to free it up
             $updateuser->timemodified = time();
             if (update_record("user", $updateuser)) {
                 unenrol_student($user->id);  // From all courses
@@ -493,818 +326,143 @@ function auth_sync_users ($bulk_insert_records = 1000, $do_updates=1) {
             }
             //copy pasted part ends
         }     
-        commit_sql();
-    } 
-    $remove_users = 0; // free mem!   
-
-    ////
-    //// User Updates
-    //// (time-consuming, optional)
-    ////
-    if ($do_updates) {
-        // narrow down what fields we need to update
-        $all_keys = array_keys(get_object_vars($CFG));
-        $updatekeys = array();
-        foreach ($all_keys as $key) {
-            if (preg_match('/^auth_user_(.+)_updatelocal$/',$key, $match)) {
-                if ($CFG->{$match[0]}) { // if it has a true value
-                    array_push($updatekeys, $match[1]); // the actual key name
-                }
-            }
-        }
-        // print_r($all_keys); print_r($updatekeys);
-        unset($all_keys); unset($key);
-        
-    }
-    if ( $do_updates && !(empty($updatekeys)) ) { // run updates only if relevant
-        $users = get_records_sql('SELECT u.username, u.id FROM ' . $CFG->prefix . 'user  AS u WHERE u.deleted=0 and u.auth=\'' . AUTH_LDAP_NAME . '\'' );
-        if (!empty($users)) {
-            print "User entries to update: ". count($users). "\n";
-            
-            
-
-            begin_sql();
-            $xcount=0; $maxxcount=100;
-            foreach ($users as $user) { 
-                echo "updating user $user->username \n";
-                auth_ldap_update_user_record($user->username, $updatekeys);
-                // update course creators
-                if ( !empty($CFG->ldap_creators) && !empty($CFG->ldap_memberattribute) ) {
-                    if (auth_iscreator($user->username)) {
-                        if (! record_exists("user_coursecreators", "userid", $user->id)) {
-                            $creator = insert_record("user_coursecreators",$user->id);
-                            if (! $creator) {
-                                error("Cannot add user to course creators.");
-                        }
-                      }
-                    } else {
-                         if ( record_exists("user_coursecreators", "userid", $user->id)) {
-                              $creator = delete_records("user_coursecreators", "userid", $user->id);
-                              if (! $creator) {
-                                  error("Cannot remove user from course creators.");
-                              }
-                         }
-                    }
-                }
-                if ($xcount++ > $maxxcount) {
-                  commit_sql();
-                  begin_sql(); 
-                  $xcount=0;
-                }
-            }
-            commit_sql();
-            $users = 0; // free mem
-        }
-    } // end do updates
-    
-    ////
-    //// User Additions
-    ////
-    // find users missing in DB that are in LDAP
-    // note that get_records_sql wants at least 2 fields returned,
-    // and gives me a nifty object I don't want.
-    $sql = 'SELECT e.idnumber,1 
-            FROM ' . $CFG->prefix .'extuser e  LEFT JOIN ' . $CFG->prefix .'user u
-                    ON e.idnumber = u.idnumber 
-            WHERE  u.id IS NULL OR (u.id IS NOT NULL AND u.deleted=1)';
-    $add_users = get_records_sql($sql); // get rid of the fat        
-    
-    if(!empty($add_users)){
-        print "User entries to add: ". count($add_users). "\n";
-        begin_sql();
-        foreach($add_users as $user){
-            $user = auth_get_userinfo_asobj($user->idnumber);
-            //print $user->username . "\n";
-            
-            // prep a few params
-            $user->modified  = time();
-            $user->confirmed = 1;
-            $user->auth      = AUTH_LDAP_NAME;
-            
-            // insert it
-            $old_debug=$CFG->debug; 
-            $CFG->debug=10;
-            
-            // maybe the user has been deleted before
-            if ($old_user = get_record('user', 'idnumber', $user->idnumber, 'deleted', 1)) {
-                $user->id = $old_user->id;
-                set_field('user', 'deleted', 0, 'idnumber', $user->idnumber);
-                echo "Revived user $user->username with idnumber $user->idnumber id $user->id\n";
-            } elseif ($id=insert_record ('user',$user)) { // it is truly a new user
-                echo "inserted user $user->username with idnumber $user->idnumber id $id\n";
-                $user->id = $id;
-            } else {
-                echo "error inserting user $user->username with idnumber $user->idnumber \n";
-            }
-            $CFG->debug=$old_debug;
-            $userobj = auth_ldap_update_user_record($user->username);
-            if(isset($CFG->{'auth_ldap_forcechangepassword'}) && $CFG->{'auth_ldap_forcechangepassword'}){
-                set_user_preference('auth_forcepasswordchange', 1, $userobj);
-            }
-            
-            // update course creators
-            if ( !empty($CFG->ldap_creators) && !empty($CFG->ldap_memberattribute) ) {
-                if (auth_iscreator($user->username)) {
-                    if (! record_exists("user_coursecreators", "userid", $user->id)) {
-                        $creator = insert_record("user_coursecreators",$user->id);
-                        if (! $creator) {
-                            error("Cannot add user to course creators.");
-                    }
-                  }
-                } else {
-                     if ( record_exists("user_coursecreators", "userid", $user->id)) {
-                          $creator = delete_records("user_coursecreators", "userid", $$user->id);
-                          if (! $creator) {
-                              error("Cannot remove user from course creators.");
-                          }
-                     }
-                }
-            }
-        }
-        commit_sql();
-        $add_users = 0; // free mem
-    }
-    return true;
+    }    
 }
 
-function auth_ldap_update_user_record($username, $updatekeys=false) {
-/// will update a local user record from an external source. 
-/// is a lighter version of the one in moodlelib -- won't do 
-/// expensive ops such as enrolment
-///
-/// If you don't pass $updatekeys, there is a performance hit and 
-/// values removed from LDAP won't be removed from moodle. 
-
-    global $CFG;
-
-    //just in case check text case
-    $username = trim(moodle_strtolower($username));
-    
-    // get the current user record
-    $user = get_record('user', 'username', $username);
-    if (empty($user)) { // trouble
-        error_log("Cannot update non-existent user: $username");
-        die;
-    }
-
-    if (function_exists('auth_get_userinfo')) {
-        if ($newinfo = auth_get_userinfo($username)) {
-            $newinfo = truncate_userinfo($newinfo);
-            
-            if (empty($updatekeys)) { // all keys? this does not support removing values
-                $updatekeys = array_keys($newinfo);
-            }
-            
-            foreach ($updatekeys as $key){
-                unset($value);
-                if (isset($newinfo[$key])) {
-                    $value = $newinfo[$key];
-                    $value = addslashes(stripslashes($value)); // Just in case
-                } else {
-                    $value = '';
-                }
-                if(isset($CFG->{'auth_user_' . $key. '_updatelocal'}) 
-                   &&    $CFG->{'auth_user_' . $key. '_updatelocal'}){
-                       if ($user->{$key} != $value) { // only update if it's changed
-                           set_field('user', $key, $value, 'username', $username);
-                       }
-                }
-            }
-        }
-    }
-    return get_record_select("user", "username = '$username' AND deleted <> '1'");
-}
-
-function auth_ldap_bulk_insert($users){
-// bulk insert in SQL's temp table
-// $users is an array of usernames
-    global $CFG;
-    
-    // bulk insert -- superfast with $bulk_insert_records
-    $sql = 'INSERT INTO '.$CFG->prefix.'extuser (idnumber) VALUES ';
-    // make those values safe
-    array_map('addslashes', $users);
-    // join and quote the whole lot
-    $sql = $sql . '(\'' . join('\'),(\'', $users) . '\')';
-    print "+ " . count($users) . " users\n";
-    execute_sql($sql, false); 
-
-}
-
-
-/*
- * auth_user_activate activates user in external db.
- *
- * Activates (enables) user in external db so user can login to external db
- *
- * @param mixed $username    username
- * @return boolen result
- */
 function auth_user_activate ($username) {
+//activate new ldap-user after email-address is confirmed
 	global $CFG;
 
-    $ldapconnection = auth_ldap_connect();
+    $ldapconnect = auth_ldap_connect();
+    $ldapbind = auth_ldap_bind($ldapconnect);
+
+    $userdn = auth_ldap_find_userdn($ldapconnect, $username);
     
-    $userdn = auth_ldap_find_userdn($ldapconnection, $username);
-    switch ($CFG->ldap_user_type)  {
-         case 'edir':
     $newinfo['loginDisabled']="FALSE";
-         default;
-            error ('auth: ldap auth_user_activate() does not support selected usertype (..yet)');    
-    }    
-    $result = ldap_modify($ldapconnection, $userdn, $newinfo);
-    ldap_close($ldapconnection);
+
+    $result = ldap_modify($ldapconnect, $userdn, $newinfo);
+    ldap_close($ldapconnect);
     return $result;
 }
 
-/*
- * auth_user_disables disables user in external db.
- *
- * Disables user in external db so user can't login to external db
- *
- * @param mixed $username    username
- * @return boolean result
- */
 function auth_user_disable ($username) {
+//activate new ldap-user after email-address is confirmed
 	global $CFG;
 
-    $ldapconnection = auth_ldap_connect();
+    $ldapconnect = auth_ldap_connect();
+    $ldapbind = auth_ldap_bind($ldapconnect);
 
-    $userdn = auth_ldap_find_userdn($ldapconnection, $username);
-    switch ($CFG->ldap_user_type)  {
-        case 'edir':
+    $userdn = auth_ldap_find_userdn($ldapconnect, $username);
     $newinfo['loginDisabled']="TRUE";
-        default:
-            error ('auth: ldap auth_user_disable() does not support selected usertype (..yet)');    
-    }    
-    $result = ldap_modify($ldapconnection, $userdn, $newinfo);
-    ldap_close($ldapconnection);
+
+    $result = ldap_modify($ldapconnect, $userdn, $newinfo);
+    ldap_close($ldapconnect);
     return $result;
 }
 
-/*
- * auth_iscreator returns true if user should be coursecreator
- *
- * auth_iscreator returns true if user should be coursecreator
- *
- * @param mixed $username    username
- * @return boolean result
- */
 function auth_iscreator($username=0) {
 ///if user is member of creator group return true
     global $USER , $CFG; 
-    auth_ldap_init();
-
     if (! $username) {
         $username=$USER->username;
     }
    
     if ((! $CFG->ldap_creators) OR (! $CFG->ldap_memberattribute)) {
-        return null;
+        return false;
     } 
 
     return auth_ldap_isgroupmember($username, $CFG->ldap_creators);
  
 }
 
-/* 
- * auth_user_update saves userinformation from moodle to external db
- *
- * Called when the user record is updated.
- * Modifies user in external database. It takes olduser (before changes) and newuser (after changes) 
- * conpares information saved modified information to external db.
- *
- * @param mixed $olduser     Userobject before modifications
- * @param mixed $newuser     Userobject new modified userobject
- * @return boolean result
- *
- */
-function auth_user_update($olduser, $newuser) {
-
-    global $USER , $CFG;
-    
-    $ldapconnection = auth_ldap_connect();
-    
-    $result = array();
-    $search_attribs = array();
-
-    $attrmap = auth_ldap_attributes();  
-    foreach ($attrmap as $key=>$values) {
-        if (!is_array($values)) {
-            $values = array($values);
-        }
-        foreach ($values as $value) {
-            if (!in_array($value, $search_attribs)) {
-                array_push($search_attribs, $value);
-            }
-        }    
-    }
-
-    $user_dn = auth_ldap_find_userdn($ldapconnection, $olduser->username);
-
-    $user_info_result = ldap_read($ldapconnection,$user_dn,$CFG->ldap_objectclass, $search_attribs);
-
-    if ($user_info_result){
-
-        $user_entry = auth_ldap_get_entries($ldapconnection, $user_info_result);
-        //error_log(var_export($user_entry) . 'fpp' );
-        
-        foreach ($attrmap as $key=>$ldapkeys){
-            if (isset($CFG->{'auth_user_'. $key.'_updateremote'}) && $CFG->{'auth_user_'. $key.'_updateremote'}){
-
-                // for ldap values that could be in more than one 
-                // ldap key, we will do our best to match 
-                // where they came from
-                $ambiguous = true;
-                $changed   = false;
-                if (!is_array($ldapkeys)) {
-                    $ldapkeys = $array($ldapkeys);
-                }
-                if (count($ldapkeys) < 2) {
-                    $ambiguous = false;
-                }
-                 
-                foreach ($ldapkeys as $ldapkey) {
-                    if (!$ambiguous) {
-                        // skip update if the values already match
-                        if( !($newuser->$key === $user_entry[0][strtolower($ldapkey)][0]) ){
-                            ldap_modify($ldapconnection, $user_dn, array($ldapkey => $newuser->$key));
-                        } else { 
-                    error_log("Skip updating field $key for entry $user_dn: it seems to be already same on LDAP. " . 
-                                      "  old moodle value: '" . $olduser->$key . 
-                                      "' new value '" . $newuser->$key . 
-                                      "' current value in ldap entry " . $user_entry[0][strtolower($ldapkey)][0]);
-                        }
-                    } else { // ambiguous
-                        // check the old values match
-                        //error_log("keys $key $ldapkey");
-                        //error_log("olduser " . $olduser->$key);
-                        //error_log("ldapuser " . $user_entry[0][strtolower($ldapkey)][0]);
-                        if (   !empty($olduser->$key) 
-                            && !empty($user_entry[0][strtolower($ldapkey)][0]) 
-                            && $olduser->$key === $user_entry[0][strtolower($ldapkey)][0] ) {
-                            // we found which value to update!
-                            error_log("Matched: ". $olduser->$key . " === " . $user_entry[0][strtolower($ldapkey)][0]);
-                            if(ldap_modify($ldapconnection, $user_dn, array($ldapkey => $newuser->$key))){
-                                $changed=true;
-                                last;
-                            } else {
-                                error ('Error updating LDAP record. Error code: ' 
-                                  . ldap_errno($ldapconnection) . '; Error string : '
-                                  . ldap_err2str(ldap_errno($ldapconnection))); 
-                            }
-                        }
-                    }
-                }
-                
-                if ($ambiguous AND !$changed) {
-                    error_log("Failed to update LDAP with ambiguous field $key". 
-                              "  old moodle value: '" . $olduser->$key . 
-                              "' new value '" . $newuser->$key );
-                }
-            }
-        }
-        
-
-    } else {
-        error_log("ERROR:No user found in LDAP");
-        @ldap_close($ldapconnection);
-        return false;
-    }
-
-    @ldap_close($ldapconnection);
-    
-    return true;
-
-}
-
-/*
- * changes userpassword in external db
- *
- * called when the user password is updated.
- * changes userpassword in external db
- *
- * @param mixed $username    Username
- * @param mixed $newpassword Plaintext password
- * @param mixed $oldpassword Plaintext old password to bind ldap with
- * @return boolean result
- *
- */
-function auth_user_update_password($username, $newpassword) {
-/// called when the user password is updated -- it assumes it is called by an admin
-/// or that you've otherwise checked the user's credentials
-/// IMPORTANT: $newpassword must be cleartext, not crypted/md5'ed
-
-    global $CFG, $USER;
-    $result = false;
-     
-    $ldapconnection = auth_ldap_connect();
-
-    $user_dn = auth_ldap_find_userdn($ldapconnection, $username);
-    
-    if(!$user_dn){
-        error_log('LDAP Error in auth_user_update_password(). No DN for: ' . $username); 
-        return false;
-    }
-
-    switch ($CFG->ldap_user_type) {
-        case 'edir':
-            //Change password
-            $result = ldap_modify($ldapconnection, $user_dn, array('userPassword' => $newpassword));
-            if(!$result){
-                error_log('LDAP Error in auth_user_update_password(). Error code: '
-                          . ldap_errno($ldapconnection) . '; Error string : '
-                          . ldap_err2str(ldap_errno($ldapconnection)));
-            }
-            //Update password expiration time, grace logins count
-            $search_attribs = array($CFG->ldap_expireattr, 'passwordExpirationInterval','loginGraceLimit' );
-            $sr = ldap_read($ldapconnection, $user_dn, 'objectclass=*', $search_attribs);
-            if ($sr)  {
-                $info=auth_ldap_get_entries($ldapconnection, $sr);
-                $newattrs = array();
-                if (!empty($info[0][$CFG->ldap_expireattr][0])) {
-                    //Set expiration time only if passwordExpirationInterval is defined
-                    if (!empty($info[0]['passwordExpirationInterval'][0])) {
-                       $expirationtime = time() + $info[0]['passwordExpirationInterval'][0]; 
-                       $ldapexpirationtime = auth_ldap_unix2expirationtime($expirationtime);
-                       $newattrs['passwordExpirationTime'] = $ldapexpirationtime;
-                    }    
-
-                    //set gracelogin count
-                    if (!empty($info[0]['loginGraceLimit'][0])) {
-                       $newattrs['loginGraceRemaining']= $info[0]['loginGraceLimit'][0]; 
-                    }
-    
-                    //Store attribute changes to ldap
-                    $result = ldap_modify($ldapconnection, $user_dn, $newattrs);
-                    if(!$result){
-                       error_log('LDAP Error in auth_user_update_password() when modifying expirationtime and/or gracelogins. Error code: '
-                                 . ldap_errno($ldapconnection) . '; Error string : '
-                                 . ldap_err2str(ldap_errno($ldapconnection)));
-                    }
-                }
-            } else {
-                error_log('LDAP Error in auth_user_update_password() when reading password expiration time. Error code: '
-                          . ldap_errno($ldapconnection) . '; Error string : '
-                          . ldap_err2str(ldap_errno($ldapconnection)));
-            }    
-            break;
-        default:
-            $usedconnection = &$ldapconnection;
-            // send ldap the password in cleartext, it will md5 it itself
-            $result = ldap_modify($ldapconnection, $user_dn, array('userPassword' => $newpassword));
-    if(!$result){
-        error_log('LDAP Error in auth_user_update_password(). Error code: ' 
-                  . ldap_errno($ldapconnection) . '; Error string : '
-                  . ldap_err2str(ldap_errno($ldapconnection)));
-    }
-    
-    }
-
-        
-    @ldap_close($ldapconnection);
-
-    return $result;
-}
-
 //PRIVATE FUNCTIONS starts
 //private functions are named as auth_ldap*
 
-/**
- * returns predefined usertypes
- *
- * @return array of predefined usertypes
- */
-
-function auth_ldap_suppported_usertypes (){
-// returns array of supported usertypes (schemas)
-// If you like to add our own please name and describe it here
-// And then add case clauses in relevant places in functions
-// iauth_ldap_init, auth_user_create, auth_check_expire, auth_check_grace
-    $types['edir']='Novell Edirectory';
-    $types['rfc2307']='posixAccount (rfc2307)';
-    $types['rfc2307bis']='posixAccount (rfc2307bis)';
-    $types['samba']='sambaSamAccount (v.3.0.7)';
-    $types['ad']='MS ActiveDirectory'; 
-    return $types;
-}    
-
-   
-/**
- * initializes needed variables for ldap-module
- *
- * Uses names defined in auth_ldap_supported_usertypes.
- * $default is first defined as:
- * $default['pseudoname'] = array(
- *                      'typename1' => 'value',
- *                      'typename2' => 'value'
- *                      ....
- *                      );
- *
- * @return array of default values
- */
-
-function auth_ldap_getdefaults(){
-    $default['ldap_objectclass'] = array(
-                        'edir' => 'User',
-                        'rfc2703' => 'posixAccount',
-                        'rfc2703bis' => 'posixAccount',
-                        'samba' => 'sambaSamAccount',
-                        'ad' => 'user',
-                        'default' => '*'
-                        );
-    $default['ldap_user_attribute'] = array(
-                        'edir' => 'cn',
-                        'rfc2307' => 'uid',
-                        'rfc2307bis' => 'uid',
-                        'samba' => 'uid',
-                        'ad' => 'cn',
-                        'default' => 'cn'
-                        );
-    $default['ldap_memberattribute'] = array(
-                        'edir' => 'member',
-                        'rfc2307' => 'member',
-                        'rfc2307bis' => 'member',
-                        'samba' => 'member',
-                        'ad' => 'member', //is this right?
-                        'default' => 'member'
-                        );
-    $default['ldap_memberattribute_isdn'] = array(
-                        'edir' => '1',
-                        'rfs2307' => '0',
-                        'rfs2307bis' => '1',
-                        'samba' => '0', //is this right?
-                        'ad' => '0', //is this right?
-                        'default' => '0'
-                        );
-    $default['ldap_expireattr'] = array (
-                        'edir' => 'passwordExpirationTime',
-                        'rfc2307' => 'shadowExpire',
-                        'rfc2307bis' => 'shadowExpire',
-                        'samba' => '', //No support yet
-                        'ad' => '', //No support yet
-                        'default' => ''
-                        );
-    return $default; 
-}
-
-/**
- * return binaryfields of selected usertype
- *
- *
- * @return array
- */
-
-function auth_ldap_getbinaryfields () {
-    global $CFG;
-    $binaryfields = array (
-                        'edir' => array('guid'),
-                        'rfc2703' => array(),
-                        'rfc2703bis' => array(),
-                        'samba' => array(),
-                        'ad' => array(),
-                        'default' => '*'
-                        );
-    if (!empty($CFG->ldap_user_type)) {
-        return $binaryfields[$CFG->ldap_user_type];   
-    } else {
-        return $binaryfields['default'];
-    }    
-    }
-    
-function auth_ldap_isbinary ($field) {
-    if (!isset($field)) {
-        return null ;
-    }    
-    return array_search($field, auth_ldap_getbinaryfields());
-}    
-
-/**
- * set $CFG-values for ldap_module
- * 
- * Get default configuration values with auth_ldap_getdefaults() 
- * and by using this information $CFG-> values are set
- * If $CFG->value is alredy set current value is honored.
- *
- * 
- */
-function auth_ldap_init () {
-    global $CFG;
- 
-    $default = auth_ldap_getdefaults();
-
-    foreach ($default as $key => $value) {
-        //set defaults if overriding fields not set
-        if(empty($CFG->{$key})) {
-            if (!empty($CFG->ldap_user_type) && !empty($default[$key][$CFG->ldap_user_type])) {
-                $CFG->{$key} = $default[$key][$CFG->ldap_user_type];
-            }else {
-                //use default value if user_type not set
-                if(!empty($default[$key]['default'])){
-                    $CFG->$key = $default[$key]['default'];
-                }else {
-                    unset($CFG->$key);
-                }    
-            }
-        }
-    }   
-    //hack prefix to objectclass
-    if ('objectClass=' != substr($CFG->ldap_objectclass, 0, 12)) {
-       $CFG->ldap_objectclass = 'objectClass='.$CFG->ldap_objectclass;
-    }
-   
-    //all chages go in $CFG , no need to return value
-}
-
-/**
- * take expirationtime and return it as unixseconds
- * 
- * takes expriration timestamp as readed from ldap
- * returns it as unix seconds
- * depends on $CFG->usertype variable
- *
- * @param mixed time   Time stamp readed from ldap as it is.
- * @return timestamp
- */
-
-function auth_ldap_expirationtime2unix ($time) {
-
-    global $CFG;
-    $result = false;
-    switch ($CFG->ldap_user_type) {
-        case 'edir':
-            $yr=substr($time,0,4);
-            $mo=substr($time,4,2);
-            $dt=substr($time,6,2);
-            $hr=substr($time,8,2);
-            $min=substr($time,10,2);
-            $sec=substr($time,12,2);
-            $result = mktime($hr,$min,$sec,$mo,$dt,$yr); 
-            break;
-        case 'posix':
-            $result = $time * DAYSECS ; //The shadowExpire contains the number of DAYS between 01/01/1970 and the actual expiration date
-            break;
-        default:  
-            error('CFG->ldap_user_type not defined or function auth_ldap_expirationtime2unix does not support selected type!');
-}
-    return $result;
-}
-
-/**
- * takes unixtime and return it formated for storing in ldap
- *
- * @param integer unix time stamp
- */
-function auth_ldap_unix2expirationtime ($time) {
-    global $CFG;
-    $result = false;
-    switch ($CFG->ldap_user_type) {
-        case 'edir':
-            $result=date('YmdHis', $time).'Z';  
-            break;
-        case 'posix':
-            $result = $time ; //Already in correct format
-            break;
-        default:  
-            error('CFG->ldap_user_type not defined or function auth_ldap_unixi2expirationtime does not support selected type!');
-    }        
-    return $result;
-
-}
-
-/*
- * checks if user belong to specific group(s)
- *
- * Returns true if user belongs group in grupdns string.
- *
- * @param mixed $username    username
- * @param mixed $groupdns    string of group dn separated by ;
- *
- */
 function auth_ldap_isgroupmember ($username='', $groupdns='') {
 // Takes username and groupdn(s) , separated by ;
 // Returns true if user is member of any given groups
 
-    global $CFG ;
-    $result = false;
-    $ldapconnection = auth_ldap_connect();
-    
+    global $CFG, $USER;
+
+    $ldapconnect = auth_ldap_connect();
+    $ldapbind = auth_ldap_bind($ldapconnect);
+   
     if (empty($username) OR empty($groupdns)) {
-        return $result;
-        }
-
-    if ($CFG->ldap_memberattribute_isdn) {
-        $username=auth_ldap_find_userdn($ldapconnection, $username);
+        return false;
     }
-    if (! $username ) {
-        return $result;
-    }
-
-    $groups = explode(";",$groupdns);
     
+    $groups = explode(";",$groupdns);
+
+    //build filter
+    $filter = "(& ($CFG->ldap_user_attribute=$username)(|";
     foreach ($groups as $group){
-        $group = trim($group);
-        if (empty($group)) {
-            continue;
+        $filter .= "($CFG->ldap_memberattribute=$group)";
+    }
+    $filter .= "))";
+    //search
+    $result = auth_ldap_get_userlist($filter);
+   
+    return count($result);
+
+}
+function auth_ldap_connect(){
+/// connects to ldap-server
+    global $CFG;
+
+    $result = ldap_connect($CFG->ldap_host_url);
+
+    if ($result) {
+        if (!empty($CFG->ldap_version)) {
+            ldap_set_option($result, LDAP_OPT_PROTOCOL_VERSION, $CFG->ldap_version);
         }
-        //echo "Checking group $group for member $username\n";
-        $search = @ldap_read($ldapconnection, $group,  '('.$CFG->ldap_memberattribute.'='.$username.')', array($CFG->ldap_memberattribute));
-        if (ldap_count_entries($ldapconnection, $search)) {$info = auth_ldap_get_entries($ldapconnection, $search);
-        
-            if (count($info) > 0 ) {
-                // user is member of group
-                $result = true;
-                break;
-            }
+
+        return $result;
+
+    } else {
+        error("LDAP-module cannot connect to server: $CFG->ldap_host_url");
+        return false;
     }
 }
 
-    return $result;
 
-}
 
-/**
- * connects to ldap server
- *
- * Tries connect to specified ldap servers.
- * Returns connection result or error.
- *
- * @return connection result
- */
-function auth_ldap_connect($binddn='',$bindpwd=''){
-/// connects  and binds to ldap-server
-/// Returns connection result
+function auth_ldap_bind($ldap_connection){
+/// makes bind to ldap for searching users
+/// uses ldap_bind_dn or anonymous bind
 
     global $CFG;
-    auth_ldap_init();
 
-    //Select bind password, With empty values use
-    //ldap_bind_* variables or anonymous bind if ldap_bind_* are empty
-    if ($binddn == '' AND $bindpwd == '') {
-        if (!empty($CFG->ldap_bind_dn)){
-           $binddn = $CFG->ldap_bind_dn;
-        }
-        if (!empty($CFG->ldap_bind_pw)){
-           $bindpwd = $CFG->ldap_bind_pw;
-        }
-    }
-    
-    $urls = explode(";",$CFG->ldap_host_url);
-        
-    foreach ($urls as $server){
-        $server = trim($server);
-        if (empty($server)) {
-            continue;
+    if ($CFG->ldap_bind_dn){
+        //bind with search-user
+        if (!ldap_bind($ldap_connection, $CFG->ldap_bind_dn,$CFG->ldap_bind_pw)){
+            error("Error: could not bind ldap with ldap_bind_dn/pw");
+            return false;
         }
 
-        $connresult = ldap_connect($server);
-        //ldap_connect returns ALWAYS true
- 
-        if (!empty($CFG->ldap_version)) {
-            ldap_set_option($connresult, LDAP_OPT_PROTOCOL_VERSION, $CFG->ldap_version);
-        }
-
-        if (!empty($binddn)){
-            //bind with search-user
-            $bindresult=@ldap_bind($connresult, $binddn,$bindpwd);
-        } else {
-            //bind anonymously 
-            $bindresult=@ldap_bind($connresult);
+    } else {
+        //bind anonymously 
+        if ( !ldap_bind($ldap_connection)){
+            error("Error: could not bind ldap anonymously");
+            return false;
         }  
-       
-        if (!empty($CFG->ldap_opt_deref)) {
-            ldap_set_option($connresult, LDAP_OPT_DEREF, $CFG->ldap_opt_deref);
-        }
-
-        if ($bindresult) {
-            return $connresult;
-        }
-        
-        $debuginfo == "<br/>Server: '$server' <br/> Connection: '$connresult'<br/> Bind result: '$bindresult'</br>";
     }
 
-    //If any of servers are alive we have already returned connection
-    error("LDAP-module cannot connect any LDAP servers : $debuginfo");
-    return false;
+    return true;
 }
 
-/**
- * retuns dn of username
- *
- * Search specified contexts for username and return user dn
- * like: cn=username,ou=suborg,o=org
- *
- * @param mixed $ldapconnection  $ldapconnection result
- * @param mixed $username username
- *
- */
 
-function auth_ldap_find_userdn ($ldapconnection, $username){
+
+function auth_ldap_find_userdn ($ldap_connection, $username){
+/// return dn of username
+/// like: cn=username,ou=suborg,o=org
+/// or false if username not found
 
     global $CFG;
 
     //default return value
     $ldap_user_dn = FALSE;
+
+    auth_ldap_bind($ldap_connection);
 
     //get all contexts and look for first matching user
     $ldap_contexts = explode(";",$CFG->ldap_contexts);
@@ -1315,24 +473,21 @@ function auth_ldap_find_userdn ($ldapconnection, $username){
   
     foreach ($ldap_contexts as $context) {
 
-        $context = trim($context);
-        if (empty($context)) {
-            continue;
-        }
+        $context == trim($context);
 
         if ($CFG->ldap_search_sub){
             //use ldap_search to find first user from subtree
-            $ldap_result = ldap_search($ldapconnection, $context, "(".$CFG->ldap_user_attribute."=".$username.")",array($CFG->ldap_user_attribute));
+            $ldap_result = ldap_search($ldap_connection, $context, "(".$CFG->ldap_user_attribute."=".$username.")",array($CFG->ldap_user_attribute));
 
         } else {
             //search only in this context
-            $ldap_result = ldap_list($ldapconnection, $context, "(".$CFG->ldap_user_attribute."=".$username.")",array($CFG->ldap_user_attribute));
+            $ldap_result = ldap_list($ldap_connection, $context, "(".$CFG->ldap_user_attribute."=".$username.")",array($CFG->ldap_user_attribute));
         }
  
-        $entry = ldap_first_entry($ldapconnection,$ldap_result);
+        $entry = ldap_first_entry($ldap_connection,$ldap_result);
 
         if ($entry){
-            $ldap_user_dn = ldap_get_dn($ldapconnection, $entry);
+            $ldap_user_dn = ldap_get_dn($ldap_connection, $entry);
             break ;
         }
     }
@@ -1340,47 +495,37 @@ function auth_ldap_find_userdn ($ldapconnection, $username){
     return $ldap_user_dn;
 }
 
-/**
- * retuns user attribute mappings between moodle and ldap
- *
- * @return array
- */
-
 function auth_ldap_attributes (){
-
+//returns array containg attribute mappings between Moodle and ldap
 	global $CFG;
 
     $config = (array)$CFG;
     $fields = array("firstname", "lastname", "email", "phone1", "phone2", 
                     "department", "address", "city", "country", "description", 
-                    "idnumber", "lang" );
+                    "idnumber", "lang", "guid");
 
     $moodleattributes = array();
     foreach ($fields as $field) {
-        if (!empty($config["auth_user_$field"])) {
+        if ($config["auth_user_$field"]) {
             $moodleattributes[$field] = $config["auth_user_$field"];
-            if (preg_match('/,/',$moodleattributes[$field])) {
-                $moodleattributes[$field] = explode(',', $moodleattributes[$field]); // split ?
-            }
         }
     }
     $moodleattributes['username']=$config["ldap_user_attribute"];
 	return $moodleattributes;
 }
 
-/**
- * return all usernames from ldap
- *
- * @return array
- */
-
 function auth_ldap_get_userlist($filter="*") {
 /// returns all users from ldap servers
     global $CFG;
 
     $fresult = array();
+    $ldap_connection = auth_ldap_connect();
 
-    $ldapconnection = auth_ldap_connect();
+    auth_ldap_bind($ldap_connection);
+
+    if (! isset($CFG->ldap_objectclass)) {
+        $CFG->ldap_objectclass="objectClass=*";
+    }
 
     if ($filter=="*") {
        $filter = "(&(".$CFG->ldap_user_attribute."=*)(".$CFG->ldap_objectclass."))";
@@ -1394,25 +539,22 @@ function auth_ldap_get_userlist($filter="*") {
 
     foreach ($contexts as $context) {
 
-        $context = trim($context);
-        if (empty($context)) {
-            continue;
-        }
-
         if ($CFG->ldap_search_sub) {
             //use ldap_search to find first user from subtree
-            $ldap_result = ldap_search($ldapconnection, $context,$filter,array($CFG->ldap_user_attribute));
+            $ldap_result = ldap_search($ldap_connection, $context,
+                                       $filter,
+                                       array($CFG->ldap_user_attribute));
         } else {
             //search only in this context
-            $ldap_result = ldap_list($ldapconnection, $context,
+            $ldap_result = ldap_list($ldap_connection, $context,
                                      $filter,
                                      array($CFG->ldap_user_attribute));
         }
 
-        $users = auth_ldap_get_entries($ldapconnection, $ldap_result);
+        $users = ldap_get_entries($ldap_connection, $ldap_result);
 
         //add found users to list
-        for ($i=0;$i<count($users);$i++) {
+        for ($i=0;$i<$users['count'];$i++) {
             array_push($fresult, ($users[$i][$CFG->ldap_user_attribute][0]) );
         }
     }
@@ -1420,15 +562,6 @@ function auth_ldap_get_userlist($filter="*") {
     return $fresult;
 }
 
-/**
- * return entries from ldap
- *
- * Returns values like ldap_get_entries but is
- * binary compatible and return all attributes as array
- *
- * @return array ldap-entries
- */
-   
 function auth_ldap_get_entries($conn, $searchresult){
 //Returns values like ldap_get_entries but is
 //binary compatible
@@ -1439,16 +572,12 @@ function auth_ldap_get_entries($conn, $searchresult){
         $attributes = ldap_get_attributes($conn, $entry);
         for($j=0; $j<$attributes['count']; $j++) {
             $values = ldap_get_values_len($conn, $entry,$attributes[$j]);
-            if (is_array($values)) {
             $fresult[$i][$attributes[$j]] = $values;
-            } else {
-                $fresult[$i][$attributes[$j]] = array($values);
-            }
         }         
         $i++;               
     }
     while ($entry = ldap_next_entry($conn, $entry));
-    //were done
+    //we're done
     return ($fresult);
 }
 

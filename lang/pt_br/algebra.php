@@ -1,7 +1,7 @@
 <?PHP // $Id$ 
-      // algebra.php - created with Moodle 1.3.3 (2004052503)
+      // algebra.php - created with Moodle 1.2.1 (2004032500)
 
 
-$string['filtername'] = 'Anotação de Álgebra';
+$string['filtername'] = 'Anotação de Algebra';
 
 ?>

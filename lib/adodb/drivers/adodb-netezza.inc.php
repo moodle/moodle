@@ -1,6 +1,6 @@
 <?php
 /*
-  V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim#natsoft.com.my). All rights reserved.
+  V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim#natsoft.com.my). All rights reserved.
  
   First cut at the Netezza Driver by Josh Eldridge joshuae74#hotmail.com
  Based on the previous postgres drivers.
@@ -149,12 +149,10 @@ class ADORecordSet_netezza extends ADORecordSet_postgres64
 		{
 		case ADODB_FETCH_NUM: $this->fetchMode = PGSQL_NUM; break;
 		case ADODB_FETCH_ASSOC:$this->fetchMode = PGSQL_ASSOC; break;
-		
+		default:
 		case ADODB_FETCH_DEFAULT:
-		case ADODB_FETCH_BOTH:
-		default: $this->fetchMode = PGSQL_BOTH; break;
+		case ADODB_FETCH_BOTH:$this->fetchMode = PGSQL_BOTH; break;
 		}
-		$this->adodbFetchMode = $mode;
 		$this->ADORecordSet($queryID);
 	}
 	

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.4.3 + (2004083134)
+      // install.php - created with Moodle 1.4 (2004083100)
 
 
 $string['admindirerror'] = 'Den katalog för administration som är angiven är felaktig';
@@ -31,13 +31,13 @@ $string['dbtype'] = 'Typ';
 $string['directorysettings'] = '<p>Var snäll och bekräfta placeringarna av denna installation av Moodle</p>
 <p><b>Webbadress</b>
 Ange den fullständiga adressen till Moodle. Om Din webbplats går att nå via flerfaldiga (ett antal olika) URL:er så bör Du välja den som är mest naturlig för Dina användare (studenter etc).
-Ta inte inte med något avslutande vänsterlutat snedstreck \"/\".</p>
+Ta inte inte med något avslutande vänsterslutat snedstreck \"/\".</p>
 
 <p><b>Katalogen för Moodle</b>
 Ange den fullständiga sökvägen till den här installationen. Kontrollera att det stämmer med sådant som är skiftlägeskänsligt (stor/liten bokstav).
 </p>
 <p><b>Katalogen för data</b>
-Du behöver ett utrymme där Moodle kan spara uppladdade filer. Till denna katalog bör det finnas läs- OCH SKRIV-rättigheter för användaren av webbservern (vanligtvis \'nobody\' eller  \'apache\') men katalogen bör inte vara tillgänglig direkt via webben.</p> ';
+Du behöver ett utrymme där Moodle kan spara uppladdade filer. Till denna katalog bör det finnas läs- OCH SKRIV-rättigheter för användaren av webbservern (vanligtvis \'nobody\' eller  \'apache\') men katalogen bör inte vara tillgänglig direkt via webben. ';
 $string['dirroot'] = 'Katalogen för Moodle';
 $string['dirrooterror'] = 'Inställningarna för \"Katalogen för Moodle\" tycks vara felaktiga - det går inte att hitta någon installation av Moodle där. Värdet här nedan har återställts.';
 $string['download'] = 'Ladda ner';
@@ -49,7 +49,7 @@ $string['fileuploadshelp'] = '<p>Uppladdning av filer verkar vara avaktiverat på
 <p>För att aktivera uppladdning av filer så måste Du (eller Din systemadministratör) redigera den övergripande php.ini-filen på Ert system och ändra inställningen för <b>uppladdning av filer (file uploads)</b> till \'1\'.</p>';
 $string['gdversion'] = 'GD version';
 $string['gdversionerror'] = 'GD biblioteket bör vara tillgängligt för att Du ska kunna bearbeta och skapa bilder. ';
-$string['gdversionhelp'] = '<p>Det verkar som om GD inte är installerat på Din server. </p>
+$string['gdversionhelp'] = '<p>Det verkar som om GD inte är installerat på Din server inte. </p>
 <p>GD är ett bibliotek som är nödvändigt i PHP om Moodle ska kunna bearbeta bilder (som t ex bilderna i användarprofilerna) eller skapa nya (som t ex graferna till loggarna). Moodle kommer fortfarande att fungera utan GD men dessa funktioner kommer alltså att saknas. </p>
 <p>Om Du vill lägga till GD under UNIX, så får Du kompilera PHP genom att använda parametern --with-gd.</p>
 <p>Under Windows kan Du vanligtvis redigera php.ini och ta bort kommentarmarkeringen för den rad som refererar till libgd.dll</p>';
@@ -67,7 +67,8 @@ $string['memorylimithelp'] = '<p>Minnesbegränsningen för PHP på Din server är f 
 <p>Vi rekommenderar att Du konfigurerar PHP med en högre begränsning, som t ex 16M. Det finns flera sätt att göra detta som Du kan pröva med:</p> <ol>
 <li>Om Du har möjlighet till det så kan Du kompilera om PHP med<i>--enable-memory-limit </i>Detta gör det möjligt för Moodle att ställa in minnesbegränsningen själv. </li>
 <li>Om Du har tillgång till Din php.ini-fil så kan Du ändra inställningen för <b>memory limit</b> till något i stil med 16M. Om Du inte har tillgång själv så kan Du kanske be Din systemadministratör att göra detta åt Dig.</li>
-<li>På en del PHP-servrar kan Du skapa en .htaccess-fil i Moodle-katalogen som innehåller den här raden: <blockquote>php_value memory_limit 16M</blockquote>.<br />Detta kan dock på en del servrar leda till att <b>inga</b> PHP-sidor fungerar. (Du får Error-sidor istället för de riktiga) så då får Du ta bort .htaccess-filen.</li>
+<li>På en del PHP-servrar kan Du skapa en .htaccess-fil i Moodle-katalogen som innehåller den här raden: <blockquote>php_value memory_limit 16M</blockquote>.<br />Detta kan dock på en del servrar leda till att <b>inga</b> PHP-sidor fungerar. (Du får Error-sidor istället för de riktiga) så då får Du ta bort .htaccess-filen.</ol>
+</li><li></li>
 </ol>';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP har inte konfigurerats på det sätt som måste i förhållande till MySQL-extensionen för att kunna kommunicera med MySQL. Var snäll och kontrollera Din php.ini-fil eller kompilera om PHP.';
 $string['pass'] = 'Pass';

@@ -1,5 +1,7 @@
-<p align="center"><b>&Uuml;ber den Richtext-HTML-Editor</b></p>
-<p>Verfügbarkeit: <b><?php  if (!$CFG->htmleditor) {
+<P ALIGN=CENTER><B>&Uuml;ber den Richtext-HTML-Editor</B></P>
+
+<P>Availability: <B>
+<?php  if (!$CFG->htmleditor) {
        print_string("htmleditordisabledadmin");
    } else if (!$USER->htmleditor) {
        print_string("htmleditordisabled");
@@ -8,180 +10,164 @@
    } else {
        print_string("htmleditoravailable");
    }
-?></b></p>
-<p>Der Richtext HTML Editor ist eine Schnittstelle zur
-Textverarbeitung. Er ist eingebettet in Ihre Webseite und erlaubt
-Ihnen, Text in einer intuitiven Weise zu editieren und normalen
-HTML-Code daraus zu machen.</p>
-<p>Zus&auml;tzlich zur Funktion &bdquo;Textformatierung&ldquo;
-hat dieser Editor eine Reihe von Extrafunktionen, die f&uuml;r
-Sie n&uuml;tzlich sein k&ouml;nnen.</p>
-<p><b>Einf&uuml;gen von Text aus anderen Anwendungen</b></p>
-<div style="margin-left: 2em">
-<p>Sie k&ouml;nnen Text aus anderen Windows-Anwendungen wie
-Microsoft Word direkt durch copy&amp;paste in den Editor
-&uuml;bertragen und Ihre Formatierung wird umgesetzt. Benutzen
-Sie dazu die Befehle unter &bdquo;Datei&ldquo; in Ihrem Browser
-oder benutzen Sie die Shortcuts ctrl-C und ctrl-V.</p>
-</div>
-<p><b>Bilder einf&uuml;gen <img alt="" border="0" hspace="10" src=
-"lib/editor/images/ed_image.gif" /></b></p>
-<div style="margin-left: 2em">
-<p>Falls Sie Bilder haben, die bereits auf einer Webseite
-publiziert sind und per URL verf&uuml;gbar sind, k&ouml;nnen Sie
-diese Bilder in Ihren Text einf&uuml;gen, indem Sie den Button
-&bdquo;Bild einf&uuml;gen&ldquo; benutzen.</p>
-</div>
-<p><b>Einf&uuml;gen von Tabellen <img alt="" border="0" hspace="10" src=
-"lib/editor/images/insert_table.gif" /></b></p>
-<div style="margin-left: 2em">
-<p>Um Ihrem Text ein Layout hinzuzuf&uuml;gen, k&ouml;nnen Sie den
-Button &ldquo;Tabellen einf&uuml;gen&rdquo; in der Toolbar
-benutzen.</p>
-</div>
-<p><b>Einf&uuml;gen von Links <img alt="" border="0" hspace="10" src=
-"lib/editor/images/ed_link.gif" /></b></p>
-<div style="margin-left: 2em">
-<p>Um einen neuen Link zu erstellen schreiben Sie zuerst den
-Textstring, den Sie später als Link verwenden m&ouml;chten. Dann markieren
-Sie ihn und klicken mit der linken Maustaste auf die Toolbar.
-Tippen Sie die URL, welche Sie verlinken m&ouml;chten und damit
-ist es geschafft.</p>
-</div>
-<p><b>Smileys einf&uuml;gen (emoticons) <img alt="" border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15" /></b></p>
-<div style="margin-left: 2em">
-<p>Um diese kleinen Smileys in Ihren Text einzubetten klicken Sie
-auf den Smiley-Button in der Toolbar. Ein Fenster wird sich
-&ouml;ffnen und Sie k&ouml;nnen zwischen den angezeigten Icons
-w&auml;hlen. (Alternativ k&ouml;nnen Sie den entsprechenden Code
-direkt in den Text tippen, dieser wird sp&auml;ter konvertiert
-und die Smilieys werden dargestellt.)</p>
-<table border="1">
-<tr valign="top">
-<td>
-<table border="0" align="center" cellpadding="10">
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/smiley.gif" width="15"
-height="15" /></td>
-<td>l&auml;cheln</td>
-<td nowrap><font face="Courier">:-)</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/biggrin.gif"
-width="15" height="15" /></td>
-<td>breites Grinsen</td>
-<td nowrap><font face="Courier">:-D</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/wink.gif"
-width="15" height="15" /></td>
-<td>zwinkernd</td>
-<td nowrap><font face="Courier">;-)</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/mixed.gif"
-width="15" height="15" /></td>
-<td>gemischt</td>
-<td nowrap><font face="Courier">:-/</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/thoughtful.gif"
-width="15" height="15" /></td>
-<td>denkend</td>
-<td nowrap><font face="Courier">V-.</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/tongueout.gif"
-width="15" height="15" /></td>
-<td>Zunge zeigen</td>
-<td nowrap><font face="Courier">:-P</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/cool.gif"
-width="15" height="15" /></td>
-<td>cool</td>
-<td nowrap><font face="Courier">B-)</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/approve.gif"
-width="15" height="15" /></td>
-<td>einverstanden</td>
-<td nowrap><font face="Courier">^-)</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/wideeyes.gif"
-width="15" height="15" /></td>
-<td>grosse Augen</td>
-<td nowrap><font face="Courier">8-)</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/surprise.gif"
-width="15" height="15" /></td>
-<td>&uuml;berrascht</td>
-<td nowrap><font face="Courier">8-o</font></td>
-</tr>
+?>
+</B></P>
 
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/sad.gif" width="15" height="15" /></td>
-<td>traurig</td>
-<td nowrap><font face="Courier">:-(</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/shy.gif" width="15" height="15" /></td>
-<td>sch&uuml;chtern</td>
-<td nowrap><font face="Courier">8-.</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/blush.gif"
-width="15" height="15" /></td>
-<td>err&ouml;tend</td>
-<td nowrap><font face="Courier">:-I</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/kiss.gif"
-width="15" height="15" /></td>
-<td>küssen</td>
-<td nowrap><font face="Courier">:-X</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/clown.gif"
-width="15" height="15" /></td>
-<td>Clown</td>
-<td nowrap><font face="Courier">:o)</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/blackeye.gif"
-width="15" height="15" /></td>
-<td>schwarzes Auge</td>
-<td nowrap><font face="Courier">P-|</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/angry.gif"
-width="15" height="15" /></td>
-<td>w&uuml;tend</td>
-<td nowrap><font face="Courier">8-[</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/dead.gif"
-width="15" height="15" /></td>
-<td>matt</td>
-<td nowrap><font face="Courier">xx-P</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/sleepy.gif"
-width="15" height="15" /></td>
-<td>schl&auml;frig</td>
-<td nowrap><font face="Courier">|-.</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/evil.gif"
-width="15" height="15" /></td>
-<td>&uuml;bel</td>
-<td nowrap><font face="Courier">}-]</font></td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-</div>
+<P>Der Richtext HTML Editor ist eine Schnittstelle zur Textverarbeitung. Er ist eingebettet
+in Ihre Webseite und erlaubt Ihnen, Text in einer intuitiven Weise zu editieren
+und normalen HTML-Code daraus zu machen.
+
+<P>Zus&auml;tzlich zur Funktion &#8222;Textformatierung&#8220; hat dieser Editor eine Reihe von
+Extrafunktionen, die f&uuml;r Sie n&uuml;tzlich sein k&ouml;nnen.
+
+<P><B>Einf&uuml;gen von Text aus anderen Anwendungen</B></P>
+<UL>
+<P>Sie k&ouml;nnen Text aus anderen Windows-Anwendungen
+wie Microsoft Word direkt durch copy&amp;paste in den Editor &uuml;bertragen und
+Ihre Formatierung wird aufbewahrt. Benutzen Sie dazu die Befehle unter &#8222;Datei&#8220;
+in Ihrem Browser oder benutzen Sie die Shortcuts ctrl-C und ctrl-V.
+</UL>
+
+<P><B>Bilder einf&uuml;gen <img border="0" hspace="10" src="lib/editor/images/ed_image.gif"></B></P>
+<UL>
+<P>Falls Sie Bilder haben, die bereits auf einer
+Webseite publiziert sind und per URL verf&uuml;gbar sind, k&ouml;nnen Sie diese Bilder in
+Ihren Text einf&uuml;gen, indem Sie den Button &#8222;Bild einf&uuml;gen&#8220; benutzen.
+</UL>
+
+<P><B>Einf&uuml;gen von Tabellen <img border="0" hspace="10" src="lib/editor/images/insert_table.gif"></B></P>
+<UL>
+<P>Um Ihrem Text ein Layout hinzuzuf&uuml;gen k&ouml;nnen Sie
+den Button &#8220;Tabellen einf&uuml;gen&#8221; in der Toolbar benutzen.
+</UL>
+
+<P><B>Einf&uuml;gen von Links <img border="0" hspace="10" src="lib/editor/images/ed_link.gif"></B></P>
+<UL>
+<P>Um ein neues Link zu erstellen schreiben Sie
+zuerst den Textstring, den Sie als Link haben m&ouml;chten. Dann markieren Sie ihn
+und klicken mit der linken Maustaste auf die Toolbar. Tippen Sie die URL,
+welche Sie verlinken m&ouml;chten und damit ist es geschafft.
+</UL>
+
+
+<P><B>Smileys einf&uuml;gen (emoticons) <img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></B></P>
+<UL>
+<P>Um diese kleinen Smileys in Ihren Text
+einzubetten klicken Sie auf den Smiley-Button in der Toolbar. Ein Fenster wird
+sich &ouml;ffnen und sie k&ouml;nnen zwischen den angezeigten Icons w&auml;hlen. (Alternativ
+k&ouml;nnen Sie den entsprechenden Code direkt in den Text tippen, dieser wird
+sp&auml;ter konvertiert und die Smilieys werden dargestellt.)
+
+    <table border="1">
+      <tr valign="top">
+        <td>
+        <table border="0" align="center" cellpadding="10">
+          <tr>
+            <td><img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></td>
+            <td>l&auml;cheln</td>
+            <td NOWRAP><FONT FACE=Courier>:-)</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/biggrin.gif" width="15" height="15"></td>
+            <td>breites grinsen</td>
+            <td NOWRAP><FONT FACE=Courier>:-D</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/wink.gif" width="15" height="15"></td>
+            <td>zwinkernd</td>
+            <td NOWRAP><FONT FACE=Courier>;-)</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/mixed.gif" width="15" height="15"></td>
+            <td>gemischt</td>
+            <td NOWRAP><FONT FACE=Courier>:-/</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/thoughtful.gif" width="15" height="15"></td>
+              <td>denkend</td>
+              <td NOWRAP><FONT FACE=Courier>V-.</FONT></td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/tongueout.gif" width="15" height="15"></td>
+            <td>Zunge zeigen</td>
+            <td NOWRAP><FONT FACE=Courier>:-P</td>
+         </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/cool.gif" width="15" height="15"></td>
+            <td>cool</td>
+            <td NOWRAP><FONT FACE=Courier>B-)</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/approve.gif" width="15" height="15"></td>
+              <td>einverstanden</td>
+              <td NOWRAP><FONT FACE=Courier>^-)</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/wideeyes.gif" width="15" height="15"></td>
+              <td>grosse Augen</td>
+              <td NOWRAP><FONT FACE=Courier>8-)</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/surprise.gif" width="15" height="15"></td>
+              <td>&uuml;berrascht</td>
+              <td NOWRAP><FONT FACE=Courier>8-o</td>
+            </tr>
+        </table>
+        </td>
+        <td>
+        <table border="0" align="center" cellpadding="10">
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/sad.gif" width="15" height="15"></td>
+              <td>traurig</td>
+              <td NOWRAP><FONT FACE=Courier>:-(</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/shy.gif" width="15" height="15"></td>
+              <td>sch&uuml;chtern</td>
+              <td NOWRAP><FONT FACE=Courier>8-.</td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/blush.gif" width="15" height="15"></td>
+            <td>err&ouml;tend</td>
+            <td NOWRAP><FONT FACE=Courier>:-I</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/kiss.gif" width="15" height="15"></td>
+              <td>kisses</td>
+              <td NOWRAP><FONT FACE=Courier>:-X</td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/clown.gif" width="15" height="15"></td>
+            <td>clown</td>
+            <td NOWRAP><FONT FACE=Courier>:o)</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/blackeye.gif" width="15" height="15"></td>
+            <td>schwarzes Auge</td>
+            <td NOWRAP><FONT FACE=Courier>P-|</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/angry.gif" width="15" height="15"></td>
+              <td>w&uuml;tend</td>
+              <td NOWRAP><FONT FACE=Courier>8-[</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/dead.gif" width="15" height="15"></td>
+              <td>matt</td>
+              <td NOWRAP><FONT FACE=Courier>xx-P</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/sleepy.gif" width="15" height="15"></td>
+              <td>schl&auml;frig</td>
+              <td NOWRAP><FONT FACE=Courier>|-.</td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/evil.gif" width="15" height="15"></td>
+            <td>&uuml;bel</td>
+            <td NOWRAP><FONT FACE=Courier>}-]</td>
+          </tr>
+        </table>
+    </table>
+
+</UL>
 

@@ -1,78 +1,43 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4.4 (2004083140)
+      // scorm.php - created with Moodle 1.4 development (2004070800)
 
 
-$string['asset'] = 'Рэсурс';
-$string['attr_error'] = 'Памылковае значэнне для атрыбуту ($a->attr) у тэгу $a->tag.';
 $string['autocontinue'] = 'Аўта-працяг';
-$string['badmanifest'] = 'Нейкія памылкі маніфесту: глядзі лог-файл памылак';
 $string['browse'] = 'Шукаць';
 $string['browsed'] = 'Знойдзены';
 $string['browsemode'] = 'Рэжым пошуку';
-$string['chooseapacket'] = 'Выберыце або мадэрнізуйце SCORM пакет';
+$string['chooseapacket'] = 'Вылучыце або мадэрнізуйце SCORM пакет';
 $string['completed'] = 'Завершанае';
-$string['configframesize'] = 'Гэтае значэнне памеру (у пікселях) верхняй панелі (якая ўтрымлівае навігацыю) падчас карыстання scorm пакетам.';
-$string['configpopup'] = 'Калі дадаецца новы scorm пакет, які можа дэманстравацца ва ўсплываючым вaкне, дык ці трэба ўключаць гэту опцыю па-змаўчанні?';
-$string['configpopupheight'] = 'Якую вышыню па-змаўчанні вызначыць для новых усплываючых вокнаў?';
-$string['configpopupresizable'] = 'Ці можна ўносіць змены ва ўсплываючыя вокны па-змаўчанні';
-$string['configpopupscrollbars'] = 'Ці павінна ва ўсплываючых вокнах дазволена функцыя пракруткі старонкі па-змаўчанні?';
-$string['configpopupstatus'] = 'Ці мусяць усплываючыя вокны дэманстравацца ў новым вакне?';
-$string['configpopupwidth'] = 'Якую шырыню трэба настроіць па-змаўчанні для новых усплываючых вокнаў?';
 $string['coursepacket'] = 'Пакет курса';
 $string['coursestruct'] = 'Структура курса';
 $string['datadir'] = 'Памылка файлавай сістэмы: Не магу стварыць дырэкторыю для захоўвання дадзеных курса';
-$string['domxml'] = 'DOMXML знешняя бібліятэка';
 $string['entercourse'] = 'Уваход у SCORM курс';
-$string['errorlogs'] = 'Памылкі загрузак';
 $string['failed'] = 'Няўдала';
-$string['found'] = 'Знойдзены маніфест';
-$string['gradeaverage'] = 'Сярэдняя адзнака';
-$string['gradehighest'] = 'Найвышэйшая адзнака';
-$string['grademethod'] = 'Метад ацэньвання';
-$string['gradescoes'] = 'Сітуацыя з ацэнкамі';
-$string['gradesum'] = 'Сумарная адзнака';
-$string['guestsno'] = 'Госці не могуць праглядаць scorm курсы';
-$string['incomplete'] = 'Незавершанае';
-$string['missing_attribute'] = 'Адсутнічае атрыбут $a->attr у тэгу $a->tag';
-$string['missing_tag'] = 'Адсутнічае тэг $a->tag';
+$string['incomplete'] = 'Не завершанае';
 $string['mode'] = 'Рэжым';
 $string['modulename'] = 'Scorm';
 $string['modulenameplural'] = 'Scorms';
-$string['newheight'] = 'Вышыня вакна па-змаўчанні (у пікселях)';
-$string['newresizable'] = 'Дазволіць змяненне памераў вакна';
-$string['newscrollbars'] = 'Дазволіць пасму пракруткі вакна';
-$string['newstatus'] = 'Паказаць пасму стану';
-$string['newwidth'] = 'Шырыня вакна па-змаўчанні (у пікселях)';
+$string['newheight'] = 'Вышыня вакна па змаўчанні (у пікселях)';
+$string['newresizable'] = 'Дазволіць змяненне памеру вакна';
+$string['newscrollbars'] = 'Дазволіць пракрутку ў вакне';
+$string['newstatus'] = 'Паказаць паласу стану';
+$string['newwidth'] = 'Шырыня вакна па змаўчанні (у пікселях)';
 $string['newwindow'] = 'Новае вакно';
-$string['newwindowopen'] = 'Паказаць гэты scorm пакет у новым усплываючым вакне';
-$string['next'] = 'Прадоўжыць';
-$string['no_attributes'] = 'Тэг $a->tag мусіць мець атрыбуты';
-$string['no_children'] = 'Тэг $a->tag мусіць мець дзетак';
+$string['next'] = 'Працягнуць';
 $string['nomanifest'] = 'Маніфест не знойдзены';
 $string['noreports'] = 'Няма справаздачаў для паказу';
 $string['normal'] = 'Нармальны';
-$string['not_corr_type'] = 'Неадпаведнасць тыпаў для тэга $a->tag';
 $string['notattempted'] = 'Не прадпрынята';
-$string['organizations'] = 'Арганізацыі';
 $string['packagedir'] = 'Памылка файлавай сістэмы: не магу стварыць пакетную дырэкторыю';
 $string['passed'] = 'Прапушчана';
-$string['php5'] = 'PHP 5 (DOMXML свая бібліятэка)';
-$string['position_error'] = '$a->tag не можа паходзіць ад $a->parent тэга';
 $string['prev'] = 'Папярэдні';
 $string['regular'] = 'Рэгулярны маніфест';
 $string['report'] = 'Справаздача';
 $string['review'] = 'Агляд';
-$string['scoes'] = 'Набраныя балы';
 $string['score'] = 'Лік';
-$string['syntax'] = 'Сінтаксічная памылка';
-$string['tag_error'] = 'Невядомы тэг ($a->tag) з гэтым зместам: $a->value';
-$string['too_many_attributes'] = 'Тэг $a->tag мае зашмат атрыбутаў';
-$string['too_many_children'] = 'Тэг $a->tag мае зашмат дзетак';
 $string['trackingloose'] = 'Увага: Дадзеныя адсочвання гэтага SCORM пакета будуць страчаныя!';
 $string['validateascorm'] = 'Дакладны SCORM пакет';
 $string['validation'] = 'Дакладны вынік';
-$string['validationtype'] = 'Гэта прэферэнцыя ўстаноўлена DOMXML бібліятэкай, скарыстанай для пацверджання SCORM маніфесту. Калі ня ведаеце, пакіньце выбраны варыянт.';
-$string['versionwarning'] = 'Версія маніфесту старэйшая за 1.3, папярэджанне ў $a->tag tag';
 $string['viewallreports'] = 'Прагляд справаздачаў для $a спробаў';
 
 ?>

@@ -1,202 +1,197 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.4 (2004083100)
+      // survey.php - created with Moodle 1.1.1 (2003091111)
 
 
-$string['actual'] = 'Aktuális';
-$string['actualclass'] = 'Aktuális osztály';
-$string['actualstudent'] = 'Aktuális $a';
-$string['allquestions'] = 'Minden kérdés sorrendben, minden tanuló';
-$string['allscales'] = 'Minden skála, minden tanuló';
-$string['alreadysubmitted'] = 'Már elküldte ezt a kérdõívet';
-$string['analysisof'] = '$a elemzése';
-$string['answers'] = 'Válaszok';
-$string['attls1'] = 'Mások mondanivalójának értékelésénél az érvek minõségét veszem figyelembe, és nem azt, hogy ki mondja.';
-$string['attls10'] = 'Fontos számomra, hogy egy elemzésnél objektív maradjak, amennyire csak lehetséges.';
-$string['attls10short'] = 'objektívnak maradni';
-$string['attls11'] = 'Inkább együtt próbálok gondolkodni az emberekkel, nem pedig vitatkozni velük.';
-$string['attls11short'] = 'együtt gondolkodni az emberekkel';
-$string['attls12'] = 'Az érvek értékelésénél vannak bizonyos kritériumaim.';
-$string['attls12short'] = 'értékelés kritériumokkal';
-$string['attls13'] = 'Inkább megérteni próbálom mások véleményét, mintsem értékelni.';
-$string['attls13short'] = 'próbálni megérteni';
-$string['attls14'] = 'Megpróbálom megmutatni mások gondolkodásának gyenge pontjait, hogy segítsem õket véleményük tisztázásában.';
-$string['attls14short'] = 'gyenge pontok megmutatása';
-$string['attls15'] = 'Vitás kérdések megbeszélésekor megpróbálom beleképzelni magam mások helyzetébe, hogy megértsem, miért gondolkodnak úgy.';
-$string['attls15short'] = 'beleképzelés';
-$string['attls16'] = 'Az elemzési módszeremet \'kipróbálásosnak\' lehetne nevezni, mert nagyon alaposan figyelembe veszek minden tényt.';
-$string['attls16short'] = 'kipróbálás';
-$string['attls17'] = 'Problémamegoldás során többre értékelem a logikát és az érvelést saját egyéni szempontjaimnál.';
-$string['attls17short'] = 'a logikát többre tartom';
-$string['attls18'] = 'Az enyémtõl különbözõ véleményeket empátiával kezelem.';
-$string['attls18short'] = 'empátia';
-$string['attls19'] = 'Ha olyanokkal találkozom, akiknek a véleménye idegennek tûnik a számomra, megpróbálom elképzelni, miként alakíthatták ki ezt a véleményt.';
-$string['attls19short'] = 'megpróbálni elképzelni ';
-$string['attls1short'] = 'az érv minõségére figyelni ';
-$string['attls2'] = 'Szeretem eljátszani az ördög ügyvédjét - a másikkal ellentétes dolgot állítani.';
-$string['attls20'] = 'Szoktam gondolkodni azon, hogy mi a baj egyes dolgokkal. Például egy irodalmi értelmezésben olyasmit keresek, ami nincs jól megindokolva.';
-$string['attls20short'] = 'mi rossz?';
-$string['attls2short'] = 'eljátszani az ördög ügyvédjét';
-$string['attls3'] = 'Szeretem tudni, milyen háttérrel rendelkeznek mások és milyen tapasztalatok alapján vélekednek úgy, ahogyan vélekednek.';
-$string['attls3short'] = 'milyen háttérrel rendelkeznek mások';
-$string['attls4'] = 'Tanulmányaim legfontosabb része az volt, amikor olyanokról tanultam, akik nagyon különböznek tõlem.';
-$string['attls4short'] = 'a tõlem különbözõk megértése';
-$string['attls5'] = 'A leginkább úgy azonosulhatok önmagammal, ha egy sor másféle emberrel érintkezem.';
-$string['attls5short'] = 'érintkezés másféle emberekkel';
-$string['attls6'] = 'Szeretem az enyémtõl eltérõ háttérrel rendelkezõk véleményét meghallgatni - segít megértenem, mitõl láthatók a dolgok annyira sokféleképpen.';
-$string['attls6short'] = 'szeretek véleményeket hallgatni';
-$string['attls7'] = 'Úgy látom, hogy erõsíthetem a véleményemet, ha olyannal vitatkozom, aki nem ért velem egyet.';
-$string['attls7short'] = 'megerõsítés vitán keresztül ';
-$string['attls8'] = 'Mindig is érdekelt, hogy az emberek miért teszik és hiszik azt, amit cselekednek.';
-$string['attls8short'] = 'ismerni, hogy miért teszik ';
-$string['attls9'] = 'Gyakran tapasztalom azt, hogy általam olvasott könyvek szerzõivel vitatkozom és megpróbálok logikusan rájönni, hogy hol tévednek.';
-$string['attls9short'] = 'vitatkozni a szerzõkkel';
-$string['attlsintro'] = 'Ennek a kérdõívnek az a célja, hogy segítsen a gondolkodás és a tanulás iránti viszonyulások megértésében.
-Nincsenek jó és rossz válaszok. A véleményére vagyunk kíváncsiak. Válaszait bizalmasan fogjuk kezelni, és nem befolyásolják majd az Ön értékelését.';
-$string['attlsm1'] = 'Viszonyulások a gondolkodáshoz és a tanuláshoz';
-$string['attlsm2'] = 'Kapcsolt tanulás';
-$string['attlsm3'] = 'Elkülönült tanulás';
-$string['attlsmintro'] = 'Vita tárgya ...';
-$string['attlsname'] = 'ATTLS (20 tételes változat)';
-$string['ciq1'] = 'Mikor kötötte le leginkább az osztályban a tanulás?';
-$string['ciq1short'] = 'Legjobban lekötött';
-$string['ciq2'] = 'Mikor kötötte le legkevésbé az osztályban a tanulás?';
-$string['ciq2short'] = 'Legkevésbé lekötött';
-$string['ciq3'] = 'Mely tevékenységet találta a fórumokon bárki részérõl a leginkább támogató vagy segítõ jellegûnek?';
-$string['ciq3short'] = 'Segítõ mozzanat';
-$string['ciq4'] = 'Mely tevékenységet találta a fórumokon bárki részérõl a leginkább zavarba ejtõnek?';
-$string['ciq4short'] = 'Zavarba ejtõ mozzanat';
-$string['ciq5'] = 'Milyen esemény lepte meg a legjobban?';
-$string['ciq5short'] = 'Meglepõ mozzanat';
-$string['ciqintro'] = 'Az osztályban történt legutóbbi eseményekre gondolva válaszolja meg az alábbi kérdéseket.';
-$string['ciqname'] = 'Fontos események';
-$string['clicktocontinue'] = 'A folytatáshoz kattintson ide';
-$string['clicktocontinuecheck'] = 'Az ellenõrzéshez és folytatáshoz kattintson ide';
-$string['colles1'] = 'tanulásom számomra érdekes dolgokra irányul.';
-$string['colles10'] = 'Megkérek más tanulókat, hogy fejtsék ki véleményüket.';
-$string['colles10short'] = 'Magyarázatot kérek';
-$string['colles11'] = 'más tanulók megkérnek, hogy fejtsem ki a véleményemet.';
-$string['colles11short'] = 'Magyarázatot kérnek tõlem';
-$string['colles12'] = 'más tanulók reagálnak ötleteimre.';
-$string['colles12short'] = 'a tanulók reagálnak rám';
-$string['colles13'] = 'a tutor gondolkodásra serkent.';
-$string['colles13short'] = 'a tutor gondolkodtat';
-$string['colles14'] = 'a tutor részvételre serkent.';
-$string['colles14short'] = 'a tutor bátorít';
-$string['colles15'] = 'a tutor megfelelõ párbeszédet biztosít.';
-$string['colles15short'] = 'a tutor párbeszédet biztosít';
-$string['colles16'] = 'a tutor kritikus önvizsgálatra ösztönöz.';
-$string['colles16short'] = 'a tutor kritikus önvizsgálatra ösztönöz';
-$string['colles17'] = 'a többi tanuló részvételre serkent.';
-$string['colles17short'] = 'a tanulók bátorítanak';
-$string['colles18'] = 'más tanulók dicsérik részvételemet.';
-$string['colles18short'] = 'a tanulók dicsérnek';
-$string['colles19'] = 'más tanulók értékelik részvételemet.';
-$string['colles19short'] = 'a tanulók értékelnek';
-$string['colles1short'] = 'érdekes dolgokra irányul';
-$string['colles2'] = 'amit tanulok, fontos a szakmai gyakorlatomhoz.';
-$string['colles20'] = 'más tanulók átérzik tanulási erõfeszítéseimet.';
-$string['colles20short'] = 'a tanulók átérzik';
-$string['colles21'] = 'Más tanulók üzeneteit figyelembe veszem.';
-$string['colles21short'] = 'Megértem a többi tanulót';
-$string['colles22'] = 'Más tanulók figyelembe veszik üzeneteimet.';
-$string['colles22short'] = 'A tanulók megértenek';
-$string['colles23'] = 'Figyelembe veszem a tutor üzeneteit.';
-$string['colles23short'] = 'Megértem a tutort';
-$string['colles24'] = 'A tutor figyelembe veszi üzeneteimet.';
-$string['colles24short'] = 'A tutor megért';
-$string['colles2short'] = 'fontos a gyakorlatomhoz';
-$string['colles3'] = 'Megtanulom, miként javítsam a szakmai jártasságomat.';
-$string['colles3short'] = 'javítom a jártasságomat';
-$string['colles4'] = 'amit tanulok, jól kapcsolódik a szakmai gyakorlatomhoz.';
-$string['colles4short'] = 'kapcsolódik a jártasságomhoz';
-$string['colles5'] = 'Kritikusan állok hozzá a tanulási módszeremhez.';
-$string['colles5short'] = 'Kritikusan szemlélem a tanulásomat';
-$string['colles6'] = 'Kritikusan állok hozzá a saját gondolataimhoz.';
-$string['colles6short'] = 'Kritikusan szemlélem saját gondolataimat';
-$string['colles7'] = 'Kritikusan állok hozzá más tanulók gondolataihoz.';
-$string['colles7short'] = 'Kritikusan szemlélem a többi tanulót';
-$string['colles8'] = 'Kritikusan állok hozzá az olvasmányokban szereplõ gondolatokhoz.';
-$string['colles8short'] = 'Kritikusan szemlélem az olvasmányokat';
-$string['colles9'] = 'Elmagyarázom gondolataimat más tanulóknak.';
-$string['colles9short'] = 'Elmagyarázom gondolataimat';
-$string['collesaintro'] = 'Ennek a kérdõívnek az a célja, hogy segítsen bennünket annak felmérésében, hogy ez az online egység mennyire segítette Önt a tanulásban. 
-Az alábbi 24 kijelentés a jelen egységgel kapcsolatos tapasztalatára kérdez rá.
+$string['actual'] = "Aktuális";
+$string['actualclass'] = "Aktuális osztály";
+$string['actualstudent'] = "Aktuális \$a";
+$string['allquestions'] = "Minden kérdés sorrendben, minden diák";
+$string['allscales'] = "Minden skála, minden diák";
+$string['alreadysubmitted'] = "Már elküldte ezt a kérdõívet";
+$string['analysisof'] = "\$a elemzése";
+$string['attls1'] = "Mások mondanivalójának értékelésénél az érvek minõségét veszem figyelembe, és nem azt, hogy ki monja.";
+$string['attls10'] = "Fontos számomra, hogy egy elemzésnél annyira objektív maradjak, amennyire csak lehetséges.";
+$string['attls10short'] = "objektívnak maradni";
+$string['attls11'] = "Inkább együtt próbálok gondolkodni az emberekkel, és nem vittakozni.";
+$string['attls11short'] = "együtt gondolkodni";
+$string['attls12'] = "Az érvek értékelésénél vannak bizonyos kritériumaim.";
+$string['attls12short'] = "értékelés kritériumokkal";
+$string['attls13'] = "Valószínûleg inkább megérteni próbálom mások véleményét, mint értékelni.";
+$string['attls13short'] = "megértés kísérlete";
+$string['attls14'] = "Megpróbálom megmutatni mások gondolkodásának gyengeségét, hogy segítsem õket véleményük tisztánlátásában.";
+$string['attls14short'] = "gyengeségek megmutatása";
+$string['attls15'] = "Hajlamos vagyok kötekedni vitatható kérdések megbeszélésekor, hogy lássam, miért úgy gondolkodnak, ahogy.";
+$string['attls15short'] = "kötekedés";
+$string['attls16'] = "Az elemzési módszeremet 'próbatételnek' lehetne nevezni, mert nagyon elõvigyázatosan figyelembe veszek minden bizonyítékot.";
+$string['attls16short'] = "próbatételnek";
+$string['attls17'] = "Problémamegoldás során többre értékelem a logikát és az észt saját egyéni szempontjaimnál.";
+$string['attls17short'] = "a logikát tartom a legtöbbre";
+$string['attls18'] = "Az enyémtõl különbözõ véleményekre empátián keresztül nyerhetek rálátást.";
+$string['attls18short'] = "empátia";
+$string['attls19'] = "When I encounter people whose opinions seem alien to me, I make a deliberate effort to 'extend' myself into that person, to try to see how they could have those opinions.";
+$string['attls19short'] = "make effort to extend";
+$string['attls1short'] = "focus quality of argument";
+$string['attls2'] = "I like playing devil's advocate - arguing the opposite of what someone is saying.";
+$string['attls20'] = "I spend time figuring out what's 'wrong' with things. For example, I'll look for something in a literary interpretation that isn't argued well enough.";
+$string['attls20short'] = "mi a rossz?";
+$string['attls2short'] = "play devil's advocate";
+$string['attls3'] = "I like to understand where other people are 'coming from', what experiences have led them to feel the way they do.";
+$string['attls3short'] = "where people come from";
+$string['attls4'] = "The most important part of my education has been learning to understand people who are very different to me.";
+$string['attls4short'] = "understand different people";
+$string['attls5'] = "I feel that the best way for me to achieve my own identity is to interact with a variety of other people.";
+$string['attls5short'] = "interact with variety";
+$string['attls6'] = "I enjoy hearing the opinions of people who come from backgrounds different to mine - it helps me to understand how the same things can be seen in such different ways.";
+$string['attls6short'] = "enjoy hearing opinions";
+$string['attls7'] = "I find that I can strengthen my own position through arguing with someone who disagrees with me.";
+$string['attls7short'] = "strengthen by argue";
+$string['attls8'] = "I am always interested in knowing why people say and believe the things they do.";
+$string['attls8short'] = "know why people do";
+$string['attls9'] = "I often find myself arguing with the authors of books that I read, trying to logically figure out why they're wrong.";
+$string['attls9short'] = "argue with authors";
+$string['attlsintro'] = "The purpose of this questionnaire is to help us evaluate your attitudes towards thinking and learning.
 
-Nincsenek jó és rossz válaszok. A véleményére vagyunk kíváncsiak. Válaszait bizalmasan fogjuk kezelni, és nem befolyásolják majd az Ön értékelését. Ha jól átgondolt válaszokat ad, segítségünkre lesz abban, hogy ez az egység a jövõben megfelelõbb formában kerüljön online tálalásra.
+There are no 'right' or 'wrong' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.";
+$string['attlsm1'] = "Attitudes Towards Thinking and Learning";
+$string['attlsm2'] = "Connected Learning";
+$string['attlsm3'] = "Separate Learning";
+$string['attlsmintro'] = "In discussion ...";
+$string['attlsname'] = "ATTLS (20 item version)";
+$string['clicktocontinue'] = "Click here to continue";
+$string['clicktocontinuecheck'] = "Click here to check and continue";
+$string['colles1'] = "my learning focuses on issues that interest me.";
+$string['colles10'] = "I ask other students to explain their ideas.";
+$string['colles10short'] = "I ask for explanations";
+$string['colles11'] = "other students ask me to explain my ideas.";
+$string['colles11short'] = "I'm asked to explain";
+$string['colles12'] = "other students respond to my ideas.";
+$string['colles12short'] = "students respond to me";
+$string['colles13'] = "the tutor stimulates my thinking.";
+$string['colles13short'] = "tutor stimulates thinking";
+$string['colles14'] = "the tutor encourages me to participate.";
+$string['colles14short'] = "tutor encourages me";
+$string['colles15'] = "the tutor models good discourse.";
+$string['colles15short'] = "tutor models discourse";
+$string['colles16'] = "the tutor models critical self-reflection.";
+$string['colles16short'] = "tutor models self-reflection";
+$string['colles17'] = "other students encourage my participation.";
+$string['colles17short'] = "A tanulók bátorítanak";
+$string['colles18'] = "other students praise my contribution.";
+$string['colles18short'] = "A tanulók dicsérnek";
+$string['colles19'] = "other students value my contribution.";
+$string['colles19short'] = "students value me";
+$string['colles1short'] = "focus on interesting issues";
+$string['colles2'] = "what I learn is important for my professional practice.";
+$string['colles20'] = "other students empathise with my struggle to learn.";
+$string['colles20short'] = "students empathise";
+$string['colles21'] = "I make good sense of other students' messages.";
+$string['colles21short'] = "I understand other students";
+$string['colles22'] = "other students make good sense of my messages.";
+$string['colles22short'] = "students understand me";
+$string['colles23'] = "I make good sense of the tutor's messages.";
+$string['colles23short'] = "I understand the tutor";
+$string['colles24'] = "the tutor makes good sense of my messages.";
+$string['colles24short'] = "tutor understands me";
+$string['colles2short'] = "important to my practice";
+$string['colles3'] = "I learn how to improve my professional practice.";
+$string['colles3short'] = "improve my practice";
+$string['colles4'] = "what I learn connects well with my professional practice.";
+$string['colles4short'] = "connects with my practice";
+$string['colles5'] = "I think critically about how I learn.";
+$string['colles5short'] = "I'm critical of my learning";
+$string['colles6'] = "I think critically about my own ideas.";
+$string['colles6short'] = "I'm critical of my own ideas";
+$string['colles7'] = "I think critically about other students' ideas.";
+$string['colles7short'] = "I'm critical of other students";
+$string['colles8'] = "I think critically about ideas in the readings.";
+$string['colles8short'] = "I'm critical of readings";
+$string['colles9'] = "I explain my ideas to other students.";
+$string['colles9short'] = "I explain my ideas";
+$string['collesaintro'] = "The purpose of this survey is to help us understand how well the online delivery of this unit enabled you to learn.
 
-Köszönjük!';
-$string['collesaname'] = 'COLLES (aktuális)';
-$string['collesapintro'] = 'Ennek a kérdõívnek az a célja, hogy segítsen bennünket annak felmérésében, hogy ez az online egység mennyire segítette Önt a tanulásban. 
-Az alábbi 24 kijelentés a jelen egységben szerzett <b>kedvezõ</b> (ideális) és <b>tényleges</b> tapasztalatának összehasonlítását kéri.
+Each one of the 24 statements below asks about your experience in this unit.
 
-Nincsenek jó és rossz válaszok. A véleményére vagyunk kíváncsiak. Válaszait bizalmasan fogjuk kezelni, és nem befolyásolják majd az Ön értékelését. Ha jól átgondolt válaszokat ad, segítségünkre lesz abban, hogy ez az egység a jövõben megfelelõbb formában kerüljön online tálalásra.
+There are no 'right' or 'wrong' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.
 
-Köszönjük!';
-$string['collesapname'] = 'COLLES (Ideális és tényleges)';
-$string['collesm1'] = 'Relevancia';
-$string['collesm1short'] = 'Relevancia';
-$string['collesm2'] = 'Reagáló gondolkodás';
-$string['collesm2short'] = 'Reagáló gondolkodás';
-$string['collesm3'] = 'Interaktivitás';
-$string['collesm3short'] = 'Interaktivitás';
-$string['collesm4'] = 'Tutortámogatás';
-$string['collesm4short'] = 'Tutortámogatás';
-$string['collesm5'] = 'Tanulótársi támogatás';
-$string['collesm5short'] = 'Tanulótársi támogatás';
-$string['collesm6'] = 'Értelmezés';
-$string['collesm6short'] = 'Értelmezés';
-$string['collesmintro'] = 'Ebben az online egységben...';
-$string['collespintro'] = 'Ennek a kérdõívnek az a célja, hogy segítsen bennünket annak felmérésében, hogy mit értékel Ön egy online tanulásban.
+Your carefully considered responses will help us improve the way this unit is presented online in the future.
 
-AZ alábbi 24 megállapítás az egyéggel kapcsolatosan az Ön <b>preferált</b> (ideális) élményére kérdez rá.
+Thanks very much.";
+$string['collesaname'] = "COLLES (Actual)";
+$string['collesapintro'] = "The purpose of this questionnaire is to help us understand how well the online delivery of this unit enabled you to learn. 
 
-Nincsenek \'helyes\' vagy \'rossz\' válaszok; minkezt a véleménye érdekel. Válaszait bizalmasan kezeljük, ezek nem befolyásolják az Ön értékelését.
-Megfontolt válaszaival segít bennünket abban, hogy az egység bemutatását a jövõben tökéletesíthessük.
+Each one of the 24 statements below asks you to compare your <B>preferred</B> (ideal) and <B>actual</B> experience in this unit.
 
-Köszönjük!';
-$string['collespname'] = 'COLLES (Ideális)';
-$string['done'] = 'Kész';
-$string['download'] = 'Letöltés';
-$string['downloadexcel'] = 'Adatok letöltése Excel-táblázatként';
-$string['downloadinfo'] = 'A kérdõív összes nyers adatát letöltheti Excel, SPSS vagy más program általi elemzésre alkalmas formában.';
-$string['downloadtext'] = 'Adatok letöltése egyszerû szöveges fájlként';
-$string['editingasurvey'] = 'Kérdõív szerkesztése';
-$string['guestsnotallowed'] = 'Vendégek nem tölthetnek ki kérdõívet';
-$string['helpsurveys'] = 'Különbözõ típusú kérdõívek súgója';
-$string['howlong'] = 'Mennyi ideig tartott a kérdõív kitöltése?';
-$string['howlongoptions'] = '1 perc,1-2 perc,2-3 perc,3-4 perc,4-5-perc,5-10 perc,több mint 10 perc alatt';
-$string['ifoundthat'] = 'Azt találtam';
-$string['introtext'] = 'Bevezetõ szöveg';
-$string['ipreferthat'] = 'Inkább ezt szeretném';
-$string['modulename'] = 'Felmérés';
-$string['modulenameplural'] = 'Felmérések';
-$string['name'] = 'Név';
-$string['newsurveyresponses'] = 'Felmérésre adott új válaszok';
-$string['nobodyyet'] = 'Senki nem töltötte még ki ezt a kérdõívet';
-$string['notdone'] = 'Még nincs kész';
-$string['notes'] = 'Az Ön személyes elemzése és megjegyzései';
-$string['othercomments'] = 'Van egyéb megjegyzése?';
-$string['peoplecompleted'] = 'Eddig $a személy töltötte ki a kérdõívet';
-$string['preferred'] = 'Ideális';
-$string['preferredclass'] = 'Ideális osztály';
-$string['preferredstudent'] = 'Ideális $a';
-$string['question'] = 'Kérdés';
-$string['questions'] = 'Kérdések';
-$string['questionsnotanswered'] = 'Néhány feleletválasztós kérdésre nem érkezett válasz.';
-$string['report'] = 'Felméréssel kapcsolatos jelentés';
-$string['savednotes'] = 'A megjegyzéseit elmentettük ';
-$string['scaleagree5'] = 'Nagyon nem ért egyet,Valamelyest nem ért egyet,Semleges, Valamelyest egyetért,Teljesen egyetért';
-$string['scales'] = 'Skálák';
-$string['scaletimes5'] = 'Szinte soha,Ritkán,Néha,Gyakran,Majdnem mindig';
-$string['seemoredetail'] = 'A részletekért kattintson ide';
-$string['selectedquestions'] = 'Egy skáláról választott kérdések, minden tanuló';
-$string['summary'] = 'Összegzés';
-$string['surveycompleted'] = 'Kitöltötte ezt a kérdõívet. Az alábbi ábra mutatja válaszainak összegzését az osztályátlaggal összevetve.';
-$string['surveyname'] = 'Felmérés neve';
-$string['surveysaved'] = 'Felmérés elmentve';
-$string['surveytype'] = 'Felmérés típusa';
-$string['thanksforanswers'] = 'Köszönjük a válaszait, $a';
-$string['time'] = 'Idõ';
-$string['viewsurveyresponses'] = '$a válaszainak megtekintése';
+There are no 'right' or 'wrong' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.
+
+Your carefully considered responses will help us improve the way this unit is presented online in the future.
+
+Thanks very much.";
+$string['collesapname'] = "COLLES (Preferred and Actual)";
+$string['collesm1'] = "Relevance";
+$string['collesm1short'] = "Relevance";
+$string['collesm2'] = "Reflective Thinking";
+$string['collesm2short'] = "Reflective Thinking";
+$string['collesm3'] = "Interactivity";
+$string['collesm3short'] = "Interactivity";
+$string['collesm4'] = "Tutor Support";
+$string['collesm4short'] = "Tutor Support";
+$string['collesm5'] = "Peer Support";
+$string['collesm5short'] = "Peer Support";
+$string['collesm6'] = "Interpretation";
+$string['collesm6short'] = "Interpretation";
+$string['collesmintro'] = "In this online unit...";
+$string['collespintro'] = "The purpose of this survey is to help us understand what you value in an online learning experience.
+
+Each one of the 24 statements below asks about your <B>preferred</B> (ideal) experience in this unit.
+
+There are no 'right' or 'wrong' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.
+
+Your carefully considered responses will help us improve the way this unit is presented online in the future.
+
+Thanks very much.";
+$string['collespname'] = "COLLES (Preferred)";
+$string['done'] = "Kész";
+$string['download'] = "Letöltés";
+$string['downloadexcel'] = "Adatok letöltése Excel munkalapként";
+$string['downloadinfo'] = "A kérdõív összes nyers adatát letöltheti Excel, SPSS, vagy más program számára megfelelõ formátumban.";
+$string['downloadtext'] = "Adatok letöltése egyzserû szöveges fájlként";
+$string['editingasurvey'] = "Kérdõív szerkesztése";
+$string['guestsnotallowed'] = "Vendégek nem tölthetnek ki kérdõívet";
+$string['helpsurveys'] = "Különbözõ típusú kérdõívek súgója";
+$string['howlong'] = "Mennyi ideig tartott a kérdõív kitöltése?";
+$string['howlongoptions'] = "1 perc,1-2 perc,2-3 perc,3-4 perc,4-5-perc,5-10 perc,több mint 10 perc alatt";
+$string['ifoundthat'] = "Ezt találtam";
+$string['introtext'] = "Bevezetõ szöveg";
+$string['ipreferthat'] = "Inkább ezt szerteném";
+$string['modulename'] = "Kérdõív";
+$string['modulenameplural'] = "Kérdõív";
+$string['name'] = "Név";
+$string['newsurveyresponses'] = "Új kérdõív válaszok";
+$string['nobodyyet'] = "Senki nem töltötte még ki a kérdõívet";
+$string['notdone'] = "Még nincs kész";
+$string['notes'] = "Személyes elemzése és megjegyzései";
+$string['othercomments'] = "Van egyéb megjegyzése?";
+$string['peoplecompleted'] = "Eddig \$a személy töltötte ki a kérdõívet";
+$string['preferred'] = "Kívánt";
+$string['preferredclass'] = "Kívánt osztály";
+$string['preferredstudent'] = "Kívánt \$a";
+$string['question'] = "Kérdés";
+$string['questions'] = "Kérdések";
+$string['questionsnotanswered'] = "Valamelyik többszörös választás kérdés nem lett megválaszolva.";
+$string['report'] = "Kérdõív jelentés";
+$string['savednotes'] = "A szavazatai elmentése megtörtént";
+$string['scaleagree5'] = "Nagyon nem ért egyet,Inkább nem ért egyet,Semleges,Inkább egyetért,Teljesen egyetért";
+$string['scales'] = "Skálák";
+$string['scaletimes5'] = "Szinte soha,Ritkán,Néha,Gyakran,Majdnem mindig";
+$string['seemoredetail'] = "A részletekért kattintson ide";
+$string['selectedquestions'] = "Egy skáláról választott kérdések, minden tanuló";
+$string['summary'] = "Összegzés";
+$string['surveycompleted'] = "Kitöltötte ezt a kérdõívet. Az alábbi ábra mutatja válaszainak összegzését, összevetve a kurzusátlaggal.";
+$string['surveyname'] = "Kérdõív neve";
+$string['surveysaved'] = "Kérdõív mentve";
+$string['surveytype'] = "Kérdõív típus";
+$string['thanksforanswers'] = "Köszönjük a válaszait \$a";
+$string['time'] = "Idõ";
+$string['viewsurveyresponses'] = "\$a válaszainak megtekintése";
 
 ?>

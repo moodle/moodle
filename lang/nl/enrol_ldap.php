@@ -16,7 +16,7 @@ $string['enrol_ldap_course_fullname'] = 'Optioneel: LDAP-veld waaruit de volledi
 $string['enrol_ldap_course_idnumber'] = 'Pad naar de unique identifier in LDAP, gewoonlijk  <em>cn</em> of <em>uid</em>. Het is aangewezen de waarde vast te zetten als je automatisch aanmaken van vakken gebruikt.';
 $string['enrol_ldap_course_settings'] = 'Instellingen voor het aanmelden bij vakken';
 $string['enrol_ldap_course_shortname'] = 'Optioneel: LDAP-veld om de korte vaknaam uit te halen';
-$string['enrol_ldap_course_summary'] = 'Optioneel: LDAP-veld om de beschrijving uit te halen';
+$string['enrol_ldap_course_summary'] = 'Optioneel: LDAP-veld om de samenvatting uit te halen';
 $string['enrol_ldap_editlock'] = 'Lock-waarde';
 $string['enrol_ldap_host_url'] = 'Specifier de LDAP-host als een URL, bijvoorbeeld
 \'ldap://ldap.myorg.com/\'

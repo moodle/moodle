@@ -1,9 +1,9 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.4 (2004083100)
+      // lesson.php - created with Moodle 1.3 - (2004052400)
 
 
 $string['actionaftercorrectanswer'] = 'Reakcja po poprawnej odpowiedzi';
-$string['addabranchtable'] = 'Wstaw Tabelê W±tków';
+$string['addabranchtable'] = 'WstawTabelê W±tków';
 $string['addanendofbranch'] = 'Wstaw Koniec Tabeli W±tków';
 $string['addaquestionpage'] = 'Wstaw Stronê Pytañ';
 $string['answer'] = 'Odpowied¼';
@@ -47,7 +47,6 @@ $string['multipleanswer'] = 'Wielokrotne odpowiedzi';
 $string['nextpage'] = 'Nastêpna strona';
 $string['noanswer'] = 'Brak odpowiedzi';
 $string['noattemptrecordsfound'] = 'Brak prób: nie przyznano oceny';
-$string['nobranchtablefound'] = 'Nie znaleziono Tabeli W±tków';
 $string['normal'] = 'Normalnie - id¼ zgodnie z trybem lekcji';
 $string['notdefined'] = 'Brak definicji';
 $string['notitle'] = 'Brak tytu³u';
@@ -82,7 +81,7 @@ $string['thispage'] = 'Ta strona';
 $string['useeditor'] = 'U¿yj edytora';
 $string['usemaximum'] = 'U¿yj maksimum';
 $string['usemean'] = 'U¿yj ¶redniej';
-$string['youhaveseen'] = 'Widzia³e¶ ju¿ wiêcej ni¿ jedn± stronê tej lekcji. <br /> Czy chcia³by¶ zacz±æ od ostatniej strony, któr± przegl±da³e¶?';
+$string['youhaveseen'] = 'Widzia³e¶ ju¿ wiêcej ni¿ jedn± stronê tej lekcji. <br/> Czy chcia³by¶ zacz±æ od ostatniej strony, któr± przegl±da³e¶?';
 $string['youranswer'] = 'Twoja odpowied¼';
 $string['yourcurrentgradeis'] = 'Twoja aktualna ocena to $a';
 $string['youshouldview'] = 'Powiniene¶ zobaczyæ co najmniej &a';

@@ -8,10 +8,10 @@
 /**
  * Smarty {cycle} function plugin
  *
- * Type:     function<br />
- * Name:     cycle<br />
- * Date:     May 3, 2002<br />
- * Purpose:  cycle through given values<br />
+ * Type:     function<br>
+ * Name:     cycle<br>
+ * Date:     May 3, 2002<br>
+ * Purpose:  cycle through given values<br>
  * Input:
  *         - name = name of cycle (optional)
  *         - values = comma separated list of values to cycle,
@@ -24,7 +24,7 @@
  *         - assign = boolean, assigns to template var instead of
  *                    printed.
  * 
- * Examples:<br />
+ * Examples:<br>
  * <pre>
  * {cycle values="#eeeeee,#d0d0d0d"}
  * {cycle name=row values="one,two,three" reset=true}

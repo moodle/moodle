@@ -1,53 +1,60 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Moodle Docs: Developers Manual</title>
-<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <title>Moodle Docs: Developers Manual</title>
+	<link rel="stylesheet" href="../theme/standard/styles.php" type="TEXT/CSS">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<style type="text/css">
+    <!--
+    .sectionheading {
+	  font-size: medium;
+	  font-weight: bold;
+	  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	  border: 1px dotted;
+	  padding: 10px;
+	  background-color: #EEEEEE;
+    }
+    -->
+    </style>
 </head>
 
-<body>
-<h1>Developers Manual</h1>
-<blockquote>
-  <p>This document describes some of Moodle's design and how you can contribute.</p>
-  <p>It's a bit thin at the moment - better documentation will come eventually!</p>
-  <p>Sections in this document:</p>
-  <ol>
-    <li><a href="#architecture">Moodle architecture</a></li>
-    <li><a href="#contribute">How you can contribute</a> 
-      <ul>
-        <li><a href="#activities">Learning activities</a></li>
-        <li><a href="#themes">Themes</a></li>
-        <li><a href="#languages">Languages</a></li>
-        <li><a href="#database">Database Schemas</a></li>
-        <li><a href="#courseformats">Course formats</a></li>
-        <li><a href="#doc">Documentation and articles</a></li>
-        <li><a href="#bugs">Participating in the bug tracker</a></li>
-      </ul>
-    </li>
-  </ol>
-</blockquote>
+<body bgcolor="#FFFFFF">
+<h2>Developers Manual</h2>
+<p>This document describes some of Moodle's design and how you can contribute.</p>
+<p>It's a bit thin at the moment - better documentation will come eventually!</p>
+<p>Sections in this document:</p>
+<ol>
+  <li><a href="#architecture">Moodle architecture</a></li>
+  <li><a href="#contribute">How you can contribute</a> 
+    <ul>
+      <li><a href="#activities">Learning activities</a></li>
+      <li><a href="#themes">Themes</a></li>
+      <li><a href="#languages">Languages</a></li>
+      <li><a href="#database">Database Schemas</a></li>
+      <li><a href="#courseformats">Course formats</a></li>
+      <li><a href="#doc">Documentation and articles</a></li>
+      <li><a href="#bugs">Participating in the bug tracker</a></li>
+    </ul>
+  </li>
+</ol>
 <p>&nbsp;</p>
-<h2><a name="architecture"></a>1. Moodle architecture</h2>
+<h3 class="sectionheading"><a name="architecture"></a>1. Moodle architecture</h3>
 <blockquote>
   <p>From a system administrator's perspective, Moodle has been designed according 
     to the following criteria:</p>
   <ol>
-    <li><strong>Moodle should run on the widest variety of platforms</strong><br />
-      <br />
+    <li><strong>Moodle should run on the widest variety of platforms</strong><br>
+      <br>
       The web application platform that runs on most platforms is PHP combined 
       with MySQL, and this is the environment that Moodle has been developed in 
       (on Linux, Windows, and Mac OS X). Moodle also uses the ADOdb library for 
       database abstraction, which means Moodle can use <a href="http://php.weblogs.com/ADOdb_manual#drivers">more 
       than ten different brands of database</a> (unfortunately, though, it can 
       not yet <em><strong>set up tables</strong></em> in all these databases - 
-      more on this later). <br />
-      <br />
+      more on this later). <br>
+      <br>
     </li>
-    <li><strong>Moodle should be easy to install, learn and modify</strong><br />
-      <br />
-      Early prototypes of Moodle (1999) were built using <a target="_top" href="http://www.zope.org/">Zope</a> 
+    <li><strong>Moodle should be easy to install, learn and modify</strong><br>
+      <br>
+      Early prototypes of Moodle (1999) were built using <a target=_top href="http://www.zope.org/">Zope</a> 
       - an advanced object-oriented web application server. Unfortunately I found 
       that although the technology was pretty cool, it had a very steep learning 
       curve and was not very flexible in terms of system administration. The PHP 
@@ -58,28 +65,28 @@
       by libraries of clearly-named functions and consistent layout of script 
       files. PHP is also easy to install (binaries are available for every platform) 
       and is widely available to the point that most web hosting services provide 
-      it as standard.<br />
-      <br />
+      it as standard.<br>
+      <br>
     </li>
-    <li><strong>It should be easy to upgrade from one version to the next</strong><br />
-      <br />
+    <li><strong>It should be easy to upgrade from one version to the next</strong><br>
+      <br>
       Moodle knows what version it is (as well as the versions of all plug-in 
       modules) and a mechanism has been built-in so that Moodle can properly upgrade 
       itself to new versions (for example it can rename database tables or add 
       new fields). If using CVS in Unix for example, one can just do a &quot;cvs 
-      update -d&quot; and then visit the site home page to complete an upgrade.<br />
-      <br />
+      update -d&quot; and then visit the site home page to complete an upgrade.<br>
+      <br>
     </li>
-    <li><strong>It should be modular to allow for growth</strong><br />
-      <br />
+    <li><strong>It should be modular to allow for growth</strong><br>
+      <br>
       Moodle has a number of features that are modular, including themes, activities, 
       interface languages, database schemas and course formats. This allows anyone 
       to add features to the main codebase or to even distribute them separately. 
-      More on this below in the next section.<br />
-      <br />
+      More on this below in the next section.<br>
+      <br>
     </li>
-    <li><strong>It should be able to be used in conjunction with other systems</strong><br />
-      <br />
+    <li><strong>It should be able to be used in conjunction with other systems</strong><br>
+      <br>
       One thing Moodle does is keep all files for one course within a single, 
       normal directory on the server. This would allow a system administrator 
       to provide seamless forms of file-level access for each teacher, such as 
@@ -93,11 +100,11 @@
   </ol>
 </blockquote>
 <p>&nbsp;</p>
-<h2><a name="contribute" id="contribute"></a>2. How you can contribute</h2>
+<h3 class="sectionheading"><a name="contribute" id="contribute"></a>2. How you can contribute</h3>
 <blockquote>
   <p>As mentioned above, Moodle has a number of features that are modular. Even 
     if you are not a programmer there are things you can change or help with.</p>
-  <h3><a name="activities" id="activities"></a>Learning Activities</h3>
+  <p><strong><a name="activities" id="activities"></a>Learning Activities</strong></p>
   <blockquote>
     <p>These are by far the most important modules, and reside in the 'mod' directory. 
       There are seven default modules: assignment, choice, forum, journal, quiz, 
@@ -120,7 +127,7 @@
           <li>widget_user_outline() - given an instance, return a summary of a 
             user's contribution</li>
           <li>widget_user_complete() - given an instance, print details of a user's 
-            contribution<br />
+            contribution<br>
           </li>
           <li>To avoid possible conflict, any module functions should be named 
             starting with widget_ and any constants you define should start with 
@@ -137,7 +144,7 @@
       modules forum on Using Moodle</a>.</p>
     <p>&nbsp;</p>
   </blockquote>
-  <h3><a name="themes" id="themes"></a>Themes</h3>
+  <p> <strong><a name="themes" id="themes"></a>Themes</strong></p>
   <blockquote>
     <p>Themes (or skins) define the look of a site. A number of simple themes 
       are provided in the main distribution, but you may want to create your own 
@@ -171,12 +178,13 @@
       the themes for this will be a completely different format, but the advantage 
       will be a much higher possible degree of customisation (including moving 
       elements around the page).</p>
-    <p>More discussion about this in the <a target="_top" href="http://moodle.org/mod/forum/view.php?id=46">Themes 
+    <p>More discussion about this in the <a target=_top href="http://moodle.org/mod/forum/view.php?id=46">Themes 
       forum on Using Moodle</a>. If you create a nice theme that you think others 
-      might want to use, please post your zip file on the themes forum!<br />
+      might want to use, please post your zip file on the themes forum!<br>
     </p>
   </blockquote>
-  <h3><a name="languages" id="languages"></a>Languages</h3>
+  <p>&nbsp;</p>
+  <p><strong><a name="languages" id="languages"></a>Languages</strong></p>
   <blockquote>
     <p>Moodle has been designed for internationalisation. Each 'string' or 'page' 
       of text that is displayed as part of the interface is drawn from a set of 
@@ -193,15 +201,16 @@
       <li>quiz.php - strings for quiz module</li>
       <li>resource.php - strings for resource module</li>
       <li>survey.php - strings for survey module</li>
-      <li>.... plus other modules if any.<br />
-        <br />
-        A string is called from these files using the <strong><em>get_string()</em></strong> or<em> <strong>print_string()</strong> </em>functions. Each string 
+      <li>.... plus other modules if any.<br>
+        <br>
+        A string is called from these files using the <strong><em>get_string()</em></strong><em> 
+        </em>or<em> <strong>print_string()</strong> </em>functions. Each string 
         supports variable substitution, to support variable ordering in different 
-        languages.<em><br />
-        <br />
+        languages.<em><br>
+        <br>
         </em>eg $strdueby = get_string(&quot;assignmentdueby&quot;, &quot;assignment&quot;, 
-        userdate($date)); <br />
-        <br />
+        userdate($date)); <br>
+        <br>
         If a string doesn't exist in a particular language, then the equivalent 
         in English will automatically be used instead.</li>
     </ul>
@@ -218,15 +227,16 @@
     <p>Note that you can edit languages online, using the administration web tools 
       under &quot;Check this language&quot;. This makes it easy to not to only 
       create new languages but to refine existing ones. If you are starting a 
-      new language, please contact me, <a target="_top" href="http://dougiamas.com/">Martin 
+      new language, please contact me, <a target=_top href="http://dougiamas.com/">Martin 
       Dougiamas</a>. </p>
-    <p>You might also like to post in the <a target="_top" href="http://moodle.org/mod/forum/view.php?id=43">Languages 
+    <p>You might also like to post in the <a target=_top href="http://moodle.org/mod/forum/view.php?id=43">Languages 
       forum on Using Moodle</a>. </p>
     <p>If you are maintaining a language an ongoing basis, I can give you <a href="?file=cvs.html">CVS 
       write access to the Moodle source code</a> so that you can directly maintain 
       the files.</p>
   </blockquote>
-  <h3><a name="database" id="database"></a>Database Schemas</h3>
+  <p><br>
+    <strong><a name="database" id="database"></a>Database Schemas</strong></p>
   <blockquote>
     <p>Given a working database with defined tables, the intentionally simple 
       SQL used in Moodle should work fine with a wide variety of database brands.</p>
@@ -243,7 +253,7 @@
       will make all this unnecessary.</p>
   </blockquote>
   <p>&nbsp;</p>
-  <h3><a name="courseformats" id="courseformats"></a>Course Formats</h3>
+  <p><strong><a name="courseformats" id="courseformats"></a>Course Formats</strong></p>
   <blockquote>
     <p>Moodle currently supports three different course formats: weekly, topics 
       and social. </p>
@@ -254,17 +264,17 @@
       in future releases.</p>
   </blockquote>
   <p>&nbsp;</p>
-  <h3><a name="doc" id="doc"></a>Documentation and articles</h3>
+  <p><strong><a name="doc" id="doc"></a>Documentation and articles</strong></p>
   <blockquote>
     <p>If you feel like writing a tutorial, an article, an academic paper or anything 
       else about Moodle, please do! </p>
-    <p>Put it on the web and make sure you include links to <a target="_top" href="http://moodle.org/">http://moodle.org/</a></p>
+    <p>Put it on the web and make sure you include links to <a target=_top href="http://moodle.org/">http://moodle.org/</a></p>
   </blockquote>
   <p>&nbsp;</p>
-  <h3><a name="bugs" id="bugs"></a>Participating in the bug tracker</h3>
+  <p><strong><a name="bugs" id="bugs"></a>Participating in the bug tracker</strong></p>
   <blockquote>
     <p>Finally, I would like to invite you to register on the &quot;bug tracker&quot; 
-      at <a target="_top" href="http://moodle.org/bugs/">http://moodle.org/bugs</a> 
+      at <a target=_top href="http://moodle.org/bugs/">http://moodle.org/bugs</a> 
       so you can file any bugs that you find and perhaps participate in discussing 
       and fixing them. </p>
     <p>&quot;Bugs&quot; not only includes software bugs with current versions 
@@ -278,18 +288,21 @@
 <blockquote> 
   <blockquote> 
     <blockquote> 
-      <p align="center">Thanks for using Moodle!<br />
-        <br />
-        <a target="_top" href="http://dougiamas.com/">Martin Dougiamas</a>, Lead 
+      <p align="center">Thanks for using Moodle!<br>
+        <br>
+        <a target=_top href="http://dougiamas.com/">Martin Dougiamas</a>, Lead 
         Developer </p>
-    </blockquote>
+      </blockquote>
   </blockquote>
 </blockquote>
+<p>&nbsp;</p>
 <p>&nbsp;</p>
 <blockquote> 
   <p>&nbsp;</p>
 </blockquote>
-<p align="center"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
-<p align="center"><font size="1">Version: $Id$</font></p>
+<p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id: developer.html,v 1.2 2001/12/09 
+  10:34:19 martin Exp $</font></p>
+
 </body>
 </html>

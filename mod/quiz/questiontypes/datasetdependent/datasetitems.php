@@ -1,6 +1,6 @@
-<?php // $Id$
+<?PHP // $Id$
 
-// Allows a teacher to create, edit and delete datasets
+// Allows a teacher to create, edit and delete categories
 
 /// Print headings
 
@@ -37,7 +37,10 @@
 
 /// Print heading
 
-    print_heading_with_help($streditdatasets, 'questiondatasets', "quiz");
+    echo "<P ALIGN=CENTER><FONT SIZE=3>";
+    echo $streditdatasets;
+    helpbutton("categories", $streditdatasets, "quiz");
+    echo "</FONT></P>";
 
 /// If data submitted, then process and store.
     if ($form = data_submitted()) {
@@ -124,17 +127,17 @@
         $columns = array();
         if ($maxnumber == $number) {
             $columns[] =
-                    "<input type=\"hidden\" name=\"numbertodelete\" value=\"$number\"/>
-                     <input type=\"submit\" name=\"deletebutton\" value=\"$strdelete\"/>";
+                    "<INPUT TYPE=\"hidden\" name=\"numbertodelete\" value=\"$number\"/>
+                     <INPUT TYPE=\"submit\" name=\"deletebutton\" value=\"$strdelete\"/>";
         } else {
             $columns[] = '';
         }
         $columns[] = $number;
         foreach ($datasetdefs as $datasetdef) {
             $columns[] =
-                    '<input type="hidden" name="itemid[]" value="'. $datasetdef->items[$number]->id .'"/>'
-                    . "<input type=\"hidden\" name=\"number[]\" value=\"$number\"/>
-                    <input type=\"hidden\" name=\"definition[]\" value=\"$datasetdef->id\"/>"
+                    '<INPUT TYPE="hidden" name="itemid[]" value="'. $datasetdef->items[$number]->id .'"/>'
+                    . "<INPUT TYPE=\"hidden\" name=\"number[]\" value=\"$number\"/>
+                    <INPUT TYPE=\"hidden\" name=\"definition[]\" value=\"$datasetdef->id\"/>"
                     . // Set $data:
                     ($data[$datasetdef->name] = $datasetdef->items[$number]->value) ;
 
@@ -146,7 +149,7 @@
     }
 
     $table->head = array($straction, $strdatasetnumber);
-    $table->align = array("center", "center");
+    $table->align = array("CENTER", "CENTER");
     $addtable->head = $table->head;
     if ($qtypeobj->supports_dataset_item_generation()) {
         if (isset($form->forceregeneration) && $form->forceregeneration) {
@@ -156,16 +159,16 @@
             $force = '';
             $reuse = ' checked="checked" ';
         }
-        $forceregeneration = '<br/><input type="radio" name="forceregeneration" '
+        $forceregeneration = '<br/><INPUT type="radio" name="forceregeneration" '
                 . $reuse . ' value="0"/>' . $strreuseifpossible
-                . '<br/><input type="radio" name="forceregeneration" value="1" '
+                . '<br/><INPUT type="radio" name="forceregeneration" value="1" '
                 . $force . ' />' . $strforceregeneration;
     } else {
         $forceregeneration = '';
     }
-    $addline = array('<input type="hidden" name="numbertoadd" value="'
+    $addline = array('<INPUT TYPE="hidden" name="numbertoadd" value="'
             . ($maxnumber+1)
-            . "\"/><input type=\"submit\" name=\"addbutton\" value=\"$stradd\"/>"
+            . "\"/><INPUT TYPE=\"submit\" name=\"addbutton\" value=\"$stradd\"/>"
             . $forceregeneration
             , $maxnumber+1);
     foreach ($datasetdefs as $datasetdef) {
@@ -175,7 +178,7 @@
                     . ($qtypeobj->supports_dataset_item_generation()
                     ?  '<br/>' . $qtypeobj->custom_generator_tools($datasetdef)
                     : '');
-            $table->align[] = "center";
+            $table->align[] = "CENTER";
 
             // THE if-statement IS FOR BUT ONE THING
             // - to determine an item value for the input field
@@ -229,10 +232,10 @@
             }
 
             $addline[] = 
-                    '<input type="hidden" name="itemid[]" value="'.$itemid.'"/>'
-                    . "<input type=\"hidden\" name=\"definition[]\" value=\"$datasetdef->id\"/>"
+                    '<INPUT TYPE="hidden" name="itemid[]" value="'.$itemid.'"/>'
+                    . "<INPUT TYPE=\"hidden\" name=\"definition[]\" value=\"$datasetdef->id\"/>"
                     . ( 2 != $datasetdef->type
-                      ? '<input type="text" size="20" name="value[]" value="'
+                      ? '<INPUT TYPE="text" size="20" name="value[]" value="'
                             . $itemvalue
                             . '"/>'
                       : choose_from_menu($coursefiles, 'value[]',
@@ -244,32 +247,30 @@
     if ($strquestionheader) {
         $table->head[] = $strquestionheader;
         $addtable->head[] = $strquestionheader;
-        $table->align[] = "center";
+        $table->align[] = "CENTER";
         $addline[] = $qtypeobj->comment_on_datasetitems($question, $data, $maxnumber + 1);
     }
 
 // Print form for adding one more dataset
     $addtable->align = $table->align;
     $addtable->data = array($addline);
-    echo "<form name=\"addform\" method=\"post\" action=\"question.php\">
-            <input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\"/>
-            <input type=\"hidden\" name=\"regenerateddefid\" value=\"0\"/>
-            <input type=\"hidden\" name=\"id\" value=\"$question->id\"/>
-            <input type=\"hidden\" name=\"editdatasets\" value=\"1\"/>";
+    echo "<FORM NAME=\"addform\" METHOD=\"post\" ACTION=\"question.php\">
+            <INPUT TYPE=\"hidden\" NAME=\"regenerateddefid\" VALUE=\"0\"/>
+            <INPUT TYPE=\"hidden\" NAME=\"id\" VALUE=\"$question->id\"/>
+            <INPUT TYPE=\"hidden\" NAME=\"editdatasets\" VALUE=\"1\"/>";
     print_table($addtable);
-    echo '</form>';
+    echo '</FORM>';
     
 // Print form with current datasets
     if ($table->data) {
-        echo "<form method=\"post\" action=\"question.php\">
-            <input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\"/>
-            <input type=\"hidden\" name=\"id\" value=\"$question->id\"/>
-            <input type=\"hidden\" name=\"editdatasets\" value=\"1\"/>";
+        echo "<FORM METHOD=\"post\" ACTION=\"question.php\">
+            <INPUT TYPE=\"hidden\" NAME=\"id\" VALUE=\"$question->id\"/>
+            <INPUT TYPE=\"hidden\" NAME=\"editdatasets\" VALUE=\"1\"/>";
         print_table($table);
-        echo '</form>';
+        echo '</FORM>';
     }
 
-    echo "<center><br /><br /><form method=\"get\" action=\"edit.php\"><input type=\"hidden\" name=\"question\" value=\"$question->id\"/><input type=\"submit\" name=\"backtoquiz\" value=\"$strbacktoquiz\"></form></center>\n";
+    echo "<center><BR><BR><FORM METHOD=\"get\" ACTION=\"edit.php\"><INPUT TYPE=\"hidden\" NAME=\"question\" VALUE=\"$question->id\"/><INPUT TYPE=submit NAME=backtoquiz VALUE=\"$strbacktoquiz\"></FORM></center>\n";
 
     print_footer();
 

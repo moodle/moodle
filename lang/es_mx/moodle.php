@@ -1,10 +1,11 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
+      // moodle.php - created with Moodle 1.0.9 Beta 1 + (2003051700)
 
+/// This language is defunct and will eventually be deleted.
+/// Please switch to "es".
 
-$string['parentlanguage'] = 'es';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Espa&#241;ol  - Mexico';
+$string['thischarset'] = "iso-8859-1";
+$string['thislanguage'] = "Español - Mexico";
+$string['parentlanguage'] = "es";
 
 ?>

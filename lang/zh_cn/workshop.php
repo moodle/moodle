@@ -112,11 +112,11 @@ $string['noassessmentsdone'] = '尚无完成的评价';
 $string['nosubmission'] = 'No Submission';
 $string['nosubmissionsavailableforassessment'] = 'No Submissions available for assessment';
 $string['notavailable'] = '没有';
-$string['noteonassessmentelements'] = '注意，得分可分解为一些“评价要素”。.<br />
-	这使评分变得容易且保持一致性。 <br />
-	作为教师你须在布置好作业之前添加这些要素。<br />
-	点击课程中的布置作业，如果没有指定过要素，你就会看到提示要求添加要素。<br />
-	你可以使用编辑课外作业页面来改变要素的数量。<br />
+$string['noteonassessmentelements'] = '注意，得分可分解为一些“评价要素”。.<BR>
+	这使评分变得容易且保持一致性。 <BR>
+	作为教师你须在布置好作业之前添加这些要素。<BR>
+	点击课程中的布置作业，如果没有指定过要素，你就会看到提示要求添加要素。<BR>
+	你可以使用编辑课外作业页面来改变要素的数量。<BR>
 	具体要素本身在“管理课外作业”页面中修改。';
 $string['notgraded'] = '尚未评分';
 $string['notitlegiven'] = '尚未命名';
@@ -218,7 +218,7 @@ $string['verypoor'] = '极差';
 $string['view'] = '查看';
 $string['viewassessmentofteacher'] = '查看 $a 的评价';
 $string['viewotherassessments'] = '查看其它评价';
-$string['warningonamendingelements'] = '<b>警告</b>：已经有提交的评价。 <br />请<b><big>不要</big></b>改变要素的数目、量表的类型或要素的权重。';
+$string['warningonamendingelements'] = '<b>警告</b>：已经有提交的评价。 <BR>请<b><big>不要</big></b>改变要素的数目、量表的类型或要素的权重。';
 $string['weight'] = '权重';
 $string['weightederrorcount'] = '加权的错误数： $a';
 $string['weightforbias'] = '偏见权重';

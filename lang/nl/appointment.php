@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // appointment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // appointment.php - created with Moodle 1.4 development (2004081200)
 
 
 $string['allowresubmit'] = 'Laat opnieuw inzenden toe';
@@ -11,10 +11,10 @@ $string['description'] = 'Beschrijving';
 $string['early'] = '$a vroeg';
 $string['failedupdatefeedback'] = 'Het updaten van de feedback op de inzending voor gebruiker $a is mislukt';
 $string['feedback'] = 'Feedback';
-$string['feedbackupdated'] = 'Feedback voor inzendingen geüpdated voor $a geruikers';
+$string['feedbackupdated'] = 'Feedback voor inzendingen geupdated voor $a geruikers';
 $string['late'] = '$a te laat';
-$string['maximumgrade'] = 'Maximumcijfer';
-$string['maximumsize'] = 'Maximumgrootte';
+$string['maximumgrade'] = 'Maximum cijfer';
+$string['maximumsize'] = 'Maximum grootte';
 $string['modulename'] = 'Afspraak';
 $string['modulenameplural'] = 'Afspraken';
 $string['newsubmissions'] = 'Afspraken ingestuurd';
@@ -26,21 +26,18 @@ $string['submissionfeedback'] = 'Feedback bij inzending';
 $string['submissions'] = 'Inzendingen';
 $string['submitappointment'] = 'Stuur je afspraak in met dit formulier';
 $string['submitted'] = 'Ingezonden';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 $string['timeend'] = 'Einde van de afspraak';
 $string['timestart'] = 'Begin van de afspraak';
-$string['typeoffline'] = 'Off line activiteit';
+$string['typeoffline'] = 'Offline activiteit';
 $string['typeuploadsingle'] = 'Upload een bestand';
-$string['uploadbadname'] = 'Deze bestandsnaam bevat vreemde tekens en kon niet geüploaded worden';
-$string['uploadedfiles'] = 'Geüploade bestanden';
+$string['uploadbadname'] = 'Deze bestandsnaam bevat vreemde tekens en kon niet geuploaded worden';
+$string['uploadedfiles'] = 'Geuploade bestanden';
 $string['uploaderror'] = 'Er is een fout gebeurd tijdens het bewaren van het bestand op de server';
-$string['uploadfailnoupdate'] = 'Het bestand is goed geüploaded, maar kon je inzending niet updaten!';
+$string['uploadfailnoupdate'] = 'Het bestand is goed geuploaded, maar kon je inzending niet updaten!';
 $string['uploadfiletoobig'] = 'Sorry, maar dit bestand is te groot (de limiet is $a bytes)';
 $string['uploadnofilefound'] = 'Er is geen bestand gevonden - ben je er zeker van dat je er één geselecteerd hebt om te uploaden?';
-$string['uploadnotregistered'] = '\'$a\' is goed geüploadet, maar de inzending is niet geregistreerd!';
-$string['uploadsuccess'] = '\'$a\' met succes geüploaded';
+$string['uploadnotregistered'] = '\'$a\' is goed geuploaded, maar de inzending is niet geregistreerd!';
+$string['uploadsuccess'] = '\'$a\' met succes geuploaded';
 $string['viewfeedback'] = 'Bekijk de cijfers en de feedback van de afspraak';
 $string['viewsubmissions'] = 'Bekijk $a ingestuurde afspraken';
 $string['yoursubmission'] = 'Jouw inzending';

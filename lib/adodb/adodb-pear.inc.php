@@ -1,6 +1,6 @@
 <?php
 /** 
- * @version V4.60 24 Jan 2005 (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+ * @version V4.50 6 July 2004 (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
  * Released under both BSD license and Lesser GPL library license. 
  * Whenever there is any discrepancy between the two licenses, 
  * the BSD license will take precedence. 
@@ -51,11 +51,6 @@ include_once ADODB_PEAR."/adodb.inc.php";
 if (!defined('DB_OK')) {
 define("DB_OK",	1);
 define("DB_ERROR",-1);
-
-// autoExecute constants
-define('DB_AUTOQUERY_INSERT', 1);
-define('DB_AUTOQUERY_UPDATE', 2);
-
 /**
  * This is a special constant that tells DB the user hasn't specified
  * any particular get mode, so the default should be used.
@@ -165,7 +160,6 @@ class DB
 		if (is_array($options)) {
 			foreach($options as $k => $v) {
 				switch(strtolower($k)) {
-				case 'persist':
 				case 'persistent': 	$persist = $v; break;
 				#ibase
 				case 'dialect': 	$obj->dialect = $v; break;
@@ -210,10 +204,9 @@ class DB
 	 */
 	function isError($value)
 	{
-		if (!is_object($value)) return false;
-		$class = get_class($value);
-		return $class == 'pear_error' || is_subclass_of($value, 'pear_error') || 
-				$class == 'db_error' || is_subclass_of($value, 'db_error');
+		return (is_object($value) &&
+				(get_class($value) == 'db_error' ||
+				 is_subclass_of($value, 'db_error')));
 	}
 
 
@@ -228,11 +221,9 @@ class DB
 	 */
 	function isWarning($value)
 	{
-		return false;
-		/*
 		return is_object($value) &&
 			(get_class( $value ) == "db_warning" ||
-			 is_subclass_of($value, "db_warning"));*/
+			 is_subclass_of($value, "db_warning"));
 	}
 
 	/**

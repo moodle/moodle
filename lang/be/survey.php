@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // survey.php - created with Moodle 1.4.3 + (2004083131)
+канфузным  <?PHP // $Id$ 
+      // survey.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['actual'] = 'Фактычны';
@@ -150,8 +150,8 @@ $string['howlongoptions'] = 'менш за 1 хв, 1-2 хв, 2-3 хв, 3-4 хв, 4-5- хв, 5-10
 $string['ifoundthat'] = 'Я даведаўся, што';
 $string['introtext'] = 'Уступны тэкст';
 $string['ipreferthat'] = 'Я аддаю перавагу';
-$string['modulename'] = 'Апытальнік';
-$string['modulenameplural'] = 'Апытальнікі';
+$string['modulename'] = 'Анкета';
+$string['modulenameplural'] = 'Анкеты';
 $string['name'] = 'Імя';
 $string['newsurveyresponses'] = 'Новыя запоўненыя анкеты';
 $string['nobodyyet'] = 'Ніхто не запоўніў гэтую анкету';
@@ -182,3 +182,5 @@ $string['time'] = 'Час';
 $string['viewsurveyresponses'] = 'Паглядзець запоўненыя анкеты';
 
 ?>
+
+  

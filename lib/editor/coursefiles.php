@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
 //  Manage all uploaded files in a course file area
 
@@ -12,16 +12,13 @@
 //  USER is a persistent variable using sessions
 
     require("../../config.php");
-    require_once($CFG->libdir.'/filelib.php');
+    require("../../files/mimetypes.php");
 
-    $id      = required_param('id', PARAM_INT);
-    $file    = optional_param('file', '', PARAM_PATH);
-    $wdir    = optional_param('wdir', '', PARAM_PATH);
-    $action  = optional_param('action', '', PARAM_ACTION);
-    $name    = optional_param('name', '', PARAM_FILE);
-    $oldname = optional_param('oldname', '', PARAM_FILE);
-    $usecheckboxes  = optional_param('usecheckboxes', 1, PARAM_INT);
-
+    require_variable($id);
+    optional_variable($file, "");
+    optional_variable($wdir, "");
+    optional_variable($action, "");
+    optional_variable($usecheckboxes, true);
 
     if (! $course = get_record("course", "id", $id) ) {
         error("That's an invalid course id");
@@ -29,24 +26,25 @@
 
     require_login($course->id);
 
-    if (! isteacheredit($course->id) ) {
+    if (! isteacher($course->id) ) {
         error("Only teachers can edit files");
     }
 
     function html_footer() {
-        echo "\n\n</body>\n</html>";
+        echo "</td></tr></table></body></html>";
     }
 
     function html_header($course, $wdir, $formfield=""){
 
         global $CFG;
 
+        if (! $site = get_site()) {
+            error("Invalid site!");
+        }
+
         ?>
-        <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-            "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
         <html>
         <head>
-        <meta http-equiv="content-type" content="text/html; charset=<?php print_string("thischarset");?>" />
         <title>coursefiles</title>
         <script language="javscript" type="text/javascript">
         <!--
@@ -184,34 +182,49 @@
 //  End of configuration and access control
 
 
-    if (!$wdir) {
-        $wdir="/";
-    }
-
-    if (($wdir != '/' and detect_munged_arguments($wdir, 0))
-      or ($file != '' and detect_munged_arguments($file, 0))) {
+    $regexp="\\.\\.";
+    if (ereg( $regexp, $file, $regs )| ereg( $regexp, $wdir,$regs )) {
         $message = "Error: Directories can not contain \"..\"";
         $wdir = "/";
         $action = "";
     }
 
+    if (!$wdir) {
+        $wdir="/";
+    }
 
     switch ($action) {
 
         case "upload":
             html_header($course, $wdir);
-            require_once($CFG->dirroot.'/lib/uploadlib.php');
 
-            if (!empty($save) and confirm_sesskey()) {
-                $um = new upload_manager('userfile',false,false,$course,false,0);
-                $dir = "$basedir$wdir";
-                if ($um->process_file_uploads($dir)) {
-                    notify(get_string('uploadedfile'));
-                }
-                // um will take care of error reporting.
-                displaydir($wdir);
+            if (!empty($_FILES['userfile'])) {
+                $userfile = $_FILES['userfile'];
             } else {
-                $upload_max_filesize = get_max_upload_file_size($CFG->maxbytes);
+                $save = false;
+            }
+            if (!empty($save)) {
+                if (!is_uploaded_file($userfile['tmp_name']) or $userfile['size'] == 0) {
+                    notify(get_string("uploadnofilefound"));
+                } else {
+                    $userfile_name = clean_filename($userfile['name']);
+                    if ($userfile_name) {
+                        $newfile = "$basedir$wdir/$userfile_name";
+                        if (move_uploaded_file($userfile['tmp_name'], $newfile)) {
+                            chmod($newfile, 0666);
+                            $a = NULL;
+                            $a->file = "$userfile_name (".$userfile['type'].")";
+                            $a->directory = $wdir;
+                            print_string("uploadedfileto", "", $a);
+                        } else {
+                            notify(get_string("uploadproblem", "", $userfile_name));
+                        }
+                    }
+                }
+                displaydir($wdir);
+
+            } else {
+                $upload_max_filesize = get_max_upload_file_size();
                 $filesize = display_size($upload_max_filesize);
 
                 $struploadafile = get_string("uploadafile");
@@ -219,36 +232,36 @@
                 $strmaxsize = get_string("maxsize", "", $filesize);
                 $strcancel = get_string("cancel");
 
-                echo "<p>$struploadafile ($strmaxsize) --> <strong>$wdir</strong>";
-                echo "<table border=\"0\"><tr><td colspan=\"2\">\n";
-                echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"coursefiles.php\">\n";
-                upload_print_form_fragment(1,array('userfile'),null,false,null,$course->maxbytes,0,false);
-                echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
-                echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />\n";
-                echo " <input type=\"hidden\" name=\"action\" value=\"upload\" />\n";
-                echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />\n";
-                echo " </td><tr><td align=\"right\">";
-                echo " <input type=\"submit\" name=\"save\" value=\"$struploadthisfile\" />\n";
-                echo "</form>\n";
-                echo "</td>\n<td>\n";
-                echo "<form action=\"coursefiles.php\" method=\"get\">\n";
-                echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
-                echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />\n";
-                echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />\n";
-                echo " <input type=\"submit\" value=\"$strcancel\" />\n";
-                echo "</form>\n";
-                echo "</td>\n</tr>\n</table>\n";
+                echo "<P>$struploadafile ($strmaxsize) --> <B>$wdir</B>";
+                echo "<TABLE border=\"0\"><TR><TD COLSPAN=2>";
+                echo "<FORM ENCTYPE=\"multipart/form-data\" METHOD=\"post\" ACTION=\"".$_SERVER['PHP_SELF']."\">";
+                echo " <INPUT TYPE=hidden NAME=MAX_FILE_SIZE value=\"$upload_max_filesize\">";
+                echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
+                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
+                echo " <INPUT TYPE=hidden NAME=action VALUE=upload>";
+                echo " <INPUT NAME=\"userfile\" TYPE=\"file\" size=\"40\">";
+                echo " </TD><TR><TD align=\"right\">";
+                echo " <INPUT TYPE=submit NAME=save VALUE=\"$struploadthisfile\">";
+                echo "</FORM>";
+                echo "</TD><TD>";
+                echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=\"get\">";
+                echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
+                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
+                echo " <INPUT TYPE=hidden NAME=action VALUE=cancel>";
+                echo " <INPUT TYPE=submit VALUE=\"$strcancel\">";
+                echo "</FORM>";
+                echo "</TD></TR></TABLE>";
             }
             html_footer();
             break;
 
         case "delete":
-            if (!empty($confirm) and confirm_sesskey()) {
+            if (!empty($confirm)) {
                 html_header($course, $wdir);
                 foreach ($USER->filelist as $file) {
                     $fullfile = $basedir.$file;
                     if (! fulldelete($fullfile)) {
-                        echo "<br />Error: Could not delete: $fullfile";
+                        echo "<BR>Error: Could not delete: $fullfile";
                     }
                 }
                 clearfilelist();
@@ -264,8 +277,8 @@
                     print_simple_box_end();
                     echo "<br />";
                     notice_yesno (get_string("deletecheckfiles"),
-                                "coursefiles.php?id=$id&amp;wdir=$wdir&amp;action=delete&amp;confirm=1&amp;sesskey=$USER->sesskey",
-                                "coursefiles.php?id=$id&amp;wdir=$wdir&amp;action=cancel");
+                                "".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&action=delete&confirm=1",
+                                "".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&action=cancel");
                 } else {
                     displaydir($wdir);
                 }
@@ -275,10 +288,10 @@
 
         case "move":
             html_header($course, $wdir);
-            if ($count = setfilelist($_POST) and confirm_sesskey()) {
+            if ($count = setfilelist($_POST)) {
                 $USER->fileop     = $action;
                 $USER->filesource = $wdir;
-                echo "<p align=\"center\">";
+                echo "<p align=center>";
                 print_string("selectednowmove", "moodle", $count);
                 echo "</p>";
             }
@@ -288,13 +301,13 @@
 
         case "paste":
             html_header($course, $wdir);
-            if (isset($USER->fileop) and $USER->fileop == "move" and confirm_sesskey()) {
+            if (isset($USER->fileop) and $USER->fileop == "move") {
                 foreach ($USER->filelist as $file) {
                     $shortfile = basename($file);
                     $oldfile = $basedir.$file;
                     $newfile = $basedir.$wdir."/".$shortfile;
                     if (!rename($oldfile, $newfile)) {
-                        echo "<p>Error: $shortfile not moved";
+                        echo "<P>Error: $shortfile not moved";
                     }
                 }
             }
@@ -304,10 +317,9 @@
             break;
 
         case "rename":
-            if (!empty($name) and confirm_sesskey()) {
+            if (!empty($name)) {
                 html_header($course, $wdir);
-                $name    = clean_filename($name);
-                $oldname = clean_filename($oldname);
+                $name = clean_filename($name);
                 if (file_exists($basedir.$wdir."/".$name)) {
                     echo "Error: $name already exists!";
                 } else if (!rename($basedir.$wdir."/".$oldname, $basedir.$wdir."/".$name)) {
@@ -320,31 +332,30 @@
                 $strcancel = get_string("cancel");
                 $strrenamefileto = get_string("renamefileto", "moodle", $file);
                 html_header($course, $wdir, "form.name");
-                echo "<p>$strrenamefileto:";
-                echo "<table border=\"0\">\n<tr>\n<td>\n";
-                echo "<form action=\"coursefiles.php\" method=\"post\" name=\"form\">\n";
-                echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
-                echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />\n";
-                echo " <input type=\"hidden\" name=\"action\" value=\"rename\" />\n";
-                echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />\n";
-                echo " <input type=\"hidden\" name=oldname value=\"$file\" />\n";
-                echo " <input type=\"text\" name=\"name\" size=\"35\" value=\"$file\" />\n";
-                echo " <input type=\"submit\" value=\"$strrename\" />\n";
-                echo "</form>\n";
-                echo "</td><td>\n";
-                echo "<form action=\"coursefiles.php\" method=\"get\">\n";
-                echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
-                echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />\n";
-                echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />\n";
-                echo " <input type=\"submit\" value=\"$strcancel\" />\n";
-                echo "</form>";
-                echo "</td></tr>\n</table>\n";
+                echo "<P>$strrenamefileto:";
+                echo "<TABLE><TR><TD>";
+                echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=\"post\" NAME=\"form\">";
+                echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
+                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
+                echo " <INPUT TYPE=hidden NAME=action VALUE=rename>";
+                echo " <INPUT TYPE=hidden NAME=oldname VALUE=\"$file\">";
+                echo " <INPUT TYPE=text NAME=name SIZE=35 VALUE=\"$file\">";
+                echo " <INPUT TYPE=submit VALUE=\"$strrename\">";
+                echo "</FORM>";
+                echo "</TD><TD>";
+                echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=get>";
+                echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
+                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
+                echo " <INPUT TYPE=hidden NAME=action VALUE=cancel>";
+                echo " <INPUT TYPE=submit VALUE=\"$strcancel\">";
+                echo "</FORM>";
+                echo "</TD></TR></TABLE>";
             }
             html_footer();
             break;
 
         case "mkdir":
-            if (!empty($name) and confirm_sesskey()) {
+            if (!empty($name)) {
                 html_header($course, $wdir);
                 $name = clean_filename($name);
                 if (file_exists("$basedir$wdir/$name")) {
@@ -359,63 +370,72 @@
                 $strcancel = get_string("cancel");
                 $strcreatefolder = get_string("createfolder", "moodle", $wdir);
                 html_header($course, $wdir, "form.name");
-                echo "<p>$strcreatefolder:";
-                echo "<table border=\"0\">\n<tr><td>\n";
-                echo "<form action=\"coursefiles.php\" method=\"post\" name=\"form\">\n";
-                echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
-                echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />\n";
-                echo " <input type=\"hidden\" name=\"action\" value=\"mkdir\" />\n";
-                echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />\n";
-                echo " <input type=\"text\" name=\"name\" size=\"35\" />\n";
-                echo " <input type=\"submit\" value=\"$strcreate\" />\n";
-                echo "</form>\n";
-                echo "</td><td>\n";
-                echo "<form action=\"coursefiles.php\" method=\"get\">\n";
-                echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
-                echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />\n";
-                echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />\n";
-                echo " <input type=\"submit\" value=\"$strcancel\" />\n";
-                echo "</form>\n";
-                echo "</td>\n</tr>\n</table>\n";
+                echo "<P>$strcreatefolder:";
+                echo "<TABLE><TR><TD>";
+                echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=post NAME=form>";
+                echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
+                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
+                echo " <INPUT TYPE=hidden NAME=action VALUE=mkdir>";
+                echo " <INPUT TYPE=text NAME=name SIZE=35>";
+                echo " <INPUT TYPE=submit VALUE=\"$strcreate\">";
+                echo "</FORM>";
+                echo "</TD><TD>";
+                echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=get>";
+                echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
+                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
+                echo " <INPUT TYPE=hidden NAME=action VALUE=cancel>";
+                echo " <INPUT TYPE=submit VALUE=\"$strcancel\">";
+                echo "</FORM>";
+                echo "</TD></TR></TABLE>";
             }
             html_footer();
             break;
 
         case "edit":
             html_header($course, $wdir);
-            if (isset($text) and confirm_sesskey()) {
+            if (isset($text)) {
                 $fileptr = fopen($basedir.$file,"w");
                 fputs($fileptr, stripslashes($text));
                 fclose($fileptr);
                 displaydir($wdir);
 
             } else {
-                $streditfile = get_string("edit", "", "<strong>$file</strong>");
+                $streditfile = get_string("edit", "", "<B>$file</B>");
                 $fileptr  = fopen($basedir.$file, "r");
                 $contents = fread($fileptr, filesize($basedir.$file));
                 fclose($fileptr);
 
+                if (mimeinfo("type", $file) == "text/html") {
+                    if ($usehtmleditor = can_use_richtext_editor()) {
+                        $onsubmit = "onsubmit=\"copyrichtext(document.form.text);\"";
+                    } else {
+                        $onsubmit = "";
+                    }
+                } else {
+                    $usehtmleditor = false;
+                    $onsubmit = "";
+                }
+
                 print_heading("$streditfile");
 
-                echo "<table><tr><td colspan=\"2\">\n";
-                echo "<form action=\"coursefiles.php\" method=\"post\" name=\"form\" $onsubmit>\n";
-                echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
-                echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />\n";
-                echo " <input type=\"hidden\" name=file value=\"$file\" />";
-                echo " <input type=\"hidden\" name=\"action\" value=\"edit\" />\n";
-                echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />\n";
-                print_textarea(false, 25, 80, 680, 400, "text", $contents);
-                echo "</td>\n</tr>\n<tr>\n<td>\n";
-                echo " <input type=\"submit\" value=\"".get_string("savechanges")."\" />\n";
-                echo "</form>\n";
-                echo "</td>\n<td>\n";
-                echo "<form action=\"coursefiles.php\" method=\"get\">\n";
-                echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
-                echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />\n";
-                echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />\n";
-                echo " <input type=\"submit\" value=\"".get_string("cancel")."\" />\n";
-                echo "</form>\n";
-                echo "</td></tr></table>\n";
+                echo "<TABLE><TR><TD COLSPAN=2>";
+                echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=\"post\" NAME=\"form\" $onsubmit>";
+                echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
+                echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";
+                echo " <INPUT TYPE=hidden NAME=file VALUE=\"$file\">";
+                echo " <INPUT TYPE=hidden NAME=action VALUE=edit>";
+                print_textarea($usehtmleditor, 25, 80, 680, 400, "text", $contents);
+                echo "</TD></TR><TR><TD>";
+                echo " <INPUT TYPE=submit VALUE=\"".get_string("savechanges")."\">";
+                echo "</FORM>";
+                echo "</TD><TD>";
+                echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=get>";
+                echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
+                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
+                echo " <INPUT TYPE=hidden NAME=action VALUE=cancel>";
+                echo " <INPUT TYPE=submit VALUE=\"".get_string("cancel")."\">";
+                echo "</FORM>";
+                echo "</TD></TR></TABLE>";
 
                 if ($usehtmleditor) {
                     print_richedit_javascript("form", "text", "yes");
@@ -427,19 +447,28 @@
             break;
 
         case "zip":
-            if (!empty($name) and confirm_sesskey()) {
+            if (!empty($name)) {
                 html_header($course, $wdir);
                 $name = clean_filename($name);
-
-                $files = array();
-                foreach ($USER->filelist as $file) {
-                   $files[] = "$basedir/$file";
+                if (empty($CFG->zip)) {    // Use built-in php-based zip function
+                    $files = array();
+                    foreach ($USER->filelist as $file) {
+                        $files[] = "$basedir/$file";
+                    }
+                    include_once('../pclzip/pclzip.lib.php');
+                    $archive = new PclZip("$basedir/$wdir/$name");
+                    if (($list = $archive->create($files,'',"$basedir/$wdir/")) == 0) {
+                        error($archive->errorInfo(true));
+                    }
+                } else {                   // Use external zip program
+                    $files = "";
+                    foreach ($USER->filelist as $file) {
+                        $files .= basename($file);
+                        $files .= " ";
+                    }
+                    $command = "cd $basedir/$wdir ; $CFG->zip -r $name $files";
+                    Exec($command);
                 }
-
-                if (!zip_files($files,"$basedir/$wdir/$name")) {
-                    error(get_string("zipfileserror","error"));
-                }
-
                 clearfilelist();
                 displaydir($wdir);
 
@@ -447,29 +476,28 @@
                 html_header($course, $wdir, "form.name");
 
                 if (setfilelist($_POST)) {
-                    echo "<p align=\"center\">".get_string("youareabouttocreatezip").":</p>";
+                    echo "<P ALIGN=CENTER>".get_string("youareabouttocreatezip").":</P>";
                     print_simple_box_start("center");
                     printfilelist($USER->filelist);
                     print_simple_box_end();
-                    echo "<br />";
-                    echo "<p align=\"center\">".get_string("whattocallzip");
-                    echo "<table border=\"0\">\n<tr>\n<td>\n";
-                    echo "<form action=\"coursefiles.php\" method=\"post\" name=\"form\">\n";
-                    echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
-                    echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />\n";
-                    echo " <input type=\"hidden\" name=\"action\" value=\"zip\" />\n";
-                    echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />\n";
-                    echo " <INPUT TYPE=text name=name SIZE=35 value=\"new.zip\" />\n";
-                    echo " <input type=\"submit\" value=\"".get_string("createziparchive")."\" />";
-                    echo "</form>\n";
-                    echo "</td>\n<td>\n";
-                    echo "<form action=\"coursefiles.php\" method=\"get\">\n";
-                    echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
-                    echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />\n";
-                    echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />\n";
-                    echo " <input type=\"submit\" value=\"".get_string("cancel")."\" />\n";
-                    echo "</form>\n";
-                    echo "</td>\n</tr>\n</table>\n";
+                    echo "<BR>";
+                    echo "<P ALIGN=CENTER>".get_string("whattocallzip");
+                    echo "<TABLE><TR><TD>";
+                    echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=post NAME=form>";
+                    echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
+                    echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";
+                    echo " <INPUT TYPE=hidden NAME=action VALUE=zip>";
+                    echo " <INPUT TYPE=text NAME=name SIZE=35 VALUE=\"new.zip\">";
+                    echo " <INPUT TYPE=submit VALUE=\"".get_string("createziparchive")."\">";
+                    echo "</FORM>";
+                    echo "</TD><TD>";
+                    echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=get>";
+                    echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
+                    echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
+                    echo " <INPUT TYPE=hidden NAME=action VALUE=cancel>";
+                    echo " <INPUT TYPE=submit VALUE=\"".get_string("cancel")."\">";
+                    echo "</FORM>";
+                    echo "</TD></TR></TABLE>";
                 } else {
                     displaydir($wdir);
                     clearfilelist();
@@ -480,25 +508,62 @@
 
         case "unzip":
             html_header($course, $wdir);
-            if (!empty($file) and confirm_sesskey()) {
+            if (!empty($file)) {
+                $strname = get_string("name");
+                $strsize = get_string("size");
+                $strmodified = get_string("modified");
+                $strstatus = get_string("status");
                 $strok = get_string("ok");
                 $strunpacking = get_string("unpacking", "", $file);
 
-                echo "<p align=\"center\">$strunpacking:</p>";
+                echo "<P ALIGN=CENTER>$strunpacking:</P>";
 
                 $file = basename($file);
 
-                if (!unzip_file("$basedir/$wdir/$file")) {
-                    error(get_string("unzipfileserror","error"));
+                if (empty($CFG->unzip)) {    // Use built-in php-based unzip function
+                    include_once('../pclzip/pclzip.lib.php');
+                    $archive = new PclZip("$basedir/$wdir/$file");
+                    if (!$list = $archive->extract("$basedir/$wdir")) {
+                        error($archive->errorInfo(true));
+                    } else {  // print some output
+                        echo "<table cellpadding=\"4\" cellspacing=\"2\" border=\"0\" width=640>";
+                        echo "<tr><th align=left>$strname</th>";
+                        echo "<th align=right>$strsize</th>";
+                        echo "<th align=right>$strmodified</th>";
+                        echo "<th align=right>$strstatus</th></tr>";
+                        foreach ($list as $item) {
+                            echo "<tr>";
+                            $item['filename'] = str_replace("$basedir/$wdir/", "", $item['filename']);
+                            print_cell("left", $item['filename']);
+                            if (! $item['folder']) {
+                                print_cell("right", display_size($item['size']));
+                            } else {
+                                echo "<td>&nbsp;</td>";
+                            }
+                            $filedate  = userdate($item['mtime'], get_string("strftimedatetime"));
+                            print_cell("right", $filedate);
+                            print_cell("right", $item['status']);
+                            echo "</tr>";
+                        }
+                        echo "</table>";
+                    }
+
+                } else {                     // Use external unzip program
+                    print_simple_box_start("center");
+                    echo "<PRE>";
+                    $command = "cd $basedir/$wdir ; $CFG->unzip -o $file 2>&1";
+                    passthru($command);
+                    echo "</PRE>";
+                    print_simple_box_end();
                 }
 
-                echo "<center><form action=\"coursefiles.php\" method=\"get\">\n";
-                echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
-                echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />\n";
-                echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />\n";
-                echo " <input type=\"submit\" value=\"$strok\" />\n";
-                echo "</form>\n";
-                echo "</center>\n";
+                echo "<CENTER><FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=get>";
+                echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
+                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
+                echo " <INPUT TYPE=hidden NAME=action VALUE=cancel>";
+                echo " <INPUT TYPE=submit VALUE=\"$strok\">";
+                echo "</FORM>";
+                echo "</CENTER>";
             } else {
                 displaydir($wdir);
             }
@@ -507,14 +572,14 @@
 
         case "listzip":
             html_header($course, $wdir);
-            if (!empty($file) and confirm_sesskey()) {
+            if (!empty($file)) {
                 $strname = get_string("name");
                 $strsize = get_string("size");
                 $strmodified = get_string("modified");
                 $strok = get_string("ok");
                 $strlistfiles = get_string("listfiles", "", $file);
 
-                echo "<p align=\"center\">$strlistfiles:</p>";
+                echo "<P ALIGN=CENTER>$strlistfiles:</P>";
                 $file = basename($file);
 
                 include_once('../pclzip/pclzip.lib.php');
@@ -523,37 +588,36 @@
                     notify($archive->errorInfo(true));
 
                 } else {
-                    echo "<table cellpadding=\"4\" cellspacing=\"2\" border=\"0\">\n";
-                    echo "<tr>\n<th align=\"left\">$strname</th><th align=\"right\">$strsize</th><th align=\"right\">$strmodified</th></tr>";
+                    echo "<table cellpadding=\"4\" cellspacing=\"2\" border=\"0\">";
+                    echo "<tr><th align=left>$strname</th><th align=right>$strsize</th><th align=right>$strmodified</th></tr>";
                     foreach ($list as $item) {
                         echo "<tr>";
                         print_cell("left", $item['filename']);
                         if (! $item['folder']) {
                             print_cell("right", display_size($item['size']));
                         } else {
-                            echo "<td>&nbsp;</td>\n";
+                            echo "<td>&nbsp;</td>";
                         }
                         $filedate  = userdate($item['mtime'], get_string("strftimedatetime"));
                         print_cell("right", $filedate);
-                        echo "</tr>\n";
+                        echo "</tr>";
                     }
-                    echo "</table>\n";
+                    echo "</table>";
                 }
-                echo "<br /><center><form action=\"coursefiles.php\" method=\"get\">\n";
-                echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
-                echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />\n";
-                echo " <input type=\"hidden\" name=\"action\" value=\"cancel\" />\n";
-                echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />\n";
-                echo " <input type=\"submit\" value=\"$strok\" />\n";
-                echo "</form>\n";
-                echo "</center>\n";
+                echo "<br><center><form action=\"".$_SERVER['PHP_SELF']."\" method=get>";
+                echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
+                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
+                echo " <INPUT TYPE=hidden NAME=action VALUE=cancel>";
+                echo " <INPUT TYPE=submit VALUE=\"$strok\">";
+                echo "</FORM>";
+                echo "</CENTER>";
             } else {
                 displaydir($wdir);
             }
             html_footer();
             break;
 
-        case "cancel":
+        case "cancel";
             clearfilelist();
 
         default:
@@ -570,7 +634,7 @@
 function fulldelete($location) {
     if (is_dir($location)) {
         $currdir = opendir($location);
-        while (false !== ($file = readdir($currdir))) {
+        while ($file = readdir($currdir)) {
             if ($file <> ".." && $file <> ".") {
                 $fullfile = $location."/".$file;
                 if (is_dir($fullfile)) {
@@ -628,10 +692,10 @@ function printfilelist($filelist) {
 
     foreach ($filelist as $file) {
         if (is_dir($basedir.$file)) {
-            echo "<img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" alt=\"\" /> $file<br />";
+            echo "<img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\"> $file<br />";
             $subfilelist = array();
             $currdir = opendir($basedir.$file);
-            while (false !== ($subfile = readdir($currdir))) {
+            while ($subfile = readdir($currdir)) {
                 if ($subfile <> ".." && $subfile <> ".") {
                     $subfilelist[] = $file."/".$subfile;
                 }
@@ -640,16 +704,16 @@ function printfilelist($filelist) {
 
         } else {
             $icon = mimeinfo("icon", $file);
-            echo "<img src=\"$CFG->pixpath/f/$icon\"  height=\"16\" width=\"16\" alt=\"\" /> $file<br />";
+            echo "<img src=\"$CFG->pixpath/f/$icon\"  height=\"16\" width=\"16\"> $file<br />";
         }
     }
 }
 
 
 function print_cell($alignment="center", $text="&nbsp;") {
-    echo "<td align=\"$alignment\" nowrap=\"nowrap\">\n";
+    echo "<TD ALIGN=\"$alignment\" NOWRAP>";
     echo "$text";
-    echo "</td>\n";
+    echo "</TD>\n";
 }
 
 function get_image_size($filepath) {
@@ -681,7 +745,7 @@ function displaydir ($wdir) {
     $fullpath = $basedir.$wdir;
 
     $directory = opendir($fullpath);             // Find all files
-    while (false !== ($file = readdir($directory))) {
+    while ($file = readdir($directory)) {
         if ($file == "." || $file == "..") {
             continue;
         }
@@ -713,8 +777,8 @@ function displaydir ($wdir) {
     $strchoose   = get_string("choose");
 
 
-    echo "<form action=\"coursefiles.php\" method=\"post\" name=\"dirform\">\n";
-    echo "<table border=\"0\" cellspacing=\"2\" cellpadding=\"2\" width=\"100%\">\n";
+    echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=post NAME=dirform>";
+    echo "<TABLE BORDER=\"0\" cellspacing=\"2\" cellpadding=\"2\" width=\"100%\">";
 
     if ($wdir == "/") {
         $wdir = "";
@@ -723,10 +787,10 @@ function displaydir ($wdir) {
         if($bdir == "/") {
             $bdir = "";
         }
-        print "<tr>\n<td colspan=\"5\">";
-        print "<a href=\"coursefiles.php?id=$id&amp;wdir=$bdir&amp;usecheckboxes=$usecheckboxes\" onclick=\"return reset_value();\">";
-        print "<img src=\"$CFG->wwwroot/lib/editor/images/folderup.gif\" height=\"14\" width=\"24\" border=\"0\" alt=\"Move up\" />";
-        print "</a></td>\n</tr>\n";
+        print "<tr><td colspan=\"5\">";
+        print "<a href=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$bdir&usecheckboxes=$usecheckboxes\" onclick=\"return reset_value();\">";
+        print "<img src=\"$CFG->wwwroot/lib/editor/images/folderup.gif\" height=\"14\" width=\"24\" border=\"0\" ALT=\"Move up\">";
+        print "</a></td></tr>\n";
     }
 
     $count = 0;
@@ -742,16 +806,16 @@ function displaydir ($wdir) {
             $filesafe = rawurlencode($dir);
             $filedate = userdate(filemtime($filename), "%d %b %Y, %I:%M %p");
 
-            echo "<tr>";
+            echo "<TR>";
 
             if ($usecheckboxes) {
-                print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" onclick=\"return set_rename('$filesafe');\" />");
+                print_cell("center", "<input type=checkbox name=\"file$count\" value=\"$fileurl\" onclick=\"return set_rename('$filesafe');\">");
             }
-            print_cell("left", "<a href=\"coursefiles.php?id=$id&amp;wdir=$fileurl\" onclick=\"return reset_value();\"><img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" border=\"0\" alt=\"folder\" /></a> <a href=\"coursefiles.php?id=$id&amp;wdir=$fileurl&amp;usecheckboxes=$usecheckboxes\" onclick=\"return reset_value();\">".htmlspecialchars($dir)."</a>");
+            print_cell("left", "<a href=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$fileurl\" onclick=\"return reset_value();\"><img src=\"$CFG->pixpath/f/folder.gif\" height=16 width=16 border=0 alt=\"folder\"></a> <a href=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$fileurl&usecheckboxes=$usecheckboxes\" onclick=\"return reset_value();\">".htmlspecialchars($dir)."</a>");
             print_cell("right", "&nbsp;");
             print_cell("right", $filedate);
 
-            echo "</tr>";
+            echo "</TR>";
         }
     }
 
@@ -779,50 +843,49 @@ function displaydir ($wdir) {
                 $imgheight = "Unknown";
             }
             unset($dimensions);
-            echo "<tr>\n";
+            echo "<tr>";
 
             if ($usecheckboxes) {
-                print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" onclick=\"return set_rename('$filesafe');\" />");
+                print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" onclick=\"return set_rename('$filesafe');\">");
             }
-            echo "<td align=\"left\" nowrap=\"nowrap\">";
+            echo "<td align=left nowrap>";
             if ($CFG->slasharguments) {
                 $ffurl = "/file.php/$id$fileurl";
             } else {
                 $ffurl = "/file.php?file=/$id$fileurl";
             }
             link_to_popup_window ($ffurl, "display",
-                                  "<img src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" border=\"0\" align=\"middle\" alt=\"$strfile\" />",
+                                  "<img src=\"$CFG->pixpath/f/$icon\" height=16 width=16 border=0 align=\"absmiddle\" alt=\"$strfile\">",
                                   480, 640);
             $file_size = filesize($filename);
 
             echo "<a onclick=\"return set_value(info = {url: '".$CFG->wwwroot.$ffurl."',";
             echo " isize: '".$file_size."', itype: '".$imgtype."', iwidth: '".$imgwidth."',";
             echo " iheight: '".$imgheight."', imodified: '".$filedate."' })\" href=\"#\">$file</a>";
-            echo "</td>\n";
+            echo "<!-- </font> --></td>";
 
             if ($icon == "zip.gif") {
-                $edittext = "<a href=\"coursefiles.php?id=$id&amp;wdir=$wdir&amp;file=$fileurl&amp;action=unzip&amp;sesskey=$USER->sesskey\">$strunzip</a>&nbsp;";
-                $edittext .= "<a href=\"coursefiles.php?id=$id&amp;wdir=$wdir&amp;file=$fileurl&amp;action=listzip&amp;sesskey=$USER->sesskey\">$strlist</a> ";
+                $edittext = "<a href=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&file=$fileurl&action=unzip\">$strunzip</a>&nbsp;";
+                $edittext .= "<a href=\"".basename($_SERVER['PHP_SELF'])."?id=$id&wdir=$wdir&file=$fileurl&action=listzip\">$strlist</a> ";
             } else {
                 $edittext = "&nbsp;";
             }
             print_cell("right", "$edittext ");
             print_cell("right", $filedate);
 
-            echo "</tr>\n";
+            echo "</TR>";
         }
     }
-    echo "</table>\n";
+    echo "</TABLE>";
 
     if (empty($wdir)) {
         $wdir = "/";
     }
 
-    echo "<table border=\"0\" cellspacing=\"2\" cellpadding=\"2\">\n";
-    echo "<tr>\n<td>";
-    echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
-    echo "<input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />\n";
-    echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />\n";
+    echo "<TABLE BORDER=0 cellspacing=2 cellpadding=2>";
+    echo "<TR><TD>";
+    echo "<INPUT TYPE=hidden NAME=id VALUE=\"$id\">";
+    echo "<INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\"> ";
     $options = array (
                    "move" => "$strmovetoanotherfolder",
                    "delete" => "$strdeletecompletely",
@@ -831,17 +894,22 @@ function displaydir ($wdir) {
     if (!empty($count)) {
         choose_from_menu ($options, "action", "", "$strwithchosenfiles...", "javascript:document.dirform.submit()");
     }
+
+    echo "</FORM>";
+    echo "<TD ALIGN=center>";
     if (!empty($USER->fileop) and ($USER->fileop == "move") and ($USER->filesource <> $wdir)) {
-        echo "<form action=\"coursefiles.php\" method=\"get\">\n";
-        echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
-        echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />\n";
-        echo " <input type=\"hidden\" name=\"action\" value=\"paste\" />\n";
-        echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />\n";
-        echo " <input type=\"submit\" value=\"$strmovefilestohere\" />\n";
-        echo "</form>";
+        echo "<FORM ACTION=\"".$_SERVER['PHP_SELF']."\" METHOD=get>";
+        echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
+        echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";
+        echo " <INPUT TYPE=hidden NAME=action VALUE=paste>";
+        echo " <INPUT TYPE=submit VALUE=\"$strmovefilestohere\">";
+        echo "</FORM>";
     }
-    echo "</td></tr>\n";
-    echo "</table>\n";
-    echo "</form>\n";
+    echo "<TD ALIGN=right>";
+    echo "</TD>";
+    echo "<TD ALIGN=right>";
+    echo "</TD></TR>";
+    echo "</TABLE>";
+
 }
 ?>

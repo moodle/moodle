@@ -235,7 +235,7 @@
 		"<" => "&lt;",
            ),
            "wm_source" => array(
-		"%%%" => "<br />",
+		"%%%" => "<br>",
 		"\t" => "        ",
 		"\n;:" => "\n      ",   # workaround, replaces the old ;:
            ),
@@ -341,8 +341,8 @@
 	   "EDIT_FORM_1" => "<a href=\"".EWIKI_SCRIPT."GoodStyle\">GoodStyle</a> is to
 		write what comes to your mind. Don't care about how it
 		looks too much now. You can add <a href=\"".EWIKI_SCRIPT."WikiMarkup\">WikiMarkup</a>
-		also later if you think it is necessary.<br />",
-	   "EDIT_FORM_2" => "<br />Please do not write things, which may make other
+		also later if you think it is necessary.<br>",
+	   "EDIT_FORM_2" => "<br>Please do not write things, which may make other
 		people angry. And please keep in mind that you are not all that
 		anonymous in the internet (find out more about your computers
 		'<a href=\"http://google.com/search?q=my+computers+IP+address\">IP address</a>' at Google).",
@@ -378,8 +378,8 @@
            "EDIT_FORM_1" => "<a href=\"".EWIKI_SCRIPT."BuenEstilo\">BuenEstilo</a> es
 		escribir lo que viene a su mente. No se preocupe mucho
 		por la apariencia. También puede agregar <a href=\"".EWIKI_SCRIPT."ReglasDeMarcadoWiki\">ReglasDeMarcadoWiki</a>
-		más adelante si piensa que es necesario.<br />",
-           "EDIT_FORM_2" => "<br />Por favor no escriba cosas, que puedan
+		más adelante si piensa que es necesario.<br>",
+           "EDIT_FORM_2" => "<br>Por favor no escriba cosas, que puedan
 		enfadar a otras personas. Y por favor tenga en mente que
 		usted no es del todo anónimo en Internet 
 		(encuentre más sobre 
@@ -406,7 +406,7 @@
 		zurück und speichere Deine Änderungen in der Zwischenablage
 		(Bearbeiten->Kopieren) um sie dann wieder an der richtigen
 		Stelle einzufügen, nachdem du die EditBoxSeite nocheinmal
-		geladen hast.<br />
+		geladen hast.<br>
 		Vielen Dank für Deine Mühe.",
 	   "ERRORSAVING" => "Beim Abspeichern ist ein Fehler aufgetreten. Bitte versuche es erneut.",
 	   "THANKSFORCONTRIBUTION" => "Vielen Dank für Deinen Beitrag!",
@@ -421,8 +421,8 @@
 		Sinn kommt. Du solltest dich jetzt noch nicht so sehr
 		darum kümmern, wie die Seite aussieht. Du kannst später
 		immernoch zurückkommen und den Text mit <a href=\"".EWIKI_SCRIPT."FormatierungsRegeln\">WikiTextFormatierungsRegeln</a>
-		aufputschen.<br />",
-	   "EDIT_FORM_2" => "<br />Bitte schreib keine Dinge, die andere Leute
+		aufputschen.<br>",
+	   "EDIT_FORM_2" => "<br>Bitte schreib keine Dinge, die andere Leute
 		verärgern könnten. Und bedenke auch, daß es schnell auf
 		dich zurückfallen kann wenn du verschiedene andere Dinge sagst (mehr Informationen zur
 		'<a href=\"http://google.de/search?q=computer+IP+adresse\">IP Adresse</a>'
@@ -443,7 +443,7 @@
 	   "InterWikiSearch" => "http://sunir.org/apps/meta.pl?",
 	   "Wiki" => "WardsWiki",
 	   "WardsWiki" => "http://www.c2.com/cgi/wiki?",
-	   "WikiFind" => "http://c2.com/cgi/wiki?FindPage&amp;value=",
+	   "WikiFind" => "http://c2.com/cgi/wiki?FindPage&value=",
 	   "WikiPedia" => "http://www.wikipedia.com/wiki.cgi?",
 	   "MeatBall" => "MeatballWiki",
 	   "MeatballWiki" => "http://www.usemod.com/cgi-bin/mb.pl?",
@@ -479,12 +479,12 @@ function ewiki_page($id=false) {
 
    #-- selected page
    if (!isset($_REQUEST)) {
-      $_REQUEST = @array_merge($_GET, $_POST);
+      $_REQUEST = @array_merge($HTTP_GET_VARS, $HTTP_POST_VARS);
    }
    if (!strlen($id)) {
       $id = ewiki_id();
    }
-   $id = format_string($id,true);
+
    #-- page action
    $action = EWIKI_DEFAULT_ACTION;
    if ($delim = strpos($id, EWIKI_ACTION_SEP_CHAR)) {
@@ -594,7 +594,6 @@ function ewiki_page($id=false) {
          $pf($o, $id, $data, $action);
       }
    }
-
    (EWIKI_ESCAPE_AT) && ($o = str_replace("@", "&#x40;", $o));
 
    return($o);
@@ -731,11 +730,7 @@ function ewiki_page_view($id, &$data, $action, $all=1) {
       return($o);
    }
    #### MOODLE CHANGE
-   /// Add Moodle filters to text porion of wiki.
-   global $moodle_format;   // from wiki/view.php
-   $o = format_text($o, $moodle_format);
-   $o.= "<br /><br />";
-
+   $o.= "<br><br>";
    #-- control line + other per-page info stuff
    if ($pf_a = $ewiki_plugins["view_append"]) {
       ksort($pf_a);
@@ -802,7 +797,6 @@ function ewiki_script($asid="", $id=false, $params="", $bin=0, $html=1, $script=
       $script = &$ewiki_config[!$bin?"script":"script_binary"];
    }
 
-
    #-- separate $action and $id for old style requests
    if ($id === false) {
       if (strpos($asid, EWIKI_ACTION_SEP_CHAR) !== false) {
@@ -861,11 +855,7 @@ function ewiki_script($asid="", $id=false, $params="", $bin=0, $html=1, $script=
 
    #-- fin
    if ($html) {
-      //Don't replace & if it's part of encoded character (bug 2209)
-      $url = preg_replace("/&(?![A-Za-z]{0,4}\w{2,3};|#[0-9]{2,5};)/","&amp;", $url);
-   } else {
-      //This is going to be used in some header or meta redirect, so It cannot use &amp; (bug 2620)
-      $url = preg_replace('/&amp;/', '&', $url); 
+      $url = str_replace("&", "&amp;", $url);
    }
    return($url);
 }
@@ -1011,7 +1001,7 @@ function ewiki_list_pages($pages=array(), $limit=EWIKI_LIST_LIMIT,
       $o = $pf_list($lines);
    }
    elseif($lines) {
-      $o = "&middot; " . implode("<br />\n&middot; ", $lines) . "<br />\n";
+      $o = "&middot; " . implode("<br>\n&middot; ", $lines) . "<br>\n";
    }
 
    return($o);
@@ -1091,9 +1081,9 @@ function ewiki_page_search($id, &$data, $action) {
 
    if (! ($q = @$_REQUEST["q"])) {
 
-      $o .= '<form action="' . ewiki_script("", $id) . '" method="post">';
-      $o .= '<input name="q" size="30" /><br /><br />';
-      $o .= '<input type="submit" value="'.$id.'" />';
+      $o .= '<form action="' . ewiki_script("", $id) . '" method="POST">';
+      $o .= '<input name="q" size="30"><br><br>';
+      $o .= '<input type="submit" value="'.$id.'">';
       $o .= '</form>';
    }
    else {
@@ -1194,7 +1184,7 @@ function ewiki_page_info($id, &$data, $action) {
             continue;  // MOODLE DOESN'T USE IT
             $str = "";
             if ($first && $value) { foreach ($value as $n=>$d) {
-               $str .= htmlentities("$n: $d") . "<br />\n";
+               $str .= htmlentities("$n: $d") . "<br>\n";
             } }
             $value = $str;
          }
@@ -1255,7 +1245,7 @@ function ewiki_page_info($id, &$data, $action) {
                      $course->id = 1;
                  }
                  $picture = print_user_picture($user->id, $course->id, $user->picture, false, true, true);
-                 $value = $picture." <a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">".fullname($user)."</a>";
+                 $value = $picture." <a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">".fullname($user)."</a>";
              } else {
                  continue;
                  //$value = @$current['author'];
@@ -1274,7 +1264,7 @@ function ewiki_page_info($id, &$data, $action) {
 
    #-- page result split
    if ($v >= 1) {
-      $o .= "<br />\n show " . ewiki_chunked_page($this, $id, -1, $v+1, 1) . "\n <br />";
+      $o .= "<br>\n show " . ewiki_chunked_page($this, $id, -1, $v+1, 1) . "\n <br>";
    }
 
    return($o);
@@ -1404,7 +1394,7 @@ function ewiki_page_edit($id, $data, $action) {
 
             if (!$pf || !$pf($id, $data)) {
                $error = 1;
-               $o .= ewiki_t("ERRVERSIONSAVE") . "<br /><br />";
+               $o .= ewiki_t("ERRVERSIONSAVE") . "<br><br>";
             }
 
          }
@@ -1447,12 +1437,11 @@ function ewiki_page_edit($id, $data, $action) {
                #-- prevent double saving, when ewiki_page() is re-called
                $_REQUEST = $_GET = $_POST = array();
 
-               $o = ewiki_t("THANKSFORCONTRIBUTION") . "<br /><br />";
+               $o = ewiki_t("THANKSFORCONTRIBUTION") . "<br><br>";
                $o .= ewiki_page($id);
 
                if (EWIKI_EDIT_REDIRECT) {
                   $url = ewiki_script("", $id, "thankyou=1", 0, 0, EWIKI_HTTP_HEADERS?ewiki_script_url():0);
-                 
                   if (EWIKI_HTTP_HEADERS && !headers_sent()) {
                      header("Status: 303 Redirect for GET");
                      header("Location: $url");
@@ -1504,8 +1493,7 @@ function ewiki_data_update(&$data, $author="") {
 #-- edit <textarea>
 function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
    global $ewiki_plugins, $ewiki_config;   
-
-   $o='';
+   $o="";
       
    #-- previously edited, or db fetched content
    if (@$_REQUEST["content"] || @$_REQUEST["version"]) {
@@ -1530,13 +1518,13 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
 
    #-- edit textarea/form
    $o .= ewiki_t("EDIT_FORM_1")
-       . '<form method="post" enctype="multipart/form-data" action="'
+       . '<form method="POST" enctype="multipart/form-data" action="'
        . ewiki_script("edit", $id) . '" name="ewiki"'
        . ' accept-charset="'.EWIKI_CHARSET.'">' . "\n";
 
    #-- additional POST vars
    foreach ($hidden_postdata as $name => $value) {
-       $o .= '<input type="hidden" name="'.$name.'" value="'.$value.'" />'."\n";
+       $o .= '<input type="hidden" name="'.$name.'" value="'.$value.'">'."\n";
    }
 
    if (EWIKI_CHARSET=="UTF-8") {
@@ -1548,9 +1536,7 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
    if($ewiki_use_editor) {
      ob_start();
      $usehtmleditor = can_use_html_editor();
-     echo '<table><tr><td>';
      print_textarea($usehtmleditor, $rows, $cols, 680, 400, "content", ewiki_format($data["content"]));
-     echo '</td></tr></table>';
      if ($usehtmleditor) {
          use_html_editor("content");
      }
@@ -1573,10 +1559,10 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
    }
 
    ##### BEGIN MOODLE ADDITION (Cancel Editing into Button) #####
-   $o .= "\n<br />\n"
-      . '<input type="submit" name="save" value="'. ewiki_t("SAVE") . '" />'."\n"
-      . '<input type="submit" name="preview" value="'. ewiki_t("PREVIEW") . '" />' . "\n"
-      . '<input type="submit" name="canceledit" value="'. ewiki_t("CANCEL_EDIT") . '" />' . "\n";
+   $o .= "\n<br>\n"
+      . '<input type="submit" name="save" value="'. ewiki_t("SAVE") . '">'."\n"
+      . '<input type="submit" name="preview" value="'. ewiki_t("PREVIEW") . '">' . "\n"
+      . '<input type="submit" name="canceledit" value="'. ewiki_t("CANCEL_EDIT") . '">' . "\n";
 #      . ' &nbsp; <a href="'. ewiki_script("", $id) . '">' . ewiki_t("CANCEL_EDIT") . '</a>';
    ##### END MOODLE ADDITION #####
 
@@ -1588,7 +1574,7 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
    $o .= "\n</form>\n";
    //   . ewiki_t("EDIT_FORM_2");  // MOODLE DELETION
 
-   return('<div align="center" class="edit-box">'. $o .'</div>');
+   return('<div class="edit-box">'. $o .'</div>');
 }
 
 
@@ -1596,16 +1582,15 @@ function ewiki_page_edit_form(&$id, &$data, &$hidden_postdata) {
 #-- pic upload form
 function ewiki_page_edit_form_final_imgupload(&$o, &$id, &$data, &$action) {
    if (EWIKI_SCRIPT_BINARY && EWIKI_UP_UPLOAD && EWIKI_IMAGE_MAXSIZE) {
-      $o .= "\n<br />\n". '<div class="image-upload">'
+      $o .= "\n<br>\n". '<div class="image-upload">'
       . '<form action='
       . '"'. ewiki_script_binary("", EWIKI_IDF_INTERNAL, "", "_UPLOAD=1") .'"'
-      . ' method="post" enctype="multipart/form-data" target="_upload">'
-      . '<input type="hidden" name="MAX_FILE_SIZE" value="'.EWIKI_IMAGE_MAXSIZE.'" />'
+      . ' method="POST" enctype="multipart/form-data" target="_upload">'
       . '<input type="file" name="'.EWIKI_UP_UPLOAD.'"'
-      . (defined("EWIKI_IMAGE_ACCEPT") ? ' accept="'.EWIKI_IMAGE_ACCEPT.'" />' : " />")
-      . '<input type="hidden" name="'.EWIKI_UP_BINARY.'" value="'.EWIKI_IDF_INTERNAL.'" />'
+      . (defined("EWIKI_IMAGE_ACCEPT") ? ' accept="'.EWIKI_IMAGE_ACCEPT.'">' : "")
+      . '<input type="hidden" name="'.EWIKI_UP_BINARY.'" value="'.EWIKI_IDF_INTERNAL.'">'
       . '&nbsp;&nbsp;&nbsp;'
-      . '<input type="submit" value="'.ewiki_t("UPLOAD_PICTURE_BUTTON").'" />'
+      . '<input type="submit" value="'.ewiki_t("UPLOAD_PICTURE_BUTTON").'">'
       . '</form></div>'. "\n";
   }
 }
@@ -1617,9 +1602,9 @@ function ewiki_page_edit_preview(&$data) {
    $preview_text=$GLOBALS["ewiki_plugins"]["render"][0]($_REQUEST["content"], 1, EWIKI_ALLOW_HTML || (@$data["flags"]&EWIKI_DB_F_HTML));
    return( '<div class="preview">'
            . "<hr noshade>"
-           . "<div align=\"right\">" . ewiki_t("PREVIEW") . "</div><hr noshade><br />\n"
+           . "<div align=\"right\">" . ewiki_t("PREVIEW") . "</div><hr noshade><br>\n"
            . format_text($preview_text, $moodle_format)
-           . "<br /><br /><hr noshade><br />"
+           . "<br><br><hr noshade><br>"
            . "</div>"
    );
 #### END MOODLE CHANGES   
@@ -1638,15 +1623,15 @@ function ewiki_control_links($id, &$data, $action) {
 
    $o = "\n"
       . '<div align="right" class="action-links control-links">'
-      . "\n<br />\n"
+      . "\n<br>\n"
       . "<hr noshade>" . "\n";
 
    if (@$data["forced_version"]) {
 
-      $o .= '<form action="' . ewiki_script("edit", $id) . '" method="post">' .
-            '<input type="hidden" name="edit" value="old" />' .
-            '<input type="hidden" name="version" value="'.$data["forced_version"].'" />' .
-            '<input type="submit" value="' . ewiki_t("OLDVERCOMEBACK") . '" /></form> ';
+      $o .= '<form action="' . ewiki_script("edit", $id) . '" method="POST">' .
+            '<input type="hidden" name="edit" value="old">' .
+            '<input type="hidden" name="version" value="'.$data["forced_version"].'">' .
+            '<input type="submit" value="' . ewiki_t("OLDVERCOMEBACK") . '"></form> ';
    }
    else {
       foreach ($action_links as $action => $title)
@@ -1923,17 +1908,6 @@ function ewiki_format (
             }
 
 
-            #-- text style triggers
-            foreach ($wm_style as $find=>$replace) {
-               $find_len = strlen($find);
-               $loop = 20;
-               while(($loop--) && (($l = strpos($line, $find)) !== false) && ($r = strpos($line, $find, $l + $find_len))) {
-                  $line = substr($line, 0, $l) . $replace[0] .
-                          substr($line, $l + strlen($find), $r - $l - $find_len) .
-                          $replace[1] . substr($line, $r + $find_len);
-               }
-            }
-
 
             #-- list markup
             if (isset($wm_list[$c0])) {
@@ -2001,6 +1975,17 @@ function ewiki_format (
                }
             }
 
+
+            #-- text style triggers
+            foreach ($wm_style as $find=>$replace) {
+               $find_len = strlen($find);
+               $loop = 20;
+               while(($loop--) && (($l = strpos($line, $find)) !== false) && ($r = strpos($line, $find, $l + $find_len))) {
+                  $line = substr($line, 0, $l) . $replace[0] .
+                          substr($line, $l + strlen($find), $r - $l - $find_len) .
+                          $replace[1] . substr($line, $r + $find_len);
+               }
+            }
 
             #-- start-end markup
             foreach ($wm_start_end as $d) {
@@ -2268,7 +2253,6 @@ function ewiki_link_regex_callback($uu, $force_noimg=0) {
    if (strpos("://", $title) || strpos($title, ":") && !strpos($href, ":")) {
       $uu = $title; $title = $href; $href = $uu;
    }
-
    #-- new entitling scheme [ url "title" ]
    if ((($l=strpos($str, '"')) < ($r=strrpos($str, '"'))) && ($l!==false) ) {
       $title = substr($str, $l + 1, $r - $l - 1);
@@ -2301,6 +2285,7 @@ function ewiki_link_regex_callback($uu, $force_noimg=0) {
    if ($href == ".") {
       $href = $ewiki_id;
    }
+
 
    #-- for case-insensitivines
    $href_i = EWIKI_CASE_INSENSITIVE ? strtolower($href) : ($href);
@@ -2416,7 +2401,7 @@ function ewiki_link_regex_callback($uu, $force_noimg=0) {
                 ' alt="' . ($title) . '"' .
                 (@$states["titled"] ? ' title="' . ($title) . '"' : '').
 		($x && $y ? " width=\"$x\" height=\"$y\"" : "") .
-                $align . " />" . ($obj ? "</embed>" : "");
+                $align . ">" . ($obj ? "</embed>" : "");
                                             # htmlentities($title)
       }
 
@@ -2550,9 +2535,9 @@ function ewiki_binary($break=0) {
 <html><head><title>File/Picture Upload</title><script language="JavaScript" type="text/javascript"><!--
  opener.document.forms["ewiki"].elements["content"].value += "\\nUPLOADED PICTURE: [$id$title]\\n";
  window.setTimeout("self.close()", 5000);
-//--></script></head><body bgcolor="#440707" text="#FFFFFF">Your uploaded file was saved as<br /><big><b>
+//--></script></head><body bgcolor="#440707" text="#FFFFFF">Your uploaded file was saved as<br><big><b>
 [$id]
-</b></big>.<br /><br /><noscript>Please copy this &uarr; into the text input box:<br />select/mark it with your mouse, press [Ctrl]+[Insert], go back<br />to the previous screen and paste it into the textbox by pressing<br />[Shift]+[Insert] inside there.</noscript></body></html>
+</b></big>.<br><br><noscript>Please copy this &uarr; into the text input box:<br>select/mark it with your mouse, press [Ctrl]+[Insert], go back<br>to the previous screen and paste it into the textbox by pressing<br>[Shift]+[Insert] inside there.</noscript></body></html>
 EOF;
       }
    }
@@ -2897,7 +2882,7 @@ function ewiki_log($msg, $error_type=3) {
    if ((EWIKI_LOGLEVEL >= 0) && ($error_type <= EWIKI_LOGLEVEL)) {
 
       $msg = time() . " - " .
-             getremoteaddr() . ":" . $_SERVER["REMOTE_PORT"] . " - " .
+             $_SERVER["REMOTE_ADDR"] . ":" . $_SERVER["REMOTE_PORT"] . " - " .
              $_SERVER["REQUEST_METHOD"] . " " . $_SERVER["REQUEST_URI"] . " - " .
              strtr($msg, "\n\r\000\377\t\f", "\r\r\r\r\t\f") . "\n";
       error_log($msg, 3, EWIKI_LOGFILE);
@@ -2993,7 +2978,7 @@ function ewiki_array($array, $key=false, $am=1, $ci=EWIKI_CASE_INSENSITIVE) {
 function ewiki_author($defstr="") {
 
    $author = @$GLOBALS["ewiki_author"];
-   ($ip = getremoteaddr()) or ($ip = "127.0.0.0");
+   ($ip = &$_SERVER["REMOTE_ADDR"]) or ($ip = "127.0.0.0");
    ($port = $_SERVER["REMOTE_PORT"]) or ($port = "null");
    $hostname = gethostbyaddr($ip);
    $remote = (($ip != $hostname) ? $hostname . " " : "")
@@ -3028,7 +3013,7 @@ function ewiki_auth($id, &$data, $action, $ring=false, $request_auth=0) {
    $ok = true;
    $ewiki_errmsg="";
 
-#echo "_a($id,dat,$action,$ring,$request_auth)<br />\n";
+#echo "_a($id,dat,$action,$ring,$request_auth)<br>\n";
 
    if (EWIKI_PROTECTED_MODE) {
  
@@ -3179,7 +3164,7 @@ function ewiki_eventually_initialize(&$id, &$data, &$action) {
          closedir($dh);
         }
         else {
-         echo "<b>ewiki error</b>: could not read from directory ". realpath($path) ."<br />\n";
+         echo "<b>ewiki error</b>: could not read from directory ". realpath($path) ."<br>\n";
         }
       }
 #### END MOODLE CHANGE

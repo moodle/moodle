@@ -1,4 +1,5 @@
-<?php // $Id$ 
+<?PHP // $Id$ 
+
 
 $string['angry'] = 'fâché';
 $string['approve'] = 'approbateur';

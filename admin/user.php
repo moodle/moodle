@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
     require_once("../config.php");
 
@@ -10,9 +10,6 @@
     optional_variable($dir, "ASC");
     optional_variable($page, 0);
     optional_variable($search, "");
-    if (!empty($search)) {
-        $search=trim($search);
-    }
     optional_variable($lastinitial, "");     // only show students with this last initial
     optional_variable($firstinitial, "");    // only show students with this first initial
     optional_variable($perpage, "30");       // how many per page
@@ -20,8 +17,6 @@
     unset($user);
     unset($admin);
     unset($teacher);
-
-    $search = trim($search);
 
     if (! record_exists("user_admins")) {   // No admin user yet
 
@@ -62,14 +57,12 @@
 
         $USER = $user;
         $USER->loggedin = true;
-        $USER->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
         $USER->site = $CFG->wwwroot;
         $USER->admin = true;
         $USER->teacher["$site->id"] = true;
         $USER->newadminuser = true;
-        sesskey(); // for added security, used to check script parameters
 
-        redirect("$CFG->wwwroot/user/edit.php?id=$user->id&amp;course=$site->id");
+        redirect("$CFG->wwwroot/user/edit.php?id=$user->id&course=$site->id");
         exit;
 
     } else {
@@ -84,7 +77,7 @@
         error("You must be an administrator to edit users this way.");
     }
 
-    if ($newuser and confirm_sesskey()) {                 // Create a new user
+    if ($newuser) {                 // Create a new user
         $user->auth      = "manual";
         $user->firstname = "";
         $user->lastname  = "";
@@ -101,8 +94,8 @@
             }
         }
 
-        redirect("$CFG->wwwroot/user/edit.php?id=$user->id&amp;course=$site->id");
-
+        redirect("$CFG->wwwroot/user/edit.php?id=$user->id&course=$site->id");
+        
     } else {                        // List all users for editing
 
         $stredituser = get_string("edituser");
@@ -115,17 +108,17 @@
         $strshowallusers = get_string("showallusers");
 
         if ($firstinitial or $lastinitial or $search or $page) {
-            print_header("$site->shortname: $stredituser", $site->fullname,
+            print_header("$site->shortname: $stredituser", $site->fullname, 
                          "<a href=\"index.php\">$stradministration</a> -> ".
                          "<a href=\"users.php\">$strusers</a> -> ".
                          "<a href=\"user.php\">$stredituser</a>");
         } else {
-            print_header("$site->shortname: $stredituser", $site->fullname,
+            print_header("$site->shortname: $stredituser", $site->fullname, 
                          "<a href=\"index.php\">$stradministration</a> -> ".
                          "<a href=\"users.php\">$strusers</a> -> $stredituser");
         }
 
-        if ($confirmuser and confirm_sesskey()) {
+        if ($confirmuser) {
             if (!$user = get_record("user", "id", "$confirmuser")) {
                 error("No such user!");
             }
@@ -141,7 +134,7 @@
                 notify(get_string("usernotconfirmed", "", fullname($user, true)));
             }
 
-        } else if ($delete and confirm_sesskey()) {              // Delete a selected user, after confirmation
+        } else if ($delete) {              // Delete a selected user, after confirmation
             if (!$user = get_record("user", "id", "$delete")) {
                 error("No such user!");
             }
@@ -154,7 +147,7 @@
             if ($confirm != md5($delete)) {
                 $fullname = fullname($user, true);
                 notice_yesno(get_string("deletecheckfull", "", "'$fullname'"),
-                     "user.php?delete=$delete&amp;confirm=".md5($delete)."&amp;sesskey=$USER->sesskey", "user.php");
+                     "user.php?delete=$delete&confirm=".md5($delete), "user.php");
 
                 exit;
             } else if (!$user->deleted) {
@@ -195,10 +188,10 @@
                 } else {
                     $columnicon = $dir == "ASC" ? "down":"up";
                 }
-                $columnicon = " <img src=\"$CFG->pixpath/t/$columnicon.gif\" alt=\"\" />";
+                $columnicon = " <img src=\"$CFG->pixpath/t/$columnicon.gif\" />";
 
             }
-            $$column = "<a href=\"user.php?sort=$column&amp;dir=$columndir&amp;search=$search&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial\">".$string[$column]."</a>$columnicon";
+            $$column = "<a href=\"user.php?sort=$column&dir=$columndir&search=$search&firstinitial=$firstinitial&lastinitial=$lastinitial\">".$string[$column]."</a>$columnicon";
         }
 
         if ($sort == "name") {
@@ -225,8 +218,8 @@
         echo "<center><p align=\"center\">";
         echo get_string("firstname")." : ";
         if ($firstinitial) {
-            echo " <a href=\"user.php?sort=firstname&amp;dir=ASC&".
-                 "perpage=$perpage&amp;lastinitial=$lastinitial\">$strall</a> ";
+            echo " <a href=\"user.php?sort=firstname&dir=ASC&".
+                 "perpage=$perpage&lastinitial=$lastinitial\">$strall</a> ";
         } else {
             echo " <b>$strall</b> ";
         }
@@ -234,8 +227,8 @@
             if ($letter == $firstinitial) {
                 echo " <b>$letter</b> ";
             } else {
-                echo " <a href=\"user.php?sort=firstname&amp;dir=ASC&".
-                     "perpage=$perpage&amp;lastinitial=$lastinitial&amp;firstinitial=$letter\">$letter</a> ";
+                echo " <a href=\"user.php?sort=firstname&dir=ASC&".
+                     "perpage=$perpage&lastinitial=$lastinitial&firstinitial=$letter\">$letter</a> ";
             }
         }
         echo "<br />";
@@ -244,8 +237,8 @@
 
         echo get_string("lastname")." : ";
         if ($lastinitial) {
-            echo " <a href=\"user.php?sort=lastname&amp;dir=ASC&".
-                 "perpage=$perpage&amp;firstinitial=$firstinitial\">$strall</a> ";
+            echo " <a href=\"user.php?sort=lastname&dir=ASC&".
+                 "perpage=$perpage&firstinitial=$firstinitial\">$strall</a> ";
         } else {
             echo " <b>$strall</b> ";
         }
@@ -253,15 +246,15 @@
             if ($letter == $lastinitial) {
                 echo " <b>$letter</b> ";
             } else {
-                echo " <a href=\"user.php?sort=lastname&amp;dir=ASC&".
-                     "perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$letter\">$letter</a> ";
+                echo " <a href=\"user.php?sort=lastname&dir=ASC&".
+                     "perpage=$perpage&firstinitial=$firstinitial&lastinitial=$letter\">$letter</a> ";
             }
         }
         echo "</p>";
         echo "</center>";
 
         print_paging_bar($usercount, $page, $perpage,
-                "user.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;search=$search&amp;");
+                "user.php?sort=$sort&dir=$dir&perpage=$perpage&firstinitial=$firstinitial&lastinitial=$lastinitial&search=$search&");
 
         flush();
 
@@ -279,8 +272,6 @@
             }
             $matchstring = implode(", ", $match);
             print_heading(get_string("nousersmatching", "", $matchstring));
-
-            $table = NULL;
 
         } else {
 
@@ -309,7 +300,7 @@
                 if ($user->id == $USER->id or $user->username == "changeme") {
                     $deletebutton = "";
                 } else {
-                    $deletebutton = "<a href=\"user.php?delete=$user->id&sesskey=$USER->sesskey\">$strdelete</a>";
+                    $deletebutton = "<a href=\"user.php?delete=$user->id\">$strdelete</a>";
                 }
                 if ($user->lastaccess) {
                     $strlastaccess = format_time(time() - $user->lastaccess);
@@ -317,41 +308,45 @@
                     $strlastaccess = get_string("never");
                 }
                 if ($user->confirmed == 0) {
-                    $confirmbutton = "<a href=\"user.php?confirmuser=$user->id&sesskey=$USER->sesskey\">" . get_string("confirm") . "</a>";
+                    $confirmbutton = "<a href=\"user.php?confirmuser=$user->id\">" . get_string("confirm") . "</a>";
                 } else {
                     $confirmbutton = "";
                 }
                 $fullname = fullname($user, true);
-                $table->data[] = array ("<a href=\"../user/view.php?id=$user->id&amp;course=$site->id\">$fullname</a>",
+                $table->data[] = array ("<a href=\"../user/view.php?id=$user->id&course=$site->id\">$fullname</a>",
                                         "$user->email",
                                         "$user->city",
                                         "$user->country",
                                         $strlastaccess,
-                                        "<a href=\"../user/edit.php?id=$user->id&amp;course=$site->id\">$stredit</a>",
+                                        "<a href=\"../user/edit.php?id=$user->id&course=$site->id\">$stredit</a>",
                                         $deletebutton,
                                         $confirmbutton);
             }
-        }
 
-        echo "<table class=\"searchbox\" align=\"center\" cellpadding=\"10\"><tr><td>";
-        echo "<form action=\"user.php\" method=\"get\">";
-        echo "<input type=\"text\" name=\"search\" value=\"$search\" size=\"20\">";
-        echo "<input type=\"submit\" value=\"$strsearch\">";
-        if ($search) {
-            echo "<input type=\"button\" onclick=\"document.location='user.php';\" value=\"$strshowallusers\">";
-        }
-        echo "</form>";
-        echo "</td></tr></table>";
-        print_heading("<a href=\"user.php?newuser=true&sesskey=$USER->sesskey\">".get_string("addnewuser")."</a>");
+            echo "<table align=center cellpadding=10><tr><td>";
+            echo "<form action=user.php method=post>";
+            echo "<input type=text name=search value=\"$search\" size=20>";
+            echo "<input type=submit value=\"$strsearch\">";
+            if ($search) {
+                echo "<input type=\"button\" onclick=\"document.location='user.php';\" value=\"$strshowallusers\">";
+            }
+            echo "</form>";    
+            echo "</td></tr></table>";
+            if (is_internal_auth()){
+                print_heading("<a href=\"user.php?newuser=true\">".get_string("addnewuser")."</a>");
+            }
 
-        if (!empty($table)) {
             print_table($table);
+
             print_paging_bar($usercount, $page, $perpage,
-                             "user.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage".
-                             "&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;search=$search&amp;");
-            print_heading("<a href=\"user.php?newuser=true&sesskey=$USER->sesskey\">".get_string("addnewuser")."</a>");
+                             "user.php?sort=$sort&dir=$dir&perpage=$perpage".
+                             "&firstinitial=$firstinitial&lastinitial=$lastinitial&search=$search&");
+
         }
 
+        if (is_internal_auth()){
+            print_heading("<a href=\"user.php?newuser=true\">".get_string("addnewuser")."</a>");
+        }
 
         print_footer();
     }

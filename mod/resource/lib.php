@@ -1,57 +1,43 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
 if (!isset($CFG->resource_framesize)) {
     set_config("resource_framesize", 130);
-}
+} 
 
 if (!isset($CFG->resource_websearch)) {
     set_config("resource_websearch", "http://google.com/");
-}
+} 
 
 if (!isset($CFG->resource_defaulturl)) {
     set_config("resource_defaulturl", "http://");
-}
+}  
 
 if (!isset($CFG->resource_filterexternalpages)) {
     set_config("resource_filterexternalpages", false);
-}
+}  
 
 if (!isset($CFG->resource_secretphrase)) {
     set_config("resource_secretphrase", random_string(20));
-}
+}  
 
 if (!isset($CFG->resource_popup)) {
     set_config("resource_popup", "");
-}
+}  
 
-if (!isset($CFG->resource_windowsettings)) {
-    set_config("resource_windowsettings", "0");
-}
-
-if (!isset($CFG->resource_parametersettings)) {
-    set_config("resource_parametersettings", "0");
-}
-
-if (!isset($CFG->resource_allowlocalfiles)) {
-    set_config("resource_allowlocalfiles", "0");
-}
-
-define('RESOURCE_LOCALPATH', 'LOCALPATH');
-
-$RESOURCE_WINDOW_OPTIONS = array('resizable', 'scrollbars', 'directories', 'location',
-                                 'menubar', 'toolbar', 'status', 'height', 'width');
+$RESOURCE_WINDOW_OPTIONS = array("resizable", "scrollbars", "directories", "location", 
+                                 "menubar", "toolbar", "status", "height", "width");
 
 foreach ($RESOURCE_WINDOW_OPTIONS as $popupoption) {
     $popupoption = "resource_popup$popupoption";
     if (!isset($CFG->$popupoption)) {
-        if ($popupoption == 'resource_popupheight') {
+        if ($popupoption == "resource_popupheight") {
             set_config($popupoption, 450);
-        } else if ($popupoption == 'resource_popupwidth') {
+        } else if ($popupoption == "resource_popupwidth") {
             set_config($popupoption, 620);
         } else {
-            set_config($popupoption, 'checked');
+            set_config($popupoption, "checked");
         }
-    }
+    }  
 }
 
 /**
@@ -72,14 +58,10 @@ var $resource;
 *
 * Constructor for the base resource class.
 * If cmid is set create the cm, course, resource objects.
-* and do some checks to make sure people can be here, and so on.
 *
 * @param cmid   integer, the current course module id - not set for new resources
 */
 function resource_base($cmid=0) {
-
-    global $CFG;
-    global $course;   // Ugly hack, needed for course language ugly hack
 
     if ($cmid) {
         if (! $this->cm = get_record("course_modules", "id", $cmid)) {
@@ -90,38 +72,14 @@ function resource_base($cmid=0) {
             error("Course is misconfigured");
         }
 
-        $course = $this->course;  // Make it a global so we can see it later
-
-        require_course_login($this->course, true, $this->cm);
-
         if (! $this->resource = get_record("resource", "id", $this->cm->instance)) {
             error("Resource ID was incorrect");
         }
-
-        $this->strresource  = get_string("modulename", "resource");
-        $this->strresources = get_string("modulenameplural", "resource");
-
-        if ($this->course->category) {
-            $this->navigation = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/course/view.php?id={$this->course->id}\">{$this->course->shortname}</a> -> ".
-                                "<a target=\"{$CFG->framename}\" href=\"index.php?id={$this->course->id}\">$this->strresources</a> ->";
-        } else {
-            $this->navigation = "<a target=\"{$CFG->framename}\" href=\"index.php?id={$this->course->id}\">$this->strresources</a> ->";
-        }
-
-        if (!$this->cm->visible and !isteacher($this->course->id)) {
-            $pagetitle = strip_tags($this->course->shortname.': '.$this->strresource);
-            print_header($pagetitle, $this->course->fullname, "$this->navigation $this->strresource", "", "", true, '', navmenu($this->course, $this->cm));
-            notice(get_string("activityiscurrentlyhidden"), "$CFG->wwwroot/course/view.php?id={$this->course->id}");
-        }
-    }
+    } 
 }
 
 
-/**
-* Display function does nothing in the base class
-*/
 function display() {
-
 }
 
 
@@ -168,9 +126,9 @@ function setup_end() {
 
 
 function add_instance($resource) {
-// Given an object containing all the necessary data,
-// (defined by the form in mod.html) this function
-// will create a new instance and return the id number
+// Given an object containing all the necessary data, 
+// (defined by the form in mod.html) this function 
+// will create a new instance and return the id number 
 // of the new instance.
 
     global $RESOURCE_WINDOW_OPTIONS;
@@ -197,20 +155,13 @@ function add_instance($resource) {
         }
     }
 
-    if (isset($resource->parametersettingspref)) {
-        set_user_preference('resource_parametersettingspref', $resource->parametersettingspref);
-    }
-    if (isset($resource->windowsettingspref)) {
-        set_user_preference('resource_windowsettingspref', $resource->windowsettingspref);
-    }
-
     return insert_record("resource", $resource);
 }
 
 
 function update_instance($resource) {
-// Given an object containing all the necessary data,
-// (defined by the form in mod.html) this function
+// Given an object containing all the necessary data, 
+// (defined by the form in mod.html) this function 
 // will update an existing instance with new data.
 
     global $RESOURCE_WINDOW_OPTIONS;
@@ -238,21 +189,14 @@ function update_instance($resource) {
         }
     }
 
-    if (isset($resource->parametersettingspref)) {
-        set_user_preference('resource_parametersettingspref', $resource->parametersettingspref);
-    }
-    if (isset($resource->windowsettingspref)) {
-        set_user_preference('resource_windowsettingspref', $resource->windowsettingspref);
-    }
-
     return update_record("resource", $resource);
 }
 
 
 function delete_instance($id) {
-// Given an ID of an instance of this module,
-// this function will permanently delete the instance
-// and any data that depends on it.
+// Given an ID of an instance of this module, 
+// this function will permanently delete the instance 
+// and any data that depends on it.  
 
     if (! $resource = get_record("resource", "id", "$id")) {
         return false;
@@ -275,9 +219,7 @@ function delete_instance($id) {
 
 function resource_add_instance($resource) {
     global $CFG;
-
-    $resource->type = clean_filename($resource->type);   // Just to be safe
-
+    
     require_once("$CFG->dirroot/mod/resource/type/$resource->type/resource.class.php");
     $resourceclass = "resource_$resource->type";
     $res = new $resourceclass();
@@ -287,9 +229,7 @@ function resource_add_instance($resource) {
 
 function resource_update_instance($resource) {
     global $CFG;
-
-    $resource->type = clean_filename($resource->type);   // Just to be safe
-
+    
     require_once("$CFG->dirroot/mod/resource/type/$resource->type/resource.class.php");
     $resourceclass = "resource_$resource->type";
     $res = new $resourceclass();
@@ -299,13 +239,11 @@ function resource_update_instance($resource) {
 
 function resource_delete_instance($id) {
     global $CFG;
-
+    
     if (! $resource = get_record("resource", "id", "$id")) {
         return false;
     }
-
-    $resource->type = clean_filename($resource->type);   // Just to be safe
-
+    
     require_once("$CFG->dirroot/mod/resource/type/$resource->type/resource.class.php");
     $resourceclass = "resource_$resource->type";
     $res = new $resourceclass();
@@ -315,7 +253,7 @@ function resource_delete_instance($id) {
 
 
 function resource_user_outline($course, $user, $mod, $resource) {
-    if ($logs = get_records_select("log", "userid='$user->id' AND module='resource'
+    if ($logs = get_records_select("log", "userid='$user->id' AND module='resource' 
                                            AND action='view' AND info='$resource->id'", "time ASC")) {
 
         $numviews = count($logs);
@@ -331,9 +269,9 @@ function resource_user_outline($course, $user, $mod, $resource) {
 
 
 function resource_user_complete($course, $user, $mod, $resource) {
-    global $CFG;
+    global $CFG, $THEME;
 
-    if ($logs = get_records_select("log", "userid='$user->id' AND module='resource'
+    if ($logs = get_records_select("log", "userid='$user->id' AND module='resource' 
                                            AND action='view' AND info='$resource->id'", "time ASC")) {
         $numviews = count($logs);
         $lastlog = array_pop($logs);
@@ -356,7 +294,7 @@ function resource_get_participants($resourceid) {
 }
 
 function resource_get_coursemodule_info($coursemodule) {
-/// Given a course_module object, this function returns any
+/// Given a course_module object, this function returns any 
 /// "extra" information that may be needed when printing
 /// this activity in a course listing.
 ///
@@ -369,29 +307,29 @@ function resource_get_coursemodule_info($coursemodule) {
 
    if ($resource = get_record("resource", "id", $coursemodule->instance)) {
        if (!empty($resource->popup)) {
-           $info->extra =  urlencode("target=\"resource$resource->id\" onclick=\"return ".
-                            "openpopup('/mod/resource/view.php?inpopup=true&amp;id=".
+           $info->extra =  urlencode("target=\"resource$resource->id\" onClick=\"return ".
+                            "openpopup('/mod/resource/view.php?inpopup=true&id=".
                             $coursemodule->id.
                             "','resource$resource->id','$resource->popup');\"");
        }
 
-       require_once($CFG->libdir.'/filelib.php');
+       require_once("$CFG->dirroot/files/mimetypes.php");
 
        if ($resource->type == 'file') {
-           $icon = mimeinfo("icon", $resource->reference);
+	       $icon = mimeinfo("icon", $resource->reference);
            if ($icon != 'unknown.gif') {
-               $info->icon ="f/$icon";
+		       $info->icon ="f/$icon";
            } else {
-               $info->icon ="f/web.gif";
+		       $info->icon ="f/web.gif";
            }
        } else if ($resource->type == 'directory') {
-           $info->icon ="f/folder.gif";
+		   $info->icon ="f/folder.gif";
        }
    }
 
    return $info;
 }
-
+ 
 function resource_fetch_remote_file ($cm, $url, $headers = "" ) {
 /// Snoopy is an HTTP client in PHP
 
@@ -400,7 +338,7 @@ function resource_fetch_remote_file ($cm, $url, $headers = "" ) {
     require_once("$CFG->libdir/snoopy/Snoopy.class.inc");
 
     $client = new Snoopy();
-    $ua = 'Moodle/'. $CFG->release . ' (+http://moodle.org';
+    $ua = 'Moodle/'. $CFG->release . ' (+http://moodle.org';    
     if ( $CFG->resource_usecache ) {
         $ua = $ua . ')';
     } else {
@@ -412,7 +350,7 @@ function resource_fetch_remote_file ($cm, $url, $headers = "" ) {
     if (is_array($headers) ) {
         $client->rawheaders = $headers;
     }
-
+    
     @$client->fetch($url);
     if ( $client->status >= 200 && $client->status < 300 ) {
         $tags = array("A"      => "href=",
@@ -422,9 +360,9 @@ function resource_fetch_remote_file ($cm, $url, $headers = "" ) {
                       "FRAME"  => "src=",
                       "IFRAME" => "src=",
                       "FORM"   => "action=");
-
+    
         foreach ($tags as $tag => $key) {
-            $prefix = "fetch.php?id=$cm->id&amp;url=";
+            $prefix = "fetch.php?id=$cm->id&url=";
             if ( $tag == "IMG" or $tag == "LINK" or $tag == "FORM") {
                 $prefix = "";
             }
@@ -455,27 +393,27 @@ function resource_redirect_tags($text, $url, $tagtoparse, $keytoparse,$prefix = 
         } else {
             $root = $url;
         }
-        if ( $root == "http://" or
+        if ( $root == "http://" or 
              $root == "https://") {
             $root = $url;
         }
         if ( substr($root,strlen($root)-1) == '/' ) {
             $root = substr($root,0,-1);
         }
-
+        
         $mainroot = $root;
         $lastslash = strrpos($mainroot,"/");
         while ( $lastslash > 9) {
             $mainroot = substr($mainroot,0,$lastslash);
-
+        
             $lastslash = strrpos($mainroot,"/");
         }
 
-        $regex = "/<$tagtoparse (.+?)>/is";
-        $count = preg_match_all($regex, $text, $hrefs);
+        $regex = "/<$tagtoparse (.+?)>/is";    
+        $count = preg_match_all($regex, $text, $hrefs);    
         for ( $i = 0; $i < $count; $i++) {
             $tag = $hrefs[1][$i];
-
+            
             $poshref = strpos(strtolower($tag),strtolower($keytoparse));
             $start = $poshref + strlen($keytoparse);
             $left = substr($tag,0,$start);
@@ -514,7 +452,7 @@ function resource_redirect_tags($text, $url, $tagtoparse, $keytoparse,$prefix = 
             if ( $valid ) {
                 if ( $finalurl[0] == "/" ) {
                     $finalurl = $mainroot . $finalurl;
-                } elseif ( strtolower(substr($finalurl,0,7)) != "http://" and
+                } elseif ( strtolower(substr($finalurl,0,7)) != "http://" and 
                            strtolower(substr($finalurl,0,8)) != "https://") {
                      if ( $finalurl[0] == "/") {
                         $finalurl = $mainroot . $finalurl;
@@ -522,7 +460,7 @@ function resource_redirect_tags($text, $url, $tagtoparse, $keytoparse,$prefix = 
                         $finalurl = "$root/$finalurl";
                      }
                 }
-
+    
                 $text = str_replace($tag,"$left$prefix$finalurl$right",$text);
             }
         }

@@ -1,4 +1,4 @@
-<p align="center"><b>Importeren van "GIFT" bestandsopmaak</b></p>
+<p align=center><b>Importeren van "GIFT" bestandsopmaak</b></p>
 
 
 <p>GIFT is het meest begrijpelijke importformat voor het importeren van testen vanuit tekstbestanden
@@ -40,7 +40,7 @@ en de opmaak ondersteunt ook commentaar, namen voor de vragen, feedback en gewog
         <pre>     Wie is begraven in de tombe van Grant?{=niemand =niets}
          Twee plus twee is {=vier =4}.</pre>
         <p>Als er slechts <u>één</u> juist antwoord is, dan mag het geschreven worden zonder gelijkheidsteken, zolang
-         het maar niet verward kan worden met Waar/Onwaar.</p>
+         het maar niet verward kan worden met Waar/Onwaar.
         <p><u>Waar/Onwaar:</u><br />
             Bij dit vraag-type geeft het antwoord aan of een stelling waar of onwaar is. Het antwoord moet geschreven worden als {TRUE} of {FALSE}, of afgekort als {T} of {F}.</p>
         <pre>     Grant is begraven in de tombe van Grant.{F}
@@ -64,8 +64,8 @@ en de opmaak ondersteunt ook commentaar, namen voor de vragen, feedback en gewog
           }</pre>
  <p>Koppelvragen ondersteunen geen feedback of procentuele weging per antwoord.</p>
 
-        <p><u>Numeriek:</u><br />
-           Het antwoordgedeelte voor numerieke vragen moet beginnen met een spoorwegteken (#). Numerieke antwoorden kunnen een foutenmarge bevatten, die onmiddellijk achter het juiste antwoord geschreven wordt, gescheiden door een komma. Als het juiste voorbeeld bijvoorbeeld ligt tussen de 1.5 en 2.5, dan schrijf je het als volgt <u>{#2:0.5}</u>. Dit geeft aan dat 2 met een foutenmarge van 0.5 juist is (het bereik van 1.5 tot 2.5). Als er geen foutenmarge gespecifieerd wordt, dan wordt er vanuitgegaan dat die 0 is.<br /><I>Nota van de vertaler: let op het gebruik van de komma -> als wiskundig teken moet een punt (.) gebruikt worden.</I></p>
+        <p><u>Numeriek:</u><br>
+           Het antwoordgedeelte voor numerieke vragen moet beginnen met een spoorwegteken (#). Numerieke antwoorden kunnen een foutenmarge bevatten, die onmiddellijk achter het juiste antwoord geschreven wordt, gescheiden door een komma. Als het juiste voorbeeld bijvoorbeeld ligt tussen de 1.5 en 2.5, dan schrijf je het als volgt <u>{#2:0.5}</u>. Dit geeft aan dat 2 met een foutenmarge van 0.5 juist is (het bereik van 1.5 tot 2.5). Als er geen foutenmarge gespecifieerd wordt, dan wordt er vanuitgegaan dat die 0 is.<br><I>Nota van de vertaler: let op het gebruik van de komma -> als wiskundig teken moet een punt (.) gebruikt worden.</I></p>
         <pre>     In welk jaar is Ulysses S. Grant geboren? {#1822}
 
      Welke waarde heeft het getal pi (tot 3 plaatsen na de komma)? {#3.1415:0.0005}.</pre>
@@ -73,15 +73,15 @@ en de opmaak ondersteunt ook commentaar, namen voor de vragen, feedback en gewog
         <pre>     Welke waarde heeft het getal pi (tot 3 plaatsen na de komma)?{#3.141..3.142}.</pre>
 
 
-        <p>De grafische interface van Moodle's ondersteunt meerdere numerieke antwoorden per vraag niet, maar de code van Moodle kan het aan en GIFT ook. Die kan gebruikt worden om meerdere antwoorden op numerieke vragen in te geven en kan bijzonder nuttig zijn in combinatie met procentueel gewogen cijfers. Als meerdere antwoorden gebruikt worden, moeten zij gescheiden worden door een gelijkheidsteken, zoals korte antwoordvragen.</p>
+        <p>De grafische interface van Moodle's ondersteund meerdere numerieke antwoorden per vraag niet, maar de code van Moodle kan het aan en GIFT ook. Die kan gebruikt worden om meerdere antwoorden op numerieke vragen in te geven en kan bijzonder nuttig zijn in combinatie met procentueel gewogen cijfers. Als meerdere antwoorden gebruikt worden, moeten zij gescheiden worden door een gelijkheidsteken, zoals korte antwoordvragen.</p>
         <pre>     Wanneer is Ulysses S. Grant geboren? {#
          =1822:0
          =%50%1822:2}</pre>
-        <p>Omdat Moodle's grafische gebruikersinterface geen meerdere antwoorden voor numerieke vragen ondersteunt, is er geen enkele manier om ze te bekijken en te bewerken via Moodle. De enige manier om iets aan de numerieke vraag te veranderen is door ze te verwijderen en ze opnieuw te importeren (of iets te gebruken als phpMyadmin, rechtstreeks in de databank).</p>
+        <p>Omdat Moodle's grafische gebruikersinterface geen meerdere antwoorden voor numerieke vragen ondersteund, is er geen enkele manier om ze te bekijken en te bewerken via Moodle. De enige manier om iets aan de numerieke vraag te veranderen is door ze te verwijderen en ze opnieuw te importeren (of iets te gebruken als phpMyadmin, rechtstreeks in de databank).</p>
         <h3>OPTIES</h3>
         <p>Bijkomend bij deze basis vraagtypes, geeft deze filter je volgende extra mogelijkheden: inline commentaar, vragennamen, feedback en procentuele antwoordweging.</p>
         <p><u>Inline Commentaar:</u><br />
-        Commentaren die niet geïmporteerd zullen worden in Moodle kunnen mee opgenomen worden in het tekstbestand. Dit kan gebruikt worden om indelingen te maken of meer informatie over de vragen te geven. Alle lijnen die beginnen met een dubbele backslash (spaties en tabs niet meegerekend) zullen genegeerd worden door de filter.</p>
+        Commentaren die niet geïmporteerd zullen worden in Moodle kunnen mee opgenomen worden in het tekstbestand. Dit kan gebruikt worden om indelingen te maken of meer informatie over de vragen te geven. Alle lijnen die beginnen met een dubbele backslash (spaties en tabs niet meegerekend) zullen genegeerd worden door de filter.
 
 <pre>     // ondertitel: Numeriekvraag volgt
      Hoeveel is 2 plus 2? {#4}</pre>
@@ -120,7 +120,7 @@ Procentuele weging is beschikbaar voor meerkeuzevragen en voor kort antwoord vra
      =%25%Bethlehem#Hij was daar geboren, maar niet opgegroeid}</pre>
 <p>Merk op dat de laatste twee voorbeelden nagenoeg dezelfde vragen zijn, eerst als meerkeuzevragen, dam als kort antwoord.</p>
 
-<p><small>Merk op dat het mogelijk is om procentuele wegingen te specifiëren die NIET mogelijk zijn via de grafisch gebruikersinterface. Zulke antwoordweging zal toch juist berekend worden (overeenkomend met de waarde die ingegeven is bij het importeren), en zal normaal verschijnen wanneer de leerling zijn test doet. Maar zulke antwoord-weging zal niet juist getoond worden aan de leraar, waneer de test achteraf via de interface om vragen te bewerken van Moodle bewerkt wordt. Het uitschuifmenu toont enkel enkele vastgelegde waarden. Wanneer de antwoord-weging niet juist overeenkomt met één van die vooraf gedefinieerde waarden, dan zullen ze niet juist getoond worden.Als je zo een vraag via de grafische interface bewerk, dan zal de antwoord-weging wijzigen in dat wat getoond wordt.</small></p>
+<p><font size="-1">Merk op dat het mogelijk is om procentuele wegingen te specifiëren die NIET mogelijk zijn via de grafisch gebruikersinterface. Zulke antwoordweging zal toch juist berekend worden (overeenkomend met de waarde die ingegeven is bij het importeren), en zal normaal verschijnen wanneer de leerling zijn test doet. Maar zulke antwoord-weging zal niet juist getoond worden aan de leraar, waneer de test achteraf via de interface om vragen te bewerken van Moodle bewerkt wordt. Het uitschuifmenu toont enkel enkele vastgelegde waarden. Wanneer de antwoord-weging niet juist overeenkomt met één van die vooraf gedefinieerde waarden, dan zullen ze niet juist getoond worden.Als je zo een vraag via de grafische interface bewerk, dan zal de antwoord-weging wijzigen in dat wat getoond wordt.</font></p>
 
 <p><u>Meerdere antwoorden mogelijk:</u><br />
 De meerdere antwoorden mogelijk-optie wordt gebruikt voor meerkeuzevragen wanneer twee of meer antwoorden gekozen moeten worden om alle punten te krijgen. De meerdere antwoorden mogelijk-optie wordt ingescakeld door een even grote deelwaarde toe te kennen aan meerdere antwoorden, terwijl geen enkel antwoord het maximumcijfer oplevert.</p>
@@ -168,4 +168,4 @@ De meerdere antwoorden mogelijk-optie wordt gebruikt voor meerkeuzevragen wannee
 <h3>KREDIETEN</h3>
 <p>Deze filter is geschreven door de samenwerking van vele leden van de Moodlegemeenschap. Het was oorspronkelijk 
 gebaseerd op de filter van Gatentekst, die code van Martin Dougiamas, Thomas Robb en anderen bevat. Paul Tsuchido Shew schreef deze filter in December 2003 met daarin suggesties van de gemeenschap voor een meer robuust vragenformaat. De naam is samengesteld als een acroniem voor &quot;General Import Format Technology&quot; of iets dat er op lijkt, maar het is te lang voor een eenvoudige filter zoals dit, daarom gewoon GIFT.</p>
-        <p><small>GIFT documentatie door Paul Tsuchido Shew, 10 Jan 2004.</small></p>
+        <p><font size="-1">GIFT documentatie door Paul Tsuchido Shew, 10 Jan 2004.</font></p>

@@ -1,9 +1,9 @@
-<?php  // $Id: lib.php,v 1.1 23 Aug 2003
+<?PHP  // $Id: lib.php,v 1.1 23 Aug 2003
 
 // exercise constants and standard moodle functions plus those functions called directly
 // see locallib.php for other non-standard exercise functions
 
-require_once($CFG->libdir.'/filelib.php');
+include_once("$CFG->dirroot/files/mimetypes.php");
 
 /*** Constants **********************************/
 
@@ -60,32 +60,7 @@ function exercise_add_instance($exercise) {
             $exercise->deadlinemonth, $exercise->deadlineday, $exercise->deadlinehour, 
             $exercise->deadlineminute);
 
-    // encode password if necessary
-    if (!empty($exercise->password)) {
-		$exercise->password = md5($exercise->password);
-	} else {
-		unset($exercise->password);
-	}
-
-    if ($returnid = insert_record("exercise", $exercise)) {
-
-        $event = NULL;
-        $event->name        = $exercise->name;
-        $event->description = $exercise->description;
-        $event->courseid    = $exercise->course;
-        $event->groupid     = 0;
-        $event->userid      = 0;
-        $event->modulename  = 'exercise';
-        $event->instance    = $returnid;
-        $event->eventtype   = 'deadline';
-        $event->timestart   = $exercise->deadline;
-        $event->timeduration = 0;
-
-        add_event($event);
-    }
-
-
-    return $returnid;
+    return insert_record("exercise", $exercise);
 }
 
 
@@ -104,31 +79,31 @@ function exercise_choose_from_menu ($options, $name, $selected="", $nothing="cho
         $javascript = "";
     }
 
-    $output = "<select name=$name $javascript>\n";
+    $output = "<SELECT NAME=$name $javascript>\n";
     if ($nothing) {
-        $output .= "   <option value=\"$nothingvalue\"\n";
+        $output .= "   <OPTION VALUE=\"$nothingvalue\"\n";
         if ($nothingvalue == $selected) {
-            $output .= " selected=\"selected\"";
+            $output .= " SELECTED";
         }
-        $output .= ">$nothing</option>\n";
+        $output .= ">$nothing</OPTION>\n";
     }
     if (!empty($options)) {
         foreach ($options as $value => $label) {
-            $output .= "   <option value=\"$value\"";
+            $output .= "   <OPTION VALUE=\"$value\"";
             if ($value == $selected) {
-                $output .= " selected=\"selected\"";
+                $output .= " SELECTED";
             }
             // stop zero label being replaced by array index value
             // if ($label) {
-            //    $output .= ">$label</option>\n";
+            //    $output .= ">$label</OPTION>\n";
             // } else {
-            //     $output .= ">$value</option>\n";
+            //     $output .= ">$value</OPTION>\n";
             //  }
-            $output .= ">$label</option>\n";
+            $output .= ">$label</OPTION>\n";
             
         }
     }
-    $output .= "</select>\n";
+    $output .= "</SELECT>\n";
 
     if ($return) {
         return $output;
@@ -202,10 +177,10 @@ function exercise_cron() {
             // "Your assignment \"$submission->title\" has been assessed by"
             $msg = get_string("mail1", "exercise", $submission->title).' '.fullname($assessmentowner).".\n";
             // "The comments and grade can be seen in the exercise assignment '$exercise->name'
-            $msg .= get_string("mail2", "exercise", format_string($exercise->name,true))."\n\n";
+            $msg .= get_string("mail2", "exercise", $exercise->name)."\n\n";
     
-            $postsubject = "$course->shortname: $strexercises: ".format_string($exercise->name,true);
-            $posttext  = "$course->shortname -> $strexercises -> ".format_string($exercise->name,true)."\n";
+            $postsubject = "$course->shortname: $strexercises: $exercise->name";
+            $posttext  = "$course->shortname -> $strexercises -> $exercise->name\n";
             $posttext .= "---------------------------------------------------------------------\n";
             $posttext .= $msg;
             // "You can see it in your exercise assignment"
@@ -213,14 +188,14 @@ function exercise_cron() {
             $posttext .= "   $CFG->wwwroot/mod/exercise/view.php?id=$cm->id\n";
             $posttext .= "---------------------------------------------------------------------\n";
             if ($sendto->mailformat == 1) {  // HTML
-                $posthtml = "<p><font face=\"sans-serif\">".
-              "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
-              "<a href=\"$CFG->wwwroot/mod/exercise/index.php?id=$course->id\">$strexercises</a> ->".
-              "<a href=\"$CFG->wwwroot/mod/exercise/view.php?id=$cm->id\">".format_string($exercise->name,true)."</a></font></p>";
-              $posthtml .= "<hr /><font face=\"sans-serif\">";
-              $posthtml .= "<p>$msg</p>";
-              $posthtml .= "<p>".get_string("mail3", "exercise").
-                  " <a href=\"$CFG->wwwroot/mod/exercise/view.php?id=$cm->id\">".format_string($exercise->name,true)."</a>.</p></font><hr />";
+                $posthtml = "<P><FONT FACE=sans-serif>".
+              "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
+              "<A HREF=\"$CFG->wwwroot/mod/exercise/index.php?id=$course->id\">$strexercises</A> ->".
+              "<A HREF=\"$CFG->wwwroot/mod/exercise/view.php?id=$cm->id\">$exercise->name</A></FONT></P>";
+              $posthtml .= "<HR><FONT FACE=sans-serif>";
+              $posthtml .= "<P>$msg</P>";
+              $posthtml .= "<P>".get_string("mail3", "exercise").
+                  " <A HREF=\"$CFG->wwwroot/mod/exercise/view.php?id=$cm->id\">$exercise->name</A>.</P></FONT><HR>";
             } else {
               $posthtml = "";
             }
@@ -343,27 +318,31 @@ function exercise_print_recent_activity($course, $isteacher, $timestart) {
                 $tempmod->course = $course->id;
                 $tempmod->id = $log->exerciseid;
                 //Obtain the visible property from the instance
-                if (instance_is_visible('exercise',$tempmod)) {
+                if (instance_is_visible("exercise",$tempmod)) {
                     $submitcontent = true;
                     break;
                     }
                 }
-            // if we got some 'live' ones then output them
+            // if we got some "live" ones then output them
             if ($submitcontent) {
-                print_headline(get_string('exercisesubmissions', 'exercise').':');
+                $strftimerecent = get_string("strftimerecent");
+                print_headline(get_string("exercisesubmissions", "exercise").":");
                 foreach ($logs as $log) {
                     //Create a temp valid module structure (only need courseid, moduleid)
                     $tempmod->course = $course->id;
                     $tempmod->id = $log->exerciseid;
                     //Obtain the visible property from the instance
-                    if (instance_is_visible('exercise',$tempmod)) {
-                        print_recent_activity_note($log->time, $log, $isteacher, $log->name,
-                                                   $CFG->wwwroot.'/mod/exercise/'.str_replace('&', '&amp;', $log->url));
+                    if (instance_is_visible("exercise",$tempmod)) {
+                        $date = userdate($log->time, $strftimerecent);
+                        echo '<p><font size="1">'.$date.' - '.fullname($log).'<br />';
+                        echo "\"<a href=\"$CFG->wwwroot/mod/exercise/$log->url\">";
+                        echo "$log->name";
+                        echo "</a>\"</font></p>";
+                        }
                     }
                 }
             }
         }
-    }
 
     // have a look for new assessment gradings for this user 
     $gradecontent = false;
@@ -377,23 +356,27 @@ function exercise_print_recent_activity($course, $isteacher, $timestart) {
             if (instance_is_visible("exercise",$tempmod)) {
                 $gradecontent = true;
                 break;
+                }
             }
-        }
         // if we got some "live" ones then output them
         if ($gradecontent) {
-            print_headline(get_string('exercisefeedback', 'exercise').':');
+            $strftimerecent = get_string("strftimerecent");
+            print_headline(get_string("exercisefeedback", "exercise").":");
             foreach ($logs as $log) {
                 //Create a temp valid module structure (only need courseid, moduleid)
                 $tempmod->course = $course->id;
                 $tempmod->id = $log->exerciseid;
                 //Obtain the visible property from the instance
-                if (instance_is_visible('exercise',$tempmod)) {
-                    print_recent_activity_note($log->time, $log, $isteacher, $log->name,
-                                               $CFG->wwwroot.'/mod/exercise/'.str_replace('&', '&amp;', $log->url));
+                if (instance_is_visible("exercise",$tempmod)) {
+                    $date = userdate($log->time, $strftimerecent);
+                    echo '<p><font size="1">'.$date.' - '.fullname($log).'<br />';
+                    echo "\"<a href=\"$CFG->wwwroot/mod/exercise/$log->url\">";
+                    echo "$log->name";
+                    echo "</a>\"</font></p>";
+                    }
                 }
             }
         }
-    }
 
     // have a look for new assessments for this user 
     $assesscontent = false;
@@ -412,67 +395,26 @@ function exercise_print_recent_activity($course, $isteacher, $timestart) {
                 }
             // if we got some "live" ones then output them
             if ($assesscontent) {
-                print_headline(get_string('exerciseassessments', 'exercise').':');
+                $strftimerecent = get_string("strftimerecent");
+                print_headline(get_string("exerciseassessments", "exercise").":");
                 foreach ($logs as $log) {
                     //Create a temp valid module structure (only need courseid, moduleid)
                     $tempmod->course = $course->id;
                     $tempmod->id = $log->exerciseid;
                     //Obtain the visible property from the instance
-                    if (instance_is_visible('exercise',$tempmod)) {
-                        print_recent_activity_note($log->time, $log, $isteacher, $log->name,
-                                                   $CFG->wwwroot.'/mod/exercise/'.str_replace('&', '&amp;', $log->url));
+                    if (instance_is_visible("exercise",$tempmod)) {
+                        $date = userdate($log->time, $strftimerecent);
+                        echo '<p><font size="1">'.$date.' - '.fullname($log).'<br />';
+                        echo "\"<a href=\"$CFG->wwwroot/mod/exercise/$log->url\">";
+                        echo "$log->name";
+                        echo "</a>\"</font></p>";
+                        }
                     }
                 }
             }
         }
-    }
     return $submitcontent or $gradecontent or $assesscontent;
 }
-
-
-///////////////////////////////////////////////////////////////////////////////
-function exercise_refresh_events($courseid = 0) {
-// This standard function will check all instances of this module
-// and make sure there are up-to-date events created for each of them.
-// If courseid = 0, then every exercise event in the site is checked, else
-// only exercise events belonging to the course specified are checked.
-// This function is used, in its new format, by restore_refresh_events()
-
-    if ($courseid == 0) {
-        if (! $exercises = get_records("exercise")) {
-            return true;        
-        }   
-    } else {
-        if (! $exercises = get_records("exercise", "course", $courseid)) {
-            return true;
-        }
-    }
-    $moduleid = get_field('modules', 'id', 'name', 'exercise');
-    
-    foreach ($exercises as $exercise) {
-        $event = NULL;
-        $event->name        = addslashes($exercise->name);
-        $event->description = addslashes($exercise->description);
-        $event->timestart   = $exercise->deadline;
-
-        if ($event->id = get_field('event', 'id', 'modulename', 'exercise', 'instance', $exercise->id)) {
-            update_event($event);
-    
-        } else {
-            $event->courseid    = $exercise->course;
-            $event->groupid     = 0;
-            $event->userid      = 0;
-            $event->modulename  = 'exercise';
-            $event->instance    = $exercise->id; 
-            $event->eventtype   = 'deadline';
-            $event->timeduration = 0;
-            $event->visible     = get_field('course_modules', 'visible', 'module', $moduleid, 'instance', $exercise->id); 
-            add_event($event);
-        }
-
-    }
-    return true;
-}   
 
 
 /*******************************************************************/
@@ -487,30 +429,9 @@ function exercise_update_instance($exercise) {
             $exercise->deadlinemonth, $exercise->deadlineday, $exercise->deadlinehour, 
             $exercise->deadlineminute);
 
-    // encode password if necessary
-    if (!empty($exercise->password)) {
-		$exercise->password = md5($exercise->password);
-	} else {
-		unset($exercise->password);
-	}
-
     $exercise->id = $exercise->instance;
 
-    if ($returnid = update_record("exercise", $exercise)) {
-
-        $event = NULL;
-
-        if ($event->id = get_field('event', 'id', 'modulename', 'exercise', 'instance', $exercise->id)) {
-
-            $event->name        = $exercise->name;
-            $event->description = $exercise->description;
-            $event->timestart   = $exercise->deadline;
-
-            update_event($event);
-        }
-    }
-
-    return $returnid;
+    return update_record("exercise", $exercise);
 }
 
 
@@ -570,13 +491,13 @@ function exercise_get_participants($exerciseid) {
     global $CFG;
 
     //Get students from exercise_submissions
-    $st_submissions = get_records_sql("SELECT DISTINCT u.id, u.id
+    $st_submissions = get_records_sql("SELECT DISTINCT u.*
                                        FROM {$CFG->prefix}user u,
                                             {$CFG->prefix}exercise_submissions s
                                        WHERE s.exerciseid = '$exerciseid' and
                                              u.id = s.userid");
     //Get students from exercise_assessments
-    $st_assessments = get_records_sql("SELECT DISTINCT u.id, u.id
+    $st_assessments = get_records_sql("SELECT DISTINCT u.*
                                  FROM {$CFG->prefix}user u,
                                       {$CFG->prefix}exercise_assessments a
                                  WHERE a.exerciseid = '$exerciseid' and
@@ -704,7 +625,7 @@ function exercise_get_submit_logs($course, $timestart) {
     global $CFG, $USER;
     
     $timethen = time() - $CFG->maxeditingtime;
-    return get_records_sql("SELECT l.time, l.url, u.firstname, u.lastname, l.info as exerciseid, e.name
+    return get_records_sql("SELECT l.time, l.url, u.firstname, u.lastname, l.info exerciseid, e.name
                              FROM {$CFG->prefix}log l,
                                 {$CFG->prefix}exercise e, 
                                 {$CFG->prefix}user u
@@ -774,8 +695,8 @@ function exercise_print_submission_title($exercise, $submission) {
             } else {
                 $ffurl = "file.php?file=/$filearea/$file";
             }
-            return "<img src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" border=\"0\" alt=\"File\" />".
-                "&nbsp;<a target=\"uploadedfile\" href=\"$CFG->wwwroot/$ffurl\">$submission->title</a>";
+            return "<IMG SRC=\"$CFG->pixpath/f/$icon\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"File\">".
+                "&nbsp;<A TARGET=\"uploadedfile\" HREF=\"$CFG->wwwroot/$ffurl\">$submission->title</A>";
         }
     }
 }

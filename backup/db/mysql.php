@@ -67,7 +67,7 @@ function backup_upgrade($oldversion=0) {
     } 
 
     if ($oldversion < 2003082600 and $result) {
-        print_simple_box("This is the first non-alpha release of the Backup/Restore module.<p>Thanks for upgrading!","center", "50%", '', "20", "noticebox");
+        print_simple_box("This is the first non-alpha release of the Backup/Restore module.<p>Thanks for upgrading!","center", "50%", "$THEME->cellheading", "20", "noticebox");
     }
 
     if ($oldversion < 2003112700 and $result) {

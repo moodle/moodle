@@ -1,7 +1,7 @@
 <table cellspacing="0" cellpadding="5" border="0" align="center">
 
 <tr valign="top">
-	<td align="right">enrol_cost:</td>
+	<td align="right"><p>enrol_cost:</p></td>
 	<td>
         <input type="text" size="5" name="enrol_cost" value="<?php echo $frm->enrol_cost ?>" />
     </td>
@@ -11,7 +11,7 @@
 </tr>
 
 <tr valign="top">
-	<td align="right">enrol_currency:</td>
+	<td align="right"><p>enrol_currency:</p></td>
 	<td>
     <?php choose_from_menu ($paypalcurrencies, "enrol_currency", $frm->enrol_currency, "","", "") ?>
     </td>
@@ -21,7 +21,7 @@
 </tr>
 
 <tr valign="top">
-	<td align="right">enrol_paypalbusiness:</td>
+	<td align="right"><p>enrol_paypalbusiness:</p></td>
 	<td>
         <input type="text" name="enrol_paypalbusiness" value="<?php echo $frm->enrol_paypalbusiness ?>" />
     </td>
@@ -31,9 +31,9 @@
 </tr>
 
 <tr valign="top">
-	<td align="right">enrol_mailstudents:</td>
+	<td align="right"><p>enrol_mailstudents:</p></td>
 	<td>
-        <input type="checkbox" value="1" name="enrol_mailstudents" <?php if ($frm->enrol_mailstudents) echo "checked=\"true\"" ?> />
+        <input type="checkbox" value=1 name="enrol_mailstudents" <?php if ($frm->enrol_mailstudents) echo "checked=\"true\"" ?> />
     </td>
     <td>
     <?php  print_string("mailstudents") ?>
@@ -41,9 +41,9 @@
 </tr>
 
 <tr valign="top">
-	<td align="right">enrol_mailteachers:</td>
+	<td align="right"><p>enrol_mailteachers:</p></td>
 	<td>
-        <input type="checkbox" value="1" name="enrol_mailteachers" <?php if ($frm->enrol_mailteachers) echo "checked=\"true\"" ?> />
+        <input type="checkbox" value=1 name="enrol_mailteachers" <?php if ($frm->enrol_mailteachers) echo "checked=\"true\"" ?> />
     </td>
     <td>
     <?php  print_string("mailteachers") ?>
@@ -51,9 +51,9 @@
 </tr>
 
 <tr valign="top">
-	<td align="right">enrol_mailadmins:</td>
+	<td align="right"><p>enrol_mailadmins:</p></td>
 	<td>
-        <input type="checkbox" value="1" name="enrol_mailadmins" <?php if ($frm->enrol_mailadmins) echo "checked=\"true\"" ?> />
+        <input type="checkbox" value=1 name="enrol_mailadmins" <?php if ($frm->enrol_mailadmins) echo "checked=\"true\"" ?> />
     </td>
     <td>
     <?php  print_string("mailadmins") ?>

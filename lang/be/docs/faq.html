@@ -1,14 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
-<title>Moodle Docs: Frequently Asked Questions (FAQ)</title>
-<link rel="stylesheet" href="docstyles.css" type="text/css" />
-<meta http-equiv="content-type" content="text/html; charset=windows-1251" />
+<title>Дакументацыя Moodle: Пытанні, што найчасцей задаюць (FAQ)</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
 
-<body>
-<h1> Найчасцей задаваныя пытанні (FAQ)</h1>
+<body bgcolor="#FFFFFF">
+<h1> Пытанні, што найчасцей задаюць (FAQ)</h1>
 <p class="normaltext">На гэтай старонцы знаходзіцца некалькі адказаў на пытанні, што найчасцей задаюць.
   Калі Вы рухаліся адпаведна <a href="./?file=install.html">інструкцыі па ладаванні</a>, але 
   усё яшчэ маеце праблемы, тады гэтая старонка павінна Вам дапамагчы. </p>
@@ -17,135 +15,620 @@
   Moodle</a> на moodle.org. Пачынайце з пошуку форумаў, скарыстаўшы некалькі ключавых словаў, 
   калі Вашая праблема ўжо абмяркоўвалася. Калі нічога ня знойдзеце, аформіце Вашае пытанне ў выглядзе адпаведнага форуму - Вам дапамогуць.</p>
 
+
 <p class="normaltext">Калі вы ўжо паспрабавалі некалькі варыянтаў безвынікова,
 і Вы пры гэтым працуеце з актывізаваным  firewall-ам (блакіроўшчыкам непажаданага доступу), рэкамендуем праверыць настройкі Вашага
 firewall-у, каб пераканацца, што ён не блакуе патрэбную функцыю або злучэнне.
 Firewall-ы зрэдку выклікаюць праблемы з Moodle, але часам уплываюць за зніжэнне функцыянальных магчымасцяў з прычыны збояў канфігурацыі Firewall-a.
+
+
+
 <p class="normaltext">Скарыстайце гэты спіс пытанняў для хуткага пераходу да адпаведнага адказу ніжэй:</p>
+
 <p class="questionlink"><a href="#filenotfound">Калі я спрабую прагледзець загружаемы файл, атрымліваю памылку &quot;файл ня знойдзены&quot;</a></p>
 
+
+
 <p class="questionlink"><a href="#php">Ці заладавана PHP, і якая ў мяне версія?</a></p>
+
+
+
 <p class="questionlink"><a href="#blankpages">Чаму ўсе мае старонкі пустыя?</a></p>
+
+
+
 <p class="questionlink"><a href="#errorgetstring">На старонках памылкі: зварот да нявызначанай функцыі: get_string()</a></p>
+
+
+
 <p class="questionlink"><a href="#headerssent">Чаму я працягваю атрымліваць паведамленні аб памылцы &quot;загалоўкі ўжо дасланыя&quot;?</a></p>
+
+
+
 <p class="questionlink"><a href="#failedopen">Працягваю атрымліваць гэту памылку: Неабходна тое, што не раскрылася '/web/moodle/lib/setup.php'</a></p>
+
+
+
 <p class="questionlink"><a href="#quotes">Тэксты, што я дадаю з апострафам (') або з (&quot;) выклікаюць памылкі або прыходзіць з даданым значкам слэш</a></p>
+
+
+
 <p class="questionlink"><a href="#sessiontmp">Я атрымліваю паведамленні аб памылцы пра session_start</a></p>
+
+
+
 <p class="questionlink"><a href="#fixdirroot">Калі я іду на старонку адміністратара, мне кажуць ачысціць dirroot!</a></p>
+
+
+
 <p class="questionlink"><a href="#loginsetting">Я рэгіструюся, але спасылка на login не змяняецца. Я нармальна загружаюся і працую.</a></p>
+
+
+
 <p class="questionlink"><a href="#resource1"> Калі хачу дадаць рэсурс, то атрымліваю паведамленні аб памылцы.</a></p>
+
+
+
 <p class="questionlink"><a href="#noadmin"> Падчас пачатку працэсу загрузкі, у мяне не патрабуюць стварыць адміністрацыйны рахунак!</a></p>
+
 <p class="questionlink"><a href="#nologin"> Не магу зарэгістравацца - вісне вакно рэгістрацыі.</a></p>
+
 <p class="questionlink"><a href="#backup">Як засцерагчыся ад згубы інфармацыі на маім сайце Moodle?</a></p>
+
 <p class="questionlink"><a href="#locale"> Чаму мой сайт Moodle няправільна паказвае дату і час?</a></p>
+
 <p class="questionlink"><a href="#cron">E-mail копіі не дасылаюцца
 з маіх форумаў</a></p>
+
+<p class="questionlink">&nbsp;</p>
+
+
+
+
+
+
+
 <h3><a name="filenotfound"></a>Калі я спрабую праглядзець загружаемы файл выскоквае памылка &quot;файл ня знойдзены&quot;</h3>
-<p class="answer">Напрыклад: Not Found: The requested URL /moodle/file.php/2/мой файл.jpg ня быў знойдзены на гэтым сэрверы. </p>
-<p class="answer">Ваш сэрвер мусіць мець такую канфігурацыю, каб частка URL пасля імя скрыпта падыходзіла да скрыпта. Гэта звычайна даступна ў Apache 1, але недаступна па змаўчанні ў Apache 2. Каб уключыць гэта, дадайце гэты радок да Вашага httpd.conf, або да .htaccess файла ў Вашай лакальнай дырэкторыі (глядзі <a href="./?file=install.html#webserver">Дакументацыю па ладаванні</a> 
+
+
+
+<p class="answer">Напрыклад: Not Found: The requested URL /moodle/file.php/2/мой файл.jpg 
+
+
+
+  ня быў знойдзены на гэтым сэрверы. </p>
+
+
+
+<p class="answer">Ваш сэрвер мусіць мець такую канфігурацыю, каб частка URL пасля імя скрыпта падыходзіла да скрыпта. Гэта звычайна даступна ў Apache 1, але недаступна па змаўчанні ў Apache 2. Каб уключыць гэта, дадайце гэты радок да Вашага httpd.conf, або да .htaccess файла ў Вашай лакальнай дырэкторыі (глядзі <a href="./?file=install.html#webserver">Усталяваць дакументацыю</a> 
+
+
+
   для таго каб атрымаць больш дэталяў): </p>
+
+
+
 <p class="answercode"><b>AcceptPathInfo</b> on</p>
+
+
+
 <p class="answer">ЗАЎВАГА: гэта спрацуе толькі ў версіі Apache 2.x. </p>
+
+
+
 <p class="answer">Калі вы не карыстаецеся Apache 2 і ў вас яшчэ ўзнікае гэта праблема, што малаверагодна, тады ўключыце  Moodle каб паспрабаваць альтэрнатыўны метад. Негатыўны бок гэтага - спад у прадуктыўнасці для Вашых карыстальнікаў і Вы таксама не зможаце ўжываць альтэрнатыўныя спасылкі на рэсурсы HTML. </p>
-<p class="answer">Каб скарыстацца гэтым альтэрнатыўным метадам, зарэгіструйцеся як Admin, ідзіце на старонку  "Configure Variables" і змяніце ўстаноўкі на "<b>slasharguments</b>". Зараз Вы зможаце карыстацца Вашымі загружанымі файламі.</p>
-<h3><a name="php"></a>Ці заладавана PHP, і якая ў мяне версія?</h3>
-<p class="answer">Зрабіце новы файл на вашым сайце пад назвай  info.php, які змяшчае наступны тэкст і выклічце яго з Вашага браўзера:</p>
-<p class="answercode">&lt;?PHP phpinfo() ?&gt;</p>
+
+
+
+<p class="answer">Каб скарыстацца гэтым альтэрнатыўным метадам, зарэгіструйцеся як Admin, ідзіце на старонку  "Configure Variables" і змяніце ўстаноўкі на "<b>slasharguments</b>".
+
+
+
+
+  Зараз Вы зможаце карыстацца Вашымі загружанымі файламі.</p>
+
+
+
+<p class="answer">&nbsp;</p>
+
+
+
+  
+
+
+
+  <h3><a name="php"></a>Ці заладавана PHP, і якая ў мяне версія?</h3>
+
+
+
+  <p class="answer">Зрабіце новы файл на вашым сайце пад назвай  info.php, які змяшчае наступны тэкст і выклічце яго з Вашага браўзера:</p>
+
+
+
+    
+
+
+
+  <p class="answercode">&lt;?PHP phpinfo() ?&gt;</p>
+
+
+
 <p class="answer">Калі не адбываецца нічога, тады ў вас не ўсталяваны PHP. Праглядзіце дакументы па інсталяцыі, каб даведацца, як яго можна паставіць на ваш камп'ютэр.</p>
+
+
+
+<p class="answer">&nbsp;</p>
+
+
+
 <h3><a name="blankpages"></a>Чаму ўсе мае старонкі пустыя? </h3> 
+
+
+
 <p class="answer">Праверце пераменную dirroot у config.php. Трэба ўжываць поўныя паролі, напрыклад:</p>
+
+
+
 <p class="answercode"> $CFG->dirroot = "d:\inetpub\sites\www.yoursite.com\web\moodle";</p>
+
+
+
+<p>&nbsp; </p>
+
+
+
 <p class="answer">Redhat Linux платформу глядзіце: <a href="http://moodle.org/doc/?file=installamp.html">Redhat Linux</a></p>
+
+
+
+<p>&nbsp; </p>
+
+
+
 <h3><a name="errorgetstring"></a>На старонках памылкі: зварот да нявызначанай функцыі: get_string()</h3>
+
+
+
 <p class="answer">Калі выскокваюць памылкі, кшталту:</p>
+
+
+
 <p class="answercode">Аналіз памылка: аналіз памылка, нечаканая Т ПЕРАМЕННАЯ у c:\program 
+
+
+
   files\easyphp\www\moodle\config.php on line 94 <br />
+
+
+
   Памылка: Зварот да нявызначанай функцыі: get_string() in c:\program files\easyphp\www\moodle\mod\resource\lib.php 
+
+
+
   on line 11</p>
+
+
+
 <p class="answer">тады, напэўна, Вы пакінулі  semi-colon або спасылку з радка ў config.php (папярэдняга радка 94).</p>
+
+
+
 <p class="answer">Іншай прычынай можа быць тое, што вы адчынілі config.php у праграме кшталту Word каб яго адрэдагаваць, а захавалі яго як HTML старонку, а не тэкставага файла.</p>
-<h3><a name="headerssent"></a>Чаму атрымліваю памылкі пра &quot;загалоўкі ўжо дасланыя&quot;?</h3>
+
+
+
+<p>&nbsp;</p>
+
+
+
+<h3><a name="headerssent"></a>Чаму атрымліваю памылкі
+
+
+пра &quot;загалоўкі ўжо дасланыя&quot;?</h3>
+
+
+
 <p class="answer">Калі выскокваюць памылкі кшталту:</p>
+
+
+
 <p class="answercode">Увага: не магу дадаць інфармацыю загалоўка - загалоўкі ўжо дасланыя (вывад пачаўся на/webs/moodle/config.php:87) у /webs/moodle/lib/moodlelib.php 
 на радку 1322 </p>
+
+
+
+
 <p class="answercode">Увага: не магу дадаць інфармацыю загалоўка - загалоўкі ўжо дасланыя (вывад пачаўся на/webs/moodle/config.php:87) у /webs/moodle/lib/moodlelib.php 
 на радку 1322 </p>
-<p class="answercode">Увага: не магу дадаць інфармацыю загалоўка - загалоўкі ўжо дасланы(вывад пачаўся на/webs/moodle/config.php:87) у /webs/moodle/lib/moodlelib.php на радку 54 </p>
-<p class="answer">У Вас пустыя радкі або прамежкі пасля апошняга на Вашым config.php файле. Магчыма, праблемы з тэкставымі рэдактарамі - на прыклад Notepad у Windows - паспрабуйце іншы. </p>
+
+
+
+<p class="answercode">Увага: не магу дадаць інфармацыю загалоўка - загалоўкі ўжо дасланы(вывад пачаўся на/webs/moodle/config.php:87) у /webs/moodle/lib/moodlelib.php 
+
+
+
+на радку 54 </p>
+
+
+
+<p class="answer">У Вас пустыя радкі або прамежкі пасля апошняга на Вашым config.php 
+
+
+
+файле. Магчыма, праблемы з тэкставымі рэдактарамі - на прыклад Notepad у Windows - паспрабуйце іншы. </p>
+
+
+
+<p class="answer">&nbsp;</p>
+
+
+
 <h3><a name="failedopen"></a>Атрымліваю памылку: неабходна тое, што не раскрылася '/web/moodle/lib/setup.php'</h3>
+
+
+
 <p class="answer">У Вашым config.php, устаноўка для пераменнай dirroot 
 мусіць быць <strong>поўны шлях ад жорсткага дыску Вашага сэрвера</strong>.</p>
+
+
+
 <p class="answer">Здараецца, людзі ўжываюць шлях ад іх хатняй дырэкторыі, 
 або роднасны кораню дырэкторыі сэрвера.</p>
-<h3><a name="quotes" id="quotes"></a>Кожны тэкст, які я дадаю з апострафам (') або ў двукоссі (&quot;) выклікае памылкі або прыходзіць з далучаным слэшам</h3>
+
+
+
+<p class="answer">&nbsp;</p>
+
+
+
+<h3><a name="quotes" id="quotes"></a>Кожны тэкст, які я дадаю з апострафам
+
+
+
+  (') або ў двукоссі (&quot;) выклікае памылкі або прыходзіць з далучаным слэшам</h3>
+
+
+
 <p class="answer">Праблемы з апострафамі выкліканы няправільным &quot;парнымі двукоссямі&quot;. Moodle патрабуе наступных установак (звычайна, па змаўчанні):</p>
-<p class="answercode">magic_quotes_gpc = On<br />  magic_quotes_runtime = Off</p>
-<p class="answer">Глядзі секцыю на <a href="./?file=install.html#webserver">webserver configuration</a> у дакументацыі па ладаванні, каб даведацца больш дэталёва.</p>
+
+
+
+<p class="answercode">magic_quotes_gpc = On<br />
+
+
+
+  magic_quotes_runtime = Off</p>
+
+
+
+<p class="answer">Глядзі секцыю на <a href="./?file=install.html#webserver">webserver 
+
+  configuration</a> у дакументацыі па ладаванні, каб даведацца больш дэталёва.</p>
+
+<p class="answer">&nbsp;</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <h3><a name="sessiontmp"></a>Памылкі ў session_start</h3>
+
+
+
 <p class="answer">Калі выскокваюць памылкі кшталту:</p>
+
+
+
 <p class="answercode">Увага: session_start() [function.session-start]: open(/tmp\sess_d40f380d37d431fc1516e9a895ad9ce0, O_RDWR) не спрацавала: Такі файл або дырэкторыя адсутнічаюць (2) у G:\web\moodle\lib\setup.php на радку 123</p>
+
+
+
 <p class="answercode">Увага: session_start() [function.session-start]: open(/tmp\sess_d40f380d37d431fc1516e9a895ad9ce0, O_RDWR) не спрацавала: Такі файл або дырэкторыя адсутнічаюць (2) у G:\web\moodle\lib\setup.php на радку 123</p>
+
+
+
 <p class="answercode">Увага: session_start() [function.session-start]: Не магу даслаць абмежавальнік СУБД - загалоўкі ўжо дасланыя (вывад пачаўся на G:\web\moodle\lib\setup.php:1) in G:\web\moodle\lib\setup.php на радку 123</p>
-<p class="answer">... гэта ўсё тычыцца таго, што PHP не можа захаваць  "session" файлы на жорсткім дыску (у дырэкторыі/tmp).  Звычайна, прычына ў тым, што ў вас НЯМА дырэкторыі /tmp на вашым камп'ютэры.  Гэта тыпова для Windows.</p>
+
+
+
+
+
+
+
+<p class="answer">... гэта ўсё тычыцца таго, што PHP не можа захаваць 
+  "session" файлы на жорсткім дыску (у дырэкторыі/tmp).  Звычайна, прычына ў тым, што ў вас НЯМА дырэкторыі /tmp на вашым камп'ютэры.  Гэта тыпова для Windows.
+
+
+
+
+
+
+
 <p class="answer">Рашэнне: трэба зафіксаваць PHP устаноўкі на гэтым шляху каб патрапіць у рэальную дырэкторыю.  Гэта можна зрабіць у вашым файле php.ini file:</p>
+
+
+
 <p class="answercode">session.save_path = C:\temp</p>
+
+
+
 <p class="answer">або інакш у файле .htaccess у вашай асноўнай дырэкторыі moodle:</p>
+
+
+
 <p class="answercode">php_value session.save_path "/home/moodle/sessions"</p>
+
+<p class="answercode">&nbsp;</p>
+
+
+
+
+
+
+
 <h3><a name="fixdirroot"></a>Калі я іду на старонку адміністратара, мне кажуць ачысціць dirroot!</h3>
+
+
+
 <p class="answer">Калі ў вас памылкі такога кшталту ў Moodle 1.0.9:</p>
+
+
+
+
+
+
+
 <table class=generalbox cellspacing=0 cellpadding=5 align=center border=0>
+
+
+
 <tbody>
+
+
+
 <tr>
-<td bgcolor=#ffbbbb>Праверце свае ўстаноўкі ў config.php: 
-<p>У вас: </p>
-<p>$CFG-&gt;dirroot = "/home/users/fred/public_html/moodle"; </p>
-<p>але мусіць быць: </p>
+
+
+
+<td bgcolor=#ffbbbb>Праверце саве ўстаноўкі ў config.php: 
+
+
+
+<p>У вас: 
+
+
+
+<p>$CFG-&gt;dirroot = "/home/users/fred/public_html/moodle"; 
+
+
+
+<p>але мусіць быць: 
+
+
+
 <p>$CFG-&gt;dirroot = "";</p></td></tr></tbody></table>
+
+
+
+
+
+
+
 <p class="answer">Тады ў вас маленькі жучок, што здараецца на некаторых сэрверах. Праблема з праверкай памылак, а не са шляхам.  Каб адрэгуляваць яго, знайдзіце гэты радок (line 66) у файле admin/index.php: </p>
+
+
+
 <p class="answercode">if ($dirroot != $CFG->dirroot) {</p>
+
+
+
 <p class="answer">і змяніце яго на:</p>
+
+
+
 <p class="answercode">if (!empty($dirroot) and $dirroot != $CFG->dirroot) {</p>
+
+<p class="answercode">&nbsp;</p>
+
+
+
+
+
 <h3><a name="loginsetting"></a>Я рэгіструюся, але спасылка на login не змяняецца. Я нармальна загружаюся і працую.</h3>
+
+
+
 <p class="answer">Пераканайцеся, што URL у Вашых $CFG->wwwroot устаноўках той самы, якім Вы рэальна карыстаецеся, каб зайсці на гэты сайт.</p>
+
+<p class="answer">&nbsp;</p>
+
+
+
 <h3><a name="resource1"></a>Калі хачу дадаць рэсурс, то атрымліваю паведамленні аб памылцы.</h3>
+
+
+
 <p class="answer">Калі вы ўжываеце Apache тады, хутчэй за ўсё, Вашы ўстаноўкі на config.php для $CFG->wwwroot адрозніваюцца ад рэальнага URL , які вы ўжываеце, каб зайсці на сайт. Паспрабуйце таксама адключыць "<b>secureforms</b>" у настройках адміністратара.</p>
+
+<p class="answer">&nbsp;</p>
+
+
+
+
+
+
+
 <h3><a name="noadmin"></a>Падчас пачатку працэсу загрузкі, у мяне не патрабуюць стварыць адміністрацыйны рахунак!</h3>
+
+
+
 <p class="answer">Гэта вядомая праблема ў версіях  Moodle да 1.0.9, зараз выпраўленая ў версіі 1.1.</p>
+
+
+
 <p class="answer">Гэта не тычыцца ўсіх, а толькі тых, хто , усталяваўшы Moodle мае сістэму паведамлення аб наведванні сайту на сваім браўзеры з іншай праграмы на тым жа сайце, пад назвамі "user", "admin", або "teacher".</p>
+
+
+
 <p class="answer">Праверкі ўключаюць выдаленне такіх сістэм з Вашага браўзера перад інсталяцыяй, карыстаючыся іншым браўзерам, або рэдагуючы файл moodle/admin/user.php каб уставіць гэтыя радкі каля пачатку:</p>
+
+
+
 <p class="answercode">unset($user);<br />unset($admin);<br />unset($teacher);</p>
+
+
+
 <p class="answer">Пасля гэтых праверак добра прапусціць усе табліцы ў базу дадзеных і перазапусціць.</p>
+
+<p class="answer">&nbsp;</p>
+
+
+
+
+
+
+
 <h3><a name="nologin"></a>Не магу зарэгістравацца - вісне вакно рэгістрацыі.</h3>
-<p class="answer">Звычайна прычына ў тым, што Ваш камп'ютэр (не ваш Moodle сэрвер)  мае firewall, які выдаляе патрэбную інфармацыю з браўзера.  Вось інструкцыі, як гэта выправіць <a href="http://service1.symantec.com/SUPPORT/nip.nsf/46f26a2d6dafb0a788256bc7005c3fa3/b9b47ad7eddd343b88256c6b006a85a8?OpenDocument&src=bar_sch_nam">Norton firewall products</a>.</p>
+
+
+
+<p class="answer">Звычайна прычына ў тым, што Ваш камп'ютэр (не ваш Moodle сэрвер) 
+
+                  мае firewall, які выдаляе патрэбную інфармацыю з браўзера.  Вось інструкцыі, як гэта выправіць <a href="http://service1.symantec.com/SUPPORT/nip.nsf/46f26a2d6dafb0a788256bc7005c3fa3/b9b47ad7eddd343b88256c6b006a85a8?OpenDocument&src=bar_sch_nam">Norton firewall products</a>.</p>
+
+
+
 <p class="answer">Сісад таксама можа выправіць гэта. Вы можаце рэдагуючы старонку настроек Moodle 
 і змяніць пераменную "<b>secureforms</b>" на "No".</p>
+
+
+
 <p class="answer">Іншая магчымая прычына памылкі -- тое,  што сесіі на сэрверы зканфігураваны няправільна. Вы можаце праверыць гэта, выклікаўшы інвентар
   http://yourserver/moodle/lib/session-test.php.</p>
+<p class="answer">&nbsp;</p>
+
+
+
+
+
+
+
 <h3><a name="backup"></a>Як засцерагчыся ад згубы інфармацыі на маім сайце Moodle?</h3>
+
+
+
 <p class="answer">Трэба зрабіць копіі 2 галоўных рэчаў: базы дадзеных і файлаў, якія загружаюцца.  Інвентары Moodle самі па сабе менш важны, паколькі пры неабходнасці заўсёды можна загрузіць свежую копію.</p>
+
+
+
 <p class="answer">Ёсць шмат шляхоў ажыццяўлення такой падтрымкі.  Вось апісанне маленькага інвентару ў Unix для падтрымкі базы дадзеных (добра будзе запускаць гэты інвентар штодня праз хрон (гэта -- дэман Unix-а) </p>
+
 <p class="answercode">cd /my/backup/directory</p>
+
 <p class="answercode">mv moodle-database.sql.gz moodle-database-old.sql.gz</p>
+
 <p class="answercode">mysqldump -h example.com -u myusername --password=mypassword -C -Q -e -a mydatabasename > moodle-database.sql</p>
+
 <p class="answercode">gzip moodle-database.sql</p>
+
 <p class="answer">Для файлаў можна рэгулярна скарыстоўваць rsync, каб капіраваць змененыя файлы на іншы сэрвер:</p>
-<p class="answercode">rsync -auvtz --delete -e ssh mysshusername@example.com:/my/server/directory   /my/backup/directory/</p>
+
+<p class="answercode">rsync -auvtz --delete -e ssh mysshusername@example.com:/my/server/directory 
+
+  /my/backup/directory/</p>
+
+<p class="answercode">&nbsp;</p>
+
+
+
+
+
 <h3><a name="locale"></a>Чаму мой сайт Moodle няправільна паказвае дату і час?</h3>
-<p class="answer">Кожная мова патрабуе спецыфічнага моўнага коду (ён называецца <strong>locale</strong> code), каб даты выводзіліся правільна. Моўныя пакеты ўтрымліваюць стандартныя коды па змаўчанні, але яны могуць не спрацоўваць на сэрверах  Windows. </p>
-<p class="answer">Правільныя коды пад  Windows можна знайсці на гэтых двух старонках: <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_language_strings.asp" target="_blank"> Коды моў</a>, а таксама <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_country_strings.asp" target="_blank">Коды краін/рэгіёнаў</a> (eg &quot;esp_esp&quot; for spanish).</p>
-<p class="answer">Новыя мясцовыя коды можна ўвесці на Admin -&gt; Configure  -&gt; старонка Пераменных, дзе яны перакрываюць коды нядаўна выбранага моўнага пакету.</p>
+
+
+
+<p class="answer">Кожная мова патрабуе спецыфічнага моўнага коду (ён называецца <strong>locale</strong> 
+
+  code), каб даты выводзіліся правільна. Моўныя пакеты ўтрымліваюць стандартныя коды па змаўчанні, але яны могуць не спрацоўваць на сэрверах  Windows. </p>
+
+<p class="answer">Правільныя коды пад  Windows можна знайсці на гэтых двух старонках: <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_language_strings.asp" target="_blank">Мова 
+
+  codes</a>, а таксама <a href="http://msdn.microsoft.com/library/default.asp?url=/library/en-us/vclib/html/_crt_country_strings.asp" target="_blank">Краіна\рэгіён 
+
+  codes</a>.(eg &quot;esp_esp&quot; for spanish)</p>
+
+<p class="answer">Новыя мясцовыя коды можна ўвесці на Admin -&gt; Configure 
+
+  -&gt; старонка Пераменных, дзе яны перакрываюць коды нядаўна выбранага моўнага пакету.</p>
+
+<p class="answer">&nbsp;</p>
+
 <h3><a name="cron"></a>E-mail копіі не дасылаюцца з маіх форумаў </h3>
-<p class="answer">Вы<strong>павінны</strong> устанаўліваеце ўласцівасці хрона Moodle, каб аўтаматычна дасылаць email з форумаў, журналаў etc. Гэты працэс патрабуе таксама вычышчэння, напрыклад выдалення старых, непацверджаных карыстальнікаў, і г. д..</p>
-<p class="answer">Увогуле, Вам трэба распачаць працэс, каб рэгулярна выклікаць інвентар http://yoursite/admin/cron.php. Глядзіце <a href="./?file=install.html#cron">секцыю пра хрон у дакументацыі па ладаванні</a>.</p>
-<p class="answer">Tip: Паспрабуйце настройкі па змаўчанні на старонцы пераменных Moodle. Пакіньце smtphost чыстым. Гэта прыймальна для бальшыні карыстальнікаў.</p>
-<br />
-<br />
-<hr />
-<p align="center" class="normaltext"><a href="mailto:martin@moodle.org" title="Martin e-mail">Прапанаваць новае пытанне ці адказ</a></p>
-<hr />
-<p align="right"><strong><em>Дзякуй John Eyre за дапамогу пры аднаўленні гэтага
+
+<p class="answer">Вы<strong>павінны</strong> устанаўліваеце ўласцівасці хрона Moodle, 
+
+каб аўтаматычна дасылаць email з форумаў, журналаў etc. Гэты працэс патрабуе таксама вычышчэння, напрыклад выдалення старых, непацверджаных карыстальнікаў, і г. д..</p>
+
+<p class="answer">Увогуле, Вам трэба распачаць працэс, каб рэгулярна выклікаць інвентар http://yoursite/admin/cron.php. Глядзіце <a href="./?file=install.html#cron">
+
+  секцыю пра хрон у дакументацыі па ладаванні</a>.</p>
+
+<p class="answer">Tip: Паспрабуйце настройкі па змаўчанні на старонцы пераменных Moodle. Пакіньце smtphost чыстым.
+
+Гэта прыймальна для бальшыні карыстальнікаў.
+<p class="answer">&nbsp;
+<p class="answer">&nbsp;
+
+
+<hr>
+
+
+
+<p align="center" class="normaltext"><a href='ma&#105&#108t&#111:ma%72%74in@%6d%6fo%64%6c%65.o%72g' title='mar&#116&#105n@&#109oo&#100&#108&#101&#46&#111&#114g'>Suggest 
+
+
+
+  новы FAQ</a> (улучна адказ!)</p>
+
+
+
+<hr>
+
+
+
+<p align="right"><strong><em>Дзякуй  John Eyre за падтрымку пры апгрэйдзе гэтага
   FAQ.</em></strong></p>
-<p align="center"><font size="1"><a href="." target="_top">Дакументацыя Moodle</a></font></p>
-<p align="center"><font size="1">Version: $Id$</font></p>
+
+
+
+<p align="CENTER"><font size="1"><a href="." target="_top">Дакументацыя Moodle</a></font></p>
+
+
+
+<p align="CENTER"><font size="1">Version: $Id: faq.html,v 1.6 2003/03/30 13:54:28 
+
+
+
+  moodler Exp $</font></p>
+
+
+
+
+
+
+
 </body>
+
+
+
 </html>

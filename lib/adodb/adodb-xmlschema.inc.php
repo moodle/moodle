@@ -1917,7 +1917,7 @@ class adoSchema {
 				$schema .= '	<table name="' . $table . '">' . "\n";
 				
 				// grab details from database
-				$rs = $this->db->Execute( 'SELECT * FROM ' . $table . ' WHERE 1=1' );
+				$rs = $this->db->Execute( 'SELECT * FROM ' . $table . ' WHERE -1' );
 				$fields = $this->db->MetaColumns( $table );
 				$indexes = $this->db->MetaIndexes( $table );
 				
@@ -1983,7 +1983,7 @@ class adoSchema {
 						
 						while( $row = $rs->FetchRow() ) {
 							foreach( $row as $key => $val ) {
-								$row[$key] = htmlentities($val);
+								$row[$key] = htmlentities($row);
 							}
 							
 							$schema .= '			<row><f>' . implode( '</f><f>', $row ) . '</f></row>' . "\n";

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
 function resource_upgrade($oldversion) {
 // This function does anything necessary to upgrade
@@ -51,18 +51,6 @@ function resource_upgrade($oldversion) {
     if ($oldversion < 2004080801) {
         modify_database("", "UPDATE prefix_resource SET alltext=reference,type='html' WHERE type='reference';");
         rebuild_course_cache();
-    }
-
-    if ($oldversion < 2004111200) { //drop first to avoid conflicts when upgrading
-        execute_sql("ALTER TABLE {$CFG->prefix}resource DROP INDEX course;",false);
-
-        modify_database('','ALTER TABLE prefix_resource ADD INDEX course (course);');
-    }
-
-    if ($oldversion < 2005041100) { // replace wiki-like with markdown
-        include_once( "$CFG->dirroot/lib/wiki_to_markdown.php" );
-        $wtm = new WikiToMarkdown();
-        $wtm->update( 'resource','alltext','options' );
     }
 
     return true;

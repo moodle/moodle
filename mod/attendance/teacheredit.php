@@ -74,18 +74,18 @@
 
     if ($course->category) {
         print_header("$course->shortname: $streditinga", "$course->fullname",
-                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> 
-                      <a href=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</a> -> 
+                     "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
+                      <A HREF=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</A> -> 
                       $streditinga", $focuscursor, "", false);
     } else {
         print_header("$course->shortname: $streditinga", "$course->fullname",
                      "$streditinga", $focuscursor, "", false);
     }
 
-        $icon = "<img align=middle height=16 width=16 src=\"$CFG->modpixpath/$module->name/icon.gif\" alt=\"\" />&nbsp;";
+        $icon = "<img align=absmiddle height=16 width=16 src=\"$CFG->modpixpath/$module->name/icon.gif\">&nbsp;";
 
         print_heading_with_help($pageheading, "mods", $module->name, $icon);
-        print_simple_box_start('center');
+        print_simple_box_start("center", "", "$THEME->cellheading");
 
 
 
@@ -109,10 +109,10 @@ if (empty($form->id)) {
  	$form->notes = "";
 }
     ?>
-<form name="form" method="post" action="<?php echo "$CFG->wwwroot/course/mod.php"; ?>">
-<center>
-<input type="submit" value="<?php  print_string("savechanges") ?>" />
-<input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
+<FORM name="form" method="post" action="<?php echo "$CFG->wwwroot/course/mod.php"; ?>">
+<CENTER>
+<INPUT type="submit" value="<?php  print_string("savechanges") ?>">
+<INPUT type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
 
 <?php  // if we're modifying an existing instance of attendance instead 
     //   of creating a new one
@@ -182,9 +182,9 @@ if ($form->hours >1) {
     if ($rollstatus==1) {$r2c="checked";}
     elseif ($rollstatus==2) {$r3c="checked";}
     else {$r1c="checked";}
-    $radio1="<input type=\"radio\" name=\"student_".$student->id."_".$j."\" value=\"0\" ".$r1c." />";
-	  $radio2="<input type=\"radio\" name=\"student_".$student->id."_".$j."\" value=\"1\" ".$r2c." />";
-    $radio3="<input type=\"radio\" name=\"student_".$student->id."_".$j."\" value=\"2\" ".$r3c." />";  	
+    $radio1="<input type=\"radio\" name=\"student_".$student->id."_".$j."\" value=\"0\" ".$r1c.">";
+	  $radio2="<input type=\"radio\" name=\"student_".$student->id."_".$j."\" value=\"1\" ".$r2c.">";
+    $radio3="<input type=\"radio\" name=\"student_".$student->id."_".$j."\" value=\"2\" ".$r3c.">";  	
     echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-left: 1px dotted; border-top: 1px solid;\">".$radio1."</td>\n";
     echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-top: 1px solid;\">".$radio2."</td>\n";
     echo "<td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-top: 1px solid;\">".$radio3."</td>\n";
@@ -204,21 +204,21 @@ if ($form->hours >1) {
 } // if ($form->id)
 ?>
 <!-- These hidden variables are always the same -->
-<input type="hidden" name=course        value="<?php p($form->course) ?>" />
-<input type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>" />
-<input type="hidden" name=section       value="<?php p($form->section) ?>" />
-<input type="hidden" name=module        value="<?php p($form->module) ?>" />
-<input type="hidden" name=modulename    value="<?php p($form->modulename) ?>" />
-<input type="hidden" name=instance      value="<?php p($form->instance) ?>" />
-<input type="hidden" name=mode          value="<?php p($form->mode) ?>" />
-<br />
+<INPUT type="hidden" name=course        value="<?php p($form->course) ?>">
+<INPUT type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>">
+<INPUT type="hidden" name=section       value="<?php p($form->section) ?>">
+<INPUT type="hidden" name=module        value="<?php p($form->module) ?>">
+<INPUT type="hidden" name=modulename    value="<?php p($form->modulename) ?>">
+<INPUT type="hidden" name=instance      value="<?php p($form->instance) ?>">
+<INPUT type="hidden" name=mode          value="<?php p($form->mode) ?>">
+<BR />
 <?php
-  echo "<a href=\"../mod/attendance/add.php?id=".$form->course . "&amp;section=".$form->section ."\">Add multiple rolls</a><br /><br />";
+  echo "<a href=\"../mod/attendance/add.php?id=".$form->course . "&section=".$form->section ."\">Add multiple rolls</a><br /><br />";
 ?>
-<input type="submit" value="<?php print_string("savechanges") ?>" />
-<input type="submit" name="cancel" value="<?php print_string("cancel") ?>" />
-</center>
-</form>
+<INPUT type="submit" value="<?php print_string("savechanges") ?>">
+<INPUT type="submit" name="cancel" value="<?php print_string("cancel") ?>">
+</CENTER>
+</FORM>
 
 
 

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -24,7 +24,7 @@
     print_header_simple($strassignments, "", $strassignments, "", "", true, "", navmenu($course));
 
     if (! $assignments = get_all_instances_in_course("assignment", $course)) {
-        notice(get_string('noassignments', 'assignment'), "../../course/view.php?id=$course->id");
+        notice("There are no assignments", "../../course/view.php?id=$course->id");
         die;
     }
 
@@ -52,12 +52,27 @@
     $currentsection = "";
 
     foreach ($assignments as $assignment) {
-
-        require_once ($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');
-        $assignmentclass = 'assignment_'.$assignment->assignmenttype;
-        $assignmentinstance = new $assignmentclass($assignment->coursemodule);
-    
-        $submitted = $assignmentinstance->submittedlink();
+        $submitted = get_string("no");
+        if (isteacher($course->id)) {
+            if ($assignment->type == OFFLINE) {
+                $submitted =  "<a href=\"submissions.php?id=$assignment->id\">" .
+                                get_string("viewfeedback", "assignment") . "</a>";
+            } else {
+                $count = assignment_count_real_submissions($assignment, $currentgroup);
+                $submitted = "<a href=\"submissions.php?id=$assignment->id\">" .
+                             get_string("viewsubmissions", "assignment", $count) . "</a>$groupname";
+            }
+        } else {
+            if (isset($USER->id)) {
+                if ($submission = assignment_get_submission($assignment, $USER)) {
+                    if ($submission->timemodified <= $assignment->timedue) {
+                        $submitted = userdate($submission->timemodified);
+                    } else {
+                        $submitted = "<font color=red>".userdate($submission->timemodified)."</font>";
+                    }
+                }
+            }
+        }
 
         $due = userdate($assignment->timedue);
         if (!$assignment->visible) {

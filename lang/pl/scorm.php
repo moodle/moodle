@@ -1,78 +1,38 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4 (2004083100)
+      // scorm.php - created with Moodle 1.4 development (2004060400)
 
 
-$string['asset'] = 'Kapita³';
-$string['attr_error'] = 'Nieprawid³owa warto¶æ atrybutu ($a->attr) w tagu $a->tag.';
 $string['autocontinue'] = 'Automatyczna kontynuacja';
-$string['badmanifest'] = 'B³edy manifestów: zobacz logi b³êdów';
 $string['browse'] = 'Przegl±daj';
 $string['browsed'] = 'Przegl±dane';
 $string['browsemode'] = 'Tryb przegl±dania';
 $string['chooseapacket'] = 'Wybierz lub uaktualnij pakiet SCORMa';
 $string['completed'] = 'Zakoñczone';
-$string['configframesize'] = 'Ta warto¶æ jest wielko¶ci± (w pixelach) górnej ramki (z nawigacj±).';
-$string['configpopup'] = 'Czy w trakcie dodawania zestawu SCORM z opcj± wy¶wietlania w okienku popup, opcja ta ma byæ domy¶lnie w³±czona?';
-$string['configpopupheight'] = 'Jaka powinna byæ domy¶lna wysoko¶æ okienka popup?';
-$string['configpopupresizable'] = 'Czy domy¶lnie u¿ytkownik mo¿e zmieniaæ wielko¶æ okienka popup?';
-$string['configpopupscrollbars'] = 'Czy domy¶lnie okienko popup powinno zawieraæ pasek przewijania?';
-$string['configpopupstatus'] = 'Czy domy¶lnie u¿ytkownik powinien widzieæ pasek statusu okienka popup?';
-$string['configpopupwidth'] = 'Jaka powinna byæ domy¶lna szeroko¶æ okienka popup?';
 $string['coursepacket'] = 'Pakiet kursu';
 $string['coursestruct'] = 'Struktura kursu';
 $string['datadir'] = 'B³±d systemu plików: Nie mo¿na utworzyæ folderu z danymi kursu.';
-$string['domxml'] = 'Zewnêtrzna biblioteka DOMXML';
 $string['entercourse'] = 'Wpisz kurs SCORMa';
-$string['errorlogs'] = 'Logi b³êdów';
 $string['failed'] = 'Nieudane';
-$string['found'] = 'Znaleziono manifest';
-$string['gradeaverage'] = '¦rednia ocena';
-$string['gradehighest'] = 'Najwy¿sza ocena';
-$string['grademethod'] = 'Metoda oceniania';
-$string['gradescoes'] = 'Sytuacja Scoes';
-$string['gradesum'] = 'Zsumuj oceny';
-$string['guestsno'] = 'Go¶cie nie mog± przegl±daæ kursów SCORM';
 $string['incomplete'] = 'Niepe³ne';
-$string['missing_attribute'] = 'Brakuje atrybutu $a->attr w tagu $a->tag';
-$string['missing_tag'] = 'Brakuje tagu $a->tag';
 $string['mode'] = 'Tryb';
 $string['modulename'] = 'Scorm';
 $string['modulenameplural'] = 'Scormy';
-$string['newheight'] = 'Domy¶lna wysoko¶æ okienka (pixele)';
-$string['newresizable'] = 'Zezwól na zmianê wielko¶ci okna';
-$string['newscrollbars'] = 'Zezwól na przewijanie w oknie';
-$string['newstatus'] = 'Poka¿ pasek statusu';
-$string['newwidth'] = 'Domy¶lna szeroko¶æ okienka (pixele)';
-$string['newwindow'] = 'Nowe okno';
-$string['newwindowopen'] = 'Wy¶wietl ten pakiet w nowym oknie';
 $string['next'] = 'Kontynuuj';
-$string['no_attributes'] = 'Tag $a->tag musi mieæ atrybuty';
-$string['no_children'] = 'Tag $a->tag musi mieæ \'dzieci\'';
 $string['nomanifest'] = 'Nie znaleziono manifestu';
 $string['noreports'] = 'Brak raportu do wy¶wietlenia';
 $string['normal'] = 'Normalne';
-$string['not_corr_type'] = 'B³±d typu w tagu $a->tag';
 $string['notattempted'] = 'Nie próbowano';
-$string['organizations'] = 'Organizacje';
 $string['packagedir'] = 'B³±d systemu plików: Nie mo¿na utworzyæ folderu dla pakietu';
 $string['passed'] = 'Udane';
-$string['php5'] = 'PHP5 (natywna biblioteka DOMXML)';
-$string['position_error'] = 'Tag $a->tag nie mo¿e byæ \'dzieckiem\' $a->parent';
 $string['prev'] = 'Poprzednie';
 $string['regular'] = 'Regularny manifest';
 $string['report'] = 'Raport';
 $string['review'] = 'Przegl±d';
 $string['scoes'] = 'Wyniki';
 $string['score'] = 'Wynik';
-$string['syntax'] = 'B³±d sk³adni';
-$string['tag_error'] = 'Nieznany tag ($a->tag) w tre¶ci: $a->value';
-$string['too_many_attributes'] = 'Tag $a->tag ma za wiele atrybutów';
-$string['too_many_children'] = 'Tag $a->tag ma za wiele \'dzieci\'';
 $string['trackingloose'] = 'OSTRZE¯ENIE: Dane dotycz±ce monitorowania tego pakietu SCORMa zostan± utracone!';
 $string['validateascorm'] = 'Autoryzuj pakiet SCORMa';
 $string['validation'] = 'Wynik autoryzacji';
-$string['validationtype'] = 'Wybierz bibliotekê DOMXML, która bêdzie autoryzowa³a Manifest SCORM. Je¶li siê na tym nie znasz, pozostaw warto¶æ obecnie wybran±.';
-$string['versionwarning'] = 'Wersja manifestu jest starsza ni¿ 1.3, ostrze¿enie w tagu $a->tag';
 $string['viewallreports'] = 'Przejrzyj raportu dla $a prób';
 
 ?>

@@ -130,7 +130,7 @@ Markdownは、余分(不必要)な<code>&lt;p&gt;</code>タグをブロック要素の周囲に追加す
 
 
 <p>注意: Markdownフォーマットシンタックスはブロック要素の中では処理されません 
-例、あなたはMarkdownスタイル <code>*強調*</code> をHTMLブロックの中で使用できません。</p>
+例、あなたはMarkdown-style <code>*強調*</code> をHTMLブロックの中で使用できません。</p>
 
 <p>汎用的なインライン要素 - 例 <code>&lt;span&gt;</code>、<code>&lt;cite&gt;</code>、<code>&lt;del&gt;</code> - は、
 Markdown段落、リスト、ヘッダのどこでも使用することができます。あなたが希望する場合、Markdownフォーマットの
@@ -141,129 +141,251 @@ Markdown段落、リスト、ヘッダのどこでも使用することができます。あなたが希望する場
 
 <h3 id="autoescape">スペシャルキャラクタの自動エスケープ</h3>
 
-<p>HTMLには特別に扱う必要のある2つの文字があります: <code>&lt;</code> と <code>&amp;</code>です。左鍵括弧タグの開始に使用し、アンパサンドはHTMLエンティティーを示すために使用します。
-これらの文字を使用する場合は、エンティティーとしてエスケープする必要があります。例、<code>&amp;lt;</code> と <code>&amp;amp;</code>です。</p>
 
-<p>特にアンパサンドは、ホームページ製作者泣かせの存在です。&#8216;AT&amp;T&#8217;と書きたい場合、&#8216;<code>AT&amp;amp;T</code>&#8217;と書く必要があります。
-さらに、URLの中でもアンパサンドをエスケープする必要があります。従って、次のようにリンクしたい場合:</p>
+
+<p>In HTML, there are two characters that demand special treatment: <code>&lt;</code>
+
+and <code>&amp;</code>. Left angle brackets are used to start tags; ampersands are
+
+used to denote HTML entities. If you want to use them as literal
+
+characters, you must escape them as entities, e.g. <code>&amp;lt;</code>, and
+
+<code>&amp;amp;</code>.</p>
+
+
+
+<p>Ampersands in particular are bedeviling for web writers. If you want to
+
+write about &#8216;AT&amp;T&#8217;, you need to write &#8216;<code>AT&amp;amp;T</code>&#8217;. You even need to
+
+escape ampersands within URLs. Thus, if you want to link to:</p>
+
+
 
 <pre><code>http://images.google.com/images?num=30&amp;q=larry+bird
 
 </code></pre>
 
-<p>アンカータグ<code>href</code>の属性において、URLを次のようにエンコードする必要があります:</p>
+
+
+<p>you need to encode the URL as:</p>
+
+
 
 <pre><code>http://images.google.com/images?num=30&amp;amp;q=larry+bird
 
 </code></pre>
 
-<p>言うまでもなく、このことは忘れやすく、恐らく適切にマークアップされたウェブサイトでHTML妥当性エラーが発生する最も一般的な原因となっています。</p>
 
-<p>Markdownは必要に応じてエスケープ処理を行いますので、あなたはこれらの文字を自然に使うことができます。
-アンパサンドをHTMLエンティティーの一部として使用したい場合は、そのままの状態にされます。そうで無い場合は、<code>&amp;amp;</code>にエンコードされます。</p>
 
-<p>ですから、あなたが著作権記号を記事に入れたい場合は、次のように記述できます:</p>
+<p>in your anchor tag <code>href</code> attribute. Needless to say, this is easy to
+
+forget, and is probably the single most common source of HTML validation
+
+errors in otherwise well-marked-up web sites.</p>
+
+
+
+<p>Markdown allows you to use these characters naturally, taking care of
+
+all the necessary escaping for you. If you use an ampersand as part of
+
+an HTML entity, it remains unchanged; otherwise it will be translated
+
+into <code>&amp;amp;</code>.</p>
+
+
+
+<p>So, if you want to include a copyright symbol in your article, you can write:</p>
+
+
 
 <pre><code>&amp;copy;
 
 </code></pre>
 
-<p>Markdownはアンパサンドをそのままにします。しかし、次のように記述すると:</p>
+
+
+<p>and Markdown will leave it alone. But if you write:</p>
+
+
 
 <pre><code>AT&amp;T
 
 </code></pre>
 
-<p>Markdownは次のようにエンコードします:</p>
+
+
+<p>Markdown will translate it to:</p>
+
+
 
 <pre><code>AT&amp;amp;T
 
 </code></pre>
 
-<p>同様に、Markdownは<a href="#html">inline HTML</a>をサポートします。鍵括弧をHTMLの区切り文字として使用する場合、Markdownは鍵括弧をそのままにします。しかし、次のように記述すると:</p>
+
+
+<p>Similarly, because Markdown supports <a href="#html">inline HTML</a>, if you use
+
+angle brackets as delimiters for HTML tags, Markdown will treat them as
+
+such. But if you write:</p>
+
+
 
 <pre><code>4 &lt; 5
 
 </code></pre>
 
-<p>Markdownは次のようにエンコードします:</p>
+
+
+<p>Markdown will translate it to:</p>
+
+
 
 <pre><code>4 &amp;lt; 5
 
 </code></pre>
 
-<p>しかし、Markdownコードspansとblocksの中では、鍵括弧、アンパサンドは<em>常に</em>自動的にエンコードされます。このことにより、Markdownを使用すると簡単にHTMLコードを記述することができます。
-(逆に、生のHTMLでHTMLシンタックスを記述すると酷いことになります。あなたのサンプルコード内の全ての <code>&lt;</code> と <code>&amp;</code> をエスケープする必要があるからです。)</p>
+
+
+<p>However, inside Markdown code spans and blocks, angle brackets and
+
+ampersands are <em>always</em> encoded automatically. This makes it easy to use
+
+Markdown to write about HTML code. (As opposed to raw HTML, which is a
+
+terrible format for writing about HTML syntax, because every single <code>&lt;</code>
+
+and <code>&amp;</code> in your example code needs to be escaped.)</p>
+
+
 
 <hr />
 
+
+
 <h2 id="block">ブロック要素</h2>
+
+
 
 <h3 id="p">段落と改行</h3>
 
-<p>段落は、単純に1つまたはそれ以上の空白行で区切られた、1つまたはそれ以上の連続したテキストの行です。
-(空白行は空白行に見えるあらゆる行を指します - スペースまたはタブを含んでいるに過ぎない行も空白行と見なされます。)
-標準的な段落はスペースやタブで区切られることはありません。</p>
 
-<p>「1つまたはそれ以上の連続したテキストの行」ルールは、Markdownが「ハードラップ」テキストの段落をサポートすることを意味します。
-これは他の殆どのtext-toHTMLフォーマッタ(Movable Typeの「改行の変換」オプションも含む)が段落内の全ての改行を <code>&lt;br /&gt;</code>タグに変換する
-のと極めて異なる部分です。
-</p>
 
-<p>あなたがMarkdownを使って<code>&lt;br /&gt;</code>タグを挿入<em>したい</em>場合は、行を1つまたはそれ以上のスペースで終わって、
-改行してください。</p>
+<p>A paragraph is simply one or more consecutive lines of text, separated
 
-<p>そうです、<code>&lt;br /&gt;</code>を作成するには少しばかり努力が必要ですが、単純に「全ての改行は<code>&lt;br /&gt;</code>に変換」
-というルールはMarkdownでは働きません。Markdownのemailスタイル<a href="#blockquote">引用</a>と複数段落の<a href="#list">リストアイテム</a>は、
-ハードブレークのフォーマットを行う時に、最も良く動作し、見栄えが良くなります。</p>
+by one or more blank lines. (A blank line is any line that looks like a
+
+blank line &#8212; a line containing nothing but spaces or tabs is considered
+
+blank.) Normal paragraphs should not be intended with spaces or tabs.</p>
+
+
+
+<p>The implication of the &#8220;one or more consecutive lines of text&#8221; rule is
+
+that Markdown supports &#8220;hard-wrapped&#8221; text paragraphs. This differs
+
+significantly from most other text-to-HTML formatters (including Movable
+
+Type&#8217;s &#8220;Convert Line Breaks&#8221; option) which translate every line break
+
+character in a paragraph into a <code>&lt;br /&gt;</code> tag.</p>
+
+
+
+<p>When you <em>do</em> want to insert a <code>&lt;br /&gt;</code> break tag using Markdown, you
+
+end a line with two or more spaces, then type return.</p>
+
+
+
+<p>Yes, this takes a tad more effort to create a <code>&lt;br /&gt;</code>, but a simplistic
+
+&#8220;every line break is a <code>&lt;br /&gt;</code>&#8221; rule wouldn&#8217;t work for Markdown.
+
+Markdown&#8217;s email-style <a href="#blockquote">blockquoting</a> and multi-paragraph <a href="#list">list items</a>
+
+work best &#8212; and look better &#8212; when you format them with hard breaks.</p>
+
+
 
 <h3 id="header">ヘッダ</h3>
 
-<p>Markdownは、<a href="http://docutils.sourceforge.net/mirror/setext.html">Setext</a> と <a href="http://www.aaronsw.com/2002/atx/">atx</a> の2つのヘッダスタイルをサポートします。</p>
 
-<p>Setextスタイルヘッダは、 イコールサイン (第一レベルヘッダ) とダッシュ (第二レベルヘッダ) を使用して「下線」を引きます。例えば:</p>
 
-<pre><code>これは H1 です。
+<p>Markdown supports two styles of headers, <a href="http://docutils.sourceforge.net/mirror/setext.html">Setext</a> and <a href="http://www.aaronsw.com/2002/atx/">atx</a>.</p>
+
+
+
+<p>Setext-style headers are &#8220;underlined&#8221; using equal signs (for first-level
+
+headers) and dashes (for second-level headers). For example:</p>
+
+
+
+<pre><code>This is an H1
 
 =============
 
 
 
-これは H2 です。
+This is an H2
 
 -------------
 
 </code></pre>
 
-<p>下線は <code>=</code> の数に関わらず表示されます。</p>
-
-<p>Atxスタイルのヘッダは、ヘッダレベル1〜6に応じて1〜6のハッシュキャラクタを行頭で使用します。例えば:</p>
 
 
-
-<pre><code># これは H1 です。
+<p>Any number of underlining <code>=</code>&#8217;s or <code>-</code>&#8217;s will work.</p>
 
 
 
-## これは H2 です。
+<p>Atx-style headers use 1-6 hash characters at the start of the line,
+
+corresponding to header levels 1-6. For example:</p>
 
 
 
-###### これは H6 です。
+<pre><code># This is an H1
+
+
+
+## This is an H2
+
+
+
+###### This is an H6
 
 </code></pre>
 
-<p>Atxスタイルヘッダを「閉じる」こともできます。これは純粋に装飾的なものです - 見た目が良くなる場合は使ってください。ハッシュの数はヘッダを開始する時に使用するハッシュの数に合致する必要はありません。( ヘッダを開始する時のハッシュ数は、ヘッダレベルを決定します。):</p>
-
-<pre><code># これは H1 です。 #
 
 
+<p>Optionally, you may &#8220;close&#8221; atx-style headers. This is purely
 
-## これは H2 です。 ##
+cosmetic &#8212; you can use this if you think it looks better. The
+
+closing hashes don&#8217;t even need to match the number of hashes
+
+used to open the header. (The number of opening hashes
+
+determines the header level.) :</p>
 
 
 
-### これは H3 です。 ######
+<pre><code># This is an H1 #
+
+
+
+## This is an H2 ##
+
+
+
+### This is an H3 ######
 
 </code></pre>
 
@@ -273,9 +395,13 @@ Markdown段落、リスト、ヘッダのどこでも使用することができます。あなたが希望する場
 
 
 
-<p>Markdownでは、E-メールと同じように <code>&gt;</code> を引用に使用します。
-もし、あなたがメールメッセージの引用に慣れているのでしたら、Markdownでどのように引用を作成すればよいか分かるでしょう。
-ハードラップにして、各行の前に <code>&gt;</code> を付けることで見栄えが最良になります:</p>
+<p>Markdown uses email-style <code>&gt;</code> characters for blockquoting. If you&#8217;re
+
+familiar with quoting passages of text in an email message, then you
+
+know how to create a blockquote in Markdown. It looks best if you hard
+
+wrap the text and put a <code>&gt;</code> before every line:</p>
 
 
 
@@ -295,7 +421,9 @@ Markdown段落、リスト、ヘッダのどこでも使用することができます。あなたが希望する場
 
 
 
-<p>Markdownでは、ハードラップした段落の最初の行のみに <code>&gt;</code> コードを付けることもできます:</p>
+<p>Markdown allows you to be lazy and only put the <code>&gt;</code> before the first
+
+line of a hard-wrapped paragraph:</p>
 
 
 
@@ -315,38 +443,43 @@ id sem consectetuer libero luctus adipiscing.
 
 
 
-<p>更に <code>&gt;</code> コードを付けることで、引用をネスト ( 例 引用の中の引用 ) することができます:</p>
+<p>Blockquotes can be nested (i.e. a blockquote-in-a-blockquote) by
+
+adding additional levels of <code>&gt;</code>:</p>
 
 
-<pre><code>&gt; これは最初の階層の引用です。
+
+<pre><code>&gt; This is the first level of quoting.
 
 &gt;
 
-&gt; &gt; これはネストした引用です。
+&gt; &gt; This is nested blockquote.
 
 &gt;
 
-&gt; 最初の階層に戻ります。
+&gt; Back to the first level.
 
 </code></pre>
 
 
 
-<p>引用は、ヘッダー、リスト、コードブロック等、他のMarkdown要素を含むことができます:</p>
+<p>Blockquotes can contain other Markdown elements, including headers, lists,
+
+and code blocks:</p>
 
 
 
-<pre><code>&gt; ## これはヘッダーです。
-
-&gt; 
-
-&gt; 1.   これは最初のリストアイテムです。
-
-&gt; 2.   これは2番目のリストアイテムです。
+<pre><code>&gt; ## This is a header.
 
 &gt; 
 
-&gt; サンプルコードです:
+&gt; 1.   This is the first list item.
+
+&gt; 2.   This is the second list item.
+
+&gt; 
+
+&gt; Here's some example code:
 
 &gt; 
 
@@ -355,50 +488,62 @@ id sem consectetuer libero luctus adipiscing.
 </code></pre>
 
 
-<p>優れたテキストエディタでは、どれでもE-メールスタイルの引用を簡単に付けることができます。
-例えば、BBEditではテキストを選択して、テキストメニューより引用の階層レベルを増やすことができます。</p>
 
-<h3 id="list">リスト</h3>
+<p>Any decent text editor should make email-style quoting easy. For
 
-<p>Markdownは、番号付きリスト(番号) と 番号無しリスト(黒丸) をサポートします。</p>
+example, with BBEdit, you can make a selection and choose Increase
 
-<p>番号無しリストは、アスタリスク、プラス、ハイフンのどれかで記述します:</p>
+Quote Level from the Text menu.</p>
 
 
 
-<pre><code>*   赤
-
-*   緑
-
-*   青
-
-</code></pre>
+<h3 id="list">Lists</h3>
 
 
 
-<p>は下記と同じです:</p>
+<p>Markdown supports ordered (numbered) and unordered (bulleted) lists.</p>
 
 
 
-<pre><code>+   赤
+<p>Unordered lists use asterisks, pluses, and hyphens &#8212; interchangably
 
-+   緑
+&#8212; as list markers:</p>
 
-+   青
+
+
+<pre><code>*   Red
+
+*   Green
+
+*   Blue
 
 </code></pre>
 
 
 
-<p>そして下記とも同じです:</p>
+<p>is equivalent to:</p>
 
 
 
-<pre><code>-   赤
+<pre><code>+   Red
 
--   緑
++   Green
 
--   青
++   Blue
+
+</code></pre>
+
+
+
+<p>and:</p>
+
+
+
+<pre><code>-   Red
+
+-   Green
+
+-   Blue
 
 </code></pre>
 

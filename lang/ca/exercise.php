@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // exercise.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
 
 
 $string['absent'] = 'Absent';
@@ -85,7 +85,7 @@ $string['noexercisedescriptionssubmitted'] = 'No s\'han lliurat les descripcions
 $string['nosubmissions'] = 'No hi ha trameses';
 $string['notassessedyet'] = 'Encara sense avaluar';
 $string['notavailable'] = 'No disponible';
-$string['noteonassessmentelements'] = 'Observeu que la qualificació està dividida <br /> en una quantitat d\'elements d\'avaluació\'.<br />Això fa més fàcil i consistent la qualificació. Com a professor/a, heu d\'afegir  <br />aquests elements abans de posar la tasca a disposició dels alumnes <br />Cliqueu sobre la tasca del curs corresponent; si no hi ha<br />elements presents us demanarà que els afegiu.<br />Podeu canviar el nombre d\'elements si utilitzeu la pantalla d\'edició de feines, <br />i podreu corregir-los des de la  pantalla de l\'administrador de feines';
+$string['noteonassessmentelements'] = 'Observeu que la qualificació està dividida <br/> en una quantitat d\'elements d\'avaluació\'.<br />Això fa més fàcil i consistent la qualificació. Com a professor/a, heu d\'afegir  <br />aquests elements abans de posar la tasca a disposició dels alumnes <br />Cliqueu sobre la tasca del curs corresponent; si no hi ha<br />elements presents us demanarà que els afegiu.<br />Podeu canviar el nombre d\'elements si utilitzeu la pantalla d\'edició de feines, <br />i podreu corregir-los des de la  pantalla de l\'administrador de feines';
 $string['noteongradinggrade'] = 'Aquesta qualificació avalua si la vostra avaluació concorda amb l\'avaluació <br />del vostre treball pels $a. Com més alta sigui, major és la coincidència.';
 $string['noteonstudentassessments'] = '{qualificació de l\'estudiant / Nivell de qualificació del professor/a}';
 $string['notgraded'] = 'No qualificat';
@@ -110,7 +110,7 @@ $string['pleasegradetheassessment'] = 'Si us plau, qualifiqueu l\'avaluació del 
 $string['pleasemakeyourownassessment'] = 'Si us plau, qualifiqueu el  treball de $a. <br />Noteu que el formulari d\'avaluació es veu al costat de l\'avaluació feta per l\'estudiant.<br /> Heu de fer les correccions necessàries i clicar en un <br />dels botons que apareixen al final de la pàgina.';
 $string['pleasesubmityourwork'] = 'Si us plau, Utilitzeu aquest formulari per lliurar el treball';
 $string['pleaseusethisform'] = 'Si us plau, ompliu aquest formulari <br />quan hagueu seguit totes les indicacions de l\'exercici de sota.';
-$string['pleaseviewtheexercise'] = 'Si us plau, cliqueu sobre el títol per a veure aquest exercici <br />i seguiu les indicacions. <br /> Quan estigueu d\'acord amb el treball, cliqueu en l\'enllaç Avaluar (o Tornar a Avalauar)<br /> A la dreta del títol. Quan ja hagueu fet l\'avaluació, es visualitzaran <br />noves indicacions per seguir endavant.';
+$string['pleaseviewtheexercise'] = 'Si us plau, cliqueu sobre el títol per a veure aquest exercici <br />i seguiu les indicacions. <br/> Quan estigueu d\'acord amb el treball, cliqueu en l\'enllaç Avaluar (o Tornar a Avalauar)<br /> A la dreta del títol. Quan ja hagueu fet l\'avaluació, es visualitzaran <br />noves indicacions per seguir endavant.';
 $string['poor'] = 'Pobre';
 $string['present'] = 'Present';
 $string['reasonforadjustment'] = 'Raó per ajustar';

@@ -1,38 +1,49 @@
-<p align="center"><b>リッチテキストHTMLエディタに関して</b></p>
+<P ALIGN=CENTER><B>リッチテキストHTMLエディタに関して</B></P>
 
-<p>利用可能な機能: <b>
-HTMLエディタは利用可能です</b></p>
+<P>利用可能な機能: <B>
+<?php  if (!$CFG->htmleditor) {
+       print_string("htmleditordisabledadmin");
+   } else if (!$USER->htmleditor) {
+       print_string("htmleditordisabled");
+   } else if (!can_use_richtext_editor()) {
+       print_string("htmleditordisabledbrowser");
+   } else {
+       print_string("htmleditoravailable");
+   }
+?>
+</B></P>
 
-<p>リッチテキストHTMLエディタはブラウザ上でワードプロセッサの機能を実現します。ここでは直感的にテキストを編集することが可能で、通常のHTMLコードが自動生成されます。
+<P>リッチテキストHTMLエディタはブラウザ上でワードプロセッサの機能を実現します。ここでは直感的にテキストを編集することが可能で、通常のHTMLコードが自動生成されます。
 
-<p>このエディタにはテキストの整形に加えて数多くの便利な機能があります。</p>
+<P>このエディタは、テキストの整形に加えて数多くの便利な機能を提供します。
 
-<p><b>他のアプリケーションからテキストをコピーする</b></p>
-<ul>
-<p>リッチテキストをMicrosoft Word等の他のWindowsアプリケーションからコピー&ペーストすることが
-できます。コピー元のフォーマットはそのまま保持されます。ブラウザのメニューより通常のコピーおよび
-貼り付けを使用してください　(　Control-C and Control-Vを使うこともできます　)。
-</ul>
+<P><B>他のアプリケーションからテキストをコピーする</B></P>
+<UL>
+<P>リッチテキストをMicrosoft Word等の他のWindowsアプリケーションからコピー&ペーストすることが
+出来ます。コピー元のフォーマットはそのまま保持されます。ブラウザのメニューより通常のコピー及び
+貼り付けを使用してください。(Control-C and Control-Vを使うことも出来ます)
+</UL>
 
-<p><b>イメージを挿入する<img border="0" hspace="10" src="lib/editor/images/ed_image.gif"></b></p>
-<ul>
-<p>ウェブ上に公開されていて、URLでアクセス可能なイメージを「Insert Image」ボタンを使って挿入することができます。</ul>
+<P><B>画像を挿入する<img border="0" hspace="10" src="lib/editor/images/ed_image.gif"></B></P>
+<UL>
+<P>ウェブ上に公開されていて、URLでアクセス可能な画像を"Insert Image"ボタンを使って挿入することが出来ます。</UL>
 
-<p><b>テーブルを挿入する<img border="0" hspace="10" src="lib/editor/images/insert_table.gif"></b></p>
-<ul>
-<p>テキストにレイアウトを追加する場合は、ツールバーの「Insert Tables」ボタンを使用できます。
-</ul>
+<P><B>テーブルを挿入する<img border="0" hspace="10" src="lib/editor/images/insert_table.gif"></B></P>
+<UL>
+<P>テキストにレイアウトを追加する場合は、ツールバーの"Insert Tables"ボタンを使用出来ます。
+</UL>
 
-<p><b>リンクを挿入する<img border="0" hspace="10" src="lib/editor/images/ed_link.gif"></b></p>
-<ul>
-<p>新しいリンクを作成する場合は、まずリンクを張りたいテキストを入力してください。そしてそのテキストを選択して、ツールバーのリンクボタンをクリックしてください。リンクしたいURLを入力して完了です!
-</ul>
+<P><B>リンクを挿入する<img border="0" hspace="10" src="lib/editor/images/ed_link.gif"></B></P>
+<UL>
+<P>新しいリンクを作成する場合は、まずリンクを張りたいテキストを入力してください。そしてそのテキストを選択してツールバーのリンクボタンをクリックしてください。リンクしたいURLを入力して完了です!
+</UL>
 
-<p><b>スマイリー ( 感情表現アイコン ) を挿入する<img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></b></p>
-<ul>
-<p>テキストにこれらの小さなアイコンを挿入する場合は、ツールバーのスマイリーアイコンをクリック
-してください ( 代わりに該当するコードをテキストに入れることもできます。このコードはスマイリーに
-変換されます。 ) 。
+
+<P><B>スマイリー(感情表現アイコン)を挿入する<img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></B></P>
+<UL>
+<P>テキストにこれらの小さなアイコンを挿入する場合は、ツールバーのスマイリーアイコンをクリック
+してください。(代わりに該当するコードをテキストに入れることも出来ます。このコードはスマイリーに
+変換されます)
 
     <table border="1">
       <tr valign="top">
@@ -41,52 +52,52 @@ HTMLエディタは利用可能です</b></p>
           <tr>
             <td><img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></td>
             <td>笑顔</td>
-            <td><font face="Courier">:-)</td>
+            <td><FONT FACE=Courier>:-)</td>
           </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="pix/s/biggrin.gif" width="15" height="15"></td>
             <td>満面の笑顔</td>
-            <td><font face="Courier">:-D</td>
+            <td><FONT FACE=Courier>:-D</td>
           </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="pix/s/wink.gif" width="15" height="15"></td>
             <td>ウインク</td>
-            <td><font face="Courier">;-)</td>
+            <td><FONT FACE=Courier>;-)</td>
           </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="pix/s/mixed.gif" width="15" height="15"></td>
             <td>複雑な</td>
-            <td><font face="Courier">:-/</td>
+            <td><FONT FACE=Courier>:-/</td>
           </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="pix/s/thoughtful.gif" width="15" height="15"></td>
               <td>思慮深い</td>
-              <td><font face="Courier">V-.</FONT></td>
+              <td><FONT FACE=Courier>V-.</FONT></td>
             </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="pix/s/tongueout.gif" width="15" height="15"></td>
             <td>ベー</td>
-            <td><font face="Courier">:-P</td>
+            <td><FONT FACE=Courier>:-P</td>
          </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="pix/s/cool.gif" width="15" height="15"></td>
             <td>クール</td>
-            <td><font face="Courier">B-)</td>
+            <td><FONT FACE=Courier>B-)</td>
           </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="pix/s/approve.gif" width="15" height="15"></td>
               <td>賛成</td>
-              <td><font face="Courier">^-)</td>
+              <td><FONT FACE=Courier>^-)</td>
             </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="pix/s/wideeyes.gif" width="15" height="15"></td>
               <td>大きな目</td>
-              <td><font face="Courier">8-)</td>
+              <td><FONT FACE=Courier>8-)</td>
             </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="pix/s/surprise.gif" width="15" height="15"></td>
               <td>驚き</td>
-              <td><font face="Courier">8-o</td>
+              <td><FONT FACE=Courier>8-o</td>
             </tr>
         </table>
         </td>
@@ -95,54 +106,56 @@ HTMLエディタは利用可能です</b></p>
             <tr>
               <td><img alt border="0" hspace="10" src="pix/s/sad.gif" width="15" height="15"></td>
               <td>悲しい</td>
-              <td><font face="Courier">:-(</td>
+              <td><FONT FACE=Courier>:-(</td>
             </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="pix/s/shy.gif" width="15" height="15"></td>
               <td>恥ずかしい</td>
-              <td><font face="Courier">8-.</td>
+              <td><FONT FACE=Courier>8-.</td>
             </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="pix/s/blush.gif" width="15" height="15"></td>
             <td>赤面</td>
-            <td><font face="Courier">:-I</td>
+            <td><FONT FACE=Courier>:-I</td>
           </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="pix/s/kiss.gif" width="15" height="15"></td>
               <td>キス</td>
-              <td><font face="Courier">:-X</td>
+              <td><FONT FACE=Courier>:-X</td>
             </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="pix/s/clown.gif" width="15" height="15"></td>
             <td>ピエロ</td>
-            <td><font face="Courier">:o)</td>
+            <td><FONT FACE=Courier>:o)</td>
           </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="pix/s/blackeye.gif" width="15" height="15"></td>
             <td>眼帯</td>
-            <td><font face="Courier">P-|</td>
+            <td><FONT FACE=Courier>P-|</td>
           </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="pix/s/angry.gif" width="15" height="15"></td>
               <td>怒り</td>
-              <td><font face="Courier">8-[</td>
+              <td><FONT FACE=Courier>8-[</td>
             </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="pix/s/dead.gif" width="15" height="15"></td>
               <td>ヘトヘト</td>
-              <td><font face="Courier">xx-P</td>
+              <td><FONT FACE=Courier>xx-P</td>
             </tr>
             <tr>
               <td><img alt border="0" hspace="10" src="pix/s/sleepy.gif" width="15" height="15"></td>
               <td>眠たい</td>
-              <td><font face="Courier">|-.</td>
+              <td><FONT FACE=Courier>|-.</td>
             </tr>
           <tr>
             <td><img alt border="0" hspace="10" src="pix/s/evil.gif" width="15" height="15"></td>
             <td>意地悪</td>
-            <td><font face="Courier">}-]</td>
+            <td><FONT FACE=Courier>}-]</td>
           </tr>
         </table>
     </table>
 
-</ul>
+</UL>
+
+

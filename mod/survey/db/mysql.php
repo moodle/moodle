@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
 function survey_upgrade($oldversion) {
 // This function does anything necessary to upgrade
@@ -175,22 +175,6 @@ function survey_upgrade($oldversion) {
     if ($oldversion < 2004021900) {
         modify_database("", "INSERT INTO prefix_log_display VALUES ('survey', 'add', 'survey', 'name');");
         modify_database("", "INSERT INTO prefix_log_display VALUES ('survey', 'update', 'survey', 'name');");
-    }
-
-    if ($oldversion < 2004111200) {
-        execute_sql("ALTER TABLE {$CFG->prefix}survey DROP INDEX course;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}survey_analysis DROP INDEX survey;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}survey_analysis DROP INDEX userid;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}survey_answers DROP INDEX userid;",false); 
-        execute_sql("ALTER TABLE {$CFG->prefix}survey_answers DROP INDEX survey;",false); 
-        execute_sql("ALTER TABLE {$CFG->prefix}survey_answers DROP INDEX question;",false);
-
-        modify_database('','ALTER TABLE prefix_survey ADD INDEX course (course);');
-        modify_database('','ALTER TABLE prefix_survey_analysis ADD INDEX survey (survey);');
-        modify_database('','ALTER TABLE prefix_survey_analysis ADD INDEX userid (userid);');
-        modify_database('','ALTER TABLE prefix_survey_answers ADD INDEX userid (userid);');
-        modify_database('','ALTER TABLE prefix_survey_answers ADD INDEX survey (survey);');
-        modify_database('','ALTER TABLE prefix_survey_answers ADD INDEX question (question);');
     }
 
     return true;

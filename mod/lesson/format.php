@@ -51,7 +51,7 @@ class quiz_default_format {
                     $count++;
 
                     echo "<hr><p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
-                    $newpage = new stdClass;
+                    unset($newpage);
                     $newpage->lessonid = $lesson->id;
                     $newpage->qtype = $question->qtype;
                     switch ($question->qtype) {

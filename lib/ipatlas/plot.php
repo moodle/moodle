@@ -11,15 +11,10 @@ if (isset($user)) {
     $username = "";
 }
 
-if ($CFG->debug > 1) {
+if($warnings == "1") {
 error_reporting(E_ALL);
 } else {
 error_reporting(E_ERROR);
-}
-
-// cleanup
-if (isset($HTTP_GET_VARS["lastquery"])) {
-    $HTTP_GET_VARS["lastquery"] = clean_param($HTTP_GET_VARS["lastquery"], PARAM_HOST);
 }
 
 // check if it is the user's ip, or another host
@@ -28,7 +23,6 @@ if(!isset($HTTP_GET_VARS["address"]) || ($HTTP_GET_VARS["address"] == "")) {
     $address = $HTTP_SERVER_VARS['REMOTE_ADDR'];
     $local = 1; 
 } else {
-    $HTTP_GET_VARS["address"] = clean_param($HTTP_GET_VARS["address"], PARAM_HOST);
     $address = $HTTP_GET_VARS["address"];
     $local = 0; 
 }
@@ -44,7 +38,6 @@ if(isset($logging) && is_writable("plotlog.txt")) {
 
 if(isset($HTTP_COOKIE_VARS["atlasprefs"]) && validcookie($HTTP_COOKIE_VARS["atlasprefs"])) {
 list( , , , $imagething) = split(":", $HTTP_COOKIE_VARS["atlasprefs"]);
-$imagething = clean_param($imagething, PARAM_FILE);
 $earthimage = isvalidimage($imagething, $earthimages, $defaultimage);
 } else {
 $earthimage = $earthimages[$defaultimage];
@@ -71,12 +64,10 @@ list($x, $y) = getlocationcoords($values["lat"], $values["lon"], $width, $height
 
 if(isset($HTTP_COOKIE_VARS["atlasprefs"])) {
 list( , , , , $dotname) = split(":", $HTTP_COOKIE_VARS["atlasprefs"]);
-$dotname = clean_param($dotname, PARAM_FILE);
 list($thedot, $dotwidth, $dotheight) = finddot($dotname, $cssdots, $defaultdot);
 } else {
 $dotname = $cssdots[$defaultdot];
 list($dotname, , , ) = split(":", $dotname);
-$dotname = clean_param($dotname, PARAM_FILE);
 list($thedot, $dotwidth, $dotheight) = finddot($dotname, $cssdots, $defaultdot);
 }
 
@@ -97,7 +88,7 @@ $display = "<div id=\"dotDiv\"><img width=\"$dotwidth\" height=\"$dotheight\" sr
 
 list($width, $height) = getimagecoords($earthimages, $earthimage) or die("Unable to find width/height for image $earthimage in config file");
 $extracss = "";
-$display = "<img src=\"plotimage.php?lat=$values[lat]&amp;lon=$values[lon]\" width=\"$width\" height=\"$height\" alt=\"\" />";
+$display = "<img src=\"plotimage.php?lat=$values[lat]&lon=$values[lon]\" width=\"$width\" height=\"$height\">";
 
 }
 
@@ -118,17 +109,17 @@ print '
 <table valign="top" cellpadding=0 cellspacing=0 border=0 background="'.$earthimage.'" width="'.$width.'" height="'.$height.'"><tr><td valign="top">'.$display.'</td></tr></table>
 
 
-<br />
+<br>
 ';
 
 if(isset($address)) {
 print "$username $values[desc]";
 }
 
-$PHP_SELF = 'plot.php';
+$PHP_SELF = $HTTP_SERVER_VARS['PHP_SELF'];
 
 print '
-<br /><br />
+<br><br>
 <form method="GET" action="'.$PHP_SELF.'#map">
 <table width="100%"><tr><td nowrap align="left">
 '.t("IP/Hostname:").' <input value="'.$values["address"].'" type="text" size="30" name="address"><input type="Submit" value="'.t("Submit").'"></td><td align="right" width="100%">

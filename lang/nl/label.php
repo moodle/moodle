@@ -1,12 +1,9 @@
 <?PHP // $Id$ 
-      // label.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // label.php - created with Moodle 1.2 development (2003092900)
 
 
-$string['labeltext'] = 'Labeltekst';
-$string['modulename'] = 'Label';
-$string['modulenameplural'] = 'Labels';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
+$string['labeltext'] = "Label tekst";
+$string['modulename'] = "Label";
+$string['modulenameplural'] = "Labels";
 
 ?>

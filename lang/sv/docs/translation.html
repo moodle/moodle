@@ -1,13 +1,11 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
   <title>Moodle translation guide</title>
-  <link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
-  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
 
-<body>
+<body style="background-color: rgb(255, 255, 255);">
 
 <h1>Moodle Translation Guide</h1>
 
@@ -121,8 +119,11 @@ restrict the available languages on <span style="font-weight: bold;">Admin &gt;&
 
 
 
+<ol>
+
+
   
-  <ol  style="margin-left: 80px;">
+  <ol>
     <li>Log on to your Moodle server as an administrator. </li>
     <li>Go to <span style="font-weight: bold;">Administration &gt;&gt; Configuration &gt;&gt; Language</span>, which is the language administration page. </li>
     <li>On this page you can choose your language from the  menu, then choose "Compare and Edit Language".</li>
@@ -146,7 +147,9 @@ language in moodle.php, otherwise English is always used by default. </li>
     
     
     
-
+    
+    
+  </ol>
 </ol>
 
 
@@ -162,21 +165,6 @@ language pack. Then use a plain text editor to translate the file,
 making sure not to modify any code in the file (there usually is no
 code, just HTML-tags). (DON'T USE A WORDPROCESSOR to write the
 help-files because these programs add too much rubbish to the files).</p>
-
-<p style="margin-left: 80px;">Take care to write the helpfiles XHTML-compliant. This means in short:</p>
-<ul style="margin-left: 80px;">
-  <li>All tags should be closed: <span style="color:rgb(255, 0, 0);" >&lt;p&gt;</span>lalala<span style="color:rgb(255, 0, 0);" >&lt;/p&gt;</span></li>
-  <li>All elements should be nested: <span style="color:rgb(255, 0, 0);" >&lt;p&gt;</span> lalala <span style="color:rgb(0, 0, 255);" >&lt;em&gt;</span>lalala<span style="color:rgb(0, 0, 255);" >&lt;/em&gt;</span> <span style="color:rgb(255, 0, 0);" >&lt;/p&gt;</span></li>
-  <li>All elements and attributes must be lower case</li>
-  <li>All atributes should be written in full and with quotes : <span style="color:rgb(255, 0, 0);" >&lt;p align=&quot;right&quot;&gt;</span> lalala &lt;/p&gt;</li>
-  <li>Empty elements must end with /&gt;: <span style="color:rgb(255, 0, 0);" >&lt;br /&gt; &lt;hr /&gt;</span>. You should add an extra space before the "/" symbol.</li>
-  <li>An &lt;img should have an alt (it can be empty) like <span style="color:rgb(255, 0, 0);" >&lt;img alt   src="picture.gif"></span></li>
-  <li><span style="color:rgb(255, 0, 0);" >&lt;?=</span> and <span style="color:rgb(255, 0, 0);" >&lt;?</span> should be <span style="color:rgb(255, 0, 0);" >&lt;?php</span></li>
-  <li>There should not be ANY font tags at all. <span style="color:rgb(255, 0, 0);" > &lt;p&gt;&lt;em&gt; &lt;h1&gt; &lt;h2&gt;</span> etc should be enough for the language files ...</li>
-  <li>The language name in the languagepack ($string['thislanguage']  in moodle.php) should generally use Unicode Numeric Character References (NCR) if possible, because this allows the name to work within ANY encoding context (see the Chinese pack for example).</li>
-</ul>
-<p style="margin-left: 80px;">None of the files in the help folder need a doc type, html, body, head opening and closing tags - these files are included with help.php. The script will take care of welforming the pages. This means also there is not much room for HTML creativity! Please stick to the English example.</p>
-<p style="margin-left: 80px;">The files in the docs folder must be completely XHTML compliant, including doc type, header etc.</p>
 
  
 <p style="margin-left: 80px;">Clicking on "Check for missing strings"
@@ -197,7 +185,7 @@ Your interface language will be available in future versions of Moodle.<br />
 </p>
 
 
-<p style="margin-left: 40px;">Simply archive your whole new language directory as a <span style="font-weight: bold;">zip</span> file and email it to <a href="m&#97&#105&#108&#116&#111:tra%6es%6ca%74%69o%6e%40%6d%6f%6f%64%6c%65.org">&#116&#114a&#110&#115&#108&#97t&#105on&#64&#109o&#111&#100&#108e&#46o&#114&#103</a>.<br />
+<p style="margin-left: 40px;">Simply archive your whole new language directory as a <span style="font-weight: bold;">zip</span> file and email it to translation@moodle.org.<br />
 </p>
 <p style="margin-left: 40px;">We will get back to you with further details.<br />
 </p>
@@ -211,19 +199,15 @@ Your interface language will be available in future versions of Moodle.<br />
 
 
 
-<p style="margin-left: 40px;">If you are committed to maintaining a language in Moodle, it's best to use <a href="?file=cvs.html">Moodle CVS</a> so that you have an up-to-date version of Moodle, and can easily "check in" your changes directly into the Moodle project. Contact <a href="m&#97&#105&#108&#116&#111:tra%6es%6ca%74%69o%6e%40%6d%6f%6f%64%6c%65.org">&#116&#114a&#110&#115&#108&#97t&#105on&#64&#109o&#111&#100&#108e&#46o&#114&#103</a> if you need help setting this up.<br />
+<p style="margin-left: 40px;">If you are committed to maintaining a language in Moodle, it's best to use <a href="?file=cvs.html">Moodle CVS</a> so that you have an up-to-date version of Moodle, and can easily "check in" your changes directly into the Moodle project.<br />
 </p>
-
-<p style="margin-left: 40px;">You must also subscribe to the <a target="_top" href="http://moodle.org/mod/forum/view.php?id=43">Languages Forum</a> for news and discussion about issues that affect translations.<br />
-</p>
-
-<p style="margin-left: 40px;">Finally, to keep in touch with changes in the project on a day-to-day basis it is a very good idea to subscribe to the <a href="http://sourceforge.net/mail/?group_id=30935" target="_top">CVS mailing list</a>.&nbsp; This helps to keep your
+<p style="margin-left: 40px;">To keep in touch with changes in the project it is a very good idea to subscribe to the <a href="http://sourceforge.net/mail/?group_id=30935" target="_top">CVS mailing list</a>.&nbsp; This helps to keep your
 translation as close to the English text as possible.<br />
 </p>
 <p style="margin-left: 40px;"><br />
 </p>
 
-<p align="center"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
-<p align="center"><font size="1">Version: $Id$</font></p>
+<p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
 
 </body></html>

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
     //This file adds support to rss feeds generation
 
     //This function is the main entry point to glossary
@@ -48,7 +48,7 @@
                             continue;
                         }
 
-                        mtrace("Updating RSS feed for ".format_string($glossary->name,true).", ID: $glossary->id");
+                        mtrace("Updating RSS feed for $glossary->name, ID: $glossary->id");
 
                         //Some debug...
                         if ($CFG->debug > 7) {
@@ -102,14 +102,14 @@
         if (empty($CFG->enablerssfeeds)) {
             //Some debug...
             if ($CFG->debug > 7) {
-                echo "DISABLED (admin variables)";
-            }
+                echo "DISABLED (admin variables)"; 
+            }           
         //Check CFG->glossary_enablerssfeeds
         } else if (empty($CFG->glossary_enablerssfeeds)) {
-            //Some debug...
+            //Some debug... 
             if ($CFG->debug > 7) {
                 echo "DISABLED (module configuration)";
-            }
+            }           
         //It's working so we start...
         } else {
             //Check the glossary has rss activated
@@ -119,14 +119,14 @@
                     $items = glossary_rss_feed_withauthor($glossary);
                 } else {                //Without author RSS
                     $items = glossary_rss_feed_withoutauthor($glossary);
-
+     
                 }
                 //Now, if items, we begin building the structure
                 if (!empty($items)) {
                     //First all rss feeds common headers
-                    $header = rss_standard_header(format_string($glossary->name,true),
+                    $header = rss_standard_header($glossary->name,
                                                   $CFG->wwwroot."/mod/glossary/view.php?f=".$glossary->id,
-                                                  format_string($glossary->intro,true));
+                                                  $glossary->intro);
                     //Now all the rss items
                     if (!empty($header)) {
                         $articles = rss_add_items($items);
@@ -140,7 +140,7 @@
                         $status = $header.$articles.$footer;
                     } else {
                         $status = false;
-                    }
+                    } 
                 } else {
                     $status = false;
                 }
@@ -159,18 +159,18 @@
 
         if ($newsince) {
             $newsince = " AND e.timecreated > '$newsince'";
-        } else {
+        } else {        
             $newsince = "";
-        }
+        }       
 
-        if ($recs = get_records_sql ("SELECT e.id AS entryid, 
-                                             e.concept AS entryconcept, 
-                                             e.definition AS entrydefinition, 
-                                             e.format AS entryformat, 
-                                             e.timecreated AS entrytimecreated, 
-                                             u.id AS userid, 
-                                             u.firstname AS userfirstname,
-                                             u.lastname AS userlastname
+        if ($recs = get_records_sql ("SELECT e.id entryid, 
+                                             e.concept entryconcept, 
+                                             e.definition entrydefinition, 
+                                             e.format entryformat, 
+                                             e.timecreated entrytimecreated, 
+                                             u.id userid, 
+                                             u.firstname userfirstname,
+                                             u.lastname userlastname
                                       FROM {$CFG->prefix}glossary_entries e,
                                            {$CFG->prefix}user u
                                       WHERE e.glossaryid = '$glossary->id' AND
@@ -220,14 +220,14 @@
             $newsince = "";
         }
 
-        if ($recs = get_records_sql ("SELECT e.id AS entryid,
-                                             e.concept AS entryconcept,
-                                             e.definition AS entrydefinition,
-                                             e.format AS entryformat,
-                                             e.timecreated AS entrytimecreated,
-                                             u.id AS userid,
-                                             u.firstname AS userfirstname,
-                                             u.lastname AS userlastname
+        if ($recs = get_records_sql ("SELECT e.id entryid,
+                                             e.concept entryconcept,
+                                             e.definition entrydefinition,
+                                             e.format entryformat,
+                                             e.timecreated entrytimecreated,
+                                             u.id userid,
+                                             u.firstname userfirstname,
+                                             u.lastname userlastname
                                       FROM {$CFG->prefix}glossary_entries e,
                                            {$CFG->prefix}user u
                                       WHERE e.glossaryid = '$glossary->id' AND
@@ -263,5 +263,5 @@
         }
         return $items;
     }
-
+    
 ?>

@@ -112,11 +112,11 @@ $string['noassessmentsdone'] = 'Non se fixeron valoracións';
 $string['nosubmission'] = 'Sen envíos';
 $string['nosubmissionsavailableforassessment'] = 'Non hai envíos dispoñibles para a valoración';
 $string['notavailable'] = 'Non dispoñible';
-$string['noteonassessmentelements'] = 'Note que a cualificación está dividida nunha serie de \'Elementos de valoración\'.<br />
-Isto fai a cualificación máis sinxela e consistente. Como profesor/a vostede debe engadir estes<br />
-Elementos antes de pór a disposición dos estudantes a tarefa. Isto conséguese<br />
-premendo na tarefa no curso, e se non hai elementos pediráselle<br /> 
-que os engada. Pode cambiar o número de elementos empregando a pantalla de editar tarefa,<br />
+$string['noteonassessmentelements'] = 'Note que a cualificación está dividida nunha serie de \'Elementos de valoración\'.<br>
+Isto fai a cualificación máis sinxela e consistente. Como profesor/a vostede debe engadir estes<br>
+Elementos antes de pór a disposición dos estudantes a tarefa. Isto conséguese<br>
+premendo na tarefa no curso, e se non hai elementos pediráselle<br> 
+que os engada. Pode cambiar o número de elementos empregando a pantalla de editar tarefa,<br>
 o elemento en si pode ser rectificado desde a pantalla \"Administrar Tarefa\". ';
 $string['notgraded'] = 'Non se cualificou';
 $string['notitlegiven'] = 'Non se lle deu un título';

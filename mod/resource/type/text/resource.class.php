@@ -31,13 +31,6 @@ function add_instance($resource) {
         $resource->popup = "";
     }
 
-    if (isset($resource->parametersettingspref)) {
-        set_user_preference('resource_parametersettingspref', $resource->parametersettingspref);
-    }
-    if (isset($resource->windowsettingspref)) {
-        set_user_preference('resource_windowsettingspref', $resource->windowsettingspref);
-    }
-
     return insert_record("resource", $resource);
 }
 
@@ -64,48 +57,46 @@ function update_instance($resource) {
         $resource->popup = "";
     }
 
-    if (isset($resource->parametersettingspref)) {
-        set_user_preference('resource_parametersettingspref', $resource->parametersettingspref);
-    }
-    if (isset($resource->windowsettingspref)) {
-        set_user_preference('resource_windowsettingspref', $resource->windowsettingspref);
-    }
-
     return update_record("resource", $resource);
 }
 
 function display() {
-    global $CFG;
+    global $CFG, $THEME;
 
-/// Set up generic stuff first, including checking for access
-    parent::display();
+    $course = $this->course;  // Shortcut
+    $resource = $this->resource;  // Shortcut
 
-/// Set up some shorthand variables
-    $cm = $this->cm;     
-    $course = $this->course;
-    $resource = $this->resource; 
+    $strresource = get_string("modulename", "resource");
+    $strresources = get_string("modulenameplural", "resource");
+    $strlastmodified = get_string("lastmodified");
 
-    $pagetitle = strip_tags($course->shortname.': '.format_string($resource->name));
+    if ($course->category) {
+        require_login($course->id);
+        $navigation = "<a target=\"{$CFG->framename}\" href=\"../../course/view.php?id={$course->id}\">{$course->shortname}</a> ->              
+                       <a target=\"{$CFG->framename}\" href=\"index.php?id={$course->id}\">$strresources</a> ->";
+    } else {
+        $navigation = "<a target=\"{$CFG->framename}\" href=\"index.php?id={$course->id}\">$strresources</a> ->";     }
+
+    $pagetitle = strip_tags($course->shortname.': '.$resource->name);
     $formatoptions->noclean = true;
     $inpopup = !empty($_GET["inpopup"]);
 
     if ($resource->popup) {
         if ($inpopup) {                    /// Popup only
-            add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", 
-                       $resource->id, $cm->id);
+            add_to_log($course->id, "resource", "view", "view.php?id={$this->cm->id}", 
+                       $resource->id, $this->cm->id);
             print_header();
             print_simple_box(format_text($resource->alltext, $resource->options, $formatoptions, $course->id), 
-                             "center", "", "", "20");
-            print_footer($course);
+                             "center", "", "$THEME->cellcontent", "20");
         } else {                           /// Make a page and a pop-up window
 
-            print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), 
-                         "", "", true, update_module_button($cm->id, $course->id, $this->strresource), 
-                         navmenu($course, $cm));
+            print_header($pagetitle, $course->fullname, "$navigation {$resource->name}", 
+                         "", "", true, update_module_button($this->cm->id, $course->id, $strresource), 
+                         navmenu($course, $this->cm));
 
-            echo "\n<script language=\"javascript\" type=\"text/javascript\">";
+            echo "\n<script language=\"Javascript\">";
             echo "\n<!--\n";
-            echo "openpopup('/mod/resource/view.php?inpopup=true&id={$cm->id}','resource{$resource->id}','{$resource->popup}');\n";
+            echo "openpopup('/mod/resource/view.php?inpopup=true&id={$this->cm->id}','resource{$resource->id}','{$resource->popup}');\n";
             echo "\n-->\n";
             echo '</script>';
     
@@ -113,7 +104,7 @@ function display() {
                 print_simple_box(format_text($resource->summary, FORMAT_MOODLE, $formatoptions, $course->id), "center");
             }
     
-            $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&amp;id={$cm->id}\" target=\"resource{$resource->id}\" onclick=\"return openpopup('/mod/resource/view.php?inpopup=true&amp;id={$cm->id}', 'resource{$resource->id}','{$resource->popup}');\">".format_string($resource->name,true)."</a>";
+            $link = "<a href=\"$CFG->wwwroot/mod/resource/view.php?inpopup=true&id={$this->cm->id}\" target=\"resource{$resource->id}\" onClick=\"return openpopup('/mod/resource/view.php?inpopup=true&id={$this->cm->id}', 'resource{$resource->id}','{$resource->popup}');\">{$resource->name}</a>";
     
             echo "<p>&nbsp</p>";
             echo '<p align="center">';
@@ -126,16 +117,15 @@ function display() {
         }
     } else {    /// not a popup at all
 
-        add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
-        print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name),
-                     "", "", true, update_module_button($cm->id, $course->id, $this->strresource), 
-                     navmenu($course, $cm));
+        add_to_log($course->id, "resource", "view", "view.php?id={$this->cm->id}", $resource->id, $this->cm->id);
+        print_header($pagetitle, $course->fullname, "$navigation {$resource->name}",
+                     "", "", true, update_module_button($this->cm->id, $course->id, $strresource), 
+                     navmenu($course, $this->cm));
     
         print_simple_box(format_text($resource->alltext, $resource->options, $formatoptions, $course->id), 
-                         "center", "", "", "20");
+                         "center", "", "$THEME->cellcontent", "20");
     
-        $strlastmodified = get_string("lastmodified");
-        echo "<center><p><font size=\"1\">$strlastmodified: ".userdate($resource->timemodified)."</font></p></center>";
+        echo "<center><p><font size=1>$strlastmodified: ".userdate($resource->timemodified)."</p></center>";
     
         print_footer($course);
     }
@@ -187,19 +177,14 @@ function setup($form) {
                 if ($optionname == "height" or $optionname == "width") {
                     $window->$optionname = $optionvalue;
                 } else if ($optionvalue) {
-                    $window->$optionname = 'checked="checked"';
+                    $window->$optionname = "checked";
                 }
             }
         }
     } else {
         foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
             $defaultvalue = "resource_popup$optionname";
-            
-            if ($optionname == "height" or $optionname == "width") {
-                $window->$optionname = $CFG->$defaultvalue;
-            } else if ($CFG->$defaultvalue) {
-                $window->$optionname = 'checked="checked"';
-            }
+            $window->$optionname = $CFG->$defaultvalue;
         }
 
         $windowtype = ($CFG->resource_popup) ? 'popup' : 'page';

@@ -6,9 +6,8 @@
     header("Content-type: application/x-javascript");  // Correct MIME type
     header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
     header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
-    // See Bug #2387
-    header("Cache-control: max_age = -1");
-    header("Pragma: no-cache");
+    header("Cache-control: max_age = $lifetime");
+    header("Pragma: ");
 
 ?>
 // I18N constants
@@ -50,7 +49,6 @@ HTMLArea.I18N = {
         inserthorizontalrule: "<?php print_string("horizontalrule","editor") ?>",
         createlink:     "<?php print_string("createlink","editor") ?>",
         unlink:         "<?php print_string("removelink","editor") ?>",
-        nolink:         "<?php print_string("nolink","editor") ?>",
         insertimage:    "<?php print_string("insertimage","editor") ?>",
         inserttable:    "<?php print_string("inserttable","editor") ?>",
         htmlmode:       "<?php print_string("htmlmode","editor") ?>",

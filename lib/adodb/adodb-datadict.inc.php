@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -22,14 +22,13 @@ if (!defined('ADODB_DIR')) die();
 
 function Lens_ParseTest()
 {
-$str = "`zcol ACOL` NUMBER(32,2) DEFAULT 'The \"cow\" (and Jim''s dog) jumps over the moon' PRIMARY, INTI INT AUTO DEFAULT 0, zcol2\"afs ds";
+$str = "`zcol ACOL` NUMBER(32,2) DEFAULT 'The \"cow\" (and Jim''s dog) jumps over the moon' PRIMARY, INTI INT AUTO DEFAULT 0";
 print "<p>$str</p>";
 $a= Lens_ParseArgs($str);
 print "<pre>";
 print_r($a);
 print "</pre>";
 }
-
 
 if (!function_exists('ctype_alnum')) {
 	function ctype_alnum($text) {
@@ -154,7 +153,6 @@ function Lens_ParseArgs($args,$endstmtchar=',',$tokenchars='_.-')
 		}
 		$pos += 1;
 	}
-	if ($intoken) $tokens[$stmtno][] = implode('',$tokarr);
 	
 	return $tokens;
 }
@@ -164,18 +162,15 @@ class ADODB_DataDict {
 	var $connection;
 	var $debug = false;
 	var $dropTable = 'DROP TABLE %s';
-	var $renameTable = 'RENAME TABLE %s TO %s'; 
 	var $dropIndex = 'DROP INDEX %s';
 	var $addCol = ' ADD';
 	var $alterCol = ' ALTER COLUMN';
 	var $dropCol = ' DROP COLUMN';
-	var $renameColumn = 'ALTER TABLE %s RENAME COLUMN %s TO %s';	// table, old-column, new-column, column-definitions (not used by default)
 	var $nameRegex = '\w';
 	var $schema = false;
 	var $serverInfo = array();
 	var $autoIncrement = false;
 	var $dataProvider;
-	var $invalidResizeTypes4 = array('CLOB','BLOB','TEXT','DATE','TIME'); // for changetablesql
 	var $blobSize = 100; 	/// any varchar/char field this size or greater is treated as a blob
 							/// in other words, we use a text area for editting.
 	
@@ -191,25 +186,21 @@ class ADODB_DataDict {
 	
 	function &MetaTables()
 	{
-		if (!$this->connection->IsConnected()) return array();
 		return $this->connection->MetaTables();
 	}
 	
 	function &MetaColumns($tab, $upper=true, $schema=false)
 	{
-		if (!$this->connection->IsConnected()) return array();
 		return $this->connection->MetaColumns($this->TableName($tab), $upper, $schema);
 	}
 	
 	function &MetaPrimaryKeys($tab,$owner=false,$intkey=false)
 	{
-		if (!$this->connection->IsConnected()) return array();
 		return $this->connection->MetaPrimaryKeys($this->TableName($tab), $owner, $intkey);
 	}
 	
 	function &MetaIndexes($table, $primary = false, $owner = false)
 	{
-		if (!$this->connection->IsConnected()) return array();
 		return $this->connection->MetaIndexes($this->TableName($table), $primary, $owner);
 	}
 	
@@ -347,18 +338,7 @@ class ADODB_DataDict {
 		return $sql;
 	}
 	
-	/**
-	 * Change the definition of one column
-	 *
-	 * As some DBM's can't do that on there own, you need to supply the complete defintion of the new table,
-	 * to allow, recreating the table and copying the content over to the new table
-	 * @param string $tabname table-name
-	 * @param string $flds column-name and type for the changed column
-	 * @param string $tableflds='' complete defintion of the new table, eg. for postgres, default ''
-	 * @param array/string $tableoptions='' options for the new table see CreateTableSQL, default ''
-	 * @return array with SQL strings
-	 */
-	function AlterColumnSQL($tabname, $flds, $tableflds='',$tableoptions='')
+	function AlterColumnSQL($tabname, $flds)
 	{
 		$tabname = $this->TableName ($tabname);
 		$sql = array();
@@ -370,39 +350,7 @@ class ADODB_DataDict {
 		return $sql;
 	}
 	
-	/**
-	 * Rename one column
-	 *
-	 * Some DBM's can only do this together with changeing the type of the column (even if that stays the same, eg. mysql)
-	 * @param string $tabname table-name
-	 * @param string $oldcolumn column-name to be renamed
-	 * @param string $newcolumn new column-name
-	 * @param string $flds='' complete column-defintion-string like for AddColumnSQL, only used by mysql atm., default=''
-	 * @return array with SQL strings
-	 */
-	function RenameColumnSQL($tabname,$oldcolumn,$newcolumn,$flds='')
-	{
-		$tabname = $this->TableName ($tabname);
-		if ($flds) {
-			list($lines,$pkey) = $this->_GenFields($flds);
-			list(,$first) = each($lines);
-			list(,$column_def) = split("[\t ]+",$first,2);
-		}
-		return array(sprintf($this->renameColumn,$tabname,$this->NameQuote($oldcolumn),$this->NameQuote($newcolumn),$column_def));
-	}
-		
-	/**
-	 * Drop one column
-	 *
-	 * Some DBM's can't do that on there own, you need to supply the complete defintion of the new table,
-	 * to allow, recreating the table and copying the content over to the new table
-	 * @param string $tabname table-name
-	 * @param string $flds column-name and type for the changed column
-	 * @param string $tableflds='' complete defintion of the new table, eg. for postgres, default ''
-	 * @param array/string $tableoptions='' options for the new table see CreateTableSQL, default ''
-	 * @return array with SQL strings
-	 */
-	function DropColumnSQL($tabname, $flds, $tableflds='',$tableoptions='')
+	function DropColumnSQL($tabname, $flds)
 	{
 		$tabname = $this->TableName ($tabname);
 		if (!is_array($flds)) $flds = explode(',',$flds);
@@ -419,11 +367,6 @@ class ADODB_DataDict {
 		return array (sprintf($this->dropTable, $this->TableName($tabname)));
 	}
 	
-	function RenameTableSQL($tabname,$newname)
-	{
-		return array (sprintf($this->renameTable, $this->TableName($tabname),$this->TableName($newname)));
-	}	
-	
 	/*
 	 Generate the SQL to create table. Returns an array of sql strings.
 	*/
@@ -431,7 +374,7 @@ class ADODB_DataDict {
 	{
 		if (!$tableoptions) $tableoptions = array();
 		
-		list($lines,$pkey) = $this->_GenFields($flds, true);
+		list($lines,$pkey) = $this->_GenFields($flds);
 		
 		$taboptions = $this->_Options($tableoptions);
 		$tabname = $this->TableName ($tabname);
@@ -443,7 +386,7 @@ class ADODB_DataDict {
 		return $sql;
 	}
 	
-	function _GenFields($flds,$widespacing=false)
+	function _GenFields($flds)
 	{
 		if (is_string($flds)) {
 			$padding = '     ';
@@ -574,7 +517,7 @@ class ADODB_DataDict {
 						$fdefault = $this->connection->qstr($fdefault);
 			$suffix = $this->_CreateSuffix($fname,$ftype,$fnotnull,$fdefault,$fautoinc,$fconstraint,$funsigned);
 			
-			if ($widespacing) $fname = str_pad($fname,24);
+			$fname = str_pad($fname,16);
 			$lines[$fid] = $fname.' '.$ftype.$suffix;
 			
 			if ($fautoinc) $this->autoIncrement = true;
@@ -699,66 +642,26 @@ class ADODB_DataDict {
 	}
 	
 	/*
-	"Florian Buzin [ easywe ]" <florian.buzin#easywe.de>
+	"Florian Buzin [ easywe ]" <florian.buzin@easywe.de>
 	
 	This function changes/adds new fields to your table. You don't
 	have to know if the col is new or not. It will check on its own.
 	*/
 	function ChangeTableSQL($tablename, $flds, $tableoptions = false)
 	{
-	global $ADODB_FETCH_MODE;
-	
-		$save = $ADODB_FETCH_MODE;
-		$ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
-		if ($this->connection->fetchMode !== false) $savem = $this->connection->SetFetchMode(false);
-		
 		// check table exists
 		$cols = &$this->MetaColumns($tablename);
-		
-		if (isset($savem)) $this->connection->SetFetchMode($savem);
-		$ADODB_FETCH_MODE = $save;
-		
 		if ( empty($cols)) { 
 			return $this->CreateTableSQL($tablename, $flds, $tableoptions);
 		}
 		
-		if (is_array($flds)) {
-		// Cycle through the update fields, comparing
-		// existing fields to fields to update.
-		// if the Metatype and size is exactly the
-		// same, ignore - by Mark Newham
-			$holdflds = array();
-			foreach($flds as $k=>$v) {
-				if ( isset($cols[$k]) && is_object($cols[$k]) ) {
-					$c = $cols[$k];
-					$ml = $c->max_length;
-					$mt = &$this->MetaType($c->type,$ml);
-					if ($ml == -1) $ml = '';
-					if ($mt == 'X') $ml = $v['SIZE'];
-					if (($mt != $v['TYPE']) ||  $ml != $v['SIZE']) {
-						$holdflds[$k] = $v;
-					}
-				} else {
-					$holdflds[$k] = $v;
-				}		
-			}
-			$flds = $holdflds;
-		}
-	
-
 		// already exists, alter table instead
 		list($lines,$pkey) = $this->_GenFields($flds);
 		$alter = 'ALTER TABLE ' . $this->TableName($tablename);
 		$sql = array();
-
+		
 		foreach ( $lines as $id => $v ) {
 			if ( isset($cols[$id]) && is_object($cols[$id]) ) {
-			
-				$flds = Lens_ParseArgs($v,',');
-				
-				//  We are trying to change the size of the field, if not allowed, simply ignore the request.
-				if ($flds && in_array(strtoupper(substr($flds[0][1],0,4)),$this->invalidResizeTypes4)) continue;	 
-	 		
 				$sql[] = $alter . $this->alterCol . ' ' . $v;
 			} else {
 				$sql[] = $alter . $this->addCol . ' ' . $v;

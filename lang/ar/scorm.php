@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4 development (2004081200)
+      // scorm.php - created with Moodle 1.4 development (2004062401)
 
 
 $string['autocontinue'] = 'ÇÓÊãÑÇÑ Âáí';
@@ -26,13 +26,11 @@ $string['next'] = 'ÇÓÊãÑ';
 $string['noreports'] = 'áÇ íæÌÏ ÊÞÑíÑ ááÚÑÖ';
 $string['normal'] = 'ÚÇÏí';
 $string['notattempted'] = 'áã ÊÊã ãÍÇæáÊå';
-$string['organizations'] = 'ÊäÙíãÇÊ';
 $string['passed'] = 'äÌÍ';
 $string['prev'] = 'ÇáÓÇÈÞ';
 $string['report'] = 'ÊÞÑíÑ';
 $string['review'] = 'ãÚÇíäå';
 $string['score'] = 'ÏÑÌÉ';
-$string['syntax'] = 'ÎØÇÁ äÍæí';
 $string['viewallreports'] = 'ÔÇåÏ ÊÞÇÑíÑ ááãÍÇæáÇÊ $a';
 
 ?>

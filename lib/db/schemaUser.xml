@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<schema>
+  <table name="m_user">
+    <field name="id" type="I" size="10">
+      <KEY/>
+      <AUTOINCREMENT/>
+    </field>
+    <field name="confirmed" type="L" size="1" default="0">
+      <NOTNULL/>
+    </field>
+    <field name="deleted" type="L" size="1" default="0">
+      <NOTNULL/>
+    </field>
+    <field name="username" type="C" size="100" default="">
+      <NOTNULL/>
+    </field>
+    <field name="password" type="C" size="32" default="">
+      <NOTNULL/>
+    </field>
+    <field name="idnumber" type="C" size="12" default="">
+      <NOTNULL/>
+    </field>
+    <field name="firstname" type="C" size="20" default="">
+      <NOTNULL/>
+    </field>
+    <field name="lastname" type="C" size="20" default="">
+      <NOTNULL/>
+    </field>
+    <field name="email" type="C" size="100" default="">
+      <NOTNULL/>
+    </field>
+    <field name="icq" type="C" size="15" default="">
+    </field>
+    <field name="phone1" type="C" size="20" default="">
+    </field>
+    <field name="phone2" type="C" size="20" default="">
+    </field>
+    <field name="institution" type="C" size="40" default="">
+    </field>
+    <field name="department" type="C" size="30" default="">
+    </field>
+    <field name="address" type="C" size="70" default="">
+    </field>
+    <field name="city" type="C" size="20" default="">
+    </field>
+    <field name="country" type="C" size="20" default="">
+    </field>
+    <field name="lang" type="C" size="5" default="en">
+      <NOTNULL/>
+    </field>
+    <field name="timezone" type="F"  default="99">
+      <NOTNULL/>
+    </field>
+    <field name="firstaccess" type="I" size="10" default="">
+      <NOTNULL/>
+    </field>
+    <field name="lastaccess" type="I" size="10" default="">
+      <NOTNULL/>
+    </field>
+    <field name="lastlogin" type="I" size="10" default="">
+      <NOTNULL/>
+    </field>
+    <field name="currentlogin" type="I" size="10" default="">
+      <NOTNULL/>
+    </field>
+    <field name="lastIP" type="C" size="15" default="">
+    </field>
+    <field name="secret" type="C" size="15" default="">
+      <NOTNULL/>
+    </field>
+    <field name="picture" type="L" size="1" >
+    </field>
+    <field name="url" type="C" size="100" default="">
+    </field>
+    <field name="description" type="X">
+      <NOTNULL/>
+    </field>
+    <field name="mailformat" type="L" size="1" default="0">
+      <NOTNULL/>
+    </field>
+    <field name="maildisplay" type="L" size="1" default="0">
+      <NOTNULL/>
+    </field>
+    <field name="htmleditor" type="L" size="1" default="0">
+      <NOTNULL/>
+    </field>
+    <field name="autosubscribe" type="L" size="1" default="0">
+      <NOTNULL/>
+    </field>
+    <field name="timemodified" type="I" size="10" default="1">
+      <NOTNULL/>
+    </field>
+  </table>
+  <sql>
+    <descr>Insert 1 row for testing only...comment out later</descr>
+    <query platform="postgres|postgres7">
+      insert into m_user values (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+    </query>
+    <query platform="mysql">
+      insert into m_user values (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+    </query>
+    <query platform="oci8po">
+      insert into m_user values (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
+    </query>
+  </sql>
+</schema>

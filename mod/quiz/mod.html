@@ -1,9 +1,9 @@
 <!-- This page defines the form to create or edit an instance of this module -->
 <!-- It is used from /course/mod.php.  The whole instance is available as $form. -->
 
-<?php
-    require_once("$CFG->dirroot/mod/quiz/locallib.php");
-// Ensure that all form variables are initialized
+<?php 
+    require_once("$CFG->dirroot/mod/quiz/lib.php");
+
     if (!isset($form->name)) {
         $form->name = "";
     }
@@ -17,118 +17,82 @@
         $form->timeclose = "";
     }
     if (!isset($form->attempts)) {
-        $form->attempts = $CFG->quiz_attempts;
+        $form->attempts = 0;
     }
     if (!isset($form->attemptonlast)) {
-        $form->attemptonlast = $CFG->quiz_attemptonlast;
+        $form->attemptonlast = 0;
     }
     if (!isset($form->grademethod)) {
-        $form->grademethod = $CFG->quiz_grademethod;
-    }
-    if (!isset($form->decimalpoints)) {
-        $form->decimalpoints = $CFG->quiz_decimalpoints;
+        $form->grademethod = "";
     }
     if (!isset($form->feedback)) {
-        $form->feedback = $CFG->quiz_showfeedback;
+        $form->feedback = "";
     }
     if (!isset($form->correctanswers)) {
-        $form->correctanswers = $CFG->quiz_showanswer;
+        $form->correctanswers = "";
     }
     if (!isset($form->review)) {
-        $form->review = $CFG->quiz_allowreview;
-    }
-    if (!isset($form->questionsperpage)) {
-        $form->questionsperpage = 0;
+        $form->review = 0;
     }
     if (!isset($form->shufflequestions)) {
-        $form->shufflequestions = $CFG->quiz_shufflequestions;
+        $form->shufflequestions = 0;
     }
     if (!isset($form->shuffleanswers)) {
-        $form->shuffleanswers = $CFG->quiz_shuffleanswers;
+        $form->shuffleanswers = 1;
     }
     if (!isset($form->grade)) {
-        $form->grade = $CFG->quiz_maximumgrade;
+        $form->grade = 0;
     }
     if (!isset($form->questions)) {
         $form->questions = "";
     }
     if (!isset($form->password)) {
-        $form->password = $CFG->quiz_password;
+        $form->password = "";
     }
     if (!isset($form->subnet)) {
-        $form->subnet = $CFG->quiz_subnet;
+        $form->subnet = "";
     }
     if (!isset($form->timelimit)) {
-        $form->timelimit = $CFG->quiz_timelimit;
+        $form->timelimit = 0;
     }
-    if (!isset($form->popup)) {
-        $form->popup = $CFG->quiz_popup;
-    }
-
-    $fix = 0; // This will later be set to 1 if some of the variables have been fixed by the admin.
-
-    // the following are used for drop-down menus
-    $reviewoptions = array();
-    $reviewoptions[0] = get_string('reviewnever', 'quiz');
-    $reviewoptions[1] = get_string('reviewafter', 'quiz');
-    $reviewoptions[2] = get_string('reviewbefore', 'quiz');
-    $reviewoptions[3] = get_string('reviewalways', 'quiz');
-
-    $yesnooptions = array();
-    $yesnooptions[0] = get_string("no");
-    $yesnooptions[1] = get_string("yes");
-
-    $attemptoptions = array();
-    $attemptoptions[0] = get_string("attemptsunlimited", "quiz");
-    $attemptoptions[1] = "1 ".strtolower(get_string("attempt", "quiz"));
-    for ($i=2;$i<=6;$i++) {
-        $attemptoptions[$i] = "$i ".strtolower(get_string("attempts", "quiz"));
-    }
-
-    $grades = array();
-    for ($i=100; $i>=1; $i--) {
-        $grades[$i] = $i;
-    }
-    $grades[0] = get_string("nograde");
 ?>
 
 
-<form name="form" method="post" action="mod.php">
 
+<form name="form" method="post" action="../mod/quiz/edit.php">
 <center>
-
-<!-- Now comes a table with all the options that have not been fixed by the admin -->
-<table cellpadding="5">
-
-<tr valign="top">
-    <td align="right"><b><?php print_string("name") ?>:</b></td>
+<table cellpadding=5>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("name") ?>:</b></p></td>
     <td>
-        <input type="text" name="name" size="40" value="<?php p($form->name) ?>" />
+        <input type="text" name="name" size=40 value="<?php p($form->name) ?>">
     </td>
 </tr>
-
-<tr valign="top">
-    <td align="right"><b><?php print_string("introduction", "quiz") ?>:</b><br /><br />
+<tr valign=top>
+    <td align=right><p><b><?php print_string("introduction", "quiz") ?>:</b></p>
+      <br />
+    <font size="1">
      <?php
         if ($usehtmleditor) {
            helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
         } else {
-           helpbutton("text", get_string("helptext"), "moodle", true, true);
+           helpbutton("text", get_string("helptext"), "moodle", true, true); 
            echo '<br />';
            emoticonhelpbutton("form", "description");
            echo '<br />';
-        }
+        } 
       ?>
+      <br />
+      </font>
     </td>
     <td>
-        <?php
+        <?php 
            print_textarea($usehtmleditor, 20, 50, 680, 400, "intro", $form->intro);
         ?>
     </td>
 </tr>
-
-<tr valign="top">
-    <td align="right"><b><?php print_string("quizopen", "quiz") ?>:</b></td>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("quizopen", "quiz") ?>:</b></p></td>
     <td>
     <?php
         if (!$form->timeopen and $course->format == "weeks") {
@@ -140,9 +104,8 @@
      ?>
     </td>
 </tr>
-
-<tr valign="top">
-    <td align="right"><b><?php print_string("quizclose", "quiz") ?>:</b></td>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("quizclose", "quiz") ?>:</b></p></td>
     <td>
     <?php
         if (!$form->timeclose and $course->format == "weeks") {
@@ -154,474 +117,161 @@
      ?>
     </td>
 </tr>
-
-<?php if (!$CFG->quiz_fix_timelimit) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("timelimit", "quiz") ?>:</b></td>
-        <td>
-        <?php
-            print_timer_selector($form->timelimit, get_string("minutes","quiz"));
-            helpbutton("timelimit", get_string("quiztimer","quiz"), "quiz");
-        ?>
-        </td>
-    </tr>
-<?php } else $fix=1 ?>
-
-<?php if (!$CFG->quiz_fix_questionsperpage) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string('questionsperpage', 'quiz') ?>:</b></td>
-        <td>
-        <?php
-            $perpage= array();
-            for ($i=0; $i<=50; ++$i) {
-                $perpage[$i] = $i;
-            }
-            $perpage[0] = get_string('allinone', 'quiz');
-
-            choose_from_menu($perpage, 'questionsperpage', $form->questionsperpage, '');
-            helpbutton('questionsperpage', get_string('questionsperpage'), 'quiz');
-         ?>
-        </td>
-    </tr>
-<?php } else $fix=1 ?>
-
-<?php if (!$CFG->quiz_fix_shufflequestions) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("shufflequestions", "quiz") ?>:</b></td>
-        <td>
-        <?php
-            choose_from_menu($yesnooptions, "shufflequestions", "$form->shufflequestions", "");
-            helpbutton("shufflequestions", get_string("shufflequestions","quiz"), "quiz");
-         ?>
-        </td>
-    </tr>
-<?php } else $fix=1 ?>
-
-<?php if (!$CFG->quiz_fix_shuffleanswers) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("shuffleanswers", "quiz") ?>:</b></td>
-        <td>
-        <?php
-            choose_from_menu($yesnooptions, "shuffleanswers", "$form->shuffleanswers", "");
-            helpbutton("shuffleanswers", get_string("shuffleanswers","quiz"), "quiz");
-         ?>
-        </td>
-    </tr>
-<?php } else $fix=1 ?>
-
-<?php if (!$CFG->quiz_fix_attempts) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("attemptsallowed", "quiz") ?>:</b></td>
-        <td>
-        <?php
-            choose_from_menu($attemptoptions, "attempts", "$form->attempts", "");
-            helpbutton("attempts", get_string("attemptsallowed","quiz"), "quiz");
-         ?>
-        </td>
-    </tr>
-<?php } else $fix=1 ?>
-
-<?php if (!$CFG->quiz_fix_attemptonlast) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("eachattemptbuildsonthelast", "quiz") ?>:</b></td>
-        <td>
-        <?php
-            choose_from_menu($yesnooptions, "attemptonlast",
-                             "$form->attemptonlast", "");
-            helpbutton("repeatattempts",
-                       get_string("eachattemptbuildsonthelast", "quiz"),
-                       "quiz");
-        ?>
-        </td>
-    </tr>
-<?php } else $fix=1 ?>
-
-<?php if (!$CFG->quiz_fix_grademethod) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("grademethod", "quiz") ?>:</b></td>
-        <td>
-        <?php
-            choose_from_menu($QUIZ_GRADE_METHOD, "grademethod", "$form->grademethod", "");
-            helpbutton("grademethod", get_string("grademethod","quiz"), "quiz");
-         ?>
-        </td>
-    </tr>
-<?php } else $fix=1 ?>
-
-<?php if (!$CFG->quiz_fix_decimalpoints) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("decimalpoints", "quiz") ?>:</b></td>
-        <td>
-         <?php
-            unset($options);
-            $options[0] = '0';
-            $options[1] = '1';
-            $options[2] = '2';
-            $options[3] = '3';
-            choose_from_menu($options, "decimalpoints", "$form->decimalpoints", "");
-            helpbutton("decimalpoints", get_string("decimalpoints","quiz"), "quiz");
-         ?>
-        </td>
-    </tr>
-<?php } else $fix=1 ?>
-
-<?php if (!$CFG->quiz_fix_showfeedback) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("showfeedback", "quiz") ?>:</b></td>
-        <td>
-        <?php
-            choose_from_menu($yesnooptions, "feedback", "$form->feedback", "");
-            helpbutton("feedback", get_string("showfeedback","quiz"), "quiz");
-         ?>
-        </td>
-    </tr>
-<?php } else $fix=1 ?>
-
-<?php if (!$CFG->quiz_fix_showanswer) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("showcorrectanswer", "quiz") ?>:</b></td>
-        <td>
-        <?php
-            choose_from_menu($yesnooptions, "correctanswers", "$form->correctanswers", "");
-            helpbutton("correctanswers", get_string("showcorrectanswer","quiz"), "quiz");
-         ?>
-        </td>
-    </tr>
-<?php } else $fix=1 ?>
-
-<?php if (!$CFG->quiz_fix_allowreview) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("allowreview", "quiz") ?>:</b></td>
-        <td>
-        <?php
-            choose_from_menu($reviewoptions, "review", "$form->review", "");
-            helpbutton("review2", get_string("allowreview","quiz"), "quiz");
-         ?>
-        </td>
-    </tr>
-<?php } else $fix=1 ?>
-
-<?php if (!$CFG->quiz_fix_maximumgrade) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("maximumgrade") ?>:</b></td>
-        <td>
-        <?php
-            choose_from_menu($grades, "grade", "$form->grade", "");
-            helpbutton("maxgrade", get_string("maximumgrade"), "quiz");
-         ?>
-        </td>
-    </tr>
-<?php } else $fix=1 ?>
-
-<?php if (!$CFG->quiz_fix_popup) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("popup", "quiz") ?>:</b></td>
-        <td>
-        <?php
-            choose_from_menu($yesnooptions, "popup", "$form->popup", "");
-            helpbutton("popup", get_string("popup","quiz"), "quiz");
-         ?>
-        </td>
-    </tr>
-<?php } else $fix=1 ?>
-
-<?php if (!$CFG->quiz_fix_password) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("requirepassword", "quiz") ?>:</b></td>
-        <td>
-            <input type="text" name="password" size="40" value="<?php p($form->password) ?>" />
-            <?php helpbutton("requirepassword", get_string("requirepassword", "quiz"), "quiz"); ?>
-        </td>
-    </tr>
-<?php } else $fix=1 ?>
-
-<?php if (!$CFG->quiz_fix_subnet) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("requiresubnet", "quiz") ?>:</b></td>
-        <td>
-            <input type="text" name="subnet" size="40" value="<?php p($form->subnet) ?>" />
-            <?php helpbutton("requiresubnet", get_string("requiresubnet", "quiz"), "quiz"); ?>
-        </td>
-    </tr>
-<?php } else $fix=1 ?>
-
-<?php print_standard_coursemodule_settings($form); ?>
-
-
-
-
-<?php if ($fix) { ?>
-
-<!-- Some javascript to allow for the hiding of advanced options
-     This code was derived from mod.html in the resource module -->
-<script language="javascript" type="text/javascript">
-    function showhide (id, set) {
-        divobj = document.getElementById(id);
-        butobj = document.getElementById(id+'button');
-        prefobj = document.getElementById(id+'pref');
-        if (set == true) {
-            if (prefobj.value == '1') {
-                divobj.style.display = 'block';
-                butobj.value = '<?php print_string("hideadvancedsettings") ?>';
-            } else {
-                divobj.style.display = 'none';
-                butobj.value = '<?php print_string("showadvancedsettings") ?>...';
-            }
-        } else {
-            if (prefobj.value == '1') {
-                divobj.style.display = 'none';
-                butobj.value = '<?php print_string("showadvancedsettings") ?>...';
-                prefobj.value = '0';
-            } else {
-                divobj.style.display = 'block';
-                butobj.value = '<?php print_string("hideadvancedsettings") ?>';
-                prefobj.value = '1';
-            }
-        }
-    }
-</script>
-
-<!-- Now comes a copy of the above but enclosed in a div with id optionsettings and with
-     the conditions reversed, so that it shows exactly the options that are usually hidden.
-     The visibility of this div is controlled by javascript. -->
-
-<tr><td colspan="2"><hr /></td></tr>
-<tr>
-    <td align="right"><b><?php print_string('advancedsettings') ?>:</b></td>
+<!-- BEGIN EDIT -->
+<tr valign=top>
+    <td align=right><p><b><?php print_string("timelimit", "quiz") ?>:</b></p></td>
     <td>
-        <input type="button" value="hide settings" id="optionsettingsbutton" onclick="javascript: return showhide('optionsettings');" />
-        <input type="hidden" name="optionsettingspref" id="optionsettingspref" value="<?php echo get_user_preferences('quiz_optionsettingspref', 0); ?>" />
-        <br />
+    <?php
+        print_timer_selector($form->timelimit, get_string("minutes","quiz"));
+        helpbutton("timelimit", get_string("quiztimer","quiz"), "quiz");
+    ?>
     </td>
 </tr>
+<!-- END EDIT -->
+<tr valign=top>
+    <td align=right><p><b><?php print_string("shufflequestions", "quiz") ?>:</b></p></td>
+    <td>
+    <?php
+        $options = array();
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu($options, "shufflequestions", "$form->shufflequestions", "");
+        helpbutton("shufflequestions", get_string("shufflequestions","quiz"), "quiz");
+     ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("shuffleanswers", "quiz") ?>:</b></p></td>
+    <td>
+    <?php
+        $options = array();
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu($options, "shuffleanswers", "$form->shuffleanswers", "");
+        helpbutton("shuffleanswers", get_string("shuffleanswers","quiz"), "quiz");
+     ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("attemptsallowed", "quiz") ?>:</b></p></td>
+    <td>
+    <?php
+        $options = array();
+        $options[0] = get_string("attemptsunlimited", "quiz");
+        $options[1] = "1 ".strtolower(get_string("attempt", "quiz"));
+        for ($i=2;$i<=6;$i++) {
+            $options[$i] = "$i ".strtolower(get_string("attempts", "quiz"));
+        }
+        choose_from_menu($options, "attempts", "$form->attempts", "");
+        helpbutton("attempts", get_string("attemptsallowed","quiz"), "quiz");
+     ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("eachattemptbuildsonthelast", "quiz") ?>:</b></p></td>
+    <td>
+    <?php
+        $options = array();
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu($options, "attemptonlast",
+                         "$form->attemptonlast", "");
+        helpbutton("repeatattempts",
+                   get_string("eachattemptbuildsonthelast", "quiz"),
+                   "quiz");
+    ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("grademethod", "quiz") ?>:</b></p></td>
+    <td>
+    <?php
+        $options = array();
+        $options[1] = get_string("gradehighest", "quiz");
+        $options[2] = get_string("gradeaverage", "quiz");
+        $options[3] = get_string("attemptfirst", "quiz");
+        $options[4] = get_string("attemptlast", "quiz");
+        choose_from_menu($QUIZ_GRADE_METHOD, "grademethod", "$form->grademethod", "");
+        helpbutton("grademethod", get_string("grademethod","quiz"), "quiz");
+     ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("showfeedback", "quiz") ?>:</b></p></td>
+    <td>
+    <?php
+        $options = array();
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu($options, "feedback", "$form->feedback", "");
+        helpbutton("feedback", get_string("showfeedback","quiz"), "quiz");
+     ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("showcorrectanswer", "quiz") ?>:</b></p></td>
+    <td>
+    <?php
+        $options = array();
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu($options, "correctanswers", "$form->correctanswers", "");
+        helpbutton("correctanswers", get_string("showcorrectanswer","quiz"), "quiz");
+     ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("allowreview", "quiz") ?>:</b></p></td>
+    <td>
+    <?php
+        $options = array();
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu($options, "review", "$form->review", "");
+        helpbutton("review", get_string("allowreview","quiz"), "quiz");
+     ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("maximumgrade") ?>:</b></p></td>
+    <td>
+    <?php
+        for ($i=100; $i>=1; $i--) {
+            $grades[$i] = $i;
+        }
+        $grades[0] = get_string("nograde");
 
-<tr><td colspan="2">
-
-<div id="optionsettings">
-
-<table align="center">
-
-<?php if ($CFG->quiz_fix_timelimit) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("timelimit", "quiz") ?>:</b></td>
-        <td>
-        <?php
-            print_timer_selector($form->timelimit, get_string("minutes","quiz"));
-            helpbutton("timelimit", get_string("quiztimer","quiz"), "quiz");
-        ?>
-        </td>
-    </tr>
-<?php } ?>
-
-<?php if ($CFG->quiz_fix_questionsperpage) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string('questionsperpage', 'quiz') ?>:</b></td>
-        <td>
-        <?php
-            $perpage= array();
-            for ($i=0; $i<=50; ++$i) {
-                $perpage[$i] = $i;
-            }
-            $perpage[0] = get_string('allinone', 'quiz');
-
-            choose_from_menu($perpage, 'questionsperpage', $form->questionsperpage, '');
-            helpbutton('questionsperpage', get_string('questionsperpage'), 'quiz');
-         ?>
-        </td>
-    </tr>
-<?php } ?>
-
-<?php if ($CFG->quiz_fix_shufflequestions) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("shufflequestions", "quiz") ?>:</b></td>
-        <td>
-        <?php
-            choose_from_menu($yesnooptions, "shufflequestions", "$form->shufflequestions", "");
-            helpbutton("shufflequestions", get_string("shufflequestions","quiz"), "quiz");
-         ?>
-        </td>
-    </tr>
-<?php } ?>
-
-<?php if ($CFG->quiz_fix_shuffleanswers) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("shuffleanswers", "quiz") ?>:</b></td>
-        <td>
-        <?php
-            choose_from_menu($yesnooptions, "shuffleanswers", "$form->shuffleanswers", "");
-            helpbutton("shuffleanswers", get_string("shuffleanswers","quiz"), "quiz");
-         ?>
-        </td>
-    </tr>
-<?php } ?>
-
-<?php if ($CFG->quiz_fix_attempts) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("attemptsallowed", "quiz") ?>:</b></td>
-        <td>
-        <?php
-            choose_from_menu($attemptoptions, "attempts", "$form->attempts", "");
-            helpbutton("attempts", get_string("attemptsallowed","quiz"), "quiz");
-         ?>
-        </td>
-    </tr>
-<?php } ?>
-
-<?php if ($CFG->quiz_fix_attemptonlast) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("eachattemptbuildsonthelast", "quiz") ?>:</b></td>
-        <td>
-        <?php
-            choose_from_menu($yesnooptions, "attemptonlast",
-                             "$form->attemptonlast", "");
-            helpbutton("repeatattempts",
-                       get_string("eachattemptbuildsonthelast", "quiz"),
-                       "quiz");
-        ?>
-        </td>
-    </tr>
-<?php } ?>
-
-<?php if ($CFG->quiz_fix_grademethod) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("grademethod", "quiz") ?>:</b></td>
-        <td>
-        <?php
-            choose_from_menu($QUIZ_GRADE_METHOD, "grademethod", "$form->grademethod", "");
-            helpbutton("grademethod", get_string("grademethod","quiz"), "quiz");
-         ?>
-        </td>
-    </tr>
-<?php } ?>
-
-<?php if ($CFG->quiz_fix_decimalpoints) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("decimalpoints", "quiz") ?>:</b></td>
-        <td>
-         <?php
-            unset($options);
-            $options[0] = '0';
-            $options[1] = '1';
-            $options[2] = '2';
-            $options[3] = '3';
-            choose_from_menu($options, "decimalpoints", "$form->decimalpoints", "");
-            helpbutton("decimalpoints", get_string("decimalpoints","quiz"), "quiz");
-         ?>
-        </td>
-    </tr>
-<?php } ?>
-
-<?php if ($CFG->quiz_fix_showfeedback) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("showfeedback", "quiz") ?>:</b></td>
-        <td>
-        <?php
-            choose_from_menu($yesnooptions, "feedback", "$form->feedback", "");
-            helpbutton("feedback", get_string("showfeedback","quiz"), "quiz");
-         ?>
-        </td>
-    </tr>
-<?php } ?>
-
-<?php if ($CFG->quiz_fix_showanswer) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("showcorrectanswer", "quiz") ?>:</b></td>
-        <td>
-        <?php
-            choose_from_menu($yesnooptions, "correctanswers", "$form->correctanswers", "");
-            helpbutton("correctanswers", get_string("showcorrectanswer","quiz"), "quiz");
-         ?>
-        </td>
-    </tr>
-<?php } ?>
-
-<?php if ($CFG->quiz_fix_allowreview) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("allowreview", "quiz") ?>:</b></td>
-        <td>
-        <?php
-            choose_from_menu($reviewoptions, "review", "$form->review", "");
-            helpbutton("review", get_string("allowreview","quiz"), "quiz");
-         ?>
-        </td>
-    </tr>
-<?php } ?>
-
-<?php if ($CFG->quiz_fix_maximumgrade) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("maximumgrade") ?>:</b></td>
-        <td>
-        <?php
-            choose_from_menu($grades, "grade", "$form->grade", "");
-            helpbutton("maxgrade", get_string("maximumgrade"), "quiz");
-         ?>
-        </td>
-    </tr>
-<?php } ?>
-
-<?php if ($CFG->quiz_fix_popup) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("popup", "quiz") ?>:</b></td>
-        <td>
-        <?php
-            choose_from_menu($yesnooptions, "popup", "$form->popup", "");
-            helpbutton("popup", get_string("popup","quiz"), "quiz");
-         ?>
-        </td>
-    </tr>
-<?php } ?>
-
-<?php if ($CFG->quiz_fix_password) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("requirepassword", "quiz") ?>:</b></td>
-        <td>
-            <input type="text" name="password" size="40" value="<?php p($form->password) ?>" />
-            <?php helpbutton("requirepassword", get_string("requirepassword", "quiz"), "quiz"); ?>
-        </td>
-    </tr>
-<?php } ?>
-
-<?php if ($CFG->quiz_fix_subnet) { ?>
-    <tr valign="top">
-        <td align="right"><b><?php print_string("requiresubnet", "quiz") ?>:</b></td>
-        <td>
-            <input type="text" name="subnet" size="40" value="<?php p($form->subnet) ?>" />
-            <?php helpbutton("requiresubnet", get_string("requiresubnet", "quiz"), "quiz"); ?>
-        </td>
-    </tr>
-<?php } ?>
-
+        choose_from_menu($grades, "grade", "$form->grade", "");
+        helpbutton("maxgrade", get_string("maximumgrade"), "quiz");
+     ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("requirepassword", "quiz") ?>:</b></p></td>
+    <td>
+        <input type="text" name="password" size=40 value="<?php p($form->password) ?>">
+        <?php helpbutton("requirepassword", get_string("requirepassword", "quiz"), "quiz"); ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("requiresubnet", "quiz") ?>:</b></p></td>
+    <td>
+        <input type="text" name="subnet" size=40 value="<?php p($form->subnet) ?>">
+        <?php helpbutton("requiresubnet", get_string("requiresubnet", "quiz"), "quiz"); ?>
+    </td>
+</tr>
+    
 </table>
-
-</div></td></tr>
-
-<?php } else { ?>
-<input type="hidden" value="hide settings" id="optionsettingsbutton" />
-<input type="hidden" name="optionsettingspref" id="optionsettingspref" value="0" />
-<?php } ?>
-
-</table>
-<br />
-
+<input type="hidden" name=questions     value="<?php p($form->questions) ?>">
 <!-- these hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php p($form->course) ?>" />
-<input type="hidden" name="sesskey"       value="<?php p($form->sesskey) ?>" />
-<input type="hidden" name="coursemodule"  value="<?php p($form->coursemodule) ?>" />
-<input type="hidden" name="section"       value="<?php p($form->section) ?>" />
-<input type="hidden" name="module"        value="<?php p($form->module) ?>" />
-<input type="hidden" name="modulename"    value="<?php p($form->modulename) ?>" />
-<input type="hidden" name="instance"      value="<?php p($form->instance) ?>" />
-<input type="hidden" name="mode"          value="<?php p($form->mode) ?>" />
-<input type="submit" value="<?php  print_string("savechanges") ?>" />
-<!-- provide an additional button to edit questions -->
-<?php if ($form->instance) { ?>
-<input type="hidden" name="redirecturl" value="<?php p("$CFG->wwwroot/mod/quiz/edit.php?quizid=$form->instance") ?>" />
-<input type="submit" name="redirect" value="<?php print_string('saveandedit', 'quiz') ?>" />
-<?php } ?>
-<input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
+<input type="hidden" name=course        value="<?php p($form->course) ?>">
+<input type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>">
+<input type="hidden" name=section       value="<?php p($form->section) ?>">
+<input type="hidden" name=module        value="<?php p($form->module) ?>">
+<input type="hidden" name=modulename    value="<?php p($form->modulename) ?>">
+<input type="hidden" name=instance      value="<?php p($form->instance) ?>">
+<input type="hidden" name=mode          value="<?php p($form->mode) ?>">
+<input type="hidden" name=destination   value="<?php echo "$CFG->wwwroot/course/mod.php" ?>">
+<input type="submit" value="<?php print_string("continue") ?>">
 </center>
 </form>
-
-<script language="javascript" type="text/javascript">
-    showhide('optionsettings', true);
-</script>

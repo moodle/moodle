@@ -1,9 +1,9 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
 // This page prints a particular instance of quiz
 
     require_once("../../config.php");
-    require_once("locallib.php");
+    require_once("lib.php");
 
     optional_variable($id);    // Course Module ID, or
     optional_variable($q);     // quiz ID
@@ -33,7 +33,7 @@
         }
     }
 
-    require_login($course->id, false, $cm);
+    require_login($course->id);
 
 
 /// Set number for next attempt:
@@ -54,18 +54,13 @@
 
 // Print the page header
 
-    if (!empty($quiz->popup)) {
-        define('MESSAGE_WINDOW', true);  // This prevents the message window coming up
-        print_header("$course->shortname: ".format_string($quiz->name), '', '', '', '', false, '', '', false, '');
-        
-    } else {
-        $strquizzes = get_string("modulenameplural", "quiz");
-        $strquiz  = get_string("modulename", "quiz");
-        print_header_simple(format_string($quiz->name), "",
-                 "<a href=\"index.php?id=$course->id\">$strquizzes</a> ->
-                  <a href=\"view.php?id=$cm->id\">".format_string($quiz->name,true)."</a> -> $strattemptnum",
+    $strquizzes = get_string("modulenameplural", "quiz");
+    $strquiz  = get_string("modulename", "quiz");
+
+    print_header_simple("$quiz->name", "",
+                 "<A HREF=index.php?id=$course->id>$strquizzes</A> ->
+                  <A HREF=\"view.php?id=$cm->id\">$quiz->name</A> -> $strattemptnum",
                   "", "", true);
-    }
 
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
@@ -76,7 +71,7 @@
     }
 
 /// Check subnet access
-    if ($quiz->subnet and !address_in_subnet(getremoteaddr(), $quiz->subnet)) {
+    if ($quiz->subnet and !address_in_subnet($_SERVER['REMOTE_ADDR'], $quiz->subnet)) {
         error(get_string("subneterror", "quiz"), "view.php?id=$cm->id");
     }
 
@@ -84,10 +79,10 @@
     if ($quiz->password and empty($_POST['q'])) {
         if (empty($_POST['quizpassword'])) {
     
-            print_heading(format_string($quiz->name));
+            print_heading($quiz->name);
             print_heading(get_string("attempt", "quiz", $attemptnumber));
             if (trim(strip_tags($quiz->intro))) {
-                print_simple_box(format_text($quiz->intro), "center");
+                print_simple_box(format_text($quiz->intro), "CENTER");
             }
             echo "<br />\n";
         
@@ -97,16 +92,14 @@
             echo "<div align=\"center\">\n";
             print_string("requirepasswordmessage", "quiz");
             echo "<br /><br />\n";
-            echo " <input name=\"quizpassword\" type=\"password\" value=\"\" alt=\"password\" />";
-            echo " <input type=\"submit\" value=\"".get_string("ok")."\" />\n";
+            echo " <input name=\"quizpassword\" type=\"password\" value=\"\">";
+            echo " <input type=\"submit\" value=\"".get_string("ok")."\">\n";
             echo "</div>\n";
 
             print_simple_box_end();
             echo "</form>\n";
             
-            if (empty($quiz->popup)) {
-                print_footer($course);
-            }
+            print_footer();
             exit;
 
         } else {
@@ -118,7 +111,7 @@
     }
     
 
-/// Get time limit if any.
+/// BEGIN EDIT Get time limit if any.
 
     $timelimit = $quiz->timelimit * 60;
 
@@ -136,9 +129,9 @@
     if($timelimit and $timerstartvalue <= 0) {
         $timerstartvalue = 1;
     }
-
+/// END EDIT
     $timenow = time();
-    $available = ($quiz->timeopen < $timenow and $timenow < $quiz->timeclose) || isteacher($course->id);
+    $available = ($quiz->timeopen < $timenow and $timenow < $quiz->timeclose);
 
 /// Check to see if they are submitting answers
     if ($rawanswers = data_submitted()) {
@@ -166,11 +159,14 @@
             } else if ('shuffleorder' == $key) {
                 $shuffleorder = explode(",", $value);   // Actual order questions were given in
 
-            } else if ('navigation' == $key) {
-                $navigation = $value;   // Determines next page to show in quiz
-
             } else {  // Useful for debugging new question types.  Must be last.
                 error("Unrecognizable input has been posted ($key -> $value)");
+            }
+        }
+
+        if($timelimit > 0) {
+            if(($timelimit + 60) <= $timesincestart) {
+                $quiz->timesincestart = $timesincestart;
             }
         }
 
@@ -182,73 +178,42 @@
             $questions[$qid]->maxgrade = $grade->grade;
         }
 
-        if (isset($timesincestart)) {
-            $quiz->timesincestart = $timesincestart;   // To pass it on to quiz_grade_responses
-        }
-
-        if (!$result = quiz_grade_responses($quiz, $questions, $unattempt->id)) {
+        if (!$result = quiz_grade_responses($quiz, $questions)) {
             error("Could not grade your quiz attempt!");
         }
 
-        if ($attempt = quiz_save_attempt($quiz, $questions, $result,
-                                         $attemptnumber, 0 == $navigation)) {
-            if (empty($navigation)) {
-                add_to_log($course->id, "quiz", "submit",
-                       "review.php?id=$cm->id&amp;attempt=$attempt->id", "$quiz->id", $cm->id);
-            }
+        if ($attempt = quiz_save_attempt($quiz, $questions, $result, $attemptnumber)) {
+            add_to_log($course->id, "quiz", "submit",
+                       "review.php?id=$cm->id&attempt=$attempt->id", "$quiz->id", $cm->id);
         } else {
             notice(get_string("alreadysubmitted", "quiz"), "view.php?id=$cm->id");
-            if (empty($quiz->popup)) {
-                print_footer($course);
-            }
+            print_footer($course);
             exit;
         }
 
-        if (empty($navigation)) {
-            /// Attempt has finished
-
-            if (! quiz_save_best_grade($quiz, $USER->id)) {
-                error("Sorry! Could not calculate your best grade!");
-            }
-        
-            if (empty($quiz->popup) and !$quiz->feedback) {
-                // No need to stop on this page, go directly to view.php
-                redirect('view.php?q='.$quiz->id);
-            }
-
-            $strgrade = get_string("grade");
-            $strscore = get_string("score", "quiz");
-
-            if ($quiz->grade) {
-                print_heading("$strscore: $result->sumgrades/$quiz->sumgrades ($result->percentage %)");
-                print_heading("$strgrade: $result->grade/$quiz->grade");
-            }
-
-            /// continue button - use javascript to close down child window if in popup
-            include('attempt_close_js.php');
-
-            if ($quiz->feedback) {
-                $quiz->shuffleanswers = false;       // Never shuffle answers in feedback
-
-                /// Make sure to get all questions in case not all are shown
-                /// in quiz all the time.
-                $questions = quiz_get_attempt_questions($quiz, $attempt);
-                quiz_print_quiz_questions($quiz, $questions,
-                        quiz_grade_responses($quiz, $questions, $unattempt->id),
-                        $shuffleorder);
-                /// continue button - use javascript to close down child window if in popup
-                include('attempt_close_js.php');
-            }
-
-            if (empty($quiz->popup)) {
-                print_footer($course);
-            }
-
-            exit;
+        if (! quiz_save_best_grade($quiz, $USER->id)) {
+            error("Sorry! Could not calculate your best grade!");
         }
-    } else {
-        $navigation= 1;
-        $shuffleorder= NULL;
+
+        $strgrade = get_string("grade");
+        $strscore = get_string("score", "quiz");
+
+        if ($quiz->grade) {
+            print_heading("$strscore: $result->sumgrades/$quiz->sumgrades ($result->percentage %)");
+            print_heading("$strgrade: $result->grade/$quiz->grade");
+        }
+
+        print_continue("view.php?id=$cm->id");
+
+        if ($quiz->feedback) {
+            $quiz->shuffleanswers = false;       // Never shuffle answers in feedback
+            quiz_print_quiz_questions($quiz, $questions, $result, $shuffleorder);
+            print_continue("view.php?id=$cm->id");
+        }
+
+        print_footer($course);
+
+        exit;
     }
 
 
@@ -256,9 +221,7 @@
 
     if (isguest()) {
         print_heading(get_string("guestsno", "quiz"));
-        if (empty($quiz->popup)) {
-            print_footer($course);
-        }
+        print_footer($course);
         exit;
     }
 
@@ -269,14 +232,14 @@
 
     } else if ($attempt = quiz_start_attempt($quiz->id, $USER->id, $attemptnumber)) {
         add_to_log($course->id, "quiz", "attempt", 
-                "review.php?id=$cm->id&amp;attempt=$attempt->id", "$quiz->id", $cm->id);
+                "review.php?id=$cm->id&attempt=$attempt->id", "$quiz->id", $cm->id);
     } else {
         error("Sorry! Could not start the quiz (could not save starting time)");
     }
 
 /// First print the headings and so on
 
-    print_heading(format_string($quiz->name));
+    print_heading($quiz->name);
 
     if (!$available) {
         error("Sorry, this quiz is not available", "view.php?id=$cm->id");
@@ -284,7 +247,7 @@
 
     print_heading(get_string("attempt", "quiz", $attemptnumber));
     if (trim(strip_tags($quiz->intro))) {
-        print_simple_box(format_text($quiz->intro), "center");
+        print_simple_box(format_text($quiz->intro), "CENTER");
     }
 
 
@@ -295,11 +258,6 @@
         include("jsclock.php");
     }
 
-/// Include Javascript protection for this page if required
-
-    if (!empty($quiz->popup)) {
-        include("protect_js.php");
-    }
 
 /// Print all the questions
 
@@ -307,7 +265,7 @@
 
     $questions = quiz_get_attempt_questions($quiz, $attempt, true);
     if ($quiz->attemptonlast && $attemptnumber >= 2 and
-            $quiz->attempts == 0 || !$unattempt) {
+            $quiz->attempts == 0 || !unattempt) {
         // There are unlimited attempts or it is a new attempt.
         // As the attempt also builds on the last, we can here
         // have the student see the scores of the pre-entered
@@ -321,8 +279,7 @@
     // We do not show feedback or correct answers during an attempt:
     $quiz->feedback = $quiz->correctanswers = false;
     
-    if (!quiz_print_quiz_questions($quiz, $questions,
-            $result, $shuffleorder, $navigation)) {
+    if (!quiz_print_quiz_questions($quiz, $questions, $result)) {
         print_continue("view.php?id=$cm->id");
     }
 
@@ -332,8 +289,6 @@
         require('jstimer.php');
     }
 
-    if (empty($quiz->popup)) {
-        print_footer($course);
-    }
+    print_footer($course);
 
 ?>

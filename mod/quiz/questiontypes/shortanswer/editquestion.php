@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
     if (!empty($question->id)) {
         $options = get_record("quiz_shortanswer", "question", $question->id);
     } else {
@@ -7,7 +7,7 @@
     if (!empty($options->answers)) {
         $answersraw = get_records_list("quiz_answers", "id", $options->answers);
     }
-    for ($i=0 ; $i < QUIZ_MAX_NUMBER_ANSWERS ; $i++) {
+    for ($i=0; $i<QUIZ_MAX_NUMBER_ANSWERS; $i++) {
         $answers[] = "";   // Make answer slots, default as blank
     }
     if (!empty($answersraw)) {
@@ -18,6 +18,6 @@
         }
     }
     print_heading_with_help(get_string("editingshortanswer", "quiz"), "shortanswer", "quiz");
-    require("$CFG->dirroot/mod/quiz/questiontypes/shortanswer/shortanswer.html");
+    require("shortanswer.html");
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // glossary.php - created with Moodle 1.2 development (2004013100)
 
 
 $string['addcomment'] = '덧글 쓰기';
@@ -60,7 +60,13 @@ $string['deletingnoneemptycategory'] = '이 범주를 삭제해도 범주내의 글들은 삭제�
 $string['descending'] = '내림차순으로';
 $string['destination'] = '목적지';
 $string['displayformat'] = '출력 양식';
+$string['displayformat2'] = '전체보기 - 올린이';
+$string['displayformat3'] = '백과사전';
+$string['displayformat4'] = 'FAQ';
+$string['displayformat5'] = '전체보기- 올린이 없음';
+$string['displayformat6'] = '항목';
 $string['displayformatcontinuous'] = '올린이없이 이어보기';
+$string['displayformatdefault'] = '사전처럼';
 $string['displayformats'] = '출력 양식';
 $string['duplicateentry'] = '항목 복사';
 $string['editcategories'] = '범주 편집';
@@ -80,7 +86,8 @@ $string['explainaddentry'] = '현재의 자료집에 새 항목을 추가합니다.';
 $string['explainall'] = '한 쪽에 모든 항목 보기';
 $string['explainalphabet'] = '색인을 사용하여 자료집 보기';
 $string['explainexport'] = '파일이 생성되었습니다. 파일을 다운받아 안전하게 보관하세요. 이곳에나 다른 배움터에서 다시 가져오기할 수 있습니다.';
-$string['explainimport'] = '가져오기 할 파일을 구체적으로 적어야 합니다. 그리고 과정의 범주를 설정합니다.';
+$string['explainimport'] = '가져오기 할 파일을 구체적으로 적어야 합니다. 그리고 과정의 범주를 설정합니다.
+';
 $string['explainspecial'] = '문자로 시작하지 않는 항목 보기';
 $string['exportedentry'] = '내보내기된 항목';
 $string['exportedfile'] = '내보내기된 파일';
@@ -89,7 +96,6 @@ $string['exportglossary'] = '자료집 내보내기';
 $string['exporttomainglossary'] = '주 자료집으로 내보내기';
 $string['filetoimport'] = '가져오기 파일';
 $string['fillfields'] = '필수적으로 채워넣어야 하는 항목';
-$string['filtername'] = '글로서리 자동 링크';
 $string['fullmatch'] = '완전히 일치하는 단어만';
 $string['glossarytype'] = '자료집 유형';
 $string['glosssaryexported'] = '자료집이 내보내기됨';
@@ -141,9 +147,6 @@ $string['sortchronogically'] = '연대표 순으로 정렬';
 $string['special'] = '특집';
 $string['standardview'] = '문사순으로 보기';
 $string['studentcanpost'] = '학생들이 항목을 추가할 수 있음';
-$string['thischarset'] = 'euc-kr';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['totalentries'] = '전체 항목';
 $string['usedynalink'] = '자료집 항목으로 자동 링크함';
 $string['waitingapproval'] = '승인  대기중';

@@ -3,7 +3,7 @@
 
 $string['about'] = 'Om denne HTML-editoren';
 $string['absbottom'] = 'Absolutt nederst';
-$string['middle'] = 'Midstilt på tekstlinjen';
+$string['absmiddle'] = 'Midstilt på tekstlinjen';
 $string['address'] = 'Adresse';
 $string['alignment'] = 'Plassering';
 $string['alternatetext'] = 'Alternativ tekst';

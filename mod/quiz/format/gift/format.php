@@ -126,7 +126,7 @@ class quiz_file_format extends quiz_default_format {
         $answerstart = strpos($text, "{");
         if ($answerstart === false) {
             if ($this->displayerrors) {
-                echo "<p>$text<p>Could not find a {";
+                echo "<P>$text<P>Could not find a {";
             }
             return false;
         }
@@ -134,7 +134,7 @@ class quiz_file_format extends quiz_default_format {
         $answerfinish = strpos($text, "}");
         if ($answerfinish === false) {
             if ($this->displayerrors) {
-                echo "<p>$text<p>Could not find a }";
+                echo "<P>$text<P>Could not find a }";
             }
             return false;
         }
@@ -193,7 +193,7 @@ class quiz_file_format extends quiz_default_format {
 
         if (!isset($question->qtype)) {
             if ($this->displayerrors) {
-                echo "<p>$text<p>Question type not set.";
+                echo "<P>$text<P>Question type not set.";
                 }
             return false;
         }
@@ -218,7 +218,7 @@ class quiz_file_format extends quiz_default_format {
                 $countanswers = count($answers);
                 if ($countanswers < 2) {
                     if ($this->displayerrors) {
-                        echo "<p>$text<p>Found tilde for multiple choice, 
+                        echo "<P>$text<P>Found tilde for multiple choice, 
                             but too few answers for Multiple Choice.<br />
                             Found <u>$countanswers</u> answers in answertext.";
                     }
@@ -262,7 +262,7 @@ class quiz_file_format extends quiz_default_format {
                 $countanswers = count($answers);
                 if ($countanswers < 3) {
                     if ($this->displayerrors) {
-                        echo "<p>$text<p>Found markers for Matching format 
+                        echo "<P>$text<P>Found markers for Matching format 
                             (= and ->), but too few answers -- must be at least 3.<br />
                             Found <u>$countanswers</u> answers in answertext.";
                     }
@@ -274,7 +274,7 @@ class quiz_file_format extends quiz_default_format {
                     $answer = trim($answer);
                     if (strpos($answer, "->") <= 0) {
                         if ($this->displayerrors) {
-                        echo "<p>$text<p>Error processing Matching question.<br />
+                        echo "<P>$text<P>Error processing Matching question.<br />
                             Improperly formatted answer: $answer";
                         }
                         return false;
@@ -323,7 +323,7 @@ class quiz_file_format extends quiz_default_format {
                 if (count($answers) == 0) {
                     // invalid question
                     if ($this->displayerrors) {
-                        echo "<p>$text<p>Found equals=, but no answers in answertext";
+                        echo "<P>$text<P>Found equals=, but no answers in answertext";
                     }
                     return false;
                     break;
@@ -364,7 +364,7 @@ class quiz_file_format extends quiz_default_format {
                 if (count($answers) == 0) {
                     // invalid question
                     if ($this->displayerrors) {
-                        echo "<p>$text<p>No answers found in answertext (Numerical answer)";
+                        echo "<P>$text<P>No answers found in answertext (Numerical answer)";
                     }
                     return false;
                     break;
@@ -407,8 +407,8 @@ class quiz_file_format extends quiz_default_format {
                      OR !is_numeric($question->max[$key])
                      OR !is_numeric($question->max[$key])) {
                         if ($this->displayerrors) {
-                            echo "<p>$text<p>For numerical questions, answer must be numbers.
-                                <p>Answer: <u>$answer</u><p>ErrorMargin: <u>$errormargin</u> .";
+                            echo "<P>$text<P>For numerical questions, answer must be numbers.
+                                <P>Answer: <u>$answer</u><P>ErrorMargin: <u>$errormargin</u> .";
                         }
                         return false;
                         break;
@@ -418,13 +418,12 @@ class quiz_file_format extends quiz_default_format {
 
                 $question->defaultgrade = 1;
                 $question->image = "";   // No images with this format
-                $question->multiplier = array(); // no numeric multipliers with GIFT
                 return $question;
                 break;
 
                 default:
                 if ($this->displayerrors) {
-                    echo "<p>$text<p> No valid question type. Error in switch(question->qtype)";
+                    echo "<P>$text<P> No valid question type. Error in switch(question->qtype)";
                 }
                 return false;
                 break;                
@@ -432,14 +431,6 @@ class quiz_file_format extends quiz_default_format {
         } // end switch ($question->qtype)
 
     }    // end function readquestion($lines)
-
-function repchar( $text ) {
-    // escapes 'reserved' characters # = ~ { )
-    $reserved = array( '#','=','~','{','}' );
-    $escaped = array( '\#','\=','\~','\{','\}' );
-
-    return str_replace( $reserved, $escaped, $text ); 
-    }
 
 function writequestion( $question ) {
     // turns question into string
@@ -456,15 +447,15 @@ function writequestion( $question ) {
     case TRUEFALSE:
         if ($question->trueanswer->fraction==1) {
             $answertext = 'TRUE';
-            $wrong_feedback = $this->repchar( $question->falseanswer->feedback );
-            $right_feedback = $this->repchar( $question->trueanswer->feedback );
+            $wrong_feedback = $question->falseanswer->feedback;
+            $right_feedback = $question->trueanswer->feedback;
         }
         else {
             $answertext = 'FALSE';
-            $wrong_feedback = $this->repchar( $question->trueanswer->feedback );
-            $right_feedback = $this->repchar( $question->falseanswer->feedback );
+            $wrong_feedback = $question->trueanswer->feedback;
+            $right_feedback = $question->falseanswer->feedback;
         }
-        $expout .= "::".$question->name."::".$this->repchar( $question->questiontext )."{".$this->repchar( $answertext );
+        $expout .= "::".$question->name."::".$question->questiontext."{".$answertext;
         if ($wrong_feedback!="") {
             $expout .= "#".$wrong_feedback;
         }
@@ -474,43 +465,39 @@ function writequestion( $question ) {
         $expout .= "}\n";
         break;
     case MULTICHOICE:
-        $expout .= "::".$question->name."::".$this->repchar( $question->questiontext )."{\n";
+        $expout .= "::".$question->name."::".$question->questiontext."{\n";
         foreach($question->answers as $answer) {
             if ($answer->fraction==1) {
                 $answertext = '=';
             }
-            elseif ($answer->fraction==0) {
+            else {
                 $answertext = '~';
             }
-            else {
-              $export_weight = $answer->fraction*100;
-              $answertext = "~%$export_weight%";
-            }
-            $expout .= "\t".$answertext.$this->repchar( $answer->answer );
+            $expout .= "\t".$answertext.$answer->answer;
             if ($answer->feedback!="") {
-                $expout .= "#".$this->repchar( $answer->feedback );
+                $expout .= "#".$answer->feedback;
             }
             $expout .= "\n";
         }
         $expout .= "}\n";
         break;
     case SHORTANSWER:
-        $expout .= "::".$question->name."::".$this->repchar( $question->questiontext )."{\n";
+        $expout .= "::".$question->name."::".$question->questiontext."{\n";
         foreach($question->answers as $answer) {
             $weight = 100 * $answer->fraction;
-            $expout .= "\t=%".$weight."%".$this->repchar( $answer->answer )."#".$this->repchar( $answer->feedback )."\n";
+            $expout .= "\t=%".$weight."%".$answer->answer."#".$answer->feedback."\n";
         }
         $expout .= "}\n";
         break;
     case NUMERICAL:
-        $expout .= "::".$question->name."::".$this->repchar( $question->questiontext )."{\n";
-        $expout .= "\t#".$question->min."..".$question->max."#".$this->repchar( $question->answer->feedback )."\n";
+        $expout .= "::".$question->name."::".$question->questiontext."{\n";
+        $expout .= "\t#".$question->min."..".$question->max."#".$question->answer->feedback."\n";
         $expout .= "}\n";
         break;
     case MATCH:
-        $expout .= "::".$question->name."::".$this->repchar( $question->questiontext )."{\n";
+        $expout .= "::".$question->name."::".$question->questiontext."{\n";
         foreach($question->subquestions as $subquestion) {
-            $expout .= "\t=".$this->repchar( $subquestion->questiontext )." -> ".$this->repchar( $subquestion->answertext )."\n";
+            $expout .= "\t=".$subquestion->questiontext." -> ".$subquestion->answertext."\n";
         }
         $expout .= "}\n";
         break;
@@ -521,7 +508,7 @@ function writequestion( $question ) {
         $expout .= "// CLOZE type is not supported\n";
         break;
     default:
-        notify("No handler for qtype $question->qtype for GIFT export" );
+        error( "No handler for qtype $question->qtype for GIFT export" );
     }
     // add empty line to delimit questions
     $expout .= "\n";

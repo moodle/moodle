@@ -1,9 +1,9 @@
-<?php // $Id$
+<?PHP // $Id$
 
 // This page lists all the instances of quiz in a particular course
 
     require_once("../../config.php");
-    require_once("locallib.php");
+    require_once("lib.php");
 
     require_variable($id);   // course
 
@@ -76,13 +76,13 @@
     foreach ($quizzes as $quiz) {
         if (!$quiz->visible) { 
             //Show dimmed if the mod is hidden
-            $link = "<a class=\"dimmed\" href=\"view.php?id=$quiz->coursemodule\">".format_string($quiz->name,true)."</a>";
+            $link = "<A class=\"dimmed\" HREF=\"view.php?id=$quiz->coursemodule\">$quiz->name</A>";
         } else {
             //Show normal if the mod is visible
-            $link = "<a href=\"view.php?id=$quiz->coursemodule\">".format_string($quiz->name,true)."</a>";
+            $link = "<A HREF=\"view.php?id=$quiz->coursemodule\">$quiz->name</A>";
         }
 
-        $bestgrade = quiz_get_best_grade($quiz, $USER->id);
+        $bestgrade = quiz_get_best_grade($quiz->id, $USER->id);
 
         $printsection = "";
         if ($quiz->section !== $currentsection) {
@@ -98,16 +98,17 @@
         $closequiz = userdate($quiz->timeclose);
 
         if (isteacher($course->id)) {
-            if ($usercount = count_records('quiz_grades', 'quiz', $quiz->id)) {
-                $attemptcount = count_records_select('quiz_attempts', 'quiz = '.$quiz->id.' AND timefinish > 0');
-                $strviewallanswers  = get_string('viewallanswers', 'quiz', $attemptcount);
+            if ($allanswers = get_records("quiz_grades", "quiz", $quiz->id)) {
+                $attemptcount = count_records_select("quiz_attempts", "quiz = '$quiz->id' AND timefinish > 0");
+                $usercount = count_records("quiz_grades", "quiz", "$quiz->id");
+                $strviewallanswers  = get_string("viewallanswers","quiz",$attemptcount);
                 $gradecol = "<a href=\"report.php?q=$quiz->id\">$strviewallanswers ($usercount $strusers)</a>";
             } else {
                 $answercount = 0;
                 $gradecol = "";
             }
         } else { 
-            if ($bestgrade === NULL || $quiz->grade == 0) {
+            if ($bestgrade === "" or $quiz->grade == 0) {
                 $gradecol = "";
             } else {
                 $gradecol = "$bestgrade / $quiz->grade";

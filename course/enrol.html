@@ -1,0 +1,45 @@
+<table cellpadding="20" align="center">
+  <tr valign="top">
+    <td>
+    <p align="center">
+       <?php
+          if ($teacher) {
+              $teachername = "<a href=\"../user/view.php?id=$teacher->id&course=$site->id\">".
+                             "$teacher->firstname $teacher->lastname</a>.";
+          } else {
+              $teachername = get_string("yourteacher", "", strtolower($course->teacher));
+          }
+          print_string("enrolmentkeyfrom", "", $teachername);
+       ?>
+       </p>
+    </td>
+
+  </tr>
+  <tr valign=top>
+    <td class="generalbox" bgcolor="<?php p($THEME->cellheading)?>"><center><?php if (isset ($errormsg)) {formerr($errormsg);} ?></center>
+      <form name="form" method="post" action="enrol.php">
+        <table>
+          <tr>
+            <td width="50%" align="right"><p><?php print_string("enrolmentkey") ?>:</p></td>
+            <td width="50%">
+              <input type="password" name="password" size="20" value="<?php p($password) ?>" >
+              <input type="hidden" name="id" value="<?php p($id) ?>" >
+            </td>
+          <tr>
+            <td width="50%">&nbsp;</td>
+            <td width="50%">
+              <table cellpadding="1" cellspacing="0" align="center">
+                <tr>
+
+                    <td><input type="submit" value="<?php print_string("login") ?>">&nbsp;&nbsp;</form></td>
+                    <td><form action="<?php p($CFG->wwwroot)?>/index.php" method=post>
+                        <input type="submit" value="<?php print_string("cancel") ?>"></form></td>
+                </tr>
+              </table>
+            </td>
+        </table>
+    </td>
+
+  </tr>
+</table>
+

@@ -1,13 +1,22 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <title>Documentación de Moodle: Instlación de Apache, PHP y MySQL</title>
-    <link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<link rel="stylesheet" href="../theme/standard/styles.php" type="TEXT/CSS">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<style type="text/css">
+    <!--
+    .sectionheading {
+	  font-size: medium;
+	  font-weight: bold;
+	  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+	  border: 1px dotted;
+	  padding: 10px;
+	  background-color: #EEEEEE;
+    }
+    -->
+    </style>
 </head>
 
-<body>
+<body bgcolor="#FFFFFF">
 
 <h2>Instalación de Apache, MySQL y PHP</h2>
 
@@ -146,20 +155,20 @@ target=
       config.php</li>
     <li>Edite config.php usando un editor de texto (Notepad valdrá, pero tenga 
       cuidado de que no añada espacios en blanco al final del archivo).</li>
-    <li>Ponga toda la información de su nueva base de datos:<br />
-      $CFG-&gt;dbtype = 'mysql';<br />
-      $CFG-&gt;dbhost = 'localhost';<br />
-      $CFG-&gt;dbname = 'moodle';<br />
-      $CFG-&gt;dbuser = 'root';<br />
-      $CFG-&gt;dbpass = '';<br />
-      $CFG-&gt;dbpersist = true;<br />
-      $CFG-&gt;prefix = 'mdl_';<br />
+    <li>Ponga toda la información de su nueva base de datos:<br>
+      $CFG-&gt;dbtype = 'mysql';<br>
+      $CFG-&gt;dbhost = 'localhost';<br>
+      $CFG-&gt;dbname = 'moodle';<br>
+      $CFG-&gt;dbuser = 'root';<br>
+      $CFG-&gt;dbpass = '';<br>
+      $CFG-&gt;dbpersist = true;<br>
+      $CFG-&gt;prefix = 'mdl_';<br>
     </li>
-    <li>Ponga la ruta de todos sus archivos:<br />
+    <li>Ponga la ruta de todos sus archivos:<br>
       $CFG-&gt;wwwroot = 'http://localhost/moodle'; // Use una dirección externa 
-      si la conoce.<br />
-      $CFG-&gt;dirroot = 'C:\Program Files\EasyPHP\www\moodle';<br />
-      $CFG-&gt;dataroot = 'C:\moodledata';<br />
+      si la conoce.<br>
+      $CFG-&gt;dirroot = 'C:\Program Files\EasyPHP\www\moodle';<br>
+      $CFG-&gt;dataroot = 'C:\moodledata';<br>
     </li>
     <li>Guarde config.php - puede hacer caso omiso de cualquier otra configuración, 
       si hay alguna.</li>
@@ -198,9 +207,10 @@ target=
   </ul>
 </blockquote>
 
+<h3> </h3>
+
 <p align="center"><a href="." target="_top"><font size="1">Documentación de Moodle</font></a></p>
 <p align="center"><font size="1">Version: $Id: installamp.html,v 1.4 2003/08/29 
   01:40:25 moodler Exp $</font></p>
 
 </body>
-</html>

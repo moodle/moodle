@@ -153,7 +153,7 @@ $string['collesm6short'] = 'Interpretación';
 $string['collesmintro'] = 'Nesta unidade <em>online</em>...';
 $string['collespintro'] = 'O propósito desta enquisa é axudarnos a entender o que vostede valora nunha experiencia de aprendizaxe <em>online</em>.
 
-Cada unha das 24 declaracións seguintes interrógao sobre a súa experiencia <strong>favorita</strong> (ideal) nesta unidade.
+Cada unha das 24 declaracións seguintes interrógao sobre a súa experiencia <strong>favorita</em> (ideal) nesta unidade.
 
 Non existen respostas \'correctas\' ou \'erróneas\', a nós interésanos só a súa opinión. Teña a seguridade de que as súas respostas serán tratadas coa máxima confidencialidade e que non afectarán a súa avaliación.
 

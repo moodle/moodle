@@ -101,7 +101,7 @@ $string['backuplogshelp'] = 'Jika diaktifkan, log kursus akan disertakan dalam a
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backupnoneusersinfo'] = 'Nota: Anda telah memilih untuk tidak mengarkib pengguna, oleh itu arkib bagi semua modul telah ditukarkan kepada mod \"tanpa data pengguna\". Sila pastikan pengarkiban bagi modul \"latihan\" dan \"bengkel\" dinyahaktifkan, kerana kedua-dua modul ini tidak serasi dengan mod ini.';
 $string['backuporiginalname'] = 'Nama arkib';
-$string['backupsavetohelp'] = 'Direktori lengkap di mana anda ingin menyimpan fail-fail arkib<br />(biarkan kosong untuk menyimpan dalam direktori default kursus)';
+$string['backupsavetohelp'] = 'Direktori lengkap di mana anda ingin menyimpan fail-fail arkib<br>(biarkan kosong untuk menyimpan dalam direktori default kursus)';
 $string['backupuserfileshelp'] = 'Tentukan sama ada fail-fail pengguna (contohnya, gambar pada profil) juga dimasukkan dalam arkib otomatik';
 $string['backupusershelp'] = 'Tentukan apakah anda ingin memasukkan semua pengguna atau hanya pengguna tertentu dari setiap kursus';
 $string['backupversion'] = 'Versi Arkib';
@@ -171,7 +171,7 @@ $string['configmaxbytes'] = 'Ini menentukan had saiz bagi fail-fail yang dimuat-
 $string['configmaxeditingtime'] = 'Ini menetapkan tempoh untuk mengubah sebarang penghantaran ke dalam forum, jurnal dll. Lazimnya, 30 minit adalah tempoh yang paling sesuai.';
 $string['confignoreplyaddress'] = 'Email kadangkala dihantar bagi pihak pengguna (cthnya pos forum). Alamat email yang anda nyatakan di sini akan digunakan sebagai alamat pengirim bagi situasi yang mana pengguna ingin merahsiakan alamatnya.';
 $string['configopentogoogle'] = 'Jika setting ini diaktifkan, enjin pencarian Google akan dibenarkan untuk login ke laman ini sebagai Tetamu. Tambahan pula, pengunjung yang tiba ke laman ini melalui laman Google akan masuk secara otomatik menggunakan login Tetamu.';
-$string['configproxyhost'] = 'Jika <b>server</b> ini perlu menggunakan komputer proxy (seperti firewall) untuk capaian Internet, masukkan nama hos proxy dan portnya disini. Atau biarkan saja kosong.';
+$string['configproxyhost'] = 'Jika <B>server</B> ini perlu menggunakan komputer proxy (seperti firewall) untuk capaian Internet, masukkan nama hos proxy dan portnya disini. Atau biarkan saja kosong.';
 $string['configsecureforms'] = 'Pilihan ini boleh digunakan untuk meningkatkan tahap keselamatan apabila menerima data dari borang laman web. Bagaimanapun, pengguna proxy mungkin akan menghadapi masalah sekiranya pilihan ini diaktifkan. Sekiranya kurang pasti, pilih \'Yes\'.';
 $string['configsessioncookie'] = 'Setting ini menentukan nama \'cookie\' yang akan digunakan untuk laman ini. Ini hanya perlu sekiranya terdapat lebih daripada satu laman Moodle dalam domain yang sama.';
 $string['configsessiontimeout'] = 'Pendaftaran masuk pengguna yang tidak aktif dalam tempoh tertentu akan ditamatkan secara automatik. Gunakan pilihan ini untuk menetapkan tempoh tersebut.';
@@ -318,9 +318,9 @@ baris pengisian alamat pada bagian atas dari browser Anda.
 Salam dari kami \'$a->sitename\' administrator,
 $a->admin';
 $string['emailconfirmationsubject'] = '$a: pengesahan akaun';
-$string['emailconfirmsent'] = '   <p>Sebuah email telah dikirimkan ke alamat Anda pada <b>$a</b></p>
-   <p>yang berisi petunjuk ringkas untuk melengkapi pendaftaran Anda.</p>
-   <p>Jika Anda menemukan kesulitan, hubungi administrator situs ini.</p>';
+$string['emailconfirmsent'] = '   <P>Sebuah email telah dikirimkan ke alamat Anda pada <B>$a</B>
+   <P>yang berisi petunjuk ringkas untuk melengkapi pendaftaran Anda.
+   <P>Jika Anda menemukan kesulitan, hubungi administrator situs ini.';
 $string['emaildigest'] = 'Jenis ringkasan email';
 $string['emaildigestcomplete'] = 'Lengkap (harian, dengan pos penuh)';
 $string['emaildigestoff'] = 'Tiada ringkasan (email bagi setiap pos)';
@@ -347,18 +347,18 @@ Sekiranya URL di atas tidak boleh diklik, sila gunakan teknik \"copy & paste\" u
 Sebarang masalah, sila hubungi admin laman ini, $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: pengesahan perubahan password';
 $string['emailpasswordconfirmsent'] = 'Anda akan menerima email melalui <b>$a</b> sebentar lagi.
-<br />Email tersebut mengandungi arahan lanjut bagi anda mengesahkan penukaran password ini. Jika anda menghadapi sebarang kesukaran, sila hubungi pihak admin laman ini.';
-$string['emailpasswordsent'] = '<p>Terima kasih kerana mengesahkan penukaran password anda.</p>
-<p>Email mengandungi password baru anda telah pun dihantar ke alamat berikut: <b>$a->email</b>.</p>
-<p>Password baru tersebut telah dijanakan secara otomatik - sila <a href=\"$a->link"\>ubah password anda</a> kepada sesuatu yang mudah diingat.</p>';
+<p>Email tersebut mengandungi arahan lanjut bagi anda mengesahkan penukaran password ini. Jika anda menghadapi sebarang kesukaran, sila hubungi pihak admin laman ini.';
+$string['emailpasswordsent'] = 'Terima kasih kerana mengesahkan penukaran password anda.
+<p>Email mengandungi password baru anda telah pun dihantar ke alamat berikut: <b>$a->email</b>.
+<p>Password baru tersebut telah dijanakan secara otomatik - sila <a href=$a->link>ubah password anda</a> kepada sesuatu yang mudah diingat.';
 $string['enable'] = 'Aktifkan';
 $string['enrolledincourse'] = 'Berdaftar dengan kursus \'$a\'';
 $string['enrolledincoursenot'] = 'Tidak berdaftar dengan kursus \'$a\'';
 $string['enrolmentconfirmation'] = 'Anda pasti ingin mendaftarkan diri untuk kursus ini?';
 $string['enrolmentkey'] = 'Kunci pendaftaran';
-$string['enrolmentkeyfrom'] = 'Kursus ini memerlukan \'Kunci Pendaftaran\' - hanya sekali<br />
+$string['enrolmentkeyfrom'] = 'Kursus ini memerlukan \'Kunci Pendaftaran\' - hanya sekali<BR>
 kunci masuk yang Anda dapatkan dari $a';
-$string['enrolmentkeyhint'] = 'Kunci Masuk ini tidak sah, sila cuba lagi<br />
+$string['enrolmentkeyhint'] = 'Kunci Masuk ini tidak sah, sila cuba lagi<BR>
 (Ini petunjuknya - dimulai dengan \'$a\'';
 $string['enrolmentnew'] = 'Pendaftaran baru dalam $a';
 $string['enrolmentnointernal'] = 'Pendaftaran secara manual tidak dibenarkan buat masa ini';
@@ -538,23 +538,23 @@ $string['loginsteps'] = 'Hai! Untuk akses penuh pada kursus Anda perlu dalam beb
    Setiap kursus juga nantinya akan membutuhkan satu kali memasukkan
    \"Kunci Masuk\", yang mungkin Anda butuhkan nanti. Ini adalah
    langkah-langkahnya:
-   <ol>
-   <li>Isilah formulir <a href="\$a"\>Anggota baru</a> dengan data Anda.</li>
-   <li>Sebuah email akan dikirimkan ke alamat email yang Anda masukkan.</li>
-   <li>Baca email yang dikirimkan, dan klik pada link situs yang ada.</li>
-   <li>Keanggotaan Anda akan dikonfirmasikan dan Anda akan mulai bisa login.</li>
-   <li>Setelah login, pilih kursus yang ingin Anda ikuti.</li>
-   <li>Jika Anda diminta untuk memasukkan \"Kunci Masuk\" - maka masukkan
+   <OL size=2>
+   <LI>Isilah formulir <A HREF=$a>Anggota baru</A> dengan data Anda.
+   <LI>Sebuah email akan dikirimkan ke alamat email yang Anda masukkan.
+   <LI>Baca email yang dikirimkan, dan klik pada link situs yang ada.
+   <LI>Keanggotaan Anda akan dikonfirmasikan dan Anda akan mulai bisa login.
+   <LI>Setelah login, pilih kursus yang ingin Anda ikuti.
+   <LI>Jika Anda diminta untuk memasukkan \"Kunci Masuk\" - maka masukkan
    Kunci Masuk yang diberikan oleh pengajar Anda. Ini akan \"mendaftarkan\" Anda pada
-   kursus.</li>
-   <li>Sekarang Anda dapat mengakses penuh kursus tersebut. Selanjutnya Anda hanya akan perlu
+   kursus.
+   <LI>Sekarang Anda dapat mengakses penuh kursus tersebut. Selanjutnya Anda hanya akan perlu
    untuk memasukkan nama pengguna dan password Anda (pada form di halaman ini)
-   untuk Login dan meng-akses yang telah Anda daftar.</li>
-   </ol>';
-$string['loginstepsnone'] = '<p>Hai!</p><p>Untuk akses penuh pada kursus, Anda perlu membuat
-keanggotaan Anda sendiri.</p><p>Yang harus Anda lakukan adalah buatlah nama pengguna dan password dan gunakanlah pada
-form dihalaman ini!</p><p>Jika orang lain telah menggunakan nama pengguna yang Anda pilih
-maka Anda harus mencoba kembali dengan menggunakan nama pengguna yang lain.</p>';
+   untuk Login dan meng-akses yang telah Anda daftar.
+   </OL>';
+$string['loginstepsnone'] = 'Hai!<P>Untuk akses penuh pada kursus, Anda perlu membuat
+keanggotaan Anda sendiri.<P>Yang harus Anda lakukan adalah buatlah nama pengguna dan password dan gunakanlah pada
+form dihalaman ini!<P>Jika orang lain telah menggunakan nama pengguna yang Anda pilih
+maka Anda harus mencoba kembali dengan menggunakan nama pengguna yang lain.';
 $string['loginto'] = 'Daftar masuk ke $a';
 $string['loginusing'] = 'Daftar masuk disini menggunakan nama pengguna dan password anda';
 $string['logout'] = 'Daftar keluar';
@@ -712,10 +712,10 @@ $string['passwordconfirmchange'] = 'Sahkan perubahan katakunci';
 $string['passwordrecovery'] = 'Ya, bantu saya untuk daftar masuk';
 $string['passwordsdiffer'] = 'Kata laluan ini tidak sepadan';
 $string['passwordsent'] = 'Kata laluan telah dikirimkan';
-$string['passwordsenttext'] = '   <p>Sebuah email telah dikirimkan ke alamat email Anda pada $a->email.</p>
-   <p><b>Silahkan periksa email Anda untuk melihat password Anda yang baru</b></p>
-   <p>Password baru telah dibuat secara otomatis, jadi mungkin Anda ingin untuk
-   <a href=\"$a->link\">menggantinya dengan sesuatu yang mudah untuk diingat</a>.</p>';
+$string['passwordsenttext'] = '   <P>Sebuah email telah dikirimkan ke alamat email Anda pada $a->email.
+   <P><B>Silahkan periksa email Anda untuk melihat password Anda yang baru</B>
+   <P>Password baru telah dibuat secara otomatis, jadi mungkin Anda ingin untuk
+   <A HREF=$a->link>menggantinya dengan sesuatu yang mudah untuk diingat</A>.';
 $string['paymentinstant'] = 'Gunakan butang berikut untuk membuat pembayaran.';
 $string['paymentrequired'] = 'Kursus ini memerlukan bayaran.';
 $string['paymentsorry'] = 'Terima kasih atas pembayaran anda! Malangnya bayaran anda masih belum siap diproses, dan anda masih belum didafarkan dengan kursus \"$a->fullname\". Sila cuba masuk sebentar lagi. Sekiranya anda berterusan menghadapi masalah, sila hubungi $a->teacher atau admin laman ini.';
@@ -746,10 +746,10 @@ $string['recentactivityreport'] = 'Laporan lengkap tentang aktiviti terkini...';
 $string['refreshingevents'] = 'Menyemak Acara';
 $string['registration'] = 'Pendaftaran Moodle';
 $string['registrationemail'] = 'Notifikasi email';
-$string['registrationinfo'] = '<p>Halaman ini membolehkan anda mendaftarkan laman Moodle anda dengan moodle.org. Pendaftaran adalah percuma. Kelebihan utama berdaftar adalah anda akan dimasukkan ke dalam \"mailing list\" untuk maklumat penting seperti amaran sekuriti dan versi Moodle terkini.</p>
-<p>Maklumat peribadi anda akan disimpan dan tidak akan dijual atau diberikan kepada pihak lain. Tujuan utama maklumat ini dikumpul adalah bagi tujuan sokongan teknikal dan bagi mendapatkan statistik penggunaan Moodle.</p>
-<p>Jika anda bersetuju, anda juga boleh membenarkan nama laman anda, negara anda dan URL laman anda disenaraikan pada laman moodle.org.</p>
-<p>Semua pendaftaran baru akan disahkan secara manual sebelum dimasukkan ke dalam senarai. Sekiranya laman anda sudah tersenarai, anda boleh mengubah maklumat laman anda dengan menghantar borang ini sekali lagi.</p>';
+$string['registrationinfo'] = '<p>Halaman ini membolehkan anda mendaftarkan laman Moodle anda dengan moodle.org. Pendaftaran adalah percuma. Kelebihan utama berdaftar adalah anda akan dimasukkan ke dalam \"mailing list\" untuk maklumat penting seperti amaran sekuriti dan versi Moodle terkini.
+<p>Maklumat peribadi anda akan disimpan dan tidak akan dijual atau diberikan kepada pihak lain. Tujuan utama maklumat ini dikumpul adalah bagi tujuan sokongan teknikal dan bagi mendapatkan statistik penggunaan Moodle.
+<p>Jika anda bersetuju, anda juga boleh membenarkan nama laman anda, negara anda dan URL laman anda disenaraikan pada laman moodle.org.
+<p>Semua pendaftaran baru akan disahkan secara manual sebelum dimasukkan ke dalam senarai. Sekiranya laman anda sudah tersenarai, anda boleh mengubah maklumat laman anda dengan menghantar borang ini sekali lagi.';
 $string['registrationno'] = 'Tidak, saya tidak mahu menerima email';
 $string['registrationsend'] = 'Hantar maklumat pendaftaran kepada moodle.org';
 $string['registrationyes'] = 'Ya, sila beritahu saya tentang berita penting';
@@ -788,7 +788,7 @@ $string['scheduledbackupstatus'] = 'Status backup berkala';
 $string['search'] = 'Cari';
 $string['searchagain'] = 'Cari lagi';
 $string['searchcourses'] = 'Cari kursus';
-$string['searchhelp'] = 'Anda boleh mencari lebih dari satu perkataan sekaligus.<br />kata : cari perkataan ini mana-mana di dalam teks.<br />+kata : cari perkataan ini dengan tepat.<br />-kata : jangan cari perkataan ini.';
+$string['searchhelp'] = 'Anda boleh mencari lebih dari satu perkataan sekaligus.<p>kata : cari perkataan ini mana-mana di dalam teks.<br>+kata : cari perkataan ini dengan tepat.<br>-kata : jangan cari perkataan ini.';
 $string['searchresults'] = 'Hasil pencarian';
 $string['sec'] = 'saat';
 $string['secs'] = 'saat';

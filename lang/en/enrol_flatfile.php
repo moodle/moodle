@@ -1,4 +1,4 @@
-<?php // $Id$ 
+<?PHP // $Id$ 
 
 $string['enrolname'] = 'Flat file';
 

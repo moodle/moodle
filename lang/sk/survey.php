@@ -139,7 +139,7 @@ $string['collesapintro'] = "Cieµom tejto ankety je zisti», ako vám online vzdelá
 
 
 
-Ka¾dá z nasledujúcich 24 otázok vy¾aduje, aby ste porovnali va¹e <b>preferované</b> (ideálne) a <b>aktuálne</b> skúsenosti v tomo kurze.
+Ka¾dá z nasledujúcich 24 otázok vy¾aduje, aby ste porovnali va¹e <B>preferované</B> (ideálne) a <B>aktuálne</B> skúsenosti v tomo kurze.
 
 
 
@@ -170,7 +170,7 @@ $string['collespintro'] = "Cieµom tejto ankety je pomôc» nám aby sme pochopili, 
 
 
 
-Ka¾dá z nasledujúcich 24 otázok sa pýta na va¹e <b>uprednostòované</b> (ideálne) skúsenosti v tomto kurze.
+Ka¾dá z nasledujúcich 24 otázok sa pýta na va¹e <B>uprednostòované</B> (ideálne) skúsenosti v tomto kurze.
 
 
 

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
     require("../../config.php");
     require("lib.php");
@@ -39,40 +39,39 @@
         } else {
             $table->head  = array ($strweek, $strname, $strtitle, $strgrade, $strsubmitted, $strdeadline);
         }
-        $table->align = array ("center", "left", "left","center","left", "left");
+        $table->align = array ("CENTER", "LEFT", "LEFT","center","LEFT", "LEFT");
     } else if ($course->format == "topics") {
         if (isteacher($course->id)) {
             $table->head  = array ($strtopic, $strname, $strtitle, $strphase, $strsubmitted, $strdeadline);
         } else {
             $table->head  = array ($strtopic, $strname, $strtitle, $strgrade, $strsubmitted, $strdeadline);
         }
-        $table->align = array ("center", "left", "left", "center", "left", "left");
+        $table->align = array ("CENTER", "LEFT", "LEFT", "center", "LEFT", "LEFT");
     } else {
         $table->head  = array ($strname, $strsubmitted, $strdeadline);
-        $table->align = array ("left", "left", "left");
+        $table->align = array ("LEFT", "LEFT", "LEFT");
     }
 
     foreach ($exercises as $exercise) {
         if ($exercise->deadline > $timenow) {
             $due = userdate($exercise->deadline);
         } else {
-            $due = "<font color=\"red\">".userdate($exercise->deadline)."</font>";
+            $due = "<FONT COLOR=\"red\">".userdate($exercise->deadline)."</FONT>";
         }
         if ($submissions = exercise_get_user_submissions($exercise, $USER)) {
             foreach ($submissions as $submission) {
                 if ($submission->late) {
-                    $submitted = "<font color=\"red\">".userdate($submission->timecreated)."</font>";
+                    $submitted = "<FONT COLOR=\"red\">".userdate($submission->timecreated)."</FONT>";
                     } 
                 else {
                     $submitted = userdate($submission->timecreated);
                     }
-                $link = "<a href=\"view.php?id=$exercise->coursemodule\">".format_string($exercise->name,true)."</a>";
+                $link = "<A HREF=\"view.php?id=$exercise->coursemodule\">$exercise->name</A>";
                 $title = $submission->title;
                 if ($course->format == "weeks" or $course->format == "topics") {
                     if (isteacher($course->id)) {
                         $phase = '';
                         switch ($exercise->phase) {
-                            case 0:
                             case 1: $phase = get_string("phase1short", "exercise");
                                     break;
                             case 2: $phase = get_string("phase2short", "exercise");
@@ -119,7 +118,7 @@
         } else {
             $submitted = get_string("no");
             $title = '';
-            $link = "<a href=\"view.php?id=$exercise->coursemodule\">".format_string($exercise->name,true)."</a>";
+            $link = "<A HREF=\"view.php?id=$exercise->coursemodule\">$exercise->name</A>";
             if ($course->format == "weeks" or $course->format == "topics") {
                 if (isteacher($course->id)) {
                     $table->data[] = array ($exercise->section, $link, $title, $exercise->phase, 
@@ -132,7 +131,7 @@
             }
         }
     }
-    echo "<br />";
+    echo "<BR>";
 
     print_table($table);
 

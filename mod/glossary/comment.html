@@ -1,62 +1,57 @@
-<form name="form" method="post" action="comment.php">
-<table  class="generalbox">
-<tr valign="top">
-    <td align="right"><b>
-      <?php echo get_string("comment","glossary") ?>:
-      </b></td>
-    <td rowspan="2">
-    <?php print_textarea($usehtmleditor, 25, 65, 630, 400, "text", $form->text); ?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right" nowrap="nowrap">
+<FORM name="theform" method="post" action="comment.php">
+<table  class=generalbox cellpadding=5 bgcolor="<?php p($THEME->cellheading)?>">
+<tr valign=top>
+    <td align=right><p><b><?php echo get_string("comment","glossary") ?>:</b></p>
+    <font size="1">
      <?php
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
         echo "<br />";
         if ($usehtmleditor) {
            helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
         } else {
-           emoticonhelpbutton("form", "text");
-        }
-        echo "<br />";
+           emoticonhelpbutton("form", "comment");
+        } 
       ?>
+      <br />
+    </font>
     </td>
-</tr>
-<tr valign="top">
-    <td align="right"><b><?php print_string("formattexttype"); ?>:</b></td>
     <td>
     <?php
-        if ($usehtmleditor) {   /// Trying this out for a while
-            print_string('formathtml');
-            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
-        } else {
-            if (!isset($form->format)) {
-                $form->format = $defaultformat;
-            }
-            choose_from_menu(format_text_menu(), "format", $form->format, "");
-        }
-        helpbutton("textformat", get_string("helpformatting"));
-     ?>
+       print_textarea($usehtmleditor, 20, 60, 680, 400, "text", $form->text);
+    
+       echo "<p align=right>";
+   	   helpbutton("textformat", get_string("helpformatting"));
+       print_string("formattexttype");
+       echo ":&nbsp;";
+       if (!isset($form->format)) {
+           if (!$form->format) {
+               $form->format = $defaultformat;
+           }
+       }
+       choose_from_menu(format_text_menu(), "format", $form->format, ""); 
+       echo "</p>";
+    ?>
     </td>
 </tr>
 <tr>
-<td colspan="2">
-	<center>
+<td colspan=2>
+	<p align=center>
 	<?php 
 	    if (isset($comment->id)) {
-		    echo "<input type=\"hidden\" name=\"cid\" value=\"$comment->id\" />";
+		    echo "<input type=\"hidden\" name=cid value=\"$comment->id\">";
    	    }
 	?>
-	<input type="hidden" name="id" value="<?php p($cm->id) ?>" />
-	<input type="hidden" name="eid" value="<?php p($entry->id) ?>" />
-	<input type="hidden" name="action" value="<?php p($action) ?>" />
-	<input type="hidden" name="confirm" value="1" />
+	<input type="hidden" name=id value="<?php p($cm->id) ?>">
+	<input type="hidden" name=eid value="<?php p($entry->id) ?>">
+	<input type="hidden" name=action value="<?php p($action) ?>">
+	<input type="hidden" name=confirm value="1">
 
-	<input type="submit" value="<?php print_string("savechanges") ?>" />
-	<input type="reset" value="<?php print_string("revert") ?>" />
-	</center>
+	<input type="submit" value="<?php print_string("savechanges") ?>">
+	<input type="reset" value="<?php print_string("revert") ?>">
+	</P>
 </td>
 </tr>
 </table>
+</p>
 
 </form>

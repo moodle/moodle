@@ -31,7 +31,7 @@ $string['newwindowopen'] = 'Mostrar este recurso en una nueva ventana (popup)';
 $string['note'] = 'Nota';
 $string['notefile'] = 'Para subir más de un archivo (y que se puedan ver en la lista) utilice el
 
-<a href="$a" >Administrador de archivos</a>.';
+<a href=$a >Administrador de archivos</a>.';
 $string['notypechosen'] = 'Necesita elegir un tipo. Vuelva atrás e inténtelo de nuevo.';
 $string['popupresourcelink'] = 'Si no lo hizo, haga clic aquí: $a';
 $string['resourcetype'] = 'Tipo de recurso';

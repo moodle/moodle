@@ -16,14 +16,9 @@ define('COURSE_MAX_RECENT_PERIOD', 172800);  // Two days, in seconds
 
 define('COURSE_MAX_SUMMARIES_PER_PAGE', 10); // courses
 
-define('COURSE_MAX_COURSES_PER_DROPDOWN',5000); //  max courses in log dropdown before switching to optional
-
-define('COURSE_MAX_USERS_PER_DROPDOWN',5000); //  max users in log dropdown before switching to optional
-
 define("FRONTPAGENEWS",           0);
 define("FRONTPAGECOURSELIST",     1);
 define("FRONTPAGECATEGORYNAMES",  2);
-define("FRONTPAGETOPICONLY",      3);
 
 function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0, $selecteddate="lastlogin",
                                     $mod="", $modid="activity/All", $modaction="", $selectedgroup="", $selectedsort="default") {
@@ -37,7 +32,13 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
         // Get all the possible users
         $users = array();
 
-        if ($courseusers = get_course_users($course->id, '', '', 'u.id, u.firstname, u.lastname')) {
+        if ($course->category) {
+            $courseusers = get_course_users($course->id);
+        } else {
+            $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname");
+        }
+
+        if ($courseusers) {
             foreach ($courseusers as $courseuser) {
                 $users[$courseuser->id] = fullname($courseuser, $isteacher);
             }
@@ -92,7 +93,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
                     $activities["section/$mod->section"] = "-------------- $strsection $mod->section --------------";
                 }
                 $section = $mod->section;
-                $mod->name = strip_tags(format_string(urldecode($mod->name),true));
+                $mod->name = strip_tags(urldecode($mod->name));
                 if (strlen($mod->name) > 55) {
                     $mod->name = substr($mod->name, 0, 50)."...";
                 }
@@ -142,7 +143,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
         }
 
         echo '<form action="recent.php" method="get">';
-        echo '<input type="hidden" name="chooserecent" value="1" />';
+        echo '<input type=hidden name=chooserecent value="1">';
         echo "<center>";
         echo "<table>";
 
@@ -151,7 +152,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
             choose_from_menu ($courses, "id", $course->id, "");
             echo "</td></tr>";
         } else {
-            echo '<input type="hidden" name="id" value="'.$course->id.'" />';
+            echo "<input type=hidden name=id value=\"$course->id\">";
         }
 
         $sortfields = array("default" => get_string("bycourseorder"),"dateasc" => get_string("datemostrecentlast"), "datedesc" => get_string("datemostrecentfirst"));
@@ -160,7 +161,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
         choose_from_menu ($users, "user", $selecteduser, get_string("allparticipants") );
         echo "</td>";
 
-        echo '<td align="right"><b>' . get_string("since") . '</b></td><td>';
+        echo "<td align='right'><b>" . get_string("since") . "</b></td><td>";
         choose_from_menu ($dates, "date", $selecteddate, get_string("alldays"));
         echo "</td></tr>";
 
@@ -168,7 +169,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
         choose_from_menu ($activities, "modid", $selectedactivity, "");
         echo "</td>";
 
-        echo '<td align="right"><b>' . get_string("sortby") . "</b></td><td>";
+        echo "<td align='right'><b>" . get_string("sortby") . "</b></td><td>";
         choose_from_menu ($sortfields, "sortby", $selectedsort, "");
         echo "</td></tr>";
 
@@ -191,13 +192,13 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
         }
 
 
-        echo '<td colspan="2" align="right">';
-        echo '<input type="submit" value="'.get_string('showrecent').'" />';
+        echo "<td colspan='2' align='right'>";
+        echo "<input type=submit value=\"".get_string("showrecent")."\">";
         echo "</td></tr>";
 
         echo "</table>";
 
-        $advancedlink = "<a href=\"$CFG->wwwroot/course/recent.php?id=$course->id&amp;advancedfilter=0\">" . get_string("normalfilter") . "</a>";
+        $advancedlink = "<a href=\"$CFG->wwwroot/course/recent.php?id=$course->id&advancedfilter=0\">" . get_string("normalfilter") . "</a>";
         print_heading($advancedlink);
         echo "</center>";
         echo "</form>";
@@ -219,13 +220,13 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
             }
             $tmpdate = time() - ($count * 3600 * 24);
             $heading = $heading .
-                "<a href=\"$CFG->wwwroot/course/recent.php?id=$course->id&amp;date=$tmpdate\"> $count $day</a> | ";
+                "<a href=\"$CFG->wwwroot/course/recent.php?id=$course->id&date=$tmpdate\"> $count $day</a> | ";
         }
 
         $heading = $strsince . ": <a href=\"$CFG->wwwroot/course/recent.php?id=$course->id\">$strlastlogin</a>" . " | " . $heading;
         print_heading($heading);
 
-        $advancedlink = "<a href=\"$CFG->wwwroot/course/recent.php?id=$course->id&amp;advancedfilter=1\">" . get_string("advancedfilter") . "</a>";
+        $advancedlink = "<a href=\"$CFG->wwwroot/course/recent.php?id=$course->id&advancedfilter=1\">" . get_string("advancedfilter") . "</a>";
         print_heading($advancedlink);
 
     }
@@ -233,47 +234,9 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
 }
 
 function print_log_selector_form($course, $selecteduser=0, $selecteddate="today",
-                                 $modname="", $modid=0, $modaction="", $selectedgroup=-1,$showcourses=0,$showusers=0) {
+                                 $modname="", $modid=0, $modaction="", $selectedgroup=-1) {
 
     global $USER, $CFG;
-
-    // first check to see if we can override showcourses and showusers
-    $numcourses =  count_records_select("course", "", "COUNT(id)");
-    if ($numcourses < COURSE_MAX_COURSES_PER_DROPDOWN && !$showcourses) {
-        $showcourses = 1;
-    }
-   
-    if ($course->category && $selectedgroup) {
-        $sql = 'SELECT COUNT(ut.id) '.
-               'FROM '.$CFG->prefix.'groups_members gm '.
-               ' JOIN '.$CFG->prefix.'user_teachers  ut ON gm.userid=ut.userid '.
-               'WHERE ut.course='.$course->id.' AND gm.groupid='.$selectedgroup;
-        $numteachers = count_records_sql($sql); 
-        // students
-        $sql = 'SELECT COUNT(us.id) '.
-               'FROM '.$CFG->prefix.'groups_members gm '.
-               ' JOIN '.$CFG->prefix.'user_students us ON gm.userid=us.userid '.
-               'WHERE us.course='.$course->id.' AND gm.groupid='.$selectedgroup;
-        $numstudents = count_records_sql($sql); 
-        // add
-        $numusers = $numstudents + $numteachers;
-    }
-    else if ($course->category || !$CFG->allusersaresitestudents) {
-        $sql = "SELECT COUNT(t.id) FROM {$CFG->prefix}user_teachers t
-                            WHERE t.course = '$course->id'";
-        $numusers = count_records_sql($sql);
-        $sql = "SELECT count(s.id) FROM {$CFG->prefix}user_students s 
-                            WHERE s.course = '$course->id'";
-        $numusers = $numusers + count_records_sql($sql);
-    }
-    else if (!$course->category && $CFG->allusersaresitestudents) {
-        $numusers = get_users(false, '', true,'','','','',0,9999,'id');
-    }
-
-    if ($numusers < COURSE_MAX_USERS_PER_DROPDOWN && !$showusers) {
-        $showusers = 1;
-    }
-    
 
     /// Setup for group handling.
     $isteacher = isteacher($course->id);
@@ -294,29 +257,34 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     // Get all the possible users
     $users = array();
 
-    if ($showusers) {
-        if ($course->category) {
-            if ($selectedgroup) {   // If using a group, only get users in that group.
-                $courseusers = get_group_users($selectedgroup, 'u.lastname ASC', '', 'u.id, u.firstname, u.lastname');
-            } else {
-                $courseusers = get_course_users($course->id, '', '', 'u.id, u.firstname, u.lastname');
-            }
-        } else {
-            $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname");
+    if ($course->category) {
+        /// If using a group, only get users in that group.
+        if ($selectedgroup) {
+            $sql = 'SELECT u.id as id, u.firstname, u.lastname, u.lastaccess '.
+                   'FROM '.$CFG->prefix.'user u,'.$CFG->prefix.'user_students us,'.$CFG->prefix.'groups_members gm, '.
+                        $CFG->prefix.'user_teachers ut '.
+                   'WHERE us.course='.$course->id.' AND gm.groupid='.$selectedgroup.
+                   ' AND (gm.userid=us.userid OR gm.userid=ut.userid) AND gm.userid=u.id';
+            $courseusers = get_records_sql($sql); 
         }
-
-        if ($courseusers) {
-            foreach ($courseusers as $courseuser) {
-                $users[$courseuser->id] = fullname($courseuser, $isteacher);
-            }
+        else {
+            $courseusers = get_course_users($course->id);
         }
-        if ($guest = get_guest()) {
-            $users[$guest->id] = fullname($guest);
-        }
+    } else {
+        $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname");
     }
 
-    if (isadmin() && $showcourses) {
-        if ($ccc = get_records("course", "", "", "fullname","id,fullname,category")) {
+    if ($courseusers) {
+        foreach ($courseusers as $courseuser) {
+            $users[$courseuser->id] = fullname($courseuser, $isteacher);
+        }
+    }
+    if ($guest = get_guest()) {
+        $users[$guest->id] = fullname($guest);
+    }
+
+    if (isadmin()) {
+        if ($ccc = get_records("course", "", "", "fullname")) {
             foreach ($ccc as $cc) {
                 if ($cc->category) {
                     $courses["$cc->id"] = "$cc->fullname";
@@ -346,7 +314,7 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
                 $activities["section/$mod->section"] = "-------------- $strsection $mod->section --------------";
             }
             $section = $mod->section;
-            $mod->name = strip_tags(format_string(urldecode($mod->name),true));
+            $mod->name = urldecode($mod->name);
             if (strlen($mod->name) > 55) {
                 $mod->name = substr($mod->name, 0, 50)."...";
             }
@@ -359,14 +327,15 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
                 $selectedactivity = "$mod->cm";
             }
         }
-    }
 
-    if (isadmin() && !$course->category) {
-        $activities["site_errors"] = get_string("siteerrors");
-        if ($modid === "site_errors") {
+        if (isadmin() && !$course->category) {
+            $activities["site_errors"] = get_string("siteerrors");
+            if ($modid === "site_errors") {
             $selectedactivity = "site_errors";
+            }
         }
     }
+
 
     $strftimedate = get_string("strftimedate");
     $strftimedaydate = get_string("strftimedaydate");
@@ -403,55 +372,25 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
 
     echo '<center>';
     echo '<form action="log.php" method="get">';
-    echo '<input type="hidden" name="chooselog" value="1" />';
-    echo '<input type="hidden" name="showusers" value="'.$showusers.'" />';
-    echo '<input type="hidden" name="showcourses" value="'.$showcourses.'" />';
-    if (isadmin() && $showcourses) { 
+    echo '<input type=hidden name=chooselog value="1">';
+    if (isadmin()) {
         choose_from_menu ($courses, "id", $course->id, "");
     } else {
-        //        echo '<input type="hidden" name="id" value="'.$course->id.'" />';
-        $courses = array();
-        $courses[$course->id] = $course->fullname . ((empty($course->category)) ? ' (Site) ' : '');
-        choose_from_menu($courses,"id",$course->id,false);
-        if (isadmin()) {
-            $a->url = "log.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
-                ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showcourses=1&showusers=$showusers";
-            print_string('logtoomanycourses','moodle',$a);
-        }
+        echo "<input type=hidden name=id value=\"$course->id\">";
     }
 
     if ($showgroups) {
-        if ($cgroups = get_groups($course->id)) {
-            foreach ($cgroups as $cgroup) {
-                $groups[$cgroup->id] = $cgroup->name;
-            }
-        }
-        else {
-            $groups = array();
+        $cgroups = get_groups($course->id);
+        foreach ($cgroups as $cgroup) {
+            $groups[$cgroup->id] = $cgroup->name;
         }
         choose_from_menu ($groups, "group", $selectedgroup, get_string("allgroups") );
     }
 
-    if ($showusers) {
-        choose_from_menu ($users, "user", $selecteduser, get_string("allparticipants") );
-    }
-    else {
-        $users = array();
-        if (!empty($selecteduser)) {
-            $user = get_record('user','id',$selecteduser);
-            $users[$selecteduser] = fullname($user);
-        }
-        else {
-            $users[0] = get_string('allparticipants');
-        }
-        choose_from_menu($users,'user',$selecteduser,false);
-        $a->url = "log.php?chooselog=0&group=$selectedgroup&user=$selecteduser"
-            ."&id=$course->id&date=$selecteddate&modid=$selectedactivity&showusers=1&showcourses=$showcourses";
-        print_string('logtoomanyusers','moodle',$a);
-    }
+    choose_from_menu ($users, "user", $selecteduser, get_string("allparticipants") );
     choose_from_menu ($dates, "date", $selecteddate, get_string("alldays"));
     choose_from_menu ($activities, "modid", $selectedactivity, get_string("allactivities"), "", "");
-    echo '<input type="submit" value="'.get_string('showtheselogs').'" />';
+    echo "<input type=submit value=\"".get_string("showtheselogs")."\">";
     echo "</form>";
     echo "</center>";
 }
@@ -460,16 +399,12 @@ function make_log_url($module, $url) {
     switch ($module) {
         case "user":
         case "course":
+        case "user":
         case "file":
         case "login":
         case "lib":
         case "admin":
-        case "message":
-        case "calendar":
             return "/$module/$url";
-            break;
-        case "upload":
-            return "$url";
             break;
         case "library":
         case "":
@@ -481,7 +416,7 @@ function make_log_url($module, $url) {
     }
 }
 
-function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $perpage=100,
+function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $perpage=100, 
                    $url="", $modname="", $modid=0, $modaction="", $groupid=0) {
 
     // It is assumed that $date is the GMT time of midnight for that day,
@@ -506,7 +441,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     $joins = array();
 
     if ($course->category) {
-        $joins[] = "l.course='$course->id'";
+        $joins[] = "l.course='$course->id'"; 
     } else {
         $courses[0] = '';
         if ($ccc = get_courses("all", "c.id ASC", "c.id,c.shortname")) {
@@ -521,7 +456,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     }
 
     if ('site_errors' === $modid) {
-        $joins[] = "( l.action='error' OR l.action='infected' )";
+        $joins[] = "l.action='error'";
     } else if ($modid) {
         $joins[] = "l.cmid = '$modid'";
     }
@@ -578,13 +513,13 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     $strftimedatetime = get_string("strftimedatetime");
     $isteacher = isteacher($course->id);
 
-    echo '<p align="center">';
+    echo "<p align=center>";
     print_string("displayingrecords", "", $totalcount);
     echo "</p>";
 
-    print_paging_bar($totalcount, $page, $perpage, "$url&amp;perpage=$perpage&amp;");
+    print_paging_bar($totalcount, $page, $perpage, "$url&perpage=$perpage&");
 
-    echo '<table border="0" align="center" cellpadding="3" cellspacing="3">';
+    echo '<table border=0 align=center cellpadding=3 cellspacing=3>';
     foreach ($logs as $log) {
 
         if (isset($ldcache[$log->module][$log->action])) {
@@ -593,42 +528,30 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
             $ld = get_record('log_display', 'module', $log->module, "action", $log->action);
             $ldcache[$log->module][$log->action] = $ld;
         }
-        if ($ld && !empty($log->info)) {
-            // ugly hack to make sure fullname is shown correctly
-            if (($ld->mtable == 'user') and ($ld->field == 'CONCAT(firstname," ",lastname)')) {
-                $log->info = fullname(get_record($ld->mtable, 'id', $log->info), true);
-            } else {
-                $log->info = get_field($ld->mtable, $ld->field, 'id', $log->info);
-            }
+        if ($ld) {
+            $log->info = get_field($ld->mtable, $ld->field, 'id', $log->info);
         }
 
-        //Filter log->info 
-        $log->info = format_string($log->info);
-
-        $log->url  = strip_tags(urldecode($log->url));   // Some XSS protection
-        $log->info = strip_tags(urldecode($log->info));  // Some XSS protection
-        $log->url  = str_replace('&', '&amp;', $log->url); /// XHTML compatibility
-
-        echo '<tr>';
+        echo '<tr nowrap="nowrap">';
         if (! $course->category) {
-            echo '<td nowrap="nowrap"><font size="2"><a href="view.php?id='.$log->course.'">'.$courses[$log->course].'</a></font></td>';
+            echo '<td nowrap="nowrap"><font size=2><a href="view.php?id='.$log->course.'">'.$courses[$log->course].'</a></td>';
         }
-        echo '<td nowrap="nowrap" align="right"><font size="2">'.userdate($log->time, '%a').'</font></td>';
-        echo '<td nowrap="nowrap"><font size="2">'.userdate($log->time, $strftimedatetime).'</font></td>';
-        echo '<td nowrap="nowrap"><font size="2">';
-        link_to_popup_window("/lib/ipatlas/plot.php?address=$log->ip&amp;user=$log->userid", 'ipatlas',$log->ip, 400, 700);
-        echo '</font></td>';
+        echo '<td nowrap align=right><font size=2>'.userdate($log->time, '%a').'</td>';
+        echo '<td nowrap><font size=2>'.userdate($log->time, $strftimedatetime).'</td>';
+        echo '<td nowrap><font size=2>';
+        link_to_popup_window("/lib/ipatlas/plot.php?address=$log->ip&user=$log->userid", 'ipatlas',$log->ip, 400, 700);
+        echo '</td>';
         $fullname = fullname($log, $isteacher);
-        echo '<td nowrap="nowrap"><font size="2"><a href="../user/view.php?id='."$log->userid&amp;course=$log->course".'"><b>'.$fullname.'</b></a></font></td>';
-        echo '<td nowrap="nowrap"><font size="2">';
+        echo '<td nowrap><font size=2><a href="../user/view.php?id='."$log->userid&course=$log->course".'"><b>'.$fullname.'</b></td>';
+        echo '<td nowrap><font size=2>';
         link_to_popup_window( make_log_url($log->module,$log->url), 'fromloglive',"$log->module $log->action", 400, 600);
-        echo '</font></td>';
-        echo '<td nowrap="nowrap"><font size="2">'.$log->info.'</font></td>';
+        echo '</td>';
+        echo '<td nowrap><font size=2>'.$log->info.'</td>';
         echo '</tr>';
     }
     echo '</table>';
 
-    print_paging_bar($totalcount, $page, $perpage, "$url&amp;perpage=$perpage&amp;");
+    print_paging_bar($totalcount, $page, $perpage, "$url&perpage=$perpage&");
 }
 
 
@@ -637,8 +560,7 @@ function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
     if (empty($CFG->gdversion)) {
         echo "(".get_string("gdneed").")";
     } else {
-        echo '<img border="0" src="'.$CFG->wwwroot.'/course/loggraph.php?id='.$course->id.
-             '&amp;user='.$userid.'&amp;type='.$type.'&amp;date='.$date.'" alt=\"\" />';
+        echo "<IMG BORDER=0 SRC=\"$CFG->wwwroot/course/loggraph.php?id=$course->id&user=$userid&type=$type&date=$date\">";
     }
 }
 
@@ -649,7 +571,7 @@ function print_recent_activity($course) {
     // This function trawls through the logs looking for
     // anything new since the user's last login
 
-    global $CFG, $USER, $SESSION;
+    global $CFG, $USER, $THEME, $SESSION;
 
     $isteacher = isteacher($course->id);
 
@@ -661,14 +583,12 @@ function print_recent_activity($course) {
         }
     }
 
-    echo '<div class="activitydate">';
-    echo get_string('activitysince', '', userdate($timestart));
-    echo '</div>';
-    echo '<div class="activityhead">';
+    echo '<center><font size="1">';
+    echo get_string("activitysince", "", userdate($timestart));
 
-    echo '<a href="'.$CFG->wwwroot.'/course/recent.php?id='.$course->id.'">'.get_string('recentactivityreport').'</a>';
+    echo '<p><a href="'.$CFG->wwwroot.'/course/recent.php?id='.$course->id.'">'.get_string('recentactivityreport').'</a></p>';
 
-    echo '</div>';
+    echo '</font></center>';
 
 
     // Firstly, have there been any new enrolments?
@@ -679,33 +599,33 @@ function print_recent_activity($course) {
     $users = get_recent_enrolments($course->id, $timestart);
 
     if ($users) {
-        echo '<div class="newusers">';
+        echo "<p>";
         foreach ($users as $user) {
             if (! $heading) {
-                print_headline(get_string("newusers").':', 3);
+                print_headline(get_string("newusers").":");
                 $heading = true;
                 $content = true;
             }
             $fullname = fullname($user, $isteacher);
-            echo '<span class="name"><a href="'.$CFG->wwwroot."/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a></span><br />";
+            echo '<font size=1><a href="'.$CFG->wwwroot."/user/view.php?id=$user->id&course=$course->id\">$fullname</a></font><br />";
         }
-        echo '</div>';
+        echo "</p>";
     }
 
     // Next, have there been any modifications to the course structure?
 
-    $logs = get_records_select('log', "time > '$timestart' AND course = '$course->id' AND
+    $logs = get_records_select("log", "time > '$timestart' AND course = '$course->id' AND
                                        module = 'course' AND action LIKE '% mod'", "time ASC");
 
     if ($logs) {
         foreach ($logs as $key => $log) {
-            $info = split(' ', $log->info);
+            $info = split(" ", $log->info);
 
-            if ($info[0] == 'label') {     // Labels are special activities
+            if ($info[0] == "label") {     // Labels are special activities
                 continue;
             }
 
-            $modname = get_field($info[0], 'name', 'id', $info[1]);
+            $modname = get_field($info[0], "name", "id", $info[1]);
             //Create a temp valid module structure (course,id)
             $tempmod->course = $log->course;
             $tempmod->id = $info[1];
@@ -715,23 +635,23 @@ function print_recent_activity($course) {
             //Only if the mod is visible
             if ($modvisible) {
                 switch ($log->action) {
-                    case 'add mod':
-                        $stradded = get_string('added', 'moodle', get_string('modulename', $info[0]));
-                        $changelist[$log->info] = array ('operation' => 'add', 'text' => "$stradded:<br /><a href=\"$CFG->wwwroot/course/$log->url\">".format_string($modname,true)."</a>");
+                    case "add mod":
+                        $stradded = get_string("added", "moodle", get_string("modulename", $info[0]));
+                        $changelist["$log->info"] = array ("operation" => "add", "text" => "$stradded:<BR><A HREF=\"$CFG->wwwroot/course/$log->url\">$modname</A>");
                     break;
-                    case 'update mod':
-                       $strupdated = get_string('updated', 'moodle', get_string('modulename', $info[0]));
-                       if (empty($changelist[$log->info])) {
-                           $changelist[$log->info] = array ('operation' => 'update', 'text' => "$strupdated:<br /><a href=\"$CFG->wwwroot/course/$log->url\">".format_string($modname,true)."</a>");
+                    case "update mod":
+                       $strupdated = get_string("updated", "moodle", get_string("modulename", $info[0]));
+                       if (empty($changelist["$log->info"])) {
+                           $changelist["$log->info"] = array ("operation" => "update", "text" => "$strupdated:<BR><A HREF=\"$CFG->wwwroot/course/$log->url\">$modname</A>");
                        }
                     break;
-                    case 'delete mod':
-                       if (!empty($changelist[$log->info]['operation']) and
-                                  $changelist[$log->info]['operation'] == 'add') {
-                           $changelist[$log->info] = NULL;
+                    case "delete mod":
+                       if (!empty($changelist["$log->info"]["operation"]) and
+                                  $changelist["$log->info"]["operation"] == "add") {
+                           $changelist["$log->info"] = NULL;
                        } else {
-                           $strdeleted = get_string('deletedactivity', 'moodle', get_string('modulename', $info[0]));
-                           $changelist[$log->info] = array ('operation' => 'delete', 'text' => $strdeleted);
+                           $strdeleted = get_string("deletedactivity", "moodle", get_string("modulename", $info[0]));
+                           $changelist["$log->info"] = array ("operation" => "delete", "text" => $strdeleted);
                        }
                     break;
                 }
@@ -747,22 +667,33 @@ function print_recent_activity($course) {
         }
         if (isset($changes)){
             if (count($changes) > 0) {
-                print_headline(get_string('courseupdates').':', 3);
+                print_headline(get_string("courseupdates").":");
                 $content = true;
                 foreach ($changes as $changeinfo => $change) {
-                    echo '<p class="activity">'.$change['text'].'</p>';
+                    echo "<p><font size=1>".$change["text"]."</font></p>";
                 }
+            }
+        }
+    }
+
+
+    // If this site uses Library module, then print recent items
+    if (!empty($CFG->librarypath)) {
+        if (file_exists("$CFG->dirroot/$CFG->librarypath/librarylib.php")) {
+            include_once("$CFG->dirroot/$CFG->librarypath/librarylib.php");
+            if (librarysummarize(5, '', date('YmdHis',$USER->lastlogin))) {
+                $content = true;
             }
         }
     }
 
     // Now display new things from each module
 
-    $mods = get_records('modules', 'visible', '1', 'name', 'id, name');
+    $mods = get_records("modules", "visible", "1", "name", "id, name");
 
     foreach ($mods as $mod) {      // Each module gets it's own logs and prints them
-        include_once($CFG->dirroot.'/mod/'.$mod->name.'/lib.php');
-        $print_recent_activity = $mod->name.'_print_recent_activity';
+        include_once("$CFG->dirroot/mod/$mod->name/lib.php");
+        $print_recent_activity = $mod->name."_print_recent_activity";
         if (function_exists($print_recent_activity)) {
             $modcontent = $print_recent_activity($course, $isteacher, $timestart);
             if ($modcontent) {
@@ -772,7 +703,7 @@ function print_recent_activity($course) {
     }
 
     if (! $content) {
-        echo '<p class="message">'.get_string('nothingnew').'</p>';
+        echo "<font size=2>".get_string("nothingnew")."</font>";
     }
 }
 
@@ -882,7 +813,7 @@ function get_all_sections($courseid) {
 function course_set_display($courseid, $display=0) {
     global $USER;
 
-    if (empty($USER->id)) {
+    if (empty($USER)) {
         return false;
     }
 
@@ -913,7 +844,11 @@ function set_section_visible($courseid, $sectionnumber, $visibility) {
         if (!empty($section->sequence)) {
             $modules = explode(",", $section->sequence);
             foreach ($modules as $moduleid) {
-                set_coursemodule_visible($moduleid, $visibility);
+                if ($visibility) {
+                    show_course_module($moduleid);
+                } else {
+                    hide_course_module($moduleid);
+                }
             }
         }
         rebuild_course_cache($courseid);
@@ -932,27 +867,23 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     static $ismoving;
     static $strmovehere;
     static $strmovefull;
-    static $strunreadpostsone;
 
-    $labelformatoptions = New stdClass;
 
     if (!isset($isteacher)) {
         $groupbuttons     = ($course->groupmode or (!$course->groupmodeforce));
         $groupbuttonslink = (!$course->groupmodeforce);
         $isteacher = isteacher($course->id);
         $isediting = isediting($course->id);
-        $ismoving = $isediting && ismoving($course->id);
+        $ismoving = ismoving($course->id);
         if ($ismoving) {
             $strmovehere = get_string("movehere");
             $strmovefull = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
         }
-        $strunreadpostsone    = get_string('unreadpostsone', 'forum');
     }
-    $labelformatoptions->noclean = true;
 
     $modinfo = unserialize($course->modinfo);
 
-    echo '<table width="'.$width.'" class="section">';
+    echo '<table width="'.$width.'" cellpadding="1" cellspacing="0">';
     if (!empty($section->sequence)) {
 
         $sectionmods = explode(",", $section->sequence);
@@ -964,19 +895,20 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             $mod = $mods[$modnumber];
 
             if ($mod->visible or $isteacher) {
-                echo '<tr><td class="activity '.$mod->modname.'">';
+                echo "<tr><td class=\"activity$mod->modname\">";
                 if ($ismoving) {
                     if ($mod->id == $USER->activitycopy) {
                         continue;
                     }
-                    echo '<a title="'.$strmovefull.'"'.
-                         ' href="'.$CFG->wwwroot.'/course/mod.php?moveto='.$mod->id.'&amp;sesskey='.$USER->sesskey.'">'.
-                         '<img class="movetarget" src="'.$CFG->pixpath.'/movehere.gif" '.
-                         ' alt="'.$strmovehere.'" /></a><br />
-                         ';
+                    echo "<a title=\"$strmovefull\"".
+                         " href=\"$CFG->wwwroot/course/mod.php?moveto=$mod->id\">".
+                         "<img height=\"16\" width=\"80\" src=\"$CFG->pixpath/movehere.gif\" ".
+                         " alt=\"$strmovehere\" border=\"0\"></a><br />\n";
                 }
                 $instancename = urldecode($modinfo[$modnumber]->name);
-                    $instancename = format_string($instancename, true,  $course->id);
+                if (!empty($CFG->filterall)) {
+                    $instancename = filter_text("<nolink>$instancename</nolink>", $course->id);
+                }
 
                 if (!empty($modinfo[$modnumber]->extra)) {
                     $extra = urldecode($modinfo[$modnumber]->extra);
@@ -998,39 +930,20 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     if (!$mod->visible) {
                         echo "<span class=\"dimmed_text\">";
                     }
-                    echo format_text($extra, FORMAT_HTML, $labelformatoptions);
+                    echo format_text($extra, FORMAT_HTML);
                     if (!$mod->visible) {
                         echo "</span>";
                     }
 
                 } else { // Normal activity
                     $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
-                    echo '<img src="'.$icon.'"'.
-                         ' class="activityicon" alt="'.$mod->modfullname.'" />'.
-                         ' <a title="'.$mod->modfullname.'" '.$linkcss.' '.$extra.
-                         ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.
-                         $instancename.'</a>';
+                    echo "<img src=\"$icon\"".
+                         " height=16 width=16 alt=\"$mod->modfullname\">".
+                         " <font size=2><a title=\"$mod->modfullname\" $linkcss $extra".
+                         " href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a></font>";
                 }
-                if ($CFG->forum_trackreadposts && $mod->modname == 'forum') {
-                    $groupmode = groupmode($course, $mod);
-                    $groupid = ($groupmode == SEPARATEGROUPS && !isteacheredit($course->id)) ?
-                        get_current_group($course->id) : false;
-//                    $unread = forum_tp_count_forum_posts($mod->instance, $groupid) -
-//                        forum_tp_count_forum_read_records($USER->id, $mod->instance, $groupid);
-                    $unread = forum_tp_count_forum_unread_posts($USER->id, $mod->instance, $groupid);
-                    if ($unread) {
-                        echo '<span class="unread"> <a href="'.$CFG->wwwroot.'/mod/forum/view.php?id='.$mod->id.'">';
-                        if ($unread == 1) {
-                            echo $strunreadpostsone;
-                        } else {
-                            print_string('unreadpostsnumber', 'forum', $unread);
-                        }
-                        echo '</a> </span>';
-                    }
-                }
-
                 if ($isediting) {
-                    if ($groupbuttons and $mod->modname != 'label' and $mod->modname != 'resource') {
+                    if ($groupbuttons) {
                         if (! $mod->groupmodelink = $groupbuttonslink) {
                             $mod->groupmode = $course->groupmode;
                         }
@@ -1038,22 +951,19 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     } else {
                         $mod->groupmode = false;
                     }
-                    echo '&nbsp;&nbsp;';
-                    echo make_editing_buttons($mod, $absolute, true, $mod->indent, $section->section);
+                    echo "&nbsp;&nbsp;";
+                    echo make_editing_buttons($mod, $absolute, true, $mod->indent);
                 }
                 echo "</td>";
                 echo "</tr>";
             }
         }
-    } else {
-        echo "<tr><td></td></tr>"; // needed for XHTML compatibility
     }
     if ($ismoving) {
-        echo '<tr><td><a title="'.$strmovefull.'"'.
-             ' href="'.$CFG->wwwroot.'/course/mod.php?movetosection='.$section->id.'&amp;sesskey='.$USER->sesskey.'">'.
-             '<img class="movetarget" src="'.$CFG->pixpath.'/movehere.gif" '.
-             ' alt="'.$strmovehere.'" /></a></td></tr>
-             ';
+        echo "<tr><td><a title=\"$strmovefull\"".
+             " href=\"$CFG->wwwroot/course/mod.php?movetosection=$section->id\">".
+             "<img height=\"16\" width=\"80\" src=\"$CFG->pixpath/movehere.gif\" ".
+             " alt=\"$strmovehere\" border=\"0\"></a></td></tr>\n";
     }
     echo "</table>\n\n";
 }
@@ -1062,7 +972,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
 function print_section_add_menus($course, $section, $modnames, $vertical=false, $return=false) {
 // Prints the menus to add activities and resources
 
-    global $CFG, $USER;
+    global $CFG;
     static $straddactivity, $stractivities, $straddresource, $resources;
 
     if (!isset($straddactivity)) {
@@ -1074,7 +984,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
         $resourceraw = resource_get_resource_types();
 
         foreach ($resourceraw as $type => $name) {
-            $resources["resource&amp;type=$type"] = $name;
+            $resources["resource&type=$type"] = $name;
         }
         $resources['label'] = get_string('resourcetypelabel', 'resource');
     }
@@ -1082,7 +992,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
     $output = '';
 
     $output .= '<div align="right"><table align="right"><tr><td>';
-    $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&amp;sesskey=$USER->sesskey&amp;add=",
+    $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=",
                 $resources, "ressection$section", "", $straddresource, 'resource/types', $straddresource, true);
     $output .= '</td>';
 
@@ -1091,7 +1001,7 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
     }
 
     $output .= '<td>';
-    $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&amp;sesskey=$USER->sesskey&amp;add=",
+    $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=",
                 $modnames, "section$section", "", $straddactivity, 'mods', $straddactivity, true);
     $output .= '</td></tr></table>';
     $output .= '</div>';
@@ -1113,7 +1023,7 @@ function rebuild_course_cache($courseid=0) {
         $select = "";
     }
 
-    if ($courses = get_records_select("course", $select,'','id,fullname')) {
+    if ($courses = get_records_select("course", $select)) {
         foreach ($courses as $course) {
             $modinfo = serialize(get_array_of_activities($course->id));
             if (!set_field("course", "modinfo", $modinfo, "id", $course->id)) {
@@ -1124,6 +1034,15 @@ function rebuild_course_cache($courseid=0) {
 }
 
 
+function print_heading_block($heading, $width="100%", $class="headingblock") {
+    global $THEME;
+
+    echo "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"5\">";
+    echo "<tr><td bgcolor=\"$THEME->cellheading\" class=\"$class\">";
+    echo stripslashes($heading);
+    echo "</td></tr></table>";
+}
+
 
 function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
 /// Given an empty array, this function recursively travels the
@@ -1132,16 +1051,16 @@ function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
 
     if ($category) {
         if ($path) {
-            $path = $path.' / '.$category->name;
+            $path = "$path / $category->name";
         } else {
-            $path = $category->name;
+            $path = "$category->name";
         }
         $list[$category->id] = $path;
     } else {
         $category->id = 0;
     }
 
-    if ($categories = get_categories($category->id)) {   // Print all the children recursively
+    if ($categories = get_categories("$category->id")) {   // Print all the children recursively
         foreach ($categories as $cat) {
             if (!empty($category->id)) {
                 if (isset($parents[$category->id])) {
@@ -1159,9 +1078,8 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
 /// Recursive function to print out all the categories in a nice format
 /// with or without courses included
     global $CFG;
-
-    if (isset($CFG->max_category_depth) && ($depth >= $CFG->max_category_depth)) {
-        return;
+    if (isset($CFG->max_category_depth)&&($depth >= $CFG->max_category_depth)) {
+      return;
     }
 
     if (!$displaylist) {
@@ -1207,114 +1125,111 @@ function print_category_info($category, $depth) {
     static $strallowguests, $strrequireskey, $strsummary;
 
     if (empty($strsummary)) {
-        $strallowguests = get_string('allowguests');
-        $strrequireskey = get_string('requireskey');
-        $strsummary = get_string('summary');
+        $strallowguests = get_string("allowguests");
+        $strrequireskey = get_string("requireskey");
+        $strsummary = get_string("summary");
     }
 
-    $catlinkcss = $category->visible ? '' : ' class="dimmed" ';
+    $catlinkcss = $category->visible ? "" : " class=\"dimmed\" ";
 
     if ($CFG->frontpage == FRONTPAGECOURSELIST) {
-        $catimage = '<img src="'.$CFG->pixpath.'/i/course.gif" width="16" height="16" border="0" alt="" />';
+        $catimage = "<img src=\"$CFG->pixpath/i/course.gif\" width=16 height=16 border=0>";
     } else {
         $catimage = "&nbsp";
     }
 
-    echo "\n\n".'<table border="0" cellpadding="3" cellspacing="0" width="100%">';
+    echo "\n\n<table border=0 cellpadding=3 cellspacing=0 width=\"100%\"><tr>";
 
     if ($CFG->frontpage == FRONTPAGECOURSELIST) {
-        $courses = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.guest');
+        $courses = get_courses($category->id);
 
         echo "<tr>";
 
         if ($depth) {
             $indent = $depth*30;
             $rows = count($courses) + 1;
-            echo '<td rowspan="'.$rows.'" valign="top" width="'.$indent.'">';
+            echo "<td rowspan=\"$rows\" valign=\"top\" width=\"$indent\">";
             print_spacer(10, $indent);
-            echo '</td>';
+            echo "</td>";
         }
 
-        echo '<td valign="top">'.$catimage.'</td>';
-        echo '<td valign="top" width="100%" class="category name">';
-        echo '<a '.$catlinkcss.' href="'.$CFG->wwwroot.'/course/category.php?id='.$category->id.'">'.$category->name.'</a>';
-        echo '</td>';
-        echo '<td class="category info">&nbsp;</td>';
-        echo '</tr>';
+        echo "<td valign=\"top\">$catimage</td>";
+        echo "<td valign=\"top\" width=\"100%\" class=\"categoryname\">";
+        echo "<a $catlinkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a>";
+        echo "</td>";
+        echo "<td class=\"categoryname\">&nbsp;</td>";
+        echo "</tr>\n";
 
         if ($courses && !(isset($CFG->max_category_depth)&&($depth>=$CFG->max_category_depth-1))) {
             foreach ($courses as $course) {
-                $linkcss = $course->visible ? '' : ' class="dimmed" ';
-                echo '<tr><td valign="top" width="30">&nbsp;';
-                echo '</td><td valign="top" width="100%" class="course name">';
-                echo '<a '.$linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->fullname.'</a>';
-                echo '</td><td align="right" valign="top" nowrap="nowrap" class="course info">';
+                $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
+                echo "<tr><td valign=\"top\" width=\"30\">&nbsp;";
+                echo "</td>\n<td valign=\"top\" width=\"100%\" class=\"coursename\">";
+                echo "<a $linkcss href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
+                echo "</td>\n<td align=\"right\" valign=\"top\" nowrap class=\"coursename\">";
                 if ($course->guest ) {
-                    echo '<a title="'.$strallowguests.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
-                    echo '<img hspace="1" alt="'.$strallowguests.'" height="16" width="16" border="0" src="'.$CFG->pixpath.'/i/guest.gif" /></a>';
+                    echo "<a title=\"$strallowguests\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
+                    echo "<img hspace=1 alt=\"$strallowguests\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/guest.gif\"></a>";
                 } else {
-                    echo '<img alt="" height="16" width="18" border="0" src="'.$CFG->pixpath.'/spacer.gif" />';
+                    echo "<img alt=\"\" height=16 width=18 border=0 src=\"$CFG->pixpath/spacer.gif\">";
                 }
                 if ($course->password) {
-                    echo '<a title="'.$strrequireskey.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
-                    echo '<img hspace="1" alt="'.$strrequireskey.'" height="16" width="16" border="0" src="'.$CFG->pixpath.'/i/key.gif" /></a>';
+                    echo "<a title=\"$strrequireskey\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
+                    echo "<img hspace=1 alt=\"$strrequireskey\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/key.gif\"></a>";
                 } else {
-                    echo '<img alt="" height="16" width="18" border="0" src="'.$CFG->pixpath.'/spacer.gif" />';
+                    echo "<img alt=\"\" height=16 width=18 border=0 src=\"$CFG->pixpath/spacer.gif\">";
                 }
                 if ($course->summary) {
-                    link_to_popup_window ('/course/info.php?id='.$course->id, 'courseinfo',
-                                          '<img hspace="1" alt="'.$strsummary.'" height="16" width="16" border="0" src="'.$CFG->pixpath.'/i/info.gif" />',
+                    link_to_popup_window ("/course/info.php?id=$course->id", "courseinfo",
+                                          "<img hspace=1 alt=\"$strsummary\" height=16 width=16 border=0 src=\"$CFG->pixpath/i/info.gif\">",
                                            400, 500, $strsummary);
                 } else {
-                    echo '<img alt="" height="16" width="18" border="0" src="'.$CFG->pixpath.'/spacer.gif" />';
+                    echo "<img alt=\"\" height=16 width=18 border=0 src=\"$CFG->pixpath/spacer.gif\">";
                 }
-                echo '</td></tr>';
+                echo "</td></tr>\n";
             }
         }
     } else {
 
         if ($depth) {
             $indent = $depth*20;
-            echo '<td valign="top" width="'.$indent.'">';
+            echo "<td valign=\"top\" width=\"$indent\">";
             print_spacer(10, $indent);
-            echo '</td>';
+            echo "</td>";
         }
 
-        echo '<td valign="top" width="100%" class="category name">';
-        echo '<a '.$catlinkcss.' href="'.$CFG->wwwroot.'/course/category.php?id='.$category->id.'">'.$category->name.'</a>';
-        echo '</td>';
-        echo '<td valign="top" class="category number">';
-        if ($category->coursecount) {
-            echo $category->coursecount;
-        }
-        echo '</td></tr>';
+        echo "<td valign=\"top\" width=\"100%\" class=\"categoryname\">";
+        echo "<a $catlinkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a>";
+        echo "</td>";
+        echo "<td valign=\"top\" class=\"categorynumber\">$category->coursecount</td></tr>";
     }
-    echo '</table>';
+    echo "\n</table>\n";
 }
 
 
 function print_courses($category, $width="100%") {
 /// Category is 0 (for all courses) or an object
 
-    global $CFG;
+    global $CFG, $THEME;
 
     if (empty($category)) {
         $categories = get_categories(0);  // Parent = 0   ie top-level categories only
         if (count($categories) == 1) {
             $category   = array_shift($categories);
-            $courses    = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher');
+            $courses    = get_courses($category->id);
         } else {
-            $courses    = get_courses('all', 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher');
+            $courses    = get_courses("all");
         }
         unset($categories);
     } else {
         $categories = get_categories($category->id);  // sub categories
-        $courses    = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher');
+        $courses    = get_courses($category->id);
     }
 
     if ($courses) {
         foreach ($courses as $course) {
             print_course($course, $width);
+            echo "<br />\n";
         }
     } else {
         print_heading(get_string("nocoursesyet"));
@@ -1325,7 +1240,7 @@ function print_courses($category, $width="100%") {
 
 function print_course($course, $width="100%") {
 
-    global $CFG;
+    global $CFG, $THEME;
 
     static $enrol;
 
@@ -1334,38 +1249,38 @@ function print_course($course, $width="100%") {
         $enrol = new enrolment_plugin;
     }
 
-    print_simple_box_start("center", "$width", '', 5, "coursebox");
+    if (! $site = get_site()) {
+        error("Could not find a site!");
+    }
+
+
+    print_simple_box_start("center", "$width", $THEME->cellcontent, 5, "coursebox");
 
     $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
 
     echo "<table width=\"100%\">";
-    echo '<tr valign="top">';
-    echo '<td valign="top" width="50%" class="info">';
-    echo '<b><a title="'.get_string('entercourse').'"'.
-         $linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.
-         $course->fullname.'</a></b><br />';
+    echo "<tr valign=top>";
+    echo "<td valign=top width=\"50%\" class=\"courseboxinfo\">";
+    echo "<p><font size=3><b><a title=\"".get_string("entercourse")."\"
+              $linkcss href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a></b></font></p>";
     if ($teachers = get_course_teachers($course->id)) {
-        echo "<span class=\"teachers\">\n";
+        echo "<p><font size=\"1\">\n";
         foreach ($teachers as $teacher) {
             if ($teacher->authority > 0) {
                 if (!$teacher->role) {
                     $teacher->role = $course->teacher;
                 }
                 $fullname = fullname($teacher, isteacher($course->id)); // is the USER a teacher of that course
-                echo $teacher->role.': <a href="'.$CFG->wwwroot.'/user/view.php?id='.$teacher->id.
-                     '&amp;course='.SITEID.'">'.$fullname.'</a><br />';
+                echo "$teacher->role: <a href=\"$CFG->wwwroot/user/view.php?id=$teacher->id&course=$site->id\">$fullname</a><br />";
             }
         }
-        echo "</span>\n";
+        echo "</font></p>";
     }
 
     echo $enrol->get_access_icons($course);
 
-    echo '</td><td valign="top" width="50%" class="summary">';
-    $options = NULL;
-    $options->noclean = true;
-    $options->para = false;
-    echo format_text($course->summary, FORMAT_MOODLE, $options,  $course->id);
+    echo "</td><td valign=top width=\"50%\" class=\"courseboxsummary\">";
+    echo "<p><font size=2>".filter_text(text_to_html($course->summary), $course->id)."</font></p>";
     echo "</td></tr>";
     echo "</table>";
 
@@ -1389,6 +1304,7 @@ function print_my_moodle() {
                 continue;
             }
             print_course($course, "100%");
+            echo "<br />\n";
         }
 
         if (count_records("course") > (count($courses) + 1) ) {  // Some courses not being displayed
@@ -1416,25 +1332,25 @@ function print_course_search($value="", $return=false, $format="plain") {
 
     $strsearchcourses= get_string("searchcourses");
 
-    if ($format == 'plain') {
-        $output  = '<form name="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
-        $output .= '<center><p align="center" class="coursesearchbox">';
-        $output .= '<input type="text" size="30" name="search" alt="'.$strsearchcourses.'" value="'.$value.'" />';
-        $output .= '<input type="submit" value="'.$strsearchcourses.'" />';
-        $output .= '</p></center></form>';
-    } else if ($format == 'short') {
-        $output  = '<form name="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
-        $output .= '<center><p align="center" class="coursesearchbox">';
-        $output .= '<input type="text" size="12" name="search" alt="'.$strsearchcourses.'" value="'.$value.'" />';
-        $output .= '<input type="submit" value="'.$strsearchcourses.'" />';
-        $output .= '</p></center></form>';
-    } else if ($format == 'navbar') {
-        $output  = '<form name="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
-        $output .= '<table border="0" cellpadding="0" cellspacing="0"><tr><td nowrap="nowrap">';
-        $output .= '<input type="text" size="20" name="search" alt="'.$strsearchcourses.'" value="'.$value.'" />';
-        $output .= '<input type="submit" value="'.$strsearchcourses.'" />';
-        $output .= '</td></tr></table>';
-        $output .= '</form>';
+    if ($format == "plain") {
+        $output  = "<center><p align=\"center\" class=\"coursesearchbox\">";
+        $output .= "<form name=\"coursesearch\" action=\"$CFG->wwwroot/course/search.php\" method=\"get\">";
+        $output .= "<input type=\"text\" size=30 name=\"search\" value=\"$value\">";
+        $output .= "<input type=\"submit\" value=\"$strsearchcourses\">";
+        $output .= "</form></p></center>";
+    } else if ($format == "short") {
+        $output  = "<center><p align=\"center\" class=\"coursesearchbox\">";
+        $output .= "<form name=\"coursesearch\" action=\"$CFG->wwwroot/course/search.php\" method=\"get\">";
+        $output .= "<input type=\"text\" size=12 name=\"search\" value=\"$value\">";
+        $output .= "<input type=\"submit\" value=\"$strsearchcourses\">";
+        $output .= "</form></p></center>";
+    } else if ($format == "navbar") {
+        $output = "<table border=0 cellpadding=0 cellspacing=0><tr><td nowrap>";
+        $output .= "<form name=\"coursesearch\" action=\"$CFG->wwwroot/course/search.php\" method=\"get\">";
+        $output .= "<input type=\"text\" size=20 name=\"search\" value=\"$value\">";
+        $output .= "<input type=\"submit\" value=\"$strsearchcourses\">";
+        $output .= "</form>";
+        $output .= "</td></tr></table>";
     }
 
     if ($return) {
@@ -1498,42 +1414,34 @@ function add_mod_to_section($mod, $beforemod=NULL) {
     }
 }
 
-function set_coursemodule_groupmode($id, $groupmode) {
+function set_groupmode_for_module($id, $groupmode) {
     return set_field("course_modules", "groupmode", $groupmode, "id", $id);
 }
 
-function set_coursemodule_visible($id, $visible) {
-    $cm = get_record('course_modules', 'id', $id);
+function hide_course_module($mod) {
+    $cm = get_record('course_modules', 'id', $mod);
     $modulename = get_field('modules', 'name', 'id', $cm->module);
     if ($events = get_records_select('event', "instance = '$cm->instance' AND modulename = '$modulename'")) {
         foreach($events as $event) {
-            if ($visible) {
-                show_event($event);
-            } else {
-                hide_event($event);
-            }
+            hide_event($event);
         }
     }
-    return set_field("course_modules", "visible", $visible, "id", $id);
+    return set_field("course_modules", "visible", 0, "id", $mod);
 }
 
-/*
- * Delete a course module and any associated data at the course level (events)
- * Until 1.5 this function simply marked a deleted flag ... now it 
- * deletes it completely.
- *
- */
-function delete_course_module($id) {
-    if (!$cm = get_record('course_modules', 'id', $id)) {
-        return true;
-    }
+function show_course_module($mod) {
+    $cm = get_record('course_modules', 'id', $mod);
     $modulename = get_field('modules', 'name', 'id', $cm->module);
     if ($events = get_records_select('event', "instance = '$cm->instance' AND modulename = '$modulename'")) {
         foreach($events as $event) {
-            delete_event($event);
+            show_event($event);
         }
     }
-    return delete_records('course_modules', 'id', $cm->id);
+    return set_field("course_modules", "visible", 1, "id", $mod);
+}
+
+function delete_course_module($mod) {
+    return set_field("course_modules", "deleted", 1, "id", $mod);
 }
 
 function delete_mod_from_section($mod, $section) {
@@ -1556,7 +1464,6 @@ function delete_mod_from_section($mod, $section) {
 
 function move_section($course, $section, $move) {
 /// Moves a whole course section up and down within the course
-    global $USER;
 
     if (!$move) {
         return true;
@@ -1582,10 +1489,6 @@ function move_section($course, $section, $move) {
     if (!set_field("course_sections", "section", $section, "id", $sectiondestrecord->id)) {
         return false;
     }
-    // if the focus is on the section that is being moved, then move the focus along
-    if (isset($USER->display[$course->id]) and ($USER->display[$course->id] == $section)) {
-        course_set_display($course->id, $sectiondest);
-    }
     return true;
 }
 
@@ -1606,12 +1509,9 @@ function moveto_module($mod, $section, $beforemod=NULL) {
 
     if ($mod->section != $section->id) {
         $mod->section = $section->id;
+
         if (!update_record("course_modules", $mod)) {
             return false;
-        }
-        // if moving to a hidden section then hide module
-        if (!$section->visible) {
-            set_coursemodule_visible($mod->id, 0);
         }
     }
 
@@ -1629,11 +1529,135 @@ function moveto_module($mod, $section, $beforemod=NULL) {
 
 }
 
-function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-1, $section=-1) {
-    global $CFG, $USER;
+
+
+function move_module($cm, $move) {
+/// Moves an activity module up and down within the course
+
+    if (!$move) {
+        return true;
+    }
+
+    if (! $thissection = get_record("course_sections", "id", $cm->section)) {
+        error("This course section doesn't exist");
+    }
+
+    $mods = explode(",", $thissection->sequence);
+
+    $len = count($mods);
+    $pos = array_keys($mods, $cm->id);
+    $thepos = $pos[0];
+
+    if ($len == 0 || count($pos) == 0 ) {
+        error("Very strange. Could not find the required module in this section.");
+    }
+
+    if ($len == 1) {
+        $first = true;
+        $last = true;
+    } else {
+        $first = ($thepos == 0);
+        $last  = ($thepos == $len - 1);
+    }
+
+    if ($move < 0) {    // Moving the module up
+
+        if ($first) {
+            if ($thissection->section == 0) {  // First section, do nothing
+                return true;
+
+            } else {               // Push onto end of previous section
+                $prevsectionnumber = $thissection->section - 1;
+                if (! $prevsection = get_record("course_sections", "course", "$thissection->course",
+                                                                   "section", "$prevsectionnumber")) {
+                    error("Previous section ($prevsection->id) doesn't exist");
+                }
+
+                if (!empty($prevsection->sequence)) {
+                    $newsequence = "$prevsection->sequence,$cm->id";
+                } else {
+                    $newsequence = "$cm->id";
+                }
+
+                if (! set_field("course_sections", "sequence", $newsequence, "id", $prevsection->id)) {
+                    error("Previous section could not be updated");
+                }
+
+                if (! set_field("course_modules", "section", $prevsection->id, "id", $cm->id)) {
+                    error("Module could not be updated");
+                }
+
+                array_splice($mods, 0, 1);
+                $newsequence = implode(",", $mods);
+                if (! set_field("course_sections", "sequence", $newsequence, "id", $thissection->id)) {
+                    error("Module could not be updated");
+                }
+
+                return true;
+
+            }
+        } else {        // move up within this section
+            $swap = $mods[$thepos-1];
+            $mods[$thepos-1] = $mods[$thepos];
+            $mods[$thepos] = $swap;
+
+            $newsequence = implode(",", $mods);
+            if (! set_field("course_sections", "sequence", $newsequence, "id", $thissection->id)) {
+                error("This section could not be updated");
+            }
+            return true;
+        }
+
+    } else {            // Moving the module down
+
+        if ($last) {
+            $nextsectionnumber = $thissection->section + 1;
+            if ($nextsection = get_record("course_sections", "course", "$thissection->course",
+                                                               "section", "$nextsectionnumber")) {
+
+                if (!empty($nextsection->sequence)) {
+                    $newsequence = "$cm->id,$nextsection->sequence";
+                } else {
+                    $newsequence = "$cm->id";
+                }
+
+                if (! set_field("course_sections", "sequence", $newsequence, "id", $nextsection->id)) {
+                    error("Next section could not be updated");
+                }
+
+                if (! set_field("course_modules", "section", $nextsection->id, "id", $cm->id)) {
+                    error("Module could not be updated");
+                }
+
+                array_splice($mods, $thepos, 1);
+                $newsequence = implode(",", $mods);
+                if (! set_field("course_sections", "sequence", $newsequence, "id", $thissection->id)) {
+                    error("This section could not be updated");
+                }
+                return true;
+
+            } else {        // There is no next section, so just return
+                return true;
+
+            }
+        } else {      // move down within this section
+            $swap = $mods[$thepos+1];
+            $mods[$thepos+1] = $mods[$thepos];
+            $mods[$thepos] = $swap;
+
+            $newsequence = implode(",", $mods);
+            if (! set_field("course_sections", "sequence", $newsequence, "id", $thissection->id)) {
+                error("This section could not be updated");
+            }
+            return true;
+        }
+    }
+}
+
+function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-1) {
+    global $CFG, $THEME;
 
     static $str;
-    static $sesskey;
 
     if (!isset($str)) {
         $str->delete    = get_string("delete");
@@ -1651,198 +1675,89 @@ function make_editing_buttons($mod, $absolute=false, $moveselect=true, $indent=-
         $str->groupsnone     = get_string("groupsnone");
         $str->groupsseparate = get_string("groupsseparate");
         $str->groupsvisible  = get_string("groupsvisible");
-        $sesskey = sesskey();
-    }
-
-    if ($section >= 0) {
-        $section = '&amp;sr='.$section;   // Section return
-    } else {
-        $section = '';
     }
 
     if ($absolute) {
-        $path = $CFG->wwwroot.'/course';
+        $path = "$CFG->wwwroot/course";
     } else {
-        $path = '.';
+        $path = ".";
+    }
+
+    if (empty($THEME->custompix)) {
+        $pixpath = "$path/../pix";
+    } else {
+        $pixpath = "$path/../theme/$CFG->theme/pix";
     }
 
     if ($mod->visible) {
-        $hideshow = '<a title="'.$str->hide.'" href="'.$path.'/mod.php?hide='.$mod->id.
-                    '&amp;sesskey='.$sesskey.$section.'"><img'.
-                    ' src="'.$CFG->pixpath.'/t/hide.gif" hspace="2" height="11" width="11" '.
-                    ' border="0" alt="'.$str->hide.'" /></a> ';
+        $hideshow = "<a title=\"$str->hide\" href=\"$path/mod.php?hide=$mod->id\"><img".
+                    " src=\"$pixpath/t/hide.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" alt=\"$str->hide\"></a> ";
     } else {
-        $hideshow = '<a title="'.$str->show.'" href="'.$path.'/mod.php?show='.$mod->id.
-                    '&amp;sesskey='.$sesskey.$section.'"><img'.
-                    ' src="'.$CFG->pixpath.'/t/show.gif" hspace="2" height="11" width="11" '.
-                    ' border="0" alt="'.$str->show.'" /></a> ';
+        $hideshow = "<a title=\"$str->show\" href=\"$path/mod.php?show=$mod->id\"><img".
+                    " src=\"$pixpath/t/show.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
+                    "border=\"0\" alt=\"$str->show\"></a> ";
     }
     if ($mod->groupmode !== false) {
         if ($mod->groupmode == SEPARATEGROUPS) {
             $grouptitle = $str->groupsseparate;
-            $groupimage = $CFG->pixpath.'/t/groups.gif';
-            $grouplink  = $path.'/mod.php?id='.$mod->id.'&amp;groupmode=0&amp;sesskey='.$sesskey;
+            $groupimage = "$pixpath/t/groups.gif";
+            $grouplink  = "$path/mod.php?id=$mod->id&groupmode=0";
         } else if ($mod->groupmode == VISIBLEGROUPS) {
             $grouptitle = $str->groupsvisible;
-            $groupimage = $CFG->pixpath.'/t/groupv.gif';
-            $grouplink  = $path.'/mod.php?id='.$mod->id.'&amp;groupmode=1&amp;sesskey='.$sesskey;
+            $groupimage = "$pixpath/t/groupv.gif";
+            $grouplink  = "$path/mod.php?id=$mod->id&groupmode=1";
         } else {
             $grouptitle = $str->groupsnone;
-            $groupimage = $CFG->pixpath.'/t/groupn.gif';
-            $grouplink  = $path.'/mod.php?id='.$mod->id.'&amp;groupmode=2&amp;sesskey='.$sesskey;
+            $groupimage = "$pixpath/t/groupn.gif";
+            $grouplink  = "$path/mod.php?id=$mod->id&groupmode=2";
         }
         if ($mod->groupmodelink) {
-            $groupmode = '<a title="'.$grouptitle.' ('.$str->clicktochange.')" href="'.$grouplink.'">'.
-                         '<img src="'.$groupimage.'" hspace="2" height="11" width="11" '.
-                         'border="0" alt="'.$grouptitle.'" /></a>';
+            $groupmode = "<a title=\"$grouptitle ($str->clicktochange)\" href=\"$grouplink\">".
+                         "<img src=\"$groupimage\" hspace=\"2\" height=\"11\" width=\"11\" ".
+                         "border=\"0\" alt=\"$grouptitle\"></a>";
         } else {
-            $groupmode = '<img title="'.$grouptitle.' ('.$str->forcedmode.')" '.
-                         ' src="'.$groupimage.'" hspace="2" height="11" width="11" '.
-                         'border="0" alt="'.$grouptitle.'" />';
+            $groupmode = "<img title=\"$grouptitle ($str->forcedmode)\" ".
+                         " src=\"$groupimage\" hspace=\"2\" height=\"11\" width=\"11\" ".
+                         "border=\"0\" alt=\"$grouptitle\">";
         }
     } else {
         $groupmode = "";
     }
 
     if ($moveselect) {
-        $move =     '<a title="'.$str->move.'" href="'.$path.'/mod.php?copy='.$mod->id.
-                    '&amp;sesskey='.$sesskey.$section.'"><img'.
-                    ' src="'.$CFG->pixpath.'/t/move.gif" hspace="2" height="11" width="11" '.
-                    ' border="0" alt="'.$str->move.'" /></a>';
+        $move =     "<a title=\"$str->move\" href=\"$path/mod.php?copy=$mod->id\"><img".
+                    " src=\"$pixpath/t/move.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
+                    " border=\"0\" alt=\"$str->move\"></a>";
     } else {
-        $move =     '<a title="'.$str->moveup.'" href="'.$path.'/mod.php?id='.$mod->id.
-                    '&amp;move=-1&amp;sesskey='.$sesskey.$section.'"><img'.
-                    ' src="'.$CFG->pixpath.'/t/up.gif" hspace="2" height="11" width="11" '.
-                    ' border="0" alt="'.$str->moveup.'" /></a>'.
-                    '<a title="'.$str->movedown.'" href="'.$path.'/mod.php?id='.$mod->id.
-                    '&amp;move=1&amp;sesskey='.$sesskey.$section.'"><img'.
-                    ' src="'.$CFG->pixpath.'/t/down.gif" hspace="2" height="11" width="11" '.
-                    ' border="0" alt="'.$str->movedown.'" /></a>';
+        $move =     "<a title=\"$str->moveup\" href=\"$path/mod.php?id=$mod->id&move=-1\"><img".
+                    " src=\"$pixpath/t/up.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
+                    " border=\"0\" alt=\"$str->moveup\"></a>".
+                    "<a title=\"$str->movedown\" href=\"$path/mod.php?id=$mod->id&move=1\"><img".
+                    " src=\"$pixpath/t/down.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
+                    " border=\"0\" alt=\"$str->movedown\"></a>";
     }
 
     $leftright = "";
     if ($indent > 0) {
-        $leftright .= '<a title="'.$str->moveleft.'" href="'.$path.'/mod.php?id='.$mod->id.
-                      '&amp;indent=-1&amp;sesskey='.$sesskey.$section.'"><img'.
-                      ' src="'.$CFG->pixpath.'/t/left.gif" hspace="2" height="11" width="11" '.
-                      ' border="0" alt="'.$str->moveleft.'" /></a>';
+        $leftright .= "<a title=\"$str->moveleft\" href=\"$path/mod.php?id=$mod->id&indent=-1\"><img".
+                      " src=\"$pixpath/t/left.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
+                      " border=\"0\" alt=\"$str->moveleft\"></a>";
     }
     if ($indent >= 0) {
-        $leftright .= '<a title="'.$str->moveright.'" href="'.$path.'/mod.php?id='.$mod->id.
-                      '&amp;indent=1&amp;sesskey='.$sesskey.$section.'"><img'.
-                      ' src="'.$CFG->pixpath.'/t/right.gif" hspace="2" height="11" width="11" '.
-                      ' border="0" alt="'.$str->moveright.'" /></a>';
+        $leftright .= "<a title=\"$str->moveright\" href=\"$path/mod.php?id=$mod->id&indent=1\"><img".
+                      " src=\"$pixpath/t/right.gif\" hspace=\"2\" height=\"11\" width=\"11\" ".
+                      " border=\"0\" alt=\"$str->moveright\"></a>";
     }
 
-    return '<span class="commands">'.$leftright.$move.
-           '<a title="'.$str->update.'" href="'.$path.'/mod.php?update='.$mod->id.
-           '&amp;sesskey='.$sesskey.$section.'"><img'.
-           ' src="'.$CFG->pixpath.'/t/edit.gif" hspace="2" height="11" width="11" border="0" '.
-           ' alt="'.$str->update.'" /></a>'.
-           '<a title="'.$str->delete.'" href="'.$path.'/mod.php?delete='.$mod->id.
-           '&amp;sesskey='.$sesskey.$section.'"><img'.
-           ' src="'.$CFG->pixpath.'/t/delete.gif" hspace="2" height="11" width="11" border="0" '.
-           ' alt="'.$str->delete.'" /></a>'.$hideshow.$groupmode.'</span>';
+    return "$leftright$move".
+           "<a title=\"$str->update\" href=\"$path/mod.php?update=$mod->id\"><img".
+           " src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" ".
+           " alt=\"$str->update\"></a>".
+      //   Following line is commented out until this feature is more definite -- martin
+      //     "<a title=\"$str->duplicate\" href=\"$path/mod.php?duplicate=$mod->id\"> 2 </a>".
+           "<a title=\"$str->delete\" href=\"$path/mod.php?delete=$mod->id\"><img".
+           " src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=\"11\" width=\"11\" border=\"0\" ".
+           " alt=\"$str->delete\"></a>$hideshow$groupmode";
 }
-
-/**
- * given a course object with shortname & fullname, this function will 
- * truncate the the number of chars allowed and add ... if it was too long
- */
-function course_format_name ($course,$max=100) {
-    
-    $str = $course->shortname.': '.$course->fullname;
-    if (strlen($str) <= $max) {
-        return $str;
-    }
-    else {
-        return substr($str,0,$max-3).'...';
-    }
-}
-
-/**
- * This function will return true if the given course is a child course at all
- */
-function course_in_meta ($course) {
-    return record_exists("course_meta","child_course",$course->id);
-}
-
-
-/**
- * Print standard form elements on module setup forms in mod/.../mod.html
- */
-function print_standard_coursemodule_settings($form) {
-    if (! $course = get_record('course', 'id', $form->course)) {
-        error("This course doesn't exist");
-    }
-    print_groupmode_setting($form, $course);
-    print_visible_setting($form, $course);
-}
-
-/**
- * Print groupmode form element on module setup forms in mod/.../mod.html
- */
-function print_groupmode_setting($form, $course=NULL) {
-
-    if (empty($course)) {
-        if (! $course = get_record('course', 'id', $form->course)) {
-            error("This course doesn't exist");
-        }
-    }
-    if ($form->coursemodule) {
-        if (! $cm = get_record('course_modules', 'id', $form->coursemodule)) {
-            error("This course module doesn't exist");
-        }
-    } else {
-        $cm = null;
-    }
-    $groupmode = groupmode($course, $cm);
-    if ($course->groupmode or (!$course->groupmodeforce)) {
-        echo '<tr valign="top">';
-        echo '<td align="right"><b>'.get_string('groupmode').':</b></td>';
-        echo '<td>';
-        unset($choices);
-        $choices[NOGROUPS] = get_string('groupsnone');
-        $choices[SEPARATEGROUPS] = get_string('groupsseparate');
-        $choices[VISIBLEGROUPS] = get_string('groupsvisible');
-        choose_from_menu($choices, 'groupmode', $groupmode, '', '', 0, false, $course->groupmodeforce);
-        helpbutton('groupmode', get_string('groupmode'));
-        echo '</td></tr>';
-    }
-}
-
-/**
- * Print visibility setting form element on module setup forms in mod/.../mod.html
- */
-function print_visible_setting($form, $course=NULL) {
-    if (empty($course)) {
-        if (! $course = get_record('course', 'id', $form->course)) {
-            error("This course doesn't exist");
-        }
-    }
-    if ($form->coursemodule) {
-        $visible = get_field('course_modules', 'visible', 'id', $form->coursemodule);
-    } else {
-        $visible = true;
-    }
-
-    if ($form->mode == 'add') { // in this case $form->section is the section number, not the id
-        $hiddensection = !get_field('course_sections', 'visible', 'section', $form->section, 'course', $form->course);
-    } else {
-        $hiddensection = !get_field('course_sections', 'visible', 'id', $form->section);
-    }
-    if ($hiddensection) {
-        $visible = false;
-    }
-    
-    echo '<tr valign="top">';
-    echo '<td align="right"><b>'.get_string('visibletostudents','',moodle_strtolower($course->students)).':</b></td>';
-    echo '<td>';
-    unset($choices);
-    $choices[1] = get_string('show');
-    $choices[0] = get_string('hide');
-    choose_from_menu($choices, 'visible', $visible, '', '', 0, false, $hiddensection);
-    echo '</td></tr>';
-} 
 
 ?>

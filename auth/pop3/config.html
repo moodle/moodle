@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
     if (!isset($config->auth_pop3host)) {
         $config->auth_pop3host = "127.0.0.1";
     }
@@ -12,62 +12,62 @@
         $config->auth_pop3mailbox = "INBOX";
     }
 ?>
-<tr valign="top" class="required">
-	<td align="right">auth_pop3host:</td>
-	<td>
-        <input name="auth_pop3host" type="text" size="30" value="<?php echo $config->auth_pop3host?>" />
+<tr valign="top" BGCOLOR="<?php echo $THEME->cellheading2 ?>">
+	<TD ALIGN=RIGHT><P>auth_pop3host:</TD>
+	<TD>
+        <INPUT name=auth_pop3host TYPE=text SIZE=30 VALUE="<?php echo $config->auth_pop3host?>">
 	<?php  if (isset($err["auth_pop3host"])) formerr($err["auth_pop3host"]); ?>
-	</td>
-    <td>
+	</TD>
+    <TD>
     <?php  print_string("auth_pop3host","auth") ?>
     <?php  print_string("auth_multiplehosts","auth") ?>
-    </td>
-</tr>
+    </TD>
+</TR>
 
-<tr valign="top" class="required">
-	<td align="right">auth_pop3type:</td>
-	<td>
+<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
+	<TD ALIGN=RIGHT><P>auth_pop3type:</TD>
+	<TD>
     <?php  $pop3types = array("pop3","pop3cert", "pop3notls");
        foreach($pop3types as $pop3type) {
            $pop3options[$pop3type] = $pop3type;
        }
        choose_from_menu($pop3options, "auth_pop3type", $config->auth_pop3type, "");
     ?>
-    </td>
-<td>
+    </TD>
+<TD>
     <?php  print_string("auth_pop3type","auth") ?>
-    </td>
-</tr>
+    </TD>
+</TR>
 
-<tr valign="top" class="required">
-	<td align="right">auth_pop3port:</td>
-	<td>
-    <input name="auth_pop3port" type="text" size="6" value="<?php echo $config->auth_pop3port?>" />
+<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
+	<TD ALIGN=RIGHT><P>auth_pop3port:</TD>
+	<TD>
+    <INPUT name=auth_pop3port TYPE=text SIZE=6 VALUE="<?php echo $config->auth_pop3port?>">
     <?php  if (isset($err["auth_pop3port"])) formerr($err["auth_pop3port"]); ?>
-    </td>
-    <td>
+    </TD>
+    <TD>
     <?php  print_string("auth_pop3port","auth") ?>
-    </td>
-</tr>
+    </TD>
+</TR>
 
-<tr valign="top" class="required">
-	<td align="right">auth_pop3mailbox:</td>
-	<td>
-    <input name="auth_pop3mailbox" type="text" size="6" value="<?php echo $config->auth_pop3mailbox?>" />
+<TR VALIGN=TOP BGCOLOR="<?php echo $THEME->cellheading2 ?>">
+	<TD ALIGN=RIGHT><P>auth_pop3mailbox:</TD>
+	<TD>
+    <INPUT name=auth_pop3mailbox TYPE=text SIZE=6 VALUE="<?php echo $config->auth_pop3mailbox?>">
     <?php  if (isset($err["auth_pop3mailbox"])) formerr($err["auth_pop3mailbox"]); ?>
-    </td>
-    <td>
+    </TD>
+    <TD>
     <?php  print_string("auth_pop3mailbox","auth") ?>
-    </td>
-</tr>
+    </TD>
+</TR>
 
-<tr valign="top">
-	<td align="right"><?php  print_string("instructions", "auth") ?>:</td>
-	<td>
-    <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
-    </td>
-    <td>
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P><?php  print_string("instructions", "auth") ?>:</TD>
+	<TD>
+    <TEXTAREA NAME=auth_instructions COLS=30 ROWS=10 WRAP=virtual><?php  p($config->auth_instructions) ?></TEXTAREA> 
+    </TD>
+    <TD>
     <?php  print_string("authinstructions","auth") ?>
     <?php  helpbutton("text", get_string("helptext")) ?>
-    </td>
-</tr>
+    </TD>
+</TR>

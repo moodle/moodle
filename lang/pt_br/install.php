@@ -14,7 +14,7 @@ $string['configfilenotwritten'] = 'O script do instalador não conseguiu criar o 
 $string['configfilewritten'] = 'config.php foi criado com sucesso';
 $string['configurationcomplete'] = 'Configuração terminada';
 $string['database'] = 'Base de dados';
-$string['databasesettings'] = 'Agora você precisa configurar a base de dados em que os dados de Moodle serão conservados. Esta base de dados deve ter sido criada anterirmente bem como o nome de usuário e a senha necessários ao acesso..<br />
+$string['databasesettings'] = 'Agora você precisa configurar a base de dados em que os dados de Moodle serão conservados. Esta base de dados deve ter sido criada anterirmente bem como o nome de usuário e a senha necessários ao acesso..<br/>
 <br /> <br />
 <b>Tipo:</b> mysql ou postgres7<br />
 <b>Host:</b> ex. localhost ou db.isp.com<br />
@@ -47,7 +47,7 @@ $string['fail'] = 'Erro';
 $string['fileuploads'] = 'Carregamento de arquivos';
 $string['fileuploadserror'] = 'Isto deve estar ativado';
 $string['fileuploadshelp'] = '<p>Parece que o envio de documentos a este servidor não está habilitado.</p>
-<p>Moodle pode ser instalado, mas não será possível carregar arquivos ou imagens nos cursos.</p>
+<p>Moodle pode ser instalado, mas não será possível carregar arquivos ou imagens nos cursos.
 <p>para habilitar o envio de arquivos é necessário editar edit o arquivo php.ini do sistema and mudar a configuração de  
 <b>file_uploads</b> para \'1\'.</p>';
 $string['gdversion'] = 'Versão do gd';
@@ -70,17 +70,17 @@ $string['memorylimit'] = 'Limite de Memória';
 $string['memorylimiterror'] = 'A configuração do limite da memória do PHP está muito baixa ... isto pode causar problemas no futuro.';
 $string['memorylimithelp'] = '<p>O limite de memória do PHP configurado atualmente no seu servidor é de $a.</p>
 
-<p>Este limite pode causar problemas no futuro, especialmente quando muitos módulos estiverem ativados ou em caso de um número elevado de usuários.</p>
+<p>Este limite pode causar problemas no futuro, especialmente quando muitos módulos estiverem ativados ou em caso de um número elevado de usuários.
 
-<p>É aconselhável a configuração do limite de memória com o valor mais alto possível, como 16M. Você pode tentar um dos seguintes caminhos:</p>
+<p>É aconselhável a configuração do limite de memória com o valor mais alto possível, como 16M. Você pode tentar um dos seguintes caminhos:
 <ol>
 <li>Se você puder, recompile o PHP com <i>--enable-memory-limit</i>.
-Com esta operação Moodle será capaz de configurar o limite de memória sózinho.</li>
-<li>Se você tiver acesso ao arquivo php.ini, você pode mudar o parâmetro <b>memory_limit</b> para um valor próximo a 16M. Se você não tiver acesso direto, peça ao administrador do sistema para fazer esta operação.</li>
+Com esta operação Moodle será capaz de configurar o limite de memória sózinho.
+<li>Se você tiver acesso ao arquivo php.ini, você pode mudar o parâmetro <b>memory_limit</b> para um valor próximo a 16M. Se você não tiver acesso direto, peça ao administrador do sistema para fazer esta operação.
 <li>Em alguns servidores é possível fazer esta mudança criando um arquivo .htaccess no diretório Moodle. O arquivo deve conter a seguinte expressão:
 <p><blockquote>php_value memory_limit 16M</blockquote></p>
-<p>Alguns servidores não aceitam este procedimento e <b>todas</b> as páginas PHP do servidor ficam bloqueadas ou imprimem mensagens de erro. Neste caso será necessário cancelar o arquivo .htaccess .</p>
-</li></ol> ';
+<p>Alguns servidores não aceitam este procedimento e <b>todas</b> as páginas PHP do servidor ficam bloqueadas ou imprimem mensagens de erro. Neste caso será necessário cancelar o arquivo .htaccess .
+</ol> ';
 $string['mysqlextensionisnotpresentinphp'] = 'O pHP não foi configurado corretamente com a extensão MySQL e não pode comunicar com a base de dados. Controle o seu php.ini ou faça a recompilação do PHP.';
 $string['pass'] = 'Senha';
 $string['phpversion'] = 'Versão do PHP';
@@ -92,7 +92,7 @@ $string['safemode'] = 'Modalidade segura';
 $string['safemodeerror'] = 'Moodle pode ter problemas se a modalidade segura estiver ativa';
 $string['safemodehelp'] = '<p>Moodle pode ter alguns problemas quando o safe mode está ativado. Provavelmente não será possível criar novos arquivos.</p>
 <p>O Safe mode normalmente é ativado apenas por serviços de web hosting públicos enabled by paranóicos, é possível que você tenha que escolher um outro serviço de webhosting para o seu site.</p>
-<p>Você pode continuar a instalação mas provavelmente outros problemas surgirão.</p>';
+p>Você pode continuar a instalação mas provavelmente outros problemas surgirão.</p>';
 $string['sessionautostart'] = 'Início da sessão automático';
 $string['sessionautostarterror'] = 'Isto deve estar ativado';
 $string['sessionautostarthelp'] = '<p>Moodle requer o suporte a sessões e não funciona sem isto.</p>

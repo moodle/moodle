@@ -39,7 +39,7 @@
 $CFG->texfilterdir = "filter/tex";
 
 
-function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $align="middle") {
+function string_file_picture_tex($imagefile, $tex= "", $height="", $width="") {
     // Given the path to a picture file in a course, or a URL,
     // this function includes the picture in the page.
     global $CFG;
@@ -65,17 +65,17 @@ function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $a
         } else {
           $output .= "<a target=\"popup\" title=\"TeX\" href=";
           $output .= "\"$CFG->wwwroot/$CFG->texfilterdir/displaytex.php?";
-          $output .= urlencode($tex) . "\" onclick=\"return openpopup('/$CFG->texfilterdir/displaytex.php?";
+          $output .= urlencode($tex) . "\" onClick=\"return openpopup('/$CFG->texfilterdir/displaytex.php?";
           $output .= urlencode($tex) . "', 'popup', 'menubar=0,location=0,scrollbars,";
           $output .= "resizable,width=300,height=240', 0);\">";
 	}
-        $output .= "<img border=\"0\" $title $height $width alt=\"\" src=\"";
+        $output .= "<img border=\"0\" $title $height $width src=\"";
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
             $output .= "$CFG->wwwroot/$CFG->texfilterdir/pix.php/$imagefile";
         } else {
             $output .= "$CFG->wwwroot/$CFG->texfilterdir/pix.php?file=$imagefile";
         }
-        $output .= "\" style=\"vertical-align:$align\" />";
+        $output .= "\" />";
         $output .= "</a>";
     } else {
         $output .= "Error: must pass URL or course";
@@ -125,14 +125,6 @@ function tex_filter ($courseid, $text) {
         $texexp = $matches[1][$i] . $matches[2][$i];
         $texexp = str_replace('<nolink>','',$texexp);
         $texexp = str_replace('</nolink>','',$texexp);
-        $align = "middle";
-        if (preg_match('/^align=bottom /',$texexp)) {
-          $align = "text-bottom";
-          $texexp = preg_replace('/^align=bottom /','',$texexp);
-        } else if (preg_match('/^align=top /',$texexp)) {
-          $align = "text-top";
-          $texexp = preg_replace('/^align=top /','',$texexp);
-        }
         $md5 = md5($texexp);
         if (! $texcache = get_record("cache_filters","filter","tex", "md5key", $md5)) {
             $texcache->filter = 'tex';
@@ -140,10 +132,10 @@ function tex_filter ($courseid, $text) {
             $texcache->md5key = $md5;
             $texcache->rawtext = addslashes($texexp);
             $texcache->timemodified = time();
-            insert_record("cache_filters",$texcache, false);
+            insert_record("cache_filters",$texcache);
         }
         $filename = $md5 . ".gif";
-        $text = str_replace( $matches[0][$i], string_file_picture_tex($filename, $texexp, '', '', $align), $text);
+        $text = str_replace( $matches[0][$i], string_file_picture_tex($filename, $texexp), $text);
     }
     return $text; 
 }

@@ -25,9 +25,7 @@ CREATE TABLE prefix_quiz (
   feedback integer NOT NULL default '0',
   correctanswers integer NOT NULL default '1',
   grademethod integer NOT NULL default '1',
-  decimalpoints integer NOT NULL default '2',
   review integer NOT NULL default '0',
-  questionsperpage integer NOT NULL default '0',
   shufflequestions integer NOT NULL default '0',
   shuffleanswers integer NOT NULL default '0',
   questions text NOT NULL default '',
@@ -37,12 +35,8 @@ CREATE TABLE prefix_quiz (
   timemodified integer NOT NULL default '0',
   timelimit integer NOT NULL default '0',
   password varchar(255) NOT NULL default '',
-  subnet varchar(255) NOT NULL default '',
-  popup integer NOT NULL default '0'
+  subnet varchar(255) NOT NULL default ''
 );
-
-CREATE INDEX prefix_quiz_course_idx ON prefix_quiz (course);
-
 # --------------------------------------------------------
 
 #
@@ -56,9 +50,6 @@ CREATE TABLE prefix_quiz_answers (
   fraction varchar(10) NOT NULL default '0.0',
   feedback text NOT NULL default ''
 );
-
-CREATE INDEX prefix_quiz_answers_question_idx ON prefix_quiz_answers (question);
-
 # --------------------------------------------------------
 
 #
@@ -75,10 +66,6 @@ CREATE TABLE prefix_quiz_attempts (
   timefinish integer NOT NULL default '0',
   timemodified integer NOT NULL default '0'
 );
-
-CREATE INDEX prefix_quiz_attempts_quiz_idx ON prefix_quiz_attempts (quiz);
-CREATE INDEX prefix_quiz_attempts_userid_idx ON prefix_quiz_attempts (userid);
-
 # --------------------------------------------------------
 
 #
@@ -91,13 +78,8 @@ CREATE TABLE prefix_quiz_categories (
   name varchar(255) NOT NULL default '',
   info text NOT NULL default '',
   publish integer NOT NULL default '0',
-  stamp varchar(255) NOT NULL default '',
-  parent integer NOT NULL default '0',
-  sortorder integer NOT NULL default '999'
+  stamp varchar(255) NOT NULL default ''
 );
-
-CREATE INDEX prefix_quiz_categories_course_idx ON prefix_quiz_categories (course);
-
 # --------------------------------------------------------
 
 #
@@ -108,13 +90,9 @@ CREATE TABLE prefix_quiz_grades (
   id SERIAL PRIMARY KEY,
   quiz integer NOT NULL default '0',
   userid integer NOT NULL default '0',
-  grade real NOT NULL default '0',
+  grade varchar(10) NOT NULL default '0.0',
   timemodified integer NOT NULL default '0'
 );
-
-CREATE INDEX prefix_quiz_grades_quiz_idx ON prefix_quiz_grades (quiz);
-CREATE INDEX prefix_quiz_grades_userid_idx ON prefix_quiz_grades (userid);
-
 # --------------------------------------------------------
 
 #
@@ -184,7 +162,6 @@ CREATE TABLE prefix_quiz_numerical (
 );
 # --------------------------------------------------------
 CREATE INDEX prefix_quiz_numerical_answer_idx ON prefix_quiz_numerical (answer);
-CREATE INDEX prefix_quiz_numerical_question_idx ON prefix_quiz_numerical (question);
 
 #
 # Table structure for table quiz_question_grades
@@ -195,24 +172,6 @@ CREATE TABLE prefix_quiz_question_grades (
   quiz integer NOT NULL default '0',
   question integer NOT NULL default '0',
   grade integer NOT NULL default '0'
-);
-
-CREATE INDEX prefix_quiz_question_grades_quiz_idx ON prefix_quiz_question_grades (quiz);
-CREATE INDEX prefix_quiz_question_grades_question_idx ON prefix_quiz_question_grades (question);
-
-# --------------------------------------------------------
-
-#
-# Table structure for table `quiz_question_versions`
-#
-
-CREATE TABLE prefix_quiz_question_versions (
-  id SERIAL PRIMARY KEY,
-  quiz integer NOT NULL default '0',
-  oldquestion integer NOT NULL default '0',
-  newquestion integer NOT NULL default '0',
-  userid integer NOT NULL default '0',
-  timestamp integer NOT NULL default '0'
 );
 # --------------------------------------------------------
 
@@ -230,12 +189,8 @@ CREATE TABLE prefix_quiz_questions (
   defaultgrade integer NOT NULL default '1',
   qtype integer NOT NULL default '0',
   stamp varchar(255) NOT NULL default '',
-  version integer NOT NULL default '1',
-  hidden integer NOT NULL default '0'
+  version integer NOT NULL default '1'
 );
-
-CREATE INDEX prefix_quiz_questions_category_idx ON prefix_quiz_questions (category);
-
 # --------------------------------------------------------
 
 #
@@ -248,8 +203,6 @@ CREATE TABLE prefix_quiz_randomsamatch (
   choose integer NOT NULL default '4'
 );
 
-CREATE INDEX prefix_quiz_randomsamatch_question_idx ON prefix_quiz_randomsamatch (question);
-
 #
 # Table structure for table quiz_responses
 #
@@ -258,14 +211,9 @@ CREATE TABLE prefix_quiz_responses (
   id SERIAL PRIMARY KEY,
   attempt integer NOT NULL default '0',
   question integer NOT NULL default '0',
-  originalquestion integer NOT NULL default '0',
-  answer text NOT NULL default '',
+  answer varchar(255) NOT NULL default '',
   grade varchar(10) NOT NULL default '0.0'
 );
-
-CREATE INDEX prefix_quiz_responses_attempt_idx ON prefix_quiz_responses (attempt);
-CREATE INDEX prefix_quiz_responses_question_idx ON prefix_quiz_responses (question);
-
 # --------------------------------------------------------
 
 #
@@ -302,14 +250,13 @@ CREATE TABLE prefix_quiz_numerical_units (
     unit varchar(50) NOT NULL default ''
 );
 
-CREATE INDEX prefix_quiz_numerical_units_question_idx ON prefix_quiz_numerical_units (question);
 
 CREATE TABLE prefix_quiz_attemptonlast_datasets (
     id SERIAL8 PRIMARY KEY,
     category INT8  NOT NULL default '0',
     userid INT8  NOT NULL default '0',
     datasetnumber INT8  NOT NULL default '0',
-    CONSTRAINT  prefix_quiz_category_userid_unique UNIQUE (category,userid)
+    CONSTRAINT  category UNIQUE (category,userid)
 );
 
 CREATE TABLE prefix_quiz_dataset_definitions (
@@ -320,8 +267,6 @@ CREATE TABLE prefix_quiz_dataset_definitions (
     options varchar(255) NOT NULL default '',
     itemcount INT8  NOT NULL default '0'
 );
-
-CREATE INDEX prefix_quiz_dataset_definitions_category_idx ON prefix_quiz_dataset_definitions (category);
 
 CREATE TABLE prefix_quiz_dataset_items (
     id SERIAL8 PRIMARY KEY,
@@ -348,13 +293,12 @@ CREATE TABLE prefix_quiz_calculated (
     answer INT8  NOT NULL default '0',
     tolerance varchar(20) NOT NULL default '0.0',
     tolerancetype INT8 NOT NULL default '1',
-    correctanswerlength INT8 NOT NULL default '2',
-    correctanswerformat INT8 NOT NULL default '2'
+    correctanswerlength INT8 NOT NULL default '2'
 );
 
 CREATE INDEX prefix_quiz_calculated_question_idx 
     ON  prefix_quiz_calculated (question);
-CREATE INDEX prefix_quiz_calculated_answer_idx ON prefix_quiz_calculated (answer);
+
 
 
 INSERT INTO prefix_log_display VALUES ('quiz', 'add', 'quiz', 'name');
@@ -364,4 +308,4 @@ INSERT INTO prefix_log_display VALUES ('quiz', 'report', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'attempt', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'submit', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'review', 'quiz', 'name');
-INSERT INTO prefix_log_display VALUES ('quiz', 'editquestions', 'quiz', 'name');
+

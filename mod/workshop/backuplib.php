@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This php script contains all the stuff to backup/restore
     //workshop mods
 
@@ -16,15 +16,15 @@
     //              |                                                                            workshop_submissions
     //              |                                                                        (UL,pk->id,fk->workshopid,files)
     //              |                                                                                    |
-    //              |        |-------------------------------------|      |----------------------|       |
-    //              |        |                                     |      |                      |       |
-    //             workshop_elements                           workshop_grades                  workshop_assessments
-    //         (CL,pk->id,fk->workshopid)                (UL,pk->id,fk->assessmentid)       (UL,pk->id,fk->submissionid)
-    //              |                  |                 (          fk->elementno   )                    |
-    //              |                  |                                                                 |
-    //              |                  |                                                                 |
-    //      workshop_rubrics          workshop_stockcomments                                        workshop_comments
-    // (CL,pk->id,fk->elementno)   (CL, pk->id, fk->elementno)                             (UL,pk->id,fk->assessmentid)
+    //              |        |---------------------------|      |--------------------------------|       |
+    //              |        |                           |      |                                |       |
+    //        workshop_elements                      workshop_grades                            workshop_assessments
+    //    (CL,pk->id,fk->workshopid)           (UL,pk->id,fk->assessmentid)                 (UL,pk->id,fk->submissionid)
+    //              |                          (          fk->elementno   )                              |
+    //              |                                                                                    |
+    //              |                                                                                    |
+    //          workshop_rubrics                                                                 workshop_comments
+    //    (CL,pk->id,fk->elementno)                                                        (UL,pk->id,fk->assessmentid)
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -53,9 +53,8 @@
                 fwrite ($bf,full_tag("MODTYPE",4,false,"workshop"));
                 fwrite ($bf,full_tag("NAME",4,false,$workshop->name));
                 fwrite ($bf,full_tag("DESCRIPTION",4,false,$workshop->description));
-                fwrite ($bf,full_tag("WTYPE",4,false,$workshop->wtype));
                 fwrite ($bf,full_tag("NELEMENTS",4,false,$workshop->nelements));
-                fwrite ($bf,full_tag("NATTACHMENTS",4,false,$workshop->nattachments));
+                fwrite ($bf,full_tag("PHASE",4,false,$workshop->phase));
                 fwrite ($bf,full_tag("FORMAT",4,false,$workshop->format));
                 fwrite ($bf,full_tag("GRADINGSTRATEGY",4,false,$workshop->gradingstrategy));
                 fwrite ($bf,full_tag("RESUBMIT",4,false,$workshop->resubmit));
@@ -64,22 +63,22 @@
                 fwrite ($bf,full_tag("ANONYMOUS",4,false,$workshop->anonymous));
                 fwrite ($bf,full_tag("INCLUDESELF",4,false,$workshop->includeself));
                 fwrite ($bf,full_tag("MAXBYTES",4,false,$workshop->maxbytes));
-                fwrite ($bf,full_tag("SUBMISSIONSTART",4,false,$workshop->submissionstart));
-                fwrite ($bf,full_tag("ASSESSMENTSTART",4,false,$workshop->assessmentstart));
-                fwrite ($bf,full_tag("SUBMISSIONEND",4,false,$workshop->submissionend));
-                fwrite ($bf,full_tag("ASSESSMENTEND",4,false,$workshop->assessmentend));
-                fwrite ($bf,full_tag("RELEASEGRADES",4,false,$workshop->releasegrades));
+                fwrite ($bf,full_tag("DEADLINE",4,false,$workshop->deadline));
                 fwrite ($bf,full_tag("GRADE",4,false,$workshop->grade));
-                fwrite ($bf,full_tag("GRADINGGRADE",4,false,$workshop->gradinggrade));
                 fwrite ($bf,full_tag("NTASSESSMENTS",4,false,$workshop->ntassessments));
-                fwrite ($bf,full_tag("ASSESSMENTCOMPS",4,false,$workshop->assessmentcomps));
                 fwrite ($bf,full_tag("NSASSESSMENTS",4,false,$workshop->nsassessments));
                 fwrite ($bf,full_tag("OVERALLOCATION",4,false,$workshop->overallocation));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$workshop->timemodified));
+                fwrite ($bf,full_tag("MERGEGRADES",4,false,$workshop->mergegrades));
                 fwrite ($bf,full_tag("TEACHERWEIGHT",4,false,$workshop->teacherweight));
+                fwrite ($bf,full_tag("PEERWEIGHT",4,false,$workshop->peerweight));
+                fwrite ($bf,full_tag("INCLUDETEACHERSGRADE",4,false,$workshop->includeteachersgrade));
+                fwrite ($bf,full_tag("BIASWEIGHT",4,false,$workshop->biasweight));
+                fwrite ($bf,full_tag("RELIABILITYWEIGHT",4,false,$workshop->reliabilityweight));
+                fwrite ($bf,full_tag("GRADINGWEIGHT",4,false,$workshop->gradingweight));
                 fwrite ($bf,full_tag("SHOWLEAGUETABLE",4,false,$workshop->showleaguetable));
-                fwrite ($bf,full_tag("USEPASSWORD",4,false,$workshop->usepassword));
-                fwrite ($bf,full_tag("PASSWORD",4,false,$workshop->password));
+                fwrite ($bf,full_tag("TEACHERLOADING",4,false,$workshop->teacherloading));
+                fwrite ($bf,full_tag("ASSESSMENTSTODROP",4,false,$workshop->assessmentstodrop));
                 //Now we backup workshop elements
                 $status = backup_workshop_elements($bf,$preferences,$workshop->id);
                 //if we've selected to backup users info, then execute backup_workshop_submisions
@@ -121,12 +120,8 @@
                 fwrite ($bf,full_tag("SCALE",6,false,$wor_ele->scale));
                 fwrite ($bf,full_tag("MAXSCORE",6,false,$wor_ele->maxscore));
                 fwrite ($bf,full_tag("WEIGHT",6,false,$wor_ele->weight));
-                fwrite ($bf,full_tag("STDDEV",6,false,$wor_ele->stddev));
-                fwrite ($bf,full_tag("TOTALASSESSMENTS",6,false,$wor_ele->totalassessments));
                 //Now we backup workshop rubrics
                 $status = backup_workshop_rubrics($bf,$preferences,$workshop,$wor_ele->elementno);
-                //Now we backup element's stock comments
-                $status = backup_workshop_stockcomments($bf,$preferences,$workshop,$wor_ele->elementno);
                 //End element
                 $status =fwrite ($bf,end_tag("ELEMENT",5,true));
             }
@@ -167,36 +162,6 @@
         return $status;
     }
 
-    //Backup workshop_stockcomments contents (executed from backup_workshop_elements)
-    function backup_workshop_stockcomments ($bf,$preferences,$workshop,$elementid) {
-
-        global $CFG;
-
-        $status = true;
-
-        $workshop_stockcomments = get_records_sql("SELECT * from {$CFG->prefix}workshop_stockcomments c
-                                              WHERE c.workshopid = '$workshop' and c.elementno = '$elementno'
-                                              ORDER BY c.id");
-
-        //If there is workshop_stockcomments
-        if ($workshop_stockcomments) {
-            //Write start tag
-            $status =fwrite ($bf,start_tag("STOCKCOMMENTS",6,true));
-            //Iterate over each comment
-            foreach ($workshop_stockcomments as $wor_com) {
-                //Start comment
-                $status =fwrite ($bf,start_tag("STOCKCOMMENT",7,true));
-                //Print comment contents
-                fwrite ($bf,full_tag("COMMENT_TEXT",8,false,$wor_com->comments));
-                //End comment
-                $status =fwrite ($bf,end_tag("STOCKCOMMENT",7,true));
-            }
-            //Write end tag
-            $status =fwrite ($bf,end_tag("STOCKCOMMENTS",6,true));
-        }
-        return $status;
-    }
-
     //Backup workshop_submissions contents (executed from workshop_backup_mods)
     function backup_workshop_submissions ($bf,$preferences,$workshop) {
 
@@ -219,11 +184,12 @@
                 fwrite ($bf,full_tag("TITLE",6,false,$wor_sub->title));       
                 fwrite ($bf,full_tag("TIMECREATED",6,false,$wor_sub->timecreated));       
                 fwrite ($bf,full_tag("MAILED",6,false,$wor_sub->mailed));       
-                fwrite ($bf,full_tag("DESCRIPTION",6,false,$wor_sub->description));       
+                fwrite ($bf,full_tag("TEACHERGRADE",6,false,$wor_sub->teachergrade));       
+                fwrite ($bf,full_tag("PEERGRADE",6,false,$wor_sub->peergrade));       
+                fwrite ($bf,full_tag("BIASGRADE",6,false,$wor_sub->biasgrade));       
+                fwrite ($bf,full_tag("RELIABILITYGRADE",6,false,$wor_sub->reliabilitygrade));       
                 fwrite ($bf,full_tag("GRADINGGRADE",6,false,$wor_sub->gradinggrade));       
                 fwrite ($bf,full_tag("FINALGRADE",6,false,$wor_sub->finalgrade));       
-                fwrite ($bf,full_tag("LATE",6,false,$wor_sub->late));       
-                fwrite ($bf,full_tag("NASSESSMENTS",6,false,$wor_sub->nassessments));       
                 //Now we backup workshop assessments
                 $status = backup_workshop_assessments($bf,$preferences,$workshop,$wor_sub->id);
                 //End submission
@@ -263,7 +229,6 @@
                 fwrite ($bf,full_tag("TIMEAGREED",8,false,$wor_ass->timeagreed));
                 fwrite ($bf,full_tag("GRADE",8,false,$wor_ass->grade));
                 fwrite ($bf,full_tag("GRADINGGRADE",8,false,$wor_ass->gradinggrade));
-                fwrite ($bf,full_tag("TEACHERGRADED",8,false,$wor_ass->teachergraded));
                 fwrite ($bf,full_tag("MAILED",8,false,$wor_ass->mailed));
                 fwrite ($bf,full_tag("RESUBMISSION",8,false,$wor_ass->resubmission));
                 fwrite ($bf,full_tag("DONOTUSE",8,false,$wor_ass->donotuse));

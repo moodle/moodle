@@ -1,6 +1,6 @@
 <?php
 /*
-  V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim#natsoft.com.my). All rights reserved.
+  V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim#natsoft.com.my). All rights reserved.
    Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -24,7 +24,7 @@ class ADODB_ldap extends ADOConnection {
     # Used during searches
     var $filter;
     var $dn;
-	var $version;
+
 
 	function ADODB_ldap() 
 	{		
@@ -74,7 +74,7 @@ class ADODB_ldap extends ADOConnection {
     
     function ServerInfo()
     {
-        if( !empty( $this->version ) ) return $this->version;
+        if( is_array( $this->version ) ) return $this->version;
         $version = array();
         /*
         Determines how aliases are handled during search. 
@@ -160,8 +160,8 @@ class ADODB_ldap extends ADOConnection {
         }
         /* The host name (or list of hosts) for the primary LDAP server. */
         ldap_get_option( $this->_connectionID, LDAP_OPT_HOST_NAME, $version['LDAP_OPT_HOST_NAME'] ); 
-        ldap_get_option( $this->_connectionID, LDAP_OPT_ERROR_NUMBER, $version['LDAP_OPT_ERROR_NUMBER'] ); 
-        ldap_get_option( $this->_connectionID, LDAP_OPT_ERROR_STRING, $version['lDAP_OPT_ERROR_STRING'] ); 
+        ldap_get_option( $this->_connectionID, OPT_ERROR_NUMBER, $version['OPT_ERROR_NUMBER'] ); 
+        ldap_get_option( $this->_connectionID, OPT_ERROR_STRING, $version['OPT_ERROR_STRING'] ); 
         ldap_get_option( $this->_connectionID, LDAP_OPT_MATCHED_DN, $version['LDAP_OPT_MATCHED_DN'] ); 
         
         return $this->version = $version;
@@ -193,9 +193,9 @@ class ADORecordSet_ldap extends ADORecordSet{
 		case ADODB_FETCH_ASSOC: 
 		  $this->fetchMode = LDAP_ASSOC; 
 		break;
+		default:
 		case ADODB_FETCH_DEFAULT:
 		case ADODB_FETCH_BOTH: 
-		default:
 		  $this->fetchMode = LDAP_BOTH; 
 		break;
 		}

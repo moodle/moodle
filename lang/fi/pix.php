@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // pix.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // pix.php - created with Moodle 1.2 Beta +++ (2004031300)
 
 
 $string['angry'] = 'Vihainen';
@@ -18,9 +18,6 @@ $string['shy'] = 'Ujo';
 $string['sleepy'] = 'Väsynyt';
 $string['smiley'] = 'Hymy';
 $string['surprise'] = 'Yllättynyt';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Suomi';
 $string['thoughtful'] = 'Ajattelevainen';
 $string['tongueout'] = 'Näyttää kieltä';
 $string['wideeyes'] = 'Silmät suurina';

@@ -1,4 +1,4 @@
-<?php  // $Id: lib.php,v 1.1 22 Aug 2003
+<?PHP  // $Id: lib.php,v 1.1 22 Aug 2003
 
 /*************************************************
     ACTIONS handled are:
@@ -33,7 +33,7 @@
     require("locallib.php");
 
     require_variable($id);    // Course Module ID
-
+ 
     // get some esential stuff...
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -49,21 +49,21 @@
 
     exercise_add_custom_scales($exercise);
 
-    require_login($course->id, false, $cm);
+    require_login($course->id);
 
     $strexercises = get_string("modulenameplural", "exercise");
     $strexercise  = get_string("modulename", "exercise");
     $strassessments = get_string("assessments", "exercise");
-
+    
     // ... print the header and...
-    print_header_simple(format_string($exercise->name), "",
-                 "<a href=\"index.php?id=$course->id\">$strexercises</a> ->
-                  <a href=\"view.php?id=$cm->id\">".format_string($exercise->name,true)."</a> -> $strassessments",
+    print_header_simple("$exercise->name", "",
+                 "<A HREF=index.php?id=$course->id>$strexercises</A> -> 
+                  <A HREF=\"view.php?id=$cm->id\">$exercise->name</A> -> $strassessments", 
                   "", "", true);
 
-    //...get the action
+    //...get the action 
     require_variable($action);
-
+    
 
     /******************* admin amend Grading Grade ************************************/
     if ($action == 'adminamendgradinggrade' ) {
@@ -74,34 +74,34 @@
         if (empty($_GET['aid'])) {
             error("Admin Amend Grading grade: assessment id missing");
             }
-
+            
         if (!$assessment = get_record("exercise_assessments", "id", $_GET['aid'])) {
             error("Amin Amend Grading grade: assessment not found");
         }
-        print_heading(get_string("amend", "exercise")." ".get_string("gradeforstudentsassessment",
+        print_heading(get_string("amend", "exercise")." ".get_string("gradeforstudentsassessment", 
                     "exercise", $course->student));
         echo "<form name=\"amendgrade\" method=\"post\" action=\"assessments.php\">\n";
-        echo "<input type=\"hidden\" name=\"aid\" value=\"$_GET[aid]\" />\n";
-        echo "<input type=\"hidden\" name=\"action\" value=\"updategradinggrade\" />\n";
-        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
-        echo "<table width=\"50%\" align=\"center\" border=\"1\" />\n";
-        echo "<tr><td align=\"right\"><b>".get_string("gradeforstudentsassessment", "exercise",
+        echo "<input type=\"hidden\" name=\"aid\" value=\"$_GET[aid]\">\n";
+        echo "<input type=\"hidden\" name=\"action\" value=\"updategradinggrade\">\n";
+        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
+        echo "<table width=\"50%\" align=\"center\" border=\"1\">\n";
+        echo "<tr><td align=\"right\"><b>".get_string("gradeforstudentsassessment", "exercise", 
                 $course->student)." :</td><td>\n";
         // set up coment scale
         for ($i=$exercise->gradinggrade; $i>=0; $i--) {
             $num[$i] = $i;
             }
-        choose_from_menu($num, "gradinggrade",
+        choose_from_menu($num, "gradinggrade", 
                 number_format($exercise->gradinggrade * $assessment->gradinggrade / 100, 0), "");
         echo "</td></tr>\n";
-        echo "<tr><td colspan=\"2\" align=\"center\">";
-        echo "<input type=\"submit\" value=\"".get_string("amend", "exercise")."\" />\n";
+        echo "<tr><td colspan=\"2\" align=\"center\">"; 
+        echo "<INPUT TYPE=submit VALUE=\"".get_string("amend", "exercise")."\">\n";
         echo "</td></tr>\n";
         echo "</table>\n";
-        echo "</center>";
-        echo "</form>\n";
+        echo "</CENTER>";
+        echo "</FORM>\n";
     }
-
+    
 
     /******************* admin confirm delete ************************************/
     elseif ($action == 'adminconfirmdelete' ) {
@@ -112,12 +112,12 @@
         if (empty($_GET['aid'])) {
             error("Admin confirm delete: assessment id missing");
             }
-
-        notice_yesno(get_string("confirmdeletionofthisitem","exercise", get_string("assessment", "exercise")),
-             "assessments.php?action=admindelete&amp;id=$cm->id&amp;aid=$_GET[aid]",
-             "submissions.php?action=adminlist&amp;id=$cm->id");
+            
+        notice_yesno(get_string("confirmdeletionofthisitem","exercise", get_string("assessment", "exercise")), 
+             "assessments.php?action=admindelete&id=$cm->id&aid=$_GET[aid]", 
+             "submissions.php?action=adminlist&id=$cm->id");
         }
-
+    
 
     /******************* admin delete ************************************/
     elseif ($action == 'admindelete' ) {
@@ -128,16 +128,16 @@
         if (empty($_GET['aid'])) {
             error("Admin delete: submission id missing");
             }
-
+            
         print_string("deleting", "exercise");
         // first delete all the associated records...
         delete_records("exercise_grades", "assessmentid", $_GET['aid']);
         // ...now delete the assessment...
         delete_records("exercise_assessments", "id", $_GET['aid']);
-
-        print_continue("submissions.php?id=$cm->id&amp;action=adminlist");
+        
+        print_continue("submissions.php?id=$cm->id&action=adminlist");
         }
-
+    
 
     /*********************** admin list of asssessments (of a submission) (by teachers)**************/
     elseif ($action == 'adminlist') {
@@ -145,13 +145,13 @@
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
             }
-
+            
         if (empty($_GET['sid'])) {
             error ("exercise asssessments: adminlist called with no sid");
             }
         $submission = get_record("exercise_submissions", "id", $_GET['sid']);
         exercise_print_assessments_for_admin($exercise, $submission);
-        print_continue("submissions.php?action=adminlist&amp;id=$cm->id");
+        print_continue("submissions.php?action=adminlist&id=$cm->id");
         }
 
 
@@ -161,13 +161,13 @@
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
             }
-
+            
         if (empty($_GET['userid'])) {
             error ("exercise asssessments: adminlistbystudent called with no userid");
             }
         $user = get_record("user", "id", $_GET['userid']);
         exercise_print_assessments_by_user_for_admin($exercise, $user);
-        print_continue("submissions.php?action=adminlist&amp;id=$cm->id");
+        print_continue("submissions.php?action=adminlist&id=$cm->id");
         }
 
 
@@ -175,14 +175,14 @@
     elseif ($action == 'assessresubmission') {
 
         require_variable($sid);
-
+        
         if (! $submission = get_record("exercise_submissions", "id", $sid)) {
             error("Assess submission is misconfigured - no submission record!");
         }
         if (!$submissionowner = get_record("user", "id", $submission->userid)) {
             error("Assess resubmission: user record not found");
         }
-
+        
         // there can be an assessment record, if there isn't...
         if (!$assessment = exercise_get_submission_assessment($submission, $USER)) {
             if (!$submissions = exercise_get_user_submissions($exercise, $submissionowner)) {
@@ -201,8 +201,8 @@
             // copy this assessment with comments...
             $assessment = exercise_copy_assessment($prevassessment, $submission, true);
         }
-
-        print_heading(get_string("thisisaresubmission", "exercise",
+        
+        print_heading(get_string("thisisaresubmission", "exercise", 
             fullname($submissionowner)));
         // show assessment and allow changes
         exercise_print_assessment_form($exercise, $assessment, true, $_SERVER["HTTP_REFERER"]);
@@ -213,11 +213,11 @@
     elseif ($action == 'assesssubmission') {
 
         require_variable($sid);
-
+        
         if (! $submission = get_record("exercise_submissions", "id", $sid)) {
             error("Assess submission is misconfigured - no submission record!");
         }
-
+        
         // there can be an assessment record (for teacher submissions), if there isn't...
         if (!$assessment = exercise_get_submission_assessment($submission, $USER)) {
             $yearfromnow = time() + 365 * 86400;
@@ -232,7 +232,7 @@
                 error("Could not insert exercise assessment!");
             }
         }
-
+        
         // show assessment and allow changes
         exercise_print_assessment_form($exercise, $assessment, true, $_SERVER["HTTP_REFERER"]);
     }
@@ -242,7 +242,7 @@
     elseif ($action == 'displaygradingform') {
 
     print_heading_with_help(get_string("specimenassessmentform", "exercise"), "specimen", "exercise");
-
+    
     exercise_print_assessment_form($exercise); // called with no assessment
     print_continue("view.php?id=$cm->id");
     }
@@ -263,18 +263,18 @@
         print_heading_with_help(get_string("editingassessmentelements", "exercise"), "elements", "exercise");
         ?>
         <form name="form" method="post" action="assessments.php">
-        <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
-        <input type="hidden" name="action" value="insertelements" />
-        <center><table cellpadding="5" border="1">
-        <?php
-
+        <input type="hidden" name="id" value="<?PHP echo $cm->id ?>">
+        <input type="hidden" name="action" value="insertelements">
+        <CENTER><TABLE cellpadding=5 border=1>
+        <?PHP
+        
         // get existing elements, if none set up appropriate default ones
         if ($elementsraw = get_records("exercise_elements", "exerciseid", $exercise->id, "elementno ASC" )) {
             foreach ($elementsraw as $element) {
                 $elements[] = $element;   // to renumber index 0,1,2...
             }
         }
-        // check for missing elements (this happens either the first time round or when the number
+        // check for missing elements (this happens either the first time round or when the number 
         // of elements is icreased)
         for ($i=0; $i<$exercise->nelements; $i++) {
             if (!isset($elements[$i])) {
@@ -288,14 +288,14 @@
             case 0: // no grading
                 for ($i=0; $i<$exercise->nelements; $i++) {
                     $iplus1 = $i+1;
-                    echo "<tr valign=\"top\">\n";
-                    echo "  <td align=\"right\"><p><b>". get_string("element","exercise")." $iplus1:</b></td>\n";
-                    echo "<td><textarea name=\"description[]\" rows=\"3\" cols=\"75\" wrap=\"virtual\">".
+                    echo "<TR valign=top>\n";
+                    echo "  <TD ALIGN=RIGHT><P><B>". get_string("element","exercise")." $iplus1:</B></TD>\n";
+                    echo "<TD><textarea name=\"description[]\" rows=3 cols=75 wrap=\"virtual\">".
                         $elements[$i]->description."</textarea>\n";
-                    echo "  </td></tr>\n";
-                    echo "<tr valign=\"top\">\n";
-                    echo "  <td colspan=\"2\">&nbsp;</td>\n";
-                    echo "</tr>\n";
+                    echo "  </TD></TR>\n";
+                    echo "<TR valign=top>\n";
+                    echo "  <TD colspan=2 BGCOLOR=\"$THEME->cellheading2\">&nbsp;</TD>\n";
+                    echo "</TR>\n";
                 }
                 break;
 
@@ -304,92 +304,92 @@
                 foreach ($EXERCISE_SCALES as $KEY => $SCALE) {
                     $SCALES[] = $SCALE['name'];
                 }
-
+                     
                 for ($i=0; $i<$exercise->nelements; $i++) {
                     $iplus1 = $i+1;
-                    echo "<tr valign=\"top\">\n";
-                    echo "  <td align=\"right\"><p><b>". get_string("element","exercise")." $iplus1:</b></td>\n";
-                    echo "<td><textarea name=\"description[]\" rows=\"3\" cols=\"75\" wrap=\"virtual\">".
+                    echo "<TR valign=top>\n";
+                    echo "  <TD ALIGN=RIGHT><P><B>". get_string("element","exercise")." $iplus1:</B></TD>\n";
+                    echo "<TD><textarea name=\"description[]\" rows=3 cols=75 wrap=\"virtual\">".
                         $elements[$i]->description."</textarea>\n";
-                    echo "  </td></tr>\n";
-                    echo "<tr valign=\"top\">\n";
-                    echo "  <td align=\"right\"><p><b>". get_string("typeofscale", "exercise"). ":</b></p></td>\n";
-                    echo "<td valign=\"top\">\n";
+                    echo "  </TD></TR>\n";
+                    echo "<TR valign=top>\n";
+                    echo "  <TD align=right><P><B>". get_string("typeofscale", "exercise"). ":</B></P></TD>\n";
+                    echo "<TD valign=\"top\">\n";
                     choose_from_menu($SCALES, "scale[]", $elements[$i]->scale, "");
                     if ($elements[$i]->weight == '') { // not set
                         $elements[$i]->weight = 11; // unity
                     }
-                    echo "</tr>\n";
-                    echo "<tr valign=\"top\"><td align=\"right\"><b>".get_string("elementweight", "exercise").
-                        ":</b></td><td>\n";
+                    echo "</TR>\n";
+                    echo "<TR valign=top><TD ALIGN=RIGHT><B>".get_string("elementweight", "exercise").
+                        ":</B></TD><TD>\n";
                     exercise_choose_from_menu($EXERCISE_EWEIGHTS, "weight[]", $elements[$i]->weight, "");
-                    echo "      </td>\n";
-                    echo "</tr>\n";
-                    echo "<tr valign=\"top\">\n";
-                    echo "  <td colspan=\"2\">&nbsp;</td>\n";
-                    echo "</tr>\n";
+                    echo "      </TD>\n";
+                    echo "</TR>\n";
+                    echo "<TR valign=top>\n";
+                    echo "  <TD colspan=2 BGCOLOR=\"$THEME->cellheading2\">&nbsp;</TD>\n";
+                    echo "</TR>\n";
                 }
                 break;
-
+                
             case 2: // error banded grading
                 for ($i=0; $i<$exercise->nelements; $i++) {
                     $iplus1 = $i+1;
-                    echo "<tr valign=\"top\">\n";
-                    echo "  <td align=\"right\"><p><b>". get_string("element","exercise")." $iplus1:</b></td>\n";
-                    echo "<td><textarea name=\"description[$i]\" rows=\"3\" cols=\"75\" wrap=\"virtual\">".
+                    echo "<TR valign=top>\n";
+                    echo "  <TD ALIGN=RIGHT><P><B>". get_string("element","exercise")." $iplus1:</B></TD>\n";
+                    echo "<TD><textarea name=\"description[$i]\" rows=3 cols=75 wrap=\"virtual\">".
                         $elements[$i]->description."</textarea>\n";
-                    echo "  </td></tr>\n";
+                    echo "  </TD></TR>\n";
                     if ($elements[$i]->weight == '') { // not set
                         $elements[$i]->weight = 11; // unity
                     }
-                    echo "</tr>\n";
-                    echo "<tr valign=\"top\"><td align=\"right\"><b>".get_string("elementweight", "exercise").
-                        ":</b></td><td>\n";
+                    echo "</TR>\n";
+                    echo "<TR valign=top><TD ALIGN=RIGHT><B>".get_string("elementweight", "exercise").
+                        ":</B></TD><TD>\n";
                     exercise_choose_from_menu($EXERCISE_EWEIGHTS, "weight[]", $elements[$i]->weight, "");
-                    echo "      </td>\n";
-                    echo "</tr>\n";
-                    echo "<tr valign=\"top\">\n";
-                    echo "  <td colspan=\"2\">&nbsp;</td>\n";
-                    echo "</tr>\n";
+                    echo "      </TD>\n";
+                    echo "</TR>\n";
+                    echo "<TR valign=top>\n";
+                    echo "  <TD colspan=2 BGCOLOR=\"$THEME->cellheading2\">&nbsp;</TD>\n";
+                    echo "</TR>\n";
                 }
-                echo "</center></table><br />\n";
-                echo "<p><center><b>".get_string("gradetable","exercise")."</b></center>\n";
-                echo "<center><table cellpadding=\"5\" border=\"1\"><tr><td align=\"CENTER\">".
+                echo "</CENTER></TABLE><BR>\n";
+                echo "<P><CENTER><B>".get_string("gradetable","exercise")."</B></CENTER>\n";
+                echo "<CENTER><TABLE cellpadding=5 border=1><TR><TD ALIGN=\"CENTER\">".
                     get_string("numberofnegativeresponses", "exercise");
-                echo "</td><td>". get_string("suggestedgrade", "exercise")."</td></tr>\n";
+                echo "</TD><TD>". get_string("suggestedgrade", "exercise")."</TD></TR>\n";
                 for ($j = $exercise->grade; $j >= 0; $j--) {
                     $numbers[$j] = $j;
                 }
                 for ($i=0; $i<=$exercise->nelements; $i++) {
-                    echo "<tr><td align=\"CENTER\">$i</td><td align=\"CENTER\">";
+                    echo "<TR><TD ALIGN=\"CENTER\">$i</TD><TD ALIGN=\"CENTER\">";
                     if (!isset($elements[$i])) {  // the "last one" will be!
                         $elements[$i]->description = "";
                         $elements[$i]->maxscore = 0;
                     }
                     choose_from_menu($numbers, "maxscore[$i]", $elements[$i]->maxscore, "");
-                    echo "</td></tr>\n";
+                    echo "</TD></TR>\n";
                 }
                 break;
-
+                
             case 3: // criterion grading
                 for ($j = $exercise->grade; $j >= 0; $j--) {
                     $numbers[$j] = $j;
                 }
                 for ($i=0; $i<$exercise->nelements; $i++) {
                     $iplus1 = $i+1;
-                    echo "<tr valign=\"top\">\n";
+                    echo "<TR valign=top>\n";
 
-                    echo "  <td align=\"right\"><p><b>". get_string("criterion","exercise")." $iplus1:</b></td>\n";
-                    echo "<td><textarea name=\"description[$i]\" rows=\"3\" cols=\"75\" wrap=\"virtual\">".
+                    echo "  <TD ALIGN=RIGHT><P><B>". get_string("criterion","exercise")." $iplus1:</B></TD>\n";
+                    echo "<TD><textarea name=\"description[$i]\" rows=3 cols=75 wrap=\"virtual\">".
                         $elements[$i]->description."</textarea>\n";
-                    echo "  </td></tr>\n";
-                    echo "<tr><td><b>". get_string("suggestedgrade", "exercise").":</b></td><td>\n";
+                    echo "  </TD></TR>\n";
+                    echo "<TR><TD><B>". get_string("suggestedgrade", "exercise").":</B></TD><TD>\n";
                     choose_from_menu($numbers, "maxscore[$i]", $elements[$i]->maxscore, "");
-                    echo "</td></tr>\n";
-                    echo "<tr valign=\"top\">\n";
+                    echo "</TD></TR>\n";
+                    echo "<TR valign=top>\n";
 
-                    echo "  <td colspan=\"2\">&nbsp;</td>\n";
-                    echo "</tr>\n";
+                    echo "  <TD colspan=2 BGCOLOR=\"$THEME->cellheading2\">&nbsp;</TD>\n";
+                    echo "</TR>\n";
                 }
                 break;
 
@@ -404,31 +404,31 @@
                 }
                 for ($i=0; $i<$exercise->nelements; $i++) {
                     $iplus1 = $i+1;
-                    echo "<tr valign=\"top\">\n";
-                    echo "  <td align=\"right\"><p><b>". get_string("element","exercise")." $iplus1:</b></td>\n";
-                    echo "<td><textarea name=\"description[$i]\" rows=\"3\" cols=\"75\" wrap=\"virtual\">".
+                    echo "<TR valign=top>\n";
+                    echo "  <TD ALIGN=RIGHT><P><B>". get_string("element","exercise")." $iplus1:</B></TD>\n";
+                    echo "<TD><textarea name=\"description[$i]\" rows=3 cols=75 wrap=\"virtual\">".
                         $elements[$i]->description."</textarea>\n";
-                    echo "  </td></tr>\n";
-                    echo "<tr valign=\"top\"><td align=\"right\"><b>".get_string("elementweight", "exercise").
-                        ":</b></td><td>\n";
+                    echo "  </TD></TR>\n";
+                    echo "<TR valign=top><TD ALIGN=RIGHT><B>".get_string("elementweight", "exercise").
+                        ":</B></TD><TD>\n";
                     exercise_choose_from_menu($EXERCISE_EWEIGHTS, "weight[]", $elements[$i]->weight, "");
-                    echo "      </td>\n";
-                    echo "</tr>\n";
+                    echo "      </TD>\n";
+                    echo "</TR>\n";
 
                     for ($j=0; $j<5; $j++) {
                         $jplus1 = $j+1;
                         if (empty($rubrics[$i][$j])) {
                             $rubrics[$i][$j] = "";
                         }
-                        echo "<tr valign=\"top\">\n";
-                        echo "  <td align=\"right\"><p><b>". get_string("grade")." $j:</b></td>\n";
-                        echo "<td><textarea name=\"rubric[$i][$j]\" rows=\"3\" cols=\"75\" wrap=\"virtual\">".
+                        echo "<TR valign=top>\n";
+                        echo "  <TD ALIGN=RIGHT><P><B>". get_string("grade")." $j:</B></TD>\n";
+                        echo "<TD><textarea name=\"rubric[$i][$j]\" rows=3 cols=75 wrap=\"virtual\">".
                             $rubrics[$i][$j]."</textarea>\n";
-                        echo "  </td></tr>\n";
+                        echo "  </TD></TR>\n";
                     }
-                    echo "<tr valign=\"top\">\n";
-                    echo "  <td colspan=\"2\">&nbsp;</td>\n";
-                    echo "</tr>\n";
+                    echo "<TR valign=top>\n";
+                    echo "  <TD colspan=2 BGCOLOR=\"$THEME->cellheading2\">&nbsp;</TD>\n";
+                    echo "</TR>\n";
                 }
                 break;
         }
@@ -436,15 +436,15 @@
 
         ?>
         </table><br />
-        <input type="submit" value="<?php  print_string("savechanges") ?>" />
-        <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
+        <input type="submit" value="<?php  print_string("savechanges") ?>">
+        <input type="submit" name=cancel value="<?php  print_string("cancel") ?>">
         </center>
 
         </form>
-        <?php
+        <?PHP
     }
-
-
+    
+    
     /****************** insert/update assignment elements (for teachers)***********************/
     elseif ($action == 'insertelements') {
 
@@ -452,11 +452,11 @@
             error("Only teachers can look at this page");
         }
 
-        $form = data_submitted();
-
+        $form = (object)$HTTP_POST_VARS;
+        
         // let's not fool around here, dump the junk!
         delete_records("exercise_elements", "exerciseid", $exercise->id);
-
+        
         // determine wich type of grading
         switch ($exercise->gradingstrategy) {
             case 0: // no grading
@@ -473,7 +473,7 @@
                     }
                 }
                 break;
-
+                
             case 1: // accumulative grading
                 // Insert all the elements that contain something
                 foreach ($form->description as $key => $description) {
@@ -500,10 +500,10 @@
                     }
                 }
                 break;
-
+                
             case 2: // error banded grading...
             case 3: // ...and criterion grading
-                // Insert all the elements that contain something, the number of descriptions is
+                // Insert all the elements that contain something, the number of descriptions is 
                 // one less than the number of grades
                 foreach ($form->maxscore as $key => $themaxscore) {
                     unset($element);
@@ -521,7 +521,7 @@
                     }
                 }
                 break;
-
+                
             case 4: // ...and criteria grading
                 // Insert all the elements that contain something
                 foreach ($form->description as $key => $description) {
@@ -573,7 +573,7 @@
     }
 
 
-    /***************** list assessments for grading student assessments ( linked to the
+    /***************** list assessments for grading student assessments ( linked to the 
     ******************Teacher's submissions) (by teachers)****/
     elseif ($action == 'listungradedstudentassessments') {
 
@@ -603,12 +603,12 @@
         if ($assessments = exercise_get_teacher_submission_assessments($exercise)) {
             foreach ($assessments as $studentassessment) {
                 if ($studentassessment->timegraded > 0) {
-                    if (!$submissions = get_records_select("exercise_submissions",
+                    if (!$submissions = get_records_select("exercise_submissions", 
                            "userid = $studentassessment->userid AND exerciseid = $exercise->id", "timecreated ASC")) {
                         error("Regrade student assessments: student submission not found");
                     }
                     foreach ($submissions as $submission) { // only the first one is relavant
-                        if (!$teacherassessments = get_records("exercise_assessments", "submissionid",
+                        if (!$teacherassessments = get_records("exercise_assessments", "submissionid", 
                                     $submission->id, "timecreated ASC")) {
                             error("Regrade student assessments: teacher assessment(s) not found");
                         }
@@ -616,19 +616,19 @@
                             $newgrade = exercise_compare_assessments($exercise, $studentassessment, $teacherassessment);
                             set_field("exercise_assessments", "gradinggrade", $newgrade, "id", $studentassessment->id);
                             break;
-                        }
+                        } 
                         break;
                     }
                 }
             }
         }
-        redirect("submissions.php?id=$cm->id&amp;action=adminlist");
+        redirect("submissions.php?id=$cm->id&action=adminlist");
     }
-
+    
 
     /****************** teacher assessment : grading of assessment and submission (from student) ************/
     elseif ($action == 'teacherassessment') {
-
+        
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
         }
@@ -647,7 +647,7 @@
 
     /****************** teacher table : show assessments by exercise and teacher ************/
     elseif ($action == 'teachertable') {
-
+        
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
         }
@@ -661,7 +661,7 @@
     elseif ($action == 'updateassessment') {
 
         $timenow = time();
-        $form = data_submitted();
+        $form = (object)$HTTP_POST_VARS;
 
         require_variable($aid);
         if (! $assessment = get_record("exercise_assessments", "id", $aid)) {
@@ -680,7 +680,7 @@
 
         // don't fiddle about, delete all the old and then add the new!
         delete_records("exercise_grades", "assessmentid",  $assessment->id);
-
+        
         //determine what kind of grading we have
         switch ($exercise->gradingstrategy) {
             case 0: // no grading
@@ -697,7 +697,7 @@
                     }
                 $grade = 0; // set to satisfy save to db
                 break;
-
+                
             case 1: // accumulative grading
                 // Insert all the elements that contain something
                 foreach ($form->grade as $key => $thegrade) {
@@ -717,18 +717,18 @@
                 foreach ($form->grade as $key => $grade) {
                     $maxscore = $elements[$key]->maxscore;
                     $weight = $EXERCISE_EWEIGHTS[$elements[$key]->weight];
-                    if ($weight > 0) {
+                    if ($weight > 0) { 
                         $totalweight += $weight;
                     }
                     $rawgrade += ($grade / $maxscore) * $weight;
-                    // echo "\$key, \$maxscore, \$weight, \$totalweight, \$grade, \$rawgrade : $key, $maxscore, $weight, $totalweight, $grade, $rawgrade<br />";
+                    // echo "\$key, \$maxscore, \$weight, \$totalweight, \$grade, \$rawgrade : $key, $maxscore, $weight, $totalweight, $grade, $rawgrade<BR>";
                 }
                 $grade = 100.0 * ($rawgrade / $totalweight);
                 break;
 
             case 2: // error banded graded
                 // Insert all the elements that contain something
-                $error = 0.0;
+                $error = 0.0; 
                 for ($i =0; $i < $exercise->nelements; $i++) {
                     unset($element);
                     $element->exerciseid = $exercise->id;
@@ -755,8 +755,8 @@
                 }
                 $grade = ($elements[intval($error + 0.5)]->maxscore + $form->grade[$i])
                     * 100.0 / $exercise->grade;
-                // echo "<p><b>".get_string("weightederrorcount", "exercise", intval($error + 0.5)).
-                //  " ".get_string("adjustment", "exercise").": ".$form->grade[$i]."</b>\n";
+                // echo "<P><B>".get_string("weightederrorcount", "exercise", intval($error + 0.5)).
+                //  " ".get_string("adjustment", "exercise").": ".$form->grade[$i]."</B>\n";
                 // check the grade for sanity!
                 if ($grade > 100.0) {
                     $grade = 100.0;
@@ -765,9 +765,9 @@
                     $grade = 0.0;
                 }
                 break;
-
+            
             case 3: // criteria grading
-                // save in the selected criteria value in element zero,
+                // save in the selected criteria value in element zero, 
                 unset($element);
                 $element->exerciseid = $exercise->id;
                 $element->assessmentid = $assessment->id;
@@ -814,7 +814,7 @@
                 foreach ($form->grade as $key => $grade) {
                     $maxscore = $elements[$key]->maxscore;
                     $weight = $EXERCISE_EWEIGHTS[$elements[$key]->weight];
-                    if ($weight > 0) {
+                    if ($weight > 0) { 
                         $totalweight += $weight;
                     }
                     $rawgrade += ($grade / $maxscore) * $weight;
@@ -823,19 +823,19 @@
                 break;
 
         } // end of switch
-
+            
         // update the time of the assessment record (may be re-edited)...
         set_field("exercise_assessments", "timecreated", $timenow, "id", $assessment->id);
         set_field("exercise_assessments", "grade", $grade, "id", $assessment->id);
         // ...and clear any grading of this assessment (these assessments are never graded but...)
         set_field("exercise_assessments", "timegraded", 0, "id", $assessment->id);
         set_field("exercise_assessments", "gradinggrade", 0, "id", $assessment->id);
-
+        
         // any comment?
         if (!empty($form->generalcomment)) {
             set_field("exercise_assessments", "generalcomment", $form->generalcomment, "id", $assessment->id);
         }
-
+            
         // is user allowed to resubmit?
         if (isteacher($course->id)) {
             if (!$submission = get_record("exercise_submissions", "id", $assessment->submissionid)) {
@@ -849,14 +849,14 @@
                 set_field("exercise_submissions", "resubmit", 0, "id", $submission->id);
             }
         }
-
+        
         add_to_log($course->id, "exercise", "assess", "view.php?id=$cm->id", "$assessment->id");
-
+        
         // set up return address
         if (!$returnto = $form->returnto) {
             $returnto = "view.php?id=$cm->id";
         }
-
+            
         // show grade if grading strategy is not zero
         if ($exercise->gradingstrategy) {
             redirect($returnto, "<p align=\"center\"><b>".get_string("thegradeis", "exercise").": ".
@@ -877,8 +877,9 @@
         }
 
         $timenow = time();
-        $form = data_submitted();
+        $form = (object)$HTTP_POST_VARS;
 
+    
         // first do the (teacher's) assessment of the student's submission
         if (! $submission = get_record("exercise_submissions", "id", $form->sid)) {
             error("Update teacher assessment: student's submission record not found");
@@ -899,7 +900,7 @@
 
         // don't fiddle about, delete all the old and then add the new!
         delete_records("exercise_grades", "assessmentid",  $assessment->id);
-
+        
         //determine what kind of grading we have
         switch ($exercise->gradingstrategy) {
             case 0: // no grading
@@ -916,7 +917,7 @@
                 }
                 $grade = 0; // set to satisfy save to db
                 break;
-
+                
             case 1: // accumulative grading
                 // Insert all the elements that contain something
                 foreach ($form->grade as $key => $thegrade) {
@@ -936,18 +937,18 @@
                 foreach ($form->grade as $key => $grade) {
                     $maxscore = $elements[$key]->maxscore;
                     $weight = $EXERCISE_EWEIGHTS[$elements[$key]->weight];
-                    if ($weight > 0) {
+                    if ($weight > 0) { 
                         $totalweight += $weight;
                     }
                     $rawgrade += ($grade / $maxscore) * $weight;
-                    // echo "\$key, \$maxscore, \$weight, \$totalweight, \$grade, \$rawgrade : $key, $maxscore, $weight, $totalweight, $grade, $rawgrade<br />";
+                    // echo "\$key, \$maxscore, \$weight, \$totalweight, \$grade, \$rawgrade : $key, $maxscore, $weight, $totalweight, $grade, $rawgrade<BR>";
                 }
                 $grade = 100.0 * ($rawgrade / $totalweight);
                 break;
 
             case 2: // error banded graded
                 // Insert all the elements that contain something
-                $error = 0.0;
+                $error = 0.0; 
                 for ($i =0; $i < $exercise->nelements; $i++) {
                     unset($element);
                     $element->exerciseid = $exercise->id;
@@ -973,11 +974,11 @@
                     error("Could not insert exercise element!");
                 }
                 $grade = ($elements[intval($error + 0.5)]->maxscore + $form->grade[$i]) * 100 / $exercise->grade;
-                echo "<p><b>".get_string("weightederrorcount", "exercise", intval($error + 0.5))."</b>\n";
+                echo "<P><B>".get_string("weightederrorcount", "exercise", intval($error + 0.5))."</B>\n";
                 break;
-
+            
             case 3: // criteria grading
-                // save in the selected criteria value in element zero,
+                // save in the selected criteria value in element zero, 
                 unset($element);
                 $element->exerciseid = $exercise->id;
                 $element->assessmentid = $assessment->id;
@@ -1017,7 +1018,7 @@
                 foreach ($form->grade as $key => $grade) {
                     $maxscore = $elements[$key]->maxscore;
                     $weight = $EXERCISE_EWEIGHTS[$elements[$key]->weight];
-                    if ($weight > 0) {
+                    if ($weight > 0) { 
                         $totalweight += $weight;
                     }
                     $rawgrade += ($grade / $maxscore) * $weight;
@@ -1026,32 +1027,32 @@
                 break;
 
         } // end of switch
-
+            
         // update the time of the assessment record (may be re-edited)...
         set_field("exercise_assessments", "timecreated", $timenow, "id", $assessment->id);
         set_field("exercise_assessments", "grade", $grade, "id", $assessment->id);
         // ...and clear any grading of this assessment (never needed but...)
         set_field("exercise_assessments", "timegraded", 0, "id", $assessment->id);
         set_field("exercise_assessments", "gradinggrade", 0, "id", $assessment->id);
-
+        
         // any comment?
         if (!empty($form->generalcomment)) {
             set_field("exercise_assessments", "generalcomment", $form->generalcomment, "id", $assessment->id);
         }
-
+            
         // now calculate the (grading) grade of the student's assessment...
         if (!$stassessment = get_record("exercise_assessments", "id", $form->said)) {
             error("Update teacher assessment: student's assessment record not found");
         }
         $gradinggrade = exercise_compare_assessments($exercise, $assessment, $stassessment);
-        // ...and save the grade for the assessment
+        // ...and save the grade for the assessment 
         set_field("exercise_assessments", "gradinggrade", $gradinggrade, "id", $stassessment->id);
         set_field("exercise_assessments", "timegraded", $timenow, "id", $stassessment->id);
         set_field("exercise_assessments", "mailed", 0, "id", $stassessment->id);
-        echo "<centre><b>".get_string("savedok", "exercise")."</b></centre><br />\n";
+        echo "<CENTRE><B>".get_string("savedok", "exercise")."</B></CENTRE><BR>\n";
 
         add_to_log($course->id, "exercise", "grade", "view.php?id=$cm->id", "$stassessment->id");
-
+        
         // is user allowed to resubmit?
         if ($form->resubmit == 1) {
             set_field("exercise_submissions", "resubmit", 1, "id", $submission->id);
@@ -1060,17 +1061,17 @@
             // clear resubmit flag
             set_field("exercise_submissions", "resubmit", 0, "id", $submission->id);
         }
-
+        
         add_to_log($course->id, "exercise", "assess", "view.php?id=$cm->id", "$assessment->id");
-
+        
         // set up return address
         if (!$returnto = $form->returnto) {
             $returnto = "view.php?id=$cm->id";
         }
-
+            
         // show grade if grading strategy is not zero
         if ($exercise->gradingstrategy) {
-            redirect($returnto, "<p align=\"center\"><b>".get_string("gradeforstudentsassessment",
+            redirect($returnto, "<p align=\"center\"><b>".get_string("gradeforstudentsassessment", 
                 "exercise", $course->student).": ".number_format($gradinggrade * $exercise->gradinggrade / 100.0, 1).
                 " (".get_string("maximumgrade")." ".number_format($exercise->gradinggrade, 1).")</b></p><p><b>".
                 get_string("thegradeis", "exercise").": ".number_format($grade * $exercise->grade / 100.0, 1).
@@ -1092,11 +1093,11 @@
         require_variable($aid);
         // normalise gradinggrade
         $gradinggrade = $_POST['gradinggrade'] * 100 / $exercise->gradinggrade;
-        if (!set_field("exercise_assessments", "gradinggrade", $gradinggrade, "id",
+        if (!set_field("exercise_assessments", "gradinggrade", $gradinggrade, "id", 
                     $_POST['aid'])) {
             error("Update grading grade: asseesment not updated");
         }
-        redirect("submissions.php?id=$cm->id&amp;action=adminlist", get_string("savedok", "exercise"), 1);
+        redirect("submissions.php?id=$cm->id&action=adminlist", get_string("savedok", "exercise"), 1);
     }
 
 
@@ -1106,11 +1107,11 @@
         if (empty($_GET['aid'])) {
             error("User confirm delete: assessment id missing");
         }
-
-        notice_yesno(get_string("confirmdeletionofthisitem","exercise", get_string("assessment", "exercise")),
-             "assessments.php?action=userdelete&amp;id=$cm->id&amp;aid=$_GET[aid]", "view.php?id=$cm->id");
+            
+        notice_yesno(get_string("confirmdeletionofthisitem","exercise", get_string("assessment", "exercise")), 
+             "assessments.php?action=userdelete&id=$cm->id&aid=$_GET[aid]", "view.php?id=$cm->id");
     }
-
+    
 
     /****************** user delete ************************************/
     elseif ($action == 'userdelete' ) {
@@ -1118,16 +1119,16 @@
         if (empty($_GET['aid'])) {
             error("User delete: assessment id missing");
         }
-
+            
         print_string("deleting", "exercise");
         // first delete all the associated records...
         delete_records("exercise_grades", "assessmentid", $_GET['aid']);
         // ...now delete the assessment...
         delete_records("exercise_assessments", "id", $_GET['aid']);
-
+        
         print_continue("view.php?id=$cm->id");
     }
-
+    
 
     /****************** view assessment ***********************/
     elseif ($action == 'viewassessment') {
@@ -1135,11 +1136,11 @@
         // get the assessment record
         if (!$assessment = get_record("exercise_assessments", "id", $_GET['aid'])) {
             error("Assessment record not found");
-        }
+        }       
 
         // show assessment but don't allow changes
         exercise_print_assessment_form($exercise, $assessment);
-
+        
         print_continue("view.php?id=$cm->id");
     }
 
@@ -1150,6 +1151,6 @@
     }
 
     print_footer($course);
-
+ 
 ?>
 

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
 include_once($CFG->dirroot.'/mod/glossary/lib.php');
 
@@ -10,9 +10,6 @@ if (!isset($form->allowduplicatedentries)) {
 }
 if (!isset($form->allowcomments)) {
     $form->allowcomments = $CFG->glossary_allowcomments;
-}
-if (!isset($form->allowprintview)) {
-    $form->allowprintview = 1;
 }
 if (!isset($form->usedynalink)) {
     $form->usedynalink = $CFG->glossary_linkbydefault;
@@ -56,30 +53,19 @@ if (!isset($form->rsstype)) {
 if (!isset($form->rssarticles)) {
     $form->rssarticles = 0;
 }
-if (!isset($form->assessed)) {
-    $form->assessed = 0;
-}
-if (!isset($form->scale)) {
-    $form->scale = 0;
-}
-if (!isset($form->assesstimestart)) {
-    $form->assesstimestart = 0;
-}
-if (!isset($form->assesstimefinish)) {
-    $form->assesstimefinish = 0;
-}
 ?>
-<form name="form" method="post" action="mod.php">
-<center>
-<table cellpadding="5">
-<tr valign="top">
-    <td align="right"><b><?php print_string("name") ?>:</b></td>
-    <td align="left">
-        <input type="text" name="name" size="30" value="<?php p($form->name) ?>" />
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right"><b><?php print_string("description") ?>:</b><br />
+<FORM name="form" method="post" action="<?php p($ME) ?>">
+<CENTER>
+<TABLE cellpadding=5>
+<TR valign=top>
+    <TD align=right><P><B><?php print_string("name") ?>:</B></P></TD>
+    <TD>
+        <INPUT type="text" name="name" size=30 value="<?php p($form->name) ?>">
+    </TD>
+</TR>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("description") ?>:</b></p>
+     <font size="1">
      <?php
         helpbutton("description", get_string("description"), "glossary", true, true);
         echo "<br />";
@@ -87,188 +73,173 @@ if (!isset($form->assesstimefinish)) {
         echo "<br />";
         helpbutton("text", get_string("helptext"), "moodle", true, true);
      ?>
+     <br />
+     </font>
     </td>
-    <td align="left">
+    <td>
         <?php print_textarea($usehtmleditor, 20, 50, 680, 400, "intro", $form->intro); ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right"><b><?php echo get_string("entbypage", "glossary") ?>:</b></td>
-    <td align="left">
-    <input name="entbypage" type="text" size="2" value="<?php p($form->entbypage) ?>" /> <?php helpbutton("entbypage", get_string("entbypage", "glossary"), "glossary") ?>
-    </td>
-</tr>
+<TR valign=top>
+    <TD align=right><P><B><?php echo get_string("entbypage", "glossary") ?>:</B></P></TD>
+    <TD>
+		<input name=entbypage type=text size=2 value="<?php p($form->entbypage) ?>"> <?php helpbutton("entbypage", get_string("entbypage", "glossary"), "glossary") ?>
+    </TD>
+</TR>
 
 <!-- More rows go in here... -->
 <?php
 if (isadmin() ) {
 ?>
-<tr valign="top">
-    <td align="right"><b><?php echo get_string("isglobal", "glossary") ?>:</b></td>
-    <td align="left">
+<TR valign=top>
+    <TD align=right><P><B><?php echo get_string("isglobal", "glossary") ?>:</B></P></TD>
+    <TD>
 <?php
-    $selected = '';
-    if ($form->globalglossary) {
-        $selected = 'checked="checked"';
+    $selected = "";
+    if ( isset($form->globalglossary) ) {
+        if ($form->globalglossary) {
+            $selected = "checked";
+        }
     }
 ?> 
-<input type="checkbox" name="globalglossary" value="1" <?php p($selected)?> /> <?php helpbutton("globalglossary", get_string("globalglossary", "glossary"), "glossary") ?>
-    </td>
-</tr>
+  <input type="checkbox" name="globalglossary" value=1 <?PHP p($selected)?>> <?php helpbutton("globalglossary", get_string("globalglossary", "glossary"), "glossary") ?>
+    </TD>
+</TR>
 <?php
 } else {
-   echo '<input type="hidden" name="globalglossary" value="' . $form->globalglossary . '" />';
+   echo '<INPUT type="hidden" name=globalglossary value="' . $form->globalglossary . '">';
 }
 ?>
 <?php
 $mainglossary = get_record("glossary","mainglossary",1,"course",$form->course);
 if (!$mainglossary or $mainglossary->id == $form->instance ) {
 ?>
-<tr valign="top">
-    <td align="right"><b><?php echo get_string("glossarytype", "glossary") ?>:</b></td>
-    <td align="left">
+<TR valign=top>
+    <TD align=right><P><B><?php echo get_string("glossarytype", "glossary") ?>:</B></P></TD>
+    <TD>
   <select size="1" name="mainglossary">
   <option value="1" <?php
    if ( $form->mainglossary ) {
-      echo "selected=\"selected\"";
+      echo "selected";
    }
 ?>>
 <?php echo get_string("mainglossary", "glossary") ?></option>
   <option value="0" <?php
    if ( !$form->mainglossary ) {
-      echo "selected=\"selected\"";
+      echo "selected";
    }
    ?>><?php echo get_string("secondaryglossary", "glossary") ?>
   </option>
   </select> <?php helpbutton("mainglossary", get_string("mainglossary", "glossary"), "glossary") ?>
-    </td>
-</tr>
+    </TD>
+</TR>
 <?php
 } else {
-  echo "<input type=\"hidden\" name=\"mainglossary\" value=\"0\" />";
+	echo "<INPUT type=\"hidden\" name=mainglossary value=\"0\">";
 }
 ?>
-<tr valign="top">
-    <td align="right"><b><?php p(get_string("studentcanpost", "glossary")) ?>:</b><br />
-    <font size="1"><?php p(get_string("warningstudentcapost","glossary")) ?></font></td>
-    <td align="left">
+<TR valign=top>
+    <TD align=right><P><B><?php p(get_string("studentcanpost", "glossary")) ?>:</B><br>
+    <font size=1><?php p(get_string("warningstudentcapost","glossary")) ?></font></P></TD>
+    <TD>
   <select size="1" name="studentcanpost">
   <option value="1" <?php
    if ( $form->studentcanpost ) {
-      echo "selected=\"selected\"";
+      echo "selected";
    }
    ?>><?php echo get_string("yes") ?></option>
   <option value="0" <?php
    if ( !$form->studentcanpost ) {
-      echo "selected=\"selected\"";
+      echo "selected";
    }
    ?>><?php echo get_string("no") ?>
   </option>
   </select> <?php helpbutton("studentcanpost", get_string("studentcanpost", "glossary"), "glossary") ?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right"><b><?php echo get_string("allowduplicatedentries", "glossary") ?>:</b></td>
-    <td align="left">
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><?php echo get_string("allowduplicatedentries", "glossary") ?>:</B></P></TD>
+    <TD>
   <select size="1" name="allowduplicatedentries">
   <option value="1" <?php
    if ( $form->allowduplicatedentries ) {
-      echo "selected=\"selected\"";
+      echo "selected";
    }
    ?> 
    ><?php echo get_string("yes") ?></option>
   <option value="0" <?php
    if ( !$form->allowduplicatedentries ) {
-      echo "selected=\"selected\"";
+      echo "selected";
    }
    ?>><?php echo get_string("no") ?>
   </option>
   </select> <?php helpbutton("allowduplicatedentries", get_string("allowduplicatedentries", "glossary"), "glossary") ?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right"><b><?php echo get_string("allowcomments", "glossary") ?>:</b></td>
-    <td align="left">
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><?php echo get_string("allowcomments", "glossary") ?>:</B></P></TD>
+    <TD>
   <select size="1" name="allowcomments">
   <option value="1" <?php
    if ( $form->allowcomments ) {
-      echo "selected=\"selected\"";
+      echo "selected";
    }
    ?> 
    ><?php echo get_string("yes") ?></option>
   <option value="0" <?php
    if ( !$form->allowcomments ) {
-      echo "selected=\"selected\"";
+      echo "selected";
    }
    ?>><?php echo get_string("no") ?>
   </option>
   </select> <?php helpbutton("allowcomments", get_string("allowcomments", "glossary"), "glossary") ?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right"><b><?php echo get_string("allowprintview", "glossary") ?>:</b></td>
-    <td align="left">
-  <select size="1" name="allowprintview">
-  <option value="1" <?php
-   if ( $form->allowprintview ) {
-      echo "selected=\"selected\"";
-   }
-   ?>
-   ><?php echo get_string("yes") ?></option>
-  <option value="0" <?php
-   if ( !$form->allowprintview ) {
-      echo "selected=\"selected\"";
-   }
-   ?>><?php echo get_string("no") ?>
-  </option>
-  </select> <?php helpbutton("allowprintview", get_string("allowprintview", "glossary"), "glossary") ?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right"><b><?php echo get_string("usedynalink", "glossary") ?>:</b></td>
-    <td align="left">
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><?php echo get_string("usedynalink", "glossary") ?>:</B></P></TD>
+    <TD>
   <select size="1" name="usedynalink">
   <option value="1" <?php
    if ( $form->usedynalink ) {
-      echo "selected=\"selected\"";
+      echo "selected";
    }
    ?> 
    ><?php echo get_string("yes") ?></option>
   <option value="0" <?php
    if ( !$form->usedynalink ) {
-      echo "selected=\"selected\"";
+      echo "selected";
    }
    ?>><?php echo get_string("no") ?>
   </option>
   </select> <?php helpbutton("usedynalink", get_string("usedynalink", "glossary"), "glossary") ?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right"><b><?php echo get_string("defaultapproval", "glossary") ?>:</b></td>
-    <td align="left">
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><?php echo get_string("defaultapproval", "glossary") ?>:</B></P></TD>
+    <TD>
   <select size="1" name="defaultapproval">
   <option value="1" <?php
    if ( $form->defaultapproval ) {
-      echo "selected=\"selected\"";
+      echo "selected";
    }
    ?> 
    ><?php echo get_string("yes") ?></option>
   <option value="0" <?php
    if ( !$form->defaultapproval ) {
-      echo "selected=\"selected\"";
+      echo "selected";
    }
    ?>><?php echo get_string("no") ?>
   </option>
   </select> <?php helpbutton("defaultapproval", get_string("defaultapproval", "glossary"), "glossary") ?>
-    </td>
+    </TD>
+</TR>
+<TR valign=top>
+<td colspan=2><hr>
 </tr>
-<tr valign="top">
-<td colspan="2"><hr />
 </tr>
-</tr>
-<tr valign="top">
-    <td align="right"><b><?php echo get_string("displayformat", "glossary") ?>:</b></td>
-    <td align="left">
+<TR valign=top>
+    <TD align=right><P><B><?php echo get_string("displayformat", "glossary") ?>:</B></P></TD>
+    <TD>
     <?php
         //get and update available formats
         $recformats = glossary_get_available_formats();
@@ -291,91 +262,91 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
         choose_from_menu($formats,'displayformat',$form->displayformat,'');
     ?>
     <?php helpbutton("displayformat", get_string("displayformat", "glossary"), "glossary") ?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right"><b><?php echo get_string("showspecial", "glossary") ?>:</b></td>
-    <td align="left">
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><?php echo get_string("showspecial", "glossary") ?>:</B></P></TD>
+    <TD>
   <select size="1" name="showspecial">
   <option value="1" <?php
    if ( $form->showspecial ) {
-      echo "selected=\"selected\"";
+      echo "selected";
    }
    ?> 
    ><?php echo get_string("yes") ?></option>
   <option value="0" <?php
    if ( !$form->showspecial ) {
-      echo "selected=\"selected\"";
+      echo "selected";
    }
    ?>><?php echo get_string("no") ?>
   </option>
   </select> <?php helpbutton("shows", get_string("showspecial", "glossary"), "glossary") ?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right"><b><?php echo get_string("showalphabet", "glossary") ?>:</b></td>
-    <td align="left">
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><?php echo get_string("showalphabet", "glossary") ?>:</B></P></TD>
+    <TD>
   <select size="1" name="showalphabet">
   <option value="1" <?php
    if ( $form->showalphabet ) {
-      echo "selected=\"selected\"";
+      echo "selected";
    }
    ?> 
    ><?php echo get_string("yes") ?></option>
   <option value="0" <?php
    if ( !$form->showalphabet ) {
-      echo "selected=\"selected\"";
+      echo "selected";
    }
    ?>><?php echo get_string("no") ?>
   </option>
   </select> <?php helpbutton("shows", get_string("showalphabet", "glossary"), "glossary") ?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right"><b><?php echo get_string("showall", "glossary") ?>:</b></td>
-    <td align="left">
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><?php echo get_string("showall", "glossary") ?>:</B></P></TD>
+    <TD>
   <select size="1" name="showall">
   <option value="1" <?php
    if ( $form->showall ) {
-      echo "selected=\"selected\"";
+      echo "selected";
    }
    ?> 
    ><?php echo get_string("yes") ?></option>
   <option value="0" <?php
    if ( !$form->showall ) {
-      echo "selected=\"selected\"";
+      echo "selected";
    }
    ?>><?php echo get_string("no") ?>
   </option>
   </select> <?php helpbutton("shows", get_string("showall", "glossary"), "glossary") ?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right"><b><?php echo get_string("editalways", "glossary") ?>:</b></td>
-    <td align="left">
+    </TD>
+</TR>
+<TR valign=top>
+    <TD align=right><P><B><?php echo get_string("editalways", "glossary") ?>:</B></P></TD>
+    <TD>
   <select size="1" name="editalways">
   <option value="1" <?php
    if ( $form->editalways ) {
-      echo "selected=\"selected\"";
+      echo "selected";
    }
    ?>
    ><?php echo get_string("yes") ?></option>
   <option value="0" <?php
    if ( !$form->editalways ) {
-      echo "selected=\"selected\"";
+      echo "selected";
    }
    ?>><?php echo get_string("no") ?>
   </option>
   </select> <?php helpbutton("editalways", get_string("editalways", "glossary"), "glossary") ?>
-    </td>
-</tr>
+    </TD>
+</TR>
 <?php
     //Only show rss parameters if rss is activated at site and glossary levels
     if (isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfeeds) &&
         $CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds) {
-        echo "<tr valign=\"top\">";
-        echo "<td align=\"right\"><b>".get_string("rsstype").":</b></td>";
-        echo "<td align=\"left\">";
+        echo "<tr valign=top>";
+        echo "<td align=right><p><b>".get_string("rsstype").":</b></p></td>";
+        echo "<td>";
         unset($choices);
         $choices[0] = get_string("none");
         $choices[1] = get_string("withauthor", "glossary");
@@ -385,9 +356,9 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
         echo "</td>";
         echo "</tr>";
 
-        echo "<tr valign=\"top\">";
-        echo "<td align=\"right\"><b>".get_string("rssarticles").":</b></td>";
-        echo "<td align=\"left\">";
+        echo "<tr valign=top>";
+        echo "<td align=right><p><b>".get_string("rssarticles").":</b></p></td>";
+        echo "<td>";
         unset($choices);
         $choices[0] = "0";
         $choices[1] = "1";
@@ -409,22 +380,22 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
     }
 ?>
 <tr>
-    <td align="right" valign="top"><b><?php print_string("allowratings", "glossary") ?>:</b></td>
-    <td align="left">
+    <td align=right valign=top><p><b><?php print_string("allowratings", "glossary") ?>:</b></p></td>
+    <td>
         <?php 
-            echo "<script type=\"text/javascript\">";
+            echo "<script>";
             echo "  var subitemstime = ['startday','startmonth','startyear','starthour', 'startminute',".
                                    "'finishday','finishmonth','finishyear','finishhour','finishminute'];";
             echo "  var subitemsall = ['assessed', 'ratingtime', 'scale', 'startday','startmonth','startyear','starthour', 'startminute',".
                                    "'finishday','finishmonth','finishyear','finishhour','finishminute'];";
             echo "</script>";
 
-            echo "<input name=\"userating\" type=\"checkbox\" value=\"1\" ";
+            echo "<input name=\"userating\" type=checkbox value=1 ";
             echo " onclick=\"return lockoptions('form','userating', subitemsall)\" ";
             if ($form->assessed) {
-                echo " checked=\"checked\" ";
+                echo " checked ";
             }
-            echo " />";
+            echo ">";
             echo get_string("ratingsuse", "glossary").":";
             echo "<br />";
 
@@ -432,81 +403,68 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
             unset($options);
             $options[2] = get_string("ratingonlyteachers", "glossary", moodle_strtolower($course->teachers));
             $options[1] = get_string("ratingeveryone", "glossary");
-            
-            echo "\n\n<table cellpadding=\"5\" align=\"left\">";
-            echo "<tr><td align=\"right\" nowrap=\"nowrap\">";
             echo get_string("users").":";
-            echo "</td><td align=\"left\" nowrap=\"nowrap\">";
             choose_from_menu($options, "assessed", $form->assessed, "");
-            echo "</td></tr>";
-            echo "<tr><td align=\"right\" nowrap=\"nowrap\">";
+            echo "<br />";
+
             echo get_string("grade").":";
-            echo "</td><td align=\"left\" nowrap=\"nowrap\">";
             print_grade_menu($course->id, "scale", $form->scale, false);
-            echo "</td></tr></table>\n\n";
+            echo "<br />";
 
-            echo "<br clear=\"all\" />";
-
-            echo "<input name=\"ratingtime\" type=\"checkbox\" value=\"1\" ";
+            echo "<input name=\"ratingtime\" type=checkbox value=1 ";
             echo " onclick=\"return lockoptions('form','ratingtime', subitemstime)\" ";
             if ($form->assesstimestart and $form->assesstimefinish and $form->assessed) {
                 $form->ratingtime = 1;
-                echo " checked=\"checked\" ";
+                echo " checked ";
             }
-            echo " />";
+            echo ">";
 
             print_string("ratingtime", "glossary");
-
-            echo "<table cellpadding=\"5\" align=\"left\"><tr><td align=\"right\" nowrap=\"nowrap\">";
+            echo "<table align=left><tr><td align=right nowrap>";
             echo get_string("from").":";
-            echo "</td><td align=\"left\" nowrap=\"nowrap\">";
             print_date_selector("startday", "startmonth", "startyear", $form->assesstimestart);
             print_time_selector("starthour", "startminute", $form->assesstimestart);
-            echo "</td></tr>";
-            echo "<tr><td align=\"right\" nowrap=\"nowrap\">";
+            echo "<br />";
             echo get_string("to").":";
-            echo "</td><td align=\"left\" nowrap=\"nowrap\">";
             print_date_selector("finishday", "finishmonth", "finishyear", $form->assesstimefinish);
             print_time_selector("finishhour", "finishminute", $form->assesstimefinish);
+            echo "<br />";
             echo "</td></tr></table>";
-            
-            echo "<input type=\"hidden\" name=\"hratingtime\" value=\"0\" />";
-            echo "<input type=\"hidden\" name=\"hassessed\" value=\"0\" />";
-            echo "<input type=\"hidden\" name=\"hscale\" value=\"0\" />";
-            echo "<input type=\"hidden\" name=\"hstartday\" value=\"0\" />";
-            echo "<input type=\"hidden\" name=\"hstartmonth\" value=\"0\" />";
-            echo "<input type=\"hidden\" name=\"hstartyear\" value=\"0\" />";
-            echo "<input type=\"hidden\" name=\"hstarthour\" value=\"0\" />";
-            echo "<input type=\"hidden\" name=\"hstartminute\" value=\"0\" />";
-            echo "<input type=\"hidden\" name=\"hfinishday\" value=\"0\" />";
-            echo "<input type=\"hidden\" name=\"hfinishmonth\" value=\"0\" />";
-            echo "<input type=\"hidden\" name=\"hfinishyear\" value=\"0\" />";
-            echo "<input type=\"hidden\" name=\"hfinishhour\" value=\"0\" />";
-            echo "<input type=\"hidden\" name=\"hfinishminute\" value=\"0\" />";
+            echo "<input type=\"hidden\" name=\"hratingtime\" value=0>";
+            echo "<input type=\"hidden\" name=\"hassessed\" value=0>";
+            echo "<input type=\"hidden\" name=\"hscale\" value=0>";
+            echo "<input type=\"hidden\" name=\"hstartday\" value=0>";
+            echo "<input type=\"hidden\" name=\"hstartmonth\" value=0>";
+            echo "<input type=\"hidden\" name=\"hstartyear\" value=0>";
+            echo "<input type=\"hidden\" name=\"hstarthour\" value=0>";
+            echo "<input type=\"hidden\" name=\"hstartminute\" value=0>";
+            echo "<input type=\"hidden\" name=\"hfinishday\" value=0>";
+            echo "<input type=\"hidden\" name=\"hfinishmonth\" value=0>";
+            echo "<input type=\"hidden\" name=\"hfinishyear\" value=0>";
+            echo "<input type=\"hidden\" name=\"hfinishhour\" value=0>";
+            echo "<input type=\"hidden\" name=\"hfinishminute\" value=0>";
 
-            echo "<script type=\"text/javascript\">";
+            echo "<script>";
             echo "lockoptions('form','userating', subitemsall);";
             echo "</script>";
 
             if (empty($form->ratingtime)) {
-                echo "<script type=\"text/javascript\">";
+                echo "<script>";
                 echo "lockoptions('form','ratingtime', subitemstime);";
                 echo "</script>";
             }
         ?>
     </td>
 </tr>
-<?php print_visible_setting($form); ?>
-</table>
+</TABLE>
 <!-- These hidden variables are always the same -->
-<input type="hidden" name="course"        value="<?php p($form->course) ?>" />
-<input type="hidden" name="sesskey"       value="<?php p($form->sesskey) ?>" />
-<input type="hidden" name="coursemodule"  value="<?php p($form->coursemodule) ?>" />
-<input type="hidden" name="section"       value="<?php p($form->section) ?>" />
-<input type="hidden" name="module"        value="<?php p($form->module) ?>" />
-<input type="hidden" name="modulename"    value="<?php p($form->modulename) ?>" />
-<input type="hidden" name="instance"      value="<?php p($form->instance) ?>" />
-<input type="hidden" name="mode"          value="<?php p($form->mode) ?>" />
-<input type="submit" value="<?php print_string("savechanges") ?>" />
-</center>
-</form>
+<INPUT type="hidden" name=course        value="<?php p($form->course) ?>">
+<INPUT type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>">
+<INPUT type="hidden" name=section       value="<?php p($form->section) ?>">
+<INPUT type="hidden" name=module        value="<?php p($form->module) ?>">
+<INPUT type="hidden" name=modulename    value="<?php p($form->modulename) ?>">
+<INPUT type="hidden" name=instance      value="<?php p($form->instance) ?>">
+<INPUT type="hidden" name=mode          value="<?php p($form->mode) ?>">
+<INPUT type="submit" value="<?php print_string("savechanges") ?>">
+</CENTER>
+</FORM>

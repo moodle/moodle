@@ -54,17 +54,15 @@ class graph {
     'y_label_left'       => '',            // if this is set then this text is printed on left axis of graph.
     'y_label_right'      => '',            // if this is set then this text is printed on right axis of graph.
 
-    'label_size'         =>  8,           // label text point size
+    'label_size'         =>  12,           // label text point size
     'label_font'         => 'default.ttf', // label text font. don't forget to set 'path_to_fonts' above.
     'label_colour'       => 'gray33',      // label text colour
     'y_label_angle'      =>  90,           // rotation of y axis label
 
     'x_label_angle'      =>  90,            // rotation of y axis label
 
-    'outer_padding'      =>  5,            // padding around outer text. i.e. title, y label, and x label.
-    'inner_padding'      =>  0,            // padding beteen axis text and graph.
-    'x_inner_padding'      =>  5,            // padding beteen axis text and graph.
-    'y_inner_padding'      =>  6,            // padding beteen axis text and graph.
+    'outer_padding'      =>  8,            // padding around outer text. i.e. title, y label, and x label.
+    'inner_padding'      =>  6,            // padding beteen axis text and graph.
     'outer_border'       => 'none',        // colour of border aound image, or 'none'.
     'inner_border'       => 'black',       // colour of border around actual graph, or 'none'.
     'inner_border_type'  => 'box',         // 'box' for all four sides, 'axis' for x/y axis only,
@@ -112,10 +110,10 @@ class graph {
 
 
     'axis_font'          => 'default.ttf', // axis text font. don't forget to set 'path_to_fonts' above.
-    'axis_size'          =>  8,            // axis text font size in points
+    'axis_size'          =>  12,            // axis text font size in points
     'axis_colour'        => 'gray33',      // colour of axis text.
     'y_axis_angle'       =>  0,            // rotation of axis text.
-    'x_axis_angle'       =>  0,            // rotation of axis text.
+    'x_axis_angle'       =>  90,           // rotation of axis text.
 
     'y_axis_text_left'   =>  1,            // whether to print left hand y axis text. if 0 no text, if 1 all ticks have text,
     'x_axis_text'        =>  1,            //   if 4 then print every 4th tick and text, etc...
@@ -135,7 +133,7 @@ class graph {
     'legend_offset'      =>  10,           // offset in pixels from graph or outside border.
     'legend_padding'     =>  5,            // padding around legend text.
     'legend_font'        => 'default.ttf',   // legend text font. don't forget to set 'path_to_fonts' above.
-    'legend_size'        =>  8,            // legend text point size.
+    'legend_size'        =>  9,            // legend text point size.
     'legend_colour'      => 'black',       // legend text colour.
     'legend_border'      => 'none',        // legend border colour, or 'none'.
 
@@ -205,19 +203,19 @@ function init() {
   $this->init_labels();
 
   //  take into account tick lengths
-  $this->calculated['bottom_inner_padding'] = $this->parameter['x_inner_padding'];
+  $this->calculated['bottom_inner_padding'] = $this->parameter['inner_padding'];
   if (($this->parameter['x_ticks_colour'] != 'none') && ($this->parameter['tick_length'] < 0))
     $this->calculated['bottom_inner_padding'] -= $this->parameter['tick_length'];
   $this->calculated['boundary_box']['bottom'] -= $this->calculated['bottom_inner_padding'];
 
-  $this->calculated['left_inner_padding'] = $this->parameter['y_inner_padding'];
+  $this->calculated['left_inner_padding'] = $this->parameter['inner_padding'];
   if ($this->parameter['y_axis_text_left']) {
     if (($this->parameter['y_ticks_colour'] != 'none') && ($this->parameter['tick_length'] < 0))
       $this->calculated['left_inner_padding'] -= $this->parameter['tick_length'];
   }
   $this->calculated['boundary_box']['left'] += $this->calculated['left_inner_padding'];
 
-  $this->calculated['right_inner_padding'] = $this->parameter['y_inner_padding'];
+  $this->calculated['right_inner_padding'] = $this->parameter['inner_padding'];
   if ($this->parameter['y_axis_text_right']) {
     if (($this->parameter['y_ticks_colour'] != 'none') && ($this->parameter['tick_length'] < 0))
       $this->calculated['right_inner_padding'] -= $this->parameter['tick_length'];
@@ -300,15 +298,15 @@ function draw_set($order, $set, $offset) {
   $fromX = 0;
   $fromY = 'none';
 
-  //print "set $set<br />";
+  //print "set $set<BR>";
   //expand_pre($this->calculated['y_plot']);
 
   foreach ($this->x_data as $index => $x) {
-    //print "index $index<br />";
+    //print "index $index<BR>";
     $thisY = $this->calculated['y_plot'][$set][$index];
     $thisX = $this->calculated['x_plot'][$index];
 
-    //print "$thisX, $thisY <br />";
+    //print "$thisX, $thisY <BR>";
 
     if (($bar!='none') && (string)$thisY != 'none') {
         if ($relatedset = $this->offset_relation[$set]) {                               // Moodle
@@ -474,7 +472,7 @@ function draw_legend() {
 
 function draw_y_label_right() {
   if (!$this->parameter['y_label_right']) return;
-  $x = $this->calculated['boundary_box']['right'] + $this->parameter['y_inner_padding'];
+  $x = $this->calculated['boundary_box']['right'] + $this->parameter['inner_padding'];
   if ($this->parameter['y_axis_text_right']) $x += $this->calculated['y_axis_right']['boundary_box_max']['width']
                                            + $this->calculated['right_inner_padding'];
   $y = ($this->calculated['boundary_box']['bottom'] + $this->calculated['boundary_box']['top']) / 2;
@@ -488,7 +486,7 @@ function draw_y_label_right() {
 
 function draw_y_label_left() {
   if (!$this->parameter['y_label_left']) return;
-  $x = $this->calculated['boundary_box']['left'] - $this->parameter['y_inner_padding'];
+  $x = $this->calculated['boundary_box']['left'] - $this->parameter['inner_padding'];
   if ($this->parameter['y_axis_text_left']) $x -= $this->calculated['y_axis_left']['boundary_box_max']['width']
                                            + $this->calculated['left_inner_padding'];
   $y = ($this->calculated['boundary_box']['bottom'] + $this->calculated['boundary_box']['top']) / 2;
@@ -512,7 +510,7 @@ function draw_title() {
 
 function draw_x_label() {
   if (!$this->parameter['x_label']) return;
-  $y = $this->calculated['boundary_box']['bottom'] + $this->parameter['x_inner_padding'];
+  $y = $this->calculated['boundary_box']['bottom'] + $this->parameter['inner_padding'];
   if ($this->parameter['x_axis_text']) $y += $this->calculated['x_axis']['boundary_box_max']['height']
                                           + $this->calculated['bottom_inner_padding'];
   $x = ($this->calculated['boundary_box']['right'] + $this->calculated['boundary_box']['left']) / 2;
@@ -757,7 +755,7 @@ function init_data() {
             round(($this->y_data[$set][$index] - $this->calculated['y_axis_right']['min'])
               * $this->calculated['y_axis_right']['factor']);
         } else {
-          //print "$set $index<br />";
+          //print "$set $index<BR>";
           $this->calculated['y_plot'][$set][$index] =
             round(($this->y_data[$set][$index] - $this->calculated['y_axis_left']['min'])
               * $this->calculated['y_axis_left']['factor']);
@@ -766,7 +764,7 @@ function init_data() {
       }
     }
   }
-  //print "factor ".$this->calculated['x_axis']['factor']."<br />";
+  //print "factor ".$this->calculated['x_axis']['factor']."<BR>";
   //expand_pre($this->calculated['x_plot']);
 
   // calculate bar parameters if bars are to be drawn.
@@ -795,16 +793,16 @@ function init_x_ticks() {
   $tickX       = $gridLeft; // tick x coord
 
   foreach ($this->calculated['x_axis']['text'] as $set => $value) {
-    //print "index: $set<br />";
+    //print "index: $set<BR>";
     // x tick value
     $this->calculated['x_axis']['tick_x'][$set] = $tickX;
     // if num ticks is auto then x plot value is same as x  tick
     if ($this->parameter['x_axis_gridlines'] == 'auto') $this->calculated['x_plot'][$set] = round($tickX);
-    //print $this->calculated['x_plot'][$set].'<br />';
+    //print $this->calculated['x_plot'][$set].'<BR>';
     $tickX += $xStep;
   }
 
-  //print "xStep: $xStep <br />";
+  //print "xStep: $xStep <BR>";
   // if numeric x axis then calculate x coords for each data point. this is seperate from x ticks.
   $gridX = $gridLeft;
   if (empty($this->calculated['x_axis']['factor'])) {
@@ -818,20 +816,20 @@ function init_x_ticks() {
 
   if ($this->parameter['x_axis_gridlines'] != 'auto') {
     foreach ($this->x_data as $index => $x) {
-      //print "index: $index, x: $x<br />";
+      //print "index: $index, x: $x<BR>";
       $offset = $x - $this->calculated['x_axis']['min'];
 
       //$gridX = ($offset * $this->calculated['x_axis']['factor']);
-      //print "offset: $offset <br />";
+      //print "offset: $offset <BR>";
       //$this->calculated['x_plot'][$set] = $gridLeft + ($offset * $this->calculated['x_axis']['factor']);
 
       $this->calculated['x_plot'][$index] = $gridLeft + ($x - $min) * $factor;
 
-      //print $this->calculated['x_plot'][$set].'<br />';
+      //print $this->calculated['x_plot'][$set].'<BR>';
     }
   }
   //expand_pre($this->calculated['boundary_box']);
-  //print "factor ".$this->calculated['x_axis']['factor']."<br />";
+  //print "factor ".$this->calculated['x_axis']['factor']."<BR>";
   //expand_pre($this->calculated['x_plot']);
 }
 
@@ -1055,7 +1053,7 @@ function init_y_axis() {
       $startLeft += $stepLeft;
     }
     $this->calculated['boundary_box']['left'] += $this->calculated['y_axis_left']['boundary_box_max']['width']
-                                                + $this->parameter['y_inner_padding'];
+                                                + $this->parameter['inner_padding'];
   }
 
   if ($this->parameter['y_axis_text_right']) {
@@ -1080,7 +1078,7 @@ function init_y_axis() {
       $start_right += $step_right;
     }
     $this->calculated['boundary_box']['right'] -= $this->calculated['y_axis_right']['boundary_box_max']['width']
-                                                + $this->parameter['y_inner_padding'];
+                                                + $this->parameter['inner_padding'];
   }
 }
 
@@ -1148,7 +1146,7 @@ function init_x_axis() {
   }
   if ($this->parameter['x_axis_text'])
     $this->calculated['boundary_box']['bottom'] -= $this->calculated['x_axis']['boundary_box_max']['height']
-                                                  + $this->parameter['x_inner_padding'];
+                                                  + $this->parameter['inner_padding'];
 }
 
 // find max and min values for a data array given the resolution.
@@ -1171,7 +1169,7 @@ function find_range($data, $min, $max, $resolution) {
   $max = $factor * @ceil($max / $factor);
   $min = $factor * @floor($min / $factor);
 
-  //print "max=$max, min=$min<br />";
+  //print "max=$max, min=$min<BR>";
 
   return array('min' => $min, 'max' => $max);
 }

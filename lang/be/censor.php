@@ -1,7 +1,7 @@
 <?PHP // $Id$ 
-      // censor.php - created with Moodle 1.4.3 + (2004083131)
+      // censor.php - created with Moodle 1.2.1 (2004032500)
 
 
-$string['filtername'] = 'Словы для цэнзуры';
+$string['filtername'] = 'Слова для цэнзуры';
 
 ?>

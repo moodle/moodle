@@ -21,7 +21,7 @@
 
     /// If data submitted, then process and store.
 
-    if (($config = data_submitted()) && confirm_sesskey()) {
+    if ($config = data_submitted()) {
 
         //First of all we check that everything is correct
         //Check for trailing slash and backslash in backup_sche_destination
@@ -73,7 +73,7 @@
         }
         if ($status) {
             //get courses
-            if ($courses = get_records('course', '', '', '', 'id,shortname')) {
+            if ($courses = get_records("course")) {
                 //For each course, we check (insert, update) the backup_course table
                 //with needed data
                 foreach ($courses as $course) {
@@ -111,18 +111,18 @@
                   "<a href=\"configure.php\">$strconfiguration</a> -> ".
                   $strbackup);
 
-    echo "<p align=\"right\"><a href=\"../backup/log.php\">".get_string("logs")."</a></p>";
+    echo "<p align=right><a href=\"../backup/log.php\">".get_string("logs")."</a></p>";
 
     print_heading($strbackup);
 
     print_simple_box("<center>".get_string("adminhelpbackup")."</center>", "center", "50%");
     echo "<br />";
 
-    print_simple_box_start("center");
+    print_simple_box_start("center", "", "$THEME->cellheading");
 
     //Check for required functions...
-    if (!function_exists('utf8_encode')) {
-        notify("You need to add XML support to your PHP installation");
+    if(!function_exists('utf8_encode')) {
+        print_simple_box("<font color=\"red\">You need to add XML support to your PHP installation</font>", "center", "70%", "$THEME->cellheading", "20", "noticebox");
     } 
     include ("$CFG->dirroot/backup/config.html");
 

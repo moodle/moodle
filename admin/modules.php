@@ -42,7 +42,7 @@
 
 /// If data submitted, then process and store.
 
-    if (!empty($hide) and confirm_sesskey()) {
+    if (!empty($hide)) {
         if (!$module = get_record("modules", "name", $hide)) {
             error("Module doesn't exist!");
         }
@@ -50,7 +50,7 @@
         set_field("course_modules", "visible", "0", "module", $module->id); // Hide all related activity modules
     }
 
-    if (!empty($show) and confirm_sesskey()) {
+    if (!empty($show)) {
         if (!$module = get_record("modules", "name", $show)) {
             error("Module doesn't exist!");
         }
@@ -58,13 +58,13 @@
         set_field("course_modules", "visible", "1", "module", $module->id); // Show all related activity modules
     }
 
-    if (!empty($delete) and confirm_sesskey()) {
+    if (!empty($delete)) {
       
         $strmodulename = get_string("modulename", "$delete");
 
         if (empty($confirm)) {
             notice_yesno(get_string("moduledeleteconfirm", "", $strmodulename), 
-                         "modules.php?delete=$delete&amp;confirm=$delete&amp;sesskey=$USER->sesskey", 
+                         "modules.php?delete=$delete&confirm=$delete", 
                          "modules.php");
             print_footer();
             exit;
@@ -144,17 +144,25 @@
 
 /// Print the table of all modules
 
+    if (empty($THEME->custompix)) {
+        $pixpath = "../pix";
+        $modpixpath = "../mod";
+    } else {
+        $pixpath = "../theme/$CFG->theme/pix";
+        $modpixpath = "../theme/$CFG->theme/pix/mod";
+    }
+
     $table->head  = array ($stractivitymodule, $stractivities, $strversion, "$strhide/$strshow", $strdelete, $strsettings);
-    $table->align = array ("left", "right", "left", "center", "center", "center");
-    $table->wrap  = array ("nowrap", "", "", "", "","");
-    $table->size  = array ("100%", "10", "10", "10", "10","12");
+    $table->align = array ("LEFT", "RIGHT", "LEFT", "CENTER", "CENTER", "CENTER");
+    $table->wrap = array ("NOWRAP", "", "", "", "","");
+    $table->size = array ("100%", "10", "10", "10", "10","12");
     $table->width = "100";
 
     foreach ($modulebyname as $modulename => $module) {
 
-        $icon = "<img src=\"$CFG->modpixpath/$module->name/icon.gif\" hspace=\"10\" height=\"16\" width=\"16\" border=\"0\" alt=\"\" />";
+        $icon = "<img src=\"$modpixpath/$module->name/icon.gif\" hspace=10 height=16 width=16 border=0>";
 
-        $delete = "<a href=\"modules.php?delete=$module->name&amp;sesskey=$USER->sesskey\">$strdelete</a>";
+        $delete = "<a href=\"modules.php?delete=$module->name\">$strdelete</a>";
 
         if (file_exists("$CFG->dirroot/mod/$module->name/config.html")) {
             $settings = "<a href=\"module.php?module=$module->name\">$strsettings</a>";
@@ -165,12 +173,12 @@
         $count = count_records("$module->name");
 
         if ($module->visible) {
-            $visible = "<a href=\"modules.php?hide=$module->name&amp;sesskey=$USER->sesskey\" title=\"$strhide\">".
-                       "<img src=\"$CFG->pixpath/i/hide.gif\" align=\"middle\" height=\"16\" width=\"16\" border=\"0\" alt=\"\" /></a>";
+            $visible = "<a href=\"modules.php?hide=$module->name\" title=\"$strhide\">".
+                       "<img src=\"$pixpath/i/hide.gif\" align=\"absmiddle\" height=16 width=16 border=0></a>";
             $class = "";
         } else {
-            $visible = "<a href=\"modules.php?show=$module->name&amp;sesskey=$USER->sesskey\" title=\"$strshow\">".
-                       "<img src=\"$CFG->pixpath/i/show.gif\" align=\"middle\" height=\"16\" width=\"16\" border=\"0\" alt=\"\" /></a>";
+            $visible = "<a href=\"modules.php?show=$module->name\" title=\"$strshow\">".
+                       "<img src=\"$pixpath/i/show.gif\" align=\"absmiddle\" height=16 width=16 border=0></a>";
             $class = "class=\"dimmed_text\"";
         }
         if ($module->name == "forum") {
@@ -178,7 +186,7 @@
             $visible = "";
             $class = "";
         }
-        $table->data[] = array ("<span $class>$icon $modulename</span>", $count, $module->version, $visible, $delete, $settings);
+        $table->data[] = array ("<p $class>$icon $modulename</p>", $count, $module->version, $visible, $delete, $settings);
     }
     print_table($table);
 

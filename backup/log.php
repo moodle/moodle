@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
        // backup.php - allows admin to edit all configuration variables for scheduled backups
 
     require_once("../config.php");
@@ -28,7 +28,6 @@
     $strftimetime = get_string("strftimetime").":%S";
     $strerror = get_string("error");
     $strok = get_string("ok");
-    $strunfinished = get_string("unfinished");
     $strcourse = get_string("course");
     $strtimetaken = get_string("timetaken","quiz");
     $strstatus = get_string("status");
@@ -40,41 +39,39 @@
         print_header("$site->shortname: $strconfiguration: $strbackup", $site->fullname,
                       "<a href=\"../$CFG->admin/index.php\">$stradmin</a> -> ".
                       "<a href=\"../$CFG->admin/configure.php\">$strconfiguration</a> -> ".
-                      "<a href=\"../$CFG->admin/backup.php?sesskey=$USER->sesskey\">$strbackup</a> -> ".
+                      "<a href=\"../$CFG->admin/backup.php\">$strbackup</a> -> ".
                       $strlogs);
 
         print_heading($backuploglaststatus);
-        print_simple_box_start('center');
+        print_simple_box_start("center", "", "$THEME->cellheading");
         //Now, get every record from backup_courses
         $courses = get_records("backup_courses");
 
         if (!$courses) {
             notify("No logs found!");
         } else {
-            echo "<table border=\"0\" align=\"center\" cellpadding=\"3\" cellspacing=\"3\">";
+            echo "<table border=0 align=center cellpadding=3 cellspacing=3>";
             //Print table header
-            echo "<tr>";
-            echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"3\">$strcourse</font></td>";
-            echo "<td nowrap=\"nowrap\" align=\"center\" colspan=\"3\"><font size=\"3\">$strtimetaken</font></td>";
-            echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"3\">$strstatus</font></td>";
-            echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"3\">$strnext</font></td></tr>";
+            echo "<tr nowrap>";
+            echo "<td nowrap align=center><font size=3>$strcourse</font></td>";
+            echo "<td nowrap align=center colspan=3><font size=3>$strtimetaken</font></td>";
+            echo "<td nowrap align=center><font size=3>$strstatus</font></td>";
+            echo "<td nowrap align=center><font size=3>$strnext</font></td>";
             foreach ($courses as $course) {
                 //Get the course shortname
                 $coursename = get_field ("course","fullname","id",$course->courseid);
                 if ($coursename) {
-                    echo "<tr>";
-                    echo "<td nowrap=\"nowrap\"><font size=\"2\"><a href=\"log.php?courseid=$course->courseid\">".$coursename."</a></font></td>";
-                    echo "<td nowrap=\"nowrap\"><font size=\"2\">".userdate($course->laststarttime,$strftimedatetime)."</font></td>";
-                    echo "<td nowrap=\"nowrap\"><font size=\"2\"> - </font></td>";
-                    echo "<td nowrap=\"nowrap\"><font size=\"2\">".userdate($course->lastendtime,$strftimedatetime)."</font></td>";
-                    if ($course->laststatus == 1) {
-                        echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"2\" color=\"green\">".$strok."</font></td>";
-                    } else if ($course->laststatus == 2) {
-                        echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"2\" color=\"red\">".$strunfinished."</font></td>";
+                    echo "<tr nowrap>";
+                    echo "<td nowrap><font size=2><a href=\"log.php?courseid=$course->courseid\">".$coursename."</a></td>";
+                    echo "<td nowrap><font size=2>".userdate($course->laststarttime,$strftimedatetime)."</td>";
+                    echo "<td nowrap><font size=2> - </td>";
+                    echo "<td nowrap><font size=2>".userdate($course->lastendtime,$strftimedatetime)."</td>";
+                    if (!$course->laststatus) {
+                        echo "<td nowrap align=center><font size=2 color=red>".$strerror."</td>";
                     } else {
-                        echo "<td nowrap=\"nowrap\" align=\"center\"><font size=\"2\" color=\"red\">".$strerror."</font></td>";
+                        echo "<td nowrap align=center><font size=2 color=green>".$strok."</td>";
                     }
-                    echo "<td nowrap=\"nowrap\"><font size=\"2\">".userdate($course->nextstarttime,$strftimedatetime)."</font></td>";
+                    echo "<td nowrap><font size=2>".userdate($course->nextstarttime,$strftimedatetime)."</td>";
                     echo "</tr>";
                 }
             }
@@ -86,7 +83,7 @@
         print_header("$site->shortname: $strconfiguration: $strbackup", $site->fullname,
                       "<a href=\"../$CFG->admin/index.php\">$stradmin</a> -> ".
                       "<a href=\"../$CFG->admin/configure.php\">$strconfiguration</a> -> ".
-                      "<a href=\"../$CFG->admin/backup.php?sesskey=$USER->sesskey\">$strbackup</a> -> ".
+                      "<a href=\"../$CFG->admin/backup.php\">$strbackup</a> -> ".
                       "<a href=\"log.php\">$strlogs</a> -> ".
                       $strbackupdetails);
 
@@ -95,7 +92,7 @@
         $coursename = get_field("course","fullname","id","$courseid");
         print_heading("$strcourse: $coursename");
 
-        print_simple_box_start('center');
+        print_simple_box_start("center", "", "$THEME->cellheading");
         
         //First, me get all the distinct backups for that course in backup_log
         $executions = get_records_sql("SELECT DISTINCT laststarttime,laststarttime
@@ -107,10 +104,10 @@
         if (!$executions) {
             notify("No logs found!");
         } else {
-            echo "<table border=\"0\" align=\"center\" cellpadding=\"3\" cellspacing=\"3\">";
+            echo "<table border=0 align=center cellpadding=3 cellspacing=3>";
             foreach($executions as $execution) {
-                echo "<tr>";
-                echo "<td nowrap=\"nowrap\" align=\"center\" colspan=\"3\">";
+                echo "<tr nowrap>";
+                echo "<td nowrap align=center colspan=3>";
                 print_simple_box("<center>".userdate($execution->laststarttime)."</center>", "center");
                 echo "</td>";
                 echo "</tr>";
@@ -118,14 +115,14 @@
                                          FROM {$CFG->prefix}backup_log
                                          WHERE courseid = '$courseid'  AND
                                                laststarttime = '$execution->laststarttime'
-                                         ORDER BY id");
+                                         ORDER BY time");
                 if ($logs) {
                     foreach ($logs as $log) {
-                        echo "<tr>";
-                        echo "<td nowrap=\"nowrap\"><font size=\"2\">".userdate($log->time,$strftimetime)."</font></td>";
-                        $log->info = str_replace("- ERROR!!","- <font color=\"red\">ERROR!!</font>",$log->info);
-                        $log->info = str_replace("- OK","- <font color=\"green\">OK</font>",$log->info);
-                        echo "<td nowrap=\"nowrap\"><font size=\"2\">".str_replace("  ","&nbsp;&nbsp;&nbsp;&nbsp;",$log->info)."</font></td>";
+                        echo "<tr nowrap>";
+                        echo "<td nowrap><font size=2>".userdate($log->time,$strftimetime)."</font></td>";
+                        $log->info = str_replace("- ERROR!!","- <font color=red>ERROR!!</font>",$log->info);
+                        $log->info = str_replace("- OK","- <font color=green>OK</font>",$log->info);
+                        echo "<td nowrap><font size=2>".str_replace("  ","&nbsp;&nbsp;&nbsp;&nbsp;",$log->info)."</font></td>";
                         echo "</tr>";
                     }
                 }

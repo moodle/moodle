@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
 /// Overview report just displays a big table of all the attempts
 
@@ -452,11 +452,7 @@ class quiz_report extends quiz_default_report {
 
     /// Check to see if groups are being used in this quiz
         if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-            if (empty($download)) {  // Display menu too
-                $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id&amp;mode=simplestat");
-            } else {
-                $currentgroup = get_current_group($course->id);
-            }
+            $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id&mode=simplestat");
         } else {
             $currentgroup = false;
         }
@@ -537,8 +533,7 @@ class quiz_report extends quiz_default_report {
             require_once("$CFG->libdir/excel/Worksheet.php");
             require_once("$CFG->libdir/excel/Workbook.php");
             header("Content-type: application/vnd.ms-excel");
-            $downloadfilename = clean_filename("$course->shortname ".format_string($quiz->name,true));
-            header("Content-Disposition: attachment; filename=$downloadfilename.xls");
+            header("Content-Disposition: attachment; filename=$course->shortname ".$quiz->name.".xls" );
             header("Expires: 0");
             header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
             header("Pragma: public");
@@ -548,7 +543,7 @@ class quiz_report extends quiz_default_report {
             $myxls = &$workbook->add_worksheet('Simple Quiz Statistics');
 
         /// Print names of all the fields
-            $myxls->write_string(0,0,format_string($quiz->name,true));
+            $myxls->write_string(0,0,$quiz->name);
             $myxls->set_column(0,0,25);
                 
             $myxls->set_column(1,$count,9);
@@ -597,8 +592,7 @@ class quiz_report extends quiz_default_report {
         /// Print header to force download
     
             header("Content-Type: application/download\n"); 
-            $downloadfilename = clean_filename("$course->shortname ".format_string($quiz->name,true));
-            header("Content-Disposition: attachment; filename=$downloadfilename.txt");
+            header("Content-Disposition: attachment; filename=$course->shortname ".$quiz->name.".txt");
             header("Expires: 0");
             header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
             header("Pragma: public");
@@ -606,7 +600,7 @@ class quiz_report extends quiz_default_report {
 
         /// Print names of all the fields
     
-            echo format_string($quiz->name,true);
+            echo "$quiz->name";
             for ($i=1; $i<=$count; $i++) {
                 echo "\t$i";
             }
@@ -648,7 +642,7 @@ class quiz_report extends quiz_default_report {
 
     /// Otherwise, display the table as HTML
 
-        echo "<table border=\"1\" align=\"center\">";
+        echo "<table border=1 align=\"center\">";
         echo "<tr>";
         echo "<td>&nbsp;</td>";
         for ($i=1; $i<=$count; $i++) {
@@ -685,7 +679,7 @@ class quiz_report extends quiz_default_report {
         echo "</table>";
 
         echo "<br />";
-        echo "<table border=\"0\" align=\"center\"><tr>";
+        echo "<table border=0 align=center><tr>";
         echo "<td>";
         unset($options);
         $options["id"] = "$cm->id";

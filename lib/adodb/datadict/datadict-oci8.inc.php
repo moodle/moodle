@@ -1,7 +1,7 @@
 <?php
 
 /**
-  V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -20,7 +20,6 @@ class ADODB2_oci8 extends ADODB_DataDict {
 	var $seqPrefix = 'SEQ_';
 	var $dropTable = "DROP TABLE %s CASCADE CONSTRAINTS";
 	var $trigPrefix = 'TRIG_';
-	var $alterCol = ' MODIFY ';
 	
 	function MetaType($t,$len=-1)
 	{
@@ -114,7 +113,7 @@ class ADODB2_oci8 extends ADODB_DataDict {
 			$f[] = "\n $v";
 		}
 		
-		$s .= implode(', ',$f).')';
+		$s .= implode(',',$f).')';
 		$sql[] = $s;
 		return $sql;
 	}
@@ -127,7 +126,7 @@ class ADODB2_oci8 extends ADODB_DataDict {
 		foreach($lines as $v) {
 			$f[] = "\n $v";
 		}
-		$s .= implode(', ',$f).')';
+		$s .= implode(',',$f).')';
 		$sql[] = $s;
 		return $sql;
 	}
@@ -135,11 +134,9 @@ class ADODB2_oci8 extends ADODB_DataDict {
 	function DropColumnSQL($tabname, $flds)
 	{
 		if (!is_array($flds)) $flds = explode(',',$flds);
-		foreach ($flds as $k => $v) $flds[$k] = $this->NameQuote($v);
-		
 		$sql = array();
 		$s = "ALTER TABLE $tabname DROP(";
-		$s .= implode(', ',$flds).') CASCADE CONSTRAINTS';
+		$s .= implode(',',$flds).') CASCADE COSTRAINTS';
 		$sql[] = $s;
 		return $sql;
 	}

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
+      // workshop.php - created with Moodle 1.2.1 (2004032500)
 
 
 $string['absent'] = 'Puuduv';
@@ -112,12 +112,12 @@ $string['noassessmentsdone'] = 'Hinnanguid pole antud';
 $string['nosubmission'] = 'Pole esitust';
 $string['nosubmissionsavailableforassessment'] = 'Ühtegi tööd pole hindamiseks esitatud';
 $string['notavailable'] = 'Pole saadaval';
-$string['noteonassessmentelements'] = 'Pane tähele: hinnang on lahutatud hulgaks \"hindamiselementideks\".<br />
-	See lihtsustab hindamist ja on loogilisem. Õpetaja peab need lisama<br />
-	Elemendid on enne ülesande andmist õpilastele saadaval. Seda saab teha<br />
-	Klikkides kursuse ülesandele, kui elemente pole näidatud, siis teil palutakse<br />
-	need lisada. Võite muuta elementide arvu, kasutades menüüs Redigeeri Assigneeringuid,<br />
-	elemente saab muuta \"Managing Assessment\" ekraanil. ';
+$string['noteonassessmentelements'] = 'Pane tähele: hinnang on lahutatud hulgaks \"hindamiselementideks\".<BR>
+	See lihtsustab hindamist ja on loogilisem. Õpetaja peab need lisama<BR>
+	Elemendid on enne ülesande andmist õpilastele saadaval. Seda saab teha<BR>
+	Klikkides kursuse ülesandele, kui elemente pole näidatud, siis teil palutakse<BR>
+	need lisada. Võite muuta elementide arvu, kasutades menüüs Redigeeri Assigneeringuid,<BR>
+	elemente saab muuta &quot;Managing Assessment&quot; ekraanil. ';
 $string['notgraded'] = 'Hindamata';
 $string['notitlegiven'] = 'Pealkiri';
 $string['numberofassessmentelements'] = 'Kommentaaride, hinnanguelementide, hindeBands või kriteeriumiväidete arv';
@@ -150,6 +150,8 @@ $string['phase4'] = 'Näita lõpphindeid';
 $string['phase4short'] = 'Hinnangud';
 $string['phase5'] = 'Lõpphinnete arvutamine';
 $string['phase5short'] = 'Arvutamine';
+$string['phase6'] = 'Näita lõpphindeid';
+$string['phase6short'] = 'Näita hindeid';
 $string['pleaseassesstheseexamplesfromtheteacher'] = 'Palun hinda neid näiteid õpetajalt $a';
 $string['pleaseassessthesestudentsubmissions'] = 'Palun hinda neid $a esitatud töid';
 $string['pleaseassessyoursubmissions'] = 'Palun hinda oma esitust';
@@ -180,6 +182,7 @@ $string['scalepresent'] = '2 punkti skaala kohal/puudub';
 $string['scaleyes'] = '2 punkti skaala Jah/Ei';
 $string['select'] = 'Vali';
 $string['selfassessment'] = 'Enesehinnang';
+$string['setoverallocation'] = 'Vali üle-määramise tase';
 $string['showgrades'] = 'Näita hindeid';
 $string['specimenassessmentform'] = 'Näidisblanketi hinnang ';
 $string['standarddeviation'] = 'Keskmine elemendi $a kõrvalekalle:';
@@ -204,6 +207,7 @@ $string['teacherscomment'] = 'Õpetaja kommentaar';
 $string['teachersgrade'] = 'Õpetaja hinne';
 $string['teachersubmissionsforassessment'] = '$a Õpetaja poolt esitatud tööd hindamiseks';
 $string['thegradeis'] = 'Hindeks on $a';
+$string['thereisfeedbackfromtheteacher'] = 'On tagasisidet kasutajalt $a';
 $string['theseasessmentsaregradedbytheteacher'] = 'Need hinnangud on andnud õpetja';
 $string['timeassessed'] = 'Hinnatud aeg';
 $string['title'] = 'Pealkiri';
@@ -214,7 +218,7 @@ $string['verypoor'] = 'Väga halb';
 $string['view'] = 'Vaata';
 $string['viewassessmentofteacher'] = 'Vaata õpetaja…hinnet $a';
 $string['viewotherassessments'] = 'Vaata teisi hindeid';
-$string['warningonamendingelements'] = 'HOIATUS: on saadetud hinnaguid. <br />Ära muuda elementide arvu, skaala tüüpe ega elementide kaalukust';
+$string['warningonamendingelements'] = 'HOIATUS: on saadetud hinnaguid. <BR>Ära muuda elementide arvu, skaala tüüpe ega elementide kaalukust';
 $string['weight'] = 'Kaalukus';
 $string['weightederrorcount'] = 'Vealoenduse kaalukus: $a';
 $string['weightforbias'] = 'Kõrvalekande kaalukus';

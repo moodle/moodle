@@ -1,9 +1,8 @@
-<?php
+<?
 
 $version = "1.0";
 
 // check for bad agents immidietly
-$blockbadagents=1;
 if($blockbadagents == 1) {
   // those metaquery assholes at t-dialin and others can't
   // get another dumber using the default user-agent, can they?

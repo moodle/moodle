@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -145,10 +145,8 @@ class ADODB_DB2 extends ADODB_odbc {
 		$rs = new ADORecordSet_odbc($qid);
 		
 		$ADODB_FETCH_MODE = $savem;
-		if (!$rs) {
-			$false = false;
-			return $false;
-		}
+		if (!$rs) return false;
+		
 		$rs->_has_stupid_odbc_fetch_api_change = $this->_has_stupid_odbc_fetch_api_change;
 		
 		$arr =& $rs->GetArray();
@@ -177,45 +175,7 @@ class ADODB_DB2 extends ADODB_odbc {
 		}
 		return $arr2;
 	}
-
-	function &MetaIndexes ($table, $primary = FALSE, $owner=false)
-	{
-        // save old fetch mode
-        global $ADODB_FETCH_MODE;
-        $save = $ADODB_FETCH_MODE;
-        $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-        if ($this->fetchMode !== FALSE) {
-               $savem = $this->SetFetchMode(FALSE);
-        }
-		$false = false;
-		// get index details
-		$table = strtoupper($table);
-		$SQL="SELECT NAME, UNIQUERULE, COLNAMES FROM SYSIBM.SYSINDEXES WHERE TBNAME='$table'";
-        if ($primary) 
-			$SQL.= " AND UNIQUERULE='P'";
-		$rs = $this->Execute($SQL);
-        if (!is_object($rs)) {
-			if (isset($savem)) 
-				$this->SetFetchMode($savem);
-			$ADODB_FETCH_MODE = $save;
-            return $false;
-        }
-		$indexes = array ();
-        // parse index data into array
-        while ($row = $rs->FetchRow()) {
-			$indexes[$row[0]] = array(
-			   'unique' => ($row[1] == 'U' || $row[1] == 'P'),
-			   'columns' => array()
-			);
-			$cols = ltrim($row[2],'+');
-			$indexes[$row[0]]['columns'] = explode('+', $cols);
-        }
-		if (isset($savem)) { 
-            $this->SetFetchMode($savem);
-			$ADODB_FETCH_MODE = $save;
-		}
-        return $indexes;
-	}
+	
 	
 	// Format date column in sql string given an input format that understands Y M D
 	function SQLDate($fmt, $col=false)
@@ -314,14 +274,12 @@ class  ADORecordSet_db2 extends ADORecordSet_odbc {
 		case 'VARCHAR':
 		case 'CHAR':
 		case 'CHARACTER':
-		case 'C':
 			if ($len <= $this->blobSize) return 'C';
 		
 		case 'LONGCHAR':
 		case 'TEXT':
 		case 'CLOB':
 		case 'DBCLOB': // double-byte
-		case 'X':
 			return 'X';
 		
 		case 'BLOB':
@@ -330,12 +288,10 @@ class  ADORecordSet_db2 extends ADORecordSet_odbc {
 			return 'B';
 			
 		case 'DATE':
-		case 'D':
 			return 'D';
 		
 		case 'TIME':
 		case 'TIMESTAMP':
-		case 'T':
 			return 'T';
 		
 		//case 'BOOLEAN': 
@@ -349,7 +305,6 @@ class  ADORecordSet_db2 extends ADORecordSet_odbc {
 		case 'INTEGER':
 		case 'BIGINT':
 		case 'SMALLINT':
-		case 'I':
 			return 'I';
 			
 		default: return 'N';

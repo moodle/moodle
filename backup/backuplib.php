@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This file contains all the function needed in the backup utility
     //except the mod-related funtions that are into every backuplib.php inside
     //every mod directory
@@ -6,90 +6,17 @@
     //Insert necessary category ids to backup_ids table
     function insert_category_ids ($course,$backup_unique_code) {
         global $CFG;
-
-        //Create missing categories and reasign orphaned questions
-        fix_orphaned_questions($course);
-
-        //Detect used categories (by category in questions)
+        $status = true;
         $status = execute_sql("INSERT INTO {$CFG->prefix}backup_ids
                                    (backup_code, table_name, old_id)
-                               SELECT DISTINCT $backup_unique_code,'quiz_categories',t.category
+                               SELECT DISTINCT '$backup_unique_code','quiz_categories',t.category
                                FROM {$CFG->prefix}quiz_questions t,
                                     {$CFG->prefix}quiz_question_grades g,
                                     {$CFG->prefix}quiz q
                                WHERE q.course = '$course' AND
                                      g.quiz = q.id AND
                                      g.question = t.id",false);
-
-        //Now, foreach detected category, we look for their parents upto 0 (top category)
-        $categories = get_records_sql("SELECT old_id, old_id 
-                                       FROM {$CFG->prefix}backup_ids
-                                       WHERE backup_code = $backup_unique_code AND
-                                             table_name = 'quiz_categories'");
-
-        if ($categories) {
-            foreach ($categories as $category) {
-                if ($dbcat = get_record('quiz_categories','id',$category->old_id)) {
-                    //echo $dbcat->name;      //Debug
-                    //Go up to 0
-                    while ($dbcat->parent != 0) {
-                        //echo '->';              //Debug
-                        $current = $dbcat->id;
-                        if ($dbcat = get_record('quiz_categories','id',$dbcat->parent)) {
-                            //Found parent, add it to backup_ids (by using backup_putid
-                            //we ensure no duplicates!)
-                            $status = backup_putid($backup_unique_code,'quiz_categories',$dbcat->id,0);
-                            //echo $dbcat->name;      //Debug
-                        } else {
-                            //Parent not found, fix it (set its parent to 0)
-                            set_field ('quiz_categories','parent',0,'id',$current);
-                            //echo 'assigned to top!';          //Debug
-                        }
-                    }
-                    //echo '<br />';          //Debug
-                }
-            }
-        }
-
         return $status;
-    }
-
-    //This function is used to detect orphaned questions (pointing to a
-    //non existing category) and to recreate such category. This function
-    //is used by the backup process, to ensure consistency and should be
-    //executed in the upgrade process and, perhaps in the health center.
-    function fix_orphaned_questions ($course) {
-
-        global $CFG;
-
-        $categories = get_records_sql("SELECT DISTINCT t.category, t.category
-                                       FROM {$CFG->prefix}quiz_questions t,
-                                            {$CFG->prefix}quiz_question_grades g,
-                                            {$CFG->prefix}quiz q
-                                       WHERE q.course = '$course' AND
-                                             g.quiz = q.id AND
-                                             g.question = t.id",false);
-        if ($categories) {
-            foreach ($categories as $key => $category) {
-                $exist = get_record('quiz_categories','id', $key);
-                //If the category doesn't exist
-                if (!$exist) {
-                    //Build a new category
-                    $db_cat->course = $course;
-                    $db_cat->name = get_string('recreatedcategory','',$key);
-                    $db_cat->info = get_string('recreatedcategory','',$key);
-                    $db_cat->publish = 1;
-                    $db_cat->stamp = make_unique_id_code();
-                    //Insert the new category
-                    $catid = insert_record('quiz_categories',$db_cat);
-                    unset ($db_cat);
-                    if ($catid) {
-                        //Reasign orphaned questions to their new category
-                        set_field ('quiz_questions','category',$catid,'category',$key);
-                    }
-                }
-            }
-        }
     }
     
     //Delete category ids from backup_ids table
@@ -103,7 +30,7 @@
  
     //Calculate the number of users to backup and put their ids in backup_ids
     //Return an array of info (name,value)
-    function user_check_backup($course,$backup_unique_code,$backup_users,$backup_messages) {
+    function user_check_backup($course,$backup_unique_code,$backup_users) {
         //$backup_users=0-->all
         //              1-->course (needed + enrolled)
         //              2-->none
@@ -117,7 +44,7 @@
         if ($backup_users == 0 or $backup_users == 1) {
         
             //Calculate needed users (calling every xxxx_get_participants function + scales users)
-            $needed_users = backup_get_needed_users($course, $backup_messages);
+            $needed_users = backup_get_needed_users($course);
 
             //Calculate enrolled users (students + teachers)
             $enrolled_users = backup_get_enrolled_users($course);
@@ -199,9 +126,9 @@
     //   every student and teacher in the course, so it
     //must be merged with backup_get_enrrolled_users !!
 
-    function backup_get_needed_users ($courseid, $includemessages=false) {
+    function backup_get_needed_users ($courseid) {
         
-        global $CFG;
+        global $CFG, $THEME;
 
         $result = false;
 
@@ -231,7 +158,7 @@
             }
         }
 
-        //Now, add scale users (from site and course scales)
+        //Now, add scales users (from site and course scales)
         //Get users
         $scaleusers = get_records_sql("SELECT DISTINCT userid,userid
                                        FROM {$CFG->prefix}scale
@@ -242,22 +169,6 @@
                 //If userid != 0
                 if ($scaleuser->userid != 0) {
                     $result[$scaleuser->userid]->id = $scaleuser->userid;
-                }
-            }
-        }
-
-        //Now, add message users if necessary
-        if ($includemessages) {
-            include_once("$CFG->dirroot/message/lib.php");
-            //Get users
-            $messageusers = message_get_participants();
-            //Add message users to results
-            if ($messageusers) {
-                foreach ($messageusers as $messageuser) {
-                    //If id != 0
-                    if ($messageuser->id !=0) {
-                        $result[$messageuser->id]->id = $messageuser->id;
-                    }
                 }
             }
         }
@@ -350,9 +261,8 @@
         $rootdir = $CFG->dataroot."/users";
         //Check if directory exists
         if (is_dir($rootdir)) {
-            //Get directories without descend
-            $userdirs = get_directory_list($rootdir,"",false,true,false);
-            foreach ($userdirs as $dir) {
+            $coursedirs = get_directory_list($rootdir);
+            foreach ($coursedirs as $dir) {
                 //Extracts user id from file path
                 $tok = strtok($dir,"/");
                 if ($tok) {
@@ -403,8 +313,7 @@
         $rootdir = $CFG->dataroot."/$course";
         //Check if directory exists
         if (is_dir($rootdir)) {
-            //Get files and directories without descend
-            $coursedirs = get_directory_list($rootdir,$CFG->moddata,false,true,true);
+            $coursedirs = get_directory_list($rootdir,$CFG->moddata);
             $backupdata_dir = "backupdata";
             foreach ($coursedirs as $dir) {
                 //Check it isn't backupdata_dir
@@ -456,17 +365,6 @@
         global $CFG;
 
             $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/user_files",true);
-
-        return $status;
-    }
-
-    //Function to check and create the "group_files" dir to
-    //save all the user files we need from "groups" dir
-    function check_and_create_group_files_dir($backup_unique_code) {
- 
-        global $CFG;
-
-            $status = check_dir_exists($CFG->dataroot."/temp/backup/".$backup_unique_code."/group_files",true);
 
         return $status;
     }
@@ -566,13 +464,6 @@
         fwrite ($bf,full_tag("DATE",2,false,$preferences->backup_unique_code));
         //The original site wwwroot
         fwrite ($bf,full_tag("ORIGINAL_WWWROOT",2,false,$CFG->wwwroot));
-        //The zip method used
-        if (!empty($CFG->zip)) {
-            $zipmethod = 'external';
-        } else {
-            $zipmethod = 'internal';
-        }
-        fwrite ($bf,full_tag("ZIP_METHOD",2,false,$zipmethod));
         //Te includes tag
         fwrite ($bf,start_tag("DETAILS",2,true));
         //Now, go to mod element of preferences to print its status
@@ -594,12 +485,6 @@
                  
             //Print the end
             fwrite ($bf,end_tag("MOD",3,true));
-        }
-        //The metacourse in backup
-        if ($preferences->backup_metacourse == 1) {
-            fwrite ($bf,full_tag("METACOURSE",3,false,"true"));
-        } else {
-            fwrite ($bf,full_tag("METACOURSE",3,false,"false"));
         }
         //The user in backup
         if ($preferences->backup_users == 1) {
@@ -627,14 +512,6 @@
         } else {
             fwrite ($bf,full_tag("COURSEFILES",3,false,"false"));
         }
-        //The messages in backup
-        if ($preferences->backup_messages == 1 && $preferences->backup_course == SITEID) {
-            fwrite ($bf,full_tag("MESSAGES",3,false,"true"));
-        } else {
-            fwrite ($bf,full_tag("MESSAGES",3,false,"false"));
-        }
-        //The mode of writing the block data
-        fwrite ($bf,full_tag('BLOCKFORMAT',3,false,'instances'));
 
         fwrite ($bf,end_tag("DETAILS",2,true));
 
@@ -657,12 +534,18 @@
         fwrite ($bf,start_tag("HEADER",2,true));
 
         //Get info from course
-        $course = get_record("course","id",$preferences->backup_course);
+        $course=false;
+        if ($courses = get_records("course","id",$preferences->backup_course)) {
+            $course = $courses[$preferences->backup_course];
+        }
         if ($course) {
             //Prints course info
             fwrite ($bf,full_tag("ID",3,false,$course->id));
             //Obtain the category
-            $category = get_record("course_categories","id","$course->category");
+            $category = false;
+            if ($categories = get_records("course_categories","id","$course->category")) {
+                $category = $categories[$course->category];
+            }
             if ($category) {
                 //Prints category info
                 fwrite ($bf,start_tag("CATEGORY",3,true));
@@ -678,6 +561,7 @@
             fwrite ($bf,full_tag("SUMMARY",3,false,$course->summary));
             fwrite ($bf,full_tag("FORMAT",3,false,$course->format));
             fwrite ($bf,full_tag("SHOWGRADES",3,false,$course->showgrades));
+            fwrite ($bf,full_tag("BLOCKINFO",3,false,blocks_get_block_names($course->blockinfo)));
             fwrite ($bf,full_tag("NEWSITEMS",3,false,$course->newsitems));
             fwrite ($bf,full_tag("TEACHER",3,false,$course->teacher));
             fwrite ($bf,full_tag("TEACHERS",3,false,$course->teachers));
@@ -693,20 +577,12 @@
             fwrite ($bf,full_tag("GROUPMODE",3,false,$course->groupmode));
             fwrite ($bf,full_tag("GROUPMODEFORCE",3,false,$course->groupmodeforce));
             fwrite ($bf,full_tag("LANG",3,false,$course->lang));
-            fwrite ($bf,full_tag("THEME",3,false,$course->theme));
             fwrite ($bf,full_tag("COST",3,false,$course->cost));
             fwrite ($bf,full_tag("MARKER",3,false,$course->marker));
             fwrite ($bf,full_tag("VISIBLE",3,false,$course->visible));
             fwrite ($bf,full_tag("HIDDENSECTIONS",3,false,$course->hiddensections));
             fwrite ($bf,full_tag("TIMECREATED",3,false,$course->timecreated));
-            fwrite ($bf,full_tag("TIMEMODIFIED",3,false,$course->timemodified));
-            //If not selected, force metacourse to 0
-            if (!$preferences->backup_metacourse) {
-                $status = fwrite ($bf,full_tag("METACOURSE",3,false,'0'));
-            //else, export the field as is in DB
-            } else {
-                $status = fwrite ($bf,full_tag("METACOURSE",3,false,$course->metacourse));
-            }
+            $status = fwrite ($bf,full_tag("TIMEMODIFIED",3,false,$course->timemodified));
             //Print header end
             fwrite ($bf,end_tag("HEADER",2,true));
         } else { 
@@ -722,246 +598,6 @@
         //Course end tag
         $status = fwrite ($bf,end_tag("COURSE",1,true)); 
     
-        return $status;
-
-    }
-
-    //Prints course's metacourse info (table course_meta)
-    function backup_course_metacourse ($bf,$preferences) {
-
-        global $CFG;
-
-        $status = true;
-
-        //Get info from meta
-        $parents = get_records_sql ("SELECT m.*, c.idnumber, c.shortname
-                                     FROM {$CFG->prefix}course_meta m,
-                                          {$CFG->prefix}course c
-                                          WHERE m.child_course = '$preferences->backup_course' AND
-                                                m.parent_course = c.id");
-        $childs =  get_records_sql ("SELECT m.*, c.idnumber, c.shortname
-                                     FROM {$CFG->prefix}course_meta m,
-                                          {$CFG->prefix}course c
-                                          WHERE m.parent_course = '$preferences->backup_course' AND
-                                                m.child_course = c.id");
-
-        if ($parents || $childs) {
-            //metacourse open tag
-            fwrite ($bf,start_tag("METACOURSE",2,true));
-            if ($parents) {
-                fwrite($bf, start_tag("PARENTS",3,true));
-                //Iterate over every parent    
-                foreach ($parents as $parent) {
-                    //Begin parent
-                    fwrite ($bf,start_tag("PARENT",4,true));
-                    fwrite ($bf,full_tag("ID",5,false,$parent->parent_course));
-                    fwrite ($bf,full_tag("IDNUMBER",5,false,$parent->idnumber));
-                    fwrite ($bf,full_tag("SHORTNAME",5,false,$parent->shortname));
-                    //End parent
-                    fwrite ($bf,end_tag("PARENT",4,true));
-                }
-                fwrite ($bf,end_tag("PARENTS",3,true));
-            }
-            if ($childs) {
-                fwrite($bf, start_tag("CHILDS",3,true));
-                //Iterate over every child    
-                foreach ($childs as $child) {
-                    //Begin parent
-                    fwrite ($bf,start_tag("CHILD",4,true));
-                    fwrite ($bf,full_tag("ID",5,false,$child->child_course));
-                    fwrite ($bf,full_tag("IDNUMBER",5,false,$child->idnumber));
-                    fwrite ($bf,full_tag("SHORTNAME",5,false,$child->shortname));
-                    //End parent
-                    fwrite ($bf,end_tag("CHILD",4,true));
-                }
-                fwrite ($bf,end_tag("CHILDS",3,true));
-            }
-            //metacourse close tag
-            $status = fwrite ($bf,end_tag("METACOURSE",3,true));
-        }
-
-        return $status;
-
-    }
-
-    //Prints course's messages info (tables message, message_read and message_contacts)
-    function backup_messages ($bf,$preferences) {
-
-        global $CFG;
-
-        $status = true;
-
-        //Get info from messages
-        $unreads = get_records ('message');
-        $reads   = get_records ('message_read');
-        $contacts= get_records ('message_contacts');
-
-        if ($unreads || $reads || $contacts) {
-            $counter = 0;
-            //message open tag
-            fwrite ($bf,start_tag("MESSAGES",2,true));
-            if ($unreads) {
-                //Iterate over every unread    
-                foreach ($unreads as $unread) {
-                    //start message
-                    fwrite($bf, start_tag("MESSAGE",3,true));
-                    fwrite ($bf,full_tag("ID",4,false,$unread->id));
-                    fwrite ($bf,full_tag("STATUS",4,false,"UNREAD"));
-                    fwrite ($bf,full_tag("USERIDFROM",4,false,$unread->useridfrom));
-                    fwrite ($bf,full_tag("USERIDTO",4,false,$unread->useridto));
-                    fwrite ($bf,full_tag("MESSAGE",4,false,$unread->message));
-                    fwrite ($bf,full_tag("FORMAT",4,false,$unread->format));
-                    fwrite ($bf,full_tag("TIMECREATED",4,false,$unread->timecreated));
-                    fwrite ($bf,full_tag("MESSAGETYPE",4,false,$unread->messagetype));
-                    //end message
-                    fwrite ($bf,end_tag("MESSAGE",3,true));
-
-                    //Do some output
-                    $counter++;
-                    if ($counter % 20 == 0) {
-                        echo ".";   
-                        if ($counter % 400 == 0) {
-                            echo "<br />";
-                        }
-                        backup_flush(300);
-                    }
-                }
-            }
-
-            if ($reads) {
-                //Iterate over every read    
-                foreach ($reads as $read) {
-                    //start message
-                    fwrite($bf, start_tag("MESSAGE",3,true));
-                    fwrite ($bf,full_tag("ID",4,false,$read->id));
-                    fwrite ($bf,full_tag("STATUS",4,false,"READ"));
-                    fwrite ($bf,full_tag("USERIDFROM",4,false,$read->useridfrom));
-                    fwrite ($bf,full_tag("USERIDTO",4,false,$read->useridto));
-                    fwrite ($bf,full_tag("MESSAGE",4,false,$read->message));
-                    fwrite ($bf,full_tag("FORMAT",4,false,$read->format));
-                    fwrite ($bf,full_tag("TIMECREATED",4,false,$read->timecreated));
-                    fwrite ($bf,full_tag("MESSAGETYPE",4,false,$read->messagetype));
-                    fwrite ($bf,full_tag("TIMEREAD",4,false,$read->timeread));
-                    fwrite ($bf,full_tag("MAILED",4,false,$read->mailed));
-                    //end message
-                    fwrite ($bf,end_tag("MESSAGE",3,true));
-
-                    //Do some output
-                    $counter++;
-                    if ($counter % 20 == 0) {
-                        echo ".";   
-                        if ($counter % 400 == 0) {
-                            echo "<br />";
-                        }
-                        backup_flush(300);
-                    }
-                }
-            }
-
-            if ($contacts) {
-                fwrite($bf, start_tag("CONTACTS",3,true));
-                //Iterate over every contact    
-                foreach ($contacts as $contact) {
-                    //start contact
-                    fwrite($bf, start_tag("CONTACT",4,true));
-                    fwrite ($bf,full_tag("ID",5,false,$contact->id));
-                    fwrite ($bf,full_tag("USERID",5,false,$contact->userid));
-                    fwrite ($bf,full_tag("CONTACTID",5,false,$contact->contactid));
-                    fwrite ($bf,full_tag("BLOCKED",5,false,$contact->blocked));
-                    //end contact
-                    fwrite ($bf,end_tag("CONTACT",4,true));
-
-                    //Do some output
-                    $counter++;
-                    if ($counter % 20 == 0) {
-                        echo ".";   
-                        if ($counter % 400 == 0) {
-                            echo "<br />";
-                        }
-                        backup_flush(300);
-                    }
-                }
-                fwrite($bf, end_tag("CONTACTS",3,true));
-            }
-            //messages close tag
-            $status = fwrite ($bf,end_tag("MESSAGES",2,true));
-        }
-
-        return $status;
-
-    }
-
-
-
-    //Prints course's blocks info (table block_instance)
-    function backup_course_blocks ($bf,$preferences) {
-
-        global $CFG;
-
-        $status = true;
-
-        // Read all of the block table
-        $blocks = blocks_get_record();
-
-        $pages = array();
-        $pages[] = page_create_object(PAGE_COURSE_VIEW, $preferences->backup_course);
-
-        // Let's see if we have to backup blocks from modules
-        $modulerecords = get_records_sql('SELECT name, id FROM '.$CFG->prefix.'modules');
-        
-        foreach($preferences->mods as $module) {
-            if(!$module->backup) {
-                continue;
-            }
-
-            $cmods = get_records_select('course_modules', 'course = '.$preferences->backup_course.' AND module = '.$modulerecords[$module->name]->id);
-            if(empty($cmods)) {
-                continue;
-            }
-
-            $pagetypes = page_import_types('mod/'.$module->name.'/');
-            if(empty($pagetypes)) {
-                continue;
-            }
-
-            foreach($pagetypes as $pagetype) {
-                foreach($cmods as $cmod) {
-                    $pages[] = page_create_object($pagetype, $cmod->instance);
-                }
-            }
-        }
-
-        //Blocks open tag
-        fwrite ($bf,start_tag('BLOCKS',2,true));
-
-        while($page = array_pop($pages)) {
-            if ($instances = blocks_get_by_page($page)) {
-                //Iterate over every block
-                foreach ($instances as $position) {
-                    foreach ($position as $instance) {
-                        //If we somehow have a block with an invalid id, skip it
-                        if(empty($blocks[$instance->blockid]->name)) {
-                            continue;
-                        }
-                        //Begin Block
-                        fwrite ($bf,start_tag('BLOCK',3,true));
-                        fwrite ($bf,full_tag('NAME',4,false,$blocks[$instance->blockid]->name));
-                        fwrite ($bf,full_tag('PAGEID',4,false,$instance->pageid));
-                        fwrite ($bf,full_tag('PAGETYPE',4,false,$instance->pagetype));
-                        fwrite ($bf,full_tag('POSITION',4,false,$instance->position));
-                        fwrite ($bf,full_tag('WEIGHT',4,false,$instance->weight));
-                        fwrite ($bf,full_tag('VISIBLE',4,false,$instance->visible));
-                        fwrite ($bf,full_tag('CONFIGDATA',4,false,$instance->configdata));
-                        //End Block
-                        fwrite ($bf,end_tag('BLOCK',3,true));
-                    }
-                }
-            }
-        }
-
-        //Blocks close tag
-        $status = fwrite ($bf,end_tag('BLOCKS',2,true));
-
         return $status;
 
     }
@@ -1084,10 +720,7 @@
                 fwrite ($bf,start_tag("USER",3,true));
                 //Output all user data
                 fwrite ($bf,full_tag("ID",4,false,$user_data->id));
-                fwrite ($bf,full_tag("AUTH",4,false,$user_data->auth));
-                fwrite ($bf,full_tag("GUID",4,false,$user_data->guid));
                 fwrite ($bf,full_tag("CONFIRMED",4,false,$user_data->confirmed));
-                fwrite ($bf,full_tag("POLICYAGREED",4,false,$user_data->policyagreed));
                 fwrite ($bf,full_tag("DELETED",4,false,$user_data->deleted));
                 fwrite ($bf,full_tag("USERNAME",4,false,$user_data->username));
                 fwrite ($bf,full_tag("PASSWORD",4,false,$user_data->password));
@@ -1097,10 +730,6 @@
                 fwrite ($bf,full_tag("EMAIL",4,false,$user_data->email));
                 fwrite ($bf,full_tag("EMAILSTOP",4,false,$user_data->emailstop));
                 fwrite ($bf,full_tag("ICQ",4,false,$user_data->icq));
-                fwrite ($bf,full_tag("SKYPE",4,false,$user_data->skype));
-                fwrite ($bf,full_tag("YAHOO",4,false,$user_data->yahoo));
-                fwrite ($bf,full_tag("AIM",4,false,$user_data->aim));
-                fwrite ($bf,full_tag("MSN",4,false,$user_data->msn));
                 fwrite ($bf,full_tag("PHONE1",4,false,$user_data->phone1));
                 fwrite ($bf,full_tag("PHONE2",4,false,$user_data->phone2));
                 fwrite ($bf,full_tag("INSTITUTION",4,false,$user_data->institution));
@@ -1109,7 +738,6 @@
                 fwrite ($bf,full_tag("CITY",4,false,$user_data->city));
                 fwrite ($bf,full_tag("COUNTRY",4,false,$user_data->country));
                 fwrite ($bf,full_tag("LANG",4,false,$user_data->lang));
-                fwrite ($bf,full_tag("THEME",4,false,$user_data->theme));
                 fwrite ($bf,full_tag("TIMEZONE",4,false,$user_data->timezone));
                 fwrite ($bf,full_tag("FIRSTACCESS",4,false,$user_data->firstaccess));
                 fwrite ($bf,full_tag("LASTACCESS",4,false,$user_data->lastaccess));
@@ -1174,7 +802,6 @@
                         fwrite ($bf,full_tag("TIMEEND",6,false,$tea->timeend));
                         fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$tea->timemodified));
                         fwrite ($bf,full_tag("TIMEACCESS",6,false,$tea->timeaccess));
-                        fwrite ($bf,full_tag("ENROL",6,false,$tea->enrol));
                         //Print ROLE end
                         fwrite ($bf,end_tag("ROLE",5,true));   
                     }
@@ -1190,7 +817,6 @@
                         fwrite ($bf,full_tag("TIMEEND",6,false,$stu->timeend));
                         fwrite ($bf,full_tag("TIME",6,false,$stu->time));
                         fwrite ($bf,full_tag("TIMEACCESS",6,false,$stu->timeaccess));
-                        fwrite ($bf,full_tag("ENROL",6,false,$stu->enrol));
                         //Print ROLE end
                         fwrite ($bf,end_tag("ROLE",5,true));   
                     }
@@ -1230,7 +856,7 @@
                 if ($counter % 10 == 0) {
                     echo ".";   
                     if ($counter % 200 == 0) {
-                        echo "<br />";
+                        echo "<br>";
                     }
                     backup_flush(300);
                 }
@@ -1296,10 +922,10 @@
                     }
                     //Do some output
                     $counter++;
-                    if ($counter % 20 == 0) {
+                    if ($counter % 10 == 0) {
                         echo ".";
-                        if ($counter % 400 == 0) {
-                            echo "<br />";
+                        if ($counter % 200 == 0) {
+                            echo "<br>";
                         }
                         backup_flush(300);
                     }
@@ -1430,29 +1056,20 @@
                 fwrite ($bf,full_tag("COURSEID",4,false,$group->courseid));
                 fwrite ($bf,full_tag("NAME",4,false,$group->name));
                 fwrite ($bf,full_tag("DESCRIPTION",4,false,$group->description));
-                fwrite ($bf,full_tag("PASSWORD",4,false,$group->password));
                 fwrite ($bf,full_tag("LANG",4,false,$group->lang));
-                fwrite ($bf,full_tag("THEME",4,false,$group->theme));
                 fwrite ($bf,full_tag("PICTURE",4,false,$group->picture));
                 fwrite ($bf,full_tag("HIDEPICTURE",4,false,$group->hidepicture));
                 fwrite ($bf,full_tag("TIMECREATED",4,false,$group->timecreated));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$group->timemodified));
                 
-                //Now, backup groups_members, only if users are included
-                if ($preferences->backup_users != 2) {
-                    $status2 = backup_groups_members_info($bf,$preferences,$group->id);
-                }
+                //Now, backup groups_members
+                $status2 = backup_groups_members_info($bf,$preferences,$group->id);
 
                 //End group tag
                 fwrite ($bf,end_tag("GROUP",3,true));
             }
             //End groups tag
             $status = fwrite ($bf,end_tag("GROUPS",2,true));
-
-            //Now save group_files
-            if ($status && $status2) {
-                $status2 = backup_copy_group_files($preferences);
-            }
         }
         return ($status && $status2);
     }
@@ -1558,7 +1175,7 @@
         }
 
         if ($result != $content && $CFG->debug>7) {                                  //Debug
-            echo "<br /><hr />".$content."<br />changed to<br />".$result."<hr /><br />";        //Debug
+            echo "<br><hr>".$content."<br>changed to<br>".$result."<hr><br>";        //Debug
         }                                                                            //Debug
 
         return $result;
@@ -1594,43 +1211,6 @@
                     if ($data) {
                         $status = backup_copy_file($rootdir."/".$dir,
                                        $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/user_files/".$dir);
-                    }
-                }
-            }
-        }
-
-        return $status;
-    }
-
-    //This function copies all the needed files under the "groups" directory to the "group_files"
-    //directory under temp/backup
-    function backup_copy_group_files ($preferences) {
-
-        global $CFG;
-
-        $status = true;
-
-        //First we check if "group_files" exists and create it as necessary
-        //in temp/backup/$backup_code  dir
-        $status = check_and_create_group_files_dir($preferences->backup_unique_code);
- 
-        //Now iterate over directories under "groups" to check if that user must be 
-        //copied to backup
-        
-        $rootdir = $CFG->dataroot.'/groups';
-        //Check if directory exists
-        if (is_dir($rootdir)) {
-            $list = list_directories ($rootdir);
-            if ($list) {
-                //Iterate
-                foreach ($list as $dir) {
-                    //Look for dir like group in groups table
-                    $data = get_record ('groups', 'courseid', $preferences->backup_course,
-                                                  'id',$dir);
-                    //If exists, copy it
-                    if ($data) {
-                        $status = backup_copy_file($rootdir."/".$dir,
-                                       $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/group_files/".$dir);
                     }
                 }
             }
@@ -1685,19 +1265,47 @@
         $status = true;
 
         //Base dir where everything happens
-        $basedir = cleardoubleslashes($CFG->dataroot."/temp/backup/".$preferences->backup_unique_code);
+        $basedir = $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code;
         //Backup zip file name
         $name = $preferences->backup_name;
-        //List of files and directories
+        //List base_dir files and directories
         $filelist = list_directories_and_files ($basedir);
 
-        //Convert them to full paths
-        $files = array();
-        foreach ($filelist as $file) {
-           $files[] = "$basedir/$file";
+        if (empty($CFG->zip)) {    // Use built-in php-based zip function
+            //echo "<br>Using pclzip";                                    //Debug
+            $files = array();
+            foreach ($filelist as $file) {
+                //If directory, append "/"
+                //Commented. Not needed wit version 2.0 of pclzip !!
+                //if (is_dir($basedir."/".$file)) {
+                //    $file = $file."/";
+                //}
+                //Include into array
+                //echo "<br>Adding file/dir ".$file;                       //Debug
+                $files[] = $basedir."/".$file;
+            }
+            include_once("$CFG->dirroot/lib/pclzip/pclzip.lib.php");
+            //include_once("$CFG->dirroot/lib/pclzip/pclerror.lib.php");   //Debug
+            //include_once("$CFG->dirroot/lib/pclzip/pcltrace.lib.php");   //Debug
+            //PclTraceOn(2);                                               //Debug
+            $archive = new PclZip("$basedir/$name");
+            if (($list = $archive->create($files,PCLZIP_OPT_REMOVE_PATH,$basedir)) == 0) {
+                error($archive->errorInfo(true));
+                $status = false;
+            } 
+            //PclTraceDisplay();                                           //Debug
+            //PclTraceOff();                                               //Debug
+        } else {                   // Use external zip program
+            //echo "<br>Using external zip";                               //Debug
+            $files = "";
+            foreach ($filelist as $file) {
+                $files .= basename($file);
+                $files .= " ";
+            }
+            $command = "cd $basedir ; $CFG->zip -r $name $files";
+            //echo "<br>Executing command: ".$command;                     //Debug
+            $status = Exec($command);
         }
-
-        $status = zip_files($files, "$basedir/$name");
 
         //echo "<br>Status: ".$status;                                     //Debug
         return $status;
@@ -1724,9 +1332,9 @@
             //Define zip destination (course dir)
             $to_zip_file = $CFG->dataroot."/".$preferences->backup_course;
     
-            //echo "<p>From: ".$from_zip_file."<br />";                                              //Debug
+            //echo "<p>From: ".$from_zip_file."<br>";                                              //Debug
     
-            //echo "<p>Checking: ".$to_zip_file."<br />";                                          //Debug
+            //echo "<p>Checking: ".$to_zip_file."<br>";                                          //Debug
     
             //Checks course dir exists
             $status = check_dir_exists($to_zip_file,true);
@@ -1734,7 +1342,7 @@
             //Define zip destination (backup dir)
             $to_zip_file = $to_zip_file."/backupdata";
     
-            //echo "<p>Checking: ".$to_zip_file."<br />";                                          //Debug
+            //echo "<p>Checking: ".$to_zip_file."<br>";                                          //Debug
     
             //Checks backup dir exists
             $status = check_dir_exists($to_zip_file,true);
@@ -1743,7 +1351,7 @@
             $to_zip_file = $to_zip_file."/".$preferences->backup_name;
         }
 
-        //echo "<p>To: ".$to_zip_file."<br />";                                              //Debug
+        //echo "<p>To: ".$to_zip_file."<br>";                                              //Debug
 
         //Copy zip file
         if ($status) {

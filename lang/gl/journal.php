@@ -9,8 +9,13 @@ $string['editingended'] = "O período de edición rematou";
 $string['editingends'] = "Período de edición finalizado";
 $string['entries'] = "Entradas";
 $string['feedbackupdated'] = "Resposta actualizada en \$a entries";
-$string['journalmail'] = "\$a->teacher fixo algúns comentarios sobre a súa entrada no xornal en '\$a->journal' Pode velos engadidos á súa entrada no xornal: \$a->url";
-$string['journalmailhtml'] = "\$a->teacher fixo algúns comentarios sobre a súa entrada no xornal en '<i>\$a->journal</i>'<br /><br />Pode velos engadidos á súa <a href=\"$a->url\">entrada en xornal</a>.";
+$string['journalmail'] = "\$a->teacher fixo algúns comentarios sobre a súa entrada no xornal en '\$a->journal'
+
+Pode velos engadidos á súa entrada no xornal:
+
+    \$a->url";
+$string['journalmailhtml'] = "\$a->teacher fixo algúns comentarios sobre a súa entrada no xornal en '<i>\$a->journal</i>'<br /><br />
+Pode velos engadidos á súa <a href=\\\"\$a->url\\\">entrada en xornal</a>.";
 $string['journalname'] = "Nome do xornal";
 $string['journalquestion'] = "Pregunta do xornal";
 $string['journalrating1'] = "Non satisfactorio";

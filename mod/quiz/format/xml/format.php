@@ -6,220 +6,7 @@
 //////////////////////////////////////////////////////////////////////////
 // Based on default.php, included by ../import.php
 
-
-require_once( "$CFG->libdir/xmlize.php" );
-
 class quiz_file_format extends quiz_default_format {
-
-// IMPORT FUNCTIONS START HERE
-
-function trans_format( $name ) {
-  // translate text format string to its internal code
-
-  $name = trim($name); 
- 
-  if ($name=='moodle_auto_format') {
-    $id = 0;
-  }
-  elseif ($name=='html') {
-    $id = 1;
-  }
-  elseif ($name=='plain_text') {
-    $id = 2;
-  }
-  elseif ($name=='wiki_like') {
-    $id = 3;
-  }
-  elseif ($name=='markdown') {
-    $id = 4;
-  }
-  else {
-    $id = 0; // or maybe warning required
-  }
-  return $id;
-}
-
-function trans_single( $name ) {
-  // translate single string to its internal format
-
-  $name = trim($name);
-
-  if ($name=="true") {
-    $id = 1;
-  }
-  elseif ($name=="false") {
-    $id = 0;
-  }
-  else {
-    $id = 0; // or maybe warning required
-  }
-  return $id;
-}
-
-function import_text( $text ) {
-  // handle xml 'text' element
-  $data = $text[0]['#'];
-  $data = html_entity_decode( $data );
-  return addslashes(trim( $data ));
-}
-
-function import_headers( $question ) {
-  // read bits that are common to all questions
-
-  // this routine initialises the question object
-  $name = $this->import_text( $question['#']['name'][0]['#']['text'] );
-  $qtext = $this->import_text( $question['#']['questiontext'][0]['#']['text'] );
-  $qformat = $question['#']['questiontext'][0]['@']['format'];
-  $image = $question['#']['image'][0]['#'];
-
-  $qo = null;
-  $qo->name = $name;
-  $qo->questiontext = $qtext;
-  $qo->questiontextformat = $this->trans_format( $qformat );
-  $qo->image = $image;
-
-  return $qo;
-}
-
-
-function import_answer( $answer ) {
-  // import answer part of question
-
-  $fraction = $answer['@']['fraction'];
-  $text = $this->import_text( $answer['#']['text']);
-  $feedback = $this->import_text( $answer['#']['feedback'][0]['#']['text'] );
-
-  $ans = null;
-  $ans->answer = $text;
-  $ans->fraction = $fraction / 100;
-  $ans->feedback = $feedback;
-  
-  return $ans;
-}
-
-function import_multichoice( $question ) {
-  // import multichoice type questions
-
-  // get common parts
-  $qo = $this->import_headers( $question );
-
-  // 'header' parts particular to multichoice
-  $qo->qtype = MULTICHOICE;
-  $single = $question['#']['single'][0]['#'];
-  $qo->single = $this->trans_single( $single );
-
-  // run through the answers
-  $answers = $question['#']['answer'];  
-  $a_count = 0;
-  foreach ($answers as $answer) {
-     $ans = $this->import_answer( $answer );
-     $qo->answer[$a_count] = $ans->answer;
-     $qo->fraction[$a_count] = $ans->fraction;
-     $qo->feedback[$a_count] = $ans->feedback;
-     ++$a_count;
-  }
-
-  return $qo;
-}
-
-function import_truefalse( $question ) {
-  // import true/false type question
-
-  // get common parts
-  $qo = $this->import_headers( $question );
-
-  // 'header' parts particular to true/false
-  $qo->qtype = TRUEFALSE;
-
-  // get answer info
-  $answers = $question['#']['answer'];
-  $fraction0 = $answers[0]['@']['fraction'];
-  $feedback0 = $this->import_text($answers[0]['#']['feedback'][0]['#']['text']);
-  $fraction1 = $answers[1]['@']['fraction'];
-  $feedback1 = $this->import_text($answers[1]['#']['feedback'][0]['#']['text']);
-
-  // sort out which is true and build object accordingly
-  if ($fraction0==100) { // then 0 index is true
-    $qo->answer = 1;
-    $qo->feedbacktrue=$feedback0;
-    $qo->feedbackfalse=$feedback1;
-  }
-  else {
-    $qo->answer = 0;
-    $qo->feedbacktrue = $feedback1;
-    $qo->feedbackfalse = $feedback0;
-  }
-
-  return $qo;
-}
-
-function import_shortanswer( $question ) {
-  // import short answer question
-
-  // get common parts
-  $qo = $this->import_headers( $question );
-
-  // header parts particular to shortanswer
-  $qo->qtype = SHORTANSWER;
-
-  // run through the answers
-  $answers = $question['#']['answer'];  
-  $a_count = 0;
-  foreach ($answers as $answer) {
-     $ans = $this->import_answer( $answer );
-     $qo->answer[$a_count] = $ans->answer;
-     $qo->fraction[$a_count] = $ans->fraction;
-     $qo->feedback[$a_count] = $ans->feedback;
-     ++$a_count;
-  }
-
-  return $qo;
-}
-
-function readquestions($lines) {
-  // parse the array of lines into an array of questions
-  // this *could* burn memory - but it won't happen that much
-  // so fingers crossed!
-
-  // we just need it as one big string
-  $text = implode($lines, " ");
-  unset( $lines );
-
-  // this converts xml to big nasty data structure
-  // the 0 means keep white space as it is (important for markdown format)
-  // print_r it if you want to see what it looks like!
-  $xml = xmlize( $text, 0 ); 
-
-  // set up array to hold all our questions
-  $questions = array();
-
-  // iterate through questions
-  foreach ($xml['quiz']['#']['question'] as $question) {
-    $question_type = $question['@']['type'];
-    echo "<b>question type = $question_type</b>"; 
-
-    if ($question_type=='multichoice') {
-      $qo = $this->import_multichoice( $question );
-    }  
-    elseif ($question_type=='truefalse') {
-      $qo = $this->import_truefalse( $question );
-    }
-    elseif ($question_type=='shortanswer') {
-      $qo = $this->import_shortanswer( $question );
-    }
-    else {
-      echo "<p>Question type $question_type not currently supported for xml import</p>";
-      $qo = null;
-    }
-
-    // stick the result in the $questions array
-    $questions[] = $qo;
-  }
-
-  return $questions;
-}
-
-// EXPORT FUNCTIONS START HERE
 
 function indent_xhtml($source, $indenter = ' ') { 
     // xml tidier-upper
@@ -339,69 +126,19 @@ function get_qtype( $type_id ) {
         $name = 'cloze';
         break;
     default:
-        $name = 'unknown';
+        $name = 'Unknown';
     }
     return $name;
 }
 
-function get_format( $id ) {
-  // translates question text format id number into something sensible
-
-  switch( $id ) {
-  case 0:
-    $name = "moodle_auto_format";
-    break;
-  case 1:
-    $name = "html";
-    break;
-  case 2:
-    $name = "plain_text";
-    break;
-  case 3:
-    $name = "wiki_like";
-    break;
-  case 4:
-    $name = "markdown";
-    break;
-  default:
-    $name = "unknown";
-  }
-  return $name;
-}
-
-function get_single( $id ) {
-  // translate single value into something sensible
-
-  switch( $id ) {
-  case 0:
-    $name = "false";
-    break;
-  case 1:
-    $name = "true";
-    break;
-  default:
-    $name = "unknown";
-  }
-  return $name;
-}
-
-function writetext( $raw, $ilev=0, $short=true) {
+function writetext( $raw ) {
     // generates <text></text> tags, processing raw text therein 
-    // $ilev is the current indent level
-    // $short=true sticks it on one line
-    $indent = str_repeat( "  ",$ilev );
 
-    // encode the text to 'disguise' HTML content 
-    $raw = htmlspecialchars( $raw );
+    // for now, don't allow any additional tags in text 
+    // otherwise xml rules would probably get broken
+    $raw = strip_tags( $raw );
 
-    if ($short) {
-      $xml = "$indent<text>$raw</text>\n";
-    }
-    else {
-      $xml = "$indent<text>\n$raw\n$indent</text>\n";
-    }
-
-    return $xml;
+    return "<text>$raw</text>\n";
 }
 
 function presave_process( $content ) {
@@ -428,14 +165,10 @@ function writequestion( $question ) {
     // add opening tag
     $question_type = $this->get_qtype( $question->qtype );
     $name_text = $this->writetext( $question->name );
-    $qtformat = $this->get_format($question->questiontextformat);
     $question_text = $this->writetext( $question->questiontext );
-    $expout .= "  <question type=\"$question_type\">\n";   
-    $expout .= "    <name>$name_text</name>\n";
-    $expout .= "    <questiontext format=\"$qtformat\">\n";
-    $expout .= $question_text;
-    $expout .= "    </questiontext>\n";   
-    $expout .= "    <image>".$question->image."</image>\n";
+    $expout .= "<question type=\"$question_type\">\n";   
+    $expout .= "<name>".$this->writetext($name_text)."</name>\n";
+    $expout .= "<questiontext>".$this->writetext($question_text)."</questiontext>\n";   
 
     // output depends on question type
     switch($question->qtype) {
@@ -443,43 +176,34 @@ function writequestion( $question ) {
         $true_percent = round( $question->trueanswer->fraction * 100 );
         $false_percent = round( $question->falseanswer->fraction * 100 );
         // true answer
-        $expout .= "    <answer fraction=\"$true_percent\">\n";
-        $expout .= $this->writetext("true",3)."\n";
-        $expout .= "      <feedback>\n";
-        $expout .= $this->writetext( $question->trueanswer->feedback,4,false );
-        $expout .= "      </feedback>\n";
-        $expout .= "    </answer>\n";
+        $expout .= "<answer fraction=\"$true_percent\">\n";
+        $expout .= $this->writetext("true")."\n";
+        $expout .= "<feedback>".$this->writetext( $question->trueanswer->feedback )."</feedback>\n";
+        $expout .= "</answer>\n";
 
 
         // false answer
-        $expout .= "    <answer fraction=\"$false_percent\">\n";
+        $expout .= "<answer fraction=\"$false_percent\">\n";
         $expout .= $this->writetext("false")."\n";
-        $expout .= "      <feedback>\n";
-        $expout .= $this->writetext( $question->falseanswer->feedback,4,false );
-        $expout .= "      </feedback>\n";
-        $expout .= "    </answer>\n";
+        $expout .= "<feedback>".$this->writetext( $question->falseanswer->feedback )."</feedback>\n";
+        $expout .= "</answer>\n";
         break;
     case MULTICHOICE:
-        $expout .= "    <single>".$this->get_single($question->single)."</single>\n";
         foreach($question->answers as $answer) {
-            $percent = $answer->fraction * 100;
-            $expout .= "      <answer fraction=\"$percent\">\n";
-            $expout .= $this->writetext( $answer->answer,4,false );
-            $expout .= "      <feedback>\n";
-            $expout .= $this->writetext( $answer->feedback,4,false );
-            $expout .= "      </feedback>\n";
-            $expout .= "    </answer>\n";
+            $percent = round( $answer->fraction * 100 );
+            $expout .= "<answer fraction=\"$percent\">\n";
+            $expout .= $this->writetext( $answer->answer );
+            $expout .= "<feedback>".$this->writetext( $answer->feedback )."</feedback>\n";
+            $expout .= "</answer>\n";
             }
         break;
     case SHORTANSWER:
         foreach($question->answers as $answer) {
             $percent = 100 * $answer->fraction;
-            $expout .= "    <answer fraction=\"$percent\">\n";
-            $expout .= $this->writetext( $answer->answer,3,false );
-            $expout .= "      <feedback>\n";
-            $expout .= $this->writetext( $answer->feedback,4,false );
-            $expout .= "      </feedback>\n";
-            $expout .= "    </answer>\n";
+            $expout .= "<answer fraction=\"$percent\">\n";
+            $expout .= $this->writetext( $answer->answer );
+            $expout .= "<feedback>".$this->writetext( $answer->feedback )."</feedback>\n";
+            $expout .= "</answer>\n";
         }
         break;
     case NUMERICAL:
@@ -508,9 +232,9 @@ function writequestion( $question ) {
     $expout .= "</question>\n";
 
     // run through xml tidy function
-    // $tidy_expout = $this->indent_xhtml( $expout, '    ' ) . "\n\n";
+    $tidy_expout = $this->indent_xhtml( $expout, '    ' ) . "\n\n";
 
-    return $expout;
+    return $tidy_expout;
 }
 }
 

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // survey.php - created with Moodle 1.3 (2004052500)
 
 
 $string['actual'] = 'Actual';
@@ -126,7 +126,7 @@ Les teves  respostes, pensades cuidadosament, ens ajudaran a millorar la manera 
 Moltes gràcies.';
 $string['collesaname'] = 'COLLES (Real)';
 $string['collesapintro'] = 'El propòsit d’aquest qüestionari és ajudar-nos a entendre fins a quin punt la presentació en línia d’aquesta unitat et va facilitar l’aprenentatge.
-Cada una de les declaracions següents et demanaran que comparis la teva experiència <b>favorita</b> (ideal) y la teva experiència <b>real</b> en aquesta unitat. Les teves  respostes seran tractades amb alt grau de confidencialitat i no afectaran la teva avaluació.
+Cada una de les declaracions següents et demanaran que comparis la teva experiència <B>favorita</B> (ideal) y la teva experiència <B>real</B> en aquesta unitat. Les teves  respostes seran tractades amb alt grau de confidencialitat i no afectaran la teva avaluació.
 Les teves  respostes, pensades cuidadosament, ens ajudaran a millorar la manera de presentar aquesta unitat en el futur.
 Moltes gràcies per la teva col·laboració.';
 $string['collesapname'] = 'COLLES (preferit i real)';
@@ -144,7 +144,7 @@ $string['collesm6'] = 'Interpretació';
 $string['collesm6short'] = 'Interpretació';
 $string['collesmintro'] = 'En aquesta unitat en línia...';
 $string['collespintro'] = 'El propòsit d’aquesta enquesta es ajudar-nos a entendre el que tu valores en una experiència d’aprenentatge en línia.
-Cada una de les 24 declaracions següents l’interroguen sobre la teva experiència <b>favorita</b> (ideal) en aquesta unitat.
+Cada una de les 24 declaracions següents l’interroguen sobre la teva experiència <B>favorita</B> (ideal) en aquesta unitat.
 No existeixen respostes \'correctes\' o \'equivocades\', sòls ens interessa la teva opinió. Les teves  respostes seran tractades amb alt grau de confidencialitat i no afectaran la teva avaluació.
 Les teves respostes, pensades cuidadosament, ens ajudaran a millorar la manera de presentar aquesta unitat en el futur.
 Moltes gràcies per la teva col·laboració.';
@@ -155,7 +155,7 @@ $string['downloadexcel'] = 'Descarregar com a full de càlcul';
 $string['downloadinfo'] = 'Pots descarregar la informació completa en un format que pugui ser analitzat per un programa de fulls de càlcul';
 $string['downloadtext'] = 'Descarregar com a text';
 $string['editingasurvey'] = 'S\'està editant la informació';
-$string['guestsnotallowed'] = 'Els visitants no poden participar en les enquestes';
+$string['guestsnotallowed'] = 'Els invitats no poden participar en les enquestes';
 $string['helpsurveys'] = 'Ajuda sobre els diferents tipus d’informació';
 $string['howlong'] = '¿Quant de temps t’ha portat completar aquest questionari?';
 $string['howlongoptions'] = 'menys de 1 <abbr title=minuto>min.</abbr>, 1-2 <abbr title=minuto>min.</abbr>,  2-3 <abbr title=minuto>min.</abbr>,  3-4 <abbr title=minuto>min.</abbr>,  4-5 <abbr title=minuto>min.</abbr>,  5-10 <abbr title=minuto>min.</abbr>, més de 10 minuts.';

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -60,20 +60,20 @@
         //Calculate the href
         if (!$survey->visible) {
             //Show dimmed if the mod is hidden
-            $tt_href = "<a class=\"dimmed\" href=\"view.php?id=$survey->coursemodule\">".format_string($survey->name,true)."</a>";
+            $tt_href = "<A class=\"dimmed\" HREF=\"view.php?id=$survey->coursemodule\">$survey->name</A>";
         } else {
             //Show normal if the mod is visible
-            $tt_href = "<a href=\"view.php?id=$survey->coursemodule\">".format_string($survey->name,true)."</a>";
+            $tt_href = "<A HREF=\"view.php?id=$survey->coursemodule\">$survey->name</A>";
         }
 
         if ($course->format == "weeks" or $course->format == "topics") {
-            $table->data[] = array ($printsection, $tt_href, "<a href=\"view.php?id=$survey->coursemodule\">$ss</a>");
+            $table->data[] = array ($printsection, $tt_href, "<A HREF=\"view.php?id=$survey->coursemodule\">$ss</A>");
         } else {
-            $table->data[] = array ($tt_href, "<a href=\"view.php?id=$survey->coursemodule\">$ss</a>");
+            $table->data[] = array ($tt_href, "<A HREF=\"view.php?id=$survey->coursemodule\">$ss</A>");
         }
     }
 
-    echo "<br />";
+    echo "<BR>";
     print_table($table);
     print_footer($course);
 

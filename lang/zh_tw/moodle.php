@@ -63,7 +63,7 @@ $string['configlangdir'] = "Most languages are printed left-to-right, but some, 
 $string['configlocale'] = "Choose a sitewide locale - this will affect the format and language of dates. You need to have this locale data installed on your operating system.  (eg en_US or es_ES).  If you don't know what to choose leave it blank.";
 $string['configlongtimenosee'] = "If students haven't logged in for a very long time, then they are automatically unsubscribed from courses.  This parameter specifies that time limit.";
 $string['configmaxeditingtime'] = "This specifies the amount of time people have to re-edit forum postings, journal feedback etc.  Usually 30 minutes is a good value.";
-$string['configproxyhost'] = "If this <b>server</b> needs to use a proxy computer (eg a firewall) to access the Internet, then provide the proxy hostname and port here.  Otherwise leave it blank.";
+$string['configproxyhost'] = "If this <B>server</B> needs to use a proxy computer (eg a firewall) to access the Internet, then provide the proxy hostname and port here.  Otherwise leave it blank.";
 $string['configslasharguments'] = "Files (images, uploads etc) are provided via a script using 'slash arguments' (the second option here). This method allows files to be more easily cached in web browsers, proxy servers etc.  Unfortunately, some PHP servers don't allow this method, so if you have trouble viewing uploaded files or images (eg user pictures), set this variable to the first option";
 $string['configsmtphosts'] = "Give the full name of one or more local SMTP servers that Moodle should use to send mail (eg 'mail.a.com' or 'mail.a.com;mail.b.com'). If you leave it blank, Moodle will use the PHP default method of sending mail.";
 $string['configsmtpuser'] = "If you have specified an SMTP server above, and the server requires authentication, then enter the username and password here.";
@@ -137,19 +137,19 @@ $string['emailconfirmation'] = "§A¦n \$a->firstname,
 
 Åwªï§Aªº¥[¤J '\$a->sitename' ¨t²ÎºÞ²z­û
 \$a->admin ·q¤W,";
-$string['emailconfirmsent'] = "   <p>¥»¨t²Î¤w¸g°e¥X¹q¤l¶l¥ó¨ì <b>\$a</b>
-   </p><p>°T®§¤º®e¥]§t¦p¦ó§¹¦¨µù¥U¤âÄò.
-   </p><p>½Ð¾\Äý§Aªº¨p¤H¶l¥ó «ö¤U½T»{³sµ²«á «K¥iµn¤J¥»¨t²Î, ­Y¬O¦³°ÝÃD½Ð©M¨t²ÎºÞ²zªÌ³sµ¸.</p>";
+$string['emailconfirmsent'] = "   <P>¥»¨t²Î¤w¸g°e¥X¹q¤l¶l¥ó¨ì <B>\$a</B>
+   <P>°T®§¤º®e¥]§t¦p¦ó§¹¦¨µù¥U¤âÄò.
+   <P>½Ð¾\Äý§Aªº¨p¤H¶l¥ó «ö¤U½T»{³sµ²«á «K¥iµn¤J¥»¨t²Î, ­Y¬O¦³°ÝÃD½Ð©M¨t²ÎºÞ²zªÌ³sµ¸.";
 $string['emaildisplay'] = "¹q¤l¶l¥ó°T®§";
 $string['emaildisplaycourse'] = "¶È¤¹³\¨ä¥L­×½Ò¦¨­ûÆ[¬Ý§Úªº¹q¤l¶l¥ó";
 $string['emaildisplayno'] = "ÁôÂÃ§Úªº¹q¤l¶l¥ó,¥ô¦ó¤H³£¤£¯àÆ[¬Ý";
 $string['emaildisplayyes'] = "¤¹³\©Ò¦³¤HÆ[¬Ý§Úªº¹q¤l¶l¥ó";
 $string['emailexists'] = "©Ò¿é¤J¹q¤l¶l¥óªº¨Ï¥ÎªÌ¤w¸g¥Ó½Ð¹L±b¸¹.";
 $string['emailformat'] = "¹q¤l¶l¥ó®æ¦¡";
-$string['emailmustbereal'] = "ª`·N: ¨S¦³¿é¤J¹q¤l¶l¥óªÌ,¶È¯à¶i¤J»Ý­n±K½Xªº½Òµ{<br />¤@¥¹§Ñ°O±K½X»Ý§ä½Òµ{±Ð®v­«·s³]©w±K½X";
+$string['emailmustbereal'] = "ª`·N: ¨S¦³¿é¤J¹q¤l¶l¥óªÌ,¶È¯à¶i¤J»Ý­n±K½Xªº½Òµ{<BR>¤@¥¹§Ñ°O±K½X»Ý§ä½Òµ{±Ð®v­«·s³]©w±K½X";
 $string['enrolmentkey'] = "½Òµ{±MÄÝ±K½X";
-$string['enrolmentkeyfrom'] = "¥»½Òµ{»Ý­n '½Òµ{±MÄÝ±K½X' - ¶È»Ý¿é¤J¤@¦¸<br />±K½X½Ð¦V¶}½Ò±Ð®v \$a ¯Á¨ú";
-$string['enrolmentkeyhint'] = "©Ò¿é¤Jªº½Òµ{±MÄÝ±K½X¤£¥¿½T, ½Ð­«·s¿é¤J<br />(´£¥Ü - ¥H '\$a'  °_©l)";
+$string['enrolmentkeyfrom'] = "¥»½Òµ{»Ý­n '½Òµ{±MÄÝ±K½X' - ¶È»Ý¿é¤J¤@¦¸<BR>±K½X½Ð¦V¶}½Ò±Ð®v \$a ¯Á¨ú";
+$string['enrolmentkeyhint'] = "©Ò¿é¤Jªº½Òµ{±MÄÝ±K½X¤£¥¿½T, ½Ð­«·s¿é¤J<BR>(´£¥Ü - ¥H '\$a'  °_©l)";
 $string['entercourse'] = "«ö¤U¥H¶i¤J½Òµ{";
 $string['enteremailaddress'] = "½Ð¿é¤Jµù¥Uµn°Oªº¹q¤l¶l¥ó ¥H«K¨t²Î­«·s³]©w­Ó¤H±K¶Ü ¨Ã°e¨ì§Aªº¹q¤l¶l¥ó«H½c.";
 $string['error'] = "¿ù»~";
@@ -253,16 +253,16 @@ $string['loginsite'] = "µn¤J¥»ºô¯¸";
 $string['loginsteps'] = "§A¦n! ­Y­n¨Ï¥Î¥»ºô¯¸¥\¯à§A¥²¶·¥ý¦b¥»ºô¯¸µù¥U.
    ³¡¤À½Òµ{¥i¯àÁÙ»Ý­n¶}½Ò±Ð®v©Ò³]©wªº±MÄÝ±K½X
    ½Ð¿í´`¥H¤U¨BÆJ:
-   <ol>
-   <li>½Ð©ó <A HREF=\$a>¥Ó½Ð·s±b¸¹</A> ªí®æ¤¤¿é¤J­Ó¤H¬ÛÃö¸ê®Æ.</li>
-   <li>¨Ì¾Ú«ü¥Ü§¹¦¨µù¥U¤âÄò,¶i¦æµn¤J°Ê§@.</li>
-   <li>µn¤J«á½Ð¿ï¾Ü·Q­n°Ñ¥[ªº½Òµ{.
-   <br />³¡¤À½Òµ{¶}½Ò±Ð®v¥i¯à·|³]©w±MÄÝ±K½X, «h»Ý­n¨ú±o±MÄÝ±K½X«á¤~¯à¶i¤J(¶È»Ýªì¦¸¶i¤J½Òµ{®É¿é¤J)
-   ¶i¤J½Òµ{«á ¥¼¨Ó¥u»Ý­nµn¤J«K¥i¦A¦¸¶i¤J½Òµ{, ¤£»Ý­n¦A¿é¤J½Òµ{±MÄÝ±K½X</li>
-   </ol>";
-$string['loginstepsnone'] = "<p>¶Ù!</p><p>»Ý­n§¹¦¨µù¥U¤âÄò¤~¥i¯à¶i¤J¥»½Òµ{.</p>
-<p>§A»Ý­n¥Ó½Ð¤@­Ó ±b¸¹¦WºÙ©M±K½X ¥H«K¶i¦æµn¤J¨t²Îªº°Ê§@!</p><p>
-°²¦p§A©Ò¿ï©w ±b¸¹¦WºÙ¤w¸g¦³¤H¥ýµn°O «h»Ý­n¿é¤J·sªº¦WºÙ.</p>";
+   <OL>
+   <LI>½Ð©ó <A HREF=\$a>¥Ó½Ð·s±b¸¹</A> ªí®æ¤¤¿é¤J­Ó¤H¬ÛÃö¸ê®Æ.
+   <LI>¨Ì¾Ú«ü¥Ü§¹¦¨µù¥U¤âÄò,¶i¦æµn¤J°Ê§@.
+   <LI>µn¤J«á½Ð¿ï¾Ü·Q­n°Ñ¥[ªº½Òµ{.
+   <br>³¡¤À½Òµ{¶}½Ò±Ð®v¥i¯à·|³]©w±MÄÝ±K½X, «h»Ý­n¨ú±o±MÄÝ±K½X«á¤~¯à¶i¤J(¶È»Ýªì¦¸¶i¤J½Òµ{®É¿é¤J)
+   ¶i¤J½Òµ{«á ¥¼¨Ó¥u»Ý­nµn¤J«K¥i¦A¦¸¶i¤J½Òµ{, ¤£»Ý­n¦A¿é¤J½Òµ{±MÄÝ±K½X
+   </OL>";
+$string['loginstepsnone'] = "¶Ù!<P>»Ý­n§¹¦¨µù¥U¤âÄò¤~¥i¯à¶i¤J¥»½Òµ{.
+<P>§A»Ý­n¥Ó½Ð¤@­Ó ±b¸¹¦WºÙ©M±K½X ¥H«K¶i¦æµn¤J¨t²Îªº°Ê§@!<P>
+°²¦p§A©Ò¿ï©w ±b¸¹¦WºÙ¤w¸g¦³¤H¥ýµn°O «h»Ý­n¿é¤J·sªº¦WºÙ.";
 $string['loginto'] = "µn¤J \$a";
 $string['loginusing'] = "½Ð¿é¤J ±b¸¹¦WºÙ»P±K½X ¶i¦æµn¤J";
 $string['logout'] = "µn¥X";
@@ -375,10 +375,10 @@ $string['passwordchanged'] = "±K½X¤w¸g³Q­×§ï";
 $string['passwordrecovery'] = "½Ð¨ó§U§Úµn¤J";
 $string['passwordsdiffer'] = "±K½X¤£¬Û²Å";
 $string['passwordsent'] = "¤w¸g°e¥X±K½X";
-$string['passwordsenttext'] = "   <p>¨t²Î¥H¹q¤l¶l¥ó°e¥X¸ê°T¨ì \$a->email.</p>
-   <p><b>½Ð¾\Äý§Aªº¶l¥ó¥HÀò±o·s³]©wªºÁ{®É±K½X</b></p>
-   <p>­«·sµn¤J«á¥i¥H¶i¤J
-   <a href=\"$a->link\"> ­×§ï¬°§A­Ó¤H°¾¦nªº±K½X</a>.</p>";
+$string['passwordsenttext'] = "   <P>¨t²Î¥H¹q¤l¶l¥ó°e¥X¸ê°T¨ì \$a->email.
+   <P><B>½Ð¾\Äý§Aªº¶l¥ó¥HÀò±o·s³]©wªºÁ{®É±K½X</B>
+   <P>­«·sµn¤J«á¥i¥H¶i¤J
+   <A HREF=\$a->link> ­×§ï¬°§A­Ó¤H°¾¦nªº±K½X</A>.";
 $string['people'] = "¨Ï¥ÎªÌ";
 $string['personalprofile'] = "­Ó¤H¬ö¿ý";
 $string['phone'] = "¹q¸Ü";
@@ -476,7 +476,7 @@ $string['upload'] = "¤W¸ü";
 $string['uploadafile'] = "¤W¸üÀÉ®×";
 $string['uploadthisfile'] = "¤W¸ü¥»ÀÉ®×";
 $string['userdeleted'] = "¥»¨Ï¥ÎªÌ±b¸¹¤w³Q§R°£";
-$string['userdescription'] = "­Ó¤HÂ²¤¶¡G<br />¾Ç¥Í½Ð¼g:<br />¾Ç®Õ/¦~¯Å/¯Z§O<br />¦Ñ®v½Ð¼g:<br />²¦·~¾Ç®Õ¨t¯Å»P<br />¥ô±Ð¾Ç®Õ¤Î¬ì¥Ø";
+$string['userdescription'] = "­Ó¤HÂ²¤¶¡G<BR>¾Ç¥Í½Ð¼g:<BR>¾Ç®Õ/¦~¯Å/¯Z§O<P>¦Ñ®v½Ð¼g:<BR>²¦·~¾Ç®Õ¨t¯Å»P<BR>¥ô±Ð¾Ç®Õ¤Î¬ì¥Ø";
 $string['username'] = "±b¸¹¦WºÙ";
 $string['usernameexists'] = "±b¸¹¦WºÙ­«½Æ(¤w³Q¨Ï¥Î), ½Ð¥t¿ï·sªº¦WºÙ";
 $string['userprofilefor'] = " \$a ªº­Ó¤H³]©w";
@@ -520,7 +520,7 @@ $string['studentmodesure']="§A½T©w­n¶i¤J¾Ç¥Í¼Ò¦¡¶Ü? (¶i¤J¾Ç¥Í¼Ò¦¡«á¥²¶·¥ýµn¥X«á¦
 $string['applyteacheraccount']="¥Ó½Ð¤@­Ó±Ð®v±b¸¹";
 $string['entername']="¿é¤J©m¦W";
 $string['donothaveemail']="¨S¦³¹q¤l¶l¥ó:«ö¦¹«Ø¥ß±b¸¹";
-$string['forgotpasswordnoemail']="·íªì¥Ó½Ð±b¸¹®É¨Ã¥¼¿é¤J¹q¤l¶l¥óªÌ,»Ý
+$string['forgotpasswordnoemail']="<HR>·íªì¥Ó½Ð±b¸¹®É¨Ã¥¼¿é¤J¹q¤l¶l¥óªÌ,»Ý
 Ápµ¸§A´¿¶i¤J¥»ºô¯¸½Òµ{ªº±Ð®v¡A½Ð±Ð®v±N§Aªº±K½X­«·s³]©w¡D
 ¥»ºô¯¸½Òµ{¦Ñ®v­«³]±K½X«á¡A·sªº±K½X±N»P½Òµ{±K½X¬Û¦P¡]µn¤J«á¥i¦Û¦æ­×§ï¡^";
 $string['onlinecount']="¥Ø«e¬ì¾Ç¶é½u¤W¤H¼Æ \$a ¤H";

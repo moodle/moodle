@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
     //This file adds support to rss feeds generation
 
     //This function is the main entry point to forum
@@ -48,7 +48,7 @@
                             continue;
                         }
 
-                        mtrace("Updating RSS feed for ".format_string($forum->name,true).", ID: $forum->id");
+                        mtrace("Updating RSS feed for $forum->name, ID: $forum->id");
 
                         //Some debug...
                         if ($CFG->debug > 7) {
@@ -82,9 +82,9 @@
     function forum_rss_newstuff($forum, $time) {
     // If there is new stuff in the forum since $time then this returns
     // true.  Otherwise it returns false.
-        if ($forum->rsstype == 1) {
+        if ($forum->rsstype == 1) {  
             $items = forum_rss_feed_discussions($forum, $time);
-        } else {
+        } else {             
             $items = forum_rss_feed_posts($forum, $time);
         }
         return (!empty($items));
@@ -102,14 +102,14 @@
         if (empty($CFG->enablerssfeeds)) {
             //Some debug...
             if ($CFG->debug > 7) {
-                echo "DISABLED (admin variables)";
-            }
+                echo "DISABLED (admin variables)"; 
+            }           
         //Check CFG->forum_enablerssfeeds
         } else if (empty($CFG->forum_enablerssfeeds)) {
-            //Some debug...
+            //Some debug... 
             if ($CFG->debug > 7) {
                 echo "DISABLED (module configuration)";
-            }
+            }           
         //It's working so we start...
         } else {
             //Check the forum has rss activated
@@ -119,14 +119,14 @@
                     $items = forum_rss_feed_discussions($forum);
                 } else {                //Post RSS
                     $items = forum_rss_feed_posts($forum);
-
+     
                 }
                 //Now, if items, we begin building the structure
                 if (!empty($items)) {
                     //First all rss feeds common headers
-                    $header = rss_standard_header(format_string($forum->name,true),
+                    $header = rss_standard_header($forum->name,
                                                   $CFG->wwwroot."/mod/forum/view.php?f=".$forum->id,
-                                                  format_string($forum->intro,true));
+                                                  $forum->intro);
                     //Now all the rss items
                     if (!empty($header)) {
                         $articles = rss_add_items($items);
@@ -140,7 +140,7 @@
                         $status = $header.$articles.$footer;
                     } else {
                         $status = false;
-                    }
+                    } 
                 } else {
                     $status = false;
                 }
@@ -163,14 +163,14 @@
             $newsince = "";
         }
 
-        if ($recs = get_records_sql ("SELECT d.id AS discussionid, 
-                                             d.name AS discussionname, 
-                                             u.id AS userid, 
-                                             u.firstname AS userfirstname,
-                                             u.lastname AS userlastname,
-                                             p.message AS postmessage,
-                                             p.created AS postcreated,
-                                             p.format AS postformat
+        if ($recs = get_records_sql ("SELECT d.id discussionid, 
+                                             d.name discussionname, 
+                                             u.id userid, 
+                                             u.firstname userfirstname,
+                                             u.lastname userlastname,
+                                             p.message postmessage,
+                                             p.created postcreated,
+                                             p.format postformat
                                       FROM {$CFG->prefix}forum_discussions d,
                                            {$CFG->prefix}forum_posts p,
                                            {$CFG->prefix}user u
@@ -208,7 +208,7 @@
         }
         return $items;
     }
-
+    
     //This function returns "items" record array to be used to build the rss feed
     //for a Type=posts forum
     function forum_rss_feed_posts($forum, $newsince=0) {
@@ -223,15 +223,15 @@
             $newsince = "";
         }
 
-        if ($recs = get_records_sql ("SELECT p.id AS postid,
-                                             d.id AS discussionid,
-                                             u.id AS userid,
-                                             u.firstname AS userfirstname,
-                                             u.lastname AS userlastname,
-                                             p.subject AS postsubject,
-                                             p.message AS postmessage,
-                                             p.created AS postcreated,
-                                             p.format AS postformat
+        if ($recs = get_records_sql ("SELECT p.id postid,
+                                             d.id discussionid,
+                                             u.id userid,
+                                             u.firstname userfirstname,
+                                             u.lastname userlastname,
+                                             p.subject postsubject,
+                                             p.message postmessage,
+                                             p.created postcreated,
+                                             p.format postformat
                                       FROM {$CFG->prefix}forum_discussions d,
                                            {$CFG->prefix}forum_posts p,
                                            {$CFG->prefix}user u

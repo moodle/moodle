@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.4.3 (2004083130)
+      // attendance.php - created with Moodle 1.3 (2004052500)
 
 
 $string['absentlong'] = 'Abwesenheit';
 $string['absentshort'] = 'F';
-$string['addingmultiple'] = 'Verschiedene Anwesenheitsgründe hinzufügen';
+$string['addingmultiple'] = 'verschiedene Anwesenheitsgründe hinzufügen';
 $string['addmultiple'] = 'V';
 $string['allmodulename'] = 'Alle Anwesenheitsgründe';
 $string['auto'] = 'selbst';

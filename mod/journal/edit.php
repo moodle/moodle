@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
     require_once("../../config.php");
 
@@ -12,7 +12,7 @@
         error("Course is misconfigured");
     }
 
-    require_login($course->id, false, $cm);
+    require_login($course->id);
 
     if (isguest()) {
         error("Guests are not allowed to edit journals", $_SERVER["HTTP_REFERER"]);
@@ -52,8 +52,8 @@
                 error("Could not insert a new journal entry");
             }
             add_to_log($course->id, "journal", "add entry", "view.php?id=$cm->id", "$newentry->id", $cm->id);
-        }
-
+        } 
+        
         redirect("view.php?id=$cm->id");
         die;
     }
@@ -69,15 +69,15 @@
     } else {
         $defaultformat = FORMAT_MOODLE;
     }
-
+    
     if (empty($entry)) {
         $entry->text = "";
         $entry->format = $defaultformat;
     }
 
-    print_header_simple(format_string($journal->name), "",
-                 "<a href=\"index.php?id=$course->id\">$strjournals</a> ->
-                  <a href=\"view.php?id=$cm->id\">".format_string($journal->name,true)."</a> -> $stredit", "",
+    print_header_simple("$journal->name", "",
+                 "<A HREF=\"index.php?id=$course->id\">$strjournals</A> -> 
+                  <A HREF=\"view.php?id=$cm->id\">$journal->name</A> -> $stredit", "",
                   "", true, "", navmenu($course, $cm));
 
     echo "<center>\n";

@@ -7,7 +7,7 @@
 
     require_variable($id);           // Course Module ID
 
-    optional_variable($step,0);
+    optional_variable($step,0);   
     optional_variable($dest,"current");   // current | new
     optional_variable($file);             // file to import
     optional_variable($catsincl,0);       // Import Categories too?
@@ -17,20 +17,20 @@
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
-    }
-
+    } 
+    
     if (! $course = get_record("course", "id", $cm->course)) {
         error("Course is misconfigured");
-    }
-
+    } 
+    
     if (! $glossary = get_record("glossary", "id", $cm->instance)) {
         error("Course module is incorrect");
-    }
-
-    require_login($course->id, false);
+    } 
+    
+    require_login($course->id);    
     if (!isteacher($course->id)) {
         error("You must be a teacher to use this page.");
-    }
+    } 
 
     if ($dest != 'new' and $dest != 'current') {
         $dest = 'current';
@@ -43,19 +43,21 @@
     $strsearchconcept = get_string("searchconcept", "glossary");
     $strsearchindefinition = get_string("searchindefinition", "glossary");
     $strsearch = get_string("search");
-
-    print_header_simple(format_string($glossary->name), "",
-        "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> ".format_string($glossary->name),
+    
+    print_header_simple(strip_tags("$glossary->name"), "",
+        "<A HREF=index.php?id=$course->id>$strglossaries</A> -> $glossary->name",
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
-
-    print_heading(format_string($glossary->name));
+    
+    echo '<p align="center"><font size="3"><b>' . stripslashes_safe($glossary->name);
+    echo '</b></font></p>';
 
 /// Info box
 
     if ( $glossary->intro ) {
-        print_simple_box(format_text($glossary->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
-        echo '<br />';
+        print_simple_box_start('center','70%');
+        echo format_text($glossary->intro);
+        print_simple_box_end();
     }
 
 /// Tabbed browsing sections
@@ -63,27 +65,15 @@
     include("tabs.html");
 
     if ( !$step ) {
-        include("import.html");
+        include("import.html");        
 
-        echo '</center>';
         glossary_print_tabbed_table_end();
         print_footer($course);
         exit;
-    }
+    } 
 
     $form = data_submitted();
     $file = $_FILES["file"];
-
-    require_once($CFG->dirroot.'/lib/uploadlib.php');
-    $um = new upload_manager('file',false,false,$course,false,0);
-
-    if (!$um->preprocess_files()) {
-        echo '</center>';
-        glossary_print_tabbed_table_end();
-        print_continue('import.php?id='.$id);
-        print_footer();
-        die();
-    }
 
     if ($xml = glossary_read_imported_file($file['tmp_name']) ) {
 
@@ -94,7 +84,7 @@
         if ($dest == 'new') {
             // If the user chose to create a new glossary
             $xmlglossary = $xml['GLOSSARY']['#']['INFO'][0]['#'];
-
+    
             if ( $xmlglossary['NAME'][0]['#'] ) {
                 unset($glossary);
                 $glossary->name = addslashes(utf8_decode($xmlglossary['NAME'][0]['#']));
@@ -147,7 +137,6 @@
                 // Include new glossary and return the new ID
                 if ( !$glossary->id = glossary_add_instance($glossary) ) {
                     notify("Error while trying to create the new glossary.");
-                    echo '</center>';
                     glossary_print_tabbed_table_end();
                     print_footer($course);
                     exit;
@@ -198,7 +187,6 @@
                 }
             } else {
                 notify("Error while trying to create the new glossary.");
-                echo '</center>';
                 glossary_print_tabbed_table_end();
                 print_footer($course);
                 exit;
@@ -221,15 +209,11 @@
             $permissiongranted = 1;
             if ( $newentry->concept and $newentry->definition ) {
                 if ( !$glossary->allowduplicatedentries ) {
-                    // checking if the entry is valid (checking if it is duplicated when should not be)
+                    // checking if the entry is valid (checking if it is duplicated when should not be) 
                     if ( $newentry->casesensitive ) {
                         $dupentry = get_record("glossary_entries","concept",$newentry->concept,"glossaryid",$glossary->id);
                     } else {
-                        if ($CFG->dbtype == 'postgres7') {
-                            $dupentry = get_record("glossary_entries","upper(concept)",strtoupper($newentry->concept),"glossaryid",$glossary->id);
-                        }else {
-                            $dupentry = get_record("glossary_entries","ucase(concept)",strtoupper($newentry->concept),"glossaryid",$glossary->id);
-                        }
+                        $dupentry = get_record("glossary_entries","ucase(concept)",strtoupper($newentry->concept),"glossaryid",$glossary->id);
                     }
                     if ($dupentry) {
                         $permissiongranted = 0;
@@ -247,7 +231,7 @@
                 $newentry->format           = $xmlentry['#']['FORMAT'][0]['#'];
                 $newentry->timecreated      = time();
                 $newentry->timemodified     = time();
-
+                
                 // Setting the default values if no values were passed
                 if ( isset($xmlentry['#']['USEDYNALINK'][0]['#']) ) {
                     $newentry->usedynalink      = $xmlentry['#']['USEDYNALINK'][0]['#'];
@@ -283,7 +267,7 @@
                         for($k = 0; $k < sizeof($xmlcats); $k++) {
                             $xmlcat = $xmlcats[$k];
                             unset($newcat);
-
+        
                             $newcat->name = addslashes(utf8_decode($xmlcat['#']['NAME'][0]['#']));
                             $newcat->usedynalink = $xmlcat['#']['USEDYNALINK'][0]['#'];
                             if ( !$category = get_record("glossary_categories","glossaryid",$glossary->id,"name",$newcat->name) ) {
@@ -332,20 +316,20 @@
             }
         }
         // processed entries
-        echo '<table border="0" width="100%">';
+        echo '<table border=0 width=100%>';
         echo '<tr>';
-        echo '<td width="50%" align="right">';
+        echo '<td width=50% align=right>';
         echo get_string("totalentries","glossary");
         echo ':</td>';
-        echo '<td width="50%">';
+        echo '<td width=50%>';
         echo $importedentries + $entriesrejected;
         echo '</td>';
         echo '</tr>';
         echo '<tr>';
-        echo '<td width="50%" align="right">';
+        echo '<td width=50% align=right>';
         echo get_string("importedentries","glossary");
         echo ':</td>';
-        echo '<td width="50%">';
+        echo '<td width=50%>';
         echo $importedentries;
         if ( $entriesrejected ) {
             echo ' <small>(' . get_string("rejectedentries","glossary") . ": $entriesrejected)</small>";
@@ -354,22 +338,22 @@
         echo '</tr>';
         if ( $catsincl ) {
             echo '<tr>';
-            echo '<td width="50%" align="right">';
+            echo '<td width=50% align=right>';
             echo get_string("importedcategories","glossary");
             echo ':</td>';
-            echo '<td width="50%">';
+            echo '<td width=50%>';
             echo $importedcats;
             echo '</td>';
             echo '</tr>';
         }
-        echo '</table><hr width="75%">';
+        echo '</table><hr width=75%>';
 
-        // rejected entries
+        // rejected entries 
         if ($rejections) {
-            echo '<center><table border="0" width="70%">';
-            echo '<tr><td align="center" colspan="2" width="100%"><strong>' . get_string("rejectionrpt","glossary") . '</strong></tr>';
+            echo '<center><table border=0 width=70%>';
+            echo '<tr><td align=center colspan=2 width=100%><strong>' . get_string("rejectionrpt","glossary") . '</strong></tr>';
             echo $rejections;
-            echo '</table></center><p><hr width="75%">';
+            echo '</table></center><p><hr width=75%>';
         }
     } else {
         notify("Error while trying to read the file.");
@@ -378,7 +362,6 @@
     glossary_print_tabbed_table_end();
 
 /// Finish the page
-
     print_footer($course);
 
 ?>

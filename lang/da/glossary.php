@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 (2004083100)
+      // glossary.php - created with Moodle 1.3.3 (2004052503)
 
 
 $string['addcomment'] = 'Tilføj kommentar';
@@ -61,17 +61,16 @@ $string['deletingnoneemptycategory'] = 'Ved sletning af denne kategori vil de op
 $string['descending'] = '(faldene)';
 $string['destination'] = 'Destination';
 $string['displayformat'] = 'Vis format';
+$string['displayformat2'] = 'Vis med forfatter';
+$string['displayformat3'] = 'leksikon';
+$string['displayformat4'] = 'SOS';
+$string['displayformat5'] = 'Komplet med forfatter';
+$string['displayformat6'] = 'Indlægs liste';
 $string['displayformatcontinuous'] = 'Kontinuerlig med forfatter';
-$string['displayformatdictionary'] = 'Simple, ordbogsstil';
-$string['displayformatencyclopedia'] = 'Opslagsværk';
-$string['displayformatentrylist'] = 'Indgangsliste';
-$string['displayformatfaq'] = 'FAQ';
-$string['displayformatfullwithauthor'] = 'Fuldt med forfatter';
-$string['displayformatfullwithoutauthor'] = 'Fuldt men uden forfatter';
+$string['displayformatdefault'] = 'Simpel ordbogs-stil';
 $string['displayformats'] = 'visnings formater';
 $string['displayformatssetup'] = 'Vis formaterings opsætning';
 $string['duplicateentry'] = 'Dubletter';
-$string['editalways'] = 'Ret altid';
 $string['editcategories'] = 'Ret kategorier';
 $string['editentry'] = 'Ret opslagsord';
 $string['editingcomment'] = 'Ret kommentar';

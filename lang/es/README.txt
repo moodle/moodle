@@ -1,26 +1,36 @@
 Español Internacional
 
-Versión:  1.4.1
+Versión:  1.3
 
-Coordinadores de traducción:
-
-Interface: 
-	Benito Arias (barias@benitoarias.com)
-
-Archivos HELP y DOCS:
-	Antonio Navarro (anavarro@sextaisla.com)
-	Antonio Vicent (avicent@telefonica.net)
-	Eloy Lafuente (stronk7@moodle.org)
-
-Coordinador de traducciones previas: 
-	Claudio Tavares (claudio@enlaceacademico.com)
+Coordinador de traducción: 
+Claudio Tavares (claudio@enlaceacademico.com)
 
 Colaboradores: 
-	Sergio Alfaro (salfaro@humanos.cl)
-	Pedro Benito (pedrusko@telefonica.net)	Ricardo Dalton (moodle@avmed.com.ar)
-	David Delgado (davidds@aprend-d.com)
-	Emmanuelle Gutiérrez y Restrepo (emmanuelle@mi.madritel.es)
-	Mauricio Latorre (moodle@chubasco.org)
-	Facundo Ortiz (facundooz@fibertel.com.ar)
-	Raúl Vernengo 
-	Sergio Zúñiga Sánchez (szuniga@vtr.net)
+
+Antonio Navarro (anavarro@sextaisla.com)
+Emmanuelle Gutiérrez y Restrepo (emmanuelle@mi.madritel.es)
+Sergio Alfaro (salfaro@humanos.cl)
+Benito Arias (barias@benitoarias.com)
+David Delgado (davidds@aprend-d.com)
+Raúl Vernengo 
+Sergio Zúñiga Sánchez (szuniga@vtr.net)
+Ricardo Dalton (moodle@avmed.com.ar)
+Facundo Ortiz (facundooz@fibertel.com.ar)
+Mauricio Latorre (moodle@chubasco.org)
+Pedro Benito (pedrusko@telefonica.net)
+ 
+
+
+Si desea contribuir puede hacerlo de diferentes maneras:
+
+traduciendo
+localizando y reportando errores
+sugiriendo cambios para mejorar la comprensión de los conceptos y el carácter universal de esta versión
+
+Todas las colaboraciones son apreciadas y reconocidas.
+
+Para comenzar, dirígase a: 
+
+http://moodle.org/course/view.php?id=11
+
+Buena suerte.

@@ -1,13 +1,11 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
 <title>Documentation Moodle : Foire Aux Questions (FAQ)</title>
-<link rel="stylesheet" href="docstyles.css" type="text/css" />
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="stylesheet" href="docstyles.css" type="text/css">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
 
-<body>
+<body bgcolor="#ffffff">
 
 <h1>Foire Aux Questions (FAQ)</h1>
 
@@ -59,13 +57,13 @@
 
 <p class="answer">Votre serveur web doit &ecirc;tre configur&eacute; de mani&egrave;re que la partie de l'URL apr&egrave;s le nom du script soit pass&eacute;e directement au script. Ce r&eacute;glage est en g&eacute;n&eacute;ral activ&eacute; par d&eacute;faut sur Apache 1, mais d&eacute;sactiv&eacute; sur Apache 2. Pour l'activer, ajoutez cette ligne &agrave; votre fichier httpd.conf, ou &agrave; un fichier .htaccess dans votre dossier moodle (voir pour plus de d&eacute;tails le <a href="./?file=install.html#webserver">Guide d'installation</a>)&nbsp;:</p>
 
-<p class="answercode"><strong>AcceptPathInfo</strong> on</p>
+<p class="answercode"><b>AcceptPathInfo</b> on</p>
 
 <p class="answer">Il est &agrave; noter que cela ne fonctionnera QUE pour Apache version 2.x.</p>
 
 <p class="answer">Si vous avez ce probl&egrave;me et n'utilisez pas Apache 2 (c'est tr&egrave;s improbable), vous pouvez indiquer &agrave; Moodle d'utiliser une autre m&eacute;thode. Les inconv&eacute;nients sont une leg&egrave;re perte de performance pour vos utilisateurs et qu'il sera impossible d'utiliser des liens relatifs dans vos ressources HTML.</p>
 
-<p class="answer">Pour utiliser cette alternative, connectez-vous comme administrateur, allez sur la page &laquo;&nbsp;Param&egrave;tres techniques&nbsp;&raquo; et modifiez le r&eacute;glage pour &laquo;&nbsp;<strong>slasharguments</strong>&nbsp;&raquo;. Le probl&egrave;me devrait alors &ecirc;tre r&eacute;gl&eacute;.</p>
+<p class="answer">Pour utiliser cette alternative, connectez-vous comme administrateur, allez sur la page &laquo;&nbsp;Param&egrave;tres techniques&nbsp;&raquo; et modifiez le r&eacute;glage pour &laquo;&nbsp;<b>slasharguments</b>&nbsp;&raquo;. Le probl&egrave;me devrait alors &ecirc;tre r&eacute;gl&eacute;.</p>
 
 <p class="answer">&nbsp;</p>
 
@@ -93,7 +91,7 @@
 
 <p class="answer">Si vous voyez des messages comme ceux-ci&nbsp;:</p>
 
-<p class="answercode">Parse error: parse error, unexpected T_VARIABLE in c:\program files\easyphp\www\moodle\config.php on line 94 <br /> Fatal error: Call to undefined function: get_string() in c:\program files\easyphp\www\moodle\mod\resource\lib.php on line 11</p>
+<p class="answercode">Parse error: parse error, unexpected T_VARIABLE in c:\program files\easyphp\www\moodle\config.php on line 94 <br> Fatal error: Call to undefined function: get_string() in c:\program files\easyphp\www\moodle\mod\resource\lib.php on line 11</p>
 
 <p class="answer">il est probable que vous avez oubli&eacute; un point-virgule ou un guillemet &agrave; la fin d'une ligne de votre fichier config.php (avant la ligne 94 dans cet exemple).</p>
 
@@ -127,7 +125,7 @@
 
 <p class="answer">Les probl&egrave;mes caus&eacute;s par des apostrophes sont dus &agrave; un r&eacute;glage incorrect des &laquo;&nbsp;magic quotes&nbsp;&raquo;. Moodle n&eacute;cessite les r&eacute;glages suivants (qui sont habituellement corrects par d&eacute;faut)&nbsp;:</p>
 
-<p class="answercode">magic_quotes_gpc = On<br /> magic_quotes_runtime = Off</p>
+<p class="answercode">magic_quotes_gpc = On<br> magic_quotes_runtime = Off</p>
 
 <p class="answer">Pour plus de d&eacute;tails, r&eacute;f&eacute;rez-vous &agrave; la section du guide d'installation sur la <a href="./?file=install.html#webserver">configuration du serveur web</a>.</p>
 
@@ -189,7 +187,7 @@
 
 <h3><a name="resource1"></a>Quand j'essaie d'ajouter une ressource, je re&ccedil;ois des messages d'erreur.</h3>
 
-<p class="answer">En admettant que vous utilisez Apache, il est probable que votre r&eacute;glage de $CFG-&gt;wwwroot dans le fichier config.php est diff&eacute;rent de l'URL que vous utilisez pour acc&eacute;der au site. Essayez aussi de d&eacute;sactiver le r&eacute;glage &laquo;&nbsp;<strong>secureforms</strong>&nbsp;&raquo; dans la configuration des param&egrave;tres du site.</p>
+<p class="answer">En admettant que vous utilisez Apache, il est probable que votre r&eacute;glage de $CFG-&gt;wwwroot dans le fichier config.php est diff&eacute;rent de l'URL que vous utilisez pour acc&eacute;der au site. Essayez aussi de d&eacute;sactiver le r&eacute;glage &laquo;&nbsp;<b>secureforms</b>&nbsp;&raquo; dans la configuration des param&egrave;tres du site.</p>
 
 <p class="answer">&nbsp;</p>
 
@@ -211,7 +209,7 @@
 
 <p class="answer">La cause principale de ce probl&egrave;me est que votre ordinateur (et non le serveur sur lequel est install&eacute; Moodle) a une programme pare-feu (firewall) actif, qui filtre des informations (referrer) de votre navigateur. Voici quelques instructions (en anglais) pour corriger cela avec <a href="http://service1.symantec.com/SUPPORT/nip.nsf/46f26a2d6dafb0a788256bc7005c3fa3/b9b47ad7eddd343b88256c6b006a85a8?OpenDocument&amp;src=bar_sch_nam">Norton firewall</a>.</p>
 
-<p class="answer">L'administrateur du serveur Moodle peut aussi corriger cela en r&eacute;glant sur la page de configuration des param&egrave;tres le r&eacute;glage &laquo;&nbsp;<strong>secureforms</strong>&nbsp;&raquo; sur &laquo;&nbsp;Non&nbsp;&raquo;.</p>
+<p class="answer">L'administrateur du serveur Moodle peut aussi corriger cela en r&eacute;glant sur la page de configuration des param&egrave;tres le r&eacute;glage &laquo;&nbsp;<b>secureforms</b>&nbsp;&raquo; sur &laquo;&nbsp;Non&nbsp;&raquo;.</p>
 
 <p class="answer">Une autre cause possible de ce probl&egrave;me est une mauvaise configuration des sessions sur le serveur. Vous pouvez tester cela en appelant le script http://yourserver/moodle/lib/session-test.php dans votre navigateur.</p>
 
@@ -257,13 +255,9 @@
 
 <p class="answer">&nbsp;</p>
 
-<p class="answer">&nbsp;</p>
+<p class="answer">&nbsp;</p> <hr>
 
-<hr />
-
-<p align="center" class="normaltext"><a href="ma&#105;&#108;t&#111;:ma%72%74in@%6d%6fo%64%6c%65.o%72g" title="mar&amp;#116&amp;#105n@&amp;#109oo&amp;#100&amp;#108&amp;#101&amp;#46&amp;#111&amp;#114g">Proposer une nouvelle question</a> (merci d'inclure la r&eacute;ponse&nbsp;!)</p>
-
-<hr />
+<p align="center" class="normaltext"><a href="ma&#105;&#108;t&#111;:ma%72%74in@%6d%6fo%64%6c%65.o%72g" title="mar&amp;#116&amp;#105n@&amp;#109oo&amp;#100&amp;#108&amp;#101&amp;#46&amp;#111&amp;#114g">Proposer une nouvelle question</a> (merci d'inclure la r&eacute;ponse&nbsp;!)</p> <hr>
 
 <p align="right"><strong><em>Merci &agrave; John Eyre pour l'aide dans la maintenance de cette FAQ.</em></strong></p>
 

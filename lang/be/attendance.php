@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.4.3 + (2004083131)
+      // attendance.php - created with Moodle 1.3.1 + (2004052501)
 
 
 $string['absentlong'] = 'Адсутнасць';
@@ -19,8 +19,8 @@ $string['defaultgrade'] = 'Ці рабіць адзначэнне па ведамасці наведванняў па-змаў
 $string['defaulthoursinclass'] = 'Колькі гадзінаў павінна быць па-змаўчанні ў ведамасці наведванняў';
 $string['defaultmaxgrade'] = 'Якое па-змаўчанні павінна быць максімальнае значэнне ацэнкі для поўнага наведвання';
 $string['defaultstudentstatus'] = 'Статус наведвання студэнта па-змаўчанні для новай ведамасці наведванняў';
-$string['downloadexcelfull'] = 'Загрузка поўнай статыстыкі ў табліцы ў фармаце  Excel';
-$string['downloadexceltotals'] = 'Загрузка выніковай статыстыкі ў табліцы ў фармаце  Excel';
+$string['downloadexcelfull'] = 'Загрузка поўных электронных табліцаў у фармаце  Excel';
+$string['downloadexceltotals'] = 'Загрузка выніковых электронных табліцаў у фармаце  Excel';
 $string['downloadtextfull'] = 'Загрузка поўнай тэкставай справаздачы ';
 $string['downloadtexttotals'] = 'Загрузка выніковай тэкставай справаздачы';
 $string['dynamicsection'] = 'Вызначыце тыдзень для наведванняў, заснаваных на гэтай даце';
@@ -44,7 +44,7 @@ $string['monday'] = 'Пан';
 $string['norolls'] = 'Няма ведамасці наведванняў на гэтым курсе';
 $string['notes'] = 'Выключная інфармацыя';
 $string['notesfor'] = ' Выключная інфармацыя для';
-$string['noviews'] = 'Прабачце, але гэтыя дадзеныя не з\'яўляецца дадзенымі для Вашага ўліковага запісу';
+$string['noviews'] = 'Прабачце, але гэта не з\'яўляецца дадзенымі для Вашага акаўнту тут';
 $string['of'] = 'для';
 $string['pages'] = 'старонкі';
 $string['presentlong'] = 'Прысутнасць ';
@@ -58,7 +58,7 @@ $string['tardiesperabsence'] = 'Колькі спазненняў будзем лічыць як адну адсутнас
 $string['tardylong'] = 'Спазненне ';
 $string['tardyshort'] = 'С';
 $string['teacheredit'] = 'Атрымаць наведвальнасць';
-$string['thursday'] = 'Чцв';
+$string['thursday'] = 'Чтв';
 $string['tuesday'] = 'Аўт';
 $string['viewall'] = 'Прагляд усіх ведамасцяў наведванняў';
 $string['viewmulti'] = 'Прагляд шматстаронкавых справаздачаў';

@@ -1,86 +1,72 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <head>
 
 <title>Documentation Moodle : Futur de Moodle</title>
 
-<link rel="stylesheet" href="docstyles.css" type="text/css" />
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
 
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"> </head>
 
-</head>
+<body bgcolor="#ffffff">
 
-<body>
+<h1>Futur de Moodle</h1> <blockquote>
 
-<h1>Futur de Moodle</h1>
+<p>&Agrave; mesure que Moodle gagne en maturit&eacute;, son avenir est de plus en plus influenc&eacute; par la communaut&eacute; des d&eacute;veloppeurs et des utilisateurs. Une base de donn&eacute;es dynamique des nouvelles fonctionnalit&eacute;s propos&eacute;es et de leur statut peut &ecirc;tre consult&eacute;e sur <a target="_top" href="http://moodle.org/bugs/">moodle.org/bugs</a>. Vos <a href="?file=credits.html">contributions</a>, sous la forme d'id&eacute;es, de code, de commentaires ou de promotion sont toutes les bienvenues. Pour plus de d&eacute;tails, consultez le <a href="?file=developer.html">Manuel du d&eacute;veloppeur</a>. Vous pouvez aussi payer le d&eacute;veloppement d'une focntionnalit&eacute; dont vous avez besoin et dont vous aimeriez disposer rapidement. Voyez <a href="http://moodle.com/development/" target="_top">moodle.com/development</a> pour plus d'informations.</p>
 
-<blockquote>
+<p>Voici notre vision actuelle du futur de Moodle, m&ecirc;me si des changements peuvent survenir, puisque le d&eacute;veloppement d&eacute;pend des sponsors et des d&eacute;veloppeurs.</p>
 
-<p>&Agrave; mesure que Moodle gagne en maturit&eacute;, son avenir est de plus en plus influenc&eacute; par la communaut&eacute; des d&eacute;veloppeurs et des utilisateurs. Une base de donn&eacute;es dynamique des nouvelles fonctionnalit&eacute;s propos&eacute;es et de leur statut peut &ecirc;tre consult&eacute;e sur <a target="_top" href="http://moodle.org/bugs/">moodle.org/bugs</a>. Vos <a href="?file=credits.html">contributions</a>, sous la forme d'id&eacute;es, de code, de commentaires ou de promotion sont toutes les bienvenues. Pour plus de d&eacute;tails, consultez le <a href="?file=developer.html">Manuel du d&eacute;veloppeur</a> ainsi que les <a href="http://moodle.org/help" target="_top">forums</a>. Vous pouvez aussi payer le d&eacute;veloppement d'une focntionnalit&eacute; dont vous avez besoin et dont vous aimeriez disposer rapidement. Voyez <a href="http://moodle.com/development/" target="_top">moodle.com/development</a> pour plus d'informations.</p>
-
-<p>Voici la planification actuelle du futur de Moodle. Cette planification est cependant sujette &agrave; modifications, puisque le d&eacute;veloppement d&eacute;pend des <a href="http://moodle.org/donations/" target="_blank">sponsors</a> et des <a href="/?file=credits.html">d&eacute;veloppeurs</a>.</p>
-
-<h3>Version 1.5 - f&eacute;vrier 2005</h3>
+<h3>Version 1.4 - 31 ao&ucirc;t 2004</h3>
 
 <blockquote>
 
-<p>L'objectif de la version 1.5 est de rendre Moodle conforme &agrave; plusieurs importantes normes en mati&egrave;re d'accessibilit&eacute; des sites web, notamment WAI (W3C), SENDA (Royaume-Uni) et Section 508 (USA).</p>
-
-<p>Le code d\'affichage sera conforme &agrave; la norme XHTML Transitional 1.0, et les CSS auront &eacute;galement &eacute;t&eacute; nettoy&eacute;es et &eacute;tendues, afin de permettre aux graphistes web un meilleur contr&ocirc;le sur l\'aspect de leurs sites. Cette version n\'utilisera pas encore de mod&egrave;les.</p>
-
-<p>Il y aura aussi de nombreuses nouvelles fonctionnalit&eacute;s, par exemple&nbsp;:</p>
+<p>Cette version contient de nombreuses am&eacute;liorations structurelles et de modifications dans des modules clef de Moodle. Quelques extraits pour vous all&eacute;cher&nbsp;:</p>
 
 <ul>
 
-<li>Une messagerie instantan&eacute;e int&eacute;gr&eacute;e pour la communication directe.</li>
+<li>Nouvelle architecture des <strong>inscriptions</strong> permettant toutes sortes de processus d'inscriptions automatiques. Un syst&egrave;me Paypal est inclus (pour les cours payant) avec acc&egrave;s instantan&eacute;, de m&ecirc;me que l'utilisation  d'une bases de donn&eacute;es externes quelconques, traitement de fichiers export&eacute;s de syst&egrave;mes plus anciens, etc.</li>
 
-<li>De grandes am&eacute;liorations du module Test, comprenant&nbsp;: des tests pagin&eacute;s avec un certain nombre de questions par page, une meilleure interface pour la production de tests et des cat&eacute;gories de questions en hi&eacute;rarchie.</li>
+<li>Am&eacute;lioration du traitement des <strong>ressources</strong> avec un nouveau processus en une &eacute;tape et un meilleur contr&ocirc;le du format d'affichage. De nouveaux types de ressources peuvent &ecirc;tre d&eacute;velopp&eacute;s comme des extensions (plug-ins).</li>
 
-<li>Un nouveau format de bloc, permettant d'avoir plusieurs copies de chaque bloc et une meilleure configuration (les anciens blocs provenant de tierces personnes doivent &ecirc;tre mis &agrave; jour. Voir la documentation dans le dossier &laquo;&nbsp;blocks&nbsp;&raquo;).</li>
+<li>R&eacute;organisation du module <strong>quiz</strong>, permettant de nouveaux types de question comme des extensions (plug-ins). Un nouveau type de question d&eacute;nomm&eacute; &laquo;&nbsp;Question calcul&eacute;e&nbsp;&raquo; permet de pr&eacute;senter &agrave; chaque &eacute;tudiant des questions uniques.</li>
 
-<li>Int&eacute;gration &agrave; LDAP &eacute;tendue, de sorte que LDAP peut maintenant contr&ocirc;ler la cr&eacute;ation des cours, les participations aux groupes, la synchronisation des utilisateurs, etc.</li>
+<li>Le module <strong>chat</strong> permet maintenant l'utilisation facultative d'un d&eacute;mon, fournissant une r&eacute;ponse quasi instantan&eacute;e &agrave; des centaines d'utilisateurs.</li>
 
-<li>Certains champs de l'utilisateur peuvent &ecirc;tre verrouill&eacute;s par l'administrateur.</li>
+<li>Module <strong>glossaire</strong> am&eacute;lior&eacute; pour permettre le d&eacute;veloppement de nouveaux formats de glossaires.</li>
 
-<li>Am&eacute;lioration du d&eacute;p&ocirc;t des fichiers, avec support de la v&eacute;rification automatique anti-virus des nouveaux documents &agrave; l'aide de ClamAV.</li>
+<li>Am&eacute;lioration des sauvegardes permettant le d&eacute;placement de contenus (par exemple des liens) meilleure que jamais.</li>
 
-<li>Simplification de l'interface des modules Atelier et Le&ccedil;on.</li>
+<li>Module SCORM am&eacute;lior&eacute; pour supporter encore plus de contenus SCORM.</li>
 
-<li>Nouveau filtre Tidy permettant de convertir tous les textes saisis par les utilisateurs en format XHTML&nbsp;</li>
-
-<li>Module d'authentification PAM.</li>
-
-<li>Les sessions peuvent maintenant &ecirc;tre enregistr&eacute;es dans la base de donn&eacute;es (utile pour les clusters Moodle).</li>
-
-<li>Demande d'accord des directives du site pour les utilisateurs.</li>
-
-<li>Bien d'autres am&eacute;liorations et corrections de bogues.</li>
+<li>Interfaces am&eacute;lior&eacute;es pour l'ajout d'&eacute;tudiants, de responsables de cours et d'administrateurs.</li>
 
 </ul>
 
 </blockquote>
 
-<h3>Version 1.6 - milieu 2005</h3>
+<h3>Version 1.5 - plus tard en 2004</h3>
 
 <blockquote>
 
-<p>Dans cette version, une grande partie des pages principales sera personnalisable &agrave; l'aide de mod&egrave;les HTML.</p>
+<p>Cette version se concentrera principalement sur la couche d'affichage, notamment en rendant Moodle totalement conforme avec les standards d'accessibilit&eacute; WAI (W3C), SENDA (Royaume-Uni) et Section 508 (&Eacute;tats-Unis).</p>
 
-<p>Support des blogs pour les utilisateurs (en remplacement des Journaux).</p>
+<ul>
 
-<p>Page &laquo;&nbsp;Mon Moodle&nbsp;&raquo;.</p>
+<li>R&eacute;-&eacute;criture compl&egrave;te de la couche d'affichage s&eacute;parant la pr&eacute;sentation et la logique de l'application.</li>
 
-<p>Am&eacute;liorations dans la mise en place de la structure et le contr&ocirc;le du d&eacute;roulement des cours.</p>
+<li>Syst&egrave;me de mod&egrave;les conformes au standard XHTML 1.0 pour une meilleure accessibilit&eacute;.</li>
+
+<li>Puissant syst&egrave;me de feuilles de styles cascad&eacute;es (CSS) pour une meilleure compatibilit&eacute; entre plateformes.</li>
+
+</ul>
+
+<p>Comme la plupart des versions de Moodle, il y aura aussi bon nombre de nouvelles fonctionnalit&eacute;s et de modules d&eacute;velopp&eacute;s par la communaut&eacute; des d&eacute;veloppeurs.</p>
 
 </blockquote>
 
-<h3>Version 2.0 - plus tard en 2005</h3>
+<h3>Version 2.0</h3>
 
 <blockquote>
 
 <p>Cette version majeure comprendra des d&eacute;veloppements all&eacute;chant pour rendre Moodle meilleur en r&eacute;seau, avec une &eacute;volution naturelle vers la collaboration. Plus d'informations seront disponibles ult&eacute;rieurement.</p>
-
-</blockquote>
 
 </blockquote>
 

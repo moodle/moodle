@@ -1,8 +1,8 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // chat.php - created with Moodle 1.2 development (2004012700)
 
 
-$string['beep'] = '호출';
+$string['beep'] = '삐';
 $string['chatintro'] = '머리말';
 $string['chatname'] = '대화방 이름';
 $string['chatreport'] = '대화 보고서';
@@ -38,9 +38,6 @@ $string['seesession'] = '대화 보기';
 $string['sessions'] = '대화';
 $string['strftimemessage'] = '%%H:%%M';
 $string['studentseereports'] = '모든 사람이 지난 대화를 볼 수 있습니다.';
-$string['thischarset'] = 'euc-kr';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['viewreport'] = '지난 대화 내용 보기';
 
 ?>

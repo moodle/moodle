@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This php script contains all the stuff to backup/restore
     //assignment mods
 
@@ -41,11 +41,9 @@
                 fwrite ($bf,full_tag("DESCRIPTION",4,false,$assignment->description));
                 fwrite ($bf,full_tag("FORMAT",4,false,$assignment->format));
                 fwrite ($bf,full_tag("RESUBMIT",4,false,$assignment->resubmit));
-                fwrite ($bf,full_tag("EMAILTEACHERS",4,false,$assignment->emailteachers));
-                fwrite ($bf,full_tag("ASSIGNMENTTYPE",4,false,$assignment->assignmenttype));
+                fwrite ($bf,full_tag("TYPE",4,false,$assignment->type));
                 fwrite ($bf,full_tag("MAXBYTES",4,false,$assignment->maxbytes));
                 fwrite ($bf,full_tag("TIMEDUE",4,false,$assignment->timedue));
-                fwrite ($bf,full_tag("TIMEAVAILABLE",4,false,$assignment->timeavailable));
                 fwrite ($bf,full_tag("GRADE",4,false,$assignment->grade));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$assignment->timemodified));
                 //if we've selected to backup users info, then execute backup_assignment_submisions
@@ -87,8 +85,6 @@
                 fwrite ($bf,full_tag("TIMECREATED",6,false,$ass_sub->timecreated));       
                 fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$ass_sub->timemodified));       
                 fwrite ($bf,full_tag("NUMFILES",6,false,$ass_sub->numfiles));       
-                fwrite ($bf,full_tag("DATA1",6,false,$ass_sub->data1));       
-                fwrite ($bf,full_tag("DATA2",6,false,$ass_sub->data2));       
                 fwrite ($bf,full_tag("GRADE",6,false,$ass_sub->grade));       
                 fwrite ($bf,full_tag("COMMENT",6,false,$ass_sub->comment));       
                 fwrite ($bf,full_tag("TEACHER",6,false,$ass_sub->teacher));       

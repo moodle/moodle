@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 (2004083100)
+      // glossary.php - created with Moodle 1.3 - (2004052400)
 
 
 $string['addcomment'] = 'Dodaj komentarz';
@@ -61,17 +61,16 @@ $string['deletingnoneemptycategory'] = 'Usuniêcie tej kategorii nie spowoduje us
 $string['descending'] = 'Malej±ce';
 $string['destination'] = 'Importuj do';
 $string['displayformat'] = 'Format s³ownika';
+$string['displayformat2'] = 'Pe³en z autorem';
+$string['displayformat3'] = 'Encyklopedia';
+$string['displayformat4'] = 'Czêsto zadawane pytania (FAQ)';
+$string['displayformat5'] = 'Pe³en bez autora';
+$string['displayformat6'] = 'Lista wpisów';
 $string['displayformatcontinuous'] = 'Ci±g³y bez autora';
-$string['displayformatdictionary'] = 'Prosty styl s³ownika';
-$string['displayformatencyclopedia'] = 'Encyklopedia';
-$string['displayformatentrylist'] = 'Lista wpisów';
-$string['displayformatfaq'] = 'FAQ';
-$string['displayformatfullwithauthor'] = 'Pe³ny z autorami';
-$string['displayformatfullwithoutauthor'] = 'Pe³ny bez autorów';
+$string['displayformatdefault'] = 'Prosty styl s³ownikowy';
 $string['displayformats'] = 'Dostêpne formaty wygl±du';
 $string['displayformatssetup'] = 'Wy¶wietl ustawienia formatów';
 $string['duplicateentry'] = 'Podwójne definicje';
-$string['editalways'] = 'Zawsze mo¿na edytowaæ';
 $string['editcategories'] = 'Edytuj kategorie';
 $string['editentry'] = 'Edytuj wpis';
 $string['editingcomment'] = 'Edytuj komentarz';
@@ -86,10 +85,10 @@ $string['entryexported'] = 'Wpis zosta³ wyeksportowany';
 $string['entryishidden'] = '(ten wpis jest aktualnie ukryty)';
 $string['entryleveldefaultsettings'] = 'Domy¶lne ustawienia wej¶ciowe';
 $string['entryusedynalink'] = 'Ten wpis powinien zostaæ automatycznie po³±czony z innymi wpisami w systemie';
-$string['explainaddentry'] = 'Dodaj nowe pojêcie do tego s³ownika pojêæ.<br />Pola: Termin i Definicja musz± zostaæ wype³nione.';
+$string['explainaddentry'] = 'Dodaj nowe pojêcie do tego s³ownika pojêæ.<br>Pola: Termin i Definicja musz± zostaæ wype³nione.';
 $string['explainall'] = 'Wy¶wietl wszystkie pojêcia na jednej stronie';
 $string['explainalphabet'] = 'Wyszukaj pojêcia u¿ywaj±c tego indeksu';
-$string['explainexport'] = 'Plik zosta³ stworzony.<br />¦ci±gnij go i zachowaj w bezpiecznym miejscu. Mo¿esz go zaimportowaæ kiedy tylko chcesz w ramach tego czy innego kursu.';
+$string['explainexport'] = 'Plik zosta³ stworzony.<br>¦ci±gnij go i zachowaj w bezpiecznym miejscu. Mo¿esz go zaimportowaæ kiedy tylko chcesz w ramach tego czy innego kursu.';
 $string['explainimport'] = 'Musisz wskazaæ plik, który chcesz importowaæ i zdefiniowac kryteria.<p>Wy¶lij swoje ¿±danie i sprawd¼ wynik.';
 $string['explainspecial'] = 'Poka¿ pojêcia, które nie zaczynaj± siê od litery';
 $string['exportedentry'] = 'Wyeksportowany plik';
@@ -100,8 +99,7 @@ $string['exporttomainglossary'] = 'Eksportuj do g³ównego s³ownika pojêæ';
 $string['filetoimport'] = 'Plik do importu';
 $string['fillfields'] = 'Pola: Termin i Definicja musz± zostaæ wype³nione';
 $string['filtername'] = 'Automatyczne linkowanie pojêæ';
-$string['fullmatch'] = 'Szukaj tylko wyrazów tak jak zosta³y wpisane<br /><small>(je¶li zosta³y automatycznie po³±czone)</small>';
-$string['globalglossary'] = 'S³ownik globalny';
+$string['fullmatch'] = 'Szukaj tylko wyrazów tak jak zosta³y wpisane<br><small>(je¶li zosta³y automatycznie po³±czone)';
 $string['glossaryleveldefaultsettings'] = 'Domy¶lne ustawienia s³ownika';
 $string['glossarytype'] = 'Typ s³ownika pojêæ';
 $string['glosssaryexported'] = 'Wyeksportowano s³ownik pojêæ';

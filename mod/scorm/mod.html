@@ -1,5 +1,4 @@
 <?php
-    require_once("$CFG->dirroot/mod/scorm/lib.php");
     if (empty($form->name)) {
 	$form->name = "";
     }
@@ -12,65 +11,15 @@
     if (empty($form->launch)) {
 	$form->launch = "";
     }
-    if (empty($form->auto)) {
-        $form->auto = "";
-    }
-    if (empty($form->datadir)) {
-        $form->datadir = "";
-    }
-    if (empty($form->maxgrade)) {
-        $form->maxgrade = "";
-    }
-    if (empty($form->grademethod)) {
-        $form->grademethod = "0";
-    }
-    $scormid = '';
-    if (!empty($form->instance)) {
-        $scormid = '&instance='.$form->instance;
-    }
-    $datadir = '';
-    if (!empty($form->datadir)) {
-        $datadir = '&datadir='.$form->datadir;
-    }
-    $sessionkey = '';
-    if (!empty($form->sesskey)) {
-        $sessionkey = '&sesskey='.$form->sesskey;
-    }
 ?>
 
-<script type="text/javascript" src="<?php p($CFG->wwwroot) ?>/mod/scorm/request.js" >
-</script>
-<script type="text/javascript">
-    function validate_scorm(theform,filename) {
-    	//alert(filename);
-        var myRequest = NewHttpReq();
-    	result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/validate.php","id=<?php p($form->course) ?>&reference="+filename+"<?php echo $sessionkey.$scormid.$datadir ?>");
-    	//alert(result);
-	results = result.split('\n');
-	if ((results[0] == "found") || (results[0] == "regular")) {
-	    theform.datadir.value = results[2];
-	    if (results[1] == 0) {
-	        theform.launch.value = results[1];
-	        if ('<?php echo $scormid ?>' != '') {
-	            return confirm('<?php print_string('trackingloose','scorm') ?>');
-	        }
-	    }
-	    return true;
-	} else {
-	    result = '<?php print_string('validation','scorm') ?>: '+ results[0] + '\n';
-	    result.concat('<?php print_string('errorlogs','scorm') ?>:\n',results[3]);
-	    alert(result);
-	    return false;
-	}
-    }
-</script>
 
-<form name="form" method="post" action="mod.php" onsubmit="return validate_scorm(document.form,document.form.reference.value);">
-    <table cellpadding="5">
-	<tr valign="top">
-	    <td align="right"><b><?php print_string("name") ?>:</b></td>
+<form name="form" method="post" action="<?php echo $CFG->wwwroot ?>/mod/scorm/details.php">
+    <table cellpadding=5>
+	<tr valign=top>
+	    <td align=right><p><b><?php print_string("name") ?>:</b></p></td>
 	    <td>
-	        <input type="text" name="name" size="50" value="<?php p($form->name) ?>" alt="<?php print_string("name") ?>" />
+	        <input type="text" name="name" size=50 value="<?php p($form->name) ?>">
 	    </td>
 	</tr>
 <?php 
@@ -78,79 +27,49 @@
     $strchooseafile = get_string("chooseapacket", "scorm");
 ?>
 	<tr valign="top">
-	    <td align="right"><b><?php print_string("summary") ?>:</b><br />
-		<font size="1">
-		<?php helpbutton("summary", get_string("summary"), "scorm", true, true) ?>
-     	  	</font>
-	    </td>
-	    <td>
-        <?php print_textarea($usehtmleditor, 10, 50, 680, 400, "summary", $form->summary); ?>
-	    </td>
-	</tr>
-	<tr valign="top">
-	    <td align="right" nowrap="nowrap">
-	 	<b><?php echo $strfilename?>:</b>
+	    <td align="right" nowrap>
+	 	<p><b><?php echo $strfilename?>:</b></p>
 	    </td>
 	    <td>
 	 	<?php
-	 	    echo "<input name=\"reference\" size=\"50\" value=\"$form->reference\" alt=\"$strfilename\" />&nbsp;";
-	 	    button_to_popup_window ("/files/index.php?id=$course->id&amp;choose=form.reference", 
+	 	    echo "<input name=\"reference\" size=\"50\" value=\"$form->reference\">&nbsp;";
+	 	    button_to_popup_window ("/mod/scorm/coursefiles.php?id=$course->id", 
 	 				    "coursefiles", $strchooseafile, 500, 750, $strchooseafile);
-	 	    helpbutton("package", get_string("coursepacket", "scorm"), "scorm", true);
 	 	?>
 	    </td>
 	</tr>
-        <tr valign="top">
-            <td align="right"><b><?php print_string("grademethod", "scorm") ?>:</b></td>
-            <td>
-            <?php
-                choose_from_menu($SCORM_GRADE_METHOD, "grademethod", "$form->grademethod", "");
-                helpbutton("grademethod", get_string("grademethod","scorm"), "scorm");
-            ?>
-            </td>
-        </tr>
-        <tr valign="top">
-            <td align="right"><b><?php print_string("maximumgrade") ?>:</b></td>
-            <td>
-            <?php
-                for ($i=100; $i>=1; $i--) {
-                    $grades[$i] = $i;
-                }
-
-                choose_from_menu($grades, "maxgrade", "$form->maxgrade", "");
-                helpbutton("maxgrade", get_string("maximumgrade"), "scorm");
-            ?>
-            </td>
-        </tr>    
-	<tr>
-            <td align="right"><b><?php print_string("autocontinue","scorm") ?>:</b></td>
-            <td>
-            <?php
-                $options = array();
-                $options[0]=get_string("no");
-                $options[1]=get_string("yes");
-                choose_from_menu ($options, "auto", $form->auto);
-                helpbutton("autocontinue", get_string("autocontinue", "scorm"), "scorm", true);
-            ?>
+	<tr valign=top>
+	    <td align=right><p><b><?php print_string("summary") ?>:</b></p>
+		<font size="1">
+		<?php
+		    helpbutton("summary", get_string("summary"), "scorm", true, true);
+		    echo "<br \>";
+		    helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
+		    echo "<br \>";
+		    helpbutton("text", get_string("helptext"), "moodle", true, true);
+     		?>
+     	  	</font>
+	    </td>
+	    <td>
+        <?php print_textarea($usehtmleditor, 20, 50, 680, 400, "summary", $form->summary); ?>
 	    </td>
 	</tr>
     </table>
-    <input type="hidden" name="datadir"	value="<?php p($form->datadir) ?>" />
-    <input type="hidden" name="launch"	value="<?php p($form->launch) ?>" />
-    <input type="hidden" name="auto"	value="<?php p($form->auto) ?>" />
+    <input type="hidden" name=course	value="<?php p($form->course) ?>">
+    <input type="hidden" name=coursemodule	value="<?php p($form->coursemodule) ?>">
+    <input type="hidden" name=datadir	value="<?php p($form->datadir) ?>">
+    <input type="hidden" name=launch	value="<?php p($form->launch) ?>">
+    <input type="hidden" name=popup	value="<?php p($form->popup) ?>">
+    <input type="hidden" name=auto	value="<?php p($form->auto) ?>">
     <input type="hidden" name="maxgrade"	value="<?php p($form->maxgrade) ?>" />
     <input type="hidden" name="grademethod"	value="<?php p($form->grademethod) ?>" />
-    
-    <input type="hidden" name="course"	value="<?php p($form->course) ?>" />
-    <input type="hidden" name="sesskey"	value="<?php p($form->sesskey) ?>" />
-    <input type="hidden" name="coursemodule"	value="<?php p($form->coursemodule) ?>" />
-    <input type="hidden" name="section"	value="<?php p($form->section) ?>" />
-    <input type="hidden" name="module"	value="<?php p($form->module) ?>" />
-    <input type="hidden" name="modulename"	value="<?php p($form->modulename) ?>" />
-    <input type="hidden" name="instance"	value="<?php p($form->instance) ?>" />
-    <input type="hidden" name="mode"		value="<?php p($form->mode) ?>" />
+    <input type="hidden" name=section	value="<?php p($form->section) ?>">
+    <input type="hidden" name=module	value="<?php p($form->module) ?>">
+    <input type="hidden" name=modulename	value="<?php p($form->modulename) ?>">
+    <input type="hidden" name=instance	value="<?php p($form->instance) ?>">
+    <input type="hidden" name=mode		value="<?php p($form->mode) ?>">
+    <input type="hidden" name=destination	value="<?php echo $ME ?>">
     <center>
-	<input type="submit" value="<?php print_string('savechanges') ?>" />
-	<input type="button" name="cancel" value="<?php print_string('cancel') ?>" onclick="document.location='view.php?id=<?php echo $form->course ?>'" />
+	<input type="submit" value="<?php print_string("continue") ?>">
     </center>
 </form>

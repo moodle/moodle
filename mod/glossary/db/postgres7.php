@@ -20,7 +20,7 @@ function glossary_upgrade($oldversion) {
   }
 
   if ( $oldversion < 2004051400 ) {
-        print_simple_box("This update might take several seconds.<p>The more glossaries, entries and aliases you have created, the more it will take so please be patient.","center", "50%", '', "20", "noticebox");
+        print_simple_box("This update might take several seconds.<p>The more glossaries, entries and aliases you have created, the more it will take so please be patient.","center", "50%", "$THEME->cellheading", "20", "noticebox");
         if ( $entries = get_records("glossary_entries", '', '', '', 'id,concept')) {
             foreach($entries as $entry) {
                 set_field("glossary_entries","concept",addslashes(trim($entry->concept)),"id",$entry->id);
@@ -105,78 +105,6 @@ function glossary_upgrade($oldversion) {
   if ( $oldversion < 2004080900) {
       set_field('glossary','editalways','1','mainglossary','0');
   }
-
-  if ($oldversion < 2004111200) {
-      execute_sql("DROP INDEX {$CFG->prefix}glossary_course_idx;",false);
-      execute_sql("DROP INDEX {$CFG->prefix}glossary_alias_entryid_idx;",false);
-      execute_sql("DROP INDEX {$CFG->prefix}glossary_categories_glossaryid_idx;",false); 
-      execute_sql("DROP INDEX {$CFG->prefix}glossary_comments_entryid_idx;",false); 
-      execute_sql("DROP INDEX {$CFG->prefix}glossary_comments_userid_idx;",false); 
-      execute_sql("DROP INDEX {$CFG->prefix}glossary_entries_glossaryid_idx;",false);
-      execute_sql("DROP INDEX {$CFG->prefix}glossary_entries_userid_idx;",false); 
-      execute_sql("DROP INDEX {$CFG->prefix}glossary_entries_concept_idx;",false);
-      execute_sql("DROP INDEX {$CFG->prefix}glossary_entries_categories_category_idx;",false);
-      execute_sql("DROP INDEX {$CFG->prefix}glossary_entries_categories_entryid_idx;",false);
-      execute_sql("DROP INDEX {$CFG->prefix}glossary_ratings_userid_idx;",false); 
-      execute_sql("DROP INDEX {$CFG->prefix}glossary_ratings_entryid_idx;",false);
-
-      modify_database('','CREATE INDEX prefix_glossary_course_idx ON prefix_glossary (course);');
-      modify_database('','CREATE INDEX prefix_glossary_alias_entryid_idx ON prefix_glossary_alias (entryid);');
-      modify_database('','CREATE INDEX prefix_glossary_categories_glossaryid_idx ON prefix_glossary_categories (glossaryid);');
-      modify_database('','CREATE INDEX prefix_glossary_comments_entryid_idx ON prefix_glossary_comments (entryid);');
-      modify_database('','CREATE INDEX prefix_glossary_comments_userid_idx ON prefix_glossary_comments (userid);');
-      modify_database('','CREATE INDEX prefix_glossary_entries_glossaryid_idx ON prefix_glossary_entries (glossaryid);');
-      modify_database('','CREATE INDEX prefix_glossary_entries_userid_idx ON prefix_glossary_entries (userid);');
-      modify_database('','CREATE INDEX prefix_glossary_entries_concept_idx ON prefix_glossary_entries (concept);');
-      modify_database('','CREATE INDEX prefix_glossary_entries_categories_category_idx ON prefix_glossary_entries_categories (categoryid);');
-      modify_database('','CREATE INDEX prefix_glossary_entries_categories_entryid_idx ON prefix_glossary_entries_categories (entryid);');
-      modify_database('','CREATE INDEX prefix_glossary_ratings_userid_idx ON prefix_glossary_ratings (userid);');
-      modify_database('','CREATE INDEX prefix_glossary_ratings_entryid_idx ON prefix_glossary_ratings (entryid);');
-  }
-
-  //Delete orphaned categories (bug 2140)
-  if ($oldversion < 2005011100) {
-      $categories = get_records('glossary_categories', '', '', '', 'id, glossaryid');
-      if ($categories) {
-          foreach ($categories as $category) {
-              $glossary = get_record('glossary', 'id', "$category->glossaryid");
-              if (!$glossary) {
-                  delete_records('glossary_categories', 'id', "$category->id");
-              }
-          }
-      }
-  }
-
-  //Allowprintview flag
-  if ($oldversion < 2005011200) {
-      table_column('glossary','','allowprintview','integer','2', 'unsigned', '1', '', 'allowcomments');
-      $glossaries = get_records('glossary', '', '', '', 'id, name');
-      if ($glossaries) {
-          foreach ($glossaries as $glossary) {
-              set_field('glossary', 'allowprintview', '1', 'id', "$glossary->id");
-          }
-      }
-  }
-
-  if ($oldversion < 2005031001) {
-      modify_database('',"INSERT INTO prefix_log_display VALUES ('glossary', 'view entry', 'glossary_entries', 'concept');");
-  }
-
-    if ($oldversion < 2005041100) { // replace wiki-like with markdown
-        include_once( "$CFG->dirroot/lib/wiki_to_markdown.php" );
-        $wtm = new WikiToMarkdown();
-        // update glossary_entries->definition
-        $sql = "select course from {$CFG->prefix}glossary,{$CFG->prefix}glossary_entries ";
-        $sql .= "where {$CFG->prefix}glossary.id = {$CFG->prefix}glossary_entries.glossaryid ";
-        $sql .= "and {$CFG->prefix}glossary_entries.id = ";
-        $wtm->update( 'glossary_entries','definition','format' );
-        // update glossary_comments->text
-        $sql = "select course from {$CFG->prefix}glossary,{$CFG->prefix}glossary_entries,{$CFG->prefix}glossary_comments ";
-        $sql .= "where {$CFG->prefix}glossary.id = {$CFG->prefix}glossary_entries.glossaryid ";
-        $sql .= "and {$CFG->prefix}glossary_entries.id = {$CFG->prefix}glossary_comments.entryid ";
-        $sql .= "and {$CFG->prefix}glossary_comments.id = ";
-        $wtm->update( 'glossary_comments','text','format',$sql );
-    }
 
   return true;
 }

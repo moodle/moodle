@@ -4,7 +4,7 @@
 
 $string['about'] = 'O urejevalniku';
 $string['absbottom'] = 'Abs. dno';
-$string['middle'] = 'Abs. sredina';
+$string['absmiddle'] = 'Abs. sredina';
 $string['address'] = 'Naslov';
 $string['alignment'] = 'Poravnava';
 $string['alternatetext'] = 'Alternativno besedilo';

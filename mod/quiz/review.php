@@ -1,9 +1,9 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
 // This page prints a review of a particular quiz attempt
 
     require_once("../../config.php");
-    require_once("locallib.php");
+    require_once("lib.php");
 
     optional_variable($id);    // Course Module ID, or
     optional_variable($q);     // quiz ID
@@ -14,11 +14,11 @@
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
         }
-
+    
         if (! $course = get_record("course", "id", $cm->course)) {
             error("Course is misconfigured");
         }
-
+    
         if (! $quiz = get_record("quiz", "id", $cm->instance)) {
             error("Course module is incorrect");
         }
@@ -40,24 +40,21 @@
     }
 
 
-    require_login($course->id, false, $cm);
+    require_login($course->id);
 
     if (!isteacher($course->id)) {
         if (!$quiz->review) {
             error(get_string("noreview", "quiz"));
         }
-        if (time() < $quiz->timeclose and $quiz->review == QUIZ_REVIEW_AFTER) {
+        if (time() < $quiz->timeclose) {
             error(get_string("noreviewuntil", "quiz", userdate($quiz->timeclose)));
-        }
-        if (time() > $quiz->timeclose and $quiz->review == QUIZ_REVIEW_BEFORE) {
-            error(get_string("noreview", "quiz"));
         }
         if ($attempt->userid != $USER->id) {
             error("This is not your attempt!");
         }
     }
 
-    add_to_log($course->id, "quiz", "review", "review.php?id=$cm->id&amp;attempt=$attempt->id", "$quiz->id", "$cm->id");
+    add_to_log($course->id, "quiz", "review", "review.php?id=$cm->id&attempt=$attempt->id", "$quiz->id", "$cm->id");
 
 
 // Print the page header
@@ -75,21 +72,15 @@
     $strtimecompleted = get_string("timecompleted", "quiz");
     $stroverdue = get_string("overdue", "quiz");
 
-    print_header_simple(format_string($quiz->name), "",
-                 "<a href=\"index.php?id=$course->id\">$strquizzes</a>
-                  -> <a href=\"view.php?id=$cm->id\">".format_string($quiz->name,true)."</a> -> $strreview",
+    print_header_simple("$quiz->name", "",
+                 "<A HREF=index.php?id=$course->id>$strquizzes</A> 
+                  -> <a href=\"view.php?id=$cm->id\">$quiz->name</a> -> $strreview", 
                  "", "", true);
 
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
-    print_heading(format_string($quiz->name));
+    print_heading($quiz->name);
 
-
-/// Include Javascript protection for this page if required
-
-    if (!empty($quiz->popup)) {
-        include("protect_js.php");
-    }
 
     if (!($questions = quiz_get_attempt_questions($quiz, $attempt))) {
         error("Unable to get questions from database for quiz $quiz->id attempt $attempt->id number $attempt->attempt");
@@ -113,11 +104,6 @@
     }
 
     $table->align  = array("right", "left");
-    if ($attempt->userid <> $USER->id) {
-       $student = get_record('user', 'id', $attempt->userid);
-       $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
-       $table->data[] = array($picture, fullname($student, true));
-    }
     $table->data[] = array("$strtimetaken:", $timetaken);
     $table->data[] = array("$strtimecompleted:", userdate($attempt->timefinish));
     if (!empty($overtime)) {

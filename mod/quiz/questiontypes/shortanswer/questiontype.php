@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
 ///////////////////
 /// SHORTANSWER ///
@@ -99,7 +99,7 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
             return true;
         }
     }
-
+    
     function print_question_formulation_and_controls($question,
             $quiz, $readonly, $answers, $correctanswers, $nameprefix) {
     /// This implementation is also used by question type NUMERICAL
@@ -115,7 +115,7 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
 
         $stranswer = get_string("answer", "quiz");
         if (isset($question->response[$nameprefix])) {
-            $value = ' value="'.htmlSpecialChars($question->response[$nameprefix]).'" ';
+            $value = ' value="'.$question->response[$nameprefix].'" ';
         } else {
             $value = ' value="" ';
         }
@@ -124,7 +124,7 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
 
         if ($quiz->feedback && isset($answers[$nameprefix])
                 && $feedback = $answers[$nameprefix]->feedback) {
-           quiz_print_comment($feedback);
+           quiz_print_comment("<p align=\"right\">$feedback</p>");
         }
         if ($readonly && $quiz->correctanswers) {
             $delimiter = '';

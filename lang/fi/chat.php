@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // chat.php - created with Moodle 1.4 development (2004072500)
 
 
 $string['beep'] = 'kutsu';
@@ -7,25 +7,21 @@ $string['chatintro'] = 'Johdanto';
 $string['chatname'] = 'Chat-huoneen nimi';
 $string['chatreport'] = 'Chat-istunnot';
 $string['chattime'] = 'Seuraavan chat-istunnon aika';
-$string['configmethod'] = 'Normaalisti chatin toiminta vaatii selaimen ottavan yhteyttä säännöllisesti palvelimeen. Tämä toimii kaikkialla ja eikä vaadi asetuksia, mutta saattaa samalla aiheuttaa kuormitusta palvelimelle. Chat-palvelu vaatii unix-komentorivin käyttömahdollisuuden mutta skaalaantuu paremmin laajempaan käyttöön.';
-$string['configoldping'] = 'Kuinka pitkän ajan kuluttua käyttäjä katsotaan poistuneeksi siitä, kun hänestä ei ole kuulunut mitään?';
-$string['configrefreshroom'] = 'Kuinka usein chat-huone päivitetään (sekunteina)? Mitä lyhyempi aika, sen \"nopeampi\" huone on, mutta serverin kuormitus on silloin suurempi, kun monta käyttäjää on huoneessa samaan aikaan.';
+$string['configmethod'] = 'Normaalisti chatin toiminta vaatii selaimen ottavan yhteyttä säännöllisesti palvelimeen. Tämä toimii kaikkialla ja eikä vaadi asetuksia, mutta saattaa samalla aiheuttaa kuormitusta palvelimelle. Chat-palvelu vaatiin unix-komentorivin käyttömahdollisuuden mutta skaalaantuu paremmin laajempaa käyttöön.';
+$string['configoldping'] = 'Kuinka pitkän ajan päästä käyttäjä katsotaan poistuneeksi siitä, kun hänestä ei ole kuulunut mitään?';
+$string['configrefreshroom'] = 'Kuinka usein chat-huone päivitetään (sekunteina)? Mitä lyhyempi aika, sen nopeampi huone on, mutta serverin kuormitus on silloin suurempi, kun monta käyttäjää on huoneessa samaan aikaan.';
 $string['configrefreshuserlist'] = 'Kuinka nopeasti käyttäjälista päivitetään (sekunteina)';
 $string['configserverhost'] = 'Palvelimen nimi jolla chat-palvelu sijaitsee';
 $string['configserverip'] = 'Chat-palvelun ip-osoite joka vastaa palvelimen nimeä';
 $string['configservermax'] = 'Maksimi asiakkaden määrä';
 $string['configserverport'] = 'Chat-palvelun portti';
 $string['currentchats'] = 'Aktiiviset chat-istunnot';
-$string['currentusers'] = 'Tämänhetkiset käyttäjät';
+$string['currentusers'] = 'Tämän hetkiset käyttäjät';
 $string['deletesession'] = 'Poista tämä istunto';
 $string['deletesessionsure'] = 'Oletko varma, että haluat poistaa tämän istunnon?';
 $string['donotusechattime'] = 'Älä julkaise mitään chat-istuntoaikoja';
 $string['enterchat'] = 'Klikkaa tästä päästäksesi mukaan chat-istuntoon';
 $string['errornousers'] = 'Muita käyttäjiä ei löydy!';
-$string['explaingeneralconfig'] = 'Nämä asetukset ovat <strong>aina</strong>voimassa';
-$string['explainmethoddaemon'] = 'Näillä asetuksilla on vaikutusta vain jos käytät \"Chat-palvelu\"-asetusta.';
-$string['explainmethodnormal'] = 'Näillä asetuksilla on vaikutusta <strong>vain</strong> jos käytät \"Normaali toiminta\"-asetusta.';
-$string['generalconfig'] = 'Yleiset asetukset';
 $string['helpchatting'] = 'Apua chat-toiminnon käyttöön';
 $string['idle'] = 'Tyhjä';
 $string['messagebeepseveryone'] = '$a kutsuu kaikkia!';
@@ -39,10 +35,9 @@ $string['modulename'] = 'Chat';
 $string['modulenameplural'] = 'Chatit';
 $string['neverdeletemessages'] = 'Älä koskaan poista viestejä';
 $string['nextsession'] = 'Seuraava istunto';
-$string['noguests'] = 'Tämä chat ei ole avoinna vieraille';
 $string['nomessages'] = 'Ei viestejä';
 $string['repeatdaily'] = 'Joka päivä samaan aikaan';
-$string['repeatnone'] = 'Ei toistoja - julkaise vain määritetyllä  ajalla';
+$string['repeatnone'] = 'Ei toistoja - julkaise vain määritellyt ajat';
 $string['repeattimes'] = 'Toista istunnot';
 $string['repeatweekly'] = 'Joka viikko samaan aikaan';
 $string['savemessages'] = 'Säästä vanhat istunnot';

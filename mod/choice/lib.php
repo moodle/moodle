@@ -1,35 +1,32 @@
-<?php // $Id$
+<?PHP // $Id$
+
+$CHOICE_MAX_NUMBER = 6;
 
 $COLUMN_HEIGHT = 300;
 
-define('CHOICE_PUBLISH_ANONYMOUS', '0');
-define('CHOICE_PUBLISH_NAMES',     '1');
+define("CHOICE_PUBLISH_ANONYMOUS", "0");
+define("CHOICE_PUBLISH_NAMES",     "1");
 
-define('CHOICE_RELEASE_NOT',          '0');
-define('CHOICE_RELEASE_AFTER_ANSWER', '1');
-define('CHOICE_RELEASE_AFTER_CLOSE',  '2');
-define('CHOICE_RELEASE_ALWAYS',       '3');
+define("CHOICE_RELEASE_NOT",          "0");
+define("CHOICE_RELEASE_AFTER_ANSWER", "1");
+define("CHOICE_RELEASE_AFTER_CLOSE",  "2");
+define("CHOICE_RELEASE_ALWAYS",       "3");
 
-define('CHOICE_DISPLAY_HORIZONTAL',  '0');
-define('CHOICE_DISPLAY_VERTICAL',    '1');
+$CHOICE_PUBLISH = array (CHOICE_PUBLISH_ANONYMOUS  => get_string("publishanonymous", "choice"),
+                         CHOICE_PUBLISH_NAMES      => get_string("publishnames", "choice"));
 
-$CHOICE_PUBLISH = array (CHOICE_PUBLISH_ANONYMOUS  => get_string('publishanonymous', 'choice'),
-                         CHOICE_PUBLISH_NAMES      => get_string('publishnames', 'choice'));
+$CHOICE_RELEASE = array (CHOICE_RELEASE_NOT          => get_string("publishnot", "choice"),
+                         CHOICE_RELEASE_AFTER_ANSWER => get_string("publishafteranswer", "choice"),
+                         CHOICE_RELEASE_AFTER_CLOSE  => get_string("publishafterclose", "choice"),
+                         CHOICE_RELEASE_ALWAYS       => get_string("publishalways", "choice"));
 
-$CHOICE_RELEASE = array (CHOICE_RELEASE_NOT          => get_string('publishnot', 'choice'),
-                         CHOICE_RELEASE_AFTER_ANSWER => get_string('publishafteranswer', 'choice'),
-                         CHOICE_RELEASE_AFTER_CLOSE  => get_string('publishafterclose', 'choice'),
-                         CHOICE_RELEASE_ALWAYS       => get_string('publishalways', 'choice'));
-
-$CHOICE_DISPLAY = array (CHOICE_DISPLAY_HORIZONTAL   => get_string('displayhorizontal', 'choice'),
-                         CHOICE_DISPLAY_VERTICAL     => get_string('displayvertical','choice'));
 
 /// Standard functions /////////////////////////////////////////////////////////
 
 function choice_user_outline($course, $user, $mod, $choice) {
-    if ($answer = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user->id)) {
-        $result->info = "'".format_string(choice_get_option_text($choice, $answer->optionid))."'";
-        $result->time = $answer->timemodified;
+    if ($current = get_record("choice_answers", "choice", $choice->id, "userid", $user->id)) {
+        $result->info = "'".choice_get_answer($choice, $current->answer)."'";
+        $result->time = $current->timemodified;
         return $result;
     }
     return NULL;
@@ -37,10 +34,10 @@ function choice_user_outline($course, $user, $mod, $choice) {
 
 
 function choice_user_complete($course, $user, $mod, $choice) {
-    if ($answer = get_record('choice_answers', "choiceid", $choice->id, "userid", $user->id)) {
-        $result->info = "'".format_string(choice_get_option_text($choice, $answer->optionid))."'";
-        $result->time = $answer->timemodified;
-        echo get_string("answered", "choice").": $result->info. ".get_string("updated", '', userdate($result->time));
+    if ($current = get_record("choice_answers", "choice", $choice->id, "userid", $user->id)) {
+        $result->info = "'".choice_get_answer($choice, $current->answer)."'";
+        $result->time = $current->timemodified;
+        echo get_string("answered", "choice").": $result->info , last updated ".userdate($result->time);
     } else {
         print_string("notanswered", "choice");
     }
@@ -65,23 +62,7 @@ function choice_add_instance($choice) {
         $choice->timeclose = 0;
     }
 
-    //insert answers    
-    if ($choice->id = insert_record("choice", $choice)) {
-        foreach ($choice as $name => $value) {        
-            if (strstr($name, "newoption")) {   /// New option
-                $value = trim($value);
-                if ($value) {
-                    $option = NULL;
-                    $option->text = $value;
-                    $option->choiceid = $choice->id;
-                    $option->maxanswers = $choice->{'newlimit'.substr($name, 9)};
-                    $option->timemodified = time();
-                    insert_record("choice_options", $option);                
-                }
-            }
-        }
-    }
-    return $choice->id;
+    return insert_record("choice", $choice);
 }
 
 
@@ -104,37 +85,9 @@ function choice_update_instance($choice) {
         $choice->timeclose = 0;
     }
     
-    //update answers
-    
-    foreach ($choice as $name => $value) {        
-        $value = trim($value);
+//    global $db; $db->debug=true;
 
-        if (strstr($name, "oldoption")) {  // Old option
-            if ($value) {
-                $option = NULL;
-                $option->id = substr($name, 9); // Get the ID of the answer that needs to be updated.
-                $option->text = $value;
-                $option->choiceid = $choice->id;
-                $option->maxanswers = $choice->{'oldlimit'.substr($name, 9)};
-                $option->timemodified = time();
-                update_record("choice_options", $option);
-            } else { //empty old option - needs to be deleted.
-                delete_records("choice_options", "id", substr($name, 9));
-            }
-        } else if (strstr($name, "newoption")) {   /// New option
-            if ($value) {
-                $option = NULL;
-                $option->text = $value;
-                $option->choiceid = $choice->id;
-                $option->maxanswers = $choice->{'newlimit'.substr($name, 9)};
-                $option->timemodified = time();
-                insert_record("choice_options", $option);                
-            }
-        }      
-    }
-
-    return update_record('choice', $choice);
-      
+    return update_record("choice", $choice);
 }
 
 
@@ -149,62 +102,69 @@ function choice_delete_instance($id) {
 
     $result = true;
 
-    if (! delete_records("choice_answers", "choiceid", "$choice->id")) {
-        $result = false;
-    }
-
-    if (! delete_records("choice_options", "choiceid", "$choice->id")) {
+    if (! delete_records("choice_answers", "choice", "$choice->id")) {
         $result = false;
     }
 
     if (! delete_records("choice", "id", "$choice->id")) {
         $result = false;
     }
-    
 
     return $result;
 }
 
 function choice_get_participants($choiceid) {
 //Returns the users with data in one choice
-//(users with records in choice_responses, students)
+//(users with records in choice_answers, students)
 
     global $CFG;
 
     //Get students
-    $students = get_records_sql("SELECT DISTINCT u.id, u.id
+    $students = get_records_sql("SELECT DISTINCT u.*
                                  FROM {$CFG->prefix}user u,
-                                      {$CFG->prefix}choice_answers a
-                                 WHERE a.choiceid = '$choiceid' and
-                                       u.id = a.userid");
+                                      {$CFG->prefix}choice_answers c
+                                 WHERE c.choice = '$choiceid' and
+                                       u.id = c.userid");
 
     //Return students array (it contains an array of unique users)
     return ($students);
 }
 
 
-function choice_get_option_text($choice, $id) {
-// Returns text string which is the answer that matches the id
-    if ($result = get_record("choice_options", "id", $id)) {
-        return $result->text;
-    } else {
-        return get_string("notanswered", "choice");
-    }            
+function choice_get_answer($choice, $code) {
+// Returns text string which is the answer that matches the code
+    switch ($code) {
+        case 1:
+            return "$choice->answer1";
+        case 2:
+            return "$choice->answer2";
+        case 3:
+            return "$choice->answer3";
+        case 4:
+            return "$choice->answer4";
+        case 5:
+            return "$choice->answer5";
+        case 6:
+            return "$choice->answer6";
+        default:
+            return get_string("notanswered", "choice");
+    }
 }
 
 function choice_get_choice($choiceid) {
-// Gets a full choice record      
+// Gets a full choice record
 
     if ($choice = get_record("choice", "id", $choiceid)) {
-        if ($options = get_records("choice_options", "choiceid", $choiceid, "id")) {
-            foreach ($options as $option) {                         
-                $choice->option[$option->id] = $option->text; 
-                $choice->maxanswers[$option->id] = $option->maxanswers;
-            }        
-            return $choice;
-        }
+        $choice->answer[1] = $choice->answer1;
+        $choice->answer[2] = $choice->answer2;
+        $choice->answer[3] = $choice->answer3;
+        $choice->answer[4] = $choice->answer4;
+        $choice->answer[5] = $choice->answer5;
+        $choice->answer[6] = $choice->answer6;
+        return $choice;
+    } else {
+        return false;
     }
-    return false;
 }
 
 ?>

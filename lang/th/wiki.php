@@ -1,13 +1,9 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4.2 (2004083125)
+      // wiki.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['action'] = 'ต้องการทำ..';
 $string['administration'] = 'การจัดการระบบ';
-$string['allowremovepages'] = 'ลบหน้าได้';
-$string['allowrevertchanges'] = 'กลับส่วนที่ทำการเปลี่ยนแปลงให้เป็นค่าเดิมได้';
-$string['allowsetpage'] = 'คั่นหน้าไว้ได้';
-$string['allowstrippages'] = 'แบ่งหน้าได้';
 $string['attachments'] = 'หน้าที่แนบมา';
 $string['author'] = 'ผู้แต่ง/ผู้เขียน';
 $string['authorfieldpattern'] = 'รูปแบบของช่องผู้เขียน';
@@ -37,7 +33,6 @@ $string['deleteversions'] = 'ลบเวอร์ชั่นล่าสุดกี่อันคะ';
 $string['deleteversionserror'] = 'กรุณาใส่ตัวเลขเวอร์ชั่นให้ถูกต้อง';
 $string['diff'] = 'ข้อแตกต่าง';
 $string['differences'] = 'ข้อแตกต่างระหว่างเวอร์ชั่น  $a->new_ver และ  $a->old_ver   ของ $a->pagename.';
-$string['disablecamel'] = 'ใช้การลิงก์ CamelCase ไม่ด้';
 $string['disabledpage'] = 'หน้านี้ยังไม่ให้บริการค่ะ';
 $string['doesnotexist'] = 'ยังไม่มีการสร้างหน้านี้ค่ะ กรุณาคลิกที่ปุ่มแก้ไขถ้าหากคุณต้องการสร้างมัน';
 $string['downloadaszip'] = 'ดาวน์โหลดได้';
@@ -112,7 +107,6 @@ $string['nothingtostrip'] = 'ไม่มีหน้าที่มีมากกว่าหนึ่งเวอร์ชั่น';
 $string['nowikicreated'] = 'ไม่มีข้อมูลที่สร้างสำหรับ wiki ที่ใช้อยู่นี้';
 $string['of'] = 'ของ';
 $string['offline'] = 'ออฟไลน์';
-$string['optional'] = 'ตัวเลือก';
 $string['orphanedpage'] = 'Orphaned page';
 $string['orphanedpages'] = 'Orphaned pages';
 $string['otherwikis'] = 'Wiki อื่น';
@@ -126,7 +120,6 @@ $string['pageslinkingto'] = 'หน้าที่ต้องการลิงก์มายังหน้านี้';
 $string['pagesremoved'] = 'ลบหน้า';
 $string['pagesreverted'] = 'เปลี่ยนกลับ';
 $string['pagesstripped'] = 'ลบหน้านี้แล้ว';
-$string['parentlanguage'] = 'en';
 $string['plaintext'] = 'ตัวหนังสือธรรมดา';
 $string['preview'] = 'ดูตัวอย่าง';
 $string['readonly'] = 'หน้านี้อ่านได้อย่างเดียว แก้ไขไม่ได้';
@@ -152,15 +145,7 @@ $string['strippagecheck'] = 'แน่ใจหรือเปล่าคะที่ต้องการลบเวอร์ชั่นเก่าออกจากหน้า
 $string['strippages'] = 'ลบหน้าออก';
 $string['studentadminoptions'] = 'การให้สิทธิการจัดการ wiki กับนักเรียน';
 $string['submit'] = 'ส่ง';
-$string['tabattachments'] = 'แนบ';
-$string['tabedit'] = 'แก้ไข';
-$string['tabinfo'] = 'History';
-$string['tablinks'] = 'ลิงก์';
-$string['tabview'] = 'ดู';
 $string['thanksforcontribution'] = 'ขอบคุณสำหรับข้อมูลที่คุณเพิ่มเข้ามาค่ะ';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
 $string['thispageisntlinkedfromanywhereelse'] = 'ไม่ได้ลิงก์หน้านี้มาจากที่อื่น';
 $string['updatedpages'] = 'อัพเดทหน้านี้แล้ว';
 $string['uplerror'] = 'ขออภัยค่ะมีปัญหาในระหว่างการอัพโหลด';

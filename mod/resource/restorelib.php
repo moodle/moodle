@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This php script contains all the stuff to backup/restore
     //resource mods
 
@@ -82,7 +82,7 @@
             $newid = insert_record ("resource",$resource);
 
             //Do some output     
-            echo "<li>".get_string("modulename","resource")." \"".format_string(stripslashes($resource->name),true)."\"</li>";
+            echo "<ul><li>".get_string("modulename","resource")." \"".$resource->name."\"<br>";
             backup_flush(300);
 
             if ($newid) {
@@ -93,6 +93,10 @@
             } else {
                 $status = false;
             }
+
+            //Finalize ul        
+            echo "</ul>";
+
         } else {
             $status = false;
         }
@@ -175,48 +179,12 @@
         $status = true;
 
         echo "<ul>";
-
-        //ASSIGNMENT: Decode every ASSIGNMENT (description) in the coure
-
-        //Check we are restoring assignments
-        if ($restore->mods['assignment']->restore == 1) {
-            echo "<li>".get_string("from")." ".get_string("modulenameplural","assignment").'</li>';
-            //Get all course assignments
-            if ($assignments = get_records_sql ("SELECT a.id, a.description
-                                       FROM {$CFG->prefix}assignment a
-                                       WHERE a.course = $restore->course_id")) {
-                //Iterate over each assignment->description
-                $i = 0;   //Counter to send some output to the browser to avoid timeouts
-                foreach ($assignments as $assignment) {
-                    //Increment counter
-                    $i++;
-                    $content = $assignment->description;
-                    $result = resource_decode_content_links($content,$restore);
-                    if ($result != $content) {
-                        //Update record
-                        $assignment->description = addslashes($result);
-                        $status = update_record("assignment",$assignment);
-                        if ($CFG->debug>7) {
-                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
-                        }
-                    }
-                    //Do some output
-                    if (($i+1) % 5 == 0) {
-                        echo ".";
-                        if (($i+1) % 100 == 0) {
-                            echo "<br>";
-                        }
-                        backup_flush(300);
-                    }
-                }
-            }
-        }
  
         //FORUM: Decode every POST (message) in the coure
 
         //Check we are restoring forums
         if ($restore->mods['forum']->restore == 1) {
-            echo "<li>".get_string("from")." ".get_string("modulenameplural","forum").'</li>';
+            echo "<li>".get_string("from")." ".get_string("modulenameplural","forum");
             //Get all course posts
             if ($posts = get_records_sql ("SELECT p.id, p.message
                                        FROM {$CFG->prefix}forum_posts p,
@@ -235,14 +203,14 @@
                         $post->message = addslashes($result);
                         $status = update_record("forum_posts",$post);
                         if ($CFG->debug>7) {
-                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
+                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
                         }
                     }
                     //Do some output
                     if (($i+1) % 5 == 0) {
                         echo ".";
                         if (($i+1) % 100 == 0) {
-                            echo "<br />";
+                            echo "<br>";
                         }
                         backup_flush(300);
                     }
@@ -270,44 +238,6 @@
                         $forum->intro = addslashes($result);
                         $status = update_record("forum",$forum);
                         if ($CFG->debug>7) {
-                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
-                        }
-                    }
-                    //Do some output
-                    if (($i+1) % 5 == 0) {
-                        echo ".";
-                        if (($i+1) % 100 == 0) {
-                            echo "<br />";
-                        }
-                        backup_flush(300);
-                    }
-                }
-            }
-        }
-
-        //LESSON: Decode every LESSON PAGE (contents) in the coure
-        
-        //Check we are restoring lessons
-        if ($restore->mods['lesson']->restore == 1) {
-            echo "<li>".get_string("from")." ".get_string("modulenameplural","lesson").'</li>';           
-            //Get all course lesson pages
-            if ($pages = get_records_sql ("SELECT p.id, p.contents                                        
-                                       FROM {$CFG->prefix}lesson l,
-                                            {$CFG->prefix}lesson_pages p
-                                       WHERE l.course = $restore->course_id AND
-                                             p.lessonid = l.id")) {
-                //Iterate over each lesson page
-                $i = 0;   //Counter to send some output to the browser to avoid timeouts
-                foreach ($pages as $page) {
-                    //Increment counter
-                    $i++;
-                    $content = $page->contents;
-                    $result = resource_decode_content_links($content,$restore);
-                    if ($result != $content) {
-                        //Update record 
-                        $page->contents = addslashes($result); 
-                        $status = update_record("lesson_pages",$page);
-                        if ($CFG->debug>7) {
                             echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
                         }
                     }
@@ -327,7 +257,7 @@
 
         //Check we are restoring resources
         if ($restore->mods['resource']->restore == 1) {
-            echo "<li>".get_string("from")." ".get_string("modulenameplural","resource").'</li>';
+            echo "<li>".get_string("from")." ".get_string("modulenameplural","resource");
             //Get all course resources
             if ($resources = get_records_sql ("SELECT r.id, r.alltext
                                        FROM {$CFG->prefix}resource r
@@ -344,14 +274,14 @@
                         $resource->alltext = addslashes($result);
                         $status = update_record("resource",$resource);
                         if ($CFG->debug>7) {
-                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
+                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
                         }
                     }
                     //Do some output
                     if (($i+1) % 5 == 0) {
                         echo ".";
                         if (($i+1) % 100 == 0) {
-                            echo "<br />";
+                            echo "<br>";
                         }
                         backup_flush(300);
                     }
@@ -379,14 +309,14 @@
                         $resource->summary = addslashes($result);
                         $status = update_record("resource",$resource);
                         if ($CFG->debug>7) {
-                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
+                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
                         }
                     }
                     //Do some output
                     if (($i+1) % 5 == 0) {
                         echo ".";
                         if (($i+1) % 100 == 0) {
-                            echo "<br />";
+                            echo "<br>";
                         }
                         backup_flush(300);
                     }
@@ -395,46 +325,6 @@
         }
 
         echo "</ul>";
-        return $status;
-    }
-
-    //This function converts texts in FORMAT_WIKI to FORMAT_MARKDOWN for
-    //some texts in the module
-    function resource_restore_wiki2markdown ($restore) {
-
-        global $CFG;
-
-        $status = true;
-
-        //Convert resource->alltext
-        if ($records = get_records_sql ("SELECT r.id, r.alltext, r.options
-                                         FROM {$CFG->prefix}resource r,
-                                              {$CFG->prefix}backup_ids b
-                                         WHERE r.course = $restore->course_id AND
-                                               options = ".FORMAT_WIKI. " AND
-                                               b.backup_code = $restore->backup_unique_code AND
-                                               b.table_name = 'resource' AND
-                                               b.new_id = r.id")) {
-            foreach ($records as $record) {
-                //Rebuild wiki links
-                $record->alltext = restore_decode_wiki_content($record->alltext, $restore);
-                //Convert to Markdown
-                $wtm = new WikiToMarkdown();
-                $record->alltext = $wtm->convert($record->alltext, $restore->course_id);
-                $record->options = FORMAT_MARKDOWN;
-                $status = update_record('resource', addslashes_object($record));
-                //Do some output
-                $i++;
-                if (($i+1) % 1 == 0) {
-                    echo ".";
-                    if (($i+1) % 20 == 0) {
-                        echo "<br />";
-                    }
-                    backup_flush(300);
-                }
-            }
-
-        }
         return $status;
     }
 
@@ -485,7 +375,7 @@
             $status = true;
             break;
         default:
-            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
             break;
         }
 

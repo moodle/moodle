@@ -1,30 +1,31 @@
-<?PHP // $Id$ 
-      // journal.php - created with Moodle 1.4.1 (2004083101)
+<?PHP // $Id$
+
+#------------------------------------------------------------
+$string['modulename'] = "Egunkaria";
+$string['modulenameplural'] = "Egunkariak";
+#------------------------------------------------------------
 
 
-$string['alwaysopen'] = 'Beti zabalik';
-$string['blankentry'] = 'Sarrera zurian';
-$string['daysavailable'] = 'Noiz arte zabalik?';
-$string['editingended'] = 'Edizio epea bukatu da';
-$string['editingends'] = 'Edizio epearen bukaera';
-$string['entries'] = 'Sarrerak';
-$string['feedbackupdated'] = 'Sarreren erantzunak eguneratu dira';
-$string['journalname'] = 'Egunkariaren izena';
-$string['journalquestion'] = 'Egunkarirako galdera';
-$string['journalrating1'] = 'Eskas';
-$string['journalrating2'] = 'Nahiko';
-$string['journalrating3'] = 'Oso ondo';
-$string['modulename'] = 'Egunkaria';
-$string['modulenameplural'] = 'Egunkariak';
-$string['newjournalentries'] = 'Egunkari-sarrera berriak';
-$string['noentry'] = 'Sarrerarik ez';
-$string['noratinggiven'] = 'Baloraziorik ez da eman';
-$string['notopenuntil'] = 'Egunkari noiz egongo den zabalik:';
-$string['notstarted'] = 'Ez duzu egunkari hau hasi oraindik';
-$string['overallrating'] = 'Balorazio orokorra';
-$string['rate'] = 'Balorazioa';
-$string['saveallfeedback'] = 'Nire erantzun guztiak gorde';
-$string['startoredit'] = 'Nire egunkari-sarrera hasi edo editatu';
-$string['viewallentries'] = 'Egunkari-sarrerak ikusi';
+$string['alwaysopen'] = "Beti irekita";
+$string['blankentry'] = "Sarrera zurian";
+$string['daysavailable'] = "Eggun eskuragarri";
+$string['editingends'] = "Edizio epearen bukaera";
+$string['editingended'] = "Edizio epea bukatu da";
+$string['feedbackupdated'] = "\$a sarreren erantzunak eguneratu dira";
+$string['journalname'] = "Egunkari izena";
+$string['journalquestion'] = "Egunkari galdera";
+$string['journalrating1'] = "Gutxi";
+$string['journalrating2'] = "Nahiko";
+$string['journalrating3'] = "Nabarmen";
+$string['newjournalentries'] = "Egunkari sarrera berriak";
+$string['noentry'] = "Sarrerarik ez";
+$string['notopenuntil'] = "Egunkari honek irekiko duen unea:";
+$string['notstarted'] = "Ez duzu egunkari hau hasi oraindik";
+$string['noratinggiven'] = "Baloraziorik ez da eman";
+$string['overallrating'] = "Balorazio orokorra";
+$string['rate'] = "Balorazioa";
+$string['saveallfeedback'] = "Nire erantzun guztiak gorde";
+$string['startoredit'] = "Nire egunkari sarrera hasi edo editatu";
+$string['viewallentries'] = "\$a (r)en egunkari sarrerak ikusi";
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // survey.php - created with Moodle 1.3 Beta + (2004051300)
 
 
 $string['actual'] = 'Werkelijk';
@@ -101,7 +101,7 @@ $string['colles21'] = 'ik begrijp de berichten/bijdragen van de andere leerlinge
 $string['colles21short'] = 'ik begrijp de andere leerlingen';
 $string['colles22'] = 'de andere leerlingen begrijpen mijn berichten/bijdragen.';
 $string['colles22short'] = 'leerlingen begrijpen me';
-$string['colles23'] = 'ik begrijp de berichten/bijdragen van de leraar';
+$string['colles23'] = 'ik begrijp de berichten/bijdragen van de docent';
 $string['colles23short'] = 'ik begrijp de leraar';
 $string['colles24'] = 'de leraar begrijpt mijn berichten/bijdragen';
 $string['colles24short'] = 'de leraar begrijpt mij';
@@ -133,7 +133,7 @@ Hartelijk bedankt.
 $string['collesaname'] = 'COLLES (Werkelijk)';
 $string['collesapintro'] = 'Door middel van dit onderzoek proberen we beter te begrijpen hoe goed de online lesmethode van dit onderdeel jou heeft geholpen bij het leren.
 
-Elk van de onderstaande 24 beweringen vraagt je om de je <b>voorkeur</b> (ideaal) te vergelijken met je <b>werkelijke</b> ervaringen met dit onderdeel.
+Elk van de onderstaande 24 beweringen vraagt je om de je <B>voorkeur</B> (ideaal) te vergelijken met je <B>werkelijke</B> ervaringen met dit onderdeel.
 
 Er zijn geen \'goede\' en geen \'foute\' antwoorden; we zijn alleen maar geïnteresseerd in je mening. Je kunt er zeker van zijn dat je antwoorden zeer vertrouwelijk zullen worden behandeld en geen invloed zullen hebben op je beoordeling.
 
@@ -147,7 +147,7 @@ $string['collesm2'] = 'Reflectief denken';
 $string['collesm2short'] = 'Reflectief denken';
 $string['collesm3'] = 'Interactiviteit';
 $string['collesm3short'] = 'Interactiviteit';
-$string['collesm4'] = 'Ondersteuning van de leraar';
+$string['collesm4'] = 'Ondersteuning van de docent';
 $string['collesm4short'] = 'Lerarenondersteuning';
 $string['collesm5'] = 'Ondersteuning van leeftijdgenoten';
 $string['collesm5short'] = 'Klasgenootondersteuning';
@@ -156,7 +156,7 @@ $string['collesm6short'] = 'Interpretatie';
 $string['collesmintro'] = 'In dit online onderdeel...';
 $string['collespintro'] = 'Door middel van dit onderzoek proberen we beter te begrijpen hoe goed de online lesmethode van dit onderdeel jou heeft geholpen bij het leren. 
 
-Elk van de onderstaande 24 beweringen vraagt je naar je <b>voorkeur</b> (ideale) ervaringen met dit onderdeel. 
+Elk van de onderstaande 24 beweringen vraagt je naar je <B>voorkeur</B> (ideale) ervaringen met dit onderdeel. 
 
 Er zijn geen \'goede\' en geen \'foute\' antwoorden; we zijn alleen maar geïnteresseerd in je mening. Je kunt er zeker van zijn dat je antwoorden zeer vertrouwelijk zullen worden behandeld en geen invloed zullen hebben op je beoordeling. Jouw zorgvuldig ingevulde antwoorden zullen ons helpen bij het verbeteren van de manier waarop dit onderdeel in toekomst online aangeboden gaat worden. 
 
@@ -197,15 +197,12 @@ $string['scales'] = 'Schalen';
 $string['scaletimes5'] = 'Bijna nooit,Zelden,Soms,Vaak,Bijna altijd';
 $string['seemoredetail'] = 'Klik hier om meer details te zien ';
 $string['selectedquestions'] = 'Geselecteerde vragen van een schaal, alle studenten  ';
-$string['summary'] = 'Beschrijving  ';
+$string['summary'] = 'Samenvatting  ';
 $string['surveycompleted'] = 'Je bent klaar met het invullen van dit onderzoek. De grafiek hieronder laat een samenvatting zien van jouw resultaten vergeleken met het klasseresultaat.';
 $string['surveyname'] = 'De naam van het onderzoek';
 $string['surveysaved'] = 'Het onderzoek is bewaard';
 $string['surveytype'] = 'Soort onderzoek';
 $string['thanksforanswers'] = 'Bedankt voor het invullen van dit onderzoek, $a';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 $string['time'] = 'Tijd';
 $string['viewsurveyresponses'] = 'Bekijk $a ingevulde onderzoeken';
 

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
     if ($question->questiontext and $question->id) {
         $answers = quiz_get_answers($question);
 
@@ -41,6 +41,6 @@
     }
     print_heading_with_help(get_string('editingmultianswer', 'quiz'),
                                        'multianswer', 'quiz');
-    require("$CFG->dirroot/mod/quiz/questiontypes/multianswer/multianswer.html");
+    require('multianswer.html');
 
 ?>

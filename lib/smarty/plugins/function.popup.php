@@ -9,8 +9,8 @@
 /**
  * Smarty {popup} function plugin
  *
- * Type:     function<br />
- * Name:     popup<br />
+ * Type:     function<br>
+ * Name:     popup<br>
  * Purpose:  make text pop up in windows via overlib
  * @link http://smarty.php.net/manual/en/language.function.popup.php {popup}
  *          (Smarty online manual)

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
     // This will only support one answer of the type NUMERICAL
     // However, lib.php has support for multiple answers
@@ -81,6 +81,6 @@
     }
 
     print_heading_with_help(get_string("editingnumerical", "quiz"), "numerical", "quiz");
-    require("$CFG->dirroot/mod/quiz/questiontypes/numerical/numerical.html");
+    require("numerical.html");
 
 ?>

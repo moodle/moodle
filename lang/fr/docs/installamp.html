@@ -1,19 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-
 <head>
     <title>Documentation Moodle : Installation de PHP et de MySQL</title>
-	<link rel="stylesheet" href="docstyles.css" type="text/css" />
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<link rel="stylesheet" href="docstyles.css" type="text/css">
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
 
-<body>
-
+<body bgcolor="#ffffff">
 <h1>Installation d'Apache, de MySQL et de PHP</h1>
-
 <blockquote>
-
   <p>Moodle est &eacute;crit dans un langage de scripts appel&eacute; PHP, et conserve la plupart
   des donn&eacute;es qu'il utilise dans une base de donn&eacute;es. Le gestionnaire de base de
   donn&eacute;es que nous recommandons est MySQL. Avant d'installer Moodle, vous devez
@@ -22,7 +15,6 @@
   L'installation de tels logiciels peut &ecirc;tre complexe. Cette page a &eacute;t&eacute; &eacute;crite pour
   essayer de rendre ce processus aussi simple que possible pour diff&eacute;rentes
   plateformes&nbsp;:</p>
-
   <ul>
     <li><a href="#host" class="questionlink">H&ocirc;tes web</a></li>
     <li><a href="#mac" class="questionlink">Mac OS X</a></li>
@@ -123,18 +115,18 @@
       appelerez config.php.</li>
       <li>Modifiez config.php avec un &eacute;diteur de texte (Notepad fera l'affaire&nbsp;;
       assurez-vous simplement qu'il n'ajoute pas d'espaces &agrave; la fin du fichier).</li>
-      <li>Indiquez tous les param&egrave;tres concernant votre base de donn&eacute;es&nbsp;:<br />
-      $CFG->dbtype = 'mysql';<br />
-      $CFG->dbhost = 'localhost';<br />
-      $CFG->dbname = 'moodle';<br />
-      $CFG->dbuser = 'root'; <br />
-      $CFG->dbpass = '';<br />
-      $CFG->dbpersist = true;<br />
+      <li>Indiquez tous les param&egrave;tres concernant votre base de donn&eacute;es&nbsp;:<br/>
+      $CFG->dbtype = 'mysql';<br/>
+      $CFG->dbhost = 'localhost';<br/>
+      $CFG->dbname = 'moodle';<br/>
+      $CFG->dbuser = 'root'; <br/>
+      $CFG->dbpass = '';<br/>
+      $CFG->dbpersist = true;<br/>
       $CFG->prefix = 'mdl_';</li>
-      <li>Puis indiquez tous les chemins des fichiers&nbsp;:<br />
+      <li>Puis indiquez tous les chemins des fichiers&nbsp;:<br/>
       $CFG->wwwroot = 'http://localhost/moodle'; // Indiquez une adresse externe 
-      si vous la connaissez.<br />
-      $CFG->dirroot = 'C:\Program Files\EasyPHP\www\moodle'; <br />
+      si vous la connaissez.<br/>
+      $CFG->dirroot = 'C:\Program Files\EasyPHP\www\moodle'; <br/>
       $CFG->dataroot = 'C:\moodledata';</li>
       <li>Enregistrez config.php - tous les autres param&egrave;tres peuvent &ecirc;tre ignor&eacute;s.</li>
       <li>C'est presque fini&nbsp;! Le reste de la configuration s'effectue &agrave; travers
@@ -167,8 +159,8 @@
     <p>&nbsp;</p>
   </blockquote>
 </blockquote>
-<p align="center"><font size="1"><a href="." target="_top">Documentation Moodle</a></font></p>
-<p align="center"><font size="1">Version: $Id$</font></p>
+<p align="CENTER"><font size="1"><a href="." target="_top">Documentation Moodle</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
 
 </body>
 </html>

@@ -1,20 +1,13 @@
 <?php // $Id$ 
 
-$string['addmorechoices'] = 'Ajouter d\'autres propositions';
 $string['allowupdate'] = 'Permettre la mise à jour du sondage';
 $string['answered'] = 'Répondu';
-$string['choice'] = 'Proposition';
+$string['choice'] = 'Proposition $a';
 $string['choiceclose'] = 'Jusqu\'au';
 $string['choicename'] = 'Nom du sondage';
-$string['choiceopen'] = 'Ouvert le';
+$string['choiceopen'] = 'Ouvert';
 $string['choicetext'] = 'Texte de la question';
-$string['displayhorizontal'] = 'Afficher horizontalement';
-$string['displaymode'] = 'Mode d\'affichage';
-$string['displayvertical'] = 'Afficher verticalement';
-$string['full'] = '(complet)';
 $string['havetologin'] = 'Vous devez vous connecter pour pouvoir répondre à ce sondage';
-$string['limit'] = 'Limite';
-$string['limitanswers'] = 'Limiter le nombre de réponses permises';
 $string['modulename'] = 'Sondage';
 $string['modulenameplural'] = 'Sondages';
 $string['mustchooseone'] = 'Vous devez sélectionner une réponse avant d\'enregistrer. L\'enregistrement n\'a pas eu lieu.';
@@ -32,11 +25,7 @@ $string['responses'] = 'Réponses';
 $string['responsesto'] = 'Réponses à $a';
 $string['savemychoice'] = 'Enregistrer mon vote';
 $string['showunanswered'] = 'Afficher la colonne des « sans réponse »';
-$string['spaceleft'] = 'espace disponible';
-$string['spacesleft'] = 'espaces disponibles';
-$string['taken'] = 'Effectué';
-$string['timerestrict'] = 'Sondage limité dans le temps';
+$string['timerestrict'] = 'Ne permettre les réponses que durant cette période';
 $string['viewallresponses'] = 'Voir les $a réponses';
-$string['yourselection'] = 'Votre choix';
 
 ?>

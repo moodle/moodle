@@ -8,16 +8,13 @@ CREATE TABLE `prefix_assignment` (
   `name` varchar(255) NOT NULL default '',
   `description` text NOT NULL,
   `format` tinyint(2) unsigned NOT NULL default '0',
-  `assignmenttype` varchar(50) NOT NULL default '',
   `resubmit` tinyint(2) unsigned NOT NULL default '0',
-  `emailteachers` tinyint(2) unsigned NOT NULL default '0',
+  `type` int(10) unsigned NOT NULL default '1',
   `maxbytes` int(10) unsigned NOT NULL default '100000',
   `timedue` int(10) unsigned NOT NULL default '0',
-  `timeavailable` int(10) unsigned NOT NULL default '0',
   `grade` int(10) NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `course` (`course`)
+  PRIMARY KEY  (`id`)
 ) COMMENT='Defines assignments';
 # --------------------------------------------------------
 
@@ -32,18 +29,12 @@ CREATE TABLE `prefix_assignment_submissions` (
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   `numfiles` int(10) unsigned NOT NULL default '0',
-  `data1` text NOT NULL,
-  `data2` text NOT NULL,
   `grade` int(11) NOT NULL default '0',
   `comment` text NOT NULL,
   `teacher` int(10) unsigned NOT NULL default '0',
   `timemarked` int(10) unsigned NOT NULL default '0',
   `mailed` tinyint(1) unsigned NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `assignment` (`assignment`),
-  KEY `userid` (`userid`),
-  KEY `mailed` (`mailed`),
-  KEY `timemarked` (`timemarked`)
+  PRIMARY KEY  (`id`)
 ) COMMENT='Info about submitted assignments';
 # --------------------------------------------------------
 

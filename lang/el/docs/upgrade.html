@@ -1,13 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-    <title>Τεκμηρίωση Moodle: Αναβάθμιση</title>
-	<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
-</head>
+<HEAD>
+    <TITLE>Τεκμηρίωση Moodle: Αναβάθμιση</TITLE>
+	<LINK REL="stylesheet" HREF="../theme/standard/styles.php" TYPE="TEXT/CSS">
+</HEAD>
 
-<body>
-<h2>Αναβαθμίζοντας το Moodle</h2>
+<BODY BGCOLOR="#FFFFFF">
+<H2>Αναβαθμίζοντας το Moodle</H2>
 
 <p>Το Moodle έχει σχεδιαστεί να αναβαθμίζεται καθαρά από οποιαδήποτε προηγούμενη έκδοση σε οποιαδήποτε επόμενη.</p>
 <p>Όταν αναβαθμίζετε μια εγκατάσταση Moodle θα πρέπει να ακολουθήσετε τα παρακάτω βήματα:</p>
@@ -24,7 +21,7 @@
     <blockquote> 
       <p>Δημιουργήστε ένα ξεχωριστό αντίγραφο των αρχείων πριν την αναβάθμιση έτσι ώστε
       να είναι δυνατή η ανάκτηση του config.php και οποιουδήποτε module έχει προστεθεί 
-      όπως θέματα, γλώσσες κτλ.<br />
+      όπως θέματα, γλώσσες κτλ.<br>
         </p>
     </blockquote>
     <p><strong>2. Ο φάκελος δεδομένων.</strong></p>
@@ -32,7 +29,7 @@
       <p>Εκεί βρίσκεται το περιεχόμενο που έχει φορτωθεί (όπως αρχεία μαθημάτων
       και εργασίες φοιτητών) και έτσι είναι πολύ σημαντικό να υπάρχουν αντίγραφα
       ασφαλείας αυτών των αρχείων ούτως ή άλλως. Μερικές φορές οι αναβαθμίσεις ενδέχεται
-      να μετακινήσουν ή να μετονομάσουν φακέλους μέσα στο φάκελο δεδομένων.<br />
+      να μετακινήσουν ή να μετονομάσουν φακέλους μέσα στο φάκελο δεδομένων.<br>
         </p>
     </blockquote>
     <p><strong>3. Η βάση δεδομένων</strong></p>
@@ -61,12 +58,12 @@
     προβλήματα σε νέες εγκαταστάσεις. Ο καλύτερος τρόπος είναι να μετονομάσετε τον 
     τρέχοντα φάκελο Moodle και να αποσυμπιέσετε το Moodle στην παλιά θέση.</p>
     <blockquote> 
-      <p><font face="Courier New, Courier, mono">mv moodle moodle.backup<br />
+      <p><font face="Courier New, Courier, mono">mv moodle moodle.backup<br>
         tar xvzf moodle-1.0.6.tgz</font></p>
       </blockquote>
     <p>Μετά, αντιγράψτε το config.php και οποιοδήποτε plugin:</p>
     <blockquote>
-      <p><font face="Courier New, Courier, mono">cp moodle.backup/config.php moodle<br />
+      <p><font face="Courier New, Courier, mono">cp moodle.backup/config.php moodle<br>
         cp -pr moodle.backup/theme/mytheme moodle/theme/mytheme</font></p>
     </blockquote>
   </blockquote>
@@ -97,8 +94,8 @@
   και αποστείλτε ένα μήνυμα στο <a target=_top href="http://moodle.com/mod/forum/view.php?id=28">Installation 
   Support Forum</a>.</p>
 <p>&nbsp;</p>
-<p>&nbsp;</p>
-<P ALIGN="center"><FONT SIZE="1"><A HREF="." TARGET="_top">Τεκμηρίωση Moodle</A></FONT></p>
-<P ALIGN="center"><FONT SIZE="1">Version: $Id$</FONT></p>
+<P>&nbsp;</P>
+<P ALIGN="CENTER"><FONT SIZE="1"><A HREF="." TARGET="_top">Τεκμηρίωση Moodle</A></FONT></P>
+<P ALIGN="CENTER"><FONT SIZE="1">Version: $Id$</FONT></P>
 
-</body>
+</BODY>

@@ -10,10 +10,12 @@ $string['editingends'] = "Il tempo a sisposizione per le modifiche termina";
 $string['entries'] = "Annotazioni";
 $string['feedbackupdated'] = "Valutazione aggiornata per \$a annotazioni";
 $string['journalmail'] = "\$a->teacher ha valutato la tua annotazione per '\$a->journal'.
+
 Puoi vedere la valutazione allegata alla tua annotazione:
+
 \$a->url ";
 $string['journalmailhtml'] = "\$a->teacher ha valutato la tua annotazione per  '<i>\$a->journal'</i>.<br /><br />
-Puoi vedere la valutazione allegata  alla tua <a href=\"\$a->url\">annotazione</a>";
+Puoi vedere la valutazione allegata  alla tua <a href=\\\"\$a->url\\\">annotazione</a>";
 $string['journalname'] = "Nome del diario";
 $string['journalquestion'] = "Domanda del diario";
 $string['journalrating1'] = "Non soddisfacente";

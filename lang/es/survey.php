@@ -144,7 +144,7 @@ $string['collesm6'] = 'Interpretación';
 $string['collesm6short'] = 'Interpretación';
 $string['collesmintro'] = 'En esta unidad en línea...';
 $string['collespintro'] = 'El propósito de esta encuesta es ayudarnos a entender lo que usted valora en una experiencia de aprendizaje en línea.
-Cada una de las 24 declaraciones siguientes le interrogan sobre su experiencia <strong>favorita</strong> (ideal) en esta unidad.
+Cada una de las 24 declaraciones siguientes le interrogan sobre su experiencia <strong>favorita</em> (ideal) en esta unidad.
 No existen respuestas \'correctas\' o \'equivocadas\', a nosotros nos interesa sólo su opinión. Sus respuestas serán tratadas con alto grado de confidencialidad y no afectarán su evaluación.
 Sus respuestas, pensadas cuidadosamente, nos ayudarán a mejorar la manera de presentar esta unidad en el futuro.
 Muchas gracias por su colaboración.';

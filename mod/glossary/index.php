@@ -1,11 +1,11 @@
-<?php // $Id$
+<?PHP // $Id$
 
 /// This page lists all the instances of glossary in a particular course
 /// Replace glossary with the name of your module
 
     require_once("../../config.php");
     require_once("lib.php");
-    require_once("$CFG->libdir/rsslib.php");
+    require_once("$CFG->dirroot/rss/rsslib.php");
 
     require_variable($id);   // course
 
@@ -57,8 +57,7 @@
 
     $can_subscribe = (isstudent($course->id) or isteacher($course->id) or isadmin());
 
-    if ($show_rss = (($can_subscribe || $course->id == SITEID) &&
-                     isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfeeds) &&
+    if ($show_rss = ($can_subscribe && isset($CFG->enablerssfeeds) && isset($CFG->glossary_enablerssfeeds) &&
                      $CFG->enablerssfeeds && $CFG->glossary_enablerssfeeds)) {
         $table->head[] = $strrss;
         $table->align[] = "CENTER";
@@ -69,10 +68,10 @@
     foreach ($glossarys as $glossary) {
         if (!$glossary->visible) {
             //Show dimmed if the mod is hidden
-            $link = "<a class=\"dimmed\" href=\"view.php?id=$glossary->coursemodule\">".format_string($glossary->name,true)."</a>";
+            $link = "<A class=\"dimmed\" HREF=\"view.php?id=$glossary->coursemodule\">$glossary->name</A>";
         } else {
             //Show normal if the mod is visible
-            $link = "<a href=\"view.php?id=$glossary->coursemodule\">".format_string($glossary->name,true)."</a>";
+            $link = "<A HREF=\"view.php?id=$glossary->coursemodule\">$glossary->name</A>";
         }
         $printsection = "";
         if ($glossary->section !== $currentsection) {
@@ -92,14 +91,9 @@
             $rsslink = '';
             if ($glossary->rsstype and $glossary->rssarticles) {
                 //Calculate the tolltip text
-                $tooltiptext = get_string("rsssubscriberss","glossary",format_string($glossary->name));
-                if (empty($USER->id)) {
-                    $userid = 0;
-                } else {
-                    $userid = $USER->id;
-                }
+                $tooltiptext = get_string("rsssubscriberss","glossary",$glossary->name);
                 //Get html code for RSS link
-                $rsslink = rss_get_link($course->id, $userid, "glossary", $glossary->id, $tooltiptext);
+                $rsslink = rss_get_link($course->id, $USER->id, "glossary", $glossary->id, $tooltiptext);
             }
         }
 

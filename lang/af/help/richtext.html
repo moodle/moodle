@@ -1,154 +1,167 @@
-<p align="center"><b>Richtext HTML redigeerder</b></p>
-<p>Beskikbaarheid: <b><?php  if (!$CFG->htmleditor) {
+<P ALIGN=CENTER><B>Richtext HTML redigeerder</B></P>
 
+<P>Beskikbaarheid: <B>
+<?php  if (!$CFG->htmleditor) {
        print_string("htmleditordisabledadmin");
-
    } else if (!$USER->htmleditor) {
-
        print_string("htmleditordisabled");
-
    } else if (!can_use_richtext_editor()) {
-
        print_string("htmleditordisabledbrowser");
-
    } else {
-
        print_string("htmleditoravailable");
-
    }
+?>
+</B></P>
 
-?></b></p>
-<p>Die Richtext HTML redigeerder laat jou toe om teks te redigeer soos 'n woord verwerker, dit produseer normale HTML kode.</p>
-<p>Die redigeerder het ekstra funksies wat jy ook dalk sal handig vind.</p>
-<p><b>Plak teks in van ander programme</b></p>
-<div style="margin-left: 2em">
-<p>Jy kan ryk teks van ander Windows programme soos Word knip en plak, en die formaat sal behoue bly. Gebruik net die normale knip en plak metodes van jou 'browser' of program (of Control-C en Control-V).</p>
-</div>
-<p><b>Om prente in te sit <img alt="" border="0" hspace="10" src="lib/rte/images/icon_ins_image.gif" /></b></p>
-<div style="margin-left: 2em">
-<p>As jy klaar prente op 'n ander web blad het, kan jy die prente in sit met die "Insert Images" knoppie.</p>
-</div>
-<p><b>Om tabelle in te sit<img  alt="" border="0" hspace="10" src="lib/rte/images/icon_ins_table.gif" /></b></p>
-<div style="margin-left: 2em">
-<p>Om 'n spesifieke uitleg vir jou teks te gebruik, gebruik die&nbsp; "Insert Tables" knoppie.</p>
-</div>
-<p><b>Om skakels in te sit <img alt=""  border="0" hspace="10" src="lib/rte/images/icon_ins_link.gif" /></b></p>
-<div style="margin-left: 2em">
-<p>Om 'n nuwe skakel in te sit, tik eerste die teks van die skakel in. Selekteer dit en klik op die "link" knoppie. Tik die URL in waarna jy wil&nbsp; skakel.</p>
-</div>
-<p><b>Om smilies (emoticons) in te sit <img  alt="" border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15" /></b></p>
-<div style="margin-left: 2em">
-<p>Om die klein ikone in jou teks te sit klik op die smilie ikoon. 'n Venster met&nbsp; die verskillende smilies sal verskyn. (Of tik die smilie se kode in jou teks dat sal as 'n smilie ikoon later vertoon word).</p>
-<table border="1">
-<tr valign="top">
-<td>
-<table border="0" align="center" cellpadding="10">
-<tr>
-<td><img  alt="" border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15" /></td>
-<td>smile</td>
-<td nowrap="nowrap"="nowrap="nowrap""><font face="Courier">:-)</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/biggrin.gif" width="15" height="15" /></td>
-<td>big grin</td>
-<td nowrap="nowrap"="nowrap="nowrap""><font face="Courier">:-D</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/wink.gif" width="15" height="15" /></td>
-<td>wink</td>
-<td nowrap="nowrap"="nowrap="nowrap""><font face="Courier">;-)</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/mixed.gif" width="15" height="15" /></td>
-<td>mixed</td>
-<td nowrap="nowrap"="nowrap="nowrap""><font face="Courier">:-/</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/thoughtful.gif" width="15" height="15" /></td>
-<td>thoughtful</td>
-<td nowrap="nowrap"="nowrap="nowrap""><font face="Courier">V-.</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/tongueout.gif" width="15" height="15" /></td>
-<td>tongue out</td>
-<td nowrap="nowrap"="nowrap="nowrap""><font face="Courier">:-P</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/cool.gif" width="15" height="15" /></td>
-<td>cool</td>
-<td nowrap="nowrap"="nowrap="nowrap""><font face="Courier">B-)</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/approve.gif" width="15" height="15" /></td>
-<td>approve</td>
-<td nowrap="nowrap"="nowrap="nowrap""><font face="Courier">^-)</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/wideeyes.gif" width="15" height="15" /></td>
-<td>wide eyes</td>
-<td nowrap="nowrap"="nowrap="nowrap""><font face="Courier">8-)</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/surprise.gif" width="15" height="15" /></td>
-<td>surprise</td>
-<td nowrap="nowrap"="nowrap="nowrap""><font face="Courier">8-o</font></td>
-</tr>
-</table>
-</td>
-<td>
-<table border="0" align="center" cellpadding="10">
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/sad.gif" width="15" height="15" /></td>
-<td>sad</td>
-<td nowrap="nowrap"="nowrap="nowrap""><font face="Courier">:-(</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/shy.gif" width="15" height="15" /></td>
-<td>shy</td>
-<td nowrap="nowrap"="nowrap="nowrap""><font face="Courier">8-.</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/blush.gif" width="15" height="15" /></td>
-<td>blush</td>
-<td nowrap="nowrap"="nowrap="nowrap""><font face="Courier">:-I</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/kiss.gif" width="15" height="15" /></td>
-<td>kisses</td>
-<td nowrap="nowrap"="nowrap="nowrap""><font face="Courier">:-X</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/clown.gif" width="15" height="15" /></td>
-<td>clown</td>
-<td nowrap="nowrap"="nowrap="nowrap""><font face="Courier">:o)</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/blackeye.gif" width="15" height="15" /></td>
-<td>black eye</td>
-<td nowrap="nowrap"="nowrap="nowrap""><font face="Courier">P-|</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/angry.gif" width="15" height="15" /></td>
-<td>angry</td>
-<td nowrap="nowrap"="nowrap="nowrap""><font face="Courier">8-[</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/dead.gif" width="15" height="15" /></td>
-<td>dead</td>
-<td nowrap="nowrap"="nowrap="nowrap""><font face="Courier">xx-P</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/sleepy.gif" width="15" height="15" /></td>
-<td>sleepy</td>
-<td nowrap="nowrap"="nowrap="nowrap""><font face="Courier">|-.</font></td>
-</tr>
-<tr>
-<td><img alt="" border="0" hspace="10" src="pix/s/evil.gif" width="15" height="15" /></td>
-<td>evil</td>
-<td nowrap="nowrap"="nowrap="nowrap""><font face="Courier">}-]</font></td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-</div>
+<P>Die Richtext HTML redigeerder laat jou toe om teks te redigeer soos 'n woord
+verwerker, dit produseer normale HTML kode.
+
+<P>Die redigeerder het ekstra funksies wat jy ook dalk sal handig vind.
+
+<P><B>Plak teks in van ander programme</B></P>
+<UL>
+<P>Jy kan ryk teks van ander Windows programme soos Word knip en plak, en die
+formaat sal behoue bly. Gebruik net die normale knip en plak metodes van jou
+'browser' of program (of Control-C en Control-V).
+</UL>
+
+<P><B>Om prente in te sit <img border="0" hspace="10" src="lib/rte/images/icon_ins_image.gif"></B></P>
+<UL>
+<P>As jy klaar prente op 'n ander web blad het, kan jy die prente in sit met die
+&quot;Insert Images&quot; knoppie.
+</UL>
+
+<P><B>Om tabelle in te sit<img border="0" hspace="10" src="lib/rte/images/icon_ins_table.gif"></B></P>
+<UL>
+<P>Om 'n spesifieke uitleg vir jou teks te gebruik, gebruik die&nbsp; "Insert Tables"
+knoppie.  
+</UL>
+
+<P><B>Om skakels in te sit <img border="0" hspace="10" src="lib/rte/images/icon_ins_link.gif"></B></P>
+<UL>
+<P>Om 'n nuwe skakel in te sit, tik eerste die teks van die skakel in. Selekteer
+dit en klik op die &quot;link&quot; knoppie. Tik die URL in waarna jy wil&nbsp;
+skakel.
+</UL>
+
+
+<P><B>Om smilies (emoticons) in te sit <img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></B></P>
+<UL>
+<P>Om die klein ikone in jou teks te sit klik op die smilie ikoon. 'n Venster
+met&nbsp; die verskillende smilies sal verskyn. (Of tik die smilie se kode in
+jou teks dat sal as 'n smilie ikoon later vertoon word).
+
+    <table border="1">
+      <tr valign="top">
+        <td>
+        <table border="0" align="center" cellpadding="10">
+          <tr>
+            <td><img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></td>
+            <td>smile</td>
+            <td NOWRAP><FONT FACE=Courier>:-)</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/biggrin.gif" width="15" height="15"></td>
+            <td>big grin</td>
+            <td NOWRAP><FONT FACE=Courier>:-D</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/wink.gif" width="15" height="15"></td>
+            <td>wink</td>
+            <td NOWRAP><FONT FACE=Courier>;-)</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/mixed.gif" width="15" height="15"></td>
+            <td>mixed</td>
+            <td NOWRAP><FONT FACE=Courier>:-/</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/thoughtful.gif" width="15" height="15"></td>
+              <td>thoughtful</td>
+              <td NOWRAP><FONT FACE=Courier>V-.</FONT></td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/tongueout.gif" width="15" height="15"></td>
+            <td>tongue out</td>
+            <td NOWRAP><FONT FACE=Courier>:-P</td>
+         </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/cool.gif" width="15" height="15"></td>
+            <td>cool</td>
+            <td NOWRAP><FONT FACE=Courier>B-)</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/approve.gif" width="15" height="15"></td>
+              <td>approve</td>
+              <td NOWRAP><FONT FACE=Courier>^-)</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/wideeyes.gif" width="15" height="15"></td>
+              <td>wide eyes</td>
+              <td NOWRAP><FONT FACE=Courier>8-)</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/surprise.gif" width="15" height="15"></td>
+              <td>surprise</td>
+              <td NOWRAP><FONT FACE=Courier>8-o</td>
+            </tr>
+        </table>
+        </td>
+        <td>
+        <table border="0" align="center" cellpadding="10">
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/sad.gif" width="15" height="15"></td>
+              <td>sad</td>
+              <td NOWRAP><FONT FACE=Courier>:-(</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/shy.gif" width="15" height="15"></td>
+              <td>shy</td>
+              <td NOWRAP><FONT FACE=Courier>8-.</td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/blush.gif" width="15" height="15"></td>
+            <td>blush</td>
+            <td NOWRAP><FONT FACE=Courier>:-I</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/kiss.gif" width="15" height="15"></td>
+              <td>kisses</td>
+              <td NOWRAP><FONT FACE=Courier>:-X</td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/clown.gif" width="15" height="15"></td>
+            <td>clown</td>
+            <td NOWRAP><FONT FACE=Courier>:o)</td>
+          </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/blackeye.gif" width="15" height="15"></td>
+            <td>black eye</td>
+            <td NOWRAP><FONT FACE=Courier>P-|</td>
+          </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/angry.gif" width="15" height="15"></td>
+              <td>angry</td>
+              <td NOWRAP><FONT FACE=Courier>8-[</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/dead.gif" width="15" height="15"></td>
+              <td>dead</td>
+              <td NOWRAP><FONT FACE=Courier>xx-P</td>
+            </tr>
+            <tr>
+              <td><img alt border="0" hspace="10" src="pix/s/sleepy.gif" width="15" height="15"></td>
+              <td>sleepy</td>
+              <td NOWRAP><FONT FACE=Courier>|-.</td>
+            </tr>
+          <tr>
+            <td><img alt border="0" hspace="10" src="pix/s/evil.gif" width="15" height="15"></td>
+            <td>evil</td>
+            <td NOWRAP><FONT FACE=Courier>}-]</td>
+          </tr>
+        </table>
+    </table>
+
+</UL>
+
+

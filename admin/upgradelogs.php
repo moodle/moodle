@@ -33,12 +33,10 @@
 
     if (empty($_GET['confirm'])) {
         notice_yesno(get_string("upgradelogsinfo", "admin"), 
-                     "upgradelogs.php?confirm=true&sesskey=$USER->sesskey", 
+                     "upgradelogs.php?confirm=true", 
                      "index.php");
         print_footer();
         exit;
-    } else if (!confirm_sesskey()) {
-        error(get_string('confirmsesskeybad', 'error'));
     }
 
 

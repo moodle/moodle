@@ -29,7 +29,7 @@ $string['newwindowopen'] = "Zobrazi» tento zdroj v novom pop-up okne";
 $string['note'] = "Poznámka";
 $string['notefile'] = "Na prenos ïal¹ích súborov do kurzu (tak aby sa zobrazili v tomto zozname) pou¾ite 
 
-<a href=\"$a\">Mana¾ér súborov</a>.";
+<A HREF=\$a >Mana¾ér súborov</A>.";
 $string['notypechosen'] = "Musíte si vybra» typ. Pou¾ite tlaèidlo spä», vrá»te sa a skúste znova.";
 $string['resourcetype'] = "Typ zdroja";
 $string['resourcetype1'] = "Odkaz";

@@ -1,29 +1,34 @@
 <?php // $Id$
 
-/// Editing interface to edit all the groups in a course
+/// Shows all the groups in a course.  
+/// Editing teachers see a nifty interface for defining groups
 
 	require_once('../config.php');
 	require_once('lib.php');
 
-    $courseid      = required_param('id');           // Course id
-    $selectedgroup = optional_param('group', NULL);  // Current group id
+    require_variable($id);        // Course id
+    optional_variable($edit);     // Turn editing on and off
 
-    if (! $course = get_record('course', 'id', $courseid) ) {
+    if (! $course = get_record('course', 'id', $id) ) {
         error("That's an invalid course id");
     }
 
     require_login($course->id);
 
-    if (!isteacheredit($course->id)) {
+    if (!isteacheredit($course->id) and $course->groupmode != VISIBLEGROUPS) {
         redirect("group.php?id=$course->id");   // Not allowed to see all groups
     }
 
-/// Get the current list of groups and check the selection is valid
-
-    $groups = get_groups($course->id);
-
-    if ($selectedgroup and !isset($groups[$selectedgroup])) {
-        $selectedgroup = NULL;
+    if (isteacheredit($course->id)) {
+        if (isset($_GET['edit'])) {
+            if($edit == "on") {
+                $USER->groupsediting = true;
+            } else {
+                $USER->groupsediting = false;
+            }
+        }
+    } else {
+        $USER->groupsediting = false;
     }
 
 
@@ -32,20 +37,52 @@
     $strgroup = get_string('group');
     $strgroups = get_string('groups');
     $streditgroupprofile = get_string('editgroupprofile');
-    $strgroupmembers = get_string('groupmembers');
     $strgroupmemberssee = get_string('groupmemberssee');
-    $strparticipants = get_string('participants');
+    $loggedinas = "<p class=\"logininfo\">".user_login_string($course, $USER)."</p>";
 
     print_header("$course->shortname: $strgroups", "$course->fullname", 
-                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ".
-                 "-> <a href=\"$CFG->wwwroot/user/index.php?id=$course->id\">$strparticipants</a> ".
-                 "-> $strgroups", "", "", true, '', user_login_string($course, $USER));
+                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
+                  -> $strgroups", "", "", true, update_groups_button($course->id), $loggedinas);
 
 
+/// Get the current list of groups
 
-/// First, process any inputs there may be.
+    $groups = get_groups($course->id);
 
-    if ($data = data_submitted() and confirm_sesskey()) {
+    if (empty($USER->groupsediting)) {         /// Display an overview of all groups
+        if (!$groups) {
+            print_heading(get_string('groupsnone'));
+
+        } else {  
+            $isteacher = isteacher($course->id);
+            $isteacheredit = isteacheredit($course->id);
+            foreach ($groups as $group) {
+                $t = $group;
+                $t->description = format_text($group->description);
+                $t->picture = print_group_picture($group, $course->id, true, true, true);
+                if ($t->users = get_group_users($group->id, 'u.lastname ASC')) {
+                    foreach ($t->users as $key => $user) {
+                        $t->users[$key]->fullname = fullname($user, $isteacher);
+                    }
+                }
+                if ($isteacheredit or ($isteacher and ismember($group->id))) {
+                    $t->linkeditprofile->url = "group.php?id=$course->id&group=$group->id&edit=on";
+                    $t->linkeditprofile->text = $streditgroupprofile;
+                }
+                $t->linkfullprofile->url = "group.php?id=$course->id&group=$group->id";
+                $t->linkfullprofile->text = $strgroupmemberssee;
+
+                include('groups-summary.html');
+            }
+        }
+        print_footer($course);
+        exit;
+    }
+
+
+/// We are in editing mode.  First, process any inputs there may be.
+
+    if ($data = data_submitted()) {
 
         if (!empty($data->nonmembersadd)) {            /// Add people to a group
             if (!empty($data->nonmembers) and !empty($data->groupid)) {
@@ -123,7 +160,6 @@
     $strgroupadd = get_string('groupadd');
     $strgroupremove = get_string('groupremove');
     $strgroupinfo = get_string('groupinfo');
-    $strgroupinfoedit = get_string('groupinfoedit');
     $strgroupinfopeople = get_string('groupinfopeople');
     $strgrouprandomassign = get_string('grouprandomassign');
     $strgroupaddusers = get_string('groupaddusers');
@@ -182,8 +218,6 @@
     } else {
         $members = $listmembers[$selectedgroup];
     }
-
-    $sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
 /// Print out the complete form
 

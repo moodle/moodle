@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
 /////////////
 /// MATCH ///
@@ -12,7 +12,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
     }
 
     function save_question_options($question) {
-
+        
         if (!$oldsubquestions = get_records("quiz_match_sub", "question", $question->id, "id ASC")) {
             $oldsubquestions = array();
         }
@@ -80,7 +80,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
         }
         return true;
     }
-
+    
     function convert_to_response_answer_field($questionresponse) {
     /// This method, together with extract_response, should be
     /// obsolete as soon as we get a better response storage
@@ -137,7 +137,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
 
         /// Check whether everything turned out alright:
         if (empty($subquestions)) {
-            notify("Error: Missing subquestions for this question!");
+            notify("Error: Missing subquestions for this question!");            
 
         } else {
             /// Everything is fine -
@@ -154,25 +154,23 @@ class quiz_match_qtype extends quiz_default_questiontype {
             $answers = draw_rand_array($answers, count($answers));
         }
 
-        ///// Print the input controls //////
+        ///// Ptint the input controls //////
 
         echo '<table border="0" cellpadding="10" align="right">';
         foreach ($subquestions as $subquestion) {
 
             /// Subquestion text:
             echo '<tr><td align="left" valign="top">';
-            echo format_text($subquestion->questiontext,
-                $question->questiontextformat, NULL, $quiz->course);
+            echo $subquestion->questiontext;
             echo '</td>';
 
             /// Drop-down list:
             $menuname = $nameprefix.$subquestion->id;
             $response = isset($question->response[$menuname])
                         ? $question->response[$menuname] : '0';
-            if ($readonly
-                and $quiz->correctanswers
-                and isset($correctanswers[$menuname])
-                and ($correctanswers[$menuname]->id == $response)) {
+            if (isset($correctanswers[$menuname])
+                    && $correctanswers[$menuname]->id
+                    == $response) {
                 $class = ' class="highlight" ';
             } else {
                 $class = '';

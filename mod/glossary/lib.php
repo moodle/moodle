@@ -1,9 +1,9 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
 /// Library of functions and constants for module glossary
 /// (replace glossary with the name of your module and delete this line)
 
-require_once($CFG->libdir.'/filelib.php');
+require_once("$CFG->dirroot/files/mimetypes.php");
 
 define("GLOSSARY_SHOW_ALL_CATEGORIES", 0);
 define("GLOSSARY_SHOW_NOT_CATEGORISED", -1);
@@ -18,41 +18,13 @@ define("GLOSSARY_IMPORT_VIEW", 5);
 define("GLOSSARY_EXPORT_VIEW", 6);
 define("GLOSSARY_APPROVAL_VIEW", 7);
 
-//Check for global configure default variables
-
-if (!isset($CFG->glossary_studentspost)) {
-    set_config("glossary_studentspost", 1);  // Students can post entries.
-}
-
-if (!isset($CFG->glossary_dupentries)) {
-    set_config("glossary_dupentries", 0);  // Duplicate entries are not allowed.
-}
-
-if (!isset($CFG->glossary_allowcomments)) {
-    set_config("glossary_allowcomments", 0);  // Comments are not allowed.
-}
-
-if (!isset($CFG->glossary_linkbydefault)) {
-    set_config("glossary_linkbydefault", 1);  // Linking entries is enabled.
-}
-
-if (!isset($CFG->glossary_defaultapproval)) {
-    set_config("glossary_defaultapproval", 1);  // Entries are approved.
-}
-
-if (!isset($CFG->glossary_entbypage)) {
-    set_config("glossary_entbypage", 10);  // 10 entries are showed.
-}
-
-/// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
-
 function glossary_add_instance($glossary) {
 /// Given an object containing all the necessary data,
 /// (defined by the form in mod.html) this function
 /// will create a new instance and return the id number
 /// of the new instance.
 
-    if (!isset($glossary->userating) || !$glossary->userating) {
+    if (!$glossary->userating) {
         $glossary->assessed = 0;
     }
 
@@ -75,11 +47,7 @@ function glossary_add_instance($glossary) {
     $glossary->timecreated = time();
     $glossary->timemodified = $glossary->timecreated;
 
-    //Check displayformat is a valid one
-    $formats = get_list_of_plugins('mod/glossary/formats','TEMPLATE');
-    if (!in_array($glossary->displayformat, $formats)) {
-        error("This format doesn't exist!");
-    }  
+    # May have to add extra stuff in here #
 
     return insert_record("glossary", $glossary);
 }
@@ -100,7 +68,7 @@ global $CFG;
     $glossary->timemodified = time();
     $glossary->id = $glossary->instance;
 
-    if (!isset($glossary->userating) || !$glossary->userating) {
+    if (!$glossary->userating) {
         $glossary->assessed = 0;
     }
 
@@ -112,12 +80,6 @@ global $CFG;
     } else {
         $glossary->assesstimestart  = 0;
         $glossary->assesstimefinish = 0;
-    }
-
-    //Check displayformat is a valid one
-    $formats = get_list_of_plugins('mod/glossary/formats','TEMPLATE');
-    if (!in_array($glossary->displayformat, $formats)) {
-        error("This format doesn't exist!");
     }
 
     $return = update_record("glossary", $glossary);
@@ -147,7 +109,7 @@ function glossary_delete_instance($id) {
     } else {
         if ($categories = get_records("glossary_categories","glossaryid",$glossary->id)) {
             $cats = "";
-            foreach ( $categories as $cat ) {
+            foreach ( $categories as $hook ) {
                 $cats .= "$cat->id,";
             }
             $cats = substr($cats,0,-1);
@@ -234,13 +196,13 @@ function glossary_print_recent_activity($course, $isteacher, $timestart) {
 /// that has occurred in glossary activities and print it out.
 /// Return true if there was output, or false is there was none.
 
-    global $CFG;
+    global $CFG, $THEME;
 
-    if (!$logs = get_records_select('log', 'time > \''.$timestart.'\' AND '.
-                                           'course = \''.$course->id.'\' AND '.
-                                           'module = \'glossary\' AND '.
-                                           '(action = \'add entry\' OR '.
-                                           ' action  = \'approve entry\')', 'time ASC')) {
+    if (!$logs = get_records_select("log", "time > '$timestart' AND ".
+                                           "course = '$course->id' AND ".
+                                           "module = 'glossary' AND ".
+                                           "(action = 'add entry' OR ".
+                                           " action  = 'approve entry')", "time ASC")) {
         return false;
     }
 
@@ -249,7 +211,7 @@ function glossary_print_recent_activity($course, $isteacher, $timestart) {
     foreach ($logs as $log) {
         //Create a temp valid module structure (course,id)
         $tempmod->course = $log->course;        
-        $entry           = get_record('glossary_entries','id',$log->info);
+        $entry           = get_record("glossary_entries","id",$log->info);
         $tempmod->id = $entry->glossaryid;
         //Obtain the visible property from the instance        
         $modvisible = instance_is_visible($log->module,$tempmod);
@@ -258,26 +220,29 @@ function glossary_print_recent_activity($course, $isteacher, $timestart) {
         if ($modvisible and $entry->approved) {
             $entries[$log->info] = glossary_log_info($log);
             $entries[$log->info]->time = $log->time;
-            $entries[$log->info]->url  = str_replace('&', '&amp;', $log->url);
+            $entries[$log->info]->url  = $log->url;
         }
     }
 
     $content = false;
     if ($entries) {
+        $strftimerecent = get_string("strftimerecent");
         $content = true;
-        print_headline(get_string('newentries', 'glossary').':');
+        print_headline(get_string("newentries", "glossary").":");
         foreach ($entries as $entry) {
-            $user = get_record('user','id',$entry->userid, '','', '','', 'firstname,lastname');
-
-            print_recent_activity_note($entry->timemodified, $user, $isteacher, $entry->concept,
-                                       $CFG->wwwroot.'/mod/glossary/view.php?g='.$entry->glossaryid.
-                                       '&amp;mode=entry&amp;hook='.$entry->id);
+            $date = userdate($entry->timemodified, $strftimerecent);
+            
+            $user = get_record("user","id",$entry->userid);
+            $fullname = fullname($user, $isteacher);
+            echo "<p><font size=1>$date - $fullname<br>";
+            echo "\"<a href=\"$CFG->wwwroot/mod/glossary/view.php?g=$entry->glossaryid&mode=entry&hook=$entry->id\">";
+            echo "$entry->concept";
+            echo "</a>\"</font></p>";
         }
     }
 
     return $content;
 }
-
 
 function glossary_log_info($log) {
     global $CFG;
@@ -379,7 +344,7 @@ function glossary_get_participants($glossaryid) {
     global $CFG;
 
     //Get students
-    $students = get_records_sql("SELECT DISTINCT u.id, u.id
+    $students = get_records_sql("SELECT DISTINCT u.*
                                  FROM {$CFG->prefix}user u,
                                       {$CFG->prefix}glossary_entries g
                                  WHERE g.glossaryid = '$glossaryid' and
@@ -467,9 +432,9 @@ function glossary_get_available_formats() {
 
 function glossary_debug($debug,$text,$br=1) {
     if ( $debug ) {
-        echo '<font color="red">' . $text . '</font>';
+        echo '<font color=red>' . $text . '</font>';
         if ( $br ) {
-            echo '<br />';
+            echo '<br>';
         }
     }
 }
@@ -485,43 +450,6 @@ function glossary_get_entries($glossaryid, $entrylist, $pivot = "") {
                             WHERE glossaryid = '$glossaryid'
                             AND id IN ($entrylist)");
 }
-
-function glossary_get_entries_search($concept, $courseid) {
-
-    global $CFG;
-
-    //Check if the user is an admin 
-    $bypassadmin = 1; //This means NO (by default)
-    if (isadmin()) {
-        $bypassadmin = 0; //This means YES
-    } 
-
-    //Check if the user is a teacher 
-    $bypassteacher = 1; //This means NO (by default)
-    if (isteacher($courseid)) {
-        $bypassteacher = 0; //This means YES
-    } 
-
-    $conceptupper = strtoupper(trim($concept));
-
-    return get_records_sql("SELECT e.*, g.name as glossaryname, cm.id as cmid, cm.course as courseid
-                            FROM {$CFG->prefix}glossary_entries e, 
-                                 {$CFG->prefix}glossary g,
-                                 {$CFG->prefix}course_modules cm,
-                                 {$CFG->prefix}modules m
-                            WHERE m.name = 'glossary' AND
-                                  cm.module = m.id AND
-                                  (cm.visible = 1 OR  cm.visible = $bypassadmin OR
-                                    (cm.course = '$courseid' AND cm.visible = $bypassteacher)) AND
-                                  g.id = cm.instance AND
-                                  e.glossaryid = g.id  AND
-                                  ( (e.casesensitive != 0 AND UPPER(concept) = '$conceptupper') OR
-                                    (e.casesensitive = 0 and concept = '$concept')) AND
-                                  (g.course = '$courseid' OR g.globalglossary = 1) AND
-                                  e.usedynalink != 0 AND
-                                  g.usedynalink != 0");
-}
-
 function glossary_get_entries_sorted($glossary, $where="", $orderby="", $pivot = "") {
 global $CFG;
     if ($where) {
@@ -555,45 +483,29 @@ global $CFG;
                                              (ge.glossaryid = $glossary->id or ge.sourceglossaryid = $glossary->id) $where $orderby");
 }
 
-function glossary_print_entry($course, $cm, $glossary, $entry, $mode='',$hook='',$printicons = 1, $displayformat  = -1, $ratings = NULL, $printview = false) {
-    global $USER, $CFG;
+function glossary_print_entry($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons = 1, $displayformat  = -1, $ratings = NULL) {
+    global $THEME, $USER, $CFG;
     $return = false;
     if ( $displayformat < 0 ) {
         $displayformat = $glossary->displayformat;
     }
     if ($entry->approved or ($USER->id == $entry->userid) or ($mode == 'approval' and !$entry->approved) ) {
         $formatfile = $CFG->dirroot.'/mod/glossary/formats/'.$displayformat.'/'.$displayformat.'_format.php';
-        if ($printview) {
-            $functionname = 'glossary_print_entry_'.$displayformat;
-        } else {
-            $functionname = 'glossary_show_entry_'.$displayformat;
-        }
+        $functionname = 'glossary_show_entry_'.$displayformat;
 
         if (file_exists($formatfile)) {
             include_once($formatfile);
             if (function_exists($functionname)) {
                 $return = $functionname($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
-            } else if ($printview) {
-                //If the glossary_print_entry_XXXX function doesn't exist, print default (old) print format
-                $return = glossary_print_entry_default($entry);
             }
         }
     }
     return $return;
 }
 
- //Default (old) print format used if custom function doesn't exist in format
-function glossary_print_entry_default ($entry) {
-    echo '<b>'. strip_tags($entry->concept) . ': </b>';
-    $options->para = false;
-    $definition = format_text('<span class="nolink">' . strip_tags($entry->definition) . '</span>', $entry->format,$options);
-    echo ($definition);
-    echo '<br /><br />';
-}
-
 function  glossary_print_entry_concept($entry) {
     $options->para = false;
-    $text = format_text('<span class="nolink">' . $entry->concept . '</span>', FORMAT_MOODLE, $options);
+    $text = format_text('<nolink>' . $entry->concept . '</nolink>', FORMAT_MOODLE, $options);
     if (!empty($entry->highlight)) {
         $text = highlight($entry->highlight, $text);
     }
@@ -605,18 +517,16 @@ function glossary_print_entry_definition($entry) {
     $definition = $entry->definition;
 
     $tags = array();
-    $urls = array();
-    $addrs = array();
 
     //Calculate all the strings to be no-linked
     //First, the concept
-    $term = preg_quote(trim($entry->concept),'/');
+    $term = preg_quote(trim($entry->concept),"/");
     $pat = '/('.$term.')/is';
     $doNolinks[] = $pat;
     //Now the aliases
-    if ( $aliases = get_records('glossary_alias','entryid',$entry->id) ) {
+    if ( $aliases = get_records("glossary_alias","entryid",$entry->id) ) {
         foreach ($aliases as $alias) {
-            $term = preg_quote(trim($alias->alias),'/');
+            $term = preg_quote(trim($alias->alias),"/");
             $pat = '/('.$term.')/is';
             $doNolinks[] = $pat;
         }
@@ -634,46 +544,10 @@ function glossary_print_entry_definition($entry) {
     if ( $tags ) {
         $definition = str_replace($tags,array_keys($tags),$definition);
     }
-
-    //Extract all URLS with protocol (http://domain.com) from definition
-    preg_match_all('/([[:space:]]|^|\(|\[)([[:alnum:]]+):\/\/([^[:space:]]*)([[:alnum:]#?\/&=])/is',$definition,$list_of_urls);
-
-    //Save them into urls array to use them later
-    foreach (array_unique($list_of_urls[0]) as $key=>$value) {
-        $urls['<*'.$key.'*>'] = $value;
-    }
-
-    //Take off every url from definition
-    if ( $urls ) {
-        $definition = str_replace($urls,array_keys($urls),$definition);
-    }
-
-    //Extract all WEB ADDRESSES (www.domain.com) from definition
-    preg_match_all('/([[:space:]]|^|\(|\[)www\.([^[:space:]]*)([[:alnum:]#?\/&=])/is',$definition,$list_of_addresses);
-
-    //Save them into addrs array to use them later
-    foreach (array_unique($list_of_addresses[0]) as $key=>$value) {
-        $addrs['<+'.$key.'+>'] = $value;
-    }
-
-    //Take off every addr from definition
-    if ( $addrs ) {
-        $definition = str_replace($addrs,array_keys($addrs),$definition);
-    }
-
+    
     //Put doNolinks (concept + aliases) enclosed by <nolink> tag
-    $definition= preg_replace($doNolinks,'<span class="nolink">$1</span>',$definition);
-
-    //Restore addrs
-    if ( $addrs ) {
-        $definition = str_replace(array_keys($addrs),$addrs,$definition);
-    }
-
-    //Restore urls
-    if ( $urls ) {
-        $definition = str_replace(array_keys($urls),$urls,$definition);
-    }
-
+    $definition= preg_replace($doNolinks,'<nolink>$1</nolink>',$definition);
+        
     //Restore tags
     if ( $tags ) {
         $definition = str_replace(array_keys($tags),$tags,$definition);
@@ -684,15 +558,12 @@ function glossary_print_entry_definition($entry) {
     if (!empty($entry->highlight)) {
         $text = highlight($entry->highlight, $text);
     }
-    if (isset($entry->footer)) {   // Unparsed footer info
-        $text .= $entry->footer;
-    }
     echo $text;
 }
 
-function  glossary_print_entry_aliases($course, $cm, $glossary, $entry,$mode='',$hook='', $type = 'print') {
+function  glossary_print_entry_aliases($course, $cm, $glossary, $entry,$mode="",$hook="", $type = 'print') {
     $return = '';
-    if ( $aliases = get_records('glossary_alias','entryid',$entry->id) ) {
+    if ( $aliases = get_records("glossary_alias","entryid",$entry->id) ) {
         foreach ($aliases as $alias) {
             if (trim($alias->alias)) {
                 if ($return == '') {
@@ -703,6 +574,7 @@ function  glossary_print_entry_aliases($course, $cm, $glossary, $entry,$mode='',
         }
         if ($return != '') {
             $return .= '</select>';
+//            $return = "<table border=0 align=$align><tr><td>$return</td></tr></table>";
         }
     } 
     if ($type == 'print') {
@@ -712,35 +584,34 @@ function  glossary_print_entry_aliases($course, $cm, $glossary, $entry,$mode='',
     }
 }
 
-function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$hook='', $type = 'print') {
-    global $USER, $CFG;
+function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$hook="", $type = 'print') {
+    global $THEME, $USER, $CFG;
 
-    $output = false;   //To decide if we must really return text in "return". Activate when needed only!
     $importedentry = ($entry->sourceglossaryid == $glossary->id);
     $isteacher = isteacher($course->id);
     $ismainglossary = $glossary->mainglossary;
-
-
-    $return = '<span class="commands">';
+	
+    $return = "<font size=1>";
     if (!$entry->approved) {
-        $output = true;
-        $return .= get_string('entryishidden','glossary');
+        $return .= get_string("entryishidden","glossary");
     }
     $return .= glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode,$hook,'html');
+
+    $return .= "</font> ";
+
     
-    if ( (!empty($USER->id) && $glossary->allowcomments && !isguest()) || $isteacher) {
-        $output = true;
-        $return .= '<a title="' . get_string('addcomment','glossary') . '" href="comment.php?id='.$cm->id.'&amp;eid='.$entry->id.'"><img src="comment.gif" height="11" width="11" border="0" alt="'.get_string('addcomment','glossary').'" /></a>';
+    if ( $glossary->allowcomments and !isguest()) {
+        $return .= " <a title=\"" . get_string("addcomment","glossary") . "\" href=\"comment.php?id=$cm->id&eid=$entry->id\"><img src=\"comment.gif\" height=11 width=11 border=0></a> ";
     }
 
-
-    if ($isteacher or (!empty($USER->id) and $glossary->studentcanpost and $entry->userid == $USER->id)) {
+    if ($isteacher or $glossary->studentcanpost and $entry->userid == $USER->id) {
         // only teachers can export entries so check it out
         if ($isteacher and !$ismainglossary and !$importedentry) {
-            $mainglossary = get_record('glossary','mainglossary',1,'course',$course->id);
+            $mainglossary = get_record("glossary","mainglossary",1,"course",$course->id);
             if ( $mainglossary ) {  // if there is a main glossary defined, allow to export the current entry
-                $output = true;
-                $return .= '<a title="'.get_string('exporttomainglossary','glossary') . '" href="exportentry.php?id='.$cm->id.'&amp;entry='.$entry->id.'&amp;mode='.$mode.'&amp;hook='.$hook.'"><img src="export.gif" height="11" width="11" border="0" alt="'.get_string('exporttomainglossary','glossary').'" /></a>';
+
+                $return .= " <a title=\"" . get_string("exporttomainglossary","glossary") . "\" href=\"exportentry.php?id=$cm->id&entry=$entry->id&mode=$mode&hook=$hook\"><img src=\"export.gif\" height=11 width=11 border=0></a> ";
+
             }
         }
 
@@ -753,27 +624,18 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
         //Decide if an entry is editable:
         // -It isn't a imported entry (so nobody can edit a imported (from secondary to main) entry)) and
         // -The user is teacher or he is a student with time permissions (edit period or editalways defined).
-        $ineditperiod = ((time() - $entry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
-        if ( !$importedentry and ($isteacher or ($entry->userid == $USER->id and $ineditperiod))) {
-            $output = true;
-            $return .= " <a title=\"" . get_string("delete") . "\" href=\"deleteentry.php?id=$cm->id&amp;mode=delete&amp;entry=$entry->id&amp;prevmode=$mode&amp;hook=$hook\"><img src=\"";
+        $ineditperiod = (time() - $entry->timemodified <  $CFG->maxeditingtime);
+        if ( !$importedentry and ($isteacher or ($entry->userid == $USER->id and ($glossary->editalways or $ineditperiod)))) {
+            $return .= " <a title=\"" . get_string("delete") . "\" href=\"deleteentry.php?id=$cm->id&mode=delete&entry=$entry->id&prevmode=$mode&hook=$hook\"><img src=\"";
             $return .= $icon;
-            $return .= "\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
+            $return .= "\" height=11 width=11 border=0></a> ";
             
-            $return .= " <a title=\"" . get_string("edit") . "\" href=\"edit.php?id=$cm->id&amp;e=$entry->id&amp;mode=$mode&amp;hook=$hook\"><img src=\"$CFG->pixpath/t/edit.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a>";
+            $return .= " <a title=\"" . get_string("edit") . "\" href=\"edit.php?id=$cm->id&e=$entry->id&mode=$mode&hook=$hook\"><img src=\"$CFG->pixpath/t/edit.gif\" height=11 width=11 border=0></a>";
         } elseif ( $importedentry ) {
-            $return .= " <font size=\"-1\">" . get_string("exportedentry","glossary") . "</font>";
+            $return .= " <font size=-1>" . get_string("exportedentry","glossary") . "</font>";
         }
     }
     $return .= "&nbsp;&nbsp;"; // just to make up a little the output in Mozilla ;)
-
-    $return .= '</span>';
-    
-    //If we haven't calculated any REAL thing, delete result ($return)
-    if (!$output) {
-        $return = '';
-    }
-    //Print or get
     if ($type == 'print') {
         echo $return;
     } else {
@@ -784,16 +646,17 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
 function glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode,$hook, $type = 'print') {
     $return = '';
 
-    $count = count_records('glossary_comments','entryid',$entry->id);
+    $count = count_records("glossary_comments","entryid",$entry->id);
     if ($count) {
-        $return = '';
-        $return .= "<a href=\"comments.php?id=$cm->id&amp;eid=$entry->id\">$count ";
+        $return = "<font size=1>";
+        $return .= "<a href=\"comments.php?id=$cm->id&eid=$entry->id\">$count ";
         if ($count == 1) {
-            $return .= get_string('comment', 'glossary');
+            $return .= get_string("comment", "glossary");
         } else {
-            $return .= get_string('comments', 'glossary');
+            $return .= get_string("comments", "glossary");
         }
-        $return .= '</a>';
+        $return .= "</a>";
+        $return .= "</font>";
     }
 
     if ($type == 'print') {
@@ -806,24 +669,24 @@ function glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode
 function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook,$printicons,$ratings,$aliases=true) {
 
     if ($aliases) {
-        $aliases = glossary_print_entry_aliases($course, $cm, $glossary, $entry, $mode, $hook,'html');
+        $aliases = glossary_print_entry_aliases($course, $cm, $glossary, $entry, $mode, $hook,"html");
     }
-    $icons   = '';
-    $return   = '';
+    $icons   = "";
+    $return   = "";
     if ( $printicons ) {
-        $icons   = glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode, $hook,'html');
+        $icons   = glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode, $hook,"html");
     }
-    if ($aliases || $icons || $ratings) {
-        echo '<table>';
+    if ($aliases || $printicons || $ratings) {
+        echo '<table border="0" width="100%" align="center">';
         if ( $aliases ) {
-            echo '<tr valign="top"><td class="aliases">' .
-                  get_string('aliases','glossary').': '.$aliases . '</td></tr>';
+            echo '<tr><td align="center"  valign="top"><font size=1>' .
+                  get_string("aliases","glossary") . ': ' . $aliases . '</td></tr>';
         }
         if ($icons) {
-            echo '<tr valign="top"><td class="icons">'.$icons.'</td></tr>';
+            echo '<tr><td align=right valign=top>'.  $icons . '</td></tr>';
         }
         if ($ratings) {
-            echo '<tr valign="top"><td class="ratings">';
+            echo '<tr><td align=right valign=top>';
             $return = glossary_print_entry_ratings($course, $entry, $ratings);
             echo '</td></tr>';
         }
@@ -840,7 +703,7 @@ function glossary_print_entry_attachment($entry,$format=NULL,$align="right",$ins
           $glossary = get_record("glossary","id",$entry->glossaryid);		  
           $entry->course = $glossary->course; //used inside print_attachment
           if ($insidetable) {
-              echo "<table border=\"0\" width=\"100%\" align=\"$align\"><tr><td align=\"$align\" nowrap=\"nowrap\">\n";
+              echo "<table border=\"0\" width=\"100%\" align=\"$align\"><tr><td align=\"$align\" nowrap>\n";
           }
           echo glossary_print_attachments($entry,$format,$align);
           if ($insidetable) {
@@ -852,11 +715,11 @@ function glossary_print_entry_attachment($entry,$format=NULL,$align="right",$ins
 function  glossary_print_entry_approval($cm, $entry, $mode,$align="right",$insidetable=true) {
     if ( $mode == 'approval' and !$entry->approved ) {
         if ($insidetable) {
-            echo '<table class="glossaryapproval" align="'.$align.'"><tr><td align="'.$align.'">';
+            echo "<table border=\"0\" width=\"100%\" align=\"$align\"><tr><td align=\"$align\">\n";
         }
-        echo '<a title="'.get_string('approve','glossary').'" href="approve.php?id='.$cm->id.'&amp;eid='.$entry->id.'&amp;mode='.$mode.'"><img align="'.$align.'" src="check.gif" border="0" width="34" height="34" alt="" /></a>';
+        echo "<a title=\"" . get_string("approve","glossary"). "\" href=\"approve.php?id=$cm->id&eid=$entry->id&mode=$mode\"><img align=\"$align\" src=\"check.gif\" border=0 width=\"34\" height=\"34\"></a>\n";
         if ($insidetable) {
-            echo '</td></tr></table>';
+            echo "</td></tr></table>\n";
         }
     }
 }
@@ -1061,8 +924,6 @@ function glossary_move_attachments($entry, $glossaryid) {
 
     global $CFG;
 
-    require_once($CFG->dirroot.'/lib/uploadlib.php');
-
     $return = true;
 
     if ($entries = get_records_select("glossary_entries", "glossaryid = '$entry->id' AND attachment <> ''")) {
@@ -1074,13 +935,8 @@ function glossary_move_attachments($entry, $glossaryid) {
                 $newentry = $oldentry;
                 $newentry->glossaryid = $glossaryid;
                 $newentrydir = "$CFG->dataroot/".glossary_file_area_name($newentry);
-                $files = get_directory_list($oldentrydir); // get it before we rename it.
                 if (! @rename($oldentrydir, $newentrydir)) {
                     $return = false;
-                }
-                foreach ($files as $file) {
-                    // this is not tested as I can't find anywhere that calls this function, grepping the source.
-                    clam_change_log($oldentrydir.'/'.$file,$newentrydir.'/'.$file);                    
                 }
             }
         }
@@ -1088,29 +944,41 @@ function glossary_move_attachments($entry, $glossaryid) {
     return $return;
 }
 
-function glossary_add_attachment($entry, $inputname) {
+function glossary_add_attachment($entry, $newfile) {
 // $entry is a full entry record, including course and glossary
 // $newfile is a full upload array from $_FILES
 // If successful, this function returns the name of the file
 
     global $CFG;
 
-    if (!$glossary = get_record("glossary","id",$entry->glossaryid)) {
-        return false;
-    }
-    
-    if (!$course = get_record("course","id",$glossary->course)) {
-        return false;
+    if (empty($newfile['name'])) {
+        return "";
     }
 
-    require_once($CFG->dirroot.'/lib/uploadlib.php');
-    $um = new upload_manager($inputname,true,false,$course,false,0,false,true);
-    $dir = glossary_file_area_name($entry);
+    $newfile_name = clean_filename($newfile['name']);
 
-    if ($um->process_file_uploads($dir)) {
-        return $um->get_new_filename();
+    if (valid_uploaded_file($newfile)) {
+        if (! $newfile_name) {
+            notify("This file had a wierd filename and couldn't be uploaded");
+
+        } else if (! $dir = glossary_file_area($entry)) {
+            notify("Attachment could not be stored");
+            $newfile_name = "";
+
+        } else {
+            if (move_uploaded_file($newfile['tmp_name'], "$dir/$newfile_name")) {
+                chmod("$dir/$newfile_name", $CFG->directorypermissions);
+                glossary_delete_old_attachments($entry, $newfile_name);
+            } else {
+                notify("An error happened while saving the file on the server");
+                $newfile_name = "";
+            }
+        }
+    } else {
+        $newfile_name = "";
     }
-    // upload manager will take care of errors.
+
+    return $newfile_name;
 }
 
 function glossary_print_attachments($entry, $return=NULL, $align="left") {
@@ -1141,20 +1009,20 @@ function glossary_print_attachments($entry, $return=NULL, $align="left") {
                 } else {
                     $ffurl = "file.php?file=/$filearea/$file";
                 }
-                $image = "<img border=\"0\" src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" alt=\"$strpopupwindow\" />";
+                $image = "<img border=0 src=\"$CFG->pixpath/f/$icon\" height=16 width=16 alt=\"$strpopupwindow\">";
 
                 if ($return == "html") {
-                    $output .= "<a target=\"_image\" href=\"$CFG->wwwroot/$ffurl\">$image</a> ";
-                    $output .= "<a target=\"_image\" href=\"$CFG->wwwroot/$ffurl\">$file</a><br />";
+                    $output .= "<a target=_image href=\"$CFG->wwwroot/$ffurl\">$image</a> ";
+                    $output .= "<a target=_image href=\"$CFG->wwwroot/$ffurl\">$file</a><br />";
                 } else if ($return == "text") {
                     $output .= "$strattachment $file:\n$CFG->wwwroot/$ffurl\n";
 
                 } else {
                     if ($icon == "image.gif") {    // Image attachments don't get printed as links
-                        $imagereturn .= "<img src=\"$CFG->wwwroot/$ffurl\" align=\"$align\" alt=\"\" />";
+                        $imagereturn .= "<img src=\"$CFG->wwwroot/$ffurl\" align=$align>";
                     } else {
                         link_to_popup_window("/$ffurl", "attachment", $image, 500, 500, $strattachment);
-                        echo "<a target=\"_image\" href=\"$CFG->wwwroot/$ffurl\">$file</a>";
+                        echo "<a target=_image href=\"$CFG->wwwroot/$ffurl\">$file</a>";
                         echo "<br />";
                     }
                 }
@@ -1169,7 +1037,21 @@ function glossary_print_attachments($entry, $return=NULL, $align="left") {
     return $imagereturn;
 }
 
-function glossary_print_tabbed_table_start($data, $currenttab, $tabsperrow=4) {
+function glossary_print_tabbed_table_start($data, $currenttab, $tTHEME = NULL) {
+
+if ( !$tTHEME ) {
+     global $THEME;
+     $tTHEME = $THEME;
+}
+
+$tablecolor           = $tTHEME->TabTableBGColor;
+$currenttabcolor      = $tTHEME->ActiveTabColor;
+$tabcolor             = $tTHEME->InactiveTabColor;
+$inactivefontcolor    = $tTHEME->InactiveFontColor;
+
+$tablewidth           = $tTHEME->TabTableWidth;
+$tabsperrow           = $tTHEME->TabsPerRow;
+$tabseparation        = $tTHEME->TabSeparation;
 
 $tabs                 = count($data);
 $tabwidth             = (int) (100 / $tabsperrow);
@@ -1178,57 +1060,137 @@ $currentrow           = ( $currenttab - ( $currenttab % $tabsperrow) ) / $tabspe
 
 $numrows              = (int) ( $tabs / $tabsperrow ) + 1;
 
-
-/// Following lines are to create a tab object so that
-/// we can use the new tab objects and functions
-$tabrows = array();
-$tabnumber = 0;
-$row = array();
-$inactive = array();
-foreach ($data as $tab) {
-    $row[] = new tabobject($tabnumber, $tab->link, $tab->caption);
-    if (empty($tab->link)) {
-        $inactive[] = $tabnumber;
-    }
-    $tabnumber++;
-    if (($tabnumber % $tabsperrow) == 0) {
-        $tabrows[] = $row;
-        unset($row);
-        $row = array();
-    }
-}
-//Add the last row! if it contains anything!
-if (!empty($row)) {
-    $tabrows[] = $row;
-}
-
-
 ?>
-  <table cellspacing="0" class="glossarydisplay">
+  <center>
+  <table border="0" cellpadding="0" cellspacing="0" width="<?php p($tablewidth) ?>">
     <tr>
       <td width="100%">
 
-<?php print_tabs($tabrows, $currenttab, $inactive);
+      <table border="0" cellpadding="0" cellspacing="0" width="100%">
 
-?>
+<?php
+$tabproccessed = 0;
+for ($row = 0; $row < $numrows; $row++) {
+     echo "<tr>\n";
+     if ( $row != $currentrow ) {
+          for ($col = 0; $col < $tabsperrow; $col++) {
+               if ( $tabproccessed < $tabs ) {
+                    if ( $col == 0 ) {
+                        echo "<td width=\"$tabseparation\" align=\"center\">&nbsp;</td>";
+                    }
+                    if ($tabproccessed == $currenttab) {
+                         $currentcolor = $currenttabcolor;
+                         $currentstyle = 'generaltabselected';
+                    } else {
+                         $currentcolor = $tabcolor;
+                         $currentstyle = 'generaltab';
+                    }
+                    echo "<td class=\"$currentstyle\" width=\"$tabwidth%\" bgcolor=\"$currentcolor\" align=\"center\"><b>";
+                    if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
+                        echo "<a href=\"" . $data[$tabproccessed]->link . "\">";
+                    }
+
+                    if ( !$data[$tabproccessed]->link ) {
+                        echo "<font color=\"$inactivefontcolor\">";
+                    }
+                    echo $data[$tabproccessed]->caption;
+                    if ( !$data[$tabproccessed]->link ) {
+                        echo "</font>";
+                    }
+
+                    if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
+                        echo "</a>";
+                    }
+                    echo "</b></td>";
+                    
+                    if ( $col < $tabsperrow ) {
+                        echo "<td width=\"$tabseparation\" align=\"center\">&nbsp;</td>";
+                    }
+               } else {
+                    $currentcolor = "";
+               }
+               $tabproccessed++;
+          }
+     } else {
+          $firsttabincurrentrow = $tabproccessed;
+          $tabproccessed += $tabsperrow;
+     }
+     echo "</tr><tr><td colspan=" . (2* $tabsperrow) . " ></td></tr>\n";
+}
+     echo "<tr>\n";
+          $tabproccessed = $firsttabincurrentrow;
+          for ($col = 0; $col < $tabsperrow; $col++) {
+               if ( $tabproccessed < $tabs ) {
+                    if ( $col == 0 ) {
+                        echo "<td width=\"$tabseparation\" align=\"center\">&nbsp;</td>";
+                    }
+                    if ($tabproccessed == $currenttab) {
+                         $currentcolor = $currenttabcolor;
+                         $currentstyle = 'generaltabselected';
+                    } else {
+                         $currentcolor = $tabcolor;
+                         $currentstyle = 'generaltab';
+                    }
+
+                    if (!isset($data[$tabproccessed]->link)) {
+                        $data[$tabproccessed]->link = NULL;
+                    }
+                    echo "<td class=\"$currentstyle\" width=\"$tabwidth%\" bgcolor=\"$currentcolor\" align=\"center\"><b>";
+                    if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
+                        echo "<a href=\"" . $data[$tabproccessed]->link . "\">";
+                    }
+
+                    if ( !$data[$tabproccessed]->link ) {
+                        echo "<font color=\"$inactivefontcolor\">";
+                    }
+                    echo $data[$tabproccessed]->caption;
+                    if ( !$data[$tabproccessed]->link ) {
+                        echo "</font>";
+                    }
+
+                    if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
+                        echo "</a>";
+                    }
+                    echo "</b></td>";
+
+                    if ($col < $tabsperrow) {
+                         echo "<td width=\"$tabseparation\" align=\"center\">&nbsp;</td>";
+                    }
+               } else {
+                    if ($numrows > 1) {
+                         $currentcolor = $tabcolor;
+                    } else {
+                         $currentcolor = "";
+                    }
+                    echo "<td colspan = " . (2 * ($tabsperrow - $col)) . " bgcolor=\"$currentcolor\" align=\"center\">";
+                    echo "</td>";
+
+                    $col = $tabsperrow;
+               }
+               $tabproccessed++;
+          }
+     echo "</tr>\n";
+     ?>
+
+      </table>
       </td>
     </tr>
     <tr>
-      <td width="100%" class="entryboxheader"><hr /></td>
+      <td width="100%" bgcolor="<?php p($tablecolor) ?>"><hr></td>
     </tr>
     <tr>
-      <td width="100%" class="entrybox">
+      <td width="100%" bgcolor="<?php p($tablecolor) ?>">
           <center>
 <?php
 }
 
 function glossary_print_tabbed_table_end() {
-     echo "</td></tr></table></center>";
+     echo "</center><p></td></tr></table></center>";
 }
 
 function glossary_print_approval_menu($cm, $glossary,$mode, $hook, $sortkey = '', $sortorder = '') {
     if ($glossary->showalphabet) {
-        echo '<center>' . get_string("explainalphabet","glossary") . '</center><br />';
+        echo '<center>' . get_string("explainalphabet","glossary") . '<p>';
     }
     glossary_print_special_links($cm, $glossary, $mode, $hook);
 
@@ -1240,21 +1202,21 @@ function glossary_print_approval_menu($cm, $glossary,$mode, $hook, $sortkey = ''
 }
 
 function glossary_print_addentry_menu($cm, $glossary, $mode, $hook, $sortkey='', $sortorder = '') {
-    echo '<center>' . get_string("explainaddentry","glossary") . '</center><br />';
+    echo '<center>' . get_string("explainaddentry","glossary") . '<p>';
 }
 
 function glossary_print_import_menu($cm, $glossary, $mode, $hook, $sortkey='', $sortorder = '') {
-    echo '<center>' . get_string("explainimport","glossary") . '</center><br />';
+    echo '<center>' . get_string("explainimport","glossary") . '<p>';
 }
 
 function glossary_print_export_menu($cm, $glossary, $mode, $hook, $sortkey='', $sortorder = '') {
-    echo '<center>' . get_string("explainexport","glossary") . '</center><br />';
+    echo '<center>' . get_string("explainexport","glossary") . '<p>';
 }
 
 function glossary_print_alphabet_menu($cm, $glossary, $mode, $hook, $sortkey='', $sortorder = '') {
     if ( $mode != 'date' ) {
         if ($glossary->showalphabet) {
-            echo '<center>' . get_string("explainalphabet","glossary") . '</center><br />';
+            echo '<center>' . get_string("explainalphabet","glossary") . '<p>';
         }
 
         glossary_print_special_links($cm, $glossary, $mode, $hook);
@@ -1269,21 +1231,21 @@ function glossary_print_alphabet_menu($cm, $glossary, $mode, $hook, $sortkey='',
 
 function glossary_print_author_menu($cm, $glossary,$mode, $hook, $sortkey = '', $sortorder = '') {
     if ($glossary->showalphabet) {
-        echo '<center>' . get_string("explainalphabet","glossary") . '</center><br />';
+        echo '<center>' . get_string("explainalphabet","glossary") . '<br />';
     }
 
     glossary_print_sorting_links($cm, $mode, $sortkey,$sortorder);
     glossary_print_alphabet_links($cm, $glossary, $mode, $hook, $sortkey, $sortorder);
     glossary_print_all_links($cm, $glossary, $mode, $hook);
+//    echo "<br />";
 }
 
 function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
-     global $CFG;
-
-     echo '<table border="0" width="100%">';
+global $CFG, $THEME;
+     echo '<table border=0 width=100%>';
      echo '<tr>';
 
-     echo '<td align="center" width="20%">';
+     echo '<td align=center width=20%>';
      if ( isteacher($glossary->course) ) {
              $options['id'] = $cm->id;
              $options['mode'] = 'cat';
@@ -1292,7 +1254,7 @@ function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
      }
      echo '</td>';
 
-     echo '<td align="center" width="60%">';
+     echo '<td align=center width=60%>';
      echo '<b>';
 
      $menu[GLOSSARY_SHOW_ALL_CATEGORIES] = get_string("allcategories","glossary");
@@ -1308,7 +1270,7 @@ function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
                          $selected = $url;
                      }
                  }
-                 $menu[$url] = clean_text($currentcategory->name); //Only clean, not filters
+                 $menu[$url] = $currentcategory->name;
           }
      }
      if ( !$selected ) {
@@ -1316,7 +1278,7 @@ function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
      }
 
      if ( $category ) {
-        echo format_text($category->name);
+        echo $category->name;
      } else {
         if ( $hook == GLOSSARY_SHOW_NOT_CATEGORISED ) {
 
@@ -1331,9 +1293,9 @@ function glossary_print_categories_menu($cm, $glossary, $hook, $category) {
         }
      }
      echo '</b></td>';
-     echo '<td align="center" width="20%">';
+     echo '<td align=center width=20%>';
 
-     echo popup_form("$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&amp;mode=cat&amp;hook=", $menu, "catmenu", $selected, "",
+     echo popup_form("$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&mode=cat&hook=", $menu, "catmenu", $selected, "",
                       "", "", false);
 
      echo '</td>';
@@ -1350,7 +1312,7 @@ global $CFG;
               echo "<b>$strallentries</b>";
          } else {
               $strexplainall = strip_tags(get_string("explainall","glossary"));
-              echo "<a title=\"$strexplainall\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&amp;mode=$mode&amp;hook=ALL\">$strallentries</a>";
+              echo "<a title=\"$strexplainall\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&mode=$mode&hook=ALL\">$strallentries</a>";
          }
      }
 }
@@ -1363,7 +1325,7 @@ global $CFG;
               echo "<b>$strspecial</b> | ";
          } else {
               $strexplainspecial = strip_tags(get_string("explainspecial","glossary"));
-              echo "<a title=\"$strexplainspecial\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&amp;mode=$mode&amp;hook=SPECIAL\">$strspecial</a> | ";
+              echo "<a title=\"$strexplainspecial\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&mode=$mode&hook=SPECIAL\">$strspecial</a> | ";
          }
      }
 }
@@ -1377,12 +1339,12 @@ global $CFG;
               if ( $hook == $alphabet[$i] and $hook) {
                    echo "<b>$alphabet[$i]</b>";
               } else {
-                   echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&amp;mode=$mode&amp;hook=$alphabet[$i]&amp;sortkey=$sortkey&amp;sortorder=$sortorder\">$alphabet[$i]</a>";
+                   echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&mode=$mode&hook=$alphabet[$i]&sortkey=$sortkey&sortorder=$sortorder\">$alphabet[$i]</a>";
               }
               if ((int) ($i % $letters_by_line) != 0 or $i == 0) {
                    echo ' | ';
               } else {
-                   echo '<br />';
+                   echo '<br>';
               }
           }
      }
@@ -1399,13 +1361,13 @@ global $CFG;
      $neworder = '';
      if ( $sortorder ) {
          if ( $sortorder == 'asc' ) {
-             $neworder = '&amp;sortorder=desc';
+             $neworder = '&sortorder=desc';
              $newordertitle = $desc;
          } else {
-             $neworder = '&amp;sortorder=asc';
+             $neworder = '&sortorder=asc';
              $newordertitle = $asc;
          }
-         $icon = " <img src=\"$sortorder.gif\" border=\"0\" width=\"16\" height=\"16\" alt=\"\" />";
+         $icon = " <img src=\"$sortorder.gif\" border=0 width=16 height=16>";
      } else {
          if ( $sortkey != 'CREATION' and $sortkey != 'UPDATE' and
                $sortkey != 'FIRSTNAME' and $sortkey != 'LASTNAME' ) {
@@ -1413,8 +1375,8 @@ global $CFG;
              $newordertitle = $asc;
          } else {
              $newordertitle = $desc;
-             $neworder = '&amp;sortorder=desc';
-             $icon = ' <img src="asc.gif" border="0" width="16" height="16" alt="" />';
+             $neworder = '&sortorder=desc';
+             $icon = ' <img src="asc.gif" border=0 width=16 height=16>';
          }
      }
      $ficon     = '';
@@ -1467,8 +1429,8 @@ global $CFG;
          $sort        = get_string("sortby", "glossary");
      }
 
-     echo "<br />$sort: $sbtag<a title=\"$ssort $sordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&amp;sortkey=$sorder$sneworder&amp;mode=$mode\">$ssort$sicon</a>$sendbtag | ".
-                          "$fbtag<a title=\"$fsort $fordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&amp;sortkey=$forder$fneworder&amp;mode=$mode\">$fsort$ficon</a>$fendbtag<br />";
+     echo "<br>$sort: $sbtag<a title=\"$ssort $sordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&sortkey=$sorder$sneworder&mode=$mode\">$ssort$sicon</a>$sendbtag | ".
+                          "$fbtag<a title=\"$fsort $fordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&sortkey=$forder$fneworder&mode=$mode\">$fsort$ficon</a>$fendbtag<br />";
 }
 
 function glossary_sort_entries ( $entry0, $entry1 ) {
@@ -1482,43 +1444,44 @@ function glossary_sort_entries ( $entry0, $entry1 ) {
 }
 
 function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
-    global $CFG, $USER;
+    global $THEME, $CFG, $USER;
 
-    $user = get_record('user', 'id', $comment->userid);
-    $strby = get_string('writtenby','glossary');
+    $colour = $THEME->cellheading2;
+
+    $user = get_record("user", "id", $comment->userid);
+    $strby = get_string("writtenby","glossary");
     $fullname = fullname($user, isteacher($course->id));
 
-    echo '<center>';
-    echo '<table class="glossarycomment" cellspacing="0">';
-    echo '<tr valign="top">';
-    echo '<tr><td class="left picture">';
+    echo '<table align="center" border="0" width="70%" cellpadding="3" cellspacing="0" class="forumpost">';
+    echo "<tr>";
+    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostpicture\" width=\"35\" valign=\"top\">";
     print_user_picture($user->id, $course->id, $user->picture);
-    echo '</td>';
-    echo '<td class="entryheader">';
-    echo "<span class=\"author\"><a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a></span><br />";
-    echo '<span class="time">'.get_string('lastedited').': '.userdate($comment->timemodified).'</span>';
-    echo '</td></tr>';
+    echo "</td>";
+    echo "<td bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\" width=\"100%\">";
+    echo "<p>";
+    echo "<font size=2><a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id\">$fullname</a></font><br />";
+    echo "<font size=1>".get_string("lastedited").": ".userdate($comment->timemodified)."</font>";
+    echo "</p></td></tr>";
 
-    echo '<tr valign="top"><td class="left side">';
-    echo '&nbsp;';
-    echo '</td><td class="entry">';
+    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostside\" width=\"10\">";
+    echo "&nbsp;";
+    echo "</td><td bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">\n";
 
     echo format_text($comment->comment, $comment->format);
 
-    echo '<div class="icons commands">';
-
-    $ineditperiod = ((time() - $comment->timemodified <  $CFG->maxeditingtime) || $glossary->editalways);
-    if ( ($glossary->allowcomments &&  $ineditperiod && $USER->id == $comment->userid)  || isteacher($course->id) ) {
-        echo "<a href=\"comment.php?id=$cm->id&amp;eid=$entry->id&amp;cid=$comment->id&amp;action=edit\"><img  
-               alt=\"" . get_string("edit") . "\" src=\"$CFG->pixpath/t/edit.gif\" height=\"11\" width=\"11\" border=\"0\" /></a> ";
+    echo "<div align=right><p align=right>";
+    if ( (time() - $comment->timemodified <  $CFG->maxeditingtime and $USER->id == $comment->userid)  or isteacher($course->id) ) {
+        echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id&cid=$comment->id&action=edit\"><img  
+               alt=\"" . get_string("edit") . "\" src=\"$CFG->pixpath/t/edit.gif\" height=11 width=11 border=0></a> ";
     }
-    if ( ($glossary->allowcomments && $USER->id == $comment->userid) || isteacher($course->id) ) {
-        echo "<a href=\"comment.php?id=$cm->id&amp;eid=$entry->id&amp;cid=$comment->id&amp;action=delete\"><img  
-               alt=\"" . get_string("delete") . "\" src=\"$CFG->pixpath/t/delete.gif\" height=\"11\" width=\"11\" border=\"0\" /></a>";
+    if ( $USER->id == $comment->userid or isteacher($course->id) ) {
+        echo "<a href=\"comment.php?id=$cm->id&eid=$entry->id&cid=$comment->id&action=delete\"><img  
+               alt=\"" . get_string("delete") . "\" src=\"$CFG->pixpath/t/delete.gif\" height=11 width=11 border=0></a>";
     }
-   
-    echo '</div></td></tr>';
-    echo '</table></center>';
+    
+    echo "</p>";
+    echo "</div>";
+    echo "</td></tr>\n</table>\n\n";
 
 }
 
@@ -1553,21 +1516,22 @@ function  glossary_print_entry_ratings($course, $entry, $ratings = NULL) {
 }
 
 function glossary_print_dynaentry($courseid, $entries, $displayformat = -1) {
-    global $USER,$CFG;
+    global $THEME, $USER,$CFG;
 
-    echo '<center>';
-    echo '<table class="glossarypopup" cellspacing="0"><tr>';
-    echo '<td>';
+    $colour = $THEME->cellheading2;
+
+    echo "\n<center><table width=95% border=0><tr>";
+    echo "<td width=100%\">";
     if ( $entries ) {
         foreach ( $entries as $entry ) {
-            if (! $glossary = get_record('glossary', 'id', $entry->glossaryid)) {
-                error('Glossary ID was incorrect or no longer exists');
+            if (! $glossary = get_record("glossary", "id", $entry->glossaryid)) {
+                error("Glossary ID was incorrect or no longer exists");
             }
-            if (! $course = get_record('course', 'id', $glossary->course)) {
-                error('Glossary is misconfigured - don\'t know what course it\'s from');
+            if (! $course = get_record("course", "id", $glossary->course)) {
+                error("Glossary is misconfigured - don't know what course it's from");
             }
-            if (!$cm = get_coursemodule_from_instance('glossary', $entry->glossaryid, $glossary->course) ) {
-                error('Glossary is misconfigured - don\'t know what course module it is');
+            if (!$cm = get_coursemodule_from_instance("glossary", $entry->glossaryid, $glossary->course) ) {
+                error("Glossary is misconfigured - don't know what course module it is ");
             }
 
             //If displayformat is present, override glossary->displayformat
@@ -1597,8 +1561,8 @@ function glossary_print_dynaentry($courseid, $entries, $displayformat = -1) {
             }
         }
     }
-    echo '</td>';
-    echo '</tr></table></center>';
+    echo "</td>";
+    echo "</tr></table></center>";
 }
 
 function glossary_generate_export_file($glossary, $hook = "", $hook = 0) {
@@ -1705,7 +1669,7 @@ function glossary_open_xml($glossary) {
 
         //Open for writing
 
-        $glossaryname = clean_filename(strip_tags(format_string($glossary->name,true))); 
+        $glossaryname = clean_filename(strip_tags($glossary->name)); 
         $pathname = make_upload_directory("$glossary->course/glossary/$glossaryname");
         $filename = "$pathname/glossary.xml";
 
@@ -1737,7 +1701,7 @@ require_once "../../lib/xmlize.php";
         }
         fclose($h);
 	}
-    return xmlize($line, 0);
+    return xmlize($line);
 }
 //Close the file
 function glossary_close_xml($h) {
@@ -1790,7 +1754,7 @@ function glossary_check_moddata_dir($glossary) {
     if ( $status ) {
         $status = glossary_check_dir_exists($CFG->dataroot."/$glossary->course/glossary",true);
         if ( $status ) {
-            $status = glossary_check_dir_exists($CFG->dataroot."/$glossary->course/glossary/". clean_filename(strip_tags(format_string($glossary->name,true))),true);
+            $status = glossary_check_dir_exists($CFG->dataroot."/$glossary->course/glossary/". clean_filename($glossary->name),true);
         }
     }
     return $status;
@@ -1882,8 +1846,9 @@ function glossary_print_ratings_mean($entryid, $scale) {
             $strratings = get_string("ratings", "glossary");
         }
 
-        echo "$strratings: ";
+        echo "<font size=-1>$strratings: ";
         link_to_popup_window ("/mod/glossary/report.php?id=$entryid", "ratings", $mean, 400, 600);
+        echo "</font>";
     }
 }
 
@@ -1971,152 +1936,14 @@ function glossary_print_rating_menu($entryid, $userid, $scale) {
     static $strrate;
 
     if (!$rating = get_record("glossary_ratings", "userid", $userid, "entryid", $entryid)) {
-        $rating->rating = -999;
+        $rating->rating = 0;
     }
 
     if (empty($strrate)) {
         $strrate = get_string("rate", "glossary");
     }
 
-    choose_from_menu($scale, $entryid, $rating->rating, "$strrate...",'',-999);
-}
-
-
-function glossary_get_paging_bar($totalcount, $page, $perpage, $baseurl, $maxpageallowed=99999, $maxdisplay=20, $separator="&nbsp;", $specialtext="", $specialvalue=-1, $previousandnext = true) {
-// Returns the html code to represent any pagging bar. Paramenters are:
-//
-//  Mandatory:
-//     $totalcount: total number of records to be displayed
-//     $page: page currently selected (0 based)
-//     $perpage: number of records per page
-//     $baseurl: url to link in each page, the string 'page=XX' will be added automatically.
-//  Optional:
-//     $maxpageallowed: maximum number of page allowed.
-//     $maxdisplay: maximum number of page links to show in the bar
-//     $separator: string to be used between pages in the bar
-//     $specialtext: string to be showed as an special link
-//     $specialvalue: value (page) to be used in the special link
-//     $previousandnext: to decide if we want the previous and next links
-//
-// The function dinamically show the first and last pages, and "scroll" over pages.
-// Fully compatible with Moodle's print_paging_bar() function. Perhaps some day this
-// could replace the general one. ;-)
-
-    $code = '';
-
-    $showspecial = false;
-    $specialselected = false;
-
-    //Check if we have to show the special link
-    if (!empty($specialtext)) {
-        $showspecial = true;
-    }
-    //Check if we are with the special link selected
-    if ($showspecial && $page == $specialvalue) {
-        $specialselected = true;
-    } 
-
-    //If there are results (more than 1 page)
-    if ($totalcount > $perpage) {
-        $code .= "<center>";
-        $code .= "<p>".get_string("page").":";
-
-        $maxpage = (int)(($totalcount-1)/$perpage);
-
-        //Lower and upper limit of page
-        if ($page < 0) {
-            $page = 0;
-        }
-        if ($page > $maxpageallowed) {
-            $page = $maxpageallowed;
-        }
-        if ($page > $maxpage) {
-            $page = $maxpage;
-        }
-
-        //Calculate the window of pages
-        $pagefrom = $page - ((int)($maxdisplay / 2));
-        if ($pagefrom < 0) {
-            $pagefrom = 0;
-        }
-        $pageto = $pagefrom + $maxdisplay - 1;
-        if ($pageto > $maxpageallowed) {
-            $pageto = $maxpageallowed;
-        }
-        if ($pageto > $maxpage) {
-            $pageto = $maxpage;
-        }
-
-        //Some movements can be necessary if don't see enought pages
-        if ($pageto - $pagefrom < $maxdisplay - 1) {
-            if ($pageto - $maxdisplay + 1 > 0) {
-                $pagefrom = $pageto - $maxdisplay + 1;
-            }
-        }
-
-        //Calculate first and last if necessary
-        $firstpagecode = '';
-        $lastpagecode = '';
-        if ($pagefrom > 0) {
-            $firstpagecode = "$separator<a href=\"{$baseurl}page=0\">1</a>";
-            if ($pagefrom > 1) {
-                $firstpagecode .= "$separator...";
-            }
-        }
-        if ($pageto < $maxpage) {
-            if ($pageto < $maxpage -1) {
-                $lastpagecode = "$separator...";
-            }
-            $lastpagecode .= "$separator<a href=\"{$baseurl}page=$maxpage\">".($maxpage+1)."</a>";
-        }
-
-        //Previous
-        if ($page > 0 && $previousandnext) {
-            $pagenum = $page - 1;
-            $code .= "&nbsp;(<a  href=\"{$baseurl}page=$pagenum\">".get_string("previous")."</a>)&nbsp;";
-        }
-
-        //Add first
-        $code .= $firstpagecode;
-
-        $pagenum = $pagefrom;
-
-        //List of maxdisplay pages
-        while ($pagenum <= $pageto) {
-            $pagetoshow = $pagenum +1;
-            if ($pagenum == $page && !$specialselected) {
-                $code .= "$separator$pagetoshow";
-            } else {
-                $code .= "$separator<a href=\"{$baseurl}page=$pagenum\">$pagetoshow</a>";
-            }
-            $pagenum++;
-        }
-
-        //Add last
-        $code .= $lastpagecode;
-
-        //Next
-        if ($page < $maxpage && $page < $maxpageallowed && $previousandnext) {
-            $pagenum = $page + 1;
-            $code .= "$separator(<a href=\"{$baseurl}page=$pagenum\">".get_string("next")."</a>)";
-        }
-
-        //Add special
-        if ($showspecial) {
-            $code .= '<br />';
-            if ($specialselected) {
-                $code .= $specialtext;
-            } else {
-                $code .= "$separator<a href=\"{$baseurl}page=$specialvalue\">$specialtext</a>";
-            }
-        }
-
-        //End html
-        $code .= "</p>";
-        $code .= "</center>";
-    }
-
-    return $code;
+    choose_from_menu($scale, $entryid, $rating->rating, "$strrate...");
 }
 
 ?>

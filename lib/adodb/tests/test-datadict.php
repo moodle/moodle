@@ -1,7 +1,7 @@
 <?php
 /*
 
-  V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+  V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -13,7 +13,7 @@
 error_reporting(E_ALL);
 include_once('../adodb.inc.php');
 
-foreach(array('sapdb','sybase','mysqlt','access','oci8','postgres','odbc_mssql','odbc','db2','firebird','informix') as $dbType) {
+foreach(array('sybase','mysqlt','access','oci8','postgres','odbc_mssql','odbc','sybase','firebird','informix','db2') as $dbType) {
 	echo "<h3>$dbType</h3><p>";
 	$db = NewADOConnection($dbType);
 	$dict = NewDataDictionary($db);
@@ -78,32 +78,18 @@ TS            T      DEFTIMESTAMP";
 	printsqla($dbType,$sqla);
 	
 	if (file_exists('d:\inetpub\wwwroot\php\phplens\adodb\adodb.inc.php'))
-	if ($dbType == 'mysqlt') {
+	if ($dbType == 'mysql') {
 		$db->Connect('localhost', "root", "", "test");
 		$dict->SetSchema('');
 		$sqla2 = $dict->ChangeTableSQL('adoxyz',$flds);
 		if ($sqla2) printsqla($dbType,$sqla2);
 	}
-	if ($dbType == 'postgres') {
-		if (@$db->Connect('localhost', "tester", "test", "test"));
+		if ($dbType == 'postgres') {
+		$db->Connect('localhost', "tester", "test", "test");
 		$dict->SetSchema('');
 		$sqla2 = $dict->ChangeTableSQL('adoxyz',$flds);
 		if ($sqla2) printsqla($dbType,$sqla2);
 	}
-	
-	if ($dbType == 'odbc_mssql') {
-		$dsn = $dsn = "PROVIDER=MSDASQL;Driver={SQL Server};Server=localhost;Database=northwind;";
-		if (@$db->Connect($dsn, "sa", "natsoft", "test"));
-		$dict->SetSchema('');
-		$sqla2 = $dict->ChangeTableSQL('adoxyz',$flds);
-		if ($sqla2) printsqla($dbType,$sqla2);
-	}
-	
-	
-	
-	adodb_pr($dict->databaseType);
-	printsqla($dbType, $dict->DropColumnSQL('table',array('`col`','col2')));
-	printsqla($dbType, $dict->ChangeTableSQL('adoxyz','LASTNAME varchar(32)'));
 	
 }
 
@@ -237,7 +223,6 @@ ALTER TABLE KUTU.testtable  ALTER COLUMN weight           REAL NOT NULL;
 
 --------------------------------------------------------------------------------
 */
-
 
 echo "<h1>Test XML Schema</h1>";
 $ff = file('xmlschema.xml');

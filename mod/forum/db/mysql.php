@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
 function forum_upgrade($oldversion) {
 // This function does anything necessary to upgrade
@@ -39,7 +39,7 @@ function forum_upgrade($oldversion) {
 
   if ($oldversion < 2002091000) {
     if (! execute_sql(" ALTER TABLE `forum_posts` ADD `attachment` VARCHAR(100) NOT NULL AFTER `message` ")) {
-      echo "<p>Don't worry about this error - your server already had this upgrade applied";
+      echo "<P>Don't worry about this error - your server already had this upgrade applied";
     }
   }
 
@@ -130,103 +130,9 @@ function forum_upgrade($oldversion) {
   if ($oldversion < 2004070700) {    // This may be redoing it from STABLE but that's OK
       table_column("forum_discussions", "groupid", "groupid", "integer", "10", "", "0", "");
   }
-  
-  if ($oldversion < 2004111700) {
-      execute_sql(" ALTER TABLE `{$CFG->prefix}forum_posts` DROP INDEX {$CFG->prefix}forum_posts_parent_idx;",false);
-      execute_sql(" ALTER TABLE `{$CFG->prefix}forum_posts` DROP INDEX {$CFG->prefix}forum_posts_discussion_idx;",false);
-      execute_sql(" ALTER TABLE `{$CFG->prefix}forum_posts` DROP INDEX {$CFG->prefix}forum_posts_userid_idx;",false);
-      execute_sql(" ALTER TABLE `{$CFG->prefix}forum_discussions` DROP INDEX {$CFG->prefix}forum_discussions_forum_idx;",false); 
-      execute_sql(" ALTER TABLE `{$CFG->prefix}forum_discussions` DROP INDEX {$CFG->prefix}forum_discussions_userid_idx;",false);
-
-      execute_sql(" ALTER TABLE `{$CFG->prefix}forum_posts` ADD INDEX {$CFG->prefix}forum_posts_parent_idx (parent) ");
-      execute_sql(" ALTER TABLE `{$CFG->prefix}forum_posts` ADD INDEX {$CFG->prefix}forum_posts_discussion_idx (discussion) ");
-      execute_sql(" ALTER TABLE `{$CFG->prefix}forum_posts` ADD INDEX {$CFG->prefix}forum_posts_userid_idx (userid) ");
-      execute_sql(" ALTER TABLE `{$CFG->prefix}forum_discussions` ADD INDEX {$CFG->prefix}forum_discussions_forum_idx (forum) ");
-      execute_sql(" ALTER TABLE `{$CFG->prefix}forum_discussions` ADD INDEX {$CFG->prefix}forum_discussions_userid_idx (userid) ");
-  }
-
-  if ($oldversion < 2004111700) {
-      execute_sql("ALTER TABLE {$CFG->prefix}forum DROP INDEX course;",false);
-      execute_sql("ALTER TABLE {$CFG->prefix}forum_ratings DROP INDEX userid;",false);
-      execute_sql("ALTER TABLE {$CFG->prefix}forum_ratings DROP INDEX post;",false);
-      execute_sql("ALTER TABLE {$CFG->prefix}forum_subscriptions DROP INDEX userid;",false);
-      execute_sql("ALTER TABLE {$CFG->prefix}forum_subscriptions DROP INDEX forum;",false);
-
-      modify_database('','ALTER TABLE prefix_forum ADD INDEX course (course);');
-      modify_database('','ALTER TABLE prefix_forum_ratings ADD INDEX userid (userid);');
-      modify_database('','ALTER TABLE prefix_forum_ratings ADD INDEX post (post);');
-      modify_database('','ALTER TABLE prefix_forum_subscriptions ADD INDEX userid (userid);');
-      modify_database('','ALTER TABLE prefix_forum_subscriptions ADD INDEX forum (forum);');
-  }
-
-  if ($oldversion < 2005011500) {
-      modify_database('','CREATE TABLE prefix_forum_read (
-                          `id` int(10) unsigned NOT NULL auto_increment, 
-                          `userid` int(10) NOT NULL default \'0\',
-                          `forumid` int(10) NOT NULL default \'0\',
-                          `discussionid` int(10) NOT NULL default \'0\',
-                          `postid` int(10) NOT NULL default \'0\',
-                          `firstread` int(10) NOT NULL default \'0\',
-                          `lastread` int(10) NOT NULL default \'0\',
-                          PRIMARY KEY  (`id`),
-                          KEY `prefix_forum_user_forum_idx` (`userid`,`forumid`),
-                          KEY `prefix_forum_user_discussion_idx` (`userid`,`discussionid`),
-                          KEY `prefix_forum_user_post_idx` (`userid`,`postid`)
-                        ) COMMENT=\'Tracks each users read posts\';');
-
-    /// Enter initial read records for all posts older than 1 day.
-
-    require $CFG->dirroot.'/mod/forum/lib.php';
-    /// Timestamp for old posts (and therefore considered read).
-    $dateafter = time() - ($CFG->forum_oldpostdays*24*60*60);
-    /// Timestamp for one day ago.
-    $onedayago = time() - (24*60*60);
-
-    /// Get all discussions that have had posts since the old post date.
-    if ($discrecords = get_records_select('forum_discussions', 'timemodified > '.$dateafter,
-                                          'course', 'id,course,forum,groupid')) {
-        $currcourse = 0;
-        $users = 0;
-        foreach ($discrecords as $discrecord) {
-            if ($discrecord->course != $currcourse) {
-            /// Discussions are ordered by course, so we only need to get any course's users once.
-                $currcourse = $discrecord->course;
-                $users = get_course_users($currcourse);
-            }
-            /// If this course has users, and posts more than a day old, mark them for each user.
-            if (is_array($users) &&
-                ($posts = get_records_select('forum_posts', 'discussion = '.$discrecord->id.
-                                             ' AND modified < '.$onedayago, '', 'id,discussion,modified'))) {
-                foreach($posts as $post) {
-                    foreach ($users as $user) {
-                        /// If its a group discussion, make sure the user is in the group.
-                        if (!$discrecord->groupid || ismember($discrecord->groupid, $user->id)) {
-                            forum_tp_mark_post_read($user->id, $post, $discrecord->forum);
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-  }
-
-  if ($oldversion < 2005032900) {
-      modify_database('','ALTER TABLE prefix_forum_posts ADD INDEX prefix_form_posts_created_idx (created);');
-      modify_database('','ALTER TABLE prefix_forum_posts ADD INDEX prefix_form_posts_mailed_idx (mailed);');
-  }
-
-    if ($oldversion < 2005041100) { // replace wiki-like with markdown
-        include_once( "$CFG->dirroot/lib/wiki_to_markdown.php" );
-        $wtm = new WikiToMarkdown();
-        $sql = "select course from {$CFG->prefix}forum_discussions, {$CFG->prefix}forum_posts ";
-        $sql .=  "where {$CFG->prefix}forum_posts.discussion = {$CFG->prefix}forum_discussions.id ";
-        $sql .=  "and {$CFG->prefix}forum_posts.id = ";
-        $wtm->update( 'forum_posts','message','format',$sql );
-    }
 
   return true;
-  
+
 }
 
 

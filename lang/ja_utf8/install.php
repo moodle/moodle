@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['admindirerror'] = '設定されたadminディレクトリが間違っています。';
@@ -14,7 +14,7 @@ $string['configfilenotwritten'] = 'インストールスクリプトは、自動
 $string['configfilewritten'] = 'config.phpが正常に作成されました。';
 $string['configurationcomplete'] = '設定が完了しました。';
 $string['database'] = 'データベース';
-$string['databasesettings'] = 'ほとんどのMoodleデータが保存されるデータベースの設定を行います。このデータベースは、アクセスするためのユーザ名およびパスワードと共に作成されている必要があります。<br/>
+$string['databasesettings'] = 'ほとんどのMoodleデータが保存されるデータベースの設定を行います。このデータベースは、アクセスするためのユーザ名及びパスワードと共に作成されている必要があります。<br/>
 <br /> <br />
 <b>タイプ:</b> mysql または postgres7<br />
 <b>ホスト:</b> 例 localhost または db.isp.com<br />
@@ -39,7 +39,7 @@ Moodleにアクセスする完全なウェブアドレスを指定してくだ�
 インストール先の完全なディレクトリパスを指定してください。大文字/小文字が間違っていないか確認してください。</p>
 
 <p><b>データディレクトリ:</b>
-Moodleがアップロードされたファイルを保存する場所が必要です。 このディレクトリは、ウェブサーバのユーザ ( 通常は「nobody」または「apache」 ) が読み込みおよび書き込みできるようにしてください。しかし、ウェブから直接アクセスできないようにしてください。</p>';
+Moodleがアップロードされたファイルを保存する場所が必要です。 このディレクトリは、ウェブサーバのユーザ(通常は「nobody」または「apache」)が読み込み及び書き込みできるようにしてください。しかし、ウェブから直接アクセスできないようにしてください。</p>';
 $string['dirroot'] = 'Moodleディレクトリ';
 $string['dirrooterror'] = '「Moodleディレクトリ」設定が間違っているようです - インストール済みMoodleが見つかりませんでした。下記の値がリセットされました。';
 $string['download'] = 'ダウンロード';
@@ -48,13 +48,13 @@ $string['fileuploads'] = 'ファイルアップロード';
 $string['fileuploadserror'] = 'これは有効にしてください。';
 $string['fileuploadshelp'] = '<p>あなたのサーバでは、ファイルのアップロードができないようです。</p>
 <p>Moodleのインストールは可能ですが、ファイルのアップロードができない場合は、コースファイルやユーザプロフィールのイメージをアップロードすることができません。</p>
-<p>ファイルアップロードを可能にするには、あなた ( またはシステム管理者 ) がメインphp.iniファイルを編集して、
+<p>ファイルアップロードを可能にするには、あなた(またはシステム管理者)がメインphp.iniファイルを編集して、
 <b>file_uploads</b> を \'1\'にする必要があります。</p>';
 $string['gdversion'] = 'GDバージョン';
-$string['gdversionerror'] = 'イメージの処理および作成を行うにはGDライブラリが必要です。';
+$string['gdversionerror'] = 'イメージの処理及び作成を行うにはGDライブラリが必要です。';
 $string['gdversionhelp'] = '<p>サーバにGDがインストールされていないようです。</p>
 
-<p>GDは、Moodleがイメージ ( ユーザプロフィールアイコン等 ) を処理したり、新しいイメージ ( ロググラフ等 ) を作成するためにPHPが必要とするライブラリです。Moodleは、GD無しでも動作します -  イメージ処理が使用できないだけです。</p>
+<p>GDは、Moodleがイメージ(ユーザプロフィールアイコン等) を処理したり、新しいイメージ(ロググラフ等)を作成するためにPHPが必要とするライブラリです。Moodleは、GD無しでも動作します -  イメージ処理が使用できないだけです。</p>
 
 <p>Unix環境下で、GDをPHPにインストールするには、PHPを --with-gd パラメータでコンパイルしてください。</p>
 
@@ -96,6 +96,9 @@ $string['sessionautostart'] = 'セッション自動スタート';
 $string['sessionautostarterror'] = 'これは無効にしてください。';
 $string['sessionautostarthelp'] = '<p>Moodleはセッションサポートを必要とします。また、セッションサポート無しでは動作しません。.</p>
 <p>セッションは、php.iniファイルで使用可にすることができます ... session.auto_startパラメータを探してください。</p>';
+$string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 $string['wwwroot'] = 'ウェブアドレス';
 $string['wwwrooterror'] = 'ウェブアドレスが間違っています - インストール済みMoodleはここに表示されません。';
 

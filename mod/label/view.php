@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
     require_once("../../config.php");
 

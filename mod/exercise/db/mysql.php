@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
 function exercise_upgrade($oldversion) {
 // This function does anything necessary to upgrade
@@ -23,37 +23,6 @@ function exercise_upgrade($oldversion) {
 		table_column("exercise", "", "assessmentcomps", "INTEGER", "4", "UNSIGNED", "2", "NOT NULL", "usemaximum");
         execute_sql("ALTER TABLE `{$CFG->prefix}exercise` DROP COLUMN `teacherweight`");
         execute_sql("ALTER TABLE `{$CFG->prefix}exercise` DROP COLUMN `gradingweight`");
-    }
-
-    if ($oldversion < 2004090200) {
-		table_column("exercise", "", "usepassword", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL");
-		table_column("exercise", "", "password", "VARCHAR", "32", "", "", "NOT NULL");
-    }
-
-    if ($oldversion < 2004091000) {
-        table_column("exercise_assessments","generalcomment","generalcomment","text","","","","NOT NULL");
-        table_column("exercise_assessments","teachercomment","teachercomment","text","","","","NOT NULL");
-    }
-
-    if ($oldversion < 2004100800) {
-        include_once("$CFG->dirroot/mod/exercise/lib.php");
-        exercise_refresh_events();
-    }
-
-    if ($oldversion < 2004111200) {
-        execute_sql("ALTER TABLE {$CFG->prefix}exercise DROP INDEX course;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}exercise_submissions DROP INDEX exerciseid;",false); 
-        execute_sql("ALTER TABLE {$CFG->prefix}exercise_assessments DROP INDEX exerciseid;",false); 
-        execute_sql("ALTER TABLE {$CFG->prefix}exercise_elements DROP INDEX exerciseid;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}exercise_rubrics DROP INDEX exerciseid;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}exercise_grades DROP INDEX exerciseid;",false);
-
-        modify_database('','ALTER TABLE prefix_exercise ADD INDEX course (course);');
-        modify_database('','ALTER TABLE prefix_exercise_submissions ADD INDEX exerciseid (exerciseid);');
-        modify_database('','ALTER TABLE prefix_exercise_assessments ADD INDEX exerciseid (exerciseid);');
-        modify_database('','ALTER TABLE prefix_exercise_elements ADD INDEX exerciseid (exerciseid);');
-        modify_database('','ALTER TABLE prefix_exercise_rubrics ADD INDEX exerciseid (exerciseid);');
-        modify_database('','ALTER TABLE prefix_exercise_grades ADD INDEX exerciseid (exerciseid);');
     }
 
     return true;

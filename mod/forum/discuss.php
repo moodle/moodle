@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
 //  Displays a post, and all the posts below it.
 //  If no post is given, displays all posts in a discussion
@@ -10,8 +10,6 @@
     optional_variable($parent); // If set, then display this post and all children.
     optional_variable($mode);   // If set, changes the layout of the thread
     optional_variable($move);   // If set, moves this discussion to another forum
-    optional_variable($mark);   // Used for tracking read posts if user initiated.
-    optional_variable($postid); // Used for tracking read posts if user initiated.
 
     if (! $discussion = get_record("forum_discussions", "id", $d)) {
         error("Discussion ID was incorrect or no longer exists");
@@ -21,26 +19,15 @@
         error("Course ID is incorrect - discussion is faulty");
     }
 
-    if (! $forum = get_record("forum", "id", $discussion->forum)) {
-        notify("Bad forum ID stored in this discussion");
+    if ($CFG->forcelogin) {
+        require_login();
     }
 
-    if ($forum->type == "teacher") {
+    if ($course->category) {
         require_login($course->id);
-
-        if (!isteacher($course->id)) {
-            error("You must be a $course->teacher to view this forum");
-        }
-
-    } else {
-        if (! $cm = get_coursemodule_from_instance("forum", $discussion->forum, $course->id)) {
-            error("Course Module ID was incorrect");
-        }
-        require_course_login($course, false, $cm);
     }
 
-
-    if (!empty($move)) {
+    if (!empty($move)) { 
         if (!isteacher($course->id)) {
             error("Only teachers can do that!");
         }
@@ -62,10 +49,21 @@
         }
     }
 
+    if (empty($forum)) {
+        if (! $forum = get_record("forum", "id", $discussion->forum)) {
+            notify("Bad forum ID stored in this discussion");
+        }
+    }
+
+    if ($forum->type == "teacher") {
+        if (!isteacher($course->id)) {
+            error("You must be a $course->teacher to view this forum");
+        }
+    }
 
     $logparameters = "d=$discussion->id";
     if ($parent) {
-        $logparameters .= "&amp;parent=$parent";
+        $logparameters .= "&parent=$parent";
     }
 
     if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
@@ -88,35 +86,27 @@
         }
     } else {
         $parent = $discussion->firstpost;
-        $navtail = format_string($discussion->name);
+        $navtail = "$discussion->name";
     }
 
     if (! $post = forum_get_post_full($parent)) {
         error("Discussion no longer exists", "$CFG->wwwroot/mod/forum/view.php?f=$forum->id");
     }
 
-    if ($CFG->forum_trackreadposts && $CFG->forum_usermarksread) {
-        if ($mark == 'read') {
-            forum_tp_add_read_record($USER->id, $postid, $discussion->id, $forum->id);
-        } else if ($mark == 'unread') {
-            forum_tp_delete_read_records($USER->id, $postid);
-        }
-    }
-
     if (empty($navtail)) {
-        $navtail = "<a href=\"discuss.php?d=$discussion->id\">".format_string($discussion->name,true)."</a> -> ".format_string($post->subject);
+        $navtail = "<A HREF=\"discuss.php?d=$discussion->id\">$discussion->name</A> -> $post->subject";
     }
 
-    $navmiddle = "<a href=\"../forum/index.php?id=$course->id\">".get_string("forums", "forum")."</a> -> <a href=\"../forum/view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
+    $navmiddle = "<A HREF=\"../forum/index.php?id=$course->id\">".get_string("forums", "forum")."</A> -> <A HREF=\"../forum/view.php?f=$forum->id\">$forum->name</A>";
 
-    $searchform = forum_search_form($course);
+    $searchform = forum_print_search_form($course, "", true, "plain");
 
     if ($course->category) {
-        print_header("$course->shortname: ".format_string($discussion->name), "$course->fullname",
-                 "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
+        print_header("$course->shortname: $discussion->name", "$course->fullname",
+                 "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> ->
                   $navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm));
     } else {
-        print_header("$course->shortname: ".format_string($discussion->name), "$course->fullname",
+        print_header("$course->shortname: $discussion->name", "$course->fullname",
                  "$navmiddle -> $navtail", "", "", true, $searchform, navmenu($course, $cm));
     }
 
@@ -134,34 +124,32 @@
     }
 
     if ($groupmode and !isteacheredit($course->id)) {   // Groups must be kept separate
-        $mygroupid = mygroupid($course->id);
-
         if ($groupmode == SEPARATEGROUPS) {
             require_login();
 
-            if ((empty($mygroupid) and $discussion->groupid == -1) || ($mygroupid == $discussion->groupid)) {
+            if (mygroupid($course->id) == $discussion->groupid) {
                 $canreply = true;
             } elseif ($discussion->groupid == -1) {
                 $canreply = false;
             } else {
                 print_heading("Sorry, you can't see this discussion because you are not in this group");
-                print_footer($course);
+                print_footer();
                 die;
             }
 
         } else if ($groupmode == VISIBLEGROUPS) {
-            $canreply = ((empty($mygroupid) and $discussion->groupid == -1) || ($mygroupid == $discussion->groupid));
+            $canreply = (mygroupid($course->id) == $discussion->groupid);
         }
     }
 
 
 /// Print the controls across the top
 
-    echo '<table width="100%"><tr><td width="33%">';
+    echo "<table width=\"100%\"><tr><td width=\"33%\">";
 
     if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
-        if ($groups = get_records_menu('groups', 'courseid', $course->id, 'name ASC', 'id,name')) {
-            print_group_menu($groups, $groupmode, $discussion->groupid, "view.php?id=$cm->id&amp;group=");
+        if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
+            print_group_menu($groups, $groupmode, $discussion->groupid, "view.php?id=$cm->id&group=");
         }
     }
 
@@ -183,13 +171,13 @@
                 }
                 $section = $courseforum->section;
                 if ($courseforum->id != $forum->id) {
-                    $url = "discuss.php?d=$discussion->id&amp;move=$courseforum->id";
-                    $forummenu[$url] = format_string($courseforum->name,true);
+                    $url = "discuss.php?d=$discussion->id&move=$courseforum->id";
+                    $forummenu[$url] = $courseforum->name;
                 }
             }
             if (!empty($forummenu)) {
                 echo "<div align=\"right\">";
-                echo popup_form("$CFG->wwwroot/mod/forum/", $forummenu, "forummenu", "",
+                echo popup_form("$CFG->wwwroot/mod/forum/", $forummenu, "forummenu", "", 
                                  get_string("movethisdiscussionto", "forum"), "", "", true);
                 echo "</div>";
             }
@@ -198,13 +186,14 @@
     echo "</td></tr></table>";
 
     if (isset($discussionmoved)) {
-        notify(get_string("discussionmoved", "forum", format_string($forum->name,true)));
+        notify(get_string("discussionmoved", "forum", $forum->name));
     }
 
 
 /// Print the actual discussion
 
     forum_print_discussion($course, $forum, $discussion, $post, $displaymode, $canreply);
+
 
     print_footer($course);
 

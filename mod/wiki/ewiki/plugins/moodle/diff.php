@@ -34,25 +34,12 @@
 
     # Different handling for html: closes Bug #1530 - Wiki diffs useless when using HTML editor    
     if($wiki->htmlmode==2) {
-        /// Remove all new line characters. They will be placed at HTML line breaks.
-        $content0 = preg_replace('/\n|\r/i', ' ', $data0['content']);
-        $content0 = preg_replace('/(\S)\s+(\S)/', '$1 $2', $content0); // Remove multiple spaces.
-        $content = preg_replace('/\n|\r/i', ' ', $data['content']);
-        $content = preg_replace('/(\S)\s+(\S)/', '$1 $2', $content);
-
-        /// Replace <p>&nbsp;</p>
-        $content0 = preg_replace('#(<p.*>(&nbsp;|\s+)</p>|<p.*></p>)#i', "\n", $content0);
-        $content = preg_replace('#(<p.*>(&nbsp;|\s+)</p>|<p.*></p>)#i', "\n", $content);
-
-        /// Place new line characters at logical HTML positions.
-        $htmlendings = array('+(<br.*>)+iU', '+(<p.*>)+iU', '+(</p>)+i', '+(<hr.*>)+iU', '+(<ol.*>)+iU',
-                             '+(</ol>)+i', '+(<ul.*>)+iU', '+(</ul>)+i', '+(<li.*>)+iU', '+(</li>)+i', 
-                             '+(</tr>)+i', '+(<div.*>)+iU', '+(</div>)+i');
-        $htmlrepl = array("\n\$1\n", "\n\$1\n", "\n\$1\n", "\n\$1\n", "\n\$1\n",
-                          "\n\$1\n", "\n\$1\n", "\n\$1\n", "\n\$1\n", "\n\$1\n",
-                          "\n\$1\n", "\n\$1\n", "\n\$1\n");
-        $content0 = preg_replace($htmlendings, $htmlrepl, $content0);
-        $content = preg_replace($htmlendings, $htmlrepl, $content);
+      $htmlendings=array("<br />","<br>","<p>","</p>","<p />","<hr />","<hr>","</li>","</tr>");
+      /// Replace <p>&nbsp;</p>
+      $content0=preg_replace("+<p>&nbsp;</p>+i","\n",$data0["content"]);
+      $content0=preg_replace("+(".join("|",$htmlendings).")+","\n",$content0);
+      $content=preg_replace("+<p>&nbsp;</p>+i","\n",$data["content"]);
+      $content=preg_replace("+(".join("|",$htmlendings).")+","\n",$content);
     } else {
       $content0=$data0["content"];
       $content=$data["content"];
@@ -71,42 +58,63 @@
     ///print "</pre>";
     ///exit;
 
+    /// Remove empty lines in html
+    if($wiki->htmlmode==2) {
+      $html0=$txt0;
+      $html2=$txt2;
+      $txt0=array();
+      $txt2=array();
+      
+      for($i=0;$i<count($html0);$i++) {
+#        $linecontent=trim(strip_tags(preg_replace("+&nbsp;+","",$html0[$i])));
+#        if($linecontent) { // There is something !
+          $txt0[]=$html0[$i];
+#        }
+      }
+      for($i=0;$i<count($html2);$i++) {
+#        $linecontent=trim(strip_tags(preg_replace("+&nbsp;+","",$html2[$i])));
+#        if($linecontent) { // There is something !
+          $txt2[]=$html2[$i];
+#        }
+      }  
+    }
+        
     $diff0 = array_diff($txt0, $txt2);
     $diff2 = array_diff($txt2, $txt0);
 
     foreach ($txt2 as $i => $line) {
-//       if($wiki->htmlmode != 2) {
-//         $line = htmlentities($line);
-//       }
+       if($wiki->htmlmode != 2) {
+         $line = htmlentities($line);
+       }
        $i2 = $i;
        while ($rm = $diff0[$i2++]) {          
           if($wiki->htmlmode == 2) {
-            $o .= "<b>-</b><font color=\"#990000\">$rm</font><br />\n";
+            $o .= "<b>-</b><font color=\"#990000\">$rm</font><br>\n";
           } else {
-            $o .= "<b>-</b><font color=\"#990000\"><tt>$rm</tt></font><br />\n";
+            $o .= "<b>-</b><font color=\"#990000\"><tt>$rm</tt></font><br>\n";
           }
           unset($diff0[$i2-1]);
        }
 
        if (in_array($line, $diff2)) {
           if($wiki->htmlmode == 2) {
-            $o .= "<b>+</b><font color=\"#009900\">$line</font><br />\n";
+            $o .= "<b>+</b><font color=\"#009900\">$line</font><br>\n";
           } else {
-            $o .= "<b>+</b><font color=\"#009900\"><tt>$line</tt></font><br />\n";
+            $o .= "<b>+</b><font color=\"#009900\"><tt>$line</tt></font><br>\n";
           }
        }
        else {
           if($wiki->htmlmode == 2) {
-            $o .= "$line\n";
+            $o .= "$line<br>\n";
           } else {
-            $o .= "&nbsp; $line<br />\n";
+            $o .= "&nbsp; $line<br>\n";
           }
        }
 
     }
 
     foreach ($diff0 as $rm) {
-       $o .= "<b>-</b><font color=\"#990000\"> <tt>$rm</tt></font><br />\n";
+       $o .= "<b>-</b><font color=\"#990000\"> <tt>$rm</tt></font><br>\n";
     }
 
     return($o);

@@ -1,1 +1,49 @@
-<p align="center"><b>Voer nuwe vrae in</b></p><p>Die funksie laat jou toe om nuwe vrae in te voer vanaf eksterne teks lêers.</p><p>Die volgende lêer formate word ondersteun:</p><p><b>Verlore Woord</b></p><ul><p>Die formaat ondersteun net meervoudige keuse vrae. Elke antwoord word geskei deur 'n&nbsp; tilde (~), en die korrekte antwoord het 'n '=' teken vooraan. Hier is 'n voorbeeld:</p><blockquote>Bokke is&nbsp; {=herbivore ~karnivore ~omnivore}</blockquote><p align="right"><a href="help.php?file=formatmissingword.html&module=quiz">More info about the "Missing Word" format</a></p></ul><p><b>AON</b></p><ul><p>Selfde as verlore woord formaat, behalwe dat na alle vrae in gevoer is word alle Kort Antwoord vrae, vier op 'n slag verander in Bypassend Vrae.</p><p>Is vernoem na die organisasie wat baie toets funksionaliteit by gedra het.</p></ul><p><b>Blackboard</b></p><ul><p>Die module voer vrae in wat in Blackboard se uitvoer vraag formaat gestoor is. Dit gebruik XML en PHP funksies.</p><p align="right"><a href="help.php?file=formatblackboard.html&module=quiz">More info about the "Blackboard" format</a></p></ul><p><b>Jou eie formaat</b></p><ul><p>As jy jou eie formaat het kan jy dit self implementeer deur mod/quiz/format/custom.php te redigeer</p><p>Die hoeveelheid nuwe kode is baie klein - 'parse' 'n enkle sin uit 'n gegewe teks.</p><p align="right"><a href="help.php?file=formatcustom.html&module=quiz">More info about the "Custom" format</a></p></ul><p>In die toekoms sal nog formate ingesluit word soos WebCT, IMS QTI en enige iets wat deur Moodle gebuikers bygedra word!</p>
+<P ALIGN=CENTER><B>Voer nuwe vrae in</B></P>
+
+<P>Die funksie laat jou toe om nuwe vrae in te voer vanaf eksterne teks lêers.  
+
+<P>Die volgende lêer formate word ondersteun:
+
+<P><B>Verlore Woord</B></P>
+<UL>
+<P>Die formaat ondersteun net meervoudige keuse vrae. Elke antwoord word geskei
+deur 'n&nbsp; tilde (~), en die korrekte antwoord het 'n '=' teken vooraan. Hier
+is 'n voorbeeld:
+
+<BLOCKQUOTE>Bokke is&nbsp; {=herbivore ~karnivore ~omnivore}
+</BLOCKQUOTE>
+
+<P>Meer inligting: <?php  helpbutton("formatmissingword", "", "quiz") ?></P>
+</UL>
+
+
+<P><B>AON</B></P>
+<UL>
+<P>Selfde as verlore woord formaat, behalwe dat na alle vrae in gevoer is word
+alle Kort Antwoord vrae, vier op 'n slag verander in Bypassend Vrae.</P>
+<p>Is vernoem na die organisasie wat baie toets funksionaliteit by gedra het.</p>
+</UL>
+
+
+<P><B>Blackboard</B></P>
+<UL>
+<P>Die module voer vrae in wat in Blackboard se uitvoer vraag formaat gestoor
+is. Dit gebruik XML en PHP funksies.</P>
+
+<P>Meer inligting: <?php  helpbutton("formatblackboard", "", "quiz") ?></P>
+</UL>
+
+<P><B>Jou eie formaat</B></P>
+<UL>
+<P>As jy jou eie formaat het kan jy dit self implementeer deur mod/quiz/format/custom.php
+te redigeer
+
+<P>Die hoeveelheid nuwe kode is baie klein - 'parse' 'n enkle sin uit 'n gegewe
+teks.
+
+<P>Meer inligting: <?php  helpbutton("formatcustom", "", "quiz") ?></P>
+</UL>
+
+
+<P>In die toekoms sal nog formate ingesluit word soos WebCT, IMS QTI en enige
+iets wat deur Moodle gebuikers bygedra word! </p>

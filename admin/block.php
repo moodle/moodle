@@ -16,44 +16,27 @@
 
     require_variable($_REQUEST['block']);
     $blockid = intval($_REQUEST['block']);
-   
-    if(($blockrecord = blocks_get_record($blockid)) === false) {
+
+    if(($blockrecord = get_record('blocks', 'id', $blockid)) === false) {
         error('This block does not exist');
     }
 
-    $block = block_instance($blockrecord->name);
+    $block = block_instance($blockrecord->name, NULL);
     if($block === false) {
         error('Problem in instantiating block object');
     }
 
-    // Define the data we're going to silently include in the instance config form here,
-    // so we can strip them from the submitted data BEFORE handling it.
-    $hiddendata = array(
-        'block' => $blockid,
-        'sesskey' => $USER->sesskey
-    );
+/// If data submitted, then process and store.
 
-    /// If data submitted, then process and store.
-
-    if ($config = data_submitted()) {
-
-        if (!confirm_sesskey()) {
-             error(get_string('confirmsesskeybad', 'error'));
-        }
-        if(!$block->has_config()) {
-            error('This block does not support global configuration');
-        }
-        $remove = array_keys($hiddendata);
-        foreach($remove as $item) {
-            unset($config->$item);
-        }
-        $block->config_save($config);
+	if ($config = data_submitted()) {
+	    unset($config['block']); // This will always be set if we have reached this point
+	    $block->handle_config($config);
         print_header();
         redirect("$CFG->wwwroot/$CFG->admin/blocks.php", get_string("changessaved"), 1);
         exit;
-    }
+	}
 
-    /// Otherwise print the form.
+/// Otherwise print the form.
 
     $stradmin = get_string('administration');
     $strconfiguration = get_string('configuration');
@@ -67,17 +50,11 @@
 
     print_heading($strblockname);
 
-    print_simple_box('<center>'.get_string('configwarning', 'admin').'</center>', 'center', '50%');
+    print_simple_box('<center>'.get_string('configwarning').'</center>', 'center', '50%');
     echo '<br />';
 
-    echo '<form method="post" action="block.php">';
-    echo '<p>';
-    foreach($hiddendata as $name => $val) {
-        echo '<input type="hidden" name="'. $name .'" value="'. $val .'" />';
-    }
-    echo '</p>';
-    $block->config_print();
-    echo '</form>';
+    $block->print_config();
+
     print_footer();
 
 ?>

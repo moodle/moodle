@@ -1,13 +1,9 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4.1 (2004083101)
+      // wiki.php - created with Moodle 1.3.3 (2004052503)
 
 
 $string['action'] = '-- Ação --';
 $string['administration'] = 'Administração';
-$string['allowremovepages'] = 'Permitir \'remover páginas\'';
-$string['allowrevertchanges'] = 'Permitir \'cancelar alterações em massa\'';
-$string['allowsetpage'] = 'Permitir \'definir flags da página\'';
-$string['allowstrippages'] = 'Permitir \'destacar páginas\'';
 $string['attachments'] = 'Anexos das páginas';
 $string['author'] = 'Autor';
 $string['authorfieldpattern'] = 'Padrão do campo de autor';
@@ -37,7 +33,6 @@ $string['deleteversions'] = 'Eliminar quantas versões anteriores';
 $string['deleteversionserror'] = 'Por favor inserir uma contagem de versões correta';
 $string['diff'] = 'Dif';
 $string['differences'] = 'Diferenças entre a versão $a->new_ver e $a->old_ver de $a->pagename.';
-$string['disablecamel'] = 'Desativar links CamelCase';
 $string['disabledpage'] = 'Esta página atualmente não está disponível';
 $string['doesnotexist'] = 'Esta página ainda não existe. Para criar esta página, clique o botão Editar.';
 $string['downloadaszip'] = 'Arquivo Zip para download';
@@ -112,7 +107,6 @@ $string['nothingtostrip'] = 'Não há páginas com mais de uma versão';
 $string['nowikicreated'] = 'Este wiki ainda não tem conteúdos';
 $string['of'] = 'de';
 $string['offline'] = 'OFFLINE';
-$string['optional'] = 'Opcional';
 $string['orphanedpage'] = 'Página órfã';
 $string['orphanedpages'] = 'Páginas órfãs';
 $string['otherwikis'] = 'Outros Wikis';
@@ -130,10 +124,10 @@ $string['plaintext'] = 'Texto sem formatação';
 $string['preview'] = 'Ver esboço';
 $string['readonly'] = 'Página que não pode ser alterada';
 $string['refs'] = 'Referências';
-$string['removenotice'] = 'Apenas as páginas sem referências serão listadas. Ewiki faz um test limitado das páginas com referências e algumas delas podem estar faltando na lista.<br />Se você esvaziar uma página antes, ela será listada. Muitos outros diagnósticos da base de dados são realizados.';
+$string['removenotice'] = 'Apenas as páginas sem referências serão listadas. Ewiki faz um test limitado das páginas com referências e algumas delas podem estar faltando na lista.<br>Se você esvaziar uma página antes, ela será listada. Muitos outros diagnósticos da base de dados são realizados.';
 $string['removepagecheck'] = 'Tem certeza que quer cancelar estas páginas?';
-$string['removepages'] = 'Remover páginas';
-$string['removeselectedpages'] = 'Remover páginas selecionadas';
+$string['removepages'] = 'Páginas removidas';
+$string['removeselectedpages'] = 'remover páginas selecionadas';
 $string['revertallsince'] = 'Recuperar versões, cancelar as alterações feitas depois';
 $string['revertchanges'] = 'Cancelar alterações';
 $string['revertlastonly'] = 'Somente se esta era a última alteração';
@@ -151,11 +145,6 @@ $string['strippagecheck'] = 'Tem certeza que quer destacar as versões antigas de
 $string['strippages'] = 'Destacar páginas';
 $string['studentadminoptions'] = 'Opções de administração dos participantes';
 $string['submit'] = 'Enviar';
-$string['tabattachments'] = 'Anexos';
-$string['tabedit'] = 'Editar';
-$string['tabinfo'] = 'História';
-$string['tablinks'] = 'Links';
-$string['tabview'] = 'Visualizar';
 $string['thanksforcontribution'] = 'Obrigada pela sua colaboração';
 $string['thispageisntlinkedfromanywhereelse'] = 'Nenhuma outra página contém links a esta.';
 $string['updatedpages'] = 'Páginas atualizadas';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // workshop.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['absent'] = 'Fraværende';
@@ -113,7 +113,8 @@ $string['nosubmission'] = 'Ingen afleveringer';
 $string['nosubmissionsavailableforassessment'] = 'Ingen indlæg tilgængelig for denne arbejdsopgave';
 $string['notavailable'] = 'Ikke tilgængelig';
 $string['noteonassessmentelements'] = 'Læg mærke til at bedømmelsen består af flere vuderinger af delopgaver fra underviseren og evt andre elever.<br /> 
-Det er for at gøre bedømmelsen nemmere og mere retfærdig. Som lærer skal du beskrive og tilføje disse delopgaver<br />før at projektets opgaveoversigt bliver tilgængelig for eleverne. Det gøres ved at klikke på opgaveoversigten i kurset, hvis der ikke er nogle opgaver vil du blive anmodet om at tilføje dem. Du kan ændre opgaverne ved hjælp af \'Ret opgaver\' siden.<br /> Selve delopgaverne kan ændres fra \'Administrer vuderinger\' siden';
+Det er for at gøre bedømmelsen nemmere og mere retfærdig. Som lærer skal du beskrive og tilføje disse delopgaver<br />før at projektets opgaveoversigt bliver tilgængelig for eleverne. Det gøres ved at klikke på opgaveoversigten i kurset, hvis der ikke er nogle opgaver vil du blive anmodet om at tilføje dem. Du kan ændre opgaverne ved hjælp af \'Ret opgaver\' siden.<br /> Selve delopgaverne kan ændres fra \'Administrer vuderinger\' siden
+';
 $string['notgraded'] = 'Ikke bedømt';
 $string['notitlegiven'] = 'Der er ikke angivet nogen title';
 $string['numberofassessmentelements'] = 'Antal kommentarer, Vuderings elementer, karakterskala eller Kriterier';
@@ -146,6 +147,8 @@ $string['phase4'] = 'Vis samlet karakter';
 $string['phase4short'] = 'Vurderinger';
 $string['phase5'] = 'Beregning af endelig karakter';
 $string['phase5short'] = 'Beregning';
+$string['phase6'] = 'Vis endelige karaktere';
+$string['phase6short'] = 'Vis karaktere';
 $string['pleaseassesstheseexamplesfromtheteacher'] = 'Du kan se disse eksempler fra $a';
 $string['pleaseassessthesestudentsubmissions'] = 'Du kan se disse $a afleveringer';
 $string['pleaseassessyoursubmissions'] = 'Vurder dine delafleveringer';
@@ -176,6 +179,7 @@ $string['scalepresent'] = '2 point afleveret/mangler skala';
 $string['scaleyes'] = '2 point Ja/Nej skala';
 $string['select'] = 'Vælg';
 $string['selfassessment'] = 'Selv-vudering';
+$string['setoverallocation'] = 'Set overtildelingsnivau';
 $string['showgrades'] = 'Vis karaktere';
 $string['specimenassessmentform'] = 'Eksempel vuderings side';
 $string['standarddeviation'] = 'Standart afvigelse af element: $a';
@@ -200,6 +204,7 @@ $string['teacherscomment'] = 'Lærerens  kommentar';
 $string['teachersgrade'] = 'Lærerens karakter';
 $string['teachersubmissionsforassessment'] = '$a Lærerens afleveringer til vudering';
 $string['thegradeis'] = 'Karakteren er $a';
+$string['thereisfeedbackfromtheteacher'] = 'Der er kommentarer fra $a';
 $string['theseasessmentsaregradedbytheteacher'] = 'Disse afleveringer er bedømt af $a';
 $string['timeassessed'] = 'Bedømt klokken';
 $string['title'] = 'Titel';

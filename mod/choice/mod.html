@@ -8,8 +8,23 @@
     if (empty($form->format)) {
         $form->format = 0;
     }
-    if (empty($form->display)) {
-        $form->display = 0;
+    if (empty($form->answer1)) {
+        $form->answer1 = get_string("yes");
+    }
+    if (empty($form->answer2)) {
+        $form->answer2 = get_string("no");
+    }
+    if (empty($form->answer3)) {
+        $form->answer3 = "";
+    }
+    if (empty($form->answer4)) {
+        $form->answer4 = "";
+    }
+    if (empty($form->answer5)) {
+        $form->answer5 = "";
+    }
+    if (empty($form->answer6)) {
+        $form->answer6 = "";
     }
     if (empty($form->timeopen)) {
         $form->timeopen = "";
@@ -32,45 +47,22 @@
     if (empty($form->showunanswered)) {
         $form->showunanswered = 0;
     }
-    if (empty($form->limitanswers)) {
-        $form->limitanswers = 0;
-    }
 
 ?>
-<script type="text/javascript">
-function lockselects(form, master, subitems) {
-  // subitems is an array of names of sub items
-  // requires that each item in subitems has a
-  // companion hidden item in the form with the
-  // same name but prefixed by "h"
-  // master is the name of the selct
-  // x is the option that is selcted to enforce the lock.
-  if (eval("document."+form+"."+master+".selected")) {   
-    for (i=0; i<subitems.length; i++) {   
-      lockoption(form, subitems[i]);
-    }
-  } else {
-    for (i=0; i<subitems.length; i++) {    
-      unlockoption(form, subitems[i]);
-    }
-  }
-  return(true);
-}
-
-</script>
 <form name="form" method="post" action="mod.php">
 
-<table cellpadding="5">
+<table cellpadding=5>
 
-<tr valign="top">
-    <td align="right"><strong><?php print_string("choicename","choice") ?>:</strong></td>
-    <td colspan="2">
-        <input type="text" name="name" size="30" alt="<?php print_string("choicename","choice") ?>" value="<?php p($form->name) ?>" />
+<tr valign=top>
+    <td align=right><p><b><?php print_string("choicename","choice") ?>:</b></p></td>
+    <td>
+        <input type="text" name="name" size=30 value="<?php p($form->name) ?>">
     </td>
 </tr>
 
-<tr valign="top">
-    <td align="right"><strong><?php print_string("choicetext","choice") ?>:</strong><br /><br />
+<tr valign=top>
+    <td align=right><p><b><?php print_string("choicetext","choice") ?>:</b></p>
+    <font size="1">
      <?php
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
         echo "<br />";
@@ -80,118 +72,99 @@ function lockselects(form, master, subitems) {
            helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
         } else {
            emoticonhelpbutton("form", "text");
-        }
-        echo "<br />";
+        }   
       ?>
+      <br />
+    </font>
     </td>
-    <td colspan="2">
-    <?php
+    <td>
+    <?php 
        print_textarea($usehtmleditor, 20, 60, 680, 400, "text", $form->text);
-
+    
        if ($usehtmleditor) {
            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
        } else {
-           echo "<div align=\"right\">";
+           echo "<p align=right>";
            helpbutton("textformat", get_string("formattexttype"));
            print_string("formattexttype");
            echo ":&nbsp;";
            if (!$form->format) {
                $form->format = $defaultformat;
            }
-           choose_from_menu(format_text_menu(), "format", $form->format, "");
-           echo "</div>";
+           choose_from_menu(format_text_menu(), "format", $form->format, ""); 
+           echo "</p>";
        }
     ?>
     </td>
 </tr>
 
-<?php
-$standardblanks = 10;
-$count = 0;
-$limitfieldlist = '';
-if (($options = get_records_menu('choice_options','choiceid', $form->instance, 'id', 'id,text')) && ($options2 = get_records_menu('choice_options','choiceid', $form->instance, 'id', 'id,maxanswers')) ) {
-    foreach ($options as $id => $text) { 
-        $count++;
-    ?>
-    <tr valign=top>
-        <td align="right"><strong><?php echo get_string("choice","choice").' '.$count; ?>:</strong></td>
-        <td>
-            <input type="text" name="oldoption<?php p($id) ?>" size="60" value="<?php p($text) ?>" id="oldoption<?php p($id) ?>" />
-            <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
-        </td>
-        <td align="right"><strong><?php p(get_string("limit","choice")) ?>:</strong>
-            <input type="text" name="oldlimit<?php p($id) ?>" size="4" value="<?php p($options2[$id]) ?>" id="oldlimit<?php p($id) ?>" />
-            <input type="hidden" name="holdlimit<?php p($id) ?>" value="0"/>
-        </td>
-    </tr>
-    <?php
-    $limitfieldlist .= "'oldlimit".$id."',";              
-    } 
-    $standardblanks = 2;
-}
-for ($i=1; $i<=$standardblanks; $i++) {
-        $count++;
-    ?>
-    <tr valign=top>
-        <td align="right"><strong><?php echo get_string("choice","choice").' '.$count; ?>:</strong></td>
-        <td>
-            <input type="text" name="newoption<?php p($i) ?>" size="60" value="" id="newoption<?php p($i) ?>">
-            <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
-        </td>
-        <td align="right"><strong><?php p(get_string("limit","choice")) ?>:</strong>
-            <input type="text" name="newlimit<?php p($i)?>" size="4" value="0" id="newlimit<?php p($i) ?>" />
-            <input type="hidden" name="hnewlimit<?php p($i) ?>" value="0" />
-        </td>
-    </tr>
-    <?php
-    $limitfieldlist .= "'newlimit".$i."',";    
-}
-$lim = trim($limitfieldlist, ",");
-?>
-<script type="text/javascript">
-    limititems = [<?php p($limitfieldlist); ?>];
-</script>
-
-<tr valign="top">
-    <td align="right" colspan="2"><strong><?php print_string("limitanswers", "choice") ?>:</strong></td>
-    <td align="right">
-        <?php
-        $menuoptions[0] = get_string("disable");
-        $menuoptions[1] = get_string("enable");
-        helpbutton("limit", get_string("limit", "choice"), "choice");
-        echo '&nbsp;';
-        choose_from_menu($menuoptions, "limitanswers", "$form->limitanswers", "", "return lockselects('form','limitanswers.options[0]', limititems)");
-        ?>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("choice","choice","1") ?>:</b></p></td>
+    <td>
+        <input type="text" name="answer1" size=60 value="<?php p($form->answer1) ?>">
+        <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
 
-<?php if ($form->limitanswers == 0) { //lock the limit fields if limit isn't used. ?>
-<script type="text/javascript">
-    lockoptions('form','limitanswers', limititems);
-</script>
-<?php }?>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("choice","choice","2") ?>:</b></p></td>
+    <td>
+        <input type="text" name="answer2" size=60 value="<?php p($form->answer2) ?>">
+        <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
+    </td>
+</tr>
 
-<tr valign="top">
-    <td align="right"><strong><?php print_string("timerestrict", "choice") ?>:</strong></td>
-    <td colspan="2">
-        <script type="text/javascript">
+<tr valign=top>
+    <td align=right><p><b><?php print_string("choice","choice","3") ?>:</b></p></td>
+    <td>
+        <input type="text" name="answer3" size=60 value="<?php p($form->answer3) ?>">
+        <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("choice","choice","4") ?>:</b></p></td>
+    <td>
+        <input type="text" name="answer4" size=60 value="<?php p($form->answer4) ?>">
+        <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("choice","choice","5") ?>:</b></p></td>
+    <td>
+        <input type="text" name="answer5" size=60 value="<?php p($form->answer5) ?>">
+        <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("choice","choice","6") ?>:</b></p></td>
+    <td>
+        <input type="text" name="answer6" size=60 value="<?php p($form->answer6) ?>">
+        <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><p><b><?php print_string("timerestrict", "choice") ?>:</b></p></td>
+    <td>
+        <script>
             var timeitems = ['openday','openmonth','openyear','openhour', 'openminute', 'closeday','closemonth','closeyear','closehour','closeminute'];
         </script>
 
-        <input name="timerestrict" type="checkbox" value="1" alt="<?php print_string("timerestrict", "choice") ?>" onclick="return lockoptions('form','timerestrict', timeitems)" <?php if ($form->timerestrict) echo 'checked="checked"'; ?> />
+        <input name="timerestrict" type="checkbox" value="1" onclick="return lockoptions('form','timerestrict', timeitems)" <?php if ($form->timerestrict) echo "checked"; ?> >
     <?php
         helpbutton("timerestrict", get_string("timerestrict","choice"), "choice");
      ?>
     </td>
 </tr>
-<tr valign="top">
-    <td>&nbsp;</td>
-    <td colspan="2">
+<tr valign=top>
+    <td><p>&nbsp;</p></td>
+    <td>
+
         <table>
             <tr>
-                <td align="right"><strong><?php print_string("choiceopen", "choice") ?>:</strong></td>
+                <td align="right"><p><b><?php print_string("choiceopen", "choice") ?>:</b></p></td>
                 <td>
-
+                
     <?php
         if (!$form->timeopen and $course->format == "weeks") {
             $form->timeopen  = $course->startdate + (($form->section - 1) * 608400);
@@ -199,18 +172,18 @@ $lim = trim($limitfieldlist, ",");
         print_date_selector("openday", "openmonth", "openyear", $form->timeopen);
         print_time_selector("openhour", "openminute", $form->timeopen);
      ?>
-
-                    <input type="hidden" name="hopenday" value="0" />
-                    <input type="hidden" name="hopenmonth" value="0" />
-                    <input type="hidden" name="hopenyear" value="0" />
-                    <input type="hidden" name="hopenhour" value="0" />
-                    <input type="hidden" name="hopenminute" value="0" />
+     
+                    <input type="hidden" name="hopenday" value="0">
+                    <input type="hidden" name="hopenmonth" value="0">
+                    <input type="hidden" name="hopenyear" value="0">
+                    <input type="hidden" name="hopenhour" value="0">
+                    <input type="hidden" name="hopenminute" value="0">
                 </td>
             </tr>
             <tr>
-                <td align="right"><strong><?php print_string("choiceclose", "choice") ?>:</strong></td>
+                <td align=right><p><b><?php print_string("choiceclose", "choice") ?>:</b></p></td>
                 <td>
-
+                
     <?php
         if (!$form->timeclose and $course->format == "weeks") {
             $form->timeclose  = $course->startdate + (($form->section) * 608400);
@@ -218,16 +191,16 @@ $lim = trim($limitfieldlist, ",");
         print_date_selector("closeday", "closemonth", "closeyear", $form->timeclose);
         print_time_selector("closehour", "closeminute", $form->timeclose);
      ?>
-
-                    <input type="hidden" name="hcloseday" value="0" />
-                    <input type="hidden" name="hclosemonth" value="0" />
-                    <input type="hidden" name="hcloseyear" value="0" />
-                    <input type="hidden" name="hclosehour" value="0" />
-                    <input type="hidden" name="hcloseminute" value="0" />
+     
+                    <input type="hidden" name="hcloseday" value="0">
+                    <input type="hidden" name="hclosemonth" value="0">
+                    <input type="hidden" name="hcloseyear" value="0">
+                    <input type="hidden" name="hclosehour" value="0">
+                    <input type="hidden" name="hcloseminute" value="0">
 
     <?php
         if (! $form->timerestrict) {
-            echo "<script type=\"text/javascript\">";
+            echo "<script>";
             echo "lockoptions('form','timerestrict', timeitems);";
             echo "</script>\n";
         }
@@ -240,80 +213,65 @@ $lim = trim($limitfieldlist, ",");
     </td>
 </tr>
 
-<tr valign="top">
-    <td align="right"><strong><?php print_string("displaymode","choice") ?>:</strong></td>
-    <td colspan="2">
+<tr valign=top>
+    <td align=right><P><B><?php print_string("publish","choice") ?>:</b></p></td>
+    <td>
         <?php
         require_once("$CFG->dirroot/mod/choice/lib.php");
-        choose_from_menu($CHOICE_DISPLAY, "display", "$form->display", "");
+        choose_from_menu($CHOICE_RELEASE, "release", "$form->release", "");
         ?>
         <br />
     </td>
 </tr>
 
-<tr valign="top">
-    <td align="right"><strong><?php print_string("publish","choice") ?>:</strong></td>
-    <td colspan="2">
-        <?php
-        require_once("$CFG->dirroot/mod/choice/lib.php");
-        choose_from_menu($CHOICE_RELEASE, "release", "$form->release", "", "return lockselects('form','release.options[0]',['publish'])");                                                                            
-        ?>
-        <br />
-    </td>
-</tr>
-
-<tr valign="top">
-    <td align="right"><strong><?php print_string("privacy","choice") ?>:</strong></td>
-    <td colspan="2">
+<tr valign=top>
+    <td align=right><P><B><?php print_string("privacy","choice") ?>:</b></p></td>
+    <td>
         <?php
         require_once("$CFG->dirroot/mod/choice/lib.php");
         choose_from_menu($CHOICE_PUBLISH, "publish", "$form->publish", "");
         ?>
         <br />
-        <input type="hidden" name="hpublish" value="0" />
     </td>
 </tr>
-<script type="text/javascript">
-    lockselects('form','release.options[0]',['publish']);
-</script>
 
-<tr valign="top">
-    <td align="right"><strong><?php print_string("allowupdate","choice") ?>:</strong></td>
-    <td colspan="2">
+
+<tr valign=top>
+    <td align=right><P><B><?php print_string("allowupdate","choice") ?>:</b></p></td>
+    <td>
         <?php
-        $menuoptions[0] = get_string("no");
-        $menuoptions[1] = get_string("yes");
-        choose_from_menu($menuoptions, "allowupdate", "$form->allowupdate", "");
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu($options, "allowupdate", "$form->allowupdate", "");
         ?>
         <br />
     </td>
 </tr>
 
 
-<tr valign="top">
-    <td align="right"><strong><?php print_string("showunanswered","choice") ?>:</strong></td>
-    <td colspan="2">
+<tr valign=top>
+    <td align=right><P><B><?php print_string("showunanswered","choice") ?>:</b></p></td>
+    <td>
         <?php
-        $menuoptions[0] = get_string("no");
-        $menuoptions[1] = get_string("yes");
-        choose_from_menu($menuoptions, "showunanswered", "$form->showunanswered", "");
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu($options, "showunanswered", "$form->showunanswered", "");
         ?>
         <br />
     </td>
 </tr>
-<?php print_standard_coursemodule_settings($form); ?>
+
 </table>
 
 <center>
-<input type="hidden" name="course"     value="<?php p($form->course) ?>" />
-<input type="hidden" name="sesskey"    value="<?php p($form->sesskey) ?>" />
-<input type="hidden" name="coursemodule"  value="<?php p($form->coursemodule) ?>" />
-<input type="hidden" name="section"    value="<?php p($form->section) ?>" />
-<input type="hidden" name="module"     value="<?php p($form->module) ?>" />
-<input type="hidden" name="modulename" value="<?php p($form->modulename) ?>" />
-<input type="hidden" name="instance"   value="<?php p($form->instance) ?>" />
-<input type="hidden" name="mode"       value="<?php p($form->mode) ?>" />
-<input type="submit" value="<?php print_string("savechanges") ?>" />
-<input type="submit" name="cancel" value="<?php print_string("cancel") ?>" />
+<input type="hidden" name=course     value="<?php p($form->course) ?>">
+<input type="hidden" name=coursemodule  value="<?php p($form->coursemodule) ?>">
+<input type="hidden" name=section       value="<?php p($form->section) ?>">
+<input type="hidden" name=module     value="<?php p($form->module) ?>">
+<input type="hidden" name=modulename value="<?php p($form->modulename) ?>">
+<input type="hidden" name=instance   value="<?php p($form->instance) ?>">
+<input type="hidden" name=mode       value="<?php p($form->mode) ?>">
+<input type="submit" value="<?php print_string("savechanges") ?>">
+<input type="submit" name=cancel value="<?php print_string("cancel") ?>">
 </center>
 </form>

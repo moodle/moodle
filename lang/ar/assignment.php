@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
+      // assignment.php - created with Moodle 1.3 development (2004041800)
 
 
 $string['allowresubmit'] = 'ÇáÓãÇÍ ÈÅÚÇÏÉ ÇáÊÓáíã';
@@ -16,9 +16,6 @@ $string['description'] = 'ÇáæÕİ';
 $string['duedate'] = 'ÊÇÑíÎ ÇáÅäåÇÁ';
 $string['duedateno'] = 'áÇ íæÌÏ ãæÚÏ ááÊÓáíã';
 $string['early'] = '$a ãÈßÑ';
-$string['emailteachermail'] = '$a->username ŞÇã ÈÊÍÏíË ÇáãåãÉÇáãŞÏãÉ áÜ \'$a->assignment\' æåĞå ÇáãåãÉ ãæÌæÏÉ İí: $a->url';
-$string['emailteachermailhtml'] = '$a->username ŞÇã ÈÊÍÏíË ÇáãåãÉÇáãŞÏãÉ áÜ <i>\'$a->assignment\'</i><br /><br /> æåí <a href=\"$a->url\">available on the web site</a>.';
-$string['emailteachers'] = 'ÈÑíÏ ÅáßÊÑæäí ÊäÈíåí ááãÚáãæä';
 $string['existingfiledeleted'] = 'Êã ÍĞ ÇáãáİÇÊ ÇáãæÌæÏÉ :a$';
 $string['failedupdatefeedback'] = 'ÊÚĞÑ ÊÍÏíË ÊÚáíŞ ÇáãÓÊÎÏã Úáì ÇáÑÓÇáÉ $a ';
 $string['feedback'] = 'ÊÕÍíÍ';

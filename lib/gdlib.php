@@ -1,38 +1,13 @@
-<?php
+<?PHP  // $Id$
+       // Collection of routines in Moodle related to processing 
+       // images using GD.
 
-/**
- * gdlib.php - Collection of routines in Moodle related to 
- * processing images using GD
- *
- * @author ?
- * @version  $Id$
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package moodlecore
- */
 
-/** 
- * short description (optional)
- *
- * long description
- * @uses $CFG
- * @param type? $dst_img description?
- * @param type? $src_img description?
- * @param type? $dst_x description?
- * @param type? $dst_y description?
- * @param type? $src_x description?
- * @param type? $src_y description?
- * @param type? $dst_w description?
- * @param type? $dst_h description?
- * @param type? $src_w description?
- * @param type? $src_h description?
- * @return ?
- * @todo Finish documenting this function
- */
 function ImageCopyBicubic ($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h) {
 
     global $CFG;
 
-    if (function_exists('ImageCopyResampled') and $CFG->gdversion >= 2) { 
+    if (function_exists("ImageCopyResampled") and $CFG->gdversion >= 2) { 
        return ImageCopyResampled($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y,
                                  $dst_w, $dst_h, $src_w, $src_h);
     }
@@ -71,19 +46,9 @@ function ImageCopyBicubic ($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $
     } 
 }
 
-/** 
- * Given an upload manager with the right settings, this function performs a virus scan, and then scales and crops
- * it and saves it in the right place to be a "user" or "group" image.
- *
- * @uses $CFG
- * @param int $id description?
- * @param object $uploadmanager description?
- * @param string $dir description?
- * @return boolean
- * @todo Finish documenting this function
- */
-function save_profile_image($id, $uploadmanager, $dir='users') {
-// 
+function save_profile_image($id, $filename, $dir="users") {
+// Given a filename to a known image, this function scales and crops
+// it and saves it in the right place to be a "user" or "group" image.
 
     global $CFG;
 
@@ -91,30 +56,27 @@ function save_profile_image($id, $uploadmanager, $dir='users') {
         return false;
     }
 
-    if (!$uploadmanager) {
-        return false;
-    }
-
     umask(0000);
 
-    if (!file_exists($CFG->dataroot .'/'. $dir)) {
-        if (! mkdir($CFG->dataroot .'/'. $dir, $CFG->directorypermissions)) {
+    if (!file_exists("$CFG->dataroot/$dir")) {
+        if (! mkdir("$CFG->dataroot/$dir", $CFG->directorypermissions)) {
             return false;
         }
     }
 
-    if (!file_exists($CFG->dataroot .'/'. $dir .'/'. $id)) {
-        if (! mkdir($CFG->dataroot .'/'. $dir .'/'. $id, $CFG->directorypermissions)) {
+    if (!file_exists("$CFG->dataroot/$dir/$id")) {
+        if (! mkdir("$CFG->dataroot/$dir/$id", $CFG->directorypermissions)) {
             return false;
         }
     }
+    
+    $originalfile = "$CFG->dataroot/$dir/$id/original";
 
-    $destination = $CFG->dataroot .'/'. $dir .'/'. $id;
-    if (!$uploadmanager->save_files($destination)) {
+    if (!move_uploaded_file($filename, $originalfile)) {
         return false;
     }
 
-    $originalfile = $uploadmanager->get_new_filepath();
+    @chmod($originalfile, 0666);
 
     $imageinfo = GetImageSize($originalfile);
     
@@ -129,28 +91,28 @@ function save_profile_image($id, $uploadmanager, $dir='users') {
 
     switch ($image->type) {
         case 1: 
-            if (function_exists('ImageCreateFromGIF')) {
+            if (function_exists("ImageCreateFromGIF")) {
                 $im = ImageCreateFromGIF($originalfile); 
             } else {
-                notice('GIF not supported on this server');
+                notice("GIF not supported on this server");
                 unlink($originalfile);
                 return false;
             }
             break;
         case 2: 
-            if (function_exists('ImageCreateFromJPEG')) {
+            if (function_exists("ImageCreateFromJPEG")) {
                 $im = ImageCreateFromJPEG($originalfile); 
             } else {
-                notice('JPEG not supported on this server');
+                notice("JPEG not supported on this server");
                 unlink($originalfile);
                 return false;
             }
             break;
         case 3:
-            if (function_exists('ImageCreateFromPNG')) {
+            if (function_exists("ImageCreateFromPNG")) {
                 $im = ImageCreateFromPNG($originalfile); 
             } else {
-                notice('PNG not supported on this server');
+                notice("PNG not supported on this server");
                 unlink($originalfile);
                 return false;
             }
@@ -162,7 +124,7 @@ function save_profile_image($id, $uploadmanager, $dir='users') {
 
     unlink($originalfile);
 
-    if (function_exists('ImageCreateTrueColor') and $CFG->gdversion >= 2) {
+    if (function_exists("ImageCreateTrueColor") and $CFG->gdversion >= 2) {
         $im1 = ImageCreateTrueColor(100,100);
         $im2 = ImageCreateTrueColor(35,35);
     } else {
@@ -194,10 +156,10 @@ function save_profile_image($id, $uploadmanager, $dir='users') {
     ImageLine ($im2, 34, 34, 34, 0, $black2);
     ImageLine ($im2, 34, 0, 0, 0, $black2);
 
-    if (ImageJpeg($im1, $CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg', 90) and 
-        ImageJpeg($im2, $CFG->dataroot .'/'. $dir .'/'. $id .'/f2.jpg', 95) ) {
-        @chmod($CFG->dataroot .'/'. $dir .'/'. $id .'/f1.jpg', 0666);
-        @chmod($CFG->dataroot .'/'. $dir .'/'. $id .'/f2.jpg', 0666);
+    if (ImageJpeg($im1, "$CFG->dataroot/$dir/$id/f1.jpg", 90) and 
+        ImageJpeg($im2, "$CFG->dataroot/$dir/$id/f2.jpg", 95) ) {
+        @chmod("$CFG->dataroot/$dir/$id/f1.jpg", 0666);
+        @chmod("$CFG->dataroot/$dir/$id/f2.jpg", 0666);
         return 1;
     } else {
         return 0;

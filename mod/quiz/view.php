@@ -1,15 +1,12 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
 // This page prints a particular instance of quiz
 
     require_once("../../config.php");
-    require_once("locallib.php");
-    require_once($CFG->libdir.'/blocklib.php');
-    require_once('pagelib.php');
+    require_once("lib.php");
 
-    $id          = optional_param('id', 0, PARAM_INT); // Course Module ID, or
-    $q           = optional_param('q',  0, PARAM_INT);  // quiz ID
-    $edit        = optional_param('edit', '');
+    optional_variable($id);    // Course Module ID, or
+    optional_variable($q);     // quiz ID
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
@@ -36,63 +33,40 @@
         }
     }
 
-    require_login($course->id, false, $cm);
-    
-    // if no questions have been set up yet redirect to edit.php
-    if (!$quiz->questions and isteacheredit($course->id)) {
-        redirect('edit.php?quizid='.$quiz->id);
-    }
+    require_login($course->id);
 
     add_to_log($course->id, "quiz", "view", "view.php?id=$cm->id", $quiz->id, $cm->id);
 
     $timenow = time();
 
-// Initialize $PAGE, compute blocks
-
-    $PAGE       = page_create_instance($quiz->id);
-    $pageblocks = blocks_setup($PAGE);
-    $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
 
 // Print the page header
 
-    if (!empty($edit) && $PAGE->user_allowed_editing()) {
-        if ($edit == 'on') {
-            $USER->editing = true;
-        } else if ($edit == 'off') {
-            $USER->editing = false;
-        }
-    }
+    $strquizzes = get_string("modulenameplural", "quiz");
+    $strquiz  = get_string("modulename", "quiz");
 
-    $PAGE->print_header($course->shortname.': %fullname%');
-
-    echo '<table id="layout-table"><tr>';
-
-    if(!empty($CFG->showblocksonmodpages) && (blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
-        echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        echo '</td>';
-    }
-
-    echo '<td id="middle-column">';
+    print_header_simple("$quiz->name", "",
+                 "<A HREF=index.php?id=$course->id>$strquizzes</A> -> $quiz->name", 
+                 "", "", true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
 
     if (isteacher($course->id)) {
         $attemptcount = count_records_select("quiz_attempts", "quiz = '$quiz->id' AND timefinish > 0");
         $usercount = count_records("quiz_grades", "quiz", "$quiz->id");
         $strusers  = get_string("users");
         $strviewallanswers  = get_string("viewallanswers","quiz",$attemptcount);
-        echo "<div class=\"reportlink\"><a href=\"report.php?id=$cm->id\">$strviewallanswers ($usercount $strusers)</a></div>";
+        echo "<p align=right><a href=\"report.php?id=$cm->id\">$strviewallanswers ($usercount $strusers)</a></p>";
     } else if (!$cm->visible) {
         notice(get_string("activityiscurrentlyhidden"));
     }
 
-    $available = ($quiz->timeopen < $timenow and $timenow < $quiz->timeclose) || isteacher($course->id);
+    $available = ($quiz->timeopen < $timenow and $timenow < $quiz->timeclose);
 
 // Print the main part of the page
 
-    print_heading(format_string($quiz->name));
+    print_heading($quiz->name);
 
     if (trim(strip_tags($quiz->intro))) {
-        print_simple_box(format_text($quiz->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
+        print_simple_box(format_text($quiz->intro), "CENTER");
     }
 
 
@@ -109,8 +83,8 @@
     }
 
     if ($quiz->attempts > 1) {
-        echo "<p align=\"center\">".get_string("attemptsallowed", "quiz").": $quiz->attempts</p>";
-        echo "<p align=\"center\">".get_string("grademethod", "quiz").": ".$QUIZ_GRADE_METHOD[$quiz->grademethod]."</p>";
+        echo "<p align=center>".get_string("attemptsallowed", "quiz").": $quiz->attempts</p>";
+        echo "<p align=center>".get_string("grademethod", "quiz").": ".$QUIZ_GRADE_METHOD[$quiz->grademethod]."</p>";
     } else {
         echo "<br />";
     }
@@ -119,22 +93,15 @@
     $strtimetaken     = get_string("timetaken", "quiz");
     $strtimecompleted = get_string("timecompleted", "quiz");
     $strgrade         = get_string("grade");
-    $strmarks          = get_string('marks', 'quiz');
     $strbestgrade     = $QUIZ_GRADE_METHOD[$quiz->grademethod];
 
-    $mygrade = quiz_get_best_grade($quiz, $USER->id);
+    $mygrade = quiz_get_best_grade($quiz->id, $USER->id);
 
     if ($numattempts) { 
-        if ($quiz->grade and $quiz->sumgrades) {
-            if ($quiz->grade <> $quiz->sumgrades) {
-                $table->head = array($strattempt, $strtimetaken, $strtimecompleted, "$strmarks / $quiz->sumgrades", "$strgrade / $quiz->grade");
-                $table->align = array("center", "center", "left", "right", "right");
-                $table->size = array("", "", "", "", "");
-            } else {
-                $table->head = array($strattempt, $strtimetaken, $strtimecompleted, "$strgrade / $quiz->grade");
-                $table->align = array("center", "center", "left", "right");
-                $table->size = array("", "", "", "");
-            }
+        if ($quiz->grade) {
+            $table->head = array($strattempt, $strtimetaken, $strtimecompleted, "$strgrade / $quiz->grade");
+            $table->align = array("center", "center", "left", "right");
+            $table->size = array("", "", "", "");
         } else {  // No grades are being used
             $table->head = array($strattempt, $strtimetaken, $strtimecompleted);
             $table->align = array("center", "center", "left");
@@ -146,31 +113,22 @@
             } else {
                 $timetaken = "-";
             }
-            if ($quiz->grade and $quiz->sumgrades) {
-                $attemptmark  = '';
-                $attemptgrade = format_float(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade,$quiz->decimalpoints);
+            if ($quiz->grade) {
+                $attemptgrade = format_float(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade);
                 if ($attemptgrade == $mygrade) {
-                    $attemptgrade = "<span class=\"highlight\">$attemptgrade</span>";
+                    $attemptgrade = "<span class=highlight>$attemptgrade</span>";
                 }
-                if (quiz_review_allowed($quiz)) {
-                    $attemptmark = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">$attempt->sumgrades</a>";
-                    $attemptgrade = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">$attemptgrade</a>";
-                    $attempt->attempt = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">#$attempt->attempt</a>";
+                if (!$available and $quiz->review) {
+                    $attemptgrade = "<a href=\"review.php?q=$quiz->id&attempt=$attempt->id\">$attemptgrade</a>";
+                    $attempt->attempt = "<a href=\"review.php?q=$quiz->id&attempt=$attempt->id\">$attempt->attempt</a>";
                 }
-                if ($quiz->grade <> $quiz->sumgrades) {
-                    $table->data[] = array( $attempt->attempt, 
-                                            format_time($attempt->timefinish - $attempt->timestart),
-                                            userdate($attempt->timefinish), 
-                                            $attemptmark, $attemptgrade);
-                } else {
-                    $table->data[] = array( $attempt->attempt, 
-                                            format_time($attempt->timefinish - $attempt->timestart),
-                                            userdate($attempt->timefinish), 
-                                            $attemptgrade);
-                }
+                $table->data[] = array( $attempt->attempt, 
+                                        format_time($attempt->timefinish - $attempt->timestart),
+                                        userdate($attempt->timefinish), 
+                                        $attemptgrade);
             } else {  // No grades are being used
-                if (quiz_review_allowed($quiz)) {
-                    $attempt->attempt = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">#$attempt->attempt</a>";
+                if (!$available and $quiz->review) {
+                    $attempt->attempt = "<a href=\"review.php?q=$quiz->id&attempt=$attempt->id\">$attempt->attempt</a>";
                 }
                 $table->data[] = array( $attempt->attempt, 
                                         format_time($attempt->timefinish - $attempt->timestart),
@@ -203,12 +161,14 @@
                 }
                 $strconfirmstartattempt = addslashes(get_string("confirmstartattempt","quiz"));
                 echo "<br />";
-                echo "</p>";
                 echo "<div align=\"center\">";
-
-                include("view_js.php");
-
+                if ($quiz->timelimit) {
+                    include("view_js.php");
+                } else {
+                    print_single_button("attempt.php", $options, get_string("attemptquiznow","quiz"));
+                }
                 echo "</div>\n";
+                echo "</p>";
             }
         } else {
             print_heading(get_string("nomoreattempts", "quiz"));
@@ -218,22 +178,8 @@
         }
     }
 
-// Finish the page
-    echo '</td></tr></table>';
 
+// Finish the page
     print_footer($course);
-    
-    function quiz_review_allowed($quiz) {
-        if (!$quiz->review) {
-            return false;
-        }
-        if ((time() < $quiz->timeclose) and ($quiz->review == QUIZ_REVIEW_AFTER)) {
-            return false;
-        }
-        if ((time() > $quiz->timeclose) and ($quiz->review == QUIZ_REVIEW_BEFORE)) {
-            return false;
-        }
-        return true;
-    }
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.4 beta (2004082300)
+      // choice.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['allowupdate'] = 'Permetti che le scelte vengano aggiornate ';
@@ -9,7 +9,6 @@ $string['choiceclose'] = 'Fino al';
 $string['choicename'] = 'Nome della scelta';
 $string['choiceopen'] = 'Aperta';
 $string['choicetext'] = 'Testo della domanda';
-$string['havetologin'] = 'Devi effettuare il Login prima di sottomettere la tua scelta ';
 $string['modulename'] = 'Scelta';
 $string['modulenameplural'] = 'Scelte';
 $string['mustchooseone'] = 'Bisogna scegliere una risposta prima di salvare. Non è stato salvato nulla.';

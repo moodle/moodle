@@ -118,21 +118,21 @@
 
              (empty($url)) and ($url = ewiki_script("", EWIKI_PAGE_EMAIL));
 
-             $html .= ewiki_t($text) . "<br /><br /><br />\n";
+             $html .= ewiki_t($text) . "<br><br><br>\n";
 
              $html .= '<form action="' . $url .
                       '" method="POST" enctype="multipart/form-data" encoding="iso-8859-1">';
-             $html .= '<input type="hidden" name="'.EWIKI_UP_ENCEMAIL.'" value="' . $email . '" />';
+             $html .= '<input type="hidden" name="'.EWIKI_UP_ENCEMAIL.'" value="' . $email . '">';
              foreach (array_merge($_GET, $_POST) as $var=>$value) {
                 if (($var != "id") && ($var != EWIKI_UP_ENCEMAIL) && ($var != EWIKI_UP_NOSPAMBOT)) {
-                   $html .= '<input type="hidden" name="' . htmlentities($var) . '" value="' . htmlentities($value) . '" />';
+                   $html .= '<input type="hidden" name="' . htmlentities($var) . '" value="' . htmlentities($value) . '">';
                 }
              }
-             $html .= '<input type="checkbox" name="'.EWIKI_UP_NOSPAMBOT.'" value="true" /> ' . ewiki_t("PROTE4") . '<br /><br />';
-             $html .= '<input type="submit" name="go" /></form><br /><br />';
+             $html .= '<input type="checkbox" name="'.EWIKI_UP_NOSPAMBOT.'" value="true"> ' . ewiki_t("PROTE4") . '<br><br>';
+             $html .= '<input type="submit" name="go"></form><br><br>';
 
              if (EWIKI_FAKE_EMAIL_LOOP) {
-                $html .= "\n" . ewiki_t("PROTE7") . "<br />\n";
+                $html .= "\n" . ewiki_t("PROTE7") . "<br>\n";
                 $html .= ewiki_email_protect_feedbots();
              }
 
@@ -141,7 +141,7 @@
 
              $email = ewiki_email_protect_encode($email, -1);
 
-             $html .= ewiki_t("PROTE6") . "<br />";
+             $html .= ewiki_t("PROTE6") . "<br>";
              $html .= '<a href="mailto:' . $email . '">' . $email . '</a>';
 
              if (EWIKI_HTTP_HEADERS && empty($_COOKIE[EWIKI_UP_NOSPAMBOT])) {
@@ -206,7 +206,7 @@
     if (!defined("STR_ROT17")) {
        $i = @$_SERVER["SERVER_SOFTWARE"] .
             @$_SERVER["HTTP_USER_AGENT"] .
-            getremoteaddr();
+            @$_SERVER["REMOTE_ADDR"];
        $i .= 'MxQXF^e-0OKC1\\s{\"?i!8PRoNnljHf65`Eb&A(\':g[D}_|S#~3hG>*9yvdI%<=.urcp/@$ZkqL,TWBw]a;72UzYJ)4mt+ V';
        $f = "";
        while (strlen($i)) {
@@ -263,7 +263,7 @@
        switch ($dom = $domains[rand(0, $n_dom)]) {
 
           case "123webhosting.org":
-             $m = strtr(".", "-", getremoteaddr())."-".$_SERVER["SERVER_NAME"]."-".time();
+             $m = strtr(".", "-", $_SERVER["REMOTE_ADDR"])."-".$_SERVER["SERVER_NAME"]."-".time();
              break;
 
           default:
@@ -276,13 +276,13 @@
     $html .= '<a href="mailto:'.$traps[rand(0, $n_trp)].'">'.$traps[rand(0, $n_trp)].'</a>';
 
     if (($rl = 1 + @$_REQUEST[EWIKI_UP_REQUESTLV]) < EWIKI_FAKE_EMAIL_LOOP) {
-       $html .= ",\n" . '<br /><a href="' .
+       $html .= ",\n" . '<br><a href="' .
              ewiki_script("", EWIKI_PAGE_EMAIL,
                array(
                   EWIKI_UP_ENCEMAIL=>ewiki_email_protect_encode($m, 1),
                   EWIKI_UP_REQUESTLV=>"$rl"
                )
-             ) . '">' . ewiki_t("PROTE5") . '</a><br />' . "\n";
+             ) . '">' . ewiki_t("PROTE5") . '</a><br>' . "\n";
        ($rl > 1) && sleep(3);
     }
 

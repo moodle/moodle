@@ -1,8 +1,7 @@
-<?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
+<?php // $Id$ 
+      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
-$string['asset'] = 'アセット';
 $string['attr_error'] = 'タグ $a->tag のアトリビュート ($a->attr) に不適切な値が設定されています。';
 $string['autocontinue'] = '自動継続';
 $string['badmanifest'] = 'マニフェストファイルエラー: エラーログをご覧ください。';
@@ -11,7 +10,7 @@ $string['browsed'] = '閲覧済み';
 $string['browsemode'] = '閲覧モード';
 $string['chooseapacket'] = 'SCORMパッケージの選択または更新';
 $string['completed'] = '完了';
-$string['configframesize'] = 'この値は、SCORMパッケージを使用する時の、ナビゲーションを含むトップフレームのサイズ ( ピクセル )';
+$string['configframesize'] = 'この値は、SCORMパッケージを使用する時の、ナビゲーションを含むトップフレームのサイズ(ピクセル)';
 $string['configpopup'] = '新しいSCORMパッケージを追加する場合、ポップアップウインドウに表示できる場合は表示しますか?';
 $string['configpopupheight'] = '新しいポップアップウインドウのデフォルト高は?';
 $string['configpopupresizable'] = 'ポップアップウインドウをデフォルトでリサイズ可能にしますか?';
@@ -21,19 +20,14 @@ $string['configpopupwidth'] = '新しいポップアップウインドウのデ�
 $string['coursepacket'] = 'コースパッケージ';
 $string['coursestruct'] = 'コース構造';
 $string['datadir'] = 'ファイルシステムエラー: コースデータディレクトリを作成できません。';
-$string['display'] = '表示';
 $string['domxml'] = 'DOMXML外部ライブラリ';
 $string['entercourse'] = 'SCORMコースの入力';
 $string['errorlogs'] = 'エラーログ';
-$string['exit'] = 'SCORMコースから抜ける';
-$string['expcoll'] = '展開する/折りたたむ';
 $string['failed'] = '失敗';
 $string['found'] = 'マニフェストファイルが見つかりました';
 $string['gradeaverage'] = '平均得点';
 $string['gradehighest'] = '最高得点';
 $string['grademethod'] = '評価方法';
-$string['gradescoes'] = 'SCOの状態';
-$string['gradesum'] = '評点の合計';
 $string['guestsno'] = 'ゲストはscormのコースを閲覧できません';
 $string['incomplete'] = '不完全';
 $string['missing_attribute'] = 'タグ $a->tag に属性 $a->attr がありません';
@@ -41,11 +35,11 @@ $string['missing_tag'] = 'タグ無し $a->tag';
 $string['mode'] = 'モード';
 $string['modulename'] = 'Scorm';
 $string['modulenameplural'] = 'Scorm';
-$string['newheight'] = 'デフォルトウインドウ高 ( ピクセル )';
+$string['newheight'] = 'デフォルトウインドウ高(ピクセル)';
 $string['newresizable'] = 'ウインドウのリサイズを許可';
 $string['newscrollbars'] = 'ウインドウのスクロールを許可';
 $string['newstatus'] = 'ステータスバーを表示';
-$string['newwidth'] = 'デフォルトウインドウ幅 ( ピクセル )';
+$string['newwidth'] = 'デフォルトウインドウ幅(ピクセル)';
 $string['newwindow'] = '新しいウインドウ';
 $string['newwindowopen'] = 'このSCORMパッケージを新しいポップアップウインドウで表示する';
 $string['next'] = '続ける';
@@ -59,16 +53,19 @@ $string['notattempted'] = '未実行';
 $string['organizations'] = '組織';
 $string['packagedir'] = 'ファイルシステムエラー: パッケージディレクトリを作成できません。';
 $string['passed'] = 'パス';
-$string['php5'] = 'PHP 5 ( DOMXMLネイティブライブラリ )';
+$string['php5'] = 'PHP 5 (DOMXMLネイティブライブラリ)';
 $string['position_error'] = '$a->tag タグは $a->parent タグの子タグになりません';
 $string['prev'] = '前の';
 $string['regular'] = '標準マニフェストファイル';
 $string['report'] = 'レポート';
 $string['review'] = 'レビュー';
-$string['scoes'] = 'SCO';
-$string['score'] = 'スコア';
+$string['scoes'] = 'Scoes';
+$string['score'] = '得点';
 $string['syntax'] = 'シンタックスエラー';
 $string['tag_error'] = 'コンテンツに不明なタグ($a->tag) があります:  $a->value';
+$string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 $string['too_many_attributes'] = 'タグ $a->tag のアトリビュートが多過ぎます';
 $string['too_many_children'] = 'タグ $a->tag の子タグが多過ぎます';
 $string['trackingloose'] = '警告: SCORMデータのトラッキングデータは消滅します!';

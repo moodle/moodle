@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
     require_once("../../config.php");
 
@@ -8,7 +8,12 @@
         error("Course ID is incorrect");
     }
 
-    require_course_login($course);
+    if ($course->category) {
+        require_login($course->id);
+        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
+    } else {
+        $navigation = '';
+    }
 
     add_to_log($course->id, "scorm", "view all", "index.php?id=$course->id", "");
 
@@ -20,7 +25,7 @@
     $strsummary = get_string("summary");
     $strlastmodified = get_string("lastmodified");
 
-    print_header_simple("$strscorms", "", "$strscorms",
+    print_header("$course->shortname: $strscorms", "$course->fullname", "$navigation $strscorms", 
                  "", "", true, "", navmenu($course));
 
     if ($course->format == "weeks" or $course->format == "topics") {
@@ -36,13 +41,13 @@
 
     if ($course->format == "weeks") {
         $table->head  = array ($strweek, $strname, $strsummary);
-        $table->align = array ("center", "left", "left");
+        $table->align = array ("CENTER", "LEFT", "LEFT");
     } else if ($course->format == "topics") {
         $table->head  = array ($strtopic, $strname, $strsummary);
-        $table->align = array ("center", "left", "left");
+        $table->align = array ("CENTER", "LEFT", "LEFT");
     } else {
         $table->head  = array ($strlastmodified, $strname, $strsummary);
-        $table->align = array ("left", "left", "left");
+        $table->align = array ("LEFT", "LEFT", "LEFT");
     }
 
     foreach ($scorms as $scorm) {
@@ -53,25 +58,25 @@
                 $tt = "$scorm->section";
             }
         } else {
-            $tt = "<font size=\"1\">".userdate($scorm->timemodified);
+            $tt = "<FONT SIZE=1>".userdate($scorm->timemodified);
         }
         if (!$scorm->visible) {
            //Show dimmed if the mod is hidden
-           $table->data[] = array ($tt, "<a class=\"dimmed\" href=\"view.php?id=$scorm->coursemodule\">$scorm->name</a>",
+           $table->data[] = array ($tt, "<A class=\"dimmed\" HREF=\"view.php?id=$scorm->coursemodule\">$scorm->name</A>",
                                    text_to_html($scorm->summary) );
         } else {
            //Show normal if the mod is visible
-           $table->data[] = array ($tt, "<a href=\"view.php?id=$scorm->coursemodule\">$scorm->name</a>",
+           $table->data[] = array ($tt, "<A HREF=\"view.php?id=$scorm->coursemodule\">$scorm->name</A>",
                                    text_to_html($scorm->summary) );
         }
     }
 
-    echo "<br />";
+    echo "<BR>";
 
     print_table($table);
 
     print_footer($course);
 
-
+ 
 ?>
 

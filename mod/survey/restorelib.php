@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This php script contains all the stuff to backup/restore
     //survey mods
 
@@ -53,7 +53,7 @@
             $newid = insert_record ("survey",$survey);
 
             //Do some output
-            echo "<li>".get_string("modulename","survey")." \"".format_string(stripslashes($survey->name),true)."\"</li>";
+            echo "<ul><li>".get_string("modulename","survey")." \"".$survey->name."\"<br>";
             backup_flush(300);
 
             if ($newid) {
@@ -72,6 +72,10 @@
             } else {
                 $status = false;
             }
+
+            //Finalize ul
+            echo "</ul>";
+
         } else {
             $status = false;
         }
@@ -121,7 +125,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                    echo "<br>";
                 }
                 backup_flush(300);
             }
@@ -177,7 +181,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";       
                 if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                    echo "<br>";
                 }
                 backup_flush(300);
             }
@@ -272,21 +276,8 @@
             $log->url = "index.php?id=".$log->course;
             $status = true;
             break;
-        case "download":
-            if ($log->cmid) {
-                //Get the new_id of the module (to recode the info field)
-                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
-                if ($mod) {
-                    //Rebuild the url, extracting the type (txt, xls)
-                    $filetype = substr($log->url,-3);
-                    $log->url = "download.php?id=".$log->cmid."&amp;type=".$filetype;
-                    $log->info = $mod->new_id;
-                    $status = true;
-                }
-            }
-            break;
         default:
-            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
             break;
         }
 

@@ -1,12 +1,31 @@
-<?php //$Id$
+<?PHP //$Id$
     //Functions used in restore
    
     //This function unzips a zip file in the same directory that it is
     //It automatically uses pclzip or command line unzip
     function restore_unzip ($file) {
         
-        return unzip_file($file, '', false);
+        global $CFG;
 
+        $status = true;
+
+        if (empty($CFG->unzip)) {    // Use built-in php-based unzip function
+            include_once("$CFG->dirroot/lib/pclzip/pclzip.lib.php");
+            //include_once("$CFG->dirroot/lib/pclzip/pclerror.lib.php");    //Debug
+            //include_once("$CFG->dirroot/lib/pclzip/pcltrace.lib.php");    //Debug
+            //PclTraceOn(2);                                          //Debug
+            $archive = new PclZip($file);
+            if (!$list = $archive->extract(dirname($file))) {
+                $status = false;
+            }
+            //PclTraceDisplay();                                       //Debug
+            //PclTraceOff();                                           //Debug
+        } else {                     // Use external unzip program
+            $command = "cd ".dirname($file)."; $CFG->unzip -o ".basename($file);
+            Exec($command);
+        }
+
+        return $status;
     }
 
     //This function checks if moodle.xml seems to be a valid xml file
@@ -77,36 +96,126 @@
                 if (function_exists($function_name)) {
                     echo "<li>".get_string ("to")." ".get_string("modulenameplural",$name);
                     $status = $function_name($restore);
-                    echo '</li>';
                 }
             }
         }
+
+        //Now I'm going to decode to their new location all the links in wiki texts
+        //having the syntax " modulename:moduleid".
+        echo "<li>wiki";
+        $status = restore_decode_wiki_texts($restore);
+
         echo "</ul>";
+
         return $status;
     }
 
-    //This function converts all the wiki texts in the restored course
-    //to the Markdown format. Used only for backup files prior 2005041100.
-    //It calls every module xxxx_convert_wiki2markdown function
-    function restore_convert_wiki2markdown($restore) {
+    //This function search for some wiki texts in differenct parts of Moodle to
+    //decode them to their new ids.
+    function restore_decode_wiki_texts($restore) {
+
+        global $CFG;
 
         $status = true;
 
         echo "<ul>";
-        foreach ($restore->mods as $name => $info) {
-            //If the module is being restored
-            if ($info->restore == 1) {
-                //Check if the xxxx_restore_wiki2markdown exists
-                $function_name = $name."_restore_wiki2markdown";
-                if (function_exists($function_name)) {
-                    echo "<li>".get_string("modulenameplural",$name);
-                    $status = $function_name($restore);
-                    echo '</li>';
+
+        if (file_exists("$CFG->dirroot/mod/resource/lib.php")) {
+            include_once("$CFG->dirroot/mod/resource/lib.php");
+        }
+
+        $formatwiki = FORMAT_WIKI;
+ 
+        //FORUM: Decode every POST (message) in the course
+        //Check we are restoring forums
+        if ($restore->mods['forum']->restore == 1) {
+            echo "<li>".get_string("from")." ".get_string("modulenameplural","forum");
+            //Get all course posts being restored
+            if ($posts = get_records_sql ("SELECT p.id, p.message
+                                       FROM {$CFG->prefix}forum_posts p,
+                                            {$CFG->prefix}forum_discussions d,
+                                            {$CFG->prefix}backup_ids b
+                                       WHERE d.course = $restore->course_id AND
+                                             p.discussion = d.id AND
+                                             p.format = $formatwiki AND
+                                             b.backup_code = $restore->backup_unique_code AND
+                                             b.table_name = 'forum_posts' AND
+                                             b.new_id = p.id")) {
+                //Iterate over each post->message
+                $i = 0;   //Counter to send some output to the browser to avoid timeouts
+                foreach ($posts as $post) {
+                    //Increment counter
+                    $i++;
+                    $content = $post->message;
+                    //Decode it 
+                    $result = restore_decode_wiki_content($content,$restore);
+
+                    if ($result != $content) {
+                        //Update record
+                        $post->message = addslashes($result);
+                        $status = update_record("forum_posts",$post);
+                        if ($CFG->debug>7) {
+                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
+                        }
+                    }
+                    //Do some output
+                    if (($i+1) % 5 == 0) {
+                        echo ".";
+                        if (($i+1) % 100 == 0) {
+                            echo "<br>";
+                        }
+                        backup_flush(300);
+                    }
+                }
+            }
+        }
+
+        //RESOURCE: Decode every RESOURCE (alltext) in the coure
+
+        //Check we are restoring resources
+        if ($restore->mods['resource']->restore == 1) {
+            echo "<li>".get_string("from")." ".get_string("modulenameplural","resource");
+            //Get all course resources of type='text' and options=FORMAT_WIKI being restored
+            if ($resources = get_records_sql ("SELECT r.id, r.alltext
+                                       FROM {$CFG->prefix}resource r,
+                                            {$CFG->prefix}backup_ids b
+                                       WHERE r.course = $restore->course_id AND
+                                             r.type = 'text' AND
+                                             r.options = $formatwiki AND
+                                             b.backup_code = $restore->backup_unique_code AND
+                                             b.table_name = 'resource' AND
+                                             b.new_id = r.id")) {
+                //Iterate over each resource->alltext
+                $i = 0;   //Counter to send some output to the browser to avoid timeouts
+                foreach ($resources as $resource) {
+                    //Increment counter
+                    $i++;
+                    $content = $resource->alltext;
+                    //Decode it
+                    $result = restore_decode_wiki_content($content,$restore);
+                    if ($result != $content) {
+                        //Update record
+                        $resource->alltext = addslashes($result);
+                        $status = update_record("resource",$resource);
+                        if ($CFG->debug>7) {
+                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
+                        }
+                    }
+                    //Do some output
+                    if (($i+1) % 5 == 0) {
+                        echo ".";
+                        if (($i+1) % 100 == 0) {
+                            echo "<br>";
+                        }
+                        backup_flush(300);
+                    }
                 }
             }
         }
         echo "</ul>";
+
         return $status;
+
     }
 
     //This function receives a wiki text in the restore process and
@@ -162,15 +271,6 @@
         return $info;
     }
 
-    //This function read the xml file and store its data from the blocks in a object
-    function restore_read_xml_blocks ($xml_file) {
-
-        //We call the main read_xml function, with todo = BLOCKS
-        $info = restore_read_xml ($xml_file,'BLOCKS',false);
-
-        return $info;
-    }
-
     //This function read the xml file and store its data from the sections in a object
     function restore_read_xml_sections ($xml_file) {
 
@@ -180,15 +280,6 @@
         return $info;
     }
     
-    //This function read the xml file and store its data from the metacourse in a object
-    function restore_read_xml_metacourse ($xml_file) {
-
-        //We call the main read_xml function, with todo = METACOURSE
-        $info = restore_read_xml ($xml_file,"METACOURSE",false);
-
-        return $info;
-    }
-
     //This function read the xml file and store its data from the users in 
     //backup_ids->info db (and user's id in $info)
     function restore_read_xml_users ($restore,$xml_file) {
@@ -198,17 +289,6 @@
 
         return $info;
     }
-
-    //This function read the xml file and store its data from the messages in
-    //backup_ids->message backup_ids->message_read and backup_ids->contact and db (and their counters in info)
-    function restore_read_xml_messages ($restore,$xml_file) {
-
-        //We call the main read_xml function, with todo = MESSAGES
-        $info = restore_read_xml ($xml_file,"MESSAGES",$restore);
-
-        return $info;
-    }
-
 
     //This function read the xml file and store its data from the questions in
     //backup_ids->info db (and category's id in $info)
@@ -276,9 +356,9 @@
         $status = true;
         if ($info) {
             //This is tha align to every ingo table      
-            $table->align = array ("right","left");
+            $table->align = array ("RIGHT","LEFT");
             //This is the nowrap clause 
-            $table->wrap = array ("","nowrap");
+            $table->wrap = array ("","NOWRAP");
             //The width
             $table->width = "70%";
             //Put interesting info in table
@@ -317,14 +397,6 @@
                 }
                 $elem++;
             }
-            //Metacourse info
-            $tab[$elem][0] = "<b>".get_string("metacourse").":</b>";
-            if ($info->backup_metacourse == "true") {
-                $tab[$elem][1] = get_string("yes");
-            } else {
-                $tab[$elem][1] = get_string("no");
-            }
-            $elem++;
             //Users info
             $tab[$elem][0] = "<b>".get_string("users").":</b>";
             $tab[$elem][1] = get_string($info->backup_users);
@@ -353,14 +425,6 @@
                 $tab[$elem][1] = get_string("no");
             }
             $elem++;
-            //Messages info (only showed if present)
-            if ($info->backup_messages == 'true') {
-                $tab[$elem][0] = "<b>".get_string('messages','message').":</b>";
-                $tab[$elem][1] = get_string('yes');
-                $elem++;
-            } else {
-                //Do nothing
-            }
             $table->data = $tab;
             //Print title
             print_heading(get_string("backupdetails").":");
@@ -379,7 +443,7 @@
         $status = true;
         if ($course_header) {
             //This is tha align to every ingo table
-            $table->align = array ("right","left");
+            $table->align = array ("RIGHT","LEFT");
             //The width
             $table->width = "70%";
             //Put interesting course header in table
@@ -473,10 +537,10 @@
             $course->fullname = addslashes($course_header->course_fullname);
             $course->shortname = addslashes($course_header->course_shortname);
             $course->idnumber = addslashes($course_header->course_idnumber);
-            $course->idnumber = ''; //addslashes($course_header->course_idnumber); // we don't want this at all.
             $course->summary = restore_decode_absolute_links(addslashes($course_header->course_summary));
             $course->format = addslashes($course_header->course_format);
             $course->showgrades = addslashes($course_header->course_showgrades);
+            $course->blockinfo = addslashes($course_header->blockinfo);
             $course->newsitems = addslashes($course_header->course_newsitems);
             $course->teacher = addslashes($course_header->course_teacher);
             $course->teachers = addslashes($course_header->course_teachers);
@@ -492,41 +556,26 @@
             $course->groupmode = addslashes($course_header->course_groupmode);
             $course->groupmodeforce = addslashes($course_header->course_groupmodeforce);
             $course->lang = addslashes($course_header->course_lang);
-            $course->theme = addslashes($course_header->course_theme);
             $course->cost = addslashes($course_header->course_cost);
             $course->marker = addslashes($course_header->course_marker);
             $course->visible = addslashes($course_header->course_visible);
             $course->hiddensections = addslashes($course_header->course_hiddensections);
             $course->timecreated = addslashes($course_header->course_timecreated);
             $course->timemodified = addslashes($course_header->course_timemodified);
-            $course->metacourse = addslashes($course_header->course_metacourse);
-            //Calculate sortorder field
-            $sortmax = get_record_sql('SELECT MAX(sortorder) AS max
-                                       FROM ' . $CFG->prefix . 'course
-                                       WHERE category=' . $course->category);
-            if (!empty($sortmax->max)) {
-                $course->sortorder = $sortmax->max + 1;
-                unset($sortmax);
+            //Adjust blockinfo field.
+            //If the info doesn't exist in backup, we create defaults, else we recode it 
+            //to current site blocks.
+            if (!$course->blockinfo) {
+                //Create blockinfo default content
+                if ($course->format == "social") {
+                    $course->blockinfo = blocks_get_default_blocks (NULL,"participants,search_forums,calendar_month,calendar_upcoming,social_activities,recent_activity,admin,course_list");
+                } else {
+                    //For topics and weeks formats (default built in the function)
+                    $course->blockinfo = blocks_get_default_blocks();
+                }
             } else {
-                $course->sortorder = 100;
+                $course->blockinfo = blocks_get_block_ids($course->blockinfo);
             }
-
-            //Now, recode some languages (Moodle 1.5)
-            if ($course->lang == 'ma_nt') {
-                $course->lang = 'mi_nt';
-            }
-
-            //Disable course->metacourse if avoided in restore config
-            if (!$restore->metacourse) {
-                $course->metacourse = 0;
-            }
-
-            //Check if the theme exists in destination server
-            $themes = get_list_of_themes();
-            if (!in_array($course->theme, $themes)) {
-                $course->theme = '';
-            } 
-
             //Now insert the record
             $newid = insert_record("course",$course);
             if ($newid) {
@@ -536,172 +585,6 @@
                 $course_header->course_id = $newid;
             } else {
                 $status = false;
-            }
-        }
-
-        return $status;
-    }
-
-    //This function creates all the block stuff when restoring courses
-    //It calls selectively to  restore_create_block_instances() for 1.5 
-    //and above backups. Upwards compatible with old blocks.
-    function restore_create_blocks($restore, $backup_block_format, $blockinfo, $xml_file) {
-
-        $status = true;
-
-        delete_records('block_instance', 'pageid', $restore->course_id, 'pagetype', PAGE_COURSE_VIEW);
-        if (empty($backup_block_format)) {     // This is a backup from Moodle < 1.5
-            if (empty($blockinfo)) {
-                // Looks like it's from Moodle < 1.3. Let's give the course default blocks...
-                $newpage = page_create_object(PAGE_COURSE_VIEW, $restore->course_id);
-                blocks_repopulate_page($newpage);
-            } else {
-                // We just have a blockinfo field, this is a legacy 1.4 or 1.3 backup
-                $blockrecords = get_records_select('block', '', '', 'name, id');
-                $temp_blocks_l = array();
-                $temp_blocks_r = array();
-                @list($temp_blocks_l, $temp_blocks_r) = explode(':', $blockinfo);
-                $temp_blocks = array(BLOCK_POS_LEFT => explode(',', $temp_blocks_l), BLOCK_POS_RIGHT => explode(',', $temp_blocks_r));
-                foreach($temp_blocks as $blockposition => $blocks) {
-                    $blockweight = 0;
-                    foreach($blocks as $blockname) { 
-                        if(!isset($blockrecords[$blockname])) {
-                            // We don't know anything about this block!
-                            continue;
-                        }
-                        $blockinstance = new stdClass;
-                        // Remove any - prefix before doing the name-to-id mapping
-                        if(substr($blockname, 0, 1) == '-') {
-                            $blockname = substr($blockname, 1);
-                            $blockinstance->visible = 0;
-                        } else {
-                            $blockinstance->visible = 1;
-                        }
-                        $blockinstance->blockid  = $blockrecords[$blockname]->id;
-                        $blockinstance->pageid   = $restore->course_id;
-                        $blockinstance->pagetype = PAGE_COURSE_VIEW;
-                        $blockinstance->position = $blockposition;
-                        $blockinstance->weight   = $blockweight;
-                        if(!$status = insert_record('block_instance', $blockinstance)) {
-                            $status = false;
-                        }
-                        ++$blockweight;
-                    }
-                }
-            }
-        } else if($backup_block_format == 'instances') {
-            $status = restore_create_block_instances($restore,$xml_file);
-        }
-
-        return $status;
-
-    } 
-
-    //This function creates all the block_instances from xml when restoring in a
-    //new course
-    function restore_create_block_instances($restore,$xml_file) {
-
-        $status = true;
-        //Check it exists
-        if (!file_exists($xml_file)) {
-            $status = false;
-        }
-        //Get info from xml
-        if ($status) {
-            $info = restore_read_xml_blocks($xml_file);
-        }
-
-        if(empty($info->instances)) {
-            return $status;
-        }
-
-        // First of all, iterate over the blocks to see which distinct pages we have
-        // in our hands and arrange the blocks accordingly.
-        $pageinstances = array();
-        foreach($info->instances as $instance) {
-
-            //pagetype and pageid black magic, we have to handle the case of blocks for the
-            //course, blocks from other pages in that course etc etc etc.
-
-            if($instance->pagetype == PAGE_COURSE_VIEW) {
-                // This one's easy...
-                $instance->pageid  = $restore->course_id;
-            }
-            else {
-                $parts = explode('-', $instance->pagetype);
-                if($parts[0] == 'mod') {
-                    if(!$restore->mods[$parts[1]]->restore) {
-                        continue;
-                    }
-                    $getid = backup_getid($restore->backup_unique_code, $parts[1], $instance->pageid);
-                    $instance->pageid = $getid->new_id;
-                }
-                else {
-                    // Not invented here ;-)
-                    continue;
-                }
-            }
-
-            if(!isset($pageinstances[$instance->pagetype])) {
-                $pageinstances[$instance->pagetype] = array();
-            }
-            if(!isset($pageinstances[$instance->pagetype][$instance->pageid])) {
-                $pageinstances[$instance->pagetype][$instance->pageid] = array();
-            }
-
-            $pageinstances[$instance->pagetype][$instance->pageid][] = $instance;
-        }
-
-        $blocks = get_records_select('block', '', '', 'name, id, multiple');
-
-        // For each type of page we have restored
-        foreach($pageinstances as $thistypeinstances) {
-
-            // For each page id of that type
-            foreach($thistypeinstances as $thisidinstances) {
-
-                $addedblocks = array();
-                $maxweights  = array();
-
-                // For each block instance in that page
-                foreach($thisidinstances as $instance) {
-
-                    if(!isset($blocks[$instance->name])) {
-                        //We are trying to restore a block we don't have...
-                        continue;
-                    }
-    
-                    //If we have already added this block once and multiples aren't allowed, disregard it
-                    if(!$blocks[$instance->name]->multiple && isset($addedblocks[$instance->name])) {
-                        continue;
-                    }
-
-                    //If its the first block we add to a new position, start weight counter equal to 0.
-                    if(empty($maxweights[$instance->position])) {
-                        $maxweights[$instance->position] = 0;
-                    }
-    
-                    //If the instance weight is greater than the weight counter (we skipped some earlier
-                    //blocks most probably), bring it back in line.
-                    if($instance->weight > $maxweights[$instance->position]) {
-                        $instance->weight = $maxweights[$instance->position];
-                    }
-
-                    //Add this instance
-                    $instance->blockid = $blocks[$instance->name]->id;
-                    
-                    if(!insert_record('block_instance', $instance)) {
-                        $status = false;
-                        break;
-                    }
-    
-                    //Now we can increment the weight counter
-                    ++$maxweights[$instance->position];
-    
-                    //Keep track of block types we have already added
-                    $addedblocks[$instance->name] = true;
-
-                }
             }
         }
 
@@ -793,7 +676,7 @@
                                     $course_module->indent = $mod->indent;
                                     $course_module->visible = $mod->visible;
                                     $course_module->groupmode = $mod->groupmode;
-                                    $course_module->instance = 0;
+                                    $course_module->instance = null;
                                     //NOTE: The instance (new) is calculated and updated in db in the
                                     //      final step of the restore. We don't know it yet.
                                     //print_object($course_module);					//Debug
@@ -837,95 +720,6 @@
         }
         return $status;
     }
-
-    //This function creates all the metacourse data from xml, notifying 
-    //about each incidence
-    function restore_create_metacourse($restore,$xml_file) {
-
-        global $CFG,$db;
-
-        $status = true;
-        //Check it exists
-        if (!file_exists($xml_file)) {
-            $status = false;
-        }
-        //Get info from xml
-        if ($status) {
-            //Load data from XML to info
-            $info = restore_read_xml_metacourse($xml_file);
-        }
-
-        //Process info about metacourse
-        if ($status and $info) {
-            //Process child records
-            if ($info->childs) {
-                foreach ($info->childs as $child) {
-                    $dbcourse = false;
-                    $dbmetacourse = false;
-                    //Check if child course exists in destination server
-                    //(by id in the same server or by idnumber and shortname in other server)
-                    if ($restore->original_wwwroot == $CFG->wwwroot) {
-                        //Same server, lets see by id
-                        $dbcourse = get_record('course','id',$child->id);
-                    } else {
-                        //Different server, lets see by idnumber and shortname, and only ONE record
-                        $dbcount = count_records('course','idnumber',$child->idnumber,'shortname',$child->shortname);
-                        if ($dbcount == 1) {
-                            $dbcourse = get_record('course','idnumber',$child->idnumber,'shortname',$child->shortname);
-                        }
-                    }
-                    //If child course has been found, insert data
-                    if ($dbcourse) {
-                        $dbmetacourse->child_course = $dbcourse->id;
-                        $dbmetacourse->parent_course = $restore->course_id;
-                        $status = insert_record ('course_meta',$dbmetacourse);
-                    } else {
-                        //Child course not found, notice!
-                        echo '<ul><li>'.get_string ('childcoursenotfound').' ('.$child->id.'/'.$child->idnumber.'/'.$child->shortname.')</li></ul>';
-                    }
-                }
-                //Now, recreate student enrolments...
-                sync_metacourse($restore->course_id);
-            }
-            //Process parent records
-            if ($info->parents) {
-                foreach ($info->parents as $parent) {
-                    $dbcourse = false;
-                    $dbmetacourse = false;
-                    //Check if parent course exists in destination server
-                    //(by id in the same server or by idnumber and shortname in other server)
-                    if ($restore->original_wwwroot == $CFG->wwwroot) {
-                        //Same server, lets see by id
-                        $dbcourse = get_record('course','id',$parent->id);
-                    } else {
-                        //Different server, lets see by idnumber and shortname, and only ONE record
-                        $dbcount = count_records('course','idnumber',$parent->idnumber,'shortname',$parent->shortname);
-                        if ($dbcount == 1) {
-                            $dbcourse = get_record('course','idnumber',$parent->idnumber,'shortname',$parent->shortname);
-                        }
-                    }
-                    //If parent course has been found, insert data if it is a metacourse
-                    if ($dbcourse) {
-                        if ($dbcourse->metacourse) {
-                            $dbmetacourse->parent_course = $dbcourse->id;
-                            $dbmetacourse->child_course = $restore->course_id;
-                            $status = insert_record ('course_meta',$dbmetacourse);
-                            //Now, recreate student enrolments in parent course
-                            sync_metacourse($dbcourse->id);
-                        } else {
-                        //Parent course isn't metacourse, notice!
-                        echo '<ul><li>'.get_string ('parentcoursenotmetacourse').' ('.$parent->id.'/'.$parent->idnumber.'/'.$parent->shortname.')</li></ul>';
-                        }
-                    } else {
-                        //Parent course not found, notice!
-                        echo '<ul><li>'.get_string ('parentcoursenotfound').' ('.$parent->id.'/'.$parent->idnumber.'/'.$parent->shortname.')</li></ul>';
-                    }
-                }
-            }
-
-        }
-        return $status;
-    }
     
     //This function creates all the user, user_students, user_teachers
     //user_course_creators and user_admins from xml
@@ -953,11 +747,6 @@
             foreach ($info->users as $userid) {
                 $rec = backup_getid($restore->backup_unique_code,"user",$userid); 
                 $user = $rec->info;
-
-                //Now, recode some languages (Moodle 1.5)
-                if ($user->lang == 'ma_nt') {
-                    $user->lang = 'mi_nt';
-                }
 
                 //Check if it's admin and coursecreator
                 $is_admin =         !empty($user->roles['admin']);
@@ -1019,35 +808,6 @@
                     $user->city = addslashes($user->city);
                     $user->url = addslashes($user->url);
                     $user->description = restore_decode_absolute_links(addslashes($user->description));
-
-                    //We need to analyse the AUTH field to recode it:
-                    //   - if the field isn't set, we are in a pre 1.4 backup and we'll 
-                    //     use $CFG->auth
-                    //   - if the destination site has any kind of INTERNAL authentication, 
-                    //     then apply it to the new user.
-                    //   - if the destination site has any kind of EXTERNAL authentication, 
-                    //     then leave the original authentication of the user.
-
-                    if ((! isset($user->auth)) || is_internal_auth($CFG->auth)) {
-                        $user->auth = $CFG->auth;
-                    }
-
-                    //We need to process the POLICYAGREED field to recalculate it:
-                    //    - if the destination site is different (by wwwroot) reset it.
-                    //    - if the destination site is the same (by wwwroot), leave it unmodified
-
-                    if ($restore->original_wwwroot != $CFG->wwwroot) {
-                        $user->policyagreed = 0;
-                    } else {
-                        //Nothing to do, we are in the same server
-                    }
-
-                    //Check if the theme exists in destination server
-                    $themes = get_list_of_themes();
-                    if (!in_array($user->theme, $themes)) {
-                        $user->theme = '';
-                    }
-
                     //We are going to create the user
                     //The structure is exactly as we need
                     $newid = insert_record ("user",$user);
@@ -1095,19 +855,6 @@
                             //Set course and user
                             $user->roles['teacher']->course = $restore->course_id;
                             $user->roles['teacher']->userid = $newid;
-
-                            //Need to analyse the enrol field
-                            //    - if it isn't set, set it to $CFG->enrol
-                            //    - if we are in a different server (by wwwroot), set it to $CFG->enrol
-                            //    - if we are in the same server (by wwwroot), maintain it unmodified.
-                            if (empty($user->roles['teacher']->enrol)) {
-                                $user->roles['teacher']->enrol = $CFG->enrol;
-                            } else if ($restore->original_wwwroot != $CFG->wwwroot) {
-                                $user->roles['teacher']->enrol = $CFG->enrol;
-                            } else {
-                                //Nothing to do. Leave it unmodified
-                            }    
-
                             //Insert data in user_teachers
                             //The structure is exactly as we need
                             $status = insert_record("user_teachers",$user->roles['teacher']);
@@ -1122,19 +869,6 @@
                             //Set course and user
                             $user->roles['student']->course = $restore->course_id;
                             $user->roles['student']->userid = $newid;
-
-                            //Need to analyse the enrol field
-                            //    - if it isn't set, set it to $CFG->enrol
-                            //    - if we are in a different server (by wwwroot), set it to $CFG->enrol
-                            //    - if we are in the same server (by wwwroot), maintain it unmodified.
-                            if (empty($user->roles['student']->enrol)) {
-                                $user->roles['student']->enrol = $CFG->enrol;
-                            } else if ($restore->original_wwwroot != $CFG->wwwroot) {
-                                $user->roles['student']->enrol = $CFG->enrol;
-                            } else {
-                                //Nothing to do. Leave it unmodified
-                            }    
-
                             //Insert data in user_students
                             //The structure is exactly as we need
                             $status = insert_record("user_students",$user->roles['student']);
@@ -1152,17 +886,17 @@
 
                 //Here, if create_preferences, do it as necessary
                 if ($create_preferences) {
-                    //echo "Checking for preferences of user ".$user->username."<br />";         //Debug
+                    //echo "Checking for preferences of user ".$user->username."<br>";         //Debug
                     //Get user new id from backup_ids
                     $data = backup_getid($restore->backup_unique_code,"user",$userid);
                     $newid = $data->new_id;
                     if (isset($user->user_preferences)) {
-                        //echo "Preferences exist in backup file<br />";                         //Debug
+                        //echo "Preferences exist in backup file<br>";                         //Debug
                         foreach($user->user_preferences as $user_preference) {
-                            //echo $user_preference->name." = ".$user_preference->value."<br />";    //Debug
+                            //echo $user_preference->name." = ".$user_preference->value."<br>";    //Debug
                             //We check if that user_preference exists in DB
                             if (!record_exists("user_preferences","userid",$newid,"name",$user_preference->name)) {
-                                //echo "Creating it<br />";                                              //Debug
+                                //echo "Creating it<br>";                                              //Debug
                                 //Prepare the record and insert it
                                 $user_preference->userid = $newid;
                                 $status = insert_record("user_preferences",$user_preference);
@@ -1174,226 +908,6 @@
         }
 
         return $status;
-    }
-
-    //This function creates all the structures messages and contacts
-    function restore_create_messages($restore,$xml_file) {
-
-        global $CFG;
-
-        $status = true;
-        //Check it exists
-        if (!file_exists($xml_file)) {
-            $status = false;
-        }
-        //Get info from xml
-        if ($status) {
-            //info will contain the id and name of every table
-            //(message, message_read and message_contacts)
-            //in backup_ids->info will be the real info (serialized)
-            $info = restore_read_xml_messages($restore,$xml_file);
-
-            //If we have info, then process messages & contacts
-            if ($info > 0) {
-                //Count how many we have
-                $unreadcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'message');
-                $readcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'message_read');
-                $contactcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'message_contacts');
-                if ($unreadcount || $readcount || $contactcount) {
-                    //Start ul
-                    echo '<ul>';
-                    //Number of records to get in every chunk
-                    $recordset_size = 4;
-
-                    //Process unread
-                    $db->debug=true;
-                    if ($unreadcount) {
-                        echo '<li>'.get_string('unreadmessages','message').'</li>';
-                        $counter = 0;
-                        while ($counter < $unreadcount) {
-                            //Fetch recordset_size records in each iteration
-                            $recs = get_records_select("backup_ids","table_name = 'message' AND backup_code = '$restore->backup_unique_code'","old_id","old_id, old_id",$counter,$recordset_size);
-                            if ($recs) {
-                                foreach ($recs as $rec) {
-                                    //Get the full record from backup_ids
-                                    $data = backup_getid($restore->backup_unique_code,"message",$rec->old_id);
-                                    if ($data) {
-                                        //Now get completed xmlized object
-                                        $info = $data->info;
-                                        //traverse_xmlize($info);                            //Debug
-                                        //print_object ($GLOBALS['traverse_array']);         //Debug
-                                        //$GLOBALS['traverse_array']="";                     //Debug
-                                        //Now build the MESSAGE record structure
-                                        $dbrec->useridfrom = backup_todb($info['MESSAGE']['#']['USERIDFROM']['0']['#']);
-                                        $dbrec->useridto = backup_todb($info['MESSAGE']['#']['USERIDTO']['0']['#']);
-                                        $dbrec->message = backup_todb($info['MESSAGE']['#']['MESSAGE']['0']['#']);
-                                        $dbrec->format = backup_todb($info['MESSAGE']['#']['FORMAT']['0']['#']);
-                                        $dbrec->timecreated = backup_todb($info['MESSAGE']['#']['TIMECREATED']['0']['#']);
-                                        $dbrec->messagetype = backup_todb($info['MESSAGE']['#']['MESSAGETYPE']['0']['#']);
-                                        //We have to recode the useridfrom field
-                                        $user = backup_getid($restore->backup_unique_code,"user",$dbrec->useridfrom);
-                                        if ($user) {
-                                            //echo "User ".$dbrec->useridfrom." to user ".$user->new_id."<br />";   //Debug
-                                            $dbrec->useridfrom = $user->new_id;
-                                        }
-                                        //We have to recode the useridto field
-                                        $user = backup_getid($restore->backup_unique_code,"user",$dbrec->useridto);
-                                        if ($user) {
-                                            //echo "User ".$dbrec->useridto." to user ".$user->new_id."<br />";   //Debug
-                                            $dbrec->useridto = $user->new_id;
-                                        }
-                                        //Check if the record doesn't exist in DB!
-                                        $exist = get_record('message','useridfrom',$dbrec->useridfrom,
-                                                                      'useridto',  $dbrec->useridto,
-                                                                      'timecreated',$dbrec->timecreated);
-                                        if (!$exist) {
-                                            //Not exist. Insert
-                                            $status = insert_record('message',$dbrec);
-                                        } else {
-                                            //Duplicate. Do nothing
-                                        }
-                                    }
-                                    //Do some output
-                                    $counter++;
-                                    if ($counter % 10 == 0) {
-                                        echo ".";
-                                        if ($counter % 200 == 0) {
-                                            echo "<br />";
-                                        }
-                                        backup_flush(300);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    //Process read
-                    if ($readcount) {
-                        echo '<li>'.get_string('readmessages','message').'</li>';
-                        $counter = 0;
-                        while ($counter < $readcount) {
-                            //Fetch recordset_size records in each iteration
-                            $recs = get_records_select("backup_ids","table_name = 'message_read' AND backup_code = '$restore->backup_unique_code'","old_id","old_id, old_id",$counter,$recordset_size);
-                            if ($recs) {
-                                foreach ($recs as $rec) {
-                                    //Get the full record from backup_ids
-                                    $data = backup_getid($restore->backup_unique_code,"message_read",$rec->old_id);
-                                    if ($data) {
-                                        //Now get completed xmlized object
-                                        $info = $data->info;
-                                        //traverse_xmlize($info);                            //Debug
-                                        //print_object ($GLOBALS['traverse_array']);         //Debug
-                                        //$GLOBALS['traverse_array']="";                     //Debug
-                                        //Now build the MESSAGE_READ record structure
-                                        $dbrec->useridfrom = backup_todb($info['MESSAGE']['#']['USERIDFROM']['0']['#']);
-                                        $dbrec->useridto = backup_todb($info['MESSAGE']['#']['USERIDTO']['0']['#']);
-                                        $dbrec->message = backup_todb($info['MESSAGE']['#']['MESSAGE']['0']['#']);
-                                        $dbrec->format = backup_todb($info['MESSAGE']['#']['FORMAT']['0']['#']);
-                                        $dbrec->timecreated = backup_todb($info['MESSAGE']['#']['TIMECREATED']['0']['#']);
-                                        $dbrec->messagetype = backup_todb($info['MESSAGE']['#']['MESSAGETYPE']['0']['#']);
-                                        $dbrec->timeread = backup_todb($info['MESSAGE']['#']['TIMEREAD']['0']['#']);
-                                        $dbrec->mailed = backup_todb($info['MESSAGE']['#']['MAILED']['0']['#']);
-                                        //We have to recode the useridfrom field
-                                        $user = backup_getid($restore->backup_unique_code,"user",$dbrec->useridfrom);
-                                        if ($user) {
-                                            //echo "User ".$dbrec->useridfrom." to user ".$user->new_id."<br />";   //Debug
-                                            $dbrec->useridfrom = $user->new_id;
-                                        }
-                                        //We have to recode the useridto field
-                                        $user = backup_getid($restore->backup_unique_code,"user",$dbrec->useridto);
-                                        if ($user) {
-                                            //echo "User ".$dbrec->useridto." to user ".$user->new_id."<br />";   //Debug
-                                            $dbrec->useridto = $user->new_id;
-                                        }
-                                        //Check if the record doesn't exist in DB!
-                                        $exist = get_record('message_read','useridfrom',$dbrec->useridfrom,
-                                                                           'useridto',  $dbrec->useridto,
-                                                                           'timecreated',$dbrec->timecreated);
-                                        if (!$exist) {
-                                            //Not exist. Insert
-                                            $status = insert_record('message_read',$dbrec);
-                                        } else {
-                                            //Duplicate. Do nothing
-                                        }
-                                    }
-                                    //Do some output
-                                    $counter++;
-                                    if ($counter % 10 == 0) {
-                                        echo ".";
-                                        if ($counter % 200 == 0) {
-                                            echo "<br />";
-                                        }
-                                        backup_flush(300);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    //Process contacts
-                    if ($contactcount) {
-                        echo '<li>'.strtolower(get_string('contacts','message')).'</li>';
-                        $counter = 0;
-                        while ($counter < $contactcount) {
-                            //Fetch recordset_size records in each iteration
-                            $recs = get_records_select("backup_ids","table_name = 'message_contacts' AND backup_code = '$restore->backup_unique_code'","old_id","old_id, old_id",$counter,$recordset_size);
-                            if ($recs) {
-                                foreach ($recs as $rec) {
-                                    //Get the full record from backup_ids
-                                    $data = backup_getid($restore->backup_unique_code,"message_contacts",$rec->old_id);
-                                    if ($data) {
-                                        //Now get completed xmlized object
-                                        $info = $data->info;
-                                        //traverse_xmlize($info);                            //Debug
-                                        //print_object ($GLOBALS['traverse_array']);         //Debug
-                                        //$GLOBALS['traverse_array']="";                     //Debug
-                                        //Now build the MESSAGE_CONTACTS record structure
-                                        $dbrec->userid = backup_todb($info['CONTACT']['#']['USERID']['0']['#']);
-                                        $dbrec->contactid = backup_todb($info['CONTACT']['#']['CONTACTID']['0']['#']);
-                                        $dbrec->blocked = backup_todb($info['CONTACT']['#']['BLOCKED']['0']['#']);
-                                        //We have to recode the userid field
-                                        $user = backup_getid($restore->backup_unique_code,"user",$dbrec->userid);
-                                        if ($user) {
-                                            //echo "User ".$dbrec->userid." to user ".$user->new_id."<br />";   //Debug
-                                            $dbrec->userid = $user->new_id;
-                                        }
-                                        //We have to recode the contactid field
-                                        $user = backup_getid($restore->backup_unique_code,"user",$dbrec->contactid);
-                                        if ($user) {
-                                            //echo "User ".$dbrec->contactid." to user ".$user->new_id."<br />";   //Debug
-                                            $dbrec->contactid = $user->new_id;
-                                        }
-                                        //Check if the record doesn't exist in DB!
-                                        $exist = get_record('message_contacts','userid',$dbrec->userid,
-                                                                               'contactid',  $dbrec->contactid);
-                                        if (!$exist) {
-                                            //Not exist. Insert
-                                            $status = insert_record('message_contacts',$dbrec);
-                                        } else {
-                                            //Duplicate. Do nothing
-                                        }
-                                    }
-                                    //Do some output
-                                    $counter++;
-                                    if ($counter % 10 == 0) {
-                                        echo ".";
-                                        if ($counter % 200 == 0) {
-                                            echo "<br />";
-                                        }
-                                        backup_flush(300);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    //End ul
-                    echo '</ul>';
-                    $db->debug=true;
-                }
-            }
-        }
-
-       return $status;
     }
 
     //This function creates all the categories and questions
@@ -1419,38 +933,13 @@
             if ($info !== true) {
                 //Iterate over each category
                 foreach ($info as $category) {
-                    //Skip empty categories (some backups can contain them)
-                    if (!empty($category->id)) {
-                        $catrestore = "quiz_restore_question_categories";
-                        if (function_exists($catrestore)) {
-                            //print_object ($category);                                                //Debug
-                            $status = $catrestore($category,$restore);
-                        } else {
-                            //Something was wrong. Function should exist.
-                            $status = false;
-                        }
-                    }
-                }
-
-                //Now we have to recode the parent field of each restored category
-                $categories = get_records_sql("SELECT old_id, new_id 
-                                               FROM {$CFG->prefix}backup_ids
-                                               WHERE backup_code = $restore->backup_unique_code AND
-                                                     table_name = 'quiz_categories'");
-                if ($categories) {
-                    foreach ($categories as $category) {
-                        $restoredcategory = get_record('quiz_categories','id',$category->new_id);
-                        if ($restoredcategory->parent != 0) {
-                            //echo 'Parent '.$restoredcategory->parent.' is ';           //Debug
-                            $idcat = backup_getid($restore->backup_unique_code,'quiz_categories',$restoredcategory->parent);
-                            if ($idcat->new_id) {
-                                $restoredcategory->parent = $idcat->new_id;
-                            } else {
-                                $restoredcategory->parent = 0;
-                            }
-                            //echo $restoredcategory->parent.' now<br />';  //Debug
-                            update_record('quiz_categories', $restoredcategory);
-                        }
+                    $catrestore = "quiz_restore_question_categories";
+                    if (function_exists($catrestore)) {
+                        //print_object ($category);                                                //Debug
+                        $status = $catrestore($category,$restore);
+                    } else {
+                        //Something was wrong. Function should exist.
+                        $status = false;
                     }
                 }
             }
@@ -1479,9 +968,6 @@
         //Now, if we have anything in scales, we have to restore that
         //scales
         if ($scales) {
-            //Get admin->id for later use
-            $admin = get_admin();
-            $adminid = $admin->id;
             if ($scales !== true) {
                 //Iterate over each scale
                 foreach ($scales as $scale) {
@@ -1529,7 +1015,7 @@
                                 $sca->userid = $user->new_id;
                             } else {
                                 //Assign it to admin
-                                $sca->userid = $adminid;
+                                $sca->userid = 1;
                             }
                             //The structure is equal to the db, so insert the scale
                             $newid = insert_record ("scale",$sca);
@@ -1589,9 +1075,7 @@
                         $gro->courseid = backup_todb($info['GROUP']['#']['COURSEID']['0']['#']);
                         $gro->name = backup_todb($info['GROUP']['#']['NAME']['0']['#']);
                         $gro->description = backup_todb($info['GROUP']['#']['DESCRIPTION']['0']['#']);
-                        $gro->password = backup_todb($info['GROUP']['#']['PASSWORD']['0']['#']);
                         $gro->lang = backup_todb($info['GROUP']['#']['LANG']['0']['#']);
-                        $gro->theme = backup_todb($info['GROUP']['#']['THEME']['0']['#']);
                         $gro->picture = backup_todb($info['GROUP']['#']['PICTURE']['0']['#']);
                         $gro->hidepicture = backup_todb($info['GROUP']['#']['HIDEPICTURE']['0']['#']);
                         $gro->timecreated = backup_todb($info['GROUP']['#']['TIMECREATED']['0']['#']);
@@ -1608,13 +1092,6 @@
                         if ($create_group) {
                             //Me must recode the courseid to the restore->course_id 
                             $gro->courseid = $restore->course_id;
-
-                            //Check if the theme exists in destination server
-                            $themes = get_list_of_themes();
-                            if (!in_array($gro->theme, $themes)) {
-                                $gro->theme = '';
-                            }
-
                             //The structure is equal to the db, so insert the group
                             $newid = insert_record ("groups",$gro);
                         } else { 
@@ -1623,19 +1100,12 @@
                         }
                         if ($newid) {
                             //We have the newid, update backup_ids
-                            backup_putid($restore->backup_unique_code,"groups",
+                            backup_putid($restore->backup_unique_code,"group",
                                          $group->id, $newid);
                         }
-                        //Now restore members in the groups_members, only if
-                        //users are included
-                        if ($restore->users != 2) {
-                            $status2 = restore_create_groups_members($newid,$info,$restore);
-                        }
+                        //Now restore members in the groups_members
+                        $status2 = restore_create_groups_members($newid,$info,$restore);
                     }   
-                }
-                //Now, restore group_files
-                if ($status && $status2) {
-                    $status2 = restore_group_files($restore); 
                 }
             }
         } else {
@@ -1679,7 +1149,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                    echo "<br>";
                 }
                 backup_flush(300);
             }
@@ -1708,11 +1178,6 @@
             //in backup_ids->info will be the real info (serialized)
             $events = restore_read_xml_events($restore,$xml_file);
         }
-
-        //Get admin->id for later use
-        $admin = get_admin();
-        $adminid = $admin->id;
-
         //Now, if we have anything in events, we have to restore that
         //events
         if ($events) {
@@ -1762,7 +1227,7 @@
                                 $eve->userid = $user->new_id;
                             } else {
                                 //Assign it to admin
-                                $eve->userid = $adminid;
+                                $eve->userid = 1;
                             }
                             //We have to recode the groupid field
                             $group = backup_getid($restore->backup_unique_code,"group",$eve->groupid);
@@ -1821,7 +1286,7 @@
         $result = str_replace($search,$replace,$content);
 
         if ($result != $content && $CFG->debug>7) {                                  //Debug
-            echo "<br /><hr />".$content."<br />changed to<br />".$result."<hr /><br />";        //Debug
+            echo "<br><hr>".$content."<br>changed to<br>".$result."<hr><br>";        //Debug
         }                                                                            //Debug
 
         return $result;
@@ -1873,66 +1338,11 @@
                             if ($counter % 2 == 0) {
                                 echo ".";
                                 if ($counter % 40 == 0) {
-                                echo "<br />";
+                                echo "<br>";
                                 }
                                 backup_flush(300);
                             }
                         }
-                    }
-                }
-            }
-        }
-        //If status is ok and whe have dirs created, returns counter to inform
-        if ($status and $counter) {
-            return $counter;
-        } else {
-            return $status;
-        }
-    }
-
-    //This function restores the groupfiles from the temp (group_files) directory to the
-    //dataroot/groups directory
-    function restore_group_files($restore) {
-
-        global $CFG;
-
-        $status = true;
-
-        $counter = 0;
-
-        //First, we check to "groups" exists and create is as necessary
-        //in CFG->dataroot
-        $dest_dir = $CFG->dataroot.'/groups';
-        $status = check_dir_exists($dest_dir,true);
-
-        //Now, we iterate over "group_files" records to check if that user dir must be
-        //copied (and renamed) to the "groups" dir.
-        $rootdir = $CFG->dataroot."/temp/backup/".$restore->backup_unique_code."/group_files";
-        //Check if directory exists
-        if (is_dir($rootdir)) {
-            $list = list_directories ($rootdir);
-            if ($list) {
-                //Iterate
-                $counter = 0;
-                foreach ($list as $dir) {
-                    //Look for dir like groupid in backup_ids
-                    $data = get_record ("backup_ids","backup_code",$restore->backup_unique_code,
-                                                     "table_name","groups",
-                                                     "old_id",$dir);
-                    //If that group exists in backup_ids
-                    if ($data) {
-                        if (!file_exists($dest_dir."/".$data->new_id)) {
-                            $status = backup_copy_file($rootdir."/".$dir, $dest_dir."/".$data->new_id);
-                            $counter ++;
-                        }
-                        //Do some output
-                        if ($counter % 2 == 0) {
-                            echo ".";
-                            if ($counter % 40 == 0) {
-                                echo "<br />";
-                            }
-                            backup_flush(300);
-                        } 
                     }
                 }
             }
@@ -1981,7 +1391,7 @@
                     if ($counter % 2 == 0) {       
                         echo ".";
                         if ($counter % 40 == 0) {       
-                        echo "<br />";
+                        echo "<br>";
                         }
                         backup_flush(300);
                     }
@@ -2019,7 +1429,6 @@
         //from backup_ids (calling every mod restore function)
         if ($info) {
             if ($info !== true) {
-                echo '<ul>';
                 //Iterate over each module
                 foreach ($info as $mod) {
                     $modrestore = $mod->modtype."_restore_mods";
@@ -2031,7 +1440,6 @@
                         $status = false;
                     }
                 }
-                echo '</ul>';
             }
         } else {
             $status = false;
@@ -2100,14 +1508,14 @@
                             //We have to recode the userid field
                             $user = backup_getid($restore->backup_unique_code,"user",$dblog->userid);
                             if ($user) {
-                                //echo "User ".$dblog->userid." to user ".$user->new_id."<br />";                             //Debug
+                                //echo "User ".$dblog->userid." to user ".$user->new_id."<br>";                             //Debug
                                 $dblog->userid = $user->new_id;
                             }
                             //We have to recode the cmid field (if module isn't "course" or "user")
                             if ($dblog->module != "course" and $dblog->module != "user") {
                                 $cm = backup_getid($restore->backup_unique_code,"course_modules",$dblog->cmid);
                                 if ($cm) {
-                                    //echo "Module ".$dblog->cmid." to module ".$cm->new_id."<br />";                         //Debug
+                                    //echo "Module ".$dblog->cmid." to module ".$cm->new_id."<br>";                         //Debug
                                     $dblog->cmid = $cm->new_id;
                                 } else {
                                     $dblog->cmid = 0;
@@ -2132,7 +1540,7 @@
                         if ($counter % 10 == 0) {
                             echo ".";
                             if ($counter % 200 == 0) {
-                                echo "<br />";
+                                echo "<br>";
                             }
                             backup_flush(300);
                         }
@@ -2154,7 +1562,7 @@
         $status = true;
         $toinsert = false;
 
-        //echo "<hr />Before transformations<br />";                                        //Debug
+        //echo "<hr>Before transformations<br>";                                        //Debug
         //print_object($log);                                                           //Debug
         //Depending of the action, we recode different things
         switch ($log->action) {
@@ -2170,7 +1578,7 @@
                 $log->info = $user->new_id;
                 //Now, extract the mode from the url field
                 $mode = substr(strrchr($log->url,"="),1);
-                $log->url = "user.php?id=".$log->course."&amp;user=".$log->info."&amp;mode=".$mode;
+                $log->url = "user.php?id=".$log->course."&user=".$log->info."&mode=".$mode;
                 $toinsert = true;
             }
             break;
@@ -2260,22 +1668,17 @@
             $log->info = "";
             $toinsert = true;
             break;
-        case "recent":
-            $log->url = "recent.php?id=".$log->course;
-            $log->info = "";
-            $toinsert = true;
-            break;
         default:
-            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
             break;
         }
 
-        //echo "After transformations<br />";                                             //Debug
+        //echo "After transformations<br>";                                             //Debug
         //print_object($log);                                                           //Debug
 
         //Now if $toinsert is set, insert the record
         if ($toinsert) {
-            //echo "Inserting record<br />";                                              //Debug
+            //echo "Inserting record<br>";                                              //Debug
             $status = insert_record("log",$log);
         }
         return $status;
@@ -2287,7 +1690,7 @@
         $status = true;
         $toinsert = false;
         
-        //echo "<hr />Before transformations<br />";                                        //Debug
+        //echo "<hr>Before transformations<br>";                                        //Debug
         //print_object($log);                                                           //Debug
         //Depending of the action, we recode different things                           
         switch ($log->action) {
@@ -2296,7 +1699,7 @@
             $user = backup_getid($restore->backup_unique_code,"user",$log->info);
             if ($user) {
                 $log->info = $user->new_id;
-                $log->url = "view.php?id=".$log->info."&amp;course=".$log->course;
+                $log->url = "view.php?id=".$log->info."&course=".$log->course;
                 $toinsert = true;
             }
             break;
@@ -2305,7 +1708,7 @@
             $user = backup_getid($restore->backup_unique_code,"user",$log->info);
             if ($user) {
                 $log->info = $user->new_id;
-                $log->url = "view.php?id=".$log->info."&amp;course=".$log->course;
+                $log->url = "view.php?id=".$log->info."&course=".$log->course;
                 $toinsert = true;
             }
             break;
@@ -2322,21 +1725,21 @@
             $user = backup_getid($restore->backup_unique_code,"user",$userid);
             if ($user) {
                 $log->info = "";
-                $log->url = "view.php?id=".$user->new_id."&amp;course=".$log->course;
+                $log->url = "view.php?id=".$user->new_id."&course=".$log->course;
                 $toinsert = true;
             }
             break;
         default:
-            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
             break;
         }
 
-        //echo "After transformations<br />";                                             //Debug
+        //echo "After transformations<br>";                                             //Debug
         //print_object($log);                                                           //Debug
 
         //Now if $toinsert is set, insert the record
         if ($toinsert) {
-            //echo "Inserting record<br />";                                              //Debug
+            //echo "Inserting record<br>";                                              //Debug
             $status = insert_record("log",$log);
         }
         return $status;
@@ -2348,7 +1751,7 @@
         $status = true;
         $toinsert = false;
 
-        //echo "<hr />Before transformations<br />";                                        //Debug
+        //echo "<hr>Before transformations<br>";                                        //Debug
         //print_object($log);                                                           //Debug
 
         //Now we see if the required function in the module exists
@@ -2362,12 +1765,12 @@
             }
         }
 
-        //echo "After transformations<br />";                                             //Debug
+        //echo "After transformations<br>";                                             //Debug
         //print_object($log);                                                           //Debug
 
         //Now if $toinsert is set, insert the record
         if ($toinsert) {
-            //echo "Inserting record<br />";                                              //Debug
+            //echo "Inserting record<br>";                                              //Debug
             $status = insert_record("log",$log);
         }
         return $status;
@@ -2456,7 +1859,7 @@
 
             //Check if we are into INFO zone
             //if ($this->tree[2] == "INFO")                                                             //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
         }
 
         //This is the startTag handler we use where we are reading the course header zone (todo="COURSE_HEADER")
@@ -2470,21 +1873,7 @@
 
             //Check if we are into COURSE_HEADER zone
             //if ($this->tree[3] == "HEADER")                                                           //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
-        }
-
-        //This is the startTag handler we use where we are reading the blocks zone (todo="BLOCKS")
-        function startElementBlocks($parser, $tagName, $attrs) {
-            //Refresh properties     
-            $this->level++;
-            $this->tree[$this->level] = $tagName;   
-            
-            //Output something to avoid browser timeouts...
-            backup_flush();
-
-            //Check if we are into BLOCKS zone
-            //if ($this->tree[3] == "BLOCKS")                                                         //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
         }
 
         //This is the startTag handler we use where we are reading the sections zone (todo="SECTIONS")
@@ -2498,24 +1887,8 @@
 
             //Check if we are into SECTIONS zone
             //if ($this->tree[3] == "SECTIONS")                                                         //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
         }
-
-        //This is the startTag handler we use where we are reading the metacourse zone (todo="METACOURSE")
-        function startElementMetacourse($parser, $tagName, $attrs) {
-
-            //Refresh properties     
-            $this->level++;
-            $this->tree[$this->level] = $tagName;   
-            
-            //Output something to avoid browser timeouts...
-            backup_flush();
-
-            //Check if we are into METACOURSE zone
-            //if ($this->tree[3] == "METACOURSE")                                                         //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
-        }
-        
         
         //This is the startTag handler we use where we are reading the user zone (todo="USERS")
         function startElementUsers($parser, $tagName, $attrs) {
@@ -2525,32 +1898,9 @@
 
             //Check if we are into USERS zone  
             //if ($this->tree[3] == "USERS")                                                            //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
         }
 
-        //This is the startTag handler we use where we are reading the messages zone (todo="MESSAGES")
-        function startElementMessages($parser, $tagName, $attrs) {
-            //Refresh properties
-            $this->level++;
-            $this->tree[$this->level] = $tagName;
-
-            //Output something to avoid browser timeouts...
-            backup_flush();
-
-            //Check if we are into MESSAGES zone
-            //if ($this->tree[3] == "MESSAGES")                                                          //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";  //Debug
-
-            //If we are under a MESSAGE tag under a MESSAGES zone, accumule it
-            if (isset($this->tree[4]) and isset($this->tree[3])) {
-                if (($this->tree[4] == "MESSAGE" || $this->tree[5] == "CONTACT" ) and ($this->tree[3] == "MESSAGES")) {
-                    if (!isset($this->temp)) {
-                        $this->temp = "";
-                    }
-                    $this->temp .= "<".$tagName.">";
-                }
-            }
-        }
         //This is the startTag handler we use where we are reading the questions zone (todo="QUESTIONS")
         function startElementQuestions($parser, $tagName, $attrs) {
             //Refresh properties
@@ -2566,7 +1916,7 @@
 
             //Check if we are into QUESTION_CATEGORIES zone
             //if ($this->tree[3] == "QUESTION_CATEGORIES")                                              //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
 
             //If we are under a QUESTION_CATEGORY tag under a QUESTION_CATEGORIES zone, accumule it
             if (isset($this->tree[4]) and isset($this->tree[3])) {
@@ -2594,7 +1944,7 @@
 
             //Check if we are into SCALES zone
             //if ($this->tree[3] == "SCALES")                                                           //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
 
             //If we are under a SCALE tag under a SCALES zone, accumule it
             if (isset($this->tree[4]) and isset($this->tree[3])) {
@@ -2621,7 +1971,7 @@
 
             //Check if we are into GROUPS zone
             //if ($this->tree[3] == "GROUPS")                                                           //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
 
             //If we are under a GROUP tag under a GROUPS zone, accumule it
             if (isset($this->tree[4]) and isset($this->tree[3])) {
@@ -2649,7 +1999,7 @@
 
             //Check if we are into EVENTS zone
             //if ($this->tree[3] == "EVENTS")                                                           //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
 
             //If we are under a EVENT tag under a EVENTS zone, accumule it
             if (isset($this->tree[4]) and isset($this->tree[3])) {
@@ -2677,7 +2027,7 @@
 
             //Check if we are into MODULES zone
             //if ($this->tree[3] == "MODULES")                                                          //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
 
             //If we are under a MOD tag under a MODULES zone, accumule it
             if (isset($this->tree[4]) and isset($this->tree[3])) {
@@ -2705,7 +2055,7 @@
 
             //Check if we are into LOGS zone
             //if ($this->tree[3] == "LOGS")                                                             //Debug
-            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
 
             //If we are under a LOG tag under a LOGS zone, accumule it
             if (isset($this->tree[4]) and isset($this->tree[3])) {
@@ -2726,7 +2076,7 @@
             //Output something to avoid browser timeouts...
             backup_flush();
 
-            echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
+            echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
         }
  
         //This is the endTag handler we use where we are reading the info zone (todo="INFO")
@@ -2734,8 +2084,8 @@
             //Check if we are into INFO zone
             if ($this->tree[2] == "INFO") {
                 //if (trim($this->content))                                                                     //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
                 //Dependig of different combinations, do different things
                 if ($this->level == 3) {
                     switch ($tagName) {
@@ -2765,9 +2115,6 @@
                 if ($this->tree[3] == "DETAILS") {
                     if ($this->level == 4) {
                         switch ($tagName) {
-                            case "METACOURSE":
-                                $this->info->backup_metacourse = $this->getContents();
-                                break;
                             case "USERS":
                                 $this->info->backup_users = $this->getContents();
                                 break;
@@ -2779,12 +2126,6 @@
                                 break;
                             case "COURSEFILES":
                                 $this->info->backup_course_files = $this->getContents();
-                                break;
-                            case "MESSAGES":
-                                $this->info->backup_messages = $this->getContents();
-                                break;
-                            case 'BLOCKFORMAT':
-                                $this->info->backup_block_format = $this->getContents();
                                 break;
                         }
                     }
@@ -2822,8 +2163,8 @@
             //Check if we are into COURSE_HEADER zone
             if ($this->tree[3] == "HEADER") {
                 //if (trim($this->content))                                                                     //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
                 //Dependig of different combinations, do different things
                 if ($this->level == 4) {
                     switch ($tagName) {
@@ -2899,9 +2240,6 @@
                         case "LANG":
                             $this->info->course_lang = $this->getContents();
                             break;
-                        case "THEME":
-                            $this->info->course_theme = $this->getContents();
-                            break;
                         case "COST":
                             $this->info->course_cost = $this->getContents();
                             break;
@@ -2919,9 +2257,6 @@
                             break;
                         case "TIMEMODIFIED":
                             $this->info->course_timemodified = $this->getContents();
-                            break;
-                        case "METACOURSE":
-                            $this->info->course_metacourse = $this->getContents();
                             break;
                     }
                 }
@@ -2952,71 +2287,12 @@
         }
 
         //This is the endTag handler we use where we are reading the sections zone (todo="SECTIONS")
-        function endElementBlocks($parser, $tagName) {
-            //Check if we are into BLOCKS zone
-            if ($this->tree[3] == 'BLOCKS') {
-                //if (trim($this->content))                                                                     //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
-                //Dependig of different combinations, do different things
-                if ($this->level == 4) {
-                    switch ($tagName) {
-                        case 'BLOCK':
-                            //We've finalized a block, get it
-                            $this->info->instances[] = $this->info->tempinstance;
-                            unset($this->info->tempinstance);
-                            break;
-                        default:
-                            die($tagName);
-                    }
-                }
-                if ($this->level == 5) {
-                    switch ($tagName) {
-                        case 'NAME':
-                            $this->info->tempinstance->name = $this->getContents();
-                            break;
-                        case 'PAGEID':
-                            $this->info->tempinstance->pageid = $this->getContents();
-                            break;
-                        case 'PAGETYPE':
-                            $this->info->tempinstance->pagetype = $this->getContents();
-                            break;
-                        case 'POSITION':
-                            $this->info->tempinstance->position = $this->getContents();
-                            break;
-                        case 'WEIGHT':
-                            $this->info->tempinstance->weight = $this->getContents();
-                            break;
-                        case 'VISIBLE':
-                            $this->info->tempinstance->visible = $this->getContents();
-                            break;
-                        case 'CONFIGDATA':
-                            $this->info->tempinstance->configdata = $this->getContents();
-                            break;
-                    }
-                }
-            }
-            //Clear things
-            $this->tree[$this->level] = '';
-            $this->level--;
-            $this->content = "";
-
-            //Stop parsing if todo = BLOCKS and tagName = BLOCKS (en of the tag, of course)
-            //Speed up a lot (avoid parse all)
-            //WARNING: ONLY EXIT IF todo = BLOCKS (thus tree[3] = "BLOCKS") OTHERWISE
-            //         THE BLOCKS TAG IN THE HEADER WILL TERMINATE US!
-            if ($this->tree[3] == 'BLOCKS' && $tagName == 'BLOCKS') {
-                $this->finished = true;
-            }
-        }
-
-        //This is the endTag handler we use where we are reading the sections zone (todo="SECTIONS")
         function endElementSections($parser, $tagName) {
             //Check if we are into SECTIONS zone
             if ($this->tree[3] == "SECTIONS") {
                 //if (trim($this->content))                                                                     //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
                 //Dependig of different combinations, do different things
                 if ($this->level == 4) {
                     switch ($tagName) {
@@ -3108,65 +2384,14 @@
                 $this->finished = true;
             }
         }
-
-        //This is the endTag handler we use where we are reading the metacourse zone (todo="METACOURSE")
-        function endElementMetacourse($parser, $tagName) {
-            //Check if we are into METACOURSE zone
-            if ($this->tree[3] == 'METACOURSE') {
-                //if (trim($this->content))                                                                     //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
-                //Dependig of different combinations, do different things
-                if ($this->level == 5) {
-                    switch ($tagName) {
-                        case 'CHILD':
-                            //We've finalized a child, get it
-                            $this->info->childs[] = $this->info->tempmeta;
-                            unset($this->info->tempmeta);
-                            break;
-                        case 'PARENT':
-                            //We've finalized a parent, get it
-                            $this->info->parents[] = $this->info->tempmeta;
-                            unset($this->info->tempmeta);
-                            break;
-                        default:
-                            die($tagName);
-                    }
-                }
-                if ($this->level == 6) {
-                    switch ($tagName) {
-                        case 'ID':
-                            $this->info->tempmeta->id = $this->getContents();
-                            break;
-                        case 'IDNUMBER':
-                            $this->info->tempmeta->idnumber = $this->getContents();
-                            break;
-                        case 'SHORTNAME':
-                            $this->info->tempmeta->shortname = $this->getContents();
-                            break;
-                    }
-                }
-            }
-            //Clear things
-            $this->tree[$this->level] = '';
-            $this->level--;
-            $this->content = "";
-
-            //Stop parsing if todo = METACOURSE and tagName = METACOURSE (en of the tag, of course)
-            //Speed up a lot (avoid parse all)
-            if ($this->tree[3] == 'METACOURSE' && $tagName == 'METACOURSE') {
-                $this->finished = true;
-            }
-        }
-
         
         //This is the endTag handler we use where we are reading the users zone (todo="USERS")
         function endElementUsers($parser, $tagName) {
             //Check if we are into USERS zone
             if ($this->tree[3] == "USERS") {
                 //if (trim($this->content))                                                                     //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
                 //Dependig of different combinations, do different things
                 if ($this->level == 4) {
                     switch ($tagName) {
@@ -3181,7 +2406,7 @@
                             if ($this->counter % 10 == 0) {
                                 echo ".";
                                 if ($this->counter % 200 == 0) {
-                                echo "<br />";
+                                echo "<br>";
                                 }
                                 backup_flush(300);
                             }
@@ -3197,17 +2422,8 @@
                             $this->info->users[$this->getContents()] = $this->getContents();
                             $this->info->tempuser->id = $this->getContents();
                             break;
-                        case "AUTH": 
-                            $this->info->tempuser->auth = $this->getContents();
-                            break;
-                        case "GUID": 
-                            $this->info->tempuser->guid = $this->getContents();
-                            break;
                         case "CONFIRMED": 
                             $this->info->tempuser->confirmed = $this->getContents();
-                            break;
-                        case "POLICYAGREED": 
-                            $this->info->tempuser->policyagreed = $this->getContents();
                             break;
                         case "DELETED": 
                             $this->info->tempuser->deleted = $this->getContents();
@@ -3236,18 +2452,6 @@
                         case "ICQ": 
                             $this->info->tempuser->icq = $this->getContents();
                             break;
-                        case "SKYPE": 
-                            $this->info->tempuser->skype = $this->getContents();
-                            break;
-                        case "AIM": 
-                            $this->info->tempuser->aim = $this->getContents();
-                            break;
-                        case "YAHOO": 
-                            $this->info->tempuser->yahoo = $this->getContents();
-                            break;
-                        case "MSN": 
-                            $this->info->tempuser->msn = $this->getContents();
-                            break;
                         case "PHONE1": 
                             $this->info->tempuser->phone1 = $this->getContents();
                             break;
@@ -3271,9 +2475,6 @@
                             break;
                         case "LANG": 
                             $this->info->tempuser->lang = $this->getContents();
-                            break;
-                        case "THEME": 
-                            $this->info->tempuser->theme = $this->getContents();
                             break;
                         case "TIMEZONE": 
                             $this->info->tempuser->timezone = $this->getContents();
@@ -3374,9 +2575,6 @@
                         case "TIMEACCESS":
                             $this->info->temprole->timeaccess = $this->getContents();
                             break;
-                        case "ENROL":
-                            $this->info->temprole->enrol = $this->getContents();
-                            break;
                         case "NAME":
                             $this->info->tempuserpreference->name = $this->getContents();
                             break;
@@ -3400,94 +2598,13 @@
             $this->content = "";
         }
 
-        //This is the endTag handler we use where we are reading the messages zone (todo="MESSAGES")
-        function endElementMessages($parser, $tagName) {
-            //Check if we are into MESSAGES zone
-            if ($this->tree[3] == "MESSAGES") {
-                //if (trim($this->content))                                                             //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n"; //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";//Debug
-                //Acumulate data to info (content + close tag)
-                //Reconvert: strip htmlchars again and trim to generate xml data
-                if (!isset($this->temp)) {
-                    $this->temp = "";
-                }
-                $this->temp .= htmlspecialchars(trim($this->content))."</".$tagName.">";
-                //If we've finished a message, xmlize it an save to db
-                if (($this->level == 4) and ($tagName == "MESSAGE")) {
-                    //Prepend XML standard header to info gathered
-                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
-                    //Call to xmlize for this portion of xml data (one MESSAGE)
-                    //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
-                    $data = xmlize($xml_data,0);
-                    //echo strftime ("%X",time())."<p>";                                              //Debug
-                    //traverse_xmlize($data);                                                         //Debug
-                    //print_object ($GLOBALS['traverse_array']);                                      //Debug
-                    //$GLOBALS['traverse_array']="";                                                  //Debug
-                    //Now, save data to db. We'll use it later
-                    //Get id and status from data
-                    $message_id = $data["MESSAGE"]["#"]["ID"]["0"]["#"];
-                    $message_status = $data["MESSAGE"]["#"]["STATUS"]["0"]["#"];
-                    if ($message_status == "READ") {
-                        $table = "message_read";
-                    } else {
-                        $table = "message";
-                    }
-                    $this->counter++;
-                    //Save to db
-                    $status = backup_putid($this->preferences->backup_unique_code, $table,$message_id, 
-                                           null,$data);
-                    //Create returning info
-                    $this->info = $this->counter;
-                    //Reset temp
-                    unset($this->temp);
-                }
-                //If we've finished a contact, xmlize it an save to db
-                if (($this->level == 5) and ($tagName == "CONTACT")) {
-                    //Prepend XML standard header to info gathered
-                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
-                    //Call to xmlize for this portion of xml data (one MESSAGE)
-                    //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
-                    $data = xmlize($xml_data,0);
-                    //echo strftime ("%X",time())."<p>";                                              //Debug
-                    //traverse_xmlize($data);                                                         //Debug
-                    //print_object ($GLOBALS['traverse_array']);                                      //Debug
-                    //$GLOBALS['traverse_array']="";                                                  //Debug
-                    //Now, save data to db. We'll use it later
-                    //Get id and status from data
-                    $contact_id = $data["CONTACT"]["#"]["ID"]["0"]["#"];
-                    $this->counter++;
-                    //Save to db
-                    $status = backup_putid($this->preferences->backup_unique_code, 'message_contacts' ,$contact_id, 
-                                           null,$data);
-                    //Create returning info
-                    $this->info = $this->counter;
-                    //Reset temp
-                    unset($this->temp);
-                }
-            }
-
-            //Stop parsing if todo = MESSAGES and tagName = MESSAGES (en of the tag, of course)
-            //Speed up a lot (avoid parse all)
-            if ($tagName == "MESSAGES" and $this->level == 3) {
-                $this->finished = true;
-                $this->counter = 0;
-
-            }
-
-            //Clear things
-            $this->tree[$this->level] = "";
-            $this->level--;
-            $this->content = "";
-        }
-
         //This is the endTag handler we use where we are reading the questions zone (todo="QUESTIONS")  
         function endElementQuestions($parser, $tagName) {
             //Check if we are into QUESTION_CATEGORIES zone
             if ($this->tree[3] == "QUESTION_CATEGORIES") {
                 //if (trim($this->content))                                                                     //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
                 //Acumulate data to info (content + close tag)
                 //Reconvert: strip htmlchars again and trim to generate xml data
                 if (!isset($this->temp)) {
@@ -3536,8 +2653,8 @@
             //Check if we are into SCALES zone
             if ($this->tree[3] == "SCALES") {
                 //if (trim($this->content))                                                                     //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
                 //Acumulate data to info (content + close tag)
                 //Reconvert: strip htmlchars again and trim to generate xml data
                 if (!isset($this->temp)) {
@@ -3586,8 +2703,8 @@
             //Check if we are into GROUPS zone
             if ($this->tree[3] == "GROUPS") {
                 //if (trim($this->content))                                                                     //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
                 //Acumulate data to info (content + close tag)
                 //Reconvert: strip htmlchars again and trim to generate xml data
                 if (!isset($this->temp)) {
@@ -3636,8 +2753,8 @@
             //Check if we are into EVENTS zone
             if ($this->tree[3] == "EVENTS") {
                 //if (trim($this->content))                                                                     //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
                 //Acumulate data to info (content + close tag)
                 //Reconvert: strip htmlchars again and trim to generate xml data
                 if (!isset($this->temp)) {
@@ -3686,8 +2803,8 @@
             //Check if we are into MODULES zone
             if ($this->tree[3] == "MODULES") {
                 //if (trim($this->content))                                                                     //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
                 //Acumulate data to info (content + close tag)
                 //Reconvert: strip htmlchars again and trim to generate xml data
                 if (!isset($this->temp)) {
@@ -3742,8 +2859,8 @@
             //Check if we are into LOGS zone
             if ($this->tree[3] == "LOGS") {
                 //if (trim($this->content))                                                                     //Debug
-                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
-                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
                 //Acumulate data to info (content + close tag)
                 //Reconvert: strip htmlchars again and trim to generate xml data
                 if (!isset($this->temp)) {
@@ -3803,8 +2920,8 @@
         //This is the endTag default handler we use when todo is undefined
         function endElement($parser, $tagName) {
             if (trim($this->content))                                                                     //Debug
-                echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n";           //Debug
-            echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";          //Debug
+                echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
+            echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
 
             //Clear things
             $this->tree[$this->level] = "";
@@ -3823,7 +2940,7 @@
         
         $status = true;
 
-        $xml_parser = xml_parser_create('UTF-8');
+        $xml_parser = xml_parser_create();
         $moodle_parser = new MoodleParser();
         $moodle_parser->todo = $todo;
         $moodle_parser->preferences = $preferences;
@@ -3835,21 +2952,12 @@
         } else if ($todo == "COURSE_HEADER") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementCourseHeader", "endElementCourseHeader");
-        } else if ($todo == 'BLOCKS') {
-            //Define handlers to that zone
-            xml_set_element_handler($xml_parser, "startElementBlocks", "endElementBlocks");
         } else if ($todo == "SECTIONS") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementSections", "endElementSections");
-        } else if ($todo == "METACOURSE") {
-            //Define handlers to that zone
-            xml_set_element_handler($xml_parser, "startElementMetacourse", "endElementMetacourse");
         } else if ($todo == "USERS") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementUsers", "endElementUsers");
-        } else if ($todo == "MESSAGES") {
-            //Define handlers to that zone
-            xml_set_element_handler($xml_parser, "startElementMessages", "endElementMessages");
         } else if ($todo == "QUESTIONS") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementQuestions", "endElementQuestions");
@@ -3895,199 +3003,4 @@
             return $status;
         }
     }
-
-    function restore_precheck($id,$file,$silent=false) {
-        
-        global $CFG, $SESSION;
-
-        //Prepend dataroot to variable to have the absolute path
-        $file = $CFG->dataroot."/".$file;
-        
-        if (empty($silent)) {
-            //Start the main table
-            echo "<table cellpadding=\"5\">";
-            echo "<tr><td>";
-            
-            //Start the mail ul
-            echo "<ul>";
-        }
-
-        //Check the file exists 
-        if (!is_file($file)) {
-            error ("File not exists ($file)");
-        }
-        
-        //Check the file name ends with .zip
-        if (!substr($file,-4) == ".zip") {
-            error ("File has an incorrect extension");
-        }
-        
-        //Now calculate the unique_code for this restore
-        $backup_unique_code = time();
-        
-        //Now check and create the backup dir (if it doesn't exist)
-        if (empty($silent)) {
-            echo "<li>".get_string("creatingtemporarystructures").'</li>';
-        }
-        $status = check_and_create_backup_dir($backup_unique_code);
-        //Empty dir
-        if ($status) {
-            $status = clear_backup_dir($backup_unique_code);
-        }
-        
-        //Now delete old data and directories under dataroot/temp/backup
-        if ($status) {   
-            if (empty($silent)) {
-                echo "<li>".get_string("deletingolddata").'</li>';
-            }
-            $status = backup_delete_old_data();
-        }
-        
-        //Now copy he zip file to dataroot/temp/backup/backup_unique_code
-        if ($status) {
-            if (empty($silent)) {
-                echo "<li>".get_string("copyingzipfile").'</li>';
-            }
-            if (! $status = backup_copy_file($file,$CFG->dataroot."/temp/backup/".$backup_unique_code."/".basename($file))) {
-                notify("Error copying backup file. Invalid name or bad perms.");
-            }
-        }
-        
-        //Now unzip the file
-        if ($status) {
-            if (empty($silent)) {
-                echo "<li>".get_string("unzippingbackup").'</li>';
-            }
-            if (! $status = restore_unzip ($CFG->dataroot."/temp/backup/".$backup_unique_code."/".basename($file))) {
-                notify("Error unzipping backup file. Invalid zip file.");
-            }
-        }
-
-        //Check for Blackboard backups and convert
-        if ($status){
-            require_once("$CFG->dirroot/backup/bb/restore_bb.php");
-            echo "<li>".get_string("checkingforbbexport");
-            $status = blackboard_convert($CFG->dataroot."/temp/backup/".$backup_unique_code);
-        }
-        
-        //Now check for the moodle.xml file
-        if ($status) {
-            $xml_file  = $CFG->dataroot."/temp/backup/".$backup_unique_code."/moodle.xml";
-            if (empty($silent)) {
-                echo "<li>".get_string("checkingbackup").'</li>';
-            }
-            if (! $status = restore_check_moodle_file ($xml_file)) {
-                notify("Error checking backup file. Invalid or corrupted.");
-            }
-        }
-        
-        $info = "";
-        $course_header = "";
-        
-        //Now read the info tag (all)
-        if ($status) {
-            if (empty($silent)) {
-                echo "<li>".get_string("readinginfofrombackup").'</li>';
-            }
-            //Reading info from file
-            $info = restore_read_xml_info ($xml_file);
-            //Reading course_header from file
-            $course_header = restore_read_xml_course_header ($xml_file);
-        }
-        
-        if (empty($silent)) {
-            //End the main ul
-            echo "</ul>";
-            
-            //End the main table
-            echo "</td></tr>";
-            echo "</table>";
-        }
-        
-        //We compare Moodle's versions
-        if ($CFG->version < $info->backup_moodle_version && $status) {
-            $message->serverversion = $CFG->version;
-            $message->serverrelease = $CFG->release;
-            $message->backupversion = $info->backup_moodle_version;
-            $message->backuprelease = $info->backup_moodle_release;
-            print_simple_box(get_string('noticenewerbackup','',$message), "center", "70%", '', "20", "noticebox");
-            
-        }
-        
-        //Now we print in other table, the backup and the course it contains info
-        if ($info and $course_header and $status) {
-            //First, the course info
-            $status = restore_print_course_header($course_header);
-            //Now, the backup info
-            if ($status) {
-                $status = restore_print_info($info);
-            }
-        }
-        
-        //Save course header and info into php session
-        if ($status) {
-            $SESSION->info = $info;
-            $SESSION->course_header = $course_header;
-        }
-        
-        //Finally, a little form to continue
-        //with some hidden fields
-        if ($status) {
-            if (empty($silent)) {
-                echo "<br /><center>";
-                $hidden["backup_unique_code"] = $backup_unique_code;
-                $hidden["launch"]             = "form";
-                $hidden["file"]               =  $file;
-                $hidden["id"]                 =  $id;
-                print_single_button("restore.php", $hidden, get_string("continue"),"post");
-                echo "</center>";
-            }
-            else {
-                redirect($CFG->wwwroot.'/backup/restore.php?backup_unique_code='.$backup_unique_code.'&launch=form&file='.$file.'&id='.$id);
-            }
-        }
-        
-        if (!$status) {
-            error ("An error has ocurred");
-        }
-        return true;
-    }
-
-    function restore_setup_for_check(&$restore,$backup_unique_code) {
-        global $SESSION;
-        $restore->backup_unique_code=$backup_unique_code;
-        $restore->users = 2; // yuk
-        if ($allmods = get_records("modules")) {
-            foreach ($allmods as $mod) {
-                $modname = $mod->name;
-                $var = "restore_".$modname;
-                //Now check that we have that module info in the backup file
-                if (isset($SESSION->info->mods[$modname]) && $SESSION->info->mods[$modname]->backup == "true") {
-                    $restore->$var = 1; 
-                }
-            }
-        }
-    }
-
-    function backup_to_restore_array($backup,$k=0) {
-        if (is_array($backup) ) {
-            foreach ($backup as $key => $value) {
-                $newkey = str_replace('backup','restore',$key);
-                $restore[$newkey] = backup_to_restore_array($value,$key);
-            }
-        }
-        else if (is_object($backup)) { 
-            $tmp = get_object_vars($backup);
-            foreach ($tmp as $key => $value) {
-                $newkey = str_replace('backup','restore',$key);
-                $restore->$newkey = backup_to_restore_array($value,$key);   
-            }
-        }
-        else {
-            $newkey = str_replace('backup','restore',$k);
-            $restore = $backup;
-        }
-        return $restore;
-    }
-
 ?>

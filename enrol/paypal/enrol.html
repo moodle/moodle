@@ -8,11 +8,11 @@
 
 <input type="hidden" name="cmd" value="_xclick">
 <input type="hidden" name="business" value="<?php p($CFG->enrol_paypalbusiness)?>">
-<input type="hidden" name="item_name" value="<?php p($coursefullname) ?>">
-<input type="hidden" name="item_number" value="<?php p($courseshortname) ?>">
+<input type="hidden" name="item_name" value="<?php p($course->fullname) ?>">
+<input type="hidden" name="item_number" value="<?php p($course->shortname) ?>">
 <input type="hidden" name="quantity" value="1">
 <input type="hidden" name="on0" value="<?php print_string("user") ?>">
-<input type="hidden" name="os0" value="<?php p($userfullname) ?>">
+<input type="hidden" name="os0" value="<?php echo fullname($USER) ?>">
 <input type="hidden" name="custom" value="<?php echo "$USER->id-$course->id" ?>">
 
 <input type="hidden" name="currency_code" value="<?php p($CFG->enrol_currency) ?>">
@@ -26,10 +26,10 @@
 <input type="hidden" name="rm" value="2">
 <input type="hidden" name="cbt" value="<?php print_string("continuetocourse") ?>">
 
-<input type="hidden" name="first_name" value="<?php p($userfirstname) ?>">
-<input type="hidden" name="last_name" value="<?php p($userlastname) ?>">
-<input type="hidden" name="address" value="<?php p($useraddress) ?>">
-<input type="hidden" name="city" value="<?php p($usercity) ?>">
+<input type="hidden" name="first_name" value="<?php p($USER->firstname) ?>">
+<input type="hidden" name="last_name" value="<?php p($USER->lastname) ?>">
+<input type="hidden" name="address" value="<?php p($USER->address) ?>">
+<input type="hidden" name="city" value="<?php p($USER->city) ?>">
 <input type="hidden" name="email" value="<?php p($USER->email) ?>">
 <input type="hidden" name="country" value="<?php p($USER->country) ?>">
 

@@ -14,7 +14,7 @@
 <html>
 <head>
 <title><?php print_string("insertlink","editor");?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=<?php print_string("thischarset");?>" />
+<meta http-equiv="Content-Type" content="text/html; <?php print_string("thischarset");?>" />
 <script language="javascript" type="text/javascript">
 
 function onCancel() {
@@ -113,7 +113,6 @@ form { margin-bottom: 1px; margin-top: 1px; }
           <input type="hidden" name="wdir" value="" />
           <input type="hidden" name="file" value="" />
           <input type="hidden" name="action" value="rename" />
-          <input type="hidden" name="sesskey" value="<?php p($USER->sesskey) ?>" />
           <input name="btnRename" type="submit" id="btnRename" value="<?php print_string("rename","editor");?>" /></form></td>
           </tr>
     </table>
@@ -131,7 +130,6 @@ form { margin-bottom: 1px; margin-top: 1px; }
           <input type="hidden" name="id" value="<?php print($course->id);?>" />
           <input type="hidden" name="wdir" value="" />
           <input type="hidden" name="action" value="mkdir" />
-          <input type="hidden" name="sesskey" value="<?php p($USER->sesskey) ?>" />
           <input name="name" type="text" id="foldername" size="35" />
           <input name="btnCfolder" type="submit" id="btnCfolder" value="<?php print_string("createfolder","editor");?>" onclick="return checkvalue('foldername','cfolder');" />
           </form>
@@ -140,7 +138,6 @@ form { margin-bottom: 1px; margin-top: 1px; }
           <input type="hidden" name="id" VALUE="<?php print($course->id);?>" />
           <input type="hidden" name="wdir" value="" />
           <input type="hidden" name="action" value="upload" />
-          <input type="hidden" name="sesskey" value="<?php p($USER->sesskey) ?>" />
           <input type="file" name="userfile" id="userfile" size="35" />
           <input name="save" type="submit" id="save" onclick="return checkvalue('userfile','uploader');" value="<?php print_string("upload","editor");?>" />
           </form>

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -13,25 +13,20 @@
         error("Course is misconfigured");
     }
 
-    require_course_login($course, false, $cm);
+    require_course_login($course);
 
     if (!$choice = choice_get_choice($cm->instance)) {
         error("Course module is incorrect");
     }
 
-    if ($choice->option) {
-        foreach ($choice->option as $optionid => $text) {
-            $answerchecked[$optionid] = '';
-        }
+    for ($i=1; $i <= $CHOICE_MAX_NUMBER; $i++) {
+        $answerchecked[$i] = '';
     }
-
-    if (isset($USER->id) && $current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $USER->id)) {
-        $answerchecked[$current->optionid] = 'checked="checked"';
+    if (isset($USER->id) and $current = get_record("choice_answers", "choice", $choice->id, "userid", $USER->id)) {
+        $answerchecked[$current->answer] = 'CHECKED';
     } else {
         $current = false;
     }
-
-/// Submit any new data if there is any
 
     if ($form = data_submitted()) {
         $timenow = time();
@@ -40,51 +35,36 @@
             redirect("view.php?id=$cm->id", get_string('mustchooseone', 'choice'));
 
         } else {
-            $countanswers = get_records("choice_answers", "optionid", $form->answer);
-            if ($countanswers) {
-                $countanswers = count($countanswers);
-                } else {
-                    $countanswers = 0;
+            if ($current) {
+                $newanswer = $current;
+                $newanswer->answer = $form->answer;
+                $newanswer->timemodified = $timenow;
+                if (! update_record("choice_answers", $newanswer)) {
+                    error("Could not update your choice");
                 }
-            $maxans = $choice->maxanswers[$form->answer];
-            if (!($choice->limitanswers && ($countanswers >= $maxans) )) {
-                if ($current) {
-                    $newanswer = $current;
-                    $newanswer->optionid = $form->answer;
-                    $newanswer->timemodified = $timenow;
-                    if (! update_record("choice_answers", $newanswer)) {
-                        error("Could not update your choice because of a database error");
-                    }
-                    add_to_log($course->id, "choice", "choose again", "view.php?id=$cm->id", $choice->id, $cm->id);
-                } else {
-                    $newanswer = NULL;
-                    $newanswer->choiceid = $choice->id;
-                    $newanswer->userid = $USER->id;
-                    $newanswer->optionid = $form->answer;
-                    $newanswer->timemodified = $timenow;
-                    if (! insert_record("choice_answers", $newanswer)) {
-                        error("Could not save your choice");
-                    }
-                    add_to_log($course->id, "choice", "choose", "view.php?id=$cm->id", $choice->id, $cm->id);
-                }
+                add_to_log($course->id, "choice", "choose again", "view.php?id=$cm->id", $choice->id, $cm->id);
             } else {
-                error("this choice is full!");
+                $newanswer->choice = $choice->id;
+                $newanswer->userid = $USER->id;
+                $newanswer->answer = $form->answer;
+                $newanswer->timemodified = $timenow;
+                if (! insert_record("choice_answers", $newanswer)) {
+                    error("Could not save your choice");
+                }
+                add_to_log($course->id, "choice", "choose", "view.php?id=$cm->id", $choice->id, $cm->id);
             }
         }
         redirect("view.php?id=$cm->id");
         exit;
     }
 
-
-/// Display the choice and possibly results
-
     $strchoice = get_string("modulename", "choice");
     $strchoices = get_string("modulenameplural", "choice");
 
     add_to_log($course->id, "choice", "view", "view.php?id=$cm->id", $choice->id, $cm->id);
 
-    print_header_simple(format_string($choice->name), "",
-                 "<a href=\"index.php?id=$course->id\">$strchoices</a> -> ".format_string($choice->name), "", "", true,
+    print_header_simple("$choice->name", "",
+                 "<A HREF=index.php?id=$course->id>$strchoices</A> -> $choice->name", "", "", true,
                   update_module_button($cm->id, $course->id, $strchoice), navmenu($course, $cm));
 
 /// Check to see if groups are being used in this choice
@@ -95,157 +75,68 @@
     }
 
     if (isteacher($course->id)) {
-        if ( $allanswers = get_records("choice_answers", "choiceid", $choice->id)) {            
-            $responsecount = 0;
-            foreach ($allanswers as $aa) {
-                if (isstudent($course->id, $aa->userid) or isteacher($course->id, $aa->userid)) { //check to make sure user is enrolled in course.
-                    $responsecount++;
-                }
-            }
+        if ( $allanswers = get_records("choice_answers", "choice", $choice->id)) {
+            $responsecount = count($allanswers);
         } else {
             $responsecount = 0;
         }
-        echo '<div class="reportlink">';
-        echo "<a href=\"report.php?id=$cm->id\">".get_string("viewallresponses", "choice", $responsecount)."</a>";
-        echo '</div>';
+        echo "<P align=right><A HREF=\"report.php?id=$cm->id\">".get_string("viewallresponses", "choice", $responsecount)."</A></P>";
     } else if (!$cm->visible) {
         notice(get_string("activityiscurrentlyhidden"));
     }
 
-    if ($choice->text) {
-        print_simple_box(format_text($choice->text, $choice->format), 'center', '70%', '', 5, 'generalbox', 'intro');
-    }
+    print_simple_box( format_text($choice->text) , "center");
 
-    //if user has already made a selection, and they are not allowed to update it, show their selected answer.
-    if (isset($USER->id) && ($current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $USER->id)) && !$choice->allowupdate) {
-        print_simple_box(get_string("yourselection", "choice", userdate($choice->timeopen)).": ".format_string(choice_get_option_text($choice, $current->optionid)), "center");
-    }
 
-/// Print the form
-
+    // print the form
+    
     if ($choice->timeopen > time() ) {
         print_simple_box(get_string("notopenyet", "choice", userdate($choice->timeopen)), "center");
-        print_footer($course);
+        print_footer();
         exit;
     }
 
-    if ( (!$current or $choice->allowupdate) and ($choice->timeclose >= time() or $choice->timeclose == 0) ) {
+    if ( (!$current or $choice->allowupdate) and ($choice->timeclose >= time() or $choice->timeclose == 0) ) { 
     // They haven't made their choice yet or updates allowed and choice is open
+    
+        echo "<CENTER><P><FORM name=\"form\" method=\"post\" action=\"view.php\">";
+        echo "<TABLE CELLPADDING=20 CELLSPACING=20><TR>";
 
-        echo "<form name=\"form\" method=\"post\" action=\"view.php\">";        
-
-        switch ($choice->display) {
-            case CHOICE_DISPLAY_HORIZONTAL:
-                echo "<table cellpadding=\"20\" cellspacing=\"20\" align=\"center\"><tr>";
-                $aid = 0;
-                foreach ($choice->option as $optionid => $text) {
-                    if ($text) { 
-                    echo "<td align=\"center\" valign=\"top\">";
-                    echo "<input type=\"radio\" name=\"answer\" value=\"".$optionid."\" ".$answerchecked[$optionid]." alt=\"".strip_tags(format_text($text))."\" />";
-                    $countanswers = (get_records("choice_answers", "optionid", $optionid));
-                    if ($countanswers) {
-                        $countanswers = count($countanswers);
-                    } else {
-                        $countanswers = 0;
-                    }
-                    $maxans = $choice->maxanswers[$optionid];
-                    if ($choice->limitanswers && ($countanswers >= $maxans) ) {
-                            if (!($answerchecked[$optionid])) {
-                                echo "<script type=\"text/javascript\">";
-                                echo "document.form.answer[".$aid."].disabled = true;";
-                                echo "</script>";
-                            }
-                            echo format_text($text."<br><strong>".get_string('full', 'choice')."</strong>");
-                        } else {
-                            echo format_text($text);
-
-                        }
-                        echo "</td>";
-                        $aid++;
-                    }
-                }
-                echo "</tr>";
-                echo "</table>";
-                break;
-
-            case CHOICE_DISPLAY_VERTICAL:
-                $aid = 0;
-                $displayoptions->para = false;
-                echo "<table cellpadding=\"10\" cellspacing=\"10\" align=\"center\">";
-                foreach ($choice->option as $optionid => $text) {
-                    if ($text) {
-                        echo "<tr><td align=\"left\">";
-                        echo "<input type=\"radio\" name=\"answer\" value=\"".$optionid."\" ".$answerchecked[$optionid]." alt=\"".strip_tags(format_text($text, FORMAT_MOODLE, $displayoptions))."\" />";
-                        $countanswers = get_records("choice_answers", "optionid", $optionid);
-                        if ($countanswers) {
-                            $countanswers = count($countanswers);
-                        } else {
-                            $countanswers = 0;
-                        }
-                        $maxans = $choice->maxanswers[$optionid];
-                        if ($choice->limitanswers && ($countanswers >= $maxans) ) {
-                            if (!($answerchecked[$optionid])) {
-                                echo "<script type=\"text/javascript\">";
-                                echo "document.form.answer[".$aid."].disabled = true;";
-                                echo "</script>";
-                            }
-                        } 
-                        echo format_text($text. ' ', FORMAT_MOODLE, $displayoptions);
-                        
-                         if ($choice->limitanswers && ($choice->release==CHOICE_RELEASE_ALWAYS) ){
-                            echo "</td><td>";
-                            
-                            if ($maxans-$countanswers==0) {
-                                echo get_string('full', 'choice');
-                            } elseif ($maxans-$countanswers==1) {
-                                echo ($maxans - $countanswers);
-                                echo " ".get_string('spaceleft', 'choice');
-                            } else {
-                                echo ($maxans - $countanswers);
-                                echo " ".get_string('spacesleft', 'choice');
-                            }
-                            echo "</td>";
-                         } else if ($choice->limitanswers && ($countanswers >= $maxans)) {
-                            echo " <strong>".get_string('full', 'choice')."</strong>";
-                         }
-
-                        echo "</td>";
-                        echo "</tr>";
-                        $aid++;
-                    }
-                }
-                echo "</table>";
-                break;
+        foreach ($choice->answer as $key => $answer) {
+            if ($answer) {
+                echo "<TD ALIGN=CENTER>";
+                echo "<INPUT type=radio name=answer value=\"$key\" ".$answerchecked[$key].">";
+                p($answer);
+                echo "</TD>";
+            }
         }
-
-        echo "<center>";
-        echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
-        if (isstudent($course->id) or isteacher($course->id, 0)) {
-            echo "<input type=\"submit\" value=\"".get_string("savemychoice","choice")."\" />";
+    
+        echo "</TR></TABLE>";
+        echo "<INPUT type=hidden name=id value=\"$cm->id\">";
+        if (isstudent($course->id) or isteacher($course->id, 0, false)) {
+            echo "<INPUT type=submit value=\"".get_string("savemychoice","choice")."\">";
         } else {
             print_string('havetologin', 'choice');
         }
-        echo "</center>";
-        echo "</form>";
+        echo "</P></FORM></CENTER>";
 
     }
 
+    
 
-
-    // print the results at the bottom of the screen
+    // print the results
 
     if (  $choice->release == CHOICE_RELEASE_ALWAYS or
         ( $choice->release == CHOICE_RELEASE_AFTER_ANSWER and $current ) or
         ( $choice->release == CHOICE_RELEASE_AFTER_CLOSE and $choice->timeclose <= time() ) )  {
-
+    
         print_heading(get_string("responses", "choice"));
 
         if ($currentgroup) {
-            $users = get_group_users($currentgroup, "u.firstname ASC", '', 'u.id, u.picture, u.firstname, u.lastname') + get_admins();
+            $users = get_group_users($currentgroup, "u.firstname ASC");
         } else {
-            $users = get_course_users($course->id, "u.firstname ASC", '', 'u.id, u.picture, u.firstname, u.lastname') + get_admins();
+            $users = get_course_users($course->id, "u.firstname ASC");
         }
-
 
         if (!$users) {
             print_heading(get_string("nousersyet"));
@@ -253,8 +144,8 @@
             exit;
         }
 
-        if ($allresponses = get_records("choice_answers", "choiceid", $choice->id)) {
-            foreach ($allresponses as $aa) {
+        if ( $allanswers = get_records("choice_answers", "choice", $choice->id)) {
+            foreach ($allanswers as $aa) {
                 $answers[$aa->userid] = $aa;
             }
         } else {
@@ -263,20 +154,20 @@
 
         $timenow = time();
 
-        foreach ($choice->option as $optionid => $text) {
-            $useranswer[$optionid] = array();
+        foreach ($choice->answer as $key => $answer) {  
+            $useranswer[$key] = array();
         }
         foreach ($users as $user) {
             if (!empty($user->id) and !empty($answers[$user->id])) {
                 $answer = $answers[$user->id];
-                $useranswer[(int)$answer->optionid][] = $user;
+                $useranswer[(int)$answer->answer][] = $user;
             } else {
                 $useranswer[0][] = $user;
             }
         }
-        foreach ($choice->option as $optionid => $text) {
-            if (!$choice->option[$optionid]) {
-                unset($useranswer[$optionid]);     // Throw away any data that doesn't apply
+        foreach ($choice->answer as $key => $answer) {  
+            if (!$choice->answer[$key]) {
+                unset($useranswer[$key]);     // Throw away any data that doesn't apply
             }
         }
         ksort($useranswer);
@@ -288,70 +179,42 @@
 
             $tablewidth = (int) (100.0 / count($useranswer));
 
-            echo "<table cellpadding=\"5\" cellspacing=\"10\" align=\"center\">";
+            echo "<table cellpadding=5 cellspacing=10 align=center>";
             echo "<tr>";
-            foreach ($useranswer as $optionid => $userlist) {
-                if ($optionid) {
-                    echo "<th class=\"col$optionid\" width=\"$tablewidth%\">";
+            foreach ($useranswer as $key => $answer) {
+                if ($key) {
+                    echo "<th width=\"$tablewidth%\">";
                 } else if ($choice->showunanswered) {
-                    echo "<th class=\"col$optionid\" width=\"$tablewidth%\">";
+                    echo "<th bgcolor=\"$THEME->body\" width=\"$tablewidth%\">";
                 } else {
                     continue;
                 }
-                echo format_string(choice_get_option_text($choice, $optionid));
+                echo choice_get_answer($choice, $key);
                 echo "</th>";
             }
             echo "</tr><tr>";
-
-            foreach ($useranswer as $optionid => $userlist) {
-                if ($optionid) {
-                    echo "<td class=\"col$optionid\" width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\">";
+        
+            foreach ($useranswer as $key => $answer) {
+                if ($key) {
+                    echo "<td width=\"$tablewidth%\" valign=top nowrap bgcolor=\"$THEME->cellcontent\">";
                 } else if ($choice->showunanswered) {
-                    echo "<td class=\"col$optionid\" width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\">";
+                    echo "<td width=\"$tablewidth%\" valign=top nowrap bgcolor=\"$THEME->body\">";
                 } else {
                     continue;
                 }
-
-                echo "<table width=\"100%\">";
-                foreach ($userlist as $user) {
-                    if (!($optionid==0 && isadmin($user->id)) && !($optionid==0 && isteacher($course->id, $user->id) && !(isteacheredit($course->id, $user->id)) )  ) { //make sure admins and hidden teachers are not shown in not answered yet column.
-                        echo "<tr><td width=\"10\" nowrap=\"nowrap\">";
-                        print_user_picture($user->id, $course->id, $user->picture);
-                        echo "</td><td width=\"100%\" nowrap=\"nowrap\">";
-                        echo "<p>".fullname($user, $isteacher)."</p>";
-                        echo "</td></tr>";
-                    }
+    
+                echo "<table width=100%>";
+                foreach ($answer as $user) {
+                    echo "<tr><td width=10 nowrap>";
+                    print_user_picture($user->id, $course->id, $user->picture);
+                    echo "</td><td width=100% nowrap>";
+                    echo "<p>".fullname($user, $isteacher)."</p>";
+                    echo "</td></tr>";
                 }
                 echo "</table>";
-
+        
                 echo "</td>";
             }
-            echo "</tr><tr>";
-            foreach ($useranswer as $optionid => $userlist) {
-                if (!$optionid and !$choice->showunanswered) {
-                    continue;
-                }
-                echo "<td align=\"center\">";
-                $countanswers = get_records("choice_answers", "optionid", $optionid);
-                    if ($countanswers) {
-                        $countanswers = count($countanswers);
-                    } else {
-                        $countanswers = 0;
-                    }
-                if ($choice->limitanswers && !$optionid==0) {
-                    echo get_string("taken", "choice").":";
-                    echo $countanswers;
-                    echo "<br>";
-                    echo get_string("limit", "choice").":";
-                    $choice_option = get_record("choice_options", "id", $optionid);
-                    echo $choice_option->maxanswers;
-                    echo "</td>";
-                }
-            }
-            
-            
-            
-            
             echo "</tr></table>";
             break;
 
@@ -359,76 +222,60 @@
           case CHOICE_PUBLISH_ANONYMOUS:
             $tablewidth = (int) (100.0 / count($useranswer));
 
-            echo "<table cellpadding=\"5\" cellspacing=\"10\" align=\"center\">";
+            echo "<table cellpadding=5 cellspacing=10 align=center>";
             echo "<tr>";
-            foreach ($useranswer as $optionid => $userlist) {
-                if ($optionid) {
+            foreach ($useranswer as $key => $answer) {
+                if ($key) {
                     echo "<th width=\"$tablewidth%\">";
                 } else if ($choice->showunanswered) {
-                    echo "<th width=\"$tablewidth%\">";
+                    echo "<th bgcolor=\"$THEME->body\" width=\"$tablewidth%\">";
                 } else {
                     continue;
                 }
-                echo format_string(choice_get_option_text($choice, $optionid));
+                echo choice_get_answer($choice, $key);
                 echo "</th>";
             }
-            echo "</tr><tr>";
+            echo "</tr>";
 
             $maxcolumn = 0;
-            foreach ($useranswer as $optionid => $userlist) {
-                if (!$optionid and !$choice->showunanswered) {
+            foreach ($useranswer as $key => $answer) {
+                if (!$key and !$choice->showunanswered) {
                     continue;
                 }
-                $column[$optionid] = 0;
-                foreach ($userlist as $user) {
-                    if (!($optionid==0 && isadmin($user->id)) && !($optionid==0 && isteacher($course->id, $user->id) && !(isteacheredit($course->id, $user->id)) )  ) { //make sure admins and hidden teachers are not shown in not answered yet column.
-                         $column[$optionid]++;
-                    }
-                }
-                if ($column[$optionid] > $maxcolumn) {
-                    $maxcolumn = $column[$optionid];
+                $column[$key] = count($answer);
+                if ($column[$key] > $maxcolumn) {
+                    $maxcolumn = $column[$key];
                 }
             }
 
-            echo "</tr><tr>";
-            foreach ($useranswer as $optionid => $userlist) {
-                if (!$optionid and !$choice->showunanswered) {
+            echo "<tr>";
+            foreach ($useranswer as $key => $answer) {
+                if (!$key and !$choice->showunanswered) {
                     continue;
                 }
                 $height = 0;
                 if ($maxcolumn) {
-                    $height = $COLUMN_HEIGHT * ((float)$column[$optionid] / (float)$maxcolumn);
+                    $height = $COLUMN_HEIGHT * ((float)$column[$key] / (float)$maxcolumn);
                 }
                 echo "<td valign=\"bottom\" align=\"center\">";
-                echo "<img src=\"column.png\" height=\"$height\" width=\"49\" alt=\"\" />";
+                echo "<img src=\"column.png\" height=\"$height\" width=\"49\">";
                 echo "</td>";
             }
             echo "</tr>";
 
             echo "<tr>";
-            foreach ($useranswer as $optionid => $userlist) {
-                if (!$optionid and !$choice->showunanswered) {
+            foreach ($useranswer as $key => $answer) {
+                if (!$key and !$choice->showunanswered) {
                     continue;
                 }
-                echo "<td align=\"center\">";
-                if ($choice->limitanswers && !$optionid==0) {
-                    echo get_string("taken", "choice").":";
-                    echo $column[$optionid];
-                    echo "<br>";
-                    echo get_string("limit", "choice").":";
-                    $choice_option = get_record("choice_options", "id", $optionid);
-                    echo $choice_option->maxanswers;
-                    echo "</td>";
-                } else {
-                    echo $column[$optionid];
-                }
+                echo "<td align=\"center\">".$column[$key]."</td>";
             }
             echo "</tr></table>";
 
             break;
         }
     }
-
+    
     print_footer($course);
 
 

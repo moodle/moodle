@@ -1,4 +1,4 @@
-<p align="center"><b>Subir usuarios</b></p>
+<p align="center"><b>Cargar Usuarios</b></p>
 
 <p>En primer lugar tenga en cuenta que <strong>normalmente no es necesario importar 
 usuarios en bloque</strong> -para mantener su trabajo de mantenimiento bajo control, 
@@ -22,19 +22,19 @@ primer registro, y deben definirse para cada usuario.</p>
       <p><strong>Campos por defecto:</strong> Estos son opcionales -si no están presentes, se tomarán los valores del administrador primario</p>
       <p><font color="#990000" face="Courier New, Courier, mono">institution, department, city, country, lang, timezone</font> </p>
       <p><strong>Campos opcionales: </strong>todos estos son opcionales. Los nombres de los cursos son sus &quot;nombres cortos&quot; -si se incluyen los nombres cortos de los cursos el alumno se incribirá automáticamente en esos cursos.</p>
-      <p> <font color="#990000" face="Courier New, Courier, mono">idnumber, icq, phone1, phone2, address, url, description, mailformat, maildisplay, htmleditor, autosubscribe, course1, course2, course3, course4, course5, group1, group2, group3, group4, group5</font></p>
+      <p> <font color="#990000" face="Courier New, Courier, mono">idnumber, icq, phone1, phone2, address, url, description, mailformat, maildisplay, htmleditor, autosubscribe, course1, course2, course3, course4, course5, grupo1, grupo2, grupo3, grupo4, grupo5</font></p>
     </blockquote>
     </li>
-  <li>Las comas entre los datos se codificarán como &amp;#44 --el script las decodificará automáticamente como comas.</li>
-  <li>Para campos boleanos use 0 para falso y 1 para verdadero</li>
-  <li>Nota: Si un usuario ya está registrado en la base de datos de Moodle, el script devolverá 
+  <li>Las comas entre los datos se codificará como &amp;#44 --el script las decodificará automáticamente como comas.</li>
+  <li>Para campos boleanos use 0 por falso y 1 por verdadero</li>
+  <li>Nota: Si un usuario ya está registrado en la base de datos de Moodle, el script regresará 
 	el número userid (índice de la base de datos) de ese usuario, e inscribirá al usuario en 
-	los cursos SIN alterar la información anterior.
+	los cursos SIN alterar la infromación anterior.
 </li>
 </ul>
   
   
-<p>Éste es un ejemplo de un archivo válido:</p>
-<p><font size="-1" face="Courier New, Courier, mono">username, password, firstname, lastname, email, lang, idnumber, maildisplay, course1, group1<br />
-juanb, secreto, Juan, Benítez, janb@algo.edu, en, 3663737, 1, Intro101, Seccion1<br />
+<p>Aquí hay un ejemplo de un archivo válido:</p>
+<p><font size="-1" face="Courier New, Courier, mono">username, password, firstname, lastname, email, lang, idnumber, maildisplay, course1, group1<br>
+juanb, secreto, Juan, Benítez, janb@algo.edu, en, 3663737, 1, Intro101, Seccion1<br>
 Saraf, sercreta, Sara, Fernández, sarara@alomas.edu, es, 6736733, 0, Avanzado202, Seccion3</font></p>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
+      // moodle.php - created with Moodle 1.3.1 (2004052501)
 
 
 $string['action'] = 'Akcija';
@@ -26,30 +26,30 @@ $string['addnewcategory'] = 'Dodaj kategorijo';
 $string['addnewcourse'] = 'Dodaj predmet';
 $string['addnewuser'] = 'Dodaj uporabnika';
 $string['address'] = 'Naslov';
-$string['addstudent'] = 'Dodaj &#65533;tudenta';
+$string['addstudent'] = 'Dodaj študenta';
 $string['addteacher'] = 'Dodaj profesorja ';
 $string['admin'] = 'Admin';
-$string['adminhelpaddnewuser'] = 'Roèno kreiranje uporabni&#65533;kega raèuna';
+$string['adminhelpaddnewuser'] = 'Roèno kreiranje uporabniškega raèuna';
 $string['adminhelpassignadmins'] = 'Admininstratorji imajo vse pravice povsod';
 $string['adminhelpassigncreators'] = 'Ustvarjalci smejo kreirati nove predmete in jih izvajati';
-$string['adminhelpassignstudents'] = 'Pojdite na predmet in dodajte &#65533;tudenta v administratorskem menuju';
-$string['adminhelpassignteachers'] = 'Poi&#65533;èite predmet in uporabite ikono za dodajanje profesorja';
-$string['adminhelpauthentication'] = 'Uporabite lahko interne uporabni&#65533;ke raèune ali zunanje baze';
+$string['adminhelpassignstudents'] = 'Pojdite na predmet in dodajte študenta v administratorskem menuju';
+$string['adminhelpassignteachers'] = 'Poišèite predmet in uporabite ikono za dodajanje profesorja';
+$string['adminhelpauthentication'] = 'Uporabite lahko interne uporabniške raèune ali zunanje baze';
 $string['adminhelpbackup'] = 'Nastavitev samodejnega varovanja podatkov in urnika le tega';
 $string['adminhelpconfiguration'] = 'Nastavitev izgleda in delovanja portala';
-$string['adminhelpconfigvariables'] = 'Nastavitev spremenljivk, ki krmilijo splo&#65533;ne operacije portala';
+$string['adminhelpconfigvariables'] = 'Nastavitev spremenljivk, ki krmilijo splošne operacije portala';
 $string['adminhelpcourses'] = 'Definiranje predmetov in kategorij ter doloèitev profesorjev';
-$string['adminhelpedituser'] = 'Pregled seznama uporabni&#65533;kih raèunov in urejanje';
+$string['adminhelpedituser'] = 'Pregled seznama uporabniških raèunov in urejanje';
 $string['adminhelplanguage'] = 'Kontrola jezikovnega paketa in  urejanje';
 $string['adminhelplogs'] = 'Pregled dnevnika vseh aktivnosti';
-$string['adminhelpmanageblocks'] = 'Nastavitve name&#65533;èenih blokov';
+$string['adminhelpmanageblocks'] = 'Nastavitve namešèenih blokov';
 $string['adminhelpmanagedatabase'] = 'Neposreden dostop do baze (previdno!)';
 $string['adminhelpmanagefilters'] = 'Izbera filtrov besedil in nastavitve';
-$string['adminhelpmanagemodules'] = 'Nastavitve name&#65533;èenih modulov';
-$string['adminhelpsitefiles'] = 'Publiciranje splo&#65533;nih datotek in nalaganje varnostnih kopij';
+$string['adminhelpmanagemodules'] = 'Nastavitve namešèenih modulov';
+$string['adminhelpsitefiles'] = 'Publiciranje splošnih datotek in nalaganje varnostnih kopij';
 $string['adminhelpsitesettings'] = 'Oblikovanje izgleda prve strani';
 $string['adminhelpthemes'] = 'Izbira barv, èrk ipd.';
-$string['adminhelpuploadusers'] = 'Vnos uporabni&#65533;kih raèunov iz tekstovne datoteke';
+$string['adminhelpuploadusers'] = 'Vnos uporabniških raèunov iz tekstovne datoteke';
 $string['adminhelpusers'] = 'Definiranje uporabnikov in avtentikacije';
 $string['administration'] = 'Administracija';
 $string['administrator'] = 'Administrator';
@@ -65,27 +65,27 @@ $string['alllogs'] = 'Vsa zgodovina';
 $string['allow'] = 'Dovoljeno';
 $string['allowguests'] = 'Gost sme vstopiti v ta predmet';
 $string['allownot'] = 'Prepovedano';
-$string['allparticipants'] = 'Vsi udele&#65533;enci';
-$string['alphabet'] = 'A,B,C,È,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,&#65533;,T,U,V,W,X,Y,Z,&#65533;';
+$string['allparticipants'] = 'Vsi udeleženci';
+$string['alphabet'] = 'A,B,C,È,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,Š,T,U,V,W,X,Y,Z,Ž';
 $string['alphanumerical'] = 'Morajo biti le èrke in cifre';
 $string['alreadyconfirmed'] = 'Registracija je bila potrjena';
 $string['always'] = 'Vedno';
 $string['answer'] = 'Odgovor';
-$string['areyousuretorestorethis'] = '&#65533;elite nadaljevati?';
+$string['areyousuretorestorethis'] = 'Želite nadaljevati?';
 $string['areyousuretorestorethisinfo'] = 'Kasneje boste izbrali: dodajanje varnostne kopije k obstojeèemu predmetu ali kreiranje novega predmeta';
 $string['assessment'] = 'Ocenitev';
 $string['assignadmins'] = 'Doloèitev administratorja';
 $string['assigncreators'] = 'Doloèitev ustvarjalca';
-$string['assignstudents'] = 'Vpis &#65533;tudenta';
-$string['assignstudentsnote'] = 'Opomba: te strani morda ni nujno uporabiti, ker &#65533;tudenti lahko sami vpi&#65533;ejo predmet';
-$string['assignstudentspass'] = '&#65533;tudente morate morda obvestiti o geslu za vpis predmeta, ki je trenutno: \'$a\'';
+$string['assignstudents'] = 'Vpis študenta';
+$string['assignstudentsnote'] = 'Opomba: te strani morda ni nujno uporabiti, ker študenti lahko sami vpišejo predmet';
+$string['assignstudentspass'] = 'Študente morate morda obvestiti o geslu za vpis predmeta, ki je trenutno: \'$a\'';
 $string['assignteachers'] = 'Doloèitev profesorja';
 $string['authentication'] = 'Avtentikacija';
 $string['autosubscribe'] = 'Samodejni vpis v forum';
 $string['autosubscribeno'] = 'Ne: samodejni vpis v forum ni zahtevan';
 $string['autosubscribeyes'] = 'Da: ko pustim sporoèilo, bom vpisan v forum';
-$string['availability'] = 'Razpolo&#65533;ljivost';
-$string['availablecourses'] = 'Mo&#65533;ni predmeti';
+$string['availability'] = 'Razpoložljivost';
+$string['availablecourses'] = 'Možni predmeti';
 $string['backup'] = 'Varnostna kopija';
 $string['backupcoursefileshelp'] = 'Èe je omogoèena ta izbira, bodo pripete datoteke vkljuèene v varnostno kopijo';
 $string['backupdate'] = 'Datum varnostne kopije';
@@ -93,22 +93,22 @@ $string['backupdetails'] = 'Podrobnosti varnostne kopije';
 $string['backupfilename'] = 'varnostna kopija';
 $string['backupfinished'] = 'Varnostna kopija je izdelana';
 $string['backupincludemoduleshelp'] = 'Bodo v varnostno kopijo modulov predmeta vkljuèeni podatki uporabnikov  ali ne bodo?';
-$string['backupkeephelp'] = 'Koliko razlièic varnostnih kopij boste shranjevali? (najstarej&#65533;e kopije bodo samodejno izbrisane najprej)';
+$string['backupkeephelp'] = 'Koliko razlièic varnostnih kopij boste shranjevali? (najstarejše kopije bodo samodejno izbrisane najprej)';
 $string['backuplogdetailed'] = 'Podrobni dnevnik izvajanja';
 $string['backuploglaststatus'] = 'Zadnji dnevnik izvajanja';
 $string['backuplogshelp'] = 'Èe je omogoèena ta izbira, bo dnevnik predmeta vkljuèen v samodejno varnostno kopijo';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
-$string['backupnoneusersinfo'] = 'Opomba: Izbrali ste izdelavo varnostne kopije brez uporabnikovih podatkov (brez uporabnika). Modula \"Vaja\" in \"Delavnica\" nista zdru&#65533;ljiva z va&#65533;o izbiro - zato sta izkljuèena iz varovanja.';
+$string['backupnoneusersinfo'] = 'Opomba: Izbrali ste izdelavo varnostne kopije brez uporabnikovih podatkov (brez uporabnika). Modula \"Vaja\" in \"Delavnica\" nista združljiva z vašo izbiro - zato sta izkljuèena iz varovanja.';
 $string['backuporiginalname'] = 'Ime varnostne kopije';
-$string['backupsavetohelp'] = 'Polna pot do mape, kjer bo shranjena varnostna kopija<br />(èe pustite prazno, se shrani v privzeto mapo)';
+$string['backupsavetohelp'] = 'Polna pot do mape, kjer bo shranjena varnostna kopija<br>(èe pustite prazno, se shrani v privzeto mapo)';
 $string['backupuserfileshelp'] = 'Bodo uporabnikovi podatki (npr. slika v profilu) vkljuèeni v samodejno varnostno kopijo?';
 $string['backupusershelp'] = 'Bo izdelana varnostna kopija vsebovala vse uporabnike ali tiste, ki so vpisani v posamezni predmet?';
 $string['backupversion'] = 'Razlièica varnostne kopije';
 $string['blockdeleteconfirm'] = 'Izbrisan bo celoten blok \'$a\' in vse kar je njemu podejeno v bazi podatkov.  Ste preprièani?';
-$string['blockdeletefiles'] = 'Vsi podrejeni podatki bloka \'$a->block\' so bili izbrisani iz baze.  Sedaj izbri&#65533;ite &#65533;e mapo na stre&#65533;niku: $a->directory (èe tega ne storite, se bo blok samodejno namestil)';
+$string['blockdeletefiles'] = 'Vsi podrejeni podatki bloka \'$a->block\' so bili izbrisani iz baze.  Sedaj izbrišite še mapo na strežniku: $a->directory (èe tega ne storite, se bo blok samodejno namestil)';
 $string['blocks'] = 'Bloki';
 $string['blocksetup'] = 'Vzpostavitev tabel za bloke';
-$string['blocksuccess'] = '&#65533;tevilo vzpostavljenih tabel: $a ';
+$string['blocksuccess'] = 'Število vzpostavljenih tabel: $a ';
 $string['bycourseorder'] = 'Urejeno po predmetu';
 $string['byname'] = 'po $a';
 $string['cancel'] = 'Preklièi';
@@ -116,7 +116,7 @@ $string['categories'] = 'Kategorije predmetov';
 $string['category'] = 'Kategorija';
 $string['categoryadded'] = 'Dodana kategorija:  \'$a\' ';
 $string['categorydeleted'] = 'Brisana kategorija: \'$a\' ';
-$string['categoryduplicate'] = 'Kategorija \'$a\' &#65533;e obstaja!';
+$string['categoryduplicate'] = 'Kategorija \'$a\' že obstaja!';
 $string['changedpassword'] = 'Spremenjeno geslo';
 $string['changepassword'] = 'Spremeni geslo';
 $string['changessaved'] = 'Spremembe shranjene';
@@ -138,64 +138,64 @@ $string['clicktochange'] = 'klik za spremembo';
 $string['closewindow'] = 'Zapri okno';
 $string['comparelanguage'] = 'Primerjaj in uredi trenutni jezik';
 $string['complete'] = 'Zakljuèeno';
-$string['configallowunenroll'] = '&#65533;tudenti se lahko izpi&#65533;ejo sami, èe omogoèite to nastavitev. V nasprotnem primeru izpisovanje nadzirajo profesorji in administratorji.';
-$string['configcachetext'] = 'Shranjevanje tekstovnih filtrov (v cache) bo izbolj&#65533;alo odzivnost velikih portalov. Kopije tekstov so shranjene v pomnilniku le doloèen èas. Èe je ta èas prekratek, bo sistem deloval poèasneje (zaradi pogostej&#65533;ega branja na disku), èe pa je èas predolg, bo npr. osve&#65533;evanje povezav manj pogosto.';
-$string['configcountry'] = 'Èe izberete dr&#65533;avo, bo ta privzeta za vse uporabnike. Èe pustite polje prazno, bodo dr&#65533;avo morali izbrati uporabniki.';
+$string['configallowunenroll'] = 'Študenti se lahko izpišejo sami, èe omogoèite to nastavitev. V nasprotnem primeru izpisovanje nadzirajo profesorji in administratorji.';
+$string['configcachetext'] = 'Shranjevanje tekstovnih filtrov (v cache) bo izboljšalo odzivnost velikih portalov. Kopije tekstov so shranjene v pomnilniku le doloèen èas. Èe je ta èas prekratek, bo sistem deloval poèasneje (zaradi pogostejšega branja na disku), èe pa je èas predolg, bo npr. osveževanje povezav manj pogosto.';
+$string['configcountry'] = 'Èe izberete državo, bo ta privzeta za vse uporabnike. Èe pustite polje prazno, bodo državo morali izbrati uporabniki.';
 $string['configdebug'] = 'Èe izberete to nastavitev, bo PHP poroèal o veè vrstah napak in opozoril. Ta nastavitev je smiselna le za razvijalce.';
-$string['configdeleteunconfirmed'] = 'Pri avtentikaciji z e-po&#65533;to bodo nepotrjeni uporabni&#65533;ki raèuni samodejno izbrisani po preteku tega obdobja.';
+$string['configdeleteunconfirmed'] = 'Pri avtentikaciji z e-pošto bodo nepotrjeni uporabniški raèuni samodejno izbrisani po preteku tega obdobja.';
 $string['configenablerssfeeds'] = 'To stikalo omogoèi RSS odzive.';
 $string['configenablerssfeedsdisabled'] = 'Stikalo RSS feeds je izkluèeno. Vkljuèite ga v menuju Administracija>Spremenljivke.';
 $string['configerrorlevel'] = 'Izberite kolièino opozoril PHP-ja. <Normalno> je obièajno dobra izbira.';
-$string['configextendedusernamechars'] = 'Èe izberete nastavitev \"Ne\", potem bodo imena uporabnikov smela vsebovati izkljuèno èrke in &#65533;tevilke. Èe izberete \"Da\", smejo biti v imenih tudi drugi znaki (npr. !,#,$ ipd.)  ';
+$string['configextendedusernamechars'] = 'Èe izberete nastavitev \"Ne\", potem bodo imena uporabnikov smela vsebovati izkljuèno èrke in številke. Èe izberete \"Da\", smejo biti v imenih tudi drugi znaki (npr. !,#,$ ipd.)  ';
 $string['configfilteruploadedfiles'] = 'Ta nastavitev povzroèi, da Moodle vse datoteke (HTML in tekste) pred izpisom obdela z ustreznim filtrom.';
 $string['configforcelogin'] = 'Obièajno sta prva stran in seznam predmetov (ne vsebina) dostopna vsem uporabnikom brez vstopnega gesla. Èe pred prikazom prve strani zahtevate prijavo, omogoèite to nastavitev.';
-$string['configforceloginforprofiles'] = 'S to nastavitvijo prisilite uporabnike, da se prijavijo z veljavnim uporabni&#65533;kim imenom in geslom (ne kot gost).  Privzeta vrednost je:\"Ne\". &#65533;tudenti v tem primeru lahko vnaprej preberejo podatke o profesorju in predmetu. Slednji do dostopni tudi spletnim iskalnikom.';
-$string['configframename'] = 'Èe je Moodle vgrajen v okvir spletne strani, potem vpi&#65533;ite ime tega okvira. Sicer naj bo ta nastavitev \'_top\'';
-$string['configfullnamedisplay'] = 'Ta nastavitev doloèa naèin prikaza imen. Za veèino enojeziènih portalov je najprimernej&#65533;a izbira \"Ime + Priimek\". Lahko tudi skrijete priimek ali pa odloèitev prepustite jezikovnemu paketu (razlièni jeziki imajo razlièna pravila).';
-$string['configgdversion'] = 'Izberite razlièico GD. Moodle samodejno zazna name&#65533;èeno. Spremenite samo v primeru, da se zavedate posledic odloèitve.';
-$string['confightmleditor'] = 'Ta nastavitev omogoèa uporabo vgrajenega urejevalnika HTML. Èe to dovolite, bo urejevalnik deloval pri uporabnikih, ki imajo zdru&#65533;ljiv spletni brskalnik. Uporabniki ga potem uporabljajo po lastni presoji.';
-$string['configidnumber'] = 'Za nastavitev omogoèa (a) uporabnik nima mo&#65533;nost za vnos ID &#65533;tevilke, (b) uporabnik sme vnesti ID &#65533;tevilko (tudi prazno) (c) uporabnik mora vnesti ID &#65533;tevilko (ne prazno). Èe je ID &#65533;tevilka vnesena, je prikazna v profilu uporabnika.';
-$string['configintro'] = 'Na tej strani doloèite &#65533;tevilo konfiguracijskih spremenljivk, ki omogoèajo pravilno delovanje portala Moodle na stre&#65533;niku. Privzeta vrednost obièajno omogoèa normalno delovanje. Èe pa se pojavijo te&#65533;ave, to nastavitev lahko kadarkoli spremenite.';
-$string['configintroadmin'] = 'Na tej strani boste doloèili uporabni&#65533;ki raèun glavnega administratorja, ki ima vsa mo&#65533;na pooblastila na tem portalu. Pozorno doloèite uporabni&#65533;ko ime, geslo in veljaven naslov epo&#65533;te. Dodatne uporabni&#65533;ke raèune administratorjev boste lahko doloèili kasneje.';
+$string['configforceloginforprofiles'] = 'S to nastavitvijo prisilite uporabnike, da se prijavijo z veljavnim uporabniškim imenom in geslom (ne kot gost).  Privzeta vrednost je:\"Ne\". Študenti v tem primeru lahko vnaprej preberejo podatke o profesorju in predmetu. Slednji do dostopni tudi spletnim iskalnikom.';
+$string['configframename'] = 'Èe je Moodle vgrajen v okvir spletne strani, potem vpišite ime tega okvira. Sicer naj bo ta nastavitev \'_top\'';
+$string['configfullnamedisplay'] = 'Ta nastavitev doloèa naèin prikaza imen. Za veèino enojeziènih portalov je najprimernejša izbira \"Ime + Priimek\". Lahko tudi skrijete priimek ali pa odloèitev prepustite jezikovnemu paketu (razlièni jeziki imajo razlièna pravila).';
+$string['configgdversion'] = 'Izberite razlièico GD. Moodle samodejno zazna namešèeno. Spremenite samo v primeru, da se zavedate posledic odloèitve.';
+$string['confightmleditor'] = 'Ta nastavitev omogoèa uporabo vgrajenega urejevalnika HTML. Èe to dovolite, bo urejevalnik deloval pri uporabnikih, ki imajo združljiv spletni brskalnik. Uporabniki ga potem uporabljajo po lastni presoji.';
+$string['configidnumber'] = 'Za nastavitev omogoèa (a) uporabnik nima možnost za vnos ID številke, (b) uporabnik sme vnesti ID številko (tudi prazno) (c) uporabnik mora vnesti ID številko (ne prazno). Èe je ID številka vnesena, je prikazna v profilu uporabnika.';
+$string['configintro'] = 'Na tej strani doloèite število konfiguracijskih spremenljivk, ki omogoèajo pravilno delovanje portala Moodle na strežniku. Privzeta vrednost obièajno omogoèa normalno delovanje. Èe pa se pojavijo težave, to nastavitev lahko kadarkoli spremenite.';
+$string['configintroadmin'] = 'Na tej strani boste doloèili uporabniški raèun glavnega administratorja, ki ima vsa možna pooblastila na tem portalu. Pozorno doloèite uporabniško ime, geslo in veljaven naslov epošte. Dodatne uporabniške raèune administratorjev boste lahko doloèili kasneje.';
 $string['configintrosite'] = 'Ta nastavitev omogoèa konfiguriranje prve strani in ime portala. Nastavitve lahko kasneje kadarkoli spremenite v administratorjevem menuju Nastavitve portala.';
 $string['configlang'] = 'Izberite privzeti jezik za portal. Uporabnikove nastavitve jezika imajo prednost pred globalno.';
-$string['configlangdir'] = 'V veèini jezikov besedilo beremo z leve proti desni. Pri nekaterih (npr. arabski in &#65533;idovski) pa beremo z desne proti levi.';
-$string['configlanglist'] = 'Pustite prazno polje, èe boste dovolili uporabnikom izbiro jezika. Seznam mo&#65533;nih (na tem portalu) skraj&#65533;ate, èe napi&#65533;ete dovoljen izbor npr.:  sl,en,de,es_es,fr,it.';
-$string['configlangmenu'] = 'Doloèite ali se bo izbor jezika prikazal na prvi strani, strani za prijavo ipd. Uporabnik bo ne glede na va&#65533;o odloèitev svoj jezik lahko izbral pri urejanju osebnega profila.';
+$string['configlangdir'] = 'V veèini jezikov besedilo beremo z leve proti desni. Pri nekaterih (npr. arabski in židovski) pa beremo z desne proti levi.';
+$string['configlanglist'] = 'Pustite prazno polje, èe boste dovolili uporabnikom izbiro jezika. Seznam možnih (na tem portalu) skrajšate, èe napišete dovoljen izbor npr.:  sl,en,de,es_es,fr,it.';
+$string['configlangmenu'] = 'Doloèite ali se bo izbor jezika prikazal na prvi strani, strani za prijavo ipd. Uporabnik bo ne glede na vašo odloèitev svoj jezik lahko izbral pri urejanju osebnega profila.';
 $string['configlocale'] = 'Doloèite krajevne nastavitve (jezik, oblika datuma ipd.), ki se morajo skladati z nastavitvijo na nivoju operacijskega sistema (npr. en_US ali es_ES). Èe ne poznate teh nastavitev, pustite prazno.';
-$string['configloglifetime'] = 'Ta nastavitev doloèa trajanje dnevni&#65533;kih zapisov o aktivnostih uporabnikov. Zapisi, ki so starej&#65533;i, se samodejno bri&#65533;ejo. Priporoèljivo je hraniti dnevni&#65533;ke zapise èim dlje. Odzivnost stre&#65533;nika izbolj&#65533;ate, èe skraj&#65533;ajte ta èas, vendar pa na ta naèin izgubite del zgodovine.';
-$string['configlongtimenosee'] = 'S to nastavitvijo doloèite èas, po katerem neaktivne  &#65533;tudente samodejno izpi&#65533;ete iz predmeta. Minimalni kriterij za aktivnost je prijava v sistem.';
-$string['configmaxbytes'] = 'S to nastavitvijo omejite najveèjo velikost posamezne datoteke, ki se prena&#65533;a na stre&#65533;nik. Ta omejitev je povezana tudi z nastavitvami v: PHP (php.ini, upload_max_filesize) in Apache (httpd.conf, LimitRequestBody).';
+$string['configloglifetime'] = 'Ta nastavitev doloèa trajanje dnevniških zapisov o aktivnostih uporabnikov. Zapisi, ki so starejši, se samodejno brišejo. Priporoèljivo je hraniti dnevniške zapise èim dlje. Odzivnost strežnika izboljšate, èe skrajšajte ta èas, vendar pa na ta naèin izgubite del zgodovine.';
+$string['configlongtimenosee'] = 'S to nastavitvijo doloèite èas, po katerem neaktivne  študente samodejno izpišete iz predmeta. Minimalni kriterij za aktivnost je prijava v sistem.';
+$string['configmaxbytes'] = 'S to nastavitvijo omejite najveèjo velikost posamezne datoteke, ki se prenaša na strežnik. Ta omejitev je povezana tudi z nastavitvami v: PHP (php.ini, upload_max_filesize) in Apache (httpd.conf, LimitRequestBody).';
 $string['configmaxeditingtime'] = 'Doloèite zgornjo mejo èasa, v katerem uporabniki smejo popravljati svoja sporoèila (npr. na forumu). Priporoèamo 30 minut.';
-$string['configopentogoogle'] = 'S to nastavitvijo omogoèite iskalcem na Google transparenten vstop z uporabni&#65533;kim raèunom Gost.';
-$string['configproxyhost'] = 'Èe ta <b>stre&#65533;nik</b> komunicira z internetom preko proxy stre&#65533;nika (npr. po&#65533;arni zid), navedite ime slednjega in vrata. Sicer pustite prazno.';
-$string['configsecureforms'] = 'Moodle zna uporabiti tudi druge naèine varnega sprejemanja podatkov preko spletnih obrazcev. Èe je ta nastavitev omogoèena, se preveri spremenljivka v brskalniku HTTP_REFERER in naslov spletnega obrazca. Redko to povzroèi te&#65533;ave v kombinaciji s po&#65533;arnim zidom (npr. Zonealarm, ki je nastavljen tako, da odstrani HTTP_REFERER). Tipièen simptom te&#65533;av je, da uporabniki obtièijo na obrazcu za prijavo. Èe onemogoèite to nastavitev, bo stre&#65533;nik bolj izpostavljen napadom tipa brute-force password attacks. Varna izbira je vsekakor \'Da\'.';
-$string['configsessioncookie'] = 'Ta nastavitev doloèi ime pi&#65533;kota (cookie) za seje v portalu Moodle.  Nastavitev je smiselna le v primeru, ko na istem spletnem stre&#65533;niku poganjate veè kopij portala Moodle.';
+$string['configopentogoogle'] = 'S to nastavitvijo omogoèite iskalcem na Google transparenten vstop z uporabniškim raèunom Gost.';
+$string['configproxyhost'] = 'Èe ta <B>strežnik</B> komunicira z internetom preko proxy strežnika (npr. požarni zid), navedite ime slednjega in vrata. Sicer pustite prazno.';
+$string['configsecureforms'] = 'Moodle zna uporabiti tudi druge naèine varnega sprejemanja podatkov preko spletnih obrazcev. Èe je ta nastavitev omogoèena, se preveri spremenljivka v brskalniku HTTP_REFERER in naslov spletnega obrazca. Redko to povzroèi težave v kombinaciji s požarnim zidom (npr. Zonealarm, ki je nastavljen tako, da odstrani HTTP_REFERER). Tipièen simptom težav je, da uporabniki obtièijo na obrazcu za prijavo. Èe onemogoèite to nastavitev, bo strežnik bolj izpostavljen napadom tipa brute-force password attacks. Varna izbira je vsekakor \'Da\'.';
+$string['configsessioncookie'] = 'Ta nastavitev doloèi ime piškota (cookie) za seje v portalu Moodle.  Nastavitev je smiselna le v primeru, ko na istem spletnem strežniku poganjate veè kopij portala Moodle.';
 $string['configsessiontimeout'] = 'Doloèite èas, po katerem bodo neaktivni uporabniki samodejno odjavljeni. Kriterij za neaktivnost je mirovanje na eni spletni strani.';
-$string['configslasharguments'] = 'Za prenose datotek se uporablja ukazni niz s t.i. \'slash arguments\' (druga izbira). To omogoèa uèinkovitej&#65533;e shranjevanje v zaèasni pomnilnik spletnega brskalnika, proxy stre&#65533;nika ipd. Nekateri stre&#65533;niki PHP ne dovoljujejo tega naèina. Èe imate te&#65533;ave s pregledom nalo&#65533;enih datotek, se odloèite za prvo izbiro.';
-$string['configsmtphosts'] = 'Navedite imena enega ali veè SMTP stre&#65533;nikov, ki bodo uporabljeni pri po&#65533;iljanju sporoèil po epo&#65533;ti (npr. \'smtp.fov.si\'). Èe je polje prazno, bo portal uporabil interne rutine PHP za po&#65533;iljanje epo&#65533;te.';
-$string['configsmtpuser'] = 'Èe ste prej doloèili SMTP stre&#65533;nik in le-ta zahteva avtentikacijo, potem vnesite uporabni&#65533;ko ime in geslo.';
-$string['configteacherassignteachers'] = 'Bodo smeli navadni profesorji doloèiti &#65533;e druge profesorje v okviru predmeta, ki ga predavajao? ?  Èe \'Ne\', potem smejo doloèati profesorje le ustvarjalci in administratorji.';
-$string['configtimezone'] = 'Doloèite privzet èasovni pas. Nastavitev se nana&#65533;a le na prikaz datuma. Vsak uporabnik si lahko nastavi svoj lastnen èasovni pas v profilu. Ta \"krajevni èas stre&#65533;nika\" se nana&#65533;a na nastavitev v operacijskem sistemu, ista nastavitev v uporabnikovem profilu pa se nana&#65533;a le na doloèenega uporabnika.';
+$string['configslasharguments'] = 'Za prenose datotek se uporablja ukazni niz s t.i. \'slash arguments\' (druga izbira). To omogoèa uèinkovitejše shranjevanje v zaèasni pomnilnik spletnega brskalnika, proxy strežnika ipd. Nekateri strežniki PHP ne dovoljujejo tega naèina. Èe imate težave s pregledom naloženih datotek, se odloèite za prvo izbiro.';
+$string['configsmtphosts'] = 'Navedite imena enega ali veè SMTP strežnikov, ki bodo uporabljeni pri pošiljanju sporoèil po epošti (npr. \'smtp.fov.si\'). Èe je polje prazno, bo portal uporabil interne rutine PHP za pošiljanje epošte.';
+$string['configsmtpuser'] = 'Èe ste prej doloèili SMTP strežnik in le-ta zahteva avtentikacijo, potem vnesite uporabniško ime in geslo.';
+$string['configteacherassignteachers'] = 'Bodo smeli navadni profesorji doloèiti še druge profesorje v okviru predmeta, ki ga predavajao? ?  Èe \'Ne\', potem smejo doloèati profesorje le ustvarjalci in administratorji.';
+$string['configtimezone'] = 'Doloèite privzet èasovni pas. Nastavitev se nanaša le na prikaz datuma. Vsak uporabnik si lahko nastavi svoj lastnen èasovni pas v profilu. Ta \"krajevni èas strežnika\" se nanaša na nastavitev v operacijskem sistemu, ista nastavitev v uporabnikovem profilu pa se nanaša le na doloèenega uporabnika.';
 $string['configunzip'] = 'Doloèite mesto programa za odpiranje stisnjenih datotek (unzip na Unix-u, izbirno). Èe doloèite vrednost, potem se bo aktiviral ta program, sicer bodo uporabljene interne rutine portala Moodle.';
 $string['configuration'] = 'Konfiguracija';
 $string['configvariables'] = 'Spremenljivke';
 $string['configwarning'] = 'Dobro razmislite o posledicah spremembe teh nastavitev. Èudne vrednosti lahko povzroèijo odpoved.';
 $string['configzip'] = 'Doloèite mesto programa za stiskanje (npr. zip na Unix-u, izbirno). Èe doloèite vrednost, potem se bo aktiviral ta program, sicer bodo uporabljene interne rutine portala Moodle.';
 $string['confirm'] = 'Potrditev';
-$string['confirmed'] = 'Va&#65533;a registracija je potrjena';
-$string['confirmednot'] = 'Va&#65533;a registracija ni bila potrjena';
+$string['confirmed'] = 'Vaša registracija je potrjena';
+$string['confirmednot'] = 'Vaša registracija ni bila potrjena';
 $string['continue'] = 'Nadaljuj';
-$string['cookiesenabled'] = 'Nastavitve brskalnika mora omogoèati pi&#65533;kote (cookie)';
+$string['cookiesenabled'] = 'Nastavitve brskalnika mora omogoèati piškote (cookie)';
 $string['copy'] = 'kopiraj';
 $string['copyingcoursefiles'] = 'Kopiranje datotek predmeta';
 $string['copyinguserfiles'] = 'Kopiranje uporabnikovih datotek';
 $string['copyingzipfile'] = 'Kopiranje stisnjene datoteke';
 $string['copyrightnotice'] = 'Avtorske pravice';
-$string['country'] = 'Dr&#65533;ava';
+$string['country'] = 'Država';
 $string['course'] = 'Predmet';
-$string['courseavailable'] = 'Ta predmet je odprt za &#65533;tudente';
-$string['courseavailablenot'] = 'Ta predmet ni odprt za &#65533;tudente';
+$string['courseavailable'] = 'Ta predmet je odprt za študente';
+$string['courseavailablenot'] = 'Ta predmet ni odprt za študente';
 $string['coursebackup'] = 'Varnostna kopija predmeta';
 $string['coursecategories'] = 'Kategorije predmeta';
 $string['coursecategory'] = 'Kategorija predmeta';
@@ -207,13 +207,13 @@ $string['courseinfo'] = 'Podatki o predmetu';
 $string['courserestore'] = 'Obnovitev stanja predmeta';
 $string['courses'] = 'Predmeti';
 $string['courseupdates'] = 'Popravki predmeta';
-$string['courseuploadlimit'] = 'Najdalj&#65533;a nalo&#65533;ena datoteka ';
+$string['courseuploadlimit'] = 'Najdaljša naložena datoteka ';
 $string['create'] = 'Ustvari';
 $string['createaccount'] = 'Dodaj raèun';
 $string['createfolder'] = 'Dodaj mapo v  $a';
 $string['createuserandpass'] = 'Dodaj novo ime in geslo za prijavo';
 $string['createziparchive'] = 'Ustvari stisnjeno datoteko';
-$string['creatingcategoriesandquestions'] = 'Dodaj kategorije in vpra&#65533;anja';
+$string['creatingcategoriesandquestions'] = 'Dodaj kategorije in vprašanja';
 $string['creatingcoursemodules'] = 'Dodaj module predmeta';
 $string['creatingevents'] = 'Dodaj dogodke';
 $string['creatinggroups'] = 'Dodaj skupine';
@@ -227,7 +227,7 @@ $string['creatingxmlfile'] = 'Ustvari XML datoteko';
 $string['currentcourseadding'] = 'Trenutni predmet: dodajanje podatkov ';
 $string['currentcoursedeleting'] = 'Trenutni predmet: brisanje podatkov';
 $string['currentlanguage'] = 'Trenutni jezik';
-$string['currentlocaltime'] = 'va&#65533; krajevni èas';
+$string['currentlocaltime'] = 'vaš krajevni èas';
 $string['currentpicture'] = 'Trenutna slika';
 $string['currentrelease'] = 'Podatki o trenutni razlièici';
 $string['currentversion'] = 'Trenutna razlièica';
@@ -238,21 +238,21 @@ $string['databasesuccess'] = 'Baz podatkov je nadgrajena';
 $string['databaseupgradebackups'] = 'Razlièica modula za varovanje: $a';
 $string['databaseupgradeblocks'] = 'Razlièica modula za bloke: $a';
 $string['databaseupgrades'] = 'Nadgraditev baze podatkov';
-$string['datemostrecentfirst'] = 'Prvi najnovej&#65533;i datum';
-$string['datemostrecentlast'] = 'Prvi najstarej&#65533;i datum';
+$string['datemostrecentfirst'] = 'Prvi najnovejši datum';
+$string['datemostrecentlast'] = 'Prvi najstarejši datum';
 $string['day'] = 'dan';
 $string['days'] = 'dni';
-$string['decodinginternallinks'] = 'De&#65533;ifriranje internih povezav';
+$string['decodinginternallinks'] = 'Dešifriranje internih povezav';
 $string['defaultcoursefullname'] = 'Polni naziv predmeta 101';
 $string['defaultcourseshortname'] = 'SP101';
-$string['defaultcoursestudent'] = '&#65533;tudent';
-$string['defaultcoursestudents'] = '&#65533;tudenti';
-$string['defaultcoursesummary'] = 'Napi&#65533;ite jedrnat in privlaèen odstavek o predmetu';
+$string['defaultcoursestudent'] = 'Študent';
+$string['defaultcoursestudents'] = 'Študenti';
+$string['defaultcoursesummary'] = 'Napišite jedrnat in privlaèen odstavek o predmetu';
 $string['defaultcourseteacher'] = 'Profesor';
 $string['defaultcourseteachers'] = 'Profesorji';
-$string['delete'] = 'Bri&#65533;i';
-$string['deleteall'] = 'Bri&#65533;i vse';
-$string['deletecheck'] = 'Bri&#65533;i $a ?';
+$string['delete'] = 'Briši';
+$string['deleteall'] = 'Briši vse';
+$string['deletecheck'] = 'Briši $a ?';
 $string['deletecheckfiles'] = 'Ste preprièani, da hoèete brisati te datoteke?';
 $string['deletecheckfull'] = 'Ste preprièani, da hoèete brisati $a ?';
 $string['deletecheckwarning'] = 'Izbrali ste brisanje';
@@ -270,14 +270,14 @@ $string['deletingolddata'] = 'Brisanje starih podatkov';
 $string['department'] = 'Oddelek';
 $string['description'] = 'Opis';
 $string['disable'] = 'Onemogoèi';
-$string['displayingfirst'] = 'Najveèje &#65533;tevilo prikazanih zapisov: $a->count $a->things';
-$string['displayingrecords'] = '&#65533;tevilo prikazanih zapisov: $a';
+$string['displayingfirst'] = 'Najveèje število prikazanih zapisov: $a->count $a->things';
+$string['displayingrecords'] = 'Število prikazanih zapisov: $a';
 $string['displayingusers'] = 'Uporabniki od $a->start do $a->end';
 $string['documentation'] = 'Dokumentacija o Moodle';
-$string['donotask'] = 'Ne spra&#65533;uj';
+$string['donotask'] = 'Ne sprašuj';
 $string['down'] = 'Dol';
-$string['downloadexcel'] = 'Odlo&#65533;i v formatu Excel';
-$string['downloadtext'] = 'Odlo&#65533;i v tekstovnem formatu';
+$string['downloadexcel'] = 'Odloži v formatu Excel';
+$string['downloadtext'] = 'Odloži v tekstovnem formatu';
 $string['doyouagree'] = 'Ste prebrali pogoje in jih razumete?';
 $string['edit'] = 'Uredi $a';
 $string['editcoursesettings'] = 'Uredi nastavitev predmeta';
@@ -289,68 +289,68 @@ $string['editsummary'] = 'Uredi povzetek';
 $string['editthisactivity'] = 'Uredi aktivnost';
 $string['editthiscategory'] = 'Uredi kategorijo';
 $string['edituser'] = 'Uredi uporabnikov raèun';
-$string['email'] = 'Naslov epo&#65533;te';
-$string['emailagain'] = 'Epo&#65533;ta(ponovno)';
-$string['emailconfirm'] = 'Potrdite uporabni&#65533;ki raèun';
+$string['email'] = 'Naslov epošte';
+$string['emailagain'] = 'Epošta(ponovno)';
+$string['emailconfirm'] = 'Potrdite uporabniški raèun';
 $string['emailconfirmation'] = 'Pozdravljeni $a->firstname,
 
-Z va&#65533;ega email-a je bila prejeta zahteva po novem uporabni&#65533;kem raèunu na  \'$a->sitename\'.
+Z vašega email-a je bila prejeta zahteva po novem uporabniškem raèunu na  \'$a->sitename\'.
 
-Èe hoèete potrditi nov uporabni&#65533;ki raèun , sledite povezavi:
+Èe hoèete potrditi nov uporabniški raèun , sledite povezavi:
 
 $a->link
 
-Veèina po&#65533;tnih odjemalcev napi&#65533;e povezavo z modro barvo. Èe klik brskalnika ne preusmeri na to povezavo: 1) kopirajte tekst v odlo&#65533;i&#65533;èe in 2)tekst v spletnem brskalniku prilepite v vrstico, kjer mora biti vpisan naslov.
+Veèina poštnih odjemalcev napiše povezavo z modro barvo. Èe klik brskalnika ne preusmeri na to povezavo: 1) kopirajte tekst v odložišèe in 2)tekst v spletnem brskalniku prilepite v vrstico, kjer mora biti vpisan naslov.
 
-Èe &#65533;e potrebujete pomoè, se oglasite pri administratorju portala,
+Èe še potrebujete pomoè, se oglasite pri administratorju portala,
 $a->admin';
-$string['emailconfirmationsubject'] = '$a: potrditev uporabni&#65533;kega raèuna';
-$string['emailconfirmsent'] = '   <p>Sporoèilo po epo&#65533;ti je bilo poslano na va&#65533; naslov: <b>$a</b></p>
-<p>V sporoèilu boste prebrali navodila za vpis.</p>
-<p>Èe &#65533;e potrebujete pomoè, se oglasite pri administratorju portala.</p>';
-$string['emaildisable'] = 'Ta naslov epo&#65533;te je onesposobljen';
-$string['emaildisplay'] = 'Prikaz naslova epo&#65533;te';
-$string['emaildisplaycourse'] = 'Samo &#65533;tudenti, vpisani v predmet, bodo videli nalov epo&#65533;te.';
-$string['emaildisplayno'] = 'Skrij moj naslov epo&#65533;te pred vsemi';
-$string['emaildisplayyes'] = 'Vsi uporabniki bodo videli naslov epo&#65533;te';
-$string['emailenable'] = 'Ta naslov epo&#65533;te je usposobljen';
-$string['emailexists'] = 'Ta naslov epo&#65533;te je &#65533;e registriran.';
-$string['emailformat'] = 'Oblika epo&#65533;te';
-$string['emailmustbereal'] = 'Opomba: naslov epo&#65533;te mora biti veljaven (ne izmi&#65533;ljen)';
+$string['emailconfirmationsubject'] = '$a: potrditev uporabniškega raèuna';
+$string['emailconfirmsent'] = '   <P>Sporoèilo po epošti je bilo poslano na vaš naslov: <B>$a</B>
+   <P>V sporoèilu boste prebrali navodila za vpis.
+   <P>Èe še potrebujete pomoè, se oglasite pri administratorju portala.';
+$string['emaildisable'] = 'Ta naslov epošte je onesposobljen';
+$string['emaildisplay'] = 'Prikaz naslova epošte';
+$string['emaildisplaycourse'] = 'Samo študenti, vpisani v predmet, bodo videli nalov epošte.';
+$string['emaildisplayno'] = 'Skrij moj naslov epošte pred vsemi';
+$string['emaildisplayyes'] = 'Vsi uporabniki bodo videli naslov epošte';
+$string['emailenable'] = 'Ta naslov epošte je usposobljen';
+$string['emailexists'] = 'Ta naslov epošte je že registriran.';
+$string['emailformat'] = 'Oblika epošte';
+$string['emailmustbereal'] = 'Opomba: naslov epošte mora biti veljaven (ne izmišljen)';
 $string['emailpasswordconfirmation'] = 'Pozdravljeni $a->firstname,
 
-nekdo (verjetno vi) je zahteval novo geslo za uporabni&#65533;ki raèun na portalu \'$a->sitename\'.
+nekdo (verjetno vi) je zahteval novo geslo za uporabniški raèun na portalu \'$a->sitename\'.
 
-Èe &#65533;elite potrditi zahtevo po geslu, sledite povezavi:
+Èe želite potrditi zahtevo po geslu, sledite povezavi:
 
 $a->link
 
-Veèina po&#65533;tnih odjemalcev napi&#65533;e povezavo z modro barvo. Èe klik brskalnika ne preusmeri na to povezavo: 1) kopirajte tekst v odlo&#65533;i&#65533;èe in 2)tekst v spletnem brskalniku prilepite v vrstico, kjer mora biti vpisan naslov.
+Veèina poštnih odjemalcev napiše povezavo z modro barvo. Èe klik brskalnika ne preusmeri na to povezavo: 1) kopirajte tekst v odložišèe in 2)tekst v spletnem brskalniku prilepite v vrstico, kjer mora biti vpisan naslov.
 
-Èe &#65533;e potrebujete pomoè, se oglasite pri administratorju portala,
+Èe še potrebujete pomoè, se oglasite pri administratorju portala,
 $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: potrditev spremembe gesla';
-$string['emailpasswordconfirmsent'] = 'Sporoèilo po epo&#65533;ti je bilo poslano na va&#65533; naslov: <b>$a</b>.
-<br />V sporoèilu boste prebrali navodila za potrditev spremembe gesla.
-Èe &#65533;e potrebujete pomoè, se oglasite pri administratorju portala.';
+$string['emailpasswordconfirmsent'] = 'Sporoèilo po epošti je bilo poslano na vaš naslov: <b>$a</b>.
+<p>V sporoèilu boste prebrali navodila za potrditev spremembe gesla.
+Èe še potrebujete pomoè, se oglasite pri administratorju portala.';
 $string['emailpasswordsent'] = 'Hvala za potrditev spremembe gesla.
-<br />Sporoèilo, ki vsebuje novo geslo je bilo poslano po epo&#65533;ti na naslov  <b>$a->email</b>.
-<br />Novo geslo vsebuje nakljuèno zaporedje znakov - èe &#65533;elite spremeniti ta niz tako, da si ga boste la&#65533;je zapomnili, sledite povezavi:
-<a href=\"$a->link\">sprememba gesla </a>.';
+<p>Sporoèilo, ki vsebuje novo geslo je bilo poslano po epošti na naslov  <b>$a->email</b>.
+<p>Novo geslo vsebuje nakljuèno zaporedje znakov - èe želite spremeniti ta niz tako, da si ga boste lažje zapomnili, sledite povezavi:
+<a href=$a->link>sprememba gesla </a>.';
 $string['enable'] = 'Omogoèi';
 $string['enrolledincourse'] = 'Vpisan v predmet';
 $string['enrolledincoursenot'] = 'Ni vpisan v predmet';
-$string['enrolmentconfirmation'] = 'Posredovali ste zahtevo za vpis v ta predmet.<br />Ste preprièani, da to &#65533;elite storiti?';
+$string['enrolmentconfirmation'] = 'Posredovali ste zahtevo za vpis v ta predmet.<br />Ste preprièani, da to želite storiti?';
 $string['enrolmentkey'] = 'Geslo za vpis v predmet';
-$string['enrolmentkeyfrom'] = 'Ta predmet zahteva geslo ob prvem pristopu (enrolment key)<br />
+$string['enrolmentkeyfrom'] = 'Ta predmet zahteva geslo ob prvem pristopu (enrolment key)<BR>
 Geslo vam je poslal: $a';
-$string['enrolmentkeyhint'] = 'To geslo za vpis v predmet ni pravilno<br />
+$string['enrolmentkeyhint'] = 'To geslo za vpis v predmet ni pravilno<BR>
 (Namig - zaène se z  \'$a\')';
 $string['entercourse'] = 'Kliknite za vstop v predmet';
-$string['enteremailaddress'] = 'Vpi&#65533;ite naslov epo&#65533;te. Va&#65533;e geslo po spremenjeno, po epo&#65533;ti pa boste prejeli novo geslo.';
+$string['enteremailaddress'] = 'Vpišite naslov epošte. Vaše geslo po spremenjeno, po epošti pa boste prejeli novo geslo.';
 $string['error'] = 'Napaka';
-$string['errortoomanylogins'] = '&#65533;al ste se preveèkrat poskusili prijaviti z napaènimi podatki. Ponovno za&#65533;enite brskalnik.';
-$string['errorwhenconfirming'] = 'Va&#65533;a zahteva &#65533;e ni bila potrjena zaradi napake.  Vrstica z naslovom epo&#65533;te ne sme biti prelomljena. V urejevalniku besedila (kopiraj/prilepi) napi&#65533;ite naslov v eni vrstici.';
+$string['errortoomanylogins'] = 'Žal ste se preveèkrat poskusili prijaviti z napaènimi podatki. Ponovno zaženite brskalnik.';
+$string['errorwhenconfirming'] = 'Vaša zahteva še ni bila potrjena zaradi napake.  Vrstica z naslovom epošte ne sme biti prelomljena. V urejevalniku besedila (kopiraj/prilepi) napišite naslov v eni vrstici.';
 $string['executeat'] = 'Izvedi ob';
 $string['existing'] = 'Obstojeè';
 $string['existingadmins'] = 'Obstojeèi administratorji';
@@ -358,14 +358,14 @@ $string['existingcourse'] = 'Obstojeèi predmeti';
 $string['existingcourseadding'] = 'Dodajanje v obstojeèi predmet';
 $string['existingcoursedeleting'] = 'Brisanje obstojeèega predmeta';
 $string['existingcreators'] = 'Ustvarjalci obstojeèega predmeta';
-$string['existingstudents'] = 'Vpisani &#65533;tudenti';
+$string['existingstudents'] = 'Vpisani študenti';
 $string['existingteachers'] = 'Obstojeèi profesorji';
 $string['feedback'] = 'Odziv';
 $string['filemissing'] = 'Datoteka $a manjka';
 $string['files'] = 'Datoteke';
 $string['filesfolders'] = 'Datoteke/mape';
 $string['filloutallfields'] = 'Izpolniti morate vsa polja v obrazcu';
-$string['findmorecourses'] = 'I&#65533;èi predmete...';
+$string['findmorecourses'] = 'Išèi predmete...';
 $string['firstdayofweek'] = '0';
 $string['firstname'] = 'Ime';
 $string['firsttime'] = 'Ste prviè tukaj?';
@@ -379,7 +379,7 @@ $string['forgotten'] = 'Ste pozabili ime ali geslo?';
 $string['format'] = 'Oblika';
 $string['formathtml'] = 'Oblika HTML';
 $string['formatplain'] = 'Oblika navadnega besedila';
-$string['formatsocial'] = 'Dru&#65533;abna oblika';
+$string['formatsocial'] = 'Družabna oblika';
 $string['formattext'] = 'Samodejna oblika - Moodle';
 $string['formattexttype'] = 'Oblikovanje';
 $string['formattopics'] = 'Oblika tem';
@@ -390,21 +390,21 @@ $string['frontpagecategorynames'] = 'Prikaz seznama kategorij';
 $string['frontpagecourselist'] = 'Prikaz seznama predmetov';
 $string['frontpagedescription'] = 'Opis prve strani';
 $string['frontpageformat'] = 'Oblika prve strani';
-$string['frontpagenews'] = 'Prika&#65533;i teme novic';
+$string['frontpagenews'] = 'Prikaži teme novic';
 $string['fulllistofcourses'] = 'Vsi predmeti';
 $string['fullname'] = 'Polno ime';
 $string['fullnamedisplay'] = '$a->firstname $a->lastname';
 $string['fullprofile'] = 'Poln profil';
 $string['fullsitename'] = 'Polno ime spletnega mesta';
-$string['gd1'] = 'GD 1.x je name&#65533;èen';
-$string['gd2'] = 'GD 2.x je name&#65533;èen';
-$string['gdneed'] = 'GD mora biti name&#65533;èen za prikaz tega grafa';
-$string['gdnot'] = 'GD ni name&#65533;èen';
+$string['gd1'] = 'GD 1.x je namešèen';
+$string['gd2'] = 'GD 2.x je namešèen';
+$string['gdneed'] = 'GD mora biti namešèen za prikaz tega grafa';
+$string['gdnot'] = 'GD ni namešèen';
 $string['gpl'] = 'Avtorske pravice (C) 1999-2004  Martin Dougiamas  (http://dougiamas.com)
 
-To je prosta programska oprema; dovoljeno je raz&#65533;irjanje in/ali spreminjanje pod pogoji, ki jih predpisuje GNU General Public License, Free Software Foundation, razlièica 2 ali katerakoli kasnej&#65533;a.
+To je prosta programska oprema; dovoljeno je razširjanje in/ali spreminjanje pod pogoji, ki jih predpisuje GNU General Public License, Free Software Foundation, razlièica 2 ali katerakoli kasnejša.
 
-Programska oprema je izdelana z upanjem, da bo uporabna. Avtorji ne dajejo NOBENEGA ZAGOTOVILA; niti nakazanega zagotovila o MO&#65533;NI PRODAJI ali PRIPRAVLJENOSTI ZA DOLOÈEN NAMEN.  Glejte podrobnosti GNU General Public License:
+Programska oprema je izdelana z upanjem, da bo uporabna. Avtorji ne dajejo NOBENEGA ZAGOTOVILA; niti nakazanega zagotovila o MOŽNI PRODAJI ali PRIPRAVLJENOSTI ZA DOLOÈEN NAMEN.  Glejte podrobnosti GNU General Public License:
 
 http://www.gnu.org/copyleft/gpl.html';
 $string['grade'] = 'Ocena';
@@ -422,7 +422,7 @@ $string['groupmode'] = 'Skupinska oblika';
 $string['groupmodeforce'] = 'Vsili skupinsko obliko';
 $string['groupmy'] = 'Moja skupina';
 $string['groupnonmembers'] = 'Uporabniki niso v skupini';
-$string['groupnotamember'] = '&#65533;al niste èlan skupine';
+$string['groupnotamember'] = 'Žal niste èlan skupine';
 $string['grouprandomassign'] = 'Nakljuèno doloèi èlane skupine';
 $string['groupremove'] = 'Odstrani izbrano skupino';
 $string['groupremovemembers'] = 'Odstrani izbrane èlane';
@@ -432,7 +432,7 @@ $string['groupsseparate'] = 'Loèene skupine';
 $string['groupsvisible'] = 'Vidne skupine';
 $string['guestskey'] = 'Dovoli gostom z geslom predmeta';
 $string['guestsno'] = 'Ne dovoli gostom vstopa';
-$string['guestsnotallowed'] = '&#65533;al predmet \'$a\' ni dostopen gostom';
+$string['guestsnotallowed'] = 'Žal predmet \'$a\' ni dostopen gostom';
 $string['guestsyes'] = 'Dovoli gostom brez gesla predmeta';
 $string['guestuser'] = 'Gostujoèi uporabnik';
 $string['guestuserinfo'] = 'Ta uporabnik ima za doloèene predmete pravico -samo branje.';
@@ -441,22 +441,22 @@ $string['helpemoticons'] = 'Uporabi èustva';
 $string['helpformatting'] = 'O oblikovanju besedila';
 $string['helphtml'] = 'Kako pisati HTML';
 $string['helpindex'] = 'Indeks vseh datotek s pomoèjo';
-$string['helppicture'] = 'Kako nalo&#65533;it sliko';
-$string['helpquestions'] = 'Dobro vpra&#65533;ajte';
+$string['helppicture'] = 'Kako naložit sliko';
+$string['helpquestions'] = 'Dobro vprašajte';
 $string['helpreading'] = 'Berite pozorno';
 $string['helprichtext'] = 'O urejevalniku HTML';
 $string['helpsummaries'] = 'O teh povzetkih';
 $string['helptext'] = 'Kako pisati besedilo';
 $string['helpwiki'] = 'Kako pisati besedilo v Wiki';
-$string['helpwriting'] = 'Pi&#65533;ite skrbno';
+$string['helpwriting'] = 'Pišite skrbno';
 $string['hiddensections'] = 'Skrite sekcij';
 $string['hiddensectionscollapsed'] = 'Skrite sekcije so prikazane v skrèeni obliki';
 $string['hiddensectionsinvisible'] = 'Skrite sekcije so nedosegljive';
 $string['hide'] = 'Skrij';
 $string['hidepicture'] = 'Skrij sliko';
-$string['hits'] = '&#65533;t. zadetkov';
-$string['hitsoncourse'] = '&#65533;t. zadetkov o $a->coursename ( $a->username)';
-$string['hitsoncoursetoday'] = '&#65533;t. dana&#65533;njih zadetkov o $a->coursename ( $a->username)';
+$string['hits'] = 'Št. zadetkov';
+$string['hitsoncourse'] = 'Št. zadetkov o $a->coursename ( $a->username)';
+$string['hitsoncoursetoday'] = 'Št. današnjih zadetkov o $a->coursename ( $a->username)';
 $string['home'] = 'Domov';
 $string['hour'] = 'ura';
 $string['hours'] = 'ure';
@@ -464,27 +464,27 @@ $string['howtomakethemes'] = 'Kako narediti temo';
 $string['htmleditor'] = 'Uporabite urejevalnik HTML  (le nekateri brskalniki)';
 $string['htmleditoravailable'] = 'Urejevalniki HTML je dostopen';
 $string['htmleditordisabled'] = 'Urejevalnika HTML niste onemogoèili v svojem profilu';
-$string['htmleditordisabledadmin'] = 'Administrator je onemogoèil urejevalnik HTML na tem stre&#65533;niku';
-$string['htmleditordisabledbrowser'] = 'Urejevalnik HTML ni dostopen, ker brskalnik ni zdru&#65533;ljiv';
+$string['htmleditordisabledadmin'] = 'Administrator je onemogoèil urejevalnik HTML na tem strežniku';
+$string['htmleditordisabledbrowser'] = 'Urejevalnik HTML ni dostopen, ker brskalnik ni združljiv';
 $string['htmlformat'] = 'Èeden HTML format';
-$string['icqnumber'] = 'ICQ &#65533;tevilka';
-$string['idnumber'] = 'ID &#65533;tevilka';
+$string['icqnumber'] = 'ICQ številka';
+$string['idnumber'] = 'ID številka';
 $string['inactive'] = 'Neaktiven';
 $string['include'] = 'Vkljuèi';
 $string['includeallusers'] = 'Vkljuèi vse uporabnike';
 $string['includecoursefiles'] = 'Vkljuèi datoteke predmeta';
-$string['includecourseusers'] = 'Vkljuèi udele&#65533;ence predmeta';
+$string['includecourseusers'] = 'Vkljuèi udeležence predmeta';
 $string['included'] = 'Vkljuèeno';
 $string['includelogentries'] = 'Vkljuèi zapise dnevnika';
 $string['includemodules'] = 'Vkljuèi module';
 $string['includeneededusers'] = 'Vkljuèi zahtevane uporabnike';
 $string['includenoneusers'] = 'Ne vkljuèi uporabnikov';
 $string['includeuserfiles'] = 'Vkljuèi uporabnikove datoteke';
-$string['institution'] = 'In&#65533;titucija';
-$string['invalidemail'] = 'Napravilen naslov epo&#65533;te';
+$string['institution'] = 'Inštitucija';
+$string['invalidemail'] = 'Napravilen naslov epošte';
 $string['invalidlogin'] = 'Nepravilna prijava, poskusite znova';
 $string['jumpto'] = 'Skoèi na...';
-$string['keep'] = 'Obdr&#65533;i';
+$string['keep'] = 'Obdrži';
 $string['langltr'] = 'Smer v jeziku: z leve na desno';
 $string['langrtl'] = 'Smer v jeziku: z desne na levo';
 $string['language'] = 'Jezik';
@@ -509,47 +509,47 @@ $string['loggedinnot'] = 'Niste prijavljeni.';
 $string['login'] = 'Prijava';
 $string['loginas'] = 'Prijava kot';
 $string['loginguest'] = 'Prijava kot gost';
-$string['loginsite'] = 'Prijava na stre&#65533;nik';
-$string['loginsteps'] = 'Pozdravljeni, za dostop do vsebin stre&#65533;nika si morate ustvariti uporabni&#65533;ki raèun. Vsak posamezen predmet pa ima lahko &#65533;e poseben vstopni kljuè, ki ga boste vnesli le enkrat. Sledite navodilom:
-   <ol>
+$string['loginsite'] = 'Prijava na strežnik';
+$string['loginsteps'] = 'Pozdravljeni, za dostop do vsebin strežnika si morate ustvariti uporabniški raèun. Vsak posamezen predmet pa ima lahko še poseben vstopni kljuè, ki ga boste vnesli le enkrat. Sledite navodilom:
+   <ol size=\"2\">
    <li>Izpolnite obrazec <a href=\"$a\">Nov raèun</a> z zahtevanimi podatki.</li>
-   <li>Po epo&#65533;ti boste prejeli sporoèilo.</li>
+   <li>Po epošti boste prejeli sporoèilo.</li>
    <li>Preberite sporoèilo in kliknite na povezavo.</li>
-   <li>Va&#65533; raèun bo potrjen - lahko se boste prijavili.</li>
+   <li>Vaš raèun bo potrjen - lahko se boste prijavili.</li>
    <li>Nato izberite predmet.</li>
-   <li>Èe vas sistem vpra&#65533;a po geslu za vpis, vpi&#65533;ite tistega, ki vam ga je dal profesor. Tako se boste vpisali v doloèen predmet.</li>
-   <li>Ko ste vpisani v doloèen predmet, imate poln dostop do njegovih spletnih strani. Naslednjiè boste na tej strani vpisali le svoje uporabni&#65533;ko ime in geslo.</li>
+   <li>Èe vas sistem vpraša po geslu za vpis, vpišite tistega, ki vam ga je dal profesor. Tako se boste vpisali v doloèen predmet.</li>
+   <li>Ko ste vpisani v doloèen predmet, imate poln dostop do njegovih spletnih strani. Naslednjiè boste na tej strani vpisali le svoje uporabniško ime in geslo.</li>
    </ol>';
 $string['loginstepsnone'] = '<p>Pozdravljeni,</p>
-<p>za poln dostop do spletnih strani si morate ustvariti uporabni&#65533;ki raèun.</p>
-<p>Izbrali si boste uporabni&#65533;ko ime in geslo.</p>
-<p>V primeru, da izbrano ime &#65533;e obstaja, se boste morali domisliti kaj bolj izvirnega.</p>';
+<p>za poln dostop do spletnih strani si morate ustvariti uporabniški raèun.</p>
+<p>Izbrali si boste uporabniško ime in geslo.</p>
+<p>V primeru, da izbrano ime že obstaja, se boste morali domisliti kaj bolj izvirnega.</p>';
 $string['loginto'] = 'Prijava v $a';
-$string['loginusing'] = 'Prijava z uporabni&#65533;kim imenom in geslom';
+$string['loginusing'] = 'Prijava z uporabniškim imenom in geslom';
 $string['logout'] = 'Odjava';
 $string['logs'] = 'Dnevniki';
 $string['mainmenu'] = 'Glavni menu';
 $string['makeafolder'] = 'Ustvari mapo';
-$string['makeeditable'] = 'Èe je mapa \'$a\' ustrezno za&#65533;èitena (dovoljen dostop preko spletnega stre&#65533;nika), jo lahko urejate na tej strani.';
+$string['makeeditable'] = 'Èe je mapa \'$a\' ustrezno zašèitena (dovoljen dostop preko spletnega strežnika), jo lahko urejate na tej strani.';
 $string['manageblocks'] = 'Bloki';
 $string['managedatabase'] = 'Baza podatkov';
 $string['managefilters'] = 'Filtri';
 $string['managemodules'] = 'Moduli';
 $string['markedthistopic'] = 'Trenutna tema je oznaèena';
 $string['markthistopic'] = 'Oznaèi temo kot trenutno';
-$string['maximumchars'] = 'Najveèje &#65533;tevilo znakov je  $a ';
-$string['maximumgrade'] = 'Najvi&#65533;ja ocena';
+$string['maximumchars'] = 'Najveèje število znakov je  $a ';
+$string['maximumgrade'] = 'Najvišja ocena';
 $string['maximumshort'] = 'Maks.';
-$string['maximumupload'] = 'Najveèja velikost nalo&#65533;ene datoteke';
+$string['maximumupload'] = 'Najveèja velikost naložene datoteke';
 $string['maxsize'] = 'Maks. vel.: $a';
 $string['min'] = 'minuta';
 $string['mins'] = 'minut';
 $string['miscellaneous'] = 'Razno';
 $string['missingcategory'] = 'Izbrati morate kategorijo';
 $string['missingcity'] = 'Manjka mesto/kraj';
-$string['missingcountry'] = 'Manjka dr&#65533;ava';
+$string['missingcountry'] = 'Manjka država';
 $string['missingdescription'] = 'Manjka opis';
-$string['missingemail'] = 'Manjka naslov epo&#65533;te';
+$string['missingemail'] = 'Manjka naslov epošte';
 $string['missingfirstname'] = 'Manjka ime';
 $string['missingfullname'] = 'Manjka polno ime';
 $string['missinglastname'] = 'Manjka priimek';
@@ -557,22 +557,22 @@ $string['missingname'] = 'Manjka ime';
 $string['missingnewpassword'] = 'Manjka novo geslo';
 $string['missingpassword'] = 'Manjka geslo';
 $string['missingshortname'] = 'Manjka kratko ime';
-$string['missingshortsitename'] = 'Manjka kratko ime stre&#65533;nika';
-$string['missingsitedescription'] = 'Manjka opis stre&#65533;nika';
-$string['missingsitename'] = 'Manjka ime stre&#65533;nika';
+$string['missingshortsitename'] = 'Manjka kratko ime strežnika';
+$string['missingsitedescription'] = 'Manjka opis strežnika';
+$string['missingsitename'] = 'Manjka ime strežnika';
 $string['missingstrings'] = 'Preveri manjkajoèe nize';
-$string['missingstudent'] = 'Morate izbrati &#65533;tudenta';
+$string['missingstudent'] = 'Morate izbrati študenta';
 $string['missingsummary'] = 'Manjka povzetek';
 $string['missingteacher'] = 'Morate izbrati profesorja';
 $string['missingurl'] = 'Manjka URL';
-$string['missingusername'] = 'Manjka uporabni&#65533;ko ime';
+$string['missingusername'] = 'Manjka uporabniško ime';
 $string['modified'] = 'Spremenjeno';
 $string['moduledeleteconfirm'] = 'Izbrali ste brisanje modula \'$a\'.  Brisani bodo tudi vsi podrejeni podatki v bazi aktivnosti tega modula. Res hoèete nadaljevali?';
-$string['moduledeletefiles'] = 'Vsi podrejeni podatki modula \'$a->module\' so bili izbrisani iz baze.  Sedaj izbri&#65533;ite &#65533;e mapo na stre&#65533;niku: $a->directory (èe tega ne storite, se bo modul samodejno namestil).';
+$string['moduledeletefiles'] = 'Vsi podrejeni podatki modula \'$a->module\' so bili izbrisani iz baze.  Sedaj izbrišite še mapo na strežniku: $a->directory (èe tega ne storite, se bo modul samodejno namestil).';
 $string['modulesetup'] = 'Vzpostavitev tabel modula';
 $string['modulesuccess'] = 'Vzpostavljene tabele: $a ';
 $string['moodleversion'] = 'Verzija Moodle';
-$string['mostrecently'] = 'najnovej&#65533;e';
+$string['mostrecently'] = 'najnovejše';
 $string['move'] = 'Premik';
 $string['movecategoryto'] = 'Premik kategorije v:';
 $string['movecourseto'] = 'Premik predmeta v:';
@@ -593,29 +593,30 @@ $string['nametopics'] = 'tema';
 $string['nameweeks'] = 'teden';
 $string['needed'] = 'Potrebno';
 $string['never'] = 'Nikoli';
-$string['neverdeletelogs'] = 'Nikoli ne bri&#65533;i dnevnika';
+$string['neverdeletelogs'] = 'Nikoli ne briši dnevnika';
 $string['new'] = 'Novo';
-$string['newaccount'] = 'Nov uporabni&#65533;ki raèun';
+$string['newaccount'] = 'Nov uporabniški raèun';
 $string['newcourse'] = 'Nov predmet';
 $string['newpassword'] = 'Novo geslo';
 $string['newpasswordtext'] = 'Pozdravljeni $a->firstname,
 
-Va&#65533; uporabni&#65533;ki raèun na stre&#65533;niku \'$a->sitename\' ima novo zaèasno geslo.
+Vaš uporabniški raèun na strežniku \'$a->sitename\' ima novo zaèasno geslo.
 
 Podatki o prijavi:
-   uporabni&#65533;ko ime: $a->username
+   uporabniško ime: $a->username
    geslo          : $a->newpassword
 
 Geslo boste spremenili, èe boste sledili povezavi:
    $a->link
 
-Veèina po&#65533;tnih odjemalcev napi&#65533;e povezavo z modro barvo. Èe klik brskalnika ne preusmeri na to povezavo: 1) kopirajte tekst v odlo&#65533;i&#65533;èe in 2)tekst v spletnem brskalniku prilepite v vrstico, kjer mora biti vpisan naslov.
-S stre&#65533;nika  \'$a->sitename\' va&#65533; administrator,
-$a->signoff';
+Veèina poštnih odjemalcev napiše povezavo z modro barvo. Èe klik brskalnika ne preusmeri na to povezavo: 1) kopirajte tekst v odložišèe in 2)tekst v spletnem brskalniku prilepite v vrstico, kjer mora biti vpisan naslov.
+S strežnika  \'$a->sitename\' vaš administrator,
+$a->signoff
+';
 $string['newpicture'] = 'Nova slika';
 $string['newsitem'] = 'tema';
 $string['newsitems'] = 'teme';
-$string['newsitemsnumber'] = '&#65533;tevilo tem za prikaz';
+$string['newsitemsnumber'] = 'Število tem za prikaz';
 $string['newuser'] = 'Nov uporabnik';
 $string['newusers'] = 'Novi uporabniki';
 $string['next'] = 'Naslednji';
@@ -624,34 +625,34 @@ $string['nocoursesfound'] = 'Noben predmet ne vsebuje niza \'$a\'';
 $string['nocoursesyet'] = 'V tej kategoriji ni predmetov';
 $string['noexistingadmins'] = 'Ni nobenega administratorja. Sporoèila o tej resni napaki ne bi smeli nikoli dobiti.';
 $string['noexistingcreators'] = 'Ni nobenega ustvarjalca';
-$string['noexistingstudents'] = 'Ni nobenega &#65533;tudenta';
+$string['noexistingstudents'] = 'Ni nobenega študenta';
 $string['noexistingteachers'] = 'Ni nobenega profesorja';
 $string['nofilesselected'] = 'Nobena datoteka ni izbrana za ponovno vpostavitev';
-$string['nofilesyet'] = 'Pri tem predmetu &#65533;e ni bila prenesena nobena datoteka';
+$string['nofilesyet'] = 'Pri tem predmetu še ni bila prenesena nobena datoteka';
 $string['nograde'] = 'Ni ocene';
 $string['noimagesyet'] = 'Pri tem predmetu ni bila prenesena nobena slika';
 $string['nomorecourses'] = 'Nobenega podobnega predmeta ni';
 $string['none'] = 'Niè';
 $string['nopotentialadmins'] = 'Ni potencialnih administratorjev';
 $string['nopotentialcreators'] = 'Ni potencialnih ustvarjalcev predmeta';
-$string['nopotentialstudents'] = 'Ni potencialnih &#65533;tudentov';
+$string['nopotentialstudents'] = 'Ni potencialnih študentov';
 $string['nopotentialteachers'] = 'Ni potencialnih profesorjev';
 $string['normal'] = 'Normalno';
 $string['normalfilter'] = 'Normalno iskanje';
 $string['nostudentsfound'] = 'Niè $a najdeno';
-$string['nostudentsyet'] = 'Noben &#65533;tudent ni vpisan v predmet';
-$string['nosuchemail'] = 'Takega naslova epo&#65533;te ni';
-$string['notavailable'] = 'Ni razpolo&#65533;ljivo';
-$string['noteachersyet'] = 'Ta predmet &#65533;e nima profesorja';
+$string['nostudentsyet'] = 'Noben študent ni vpisan v predmet';
+$string['nosuchemail'] = 'Takega naslova epošte ni';
+$string['notavailable'] = 'Ni razpoložljivo';
+$string['noteachersyet'] = 'Ta predmet še nima profesorja';
 $string['notenrolled'] = '$a ni vpisan v ta predmet';
-$string['noteuserschangednonetocourse'] = 'Opomba: tudi &#65533;tudenti predmeta morajo biti ponovno vzpostavljeni. Nastavitev je popravljena.';
+$string['noteuserschangednonetocourse'] = 'Opomba: tudi študenti predmeta morajo biti ponovno vzpostavljeni. Nastavitev je popravljena.';
 $string['nothingnew'] = 'Ni novic od zadnje prijave';
 $string['notincluded'] = 'Ni vkljuèeno';
-$string['notingroup'] = '&#65533;al morate biti èlan skupine za pregled te aktivnosti.';
+$string['notingroup'] = 'Žal morate biti èlan skupine za pregled te aktivnosti.';
 $string['nousersmatching'] = 'Ni nobenega uporabnika na  \'$a\' ';
 $string['nousersyet'] = 'Ni nobenega uporabnika';
 $string['now'] = 'sedaj';
-$string['numberweeks'] = '&#65533;tevilo tednov/tem';
+$string['numberweeks'] = 'Število tednov/tem';
 $string['numdays'] = '$a dni ';
 $string['numhours'] = '$a ur';
 $string['numminutes'] = '$a minut ';
@@ -668,16 +669,16 @@ $string['other'] = 'Drugo';
 $string['outline'] = 'Osnutek';
 $string['page'] = 'Stran';
 $string['parentlanguage'] = 'en';
-$string['participants'] = 'Udele&#65533;enci';
+$string['participants'] = 'Udeleženci';
 $string['password'] = 'Geslo';
 $string['passwordchanged'] = 'Geslo je bilo spremenjeno';
 $string['passwordconfirmchange'] = 'Potrditev spremembe gesla';
 $string['passwordrecovery'] = 'Da, pomoè pri prijavi';
 $string['passwordsdiffer'] = 'Gesli se razlikujeta';
 $string['passwordsent'] = 'Geslo je bilo poslano';
-$string['passwordsenttext'] = '<p>Epo&#65533;ta je bila poslana na naslov $a->email. </p>
-<p><b>Med sporoèili poi&#65533;èite novo geslo.</b></p>
-<p>Novo geslo vsebuje nakljuèno zaporedje znakov. Èe &#65533;elite spremeniti ta niz, sledite povezavi: <a href=\"$a->link\">sprememba gesla </a>.</p>';
+$string['passwordsenttext'] = '<P>Epošta je bila poslana na naslov $a->email. 
+<P><B>Med sporoèili poišèite novo geslo.</B>
+<P>Novo geslo vsebuje nakljuèno zaporedje znakov. Èe želite spremeniti ta niz, sledite povezavi: <a href=$a->link>sprememba gesla </a>.';
 $string['people'] = 'Ljudje';
 $string['personalprofile'] = 'Osebni profil';
 $string['phone'] = 'Telefon';
@@ -685,35 +686,35 @@ $string['phpinfo'] = 'Podatki o PHP';
 $string['popupwindow'] = 'Odpri datoteko v novem oknu';
 $string['potentialadmins'] = 'Potencilani administratorji';
 $string['potentialcreators'] = 'Potencialni ustvarjalci predmeta';
-$string['potentialstudents'] = 'Potencialni &#65533;tudenti';
+$string['potentialstudents'] = 'Potencialni študenti';
 $string['potentialteachers'] = 'Potencilani profesorji';
 $string['preferredlanguage'] = 'Prednostni jezik';
 $string['preview'] = 'Predogled';
 $string['previeworchoose'] = 'Predogled ali izbira izgleda';
-$string['previous'] = 'Prej&#65533;nji';
+$string['previous'] = 'Prejšnji';
 $string['publicdirectory'] = 'Javna mapa';
 $string['publicdirectory0'] = 'Prosimo, da ne objavljate tega naslova';
 $string['publicdirectory1'] = 'Objavi samo naslov';
 $string['publicdirectory2'] = 'Objavi naslov s povezavo';
 $string['publicsitefileswarning'] = 'Opomba: vse datoteke na tem mestu so dostopne vsem ';
-$string['question'] = 'Vpra&#65533;anje';
+$string['question'] = 'Vprašanje';
 $string['readinginfofrombackup'] = 'Branje podatkov iz varnostne kopije';
 $string['readme'] = 'BERIME';
 $string['recentactivity'] = 'Zadnja aktivnost';
 $string['recentactivityreport'] = 'Podrobno poroèilo o zadnjih aktivnostih...';
-$string['refreshingevents'] = 'Osve&#65533;evanje dogodkov';
+$string['refreshingevents'] = 'Osveževanje dogodkov';
 $string['registration'] = 'Registracija Moodle';
-$string['registrationemail'] = 'Obve&#65533;èanje po epo&#65533;ti';
-$string['registrationinfo'] = '<p>Ta stran vam omogoèa, da registrirate va&#65533; portal pri moodle.org.  Registracija je brezplaèna. Glavna korist registracije je, da boste dodani v seznam za po&#65533;iljanje epo&#65533;te o pomembnih zadevah kot so varnostni popravki in nove razlièice portala Moodle.</p>
-<p>Va&#65533;i podatki bodo skrbno varovani in jih ne bomo prodali ali posredovali nikomur.  Edini razlog za zbiranje podatkov je zagotavljanje va&#65533;e podpore in posodobitev statistike o uporabi portala Moodle.</p>
-<p>Èe &#65533;elite, bomo ime va&#65533;ega stre&#65533;nika, dr&#65533;avo in URL javni dodali na seznam stre&#65533;nikov Moodle.</p>
-<p>Nova registracija je preverjena preden je stre&#65533;nik dodan na seznam. Za posodobitve podatkov zadostuje ponovno po&#65533;iljanje podatkov s tem obrazcem.</p>';
-$string['registrationno'] = 'Ne &#65533;elim prejemati epo&#65533;te';
-$string['registrationsend'] = 'Po&#65533;lji podatke za registracijo na moodle.org';
-$string['registrationyes'] = 'Da, obve&#65533;èajte me o pomembnih zadevah';
+$string['registrationemail'] = 'Obvešèanje po epošti';
+$string['registrationinfo'] = '<p>Ta stran vam omogoèa, da registrirate vaš portal pri moodle.org.  Registracija je brezplaèna. Glavna korist registracije je, da boste dodani v seznam za pošiljanje epošte o pomembnih zadevah kot so varnostni popravki in nove razlièice portala Moodle.
+<p>Vaši podatki bodo skrbno varovani in jih ne bomo prodali ali posredovali nikomur.  Edini razlog za zbiranje podatkov je zagotavljanje vaše podpore in posodobitev statistike o uporabi portala Moodle.
+<p>Èe želite, bomo ime vašega strežnika, državo in URL javni dodali na seznam strežnikov Moodle.
+<p>Nova registracija je preverjena preden je strežnik dodan na seznam. Za posodobitve podatkov zadostuje ponovno pošiljanje podatkov s tem obrazcem.';
+$string['registrationno'] = 'Ne želim prejemati epošte';
+$string['registrationsend'] = 'Pošlji podatke za registracijo na moodle.org';
+$string['registrationyes'] = 'Da, obvešèajte me o pomembnih zadevah';
 $string['removeadmin'] = 'Odstrani administratorja';
 $string['removecreator'] = 'Odtsrani ustvarjalca predmeta';
-$string['removestudent'] = 'Odstrani &#65533;tudenta';
+$string['removestudent'] = 'Odstrani študenta';
 $string['removeteacher'] = 'Odstrani profesorja';
 $string['rename'] = 'Preimenuj';
 $string['renamefileto'] = 'Preimenuj <b>$a</b> v';
@@ -724,12 +725,12 @@ $string['resources'] = 'Viri';
 $string['restore'] = 'Obnovi';
 $string['restorecancelled'] = 'Obnova preklicana';
 $string['restorecoursenow'] = 'Obnovi ta predmet sedaj!';
-$string['restorefinished'] = 'Obnova uspe&#65533;no zakljuèena';
+$string['restorefinished'] = 'Obnova uspešno zakljuèena';
 $string['restoreto'] = 'Obnovi na';
-$string['returningtosite'] = 'Se vraèate na ta stre&#65533;nik?';
-$string['revert'] = 'Vrnitev v prej&#65533;nje stanje';
+$string['returningtosite'] = 'Se vraèate na ta strežnik?';
+$string['revert'] = 'Vrnitev v prejšnje stanje';
 $string['role'] = 'Vloga';
-$string['rssarticles'] = '&#65533;tevilo zadnjih RSS èlankov';
+$string['rssarticles'] = 'Število zadnjih RSS èlankov';
 $string['rsstype'] = 'RSS odziv za to aktivnost';
 $string['savechanges'] = 'Shrani spremembe';
 $string['saveto'] = 'Shrani v';
@@ -745,54 +746,54 @@ $string['scheduledbackupstatus'] = 'Stanje naèrtovanih varovanj podatkov ';
 $string['search'] = 'Iskanje';
 $string['searchagain'] = 'Ponovno iskanje';
 $string['searchcourses'] = 'Iskanje predmeta';
-$string['searchhelp'] = 'I&#65533;èete lahko z veè besedami.<br />beseda : poi&#65533;èi v besedilu.<br />+beseda : poi&#65533;èi le popolnoma enake besede.<br />-beseda : izloèi zadetke s to besedo.';
+$string['searchhelp'] = 'Išèete lahko z veè besedami.<p>beseda : poišèi v besedilu.<br>+beseda : poišèi le popolnoma enake besede.<br>-beseda : izloèi zadetke s to besedo.';
 $string['searchresults'] = 'Rezultat iskanja';
 $string['sec'] = 'sek';
 $string['secs'] = 'sekund';
 $string['section'] = 'Sekcija';
 $string['sections'] = 'Sekcije';
 $string['select'] = 'Izberite';
-$string['selectacountry'] = 'Izberite dr&#65533;avo';
-$string['selectednowmove'] = '&#65533;tevilo datotek za premik: $a. Pojdite na ciljno mesto in pritisnite \'Premik datotek na to mesto\'';
-$string['senddetails'] = 'Po&#65533;lji podrobnosti po epo&#65533;ti';
+$string['selectacountry'] = 'Izberite državo';
+$string['selectednowmove'] = 'Število datotek za premik: $a. Pojdite na ciljno mesto in pritisnite \'Premik datotek na to mesto\'';
+$string['senddetails'] = 'Pošlji podrobnosti po epošti';
 $string['separateandconnected'] = 'Loèeno in povezano znanje';
-$string['serverlocaltime'] = 'Krajevni èas stre&#65533;nika';
+$string['serverlocaltime'] = 'Krajevni èas strežnika';
 $string['settings'] = 'Nastavitve';
 $string['shortname'] = 'Kratko iime';
-$string['shortnametaken'] = 'Kratko ime predmeta &#65533;e obstaja ($a)';
-$string['shortsitename'] = 'Kratek naziv stre&#65533;nika (npr. ena beseda)';
-$string['show'] = 'Prika&#65533;i';
-$string['showall'] = 'Prika&#65533;i vse $a';
-$string['showallcourses'] = 'Prika&#65533;i vse predmete';
-$string['showalltopics'] = 'Prika&#65533;i vse teme';
-$string['showallusers'] = 'Prika&#65533;i vse uporabnike';
-$string['showallweeks'] = 'Prika&#65533;i vse tedne';
-$string['showgrades'] = 'Prika&#65533;i ocene';
-$string['showlistofcourses'] = 'Prika&#65533;i seznam predmetov';
-$string['showonlytopic'] = 'Prika&#65533;i le temo $a';
-$string['showonlyweek'] = 'Prika&#65533;i le teden $a';
-$string['showrecent'] = 'Prika&#65533;i zadnjo aktivnost';
-$string['showreports'] = 'Prika&#65533;i poroèila o aktivnosti';
-$string['showtheselogs'] = 'Prika&#65533;i te dnevnike';
+$string['shortnametaken'] = 'Kratko ime predmeta že obstaja ($a)';
+$string['shortsitename'] = 'Kratek naziv strežnika (npr. ena beseda)';
+$string['show'] = 'Prikaži';
+$string['showall'] = 'Prikaži vse $a';
+$string['showallcourses'] = 'Prikaži vse predmete';
+$string['showalltopics'] = 'Prikaži vse teme';
+$string['showallusers'] = 'Prikaži vse uporabnike';
+$string['showallweeks'] = 'Prikaži vse tedne';
+$string['showgrades'] = 'Prikaži ocene';
+$string['showlistofcourses'] = 'Prikaži seznam predmetov';
+$string['showonlytopic'] = 'Prikaži le temo $a';
+$string['showonlyweek'] = 'Prikaži le teden $a';
+$string['showrecent'] = 'Prikaži zadnjo aktivnost';
+$string['showreports'] = 'Prikaži poroèila o aktivnosti';
+$string['showtheselogs'] = 'Prikaži te dnevnike';
 $string['since'] = 'Od';
-$string['site'] = 'Stre&#65533;nik';
-$string['sitefiles'] = 'Datoteke na stre&#65533;niku';
-$string['sitelogs'] = 'Dnevniki na stre&#65533;niku';
-$string['sitenews'] = 'Novice na stre&#65533;niku';
-$string['sites'] = 'Stre&#65533;niki';
-$string['sitesettings'] = 'Nastavitve stre&#65533;nika';
+$string['site'] = 'Strežnik';
+$string['sitefiles'] = 'Datoteke na strežniku';
+$string['sitelogs'] = 'Dnevniki na strežniku';
+$string['sitenews'] = 'Novice na strežniku';
+$string['sites'] = 'Strežniki';
+$string['sitesettings'] = 'Nastavitve strežnika';
 $string['size'] = 'Velikost';
 $string['sizeb'] = 'bytov';
 $string['sizegb'] = 'Gb';
 $string['sizekb'] = 'Kb';
 $string['sizemb'] = 'Mb';
-$string['socialheadline'] = 'Dru&#65533;beni forum - zadnje teme';
+$string['socialheadline'] = 'Družbeni forum - zadnje teme';
 $string['someallowguest'] = 'Do nekaterih predmetov sme dostopati gost';
 $string['someerrorswerefound'] = 'Nekateri podatki manjkajo ali so napaèni. Glejte podrobnosti spodaj.';
 $string['sortby'] = 'Urejeno po';
 $string['startdate'] = 'Datum zaèetka predmeta';
-$string['startsignup'] = 'Ustvarite si nov uporabni&#65533;ki raèun';
-$string['state'] = 'Dr&#65533;ava/provinca';
+$string['startsignup'] = 'Ustvarite si nov uporabniški raèun';
+$string['state'] = 'Država/provinca';
 $string['status'] = 'Stanje';
 $string['strftimedate'] = '%%d %%B %%Y';
 $string['strftimedateshort'] = '%%d %%B';
@@ -805,10 +806,10 @@ $string['strftimerecent'] = '%%d %%b, %%H:%%M';
 $string['strftimerecentfull'] = '%%a, %%d %%b %%Y, %%I:%%M %%p';
 $string['strftimetime'] = '%%I:%%M %%p';
 $string['stringsnotset'] = 'Naslednji nizi niso definirani $a';
-$string['studentnotallowed'] = '&#65533;al se ne morete udele&#65533;iti predmeta kot  \'$a\'';
-$string['students'] = '&#65533;tudenti';
+$string['studentnotallowed'] = 'Žal se ne morete udeležiti predmeta kot  \'$a\'';
+$string['students'] = 'Študenti';
 $string['subcategories'] = 'Pod-kategorije';
-$string['success'] = 'Uspe&#65533;no';
+$string['success'] = 'Uspešno';
 $string['summary'] = 'Povzetek';
 $string['summaryof'] = 'Povzetek  $a';
 $string['supplyinfo'] = 'Prosimo, da vnesite svoje podatke';
@@ -824,29 +825,29 @@ $string['themes'] = 'Teme';
 $string['themesaved'] = 'Tema shranjena';
 $string['thischarset'] = 'iso-8859-2';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Sloven&#353;&#232;ina';
+$string['thislanguage'] = 'Slovenšèina';
 $string['time'] = 'Èas';
 $string['timezone'] = 'Èasovni pas';
 $string['to'] = 'Prejme';
 $string['today'] = 'Danes';
-$string['todaylogs'] = 'Dana&#65533;nji dnevnik';
+$string['todaylogs'] = 'Današnji dnevnik';
 $string['toomanytoshow'] = 'Preveè uporabnikov za prikaz';
 $string['top'] = 'Na vrh';
 $string['topic'] = 'Tema';
 $string['topichide'] = 'Skrij temo pred $a';
 $string['topicoutline'] = 'Osnutek teme';
-$string['topicshow'] = 'Prika&#65533;i temo $a';
+$string['topicshow'] = 'Prikaži temo $a';
 $string['total'] = 'Skupaj';
 $string['turneditingoff'] = 'Izkljuèi urejanje';
 $string['turneditingon'] = 'Vkljuèi urejanje';
 $string['undecided'] = 'Neodloèeno';
-$string['unenrol'] = 'Izpi&#65533;i';
-$string['unenrolallstudents'] = 'Izpi&#65533;i vse &#65533;tudente';
-$string['unenrolallstudentssure'] = 'Ste preprièani, da hoèete izpisati vse &#65533;tudente iz predmeta?';
-$string['unenrolme'] = 'Izpi&#65533;i me iz $a';
+$string['unenrol'] = 'Izpiši';
+$string['unenrolallstudents'] = 'Izpiši vse študente';
+$string['unenrolallstudentssure'] = 'Ste preprièani, da hoèete izpisati vse študente iz predmeta?';
+$string['unenrolme'] = 'Izpiši me iz $a';
 $string['unenrolsure'] = 'Ste preprièani, da hoèete izpisati $a iz tega predmeta?';
 $string['unknowncategory'] = 'Neznana kategorija';
-$string['unpacking'] = 'Raz&#65533;irjanje $a';
+$string['unpacking'] = 'Razširjanje $a';
 $string['unsafepassword'] = 'Navarno geslo - poskusite kaj drugega';
 $string['unusedaccounts'] = 'Uporabniki, ki ne bodo dostopali do vsebin veè kot $a dni, bodo izpisani';
 $string['unzip'] = 'Unzip';
@@ -860,25 +861,25 @@ $string['updatethis'] = 'Posodobi $a';
 $string['updatethiscourse'] = 'Posodobi predmet';
 $string['updatinga'] = 'Posodabljanje: $a';
 $string['updatingain'] = 'Posodabljanje $a->what v $a->in';
-$string['upload'] = 'Nalaganje na stre&#65533;nik';
-$string['uploadafile'] = 'Nalo&#65533;i datoteko';
-$string['uploadedfileto'] = 'Datoteka $a->file nalo&#65533;ena v mapo $a->directory';
+$string['upload'] = 'Nalaganje na strežnik';
+$string['uploadafile'] = 'Naloži datoteko';
+$string['uploadedfileto'] = 'Datoteka $a->file naložena v mapo $a->directory';
 $string['uploadnofilefound'] = 'Datoteka ni najdena. Ste preprièani, da ste jo izbrali za nalaganje?';
 $string['uploadnotallowed'] = 'Nalaganje datotek ni dovoljeno';
-$string['uploadproblem'] = 'Med nalaganjem datoteke \'$a\' je pri&#65533;lo do napake(je bila predolga?)';
-$string['uploadthisfile'] = 'Nalo&#65533;i to datoteko';
-$string['uploadusers'] = 'Nalo&#65533;i uporabnike';
-$string['usedinnplaces'] = '&#65533;t. mest uporabe: $a ';
+$string['uploadproblem'] = 'Med nalaganjem datoteke \'$a\' je prišlo do napake(je bila predolga?)';
+$string['uploadthisfile'] = 'Naloži to datoteko';
+$string['uploadusers'] = 'Naloži uporabnike';
+$string['usedinnplaces'] = 'Št. mest uporabe: $a ';
 $string['user'] = 'uporabnik';
 $string['userconfirmed'] = 'Potrjeno $a';
 $string['userdata'] = 'Uporabnikovi podatki';
 $string['userdeleted'] = 'Uporabnikov raèun je izbrisan';
 $string['userdescription'] = 'Opis';
 $string['userfiles'] = 'Uporabnikove datoteke';
-$string['username'] = 'Uporabni&#65533;ko ime';
-$string['usernameexists'] = 'Uporabni&#65533;ko ime &#65533;e obstaja';
-$string['usernotconfirmed'] = 'Ni bilo mo&#65533;no potrditi $a';
-$string['userprofilefor'] = 'Uporabni&#65533;ki profil $a';
+$string['username'] = 'Uporabniško ime';
+$string['usernameexists'] = 'Uporabniško ime že obstaja';
+$string['usernotconfirmed'] = 'Ni bilo možno potrditi $a';
+$string['userprofilefor'] = 'Uporabniški profil $a';
 $string['users'] = 'Uporabniki';
 $string['usersnew'] = 'Novi uporabniki';
 $string['userzones'] = 'Uporabnikoi èasovni pasovi';
@@ -889,42 +890,42 @@ $string['webpage'] = 'Spletna stran';
 $string['week'] = 'Teden';
 $string['weekhide'] = 'Skrij teden pred: $a';
 $string['weeklyoutline'] = 'Osnutek tedna';
-$string['weekshow'] = 'Prika&#65533;i teden za: $a';
-$string['welcometocourse'] = 'Dobrodo&#65533;li na $a';
-$string['welcometocoursetext'] = 'Dobrodo&#65533;li v predmetu $a->coursename!
+$string['weekshow'] = 'Prikaži teden za: $a';
+$string['welcometocourse'] = 'Dobrodošli na $a';
+$string['welcometocoursetext'] = 'Dobrodošli v predmetu $a->coursename!
 
-Èe &#65533;e niste prilagodili izgleda strani, to storite sedaj:
+Èe še niste prilagodili izgleda strani, to storite sedaj:
 
   $a->profileurl';
 $string['whattocallzip'] = 'Kako boste imenovali stisnjeno datoteko?';
 $string['withchosenfiles'] = 'Z izbranimi datotekami';
 $string['withoutuserdata'] = 'brez uporabnikovih podatkov';
 $string['withuserdata'] = 'z uporabnikovimi podatki';
-$string['wordforstudent'] = 'Va&#65533;a beseda za ';
-$string['wordforstudenteg'] = 'npr. dijak, udele&#65533;enec ipd.';
-$string['wordforstudents'] = 'Va&#65533;a beseda za ';
-$string['wordforstudentseg'] = 'npr. dijaki, udele&#65533;enci ipd.';
-$string['wordforteacher'] = 'Va&#65533;a beseda za ';
+$string['wordforstudent'] = 'Vaša beseda za ';
+$string['wordforstudenteg'] = 'npr. dijak, udeleženec ipd.';
+$string['wordforstudents'] = 'Vaša beseda za ';
+$string['wordforstudentseg'] = 'npr. dijaki, udeleženci ipd.';
+$string['wordforteacher'] = 'Vaša beseda za ';
 $string['wordforteachereg'] = 'npr. uèitelj, tutor, mentor ipd.';
-$string['wordforteachers'] = 'Va&#65533;a beseda za ';
+$string['wordforteachers'] = 'Vaša beseda za ';
 $string['wordforteacherseg'] = 'npr. uèitelji, tutorji, mentorji ipd.';
-$string['writingcategoriesandquestions'] = 'Pisanje kategorij in vpra&#65533;anj';
+$string['writingcategoriesandquestions'] = 'Pisanje kategorij in vprašanj';
 $string['writingcoursedata'] = 'Pisanje podatkov o predmetu';
 $string['writingeventsinfo'] = 'Pisanje podatkov o dogodkih';
-$string['writinggeneralinfo'] = 'Pisanje splo&#65533;nih podatkov';
+$string['writinggeneralinfo'] = 'Pisanje splošnih podatkov';
 $string['writinggroupsinfo'] = 'Pisanje podatkov o skupini';
 $string['writingheader'] = 'Pisanje glave';
 $string['writingloginfo'] = 'Pisanje podatkov o dnevnikih';
 $string['writingmoduleinfo'] = 'Pisanje podatkov o modulih';
 $string['writingscalesinfo'] = 'Pisanje merskih lestvic';
 $string['writinguserinfo'] = 'Pisanje podatkov o uporabniku';
-$string['wrongpassword'] = 'Napaèno geslo za to uporabni&#65533;ko ime';
+$string['wrongpassword'] = 'Napaèno geslo za to uporabniško ime';
 $string['yes'] = 'Da';
 $string['youareabouttocreatezip'] = 'Stisnjena datoteka bo vsebovala';
 $string['youaregoingtorestorefrom'] = 'Zaèeli boste z varnostnim kopiranjem za';
-$string['yourlastlogin'] = 'Va&#65533;a zadnja prijava';
+$string['yourlastlogin'] = 'Vaša zadnja prijava';
 $string['yourself'] = 'vam';
-$string['yourteacher'] = 'va&#65533; $a';
+$string['yourteacher'] = 'vaš $a';
 $string['zippingbackup'] = 'Stiskanje varnostne kopije';
 
 ?>

@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
 //  Moves, adds, updates, duplicates or deletes modules in a course
 
@@ -7,8 +7,6 @@
 
     require_login();
 
-    $sectionreturn = optional_param('sr', '', PARAM_INT);
-
     if (isset($SESSION->modform)) {   // Variables are stored in the session
         $mod = $SESSION->modform;
         unset($SESSION->modform);
@@ -16,18 +14,18 @@
         $mod = (object)$_POST;
     }
 
-    if (isset($cancel)) {
+    if (isset($cancel)) {  
         if (!empty($SESSION->returnpage)) {
             $return = $SESSION->returnpage;
             unset($SESSION->returnpage);
             redirect($return);
         } else {
-            redirect("view.php?id=$mod->course#$sectionreturn");
+            redirect("view.php?id=$mod->course");
         }
     }
 
 
-    if (isset($_POST["course"]) and confirm_sesskey()) {    // add or update form submitted
+    if (isset($_POST["course"])) {    // add or update form submitted
 
         if (!$course = get_record("course", "id", $mod->course)) {
             error("This course doesn't exist");
@@ -37,9 +35,7 @@
             error("You can't modify this course!");
         }
 
-        $mod->modulename = clean_filename($mod->modulename);  // For safety
         $modlib = "$CFG->dirroot/mod/$mod->modulename/lib.php";
-
         if (file_exists($modlib)) {
             include_once($modlib);
         } else {
@@ -53,10 +49,8 @@
         switch ($mod->mode) {
             case "update":
 
-                if (isset($mod->name)) {
-                    if (trim($mod->name) == '') {
-                        unset($mod->name);
-                    }
+                if (trim($mod->name) == '') {
+                    unset($mod->name);
                 }
 
                 $return = $updateinstancefunction($mod);
@@ -68,31 +62,18 @@
                     }
                     error("Could not update the $mod->modulename", "view.php?id=$course->id");
                 }
-
-                if (isset($mod->visible)) {
-                    set_coursemodule_visible($mod->coursemodule, $mod->visible);
-                }
-
-                if (isset($mod->groupmode)) {
-                    set_coursemodule_groupmode($mod->coursemodule, $mod->groupmode);
-                }
-
                 if (is_string($return)) {
                     error($return, "view.php?id=$course->id");
                 }
 
-                if (isset($mod->redirect)) {
-                    $SESSION->returnpage = $mod->redirecturl;
-                } else {
-                    $SESSION->returnpage = "$CFG->wwwroot/mod/$mod->modulename/view.php?id=$mod->coursemodule";
-                }
+                $SESSION->returnpage = "$CFG->wwwroot/mod/$mod->modulename/view.php?id=$mod->coursemodule";
 
-                add_to_log($course->id, "course", "update mod",
-                           "../mod/$mod->modulename/view.php?id=$mod->coursemodule",
-                           "$mod->modulename $mod->instance");
-                add_to_log($course->id, $mod->modulename, "update",
-                           "view.php?id=$mod->coursemodule",
-                           "$mod->instance", $mod->coursemodule);
+                add_to_log($course->id, "course", "update mod", 
+                           "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
+                           "$mod->modulename $mod->instance"); 
+                add_to_log($course->id, $mod->modulename, "update", 
+                           "view.php?id=$mod->coursemodule", 
+                           "$mod->instance", $mod->coursemodule); 
                 break;
 
             case "add":
@@ -114,13 +95,10 @@
                     error($return, "view.php?id=$course->id");
                 }
 
-                if (!isset($mod->groupmode)) { // to deal with pre-1.5 modules
-                    $mod->groupmode = $course->groupmode;  /// Default groupmode the same as course
-                }
+                $mod->groupmode = $course->groupmode;  /// Default groupmode the same as course
 
                 $mod->instance = $return;
-
-                // course_modules and course_sections each contain a reference
+                // course_modules and course_sections each contain a reference 
                 // to each other, so we have to update one of them twice.
 
                 if (! $mod->coursemodule = add_course_module($mod) ) {
@@ -129,31 +107,27 @@
                 if (! $sectionid = add_mod_to_section($mod) ) {
                     error("Could not add the new course module to that section");
                 }
+                //We get the section's visible field status
+                $visible = get_field("course_sections","visible","id",$sectionid);
+
+                if (! set_field("course_modules", "visible", $visible, "id", $mod->coursemodule)) {
+                    error("Could not update the course module with the correct visibility");
+                }   
 
                 if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
                     error("Could not update the course module with the correct section");
-                }
+                }   
 
-                if (!isset($mod->visible)) {   // We get the section's visible field status
-                    $mod->visible = get_field("course_sections","visible","id",$sectionid);
-                }
-                // make sure visibility is set correctly (in particular in calendar)
-                set_coursemodule_visible($mod->coursemodule, $mod->visible);
-
-                if (isset($mod->redirect)) {
-                    $SESSION->returnpage = $mod->redirecturl;
-                } else {
-                    $SESSION->returnpage = "$CFG->wwwroot/mod/$mod->modulename/view.php?id=$mod->coursemodule";
-                }
-
-                add_to_log($course->id, "course", "add mod",
-                           "../mod/$mod->modulename/view.php?id=$mod->coursemodule",
-                           "$mod->modulename $mod->instance");
-                add_to_log($course->id, $mod->modulename, "add",
-                           "view.php?id=$mod->coursemodule",
-                           "$mod->instance", $mod->coursemodule);
+                $SESSION->returnpage = "$CFG->wwwroot/mod/$mod->modulename/view.php?id=$mod->coursemodule";
+                
+                add_to_log($course->id, "course", "add mod", 
+                           "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
+                           "$mod->modulename $mod->instance"); 
+                add_to_log($course->id, $mod->modulename, "add", 
+                           "view.php?id=$mod->coursemodule", 
+                           "$mod->instance", $mod->coursemodule); 
                 break;
-
+                
             case "delete":
                 if (! $deleteinstancefunction($mod->instance)) {
                     notify("Could not delete the $mod->modulename (instance)");
@@ -164,12 +138,9 @@
                 if (! delete_mod_from_section($mod->coursemodule, "$mod->section")) {
                     notify("Could not delete the $mod->modulename from that section");
                 }
-
-                unset($SESSION->returnpage);
-
-                add_to_log($course->id, "course", "delete mod",
-                           "view.php?id=$mod->course",
-                           "$mod->modulename $mod->instance", $mod->coursemodule);
+                add_to_log($course->id, "course", "delete mod", 
+                           "view.php?id=$mod->course", 
+                           "$mod->modulename $mod->instance", $mod->coursemodule); 
                 break;
             default:
                 error("No mode defined");
@@ -183,13 +154,38 @@
             unset($SESSION->returnpage);
             redirect($return);
         } else {
-            redirect("view.php?id=$course->id#$sectionreturn");
+            redirect("view.php?id=$course->id");
         }
         exit;
     }
 
-    if ((isset($_GET['movetosection']) or isset($_GET['moveto'])) and confirm_sesskey()) {
 
+    if (isset($_GET['move'])) {  
+
+        require_variable($id);   
+
+        if (! $cm = get_record("course_modules", "id", $id)) {
+            error("This course module doesn't exist");
+        }
+
+        if (!isteacheredit($cm->course)) {
+            error("You can't modify this course!");
+        }
+    
+        move_module($cm, $_GET['move']);
+
+        rebuild_course_cache($cm->course);
+
+        $site = get_site();
+        if ($site->id == $cm->course) {
+            redirect($CFG->wwwroot);
+        } else {
+            redirect("view.php?id=$cm->course");
+        }
+        exit;
+
+    } else if (isset($_GET['movetosection']) or isset($_GET['moveto'])) {  
+        
         if (! $cm = get_record("course_modules", "id", $USER->activitycopy)) {
             error("The copied course module doesn't exist!");
         }
@@ -225,15 +221,16 @@
 
         rebuild_course_cache($section->course);
 
-        if (SITEID == $section->course) {
+        $site = get_site();
+        if ($site->id == $section->course) {
             redirect($CFG->wwwroot);
         } else {
-            redirect("view.php?id=$section->course#$sectionreturn");
+            redirect("view.php?id=$section->course");
         }
 
-    } else if (isset($_GET['indent']) and confirm_sesskey()) {
+    } else if (isset($_GET['indent'])) {  
 
-        require_variable($id);
+        require_variable($id);   
 
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("This course module doesn't exist");
@@ -249,14 +246,15 @@
             error("Could not update the indent level on that course module");
         }
 
-        if (SITEID == $cm->course) {
+        $site = get_site();
+        if ($site->id == $cm->course) {
             redirect($CFG->wwwroot);
         } else {
-            redirect("view.php?id=$cm->course#$sectionreturn");
+            redirect("view.php?id=$cm->course");
         }
         exit;
 
-    } else if (isset($_GET['hide']) and confirm_sesskey()) {
+    } else if (isset($_GET['hide'])) {
 
         if (! $cm = get_record("course_modules", "id", $_GET['hide'])) {
             error("This course module doesn't exist");
@@ -265,19 +263,20 @@
         if (!isteacheredit($cm->course)) {
             error("You can't modify this course!");
         }
-
-        set_coursemodule_visible($cm->id, 0);
+   
+        hide_course_module($cm->id);
 
         rebuild_course_cache($cm->course);
 
-        if (SITEID == $cm->course) {
+        $site = get_site();
+        if ($site->id == $cm->course) {
             redirect($CFG->wwwroot);
         } else {
-            redirect("view.php?id=$cm->course#$sectionreturn");
+            redirect("view.php?id=$cm->course");
         }
         exit;
 
-    } else if (isset($_GET['show']) and confirm_sesskey()) {
+    } else if (isset($_GET['show'])) {
 
         if (! $cm = get_record("course_modules", "id", $_GET['show'])) {
             error("This course module doesn't exist");
@@ -295,19 +294,21 @@
             error("This module doesn't exist");
         }
 
-        if ($module->visible and ($section->visible or (SITEID == $cm->course))) {
-            set_coursemodule_visible($cm->id, 1);
+        $site = get_site();
+
+        if ($module->visible and ($section->visible or ($site->id == $cm->course))) {
+            show_course_module($cm->id);
             rebuild_course_cache($cm->course);
         }
 
-        if (SITEID == $cm->course) {
+        if ($site->id == $cm->course) {
             redirect($CFG->wwwroot);
         } else {
-            redirect("view.php?id=$cm->course#$sectionreturn");
+            redirect("view.php?id=$cm->course");
         }
         exit;
 
-    } else if (isset($_GET['groupmode']) and confirm_sesskey()) {
+    } else if (isset($_GET['groupmode'])) {
 
         if (! $cm = get_record("course_modules", "id", $_GET['id'])) {
             error("This course module doesn't exist");
@@ -316,19 +317,20 @@
         if (!isteacheredit($cm->course)) {
             error("You can't modify this course!");
         }
-
-        set_coursemodule_groupmode($cm->id, $_GET['groupmode']);
+   
+        set_groupmode_for_module($cm->id, $_GET['groupmode']);
 
         rebuild_course_cache($cm->course);
 
-        if (SITEID == $cm->course) {
+        $site = get_site();
+        if ($site->id == $cm->course) {
             redirect($CFG->wwwroot);
         } else {
-            redirect("view.php?id=$cm->course#$sectionreturn");
+            redirect("view.php?id=$cm->course");
         }
         exit;
 
-    } else if (isset($_GET['copy']) and confirm_sesskey()) { // value = course module
+    } else if (isset($_GET['copy'])) { // value = course module
 
         if (! $cm = get_record("course_modules", "id", $_GET['copy'])) {
             error("This course module doesn't exist");
@@ -354,9 +356,9 @@
         $USER->activitycopycourse = $cm->course;
         $USER->activitycopyname = $instance->name;
 
-        redirect("view.php?id=$cm->course#$sectionreturn");
+        redirect("view.php?id=$cm->course");
 
-    } else if (isset($_GET['cancelcopy']) and confirm_sesskey()) { // value = course module
+    } else if (isset($_GET['cancelcopy'])) { // value = course module
 
         $courseid = $USER->activitycopycourse;
 
@@ -364,9 +366,9 @@
         unset($USER->activitycopycourse);
         unset($USER->activitycopyname);
 
-        redirect("view.php?id=$courseid#$sectionreturn");
+        redirect("view.php?id=$courseid");
 
-    } else if (isset($_GET['delete']) and confirm_sesskey()) {   // value = course module
+    } else if (isset($_GET['delete'])) {   // value = course module
 
         if (! $cm = get_record("course_modules", "id", $_GET['delete'])) {
             error("This course module doesn't exist");
@@ -386,11 +388,11 @@
 
         if (! $instance = get_record($module->name, "id", $cm->instance)) {
             // Delete this module from the course right away
-            if (! delete_mod_from_section($cm->id, $cm->section)) {
-                notify("Could not delete the $module->name from that section");
-            }
             if (! delete_course_module($cm->id)) {
                 notify("Could not delete the $module->name (coursemodule)");
+            }
+            if (! delete_mod_from_section($cm->id, $cm->section)) {
+                notify("Could not delete the $module->name from that section");
             }
             error("The required instance of this module didn't exist.  Module deleted.",
                   "$CFG->wwwroot/course/view.php?id=$course->id");
@@ -405,12 +407,11 @@
         $form->modulename   = $module->name;
         $form->fullmodulename  = $fullmodulename;
         $form->instancename = $instance->name;
-        $form->sesskey      = !empty($USER->id) ? $USER->sesskey : '';
 
         $strdeletecheck = get_string("deletecheck", "", "$form->fullmodulename");
         $strdeletecheckfull = get_string("deletecheckfull", "", "$form->fullmodulename '$form->instancename'");
 
-        print_header_simple("$strdeletecheck", "",
+        print_header_simple("$strdeletecheck", "$",
                      "$strdeletecheck");
 
         print_simple_box_start("center", "60%", "#FFAAAA", 20, "noticebox");
@@ -422,7 +423,7 @@
         exit;
 
 
-    } else if (isset($_GET['update']) and confirm_sesskey()) {   // value = course module
+    } else if (isset($_GET['update'])) {   // value = course module
 
         if (! $cm = get_record("course_modules", "id", $_GET['update'])) {
             error("This course module doesn't exist");
@@ -443,12 +444,12 @@
         if (! $form = get_record($module->name, "id", $cm->instance)) {
             error("The required instance of this module doesn't exist");
         }
-
+        
         if (! $cw = get_record("course_sections", "id", $cm->section)) {
             error("This course section doesn't exist");
         }
 
-        if (isset($return)) {
+        if (isset($return)) {  
             $SESSION->returnpage = "$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id";
         }
 
@@ -459,7 +460,6 @@
         $form->modulename   = $module->name;
         $form->instance     = $cm->instance;
         $form->mode         = "update";
-        $form->sesskey      = !empty($USER->id) ? $USER->sesskey : '';
 
         $sectionname    = get_string("name$course->format");
         $fullmodulename = strtolower(get_string("modulename", $module->name));
@@ -472,7 +472,7 @@
             $pageheading = get_string("updatinga", "moodle", $fullmodulename);
         }
 
-    } else if (isset($_GET['duplicate']) and confirm_sesskey()) {   // value = course module
+    } else if (isset($_GET['duplicate'])) {   // value = course module
 
         if (! $cm = get_record("course_modules", "id", $_GET['duplicate'])) {
             error("This course module doesn't exist");
@@ -493,15 +493,15 @@
         if (! $form = get_record($module->name, "id", $cm->instance)) {
             error("The required instance of this module doesn't exist");
         }
-
+        
         if (! $cw = get_record("course_sections", "id", $cm->section)) {
             error("This course section doesn't exist");
         }
 
-        if (isset($return)) {
+        if (isset($return)) {  
             $SESSION->returnpage = "$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id";
         }
-
+        
         $section = get_field('course_sections', 'section', 'id', $cm->section);
 
         $form->coursemodule = $cm->id;
@@ -511,7 +511,6 @@
         $form->modulename   = $module->name;
         $form->instance     = $cm->instance;
         $form->mode         = "add";
-        $form->sesskey      = !empty($USER->id) ? $USER->sesskey : '';
 
         $sectionname    = get_string("name$course->format");
         $fullmodulename = strtolower(get_string("modulename", $module->name));
@@ -524,8 +523,8 @@
             $pageheading = get_string("duplicatinga", "moodle", $fullmodulename);
         }
 
-
-    } else if (isset($_GET['add']) and confirm_sesskey()) {
+        
+    } else if (isset($_GET['add'])) {
 
         if (empty($_GET['add'])) {
             redirect($_SERVER["HTTP_REFERER"]);
@@ -550,7 +549,6 @@
         $form->instance   = "";
         $form->coursemodule = "";
         $form->mode       = "add";
-        $form->sesskey    = !empty($USER->id) ? $USER->sesskey : '';
         if (isset($_GET['type'])) {
             $form->type = $_GET['type'];
         }
@@ -585,8 +583,8 @@
 
     if ($course->category) {
         print_header("$course->shortname: $streditinga", "$course->fullname",
-                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
-                      <a href=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</a> ->
+                     "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
+                      <A HREF=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</A> -> 
                       $streditinga", $focuscursor, "", false);
     } else {
         print_header("$course->shortname: $streditinga", "$course->fullname",
@@ -606,14 +604,14 @@
             $defaultformat = FORMAT_MOODLE;
         }
 
-        $icon = "<img align=\"middle\" height=\"16\" width=\"16\" src=\"$CFG->modpixpath/$module->name/icon.gif\" alt=\"\" />&nbsp;";
+        $icon = "<img align=absmiddle height=16 width=16 src=\"$CFG->modpixpath/$module->name/icon.gif\">&nbsp;";
 
         print_heading_with_help($pageheading, "mods", $module->name, $icon);
-        print_simple_box_start("center");
+        print_simple_box_start("center", "", "$THEME->cellheading");
         include_once($modform);
         print_simple_box_end();
 
-        if ($usehtmleditor and empty($nohtmleditorneeded)) {
+        if ($usehtmleditor and empty($nohtmleditorneeded)) { 
             use_html_editor($editorfields);
         }
 

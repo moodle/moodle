@@ -1,7 +1,6 @@
-<?php print_simple_box_start("center"); ?>
+<?php print_simple_box_start("center", "", "$THEME->cellheading"); ?>
 
 <form name="filters" id="filters" method="post" action="filters.php">
-<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>">
   <table align="center" border="0" cellpadding="5" cellspacing="0">
     <tr>
       <td valign="top"><div align="right">
@@ -78,20 +77,16 @@
 <br />
 
 
-<?php print_simple_box_start("center"); ?>
+<?php print_simple_box_start("center", "", "$THEME->cellheading"); ?>
 
 <form name="options" id="options" method="post" action="filters.php">
-<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>">
 <input type="hidden" name="options" value="1">
 <table cellpadding="20">
-<tr valign="top">
+<tr valign=top>
 	<td nowrap="nowrap" align="right"><?php p($strcachetext) ?>:</td>
 	<td>
     <?php 
        unset($options);
-       $options[604800]  = get_string('numdays', '', 7);
-       $options[86400]  = get_string('numdays', '', 1);
-       $options[43200]  = get_string('numhours', '', 12);
        $options[10800] = get_string('numhours', '', 3);
        $options[7200]  = get_string('numhours', '', 2);
        $options[3600]  = get_string('numhours', '', 1);
@@ -118,7 +113,7 @@
 	<?php p($strconfigcachetext) ?>
     </td>
 </tr>
-<tr valign="top">
+<tr valign=top>
 	<td nowrap="nowrap" align="right"><?php p($strfilteruploadedfiles) ?>:</td>
 	<td>
     <?php 
@@ -133,22 +128,7 @@
 	<?php p($strconfigfilteruploadedfiles) ?>
     </td>
 </tr>
-<tr valign="top">
-	<td nowrap="nowrap" align="right"><?php p($strfilterall) ?>:</td>
-	<td>
-    <?php 
-       unset($options);
-       $options[0] = get_string('no');
-       $options[1] = get_string('yes');
-
-       choose_from_menu ($options, "filterall", $CFG->filterall, "", "", "");
-    ?>
-    </td>
-    <td>
-	<?php p($strconfigfilterall) ?>
-    </td>
-</tr>
-<tr valign="top">
+<tr valign=top>
     <td>&nbsp;</td>
     <td><input type="submit" value="<?php print_string("savechanges") ?>"></td>
     <td>&nbsp;</td>

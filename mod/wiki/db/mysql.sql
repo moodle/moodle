@@ -22,8 +22,7 @@ CREATE TABLE `prefix_wiki` (
   `revertchanges` tinyint(4) NOT NULL default '1',
   `initialcontent` varchar(255) default NULL,
   `timemodified` int(10) NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `course` (`course`)
+  PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='Main wiki table';
 
 
@@ -39,17 +38,11 @@ CREATE TABLE `prefix_wiki_entries` (
   `userid` int(10) NOT NULL default '0',
   `pagename` varchar(255) NOT NULL default '',
   `timemodified` int(10) NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `wikiid` (`wikiid`),
-  KEY `course` (`course`),
-  KEY `gropuid` (`groupid`),
-  KEY `userid` (`userid`),
-  KEY `pagename` (`pagename`)
+  PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='Holds entries for each wiki start instance.';
 
 
 CREATE TABLE `prefix_wiki_pages` (
-  `id` int(10) unsigned NOT NULL auto_increment,
   `pagename` VARCHAR(160) NOT NULL,
   `version` INTEGER UNSIGNED NOT NULL DEFAULT 0,
   `flags` INTEGER UNSIGNED DEFAULT 0,
@@ -62,6 +55,5 @@ CREATE TABLE `prefix_wiki_pages` (
   `meta` MEDIUMTEXT,
   `hits` INTEGER UNSIGNED DEFAULT 0,
   `wiki` int(10) unsigned NOT NULL,
-  PRIMARY KEY `id` (`id`),
-  UNIQUE KEY `wiki_pages_uk` (`pagename`, `version`, `wiki`)
+  PRIMARY KEY id (pagename, version, wiki)
 ) TYPE=MyISAM COMMENT='Holds the Wiki-Pages';

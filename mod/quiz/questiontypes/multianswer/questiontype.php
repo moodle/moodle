@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
 ///////////////////
 /// MULTIANSWER /// (Embedded - cloze)
@@ -63,16 +63,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         if (!$oldmultianswers = get_records("quiz_multianswers", "question", $question->id, "id ASC")) {
             $oldmultianswers = array();
         }
-        
-        if (empty($question->name)) {
-            $result->notice = get_string("missingname", "quiz");
-            return $result;
-        }
-        if (!$question->answers) {
-            $result->notice = get_string('noquestionintext', 'quiz');
-            return $result;
-        }
-        
+
         // Insert all the new multi answers
         foreach ($question->answers as $dataanswer) {
             if ($oldmultianswer = array_shift($oldmultianswers)) {  // Existing answer, so reuse it
@@ -120,9 +111,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
 
         $question = quiz_qtype_multianswer_extract_question
                                      ($form->questiontext);
-        if (isset($authorizedquestion->id)) {
-            $question->id = $authorizedquestion->id;
-        }
+        $question->id = $authorizedquestion->id;
         $question->qtype = $authorizedquestion->qtype;
         $question->category = $authorizedquestion->category;
 
@@ -133,40 +122,45 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
             $question->image = $form->image;
         }
 
-        if (!empty($question->id)) { // Question already exists
-            if (!update_record("quiz_questions", $question)) {
-                error("Could not update question!");
+        // Formcheck
+        $err = array();
+        if (empty($question->name)) {
+            $err["name"] = get_string("missingname", "quiz");
+        }
+        if (empty($question->questiontext)) {
+            $err["questiontext"] = get_string("missingquestiontext", "quiz");
+        }
+        if ($err) { // Formcheck failed
+            notify(get_string("someerrorswerefound"));
+
+        } else {
+
+            if (!empty($question->id)) { // Question already exists
+                if (!update_record("quiz_questions", $question)) {
+                    error("Could not update question!");
+                }
+            } else {         // Question is a new one
+                $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
+                if (!$question->id = insert_record("quiz_questions", $question)) {
+                    error("Could not insert new question!");
+                }
             }
-        } else {         // Question is a new one
-            $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
-            if (!$question->id = insert_record("quiz_questions", $question)) {
-                error("Could not insert new question!");
+    
+            // Now to save all the answers and type-specific options
+            $result = $this->save_question_options($question);
+
+            if (!empty($result->error)) {
+                error($result->error);
             }
-        }
 
-        // Now to save all the answers and type-specific options
-        
-        $form->id       = $question->id;
-        $form->qtype    = $question->qtype;
-        $form->category = $question->category;
-        
-        $result = $this->save_question_options($question);
-
-        if (!empty($result->error)) {
-            error($result->error);
+            if (!empty($result->notice)) {
+                notice_yesno($result->notice, "question.php?id=$question->id", "edit.php");
+                print_footer($course);
+                exit;
+            }
+    
+            redirect("edit.php");
         }
-
-        if (!empty($result->notice)) {
-            notice($result->notice, "question.php?id=$question->id");
-        }
-
-        if (!empty($result->noticeyesno)) {
-            notice_yesno($result->noticeyesno, "question.php?id=$question->id", "edit.php");
-            print_footer($course);
-            exit;
-        }
-        
-        return $question;
     }
     
     function convert_to_response_answer_field($questionresponse) {
@@ -206,6 +200,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
 
     function print_question_formulation_and_controls($question,
             $quiz, $readonly, $answers, $correctanswers, $nameprefix) {
+         global $THEME;
 
         // For this question type, we better print the image on top:
         quiz_print_possible_question_image($quiz->id, $question);
@@ -255,7 +250,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
             if ($quiz->feedback && isset($answers[$inputname])
                     && '' !== $answers[$inputname]->feedback) {
                 $title = str_replace("'", "\\'", $answers[$inputname]->feedback);
-                $popup = " onmouseover=\"return overlib('$title', CAPTION, '$strfeedback', FGCOLOR);\" ".
+                $popup = " onmouseover=\"return overlib('$title', CAPTION, '$strfeedback', FGCOLOR, '$THEME->cellcontent');\" ".
                          " onmouseout=\"return nd();\" ";
             } else {
                 $popup = '';
@@ -276,7 +271,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
                                 ? ' selected="selected" ' : '';
                         $outputoptions .= "<option value=\"$mcanswer->id\" $selected>$mcanswer->answer</option>";
                     }
-                   echo "<select $popup $style name=\"$inputname\">";
+                   echo "<select $popup $style name=\"$inputname\" $readonly>";
                    echo $outputoptions;
                    echo '</select>';
                    break;

@@ -1,8 +1,9 @@
-<?php // $Id$
+<?PHP // $Id$
 
     require_once("../config.php");
 
-    $choose = optional_param("choose",'',PARAM_FILE);   // set this theme as default
+    optional_variable($preview);   // which theme to show
+    optional_variable($choose);    // set this theme as default
 
     if (! $site = get_site()) {
         error("Site doesn't exist!");
@@ -14,30 +15,35 @@
         error("You must be an administrator to change themes.");
     }
 
-    unset($SESSION->theme);
+    if ($choose) {
+        if (!is_dir($choose)) {
+            error("This theme is not installed!");
+        }
+        $preview = $choose;
+    }
+
+    if ($preview) {
+        $CFG->theme = $preview;
+        $CFG->stylesheet  = "$CFG->wwwroot/theme/$CFG->theme/styles.php?themename=$preview";
+        $CFG->header      = "$CFG->dirroot/theme/$CFG->theme/header.html";
+        $CFG->footer      = "$CFG->dirroot/theme/$CFG->theme/footer.html";
+        include ("$CFG->theme/config.php");
+    }
 
     $stradministration = get_string("administration");
     $strconfiguration = get_string("configuration");
     $strthemes = get_string("themes");
     $strpreview = get_string("preview");
-    $strchoose = get_string("choose");
-    $strinfo = get_string("info");
+    $strsavechanges = get_string("savechanges");
     $strtheme = get_string("theme");
     $strthemesaved = get_string("themesaved");
-    $strscreenshot = get_string("screenshot");
-    $stroldtheme = get_string("oldtheme");
 
+    print_header("$site->shortname: $strthemes", $site->fullname, 
+                 "<a href=\"$CFG->wwwroot/admin/index.php\">$stradministration</a> -> ".
+                 "<a href=\"$CFG->wwwroot/admin/configure.php\">$strconfiguration</a> -> $strthemes");
 
-    if ($choose and confirm_sesskey()) {
-        if (!is_dir($choose)) {
-            error("This theme is not installed!");
-        }
+    if ($choose) {
         if (set_config("theme", $choose)) {
-            theme_setup($choose);
-
-            print_header("$site->shortname: $strthemes", $site->fullname, 
-                 "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> -> ".
-                 "<a href=\"$CFG->wwwroot/$CFG->admin/configure.php\">$strconfiguration</a> -> $strthemes");
             print_heading(get_string("themesaved"));
             print_continue("$CFG->wwwroot/");
 
@@ -59,85 +65,29 @@
         }
     }
 
-    print_header("$site->shortname: $strthemes", $site->fullname, 
-                 "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> -> ".
-                 "<a href=\"$CFG->wwwroot/$CFG->admin/configure.php\">$strconfiguration</a> -> $strthemes");
-
-
-    print_heading($strthemes);
+    print_heading(get_string("previeworchoose"));
 
     $themes = get_list_of_plugins("theme");
-    $sesskey = !empty($USER->id) ? $USER->sesskey : '';
 
-    echo "<table align=\"center\" cellpadding=\"7\" cellspacing=\"5\">";
-    echo "<tr class=\"generaltableheader\"><th>$strtheme</th><th>$strinfo</th></tr>";
+    echo "<TABLE ALIGN=CENTER cellpadding=7 cellspacing=5>";
+    echo "<TR><TH class=\"generaltableheader\">$strtheme<TH class=\"generaltableheader\">&nbsp;</TR>";
     foreach ($themes as $theme) {
-
-        unset($THEME);
-
-        if (!file_exists($CFG->themedir.$theme.'/config.php')) {   // bad folder
-            continue;
-        }
-
-        include_once($CFG->themedir.$theme.'/config.php');
-
-        $readme = '';
-        $screenshot = '';
-        $screenshotpath = '';
-
-        if (file_exists("$theme/README.html")) {
-            $readme =  '<li>'.
-            link_to_popup_window('/theme/'.$theme.'/README.html', $theme, $strinfo, 400, 500, '', 'none', true).'</li>';
-        } else if (file_exists("$theme/README.txt")) {
-            $readme =  '<li>'.
-            link_to_popup_window('/theme/'.$theme.'/README.txt', $theme, $strinfo, 400, 500, '', 'none', true).'</li>';
-        }
-        if (file_exists("$theme/screenshot.png")) {
-            $screenshotpath = "$theme/screenshot.png";
-        } else if (file_exists("$theme/screenshot.jpg")) {
-            $screenshotpath = "$theme/screenshot.jpg";
-        }
-
-        echo "<tr>";
-        echo "<td align=\"center\">";
-
-        if ($screenshotpath) {
-            $screenshot = "<li><a target=\"$theme\" href=\"$theme/screenshot.jpg\">$strscreenshot</a></li>";
-            echo "<iframe name=\"$theme\" src=\"$screenshotpath\" height=\"200\" width=\"400\"></iframe></td>";
-        } else {
-            echo "<iframe name=\"$theme\" src=\"preview.php?preview=$theme\" height=\"200\" width=\"400\"></iframe></td>";
-        }
-
-
+        include ("$theme/config.php");
+        echo "<TR>";
         if ($CFG->theme == $theme) {
-            echo '<td valign="top" style="border-style:solid; border-width:1px; border-color=#555555">';
+            echo "<TD ALIGN=CENTER BGCOLOR=\"$THEME->body\">$theme</TD>";
+            echo "<TD ALIGN=CENTER><A HREF=\"index.php?choose=$theme\">$strsavechanges</A></TD>";
         } else {
-            echo '<td valign="top">';
+            echo "<TD ALIGN=CENTER BGCOLOR=\"$THEME->body\">";
+            echo "<A TITLE=\"$strpreview\" HREF=\"index.php?preview=$theme\">$theme</A>";
+            echo "</TD>";
+            echo "<TD>&nbsp;</TD>";
         }
-        if (isset($THEME->sheets)) {
-            echo '<p style="font-size:1.5em;font-style:bold;">'.$theme.'</p>';
-        } else {
-            echo '<p style="font-size:1.5em;font-style:bold;color:red;">'.$theme.' (Moodle 1.4)</p>';
-        }
-
-        echo '<ul>';
-
-        if ($screenshot or $readme) {
-            echo "<li><a target=\"$theme\" href=\"preview.php?preview=$theme\">$strpreview</a></li>";
-        }
-        echo $screenshot.$readme;
-        echo '</ul>';
-
-        $options = null;
-        $options['choose'] = $theme;
-        $options['sesskey'] = $sesskey;
-        print_single_button('index.php', $options, $strchoose);
-        echo '</td>';
         echo "</tr>";
     }
     echo "</table>";
 
-    echo "<br /><div align=\"center\">";
+    echo "<br><div align=center>";
     $options["frame"] = "developer.html";
     $options["sub"] = "themes";
     print_single_button("$CFG->wwwroot/doc/index.php", $options, get_string("howtomakethemes"));

@@ -1,310 +1,218 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-
 <html>
-
 <head>
-
   
-
 <title>Moodle Docs: 特徴</title>
-
   
-
 <link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
-
   
-
 <meta http-equiv="Content-Type" content="text/html; charset=EUC-JP">
-
 </head>
-
 <body bgcolor="#ffffff">
-
   
-
 <h1>特徴</h1>
-
 <blockquote>
-
   <p>Moodleは活発に進化し続けているシステムです。このページでは、Moodleの数多くの特徴の中から幾つかを取り上げます:</p>
-
   <h3>全体的なデザイン</h3>
-
   <ul>
-
-    <li>社会的構築主義教授法(協調、活動、批判的省察等)を促進します。</li>
-
-    <li>対面教育の補助および100%のオンラインコースに適しています。</li>
-
-    <li>シンプル、軽い、能率的、互換性がある、バージョンの低いブラウザに対応しています。</li>
-
-    <li>PHPをサポートするほとんどのプラットフォームへ簡単にインストール可能。1つのデータベースを必要(共有可)とします。</li>
-
-    <li>全てのメジャーなデータベースの抽出をフルサポート(初期テーブル作成を除く)しています。</li>
-
-    <li>コース一覧では、ゲストアクセスの可否も含めて、サーバ上の全コースの説明を表示します。</li>
-
-    <li>コースをカテゴリ分け、検索することができます。1つのMoodleサイトは数千のコースをサポートします。</li>
-
-    <li>Moodleでは、サイト全体にわたる強固なセキュリティを重要視しています。フォームに関して、全てのチェック、データの正当性確認、クッキーの暗号化処理等が行われます。</li>
-
-    <li>ほとんどのテキストエリア (リソース、フォーラム投稿欄、日誌エントリ等)は、実装済みのWYSIWYG HTMLエディタで編集することができます。</li>
-
+    <li>Promotes a social constructionist pedagogy (collaboration, activities, critical 
+    reflection, etc)</li>
+    <li>Suitable for 100% online classes as well as supplementing face-to-face learning 
+  </li>
+    <li>Simple, lightweight, efficient, compatible, low-tech browser interface</li>
+    <li>Easy to install on almost any platform that supports PHP. Requires only 
+    one database (and can share it).</li>
+    <li>Full database abstraction supports all major brands of database (except 
+    for initial table definition)</li>
+    <li>Course listing shows descriptions for every course on the server, including 
+    accessibility to guests.</li>
+    <li>Courses can be categorised and searched - one Moodle site can support thousands 
+    of courses</li>
+    <li>Emphasis on strong security throughout. Forms are all checked, data validated, 
+    cookies encrypted etc</li>
+    <li>Most text entry areas (resources, forum postings, journal entries etc) can 
+    be edited using an embedded WYSIWYG HTML editor</li>
   </ul>
-
   <h3 >サイト管理</h3>
-
   <ul>
-
-    <li>サイトは、セットアップ時に設定した管理者によって管理されます。</li>
-
-    <li>「テーマ」プラグインにより、管理者は必要に応じてサイトの色、フォント、レイアウト等をカスタマイズすることができます。</li>
-
-    <li>活動モジュールプラグインは、インストール済みのMoodleに追加することができます。</li>
-
-    <li>言語パックプラグインにより、数多くの言語に対応することができます。これらはMoodleに組み込まれたウェブベースのエディタで編集することができます。現在、<a href="http://moodle.org/download/lang/" target="_top">43以上の言語</a>ファイルがあります。</li>
-
-    <li>コードは、GPLライセンスの下で分かりやすく記述され、必要に応じて簡単に修正を加えることができます。</li>
-
+    <li>Site is managed by an admin user, defined during setup</li>
+    <li>Plug-in "themes" allow the admin to customise the site colours, fonts, layout 
+    etc to suit local needs</li>
+    <li>Plug-in activity modules can be added to existing Moodle installations</li>
+    <li>Plug-in language packs allow full localisation to any language. These can 
+    be edited using a built-in web-based editor. Currently there are language 
+    packs for over <a href="http://moodle.org/download/lang/" target="_top">43 
+    languages</a>.</li>
+    <li>The code is clearly-written PHP under a GPL license - easy to modify to 
+    suit your needs</li>
   </ul>
-
   <h3 >ユーザ管理</h3>
-
   <ul>
-
-    <li>ユーザ管理のゴールは、高度なセキュリティを保ったまま、管理者の負担を減らすことです。</li>
-
-    <li>既存のシステムに簡単に統合することが可能な認証モジュールプラグインにより、様々な認証手段をサポートします。</li>
-
-    <li>標準的なメールによる認証: 学生は自分のアカウントを作成することができます。アカウント確定時に、メールアドレスが確認されます。</li>
-
-    <li>LDAPを使用した認証: LDAPサーバに対してアカウントのログインを照会することができます。管理者は、どのフィールドを使用するか指定できます。</li>
-
-    <li>IMAP、POP3、NNTPを使用した認証: メールサーバまたはニュースサーバに対してアカウントのログインが照会されます。SSL認証およびTLS認証がサポートされます。</li>
-
-    <li>外部データベースを使用した認証: 少なくとも2つのフィールドを持つデータベースを外部認証用のデータベースとして使用できます。</li>
-
-    <li>各ユーザは、サーバ全体で1つのアカウントのみ必要です。各アカウントは異なるアクセス権限を持つことができます。</li>
-
-    <li>管理者のアカウントは、コース作成をコントロールし、ユーザをコースに割り当てることで教師を作成します。</li>
-
-    <li>コース作成者には、コースの作成およびコース内で教えることのみ許可されます。</li>
-
-    <li>コース内容を変更できないように、教師のコース編集権限を削除することができます。(例えば非常勤教師)</li>
-
-    <li>セキュリティ - 教師は学生以外をコース内に入らせないように、「登録キー」を追加することができます。登録キーは、直接渡すことも、メール等で渡すこともできます。</li>
-
-    <li>必要に応じて、教師は学生を手動で登録することができます。</li>
-
-    <li>必要に応じて、教師は学生を登録抹消することができます。そうでなければ、ある一定期間(管理者により設定)の未ログインにより自動的に登録抹消されます。</li>
-
-    <li>学生には写真や自己紹介を含んだオンラインプロフィールの作成が奨励されます。メールアドレスは必要に応じて表示されないようにすることができます。</li>
-
-    <li>全てのユーザは自分のタイムゾーンを設定することができます。Moodleで使用される日付は設定したタイムゾーンに変換されます(例 投稿日時、課題の提出日等)。</li>
-
-    <li>全てのユーザはMoodleインターフェースに使用される言語(例 英語、フランス語、ドイツ語、スペイン語、ポルトガル語等)を選択することができます。</li>
-
+    <li>Goals are to reduce admin involvement to a minimum, while retaining high 
+    security</li>
+    <li>Supports a range of authentication mechanisms through plug-in authentication 
+    modules, allowing easy integration with existing systems.</li>
+    <li>Standard email method: students can create their own login accounts. Email 
+    addresses are verified by confirmation.</li>
+    <li>LDAP method: account logins can be checked against an LDAP server. Admin 
+    can specify which fields to use.</li>
+    <li>IMAP, POP3, NNTP: account logins are checked against a mail or news server. 
+    SSL, certificates and TLS are supported.</li>
+    <li>External database: any database containing at least two fields can be used 
+    as an external authentication source.</li>
+    <li>Each person requires only one account for the whole server - each account 
+    can have different access</li>
+    <li>An admin account controls the creation of courses and creates teachers by 
+    assigning users to courses</li>
+    <li>A course creator account is only allowed to create courses and teach in 
+    them</li>
+    <li>Teachers may have editing privileges removed so that they can't modify the 
+    course (eg for part-time tutors)</li>
+    <li>Security - teachers can add an "enrolment key" to their courses to keep 
+    out non-students. They can give out this key face-to-face or via personal 
+    email etc</li>
+    <li>Teachers can enrol students manually if desired</li>
+    <li>Teachers can unenrol students manually if desired, otherwise they are automatically 
+    unenrolled after a certain period of inactivity (set by the admin)</li>
+    <li>Students are encouraged to build an online profile including photos, description. 
+    Email addresses can be protected from display if required.</li>
+    <li>Every user can specify their own timezone, and every date in Moodle is translated 
+    to that timezone (eg posting dates, assignment due dates etc)</li>
+    <li>Every user can choose the language used for the Moodle interface (English, 
+    French, German, Spanish, Portuguese etc)</li>
   </ul>
-
   <h3 >コース管理</h3>
-
   <ul>
-
-    <li>完全な権限を持った教師は、他の教師の制限も含めて、コースに関するあらゆるコントロールを行うことができます。</li>
-
-    <li>コースフォーマットでは、ウイークリー、トピック、ディスカッションに焦点を置いたソーシャルフォーマットを選択することができます。</li>
-
-    <li>柔軟なコース活動の配列 - フォーラム、日誌、小テスト、リソース、アンケート、調査、課題、チャット、ワークショップ</li>
-
-    <li>最終ログインより更新された内容をコースホームページに表示することができます。これは、コミュニティー意識を与える手助けとなります。</li>
-
-    <li>ほとんどのテキストエリア (リソース、フォーラム投稿欄、日誌エントリ等)は、実装済みのWYSIWYG HTMLエディタで編集することができます。</li>
-
-    <li>フォーラム、日誌、小テスト、課題の評価は同一ページで閲覧することができます。また、スプレッドシート形式のファイルとしてダウンロードすることもできます。</li>
-
-    <li>完全なユーザロギングおよびトラッキング - 各モジュールで、それぞれの学生に関する活動レポートを、グラフと詳細(最終アクセス、閲覧数)で見ることができます。同様に、それぞれの学生が関わったフォーラムの投稿、日誌エントリー等の詳細な「ストーリー」を1ページで見ることができます。</li>
-
-    <li>メールインテグレーション - フォーラムの投稿のコピー、教師のフィードバック等をHTML形式またはプレインテキスト形式でメール送信することができます。</li>
-
-    <li>独自評価尺度 - 教師は、フォーラム、課題、日誌の評価を行うために独自の評価尺度を設定することができます。</li>
-
-    <li>コースは、バックアップ機能を使って単独のzipファイルに圧縮することができます。これらは、どのMoodleサーバにでもリストアすることができます。</li>
-
+    <li>A full teacher has full control over all settings for a course, including 
+    restricting other teachers</li>
+    <li>Choice of course formats such as by week, by topic or a discussion-focussed 
+    social format</li>
+    <li>Flexible array of course activities - Forums, Journals, Quizzes, Resources, 
+    Choices, Surveys, Assignments, Chats, Workshops</li>
+    <li>Recent changes to the course since the last login can be displayed on the 
+    course home page - helps give sense of community</li>
+    <li>Most text entry areas (resources, forum postings, journal entries etc) can 
+    be edited using an embedded WYSIWYG HTML editor</li>
+    <li>All grades for Forums, Journals, Quizzes and Assignments can be viewed on 
+    one page (and downloaded as a spreadsheet file)</li>
+    <li>Full user logging and tracking - activity reports for each student are available 
+    with graphs and details about each module (last access, number of times read) 
+    as well as a detailed "story" of each students involvement including postings, 
+    journal entries etc on one page.</li>
+    <li>Mail integration - copies of forum posts, teacher feedback etc can be mailed 
+    in HTML or plain text.</li>
+    <li>Custom scales - teachers can define their own scales to be used for grading 
+    forums, assignments and journals</li>
+    <li>Courses can be packaged as a single zip file using the Backup function. 
+    These can be restored on any Moodle server.</li>
   </ul>
-
   <h3 >課題モジュール</h3>
-
   <ul>
-
-    <li>課題モジュールでは、提出期限および最大評価を設定することができます。</li>
-
-    <li>学生は提出物(どのようなフォーマットでも)をサーバにアップロードできます。アップロードしたファイルの提出日が記録されます。</li>
-
-    <li>提出期限を過ぎた提出は許可されますが、どの程度遅れたか明確に教師に提示されます。</li>
-
-    <li>各提出物に対して、1ページ内でクラス全体を評価(採点およびコメント)することができます。</li>
-
-    <li>教師のフィードバックは、各学生の課題ページに追加され、その旨が学生にメール通知されます。</li>
-
-    <li>教師は、評価後に(再評価のため)課題を再提出させることができます。</li>
-
+    <li>Assignments can be specified with a due date and a maximum grade.</li>
+    <li>Students can upload their assignments (any file format) to the server - 
+    they are date-stamped.</li>
+    <li>Late assignments are allowed, but the amount of lateness is shown clearly 
+    to the teacher</li>
+    <li>For each particular assignment, the whole class can be assessed (grade and 
+    comment) on one page in one form.</li>
+    <li>Teacher feedback is appended to the assignment page for each student, and 
+    notification is mailed out.</li>
+    <li>The teacher can choose to allow resubmission of assignments after grading 
+    (for regrading)</li>
   </ul>
-
   <h3 >チャットモジュール</h3>
-
   <ul>
-
-    <li>テキストによるスムーズでリアルタイムの相互交流を実現します。</li>
-
-    <li>チャットウインドウにプロフィール写真を表示することができます。</li>
-
-    <li>URL、スマイリー、埋め込みHTML、イメージ等をサポートします。</li>
-
-    <li>全てのセッションは後で閲覧するために記録され、学生にも閲覧できるようにすることができます。</li>
-
+    <li>Allows smooth, synchronous text interaction</li>
+    <li>Includes profile pictures in the chat window</li>
+    <li>Supports URLs, smilies, embedded HTML, images etc</li>
+    <li>All sessions are logged for later viewing, and these can also be made available 
+    to students</li>
   </ul>
-
-  <h3 >投票モジュール</h3>
-
+  <h3 >選択モジュール</h3>
   <ul>
-
-    <li>投票のような機能を持ったモジュールです。投票や、学生からのフィードバックの収集に使用することができます。(例 リサーチコンセント)</li>
-
-    <li>教師は、誰が何を選択したか直感的に分かる表を閲覧することができます。</li>
-
-    <li>任意で、結果のリアルタイムグラフを学生に見せることができます。</li>
-
+    <li>Like a poll. Can either be used to vote on something, or to get feedback 
+    from every student (eg research consent)</li>
+    <li>Teacher sees intuitive table view of who chose what</li>
+    <li>Students can optionally be allowed to see an up-to-date graph of results</li>
   </ul>
-
   <h3 >フォーラムモジュール</h3>
-
   <ul>
-
-    <li>教師のみ、コースニュース、全てにオープン、1ユーザ1スレッド等の異なるタイプのフォーラムを利用できます。</li>
-
-    <li>全ての投稿には投稿者の顔写真が表示されます。</li>
-
-    <li>ディスカッションは、ネスト、フラット、スレッドおよび投稿日時の降順・昇順に表示させることができます。</li>
-
-    <li>個々のフォーラムは、コピーがメールで送信されるようにメール通知登録を行うことができます。また、教師はメール通知登録を強制的に行うこともできます。</li>
-
-    <li>教師は、返信を許可しないこともできます (例 お知らせ専用フォーラム)。</li>
-
-    <li>ディスカッションスレッドは、教師により簡単にフォーラム間を移動させることができます。</li>
-
-    <li>添付イメージはインライン表示されます。</li>
-
-    <li>フォーラムにレーティングが使用される場合、レーティングの期限を設けることができます。</li>
-
+    <li>Different types of forums are available, such as teacher-only, course news, 
+    open-to-all, and one-thread-per-user.</li>
+    <li>All postings have the authors photo attached.</li>
+    <li>Discussions can be viewed nested, flat or threaded, oldest or newest first.</li>
+    <li>Individual forums can be subscribed to by each person so that copies are 
+    forwarded via email, or the teacher can force subscription for all</li>
+    <li>The teacher can choose not to allow replies (eg for an announcements-only 
+    forum)</li>
+    <li>Discussion threads can be easily moved between forums by the teacher</li>
+    <li>Attached images are shown inline</li>
+    <li>If forum ratings are being used, these can be restricted to a range of dates</li>
   </ul>
-
   <h3 >日誌モジュール</h3>
-
   <ul>
-
-    <li>日誌は学生と教師の間のプライベートな活動です。</li>
-
-    <li>それぞれの日誌を自由回答質問により方向付けることができます。</li>
-
-    <li>各日誌エントリに対して、1ページ内でクラス全体を評価することができます。</li>
-
-    <li>教師のフィードバックは、各学生の日誌ページに追加され、その旨が学生にメール通知されます。</li>
-
+    <li>Journals are private between student and teacher.</li>
+    <li>Each journal entry can be directed by an open question.</li>
+    <li>For each particular journal entry, the whole class can be assessed on one 
+    page in one form</li>
+    <li>Teacher feedback is appended to the journal entry page, and notification 
+    is mailed out.</li>
   </ul>
-
   <h3 >小テストモジュール</h3>
-
   <ul>
-
-    <li>教師は、異なる小テストで再利用するため、データベースに質問を登録することができます。</li>
-
-    <li>簡単なアクセスのために、質問をカテゴリ内に保存することができます。サイト内の全てのコースからアクセスできるように、カテゴリを「公開」することができます。 </li>
-
-    <li>小テストは自動的に評価され、質問が修正された場合は再評価させることができます。</li>
-
-    <li>小テストには、期間外の利用ができないように時間制限を設定することができます。</li>
-
-    <li>教師のオプション設定により、小テストを複数回受けさせることができます。また、フィードバックや正答を表示することもできます。</li>
-
-    <li>不正行為を減らすため、小テストと小テストの答えをランダムに混ぜることができます。</li>
-
-    <li>小テストではHTMLとイメージを使用できます。</li>
-
-    <li>外部のテキストファイルから小テストをインポートすることができます。</li>
-
-    <li>必要に応じて、小テストを複数回受けることができます。</li>
-
-    <li>必要に応じて、小テストの結果は蓄積され、複数回の実施で終了させることができます。</li>
-
-    <li>多肢選択式問題には、単一または複数の答えを用意することができます。</li>
-
-    <li>記述問題(単語またフレーズ)</li>
-
-    <li>○/×問題</li>
-
-    <li>組み合わせ問題</li>
-
-    <li>ランダム方式問題</li>
-
-    <li>数値問題 (許容範囲)</li>
-
-    <li>テキスト内に答えを入れる穴埋め問題(clozeスタイル)</li>
-
-    <li>説明のためにテキストとグラフィックを埋め込むことができます。</li>
-
+    <li>Teachers can define a database of questions for re-use in different quizzes</li>
+    <li>Questions can be stored in categories for easy access, and these categories 
+    can be &quot;published&quot; to make them accessible from any course on the 
+    site. </li>
+    <li>Quizzes are automatically graded, and can be re-graded if questions are 
+    modified </li>
+    <li>Quizzes can have a limited time window outside of which they are not available</li>
+    <li>At the teacher's option, quizzes can be attempted multiple times, and can 
+    show feedback and/or correct answers</li>
+    <li>Quiz questions and quiz answers can be shuffled (randomised) to reduce cheating</li>
+    <li>Questions allow HTML and images</li>
+    <li>Questions can be imported from external text files</li>
+    <li>Quizzes can be attempted multiple times, if desired</li>
+    <li>Attempts can be cumulative, if desired, and finished over several sessions</li>
+    <li>Multiple-choice questions supporting single or multiple answers</li>
+    <li>Short Answer questions (words or phrases)</li>
+    <li>True-False questions </li>
+    <li>Matching questions</li>
+    <li>Random questions</li>
+    <li>Numerical questions (with allowable ranges)</li>
+    <li>Embedded-answer questions (cloze style) with answers within passages of 
+    text </li>
+    <li>Embedded descriptive text and graphics</li>
   </ul>
-
   <h3 >リソースモジュール</h3>
-
   <ul>
-
-    <li>Word、PowerPoint、Flash、ビデオ、音声等を含む様々な電子コンテンツをサポートします。</li>
-
-    <li>ファイルは、サーバにアップロードして管理することも、ウェブフォームを使用して作成(テキスト、HTML)することもできます。</li>
-
-    <li>ウェブ上の外部コンテンツは、リンクを張ったり、コース内に継ぎ目無しに表示することができます。</li>
-
-    <li>外部のウェブアプリケーションには、リンクを張ってパラメータを渡すことができます。</li>
-
+    <li>Supports display of any electronic content, Word, Powerpoint, Flash, Video, 
+    Sounds etc</li>
+    <li>Files can be uploaded and managed on the server, or created on the fly using 
+    web forms (text or HTML)</li>
+    <li>External content on the web can be linked to or seamlessly included within 
+    the course interface.</li>
+    <li>External web applications can be linked in with data passed to them</li>
   </ul>
-
   <h3 >調査モジュール</h3>
-
   <ul>
-
-    <li>内蔵されている調査(COLLES, ATTLS)は、オンラインクラスの分析に適したツールであると証明されています。</li>
-
-    <li>沢山のグラフを含んだ、オンライン調査レポートを常に利用することができます。データはExcelスプレッドシートまたはCSVテキストファイル形式でダウンロードすることができます。</li>
-
-    <li>調査インターフェースが、一部終了のみで終了する調査を防ぎます。</li>
-
-    <li>フィードバックは、クラスの平均と比較されながら、学生の結果に対して提供されます。</li>
-
+    <li>Built-in surveys (COLLES, ATTLS) have been proven as instruments for analysing online classes</li>
+    <li>Online survey reports always available, including many graphs.  Data is downloadable as an Excel spreadsheet or CSV text file.</li>
+    <li>Survey interface prevents partly-finished surveys.</li>
+    <li>Feedback is provided to the student of their results compared to the class averages
+</li>
   </ul>
-
   <h3 >ワークショップモジュール</h3>
-
   <ul>
-
-    <li>ドキュメントに対して相互評価を許可し、教師は管理および相互評価に関する評価を行うことができます。</li>
-
-    <li>広範囲の評価尺度をサポートします。</li>
-
-    <li>評価の練習をするため、教師は学生にサンプル文書を提供することができます。</li>
-
-    <li>様々なオプションを備えた非常に柔軟なモジュールです。</li>
-
+    <li>Allows peer assessement of documents, and the teacher can manage and grade 
+    the assessment.</li>
+    <li>Supports a wide range of possible grading scales</li>
+    <li>Teacher can provide sample documents for students to practice grading</li>
+    <li>Very flexible with many options.</li>
   </ul>
-
   <p>&nbsp;</p>
-
 </blockquote>
-
-<p align="center"><font size="1"><a href="." target="_top">Moodle文書</a></font></p>
-
-<p align="center"><font size="1">Version: $Id$</font></p>
-
+<p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
 </body>
-
 </html>
-

@@ -100,7 +100,7 @@ $string['backuplogshelp'] = 'Para seleccionar se desexa incluír os rexistros de 
 $string['backupnameformat'] = '%%d%%m%%Y-%%H%%M';
 $string['backupnoneusersinfo'] = 'Nota: Vostede seleccionou facer unha copia de seguridade de \"ningún\" usuario, polo que todas as copias dos módulos foron cambiadas ao modo \"sen datos de usuario\". Por favor, advirta que os módulos \"Exercicio\" e \"Xornal\" non son compatibles con este tipo de copia de seguridade, de modo que foron completamente desactivados.';
 $string['backuporiginalname'] = 'Nome da copia de seguridade';
-$string['backupsavetohelp'] = 'Ruta completa do directorio no que desexa que se garden as copias de seguridade<br />(deixalo en branco para gardalas no directorio por defecto de cada curso)';
+$string['backupsavetohelp'] = 'Ruta completa do directorio no que desexa que se garden as copias de seguridade<br>(deixalo en branco para gardalas no directorio por defecto de cada curso)';
 $string['backupuserfileshelp'] = 'Seleccione se os arquivos de usuario (ex. a foto do usuario) deben ser incluídos nas copias de seguridade automáticas';
 $string['backupusershelp'] = 'Seleccione se desexa incluír todos os usuarios do servidor ou só os vinculados ao curso na copia de seguridade';
 $string['backupversion'] = 'Versión da copia de seguridade';
@@ -168,7 +168,7 @@ $string['configlongtimenosee'] = 'Se os estudantes non participaron durante este
 $string['configmaxbytes'] = 'Especifica o tamaño máximo dos arquivos que os usuarios/as poden subir ao servidor. Esta variable está limitada polas variables de PHP upload_max_filesize e de Apache LimitRequestBody. Por outra banda, maxbytes limita o tamaño total nun curso ou módulo.';
 $string['configmaxeditingtime'] = 'Especifique o tempo que os participantes teñen para editar as súas mensaxes. Normalmente 30 minutos é un valor adecuado.';
 $string['configopentogoogle'] = 'Se habilita esta opción, Google poderá entrar no seu sitio como convidado. Adicionalmente, a xente que entre ao seu sitio por unha búsqueda de Google accederá automaticamente como convidado. Observe que isto proporciona acceso soamente  aos cursos que xa teñen a entrada permitida a convidados.';
-$string['configproxyhost'] = 'Se este <b>servidor</b> necesita un proxy (por exemplo un firewall) para acceder a internet, indique o nome do proxy e o porto.';
+$string['configproxyhost'] = 'Se este <B>servidor</B> necesita un proxy (por exemplo un firewall) para acceder a internet, indique o nome do proxy e o porto.';
 $string['configsecureforms'] = 'Moodle pode usar un nivel adicional de seguridade ao aceptar datos desde formularios web. Se isto está habilitado, a variable do navegador HTTP_REFERER contrástase co enderezo actual no formulario. Nalgúns casos isto pode causar problemas se o/a usuario/a está usando un cortalumes (ex. Zonealarm) configurado para quitar os HTTP_REFERER do seu tráfico web. Síntomas disto son quedarse \"atascado\" nun formulario. Se os seus usuarios/as están tendo problemas coa páxina de inscrición (por exemplo) debe deshabilitar esta opción, aínda que facelo deixará o seu sitio máis aberto á posibilidade de ataques mediante \"forza bruta\". Se ten dúbidas, deixe isto establecido como \'Si\'.';
 $string['configsessioncookie'] = 'Esta variable define o nome da cookie que Moodle utiliza para as súas sesións. Esta é opcional, e é só útil cando existe máis dunha copia de Moodle instalada no mesmo sitio web.';
 $string['configsessiontimeout'] = 'Se unha persoa entrou neste sitio e permanece inactiva durante un longo período de tempo (sen cargar páxinas) automaticamente é posta fóra do sistema (finaliza a súa sesión). Esta variable especifica cánto debe durar ese período de tempo.';
@@ -306,11 +306,11 @@ Grazas
 
 $a->admin';
 $string['emailconfirmationsubject'] = '$a: confirmación de conta';
-$string['emailconfirmsent'] = 'Enviamos un correo electrónico a <b>$a</b>,
+$string['emailconfirmsent'] = '   <P>Enviamos un correo electrónico a <B>$a</B>,
 
-   <br />onde atopará unhas sinxelas instrucións para rematar o proceso.
+   <P>onde atopará unhas sinxelas instrucións para rematar o proceso.
 
-   <br />Se atopa algunha dificultade, por favor contacte co administrador do sistema.';
+   <P>Se atopa algunha dificultade, por favor contacte co administrador do sistema.';
 $string['emaildisable'] = 'O enderezo de correo-e non está habilitada';
 $string['emaildisplay'] = 'Amosar correo';
 $string['emaildisplaycourse'] = 'Amosar o meu enderezo de correo só aos meus compañeiros/as de curso';
@@ -334,21 +334,21 @@ Se necesita axuda, contacte por favor co administrador do sitio,
 $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: confirmación de cambio de contrasinal';
 $string['emailpasswordconfirmsent'] = 'Deberíase ter enviado unha mensaxe ao seu enderezo: <strong>$a</strong>.
-<br />A mensaxe contén instrucións sinxelas para confirmar e completar este cambio de contrasinal.
+<p>A mensaxe contén instrucións sinxelas para confirmar e completar este cambio de contrasinal.
 Se segue tendo problemas, contacte co administrador do sitio.';
 $string['emailpasswordsent'] = 'Grazas por confirmar o cambio de contrasinal.
-<br />Enviouse unha mensaxe que contén o seu novo contrasinal ao seu enderezo: <strong>$a->email</strong>.
-<br />O novo contrasinal foi xerada automaticamente - vostede pode
-<a href=\"$a->link\">cambiar este contrasinal</a> por algunha outra máis doada de lembrar.';
+<p>Enviouse unha mensaxe que contén o seu novo contrasinal ao seu enderezo: <strong>$a->email</strong>.
+<p>O novo contrasinal foi xerada automaticamente - vostede pode
+<a href=$a->link>cambiar este contrasinal</a> por algunha outra máis doada de lembrar.';
 $string['enable'] = 'Habilitar';
 $string['enrolledincourse'] = 'Inscritos no curso ';
 $string['enrolledincoursenot'] = 'Non inscritos no curso ';
 $string['enrolmentconfirmation'] = 'Está a punto de inscribirse como alumno/a neste curso. <br />¿Está seguro de que desexa facelo?';
 $string['enrolmentkey'] = 'Clave de acceso';
-$string['enrolmentkeyfrom'] = 'Este curso require o uso dunha \'clave de acceso\'. Se foi admitido/a<br />
+$string['enrolmentkeyfrom'] = 'Este curso require o uso dunha \'clave de acceso\'. Se foi admitido/a<BR>
 
 nel e non lle enviamos a clave, por favor fáganolo saber.';
-$string['enrolmentkeyhint'] = 'Esta \'clave de acceso\' é incorrecta, por favor inténteo de novo<br />
+$string['enrolmentkeyhint'] = 'Esta \'clave de acceso\' é incorrecta, por favor inténteo de novo<BR>
 
 (Unha pista: comeza con \'$a\')';
 $string['entercourse'] = 'Prema aquí para entrar ao curso';
@@ -405,10 +405,10 @@ $string['gd1'] = 'GD 1.x está instalado';
 $string['gd2'] = 'GD 2.x está instalado';
 $string['gdneed'] = 'GD debe estar instalado para ver este gráfico';
 $string['gdnot'] = 'GD non está instalado';
-$string['gpl'] = 'Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)<br /> Tradución: Sonia Álvarez López
+$string['gpl'] = 'Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)<BR> Tradución: Sonia Álvarez López
 Este programa é software libre. Vd. pode redistribuílo e/ou modificalo baixo os termos de GNU General Public License segundo a publicación de The Free Software Foundation; incluso a versión 2 ou algunha posterior.
 
-<br />
+<BR>
 
 Para máis detalles vexa: http://www.gnu.org/copyleft/gpl.html';
 $string['grade'] = 'Cualificación';
@@ -515,16 +515,16 @@ $string['loginas'] = 'Entrar como';
 $string['loginguest'] = 'Entrar como convidado/a';
 $string['loginsite'] = 'Entrar ao sitio';
 $string['loginsteps'] = 'Para ter acceso completo aos cursos precisa crear unha conta para vostede neste sitio web. Ademais, cada un dos cursos pode ter unha clave de acceso que necesitará para entrar neles. Estes son os pasos que debe seguir:
-   <ol>
-   <li>Encha a <a href=\"$a\">Solicitude de alta</a>.</li>
-   <li>O sistema enviaralle un correo electrónico para verificar que o seu enderezo é correcto.</li>
-   <li>Lea o correo e confirme a súa alta.</li>
-   <li>Para entrar nos cursos pediráselle unha \"clave de acceso\", que se lle enviará cando se matricule neles.</li>
-   <li>A partir dese momento non necesitará empregar máis que o seu nome e contrasinal.</li>
-   </ol>';
-$string['loginstepsnone'] = 'Ola.<p>Para poder ter acceso completo aos cursos precisa crear
-unha conta.</p><p>Todo o que ten que facer é inscribirse nesta páxina.
-</p>';
+   <OL size=2>
+   <LI>Encha a <A HREF=$a>Solicitude de alta</A>.
+   <LI>O sistema enviaralle un correo electrónico para verificar que o seu enderezo é correcto.
+   <LI>Lea o correo e confirme a súa alta.
+   <LI>Para entrar nos cursos pediráselle unha \"clave de acceso\", que se lle enviará cando se matricule neles.
+   <LI>A partir dese momento non necesitará empregar máis que o seu nome e contrasinal.
+   </OL>';
+$string['loginstepsnone'] = 'Ola.<P>Para poder ter acceso completo aos cursos precisa crear
+unha conta.<P>Todo o que ten que facer é inscribirse nesta páxina.
+<P>';
 $string['loginto'] = 'Entrar a $a';
 $string['loginusing'] = 'Entre aquí usando o seu nome e contrasinal';
 $string['logout'] = 'Saír';
@@ -677,10 +677,10 @@ $string['passwordconfirmchange'] = 'Confirmar o cambio de contrasinal';
 $string['passwordrecovery'] = 'Si, axúdeme a entrar';
 $string['passwordsdiffer'] = 'Os contrasinais non coinciden';
 $string['passwordsent'] = 'Enviouse o contrasinal';
-$string['passwordsenttext'] = 'O sistema enviou un correo electrónico a $a->email.
-   <br /><b>Revise o seu correo para recibir un novo contrasinal</b>
-   <br />O novo contrasinal xérase automaticamente, polo que tal vez Vd. desexe
-   <a href=\"$a->link\">cambialo</a> por unha que lle sexa máis doado de lembrar.';
+$string['passwordsenttext'] = '   <P>O sistema enviou un correo electrónico a $a->email.
+   <P><B>Revise o seu correo para recibir un novo contrasinal</B>
+   <P>O novo contrasinal xérase automaticamente, polo que tal vez Vd. desexe
+   <A HREF=$a->link>cambialo</A> por unha que lle sexa máis doado de lembrar.';
 $string['people'] = 'Persoas';
 $string['personalprofile'] = 'Información persoal';
 $string['phone'] = 'Teléfono';
@@ -748,7 +748,7 @@ $string['scheduledbackupstatus'] = 'Estado previsto da copia de seguridade';
 $string['search'] = 'Buscar';
 $string['searchagain'] = 'Volver a buscar';
 $string['searchcourses'] = 'Buscar cursos';
-$string['searchhelp'] = 'Pode buscar moitas palabras ao mesmo tempo.<br /> Se coloca unha ou máis palabras, o buscador atopa todas as mensaxes que conteñan esa ou esas palabras en calquera lugar.<br /> Se coloca varias palabras separadas polo signo de adición (+) aparecerán os resultados que conteñan todas esas palabras na orde exacta en que foron colocadas.<br /> Se coloca un signo de subtracción (-) antes dunha palabra, amosaranse todas as mensaxes que conteñan a ou as outras palabras pero que non conteñan a palabra antecedida por este signo.';
+$string['searchhelp'] = 'Pode buscar moitas palabras ao mesmo tempo.<p> Se coloca unha ou máis palabras, o buscador atopa todas as mensaxes que conteñan esa ou esas palabras en calquera lugar.<br /> Se coloca varias palabras separadas polo signo de adición (+) aparecerán os resultados que conteñan todas esas palabras na orde exacta en que foron colocadas.<br /> Se coloca un signo de subtracción (-) antes dunha palabra, amosaranse todas as mensaxes que conteñan a ou as outras palabras pero que non conteñan a palabra antecedida por este signo.';
 $string['searchresults'] = 'Resultados da pescuda';
 $string['sec'] = 'segundo';
 $string['secs'] = 'segundos';

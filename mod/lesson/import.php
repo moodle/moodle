@@ -4,8 +4,8 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $id     = required_param('id', PARAM_INT);         // Course Module ID
-    $pageid = optional_param('pageid', '', PARAM_INT); // Page ID
+    optional_variable($format);
+    require_variable($id);    // Course Module ID
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -20,7 +20,7 @@
     }
 
 
-    require_login($course->id, false);
+    require_login($course->id);
 
     if (!isteacher($course->id)) {
         error("Only the teacher can import questions!");
@@ -34,13 +34,18 @@
 
     if ($form = data_submitted()) {   /// Filename
 
-        $form->format = clean_filename($form->format); // For safety
+        if (isset($form->filename)) {                 // file already on server
+            $newfile['tmp_name'] = $form->filename; 
+            $newfile['size'] = filesize($form->filename);
 
-        if (empty($_FILES['newfile'])) {      // file was just uploaded
-            notify(get_string("uploadproblem") );
+        } else if (!empty($_FILES['newfile'])) {      // file was just uploaded
+            $newfile = $_FILES['newfile'];
         }
 
-        if ((!is_uploaded_file($_FILES['newfile']['tmp_name']) or $_FILES['newfile']['size'] == 0)) {
+        if (empty($newfile)) {
+            notify(get_string("uploadproblem") );
+
+        } else if (!isset($filename) and (!is_uploaded_file($newfile['tmp_name']) or $newfile['size'] == 0)) {
             notify(get_string("uploadnofilefound") );
 
         } else {  // Valid file is found
@@ -50,8 +55,8 @@
             }
 
             require("format.php");  // Parent class
-            require("$CFG->dirroot/mod/quiz/lib.php"); // for the constants used in quiz/format/<format>/format.php
-            require("$CFG->dirroot/mod/quiz/format/$form->format/format.php");
+            require("../quiz/lib.php"); // for the constants used in quiz/format/<format>/format.php
+            require("../quiz/format/$form->format/format.php");
 
             $format = new quiz_file_format();
 
@@ -59,7 +64,7 @@
                 error("Error occurred during pre-processing!");
             }
 
-            if (! $format->importprocess($_FILES['newfile']['tmp_name'], $lesson, $pageid)) {    // Process the uploaded file
+            if (! $format->importprocess($newfile['tmp_name'], $lesson, $_POST['pageid'])) {    // Process the uploaded file
                 error("Error occurred during processing!");
             }
 
@@ -72,7 +77,7 @@
             print_footer($course);
             exit;
         }
-    }
+    } 
 
     /// Print upload form
 
@@ -90,10 +95,10 @@
 
     print_heading_with_help($strimportquestions, "import", "lesson");
 
-    print_simple_box_start("center");
+    print_simple_box_start("center", "", "$THEME->cellheading");
     echo "<form enctype=\"multipart/form-data\" method=\"post\" action=import.php>";
     echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
-    echo "<input type=\"hidden\" name=\"pageid\" value=\"$pageid\">\n";
+    echo "<input type=\"hidden\" name=\"pageid\" value=\"".$_GET['pageid']."\">\n";
     echo "<table cellpadding=5>";
 
     echo "<tr><td align=right>";

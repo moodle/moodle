@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -13,7 +13,7 @@
         error("Course is misconfigured");
     }
 
-    require_login($course->id, true, $cm);
+    require_login($course->id);
 
     if (! $journal = get_record("journal", "id", $cm->instance)) {
         error("Course module is incorrect");
@@ -28,8 +28,8 @@
     $strjournal = get_string("modulename", "journal");
     $strjournals = get_string("modulenameplural", "journal");
 
-    print_header_simple(format_string($journal->name), '',
-                 "<a href=\"index.php?id=$course->id\">$strjournals</a> -> ".format_string($journal->name), '', '', true,
+    print_header_simple("$journal->name", "",
+                 "<A HREF=index.php?id=$course->id>$strjournals</A> -> $journal->name", "", "", true,
                   update_module_button($cm->id, $course->id, $strjournal), navmenu($course, $cm));
 
     if (isteacher($course->id)) {
@@ -42,24 +42,26 @@
         }
         $entrycount = journal_count_entries($journal, $currentgroup);
 
-        echo '<div class="reportlink"><a href="report.php?id='.$cm->id.'">'.
-              get_string('viewallentries','journal', $entrycount)."</a>$groupname</div>";
+        echo "<p align=right><a href=\"report.php?id=$cm->id\">".
+              get_string("viewallentries","journal", $entrycount)."</a>$groupname</p>";
 
     } else if (!$cm->visible) {
-        notice(get_string('activityiscurrentlyhidden'));
+        notice(get_string("activityiscurrentlyhidden"));
     }
 
+    echo "<center>\n";
+    
     $journal->intro = trim($journal->intro);
 
     if (!empty($journal->intro)) {
-        print_simple_box( format_text($journal->intro,  $journal->introformat), 'center', '70%', '', 5, 'generalbox', 'intro');
+        print_simple_box( format_text($journal->intro,  $journal->introformat) , "center");
     }
 
-    echo '<br />';
+    echo "<br />";
 
     $timenow = time();
 
-    if ($course->format == 'weeks' and $journal->days) {
+    if ($course->format == "weeks" and $journal->days) {
         $timestart = $course->startdate + (($cw->section - 1) * 604800);
         if ($journal->days) {
             $timefinish = $timestart + (3600 * 24 * $journal->days);
@@ -75,60 +77,59 @@
 
     if ($timenow > $timestart) {
 
-        print_simple_box_start('center');
+        print_simple_box_start("center");
 
         if ($timenow < $timefinish) {
-            $options = array ('id' => "$cm->id");
-            echo '<center>';
+            $options = array ("id" => "$cm->id");
+            echo "<CENTER>";
             if (!isguest()) {
-                print_single_button('edit.php', $options, get_string('startoredit','journal'));
+                print_single_button("edit.php", $options, get_string("startoredit","journal"));
             }
-            echo '</center>';
+            echo "</CENTER>";
         }
 
 
-        if ($entry = get_record('journal_entries', 'userid', $USER->id, 'journal', $journal->id)) {
+        if ($entry = get_record("journal_entries", "userid", $USER->id, "journal", $journal->id)) {
 
             if (empty($entry->text)) {
-                echo '<p align="center"><b>'.get_string('blankentry','journal').'</b></p>';
+                echo "<P ALIGN=center><B>".get_string("blankentry","journal")."</B></P>";
             } else {
                 echo format_text($entry->text, $entry->format);
             }
-
+            
         } else {
-            echo '<span class="warning">'.get_string('notstarted','journal').'</span>';
+            echo "<B><I>".get_string("notstarted","journal")."</I></B>";
         }
 
         print_simple_box_end();
 
         if ($timenow < $timefinish) {
             if ($entry->modified) {
-                echo '<div class="lastedit"><strong>'.get_string('lastedited').':</strong> ';
+                echo "<P><FONT SIZE=-2><B>".get_string("lastedited").":</B> ";
                 echo userdate($entry->modified);
-                echo ' ('.get_string('numwords', '', count_words($entry->text)).')';
-                echo "</div>";
+                echo " (".get_string("numwords", "", count_words($entry->text)).")";
+                echo "</FONT></P>";
             }
             if ($journal->days) {
-                echo '<div class="editend"><strong>'.get_string('editingends', 'journal').':</strong> ';
-                echo userdate($timefinish).'</div>';
+                echo "<P><FONT SIZE=-2><B>".get_string("editingends", "journal").":</B> ";
+                echo userdate($timefinish)."</FONT></P>";
             }
         } else {
-            echo '<div class="editend"><strong>'.get_string('editingended', 'journal').':</strong> ';
-            echo userdate($timefinish).'</div>';
+            echo "<P><FONT SIZE=-2><B>".get_string("editingended", "journal").":</B> ";
+            echo userdate($timefinish)."</P>";
         }
 
         if ($entry->comment or $entry->rating) {
             $grades = make_grades_menu($journal->assessed);
-            print_heading(get_string('feedback'));
+            print_heading(get_string("feedback"));
             journal_print_feedback($course, $entry, $grades);
         }
 
 
     } else {
-        echo '<div class="warning">'.get_string('notopenuntil', 'journal').': ';
-        echo userdate($timestart).'</div>';
+        echo "<P><B>".get_string("notopenuntil", "journal").": ";
+        echo userdate($timestart)."</B></P>";
     }
-
 
     print_footer($course);
 

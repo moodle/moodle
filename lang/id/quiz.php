@@ -81,11 +81,11 @@ $string['filloutthreequestions'] = 'Anda harus mengisi paling sedikit 3 pertanya
 Pertanyaan yang dikosongkan tidak akan digunakan.';
 $string['fillouttwochoices'] = 'Anda harus memilih paling tidak dua pilihan.  Pilihan yang dikosongkan tidak akan dinilai.';
 $string['fractionsaddwrong'] = 'Jumlah nilai tingkat yang Anda pilih tidak cukup 100%%
-<br />Tetapi, jumlah nilainya $a%%
-<br />Anda ingin kembali untuk memperbaiki pertanyaan ini?';
+<BR>Tetapi, jumlah nilainya $a%%
+<BR>Anda ingin kembali untuk memperbaiki pertanyaan ini?';
 $string['fractionsnomax'] = 'Satu dari jawaban harus bernilai 100%%, jadi
-<br />memungkinkan untuk mendapat tingkatan tertinggi pada pertanyaan ini.
-<br />Anda ingin kembali untuk memperbaiki pertanyaan ini?';
+<BR>memungkinkan untuk mendapat tingkatan tertinggi pada pertanyaan ini.
+<BR>Anda ingin kembali untuk memperbaiki pertanyaan ini?';
 $string['gift'] = 'Format GIFT';
 $string['gradeaverage'] = 'Nilai Rata-rata';
 $string['gradehighest'] = 'Nilai Tertinggi';

@@ -1,4 +1,4 @@
-<p align="center"><b>Importando archivos del "Course Test Manager"</b></p>
+<p align=center><b>Importando archivos del "Course Test Manager"</b></p>
 
 <p>Course Test Manager (Administrador de Test de Cursos) es un paquete 
 de software "End of Lifetime" de Tecnología de cursos (Course Technology). 
@@ -38,15 +38,15 @@ del libro o secciones del curso.</li>
 </ol>
 
 <p>El proceso para Moodle <b>basado en Linux</b> incluye un componente de software 
-de terceros llamado <a href="http://odbcsock.sourceforge.net/" target="_blank"><b>ODBC 
+de terceros llamado <a href="http://odbcsock.sourceforge.net/" target="_new"><b>ODBC 
 Socket Server</b></a>. Para importar bases de datos CTM en Linux, primero debe bajar 
 e instalar este pequeño programa de red en la PC con Windows que hospeda las bases 
 de datos CTM. <b>No siga</b> las instrucciones mencionadas en la instalación del <br />
 ODBC Socket Server. ¡Son más complicadas de lo necesario para este trabajo! En vez 
-de eso, siga los pasos a continuación:</p>
+de eso, siga los pasos a continuación:</P>
 
 <ol><li>Vaya a la PC con Windows y descomprima el archivo de instalación que bajó de 
-<a href="http://odbcsock.sourceforge.net/" target="_blank">este sitio</a> en la PC.</li>
+<a href="http://odbcsock.sourceforge.net/" target="_new">este sitio</a> en la PC.</li>
 <li>Copie el archivo binario ODBCSocketServer.exe a una ubicación permanente, tal 
 como c:\windows\ o c:\WINNT\ (también podría ser su carpeta de archivos de programa). </li> 
 
@@ -58,7 +58,7 @@ de comandos.</li>
 <li>Abra el administrador de Servicios en: Inicio-&gt;Configuración-&gt;Panel de 
 Control-&gt;Herramientas Administrativas-&gt;Servicios, o haciendo clic con el 
 botón derecho del mouse en <b>Mi PC</b>, eligiendo <b>Administrar</b>, luego 
-eligiendo <b>Servicios y Aplicaciones-&gt;Servicios</b> del Panel derecho. 
+eligiendo <B>Servicios y Aplicaciones-&gt;Servicios</b> del Panel derecho. 
 También puede acceder al Administrador de Servicios escribiendo <b>services.msc</b> en 
 la caja de diálogo Inicio-&gt;Ejecutar...</li>
 
@@ -78,8 +78,8 @@ así como de la dirección IP o nombre del Host del servidor Windows. Necesitará
 esta información para el proceso de importación.</li>
 
 <li>Ahora ya puede importar los bancos de evaluaciones al Moodle. Cree su cuestionario 
-y vaya al proceso "Importar preguntas desde archivo". <b>AQUÍ ES DONDE LAS COSAS 
-SON DIFERENTES PARA LINUX - </b> ESPECIFIQUE UN ARCHIVO IMAGINARIO EN EL CAMPO 
+y vaya al proceso "Importar preguntas desde archivo". <B>AQUÍ ES DONDE LAS COSAS 
+SON DIFERENTES PARA LINUX - </B> ESPECIFIQUE UN ARCHIVO IMAGINARIO EN EL CAMPO 
 SUBIR PARA EMPEZAR EL PROCESO DE IMPORTACIÓN. ESTE ARCHIVO <b>NO SE PROCESARÁ</b>, 
 ES SÓLO UN NOMBRE PARA EL FORMULARIO DE IMPORTACIÓN. TENDRÁ UN LUGAR PARA ESPECIFICAR 
 LA INFORMACIÓN DEL SERVIDOR WINDOWS MÁS ADELANTE. A continuación, aparecerá una pantalla 
@@ -94,7 +94,7 @@ del libro o las secciones de un curso.
 SI LLEGA A ESTE PUNTO SIN MENSAJES DE ERROR, SIGNIFICA QUE HA CONFIGURADO EL SOCKET 
 SERVER CORRECTAMENTE, Y ¡ESTÁ LISTO PARA IMPORTAR LAS PREGUNTAS AL MOODLE!</li> </ol>
 
-<p>Si recibió mensajes de error durante este proceso, encontrará esta información 
+<P>Si recibió mensajes de error durante este proceso, encontrará esta información 
 técnica muy útil: 
 El ODBC Socket server utiliza el puerto 9628 para abrir el socket, negociar y 
 ejecutar las consultas XML, y a partir de allí construir una tabla con los 

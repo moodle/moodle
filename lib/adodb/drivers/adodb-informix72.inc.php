@@ -1,6 +1,6 @@
 <?php
 /*
-V4.60 24 Jan 2005  (c) 2000-2005 John Lim. All rights reserved.
+V4.51 29 July 2004  (c) 2000-2004 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license.
   Whenever there is any discrepancy between the two licenses,
   the BSD license will take precedence.
@@ -28,7 +28,7 @@ class ADODB_informix72 extends ADOConnection {
 	var $hasInsertID = true;
 	var $hasAffectedRows = true;
     var $substr = 'substr';
-	var $metaTablesSQL="select tabname,tabtype from systables where tabtype in ('T','V') and owner!='informix'"; //Don't get informix tables and pseudo-tables
+	var $metaTablesSQL="select tabname from systables where tabtype!=' ' and owner!='informix'"; //Don't get informix tables and pseudo-tables
 
 
 	var $metaColumnsSQL = 
@@ -74,7 +74,7 @@ class ADODB_informix72 extends ADOConnection {
 	    if (isset($this->version)) return $this->version;
 	
 	    $arr['description'] = $this->GetOne("select DBINFO('version','full') from systables where tabid = 1");
-	    $arr['version'] = $this->GetOne("select DBINFO('version','major') || DBINFO('version','minor') from systables where tabid = 1");
+	    $arr['version'] = $this->GetOne("select DBINFO('version','major')||"."||DBINFO('version','minor') from systables where tabid = 1");
 	    $this->version = $arr;
 	    return $arr;
 	}
@@ -141,7 +141,7 @@ class ADODB_informix72 extends ADOConnection {
 
 	function ErrorNo()
 	{
-		preg_match("/.*SQLCODE=([^\]]*)/",ifx_error(),$parse);
+		preg_match("/.*SQLCODE=([^\]]*)/",ifx_error(),$parse); //!EOS
 		if (is_array($parse) && isset($parse[1])) return (int)$parse[1]; 
 		return 0;
 	}
@@ -165,20 +165,9 @@ class ADODB_informix72 extends ADOConnection {
 			while (!$rs->EOF) { //print_r($rs->fields);
 				$fld = new ADOFieldObject();
 				$fld->name = $rs->fields[0];
-/*  //!eos.
-						$rs->fields[1] is not the correct adodb type
-						$rs->fields[2] is not correct max_length, because can include not-null bit
-
 				$fld->type = $rs->fields[1];
 				$fld->primary_key=$rspkey->fields && array_search($rs->fields[4],$rspkey->fields); //Added to set primary key flag
-				$fld->max_length = $rs->fields[2];*/
-				$pr=ifx_props($rs->fields[1],$rs->fields[2]); //!eos
-				$fld->type = $pr[0] ;//!eos
-				$fld->primary_key=$rspkey->fields && array_search($rs->fields[4],$rspkey->fields);
-				$fld->max_length = $pr[1]; //!eos
-				$fld->precision = $pr[2] ;//!eos
-				$fld->not_null = $pr[3]=="N"; //!eos
-
+				$fld->max_length = $rs->fields[2];
 				if (trim($rs->fields[3]) != "AAAAAA 0") {
 	                    		$fld->has_default = 1;
 	                    		$fld->default_value = $rs->fields[3];
@@ -191,7 +180,6 @@ class ADODB_informix72 extends ADOConnection {
 			}
 
 			$rs->Close();
-			$rspKey->Close(); //!eos
 			return $retarr;	
 		}
 
@@ -202,38 +190,6 @@ class ADODB_informix72 extends ADOConnection {
    {
 		return ADOConnection::MetaColumns($table,false);
    }
-
-	 function MetaForeignKeys($table, $owner=false, $upper=false) //!Eos
-	{
-		$sql = "
-			select tr.tabname,updrule,delrule,
-			i.part1 o1,i2.part1 d1,i.part2 o2,i2.part2 d2,i.part3 o3,i2.part3 d3,i.part4 o4,i2.part4 d4,
-			i.part5 o5,i2.part5 d5,i.part6 o6,i2.part6 d6,i.part7 o7,i2.part7 d7,i.part8 o8,i2.part8 d8
-			from systables t,sysconstraints s,sysindexes i,
-			sysreferences r,systables tr,sysconstraints s2,sysindexes i2
-			where t.tabname='$table'
-			and s.tabid=t.tabid and s.constrtype='R' and r.constrid=s.constrid
-			and i.idxname=s.idxname and tr.tabid=r.ptabid
-			and s2.constrid=r.primary and i2.idxname=s2.idxname";
-
-		$rs = $this->Execute($sql);
-		if (!$rs || $rs->EOF)  return false;
-		$arr =& $rs->GetArray();
-		$a = array();
-		foreach($arr as $v) {
-			$coldest=$this->metaColumnNames($v["tabname"]);
-			$colorig=$this->metaColumnNames($table);
-			$colnames=array();
-			for($i=1;$i<=8 && $v["o$i"] ;$i++) {
-				$colnames[]=$coldest[$v["d$i"]-1]."=".$colorig[$v["o$i"]-1];
-			}
-			if($upper)
-				$a[strtoupper($v["tabname"])] =  $colnames;
-			else
-				$a[$v["tabname"]] =  $colnames;
-		}
-		return $a;
-	 }
 
    function UpdateBlob($table, $column, $val, $where, $blobtype = 'BLOB')
    {
@@ -386,7 +342,7 @@ class ADORecordset_informix72 extends ADORecordSet {
 
 	function _seek($row)
 	{
-		return @ifx_fetch_row($this->_queryID, (int) $row);
+		return @ifx_fetch_row($this->_queryID, $row);
 	}
 
    function MoveLast()
@@ -445,29 +401,4 @@ class ADORecordset_informix72 extends ADORecordSet {
 	}
 
 }
-/** !Eos
-* Auxiliar function to Parse coltype,collength. Used by Metacolumns
-* return: array ($mtype,$length,$precision,$nullable) (similar to ifx_fieldpropierties)
-*/
-function ifx_props($coltype,$collength){
-	$itype=fmod($coltype+1,256);
-	$nullable=floor(($coltype+1) /256) ?"N":"Y";
-	$mtype=substr(" CIIFFNNDN TBXCC     ",$itype,1);
-	switch ($itype){
-		case 2:
-			$length=4;
-		case 6:
-		case 9:
-		case 14:
-			$length=floor($collength/256);
-			$precision=fmod($collength,256);
-			break;
-		default:
-			$precision=0;
-			$length=$collength;
-	}
-	return array($mtype,$length,$precision,$nullable);
-}
-
-
 ?>

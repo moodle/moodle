@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_flatfile.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // enrol_flatfile.php - created with Moodle 1.4 aiming-for-beta-soon (2004082100)
 
 
 $string['description'] = 'Deze methode controleert regelmatig een speciaal opgemaakt tekstbestand op een lokatie die je zelf bepaalt. Het bestand kan er uitzien als volgt:
@@ -17,8 +17,5 @@ $string['filelockedmailsubject'] = 'Belangrijke fout: aanmeldingsbestand';
 $string['location'] = 'Bestandslokatie';
 $string['mailadmin'] = 'Verwittig de beheerder met e-mail';
 $string['mailusers'] = 'Verwittig de gebruikers met e-mail';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 
 ?>

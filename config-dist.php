@@ -110,7 +110,7 @@ $CFG->dataroot  = '/home/example/moodledata';
 // to make sure the web server process (eg Apache) can access the files.
 // NOTE: the prefixed 0 is important, and don't use quotes.
 
-$CFG->directorypermissions = 02777;
+$CFG->directorypermissions = 0777;
 
 
 //=========================================================================
@@ -152,88 +152,30 @@ $CFG->admin = 'admin';
 // Setting this to true will enable admins to edit any post at any time
 //      $CFG->admineditalways = true;
 //
-// These variables define DEFAULT block variables for new courses
-// If this one is set it overrides all others and is the only one used.
-//      $CFG->defaultblocks_override = 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity';
-//
-// These variables define the specific settings for defined course formats.
-// They override any settings defined in the formats own config file.
-//      $CFG->defaultblocks_site = 'site_main_menu,admin,course_list:course_summary,calendar_month';
-//      $CFG->defaultblocks_social = 'participants,search_forums,calendar_month,calendar_upcoming,social_activities,recent_activity,admin,course_list';
-//      $CFG->defaultblocks_topics = 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity';
-//      $CFG->defaultblocks_weeks = 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity';
-//
-// These blocks are used when no other default setting is found.
-//      $CFG->defaultblocks = 'participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity';
-//
+// This variable will override the default block configuration on newly
+// created courses, or on upgraded courses from Moodle 1.2.1 and earlier.
+// The names here should all be existing blocks in the "blocks" directory.
+//      $CFG->defaultblocks = "participants,activity_modules,search_forums,admin,course_list:news_items,calendar_upcoming,recent_activity";
 //
 // This setting will put Moodle in Unicode mode.  It's very new and
 // most likely doesn't work yet.   THIS IS FOR DEVELOPERS ONLY, IT IS
 // NOT RECOMMENDED FOR PRODUCTION SITES
 //      $CFG->unicode = true;
 //
+// Turning this on will make Moodle use a https connection just for the
+// login page (providing a secure login), and then afterwards revert
+// back to the normal http URL.  Requires https to be enabled on the
+// web server.
+//      $CFG->loginhttps = true;
+//
+// To use spell-checking (experimental) define a path below to your
+// locally-installed copy of Aspell (0.50.1 or newer)
+//      $CFG->aspellpath = '/usr/bin/aspell'; // *nix
+//      $CFG->aspellpath = '"c:\path\to\aspell\aspell.exe"'; // Windows
+//
 // Seconds for files to remain in caches. Decrease this if you are worried
 // about students being served outdated versions of uploaded files.
 //      $CFG->filelifetime = 86400;
-// 
-// If this setting is set to true, then Moodle will track the IP of the 
-// current user to make sure it hasn't changed during a session.  This 
-// will prevent the possibility of sessions being hijacked via XSS, but it 
-// may break things for users coming using proxies that change all the time,
-// like AOL.
-//      $CFG->tracksessionip = true;
-//
-//
-// The following lines are for handling email bounces.
-//      $CFG->handlebounces = true;
-//      $CFG->minbounces = 10;
-//      $CFG->bounceratio = .20;
-// The next lines are needed both for bounce handling and any other email to module processing.
-// mailprefix must be EXACTLY four characters.
-// Uncomment and customise this block for Postfix 
-//      $CFG->mailprefix = 'mdl+'; // + is the separator for Exim and Postfix.
-//      $CFG->mailprefix = 'mdl-'l // - is the separator for qmail 
-//      $CFG->maildomain = 'youremaildomain.com';
-//
-// The following setting will tell Moodle to respect your PHP session 
-// settings. Use this if you want to control session configuration
-// from php.ini, httpd.conf or .htaccess files. 
-//      $CFG->respectsessionsettings = true;
-//
-// This setting will cause the userdate() function not to fix %d in 
-// date strings, and just let them show with a zero prefix.
-//      $CFG->nofixday = true;
-//
-// This setting will make some graphs (eg user logs) use lines instead of bars
-//      $CFG->preferlinegraphs = true;
-//
-// Enabling this will make most text-based filters only match the first time
-// a phrase occurs in a given text.  Otherwise all are matched.
-//      $CFG->filtermatchonepertext = true;
-//
-// Enabling this will make most text-based filters only match the first time
-// a phrase occurs in a given page.  Otherwise all are matched.
-//      $CFG->filtermatchoneperpage = true;
-//
-// Performance profiling 
-// 
-//   If you set Debug to "Yes" in the Configuration->Variables page some
-//   performance profiling data will show up on your footer (in default theme).
-//   With these settings you get more granular control over the capture
-//   and printout of the data
-//
-//   Capture performance profiling data
-//   define('MDL_PERF'  , true);
-//
-//   Capture additional data from DB
-//   define('MDL_PERFDB'  , true);
-//
-//   Print to log (for passive profiling of production servers)
-//   define('MDL_PERFTOLOG'  , true);
-//
-//   Print to footer (works with the default theme)
-//   define('MDL_PERFTOFOOT', true);
-//
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser

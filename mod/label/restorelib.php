@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This php script contains all the stuff to backup/restore
     //label mods
 
@@ -43,7 +43,7 @@
             $newid = insert_record ("label",$label);
 
             //Do some output     
-            echo "<li>".get_string("modulename","label")." \"".format_string(stripslashes($label->name),true)."\"</li>";
+            echo "<ul><li>".get_string("modulename","label")." \"".$label->name."\"<br>";
             backup_flush(300);
 
             if ($newid) {
@@ -54,6 +54,10 @@
             } else {
                 $status = false;
             }
+
+            //Finalize ul        
+            echo "</ul>";
+
         } else {
             $status = false;
         }
@@ -92,7 +96,7 @@
             }
             break;
         default:
-            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
             break;
         }
 

@@ -2,12 +2,12 @@
 
     include("../../../config.php");
 
-    require_variable($id);
+	require_variable($id);
 
     if (!$course = get_record("course", "id", $id)) {
         $course->fullname = "";   // Just to keep display happy, though browsing may fail
     }
-
+    
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -23,15 +23,6 @@ var preview_window = null;
 
 function Init() {
   __dlg_init();
-  var param = window.dialogArguments;
-  if (param) {
-      var alt = param["f_url"].substring(param["f_url"].lastIndexOf('/') + 1);
-      document.getElementById("f_url").value = param["f_url"];
-      document.getElementById("f_alt").value = param["f_alt"] ? param["f_alt"] : alt;
-      document.getElementById("f_border").value = parseInt(param["f_border"] || 0);
-      document.getElementById("f_vert").value = param["f_vert"] != -1 ? param["f_vert"] : 0;
-      document.getElementById("f_horiz").value = param["f_horiz"] != -1 ? param["f_horiz"] : 0;
-  }
   document.getElementById("f_url").focus();
 };
 
@@ -184,7 +175,7 @@ form { padding: 0px; margin: 0px; }
   <option value="left"                   ><?php print_string("left","editor") ?></option>
   <option value="right"                  ><?php print_string("right","editor") ?></option>
   <option value="texttop"                ><?php print_string("texttop","editor") ?></option>
-  <option value="middle"              ><?php print_string("middle","editor") ?></option>
+  <option value="absmiddle"              ><?php print_string("absmiddle","editor") ?></option>
   <option value="baseline" selected="1"  ><?php print_string("baseline","editor") ?></option>
   <option value="absbottom"              ><?php print_string("absbottom","editor") ?></option>
   <option value="bottom"                 ><?php print_string("bottom","editor") ?></option>

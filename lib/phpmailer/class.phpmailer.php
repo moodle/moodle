@@ -67,8 +67,8 @@ class PHPMailer
     var $FromName           = "Root User";
 
     /**
-     * Sets the Sender email (Return-Path) of the message.  If not empty,
-     * will be sent via -f to sendmail or as 'MAIL FROM' in smtp mode.
+     * Sets the Sender email of the message. If not empty, will be sent via -f to sendmail
+     * or as 'MAIL FROM' in smtp mode.
      * @var string
      */
     var $Sender            = "";
@@ -78,6 +78,12 @@ class PHPMailer
      * @var string
      */
     var $Subject           = "";
+
+    /**
+     * Sets the Precedence level of this email.  "bulk" will prevent some bounces
+     * @var string
+     */
+    var $Precedence        = "";
 
     /**
      * Sets the Body of the message.  This can be either an HTML or text body.
@@ -119,13 +125,13 @@ class PHPMailer
      * is in a different directory than the PHP include path.  
      * @var string
      */
-    var $PluginDir         = '';
+    var $PluginDir         = "";
 
     /**
      *  Holds PHPMailer version.
      *  @var string
      */
-    var $Version           = "1.72";
+    var $Version           = "1.70";
 
     /**
      * Sets the email address that a reading confirmation will be sent.
@@ -140,6 +146,7 @@ class PHPMailer
      *  @var string
      */
     var $Hostname          = "";
+
 
     /////////////////////////////////////////////////
     // SMTP VARIABLES
@@ -226,20 +233,6 @@ class PHPMailer
     /////////////////////////////////////////////////
     // VARIABLE METHODS
     /////////////////////////////////////////////////
-
-    /**
-     * Constructor
-     * Hack for Moodle as class may be included from various locations
-     * SE 20041001
-     * @param void
-     * @return void
-     */
-    function PHPMailer () {
-        global $CFG;
-        $this->PluginDir = $CFG->libdir.'/phpmailer/';
-    }
-
-    
 
     /**
      * Sets message type to HTML.  
@@ -357,7 +350,6 @@ class PHPMailer
     function Send() {
         $header = "";
         $body = "";
-        $result = true;
 
         if((count($this->to) + count($this->cc) + count($this->bcc)) < 1)
         {
@@ -369,7 +361,6 @@ class PHPMailer
         if(!empty($this->AltBody))
             $this->ContentType = "multipart/alternative";
 
-        $this->error_count = 0; // reset errors
         $this->SetMessageType();
         $header .= $this->CreateHeader();
         $body = $this->CreateBody();
@@ -377,24 +368,28 @@ class PHPMailer
         if($body == "") { return false; }
 
         // Choose the mailer
-        switch($this->Mailer)
+        if($this->Mailer == "sendmail")
         {
-            case "sendmail":
-                $result = $this->SendmailSend($header, $body);
-                break;
-            case "mail":
-                $result = $this->MailSend($header, $body);
-                break;
-            case "smtp":
-                $result = $this->SmtpSend($header, $body);
-                break;
-            default:
+          if(!$this->SendmailSend($header, $body))
+              return false;
+        }
+        elseif($this->Mailer == "mail")
+        {
+          if(!$this->MailSend($header, $body))
+              return false;
+        }
+        elseif($this->Mailer == "smtp")
+        {
+          if(!$this->SmtpSend($header, $body))
+              return false;
+        }
+        else
+        {
             $this->SetError($this->Mailer . $this->Lang("mailer_not_supported"));
-                $result = false;
-                break;
+            return false;
         }
 
-        return $result;
+        return true;
     }
     
     /**
@@ -433,20 +428,21 @@ class PHPMailer
      * @return bool
      */
     function MailSend($header, $body) {
-        $to = "";
-        for($i = 0; $i < count($this->to); $i++)
-        {
-            if($i != 0) { $to .= ", "; }
-            $to .= $this->to[$i][0];
-        }
+        // Cannot add Bcc's to the $to
+        $to = $this->to[0][0]; // no extra comma
+        for($i = 1; $i < count($this->to); $i++)
+            $to .= sprintf(",%s", $this->to[$i][0]);
 
-        if ($this->Sender != "" && strlen(ini_get("safe_mode"))< 1)
+        if ($this->Sender != "" && PHP_VERSION >= "4.0")
         {
             $old_from = ini_get("sendmail_from");
             ini_set("sendmail_from", $this->Sender);
+        }
+
+        if ($this->Sender != "" && PHP_VERSION >= "4.0.5")
+        {
             $params = sprintf("-oi -f %s", $this->Sender);
-            $rt = @mail($to, $this->EncodeHeader($this->Subject), $body, 
-                        $header, $params);
+            $rt = @mail($to, $this->EncodeHeader($this->Subject), $body, $header, $params);
         }
         else
             $rt = @mail($to, $this->EncodeHeader($this->Subject), $body, $header);
@@ -471,12 +467,33 @@ class PHPMailer
      * @return bool
      */
     function SmtpSend($header, $body) {
-        include_once($this->PluginDir.'class.smtp.php');
+        // Include SMTP class code, but not twice
+        include_once($this->PluginDir . "class.smtp.php");
         $error = "";
         $bad_rcpt = array();
 
-        if(!$this->SmtpConnect())
-            return false;
+        if($this->smtp == NULL)
+        {
+            if(!$this->SmtpConnect())
+                return false;
+        }
+
+        // Must perform HELO before authentication
+        if ($this->Helo != '')
+            $this->smtp->Hello($this->Helo);
+        else
+            $this->smtp->Hello($this->ServerHostname());
+
+        // If user requests SMTP authentication
+        if($this->SMTPAuth)
+        {
+            if(!$this->smtp->Authenticate($this->Username, $this->Password))
+            {
+                $this->SetError($this->Lang("authenticate"));
+                $this->smtp->Reset();
+                return false;
+            }
+        }
 
         $smtp_from = ($this->Sender == "") ? $this->From : $this->Sender;
         if(!$this->smtp->Mail($smtp_from))
@@ -504,7 +521,8 @@ class PHPMailer
                 $bad_rcpt[] = $this->bcc[$i][0];
         }
 
-        if(count($bad_rcpt) > 0) // Create error message
+        // Create error message
+        if(count($bad_rcpt) > 0)
         {
             for($i = 0; $i < count($bad_rcpt); $i++)
             {
@@ -557,24 +575,7 @@ class PHPMailer
             }
 
             if($this->smtp->Connect($host, $port, $this->Timeout))
-            {
-                if ($this->Helo != '')
-                    $this->smtp->Hello($this->Helo);
-                else
-                    $this->smtp->Hello($this->ServerHostname());
-        
-                if($this->SMTPAuth)
-                {
-                    if(!$this->smtp->Authenticate($this->Username, 
-                                                  $this->Password))
-                    {
-                        $this->SetError($this->Lang("authenticate"));
-                        $this->smtp->Reset();
-                        $connection = false;
-                    }
-                }
                 $connection = true;
-            }
             $index++;
         }
         if(!$connection)
@@ -602,18 +603,16 @@ class PHPMailer
      * Sets the language for all class error messages.  Returns false 
      * if it cannot load the language file.  The default language type
      * is English.
-     * SE 20041001: Added '$this->PluginDir' for Moodle compatibility
-     *
      * @param string $lang_type Type of language (e.g. Portuguese: "br")
      * @param string $lang_path Path to the language file directory
      * @access public
      * @return bool
      */
-    function SetLanguage($lang_type, $lang_path = "language/") {
-        if(file_exists($this->PluginDir.$lang_path.'phpmailer.lang-'.$lang_type.'.php'))
-            include($this->PluginDir.$lang_path.'phpmailer.lang-'.$lang_type.'.php');
+    function SetLanguage($lang_type, $lang_path = "") {
+        if(file_exists($lang_path.'phpmailer.lang-'.$lang_type.'.php'))
+            include($lang_path.'phpmailer.lang-'.$lang_type.'.php');
         else if(file_exists($lang_path.'phpmailer.lang-en.php'))
-            include($this->PluginDir.$lang_path.'phpmailer.lang-en.php');
+            include($lang_path.'phpmailer.lang-en.php');
         else
         {
             $this->SetError("Could not load language file");
@@ -639,9 +638,11 @@ class PHPMailer
         if(count($addr) > 1)
         {
             for($i = 1; $i < count($addr); $i++)
-                $addr_str .= ", " . $this->AddrFormat($addr[$i]);
+                $addr_str .= sprintf(", %s", $this->AddrFormat($addr[$i]));
+            $addr_str .= $this->LE;
         }
-        $addr_str .= $this->LE;
+        else
+            $addr_str .= $this->LE;
 
         return $addr_str;
     }
@@ -655,10 +656,7 @@ class PHPMailer
         if(empty($addr[1]))
             $formatted = $addr[0];
         else
-        {
-            $formatted = $this->EncodeHeader($addr[1], 'phrase') . " <" . 
-                         $addr[0] . ">";
-        }
+            $formatted = sprintf('%s <%s>', $this->EncodeHeader($addr[1], 'phrase'), $addr[0]);
 
         return $formatted;
     }
@@ -778,6 +776,7 @@ class PHPMailer
         $this->boundary[1] = "b1_" . $uniq_id;
         $this->boundary[2] = "b2_" . $uniq_id;
 
+        $result .= $this->Received();
         $result .= $this->HeaderLine("Date", $this->RFCDate());
         if($this->Sender == "")
             $result .= $this->HeaderLine("Return-Path", trim($this->From));
@@ -791,14 +790,15 @@ class PHPMailer
                 $result .= $this->AddrAppend("To", $this->to);
             else if (count($this->cc) == 0)
                 $result .= $this->HeaderLine("To", "undisclosed-recipients:;");
-            if(count($this->cc) > 0)
-                $result .= $this->AddrAppend("Cc", $this->cc);
         }
 
         $from = array();
         $from[0][0] = trim($this->From);
         $from[0][1] = $this->FromName;
         $result .= $this->AddrAppend("From", $from); 
+
+        if(count($this->cc) > 0)
+            $result .= $this->AddrAppend("Cc", $this->cc);
 
         // sendmail and mail() extract Bcc from the header before sending
         if((($this->Mailer == "sendmail") || ($this->Mailer == "mail")) && (count($this->bcc) > 0))
@@ -815,6 +815,10 @@ class PHPMailer
         $result .= $this->HeaderLine("X-Priority", $this->Priority);
         $result .= $this->HeaderLine("X-Mailer", "PHPMailer [version " . $this->Version . "]");
         
+        if ($this->Precedence != "") {
+            $result .= $this->HeaderLine("Precedence", $this->Precedence);
+        }
+
         if($this->ConfirmReadingTo != "")
         {
             $result .= $this->HeaderLine("Disposition-Notification-To", 
@@ -839,7 +843,7 @@ class PHPMailer
             case "attachments":
                 // fall through
             case "alt_attachments":
-                if($this->InlineImageExists())
+                if($this->EmbeddedImageCount() > 0)
                 {
                     $result .= sprintf("Content-Type: %s;%s\ttype=\"text/html\";%s\tboundary=\"%s\"%s", 
                                     "multipart/related", $this->LE, $this->LE, 
@@ -941,9 +945,8 @@ class PHPMailer
         if($encoding == "") { $encoding = $this->Encoding; }
 
         $result .= $this->TextLine("--" . $boundary);
-        $result .= sprintf("Content-Type: %s; charset = \"%s\"", 
+        $result .= sprintf("Content-Type: %s; charset = \"%s\"\n", 
                             $contentType, $charSet);
-        $result .= $this->LE;
         $result .= $this->HeaderLine("Content-Transfer-Encoding", $encoding);
         $result .= $this->LE;
        
@@ -1006,7 +1009,7 @@ class PHPMailer
      * @param string $path Path to the attachment.
      * @param string $name Overrides the attachment name.
      * @param string $encoding File encoding (see $Encoding).
-     * @param string $type File extension (MIME) type.
+     * @param string $type File extension type.
      * @return bool
      */
     function AddAttachment($path, $name = "", $encoding = "base64", 
@@ -1021,6 +1024,7 @@ class PHPMailer
         if($name == "")
             $name = $filename;
 
+        // Append to $attachment array
         $cur = count($this->attachment);
         $this->attachment[$cur][0] = $path;
         $this->attachment[$cur][1] = $filename;
@@ -1123,18 +1127,22 @@ class PHPMailer
               // chunk_split is found in PHP >= 3.0.6
               $encoded = chunk_split(base64_encode($str), 76, $this->LE);
               break;
+
           case "7bit":
           case "8bit":
               $encoded = $this->FixEOL($str);
               if (substr($encoded, -(strlen($this->LE))) != $this->LE)
                 $encoded .= $this->LE;
               break;
+
           case "binary":
               $encoded = $str;
               break;
+
           case "quoted-printable":
               $encoded = $this->EncodeQP($str);
               break;
+
           default:
               $this->SetError($this->Lang("encoding") . $encoding);
               break;
@@ -1254,7 +1262,7 @@ class PHPMailer
      * @param string $string String attachment data.
      * @param string $filename Name of the attachment.
      * @param string $encoding File encoding (see $Encoding).
-     * @param string $type File extension (MIME) type.
+     * @param string $type File extension type.
      * @return void
      */
     function AddStringAttachment($string, $filename, $encoding = "base64", 
@@ -1273,15 +1281,13 @@ class PHPMailer
     
     /**
      * Adds an embedded attachment.  This can include images, sounds, and 
-     * just about any other document.  Make sure to set the $type to an 
-     * image type.  For JPEG images use "image/jpeg" and for GIF images 
-     * use "image/gif".
+     * just about any other document.
      * @param string $path Path to the attachment.
      * @param string $cid Content ID of the attachment.  Use this to identify 
      *        the Id for accessing the image in an HTML form.
      * @param string $name Overrides the attachment name.
      * @param string $encoding File encoding (see $Encoding).
-     * @param string $type File extension (MIME) type.  
+     * @param string $type File extension type.
      * @return bool
      */
     function AddEmbeddedImage($path, $cid, $name = "", $encoding = "base64", 
@@ -1312,19 +1318,16 @@ class PHPMailer
     }
     
     /**
-     * Returns true if an inline attachment is present.
+     * Returns the number of embedded images in an email.
      * @access private
-     * @return bool
+     * @return int
      */
-    function InlineImageExists() {
-        $result = false;
+    function EmbeddedImageCount() {
+        $result = 0;
         for($i = 0; $i < count($this->attachment); $i++)
         {
             if($this->attachment[$i][6] == "inline")
-            {
-                $result = true;
-                break;
-            }
+                $result++;
         }
         
         return $result;
@@ -1411,7 +1414,7 @@ class PHPMailer
     }
 
     /**
-     * Returns the proper RFC 822 formatted date. 
+     * Returns the proper RFC 822 formatted date. Returns string.
      * @access private
      * @return string
      */
@@ -1421,6 +1424,36 @@ class PHPMailer
         $tz = abs($tz);
         $tz = ($tz/3600)*100 + ($tz%3600)/60;
         $result = sprintf("%s %s%04d", date("D, j M Y H:i:s"), $tzs, $tz);
+
+        return $result;
+    }
+
+    /**
+     * Returns Received header for message tracing. Returns string.
+     * @access private
+     * @return string
+     */
+    function Received() {
+        if ($this->ServerVar('SERVER_NAME') != '')
+        {
+            $protocol = ($this->ServerVar('HTTPS') == 'on') ? 'HTTPS' : 'HTTP';
+            $remote = $this->ServerVar('REMOTE_HOST');
+            if($remote == "")
+                $remote = 'phpmailer';
+            $remote .= ' (['.$this->ServerVar('REMOTE_ADDR').'])';
+        }
+        else
+        {
+            $protocol = 'local';
+            $remote = $this->ServerVar('USER');
+            if($remote == '')
+                $remote = 'phpmailer';
+        }
+
+        $result = sprintf("Received: from %s %s\tby %s " .
+                          "with %s (PHPMailer);%s\t%s%s", $remote, $this->LE,
+                          $this->ServerHostname(), $protocol, $this->LE,
+                          $this->RFCDate(), $this->LE);
 
         return $result;
     }
@@ -1477,7 +1510,7 @@ class PHPMailer
         if(isset($this->language[$key]))
             return $this->language[$key];
         else
-            return "Language string failed to load: " . $key;
+            return "";
     }
     
     /**
@@ -1489,7 +1522,7 @@ class PHPMailer
     }
 
     /**
-     * Changes every end of line from CR or LF to CRLF.  
+     * Changes every end of line from CR or LF to CRLF.  Returns string.
      * @access private
      * @return string
      */
@@ -1501,7 +1534,7 @@ class PHPMailer
     }
 
     /**
-     * Adds a custom header. 
+     * Adds a custom header.  Returns void.
      * @return void
      */
     function AddCustomHeader($custom_header) {

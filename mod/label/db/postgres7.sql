@@ -6,7 +6,5 @@ CREATE TABLE prefix_label (
   timemodified integer NOT NULL default '0'
 );
 
-CREATE INDEX prefix_label_course_idx ON prefix_label (course);
-
 INSERT INTO prefix_log_display VALUES ('label', 'add', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('label', 'update', 'quiz', 'name');

@@ -4,7 +4,7 @@
 
 $string['about'] = 'О овом едитору';
 $string['absbottom'] = 'Апсолутно доље';
-$string['middle'] = 'Апсолутна средина';
+$string['absmiddle'] = 'Апсолутна средина';
 $string['address'] = 'Адресе';
 $string['alignment'] = 'Поравнање';
 $string['alternatetext'] = 'Алтернативни текст';

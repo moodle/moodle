@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
 //  Collect ratings, store them, then return to where we came from
 
@@ -29,15 +29,10 @@
 
     if ($data) {
 
-        $lastpostid = 0;
-
-        foreach ((array)$data as $postid => $rating) {
+        foreach ($data as $postid => $rating) {
             if ($postid == "id") {
                 continue;
             }
-
-            $lastpostid = $postid;
-
             if ($oldrating = get_record("forum_ratings", "userid", $USER->id, "post", $postid)) {
                 if ($rating != $oldrating->rating) {
                     $oldrating->rating = $rating;
@@ -58,7 +53,7 @@
                 }
             }
         }
-        if ($post = get_record('forum_posts', 'id', $lastpostid)) {    // To find discussion we're in
+        if ($post = get_record('forum_posts', 'id', $postid)) {
             if ($returntoview and ($discussion = get_record('forum_discussions', 'id', $post->discussion))) {
                 redirect("$CFG->wwwroot/mod/forum/view.php?f=$discussion->forum", get_string("ratingssaved", "forum"));
             } else {

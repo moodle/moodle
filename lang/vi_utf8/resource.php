@@ -1,82 +1,10 @@
-﻿<?php // $Id$ 
-      // resource.php - created with Moodle 1.2 development (2003120700)
+<?PHP // $Id$ 
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112400)
 
 
-$string['addresource'] = 'Thêm tài nguyên mới';
-$string['chooseafile'] = 'Chọn hoặc tải một file lên';
-$string['chooseparameter'] = 'Chọn tham số';
-$string['configdefaulturl'] = 'Giá trị này được sử dụng điền trước mẫu URL khi tạo một nguồn tài nguyên mới dựa trên URL.';
-$string['configfilterexternalpages'] = 'Cho phép thiết lập này sẽ là nguyên nhân tất cả các tài nguyên ngoài( như các trang web, các file dạng HTML được tải lên) được xử lý bởi các bộ lọc file được định nghĩa hiện hành (ví dụ như các kết nối tự động bảng chú giải thuật ngữ). Bật tuỳ chọn này có thể là nguyên nhân làm các trang trong cua học của bạn bị trì hoãn một cách đáng kể - cẩn thận và chỉ khi nào bạn thực sự cần nó.';
-$string['configframesize'] = 'Khi một trang web hoặc một file được tải lên được hiển thị trong một khung, giá trị này là kích cỡ (theo điểm ảnh) của đỉnh khung.';
-$string['configparametersettings'] = 'Điều này thiết lập giá trị đối với ô cửa thiết lập tham số trong form khi thêm một số tài nguyên mới. Sau lần đầu tiên, điều này sẽ thích hợp với tuỳ chọn của từng cá nhân riêng lẻ.';
-$string['configpopup'] = 'Khi thêm một nguồn tài nguyên mới nó có khả năng hiển thị trong một cửa sổ popup, tuỳ chọn này có nên được thiết lập theo mặc định?';
-$string['configpopupdirectories'] = 'Các cửa sổ popup có nên hiển thị các đường kết nối trực tiếp theo mặc định ?';
-$string['configpopupheight'] = 'Chiều cao mặc định cho cửa sổ popup mới nên là bao nhiêu ?';
-$string['configpopuplocation'] = 'Các cửa sổ popup có nên hiển thị thanh định vị theo mặc định?';
-$string['configpopupmenubar'] = 'Các cửa sổ popup có nên hiển thị thanh menu theo mặc định?';
-$string['configpopupresizable'] = 'Có nên thay đổi kích thước của cửa sổ popup theo mặc định?';
-$string['configpopupscrollbars'] = 'Các cửa sổ popup có nên được cuộn theo mặc định?';
-$string['configpopupstatus'] = 'Các cửa sổ popup có nên hiển thị thanh trạng thái theo mặc định?';
-$string['configpopuptoolbar'] = 'Các cửa sổ popup có nên hiển thị thanh công cụ theo mặc định ?';
-$string['configpopupwidth'] = 'Chiều rộng mặc định đối với các cửa sổ popup mới nên là bao nhiêu?';
-$string['configsecretphrase'] = 'Cụm từ bí mật này được sử dụng để đưa ra giá trị mã được mã hoá mà có thể được gửi tới một số tài nguyên như một tham số. Mã được mã hoá được đưa ra bởi một giá trị md5 của địa chỉ IP của người dùng hiện hành bị ràng buộc bởi cụm từ bí mật của bạn. ví dụ code = md5(IP.secretphrase).  Điều này cho phép tài nguyên đích để kiểm tra kết nối kết nối đối với bảo mật được thêm vào.';
-$string['configwebsearch'] = 'Khi thêm một URL như một webpage hoặc weblink, vị trí này được tham chiếu như là một site nhằm trợ giúp người dùng tìm kiếm địa chỉ URL mà họ muốn.';
-$string['configwindowsettings'] = 'Điều này thiết lập giá trị mặc định cho các thiết lập cửa sổ trong form khi thêm một số tài nguyên mới. Sau lần đầu tiên, điều này thích hợp với tuỳ chọn của từng cá nhân.';
-$string['directlink'] = 'Kết nối trực tiếp tới file này';
-$string['directoryinfo'] = 'Tất cả các file trong thư mục chọn sẽ được hiển thị';
-$string['display'] = 'Cửa sổ';
-$string['editingaresource'] = 'Soạn thảo một tài nguyên';
-$string['encryptedcode'] = 'Mã được mã hoá';
-$string['example'] = 'Ví dụ';
-$string['exampleurl'] = 'http://www.example.com/somedirectory/somefile.html';
-$string['fetchclienterror'] = 'Một lỗi được tìm thấy cùng với web client của bạn trong khi cố gắng truy lục trang web (có thể là địa chỉ URL bị lỗi).';
-$string['fetcherror'] = 'Một lỗi được tìm thấy trong khi cố gắng truy tìm trang web.';
-$string['fetchservererror'] = 'Một lỗi được tìm thấy với server ở xa trong quá trình cố gắng truy tìm trang web.</p>';
-$string['filename'] = 'Tên File';
-$string['filtername'] = "Các tên tài nguyên được kết nối tự động ";
-$string['frameifpossible'] = 'Đặt tài nguyên trong một khung để duy trì site hiển thị trong quá trình duyệt';
-$string['fulltext'] = 'Nội dung văn bản';
-$string['htmlfragment'] = 'Phân đoạn HTML';
-$string['maindirectory'] = 'Thư mục các file chính';
-$string['modulename'] = 'Tài nguyên';
-$string['modulenameplural'] = 'Các tài nguyên';
-$string['neverseen'] = 'Chưa bao giờ nhìn thấy';
-$string['newdirectories'] = 'Hiển thị các kết nối thư mục';
-$string['newfullscreen'] = 'Hiển thị toàn màn hình';
-$string['newheight'] = 'Độ cao cửa sổ mặc định (theo điểm ảnh)';
-$string['newlocation'] = 'Hiển thị thanh định vị';
-$string['newmenubar'] = 'Hiển thị thanh menu';
-$string['newresizable'] = 'Cho phép thay đổi kích thước cửa sổ';
-$string['newscrollbars'] = 'Cho phép cửa sổ được cuộn';
-$string['newstatus'] = 'Hiển thị thanh trạng thái';
-$string['newtoolbar'] = 'Hiển thị thanh công cụ';
-$string['newwidth'] = 'Chiều rộng cửa sổ mặc định (theo điểm ảnh )';
-$string['newwindow'] = 'Cửa sổ mới';
-$string['newwindowopen'] = 'Hiển thị tài nguyên này trong một cửa sổ popup mới';
-$string['note'] = 'Ghi chú';
-$string['notefile'] = 'Để tải nhiều file hơn vào trong cua học( vì thế chúng sẽ xuất hiện trong danh sách này) sử dụng <a href=\"$a\"> Quản lý File </a>.';
-$string['notypechosen'] = 'Bạn cần chọn một kiểu. Sử dụng nút quay trở để quay trở lại và thử lại.';
-$string['pagedisplay'] = 'Hiển thị tài nguyên này trong cửa sổ hiện hành';
-$string['pagewindow'] = ' Trong cùng cửa sổ ';
-$string['parameter'] = 'Tham số';
-$string['parameters'] = 'Các tham số';
-$string['popupresource'] = 'Tài nguyên này nên xuất hiện trong một cửa sổ popup.';
-$string['popupresourcelink'] = 'Nếu nó không thực hiện, nhấn chuột vào đây: $a';
-$string['resourcetype'] = 'Kiểu tài nguyên';
-$string['resourcetype1'] = 'Tham khảo';
-$string['resourcetype2'] = 'Trang Web';
-$string['resourcetype3'] = 'File được tải lên';
-$string['resourcetype4'] = 'Văn bản thuần tuý';
-$string['resourcetype5'] = 'Liên kết đến Web';
-$string['resourcetype6'] = 'Văng bản dạng HTML';
-$string['resourcetype7'] = 'Chương trình';
-$string['resourcetype8'] = 'Văn bản giống như Wiki';
-$string['resourcetype9'] = 'Thu mục';
-$string['resourcetypedirectory'] = 'Hiển thị một thư mục';
-$string['resourcetypefile'] = 'Link tới một file hoặc web site';
-$string['resourcetypehtml'] = 'Soạn thảo một trang web';
-$string['resourcetypelabel'] = 'Chèn một nhãn';
-$string['resourcetypetext'] = 'Soạn thảo một trang văn bản';
-$string['searchweb'] = 'Tìm kiếm trang web';
-$string['variablename'] = 'Tên biến';
+$string['modulename'] = 'Tài Liệu';
+$string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Vietnamese';
+
 ?>

@@ -52,7 +52,7 @@ function ewiki_format_source_footnotes (&$source) {
          $source .= "\n----";
       }
       $source .= "\n" .
-                 "<a name=\"fn$notenum\">·$notenum</a> ". $footnote . "\n<br />";
+                 "<a name=\"fn$notenum\">·$notenum</a> ". $footnote . "\n<br>";
       
    }
 }

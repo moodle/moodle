@@ -9,10 +9,10 @@ $string['editingended'] = 'ÇäÊåÊ İÊÑÉ ÇáÊÚÏíá';
 $string['editingends'] = 'ÊäÊåí İÊÑÉ ÇáÊÚÏíá';
 $string['entries'] = 'ãæÇÏ';
 $string['feedbackupdated'] = 'ÊÕÍíÍ ãÍÏË $a ááãÏÎáÇÊ ';
-$string['journalmail'] = '$a->teacher ŞÇã íæÖÚ ÈÚÖ ÇáÊÕÍíÍÇÊ Úáì ãÇÏÉ ãĞßÑÊß ÇáãÓáãÉ áÜ \'$a->journal\'
-ÊÓÊØíÚ ãÔÇåÏÊåÇ ãÑİŞÉ ãÚ ãÇÏÉ ãĞßÑÊß: $a->url
+$string['journalmail'] = '$a->teacher ŞÇã íæÖÚ ÈÚÖ ÇáÊÕÍíÍÇÊ Úáì ãÇÏÉ ãĞßÑÊß ÇáãÓáãÉ áÜ \'$a->journal\'
+ÊÓÊØíÚ ãÔÇåÏÊåÇ ãÑİŞÉ ãÚ ãÇÏÉ ãĞßÑÊß: $a->url
 ';
-$string['journalmailhtml'] = '$a->teacher ŞÇã ÈæÖÚ ÈÚÖ ÇáÊÕÍíÍÇÊ Úáì ãÇÏÉ ãĞßÑÊß \'<i>$a->journal</i>\'<br /><br />
+$string['journalmailhtml'] = '$a->teacher ŞÇã ÈæÖÚ ÈÚÖ ÇáÊÕÍíÍÇÊ Úáì ãÇÏÉ ãĞßÑÊß \'<i>$a->journal</i>\'<br /><br />
  íãßäß ãÔÇåÏÊåÇ ãÑİŞÉ ãÚ áãÇÏÉ ãĞßÑÊß<a href=\"$a->url\">journal entry</a>.';
 $string['journalname'] = 'ÇÓã ÇáãĞßÑÉ';
 $string['journalquestion'] = 'ÓÄÇá ÇáãĞßÑÉ';

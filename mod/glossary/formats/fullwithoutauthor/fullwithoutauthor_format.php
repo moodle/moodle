@@ -1,61 +1,48 @@
-<?php  // $Id$
+<?PHP  // $Id$
 
-function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL, $aliases=true) {
-    global $CFG, $USER;
+function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons=1,$ratings=NULL) {
+    global $THEME, $CFG, $USER;
 
+    $colour = $THEME->cellheading2;
 
+    echo "\n<br /><table border=0 width=95% cellspacing=0 valign=top cellpadding=3 class=forumpost align=center>";
+
+    echo "\n<tr>";
     $return = false;
     if ($entry) {
-        echo '<table class="glossarypost fullwithoutauthor" cellspacing="0">';
-        echo '<tr valign="top">';
 
-        echo '<td class="entryheader">';
+        echo "<td valign=\"top\" width=100% bgcolor=\"$THEME->cellheading\" class=\"forumpostheader\">";
 
-        echo '<span class="concept">';
+        echo "<b>";
         glossary_print_entry_concept($entry);
-		echo '</span><br />';
+		echo "</b><br />";
 
-        echo '('.get_string('lastedited').': '.
-             userdate($entry->timemodified).')';
-        echo '</td>';
-        echo '<td class="entryattachment">';
+        echo "<font size=1>(".get_string("lastedited").": ".
+             userdate($entry->timemodified).")</font>";
+        echo "</td>";
+        echo "\n<td bgcolor=\"$THEME->cellheading\" width=35 valign=top class=\"forumpostheader\">";
 
         glossary_print_entry_approval($cm, $entry, $mode);
-        glossary_print_entry_attachment($entry,'html','right');
-        echo '</td>';
+        glossary_print_entry_attachment($entry,"html","right");
+        echo "</td>";
 
-        echo '</tr>';
+        echo "</tr>";
 
-        echo '<tr valign="top">';
-        echo '<td width="100%" colspan="2" class="entry">';
+        echo "\n<tr>";
+        echo "\n<td width=100% colspan=\"2\" bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">";
 
         glossary_print_entry_definition($entry);
-
-        echo '</td></tr>';
-        echo '<tr valign="top"><td colspan="2" class="entrylowersection">';
-        $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases);
-        
+        $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
         echo ' ';
-        echo '</td></tr>';
-        echo "</table>\n";
     } else {
-        echo '<center>';
-        print_string('noentry', 'glossary');
-        echo '</center>';
+        echo "<center>";
+        print_string("noentry", "glossary");
+        echo "</center>";
     }
+    echo "</td></tr>";
+
+    echo "</table>\n";
     return $return;
-}
-
-function glossary_print_entry_fullwithoutauthor($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL) {
-
-    //The print view for this format is exactly the normal view, so we use it
-
-    //Take out autolinking in definitions un print view
-    $entry->definition = '<span class="nolink">'.$entry->definition.'</span>';
-
-    //Call to view function (without icons, ratings and aliases) and return its result
-    return glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, $mode, $hook, false, false, false);
-
 }
 
 ?>

@@ -3,89 +3,86 @@
       // Syntax:   quizfile.php/quiz id/question id/dir/.../dir/filename.ext
       // It is supposed to be used by the quiz module only
 
-    require_once('../../config.php');
-    require_once($CFG->libdir.'/filelib.php');
-    require_once('locallib.php');
+    require_once("../../config.php");
+    require_once("../../files/mimetypes.php");
+    require_once("lib.php");
 
-    if (empty($CFG->filelifetime)) {
-        $lifetime = 86400;     // Seconds for files to remain in caches
+    $lifetime = 86400;
+
+    if (isset($file)) {     // workaround for situations where / syntax doesn't work
+        $pathinfo = $file;
     } else {
-        $lifetime = $CFG->filelifetime;
-    }
-    
-    $relativepath = get_file_argument('quizfile.php');
-    
-    if (!$relativepath) {
-        error('No valid arguments supplied or incorrect server configuration');
-    }
-    
-    // extract relative path components
-    $args = explode('/', trim($relativepath, '/'));
-    if (count($args) < 3) { // always at least category, question and path
-        error('No valid arguments supplied');
-    }
-    
-    $quizid       = (int)array_shift($args);
-    $questionid   = (int)array_shift($args);
-    $relativepath = implode ('/', $args);
-
-    if (!($question = get_record('quiz_questions', 'id', $questionid))) {
-        error('No valid arguments supplied');
+        $pathinfo = get_slash_arguments("file.php");
     }
 
-    if (!($questioncategory = get_record('quiz_categories', 'id', $question->category))) {
-        error('No valid arguments supplied');
+    if (!$pathinfo) {
+        error("No file parameters!");
     }
 
     /////////////////////////////////////
-    // Check access
+    // Extract info from $pathinfo
     /////////////////////////////////////
-    if ($quizid == 0) { // teacher doing preview during quiz creation
-        if ($questioncategory->publish) {
-            require_login();
-            if (!isteacherinanycourse()) {
-              error('No valid arguments supplied');
-            }
-        } else {
-            require_login($questioncategory->course);
-            if (!isteacher($questioncategory->course)) {
-                error('Access not allowed');
-            }
-        }        
-    } else {
-        if (!($quiz = get_record('quiz', 'id', $quizid))) {
-            error('No valid arguments supplied');
-        }
-        if (!($course = get_record('course', 'id', $quiz->course))) {
-            error('No valid arguments supplied');
-        }
-        require_login($course->id);
-        
-        // For now, let's not worry about this.  The following check causes 
-        // problems sometimes when reviewing a quiz
-        //if (!isteacher($course->id)
-        //    and !quiz_get_user_attempt_unfinished($quiz->id, $USER->id)
-        //    and ! ($quiz->review  &&  time() > $quiz->timeclose)
-        //        || !quiz_get_user_attempts($quiz->id, $USER->id) )
-        //{
-        //    error("Logged-in user is not allowed to view this quiz");
-        //}
-    
-        ///////////////////////////////////////////////////
-        // The logged-in user has the right to view material on this quiz!
-        // Now verify the consistency between $quiz, $question, its category and $relativepathname
-        ///////////////////////////////////////////////////
-    
-        // For now, let's not worry about this.  The following check doesn't 
-        // work for randomly selected questions and it gets complicated
-        //if (!in_array($question->id, explode(',', $quiz->questions), FALSE)) {
-        //    error("Specified question is not on the specified quiz");
-        //}
+
+    $idreg = '[0-9]+';
+    if (!ereg("^/?($idreg)/($idreg)/((.+/)?([^/]+))$",
+              $pathinfo,
+              $regs) ) {
+        error("File parameters are badly formated");
+    }
+    if (! ($quiz = get_record('quiz', 'id', $regs[1]))) {
+        error("No valid quiz supplied");
+    }
+    if (! ($question = get_record('quiz_questions', 'id', $regs[2]))) {
+        error("No valid question supplied");
+    }
+    if (! ($relativefilepath = $regs[3])) {
+        error("No valid file path supplied");
+    }
+    if (! ($filename = $regs[5])) {
+        error("No valid file name supplied");
+    }
+
+    //////////////////////////////////////////
+    // Info from $pathinfo is now extracted!
+    // Now check the user's persmissions on this quiz...
+    //////////////////////////////////////////
+
+    if (! ($course = get_record("course", "id", $quiz->course))) {
+        error("Supplied quiz $quiz->name does not belong to a valid course");
+    }
+
+    require_login($course->id);
+
+    // For now, let's not worry about this.  The following check causes 
+    // problems sometimes when reviewing a quiz
+    //if (!isteacher($course->id)
+    //    and !quiz_get_user_attempt_unfinished($quiz->id, $USER->id)
+    //    and ! ($quiz->review  &&  time() > $quiz->timeclose)
+    //        || !quiz_get_user_attempts($quiz->id, $USER->id) )
+    //{
+    //    error("Logged-in user is not allowed to view this quiz");
+    //}
+
+    ///////////////////////////////////////////////////
+    // The logged-in user has the right to view material on this quiz!
+    // Now verify the consistency between $quiz, $question, its category and $relativepathname
+    ///////////////////////////////////////////////////
+
+    // For now, let's not worry about this.  The following check doesn't 
+    // work for randomly selected questions and it gets complicated
+    //if (!in_array($question->id, explode(',', $quiz->questions), FALSE)) {
+    //    error("Specified question is not on the specified quiz");
+    //}
+
+    if (! ($questioncategory = get_record('quiz_categories', 'id',
+                                          $question->category)))
+    {
+        error("Question category is not valid");
     }
 
     // Have the question check whether it uses this file or not
     if (!$QUIZ_QTYPES[$question->qtype]->uses_quizfile($question,
-                                                       $relativepath)) {
+                                                       $relativefilepath)) {
         error("The specified file path is not on the specified question");
     }
 
@@ -95,14 +92,34 @@
     // Specified file can now be returned...
     //////////////////////////////////////////
 
-    $pathname = "$CFG->dataroot/$questioncategory->course/$relativepath";
-    $filename = $args[count($args)-1];
+    $pathname = "$CFG->dataroot/$questioncategory->course/$relativefilepath";
+    // $filename has already been extracted
 
+
+    /////////////////////////////////////////////////////////////////
+    // The remaining code is identical to the final lines of file.php
+    // If you ask me - this stuff should be separated into a separate
+    // function for conviency.
+    // That function would find itself very in comfortable in the 
+    // file mimetypes.php
+    //////////////////////////////////
+
+    $mimetype = mimeinfo("type", $filename);
 
     if (file_exists($pathname)) {
-        send_file($pathname, $filename, $lifetime);
+        $lastmodified = filemtime($pathname);
+
+        header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
+        header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
+        header("Cache-control: max_age = $lifetime"); // a day
+        header("Pragma: ");
+        header("Content-disposition: inline; filename=$filename");
+        header("Content-length: ".filesize($pathname));
+        header("Content-type: $mimetype");
+        readfile("$pathname");
     } else {
-        header('HTTP/1.0 404 not found');
-        error(get_string('filenotfound', 'error')); //this is not displayed on IIS??
+        error("Sorry, but the file you are looking for was not found ($pathname)", "course/view.php?id=$courseid");
     }
+
+    exit;
 ?>

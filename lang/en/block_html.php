@@ -4,6 +4,5 @@ $string['html'] = 'HTML';
 $string['configtitle'] = 'Block Title';
 $string['configcontent'] = 'Content';
 $string['leaveblanktohide'] = 'leave blank to hide the title';
-$string['newhtmlblock'] = '(new HTML block)';
 
 ?>

@@ -3,22 +3,13 @@
 //  Display profile for a particular user
 
     require_once("../config.php");
+    require_once("../mod/forum/lib.php");
 
-    $id      = optional_param('id',     0,      PARAM_INT);   // user id
-    $course  = optional_param('course', SITEID, PARAM_INT);   // course id (defaults to Site)
-    $enable  = optional_param('enable', '');                  // enable email
-    $disable = optional_param('disable', '');                 // disable email
+    require_variable($id);
+    require_variable($course);
+    optional_variable($enable, "");
+    optional_variable($disable, "");
 
-    if (!empty($SESSION->wantsurl)) {
-        $wantsurl = $SESSION->wantsurl;
-        unset($SESSION->wantsurl);
-        redirect($wantsurl);
-    }
-
-    if (empty($id)) {         // See your own profile by default
-        require_login();
-        $id = $USER->id;
-    }
 
     if (! $user = get_record("user", "id", $id) ) {
         error("No such user in this course");
@@ -39,12 +30,10 @@
 
     add_to_log($course->id, "user", "view", "view.php?id=$user->id&course=$course->id", "$user->id");
 
-    if ($course->id != SITEID) {
-        if ($student = get_record("user_students", "userid", $user->id, "course", $course->id)) {
-            $user->lastaccess = $student->timeaccess;
-        } else if ($teacher = get_record("user_teachers", "userid", $user->id, "course", $course->id)) {
-            $user->lastaccess = $teacher->timeaccess;
-        }
+    if ($student = get_record("user_students", "userid", $user->id, "course", $course->id)) {
+        $user->lastaccess = $student->timeaccess;
+    } else if ($teacher = get_record("user_teachers", "userid", $user->id, "course", $course->id)) {
+        $user->lastaccess = $teacher->timeaccess;
     }
 
     $fullname = fullname($user, isteacher($course->id));
@@ -60,7 +49,7 @@
     if (groupmode($course) == SEPARATEGROUPS and !isteacheredit($course->id)) {   // Groups must be kept separate
         require_login();
 
-        if (!$currentuser && !isteacheredit($course->id, $user->id) && !ismember(mygroupid($course->id), $user->id)) {
+        if (!isteacheredit($course->id, $user->id) and !ismember(mygroupid($course->id), $user->id)) {
             print_header("$personalprofile: ", "$personalprofile: ",
                          "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
                           <a href=\"index.php?id=$course->id\">$participants</a>",
@@ -69,8 +58,8 @@
         }
     }
 
-    if ($course->id == SITEID and !$currentuser) {  // To reduce possibility of "browsing" userbase at site level
-        if (!isteacherinanycourse() and !isteacherinanycourse($user->id) ) {  // Teachers can browse and be browsed at site level
+    if (!$course->category and !$currentuser) {  // To reduce possibility of "browsing" userbase at site level
+        if (!isteacher() and !isteacher(0, $user->id) ) {  // Teachers can browse and be browsed at site level
             print_header("$personalprofile: ", "$personalprofile: ",
                           "<a href=\"index.php?id=$course->id\">$participants</a>",
                           "", "", true, "&nbsp;", navmenu($course));
@@ -104,32 +93,42 @@
         print_heading(get_string("userdeleted"));
     }
 
-
-/// Print tabs at top
-/// This same call is made in:
-///     /user/view.php
-///     /user/edit.php
-///     /course/user.php
-    $currenttab = 'profile';
-    include('tabs.php');
-
-
-
-    echo "<table width=\"80%\" align=\"center\" border=\"0\" cellspacing=\"0\" class=\"userinfobox\">";
+    echo "<table width=\"80%\" align=\"center\" border=\"0\" cellpadding=\"1\" cellspacing=\"1\" class=\"userinfobox\">";
     echo "<tr>";
-    echo "<td width=\"100\" valign=\"top\" class=\"side\">";
+    echo "<td width=\"100\" valign=\"top\" class=\"userinfoboxside\">";
     print_user_picture($user->id, $course->id, $user->picture, true, false, false);
-    echo "</td><td width=\"100%\" class=\"content\">";
+    echo "</td><td width=\"100%\" bgcolor=\"$THEME->cellcontent\" class=\"userinfoboxcontent\">";
+
+
+    // Print name and edit button across top
+
+    echo "<table width=\"100%\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr><td nowrap>";
+    echo "<h3>$fullname</h3>";
+    echo "</td><td align=\"right\">";
+    if (($currentuser and !isguest()) or isadmin()) {
+        if(empty($CFG->loginhttps)) {
+            $wwwroot = $CFG->wwwroot;
+        } else {
+            $wwwroot = str_replace('http','https',$CFG->wwwroot);
+        }
+        echo "<p><form action=\"$wwwroot/user/edit.php\" method=\"get\">";
+        echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />";
+        echo "<input type=\"hidden\" name=\"course\" value=\"$course->id\" />";
+        echo "<input type=\"submit\" value=\"".get_string("editmyprofile")."\" />";
+        echo "</form></p>";
+    }
+    echo "</td></tr></table>";
+
 
     // Print the description
 
     if ($user->description) {
-        echo format_text($user->description, FORMAT_MOODLE)."<hr />";
+        echo "<p>".format_text(clean_text($user->description, FORMAT_MOODLE))."</p><hr>";
     }
 
     // Print all the little details in a list
 
-    echo '<table border="0" cellpadding="0" cellspacing="0" class="list">';
+    echo "<table border=\"0\" cellpadding=\"5\" cellspacing=\"2\">";
 
     if ($user->city or $user->country) {
         $countries = get_list_of_countries();
@@ -152,20 +151,15 @@
        ($user->maildisplay == 2 and $course->category and !isguest()) or
        isteacher($course->id)) {
 
-        $emailswitch = '';
-
         if (isteacheredit($course->id) or $currentuser) {   /// Can use the enable/disable email stuff
-            if (!empty($_GET['enable'])) {     /// Recieved a parameter to enable the email address
+            if (!empty($_GET['enable'])) {     /// Recieved a paramter to enable the email address
                 set_field('user', 'emailstop', 0, 'id', $user->id);
                 $user->emailstop = 0;
             }
-            if (!empty($_GET['disable'])) {     /// Recieved a parameter to disable the email address
+            if (!empty($_GET['disable'])) {     /// Recieved a paramter to disable the email address
                 set_field('user', 'emailstop', 1, 'id', $user->id);
                 $user->emailstop = 1;
             }
-        }
-
-        if (isteacheredit($course->id)) {   /// Can use the enable/disable email stuff
             if ($user->emailstop) {
                 $switchparam = 'enable';
                 $switchtitle = get_string('emaildisable');
@@ -178,18 +172,10 @@
                 $switchpix   = 'email.gif';
             }
             $emailswitch = "&nbsp<a title=\"$switchclick\" ".
-                           "href=\"view.php?id=$user->id&course=$course->id&$switchparam=1\">".
+                           "href=\"view.php?id=$user->id&course=$course->id&$switchparam=$user->id\">".
                            "<img border=\"0\" width=11 height=11 src=\"$CFG->pixpath/t/$switchpix\"></a>";
-
-        } else if ($currentuser) {         /// Can only re-enable an email this way
-            if ($user->emailstop) {   // Include link that tells how to re-enable their email
-                $switchparam = 'enable';
-                $switchtitle = get_string('emaildisable');
-                $switchclick = get_string('emailenableclick');
-
-                $emailswitch = "&nbsp(<a title=\"$switchclick\" ".
-                               "href=\"view.php?id=$user->id&course=$course->id&enable=1\">$switchtitle</a>)";
-            }
+        } else {
+            $emailswitch = '';
         }
 
         print_row(get_string("email").":", obfuscate_mailto($user->email, '', $user->emailstop)."$emailswitch");
@@ -200,20 +186,7 @@
     }
 
     if ($user->icq) {
-        print_row(get_string('icqnumber').':',"<a href=\"http://web.icq.com/wwp?uin=$user->icq\">$user->icq <img src=\"http://web.icq.com/whitepages/online?icq=$user->icq&amp;img=5\" width=\"18\" height=\"18\" border=\"0\" alt=\"\" /></a>");
-    }
-
-    if ($user->skype) {
-        print_row(get_string('skypeid').':','<a href="callto:'.urlencode($user->skype).'">'.s($user->skype).'</a>');
-    }
-    if ($user->yahoo) {
-        print_row(get_string('yahooid').':', '<a href="http://edit.yahoo.com/config/send_webmesg?.target='.s($user->yahoo).'&amp;.src=pg">'.s($user->yahoo).'</a>');
-    }
-    if ($user->aim) {
-        print_row(get_string('aimid').':', '<a href="aim:goim?screenname='.s($user->aim).'">'.s($user->aim).'</a>');
-    }
-    if ($user->msn) {
-        print_row(get_string('msnid').':', s($user->msn));
+        print_row("ICQ:","<a href=\"http://web.icq.com/wwp?uin=$user->icq\">$user->icq <img src=\"http://web.icq.com/whitepages/online?icq=$user->icq&img=5\" width=18 height=18 border=0></a>");
     }
 
     if (isteacher($course->id)) {
@@ -221,7 +194,7 @@
             $courselisting = '';
             foreach ($mycourses as $mycourse) {
                 if ($mycourse->visible and $mycourse->category) {
-                    $courselisting .= "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$mycourse->id\">$mycourse->fullname</a>, ";
+                    $courselisting .= "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$mycourse->id\">$mycourse->fullname</a>, ";
                 }
             }
             print_row(get_string('courses').':', rtrim($courselisting,', '));
@@ -239,81 +212,68 @@
 
     echo "</td></tr></table>";
 
-
     $internalpassword = false;
-    if (is_internal_auth() or (!empty($CFG->{'auth_'.$USER->auth.'_stdchangepassword'}))) {
-        if (empty($CFG->loginhttps)) {
-            $internalpassword = "$CFG->wwwroot/login/change_password.php";
+    if (is_internal_auth()) {
+        if(empty($CFG->loginhttps)) {
+        $internalpassword = "$CFG->wwwroot/login/change_password.php";
         } else {
             $internalpassword = str_replace('http','https',$CFG->wwwroot.'/login/change_password.php');
         }
     }
 
 //  Print other functions
-    echo '<div class="buttons"><table align="center"><tr>';
+    echo "<center><table align=center><tr>";
     if ($currentuser and !isguest()) {
-        if ($internalpassword ) {
-            echo "<td nowrap=\"nowrap\"><form action=\"$internalpassword\" method=\"get\">";
-            echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
-            echo "<input type=\"submit\" value=\"".get_string("changepassword")."\" />";
-            echo "</form></td>";
-        } else if ( strlen($CFG->changepassword) > 1 ) {
-            echo "<td nowrap=\"nowrap\"><form action=\"$CFG->changepassword\" method=\"get\">";
-            echo "<input type=\"submit\" value=\"".get_string("changepassword")."\" />";
-            echo "</form></td>";
+        if ($internalpassword) {
+            echo "<td nowrap><p><form action=\"$internalpassword\" method=get>";
+            echo "<input type=hidden name=id value=\"$course->id\">";
+            echo "<input type=submit value=\"".get_string("changepassword")."\">";
+            echo "</form></p></td>";
+        } else if (strlen($CFG->changepassword) > 1) {
+            echo "<td nowrap><p><form action=\"$CFG->changepassword\" method=get>";
+            echo "<input type=submit value=\"".get_string("changepassword")."\">";
+            echo "</form></p></td>";
         }
     }
     if ($course->category and
         ((isstudent($course->id) and ($user->id == $USER->id) and !isguest() and $CFG->allowunenroll) or
         (isteacheredit($course->id) and isstudent($course->id, $user->id))) ) {
-        echo "<td nowrap=\"nowrap\"><form action=\"../course/unenrol.php\" method=\"get\" />";
-        echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
-        echo "<input type=\"hidden\" name=\"user\" value=\"$user->id\" />";
-        echo "<input type=\"submit\" value=\"".get_string("unenrolme", "", $course->shortname)."\">";
-        echo "</form></td>";
+        echo "<td nowrap><p><form action=\"../course/unenrol.php\" method=get>";
+        echo "<input type=hidden name=id value=\"$course->id\">";
+        echo "<input type=hidden name=user value=\"$user->id\">";
+        echo "<input type=submit value=\"".get_string("unenrolme", "", $course->shortname)."\">";
+        echo "</form></p></td>";
     }
-/*    if (isteacher($course->id) or ($course->showreports and $USER->id == $user->id)) {
-        echo "<td nowrap=\"nowrap\"><form action=\"../course/user.php\" method=\"get\">";
-        echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
-        echo "<input type=\"hidden\" name=\"user\" value=\"$user->id\" />";
-        echo "<input type=\"submit\" value=\"".get_string("activityreport")."\" />";
-        echo "</form></td>";
+    if (isteacher($course->id) or ($course->showreports and $USER->id == $user->id)) {
+        echo "<td nowrap><p><form action=\"../course/user.php\" method=get>";
+        echo "<input type=hidden name=id value=\"$course->id\">";
+        echo "<input type=hidden name=user value=\"$user->id\">";
+        echo "<input type=submit value=\"".get_string("activityreport")."\">";
+        echo "</form></p></td>";
     }
-*/
-    if ((isadmin() and !isadmin($user->id)) or (isteacher($course->id) and ($USER->id != $user->id) and !iscreator($user->id))) {
-        echo "<td nowrap=\"nowrap\"><form action=\"../course/loginas.php\" method=\"get\">";
-        echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
-        echo "<input type=\"hidden\" name=\"user\" value=\"$user->id\" />";
-        echo "<input type=\"submit\" value=\"".get_string("loginas")."\" />";
-        echo "</form></td>";
+    if (isteacher($course->id) and ($USER->id != $user->id) and !iscreator($user->id)) {
+        echo "<td nowrap><p><form action=\"../course/loginas.php\" method=get>";
+        echo "<input type=hidden name=id value=\"$course->id\">";
+        echo "<input type=hidden name=user value=\"$user->id\">";
+        echo "<input type=submit value=\"".get_string("loginas")."\">";
+        echo "</form></p></td>";
     }
-    if (!empty($CFG->messaging) and !isguest()) {
-        if (!empty($USER->id) and ($USER->id == $user->id)) {
-            if ($countmessages = count_records('message', 'useridto', $user->id)) {
-                $messagebuttonname = get_string("messages", "message")."($countmessages)";
-            } else {
-                $messagebuttonname = get_string("messages", "message");
-            }
-            echo "<td nowrap=\"nowrap\"><form target=\"message\" action=\"../message/index.php\" method=\"get\">";
-            echo "<input type=\"submit\" value=\"$messagebuttonname\" onclick=\"return openpopup('/message/index.php', 'message', 'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0);\" />";
-            echo "</form></td>";
-        } else {
-            echo "<td nowrap=\"nowrap\"><form target=\"message_$user->id\" action=\"../message/discussion.php\" method=\"get\">";
-            echo "<input type=\"hidden\" name=\"id\" value=\"$user->id\" />";
-            echo "<input type=\"submit\" value=\"".get_string("sendmessage", "message")."\" onclick=\"return openpopup('/message/discussion.php?id=$user->id', 'message_$user->id', 'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0);\" />";
-            echo "</form></td>";
-        }
-    }
-    echo "<td></td>";
-    echo "</tr></table></div>\n";
+    echo "</tr></table></center>\n";
 
+    $isseparategroups = ($course->groupmode == SEPARATEGROUPS and
+                         $course->groupmodeforce and
+                         !isteacheredit($course->id));
+
+    $groupid = $isseparategroups ? get_current_group($course->id) : NULL;
+
+    forum_print_user_discussions($course->id, $user->id, $groupid);
 
     print_footer($course);
 
 /// Functions ///////
 
 function print_row($left, $right) {
-    echo "\n<tr><td nowrap=\"nowrap\" align=\"right\" valign=\"top\" class=\"label c0\">$left</td><td align=\"left\" valign=\"top\" class=\"info c1\">$right</td></tr>\n";
+    echo "<tr><td nowrap align=right valign=top><p>$left</td><td align=left valign=top><p>$right</p></td></tr>";
 }
 
 ?>

@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // appointment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+<?php // $Id$ 
+      // appointment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['allowresubmit'] = '再提出を許可';
@@ -26,6 +26,9 @@ $string['submissionfeedback'] = '提出物のフィードバック';
 $string['submissions'] = '提出物';
 $string['submitappointment'] = 'このフォームを利用して予約を登録してください。';
 $string['submitted'] = '登録されました。';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 $string['timeend'] = '予約終了';
 $string['timestart'] = '予約開始';
 $string['typeoffline'] = 'オフライン活動';
@@ -34,7 +37,7 @@ $string['uploadbadname'] = 'ファイル名に不適切な文字が含まれているため、アップロ
 $string['uploadedfiles'] = 'アップロードされたファイル';
 $string['uploaderror'] = 'ファイルをサーバに保存している最中にエラーが発生しました。';
 $string['uploadfailnoupdate'] = 'ファイルは正常にアップロードされましたが、あなたの提出物は更新されませんでした!';
-$string['uploadfiletoobig'] = '申し訳ございません、ファイルサイズ ( 上限 $a バイト ) が大き過ぎます。';
+$string['uploadfiletoobig'] = '申し訳ございません、ファイルサイズ(上限 $a バイト)が大き過ぎます。';
 $string['uploadnofilefound'] = 'ファイルが見つかりませんでした - 本当にアップロードするファイルを選択しましたか?';
 $string['uploadnotregistered'] = '「 $a 」は正常にアップロードされましたが、提出物は登録されませんでした!';
 $string['uploadsuccess'] = '「 $a 」が正常にアップロードされました。';

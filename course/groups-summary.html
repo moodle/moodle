@@ -1,0 +1,50 @@
+<table align="center" class="generalbox" width="70%">
+ <tr>
+   <th colspan="2"><?php echo $t->name ?></th>
+ </tr>
+ <tr><td class="generalboxcontent" bgcolor="<?php echo $THEME->cellcontent ?>">
+   <table width="100%">
+     <tr>
+      <td valign="top" width="120">
+        <p><?php echo $t->picture ?></p>
+      </td>
+      <td>
+        <p><?php echo $t->description ?></p>
+        <?php
+          if (!empty($t->linkeditprofile)) {
+              echo '<p style="font-size: small" align="right"><a href="'.$t->linkeditprofile->url.'">'.$t->linkeditprofile->text.'</a>...</p>';
+          }
+        ?>
+      </td>
+    </tr>
+    <tr bgcolor="<?php echo $THEME->cellcontent ?>">
+      <td colspan="2" align="left">
+        <p style="font-size: x-small"><?php 
+          if ($t->users) {
+              $countusers = count($t->users);
+              foreach ($t->users as $user) {
+                  echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$t->courseid\">$user->fullname</a>";
+                  $countusers--;
+                  if ($countusers) {
+                      echo ', ';
+                  }
+              }
+          }
+          ?>
+        </p>
+      </td>
+    </tr>
+    <tr bgcolor="<?php echo $THEME->cellcontent ?>">
+      <td colspan="2" align="right">
+        <?php 
+          if (!empty($t->linkfullprofile)) {
+              echo '<p style="font-size: small" align="right"><a href="'.$t->linkfullprofile->url.'">'.$t->linkfullprofile->text.'</a>...</p>';
+          }
+        ?>
+      </td>
+    </tr>
+   </table>
+   </td>
+   </tr>
+  </table>
+<br />

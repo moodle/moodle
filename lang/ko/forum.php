@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // forum.php - created with Moodle 1.2 development (2004013100)
 
 
 $string['addanewdiscussion'] = '새 토론 주제 추가하기';
@@ -10,15 +10,16 @@ $string['allowratings'] = '등록된 글을 평가할 수 있도록 할까요?';
 $string['allowsdiscussions'] = '이 포럼은 한 사람이 한가지 토론 주제만 시작할 수 있도록 할까요?';
 $string['anyfile'] = '모든 파일';
 $string['attachment'] = '첨부';
+$string['bynameondate'] = 'by $a->name - $a->date';
 $string['configdisplaymode'] = '만약 설정되지 않았다면 기본 설정이 보여집니다.';
 $string['configlongpost'] = '이 길이를 초과한 게시물은(not including HTML) 길은 것으로 여겨집니다.';
-$string['configmanydiscussions'] = '포럼 한 페이지에 최대 수용 할 수 있는 토론의 수';
-$string['configmaxbytes'] = '이 사이트 모든 포럼의 첨가물의 최대 디폴트 크기(코스 제한과 여러 세팅에 따라 틀려집니다.)';
-$string['configshortpost'] = '이 게시물은(not including HTML) 짧은 것으로 여겨집니다.';
-$string['couldnotadd'] = '알 수 없는 오류로 인해 첨가 할 수 없습니다.';
-$string['couldnotdeleteratings'] = '죄송합니다. 사람들이 벌써 평가를 하였기에 지울수 없습니다.';
-$string['couldnotdeletereplies'] = '죄송합니다. 사람들이 벌써 답변하였기에 지울수 업습니다.';
-$string['couldnotupdate'] = '알 수 없는 오류로 인해 업데이트 할 수 없습니다.';
+$string['configmanydiscussions'] = 'Maximum number of discussions shown in a forum per page';
+$string['configmaxbytes'] = 'Default maximum size for all forum attachments on the site (subject to course limits and other local settings)';
+$string['configshortpost'] = 'Any post under this length (not including HTML) is considered short.';
+$string['couldnotadd'] = 'Could not add your post due to an unknown error';
+$string['couldnotdeleteratings'] = 'Sorry, that cannot be deleted as people have already rated it';
+$string['couldnotdeletereplies'] = 'Sorry, that cannot be deleted as people have already responded to it';
+$string['couldnotupdate'] = 'Could not update your post due to an unknown error';
 $string['delete'] = '삭제';
 $string['deleteddiscussion'] = '이 주제는 삭제되었습니다.';
 $string['deletedpost'] = '게시물은 삭제되었습니다.';
@@ -72,7 +73,6 @@ $string['nonews'] = '아직 뉴스가 게시되지 않았습니다.';
 $string['noposts'] = '게시물 없음';
 $string['nopostscontaining'] = '\'$a\' 를 포함하는 게시물이 없습니다.';
 $string['nosubscribers'] = '이 포럼의 구독자가 없습니다.';
-$string['notingroup'] = '죄송합니다. 이 포럼을 보기위해서는 그룹안에 속해있어야 합니다. ';
 $string['nownotsubscribed'] = '$a->name 께서는 이메일로 \'$a->forum\' 의 복사본을 받으실 수 없게 됩니다.';
 $string['nowsubscribed'] = '$a->name 께서는 \'$a->forum\'의 글을 이메일로 받아 볼 수 있습니다.';
 $string['numposts'] = '$a 게시물';
@@ -82,9 +82,9 @@ $string['openmode1'] = '토론 없음, 답글 허용됨';
 $string['openmode2'] = '토론과 답글 허용됨';
 $string['parent'] = '윗글 보기';
 $string['parentofthispost'] = '이글의 윗글';
-$string['postadded'] = '성공적으로 글이 추가되었습니다.<br /> $a 글을 수정할 수 있습니다.';
+$string['postadded'] = '성공적으로 글이 추가되었습니다.<P> $a 글을 수정할 수 있습니다.';
 $string['postincontext'] = '문맥에서 이 글 보기';
-$string['postmailinfo'] = '$a 웹사이트에 게시된 글입니다.
+$string['postmailinfo'] = '$a 웹사이트에 게시된 글입니다.
 웹사이트에 답글을 추가하려면 링크를 클릭해 주세요:';
 $string['postrating1'] = '별로 관련 없음';
 $string['postrating2'] = '관련 있음';
@@ -127,9 +127,6 @@ $string['subscribestart'] = '이포럼의 게시물 사본을 이메일로 알려주세요.';
 $string['subscribestop'] = '이 포럼의 게시물 사본을 이메일로 받고 싶지 않아요.';
 $string['subscription'] = '이메일로 보기';
 $string['subscriptions'] = '이메일로 보기';
-$string['thischarset'] = 'euc-kr';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['unsubscribe'] = '이 포럼을 이메일로 구독하지 않기';
 $string['unsubscribed'] = '이메일로 구독 않함';
 $string['youratedthis'] = '당신의 평가';

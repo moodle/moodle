@@ -84,7 +84,7 @@ $string['openmode1'] = 'Non permitir debates, pero si respostas';
 $string['openmode2'] = 'Permitir debates e respostas';
 $string['parent'] = 'Mostrar mensaxe anterior';
 $string['parentofthispost'] = 'Anterior a esta mensaxe';
-$string['postadded'] = 'A súa mensaxe colocouse con éxito.<br />Ten $a para editala se quere facer calquera cambio.';
+$string['postadded'] = 'A súa mensaxe colocouse con éxito.<P>Ten $a para editala se quere facer calquera cambio.';
 $string['postincontext'] = 'Mira esta mensaxe no seu contexto';
 $string['postmailinfo'] = 'Esta é unha copia da mensaxe publicada en $a .
 Para responder a esta mensaxe, faga clic nesta ligazón:';

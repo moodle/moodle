@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 (2004083100)
+      // forum.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['addanewdiscussion'] = 'Pøidat nový pøíspìvek';
@@ -43,7 +43,6 @@ $string['editing'] = 'Úprava';
 $string['emptymessage'] = 'Ve va¹em pøíspìvku je nìco ¹patnì. Mo¾ná jste nevyplnili nìkteré povinné údaje, nebo pøilo¾ený soubor byl moc velký.  Va¹e úpravy NEBYLY ULO®ENY!';
 $string['everyonecanchoose'] = 'Kdokoliv si mù¾e vybrat odebírání pøíspìvkù emailem';
 $string['everyoneissubscribed'] = 'V¹ichni odebírají nové pøíspìvky emailem';
-$string['existingsubscribers'] = 'Stávající odbìratelé';
 $string['forcesubscribe'] = 'Vnutit v¹em odebírání pøíspìvkù emailem';
 $string['forcesubscribeq'] = 'Vnutit v¹em odebírání pøíspìvkù emailem?';
 $string['forum'] = 'Fórum';
@@ -91,7 +90,7 @@ $string['openmode1'] = 'Bez témat diskuse, ale odpovìdi jsou povoleny';
 $string['openmode2'] = 'Nová témata diskuse i odpovìdi jsou povoleny';
 $string['parent'] = 'Ukázat pøedchùdce';
 $string['parentofthispost'] = 'Pøedchùdce tohoto pøíspìvku';
-$string['postadded'] = 'Vá¹ pøíspìvek byl úspì¹nì pøidán.<p>Na pøípadné úpravy máte $a .';
+$string['postadded'] = 'Vá¹ pøíspìvek byl úspì¹nì pøidán.<P>Na pøípadné úpravy máte $a .';
 $string['postincontext'] = 'Ukázat pøíspìvek v kontextu';
 $string['postmailinfo'] = 'Toto je kopie nove zpravy ze stranek $a .
 Chcete-li na prispevek odpovedet, nasledujte tento odkaz:';
@@ -101,7 +100,6 @@ $string['postrating3'] = 'Vykazuje zejména KOLEKTIVNÍ poznávání';
 $string['posts'] = 'Pøíspìvky';
 $string['posttoforum'] = 'Poslat do fóra';
 $string['postupdated'] = 'Vá¹ pøíspìvek byl aktualizován';
-$string['potentialsubscribers'] = 'Odbìratelé k dispozici';
 $string['processingdigest'] = 'Zpracovávám souhrnný email pro u¾ivatele $a';
 $string['processingpost'] = 'Zpracovávám pøíspìvek $a';
 $string['prune'] = 'Oddìlit';
@@ -149,8 +147,6 @@ $string['subscriptions'] = 'Odebírání';
 $string['unsubscribe'] = 'Neodebírat pøíspìvky z tohoto fóra emailem';
 $string['unsubscribed'] = 'Neodebíráno';
 $string['unsubscribeshort'] = 'Neodebírat';
-$string['yesforever'] = 'Ano, nav¾dy';
-$string['yesinitially'] = 'Ano, na zaèátku';
 $string['youratedthis'] = 'Ji¾ jste hodnotili';
 $string['yournewtopic'] = 'Va¹e nové téma diskuse';
 $string['yourreply'] = 'Va¹e odpovìï';

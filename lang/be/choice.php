@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.4.3 + (2004083131)
+      // choice.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['allowupdate'] = 'Дазволіць абнаўленне';
@@ -9,7 +9,6 @@ $string['choiceclose'] = 'Пакуль не';
 $string['choicename'] = 'Назва апытання';
 $string['choiceopen'] = 'Адчыніць';
 $string['choicetext'] = 'Тэкст апытання';
-$string['havetologin'] = 'Вам неабходна ўвайсці перад тым як адправіць адказ на апытанне';
 $string['modulename'] = 'Апытанне';
 $string['modulenameplural'] = 'Апытанні';
 $string['mustchooseone'] = 'Вы павінны выбраць адказ перад захаваннем. Нічога не было захавана.';

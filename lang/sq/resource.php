@@ -51,7 +51,7 @@ $string['newwidth'] = 'Gjerësia standarte e dritares(në pixel)';
 $string['newwindow'] = 'Dritare e re';
 $string['newwindowopen'] = 'Shfaq këtë resurs në një dritare të re';
 $string['note'] = 'Shënim';
-$string['notefile'] = 'Për të dërguar më shumë skedarë te kursi (si ata që shfaqen në këtë listë) përdor <a href=\"$a\">File Manager</a>.';
+$string['notefile'] = 'Për të dërguar më shumë skedarë te kursi (si ata që shfaqen në këtë listë) përdor <A HREF=$a >File Manager</A>.';
 $string['notypechosen'] = 'Ju duhet të zgjidhni një tip. Përdor butonin e kthimit mbrapsht për tu kthyer te faqja e mëparshme dhe provo përsëri.';
 $string['popupresource'] = 'Ky resurs duhet të shfaqet në një dritare popup-i';
 $string['popupresourcelink'] = 'Nëse nuk e bën, kliko këtu: $a';

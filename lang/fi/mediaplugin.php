@@ -1,10 +1,7 @@
 <?PHP // $Id$ 
-      // mediaplugin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // mediaplugin.php - created with Moodle 1.3 development (2004050200)
 
 
 $string['filtername'] = 'Multimedialaajennukset';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Suomi';
 
 ?>

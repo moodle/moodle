@@ -1,8 +1,7 @@
 <?PHP // $Id$ 
-      // block_course_summary.php - created with Moodle 1.4.3 + (2004083131)
+      // block_course_summary.php - created with Moodle 1.3 (2004052500)
 
 
-$string['coursesummary'] = 'Sammanfattning av kurs';
-$string['pagedescription'] = 'Beskrivning av webbplats/kurs';
+$string['blockname'] = 'Sammanfattning av kurs';
 
 ?>

@@ -1,49 +1,37 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // resource.php - created with Moodle 1.3 (2004052500)
 
 
 $string['addresource'] = 'Material hinzufügen';
 $string['chooseafile'] = 'Wählen Sie ein Datei aus oder laden Sie eine auf den Server';
-$string['chooseparameter'] = 'Parameter auswählen';
-$string['configallowlocalfiles'] = 'Beim Erstellen neuer Arbeitsunterlagen können  Verlinkungen zu lokalen Dateisystemen, Festplatten oder CD-Laufwerken angelegt werden. Das ist sinnvoll wenn in einem Schulungsraum alle Nutzer/innen Zugriff auf gemeinsam Netzwerkverzeichnisse oder CD-Laufwerke haben. Evtl. müssen Sie jedoch Sicherheitseinstelungen des Browsers anpassen.';
 $string['configdefaulturl'] = 'Wenn Sie eine neue URL basierte Ressource anlegen wird dieser Wert als Voreinstellung bereits angezeigt.';
 $string['configfilterexternalpages'] = 'Diese Option wendet den eingestellten Filter (Wörterbuch, Autolinks, etc.) auch für alle externen Quellen (Webseiten und hochgeladene HTML-Seiten) an. Wenn Sie diese Option aktivieren, werden Ihre Kursseiten wesentlich langsamer laufen. Nutzen Sie diese Option daher nur wenn Sie sie wirklich benötigen.';
 $string['configframesize'] = 'Wenn eine Webseite oder eine hochgeladene Datei in einem Frame angezeigt wird, so gibt dieser Wert die Größe des Top-Frames, der die Navigation beinhaltet, in Pixeln an.';
-$string['configparametersettings'] = 'Stellen Sie die Anfangswerte für die Parameter im Formular zur Bereitstellung neuer Arbeitsunterlagen ein. Nach dem ersten Öffnen kann diese individuell angepasst werden.';
 $string['configpopup'] = 'Soll eine neue Ressource in einem Popup-Fenster angezeigt werden, falls dies möglich ist (Grundeinstellung)?';
 $string['configpopupdirectories'] = 'Sollen von Popup-Fenstern Verzeichnislinks angezeigt werden? (Voreinstellung)';
 $string['configpopupheight'] = 'Welche Höhe sollen Popup-Fenster haben (Voreinstellung)?';
 $string['configpopuplocation'] = 'Sollen Popup-Fenster das Adressmenu zeigen (Voreinstellung)?';
 $string['configpopupmenubar'] = 'Sollen Popup-Fenster das Menu zeigen (Voreinstellung)?';
-$string['configpopupresizable'] = 'Soll die Größe von Popup-Fenstern veränderbar sein (Voreinstellung)?';
+$string['configpopupresizable'] = 'Soll  die Größe von Popup-Fenstern veränderbar sein (Voreinstellung)?';
 $string['configpopupscrollbars'] = 'Sollen Popup-Fenster scrollbar sein (Voreinstellung)?';
 $string['configpopupstatus'] = 'Sollen Popup-Fenster eine Statusanzeige haben (Voreinstellung)?';
 $string['configpopuptoolbar'] = 'Sollen Popup-Fenster die Toolbar anzeigen (Voreinstellung)?';
 $string['configpopupwidth'] = 'Welche Breite sollen Popup-Fenster haben (Voreinstellung)?';
-$string['configsecretphrase'] = 'Dieser versteckte Wert wird verwandt, um einen verschlüsselten Wert zu erstellen, der als Parameter an andere Ressourcen gesandt wird. Der verschlüsselte Code wird erstellt von einem md5 Wert der derzeitigen IP Adresse in Verbindung mit dem eingegenen Wert. Z.B. code = md5(IP.secretphrase). Dies erlaubt der angesprochenen Ressource die Verbindung für erhöhte Sicherheit zu überprüfen.';
 $string['configwebsearch'] = 'Wenn eine URL als Webseite oder Link eingefügt wird soll diese Seite dem Benutzer bei der Suche nach einer URL unterstützen.';
-$string['configwindowsettings'] = 'Stellen Sie die Anfangswerte für die Fenstereinstellungen im Formular zur Bereitstellung neuer Arbeitsunterlagen ein. Nach dem ersten Öffnen kann diese individuell angepasst werden.';
 $string['directlink'] = 'Direkter Link zu dieser Datei';
 $string['directoryinfo'] = 'Alle Dateien im ausgewählten Verzeichnis werden angezeigt';
-$string['display'] = 'Fenster';
 $string['editingaresource'] = 'Material bearbeiten';
-$string['encryptedcode'] = 'Verschlüsselter Code';
 $string['example'] = 'Beispiel';
+$string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
 $string['exampleurl'] = 'http://www.beispiel.de/Beispielverzeichnis/Beispieldatei.html';
-$string['fetchclienterror'] = 'Beim Aufruf der Seite ist ein Fehler aufgetreten (evtl. eine falsche Web-Adresse).';
-$string['fetcherror'] = 'Ein Fehler ist beim Aufruf der Seite aufgetreten.';
+$string['fetchclienterror'] = 'Ein Fehler ist beim Aufruf der Seite aufgetreten (evtl. eine falsche Web-Adresse).';
+$string['fetcherror'] = 'Ein Fehler ist beim Aufruf der Seite aufgetreten.
+';
 $string['fetchservererror'] = 'Ein Fehler (evtl. ein Programmfehler) ist beim Remoteserver aufgetreten . </p>';
 $string['filename'] = 'Dateiname';
 $string['filtername'] = 'Automatische Verlinkung von Arbeitsunterlagen';
-$string['frameifpossible'] = 'Zeigt das Arbeitsmaterial in einem Frame. Die Seitennavigation bleibt sichtbar';
-$string['fulltext'] = 'Text-/Webseite';
+$string['fulltext'] = 'Voller Text';
 $string['htmlfragment'] = 'HTML-Teil';
-$string['localfile'] = 'Lokale Datei';
-$string['localfilechoose'] = 'Wählen Sie eine lokale Datei aus (z.B. CD-ROM Laufwerk)';
-$string['localfilehelp'] = 'Hilfe zur Anzeige lokaler Dateien';
-$string['localfileinfo'] = '<p>Wählen Sie eine lokale Datei von Ihrem Computer(-netzwerk). Die Datei wird nicht in das Kursverzeichnis hochgeladen. Beim Aufruf dieser Arbeitsunterlage wird die Datei an dem angegebenen Ort aufgerufen.</p> <p>Dies ist sehr nützlich wenn Sie große Dateien verwenden, die Sie auf CD-ROM an alle Teilnehmer/innen verteilen. Jede/r Teilnehmer/in kann für den Zugriff einen eigenen Pfad für solche Dateien im Nutzerprofil definieren.
-<a href=\"$a\" target=\"_blank\">Nutzerprofil bearbeiten</a>.</p>';
-$string['localfilepath'] = 'Legen Sie den Pfad zu den Arbeitsmaterialien auf Ihrem PC (z.B. CD-Rom-Laufwerk) fest. Wählen Sie dazu irgendeine Datei auf diesem Laufwerk aus. Die Datei wird nicht hochgeladen, aber die Verzeichnisinformation wird abgespeichert und für alle lokalen Dateiressourcen verwandt.';
 $string['maindirectory'] = 'Hauptverzeichnis für Dateien';
 $string['modulename'] = 'Arbeitsmaterial';
 $string['modulenameplural'] = 'Arbeitsmaterialien';
@@ -60,17 +48,12 @@ $string['newtoolbar'] = 'Die Werkzeugleiste anzeigen';
 $string['newwidth'] = 'Standard Fensterbreite (in Pixeln)';
 $string['newwindow'] = 'Neues Fenster';
 $string['newwindowopen'] = 'Dieses Quelle in einem neuen Popup-Fenster anzeigen';
-$string['notallowedlocalfileaccess'] = 'Der Zugriff auf lokale Dateiressourcen ist zur Zeit nicht aktiviert. Daher sind die Materialien nicht verfügbar.';
 $string['note'] = 'Anmerkung';
 $string['notefile'] = 'Um mehr als eine Datei für diesen Kurs hochzuladen (damit dieses in der Liste erscheinen) benutzen Sie bitte den 
-<a href=\"$a\">Datei-Manager</a>.';
+<A HREF=$a >Datei-Manager</A>.';
 $string['notypechosen'] = 'Sie müssen einen Typ auswählen. Verwenden Sie den Zurück-Knopf und probieren Sie es erneut';
-$string['pagedisplay'] = 'Zeigt das Arbeitsmaterial im derzeitigen Fenster';
-$string['pagewindow'] = 'Gleiches Fenster';
-$string['parameter'] = 'Einstellung';
-$string['parameters'] = 'Einstellungen';
 $string['popupresource'] = 'Diese Quelle erscheint in einem Pop-Up-Fenster';
-$string['popupresourcelink'] = 'Wenn es nicht klappt, klicken Sie hier $a';
+$string['popupresourcelink'] = 'Wenn es nicht klappt, klicken sie hier $a';
 $string['resourcetype'] = 'Typ der Quelle';
 $string['resourcetype1'] = 'Referenz';
 $string['resourcetype2'] = 'Internet-Seite';
@@ -81,13 +64,5 @@ $string['resourcetype6'] = 'HTML-Text';
 $string['resourcetype7'] = 'Programm';
 $string['resourcetype8'] = 'Wiki-Text';
 $string['resourcetype9'] = 'Verzeichnis';
-$string['resourcetypedirectory'] = 'Ein Verzeichnis anzeigen';
-$string['resourcetypefile'] = 'Link auf Datei oder Webseite';
-$string['resourcetypehtml'] = 'Erstellen einer Webseite';
-$string['resourcetypelabel'] = 'Bezeichnung einfügen';
-$string['resourcetypetext'] = 'Erstellen einer Textseite';
-$string['searchweb'] = 'Suche nach einer Webseite';
-$string['serverurl'] = 'Server URL ($a->wwwroot)';
-$string['variablename'] = 'Name der Variable';
 
 ?>

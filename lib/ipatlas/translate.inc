@@ -1,4 +1,4 @@
-<?php
+<?
 
 function t($phrase) {
   global $language;

@@ -9,9 +9,6 @@
 
 /// Creating the SQL statements
 
-/// Initialise some variables
-    $sqlorderby = '';
-
 /// Pivot is the field that set the break by groups (category, initial, author name, etc)
 
 /// fullpivot indicate if the whole pivot should be compared agasint the db or just the first letter
@@ -46,7 +43,7 @@
     case GLOSSARY_CATEGORY_VIEW:
         if ($hook == GLOSSARY_SHOW_ALL_CATEGORIES  ) { 
 
-            $sqlselect = "SELECT gec.id, ge.*, gec.entryid, gc.name $as pivot";
+            $sqlselect = "SELECT ge.*, gec.entryid, gc.name $as pivot";
             $sqlfrom   = "FROM {$CFG->prefix}glossary_entries ge,
                          {$CFG->prefix}glossary_entries_categories gec,
                          {$CFG->prefix}glossary_categories gc";
@@ -60,10 +57,9 @@
 
             $printpivot = 0;
             $sqlselect = "SELECT ge.*, concept $as pivot";
-            $sqlfrom   = "FROM {$CFG->prefix}glossary_entries ge LEFT JOIN {$CFG->prefix}glossary_entries_categories gec
-                          ON ge.id = gec.entryid";
+            $sqlfrom   = "FROM {$CFG->prefix}glossary_entries ge";
             $sqlwhere  = "WHERE (glossaryid = '$glossary->id' OR sourceglossaryid = '$glossary->id') AND
-                          (ge.approved != 0 $userid) AND gec.entryid IS NULL";
+                          (ge.approved != 0 $userid)";
 
 
             $sqlorderby = ' ORDER BY concept';
@@ -73,9 +69,9 @@
             $printpivot = 0;
             $sqlselect  = "SELECT ge.*, ce.entryid, c.name $as pivot";
             $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge, {$CFG->prefix}glossary_entries_categories ce, {$CFG->prefix}glossary_categories c";
-            $sqlwhere   = "WHERE ge.id = ce.entryid AND ce.categoryid = '$hook' AND
+            $sqlwhere   = "WHERE ge.id = ce.entryid AND ce.categoryid = $hook AND
                                  ce.categoryid = c.id AND ge.approved != 0 AND
-                                 (ge.glossaryid = '$glossary->id' OR ge.sourceglossaryid = '$glossary->id') AND
+                                 (ge.glossaryid = $glossary->id OR ge.sourceglossaryid = $glossary->id) AND
                           (ge.approved != 0 $userid)";
 
             $sqlorderby = ' ORDER BY c.name, ge.concept';
@@ -97,7 +93,7 @@
             } else {
                 $usernamefield = "u.lastname || ' ' || u.firstname";
             }
-            $where = "AND substr(upper($usernamefield),1," .  strlen($hook) . ") = '" . strtoupper($hook) . "'";
+            $where = "AND substr(ucase($usernamefield),1," .  strlen($hook) . ") = '" . strtoupper($hook) . "'";
         break;
         case 'mysql':
             if ( $sqlsortkey == 'FIRSTNAME' ) {
@@ -112,12 +108,12 @@
             $where = '';
         }
 
-        $sqlselect  = "SELECT ge.id, $usernamefield $as pivot, u.id as uid, ge.*";
+        $sqlselect  = "SELECT ge.id, $usernamefield $as pivot, u.id uid, ge.*";
         $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge, {$CFG->prefix}user u";
         $sqlwhere   = "WHERE ge.userid = u.id  AND
                              (ge.approved != 0 $userid)
                              $where AND 
-                             (ge.glossaryid = '$glossary->id' OR ge.sourceglossaryid = '$glossary->id')";
+                             (ge.glossaryid = $glossary->id OR ge.sourceglossaryid = $glossary->id)";
         $sqlorderby = "ORDER BY $usernamefield $sqlsortorder, ge.concept";
     break;
     case GLOSSARY_APPROVAL_VIEW:
@@ -132,7 +128,7 @@
         if ($hook != 'ALL' and $hook != 'SPECIAL') {
             switch ($CFG->dbtype) {
             case 'postgres7':
-                $where = 'AND substr(upper(concept),1,' .  strlen($hook) . ') = \'' . strtoupper($hook) . '\'';
+                $where = 'AND substr(ucase(concept),1,' .  strlen($hook) . ') = \'' . strtoupper($hook) . '\'';
             break;
             case 'mysql':
                 $where = 'AND left(ucase(concept),' .  strlen($hook) . ") = '$hook'";
@@ -142,7 +138,7 @@
 
         $sqlselect  = "SELECT ge.*, ge.concept $as pivot";
         $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge";
-        $sqlwhere   = "WHERE (ge.glossaryid = '$glossary->id' OR ge.sourceglossaryid = '$glossary->id') AND
+        $sqlwhere   = "WHERE (ge.glossaryid = $glossary->id OR ge.sourceglossaryid = $glossary->id) AND
                              ge.approved = 0 $where";
                              
         if ( $sqlsortkey ) {
@@ -167,31 +163,10 @@
 
         switch ( $mode ) {
         case 'search': 
-            //First, look in aliases (bug 2242)
-            $idaliases = '';
-            $listaliases = array();
-            $recaliases = get_records_sql ("SELECT al.id, al.entryid
-                                              FROM {$CFG->prefix}glossary_alias al,
-                                                   {$CFG->prefix}glossary_entries ge
-                                              WHERE (ge.glossaryid = '$glossary->id' OR 
-                                                     ge.sourceglossaryid = '$glossary->id') AND
-                                                    (ge.approved != 0 $userid) AND
-                                                    ge.id = al.entryid AND
-                                                    al.alias $LIKE '%$hook%'");
-            if ($recaliases) {
-                foreach ($recaliases as $recalias) {
-                    $listaliases[] = $recalias->entryid;
-                }
-                $idaliases = implode (',',$listaliases);
-            }
             $printpivot = 0;
             $where = "AND ( ge.concept $LIKE '%$hook%'";
-            //Include aliases in resultset (if any)
-            if (!empty($idaliases)) {
-                $where .= " OR ge.id IN ($idaliases)";
-            }
             if ( $fullsearch ) {
-                $where .= " OR ge.definition $LIKE '%$hook%')";
+                $where .= "OR ge.definition $LIKE '%$hook%')";
             } else {
                 $where .= ")";
             }
@@ -206,43 +181,24 @@
 
         case 'entry': 
             $printpivot = 0;
-            $where = "AND ge.id = '$hook'";
+            $where = "AND ge.id = $hook";
         break;
 
         case 'letter': 
             if ($hook != 'ALL' and $hook != 'SPECIAL') {
                 switch ($CFG->dbtype) {
                 case 'postgres7':
-                    $where = 'AND substr(upper(concept),1,' .  strlen($hook) . ') = \'' . strtoupper($hook) . '\'';
+                    $where = 'AND substr(ucase(concept),1,' .  strlen($hook) . ') = \'' . strtoupper($hook) . '\'';
                 break;
                 case 'mysql':
                     $where = 'AND left(ucase(concept),' .  strlen($hook) . ") = '" . strtoupper($hook) . "'";
                 break;
                 }
             }
-            if ($hook == 'SPECIAL') {
-                //Create appropiate IN contents
-                $alphabet = explode(",", get_string("alphabet"));
-                $sqlalphabet = '';
-                for ($i = 0; $i < count($alphabet); $i++) {
-                    if ($i != 0) {
-                        $sqlalphabet .= ',';
-                    }
-                    $sqlalphabet .= '\''.$alphabet[$i].'\'';
-                }
-                switch ($CFG->dbtype) {
-                case 'postgres7':
-                    $where = 'AND substr(upper(concept),1,1) NOT IN (' . strtoupper($sqlalphabet) . ')';
-                break;
-                case 'mysql':
-                    $where = 'AND left(ucase(concept),1) NOT IN (' . strtoupper($sqlalphabet) . ')';
-                break;
-                }
-            }
         break;
         }
         
-        $sqlwhere   = "WHERE (ge.glossaryid = '$glossary->id' or ge.sourceglossaryid = '$glossary->id') AND
+        $sqlwhere   = "WHERE (ge.glossaryid = $glossary->id or ge.sourceglossaryid = $glossary->id) AND
                              (ge.approved != 0 $userid)
                               $where";
         switch ( $tab ) {
@@ -273,5 +229,4 @@
     }
 
     $allentries = get_records_sql("$sqlselect $sqlfrom $sqlwhere $sqlorderby $sqllimit");
-
 ?>

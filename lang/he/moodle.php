@@ -1,32 +1,30 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // moodle.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['action'] = 'פעולה';
 $string['active'] = 'פעיל/ה';
 $string['activities'] = 'פעילויות';
 $string['activity'] = 'פעילות';
-$string['activityclipboard'] = 'הפעילות <b>$a</b> מועברת';
-$string['activityiscurrentlyhidden'] = 'מצטערים, הפעילות כרגע נמצאת במצב נסתר';
-$string['activitymodule'] = 'מודול פעילות';
-$string['activityreport'] = 'דוח פעילות';
-$string['activityselect'] = 'בחר בפעילות זאת להעברה למקום אחר';
-$string['activitysince'] = 'פעילות מאז $a';
+$string['activityclipboard'] = '<b>$a</b>הפעילות מועברת';
+$string['activityiscurrentlyhidden'] = 'מצטערים, הפעילות כרגע נמצת במצב נסתר';
+$string['activitymodule'] = 'פרק פעילות';
+$string['activityreport'] = 'דו';
+$string['activityselect'] = 'בחר בפעילות זאת להעברה למרום אחר';
+$string['activitysince'] = ' $a פעילות מאז';
 $string['add'] = 'הוסף';
-$string['addactivity'] = 'הוסף פעילות';
 $string['addadmin'] = 'הוסף מנהל';
 $string['addcreator'] = 'הוסף יוצר קורסים';
-$string['added'] = '$a הוסף';
-$string['addedtogroup'] = '$a הצטרף לקבוצה';
-$string['addedtogroupnot'] = '$a לא הצטרף לקבוצה';
-$string['addedtogroupnotenrolled'] = 'לא צורף לקבוצה $a, מאחר שלא נרשם לקורס';
-$string['addinganew'] = 'הוספת $a חדש';
-$string['addinganewto'] = 'הוספת $a->what חדש ל$a->to';
-$string['addingdatatoexisting'] = 'הוספת מידע לקיים';
+$string['added'] = '$a הצטרף';
+$string['addedtogroup'] = ' $a הצטרף לקבוצה';
+$string['addedtogroupnot'] = ' $a לא הצטרף לקבוצה';
+$string['addedtogroupnotenrolled'] = '  מפני שלא נרשם לקורס ,$a לא הצטרף לקבוצה';
+$string['addinganew'] = 'חדש $a מוסיפים';
+$string['addinganewto'] = '   $a->to חדש ל $a->what מוסיפים ';
+$string['addingdatatoexisting'] = 'מוסיפים מידע לקיים';
 $string['addnewcategory'] = 'הוסף קטגוריה חדשה';
 $string['addnewcourse'] = 'הוסף קורס חדש';
 $string['addnewuser'] = 'הוסף משתמש חדש';
-$string['addresource'] = 'הוסף משאב';
 $string['address'] = 'כתובת';
 $string['addstudent'] = 'הוסף תלמיד';
 $string['addteacher'] = 'הוסף מורה';
@@ -35,32 +33,27 @@ $string['adminhelpaddnewuser'] = 'ליצירה ידנית של חשבון משתמש חדש';
 $string['adminhelpassignadmins'] = 'מנהלים יכולים לעשות הכל וללכת לכל מקום באתר';
 $string['adminhelpassigncreators'] = 'יוצרים יכולים ליצור קורסים חדשים וללמד אותם';
 $string['adminhelpassignstudents'] = 'להיכנס לקורס ולהוסיף תלמידים מתפריט המנהל';
-$string['adminhelpassignteachers'] = 'מצא קורס ואז השתמש בסמל להוספת מורים';
+$string['adminhelpassignteachers'] = 'מצא קורס ואז השתמש באייקון להוספת מורים';
 $string['adminhelpauthentication'] = 'מותר להשתמש חשבונות משתמשים פנימיים או בסיסי מידע חיצוניים';
-$string['adminhelpbackup'] = 'הגדר גיבויים אוטומטיים ואת לוחות הזמנים שלהם';
-$string['adminhelpconfiguration'] = 'הגדר את מראה ודרך העבודה של האתר';
-$string['adminhelpconfigvariables'] = 'הגדר משתנים המשפיעים על הפעילות הכללית של האתר ';
-$string['adminhelpcourses'] = 'הגדר קורסים וקטגוריות וצוות אליהם משתמשים';
-$string['adminhelpeditorsettings'] = 'הגדרת כיוונונים בסיסיים לעורך ה-HTML';
-$string['adminhelpedituser'] = 'עיין ברשימת חשבונות המשתמשים וערוך כל אחד מהם';
-$string['adminhelpenrolments'] = 'בחר אופנים פנימיים או חיצוניים לבקרת רישום לקורסים';
-$string['adminhelpfailurelogs'] = 'צפה ברישומי נסיונות התחברות כושלים';
+$string['adminhelpbackup'] = ' עצב גיבויים אוטומטיים ואת לוחות הזמנים שלהם ';
+$string['adminhelpconfiguration'] = 'עצב את מראה ודרך העבודה של האתר';
+$string['adminhelpconfigvariables'] = 'עצב משתנים המשפיעים על הפעילות הכללית של האתר ';
+$string['adminhelpcourses'] = 'הגדר קורסים וקטגוריות ומנה אליהם אנשים';
+$string['adminhelpedituser'] = 'גלוש ברשימת חשובונות המשתמשים וערוך כל אחד מהם';
 $string['adminhelplanguage'] = 'לבדיקה ועריכה של חבילת השפה הנוכחית';
-$string['adminhelplogs'] = 'עיין בדוחות של כל הפעילות באתר זה';
-$string['adminhelpmanageblocks'] = 'נהל בלוקים מותקנים ואת ההגדרות שלהם';
+$string['adminhelplogs'] = 'גלוש בדוחות של כל הפעילות באתר זה';
+$string['adminhelpmanageblocks'] = 'נהל גושים מותקנים וההגדרות שלהם';
 $string['adminhelpmanagedatabase'] = 'כנס ישירות למאגר המידע (היה זהיר!) ';
 $string['adminhelpmanagefilters'] = 'בחר מסנני טקסט והגדרות קשורות';
-$string['adminhelpmanagemodules'] = 'נהל מודולים מותקנים וההגדרות שלהם';
+$string['adminhelpmanagemodules'] = 'נהל פרקים מותקנים וההגדרות שלהם';
 $string['adminhelpsitefiles'] = 'לפרסום קבצים כלליים או להעלות גיבויים חיצוניים';
 $string['adminhelpsitesettings'] = 'הגדר כיצד העמוד הראשי של האתר נראה';
 $string['adminhelpthemes'] = 'בחר כיצד האתר נראה (צבעים, גופנים וכו\')';
 $string['adminhelpuploadusers'] = 'יבא חשבונות משתמשים חדשים מקובץ טקסט';
-$string['adminhelpusers'] = 'הגדר את המשתמשים שלך והגדר שיטות אימות';
+$string['adminhelpusers'] = 'הגדר את המשתמשים שלך והגדר שיטות זיהוי';
 $string['administration'] = 'ניהול';
 $string['administrator'] = 'מנהל';
 $string['administrators'] = 'מנהלים';
-$string['administratorsall'] = 'כל המנהלים';
-$string['administratorsandteachers'] = 'מנהלים ומורים';
 $string['advancedfilter'] = 'חיפוש מתקדם';
 $string['again'] = 'שוב';
 $string['all'] = 'הכל';
@@ -71,10 +64,8 @@ $string['allgroups'] = 'כל הקבוצות';
 $string['alllogs'] = 'כל הדוחות';
 $string['allow'] = 'הרשה';
 $string['allowguests'] = 'הקורס הזה מרשה למשתמשים אורחים להכנס';
-$string['allowinternal'] = 'הרשה גם שיטות פנימיות';
 $string['allownot'] = 'אל תרשה';
 $string['allparticipants'] = 'כל המשתתפים';
-$string['allteachers'] = 'כל המורים';
 $string['alphabet'] = 'א,ב,ג,ד,ה,ו,ז,ח,ט,י,כ,ל,מ,נ,ע,פ,צ,ק,ר,ש,ת';
 $string['alphanumerical'] = 'יכול להכיל רק אותיות או מספרים';
 $string['alreadyconfirmed'] = 'ההרשמה כבר אושרה ';
@@ -85,21 +76,20 @@ $string['areyousuretorestorethisinfo'] = 'מאוחר יותר בתהליך זה תהיה בידך האפשרות
 $string['assessment'] = 'הערכה';
 $string['assignadmins'] = 'מנה מנהלים';
 $string['assigncreators'] = 'מנה יוצרים';
-$string['assignstudents'] = 'רשום סטודנטים';
+$string['assignstudents'] = 'הרשם סטודנטים';
 $string['assignstudentsnote'] = 'הערה: אין זה הכרחי להשתמש בדף זה, לסטודנטים ישנה האפשרות להירשם בעצמם לקורס זה. ';
 $string['assignstudentspass'] = 'יכול להיות וכל מה שתצתרכו לעשות הוא להודיע לסטודנטים שלכם על קוד ההרשמה לקורס זה, שכרגע נקבע כ: \'a$\' ';
 $string['assignteachers'] = 'מנה מורים';
-$string['authentication'] = 'אימות';
-$string['autosubscribe'] = 'מנוי אוטומטי לעדכונים מהפורומים';
-$string['autosubscribeno'] = 'לא: אל תרשום אותי אוטומטית לפורומים';
-$string['autosubscribeyes'] = 'כן: כשאני שולח הודעה, רשום אותי לפורום';
+$string['authentication'] = 'ווידוי';
+$string['autosubscribe'] = 'טופס הרשמות אוטומטית';
+$string['autosubscribeno'] = 'לא: אל תרשים אותי אוטומטית לפורומים';
+$string['autosubscribeyes'] = 'כן: כשאני מפרסם, רשום אותי לפורום';
 $string['availability'] = 'זמינות';
 $string['availablecourses'] = 'קורסים זמינים';
 $string['backup'] = 'גיבוי';
 $string['backupcoursefileshelp'] = 'אם זמינים אז קבצי הקורס יכללו בגיבויים האוטומטיים';
 $string['backupdate'] = 'תאריך גיבוי';
 $string['backupdetails'] = 'פרטי גיבוי';
-$string['backupfailed'] = 'חלק מהקורסים שלך לא נשמרו!';
 $string['backupfilename'] = 'גיבוי';
 $string['backupfinished'] = 'הגיבוי הושלם בהצלחה';
 $string['backupincludemoduleshelp'] = 'בחר האם אתה רוצה לכלול את פרקי הקורס, עם או ללא נתוני משתמש, בגיבויים אוטומטיים';
@@ -108,19 +98,19 @@ $string['backuplogdetailed'] = 'דוח הפעלה מפורט';
 $string['backuploglaststatus'] = 'דוח הפעלה אחרון';
 $string['backuplogshelp'] = 'אם זמינים, אז דוחות הקורס יכללו בגיבויים אוטומטיים ';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
-$string['backupnoneusersinfo'] = 'הודעה: בחרת לגבות \"אף אחד\" מהמשתמשים, כך שכל גיבויי המודולים שונו למצב \"ללא מידע משתמש\". אנא שים לב שמודולי ה\"תרגול\" וה\"סדנת עבודה\" אינם מתאימים לסוג זה של גיבוי, כך שהם נוטרלו לחלוטין.  ';
+$string['backupnoneusersinfo'] = 'הודעה: בחרת לגבות \"לא\" משתמשים, כך שכל גיבויי הפרקים שונו למצב \"ללא מידע משתמש\". אנא שים לב שפרקי ה\"תרגול\" וה\"סדנת עבודה\" אינם מתאימים לסוג זה של גיבוי, כך שהם נוטרלו לחלוטין.  ';
 $string['backuporiginalname'] = 'שם גיבוי';
-$string['backupsavetohelp'] = 'דרך מלאה לתיקיה בה אתה רוצה לשמור את קבצי הגיבוי <br /> (השאר ריק בכדי לשמור תיקיית ברירת מחדל של הקורס)';
+$string['backupsavetohelp'] = 'דרך מלאה לתיקיה בה אתה רוצה לשמור את קבצי הגיבוי <br> (השאר ריק בכדי לשמור תיקיית ברירת מחדל של הקורס)';
 $string['backupuserfileshelp'] = 'בחר האם קבצי משתמשים (לדוגמא תמונות המשתמשים) צריכים להיכלל בגיבויים אוטומטיים';
 $string['backupusershelp'] = 'בחר האם אתה רוצה לכלול את כל המשתמשים בשרת או רק את המשתמשים הנחוצים לכל קורס';
 $string['backupversion'] = 'גרסת גיבוי';
-$string['blockdeleteconfirm'] = 'אתה עומד להסיר את הבלוק \'$a\'. פעולה זו תמחוק באופן מוחלט את כל המידע הקשור לבלוק זה במסד הנתונים. האם אתה בטוח שאתה רוצה להמשיך?';
-$string['blockdeletefiles'] = 'כל המידע הקשור לבלוק \'$a->block\' נמחק ממסד הנתונים. להשלמת המחיקה (ומניעת האפשרות מבלוק זה להתקין את עצמו מחדש), עליך למחוק כעת את הספריה $a->directory מהשרת.';
-$string['blocks'] = 'בלוקים';
-$string['blocksetup'] = 'יצירת טבלאות עבור הבלוק';
-$string['blocksuccess'] = 'הטבלאות $a נוצרו באופן תקין';
+$string['blockdeleteconfirm'] = 'אתה עומד למחוק לחלוטין את פנל צדדי \'a$\'. פעולה זו תמחוק לחלוטין את כל מה שקשור לפנל צדדי זה בבסיס הנתונים. האם אתה בטוח שאתה רוצה להמשיך?  ';
+$string['blockdeletefiles'] = 'כל הנתונים הקשורים לפנלים צדדיים \'a->block$\' נמחקו מבסיס הנתונים. להשלמת המחיקה (ומניעת הפנל הצדדי מלהתקין את עצמו מחדש) אתה צריך למחוק תיקייה זו מהשרת: a->directory $';
+$string['blocks'] = 'פנלים צדדיים';
+$string['blocksetup'] = 'התקנת טבלאות של פנלים צדדיים';
+$string['blocksuccess'] = ' הטבלאות הותקנו בהצלחה a$';
 $string['bycourseorder'] = 'לפי סדר קורסים';
-$string['byname'] = 'לפי $a';
+$string['byname'] = 'לפי a$';
 $string['cancel'] = 'בטל';
 $string['categories'] = 'קטגוריות קורסים';
 $string['category'] = 'קטגוריה';
@@ -137,29 +127,24 @@ $string['checkingsections'] = 'בודק יחידות';
 $string['checklanguage'] = 'בדוק שפה';
 $string['choose'] = 'בחר';
 $string['choosecourse'] = 'בחר קורס';
-$string['chooseenrolmethod'] = 'שיטת רישום ראשית';
 $string['chooselivelogs'] = 'או צפה פעילות נוכחית';
 $string['chooselogs'] = 'בחר אלו דוחות אתה רוצה לראות';
 $string['choosereportfilter'] = 'בחר מסנן לדיווח';
-$string['choosetheme'] = 'בחר ערכת נושא';
+$string['choosetheme'] = 'בחר נושא';
 $string['chooseuser'] = 'בחר משתמש';
-$string['city'] = 'עיר/עיירה';
-$string['clamdeletedfile'] = 'הקובץ נמחק';
-$string['clamdeletedfilefailed'] = 'מחיקת הקובץ נכשלה';
+$string['city'] = 'עיר  עיירה';
 $string['cleaningtempdata'] = 'מנקה נתונים זמניים';
 $string['clicktochange'] = 'לחץ בשביל לשנות';
 $string['closewindow'] = 'סגור את החלון הזה';
-$string['comparelanguage'] = 'השווה וערוך חבילת שפה נוכחית';
-$string['complete'] = 'הושלם';
+$string['comparelanguage'] = 'השווה וערוך שפה נוכחית';
+$string['complete'] = 'השלם';
 $string['configallowunenroll'] = 'אם זה מוגדר \'כן\', אז הסטודנטים מורשים לפרוש בעצמם מהקורס בכל זמן שירצו. אחרת הם אינם מורשים, והליך זה יהיה אך ורק תחת שליטתם של המורים והמנהלים. ';
 $string['configcachetext'] = 'בשביל אתרים גדולים יותר, או בשביל אתרים עם מסנני טקסט, ההגדרות אלו באמת יכולות להאיץ את העניינים. עותקים של טקסט יישמרו בצורתם המעובדת למשך הזמן המצויין פה. הגדרה קטנה מדי יכולה למעשה להאיט מעט את העניינים, אבל הגדרה גדולה מדי יכולה לגרום לכך שלטקסטים יקח יוצר מדי זמן להתחדש (עם קישורים חדשים, לדוגמא).    ';
-$string['configclamactlikevirus'] = 'התייחס לקבצים כוירוסים';
-$string['configclamdonothing'] = 'התייחס לקבצים כתקינים';
-$string['configcountry'] = 'אם אתה מגדיר כאן ארץ, אז ארץ זו תבחר אוטומטית בכל חשבונות המשתמש החדשים. בכדי להכריח משתמשים לבחור ארץ, פשוט השאר זאת לא מוגדר.';
+$string['configcountry'] = 'אם אתה מגדיר כאן אדץ, אז ארץ זו תבחר אוטומטית בכל חשבונות המשתמש החדשים. בכדי להכריח משתמשים לבחור ארץ, פשוט השאר זאת לא מוגדר.';
 $string['configdebug'] = 'אם אתה מפעיל זאת, אז PHP\'s error_resporting תגדל כך שיותר אזהרות יודפסו. זה רק שמושי למפתחים.';
 $string['configdeleteunconfirmed'] = 'אם אתה משתמש בווידוי דואר אלקטרוני, זוהי תקופת הזמן בה תגובה ממשתמשים תתקבל. לאחר תקופה זו, חשבונות לא מאושרים ישנים, נמחקים.';
-$string['configdigestmailtime'] = 'משתמשים הבוחרים שהדואר האלקטרוני יישלח אליהם במקבץ יקבלו מקבץ יומי. הגדרה זו קובעת באיזו שעה ישלח הדואר היומי (הדואר יישלח במועד הבא האפשרי אחרי שעה זו שבה יופעל התהליך האוטומטי)';
-$string['configenablerssfeeds'] = 'מתג זה יפעיל RSS feeds באתר כולו. בכדי לראות שינוי כלשהו תצטרך להפעיל RSS feeds בתוך המודולים הבודדים גם כן - גש להגדרות המודולים תחת קונפיגורצית הנהלה.';
+$string['configdigestmailtime'] = 'לאנשים הבוחרים שהדואר האלקטרוני יישלח אליהם בצורה תמציתית, יישלח אותו באופן יומי. הגדרה זו אחראית באיזה זמן של היום יישלח הדואר היומי יישלח (ה cron הראשון בייפעל לאחר שעה זו, יישלח אותו).';
+$string['configenablerssfeeds'] = 'מתג זה יפעיל RSS feeds באתר כולו. בכדי לראות שינוי כלשהו תצטרך להפעיל RSS feeds בתוך הפרקים האינדיבידואלים גם כן - לך להגדרות הפרקים תחת קונפיגורצית הנהלה.';
 $string['configenablerssfeedsdisabled'] = 'זה אינו זמין בגלל ש RSS feeds אינם מופעלים באתר. בכדי להפעילם, לך להגדרות משתנים תחת קונפיגורצית הנהלה. ';
 $string['configerrorlevel'] = 'בחר את כמות אזהרות הPHP שאתה רוצה שיוצגו. Normal היא בדרך כלל הבחירה הכי טובה.';
 $string['configextendedusernamechars'] = 'הפעל הגדרה זו הכדי לאפשר לסטודנטים להשתמש בכל הסמלים בשם המשתמש שלהם (שים לב כי זה אינו מפשיע על שמם הממשי). ברירת המחדל היא \"false\", דבר שמגביל שמות משתמשים לסמלים אלפבתיים ומספרים בלבד.';
@@ -181,11 +166,11 @@ $string['configlangmenu'] = 'בחר האם אתה רוצה להציג את תפריט השפות הכלל-שימושי ב
 $string['configlocale'] = 'בחר שפת מקום כלל אתרית - דבר זה ישפיע על פורמט ושפת התאריכים. אתה צריך שמידע שפת מקום יהיה מותקן במערכת ההפעלה שלך. (לדוגמא: en_US או es_ES). אם אתה לא יודע מה לבחור, השאר ריק.';
 $string['configloglifetime'] = 'זה מפרט את אורך הזמן בו אתה רוצה לשמור דוחות על פעילות משתמשים. דוחות הישנים מהזמן שצויין, יימחקו אוטומטית. מומלץ לשמור דוחות עד כמה שיותר זמן שאפשר, במקרה שתצטרך אותם. אלא אם כן, יש לך שרת מאוד עסוק אשר חווה בעיות תפקוד - במקרה זה יכול להיות שתרצה להוריד את אורך החיים של הדוחות.  ';
 $string['configlongtimenosee'] = 'אם סטודנטים לא התחברו למערכת תקופת זמן ארוכה, אזי הם פורשים אוטומטית מהקורסים. פרמטר זה מגדיר את מגבלת הזמן הזו. ';
-$string['configmaxbytes'] = 'זה מפרט את מה יכול להיות גודלם המקסימלי של קבצים המועלים לאתר (בשלמותו). הגדרה זו מוגבלת על ידי ההגדרות: PHP - uploud_max_filesize,ו Apache - LimitRequestBody. בתורו, maxbytes מגביל את מרווח הגדלים שיכולים להיבחר ברמת הקורס או המודול.   ';
+$string['configmaxbytes'] = 'זה מפרט את מה יכול להיות גודלם המקסימלי של קבצים המועלים לאתר (בשלמותו). הגדרה זו מוגבלת על ידי ההגדרות: PHP - uploud_max_filesize,ו Apache - LimitRequestBody. בתורו, maxbytes מגביל את מרווח הגדלים שיכולים להיבחר ברמת הקורס או הפרק.   ';
 $string['configmaxeditingtime'] = 'זה מגדיר את כמות הזמן הניתנת לאנשים בכדי לערוך מחדש את הפרסומים שלהם בפורום, משוביהם לעיתון וכדומה. לרוב 30 דקות הינן אורך טוב. ';
 $string['confignoreplyaddress'] = 'דואר אלקטרוני נשלח לעיתים בשם המשתמש (לדוגמא: פרסומי פורום). כתובת הדואר אלקטרוני שתציין פה תשמש ככתובת ה\"פורום\" במקרים שבהם הנמענים לא יוכלו להגיב באופן ישיר למשתמש. (לדוגמא, כאשר המשתמש אינו רוצה לפרסם את הכתובת שלו).';
 $string['configopentogoogle'] = 'אם אתה מאפשר הגדרה זו, אזי Google יורשה להיכנס לאתר שלך כאורח. בנוסף לכך, אנשים הנכנסים לאתר דרך מנוע חיפוש Google, יתחברו למערכת  כאורחים אוטומטית. הבחן כי דבר זה מאפשר גישה שקופה לקורסים שכבר מאפשרים כניסת אורחים. ';
-$string['configproxyhost'] = 'אם <b>שרת</b> זה צריך להשתמש במחשב פרוקסי (לדוגמא firewall) בכדי להיכנס לאינטרנט, אז ספק את שם נמל ושם שרת הפרוקסי. אחרת, השאר זאת ריק.  ';
+$string['configproxyhost'] = 'אם <B>שרת</B> זה צריך להשתמש במחשב פרוקסי (לדוגמא firewall) בכדי להיכנס לאינטרנט, אז ספק את שם נמל ושם שרת הפרוקסי. אחרת, השאר זאת ריק.  ';
 $string['configsecureforms'] = 'ל Moodle לא תזיק רמת אבטחה נוספת כאשר הוא מקבל מידע מטפסי אינטרנט. אם זה מאופשר, אז המשתנהHTTP_REFERER של הדפדפן מסומן כנגד כתובת הטופס הנוכחית. במקרים בודדים מאוד זה יכול לגרום בעיות אם המשתמש משתמש בfirewall (לדוגמא: Zonealarm) שמכוונת לפשוט את ה HTTP_REFERER מתנועת הרשת שלהם. סימפטומים הם \'להיתקע\' על טופס. אם המשתמשים שלך נתקלים בבעיות עם דף ההתחברות למערכת (לדוגמא) יכול להיות שתרצה לנטרל הגדרה זו, למרות שזה יכול להשאיר את אתרך פתוח יותר להתקפות סיסמא כוחניות. אם בספק, השאר הגדרה זו על \'כן\'.';
 $string['configsessioncookie'] = 'הגדרה זו מתאימה אישית את שם העוגייה שמשתמשים בה במפגשי Moodle. זהו אופציונלי ושימושי רק בכדי להמנע מבלבול של עוגיות כאשר יש יותר מעותק אחד של Moodle בתוך אותו האתר.';
 $string['configsessiontimeout'] = 'אם אנשים שהתחברו לאתר נשארים ללא מעש למשך זמן רב (ללא העלאת דפים) אז הם מתנטקים אוטומטית (המפגש שלהם מסתיים).  משתנה זה מפרט כמה ארוך זמן זה צריך להיות.';
@@ -194,7 +179,7 @@ $string['configsmtphosts'] = 'תנו את שמם המלא של אחד או יותר שרתי SMTP מקומיים ש
 $string['configsmtpuser'] = 'אם ציינתם שרת SMTP לעיל, והשרת מחייב אימות, אז הכניסו את שם המשתמש והסיסמא כאן.';
 $string['configteacherassignteachers'] = 'האם צריכם מורים רגילים להיות מורשים למנות מורים אחרים בתוך הקורסים שהם מלמדים?  אם \'לא\', אז רק יוצרי קורס ומנהלים יכולים למנות מורים.';
 $string['configunzip'] = 'ציין את מיקום תוכנת פתיחת קבצים מקובצים שלך (Unix בלבד, אופציונלי).  אם מצויינת, תהיה משומשת לפתיחת ארכיוני זיפ על השרת. אם תשאיר ריק, אז Moodle ישתמש בתהליכים פנימיים.';
-$string['configuration'] = 'תצורה';
+$string['configuration'] = 'קונפיגורציה';
 $string['configvariables'] = 'משתנים';
 $string['configwarning'] = 'היו זהירים בשינוי הגדרות אלו - ערכים מוזרים יכולים לגרום לבעיות.';
 $string['configzip'] = ' ציין את מיקום תוכנת פתיחת קבצים מקובצים שלך (Unix בלבד, אופציונלי).  אם מצויינת, תהיה משומשת לפתיחת ארכיוני זיפ על השרת. אם תשאיר ריק, אז Moodle ישתמש בתהליכים פנימיים.';
@@ -202,15 +187,12 @@ $string['confirm'] = 'אשר';
 $string['confirmed'] = 'ההרשמה שלך אושרה';
 $string['confirmednot'] = 'ההרשמה שלך עדיין לא אושרה!';
 $string['continue'] = 'המשך';
-$string['continuetocourse'] = 'הקלד כאן לכניסה לקורס';
-$string['cookiesenabled'] = 'הדפדפן שלך צריך לאפשר עוגיות';
+$string['cookiesenabled'] = 'בדפדפן שלך חייביות לפעול עוגיות';
 $string['copy'] = 'העתק';
 $string['copyingcoursefiles'] = 'מעתיק קבצי קורס';
 $string['copyinguserfiles'] = 'מעתיק קבצי משתמש';
-$string['copyingzipfile'] = 'מעתיק קבצי ארכיב';
+$string['copyingzipfile'] = 'מעתיק קבצי זיפ';
 $string['copyrightnotice'] = 'אזהרת זכויות יוצרים';
-$string['cost'] = 'מחיר';
-$string['costdefault'] = 'מחיר ברירת מחדל';
 $string['country'] = 'ארץ';
 $string['course'] = 'קורס';
 $string['courseavailable'] = 'קורס זה זמין לסטודנטים';
@@ -227,9 +209,9 @@ $string['courserestore'] = 'שחזר קורס';
 $string['courses'] = 'קורסים';
 $string['courseupdates'] = 'עדכוני קורסים';
 $string['courseuploadlimit'] = 'גודל מירבי של קובץ הניתן להעלותו לאתר הקורס';
-$string['create'] = 'צור';
-$string['createaccount'] = 'צור לי חשבון חדש';
-$string['createfolder'] = 'צור ספרייה ב$a';
+$string['create'] = 'תצור';
+$string['createaccount'] = 'תצור לי חשבון חדש';
+$string['createfolder'] = 'צור תקייה ב $a';
 $string['createuserandpass'] = 'צור שם משתמש וסיסמא חדשה להיכנס איתם';
 $string['createziparchive'] = 'צור ארכיון זיפ';
 $string['creatingcategoriesandquestions'] = 'יצירת קטגוריות ושאלות';
@@ -243,12 +225,11 @@ $string['creatingsections'] = 'יצירת יחידות';
 $string['creatingtemporarystructures'] = 'יצירת מבנים זמניים';
 $string['creatingusers'] = 'יצירת משתמשים';
 $string['creatingxmlfile'] = 'יצירת קובץ XML';
-$string['currency'] = 'מטבע';
 $string['currentcourseadding'] = 'הקורס הנוכחי, הוספת מידע אליו';
 $string['currentcoursedeleting'] = 'הקורס הנוכחי, עם מחיקה קודמת ';
-$string['currentlanguage'] = 'שפה נוכחית';
-$string['currentlocaltime'] = 'הזמן המקומי הנוכחי שלך';
-$string['currentpicture'] = 'תמונה נוכחית';
+$string['currentlanguage'] = 'שפה עכשווית';
+$string['currentlocaltime'] = 'הזמן המקומי העכשווי שלך';
+$string['currentpicture'] = 'תמונה עכשווית';
 $string['currentrelease'] = 'מידע שחרור עכשווי';
 $string['currentversion'] = 'גרסה עכשווית';
 $string['databasechecking'] = 'שדרוג בסיס נתונים Moodle מגרסה $a->oldversion ל $a->newversion...';
@@ -256,9 +237,8 @@ $string['databaseperformance'] = 'ביצועי בסיס נתונים';
 $string['databasesetup'] = 'הקמת בסיס נתונים';
 $string['databasesuccess'] = 'בסיס הנתונים שודרג בהצלחה';
 $string['databaseupgradebackups'] = 'גרסת הגיבוי היא עכשיו $a';
-$string['databaseupgradeblocks'] = 'גרסת הבלוקים היא עכשיו $a';
+$string['databaseupgradeblocks'] = 'גרסת הפנלים הצדדיים היא עכשיו $a';
 $string['databaseupgrades'] = 'שדרוג בסיס נתונים';
-$string['date'] = 'תאריך';
 $string['datemostrecentfirst'] = 'תאריך - הכי חדשים ראשונים';
 $string['datemostrecentlast'] = 'תאריך - הכי חדשים אחרונים';
 $string['day'] = 'יום';
@@ -290,9 +270,6 @@ $string['deletingexistingcoursedata'] = 'מוחק נתוני קורס קיימים';
 $string['deletingolddata'] = 'מוחק נתונים ישנים';
 $string['department'] = 'מחלקה';
 $string['description'] = 'תיאור';
-$string['detailedless'] = 'פחות מפורט';
-$string['detailedmore'] = 'יותר מפורט';
-$string['directorypaths'] = 'נתיבי ספריות';
 $string['disable'] = 'נטרל';
 $string['displayingfirst'] = 'רק הראשונים a->count $a->things$ מוצגים';
 $string['displayingrecords'] = 'מציג $a רשומות';
@@ -306,105 +283,81 @@ $string['doyouagree'] = 'האם קראת והבנת נאים אלו?';
 $string['duplicate'] = 'העתק';
 $string['duplicatinga'] = 'מעתיק: a$';
 $string['duplicatingain'] = 'מעתיק a->what$ ב a->in$';
-$string['edit'] = 'ערוך $a';
+$string['edit'] = 'ערוך a$';
 $string['editcoursesettings'] = 'ערוך הגדרות קורס';
 $string['editfiles'] = 'ערוך קבצים';
 $string['editgroupprofile'] = 'ערוך פרופיל קבוצה';
-$string['editinga'] = 'עורך $a';
-$string['editlock'] = 'ערך זה אינו ניתן לעריכה!';
+$string['editinga'] = 'עריכת a$';
 $string['editmyprofile'] = 'ערוך פרופיל';
-$string['editorbgcolor'] = 'צבע רקע';
-$string['editorcleanonpaste'] = 'ניקוי קוד HTML שהוסף ע\"י Word בהדבקה';
-$string['editorcommonsettings'] = 'הגדרות משותפות';
-$string['editordefaultfont'] = 'גופן ברירת מחדל';
-$string['editorenablespelling'] = 'אפשר בדיקת איות';
-$string['editorfontlist'] = 'רשימת גופנים';
-$string['editorfontsize'] = 'גודל גופן ברירת מחדל';
-$string['editorresettodefaults'] = 'אפס להגדרות ברירת מחדל';
-$string['editorsettings'] = 'הגדרות עורך';
-$string['editsummary'] = 'ערוך תקציר';
+$string['editsummary'] = 'ערוך סיכום';
 $string['editthisactivity'] = 'ערוך פעילות זו';
 $string['editthiscategory'] = 'ערוך קטגוריה זו';
 $string['edituser'] = 'ערוך חשבונות משתמשים';
 $string['email'] = 'כתובת דואר אלקטרוני';
-$string['emailactive'] = 'דואר אלקטרוני מאופשר';
 $string['emailagain'] = 'דואר אלקטרוני (שוב)';
 $string['emailconfirm'] = 'אשר את חשבונך';
-$string['emailconfirmation'] = 'שלום $a->firstname.
+$string['emailconfirmation'] = 'שלום a$->firstname,
 
-מישהו נרשם לאתר \'$a->sitename\' תוך שימוש בכתובת הדואר אלקטרוני שלך.
-לאישור חשבונך החדש, נא גלוש לכתובת האינטרנט הזו:
+נתבקש חשבון חדש ב \'$a->sitename\' תוך שימוש בכתובת הדואר אלקטרוני שלך.
+לאישור חשבונך החדש, נא גלוש לכתובת האינטרנט הזו: 
 
-$a->link
+a->link$
 
-ברוב תוכנות הדואר, כתובת האינטרנט אמורה להופיע כקישור כחול אשר אתה יכול פשוט ללחוץ עליו. אם זה לא עובד, גזור את הכתובת והדבק אותה בתוך שורת הכתובות של דפדפן האינטרנט שלך.
+ברוב תוכנות הדואר, כתובת האינטרנט אמורה להופיע כקישור כחול אשר אתה יכול פשוט ללחוץ עליו. אם זה לא עובד, גזור את הכתובת והדבק אותה בתוך פס הכתובות של דפדפן האינטרנט שלך.
 
 אם אתה זקוק לעזרה, אנא צור קשר עם האתר.
-מנהל האתר,
-
-$a->admin';
+מנהל,
+a->admin$';
 $string['emailconfirmationsubject'] = '$a: אישור חשבון';
-$string['emailconfirmsent'] = '<p>לכתובתך ב <b>$a</b> תשלח בקרוב הודעת דואר אלקטרוני.
-<p>הודעה זו מכילה הוראות פשוטות להשלמת הרשמתך.</p>
-<p>אם תיתקל בקשיים, אנא צור קשר עם מנהל האתר.</p>';
-$string['emaildigest'] = 'אופן משלוח הדואר האלקטרוני';
-$string['emaildigestcomplete'] = 'מקבץ (הודעת דואר יומית עם כל התכתובות)';
-$string['emaildigestoff'] = 'רגיל (הודעת דואר על כל הודעה בפורום)';
-$string['emaildigestsubjects'] = 'נושאים (הודעת דואר יומית עם כותרות בלבד)';
-$string['emaildisable'] = 'כתובת הדואר אלקטרוני הזו מנוטרלת';
-$string['emaildisableclick'] = 'לחץ כאן בכדי להפסיק משלוח של דואר אלקטרוני לכתובת זו';
+$string['emailconfirmsent'] = '<P>לכתובתך ב <B>$a</B> היה צריך היה להישלח 
+דואר אלקטרוני.   
+<P>הוא מכיל הוראות פשוטות להשלמת הרשמתך.
+<P>אם אתה ממשיך להיתקל בקשיים, צור קשר עם מנהל האתר.';
+$string['emaildisable'] = 'כתובת הדואר אלקטרוני הזו מנותקת.';
 $string['emaildisplay'] = 'תצוגת דואר אלקטרוני';
-$string['emaildisplaycourse'] = 'אפשר רק למשתתפים אחרים בקורס לראות את כתובת הדואר האלקטרוני שלי';
+$string['emaildisplaycourse'] = 'אפשר לראות את כתובת הדואר אלקטרוני שלי לחברים אחרים בקורס בלבד';
 $string['emaildisplayno'] = 'הסתר את כתובת הדואר אלקטרוני האמיתית שלי מכולם ';
 $string['emaildisplayyes'] = 'אפשר לכולם לראות את כתובת הדואר אלקטרוני שלי';
-$string['emailenable'] = 'כתובת הדואר אלקטרוני הזו מופעלת';
-$string['emailenableclick'] = 'לחץ כאן בכדי לאפשר מחדש משלוח של דואר אלקטרוני לכתובת זו';
-$string['emailexists'] = 'כתובת הדואר אלקטרוני הזו כבר בשימוש.';
+$string['emailenable'] = 'כתובת הדואר אלקטרוני הזו מופעלת.';
+$string['emailexists'] = 'כתובת הדואר אלקטרוני הזו כבר רשומה.';
 $string['emailformat'] = 'פורמט דואר אלקטרוני';
 $string['emailmustbereal'] = 'הערה: כתובת הדואר אלקטרוני שלך חייבת להיות אמיתית';
-$string['emailpasswordconfirmation'] = 'שלום $a->firstname,
+$string['emailpasswordconfirmation'] = 'שלום a->firstname$,
 
-מישהו (כנראה שאתה) ביקש סיסמה חדשה בשביל חשבונך באתר \'$a->sitename\'.
+משהו (כנראה שאתה) בקש סיסמא חדשה בשביל חשבונך ב  \'a->sitename$\'.
 
-כדי לאשר זאת, ושסיסמא חדשה תשלח אליך דרך הדואר האלקטרוני שלך, עליך לגשת לכתובת האינטרנט הבאה:
+כדי לאשר זאת, ושסיסמא חדשה תשלח אליך דרך הדואר האלקטרוני שלך,
+לך לכתובת האינטרנט הבאה:
 
-$a->link
+a->link$
 
-ברוב תוכנות הדואר, כתובת האינטרנט אמורה להופיע כקישור כחול אשר אתה יכול פשוט ללחוץ עליו. אם זה לא עובד, גזור את הכתובת והדבק אותה בתוך שורת הכתובות של דפדפן האינטרנט שלך.
+ברוב תוכנות הדואר, כתובת האינטרנט אמורה להופיע כקישור כחול אשר אתה יכול פשוט ללחוץ עליו. אם זה לא עובד, גזור את הכתובת והדבק אותה בתוך פס הכתובות של דפדפן האינטרנט שלך.
 
-אם אתה זקוק לעזרה, אנא צור קשר עם מנהל האתר, $a->admin';
-$string['emailpasswordconfirmationsubject'] = '$a: אשר שינוי סיסמא';
-$string['emailpasswordconfirmsent'] = 'לכתובתך ב <b>$a</b> תשלח בקרוב הודעת דואר אלקטרוני.
-<p>הודעה זו מכילה הוראות פשוטות לאישור והשלמת שינוי סיסמא זה.
-אם אתה ממשיך להיתקל בקשיים, צור קשר עם מנהל האתר.</p>';
+אם אתה זקוק לעזרה, אנא צור קשר עם האתר.
+מנהל,
+a->admin$ ';
+$string['emailpasswordconfirmationsubject'] = '$a: שנה אישור סיסמא';
+$string['emailpasswordconfirmsent'] = 'לכתובתך ב <b>$a</b> היה צריך להישלח דואר אלקטרוני.
+<p>הוא מכיל הוראות פשוטות לאישור והשלמת שינוי סיסמא זה.
+אם אתה ממשיך להיתקל בקשיים, צור קשר עם מנהל האתר.';
 $string['emailpasswordsent'] = 'תודה על אישור שינוי סיסמא זה.
-<p>דואר אלקטרוני המכיל את סיסמתך החדשה נשלח לכתובתך ב<b>$a->email</b>.</p>
-<p>הסיסמא החדשה הופעלה אוטומטית - יכול להיות שתרצה
-<a href=\"$a->link\">לשנות את הסיסמא שלך</a> למשהו שקל יותר לזכור.</p>';
-$string['enable'] = 'הרשה';
-$string['encryptedcode'] = 'קוד מוצפן';
-$string['enrolledincourse'] = 'רשום לקורס \"$a\"';
-$string['enrolledincoursenot'] = 'לא רשום לקורס \"$a\"';
-$string['enrollfirst'] = 'עליך להרשם לאחד הקורסים לפני שתוכל להשתתף בפעילויות האתר';
+<p>דואר אלקטרוני המכיל את סיסמתך החדשה נשלח לכתובתך ב<b>$a->email</b>.
+<p>הסיסמא החדשה הופעלה אוטומטית - יכול להיות שתרצה ל
+<a href=$a->link>לשנות את הסיסמא שלך</a> למשהו שקל יותר לזכור.';
+$string['enable'] = 'התר';
+$string['enrolledincourse'] = 'רשום לקורס ';
+$string['enrolledincoursenot'] = 'לא רשום לקורס ';
 $string['enrolmentconfirmation'] = 'אתה עומד לרשום את עצמך כחבר בקורס הזה.<br />האם אתה בטוח שאתה רוצה לעשות זאת?';
 $string['enrolmentkey'] = 'מפתח הרשמה';
-$string['enrolmentkeyfrom'] = 'קורס זה מחייב \'מפתח הרשמה\'- סיסמא<br /> חד-פעמית
+$string['enrolmentkeyfrom'] = 'קורס זה מחייב \'מפתח הרשמה\'- סיסמא<BR> חד-פעמית
 שהיית צריך לקבל מ a$';
-$string['enrolmentkeyhint'] = 'מפתח ההרשמה ההוא היה שגוי, אנא נסה שנית<br />
+$string['enrolmentkeyhint'] = 'מפתח ההרשמה ההוא היה שגוי, אנא נסה שנית<BR>
 (הנה רמז - הוא מתחיל ב\'a$\')';
-$string['enrolmentnew'] = 'רישום חדש ב$a';
-$string['enrolmentnewuser'] = '$a->user נרשם לקורס \"$a->course\"';
-$string['enrolmentnointernal'] = 'רישום ידני לקורסים אינו מאופשר כרגע';
-$string['enrolmentnotyet'] = 'מצטערים, אינך יכול לגשת לקורס זה עד ש<br /> $a';
-$string['enrolments'] = 'רישום לקורסים';
-$string['enrolperiod'] = 'תקופת רישום';
 $string['entercourse'] = 'לחץ בכדי להיכנס לקורס';
 $string['enteremailaddress'] = 'הכנס את כתובת הדואר אלקטרוני שלך בכדי לאתחל מחדש את הסיסמא ושהסיסמא החדשה תשלח לך דרך דואר אלקטרוני.';
-$string['entries'] = 'כניסות';
 $string['error'] = 'טעות';
 $string['errortoomanylogins'] = 'מצטערים, מספר ניסיונותיך להתחבר למערכת עלו על מספר הפעמים המורשה.';
-$string['errorwhenconfirming'] = 'אתה לא מאושר עדיין מפני שקרתה טעות. אם לחצת על קישור בדואר אלקטרוני כדי להגיע לפה, וודא שהקו בדואר האלקטרוני שלך לא נקטע או נעטף. יכול להיות ותצטרך לגזור ולהדביק בכדי לשחזר את הקישור כצריך.';
-$string['everybody'] = 'כולם';
+$string['errorwhenconfirming'] = 'אתה לא מאושר עדיים מפני שקרתה טעות. אם לחצת על קישור בדואר אלקטרוני כדי להגיע לפה, וודא שהקו בדואר האלקטרוני שלך לא נקטע או נעטף. יכול להיות ותצטרך לגזור ולהדביק בכדי לשחזר את הקישור כצריך.';
 $string['executeat'] = 'בצע ב';
 $string['existing'] = 'קיימים';
 $string['existingadmins'] = 'מנהלים קיימים';
@@ -414,30 +367,25 @@ $string['existingcoursedeleting'] = 'קורס קיים, עם מחיקה קודמת ';
 $string['existingcreators'] = 'יוצרי קורס קיימים';
 $string['existingstudents'] = 'סטודנטים רשומים';
 $string['existingteachers'] = 'מורים קיימים';
-$string['failedloginattempts'] = '$a->attempts נסיונות כניסה כושלים מאז החיבור האחרון שלך';
-$string['failedloginattemptsall'] = '$a->attempts נסיונות כניסה כושלים עבור $a->accounts חשבונות';
 $string['feedback'] = 'תגובות';
-$string['file'] = 'קובץ';
-$string['filemissing'] = '$a חסר';
+$string['filemissing'] = 'a$ חסר';
 $string['files'] = 'קבצים';
-$string['filesfolders'] = 'קבצים/תיקיות';
-$string['filloutallfields'] = 'אנא מלא את כל השדות בטופס זה';
+$string['filesfolders'] = 'קבציםתיקיות';
+$string['filloutallfields'] = 'אנא מלא את כל השדום בטופס זה';
 $string['findmorecourses'] = 'מצא קורסים נוספים...';
 $string['firstdayofweek'] = '0';
 $string['firstname'] = 'שם נתון';
-$string['firsttime'] = 'האם זהו הביקור הראשון שלך באתר זה?';
+$string['firsttime'] = 'האם זוהי הפעם הראשונה שלך פה?';
 $string['followingoptional'] = 'הפריטים הבאים אינם הכרחיים';
 $string['followingrequired'] = 'הפריטים הבאים הינם הכרחיים';
 $string['force'] = 'הכרח';
 $string['forcedmode'] = 'הכרח מצב ';
 $string['forcelanguage'] = 'הכרח שפה';
 $string['forceno'] = 'אל תכריח';
-$string['forcepasswordchange'] = 'הכרח שינוי סיסמה';
-$string['forcepasswordchangehelp'] = 'בקש מהמשתמש לשנות בכניסה הבאה';
 $string['forgotten'] = 'שכחת את שם המשתמש או את הסיסמא שלך?';
 $string['format'] = 'פורמט';
 $string['formathtml'] = 'פורמט HTML';
-$string['formatplain'] = 'פורמט טקסט פשוט';
+$string['formatplain'] = 'פורמט Plain text ';
 $string['formatsocial'] = 'פורמט חברתי';
 $string['formattext'] = ' פורמט אוטומטי Moodle';
 $string['formattexttype'] = 'פרמוט';
@@ -459,15 +407,19 @@ $string['gd1'] = 'GD 1.x מותקן';
 $string['gd2'] = 'GD 2.x מותקן';
 $string['gdneed'] = 'GD חייב להיות מותקן בכדי לראות גרף זה';
 $string['gdnot'] = 'GD אינו מותקן';
-$string['go'] = 'גש';
 $string['gpl'] = 'Copyright (C) 1999-2004  Martin Dougiamas  (http://dougiamas.com)
 
-תוכנית זו היא תוכנה חופשית; אתה יכול להפיצה מחדש ו/או לשנות אותה על-פי תנאי הרישיון הציבורי הכללי של GNU כפי שפורסם על ידי קרן התוכנה החופשית; בין אם גרסה 2 של הרישיון, ובין אם (לפי בחירתך) כל גרסה מאוחרת שלו.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
 
- תוכנית זו מופצת בתקווה שתהיה מועילה, אבל בלא אחריות כלשהי; ואפילו ללא האחריות המשתמעת בדבר מסחריותה או התאמתה למטרה מסויימת. לפרטים נוספים, ראה את הרישיון הציבורי הכללי של GNU:
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details:
 
-http://www.gnu.org/copyleft/gpl.html
-http://www.law.co.il/computer-law/gpl-hebrew.html';
+http://www.gnu.org/copyleft/gpl.html';
 $string['grade'] = 'ציון';
 $string['grades'] = 'ציונים';
 $string['group'] = 'קבוצה';
@@ -505,32 +457,31 @@ $string['helpindex'] = 'אינדקס של כל קבצי העזרה';
 $string['helppicture'] = 'כיצד להעלות תמונה';
 $string['helpquestions'] = 'שאל שאלות טובות';
 $string['helpreading'] = 'קרא בתשומת לב';
-$string['helprichtext'] = 'על עורך הHTML';
-$string['helpsummaries'] = 'על תקצירים אלו';
+$string['helprichtext'] = 'על עורך ה HTML';
+$string['helpsummaries'] = 'על סיכומים אלו';
 $string['helptext'] = 'כיצד לכתוב טקסט';
-$string['helpwiki'] = 'כיצד לכתוב טקסט דמוי וויקי';
+$string['helpwiki'] = 'כיצד לכתוב טקסט Wiki  ';
 $string['helpwriting'] = 'כתוב בזהירות';
 $string['hiddensections'] = 'יחידות נסתרות';
 $string['hiddensectionscollapsed'] = 'יחידות נסתרות מוראות בצורה מקובצת ';
 $string['hiddensectionsinvisible'] = 'יחידות נסתרות הינן בלתי נראות לחלוטין';
 $string['hide'] = 'הסתר';
 $string['hidepicture'] = 'הסתר תמונה';
-$string['hidesettings'] = 'הסתר הגדרות';
 $string['hits'] = 'כניסות';
 $string['hitsoncourse'] = 'כניסות ל a->coursename$ על ידי a->username$';
 $string['hitsoncoursetoday'] = 'הכניסות של היום ל a->coursename$ על ידי a->username$';
 $string['home'] = 'בית';
 $string['hour'] = 'שעה';
 $string['hours'] = 'שעות';
-$string['howtomakethemes'] = 'כיצד ליצור ערכות נושא חדשות';
+$string['howtomakethemes'] = 'כיצד ליצור נושאים חדשים';
 $string['htmleditor'] = 'השתמש בעורך HTML  (דפדפנים מסויימים בלבד)';
 $string['htmleditoravailable'] = 'עורך ה HTML זמין';
 $string['htmleditordisabled'] = 'בפרופיל המשתמש שלך נטרלת את עורך הHTML';
 $string['htmleditordisabledadmin'] = 'באתר זה המנהל נטרל את עורך הHTML';
-$string['htmleditordisabledbrowser'] = 'עורך הHTML אינו זמין מפני שדפדפן הרשת שלך אינו מתאים';
+$string['htmleditordisabledbrowser'] = 'Tעורך הHTML אינו זמין מפני שדפדפן הרשת שלך אינו מתאים';
 $string['htmlformat'] = ' פורמט HTML יפה';
 $string['icqnumber'] = 'מספר ICQ  ';
-$string['idnumber'] = 'קוד חיצוני';
+$string['idnumber'] = 'מספר זהות';
 $string['inactive'] = 'לא פעיל';
 $string['include'] = 'כלול';
 $string['includeallusers'] = 'כלול את כל המשתמשים';
@@ -538,21 +489,19 @@ $string['includecoursefiles'] = 'כלול קבצי קורסים';
 $string['includecourseusers'] = 'כלול משתמשי הקורס';
 $string['included'] = 'כלול';
 $string['includelogentries'] = 'כלול דיווחי דוח';
-$string['includemodules'] = 'כלול מודולים';
+$string['includemodules'] = 'כלול פרקים';
 $string['includeneededusers'] = 'כלול משתמשים נחוצים';
 $string['includenoneusers'] = 'כלול לא-משתמשים';
 $string['includeuserfiles'] = 'כלול קבצי משתמשים';
 $string['institution'] = 'מוסד';
 $string['invalidemail'] = 'כתובת דואר אלקטרוני לא תקפה';
 $string['invalidlogin'] = 'התחברות לא תקפה, אנא נסה שוב';
-$string['ip_address'] = 'כתובת IP';
-$string['jump'] = 'קפוץ';
 $string['jumpto'] = 'קפוץ ל...';
 $string['keep'] = 'שמור';
 $string['langltr'] = 'כיוון השפה משמאל לימין';
 $string['langrtl'] = 'כיוון השפה מימין לשמאל';
-$string['language'] = 'חבילת שפה';
-$string['languagegood'] = 'חבילת שפה זו מעודכנת! :-)';
+$string['language'] = 'שפה';
+$string['languagegood'] = 'חבילת שפה זו מעודכנת! (-:';
 $string['lastaccess'] = 'כניסה אחרונה';
 $string['lastedited'] = 'עריכה אחרונה';
 $string['lastlogin'] = 'כניסה אחרונה';
@@ -563,63 +512,59 @@ $string['latestnews'] = 'חדשות אחרונות';
 $string['leavetokeep'] = 'השאר ריק כדי לשמור על סיסמא נוחכית';
 $string['license'] = ' רשיון GPL ';
 $string['list'] = 'רשימה';
-$string['listfiles'] = 'רשימת קבצים ב $a';
+$string['listfiles'] = 'רשימה של קבצים ב a$';
 $string['listofallpeople'] = 'רשימה של כל האנשים';
 $string['livelogs'] = 'דוחות טריים מהשעה האחרונה';
 $string['locale'] = 'en';
 $string['location'] = 'מיקום';
-$string['loggedinas'] = 'אתה מחובר כ$a';
+$string['loggedinas'] = 'אתה מחובר כ a$ ';
 $string['loggedinnot'] = 'אתה לא מחובר.';
 $string['login'] = 'התחבר';
-$string['login_failure_logs'] = 'רישום נסיונות התחברות כושלים';
 $string['loginas'] = 'התחבר כ';
 $string['loginguest'] = 'התחבר כאורח';
 $string['loginsite'] = 'התחבר לאתר';
-$string['loginsteps'] = 'שלום לך! לקבלת גישה מלאה לקורסים עליך להקדיש דקה לפתיחת חשבון חדש באתר זה.
-לכל אחד מהקורסים הבודדים יכול להיות גם \"מפתח רישום\" שתצטרך רק מאוחר יותר. להלן שלבי פתיחת החשבון:
-<ol>
-<li>מלא את הטופס <a href=\"$a\">חשבון חדש</a> בפרטים שלך</li>
-<li>דואר אלקטרוני יישלח מיידית לכתובת הדואר האלקטרוני שסיפקת.</li>
-<li>קרא את הדואר אלקטרוני שלך ולחץ על קישור האינטרנט שהוא מכיל.</li>
+$string['loginsteps'] = 'הי! בשביל גישה מלאה לקורסים תצטרך לקחת דקה
+   כדי ליצור לעצמך חשבון חדש באתר זה.
+   לכל אחד מהקורסים האינדיבידואליים יכול להיות גם  \"enrolment key\" שתצטרך רק מאוחר יותר. הנה הצעדים:
+>ol size=\"2\"> 
+><liמלא את טופס ה <a href=\"$a\">New Account</a>  בפרטים שלך.</li>
+<li>דואר אלקטרוני יישלח מיידית לכתובת הדואר האלקטרוני שלך.</li>
+<li>קרא את הדואר אלקטרוני שלך ולחץ על קישור הרשת שהוא מכיל.</li>
 <li>החשבון שלך יאושר ואתה תהיה מחובר.</li>
 <li>עכשיו בחר את הקורס בו תרצה להשתתף.</li>
-<li>אם מבקשים ממך \"מפתח רישום\" השתמש בזה שנתן לך המורה שלך. זה \"ירשום\" אותך לקורס.</li>
-<li>עכשיו יש בידך גישה לכל הקורס. מעתה והלאה כל שתצטרך בכדי להתחבר ולהיכנס לכל קורס שנרשמת אליו הוא שם המשתמש שלך והסיסמא (בטופס המופיע בדף זה).</li>
+<li>אם מבקשים ממך \"enrolment key\" השתמש בזה שנתן לך המורה שלך. זה & quot;enrol\" אותך לקורס.</li>
+<li>עכשיו יש בידך גישה לכל הקורס. מאתה והלאה כל שתצטרך בכדי להתחבר ולהיכנס לכל קורס שנרשמת אליו הוא שם המשתמש שלך והסיסמא (בטופס בדף זה).</li>
 </ol>';
-$string['loginstepsnone'] = '<p>שלום לך!</p>
-<p>לקבלת גישה מלאה לקורסים עליך לפתוח חשבון באתר.</p>
-<p>כל שעליך לעשות הוא להמציא לעצמך שם משתמש וסיסמא ולהזין אותם בטופס בעמוד זה!</p>
-<p>אם מישהו אחר כבר בחר את שם המשתמש שלך אז תצטרך לנסות שוב עם שם משתמש אחר.</p>';
-$string['loginto'] = 'התחבר ל$a';
-$string['loginusing'] = 'התחבר כאן על ידי שימוש בשם המשתמש והסיסמא שלך';
+$string['loginstepsnone'] = '<p>הי!</p>
+<p>בשביל גישה מלאה לקורסים תצטרך ליצור לעצמך חשבון.</p>
+<p>כל שתצטרך לעשות הוא להמציא לעצמך שם משתמש וסיסמא ולהשתמש בהם בטופס בעמוד זה!</p>
+<p>אם משהו אחר כבר בחר את שם המשתמש שלךאז תצטרך לנסות שוב עם שם משתמש אחר.</p>';
+$string['loginto'] = 'התחבר ל a$';
+$string['loginusing'] = 'התחבר כאן על ידי שימוש בשם המשתמש והסיסמא שלך.';
 $string['logout'] = 'התנתק';
 $string['logs'] = 'דוחות';
-$string['mailadmins'] = 'הודע למנהלים';
-$string['mailstudents'] = 'הודע לתלמידים';
-$string['mailteachers'] = 'הודע למורים';
 $string['mainmenu'] = 'תפריט ראשי';
 $string['makeafolder'] = 'צור תיקייה';
-$string['makeeditable'] = 'אם תהפוך את \'$a\' לקובץ שניתן לערוך אותו על ידי תוכנת שרת הרשת (לדוגמא אפאצ\'י), אז תוכל לערוך קובץ זה ישירות מדף זה';
-$string['manageblocks'] = 'בלוקים';
+$string['makeeditable'] = 'אם תהפוך את \'$a\' לקובץ שניתן לערוך אותו על ידי תהליך שרת הרשת (לדוגמא אפאצ\'י), אז תוכל לערוך אותו ישירות מעמוד זה. ';
+$string['manageblocks'] = 'פנלים צדדיים';
 $string['managedatabase'] = 'בסיס נתונים';
 $string['managefilters'] = 'פילטרים';
-$string['managemodules'] = 'מודולים';
-$string['markedthistopic'] = 'נושא זה מודגש כנושא הנוכחי';
-$string['markthistopic'] = 'הדגש נושא זה כנושא הנוכחי';
-$string['maximumchars'] = 'מקסימום של $a תווים';
+$string['managemodules'] = 'פרקים';
+$string['markedthistopic'] = 'נושא זה מודגש כנושא העכשווי';
+$string['markthistopic'] = 'הדגש נושא זה כנושא העכשווי';
+$string['maximumchars'] = 'מקסימום של סמלי a$';
 $string['maximumgrade'] = 'ציון מקסימלי';
 $string['maximumshort'] = 'מקסימום';
 $string['maximumupload'] = 'גודל העלאה מקסימלי';
-$string['maxsize'] = 'גודל מקסימלי: $a';
+$string['maxsize'] = 'גודל מקסימלי: a$';
 $string['min'] = 'דקה';
 $string['mins'] = 'דקות';
-$string['miscellaneous'] = 'שונות';
 $string['missingcategory'] = 'אתה צריך לבחור קטגוריה';
-$string['missingcity'] = 'חסרה עיר/עיירה ';
+$string['missingcity'] = 'חסרה עירעיירה ';
 $string['missingcountry'] = 'חסרה ארץ';
 $string['missingdescription'] = 'חסר תיאור';
 $string['missingemail'] = 'חסרה כתובת דואר אלקטרוני';
-$string['missingfirstname'] = 'חסר שם פרטי';
+$string['missingfirstname'] = 'חסר שם נתון';
 $string['missingfullname'] = 'חסר שם מלא';
 $string['missinglastname'] = 'חסר שם משפחה';
 $string['missingname'] = 'חסר שם';
@@ -629,33 +574,31 @@ $string['missingshortname'] = 'חסר שם מקוצר';
 $string['missingshortsitename'] = 'חסר שם אתר מקוצר';
 $string['missingsitedescription'] = 'חסר תיאור אתר';
 $string['missingsitename'] = 'חסר שם אתר';
-$string['missingstrings'] = 'חפש מחרוזות חסרות';
 $string['missingstudent'] = 'חייב לבחור משהו';
 $string['missingsummary'] = 'חסר סיכום';
-$string['missingteacher'] = 'חייב לבחור משהו';
+$string['missingteacher'] = 'חייס לבחור משרו';
 $string['missingurl'] = 'חסר URL';
 $string['missingusername'] = 'חסר שם משתמש';
 $string['modified'] = 'שונה';
-$string['moduledeleteconfirm'] = 'אתה עומד למחוק לחלוטין את המודול \'$a\'. פעולה זו תמחוק לחלוטין את כל מה שקשור למודול פעילות זה בבסיס הנתונים. האם אתה בטוח שאתה רוצה לעשות זאת?';
-$string['moduledeletefiles'] = 'כל מידע הקשור למודול \'$a->module\' נמחק  מבסיס הנתונים.  בכדי להשלים את המחיקה (ולמנוע מהפרק להתקין את עצמו מחדש), אתה צריך למחוק עכשיו את הספריה $a->directory מהשרת שלך';
-$string['modulesetup'] = 'יוצר טבלאות מודולים';
-$string['modulesuccess'] = '$a טבלאות נוצרו בהצלחה';
+$string['moduledeleteconfirm'] = 'אתה עומד למחוק לחלוטין את פרק \'$a\'.  מה שימחוק לחלוטין את כל מה שקשור לפרק פעילות זה בבסיס הנתונים. האם אתה בטוח שאתה רוצה לעשות זאת?';
+$string['moduledeletefiles'] = 'כל מידע הקשור לפרק \'a->module$\' נמחק  מבסיס הנתונים.  בכדי להשלים את המחיקה (ולמנוע מהפרק להתקין את עצמו מחדש), אתה צריך למחוק עכשיו את התיקייה המהשרת שלך: a->directory$';
+$string['modulesetup'] = 'מתבצעת התקנת טבלאות פרק';
+$string['modulesuccess'] = '$a  טבלאות הותקנו בהצלחה';
 $string['moodleversion'] = 'גרסת Moodle ';
-$string['more'] = 'עוד';
 $string['mostrecently'] = 'לאחרונה';
 $string['move'] = 'הזז';
 $string['movecategoryto'] = 'הזז קטגוריה ל:';
 $string['movecourseto'] = 'הזז קורס ל:';
 $string['movedown'] = 'הזז למטה';
 $string['movefilestohere'] = 'הזז קבצים לכאן';
-$string['movefull'] = 'הזז את $a למיקום זה';
+$string['movefull'] = 'הזז את a$ למיקום זה';
 $string['movehere'] = 'הזז לכאן';
-$string['moveleft'] = 'הזז ימינה';
-$string['moveright'] = 'הזז שמאלה';
+$string['moveleft'] = 'הזז שמאלה';
+$string['moveright'] = 'הזז ימינה';
 $string['moveselectedcoursesto'] = 'הזז הקורסים הנבחרים ל...';
 $string['movetoanotherfolder'] = 'הזז לתיקייה אחרת';
 $string['moveup'] = 'הזז למעלה';
-$string['mustconfirm'] = 'עליך לאשר את ההתחברות שלך';
+$string['mustconfirm'] = 'אתה צריך לאשר את ההתחברות שלך';
 $string['mycourses'] = 'הקורסים שלי';
 $string['name'] = 'שם';
 $string['namesocial'] = 'יחידה';
@@ -668,22 +611,23 @@ $string['new'] = 'חדש';
 $string['newaccount'] = 'חשבון חדש';
 $string['newcourse'] = 'קורס חדש';
 $string['newpassword'] = 'סיסמא חדשה';
-$string['newpasswordtext'] = 'שלום לך $a->firstname,
+$string['newpasswordtext'] = 'הי a->firstname$,
 
-סיסמת חשבונך באתר \'$a->sitename\' אופסה,
+סיסמאת חשבונך ב \'$a->sitename\' אופסה,
 והונפקה לך סיסמא זמנית חדשה.
 
-פרטי ההתחברות החדשים שלך הינם:
-שם משתמש: $a->username
-סיסמא: $a->newpassword
+פרטי ההתחברות העכשויים שלך הינם:
+שם משתמש: a->username$
+סיסמא: a->newpassword$
 
-אנא גש לעמוד זה כדי לשנות את סיסמאתך:
-$a->link
+אנא לך לעמוד זה כדי לשנות את סיסמאתך:
+   a->link$
 
 ברוב תוכנות הדואר, כתובת האינטרנט אמורה להופיע כקישור כחול אשר אתה יכול פשוט ללחוץ עליו. אם זה לא עובד, גזור את הכתובת והדבק אותה בתוך פס הכתובות של דפדפן האינטרנט שלך.
 
-איחולי הצלחה מהמנהל של \'$a->sitename\'.
-$a->signoff';
+ איחולי הצלחה מהמנהל של\'a->sitename$\' ,
+a->signoff$
+';
 $string['newpicture'] = 'תמונה חדשה';
 $string['newsitem'] = 'פריט חדשות';
 $string['newsitems'] = 'פריטי חדשות';
@@ -710,12 +654,12 @@ $string['nopotentialstudents'] = 'אין סטודנטים פוטנציאלים';
 $string['nopotentialteachers'] = 'אין מורים פוטנציאלים';
 $string['normal'] = 'רגיל';
 $string['normalfilter'] = 'חיפוש רגיל';
-$string['nostudentsfound'] = 'לא נמצא $a';
+$string['nostudentsfound'] = 'לא נמצא a$ ';
 $string['nostudentsyet'] = 'עדיין לא נרשמו סטודנטים לקורס זה';
 $string['nosuchemail'] = ' כתובת דואר אלקטרוני שכזו לא קיימת';
 $string['notavailable'] = 'לא זמין';
 $string['noteachersyet'] = 'עדיין אין מורים בקורס זה';
-$string['notenrolled'] = '$a אינו רשום בקורס זה.';
+$string['notenrolled'] = 'a$ אינו רשום בקורס זה.';
 $string['noteuserschangednonetocourse'] = 'הערה: כאשר משחזרים מידע,משתמשי הקורס גם כן צריכים להיות משוחזרים. הגדרה זו שונתה למענך.';
 $string['nothingnew'] = 'אין חדש מאז התחברותך האחרונה';
 $string['notincluded'] = 'לא נכלל';
@@ -723,15 +667,15 @@ $string['notingroup'] = 'מצטערים, אבל אתה צריך להיות חלק מקבוצה בשביל לראות פעיל
 $string['nousersmatching'] = 'לא נמצאו משתמשים התואמים את \'a$\'  ';
 $string['nousersyet'] = 'עדיין אין משתמשים';
 $string['now'] = 'עכשיו';
-$string['numberweeks'] = 'מספר שבועות/נושאים';
-$string['numdays'] = '$a ימים';
-$string['numhours'] = '$a שעות';
-$string['numminutes'] = '$a דקות';
-$string['numseconds'] = '$a שניות';
-$string['numviews'] = '$a חשיפות';
-$string['numweeks'] = '$a שבועות';
-$string['numwords'] = '$a מילים';
-$string['numyears'] = '$a שנים';
+$string['numberweeks'] = 'מספר שבועותנושאים';
+$string['numdays'] = 'a$ ימים';
+$string['numhours'] = 'a$ שעות';
+$string['numminutes'] = 'a$ דקות';
+$string['numseconds'] = 'a$ שניות';
+$string['numviews'] = 'a$ חשיפות';
+$string['numweeks'] = 'a$ שבועות';
+$string['numwords'] = 'a$ מילים';
+$string['numyears'] = 'a$ שנים';
 $string['ok'] = 'כן';
 $string['opentoguests'] = 'כניסת אורחים';
 $string['optional'] = 'אופציונלי';
@@ -746,10 +690,10 @@ $string['passwordconfirmchange'] = 'אשר שינוי סיסמא';
 $string['passwordrecovery'] = 'כן, עזור לי להתחבר';
 $string['passwordsdiffer'] = 'סיסמאות אלו אינן תואמות';
 $string['passwordsent'] = 'הסיסמא נשלחה';
-$string['passwordsenttext'] = '<p>לכתובתך ב $a->email תשלח בקרוב הודעת דואר אלקטרוני.</p>
-<p><b>עליך לבדוק את תיבת הדואר שלך לקבלת סיסמתך החדשה</b></p>
-<p>סיסמה זו נוצרה באופן אוטומטי, כך שיתכן ותרצה <a href=\"$a->link\">לשנות את הסיסמה לאחת שתוכל לזכור בקלות</a>';
-$string['people'] = 'משתמשים';
+$string['passwordsenttext'] = '<P>לכתובתך בa->email$ נשלח דואר אלקטרוני.
+<P><B>אנא בדוק את הדואר האלקטרוני שלך אחר סיסמתך החדשה</B>
+   <P>סיסמא חדשה זו הופעלה אוטומטית, כך שיכול להיות שתרצה <A HREF=$a->link> לשנות אותה למשהו שיותר קל לזכור אותו</A>.';
+$string['people'] = 'אנשים';
 $string['personalprofile'] = 'פרופיל אישי';
 $string['phone'] = 'טלפון';
 $string['phpinfo'] = 'מידע PHP ';
@@ -760,7 +704,7 @@ $string['potentialstudents'] = 'סטודנטים פוטנציאלים';
 $string['potentialteachers'] = 'מורים פוטנציאלים';
 $string['preferredlanguage'] = 'שפה מועדפת';
 $string['preview'] = 'תצוגה מקדימה';
-$string['previeworchoose'] = 'הצג או בחר ערכת נושא';
+$string['previeworchoose'] = 'הצג או בחר הגדרות גרפיות';
 $string['previous'] = 'קודם';
 $string['publicdirectory'] = 'תיקייה משותפת';
 $string['publicdirectory0'] = 'אנא אל תפרסם אתר זה';
@@ -770,16 +714,16 @@ $string['publicsitefileswarning'] = 'הערה: קבצים הממוקמים כאן הינם נגישים לכולם'
 $string['question'] = 'שאלה';
 $string['readinginfofrombackup'] = 'קורא מידע מהגיבוי';
 $string['readme'] = 'README';
-$string['recentactivity'] = 'פעילויות אחרונות';
-$string['recentactivityreport'] = 'דו\"ח מלא על פעילויות אחרונות';
+$string['recentactivity'] = 'פעילות שהתרחשה לאחרונה';
+$string['recentactivityreport'] = 'דוח מלא על פעילות שהתרחשה לאחרונה...';
 $string['refreshingevents'] = 'רענון אירועים';
 $string['registration'] = 'הרשמת Moodle  ';
 $string['registrationemail'] = 'הודעות דואר אלקטרוני';
-$string['registrationinfo'] = 'עמוד זה מאפשר לך לרשום את אתר ה Moodle שלך באמצעות moodle.org. ההרשמה היא חינם.
+$string['registrationinfo'] = 'עמוד זה מאפשר לך לרשום את אתר ה Moodle שלך באמצעות   moodle.org. ההרשמה היא חינם.
 ההטבה העיקרית של ההרשמה היא שאתה תתווסף לרשימת הפצה בעלת נפח נמוך של הודעות, להודעות חשובות כגון התראות אבטחה ושחרורים חדשים של .Moodle
-<p>לפי ברירת מחדל, הנתונים שלך יישמרו סודיים, ולעולם לא יימכרו או יעבורו למשהו אחר. הסיבה היחידה לאסיפת מידע זה היא למטרת תמיכה, וכדי לעזור לבנות תמונה סטטיסטית של קהילת Moodle כשלם. </p>
-<p>אם תבחר, אתה יכול להרשות ששם האתר שלך, ארץ וURL יוספו לרשימה הפומבית של אתרי .Moodle</p>
-<p>כל ההרשמות החדשות מאושרות ידנית לפני שהם מתווספות לרשימה, אבל מרגע שאתה מתווסף לרשימה אתה יכול לעדכן את את ההרשמה (ואת הכניסה שלך ברשימה הפומבית) בכל זמן על ידי הגשה חוזרת של טופס זה.</p>';
+<p>לפי ברירת מחדל, הנתונים שלך יישמרו סודיים, ולעולם לא יימכרו או יעבורו למשהו אחר. הסיבה היחידה לאסיפת מידע זה היא למטרת תמיכה, וכדי לעזור לבנות תמונה סטטיסטית של קהילת Moodle כשלם. 
+<p>אם תבחר, אתה יכול להרשות ששם האתר שלך, ארץ וURL יוספו לרשימה הפומבית של אתרי .Moodle
+<p>כל ההרשמות החדשות מאושרות ידנית לפני שהם מתווספות לרשימה, אבל מרגע שאתה מתווסף לרשימה אתה יכול לעדכן את את ההרשמה (ואת הכניסה שלך ברשימה הפומבית) בכל זמן על ידי הגשה חוזרת של טופס זה.';
 $string['registrationno'] = 'לא, אני לא רוצה לקבל דואר אלקטרוני';
 $string['registrationsend'] = 'שלח נתוני הרשמה ל moodle.org';
 $string['registrationyes'] = 'כן, אנא הודע על נושאים חשובים';
@@ -791,7 +735,6 @@ $string['rename'] = 'שנה שם';
 $string['renamefileto'] = 'שנה שם ל<b>$a</b> ';
 $string['required'] = 'דרוש';
 $string['requireskey'] = 'קורס זה דורש מפתח הרשמה';
-$string['requirespayment'] = 'גישה לקורס זה מחייבת תשלום';
 $string['resortcoursesbyname'] = 'מיין מחדש קורסים על פי שם';
 $string['resources'] = 'משאבים';
 $string['restore'] = 'שחזר';
@@ -799,10 +742,9 @@ $string['restorecancelled'] = 'שחזור בוטל';
 $string['restorecoursenow'] = 'שחזר קורס זה מיד!';
 $string['restorefinished'] = 'שחזור הושלם בהצלחה';
 $string['restoreto'] = 'שחזר ל';
-$string['returningtosite'] = 'האם זהו ביקור חוזר שלך באתר זה?';
+$string['returningtosite'] = 'חוזר לאתר רשת זה?';
 $string['revert'] = 'לחזור';
 $string['role'] = 'תפקיד';
-$string['rss'] = 'RSS';
 $string['rssarticles'] = 'מספר הכתבות האחרונות של RSS';
 $string['rsstype'] = 'RSS feed לפעילות זו';
 $string['savechanges'] = 'שמור שינויים';
@@ -815,11 +757,11 @@ $string['scalescustomno'] = 'לא נוצרו עדיין מדרגות הערכה מותאמות אישית';
 $string['scalesstandard'] = 'מדרגות הערכה סטנדרטיות';
 $string['scalestip'] = 'כדי ליצור מדרגות הערכה מותאמות אישית, השתמש בקישור ה \'מדרגות...\' בתפריט הנהלת הקורס שלך.';
 $string['schedule'] = 'לוח זמנים';
-$string['scheduledbackupstatus'] = 'מצב גיבוי מתוכנן';
+$string['scheduledbackupstatus'] = 'סטאטוס גיבוי מתוכנן';
 $string['search'] = 'חפש';
 $string['searchagain'] = 'חפש שוב';
 $string['searchcourses'] = 'חפש קורסים';
-$string['searchhelp'] = 'אתה יכול לחפש מספר מילים בבת אחת.<br />word : תמצא כל התאמה למילה זו בתוך הטקסט.<br />+word : רק התאמות מדוייקות יימצאו.<br />-word : אל תכלול תוצאות הכוללות מילה זו.';
+$string['searchhelp'] = 'אתה יכול לחפש מספר מילים בבת אחת.<p>word : תמצא כל התאמה למילה זו בתוך הטקסט.<br>+word : רק התאמות מדוייקות יימצאו.<br>-word : אל תכלול תוצאות הכוללות מילה זו.';
 $string['searchresults'] = 'תוצאות חיפוש';
 $string['sec'] = 'שניה';
 $string['secs'] = 'שניות';
@@ -832,8 +774,8 @@ $string['senddetails'] = 'שלח את פרטי דרך דואר אלקטרוני';
 $string['separateandconnected'] = 'דרכים נפרדות וקשורות לדעת';
 $string['serverlocaltime'] = 'הזמן המקומי של השרת';
 $string['settings'] = 'הגדרות';
-$string['shortname'] = 'שם מקוצר';
-$string['shortnametaken'] = 'השם המקוצר כבר בשימוש בקורס אחר ($a)';
+$string['shortname'] = 'קיצור שם';
+$string['shortnametaken'] = 'קיצור השם כבר בשימוש בקורס אחר ($a)';
 $string['shortsitename'] = 'קיצור שם לאתר (לדוגמא מילה אחת)';
 $string['show'] = 'הראה';
 $string['showall'] = 'הראה כל $a';
@@ -847,31 +789,26 @@ $string['showonlytopic'] = 'הראה רק נושא $a';
 $string['showonlyweek'] = 'הראה רק שבוע $a';
 $string['showrecent'] = 'הראה פעילות אחרונה';
 $string['showreports'] = 'הראה דיווחי פעילות';
-$string['showsettings'] = 'הראה הגדרות';
 $string['showtheselogs'] = 'הראה דוחות אלה';
 $string['since'] = 'מאז';
 $string['site'] = 'אתר';
 $string['sitefiles'] = 'קבצי האתר';
 $string['sitelogs'] = 'דוחות האתר';
 $string['sitenews'] = 'חדשות האתר';
-$string['sitepartlist0'] = 'אתה חייב להיות מורה האתר בכדי לראות את רשימת המשתתפים באתר';
-$string['sitepartlist1'] = 'אתה חייב להיות מורה בכדי לראות את רשימת המשתתפים באתר';
 $string['sites'] = 'אתרים';
 $string['sitesettings'] = 'הגדרות האתר';
-$string['siteteachers'] = 'מורי האתר';
 $string['size'] = 'גודל';
 $string['sizeb'] = 'בייטים';
 $string['sizegb'] = 'Gb';
 $string['sizekb'] = 'Kb';
 $string['sizemb'] = 'Mb';
 $string['socialheadline'] = 'פורום חברתי - נושאים אחרונים';
-$string['someallowguest'] = 'יתכן וחלק מהקורסים מאפשרים כניסת אורחים';
+$string['someallowguest'] = 'יכול להיות וחלק מהקורסים מרשים כניסת אורחים';
 $string['someerrorswerefound'] = 'חלק מהמידע היה חסר או לא נכון. לפרטים ראה למטה .';
 $string['sortby'] = 'מיין לפי';
-$string['specifyname'] = 'אתה חייב להגדיר שם.';
 $string['startdate'] = 'תאריך תחילת הקורס';
 $string['startsignup'] = 'התחל עכשיו על ידי יצירת חשבון חדש!';
-$string['state'] = 'מדינה/מחוז';
+$string['state'] = 'מדינהמחוז';
 $string['status'] = 'מצב';
 $string['strftimedate'] = '%%d %%B %%Y';
 $string['strftimedateshort'] = '%%d %%B';
@@ -886,27 +823,25 @@ $string['strftimetime'] = '%%I:%%M %%p';
 $string['stringsnotset'] = ' $a';
 $string['studentnotallowed'] = 'מצטערים, אבל אתה לא יכול להיכנס לקורס זה כ \'$a\'';
 $string['students'] = 'סטודנטים';
-$string['studentsandteachers'] = 'תלמידים ומורים';
 $string['subcategories'] = 'תת-קטגוריות';
 $string['success'] = 'הצלחה';
-$string['summary'] = 'תקציר';
-$string['summaryof'] = 'תקציר של $a';
+$string['summary'] = 'סיכום';
+$string['summaryof'] = 'סיכום של $a';
 $string['supplyinfo'] = 'אנא ספק מספר נתונים על עצמך';
-$string['teacheronly'] = 'בשביל ה$a בלבד';
+$string['teacheronly'] = 'בשביל ה $a בלבד';
 $string['teacherroles'] = '$a תפקידים';
 $string['teachers'] = 'מורים';
 $string['textediting'] = 'בזמן עריכת טקסט';
 $string['texteditor'] = 'השתמש בטופסי רשת סטנדרטיים';
-$string['textformat'] = 'פורמט טקסט פשוט  ';
+$string['textformat'] = 'פורמט Plain text  ';
 $string['thanks'] = 'תודה';
-$string['theme'] = 'ערכת נושא';
-$string['themes'] = 'ערכות נושא';
-$string['themesaved'] = 'ערכת הנושא החדשה נשמרה';
-$string['thischarset'] = 'ISO-8859-8-I';
+$string['theme'] = 'עיצוב';
+$string['themes'] = 'עיצובים';
+$string['themesaved'] = 'עיצוב חדש נשמר';
+$string['thischarset'] = 'iso-8859-8';
 $string['thisdirection'] = 'rtl';
-$string['thislanguage'] = '&#1506;&#1489;&#1512;&#1497;&#1514;';
+$string['thislanguage'] = 'Hebrew';
 $string['time'] = 'זמן';
-$string['timezone'] = 'אזור זמן';
 $string['to'] = 'ל';
 $string['today'] = 'היום';
 $string['todaylogs'] = 'הדוחות של היום';
@@ -920,59 +855,46 @@ $string['total'] = 'סך הכל';
 $string['turneditingoff'] = 'כבה עריכה';
 $string['turneditingon'] = 'הפעל עריכה';
 $string['undecided'] = 'בהתלבטות';
-$string['unenrol'] = 'בטל רישום';
-$string['unenrolallstudents'] = 'בטל את הרישום של כל התלמידים';
-$string['unenrolallstudentssure'] = 'האם אתה בטוח שאתה רוצה לבטל את הרישום של כל התלמידים מקורס זה?';
-$string['unenrolme'] = 'בטל את הרישום שלי מ$a';
-$string['unenrolsure'] = 'האם אתה בטוח שאתה רוצה לבטל את הרישום של $a מקורס זה?';
-$string['unfinished'] = 'לא גמור';
 $string['unknowncategory'] = 'קטגוריה לא ידועה';
-$string['unlimited'] = 'אין הגבלה';
 $string['unpacking'] = 'פתיחת ארכיון $a';
 $string['unsafepassword'] = 'סיסמא לא בטוחה - נסה משהו אחר';
-$string['unusedaccounts'] = 'הרישום של חשבונות שלא נעשה בהם שימוש יותר מ$a ימים מבוטל באופן אוטומטי';
 $string['unzip'] = 'פתח קובץ מקובץ';
 $string['unzippingbackup'] = 'פותח גיבוי מקובץ';
 $string['up'] = 'מעלה';
 $string['update'] = 'עדכן';
-$string['updated'] = '$a עודכן';
+$string['updated'] = 'עדכן a$';
 $string['updatemyprofile'] = 'עדכן פרופיל';
-$string['updatesevery'] = 'עדכונים כל $a שניות';
-$string['updatethis'] = 'עדכן $a זה';
+$string['updatesevery'] = 'עדכן כל a$ שניות';
+$string['updatethis'] = 'עדכן זה a$';
 $string['updatethiscourse'] = 'עדכן קורס זה';
 $string['updatinga'] = 'מעדכן: $a';
-$string['updatingain'] = 'מעדכן $a->what ב$a->in';
+$string['updatingain'] = 'מעדכן a->what $ב a->in$';
 $string['upload'] = 'העלה';
 $string['uploadafile'] = 'העלה קובץ';
-$string['uploadedfile'] = 'הקובץ הועלה בהצלחה';
-$string['uploadedfileto'] = 'הקובץ $a->file הועלה לספרייה $a->directory';
-$string['uploadfilelog'] = 'טען את הרישום עבור הקובץ $a';
-$string['uploadlabel'] = 'כותרת:';
+$string['uploadedfileto'] = 'העלה a->file $ ל a->directory$';
 $string['uploadnofilefound'] = 'לא נמצא כל קובץ - האם אתה בטוח שבחרת אחד להעלאה?';
 $string['uploadnotallowed'] = 'העלאות אינן מורשות';
 $string['uploadproblem'] = 'בעיה לא מזוהה קרתה בזמן העלאת קובץ \'$a\' (אולי הוא היה גדול מדי?)';
 $string['uploadthisfile'] = 'העלה קובץ זה';
 $string['uploadusers'] = 'העלה משתמשים';
-$string['usedinnplaces'] = 'בשימוש ב $a מקומות';
+$string['usedinnplaces'] = 'בשימוש בa$ מקומות';
 $string['user'] = 'משתמש';
-$string['userconfirmed'] = '$a מאושר';
+$string['userconfirmed'] = 'מאושר a$';
 $string['userdata'] = 'נתוני משתמש';
 $string['userdeleted'] = 'חשבון משתמש זה נמחק';
 $string['userdescription'] = 'תיאור';
 $string['userfiles'] = 'קבצי משתמש';
-$string['userlist'] = 'רשימת משתמשים';
 $string['username'] = 'שם משתמש';
 $string['usernameexists'] = 'שם משתמש זה כבר קיים, בחר אחר';
-$string['usernotconfirmed'] = 'לא ניתן לאשר את $a';
-$string['userprofilefor'] = 'פרופיל משתמש עבור $a';
+$string['usernotconfirmed'] = 'לא יכול היה לאשר a$';
+$string['userprofilefor'] = 'פרופיל משתמש בשביל a$';
 $string['users'] = 'משתמשים';
 $string['usersnew'] = 'משתמשים חדשים';
 $string['userzones'] = 'אזורי משתמש';
 $string['usingexistingcourse'] = 'משתמש בקורס קיים';
 $string['version'] = 'גרסה';
 $string['view'] = 'תצוגה';
-$string['virusfoundsubject'] = '$a: נמצא וירוס!';
-$string['webpage'] = 'דף בית באינטרנט';
+$string['webpage'] = 'עמוד רשת';
 $string['week'] = 'שבוע';
 $string['weekhide'] = 'החבא שבוע זה מפני a$';
 $string['weeklyoutline'] = 'סקירה שבועית';
@@ -999,18 +921,17 @@ $string['writingcoursedata'] = 'כתיבת נתוני קורס';
 $string['writingeventsinfo'] = 'כתיבת מידע אירועים';
 $string['writinggeneralinfo'] = 'כתיבת מידע כללי';
 $string['writinggroupsinfo'] = 'כתיבת מידע קבוצות';
-$string['writingheader'] = 'כתיבת כותרת';
 $string['writingloginfo'] = 'כתיבת מידע דוחות';
-$string['writingmoduleinfo'] = 'כתיבת מידע מודולים';
+$string['writingmoduleinfo'] = 'כתיבת מידע פרקים';
 $string['writingscalesinfo'] = 'כתיבת מידע סולמות הערכה';
 $string['writinguserinfo'] = 'כתיבת מידע משתמשים';
 $string['wrongpassword'] = 'סיסמא שגויה לשם משתמש זה';
 $string['yes'] = 'כן';
-$string['youareabouttocreatezip'] = 'אתה עומד ליצור קובץ ארכיב המכיל';
+$string['youareabouttocreatezip'] = 'אתה עומד ליצור קובץ מקובץ המכיל';
 $string['youaregoingtorestorefrom'] = 'אתה עומד להתחיל את תהליך השיחזור ל';
 $string['yourlastlogin'] = 'התחברותך האחרונה היתה';
 $string['yourself'] = 'את עצמך';
-$string['yourteacher'] = '$a שלך';
-$string['zippingbackup'] = 'מכווץ את הגיבוי לארכיב';
+$string['yourteacher'] = ' a$ שלך';
+$string['zippingbackup'] = 'מקבץ גיבוי';
 
 ?>

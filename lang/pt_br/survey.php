@@ -50,7 +50,7 @@ $string['attls8'] = 'Estou sempre interessado(a) em saber porque as pessoas dize
 $string['attls8short'] = 'saber porque';
 $string['attls9'] = 'Frequentemente discordo de autores de livros que leio, e procuro uma explicação lógica que comprove que eles estão errados.';
 $string['attls9short'] = 'discorda do autor';
-$string['attlsintro'] = '<b>COMO RESPONDER AO QUESTIONÁRIO</b>
+$string['attlsintro'] = '<B>COMO RESPONDER AO QUESTIONÁRIO</B>
 
 O objetivo deste questionário é fazer uma pesquisa sobre as posturas dos participantes do curso perante a aprendizagem e a reflexão crítica.
 
@@ -128,7 +128,7 @@ $string['colles8'] = 'Faço reflexões críticas sôbre os conteúdos do curso';
 $string['colles8short'] = 'eu critico os conteúdos';
 $string['colles9'] = 'Eu explico as minhas idéias aos outros participantes.';
 $string['colles9short'] = 'eu explico as minhas idéias';
-$string['collesaintro'] = '<b>COMO RESPONDER AO QUESTIONÁRIO</b>
+$string['collesaintro'] = '<B>COMO RESPONDER AO QUESTIONÁRIO</B>
 
 O objetivo deste questionário é fazer uma pesquisa sobre a medida em que as atividades deste curso favorecem o seu processo de aprendizagem.
 
@@ -141,7 +141,7 @@ Não há respostas certas ou erradas; nós estamos interessados apenas na sua opini
 Agradecemos a sua colaboração.
 ';
 $string['collesaname'] = 'COLLES (experiência efetiva)';
-$string['collesapintro'] = '<b>COMO RESPONDER AO QUESTIONÁRIO</b>
+$string['collesapintro'] = '<B>COMO RESPONDER AO QUESTIONÁRIO</B>
 
 O objetivo deste questionário é fazer uma pesquisa sobre a medida em que o seu processo de aprendizagem neste curso corresponte às suas expectativas.
 
@@ -167,7 +167,7 @@ $string['collesm5short'] = 'Apoio dos Colegas';
 $string['collesm6'] = 'Compreensão';
 $string['collesm6short'] = 'Compreensão';
 $string['collesmintro'] = 'Neste curso...';
-$string['collespintro'] = '<b>COMO RESPONDER AO QUESTIONÁRIO</b>
+$string['collespintro'] = '<B>COMO RESPONDER AO QUESTIONÁRIO</B>
 
 O objetivo deste questionário é fazer uma pesquisa sobre as suas expectativas em relação ao seu processo de aprendizagem neste curso.
 

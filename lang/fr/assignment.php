@@ -4,27 +4,19 @@ $string['allowresubmit'] = 'Permettre plusieurs remises d\'un devoir';
 $string['assignmentdetails'] = 'Détails du devoir';
 $string['assignmentmail'] = '$a->teacher a écrit un feedback concernant votre devoir « $a->assignment »
 
-Vous pouvez le consulter en annexe à votre devoir :
+Vous pouvez le consulter en annexe à votre devoir:
 
 $a->url';
-$string['assignmentmailhtml'] = '$a->teacher a écrit un feedback concernant votre devoir rendu « <em>$a->assignment</em> »<br /><br />
+$string['assignmentmailhtml'] = '$a->teacher a écrit un feedback concernant votre devoir rendu « <i>$a->assignment</i> »<br /><br />
 
 Vous pouvez le consulter en annexe à <a href=\'$a->url\'>votre devoir</a>.';
 $string['assignmentname'] = 'Nom du devoir';
 $string['assignmenttype'] = 'Type du devoir';
-$string['availabledate'] = 'Disponible dès le';
 $string['configmaxbytes'] = 'Taille maximale par défaut de tous les devoirs du site (sujet aux limites des cours et autres réglages locaux)';
 $string['description'] = 'Description';
 $string['duedate'] = 'À rendre le';
 $string['duedateno'] = 'Pas de date de retour';
 $string['early'] = 'en avance de $a';
-$string['emailteachers'] = 'Envoyer aux enseignants les alertes par courriel';
-$string['emailteachermail'] = '$a->username a modifié son travail remis pour le devoir « $a->assignment ».
-
-Ce travail est disponible ici :
-
-$a->url';
-$string['emailteachermailhtml'] = '$a->username a modifié son travail remis pour le devoir «&nbsp;<em>$a->assignment</em>&nbsp;»<br /><br />Le travail remis est <a href=\"$a->url\">disponible sur le site web</a>.';
 $string['existingfiledeleted'] = 'Le fichier $a a été supprimé';
 $string['failedupdatefeedback'] = 'Impossible d\'enregistrer le feedback pour $a';
 $string['feedback'] = 'Feedback';
@@ -35,17 +27,15 @@ $string['maximumsize'] = 'Taille maximale';
 $string['modulename'] = 'Devoir';
 $string['modulenameplural'] = 'Devoirs';
 $string['newsubmissions'] = 'Devoirs rendus';
-$string['noassignments'] = 'Il n\'y a pas encore de devoir';
 $string['notgradedyet'] = 'Pas encore de note';
 $string['notsubmittedyet'] = 'Pas encore rendu';
-$string['overwritewarning'] = 'Attention ! un nouvel envoi remplacera votre devoir déjà remis';
+$string['overwritewarning'] = 'Attention : un nouvel envoi remplacera votre devoir déjà remis';
 $string['saveallfeedback'] = 'Enregistrer tous mes feedbacks';
 $string['submissionfeedback'] = 'Feedback du devoir';
 $string['submissions'] = 'Devoirs rendus';
 $string['submitassignment'] = 'Déposer votre devoir en utilisant ce formulaire';
 $string['submitted'] = 'Devoir rendu';
 $string['typeoffline'] = 'Activité hors ligne';
-$string['typeonline'] = 'Activité en ligne';
 $string['typeuploadsingle'] = 'Déposer un fichier';
 $string['uploadbadname'] = 'Ce nom de fichier contient d\'étranges caractères. Il ne peut être déposé';
 $string['uploadedfiles'] = 'fichiers déposés';

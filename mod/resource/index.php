@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
     require_once("../../config.php");
 
@@ -14,7 +14,7 @@
 
     if ($course->category) {
         require_login($course->id);
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
+        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
     } else {
         $navigation = '';
     }
@@ -39,17 +39,16 @@
 
     if ($course->format == "weeks") {
         $table->head  = array ($strweek, $strname, $strsummary);
-        $table->align = array ("center", "left", "left");
+        $table->align = array ("CENTER", "LEFT", "LEFT");
     } else if ($course->format == "topics") {
         $table->head  = array ($strtopic, $strname, $strsummary);
-        $table->align = array ("center", "left", "left");
+        $table->align = array ("CENTER", "LEFT", "LEFT");
     } else {
         $table->head  = array ($strlastmodified, $strname, $strsummary);
-        $table->align = array ("left", "left", "left");
+        $table->align = array ("LEFT", "LEFT", "LEFT");
     }
 
     $currentsection = "";
-    $options->para = false;
     foreach ($resources as $resource) {
         if ($course->format == "weeks" or $course->format == "topics") {
             $printsection = "";
@@ -72,13 +71,13 @@
         }
         if (!$resource->visible) {      // Show dimmed if the mod is hidden
            $table->data[] = array ($printsection, 
-                "<a class=\"dimmed\" $extra href=\"view.php?id=$resource->coursemodule\">".format_string($resource->name,true)."</a>",
-                format_text($resource->summary, FORMAT_MOODLE, $options) );
+                "<a class=\"dimmed\" $extra href=\"view.php?id=$resource->coursemodule\">$resource->name</a>",
+                format_text($resource->summary) );
 
         } else {                        //Show normal if the mod is visible
            $table->data[] = array ($printsection, 
-                "<a $extra href=\"view.php?id=$resource->coursemodule\">".format_string($resource->name,true)."</a>",
-                format_text($resource->summary, FORMAT_MOODLE, $options) );
+                "<a $extra href=\"view.php?id=$resource->coursemodule\">$resource->name</a>",
+                format_text($resource->summary) );
         }
     }
 

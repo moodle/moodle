@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
        // No authentication at all.  This method approves everything!
 
 function auth_user_login ($username, $password) {

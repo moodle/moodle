@@ -1,6 +1,6 @@
 <?php
 /*
-V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -18,10 +18,7 @@ Based on adodb 3.40
 
 if (! defined("_ADODB_MYSQLI_LAYER")) {
  define("_ADODB_MYSQLI_LAYER", 1 );
-
- // disable adodb extension - currently incompatible.
- global $ADODB_EXTENSION; $ADODB_EXTENSION = false;
-
+ 
 class ADODB_mysqli extends ADOConnection {
 	var $databaseType = 'mysqli';
 	var $dataProvider = 'native';
@@ -49,7 +46,7 @@ class ADODB_mysqli extends ADOConnection {
 	function ADODB_mysqli() 
 	{			
 	  if(!extension_loaded("mysqli"))
-	      trigger_error("You must have the mysqli extension installed.", E_USER_ERROR);
+	      trigger_error("You must have the MySQLi extension.", E_USER_ERROR);
 	    
 	}
 	
@@ -107,7 +104,7 @@ class ADODB_mysqli extends ADOConnection {
 	function _nconnect($argHostname, $argUsername, $argPassword, $argDatabasename)
 	  {
 	    $this->forceNewConnect = true;
-	    return $this->_connect($argHostname, $argUsername, $argPassword, $argDatabasename);
+	    $this->_connect($argHostname, $argUsername, $argPassword, $argDatabasename);
 	  }
 	
 	function IfNull( $field, $ifNull ) 
@@ -179,6 +176,7 @@ class ADODB_mysqli extends ADOConnection {
 	
 	function _insertid()
 	{
+//	  $this->_connectionID = $this->mysqli_resolve_link($this->_connectionID);
 	  $result = @mysqli_insert_id($this->_connectionID);
 	  if ($result == -1){
 	      if ($this->debug) ADOConnection::outp("mysqli_insert_id() failed : "  . $this->ErrorMsg());
@@ -189,6 +187,7 @@ class ADODB_mysqli extends ADOConnection {
 	// Only works for INSERT, UPDATE and DELETE query's
 	function _affectedrows()
 	{
+	//  $this->_connectionID = $this->mysqli_resolve_link($this->_connectionID);
 	  $result =  @mysqli_affected_rows($this->_connectionID);
 	  if ($result == -1) {
 	      if ($this->debug) ADOConnection::outp("mysqli_affected_rows() failed : "  . $this->ErrorMsg());
@@ -236,62 +235,62 @@ class ADODB_mysqli extends ADOConnection {
 	}
 	
   	function &MetaDatabases()
-	{
-		$query = "SHOW DATABASES";
-		$ret =& $this->Execute($query);
+	  {
+	    $query = "SHOW DATABASES";
+	    $ret =& $this->Execute($query);
 		return $ret;
-	}
+	  }
 
 	  
 	function &MetaIndexes ($table, $primary = FALSE)
 	{
-		// save old fetch mode
-		global $ADODB_FETCH_MODE;
-		
-		$save = $ADODB_FETCH_MODE;
-		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-		if ($this->fetchMode !== FALSE) {
-		       $savem = $this->SetFetchMode(FALSE);
-		}
-		
-		// get index details
-		$rs = $this->Execute(sprintf('SHOW INDEXES FROM %s',$table));
-		
-		// restore fetchmode
-		if (isset($savem)) {
-		        $this->SetFetchMode($savem);
-		}
-		$ADODB_FETCH_MODE = $save;
-		
-		if (!is_object($rs)) {
-		        return FALSE;
-		}
-		
-		$indexes = array ();
-		
-		// parse index data into array
-		while ($row = $rs->FetchRow()) {
-		        if ($primary == FALSE AND $row[2] == 'PRIMARY') {
-		                continue;
-		        }
-		        
-		        if (!isset($indexes[$row[2]])) {
-		                $indexes[$row[2]] = array(
-		                        'unique' => ($row[1] == 0),
-		                        'columns' => array()
-		                );
-		        }
-		        
-		        $indexes[$row[2]]['columns'][$row[3] - 1] = $row[4];
-		}
-		
-		// sort columns by order in the index
-		foreach ( array_keys ($indexes) as $index )
-		{
-		        ksort ($indexes[$index]['columns']);
-		}
-		
-		return $indexes;
+	        // save old fetch mode
+	        global $ADODB_FETCH_MODE;
+	        
+	        $save = $ADODB_FETCH_MODE;
+	        $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
+	        if ($this->fetchMode !== FALSE) {
+	               $savem = $this->SetFetchMode(FALSE);
+	        }
+	        
+	        // get index details
+	        $rs = $this->Execute(sprintf('SHOW INDEXES FROM %s',$table));
+	        
+	        // restore fetchmode
+	        if (isset($savem)) {
+	                $this->SetFetchMode($savem);
+	        }
+	        $ADODB_FETCH_MODE = $save;
+	        
+	        if (!is_object($rs)) {
+	                return FALSE;
+	        }
+	        
+	        $indexes = array ();
+	        
+	        // parse index data into array
+	        while ($row = $rs->FetchRow()) {
+	                if ($primary == FALSE AND $row[2] == 'PRIMARY') {
+	                        continue;
+	                }
+	                
+	                if (!isset($indexes[$row[2]])) {
+	                        $indexes[$row[2]] = array(
+	                                'unique' => ($row[1] == 0),
+	                                'columns' => array()
+	                        );
+	                }
+	                
+	                $indexes[$row[2]]['columns'][$row[3] - 1] = $row[4];
+	        }
+	        
+	        // sort columns by order in the index
+	        foreach ( array_keys ($indexes) as $index )
+	        {
+	                ksort ($indexes[$index]['columns']);
+	        }
+	        
+	        return $indexes;
 	}
 
 	
@@ -389,65 +388,109 @@ class ADODB_mysqli extends ADOConnection {
 	
  	function &MetaColumns($table) 
 	{
-		if (!$this->metaColumnsSQL)
-			return false;
-		
-		global $ADODB_FETCH_MODE;
-		$save = $ADODB_FETCH_MODE;
+	  if ($this->metaColumnsSQL) {
+	    global $ADODB_FETCH_MODE;
+	    $save = $ADODB_FETCH_MODE;
+	    $rs = false;
+	    switch($ADODB_FETCH_MODE)
+	      {
+	      case ADODB_FETCH_NUM:
 		$ADODB_FETCH_MODE = ADODB_FETCH_NUM;
-		if ($this->fetchMode !== false)
-			$savem = $this->SetFetchMode(false);
-		$rs = $this->Execute(sprintf($this->metaColumnsSQL,$table));
-		if (isset($savem)) $this->SetFetchMode($savem);
+		$rs = $this->Execute(sprintf($this->metaColumnsSQL,
+					     $table));
+		
 		$ADODB_FETCH_MODE = $save;
-		if (!is_object($rs))
-			return false;
-		
+		if ($rs === false) break;
 		$retarr = array();
-		while (!$rs->EOF) {
-			$fld = new ADOFieldObject();
-			$fld->name = $rs->fields[0];
-			$type = $rs->fields[1];
-			
-			// split type into type(length):
-			$fld->scale = null;
-			if (preg_match("/^(.+)\((\d+),(\d+)/", $type, $query_array)) {
-				$fld->type = $query_array[1];
-				$fld->max_length = is_numeric($query_array[2]) ? $query_array[2] : -1;
-				$fld->scale = is_numeric($query_array[3]) ? $query_array[3] : -1;
-			} elseif (preg_match("/^(.+)\((\d+)/", $type, $query_array)) {
-				$fld->type = $query_array[1];
-				$fld->max_length = is_numeric($query_array[2]) ? $query_array[2] : -1;
-			} else {
-				$fld->type = $type;
-				$fld->max_length = -1;
+		while (!$rs->EOF){
+		  $fld = new ADOFieldObject();
+		  $fld->name = $rs->fields[0];
+		  $fld->type = $rs->fields[1];
+		  // split type into type(length):
+		  if (preg_match("/^(.+)\((\d+)\)$/", $fld->type, $query_array))
+		    {
+		      $fld->type = $query_array[1];
+		      $fld->max_length = $query_array[2];
+		    }
+		  else
+		    {
+		      $fld->max_length = -1;
+		    }
+		  $fld->not_null = ($rs->fields[2] != 'YES');
+		  $fld->primary_key = ($rs->fields[3] == 'PRI');
+		  $fld->auto_increment = (strpos($rs->fields[5], 'auto_increment') !== false);
+		  $fld->binary = (strpos($fld->type,'blob') !== false);
+		  if (!$fld->binary) 
+		    {
+		      $d = $rs->fields[4];
+		      $d = $rs->fields['Default'];
+		      if ($d != "" && $d != "NULL")
+			{
+			  $fld->has_default = true;
+			  $fld->default_value = $d;
+			} 
+		      else 
+			{
+			  $fld->has_default = false;
 			}
-			$fld->not_null = ($rs->fields[2] != 'YES');
-			$fld->primary_key = ($rs->fields[3] == 'PRI');
-			$fld->auto_increment = (strpos($rs->fields[5], 'auto_increment') !== false);
-			$fld->binary = (strpos($type,'blob') !== false);
-			$fld->unsigned = (strpos($type,'unsigned') !== false);
-
-			if (!$fld->binary) {
-				$d = $rs->fields[4];
-				if ($d != '' && $d != 'NULL') {
-					$fld->has_default = true;
-					$fld->default_value = $d;
-				} else {
-					$fld->has_default = false;
-				}
-			}
-			
-			if ($save == ADODB_FETCH_NUM) {
-				$retarr[] = $fld;
-			} else {
-				$retarr[strtoupper($fld->name)] = $fld;
-			}
-			$rs->MoveNext();
+		    }
+		  $retarr[strtoupper($fld->name)] = $fld;	
+		  $rs->MoveNext();
 		}
-		
-		$rs->Close();
-		return $retarr;
+		break;
+	      case ADODB_FETCH_ASSOC:
+	      case ADODB_FETCH_DEFAULT:
+	      case ADODB_FETCH_BOTH:
+		$ADODB_FETCH_MODE = ADODB_FETCH_ASSOC;
+		$rs = $this->Execute(sprintf($this->metaColumnsSQL,
+					     $table));
+		$ADODB_FETCH_MODE = $save;
+		if ($rs === false) break;
+		$retarr = array();
+		while (!$rs->EOF){
+		  $fld = new ADOFieldObject();
+		  $fld->name = $rs->fields['Field'];
+		  $fld->type = $rs->fields['Type'];
+				
+		  // split type into type(length):
+		  if (preg_match("/^(.+)\((\d+)\)$/", $fld->type, $query_array))
+		    {
+		      $fld->type = $query_array[1];
+		      $fld->max_length = $query_array[2];
+		    }
+		  else
+		    {
+		      $fld->max_length = -1;
+		    }
+		  $fld->not_null = ($rs->fields['Null'] != 'YES');
+		  $fld->primary_key = ($rs->fields['Key'] == 'PRI');
+		  $fld->auto_increment = (strpos($rs->fields['Extra'], 'auto_increment') !== false);
+		  $fld->binary = (strpos($fld->type,'blob') !== false);
+		  if (!$fld->binary) 
+		    {
+		      $d = $rs->fields['Default'];
+		      if ($d != "" && $d != "NULL")
+			{
+			  $fld->has_default = true;
+			  $fld->default_value = $d;
+			} 
+		      else 
+			{
+			  $fld->has_default = false;
+			}
+		    }
+		  $retarr[strtoupper($fld->name)] = $fld;	
+		  $rs->MoveNext();
+		}
+		break;
+	      default:
+	      }
+	    
+	    if ($rs === false) return false;
+	    $rs->Close();
+	    return $retarr;	
+	  }
+	  return false;
 	}
 		
 	// returns true or false
@@ -601,7 +644,7 @@ class ADORecordSet_mysqli extends ADORecordSet{
 	      $this->fetchMode = MYSQLI_BOTH; 
 	      break;
 	    }
-	  $this->adodbFetchMode = $mode;
+	  
 	  $this->ADORecordSet($queryID);	
 	}
 	
@@ -667,7 +710,7 @@ class ADORecordSet_mysqli extends ADORecordSet{
 	{
 		if ($this->EOF) return false;
 		$this->_currentRow++;
-		$this->fields = @mysqli_fetch_array($this->_queryID,$this->fetchMode);
+		$this->fields = mysqli_fetch_array($this->_queryID,$this->fetchMode);
 		
 		if (is_array($this->fields)) return true;
 		$this->EOF = true;
@@ -686,132 +729,70 @@ class ADORecordSet_mysqli extends ADORecordSet{
 	  	$this->_queryID = false;	
 	}
 	
-/*
-
-0 = MYSQLI_TYPE_DECIMAL
-1 = MYSQLI_TYPE_CHAR
-1 = MYSQLI_TYPE_TINY
-2 = MYSQLI_TYPE_SHORT
-3 = MYSQLI_TYPE_LONG
-4 = MYSQLI_TYPE_FLOAT
-5 = MYSQLI_TYPE_DOUBLE
-6 = MYSQLI_TYPE_NULL
-7 = MYSQLI_TYPE_TIMESTAMP
-8 = MYSQLI_TYPE_LONGLONG
-9 = MYSQLI_TYPE_INT24
-10 = MYSQLI_TYPE_DATE
-11 = MYSQLI_TYPE_TIME
-12 = MYSQLI_TYPE_DATETIME
-13 = MYSQLI_TYPE_YEAR
-14 = MYSQLI_TYPE_NEWDATE
-247 = MYSQLI_TYPE_ENUM
-248 = MYSQLI_TYPE_SET
-249 = MYSQLI_TYPE_TINY_BLOB
-250 = MYSQLI_TYPE_MEDIUM_BLOB
-251 = MYSQLI_TYPE_LONG_BLOB
-252 = MYSQLI_TYPE_BLOB
-253 = MYSQLI_TYPE_VAR_STRING
-254 = MYSQLI_TYPE_STRING
-255 = MYSQLI_TYPE_GEOMETRY
-*/
-
 	function MetaType($t, $len = -1, $fieldobj = false)
 	{
-		if (is_object($t)) {
-		    $fieldobj = $t;
-		    $t = $fieldobj->type;
-		    $len = $fieldobj->max_length;
-		}
+	  if (is_object($t)) 
+	    {
+	      $fieldobj = $t;
+	      $t = $fieldobj->type;
+	      $len = $fieldobj->max_length;
+	    }
 		
+	  $len = -1; // mysql max_length is not accurate
+	  switch (strtoupper($t)) {
+	  case 'STRING': 
+	  case 'CHAR':
+	  case 'VARCHAR': 
+	  case 'TINYBLOB': 
+	  case 'TINYTEXT': 
+	  case 'ENUM': 
+	  case 'SET': 
+	    if ($len <= $this->blobSize) return 'C';
+	    
+	  case 'TEXT':
+	  case 'LONGTEXT': 
+	  case 'MEDIUMTEXT':
+	    return 'X';
+			
+	    // php_mysql extension always returns 'blob' even if 'text'
+	    // so we have to check whether binary...
+	  case 'IMAGE':
+	  case 'LONGBLOB': 
+	  case 'BLOB':
+	  case 'MEDIUMBLOB':
+	    return !empty($fieldobj->binary) ? 'B' : 'X';
+	  case 'YEAR':
+	  case 'DATE': 
+	    return 'D';
 		
-		 $len = -1; // mysql max_length is not accurate
-		 switch (strtoupper($t)) {
-		/* case 'STRING': 
-		 case 'CHAR':
-		 case 'VARCHAR': 
-		 case 'TINYBLOB': 
-		 case 'TINYTEXT': 
-		 case 'ENUM': 
-		 case 'SET': */
+	  case 'TIME':
+	  case 'DATETIME':
+	  case 'TIMESTAMP': return 'T';
 		
-		case MYSQLI_TYPE_TINY_BLOB :
-		case MYSQLI_TYPE_CHAR :
-		case MYSQLI_TYPE_STRING :
-		case MYSQLI_TYPE_ENUM :
-		case MYSQLI_TYPE_SET :
-		case 253 :
-		   if ($len <= $this->blobSize) return 'C';
-		   
-		/*case 'TEXT':
-		case 'LONGTEXT': 
-		case 'MEDIUMTEXT':*/
-		   return 'X';
-		
-		
-		   // php_mysql extension always returns 'blob' even if 'text'
-		   // so we have to check whether binary...
-		/*case 'IMAGE':
-		case 'LONGBLOB': 
-		case 'BLOB':
-		case 'MEDIUMBLOB':*/
-		
-		case MYSQLI_TYPE_BLOB :
-		case MYSQLI_TYPE_LONG_BLOB :
-		case MYSQLI_TYPE_MEDIUM_BLOB :
-		
-		   return !empty($fieldobj->binary) ? 'B' : 'X';
-		/*case 'YEAR':
-		case 'DATE': */
-		case MYSQLI_TYPE_DATE :
-		case MYSQLI_TYPE_YEAR :
-		
-		   return 'D';
-		
-		/*case 'TIME':
-		case 'DATETIME':
-		case 'TIMESTAMP':*/
-		
-		case MYSQLI_TYPE_DATETIME :
-		case MYSQLI_TYPE_NEWDATE :
-		case MYSQLI_TYPE_TIME :
-		case MYSQLI_TYPE_TIMESTAMP :
-		
-			return 'T';
-		
-		/*case 'INT': 
-		case 'INTEGER':
-		case 'BIGINT':
-		case 'TINYINT':
-		case 'MEDIUMINT':
-		case 'SMALLINT': 
-		*/
-		case MYSQLI_TYPE_INT24 :
-		case MYSQLI_TYPE_LONG :
-		case MYSQLI_TYPE_LONGLONG :
-		case MYSQLI_TYPE_SHORT :
-		case MYSQLI_TYPE_TINY :
-		
-		   if (!empty($fieldobj->primary_key)) return 'R';
-		   
-		   return 'I';
-		
-		/*
-		   // Added floating-point types
-		   // Maybe not necessery.
-		 case 'FLOAT':
-		 case 'DOUBLE':
-		   //		case 'DOUBLE PRECISION':
-		 case 'DECIMAL':
-		 case 'DEC':
-		 case 'FIXED':*/
-		 default:
-		 	if (!is_numeric($t)) echo "<p>--- Error in type matching $t -----</p>"; 
-		 	return 'N';
-		}
-	} // function
+	  case 'INT': 
+	  case 'INTEGER':
+	  case 'BIGINT':
+	  case 'TINYINT':
+	  case 'MEDIUMINT':
+	  case 'SMALLINT': 
+			
+	    if (!empty($fieldobj->primary_key)) return 'R';
+	    else return 'I';
+	    // Added floating-point types
+	    // Maybe not necessery.
+	  case 'FLOAT':
+	  case 'DOUBLE':
+	    //		case 'DOUBLE PRECISION':
+	  case 'DECIMAL':
+	  case 'DEC':
+	  case 'FIXED':
+	  default: 
+	    return 'N';
+	  }
+	}
 	
 
-} // rs class
+}
  
 }
 

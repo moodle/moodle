@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
       // Displays all grades for a course
 
     require_once("../config.php");
@@ -35,26 +35,20 @@
         $currentgroup = false;
     }
 
-/// Get a list of all students
     if ($currentgroup) {
-        if (!$students = get_group_students($currentgroup, "u.lastname ASC")) {
-            print_header("$course->shortname: $strgrades", "$course->fullname", 
-                     "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
-                      -> $strgrades");
-            setup_and_print_groups($course, $groupmode, "grades.php?id=$course->id");
-            notice(get_string("nostudentsingroup"), "$CFG->wwwroot/course/view.php?id=$course->id");
-            print_footer($course);
-            exit;
-        }
+        $students = get_group_students($currentgroup, "u.lastname ASC");
     } else {
-        if (!$students = get_course_students($course->id, "u.lastname ASC")) {
-            print_header("$course->shortname: $strgrades", "$course->fullname", 
+        $students = get_course_students($course->id, "u.lastname ASC");
+    }
+
+/// Get a list of all students
+    if (!$students) {
+        print_header("$course->shortname: $strgrades", "$course->fullname", 
                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
                       -> $strgrades");
-            notice(get_string("nostudentsyet"), "$CFG->wwwroot/course/view.php?id=$course->id");
-            print_footer($course);
-            exit;
-        }
+        print_heading(get_string("nostudentsyet"));
+        print_footer($course);
+        exit;
     }
 
     foreach ($students as $student) {
@@ -90,32 +84,32 @@
                                 if (!empty($modgrades->maxgrade)) {
                                     if ($mod->visible) {
                                         $maxgrade = "$strmax: $modgrades->maxgrade";
-                                        $maxgradehtml = "<br />$strmax: $modgrades->maxgrade";
+                                        $maxgradehtml = "<BR>$strmax: $modgrades->maxgrade";
                                     } else {
                                         $maxgrade = "$strmax: $modgrades->maxgrade";
-                                        $maxgradehtml = "<br /><font class=\"dimmed_text\">$strmax: $modgrades->maxgrade</font>";
+                                        $maxgradehtml = "<BR><FONT class=\"dimmed_text\">$strmax: $modgrades->maxgrade</FONT>";
                                     }
                                 } else {
                                     $maxgrade = "";
                                     $maxgradehtml = "";
                                 }
     
-                                $image = "<a href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\"".
-                                         "   title=\"$mod->modfullname\">".
-                                         "<img border=\"0\" valign=\"middle\" src=\"../mod/$mod->modname/icon.gif\" ".
-                                         "height=\"16\" width=\"16\" alt=\"$mod->modfullname\" /></a>";
+                                $image = "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\"".
+                                         "   TITLE=\"$mod->modfullname\">".
+                                         "<IMG BORDER=0 VALIGN=absmiddle SRC=\"../mod/$mod->modname/icon.gif\" ".
+                                         "HEIGHT=16 WIDTH=16 ALT=\"$mod->modfullname\"></A>";
                                 if ($mod->visible) {
                                     $columnhtml[] = "$image ".
-                                                 "<a href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
-                                                 format_string($instance->name,true).
-                                                 "</a>$maxgradehtml";
+                                                 "<A HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
+                                                 "$instance->name".
+                                                 "</A>$maxgradehtml";
                                 } else {
                                     $columnhtml[] = "$image ".
-                                                 "<a class=\"dimmed\" href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
-                                                 format_string($instance->name,true).
-                                                 "</a>$maxgradehtml";
+                                                 "<A CLASS=\"dimmed\" HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
+                                                 "$instance->name".
+                                                 "</A>$maxgradehtml";
                                 }
-                                $columns[] = "$mod->modfullname: ".format_string($instance->name)." - $maxgrade";
+                                $columns[] = "$mod->modfullname: $instance->name - $maxgrade";
     
                                 foreach ($students as $student) {
                                     if (!empty($modgrades->grades[$student->id])) {
@@ -123,9 +117,9 @@
                                         if ($mod->visible) {
                                             $gradeshtml[$student->id][] = $modgrades->grades[$student->id];
                                         } else {
-                                            $gradeshtml[$student->id][] = "<font class=\"dimmed_text\">".
+                                            $gradeshtml[$student->id][] = "<FONT class=\"dimmed_text\">".
                                                                            $modgrades->grades[$student->id].
-                                                                           "</font>";
+                                                                           "</FONT>";
                                         }
                                     } else {
                                         $grades[$student->id][] = $currentstudentgrade = "";
@@ -147,7 +141,7 @@
 
 
 /// OK, we have all the data, now present it to the user
-    if ($download == "xls" and confirm_sesskey()) {
+    if ($download == "xls") {
         require_once("../lib/excel/Worksheet.php");
         require_once("../lib/excel/Workbook.php");
 
@@ -205,7 +199,7 @@
     
         exit;
 
-    } else if ($download == "txt" and confirm_sesskey()) {
+    } else if ($download == "txt") {
 
 /// Print header to force download
 
@@ -249,24 +243,22 @@
     } else {  // Just print the web page
 
         print_header("$course->shortname: $strgrades", "$course->fullname", 
-                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> 
+                     "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
                       -> $strgrades");
     
         print_heading($strgrades);
 
         setup_and_print_groups($course, $groupmode, "grades.php?id=$course->id");
 
-        echo "<table border=\"0\" align=\"center\"><tr>";
-        echo "<td>";
+        echo "<TABLE BORDER=0 ALIGN=CENTER><TR>";
+        echo "<TD>";
         $options["id"] = "$course->id";
         $options["download"] = "xls";
-        $options["sesskey"] = $USER->sesskey;
         print_single_button("grades.php", $options, get_string("downloadexcel"));
-        echo "<td>";
+        echo "<TD>";
         $options["download"] = "txt";
-        $options["sesskey"] = $USER->sesskey;
         print_single_button("grades.php", $options, get_string("downloadtext"));
-        echo "</table>";
+        echo "</TABLE>";
     
 
         $table->head  = array_merge(array ("", get_string("firstname"), get_string("lastname")), $columnhtml, array(get_string("total")));

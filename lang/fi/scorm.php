@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // scorm.php - created with Moodle 1.4 development (2004072500)
 
 
 $string['attr_error'] = 'Virheelinen arvo atribuutille ($a->attr) merkinn‰ss‰  $a->tag';
@@ -28,7 +28,6 @@ $string['found'] = 'Manifest';
 $string['gradeaverage'] = 'Keskiarvo';
 $string['gradehighest'] = 'Korkein arviointi';
 $string['grademethod'] = 'Arviointi tapa';
-$string['gradescoes'] = 'Sis‰ltˆobjektien tilanne';
 $string['gradesum'] = 'Yhteistulos';
 $string['guestsno'] = 'Vieraat ev‰t voi katsella scorm-kursseja';
 $string['incomplete'] = 'Kesken';
@@ -52,7 +51,6 @@ $string['noreports'] = 'Ei raporttia n‰ytett‰v‰ksi';
 $string['normal'] = 'Normaali';
 $string['not_corr_type'] = 'Typpi virhe merkinn‰ss‰ $a->tag';
 $string['notattempted'] = 'Ei yritetty';
-$string['organizations'] = 'Organisaatiot';
 $string['packagedir'] = 'Tiedoston luonti virhe: paketin hakemistoa ei voi luoda';
 $string['passed'] = 'Hyv‰ksytty';
 $string['php5'] = 'PHP 5 (oma DOMXML kirjasto)';
@@ -61,13 +59,9 @@ $string['prev'] = 'Edellinen';
 $string['regular'] = 'Tavallinen Manifest';
 $string['report'] = 'Raportti';
 $string['review'] = 'Esikatsele';
-$string['scoes'] = 'Sis‰ltˆ objektit';
 $string['score'] = 'Tulos';
 $string['syntax'] = 'Muoto virhe';
 $string['tag_error'] = 'Tuntematon merkint‰ ($a->tag) sis‰llˆss‰: $a->value';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Suomi';
 $string['too_many_attributes'] = 'Merkin‰ll‰ $a->tag on liikaa atribuutteja';
 $string['too_many_children'] = 'Merkinn‰ll‰ $a->tag on liikaa lapsia';
 $string['trackingloose'] = 'VAROITUS: T‰m‰n SCORM-paketin seurantatiedot menetet‰‰n!';

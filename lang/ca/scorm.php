@@ -1,78 +1,36 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // scorm.php - created with Moodle 1.4 development (2004070800)
 
 
-$string['asset'] = 'Bé';
-$string['attr_error'] = 'Valor incorrecte de l\'atribut ($a->attr) en l\'etiqueta $a->tag';
 $string['autocontinue'] = 'Continuació automàtica';
-$string['badmanifest'] = 'El manifest té errors: vg. el registre d\'errors';
 $string['browse'] = 'Explora';
 $string['browsed'] = 'Explorat';
 $string['browsemode'] = 'Mode d\'exploració';
 $string['chooseapacket'] = 'Trieu o actualitzeu un paquet SCORM';
 $string['completed'] = 'Completat';
-$string['configframesize'] = 'Aquest valor és la mida en píxels del marc superior (el que conté la navegació) quan es reprodueix un paquet SCORM.';
-$string['configpopup'] = 'Quan s\'afegeix un nou paquet SCORM que es pot visualitzar en una finestra emergent, cal habilitar per defecte aquesta opció?';
-$string['configpopupheight'] = 'Quina alçada per defecte han de tenir les noves finestres emergents?';
-$string['configpopupresizable'] = 'Les finestres emergents s\'han de poder redimensionar per defecte?';
-$string['configpopupscrollbars'] = 'Les finestres emergents han de permetre per defecte el desplaçament?';
-$string['configpopupstatus'] = 'Les finestres emergents han de mostrar per defecte la barra d\'estat?';
-$string['configpopupwidth'] = 'Quina amplada per defecte han de tenir les noves finestres emergents?';
 $string['coursepacket'] = 'Paquet de curs';
 $string['coursestruct'] = 'Estructura del curs';
 $string['datadir'] = 'Error del sistema de fitxers: no s\'ha pogut crear el directori de dades del curs';
-$string['domxml'] = 'Biblioteca externa DOMXML';
 $string['entercourse'] = 'Entra al curs SCORM';
-$string['errorlogs'] = 'Registre d\'errors';
 $string['failed'] = 'Fallat';
-$string['found'] = 'S\'ha trobat el manifest';
-$string['gradeaverage'] = 'Nota mitjana';
-$string['gradehighest'] = 'Nota més alta';
-$string['grademethod'] = 'Mètode de qualificació';
-$string['gradescoes'] = 'Situació dels Sco';
-$string['gradesum'] = 'Suma de notes';
-$string['guestsno'] = 'Els visitants no poden veure cursos SCORM';
 $string['incomplete'] = 'No completat';
-$string['missing_attribute'] = 'Falta l\'atribut $a->attr en l\'etiqueta $a->tag';
-$string['missing_tag'] = 'Falta l\'etiqueta $a->tag';
 $string['mode'] = 'Mode';
-$string['modulename'] = 'SCORM';
-$string['modulenameplural'] = 'SCORM';
-$string['newheight'] = 'Alçada per defecte de la finestra (en píxels)';
-$string['newresizable'] = 'Permet redimensionar la finestra';
-$string['newscrollbars'] = 'Permet el desplaçament dins de la finestra';
-$string['newstatus'] = 'Mostra la barra d\'estat';
-$string['newwidth'] = 'Amplada de la finestra (en píxels)';
-$string['newwindow'] = 'Nova finestra';
-$string['newwindowopen'] = 'Mostra el paquet SCORM en una nova finestra emergent';
+$string['modulename'] = 'Scorm';
+$string['modulenameplural'] = 'Scorms';
 $string['next'] = 'Continua';
-$string['no_attributes'] = 'L\'etiqueta $a->tag ha de tenir atributs';
-$string['no_children'] = 'L\'etiqueta $a->tag ha de tenir fills';
 $string['nomanifest'] = 'No s\'ha trobat el manifest';
 $string['noreports'] = 'Cap informe per visualitzar';
 $string['normal'] = 'Normal';
-$string['not_corr_type'] = 'El tipus de l\'etiqueta $a->tag no coincideix';
 $string['notattempted'] = 'No intentat';
-$string['organizations'] = 'Organitzacions';
 $string['packagedir'] = 'Error del sistema de fitxers: no es pot crear el directori del paquet';
 $string['passed'] = 'S\'ha passat';
-$string['php5'] = 'PHP 5 (biblioteca nativa DOMXML)';
-$string['position_error'] = 'L\'etiqueta $a->tag no pot ser filla de $a->parent';
 $string['prev'] = 'Anterior';
 $string['regular'] = 'Manifest normal';
 $string['report'] = 'Informe';
 $string['review'] = 'Revisa';
-$string['scoes'] = 'SCO';
-$string['score'] = 'Puntuació bruta';
-$string['syntax'] = 'Error de sintaxi';
-$string['tag_error'] = 'Etiqueta desconeguda ($a->tag) amb aquest contingut: $a->value';
-$string['too_many_attributes'] = 'L\'etiqueta $a->tag té massa atributs';
-$string['too_many_children'] = 'L\'etiqueta $a->tag té massa fills';
 $string['trackingloose'] = 'ATENCIÓ: les dades de seguiment d\'aquest paquet SCORM es perdran.';
 $string['validateascorm'] = 'Valida un paquet scorm';
 $string['validation'] = 'Resultat de la validació';
-$string['validationtype'] = 'Aquesta preferència defineix la biblioteca DOMXML utilitzada per validar el manifest SCORM. Si no sabeu, deixeu l\'opció seleccionada per defecte.';
-$string['versionwarning'] = 'La versió del manifest és anterior a la 1.3, advertiment a l\'etiqueta $a->tag';
 $string['viewallreports'] = 'Visualitza informes de $a intents';
 
 ?>

@@ -1,4 +1,5 @@
-<?php // $Id$ 
+<?PHP // $Id$ 
+
 
 $string['actual'] = 'Actuel';
 $string['actualclass'] = 'Classe actuelle';
@@ -130,7 +131,7 @@ Nous vous remercions de votre collaboration.';
 $string['collesaname'] = 'COLLES (réel)';
 $string['collesapintro'] = 'L\'objet de cette consultation est de nous aider à comprendre à quel point ce cours en ligne vous a permis d\'apprendre.
 
-Chacune des 24 affirmations ci-dessous vous demande de comparer votre expérience <strong>idéale</strong> (désirée) et <strong>réelle</strong> (vécue) dans ce cours.
+Chacune des 24 affirmations ci-dessous vous demande de comparer votre expérience <b>idéale</b> (désirée) et <b>réelle</b> (vécue) dans ce cours.
 
 Il n\'y a pas de réponse « juste » ou « fausse » ; nous ne nous intéressons qu\'à votre opinion. Soyez assuré que vos réponses seront traitées avec le maximum de confidentialité, et qu\'elles n\'auront aucune influence sur votre note finale.
 
@@ -153,7 +154,7 @@ $string['collesm6short'] = 'Interprétation';
 $string['collesmintro'] = 'Dans ce cours en ligne ...';
 $string['collespintro'] = 'L\'objet de cette consultation est de nous aider à comprendre à quel point ce cours en ligne vous a permis d\'apprendre.
 
-Chacune des 24 affirmations ci-dessous vous interroge sur votre expérience <strong>idéale</strong> (désirée) dans ce cours.
+Chacune des 24 affirmations ci-dessous vous interroge sur votre expérience <b>idéale</b> (désirée) dans ce cours.
 
 Il n\'y a pas de réponse « juste » ou « fausse » ; nous ne nous intéressons qu\'à votre opinion. Soyez assuré que vos réponses seront traitées avec le maximum de confidentialité, et qu\'elles n\'auront aucune influence sur votre note finale.
 

@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?PHP  // $Id$
        // Authentication by looking up an external database table
 
 
@@ -12,10 +12,7 @@ function auth_user_login ($username, $password) {
     // two databases of the same kind ... it seems to get confused when trying to access
     // the first database again, after having accessed the second.
     // The following hack will make the database explicit which keeps it happy
-    // This seems to broke postgesql so ..
-    if ($CFG->dbtype != 'postgres7') {
-        $CFG->prefix = "$CFG->dbname.$CFG->prefix";
-    }
+    $CFG->prefix = "$CFG->dbname.$CFG->prefix";
 
     // Connect to the external database
     $authdb = &ADONewConnection($CFG->auth_dbtype);         
@@ -68,7 +65,7 @@ function auth_get_userinfo($username){
             if ($rs = $authdb->Execute("SELECT ".$config["auth_user_$field"]." FROM $CFG->auth_dbtable
                                         WHERE $CFG->auth_dbfielduser = '$username'")) {
                 if ( $rs->RecordCount() == 1 ) {
-                    $result["$field"] = $rs->fields[0];
+                    $result["$field"] = $rs->fields[$config["auth_user_$field"]];
                 }
             }
         }

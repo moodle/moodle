@@ -4,78 +4,26 @@
 de un formulario.
 <P>Los formatos permitidos son: 
 
-
-<P><B>GIFT</B></P>
-<ul>
-<p>GIFT es el formato disponible más completo para importar preguntas de 
-cuestionario a partir de un archivo de texto. Su diseño permite escribir 
-preguntas en un archivo de texto de forma fácil. Soporta opciones múltiples, 
-verdadero-falso, respuesta corta, emparejamientos y preguntas numéricas, así 
-como la inserción de _____ para el formato de rellenar huecos. Varios tipos de 
-pregunta pueden mezclarse en un sencillo archivo de texto, dado que este formato 
-soporta líneas de comentario, nombres de preguntas, respuesta automática al 
-alumno y calificaciones por porcentajes de peso. Veamos dos ejemplos:</p>
-<pre>     Colón descubrió América el 12 de {
-         ~Agosto
-         ~Septiembre
-         =Octubre
-         } de 1492.
-     
-     De qué país provienen originalmente los caracteres japoneses? {
-         ~India
-         =China
-         ~Corea
-         ~Egipto}
-</pre>
-
-<p align=right><a href="help.php?file=formatgift.html&module=quiz">Más 
-información sobre el formato GIFT</a></p>
-</ul>
-
-<P><B>Formato Aiken</B></P>
-<ul>
-<p>El formato &quot;Aiken&quot; es una manera muy sencilla de crear preguntas con respuesta 
-de opciones múltiples, usando un formato claro y entendible. He aquí un ejemplo:</p>
-<pre>¿Cuál LMS tiene más formatos de importación de cuestionarios?
-A) Moodle
-B) ATutor
-C) Claroline
-D) Blackboard
-E) WebCT
-F) Ilias
-ANSWER: A
-</pre>
-
-<p align=right><a href="help.php?file=formataiken.html&module=quiz">Más 
-información sobre el formato Aiken</a></p>
-</ul>
-
-
-<P><B>Palabra perdida</B></P>
+<P><B>Llenar el blanco</B></P>
 <UL>
-<P>Este formato sólo soporta preguntas de opción múltiple.
+<P>este formato sólo soporta preguntas de opción múltiple.
 Cada pregunta se separa con un tilde (~), y la respuesta correcta se precede con 
 un signo de igual (=). Un ejemplo:
 <BLOCKQUOTE>Cuando comenzamos a explorar las partes de nuestro cuerpo
 nos convertimos en estudiosos de: {=anatomía y fisiología ~reflexología 
-~la ciencia ~los experimentos}, y en cierto sentido seguimos siendo estudiantes 
-  de por vida.
+~la ciencia ~los experimentos}, and in a sense we remain students for life.
 </BLOCKQUOTE>
 
-<P align="right">
-<a href="../../../en/help/quiz/help.php?file=formatmissingword.html&module=quiz">Más 
-información sobre el formato Palabra perdida</a></P>
+<P>Más información: <?php  helpbutton("formatmissingword", "", "quiz") ?></P>
 </UL>
 
 
 <P><B>AON</B></P>
 <UL>
-<P>Este es el mismo caso de palabra perdida, excepto que después de ser importadas, 
-todas las preguntas se convierten en grupos de cuatro preguntas para seleccionar la correcta.</P>
-<P>Además las preguntas de opción múltiple son mezcladas aleatoriamente al ser 
-importadas.</P>
+<P>Este es el mismo caso de llenar el blanco, excepto que luego de ser importadas, 
+todas las preguntas se convierten en grupos de cuatro preguntas de seleccionar la correcta.</P>
 <p>Se le llama así en honor a una empresa que impulsó el desarrollo de muchas 
-características para los cuestionarios.</p>
+caraterísticas para los cuestionarios.</p>
 </UL>
 
 
@@ -85,50 +33,7 @@ características para los cuestionarios.</p>
 preguntas del programa Blackboard. Se apoya en la capacidad de compilar funciones 
 XML en sus correspondientes PHP.</P>
 
-<P align="right">
-<a href="../../../en/help/quiz/help.php?file=formatblackboard.html&module=quiz">Más 
-información sobre el formato Blackboard</a></P>
-</UL>
-
-<P><B>WebCT</B></P>
-<UL>
-<P>Este módulo permite importar algunos tipos de preguntas en formato texto de 
-WebCT.</P>
-
-<p align=right><a href="help.php?file=formatwebct.html&module=quiz">Más 
-información sobre el formato WebCT</a></p>
-</UL>
-
-
-<P><b>Course Test Manager (Administrador de Test de Cursos)</b></P>
-<UL>
-<P>Este módulo permite importar banco de preguntas en formato Course Test Manager.
-Existen diversas maneras de tener acceso al banco de preguntas, de base de datos 
-Access de Microsoft Access&nbsp; , dependiendo si Moodle se ejecuta sobre un 
-servidor Web: Windows o Linux.</P>
-<p>En Windows debe subir la base de datos Access como cualquier otro archivo de 
-importación de los datos.</p>
-<p>En Linux, usted debe instalar una máquina de Windows en la misma red que la 
-base de datos Course Test
-Manager y un&nbsp; software llamado ODBC Socket Server, que utiliza XML para 
-transferir datos a Moodle en el servidor de Linux.</p>  <p>Por favor, lea el 
-archivo de la ayuda de abajo antes de usar este tipo de importación.</p>
-
-
-<p align=right><a href="help.php?file=formatctm.html&module=quiz">Más 
-información sobre el formato CTM</a></p>
-</UL>
-
-
-
-<P><B>Respuestas incrustadas (Cloze)</B></P>
-<UL>
-<P>Este formato especial tiene el propósito de importa solo el tipo de pregunta 
-que incrusta&nbsp; las respuestas (también conocido como Cloze).
-</p>
-
-<p align=right><a href="help.php?file=multianswer.html&module=quiz">Más 
-información sobre el formato Cloze</a></p>
+<P>Mayor infomración: <?php  helpbutton("formatblackboard", "", "quiz") ?></P>
 </UL>
 
 <P><B>Personal</B></P>
@@ -138,11 +43,9 @@ mod/quiz/format/custom.php
 
 <P>La cantidad de código nuevo necesaria es bastante pequeña.
 
-<P align="right">
-<a href="../../../en/help/quiz/help.php?file=formatcustom.html&module=quiz">Más 
-información sobre el formato Personal</a></P>
+<P>Mayor infomración: <?php  helpbutton("formatcustom", "", "quiz") ?></P>
 </UL>
 
 
-<P>Se están desarrollando más formatos , incluyendo WebCT, IMS QTI y cualquier otro 
+<P>Más formatos se están desarrollando, incluyendo WebCT, IMS QTI y cualquier otro 
 que los usuarios de Moodle quieran aportar.</p>

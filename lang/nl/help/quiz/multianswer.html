@@ -1,17 +1,17 @@
 <p align="center"><b>Ingebedde Antwoorden (Cloze)</b></p>
 
-<p>Deze heel flexibele vraag lijkt op de erg populaire Cloze vraagopmaak.  </p>
+<p>Deze heel flexibele vraag lijkt op de erg populaire Cloze vraagopmaak.  
    
 <p>Vragen bestaan uit een stuk tekst (in Moodle opmaak) waarin verschillende antwoorden vervat zitten, zoals meerkeuzevragen,
-Kort Antwoord en Numeriek vragen.</p>
+Kort Antwoord en Numeriek vragen.
 <p>Er is op dit moment nog geen grafische interface om deze vragen te maken - je moet de vraag opmaken in een tekstbox of door
-ze te importeren uit externe bestanden.</p>
+ze te importeren uit externe bestanden.
    
 <p>Hier is een voorbeeld van de in te geven tekst die gebruikt wordt om zo een vraag te maken:
 
-<form action="">
+<form>
 <center>
-<textarea rows="15" cols="60" wrap="virtual">
+<textarea rows=15 cols=60 wrap=virtual>
 Dit is een vraag die bestaat uit wat tekst met het antwoord op deze plaats ingebed {1:MULTICHOICE:Fout antwoord#Feedback voor dit fout antwoord~Nog een fout antwoord#Feedback voor het andere fout antwoord~=Juist antwoord#Feedback voor het juiste antwoord~%50%Antwoord dat de helft van de punten oplevert#Feedback voor het half juiste antwoord} en onmiddellijk daarna krijg je deze Kort Antwoordvraag {1:SHORTANSWER:Fout antwoord#Feedback voor dit fout antwoord~=Juist antwoord#Feedback voor het juiste antwoord~%50%Antwoord op de helft van de punten#Feedback voor het halfjuiste antwoord} en uiteindelijk krijgen we een kommagetal {2:NUMERICAL:=23.8:0.1#Feedback voor het juiste antwoord~23.8~%50%N/A#Feedback voor een antwoord op de helft van de punten voor een antwoord dat in de buurt komt van het juiste antwoord}.
 
 Merk op dat addressen zoals www.moodle.org en smileys :-) normaal werken:
@@ -26,14 +26,17 @@ Veel succes!
 <p>Dit voorbeeld ziet er voor leerlingen als volgt uit:</p>
 
 
-<form action="">
-<table align="center" width="90%" class="generalbox" border="0" cellpadding="5" cellspacing="0"><tr><td bgcolor="#FFFFFF" class="generalboxcontent"><table width="100%" cellspacing="10"><tr><td nowrap="nowrap" width=100 valign=top><p align="center"><b>3</b></p><p align=center><font size=1>8 Punten</font></p><img height="1" width="100" src="pix/spacer.gif" alt ><br />
-</td><td valign="top"><p>Dit is een vraag die bestaat uit wat tekst met het antwoord op deze plaats ingebed  <select   name="q4ma1" ><option>&nbsp;</option><option value="4" >Fout antwoord</option><option value="5" >Nog een fout antwoord</option><option value="6" >Juist antwoord</option><option value="7" >Antwoord dat de helft van de punten oplevert</option></select>  en onmiddellijk daarna krijg je deze Kort Antwoordvraag  <input   name="q4ma2"  value="" type="text" size="8"/>  en uiteindelijk krijgen we een kommagetal  <input   name="q4ma3"  value="" type="TEXT" size="8" /> .<br />
+<form>
+<table align="CENTER" width="90%" class="generalbox" border="0" cellpadding="5" cellspacing="0"><tr><td bgcolor="#FFFFFF" class="generalboxcontent"><table width=100% cellspacing=10><tr><td nowrap width=100 valign=top><p align=center><b>3</b></p><p align=center><font size=1>8 Punten</font></p><img height="1" width="100" src="pix/spacer.gif" alt=""><br />
+</td><td valign=top><p>Dit is een vraag die bestaat uit wat tekst met het antwoord op deze plaats ingebed  <select   name="q4ma1" ><option></option><option value="4" >Fout antwoord</option><option value="5" >Nog een fout antwoord</option><option value="6" >Juist antwoord</option><option value="7" >Antwoord dat de helft van de punten oplevert</option></select>  en onmiddellijk daarna krijg je deze Kort Antwoordvraag  <input   name="q4ma2"  value="" type="TEXT" size="8"/>  en uiteindelijk krijgen we een kommagetal  <input   name="q4ma3"  value="" type="TEXT" size="8"/> .<br />
 <br />
 Merk op dat addressen zoals <a href="http://www.moodle.org" target="newpage">www.moodle.org</a> en smileys 
-<img alt="glimlach" border="0" src="pix/s/smiley.gif" width="15" height="15" /> normaal werken:<br />
-a) Hoe goed is dit?  <select   name="q4ma4" ><option>&nbsp;</option><option value="13" >Ja</option><option value="14" >Nee</option></select> <br />
-b) Welk cijfer zou je er voor geven?  <input   name="q4ma5"  value="" type="tekst" size="8"/> <br />
+<img border="0" src="pix/s/smiley.gif" width="15" height="15"> normaal werken:<br />
+a) Hoe goed is dit?  <select   name="q4ma4" ><option></option><option value="13" >Ja</option><option value="14" >Nee</option></select> <br />
+b) Welk cijfer zou je er voor geven?  <input   name="q4ma5"  value="" type="TEXT" size="8"/> <br />
 <br />
-Veel succes!!</p></td></tr></table></td></tr></table>
+Veel succes!!</p></TD></TR></TABLE></td></tr></table>
 </form>
+
+<br />
+

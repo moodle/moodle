@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
 /// Displays external information about a course
 
@@ -28,6 +28,12 @@
         require_login();
     }
 
+    if (empty($THEME->custompix)) {
+        $pixpath = "$CFG->wwwroot/pix";
+    } else {
+        $pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
+    }
+
     print_header(get_string("summaryof", "", $course->fullname));
 
     echo "<h3 align=\"center\">$course->fullname<br />($course->shortname)</h3>";
@@ -35,16 +41,16 @@
     echo "<center>";
     if ($course->guest) {
         $strallowguests = get_string("allowguests");
-        echo "<p><font size=\"1\"><img align=\"middle\" alt=\"\" height=\"16\" width=\"16\" border=\"0\" src=\"$CFG->pixpath/i/guest.gif\" /></a>&nbsp;$strallowguests</font></p>";
+        echo "<p><font size=1><img align=\"absmiddle\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/guest.gif\"></a>&nbsp;$strallowguests</font></p>";
     }
     if ($course->password) {
         $strrequireskey = get_string("requireskey");
-        echo "<p><font size=\"1\"><img align=\"middle\" alt=\"\" height=\"16\" width=\"16\" border=\"0\" src=\"$CFG->pixpath/i/key.gif\" /></a>&nbsp;$strrequireskey</font></p>";
+        echo "<p><font size=1><img align=\"absmiddle\" alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/key.gif\"></a>&nbsp;$strrequireskey</font></p>";
     }
 
 
     if ($teachers = get_course_teachers($course->id)) {
-        echo "<table align=\"center\"><tr><td nowrap=\"nowrap\">";
+        echo "<table align=center><tr><td nowrap>";
         echo "<p><font size=\"1\">\n";
         foreach ($teachers as $teacher) {
             if ($teacher->authority > 0) {
@@ -52,7 +58,7 @@
                     $teacher->role = $course->teacher;
                 }
                 echo "$teacher->role: ";
-                link_to_popup_window ("/user/view.php?id=$teacher->id&amp;course=$site->id", "opener", 
+                link_to_popup_window ("/user/view.php?id=$teacher->id&course=$site->id", "opener", 
                                       fullname($teacher), 400, 500, "$teacher->role", 
                                       "");
                 echo "<br />";

@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This php script contains all the stuff to backup/restore
     //glossary mods
 
@@ -57,7 +57,6 @@
             $glossary->showalphabet = backup_todb($info['MOD']['#']['SHOWALPHABET']['0']['#']);
             $glossary->showall = backup_todb($info['MOD']['#']['SHOWALL']['0']['#']);
             $glossary->allowcomments = backup_todb($info['MOD']['#']['ALLOWCOMMENTS']['0']['#']);
-            $glossary->allowprintview = backup_todb($info['MOD']['#']['ALLOWPRINTVIEW']['0']['#']);
             $glossary->usedynalink = backup_todb($info['MOD']['#']['USEDYNALINK']['0']['#']);
             $glossary->defaultapproval = backup_todb($info['MOD']['#']['DEFAULTAPPROVAL']['0']['#']);
             $glossary->globalglossary = backup_todb($info['MOD']['#']['GLOBALGLOSSARY']['0']['#']);
@@ -113,7 +112,7 @@
             $newid = insert_record ("glossary",$glossary);
 
             //Do some output
-            echo "<li>".get_string("modulename","glossary")." \"".format_string(stripslashes($glossary->name),true)."\"</li>";
+            echo "<ul><li>".get_string("modulename","glossary")." \"".$glossary->name."\"<br>";
             backup_flush(300);
 
             if ($newid) {
@@ -127,6 +126,10 @@
             } else {
                 $status = false;
             }
+
+            //Finalize ul
+            echo "</ul>";
+
         } else {
             $status = false;
         }
@@ -190,7 +193,7 @@
 	        if (($i+1) % 50 == 0) {
       	            echo ".";
             	    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
+                        echo "<br>";
 	            }
       	            backup_flush(300);
                 }
@@ -222,7 +225,7 @@
 
         global $CFG;
 
-        $status = true;
+        $status = true;    
 
         //Get the comments array
         $comments = $info['#']['COMMENTS']['0']['#']['COMMENT'];
@@ -257,11 +260,11 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                    echo "<br>";
                 }
                 backup_flush(300);
             }
-            if ($newid) {
+            if ($newid) { 
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"glossary_comments",$oldid,$newid);
             } else {
@@ -308,7 +311,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                    echo "<br>";
                 }
                 backup_flush(300);
             }
@@ -326,7 +329,7 @@
 
         global $CFG;
 
-        $status = true;
+        $status = true;    
 
         //Get the comments array
         $aliases = $info['#']['ALIASES']['0']['#']['ALIAS'];
@@ -346,7 +349,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                    echo "<br>";
                 }
                 backup_flush(300);
             }
@@ -390,7 +393,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                    echo "<br>";
                 }
                 backup_flush(300);
             }
@@ -414,7 +417,7 @@
 
         global $CFG;
 
-        $status = true;
+        $status = true;     
 
         //Get the entryids array
         $entryids = $info['#']['ENTRIES']['0']['#']['ENTRY'];
@@ -429,7 +432,7 @@
             //Now, build the GLOSSARY_ENTRIES_CATEGORIES record structure
             $entry_category->categoryid = $new_category_id;
             $entry_category->entryid = backup_todb($ent_info['#']['ENTRYID']['0']['#']);
-
+            
             //We have to recode the entryid field
             $entry = backup_getid($restore->backup_unique_code,"glossary_entries",$entry_category->entryid);
             if ($entry) {
@@ -442,7 +445,7 @@
             if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
-                    echo "<br />";
+                    echo "<br>";
                 }
                 backup_flush(300);
             }
@@ -509,89 +512,12 @@
         return $status;
     }
 
-    //This function converts texts in FORMAT_WIKI to FORMAT_MARKDOWN for
-    //some texts in the module
-    function glossary_restore_wiki2markdown ($restore) {
-
-        global $CFG;
-
-        $status = true;
-
-        //Convert glossary_comments->comment
-        if ($records = get_records_sql ("SELECT c.id, c.comment, c.format
-                                         FROM {$CFG->prefix}glossary_comments c,
-                                              {$CFG->prefix}glossary_entries e,
-                                              {$CFG->prefix}glossary g,
-                                              {$CFG->prefix}backup_ids b
-                                         WHERE e.id = c.entryid AND
-                                               g.id = e.glossaryid AND
-                                               g.course = $restore->course_id AND
-                                               c.format = ".FORMAT_WIKI. " AND
-                                               b.backup_code = $restore->backup_unique_code AND
-                                               b.table_name = 'glossary_comments' AND
-                                               b.new_id = c.id")) {
-            foreach ($records as $record) {
-                //Rebuild wiki links
-                $record->comment = restore_decode_wiki_content($record->comment, $restore);
-                //Convert to Markdown
-                $wtm = new WikiToMarkdown();
-                $record->comment = $wtm->convert($record->comment, $restore->course_id);
-                $record->format = FORMAT_MARKDOWN;
-                $status = update_record('glossary_comments', addslashes_object($record));
-                //Do some output
-                $i++;
-                if (($i+1) % 1 == 0) {
-                    echo ".";
-                    if (($i+1) % 20 == 0) {
-                        echo "<br />";
-                    }
-                    backup_flush(300);
-                }
-            }
-
-        }
-
-        //Convert glossary_entries->definition
-        if ($records = get_records_sql ("SELECT e.id, e.definition, e.format
-                                         FROM {$CFG->prefix}glossary_entries e,
-                                              {$CFG->prefix}glossary g,
-                                              {$CFG->prefix}backup_ids b
-                                         WHERE g.id = e.glossaryid AND
-                                               g.course = $restore->course_id AND
-                                               e.format = ".FORMAT_WIKI. " AND
-                                               b.backup_code = $restore->backup_unique_code AND
-                                               b.table_name = 'glossary_entries' AND
-                                               b.new_id = e.id")) {
-            foreach ($records as $record) {
-                //Rebuild wiki links
-                $record->definition = restore_decode_wiki_content($record->definition, $restore);
-                //Convert to Markdown
-                $wtm = new WikiToMarkdown();
-                $record->definition = $wtm->convert($record->definition, $restore->course_id);
-                $record->format = FORMAT_MARKDOWN;
-                $status = update_record('glossary_entries', addslashes_object($record));
-                //Do some output
-                $i++;
-                if (($i+1) % 1 == 0) {
-                    echo ".";
-                    if (($i+1) % 20 == 0) {
-                        echo "<br />";
-                    }
-                    backup_flush(300);
-                }
-            }
-
-        }
-        
-        return $status;
-    }
-
     //This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
     function glossary_restore_logs($restore,$log) {
-
+                    
         $status = false;
-
+                    
         //Depending of the action, we recode different things
         switch ($log->action) {
         case "add":
@@ -669,7 +595,7 @@
                 //Get the new_id of the glossary_entry (to recode the info and url field)
                 $ent = backup_getid($restore->backup_unique_code,"glossary_entries",$log->info);
                 if ($ent) {
-                    $log->url = "view.php?id=".$log->cmid."&amp;mode=entry&amp;hook=".$ent->new_id;
+                    $log->url = "view.php?id=".$log->cmid."&mode=entry&hook=".$ent->new_id;
                     $log->info = $ent->new_id;
                     $status = true;
                 }
@@ -703,17 +629,6 @@
                 $ent = backup_getid($restore->backup_unique_code,"glossary_entries",$log->info);
                 if ($ent) {
                     $log->url = "showentry.php?id=".$log->cmid."&eid=".$ent->new_id;
-                    $log->info = $ent->new_id;
-                    $status = true;
-                }
-            }
-            break;
-        case "view entry":
-            if ($log->cmid) {
-                //Get the new_id of the glossary_entry (to recode the info and url field)
-                $ent = backup_getid($restore->backup_unique_code,"glossary_entries",$log->info);
-                if ($ent) {
-                    $log->url = "showentry.php?&eid=".$ent->new_id;
                     $log->info = $ent->new_id;
                     $status = true;
                 }
@@ -765,7 +680,7 @@
             }
             break;
         default:
-            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
             break;
         }
 

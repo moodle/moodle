@@ -1,4 +1,4 @@
-<script type="text/javascript">
+<script language="JavaScript">
 <!-- Begin
 <?php 
     foreach ($listmembers as $groupid => $listmember) {
@@ -64,7 +64,7 @@ function groupWindow(selectgroup) {
         if (selectgroup.options[i].selected) {
             num++;
             group = selectgroup.options[i].value;
-            openpopup('/course/group.php?id=<?php echo $courseid ?>&group='+group,'groupinfo'+num,'menubar=0,directory=0,location=0,scrollbars,resizable,width=600,height=480','');
+            openpopup('/course/group.php?id=<?php echo $courseid ?>&group='+group,'groupinfo'+num,'','');
         }
     }
     return false;
@@ -75,18 +75,18 @@ function groupWindow(selectgroup) {
 </script>
 
 
-  <table cellspacing="0" cellpadding="10" align="center" class="generaltable generalbox">
+
+  <table border="0" cellspacing="2" cellpadding="10" align="center" class="generalbox">
     <tr>
-      <th width="33%" align="center" class="header"><?php p($strgroupnonmembers) ?></td>
-      <th width="33%" align="center" class="header"><?php p($strgroups) ?></td>
-      <th width="33%" align="center" class="header"><?php p($strgroupmembersselected) ?></td>
+      <td width="33%" align="center" class="generaltableheader"><?php p($strgroupnonmembers) ?></td>
+      <td width="33%" align="center" class="generaltableheader"><?php p($strgroups) ?></td>
+      <td width="33%" align="center" class="generaltableheader"><?php p($strgroupmembersselected) ?></td>
     </tr>
     <tr align="center" valign="top">
       <td class="generalboxcontent"><p>
         <form name="form1" id="form1" method="post" action="groups.php">
           <input type="hidden" name="id" value="<?php p($course->id) ?>" />
           <input type="hidden" name="groupid" value="<?php p($selectedgroup) ?>" />
-          <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>">
           <select name="nonmembers[]" size="15" multiple="multiple">
             <?php 
                 if (!empty($nonmembers)) {
@@ -113,7 +113,6 @@ function groupWindow(selectgroup) {
       <td class="generalboxcontent"><p>
         <form name="form2" id="form2" method="post" action="groups.php">
           <input type="hidden" name="id" value="<?php p($course->id) ?>" />
-          <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>">
           <select name="groups" size="15" onChange="updateMembers(this)">
             <?php 
                 if (!empty($listgroups)) {
@@ -129,7 +128,7 @@ function groupWindow(selectgroup) {
           </select>
         </p>
         <p>
-          <input type="submit" name="groupsinfo" value="<?php p($strgroupinfoedit) ?>" 
+          <input type="submit" name="groupsinfo" value="<?php p($strgroupinfo) ?>" 
                  onclick="return groupWindow(document.form2.groups);"/>
         </p>
         <p>
@@ -147,7 +146,6 @@ function groupWindow(selectgroup) {
         <form name="form3" id="form3" method="post" action="groups.php">
           <input type="hidden" name="id" value="<?php p($course->id) ?>" />
           <input type="hidden" name="groupid" value="<?php p($selectedgroup) ?>" />
-          <input type="hidden" name="sesskey" value="<?php p($sesskey) ?>">
           <select name="members[]" size="15" multiple="multiple">
             <?php 
                 if (!empty($members)) {

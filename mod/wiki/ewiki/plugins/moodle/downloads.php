@@ -1,6 +1,6 @@
 <?php
     require_once("../../config.php"); 
-    require_once($CFG->libdir.'/filelib.php');
+    require_once("$CFG->dirroot/files/mimetypes.php");
 
 # this is the upload/download plugin, which allows to put arbitrary binary
 # files into the ewiki database using the provided specialized form, or the
@@ -47,52 +47,52 @@ $ewiki_upload_sections = array(
 
 
 #-- text, translations
-$ewiki_t["en"]["UPLOAD0"] = "Use this form to upload an arbitrary binary file into the wiki:<br />";
+$ewiki_t["en"]["UPLOAD0"] = "Use this form to upload an arbitrary binary file into the wiki:<br>";
 $ewiki_t["en"]["UPL_NEWNAM"] = "Save with different filename";
 $ewiki_t["en"]["UPL_INSECT"] = "Upload into section";
 $ewiki_t["en"]["UPL_TOOLARGE"] = "Your upload has been rejected, because that file was too large!";
-$ewiki_t["en"]["UPL_REJSECT"] = 'The given download section "$sect" has been rejected. Please only use the default ones, or tell the WikiAdmin to reenable per-page uploads; else others can\'t find your uploaded files easily.<br /><br />';
-$ewiki_t["en"]["UPL_OK"] = "Your file was uploaded correctly, please see <a href=\"\$script".EWIKI_PAGE_DOWNLOAD."\">".EWIKI_PAGE_DOWNLOAD."</a>.<br /><br />";
-$ewiki_t["en"]["UPL_ERROR"] = "We're sorry, but something went wrong during the file upload.<br /><br />";
-$ewiki_t["en"]["DWNL_SEEUPL"] = 'See also <a href="$script'.EWIKI_PAGE_UPLOAD.'">FileUpload</a>, this page is only about downloading.<br /><br />';
-$ewiki_t["en"]["DWNL_NOFILES"] = "No files uploaded yet.<br />\n";
+$ewiki_t["en"]["UPL_REJSECT"] = 'The given download section "$sect" has been rejected. Please only use the default ones, or tell the WikiAdmin to reenable per-page uploads; else others can\'t find your uploaded files easily.<br><br>';
+$ewiki_t["en"]["UPL_OK"] = "Your file was uploaded correctly, please see <a href=\"\$script".EWIKI_PAGE_DOWNLOAD."\">".EWIKI_PAGE_DOWNLOAD."</a>.<br><br>";
+$ewiki_t["en"]["UPL_ERROR"] = "We're sorry, but something went wrong during the file upload.<br><br>";
+$ewiki_t["en"]["DWNL_SEEUPL"] = 'See also <a href="$script'.EWIKI_PAGE_UPLOAD.'">FileUpload</a>, this page is only about downloading.<br><br>';
+$ewiki_t["en"]["DWNL_NOFILES"] = "No files uploaded yet.<br>\n";
 $ewiki_t["en"]["file"] = "File";
 $ewiki_t["en"]["of"] = "of";
 $ewiki_t["en"]["comment"] = "Comment";
 $ewiki_t["en"]["dwnl_section"] = "download section";
 $ewiki_t["en"]["DWNL_ENTRY_FORMAT"] =
-	'<div class="download"><a href="$url">$icon$title</a><small>$size<br />'.
-        'uploaded on <b>$time</b>, downloaded <tt>$hits</tt> times<br />'.
-        '(<a href="$url">$id</a>)<br />'.
+	'<div class="download"><a href="$url">$icon$title</a><small>$size<br>'.
+        'uploaded on <b>$time</b>, downloaded <tt>$hits</tt> times<br>'.
+        '(<a href="$url">$id</a>)<br>'.
         '$section'.'file is of type <tt>$type</tt>'.
-        '$comment'."</small></div><br />\n";
+        '$comment'."</small></div><br>\n";
 
-$ewiki_t["de"]["UPLOAD0"] = "Mit diesem Formular kannst du beliebige Dateien in das Wiki abspeichern:<br />";
+$ewiki_t["de"]["UPLOAD0"] = "Mit diesem Formular kannst du beliebige Dateien in das Wiki abspeichern:<br>";
 $ewiki_t["de"]["UPL_NEWNAM"] = "Mit unterschiedlichem Dateinamen speichern";
 $ewiki_t["de"]["UPL_INSECT"] = "Hochladen in Bereich:";
 $ewiki_t["de"]["UPL_TOOLARGE"] = "Deine Datei wurde nicht aufgenommen, weil sie zu groß war!";
-$ewiki_t["de"]["UPL_REJSECT"] = 'Der angegebene Download-Bereich "$sect" wird nicht verwendet. Bitte verwende einen von den voreingestellten Bereichen, damit Andere die Datei später auch finden können, oder frag den Administrator das Hochladen für beliebige Seiten zu aktivieren.<br /><br />';
-$ewiki_t["de"]["UPL_OK"] = "Deine Datei wurde korrekt hochgeladen, sehe einfach auf der <a href=\"\$script".EWIKI_PAGE_DOWNLOAD."\">".EWIKI_PAGE_DOWNLOAD."</a> nach.<br /><br />";
-$ewiki_t["de"]["UPL_ERROR"] = "'Tschuldige, aber irgend etwas ist während des Hochladens gründlich schief gelaufen.<br /><br />";
-$ewiki_t["de"]["DWNL_SEEUPL"] = 'Siehe auch <a href="$script'.EWIKI_PAGE_UPLOAD.'">DateiHochladen</a>, auf dieser Seite stehen nur die Downloads.<br /><br />';
-$ewiki_t["de"]["DWNL_NOFILES"] = "Noch keine Dateien hochgeladen.<br />\n";
+$ewiki_t["de"]["UPL_REJSECT"] = 'Der angegebene Download-Bereich "$sect" wird nicht verwendet. Bitte verwende einen von den voreingestellten Bereichen, damit Andere die Datei später auch finden können, oder frag den Administrator das Hochladen für beliebige Seiten zu aktivieren.<br><br>';
+$ewiki_t["de"]["UPL_OK"] = "Deine Datei wurde korrekt hochgeladen, sehe einfach auf der <a href=\"\$script".EWIKI_PAGE_DOWNLOAD."\">".EWIKI_PAGE_DOWNLOAD."</a> nach.<br><br>";
+$ewiki_t["de"]["UPL_ERROR"] = "'Tschuldige, aber irgend etwas ist während des Hochladens gründlich schief gelaufen.<br><br>";
+$ewiki_t["de"]["DWNL_SEEUPL"] = 'Siehe auch <a href="$script'.EWIKI_PAGE_UPLOAD.'">DateiHochladen</a>, auf dieser Seite stehen nur die Downloads.<br><br>';
+$ewiki_t["de"]["DWNL_NOFILES"] = "Noch keine Dateien hochgeladen.<br>\n";
 $ewiki_t["de"]["file"] = "Datei";
 $ewiki_t["de"]["of"] = "von";
 $ewiki_t["de"]["comment"] = "Kommentar";
 $ewiki_t["de"]["dwnl_section"] = "Download Bereich";
 $ewiki_t["de"]["DWNL_ENTRY_FORMAT"] =
-	'<div class="download"><a href="$url">$icon$title</a><small>$size<br />'.
-        'am <b>$time</b> hochgeladen, <tt>$hits</tt> mal abgerufen<br />'.
-        '(<a href="$url">$id</a>)<br />'.
+	'<div class="download"><a href="$url">$icon$title</a><small>$size<br>'.
+        'am <b>$time</b> hochgeladen, <tt>$hits</tt> mal abgerufen<br>'.
+        '(<a href="$url">$id</a>)<br>'.
         '$section'.'Datei ist vom Typ <tt>$type</tt>'.
-        '$comment'."</small></div><br />\n";
+        '$comment'."</small></div><br>\n";
 
 
 
 
 function ewiki_page_fileupload($id, $data, $action, $def_sec="") {
 
-   global $CFG, $ewiki_upload_sections, $ewiki_plugins;
+   global $ewiki_upload_sections, $ewiki_plugins;
 
    $o = ewiki_make_title($id, $id, 2);
 
@@ -104,12 +104,12 @@ function ewiki_page_fileupload($id, $data, $action, $def_sec="") {
       $o .= '<div class="upload">'.
             '<form action="' .
             ewiki_script( ($action!="view" ? $action : ""), $id).
-          '" method="POST" enctype="multipart/form-data">' ;
-      require_once($CFG->dirroot.'/lib/uploadlib.php');
-      $o .= upload_print_form_fragment(1,array(EWIKI_UP_UPLOAD),array(ewiki_t("file")),false,null,0,0,true);
-      $o .= '<input type="submit" value="' . EWIKI_PAGE_UPLOAD . '"><br /><br />'
-          .'<b>' . ewiki_t("comment") . '</b><br /><textarea name="comment" cols="35" rows="3"></textarea><br /><br />';
-      
+            '" method="POST" enctype="multipart/form-data">' .
+            '<b>'.ewiki_t("file").'</b><br><input type="file" name="'.EWIKI_UP_UPLOAD.'"><br><br>' .
+            '<input type="submit" value="' . EWIKI_PAGE_UPLOAD . '"><br><br>';
+
+      $o .= '<b>' . ewiki_t("comment") . '</b><br><textarea name="comment" cols="35" rows="3"></textarea><br><br>';
+
       if (empty($ewiki_upload_sections[$def_sec])) {
          $ewiki_upload_sections[$def_sec] = $def_sec;
       }
@@ -117,14 +117,14 @@ function ewiki_page_fileupload($id, $data, $action, $def_sec="") {
          if (empty($def_sec)) {
             $def_sec = $_REQUEST["section"];
          }
-         $o .= '<b>'.ewiki_t("UPL_INSECT").'</b><br /><select name="section">';
+         $o .= '<b>'.ewiki_t("UPL_INSECT").'</b><br><select name="section">';
          foreach ($ewiki_upload_sections as $id => $title) {
             $o .= '<option value="'.$id.'"' .($id==$def_sec?' selected':''). '>'.$title.'</option>';
          }
-         $o .= '</select><br /><br />';
+         $o .= '</select><br><br>';
       }
 
-      $o .= '<b>'.ewiki_t("UPL_NEWNAM").'</b><br /><input type="text" name="new_filename" size="20" /><br /><br />';
+      $o .= '<b>'.ewiki_t("UPL_NEWNAM").'</b><br><input type="text" name="new_filename" size="20"><br><br>';
 
       $o .= '</form></div>';
 
@@ -215,7 +215,7 @@ function ewiki_page_filedownload($id, $data, $action, $def_sec="") {
                "orderby"=>$orderby, "section" => $sec)) .
                '">' . $title . "</a>";
          }
-         $o .= '<div align="center" class="darker">'.implode(" &middot; ", $oa).'</div><br />';
+         $o .= '<div align="center" class="darker">'.implode(" &middot; ", $oa).'</div><br>';
       }
    }
 
@@ -223,7 +223,7 @@ function ewiki_page_filedownload($id, $data, $action, $def_sec="") {
    #-- collect entries
    $files = array();
    $sorted = array();
-   $result = ewiki_database("GETALL", array("flags", "meta", "created", "hits", "userid"));
+   $result = ewiki_database("GETALL", array("flags", "meta", "created", "hits"));
 
    while ($row = $result->get()) {
       if (($row["flags"] & EWIKI_DB_F_TYPE) == EWIKI_DB_F_BINARY) {
@@ -263,7 +263,7 @@ function ewiki_page_filedownload($id, $data, $action, $def_sec="") {
            "orderby"=>$orderby, "section"=>$section, EWIKI_UP_PAGENUM=>$n)) .
             '">[' . $n . "]</a>  ";
       }
-      $o_nl .= '</div><br />';
+      $o_nl .= '</div><br>';
       $o .= $o_nl;
    }
    $sorted = array_slice($sorted, $pnum * EWIKI_LIST_LIMIT, EWIKI_LIST_LIMIT);
@@ -278,7 +278,7 @@ function ewiki_page_filedownload($id, $data, $action, $def_sec="") {
 
       foreach ($sorted as $id=>$uu) {
          $row = $files[$id];
-         $o .= ewiki_entry_downloads($row, $section[0]=="*", true);
+         $o .= ewiki_entry_downloads($row, $section[0]=="*");
       }
    }
 
@@ -291,7 +291,7 @@ function ewiki_page_filedownload($id, $data, $action, $def_sec="") {
 
 
 
-function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
+function ewiki_entry_downloads($row, $show_section=0) {
 
    global $ewiki_binary_icons, $ewiki_upload_sections;
 
@@ -299,7 +299,7 @@ function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
 
    $id = $row["id"];
    $p_title = basename($meta["Content-Location"]);
-   $p_time = userdate($row["created"]);
+   $p_time = strftime("%c", $row["created"]);
    
    
    $p_hits = ($row["hits"] ? $row["hits"] : "0");
@@ -316,7 +316,7 @@ function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
    $p_section = $p_section ? $p_section : $meta["section"];
    $p_comment = strlen($meta["comment"]) ? '<table border="1" cellpadding="2" cellspacing="0"><tr><td class="lighter">'.
                 str_replace('</p>', '', str_replace('<p>', '',
-                ewiki_format($meta["comment"]))) . '</td></tr></table>' : "<br />";
+                ewiki_format($meta["comment"]))) . '</td></tr></table>' : "<br>";
 
    $p_icon = "";
    /*foreach ($ewiki_binary_icons as $str => $i) {
@@ -334,40 +334,21 @@ function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
 
    $info->id = $id;
    $info->size = $p_size;
-   $info->icon = ($p_icon ? '<img src="'.$p_icon.'" alt="['.$p_icon_t.']" align="left" width="14" height="14" border="0" /> ' : '');
+   $info->icon = ($p_icon ? '<img src="'.$p_icon.'" alt="['.$p_icon_t.']" align="left" width="14" height="14" border="0"> ' : '');
    $info->time = $p_time;
    $info->hits = $p_hits;
-   $info->section = ($show_section ? ewiki_t('dwnl_section') . ": $p_section<br />" : '');
+   $info->section = ($show_section ? ewiki_t('dwnl_section') . ": $p_section<br>" : '');
    $info->type = $p_ct;
    $info->url =  ewiki_script_binary("", $row["id"]);
    $info->title = $p_title;
    $info->comment = $p_comment;
 
-   if ($fullinfo) {
-        if ($user = get_record('user', 'id', $row['userid'])) {
-            if (!isset($course->id)) {
-                $course->id = 1;
-            }
-            $picture = print_user_picture($user->id, $course->id, $user->picture, false, true, true);
-            $value = $picture." <a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">".
-                     fullname($user)."</a>";
-        }
-
-        $o .= '<a href="'.$info->url.'">'.$info->icon.$info->title.'</a>'.$info->size.'<br />'.
-            $info->comment.
-            $info->section." ".get_string("fileisoftype","wiki").": ".$info->type.'<br />'.
-            get_string("uploadedon","wiki").": ".$info->time.", ".
-            ' by '.$value.'<br />'.
-            get_string("downloadtimes","wiki",$info->hits)."<br />".
-//            '(<a href="'.$info->url.'">'.$info->id."</a>)<br />".
-            '<br /><br />';
-   }
-   else {
-//       global $moodle_format;   // from wiki/view.php
-        $o .= '<a href="'.$info->url.'">'.$info->icon.$info->title.'</a>'.$info->size.'<br />'.
-              $info->comment.'<br /><br />';
-//        $o = format_text($o, $moodle_format);
-   }
+   
+   $o .= '<a href="'.$info->url.'">'.$info->icon.$info->title.'</a>'.$info->size.'<br>'.
+        get_string("uploadedon","wiki").": ".$info->time.", ".get_string("downloadtimes","wiki",$info->hits)."<br>".
+        '(<a href="'.$info->url.'">'.$info->id."</a>)<br>".
+        $info->section." ".get_string("fileisoftype","wiki").": ".$info->type.
+        "$info->comment<br><br>";
 
    
    

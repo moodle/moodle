@@ -1,13 +1,9 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 (2004083100)
+      // wiki.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['action'] = '--Dzia³anie--';
 $string['administration'] = 'Administracja';
-$string['allowremovepages'] = 'Zezwól na \'usuñ stronê\'';
-$string['allowrevertchanges'] = 'Zezwól na \'cofnij zmiany\'';
-$string['allowsetpage'] = 'Zezwól na \'ustaw flagi\'';
-$string['allowstrippages'] = 'Zezwól na \'obetnij strony\'';
 $string['attachments'] = 'Za³±czniki strony';
 $string['author'] = 'Autor';
 $string['authorfieldpattern'] = 'Wzór pola autora';
@@ -17,7 +13,6 @@ $string['binimgtoolarge'] = 'Zbyt du¿a wielko¶æ zdjêcia!';
 $string['binnoimg'] = 'Nieznany typ pliku!';
 $string['browse'] = 'Przeszukaj';
 $string['canceledit'] = 'Anuluj';
-$string['cannotchangepage'] = 'Ta strona nie mo¿e byæ zmieniona';
 $string['changes'] = '$a zmian';
 $string['changesfield'] = 'W ci±gu ilu godzin od ostatniej zmiany';
 $string['changesfielderror'] = 'Wprowad¼ poprawn± ilo¶æ godzin';
@@ -37,7 +32,6 @@ $string['deleteversions'] = 'Ile usun±æ ostatnich wersji?';
 $string['deleteversionserror'] = 'Wprowad¼ poprawny liczbê wersji';
 $string['diff'] = 'Ró¿nice';
 $string['differences'] = 'Ró¿nice pomiêdzy wersj± $a->new_ver i $a->old_ver strony $a->pagename.';
-$string['disablecamel'] = 'Wy³±cz linkowanie CamelCase';
 $string['disabledpage'] = 'Ta strona nie jest aktualnie dostêpna';
 $string['doesnotexist'] = 'Ta strona jeszcze nie istnieje. Kliknij na przycisk edytuj je¶li chcesz j± stworzyæ.';
 $string['downloadaszip'] = 'Plik zip';
@@ -112,7 +106,6 @@ $string['nothingtostrip'] = 'Nie ma stron z wiêcej ni¿ jedn± wersj±';
 $string['nowikicreated'] = 'Brak wpisów dla tego wiki';
 $string['of'] = 'z';
 $string['offline'] = 'OFFLINE';
-$string['optional'] = 'Opcjonalny';
 $string['orphanedpage'] = 'Osamotniona strona';
 $string['orphanedpages'] = 'Osamotnione strony';
 $string['otherwikis'] = 'Inne wiki';
@@ -130,7 +123,7 @@ $string['plaintext'] = 'Tekst';
 $string['preview'] = 'Podgl±d';
 $string['readonly'] = 'Strony tylko do odczytu';
 $string['refs'] = 'Odwo³ania';
-$string['removenotice'] = 'Zauwa¿, ¿e tylko strony do których nie odwo³uj± siê ¿adne inne bêd± tutaj wy¶wietlone. Poniewa¿ silnik wiki dokonuje tylko ograniczonego testowania czy do strony s± jakie¶ odwo³ania, mo¿e wiêc nie wy¶wietliæ wszystkich stron.<br />
+$string['removenotice'] = 'Zauwa¿, ¿e tylko strony do których nie odwo³uj± siê ¿adne inne bêd± tutaj wy¶wietlone. Poniewa¿ silnik wiki dokonuje tylko ograniczonego testowania czy do strony s± jakie¶ odwo³ania, mo¿e wiêc nie wy¶wietliæ wszystkich stron.<br>
 Je¶li jednak wpierw opró¿nisz stronê, zostanie ona tutaj wy¶wietlona. Inne testy bazy danych s± równie¿ przedstawione. ';
 $string['removepagecheck'] = 'Czy na pewno usun±æ te strony?';
 $string['removepages'] = 'Usuñ strony';
@@ -150,13 +143,7 @@ $string['smfor'] = 'Mapa serwisu dla';
 $string['status'] = 'Status';
 $string['strippagecheck'] = 'Czy chcesz usun±æ wcze¶niejsze wersje z tych stron:';
 $string['strippages'] = 'Usuñ';
-$string['studentadminoptions'] = 'Opcje administracyjne studenta';
 $string['submit'] = 'Prze¶lij';
-$string['tabattachments'] = 'Za³±czniki';
-$string['tabedit'] = 'Edytuj';
-$string['tabinfo'] = 'Historia';
-$string['tablinks'] = 'Linki';
-$string['tabview'] = 'Podgl±d';
 $string['thanksforcontribution'] = 'Dziêkujê za Twój wk³ad';
 $string['thispageisntlinkedfromanywhereelse'] = 'Do tej strony nie odwo³uje siê ¿adna inna';
 $string['updatedpages'] = 'Uaktualnione strony';
@@ -177,7 +164,6 @@ $string['wantedpages'] = 'Poszukiwane strony';
 $string['wikidefaultpagename'] = 'Indeks wiki';
 $string['wikiexport'] = 'Eksportuj strony';
 $string['wikiexportcomment'] = 'Konfiguracja opcji eksportu';
-$string['wikilinkoptions'] = 'Opcje autolinkowania Wiki';
 $string['wikilinks'] = 'Linki wiki';
 $string['wikiname'] = 'Nazwa strony';
 $string['wikistartederror'] = 'Wiki posiada ju¿ wpisy - nie mo¿na wprowadziæ zmian';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // glossary.php - created with Moodle 1.3 (2004052500)
 
 
 $string['addcomment'] = 'Pøidat komentáø';
@@ -61,17 +61,16 @@ $string['deletingnoneemptycategory'] = 'Odstranìním této kategorie neodstraníte 
 $string['descending'] = '(sestupnì)';
 $string['destination'] = 'Cíl';
 $string['displayformat'] = 'Zpùsob zobrazení';
+$string['displayformat2'] = 'Úplný vèetnì autora';
+$string['displayformat3'] = 'Encyclopedie';
+$string['displayformat4'] = 'FAQ (ÈKD:-)';
+$string['displayformat5'] = 'Úplný bez autora';
+$string['displayformat6'] = 'Seznam polo¾ek';
 $string['displayformatcontinuous'] = 'Souvislý bez autora';
-$string['displayformatdictionary'] = 'Prostý slovníkový styl';
-$string['displayformatencyclopedia'] = 'Encyklopedie';
-$string['displayformatentrylist'] = 'Seznam polo¾ek';
-$string['displayformatfaq'] = 'ÈKD';
-$string['displayformatfullwithauthor'] = 'Úplný vèetnì autora';
-$string['displayformatfullwithoutauthor'] = 'Úplný bez autora';
+$string['displayformatdefault'] = 'Prostý slovníkový styl';
 $string['displayformats'] = 'Zpùsoby zobrazení';
 $string['displayformatssetup'] = 'Nastavení zpùsobù zobrazení';
 $string['duplicateentry'] = 'Duplicitní polo¾ka';
-$string['editalways'] = 'Upravit v¾dy';
 $string['editcategories'] = 'Upravit kategorie';
 $string['editentry'] = 'Upravit polo¾ku';
 $string['editingcomment'] = 'Úprava komentáøe';
@@ -85,13 +84,11 @@ $string['entrydeleted'] = 'Polo¾ka odstranìna';
 $string['entryexported'] = 'Polo¾ka úspì¹nì exportována';
 $string['entryishidden'] = '(tato polo¾ka je momentálnì skrytá)';
 $string['entryleveldefaultsettings'] = 'Výchozí nastavení pro polo¾ky';
-$string['entrysaved'] = 'Polo¾ka byla ulo¾ena';
-$string['entryupdated'] = 'Polo¾ka byla aktualizována';
 $string['entryusedynalink'] = 'Tato polo¾ka by mìla být automaticky propojována';
-$string['explainaddentry'] = 'Pøidat novou polo¾ku do stávajícího slovníku.<br />Pojem a jeho definice jsou povinná pole.';
+$string['explainaddentry'] = 'Pøidat novou polo¾ku do stávajícího slovníku.<br>Pojem a jeho definice jsou povinná pole.';
 $string['explainall'] = 'Zobrazit V©ECHNY polo¾ky na jedné stránce';
 $string['explainalphabet'] = 'Procházet slovníkem pomocí tohoto rejstøíku';
-$string['explainexport'] = 'Soubor vytvoøen.<br />Stáhnìte si jej a uchovejte v bezpeèí. Pozdìji jej kdykoliv mù¾ete importovat do tohoto nebo jiného kurzu.';
+$string['explainexport'] = 'Soubor vytvoøen.<br>Stáhnìte si jej a uchovejte v bezpeèí. Pozdìji jej kdykoliv mù¾ete importovat do tohoto nebo jiného kurzu.';
 $string['explainimport'] = 'Musíte urèit importovaný soubor a kritéria importu.<p>Ode¹lete vá¹ po¾adavek a zkontrolujte si výsledky importu.';
 $string['explainspecial'] = 'Ukazuje polo¾ky, které nezaèínají písmenem';
 $string['exportedentry'] = 'Exportované polo¾ky';
@@ -102,8 +99,7 @@ $string['exporttomainglossary'] = 'Exportovat do hlavního slovníku';
 $string['filetoimport'] = 'Importovat ze souboru';
 $string['fillfields'] = 'Pojem a definice jsou povinná pole.';
 $string['filtername'] = 'Automatické propojování slovníku';
-$string['fullmatch'] = 'Srovnávat pouze celá slova<br /><small>(pøi automatickém propojování)</small>';
-$string['globalglossary'] = 'Globální slovník';
+$string['fullmatch'] = 'Srovnávat pouze celá slova<br><small>(pøi automatickém propojování)</small>';
 $string['glossaryleveldefaultsettings'] = 'Výchozí nastavení pro slovník';
 $string['glossarytype'] = 'Typ slovníku';
 $string['glosssaryexported'] = 'Slovník exportován.';

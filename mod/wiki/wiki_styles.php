@@ -27,7 +27,7 @@
 
 <!-- Defines the <div> tag surrounding the backlinks feature. -->
 .wiki_backlinks {
-    border-top: 2px #EEEEEE solid;
+    border-top: 2px <?php echo $THEME->borders?> solid;
 }
 
 .indent {
@@ -35,7 +35,7 @@
 
 <!-- defines the h2 class for the title -->
 h2.page.title {
-    border-bottom: 2px #EEEEEE solid;
+    border-bottom: 2px <?php echo $THEME->borders?> solid;
 }
 
 <!-- Defines the table used for the version information -->

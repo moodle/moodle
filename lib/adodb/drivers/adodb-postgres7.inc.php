@@ -1,6 +1,6 @@
 <?php
 /*
- V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim#natsoft.com.my). All rights reserved.
+ V4.51 29 July 2004  (c) 2000-2004 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -25,9 +25,6 @@ class ADODB_postgres7 extends ADODB_postgres64 {
 	function ADODB_postgres7() 
 	{
 		$this->ADODB_postgres64();
-		if (ADODB_ASSOC_CASE !== 2) {
-			$this->rsPrefix .= 'assoc_';
-		}
 	}
 
 	
@@ -90,6 +87,41 @@ function MetaForeignKeys($table, $owner=false, $upper=false)
 }
 
 
+
+    function xMetaForeignKeys($table, $owner=false, $upper=false)
+	{
+
+        $sql = '
+SELECT t.tgargs as args
+   FROM pg_trigger t,
+        pg_class c,
+        pg_class c2,
+        pg_proc f
+   WHERE t.tgenabled
+   AND t.tgrelid=c.oid
+   AND t.tgconstrrelid=c2.oid
+   AND t.tgfoid=f.oid
+   AND f.proname ~ \'^RI_FKey_check_ins\'
+   AND t.tgargs like \'$1\\\000'.strtolower($table).'%\'
+   ORDER BY t.tgrelid';
+
+        $rs = $this->Execute($sql);
+		if ($rs && !$rs->EOF) {
+			$arr =& $rs->GetArray();
+			$a = array();
+			foreach($arr as $v) {
+                $data = explode(chr(0), $v['args']);
+                if ($upper) {
+                    $a[] = array(strtoupper($data[2]) => strtoupper($data[4].'='.$data[5]));
+                } else {
+                    $a[] = array($data[2] => $data[4].'='.$data[5]);
+                }
+                
+			}
+			return $a;
+		}
+		else return false;
+    }
 	
  	 // this is a set of functions for managing client encoding - very important if the encodings
 	// of your database and your output target (i.e. HTML) don't match
@@ -156,75 +188,5 @@ class ADORecordSet_postgres7 extends ADORecordSet_postgres64{
 		return false;
 	}		
 
-}
-
-class ADORecordSet_assoc_postgres7 extends ADORecordSet_postgres64{
-
-	var $databaseType = "postgres7";
-	
-	
-	function ADORecordSet_assoc_postgres7($queryID,$mode=false) 
-	{
-		$this->ADORecordSet_postgres64($queryID,$mode);
-	}
-	
-	function _fetch()
-	{
-		if ($this->_currentRow >= $this->_numOfRows && $this->_numOfRows >= 0)
-        	return false;
-
-		$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
-		
-		if ($this->fields) {
-			if (isset($this->_blobArr)) $this->_fixblobs();
-			$this->_updatefields();
-		}
-			
-		return (is_array($this->fields));
-	}
-	
-		// Create associative array
-	function _updatefields()
-	{
-		if (ADODB_ASSOC_CASE == 2) return; // native
-	
-		$arr = array();
-		$lowercase = (ADODB_ASSOC_CASE == 0);
-		
-		foreach($this->fields as $k => $v) {
-			if (is_integer($k)) $arr[$k] = $v;
-			else {
-				if ($lowercase)
-					$arr[strtolower($k)] = $v;
-				else
-					$arr[strtoupper($k)] = $v;
-			}
-		}
-		$this->fields = $arr;
-	}
-	
-	function MoveNext() 
-	{
-		if (!$this->EOF) {
-			$this->_currentRow++;
-			if ($this->_numOfRows < 0 || $this->_numOfRows > $this->_currentRow) {
-				$this->fields = @pg_fetch_array($this->_queryID,$this->_currentRow,$this->fetchMode);
-			
-				if (is_array($this->fields)) {
-					if ($this->fields) {
-						if (isset($this->_blobArr)) $this->_fixblobs();
-					
-						$this->_updatefields();
-					}
-					return true;
-				}
-			}
-			
-			
-			$this->fields = false;
-			$this->EOF = true;
-		}
-		return false;
-	}
 }
 ?>

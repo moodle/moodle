@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.4 (2004083100)
+      // chat.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['beep'] = 'prozvonit';
@@ -7,14 +7,9 @@ $string['chatintro'] = 'Úvodní text';
 $string['chatname'] = 'Název této místnosti';
 $string['chatreport'] = 'Chatování';
 $string['chattime'] = 'Pøí¹tí chat';
-$string['configmethod'] = 'Pøi normálním chatu se aktualizují klienti pøi spojení se serverem. Tato metoda nikde nevy¾aduje ¾ádnou dal¹í konfiguraci, ale mù¾e vést k velkému zatí¾ení serveru pøi vìt¹ím mno¾ství chataøù. Pou¾ití démona na serveru vy¾aduje pøístup k Unix shellu, ale umo¾òuje vytvoøit rychlé a ¹kálovatelné chatovací prostøedí.';
 $string['configoldping'] = 'Po jak dlouhém mlèení se má pøedpokládat, ¾e u¾ivatel ji¾ ode¹el?';
 $string['configrefreshroom'] = 'Po kolika vteøinách se má místnost sama aktualizovat (obnovovat - refresh). Nastavením malé hodnoty se sice chatování mù¾e zrychlit, ov¹em na úkor zvý¹ené zátì¾e va¹eho webového serveru, obzvlá¹tì pøi velkém poètu chataøù.';
 $string['configrefreshuserlist'] = 'Po kolika vteøinách se má aktualizovat seznam u¾ivatelù?';
-$string['configserverhost'] = 'Název poèítaèe (hostname), na kterém je umístìn démon';
-$string['configserverip'] = 'Èíselná IP adresa odpovídající vý¹e uvedenému názvu poèítaèe';
-$string['configservermax'] = 'Nejvìt¹í mo¾ný poèet povolených klientù';
-$string['configserverport'] = 'Port pou¾itý démonem na serveru';
 $string['currentchats'] = 'Probíhající chatování';
 $string['currentusers'] = 'Stávající u¾ivatelé';
 $string['deletesession'] = 'Odstranit toto chatování';
@@ -22,10 +17,6 @@ $string['deletesessionsure'] = 'Jste si jisti, ¾e chcete odstranit toto chatován
 $string['donotusechattime'] = 'Nezveøejòovat èas chatování';
 $string['enterchat'] = 'Kliknìte zde pro vstup do chatu';
 $string['errornousers'] = 'Nemohu najít ¾ádné u¾ivatele!';
-$string['explaingeneralconfig'] = 'Tato nastavení pùsobí <strong>v¾dy</strong>';
-$string['explainmethoddaemon'] = 'Tato nastavení pùsobí <strong>pouze</strong> pokud máte vybránu chat_method \"Chat démon na serveru\"';
-$string['explainmethodnormal'] = 'Tato nastavení pùsobí <strong>pouze</strong> pokud máte vybránu chat_method \"Normální metoda\"';
-$string['generalconfig'] = 'Obecná konfigurace';
 $string['helpchatting'] = 'Nápovìda k chatování';
 $string['idle'] = 'Neèinný';
 $string['messagebeepseveryone'] = '$a nìkoho prozvání!';
@@ -33,13 +24,10 @@ $string['messagebeepsyou'] = '$a vás prozvání!';
 $string['messageenter'] = '$a právì vstoupil do tohoto chatu';
 $string['messageexit'] = '$a opustil tento chat';
 $string['messages'] = 'Zprávy';
-$string['methoddaemon'] = 'Chat démon na serveru';
-$string['methodnormal'] = 'Normální metoda';
 $string['modulename'] = 'Chat';
 $string['modulenameplural'] = 'Chatování';
 $string['neverdeletemessages'] = 'Nikdy neodstraòovat zprávy';
 $string['nextsession'] = 'Pøí¹tí naplánované chatování';
-$string['noguests'] = 'Tento chat není otevøen pro hosty';
 $string['nomessages'] = 'Zatím ¾ádné zprávy';
 $string['repeatdaily'] = 'Ve stejný èas ka¾dý den';
 $string['repeatnone'] = 'Bez opakování - zveøejnit pouze urèený èas';

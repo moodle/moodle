@@ -1,139 +1,70 @@
 
-
 <p align="center"><b>Respostes incrustades (format Cloze)</b></p>
 
-
-
 <p>Aquest tipus de pregunta tan flexible &eacute;s semblant al conegut format 
-
-  Cloze.</p>
-
+  Cloze.
 <p>Les preguntes consisteixen en un passatge d'un text, en format de Moodle, que 
-
   t&eacute; diferents respostes incrustades, incloent-ne dels tipus elecci&oacute; 
-
-  m&uacute;ltiple, resposta curta o resposta num&egrave;rica.</p>
-
+  m&uacute;ltiple, resposta curta o resposta num&egrave;rica.
 <p>De moment no hi ha una interf&iacute;cie gr&agrave;fica per crear aquestes 
-
   preguntes de forma que haureu d'especificar el format de pregunta usant un quadre 
-
-  de text o important-lo d'un fitxer extern.</p>
-
+  de text o important-lo d'un fitxer extern.
 <p>Aquest &eacute;s un exemple de text d'entrada que especifica una pregunta d'aquest 
-
-  tipus: </p>
-
-<form action="">
-
+  tipus: 
+<form>
 <center>
-
-    <textarea rows="15" cols="60" wrap="virtual">Aquesta pregunta consisteix en un text amb una resposta incrustada just aquí {1:MULTICHOICE:Resposta incorrecta#Retroalimentació per resposta incorrecta~Una altra resposta incorrecta#Retroalimentació per una altra resposta incorrecta~=Resposta correcta#Retroalimentació per resposta correcta~%50% de la resposta que dona la meitat de punts#Retroalimentació per resposta meitat de punts} i ara haureu d'enfrontar-vos a aquesta resposta curta {1:SHORTANSWER:Resposta incorrecta#Retroalimentació per resposta incorrecta~=Resposta correcta#Retroalimentació per resposta correcta~%50%de la resposta que dona la meitat de punts#Retroalimentació per resposta meitat de punts} i per acabar un número decimal {2:NUMERICAL:=23.8:0.1#Retroalimentació per resposta correcta 23.8~%50%N/A#Retroalimentació per la meitat de la resposta en la regió propera a la resposta correcta}.
-
-
+    <textarea rows=15 cols=60 wrap=virtual>Aquesta pregunta consisteix en un text amb una resposta incrustada just aquí {1:MULTICHOICE:Resposta incorrecta#Retroalimentació per resposta incorrecta~Una altra resposta incorrecta#Retroalimentació per una altra resposta incorrecta~=Resposta correcta#Retroalimentació per resposta correcta~%50% de la resposta que dona la meitat de punts#Retroalimentació per resposta meitat de punts} i ara haureu d'enfrontar-vos a aquesta resposta curta {1:SHORTANSWER:Resposta incorrecta#Retroalimentació per resposta incorrecta~=Resposta correcta#Retroalimentació per resposta correcta~%50%de la resposta que dona la meitat de punts#Retroalimentació per resposta meitat de punts} i per acabar un número decimal {2:NUMERICAL:=23.8:0.1#Retroalimentació per resposta correcta 23.8~%50%N/A#Retroalimentació per la meitat de la resposta en la regió propera a la resposta correcta}.
 
 Fixeu-vos que les adreces com ara www.moodle.org i les emoticones :-) funcionen com de costum:
-
  a) T'agrada? {:MULTICHOICE:=Sí#Correcte~No#Em sembla que pensem diferent}
-
  b) Quina nota li posaries? {3:NUMERICAL:=3:2}
 
-
-
 Bona sort!
-
 </textarea>
-
 </center>
-
 </form>
-
-
 
 <p>Aquest exemple apareixeria als estudiants d'aquesta manera:</p>
 
 
-
-
-
-<form action="">
-
-<table align="center" width="90%" class="generalbox" border="0" cellpadding="5" cellspacing="0"><tr><td bgcolor="#FFFFFF" class="generalboxcontent"><table width="100%" cellspacing="10"><tr><td nowrap="nowrap" width="100" valign="top"><p align="center"><b>3</b></p>
-
-              <p align="center"><font size="1">8 punts</font></p>
-
-              <img height="1" width="100" src="pix/spacer.gif" alt="" /><br />
-
+<form>
+<table align="CENTER" width="90%" class="generalbox" border="0" cellpadding="5" cellspacing="0"><tr><td bgcolor="#FFFFFF" class="generalboxcontent"><table width=100% cellspacing=10><tr><td nowrap width=100 valign=top><p align=center><b>3</b></p>
+              <p align=center><font size=1>8 punts</font></p>
+              <img height="1" width="100" src="pix/spacer.gif" alt=""><br />
 </td>
-
-            <td valign="top"> 
-
+            <td valign=top> 
               <p>Aquesta pregunta consisteix en un text amb una resposta incrustada 
-
                 just aqu&iacute; 
-
                 <select   name="q4ma1" >
-		  <option>&nbsp;</option>
-
+                  <option></option>
                   <option value="4" >Resposta incorrecta</option>
-
                   <option value="5" >Una altra resposta incorrecta</option>
-
                   <option value="6" >Resposta correcta</option>
-
                   <option value="7" >Resposta que dona la meitat de punts</option>
-
                 </select>
-
                 i ara haureu d'enfrontar-vos a aquesta resposta curta 
-
                 <input   name="q4ma2"  value="" type="TEXT" size="8"/>
-
                 i per acabar un n&uacute;mero decimal 
-
                 <input   name="q4ma3"  value="" type="TEXT" size="8"/>
-
                 .<br />
-
                 <br />
-
                 Fixeu-vos que les adreces com ara www.moodle.org i les emoticones 
-
-                <img alt="" border="0" src="pix/s/smiley.gif" width="15" height="15">
-
+                <img border="0" src="pix/s/smiley.gif" width="15" height="15">
                 funcionen com de costum:<br />
-
                 a) T'agrada? 
-
                 <select   name="q4ma4" >
-
-                  <option>&nbsp;</option>
-
+                  <option></option>
                   <option value="13" >Sí</option>
-
                   <option value="14" >No</option>
-
                 </select>
-
                 <br />
-
                 b) Quina nota li posaries?
-
-                <input   name="q4ma5"  value="" type="tekst" size="8"/>
-
+                <input   name="q4ma5"  value="" type="TEXT" size="8"/>
                 <br />
-
                 <br />
-
                 Bona sort!</p>
-
-            </td></tr></table></td></tr></table>
-
+            </TD></TR></TABLE></td></tr></table>
 </form>
 
-
-
 <br />
-
-
 

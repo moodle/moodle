@@ -1,15 +1,15 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.4 development (2004080300)
+      // exercise.php - created with Moodle 1.3.1 + (2004052501)
 
 
 $string['absent'] = 'Отсутствующий';
 $string['accumulative'] = 'Суммарный';
 $string['action'] = 'Действие';
 $string['ago'] = '$a ранее';
+$string['allgradeshaveamaximumof'] = 'Все оценки имеют максимум: $a';
 $string['amend'] = 'Улучшить';
 $string['amendassessmentelements'] = 'Улучшить Элементы Оценивания';
 $string['amendtitle'] = 'Заголовок улучшения';
-$string['analysis'] = 'Анализ';
 $string['assess'] = 'Оценить';
 $string['assessed'] = 'Оценено ';
 $string['assessment'] = 'Оценка';
@@ -20,11 +20,11 @@ $string['assessmentofthissubmission'] = 'Оценка этого послания';
 $string['assessments'] = 'Оценки';
 $string['atthisstageyou'] = 'На этой стадии Вы уже имеете итоговую оценку своей работы. <br /> Вы можете изменить свою работу с учетом полученной оценки. При этом, Вы не должны забывать что необходимо заново оценить переделанную работу. <br />Если Вы хотите сделать это то нажмите на ссылку приведенную ниже для получения нового доступа.  ';
 $string['awaitingassessmentbythe'] = 'Ожидание оценки для $a';
+$string['awaitingfeedbackfromthe'] = 'Ожидание отзыва от $a';
 $string['clearlateflag'] = 'Очистка флага ожидания';
 $string['comment'] = 'Комментарий';
 $string['confirmdeletionofthisitem'] = 'Подтвердите удаление этого $a';
 $string['correct'] = 'Правильно';
-$string['count'] = 'Считать';
 $string['criterion'] = 'Критерий';
 $string['deadline'] = 'Крайний срок';
 $string['deadlineis'] = 'Крайний срок - $a';
@@ -64,9 +64,7 @@ $string['mail3'] = 'Вы можете посмотреть это при Вашем оценивании Упражнения';
 $string['mail6'] = 'Ваша оценка по заданию  \'$a\'была рассмотрена';
 $string['mail7'] = 'Комментарии, полученные от $a можно увидеть при оценивании Упражнения';
 $string['managingassignment'] = 'Управление Упражнением';
-$string['maximum'] = 'Максимум';
 $string['maximumsize'] = 'Максимальный размер';
-$string['minimum'] = 'Минимум';
 $string['modulename'] = 'Упражнение ';
 $string['modulenameplural'] = 'Упражнения';
 $string['movingtophase'] = 'Переместить в фазу $a';
@@ -79,6 +77,7 @@ $string['noteonassessmentelements'] = 'Обратите внимание, что оценивание может б
 $string['noteonstudentassessments'] = '{Оценка от студента/Окончательная оценка от преподавателя}';
 $string['notgraded'] = 'Не оцениваемая';
 $string['notitlegiven'] = 'Не дано никакого названия';
+$string['nowpleasemakeyourownassessment'] = 'Сейчас, пожалуйста сделайте свою собственную оценку части работы от $a. <br /> Следует обратить внимание что в формке оценивания первоначально выставлются те же оценки, что и в студенческой форме.<br /> Вы можете делать любые поправки, которые считаете необходимыми, нажимая на одну из кнопок в конце страницы.';
 $string['numberofassessmentelements'] = 'Количество комментариев, Элементов оценивания,погрешностей оценивания, критериев оценивания или категорий в рубриках ';
 $string['numberofentries'] = 'Количество входов';
 $string['numberofnegativeresponses'] = 'Количество отрицательных отзывов';
@@ -119,7 +118,6 @@ $string['scalegood3'] = '3 балла Хорошо/Плохо шкалы';
 $string['scalepresent'] = '2 балла Присутствие/Отсутствие шкалы';
 $string['scaleyes'] = '2 балла Да/Нет шкалы';
 $string['specimenassessmentform'] = 'Экземпляр формы оценки';
-$string['strict'] = 'Строго';
 $string['studentallowedtoresubmit'] = '$a  разрешено послать сообщение заново';
 $string['studentassessments'] = '$a Оценки';
 $string['studentnotallowed'] = '$a  не разрешено посылать сообщения заново ';
@@ -147,6 +145,7 @@ $string['usemaximum'] = 'Использовать максимум';
 $string['usemean'] = 'ипсользовать среднее ';
 $string['verypoor'] = 'Очень плохо';
 $string['view'] = 'Просмотр';
+$string['viewassessment'] = 'Просмотр Оценки';
 $string['warningonamendingelements'] = 'ПРЕДУПРЕЖДЕНИЕ: имеются представленные оценки. <br />
 Не изменяйте количество элементов, типы шкалирования или веса элементов.';
 $string['weightederrorcount'] = 'Весовой индекс ошибки: $a';

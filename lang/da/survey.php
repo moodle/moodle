@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // survey.php - created with Moodle 1.3.3 (2004052503)
 
 
 $string['actual'] = 'Aktuel';
@@ -132,7 +132,7 @@ På forhånd tak.';
 $string['collesaname'] = 'COLLES (Aktuelle)';
 $string['collesapintro'] = 'Formålet med disse spørgsmål er, at vi gerne vil undersøge, hvor meget du har lært ved at følge dette online modul. 
 
-Hver af de 24 udsagn nedenfor vil få dig til at sammneligne <b>foretrukne</b> (ideelle) og <b>aktuelle</b> oplevelse i dette modul.
+Hver af de 24 udsagn nedenfor vil få dig til at sammneligne <B>foretrukne</B> (ideelle) og <B>aktuelle</B> oplevelse i dette modul.
 
 Der er ingen \'rigtige\' eller \'forkerte\' svar; vi er interesserede i din mening. Dine svar vil blive behandlet fortroligt og , vil ikke have indflydelse på bedømmelsen af dig.
 
@@ -155,7 +155,7 @@ $string['collesm6short'] = 'Fortolkning';
 $string['collesmintro'] = 'I dette online modul...';
 $string['collespintro'] = 'Formålet med denne undersøgelse er at finde ud af, hvad du mener om denne online læringsoplevelse.
 
-Hver af de 24 sætninger nedenunder kan bruges til at angive din <b>foretrukne</b> (ideelle) oplevelse med dette modul.
+Hver af de 24 sætninger nedenunder kan bruges til at angive din <B>foretrukne</B> (ideelle) oplevelse med dette modul.
 
 Der er ingen \'rigtige\' eller \'forkerte\' svar; vi er interesserede i din mening. Dine svar vil blive behandlet fortroligt og , vil ikke have indflydelse på bedømmelsen af dig.
 

@@ -1,7 +1,6 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
-
+      // chat.php - created with Moodle 1.3 (2004052500)
 $string['beep'] = 'сигнал';
 $string['chatintro'] = 'Уводни текст';
 $string['chatname'] = 'Име ове причаонице';

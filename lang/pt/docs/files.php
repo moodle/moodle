@@ -4,13 +4,13 @@
 
 $string['-about'] = "Sobre o Moodle";
 $string['intro.html'] = "Introdução";
-$string['background.html'] = "Contexto";
+$string['background.html'] = "História";
 $string['philosophy.html'] = "Filosofia";
 $string['licence.html'] = "Licença";
 $string['features.html'] = "Características";
 $string['release.html'] = "Notas de lançamento";
-$string['future.html'] = "Plano de acção";
-$string['credits.html'] = "Créditos";
+$string['future.html'] = "Futuro";
+$string['credits.html'] = "Autoria";
 
 $string['-installation'] = "Administração";
 $string['install.html'] = "Instalação";
@@ -19,13 +19,13 @@ $string['installamp.html'] = "Apache, MySQL, PHP";
 $string['upgrade.html'] = "Actualizações";
 
 $string['-usage'] = "Uso do Moodle";
-$string['teacher.html'] = "Manual do Docente";
+$string['teacher.html'] = "Manual do Professor";
 $string['other.html'] = "Outros Documentos";
 
 $string['-development'] = "Desenvolvimento";
 $string['developer.html'] = "Manual do programador";
 $string['coding.html'] = "Guia de programação";
-$string['cvs.html'] = "Uso do CVS";
-$string['translation.html'] = "Tradução";
+$string['cvs.html'] = "Uso doCVS";
+
 
 ?>

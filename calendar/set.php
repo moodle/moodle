@@ -78,25 +78,21 @@
         break;
         case 'showgroups':
             $SESSION->cal_show_groups = !$SESSION->cal_show_groups;
-            set_user_preference('calendar_savedflt', calendar_get_filters_status());
         break;
         case 'showcourses':
             $SESSION->cal_show_course = !$SESSION->cal_show_course;
-            set_user_preference('calendar_savedflt', calendar_get_filters_status());
         break;
         case 'showglobal':
             $SESSION->cal_show_global = !$SESSION->cal_show_global;
-            set_user_preference('calendar_savedflt', calendar_get_filters_status());
         break;
         case 'showuser':
             $SESSION->cal_show_user = !$SESSION->cal_show_user;
-            set_user_preference('calendar_savedflt', calendar_get_filters_status());
         break;
     }
 
     switch($_GET['from']) {
         case 'event':
-            redirect(CALENDAR_URL.'event.php?action='.$_GET['action'].'&amp;type='.$_GET['type'].'&amp;id='.intval($_GET['id']));
+            redirect(CALENDAR_URL.'event.php?action='.$_GET['action'].'&type='.$_GET['type'].'&id='.intval($_GET['id']));
         break;
         case 'month':
             redirect(CALENDAR_URL.'view.php?view=month&cal_d='.$_GET['cal_d'].'&cal_m='.$_GET['cal_m'].'&cal_y='.$_GET['cal_y']);

@@ -1,16 +1,13 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     
 <title>Documents de Moodle: Instal&middot;laci&oacute;</title>
   
-<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
     
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
 
-<body>
+<body bgcolor="#FFFFFF">
 <h1>Instal&middot;laci&oacute; de Moodle</h1>
 <blockquote>
   <p>Aquesta guia explica com instal&middot;lar Moodle per primera vegada. Detalla bastant alguns dels passos per tal de prendre en consideraci&oacute; les petites difer&egrave;ncies segons el tipus de servidor web. &Eacute;s per aix&ograve; que el document pot semblar llarg i complicat, per&ograve; no us amo&iuml;neu: generalment Moodle es configura en uns minuts.</p>
@@ -62,7 +59,7 @@
 <blockquote>
   <p>Heus ac&iacute;, com a orientaci&oacute;, un resum r&agrave;pid dels continguts de la carpeta Moodle:</p>
   <blockquote>
-    <table><tr>
+    <p><table><tr>
       <td width="130" valign="top">config-dist.php</td>
       <td valign="top">-</td>
       <td valign="top">
@@ -78,6 +75,7 @@
       <td valign="top">
         La pagina inicial del lloc.
       </td></tr></table>
+    </p>
     <ul>
       <li>admin/ - codi per a l'administraci&oacute; del servidor </li>
       <li>auth/ - m&ograve;duls d'autenticaci&oacute; d'usuaris  </li>
@@ -154,8 +152,8 @@ session.auto_start = 0
 session.bug_compat_warn = 0
 </pre>
   </blockquote>
-  <p>Si no teniu acc&eacute;s a l'httpd.conf i al php.ini del vostre servidor, o si altres aplicacions del mateix servidor necessiten par&agrave;metres diferents, no us amo&iuml;neu: podeu definir els par&agrave;metres en el directori de Moodle.</p?
-  <p>Per a fer-ho, heu de crear un fitxer anomenat <b>.htaccess</b> en el directori principal de Moodle que contingui les definicions d'aquests par&agrave;metres. Per&ograve; aix&ograve; nom&eacute;s funcionar&agrave; en servidors Apache que permetin Overrides.</p>
+  <p>Si no teniu acc&eacute;s a l'httpd.conf i al php.ini del vostre servidor, o si altres aplicacions del mateix servidor necessiten par&agrave;metres diferents, no us amo&iuml;neu: podeu definir els par&agrave;metres en el directori de Moodle.
+  <p>Per a fer-ho, heu de crear un fitxer anomenat <b>.htaccess</b> en el directori principal de Moodle que contingui les definicions d'aquests par&agrave;metres. Per&ograve; aix&ograve; nom&eacute;s funcionar&agrave; en servidors Apache que permetin Overrides.
      
   <blockquote>
     <pre>
@@ -171,7 +169,7 @@ php_flag file_uploads 1
 php_flag session.auto_start 0
 php_flag session.bug_compat_warn 0</pre>
   </blockquote>
-  <p>Tamb&eacute; podeu definir la mida m&agrave;xima dels fitxers que es pengin:</p>
+  <p>Tamb&eacute; podeu definir la mida m&agrave;xima dels fitxers que es pengin:
      
   <blockquote>
     <pre>
@@ -180,7 +178,7 @@ php_value upload_max_filesize 2M
 php_value post_max_size 2M
      </pre>
   </blockquote>
-  <p>La via m&eacute;s f&agrave;cil &eacute;s copiar el fitxer de mostra lib/htaccess i editar-lo adequadament a les vostres necessitats. Cont&eacute; instruccions addicionals. Per exemple, en l'int&egrave;rpret d'ordres de Unix:</p>
+  <p>La via m&eacute;s f&agrave;cil &eacute;s copiar el fitxer de mostra lib/htaccess i editar-lo adequadament a les vostres necessitats. Cont&eacute; instruccions addicionals. Per exemple, en l'int&egrave;rpret d'ordres de Unix:
   <blockquote>
     <pre>cp lib/htaccess .htaccess</pre>
   </blockquote>
@@ -198,7 +196,7 @@ php_value post_max_size 2M
 <h3 class="sectionheading"><a name="admin"></a>8. P&agrave;gina d'administraci&oacute;</h3>
 <blockquote> 
   <p>La p&agrave;gina d'administraci&oacute; hauria d'estar en funcionament en l'adre&ccedil;a: <u>http://example.com/moodle/admin</u>. Si proveu a anar la p&agrave;gina inicial del lloc tamb&eacute; anireu a parar all&ograve; autom&agrave;ticament. La primera vegada que accediu a la p&agrave;gina d'administraci&oacute; se us presentar&agrave; un contracte GPL &quot;empaquetat&quot; que heu d'acceptarbans de prosseguir la configuraci&oacute;.</p>
-  <p>(Moodle tamb&eacute; intentar&agrave; definir algunes galetes en el vostre navegador. Si teniu configurat el navegador de manera que us permeti triar si accepteu les galetes, alheshores obligat&ograve;riament <b>heu</b> d'acceptar les galetes de Moodle, o si no Moodle no funcionar&agrave; correctament.) </p>
+  <p>(Moodle tamb&eacute; intentar&agrave; definir algunes galetes en el vostre navegador. Si teniu configurat el navegador de manera que us permeti triar si accepteu les galetes, alheshores obligat&ograve;riament <b>heu</b> d'acceptar les galetes de Moodle, o si no Moodle no funcionar&agrave; correctament.) 
   <p>Ara Moodle comen&ccedil;ar&agrave; a configurar la base de dades i a crear taules per emmagatzemar les dades. Primer es creen les taules principals de la base de dades. Haur&iacute;eu de veure una llista de declaracions SQL seguides de missatges d'estat (en verd o en vermell) amb un aspecte semblant a aquest:</p>
   <blockquote> 
     <p>CREATE TABLE course ( id int(10) unsigned NOT NULL auto_increment, category 
@@ -282,6 +280,7 @@ php_value post_max_size 2M
   <p><b>En sistemes Windows</b>: el cam&iacute; m&eacute;s f&agrave;cil &eacute;s utilitzar aquest paquet: <a href="http://moodle.org/download/moodle-cron-for-windows.zip" title="Click to download this package (150k)" target="_blank">moodle-cron-for-windows.zip</a> 
 que fa molt senzill tot aix&ograve;. Tamb&eacute; podeu explorar la caracter&iacute;stica de "Tasques programades" integrada en Windows.</p>
   <p>En un servidor web allotjat externament: el vostre tauler de control pot tenir una p&agrave;gina que us permeti programar processos del cron. Pregunteu al servei t&egrave;cnic.</p>
+  <p></p>
 </blockquote>
 <h3 class="sectionheading"><a name="course"></a>10. Creaci&oacute; d'un curs nou</h3>
 <blockquote>
@@ -293,7 +292,6 @@ que fa molt senzill tot aix&ograve;. Tamb&eacute; podeu explorar la caracter&iac
   <p>Per a m&eacute;s informaci&oacute; sobre creaci&oacute; de cursos, consulteu el &quot;<a href="./?file=teacher.html">Manual del professorat </a>&quot;.</p>
 </blockquote>
 <p>&nbsp;</p>
-<p align="center"><font size="1"><a href="." target="_top">Documentaci&oacute; de Moodle</a></font></p>
-<p align="center"><font size="1">Version: $Id$</font></p>
+<p align="CENTER"><font size="1"><a href="." target="_top">Documentaci&oacute; de Moodle</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
 </body>
-</html>

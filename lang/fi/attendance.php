@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // attendance.php - created with Moodle 1.3 Nearly Ready (2004052000)
 
 
 $string['absentlong'] = 'Puuttuva';
@@ -23,7 +23,7 @@ $string['downloadexcelfull'] = 'Lataa kaikki tiedot Excel-taulukkona';
 $string['downloadexceltotals'] = 'Lataa yhteenveto Excel-taulukkona';
 $string['downloadtextfull'] = 'Lataa kaikki tiedot tekstinä';
 $string['downloadtexttotals'] = 'Lataa yhteenveto tekstinä';
-$string['dynamicsection'] = 'Siirrä läsnäololista viikottain päivämäärän mukaan';
+$string['dynamicsection'] = 'Määritä viikottainen läsnäolo tämän pävän mukaan';
 $string['dynamicsectionmulti'] = 'Sijoita listat viikolle automattisesti';
 $string['dynsectionshort'] = 'Siirtyy dynaamisesti osioon';
 $string['endbeforestart'] = 'Päättymispäivä on ennen lopetus päivää';
@@ -35,7 +35,7 @@ $string['gradevalue'] = 'Tee tästä listasta arvioitava';
 $string['gradevaluemulti'] = 'Tee näistä listoista arvioitavat';
 $string['hoursinclass'] = 'Tuntien määrä opetuskokonaisuudessa';
 $string['hoursineachclass'] = 'Tuntien määrä jokaisessa opetuskokonaisuudessa';
-$string['hoursinfullreport'] = 'Suurin määrä läsnäolotunteja, jotka näytetään raportin yhdellä sivulla';
+$string['hoursinfullreport'] = 'Maksimäärä läsnäolotunteja, joka näytetään raportin yhdellä sivulla';
 $string['maxgradeshort'] = 'Suurin arvosana';
 $string['maxgradevalue'] = 'Suurin arvosana täydelle läsnäololle';
 $string['modulename'] = 'Läsnäolo';
@@ -50,7 +50,7 @@ $string['pages'] = 'Sivut';
 $string['presentlong'] = 'Nykyinen';
 $string['presentshort'] = 'N';
 $string['saturday'] = 'La';
-$string['startafterend'] = 'Aloituspäivä on kurssin lopetuspäivän jälkeen';
+$string['startafterend'] = 'Aloituspäivä on lopetuspäivän jälkeen';
 $string['startmulti'] = 'Ensimmäisen läsnäololistan päiväys.';
 $string['sunday'] = 'Su';
 $string['takeroll'] = 'Hae tämän päivän lista?';

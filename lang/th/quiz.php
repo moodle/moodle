@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4.2 (2004083125)
+      // quiz.php - created with Moodle 1.4 development (2004072901)
 
 
 $string['acceptederror'] = 'คลาดเคลื่อนได้..';
@@ -41,11 +41,9 @@ $string['category'] = 'ประเภท';
 $string['categoryinfo'] = 'ข้อมูลของประเภทนี้';
 $string['categorymove'] = 'ประเภท \'$a->name\' contains $a->count questions.  กรุณาเลือกประเภทอื่นที่ต้องการย้ายไป';
 $string['categorymoveto'] = 'ย้ายไปยังประเภทนี้';
-$string['checkanswer'] = 'ตรวจคำตอบ';
 $string['choice'] = 'ตัวเลือก';
 $string['choices'] = 'ตัวเลือก';
 $string['choosedatasetproperties'] = 'เลือกคุณสมบัติของชุดข้อมูล';
-$string['close'] = 'ปิดหน้าการแสดงผล';
 $string['confirmstartattempt'] = 'แบบทดสอบนี้จำกัดเวลาในการทำ คุณต้องการเริ่มทำแบบทดสอบแล้วใช่ไหมคะ';
 $string['correctanswer'] = 'คำตอบที่ถูกต้อง';
 $string['correctanswerformula'] = 'สูตรของคำตอบที่ถูกต้อง';
@@ -59,7 +57,6 @@ $string['coursetestmanager'] = 'รูปแบบ Course Test Manager';
 $string['createmultiple'] = 'สุ่มคำถามมาใช้ในแบบทดสอบ';
 $string['createnewquestion'] = 'สร้างคำถามใหม่(ทีละคำถาม)';
 $string['custom'] = 'รูปแบบใหม่(สร้างเอง)';
-$string['datasetdefinitions'] = 'คำจำกัดความของกลุ่มข้อมูลที่นำมาใช้ใหม่ได้สำหรับประเภท $a';
 $string['datasetnumber'] = 'จำนวน';
 $string['daysavailable'] = 'จำนวนวันที่เปิดให้ตอบ ';
 $string['decimals'] = 'ด้วย $a ';
@@ -87,16 +84,13 @@ $string['editingshortanswer'] = 'กำลังแก้ไขคำถามอัตนัย';
 $string['editingtruefalse'] = 'กำลังแก้ไข คำถามแบบ ถูก/ผิด';
 $string['editquestions'] = 'แก้ไขคำถาม';
 $string['errorsdetected'] = 'พบ $a ข้อผิดพลาด';
-$string['existingcategory1'] = 'ค่าคงที่ (literal)ถูกใช้ในคำถามอื่นในประเภทเดียวกัน';
-$string['existingcategory2'] = 'ไฟล์นี้ถูกใช้อยู่ในคำถามอื่นในประเภทเดียวกัน';
-$string['existingcategory3'] = 'ลิงก์นี้ถูกใช้อยู่ในคำถามอื่นในประเภทเดียวกัน';
+$string['existingcategory'] = 'a \".(1==$a ? \'literal\' :(2==$a ? \'file\' :(3==$a ? \'link\' : $a))).\" จากเซ็ทที่มีอยู่ของ \".(1==$a ? \'literals\' :(2==$a ? \'files\' : (3==$a ? \'links\' : $a))).\" ถูกใช้ในคำถามอื่นในประเภทนี้ด้วย';
 $string['exportfilename'] = 'แบบทดสอบ';
 $string['exportname'] = 'ชื่อไฟล์';
 $string['exportnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['exportquestions'] = 'ส่งออกคำถามเป็นไฟล์';
 $string['false'] = 'ผิด';
 $string['feedback'] = 'Feedback';
-$string['file'] = 'ไฟล์';
 $string['fileformat'] = 'รูปแบบไฟล์';
 $string['filloutoneanswer'] = 'คุณต้องเติมคำตอบอย่างน้อยหนึ่งคำตอบ ช่องว่างที่ว่างไว้จะไม่นำมาใช้';
 $string['filloutthreequestions'] = 'คุณต้องเติมอย่างน้อยสามคำถาม คำถามที่ว่างไว้จะไม่นำมาใช้';
@@ -104,16 +98,11 @@ $string['fillouttwochoices'] = 'คุณต้องเติมคำตอบอย่างน้อยสองคำตอบ ช่องว่างที่ว่า
 $string['forceregeneration'] = 'บังคับการสร้าง ( generate )';
 $string['fractionsaddwrong'] = 'คะแนนที่คุณเลือก รวมแล้วไม่ได้ 100 เปอร์เซ็นต์
 
-<br />รวมแล้วได้ $a%%
-<br />ต้องการกลับไปแก้ไขหรือเปล่า?';
+<BR>รวมแล้วได้ $a%%
+<BR>ต้องการกลับไปแก้ไขหรือเปล่า?';
 $string['fractionsnomax'] = 'หนึ่งในคำตอบ ควร มีคะแนน 100%% เพื่อ
-<br />ความเป็นไปได้ในการได้คะแนนเต็ม สำหรับคำถามข้อนี้
-<br />ต้องการกลับไปแก้ไขหรือเปล่า?';
-$string['functiontakesatleasttwo'] = 'ฟังก์ชั่น $a ต้องมีอย่างน้อย 2 arguments';
-$string['functiontakesnoargs'] = 'ฟังก์ชั่น $a ไม่จำเป็นต้องมี arguments';
-$string['functiontakesonearg'] = 'ฟังก์ชั่น $a ต้องมี 1 arguments พอดี';
-$string['functiontakesoneortwoargs'] = 'ฟังก์ชั่น $a  ต้องมี 1 หรือ 2 arguments';
-$string['functiontakestwoargs'] = 'ฟังก์ชั่น $a ต้องมี 2  arguments พอดี';
+<BR>ความเป็นไปได้ในการได้คะแนนเต็ม สำหรับคำถามข้อนี้
+<BR>ต้องการกลับไปแก้ไขหรือเปล่า?';
 $string['generatevalue'] = 'สร้างค่าใหม่ระหว่าง';
 $string['geometric'] = 'เลขาคณิต';
 $string['gift'] = 'รูปแบบ GIFT';
@@ -128,16 +117,9 @@ $string['importquestions'] = 'นำเข้าคำถามจากไฟล์';
 $string['indivresp'] = 'ความคิดเห็นของแต่ละคนที่มีต่อแต่ละคำถาม';
 $string['introduction'] = 'คำนำ';
 $string['itemanal'] = 'การวิเคราะห์ความคิดเห็นที่มีต่อแต่ละคำถาม';
-$string['itemdefinition'] = 'คำจัดความ';
-$string['keptcategory1'] = 'ค่าคงที่จากเซ็ตค่าคงที่ในประเภทเดียวกันเหมือนก่อนหน้า';
-$string['keptcategory2'] = 'ไฟล์จากเซ็ตของไฟล์ในประเภทเดียวกันเหมือนก่อนหน้า';
-$string['keptcategory3'] = 'ลิงก์จากเซ็ตของลิงก์ในประเภทเดียวกันเหมือนก่อนหน้า';
-$string['keptlocal1'] = 'ค่าคงที่จากเซ็ตคำถามส่วนตัวเหมือนก่อนหน้า';
-$string['keptlocal2'] = 'ไฟล์จากเซ็ตคำถามส่วนตัวเหมือนก่อนหน้า';
-$string['keptlocal3'] = 'ลิงก์จากเซ็ตคำถามส่วนตัวเหมือนก่อนหน้า';
-$string['link'] = 'ลิงก์';
+$string['keptcategory'] = 'a \".(1==$a ? \'literal\' :(2==$a ? \'file\' :(3==$a ? \'link\' : $a))).\" จากประเภทเดียวกันกับเซ็ทที่นำมาใช้ใหม่ของ \".(1==$a ? \'literals\' :(2==$a ? \'files\' : (3==$a ? \'links\' : $a))) เหมือนก่อนหน้า';
+$string['keptlocal'] = ' a \".(1==$a ? \'literal\' :(2==$a ? \'file\' :(3==$a ? \'link\' : $a))).\" จากเซ็ทคำถามส่วนตัวเดียวกันของ\".(1==$a ? \'literals\' :(2==$a ? \'files\' : (3==$a ? \'links\' : $a))).\"  เหมือนก่อนหน้า';
 $string['listitems'] = 'รายการคำถามในแบบทดสอบ';
-$string['literal'] = 'ค่าคงที่';
 $string['loguniform'] = 'ตำแหน่ง จาก loguniform distribution';
 $string['marks'] = 'คะแนน';
 $string['match'] = 'จับคู่';
@@ -157,18 +139,13 @@ $string['multianswer'] = 'แบบเติมคำในช่องว่าง';
 $string['multichoice'] = 'แบบปรนัย';
 $string['multiplier'] = 'ตัวคูณ';
 $string['name'] = 'ชื่อ';
-$string['newcategory1'] = 'ค่าคงที่จากเซ็ตข้อมูลใหม่ที่ถูกใช้ในคำถามอื่นในประเภทเดียวกัน';
-$string['newcategory2'] = 'ไฟล์จากเซ็ตข้อมูลใหม่ที่ถูกใช้ในคำถามอื่นในประเภทเดียวกัน';
-$string['newcategory3'] = 'ลิงก์จากเซ็ตข้อมูลใหม่ที่ถูกใช้ในคำถามอื่นในประเภทเดียวกัน';
-$string['newlocal1'] = 'ค่าคงที่จากเซ็ตข้อมูลใหม่ที่ใช้ในคำถามนี้เท่านั้น';
-$string['newlocal2'] = 'ไฟล์จากเซ็ตข้อมูลใหม่ที่ใช้ในคำถามนี้เท่านั้น';
-$string['newlocal3'] = 'ลิงก์จากเซ็ตข้อมูลใหม่ที่ใช้ในคำถามนี้เท่านั้น';
+$string['newcategory'] = 'a \".(1==$a ? \'literal\' :(2==$a ? \'file\' :(3==$a ? \'link\' : $a))).\" จากเซ็ทใหม่ของ\".(1==$a ? \'literals\' :(2==$a ? \'files\' : (3==$a ? \'links\' : $a))).\" ซึ่งถูกใช้โดยคำถามอื่นในประเภทนี้';
+$string['newlocal'] = 'a \".(1==$a ? \'literal\' :(2==$a ? \'file\' :(3==$a ? \'link\' : $a))).\" จากเซ็ทใหม่ของ\".(1==$a ? \'literals\' :(2==$a ? \'files\' : (3==$a ? \'links\' : $a))).\" ซึ่งใช้เฉพาะในคำถามนี้';
 $string['noanswers'] = 'คุณไม่ได้เลือกคำตอบ';
 $string['noattempts'] = 'คุณไม่ได้ทำแบบทดสอบ';
 $string['nodataset'] = 'ไม่มี (ไม่ใช่ wild card)';
-$string['nominal'] = 'มีแต่ชื่อ';
+$string['nominal'] = 'Nominal';
 $string['nomoreattempts'] = 'หมดสิทธิ์ทำแบบทดสอบแล้ว';
-$string['nopossibledatasets'] = 'ไม่มีเซ็ตข้อมูลที่เป็นไปได้';
 $string['noquestions'] = 'ยังไม่มีคำถามในแบบทดสอบ';
 $string['noresponse'] = 'ไม่มีการโต้ตอบ';
 $string['noreview'] = 'คุณไม่ได้รับอนุญาตให้ทำแบบทดสอบนี้ใหม่';
@@ -180,11 +157,8 @@ $string['numerical'] = 'แบบโจทย์ตัวเลข';
 $string['optional'] = 'ทางเลือก';
 $string['overdue'] = 'เกินกำหนด';
 $string['paragraphquestion'] = 'คำถามย่อหน้าดังกล่าวบรรทัดที่ $a ไม่ถูกต้อง ระบบจะไม่นำคำถามนี้มาใช้';
-$string['parentlanguage'] = 'en';
 $string['passworderror'] = 'ใส่รหัสผ่านผิดค่ะ';
 $string['percentcorrect'] = 'เปอร์เซ็นต์ที่ถูก';
-$string['preview'] = 'Preview';
-$string['previewquestion'] = 'Preview คำถาม';
 $string['publish'] = 'ใช้คำถามร่วมกับคนอื่น';
 $string['publishedit'] = 'คุณต้องได้รับอนุญาตในการเผยแพร่ก่อนค่ะ จึงจะสามารถเพิ่มหรือแก้ไขคำถามในประเภทดังกล่าวได้';
 $string['qti'] = 'รูปแบบ IMS QTI ';
@@ -246,9 +220,6 @@ $string['shufflequestions'] = 'สลับคำถาม';
 $string['significantfigures'] = 'ด้วย $a ';
 $string['subneterror'] = 'ขออภัยค่ะ แบบทดสอบนี้ถูกล็อกเอาไว้สามารถทำได้ภายในที่ตั้งที่ระบุไว้เท่านั้น คอมพิวเตอร์ของคุณอยู่ในพื้นที่นอกเหนือจากเขตที่ระบุเอาไว้';
 $string['substitutedby'] = 'แทนที่โดย';
-$string['thischarset'] = 'TIS-620';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Thai';
 $string['time'] = 'เวลา';
 $string['timecompleted'] = 'ทำเสร็จเมื่อ';
 $string['timeleft'] = 'เหลือเวลา';
@@ -265,7 +236,6 @@ $string['type'] = 'ประเภท';
 $string['uniform'] = 'ทศนิยม  จาก uniform distribution';
 $string['unit'] = 'หน่วย';
 $string['unknowntype'] = 'ประเภทคำถามไม่ถูกต้องที่บรรทัดที่ $a ระบบจะไม่นำคำถามนี้มาใช้';
-$string['unsupportedformulafunction'] = 'ไม่สนับสนุนฟังก์ชั่น literal';
 $string['viewallanswers'] = 'มีการทำแบบทดสอบแล้ว  $a ครั้ง';
 $string['viewallreports'] = 'ดูรายงานสำหรับ $a  ครั้ง';
 $string['warningsdetected'] = 'พบ $a คำเตือน';
@@ -273,7 +243,6 @@ $string['webct'] = 'รูปแบบ WebCT';
 $string['wildcard'] = 'Wild  card';
 $string['withsummary'] = 'พร้อมกับสถิติฉบับย่อ';
 $string['wronggrade'] = 'คะแนนไม่ถูกต้อง ( บรรทัดที่ $a)';
-$string['xml'] = 'รูปแบบ Moodle XML';
 $string['yourfinalgradeis'] = 'คะแนนที่ได้คือ $a';
 
 ?>

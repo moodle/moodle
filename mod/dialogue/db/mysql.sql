@@ -30,8 +30,7 @@ CREATE TABLE prefix_dialogue (
   timemodified int(10) unsigned NOT NULL default '0',
   name varchar(255) default NULL,
   intro text,
-  PRIMARY KEY  (id),
-  KEY course (course)
+  PRIMARY KEY  (id)
 ) TYPE=MyISAM;
 # --------------------------------------------------------
 
@@ -52,10 +51,8 @@ CREATE TABLE prefix_dialogue_conversations (
   format tinyint(2) NOT NULL default '0',
   subject varchar(100) not null default '',
   PRIMARY KEY  (id),
-  KEY dialogueid (dialogueid),
-  KEY timemodified (timemodified),
-  KEY userid (userid),
-  KEY recipientid (recipientid)
+  KEY (dialogueid),
+  KEY (timemodified)
 ) TYPE=MyISAM COMMENT='All the conversations between pairs of people';
 
 #
@@ -71,9 +68,7 @@ CREATE TABLE prefix_dialogue_entries (
   mailed int(1) unsigned NOT NULL default '0',
   text text NOT NULL,
   PRIMARY KEY  (id),
-  KEY conversationid (conversationid),
-  KEY dialogueid (dialogueid),
-  KEY userid (userid)
+  KEY (conversationid)
 ) TYPE=MyISAM COMMENT='All the conversation entries';
 
 #

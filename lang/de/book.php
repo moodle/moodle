@@ -1,24 +1,13 @@
 <?PHP // $Id$ 
-      // book.php - created with Moodle 1.4.3 (2004083130)
+      // book.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['addafter'] = 'Ein neues Kapitel hinzufügen';
 $string['chapterscount'] = 'Kapitel';
 $string['chaptertitle'] = 'Titel des Kapitels';
 $string['confchapterdelete'] = 'Wollen Sie dieses Kapitel wirklich löschen?';
-$string['confchapterdeleteall'] = 'Wollen Sie dieses Kapitel mit allen Unterkapiteln wirklich löschen?';
 $string['content'] = 'Inhalt';
-$string['customtitles'] = 'Eigene Titel der Unterkapitel';
-$string['disableprinting'] = 'Druckoption abschalten';
-$string['doimport'] = 'Import';
-$string['editingchapter'] = 'Kapitel bearbeiten';
 $string['faq'] = 'Buch FAQ';
-$string['fileordir'] = 'Datei oder Verzeichnis';
-$string['import'] = 'Import';
-$string['importinfo'] = 'Import ausgewählter HTML-Dateien oder Verzeichnisinhalte. Die Kapitel werden alphabetisch nach den Dateinamen sortiert.';
-$string['importing'] = 'Importieren';
-$string['importingchapters'] = 'Kapitel in das Buch importieren';
-$string['maindirectory'] = 'Hauptverzeichnis';
 $string['modulename'] = 'Buch';
 $string['modulenameplural'] = 'Bücher';
 $string['navnext'] = 'Nächste';
@@ -32,7 +21,6 @@ $string['printbook'] = 'Gesamtes Buch drucken';
 $string['printchapter'] = 'Dieses Kapitel drucken';
 $string['printdate'] = 'Datum';
 $string['printedby'] = 'Gedruckt von';
-$string['relinking'] = 'Verlinkung';
 $string['subchapter'] = 'Unterkapitel';
 $string['toc'] = 'Inhaltsverzeichnis';
 $string['tocwidth'] = 'Wählen Sie die Breite des Inhaltsverzeichnisses für alle Bücher aus.';

@@ -9,11 +9,11 @@
 /**
  * Smarty {html_table} function plugin
  *
- * Type:     function<br />
- * Name:     html_table<br />
- * Date:     Feb 17, 2003<br />
- * Purpose:  make an html table from an array of data<br />
- * Input:<br />
+ * Type:     function<br>
+ * Name:     html_table<br>
+ * Date:     Feb 17, 2003<br>
+ * Purpose:  make an html table from an array of data<br>
+ * Input:<br>
  *         - loop = array to loop through
  *         - cols = number of columns
  *         - rows = number of rows

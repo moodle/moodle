@@ -1,7 +1,6 @@
-<?php // $Id$
+<?PHP
 
 function label_upgrade($oldversion) {
-
 /// This function does anything necessary to upgrade 
 /// older versions to match current functionality 
 
@@ -16,13 +15,8 @@ function label_upgrade($oldversion) {
         modify_database("", "INSERT INTO prefix_log_display VALUES ('label', 'update', 'quiz', 'name');");
     }
 
-    if ($oldversion < 2004111200) { //DROP first
-        execute_sql("ALTER TABLE {$CFG->prefix}label DROP INDEX course;",false);
-        modify_database('','ALTER TABLE prefix_label ADD INDEX course (course);');
-    }
 
     return true;
-
 }
 
 ?>

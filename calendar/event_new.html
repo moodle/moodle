@@ -3,13 +3,13 @@
     $course = get_record('course', 'id', ($form->courseid) ? $form->courseid : $site->id);
 ?>
 <form method="post" action="event.php" name="new">
-<table cellpadding="5">
+<table cellpadding=5>
   <tr>
     <td style="vertical-align: top; text-align: right;">
       <?php print_string('eventname', 'calendar'); ?>:
     </td>
     <td>
-      <input type="text" name="name" size="67" value="<?php p($form->name); ?>" />
+      <input type="text" name="name" size="67" value="<?php p($form->name); ?>" /> 
       <?php if (isset($err['name'])) formerr($err['name']); ?>
     </td>
   </tr>
@@ -18,9 +18,9 @@
       <?php print_string('eventdescription', 'calendar'); ?>:
     </td>
     <td>
-    <?php
+    <?php 
         print_textarea($usehtmleditor, 20, 65, 630, 300, "description", $form->description);
-        if (isset($err['description'])) formerr($err['description']);
+        if (isset($err['description'])) formerr($err['description']); 
     ?>
     </td>
   </tr>
@@ -29,9 +29,9 @@
       <?php print_string('eventdate', 'calendar'); ?>:
     </td>
     <td>
-      <?php print_date_selector('startday', 'startmon', 'startyr', $form->timestart);?>
-      <?php print_string('eventtime', 'calendar');?>
-      <?php print_time_selector('starthr', 'startmin', $form->timestart) ?>
+      <?php print_date_selector('startday', 'startmon', 'startyr', $form->timestart);?> 
+      <?php print_string('eventtime', 'calendar');?> 
+      <?php print_time_selector('starthr', 'startmin', $form->timestart) ?>  
       <?php if (isset($err['timestart'])) formerr($err['timestart']); ?>
     </td>
   </tr>
@@ -47,15 +47,15 @@
       <div>
         <input type="radio" name="duration" value="1" id="duration_yes" <?php if($form->duration == 1) echo 'checked="checked"'; ?>/>
         <label for="duration_yes"><?php print_string('durationuntil', 'calendar'); ?></label>
-        <?php print_date_selector('endday', 'endmon', 'endyr', $form->timestart + $form->timeduration);?>
-        <?php print_string('eventtime', 'calendar');?>
-        <?php print_time_selector('endhr', 'endmin', $form->timestart + $form->timeduration) ?>
+        <?php print_date_selector('endday', 'endmon', 'endyr', $form->timestart + $form->timeduration);?> 
+        <?php print_string('eventtime', 'calendar');?> 
+        <?php print_time_selector('endhr', 'endmin', $form->timestart + $form->timeduration) ?>  
         <?php if (isset($err['timeduration'])) formerr($err['timeduration']); ?>
       </div>
       <div>
         <input type="radio" name="duration" value="2" id="duration_minutes" <?php if($form->duration == 2) echo 'checked="checked"'; ?>/>
         <label for="duration_minutes"><?php print_string('durationminutes', 'calendar'); ?></label>
-        <input type="text" name="minutes" size="3" value="<?php p($form->minutes); ?>" />
+        <input type="text" name="minutes" size="3" value="<?php p($form->minutes); ?>" /> 
         <?php if (isset($err['minutes'])) formerr($err['minutes']); ?>
       </div>
     </td>
@@ -77,7 +77,7 @@
         <label for="repeat_yes">
           <?php print_string('repeatweeksl', 'calendar'); ?>
         </label>
-        <input type="text" name="repeats" size="2" value="<?php p($form->repeats); ?>" />
+        <input type="text" name="repeats" size="2" value="<?php p($form->repeats); ?>" /> 
         <?php print_string('repeatweeksr', 'calendar'); ?>
         <?php if (isset($err['repeats'])) formerr($err['repeats']); ?>
       </div>
@@ -85,7 +85,7 @@
   </tr>
 
   <tr>
-    <td align="center" colspan="2"><p><input type="submit" value="<?php print_string('savechanges') ?>" /></p></td>
+    <td align="center" colspan="2"><p><input type="submit" value="<?php print_string('savechanges') ?>"></p></td>
   </tr>
 </table>
 <p>

@@ -1,23 +1,111 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
+
 <head>
 
 <title>Documentación de Moodle: Preguntas frecuentes (FAQ)</title>
-<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+
+<link rel="stylesheet" href="../theme/standard/styles.php" type="TEXT/CSS">
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+<style type="text/css">
+
+<!--
+
+.question {
+
+    font-size: medium;
+
+    font-weight: bold;
+
+    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+
+    border: 1px dotted;
+
+    padding: 10px;
+
+    background-color: #EEEEEE;
+
+}
+
+.answer {
+
+    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+
+    font-size: medium;
+
+    border: none;
+
+    padding-left: 40px;
+
+}
+
+-->
+
+</style>
+
+<style type="text/css">
+
+<!--
+
+.normaltext {
+
+    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+
+    font-size: medium;
+
+    border: none;
+
+    padding-left: 10px;
+
+}
+
+.answercode {
+
+    font-family: "Courier New", Courier, mono;
+
+    font-size: small;
+
+    border: none;
+
+    padding-left: 60px;
+
+}
+
+.questionlink {
+
+    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+
+    font-size: medium;
+
+    border: none;
+
+    padding-left: 40px;
+
+}
+
+-->
+
+</style>
+
 </head>
 
-<body>
-<h1>Preguntas Frecuentes (FAQ)</h1>
-<p class="normaltext">Esta página contiene las respuestas a algunas de las preguntas que se hacen
-  con más frecuencia al instalar Moodle. Si ha seguido las <a href="./?file=install.html">instrucciones de instalación</a> y todavía tiene algún problema, lo mejor será que lea esta página.</p>
+
+
+<body bgcolor="#FFFFFF">
+
+<h2>Preguntas frecuentes (FAQ)</h2>
+
+<p class="normaltext">Esta página contiene algunas de las preguntas que se hacen
+  con más frecuencia al instalar Moodle junto con sus respuestas. Si ha seguido
+  las <a href="./?file=install.html">instrucciones de instalación</a> y
+  todavía tiene algún problema, lo mejor será que lea esta página.</p>
 
 <p class="normaltext">Si no obtiene su respuesta aquí, pruebe el curso
   <a href="http://moodle.org/mod/forum/index.php?id=5" target="_top">Using
 	Moodle</a> en moodle.org.
   Primero busque en los foros unas pocas palabras, por si su problema ya ha sido
-  debatido. Si no encuentra nada, envíe su pregunta al foro adecuado -alguien
+  debatido. Si no encuentra nada, envíe su pregunta al foro adecuado --alguien
 	podrá ayudarle.</p>
 
 <p class="normaltext"> Si ha intentado varias soluciones sin poder resolver un
@@ -26,7 +114,7 @@
   esté bloqueando una función o comunicación necesaria. Los
   cortafuegos muy rara vez causan problemas en Moodle, pero alguna
   que otra vez son responsables de una menor funcionalidad debido a fallos en la
-  configuración de sus opciones.</p>
+	configuración de sus opciones.
 <p class="normaltext">Use esta lista para ir a la respuesta adecuada más
   abajo:</p>
 
@@ -60,14 +148,14 @@
 <p class="questionlink"><a href="#fixdirroot">Cuando voy a la página de administración,
   me indica que ponga un dirroot vacío.</a></p>
 
-<p class="questionlink"><a href="#loginsetting">Entro, pero el enlace de entrada
+<p class="questionlink"><a href="#loginsetting">Entro, pero en enlace de entrada
   no cambia. He entrado y puedo navegar libremente.</a></p>
 
 <p class="questionlink"><a href="#resource1">Cuando trato de añadir un
   recurso recibo mensajes de error.</a></p>
 
 <p class="questionlink"><a href="#noadmin">Durante el proceso de configuración
-  inicial, nunca se me pide que cree una cuenta de administrador</a></p>
+  inicial, &iexcl;nunca se me pide que cree una cuenta de administrador!</a></p>
 
 <p class="questionlink"><a href="#nologin">No hay forma de entrar --me quedo colgado
   en la página de entrada</a></p>
@@ -85,7 +173,7 @@
 
 
 
-<h3><a name="filenotfound"></a>Siempre que intento acceder a
+<h3 class="question"><a name="filenotfound"></a>Siempre que intento acceder a
   un archivo que he enviado o intento verlo, se muestra el error &quot;File not
   found&quot;</h3>
 
@@ -119,8 +207,8 @@
   opción &quot;<strong>slasharguments</strong>&quot;. Ahora debería
   poder acceder a sus archivos enviados.</p>
 
-<h3><a name="php"></a>PHP - &iquest;Está instalado? &iquest;Qué
-  versión tengo?</h3>
+<h4  class="question"><a name="php"></a>PHP - &iquest;Está instalado? &iquest;Qué
+  versión tengo?</h4>
 
 <p class="answer">Cree un nuevo archivo en su sitio web llamado info.php, conteniendo
   el siguiente texto, y acceda a éste desde su navegador:</p>
@@ -133,8 +221,8 @@
 
 <p class="answer">&nbsp;</p>
 
-<h3><a name="blankpages"></a>&iquest;Por qué están
-  todas mis páginas vacías? </h3>
+<h4 class="question"><a name="blankpages"></a>&iquest;Por qué están
+  todas mis páginas vacías? </h4>
 
 <p class="answer">Compruebe la variable &quot;dirroot&quot; en su config.php.
   Debe usar rutas completas y absolutas, por ejemplo:</p>
@@ -149,14 +237,14 @@
 
 <p>&nbsp; </p>
 
-<h3><a name="errorgetstring"></a>Mis páginas muestran
-  errores fatales como: &quot;call to undefined function: get_string()&quot;</h3>
+<h4 class="question"><a name="errorgetstring"></a>Mis páginas muestran
+  errores fatales como: &quot;call to undefined function: get_string()&quot;</h4>
 
 <p class="answer">Si ve errores como:</p>
 
 <p class="answercode">Parse error: parse error, unexpected T_VARIABLE in c:\program
 
-  files\easyphp\www\moodle\config.php on line 94 <br />
+  files\easyphp\www\moodle\config.php on line 94 <br>
 
   Fatal error: Call to undefined function: get_string() in c:\program files\easyphp\www\moodle\mod\resource\lib.php
 
@@ -170,10 +258,10 @@
 	adecuada.</p>
 <p class="answer">&nbsp;</p>
 
-<h3><a name="headerssent"></a>&iquest;Por qué sigo obteniendo
-  mensajes de error sobre &quot;headers already sent&quot;?</h3>
+<h4 class="question"><a name="headerssent"></a>&iquest;Por qué sigo obteniendo
+  mensajes de error sobre &quot;headers already sent&quot;?</h4>
 
-<p class="answer">Si ve errores de este estilo:</p>
+<p class="answer">Si ver errores de este estilo:</p>
 
 <p class="answercode">Warning: Cannot add header information - headers already
 
@@ -200,8 +288,8 @@
   espacios o líneas vacías.</p>
 <p class="answer">&nbsp;</p>
 
-<h3><a name="failedopen"></a>Sigo teniendo este error: &quot;
-  Failed opening required '/web/moodle/lib/setup.php' &quot;</h3>
+<h4 class="question"><a name="failedopen"></a>Sigo teniendo este error: &quot;
+  Failed opening required '/web/moodle/lib/setup.php' &quot;</h4>
 
 <p class="answer">En su config.php, la opción que usa para la variable
   &quot;dirroot&quot; debe ser la <strong>ruta completa desde la raíz del
@@ -212,14 +300,14 @@
 
 <p class="answer">&nbsp;</p>
 
-<h3><a name="quotes" id="quotes"></a>Cualquier texto con un apóstrofe
-  (') o comillas (&quot;) provoca errores o aparece con una barra añadida</h3>
+<h4 class="question"><a name="quotes" id="quotes"></a>Cualquier texto con un apóstrofe
+  (') o comillas (&quot;) provoca errores o aparece con una barra añadida</h4>
 
 <p class="answer">Los problemas causados por los apóstrofes son causados
   por opciones incorrectas de &quot;magic quotes&quot;. Moodle necesita las siguientes
-  opciones (que normalmente están activadas por defecto):</p>
+  opciones (que normalmente están puestas por defecto):</p>
 
-<p class="answercode">magic_quotes_gpc = On<br />
+<p class="answercode">magic_quotes_gpc = On<br>
 
   magic_quotes_runtime = Off</p>
 
@@ -228,8 +316,8 @@
   detalles.</p>
 <p class="answer">&nbsp;</p>
 
-<h3><a name="sessiontmp"></a>Sigo teniendo mensajes de error
-  sobre &quot;session_start&quot;</h3>
+<h4 class="question"><a name="sessiontmp"></a>Sigo teniendo mensajes de error
+  sobre &quot;session_start&quot;</h4>
 
 <p class="answer">Si ve errores de este estilo:</p>
 
@@ -245,7 +333,7 @@
   no puede guardar los archivos de &quot;sesión&quot; en su disco duro
   (en un directorio denominado /tmp). Normalmente la razón is que usted
   no TIENE un directorio llamado /tmp en su ordenador/computadora. Es el típico
-  caso de las instalaciones Windows.</p>
+  caso de las instalaciones Windows.
 <p class="answer">La solución es arreglar la opción de PHP para
   que esta ruta apunte a un directorio real. Puede hacer esto en su archivo php.ini.</p>
 
@@ -257,24 +345,24 @@
 <p class="answercode">php_value session.save_path "/home/moodle/sessions"</p>
 <p class="answercode">&nbsp;</p>
 
-<h3><a name="fixdirroot"></a>Cuando voy a la página admin,
-  me indica que ponga un dirroot vacío (&quot;&quot;)</h3>
+<h4 class="question"><a name="fixdirroot"></a>Cuando voy a la página admin,
+  me indica que ponga un dirroot vacío (&quot;&quot;)</h4>
 
 <p class="answer">Si ve errores como éste en Moodle 1.0.9:</p>
 
-<table class="generalbox" cellspacing="0" cellpadding="5" align="center" border="0">
+<table class=generalbox cellspacing=0 cellpadding=5 align=center border=0>
 
 <tbody>
 
 <tr>
 
-<td bgcolor="#ffbbbb">Please fix your settings in config.php:
+<td bgcolor=#ffbbbb>Please fix your settings in config.php:
 
-    <p>You have:</p>
+<p>You have:
 
-    <p>$CFG-&gt;dirroot = "/home/users/fred/public_html/moodle";</p>
+<p>$CFG-&gt;dirroot = "/home/users/fred/public_html/moodle";
 
-    <p>but it should be:</p>
+<p>but it should be:
 
 <p>$CFG-&gt;dirroot = "";</p></td></tr></tbody></table>
 
@@ -291,16 +379,16 @@
 <p class="answercode">&nbsp;</p>
 
 
-<h3><a name="loginsetting"></a>Entro, pero el enlace de entrada
-  no cambia. He entrado y puedo navegar libremente</h3>
+<h4 class="question"><a name="loginsetting"></a>Entro, pero el enlace de entrada
+  no cambia. He entrado y puedo navegar libremente</h4>
 
 <p class="answer">Asegúrese de que la dirección (URL) de su opción
   $CFG->wwwroot es exactamente la misma que la que realmente está usando
   para acceder a Moodle.</p>
 <p class="answer">&nbsp;</p>
 
-<h3><a name="resource1"></a>Cuando trato de añadir un
-  recurso recibo mensajes de error</h3>
+<h4 class="question"><a name="resource1"></a>Cuando trato de añadir un
+  recurso recibo mensajes de error</h4>
 
 <p class="answer">Suponiendo que está usando Apache, entonces es bastante
   probable que la opción $CFG->wwwroot en su config.php sea diferente de
@@ -309,8 +397,8 @@
 	administración.</p>
 <p class="answer">&nbsp;</p>
 
-<h3><a name="noadmin"></a>Durante el proceso de configuración
-  inicial, &iexcl;nunca se me pide que cree una cuenta de administrador!</h3>
+<h4 class="question"><a name="noadmin"></a>Durante el proceso de configuración
+  inicial, &iexcl;nunca se me pide que cree una cuenta de administrador!</h4>
 
 <p class="answer">Es un fallo conocido en las versiones de Moodle hasta la 1.0.9,
   está arreglado en el código principal y la versión 1.1.</p>
@@ -330,8 +418,8 @@
   nuevo todo desde cero.</p>
 <p class="answer">&nbsp;</p>
 
-<h3><a name="nologin"></a>No hay forma de entrar --me quedo colgado
-  en la página de entrada</h3>
+<h4 class="question"><a name="nologin"></a>No hay forma de entrar --me quedo colgado
+  en la página de entrada</h4>
 
 <p class="answer">La causa más común de ésto es que su propio
   ordenador/computadora (no su servidor Moodle) tiene un contafuegos (firewall)
@@ -346,8 +434,8 @@
   bien configuradas en el servidor. Puede comprobarlo ejecutando el script http://suservidor/moodle/lib/session-test.php.</p>
 <p class="answer">&nbsp;</p>
 
-<h3><a name="backup"></a>&iquest;Cómo hago una copia de
-  seguridad de mi Moodle?</h3>
+<h4 class="question"><a name="backup"></a>&iquest;Cómo hago una copia de
+  seguridad de mi Moodle?</h4>
 
 <p class="answer">Hay dos cosas principales de las que necesitará hacer
   una copia: la base de datos y los archivos enviados. Los scripts de Moodle por
@@ -369,8 +457,8 @@
 <p class="answercode">&nbsp;</p>
 
 
-<h3><a name="locale"></a>&iquest;Por qué no muestra mi
-  Moodle la fecha y la hora correctamente?</h3>
+<h4 class="question"><a name="locale"></a>&iquest;Por qué no muestra mi
+  Moodle la fecha y la hora correctamente?</h4>
 
 <p class="answer">Cada idioma necesita un código de lenguage específico
   (llamado código local o &quot;locale code&quot;) para hacer que las fechas
@@ -386,30 +474,32 @@
   en la página Admin -&gt; Configuración -&gt; Configuración
   general, donde anulan a los correspondientes del idioma actualmente elegido.</p>
 <p class="answer">&nbsp;</p>
-<h3><a name="cron"></a>No se envían copias de los mensajes
-    de mis foros por correo electrónico</h3>
+<h4 class="question"><a name="cron"></a>No se envían copias de los mensajes
+  de mis foros por correo electrónico</h4>
 <p class="answer">Debe configurar &quot;cron&quot; correctamente si quiere que
   Moodle envíe automáticamente mensajes de correo electrónico
   de los foros, diarios, tareas, etc. Este mismo proceso también realiza
   varias tareas de limpieza tales como borrar usuarios antiguos sin confirmar,
   dar de baja a alumnos antiguos y otras tareas por el estilo.</p>
-<p class="answer">Básicamente, necesita configurar un proceso que regularmente ejecute el script http://susitio/admin/cron.php. Consulte <a href="./?file=install.html#cron">la
+<p class="answer">Básicamente, necesita configurar un proceso que regularmente
+  ejecute el script http://susitio/admin/cron.php. Consulte <a href="./?file=install.html#cron">la
   sección sobre &quot;cron&quot; en la Documentación de instalación</a>.</p>
-<p class="answer">Inténtalo con los valores por defecto en la página de variables de Moodle. Deja &quot;smtphost&quot; en blanco. Esto será lo correcto en la mayoría de las ocasiones.</p>
+<h2>&nbsp;</h2>
+<h2>&nbsp;</h2>
 
-<hr />
+<hr>
 
 <p align="center" class="normaltext"><a href='ma&#105&#108t&#111:ma%72%74in@%6d%6fo%64%6c%65.o%72g' title='mar&#116&#105n@&#109oo&#100&#108&#101&#46&#111&#114g'>Proponga
   una nueva FAQ</a> (&iexcl;incluya la respuesta!)</p>
 
-<hr />
+<hr>
 
 <p align="right"><strong><em>Gracias a John Eyre por ayudar a mantener esta FAQ.</em></strong></p>
 
-<p align="center"><font size="1"><a href="." target="_top">Documentación
+<p align="CENTER"><font size="1"><a href="." target="_top">Documentación
   de Moodle</a></font></p>
 
-<p align="center"><font size="1">Version: $Id: faq.html,v 1.6 2003/03/30 13:54:28
+<p align="CENTER"><font size="1">Version: $Id: faq.html,v 1.6 2003/03/30 13:54:28
 
   moodler Exp $</font></p>
 

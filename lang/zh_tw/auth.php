@@ -3,7 +3,7 @@
 
 
 $string['auth_dbdescription'] = "從外界資料庫檢查 帳號名稱與密碼是否相符.  若是一個新帳號資料庫中其他資料也會被拷貝到本系統.";
-$string['auth_dbextrafields'] = "選填資料.  你可以選擇將使用者帳號部分資料從<b>外界資料庫</b> 中擷取填為預設值. <br />若是不填, 將以本系統預設值為準.<br />無論如何使用者皆可以登入後修改.";
+$string['auth_dbextrafields'] = "選填資料.  你可以選擇將使用者帳號部分資料從<B>外界資料庫</B> 中擷取填為預設值. <P>若是不填, 將以本系統預設值為準.<P>無論如何使用者皆可以登入後修改.";
 $string['auth_dbfieldpass'] = "包含密碼的欄位名稱";
 $string['auth_dbfielduser'] = "包含帳號名稱的欄位名稱";
 $string['auth_dbhost'] = "資料庫所在電腦.";
@@ -12,7 +12,7 @@ $string['auth_dbpass'] = "密碼與帳號名稱相符合";
 $string['auth_dbpasstype'] = "Specify the format that the password field is using. MD5 encryption is useful for connecting to other common web applications like PostNuke";
 $string['auth_dbtable'] = "資料庫中資料表名稱";
 $string['auth_dbtitle'] = "使用外界資料庫";
-$string['auth_dbtype'] = "資料庫格式 (進一步說明請參見<a href=\"../lib/adodb/readme.htm#drivers\">ADOdb 說明文件</a>)";
+$string['auth_dbtype'] = "資料庫格式 (進一步說明請參見<A HREF=../lib/adodb/readme.htm#drivers>ADOdb 說明文件</A>)";
 $string['auth_dbuser'] = "可讀取資料庫的使用者名稱";
 $string['auth_emaildescription'] = "以電子郵件確認帳號是系統預設認證方式.  當使用者申請帳號時, 選擇帳號名稱與密碼, 系統將以電子郵件送出確認訊息. 申請者須閱讀電子郵件後按下內容內確認連結後啟動帳號使用權. 以上動作只要一次即可,之後可要帳號名稱與密碼相符便可登入.";
 $string['auth_emailtitle'] = "電子郵件確認";
@@ -33,7 +33,7 @@ $string['auth_ldapdescription'] = "This method provides authentication against a
                                   entry in its database. This module can read user attributes from LDAP and prefill 
                                   wanted fields in Moodle.  For following logins only the username and 
                                   password are checked.";
-$string['auth_ldapextrafields'] = "These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <b>LDAP fields</b> that you specify here. <br />If you leave these fields blank, then nothing will be transferred from LDAP and Moodle defaults will be used instead.<br />In either case, the user will be able to edit all of these fields after they log in.";
+$string['auth_ldapextrafields'] = "These fields are optional.  You can choose to pre-fill some Moodle user fields with information from the <B>LDAP fields</B> that you specify here. <P>If you leave these fields blank, then nothing will be transferred from LDAP and Moodle defaults will be used instead.<P>In either case, the user will be able to edit all of these fields after they log in.";
 $string['auth_ldaptitle'] = "Use an LDAP server";
 $string['auth_nntpdescription'] = "This method uses an NNTP server to check whether a given username and password is valid.";
 $string['auth_nntphost'] = "The NNTP server address. Use the IP number, not DNS name.";

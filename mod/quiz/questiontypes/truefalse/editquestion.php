@@ -1,4 +1,4 @@
-<?php // $Id$
+<?PHP // $Id$
 
     if (!empty($question->id)) {
         $options = get_record("quiz_truefalse", "question", "$question->id");
@@ -23,6 +23,6 @@
     }
 
     print_heading_with_help(get_string("editingtruefalse", "quiz"), "truefalse", "quiz");
-    require("$CFG->dirroot/mod/quiz/questiontypes/truefalse/truefalse.html");
+    require("truefalse.html");
 
 ?>

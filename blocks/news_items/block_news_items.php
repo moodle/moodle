@@ -1,9 +1,11 @@
 <?PHP //$Id$
 
-class block_news_items extends block_base {
-    function init() {
+class CourseBlock_news_items extends MoodleBlock {
+    function CourseBlock_news_items ($course) {
         $this->title = get_string('latestnews');
-        $this->version = 2005030800;
+        $this->content_type = BLOCK_TYPE_TEXT;
+        $this->course = $course;
+        $this->version = 2004052600;
     }
 
     function get_content() {
@@ -13,96 +15,28 @@ class block_news_items extends block_base {
             return $this->content;
         }
 
-        $this->content = new stdClass;
-        $this->content->text = '';
-        $this->content->footer = '';
-
-        if (empty($this->instance)) {
+        if (empty($this->course)) {
+            $this->content = '';
             return $this->content;
         }
 
+        require_once($CFG->dirroot.'/course/lib.php');
+        require_once($CFG->dirroot.'/mod/forum/lib.php');
 
-        $course = get_record('course', 'id', $this->instance->pageid);
+        $this->content = New object;
+        $this->content->text = '';
+        $this->content->footer = '';
 
-        if ($course->newsitems) {   // Create a nice listing of recent postings
-
-            require_once($CFG->dirroot.'/mod/forum/lib.php');   // We'll need this
-           
-            $text = '';
-
-            if (!$forum = forum_get_course_forum($course->id, 'news')) {
-                return $this->content;
-            }
-
-        /// First work out whether we can post to this group and if so, include a link
-
-            if (isteacheredit($course->id)) {     /// Teachers can always post
-                $visiblegroups = -1; 
-
-                $text .= '<div align="center" class="newlink"><a href="'.$CFG->wwwroot.'/mod/forum/post.php?forum='.$forum->id.'">'.
-                          get_string('addanewtopic', 'forum').'</a>...</div>';
-
-            } else {                              /// Check the group situation
-                $currentgroup = get_current_group($course->id);
-
-                if (forum_user_can_post_discussion($forum, $currentgroup)) {
-                    $text .= '<div align="center" class="newlink"><a href="'.$CFG->wwwroot.'/mod/forum/post.php?forum='.$forum->id.'">'.
-                              get_string('addanewtopic', 'forum').'</a>...</div>';
-                }
-
-                if (!$cm = get_coursemodule_from_instance('forum', $forum->id, $course->id)) {
-                    $this->content->text = $text;
-                    return $this->content;
-                }
-    
-                $groupmode = groupmode($course, $cm);
-    
-                /// Decides if current user is allowed to see ALL the current discussions or not
-    
-                if (!$currentgroup and ($groupmode != SEPARATEGROUPS) ) {
-                    $visiblegroups = -1;
-                } else {
-                    $visiblegroups = $currentgroup;
-                }
-            }
-
-        /// Get all the recent discussions we're allowed to see
-
-            if (! $discussions = forum_get_discussions($forum->id, 'p.modified DESC', 0, false, 
-                                                       $visiblegroups, $course->newsitems) ) {
-                $text .= '('.get_string('nonews', 'forum').')';
-                $this->content->text = $text;
-                return $this->content;
-            }
-
-        /// Actually create the listing now
-
-            $strftimerecent = get_string('strftimerecent');
-            $strmore = get_string('more', 'forum');
-
-            foreach ($discussions as $discussion) {
-
-                $discussion->subject = $discussion->name;
-
-                $discussion->subject = format_string($discussion->subject, true, $forum->course);
-
-                $text .= '<div class="post">'.
-                         '<div class="head">'.
-                         '<span class="date">'.userdate($discussion->modified, $strftimerecent).'</span><br />'.
-                         '<span class="name">'.fullname($discussion).'</span></div>'.
-                         '<div class="info">'.$discussion->subject.' '.
-                         '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->discussion.'">'.
-                         $strmore.'...</a></div>'.
-                         '</div>';
-            }
-
-            $this->content->text = $text;
-
-            $this->content->footer = '<a href="'.$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id.'">'.
-                                      get_string('oldertopics', 'forum').'</a> ...';
-
+        if ($this->course->newsitems) {
+            $news = forum_get_course_forum($this->course->id, 'news');
+            // Slightly hacky way to do it but...
+            ob_start();
+            echo '<font size="-2">';
+            forum_print_latest_discussions($news->id, $this->course->newsitems, "minimal", "", get_current_group($this->course->id));
+            echo '</font>';
+            $this->content->text = ob_get_contents();
+            ob_end_clean();
         }
-
         return $this->content;
     }
 }

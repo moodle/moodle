@@ -1,12 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
-<title>Moodle Docs: manual de estilo del c&oacute;digo</title>
-<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Moodle Docs: Coding Guidelines</title>
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
-<body>
+<body bgcolor="#FFFFFF">
 <h1>Manual de Estilo del C&oacute;digo</h1> 
 <p class="normaltext">Cualquier proyecto colaborativo necesita que la consistencia 
   y la estabilidad sean fuertes.</p>
@@ -53,23 +51,9 @@
     textos en los archivos &quot;lang/es&quot; files
     con palabras reducidas en ingl&eacute;s y su traducci&oacute;n completa al Espa&ntilde;ol y recup&eacute;ralas
     en tu c&oacute;digo utilizando las funciones  get_string() or print_string().</li>
-  <li class="spaced">Todos los ficheros de ayuda deben ser traducibles - crea
-    nuevos textos en el directorio &quot;en/help&quot; y ll&aacute;malos utilizando
-    la funci&oacute;n helpbutton().
-    <p>Si necesitas actualizar un fichero de ayuda:</p> 
-     <ul>
-      <li>para un peque&ntilde;o cambio, donde la traducci&oacute;n antigua del fichero
-        podr&iacute;a tener todav&iacute;a sentido, est&aacute; permitido que hagas el cambio, pero
-        deber&iacute;as notific&aacute;rselo a  translation@moodle.org</li>
-      <li>para un cambio importante tendr&aacute;s que crear un nuevo fichero a&ntilde;adiendole
-        en el nombre un numero incrementado 
-        (p.ej. filename2.html)
-        para que los traductores puedan ver facilmente que se trata de una nueva
-        versi&oacute;n del archivo. Obviamente el nuevo c&oacute;digo y los &iacute;ndices de las
-        p&aacute;ginas de ayuda deben ser modificados para apuntar a las versiones m&aacute;s
-        recientes.</li>
-    </ul>
-  </li>
+  <li class="spaced">Todos los archivos de ayuda deber&iacute;an ser traducibles - crea
+    nuevos textos en el directorio &quot;es/help&quot; y ll&aacute;malos utilizando
+    la funci&oacute;n helpbutton().</li>
   <li class="spaced">La informaci&oacute;n que llega desde el navegador (enviada 
     con los m&eacute;todos GET o POST) autom&aacute;ticamente tiene las &quot;magic_quotes&quot; 
     aplicadas (sin importar la configuraci&oacute;n de PHP) por lo que puedes 
@@ -77,10 +61,6 @@
     desde los archivos, o desde la base de datos) debe ser escapada con la funci&oacute;n 
     <font color="#339900">addslashes()</font> antes de insertarla en la base de 
     datos.</li>
-	  <li class="spaced">IMPORTANTE: Todos los textos dentro de Moodle, especialmente
-	    aqueloos que han sido introducidos por los usuarios, deben ser mostrados
-	    utilizando la funci&oacute;n format_text(). Esto asegura que el texto es filtrado
-	    y limpiado correctamente.</li>
 </ol>
 <p>&nbsp;</p>
 <h2>Estilo del C&oacute;digo</h2>
@@ -100,15 +80,15 @@
     juntas, pero procura mantenerlas tan breves como sea posible. Utiliza nombres
     en plural para las matrices de objetos.
     <p class="examplecode"><font color="#006600">BIEN</font><font color="#006600">:
-        $quiz<br />
-      BIEN</font><font color="#006600"></font><font color="#006600">: $errorstring<br />
+        $quiz<br>
+      BIEN</font><font color="#006600"></font><font color="#006600">: $errorstring<br>
       BIEN</font><font color="#006600"></font><font color="#006600">: $assignments
-      (for an array of objects)<br />
+      (for an array of objects)<br>
       BIEN</font><font color="#006600"></font><font color="#006600">: $i (but
-      only in little loops)<br />
+      only in little loops)<br>
       <br />
-      MAL: $Quiz <br />
-      MAL: $aReallyLongVariableNameWithoutAGoodReason<br />
+      MAL: $Quiz <br>
+      MAL: $aReallyLongVariableNameWithoutAGoodReason<br>
     MAL: $error_string</font></p>
   </li>
   <li class="spaced"><strong>Las constantes</strong> tienen que definirse siempre
@@ -123,7 +103,7 @@
     m&oacute;dulos. Las palabras deber&iacute;an separarse por guiones bajos. 
     Los par&aacute;mentros, si es posible, tendr&aacute;n valores por defecto. 
     F&iacute;jate en que no haya espacio entre el nombre de la funci&oacute;n 
-    y lo siguiente (par&eacute;ntesis).<br />
+    y lo siguiente (par&eacute;ntesis).<br>
     <p class="examplecode"> <font color="#007700">function </font><font color="#0000BB">forum_set_display_mode</font><font color="#007700">(</font><font color="#0000BB">$mode</font><font color="#007700">=</font><font color="#0000BB">0</font><font color="#007700">) 
       {<br />
       &nbsp;&nbsp;&nbsp;&nbsp;global </font><font color="#0000BB">$USER</font><font color="#007700">, 
@@ -154,11 +134,11 @@
       }</font></p>
   </li>
   <li class="spaced"><strong>Las cadenas </strong> tienen que ser definidas utilizando
-    comillas simples siempre que sea posible, para obtener un mejor rendimiento.<br />
+    comillas simples siempre que sea posible, para obtener un mejor rendimiento.<br>
     <p class="examplecode"> <font color="#006600">$var = 'some text without any 
-      variables';<br />
-      $var = &quot;with special characters like a new line \n&quot;;<br />
-      $var = 'a very, very long string with a '.$single.' variable in it';<br />
+      variables';<br>
+      $var = &quot;with special characters like a new line \n&quot;;<br>
+      $var = 'a very, very long string with a '.$single.' variable in it';<br>
       $var = &quot;some $text with $many variables $within it&quot;; </font></p>
   </li>
   <li class="spaced"><strong>Los comentarios</strong> utilizar&aacute;n dos o tres barras
@@ -179,37 +159,37 @@
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000BB">$rates 
       </font><font color="#007700">= </font><font color="#0000BB">get_records</font><font color="#007700">(</font><font color="#DD0000">"forum_ratings"</font><font color="#007700">, 
       </font><font color="#DD0000">"post"</font><font color="#007700">, </font><font color="#0000BB">$postid</font><font color="#007700">)) 
-      {<br />
+      {<br>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#FF8000">// 
       Process each rating in turn</font><font color="#007700"><br />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach 
       (</font><font color="#0000BB">$rates </font><font color="#007700">as </font><font color="#0000BB">$rate</font><font color="#007700">) 
-      {</font> <br />
+      {</font> <br>
       ....etc </p>
   </li>
   <li class="spaced"><strong>El espacio en blanco</strong> se puede utilizar
     con bastante libertad - no te preocupes por separar las cosas un poco para
     ganar en claridad. Generalmente, deber&iacute;a haber un espacio entre llaves y
-    l&iacute;neas normales y ninguno entre llaves y variables o funciones:<br />
+    l&iacute;neas normales y ninguno entre llaves y variables o funciones:<br>
     <p class="examplecode"> <font color="#007700">foreach (</font><font color="#0000BB">$objects 
       </font><font color="#007700">as </font><font color="#0000BB">$key </font><font color="#007700">=&gt;</font><font color="#0000BB"> 
-      $thing</font><font color="#007700">)</font><font color="#006600"> {<br />
+      $thing</font><font color="#007700">)</font><font color="#006600"> {<br>
       </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">process($thing);</font><font color="#006600"> 
-      <br />
-      } <br />
-      <br />
+      <br>
+      } <br>
+      <br>
       </font><font color="#007700">if (</font><font color="#0000BB">$x </font><font color="#007700">== 
       </font><font color="#0000BB">$y</font><font color="#007700">)</font><font color="#006600"> 
-      {<br />
+      {<br>
       </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a 
-      </font><font color="#007700">= </font><font color="#0000BB">$b</font><font color="#007700">;</font><font color="#006600"><br />
+      </font><font color="#007700">= </font><font color="#0000BB">$b</font><font color="#007700">;</font><font color="#006600"><br>
       } else if (</font><font color="#0000BB">$x </font><font color="#007700">== 
-      </font><font color="#0000BB">$z</font><font color="#006600">) {<br />
+      </font><font color="#0000BB">$z</font><font color="#006600">) {<br>
       </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a 
-      </font><font color="#007700">= </font><font color="#0000BB">$c</font><font color="#007700">;</font><font color="#006600"><br />
-      } else {<br />
+      </font><font color="#007700">= </font><font color="#0000BB">$c</font><font color="#007700">;</font><font color="#006600"><br>
+      } else {<br>
       </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a 
-      </font><font color="#007700">= </font><font color="#0000BB">$d</font><font color="#007700">;</font><font color="#006600"><br />
+      </font><font color="#007700">= </font><font color="#0000BB">$d</font><font color="#007700">;</font><font color="#006600"><br>
       } </font></p>
   </li>
 </ol>
@@ -246,8 +226,8 @@
     la funci&oacute;n <strong>time</strong>()
     de PHP.</li>
 </ol>
-<hr />
-<p align="center"><font size="1"><a href="." target="_top">Documentaci&oacute;n de Moodle</a></font></p>
-<p align="center"><font size="1">Version: $Id$</font></p>
+<hr>
+<p align="CENTER"><font size="1"><a href="." target="_top">Documentaci&oacute;n de Moodle</a></font></p>
+<p align="CENTER"><font size="1">Version: $Id$</font></p>
 </body>
 </html>

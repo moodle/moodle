@@ -1,4 +1,4 @@
-<?php
+<?PHP
 /// This is a tiny standalone diagnostic script to test that sessions 
 /// are working correctly on a given server.  
 ///
@@ -9,14 +9,14 @@
 session_start();
 
 if (!isset($_SESSION["test"])) {   // First time you call it.
-    echo "<p>No session found - starting a session now.";
+    echo "<P>No session found - starting a session now.";
     $_SESSION["test"] = "welcome back!";
 
 } else {                           // Subsequent times you call it
-    echo "<p>Session found - ".$_SESSION["test"];
-    echo "</p><p>Sessions are working correctly</p>";
+    echo "<P>Session found - ".$_SESSION["test"];
+    echo "<P>Sessions are working correctly</P>";
 }
 
-echo "<p><a href=\"session-test.php?random=".rand(1,10000)."\">Reload this page</a></p>";
+echo "<P><A HREF=\"session-test.php?random=".rand(1,10000)."\">Reload this page</A></P>";
 
 ?>

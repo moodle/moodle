@@ -7,9 +7,7 @@ CREATE TABLE `prefix_workshop` (
   `course` int(10) unsigned NOT NULL default '0',
   `name` varchar(255) NOT NULL default '',
   `description` text NOT NULL,
-  `wtype` tinyint(3) unsigned NOT NULL default '0',
   `nelements` tinyint(3) unsigned NOT NULL default '1',
-  `nattachments` tinyint(3) unsigned NOT NULL default '0',
   `phase` tinyint(2) unsigned NOT NULL default '0',
   `format` tinyint(2) unsigned NOT NULL default '0',
   `gradingstrategy` tinyint(2) unsigned NOT NULL default '1',
@@ -19,24 +17,23 @@ CREATE TABLE `prefix_workshop` (
   `anonymous` tinyint(2) unsigned NOT NULL default '0',
   `includeself` tinyint(2) unsigned NOT NULL default '0',
   `maxbytes` int(10) unsigned NOT NULL default '100000',
-  `submissionstart` int(10) unsigned NOT NULL default '0',
-  `assessmentstart` int(10) unsigned NOT NULL default '0',
-  `submissionend` int(10) unsigned NOT NULL default '0',
-  `assessmentend` int(10) unsigned NOT NULL default '0',
-  `releasegrades` int(10) unsigned NOT NULL default '0',
-  `grade` tinyint(3) NOT NULL default '0',
-  `gradinggrade` tinyint(3) NOT NULL default '0',
+  `deadline` int(10) unsigned NOT NULL default '0',
+  `grade` int(10) NOT NULL default '0',
   `ntassessments` tinyint(3) unsigned NOT NULL default '0',
-  `assessmentcomps` tinyint(3) unsigned NOT NULL default '2',
   `nsassessments` tinyint(3) unsigned NOT NULL default '0',
   `overallocation` tinyint(3) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
-  `teacherweight` tinyint(3) unsigned NOT NULL default '1',
+  `mergegrades` tinyint(3) unsigned NOT NULL default '0',
+  `teacherweight` tinyint(3) unsigned NOT NULL default '5',
+  `peerweight` tinyint(3) unsigned NOT NULL default '5',
+  `includeteachersgrade` tinyint(3) unsigned NOT NULL default '0',
+  `biasweight` tinyint(3) unsigned NOT NULL default '5',
+  `reliabilityweight` tinyint(3) unsigned NOT NULL default '5',
+  `gradingweight` tinyint(3) unsigned NOT NULL default '5',
+  `teacherloading` tinyint(3) unsigned NOT NULL default '5',
+  `assessmentstodrop` tinyint(3) unsigned NOT NULL default '0',
   `showleaguetable` tinyint(3) unsigned NOT NULL default '0',
-  `usepassword` tinyint(3) unsigned NOT NULL default '0',
-  `password` varchar(32) NOT NULL default '',
-  PRIMARY KEY  (`id`),
-  KEY `course` (`course`)
+  PRIMARY KEY  (`id`)
 ) COMMENT='Defines workshop';
 # --------------------------------------------------------
 
@@ -51,15 +48,14 @@ CREATE TABLE `prefix_workshop_submissions` (
   `title` varchar(100) NOT NULL default '',
   `timecreated` int(10) unsigned NOT NULL default '0',
   `mailed` tinyint(2) unsigned NOT NULL default '0',
-  `description` text NOT NULL,
+  `teachergrade` int(3) unsigned NOT NULL default '0',
+  `peergrade` int(3) unsigned NOT NULL default '0',
+  `biasgrade` int(3) unsigned NOT NULL default '0',
+  `reliabilitygrade` int(3) unsigned NOT NULL default '0',
   `gradinggrade` int(3) unsigned NOT NULL default '0',
   `finalgrade` int(3) unsigned NOT NULL default '0',
-  `late` int(3) unsigned NOT NULL default '0',
-  `nassessments` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  INDEX `userid` (`userid`),
-  INDEX `workshopid` (`workshopid`),
-  INDEX `mailed` (`mailed`)
+  INDEX `title` (`title`) 
 ) COMMENT='Info about submitted work from teacher and students';
 # --------------------------------------------------------
 
@@ -82,11 +78,7 @@ CREATE TABLE `prefix_workshop_assessments` (
   `donotuse` tinyint(3) unsigned NOT NULL default '0',
   `generalcomment` text NOT NULL,
   `teachercomment` text NOT NULL,
-  PRIMARY KEY  (`id`),
-  INDEX (`submissionid`),
-  INDEX (`userid`),
-  INDEX `workshopid` (`workshopid`),
-  INDEX `mailed` (`mailed`)
+  PRIMARY KEY  (`id`)
   ) COMMENT='Info about assessments by teacher and students';
 # --------------------------------------------------------
 
@@ -101,11 +93,8 @@ CREATE TABLE `prefix_workshop_elements` (
   `description` text NOT NULL,
   `scale` tinyint(3) unsigned NOT NULL default '0',
   `maxscore` tinyint(3) unsigned NOT NULL default '1',
-  `weight` tinyint(3) unsigned NOT NULL default '11',
-  `stddev` float NOT NULL default '0.0',
-  `totalassessments` int(10) NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  KEY `workshopid` (`workshopid`)
+  `weight` float NOT NULL default '1.0',
+  PRIMARY KEY  (`id`)
 ) COMMENT='Info about marking scheme of assignment';
 # --------------------------------------------------------
 
@@ -135,24 +124,8 @@ CREATE TABLE `prefix_workshop_grades` (
   `elementno` int(10) unsigned NOT NULL default '0',
   `feedback` text NOT NULL default '',
   `grade` tinyint(3) NOT NULL default '0',
-  PRIMARY KEY  (`id`),
-  INDEX (`assessmentid`),
-  INDEX `workshopid` (`workshopid`)
-) COMMENT='Info about individual grades given to each element';
-# --------------------------------------------------------
-
-
-#
-# Table structure for table `workshop_stockcomments`
-#
-
-CREATE TABLE `prefix_workshop_stockcomments` (
-  `id` int(10) unsigned NOT NULL auto_increment,
-  `workshopid` int(10) unsigned NOT NULL default '0', 
-  `elementno` int(10) unsigned NOT NULL default '0',
-  `comments` text NOT NULL default '',
   PRIMARY KEY  (`id`)
-) COMMENT='Info about the teacher comment bank';
+) COMMENT='Info about individual grades given to each element';
 # --------------------------------------------------------
 
 #
@@ -167,11 +140,7 @@ CREATE TABLE `prefix_workshop_comments` (
   `timecreated` int(10) unsigned NOT NULL default '0',
   `mailed` tinyint(2) unsigned NOT NULL default '0',
   `comments` text NOT NULL,
-  PRIMARY KEY  (`id`),
-  KEY `workshopid` (`workshopid`),
-  KEY `assessmentid` (`assessmentid`),
-  KEY `userid` (`userid`),
-  KEY `mailed` (`mailed`)
+  PRIMARY KEY  (`id`)
 ) COMMENT='Defines comments';
 # --------------------------------------------------------
         
@@ -185,3 +154,4 @@ INSERT INTO `prefix_log_display` VALUES ('workshop', 'set up', 'workshop', 'name
 INSERT INTO `prefix_log_display` VALUES ('workshop', 'submissions', 'workshop', 'name');
 INSERT INTO `prefix_log_display` VALUES ('workshop', 'view', 'workshop', 'name');
 INSERT INTO `prefix_log_display` VALUES ('workshop', 'update', 'workshop', 'name');
+
