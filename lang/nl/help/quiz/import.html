@@ -1,0 +1,69 @@
+<P ALIGN=CENTER><B>Importeer vragen uit een bestand</B></P>
+
+<P>
+Met dit formulier kun je vragen importeren uit tekstbestanden op je eigen computer door ze te uploaden via een 
+formulier
+<P>
+Een aantal bestandsformaten worden ondersteund:
+
+
+<P><B>Missing Word formaat</B></P>
+<UL>
+<P>
+Elk antwoord wordt gescheiden door een tilde (~). Het juiste antwoord wordt voorafgegaan door een gelijkheidsteken (=).
+Tussen de vragen moet je één vrije regel laten.
+Enkele voorbeelden:<br><br>
+<u>Multiple choice</u>
+<BLOCKQUOTE>
+Zodra we als kind onze lichaamsdelen beginnen te verkennen, bestuderen we 
+{=anatomie ~wetenschappen ~reflexen ~experimenten} en in feite blijven we studenten voor de rest van ons
+leven.
+</BLOCKQUOTE>
+<br>
+<u>Kort Antwoord</u>
+<BLOCKQUOTE>
+Zodra we als kind onze lichaamsdelen beginnen te verkennen, bestuderen we 
+{=anatomie} en in feite blijven we studenten voor de rest van ons
+leven.
+</BLOCKQUOTE>
+<u>Waar/Onwaar</u>
+<BLOCKQUOTE>
+Zodra we als kind onze lichaamsdelen beginnen te verkennen, bestuderen we 
+anatomie {=waar ~onwaar} en in feite blijven we studenten voor de rest van ons
+leven.
+</BLOCKQUOTE>
+<P>Meer informatie: <? helpbutton("formatmissingword", "", "quiz") ?></P>
+</UL>
+
+
+<P><B>AON</B></P>
+<UL>
+<P>Dit is hetzelfde als het 'Missing Word' formaat, behalve dat alle 'korte antwoord' vragen per vier geconverteerd
+zullen worden in koppel vragen</P>
+<p>Het formaat is genoemd naar een organisatie die de ontwikkeling van testen gesponsord heeft.</p>
+</UL>
+
+
+<P><B>Blackboard</B></P>
+<UL>
+<P>Met deze module kun je vragen importeren die in het exportformaat van Blackboard gemaakt zijn. Het steunt
+op xml-functies die door PHP gecompileerd worden.</P>
+
+<P>Meer informatie: <? helpbutton("formatblackboard", "", "quiz") ?></P>
+</UL>
+
+<P><B>Aangepast</B></P>
+<UL>
+<P>Als je je eigen opmaak hebt die geïmporteerd moet worden, dan kan je dit bouwen door mod/quiz/format/custom.php te bewerken.
+
+
+<P>
+De hoeveelheid niewe code die je moet maken is klein - juist genoeg om een stukje tekst om te zetten in een vraag.
+
+
+<P>Meer informatie: <? helpbutton("formatcustom", "", "quiz") ?></P>
+</UL>
+
+
+<P>
+Er zijn nog meer formaten onderweg, zoals WebCT, IMS, QTI en gelijk welk formaat dat uitgewerkt wordt door Moodle-gebruikers!</p>
