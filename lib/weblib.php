@@ -814,7 +814,7 @@ function print_table($table) {
     echo "<TABLE WIDTH=100% BORDER=0 valign=top align=center ";
     echo " cellpadding=\"$table->cellpadding\" cellspacing=\"$table->cellspacing\" class=\"generaltable\">\n";
 
-    if ($table->head) {
+    if (!empty($table->head)) {
         echo "<TR>";
         foreach ($table->head as $key => $heading) {
             if (!isset($size[$key])) {
