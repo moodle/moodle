@@ -12,7 +12,7 @@ class block_quiz_results extends block_base {
     }
 
     function applicable_formats() {
-        return array('all' => true);
+        return array('course' => true, 'mod-quiz' => true);
     }
 
     function get_content() {
