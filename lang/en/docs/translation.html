@@ -66,10 +66,19 @@ an underscore and a meaningful two letter extension (e.g. <span style="font-styl
 
 
 
-<p style="margin-left: 40px;">Next, copy the moodle.php from another
+<p style="margin-left: 40px;">Next, create in your new language folder the file &quot;moodle.php&quot;, containing the folowing lines:<br /><br />
+<code>
+&lt?PHP <br />
+$string['thischarset'] = 'iso-8859-1';<br />
+$string['thisdirection'] = 'ltr';<br />
+$string['thislanguage'] = 'new language pack';<br />
+?>
+</code>
+<br /><br />
+or copy the moodle.php from another
 language into your new directory.&nbsp; The one from the "en" folder is
 usually best but it doesn't really matter as you are going to rewrite
-it anyway.<br />
+it anyway. Creating moodle.php yourself has the advantage of starting with a completely clean and empty language pack.<br />
 </p>
 
 

@@ -57,7 +57,19 @@ Deze bestanden bevatten korte uitdrukkingen, "<span style="font-style: italic;">
 
 
 
-<p style="margin-left: 40px;">Kopieer vervolgens moodle.php van een andere taal in je nieuwe map.&nbsp; Die van de  "en" map is gewoonlijk de beste keuze, maar het heeft eigenlijk weinig belang vermits je het toch gaat herschrijven.<br />
+
+<p style="margin-left: 40px;">Maak dan in je nieuwe map het een bestand &quot;moodle.php&quot;, aan en zet er volgende lijnen in:<br /><br />
+<code>
+&lt?PHP <br />
+$string['thischarset'] = 'iso-8859-1';<br />
+$string['thisdirection'] = 'ltr';<br />
+$string['thislanguage'] = 'new language pack';<br />
+?>
+</code>
+<br /><br />
+
+
+of kopieer moodle.php van een andere taal in je nieuwe map. Die van de  "en" map is gewoonlijk de beste keuze, maar het heeft eigenlijk weinig belang vermits je het toch gaat herschrijven. Zelf het bestand maken heeft het voordeel dat je met een nieuw, leeg taalpakket begint.<br />
 </p>
 
 
