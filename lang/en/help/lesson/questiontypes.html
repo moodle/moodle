@@ -54,16 +54,23 @@
     </p>
 
 <p>By default the comparisons ignore the case of the text. There is an option 
-to make the comparisons case sensitive.</p>
+    to make the comparisons case sensitive.</p>
 
 <p>The asterix (*) character can be used in answers as a &quot;wild card&quot; 
     character. It stands for any number of characters (including no charcters 
     at all). For example, the answer &quot;Long*&quot; will match 
     &quot;longer&quot;, &quot;longest&quot; and &quot;long&quot;. If one of 
     the answers is just &quot;*&quot; (a single *) this anwser will match 
-    anything, it is normally used as the last &quot;catch-all&quot; answer. 
-    (If an asterix (*) is actually needed in an answer, it should be entered as 
-    \*, backslash asterix)<p></li>
+    anything, it is normally used as the last &quot;catch-all&quot; answer. The
+    matching process goes through the answers in the order they appear on the 
+    screen. Once a match is found the process stops and the corresponding 
+    result (and response, if present) is returned. So, if for example the 
+    answers are Longest, Long* and * (in that order), the input 
+    &quot;longer&quot; will match the second answer and, in this case, the 
+    third answer, although a match, is ignored.</p>
+
+<p> If an asterix (*) is actually needed in an answer, it should be entered as 
+    \*, backslash asterix.<p></li>
 
 <li><b>True/False</b> The answer to this type of question only has two options,
     true or false. The student is prompted to choose which is the correct 
