@@ -203,6 +203,10 @@ function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
 /// Given some normal text, this function will break up any
 /// long words to a given size, by inserting the given character
 
+    if (in_array(current_language(), array('ja', 'zh_cn', 'zh_tw', 'zh_tw_utf8'))) {  // Multibyte languages
+        return $string;
+    }
+
     $output = '';
     $length = strlen($string);
     $wordlength = 0;
