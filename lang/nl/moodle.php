@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 unstable development (2004090600)
+      // moodle.php - created with Moodle 1.5 unstable development (2004091700)
 
 
 $string['action'] = 'Actie';
@@ -143,6 +143,14 @@ $string['choosereportfilter'] = 'Kies een filter voor het rapport';
 $string['choosetheme'] = 'Kies een thema';
 $string['chooseuser'] = 'Kies een gebruiker ';
 $string['city'] = 'Plaats';
+$string['clambroken'] = 'Je beheerder heeft viruscontrole voor geüploade bestanden ingeschakeld, maar heeft iets fout geconfigureerd.<br />Je bestand is NIET geüpload. Er is een e-mail naar je beheerder gestuurd om hem te verwittigen, zodat hij het kan herstellen.<br />Misschien moet je later nog eens proberen dit bestand te uploaden.';
+$string['clamdeletedfile'] = 'Dit bestand is verwijderd';
+$string['clamdeletedfilefailed'] = 'Dit bestand kon niet verwijderd worden';
+$string['clamemailsubject'] = '$a:: Clam AV-melding';
+$string['clamfailed'] = 'Clam AV is vastgelopen. De foutmelding was $a. Hier is de melding van Clam: ';
+$string['clamlost'] = 'Moodle is geconfigureerd op Clam te lopen voor bestandsupload, maar het pad naar Clam AV, $a, was niet juist.';
+$string['clamlostandactinglikevirus'] = 'Moodle is zo geconfigureerd dat, wanneer Clam niet loopt, alle bestanden als virussen behandeld worden. Dit heeft natuurlijk als gevolg dat geen enkele leerling bestanden kan uploaden tot je dit hersteld hebt';
+$string['clammovedfilebasic'] = 'Het bestand is in de quarantainemap gezet';
 $string['cleaningtempdata'] = 'Schoon de tijdelijke data op';
 $string['clicktochange'] = 'Klik om te wijzigen';
 $string['closewindow'] = 'Sluit dit venster';
@@ -725,7 +733,7 @@ $string['noteuserschangednonetocourse'] = 'Let op: de gebruikers van een vak moe
 $string['nothingnew'] = 'Niets nieuws sinds je laatste log in';
 $string['noticenewerbackup'] = 'Dit backupbestand is gemaakt met Moodle $a->backuprelease ($a->backupversion) en is nieuwer dan je geïnstalleerde Moodle $a->serverrelease ($a->serverversion). Dit kan wat problemen veroorzaken omdat terugwaartse compatibiliteit van backupbestanden niet gegarandeerd kan worden.';
 $string['notifyloginfailuresmessage'] = '$a->time, IP-adres: $a->ip, Gebruiker: $a->info';
-$string['notifyloginfailuresmessageend'] = 'Je kunt deze logs bekijken op $a/course/log.php?id=1&amp;chooselog=1&amp;modid=site_errors.';
+$string['notifyloginfailuresmessageend'] = 'Je kunt deze logs bekijken op $a/course/log.php?id=1&chooselog=1&modid=site_errors.';
 $string['notifyloginfailuresmessagestart'] = 'Hier is een lijst van mislukte aanmeldingen op $a sinds je laatste notificatie';
 $string['notifyloginfailuressubject'] = '$a::Notificatie van mislukte aanmeldingen';
 $string['notincluded'] = 'Niet ingevoegd';
