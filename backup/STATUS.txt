@@ -85,13 +85,13 @@ Backup Details:
                  + course data..................................NO EXISTS
                  + user data....................................NO EXISTS
                  + files........................................NO EXISTS
-              x user files to temp..............................IN PROGRESS
-              x course files to temp............................IN PROGRESS
-   - Compress the backup (zip)..................................NO EXISTS
-      - XML File................................................NO EXISTS
-      - moddata files...........................................NO EXISTS
-      - Course Files............................................NO EXISTS
-      - User Files..............................................NO EXISTS
+              x user files to temp..............................DONE
+              x course files to temp............................DONE
+   - Compress the backup (zip)..................................IN PROGRESS
+      - XML File................................................IN PROGRESS
+      - moddata files...........................................IN PROGRESS
+      - Course Files............................................IN PROGRESS
+      - User Files..............................................IN PROGRESS
    - Copy finished file to browseable dir.......................NO EXISTS
    - Delete old entries at backup end...........................NO EXISTS
       - From database...........................................NO EXISTS      
