@@ -8,7 +8,7 @@ class block_quiz_results extends block_base {
     function init() {
         $this->title = get_string('formaltitle', 'block_quiz_results');
         $this->content_type = BLOCK_TYPE_TEXT;
-        $this->version = 2005012500;
+        $this->version = 2005012600;
     }
 
     function get_content() {
@@ -39,12 +39,14 @@ class block_quiz_results extends block_base {
         }
 
         if(empty($quizid)) {
+            $this->content->text = get_string('error_emptyquizid', 'block_quiz_results');
             return $this->content;
         }
 
         // Get the quiz record
         $quiz = get_record('quiz', 'id', $quizid);
         if(empty($quiz)) {
+            $this->content->text = get_string('error_emptyquizrecord', 'block_quiz_results');
             return $this->content;
         }
 
@@ -53,20 +55,147 @@ class block_quiz_results extends block_base {
 
         if(empty($grades)) {
             // No grades, sorry
-            // TODO
+            // The block will hide itself in this case
         }
 
-        $numbest  = empty($this->config->showbest) ? 0 : min($this->config->showbest, count($grades));
-        $numworst = empty($this->config->showworst) ? 0 : min($this->config->showworst, count($grades) - $numbest);
-        $best  = array();
-        $worst = array();
+        $groupmode = NOGROUPS;
+        $best      = array();
+        $worst     = array();
 
         if(!empty($this->config->usegroups)) {
-            // Group mode activated, what about it?
-            // TODO
+            // The block was configured to operate in group mode
+            $course = get_record_select('course', 'id = '.$courseid, 'groupmode, groupmodeforce');
+            if($course->groupmodeforce) {
+                $groupmode = $course->groupmode;
+            }
+            else {
+                $module = get_record_sql('SELECT cm.groupmode FROM '.$CFG->prefix.'modules m LEFT JOIN '.$CFG->prefix.'course_modules cm ON m.id = cm.module WHERE m.name = \'quiz\' AND cm.instance = '.$quizid);
+                $groupmode = $module->groupmode;
+            }
+            // The actual groupmode for the quiz is now known to be $groupmode
         }
+
+        if($groupmode != NOGROUPS) {
+            // Group mode
+
+            // Pull out the course groups
+            $groups = get_groups($courseid);
+
+            if(empty($groups)) {
+                // No groups exist, sorry
+                $this->content->text = get_string('error_nogroupsexist', 'block_quiz_results');
+                return $this->content;
+            }
+
+            // Find out all the userids which have a submitted grade
+            $userids = array();
+            foreach($grades as $grade) {
+                $userids[] = $grade->userid;
+            }
+
+            // Now find which groups these users belong in
+            $groupofuser = get_records_sql(
+            'SELECT m.userid, m.groupid, g.name FROM '.$CFG->prefix.'groups g LEFT JOIN '.$CFG->prefix.'groups_members m ON g.id = m.groupid '.
+            'WHERE g.courseid = '.$courseid.' AND m.userid IN ('.implode(',', $userids).')'
+            );
+
+            $groupgrades = array();
+
+            // OK... now, iterate the grades again and sum them up for each group
+            foreach($grades as $grade) {
+                if(isset($groupofuser[$grade->userid])) {
+                    // Count this result only if the user is in a group
+                    $groupid = $groupofuser[$grade->userid]->groupid;
+                    if(!isset($groupgrades[$groupid])) {
+                        $groupgrades[$groupid] = array('sum' => $grade->grade, 'number' => 1, 'group' => $groupofuser[$grade->userid]->name);
+                    }
+                    else {
+                        $groupgrades[$groupid]['sum'] += $grade->grade;
+                        ++$groupgrades[$groupid]['number'];
+                    }
+                }
+            }
+
+            // Sort groupgrades according to total grade, ascending
+            uasort($groupgrades, create_function('$a, $b', 'if($a["sum"] == $b["sum"]) return 0; return ($a["sum"] > $b["sum"] ? 1 : -1);'));
+
+            // How many groups do we have with graded member submissions to show?
+            $numbest  = empty($this->config->showbest) ? 0 : min($this->config->showbest, count($groupgrades));
+            $numworst = empty($this->config->showworst) ? 0 : min($this->config->showworst, count($groupgrades) - $numbest);
+
+            // Collect all the group results we are going to use in $best and $worst
+            $remaining = $numbest;
+            $groupgrade = end($groupgrades);
+            while($remaining--) {
+                $best[key($groupgrades)] = $groupgrade['sum'] / $groupgrade['number'];
+                $groupgrade = prev($groupgrades);
+            }
+
+            $remaining = $numworst;
+            $groupgrade = reset($groupgrades);
+            while($remaining--) {
+                $worst[key($groupgrades)] = $groupgrade['sum'] / $groupgrade['number'];
+                $groupgrade = next($groupgrades);
+            }
+
+            // Ready for output!
+            $gradeformat = intval(empty($this->config->gradeformat) ? GRADE_FORMAT_PCT : $this->config->gradeformat);
+
+            $this->content->text .= '<h1><a href="'.$CFG->wwwroot.'/mod/quiz/view.php?q='.$quizid.'">'.$quiz->name.'</a></h1>';
+
+            $rank = 0;
+            if(!empty($best)) {
+                $this->content->text .= '<h2>'.get_string('bestgroupgrades', 'block_quiz_results', $numbest).'</h2>';
+                $this->content->text .= '<table class="grades"><tbody>';
+                foreach($best as $groupid => $averagegrade) {
+                    $this->content->text .= '<tr><td width="10%">'.(++$rank).'.</td><td><a href="'.$CFG->wwwroot.'/course/group.php?group='.$groupid.'&amp;id='.$courseid.'">'.$groupgrades[$groupid]['group'].'</a></td><td width="10%">';
+                    switch($gradeformat) {
+                        case GRADE_FORMAT_FRA:
+                            $this->content->text .= ($averagegrade.'/'.$quiz->grade);
+                        break;
+                        case GRADE_FORMAT_ABS:
+                            $this->content->text .= $averagegrade;
+                        break;
+                        default:
+                        case GRADE_FORMAT_PCT:
+                            $this->content->text .= round(floatval($averagegrade) / floatval($quiz->grade) * 100).'%';
+                        break;
+                    }
+                    $this->content->text .= '</td></tr>';
+                }
+                $this->content->text .= '</tbody></table>';
+            }
+
+            $rank = 0;
+            if(!empty($worst)) {
+                $worst = array_reverse($worst, true);
+                $this->content->text .= '<h2>'.get_string('worstgroupgrades', 'block_quiz_results', $numworst).'</h2>';
+                $this->content->text .= '<table class="grades"><tbody>';
+                foreach($worst as $groupid => $averagegrade) {
+                    $this->content->text .= '<tr><td width="10%">'.(++$rank).'.</td><td><a href="'.$CFG->wwwroot.'/course/group.php?group='.$groupid.'&amp;id='.$courseid.'">'.$groupgrades[$groupid]['group'].'</a></td><td width="10%">';
+                    switch($gradeformat) {
+                        case GRADE_FORMAT_FRA:
+                            $this->content->text .= ($averagegrade.'/'.$quiz->grade);
+                        break;
+                        case GRADE_FORMAT_ABS:
+                            $this->content->text .= $averagegrade;
+                        break;
+                        default:
+                        case GRADE_FORMAT_PCT:
+                            $this->content->text .= round(floatval($averagegrade) / floatval($quiz->grade) * 100).'%';
+                        break;
+                    }
+                    $this->content->text .= '</td></tr>';
+                }
+                $this->content->text .= '</tbody></table>';
+            }
+        }
+
+
         else {
             // Single user mode
+            $numbest  = empty($this->config->showbest) ? 0 : min($this->config->showbest, count($grades));
+            $numworst = empty($this->config->showworst) ? 0 : min($this->config->showworst, count($grades) - $numbest);
 
             // Collect all the usernames we are going to need
             $remaining = $numbest;
@@ -113,7 +242,7 @@ class block_quiz_results extends block_base {
                         break;
                         default:
                         case GRADE_FORMAT_PCT:
-                            $this->content->text .= round(intval($grades[$gradeid]->grade) / intval($quiz->grade) * 100).'%';
+                            $this->content->text .= round(floatval($grades[$gradeid]->grade) / floatval($quiz->grade) * 100).'%';
                         break;
                     }
                     $this->content->text .= '</td></tr>';
@@ -137,7 +266,7 @@ class block_quiz_results extends block_base {
                         break;
                         default:
                         case GRADE_FORMAT_PCT:
-                            $this->content->text .= round(intval($grades[$gradeid]->grade) / intval($quiz->grade) * 100).'%';
+                            $this->content->text .= round(floatval($grades[$gradeid]->grade) / floatval($quiz->grade) * 100).'%';
                         break;
                     }
                     $this->content->text .= '</td></tr>';
