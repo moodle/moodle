@@ -16,7 +16,7 @@
 
         if (!empty($USER->id)) {             // Additional identity check
             if (!confirm_sesskey()) {
-                //error(get_string('confirmsesskeybad', 'error'));
+                error(get_string('confirmsesskeybad', 'error'));
             }
         }
 
