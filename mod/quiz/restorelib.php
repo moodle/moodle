@@ -168,20 +168,14 @@
             $question->image = backup_todb($que_info['#']['IMAGE']['0']['#']);
             $question->defaultgrade = backup_todb($que_info['#']['DEFAULTGRADE']['0']['#']);
             $question->qtype = backup_todb($que_info['#']['QTYPE']['0']['#']);
+            $question->stamp = backup_todb($que_info['#']['STAMP']['0']['#']);
+            $question->version = backup_todb($que_info['#']['VERSION']['0']['#']);
 
             //Check if the question exists
-            //by category,questiontext and qtype
-            //But do it only if the question type isn't RANDOM (4) or RANDOMSAMATCH (6), because this
-            //types can have duplicates in the fields I'm searching !!
-            //I think that some modifications should be done here !!
-            //Detected by scott dot elliott at mchsi dot com in Bug 84 
-            if ($question->qtype != 4 and $question->qtype != 6) {
-                $question_exists = get_record ("quiz_questions","category",$question->category,
-                                                                "questiontext",$question->questiontext,
-                                                                "qtype",$question->qtype);
-            } else {
-                $question_exists = false;
-            }
+            //by category,stamp and version
+            $question_exists = get_record ("quiz_questions","category",$question->category,
+                                                            "stamp",$question->stamp,
+                                                            "version",$question->version);
             //If the question exists, only record its id
             if ($question_exists) {
                 $newid = $question_exists->id;

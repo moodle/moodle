@@ -144,6 +144,8 @@
                 fwrite ($bf,full_tag("IMAGE",6,false,$question->image));
                 fwrite ($bf,full_tag("DEFAULTGRADE",6,false,$question->defaultgrade));
                 fwrite ($bf,full_tag("QTYPE",6,false,$question->qtype));
+                fwrite ($bf,full_tag("STAMP",6,false,$question->stamp));
+                fwrite ($bf,full_tag("VERSION",6,false,$question->version));
                 //Now, depending of the qtype, call one function or other
                 if ($question->qtype == "1") {
                     $status = quiz_backup_shortanswer($bf,$preferences,$question->id);
