@@ -478,6 +478,27 @@ function blocks_execute_action($page, &$pageblocks, $blockaction, $instanceorid)
     redirect($page->url_get_full());
 }
 
+// You can use this to get the blocks to respond to URL actions without much hassle
+function blocks_execute_url_action(&$PAGE, &$pageblocks) {
+    $blockaction = optional_param('blockaction');
+
+    if (empty($blockaction) || !confirm_sesskey()) {
+        return;
+    }
+
+    $instanceid  = optional_param('instanceid', 0, PARAM_INT);
+    $blockid     = optional_param('blockid',    0, PARAM_INT);
+    
+    if (!empty($blockid)) {
+        blocks_execute_action($PAGE, $pageblocks, strtolower($blockaction), $blockid);
+
+    }
+    else if (!empty($instanceid)) {
+        $instance = blocks_find_instance($instanceid, $pageblocks);
+        blocks_execute_action($PAGE, $pageblocks, strtolower($blockaction), $instance);
+    }
+}
+
 // This shouldn't be used externally at all, it's here for use by blocks_execute_action()
 // in order to reduce code repetition.
 function blocks_execute_repositioning(&$instance, $newpos, $newweight) {

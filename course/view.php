@@ -9,8 +9,6 @@
     $id          = optional_param('id', 0, PARAM_INT);
     $name        = optional_param('name');
     $blockaction = optional_param('blockaction');
-    $instanceid  = optional_param('instanceid', 0, PARAM_INT);
-    $blockid     = optional_param('blockid',    0, PARAM_INT);
 
     if (empty($id) && empty($name)) {
         error("Must specify course id or short name");
@@ -65,15 +63,8 @@
             set_section_visible($course->id, $show, '1');
         }
 
-        if (!empty($blockaction) && confirm_sesskey()) {
-            if (!empty($blockid)) {
-                blocks_execute_action($PAGE, $pageblocks, strtolower($blockaction), intval($blockid));
-
-            }
-            else if (!empty($instanceid)) {
-                $instance = blocks_find_instance($instanceid, $pageblocks);
-                blocks_execute_action($PAGE, $pageblocks, strtolower($blockaction), $instance);
-            }
+        if (!empty($blockaction)) {
+            blocks_execute_url_action($PAGE, $pageblocks);
             // This re-query could be eliminated by judicious programming in blocks_execute_action(),
             // but I 'm not sure if it's worth the complexity increase...
             $pageblocks = blocks_get_by_page($PAGE);
