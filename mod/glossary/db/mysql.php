@@ -104,6 +104,11 @@ function glossary_upgrade($oldversion) {
         execute_sql( "ALTER TABLE `{$CFG->prefix}glossary_entries` " .
                     "ADD `fullmatch`  TINYINT(2) UNSIGNED NOT NULL DEFAULT '1' AFTER `casesensitive` ");
     }
+
+    if ( $oldversion < 2003101800 ) {
+        execute_sql( "UPDATE `{$CFG->prefix}glossary`" .
+                    " SET displayformat = 5 WHERE displayformat = 1");
+    }
     return true;
 }
 

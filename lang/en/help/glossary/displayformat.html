@@ -1,10 +1,19 @@
 <P ALIGN=CENTER><B>Display format</B></P>
 
-<P>The system has three built-in formats to display entries. You can create your own format if you want.
-<p>The default view is quite simple. It looks like a conventional dictionary.
-<p>The second view shows the entry in a forum-like format, without the author's data.
-<p>And the third one shows the entry also in a forum-like format but with the author's data.
+<P>This setting specify the way the entries will be shown within the glossary. The system has two built-in formats: Default and continuous. 
+<ul>
+<il>The default view is simple. It looks like a conventional dictionary. No author. Attachment are shown as links.</il>
+<il>Continuous shows the entries one after other without any kind of separation but the editing icons.</il>
+</ul>
+<p>Also, there are three more display formats:
+<ul>
+<il>Full with Author: A forum-like display format showing author's data. Attachments are shown as links.</il>
+<il>Encyclopedia: Quite like Full with Author but shows the attached images inline.</il>
+<il>FAQ: A sort of FAQ. It automatically appends the words QUESTION and ANSWER in the concepto and definition respectivelly.</il>
+<il>Full without Author: A forum-like display format that does not show author's data. Attachments are shown as links.</il>
+</ul>
+
 <hr>
-<p>If you want to create your own format, you should create a .PHP file and give it a number as its name. See into mod/glossary/formats which should be the next number.
-<p>Then, create a funcion called <b>glossary_print_entry_by_format($course, $cm, $glossary, $entry)</b> and dump all your creativity.
-<p>The last stemp is to insert a new entry in every language pack you use called <b>displayformat[number]</b>, and give it a meaningful description.
+<p>If you want to create your own format, you should create a .PHP file and give it a number as its name. See into mod/glossary/formats which should be the next number. Note that numbers 0 and 1 are reserved.
+<p>Then, create a function called <b>glossary_print_entry_by_format($course, $cm, $glossary, $entry)</b> and dump all your creativity on it.
+<p>The last step is to insert a new entry in every language pack you use called <b>displayformat[number]</b>, and give it a short but meaningful description.

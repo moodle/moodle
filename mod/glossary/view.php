@@ -5,14 +5,17 @@
     require_once("lib.php");
     
     require_variable($id);           // Course Module ID
-    optional_variable($l);           // letter to look for
+    optional_variable($l,"");           // letter to look for
     optional_variable($eid);         // Entry ID
     optional_variable($search, "");  // search string
     optional_variable($includedefinition); // include definition in search function?
     
-    optional_variable($currentview); // browsing entries by categories?
+    optional_variable($currentview,""); // browsing entries by categories?
     optional_variable($cat);         // categoryID
-    
+
+    optional_variable($sortkey,"");  // Sorted view: CREATION or UPDATE
+    optional_variable($sortorder,"");  // it define the order of the sorting (ASC or DESC)
+
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
     } 
@@ -33,6 +36,17 @@
     
     add_to_log($course->id, "glossary", "view", "view.php?id=$cm->id", "$glossary->id");
     
+    if ( $sortorder ) {
+        $sortorder = strtolower($sortorder);
+        if ($sortorder != "asc" and $sortorder != "desc") {
+            $sortorder = "";
+        }
+    }
+    if ( $sortorder ) {
+        $l = "";
+        $search ="";
+    }
+
 	$search = trim(strip_tags($search));
     if ($search and !$entryid) {
         $l = "";
@@ -49,7 +63,7 @@
     } 
     
     $alphabet = explode("|", get_string("alphabet","glossary"));
-    if ($l == "" and $search == "" and ($eid == "" or $eid == 0)) {
+    if ($l == "" and $search == "" and $sortkey == "" and ($eid == "" or $eid == 0)) {
         $l = $alphabet[0];
     } elseif ($eid) {
         $l = "";
@@ -94,7 +108,7 @@
 
     if ( $glossary->intro ) {
 	    print_simple_box_start("center","70%");
-        echo '<p>';
+        echo '<p align="center">';
         echo $glossary->intro;
         echo '</p>';
         print_simple_box_end();
@@ -155,8 +169,8 @@
         $currentcategory = "";
 
     } else {
-        glossary_print_alphabet_menu($cm, $glossary, $l);
-        if ($l) {
+        glossary_print_alphabet_menu($cm, $glossary, $l, $sortkey, $sortorder);
+        if ($l or $sortkey) {
             $currentletter = "";
         } elseif ($search) {
             echo "<h3>$strsearch: $search</h3>";
@@ -177,12 +191,32 @@
                         {$CFG->prefix}glossary_categories gc
                     WHERE (ge.glossaryid = '$glossary->id' or ge.sourceglossaryid = '$glossary->id') AND
                         gec.entryid = ge.id AND
-                        gc.id = gec.categoryid
-                    ORDER BY gc.name, ge.concept";
+                        gc.id = gec.categoryid ";
+        if ( $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS ) {
+            $sql .= "ORDER BY gc.name, ge.timecreated";
+        } else {
+            $sql .= "ORDER BY gc.name, ge.concept";
+        }
         $allentries = get_records_sql($sql);
     } else { // looking for terms that begin with a specify letter or entries with no category associated
-        $ownentries = get_records("glossary_entries", "glossaryid", $glossary->id, "concept ASC");
-        $importedentries = get_records("glossary_entries", "sourceglossaryid", $glossary->id, "concept ASC");
+        if ( $sortkey == "CREATION" or $sortkey == "UPDATE" or $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS) {
+            if ( !$sortkey and $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS) {
+                $sortkey = "CREATION";
+                $sortorder = "asc";
+            } 
+            if ( !$sortorder ) {
+                $sortorder = "asc";
+            }
+            if ($sortkey == "CREATION") {
+                $orderby = "timecreated $sortorder";
+           } else {
+                $orderby = "timemodified $sortorder";
+           }
+        } else {
+            $orderby = "concept ASC";
+        }
+        $ownentries = get_records("glossary_entries", "glossaryid", $glossary->id, $orderby);
+        $importedentries = get_records("glossary_entries", "sourceglossaryid", $glossary->id, $orderby);
     
         if ($ownentries and $importedentries) {
             $allentries = array_merge($ownentries, $importedentries);
@@ -195,29 +229,32 @@
     } 
     
     if ($allentries) {
+        if ($glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS) {
+            echo "<table border=0 cellspacing=0 width=95% valign=top cellpadding=5><tr><td align=left bgcolor=\"#FFFFFF\">";
+        }
         $dumpeddefinitions = 0;
         foreach ($allentries as $entry) {
             $dumptoscreen = 0;
             $firstletter = strtoupper(substr(ltrim($entry->concept), 0, strlen($l)));
             if ($l) {
-                if ($l == "ALL" or $firstletter == $l) {
+                if ($l == "ALL" or $sortkey == "CREATION" or $sortkey == "UPDATE" or $firstletter == $l) {
                     if ($currentletter != $firstletter[0]) {
                         $currentletter = $firstletter[0];
     
-                        if ($glossary->displayformat == 0) {
+                        if ($glossary->displayformat == GLOSSARY_FORMAT_SIMPLE) {
                             if ($dumpeddefinitions > 0) {
                                 echo "</table></center><p>";
                             } 
-                            echo "\n<center><table border=0 cellspacing=0 width=95% valign=top cellpadding=10><tr><td align=center bgcolor=\"$THEME->cellheading2\">";
-                        } 
-                        if ($l == "ALL") {
+                            echo "\n<center><table border=0 cellspacing=0 width=95% valign=top cellpadding=5><tr><td align=center bgcolor=\"$THEME->cellheading2\">";
+                        }
+                        if ($l == "ALL" and $glossary->displayformat != GLOSSARY_FORMAT_CONTINUOUS) {
                             echo "<b>$currentletter</b>";
                         } 
     
-                        if ($glossary->displayformat == 0) {
+                        if ($glossary->displayformat == GLOSSARY_FORMAT_SIMPLE) {
                             echo "\n</center></td></tr></table></center>";
                             if ($dumpeddefinitions > 0) {
-                                echo "\n<center><table border=1 cellspacing=0 width=95% valign=top cellpadding=10>";
+                                echo "\n<center><table border=0 cellspacing=0 width=95% valign=top cellpadding=5>";
                             } 
                         } 
                     } 
@@ -240,16 +277,22 @@
                         } else { // All categories
                             if ($currentcategory != $entry->CID) {
                                 $currentcategory = $entry->CID;
-                                if ($glossary->displayformat == 0) {
+                                if ($glossary->displayformat == GLOSSARY_FORMAT_SIMPLE) {
                                     if ($dumpeddefinitions > 0) {
                                         echo "</table></center><p>";
                                     } 
                                     echo "\n<center><table border=0 cellspacing=0 width=95% valign=top cellpadding=10><tr><td align=center bgcolor=\"$THEME->cellheading2\">";
                                 } 
+                                if ( $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS ) {
+                                    echo "<center>";
+                                }
                                 echo "<b>$entry->name</b>";
+                                if ( $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS ) {
+                                    echo "</center><p>";
+                                }
                             } 
     
-                            if ($glossary->displayformat == 0) {
+                            if ($glossary->displayformat == GLOSSARY_FORMAT_SIMPLE) {
                                 echo "\n</center></td></tr></table></center>";
                                 if ($dumpeddefinitions > 0) {
                                     echo "\n<center><table border=1 cellspacing=0 width=95% valign=top cellpadding=10>";
@@ -271,7 +314,7 @@
                 $definition = $entry->definition;
     
                 if ($dumpeddefinitions == 1) {
-                    if ($glossary->displayformat == 0) {
+                    if ($glossary->displayformat == GLOSSARY_FORMAT_SIMPLE) {
                         echo "\n<center><table border=1 cellspacing=0 width=95% valign=top cellpadding=10>";
                     } 
                 } 
@@ -282,14 +325,14 @@
     
                 glossary_print_entry($course, $cm, $glossary, $entry, $currentview, $cat);
     
-                if ($glossary->displayformat != 0) {
+                if ($glossary->displayformat != GLOSSARY_FORMAT_SIMPLE) {
                     echo "<p>";
                 } 
             } 
         } 
     } 
     if (! $dumpeddefinitions) {
-        print_simple_box_start("center", "70%", "$THEME->cellheading");
+        print_simple_box_start("center", "70%", "$THEME->cellheading2");
         if (!$search) {
             echo "<center>$strnoentries</center>";
         } else {
@@ -299,7 +342,10 @@
         } 
         print_simple_box_end();
     } else {
-        if ($glossary->displayformat == 0) {
+        if ($glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS) {
+            echo "</td></tr></table>";
+        }
+        if ($glossary->displayformat == GLOSSARY_FORMAT_SIMPLE) {
             echo "\n</table></center>";
         } 
     } 

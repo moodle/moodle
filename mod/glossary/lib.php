@@ -10,6 +10,9 @@ define("GLOSSARY_SHOW_NOT_CATEGORISED", -1);
 define("GLOSSARY_STANDARD_VIEW", 0);
 define("GLOSSARY_CATEGORY_VIEW", 1);
 
+define("GLOSSARY_FORMAT_SIMPLE", 0);
+define("GLOSSARY_FORMAT_CONTINUOUS", 1);
+
 function glossary_add_instance($glossary) {
 /// Given an object containing all the necessary data,
 /// (defined by the form in mod.html) this function
@@ -189,7 +192,9 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $currentview="",$
     $formatfile = "$CFG->dirroot/mod/glossary/formats/$glossary->displayformat.php";
     $functionname = "glossary_print_entry_by_format";
 
-    if ( $glossary->displayformat > 0 ) {
+    $basicformat = ($glossary->displayformat == GLOSSARY_FORMAT_SIMPLE or
+                    $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS);
+    if ( !$basicformat ) {
         if ( file_exists($formatfile) ) {
            include_once($formatfile);
            if (function_exists($functionname) ) {
@@ -200,10 +205,17 @@ function glossary_print_entry($course, $cm, $glossary, $entry, $currentview="",$
        $permissiongranted = 1;
     }
     
-    if ( $glossary->displayformat > 0 and $permissiongranted ) {
+    if ( !$basicformat and $permissiongranted ) {
         glossary_print_entry_by_format($course, $cm, $glossary, $entry,$currentview,$cat);
     } else {
-        glossary_print_entry_by_default($course, $cm, $glossary, $entry,$currentview,$cat);
+        switch ( $glossary->displayformat ) {
+            case GLOSSARY_FORMAT_SIMPLE:
+                glossary_print_entry_by_default($course, $cm, $glossary, $entry,$currentview,$cat);
+            break;
+            case GLOSSARY_FORMAT_CONTINUOUS:
+                glossary_print_entry_continuous($course, $cm, $glossary, $entry,$currentview,$cat);
+            break;
+        }
     }
 
 }
@@ -228,6 +240,21 @@ function glossary_print_entry_by_default($course, $cm, $glossary, $entry,$curren
     echo "</TR>";
 }
 
+function glossary_print_entry_continuous($course, $cm, $glossary, $entry,$currentview="",$cat="") {
+    global $THEME, $USER;
+    if ($entry) {
+        if ($entry->attachment) {
+            $entry->course = $course->id;
+            echo "<table border=0 align=right><tr><td>";
+            echo glossary_print_attachments($entry, "html");
+            echo "</td></tr></table>";
+        }
+        echo " $entry->concept ";
+        echo format_text($entry->definition, $entry->format);
+
+        glossary_print_entry_icons($course, $cm, $glossary, $entry, $currentview, $cat);
+    }
+}
 function glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview="",$cat="") {
     global $THEME, $USER;
 
@@ -679,11 +706,14 @@ function glossary_print_tabbed_table_end() {
      echo "</center><p></td></tr></table></center>";
 }
 
-function glossary_print_alphabet_menu($cm, $glossary, $l) {
+function glossary_print_alphabet_menu($cm, $glossary, $l, $sortkey, $sortorder = "") {
 global $CFG, $THEME;
-     $strselectletter = get_string("selectletter", "glossary");
-     $strspecial      = get_string("special", "glossary");
-     $strallentries   = get_string("allentries", "glossary");
+     $strselectletter     = get_string("selectletter", "glossary");
+     $strspecial          = get_string("special", "glossary");
+     $strallentries       = get_string("allentries", "glossary");
+     $strsort             = get_string("sortchronogically", "glossary");
+     $strsortbycreation   = get_string("sortbycreation", "glossary");
+     $strsortbylastupdate = get_string("sortbylastupdate", "glossary");
 
      if ($glossary->showalphabet) {
          $output .= get_string("explainalphabet","glossary").'<br />';
@@ -695,7 +725,7 @@ global $CFG, $THEME;
           if ( $l == "SPECIAL" ) {
                echo "<b>$strspecial</b> | ";
           } else {
-               $strexplainspecial = get_string("explainspecial","glossary");
+               $strexplainspecial = strip_tags(get_string("explainspecial","glossary"));
                echo "<a title=\"$strexplainspecial\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&l=SPECIAL\">$strspecial</a> | ";
           }
       }
@@ -704,7 +734,7 @@ global $CFG, $THEME;
            $alphabet = explode("|", get_string("alphabet","glossary"));
            $letters_by_line = 14;
            for ($i = 0; $i < count($alphabet); $i++) {
-               if ( $l == $alphabet[$i] ) {
+               if ( $l == $alphabet[$i] and $l) {
                     echo "<b>$alphabet[$i]</b>";
                } else {
                     echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&l=$alphabet[$i]\">$alphabet[$i]</a>";
@@ -719,12 +749,62 @@ global $CFG, $THEME;
 
       if ( $glossary->showall ) {
           if ( $l == "ALL" ) {
-               echo "<b>$strallentries</b></p>";
+               echo "<b>$strallentries</b>";
           } else {
-               $strexplainall = get_string("explainall","glossary");
-               echo "<a title=\"$strexplainall\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&l=ALL\">$strallentries</a></p>";
+               $strexplainall = strip_tags(get_string("explainall","glossary"));
+               echo "<a title=\"$strexplainall\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&l=ALL\">$strallentries</a>";
           }
       }
+      $neworder = "";
+      if ( $sortorder ) {
+          if ( $sortorder == "asc" ) {
+              $neworder = "&sortorder=desc";
+              $ordertitle = get_string("descending","glossary");
+          } else {
+              $neworder = "&sortorder=asc";
+              $ordertitle = get_string("ascending","glossary");
+          }
+          $icon = " <img src=\"$sortorder.gif\" border=0 width=16 height=16>";
+      } else {
+          if ( $sortkey != "CREATION" and $sortkey != "UPDATE" ) {
+              $icon = "";
+              $ordertitle = get_string("ascending","glossary");
+          } else {
+              $ordertitle = get_string("descending","glossary");
+              $neworder = "&sortorder=desc";
+              $icon = " <img src=\"asc.gif\" border=0 width=16 height=16>";
+          }
+      }
+      $cicon = "";
+      $cneworder = "";
+      $cbtag = "";
+      $cendbtag = "";
+
+      $uicon = "";
+      $uneworder = "";
+      $ubtag = "";
+      $uendbtag = "";
+
+      if ( $sortkey == "CREATION" ) {
+          $cicon = $icon;
+          $cneworder = $neworder;
+          $cordertitle = $ordertitle;
+          $uordertitle = get_string("ascending","glossary");
+          $cbtag = "<b>";
+          $cendbtag = "</b>";
+      } elseif ($sortkey == "UPDATE") {
+          $uicon = $icon;
+          $uneworder = $neworder;
+          $cordertitle = get_string("ascending","glossary");
+          $uordertitle = $ordertitle;
+          $ubtag = "<b>";
+          $uendbtag = "</b>";
+      } else {
+          $cordertitle = get_string("ascending","glossary");
+          $uordertitle = get_string("ascending","glossary");
+      }
+      echo "<br>$strsort: $ubtag<a title=\"$strsortbylastupdate $uordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&sortkey=UPDATE$uneworder\">$strsortbylastupdate$uicon</a>$uendbtag | ".
+                           "$cbtag<a title=\"$strsortbycreation $cordertitle\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&sortkey=CREATION$cneworder\">$strsortbycreation$cicon</a>$cendbtag</p>";
 }
 function glossary_print_categories_menu($course, $cm, $glossary, $cat, $category) {
 global $CFG, $THEME;

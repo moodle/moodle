@@ -144,6 +144,11 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
       echo "selected";
    }
   ?>><?php echo get_string("displayformatdefault", "glossary") ?></option>
+  <option value="1" <?php
+   if ( $form->displayformat == 1) {
+      echo "selected";
+   }
+  ?>><?php echo get_string("displayformatcontinuous", "glossary") ?></option>
 
 <?php
     global $CFG;
@@ -157,19 +162,19 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
         if (filetype("$CFG->dirroot/mod/glossary/formats/$dir") == "dir") {
             continue;
         }
-	  if ( $pos = strpos($dir, ".") ) {
-		$dir = substr($dir, 0, $pos );
-
-	  	echo "<option value=\"$dir\" ";
-	  	if ( $form->displayformat == $dir) {
-      		echo "selected ";
-	  	}
-  	  	echo ">";
-
-	  	echo get_string("displayformat$dir", "glossary")."</option>";	
-	  }
+        if ( $pos = strpos($dir, ".") ) {
+            $dir = substr($dir, 0, $pos );
+            if ($dir != 0 and $dir != 1) {  // excluding basic formats
+                echo "<option value=\"$dir\" ";
+                if ( $form->displayformat == $dir) {
+                    echo "selected ";
+                }
+                echo ">";
+                echo get_string("displayformat$dir", "glossary")."</option>";	
+            }
+        }
     }
-	
+
 ?>
 
     </select> <?php helpbutton("displayformat", get_string("displayformat", "glossary"), "glossary") ?>
