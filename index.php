@@ -30,7 +30,7 @@
         $langmenu = popup_form ("$CFG->wwwroot/?lang=", $langs, "chooselang", $currlang, "", "", "", true);
     }
 
-    print_header("$site->fullname", "$site->fullname", "home", "",
+    print_header(strip_tags($site->fullname), "$site->fullname", "home", "",
                  "<meta name=\"description\" content=\"".s(strip_tags($site->summary))."\">",
                  true, "", "<div align=right>$loginstring$langmenu</div>");
 
