@@ -34,13 +34,13 @@ CREATE INDEX prefix_course_category_idx ON prefix_course (category);
 
 CREATE TABLE prefix_course_categories (
    id SERIAL PRIMARY KEY,
-   name varchar(255) NOT NULL default ''
+   name varchar(255) NOT NULL default '',
    description text NOT NULL default '',
    parent integer NOT NULL default '0',
    sortorder integer NOT NULL default '0',
    coursecount integer NOT NULL default '0',
    visible integer NOT NULL default '1',
-   timemodified` integer NOT NULL default '0'
+   timemodified integer NOT NULL default '0'
 );
 
 CREATE TABLE prefix_course_display (
