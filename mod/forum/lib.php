@@ -919,7 +919,7 @@ function forum_get_user_discussions($courseid, $userid, $groupid=0) {
         $groupselect = "";
     }
 
-    return get_records_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture,
+    return get_records_sql("SELECT p.*, d.groupid, u.firstname, u.lastname, u.email, u.picture,
                                    f.type as forumtype, f.name as forumname, f.id as forumid
                               FROM {$CFG->prefix}forum_discussions d,
                                    {$CFG->prefix}forum_posts p,
@@ -1903,12 +1903,22 @@ function forum_print_user_discussions($courseid, $userid, $groupid=0) {
 
     $visible = array();
 
+    $course = get_record("course", "id", $courseid);
+
+    $currentgroup = get_current_group($courseid);
+    $isteacheredit = isteacheredit($courseid);
+
     if ($discussions = forum_get_user_discussions($courseid, $userid, $groupid=0)) {
-        $user = get_record("user", "id", $userid);
-        echo "<hr />";
+
+        $user    = get_record("user", "id", $userid);
         $fullname = fullname($user, isteacher($courseid));
-        print_heading( get_string("discussionsstartedbyrecent", "forum", $fullname) );
+
         $replies = forum_count_discussion_replies();
+
+        echo "<hr />";
+
+        print_heading( get_string("discussionsstartedbyrecent", "forum", $fullname) );
+
         foreach ($discussions as $discussion) {
             $countdiscussions++;
             if ($countdiscussions > $maxdiscussions) {
@@ -1926,6 +1936,22 @@ function forum_print_user_discussions($courseid, $userid, $groupid=0) {
             if(!$visible[$discussion->forumid] && !isteacheredit($courseid, $USER->id)) {
                 continue;
             }
+
+            /// Check whether this is belongs to a discussion in a group that
+            /// should NOT be accessible to the current user
+
+            if (!$isteacheredit and $discussion->groupid != -1) {   /// Editing teachers or open discussions
+                if (!isset($cm[$discussion->forum])) {
+                    $cm[$discussion->forum] = get_coursemodule_from_instance("forum", $discussion->forum, $courseid);
+                    $groupmode[$discussion->forum] = groupmode($course, $cm[$discussion->forum]);
+                }
+                if ($groupmode[$discussion->forum] == SEPARATEGROUPS) {
+                    if ($currentgroup != $discussion->groupid) {
+                        continue;
+                    }
+                }
+            }
+
             if (!empty($replies[$discussion->discussion])) {
                 $discussion->replies = $replies[$discussion->discussion]->replies;
             } else {
