@@ -907,13 +907,13 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
     
     $mail = new phpmailer;
 
-    $mail->Version = "Moodle";                         // mailer version 
+    $mail->Version = "Moodle $CFG->moodleversion";     // mailer version 
     $mail->PluginDir = "$CFG->libdir/phpmailer/";      // plugin directory (eg smtp plugin)
     if ($CFG->smtphosts) {
-        $mail->IsSMTP();                                   // use SMTP directly
-        $mail->Host = "$CFG->smtphosts";                   // specify main and backup servers
+        $mail->IsSMTP();                               // use SMTP directly
+        $mail->Host = "$CFG->smtphosts";               // specify main and backup servers
     } else {
-        $mail->IsMail();                                   // use PHP mail() = sendmail
+        $mail->IsMail();                               // use PHP mail() = sendmail
     }
 
     $mail->From     = "$from->email";
