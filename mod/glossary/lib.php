@@ -675,7 +675,6 @@ function  glossary_print_entry_aliases($course, $cm, $glossary, $entry,$mode="",
         }
         if ($return != '') {
             $return .= '</select>';
-//            $return = "<table border=0 align=$align><tr><td>$return</td></tr></table>";
         }
     } 
     if ($type == 'print') {
@@ -701,11 +700,11 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
     $return .= "</font> ";
 
     
-    if ( ($glossary->allowcomments && !isguest()) || isteacher($glossary->course)) {
+    if ( (!empty($USER->id) && $glossary->allowcomments && !isguest()) || $isteacher) {
         $return .= " <a title=\"" . get_string("addcomment","glossary") . "\" href=\"comment.php?id=$cm->id&eid=$entry->id\"><img src=\"comment.gif\" height=11 width=11 border=0></a> ";
     }
 
-    if ($isteacher or ($glossary->studentcanpost and $entry->userid == $USER->id)) {
+    if ($isteacher or (!empty($USER->id) and $glossary->studentcanpost and $entry->userid == $USER->id)) {
         // only teachers can export entries so check it out
         if ($isteacher and !$ismainglossary and !$importedentry) {
             $mainglossary = get_record("glossary","mainglossary",1,"course",$course->id);
@@ -2046,6 +2045,144 @@ function glossary_print_rating_menu($entryid, $userid, $scale) {
     }
 
     choose_from_menu($scale, $entryid, $rating->rating, "$strrate...");
+}
+
+
+function glossary_get_paging_bar($totalcount, $page, $perpage, $baseurl, $maxpageallowed=99999, $maxdisplay=20, $separator="&nbsp;", $specialtext="", $specialvalue=-1, $previousandnext = true) {
+// Returns the html code to represent any pagging bar. Paramenters are:
+//
+//  Mandatory:
+//     $totalcount: total number of records to be displayed
+//     $page: page currently selected (0 based)
+//     $perpage: number of records per page
+//     $baseurl: url to link in each page, the string 'page=XX' will be added automatically.
+//  Optional:
+//     $maxpageallowed: maximum number of page allowed.
+//     $maxdisplay: maximum number of page links to show in the bar
+//     $separator: string to be used between pages in the bar
+//     $specialtext: string to be showed as an special link
+//     $specialvalue: value (page) to be used in the special link
+//     $previousandnext: to decide if we want the previous and next links
+//
+// The function dinamically show the first and last pages, and "scroll" over pages.
+// Fully compatible with Moodle's print_paging_bar() function. Perhaps some day this
+// could replace the general one. ;-)
+
+    $code = '';
+
+    $showspecial = false;
+    $specialselected = false;
+
+    //Check if we have to show the special link
+    if (!empty($specialtext)) {
+        $showspecial = true;
+    }
+    //Check if we are with the special link selected
+    if ($showspecial && $page == $specialvalue) {
+        $specialselected = true;
+    } 
+
+    //If there are results (more than 1 page)
+    if ($totalcount > $perpage) {
+        $code .= "<center>";
+        $code .= "<p>".get_string("page").":";
+
+        $maxpage = (int)(($totalcount-1)/$perpage);
+
+        //Lower and upper limit of page
+        if ($page < 0) {
+            $page = 0;
+        }
+        if ($page > $maxpageallowed) {
+            $page = $maxpageallowed;
+        }
+        if ($page > $maxpage) {
+            $page = $maxpage;
+        }
+
+        //Calculate the window of pages
+        $pagefrom = $page - ((int)($maxdisplay / 2));
+        if ($pagefrom < 0) {
+            $pagefrom = 0;
+        }
+        $pageto = $pagefrom + $maxdisplay - 1;
+        if ($pageto > $maxpageallowed) {
+            $pageto = $maxpageallowed;
+        }
+        if ($pageto > $maxpage) {
+            $pageto = $maxpage;
+        }
+
+        //Some movements can be necessary if don't see enought pages
+        if ($pageto - $pagefrom < $maxdisplay - 1) {
+            if ($pageto - $maxdisplay + 1 > 0) {
+                $pagefrom = $pageto - $maxdisplay + 1;
+            }
+        }
+
+        //Calculate first and last if necessary
+        $firstpagecode = '';
+        $lastpagecode = '';
+        if ($pagefrom > 0) {
+            $firstpagecode = "$separator<a href=\"{$baseurl}page=0\">1</a>";
+            if ($pagefrom > 1) {
+                $firstpagecode .= "$separator...";
+            }
+        }
+        if ($pageto < $maxpage) {
+            if ($pageto < $maxpage -1) {
+                $lastpagecode = "$separator...";
+            }
+            $lastpagecode .= "$separator<a href=\"{$baseurl}page=$maxpage\">".($maxpage+1)."</a>";
+        }
+
+        //Previous
+        if ($page > 0 && $previousandnext) {
+            $pagenum = $page - 1;
+            $code .= "&nbsp;(<a  href=\"{$baseurl}page=$pagenum\">".get_string("previous")."</a>)&nbsp;";
+        }
+
+        //Add first
+        $code .= $firstpagecode;
+
+        $pagenum = $pagefrom;
+
+        //List of maxdisplay pages
+        while ($pagenum <= $pageto) {
+            $pagetoshow = $pagenum +1;
+            if ($pagenum == $page && !$specialselected) {
+                $code .= "$separator$pagetoshow";
+            } else {
+                $code .= "$separator<a href=\"{$baseurl}page=$pagenum\">$pagetoshow</a>";
+            }
+            $pagenum++;
+        }
+
+        //Add last
+        $code .= $lastpagecode;
+
+        //Next
+        if ($page < $maxpage && $page < $maxpageallowed && $previousandnext) {
+            $pagenum = $page + 1;
+            $code .= "$separator(<a href=\"{$baseurl}page=$pagenum\">".get_string("next")."</a>)";
+        }
+
+        //Add special
+        if ($showspecial) {
+            $code .= '<br />';
+            if ($specialselected) {
+                $code .= $specialtext;
+            } else {
+                $code .= "$separator<a href=\"{$baseurl}page=$specialvalue\">$specialtext</a>";
+            }
+        }
+
+        //End html
+        $code .= "</p>";
+        $code .= "</center>";
+    }
+
+    return $code;
 }
 
 ?>
