@@ -1,12 +1,12 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 unstable development (2004091700)
+      // calendar.php - created with Moodle 1.5 unstable development (2004092000)
 
 
 $string['calendar'] = 'カレンダー';
 $string['calendarheading'] = '$a カレンダー';
 $string['clickhide'] = '非表示';
 $string['clickshow'] = '表示';
-$string['confirmeventdelete'] = '本当にこのイベントを削除しても宜しいですか?';
+$string['confirmeventdelete'] = '本当にこのイベントを削除してもよろしいですか?';
 $string['courseevents'] = 'コースイベント';
 $string['dayview'] = '1日分表示';
 $string['daywithnoevents'] = 'イベントがありません。';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.5 unstable development (2004091700)
+      // chat.php - created with Moodle 1.5 unstable development (2004092000)
 
 
 $string['beep'] = 'ビープ';
@@ -18,7 +18,7 @@ $string['configserverport'] = 'デーモンに使用するサーバのポート';
 $string['currentchats'] = 'アクティブなチャット';
 $string['currentusers'] = '現在のユーザ';
 $string['deletesession'] = 'セッションを削除する';
-$string['deletesessionsure'] = '本当にこのセッションを削除しても宜しいですか?';
+$string['deletesessionsure'] = '本当にこのセッションを削除してもよろしいですか?';
 $string['donotusechattime'] = 'チャット時間を表示しない';
 $string['enterchat'] = 'チャットルームに入室';
 $string['errornousers'] = 'ユーザが見つかりませんでした!';

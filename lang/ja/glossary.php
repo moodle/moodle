@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 unstable development (2004091700)
+      // glossary.php - created with Moodle 1.5 unstable development (2004092000)
 
 
 $string['addcomment'] = 'コメントの追加';
@@ -13,9 +13,9 @@ $string['allowduplicatedentries'] = '重複エントリを許可する';
 $string['allowratings'] = 'エントリの評価を許可しますか?';
 $string['answer'] = '答え';
 $string['approve'] = '承認';
-$string['areyousuredelete'] = '本当にこのエントリを削除しても宜しいですか?';
-$string['areyousuredeletecomment'] = '本当にこのコメントを削除しても宜しいですか?';
-$string['areyousureexport'] = '本当にこのエントリを次へエクスポートしても宜しいですか';
+$string['areyousuredelete'] = '本当にこのエントリを削除してもよろしいですか?';
+$string['areyousuredeletecomment'] = '本当にこのコメントを削除してもよろしいですか?';
+$string['areyousureexport'] = '本当にこのエントリを次へエクスポートしてもよろしいですか';
 $string['ascending'] = '(降順)';
 $string['attachment'] = '添付';
 $string['authorview'] = '著者順に表示';

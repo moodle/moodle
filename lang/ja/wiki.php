@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 unstable development (2004091700)
+      // wiki.php - created with Moodle 1.5 unstable development (2004092000)
 
 
 $string['action'] = '-- アクション --';
@@ -113,12 +113,12 @@ $string['plaintext'] = 'プレインテキスト';
 $string['preview'] = 'プレビュー';
 $string['readonly'] = '読み取り専用ページ';
 $string['refs'] = 'リファレンス';
-$string['removepagecheck'] = '本当にこれらのページを削除しても宜しいですか?';
+$string['removepagecheck'] = '本当にこれらのページを削除してもよろしいですか?';
 $string['removepages'] = 'ページの削除';
 $string['removeselectedpages'] = '選択したページを削除';
 $string['revertchanges'] = '変更を元に戻す';
 $string['revertpages'] = '変更の大量取消し';
-$string['revertpagescheck'] = '本当に次の変更を元に戻しても宜しいですか:';
+$string['revertpagescheck'] = '本当に次の変更を元に戻してもよろしいですか:';
 $string['safehtml'] = 'セーフHTML';
 $string['save'] = '保存';
 $string['searchwiki'] = 'Wikiの検索';
@@ -126,7 +126,7 @@ $string['setpageflags'] = 'ページフラグの設定';
 $string['sitemap'] = 'サイトマップ';
 $string['smfor'] = 'サイトマップ:';
 $string['status'] = 'ステータス';
-$string['strippagecheck'] = '本当に、これらのページから古いバージョンをストリップしても宜しいですか:';
+$string['strippagecheck'] = '本当に、これらのページから古いバージョンをストリップしてもよろしいですか:';
 $string['strippages'] = 'ページのストリップ';
 $string['studentadminoptions'] = '学生管理オプション';
 $string['submit'] = '実行';
