@@ -86,10 +86,8 @@
 
     if ($usehtmleditor = can_use_richtext_editor()) {
         $defaultformat = FORMAT_HTML;
-        $onsubmit = "onsubmit=\"copyrichtext(theform.message);\"";
     } else {
         $defaultformat = FORMAT_MOODLE;
-        $onsubmit = "";
     }
 
 
@@ -341,7 +339,7 @@
 
     }
 
-    echo "<CENTER>";
+    echo "<center>";
     if (!empty($parent)) {
         forum_print_post($parent, $course->id, $ownpost=false, $reply=false, $link=false);
         echo "<H2>".get_string("yourreply", "forum").":</H2>";
@@ -351,11 +349,15 @@
     if (!empty($post->error)) {
         notify($post->error);
     }
-    echo "</CENTER>";
+    echo "</center>";
 
     print_simple_box_start("center", "", "$THEME->cellheading");
     require("post.html");
     print_simple_box_end();
+
+    if ($usehtmleditor) {
+        use_html_editor();
+    }
 
     print_footer($course);
 

@@ -1,4 +1,4 @@
-<form name="theform" method="post" action="post.php" <?php echo $onsubmit ?> enctype="multipart/form-data">
+<form name="theform" method="post" action="post.php" type="multipart/form-data">
 <table border="0" cellpadding="5">
 <tr valign="top">
     <td align=right><p><b><?php print_string("subject", "forum"); ?>:</b></p></td>
@@ -11,7 +11,7 @@
      <?php print_string("message", "forum"); ?>:
      </b></p></td>
     <td align=left rowspan=2>
-    <?php print_textarea($usehtmleditor, 15, 50, 630, 400, "message", $post->message); ?>
+    <?php print_textarea($usehtmleditor, 25, 65, 630, 400, "message", $post->message); ?>
     </td>
 </tr>
 <tr valign="top">
@@ -112,10 +112,3 @@
 </tr>
 </table>
 </form>
-
-<?php 
-   if ($usehtmleditor) { 
-       print_richedit_javascript("theform", "message", "no");
-   }
-?>
-
