@@ -181,15 +181,19 @@ $string['fullsitename'] = "Side navn";
 $string['gd1'] = "GD 1.x er installert";
 $string['gd2'] = "GD 2.x er installert";
 $string['gdnot'] = "GD er ikke installert";
-$string['gpl'] = "Copyright (C) 2002 TeleWeb as
+$string['gpl'] = "Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)
 
-Denne applikasjonen er laget og utvikklet av
-Jøran Sørbø for TeleWeb as 2002.
-TeleWeb as stiller seg ikke ansvarlig for innholdet
-på sidene etter at applikasjon er installert og
-konfigurert for sluttbruker.
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
 
-";
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details:
+
+http://www.gnu.org/copyleft/gpl.html";
 $string['grade'] = "Karrakter";
 $string['grades'] = "Karrakterer";
 $string['guestskey'] = "Tillat gjester som har sikkerhets nøkkel";
