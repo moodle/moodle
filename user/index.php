@@ -134,7 +134,7 @@
     }
     echo '</h2>';
 
-    if (($CFG->longtimenosee < 500) and (!$page) and ($sort == "lastaccess")) {
+    if (($CFG->longtimenosee > 0) and ($CFG->longtimenosee < 1000) and (!$page) and ($sort == "lastaccess")) {
         echo '<p id="longtimenosee">('.get_string('unusedaccounts', '', $CFG->longtimenosee).')</p>';
     }
 
