@@ -7,7 +7,7 @@ $string['allowduplicatedentries'] = "Duplicated entries allowed";
 $string['alphabet'] = "A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z";
 $string['areyousuredelete'] = "Are you sure you want to delete this entry?";
 $string['attachment'] = "Attachment";
-$string['categoryview'] = "Vista por Categoría";
+$string['categoryview'] = "By Category";
 $string['concept'] = "Concept";
 $string['concepts'] = "Concepts";
 $string['definition'] = "Definition";
@@ -37,7 +37,7 @@ $string['showspecial'] = "Show 'Special' link";
 $string['showalphabet'] = "Show alphabet";
 $string['showall'] = "Show 'ALL' link";
 $string['special'] = "Special";
-$string['standardview'] = "Vista Normal";
+$string['standardview'] = "Standard View";
 $string['studentcanpost'] = "Students can add entries";
 $string['writtenby'] = "By";
 
