@@ -968,7 +968,7 @@ function authenticate_user_login($username, $password) {
 
     } else {
         add_to_log(0, 'login', 'error', $_SERVER['HTTP_REFERER'], $username);
-        error_log('[client '.$_SERVER['REMOTE_ADDR']."]\t$CFG->wwwroot\tFailed Login:\t$username\t".$_SERVER['HTTP_USER_AGENT'];
+        error_log('[client '.$_SERVER['REMOTE_ADDR']."]\t$CFG->wwwroot\tFailed Login:\t$username\t".$_SERVER['HTTP_USER_AGENT']);
         return false;
     }
 }
