@@ -6,6 +6,12 @@ function wiki_upgrade($oldversion) {
 
     global $CFG;
 
+    if ($oldversion < 2004073000) {
+
+       modify_database("", "ALTER TABLE prefix_wiki_pages DROP COLUMN id;"); 
+       modify_database("", "ALTER TABLE ONLY prefix_wiki_pages 
+                            ADD CONSTRAINT id PRIMARY KEY (pagename, \"version\");"); 
+    }    
 
     return true;
 }
