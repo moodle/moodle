@@ -72,9 +72,7 @@ if (isset($errors)) {
             $selected = "";
         }
         echo '<input type="checkbox" name="usedynalink" value="1" alt="' . get_string("entryusedynalink","glossary") . '" ' . $selected . ' onclick="return lockoptions(\'form\',\'usedynalink\', items)" /> ';
-        echo '<font size="-1">';
         print_string("entryusedynalink","glossary");
-        echo '</font>';
         echo helpbutton("usedynalinkentry", strip_tags(get_string("usedynalink", "glossary")), "glossary");
         echo '<br />';
 
@@ -84,9 +82,7 @@ if (isset($errors)) {
             $selected = "";
         }
         echo '<input type="checkbox" name="casesensitive" value="1" alt="' . get_string("casesensitive","glossary") . '" ' . $selected . ' /> ';
-        echo '<font size="-1">';
         print_string("casesensitive","glossary");
-        echo '</font>';
         echo helpbutton("casesensitive", strip_tags(get_string("casesensitive", "glossary")), "glossary");
         echo '<br />';
 
@@ -97,9 +93,7 @@ if (isset($errors)) {
             $selected = "";
         }
         echo '<input type="checkbox" name="fullmatch" value="1" alt="' . get_string("fullmatch","glossary") . '" ' . $selected . ' /> ';
-        echo '<font size="-1">';
         print_string("fullmatch","glossary");
-        echo '</font>';
         echo helpbutton("fullmatch", strip_tags(get_string("fullmatch", "glossary")), "glossary");
         echo '<br />';
     }
@@ -122,7 +116,6 @@ if (isset($errors)) {
 <tr valign="top">
     <td align="right" valign="middle" nowrap="nowrap">
 
-    <font size="1">
      <?php
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
         echo "<br />";
@@ -131,9 +124,8 @@ if (isset($errors)) {
         } else {
            emoticonhelpbutton("form", "text");
         }
+        echo "<br />";
       ?>
-     <br />
-     </font>
 
     </td>
 </tr>
