@@ -29,8 +29,9 @@
         $navigation = "<A TARGET=_top HREF=\"index.php?id=$course->id\">$strresources</A> ->";
     }
 
+
     switch ($resource->type) {
-        case 1:  // Reference (eg Journal or Book etc)
+        case REFERENCE:
             add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
             print_header("$course->shortname: $resource->name", "$course->fullname", "$navigation $resource->name",
                          "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
@@ -45,12 +46,12 @@
             print_footer($course);
             break;
 
-        case 5: // Web Link
+        case WEBLINK:
             add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
             redirect($resource->reference);
             break;
 
-        case 2: // Web Page
+        case WEBPAGE:
             if ($frameset) {
                 print_header("$course->shortname: $resource->name", "$course->fullname", 
                 "$navigation <A TARGET=_top HREF=\"$resource->reference\" TITLE=\"$resource->reference\">$resource->name</A>",
@@ -67,7 +68,7 @@
             }
             break;
 
-        case 3:  // Uploaded File
+        case UPLOADEDFILE:
             if ($frameset) {
                 print_header("$course->shortname: $resource->name", "$course->fullname", "$navigation $resource->name",
                          "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
@@ -88,7 +89,7 @@
             }
             break;
 
-        case 4:  // Plain text
+        case PLAINTEXT:
             add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
             print_header("$course->shortname: $resource->name", "$course->fullname", "$navigation $resource->name",
                          "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
@@ -100,7 +101,7 @@
             print_footer($course);
             break;
 
-        case 6:  // HTML text
+        case HTML:
             add_to_log($course->id, "resource", "view", "view.php?id=$cm->id", "$resource->id");
             print_header("$course->shortname: $resource->name", "$course->fullname", "$navigation $resource->name",
                          "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
