@@ -1,69 +1,69 @@
 <?php  // $Id$
 
-require_once("$CFG->dirroot/files/mimetypes.php");
+require_once($CFG->dirroot.'/files/mimetypes.php');
 
 /// CONSTANTS ///////////////////////////////////////////////////////////
 
-define("FORUM_MODE_FLATOLDEST", 1);
-define("FORUM_MODE_FLATNEWEST", -1);
-define("FORUM_MODE_THREADED", 2);
-define("FORUM_MODE_NESTED", 3);
+define('FORUM_MODE_FLATOLDEST', 1);
+define('FORUM_MODE_FLATNEWEST', -1);
+define('FORUM_MODE_THREADED', 2);
+define('FORUM_MODE_NESTED', 3);
 
-define("FORUM_FORCESUBSCRIBE", 1);
-define("FORUM_INITIALSUBSCRIBE", 2);
+define('FORUM_FORCESUBSCRIBE', 1);
+define('FORUM_INITIALSUBSCRIBE', 2);
 
-$FORUM_LAYOUT_MODES = array ( FORUM_MODE_FLATOLDEST => get_string("modeflatoldestfirst", "forum"),
-                              FORUM_MODE_FLATNEWEST => get_string("modeflatnewestfirst", "forum"),
-                              FORUM_MODE_THREADED   => get_string("modethreaded", "forum"),
-                              FORUM_MODE_NESTED     => get_string("modenested", "forum") );
+$FORUM_LAYOUT_MODES = array ( FORUM_MODE_FLATOLDEST => get_string('modeflatoldestfirst', 'forum'),
+                              FORUM_MODE_FLATNEWEST => get_string('modeflatnewestfirst', 'forum'),
+                              FORUM_MODE_THREADED   => get_string('modethreaded', 'forum'),
+                              FORUM_MODE_NESTED     => get_string('modenested', 'forum') );
 
 // These are course content forums that can be added to the course manually
-$FORUM_TYPES   = array ("general"    => get_string("generalforum", "forum"),
-                        "eachuser"   => get_string("eachuserforum", "forum"),
-                        "single"     => get_string("singleforum", "forum") );
+$FORUM_TYPES   = array ('general'    => get_string('generalforum', 'forum'),
+                        'eachuser'   => get_string('eachuserforum', 'forum'),
+                        'single'     => get_string('singleforum', 'forum') );
 
-$FORUM_OPEN_MODES   = array ("2" => get_string("openmode2", "forum"),
-                             "1" => get_string("openmode1", "forum"),
-                             "0" => get_string("openmode0", "forum") );
+$FORUM_OPEN_MODES   = array ('2' => get_string('openmode2', 'forum'),
+                             '1' => get_string('openmode1', 'forum'),
+                             '0' => get_string('openmode0', 'forum') );
 
 if (!isset($CFG->forum_displaymode)) {
-    set_config("forum_displaymode", FORUM_MODE_NESTED);
+    set_config('forum_displaymode', FORUM_MODE_NESTED);
 }
 
 if (!isset($CFG->forum_shortpost)) {
-    set_config("forum_shortpost", 300);  // Less non-HTML characters than this is short
+    set_config('forum_shortpost', 300);  // Less non-HTML characters than this is short
 }
 
 if (!isset($CFG->forum_longpost)) {
-    set_config("forum_longpost", 600);  // More non-HTML characters than this is long
+    set_config('forum_longpost', 600);  // More non-HTML characters than this is long
 }
 
 if (!isset($CFG->forum_manydiscussions)) {
-    set_config("forum_manydiscussions", 100);  // Number of discussions on a page
+    set_config('forum_manydiscussions', 100);  // Number of discussions on a page
 }
 
 if (!isset($CFG->forum_maxbytes)) {
-    set_config("forum_maxbytes", 512000);  // Default maximum size for all forums
+    set_config('forum_maxbytes', 512000);  // Default maximum size for all forums
 }
 
 if (!isset($CFG->forum_trackreadposts)) {
-    set_config("forum_trackreadposts", true);  // Default whether user needs to mark a post as read
+    set_config('forum_trackreadposts', true);  // Default whether user needs to mark a post as read
 }
 
 if (!isset($CFG->forum_oldpostdays)) {
-    set_config("forum_oldpostdays", 60);  // Default number of days that a post is considered old
+    set_config('forum_oldpostdays', 60);  // Default number of days that a post is considered old
 }
 
 if (!isset($CFG->forum_usermarksread)) {
-    set_config("forum_usermarksread", false);  // Default whether user needs to mark a post as read
+    set_config('forum_usermarksread', false);  // Default whether user needs to mark a post as read
 }
 
 if (!isset($CFG->forum_cleanreadtime)) {
-    set_config("forum_cleanreadtime", 2);  // Default time (hour) to execute 'clean_read_records' cron
+    set_config('forum_cleanreadtime', 2);  // Default time (hour) to execute 'clean_read_records' cron
 }
 
 if (!isset($CFG->forum_replytouser)) {
-    set_config("forum_replytouser", true);  // Default maximum size for all forums
+    set_config('forum_replytouser', true);  // Default maximum size for all forums
 }
 
 if (empty($USER->id) or isguest()) {
@@ -97,11 +97,11 @@ function forum_add_instance($forum) {
         $forum->assesstimefinish = 0;
     }
 
-    if (! $forum->id = insert_record("forum", $forum)) {
+    if (! $forum->id = insert_record('forum', $forum)) {
         return false;
     }
 
-    if ($forum->type == "single") {  // Create related discussion.
+    if ($forum->type == 'single') {  // Create related discussion.
         $discussion->course   = $forum->course;
         $discussion->forum    = $forum->id;
         $discussion->name     = $forum->name;
@@ -109,7 +109,7 @@ function forum_add_instance($forum) {
         $discussion->assessed = $forum->assessed;
 
         if (! forum_add_discussion($discussion)) {
-            error("Could not add the discussion for this forum");
+            error('Could not add the discussion for this forum');
         }
     }
 
@@ -146,35 +146,35 @@ function forum_update_instance($forum) {
         $forum->assesstimefinish = 0;
     }
 
-    if ($forum->type == "single") {  // Update related discussion and post.
-        if (! $discussion = get_record("forum_discussions", "forum", $forum->id)) {
-            if ($discussions = get_records("forum_discussions", "forum", $forum->id, "timemodified ASC")) {
-                notify("Warning! There is more than one discussion in this forum - using the most recent");
+    if ($forum->type == 'single') {  // Update related discussion and post.
+        if (! $discussion = get_record('forum_discussions', 'forum', $forum->id)) {
+            if ($discussions = get_records('forum_discussions', 'forum', $forum->id, 'timemodified ASC')) {
+                notify('Warning! There is more than one discussion in this forum - using the most recent');
                 $discussion = array_pop($discussions);
             } else {
-                error("Could not find the discussion in this forum");
+                error('Could not find the discussion in this forum');
             }
         }
-        if (! $post = get_record("forum_posts", "id", $discussion->firstpost)) {
-            error("Could not find the first post in this forum discussion");
+        if (! $post = get_record('forum_posts', 'id', $discussion->firstpost)) {
+            error('Could not find the first post in this forum discussion');
         }
 
         $post->subject  = $forum->name;
         $post->message  = $forum->intro;
         $post->modified = $forum->timemodified;
 
-        if (! update_record("forum_posts", $post)) {
-            error("Could not update the first post");
+        if (! update_record('forum_posts', $post)) {
+            error('Could not update the first post');
         }
 
         $discussion->name = $forum->name;
 
-        if (! update_record("forum_discussions", $discussion)) {
-            error("Could not update the discussion");
+        if (! update_record('forum_discussions', $discussion)) {
+            error('Could not update the discussion');
         }
     }
 
-    return update_record("forum", $forum);
+    return update_record('forum', $forum);
 }
 
 
@@ -183,13 +183,13 @@ function forum_delete_instance($id) {
 // this function will permanently delete the instance
 // and any data that depends on it.
 
-    if (! $forum = get_record("forum", "id", "$id")) {
+    if (! $forum = get_record('forum', 'id', $id)) {
         return false;
     }
 
     $result = true;
 
-    if ($discussions = get_records("forum_discussions", "forum", $forum->id)) {
+    if ($discussions = get_records('forum_discussions', 'forum', $forum->id)) {
         foreach ($discussions as $discussion) {
             if (! forum_delete_discussion($discussion)) {
                 $result = false;
@@ -197,13 +197,13 @@ function forum_delete_instance($id) {
         }
     }
 
-    if (! delete_records("forum_subscriptions", "forum", "$forum->id")) {
+    if (! delete_records('forum_subscriptions', 'forum', $forum->id)) {
         $result = false;
     }
 
     forum_tp_delete_read_records(-1, -1, -1, $forum->id);
 
-    if (! delete_records("forum", "id", "$forum->id")) {
+    if (! delete_records('forum', 'id', $forum->id)) {
         $result = false;
     }
 
@@ -244,7 +244,7 @@ function forum_cron () {
         /// prevents the risk of duplicated mails, which is a worse problem.
 
         if (!forum_mark_old_posts_as_mailed($endtime)) {
-            mtrace("Errors occurred while trying to mark some posts as being mailed.");
+            mtrace('Errors occurred while trying to mark some posts as being mailed.');
             return false;  // Don't continue trying to mail them, in case we are in a cron loop
         }
 
@@ -255,10 +255,10 @@ function forum_cron () {
 
         foreach ($posts as $post) {
 
-            mtrace(get_string("processingpost", "forum", $post->id), '');
+            mtrace(get_string('processingpost', 'forum', $post->id), '');
 
-            if (! $userfrom = get_record("user", "id", "$post->userid")) {
-                mtrace("Could not find user $post->userid");
+            if (! $userfrom = get_record('user', 'id', $post->userid)) {
+                mtrace('Could not find user '.$post->userid);
                 continue;
             }
 
@@ -1532,63 +1532,63 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
     echo '<a name="'.$post->id.'"></a>';
     if ($post->parent) {
-        echo '<table border="0" cellpadding="3" cellspacing="0" class="forumpost'.$read_style.'">';
+        echo '<table class="forumpost'.$read_style.'">';
     } else {
-        echo '<table border="0" cellpadding="3" cellspacing="0" class="forumpost'.$read_style.'" width="100%">';
+        echo '<table class="forumpost'.$read_style.'" width="100%">';
     }
 
-    echo "<tr><td class=\"forumpostpicture\" width=\"35\" valign=\"top\">";
+    echo '<tr class="header"><td class="picture left">';
     print_user_picture($post->userid, $courseid, $post->picture);
-    echo "</td>";
+    echo '</td>';
 
     if ($post->parent) {
-        echo "<td class=\"forumpostheader\" width=\"100%\">";
+        echo '<td class="topic">';
     } else {
-        echo "<td class=\"forumpostheadertopic\" width=\"100%\">";
+        echo '<td class="topic starter">';
     }
 
     if (!empty($CFG->filterall)) {      /// Put the subject through the filters
-        $post->subject = filter_text("<nolink>$post->subject</nolink>", $courseid);
+        $post->subject = filter_text('<span class="nolink">$post->subject</span>', $courseid);
     }
-    echo "<font size=\"3\"><b>$post->subject</b></font><br />";
-    echo "<font size=\"2\">";
+    echo '<div class="subject">'.$post->subject.'</div>';
 
+    echo '<div class="author">';
     $fullname = fullname($post, $isteacher);
-    $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&amp;course=$courseid\">$fullname</a>";
+    $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.
+                $post->userid.'&amp;course='.$courseid.'">'.$fullname.'</a>';
     $by->date = userdate($post->modified);
-    print_string("bynameondate", "forum", $by);
+    print_string('bynameondate', 'forum', $by);
+    echo '</div></td></tr>';
 
-    if ($CFG->forum_trackreadposts) {
-        echo "</font></span></td></tr>";
-    } else {
-        echo "</font></td></tr>";
-    }
-
-    echo "<tr><td valign=\"top\" class=\"forumpostside\" width=\"10\">";
+    echo '<tr><td class="left side">';
     if ($group = user_group($courseid, $post->userid)) {
         print_group_picture($group, $courseid, false, false, true);
     } else {
-        echo "&nbsp;";
+        echo '&nbsp;';
     }
-    echo "</td><td class=\"forumpostmessage\">\n";
+
+/// Actual content
+
+    echo '</td><td class="content">'."\n";
 
     if ($post->attachment) {
         $post->course = $courseid;
-        $post->forum = get_field("forum_discussions", "forum", "id", $post->discussion);
-        echo "<div align=\"right\">";
+        $post->forum = get_field('forum_discussions', 'forum', 'id', $post->discussion);
+        echo '<div class="attachments">';
         $attachedimages = forum_print_attachments($post);
-        echo "</div>";
+        echo '</div>';
     } else {
-        $attachedimages = "";
+        $attachedimages = '';
     }
+
 
     if ($link and (strlen(strip_tags($post->message)) > $CFG->forum_longpost)) {
         // Print shortened version
         echo format_text(forum_shorten_post($post->message), $post->format, NULL, $courseid);
         $numwords = count_words(strip_tags($post->message));
-        echo "<p><a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">";
-        echo get_string("readtherest", "forum");
-        echo "</a> (".get_string("numwords", "", $numwords).")...</p>";
+        echo '<p><a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'">';
+        echo get_string('readtherest', 'forum');
+        echo '</a> ('.get_string('numwords', '', $numwords).')...</p>';
     } else {
         // Print whole message
         if ($highlight) {
@@ -1598,6 +1598,9 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         }
         echo $attachedimages;
     }
+
+
+/// Commands
 
     $commands = array();
 
@@ -1613,47 +1616,55 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
                 $mtxt = $strmarkread;
             }
             if ($threadedmode) {
-                $commands[] = "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion&amp;parent=$post->id$mcmd\">$mtxt</a>";
+                $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.
+                              $post->discussion.'&amp;parent='.$post->id.$mcmd.'">'.$mtxt.'</a>';
             } else {
-                $commands[] = "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion$mcmd#$post->id\">$mtxt</a>";
+                $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.
+                              $post->discussion.$mcmd.'#'.$post->id.'">'.$mtxt.'</a>';
             }
         }
     }
 
     if ($post->parent) {
         if ($threadedmode) {
-            $commands[] = "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion&amp;parent=$post->parent\">$strparent</a>";
+            $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.
+                          $post->discussion.'&amp;parent='.$post->parent.'">'.$strparent.'</a>';
         } else {
-            $commands[] = "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion#$post->parent\">$strparent</a>";
+            $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.
+                          $post->discussion.'#'.$post->parent.'">'.$strparent.'</a>';
         }
     }
 
     $age = time() - $post->created;
     if ($ownpost or $adminedit) {
         if (($age < $CFG->maxeditingtime) or $adminedit) {
-            $commands[] =  "<a href=\"$CFG->wwwroot/mod/forum/post.php?edit=$post->id\">$stredit</a>";
+            $commands[] =  '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?edit='.$post->id.'">'.$stredit.'</a>';
         }
     }
 
     if (isteacheredit($courseid) and $post->parent) {
-        $commands[] = "<a href=\"$CFG->wwwroot/mod/forum/post.php?prune=$post->id\" title=\"$strpruneheading\">$strprune</a>";
+        $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?prune='.$post->id.
+                      '" title="'.$strpruneheading.'">'.$strprune.'</a>';
     }
 
     if (($ownpost and $age < $CFG->maxeditingtime) or $isteacher) {
-        $commands[] = "<a href=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">$strdelete</a>";
+        $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?delete='.$post->id.'">'.$strdelete.'</a>';
     }
 
     if ($reply) {
-        $commands[] = "<a href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">$strreply</a>";
+        $commands[] = '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?reply='.$post->id.'">'.$strreply.'</a>';
     }
-    echo "<p align=\"right\"><font size=\"-1\">";
-    echo implode(' | ', $commands).'&nbsp;&nbsp;';
-    echo "</font></p>";
 
-    echo "<div align=\"right\"><p align=\"right\">";
+    echo '<div class="commands">';
+    echo implode(' | ', $commands);
+    echo '</div>';
+
+
+/// Ratings
 
     $ratingsmenuused = false;
     if (!empty($ratings) and !empty($USER->id)) {
+        echo '<div class="ratings">';
         $useratings = true;
         if ($ratings->assesstimestart and $ratings->assesstimefinish) {
             if ($post->created < $ratings->assesstimestart or $post->created > $ratings->assesstimefinish) {
@@ -1666,6 +1677,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
             if (($isteacher or $ratings->assesspublic) and !$mypost) {
                 forum_print_ratings_mean($post->id, $ratings->scale, $isteacher);
                 if (!empty($ratings->allow)) {
+                    echo '&nbsp;';
                     forum_print_rating_menu($post->id, $USER->id, $ratings->scale);
                     $ratingsmenuused = true;
                 }
@@ -1678,26 +1690,28 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
                 $ratingsmenuused = true;
             }
         }
+        echo '</div>';
     }
+
+/// Link to post if required
 
     if ($link) {
+        echo '<div class="link">';
         if ($post->replies == 1) {
-            $replystring = get_string("repliesone", "forum", $post->replies);
+            $replystring = get_string('repliesone', 'forum', $post->replies);
         } else {
-            $replystring = get_string("repliesmany", "forum", $post->replies);
+            $replystring = get_string('repliesmany', 'forum', $post->replies);
         }
-        echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\"><b>".
-             get_string("discussthistopic", "forum")."</b></a> ($replystring)&nbsp;&nbsp;";
+        echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'">'.
+             get_string('discussthistopic', 'forum').'</a>&nbsp;('.$replystring.')';
+        echo '</div>';
     }
-    echo "</p>";
-    if ($footer) {
-        echo "<p>$footer</p>";
-    }
-    echo "</div>";
-    echo "</td></tr>\n</table>\n\n";
 
-/// *** Need to get the forum ID from somewhere. Its not automatically part of post.
-/// *** Backtrack through code to find where 'post' gets set.
+    if ($footer) {
+        echo '<div class="footer">'.$footer.'</div>';
+    }
+    echo '</td></tr></table>'."\n\n";
+
     if ($CFG->forum_trackreadposts && !$CFG->forum_usermarksread && !empty($post->forum)) {
         forum_tp_mark_post_read($USER->id, $post, $post->forum);
     }
@@ -2411,7 +2425,6 @@ function forum_print_user_discussions($courseid, $userid, $groupid=0) {
                 $ownpost = false;
             }
             forum_print_post($discussion, $courseid, $ownpost, $reply=0, $link=1, $assessed=false);
-            echo "<br />\n";
         }
     }
 }
@@ -2737,7 +2750,6 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
                 $discussion->forum = $forum_id;
 
                 forum_print_post($discussion, $forum->course, $ownpost, $reply=0, $link, $assessed=false);
-                echo "<br />\n";
             break;
         }
     }
@@ -2907,7 +2919,6 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
                                      '', '', (isset($user_read_array[$post->id]) || forum_tp_is_post_old($post)))) {
                     $ratingsmenuused = true;
                 }
-                echo "<br />";
             } else {
                 $by->name = fullname($post, isteacher($courseid));
                 $by->date = userdate($post->modified);
@@ -2966,7 +2977,6 @@ function forum_print_posts_nested($parent, $courseid, $ratings, $reply, &$user_r
                                  '', '', (isset($user_read_array[$post->id]) || forum_tp_is_post_old($post)))) {
                 $ratingsmenuused = true;
             }
-            echo "<br />";
             if (forum_print_posts_nested($post->id, $courseid, $ratings, $reply, $user_read_array, $forumid)) {
                 $ratingsmenuused = true;
             }
