@@ -32,6 +32,9 @@ Backup Details:
         - Backup Info data......................................DONE
         - Course................................................IN PROGRESS
            - Course Summary Data................................IN PROGRESS
+              x course info.....................................DONE
+              x sections info...................................IN PROGRESS
+              x mods info.......................................IN PROGRESS
            - User Accounts Info.................................NO EXISTS
               x teachers........................................NO EXISTS
                  - Needed.......................................NO EXISTS
