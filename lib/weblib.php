@@ -788,8 +788,9 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
             }
         }
         echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1";
-        if ($CFG->xml_doctype_extra)
+        if (!empty($CFG->xml_doctype_extra)) {
             echo " plus $CFG->xml_doctype_extra";
+        }
         echo "//" . strtoupper($currentlanguage) . "\" \"$CFG->xml_dtd\">\n";
         $direction = " xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"$currentlanguage\" $direction";
     }
