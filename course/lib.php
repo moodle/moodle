@@ -10,6 +10,8 @@ $FORMATS = array (
 
 function print_log_selector_form($course, $selecteduser=0, $selecteddate="today") {
 
+    global $USER, $CFG;
+
     // Get all the possible users
     $users = array();
     if ($students = get_records_sql("SELECT u.* FROM user u, user_students s 
@@ -30,13 +32,29 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     asort($users);
 
     // Get all the possible dates
-    $tt = usergetdate(time());
-    $timemidnight = $today = mktime (0, 0, 0, $tt["mon"], $tt["mday"], $tt["year"]);
-    $dates = array("$today" => "Today, ".userdate($today, "j F Y") );
+    // Note that we are keeping track of real (GMT) time and user time
+    // User time is only used in displays - all calcs and passing is GMT
 
-    while ($timemidnight > $course->startdate) {
+    $timenow = time(); // GMT
+
+    // What day is it now for the user, and when is midnight that day (in GMT).
+    $date = usergetdate($timenow);
+    $timemidnight = gmmktime (0, 0, 0, $date["mon"], $date["mday"], $date["year"]);
+    $timemidnight = usertime($timemidnight); // Time of midnight of this user's day, in GMT
+
+    // Put today up the top of the list
+    $dates = array("$timemidnight" => "Today, ".userdate($timenow, "j F Y") );
+
+    if (! $course->startdate) {
+        $course->startdate = $course->timecreated;
+    }
+
+    $numdates = 1;
+    while ($timemidnight > $course->startdate and $numdates < 365) {
         $timemidnight = $timemidnight - 86400;
-        $dates["$timemidnight"] = userdate($timemidnight, "l, j F Y");
+        $timenow = $timenow - 86400;
+        $dates["$timemidnight"] = userdate($timenow, "l, j F Y");
+        $numdates++;
     }
 
     if ($selecteddate == "today") {
@@ -71,6 +89,8 @@ function make_log_url($module, $url) {
 
 
 function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
+// It is assumed that $date is the GMT time of midnight for that day, 
+// and so the next 86400 seconds worth of logs are printed.
 
     $selector = "WHERE l.course='$course->id' AND l.user = u.id";
 
@@ -142,7 +162,8 @@ function print_course($course) {
     echo "<TABLE WIDTH=100%>";
     echo "<TR VALIGN=top>";
     echo "<TD VALIGN=top WIDTH=50%>";
-    echo "<P><FONT SIZE=3><B><A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</A></B></FONT></P>";
+    echo "<P><FONT SIZE=3><B><A TITLE=\"Click to enter this course\" 
+              HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</A></B></FONT></P>";
     if ($teachers = get_records_sql("SELECT u.* FROM user u, user_teachers t 
                                      WHERE u.id = t.user AND t.course = '$course->id' 
                                      ORDER BY t.authority ASC")) {

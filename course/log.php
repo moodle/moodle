@@ -11,7 +11,7 @@
         error("That's an invalid course id");
     }
 
-    if ( ! isteacher($course->id)) {
+    if (! isteacher($course->id)) {
         error("Only teachers can view logs");
     }
 
@@ -35,7 +35,7 @@
                      "<A HREF=\"view.php?id=$course->id\">$course->shortname</A> ->
                       <A HREF=\"log.php?id=$course->id\">Logs</A> -> Logs for $userinfo, $dateinfo", "");
         
-        print_heading("Logs for $userinfo, $dateinfo");
+        print_heading("Logs for $userinfo, $dateinfo (".usertimezone().")");
 
         print_log_selector_form($course, $user, $date);
 
