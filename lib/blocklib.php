@@ -496,23 +496,32 @@ function upgrade_blocks_plugins($continueto) {
                     $strblocksetup    = get_string("blocksetup");
                     print_header($strblocksetup, $strblocksetup, $strblocksetup, "", "", false, "&nbsp;", "&nbsp;");
                 }
-                print_heading("$block->name block needs upgrading");
-                $upgrade_function = $block->name."_upgrade";
+                print_heading('New version of '.$blocktitle.' ('.$block->name.') exists');
+                $upgrade_function = $block->name.'_upgrade';
                 if (function_exists($upgrade_function)) {
                     $db->debug=true;
                     if ($upgrade_function($currblock->version, $block)) {
-                        $db->debug=false;
-                        // OK so far, now update the blocks record
-                        $block->id = $currblock->id;
-                        if (! update_record("blocks", $block)) {
-                            error("Could not update block $block->name record in blocks table!");
-                        }
-                        notify(get_string('blocksuccess', '', $blocktitle), 'green');
-                        echo "<HR>";
+
+                        $upgradesuccess = true;
                     } else {
-                        $db->debug=false;
-                        notify("Upgrading block $block->name from $currblock->version to $block->version FAILED!");
+                        $upgradesuccess = false;
                     }
+                    $db->debug=false;
+                }
+                else {
+                    $upgradesuccess = true;
+                }
+                if(!$upgradesuccess) {
+                    notify("Upgrading block $block->name from $currblock->version to $block->version FAILED!");
+                }
+                else {
+                    // OK so far, now update the blocks record
+                    $block->id = $currblock->id;
+                    if (! update_record('blocks', $block)) {
+                        error("Could not update block $block->name record in blocks table!");
+                    }
+                    notify(get_string('blocksuccess', '', $blocktitle), 'green');
+                    echo '<hr />';
                 }
                 $updated_blocks = true;
             } else {
