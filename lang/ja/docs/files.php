@@ -9,7 +9,7 @@ $string['philosophy.html'] = "哲学";
 $string['licence.html'] = "ライセンス";
 $string['features.html'] = "特徴";
 $string['release.html'] = "リリースノート";
-$string['future.html'] = "将来";
+$string['future.html'] = "未来";
 $string['credits.html'] = "謝辞";
 
 $string['-installation'] = "管理";

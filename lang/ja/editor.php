@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.4 alpha (2004081500)
+      // editor.php - created with Moodle 1.4 alpha (2004081900)
 
 
 $string['about'] = 'エディタに関して';
@@ -8,6 +8,7 @@ $string['absmiddle'] = 'Absmiddle';
 $string['address'] = 'アドレス';
 $string['alignment'] = '配置';
 $string['alternatetext'] = 'Alternate text';
+$string['anchorhelp'] = 'ここではアンカーのみを作成します。リンクは手動で作成する必要があります。';
 $string['anchorname'] = 'アンカー名';
 $string['anchors'] = 'アンカー';
 $string['baseline'] = 'Baseline';

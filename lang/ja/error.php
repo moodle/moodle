@@ -1,10 +1,11 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.4 alpha (2004081500)
+      // error.php - created with Moodle 1.4 alpha (2004081900)
 
 
 $string['coursegroupunknown'] = 'コースに関連するグループ $a が指定されていません';
 $string['erroronline'] = '$a 行にエラーがあります';
 $string['fieldrequired'] = '\"$a\" は必須項目です';
+$string['filenotfound'] = '申し訳ございません。ファイルが見つかりませんでした。';
 $string['groupalready'] = 'ユーザは既にグループ $a に属しています';
 $string['groupunknown'] = 'グループ $a は指定されたコースに関連していません';
 $string['invalidfieldname'] = '\"$a\" は正しいフィールド名ではありません';
