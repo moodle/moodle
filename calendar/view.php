@@ -44,7 +44,9 @@
     require_once('lib.php');
     require_once('../course/lib.php');
 
-    optional_variable($_GET['view'], "upcoming");
+    require_login();
+
+    optional_variable($_GET['view'], 'upcoming');
     optional_variable($_GET['cal_d']);
     optional_variable($_GET['cal_m']);
     optional_variable($_GET['cal_y']);
@@ -54,11 +56,6 @@
     }
 
     //add_to_log($course->id, "course", "view", "view.php?id=$course->id", "$course->id");
-
-    $side = 175;
-
-    $prefmenu = true; // By default, display it
-    calendar_session_vars();
     $now = usergetdate(time());
     $pagetitle = '';
 
@@ -117,11 +114,11 @@
 
     // Layout the whole page as three big columns.
     echo '<table border="0" cellpadding="3" cellspacing="0" width="100%">';
-    echo '<tr valign="top">';
+    echo '<tr style="vertical-align: top;">';
 
     // START: Main column
 
-    echo '<td width="100%" valign="top">';
+    echo '<td style="vertical-align: top; width: 100%;">';
 
     if($_GET['view'] == 'month') {
         if(is_numeric($SESSION->cal_show_course)) {
@@ -182,7 +179,7 @@
     // END: Main column
 
     // START: Last column (3-month display)
-    echo '<td valign="top" width="'.$side.'">';
+    echo '<td style="vertical-align: top; width: 180px;">';
     print_side_block_start(get_string('monthlyview', 'calendar'), '', 'sideblockmain');
     list($prevmon, $prevyr) = calendar_sub_month($mon, $yr);
     list($nextmon, $nextyr) = calendar_add_month($mon, $yr);
@@ -199,7 +196,7 @@
     echo calendar_get_mini($courses, $groups, $users, $nextmon, $nextyr);
     echo '</p>';
     print_side_block_end();
-    print_spacer(1, $side);
+    print_spacer(1, 180);
     echo '</td>';
 
     echo '</tr></table>';
