@@ -1,7 +1,81 @@
+<?php
+    require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+?>
 <form method="post" action="module.php" name="form">
 <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>">
 
-<table cellpadding="9" cellspacing="0" >
+
+<!-- Table of config options -->
+<?php
+    $table_created = false; // used to make sure that table is only created when needed
+    $submitbutton = false;
+    // Include the options from each question type
+    foreach ($QUIZ_QTYPES as $type) {
+        $options = $type->get_config_options();
+        if ($options) {
+            // Temporary code
+            if (!$table_created) {
+                echo "<table cellpadding=\"9\" cellspacing=\"0\" align=\"center\">\n";
+                echo '<tr><th colspan="3">';
+                print_heading(get_string('questiontypesetupoptions', 'quiz'));
+                echo "</th></tr>\n";
+                $table_created = true;
+            }
+            $typename = $type->name();
+            $strtype = get_string($typename, 'quiz');
+            echo "<tr valign=\"top\">\n";
+            echo '<td colspan="3" align="center"><b>' . $strtype . "</b></td>\n";
+            echo "</tr>\n";
+            foreach ($options as $option) {
+                if (!isset($option->name)) {
+                    continue;
+                }
+                echo "<tr valign=\"top\">\n";
+                if (!empty($option->link)) {
+                    echo '<td colspan="3" align="center"><a href="' . s($CFG->wwwroot) . '/mod/quiz/questiontypes/' . s($typename) . '/' . s($option->link) . '?sesskey=' . s(rawurlencode($USER->sesskey)) . '">' . get_string($option->name, 'quiz') . "</a></td>\n";
+                }
+                else {
+                    if (!isset($option->code)) {
+                        $option->code = '';
+                    }
+                    echo '<td align="right"><b>';
+                    print_string($option->name, 'quiz');
+                    echo ":</b></td>\n";
+                    echo '<td>' . $option->code . "</td>\n";
+                    if (empty($option->help)) {
+                        echo "<td></td>\n";
+                    }
+                    else {
+                        echo '<td align="left">' . get_string($option->help, 'quiz') . "</td>\n";
+                    }
+                    $submitbutton = 'true';
+                }
+                echo "</tr>\n";
+            }
+        }
+    }
+    if ($submitbutton) {
+?>
+<tr>
+  <td colspan="3" align="center">
+    <input type="submit" value="<?php print_string("savechanges") ?>" />
+  </td>
+</tr>
+</table>
+<?php
+    }
+    if ($table_created) {
+        echo '</table>';
+        print_simple_box_end();
+        echo '<br />';
+        print_simple_box_start("center", "", "$THEME->cellheading");
+    }
+?>
+
+
+<!-- Table of default values -->
+
+<table cellpadding="9" cellspacing="0" align="center">
 
 <tr valign="top">
   <th align="right">&nbsp;</th>

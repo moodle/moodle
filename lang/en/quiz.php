@@ -203,6 +203,7 @@ $string['questionname'] = 'Question name';
 $string['questionnametoolong'] = 'Question name too long at line $a (255 char. max). It has been truncated.';
 $string['questions'] = 'Questions';
 $string['questionsperpage'] = 'Max number of questions per page';
+$string['questiontypesetupoptions'] = 'Setup options for question types:';
 $string['quizavailable'] = 'The quiz is available until: $a';
 $string['quizclose'] = 'Close the quiz';
 $string['quizclosed'] = 'This quiz closed on $a';

@@ -312,6 +312,39 @@ class quiz_default_questiontype {
         error('grade_response has not been implemented for question type '
                 .$this->name());
     }
+
+    function get_config_options() {
+    // Returns an array of objects describing the options for the question type
+    // to be included on the quiz module admin page
+    //
+    // Configuration options can be included by setting the following fields in
+    // the object:
+    // ->name           (The name of the option within this question type
+    //                   - the full option name will be constructed as
+    //                   "quiz_{$this->name()}_$name", the human readable name
+    //                   will be displayed with get_string($name, 'quiz'))
+    // ->code           (The code to display the form element, help button, etc.
+    //                   i.e. the content for the central table cell. Be sure
+    //                   to name the element "quiz_{$this->name()}_$name" and
+    //                   set the value to $CFG->{"quiz_{$this->name()}_$name"})
+    // ->help           (Name of the string from the quiz module language file
+    //                   to be used for the help message in the third column of
+    //                   the table. An empty string (or the field not set)
+    //                   means to leave the box empty)
+    //
+    // Links to custom settings pages can be included by setting the following
+    // fields in the object:
+    // ->name           (The name of the link text string -
+    //                   get_string($name, 'quiz') will be called)
+    // ->link           (The filename part of the URL for the link
+    //                   - the full URL is contructed as
+    //                   "$CFG->wwwroot/mod/quiz/questiontypes/{$this->name()}/$link?sesskey=$sesskey"
+    //                   [but with the relavant calls to the s and rawurlencode
+    //                   functions] where $sesskey is the sesskey for the user)
+
+        // No options by default
+        return false;
+    } 
 }
 
 quiz_load_questiontypes();
