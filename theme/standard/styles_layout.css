@@ -118,6 +118,10 @@ form {
     border-style:solid;
 }
 
+.forumpostindent {
+    margin-left: 30px;
+}
+
 /* weblib.php table */
 .tabledivider {
     border-width:1px;
