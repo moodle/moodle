@@ -374,16 +374,12 @@ TABLE.cal_controls td {
 	font-size:90%;
 }
 
-.sideblockheading {
+.sideblock.header {
 	font-weight:bold;
 }
 
-.sideblocklinks { }
+.sideblock .links { }
 
-td.sideblockmain center, td.sideblockmain p, td.sideblockmain div {
+td.sideblock .content {
   text-align:left;
 }
-
-
-/* course summary */
-#block_course_summary .sideblockmain { }
