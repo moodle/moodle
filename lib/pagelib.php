@@ -228,7 +228,7 @@ class MoodlePage_Course extends MoodlePage {
     // Do NOT load up "expensive" resouces (e.g. SQL data) here!
     function init_quick($data) {
         if(empty($data->pageid)) {
-            error('Cannot quickly initialize page: empty course id ');
+            error('Cannot quickly initialize page: empty course id');
         }
         parent::init_quick($data);
     }
