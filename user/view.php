@@ -282,6 +282,21 @@
         echo "<input type=\"submit\" value=\"".get_string("loginas")."\" />";
         echo "</form></td>";
     }
+    if ($USER->id == $user->id) {
+        if ($countmessages = count_records('message', 'useridto', $user->id)) {
+            $messagebuttonname = get_string("messages", "message")."($countmessages)";
+        } else {
+            $messagebuttonname = get_string("messages", "message");
+        }
+        echo "<td nowrap=\"nowrap\"><form target=\"message\" action=\"../message/index.php\" method=\"get\">";
+        echo "<input type=\"submit\" value=\"$messagebuttonname\" onclick=\"return openpopup('/message/index.php', 'message', 'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0);\" />";
+        echo "</form></td>";
+    } else {
+        echo "<td nowrap=\"nowrap\"><form target=\"message_$user->id\" action=\"../message/user.php\" method=\"get\">";
+        echo "<input type=\"hidden\" name=\"id\" value=\"$user->id\" />";
+        echo "<input type=\"submit\" value=\"".get_string("sendmessage", "message")."\" onclick=\"return openpopup('/message/user.php?id=$user->id', 'message_$user->id', 'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500', 0);\" />";
+        echo "</form></td>";
+    }
     echo "<td></td>";
     echo "</tr></table></center>\n";
 
