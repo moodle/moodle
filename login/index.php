@@ -58,11 +58,14 @@
                 header("Location: $CFG->wwwroot/user/edit.php?id=$USER->id&course=$site->id");
 
             } else if (empty($SESSION->wantsurl)) {
+                unset($SESSION->lang);
+                save_session("SESSION");
                 session_write_close();
                 header("Location: $CFG->wwwroot");
 
             } else {
                 $wantsurl = $SESSION->wantsurl;
+                unset($SESSION->lang);
                 unset($SESSION->wantsurl);
                 save_session("SESSION");
                 session_write_close();
