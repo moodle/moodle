@@ -106,20 +106,7 @@ function blocks_get_missing(&$page, &$pageblocks) {
         foreach($allblocks as $block) {
             if($block->visible && (!blocks_find_block($block->id, $pageblocks) || $block->multiple)) {
                 // And if it's applicable for display in this format...
-                $formats = block_method_result($block->name, 'applicable_formats');
-                $accept  = NULL;
-                foreach($formats as $format => $allowed) {
-                    $thisformat = '^'.str_replace('*', '[^-]*', $format).'.*$';
-                    if(ereg($thisformat, $pageformat)) {
-                        $accept = $allowed;
-                        break;
-                    }
-                }
-                if($accept === NULL) {
-                    // ...or in all pages...
-                    $accept = !empty($formats['all']);
-                }
-                if(!empty($accept)) {
+                if(blocks_name_allowed_in_format($block->name, $pageformat)) {
                     // ...add it to the missing blocks
                     $missingblocks[] = $block->id;
                 }
@@ -143,23 +130,30 @@ function blocks_remove_inappropriate($page) {
     foreach($pageblocks as $position) {
         foreach($position as $instance) {
             $block = blocks_get_record($instance->blockid);
-            $formats = block_method_result($block->name, 'applicable_formats');
-            $accept  = NULL;
-            foreach($formats as $format => $allowed) {
-                $thisformat = '^'.str_replace('*', '[^-]*', $format).'.*$';
-                if(ereg($thisformat, $pageformat)) {
-                    $accept = $allowed;
-                    break;
-                }
-            }
-            if($accept === NULL) {
-                $accept = !empty($formats['all']);
-            }
-            if(empty($accept)) {
+            if(!blocks_name_allowed_in_format($block->name, $pageformat)) {
                blocks_delete_instance($instance);
             }
         }
     }
+}
+
+function blocks_name_allowed_in_format($name, $pageformat) {
+    $formats = block_method_result($name, 'applicable_formats');
+    $accept  = NULL;
+    $depth   = -1;
+    foreach($formats as $format => $allowed) {
+        $thisformat = '^'.str_replace('*', '[^-]*', $format).'.*$';
+        if(ereg($thisformat, $pageformat)) {
+            if(($scount = substr_count($format, '-')) > $depth) {
+                $depth  = $scount;
+                $accept = $allowed;
+            }
+        }
+    }
+    if($accept === NULL) {
+        $accept = !empty($formats['all']);
+    }
+    return $accept;
 }
 
 function blocks_delete_instance($instance) {
