@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.9 development (2003042701)
+      // forum.php - created with Moodle 1.0.9 development (2003042801)
 
 
 $string['addanewdiscussion'] = "トピックを追加";
@@ -19,6 +19,7 @@ $string['deleteddiscussion'] = "ディスカッショントピックが削除されました";
 $string['deletedpost'] = "投稿が削除されました";
 $string['deletesure'] = "この投稿を削除してもよろしいですか?";
 $string['discussion'] = "ディスカッション";
+$string['discussionmoved'] = "ディスカッションは '\$a' に移動されました。";
 $string['discussions'] = "ディスカッション";
 $string['discussionsstartedby'] = "\$a さんより開始されたディスカッション";
 $string['discussthistopic'] = "投稿";

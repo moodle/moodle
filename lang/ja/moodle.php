@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 development (2003042701)
+      // moodle.php - created with Moodle 1.0.9 development (2003042801)
 
 
 $string['action'] = "Áàºî";
@@ -36,6 +36,7 @@ $string['assigncreators'] = "¥³¡¼¥¹ºîÀ®¼Ô¤Î³äÅö¤Æ";
 $string['assignteachers'] = "¶µ»Õ¤Î³äÅö¤Æ";
 $string['authentication'] = "Ç§¾Ú¥ª¥×¥·¥ç¥ó";
 $string['availablecourses'] = "¥³¡¼¥¹°ìÍ÷";
+$string['backup'] = "¥Ð¥Ã¥¯¥¢¥Ã¥×";
 $string['cancel'] = "¥­¥ã¥ó¥»¥ë";
 $string['categories'] = "¥³¡¼¥¹¥«¥Æ¥´¥ê¡¼";
 $string['category'] = "¥«¥Æ¥´¥ê¡¼";
@@ -86,6 +87,8 @@ $string['cookiesenabled'] = "¥Ö¥é¥¦¥¶¤Î¥¯¥Ã¥­¡¼¤ÎÀßÄê¤òÍ­¸ú¤Ë¤·¤Æ¤¯¤À¤µ¤¤";
 $string['copyrightnotice'] = "Ãøºî¸¢É½¼¨";
 $string['country'] = "¹ñ";
 $string['course'] = "¥³¡¼¥¹";
+$string['coursebackup'] = "¥³¡¼¥¹¥Ð¥Ã¥¯¥¢¥Ã¥×";
+$string['coursefiles'] = "¥³¡¼¥¹¥Õ¥¡¥¤¥ë";
 $string['courseformats'] = "¥³¡¼¥¹¥Õ¥©¡¼¥Þ¥Ã¥È";
 $string['courses'] = "¥³¡¼¥¹";
 $string['courseupdates'] = "¥³¡¼¥¹¹¹¿·ÆâÍÆ";
@@ -227,6 +230,7 @@ $string['helpreading'] = "½½Ê¬¤ËÆÉ¤à";
 $string['helprichtext'] = "¥ê¥Ã¥Á¥Æ¥­¥¹¥ÈHTML¥¨¥Ç¥£¥¿¤Ë´Ø¤·¤Æ";
 $string['helpsummaries'] = "³µÍ×¤Ë´Ø¤·¤Æ";
 $string['helptext'] = "¥Æ¥­¥¹¥È¤Î½ñ¤­Êý";
+$string['helpwiki'] = "Wiki¥Æ¥­¥¹¥È¤Î½ñ¤­Êý";
 $string['helpwriting'] = "¿µ½Å¤Ë½ñ¤¯";
 $string['hide'] = "ÈóÉ½¼¨";
 $string['hits'] = "¥¢¥¯¥»¥¹";
@@ -244,6 +248,7 @@ $string['htmleditordisabledbrowser'] = "InternetExplorer5.5°Ê¾å¤ò»ÈÍÑ¤·¤Æ¤¤¤Ê¤¤¤
 $string['htmlformat'] = "HTML·Á¼°";
 $string['icqnumber'] = "ICQ¥Ê¥ó¥Ð¡¼";
 $string['idnumber'] = "ID¥Ê¥ó¥Ð¡¼";
+$string['include'] = "´Þ¤à";
 $string['invalidemail'] = "ÉÔÀµ¤Ê¥á¡¼¥ë¥¢¥É¥ì¥¹¤Ç¤¹";
 $string['invalidlogin'] = "ÉÔÀµ¤Ê¥í¥°¥¤¥ó¤Ç¤¹¡¢ºÆÅÙ¥í¥°¥¤¥ó¤·¤Æ¤¯¤À¤µ¤¤";
 $string['jumpto'] = "°ÜÆ° ...";
@@ -333,6 +338,7 @@ $string['name'] = "Ì¾¾Î";
 $string['namesocial'] = "¥»¥¯¥·¥ç¥ó";
 $string['nametopics'] = "¥È¥Ô¥Ã¥¯";
 $string['nameweeks'] = "½µ";
+$string['needed'] = "É¬Í×¤Ê";
 $string['never'] = "Ìµ¤·";
 $string['neverdeletelogs'] = "¥í¥°¤òºï½ü¤·¤Ê¤¤";
 $string['new'] = "¿·¤·¤¤";
@@ -517,6 +523,7 @@ $string['uploadproblem'] = "¥Õ¥¡¥¤¥ë '\$a' ¤Î¥¢¥Ã¥×¥í¡¼¥ÉÃæ¤Ë¸¶°øÉÔÌÀ¤Î¥¨¥é¡¼¤¬È
 $string['uploadthisfile'] = "¥Õ¥¡¥¤¥ë¤ò¥¢¥Ã¥×¥í¡¼¥É¤¹¤ë";
 $string['userdeleted'] = "¤³¤Î¥æ¡¼¥¶¤Î¥¢¥«¥¦¥ó¥È¤Ïºï½ü¤µ¤ì¤Þ¤·¤¿";
 $string['userdescription'] = "¼«¸Ê¾Ò²ð";
+$string['userfiles'] = "¥æ¡¼¥¶¥Õ¥¡¥¤¥ë";
 $string['username'] = "¥æ¡¼¥¶Ì¾";
 $string['usernameexists'] = "¤³¤Î¥æ¡¼¥¶Ì¾¤Ï´û¤Ë»ÈÍÑ¤µ¤ì¤Æ¤¤¤Þ¤¹¡¡Â¾¤Î¥æ¡¼¥¶Ì¾¤òÆþÎÏ¤·¤Æ¤¯¤À¤µ¤¤";
 $string['userprofilefor'] = "\$a ¤Î¥×¥í¥Õ¥£¡¼¥ë";
@@ -531,6 +538,8 @@ $string['welcometocoursetext'] = "\$a->coursename ¤Ø¤è¤¦¤³¤½!
 
   \$a->profileurl";
 $string['withchosenfiles'] = "ÁªÂò¤·¤¿¤â¤Î¤ò";
+$string['withoutuserdata'] = "¥æ¡¼¥¶¥Ç¡¼¥¿¤ò½ü¤¯";
+$string['withuserdata'] = "¥æ¡¼¥¶¥Ç¡¼¥¿¤ò´Þ¤à";
 $string['wordforstudent'] = "³ØÀ¸(Ã±¿ô)¤ËÂÐ¤¹¤ë¸Æ¾Î";
 $string['wordforstudenteg'] = "Îã ³ØÀ¸¡¢»²²Ã¼Ô";
 $string['wordforstudents'] = "³ØÀ¸(Ê£¿ô)¤ËÂÐ¤¹¤ë¸Æ¾Î";
