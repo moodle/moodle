@@ -414,6 +414,7 @@ $string['startdate'] = "Datum des Kursbeginns";
 $string['startsignup'] = "Jetzt einen neuen Zugang anlegen!";
 $string['status'] = "Status";
 $string['stringsnotset'] = "Folgende Textteile sind nicht vorhanden in \$a";
+$string['studentnotallowed'] = "Entschuldigung, aber Sie können diesen Kurs nich al '\$a' betreten";
 $string['success'] = "Erfolg";
 $string['summary'] = "Zusammenfassung";
 $string['summaryof'] = "Zusammenfassung von \$a";

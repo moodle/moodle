@@ -58,6 +58,7 @@ $string['newforumposts'] = "Neue Foren-Beiträge";
 $string['nodiscussions'] = "Es befindet sich noch kein Diskussionsthema in diesem Forum";
 $string['noguestpost'] = "Gäste dürfen hier nicht eintragen";
 $string['noposts'] = "Keine Beiträge";
+$string['nopostscontaining'] = "Es wurden keine in ' \$a' enthaltenen Beiträge gefunden";
 $string['nosubscribers'] = "Momentan gibt es keine Teilnehmer in diesem Forum";
 $string['nownotsubscribed'] = "\$a->name wird keine Kopien von '\$a->forum' per Email erhalten";
 $string['nowsubscribed'] = "\$a->name wird Kopien von '\$a->forum'  per Email erhalten";
@@ -68,6 +69,7 @@ $string['openmode1'] = "Keine Diskussionen, aber Atworten erlaubt";
 $string['openmode2'] = "Discussions and replies are allowed";
 $string['parentofthispost'] = "Verfasser dieses Beitrags";
 $string['postadded'] = "Ihr Eintrag wurde erfolgreich hinzugefügt. <P>Sie haben \$a zu bearbeiten, sofern Sie Änderungen machen möchten.";
+$string['postincontext'] = "Diesen Beitrag im Zusammenhang einsehen";
 $string['postingtip'] = "<B>Eintragstipps
 für Antworten
 <UL>
@@ -97,6 +99,7 @@ $string['repliesone'] = "\$a Antwort bis jetzt";
 $string['reply'] = "Antwort";
 $string['search'] = "Suche";
 $string['searchforums'] = "Durchsuche Foren";
+$string['searchresults'] = "Suchergebnisse";
 $string['sendinratings'] = "Aktuelle Bewertung senden";
 $string['showsubscribers'] = "Teilnehmer anzeigen";
 $string['singleforum'] = "Eine einzelne, einfache Diskussion";

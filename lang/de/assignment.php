@@ -22,6 +22,7 @@ $string['submissionfeedback'] = "Eintragsmeldung";
 $string['submissions'] = "Einträge";
 $string['submitassignment'] = "Tragen Sie Ihre Aufgabe ein unter Verwendung dieses Formulars";
 $string['submitted'] = "Eingetragen";
+$string['typeoffline'] = "Offlineaktivität ";
 $string['typeuploadsingle'] = "Laden Sie einzige Datei hoch, Wert zwischen 0 - 100 Punkten";
 $string['uploadbadname'] = "Dieser Dateiname enthält unzulässige Zeichen und kann nicht hochgeladen erden.";
 $string['uploadedfiles'] = "hochgeladene Dateien";
@@ -31,6 +32,7 @@ $string['uploadfiletoobig'] = "Entschuldigung, aber diese Datei ist zu groß (Die
 $string['uploadnofilefound'] = "Es wurke keine Datei gefunden . Sind Sie sicher, dass Sie eine für das Hochladen ausgewählt haben?";
 $string['uploadnotregistered'] = "'\$a' wurde korrekt hochgeladen, aber der Eintrag nicht registriert'";
 $string['uploadsuccess'] = "'\$a' wurde erfolgreich hochgeladen";
+$string['viewfeedback'] = "Aufgabengrad und Rückmeldung anzeigen ";
 $string['viewsubmissions'] = "Zeige \$a eingetragen Aufgaben ";
 $string['yoursubmission'] = "Ihre Eintrag";
 
