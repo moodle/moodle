@@ -6,15 +6,15 @@ if (defined('COURSE_MAX_LOG_DISPLAY')) {  // Being included again - should never
     return;
 }
 
-define('COURSE_MAX_SUMMARIES_PER_PAGE', 8);    // records
-
 define('COURSE_MAX_LOG_DISPLAY', 150);       // days
 
 define('COURSE_MAX_LOGS_PER_PAGE', 1000);    // records
 
 define('COURSE_LIVELOG_REFRESH', 60);        // Seconds
 
-define('COURSE_MAX_RECENT_PERIOD', 604800);   // A week, in seconds
+define('COURSE_MAX_RECENT_PERIOD', 604800);  // A week, in seconds
+
+define('COURSE_MAX_SUMMARIES_PER_PAGE', 10); // courses
 
 define("FRONTPAGENEWS",           0);
 define("FRONTPAGECOURSELIST",     1);
@@ -973,19 +973,19 @@ function print_category_info($category, $depth) {
         }
     
         echo "<td valign=\"top\">$catimage</td>";
-        echo "<td valign=\"top\" width=\"100%\" class=\"categoryname\"><font size=+1>";
+        echo "<td valign=\"top\" width=\"100%\" class=\"categoryname\">";
         echo "<a $catlinkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a>";
-        echo "</font></td>";
-        echo "<td>&nbsp;</td>";
+        echo "</td>";
+        echo "<td class=\"categoryname\">&nbsp;</td>";
         echo "</tr>\n";
 
         if ($courses) {
             foreach ($courses as $course) {
                 $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
                 echo "<tr><td valign=\"top\" width=\"30\">&nbsp;";
-                echo "</td>\n<td valign=\"top\" class=\"coursename\" width=\"100%\">";
+                echo "</td>\n<td valign=\"top\" width=\"100%\" class=\"coursename\">";
                 echo "<a $linkcss href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
-                echo "</td>\n<td align=\"right\" valign=\"top\" nowrap>";
+                echo "</td>\n<td align=\"right\" valign=\"top\" nowrap class=\"coursename\">";
                 if ($course->guest ) {
                     echo "<a title=\"$strallowguests\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
                     echo "<img hspace=2 alt=\"\" height=16 width=16 border=0 src=\"$pixpath/i/user.gif\"></a>";
@@ -1011,10 +1011,10 @@ function print_category_info($category, $depth) {
             echo "</td>";
         }
     
-        echo "<td valign=\"top\" width=\"100%\" class=\"categoryname\"><font size=+1>";
+        echo "<td valign=\"top\" width=\"100%\" class=\"categoryname\">";
         echo "<a $catlinkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a>";
-        echo "</font></td>";
-        echo "<td valign=\"top\">$category->coursecount</td></tr>";
+        echo "</td>";
+        echo "<td valign=\"top\" class=\"categoryname\">$category->coursecount</td></tr>";
     }
     echo "\n</table>\n";
 }
@@ -1191,7 +1191,7 @@ function print_my_moodle() {
         echo "</td></tr></table>\n";
     } else {
         if (count_records("course_categories") > 1) {
-            print_simple_box_start("center", "100%");
+            print_simple_box_start("center", "100%", "#FFFFFF", 5, "categorybox");
             print_whole_category_list();
             print_simple_box_end();
         } else {

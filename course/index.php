@@ -32,7 +32,7 @@
             $strcourses = get_string("courses");
             print_header($strcourses, $strcourses, $strcourses, "", "", true, update_categories_button());
             print_heading(get_string("categories"));
-            print_simple_box_start("center", "50%");
+            print_simple_box_start("center", "50%", "#FFFFFF", 5, "categorybox");
             print_whole_category_list();
             print_simple_box_end();
             print_course_search();
