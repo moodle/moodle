@@ -1,0 +1,31 @@
+<p align="center"><b>Upload users</b></p>
+
+<p>Beachten Sie bitte: <strong>es ist normalerweise nicht erforderlich Anwender in gro&szlig;en Mengen nach Moodle zu importieren</strong> - um den eigenen Arbeitsaufwand zu begrenzen sollten anderre Formen der Best&auml;tigung von Teilnehmern gepr&uuml;ft werden, die keine manuelle Erfassung erfordern, wie die Verbindung zu bestehenden externen Datenbanken oder die Einrichtung von Zug&auml;ngen durch die Teilnehmer selber. Weitere Hinweise dazu finden Sie im Bereich Anmeldung /Authentifikation im Administrationsmenu.</p>
+<p>Wenn Sie dennoch eine gro&szlig;e Zahl von Anwendern aus einer Textdatei importieren wollen, m&uuml;ssen Sie die Textdatei folgenderma&szlig;en aufbauen:</p>
+
+<ul>
+  <li>Jede Zeile der Datei enth&auml;lt einen einzelnen Datensatz</li>
+  <li>Jeder Datensatz besteht aus einer Reihe von Datenfeldern, die durch Kommas getrennt sind</li>
+  <li>Der erste Datensatz der Datei (erste Zeile) enth&auml;lt eine Liste der Feldnamen. Diese Zeile legt das Format der restlichen Zeilen fest.  Die Feldnamen entsprechen den Datens&auml;tzen, die im Anmeldeformular in der Datenbank genutzt werden.
+    <blockquote>
+      <p><strong>Erforderliche Datenfeldnamen:</strong> diese Datenfeldnamen m&uuml;ssen in der ersten Zeile eingetragen werden und f&uuml;r jeden Nutzer definiert werden</p>
+      <p></p>
+      <font color="#990000" face="Courier New, Courier, mono">username, password, firstname, lastname, email</font></p>
+</p>
+      <p><strong>Default Datenfeldnamen:</strong> diese sind optional - wenn diese nicht eingebunden werden, werden die Werte f&uuml;r diese Felder vom Basiseintrag &uuml;bernommen, die bei jeder Neuanmeldung voreingestellt sind. (Der Spracheintrag f&uuml;r Deutsch lautet 'de'.</p>
+      <p><font color="#990000" face="Courier New, Courier, mono">institution, department, city, country, lang, timezone</font> </p>
+      <p><strong>Optionale Datenfeldnamen: </strong>all diese Eintr&auml;ge sind v&ouml;llig freigestellt. Als Kursname (course1,2, etc) werden die Kurzbezeichnungen der Kurse genutzt - wenn die Kurse angelegt sind, werden die Teilnehmer dann in den Kursen automatisch angemeldet.</p>
+      <p> <font color="#990000" face="Courier New, Courier, mono">idnumber, icq, phone1, phone2, address, url, description, mailformat, maildisplay, htmleditor, autosubscribe, course1, course2, course3, course4, course5</font></p>
+    </blockquote>
+    </li>
+  <li>Wenn Sie Kommas in den Datenfeldern verwenden m&uuml;ssen, nutzen Sie die Eingabe &amp;#44 - das Skript wird diese dann automatisch in ein Komma umwandeln. </li>
+  <li>F&uuml;r Boole-sche Felder verwenden Sie 0 f&uuml;r falssch und 1 f&uuml;r richtig/wahr. </li>
+  <li>Anmerkung: Wenn ein Nutzer bereits in der Moodle Nutzerdatenbank registriert ist, wird er f&uuml;r die neuen Kurse als Teilnehmer eingetragen ohne die anderen Daten zu aktualisieren.</li>
+</ul>
+
+
+<p>Hier ist ein Beispiel f&uuml;r eine g&uuml;ltige Importdatei:<br>
+</p>
+<p><font size="-1" face="Courier New, Courier, mono">username, password, firstname, lastname, email, lang, idnumber, maildisplay, course1<br>
+jonest, verysecret, Tom, Jones, jonest@someplace.edu, en, 3663737, 1, Intro101<br>
+reznort, somesecret, Trent, Reznor, reznort@someplace.edu, en_us, 6736733, 0, Advanced202</font></p>

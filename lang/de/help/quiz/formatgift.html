@@ -1,0 +1,142 @@
+<p align=center><b>"GIFT"-Format-Dateien importieren</b></p>
+
+<p>GIFT ist das umfangreichste Format zum Import von Textdateien in das Moodle Quiz-Modul.  Es unterst&uuml;tzt
+Multiple-Choice-Fragen, Richtig-Falsch- Fragen, Kurzantwort-Fragen, Zuordnungen und Numerische Fragen, genauso
+ wie Fragen mit L&uuml;ckentexten.  Verschiedene Fragenanrten k&ouml;nnen in einer Textdatei kombiniert werden.
+ Das Importformat unterst&uuml;tzt auch Kommentarzeilen, Fragenamen, Feedback und die prozentuale Gewichtung der Antworten.</p>
+
+        <h3>Verschiedene Frageformen</h3>
+
+        <p><u>Multiple-Choice-Fragen:</u><br />
+        F&uuml;r Multiple-Choice-Fragen wird das Tilde-Zeichen (~) verwandt, um falsche Antworten zu kennzeichnen. Richtige Antworten werden mit dem Gleichheitszeichen (=) markiert.</p>
+        <pre>     Who's buried in Grant's tomb?{~Grant ~Jefferson =no one}</pre>
+<br>
+<h3>L&uuml;ckentexte</h3>
+        <p>Das <b>L&uuml;ckentext</b>format f&uuml;llt automatisch ein unterstrichenes Leerfeld (wie _____) in den Satz. Die Reihenfolge der Antwortvorgaben ist beliebig. Richtige und falsche Antworten werden wieder mit Tilde (~) und Gleichheitszeichen markiert.</p>
+        <pre>     Grant is {~buried =entombed ~living} in Grant's tomb.</pre>
+        <p>Wenn die Antwort vor der schlie&szlig;enden geschweiften klammer kommt, wird ein unterstrichenes Leerfeld f&uuml;r den L&uuml;ckentext eingef&uuml;gt. Alle Fragetypen k&ouml;nnen in diesem Format geschrieben werden.</p>
+        <p>Zwei Fragen werden durch die Eingabe von zwei aufeinander folgenden Absatzzeichen getrennt. Zur Verdeutlichung, die Antworten k&ouml;nnen auch in separtaen Zeilen eingegeben werden. Beispiel:</p>
+<pre>     The American holiday of Thanksgiving is celebrated on the {
+         ~second
+         ~third
+         =fourth
+     } Thursday of November.
+
+     Japanese characters originally came from what country? {
+         ~India
+         =China
+         ~Korea
+         ~Egypt}</pre>
+
+        <h3><p>Kurzantwort-Fragen:<br/></h3><br>
+         Antworten im Kurzantzwortfragen-Format werden alle durch ein Gleichheitszeichen (=) eingeleitet, das verdeutlicht, dass alle Antworten richtig sind. Falsche Antwortvorgaben (~) sind nicht erforderlich.</p>
+        <pre>     Who's buried in Grant's tomb?{=no one =nobody}
+<br>
+
+     Two plus two equals {=four =4}.</pre>
+        <p>Wenn es nur <u>eine</u> richtige Antwort gibt, kann auf das Gleichheitszeichen f&uuml;r die richtige Antwort verzichtet werden, solange keine Verwechslung mit Richtig-Falsch Fragestellung erfolgen kann.
+        <h3><p>Richtig-Falsch-Fragen:<br/></h3>
+            Bei diesem Fragetyp kennzeichnet die antwort, ob die Aussage richtig oder falsch ist. Die Antwort sollte als richtig {TRUE} oder falsch {FALSE}, oder abgek&uuml;rzt {T} oder {F} gekennzeichnet werden.</p>
+        <pre>     Grant is buried in Grant's tomb.{F}
+
+     The sun rises in the east.{T}</pre>
+
+        <h3><p>Zuordnungen:<br/></h3>
+       Zuordnungspaare beginnen mit einem Gleichheitszeichen (=) und werden durch das Pfeilsymbol "->" voneinander getrennt. Es sind mindestens drei Vergleichspaare erforderlich.</p>
+
+<pre>     Matching Question. {
+         =subquestion1 -> subanswer1
+         =subquestion2 -> subanswer2
+         =subquestion3 -> subanswer3
+         }
+
+     Match the following countries with their corresponding capitals. {
+         =Canada -> Ottawa
+         =Italy  -> Rome
+         =Japan  -> Tokyo
+         =India  -> New Delhi
+         }</pre>
+<p>Feedback und die prozentuale Gewichtung der Antworten werden hier nicht unterst&uuml;tzt.</p>
+        <h3><p>Numerische Fragen:<br/></h3>
+            Der Antwortabschnitt f&uuml;r eine numerische Antwort mu&szlig; mit dem Rautenzeichen (#) beginnen. Nicht exakt richtige, aber akzeptierte Antworten k&ouml;nnen ebenfalls eingegeben werden. Sie folgen der richtigen Antwort und einem Doppelpunkt. Wenn z.B. die richte Antwort zwiscehn 1,5 und 2,5 liegt dann erfolgt diese Eingabe <u>{#2:0.5}</u>. Das bedeutet 2 mit einer Fehlertoleranz von 0,5 ist korrekt. Wenn keine Fehlertoleranz angegeben wird, wird nur die genaue Antwort als richtig gewertet.</p>
+        <pre>     When was Ulysses S. Grant born? {#1822}
+
+     What is the value of pi (to 3 decimal places)? {#3.1415:0.0005}.</pre>
+         <p>Zus&auml;tzlich k&ouml;nnen Zahlenantworten auch als Spanne von..bis eingegeben werden. Schreiben Sie dazu in diesem Format {#<i>MinimumValue</i>..<i>MaximumValue</i>}.</p>
+        <pre>     What is the value of pi (to 3 decimal places)? {#3.141..3.142}.</pre>
+        <p>Moodle's Browseroberfl&auml;che unterst&uuml;tzt keine Antworten mit verschiedenen richtigen Zahlen. Der Code kann dies jedoch verabeiten und daher erm&ouml;glicht das GIFT Format eine Definition derartiger Fragen und Antworten. Dies ist erforderlich wenn verschiedene Antwortspannen richtig sind oder zum Teil auch wenn verschiedene Antworten unterschiedliche Prozentwerte bei der Bewertung ergeben. Verschiedene Antworten m&uuml;ssen durch ein Gleichheitszeichen voneinander getrennt sein wie bei den Kurzantwortfragen.</p>
+        <pre>     When was Ulysses S. Grant born? {#
+         =1822:0
+         =%50%1822:2}</pre>
+        <p>Hinweis: diese Option wird in der Verwaltung von Moodle-Quiz nicht unterst&uuml;tzt und  nicht angezeigt. Der einzige Weg, solche Fragen zu &auml;ndern ist durch L&ouml;schen der Frage im Moodle-Quiz-Modul und Re-Import der ver&auml;nderten Frage (oder direkt in phpMyAdmin).</p>
+        <h3>Optionen</h3>
+        <p>Zus&auml;tzlich zu diesen Frageformen bietet dieser Filter folgende Optionen: Kommentarzeilen, Fragenamen, Feedback und eine prozentuale Gewichtung der Antworten bei der Bewertung.</p>
+        <p><u>Kommentarzeilen:</u><br />
+        Alle Zeilen, die mit einem doppelten backlash-Zeichen (\\) beginnen, werden von diesem Filter ignoriert.
+<pre>     // Subheading: Numerical questions below
+     What's 2 plus 2? {#4}</pre>
+        <h3><p>Fragenname:<br/></h3> Der Fragenname wird zu Beginn der Frage geschrieben und durch zweifache Doppelpunkte eingefasst.</p>
+<pre>     ::Kanji Origins::Japanese characters originally
+     came from what country? {=China}
+
+     ::Thanksgiving Date::The American holiday of Thanksgiving is
+     celebrated on the {~second ~third =fourth} Thursday of November.</pre>
+        <p>Wenn kein Fragenname angegeben wird wird automatisch durch Voreinstellung eine Bezeichnung vergeben.</p>
+<h3><p>Feedback:<br/></h3> Feedback kann f&uuml;r jede Antwort definiert werden. Die Feedbackdefinition folgt der Antwort und wird durch ein(#) von ihr separiert.</p>
+<pre>     Waas ist die Antwort auf diese Multipli-Choice-Frage?{
+     ~falsche Antwort#Feedback Kommentar zur falschen Antwort
+     ~eine andere falsche Antwort#Feedback Kommentar zu dieser falschen Antwort
+     =richtige Antwort#Very good!}
+
+     Who's buried in Grant's tomb?{
+     =no one#excellent answer!
+     =nobody#excellent answer!}
+
+     Grant is buried in Grant's tomb.{FALSE#No one is buried in Grant's tomb.}</pre>
+
+<p>Bei Multiple-ChoiceFragen wird der Kommentar nur f&uuml;r die ausgew&auml;hlte Antwort angezeigt. Bei Kurzantwortfragen wird der Kommegar nur bei der richtigen Antwort angezeigt. Bei Richtig-Falsch-Fragen wird ein Kommentar bei der falschen Antwort gezeigt.Im obigen Beispiel wird der Feedback-Kommentar  nur bei der falschen Antwort (hier: richtig) angezeigt.</p>
+
+<p><h3>Prozentuale Gewichtung der Antworten</h3><br />
+Eine prozentuale Gewichtung der Antworten ist bei den Kurzantwortfragen und bei Multiple-Choice-Fragen m&ouml;glich. Der Prozentwert folgt dem Tilde-Zeichen (bei Multiple-Choice-Fragen) oder dem Gleichheitszeichen (bei KurzantwortFragen). Eingegeben wird der Zahlwert zwischen den Prozentzeichen (%50%). Diese Option kann mit Komentaren kombiniert werden.</p>
+<pre>     Difficult question.{~wrong answer ~%50%half credit answer =full credit answer}
+
+     ::Jesus' hometown::Jesus Christ was from {
+     ~Jerusalem#This was an important city, but the wrong answer.
+     ~%25%Bethlehem#He was born here, but not raised here.
+     ~%50%Galilee#You need to be more specific.
+     =Nazareth#Yes! That's right!}.
+
+     ::Jesus' hometown:: Jesus Christ was from {
+     =Nazareth#Yes! That's right!
+     =%75%Nazereth#Right, but misspelled.
+     =%25%Bethlehem#He was born here, but not raised here.}</pre>
+<p>Die Beispiele sind die gleiche Frage als Multiple-Choice Frage und als Kurzantwort-Frage.</p>
+
+<p><font size="-1">Hinweis: Hier k&ouml;nnen auch Prozentwerte angegeben werden, die bei Moodle im Quiz-Modul nicht erfasst werden k&ouml;nnen. Die Berechnung erfolgt dennoch richtig. Die Anzeige f&uuml;r den Lehrer in Moodle erfolgt u.U. jedoch nicht korrekt wenn sie innerhalb des Quizmoduls weiter bearbeitet wird. Die Anzeige f&uuml;r die Teilnehmer ist dennoch richtig. Das Pulldownmenu in Moodle's Quiz-Modul erlaubt nur bestimmte Werte. Wenn der in der Import-Datei eingetragene Wert damit nicht v&ouml;llig &uuml;bereinstimmt erfolgt eine fehlerhafte Anzeige in der Ansicht von Moodle. Wenn Sie nun eine Bearbeitung des Quiz innerhalb von Moodle vornehmen wird der Wert entsprechend den M&ouml;glichkeiten von Moodle angepasst und ge&auml;ndert.</font></p>
+
+<p><h3>Mehrere Antworten</h3><br />
+Die Option Mehrere Antworten erm&ouml;glicht Fragen bei denen mehrere Antworten als richtig bezeichnet werden m&uuml;ssen, um die Antwort insgesamt als vollst&auml;ndig richtig zu beantworten. Damit nicht bei einer einzelnen abgegeben Antwort die volle Punktzahl vergeben wird, m&uuml;ssen alle richtigen Antworten mit einem entsprechenden Bewertungsgewicht versehen werden.</p>
+<pre>     What two people are entombed in Grant's tomb? {
+          ~No one
+          ~%50%Grant
+          ~%50%Grant's wife
+          ~Grant's father }</pre>
+<p>Hinweis: Es gibt kein Gleichheitszeichen (=) f&uuml;r eine Antwort und die Summe der Gewichtungen darf 100% nicht &uuml;berschreiten, sonst erfolgt eine Fehlermeldung durch Moodle. Damit ein 100 % Wert nicht durch anklicken aller Antworten ereicht wird, m&uuml;ssen negative Gewichtugen f&uuml;r falsche Antworten vergeben werden.</p>
+<pre>     What two people are entombed in Grant's tomb? {
+          ~%-50%No one
+          ~%50%Grant
+          ~%50%Grant's wife
+          ~%-50%Grant's father }</pre>
+
+        <p><h3>Andere Optionen:</h3><br />
+        Andere Optionen sind durch Anpassung des Importfilters <b>gift/format.php</b> m&ouml;glich. </p>
+<p>Kurzantwortfragen k&ouml;nnen die Gro&szlig;- und Kleinschreibung der Antworten ber&uuml;cksichtigen durch eine &Auml;nderung der Zeile<br />
+        <tt>$question-&gt;usecase = 0;  // Ignore case</tt></p>
+<p></p>
+<h3>Troubleshooting</h3>
+<p>Die Textdateibezeichnung mu&szlig; mit der Bezeichnung in Ihrer Moodle Installaton &uuml;bereinstimmen. </p>
+<p>Hier finden Sie einen Beispieltext: <a href="../../../../mod/quiz/format/gift/examples.txt">gift/examples.txt</a>.</p>
+<p></p>
+<h3>Credits</h3>
+<p>Dieser Filter wurde gemeinsam von mehreren Mitgliedern der Moodle Community geschrieben. Urspr&uuml;nglich wurde er f&uuml;r das L&uuml;ckentextformat von Martin Dougiamas, Thomas Robb und anderen geschrieben. Paul Tsuchido Shew erweiterte den Filter im Dezember 2003 unter Mitwirkung von Vorschl&auml;gen aus der Community um weitere Frageformate. Der Name GIFT ist ein Akronym aus &quot;General Import Format Technology&quot; oder irgendsoetwas. Das ist aber f&uuml;r die Bezeichnung eines Filters zu lang: deshalb einfach GIFT.</p>
+        <p><font size="-1">GIFT documentation by Paul Tsuchido Shew, 13 Jan 2004.</font></p>
