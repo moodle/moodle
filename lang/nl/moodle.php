@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 development (2004060400)
+      // moodle.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['action'] = 'Actie';
@@ -40,6 +40,7 @@ $string['adminhelpconfiguration'] = 'Stel in hoe de site er uitziet  en werkt';
 $string['adminhelpconfigvariables'] = 'Stel variabelen in die het algemene werken van de site beïnvloeden';
 $string['adminhelpcourses'] = 'Definieer vakken en vak categorieën en voeg mensen aan de vakken toe';
 $string['adminhelpedituser'] = 'Bekijk de lijst met gebruikersaccounts en bewerk de accounts';
+$string['adminhelpenrolments'] = 'Kies interne of externe manieren om de aanmelding bij vakken te controleren';
 $string['adminhelplanguage'] = 'Voor het controleren en bewerken van het huidige taalpakket';
 $string['adminhelplogs'] = 'Bekijk de statistieken van alle activiteiten op deze site';
 $string['adminhelpmanageblocks'] = 'Beheer de geïnstalleerde blokken en hun instellingen';
@@ -139,6 +140,7 @@ $string['closewindow'] = 'Sluit dit venster';
 $string['comparelanguage'] = 'Vergelijk en bewerk huidige taal ';
 $string['complete'] = 'Voltooid';
 $string['configallowunenroll'] = 'Als dit op \'ja\' staat, dan mogen leerlingen zichzelf uitschrijven uit vakken wanneer ze willen. Anders mogen zij dat niet en dan wordt dit proces uitsluitend door leraars en beheerders gecontroleerd.';
+$string['configautologinguests'] = 'Moeten bezoekers automatisch als gast aangemeld worden als ze vakken met toegangsrecht voor gasten binnengaan ?';
 $string['configcachetext'] = 'Deze instelling kan de snelheid vergroten voor grotere sites of voor sites die textfilters gebruiken. Kopies van teksten zullen in hun gecompileerde vorm bewaard worden voor de tijd die je hier instelt. Als je deze tijd te kort instelt, zou je zelfs een kleine vertraging kunnen krijgen, maar de tijd te lang instellen kan er voor zorgen dat het te lang duurt voor teksten vernieuwd worden (met nieuwe links bijvoorbeeld).';
 $string['configcountry'] = 'Als je hier een land invult zal dit land als standaard worden geselecteerd bij nieuwe gebruikersaccounts. Laat dit veld gewoon leeg om gebruikers te dwingen een land te kiezen.';
 $string['configdebug'] = 'Als je dit aan zet zullen er meer PHP-fouten op het scherm worden weergegeven. Dit is alleen maar handig voor ontwikkelaars van de applicatie.';
@@ -193,12 +195,14 @@ $string['confirm'] = 'Bevestig';
 $string['confirmed'] = 'Je registratie is bevestigd';
 $string['confirmednot'] = 'Je registratie is nog niet bevestigd !';
 $string['continue'] = 'Ga door';
+$string['continuetocourse'] = 'Klik hier om je vak binnen te gaan';
 $string['cookiesenabled'] = 'Cookies moeten aan staan in je browser';
 $string['copy'] = 'Kopie';
 $string['copyingcoursefiles'] = 'Vakbestanden kopieëren';
 $string['copyinguserfiles'] = 'Gebruikersbestanden kopieëren';
 $string['copyingzipfile'] = 'Zipbestanden kopieëren';
 $string['copyrightnotice'] = 'Auteursrecht verklaring';
+$string['cost'] = 'Prijs';
 $string['country'] = 'Land';
 $string['course'] = 'Vak';
 $string['courseavailable'] = 'Dit vak is beschikbaar voor leerlingen';
@@ -360,6 +364,9 @@ wachtwoord dat je moet hebben gekregen van $a
 ';
 $string['enrolmentkeyhint'] = 'Die \'Vaksleutel\' was niet correct. Probeer het nog eens.<BR>
 (Hier een hint: het begint met \'$a\')';
+$string['enrolmentnew'] = 'Nieuwe aanmelding in $a';
+$string['enrolmentnointernal'] = 'Manuele aanmeldingen zijn uitgeschakeld';
+$string['enrolments'] = 'Aanmeldingen';
 $string['entercourse'] = 'Klik om dit vak binnen te gaan';
 $string['enteremailaddress'] = 'Typ je e-mail adres om je wachtwoord te resetten en via e-mail een nieuw wachtwoord naar je toegestuurd te krijgen.';
 $string['error'] = 'Fout';
@@ -698,6 +705,10 @@ $string['passwordsent'] = 'Het wachtwoord is verzonden';
 $string['passwordsenttext'] = '<P>Er is een e-mail verstuurd naar $a->email.
 <P><B>Bekijk je e-mail voor je nieuwe wachtwoord</B>
 <P>Het nieuwe wachtwoord is automatisch aangemaakt, dus misschien wil je het <A HREF=$a->link>wijzigen naar iets wat makkelijker te onthouden is</A>.';
+$string['paymentinstant'] = 'Gebruik de knop om te betalen en je zult binnen enkele minuten aangemeld zijn!';
+$string['paymentrequired'] = 'Betaling vereist om dit vak binnen te gaan.';
+$string['paymentsorry'] = 'Bedankt voor je betaling! Jammer genoeg is je betaling nog niet volledig verwerkt en ben je nog niet geregistreerd on het vak \"$a->fullname\" binnen te gaan. Probeer binnen enkele seconden nog eens het vak binnen te gaan, maar als je blijft problemen hebben, waarschuw dan de $a->teacher of de site beheerder';
+$string['paymentthanks'] = 'Bedankt voor je betaling! Je bent nu aangemeld in je vak:<br>\"$a\"';
 $string['people'] = 'Mensen';
 $string['personalprofile'] = 'Persoonlijke profiel';
 $string['phone'] = 'Telefoon';
@@ -741,6 +752,7 @@ $string['rename'] = 'Hernoem';
 $string['renamefileto'] = 'Hernoem <b>$a</b> naar';
 $string['required'] = 'Verplicht';
 $string['requireskey'] = 'Dit vak vereist een \'Vaksleutel\'.';
+$string['requirespayment'] = 'Voor toegang tot dit vak is betaling vereist';
 $string['resortcoursesbyname'] = 'Hersorteer de vakken op naam';
 $string['resources'] = 'Bronnen';
 $string['restore'] = 'Terug zetten';

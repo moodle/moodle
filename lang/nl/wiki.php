@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 development (2004060400)
+      // wiki.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['action'] = '- - Acties - -';
@@ -165,6 +165,7 @@ $string['wantedpages'] = 'Te maken pagina\'s';
 $string['wikidefaultpagename'] = 'StartPagina';
 $string['wikiexport'] = 'Exporteer pagina\'s';
 $string['wikiexportcomment'] = 'Hier kun je het exporteren configureren';
+$string['wikilinkoptions'] = 'Opties voor automatische links in wiki';
 $string['wikilinks'] = 'Wiki links';
 $string['wikiname'] = 'Naam pagina';
 $string['wikistartederror'] = 'Er zit al inhoud in de Wiki - de gevraagde wijziging kan niet meer';
