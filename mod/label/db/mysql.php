@@ -6,6 +6,10 @@ function label_upgrade($oldversion) {
 
     global $CFG;
 
+    if ($oldversion < 2003091400) {
+        table_column("label", "", "course", "integer", "10", "unsigned", "0", "not null", "id");
+    }
+
     return true;
 }
 
