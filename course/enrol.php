@@ -62,7 +62,31 @@
 /// Check the submitted enrollment key if there is one
 
     if ($form = data_submitted()) {
-        $enrol->check_entry($form, $course);
+      //User is not enrolled in the course, wants to access course content
+      //as a guest, and course setting allow unlimited guest access
+      //Code cribbed from course/loginas.php
+      if (isset($loginasguest) && ($course->guest==1)) {
+	$realuser = $USER->id;
+	$realname = fullname($USER, true);
+	$USER = guest_user();
+	$USER->loggedin = true;
+	$USER->site = $CFG->wwwroot;
+	$USER->realuser = $realuser;
+	if (isset($SESSION->currentgroup[$course->id])) {    // Remember current setting for later
+	  $SESSION->oldcurrentgroup = $SESSION->currentgroup[$course->id];
+	  unset($SESSION->currentgroup[$course->id]);
+	}
+	$guest_name = fullname($USER, true);
+	add_to_log($course->id, "course", "loginas", "../user/view.php?id=$course->id&$USER->id$", "$realname -> $guest_name");
+	if ($SESSION->wantsurl) {
+	  $destination = $SESSION->wantsurl;
+	  unset($SESSION->wantsurl);
+	} else {
+	  $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
+	}
+	redirect($destination);
+      }
+      $enrol->check_entry($form, $course);
     }
 
     $enrol->print_entry($course);
