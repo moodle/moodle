@@ -823,7 +823,7 @@ function print_section_block($heading, $course, $section, $mods, $modnames, $mod
                 }
                 $instancename = urldecode($modinfo[$modnumber]->name);
                 if (!empty($CFG->filterall)) {
-                    $instancename = filter_text($instancename, $course->id);
+                    $instancename = filter_text("<nolink>$instancename</nolink>", $course->id);
                 }
                 $linkcss = $mod->visible ? "" : " class=\"dimmed\" ";
                 if (!empty($modinfo[$modnumber]->extra)) {
@@ -915,7 +915,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                 }
                 $instancename = urldecode($modinfo[$modnumber]->name);
                 if (!empty($CFG->filterall)) {
-                    $instancename = filter_text($instancename, $course->id);
+                    $instancename = filter_text("<nolink>$instancename</nolink>", $course->id);
                 }
 
                 if (!empty($modinfo[$modnumber]->extra)) {
