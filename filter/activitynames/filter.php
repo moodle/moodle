@@ -17,6 +17,9 @@
         $course = get_record("course","id",$courseid);
         $modinfo = unserialize($course->modinfo);
 
+        //Sort modinfo by name lenght
+        usort($modinfo,'comparemodulenamesbylenght'); 
+
         if (!empty($modinfo)) {
             $cm = '';
             foreach ($modinfo as $activity) {
@@ -112,5 +115,13 @@
             $text = str_replace(array_keys($words),$words,$text);
         }
         return $text;
+    }
+
+    //This function is used to order module names from longer to shorter
+    function comparemodulenamesbylenght($a, $b)  {
+        if (strlen($a->name) == strlen($b->name)) {
+            return 0;
+        }
+        return (strlen($a->name) < strlen($b->name)) ? 1 : -1;
     }
 ?>
