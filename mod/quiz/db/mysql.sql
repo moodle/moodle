@@ -81,6 +81,7 @@ CREATE TABLE `prefix_quiz_categories` (
   `name` varchar(255) NOT NULL default '',
   `info` text NOT NULL,
   `publish` tinyint(4) NOT NULL default '0',
+  `stamp` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='Categories are for grouping questions';
 # --------------------------------------------------------

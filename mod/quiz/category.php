@@ -99,6 +99,7 @@
                 $cat->info = $form['newinfo'];
                 $cat->publish = $form['newpublish'];
                 $cat->course = $course->id;
+                $cat->stamp = make_unique_id_code();
                 if (!insert_record("quiz_categories", $cat)) {
                     error("Could not insert the new quiz category '$val'");
                 } else {

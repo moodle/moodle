@@ -147,6 +147,18 @@ function quiz_upgrade($oldversion) {
         }
     }
 
+    if ($oldversion < 2003082700) {
+        table_column("quiz_categories", "", "stamp", "varchar", "255", "", "", "not null");
+        if ($categories = get_records("quiz_categories")) {
+            foreach ($categories as $category) {
+                $stamp = make_unique_id_code();
+                if (!set_field("quiz_categories", "stamp", $stamp, "id", $category->id)) {
+                    notify("Error while adding stamp to category id = $category->id");
+                }
+            }
+        }
+    }
+
     return true;
 }
 
