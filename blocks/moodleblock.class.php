@@ -1,4 +1,4 @@
-<?php
+<?php  // $Id$
 
 define('BLOCK_TYPE_LIST',    1);
 define('BLOCK_TYPE_TEXT',    2);
