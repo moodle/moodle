@@ -2768,7 +2768,7 @@ function forum_get_recent_mod_activity(&$activities, &$index, $sincetime, $cours
 
 function forum_print_recent_mod_activity($activity, $course, $detail=false) {
 
-    global $CFG;
+    global $CFG, $THEME;
 
     echo '<table border="0" cellpadding="3" cellspacing="0">';
 
