@@ -303,7 +303,7 @@
             $db->debug=true;
             if (modify_database("$CFG->dirroot/backup/db/$CFG->dbtype.sql")) {
                 $db->debug = false;
-                if (set_config("backup_version", $backup_version)) {
+                if (set_config("backup_version", $backup_version) and set_config("backup_release", $backup_release)) {
                     notify(get_string("databasesuccess"), "green");
                     notify(get_string("databaseupgradebackups", "", $backup_release));
                     print_continue($continueto);
@@ -326,7 +326,7 @@
             $db->debug=true;
             if (backup_upgrade($CFG->backup_version)) {
                 $db->debug=false;
-                if (set_config("backup_version", $backup_version)) {
+                if (set_config("backup_version", $backup_version) and set_config("backup_release", $backup_release)) {
                     notify(get_string("databasesuccess"), "green");
                     notify(get_string("databaseupgradebackups", "", $backup_release));
                     print_continue($continueto);
