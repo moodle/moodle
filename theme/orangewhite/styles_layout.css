@@ -276,6 +276,10 @@ table.formtable td {
 
 
 /* course */
+#layout-table tr {
+  vertical-align:top;
+}
+
 #left-column,
 #right-column {
     margin:0px;
@@ -719,8 +723,6 @@ TD.cal_event_description {
 
 #left-column .sideblocklist {
     padding-left:5px;
-    border-width:0px 0px 1px 0px;
-    border-style:solid;
 }
 
 #right-column .sideblock {
