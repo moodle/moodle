@@ -1,5 +1,6 @@
 <? // $Id$
 
+function mimeinfo($element, $filename) {
     $mimeinfo = array (
         "xxx"  => array ("type"=>"document/unknown", "icon"=>"unknown.gif"),
         "zip"  => array ("type"=>"application/zip", "icon"=>"zip.gif"),
@@ -19,9 +20,6 @@
         "doc"  => array ("type"=>"application/msword", "icon"=>"word.gif"),
         "xls"  => array ("type"=>"application/vnd.ms-excel", "icon"=>"excel.gif")
     );
-
-function mimeinfo($element, $filename) {
-    global $mimeinfo;
 
     if (eregi("\.([a-z0-9]+)$", $filename, $match)) {
         $result = $mimeinfo[strtolower($match[1])][$element];
