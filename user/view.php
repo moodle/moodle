@@ -105,7 +105,7 @@
 
     // Print all the little details in a list
 
-    echo "<table border=\"1\" cellpadding=\"5\" cellspacing=\"2\">";
+    echo "<table border=\"0\" cellpadding=\"5\" cellspacing=\"2\">";
 
     if ($user->city or $user->country) {
         $countries = get_list_of_countries();
