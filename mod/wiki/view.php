@@ -17,7 +17,7 @@
     optional_variable($groupid);    // Group wiki.
     optional_variable($canceledit,"");    // Editing has been cancelled
     if($canceledit) {
-      $wikipage=$ewiki_id;
+      @$wikipage=$ewiki_id;
     }
 
     if ($id) {
