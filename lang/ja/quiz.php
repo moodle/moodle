@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021800)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005022400)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -43,6 +43,8 @@ $string['casesensitive'] = '大文字小文字の区別';
 $string['caseyes'] = 'はい、合致する必要があります';
 $string['categories'] = 'カテゴリ';
 $string['category'] = 'カテゴリ';
+$string['categoryadded'] = 'カテゴリ「 $a 」が追加されました。';
+$string['categorydeleted'] = 'カテゴリ「 $a 」が削除されました。';
 $string['categoryinfo'] = 'カテゴリ情報';
 $string['categorymove'] = 'カテゴリ $a->name には $a->count の問題があります。他のカテゴリを選んでください。';
 $string['categorymoveto'] = 'このカテゴリに移動する';
