@@ -7,9 +7,9 @@
 /* README!
 CAS Module
 This Module can be turn ON/OFF on admin screen.
-The moodle/login module have to be changed by the one in this directory
+The /login/index.php module is intercepted and replace with the login.php.
+And use the /auth/cas/index_form.html and /auth/cas/caslogin.php.
 This module is using the LDAP Module so you need the /auth/ldap directory.
-
 */
 
 define("AUTH_METHOD", 'cas');
@@ -25,7 +25,7 @@ function auth_user_login ($username, $password) {
         return false;
     }
  
-    if ($CFG->auth == "cas" && $CFG->cas_use_cas == "1" ){
+    if ($CFG->auth == "cas" && !empty($CFG->cas_enabled)){
        if ($CFG->cas_create_user=="0"){
           if (get_user_info_from_db("username", $username)){
              return true;

@@ -6,7 +6,7 @@
     optional_variable($config->cas_version,"");
     optional_variable($config->cas_baseuri,"");
     optional_variable($config->cas_language,"");
-    optional_variable($config->cas_use_cas,"0");
+    optional_variable($config->cas_use_cas,"");
     optional_variable($config->cas_create_user,"0");
 ?>
 
@@ -17,16 +17,15 @@
    </td>
 </tr>
 <TR VALIGN=TOP  class="required">
-    <TD ALIGN=RIGHT><P>cas_use_cas:</TD>
+    <TD ALIGN=RIGHT><P>cas_enabled:</TD>
     <TD>
     <?php
        unset($options);
-       $options[0] = get_string("no");
        $options[1] = get_string("yes");
 
-       choose_from_menu ($options, "cas_use_cas", $config->cas_use_cas, "");?>
+       choose_from_menu ($options, "cas_enabled", $config->cas_enabled, get_string("no"),"","");?>
     </TD><TD>
-    <?php  print_string("auth_cas_use_cas","auth") ?>
+    <?php  print_string("auth_cas_enabled","auth") ?>
     </TD>
 </TR>
 <TR valign="top"  class="required">
