@@ -3411,6 +3411,9 @@ function raise_memory_limit ($newlimit) {
 */
 function return_bytes($val) {
    $val = trim($val);
+   if (empty($val)) {
+       return '';
+   }
    $last = $val{strlen($val)-1};
    switch($last) {
        case 'k':
