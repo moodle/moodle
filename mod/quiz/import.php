@@ -23,6 +23,7 @@
 
     $streditingquiz = get_string("editingquiz", "quiz");
     $strimportquestions = get_string("importquestions", "quiz");
+    $strquestions = get_string("questions", "quiz");
 
     print_header("$course->shortname: $strimportquestions", "$course->shortname: $strimportquestions",
                  "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
@@ -60,8 +61,8 @@
             $count = 0;
             foreach ($questions as $question) {
                 $count++;
-                echo "<HR>";
-                echo "<P>$count<BR>".stripslashes($question->questiontext)."</P>";
+                echo "<hr>";
+                echo "<p><b>$count</b>. ".stripslashes($question->questiontext)."</p>";
 
                 $question->category = $category->id;
 
@@ -82,6 +83,37 @@
                 }
     
             }
+
+            if (!empty($form->createrandom)) {   /// Create a number of random questions
+
+                $rm->category = $category->id;
+                $rm->questiontext =  get_string("randommatchintro", "quiz");
+                $rm->image = "";
+                $rm->qtype =  RANDOMMATCH;
+                $rm->choose = 4;                 /// Always 4, for now.
+
+                echo "<hr>";
+
+                for ($i=1; $i<=$form->createrandom; $i++) {
+                    $rm->name =  get_string("randommatch", "quiz") . " $i ($rm->choose $strquestions)";
+
+                    if (!$rm->id = insert_record("quiz_questions", $rm)) {
+                        error("Could not insert new question!");
+                    }
+
+                    $result = quiz_save_question_options($rm);
+        
+                    if (!empty($result->error)) {
+                        notify($result->error);
+                    }
+
+                    if (!empty($result->notice)) {
+                        notify($result->notice);
+                    }
+                    echo "<p>$rm->name</p>";
+                }
+            }
+            echo "<hr>";
             print_continue("edit.php");
             print_footer($course);
             exit;
@@ -110,6 +142,14 @@
     echo ":</TD><TD>";
     choose_from_menu($QUIZ_FILE_FORMAT, "format", "missingword", "");
     helpbutton("import", $strimportquestions, "quiz");
+    echo "</TR><TR><TD align=right>";
+    print_string("randommatchcreate", "quiz");
+    echo ":</TD><TD>";
+    for ($i=0;$i<=100;$i++) {
+        $menu[$i] = $i;
+    }
+    choose_from_menu($menu, "createrandom", 0, "");
+    unset($menu);
     echo "</TR><TR><TD align=right>";
     print_string("upload");
     echo ":</TD><TD>";
