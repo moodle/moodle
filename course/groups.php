@@ -20,7 +20,7 @@
     }
 
     if (isteacheredit($course->id)) {
-        if (isset($edit)) {
+        if (isset($_GET['edit'])) {
             if ($edit == "on") {
                 $USER->groupsediting = true;
             } else if ($edit == "off") {
@@ -36,6 +36,8 @@
 
     $strgroup = get_string('group');
     $strgroups = get_string('groups');
+    $streditgroupprofile = get_string('editgroupprofile');
+    $strgroupmemberssee = get_string('groupmemberssee');
     $loggedinas = "<p class=\"logininfo\">".user_login_string($course, $USER)."</p>";
 
     print_header("$course->shortname: $strgroups", "$course->fullname", 
@@ -53,6 +55,7 @@
 
         } else {  
             $isteacher = isteacher($course->id);
+            $isteacheredit = isteacheredit($course->id);
             foreach ($groups as $group) {
                 $t = $group;
                 $t->picture = print_group_picture($group, $course->id, true, true, true);
@@ -61,6 +64,13 @@
                         $t->users[$key]->fullname = fullname($user, $isteacher);
                     }
                 }
+                if ($isteacheredit or ($isteacher and ismember($group->id))) {
+                    $t->linkeditprofile->url = "group.php?id=$course->id&group=$group->id&edit=on";
+                    $t->linkeditprofile->text = $streditgroupprofile;
+                }
+                $t->linkfullprofile->url = "group.php?id=$course->id&group=$group->id&edit=off";
+                $t->linkfullprofile->text = $strgroupmemberssee;
+
                 include('groups-summary.html');
             }
         }
