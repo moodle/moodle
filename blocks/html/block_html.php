@@ -12,8 +12,7 @@ class block_html extends block_base {
     }
 
     function specialization() {
-        // We allow empty titles
-        $this->title = isset($this->config->title) ? $this->config->title : '';
+        $this->title = isset($this->config->title) ? $this->config->title : get_string('newhtmlblock', 'block_html');
     }
 
     function instance_allow_multiple() {
@@ -21,8 +20,6 @@ class block_html extends block_base {
     }
 
     function get_content() {
-        global $CFG;
-        require_once($CFG->dirroot .'/lib/weblib.php');
         if ($this->content !== NULL) {
             return $this->content;
         }
