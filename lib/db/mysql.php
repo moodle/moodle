@@ -958,7 +958,11 @@ function main_upgrade($oldversion=0) {
         modify_database('','ALTER TABLE prefix_user_teachers DROP INDEX courseuserid;');
         modify_database('','ALTER TABLE prefix_user_teachers ADD UNIQUE INDEX courseuserid(course,userid);');        
     } 
-       
+
+    if ($oldversion < 2004083133) {
+        fix_course_sortorder(0, 1, 1);
+    }   
+
     return $result;
     
 }
