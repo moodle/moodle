@@ -562,7 +562,7 @@
                 fwrite ($bf,full_tag("USERNAME",4,false,$user_data->username));
                 fwrite ($bf,full_tag("PASSWORD",4,false,$user_data->password));
                 fwrite ($bf,full_tag("IDNUMBER",4,false,$user_data->idnumber));
-                fwrite ($bf,full_tag("FIRSTNAME",4,false,$user_data->firsname));
+                fwrite ($bf,full_tag("FIRSTNAME",4,false,$user_data->firstname));
                 fwrite ($bf,full_tag("LASTNAME",4,false,$user_data->lastname));
                 fwrite ($bf,full_tag("EMAIL",4,false,$user_data->email));
                 fwrite ($bf,full_tag("ICQ",4,false,$user_data->icq));
@@ -587,6 +587,7 @@
                 fwrite ($bf,full_tag("MAILFORMAT",4,false,$user_data->mailformat));
                 fwrite ($bf,full_tag("MAILDISPLAY",4,false,$user_data->maildisplay));
                 fwrite ($bf,full_tag("HTMLEDITOR",4,false,$user_data->htmleditor));
+                fwrite ($bf,full_tag("AUTOSUBSCRIBE",4,false,$user_data->autosubscribe));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$user_data->timemodified));
 
                 //Output every user role (with its associated info) 
