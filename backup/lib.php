@@ -252,10 +252,15 @@
     //Little modifications done
   
     function backup_copy_file ($from_file,$to_file) {
+
+        global $CFG;
+
         if (is_file($from_file)) {
             //echo "<br>Copying ".$from_file." to ".$to_file;              //Debug
-            $perms=fileperms($from_file);
-            return copy($from_file,$to_file) && chmod($to_file,$perms);
+            //$perms=fileperms($from_file);
+            //return copy($from_file,$to_file) && chmod($to_file,$perms);
+            umask(0000);
+            return copy($from_file,$to_file) && chmod($to_file,$CFG->directorypermissions);
         }
         else if (is_dir($from_file)) {
             return backup_copy_dir($from_file,$to_file);
@@ -272,6 +277,7 @@
 
         if (!is_dir($to_file)) {
             //echo "<br>Creating ".$to_file;                                //Debug
+            umask(0000);
             $status = mkdir($to_file,$CFG->directorypermissions);
         }
         $dir = opendir($from_file);
