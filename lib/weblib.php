@@ -995,15 +995,18 @@ function navmenu($course, $cm=NULL) {
             $menu[] = "-------------- $strsection $mod->section --------------";
         }
         $section = $mod->section;
-        $url = "$mod->mod/view.php?id=$mod->cm";
-        if ($cm == $mod->cm) {
-            $selected = $url;
+        //Only add visible or teacher mods to jumpmenu
+        if ($mod->visible or isteacher($course->id)) {
+            $url = "$mod->mod/view.php?id=$mod->cm";
+            if ($cm == $mod->cm) {
+                $selected = $url;
+            }
+            $mod->name = urldecode($mod->name);
+            if (strlen($mod->name) > 55) {
+                $mod->name = substr($mod->name, 0, 50)."...";
+            }
+            $menu[$url] = $mod->name; 
         }
-        $mod->name = urldecode($mod->name);
-        if (strlen($mod->name) > 55) {
-            $mod->name = substr($mod->name, 0, 50)."...";
-        }
-        $menu[$url] = $mod->name; 
     }
 
     return popup_form("$CFG->wwwroot/mod/", $menu, "navmenu", $selected, get_string("jumpto"), "", "", true);
