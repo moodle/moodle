@@ -88,6 +88,7 @@ function get_access_icons($course) {
            case 'CAD': $currency = '$'; break;
            case 'GBP': $currency = '&pound;'; break;
            case 'JPY': $currency = '&yen;'; break;
+           case 'AUD': $currency = '$'; break;
            default:    $currency = '$'; break;
         }
         
@@ -108,7 +109,8 @@ function config_form($frm) {
                                 'EUR' => 'Euros',
                                 'JPY' => 'Japanese Yen',
                                 'GBP' => 'British Pounds',
-                                'CAD' => 'Canadian Dollars'
+                                'CAD' => 'Canadian Dollars',
+                                'AUD' => 'Australian Dollars'
                              );
 
     include("$CFG->dirroot/enrol/paypal/config.html");
