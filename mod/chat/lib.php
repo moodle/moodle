@@ -151,8 +151,9 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
         return false;
     }
 
-    print_headline(get_string("currentchats", "chat").":");
+    $isteacher = isteacher($course->id);
 
+    $outputstarted = false;
     $current = 0;
     foreach ($chatusers as $chatuser) {
         if ($current != $chatuser->chatid) {
@@ -160,6 +161,13 @@ function chat_print_recent_activity($course, $isteacher, $timestart) {
                 echo "</p>";
             }
             if ($chat = get_record("chat", "id", $chatuser->chatid)) {
+                if (!($isteacher or instance_is_visible('chat', $chat))) {  // Chat hidden to students
+                    continue;
+                }
+                if (!$outputstarted) {
+                    print_headline(get_string("currentchats", "chat").":");
+                    $outputstarted = true;
+                }
                 echo "<p><font size=1><a href=\"$CFG->wwwroot/mod/chat/view.php?c=$chat->id\">$chat->name</a></font><br />";
             }
             $current = $chatuser->chatid;
