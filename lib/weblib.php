@@ -2607,8 +2607,6 @@ function print_speller_code ($usehtmleditor=false) {
         echo "\tspeller._editor=editor;\n";
         echo "\tspeller.openChecker();\n";
         echo "}\n";
-        echo "config.registerButton(\"spell-check\",  \"spell-check\", \"". $CFG->wwwroot ."/lib/speller/spell.gif\", false, spellClickHandler);\n";
-        echo "config.toolbar.push([\"spell-check\"]);\n";
     }
 }
 
