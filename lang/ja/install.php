@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 unstable development (2004091100)
+      // install.php - created with Moodle 1.5 unstable development (2004091700)
 
 
 $string['admindirerror'] = '設定されたadminディレクトリが間違っています。';
@@ -47,14 +47,14 @@ $string['fail'] = '失敗';
 $string['fileuploads'] = 'ファイルアップロード';
 $string['fileuploadserror'] = 'これは有効にしてください。';
 $string['fileuploadshelp'] = '<p>あなたのサーバでは、ファイルのアップロードが出来ないようです。</p>
-<p>Moodleのインストールは可能ですが、ファイルのアップロードが出来ない場合は、コースファイルやユーザプロフィールの画像をアップロードすることが出来ません。</p>
+<p>Moodleのインストールは可能ですが、ファイルのアップロードが出来ない場合は、コースファイルやユーザプロフィールのイメージをアップロードすることが出来ません。</p>
 <p>ファイルアップロードを可能にするには、あなた(又はシステム管理者)がメインphp.iniファイルを編集して、
 <b>file_uploads</b> を \'1\'にする必要があります。</p>';
 $string['gdversion'] = 'GDバージョン';
 $string['gdversionerror'] = 'イメージの処理及び作成を行うにはGDライブラリが必要です。';
 $string['gdversionhelp'] = '<p>サーバにGDがインストールされていないようです。</p>
 
-<p>GDは、Moodleが画像(ユーザプロフィールアイコン等) を処理したり、新しい画像(ロググラフ等)を作成する為にPHPが必要とするライブラリです。Moodleは、GD無しでも動作します -  画像処理が使用できないだけです。</p>
+<p>GDは、Moodleがイメージ(ユーザプロフィールアイコン等) を処理したり、新しいイメージ(ロググラフ等)を作成する為にPHPが必要とするライブラリです。Moodleは、GD無しでも動作します -  イメージ処理が使用出来ないだけです。</p>
 
 <p>Unix環境下で、GDをPHPにインストールするには、PHPを --with-gd パラメータでコンパイルしてください。</p>
 

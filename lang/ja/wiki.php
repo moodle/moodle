@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 unstable development (2004091100)
+      // wiki.php - created with Moodle 1.5 unstable development (2004091700)
 
 
 $string['action'] = '-- アクション --';
@@ -10,7 +10,7 @@ $string['author'] = '著者';
 $string['authorfieldpattern'] = '著者フィールドパターン';
 $string['authorfieldpatternerror'] = '著者を入力してください。';
 $string['backlinks'] = '参照リンク';
-$string['binimgtoolarge'] = '画像ファイルが大き過ぎます!';
+$string['binimgtoolarge'] = 'イメージファイルが大き過ぎます!';
 $string['binnoimg'] = '許可されていないファイルタイプです!';
 $string['browse'] = '閲覧';
 $string['canceledit'] = 'キャンセル';

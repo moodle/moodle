@@ -1,10 +1,9 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 unstable development (2004091100)
+      // editor.php - created with Moodle 1.5 unstable development (2004091700)
 
 
 $string['about'] = 'エディタに関して';
 $string['absbottom'] = 'Absbottom';
-$string['middle'] = 'middle';
 $string['address'] = 'アドレス';
 $string['alignment'] = '配置';
 $string['alternatetext'] = 'Alternate text';
@@ -38,10 +37,10 @@ $string['hilitecolor'] = '背景色';
 $string['horizontal'] = '水平';
 $string['horizontalrule'] = '水平線';
 $string['htmlmode'] = 'HTMLソースモード';
-$string['imageurl'] = '画像URL';
+$string['imageurl'] = 'イメージURL';
 $string['indent'] = 'インデントを増やす';
 $string['insertchar'] = '特別文字の挿入';
-$string['insertimage'] = '画像の挿入';
+$string['insertimage'] = 'イメージの挿入';
 $string['insertlink'] = 'リンクの挿入';
 $string['insertsmile'] = 'スマイリーの挿入';
 $string['inserttable'] = 'テーブルの挿入';
@@ -66,7 +65,7 @@ $string['middle'] = '中央';
 $string['minimize'] = 'エディタを最小化する';
 $string['move'] = '移動';
 $string['normal'] = 'ノーマル';
-$string['notimage'] = '選択したファイルは画像ではありません。画像を選択してください。';
+$string['notimage'] = '選択したファイルはイメージではありません。イメージを選択してください。';
 $string['notset'] = '未設定';
 $string['ok'] = 'OK';
 $string['orderedlist'] = '順序付きリスト';
