@@ -14,13 +14,13 @@
             error("Course ID was incorrect");
         }
 
-        if (!isteacher($course->id)) {
-            error("Only teachers can edit the course!");
+        if (!isteacheredit($course->id)) {
+            error("You do not currently have editing privileges!");
         }
     } else {  // Admin is creating a new course
 
         if (!iscreator()) {
-            error("Only administrators and teachers can use this page");
+            error("You do not currently have course creation privileges!");
         }
 
         $course = NULL;
@@ -74,12 +74,14 @@
                         $newteacher->userid = $USER->id;
                         $newteacher->course = $newcourseid;
                         $newteacher->authority = 1;   // First teacher is the main teacher
+                        $newteacher->editall = 1;     // Course creator can edit their own course
 
                         if (!$newteacher->id = insert_record("user_teachers", $newteacher)) {
                             error("Could not add you to this new course!");
                         }
 
                         $USER->teacher[$newcourseid] = true;
+                        $USER->teacheredit[$newcourseid] = true;
 
                         redirect("view.php?id=$newcourseid", get_string("changessaved"));
                     }
