@@ -93,7 +93,7 @@ print '
 
 <!-- your head tags here -->
 <link rel="Stylesheet" href="ip-atlas.css">
-</head><body bgcolor="#ffffff">
+</head><body bgcolor="'.$THEME->body.'">
 
 
 <a name="map"></a>
