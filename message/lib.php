@@ -5,11 +5,11 @@
 define ('MESSAGE_SHORTLENGTH', 300);
 define ('MESSAGE_WINDOW', true);          // We are in a message window (so don't pop up a new one!)
 
-if (!isset($CFG->message_contacts_refresh)) {  // Refresh the contacts list every 30 seconds
+if (!isset($CFG->message_contacts_refresh)) {  // Refresh the contacts list every 60 seconds
     $CFG->message_contacts_refresh = 60;
 }
-if (!isset($CFG->message_chat_refresh)) {      // Look for new comments every 5 seconds
-    $CFG->message_chat_refresh = 15;
+if (!isset($CFG->message_chat_refresh)) {      // Look for new comments every 20 seconds
+    $CFG->message_chat_refresh = 20;
 }
 if (!isset($CFG->message_offline_time)) {
     $CFG->message_offline_time = 300;
