@@ -687,12 +687,14 @@ function  glossary_print_entry_aliases($course, $cm, $glossary, $entry,$mode="",
 function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$hook="", $type = 'print') {
     global $THEME, $USER, $CFG;
 
+    $output = false;   //To decide if we must really return text in "return". Activate when needed only!
     $importedentry = ($entry->sourceglossaryid == $glossary->id);
     $isteacher = isteacher($course->id);
     $ismainglossary = $glossary->mainglossary;
 	
     $return = "<font size=\"1\">";
     if (!$entry->approved) {
+        $output = true;
         $return .= get_string("entryishidden","glossary");
     }
     $return .= glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode,$hook,'html');
@@ -701,6 +703,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
 
     
     if ( (!empty($USER->id) && $glossary->allowcomments && !isguest()) || $isteacher) {
+        $output = true;
         $return .= " <a title=\"" . get_string("addcomment","glossary") . "\" href=\"comment.php?id=$cm->id&amp;eid=$entry->id\"><img src=\"comment.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
     }
 
@@ -709,9 +712,8 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
         if ($isteacher and !$ismainglossary and !$importedentry) {
             $mainglossary = get_record("glossary","mainglossary",1,"course",$course->id);
             if ( $mainglossary ) {  // if there is a main glossary defined, allow to export the current entry
-
+                $output = true;
                 $return .= " <a title=\"" . get_string("exporttomainglossary","glossary") . "\" href=\"exportentry.php?id=$cm->id&amp;entry=$entry->id&amp;mode=$mode&amp;hook=$hook\"><img src=\"export.gif\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
-
             }
         }
 
@@ -726,6 +728,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
         // -The user is teacher or he is a student with time permissions (edit period or editalways defined).
         $ineditperiod = ((time() - $entry->timecreated <  $CFG->maxeditingtime) || $glossary->editalways);
         if ( !$importedentry and ($isteacher or ($entry->userid == $USER->id and $ineditperiod))) {
+            $output = true;
             $return .= " <a title=\"" . get_string("delete") . "\" href=\"deleteentry.php?id=$cm->id&amp;mode=delete&amp;entry=$entry->id&amp;prevmode=$mode&amp;hook=$hook\"><img src=\"";
             $return .= $icon;
             $return .= "\" height=\"11\" width=\"11\" border=\"0\" alt=\"\" /></a> ";
@@ -736,6 +739,12 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry,$mode="",$ho
         }
     }
     $return .= "&nbsp;&nbsp;"; // just to make up a little the output in Mozilla ;)
+
+    //If we haven't calculated any REAL thing, delete result ($return)
+    if (!$output) {
+        $return = '';
+    }
+    //Print or get
     if ($type == 'print') {
         echo $return;
     } else {
@@ -776,7 +785,7 @@ function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $m
     if ( $printicons ) {
         $icons   = glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode, $hook,"html");
     }
-    if ($aliases || $printicons || $ratings) {
+    if ($aliases || $icons || $ratings) {
         echo '<table border="0" width="100%" align="center">';
         if ( $aliases ) {
             echo '<tr><td align="center"  valign="top"><font size="1">' .
