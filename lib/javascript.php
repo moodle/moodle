@@ -1,3 +1,5 @@
+<script language="JavaScript" type="text/javascript"
+        src="<?php echo "$CFG->wwwroot/lib/overlib.js" ?>"></script>
 
 <script language="JavaScript">
 <!-- //hide
