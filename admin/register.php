@@ -103,8 +103,8 @@
     echo "<tr valign=top>";
     echo "<td align=right><p>".get_string("registrationemail")."</a>:</td>";
     echo "<td><p>";
-    $options[1] = get_string("registrationyes");
     $options[0] = get_string("registrationno");
+    $options[1] = get_string("registrationyes");
     choose_from_menu ($options, "mailme", "1", "", "", "");
     unset($options);
     echo "</td>";
