@@ -969,14 +969,14 @@ function forum_get_recent_posts($sincetime, $forum="0") {
         $forumselect = "";
     }
 
-    return get_records_sql("SELECT p.*, d.name, u.id, u.firstname, u.lastname, u.picture, d.course
+    return get_records_sql("SELECT p.*, d.name, u.firstname, u.lastname, u.picture, d.course
                               FROM {$CFG->prefix}forum_posts p, 
                                    {$CFG->prefix}forum_discussions d,
                                    {$CFG->prefix}user u
                              WHERE p.modified > '$sincetime' $forumselect
                                AND p.userid = u.id
                                AND p.discussion = d.id
-                             ORDER BY p.discussion ASC");
+                             ORDER BY p.modified ASC");
 }
 
 
