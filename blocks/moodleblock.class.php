@@ -217,25 +217,34 @@ class MoodleBlock {
 class MoodleBlock_Nuke extends MoodleBlock {
     function get_content() {
 
-        // This whole thing begs to be written for PHP >= 4.3.0
-        // using glob();
+        if($this->content !== NULL) {
+            return $this->content;
+        }
 
         global $CFG;
+        $this->content = &New stdClass;
+
+        // This whole thing begs to be written for PHP >= 4.3.0 using glob();
         $dir = $CFG->dirroot.'/blocks/'.$this->name().'/nuke/';
         if($dh = @opendir($dir)) {
             while (($file = readdir($dh)) !== false) {
                 $regs = array();
                 if(ereg('^block\-(.*)\.php$', $file, $regs)) {
-                    $old = $_SERVER['PHP_SELF'];
-                    $_SERVER['PHP_SELF'] = 'index.php';
+                    // Found it! Let's prepare the environment...
 
-                    // Do our best to suppress any spurious output
-                    ob_start();
+                    $oldvals = array();
+                    if(isset($GLOBALS['admin'])) {
+                        $oldvals['admin'] = $GLOBALS['admin'];
+                    }
+
+                    $GLOBALS['admin'] = isteacher($this->course->id);
                     @include($dir.$file);
-                    ob_end_clean();
+
+                    foreach($oldvals as $key => $val) {
+                        $GLOBALS[$key] = $val;
+                    }
 
                     // We should have $content set now
-                    $_SERVER['PHP_SELF'] = $old;
                     if(!isset($content)) {
                         return NULL;
                     }
@@ -243,9 +252,9 @@ class MoodleBlock_Nuke extends MoodleBlock {
                 }
             }
         }
-        else {
-            // nuke subdirectory does not exist
-        }
+
+        // If we reached here, we couldn't find the nuke block for some reason
+        return $this->content->text = get_string('blockmissingnuke');
     }
 }
 
