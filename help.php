@@ -76,6 +76,7 @@
     print_simple_box_end();
 
     if (!$helpfound) {
+        $file = clean_text($file);  // Keep it clean!
         notify("Help file '$file' could not be found!");
     }
 
