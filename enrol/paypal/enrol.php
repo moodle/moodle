@@ -3,20 +3,6 @@
 require_once("$CFG->dirroot/enrol/enrol.class.php");
 
 
-// $CFG->enrol_paypalmailusers:      send email to users when they are enrolled in a course
-// $CFG->enrol_paypalmailadmin:      email the log from the cron job to the admin
-
-
-// Test data
-$CFG->enrol_cost = 5.00;
-$CFG->enrol_paypalbusiness = "payment@moodle.com";
-$CFG->enrol_paypalcurrency = "USD";
-
-// Accepted PayPal currencies (USD/EUR/JPY/GBP/CAD)
-
-
-
-
 class enrolment_plugin extends enrolment_base {
 
 
