@@ -64,6 +64,9 @@
             echo "</center>";
 
         } else {
+
+            print_simple_box(format_text($survey->intro), "center", "80%");
+
             $questions = get_records_list("survey_questions", "id", $survey->questions);
             $questionorder = explode(",", $survey->questions);
             foreach ($questionorder as $key => $val) {
@@ -75,6 +78,7 @@
                         $table->align = array ("left");
                         $table->data[] = array("$answer->answer1");
                         print_table($table);
+                        print_spacer(30);
                     }
                 }
             }
@@ -90,7 +94,7 @@
     echo "<form name=form method=post action=save.php>";
     echo "<input type=hidden name=id value=$id>";
 
-    print_simple_box(text_to_html($survey->intro), "center", "80%");
+    print_simple_box(format_text($survey->intro), "center", "80%");
 
 // Get all the major questions and their proper order
     if (! $questions = get_records_list("survey_questions", "id", $survey->questions)) {
