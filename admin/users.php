@@ -37,6 +37,8 @@
                            get_string("adminhelpassigncreators"));
     $table->data[] = array("<b><a href=\"../course/index.php?edit=on\">".get_string("assignteachers")."</a></b>",
                            get_string("adminhelpassignteachers")." <img src=\"../pix/t/user.gif\" height=11 width=11>");
+    $table->data[] = array("<b><a href=\"../course/index.php?edit=off\">".get_string("assignstudents")."</a></b>",
+                           get_string("adminhelpassignstudents"));
 
     print_table($table);
     

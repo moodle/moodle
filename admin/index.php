@@ -347,13 +347,14 @@
 
     $stradministration = get_string("administration");
     print_header("$site->shortname: $stradministration","$site->fullname", "$stradministration");
-    print_simple_box_start("center", "90%", "$THEME->cellcontent2", 20);
+    print_simple_box_start("center", "100%", "$THEME->cellcontent2", 20);
     print_heading($stradministration);
 
     $table->align = array ("right", "left");
+    $table->wrap = array ("nowrap", "nowrap");
     $table->cellpadding = 4;
     $table->cellspacing = 3;
-    $table->width = "90%";
+    $table->width = "98%";
 
     $configdata  = "<a href=\"config.php\">".get_string("configvariables")."</a> - <font size=1>".
                     get_string("adminhelpconfigvariables")."</font><br />";
