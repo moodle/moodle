@@ -359,7 +359,7 @@
                          "<p><a href=\"../course/categories.php\">".get_string("categories")."</a></p>";
                 if (!empty($CFG->backup_version)) {
                     //MODIFY RELATIVE PATH TO backup.php
-                    $backup_path = "../contrib/stronk7/backup/backup.php";
+                    $backup_path = "../backup/backup.php";
                     //END MODIFY
                     $table->data[0][1] .= "<p><a href=\"".$backup_path."\">".get_string("coursebackup")."</a></p>";
                 }
