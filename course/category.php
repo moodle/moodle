@@ -89,7 +89,7 @@
 
     /// Move a specified course to a new category 
 
-        if ($data = data_submitted()) {   // Some courses are being moved
+        if (isset($moveto) and $data = data_submitted()) {   // Some courses are being moved
 
             if (! $destcategory = get_record("course_categories", "id", $data->moveto)) {
                 error("Error finding the category");
