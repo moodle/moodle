@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.0.6.4 (2002112400)
+      // auth.php - created with Moodle 1.0.8.1 (2003011200)
 
 
 $string['auth_dbdescription'] = "Este método utiliza una tabla de una base de datos externa para comprobar si un determinado usuario y contraseña son válidos. Si la cuenta es nueva, la información de otros campos puede también ser copiada en Moodle.";
@@ -9,6 +9,7 @@ $string['auth_dbfielduser'] = "Nombre del campo que contiene los nombres de usua
 $string['auth_dbhost'] = "El ordenador que hospeda el servidor de la base de datos.";
 $string['auth_dbname'] = "Nombre de la base de datos";
 $string['auth_dbpass'] = "Contraseña correspondiente al usuario anterior";
+$string['auth_dbpasstype'] = "Especifica el formato que usa el campo de contraseña. La encriptación MD5 es útil para conectar on otras aplicaciones web como PostNuke.";
 $string['auth_dbtable'] = "Nombre de la tabla en la base de datos";
 $string['auth_dbtitle'] = "Usar una base de datos externa";
 $string['auth_dbtype'] = "El tipo de base de datos (Vea la <A HREF=../lib/adodb/readme.htm#drivers>ADOdb documentación</A> para más detalles)";
@@ -28,6 +29,7 @@ $string['auth_ldap_search_sub'] = "Poner el valor &lt;&gt; 0 si quiere buscar us
 $string['auth_ldap_update_userinfo'] = "Actualizar información del usuario (nombre, apellido, dirección..) desde LDAP a Moodle. Mire en /auth/ldap/attr_mappings.php para información de mapeado";
 $string['auth_ldap_user_attribute'] = "El atributo usado para nombrar/buscar usuarios. Normalmente 'cn'.";
 $string['auth_ldapdescription'] = "Este método proporciona autenticación contra un servidor LDAP externo.
+
 Si el nombre de usuario y contraseña facilitados son válidos, Moodle crea una nueva entrada para el usuario en su base de datos. Este módulo puede leer atributos de usuario desde LDAP y prerrellenar los campos requeridos en Moodle. Para las entradas sucesivas sólo se comprueba el usuario y la contraseña.";
 $string['auth_ldapextrafields'] = "Estos campos son opcionales. Usted puede elegir pre-rellenar algunos campos de usuario en Moodle con información de los <B>campos LDAP</B> que especifique aquí. <P>Si deja estos campos en blanco, entonces no se transferirá nada desde LDAP y se usará el sistema predeterminado en Moodle.<P>En ambos casos, los usuarios podrán editar todos estos campos después de entrar.";
 $string['auth_ldaptitle'] = "Usar un servidor LDAP";
@@ -49,6 +51,8 @@ $string['changepasswordhelp'] = "Aquí puede especificar donde pueden sus usuario
 $string['chooseauthmethod'] = "Escoger un método de autenticación: ";
 $string['guestloginbutton'] = "Botón de entrada para invitados";
 $string['instructions'] = "Instrucciones";
+$string['md5'] = "Encriptación M5";
+$string['plaintext'] = "Texto plano";
 $string['showguestlogin'] = "Puede ocultar o mostrar el botón de entrada para invitados en la página de acceso.";
 
 ?>

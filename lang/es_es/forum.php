@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.6.4 (2002112400)
+      // forum.php - created with Moodle 1.0.8.1 (2003011200)
 
 
 $string['addanewdiscussion'] = "Añadir un nuevo tema de debate";
@@ -12,7 +12,7 @@ $string['attachment'] = "Archivo adjunto";
 $string['bynameondate'] = "de \$a->name - \$a->date";
 $string['couldnotadd'] = "No se pudo añadir su mensaje debido a un error desconocido.";
 $string['couldnotdeleteratings'] = "Lo sentimos, no es posible borrar este ítem debido a que ha sido calificado.";
-$string['couldnotdeletereplies'] = "Lo sentimos, no es posible borrar este ítem debido a que tiene respuestas.";
+$string['couldnotdeletereplies'] = "Lo sentimos, no es posible borrar este ítem debido a que ya tiene respuestas.";
 $string['couldnotupdate'] = "No se pudo actualizar su mensage debido a un error desconocido.";
 $string['delete'] = "Borrar ";
 $string['deleteddiscussion'] = "El tema de debate ha sido eliminado";
@@ -70,19 +70,6 @@ $string['openmode2'] = "Permitir debates y respuestas";
 $string['parentofthispost'] = "Anterior a este mensaje";
 $string['postadded'] = "Su mensaje se ha colocado con éxito.<P>Tiene \$a para editarlo si quiere hacer cualquier cambio.";
 $string['postincontext'] = "Mira este mensaje en su contexto";
-$string['postingtip'] = "<B>Recomendaciones</B><BR>
-Cuando responda:
-<UL>
-<LI>lea el mensaje con cuidado y atención
-<LI>busque cosas que pueda comentar
-</UL>
-
-Cuando escriba:
-<UL>
-<LI>mantenga sus mensajes cortos y centrados sobre el tema
-<LI>explique sus propias ideas con claridad
-<LI>piense en cuestiones que pueda preguntar
-</UL>";
 $string['postmailinfo'] = "Esta es una copia del mensaje publicado en \$a .
 
 Para responder a este mensaje, haga clic en este enlace:";
@@ -93,6 +80,7 @@ $string['postupdated'] = "Su mensaje se ha actualizado";
 $string['processingpost'] = "Procesando mensage \$a";
 $string['rate'] = "Calificar";
 $string['ratings'] = "Calificaciones";
+$string['ratingssaved'] = "Calificaciones salvadas";
 $string['re'] = "Re:";
 $string['readtherest'] = "Ver el resto del tema";
 $string['repliesmany'] = "\$a respuestas";
