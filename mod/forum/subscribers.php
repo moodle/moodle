@@ -91,10 +91,6 @@
 
 /// We are in editing mode.
 
-    if (!isteacheredit($course->id)) {
-        error("You must be an editing teacher in this course, or an admin");
-    }
-
     $strexistingsubscribers   = get_string("existingsubscribers", 'forum');
     $strpotentialsubscribers  = get_string("potentialsubscribers", 'forum');
     $straddsubscriber    = get_string("addsubscriber", 'forum');
@@ -144,95 +140,22 @@
     unset($subscriberarray);
 
 /// Get search results excluding any users already subscribed
-    switch ($CFG->dbtype) {
-        case "mysql":
-             $fullname = " CONCAT(u.firstname,\" \",u.lastname) ";
-             $LIKE = "LIKE";
-             break;
-        case "postgres7":
-             $fullname = " u.firstname||' '||u.lastname ";
-             $LIKE = "ILIKE";
-             break;
-        default: 
-             $fullname = " u.firstname||\" \"||u.lastname ";
-             $LIKE = "ILIKE";
-    }
-    if (!empty($subscriberlist)) {
-        $except = " AND u.id NOT IN ($subscriberlist) ";
-    } else {
-        $except = '';
-    }
+
     if (!empty($frm->searchtext) and $previoussearch) {
-        if ($currentgroup) {
-            $searchusers = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
-                              FROM {$CFG->prefix}user u, 
-                                   {$CFG->prefix}groups_members g
-                              WHERE g.groupid = '$currentgroup' AND g.userid = u.id AND u.deleted = '0'
-                                  AND ($fullname $LIKE '%$frm->searchtext%' OR u.email $LIKE '%$frm->searchtext%')
-                                  $except
-                              ORDER BY u.firstname ASC, u.lastname ASC");
-
-            $usercount = count_records_sql("SELECT COUNT(*)
-                              FROM {$CFG->prefix}user u, 
-                                   {$CFG->prefix}groups_members g
-                              WHERE g.groupid = '$currentgroup' AND g.userid = u.id AND u.deleted = '0'
-                                  $except");
-        } else {
-            $searchusers = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
-                              FROM {$CFG->prefix}user u, 
-                                   {$CFG->prefix}user_students s
-                              WHERE s.course = '$course->id' AND s.userid = u.id AND u.deleted = '0'
-                                  AND ($fullname $LIKE '%$frm->searchtext%' OR u.email $LIKE '%$frm->searchtext%')
-                                  $except
-                              UNION
-                              SELECT u.id, u.firstname, u.lastname, u.email
-                              FROM {$CFG->prefix}user u, 
-                                   {$CFG->prefix}user_teachers s
-                              WHERE s.course = '$course->id' AND s.userid = u.id AND u.deleted = '0'
-                                  AND ($fullname $LIKE '%$frm->searchtext%' OR u.email $LIKE '%$frm->searchtext%')
-                                  $except
-                              ORDER BY u.firstname ASC, u.lastname ASC");
-
-            $usercount = count_records_sql("SELECT COUNT(*)
-                              FROM {$CFG->prefix}user u, 
-                                   {$CFG->prefix}user_students s
-                              WHERE s.course = '$course->id' AND s.userid = u.id AND u.deleted = '0'
-                                  $except") +
-                         count_records_sql("SELECT COUNT(*)
-                              FROM {$CFG->prefix}user u, 
-                                   {$CFG->prefix}user_teachers s
-                              WHERE s.course = '$course->id' AND s.userid = u.id AND u.deleted = '0'
-                                  $except");
-        }
+        $searchusers = search_users($course->id, $currentgroup, $frm->searchtext, 'firstname ASC, lastname ASC', $subscriberlist);
     }
     
 /// If no search results then get potential subscribers for this forum excluding users already subscribed
     if (empty($searchusers)) {
         if ($currentgroup) {
-            $users = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
-                                  FROM {$CFG->prefix}user u, 
-                                       {$CFG->prefix}groups_members g
-                                  WHERE g.groupid = '$currentgroup' AND g.userid = u.id AND u.deleted = '0'
-                                      $except
-                                  ORDER BY u.firstname ASC, u.lastname ASC");
+            $users = get_group_users($currentgroup, 'firstname ASC, lastname ASC', $subscriberlist);
         } else {
-             $users = get_records_sql("SELECT u.id, u.firstname, u.lastname, u.email
-                                  FROM {$CFG->prefix}user u, 
-                                       {$CFG->prefix}user_students s
-                                  WHERE s.course = '$course->id' AND s.userid = u.id AND u.deleted = '0'
-                                      $except
-                                  UNION
-                                  SELECT u.id, u.firstname, u.lastname, u.email
-                                  FROM {$CFG->prefix}user u, 
-                                       {$CFG->prefix}user_teachers s
-                                  WHERE s.course = '$course->id' AND s.userid = u.id AND u.deleted = '0'
-                                      $except
-                                  ORDER BY u.firstname ASC, u.lastname ASC");
+             $users = get_course_users($course->id, 'firstname ASC, lastname ASC', $subscriberlist);
         }
         if (!$users) {
             $users = array();
         }
-        $usercount = count($users);
+
     }
 
     $searchtext = (isset($frm->searchtext)) ? $frm->searchtext : "";
