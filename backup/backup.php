@@ -34,8 +34,8 @@
     $strcoursebackup = get_string("coursebackup");
     $stradministration = get_string("administration");
 
-    //If no course has been selected
-    if (!$id) {
+    //If no course has been selected or cancel button pressed
+    if (!$id or $cancel) {
         print_header("$site->shortname: $strcoursebackup", $site->fullname,
                      "<A HREF=\"$moodle_home/$CFG->admin/index.php\">$stradministration</A> -> $strcoursebackup");
 
@@ -66,12 +66,21 @@
     //Print form     
     print_heading("$strcoursebackup: $course->fullname ($course->shortname)");
     print_simple_box_start("center", "", "$THEME->cellheading");
-    //Set form initial values
-    //Call the form     
-    include_once("backup.html");
+    //Call the form, depending the step we are
+    if (!$launch) {
+        include_once("backup.html");
+    } else {
+        if ($launch == "check") {
+            include_once("check.html");
+        }
+        if ($launch == "execute") {
+            include_once("check.html");
+        }
+    }
     print_simple_box_end();
 
     //Print footer  
     print_footer();
+
 ?>
 
