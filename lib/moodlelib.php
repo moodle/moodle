@@ -923,7 +923,9 @@ function get_user_info_from_db($field, $value) {
     if (!$field || !$value) 
         return false;
 
-    $result = $db->Execute("SELECT * FROM user WHERE $field = '$value' AND deleted <> '1'");
+    if (! $result = $db->Execute("SELECT * FROM user WHERE $field = '$value' AND deleted <> '1'")) {
+        error("Could not find any active users!");
+    }
 
     if ( $result->RecordCount() == 1 ) {
         $user = (object)$result->fields;
