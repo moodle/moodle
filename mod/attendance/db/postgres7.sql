@@ -17,6 +17,8 @@ CREATE TABLE prefix_attendance (
   PRIMARY KEY(id)
 );
 
+CREATE INDEX prefix_attendance_course_idx ON prefix_attendance (course);
+
 #
 # Table structure for table `prefix_attendance_roll`
 #
@@ -30,6 +32,9 @@ CREATE TABLE prefix_attendance_roll (
   notes varchar(64) NOT NULL default '',
   PRIMARY KEY  (id)
 );
+
+CREATE INDEX prefix_attendance_roll_dayid_idx ON prefix_attendance_roll (dayid);
+CREATE INDEX prefix_attendance_roll_userid_idx ON prefix_attendance_roll (userid);
 
 INSERT INTO prefix_log_display VALUES ('attendance', 'view', 'attendance', 'name');
 INSERT INTO prefix_log_display VALUES ('attendance', 'view', 'attendance', 'name');
