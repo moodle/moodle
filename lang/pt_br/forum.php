@@ -19,7 +19,7 @@ $string[couldnotadd] = "Não possa somar seu posto devido a um erro desconhecido"
 $string[couldnotdeleteratings] = "Desculpe, isso não pode ser apagado como pessoas já taxou isto";
 $string[couldnotdeletereplies] = "Desculpe, isso não pode ser apagado como pessoas já respondeu a isto";
 $string[couldnotupdate] = "Não possa atualizar seu posto devido a um erro desconhecido";
-$string[delete] = "Apague";
+$string['delete'] = "Apague";
 $string[deleteddiscussion] = "O tópico de discussão foi apagado";
 $string[deletedpost] = "O posto foi apagado";
 $string[deletesure] = "Você seguramente é você quer apagar este posto?";
@@ -28,7 +28,7 @@ $string[discussions] = "Discussões";
 $string[discussionsstartedby] = "Discussões começadas por \$a";
 $string[discussthistopic] = "Discuta este tópico";
 $string[eachuserforum] = "Cada pessoa posta uma discussão";
-$string[edit] = "Editar";
+$string['edit'] = "Editar";
 $string[editing] = "Editando";
 $string[emptymessage] = "Algo estava errado com seu posto.  Talvez você deixou isto em branco, ou o anexo era muito grande.  Suas mudanças não foram salvas.";
 $string[everyonecanchoose] = "Todo o mundo pode escolher ser subscrito";
@@ -99,4 +99,8 @@ $string[newforumposts] = "Postos de forum novos";
 $string[openmode0] = "Nenhuma discussão, nenhuma resposta";
 $string[openmode1] = "Nenhuma discussão, mas são permitidas respostas";
 $string[openmode2] = "São permitidas discussões e respostas";
+$string[nopostscontaining] = "Nenhum tópico '\$a' foi encontrado";
+$string[postincontext] = "Veja este tópico no contexto";
+$string[searchresults] = "Procurar resultados";
+
 ?>

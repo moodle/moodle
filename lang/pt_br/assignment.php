@@ -36,6 +36,9 @@ $string[uploadfiletoobig] = "Desculpe, mas esse arquivo é demasiado grande (o li
 $string[uploadnofilefound] = "Nenhum arquivo foi encontrado - você selecionou um para enviar?";
 $string[uploadnotregistered] = "'\$a' enviado está OK mas a submissão não registou!  ";
 $string[uploadsuccess] = "Enviado '\$a' com sucesso!";
+$string['typeoffline'] = "Atividade desativada";
+$string['viewfeedback'] = "Classes e gabarito da atribuição da vista";
+
 
 ?>
 
