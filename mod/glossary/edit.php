@@ -241,6 +241,9 @@ if (!isset($newentry->definition)) {
 if (!isset($newentry->timecreated)) {
     $newentry->timecreated = 0;
 }
+if (!isset($newentry->userid)) {
+    $newentry->userid = $USER->id;
+}
 $strglossary = get_string("modulename", "glossary");
 $strglossaries = get_string("modulenameplural", "glossary");
 $stredit = get_string("edit");
