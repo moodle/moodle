@@ -187,12 +187,12 @@ form {
 
 a.dimmed:link {
     text-decoration: none; 
-    color: #AAAAAA;
+    color: <?PHP echo $THEME->hidden?>;
 }
 
 a.dimmed:visited {
     text-decoration: none;
-    color: #AAAAAA;
+    color: <?PHP echo $THEME->hidden?>;
 }
 
 a.dimmed:hover {
@@ -200,9 +200,6 @@ a.dimmed:hover {
     color: red;
 }
 .dimmed_text {
-    color: #AAAAAA;
-}
-dimmed_text {
     color: #AAAAAA;
 }
 
@@ -234,4 +231,11 @@ dimmed_text {
 
 .teacheronly {
     color: #990000;
+}
+
+.topicsoutlinesidehidden {
+    background-color: <?PHP echo $THEME->hidden?>;
+}
+
+.topicsoutlinecontenthidden {
 }

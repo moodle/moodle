@@ -205,6 +205,12 @@ form {
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
 }
+.topicsoutlinesidehidden {
+    background-color: <?PHP echo $THEME->hidden?>;
+}
+
+.topicsoutlinecontenthidden {
+}
 
 
 .forumpost {

@@ -175,6 +175,12 @@ form {
 .topicsoutlinecontenthighlight {
 }
 
+.topicsoutlinesidehidden {
+    background-color: <?PHP echo $THEME->hidden?>;
+}
+
+.topicsoutlinecontenthidden {
+}
 
 .siteinfo {
     border-width: 1px;

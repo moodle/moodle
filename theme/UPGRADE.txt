@@ -1,0 +1,57 @@
+THEME UPGRADES
+--------------
+
+This file lists the major changes to the theme files between Moodle versions.
+
+================================
+Changes to 1.0.9 since 1.0.8.1
+--------------------------------
+
+ALL pix files can now be changed from within a theme, 
+see cordoroyblue for an example:  config.php and the 
+pix subdirectory.
+
+config.php contains two new entries:
+
+  $THEME->custompix
+  $THEME->hidden
+
+
+Styles for the hide/show features (activities):
+
+a.dimmed:link
+a.dimmed:visited
+a.dimmed:hover
+.dimmed_text
+
+
+Styles used when listing discussions in a forum:
+
+.forumpostheaderpicture
+.forumpostheadername
+.forumpostheaderreplies
+.forumpostheaderdate
+
+
+Style for the "you are logged in as" string top and bottom:
+
+.logininfo
+
+
+Style for the link to "home":
+
+.homelink
+
+
+Style for teacher only stuff (used to be hard-coded red):
+
+.teacheronly
+
+
+Styles to show hidden topics on the course page
+
+.topicsoutlinesidehidden
+.topicsoutlinecontenthidden
+
+
+

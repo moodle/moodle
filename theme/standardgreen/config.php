@@ -7,6 +7,7 @@ $THEME->cellcontent  = "#FFFFFF";  // For areas with text
 $THEME->cellcontent2 = "#AFE9BB";  // Alternate colour
 $THEME->borders      = "#555555";  // Table borders
 $THEME->highlight    = "#AAFFAA";  // Highlighted text (eg after a search)
+$THEME->hidden       = "#AAAAAA";  // To color things that are hidden
 
 $THEME->custompix    = false;      // If true, then this theme must have a "pix" 
                                    // subdirectory that contains copies of all 
