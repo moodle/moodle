@@ -176,10 +176,10 @@
 
         global $CFG;
 
-        return get_records_sql ("SELECT s.id , s.dialogue
+        return get_records_sql ("SELECT s.id , s.dialogueid
                                  FROM {$CFG->prefix}dialogue_entries s,
                                       {$CFG->prefix}dialogue a
                                  WHERE a.course = '$course' AND
-                                       s.dialogue = a.id");
+                                       s.dialogueid = a.id");
     }
 ?>
