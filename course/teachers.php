@@ -57,11 +57,12 @@
 
     print_heading($course->teachers);
 
+    $table->head  = array ("", get_string("name"), get_string("order"), get_string("role"));
+    $table->align = array ("RIGHT", "LEFT", "CENTER", "CENTER");
+    $table->size  = array ("35", "", "", "");
+
     echo "<FORM ACTION=teachers.php METHOD=post>";
     foreach ($teachers as $teacher) {
-        $table->head  = array ("", get_string("name"), get_string("order"), get_string("role"));
-        $table->align = array ("RIGHT", "LEFT", "CENTER", "CENTER");
-        $table->size  = array ("35", "", "", "");
 
         $picture = print_user_picture($teacher->id, $course->id, $teacher->picture, false, true);
 
