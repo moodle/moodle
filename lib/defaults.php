@@ -5,6 +5,7 @@
 
    $defaults = array (
        "auth"             => "email",
+       "autologinguests"  => 0,
        "allowunenroll"    =>  true,
        "cachetext"        =>  60,
        "changepassword"   =>  true,

@@ -429,6 +429,21 @@
     </td>
 </tr>
 <tr valign=top>
+    <td align=right><p>autologinguests:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0]  = get_string('no');
+       $options[1]  = get_string('yes');
+
+       choose_from_menu ($options, "autologinguests", $config->autologinguests, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configautologinguests") ?>
+    </td>
+</tr>
+<tr valign=top>
     <td align=right><p>forcelogin:</td>
     <td>
     <?php

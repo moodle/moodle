@@ -365,11 +365,13 @@ function require_login($courseid=0) {
             $SESSION->fromurl  = $_SERVER["HTTP_REFERER"];
         }
         $USER = NULL;
+        $loginguest = (isset($CFG->loginguests) and $CFG->autologinguests 
+            and $courseid and get_field('course','guest','id',$courseid)) ? '?loginguest=true' : '';
         if (empty($CFG->loginhttps)) {
-            redirect("$CFG->wwwroot/login/index.php");
+            redirect("$CFG->wwwroot/login/index.php$loginguest");
         } else {
             $wwwroot = str_replace('http','https',$CFG->wwwroot);
-            redirect("$wwwroot/login/index.php");
+            redirect("$wwwroot/login/index.php$loginguest");
         }
         die;
     }

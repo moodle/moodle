@@ -1,6 +1,7 @@
 <?PHP // $Id$
 
     require_once("../config.php");
+    optional_variable($loginguest, false); // determines whether visitors are logged in as guest automatically
 
     // Check if the guest user exists.  If not, create one.
     if (! record_exists("user", "username", "guest")) {
@@ -20,7 +21,7 @@
     }
 
     $frm = false;
-    if (!empty($SESSION->wantsurl) and strstr($SESSION->wantsurl,"username=guest")) {
+    if ((!empty($SESSION->wantsurl) and strstr($SESSION->wantsurl,"username=guest")) or $loginguest) {
         /// Log in as guest automatically (idea from Zbigniew Fiedorowicz)
         $frm->username = "guest";
         $frm->password = "guest";

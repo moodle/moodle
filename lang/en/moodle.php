@@ -139,6 +139,7 @@ $string['closewindow'] = 'Close this window';
 $string['comparelanguage'] = 'Compare and edit current language';
 $string['complete'] = 'Complete';
 $string['configallowunenroll'] = 'If this is set \'Yes\', then students are allowed to unenroll themselves from courses whenever they like. Otherwise they are not allowed, and this process will be solely controlled by the teachers and administrators.';
+$string['configautologinguests'] = 'Should visitors be logged in as guests automatically when entering courses with guest access?';
 $string['configcachetext'] = 'For larger sites or sites that use text filters, this setting can really speed things up.  Copies of texts will be retained in their processed form for the time specified here.  Setting this too small may actually slow things down slightly,  but setting it too large may mean texts take too long to refresh (with new links, for example).';
 $string['configcountry'] = 'If you set a country here, then this country will be selected by default on new user accounts.  To force users to choose a country, just leave this unset.';
 $string['configdebug'] = 'If you turn this on, then PHP\'s error_reporting will be increased so that more warnings are printed.  This is only useful for developers.';
