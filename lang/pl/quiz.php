@@ -44,7 +44,7 @@ $string['reportsimplestat'] = "Proste statystyki";
 
 $string['review'] = "Przegl±d";
 
-$string['viewallreports'] = "Obejrzyj raporty dla próby $a";
+$string['viewallreports'] = "Obejrzyj raporty dla próby \$a";
 
 $string['addquestions'] = "Dodaj pytania";
 
@@ -68,7 +68,7 @@ $string['answersingleyes'] = "Wy³±cznie jedna odpowied¼";
 
 $string['answersingleno'] = "Odpowied¼ wielokrotna jest dozwolona";
 
-$string['attempt'] = "Próba $a";
+$string['attempt'] = "Próba \$a";
 
 $string['attemptfirst'] = "Pierwsza próba";
 
@@ -100,7 +100,7 @@ $string['category'] = "Kategoria";
 
 $string['categoryinfo'] = "Informacje na temat kategorii";
 
-$string['categorymove'] = "Kategoria \'$a->name\' zawiera $a->count pytañ. Wybierz kategoriê, do której maj± one zostaæ przeniesione";
+$string['categorymove'] = "Kategoria '\$a->name\' zawiera \$a->count pytañ. Wybierz kategoriê, do której maj± one zostaæ przeniesione";
 
 $string['categorymoveto'] = "Przenie¶ je do tej kategorii";
 
@@ -126,7 +126,7 @@ $string['defaultgrade'] = "Domy¶lna ocena za pytanie";
 
 $string['defaultinfo'] = "Domy¶lna kategoria pytañ";
 
-$string['deletequestioncheck'] = "Czy masz ca³kowit± pewno¶æ, ¿e chcesz usun±æ \'$a\'?";
+$string['deletequestioncheck'] = "Czy masz ca³kowit± pewno¶æ, ¿e chcesz usun±æ '\$a\'?";
 
 $string['editcategories'] = "Modyfikuj kategorie";
 
@@ -158,7 +158,7 @@ $string['filloutthreequestions'] = "Musisz stworzyæ przynajmniej trzy odpowiedzi
 
 $string['fileformat'] = "Format pliku";
 
-$string['fractionsaddwrong'] = "Wybrane odpowiedzi pozytywne nie sumuj± siê do 100%% <BR>Zamiast tego jest sumuj± siê $a%% <BR>Czy chcesz wróciæ i poprawiæ pytanie?";
+$string['fractionsaddwrong'] = "Wybrane odpowiedzi pozytywne nie sumuj± siê do 100%% <BR>Zamiast tego jest sumuj± siê \$a%% <BR>Czy chcesz wróciæ i poprawiæ pytanie?";
 
 $string['fractionsnomax'] = "Jedna z odpowiedzi powinna byæ warta 100%, dziêki czemu <BR>mo¿liwe jest uzyskanie maksymalnej oceny za to pytanie. <BR>Czy chcesz wróciæ i poprawiæ pytanie?";
 
@@ -202,7 +202,7 @@ $string['noquestions'] = "Nie dodano jeszcze ¿adnego pytania";
 
 $string['noreview'] = "Nie mo¿esz przegl±daæ tego quizu";
 
-$string['noreviewuntil'] = "Nie mo¿esz przegl±daæ tego quizu do $a";
+$string['noreviewuntil'] = "Nie mo¿esz przegl±daæ tego quizu do \$a";
 
 $string['notenoughsubquestions'] = "Nie zdefiniowano wystarczaj±cej liczby podpunktów pytañ! <br> Czy chcesz wróciæ i poprawiæ pytanie?";
 
@@ -212,21 +212,21 @@ $string['qti'] = "Format IMS QTI";
 
 $string['question'] = "Pytanie";
 
-$string['questioninuse'] = "Pytanie \'$a\' jest w u¿yciu:";
+$string['questioninuse'] = "Pytanie '\$a\' jest w u¿yciu:";
 
 $string['questions'] = "Pytania";
 
 $string['questionname'] = "Nazwa pytania";
 
-$string['quizavailable'] = "Quiz jest dostêpny do: $a";
+$string['quizavailable'] = "Quiz jest dostêpny do: \$a";
 
 $string['quizclose'] = "Zamknij quiz";
 
-$string['quizclosed'] = "Ten quiz zosta³ zamkniêty $a";
+$string['quizclosed'] = "Ten quiz zosta³ zamkniêty \$a";
 
 $string['quizopen'] = "Otwórz quiz";
 
-$string['quiznotavailable'] = "Quiz nie bêdzie dostêpny do dnia $a";
+$string['quiznotavailable'] = "Quiz nie bêdzie dostêpny do dnia \$a";
 
 $string['random'] = "Pytanie wybierane losowo";
 
@@ -246,7 +246,7 @@ $string['regrade'] = "Ponownie oceñ wszystkie próby";
 
 $string['regradecomplete'] = "Wszystkie próby zosta³y ocenione ponownie";
 
-$string['regradecount'] = "Zmieniono $a->changed z $a->attempt ocen";
+$string['regradecount'] = "Zmieniono \$a->changed z \$a->attempt ocen";
 
 $string['rename'] = "Zmieñ nazwê";
 
@@ -286,7 +286,7 @@ $string['timetaken'] = "Wykorzystany Czas";
 
 $string['timecompleted'] = "Zakoñczono";
 
-$string['toomanyrandom'] = "Liczba potrzebnych pytañ wybieranych losowo jest wiêksza od liczby pytañ w tej kategorii! ($a)";
+$string['toomanyrandom'] = "Liczba potrzebnych pytañ wybieranych losowo jest wiêksza od liczby pytañ w tej kategorii! (\$a)";
 
 $string['true'] = "Prawda";
 
@@ -294,11 +294,11 @@ $string['truefalse'] = "Prawda/Fa³sz";
 
 $string['type'] = "Typ";
 
-$string['viewallanswers'] = "Przegl±daj $a ukoñczonych quizów";
+$string['viewallanswers'] = "Przegl±daj \$a ukoñczonych quizów";
 
 $string['webct'] = "Format WebCT";
 
-$string['yourfinalgradeis'] = "Twoja ostateczna ocena za ten quiz wynosi $a";
+$string['yourfinalgradeis'] = "Twoja ostateczna ocena za ten quiz wynosi \$a";
 
 $string[''] = "";
 

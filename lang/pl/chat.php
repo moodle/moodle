@@ -36,13 +36,13 @@ $string['helpchatting'] = "Pomoc z czatem";
 
 $string['idle'] = "Bezczynny";
 
-$string['messagebeepseveryone'] = "$a bzyczy do wszstkich!";
+$string['messagebeepseveryone'] = "\$a bzyczy do wszstkich!";
 
-$string['messagebeepsyou'] = "$a w³a¶nie do Ciebie zabzycza³!";
+$string['messagebeepsyou'] = "\$a w³a¶nie do Ciebie zabzycza³!";
 
-$string['messageenter'] = "$a w³a¶nie wszed³ na czat";
+$string['messageenter'] = "\$a w³a¶nie wszed³ na czat";
 
-$string['messageexit'] = "$a opu¶ci³ czat";
+$string['messageexit'] = "\$a opu¶ci³ czat";
 
 $string['messages'] = "Wiadomo¶ci";
 

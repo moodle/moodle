@@ -6,7 +6,7 @@ $string['absent'] = "Nieobecny";
 
 $string['amendtitle'] = "Popraw tytu³";
 
-$string['confirmdeletionofthisitem'] = "Potwierd¼ usuniêcie $a";
+$string['confirmdeletionofthisitem'] = "Potwierd¼ usuniêcie \$a";
 
 $string['correct'] = "Poprawnie";
 
@@ -24,21 +24,21 @@ $string['leaguetable'] = "\'Tabela ligowa\' nades³anych prac";
 
 $string['liststudentsassessments'] = "Wymieñ oceny studentów";
 
-$string['mail1'] = "Twoje zadanie \'$a\' zosta³o ocenione przez";
+$string['mail1'] = "Twoje zadanie '\$a\' zosta³o ocenione przez";
 
-$string['mail2'] = "Komentarze i stopieñ mog± zostaæ obajrzane w Zadaniach Warsztatów \'$a\'";
+$string['mail2'] = "Komentarze i stopieñ mog± zostaæ obajrzane w Zadaniach Warsztatów '\$a\'";
 
 $string['mail3'] = "Mo¿esz to obejrzeæ w Zadaniach Warsztatów";
 
-$string['mail4'] = "Komentarz zosta³ dodany  do zadania \'$a\' przez";
+$string['mail4'] = "Komentarz zosta³ dodany  do zadania '\$a\' przez";
 
-$string['mail5'] = "Nowy komentarz mo¿e byæ obejrzany w Zadaniach Warsztatów \'$a\'";
+$string['mail5'] = "Nowy komentarz mo¿e byæ obejrzany w Zadaniach Warsztatów '\$a\'";
 
-$string['mail6'] = "Twoja ocena zadania \'$a\' zosta³a przejrzana";
+$string['mail6'] = "Twoja ocena zadania '\$a\' zosta³a przejrzana";
 
-$string['mail7'] = "Komentarze dane przez $a mog± byæ obejrznae w Zadaniach Warsztatów";
+$string['mail7'] = "Komentarze dane przez \$a mog± byæ obejrznae w Zadaniach Warsztatów";
 
-$string['movingtophase'] = "Przejd¼ do fazy $a";
+$string['movingtophase'] = "Przejd¼ do fazy \$a";
 
 $string['newassessments'] = "Nowe oceny";
 
@@ -56,19 +56,19 @@ $string['rubric'] = "Rubyka";
 
 $string['select'] = "Wybierz";
 
-$string['studentassessments'] = "Oceny $a";
+$string['studentassessments'] = "Oceny \$a";
 
 $string['submission'] = "Praca";
 
 $string['suggestedgrade'] = "Proponowany stopieñ";
 
-$string['teacherassessments'] = "Oceny $a";
+$string['teacherassessments'] = "Oceny \$a";
 
-$string['thereisfeedbackfromtheteacher'] = "Oto informacja zwrotna od: $a";
+$string['thereisfeedbackfromtheteacher'] = "Oto informacja zwrotna od: \$a";
 
 $string['verypoor'] = "Bardzo s³abo";
 
-$string['weightforteacherassessments'] = "Waga ocen $a";
+$string['weightforteacherassessments'] = "Waga ocen \$a";
 
 $string['accumulative'] = "Sumacyjna";
 
@@ -76,31 +76,31 @@ $string['action'] = "Akcja";
 
 $string['addacomment'] = "Dodaj komentarz";
 
-$string['afterdeadline'] = "$a po terminie";
+$string['afterdeadline'] = "\$a po terminie";
 
 $string['agreetothisassessment'] = "Zgadzam siê z t± ocen±";
 
-$string['allgradeshaveamaximumof'] = "Maksymalna warto¶æ ocen : $a";
+$string['allgradeshaveamaximumof'] = "Maksymalna warto¶æ ocen : \$a";
 
 $string['allowresubmit'] = "Zezwól na wielokrotne przesy³anie rozwi±zania";
 
-$string['alreadyinphase'] = "Warsztaty s± w fazie $a";
+$string['alreadyinphase'] = "Warsztaty s± w fazie \$a";
 
 $string['amendassessmentelements'] = "Zmieñ sk³adowe zadania";
 
 $string['assess'] = "Oceñ";
 
-$string['assessedon'] = "Oceniono na $a";
+$string['assessedon'] = "Oceniono na \$a";
 
 $string['assessment'] = "Ocena";
 
-$string['assessmentby'] = "Ocenione przez : $a";
+$string['assessmentby'] = "Ocenione przez : \$a";
 
-$string['assessmentgrade'] = "Ocena stopnia : $a";
+$string['assessmentgrade'] = "Ocena stopnia : \$a";
 
 $string['assessmentnotyetagreed'] = "Jeszcze nie uzgodniono oceny";
 
-$string['assessmentsby'] = "Oceny wykonane przez $a";
+$string['assessmentsby'] = "Oceny wykonane przez \$a";
 
 $string['assessmentsmustbeagreed'] = "Ocena musi byæ uzgodniona";
 
@@ -110,7 +110,7 @@ $string['assessmentsareok'] = "Oceny s± prawid³owe";
 
 $string['assessmentsdone'] = "Zakoñczono ocenê";
 
-$string['assessmentwasagreedon'] = "Ocenê ustalono na $a";
+$string['assessmentwasagreedon'] = "Ocenê ustalono na \$a";
 
 $string['assessor'] = "Oceniaj±cy";
 
@@ -122,9 +122,9 @@ $string['assignmentnotinthecorrectphase'] = "Warsztaty nie znajduj± siê w odpowi
 
 $string['authorofsubmission'] = "Autor pracy";
 
-$string['awaitinggradingbyteacher'] = "Oczekiwanie na stopieñ od $a";
+$string['awaitinggradingbyteacher'] = "Oczekiwanie na stopieñ od \$a";
 
-$string['beforedeadline'] = " $a przed terminem";
+$string['beforedeadline'] = " \$a przed terminem";
 
 $string['calculationoffinalgrades'] = "Liczenie oceny koñcowej";
 
@@ -138,7 +138,7 @@ $string['criteria'] = "Zale¿na od zgodno¶ci z kryteriami";
 
 $string['deadline'] = "Termin";
 
-$string['deadlineis'] = "Termin : $a";
+$string['deadlineis'] = "Termin : \$a";
 
 $string['description'] = "Opis";
 
@@ -174,7 +174,7 @@ $string['gradeassessment'] = "Sklasyfikuj wystawion± ocenê";
 
 $string['graded'] = "Oceniono";
 
-$string['gradedbyteacher'] = "Ocenione przez $a";
+$string['gradedbyteacher'] = "Ocenione przez \$a";
 
 $string['gradeforassessments'] = "Stopieñ za wystawione oceny";
 
@@ -184,7 +184,7 @@ $string['gradeforreliability'] = "Stopieñ za rzetelno¶æ";
 
 $string['gradeforstudentsassessment'] = "Stopieñ za ocenê wspó³uczestników";
 
-$string['gradeofsubmission'] = "Ocena za pracê : $a";
+$string['gradeofsubmission'] = "Ocena za pracê : \$a";
 
 $string['gradingstrategy'] = "Strategia oceniania";
 
@@ -204,7 +204,7 @@ $string['modulename'] = "Warsztaty";
 
 $string['modulenameplural'] = "Warsztaty";
 
-$string['movedtophase'] = "Rozpoczêto fazê $a";
+$string['movedtophase'] = "Rozpoczêto fazê \$a";
 
 $string['moveonto'] = "Przejd¼ do";
 
@@ -228,7 +228,7 @@ $string['numberofassessmentsofstudentsubmissions'] = "Ilo¶æ ocen prac wspó³uczes
 
 $string['numberofassessmentsofteachersexamples'] = "Ilo¶æ ocen przyk³adów przes³anych przez prowadz±cego";
 
-$string['on'] = "$a";
+$string['on'] = "\$a";
 
 $string['openassignment'] = "Zadanie otwarte";
 
@@ -236,9 +236,9 @@ $string['optionforpeergrade'] = "Opcja ocen wspó³uczestników";
 
 $string['overallgrade'] = "Koñcowa ocena";
 
-$string['overallpeergrade'] = "Koñcowa ocena wspó³uczestników: $a";
+$string['overallpeergrade'] = "Koñcowa ocena wspó³uczestników: \$a";
 
-$string['overallteachergrade'] = "Koñcowa ocena prowadz±cego: $a";
+$string['overallteachergrade'] = "Koñcowa ocena prowadz±cego: \$a";
 
 $string['ownwork'] = "Praca w³asna";
 
@@ -246,15 +246,15 @@ $string['phase'] = "Faza";
 
 $string['phase1'] = "Przygotowanie zadania";
 
-$string['phase2'] = "faza w której $a przesy³a prace i oceny";
+$string['phase2'] = "faza w której \$a przesy³a prace i oceny";
 
 $string['phase3'] = "Liczenie ocen koñcowych";
 
 $string['phase4'] = "Poka¿ oceny koñcowe";
 
-$string['pleaseassesstheseexamplesfromtheteacher'] = "Proszê oceniæ przyk³ady z $a";
+$string['pleaseassesstheseexamplesfromtheteacher'] = "Proszê oceniæ przyk³ady z \$a";
 
-$string['pleaseassessthesestudentsubmissions'] = "Proszê oceniæ $a przes³anych prac";
+$string['pleaseassessthesestudentsubmissions'] = "Proszê oceniæ \$a przes³anych prac";
 
 $string['reassess'] = "Oceñ ponownie";
 
@@ -298,11 +298,11 @@ $string['specimenassessmentform'] = "Przyk³adowy formularz do wystawiania ocen";
 
 $string['studentsassessment'] = "Ocena wystawiona przez studentów";
 
-$string['studentgrades'] = "Stopnie $a";
+$string['studentgrades'] = "Stopnie \$a";
 
-$string['studentsubmissionsforassessment'] = "$a prac przes³anych przez studentów do oceny";
+$string['studentsubmissionsforassessment'] = "\$a prac przes³anych przez studentów do oceny";
 
-$string['studentsubmissions'] = "$a prac przes³anych przez studentów";
+$string['studentsubmissions'] = "\$a prac przes³anych przez studentów";
 
 $string['submitassignment'] = "Prze¶lij rozwi±zanie";
 
@@ -322,11 +322,11 @@ $string['teacherscomment'] = "Komentarz prowadz±cego";
 
 $string['teachersgrade'] = "Stopieñ wystawiony przez prowadz±cego";
 
-$string['teachersubmissionsforassessment'] = "$a przyk³adów do oceny";
+$string['teachersubmissionsforassessment'] = "\$a przyk³adów do oceny";
 
-$string['thegradeis'] = "Stopieñ  : $a";
+$string['thegradeis'] = "Stopieñ  : \$a";
 
-$string['theseasessmentsaregradedbytheteacher'] = "Te oceny prac s± sklasyfikowane przez $a";
+$string['theseasessmentsaregradedbytheteacher'] = "Te oceny prac s± sklasyfikowane przez \$a";
 
 $string['timeassessed'] = "Czas oceny";
 
@@ -334,19 +334,19 @@ $string['title'] = "Tytu³";
 
 $string['typeofscale'] = "Typ skali";
 
-$string['ungradedassessmentsofstudentsubmissions'] = "$a niesklasyfikowanych ocen przes³anych przez studentów";
+$string['ungradedassessmentsofstudentsubmissions'] = "\$a niesklasyfikowanych ocen przes³anych przez studentów";
 
-$string['ungradedassessmentsofteachersubmissions'] = "$a niesklasyfikowanych ocen przes³anych przez prowadz±cego";
+$string['ungradedassessmentsofteachersubmissions'] = "\$a niesklasyfikowanych ocen przes³anych przez prowadz±cego";
 
 $string['view'] = "Obejrzyj";
 
-$string['viewassessmentofteacher'] = "Obejrzyj ocenê $a";
+$string['viewassessmentofteacher'] = "Obejrzyj ocenê \$a";
 
 $string['viewotherassessments'] = "Obejrzyj inne oceny";
 
 $string['warningonamendingelements'] = "UWAGA : Przes³ano oceny. <BR> Proszê NIE zmieniaæ ilo¶ci sk³adowych, typów skal, ani wag sk³adowych";
 
-$string['weightederrorcount'] = "Ilo¶æ b³êdów wa¿onych : $a";
+$string['weightederrorcount'] = "Ilo¶æ b³êdów wa¿onych : \$a";
 
 $string['weightforbias'] = "Waga przek³amania";
 
@@ -368,5 +368,6 @@ $string['yourassessments'] = "Twoje oceny";
 
 $string['yourfeedbackgoeshere'] = "Tu zamie¶æ swoj± informacjê zwrotn±";
 
+$string[''] = "";
 
 ?>
