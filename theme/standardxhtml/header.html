@@ -9,16 +9,17 @@
 <?php include("$CFG->javascript"); ?>
 </head>
 
-<body<?php 
+<body<?php
    echo " $bodytags";
-   if ($focus) { 
-       echo " onload=\"setfocus()\""; 
-   } 
+   if ($focus) {
+       echo " onload=\"setfocus()\"";
+   }
    echo " bgcolor=\"$THEME->body\">";
 ?>
+<div id="wrapper">
 
 <?php if ($home) {  // This is what gets printed on the home page only  ?>
-
+<div id="header-home">
   <table width="100%" cellpadding="10" cellspacing="0" border="0" class="headerhome">
     <tr>
       <td valign="top" class="headerhomemain"><?php echo $heading?></td>
@@ -27,17 +28,17 @@
   </table>
 
 <?php } else if ($heading) {  // This is what gets printed on any other page with a heading ?>
-
+<div id="header">
   <table width="100%" cellpadding="0" cellspacing="0" border="0" class="header">
     <tr>
       <td valign="top" class="headermain"><?php echo $heading?></td>
       <td align="right" valign="top" class="headermenu"><?php echo $menu ?></td>
     </tr>
   </table>
-
 <?php } ?>
+</div>
 
-
+<div id="nav-bar">
 <?php if ($navigation) { // This is the navigation table with breadcrumbs  ?>
 
   <table border="0" cellpadding="3" cellspacing="0" width="100%">
@@ -45,7 +46,7 @@
       <td bgcolor="<?php echo $THEME->cellheading?>" class="navbar">
         <font size="2"><b><?php print_navigation("$navigation"); ?></b></font>
       </td>
-      <td bgcolor="<?php echo $THEME->cellheading?>" class="navbar" align="right" width="20" valign="top"><?php 
+      <td bgcolor="<?php echo $THEME->cellheading?>" class="navbar" align="right" width="20" valign="top"><?php
           echo $button;
       ?></td>
     </tr>
@@ -57,5 +58,6 @@
   <hr size="1" noshade="noshade" />
 
 <?php } ?>
-
+</div>
 <!-- END OF HEADER -->
+<div id="containerContent">
