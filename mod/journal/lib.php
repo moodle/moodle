@@ -69,4 +69,81 @@ function journal_user_complete($course, $user, $mod, $journal) {
     }
 }
 
+
+function journal_cron () {
+// Function to be run periodically according to the moodle cron
+// Finds all journal notifications that have yet to be mailed out, and mails them
+
+    global $CFG;
+
+    echo "Processing journals...\n";
+
+    $cutofftime = time() - $CFG->maxeditingtime;
+
+    if ($entries = get_records_sql("SELECT e.*, j.course, j.name 
+                                     FROM   journal_entries e, journal j
+                                     WHERE  e.mailed = '0' AND 
+                                     e.timemarked < '$cutofftime' AND e.timemarked > 0
+                                     AND e.journal = j.id")) {
+        $timenow = time();
+
+        foreach ($entries as $entry) {
+
+            echo "Processing journal entry $entry->id\n";
+
+            if (! $user = get_record("user", "id", "$entry->user")) {
+                echo "Could not find user $post->user\n";
+                continue;
+            }
+
+            if (! $teacher = get_record("user", "id", "$entry->teacher")) {
+                echo "Could not find teacher $entry->teacher\n";
+                continue;
+            }
+
+            if (! $course = get_record("course", "id", "$entry->course")) {
+                echo "Could not find course $entry->course\n";
+                continue;
+            }
+
+            if (! $mod = get_coursemodule_from_instance("journal", $entry->journal, $course->id)) {
+                echo "Could not find course module for journal id $entry->journal\n";
+                continue;
+            }
+
+            $postsubject = "$course->shortname: Journal feedback: $entry->name";
+            $posttext  = "$course->shortname -> Journals -> $entry->name\n";
+            $posttext .= "---------------------------------------------------------------------\n";
+            $posttext .= "$teacher->firstname $teacher->lastname has posted some feedback on your\n";
+            $posttext .= "journal entry for '$entry->name'\n\n";
+            $posttext .= "You can see it appended to your journal entry:\n";
+            $posttext .= "   $CFG->wwwroot/mod/journal/view.php?id=$mod->id\n";
+            $posttext .= "---------------------------------------------------------------------\n";
+            if ($user->mailformat == 1) {  // HTML
+                $posthtml = "<P><FONT FACE=sans-serif>".
+              "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
+              "<A HREF=\"$CFG->wwwroot/mod/journal/index.php?id=$course->id\">Journals</A> ->".
+              "<A HREF=\"$CFG->wwwroot/mod/journal/view.php?id=$mod->id\">$entry->name</A></FONT></P>";
+              $posthtml .= "<HR><FONT FACE=sans-serif>";
+              $posthtml .= "<P>$teacher->firstname $teacher->lastname has posted some feedback on your";
+              $posthtml .= " journal entry for '<B>$entry->name</B>'</P>";
+              $posthtml .= "<P>You can see it <A HREF=\"$CFG->wwwroot/mod/journal/view.php?id=$mod->id\">";
+              $posthtml .= "appended to your journal entry</A>.</P></FONT><HR>";
+            } else {
+              $posthtml = "";
+            }
+
+            if (! email_to_user($user, $teacher, $postsubject, $posttext, $posthtml)) {
+                echo "Error: Journal cron: Could not send out mail for id $entry->id to user $user->id ($user->email)\n";
+            }
+            if (! set_field("journal_entries", "mailed", "1", "id", "$entry->id")) {
+                echo "Could not update the mailed field for id $entry->id\n";
+            }
+        }
+    }
+
+    return true;
+}
+
+
 ?>

@@ -40,6 +40,7 @@ CREATE TABLE journal_entries (
   comment text,
   teacher int(10) unsigned NOT NULL default '0',
   timemarked int(10) unsigned NOT NULL default '0',
+  mailed int(1) unsigned NOT NULL default '0',
   PRIMARY KEY  (id)
 ) TYPE=MyISAM COMMENT='All the journal entries of all people';
 
