@@ -1,3 +1,174 @@
+2002-06-06 Thursday 23:25  martin
+
+	* config-dist.php: Altered smtphosts and removed cronpassword
+
+2002-06-06 Thursday 23:21  martin
+
+	* lib/moodlelib.php: If $CFG->smtphosts is empty, then mailer uses
+	PHP mail() == sendmail.
+
+2002-06-06 Thursday 23:19  martin
+
+	* admin/cron.php: Removed password ... it's not necessary any more.
+
+2002-06-06 Thursday 10:59  martin
+
+	* lib/setup.php: WHoops .... time should be 1800 seconds
+
+2002-06-06 Thursday 00:39  martin
+
+	* course/unenrol.php: Remember to remove subscriptions when
+	unenrolling.
+
+2002-06-05 Wednesday 22:05  martin
+
+	* error/index.php, lib/moodlelib.php, lib/setup.php,
+	login/forgot_password.php, login/signup.php, mod/discuss/cron.php,
+	mod/discuss/lib.php: Fixes to convert mail to individual mailing
+	...  so that we can use the new preferences for mail (plain or
+	html).
+
+2002-06-05 Wednesday 14:24  martin
+
+	* course/lib.php, course/log.php, lib/weblib.php: Slight interface
+	tweaks
+
+2002-06-05 Wednesday 14:10  martin
+
+	* user/edit.php: Typo on add_to_log URL
+
+2002-06-05 Wednesday 13:54  martin
+
+	* user/index.php: Doesn't display teachers or students if there
+	aren't any
+
+2002-06-05 Wednesday 13:37  martin
+
+	* lib/weblib.php, lib/db/mysql.sql, user/edit.html, user/edit.php,
+	user/index.php, user/view.php: Changes to user settings, now it
+	matches the stored data better
+
+2002-06-05 Wednesday 13:36  martin
+
+	* lib/countries.php: Moved here from login/countries.php.  Function
+	removed.
+
+2002-06-05 Wednesday 13:35  martin
+
+	* login/: countries.php, signup.php, signup_form.php: Changes to
+	use new lib/countries.php
+
+2002-06-05 Wednesday 11:24  martin
+
+	* lib/db/mysql.sql: Changes to user table
+
+2002-06-05 Wednesday 11:22  martin
+
+	* course/new.php, course/social.php, mod/discuss/new.php,
+	mod/journal/new.php, mod/reading/new.php, user/new.php: Old new.php
+	system is replaced by print_recent_activity() in course/lib.php
+
+2002-06-05 Wednesday 11:15  martin
+
+	* course/lib.php, course/log.php, course/new.php, files/index.php,
+	lib/moodlelib.php, lib/weblib.php, lib/db/mysql.sql,
+	mod/choice/report.php, mod/discuss/lib.php, mod/discuss/report.php,
+	mod/discuss/view.php, mod/journal/lib.php, mod/journal/new.php,
+	mod/journal/report.php, mod/journal/user.php, mod/journal/view.php,
+	mod/reading/index.php, mod/reading/new.php,
+	mod/survey/download.php, mod/survey/report.php, user/edit.html,
+	user/edit.php, user/index.php, user/lib.php: Changes related to
+	timezone display.  Datetime display now uses userdate() which
+	itself uses the USER variable timezone to alter the displayed time.
+
+2002-06-05 Wednesday 11:13  martin
+
+	* theme/standard/styles.css: Changed formatting (attempting to
+	improve IE display)
+
+2002-06-04 Tuesday 15:00  martin
+
+	* course/loginas.php: Errr this is what I meant
+
+2002-06-04 Tuesday 14:58  martin
+
+	* course/loginas.php: Improved logging slightly
+
+2002-06-04 Tuesday 14:54  martin
+
+	* user/index.php: Formatting of teacher links
+
+2002-06-04 Tuesday 14:49  martin
+
+	* user/view.php: Added a message if the student is not a member of
+	the current course
+
+2002-06-04 Tuesday 14:35  martin
+
+	* user/view.php: Whoops ... don't put unenrol button unless the
+	user is the current user!
+
+2002-06-04 Tuesday 14:32  martin
+
+	* lib/moodlelib.php: course/login.php is now course/enrol.php ...
+
+2002-06-04 Tuesday 14:30  martin
+
+	* course/: enrol.html, enrol.php, lib.php, login.html, login.php,
+	unenrol.php: Cleaned up enrol and unenrol process a bit
+
+2002-06-04 Tuesday 14:29  martin
+
+	* user/view.php: Added button to unenrol a user
+	(course/unenrol.php)
+
+2002-06-03 Monday 18:42  martin
+
+	* course/: email.html, email.php: Not needed any more ... use the
+	"News" forum instead.
+
+2002-06-02 Sunday 16:23  martin
+
+	* user/index.php: Now uses $course->student as title of list
+
+2002-06-02 Sunday 16:10  martin
+
+	* course/: edit.html, edit.php, social.php, weeks.php: Added
+	per-course config and use of a word for "student"
+
+2002-06-02 Sunday 15:41  martin
+
+	* theme/standardblue/styles.css: Added semicolons to keep IE happy
+
+2002-06-02 Sunday 15:39  martin
+
+	* theme/standardblue/styles.css: Changed to lowercase to make IE
+	happy
+
+2002-06-01 Saturday 23:35  martin
+
+	* theme/standard/styles.css: Fixed for Internet Explorer?
+
+2002-06-01 Saturday 22:11  martin
+
+	* mod/reading/view.php: Added TITLE to link to fullscreen reading
+
+2002-06-01 Saturday 22:00  martin
+
+	* mod/reading/view.php: Minor frameset adjustments
+
+2002-06-01 Saturday 21:57  martin
+
+	* mod/reading/view.php: Slight alterations to layout of frames.
+
+2002-06-01 Saturday 21:47  martin
+
+	* course/edit.php: Removed check for course format changing
+
+2002-06-01 Saturday 20:52  martin
+
+	* CHANGES: Updated
+
 2002-06-01 Saturday 17:48  martin
 
 	* course/social.php: Added a <BR>
