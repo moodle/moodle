@@ -293,17 +293,18 @@ class MoodleBlock {
         // If yes, then it is assumed that the block WILL USE per-instance configuration
         return false;
     }
+    
     function instance_config_print() {
         // Default behavior: print the config_instance.html file
-        // You don't need to override this if you 're satisfied with the above
+        // You don't need to override this if you're satisfied with the above
         if(!$this->instance_allow_multiple()) {
             return false;
         }
         global $CFG, $USER, $THEME;
 
-        if(is_file($CFG->dirroot.'/blocks/'.$this->name().'/config_instance.html')) {
+        if(is_file($CFG->dirroot.'/blocks/'. $this->name() .'/config_instance.html')) {
             print_simple_box_start('center', '', $THEME->cellheading);
-            include($CFG->dirroot.'/blocks/'.$this->name().'/config_instance.html');
+            include($CFG->dirroot.'/blocks/'. $this->name() .'/config_instance.html');
             print_simple_box_end();
         }
         else {
@@ -312,6 +313,7 @@ class MoodleBlock {
         
         return true;
     }
+    
     function instance_config_save($data) {
         $data = stripslashes_recursive($data);
         $this->config = $data;
