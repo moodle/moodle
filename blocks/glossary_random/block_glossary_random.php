@@ -99,7 +99,7 @@ class block_glossary_random extends block_base {
     function instance_config_print() {
         global $CFG;
 
-        if (empty($this->config->nexttime)) {
+        if (!isset($this->config)) {
             // ... teacher has not yet configured the block, let's put some default values here to explain things
             $this->config->title = get_string('blockname','block_glossary_random');
             $this->config->refresh = 0;
@@ -118,7 +118,7 @@ class block_glossary_random extends block_base {
         $type[1] = get_string('lastmodified','block_glossary_random');
         $type[2] = get_string('nextone','block_glossary_random');
 
-        $this->config->nexttime = usergetmidnight(time())+24*60*60*$this->config->refresh;
+        $this->config->nexttime = usergetmidnight(time()) + DAYSECS * $this->config->refresh;
 
         // display the form
 
@@ -167,13 +167,13 @@ class block_glossary_random extends block_base {
 
             $cm = get_coursemodule_from_instance('glossary',$glossaryid, $this->course->id) ;
             if ($studentcanpost) {
-                $footertext = $this->config->addentry;
-            } else {
-                $footertext = $this->config->viewglossary;
-            }
-            $this->content->footer = '<a href="'.$CFG->wwwroot.'/mod/glossary/'
-                .(($studentcanpost == 1)?'edit':'view').'.php?id='.$cm->id
-                .'" title="'.$footertext.'">'.$footertext.'</a>';
+                
+		$this->content->footer = '<a href="'.$CFG->wwwroot.'/mod/glossary/edit.php?id='.$cm->id
+                .'" title="'.$this->config->addentry.'">'.$this->config->addentry.'</a><br />';
+            } 
+            
+            $this->content->footer .= '<a href="'.$CFG->wwwroot.'/mod/glossary/view.php?id='.$cm->id
+                .'" title="'.$this->config->viewglossary.'">'.$this->config->viewglossary.'</a>';
 
         // otherwise just place some text, no link
         } else {
