@@ -4,15 +4,17 @@ function glossary_show_entry_dictionary($course, $cm, $glossary, $entry, $mode='
 
     global $CFG, $USER;
 
-    echo '<table class="glossarypost dictionary" align="center">';
+    echo '<table class="glossarypost dictionary">';
     echo '<tr valign="top">';
-    echo '<td width="100%" valign="top" class="entry">';
+    echo '<td class="entry">';
     glossary_print_entry_approval($cm, $entry, $mode);
     glossary_print_entry_attachment($entry,'html','right');
     echo '<b>';
     glossary_print_entry_concept($entry);
     echo ':</b> ';
     glossary_print_entry_definition($entry);
+    echo '</td></tr>';
+    echo '<tr valign="top"><td class="entrylowersection">';
     $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases);
     echo '</td>';
     echo '</tr>';
@@ -26,7 +28,7 @@ function glossary_print_entry_dictionary($course, $cm, $glossary, $entry, $mode=
     //The print view for this format is exactly the normal view, so we use it
 
     //Take out autolinking in definitions in print view
-    $entry->definition = '<nolink>'.$entry->definition.'</nolink>';
+    $entry->definition = '<span class="nolink">'.$entry->definition.'</span>';
 
     //Call to view function (without icons, ratings and aliases) and return its result
     return glossary_show_entry_dictionary($course, $cm, $glossary, $entry, $mode, $hook, false, false, false);

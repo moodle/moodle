@@ -1,76 +1,77 @@
 <?php  // $Id$
 
-function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode="",$hook="",$printicons=1,$ratings=NULL, $aliases=true) {
+function glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode='',$hook='',$printicons=1,$ratings=NULL, $aliases=true) {
     global $CFG, $USER;
 
 
-    $user = get_record("user", "id", $entry->userid);
-    $strby = get_string("writtenby", "glossary");
+    $user = get_record('user', 'id', $entry->userid);
+    $strby = get_string('writtenby', 'glossary');
 
-    echo '<table class="glossarypost encyclopedia" align="center">';
-
-    echo "\n<tr valign=\"top\">";
-    echo "\n<td width=\"35\" valign=\"top\" class=\"forumpostpicture\">";
     $return = false;
     if ($entry) {
+        echo '<table class="glossarypost encyclopedia" align="center">';
+        echo '<tr valign="top">';
+        echo '<td class="picture">';
+        
         print_user_picture($user->id, $course->id, $user->picture);
     
-        echo "</td>";
-        echo "<td valign=\"top\" width=\"100%\" class=\"forumpostheader\">";
-        echo "<b>";
+        echo '</td>';
+        echo '<td class="entryheader">';
+        echo '<b>';
         glossary_print_entry_concept($entry);
-        echo "</b><br />";
-    
-        echo "$strby " . fullname($user, isteacher($course->id));
-        echo "&nbsp;&nbsp;<font size=\"1\">(".get_string("lastedited").": ".
-             userdate($entry->timemodified).")</font>";
-        echo "</td>";
-        echo "\n<td width=\"35\" valign=\"top\" class=\"forumpostheader\">";
-
-        glossary_print_entry_approval($cm, $entry, $mode);
-        echo "</td>";
+        echo '</b><br />';
+        echo '<span class="author">'.$strby.' '.fullname($user, isteacher($course->id));
+        echo '&nbsp;&nbsp;('.get_string('lastedited').': '.
+             userdate($entry->timemodified).')</span>';
+        echo '</td>';
         
-        echo "</tr>";
+        echo '<td class="entryheader">';
+        glossary_print_entry_approval($cm, $entry, $mode);
+        echo '</td>';
+        
+        echo '</tr>';
 
-        echo "\n<tr>";
-        echo "\n<td width=\"35\" valign=\"top\" class=\"forumpostside\">&nbsp;</td>";
-        echo "\n<td width=\"100%\" colspan=\"2\" class=\"forumpostmessage\">";
-        echo "<table width=\"100%\" border=\"0\"><tr><td>";
+        echo '<tr valign="top">';
+        echo '<td class="left">&nbsp;</td>';
+        echo '<td colspan="2" class="entry">';
 
         if ($entry->attachment) {
             $entry->course = $course->id;
             if (strlen($entry->definition)%2) {
-                $align = "right";
+                $align = 'right';
             } else {
-                $align = "left";
+                $align = 'left';
             }
-            glossary_print_entry_attachment($entry,"",$align,false);
+            glossary_print_entry_attachment($entry,'',$align,false);
         }
         glossary_print_entry_definition($entry);
-        echo "</td></tr></table>";
 
         if ($printicons or $ratings or $aliases) {
+            echo '</td></tr>';
+            echo '<td class="left">&nbsp;</td>';
+            echo '<td colspan="2" class="entrylowersection">';
             $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings, $aliases);
             echo ' ';
         }
+        
+        echo '</td></tr>';
+        echo "</table>\n";
+        
     } else {
-        echo "<center>";
-        print_string("noentry", "glossary");
-        echo "</center>";
+        echo '<center>';
+        print_string('noentry', 'glossary');
+        echo '</center>';
     }
-    echo "</td></tr>";
-
-    echo "</table>\n";
     
     return $return;
 }
 
-function glossary_print_entry_encyclopedia($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL) {
+function glossary_print_entry_encyclopedia($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $ratings=NULL) {
 
     //The print view for this format is exactly the normal view, so we use it
 
     //Take out autolinking in definitions un print view
-    $entry->definition = '<nolink>'.$entry->definition.'</nolink> ';
+    $entry->definition = '<span class="nolink">'.$entry->definition.'</span>';
 
     //Call to view function (without icons, ratings and aliases) and return its result
     return glossary_show_entry_encyclopedia($course, $cm, $glossary, $entry, $mode, $hook, false, false, false);

@@ -1,14 +1,14 @@
 <?php  // $Id$
 
-function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL, $aliases=true) {
+function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $ratings=NULL, $aliases=true) {
     global $USER;
 
     $return = false;
 
-    echo "\n<table border=\"0\" cellspacing=\"0\" width=\"95%\" cellpadding=\"10\">";
+    echo '<table class="glossarypost entrylist">';
 
-    echo "\n<tr valign=\"top\">";
-    echo "<td width=\"100%\">";
+    echo '<tr valign="top">';
+    echo '<td class="entry">';
     if ($entry) {
         glossary_print_entry_approval($cm, $entry, $mode);
         echo "<b><a href=\"showentry.php?courseid=$course->id\&amp;eid=$entry->id\&amp;displayformat=dictionary\" target=\"_blank\" onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$course->id\&amp;eid=$entry->id\&amp;displayformat=dictionary', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
@@ -16,40 +16,40 @@ function glossary_show_entry_entrylist($course, $cm, $glossary, $entry, $mode=""
         echo '</a></b> ';
 
         if ( $return = glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode,$hook, 'html') ) {
-            echo "<font size=-1>($return)</font>";
+            echo "($return)";
         }
 
         echo '<br />';
     } else {
-        echo "<center>";
-        print_string("noentry", "glossary");
-        echo "</center>";
+        echo '<center>';
+        print_string('noentry', 'glossary');
+        echo '</center>';
     }
-    echo "</td></tr>";
+    echo '</td></tr>';
 
     echo "</table>\n";
     return $return;
 }
 
-function glossary_print_entry_entrylist($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL) {
+function glossary_print_entry_entrylist($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $ratings=NULL) {
 
     //The print view for this format is different from the normal view, so we implement it here completely
     global $CFG, $USER;
 
 
     //Take out autolinking in definitions un print view
-    $entry->definition = '<nolink>'.$entry->definition.'</nolink>';
+    $entry->definition = '<span class="nolink">'.$entry->definition.'</span>';
 
-    echo "\n<table border=\"0\" width=\"95%\" cellspacing=\"0\" cellpadding=\"3\" class=\"forumpost\" align=\"center\">\n";
-    echo "<tr valign=\"top\">\n";
-    echo "<td width=\"100%\" valign=\"top\" bgcolor=\"#FFFFFF\">\n";
-    echo "<b>";
+    echo '<table class="glossarypost entrylist">';
+    echo '<tr valign="top">';
+    echo '<td class="entry">';
+    echo '<b>';
     glossary_print_entry_concept($entry);
-    echo ":</b> ";
+    echo ':</b> ';
     glossary_print_entry_definition($entry);
     $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, false, false, false);
-    echo "</td>\n";
-    echo "</tr>\n";
+    echo '</td>';
+    echo '</tr>';
     echo "</table>\n";
 
     return $return;

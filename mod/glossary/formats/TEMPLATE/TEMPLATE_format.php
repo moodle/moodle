@@ -1,34 +1,35 @@
 <?php  // $Id$
 
-function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL, $aliases=true) {
+function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $ratings=NULL, $aliases=true) {
 
     global $CFG, $USER;
+    
 
-
-    $user = get_record("user", "id", $entry->userid);
-    $strby = get_string("writtenby", "glossary");
-
-    echo "<table border=\"0\" width=\"95%\" cellspacing=\"0\" cellpadding=\"3\" class=\"forumpost\" align=\"center\"r>\n";
-    echo "<tr>\n";
-    echo "<td width=\"100%\" valign=\"top\" bgcolor=\"#FFFFFF\">\n";
+    $user = get_record('user', 'id', $entry->userid);
+    $strby = get_string('writtenby', 'glossary');
 
     if ($entry) {
+    
+        echo '<table class="glossarypost TEMPLATE">';
+        echo '<tr>';
+        echo '<td class="entryheader">';
+
         //Use this function to show author's image
         //Comments: Configuration not supported
         print_user_picture($user->id, $course->id, $user->picture);
 
         //Line separator to show this template fine. :-)
-        echo "<br />\n";
+        echo '<br />';
 
         //Use this code to show author's name
         //Comments: Configuration not supported
-        echo "$strby " . fullname($user, isteacher($course->id)) . "<br />\n";
+        echo '<span class="author">'.$strby.' '.fullname($user, isteacher($course->id)) . '<br />';
 
         //Use this code to show modification date
         //Comments: Configuration not supported
-        echo get_string("lastedited").": ". userdate($entry->timemodified) . "<br />\n";
+        echo get_string('lastedited').': '. userdate($entry->timemodified) . '<br /></span>';
 
-        //Use this function to show the approval button. It'll be showed if necessary       
+        //Use this function to show the approval button. It'll be shown if necessary       
         //Comments: You can configure this parameters:
         //----Define where to show the approval button
         $approvalalign = 'right'; //Values: left, center and right (default right)
@@ -38,7 +39,11 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode="",
         glossary_print_entry_approval($cm, $entry, $mode, $approvalalign, $approvalinsidetable);
 
         //Line separator to show this template fine. :-)
-        echo "<br />\n";
+        echo '<br />';
+
+        echo '</td>';
+
+        echo '<td class="entryattachment">';
 
         //Use this function to show the attachment. It'll be showed if necessary
         //Comments: You can configure this parameters:
@@ -53,6 +58,11 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode="",
 
         //Line separator to show this template fine. :-)
         echo "<br />\n";
+
+        echo '</td></tr>';
+
+        echo '<tr valign="top">';
+        echo '<td class="entry">';
 
         //Use this function to print the concept
         //Comments: Configuration not supported
@@ -80,25 +90,26 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode="",
         //    use it only if you are really sure!
         //$printicons = false;
         $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases);
+        
+        echo '</td>';
+        echo '</tr>';
+        echo "</table>\n";
     } else {    
-        echo "<center>";
-        print_string("noentry", "glossary");
-        echo "</center>";
+        echo '<center>';
+        print_string('noentry', 'glossary');
+        echo '</center>';
     }
-    echo "</td>\n";
-    echo "</tr>\n";
-    echo "</table>\n";
 
     return $return;
 }
 
-function glossary_print_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode="", $hook="", $printicons=1, $ratings=NULL) {
+function glossary_print_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='', $hook='', $printicons=1, $ratings=NULL) {
 
     //The print view for this format is exactly the normal view, so we use it
     //Anyway, you can modify this to use your own print format!!
 
     //Take out autolinking in definitions in print view
-    $entry->definition = '<nolink>'.$entry->definition.'</nolink>';
+    $entry->definition = '<span class="nolink">'.$entry->definition.'</span>';
 
     //Call to view function (without icons, ratings and aliases) and return its result
     return glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode, $hook, false, false, false);

@@ -724,7 +724,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
     $ismainglossary = $glossary->mainglossary;
 
 
-    $return = '<div class="commands">';
+    $return = '<span class="commands">';
     if (!$entry->approved) {
         $output = true;
         $return .= get_string('entryishidden','glossary');
@@ -735,9 +735,6 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
         $output = true;
         $return .= '<a title="' . get_string('addcomment','glossary') . '" href="comment.php?id='.$cm->id.'&amp;eid='.$entry->id.'"><img src="comment.gif" height="11" width="11" border="0" alt="'.get_string('addcomment','glossary').'" /></a>';
     }
-
-    $return .= '</div>';
-
 
 
     if ($isteacher or (!empty($USER->id) and $glossary->studentcanpost and $entry->userid == $USER->id)) {
@@ -773,6 +770,8 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
     }
     $return .= "&nbsp;&nbsp;"; // just to make up a little the output in Mozilla ;)
 
+    $return .= '</span>';
+    
     //If we haven't calculated any REAL thing, delete result ($return)
     if (!$output) {
         $return = '';
@@ -810,24 +809,24 @@ function glossary_print_entry_commentslink($course, $cm, $glossary, $entry,$mode
 function  glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook,$printicons,$ratings,$aliases=true) {
 
     if ($aliases) {
-        $aliases = glossary_print_entry_aliases($course, $cm, $glossary, $entry, $mode, $hook,"html");
+        $aliases = glossary_print_entry_aliases($course, $cm, $glossary, $entry, $mode, $hook,'html');
     }
-    $icons   = "";
-    $return   = "";
+    $icons   = '';
+    $return   = '';
     if ( $printicons ) {
-        $icons   = glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode, $hook,"html");
+        $icons   = glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode, $hook,'html');
     }
     if ($aliases || $icons || $ratings) {
-        echo '<table border="0" width="100%" align="center">';
+        echo '<table>';
         if ( $aliases ) {
-            echo '<tr><td align="center"  valign="top"><font size="1">' .
-                  get_string("aliases","glossary") . ': ' . $aliases . '</font></td></tr>';
+            echo '<tr valign="top"><td class="aliases">' .
+                  get_string('aliases','glossary').': '.$aliases . '</td></tr>';
         }
         if ($icons) {
-            echo '<tr><td align="right" valign="top">'.  $icons . '</td></tr>';
+            echo '<tr valign="top"><td class="icons">'.$icons.'</td></tr>';
         }
         if ($ratings) {
-            echo '<tr><td align="right" valign="top">';
+            echo '<tr valign="top"><td class="ratings">';
             $return = glossary_print_entry_ratings($course, $entry, $ratings);
             echo '</td></tr>';
         }

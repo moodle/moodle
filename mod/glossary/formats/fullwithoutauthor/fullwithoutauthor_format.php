@@ -4,11 +4,10 @@ function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, 
     global $CFG, $USER;
 
 
-    echo "\n".'<table class="glossarypost fullwithoutauthor" align="center">';
-
-    echo '<tr valign="top">';
     $return = false;
     if ($entry) {
+        echo "\n".'<table class="glossarypost fullwithoutauthor" align="center">';
+        echo '<tr valign="top">';
 
         echo '<td class="entryheader">';
 
@@ -31,16 +30,19 @@ function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, 
         echo '<td width="100%" colspan="2" class="entry">';
 
         glossary_print_entry_definition($entry);
+
+        echo '</td></tr>';
+        echo '<tr valign="top"><td colspan="2" class="entrylowersection">';
         $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases);
+        
         echo ' ';
+        echo '</td></tr>';
+        echo "</table>\n";
     } else {
         echo '<center>';
         print_string('noentry', 'glossary');
         echo '</center>';
     }
-    echo '</td></tr>';
-
-    echo "</table>\n";
     return $return;
 }
 

@@ -7,11 +7,11 @@ function glossary_show_entry_fullwithauthor($course, $cm, $glossary, $entry, $mo
     $user = get_record('user', 'id', $entry->userid);
     $strby = get_string('writtenby', 'glossary');
 
-    echo '<table class="glossarypost fullwithauthor">';
-
-    echo '<tr valign="top">';
     $return = false;
     if ($entry) {
+        echo '<table class="glossarypost fullwithauthor">';
+        echo '<tr valign="top">';
+        
         echo '<td class="picture">';
         print_user_picture($user->id, $course->id, $user->picture);
         echo '</td>';
@@ -39,15 +39,21 @@ function glossary_show_entry_fullwithauthor($course, $cm, $glossary, $entry, $mo
         echo '<td colspan="2" class="entry">';
 
         glossary_print_entry_definition($entry);
+
+        echo '</td></tr>';
+        echo '<tr valign="top">';
+        echo '<td class="left">&nbsp;</td>';
+        echo '<td colspan="2" class="entrylowersection">';
+        
         $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry, $mode, $hook, $printicons, $ratings, $aliases);
         echo ' ';
+        echo '</td></tr>';
+        echo "</table>\n";
     } else {
-        echo '<td align="center">';
+        echo '<center>';
         print_string('noentry', 'glossary');
+        echo '</center>';
     }
-    echo '</td></tr>';
-
-    echo "</table>\n";
     return $return;
 }
 
