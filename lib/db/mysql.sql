@@ -147,6 +147,7 @@ CREATE TABLE `modules` (
 CREATE TABLE `user` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `confirmed` tinyint(1) NOT NULL default '0',
+  `deleted` tinyint(1) NOT NULL default '0',
   `username` varchar(100) NOT NULL default '',
   `password` varchar(32) NOT NULL default '',
   `idnumber` varchar(12) default NULL,
