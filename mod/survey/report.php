@@ -71,7 +71,11 @@
 
         print_heading("All scales, all students");
 
-        echo "<P ALIGN=CENTER><A HREF=\"report.php?action=scales&id=$id\"><IMG HEIGHT=$GHEIGHT WIDTH=$GWIDTH ALT=\"Click here to see the scales in more detail\" BORDER=0 SRC=\"graph.php?id=$id&type=overall.png\"></A>";
+        if (count_completed_surveys($survey->id)) {
+            echo "<P ALIGN=CENTER><A HREF=\"report.php?action=scales&id=$id\"><IMG HEIGHT=$GHEIGHT WIDTH=$GWIDTH ALT=\"Click here to see the scales in more detail\" BORDER=0 SRC=\"graph.php?id=$id&type=overall.png\"></A>";
+        } else {
+            echo "<P ALIGN=CENTER>Nobody has yet completed this survey</P>";
+        }
         print_footer($course);
         break;
 
