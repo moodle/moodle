@@ -13,14 +13,14 @@
     if (isadmin()) {
         if (isset($_GET['edit'])) {
             if ($edit == "on") {
-                $USER->editing = true;
+                $USER->categoriesediting = true;
             } else if ($edit == "off") {
-                $USER->editing = false;
+                $USER->categoriesediting = false;
             }
         }
     }
 
-    $adminediting = (isadmin() and !empty($USER->editing));
+    $adminediting = (isadmin() and !empty($USER->categoriesediting));
 
 
 /// Unless it's an editing admin, just print the regular listing of courses/categories

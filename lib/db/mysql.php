@@ -560,6 +560,39 @@ function main_upgrade($oldversion=0) {
         table_column("course", "", "showreports", "integer", "4", "unsigned", "0", "", "maxbytes");
     }
 
+    if ($oldversion < 2003121600) {
+        modify_database("", "CREATE TABLE `prefix_group` (
+                                `id` int(10) unsigned NOT NULL auto_increment,
+                                `courseid` int(10) unsigned NOT NULL default '0',
+                                `name` varchar(254) NOT NULL default '',
+                                `description` text NOT NULL,
+                                `lang` varchar(10) NOT NULL default 'en',
+                                `picture` int(10) unsigned NOT NULL default '0',
+                                `timecreated` int(10) unsigned NOT NULL default '0',
+                                `timemodified` int(10) unsigned NOT NULL default '0',
+                                PRIMARY KEY  (`id`),
+                                KEY `courseid` (`courseid`)
+                              ) TYPE=MyISAM COMMENT='Each record is a group in a course.'; ");
+
+        modify_database("", "CREATE TABLE `prefix_group_members` (
+                                `id` int(10) unsigned NOT NULL auto_increment,
+                                `groupid` int(10) unsigned NOT NULL default '0',
+                                `userid` int(10) unsigned NOT NULL default '0',
+                                `timeadded` int(10) unsigned NOT NULL default '0',
+                                PRIMARY KEY  (`id`),
+                                KEY `groupid` (`groupid`)
+                              ) TYPE=MyISAM COMMENT='Lists memberships of users in groups'; ");
+    }
+
+    if ($oldversion < 2003121800) {
+        table_column("course", "modinfo", "modinfo", "longtext", "", "", "");
+    }
+
+    if ($oldversion < 2003122600) {
+        table_column("course", "", "groupmode", "integer", "4", "unsigned", "0", "", "showreports");
+        table_column("course", "", "groupmodeforce", "integer", "4", "unsigned", "0", "", "groupmode");
+    }
+
     return $result;
 
 }

@@ -24,6 +24,8 @@
     $stractivities   = get_string("activities");
     $strshowallweeks = get_string("showallweeks");
     $strweek         = get_string("week");
+    $strgroups       = get_string("groups");
+    $strgroupmy      = get_string("groupmy");
     if (isediting($course->id)) {
         $strstudents = moodle_strtolower($course->students);
         $strweekhide = get_string("weekhide", "", $strstudents);
@@ -43,6 +45,16 @@
 /// Links to people
     $moddata[]="<a title=\"".get_string("listofallpeople")."\" href=\"../user/index.php?id=$course->id\">".get_string("participants")."</a>";
     $modicon[]="<img src=\"$CFG->pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
+
+    if ($course->groupmode or !$course->groupmodeforce) {
+        if (isteacheredit($course->id) or $course->groupmode == VISIBLEGROUPS) {
+            $moddata[]="<a title=\"$strgroups\" href=\"groups.php?id=$course->id\">$strgroups</a>";
+        } else if ($currentgroup = get_current_group($course->id)) {
+            $moddata[]="<a title=\"$strgroupmy\" href=\"group.php?id=$course->id\">$strgroupmy</a>";
+        }
+        $modicon[]="<img src=\"$CFG->pixpath/i/group.gif\" height=16 width=16 alt=\"\">";
+    }
+
     $fullname = fullname($USER, true);
     $editmyprofile = "<a title=\"$fullname\" href=\"../user/edit.php?id=$USER->id&course=$course->id\">".get_string("editmyprofile")."</a>";
     if ($USER->description) {

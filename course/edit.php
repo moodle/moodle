@@ -116,6 +116,8 @@
             $form->newsitems = 5;
             $form->showrecent = 1;
             $form->showgrades = 1;
+            $form->groupmode = 0;
+            $form->groupmodeforce = 0;
             $form->category = $category;
             $form->id = "";
             $form->visible = 1;
@@ -147,6 +149,8 @@
         $form->courseformats["$courseformat"] = get_string("format$courseformat");
     }
 
+    $usehtmleditor = can_use_html_editor();
+
     $streditcoursesettings = get_string("editcoursesettings");
     $straddnewcourse = get_string("addnewcourse");
     $stradministration = get_string("administration");
@@ -168,6 +172,10 @@
     print_simple_box_end();
 
     print_footer($course);
+
+    if ($usehtmleditor) { 
+        use_html_editor();
+    }
 
     exit;
 

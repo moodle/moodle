@@ -945,6 +945,13 @@ function get_user_info_from_db($field, $value) {
         }
     }
 
+    if ($groups = get_records("group_members", "userid", $user->id)) {
+        foreach ($groups as $group) {
+            $courseid = get_field("group", "courseid", "id", $group->id);
+            $user->groupmember[$courseid] = $group->id;
+        }
+    }
+
     return $user;
 }
 
@@ -1417,6 +1424,69 @@ function get_users_longtimenosee($cutofftime) {
                              WHERE timeaccess > '0' 
                                AND timeaccess < '$cutofftime' ");
 }
+
+/**
+* Returns an array of group objects that the user is a member of
+* in the given course.  If userid isn't specified, then return a 
+* list of all groups in the course.
+* 
+* @param	type description
+*/
+function get_groups($courseid, $userid=0) {
+    global $CFG;
+
+    if ($userid) {
+        $userselect = "AND m.groupid = g.id AND m.userid = '$userid'";
+    }
+
+    return get_records_sql("SELECT DISTINCT g.*
+                              FROM {$CFG->prefix}group g,
+                                   {$CFG->prefix}group_members m 
+                             WHERE g.courseid = '$courseid' $userselect ");
+}
+
+
+/**
+* Returns an array of user objects
+* 
+* @param	type description
+*/
+function get_users_in_group($groupid) {
+    global $CFG;
+    return get_records_sql("SELECT DISTINCT u.*
+                              FROM {$CFG->prefix}user u,
+                                   {$CFG->prefix}group_members m 
+                             WHERE m.groupid = '$groupid'
+                               AND m.userid = u.id");
+}
+
+/**
+* An efficient way of finding all the users who aren't in groups yet
+* 
+* @param	type description
+*/
+function get_users_not_in_group($courseid) {
+    global $CFG;
+
+    return array();     /// XXX TO BE DONE
+}
+
+/**
+* Returns the user's group in a particular course
+* 
+* @param	type description
+*/
+function user_group($courseid, $userid) {
+    global $CFG;
+
+    return get_record_sql("SELECT g.*
+                             FROM {$CFG->prefix}group g,
+                                  {$CFG->prefix}group_members m
+                             WHERE g.courseid = '$courseid'
+                               AND g.id = m.groupid
+                               AND m.userid = '$userid'");
+}
+
 
 
 

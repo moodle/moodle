@@ -22,14 +22,14 @@
     if (iscreator()) {
         if (isset($_GET['edit'])) {
             if ($edit == "on") {
-                $USER->editing = true;
+                $USER->categoryediting = true;
             } else if ($edit == "off") {
-                $USER->editing = false;
+                $USER->categoryediting = false;
             }
         }
         $navbaritem = update_category_button($category->id);
 
-        $creatorediting = !empty($USER->editing);
+        $creatorediting = !empty($USER->categoryediting);
         $adminediting = (isadmin() and $creatorediting);
 
     } else {

@@ -34,6 +34,12 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
+/// CONSTANTS /////////////////////////////////////////////////////////////
+
+define('NOGROUPS', 0);   
+define('SEPARATEGROUPS', 1);
+define('VISIBLEGROUPS', 2);
+
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
@@ -504,7 +510,11 @@ function fullname($user, $override=false) {
 /// or language.  'override' will force both names
 /// to be used even if system settings specify one.
 
-    global $CFG;
+    global $CFG, $SESSION;
+
+    if (!empty($SESSION->fullnamedisplay)) {
+        $CFG->fullnamedisplay = $SESSION->fullnamedisplay;
+    }
 
     if ($CFG->fullnamedisplay == 'firstname lastname') {
         return "$user->firstname $user->lastname";
@@ -863,6 +873,76 @@ function remove_course_contents($courseid, $showfeedback=true) {
     return $result;
 
 }
+
+
+/// GROUPS /////////////////////////////////////////////////////////
+
+/**
+* Returns a boolean: is the user a member of the given group?
+* 
+* @param	type description
+*/
+function ismember($groupid, $userid=0) {
+    global $USER;
+
+    if (!$userid) {
+        return !empty($USER->groupmember[$groupid]);
+    }
+
+    return record_exists("group_members", "groupid", $groupid, "userid", $userid);
+}
+
+/**
+* For a given course, and possibly course module, determine 
+* what the current default groupmode is:
+* NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS
+* 
+* @param	type description
+*/
+function groupmode($course, $cm=null) {
+
+    if ($cm and !$course->groupmodeforce) {
+        return $cm->groupmode;
+    }
+    return $course->groupmode;
+}
+
+
+/**
+* Sets the current group in the session variable
+* 
+* @param	type description
+*/
+function set_current_group($courseid, $groupid) {
+    global $SESSION;
+
+    return $SESSION->currentgroup[$courseid] = $groupid;
+}
+
+
+/**
+* Gets the current group for the current user as an id or an object
+* 
+* @param	type description
+*/
+function get_current_group($courseid, $full=false) {
+    global $SESSION, $USER;
+
+    if (empty($SESSION->currentgroup[$courseid])) {
+        if (empty($USER->groupmember[$courseid])) {
+            return false;
+        } else {
+            $SESSION->currentgroup[$courseid] = $USER->groupmember[$courseid];
+        }
+    }
+
+    if ($full) {
+        return get_record('group', 'id', $SESSION->currentgroup[$courseid]);
+    } else {
+        return $SESSION->currentgroup[$courseid];
+    }
+}
+
 
 
 /// CORRESPONDENCE  ////////////////////////////////////////////////

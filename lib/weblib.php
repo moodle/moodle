@@ -1069,7 +1069,7 @@ function print_file_picture($path, $courseid=0, $height="", $width="", $link="")
 }
 
 function print_user_picture($userid, $courseid, $picture, $large=false, $returnstring=false, $link=true) {
-    global $CFG, $THEME;
+    global $CFG;
 
     if ($link) {
         $output = "<a href=\"$CFG->wwwroot/user/view.php?id=$userid&amp;course=$courseid\">";
@@ -1093,6 +1093,44 @@ function print_user_picture($userid, $courseid, $picture, $large=false, $returns
         }
     } else {         // Print default user pictures (use theme version if available)
         $output .= "<img align=\"absmiddle\" src=\"$CFG->pixpath/u/$file.png\"".
+                   " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
+    }
+    if ($link) {
+        $output .= "</a>";
+    }
+
+    if ($returnstring) {
+        return $output;
+    } else {
+        echo $output;
+    }
+}
+
+function print_group_picture($groupid, $courseid, $picture, $large=false, $returnstring=false, $link=true) {
+    global $CFG;
+
+    if ($link) {
+        $output = "<a href=\"$CFG->wwwroot/course/group.php?id=$courseid&group=$groupid\">";
+    } else {
+        $output = "";
+    }
+    if ($large) {
+        $file = "f1";
+        $size = 100;
+    } else {
+        $file = "f2";
+        $size = 35;
+    }
+    if ($picture) {  // Print custom group picture
+        if ($CFG->slasharguments) {        // Use this method if possible for better caching
+            $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pixgroup.php/$groupid/$file.jpg\"".
+                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
+        } else {
+            $output .= "<img align=\"absmiddle\" src=\"$CFG->wwwroot/user/pixgroup.php?file=/$groupid/$file.jpg\"".
+                       " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
+        }
+    } else {         // Print default group pictures (use theme version if available)
+        $output .= "<img align=\"absmiddle\" src=\"$CFG->pixpath/g/$file.png\"".
                    " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
     }
     if ($link) {
@@ -1404,7 +1442,7 @@ function update_category_button($categoryid) {
     global $CFG, $USER;
 
     if (iscreator()) {
-        if (!empty($USER->editing)) {
+        if (!empty($USER->categoryediting)) {
             $string = get_string("turneditingoff");
             $edit = "off";
         } else {
@@ -1423,7 +1461,7 @@ function update_categories_button() {
     global $CFG, $USER;
 
     if (isadmin()) {
-        if (!empty($USER->editing)) {
+        if (!empty($USER->categoriesediting)) {
             $string = get_string("turneditingoff");
             $edit = "off";
         } else {
@@ -1431,6 +1469,44 @@ function update_categories_button() {
             $edit = "on";
         }
         return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/index.php\">".
+               "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
+               "<input type=\"submit\" value=\"$string\" /></form>";
+    }
+}
+
+function update_group_button($courseid) {
+// Prints the editing button on group page
+    global $CFG, $USER;
+
+    if (isteacheredit($courseid)) {
+        if (!empty($USER->groupediting)) {
+            $string = get_string("turneditingoff");
+            $edit = "off";
+        } else {
+            $string = get_string("turneditingon");
+            $edit = "on";
+        }
+        return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/group.php\">".
+               "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
+               "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
+               "<input type=\"submit\" value=\"$string\" /></form>";
+    }
+}
+
+function update_groups_button($courseid) {
+// Prints the editing button on groups page
+    global $CFG, $USER;
+
+    if (isteacheredit($courseid)) {
+        if (!empty($USER->groupsediting)) {
+            $string = get_string("turneditingoff");
+            $edit = "off";
+        } else {
+            $string = get_string("turneditingon");
+            $edit = "on";
+        }
+        return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/groups.php\">".
+               "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
                "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
                "<input type=\"submit\" value=\"$string\" /></form>";
     }
@@ -1801,6 +1877,10 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl) {
     if ($totalcount > $perpage) {
         echo "<center>";
         echo "<p>".get_string("page").":";
+        if ($page > 0) {
+            $pagenum=$page-1;
+            echo "&nbsp;(<a  href=\"{$baseurl}page=$pagenum\">".get_string("previous")."</a>)&nbsp;";
+        }
         $lastpage = ceil($totalcount / $perpage);
         if ($page > 15) {
             $startpage = $page - 10;

@@ -1,0 +1,19 @@
+<table align="center" class="generalbox">
+ <tr>
+   <td valign="top"><?php echo $t->picture ?></td>
+   <td><p style="font-size: larger"><?php echo $t->name ?></p>
+   <p><?php echo $t->description ?></p>
+   <p><ul><?php 
+      if ($t->users) {
+          foreach ($t->users as $user) {
+              echo '<li style="font-size: x-small">';
+              echo "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&course=$t->courseid\">$user->fullname</a>";
+              echo '</li>';
+          }
+      }
+      ?>
+   </ul></p>
+   </td>
+ </tr>
+</table>
+<br />

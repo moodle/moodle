@@ -310,6 +310,36 @@ function main_upgrade($oldversion=0) {
     }
 
 
+    if ($oldversion < 2003121600) {
+        execute_sql("CREATE TABLE {$CFG->prefix}group (
+                        id SERIAL PRIMARY KEY,
+                        courseid integer NOT NULL default '0',
+                        name varchar(255) NOT NULL default '',
+                        description text,
+                        lang varchar(10) NOT NULL default '',
+                        picture integer NOT NULL default '0',
+                        timecreated integer NOT NULL default '0',
+                        timemodified integer NOT NULL default '0'
+                     )");
+    
+        execute_sql("CREATE INDEX {$CFG->prefix}group_idx ON {$CFG->prefix}group (courseid) ");
+    
+        execute_sql("CREATE TABLE {$CFG->prefix}group_members (
+                        id SERIAL PRIMARY KEY,
+                        groupid integer NOT NULL default '0',
+                        userid integer NOT NULL default '0',
+                        timeadded integer NOT NULL default '0'
+                     )");
+      
+        execute_sql("CREATE INDEX {$CFG->prefix}group_members_idx ON {$CFG->prefix}group_members (groupid) ");
+    }
+
+    if ($oldversion < 2003122600) {
+        table_column("course", "", "groupmode", "integer", "4", "unsigned", "0", "", "visible");
+        table_column("course", "", "groupmodeforce", "integer", "4", "unsigned", "0", "", "groupmode");
+    }
+
     return $result;
 }
+
 ?>    

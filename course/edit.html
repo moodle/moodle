@@ -1,7 +1,7 @@
 <FORM METHOD="post" action="edit.php" NAME="form">
 <table cellpadding=9 cellspacing=0 >
 <tr valign=top>
-	<td><P><?php  print_string("category") ?>:</td>
+	<td align="right"><P><?php  print_string("category") ?>:</td>
 	<td><?php  
            $displaylist = array();
            $parentlist = array();
@@ -12,28 +12,75 @@
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><?php  print_string("fullname") ?>:</td>
+	<td align="right"><P><?php  print_string("fullname") ?>:</td>
 	<td><input type="text" name="fullname" maxlength="254" size=50 value="<?php  p($form->fullname) ?>">
     <?php  helpbutton("coursefullname", get_string("fullname")) ?>
     <?php  if (isset($err["fullname"])) formerr($err["fullname"]); ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><?php  print_string("shortname") ?>:</td>
+	<td align="right"><P><?php  print_string("shortname") ?>:</td>
 	<td><input type="text" name="shortname" maxlength="15"  size="10" value="<?php  p($form->shortname) ?>">
     <?php  helpbutton("courseshortname", get_string("shortname")) ?>
     <?php  if (isset($err["shortname"])) formerr($err["shortname"]); ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><?php  print_string("summary") ?>:</td>
-	<td><TEXTAREA NAME=summary COLS=50 ROWS=10 WRAP=virtual><?php  p($form->summary) ?></TEXTAREA>
-    <?php  helpbutton("text", get_string("helptext")) ?>
-    <?php  if (isset($err["summary"])) formerr($err["summary"]); ?>
+	<td align="right"><P><?php  print_string("summary") ?>:</td>
+	<td><?php 
+        print_textarea($usehtmleditor, 10, 50, 660, 200, "summary", $form->summary);
+        helpbutton("text", get_string("helptext"));
+        if (isset($err["summary"])) formerr($err["summary"]); 
+    ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><?php  print_string("availability") ?>:</td>
+	<td align="right"><P><?php  print_string("format") ?>:</td>
+	<td><?php  
+           choose_from_menu ($form->courseformats, "format", "$form->format", "");
+           helpbutton("courseformats", get_string("courseformats"));
+        ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td align="right"><P><?php  print_string("startdate") ?>:</td>
+	<td><?php
+           print_date_selector("startday", "startmonth", "startyear", $form->startdate);
+           helpbutton("coursestartdate", get_string("startdate"));
+	?></td>
+</tr>
+<tr valign=top>
+	<td align="right"><P><?php  print_string("numberweeks") ?>:</td>
+	<td><?php
+           for ($i=1; $i<=52; $i++) {
+              $sectionmenu[$i] = "$i";
+           }
+           choose_from_menu ($sectionmenu, "numsections", "$form->numsections", "");
+           helpbutton("coursenumsections", get_string("numberweeks"));
+	?></td>
+</tr>
+<tr valign=top>
+	<td align="right"><P><?php  print_string("groupmode") ?>:</td>
+	<td><?php
+    unset($choices);
+    $choices[NOGROUPS] = get_string("groupsnone");
+    $choices[SEPARATEGROUPS] = get_string("groupsseparate");
+    $choices[VISIBLEGROUPS] = get_string("groupsvisible");
+    choose_from_menu ($choices, "groupmode", $form->groupmode, "");
+    helpbutton("groupmode", get_string("groupmode"));
+
+    echo '&nbsp;&nbsp;&nbsp;&nbsp;';
+    print_string('force');
+    echo ': ';
+    unset($choices);
+    $choices["0"] = get_string("no");
+    $choices["1"] = get_string("yes");
+    choose_from_menu ($choices, "groupmodeforce", $form->groupmodeforce, "");
+    helpbutton("groupmodeforce", get_string("groupmodeforce")); ?>
+	</td>
+</tr>
+<tr valign=top>
+	<td align="right"><P><?php  print_string("availability") ?>:</td>
 	<td><?php
     unset($choices);
     $choices["0"] = get_string("courseavailablenot");
@@ -43,14 +90,14 @@
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><?php  print_string("enrolmentkey") ?>:</td>
+	<td align="right"><P><?php  print_string("enrolmentkey") ?>:</td>
 	<td><input type="text" name="password" size=25 value="<?php  p($form->password) ?>">
     <?php  helpbutton("enrolmentkey", get_string("enrolmentkey")) ?>
     <?php  if (isset($err["password"])) formerr($err["password"]); ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><?php  print_string("opentoguests") ?>:</td>
+	<td align="right"><P><?php  print_string("opentoguests") ?>:</td>
 	<td><?php
     unset($choices);
     $choices["0"] = get_string("guestsno");
@@ -61,15 +108,7 @@
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><?php  print_string("format") ?>:</td>
-	<td><?php  
-           choose_from_menu ($form->courseformats, "format", "$form->format", "");
-           helpbutton("courseformats", get_string("courseformats"));
-        ?>
-	</td>
-</tr>
-<tr valign=top>
-    <td><P><?php  print_string("newsitemsnumber") ?>:</td>
+    <td align="right"><P><?php  print_string("newsitemsnumber") ?>:</td>
     <td><?php  
        $newsitem = get_string("newsitem");
        $newsitems = get_string("newsitems");
@@ -91,24 +130,7 @@
     </td>
 </tr>
 <tr valign=top>
-	<td><P><?php  print_string("startdate") ?>:</td>
-	<td><?php
-           print_date_selector("startday", "startmonth", "startyear", $form->startdate);
-           helpbutton("coursestartdate", get_string("startdate"));
-	?></td>
-</tr>
-<tr valign=top>
-	<td><P><?php  print_string("numberweeks") ?>:</td>
-	<td><?php
-           for ($i=1; $i<=52; $i++) {
-              $sectionmenu[$i] = "$i";
-           }
-           choose_from_menu ($sectionmenu, "numsections", "$form->numsections", "");
-           helpbutton("coursenumsections", get_string("numberweeks"));
-	?></td>
-</tr>
-<tr valign=top>
-	<td><P><?php  print_string("showrecent") ?>:</td>
+	<td align="right"><P><?php  print_string("showrecent") ?>:</td>
 	<td><?php
     unset($choices);
     $choices["0"] = get_string("no");
@@ -118,7 +140,7 @@
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><?php  print_string("showgrades") ?>:</td>
+	<td align="right"><P><?php  print_string("showgrades") ?>:</td>
 	<td><?php
     unset($choices);
     $choices["0"] = get_string("no");
@@ -128,7 +150,7 @@
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><?php  print_string("showreports") ?>:</td>
+	<td align="right"><P><?php  print_string("showreports") ?>:</td>
 	<td><?php
     unset($choices);
     $choices["0"] = get_string("no");
@@ -138,7 +160,7 @@
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><?php  print_string("maximumupload") ?>:</td>
+	<td align="right"><P><?php  print_string("maximumupload") ?>:</td>
 	<td><?php
     $choices = get_max_upload_sizes($CFG->maxbytes);
     choose_from_menu ($choices, "maxbytes", $form->maxbytes, "");
@@ -146,28 +168,28 @@
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><?php  print_string("wordforteacher") ?>:</td>
+	<td align="right"><P><?php  print_string("wordforteacher") ?>:</td>
 	<td><input type="text" name="teacher" maxlength="100" size=25 value="<?php  p($form->teacher) ?>">
 	(<?php  print_string("wordforteachereg") ?>) 
     <?php  if (isset($err["teacher"])) formerr($err["teacher"]); ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><?php  print_string("wordforteachers") ?>:</td>
+	<td align="right"><P><?php  print_string("wordforteachers") ?>:</td>
 	<td><input type="text" name="teachers" maxlength="100" size=25 value="<?php  p($form->teachers) ?>">
 	(<?php  print_string("wordforteacherseg") ?>)
     <?php  if (isset($err["teachers"])) formerr($err["teachers"]); ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><?php  print_string("wordforstudent") ?>:</td>
+	<td align="right"><P><?php  print_string("wordforstudent") ?>:</td>
 	<td><input type="text" name="student" maxlength="100" size=25 value="<?php  p($form->student) ?>">
 	(<?php  print_string("wordforstudenteg") ?>) 
     <?php  if (isset($err["student"])) formerr($err["student"]); ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P><?php  print_string("wordforstudents") ?>:</td>
+	<td align="right"><P><?php  print_string("wordforstudents") ?>:</td>
 	<td><input type="text" name="students" maxlength="100" size=25 value="<?php  p($form->students) ?>">
 	(<?php  print_string("wordforstudentseg") ?>) 
     <?php  if (isset($err["students"])) formerr($err["students"]); ?>

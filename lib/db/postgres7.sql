@@ -29,6 +29,8 @@ CREATE TABLE prefix_course (
    maxbytes integer NOT NULL default '0',
    showreports integer NOT NULL default '0',
    visible integer NOT NULL default '1',
+   groupmode integer NOT NULL default '0',
+   groupmodeforce integer NOT NULL default '0',
    timecreated integer NOT NULL default '0',
    timemodified integer NOT NULL default '0'
 );
@@ -76,6 +78,28 @@ CREATE TABLE prefix_course_sections (
    sequence text NOT NULL default '',
    visible integer NOT NULL default '1'
 );
+
+CREATE TABLE prefix_group (
+   id SERIAL PRIMARY KEY,
+   courseid integer NOT NULL default '0',
+   name varchar(255) NOT NULL default '',
+   description text,
+   lang varchar(10) NOT NULL default '',
+   picture integer NOT NULL default '0',
+   timecreated integer NOT NULL default '0',
+   timemodified integer NOT NULL default '0'
+);
+
+CREATE INDEX prefix_group_idx ON prefix_group (courseid);
+
+CREATE TABLE prefix_group_members (
+   id SERIAL PRIMARY KEY,
+   groupid integer NOT NULL default '0',
+   userid integer NOT NULL default '0',
+   timeadded integer NOT NULL default '0'
+);
+
+CREATE INDEX prefix_group_members_idx ON prefix_group_members (groupid);
 
 CREATE TABLE prefix_log (
    id SERIAL PRIMARY KEY,

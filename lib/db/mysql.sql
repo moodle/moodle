@@ -37,7 +37,7 @@ CREATE TABLE `prefix_course` (
   `summary` text NOT NULL,
   `format` varchar(10) NOT NULL default 'topics',
   `showgrades` smallint(2) unsigned NOT NULL default '1',
-  `modinfo` text NOT NULL,
+  `modinfo` longtext NOT NULL,
   `newsitems` smallint(5) unsigned NOT NULL default '1',
   `teacher` varchar(100) NOT NULL default 'Teacher',
   `teachers` varchar(100) NOT NULL default 'Teachers',
@@ -51,6 +51,9 @@ CREATE TABLE `prefix_course` (
   `maxbytes` int(10) unsigned NOT NULL default '0',
   `showreports` int(4) unsigned NOT NULL default '0',
   `visible` int(10) unsigned NOT NULL default '1',
+  `groupmode` int(4) unsigned NOT NULL default '0',
+  `groupmodeforce` int(4) unsigned NOT NULL default '0',
+  `showreports` int(4) unsigned NOT NULL default '0',
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
@@ -124,9 +127,43 @@ CREATE TABLE `prefix_course_sections` (
   `summary` text NOT NULL,
   `sequence` text NOT NULL default '',
   `visible` tinyint(1) NOT NULL default '1',
-  PRIMARY KEY  (`id`)
+  PRIMARY KEY  (`id`),
+  KEY `coursesection` (course,section)
 ) TYPE=MyISAM;
 # --------------------------------------------------------
+
+#
+# Table structure for table `group`
+#
+
+CREATE TABLE `prefix_group` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `courseid` int(10) unsigned NOT NULL default '0',
+  `name` varchar(254) NOT NULL default '',
+  `description` text NOT NULL,
+  `lang` varchar(10) NOT NULL default 'en',
+  `picture` int(10) unsigned NOT NULL default '0',
+  `timecreated` int(10) unsigned NOT NULL default '0',
+  `timemodified` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `courseid` (`courseid`)
+) TYPE=MyISAM COMMENT='Each record is a group in a course.';
+# --------------------------------------------------------
+
+#
+# Table structure for table `group_members`
+#
+
+CREATE TABLE `prefix_group_members` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `groupid` int(10) unsigned NOT NULL default '0',
+  `userid` int(10) unsigned NOT NULL default '0',
+  `timeadded` int(10) unsigned NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `groupid` (`groupid`)
+) TYPE=MyISAM COMMENT='Lists memberships of users to groups';
+# --------------------------------------------------------
+
 
 #
 # Table structure for table `log`
