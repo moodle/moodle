@@ -93,7 +93,7 @@ class quiz_report extends quiz_default_report {
     foreach($user_resps as $thiskey => $thisresp){
         $userdata[$thisresp->userid][$thisresp->attemptno]['response'][$thisresp->question]=$thisresp->answer;
         $userdata[$thisresp->userid][$thisresp->attemptno]['grade']=$thisresp->sumgrades;
-        $userdata[$thisresp->userid][$thisresp->attemptno]['name']=$thisresp->lastname .  ", " . $thisresp->firstname;
+        $userdata[$thisresp->userid][$thisresp->attemptno]['name']=fullname($thisresp);
         $userdata[$thisresp->userid][$thisresp->attemptno]['attemptid']=$thisresp->aid;
     }
     if($debug and !$download){

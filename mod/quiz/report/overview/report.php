@@ -102,7 +102,7 @@ class quiz_report extends quiz_default_report {
 
             $table->data[] = array ($picture, 
                                     "<a href=\"$CFG->wwwroot/user/view.php?id=$grade->userid&course=$course->id\">".
-                                    "$grade->firstname $grade->lastname</a>", 
+                                    fullname($grade).'</a>', 
                                     "$userattempts", round($grade->grade,0));
         }
 

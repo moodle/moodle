@@ -116,7 +116,7 @@ class quiz_report extends quiz_default_report {
 
             $row=1;
             foreach ($data as $userid => $datum) {
-                $myxls->write_string($row,0,"$datum->firstname $datum->lastname");
+                $myxls->write_string($row,0,fullname($datum));
                 for ($i=1; $i<=$count; $i++) {
                     if (isset($datum->grades[$i])) {
                         $myxls->write_number($row,$i,$datum->grades[$i]);
@@ -170,7 +170,7 @@ class quiz_report extends quiz_default_report {
         /// Print all the user data
 
             foreach ($data as $userid => $datum) {
-                echo "$datum->firstname $datum->lastname";
+                echo fullname($datum);
                 for ($i=1; $i<=$count; $i++) {
                     echo "\t";
                     if (isset($datum->grades[$i])) {
@@ -217,7 +217,7 @@ class quiz_report extends quiz_default_report {
 
         foreach ($data as $userid => $datum) {
             echo "<tr>";
-            echo "<td><b>$datum->firstname $datum->lastname</b></td>";
+            echo "<td><b>".fullname($datum)."</b></td>";
             if ($datum->grades) {
                 foreach ($datum->grades as $key => $grade) {
                     if (isset($grade)) {
