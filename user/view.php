@@ -52,7 +52,7 @@
     echo "<TABLE WIDTH=80% ALIGN=CENTER BORDER=0 CELLPADDING=1 CELLSPACING=1><TR><TD BGCOLOR=#888888>";
     echo "<TABLE WIDTH=100% BORDER=0 CELLPADDING=3 CELLSPACING=0><TR>";
     echo "<TD WIDTH=100 BGCOLOR=\"$THEME->body\" VALIGN=top>";
-    print_user_picture($user->id, $course->id, $user->picture, true);
+    print_user_picture($user->id, $course->id, $user->picture, true, false, false);
     echo "</TD><TD WIDTH=100% BGCOLOR=#FFFFFF>";
 
 

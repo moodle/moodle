@@ -216,10 +216,14 @@ function print_file_picture($path, $courseid=0, $height="", $width="", $link="")
     }
 }
 
-function print_user_picture($userid, $courseid, $picture, $large=false, $returnstring=false) {
+function print_user_picture($userid, $courseid, $picture, $large=false, $returnstring=false, $link=true) {
     global $CFG;
 
-    $output = "<A HREF=\"$CFG->wwwroot/user/view.php?id=$userid&course=$courseid\">";
+    if ($link) {
+        $output = "<A HREF=\"$CFG->wwwroot/user/view.php?id=$userid&course=$courseid\">";
+    } else {
+        $output = "";
+    }
     if ($large) {
         $file = "f1.jpg";
         $size = 100;
@@ -236,7 +240,9 @@ function print_user_picture($userid, $courseid, $picture, $large=false, $returns
     } else {
         $output .= "<IMG SRC=\"$CFG->wwwroot/user/default/$file\" BORDER=0 WIDTH=$size HEIGHT=$size ALT=\"\">";
     }
-    $output .= "</A>";
+    if ($link) {
+        $output .= "</A>";
+    }
 
     if ($returnstring) {
         return $output;
