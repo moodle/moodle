@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?php // $Id$ 
 
 
 $string['action'] = 'Action';
@@ -18,8 +18,8 @@ $string['added'] = '$a ajouté(e)';
 $string['addedtogroup'] = 'Ajouté au groupe $a';
 $string['addedtogroupnot'] = 'Non ajouté au groupe $a';
 $string['addedtogroupnotenrolled'] = 'Non ajouté au groupe $a, parce que non inscrit au cours';
-$string['addinganew'] = 'Ajouter un(e) $a';
-$string['addinganewto'] = 'Ajouter un(e) $a->what à $a->to';
+$string['addinganew'] = 'Ajouter $a';
+$string['addinganewto'] = 'Ajouter $a->what à $a->to';
 $string['addingdatatoexisting'] = 'Ajout à des données existantes';
 $string['addnewcategory'] = 'Ajouter une discipline';
 $string['addnewcourse'] = 'Ajouter un cours';
@@ -281,7 +281,7 @@ $string['edit'] = 'Modifier $a';
 $string['editcoursesettings'] = 'Modifier les paramètres du cours';
 $string['editfiles'] = 'Modifier les fichiers';
 $string['editgroupprofile'] = 'Modifier le profil du groupe';
-$string['editinga'] = 'Modifier un(e) $a';
+$string['editinga'] = 'Modifier $a';
 $string['editmyprofile'] = 'Modifier mon profil';
 $string['editsummary'] = 'Modifier le résumé';
 $string['editthisactivity'] = 'Modifier cette activité';
@@ -766,6 +766,7 @@ $string['select'] = 'Choisir';
 $string['selectacountry'] = 'Choisir un pays';
 $string['selectednowmove'] = '$a fichiers sélectionné pour déplacement. Allez maintenant vers la destination désirée et cliquez sur « Déplacer les fichiers ici »';
 $string['senddetails'] = 'Envoyer mes informations par courriel';
+$string['separateandconnected'] = 'Appropriation du savoir liée ou détachée';
 $string['serverlocaltime'] = 'Heure locale du serveur';
 $string['settings'] = 'Paramètres';
 $string['shortname'] = 'Nom abrégé';
@@ -867,8 +868,8 @@ $string['updatemyprofile'] = 'Enregistrer le profil';
 $string['updatesevery'] = 'Mise à jour toutes les $a secondes';
 $string['updatethis'] = 'Modifier ce(tte) $a';
 $string['updatethiscourse'] = 'Modifier ce cours';
-$string['updatinga'] = 'Modifier un(e) $a';
-$string['updatingain'] = 'Modifier un(e) $a->what dans $a->in';
+$string['updatinga'] = 'Modifier $a';
+$string['updatingain'] = 'Modifier $a->what dans $a->in';
 $string['upload'] = 'Envoyer';
 $string['uploadafile'] = 'Envoyer un fichier';
 $string['uploadedfileto'] = 'Le fichier « $a->file » a été déposé dans le dossier « $a->directory »';
