@@ -164,7 +164,7 @@
         exit;
     }
 
-    $table->head = array("", $strname, $strattempts, $strbestgrade);
+    $table->head = array("", $strname, $strattempts, "$strbestgrade /$quiz->grade");
     $table->align = array("CENTER", "LEFT", "LEFT", "CENTER");
     $table->width = array(10, "*", "*", 20);
 
