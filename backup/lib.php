@@ -324,7 +324,7 @@
     
             if (set_config("backup_version", "2003010100")) {
                 print_heading("You are currently going to install the needed structures to Backup/Recover");
-                print_continue($continue_to);
+                print_continue($continueto);
                 die;
             }
         }
