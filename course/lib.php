@@ -465,7 +465,7 @@ function get_array_of_activities($courseid) {
                    if ($mod[$seq]->mod == "resource") {
                        if ($resource = get_record("resource", "id", $rawmods[$seq]->instance)) {
                            if ($resource->type == 5 and $resource->alltext) {
-                               $mod[$seq]->extra = urlencode("onClick=\"return ".
+                               $mod[$seq]->extra = urlencode("target=\"resource$resource->id\" onClick=\"return ".
                                                    "openpopup('/mod/resource/view.php?id=".
                                                    $mod[$seq]->cm.
                                                    "','resource$resource->id','$resource->alltext');\"");
