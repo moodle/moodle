@@ -1,4 +1,4 @@
-<?
+<?php
 //Moodle wersja polska, Adam Pawelczak, Michal Wozniak, Lukasz Wrona (crow1@interia.pl)
 //Modul assignment.php
 
@@ -79,7 +79,5 @@ $string['viewfeedback'] = " Obejrzyj wyniki i informacje zwrotne za zadanie";
 $string['viewsubmissions'] = " Przejrzyj \$a przes³anych rozwi±zañ";
 
 $string['yoursubmission'] = " Twoje rozwi±zanie";
-
-$string[''] = "";
 
 ?>

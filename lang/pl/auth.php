@@ -1,4 +1,4 @@
-<?
+<?php
 //Moodle wersja polska, Adam Pawelczak, Michal Wozniak, Lukasz Wrona (crow1@interia.pl)
 //Modul auth.php
 
@@ -117,7 +117,5 @@ $string['md5'] = "Kodowanie MD5";
 $string['plaintext'] = "Zwyk³y tekst";
 
 $string['showguestlogin'] = "Mo¿esz ukryæ b±d¼ pokazaæ przycisk logowania jako go¶æ";
-
-$string[''] = "";
 
 ?>

@@ -368,6 +368,5 @@ $string['yourassessments'] = "Twoje oceny";
 
 $string['yourfeedbackgoeshere'] = "Tu zamie¶æ swoj± informacjê zwrotn±";
 
-$string[''] = "";
 
 ?>

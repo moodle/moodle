@@ -1,4 +1,4 @@
-<?
+<?php
 //Moodle wersja polska, Adam Pawelczak, Michal Wozniak, Lukasz Wrona (crow1@interia.pl)
 //Modul survey.php
 
@@ -349,7 +349,5 @@ $string['thanksforanswers'] = "\$a, dziêkujemy za wype³nienie ankiety";
 $string['time'] = "Czas";
 
 $string['viewsurveyresponses'] = "Zobacz \$a odpowiedzi na ankietê";
-
-$string[''] = "";
 
 ?>
