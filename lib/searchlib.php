@@ -44,7 +44,7 @@ class search_token {
 
 class search_lexer extends Lexer{
 
-  function search_lexer($parser){
+  function search_lexer(&$parser){
 
     // Call parent constructor.
     $this->Lexer($parser);

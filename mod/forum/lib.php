@@ -1031,7 +1031,7 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
     // by the parser, but this should be examined carefully for security implications.
     $searchstring = str_replace("\\\"","\"",$searchstring);
     $parser = new search_parser();
-    $lexer = new search_lexer(&$parser);
+    $lexer = new search_lexer($parser);
 
     if ($lexer->parse($searchstring)) {
         $parsearray = $parser->get_parsed_array();
