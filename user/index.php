@@ -79,7 +79,7 @@ function print_user($user, $course, $teacherlinks) {
     echo "<FONT SIZE=1>";
     if ($teacherlinks) {
         $timemidnight = usergetmidnight(time());
-        echo "<A HREF=\"../course/user.php?id=$course->id&user=$user->id\">".get_string("contributions")."</A><BR>";
+        echo "<A HREF=\"../course/user.php?id=$course->id&user=$user->id\">".get_string("activity")."</A><BR>";
         echo "<A HREF=\"../course/log.php?id=$course->id&user=$user->id&date=$timemidnight\">".get_string("todaylogs")."</A><BR>";
         echo "<A HREF=\"../course/log.php?id=$course->id&user=$user->id\">".get_string("alllogs")."</A><BR>";
         echo "<A HREF=\"../course/unenrol.php?id=$course->id&user=$user->id\">".get_string("unenrol")."</A><BR>";

@@ -1,6 +1,7 @@
 <?php 
 // Strings for Moodle site 
 
+$string[activity] = "Activity";
 $string[address] = "Address";
 $string[admin] = "Admin";
 $string[adminpage] = "Admin page";
@@ -16,7 +17,6 @@ $string[changedpassword] = "Changed password";
 $string[changessaved] = "Changes saved";
 $string[city] = "City/town";
 $string[confirmed] = "Your registration has been confirmed";
-$string[contributions] = "Contributions";
 $string[country] = "Country";
 $string[course] = "Course";
 $string[courses] = "Courses";
