@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 development (2004060100)
+      // quiz.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['acceptederror'] = 'Errore accettato';
@@ -75,6 +75,10 @@ $string['editingshortanswer'] = 'Modifica una domanda a risposta breve';
 $string['editingtruefalse'] = 'Modifica una domanda vero/falso';
 $string['editquestions'] = 'Modifica domande';
 $string['errorsdetected'] = '$a errore(i) trovati';
+$string['exportfilename'] = 'quiz';
+$string['exportname'] = 'Nome del file';
+$string['exportnameformat'] = '%%Y%%m%%d-%%H%%M';
+$string['exportquestions'] = 'Esporta domande su file';
 $string['false'] = 'Falso';
 $string['feedback'] = 'Commento';
 $string['fileformat'] = 'Formato file';
@@ -133,6 +137,7 @@ $string['numerical'] = 'Numerica';
 $string['paragraphquestion'] = 'Domanda paragrafo non supportata alla linea $a. La domanda sarà ignorata';
 $string['percentcorrect'] = 'Percentuale corretta';
 $string['publish'] = 'Rendere pubblico';
+$string['publishedit'] = 'Devi avere il permesso nel corso sono pubblicate per aggiungere o modificare le domande in questa categoria';
 $string['qti'] = 'Formato IMS QTI';
 $string['question'] = 'Domanda';
 $string['questioninuse'] = 'La domanda \'$a\' è attualmente in uso:';

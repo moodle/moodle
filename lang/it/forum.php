@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004060400)
+      // forum.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['addanewdiscussion'] = 'Aggiungi un nuovo argomento di discussione';
@@ -79,7 +79,6 @@ $string['nomorepostscontaining'] = 'Non sono stati trovati altri messaggi conten
 $string['nonews'] = 'Nessuna News é stata ancora spedita';
 $string['noposts'] = 'Nessun messaggio';
 $string['nopostscontaining'] = 'Nessun messaggio contenente \'$a\' è stato trovato';
-$string['noreply'] = ' ';
 $string['nosubscribers'] = 'Non ci sono ancora iscritti per questo forum';
 $string['notingroup'] = 'Spiacente, ma devi appartenere ad un gruppo per poter vedere questo forum.';
 $string['nownotsubscribed'] = '$a->name NON riceverà copie di \'$a->forum\' via email.';
@@ -104,6 +103,7 @@ $string['postupdated'] = 'Il tuo messaggio è stato aggiornato';
 $string['processingdigest'] = 'Elaborazione mail della raccolta per l\'utente $a';
 $string['processingpost'] = 'Elaborazione del messaggio $a';
 $string['prune'] = 'Interrotto';
+$string['prunedpost'] = 'Una nuova discussione è stata creata da quel messaggio';
 $string['pruneheading'] = 'Messaggio interrotto e spostato a una nuova discussione';
 $string['rate'] = 'Vota';
 $string['rating'] = 'Valutazione';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 development (2004060400)
+      // wiki.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['action'] = '-- Azione --';
@@ -165,6 +165,7 @@ $string['wantedpages'] = 'Pagine cercate';
 $string['wikidefaultpagename'] = 'Indice Wiki';
 $string['wikiexport'] = 'Esporta pagine';
 $string['wikiexportcomment'] = 'Qui si può impostare le tue preferenze sull\'esportazione';
+$string['wikilinkoptions'] = 'Opzioni di auto-collegamento Wiki';
 $string['wikilinks'] = 'Collegamenti Wiki';
 $string['wikiname'] = 'Nome pagina';
 $string['wikistartederror'] = 'Esitono wiki - non è possibile canbiare.';

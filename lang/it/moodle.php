@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4 development (2004060400)
+      // moodle.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['action'] = 'Azione';
@@ -40,6 +40,7 @@ $string['adminhelpconfiguration'] = 'Configura le variabili che agiscono sulle o
 $string['adminhelpconfigvariables'] = 'Configura le variabili generali del sito';
 $string['adminhelpcourses'] = 'Definisci corsi e categorie e assegnagli le persone';
 $string['adminhelpedituser'] = 'Visualizza la lista ed modifica gli utenti ';
+$string['adminhelpenrolments'] = 'Scegli la modalità interna o esterna per il controllo delle registrazioni';
 $string['adminhelplanguage'] = 'Controlla ed modifica il language pack corrente';
 $string['adminhelplogs'] = 'Visualizza i log di tutte le attività in questo sito';
 $string['adminhelpmanageblocks'] = 'Gestisci i blocchi installati e le loro impostazioni';
@@ -193,12 +194,14 @@ $string['confirm'] = 'Conferma';
 $string['confirmed'] = 'La tua registrazione è stata confermata';
 $string['confirmednot'] = 'La tua registrazione non é stata ancora confermata';
 $string['continue'] = 'Continua';
+$string['continuetocourse'] = 'Clicca qui per entrare nel tuo corso';
 $string['cookiesenabled'] = 'I cookies devono essere abilitati nel tuo browser';
 $string['copy'] = 'copia';
 $string['copyingcoursefiles'] = 'Copia dei file del corso';
 $string['copyinguserfiles'] = 'Copia dei file utente';
 $string['copyingzipfile'] = 'Copia dei file compressi';
 $string['copyrightnotice'] = 'Informazioni sul copyright';
+$string['cost'] = 'Costo';
 $string['country'] = 'Paese';
 $string['course'] = 'Corso';
 $string['courseavailable'] = 'Questo corso é disponibile agli studenti';
@@ -367,6 +370,9 @@ $string['enrolmentkeyfrom'] = 'Questo corso richiede una \'chiave di accesso\' -
 $string['enrolmentkeyhint'] = 'Questa chiave di accesso è inesatta, riprovare, prego.<BR>
 
 (Questo è un suggerimento - essa inizia con \'$a\'';
+$string['enrolmentnew'] = 'Nuova registrazione a $a';
+$string['enrolmentnointernal'] = 'La registrazione manuale non è attualmente abilitata';
+$string['enrolments'] = 'Registrazioni';
 $string['entercourse'] = 'Clicca per accedere a questo corso';
 $string['enteremailaddress'] = 'Digita il tuo email per cancellare la tua password e ottenere una nuova password spedita via email.';
 $string['error'] = 'Errore';
@@ -726,6 +732,10 @@ $string['passwordsenttext'] = '<P>Un email è stato spedito a $a->email.
  <A HREF=$a->link> 
 
 per cambiarla con una che sia, per te, più facile da ricordare</A>.';
+$string['paymentinstant'] = 'Utilizza il bottone sottostante per pagare ed essere registrato in pochi minuti!';
+$string['paymentrequired'] = 'Questo corso richiede un pagamento per l\'accesso.';
+$string['paymentsorry'] = 'Grazie per il pagamento! Sfortunatamente il pagamento non è stato completamente elaborato, e la registrazione al corso \"$a->fullname\" non è stata completata. Per favore prova a cliccare su continua  tra alcuni secondi, ma se incontri problemi allora avverti il $a->teacher o l\'amministratore del sito.';
+$string['paymentthanks'] = 'Grazie per il pagamento! Ora sei registrato nel tuo corso:<br />\"$a\"';
 $string['people'] = 'Persone';
 $string['personalprofile'] = 'Profilo personale';
 $string['phone'] = 'Telefono';
@@ -770,6 +780,7 @@ $string['rename'] = 'Rinomina';
 $string['renamefileto'] = 'Rinomina <b>$a</b> in';
 $string['required'] = 'Richiesto';
 $string['requireskey'] = 'Questo corso richiede una chiave di accesso';
+$string['requirespayment'] = 'Questo corso richiede un pagamento per l\'accesso';
 $string['resortcoursesbyname'] = 'Riordina corsi per nome';
 $string['resources'] = 'Risorse';
 $string['restore'] = 'Ripristina';
