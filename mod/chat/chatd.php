@@ -1,7 +1,7 @@
 #!./php -q
 <?php
 
-echo "Moodle chat daemon v1.0  ($Id$)\n\n";
+echo "Moodle chat daemon v1.0  (\$Id$)\n\n";
 
 /// Set up all the variables we need   /////////////////////////////////////
 
