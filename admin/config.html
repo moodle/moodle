@@ -131,20 +131,6 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align=right><p>htmleditor:</td>
-    <td>
-    <?php
-       unset($options);
-       $options[0] = get_string("allownot");
-       $options[1] = get_string("allow");
-       choose_from_menu ($options, "htmleditor", $config->htmleditor, "", "", "");
-    ?>
-    </td>
-    <td>
-    <?php print_string("confightmleditor") ?>
-    </td>
-</tr>
-<tr valign=top>
     <td align=right><p>maxeditingtime:</td>
     <td>
     <?php
@@ -414,6 +400,21 @@
     </td>
     <td>
     <?php print_string("configteacherassignteachers") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p>allusersaresitestudents:</td>
+    <td>
+    <?php
+       unset($options);
+       $options[0]  = get_string("no");
+       $options[1]  = get_string("yes");
+
+       choose_from_menu ($options, "allusersaresitestudents", $config->allusersaresitestudents, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configallusersaresitestudents") ?>
     </td>
 </tr>
 <tr valign=top>
