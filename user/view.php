@@ -131,15 +131,15 @@
     echo "</TD></TR></TABLE></TABLE>";
 
     $internalpassword = false;
-    if ($CFG->auth == "email" or $CFG->auth == "none") {
+    if ($CFG->auth == "email" or $CFG->auth == "none" or $CFG->auth == "manual") {
         $internalpassword = "$CFG->wwwroot/login/change_password.php";
     }
 
 //  Print other functions
     echo "<CENTER><TABLE ALIGN=CENTER><TR>";
     if ($currentuser and !isguest()) {
-        if ($CFG->auth == "email" or $CFG->auth == "none") {
-            echo "<TD NOWRAP><P><FORM ACTION=\"$CFG->wwwroot/login/change_password.php\" METHOD=GET>";
+        if ($internalpassword) {
+            echo "<TD NOWRAP><P><FORM ACTION=\"$internalpassword\" METHOD=GET>";
             echo "<INPUT type=hidden name=id value=\"$course->id\">";
             echo "<INPUT type=submit value=\"".get_string("changepassword")."\">";
             echo "</FORM></P></TD>";

@@ -113,7 +113,7 @@
 
     require_once("$CFG->dirroot/auth/$auth/config.html");
 
-    if ($auth != "email" and $auth != "none") {
+    if ($auth != "email" and $auth != "none" and $auth != "manual") {
         echo "<tr valign=\"top\">";
 	    echo "<td align=right nowrap><p>";
         print_string("changepassword", "auth");
