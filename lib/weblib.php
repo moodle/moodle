@@ -1475,7 +1475,6 @@ function highlightfast($needle, $haystack) {
  *
  * @uses $USER
  * @uses $CFG
- * @uses $THEME 
  * @uses $SESSION
  * @param string $title Appears at the top of the window
  * @param string $heading Appears at the top of the page
@@ -1491,7 +1490,7 @@ function highlightfast($needle, $haystack) {
 function print_header ($title='', $heading='', $navigation='', $focus='', $meta='',
                        $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='') {
 
-    global $USER, $CFG, $THEME, $SESSION, $ME;
+    global $USER, $CFG, $SESSION, $ME;
 
     global $course;                // This is a bit of an ugly hack to be gotten rid of later
     if (!empty($course->lang)) {
@@ -1689,13 +1688,12 @@ function print_header_simple($title='', $heading='', $navigation='', $focus='', 
  *
  * @uses $CFG
  * @uses $USER
- * @uses $THEME
  * @param course $course {@link $COURSE} object containing course information
  * @param ? $usercourse ?
  * @todo Finish documenting this function
  */
 function print_footer($course=NULL, $usercourse=NULL) {
-    global $USER, $CFG, $THEME;
+    global $USER, $CFG;
 
 /// Course links
     if ($course) {
@@ -1890,7 +1888,7 @@ function print_continue($link) {
  * @param string $class ?
  * @todo Finish documenting this function
  */
-function print_simple_box($message, $align='', $width='', $color='#FFFFFF', $padding=5, $class='generalbox') {
+function print_simple_box($message, $align='', $width='', $color='', $padding=5, $class='generalbox') {
     print_simple_box_start($align, $width, $color, $padding, $class);
     echo stripslashes_safe($message);
     print_simple_box_end();
@@ -1906,16 +1904,19 @@ function print_simple_box($message, $align='', $width='', $color='#FFFFFF', $pad
  * @param string $class ?
  * @todo Finish documenting this function
  */
-function print_simple_box_start($align='', $width='', $color='#FFFFFF', $padding=5, $class='generalbox') {
-    global $THEME;
+function print_simple_box_start($align='', $width='', $color='', $padding=5, $class='generalbox') {
 
+    if ($color) {
+        $color = 'bgcolor="'. $color .'"';
+    }
     if ($align) {
         $align = 'align="'. $align .'"';
     }
     if ($width) {
         $width = 'width="'. $width .'"';
     }
-    echo "<table $align $width class=\"$class\" border=\"0\" cellpadding=\"$padding\" cellspacing=\"0\"><tr><td bgcolor=\"$color\" class=\"$class"."content\">";
+    echo "<table $align $width class=\"$class\" border=\"0\" cellpadding=\"$padding\" cellspacing=\"0\">".
+         "<tr><td $color class=\"$class"."content\">";
 }
 
 /**
@@ -2255,7 +2256,6 @@ function print_png($url, $sizex, $sizey, $returnstring, $parameters='alt=""') {
 /**
  * Print a nicely formatted table.
  *
- * @uses $THEME
  * @param array $table is an object with several properties.
  *     <ul<li>$table->head - An array of heading names.
  *     <li>$table->align - An array of column alignments
@@ -2270,8 +2270,6 @@ function print_png($url, $sizex, $sizey, $returnstring, $parameters='alt=""') {
  * @todo Finish documenting this function
  */
 function print_table($table) {
-
-    global $THEME;
 
     if (isset($table->align)) {
         foreach ($table->align as $key => $aa) {
@@ -3056,7 +3054,6 @@ function error ($message, $link='') {
  * Print a help button.
  *
  * @uses $CFG
- * @uses $THEME
  * @param string $page  The keyword that defines a help page
  * @param string $title The title of links, rollover tips, alt tags etc
  * @param string $module Which module is the page defined in
@@ -3070,7 +3067,7 @@ function error ($message, $link='') {
  */
 function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=false, $text='', $return=false,
                      $imagetext='') {
-    global $CFG, $THEME;
+    global $CFG;
 
     if ($module == '') {
         $module = 'moodle';
@@ -3136,13 +3133,12 @@ function emoticonhelpbutton($form, $field) {
  * Print a message and exit.
  *
  * @uses $CFG
- * @uses $THEME
  * @param string $message ?
  * @param string $link ?
  * @todo Finish documenting this function
  */
 function notice ($message, $link='') {
-    global $CFG, $THEME;
+    global $CFG;
 
     $message = clean_text($message);
     $link    = clean_text($link);
@@ -3156,7 +3152,7 @@ function notice ($message, $link='') {
     }
 
     echo '<br />';
-    print_simple_box($message, 'center', '50%', $THEME->cellheading, '20', 'noticebox');
+    print_simple_box($message, 'center', '50%', '', '20', 'noticebox');
     print_heading('<a href="'. $link .'">'. get_string('continue') .'</a>');
     print_footer(get_site());
     die;
@@ -3165,19 +3161,17 @@ function notice ($message, $link='') {
 /**
  * Print a message along with "Yes" and "No" links for the user to continue.
  *
- * @uses $THEME
  * @param string $message The text to display
  * @param string $linkyes The link to take the user to if they choose "Yes"
  * @param string $linkno The link to take the user to if they choose "No"
  */
 function notice_yesno ($message, $linkyes, $linkno) {
-    global $THEME;
 
     $message = clean_text($message);
     $linkyes = clean_text($linkyes);
     $linkno = clean_text($linkno);
 
-    print_simple_box_start('center', '60%', $THEME->cellheading);
+    print_simple_box_start('center', '60%');
     echo '<p align="center"><font size="3">'. $message .'</font></p>';
     echo '<p align="center"><font size="3"><strong>';
     echo '<a href="'. $linkyes .'">'. get_string('yes') .'</a>';
@@ -3396,7 +3390,6 @@ function rebuildnolinktag($text) {
  * Prints a nice side block with an optional header.  The content can either
  * be a block of HTML or a list of text with optional icons.
  *
- * @uses $THEME
  * @param  string $heading ?
  * @param  string $content ?
  * @param  array $list ?
@@ -3406,8 +3399,6 @@ function rebuildnolinktag($text) {
  * @todo Finish documenting this function. Show example of various attributes, etc.
  */
 function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $footer='', $attributes = array()) { 
-
-    global $THEME;
 
     print_side_block_start($heading, $attributes);
 
@@ -3420,7 +3411,7 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
         echo '<table width="100%" border="0" cellspacing="0" cellpadding="2">';
         if ($list) {
             foreach ($list as $key => $string) {
-                echo '<tr bgcolor="'. $THEME->cellcontent2 .'">';
+                echo '<tr>';
                 if ($icons) {
                     echo '<td class="sideblocklinks" valign="top" width="16">'. $icons[$key] .'</td>';
                 }
@@ -3429,7 +3420,7 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
             }
         }
         if ($footer) {
-            echo '<tr bgcolor="'. $THEME->cellcontent2 .'">';
+            echo '<tr>';
             echo '<td class="sideblocklinks" ';
             if ($icons) {
                 echo ' colspan="2" ';
@@ -3447,13 +3438,11 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
 /**
  * Starts a nice side block with an optional header.
  *
- * @uses $THEME
  * @param string $heading ?
  * @param array $attributes ?
  * @todo Finish documenting this function
  */
 function print_side_block_start($heading='', $attributes = array()) {
-    global $THEME;
 
     // If there are no special attributes, give a default CSS class
     if(empty($attributes) || !is_array($attributes)) {
@@ -3473,14 +3462,11 @@ function print_side_block_start($heading='', $attributes = array()) {
        $attrtext .= ' '.$attr.'="'.$val.'"';
     }
 
-    // [pj] UGLY UGLY UGLY! I hate myself for doing this!
-    // When the Lord Moodle 2.0 cometh, his mercy shalt move all this mess
-    // to CSS and banish the evil to the abyss from whence it came.
-    echo '<table style="width: 100%;" cellspacing="0" cellpadding="5"'.$attrtext.'>';
+    echo '<table class="sideblock" cellspacing="0" cellpadding="5"'.$attrtext.'>';
     if ($heading) {
         echo '<thead><tr><td class="sideblockheading">'.$heading.'</td></tr></thead>';
     }
-    echo '<tbody style="background-color: '.$THEME->cellcontent2.';"><tr><td class="sideblockmain">';
+    echo '<tbody><tr><td class="sideblockmain">';
 }
 
 
