@@ -266,7 +266,7 @@ function cleantext($text) {
 // Given raw text (eg typed in by a user), this function cleans it up 
 // and removes any nasty tags that could mess up Moodle pages.
 
-    return strip_tags($text, '<b><i><u><font><ol><ul><li>');
+    return strip_tags($text, '<b><i><u><font><ol><ul><dl><li><dt><dd><h1><h2><h3><hr>');
 }
 
 
