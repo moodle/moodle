@@ -72,7 +72,6 @@ $string['filloutthreequestions'] = 'You must fill out at least three questions. 
 $string['fillouttwochoices'] = 'You must fill out at least two choices.  Choices left blank will not be used.';
 $string['fractionsaddwrong'] = 'The positive grades you have chosen do not add up to 100%%<BR>Instead, they add up to $a%%<BR>Do you want to go back and fix this question?';
 $string['fractionsnomax'] = 'One of the answers should be 100%%, so that it is<BR>possible to get a full grade for this question.<BR>Do you want to go back and fix this question?';
-$string['grade'] = 'Grade';
 $string['gradeaverage'] = 'Average grade';
 $string['gradehighest'] = 'Highest grade';
 $string['grademethod'] = 'Grading method';
