@@ -439,7 +439,7 @@ function forum_print_recent_instance_activity($forum, $timestart, $detail=false)
         echo $post->subject;
         echo "</a></font><br>";
         echo "<font size=2>";
-        $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$courseid\">$post->firstname $post->lastname</a>";
+        $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$post->userid&course=$post->course\">$post->firstname $post->lastname</a>";
         $by->date = userdate($post->modified);
         print_string("bynameondate", "forum", $by);
         echo "</font></p></td></tr></table>";
@@ -905,7 +905,7 @@ function forum_get_recent_posts($sincetime, $forum="0") {
         $forumselect = "";
     }
 
-    return get_records_sql("SELECT p.*, d.name, u.id, u.firstname, u.lastname, u.picture
+    return get_records_sql("SELECT p.*, d.name, u.id, u.firstname, u.lastname, u.picture, d.course
                               FROM {$CFG->prefix}forum_posts p, 
                                    {$CFG->prefix}forum_discussions d,
                                    {$CFG->prefix}user u
