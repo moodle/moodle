@@ -1,5 +1,4 @@
-<?PHP // $Id$ 
-
+<?php // $Id$ 
 
 $string['about'] = 'À propos de cet éditeur';
 $string['absbottom'] = 'Absbottom';
@@ -96,7 +95,7 @@ $string['type'] = 'Type';
 $string['underline'] = 'Souligné';
 $string['undo'] = 'Annuler la dernière action';
 $string['unorderedlist'] = 'Liste non numérotée';
-$string['upload'] = 'Envoyer';
+$string['upload'] = 'Déposer';
 $string['vertical'] = 'Vertical';
 $string['width'] = 'Largeur';
 $string['wordclean'] = 'Nettoyer le code HTML de Word';

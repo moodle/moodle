@@ -1,14 +1,13 @@
-<?PHP // $Id$ 
-
+<?php // $Id$ 
 
 $string['allowresubmit'] = 'Permettre plusieurs remises d\'un devoir';
 $string['assignmentdetails'] = 'Détails du devoir';
-$string['assignmentmail'] = '$a->teacher a envoyé un feedback concernant votre devoir « $a->assignment »
+$string['assignmentmail'] = '$a->teacher a écrit un feedback concernant votre devoir « $a->assignment »
 
 Vous pouvez le consulter en annexe à votre devoir:
 
 $a->url';
-$string['assignmentmailhtml'] = '$a->teacher a envoyé un feedback concernant votre devoir rendu « <i>$a->assignment</i> »<br /><br />
+$string['assignmentmailhtml'] = '$a->teacher a écrit un feedback concernant votre devoir rendu « <i>$a->assignment</i> »<br /><br />
 
 Vous pouvez le consulter en annexe à <a href=\'$a->url\'>votre devoir</a>.';
 $string['assignmentname'] = 'Nom du devoir';
@@ -34,18 +33,18 @@ $string['overwritewarning'] = 'Attention : un nouvel envoi remplacera votre devo
 $string['saveallfeedback'] = 'Enregistrer tous mes feedbacks';
 $string['submissionfeedback'] = 'Feedback du devoir';
 $string['submissions'] = 'Devoirs rendus';
-$string['submitassignment'] = 'Envoyer votre devoir en utilisant ce formulaire';
+$string['submitassignment'] = 'Déposer votre devoir en utilisant ce formulaire';
 $string['submitted'] = 'Devoir rendu';
 $string['typeoffline'] = 'Activité hors ligne';
-$string['typeuploadsingle'] = 'Envoyer un fichier';
-$string['uploadbadname'] = 'Ce nom de fichier contient d\'étranges caractères. Il ne peut être envoyé';
-$string['uploadedfiles'] = 'fichiers envoyés';
+$string['typeuploadsingle'] = 'Déposer un fichier';
+$string['uploadbadname'] = 'Ce nom de fichier contient d\'étranges caractères. Il ne peut être déposé';
+$string['uploadedfiles'] = 'fichiers déposés';
 $string['uploaderror'] = 'Une erreur est survenue lors de l\'enregistrement du fichier sur le serveur';
-$string['uploadfailnoupdate'] = 'Le fichier a été correctement envoyé, mais il n\'a pas été possible de mettre à jour votre devoir !';
+$string['uploadfailnoupdate'] = 'Le fichier a été correctement déposé, mais il n\'a pas été possible de mettre à jour votre devoir !';
 $string['uploadfiletoobig'] = 'Désolé, la taille de ce fichier est trop grande (taille maximale: $a octets)';
-$string['uploadnofilefound'] = 'Aucun fichier n\'a été trouvé, êtes-vous certain d\'en avoir choisi un à envoyer ?';
-$string['uploadnotregistered'] = '« $a » a été correctement envoyé mais votre devoir n\'a pu être enregistré !';
-$string['uploadsuccess'] = '« $a » a été correctement envoyé';
+$string['uploadnofilefound'] = 'Aucun fichier n\'a été trouvé, êtes-vous certain d\'en avoir choisi un à déposer ?';
+$string['uploadnotregistered'] = '« $a » a été correctement déposé, mais votre devoir n\'a pu être enregistré !';
+$string['uploadsuccess'] = '« $a » a été correctement déposé';
 $string['viewfeedback'] = 'Afficher les notes et feedbacks des devoirs';
 $string['viewsubmissions'] = 'Afficher les $a devoirs rendus';
 $string['yoursubmission'] = 'Votre devoir';
