@@ -1075,7 +1075,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
     if ( !isset($dataobject->{$primarykey}) 
          && $CFG->dbtype === 'postgres7'      
          && $returnid == true ) {        
-        if ($nextval = get_field_sql("SELECT NEXTVAL('{$CFG->prefix}{$table}_{$primarykey}_seq')")) {
+        if ($nextval = (int)get_field_sql("SELECT NEXTVAL('{$CFG->prefix}{$table}_{$primarykey}_seq')")) {
             $dataobject->{$primarykey} = $nextval;            
         } 
     }
