@@ -11,7 +11,7 @@ $string['feedbackupdated'] = 'Feedback mis à jour pour les contributions de $a';
 $string['journalmail'] = '$a->teacher a envoyé un feedback au sujet de votre contribution au journal « $a->journal »
 Vous pouvez le consulter en annexe à votre contribution au journal :
 $a->url';
-$string['journalmailhtml'] = '$a->teacher a envoyé un feedback au sujet de votre contribution au journal « <i>$a->journal</i> »<br /><br />Vous pouvez le consulter en annexe à votre <a href="$a->url">contribution au journal</a>.';
+$string['journalmailhtml'] = '$a->teacher a envoyé un feedback au sujet de votre contribution au journal « <i>$a->journal</i> »<br /><br />Vous pouvez le consulter en annexe à votre <a href=\"$a->url\">contribution au journal</a>.';
 $string['journalname'] = 'Nom du journal';
 $string['journalquestion'] = 'Sujet du journal';
 $string['journalrating1'] = 'Insatisfaisant';
