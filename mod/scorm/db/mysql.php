@@ -26,6 +26,21 @@ function scorm_upgrade($oldversion) {
       table_column("scorm", "", "maxgrade", "FLOAT", "3", "", "0", "NOT NULL", "reference");
       table_column("scorm", "", "grademethod", "TINYINT", "2", "", "0", "NOT NULL", "maxgrade");
     }
+
+    if ($oldversion < 2004111200) {
+        execute_sql("ALTER TABLE {$CFG->prefix}scorm DROP INDEX course;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}scorm_scoes DROP INDEX scorm;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}scorm_sco_users DROP INDEX scormid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}scorm_sco_users DROP INDEX userid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}scorm_sco_users DROP INDEX scoid;",false);
+
+        modify_database('','ALTER TABLE prefix_scorm ADD INDEX course (course);');
+        modify_database('','ALTER TABLE prefix_scorm_scoes ADD INDEX scorm (scorm);');
+        modify_database('','ALTER TABLE prefix_scorm_sco_users ADD INDEX scormid (scormid);');
+        modify_database('','ALTER TABLE prefix_scorm_sco_users ADD INDEX userid (userid);');
+        modify_database('','ALTER TABLE prefix_scorm_sco_users ADD INDEX scoid (scoid);');
+    }
+
     return true;
 }
 

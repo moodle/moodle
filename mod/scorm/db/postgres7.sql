@@ -17,6 +17,8 @@ CREATE TABLE prefix_scorm (
   timemodified integer NOT NULL default '0'
 );
 
+CREATE INDEX prefix_scorm_course_idx ON prefix_scorm (course);
+
 CREATE TABLE prefix_scorm_scoes (
   id SERIAL PRIMARY KEY,
   scorm integer NOT NULL default '0',
@@ -32,6 +34,8 @@ CREATE TABLE prefix_scorm_scoes (
   previous integer NOT NULL default '0'
 );
 
+CREATE INDEX prefix_scorm_scoes_scorm_idx ON prefix_scorm_scoes (scorm);
+
 CREATE TABLE prefix_scorm_sco_users (
   id SERIAL PRIMARY KEY,
   userid integer NOT NULL default '0',
@@ -45,6 +49,10 @@ CREATE TABLE prefix_scorm_sco_users (
   cmi_core_score_raw real NOT NULL default '0',
   cmi_suspend_data text NOT NULL default ''
 );
+
+CREATE INDEX prefix_scorm_sco_users_userid_idx ON  prefix_scorm_sco_users (userid);
+CREATE INDEX prefix_scorm_sco_users_scormid_idx ON  prefix_scorm_sco_users (scormid);
+CREATE INDEX prefix_scorm_sco_users_scoid_idx ON  prefix_scorm_sco_users (scoid);
 
 #
 # Dumping data for table `log_display`

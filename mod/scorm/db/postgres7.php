@@ -26,6 +26,21 @@ function scorm_upgrade($oldversion) {
         table_column("scorm", "", "maxgrade", "real", "3", "", "0", "NOT NULL", "reference");
         table_column("scorm", "", "grademethod", "integer", "", "", "0", "NOT NULL", "maxgrade");
     }
+    
+    if ($oldversion < 2004111200) {
+        execute_sql("DROP INDEX {$CFG->prefix}scorm_course_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}scorm_scoes_scorm_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}scorm_sco_users_userid_idx;",false); 
+        execute_sql("DROP INDEX {$CFG->prefix}scorm_sco_users_scormid_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}scorm_sco_users_scoid_idx;",false);
+
+        modify_database('','CREATE INDEX prefix_scorm_course_idx ON prefix_scorm (course);');
+        modify_database('','CREATE INDEX prefix_scorm_scoes_scorm_idx ON prefix_scorm_scoes (scorm);');
+        modify_database('','CREATE INDEX prefix_scorm_sco_users_userid_idx ON  prefix_scorm_sco_users (userid);');
+        modify_database('','CREATE INDEX prefix_scorm_sco_users_scormid_idx ON  prefix_scorm_sco_users (scormid);');
+        modify_database('','CREATE INDEX prefix_scorm_sco_users_scoid_idx ON  prefix_scorm_sco_users (scoid);');
+    }
+
     return true;
 }
 
