@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004121600)
+      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
 
 
 $string['absent'] = '欠席';
@@ -101,7 +101,7 @@ $string['grade'] = '成績';
 $string['gradeassessment'] = '評価評定';
 $string['graded'] = '評定';
 $string['gradedbyteacher'] = '$a による評定';
-$string['gradeforassessments'] = '評価に対する評点';
+$string['gradeforassessments'] = '学生の評価に対する評点';
 $string['gradeforbias'] = 'バイアスに対する評点';
 $string['gradeforreliability'] = '信頼性に対する評点';
 $string['gradeforstudentsassessment'] = '学生の評価に対する評点';
@@ -271,11 +271,11 @@ $string['submissionsnolongerallowed'] = 'これ以上の提出は許可されて
 $string['submissionstart'] = '提出開始日時';
 $string['submissionstartevent'] = '$a の提出開始日時';
 $string['submissionsused'] = 'このテーブルで使用される $a の提出物 ';
-$string['submitassignment'] = '課題を登録する';
-$string['submitassignmentusingform'] = 'このフォームで課題を登録してください';
+$string['submitassignment'] = '課題の登録';
+$string['submitassignmentusingform'] = 'このフォームを使用して課題を登録してください';
 $string['submitexample'] = '課題例の登録';
-$string['submitexampleassignment'] = '課題例を登録する';
-$string['submitrevisedassignment'] = 'このフォームで訂正した課題を登録してください';
+$string['submitexampleassignment'] = '課題例の登録';
+$string['submitrevisedassignment'] = 'このフォームを使用して訂正した課題を登録してください';
 $string['submitted'] = '登録日時';
 $string['submittedby'] = '登録者';
 $string['suggestedgrade'] = '推奨評価';
@@ -308,11 +308,11 @@ $string['viewotherassessments'] = '他の評価を表示する';
 $string['warningonamendingelements'] = '警告：評価が登録されています。<br />要素数、評価タイプ、要素比重を変更しないでください。';
 $string['weight'] = '比重';
 $string['weightederrorcount'] = '比重エラーカウント： $a';
-$string['weightforbias'] = 'バイアスに対する比重';
+$string['weightforbias'] = 'バイアスに関する比重';
 $string['weightforgradingofassessments'] = '評価評定に対する比重';
-$string['weightforpeerassessments'] = '相互評価に対する比重';
-$string['weightforreliability'] = '信頼性に対する比重';
-$string['weightforteacherassessments'] = '教師の評価に対する比重';
+$string['weightforpeerassessments'] = '相互評価に関する比重';
+$string['weightforreliability'] = '信頼性に関する比重';
+$string['weightforteacherassessments'] = '教師の評価に関する比重';
 $string['weights'] = '比重';
 $string['weightsusedforfinalgrade'] = '最終評点に使用する比重';
 $string['weightsusedforsubmissions'] = '提出物に使用する比重';
@@ -322,9 +322,9 @@ $string['workshopcomments'] = 'ワークショップコメント';
 $string['workshopfeedback'] = 'ワークショップフィードバック';
 $string['workshopsubmissions'] = 'ワークショップ提出';
 $string['wrongpassword'] = 'ワークショップのパスワードが間違っています。';
-$string['yourassessments'] = 'あなたの評価';
+$string['yourassessments'] = 'あなたの課題に対する仲間の評価';
 $string['yourassessmentsofexamplesfromtheteacher'] = '$a によるあなたの評価例';
 $string['yourfeedbackgoeshere'] = 'あなたのフィードバックはここに表示されます';
-$string['yoursubmissions'] = 'あなたの提出';
+$string['yoursubmissions'] = 'あなたの提出物';
 
 ?>
