@@ -58,7 +58,7 @@ $string['changepasswordhelp'] = "Aquí puede especificar dónde pueden sus usuario
 $string['chooseauthmethod'] = "Escoger un método de autenticación: ";
 $string['guestloginbutton'] = "Botón de entrada para invitados";
 $string['instructions'] = "Instrucciones";
-$string['md5'] = "Encriptación M5";
+$string['md5'] = "Encriptación MD5";
 $string['plaintext'] = "Texto plano";
 $string['showguestlogin'] = "Puede ocultar o mostrar el botón de entrada para invitados en la página de acceso.";
 
