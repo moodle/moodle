@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.2 development (2003121500)
+      // dialogue.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['addmynewentries'] = 'Voeg mijn nieuwe boodschappen toe';
@@ -9,14 +9,14 @@ $string['allowmultiple'] = 'Sta meer dan één dialoog met dezelfde persoon toe';
 $string['allowstudentdialogues'] = 'Sta dialoog tussen leerlingen toe';
 $string['close'] = 'Sluit';
 $string['closed'] = 'Gesloten';
-$string['confirmclosure'] = 'Je gaat de dialoog met $a sluiten. Gesloten dialogen kunnen niet meer geopend worden. Als je deze dialoog sluit, kun je hem nog wel bekijken, maar je kunt er niets meer aan toevoegen. Je zult een nieuwe dialoog moeten starten om met deze persoon verder te &quot;praten&quot;.<br/><br/>Ben je er zeker van dat je deze dialoog wil sluiten? ';
+$string['confirmclosure'] = 'Je gaat de dialoog met $a sluiten. Gesloten dialogen kunnen niet meer geopend worden. Als je deze dialoog sluit, kun je hem nog wel bekijken, maar je kunt er niets meer aan toevoegen. Je zult een nieuwe dialoog moeten starten om met deze persoon verder te \"praten\".<br/><br/>Ben je er zeker van dat je deze dialoog wil sluiten? ';
 $string['deleteafter'] = 'Verwijder gesloten dialogen na (dagen)';
 $string['dialogueclosed'] = 'Dialoog gesloten';
 $string['dialogueintro'] = 'Inleiding dialoog';
-$string['dialoguemail'] = '$a->userform heeft een niewe boodschap in je dialoog gepost voor \'$a->dialoog\'
+$string['dialoguemail'] = '$a->userfrom heeft een niewe boodschap in je dialoog gepost voor \'$a->dialoog\'
 Je kunt het zien verschijnen bij je dialoogboodschap:
 $a->url';
-$string['dialoguemailhtml'] = '$a->userform heeft een nieuwe boodschap in je dialoog gepost voor \'<i>$a->dialogue</i>\'<br/><br/>
+$string['dialoguemailhtml'] = '$a->userfrom heeft een nieuwe boodschap in je dialoog gepost voor \'<i>$a->dialogue</i>\'<br/><br/>
 Je kunt zien dat het aan jouw <a href=\"$a->url\">dialoog</a> toegevoegd is ';
 $string['dialoguename'] = 'Dialoog naam';
 $string['dialogueopened'] = 'Dialoog geopend met $a';
