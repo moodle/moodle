@@ -1085,7 +1085,7 @@ function print_courses_sideblock($category=0, $width="100%") {
             $moddata[]="<a $linkcss href=\"$CFG->wwwroot/course/category.php?id=$category->id\">$category->name</a>";
             $modicon[]=$icon;
         }
-        $fulllist = "<p><a href=\"$CFG->wwwroot/course/search.php\">".get_string("searchcourses")."</a>...";
+        $fulllist = "<p><a href=\"$CFG->wwwroot/course/\">".get_string("searchcourses")."</a>...";
     } else {                          // Just print course names of single category
         $category = array_shift($categories);
         $courses = get_courses($category->id);
