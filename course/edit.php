@@ -87,6 +87,7 @@
             $form->students = get_string("defaultcoursestudents");
             $form->summary = get_string("defaultcoursesummary");
             $form->format = "weeks";
+            $form->password = "";
             $form->guest = 0;
             $form->numsections = 10;
             $form->newsitems = 5;
