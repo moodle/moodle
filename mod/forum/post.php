@@ -25,7 +25,7 @@
 
         $post->message = clean_text($post->message, $post->format);   // Clean up any bad tags
 
-        $post->attachment = $_FILES["attachment"];
+        $post->attachment = isset($_FILES['attachment']) ? $_FILES['attachment'] : NULL;
 
         if (!$cm = get_coursemodule_from_instance("forum", $post->forum, $post->course)) { // For the logs
             $cm->id = 0;
