@@ -544,7 +544,7 @@ function calendar_show_upcoming_events($courses, $groups, $users, $futuredays, $
 
 
 function calendar_print_event($event) {
-    global $CFG, $THEME;
+    global $CFG, $THEME, $USER;
 
     static $strftimetime;
 
@@ -582,8 +582,8 @@ function calendar_print_event($event) {
             $editlink   = CALENDAR_URL.'event.php?action=edit&amp;id='.$event->id;
             $deletelink = CALENDAR_URL.'event.php?action=delete&amp;id='.$event->id;
         } else {
-            $editlink   = $CFG->wwwroot.'/course/mod.php?update='.$event->cmid.'&amp;return=true';
-            $deletelink = $CFG->wwwroot.'/course/mod.php?delete='.$event->cmid;
+            $editlink   = $CFG->wwwroot.'/course/mod.php?update='.$event->cmid.'&amp;return=true&amp;sesskey='.$USER->sesskey;
+            $deletelink = $CFG->wwwroot.'/course/mod.php?delete='.$event->cmid.'&amp;sesskey='.$USER->sesskey;;
         }
         echo ' <a href="'.$editlink.'"><img
                   src="'.$CFG->pixpath.'/t/edit.gif" alt="'.get_string('tt_editevent', 'calendar').'"
