@@ -65,9 +65,9 @@ print_heading_with_help(get_string("furtherinformation", "dialogue"), "info", "d
 </tr>
 
 <tr>
-    <td align=right><P><B><? print_string("typeofdialogue", "dialogue") ?>:</B></P></TD>
+    <td align=right><P><B><?php print_string("typeofdialogue", "dialogue") ?>:</B></P></TD>
     <td>
-    <?PHP 
+    <?php 
         $options[0] = get_string("teachertostudent", "dialogue"); 
         $options[1] = get_string("studenttostudent", "dialogue");
         $options[2] = get_string("everybody", "dialogue");
@@ -78,9 +78,9 @@ print_heading_with_help(get_string("furtherinformation", "dialogue"), "info", "d
 </tr>
 
 <tr>
-    <td align=right><P><B><? print_string("allowmultiple", "dialogue") ?>:</B></P></TD>
+    <td align=right><P><B><?php print_string("allowmultiple", "dialogue") ?>:</B></P></TD>
     <td>
-    <?PHP 
+    <?php 
         unset($options);
         $options[0] = get_string("no"); $options[1] = get_string("yes");
         choose_from_menu($options, "multipleconversations", $form->multipleconversations, "");
@@ -90,9 +90,9 @@ print_heading_with_help(get_string("furtherinformation", "dialogue"), "info", "d
 </tr>
 
 <tr>
-    <td align=right><P><B><? print_string("maildefault", "dialogue") ?>:</B></P></TD>
+    <td align=right><P><B><?php print_string("maildefault", "dialogue") ?>:</B></P></TD>
     <td>
-    <?PHP 
+    <?php 
         unset($options);
         $options[0] = get_string("no"); $options[1] = get_string("yes");
         choose_from_menu($options, "maildefault", $form->maildefault, "");

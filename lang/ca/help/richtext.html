@@ -1,7 +1,7 @@
 <P ALIGN=CENTER><B>Sobre l'editor de text enriquit HTML</B></P>
 
 <P>Disponibilitat: <B> 
-  <? if (!$CFG->htmleditor) {
+  <?php  if (!$CFG->htmleditor) {
        print_string("htmleditordisabledadmin");
    } else if (!$USER->htmleditor) {
        print_string("htmleditordisabled");
