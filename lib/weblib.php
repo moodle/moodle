@@ -46,13 +46,13 @@ $ALLOWED_TAGS = "<p><br><b><i><u><font><table><tbody><span><div><tr><td><ol><ul>
 
 /// Functions
 
-function s($var) {
+function s($var="") {
 /// returns $var with HTML characters (like "<", ">", etc.) properly quoted,
 
     return htmlSpecialChars(stripslashes_safe($var));
 }
 
-function p($var) {
+function p($var="") {
 /// prints $var with HTML characters (like "<", ">", etc.) properly quoted,
 
     echo htmlSpecialChars(stripslashes_safe($var));
@@ -379,13 +379,10 @@ function validate_email ($address) {
 }
 
 function detect_munged_arguments($string) {
-    if (ereg("\.\.", $string)) { // check for parent URLs
+    if (ereg('\.\.', $string)) { // check for parent URLs
         return true;
     }
-    if (ereg("\|", $string)) {  // check for pipes
-        return true;
-    }
-    if (ereg("\'", $string)) {  // check for backquotes
+    if (ereg('[\|\`]', $string)) {  // check for other bad characters
         return true;
     }
     return false;
