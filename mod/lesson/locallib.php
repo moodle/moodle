@@ -916,10 +916,12 @@ function lesson_print_tree_link_menu($page, $id, $showpages=false) {
 	$title=$page->title;  //CDC Chris Berri took out parsing of title in left menu on 6/11
 	$link="id=$id&amp;action=navigation&amp;pageid=".$page->id;
 	
-	if($page->id == $_REQUEST['pageid']) { 
-		$close=true; 
-		$output.="<strong>"; 
-	} 
+	if (isset($_REQUEST['pageid'])) {
+		if($page->id == $_REQUEST['pageid']) { 
+			$close=true; 
+			$output.="<strong>"; 
+		} 
+	}
 	
 	$output .= "<li><a href=\"view.php?id=$id&amp;action=navigation&amp;pageid=$page->id\">".$title."</a></li>\n"; 
 	
@@ -1016,77 +1018,77 @@ function lesson_calculate_ongoing_score($lesson, $userid, $retries, $return=fals
 			}
 		}
 		$nviewed = count($temp); // this counts number of Questions the user viewed
-		
-		$output->correct = $ncorrect;
-		$output->viewed = $nviewed;
-		print_simple_box(get_string("ongoingnormal", "lesson", $output), "center");
+		$thegrade = intval(100 * $ncorrect / $nviewed);
+
+		if ($return) {
+			return $thegrade;
+		} else {
+			$output->correct = $ncorrect;
+			$output->viewed = $nviewed;
+			print_simple_box(get_string("ongoingnormal", "lesson", $output), "center");
+		}
 
 	} else {
 		$score = 0;
-		$currenthigh = 0;
+		$essayquestions = 0;
+		$essayquestionpoints = 0;
+		$bestscore = 0;
+		$thegrade = 0;
+
 		if ($useranswers = get_records_select("lesson_attempts",  "lessonid = $lesson->id AND 
 				userid = $userid AND retry = $retries", "timeseen")) {
-
+			// group each try with its page
 			foreach ($useranswers as $useranswer) {
-				if (@!array_key_exists($useranswer->pageid, $temp)) {
-					$temp[$useranswer->pageid] = array($useranswer->answerid, 1);
+				$attemptset[$useranswer->pageid][] = $useranswer;								
+			}
+			
+			$pageids = array_keys($attemptset);
+			$pageids = implode(",", $pageids);
+			
+			// get only the pages and their answers that the user answered
+			$answeredpages = get_records_select("lesson_pages", "lessonid = $lesson->id AND id IN($pageids)");
+			$pageanswers = get_records_select("lesson_answers", "lessonid = $lesson->id AND pageid IN($pageids)");
+
+			foreach ($attemptset as $attempts) {
+				if(count($attempts) > $lesson->maxattempts) { // if there are more tries than the max that is allowed, grab the last "legal" attempt
+					$attempt = $attempts[$lesson->maxattempts - 1];
 				} else {
-					if ($temp[$useranswer->pageid][1] < $lesson->maxattempts) {
-						$n = $temp[$useranswer->pageid][1] + 1;
-						$temp[$useranswer->pageid] = array($useranswer->answerid, $n);
-					}
+					// else, user attempted the question less than the max, so grab the last one
+					$attempt = end($attempts);
+				}
+				// if essay question, handle it, otherwise add to score
+				if ($answeredpages[$attempt->pageid]->qtype == LESSON_ESSAY) {
+					$essayinfo = unserialize($attempt->useranswer);
+					$score += $essayinfo->score;
+					$essayquestions++;
+					$essayquestionpoints += $pageanswers[$attempt->answerid]->score;
+				} else {
+					$score += $pageanswers[$attempt->answerid]->score;
 				}
 			}
-			if ($answervalues = get_records_select("lesson_answers",  "lessonid = $lesson->id")) {
-				if ($pages = get_records_select("lesson_pages", "lessonid = $lesson->id")) {
-					foreach ($pages as $page) {
-						$questions[$page->id] = $page->qtype;
+			$bestscores = array();
+			// find the highest possible score per page
+			foreach ($pageanswers as $pageanswer) {
+				if(isset($bestscores[$pageanswer->pageid])) {
+					if ($bestscores[$pageanswer->pageid] < $pageanswer->score) {
+						$bestscores[$pageanswer->pageid] = $pageanswer->score;
 					}
 				} else {
-					$questions = array();
+					$bestscores[$pageanswer->pageid] = $pageanswer->score;
 				}
-				$currenthighscore = array();
-				foreach ($answervalues as $answervalue) {
-					if (array_key_exists($answervalue->pageid, $temp)) {
-						if ($temp[$answervalue->pageid][0] == $answervalue->id && $questions[$answervalue->pageid] != LESSON_ESSAY) {
-							$score = $score + $answervalue->score;
-							if (isset($currenthighscore[$answervalue->pageid])) {
-								if ($currenthighscore[$answervalue->pageid] < $answervalue->score) {
-									$currenthighscore[$answervalue->pageid] = $answervalue->score;
-								}
-							} else {
-								$currenthighscore[$answervalue->pageid] = $answervalue->score;
-							}
-						} elseif ($questions[$answervalue->pageid] != LESSON_ESSAY) {
-							if (isset($currenthighscore[$answervalue->pageid])) {
-								if ($currenthighscore[$answervalue->pageid] < $answervalue->score) {
-									$currenthighscore[$answervalue->pageid] = $answervalue->score;
-								}
-							} else {
-								$currenthighscore[$answervalue->pageid] = $answervalue->score;
-							}
-						}
-					}
-				}
-				// add up the current high score
-				foreach ($currenthighscore as $value) {
-					$currenthigh += $value;
-				}
-			} else {
-				error("Error: Could not find answers!");
 			}
+			
+			$bestscore = array_sum($bestscores);
+			$thegrade = intval(100 * $score / $bestscore);
 		}
-		if ($score > $lesson->grade) {
-			$score = $lesson->grade;
-		} elseif ($score < 0) {
-			$score = 0;
-		}
+			
+		
 		if ($return) {
-			return $score;
+			return $thegrade;
 		} else {
-			$ongoingoutput->grade = $lesson->grade;
+			// not taking into account essay questions... may want to?
 			$ongoingoutput->score = $score;
-			$ongoingoutput->currenthigh = $currenthigh;
+			$ongoingoutput->currenthigh = $bestscore;
 			print_simple_box(get_string("ongoingcustom", "lesson", $ongoingoutput), "center");
 		}
 	}
