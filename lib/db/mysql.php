@@ -348,9 +348,19 @@ function main_upgrade($oldversion=0) {
     }
 
     if ($oldversion < 2003042600) {
-        /// Some more indexes - we need al the help we can get on the logs
-        execute_sql(" ALTER TABLE `{$CFG->prefix}log` ADD INDEX(module) ");
-        execute_sql(" ALTER TABLE `{$CFG->prefix}log` ADD INDEX(action) ");
+        /// Some more indexes - we need all the help we can get on the logs
+        //execute_sql(" ALTER TABLE `{$CFG->prefix}log` ADD INDEX(module) ");
+        //execute_sql(" ALTER TABLE `{$CFG->prefix}log` ADD INDEX(action) ");
+    }
+
+    if ($oldversion < 2003042700) {
+        /// Changing to multiple indexes
+        execute_sql(" ALTER TABLE `{$CFG->prefix}log` DROP INDEX module ", false);
+        execute_sql(" ALTER TABLE `{$CFG->prefix}log` DROP INDEX action ", false);
+        execute_sql(" ALTER TABLE `{$CFG->prefix}log` DROP INDEX course ", false);
+        execute_sql(" ALTER TABLE `{$CFG->prefix}log` DROP INDEX userid ", false);
+        execute_sql(" ALTER TABLE `{$CFG->prefix}log` ADD INDEX coursemoduleaction (course,module,action) ");
+        execute_sql(" ALTER TABLE `{$CFG->prefix}log` ADD INDEX courseuserid (course,userid) ");
     }
 
     return $result;
