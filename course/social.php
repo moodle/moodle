@@ -11,7 +11,7 @@
     <TD WIDTH="15%" VALIGN="TOP">
       <? 
       //if ($news = get_course_news_forum($course->id)) {
-          //forum_latest_topics($news->id, 5, "minimal", "DESC", false);
+          //print_forum_latest_topics($news->id, 5, "minimal", "DESC", false);
       //}
 
       //echo "<BR><BR>";
@@ -93,7 +93,7 @@
 
       <? 
           if ($social = get_course_social_forum($course->id)) {
-              forum_latest_topics($social->id, 10, "plain", "DESC", false);
+              print_forum_latest_topics($social->id, 10, "plain", "DESC", false);
           } else {
               error("Could not find or create a social forum here");
           }

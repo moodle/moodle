@@ -193,7 +193,7 @@
         print_simple_box("Latest News", $align="CENTER", $width="100%", $color="$THEME->cellheading");
         print_simple_box_start("CENTER", "100%", "#FFFFFF", 3, 0);
         echo "<FONT SIZE=1>";
-        forum_latest_topics($news->id, 5, "minimal", "DESC", false);
+        print_forum_latest_topics($news->id, 5, "minimal", "DESC", false);
         echo "</FONT>";
         print_simple_box_end();
     }

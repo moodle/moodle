@@ -87,7 +87,7 @@
              }
              print_simple_box("$headertext", $align="CENTER", $width="100%", $color="$THEME->cellheading");
              echo "<IMG HEIGHT=8 SRC=\"pix/spacer.gif\" ALT=\"\"><BR>";
-             forum_latest_topics($newsforum->id, $site->format);
+             print_forum_latest_topics($newsforum->id, $site->format);
          }
       ?>
 

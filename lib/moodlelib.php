@@ -197,7 +197,7 @@ function update_module_icon($moduleid) {
     global $CFG;
 
     if (isteacher($courseid)) {
-        return "<A TITLE=\"Edit this activity\" HREF=\"$CFG->wwwroot/course/mod.php?update=$moduleid\" TARGET=_top><IMG 
+        return "<A TITLE=\"Edit this activity\" HREF=\"$CFG->wwwroot/course/mod.php?update=$moduleid&return=true\" TARGET=_top><IMG 
                 SRC=\"$CFG->wwwroot/pix/i/edit.gif\" ALIGN=right BORDER=0></A>";
     }
 }

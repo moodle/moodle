@@ -26,11 +26,38 @@ function forum_unsubscribe($user, $forum) {
 }
 
 
-function get_all_topics($forum="0", $forum_sort="DESC") {
+function user_has_posted_discussion($forumid, $userid) {
+    if ($topics = get_all_topics($forumid, "DESC", $userid)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function user_can_post_discussion($forum) {
+// $forum is an object
+    global $USER;
+
+    if ($forum->type == "eachuser") {
+        return (! user_has_posted_discussion($forum->id, $USER->id));
+    } else if (isteacher($forum->course)) {
+        return true;
+    } else {
+        return $forum->open;
+    }
+}
+
+
+function get_all_topics($forum="0", $forum_sort="DESC", $user=0) {
+    if ($user) {
+        $userselect = " AND u.id = '$user' ";
+    } else {
+        $userselect = "";
+    }
     return get_records_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture, u.id as userid
                             FROM discuss d, discuss_posts p, user u 
                             WHERE d.forum = '$forum' AND p.discuss = d.id AND 
-                                  p.parent= 0 AND p.user = u.id
+                                  p.parent= 0 AND p.user = u.id $userselect
                             ORDER BY p.created $forum_sort");
 }
 
@@ -87,7 +114,7 @@ function get_course_discussion_forum($courseid) {
 }
 
 
-function forum_latest_topics($forum_id=0, $forum_numtopics=5, $forum_style="plain", $forum_sort="DESC") {
+function print_forum_latest_topics($forum_id=0, $forum_numtopics=5, $forum_style="plain", $forum_sort="DESC") {
     global $CFG, $USER;
     
     if ($forum_id) {
@@ -112,7 +139,7 @@ function forum_latest_topics($forum_id=0, $forum_numtopics=5, $forum_style="plai
     }
 
     if (! $topics = get_all_topics($forum->id, $forum_sort) ) {
-        echo "<P><B>There are no discussion topics yet in this forum.</B></P>";
+        echo "<P ALIGN=CENTER><B>There are no discussion topics yet in this forum.</B></P>";
 
     } else {
 
@@ -147,7 +174,7 @@ function forum_latest_topics($forum_id=0, $forum_numtopics=5, $forum_style="plai
             }
         }
     }
-    if ($forum->open || $USER->editing) {
+    if (user_can_post_discussion($forum)) {
         echo "<P ALIGN=right>";
         echo "<A HREF=\"$CFG->wwwroot/mod/discuss/post.php?forum=$forum->id\">Add a new topic...</A>";
         echo "</P>";

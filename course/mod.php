@@ -63,10 +63,19 @@
 
         }
 
-        redirect("view.php?id=$mod->course");
+        if ($SESSION->returnpage) {
+            $return = $SESSION->returnpage;
+            unset($SESSION->returnpage);
+            redirect($return);
+        } else {
+            redirect("view.php?id=$mod->course");
+        }
         exit;
     }
 
+    if (isset($return)) {  
+        $SESSION->returnpage = $HTTP_REFERER;
+    }
 
     if (isset($move)) {  
 
