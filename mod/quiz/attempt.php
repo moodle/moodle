@@ -191,7 +191,47 @@
 
     echo "<br />";
 
-    if (! quiz_print_quiz_questions($quiz)) {
+    $result = NULL;     // Default
+    $questions = NULL;  // Default
+    if ($quiz->eachattemptbuildsonthelast) {
+        $latestfinishedattempt->attempt = 0;
+        foreach ($attempts as $attempt) {
+            if ($attempt->timefinish
+                && $attempt->attempt > $latestfinishedattempt->attempt)
+            {
+                $latestfinishedattempt = $attempt;
+            }
+        }
+        if ($latestfinishedattempt->attempt > 0
+            and $questions =
+                    quiz_get_attempt_responses($latestfinishedattempt))
+        {
+            // An previous attempt to continue on is found:
+            quiz_remove_unwanted_questions($questions, $quiz); // In case the quiz has been changed
+
+            if (!($result = quiz_grade_attempt_results($quiz, $questions))) {
+                // No results, reset to defaults:
+                $questions = NULL;
+                $result = NULL;
+
+            } else {
+                // We're on, latest attempt responses are to be included.
+                // In order to have this accomplished by
+                // the method quiz_print_quiz_questions we need to
+                // temporarilly change some of the $quiz attributes
+                // and remove some of the information from result.
+
+                $quiz->correctanswers = false; // Not a good idea to show them, huh?
+                $result->feedback = array(); // Not to be printed
+                $result->attemptbuildsonthelast = true;
+            }
+            
+        } else {
+            // No latest attempt, or latest attempt was empty - Reset to defaults
+            $questions = NULL;
+        }
+    }
+    if (! quiz_print_quiz_questions($quiz, $result, $questions)) {
         print_continue("view.php?id=$cm->id");
     }
 

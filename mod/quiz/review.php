@@ -83,7 +83,7 @@
     print_heading($quiz->name);
 
 
-    if (! $questions = quiz_get_attempt_responses($attempt, $quiz)) {
+    if (! $questions = quiz_get_attempt_responses($attempt)) {
         error("Could not reconstruct quiz results for attempt $attempt->id!");
     }
 

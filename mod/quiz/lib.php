@@ -338,7 +338,7 @@ function quiz_get_answers($question, $answerids=NULL) {
 }
 
 
-function quiz_get_attempt_responses($attempt, $quiz) {
+function quiz_get_attempt_responses($attempt) {
 // Given an attempt object, this function gets all the 
 // stored responses and returns them in a format suitable
 // for regrading using quiz_grade_attempt_results()
@@ -598,7 +598,7 @@ function quiz_print_question($number, $question, $grade, $courseid,
                $answer = $answers[$answerid];
                $qnumchar = chr(ord('a') + $key);
 
-               if (empty($feedback) or empty($response[$answerid])) {
+               if (empty($response[$answerid])) {
                    $checked = "";
                } else {
                    $checked = "CHECKED";
@@ -990,7 +990,7 @@ function quiz_print_quiz_questions($quiz, $results=NULL, $questions=NULL, $shuff
         echo "<br \>";
     }
 
-    if (empty($results)) {
+    if (empty($results) || $results->attemptbuildsonthelast) {
         if (!empty($quiz->shufflequestions)) {  // Things have been mixed up, so pass the question order
             $shuffleorder = implode(',', $questionorder);
             echo "<input type=hidden name=shuffleorder value=\"$shuffleorder\">\n";
@@ -2234,7 +2234,7 @@ function quiz_save_question_options($question) {
 function quiz_remove_unwanted_questions(&$questions, $quiz) {
 /// Given an array of questions, and a list of question IDs,
 /// this function removes unwanted questions from the array
-/// Used by review.php to counter changing quizzes
+/// Used by review.php and attempt.php to counter changing quizzes
 
     $quizquestions = array();
     $quizids = explode(",", $quiz->questions);

@@ -19,6 +19,9 @@
     if (!isset($form->attempts)) {
         $form->attempts = 0;
     }
+    if (!isset($form->eachattemptbuildsonthelast)) {
+        $form->eachattemptbuildsonthelast = 0;
+    }
     if (!isset($form->grademethod)) {
         $form->grademethod = "";
     }
@@ -128,6 +131,21 @@
         choose_from_menu($options, "attempts", "$form->attempts", "");
         helpbutton("attempts", get_string("attemptsallowed","quiz"), "quiz");
      ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><b><?php print_string("eachattemptbuildsonthelast", "quiz") ?>:</b></p></td>
+    <td>
+    <?php
+        $options = array();
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu($options, "eachattemptbuildsonthelast",
+                         "$form->eachattemptbuildsonthelast", "");
+        helpbutton("eachattemptbuildsonthelast",
+                   get_string("eachattemptbuildsonthelast", "quiz"),
+                   "quiz");
+    ?>
     </td>
 </tr>
 <tr valign=top>
