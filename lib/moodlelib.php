@@ -771,11 +771,31 @@ function send_confirmation_email($user) {
     $data->admin = "$from->firstname $from->lastname ($from->email)";
 
     $message = get_string("emailconfirmation", "", $data);
-    $subject = "$site->fullname account confirmation";
+    $subject = get_string("emailconfirmationsubject", "", $site->fullname);
 
     return email_to_user($user, $from, $subject, $message);
 
 }
+
+function send_password_change_confirmation_email($user) {
+
+    global $CFG;
+
+    $site = get_site();
+    $from = get_admin();
+
+    $data->firstname = $user->firstname;
+    $data->sitename = $site->fullname;
+    $data->link = "$CFG->wwwroot/login/forgot_password.php?p=$user->secret&s=$user->username";
+    $data->admin = "$from->firstname $from->lastname ($from->email)";
+
+    $message = get_string("emailpasswordconfirmation", "", $data);
+    $subject = get_string("emailpasswordconfirmationsubject", "", $site->fullname);
+
+    return email_to_user($user, $from, $subject, $message);
+
+}
+
 
 
 

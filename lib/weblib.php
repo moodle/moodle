@@ -715,7 +715,7 @@ function print_navigation ($navigation) {
        if (! $site = get_site()) {
            $site->shortname = get_string("home");;
        }
-       echo "<A TARGET=\"{$CFG->framename}\" HREF=\"$CFG->wwwroot/\">$site->shortname</A> -> $navigation";
+       echo "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/\">$site->shortname</a> -> $navigation";
    }
 }
 
@@ -725,9 +725,9 @@ function print_heading($text, $align="CENTER", $size=3) {
 
 function print_heading_with_help($text, $helppage, $module="moodle") {
 // Centered heading with attached help button (same title text)
-    echo "<P ALIGN=\"CENTER\"><FONT SIZE=\"3\"><B>".stripslashes_safe($text);
+    echo "<p align=\"center\"><font size=\"3\"><b>".stripslashes_safe($text);
     helpbutton($helppage, $text, $module);
-    echo "</B></FONT></P>";
+    echo "</b></font></p>";
 }
     
 function print_continue($link) {
@@ -736,7 +736,7 @@ function print_continue($link) {
         $link = $_SERVER["HTTP_REFERER"];
     }
 
-    print_heading("<A HREF=\"$link\">".get_string("continue")."</A>");
+    print_heading("<a href=\"$link\">".get_string("continue")."</a>");
 }
 
 
@@ -1158,9 +1158,9 @@ function notice ($message, $link="") {
         }
     }
 
-    echo "<BR>";
-    print_simple_box($message, "center", "", "$THEME->cellheading");
-    print_heading("<A HREF=\"$link\">".get_string("continue")."</A>");
+    echo "<br>";
+    print_simple_box($message, "center", "50%", "$THEME->cellheading", "", "noticebox");
+    print_heading("<a href=\"$link\">".get_string("continue")."</a>");
     print_footer(get_site());
     die;
 }
@@ -1168,13 +1168,13 @@ function notice ($message, $link="") {
 function notice_yesno ($message, $linkyes, $linkno) {
     global $THEME;
 
-    print_simple_box_start("center", "", "$THEME->cellheading");
-    echo "<P ALIGN=CENTER><FONT SIZE=3>$message</FONT></P>";
-    echo "<P ALIGN=CENTER><FONT SIZE=3><B>";
-    echo "<A HREF=\"$linkyes\">".get_string("yes")."</A>";
+    print_simple_box_start("center", "60%", "$THEME->cellheading");
+    echo "<p align=center><font size=3>$message</font></p>";
+    echo "<p align=center><font size=3><b>";
+    echo "<a href=\"$linkyes\">".get_string("yes")."</a>";
     echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-    echo "<A HREF=\"$linkno\">".get_string("no")."</A>";
-    echo "</B></FONT></P>";
+    echo "<a href=\"$linkno\">".get_string("no")."</a>";
+    echo "</b></font></p>";
     print_simple_box_end();
 }
 

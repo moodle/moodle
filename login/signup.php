@@ -5,8 +5,10 @@
     require_once("../auth/$CFG->auth/lib.php");
 
     if ($user = data_submitted()) {
+
         validate_form($user, $err);
         $user->username= trim(moodle_strtolower($user->username));
+
         if (count((array)$err) == 0) {
             $plainpass = $user->password;
             $user->password = md5($user->password);
@@ -27,8 +29,6 @@
             if (! ($user->id = insert_record("user", $user)) ) {
                 error("Could not add your record to the database!");
             }
-
-           
 
             if (! send_confirmation_email($user)) {
                 error("Tried to send you an email but failed!");

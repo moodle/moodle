@@ -151,8 +151,7 @@ $string['emailconfirmation'] = "Hi \$a->firstname,
 A new account has been requested at '\$a->sitename'
 using your email address.
 
-To confirm your new account, please go to the
-following web address:
+To confirm your new account, please go to this web address:
 
   \$a->link
 
@@ -161,15 +160,40 @@ which you can just click on.  If that doesn't work,
 then cut and paste the address into the address
 line at the top of your web browser window.
 
-Cheers from the '\$a->sitename' administrator,
+If you need help, please contact the site administrator,
 \$a->admin";
-
+$string['emailconfirmationsubject'] = "\$a: account confirmation";
 $string['emaildisplay'] = "Email display";
 $string['emaildisplayno'] = "Hide my real email address from everyone";
 $string['emaildisplayyes'] = "Allow everyone to see my email address";
 $string['emaildisplaycourse'] = "Allow only other course members to see my email address";
 $string['emailexists'] = "This email address is already registered.";
 $string['emailmustbereal'] = "Note: your email address must be a real one";
+$string['emailpasswordconfirmation'] = "Hi \$a->firstname,
+
+Someone (probably you) has requested a new password for your 
+account on '\$a->sitename'.
+
+To confirm this and have a new password sent to you via email,
+go to the following web address:
+
+  \$a->link
+
+In most mail programs, this should appear as a blue link
+which you can just click on.  If that doesn't work,
+then cut and paste the address into the address
+line at the top of your web browser window.
+
+If you need help, please contact the site administrator,
+\$a->admin";
+$string['emailpasswordconfirmationsubject'] = "\$a: change password confirmation";
+$string['emailpasswordconfirmsent'] = "An email should have been sent to your address at <b>\$a</b>.
+<p>It contains easy instructions to confirm and complete this password change.
+If you continue to have difficulty, contact the site administrator.";
+$string['emailpasswordsent'] = "Thank you for confirming the change of password.
+<p>An email containing your new password has been sent to your address at <b>\$a->email</b>.
+<p>The new password was automatically generated - you might like to
+<a href=\$a->link>change your password</a> to something easier to remember.";
 $string['enrolmentkey'] = "Enrolment key";
 $string['enrolmentkeyfrom'] = "This course requires an 'enrolment key' - a one-time<BR>
 password that you should have got from \$a";
@@ -431,6 +455,7 @@ $string['outline'] = "Outline";
 $string['participants'] = "Participants";
 $string['password'] = "Password";
 $string['passwordchanged'] = "Password has been changed";
+$string['passwordconfirmchange'] = "Confirm password change";
 $string['passwordsdiffer'] = "These passwords do not match";
 $string['passwordrecovery'] = "Yes, help me log in";
 $string['passwordsent'] = "Password has been sent";
