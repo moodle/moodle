@@ -6,7 +6,7 @@ $string['actualclass'] = 'Classe actuelle';
 $string['actualstudent'] = '$a actuel';
 $string['allquestions'] = 'Toutes les questions dans l\'ordre, tous les étudiants';
 $string['allscales'] = 'Tous les barèmes, tous les étudiants';
-$string['alreadysubmitted'] = 'Vous avez déjà répondu à ce questionnaire';
+$string['alreadysubmitted'] = 'Vous avez déjà répondu à cette consultation';
 $string['analysisof'] = 'Analyse de $a';
 $string['answers'] = 'Réponses';
 $string['attls1'] = 'Quand j\'évalue ce que dit quelqu\'un, je prête attention à la qualité de l\'argumentation, et non à la personnalité de qui la présente.';
@@ -49,7 +49,7 @@ $string['attls8'] = 'Je suis toujours très intéressé à savoir pourquoi les gens 
 $string['attls8short'] = 'savoir pourquoi les gens croient';
 $string['attls9'] = 'Je discute souvent avec les auteurs de livres que je lis, essayant de comprendre pourquoi ils ont tort.';
 $string['attls9short'] = 'discuter avec des auteurs';
-$string['attlsintro'] = 'Le but de ce questionnaire est de nous aider à évaluer votre état d\'esprit vis-à-vis de la pensée et de l\'apprentissage.
+$string['attlsintro'] = 'Le but de cette consultation est de nous aider à évaluer votre état d\'esprit vis-à-vis de la pensée et de l\'apprentissage.
 
 Il n\'y a pas de « bonne » ou de « mauvaise » réponse ; seule votre opinion nous intéresse. Soyez assuré que vos réponses seront traitées avec le maximum de confidentialité, et qu\'elles n\'auront aucun effet sur votre note finale.';
 $string['attlsm1'] = 'État d\'esprit envers la pensée et l\'étude';
@@ -114,7 +114,7 @@ $string['colles8'] = 'j\'ai un regard critique sur les idées développées dans le
 $string['colles8short'] = 'j\'ai un regard critique sur les documents';
 $string['colles9'] = 'J\'explique mes idées aux autres étudiants';
 $string['colles9short'] = 'J\'explique mes idées';
-$string['collesaintro'] = 'L\'objet de ce questionnaire est de nous aider à comprendre à quel point ce cours en ligne vous a permis d\'apprendre.
+$string['collesaintro'] = 'L\'objet de cette consultation est de nous aider à comprendre à quel point ce cours en ligne vous a permis d\'apprendre.
 
 Chacune des 24 affirmations ci-dessous vous interroge sur votre expérience dans ce cours.
 
@@ -124,7 +124,7 @@ Vos réponses soigneusement réfléchies nous aideront à améliorer la façon de prés
 
 Nous vous remercions de votre collaboration.';
 $string['collesaname'] = 'COLLES (réel)';
-$string['collesapintro'] = 'L\'objet de ce questionnaire est de nous aider à comprendre à quel point ce cours en ligne vous a permis d\'apprendre.
+$string['collesapintro'] = 'L\'objet de cette consultation est de nous aider à comprendre à quel point ce cours en ligne vous a permis d\'apprendre.
 
 Chacune des 24 affirmations ci-dessous vous demande de comparer votre expérience <b>idéale</b> (désirée) et <b>réelle</b> (vécue) dans ce cours.
 
@@ -147,7 +147,7 @@ $string['collesm5short'] = 'Assistance des pairs';
 $string['collesm6'] = 'Interprétation';
 $string['collesm6short'] = 'Interprétation';
 $string['collesmintro'] = 'Dans ce cours en ligne ...';
-$string['collespintro'] = 'L\'objet de ce questionnaire est de nous aider à comprendre à quel point ce cours en ligne vous a permis d\'apprendre.
+$string['collespintro'] = 'L\'objet de cette consultation est de nous aider à comprendre à quel point ce cours en ligne vous a permis d\'apprendre.
 
 Chacune des 24 affirmations ci-dessous vous interroge sur votre expérience <b>idéale</b> (désirée) dans ce cours.
 
@@ -162,30 +162,30 @@ $string['download'] = 'Télécharger';
 $string['downloadexcel'] = 'Télécharger les données en format Excel';
 $string['downloadinfo'] = 'Il vous est possible de télécharger l\'ensemble des données brutes de ce sondage dans un format utilisable par un tableur, SPSS ou d\'autres programmes.';
 $string['downloadtext'] = 'Télécharger les données dans un format texte';
-$string['editingasurvey'] = 'Modifier un questionnaire';
-$string['guestsnotallowed'] = 'Les utilisateurs anonymes ne peuvent pas envoyer de questionnaires';
-$string['helpsurveys'] = 'Aide sur les différents types de questionnaire';
-$string['howlong'] = 'Combien de temps avez-vous mis pour remplir ce questionnaire ?';
+$string['editingasurvey'] = 'Modifier une consultation';
+$string['guestsnotallowed'] = 'Les utilisateurs anonymes ne peuvent pas participer à des consultations';
+$string['helpsurveys'] = 'Aide sur les différents types de consultation';
+$string['howlong'] = 'Combien de temps avez-vous mis pour répondre à cette consultation ?';
 $string['howlongoptions'] = 'Moins d\'1 min,1-2 min,2-3 min,3-4 min,4-5 min,5-10 min,plus de 10 min';
 $string['ifoundthat'] = 'J\'ai trouvé que';
 $string['introtext'] = 'Texte d\'introduction';
 $string['ipreferthat'] = 'J\'aime mieux quand';
-$string['modulename'] = 'Questionnaire';
-$string['modulenameplural'] = 'Questionnaires';
+$string['modulename'] = 'Consultation pŽdagogique';
+$string['modulenameplural'] = 'Consultation pŽdagogiques';
 $string['name'] = 'Nom';
-$string['newsurveyresponses'] = 'Nouvelles réponses au questionnaire';
-$string['nobodyyet'] = 'Personne n\'a encore répondu à ce questionnaire';
+$string['newsurveyresponses'] = 'Nouvelles réponses à la consultation';
+$string['nobodyyet'] = 'Personne n\'a encore répondu à cette consultation';
 $string['notdone'] = 'Pas encore répondu';
 $string['notes'] = 'Votre analyse et vos remarques personnelles';
 $string['othercomments'] = 'Avez-vous d\'autres commentaires à faire ?';
-$string['peoplecompleted'] = '$a personnes ont répondu à ce questionnaire pour l\'instant';
+$string['peoplecompleted'] = '$a personnes ont pour l\'instant répondu à cette consultation';
 $string['preferred'] = 'Préféré';
 $string['preferredclass'] = 'Classe préférée';
 $string['preferredstudent'] = '$a préféré';
 $string['question'] = 'Question';
 $string['questions'] = 'Questions';
 $string['questionsnotanswered'] = 'Certaines questions à choix multiples n\'ont pas reçu de réponse.';
-$string['report'] = 'Rapport des questionnaires';
+$string['report'] = 'Rapport des consultations';
 $string['savednotes'] = 'Vos notes ont été enregistrées';
 $string['scaleagree5'] = 'Pas du tout d\'accord,Pas tout à fait d\'accord,Neutre,Assez d\'accord,Tout à fait d\'accord';
 $string['scales'] = 'Barèmes';
@@ -193,12 +193,12 @@ $string['scaletimes5'] = 'Presque jamais,Rarement,Parfois,Souvent,Presque toujou
 $string['seemoredetail'] = 'Cliquer ici pour avoir plus de détail';
 $string['selectedquestions'] = 'Question choisies dans un barème, tous les étudiants';
 $string['summary'] = 'Résumé';
-$string['surveycompleted'] = 'Vous avez complètement rempli ce questionnaire. Le graphique ci-dessous montre un résumé de vos résultats comparés aux moyennes de la classe.';
-$string['surveyname'] = 'Nom du questionnaire';
-$string['surveysaved'] = 'Questionnaire enregistré';
-$string['surveytype'] = 'Type de questionnaire';
-$string['thanksforanswers'] = 'Merci d\'avoir répondu à ce questionnaire, $a';
+$string['surveycompleted'] = 'Vous avez complètement répondu à cette consultation. Le graphique ci-dessous montre un résumé de vos résultats comparés aux moyennes de la classe.';
+$string['surveyname'] = 'Nom de la consultation';
+$string['surveysaved'] = 'Consultation enregistrée';
+$string['surveytype'] = 'Type de consultation';
+$string['thanksforanswers'] = 'Merci d\'avoir répondu à cette consultation, $a';
 $string['time'] = 'Temps';
-$string['viewsurveyresponses'] = 'Consulter les réponses du questionnaire $a';
+$string['viewsurveyresponses'] = 'Afficher les réponses à la consultation $a';
 
 ?>
