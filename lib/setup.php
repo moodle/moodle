@@ -115,27 +115,27 @@
     $smarty->compile_dir = "$CFG->dataroot/cache";
 
     if(empty($CFG->respectsessionsettings)) {
-    
-    	// Some distros disable GC by setting probability to 0
-    	// overriding the PHP default of 1 
-    	// (gc_probability is divided by gc_divisor, which defaults to 1000)
+     
+        // Some distros disable GC by setting probability to 0
+        // overriding the PHP default of 1 
+        // (gc_probability is divided by gc_divisor, which defaults to 1000)
         if (ini_get('session.gc_probability') == 0) {
-        	ini_set('session.gc_probability', 1);
+            ini_set('session.gc_probability', 1);
         }
         
-		/// Set session timeouts
-	    if (!empty($CFG->sessiontimeout)) {
-    	    ini_set('session.gc_maxlifetime', $CFG->sessiontimeout);
-    	}
+        /// Set session timeouts
+        if (!empty($CFG->sessiontimeout)) {
+            ini_set('session.gc_maxlifetime', $CFG->sessiontimeout);
+        }
 
-		/// Set custom session path
-    	if (!file_exists("$CFG->dataroot/sessions")) {
-        	make_upload_directory('sessions');
-    	}
-    	ini_set('session.save_path', "$CFG->dataroot/sessions");
+        /// Set custom session path
+        if (!file_exists("$CFG->dataroot/sessions")) {
+            make_upload_directory('sessions');
+        }
+        ini_set('session.save_path', "$CFG->dataroot/sessions");
 
-	} // end of PHP session settings override
-	
+    } // end of PHP session settings override
+    
 /// Set sessioncookie variable if it isn't already
     if (!isset($CFG->sessioncookie)) {
         $CFG->sessioncookie = '';
