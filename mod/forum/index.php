@@ -90,6 +90,7 @@
     
                 $forum->intro = forum_shorten_post($forum->intro);
                 replace_smilies($forum->intro);
+                $forum->intro = "<span style=\"font-size:x-small;\">$forum->intro</span>";
     
                 if (!$forum->section) {     // forums in the "0" section => generaltable
                     $generalforums[] = $forum;
@@ -98,6 +99,9 @@
 
                 if ($forum->section != $currentsection) {
                     $printsection = $forum->section;
+                    if ($currentsection) {
+                        $learningtable->data[] = 'hr';
+                    }
                     $currentsection = $forum->section;
                 } else {
                     $printsection = "";
