@@ -260,7 +260,7 @@ function cleantext($text) {
 }
 
 
-function text_to_html($text, $smiley=true) {
+function text_to_html($text, $smiley=true, $para=true) {
 // Given plain text, makes it into HTML as nicely as possible.
 
     global $CFG;
@@ -291,7 +291,11 @@ function text_to_html($text, $smiley=true) {
         $text = ereg_replace("B-)", "<IMG ALT=\"{cool}\" SRC=\"$CFG->wwwroot/pix/s/cool.gif\">", $text);
     }
 
-    return "<P>".$text."</P>";
+    if ($para) {
+        return "<P>".$text."</P>";
+    } else {
+        return $text;
+    }
 }
 
 function highlight($needle, $haystack) {
