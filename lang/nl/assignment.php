@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.2 development (2003092900)
+      // assignment.php - created with Moodle 1.2 development (2003102200)
 
 
 $string['allowresubmit'] = "Sta  meerdere malen insturen toe";
@@ -15,6 +15,7 @@ $string['assignmenttype'] = "Soort opdracht";
 $string['configmaxbytes'] = "Standaard maximum grootte voor alle opdrachten op de site (afhankelijk van vak limieten en andere lokale instellingen)";
 $string['description'] = "Beschrijving  ";
 $string['duedate'] = "Uiterste inleverdatum";
+$string['duedateno'] = "Geen uiterste inleverdatum";
 $string['early'] = "\$a vroeg";
 $string['failedupdatefeedback'] = "Het updaten van de feedback op de ingestuurde opdracht van gebruiker \$a is niet gelukt";
 $string['feedback'] = "Feedback";
