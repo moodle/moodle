@@ -2,13 +2,18 @@
 
     require("../config.php");
 
-    optional_variable($file, "");    // docs file to view
+    optional_variable($file, "");     // docs file to view
     optional_variable($frame, "");    // docs file to view
-    optional_variable($lang, "");    // override current language
+    optional_variable($sub, "");      // sub-section (named anchor)
+    optional_variable($lang, "");     // override current language
 
     if (!empty($lang)) {
         $SESSION->doclang = $lang;
         save_session("SESSION");
+    }
+
+    if (!empty($sub)) {
+        $sub = "#$sub";
     }
 
     if (empty($file)) {
@@ -38,6 +43,6 @@
     <FRAME NAME="top" SRC="top.php">
     <FRAMESET COLS="200,*">
         <FRAME NAME="contents" SRC="contents.php">
-        <FRAME NAME="main" SRC="index.php?file=<?PHP echo "$file"; ?>">
+        <FRAME NAME="main" SRC="index.php?file=<?PHP echo "$file$sub"; ?>">
     </FRAMESET>
 </FRAMESET>
