@@ -27,6 +27,6 @@ $string['overallrating'] = 'Note générale';
 $string['rate'] = 'Note';
 $string['saveallfeedback'] = 'Enregistrer tous mes feedbacks';
 $string['startoredit'] = 'Commencer ou modifier ma contribution';
-$string['viewallentries'] = 'Voir toutes les contribution du journal';
+$string['viewallentries'] = 'Voir toutes les contributions du journal';
 
 ?>
