@@ -1,5 +1,5 @@
 # On some PHP servers it may help if this file is copied
-# to the main moodle directory and renamed .htacess
+# to the main moodle directory and renamed .htaccess
 #
 php_value magic_quotes_gpc 1
 php_value file_uploads 1
