@@ -735,6 +735,9 @@ function usergetdate($time, $timezone=99) {
 
     if (abs($timezone) > 13) {
         $time += intval((float)date('O') * HOURSECS);
+        if(abs(date('O') > 12)) {
+            error('date("O") returns '.date('O').'!');
+        }
     }
     else {
         $time += intval((float)$timezone * HOURSECS);
