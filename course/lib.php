@@ -1033,7 +1033,7 @@ function print_side_block($heading="", $content="", $list=NULL, $icons=NULL, $fo
     if ($content) {
         echo "$content";
         if ($footer) {
-            echo "<div style=\"font-size: x-small; text-align:right;\">$footer</div>";
+            echo "<div style=\"font-size: x-small; text-align:center;\">$footer</div>";
         }
     } else {
         echo "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\">";
@@ -1049,11 +1049,13 @@ function print_side_block($heading="", $content="", $list=NULL, $icons=NULL, $fo
         }
         if ($footer) {
             echo "<tr bgcolor=\"$THEME->cellcontent2\">";
+            echo "<td class=\"sideblocklinks\" ";
             if ($icons) {
-                echo "<td class=\"sideblocklinks\" valign=\"top\" width=\"16\">&nbsp;</td>";
+                echo ' colspan="2" ';
             }
-            echo "<td class=\"sideblocklinks\"><div style=\"font-size: x-small; text-align:right;\">$footer</div></td>";
-            echo "</tr>";
+            echo '>';
+            echo "<div style=\"font-size: x-small; text-align:center;\">$footer</div>";
+            echo "</td></tr>";
         }
         echo "</table>";
     }
