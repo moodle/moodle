@@ -12,6 +12,7 @@ class quiz_default_format {
 
     var $displayerrors = true;
     var $category = NULL;
+    var $course = NULL;
     var $questionids = array();
 
 /// Importing functions
@@ -145,10 +146,11 @@ class quiz_default_format {
 // Export functions
 
 
-    function exportpreprocess($category) {
+    function exportpreprocess($category, $course) {
     /// Does any pre-processing that may be desired
 
         $this->category = $category;  // Important
+        $this->course = $course; // As is this!
 
         return true;
     }
@@ -160,7 +162,7 @@ class quiz_default_format {
 
         // create a directory for the exports (if not already existing)
         $dirname = get_string("exportfilename","quiz");
-        $courseid = $this->category->course;
+        $courseid = $this->course->id;
         $path = $CFG->dataroot.'/'.$courseid.'/'.$dirname;
         if (!is_dir($path)) {
             if (!mkdir($path, $CFG->directorypermissions)) {
