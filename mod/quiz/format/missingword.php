@@ -92,7 +92,6 @@ class quiz_file_format extends quiz_default_format {
             default:
                 $question->qtype = MULTICHOICE;
 
-                $answers = swapshuffle($answers);
                 foreach ($answers as $key => $answer) {
                     $answer = trim($answer);
                     if ($answer[0] == "=") {
