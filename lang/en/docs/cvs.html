@@ -173,9 +173,11 @@ update -dP</div>
           <li>Merge everything on the branch since the last merge, into your trunk version<br><br>
             <div class="commandline">cvs update -kk -j MOODLE_13_MERGED -j MOODLE_13_STABLE</div>
 	      </li>
-          <li>Check the merged copy back into CVS trunk version<br><br>
+          <li>Carefully watch the update logs for conflicts, and fix every file that you see with a conflict</li>
+          <li>Check the merged copy back into CVS trunk version<br>
+            <br>
             <div class="commandline">cvs commit</div>
-		 </li>
+          </li>
           <li>Go back to the branch version<br><br>
             <div class="commandline">cvs update -dPr MOODLE_13_STABLE</div>
 			</li>
@@ -206,8 +208,9 @@ update -dP</div>
           <li>Work in that branch until the feature is reasonably stable. Commit as necessary.
 		  <br><br>
             <div class="commandline">cvs commit</div></li>
-          <li>When ready, merge the whole branch into the trunk, commit it to the trunk and then abandon the branch.
-		  <br><br>
+          <li>When ready, merge the whole branch into the trunk, fix conflicts, commit it to the trunk and then abandon the branch.
+		  <br>
+		  <br>
             <div class="commandline">
             <strong>cvs update -dPA</strong><br />
             <strong>cvs update -kk -j <span class="style1">MOODLE_XX_WIDGET</span></strong><br />
