@@ -15,7 +15,7 @@
         error("Course ID was incorrect");
     }
 
-    if ($user->confirmed and !$user->email) {
+    if ($user->confirmed and user_not_fully_set_up($user)) {
         // Special case which can only occur when a new account 
         // has just been created by EXTERNAL authentication
         // This is the only page in Moodle that has the exception
