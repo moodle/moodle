@@ -8,7 +8,23 @@
 //29.09.2002 LDAP authentication functions v. 0.01
 //Distributed under GPL (c)Petri Asikainen 2002-2003
 
+/* README!
+Module is quite complete and  most functinality can be configured from
+configinterfave /admin/auth.php. Some of latest additions/features need to
+be configured by modifying source code.
+ 
+If you plan to use user creation feature, look function auth_user_create
+and modify it for your needs.
+You have to change all hardcoded attribute values to fit your LDAP-server.
+I write ldap-module on Novell E-directory / Linux & Solaris , 
+so all default values are for it.
 
+Any feedback is wellcome,
+
+Petri Asikainen paca@sci.fi
+
+
+*/
 function auth_user_login ($username, $password) {
 /// Returns true if the username and password work
 /// and false if they don't
