@@ -84,8 +84,8 @@
 
 /// Print the lists of existing and potential students
 
-    echo "<table cellpadding=2 cellspacing=10 align=center>";
-    echo "<tr><th width=50%>$strexistingstudents$parastudents</th><th width=50%>$strpotentialstudents</th></tr>";
+    echo "<table cellpadding=1 cellspacing=5 align=center>";
+    echo "<tr><th width=50%>$strexistingstudents$parastudents</th><td>&nbsp;</td><th width=50%>$strpotentialstudents</th></tr>";
     echo "<tr><td width=50% nowrap valign=top>";
 
 /// First, show existing students for this course
@@ -104,6 +104,7 @@
         unset($studentarray);
     }
 
+    echo "<td>&nbsp;</td>";
     echo "<td width=50% nowrap valign=top>";
 
 /// Print list of potential students
