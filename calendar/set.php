@@ -95,17 +95,20 @@
     }
 
     switch($_GET['from']) {
+        case 'event':
+            redirect(CALENDAR_URL.'event.php?action='.$_GET['action'].'&type='.$_GET['type'].'&id='.intval($_GET['id']));
+        break;
         case 'month':
-        redirect($CFG->wwwroot.'/calendar/view.php?view=month&cal_d='.$_GET['cal_d'].'&cal_m='.$_GET['cal_m'].'&cal_y='.$_GET['cal_y']);
+            redirect(CALENDAR_URL.'view.php?view=month&cal_d='.$_GET['cal_d'].'&cal_m='.$_GET['cal_m'].'&cal_y='.$_GET['cal_y']);
         break;
         case 'upcoming':
-        redirect($CFG->wwwroot.'/calendar/view.php?view=upcoming');
+            redirect(CALENDAR_URL.'view.php?view=upcoming');
         break;
         case 'day':
-        redirect($CFG->wwwroot.'/calendar/view.php?view=day&cal_d='.$_GET['cal_d'].'&cal_m='.$_GET['cal_m'].'&cal_y='.$_GET['cal_y']);
+            redirect(CALENDAR_URL.'view.php?view=day&cal_d='.$_GET['cal_d'].'&cal_m='.$_GET['cal_m'].'&cal_y='.$_GET['cal_y']);
         break;
         case 'course':
-        redirect($CFG->wwwroot.'/course/view.php?id='.intval($_GET['id']));
+            redirect(CALENDAR_URL.'view.php?id='.intval($_GET['id']));
         break;
         default:
 

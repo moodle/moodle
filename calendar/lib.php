@@ -611,11 +611,10 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL) {
     $getvars = '';
 
     switch($type) {
+        case 'event':
         case 'upcoming':
-            $getvars = '&amp;from=upcoming';
-        break;
         case 'day':
-            $getvars = '&amp;from=day';
+            $getvars = '&amp;from='.$type;
         break;
         case 'course':
             $getvars = '&amp;from=course&amp;id='.$_GET['id'];
