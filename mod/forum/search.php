@@ -37,13 +37,7 @@
 
     $searchform = forum_print_search_form($course, $search, true, "plain");
 
-    if ($search) {
-        print_header("$course->shortname: $strsearchresults", "$course->fullname",
-                 "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> -> 
-                  <A HREF=\"index.php?id=$course->id\">$strforums</A> -> 
-                  <A HREF=\"search.php?id=$course->id\">$strsearch</A> -> \"$search\"", "search.search", 
-                  "", "",  $searchform);
-    } else {
+    if (!$search) {
         print_header("$course->shortname: $strsearch", "$course->fullname",
                  "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> -> 
                   <A HREF=\"index.php?id=$course->id\">$strforums</A> -> $strsearch", "search.search",
@@ -62,17 +56,32 @@
     }
 
     if ($search) {
-     
         if (!$posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, $totalcount)) {
-            if ($page) {
-                print_heading(get_string("nomorepostscontaining", "forum", $search));
-                print_continue("search.php?id=$course->id&search=".urlencode($search));
-            } else {
-                print_heading(get_string("nopostscontaining", "forum", $search));
-            }
+            print_header("$course->shortname: $strsearchresults", "$course->fullname",
+                     "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> -> 
+                      <a href=\"index.php?id=$course->id\">$strforums</a> -> 
+                      <a href=\"search.php?id=$course->id\">$strsearch</a> -> \"$search\"", "search.search", 
+                      "", "");
+            print_heading(get_string("nopostscontaining", "forum", $search));
+
+            print_simple_box_start("center");
+            echo "<center>";
+            echo "<br />";
+            echo $searchform;
+            echo "<br /><p>";
+            print_string("searchhelp");
+            echo "</p>";
+            echo "</center>";
+            print_simple_box_end();
             print_footer($course);
             exit;
         }
+
+        print_header("$course->shortname: $strsearchresults", "$course->fullname",
+                 "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> -> 
+                  <a href=\"index.php?id=$course->id\">$strforums</a> -> 
+                  <a href=\"search.php?id=$course->id\">$strsearch</a> -> \"$search\"", "search.search", 
+                  "", "",  $searchform);
 
         print_heading("$strsearchresults: $totalcount");
 
