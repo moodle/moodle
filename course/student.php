@@ -86,10 +86,11 @@
             }
         } else if (!empty($frm->showall)) {
             unset($frm->searchtext);
+            $frm->previoussearch = 0;
         }
-
     }
 
+    $previoussearch = (!empty($frm->search) or ($frm->previoussearch == 1)) ;
 
 /// Get all existing students for this course.
     if (!$students = get_course_students($course->id, "u.firstname ASC, u.lastname ASC", "", 0, 99999,
@@ -102,31 +103,31 @@
         $studentarray[] = $student->id;
     }
     $studentlist = implode(',', $studentarray);
+    
+    unset($studentarray);
 
 
 /// Get search results excluding any users already in this course
-    if (!empty($frm->searchtext)) {
-        if ($searchusers = get_users(true, $frm->searchtext, true, $studentlist, 'firstname ASC, lastname ASC', 
-                                      '', '', 0, 99999, 'id, firstname, lastname, email')) {
-            foreach ($searchusers as $student) {
-                $studentarray[] = $student->id;
-            }
-            $studentlist = implode(',', $studentarray);
-        }
+    if (!empty($frm->searchtext) and $previoussearch) {
+        $searchusers = get_users(true, $frm->searchtext, true, $studentlist, 'firstname ASC, lastname ASC', 
+                                      '', '', 0, 99999, 'id, firstname, lastname, email');
+        $usercount = get_users(false, '', true, $studentlist);
     }
-
-    unset($studentarray);
     
-/// Get potential students for this course excluding users already in course or
-/// users in the search results
+/// If no search results then get potential students for this course excluding users already in course
     if (empty($searchusers)) {
         if (!$users = get_users(true, '', true, $studentlist, 'firstname ASC, lastname ASC', '', '', 
                                 0, 99999, 'id, firstname, lastname, email') ) {
             $users = array();
         }
+        $usercount = count($users);
     }
 
+
+    
+
     $searchtext = (isset($frm->searchtext)) ? $frm->searchtext : "";
+    $previoussearch = ($previoussearch) ? '1' : '0';
 
     print_simple_box_start("center", "", "$THEME->cellheading");
 
