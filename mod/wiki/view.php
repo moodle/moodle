@@ -312,25 +312,28 @@
     if (!empty($canedit)) {   /// Print tabs with commands for this page
         $tabstyle = ' style="padding-left: 5px;padding-right: 5px" ';
 
-        echo '<table border="0">';
-        echo '<tr>';
         $tabs = array('view', 'edit','links','info');
         if ($wiki->ewikiacceptbinary) {
             $tabs[] = 'attachments';
         }
+
+        $tabrows = array();
+        $row  = array();
+        $currenttab = '';
         foreach ($tabs as $tab) {
             $tabname = get_string("tab$tab", 'wiki');
-            if ($ewiki_action != "$tab" && !in_array($page, $specialpages)) {
-                echo '<td class="generaltab" '.$tabstyle.'>';
-                echo '<a href="'.$ewbase.'&amp;page='.$tab.'/'.$ewiki_id.'">'.$tabname.'</a>';
-                echo '</td>';
-            } else {
-                echo '<td class="generaltabselected" '.$tabstyle.'>'.$tabname.'</td>';
+            $row[] = new tabobject($tabname, $ewbase.'&amp;page='.$tab.'/'.$ewiki_id, $tabname);
+            if ($ewiki_action == "$tab" or in_array($page, $specialpages)) {
+                $currenttab = $tabname;
             }
         }
-        echo '</tr>';
-        echo '</table>';
+        $tabrows[] = $row;
+
+        print_tabs($tabrows, $currenttab);
+
     }
+
+    
     print_simple_box_start( 'right', '100%', '', '20');
 
     /// Don't filter any pages containing wiki actions (except view). A wiki page containing
