@@ -1016,7 +1016,7 @@ function quiz_grade_attempt_results($quiz, $questions) {
             $grade = 0.0;
         }
 
-        $result->grades[$question->id] = $grade;
+        $result->grades[$question->id] = round($grade, 2);
         $result->sumgrades += $grade;
         $result->feedback[$question->id] = $feedback;
         $result->response[$question->id] = $response;
@@ -1026,6 +1026,7 @@ function quiz_grade_attempt_results($quiz, $questions) {
     $fraction = (float)($result->sumgrades / $quiz->sumgrades);
     $result->percentage = format_float($fraction * 100.0);
     $result->grade      = format_float($fraction * $quiz->grade);
+    $result->sumgrades = round($result->sumgrades, 2);
 
     return $result;
 }

@@ -235,6 +235,7 @@
                         exit;
                     }
                 } else {
+                    $totalfraction = round($totalfraction,2);
                     if ($totalfraction != 1) {
                         $totalfraction = $totalfraction * 100;
                         notice_yesno(get_string("fractionsaddwrong", "quiz", $totalfraction), "question.php?id=$question->id", "edit.php");
@@ -255,7 +256,7 @@
 
     } 
 
-    $grades = array(1,0.9,0.8,0.75,0.70,0.6666,0.60,0.50,0.40,0.3333,0.30,0.25,0.20,0.10,0.05,0);
+    $grades = array(1,0.9,0.8,0.75,0.70,0.66666,0.60,0.50,0.40,0.33333,0.30,0.25,0.20,0.10,0.05,0);
     foreach ($grades as $grade) {
         $percentage = 100 * $grade;
         $neggrade = -$grade;
