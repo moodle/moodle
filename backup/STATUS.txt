@@ -6,9 +6,7 @@ This documment shows the current status of the backup/restore option.
 Backup:  WORKING. COMPLETED but only assignments, resources,
                   choices and surveys.
 
-Restore: WORKING. NOT COMPLETED. Only course, users, user_files,
-                  course_files and resources. Final Checks Included.
-                  Delete temp data no exists.
+Restore: WORKING. COMPLETED but only assignments and resources.
                   
 
 ========== ========== ========== ========== ========== ==========
@@ -156,15 +154,15 @@ Restore Details:
               x separate every mod..............................DONE
               x xmlize (to array) and serialize it..............DONE
               x save to db (backup_ids).........................DONE
-           - Mods Info..........................................IN PROGRESS
-              x assignments.....................................NO EXISTS
+           - Mods Info..........................................DONE
+              x assignments.....................................DONE
+                 + course data..................................DONE
+                 + user data....................................DONE
+                 + files........................................DONE
+              x choices.........................................IN PROGRESS
                  + course data..................................NO EXISTS
                  + user data....................................NO EXISTS
-                 + files........................................NO EXISTS
-              x choices.........................................NO EXISTS
-                 + course data..................................NO EXISTS
-                 + user data....................................NO EXISTS
-                 + files........................................NO EXISTS
+                 + files.(NOT EXISTS)...........................NO EXISTS
               x forums..........................................NO EXISTS
                  + course data..................................NO EXISTS
                  + user data....................................NO EXISTS
@@ -184,15 +182,15 @@ Restore Details:
               x surveys.........................................NO EXISTS
                  + course data..................................NO EXISTS
                  + user data....................................NO EXISTS
-                 + files........................................NO EXISTS
+                 + files.(NOT EXISTS)...........................NO EXISTS
    - User files from temp.......................................DONE
    - Course files from temp.....................................DONE
    - Log entries................................................NO EXISTS
    - Readjust instance in course_modules........................DONE
    - Readjust modinfo in course (serialize).....................DONE
-   - Delete old entries at restore end.  .......................NO EXISTS   
-      - From database...........................................NO EXISTS
-      - From filesystem.........................................NO EXISTS
+   - Delete old entries at restore end.  .......................DONE   
+      - From database...........................................DONE
+      - From filesystem.........................................DONE
    - Upload backup files........................................DONE
 
 ========== ========== ========== =========== =========== =========== ===
