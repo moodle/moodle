@@ -947,7 +947,7 @@ function print_courses_sideblock($category=0, $width="100%") {
                            "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
                 $modicon[]=$icon;
             }
-            $fulllist = "<p><a href=\"$CFG->wwwroot/course/\">".get_string("fulllistofcourses")."</a>...";
+            $fulllist = "<p><a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
             print_side_block( get_string("mycourses"), "", $moddata, $modicon, $fulllist, $width);
             return;
         }
@@ -972,7 +972,7 @@ function print_courses_sideblock($category=0, $width="100%") {
                            "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->fullname</a>";
                 $modicon[]=$icon;
             }   
-            $fulllist = "<p><a href=\"$CFG->wwwroot/course/\">".get_string("fulllistofcourses")."</a>...";
+            $fulllist = "<p><a href=\"$CFG->wwwroot/course/index.php\">".get_string("fulllistofcourses")."</a>...";
         } else {
             $moddata = array();
             $modicon = array();
@@ -1099,7 +1099,7 @@ function print_my_moodle() {
         echo "<table width=\"100%\"><tr><td align=\"center\">";
         print_course_search();
         echo "</td><td align=\"center\">";
-        print_single_button("index.php", NULL, get_string("fulllistofcourses"), "get");
+        print_single_button("$CFG->wwwroot/course/index.php", NULL, get_string("fulllistofcourses"), "get");
         echo "</td></tr></table>\n";
     } else {
         if (count_records("course_categories") > 1) {
