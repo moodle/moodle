@@ -528,6 +528,7 @@
             $course->password = addslashes($course_header->course_password);
             $course->fullname = addslashes($course_header->course_fullname);
             $course->shortname = addslashes($course_header->course_shortname);
+            $course->idnumber = addslashes($course_header->course_idnumber);
             $course->summary = addslashes($course_header->course_summary);
             $course->format = addslashes($course_header->course_format);
             $course->showgrades = addslashes($course_header->course_showgrades);
@@ -2160,6 +2161,9 @@
                         case "SHORTNAME":
                             $this->info->course_shortname = $this->getContents();
                             break;
+                        case "IDNUMBER":
+                            $this->info->course_idnumber = $this->getContents();
+                            break;
                         case "SUMMARY":
                             $this->info->course_summary = $this->getContents();
                             break;
@@ -2521,6 +2525,12 @@
                             break;
                         case "EDITALL":
                             $this->info->temprole->editall = $this->getContents();
+                            break;
+                        case "TIMESTART":
+                            $this->info->temprole->timestart = $this->getContents();
+                            break;
+                        case "TIMEEND":
+                            $this->info->temprole->timeend = $this->getContents();
                             break;
                         case "TIMEMODIFIED":
                             $this->info->temprole->timemodified = $this->getContents();

@@ -557,6 +557,7 @@
             fwrite ($bf,full_tag("PASSWORD",3,false,$course->password));
             fwrite ($bf,full_tag("FULLNAME",3,false,$course->fullname));
             fwrite ($bf,full_tag("SHORTNAME",3,false,$course->shortname));
+            fwrite ($bf,full_tag("IDNUMBER",3,false,$course->idnumber));
             fwrite ($bf,full_tag("SUMMARY",3,false,$course->summary));
             fwrite ($bf,full_tag("FORMAT",3,false,$course->format));
             fwrite ($bf,full_tag("SHOWGRADES",3,false,$course->showgrades));
@@ -794,6 +795,8 @@
                         fwrite ($bf,full_tag("AUTHORITY",6,false,$tea->authority));
                         fwrite ($bf,full_tag("TEA_ROLE",6,false,$tea->role));
                         fwrite ($bf,full_tag("EDITALL",6,false,$tea->editall));
+                        fwrite ($bf,full_tag("TIMESTART",6,false,$tea->timestart));
+                        fwrite ($bf,full_tag("TIMEEND",6,false,$tea->timeend));
                         fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$tea->timemodified));
                         fwrite ($bf,full_tag("TIMEACCESS",6,false,$tea->timeaccess));
                         //Print ROLE end
