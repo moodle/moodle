@@ -56,7 +56,7 @@
 /// Get all the messages and print them
 
     if ($messages = message_get_history($user1, $user2)) {
-        $current->day = '';
+        $current->mday = '';
         $current->month = '';
         $current->year = '';
         $messagedate = get_string('strftimetime');

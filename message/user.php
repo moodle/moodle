@@ -12,8 +12,7 @@
 /// Script parameters
     $userid = required_param('id', PARAM_INT);
     $frame  = optional_param('frame', '', PARAM_ALPHA);
-
-    $message = optional_param('message', '', PARAM_CLEAN);
+    $message  = optional_param('message', '', PARAM_CLEANHTML);
     $format  = optional_param('format', FORMAT_MOODLE, PARAM_INT);
 
     $addcontact     = optional_param('addcontact',     0, PARAM_INT); // adding a contact
@@ -62,12 +61,6 @@
               scrolling="no"  marginwidth="2" marginheight="2">
      </frameset>
      <noframes>Sorry, but support for Frames is required to use Messaging</noframes>
-
-     <!-- The following is a wierd hack that makes ADDING text to the *messages* frame work later.
-          Don't ask me why, I don't know, but it works.  -->
-     <script language="Javascript">
-        info.document.location.replace('<?php echo "$CFG->wwwroot/message/user.php?id=$user->id&frame=info"?>');
-     </script>
 
     </html>
     <?php
@@ -124,13 +117,15 @@
         break;
 
         case 'messages':  /// Print the main frame containing the current chat
-            print_header();
-            echo '<script language="Javascript">';
-            echo 'document.write(\'<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/theme/standard/styles.php" />\');';
-            echo "</script>\n\n";
+            echo '<html>';
+            echo '<body>';
         break;
 
         case 'refresh':  /// Print the main frame containing the current chat
+            $stylesheetshtml = '';
+            foreach ($CFG->stylesheets as $stylesheet) {
+                $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />';
+            }
             header("Expires: Sun, 28 Dec 1997 09:32:45 GMT");
             header("Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT");
             header("Cache-Control: no-cache, must-revalidate");
@@ -138,7 +133,20 @@
             header("Content-Type: text/html");
             header("Refresh: $CFG->message_chat_refresh; url=user.php?id=$user->id&frame=refresh");
 
-            echo '<body>';
+            echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">'."\n";
+            echo '<html><head>';
+            echo '<script type="text/javascript">'."\n";
+            echo '<!--'."\n";
+            echo 'if (parent.messages.document.getElementById("messagestarted") == null) {'."\n";
+            echo '  parent.messages.document.close();'."\n";
+            echo '  parent.messages.document.open("text/html","replace");'."\n";
+            echo '  parent.messages.document.write("<html><head>");'."\n";
+            echo '  parent.messages.document.write("<meta http-equiv=\"content-type\" content=\"text/html; charset='.get_string('thischarset').'\" />");'."\n";
+            echo '  parent.messages.document.write("<base target=\"_blank\">");'."\n";
+            echo '  parent.messages.document.write("'.addslashes($stylesheetshtml).'");'."\n";
+            echo '  parent.messages.document.write("</head><body><div style=\"display: none\" id=\"messagestarted\">&nbsp;</div>");'."\n";
+            echo '}'."\n";
+
             if ($messages = get_records_select('message', "useridto = '$USER->id' AND useridfrom = '$user->id'", 
                                                'timecreated')) {
                 foreach ($messages as $message) {
@@ -152,9 +160,7 @@
                     $printmessage = str_replace("\n", ' ', $printmessage);
                     $printmessage = '<p><font size="-1"><b>'.$user->firstname.' ['.$time.']</b>: '.
                                $printmessage.'</font></p>';
-                    echo '<script language="Javascript">';
                     echo "parent.messages.document.write('".addslashes($printmessage)."\\n');\n";
-                    echo "</script>\n\n";
                     
                     /// Move the entry to the other table
                     $message->timeread = time();
@@ -165,9 +171,7 @@
                         delete_records('message', 'id', $messageid);
                     }
                 }
-                echo '<script language="Javascript">';
                 echo "parent.messages.scroll(1,5000000);\n";
-                echo "</script>\n\n";
             }
 
             // Update the info pane, but only if the data there is getting too old
@@ -185,11 +189,12 @@
                 }
             }
             if (!empty($refreshinfo)) {
-                echo '<script language="Javascript">';
                 echo "parent.info.document.location.replace('$CFG->wwwroot/message/user.php?id=$user->id&frame=info');\n";
-                echo "</script>\n\n";
             }
-            echo '</body>';
+            echo '-->'."\n";
+            echo '</script>'."\n";
+            echo '</head>'."\n";
+            echo '</html>'."\n";
         break;
 
         case 'edit':      /// Print the bottom frame with the text editor
@@ -202,13 +207,11 @@
                 }
             }
 
-            $message = trim($message);
-
 
             if ($message and confirm_sesskey()) {   /// Current user has just sent a message
 
             /// Save it to the database...
-                $messageid = message_post_message($USER, $user, $message, $format, 'direct');
+                $messageid = message_post_message($USER, $user, addslashes($message), $format, 'direct');
 
             /// Format the message as HTML
                 $options = NULL;
@@ -220,10 +223,10 @@
 
             /// Then write it to our own screen immediately
                 $time = userdate(time(), get_string('strftimedaytime'));
-                $message = '<p><font size="-1"><b>'.addslashes($USER->firstname).' ['.$time.']</b>: '.$message.'</font></p>';
+                $message = '<p><font size="-1"><b>'.$USER->firstname.' ['.$time.']</b>: '.$message.'</font></p>';
 
                 $script  = "<script>\n";
-                $script .= "parent.messages.document.write('$message\\n');\n";
+                $script .= "parent.messages.document.write('".addslashes($message)."\\n');\n";
                 $script .= "parent.messages.scroll(1,5000000);\n";
                 $script .= "</script>\n\n";
 
@@ -243,10 +246,10 @@
             echo '<input type="hidden" name="frame" value="edit" />';
             echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
 
-            $usehtmleditor = (can_use_html_editor() && get_user_preferences('message_usehtmleditor', 1));
+            $usehtmleditor = (can_use_html_editor() && get_user_preferences('message_usehtmleditor', 0));
             if ($usehtmleditor) {
                 echo '<table align="center"><tr><td align="center">';
-                print_textarea($usehtmleditor, 7, 34, 0, 0, 'message', '');
+                print_textarea($usehtmleditor, 8, 34, 0, 0, 'message', '');
                 echo '</td></tr></table>';
                 use_html_editor('message', 'formatblock subscript superscript copy cut paste clean undo redo justifyleft justifycenter justifyright justifyfull lefttoright righttoleft insertorderedlist insertunorderedlist outdent indent forecolor hilitecolor inserthorizontalrule createanchor nolink inserttable');
                 echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';

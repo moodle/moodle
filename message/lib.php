@@ -247,7 +247,7 @@ function message_print_settings() {
 
     $cbshowmessagewindow = (get_user_preferences('message_showmessagewindow', 1) == '1') ? 'checked="checked"' : '';
     $cbbeepnewmessage = (get_user_preferences('message_beepnewmessage', 0) == '1') ? 'checked="checked"' : '';
-    $cbusehtmleditor = (get_user_preferences('message_usehtmleditor', 1) == '1') ? 'checked="checked"' : '';
+    $cbusehtmleditor = (get_user_preferences('message_usehtmleditor', 0) == '1') ? 'checked="checked"' : '';
     $cbemailmessages = (get_user_preferences('message_emailmessages', 1) == '1') ? 'checked="checked"' : '';
     $txemailaddress = get_user_preferences('message_emailaddress', $USER->email);
     $txemailtimenosee = get_user_preferences('message_emailtimenosee', 10);
