@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 Beta 1 + (2003052000)
+      // moodle.php - created with Moodle 1.1 development (2003053000)
 
 
 $string['action'] = "动作";
@@ -39,6 +39,9 @@ $string['assignadmins'] = "任命管理员";
 $string['assigncreators'] = "任命课程创建者";
 $string['assignteachers'] = "任命教师";
 $string['authentication'] = "身份验证";
+$string['autosubscribe'] = "论坛自动订阅";
+$string['autosubscribeno'] = "不，我不要自动订阅论坛";
+$string['autosubscribeyes'] = "是，当我发表帖子时就自动订阅该论坛";
 $string['availablecourses'] = "现有的课程";
 $string['backup'] = "备份";
 $string['backupdate'] = "备份日期";
@@ -93,6 +96,7 @@ $string['configunzip'] = "指定解压缩程序的位置（只有Unix系统才需要）。服务器解压
 $string['configvariables'] = "设置变量";
 $string['configzip'] = "指定压缩程序的位置（只有Unix系统才需要），服务器压缩产生zip文件时需要用到它。";
 $string['confirmed'] = "你的登记已经得到确认";
+$string['confirmednot'] = "你的登记尚未得到确认！";
 $string['continue'] = "继续";
 $string['cookiesenabled'] = "你的浏览器的Cookies设置必须打开";
 $string['copyrightnotice'] = "版权声明";
@@ -164,8 +168,6 @@ $string['emailconfirmation'] = "\$a->lastname ：
   \$a->link
 
 在多数的邮件软件中，这个地址应该显示为蓝色的链接。如果不是这样，请将以上地址复制粘贴到网页浏览器（比如IE或netscape等）的地址栏，打开这个网页。
-
-
 致
 
 敬礼！
@@ -175,11 +177,7 @@ $string['emailconfirmation'] = "\$a->lastname ：
 \$a->admin";
 $string['emailconfirmationsubject'] = "\$a ：帐号确认";
 $string['emailconfirmsent'] = "   <P>一封电子邮件已经发送到你的地址 <B> \$a </B>。
-
-
    <P>这封邮件简要说明了你如何完成注册。
-
-
    <P>如果你还遇到什么困难，请和网站管理员联系。";
 $string['emaildisplay'] = "Email显示";
 $string['emaildisplaycourse'] = "只允许参加同一课程的其他成员看见我的email地址";
@@ -206,8 +204,6 @@ $string['emailpasswordconfirmationsubject'] = "\$a ：确认更改密码";
 $string['emailpasswordconfirmsent'] = "一封email已经发送到你的邮箱<b>\$a</b>。
 
 <p>其中有关于如何确认并完成本次密码更改的简单说明。
-
-
 如果你还是有困难，请联系管理员。";
 $string['emailpasswordsent'] = "谢谢你对更改密码做了确认。
 
@@ -219,13 +215,9 @@ $string['enrolmentkeyfrom'] = "该课程需要‘选课密钥’——<BR>
 
 一个从 \$a 获得的一次性密码";
 $string['enrolmentkeyhint'] = "这个选课密钥不正确，请再试一次<BR>
-
-
 （提示：以'\$a'开头）";
 $string['entercourse'] = "点击进入该课程";
 $string['enteremailaddress'] = "输入你的email地址以重设密码，
-
-
 新密码将送到你的信箱中。";
 $string['error'] = "错误";
 $string['errortoomanylogins'] = "抱歉，你已超过允许的最大登录尝试次数。请重启你的浏览器。";
@@ -323,6 +315,7 @@ $string['lastaccess'] = "最近登录";
 $string['lastedited'] = "最近编辑";
 $string['lastmodified'] = "最后修改";
 $string['lastname'] = "名";
+$string['latestlanguagepack'] = "从moodle.org检查有无最新的语言包";
 $string['latestnews'] = "最新新闻";
 $string['leavetokeep'] = "留空以保留现有密码";
 $string['license'] = "GPL许可证";
@@ -585,8 +578,8 @@ $string['textformat'] = "纯文本格式";
 $string['thanks'] = "感谢";
 $string['theme'] = "主题风格";
 $string['themesaved'] = "新主题风格已保存";
-$string['thischarset'] = "GB2312";
-$string['thislanguage'] = "中文";
+$string['thischarset'] = "GB18030";
+$string['thislanguage'] = "简体中文";
 $string['timezone'] = "时区";
 $string['today'] = "今天";
 $string['todaylogs'] = "今天的日志";

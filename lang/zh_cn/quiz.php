@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.9 development version (2003050700)
+      // quiz.php - created with Moodle 1.1 development (2003053000)
 
 
+$string['addingquestions'] = "页面的这一边用来管理题库。题目分门别类，以便管理。题库中的题目可用于你的课程中的任何测验。如果你选择“公布”它们，则甚至可用于其它课程。<br><br>你在选择或创建类别后才能创建或编辑题目。你可以选择任何题目加入到另一边的测验中。";
 $string['addquestions'] = "添加题目";
 $string['addquestionstoquiz'] = "向当前测验添加题目";
 $string['addselectedtoquiz'] = "把选中的题目添加到测验中";
@@ -21,15 +22,15 @@ $string['attemptsallowed'] = "允许多次尝试";
 $string['attemptsunlimited'] = "不限尝试次数";
 $string['backtoquiz'] = "回到测验编辑";
 $string['bestgrade'] = "最高得分";
-$string['blackboard'] = "黑板";
+$string['blackboard'] = "黑板软件";
 $string['caseno'] = "不,大小写无所谓";
 $string['casesensitive'] = "区分大小写";
 $string['caseyes'] = "是的,大小写必须正确";
 $string['categories'] = "分类";
 $string['category'] = "分类";
 $string['categoryinfo'] = "分类信息";
-$string['categorymove'] = "该题型 '\$a->name' 中有 \$a->count 个题目。 请选择另一个题型以转移它们。";
-$string['categorymoveto'] = "把它们转移到这个题型";
+$string['categorymove'] = "该类别 '\$a->name' 中有 \$a->count 个题目。 请选择另一个类别以转移它们。";
+$string['categorymoveto'] = "把它们转移到这个类别";
 $string['choice'] = "选择";
 $string['choices'] = "现有选项";
 $string['correctanswer'] = "正确答案";
@@ -40,7 +41,7 @@ $string['custom'] = "自定义格式";
 $string['daysavailable'] = "可用天数";
 $string['default'] = "默认";
 $string['defaultgrade'] = "默认题目得分";
-$string['defaultinfo'] = "题目的默认题型。";
+$string['defaultinfo'] = "题目的默认类别。";
 $string['deletequestioncheck'] = "你真的确定要删除'\$a'吗？";
 $string['editcategories'] = "编辑题型";
 $string['editingmatch'] = "编辑匹配题";
@@ -121,7 +122,7 @@ $string['savequiz'] = "保存这整个测验";
 $string['score'] = "原始分数";
 $string['select'] = "选择";
 $string['selectall'] = "选择全部";
-$string['selectcategoryabove'] = "在上面选一个题型";
+$string['selectcategoryabove'] = "在上面选一个类别";
 $string['shortanswer'] = "简答";
 $string['show'] = "显示";
 $string['showcorrectanswer'] = "在反馈信息中显示正确答案吗？";
