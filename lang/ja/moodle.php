@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.0.9 development (2003042801)
+      // moodle.php - created with Moodle 1.0.9 development (2003050400)
 
 
 $string['action'] = "操作";
@@ -409,6 +409,7 @@ $string['nopotentialteachers'] = "潜在的な教師は登録されていません";
 $string['normal'] = "普通";
 $string['nostudentsyet'] = "このコースにはまだ学生が参加していません";
 $string['nosuchemail'] = "そのようなメールアドレスは存在しません";
+$string['notavailable'] = "利用できません";
 $string['noteachersyet'] = "このコースにはまだ教師が登録されていません";
 $string['notenrolled'] = "\$a はこのコースには参加していません";
 $string['nothingnew'] = "最終ログインより更新されたものはありません";
@@ -525,7 +526,9 @@ $string['today'] = "今日";
 $string['todaylogs'] = "今日のログ";
 $string['toomanytoshow'] = "表示するユーザが多すぎます";
 $string['topic'] = "トピック";
+$string['topichide'] = "\$a よりこのトピックを隠す";
 $string['topicoutline'] = "トピックの概要";
+$string['topicshow'] = "\$a にこのトピックを表示する";
 $string['total'] = "合計";
 $string['turneditingoff'] = "編集モード OFF";
 $string['turneditingon'] = "編集モード ON";
@@ -560,7 +563,9 @@ $string['userprofilefor'] = "\$a のプロフィール";
 $string['users'] = "ユーザ";
 $string['webpage'] = "ウェブページ";
 $string['week'] = "週";
+$string['weekhide'] = "\$a よりこの週を隠す";
 $string['weeklyoutline'] = "週の概要";
+$string['weekshow'] = "\$a にこの週を表示する";
 $string['welcometocourse'] = "\$a へようこそ";
 $string['welcometocoursetext'] = "\$a->coursename へようこそ!
 
