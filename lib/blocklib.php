@@ -942,7 +942,7 @@ function blocks_get_config_default ($cformat='') {
     }
     else {
         $format_config = $CFG->dirroot.'/course/format/'.$cformat.'/config.php';
-        if (file_exists($format_config)) {
+        if (@is_file($format_config) && is_readable($format_config)) {
             require($format_config);
         }
         if (!empty($format['defaultblocks'])) {
