@@ -1308,7 +1308,7 @@ function get_users_listing($sort, $dir="ASC", $page=1, $recordsperpage=20, $sear
     return get_records_sql("SELECT id, username, email, firstname, lastname, city, country, lastaccess  
                               FROM {$CFG->prefix}user 
                              WHERE username <> 'guest' 
-                               AND deleted <> '1' $search
+                               AND deleted <> 1 and confirmed = 1 $search
                           ORDER BY $sort $dir $limit");
 
 }
