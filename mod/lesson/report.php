@@ -688,14 +688,14 @@
 							}
 							
 							if (isset($pagestats[$page->id])) {
-								$percent = $pagestats[$page->id]->totalscore / $pagestats[$page->id]->total * 100;
-								$percent = round($percent, 2);
-								$percent = get_string("averagescore", "lesson").": ". $percent ."%";
+								$avescore = $pagestats[$page->id]->totalscore / $pagestats[$page->id]->total;
+								$avescore = round($avescore, 2);
+								$avescore = get_string("averagescore", "lesson").": ". $avescore ;
 							} else {
 								// dont think this should ever be reached....
-								$percent = get_string("nooneansweredthisquestion", "lesson");
+								$avescore = get_string("nooneansweredthisquestion", "lesson");
 							}
-							$answerdata->answers[] = array($essayinfo->answer, $percent);
+							$answerdata->answers[] = array($essayinfo->answer, $avescore);
 							break;
 						case LESSON_BRANCHTABLE :    
 							$data = "<input type=\"button\" name=\"$answer->id\" value=\"$answer->answer\" disabled=\"disabled\"> ";
