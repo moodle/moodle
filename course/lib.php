@@ -504,7 +504,7 @@ function print_side_block($heading="", $list=NULL, $footer="", $icons=NULL, $wid
     echo "</TABLE><BR>\n\n";
 }
 
-function print_admin_links ($siteid, $width=190) {
+function print_admin_links ($siteid, $width=180) {
     global $THEME, $CFG;
     
     print_simple_box(get_string("administration"), $align="CENTER", $width, $color="$THEME->cellheading");
