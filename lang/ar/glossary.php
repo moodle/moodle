@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.3 development (2004041800)
+      // glossary.php - created with Moodle 1.4 development (2004062401)
 
 
 $string['addcomment'] = 'ÃÖİ ÊÚáíŞ';
@@ -68,6 +68,7 @@ $string['displayformat6'] = 'ŞÇÆãÉ ãÕØáÇÍÇÊ';
 $string['displayformatcontinuous'] = 'ãÓÊãÑ ÈÏæä ßÇÊÈ';
 $string['displayformatdefault'] = 'ÓÑÏ ãÚÌãí ãÈÓØ';
 $string['displayformats'] = 'ÚÑÖ ÊäÓíŞÇÊ';
+$string['displayformatssetup'] = 'ÃÚÑÖ ÅÚÏÇÏ ÇáÕíÛÇÊ';
 $string['duplicateentry'] = 'ÊßÑÇÑ ÇáãÕØáÍ';
 $string['editcategories'] = 'ÊÍÑíÑ ÇáÇÕäÇİ';
 $string['editentry'] = 'ÊÍÑíÑ ÇáãÕØáÍ';
@@ -81,6 +82,7 @@ $string['entryapproved'] = 'Êã ÇáãæÇİŞÉ Úáì åĞÇ ÇáãÕØáÍ';
 $string['entrydeleted'] = 'Êã ÍĞİ ÇáãÕØáÍ';
 $string['entryexported'] = 'Êã ÊÕÏíÑ ÇáãÕØáÍ ÈäÌÇÍ';
 $string['entryishidden'] = '(åĞÇ ÇáãÕØáÍ ãÎİíÉ ÍÇáíÇğ)';
+$string['entryleveldefaultsettings'] = 'ÇÅÚÏÇÏ ÇáÅİÊÑÇÖí ááãÕØáÍ';
 $string['entryusedynalink'] = 'íÌÈ ÑÈØ åĞÇ ÇáãÕØáÍ ÂáíÇ';
 $string['explainaddentry'] = 'ÃÖİ ãÕØáÍ ÌÏíÏÉ Åáì ÇáãÓÑÏ ÇáÍÇáí.<br> ÊÚÈÆÉ ÍŞáí Çáãİåæã æ ÇáÊÚÑíİ ÅÌÈÇÑí';
 $string['explainall'] = 'ÃÚÑÖ ÌãíÚ ÇáãÕØáÇÍÇÊ İí ÕİÍÉ æÇÍÏÉ';
@@ -97,6 +99,7 @@ $string['filetoimport'] = 'Çáãáİ ÇáãÑÇÏ ÇÓÊíÑÇÏå';
 $string['fillfields'] = 'ÍŞæá Çáãİåæã æÇáÊÚÑíİ ÇÌÈÇÑíÉ';
 $string['filtername'] = 'ÇáÑÈØ ÇáÂáí ááãÓÑÏ';
 $string['fullmatch'] = 'ŞÇÑä ßá ÇáßáãÇÊ İŞØ';
+$string['glossaryleveldefaultsettings'] = 'ÇáÅÚÏÇÏ ÇáÅİÊÑÇÖí ááãÓÑÏ';
 $string['glossarytype'] = 'äæÚ ÇáãÓÑÏ';
 $string['glosssaryexported'] = 'Êã ÊÕÏíÑ ÇáãÓÑÏ';
 $string['importcategories'] = 'ÇÓÊæÑÏ ÇáİÆÇÊ';
@@ -151,6 +154,8 @@ $string['totalentries'] = 'ãÌãæÚ ÇáãÕØáÇÍÇÊ Çáßáí';
 $string['usedynalink'] = 'ÑÈØ ãÕØáÇÍÇÊ ÇáãÓÑÏ ÂáíÇ';
 $string['waitingapproval'] = 'ÅäÊÙÇÑ ÇáãæÇİŞÉ';
 $string['warningstudentcapost'] = 'íäØÈŞ İŞØ ÅĞÇ áã íßä ÇáãÓÑÏ åæ ÇáãÓÑ ÇáÑÆíÓ';
+$string['withauthor'] = 'ÇáãİÇåíã ãÚ ÇáßÇÊÈ';
+$string['withoutauthor'] = 'ÇáãİÇåíã ÈÏæä ÇáßÇÊÈ';
 $string['writtenby'] = 'ÈæÇÓØÉ';
 $string['youarenottheauthor'] = 'ÃäÊ áÓÊ ßÇÊÈ åĞÇ ÇáÊÚáíŞ¡ áĞÇ áä ÊÊãßä ãä ÊÍÑíÑå';
 

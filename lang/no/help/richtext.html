@@ -1,10 +1,16 @@
 <P ALIGN=CENTER><B>HTML-redigereren</B></P>
 
 <P>Tilgjengelighet: <b>
-<?php if (!$CFG-?>htmleditor) { print_string(&quot;htmleditordisabledadmin&quot;); } else 
-if (!$USER-&gt;htmleditor) { print_string(&quot;htmleditordisabled&quot;); } else if (!can_use_richtext_editor()) 
-{ print_string(&quot;htmleditordisabledbrowser&quot;); } else { 
-print_string(&quot;htmleditoravailable&quot;); } ?&gt; </b></P>
+<?php  if (!$CFG->htmleditor) {
+       print_string("htmleditordisabledadmin");
+   } else if (!$USER->htmleditor) {
+       print_string("htmleditordisabled");
+   } else if (!can_use_richtext_editor()) {
+       print_string("htmleditordisabledbrowser");
+   } else {
+       print_string("htmleditoravailable");
+   }
+?></b></P>
 
 <P>HTML-redigereren gir deg mulighet til å bruke et velkjent skjermbilde som ser 
 ut som et tekstredigeringsprogram. Det er en del av nettsiden. Du kan altså 
@@ -16,19 +22,19 @@ forskjell. <P>I tillegg til  formattering av tekst kan den også gjøre en del ann
    f.eks. Microsoft Word. Bare bruk Ctrl + C og Ctrl + V. Alternativt: Bruk 
 menyen &quot;Rediger&quot;, deretter &quot;Kopier&quot; og &quot;Lim inn&quot;.</UL>
 
-<P><B>Sett inn bilder <img border="0" hspace="10" src="lib/rte/images/icon_ins_image.gif"></B></P>
+<P><B>Sett inn bilder <img border="0" hspace="10" src="lib/editor/images/ed_image.gif"></B></P>
 <UL>
 <P>Hvis du har bilder på serveren eller en link til et bilde kan du sette disse inn i teksten ved hjelp av 
 knappen "Sett inn bilde". 
 Merk: Disse bildene må ligge på Internett! Her taster du bare inn adressen til 
 bildet, du legger ikke inn selve bildet.</UL>
 
-<P><B>Tabeller <img border="0" hspace="10" src="lib/rte/images/icon_ins_table.gif"></B></P>
+<P><B>Tabeller <img border="0" hspace="10" src="lib/editor/images/insert_table.gif"></B></P>
 <UL>
 <P>Du kan også bruke tabeller i teksten. Klikk på knappen "Sett inn tabell&quot;.  
 </UL>
 
-<P><B>Lenker <img border="0" hspace="10" src="lib/rte/images/icon_ins_link.gif"></B></P>
+<P><B>Lenker <img border="0" hspace="10" src="lib/editor/images/ed_link.gif"></B></P>
 <UL>
 <P>For å lage en lenke skriver du første teksten det skal lenkes fra. Så markerer du den og 
 klikker knappen &quot;Sett inn lenke&quot; på menyen. 

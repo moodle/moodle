@@ -1,12 +1,12 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.3 - (2004052400)
+      // lesson.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['actionaftercorrectanswer'] = '正解後の動作';
 $string['addabranchtable'] = '分岐表の追加';
 $string['addanendofbranch'] = '分岐終了の追加';
 $string['addaquestionpage'] = '質問ページの追加';
-$string['answer'] = '解答';
+$string['answer'] = '選択肢';
 $string['answersfornumerical'] = '数字の質問に対する解答は最大値及び最小値の範囲内に入る必要があります。';
 $string['attempt'] = '挑戦: $a';
 $string['attempts'] = '挑戦';
@@ -66,7 +66,7 @@ $string['pleasematchtheabovepairs'] = '上記のペアを合わせてください';
 $string['questionoption'] = '質問オプション';
 $string['questiontype'] = '質問タイプ';
 $string['redisplaypage'] = '再表示';
-$string['response'] = '返答';
+$string['response'] = 'フィードバック';
 $string['sanitycheckfailed'] = '正当性チェックが失敗しました: この挑戦は削除されました';
 $string['savepage'] = 'ページの保存';
 $string['showanunansweredpage'] = '未解答のページを表示';
@@ -81,5 +81,6 @@ $string['usemean'] = '平均値を使用';
 $string['youhaveseen'] = 'あなたは既にこのレッスンを1ページ以上閲覧しました。<br />あなたが見た最後のページから始めますか?';
 $string['youranswer'] = 'あなたの解答';
 $string['yourcurrentgradeis'] = '現在の成績は $a です';
+$string['youshouldview'] = '少なくとも $a 回閲覧してください';
 
 ?>

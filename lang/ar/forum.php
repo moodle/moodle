@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.3 development (2004041800)
+      // forum.php - created with Moodle 1.4 development (2004062401)
 
 
 $string['addanewdiscussion'] = 'ÃÖÝ ãæÖæÚÇ ÌÏíÏÇ ááäÞÇÔ';
@@ -24,8 +24,12 @@ $string['delete'] = 'ÍÐÝ';
 $string['deleteddiscussion'] = 'Êã ÍÐÝ ãæÖæÚ ÇáäÞÇÔ';
 $string['deletedpost'] = 'Êã ÍÐÝ åÐå ÇáãÞÇáÉ';
 $string['deletesure'] = 'åá ÃäÊ ãÊÃßÏ Ãäß ÊÑíÏ ÅáÛÇÁ ÍÐÝ åÐå ÇáãÔÇÑßÉ¿';
+$string['digestmailprefs'] = 'áãÍÊß ÇáÔÎÕíÉ';
+$string['digestmailsubject'] = '$a ãáÎÕ ãäÊÏì';
+$string['digestsentusers'] = 'ÇáãáÎÕÇÊ ÇÑÓáÊ ÈäÌÇÍ ÈÇáÈÑíÏ ÇáÅáßÊÑæäí Åáì $a ÇáãÓÊÎÏãíä';
 $string['discussion'] = 'äÞÇÔ';
 $string['discussionmoved'] = 'Êã äÞá åÐÇ áäÞÇÔ Åáì  \'$a\'';
+$string['discussionname'] = 'ÇÓã ÇáäÞÇÔ';
 $string['discussions'] = 'ãäÇÞÔÇÊ';
 $string['discussionsstartedby'] = 'ÇáãäÇÞÔÇÊ ÈÏÃÊ ÈæÇÓØÉ  $a';
 $string['discussionsstartedbyrecent'] = 'ÇáãäÇÞÔÇÊ ÈÏÃÊ ÍÏíËÇ ÈæÇÓØÉ  $a';
@@ -90,8 +94,12 @@ $string['postrating1'] = 'ÊÙåÑ ãåÇÑÊå ãäÝÑÏÇ';
 $string['postrating2'] = 'ÇáÇÊÕÇá æÇáÇäÝÕÇá ÓæÇÁ ';
 $string['postrating3'] = 'ÊÙåÑ ãåÇÑÊå Ýí ÇáÛÇáÈ ÚäÏãÇ íßæä ãÊÕáÇ';
 $string['posts'] = 'ãÔÇÑßÇÊ';
+$string['posttoforum'] = 'ãÔÇÑßÉ Ýí ãäÊÏì';
 $string['postupdated'] = 'Êã ÊÍÏíË ãÞÇáß ÇáãÑÓá';
+$string['processingdigest'] = 'ÅÚÏÇÏ ÇáãáÕ ÇáÈÑíÏí ááãÓÊÎÏã  $a';
 $string['processingpost'] = 'ãÚÇáÌÉ ÇáÑÓÇáÉ $a';
+$string['prune'] = 'ÌÒÇÁ';
+$string['pruneheading'] = 'ÌÒÇÁ ÇáãÔÇÑßÉ æÇäÞáåÇ Åáì äÞÇÔ ÌÏíÏ';
 $string['rate'] = 'ÕäÝ';
 $string['rating'] = 'ÊÕäíÝ';
 $string['ratingeveryone'] = 'ÇáÌãíÚ íÓÊØíÚ ÇáÊÕäíÝ';
@@ -120,7 +128,9 @@ $string['singleforum'] = 'äÞÇÔ æÇÍÏ ÈÓíØ';
 $string['startedby'] = 'ÈÏÇÁ ÇáäÞÇÔ ÈæÇÓØÉ';
 $string['subject'] = 'ÇáãæÖæÚ';
 $string['subscribe'] = 'ÇÔÊÑß Ýí åÐÇ ÇáãäÊÏì';
+$string['subscribeall'] = 'ÇÔÑß Çáßá Ýí åÐÇ ÇáãäÊÏì';
 $string['subscribed'] = 'Êã ÇáÇÔÊÑÇß';
+$string['subscribenone'] = 'ÇáÛì ÇÔÊÑÇß Çáßá ãä åÐÇ ÇáãäÊÏì';
 $string['subscribers'] = 'ÇáãÔÊÑßæä';
 $string['subscribersto'] = 'ÇáãÔÊÑßæä Ýí  \' $a\' ';
 $string['subscribestart'] = 'ÊÒæíÏí ÈäÓÎ ÇáãÔÇÑßÇÊ ãä åÐÇ ÇáãäÊÏì ÚÈÑ ÇáÈÑíÏ ÇáÇáßÊÑæäí';
@@ -129,6 +139,7 @@ $string['subscription'] = 'ÇÔÊÑÇß';
 $string['subscriptions'] = 'ÇÔÊÑÇßÇÊ';
 $string['unsubscribe'] = 'ÅáÛÇÁ ÇáÇÔÊÑÇß Ýí åÐÇ ÇáãäÊÏì';
 $string['unsubscribed'] = 'ÅáÛÇÁ ÇáÇÔÊÑÇß';
+$string['unsubscribeshort'] = 'ÇáÛí ÇáÇÔÊÑÇß';
 $string['youratedthis'] = 'ÃäÊ ÕäÝÊ åÐÇ';
 $string['yournewtopic'] = 'ãæÖæÚß ÇáÌÏíÏ ááãäÇÞÔÉ';
 $string['yourreply'] = 'ÑÏß';

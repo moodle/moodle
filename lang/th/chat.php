@@ -1,13 +1,13 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.2 Beta (2004022400)
+      // chat.php - created with Moodle 1.3 (2004052500)
 
 
 $string['beep'] = 'เรียก';
-$string['chatintro'] = 'ข้อความแนะนำ';
+$string['chatintro'] = 'คำนำ';
 $string['chatname'] = 'ชื่อห้อง';
 $string['chatreport'] = 'กำหนดการเสวนา';
 $string['chattime'] = 'เวลาเสวนาครั้งต่อไป';
-$string['configoldping'] = 'ผู้ใช้หายไปกี่นาทีถึงจะถือว่าออกจากห้องสนทนาแล้ว';
+$string['configoldping'] = 'สมาชิกหายไปกี่นาทีถึงจะถือว่าออกจากห้องสนทนาแล้ว';
 $string['configrefreshroom'] = 'ควรรีเฟรชแชทรูมบ่อยขนาดไหน ถ้าตั้งค่าช้าจะทำให้ห้องสนทนาดูเร็วขึ้นแต่ว่าจะทำให้เว็บเซิร์ฟเวอร์ทำงานหนัก ถ้ามีคนสนทนาจำนวนมาก';
 $string['configrefreshuserlist'] = 'ควรทำการรีเฟรชรายชื่อผู้ร่วมสนทนาบ่อยแค่ไหน (เป็นวินาที)';
 $string['currentchats'] = 'การเสวนาที่มีอยู่ตอนนี้';
@@ -16,7 +16,7 @@ $string['deletesession'] = 'ลบการเสวนานี้';
 $string['deletesessionsure'] = 'แน่ใจนะคะว่าต้องการลบการเสวนานี้';
 $string['donotusechattime'] = 'ไม่ระบุเวลาเสวนา';
 $string['enterchat'] = 'คลิกที่นี่เพื่อสนทนา';
-$string['errornousers'] = 'ไม่พบผู้ใช้';
+$string['errornousers'] = 'ไม่พบสมาชิก';
 $string['helpchatting'] = 'ช่วยเหลือ';
 $string['idle'] = 'นิ่ง';
 $string['messagebeepseveryone'] = '$a เรียกทุกคน';

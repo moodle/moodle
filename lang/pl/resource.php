@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 development (2004021201)
+      // resource.php - created with Moodle 1.3 - (2004052400)
 
 
 $string['addresource'] = ' Dodaj zasób';
@@ -19,6 +19,7 @@ $string['configpopuptoolbar'] = 'Pokazuj pasek narzêdzi w osobnym oknie';
 $string['configpopupwidth'] = 'Okre¶l szeroko¶æ osobnego okna';
 $string['configwebsearch'] = 'Adres ten ma s³u¿yæ jako pomoc w poszukiwaniu odpowiedniego URL podczas dodawani nowego zasobu jako strona WWW lub link.';
 $string['directlink'] = 'Bezpo¶redni link to tego pliku';
+$string['directoryinfo'] = 'Wszystkie pliki w danym katalogu zostan± wy¶wietlone';
 $string['editingaresource'] = ' Modyfikacja zasobu';
 $string['example'] = ' Przyk³ad';
 $string['examplereference'] = ' Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
@@ -27,8 +28,10 @@ $string['fetchclienterror'] = 'B³±d zareportowany przez Twoj± przegl±darkê, podc
 $string['fetcherror'] = 'B³±d podczas ³adowania strony internetowej';
 $string['fetchservererror'] = 'B³±d zareportowany przez serwer, podczas ³adowania strony internetowej (prawdopodobnie b³ad programu). </p>';
 $string['filename'] = ' Nazwa pliku';
+$string['filtername'] = 'Automatyczne linkowanie zasobów';
 $string['fulltext'] = ' Pe³na tre¶æ';
 $string['htmlfragment'] = ' Fragment HTML';
+$string['maindirectory'] = 'Folder z g³ównymi plikami';
 $string['modulename'] = ' Zasób';
 $string['modulenameplural'] = ' Zasoby';
 $string['neverseen'] = ' Nigdy nie widziany';
@@ -58,5 +61,6 @@ $string['resourcetype5'] = ' Link';
 $string['resourcetype6'] = ' Tekst HTML';
 $string['resourcetype7'] = ' Program';
 $string['resourcetype8'] = ' Tekst Wiki';
+$string['resourcetype9'] = 'Folder';
 
 ?>

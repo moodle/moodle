@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.2 development (2004020300)
+      // exercise.php - created with Moodle 1.3 (2004052500)
 
 
 $string['absent'] = 'Fehlen';
@@ -74,7 +74,7 @@ $string['nosubmissions'] = 'Keine Einreichung';
 $string['notassessedyet'] = 'Bisher nicht bewertet';
 $string['notavailable'] = 'Nicht verfügbar';
 $string['noteonassessmentelements'] = 'Beachten Sie bitte, dass die Note aus mehreren Bewertungselementen gebildet wird.<br />. Das macht die Benotung leichter und besser vergleichbar. Als Trainer/in müssen Sie diese Elemente hinzufügen, <br />
-bevor Sie die Bewertung für die Teilnehmer/innen sichtbar machen.<br /> Dies ist möglich durch einen Klick auf Bewertung im Kurs-Menü. Sind keine Elemente vorhanden, werden sie aufgefordert, <br /> diese einzufügen. Sie können die Anzahl der Elemente ändern unter Benutzung des Menüpunktes Bewertung ändern.<br /> Die Elemente selbst können über den Punkt&quot;Bewertung verwalten&quot;geändert werden.';
+bevor Sie die Bewertung für die Teilnehmer/innen sichtbar machen.<br /> Dies ist möglich durch einen Klick auf Bewertung im Kurs-Menü. Sind keine Elemente vorhanden, werden sie aufgefordert, <br /> diese einzufügen. Sie können die Anzahl der Elemente ändern unter Benutzung des Menüpunktes Bewertung ändern.<br /> Die Elemente selbst können über den Punkt\"Bewertung verwalten\"geändert werden.';
 $string['noteonstudentassessments'] = '( Note von Teilnehmer/in/ Note vom Trainer/in )';
 $string['notgraded'] = 'Nicht bewertet';
 $string['notitlegiven'] = 'Kein  Titel vergeben';

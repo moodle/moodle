@@ -27,7 +27,7 @@ Si us voleu fer càrrec d'un mòdul, els únics requisits són aquests:
    http://www.softcatala.org/projectes/eines/guiaestil/guiaestil.htm
    http://www.softcatala.org/projectes/eines/recull/recull.htm
 
-3. Que sigueu usuaris habituals i experiments del mòdul en qüestió.
+3. Que sigueu usuaris habituals del mòdul en qüestió.
 
 4. Que us comprometeu a mantenir i actualitzar la traducció durant un
    temps.
@@ -55,11 +55,12 @@ quiz.php           No assignat
 resource.php       CENT
 scheduler.php      No assignat
 scorm.php          CENT
-survey.php         No assignat
+survey.php                 No assignat
+wiki.php           CENT
 workshop.php       No assignat
 
-admin.php          CENT
-auth.php           CENT
+admin.php                   CENT
+auth.php                     CENT
 calendar.php       CENT
 countries.php      CENT
 editor.php         CENT

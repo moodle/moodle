@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2 Beta (2004022400)
+      // glossary.php - created with Moodle 1.3 - (2004052400)
 
 
 $string['addcomment'] = 'Dodaj komentarz';
@@ -49,6 +49,7 @@ $string['commentson'] = 'Komentarze na';
 $string['commentupdated'] = 'Komentarz zosta³ uaktualniony';
 $string['concept'] = 'Termin';
 $string['concepts'] = 'Terminy';
+$string['configenablerssfeeds'] = 'Umo¿liwia RSS feeds dla wszystkich s³owników pojêæ. Musisz jednak i tak w³±czyæ obs³ugê feeds manualnie dla ka¿dego s³ownika.';
 $string['currentglossary'] = 'Aktualny s³ownik pojêæ';
 $string['dateview'] = 'Szukaj wed³ug daty';
 $string['defaultapproval'] = 'Automatycznie aprobuj wpisy definicji przez studentów';
@@ -68,6 +69,7 @@ $string['displayformat6'] = 'Lista wpisów';
 $string['displayformatcontinuous'] = 'Ci±g³y bez autora';
 $string['displayformatdefault'] = 'Prosty styl s³ownikowy';
 $string['displayformats'] = 'Dostêpne formaty wygl±du';
+$string['displayformatssetup'] = 'Wy¶wietl ustawienia formatów';
 $string['duplicateentry'] = 'Podwójne definicje';
 $string['editcategories'] = 'Edytuj kategorie';
 $string['editentry'] = 'Edytuj wpis';
@@ -81,6 +83,7 @@ $string['entryapproved'] = 'Wpis zosta³ zaaprobowany';
 $string['entrydeleted'] = 'Wpis zosta³ usuniêty';
 $string['entryexported'] = 'Wpis zosta³ wyeksportowany';
 $string['entryishidden'] = '(ten wpis jest aktualnie ukryty)';
+$string['entryleveldefaultsettings'] = 'Domy¶lne ustawienia wej¶ciowe';
 $string['entryusedynalink'] = 'Ten wpis powinien zostaæ automatycznie po³±czony z innymi wpisami w systemie';
 $string['explainaddentry'] = 'Dodaj nowe pojêcie do tego s³ownika pojêæ.<br>Pola: Termin i Definicja musz± zostaæ wype³nione.';
 $string['explainall'] = 'Wy¶wietl wszystkie pojêcia na jednej stronie';
@@ -97,6 +100,7 @@ $string['filetoimport'] = 'Plik do importu';
 $string['fillfields'] = 'Pola: Termin i Definicja musz± zostaæ wype³nione';
 $string['filtername'] = 'Automatyczne linkowanie pojêæ';
 $string['fullmatch'] = 'Szukaj tylko wyrazów tak jak zosta³y wpisane<br><small>(je¶li zosta³y automatycznie po³±czone)';
+$string['glossaryleveldefaultsettings'] = 'Domy¶lne ustawienia s³ownika';
 $string['glossarytype'] = 'Typ s³ownika pojêæ';
 $string['glosssaryexported'] = 'Wyeksportowano s³ownik pojêæ';
 $string['importcategories'] = 'Importuj kategorie';
@@ -134,11 +138,12 @@ $string['ratingsuse'] = 'U¿yj ocen';
 $string['ratingtime'] = 'Ogranicz oceny do definicji wpisanych pomiêdzy tymi datami:';
 $string['rejectedentries'] = 'Odrzuæ wpisy';
 $string['rejectionrpt'] = 'Raport Odrzuceñ';
+$string['rsssubscriberss'] = 'Wy¶wietl RSS feed dla $a terminów';
 $string['searchindefinition'] = 'Przeszukaj ca³y tekst';
 $string['secondaryglossary'] = 'Tymczasowy s³ownik pojêæ';
 $string['sendinratings'] = 'Przy¶lij moje ostatnie oceny';
 $string['showall'] = 'Poka¿ link &#8222;Wszystkie&#8221;';
-$string['showalphabet'] = 'Poka¿ link \"Alfabet\"';
+$string['showalphabet'] = 'Poka¿ link ';
 $string['showspecial'] = 'Poka¿ link &#8222;Specjalne&#8221;';
 $string['sortby'] = 'Posortuj wed³ug';
 $string['sortbycreation'] = 'Wed³ug daty utworzenia';
@@ -151,6 +156,8 @@ $string['totalentries'] = 'Ilo¶æ wpisów';
 $string['usedynalink'] = 'Automatycznie ³±cz wpisane pojêcia';
 $string['waitingapproval'] = 'Oczekiwanie potwierdzenia';
 $string['warningstudentcapost'] = '(Dotyczy tylko sytuacji gdy s³ownik pojêæ nie jest s³ownikiem g³ównym)';
+$string['withauthor'] = 'Terminy z autorem';
+$string['withoutauthor'] = 'Terminy bez autora';
 $string['writtenby'] = 'przez';
 $string['youarenottheauthor'] = 'Nie jeste¶ autorem tego wpisu, tak wiêc nie mo¿esz go edytowaæ.';
 

@@ -1,7 +1,6 @@
 <?PHP // $Id$ 
       // editor.php - created with Moodle 1.3 (2004052500)
 
-
 $string['about'] = 'O tomto editoru';
 $string['absbottom'] = 'Úplnì dolù (absbottom)';
 $string['absmiddle'] = 'Pøesnì uprostøed (absmiddle)';
@@ -79,8 +78,8 @@ $string['redo'] = 'Opakovat poslední akci';
 $string['removelink'] = 'Odstranit odkaz';
 $string['rename'] = 'Pøejmenovat';
 $string['right'] = 'Vpravo';
+$string['rows'] = 'Øádkù';
 $string['righttoleft'] = 'Zprava doleva';
-$string['rows'] = 'Sloupcù';
 $string['selectcolor'] = 'Výbìr barvy';
 $string['selection'] = 'Výbìr';
 $string['showhelp'] = 'Nápovìda k pou¾ívání editoru';

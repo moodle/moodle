@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2.1 (2004032500)
+      // quiz.php - created with Moodle 1.3 Stable (001) (2004052500)
 
 
 $string['acceptederror'] = 'Margem de erro';
@@ -26,6 +26,7 @@ $string['attemptlast'] = 'Última tentativa';
 $string['attemptquiznow'] = 'Tentar responder o questionário agora';
 $string['attempts'] = 'Tentativas';
 $string['attemptsallowed'] = 'Tentativas permitidas';
+$string['attemptsexist'] = 'Este questonário já foi respondido';
 $string['attemptsunlimited'] = 'Tentativas ilimitadas';
 $string['backtoquiz'] = 'Voltar para edição do questionário';
 $string['bestgrade'] = 'Melhor nota';
@@ -119,6 +120,7 @@ $string['noquestions'] = 'Ainda não foi inserida nenhuma pergunta';
 $string['noresponse'] = 'Nenhuma resposta';
 $string['noreview'] = 'Não é permitido rever este questionário';
 $string['noreviewuntil'] = 'Não é permitido rever este questionário até $a';
+$string['notenoughanswers'] = 'Este tipo de questão requer ao menos $a respostas';
 $string['notenoughsubquestions'] = 'Não foi definido um numero suficiente de perguntas subordinadas<br>Você quer voltar e corrigir esta pergunta?';
 $string['numerical'] = 'Numérica';
 $string['paragraphquestion'] = 'O Parágrafo-questão da linha $a não é suportado. A questão será ignorada.';
@@ -136,6 +138,7 @@ $string['quizclosed'] = 'Este questionário foi encerrado em $a';
 $string['quizcloses'] = 'O questionário encerra-se';
 $string['quiznotavailable'] = 'O questionário não será disponível antes de: $a';
 $string['quizopen'] = 'Abrir o questionário';
+$string['quizopens'] = 'O questionário abre';
 $string['random'] = 'Questão aleatória';
 $string['randomcreate'] = 'Criar questões aleatórias';
 $string['randomsamatch'] = 'Aleatória de associação com respostas breves';

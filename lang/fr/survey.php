@@ -171,7 +171,7 @@ $string['editingasurvey'] = 'Modifier une consultation';
 $string['guestsnotallowed'] = 'Les utilisateurs anonymes ne peuvent pas participer à des consultations';
 $string['helpsurveys'] = 'Aide sur les différents types de consultation';
 $string['howlong'] = 'Combien de temps avez-vous mis pour répondre à cette consultation ?';
-$string['howlongoptions'] = 'Moins d\'1 min,1-2 min,2-3 min,3-4 min,4-5 min,5-10 min,plus de 10 min';
+$string['howlongoptions'] = 'Moins d\'1 min,1-2 min,2-3 min,3-4 min,4-5 min,5-10 min,Plus de 10 min';
 $string['ifoundthat'] = 'J\'ai trouvé que';
 $string['introtext'] = 'Texte d\'introduction';
 $string['ipreferthat'] = 'J\'aime mieux quand';
@@ -196,7 +196,7 @@ $string['scaleagree5'] = 'Pas du tout d\'accord,Pas tout à fait d\'accord,Neutre
 $string['scales'] = 'Barèmes';
 $string['scaletimes5'] = 'Presque jamais,Rarement,Parfois,Souvent,Presque toujours';
 $string['seemoredetail'] = 'Cliquer ici pour avoir plus de détail';
-$string['selectedquestions'] = 'Question choisies dans un barème, tous les étudiants';
+$string['selectedquestions'] = 'Questions choisies dans un barème, tous les étudiants';
 $string['summary'] = 'Résumé';
 $string['surveycompleted'] = 'Vous avez complètement répondu à cette consultation. Le graphique ci-dessous montre un résumé de vos résultats comparés aux moyennes de la classe.';
 $string['surveyname'] = 'Nom de la consultation';
@@ -204,6 +204,6 @@ $string['surveysaved'] = 'Consultation enregistrée';
 $string['surveytype'] = 'Type de consultation';
 $string['thanksforanswers'] = 'Merci d\'avoir répondu à cette consultation, $a';
 $string['time'] = 'Temps';
-$string['viewsurveyresponses'] = 'Afficher les réponses à la consultation $a';
+$string['viewsurveyresponses'] = 'Afficher les $a réponses à la consultation';
 
 ?>

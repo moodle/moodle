@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 (2004052500)
+      // moodle.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['action'] = 'Acció';
@@ -40,6 +40,7 @@ $string['adminhelpconfiguration'] = 'Configureu l\'aparença i el funcionament de
 $string['adminhelpconfigvariables'] = 'Configureu les variables que afecten el funcionament general del lloc';
 $string['adminhelpcourses'] = 'Definiu cursos i categories i assigneu-los persones';
 $string['adminhelpedituser'] = 'Navegueu per la llista de comptes d\'usuari i editeu-los';
+$string['adminhelpenrolments'] = 'Trieu el mètode intern o extern de control d\'inscripció';
 $string['adminhelplanguage'] = 'Comproveu i editeu el paquet de llenguatge actual';
 $string['adminhelplogs'] = 'Navegueu pels registres de tota l\'activitat d\'aquest lloc';
 $string['adminhelpmanageblocks'] = 'Gestioneu els blocs instal·lats i els seus paràmetres';
@@ -140,10 +141,12 @@ $string['comparelanguage'] = 'Compara i edita l\'idioma actual';
 $string['complete'] = 'Complet';
 $string['configallowunenroll'] = 'Si seleccioneu \"Sí\", aleshores els estudiants poden esborrar-se ells mateixos dels cursos quan vulguin. 
 En cas contrari no els és permès i aquest procés és controlat únicament pels professors i els administradors.';
+$string['configautologinguests'] = 'Cal connectar un usuari automàticament com a visitant quan entra en un curs que permet l\'accés als visitants?';
 $string['configcachetext'] = 'En llocs grans o llocs que utilitzen filtres de text, aquest paràmetre pot accelerar realment les coses. S\'emmagatzemen còpies del text ja processat durant el temps que s\'especfica aquí. Si configureu un temps massa breu, de fet el funcionament es pot alentir una mica, però si configureu un temps massa llarg pot implicar que els texts triguin massa a refrescar-se (amb nous enllaços, per exemple).';
 $string['configcountry'] = 'Si definiu aquí un país, quedarà seleccionat per defecte en els nous comptes. Deixeu-lo en blanc per forçar els usuaris a triar un país.';
 $string['configdebug'] = 'Si l\'activeu, s\'incrementaran els informes d\'errors de PHP i apareixeran més avisos. Això només és útil per a desenvolupadors.';
 $string['configdeleteunconfirmed'] = 'Si esteu utilitzant autenticació per correu electronic, aquest es el període de temps durant el qual s\'acceptarà la resposta de l\'usuari. Després d\'aquest períde, els comptes no confirmats se suprimiran.';
+$string['configdigestmailtime'] = 'La gent que vulgui els correus en format resum els rebrà una vegada al dia. Aquest paràmetre controla a quina hora s\'enviarà el resum diari (l\'enviarà el següent cron que s\'executi després d\'aquesta hora).';
 $string['configenablerssfeeds'] = 'Aquest commutador habilitarà l\'RSS en tot el lloc. Per veure realment cap canvi haureu d\'habilitar també l\'RSS en cada mòdul: aneu als paràmetres dels mòduls en el menú de configuració.';
 $string['configenablerssfeedsdisabled'] = 'No està disponible perquè l\'RSS està inhabilitat en tot el lloc. Per habilitar-lo, aneu a les variables en el menú de configuració.';
 $string['configerrorlevel'] = 'Trieu la quantitat d\'avisos de PHP que voleu visualitzar. La millor elecció sol ser Normal.';
@@ -168,6 +171,7 @@ $string['configloglifetime'] = 'Especifiqueu aquí el temps que voleu mantenir el
 $string['configlongtimenosee'] = 'Si els estudiants no han entrat durant molt de temps, se\'ls dóna de baixa dels cursos automàticament. Aquest paràmetre especifica el límit de temps.';
 $string['configmaxbytes'] = 'Especifiqueu la mida màxima que poden tenir els fitxers que es pengen en aquest lloc. Aquest paràmetre està limitat pel paràmetre de PHP upload_max_filesize i pel paràmetre d\'Apache LimitRequestBody. Al seu torn, maxbytes limita el rang de mides que es poden triar dins de cada curs o per a cada mòdul.';
 $string['configmaxeditingtime'] = 'Especifiqueu el temps que tenen els usuaris per revisar els enviaments dels fòrums, la retroacció dels diaris, etc. Generalment 30 minuts és una bona opció.';
+$string['confignoreplyaddress'] = 'Els correus de vegades s\'envien a nom d\'un usuari (p. ex. els missatges dels fòrums). L\'adreça de correu que especifiqueu aquí s\'utilitzarà en el \"From\" en els casos en què els destinataris no haurien de poder contestar directament a l\'usuari (p. ex. quan un usuari tria de mantenir oculta la seva adreça).';
 $string['configopentogoogle'] = 'Si habiliteu aquest paràmetre, llavors Google podrà entrar al vostre lloc com a Visitant. A més a més, la gent que vagi a parar al vostre lloc a través d\'una recerca en Google, hi entrarà automàticament com a Visitant. Adoneu-vos que això només proporciona accés transparent als cursos que permeten l\'accés als visitants. ';
 $string['configproxyhost'] = 'Si aquest <B>servidor</B> accedeix a la xarxa a través d\'un intermediari (<i>proxy</i>, p. e. un tallafocs), escriviu aquí el nom del servidor intermediari i el port. En cas contrari deixeu-lo en blanc.';
 $string['configsecureforms'] = 'Moodle pot fer servir un nivell addicional de seguretat a l\'hora d\'acceptar dades dels formularis web. Si habiliteu aquesta opció, la variable HTTP_REFERER del navegador es compara amb l\'adreça real del formulari. Això pot causar problemes en molt pocs casossi l\'usuari fa servir un tallafocs (p. e. Zonealarm) configurat per eliminar l\'HTTP_REFERER del tràfic web. Els símptomes són que us quedeu encallats en un formulari. Si els vostres usuaris tenen problemes amb la pàgina d\'entrada, per exemple, potser vodreu inhabilitar aquest paràmetre, tot i que això podria deixar el vostre lloc més obert als atacs de força bruta que intenten esbrinar una contrasenya. En cas de dubte deixeu aquest paràmetre configurat com \'Sí\'.';
@@ -187,12 +191,14 @@ $string['confirm'] = 'Confirma';
 $string['confirmed'] = 'S\'ha confirmat el vostre registre';
 $string['confirmednot'] = 'Encara no s\'ha confirmat el vostre registre!';
 $string['continue'] = 'Continua';
+$string['continuetocourse'] = 'Feu clic aquí per entrar al curs';
 $string['cookiesenabled'] = 'Les galetes han d\'estar habilitades en el vostre navegador';
 $string['copy'] = 'copia';
 $string['copyingcoursefiles'] = 'S\'estan copiant els fitxers del curs';
 $string['copyinguserfiles'] = 'S\'estan copiant els fitxers d\'usuari';
 $string['copyingzipfile'] = 'S\'està copiant el fitxer zip';
 $string['copyrightnotice'] = 'Copyright';
+$string['cost'] = 'Cost';
 $string['country'] = 'País';
 $string['course'] = 'Curs';
 $string['courseavailable'] = 'Aquest curs està disponible per als estudiants';
@@ -280,12 +286,15 @@ $string['down'] = 'Avall';
 $string['downloadexcel'] = 'Baixa en format Excel';
 $string['downloadtext'] = 'Baixa en format text';
 $string['doyouagree'] = 'Heu llegit aquestes condicions i les enteneu?';
+$string['duplicate'] = 'Duplica';
+$string['duplicatinga'] = 'S\'està duplicant: $a';
+$string['duplicatingain'] = 'S\'està duplicant $a->what en $a->in';
 $string['edit'] = 'Edita $a';
 $string['editcoursesettings'] = 'Edita els paràmetres del curs';
 $string['editfiles'] = 'Edita fitxers';
 $string['editgroupprofile'] = 'Edita el perfil del grup';
 $string['editinga'] = 'S\'està editant $a';
-$string['editmyprofile'] = 'Edita el perfil';
+$string['editmyprofile'] = 'Edita perfil';
 $string['editsummary'] = 'Edita un resum';
 $string['editthisactivity'] = 'Edita aquesta activitat';
 $string['editthiscategory'] = 'Edita aquesta categoria';
@@ -310,6 +319,10 @@ $string['emailconfirmationsubject'] = '$a: confirmació de compte';
 $string['emailconfirmsent'] = '<P>S\'ha enviat un correu a la vostra adreça <B>$a</B>
 <P>Conté instruccions senzilles per completar el registre.
 <P>Si seguiu tenint problemes, contacteu amb l\'administrador del lloc.';
+$string['emaildigest'] = 'Tipus de resum de correu';
+$string['emaildigestcomplete'] = 'Complet (correu diari amb missatges complets)';
+$string['emaildigestoff'] = 'Sense resum (un correu per cada missatge dels fòrums)';
+$string['emaildigestsubjects'] = 'Assumptes (correu diari només amb els assumptes)';
 $string['emaildisable'] = 'Aquesta adreça de correu està inhabilitada.';
 $string['emaildisplay'] = 'Mostra el correu electrònic';
 $string['emaildisplaycourse'] = 'Permet només als altres membres del curs veure la meva adreça de correu';
@@ -346,13 +359,14 @@ $string['enrolledincourse'] = 'Inscrit al curs ';
 $string['enrolledincoursenot'] = 'No inscrit al curs ';
 $string['enrolmentconfirmation'] = 'Aneu a inscriure-us en aquest curs.<br />Esteu segur que voleu fer això?';
 $string['enrolmentkey'] = 'Clau d\'inscripció';
-$string['enrolmentkeyfrom'] = 'Aquest curs requereix una clau d\'inscripció - una contrasenya<br />d\'un sol ús que us ha d\'haver proporcionat $a
-
-d\'un sol ús que us ha d\'haver proporcionat $a';
+$string['enrolmentkeyfrom'] = 'Aquest curs requereix una clau d\'inscripció - una contrasenya<br />d\'un sol ús que us ha d\'haver proporcionat $a';
 $string['enrolmentkeyhint'] = 'Aquesta clau d\'inscripció es errònia, si us plau torneu a intentar-ho<br />
 (Heus ací una pista: comença per \'$a\'.)
 
 (Una pista: comença per \'$a\'';
+$string['enrolmentnew'] = 'Nova inscripció en $a';
+$string['enrolmentnointernal'] = 'Les inscripcions manuals no estan habilitades';
+$string['enrolments'] = 'Inscripcions';
 $string['entercourse'] = 'Feu clic per entrar en aquest curs';
 $string['enteremailaddress'] = 'Introduïu la vostra adreça de correu per anul·lar la contrasenya anterior i rebre\'n una de nova per correu electrònic.';
 $string['error'] = 'Error';
@@ -460,8 +474,8 @@ $string['helpindex'] = 'Índex de tots els fitxers d\'ajuda';
 $string['helppicture'] = 'Com penjar una imatge';
 $string['helpquestions'] = 'Feu bones preguntes';
 $string['helpreading'] = 'Llegiu amb cura';
-$string['helprichtext'] = 'Referent a l\'editor HTML';
-$string['helpsummaries'] = 'Referent a aquests resums';
+$string['helprichtext'] = 'Sobre l\'editor HTML';
+$string['helpsummaries'] = 'Sobre aquests resums';
 $string['helptext'] = 'Com escriure text';
 $string['helpwiki'] = 'Com escriure text Wiki';
 $string['helpwriting'] = 'Escriviu amb cura';
@@ -695,6 +709,10 @@ $string['passwordsent'] = 'S\'ha enviat la contrasenya';
 $string['passwordsenttext'] = '<P>S\'ha enviat un correu a la vostra adreça electrònica $a->email.
 <P><B>Si us plau, busqueu la contrasenya nova al correu</B>
 <P>Aquesta contrasenya nova s\'ha generat automàticament, de manera que potser voldreu <A HREF=$a->link>canviar-la per una altra més fàcil de recordar</A>.';
+$string['paymentinstant'] = 'Utilitzeu el botó de baix per pagar i inscriure-us.';
+$string['paymentrequired'] = 'Aquest curs requereix pagament.';
+$string['paymentsorry'] = 'Gràcies per pagar. Dissortadament el pagament encara no ha estat completament processat i encara no podeu entrar al curs \"$a->fullname\". Torneu a intentar-ho d\'aquí a uns segons i si no podeu adreceu-vos al $a->teacher o a l\'administrador del lloc';
+$string['paymentthanks'] = 'Gràcies per pagar. Ja esteu inscrit al curs:<br />\"$a\"';
 $string['people'] = 'Persones';
 $string['personalprofile'] = 'Perfil personal';
 $string['phone'] = 'Telèfon';
@@ -737,6 +755,7 @@ $string['rename'] = 'Canvia el nom';
 $string['renamefileto'] = 'Canvia el nom de <b>$a</b> a';
 $string['required'] = 'Necessari';
 $string['requireskey'] = 'Aquest curs requereix una clau d\'inscripció';
+$string['requirespayment'] = 'Aquest curs requereix pagament';
 $string['resortcoursesbyname'] = 'Reordena els cursos pel nom';
 $string['resources'] = 'Recursos';
 $string['restore'] = 'Restaura';
@@ -798,6 +817,7 @@ $string['sitefiles'] = 'Fitxers del lloc';
 $string['sitelogs'] = 'Registres del lloc';
 $string['sitenews'] = 'Notícies del lloc';
 $string['sites'] = 'Llocs';
+$string['sitesection'] = 'Inclou una secció de tema';
 $string['sitesettings'] = 'Paràmetres del lloc';
 $string['size'] = 'Mida';
 $string['sizeb'] = 'bytes';
@@ -885,7 +905,7 @@ $string['uploadnofilefound'] = 'No s\'ha trobat cap fitxer. Segur que n\'havíeu 
 $string['uploadnotallowed'] = 'No es permet penjar fitxers';
 $string['uploadproblem'] = 'S\'ha esdevingut un problema desconegut mentre es penjava el fitxer \'$a\' (potser era massa gran?)';
 $string['uploadthisfile'] = 'Penja aquest fitxer';
-$string['uploadusers'] = 'Carrega els usuaris';
+$string['uploadusers'] = 'Carrega usuaris';
 $string['usedinnplaces'] = 'Utilitzat en $a llocs';
 $string['user'] = 'Usuari';
 $string['userconfirmed'] = '$a confirmat';

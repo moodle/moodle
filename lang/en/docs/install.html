@@ -84,9 +84,24 @@
   <p>Here is a quick summary of the contents of the Moodle folder, to help get 
     you oriented:</p>
   <blockquote>
-    <p>config.php - the ONLY file you need to edit to get started<br>
-      version.php - defines the current version of Moodle code<br>
-      index.php - the front page of the site</p>
+    <p><table><tr>
+      <td width="130" valign="top">config-dist.php</td>
+      <td valign="top">-</td>
+      <td valign="top">
+        you will later make a copy of this and save it as config.php.
+        This will be the ONLY file you need to edit to get started.
+      </td></tr>
+      <tr><td valign="top">version.php</td>
+      <td valign="top">-</td>
+      <td valign="top">
+        defines the current version of Moodle code
+      </td></tr>
+      <tr><td valign="top">index.php</td>
+      <td valign="top">-</td>
+      <td valign="top">
+        the front page of the site
+      </td></tr></table>
+    </p>
     <ul>
       <li>admin/ - code to administrate the whole server </li>
       <li>auth/ - plugin modules to authenticate users  </li>
@@ -231,7 +246,7 @@ php_value post_max_size 2M
 <p>&nbsp;</p>
 <h3 class="sectionheading"><a name="config"></a>7. Edit config.php</h3>
 <blockquote>
-  <p>Now you can edit the configuration file, <strong>config.php</strong>, using a 
+  <p>Now you can create and edit the configuration file, <strong>config.php</strong>, using a 
      text editor. This file is used by all other files in Moodle.</p>
   <p>To start with, make a copy of <strong>config-dist.php</strong> and name it 
     config.php. We do this so that your config.php won't be overwritten in case 

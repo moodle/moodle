@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.3 Beta (2004051100)
+      // forum.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['addanewdiscussion'] = 'Voeg een nieuw onderwerp voor discussie toe';
@@ -16,6 +16,7 @@ $string['configenablerssfeeds'] = 'Met deze instelling kun je de mogelijkheid vo
 $string['configlongpost'] = 'Elk bericht dat langer is dan deze waarde (HTML-code niet inbegrepen) wordt als lang beschouwd.';
 $string['configmanydiscussions'] = 'Maximale aantal discussies van een forum die per pagina getoond worden';
 $string['configmaxbytes'] = 'Standaard maximum grootte voor alle forum bijlagen op deze site (afhankelijk van vak limieten en andere locale instellingen)';
+$string['configreplytouser'] = 'Wil je dat de e-mail van een bericht op het forum het e-mailadres van de verstuurder bevat, zodat de ontvangers eventueel ook persoonlijk kunnen antwoorden, eerder dan via het forum? Zelfs als je hier \'Ja\' instelt, kunnen gebruikers er voor kiezen hun e-mailadres privé te houden via hun profielpagina';
 $string['configshortpost'] = 'Elk bericht dat korter is dan deze waarde (HTML-code niet inbegrepen) wordt als kort beschouwd.';
 $string['couldnotadd'] = 'Door een onbekende fout was het niet mogelijk om je bericht toe te voegen .';
 $string['couldnotdeleteratings'] = 'Helaas, dit kan niet worden verwijderd omdat iemand het bericht al beoordeeld heeft';
@@ -25,8 +26,13 @@ $string['delete'] = 'Verwijder';
 $string['deleteddiscussion'] = 'De discussie is verwijderd';
 $string['deletedpost'] = 'De bijdrage is verwijderd';
 $string['deletesure'] = 'Weet je zeker dat je dit bericht wilt verwijderen?';
+$string['digestmailheader'] = 'Dit is je dagelijkse samenvattende e-mail met de nieuwe berichten van de forums van $a->sitename. Als je jouw voorkeurinstellingen voor de e-maildienst van de forums wil wijzigen, ga dan naar $a->userprefs.';
+$string['digestmailprefs'] = 'Jouw gebruikersprofiel';
+$string['digestmailsubject'] = 'Dagelijkse forumsamenvatting van $a';
+$string['digestsentusers'] = 'Samenvattende e-mail met succes naar $a gebruikers gestuurd.';
 $string['discussion'] = 'Discussie';
 $string['discussionmoved'] = 'Deze discussie is verplaatst naar \'$a\'.';
+$string['discussionname'] = 'Discussienaam';
 $string['discussions'] = 'Discussies';
 $string['discussionsstartedby'] = 'Discussies die door $a zijn gestart';
 $string['discussionsstartedbyrecent'] = 'Discussies die recentelijk door $a zijn gestart';
@@ -97,8 +103,13 @@ $string['postrating1'] = 'Vooral \'Separate Knowing\'';
 $string['postrating2'] = '\'Separate\'en \'Knowing\'';
 $string['postrating3'] = 'Vooral \'Connected\'';
 $string['posts'] = 'Berichten';
+$string['posttoforum'] = 'Plaats op het forum';
 $string['postupdated'] = 'Je bericht is bijgewerkt';
+$string['processingdigest'] = 'E-mail samenvatting aan het verwerken voor gebruiker $a';
 $string['processingpost'] = 'Bericht $a aan het verwerken';
+$string['prune'] = 'Splits discussie';
+$string['prunedpost'] = 'Er is een nieuwe discussie gestart met dat bericht';
+$string['pruneheading'] = 'Splits deze discussie en begin met dit bericht een nieuwe discussie';
 $string['rate'] = 'Beoordeel';
 $string['rating'] = 'Beoordeling';
 $string['ratingeveryone'] = 'Iedereen kan berichten beoordelen';

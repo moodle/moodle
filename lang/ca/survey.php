@@ -33,7 +33,7 @@ $string['attls19'] = 'Quan trobo a gent amb opinions que em semblen estranyes, f
 $string['attls19short'] = 'Fer esforços per a arribar a l’altre';
 $string['attls1short'] = 'Centrar-se en la qualitat de  l’argument';
 $string['attls2'] = 'M\'agrada ser l\'advocat del diable, sostenint el contrari del que algú diu.';
-$string['attls20'] = 'Dedico temps a comprendre qué està \'equivocat\' en les coses. Per exemple, en una interpretació literaria busco quelcom que no estigui suficientement ben argumentat.';
+$string['attls20'] = 'Dedico temps a comprendre què està \'equivocat\' en les coses. Per exemple, en una interpretació literària busco quelcom que no estigui suficientement ben argumentat.';
 $string['attls20short'] = 'Qué està equivocat?';
 $string['attls2short'] = 'Ser l\'advocat del diable';
 $string['attls3'] = 'M\'agrada entendre \'d\'ón venen\' els demés, quines experiències els han fet sentir de la forma en que ho fan.';
@@ -50,7 +50,7 @@ $string['attls8'] = 'Estic sempre interessat en conèixer per què la gent diu i c
 $string['attls8short'] = 'Saber per què';
 $string['attls9'] = 'Sovint em trobo a mi mateix discutint amb els autors dels llibres que llegeixo, intentant entendre per què estan equivocats.';
 $string['attls9short'] = 'Discutir amb autors';
-$string['attlsintro'] = 'El propòsit d’aquest qüestionari es ajudar-nos a avaluar les teves  actituds cap a el pensament i l’aprenentatge.
+$string['attlsintro'] = 'El propòsit d’aquest qüestionari es ajudar-nos a avaluar les vostres actituds envers el pensament i l’aprenentatge.
 No hi ha respostes \'correctes\' o \'equivocades\', ens interessa sols la teva opinió. Les teves  respostes seran tractades amb alt grau de confidencialitat i no afectaran la teva avaluació.';
 $string['attlsm1'] = 'Actituds cap al pensament i l’aprenentatge';
 $string['attlsm2'] = ' Aprenentatge Col·laboratiu';
@@ -124,12 +124,12 @@ Cada una de les 24 declaracions següents t’interroga sobre la teva experiència e
 No hi ha respostes \'correctes\' o \'equivocades\', estem interessats sols en la teva opinió. Les teves  respostes seran tractades amb alt grau de confidencialitat i no afectaran la teva avaluació.
 Les teves  respostes, pensades cuidadosament, ens ajudaran a millorar la manera de presentar aquesta unitat en el futur.
 Moltes gràcies.';
-$string['collesaname'] = 'COLLES (Actual)';
+$string['collesaname'] = 'COLLES (Real)';
 $string['collesapintro'] = 'El propòsit d’aquest qüestionari és ajudar-nos a entendre fins a quin punt la presentació en línia d’aquesta unitat et va facilitar l’aprenentatge.
 Cada una de les declaracions següents et demanaran que comparis la teva experiència <B>favorita</B> (ideal) y la teva experiència <B>real</B> en aquesta unitat. Les teves  respostes seran tractades amb alt grau de confidencialitat i no afectaran la teva avaluació.
 Les teves  respostes, pensades cuidadosament, ens ajudaran a millorar la manera de presentar aquesta unitat en el futur.
 Moltes gràcies per la teva col·laboració.';
-$string['collesapname'] = 'COLLES (Favorita i actual)';
+$string['collesapname'] = 'COLLES (preferit i real)';
 $string['collesm1'] = 'Rellevància';
 $string['collesm1short'] = 'Rellevància';
 $string['collesm2'] = 'Pensament reflexiu';
@@ -148,13 +148,13 @@ Cada una de les 24 declaracions següents l’interroguen sobre la teva experiència
 No existeixen respostes \'correctes\' o \'equivocades\', sòls ens interessa la teva opinió. Les teves  respostes seran tractades amb alt grau de confidencialitat i no afectaran la teva avaluació.
 Les teves respostes, pensades cuidadosament, ens ajudaran a millorar la manera de presentar aquesta unitat en el futur.
 Moltes gràcies per la teva col·laboració.';
-$string['collespname'] = 'COLLES (Preferida)';
+$string['collespname'] = 'COLLES (preferit)';
 $string['done'] = 'Fet';
 $string['download'] = 'Descarregar';
 $string['downloadexcel'] = 'Descarregar com a full de càlcul';
 $string['downloadinfo'] = 'Pots descarregar la informació completa en un format que pugui ser analitzat per un programa de fulls de càlcul';
 $string['downloadtext'] = 'Descarregar com a text';
-$string['editingasurvey'] = 'Editant informació';
+$string['editingasurvey'] = 'S\'està editant la informació';
 $string['guestsnotallowed'] = 'Els invitats no poden participar en les enquestes';
 $string['helpsurveys'] = 'Ajuda sobre els diferents tipus d’informació';
 $string['howlong'] = '¿Quant de temps t’ha portat completar aquest questionari?';

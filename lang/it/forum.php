@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.3 development (2004050300)
+      // forum.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['addanewdiscussion'] = 'Aggiungi un nuovo argomento di discussione';
@@ -16,6 +16,7 @@ $string['configenablerssfeeds'] = 'Questa opzione abilita di utilizzare gli RSS 
 $string['configlongpost'] = 'Ogni messaggio oltre questa lunghezza (escludendo l\'HTML) é considerato lungo.';
 $string['configmanydiscussions'] = 'Numero massimo di discussioni mostrate in una pagina del forum';
 $string['configmaxbytes'] = 'Dimensione massima del allegato per tutti gli allegati dei forum del sito (modificabile da limiti del corso e altre impostazioni locali)';
+$string['configreplytouser'] = 'Quando un messaggio del forum viene inviato via mail, deve contenere l\'indirizzo mail dell\'utente in modo che il ricevente possa replicare anche senza usare il forum? Se è impostato \"Si\" gli utenti possono scegliere nel loro profilo di mantenere il proprio indirizzo mail segreto.';
 $string['configshortpost'] = 'Ogni messaggio sotto questa lunghezza (escludendo l\'HTML) é considerato corto.';
 $string['couldnotadd'] = 'Non è possibile aggiungere il tuo messaggio a causa di un errore sconosciuto.';
 $string['couldnotdeleteratings'] = 'Spiacenti,questo non può essere cancellato in quanto gli utenti lo hanno già valutato.';
@@ -25,8 +26,13 @@ $string['delete'] = 'Cancella';
 $string['deleteddiscussion'] = 'L\'argomento di discussione è stato cancellato.';
 $string['deletedpost'] = 'Il messaggio è stato cancellato.';
 $string['deletesure'] = 'Sei sicuro di voler cancellare questo messaggio?';
+$string['digestmailheader'] = 'Questa è le tua raccolta giornaliera di posta con i nuovi messaggi dai forum di $a->sitename. Se vuoi  cambiare le preferenze della mail dei forum, vai a $a->userprefs. ';
+$string['digestmailprefs'] = 'Il tuo profilo utente';
+$string['digestmailsubject'] = 'Raccolta giornaliera del forum da $a';
+$string['digestsentusers'] = 'Mail delle raccolte inviata con successo a $a utenti. ';
 $string['discussion'] = 'Discussione';
 $string['discussionmoved'] = 'Questa discussione é stata spostata in \'$a\'';
+$string['discussionname'] = 'Nome della discussione';
 $string['discussions'] = 'Discussioni';
 $string['discussionsstartedby'] = 'Discussione iniziata da $a';
 $string['discussionsstartedbyrecent'] = 'Discussione ultimamente iniziata da $a';
@@ -92,8 +98,13 @@ $string['postrating1'] = 'Le esposizioni in genere, sono INDIPENDENTI dai saperi
 $string['postrating2'] = 'Equamente indipendenti e connesse';
 $string['postrating3'] = 'Le esposizioni in genere, sono CONNESSE ai saperi';
 $string['posts'] = 'Messaggi';
+$string['posttoforum'] = 'Invia al forum';
 $string['postupdated'] = 'Il tuo messaggio è stato aggiornato';
+$string['processingdigest'] = 'Elaborazione mail della raccolta per l\'utente $a';
 $string['processingpost'] = 'Elaborazione del messaggio $a';
+$string['prune'] = 'Interrotto';
+$string['prunedpost'] = 'Una nuova discussione è stata creata da quel messaggio';
+$string['pruneheading'] = 'Messaggio interrotto e spostato a una nuova discussione';
 $string['rate'] = 'Vota';
 $string['rating'] = 'Valutazione';
 $string['ratingeveryone'] = 'Tutti possono valutare i messaggi';
@@ -112,10 +123,8 @@ $string['repliesmany'] = '$a risposte al momento';
 $string['repliesone'] = '$a risposta al momento';
 $string['reply'] = 'Rispondi';
 $string['replyforum'] = 'Replica al forum';
-$string['rssarticles'] = 'Numero di articoli RSS recenti';
 $string['rsssubscriberssdiscussions'] = 'Mostra l\'RSS per \'$a\' discussioni';
 $string['rsssubscriberssposts'] = 'Mostra l\'RSS per \'$a\' messaggi';
-$string['rsstype'] = 'RSS per questo forum';
 $string['search'] = 'Cerca';
 $string['searchforums'] = 'Cerca nei forum';
 $string['searcholderposts'] = 'Cerca vecchi messaggi...';

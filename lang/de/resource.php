@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 development (2004020300)
+      // resource.php - created with Moodle 1.3 (2004052500)
 
 
 $string['addresource'] = 'Material hinzufügen';
@@ -19,6 +19,7 @@ $string['configpopuptoolbar'] = 'Sollen Popup-Fenster die Toolbar anzeigen (Vore
 $string['configpopupwidth'] = 'Welche Breite sollen Popup-Fenster haben (Voreinstellung)?';
 $string['configwebsearch'] = 'Wenn eine URL als Webseite oder Link eingefügt wird soll diese Seite dem Benutzer bei der Suche nach einer URL unterstützen.';
 $string['directlink'] = 'Direkter Link zu dieser Datei';
+$string['directoryinfo'] = 'Alle Dateien im ausgewählten Verzeichnis werden angezeigt';
 $string['editingaresource'] = 'Material bearbeiten';
 $string['example'] = 'Beispiel';
 $string['examplereference'] = 'Tobin, K. & Tippins, D (1993) Constructivism as a Referent for Teaching and Learning. In: K. Tobin (Ed) The Practice of Constructivism in Science Education, pp 3-21, Lawrence-Erlbaum, Hillsdale, NJ.';
@@ -28,8 +29,10 @@ $string['fetcherror'] = 'Ein Fehler ist beim Aufruf der Seite aufgetreten.
 ';
 $string['fetchservererror'] = 'Ein Fehler (evtl. ein Programmfehler) ist beim Remoteserver aufgetreten . </p>';
 $string['filename'] = 'Dateiname';
+$string['filtername'] = 'Automatische Verlinkung von Arbeitsunterlagen';
 $string['fulltext'] = 'Voller Text';
 $string['htmlfragment'] = 'HTML-Teil';
+$string['maindirectory'] = 'Hauptverzeichnis für Dateien';
 $string['modulename'] = 'Arbeitsmaterial';
 $string['modulenameplural'] = 'Arbeitsmaterialien';
 $string['neverseen'] = 'Nie gelesen';
@@ -60,5 +63,6 @@ $string['resourcetype5'] = 'Internet-Verknüpfung';
 $string['resourcetype6'] = 'HTML-Text';
 $string['resourcetype7'] = 'Programm';
 $string['resourcetype8'] = 'Wiki-Text';
+$string['resourcetype9'] = 'Verzeichnis';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 Beta (2004022400)
+      // quiz.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['acceptederror'] = 'Zaakceptowany b³±d';
@@ -25,6 +25,7 @@ $string['attemptlast'] = 'Ostatnia próba';
 $string['attemptquiznow'] = 'Spróbuj teraz rozwi±zaæ quiz';
 $string['attempts'] = 'Próby';
 $string['attemptsallowed'] = 'Próby dostêpne';
+$string['attemptsexist'] = 'Ten quiz by³ ju¿ rozwi±zywany';
 $string['attemptsunlimited'] = 'Nielimitowana liczba prób';
 $string['backtoquiz'] = 'Powrót do edycji quizu';
 $string['bestgrade'] = 'Najlepsza ocena';
@@ -40,6 +41,7 @@ $string['categorymove'] = 'Kategoria \'$a->name\' zawiera $a->count pytañ. Wybie
 $string['categorymoveto'] = 'Przenie¶ je do tej kategorii';
 $string['choice'] = 'Wybór';
 $string['choices'] = 'Mo¿liwe odpowiedzi';
+$string['confirmstartattempt'] = 'Quiz posiada limit czasu. Czy jeste¶ pewien, ¿e chcesz zacz±æ?';
 $string['correctanswer'] = 'Poprawna odpowied¼';
 $string['correctanswers'] = 'Poprawne odpowiedzi';
 $string['corrresp'] = 'W³a¶ciwa odpowied¼';
@@ -96,6 +98,7 @@ $string['listitems'] = 'Lista pytañ w tym quizie';
 $string['marks'] = 'Punkty';
 $string['match'] = 'Dopasuj odpowied¼';
 $string['matchanswer'] = 'Pasuj±ca odpowied¼';
+$string['minutes'] = 'minuty';
 $string['missinganswer'] = 'Za ma³o odpowiedzi! Musisz podaæ przynajmniej 2 mo¿liwe odpowiedzi.';
 $string['missingcorrectanswer'] = 'Poprawna odpowied¼ musi byæ okre¶lona';
 $string['missingname'] = 'Pominiêto nazwê pytania';
@@ -114,6 +117,8 @@ $string['noquestions'] = 'Nie dodano jeszcze ¿adnego pytania';
 $string['noresponse'] = 'Brak odpowiedzi';
 $string['noreview'] = 'Nie mo¿esz przegl±daæ tego quizu';
 $string['noreviewuntil'] = 'Nie mo¿esz przegl±daæ tego quizu do $a';
+$string['noscript'] = 'JavaScript musi byæ w³±czony aby mo¿na by³o kontynowaæ!';
+$string['notenoughanswers'] = 'Ten typ pytañ wymaga przynajmniej $a odpowiedzi';
 $string['notenoughsubquestions'] = 'Nie zdefiniowano wystarczaj±cej liczby podpunktów pytañ! <br> Czy chcesz wróciæ i poprawiæ pytanie?';
 $string['numerical'] = 'Numeryczne';
 $string['paragraphquestion'] = 'Pytanie w bloku tekstu nie mo¿e byæ odnalezione na lini $a. Pytanie zostanie zignorowane';
@@ -131,6 +136,9 @@ $string['quizclosed'] = 'Ten quiz zosta³ zamkniêty $a';
 $string['quizcloses'] = 'Quiz koñczy siê';
 $string['quiznotavailable'] = 'Quiz nie bêdzie dostêpny do dnia $a';
 $string['quizopen'] = 'Otwórz quiz';
+$string['quizopens'] = 'Quiz siê otwiera';
+$string['quiztimelimit'] = 'Limit czasu: $a';
+$string['quiztimer'] = 'Czasomierz quizu';
 $string['random'] = 'Pytanie wybierane losowo';
 $string['randomcreate'] = 'Utwórz pytania wybierane losowo';
 $string['randomsamatch'] = 'Losowo wybierane pytania typu \'Dopasuj odpowied¼\'';
@@ -168,6 +176,10 @@ $string['shuffleanswers'] = 'Wymieszaj kolejno¶æ odpowiedzi';
 $string['shufflequestions'] = 'Wymieszaj kolejno¶æ pytañ';
 $string['time'] = 'Czas';
 $string['timecompleted'] = 'Zakoñczono';
+$string['timeleft'] = 'Pozosta³y czas';
+$string['timelimit'] = 'Limit czasu';
+$string['timelimitexeeded'] = 'Up³yn±³ limit czasu!';
+$string['timesup'] = 'Koniec czasu';
 $string['timetaken'] = 'Wykorzystany Czas';
 $string['toomanyrandom'] = 'Liczba potrzebnych pytañ wybieranych losowo jest wiêksza od liczby pytañ w tej kategorii! ($a)';
 $string['true'] = 'Prawda';

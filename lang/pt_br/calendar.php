@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 (2004052500)
+      // calendar.php - created with Moodle 1.3 Stable (001) (2004052500)
 
 
 $string['april'] = 'Abril';
@@ -39,6 +39,10 @@ $string['eventstarttime'] = 'Ora inicial';
 $string['eventtime'] = 'Ora';
 $string['eventview'] = 'Detalhes do evento';
 $string['expired'] = 'Terminado';
+$string['explain_lookahead'] = 'Define um número máximo de dias correspondente ao intervallo em que um evento futuro será considerado com Evento Próximo. Os eventos che iniciam depois deste periodo não seráo considerados como eventos próximos. Se o número de eventos próximos for muito grande, o número de eventos visualizados sérá limitado em função da configuração do Numero máximo de eventos próximos';
+$string['explain_maxevents'] = 'Define o numero máximo de Próximos Eventos visualizados. Escolha um numero pequeno para evitar de a visualização de um numero excessivo de dados.';
+$string['explain_startwday'] = 'As semana mostradas começam no dia indicado aqui.';
+$string['explain_timeformat'] = 'Você pode escolher o formato di visualização das oras: intervalos de 12 ou 24 oras. Escolhendo a opção predefinda os paramêtros utilizzados serão aqueles definidos para o idioma do site.';
 $string['february'] = 'Fevereiro';
 $string['fri'] = 'Sex';
 $string['friday'] = 'Sexta-feira';

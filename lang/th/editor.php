@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.2 Beta (2004022400)
+      // editor.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['about'] = 'เกี่ยวกับเครื่องมือแก้ไข';
@@ -14,15 +14,15 @@ $string['borderthickness'] = 'ความหนาของขอบ';
 $string['bottom'] = 'ด้านล่าง';
 $string['browse'] = 'Browse';
 $string['cancel'] = 'ยกเลิก';
-$string['cellpadding'] = 'cell padding ';
-$string['cellspacing'] = 'cell spacing';
+$string['cellpadding'] = 'ขอเซลล์';
+$string['cellspacing'] = 'ช่องว่างระหว่างเซลล์';
 $string['choosechar'] = 'เลือกตัวหนังสือ';
 $string['chooseicon'] = 'เลือกไอคอนภาพที่ต้องการแทรก';
 $string['close'] = 'ปิด';
 $string['cols'] = 'คอลัมน์';
 $string['copy'] = 'ก้อปปี้ที่เลือก';
 $string['createfolder'] = 'สร้างแฟ้ม';
-$string['createlink'] = 'แทรกลิงค์';
+$string['createlink'] = 'แทรกลิงก์';
 $string['cut'] = 'ตัด';
 $string['delete'] = 'ลบ';
 $string['filebrowser'] = 'ไฟล์ Browser';
@@ -73,9 +73,12 @@ $string['preformatted'] = 'Preformatted';
 $string['preview'] = 'preview';
 $string['properties'] = 'คุณสมบัติ';
 $string['redo'] = 'ยกเลิกทำซ้ำ';
+$string['removelink'] = 'ลบลิงก์ออก';
 $string['rename'] = 'เปลี่ยนชื่อ';
 $string['right'] = 'ขวา';
+$string['righttoleft'] = 'จากขวาไปซ้าย';
 $string['rows'] = 'แถว';
+$string['selectcolor'] = 'เลือกสี';
 $string['selection'] = 'เลือก';
 $string['showhelp'] = 'วิธีใช้เครื่องมือแก้ไข';
 $string['size'] = 'ขนาด';
@@ -94,6 +97,7 @@ $string['unorderedlist'] = 'ปุ่มรายการ';
 $string['upload'] = 'อัพโหลด';
 $string['vertical'] = 'แนวตั้ง';
 $string['width'] = 'กว้าง';
-$string['zip'] = 'ซิป';
+$string['wordclean'] = 'ล้าง HTML';
+$string['zip'] = 'zip';
 
 ?>

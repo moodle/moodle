@@ -1,163 +1,1 @@
-<html>
-
-<head>
-<title>Documentación de Moodle: Guía de programación</title>
-<link rel="stylesheet" href="../theme/standard/styles.php" type="TEXT/CSS">
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<style type="text/css">
-
-<!--
-li {
-       padding-top: 10px;
-}
-
-.question {
-
-    font-size: medium;
-
-    font-weight: bold;
-
-    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-
-    border: 1px dotted;
-
-    padding: 10px;
-
-    background-color: #EEEEEE;
-
-}
-
-.answer {
-
-    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-
-    font-size: medium;
-
-    border: none;
-
-    padding-left: 40px;
-
-}
-
--->
-
-</style>
-<style type="text/css">
-
-<!--
-
-.normaltext {
-
-    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-
-    font-size: medium;
-
-    border: none;
-
-    padding-left: 10px;
-
-}
-
-.answercode {
-
-    font-family: "Courier New", Courier, mono;
-
-    font-size: small;
-
-    border: none;
-
-    padding-left: 60px;
-
-}
-
-.questionlink {
-
-    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-
-    font-size: medium;
-
-    border: none;
-
-    padding-left: 40px;
-
-}
-
--->
-
-</style>
-<style type="text/css">
-<!--
-.examplecode {
-	font-family: "Courier New", Courier, mono;
-	font-size: small;
-	border: thin dashed #999999;
-	background-color: #FBFBFB;
-	margin: auto;
-	padding: 30px;
-	height: auto;
-	width: auto;
-}
--->
-</style>
-</head>
-
-
-
-<body bgcolor="#FFFFFF">
-
-<h2>Guía de programación para Moodle</h2>
-<h2 class="normaltext">Reglas Generales</h2>
-<ol class="normaltext">
-  <li>Todos los archivos deben utilizar la extensión .php .</li>
-  <li>Deben mantenerse todas las notas de derechos de autor. Usted puede añadir 
-    la suya si es necesario.</li>
-  <li>Cada archivo debe incluir el config.php principal.</li>
-  <li>Cada archivo debe certificar que el usuario esté correctamente autenticado, 
-    utilizando require_login() e isadmin(), isteacher(), iscreator() o isstudent().</li>
-  <li>Todo acceso a las bases de datos debe utilizar las funciones incluidas en 
-    lib/datalib.php en cuanto sea posible --esto permite que sea compatible con 
-    un amplio rango de bases de datos. Con esas funciones es posible hacer casi 
-    todo. Cualquier otra sentencia SQL debe ser: inter-plataforma, restringida 
-    a funciones específicas dentro de su código (a menudo un archivo lib.php), 
-    y señalada con claridad.</li>
-  <li>Todas las cadenas deben ser traducibles --cree nuevos textos en los archivos 
-    de "lang/en" y llámelos utilizando get_string() o print_string().</li>
-  <li>Todos los archivos de ayuda deben ser traducibles --cree nuevos textos en 
-    los archivos de "lang/en/help" y llámelos utilizando helpbutton().</li>
-</ol>
-<p>&nbsp;</p>
-<h2 class="normaltext">Estilo de programación</h2>
-<ol class="normaltext">
-  <li>No utilice tabuladores. Use sangría consistente con 4 espacios.</li>
-  <li>Siempre se deben utilizar llaves para los bloques de código (aunque sean 
-    de una sola línea). Moodle usa este estilo: 
-    <p class="examplecode"> <font color="#006600">if (</font><font
- color="#0000cc">$quiz</font><font color="#006600">-&gt;</font><font
- color="#0000cc">attempts</font><font color="#006600">) {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000cc">$numattempts </font><font
- color="#006600">&gt; </font><font color="#0000cc">$quiz</font><font
- color="#006600">-&gt;</font><font color="#0000cc">attempts</font><font
- color="#006600">) {<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font
- color="#0000cc">error</font><font color="#006600">(</font><font
- color="#cc0000">$strtoomanyattempts</font><font color="#006600">, </font><font
- color="#cc0000">"view.php?id=$cm</font><font color="#006600">-&gt;</font><font
- color="#cc0000">id"</font><font color="#006600">);<br />
-      &nbsp;&nbsp;&nbsp;&nbsp;}<br />
-      }</font></p>
-
-  </li>
-  <li>Ya se añadirán más cosas... &iexcl;este documento aún 
-    no está terminado!</li>
-</ol>
-<p align="center" class="normaltext">&nbsp;</p>
-
-<hr>
-<p align="CENTER"><font size="1"><a href="." target="_top">Documentación 
-  de Moodle</a></font></p>
-
-<p align="CENTER"><font size="1">Version: $Id: faq.html,v 1.6 2003/03/30 13:54:28 
-
-  moodler Exp $</font></p>
-</body>
-</html>
+<html><head><title>Moodle Docs: Coding Guidelines</title><link rel="stylesheet" href="docstyles.css" type="TEXT/CSS"><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></head><body bgcolor="#FFFFFF"><h1>Manual de Estilo del C&oacute;digo</h1><p class="normaltext">Cualquier proyecto colaborativo necesita que que la consistencia  y la estabilidad sean fuertes.</p><p class="normaltext">Esta manual de estilo ha sido escrito para conseguir que  todo el c&oacute;digo de Moodle cumpla estas caracter&iacute;sticas. Es cierto que la parte  m&aacute;s antigua del c&oacute;digo no cumple lo aqu&iacute; especificado en algunos casos, pero  esto ser&aacute; solucionado en breve. Todo el c&oacute;digo nuevo definitivamente deber&aacute;  adherirse a estos est&aacute;ndares de la forma m&aacute;s exacta posible.</p><h2>Reglas Generales</h2><ol class="normaltext">  <li class="spaced">Todos los archivos con c&oacute;digo deber&iacute;an utilizar la extensi&oacute;n    .php.</li>  <li class="spaced">Todas las plantillas deber&iacute;an utilizar la extensi&oacute;n .html.</li>  <li class="spaced">Todos los archivos de texto deber&iacute;an utilizar el formato    de texto Unix (la mayor&iacute;a de los editores de texto tienen esto como una opci&oacute;n).</li>  <li class="spaced">Todas las etiquetas php deben ser 'completas' como <font color="#339900">&lt;?php       ?&gt;</font> ... no 'reducidas' como <font color="#339900">&lt;?       ?&gt;</font>.   </li>  <li class="spaced">Todos los avisos de copyright deben ser mantenidos. Puedes    incluir los tuyos propios si resulta necesario.</li>  <li class="spaced">Todos los archivos deben incluir el el archivo principal    config.php.</li>  <li class="spaced">Cada archivo deber&iacute;a comprobar que el usuario est&aacute; autenticado    correctamente, utilizando las funciones require_login() y    isadmin(),    isteacher(),    iscreator()    o isstudent().</li>  <li class="spaced">Todos los accesos a la base de datos deber&iacute;an utilizar las    funciones de finidas en    lib/datalib.php cuando sea posible    -    esto permite la compatibilidad con un gran n&uacute;mero de bases de datos.        Deber&iacute;as encontrar que pr&aacute;cticamente todo es posible utilizando estas funciones.    Si quieres esribir c&oacute;digo SQL entonces deber&aacute;s comprobar que: funciona en    cualquir plataforma; restringido a funciones espec&iacute;ficas de tu c&oacute;digo (normalmente    un archivo lib.php); y claramente comentado.</li>  <li class="spaced">No crees o utilices variables globales distintas de las    est&aacute;ndar $CFG, $SESSION, $THEME y $USER.</li>  <li class="spaced">Todas las variables deber&iacute;an ser inicializadas o, al menos,    comprobada su existencia utilizando  isset()    o empty()    antes de ser utilizadas.</li>  <li class="spaced">Todas las cadenas deber&iacute;an ser traducibles - crea nuevos    textos en los archivos &quot;lang/es&quot; files    con palabras reducidas en ingl&eacute;s y su traducci&oacute;n completa al Espa&ntilde;ol y recup&eacute;ralas    en tu c&oacute;digo utilizando las funciones  get_string() or print_string().</li>  <li class="spaced">Todos los archivos de ayuda deber&iacute;an ser traducibles - crea    nuevos textos en el directorio &quot;es/help&quot; y ll&aacute;malos utilizando    la funci&oacute;n helpbutton().</li>  <li class="spaced">La informaci&oacute;n que llaga desde el navegador (enviada con    los m&eacute;todos GET o POST) autom&aacute;ticamente tiene las &quot;magic_quotes&quot; aplicadas    (sin importar la configuraci&oacute;n de PHP) por lo que uedes insertarla contotal    seguridad en la base de datos. El resto de la informaci&oacute;n(obtenida desde    los archivos, o desde la base de datos)    debe ser escapada con la funci&oacute;n <font color="#339900">addslashes()</font> antes    de insertarla en la base de datos.</li></ol><p>&nbsp;</p><h2>Estilo del C&oacute;digo</h2><p class="normaltext">Comprendo que puede ser un poco frustrante modificar tu  estilo de programaci&oacute;n si has trabajado en otras coasa, pero compara esa frustraci&oacute;n  con la frustraci&oacute;n de toda la gente que intente, m&aacute;s adelante, encontrar el  sentido del c&oacute;digo de Moodle si es una mezcla de estilos. Obviamente, hay muchos  puntos a favor y en contra de cada estilo que la gente utiliza, pero el que  se detalla aqu&iacute; es el que deber&aacute;s utilizar.</p><ol class="normaltext">  <li class="spaced"><strong>El sangrado</strong> del texto debe ser siempre    de 4 espacios. No utilices los tabuladosres NUNCA.</li>  <li class="spaced"><strong>Los nombres de las variables</strong> tienen que    ser siempre f&aacute;ciles de leer, procurando que sean palabras en min&uacute;sculas con    significado en Ingl&eacute;s. Si realmente necesitas m&aacute;s de una palabra, ponlas    juntas, pero procura mantenerlas tan breves como sea posible. Utiliza nombres    en plural para las matrices de objetos.    <p class="examplecode"><font color="#006600">BIEN</font><font color="#006600">:        $quiz<br>      BIEN</font><font color="#006600"></font><font color="#006600">: $errorstring<br>      BIEN</font><font color="#006600"></font><font color="#006600">: $assignments      (for an array of objects)<br>      BIEN</font><font color="#006600"></font><font color="#006600">: $i (but      only in little loops)<br>      <br />      MAL: $Quiz <br>      MAL: $aReallyLongVariableNameWithoutAGoodReason<br>    MAL: $error_string</font></p>  </li>  <li class="spaced"><strong>Las constantes</strong> tienen que definirse siempre    en may&uacute;sculas, y empezar siempre por el nombre del m&oacute;dulo al que pertenecen.    Deber&iacute;an tener las palabras separadas por guiones bajos.    <p class="examplecode"><font color="#006600">define(&quot;FORUM_MODE_FLATOLDEST&quot;,       1);</font></p>  </li>  <li class="spaced"><strong>Los nombres de las funciones</strong> tienen que    ser palabras sencillas en min&uacute;sculas y en Ingl&eacute;s, y empezar con el nombre    del m&oacute;dulo al que pertenecen para evitar conflictos entre m&oacute;dulos.  Las palabras    deber&iacute;an separarse por guiones bajos. Los par&aacute;mentros, si es posible, tendr&aacute;n    valores por defecto. F&iacute;jate en que no has espacio entre el nombre de la funci&oacute;n    y lo siguiente (par&eacute;ntesis).<br>    <p class="examplecode"> <font color="#007700">function </font><font color="#0000BB">forum_set_display_mode</font><font color="#007700">(</font><font color="#0000BB">$mode</font><font color="#007700">=</font><font color="#0000BB">0</font><font color="#007700">)       {<br />      &nbsp;&nbsp;&nbsp;&nbsp;global </font><font color="#0000BB">$USER</font><font color="#007700">,       </font><font color="#0000BB">$CFG</font><font color="#007700">;<br />      <br />      &nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000BB">$mode</font><font color="#007700">)       {<br />      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$USER</font><font color="#007700">-&gt;</font><font color="#0000BB">mode       </font><font color="#007700">= </font><font color="#0000BB">$mode</font><font color="#007700">;<br />      &nbsp;&nbsp;&nbsp;&nbsp;} else if (empty(</font><font color="#0000BB">$USER</font><font color="#007700">-&gt;</font><font color="#0000BB">mode</font><font color="#007700">))       {<br />      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$USER</font><font color="#007700">-&gt;</font><font color="#0000BB">mode       </font><font color="#007700">= </font><font color="#0000BB">$CFG</font><font color="#007700">-&gt;</font><font color="#0000BB">forum_displaymode</font><font color="#007700">;<br />      &nbsp;&nbsp;&nbsp;&nbsp;}<br />      }</font></p>  </li>  <li class="spaced"><strong>Los bloques de c&oacute;digo</strong> siempre deben    estar encerrados por llaves(incluso si solo constan de una l&iacute;nea). Moodle    utiliza este estilo:     <p class="examplecode"> <font color="#006600">if (</font><font color="#0000CC">$quiz</font><font color="#006600">-&gt;</font><font color="#0000CC">attempts</font><font color="#006600">)       {<br />      &nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000CC">$numattempts </font><font color="#006600">&gt;       </font><font color="#0000CC">$quiz</font><font color="#006600">-&gt;</font><font color="#0000CC">attempts</font><font color="#006600">)       {<br />      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000CC">error</font><font color="#006600">(</font><font color="#0000BB">$strtoomanyattempts</font><font color="#006600">,       </font><font color="#CC0000">"view.php?id=$cm</font><font color="#006600">-&gt;</font><font color="#CC0000">id"</font><font color="#006600">);<br />      &nbsp;&nbsp;&nbsp;&nbsp;}<br />      }</font></p>  </li>  <li class="spaced"><strong>Las cadenas </strong> tienen que ser definidas utilizando    comillas simples siempre que sea posible, para obtener un mejor rendimiento.<br>    <p class="examplecode"> <font color="#006600">$var = 'some text without any       variables';<br>      $var = &quot;with special characters like a new line \n&quot;;<br>      $var = 'a very, very long string with a '.$single.' variable in it';<br>      $var = &quot;some $text with $many variables $within it&quot;; </font></p>  </li>  <li class="spaced"><strong>Los comentarios</strong> utilizar&aacute;n dos o tres barras    y estar&aacute;n alineados con el c&oacute;digo    <p class="examplecode"><font color="#006600">function </font><font color="#0000BB">forum_get_ratings_mean</font><font color="#007700">(</font><font color="#0000BB">$postid</font><font color="#007700">,       </font><font color="#0000BB">$scale</font><font color="#007700">, </font><font color="#0000BB">$ratings</font><font color="#007700">=</font><font color="#0000BB">NULL</font><font color="#007700">)       {<br />      </font><font color="#FF8000">/// Return the mean rating of a post given       to the current user by others.<br />      /// Scale is an array of possible ratings in the scale<br />      /// Ratings is an optional simple array of actual ratings (just integers)<br />      <br />      &nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#007700">if (!</font><font color="#0000BB">$ratings</font><font color="#007700">)       {<br />      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$ratings       </font><font color="#007700">= array(); &nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#FF8000">//       Initialize the empty array</font><font color="#007700"><br />      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000BB">$rates       </font><font color="#007700">= </font><font color="#0000BB">get_records</font><font color="#007700">(</font><font color="#DD0000">"forum_ratings"</font><font color="#007700">,       </font><font color="#DD0000">"post"</font><font color="#007700">, </font><font color="#0000BB">$postid</font><font color="#007700">))       {<br>      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#FF8000">//       Process each rating in turn</font><font color="#007700"><br />      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach       (</font><font color="#0000BB">$rates </font><font color="#007700">as </font><font color="#0000BB">$rate</font><font color="#007700">)       {</font> <br>      ....etc </p>  </li>  <li class="spaced"><strong>El espacio en blanco</strong> se puede utilizar    con bastante libertad - no te preocupes por separar las cosas un poco para    ganar en claridad. Generalmente, deber&iacute;a haber un espacio entre llaves y    l&iacute;neas normales y ninguno entre llaves y variables o funciones:<br>    <p class="examplecode"> <font color="#007700">foreach (</font><font color="#0000BB">$objects       </font><font color="#007700">as </font><font color="#0000BB">$key </font><font color="#007700">=&gt;</font><font color="#0000BB">       $thing</font><font color="#007700">)</font><font color="#006600"> {<br>      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">process($thing);</font><font color="#006600">       <br>      } <br>      <br>      </font><font color="#007700">if (</font><font color="#0000BB">$x </font><font color="#007700">==       </font><font color="#0000BB">$y</font><font color="#007700">)</font><font color="#006600">       {<br>      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a       </font><font color="#007700">= </font><font color="#0000BB">$b</font><font color="#007700">;</font><font color="#006600"><br>      } else if (</font><font color="#0000BB">$x </font><font color="#007700">==       </font><font color="#0000BB">$z</font><font color="#006600">) {<br>      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a       </font><font color="#007700">= </font><font color="#0000BB">$c</font><font color="#007700">;</font><font color="#006600"><br>      } else {<br>      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a       </font><font color="#007700">= </font><font color="#0000BB">$d</font><font color="#007700">;</font><font color="#006600"><br>      } </font></p>  </li></ol><p>&nbsp;</p><h2>Estructuras de la base de datos</h2><ol class="normaltext">  <li class="spaced">Cada tabla debe tener un campo autonum&eacute;rico <strong>id</strong>    (INT10)    como clave primaria.</li>  <li class="spaced">La tabla principal que contiene instancias de cada m&oacute;dulo    debe tener el mismo nombre que el m&oacute;dulo y contener, por lo menos, los siguientes    campos:    <ul>      <li><strong>id</strong> - descrito arriba</li>      <li><strong>course</strong> - el identificador del curso al que la instancia        pertenece</li>      <li><strong>name</strong> - el nombre completo de la instancia</li>    </ul>  </li>  <li class="spaced">El resto de las tablas asociadas con un m&oacute;dulo que contiene    informaci&oacute;n sobre 'cosas', deber&iacute;an ser llamandas <strong>modulo_cosas</strong>(f&iacute;jate    en el plural!).</li>  <li class="spaced">Los nombres de los campos (columnas) deber&iacute;an ser sencillos    y cortos, siguiendo las mismas reglas que los nombres de las variables.</li>  <li class="spaced">Cuando sea posible, las columnas que contengan una referencia    al campo id de otra tabla    (por ejemplo, <strong>modulo</strong>)    deber&iacute;a ser llamado <strong>moduloid</strong>.    (f&iacute;jate que esta norma es nueva y no es seguida por algunas tablas antiguas).</li>  <li class="spaced">Los campos booleanos ser&aacute;n implementados como enteros cortos    (por ejemplo, INT4) con los valores 0 o 1,    para permitir la futura expansi&oacute;n de los valores si fuera necesario.</li>  <li class="spaced">La mayor&iacute;a de las tablas tienen que tener un campo <strong>timemodified</strong>    (INT10)    que ser&aacute; actualizado con la fecha actual (timestamp de UNIX) obtenida con    la funci&oacute;n <strong>time</strong>()    de PHP.</li></ol><hr><p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p><p align="CENTER"><font size="1">Version: $Id$</font></p></body></html>

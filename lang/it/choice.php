@@ -3,11 +3,11 @@
 
 
 $string['answered'] = 'Risposta';
-$string['choice'] = 'Scelta $a';
-$string['choicename'] = 'Nome della domanda';
+$string['choice'] = 'Proposta $a';
+$string['choicename'] = 'Nome della scelta';
 $string['choicetext'] = 'Testo della domanda';
-$string['modulename'] = 'Domanda';
-$string['modulenameplural'] = 'Domanda';
+$string['modulename'] = 'Scelta';
+$string['modulenameplural'] = 'Scelte';
 $string['mustchooseone'] = 'Bisogna scegliere una risposta prima di salvare. Non è stato salvato nulla.';
 $string['notanswered'] = 'Ancora nessuna risposta';
 $string['publish'] = 'Rendi pubblici i risultati';

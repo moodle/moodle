@@ -74,11 +74,20 @@ LAMP platform), maar is ook grondig getest met PostgreSQL en op Windows XP, Mac 
 <p>&nbsp;</p>
 <h3 class="sectionheading"><a name="site"></a>3. Site structuur</h3>
 <blockquote>
-  <p>Een kort overzicht van de inhoud van de Moodle map, om je te helpen oriënteren</p>
-  <blockquote>
-    <p>config.php - het ENIGE bestand dat bewerkt moet worden voor je kunt starten<br>
-      version.php - geeft de huidige versie van de Moodle programmatuur<br>
-      index.php - de startpagina van de site</p>
+<p><table><tr>
+       <td width="130" valign="top">config-dist.php</td>
+       <td valign="top">-</td>
+       <td valign="top">later in dit stappenplan zul je van dit bestand een kopie maken en die kopie bewaren als config.php. Dit zal het ENIGE bestand zijn dat bewerkt moet worden voor je kunt starten.
+       </td></tr>
+       <tr><td valign="top">version.php</td>
+       <td valign="top">-</td>
+       <td valign="top">geeft de huidige versie van de Moodle programmatuur
+       </td></tr>
+       <tr><td valign="top">index.php</td>
+       <td valign="top">-</td>
+       <td valign="top">de startpagina van de site
+       </td></tr></table>
+     </p>
     <ul>
       <li>admin/ - code om de server te beheren </li>
       <li>auth/ - modules om gebruikers te authenticeren </li>
@@ -217,7 +226,7 @@ php_value post_max_size 2M
 <p>&nbsp;</p>
 <h3 class="sectionheading"><a name="config"></a>7. Config.php bewerken</h3>
 <blockquote>
-  <p>Nu kun je het configuratiebestand, <strong>config.php</strong>, bewerken met een tekstverwerker.
+  <p>Nu kun je het configuratiebestand, <strong>config.php</strong>, maken en dan bewerken met een tekstverwerker.
      Dit bestand wordt door alle andere bestanden in Moodle gebruikt.</p>
   <p>Maak om te beginnen een kopie van <strong>config-dist.php</strong> en noem ze config.php. 
      We doen dit, zodat je config.php niet overschreven zou worden als je Moodle later upgrade.</p>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.2 development (2004020300)
+      // auth.php - created with Moodle 1.3 - (2004052400)
 
 
 $string['auth_dbdescription'] = 'Metoda ta wykorzystuje tabelê zewnêtrznej bazy danych dla sprawdzenia czy podana nazwa u¿ytkownika i has³o s± poprawne. W przypadku nowego konta, informacje z innych pól równie¿ mog± zostaæ skopiowane do Moodle.';
@@ -28,9 +28,10 @@ $string['auth_ldap_create_context'] = 'Je¿eli w³±czysz opcjê tworzenia u¿ytkowni
 $string['auth_ldap_creators'] = 'Lista grup, których cz³onkowie mog± tworzyæ nowe kursy. Oddziel kolejne grupy symbolem \';\'. Przyk³adowa lista: \'cn=teachers,ou=staff,o=myorg\'';
 $string['auth_ldap_host_url'] = 'Okre¶l hosta LDAP za pomoc± adresu, np. URL\'ldap://ldap.myorg.com/\' lub \'ldaps://ldap.myorg.com/\'';
 $string['auth_ldap_memberattribute'] = 'Okre¶l atrybut cz³onkostwa u¿ytkownika je¿eli u¿ytkownik nale¿y do grupy. Zazwyczaj jest to \'member\'';
-$string['auth_ldap_search_sub'] = 'Wpisz warto¶æ &lt;&gt; 0 je¿eli chcesz szukaæ u¿ytkowników z podkontekstów';
+$string['auth_ldap_search_sub'] = 'Wpisz warto¶æ <> 0 je¿eli chcesz szukaæ u¿ytkowników z podkontekstów';
 $string['auth_ldap_update_userinfo'] = 'Uaktualnij informacje o u¿ytkowniku (imiê, nazwisko, adres...) z LDAP do Moodle. Informacje na temat mapowania: /auth/ldap/attr_mappings.php';
 $string['auth_ldap_user_attribute'] = 'Atrybut u¿ywany do nazywania/szukania u¿ytkowników, zwykle \'cn\'.';
+$string['auth_ldap_version'] = 'Wersja protoko³u LDAP u¿ywana przez serwer.';
 $string['auth_ldapdescription'] = 'Metoda ta zapewnia uwierzytelnienie wzglêdem zewnêtrznego serwera LDAP.<br> Je¿eli podana nazwa u¿ytkownika i has³o s± poprawne, Moodle dokonuje wpisu nowego u¿ytkownika do swojej bazy danych. Modu³ ten mo¿e odczytywaæ atrybuty u¿ytkownika z LDAP i wstêpnie wype³niæ odpowiednie pola w Moodle. Przy kolejnych logowaniach sprawdzane s± tylko nazwa u¿ytkownika i has³o.';
 $string['auth_ldapextrafields'] = 'Te pola s± opcjonalne. Mo¿esz wstêpnie wype³niæ niektóre pola dotycz±ce u¿ytkowników Moodle informacjami z okre¶lonych tutaj <B>pól LDAP.<B> <P> Je¿eli pola te pozostawisz puste, ¿adne informacje nie zostan± przeniesione z LDAP i wykorzystane zostan± warto¶ci domy¶lne Moodle. <P> W obu przypadkach, u¿ytkownik bêdzie móg³ dokonaæ edycji tych pól po zalogowaniu.';
 $string['auth_ldaptitle'] = 'U¿yj serwera LDAP';

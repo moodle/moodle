@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.3 - (2004052400)
+      // glossary.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['addcomment'] = 'コメントの追加';
@@ -64,7 +64,7 @@ $string['displayformat'] = 'フォーマットを表示';
 $string['displayformat2'] = 'フル、作者有り';
 $string['displayformat3'] = '百科事典';
 $string['displayformat4'] = 'FAQ';
-$string['displayformat5'] = 'フル、作者有り';
+$string['displayformat5'] = 'フル、作者無し';
 $string['displayformat6'] = 'エントリーリスト';
 $string['displayformatcontinuous'] = '連続、作者無し';
 $string['displayformatdefault'] = 'シンプル、ディレクトリスタイル';
@@ -99,7 +99,7 @@ $string['exporttomainglossary'] = 'メイン用語集のエクスポート';
 $string['filetoimport'] = 'インポートするファイル';
 $string['fillfields'] = '概念と定義は必須入力項目です。';
 $string['filtername'] = '用語集オートリンク';
-$string['fullmatch'] = '全ての単語を一致させる><small>(自動的にリンクさせる場合)</small>';
+$string['fullmatch'] = '完全一致<small>（自動的にリンクさせる場合）</small>';
 $string['glossaryleveldefaultsettings'] = '用語集レベルデフォルト設定';
 $string['glossarytype'] = '用語集タイプ';
 $string['glosssaryexported'] = '用語集がエクスポートされました。';

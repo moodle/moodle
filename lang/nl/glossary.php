@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.3 Beta + (2004051300)
+      // glossary.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['addcomment'] = 'Voeg commentaar toe';
@@ -131,7 +131,7 @@ $string['rate'] = 'Beoordeel';
 $string['rating'] = 'Beoordeling';
 $string['ratingeveryone'] = 'Iedereen kan de invoer beoordelen';
 $string['ratingno'] = 'Geen beoordelingen';
-$string['ratingonlyteachers'] = 'Alleen $a kan invoer beoordelen';
+$string['ratingonlyteachers'] = 'Alleen $a kunnen invoer beoordelen';
 $string['ratings'] = 'Beoordelingen';
 $string['ratingssaved'] = 'Beoordelingen bewaard';
 $string['ratingsuse'] = 'Gebruik beoordelingen';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.3 Nearly Ready (2004052000)
+      // forum.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['addanewdiscussion'] = 'Colocar un nuevo tema de discusión aquí';
@@ -16,6 +16,7 @@ $string['configenablerssfeeds'] = 'Este interruptor permite canales RSS para tod
 $string['configlongpost'] = 'Cualquier mensaje que exceda esta extensión (sin incluir código HTML) se considera largo.';
 $string['configmanydiscussions'] = 'Máximo número de temas mostrados en una página de foro.';
 $string['configmaxbytes'] = 'Tamaño máximo por defecto para los archivos adjuntos a los mensajes de los foros en este sitio (sujeto a los límites del curso y otras configuraciones del servidor)';
+$string['configreplytouser'] = 'Cuando un mensaje del foro es enviado por correo electrónico, ¿debería contener la dirección del usuario de modo que los receptores pudieran responderle personalmente en lugar de hacerlo en el foro? Incluso aunque se seleccione \'Sí\', los usuarios pueden elegir en su perfil que su dirección de correo electrónico se mantenga en secreto.';
 $string['configshortpost'] = 'Cualquier mensaje que no alcance esta extensión (sin incluir código HTML) se considera corto.';
 $string['couldnotadd'] = 'No se puede colocar su mensaje debido a un problema desconocido.';
 $string['couldnotdeleteratings'] = 'Lo sentimos, no podemos borrar este mensaje debido a que ha sido calificado.';
@@ -25,8 +26,13 @@ $string['delete'] = 'Borrar ';
 $string['deleteddiscussion'] = 'El tema se ha borrado';
 $string['deletedpost'] = 'El mensaje se ha borrado';
 $string['deletesure'] = '¿Está seguro de que desea borrar este mensaje?';
+$string['digestmailheader'] = 'Éste es su resumen diario por correo de los nuevos mensajes de los foros de $a->sitename. Si desea cambiar sus preferencias de foro por correo, hágalo en $a->userprefs.';
+$string['digestmailprefs'] = 'su perfil de usuario';
+$string['digestmailsubject'] = 'Resumen diario del foro de $a';
+$string['digestsentusers'] = 'Resúmenes de correo enviados con éxito a $a usuarios.';
 $string['discussion'] = 'Tema';
 $string['discussionmoved'] = 'Este tema se ha movido a \'$a\'.';
+$string['discussionname'] = 'Denominación';
 $string['discussions'] = 'Temas';
 $string['discussionsstartedby'] = 'Tema comenzado por $a';
 $string['discussionsstartedbyrecent'] = 'Tema recientemente comenzado por $a';
@@ -93,8 +99,13 @@ $string['postrating1'] = 'Muy individualista';
 $string['postrating2'] = 'Término medio';
 $string['postrating3'] = 'Muy comunicativo';
 $string['posts'] = 'Mensajes';
+$string['posttoforum'] = 'Enviar al foro';
 $string['postupdated'] = 'Su mensaje se ha actualizado';
+$string['processingdigest'] = 'Procesando el resumen por correo para el usuario $a';
 $string['processingpost'] = 'Procesando $a';
+$string['prune'] = 'Partir';
+$string['prunedpost'] = 'Se ha creado un nuevo debate a partir de ese mensaje';
+$string['pruneheading'] = 'Partir el mensaje y pasar a una nueva discusión';
 $string['rate'] = 'Calificar';
 $string['rating'] = 'Calificación';
 $string['ratingeveryone'] = 'Todos pueden calificar los mensajes';

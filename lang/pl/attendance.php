@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.2 development (2004020300)
+      // attendance.php - created with Moodle 1.3 - (2004052400)
 
 
 $string['absentlong'] = 'Nieobecny/a';
@@ -57,6 +57,7 @@ $string['takeroll'] = 'Czy sprawdziæ obecno¶æ tego dnia?';
 $string['tardiesperabsence'] = 'Ile spó¼nieñ powinno siê liczyæ jako jedna niebecno¶æ?';
 $string['tardylong'] = 'Spó¼nienie';
 $string['tardyshort'] = 'S';
+$string['teacheredit'] = 'Sprawd¼ obecno¶æ';
 $string['thursday'] = 'Czwartek';
 $string['tuesday'] = 'Wtorek';
 $string['viewall'] = 'Wy¶wietl wszystkie listy obecno¶ci';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.3 development (2004050500)
+      // forum.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['addanewdiscussion'] = 'Afegeix un nou tema de debat';
@@ -16,6 +16,7 @@ $string['configenablerssfeeds'] = 'Aquest commutador habilitarà la possibilitat 
 $string['configlongpost'] = 'Qualsevol missatge per damunt d\'aquesta mida (exclòs l\'HTML) es considera massa llarg.';
 $string['configmanydiscussions'] = 'Nombre màxim de debats per pàgina';
 $string['configmaxbytes'] = 'Mida màxima per defecte per a tots els fitxers adjuntats als fòrums d\'aquest lloc (subjecte als límits de cada curs i altres paràmetres locals)';
+$string['configreplytouser'] = 'Quan s\'envia per correu un missatge d\'un fòrum, ha de portar l\'adreça de l\'usuari com a remitent de manera que els destinataris puguin contestar-li privadament per correu? Encara que s\'especifiqui així, els usuaris poden triar en el seu perfil de mantenir oculta l\'adreça de correu.';
 $string['configshortpost'] = 'Qualsevol missatge per sota d\'aquesta mida (exclòs l\'HTML) es considera massa breu.';
 $string['couldnotadd'] = 'Un error desconegut ha impedit afegir el vostre missatge';
 $string['couldnotdeleteratings'] = 'No es pot suprimir perquè ja l\'han valorat altres persones';
@@ -25,13 +26,18 @@ $string['delete'] = 'Suprimeix';
 $string['deleteddiscussion'] = 'El tema de debat s\'ha suprimit';
 $string['deletedpost'] = 'El missatge s\'ha suprimit';
 $string['deletesure'] = 'Segur que voleu suprimir aquest missatge?';
+$string['digestmailheader'] = 'Aquest és el vostre resum diari de missatges enviats als fòrums de $a->sitename. Si voleu canviar les vostres preferències de correu dels fòrums, aneu a $a->userprefs.';
+$string['digestmailprefs'] = 'el vostre perfil d\'usuari';
+$string['digestmailsubject'] = 'Resum diari de missatges $a';
+$string['digestsentusers'] = 'S\'han enviat amb èxit els resums de correu de: $a usuaris.';
 $string['discussion'] = 'Debat';
 $string['discussionmoved'] = 'Aquest debat s\'ha traslladat a \'$a\'.';
+$string['discussionname'] = 'Títol del debat';
 $string['discussions'] = 'Debats';
 $string['discussionsstartedby'] = 'Debats iniciats per $a';
 $string['discussionsstartedbyrecent'] = 'Debats iniciats recentment per $a';
 $string['discussthistopic'] = 'Debat aquest tema';
-$string['eachuserforum'] = 'Cada persona envia un debat';
+$string['eachuserforum'] = 'Cada persona inicia un debat';
 $string['edit'] = 'Edita';
 $string['editing'] = 'S\'està editant';
 $string['emptymessage'] = 'El vostre missatge presentava algun problema. Potser l\'havíeu deixat en blanc, o el fitxer adjunt era massa gran. Els canvis NO s\'han desat.';
@@ -92,8 +98,13 @@ $string['postrating1'] = 'Sobretot coneixement separats';
 $string['postrating2'] = 'Separats i connectats';
 $string['postrating3'] = 'Sobretot coneixements connectats';
 $string['posts'] = 'Missatges';
+$string['posttoforum'] = 'Envia al fòrum';
 $string['postupdated'] = 'S\'ha actualitzat el vostre missatge';
+$string['processingdigest'] = 'S\'està processant el resum de correu de l\'usuari $a';
 $string['processingpost'] = 'S\'està processant el missatge $a';
+$string['prune'] = 'Separa';
+$string['prunedpost'] = 'S\'ha creat un nou debat amb aquest missatge';
+$string['pruneheading'] = 'Separa el missatge i mou-lo a un altre debat';
 $string['rate'] = 'Valora';
 $string['rating'] = 'Valoració';
 $string['ratingeveryone'] = 'Qualsevol pot valorar els missatges';

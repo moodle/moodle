@@ -1,4 +1,3 @@
-
 body, td, th, li {
     font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
 }
@@ -116,4 +115,19 @@ h3 {
 ul {
 	margin-top: 10px;
 
+}
+.commandline {
+	font-family: "Courier New", Courier, mono;
+	font-size: x-small;
+	background-color: #FBFBFB;
+	margin: auto auto 20px 30px;
+	padding: 5px;
+	height: auto;
+	width: auto;
+	font-weight: bold;
+	border: 1px solid #999999;
+	white-space: nowrap;
+	display: compact;
+	clear: both;
+	float: none;
 }

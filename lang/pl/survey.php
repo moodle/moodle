@@ -1,355 +1,184 @@
-<?php
-//Moodle wersja polska, Adam Pawelczak, Michal Wozniak, Lukasz Wrona (crow1@interia.pl)
-//Modul survey.php
-
-$string['modulename'] = "Ankieta";
-
-$string['modulenameplural'] = "Ankiety";
-
-$string['actual'] = "Aktualne";
-
-$string['actualclass'] = "Aktualne dla grupy";
-
-$string['actualstudent'] = "Aktualne dla \$a";
-
-$string['allquestions'] = "Wszystkie pytania uporz±dkowane, wszyscy studenci";
-
-$string['allscales'] = "Wszystkie skale, wszyscy studenci";
-
-$string['alreadysubmitted'] = "Ju¿ odda³e¶ tê ankietê";
-
-$string['analysisof'] = "Analiza \$a";
-
-$string['answer'] = "Odpowied¼";
-
-$string['answers'] = "Odpowiedzi";
-
-$string['attlsname'] = "ATTLS (wersja 20 punktowa)";
-
-$string['attlsintro'] = "Kwestionariusz ten ma na celu pomóc nam w ocenie Twojego podej¶cia do my¶lenia i uczenia siê. Nie ma odpowiedzi &quot;poprawnych&quot; lub &quot;niepoprawnych&quot;; interesuje nas wy³±cznie Twoja opinia. Zapewniamy, ¿e wszelkie odpowiedzi bêd± traktowane jako poufne i nie wp³yn± na Twoj± ocenê.";
-
-$string['attls1'] = "Oceniaj±c czyj±¶ wypowied¼ koncentrujê siê na jako¶ci argumentu, a nie na osobie wypowiadaj±cej go.";
-
-$string['attls1short'] = "Skupienie siê na jako¶ci argumentu";
-
-$string['attls2'] = "Lubiê graæ rolê &quot;adwokata diab³a&quot; przedstawiaj±c argumenty przeciwne tym, które wypowiada kto¶ inny";
-
-$string['attls2short'] = "Rola adwokata diab³a";
-
-$string['attls3'] = "Lubiê wiedzieæ &quot;sk±d przychodz±&quot; inni i jakie do¶wiadczenia przyczyni³y siê do tego co czuj±";
-
-$string['attls3short'] = "Sk±d inni przychodz±";
-
-$string['attls4'] = "Najistotniejsz± czê¶ci± mojej edukacji jest uczenie siê jak rozumieæ ludzi innych ni¿ ja";
-
-$string['attls4short'] = "Rozumieæ innych";
-
-$string['attls5'] = "Uwa¿am, ¿e dla mnie najlepszym sposobem osi±gniêcia w³asnej to¿samo¶ci jest interakcja z innymi.";
-
-$string['attls5short'] = "Interakcja z innymi";
-
-$string['attls6'] = "Lubiê s³uchaæ opinii osób ze ¶rodowisk innych ni¿ moje - pomaga mi to zrozumieæ jak te same rzeczy mo¿na postrzegaæ w tak ró¿ny sposób.";
-
-$string['attls6short'] = "Lubiæ s³uchaæ opinii";
-
-$string['attls7'] = "Uwa¿am, ¿e mogê wzmocniæ swoj± pozycjê poprzez wymianê pogl±dów z kim¶ kto siê ze mn± nie zgadza";
-
-$string['attls7short'] = "Wzmocnienie poprzez wymianê pogl±dów";
-
-$string['attls8'] = "Zawsze interesuje mnie dlaczego ludzie mówi± to co mówi± i wierz± w to co wierz±";
-
-$string['attls8short'] = "Znaæ motywy innych";
-
-$string['attls9'] = "Czêsto dyskutujê z autorami ksi±¿ek, które czytam, próbuj±c logicznie wyja¶niæ dlaczego nie maj± racji";
-
-$string['attls9short'] = "Dyskutowaæ z autorami";
-
-$string['attls10'] = "Gdy co¶ analizujê wa¿ne jest dla mnie aby pozostaæ obiektywnym";
-
-$string['attls10short'] = "Pozostaæ obiektywnym";
-
-$string['attls11'] = "Staram siê my¶leæ w zgodzie z innymi a nie przeciwko nim";
-
-$string['attls11short'] = "My¶leæ w zgodzie z innymi";
-
-$string['attls12'] = "Mam pewne kryteria, które stosujê do oceny argumentów.";
-
-$string['attls12short'] = "Stosowaæ kryteria do oceny";
-
-$string['attls13'] = "Bardziej staram siê zrozumieæ opiniê innych ni¿ j± oceniæ.";
-
-$string['attls13short'] = "Próbowaæ rozumieæ";
-
-$string['attls14'] = "Staram siê zwracaæ uwagê na s³abe punkty w rozumowaniu innych osób aby pomóc im wyja¶niæ ich argumenty";
-
-$string['attls14short'] = "Zwracaæ uwagê na s³abe punkty";
-
-$string['attls15'] = "Mam zwyczaj stawiania siê na miejscu innych w trakcie dyskusji na kontrowersyjne tematy, aby przekonaæ siê dlaczego tak my¶l±.";
-
-$string['attls15short'] = "Stawianie siê na miejscu innych";
-
-$string['attls16'] = "Mój sposób analizowania mo¿na by okre¶liæ jako &quot;stawianie przed s±dem&quot; poniewa¿ ostro¿nie rozwa¿am wszystkie dowody.";
-
-$string['attls16short'] = "Stawianie przed s±dem";
-
-$string['attls17'] = "W rozwi±zywaniu problemów u¿ycie logiki i rozumu ceniê bardziej od anga¿owania swoich w³asnych trosk.";
-
-$string['attls17short'] = "Najbardziej ceniê logikê";
-
-$string['attls18'] = "Potrafiê zg³êbiaæ opinie inne ni¿ moje w³asne poprzez empatiê";
-
-$string['attls18short'] = "Zg³êbianie poprzez empatiê";
-
-$string['attls19'] = "Gdy spotykam osobê, której opinie s± mi obce staram siê &quot;otworzyæ&quot; na tê osobê aby siê przekonaæ dlaczego ma ona tak± opiniê.";
-
-$string['attls19short'] = "Staraæ siê otworzyæ";
-
-$string['attls20'] = "Po¶wiêcam czas na rozpracowanie co jest &quot;nie tak&quot; w pewnych rzeczach. Na przyk³ad szukam w interpretacji dos³ownej czego¶ co nie jest odpowiednio uargumentowane.";
-
-$string['attls20short'] = "Co jest nie tak?";
-
-$string['attlsmintro'] = "W dyskusji...";
-
-$string['attlsm1'] = "Stosunek do my¶lenia i uczenia siê";
-
-$string['attlsm2'] = "Powi±zane poznanie";
-
-$string['attlsm3'] = "Odrêbne poznanie";
-
-$string['ciqname'] = "Zdarzenia krytyczne";
-
-$string['ciqintro'] = "My¶l±c o zdarzeniach, które mia³y miejsce podczas tych zajêæ w ci±gu ostatniego tygodnia, odpowiedz na poni¿sze pytania.";
-
-$string['ciq1'] = "W którym momencie zajêæ by³e¶ najbardziej zaanga¿owany w proces uczenia siê?";
-
-$string['ciq2'] = "W którym momencie zajêæ by³e¶ najbardziej zdystansowany od procesu uczenia siê?";
-
-$string['ciq3'] = "Jakie dzia³anie któregokolwiek z uczestników forów by³o dla Ciebie najbardziej utwierdzaj±ce i pomocne?";
-
-$string['ciq4'] = "Jakie dzia³anie któregokolwiek z uczestników forów by³o dla Ciebie najbardziej niezrozumia³e lub dezorientuj±ce?";
-
-$string['ciq5'] = "Które zdarzenie najbardziej ciê zaskoczy³o?";
-
-$string['clicktocontinue'] = "Kliknij tutaj aby kontynuowaæ";
-
-$string['clicktocontinuecheck'] = "Kliknij tutaj aby sprawdziæ i kontynuowaæ";
-
-$string['colles1'] = "Ucz±c siê skupiam siê na tym co mnie interesuje";
-
-$string['colles1short'] = "Skupianie siê na interesuj±cych sprawach";
-
-$string['colles2'] = "To czego siê uczê ma du¿e znaczenie w mojej praktyce zawodowej";
-
-$string['colles2short'] = "Wa¿ne dla mojej praktyki zawodowej";
-
-$string['colles3'] = "Uczê siê jak udoskonalaæ moj± praktykê zawodow±";
-
-$string['colles3short'] = "Udoskonalanie mojej praktyki zawodowej";
-
-$string['colles4'] = "To czego siê uczê dobrze ³±czy siê z moj± praktyk± zawodow±";
-
-$string['colles4short'] = "£±czy siê z moj± praktyk± zawodow±";
-
-$string['colles5'] = "My¶lê krytycznie o moim sposobie uczenia siê";
-
-$string['colles5short'] = "Krytycznie oceniam mój proces uczenia siê";
-
-$string['colles6'] = "My¶lê krytycznie o moich w³asnych pomys³ach";
-
-$string['colles6short'] = "Krytycznie podchodzê do swoich pomys³ów";
-
-$string['colles7'] = "My¶lê krytycznie o pomys³ach innych studentów";
-
-$string['colles7short'] = "Krytycznie podchodzê do innych studentów";
-
-$string['colles8'] = "My¶lê krytycznie o pomys³ach przedstawionych w materia³ach do czytania";
-
-$string['colles8short'] = "Krytycznie podchodzê do materia³ów do czytania";
-
-$string['colles9'] = "Wyja¶niam swoje pomys³y innym studentom";
-
-$string['colles9short'] = "Wyja¶niam swoje pomys³y";
-
-$string['colles10'] = "Proszê innych studentów o wyja¶nienie ich pomys³ów";
-
-$string['colles10short'] = "Proszê o wyja¶nienia";
-
-$string['colles11'] = "Inni studenci prosz± mnie o wyja¶nienie moich pomys³ów";
-
-$string['colles11short'] = "Jestem proszony o wyja¶nienia";
-
-$string['colles12'] = "Inni studenci reaguj± na moje pomys³y";
-
-$string['colles12short'] = "Studenci reaguj± na moje dzia³ania";
-
-$string['colles13'] = "Prowadz±cy stymuluje moje my¶lenie";
-
-$string['colles13short'] = "Prowadz±cy stymuluje my¶lenie";
-
-$string['colles14'] = "Prowadz±cy zachêca mnie do brania udzia³u";
-
-$string['colles14short'] = "Prowadz±cy zachêca mnie";
-
-$string['colles15'] = "Prowadz±cy kszta³tuje w³a¶ciwy dyskurs";
-
-$string['colles15short'] = "Prowadz±cy kszta³tuje dyskurs";
-
-$string['colles16'] = "Prowadz±cy kszta³tuje krytyczn± autorefleksjê";
-
-$string['colles16short'] = "Prowadz±cy kszta³tuje autorefleksjê";
-
-$string['colles17'] = "Inni studenci zachêcaj± mnie do brania udzia³u";
-
-$string['colles17short'] = "studenci zachêcaj± mnie";
-
-$string['colles18'] = "Inni studenci chwal± mój wk³ad";
-
-$string['colles18short'] = "Studenci chwal± mnie";
-
-$string['colles19'] = "Inni studenci ceni± mój wk³ad";
-
-$string['colles19short'] = "Studenci ceni± mnie";
-
-$string['colles20'] = "Inni studenci maj± zrozumienie dla moich wysi³ków w uczeniu siê";
-
-$string['colles20short'] = "studenci maj± zrozumienie";
-
-$string['colles21'] = "Potrafiê dobrze zrozumieæ komunikaty innych studentów";
-
-$string['colles21short'] = "Rozumiem innych studentów";
-
-$string['colles22'] = "Inni studenci potrafi± dobrze zrozumieæ moje komunikaty";
-
-$string['colles22short'] = "Studenci rozumiej± mnie";
-
-$string['colles23'] = "Potrafiê dobrze zrozumieæ komunikaty Prowadz±cego";
-
-$string['colles23short'] = "Rozumiem Prowadz±cego";
-
-$string['colles24'] = "Prowadz±cy potrafi dobrze zrozumieæ moje komunikaty";
-
-$string['colles24short'] = "Prowadz±cy mnie rozumie";
-
-$string['collesaname'] = "COLLES (rzeczywiste)";
-
-$string['collesaintro'] = "Ankieta ta ma na celu pomóc nam zrozumieæ w jakim stopniu dostêpno¶æ tego modu³u w trybie on-line pomog³a Ci w uczeniu siê.<br>Ka¿de z poni¿szych 24 stwierdzeñ dotyczy Twoich do¶wiadczeñ w tym module. Nie ma odpowiedzi &quot;poprawnych&quot; lub &quot;niepoprawnych&quot;, interesuje nas wy³±cznie Twoja opinia. Zapewniamy, ¿e wszelkie odpowiedzi bêd± traktowane jako poufne i nie wp³yn± na Twoj± ocenê. <br>Twoje przemy¶lane odpowiedzi pomog± nam w przysz³o¶ci udoskonaliæ sposób prezentacji tego modu³u w trybie on-line. Bardzo dziêkujemy.";
-
-$string['collesapname'] = "COLLES (preferowane i rzeczywiste)";
-
-$string['collesapintro'] = "Ankieta ta ma na celu pomóc nam zrozumieæ w jakim stopniu dostêpno¶æ tego modu³u w trybie on-line pomog³a Ci w uczeniu siê. <br>Ka¿de z poni¿szych 24 stwierdzeñ dotyczy porównania Twoich <B>preferowanych</B> (idealnych)i <B>rzeczywistych</B>  do¶wiadczeñ w tym module. Nie ma odpowiedzi &quot;poprawnych&quot; lub &quot;niepoprawnych&quot;; interesuje nas wy³±cznie Twoja opinia. Zapewniamy, ¿e wszelkie odpowiedzi bêd± traktowane jako poufne i nie wp³yn± na Twoj± ocenê. <br>Twoje przemy¶lane odpowiedzi pomog± nam w przysz³o¶ci udoskonaliæ sposób prezentacji tego modu³u w trybie on-line. Bardzo dziêkujemy.";
-
-$string['collespname'] = "COLLES (preferowane)";
-
-$string['collespintro'] = "Ankieta ta ma na celu pomóc nam zrozumieæ co cenisz w procesie uczenia siê on-line. <br>Ka¿de z poni¿szych 24 stwierdzeñ dotyczy porównania Twoich <B>preferowanych</B> (idealnych) do¶wiadczeñ w tym module. Nie ma odpowiedzi &quot;poprawnych&quot; lub &quot;niepoprawnych&quot;; interesuje nas wy³±cznie Twoja opinia. Zapewniamy, ¿e wszelkie odpowiedzi bêd± traktowane jako poufne i nie wp³yn± na Twoj± ocenê. <br>Twoje przemy¶lane odpowiedzi pomog± nam w przysz³o¶ci udoskonaliæ sposób prezentacji tego modu³u w trybie on-line. Bardzo dziêkujemy.";
-
-$string['collesm1'] = "Znaczenie";
-
-$string['collesm1short'] = "Znaczenie";
-
-$string['collesm2'] = "My¶lenie refleksyjne";
-
-$string['collesm2short'] = "My¶lenie refleksyjne";
-
-$string['collesm3'] = "Interaktywno¶æ";
-
-$string['collesm3short'] = "Interaktywno¶æ";
-
-$string['collesm4'] = "Wsparcie ze strony prowadz±cego";
-
-$string['collesm4short'] = "Wsparcie ze strony prowadz±cego";
-
-$string['collesm5'] = "Wsparcie ze strony wspó³uczestników";
-
-$string['collesm5short'] = "Wsparcie ze strony wspó³uczestników";
-
-$string['collesm6'] = "Interpretacja";
-
-$string['collesm6short'] = "Interpretacja";
-
-$string['collesmintro'] = "W tym module on-line...";
-
-$string['done'] = "Wykonane";
-
-$string['download'] = "¦ci±gnij";
-
-$string['downloadexcel'] = "¦ci±gnij dane jako arkusz kalkulacyjny Excel";
-
-$string['downloadinfo'] = "Mo¿esz ¶ci±gn±æ kompletne  dane dla tej ankiety w postaci nadaj±cej siê do analizy przy u¿yciu Excela, SPSS lub innego pakietu.";
-
-$string['downloadtext'] = "¦ci±gnij dane w formie pliku tekstu zwyk³ego";
-
-$string['editingasurvey'] = "Edycja ankiety";
-
-$string['guestsnotallowed'] = "Go¶cie nie mog± braæ udzia³u w ankietach";
-
-$string['helpsurveys'] = "Pomoc na temat ró¿nych rodzajów ankiet";
-
-$string['howlong'] = "Ile czasu zajê³o Ci wype³nienie tej ankiety>";
-
-$string['howlongoptions'] = "mniej ni¿ 1 min, 1-2 min, 2-3 min,3-4 min,4-5-min,5-10 min, wiêcej ni¿ 10 min";
-
-$string['ifoundthat'] = "Stwierdzi³em, ¿e";
-
-$string['introtext'] = "Tekst wprowadzaj±cy";
-
-$string['ipreferthat'] = "Wolê to";
-
-$string['name'] = "Nazwa";
-
-$string['newsurveyresponses'] = "Nowe odpowiedzi na ankietê";
-
-$string['nobodyyet'] = "Nikt jeszcze nie wype³ni³ tej ankiety";
-
-$string['notdone'] = "Jeszcze nie zrobione";
-
-$string['notes'] = "Twoja prywatna analiza i notatki";
-
-$string['othercomments'] = "Czy masz jakie¶ inne uwagi?";
-
-$string['peoplecompleted'] = "Dotychczas ankietê tê wype³ni³o \$a osób";
-
-$string['preferred'] = "Preferowane";
-
-$string['preferredclass'] = "Preferowane przez grupê";
-
-$string['preferredstudent'] = "Preferowane przez \$a";
-
-$string['question'] = "Pytanie";
-
-$string['questions'] = "Pytania";
-
-$string['questionsnotanswered'] = "Nie udzielono odpowiedzi na niektóre pytania wielokrotnego wyboru";
-
-$string['report'] = "Raport dotycz±cy ankiety";
-
-$string['scales'] = "Skale";
-
-$string['savednotes'] = "Twoje notatki zosta³y zapisane";
-
-$string['scaleagree5'] = "Zupe³nie siê nie zgadzam, Czê¶ciowo siê nie zgadzam, Nie mam zdania, Czê¶ciowo siê zgadzam, Zupe³nie siê zgadzam";
-
-$string['scaletimes5'] = "Prawie nigdy, rzadko, czasami, czêsto, prawie zawsze";
-
-$string['seemoredetail'] = "Kliknij aby zobaczyæ wiêcej szczegó³ów";
-
-$string['selectedquestions'] = "Wybrane pytania ze skali, wszyscy studenci";
-
-$string['summary'] = "Podsumowanie";
-
-$string['surveycompleted'] = "Wype³ni³e¶ niniejsz± ankietê. Poni¿szy wykres przedstawia podsumowanie Twoich wyników w porównaniu ze ¶rednimi warto¶ciami dla grupy";
-
-$string['surveyname'] = "Nazwa ankiety";
-
-$string['surveysaved'] = "Ankieta zapisana";
-
-$string['surveytype'] = "Rodzaj ankiety";
-
-$string['thanksforanswers'] = "\$a, dziêkujemy za wype³nienie ankiety";
-
-$string['time'] = "Czas";
-
-$string['viewsurveyresponses'] = "Zobacz \$a odpowiedzi na ankietê";
-
-$string[''] = "";
+<?PHP // $Id$ 
+      // survey.php - created with Moodle 1.3 - (2004052400)
+
+
+$string['actual'] = 'Aktualne';
+$string['actualclass'] = 'Aktualne dla grupy';
+$string['actualstudent'] = 'Aktualne dla $a';
+$string['allquestions'] = 'Wszystkie pytania uporz±dkowane, wszyscy studenci';
+$string['allscales'] = 'Wszystkie skale, wszyscy studenci';
+$string['alreadysubmitted'] = 'Ju¿ odda³e¶ tê ankietê';
+$string['analysisof'] = 'Analiza $a';
+$string['answers'] = 'Odpowiedzi';
+$string['attls1'] = 'Oceniaj±c czyj±¶ wypowied¼ koncentrujê siê na jako¶ci argumentu, a nie na osobie wypowiadaj±cej go.';
+$string['attls10'] = 'Gdy co¶ analizujê wa¿ne jest dla mnie aby pozostaæ obiektywnym';
+$string['attls10short'] = 'Pozostaæ obiektywnym';
+$string['attls11'] = 'Staram siê my¶leæ w zgodzie z innymi a nie przeciwko nim';
+$string['attls11short'] = 'My¶leæ w zgodzie z innymi';
+$string['attls12'] = 'Mam pewne kryteria, które stosujê do oceny argumentów.';
+$string['attls12short'] = 'Stosowaæ kryteria do oceny';
+$string['attls13'] = 'Bardziej staram siê zrozumieæ opiniê innych ni¿ j± oceniæ.';
+$string['attls13short'] = 'Próbowaæ rozumieæ';
+$string['attls14'] = 'Staram siê zwracaæ uwagê na s³abe punkty w rozumowaniu innych osób aby pomóc im wyja¶niæ ich argumenty';
+$string['attls14short'] = 'Zwracaæ uwagê na s³abe punkty';
+$string['attls15'] = 'Mam zwyczaj stawiania siê na miejscu innych w trakcie dyskusji na kontrowersyjne tematy, aby przekonaæ siê dlaczego tak my¶l±.';
+$string['attls15short'] = 'Stawianie siê na miejscu innych';
+$string['attls16'] = 'Mój sposób analizowania mo¿na by okre¶liæ jako \"stawianie przed s±dem\" poniewa¿ ostro¿nie rozwa¿am wszystkie dowody.';
+$string['attls16short'] = 'Stawianie przed s±dem';
+$string['attls17'] = 'W rozwi±zywaniu problemów u¿ycie logiki i rozumu ceniê bardziej od anga¿owania swoich w³asnych trosk.';
+$string['attls17short'] = 'Najbardziej ceniê logikê';
+$string['attls18'] = 'Potrafiê zg³êbiaæ opinie inne ni¿ moje w³asne poprzez empatiê';
+$string['attls18short'] = 'Zg³êbianie poprzez empatiê';
+$string['attls19'] = 'Gdy spotykam osobê, której opinie s± mi obce staram siê \"otworzyæ\" na tê osobê aby siê przekonaæ dlaczego ma ona tak± opiniê.';
+$string['attls19short'] = 'Staraæ siê otworzyæ';
+$string['attls1short'] = 'Skupienie siê na jako¶ci argumentu';
+$string['attls2'] = 'Lubiê graæ rolê \"adwokata diab³a\" przedstawiaj±c argumenty przeciwne tym, które wypowiada kto¶ inny';
+$string['attls20'] = 'Po¶wiêcam czas na rozpracowanie co jest \"nie tak\" w pewnych rzeczach. Na przyk³ad szukam w interpretacji dos³ownej czego¶ co nie jest odpowiednio uargumentowane.';
+$string['attls20short'] = 'Co jest nie tak?';
+$string['attls2short'] = 'Rola adwokata diab³a';
+$string['attls3'] = 'Lubiê wiedzieæ \"sk±d przychodz±\" inni i jakie do¶wiadczenia przyczyni³y siê do tego co czuj±';
+$string['attls3short'] = 'Sk±d inni przychodz±';
+$string['attls4'] = 'Najistotniejsz± czê¶ci± mojej edukacji jest uczenie siê jak rozumieæ ludzi innych ni¿ ja';
+$string['attls4short'] = 'Rozumieæ innych';
+$string['attls5'] = 'Uwa¿am, ¿e dla mnie najlepszym sposobem osi±gniêcia w³asnej to¿samo¶ci jest interakcja z innymi.';
+$string['attls5short'] = 'Interakcja z innymi';
+$string['attls6'] = 'Lubiê s³uchaæ opinii osób ze ¶rodowisk innych ni¿ moje - pomaga mi to zrozumieæ jak te same rzeczy mo¿na postrzegaæ w tak ró¿ny sposób.';
+$string['attls6short'] = 'Lubiæ s³uchaæ opinii';
+$string['attls7'] = 'Uwa¿am, ¿e mogê wzmocniæ swoj± pozycjê poprzez wymianê pogl±dów z kim¶ kto siê ze mn± nie zgadza';
+$string['attls7short'] = 'Wzmocnienie poprzez wymianê pogl±dów';
+$string['attls8'] = 'Zawsze interesuje mnie dlaczego ludzie mówi± to co mówi± i wierz± w to co wierz±';
+$string['attls8short'] = 'Znaæ motywy innych';
+$string['attls9'] = 'Czêsto dyskutujê z autorami ksi±¿ek, które czytam, próbuj±c logicznie wyja¶niæ dlaczego nie maj± racji';
+$string['attls9short'] = 'Dyskutowaæ z autorami';
+$string['attlsintro'] = 'Kwestionariusz ten ma na celu pomóc nam w ocenie Twojego podej¶cia do my¶lenia i uczenia siê. Nie ma odpowiedzi \"poprawnych\" lub \"niepoprawnych\"; interesuje nas wy³±cznie Twoja opinia. Zapewniamy, ¿e wszelkie odpowiedzi bêd± traktowane jako poufne i nie wp³yn± na Twoj± ocenê.';
+$string['attlsm1'] = 'Stosunek do my¶lenia i uczenia siê';
+$string['attlsm2'] = 'Powi±zane poznanie';
+$string['attlsm3'] = 'Odrêbne poznanie';
+$string['attlsmintro'] = 'W dyskusji...';
+$string['attlsname'] = 'ATTLS (wersja 20 punktowa)';
+$string['ciq1'] = 'W którym momencie zajêæ by³e¶ najbardziej zaanga¿owany w proces uczenia siê?';
+$string['ciq1short'] = 'Najbardziej zaanga¿owany';
+$string['ciq2'] = 'W którym momencie zajêæ by³e¶ najbardziej zdystansowany od procesu uczenia siê?';
+$string['ciq2short'] = 'Najbardziej zdystansowany';
+$string['ciq3'] = 'Jakie dzia³anie któregokolwiek z uczestników forów by³o dla Ciebie najbardziej utwierdzaj±ce i pomocne?';
+$string['ciq3short'] = 'Najbardziej pomocny moment';
+$string['ciq4'] = 'Jakie dzia³anie któregokolwiek z uczestników forów by³o dla Ciebie najbardziej niezrozumia³e lub dezorientuj±ce?';
+$string['ciq4short'] = 'Najbardziej dezorientuj±cy moment';
+$string['ciq5'] = 'Które zdarzenie najbardziej ciê zaskoczy³o?';
+$string['ciq5short'] = 'Najbardziej zaskakuj±cy moment';
+$string['ciqintro'] = 'My¶l±c o zdarzeniach, które mia³y miejsce podczas tych zajêæ w ci±gu ostatniego tygodnia, odpowiedz na poni¿sze pytania.';
+$string['ciqname'] = 'Zdarzenia krytyczne';
+$string['clicktocontinue'] = 'Kliknij tutaj aby kontynuowaæ';
+$string['clicktocontinuecheck'] = 'Kliknij tutaj aby sprawdziæ i kontynuowaæ';
+$string['colles1'] = 'Ucz±c siê skupiam siê na tym co mnie interesuje';
+$string['colles10'] = 'Proszê innych studentów o wyja¶nienie ich pomys³ów';
+$string['colles10short'] = 'Proszê o wyja¶nienia';
+$string['colles11'] = 'Inni studenci prosz± mnie o wyja¶nienie moich pomys³ów';
+$string['colles11short'] = 'Jestem proszony o wyja¶nienia';
+$string['colles12'] = 'Inni studenci reaguj± na moje pomys³y';
+$string['colles12short'] = 'Studenci reaguj± na moje dzia³ania';
+$string['colles13'] = 'Prowadz±cy stymuluje moje my¶lenie';
+$string['colles13short'] = 'Prowadz±cy stymuluje my¶lenie';
+$string['colles14'] = 'Prowadz±cy zachêca mnie do brania udzia³u';
+$string['colles14short'] = 'Prowadz±cy zachêca mnie';
+$string['colles15'] = 'Prowadz±cy kszta³tuje w³a¶ciwy dyskurs';
+$string['colles15short'] = 'Prowadz±cy kszta³tuje dyskurs';
+$string['colles16'] = 'Prowadz±cy kszta³tuje krytyczn± autorefleksjê';
+$string['colles16short'] = 'Prowadz±cy kszta³tuje autorefleksjê';
+$string['colles17'] = 'Inni studenci zachêcaj± mnie do brania udzia³u';
+$string['colles17short'] = 'studenci zachêcaj± mnie';
+$string['colles18'] = 'Inni studenci chwal± mój wk³ad';
+$string['colles18short'] = 'Studenci chwal± mnie';
+$string['colles19'] = 'Inni studenci ceni± mój wk³ad';
+$string['colles19short'] = 'Studenci ceni± mnie';
+$string['colles1short'] = 'Skupianie siê na interesuj±cych sprawach';
+$string['colles2'] = 'To czego siê uczê ma du¿e znaczenie w mojej praktyce zawodowej';
+$string['colles20'] = 'Inni studenci maj± zrozumienie dla moich wysi³ków w uczeniu siê';
+$string['colles20short'] = 'studenci maj± zrozumienie';
+$string['colles21'] = 'Potrafiê dobrze zrozumieæ komunikaty innych studentów';
+$string['colles21short'] = 'Rozumiem innych studentów';
+$string['colles22'] = 'Inni studenci potrafi± dobrze zrozumieæ moje komunikaty';
+$string['colles22short'] = 'Studenci rozumiej± mnie';
+$string['colles23'] = 'Potrafiê dobrze zrozumieæ komunikaty Prowadz±cego';
+$string['colles23short'] = 'Rozumiem Prowadz±cego';
+$string['colles24'] = 'Prowadz±cy potrafi dobrze zrozumieæ moje komunikaty';
+$string['colles24short'] = 'Prowadz±cy mnie rozumie';
+$string['colles2short'] = 'Wa¿ne dla mojej praktyki zawodowej';
+$string['colles3'] = 'Uczê siê jak udoskonalaæ moj± praktykê zawodow±';
+$string['colles3short'] = 'Udoskonalanie mojej praktyki zawodowej';
+$string['colles4'] = 'To czego siê uczê dobrze ³±czy siê z moj± praktyk± zawodow±';
+$string['colles4short'] = '£±czy siê z moj± praktyk± zawodow±';
+$string['colles5'] = 'My¶lê krytycznie o moim sposobie uczenia siê';
+$string['colles5short'] = 'Krytycznie oceniam mój proces uczenia siê';
+$string['colles6'] = 'My¶lê krytycznie o moich w³asnych pomys³ach';
+$string['colles6short'] = 'Krytycznie podchodzê do swoich pomys³ów';
+$string['colles7'] = 'My¶lê krytycznie o pomys³ach innych studentów';
+$string['colles7short'] = 'Krytycznie podchodzê do innych studentów';
+$string['colles8'] = 'My¶lê krytycznie o pomys³ach przedstawionych w materia³ach do czytania';
+$string['colles8short'] = 'Krytycznie podchodzê do materia³ów do czytania';
+$string['colles9'] = 'Wyja¶niam swoje pomys³y innym studentom';
+$string['colles9short'] = 'Wyja¶niam swoje pomys³y';
+$string['collesaintro'] = 'Ankieta ta ma na celu pomóc nam zrozumieæ w jakim stopniu dostêpno¶æ tego modu³u w trybie on-line pomog³a Ci w uczeniu siê.<br>Ka¿de z poni¿szych 24 stwierdzeñ dotyczy Twoich do¶wiadczeñ w tym module. Nie ma odpowiedzi \"poprawnych\" lub \"niepoprawnych\", interesuje nas wy³±cznie Twoja opinia. Zapewniamy, ¿e wszelkie odpowiedzi bêd± traktowane jako poufne i nie wp³yn± na Twoj± ocenê. <br>Twoje przemy¶lane odpowiedzi pomog± nam w przysz³o¶ci udoskonaliæ sposób prezentacji tego modu³u w trybie on-line. Bardzo dziêkujemy.';
+$string['collesaname'] = 'COLLES (rzeczywiste)';
+$string['collesapintro'] = 'Ankieta ta ma na celu pomóc nam zrozumieæ w jakim stopniu dostêpno¶æ tego modu³u w trybie on-line pomog³a Ci w uczeniu siê. <br>Ka¿de z poni¿szych 24 stwierdzeñ dotyczy porównania Twoich <B>preferowanych</B> (idealnych)i <B>rzeczywistych</B>  do¶wiadczeñ w tym module. Nie ma odpowiedzi \"poprawnych\" lub \"niepoprawnych\"; interesuje nas wy³±cznie Twoja opinia. Zapewniamy, ¿e wszelkie odpowiedzi bêd± traktowane jako poufne i nie wp³yn± na Twoj± ocenê. <br>Twoje przemy¶lane odpowiedzi pomog± nam w przysz³o¶ci udoskonaliæ sposób prezentacji tego modu³u w trybie on-line. Bardzo dziêkujemy.';
+$string['collesapname'] = 'COLLES (preferowane i rzeczywiste)';
+$string['collesm1'] = 'Znaczenie';
+$string['collesm1short'] = 'Znaczenie';
+$string['collesm2'] = 'My¶lenie refleksyjne';
+$string['collesm2short'] = 'My¶lenie refleksyjne';
+$string['collesm3'] = 'Interaktywno¶æ';
+$string['collesm3short'] = 'Interaktywno¶æ';
+$string['collesm4'] = 'Wsparcie ze strony prowadz±cego';
+$string['collesm4short'] = 'Wsparcie ze strony prowadz±cego';
+$string['collesm5'] = 'Wsparcie ze strony wspó³uczestników';
+$string['collesm5short'] = 'Wsparcie ze strony wspó³uczestników';
+$string['collesm6'] = 'Interpretacja';
+$string['collesm6short'] = 'Interpretacja';
+$string['collesmintro'] = 'W tym module on-line...';
+$string['collespintro'] = 'Ankieta ta ma na celu pomóc nam zrozumieæ co cenisz w procesie uczenia siê on-line. <br>Ka¿de z poni¿szych 24 stwierdzeñ dotyczy porównania Twoich <B>preferowanych</B> (idealnych) do¶wiadczeñ w tym module. Nie ma odpowiedzi \"poprawnych\" lub \"niepoprawnych\"; interesuje nas wy³±cznie Twoja opinia. Zapewniamy, ¿e wszelkie odpowiedzi bêd± traktowane jako poufne i nie wp³yn± na Twoj± ocenê. <br>Twoje przemy¶lane odpowiedzi pomog± nam w przysz³o¶ci udoskonaliæ sposób prezentacji tego modu³u w trybie on-line. Bardzo dziêkujemy.';
+$string['collespname'] = 'COLLES (preferowane)';
+$string['done'] = 'Wykonane';
+$string['download'] = '¦ci±gnij';
+$string['downloadexcel'] = '¦ci±gnij dane jako arkusz kalkulacyjny Excel';
+$string['downloadinfo'] = 'Mo¿esz ¶ci±gn±æ kompletne  dane dla tej ankiety w postaci nadaj±cej siê do analizy przy u¿yciu Excela, SPSS lub innego pakietu.';
+$string['downloadtext'] = '¦ci±gnij dane w formie pliku tekstu zwyk³ego';
+$string['editingasurvey'] = 'Edycja ankiety';
+$string['guestsnotallowed'] = 'Go¶cie nie mog± braæ udzia³u w ankietach';
+$string['helpsurveys'] = 'Pomoc na temat ró¿nych rodzajów ankiet';
+$string['howlong'] = 'Ile czasu zajê³o Ci wype³nienie tej ankiety>';
+$string['howlongoptions'] = 'mniej ni¿ 1 min, 1-2 min, 2-3 min,3-4 min,4-5-min,5-10 min, wiêcej ni¿ 10 min';
+$string['ifoundthat'] = 'Stwierdzi³em, ¿e';
+$string['introtext'] = 'Tekst wprowadzaj±cy';
+$string['ipreferthat'] = 'Wolê to';
+$string['modulename'] = 'Ankieta';
+$string['modulenameplural'] = 'Ankiety';
+$string['name'] = 'Nazwa';
+$string['newsurveyresponses'] = 'Nowe odpowiedzi na ankietê';
+$string['nobodyyet'] = 'Nikt jeszcze nie wype³ni³ tej ankiety';
+$string['notdone'] = 'Jeszcze nie zrobione';
+$string['notes'] = 'Twoja prywatna analiza i notatki';
+$string['othercomments'] = 'Czy masz jakie¶ inne uwagi?';
+$string['peoplecompleted'] = 'Dotychczas ankietê tê wype³ni³o $a osób';
+$string['preferred'] = 'Preferowane';
+$string['preferredclass'] = 'Preferowane przez grupê';
+$string['preferredstudent'] = 'Preferowane przez $a';
+$string['question'] = 'Pytanie';
+$string['questions'] = 'Pytania';
+$string['questionsnotanswered'] = 'Nie udzielono odpowiedzi na niektóre pytania wielokrotnego wyboru';
+$string['report'] = 'Raport dotycz±cy ankiety';
+$string['savednotes'] = 'Twoje notatki zosta³y zapisane';
+$string['scaleagree5'] = 'Zupe³nie siê nie zgadzam, Czê¶ciowo siê nie zgadzam, Nie mam zdania, Czê¶ciowo siê zgadzam, Zupe³nie siê zgadzam';
+$string['scales'] = 'Skale';
+$string['scaletimes5'] = 'Prawie nigdy, rzadko, czasami, czêsto, prawie zawsze';
+$string['seemoredetail'] = 'Kliknij aby zobaczyæ wiêcej szczegó³ów';
+$string['selectedquestions'] = 'Wybrane pytania ze skali, wszyscy studenci';
+$string['summary'] = 'Podsumowanie';
+$string['surveycompleted'] = 'Wype³ni³e¶ niniejsz± ankietê. Poni¿szy wykres przedstawia podsumowanie Twoich wyników w porównaniu ze ¶rednimi warto¶ciami dla grupy';
+$string['surveyname'] = 'Nazwa ankiety';
+$string['surveysaved'] = 'Ankieta zapisana';
+$string['surveytype'] = 'Rodzaj ankiety';
+$string['thanksforanswers'] = '$a, dziêkujemy za wype³nienie ankiety';
+$string['time'] = 'Czas';
+$string['viewsurveyresponses'] = 'Zobacz $a odpowiedzi na ankietê';
 
 ?>

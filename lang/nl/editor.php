@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.3 Beta + (2004051600)
+      // editor.php - created with Moodle 1.4 development (2004062401)
 
 
 $string['about'] = 'Info';
@@ -59,7 +59,7 @@ $string['linktargettop'] = 'Zelfde venster';
 $string['linktitle'] = 'Titel';
 $string['linkurl'] = 'URL';
 $string['middle'] = 'Midden';
-$string['minimize'] = 'Verklein bewerkingsscherm';
+$string['minimize'] = 'Verklein editor';
 $string['move'] = 'Verplaats';
 $string['normal'] = 'Standaard';
 $string['notimage'] = 'Het geselecteerde bestand is geen afbeelding. Kies een afbeelding.';

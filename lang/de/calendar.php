@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.3 development (2004041800)
+      // calendar.php - created with Moodle 1.3 (2004052500)
 
 
 $string['april'] = 'April';
@@ -16,11 +16,14 @@ $string['december'] = 'Dezember';
 $string['default'] = 'Grundeinstellung';
 $string['deleteevent'] = 'Termin löschen';
 $string['detailedmonthview'] = 'Monatsgesamtansicht';
+$string['durationminutes'] = 'Dauer in Minuten';
 $string['durationnone'] = 'Ohne Zeitangabe';
 $string['durationuntil'] = 'Bis';
 $string['editevent'] = 'Termin bearbeiten';
 $string['errorbeforecoursestart'] = 'Der angegebene Termin liegt vor dem Beginn des Kurses. Bitte korrigieren Sie den Eintrag.';
 $string['errorinvaliddate'] = 'Ungültiges Datum';
+$string['errorinvalidminutes'] = 'Geben Sie die Dauer inMinuten ein (Zahl zwischen 1 und 999)';
+$string['errorinvalidrepeats'] = 'Geben Sie die Zahl ver Veranstaltungen ein (Zahl zwischen 1 und 99';
 $string['errornodescription'] = 'Eine Beschreibung für den Termin muß eingetragen werden.';
 $string['errornoeventname'] = 'Eine Bezeichnung für den Termin ist erforderlich.';
 $string['eventdate'] = 'Datum';
@@ -30,6 +33,7 @@ $string['eventendtime'] = 'Endzeitpunkt';
 $string['eventinstanttime'] = 'Zeit';
 $string['eventkind'] = 'Art des Termins';
 $string['eventname'] = 'Name';
+$string['eventrepeat'] = 'Wiederholungen';
 $string['eventsfor'] = '$a Termine';
 $string['eventstarttime'] = 'Startzeitpunkt';
 $string['eventtime'] = 'Zeit';
@@ -43,6 +47,7 @@ $string['february'] = 'Februar';
 $string['fri'] = 'Fr';
 $string['friday'] = 'Freitag';
 $string['globalevents'] = 'Globale Termine';
+$string['gotocalendar'] = 'Zum Kalender';
 $string['groupevents'] = 'Gruppen- termine';
 $string['hidden'] = 'versteckt';
 $string['january'] = 'Januar';
@@ -65,6 +70,9 @@ $string['pref_startwday'] = 'Erster Tag der Woche';
 $string['pref_timeformat'] = 'Format der Zeitanzeige';
 $string['preferences'] = 'Einstellungen';
 $string['preferences_available'] = 'Ihre persönlichen Einstellungen';
+$string['repeatnone'] = 'Keine Wiederholungen';
+$string['repeatweeksl'] = 'Wöchentliche Wiederholung, automatische Erstellung';
+$string['repeatweeksr'] = 'Termine';
 $string['sat'] = 'Sa';
 $string['saturday'] = 'Samstag';
 $string['september'] = 'September';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2.1 (2004032500)
+      // forum.php - created with Moodle 1.3 Stable (001) (2004052500)
 
 
 $string['addanewdiscussion'] = 'Adicionar um novo tópico de discussão';
@@ -12,6 +12,7 @@ $string['anyfile'] = 'Qualquer arquivo';
 $string['attachment'] = 'Anexo';
 $string['bynameondate'] = 'por $a->name - $a->date';
 $string['configdisplaymode'] = 'Modalidade de visualização das discussões predefinida, se uma outra não for configurada.';
+$string['configenablerssfeeds'] = 'Esta opção ativa a possibilidade de gerar feeds RSS nos fóruns. É necessário configurar cada fórum para che sejam gerados os feeds específicos';
 $string['configlongpost'] = 'Todas as mensagens maiores que esta dimensão (sem contar o html) são consideradas longas.';
 $string['configmanydiscussions'] = 'Número máximo de discussões mostrado em um fórum, por página.';
 $string['configmaxbytes'] = 'Tamanho máximo predefinido dos anexos de todos os fóruns do site (sujeito aos limites dos cursos e outras configurações locais)';
@@ -26,6 +27,7 @@ $string['deletedpost'] = 'A mensagem foi apagada';
 $string['deletesure'] = 'Você tem certeza que quer apagar esta mensagem?';
 $string['discussion'] = 'Tópico';
 $string['discussionmoved'] = 'Esta discussão foi transferida para \'$a\'.';
+$string['discussionname'] = 'Titulo';
 $string['discussions'] = 'Tópicos';
 $string['discussionsstartedby'] = 'Discussões iniciadas por $a';
 $string['discussionsstartedbyrecent'] = 'Discussões iniciadas recentemente por $a';
@@ -93,6 +95,8 @@ $string['postrating3'] = 'Mostra sobretudo saber CONECTADO';
 $string['posts'] = 'Mensagens';
 $string['postupdated'] = 'A sua mensagem foi atualizada';
 $string['processingpost'] = 'Processando mensagem $a';
+$string['prune'] = 'Interromper';
+$string['pruneheading'] = 'Interromper a mensagem e mover para uma nova discussão';
 $string['rate'] = 'Classificar';
 $string['rating'] = 'Classificação';
 $string['ratingeveryone'] = 'Todos podem classificar as mensagens';
@@ -111,6 +115,8 @@ $string['repliesmany'] = '$a respostas até agora';
 $string['repliesone'] = '$a resposta até agora';
 $string['reply'] = 'Responder';
 $string['replyforum'] = 'Responder ao forum';
+$string['rsssubscriberssdiscussions'] = 'Mostrar RSS de \'$a\' discussões';
+$string['rsssubscriberssposts'] = 'Mostrar RSS de \'$a\' mensagens';
 $string['search'] = 'Buscar';
 $string['searchforums'] = 'Buscar no fórum';
 $string['searcholderposts'] = 'Buscar nas mensagens mais antigas...';

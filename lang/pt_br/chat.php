@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.1 development (2003072800)
+      // chat.php - created with Moodle 1.3 Stable (001) (2004052500)
 
 
 $string['beep'] = 'bip';
@@ -14,12 +14,12 @@ $string['currentchats'] = 'Sessões de chat ativas';
 $string['currentusers'] = 'Usuários atuais';
 $string['deletesession'] = 'Cancelar esta sessão';
 $string['deletesessionsure'] = 'Confirmar o cancelamento desta sessão?';
-$string['donotusechattime'] = 'Não publicar os orários das chats';
+$string['donotusechattime'] = 'Não publicar os horários das chats';
 $string['enterchat'] = 'Clique aqui para entrar na chat agora';
 $string['errornousers'] = 'Não foi encontrado nenhum usuário!';
 $string['helpchatting'] = 'Ajuda para usar a chat';
 $string['idle'] = 'Idle';
-$string['messagebeepseveryone'] = '$a \"bipa\" todo mundo';
+$string['messagebeepseveryone'] = '$a ';
 $string['messagebeepsyou'] = '$a está bipando você!';
 $string['messageenter'] = '$a entrou na chat';
 $string['messageexit'] = '$a abandonou esta chat';
@@ -30,9 +30,9 @@ $string['neverdeletemessages'] = 'Nunca cancelar as mensagens';
 $string['nextsession'] = 'Próxima sessão programada';
 $string['nomessages'] = 'Nenhuma mensagem ainda';
 $string['repeatdaily'] = 'Na mesma ora todos os dias';
-$string['repeatnone'] = 'Não repetir - publicar apenas o orario especifico';
+$string['repeatnone'] = 'Não repetir - publicar apenas o horário especifico';
 $string['repeattimes'] = 'Repetir sessões';
-$string['repeatweekly'] = 'No mesmo orário cada semana';
+$string['repeatweekly'] = 'No mesmo horário cada semana';
 $string['savemessages'] = 'Salvar as sessões encerradas';
 $string['seesession'] = 'Ver esta sessão';
 $string['sessions'] = 'Sessões de chat';

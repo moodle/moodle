@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.2 development (2004020300)
+      // survey.php - created with Moodle 1.3 (2004052500)
 
 
 $string['actual'] = 'Momentan';
@@ -57,10 +57,15 @@ $string['attlsm3'] = 'Getrenntes Lernen';
 $string['attlsmintro'] = 'In der Diskussion...';
 $string['attlsname'] = 'ATTLS (20 Punkte Version)';
 $string['ciq1'] = 'Zu welchem Zeitpunkt waren Sie am meisten engagiert in der Klasse als Lernender?';
+$string['ciq1short'] = 'Stark beteiligt/engagiert';
 $string['ciq2'] = 'Zu welchem Zeitpunkt waren Sie am meisten distanziert in der Klasse als Lernender?';
+$string['ciq2short'] = 'Desinteressiert/distanziert';
 $string['ciq3'] = 'Welche Aktion von allen im Forum fanden Sie am meisten bestätigend oder hilfreich?';
+$string['ciq3short'] = 'Hilfreiche Momente';
 $string['ciq4'] = 'Welche Aktion von allen im Forum fanden Sie am meisten verwirrend oder irritierend?';
+$string['ciq4short'] = 'Irritierende Momente';
 $string['ciq5'] = 'Was hat Sie am meisten überrascht?';
+$string['ciq5short'] = 'Überraschende Momente';
 $string['ciqintro'] = 'Während Sie über die Ereignisse in dieser Klasse in den vergangenen Wochen nachdenken, beantworten Sie die folgenden Fragen.';
 $string['ciqname'] = 'Kritische Ereignisse';
 $string['clicktocontinue'] = 'Klicken Sie hier, um weiterzumachen ';

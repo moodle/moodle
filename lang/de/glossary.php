@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.2 alpha (2004022200)
+      // glossary.php - created with Moodle 1.3 (2004052500)
 
 
 $string['addcomment'] = 'Kommentar einfügen';
@@ -47,8 +47,9 @@ $string['commentdeleted'] = 'Dieser Kommentar wurde gelöscht.';
 $string['comments'] = 'Kommentare';
 $string['commentson'] = 'Kommentare eingeschaltet';
 $string['commentupdated'] = 'Dieser Kommentar wurde geändert.';
-$string['concept'] = 'Konzept';
-$string['concepts'] = 'Konzepte';
+$string['concept'] = 'Eintrag';
+$string['concepts'] = 'Einträge';
+$string['configenablerssfeeds'] = 'Diese Einstellung ermöglicht die Nutzung der RSS-Feeds für alel Foren. Jedes Forum muss einzeln für den RSS-Feed aktiviert werden.';
 $string['currentglossary'] = 'Derzeitiges Glossar';
 $string['dateview'] = 'Suche nach Datum';
 $string['defaultapproval'] = 'Status Standard Bestätigung';
@@ -68,6 +69,7 @@ $string['displayformat6'] = 'Beitragsliste';
 $string['displayformatcontinuous'] = 'Anzeige fortsetzen ohne Autor/in';
 $string['displayformatdefault'] = 'Kurzanzeige';
 $string['displayformats'] = 'Anzeigeformat';
+$string['displayformatssetup'] = 'Anzeigeformat Setup';
 $string['duplicateentry'] = 'Doppeleintrag';
 $string['editcategories'] = 'Kategorie bearbeiten';
 $string['editentry'] = 'Eintrag bearbeiten';
@@ -81,6 +83,7 @@ $string['entryapproved'] = 'Der Eintrag wurde eingefügt.';
 $string['entrydeleted'] = 'Eintrag gelöscht';
 $string['entryexported'] = 'Der Eintrag wurde erfolgreich exportiert.';
 $string['entryishidden'] = '( Dieser Eintrag ist gegenwärtig nicht sichtbar.)';
+$string['entryleveldefaultsettings'] = 'Grundeinstellung für Einträge';
 $string['entryusedynalink'] = 'Dieser Eintrag sollte <br> automatisch verbunden werden.';
 $string['explainaddentry'] = 'Fügt einen neuen Beitrag im Glossar ein. <br> Konzept und Definition sind Pflichtfelder';
 $string['explainall'] = 'Zeigt alle Einträge auf einer Seite.';
@@ -97,6 +100,7 @@ $string['filetoimport'] = 'Datei zum importieren';
 $string['fillfields'] = 'Konzept und Definition sind Pflichtfelder.';
 $string['filtername'] = 'Automatische Verlinkung des Glossars';
 $string['fullmatch'] = 'Überprüfe das ganze Wort nur dann <br><small>(wenn es automatisch verlinkt wurde)</small>';
+$string['glossaryleveldefaultsettings'] = 'Grundeinstellung des Glossars';
 $string['glossarytype'] = 'Art des Glossars';
 $string['glosssaryexported'] = 'Glossar wurde exportiert';
 $string['importcategories'] = 'Import von Kategorien';
@@ -134,6 +138,7 @@ $string['ratingsuse'] = 'Bewertungen verwenden';
 $string['ratingtime'] = 'Bewertungen sind nur für Einträge möglich, die in folgendem Zeitraum vorgenommen wurden:';
 $string['rejectedentries'] = 'Abgelehnte Einträge';
 $string['rejectionrpt'] = 'Übersicht über abgelegte Beiträge';
+$string['rsssubscriberss'] = 'Anzeige von RSS Feed für \'$a\' -Konzepte';
 $string['searchindefinition'] = 'Volltextsuche';
 $string['secondaryglossary'] = 'Zweites Glossar';
 $string['sendinratings'] = 'Einsenden meiner letzten Bewertungen';
@@ -151,6 +156,8 @@ $string['totalentries'] = 'Gesamtzahl der Einträge';
 $string['usedynalink'] = 'Automatisch verbundene Einträge im Glossar';
 $string['waitingapproval'] = 'Warten auf Bestätigung';
 $string['warningstudentcapost'] = '( Dies gilt nur, wenn dieses Glossar, nicht das Hauptglossar ist.)';
+$string['withauthor'] = 'Einträge mit Autorennennung';
+$string['withoutauthor'] = 'Einträge ohne Autorennennung';
 $string['writtenby'] = 'von';
 $string['youarenottheauthor'] = 'Sie sind nicht der/die Autor/in dieses Kommentars und deshalb nicht berechtigt, diesen Kommentar zu bearbeiten.';
 
