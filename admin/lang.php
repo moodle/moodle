@@ -257,7 +257,7 @@ function lang_save_file($path, $file, $strings) {
 
     foreach ($strings as $key => $value) {
         list($id, $stringname) = explode("-",$key);
-        if ($CFG->lang != "zh_hk") {  // Some MB languages include backslash bytes
+        if ($CFG->lang != "zh_hk" and $CFG->lang != "zh_tw") {  // Some MB languages include backslash bytes
             $value = str_replace("\\","",$value);           // Delete all slashes
         }
         $value = str_replace("$"."a", "\\$"."a", $value);   // Add slashes for $a
