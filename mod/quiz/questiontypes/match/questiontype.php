@@ -168,9 +168,10 @@ class quiz_match_qtype extends quiz_default_questiontype {
             $menuname = $nameprefix.$subquestion->id;
             $response = isset($question->response[$menuname])
                         ? $question->response[$menuname] : '0';
-            if (isset($correctanswers[$menuname])
-                    && $correctanswers[$menuname]->id
-                    == $response) {
+            if ($readonly 
+                and $quiz->correctanswers 
+                and isset($correctanswers[$menuname])
+                and ($correctanswers[$menuname]->id == $response)) {
                 $class = ' class="highlight" ';
             } else {
                 $class = '';
