@@ -1124,22 +1124,16 @@ function notice_yesno ($message, $linkyes, $linkno) {
     print_simple_box_end();
 }
 
-/* This is an alternate beginning to the redirect function
-function redirect($url, $message="", $delay=false) {
-// Uses META tags to redirect the user, after printing a notice
-    if(!empty($message) && $delay == false):
-        $delay = 10;
-    else:
-        $delay = 0;
-    endif;
-*/
-
 function redirect($url, $message="", $delay=0) {
 // Uses META tags to redirect the user, after printing a notice
 
-    echo "<META HTTP-EQUIV='Refresh' CONTENT='$delay; URL=$url'>";
-
-    if (!empty($message)) {
+    if (empty($message)) {
+        echo "<META HTTP-EQUIV='Refresh' CONTENT='$delay; URL=$url'>";
+    } else {
+        if (! $delay) {  
+            $delay = 3;  // There's no point having a message with no delay
+        }
+        echo "<META HTTP-EQUIV='Refresh' CONTENT='$delay; URL=$url'>";
         print_header();
         echo "<CENTER>";
         echo "<P>$message</P>";
