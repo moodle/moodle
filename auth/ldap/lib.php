@@ -342,38 +342,49 @@ function auth_user_disable ($username) {
 
 function auth_iscreator($username=0) {
 ///if user is member of creator group return true
-   global $CFG, $USER;
-
-   $ldapconnect = auth_ldap_connect();
-   $ldapbind = auth_ldap_bind($ldapconnect);
-
-   if (! $username) {
-       $username=$USER->username;
-   }
+    global $USER , $CFG; 
+    if (! $username) {
+        $username=$USER->username;
+    }
    
-   if ((! $CFG->ldap_creators) OR (! $CFG->ldap_memberattribute)) {
-      return false;
-   } else {
-      $groups = explode(";",$CFG->ldap_creators);
-   }
+    if ((! $CFG->ldap_creators) OR (! $CFG->ldap_memberattribute)) {
+        return false;
+    } 
 
-
-   //build filter
-   $filter = "(& ($CFG->ldap_user_attribute=$username)(|";
-   foreach ($groups as $group){
-       $filter .= "($CFG->ldap_memberattribute=$group)";
-   }
-   $filter .= "))";
-   //search
-   $result = auth_ldap_get_userlist($filter);
-   
-   return count($result);
-
+    return auth_ldap_isgroupmember($username, $CFG->ldap_creators);
+ 
 }
 
 //PRIVATE FUNCTIONS starts
 //private functions are named as auth_ldap*
 
+function auth_ldap_isgroupmember ($username='', $groupdns='') {
+// Takes username and groupdn(s) , separated by ;
+// Returns true if user is member of any given groups
+
+    global $CFG, $USER;
+
+    $ldapconnect = auth_ldap_connect();
+    $ldapbind = auth_ldap_bind($ldapconnect);
+   
+    if (empty($username) OR empty($groupdns)) {
+        return false;
+    }
+    
+    $groups = explode(";",$groupdns);
+
+    //build filter
+    $filter = "(& ($CFG->ldap_user_attribute=$username)(|";
+    foreach ($groups as $group){
+        $filter .= "($CFG->ldap_memberattribute=$group)";
+    }
+    $filter .= "))";
+    //search
+    $result = auth_ldap_get_userlist($filter);
+   
+    return count($result);
+
+}
 function auth_ldap_connect(){
 /// connects to ldap-server
     global $CFG;
