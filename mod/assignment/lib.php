@@ -530,7 +530,7 @@ function assignment_delete_user_files($assignment, $user, $exception) {
             foreach ($files as $file) {
                 if ($file != $exception) {
                     unlink("$basedir/$file");
-                    notify("Existing file '$file' has been deleted!");
+                    notify(get_string("existingfiledeleted", "assignment", $file));
                 }
             }
         }

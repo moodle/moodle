@@ -20,6 +20,7 @@ $string['description'] = 'Description';
 $string['duedate'] = 'Due date';
 $string['duedateno'] = 'No due date';
 $string['early'] = '$a early';
+$string['existingfiledeleted'] = 'Existing file has been deleted: $a';
 $string['failedupdatefeedback'] = 'Failed to update submission feedback for user $a';
 $string['feedback'] = 'Feedback';
 $string['feedbackupdated'] = 'Submissions feedback updated for $a people';
