@@ -4,6 +4,8 @@
 
     optional_param('agree', 0, PARAM_INT);
 
+    define('MESSAGE_WINDOW', true);  // This prevents the message window coming up
+
 
     if (!isset($USER->id)) {
         require_login();
