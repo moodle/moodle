@@ -17,7 +17,6 @@
     ?>
     <script type="text/javascript">
     <!--
-    scroll_active = true;
     function empty_field_and_submit() {
         document.sendForm.chat_message.value = document.inputForm.chat_message.value;
         document.inputForm.chat_message.value = '';

@@ -295,11 +295,13 @@ function chat_force_language($lang) {
 /// This function prepares moodle to operate in given language
 /// usable when $nomoodlecookie = true;
 /// BEWARE: there must be no $course, $USER or $SESSION
+    global $CFG;
+
     if(!empty($CFG->courselang)) {
-        uset($CFG->courselang);
+        unset($CFG->courselang);
     }
     if(!empty($CFG->locale)) {
-        uset($CFG->locale);
+        unset($CFG->locale);
     }
     $CFG->lang = clean_filename($lang);
     moodle_setlocale();
