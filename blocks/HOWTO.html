@@ -238,7 +238,7 @@
 
     <p>It isn't difficult to see that the above code just provides us with a wysiwyg-editor-enabled textarea to write our block's desired content in and a submit button to save. But... what's $this->config->text? Well...</p>
 
-    <p>Moodle goes a long way to make things easier for block developers. Did you notice that the textarea is actually named "text"? When the submit button is pressed, Moodle saves each and every field it can find in our config_instance.html file as instance configuration data. We can then access that data as <strong>$this->config-><em>variablename</em></strong>, where <em>variablename</em> is the actual name we used for our field; in this case, "text". So in essence, the above form just pre-populates the textarea with the current content of the block (as indeed it should) and then allows us to change it.</p>
+    <p>Moodle goes a long way to make things easier for block developers. Did you notice that the textarea is actually named "text"? When the submit button is pressed, Moodle saves each and every field it can find in our <span class="filename">config_instance.html</span> file as instance configuration data. We can then access that data as <strong>$this->config-><em>variablename</em></strong>, where <em>variablename</em> is the actual name we used for our field; in this case, "text". So in essence, the above form just pre-populates the textarea with the current content of the block (as indeed it should) and then allows us to change it.</p>
 
     <p>You also might be surprised by the presence of a submit button and the absence of any &lt;form&gt; element at the same time. But the truth is, we don't need to worry about that at all; Moodle goes a really long way to make things easier for developers! We just print the configuration options we want, in any format we want; include a submit button, and Moodle will handle all the rest itself. The instance configuration variables are automatically at our disposal to access from any of the class methods <em>except</em> <a class="function_title" href="#method_init">init</a>.</p>
 
@@ -451,7 +451,7 @@ function instance_config_save($data) {
 
     <p>We will let this part of the tutorial come to a close with the obligatory excercise for the reader: in order to have the SimpleHTML block work "correctly", find out how to strengthen the eager approach to strip out all tags from the existing configuration of all instances of our block, <strong>or</strong> go back and implement the lazy approach instead. (Hint: do that in the <a class="function_title" href="#method_get_content">get_content</a> method)</p>
 
-    <p class="updating"><strong>UPDATING</strong>: Prior to version 1.5, the file "config_global.html" was named simply "config.hmtl". Also, the methods <a class="function_title" href="#method_config_save">config_save</a> and <a class="function_title" href="#method_config_print">config_print</a> were named <strong>handle_config</strong> and <strong>print_config</strong> respectively. Upgrading a block to work with Moodle 1.5 involves updating these aspects; refer to <a href="#appendix_b">Appendix B</a> for more information.</p>
+    <p class="updating"><strong>UPDATING</strong>: Prior to version 1.5, the file <span class="filename">config_global.html</span> was named simply <span class="filename">config.html</span>. Also, the methods <a class="function_title" href="#method_config_save">config_save</a> and <a class="function_title" href="#method_config_print">config_print</a> were named <strong>handle_config</strong> and <strong>print_config</strong> respectively. Upgrading a block to work with Moodle 1.5 involves updating these aspects; refer to <a href="#appendix_b">Appendix B</a> for more information.</p>
 
 </li>
 
@@ -983,7 +983,7 @@ function name() {
 
     <div class="variable_title">$this->content</div>
 
-    <p>This variable holds all the actual content that is displayed inside each block. Valid values for it are either NULL or an object of class stdClass, which must have specific member variables set as explained below. Normally, it begins life with a value of NULL and it becomes fully constructed (i.e., an object) when the <a class="function_title" href="#method_get_content">get_content</a> is called.</p>
+    <p>This variable holds all the actual content that is displayed inside each block. Valid values for it are either NULL or an object of class stdClass, which must have specific member variables set as explained below. Normally, it begins life with a value of NULL and it becomes fully constructed (i.e., an object) when <a class="function_title" href="#method_get_content">get_content</a> is called.</p>
 
     <p>After it is fully constructed, this object is expected to have certain properties, depending on the value of <a class="variable_title" href="#variable_content_type">$this->content_type</a>. Specifically:
 
