@@ -1270,6 +1270,8 @@ function print_table($table) {
 //     $table->cellpadding    padding on each cell
 //     $table->cellspacing    spacing between cells
 
+    global $THEME;
+
     if (isset($table->align)) {
         foreach ($table->align as $key => $aa) {
             if ($aa) {
@@ -1314,9 +1316,13 @@ function print_table($table) {
     echo "<table width=\"100%\" border=\"0\" valign=\"top\" align=\"center\" ";
     echo " cellpadding=\"$table->cellpadding\" cellspacing=\"$table->cellspacing\" class=\"generaltable\">\n";
 
+    $countcols = 0;
+
     if (!empty($table->head)) {
+        $countcols = count($table->head);;
         echo "<tr>";
         foreach ($table->head as $key => $heading) {
+            
             if (!isset($size[$key])) {
                 $size[$key] = "";
             } 
@@ -1331,17 +1337,21 @@ function print_table($table) {
     if (!empty($table->data)) {
         foreach ($table->data as $row) {
             echo "<tr valign=\"top\">";
-            foreach ($row as $key => $item) {
-                if (!isset($size[$key])) {
-                    $size[$key] = "";
-                } 
-                if (!isset($align[$key])) {
-                    $align[$key] = "";
-                } 
-                if (!isset($wrap[$key])) {
-                    $wrap[$key] = "";
-                } 
-                echo "<td ".$align[$key].$size[$key].$wrap[$key]." class=\"generaltablecell\">$item</td>";
+            if ($row == "hr" and $countcols) {
+                echo "<td colspan=\"$countcols\"><hr noshade=\"noshade\" size=\"1\" color=\"$THEME->borders\"></td>";
+            } else {  /// it's a normal row of data
+                foreach ($row as $key => $item) {
+                    if (!isset($size[$key])) {
+                        $size[$key] = "";
+                    } 
+                    if (!isset($align[$key])) {
+                        $align[$key] = "";
+                    } 
+                    if (!isset($wrap[$key])) {
+                        $wrap[$key] = "";
+                    } 
+                    echo "<td ".$align[$key].$size[$key].$wrap[$key]." class=\"generaltablecell\">$item</td>";
+                }
             }
             echo "</tr>\n";
         }
