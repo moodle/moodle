@@ -29,6 +29,7 @@ $string['prev'] = 'Previous';
 $string['regular'] = 'Regular Manifest';
 $string['report'] = 'Report';
 $string['review'] = 'Review';
+$string['scoes'] = 'Scoes';
 $string['score'] = 'Score';
 $string['trackingloose'] = 'WARNING: The tracking data of this SCORM package will be lost!';
 $string['validation'] = 'Validation result';
