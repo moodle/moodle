@@ -716,7 +716,7 @@ function main_upgrade($oldversion=0) {
         }
     }
 
-    if ($oldversion < 2004030701) {     /// Because of the renaming of Czech language pack
+    if ($oldversion < 2004030702) {     /// Because of the renaming of Czech language pack
         execute_sql("UPDATE {$CFG->prefix}user SET lang = 'cs' WHERE lang = 'cz'");
         execute_sql("UPDATE {$CFG->prefix}course SET lang = 'cs' WHERE lang = 'cz'");
     }
