@@ -119,7 +119,7 @@
         # Database Handler
         include_once($CFG->dirroot."/mod/wiki/ewikimoodlelib.php");
         # Plugins
-        include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/email_protect.php");
+        //include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/email_protect.php");
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/patchsaving.php");
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/notify.php");
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/feature/imgresize_gd.php");
