@@ -510,7 +510,7 @@ function validate_email ($address) {
 }
 
 function detect_munged_arguments($string) {
-    if (ereg('\.\.', $string)) { // check for parent URLs
+    if (substr_count($string, '..') > 1) {   // We allow one '..' in a URL
         return true;
     }
     if (ereg('[\|\`]', $string)) {  // check for other bad characters
