@@ -456,14 +456,29 @@
                          "", "", true, update_module_button($cm->id, $course->id, $strresource), 
                          navmenu($course, $cm));
 
+            if (isteacheredit($course->id)) {
+                echo "<div align=\"right\"><img src=\"$CFG->pixpath/i/files.gif\" height=16 width=16 alt=\"\">&nbsp".
+                     "<a href=\"$CFG->wwwroot/files/index.php?id=$course->id&wdir=/$resource->reference$subdir\">".
+                      get_string("editfiles")."...</a></div>";
+            }
+
+
             if (trim($resource->summary)) {
                 print_simple_box(text_to_html($resource->summary), "center");
                 print_spacer(10,10);
             }
 
+            $files = get_directory_list("$CFG->dataroot/$relativepath", 'moddata', false, true, true);
+
+
+            if (!$files) {
+                print_heading(get_string("nofilesyet"));
+                print_footer($course);
+                exit;
+            }
+
             print_simple_box_start("center", "", "$THEME->cellcontent", '0' );
 
-            $files = get_directory_list("$CFG->dataroot/$relativepath", 'moddata', false, true, true);
             $strftime = get_string('strftimedatetime');
             $strname = get_string("name");
             $strsize = get_string("size");
