@@ -92,8 +92,9 @@
     }
 
     //Function to delete all the directory contents recursively
+    //it supports a excluded dit too
     //Copied from the web !!
-    function delete_dir_contents ($dir) {
+    function delete_dir_contents ($dir,$excludeddir="") {
 
         $slash = "/";
 
@@ -111,10 +112,10 @@
 
         // Loop through all directory entries, and construct two temporary arrays containing files and sub directories
         while($entry = readdir($handle)) {
-            if (is_dir($dir. $slash .$entry) && $entry !=  ".." && $entry !=  ".") {
+            if (is_dir($dir. $slash .$entry) && $entry != ".." && $entry != "." && $entry != $excludeddir) {
                 $dir_subdirs[] = $dir. $slash .$entry;
             }
-            else if ($entry !=  ".." && $entry !=  ".") {
+            else if ($entry != ".." && $entry != "." && $entry != $excludeddir) {
                 $dir_files[] = $dir. $slash .$entry;
             }
         }
