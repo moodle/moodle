@@ -26,8 +26,13 @@
   <p>All you should need are:</p>
   <ul>
     <li>a working installation of <A HREF="http://www.php.net/">PHP</A> (version 
-      4.1.0 or better), including the <A HREF="http://www.boutell.com/gd/">GD</A> 
-      library for manipulating images.</li>
+      4.1.0 or later), with the following features enabled (most PHP installations 
+      these days will have all of these):
+      <ul>
+      <LI>JPEG and/or PNG image editing support via the <A HREF="http://www.boutell.com/gd/">GD library</A></li>
+      <LI>Sessions support
+      <LI>File uploading
+      </UL>
     <li>a working database server (<A HREF="http://www.mysql.com/">MySQL</A> for 
       now, but soon it will support PostgreSQL, MSSQL, Oracle, Interbase, Foxpro, 
       Access, ADO, Sybase, DB2 or ODBC).</li>
@@ -65,6 +70,7 @@
       index.php - the front page of the site</p>
     <ul>
       <li>admin/ - code to administrate the whole server </li>
+      <li>auth/ - plugin modules to authenticate users  </li>
       <li>course/ - code to display and manage courses </li>
       <li>doc/ - help documentation for Moodle (eg this page)</li>
       <li>files/ - code to display and manage uploaded files</li>
