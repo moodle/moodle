@@ -2,7 +2,8 @@
 //  created from the above 2003/11/20 by Tom Robb tom@robb.net
 // Version 2.3  Modified 2003/12/12 pm
 //  Instance delete function implemented
-// 
+// Version 2.4 2003/12/17 -- Error when Short Answers are blank fixed.  Delete function removed (in favor of Overview module)
+//   Excel worksheet 3 now reports percent correct for M/C and T/F items
 
 /// This report shows the specific responses made by each student for each question.
 /// and provides an analysis of the responses for each item
@@ -521,24 +522,45 @@ $string[''] = "";
         $myxls->write_string(0,0,$sheettitle,$formatb);
         $itemcount = 0;
         //Now printout the questions (and M/C answers if $containsMC
-
         $qcount = 0;
         $row = 1;
+        $itemcount = 0;
         foreach ($qs_in_order as $qid){
+            if ($quests[$qid]['qtype']==5) { $itemcount = $itemcount + $match_number[$qid];} else {$itemcount++;}
             $row++;
             $qcount++;
             $label = "Q-$qcount";
             $myxls->write_string($row,0,$label,$formatb);
             $myxls->write_string($row,1,$quests[$qid]['qtext'],$formatb);
-            $itemcount = 0;
             if($quests[$qid]['qtype']==3){
                 $nowchoices = $quests[$qid]['choice'];
                 foreach($nowchoices as $thischoice){
-                $row++;
-                $label = "A-$thischoice[choiceno]";
-                $myxls->write_string($row,2,$label,$formatb);
-                $myxls->write_string($row,3,$thischoice[answer],$formatb);
+                    $cno = $thischoice['choiceno'];
+                    $row++;
+                    $label = "A-$thischoice[choiceno]";
+                    $nowstat =  $analysis[$cno][$itemcount];
+                    $pct_cor = qr_make_pct($nowstat,$total_user_count);
+                    $nowstatpct = $nowstat . " ($pct_cor)";
+                    $myxls->write_string($row,1,$nowstatpct,$formatb);
+                    $myxls->write_string($row,2,$label,$formatb);
+                    $myxls->write_string($row,3,$thischoice[answer],$formatb);
                 }
+            }
+            if($quests[$qid]['qtype']==2){
+                //"True" responses
+                $row++;
+                $nowstat =  $analysis[1][$qcount];
+                $nowresp = substr($nowstat,5);
+                $pct_cor = qr_make_pct($nowresp,$total_user_count);
+                $myxls->write_string($row,1,$pct_cor,$formatb);
+                $myxls->write_string($row,2,'True',$formatb);
+                //"False" responses
+                $row++;
+                $nowstat =  $analysis[2][$qcount];
+                $nowresp = substr($nowstat,6);
+                $pct_cor = qr_make_pct($nowresp,$total_user_count);
+                $myxls->write_string($row,1,$pct_cor,$formatb);
+                $myxls->write_string($row,2,'True',$formatb);
             }
         }
 
@@ -651,9 +673,7 @@ $string[''] = "";
             //else the data to be printed is in $thisitem['data'] and $thisitem['score'] == 1 shows that the item was correct
                 if ($thisitem['score'] < 1) {$thiscolor = "ff0000";} else {$thiscolor = "000000";}
                 if ($thisitemkey == 0){
-            //modified to add DEL  Dec.  12, 2003
-                    $delstring = get_string('delete');
-                    print("<th align='left'>$thisitem<br><font size=-1>&nbsp;&nbsp;<a href='report.php?id=$cm->id&mode=fullstat&del=$thisattemptno'>($delstring)</a></font></th>");
+                    print("<th align='left'>$thisitem</font></th>");
                 } elseif ($thisitemkey == 1){
                     print("<td align='right'>&nbsp;$thisitem%&nbsp;&nbsp;</td>");
                 } elseif ($thisitemkey['qtype'] == 2){
@@ -927,6 +947,7 @@ function qr_answer_lookup($qid,$thisanswer){
     switch ($thistype) {
         case 1:  //SHORTANSWER
             $returndata['data'] = $thisanswer;
+            if(!$thisanswer){$thisanswer = "N/R";}
             $qtally[$qid]['response'][$thisanswer]++;
             //convert all to lowercase to allow for mismatching cases to be correct
             if (strpos(strtolower($quests[$qid]['correct']),trim(strtolower($thisanswer))) >-1){
