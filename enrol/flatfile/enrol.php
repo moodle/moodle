@@ -41,16 +41,21 @@ function check_entry($form, $course) {
 /**
 * Override the base cron() function to read in a file
 *
-* Comma separated file assumed to have four fields per line:
-*   operation, role, idnumber(user), idnumber(course)
+* Comma separated file assumed to have four or six fields per line:
+*   operation, role, idnumber(user), idnumber(course) [, starttime, endtime]
 * where:
 *   operation        = add | del
 *   role             = student | teacher | teacheredit
 *   idnumber(user)   = idnumber in the user table NB not id
 *   idnumber(course) = idnumber in the course table NB not id
+*   starttime        = start time (in seconds since epoch) - optional
+*   endtime          = end time (in seconds since epoch) - optional
 */
     function cron() {
         global $CFG;
+
+        /// call the base class
+        parent::cron();
 
         if (empty($CFG->enrol_flatfilelocation)) {
             $filename = "$CFG->dataroot/1/enrolments.txt";  // Default location
@@ -73,7 +78,7 @@ function check_entry($form, $course) {
 
 
                 /// If a line is incorrectly formatted ie does not have 4 comma separated fields then ignore it
-                    if ( count($fields) != 4) {
+                    if (count($fields) != 4 and count($fields) !=6) {
                         if ( count($fields) > 1 or strlen($fields[0]) > 1) { // no error for blank lines
                             $this->log .= "$line: Line incorrectly formatted - ignoring\n";
                         }
@@ -85,9 +90,19 @@ function check_entry($form, $course) {
                     $fields[1] = trim(strtolower($fields[1]));
                     $fields[2] = trim($fields[2]);
                     $fields[3] = trim($fields[3]);
+                    
+                    $this->log .= "$line: $fields[0] $fields[1] $fields[2] $fields[3] ";
+                    
+                    if (!empty($fields[5])) {
+                        $fields[4] = (int)trim($fields[4]);
+                        $fields[5] = (int)trim($fields[5]);
+                        $this->log .= "$fields[4] $fields[5]";
+                    } else {
+                        $fields[4] = 0;
+                        $fields[5] = 0;
+                    } 
 
-
-                    $this->log .= "$line: $fields[0] $fields[1] $fields[2] $fields[3]: ";
+                    $this->log .= ":";
 
 
 
@@ -116,12 +131,17 @@ function check_entry($form, $course) {
                         continue;
                     }
 
+                    if ($fields[4] > $fields[5]) {
+                        $this->log .= "Start time was later than end time - ignoring line\n";
+                        continue;
+                    }
+
 
                     unset($elog);
                     switch ($fields[1]) {
                         case "student":
                             if ($fields[0] == "add") {
-                                if (! enrol_student($user->id, $course->id)) {
+                                if (! enrol_student($user->id, $course->id, $fields[4], $fields[5])) {
                                     $elog = "Error enrolling in course\n";
                                 }
                             } else {
@@ -133,7 +153,7 @@ function check_entry($form, $course) {
 
                         case "teacher":
                             if ($fields[0] == "add") {
-                                if (! add_teacher($user->id, $course->id, 0)) {
+                                if (! add_teacher($user->id, $course->id, 0, '', $fields[4], $fields[5])) {
                                     $elog = "Error adding teacher to course\n";
                                 }
                             } else {
@@ -145,7 +165,7 @@ function check_entry($form, $course) {
 
                         case "teacheredit":
                             if ($fields[0] == "add") {
-                                if (! add_teacher($user->id, $course->id, 1)) {
+                                if (! add_teacher($user->id, $course->id, 1, '', $fields[4], $fields[5])) {
                                     $elog = "Error adding teacher to course\n";
                                 }
                             } else {

@@ -78,6 +78,10 @@ function get_access_icons($course) {
         $strrequirespayment = get_string("requirespayment");
         $strcost = get_string("cost");
 
+        if (empty($CFG->enrol_paypalcurrency)) {
+            $CFG->enrol_paypalcurrency = 'USD';
+        }
+
         switch ($CFG->enrol_paypalcurrency) {
            case 'EUR': $currency = '&euro;'; break;
            case 'CAD': $currency = '$'; break;
@@ -87,7 +91,7 @@ function get_access_icons($course) {
         }
         
         $str .= "<p>$strcost: <a title=\"$strrequirespayment\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-        $str .= "$currency $cost</a></p>";
+        $str .= "$currency".format_float($cost,2).'</a></p>';
         
     }
 

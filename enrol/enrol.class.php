@@ -138,8 +138,15 @@ function print_entry($course) {
             exit;
 
         } else {
+            if ($course->enrolperiod == 0) {
+                $timestart = 0;
+                $timeend = 0;
+            } else {
+                $timestart = time();
+                $timeend = time() + $course->enrolperiod;
+            }
 
-            if (! enrol_student($USER->id, $course->id)) {
+            if (! enrol_student($USER->id, $course->id, $timestart, $timeend)) {
                 error("An error occurred while trying to enrol you.");
             }
             add_to_log($course->id, "course", "enrol", "view.php?id=$course->id", "$USER->id");
@@ -268,6 +275,20 @@ function process_config($config) {
 *
 */
 function cron() {
+    // Delete students from all courses where their enrolment period has expired
+    
+    $select = "timeend > '0' AND timeend < '" . time() . "'";
+    
+    if ($students = get_records_select('user_students', $select)) {
+        foreach ($students as $student) {
+            unenrol_student($student->userid, $student->course);
+        }
+    }
+    if ($teachers = get_records_select('user_teachers', $select)) {
+        foreach ($teachers as $teacher) {
+            remove_teacher($teacher->userid, $teacher->course);
+        }
+    }
 }
 
 
