@@ -141,7 +141,7 @@
 
 
 /// OK, we have all the data, now present it to the user
-    if ($download == "xls") {
+    if ($download == "xls" and confirm_sesskey()) {
         require_once("../lib/excel/Worksheet.php");
         require_once("../lib/excel/Workbook.php");
 
@@ -199,7 +199,7 @@
     
         exit;
 
-    } else if ($download == "txt") {
+    } else if ($download == "txt" and confirm_sesskey()) {
 
 /// Print header to force download
 
@@ -254,9 +254,11 @@
         echo "<TD>";
         $options["id"] = "$course->id";
         $options["download"] = "xls";
+        $options["sesskey"] = $USER->sesskey;
         print_single_button("grades.php", $options, get_string("downloadexcel"));
         echo "<TD>";
         $options["download"] = "txt";
+        $options["sesskey"] = $USER->sesskey;
         print_single_button("grades.php", $options, get_string("downloadtext"));
         echo "</TABLE>";
     
