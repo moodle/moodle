@@ -1,5 +1,6 @@
 <?PHP // $Id$ 
 
+$string[action] = "Action";
 $string[activity] = "Activity";
 $string[activities] = "Activities";
 $string[activityreport] = "Activity report";
@@ -47,6 +48,7 @@ $string[courseformats] = "Course formats";
 $string[courses] = "Courses";
 $string[createaccount] = "Create my new account";
 $string[createuserandpass] = "Create a new username and password to log in with";
+$string[createziparchive] = "Create zip archive";
 $string[currentlocaltime] = "your current local time";
 $string[databasechecking] = "Upgrading Moodle database from version \$a->oldversion to \$a->newversion...";
 $string[databasesetup] = "Setting up database";
@@ -60,6 +62,7 @@ $string[defaultcourseteacher] = "Facilitator";
 $string[delete] = "Delete";
 $string[deletecheck] = "Delete \$a ?";
 $string[deletecheckfull] = "Are you absolutely sure you want to completely delete \$a ?";
+$string[deletecompletely] = "Delete completely";
 $string[deletecoursecheck] = "Are you absolutely sure you want to completely delete this course and all the data it contains?";
 $string[deletecourse] = "Delete a course";
 $string[deleted] = "Deleted";
@@ -197,6 +200,7 @@ $string[loginsteps] = "Hi! For full access to courses you'll need to take
    </OL>";
 $string[logout] = "Logout";
 $string[logs] = "Logs";
+$string[makeafolder] = "Make a folder";
 $string[mainmenu] = "Main menu";
 $string[markthistopic] = "Mark this topic as the current topic";
 $string[maximumchars] = "Maximum of \$a characters";
@@ -219,11 +223,14 @@ $string[missingstudent] = "Must choose something";
 $string[missingsummary] = "Missing summary";
 $string[missingteacher] = "Must choose something";
 $string[missingusername] = "Missing username";
+$string[modified] = "Modified";
 $string[modulesetup] = "Setting up module tables";
 $string[modulesuccess] = "\$a tables have been set up correctly";
 $string[mostrecently] = "most recently";
 $string[movedown] = "Move down";
 $string[moveup] = "Move up";
+$string[movetoanotherfolder] = "Move to another folder";
+$string[movefilestohere] = "Move files to here";
 $string[mustconfirm] = "You need to confirm your login";
 $string[name] = "Name";
 $string[namesocial] = "section";
@@ -296,6 +303,7 @@ $string[previeworchoose] = "Preview or choose a theme";
 $string[question] = "Question";
 $string[readme] = "README";   // This is a file name
 $string[recentactivity] = "Recent activity";
+$string['rename'] = "Rename";
 $string[resources] = "Resources";
 $string[returningtosite] = "Returning to this web site?";
 $string[requireskey] = "This course requires an enrolment key";
@@ -321,6 +329,7 @@ $string[sites] = "Sites";
 $string[sitelogs] = "Site logs";
 $string[sitenews] = "Site news";
 $string[sitesettings] = "Site settings";
+$string[size] = "Size";
 $string[someallowguest] = "Some courses may allow guest access";
 $string[startdate] = "Course start date";
 $string[startsignup] = "Start now by creating a new account!";
@@ -346,6 +355,7 @@ $string[undecided] = "Undecided";
 $string[unenrol] = "Unenrol";
 $string[unenrolme] = "Unenrol me from \$a";
 $string[unenrolsure] = "Are you sure you want to unenrol \$a from this course?";
+$string[unzip] = "Unzip";
 $string[update] = "Update";
 $string[updated] = "Updated \$a";
 $string[updatemyprofile] = "Update profile";
@@ -354,6 +364,7 @@ $string[updatethiscourse] = "Update this course";
 $string[updatinga] = "Updating a \$a";
 $string[updatingain] = "Updating a \$a->what in \$a->in";
 $string[upload] = "Upload";
+$string[uploadafile] = "Upload a file";
 $string[uploadthisfile] = "Upload this file";
 $string[userdescription] = "Description";
 $string[username] = "Username";
@@ -370,6 +381,7 @@ One of the first things you should do is edit your profile page
 within the course so that we can learn more about you:
 
   \$a->profileurl";
+$string[withchosenfiles] = "With chosen files";
 $string[wordforteacher] = "Your word for Teacher";
 $string[wordforteachereg] = "eg Teacher, Tutor, Facilitator etc";
 $string[wordforstudent] = "Your word for Student";
