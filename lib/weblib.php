@@ -1108,17 +1108,23 @@ function helpbutton ($page, $title="", $module="moodle", $image=true, $linktext=
     // $image = use a help image for the link?  (true/false/"both")
     // $text = if defined then this text is used in the page, and 
     //         the $page variable is ignored.
-    global $CFG;
+    global $CFG, $THEME;
 
     if ($module == "") {
         $module = "moodle";
     }
 
+    if (empty($THEME->custompix)) {
+        $icon = "$CFG->wwwroot/pix/help.gif";
+    } else {
+        $icon = "$CFG->wwwroot/theme/$CFG->theme/pix/help.gif";
+    }
+
     if ($image) {
         if ($linktext) {
-            $linkobject = "$title<IMG align=\"absmiddle\" BORDER=0 HEIGHT=17 WIDTH=22 ALT=\"\" SRC=\"$CFG->wwwroot/pix/help.gif\">";
+            $linkobject = "$title<img align=\"absmiddle\" border=0 height=17 width=22 alt=\"\" src=\"$icon\">";
         } else {
-            $linkobject = "<IMG align=\"absmiddle\" BORDER=0 HEIGHT=17 WIDTH=22 ALT=\"$title\" SRC=\"$CFG->wwwroot/pix/help.gif\">";
+            $linkobject = "<img align=\"absmiddle\" border=0 height=17 width=22 alt=\"$title\" src=\"$icon\">";
         }
     } else {
         $linkobject = $title;

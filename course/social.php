@@ -42,24 +42,24 @@
 
 /// Print a form to search forums
       $searchform = forum_print_search_form($course, "", true);
-      $searchform = "<DIV ALIGN=\"CENTER\">$searchform</DIV>";
+      $searchform = "<div align=\"center\">$searchform</div>";
       print_side_block(get_string("search","forum"), $searchform, "", "", "", $leftwidth);
 
 /// Admin links and controls
       print_course_admin_links($course);
 
-      echo "</TD>";
+      echo "</td>";
 
-      echo "<TD WIDTH=\"*\" VALIGN=\"TOP\">";
+      echo "<td width=\"*\" valign=\"top\">";
       if ($social = forum_get_course_forum($course->id, "social")) {
           if (forum_is_subscribed($USER->id, $social->id)) {
               $subtext = get_string("unsubscribe", "forum");
           } else {
               $subtext = get_string("subscribe", "forum");
           }
-          $headertext = "<TABLE BORDER=0 WIDTH=100% CELLPADDING=0 CELLSPACING=0><TR><TD>".get_string("socialheadline")."</TD><TD ALIGN=RIGHT><FONT SIZE=1><A HREF=\"../mod/forum/subscribe.php?id=$social->id\">$subtext</A></TD></TR></TABLE>";
+          $headertext = "<table border=0 width=100% cellpadding=0 cellspacing=0><tr><td>".get_string("socialheadline")."</td><td align=right><font size=1><a href=\"../mod/forum/subscribe.php?id=$social->id\">$subtext</a></td></tr></table>";
           print_heading_block($headertext);
-          echo "<IMG ALT=\"\" HEIGHT=7 SRC=\"../pix/spacer.gif\"><BR>";
+          echo "<img alt=\"\" height=7 src=\"../pix/spacer.gif\"><br>";
     
           forum_print_latest_discussions($social->id, 10, "plain", "", false);
 

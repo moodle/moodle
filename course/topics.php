@@ -33,22 +33,22 @@
 
 
 /// Layout the whole page as three big columns.
-    echo "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 WIDTH=100%>";
+    echo "<table border=0 cellpadding=3 cellspacing=0 width=100%>";
 
 /// The left column ...
 
-    echo "<TR VALIGN=top><TD VALIGN=top WIDTH=180>";
+    echo "<tr valign=top><td valign=top width=180>";
     
 /// Links to people
-    $moddata[]="<A TITLE=\"".get_string("listofallpeople")."\" HREF=\"../user/index.php?id=$course->id\">".get_string("participants")."</A>";
-    $modicon[]="<IMG SRC=\"../user/users.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-    $editmyprofile = "<A TITLE=\"$USER->firstname $USER->lastname\" HREF=\"../user/edit.php?id=$USER->id&course=$course->id\">".get_string("editmyprofile")."</A>";
+    $moddata[]="<a title=\"".get_string("listofallpeople")."\" href=\"../user/index.php?id=$course->id\">".get_string("participants")."</a>";
+    $modicon[]="<img src=\"$pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
+    $editmyprofile = "<a title=\"$USER->firstname $USER->lastname\" href=\"../user/edit.php?id=$USER->id&course=$course->id\">".get_string("editmyprofile")."</a>";
     if ($USER->description) {
         $moddata[]= $editmyprofile;
     } else {
-        $moddata[]= $editmyprofile." <BLINK>*</BLINK>";
+        $moddata[]= $editmyprofile." <blink>*</blink>";
     }
-    $modicon[]="<IMG SRC=\"../user/user.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+    $modicon[]="<img src=\"$pixpath/i/user.gif\" height=16 width=16 alt=\"\">";
     print_side_block(get_string("people"), "", $moddata, $modicon);
 
 
@@ -57,22 +57,22 @@
     $modicon = array();
     if ($modnamesused) {
         foreach ($modnamesused as $modname => $modfullname) {
-            $moddata[] = "<A HREF=\"../mod/$modname/index.php?id=$course->id\">".$modnamesplural[$modname]."</A>";
-            $modicon[] = "<IMG SRC=\"../mod/$modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+            $moddata[] = "<a href=\"../mod/$modname/index.php?id=$course->id\">".$modnamesplural[$modname]."</a>";
+            $modicon[] = "<img src=\"$modpixpath/$modname/icon.gif\" height=16 width=16 alt=\"\">";
         }
     }
     print_side_block($stractivities, "", $moddata, $modicon);
 
 /// Print a form to search forums
     $searchform = forum_print_search_form($course, "", true);
-    $searchform = "<DIV ALIGN=\"CENTER\">$searchform</DIV>";
+    $searchform = "<div align=\"center\">$searchform</div>";
     print_side_block(get_string("search","forum"), $searchform);
 
 /// Admin links and controls
     print_course_admin_links($course);
 
 /// Start main column
-    echo "</TD><TD WIDTH=\"*\">";
+    echo "</td><td width=\"*\">";
 
     print_heading_block(get_string("topicoutline"), "100%", "outlineheadingblock");
     print_spacer(8, 1, true);
@@ -85,14 +85,14 @@
     $thistopic = $sections[$topic];
 
     if ($thistopic->summary or $thistopic->sequence or isediting($course->id)) {
-        echo "<TR>";
-        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\" class=\"topicsoutlineside\" VALIGN=top WIDTH=20>&nbsp;</TD>";
-        echo "<TD VALIGN=top BGCOLOR=\"$THEME->cellcontent\" class=\"topicsoutlinecontent\" WIDTH=\"100%\">";
+        echo "<tr>";
+        echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\" valign=top width=20>&nbsp;</td>";
+        echo "<td valign=top bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontent\" width=\"100%\">";
     
         if (isediting($course->id)) {
-            $thistopic->summary .= "&nbsp;<A TITLE=\"$streditsummary\" ".
-                                     "HREF=\"editsection.php?id=$thistopic->id\"><IMG SRC=\"../pix/t/edit.gif\" ".
-                                     "BORDER=0 ALT=\"$streditsummary\"></A></P>";
+            $thistopic->summary .= "&nbsp;<a title=\"$streditsummary\" ".
+                                     "href=\"editsection.php?id=$thistopic->id\"><img src=\"$pixpath/t/edit.gif\" ".
+                                     "height=11 width=11 border=0 alt=\"$streditsummary\"></a></p>";
         }
     
         echo text_to_html($thistopic->summary);
@@ -100,17 +100,17 @@
         print_section($course, $thistopic, $mods, $modnamesused);
     
         if (isediting($course->id)) {
-            echo "<DIV ALIGN=right>";
+            echo "<div align=right>";
             popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$topic&add=", 
                         $modnames, "section$topic", "", "$stradd...", "mods", $stractivities);
-            echo "</DIV>";
+            echo "</div>";
         }
     
-        echo "</TD>";
-        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\" class=\"topicsoutlineside\" VALIGN=top ALIGN=CENTER WIDTH=10>&nbsp;";
-        echo "</TD>";
-        echo "</TR>";
-        echo "<TR><TD COLSPAN=3><IMG SRC=\"../pix/spacer.gif\" WIDTH=1 HEIGHT=1></TD></TR>";
+        echo "</td>";
+        echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"topicsoutlineside\" valign=top align=center width=10>&nbsp;";
+        echo "</td>";
+        echo "</tr>";
+        echo "<tr><td colspan=3><img src=\"../pix/spacer.gif\" width=1 height=1></td></tr>";
     }
 
 
@@ -139,12 +139,12 @@
             $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"topicsoutlinecontent\"";
         }
 
-        echo "<TR>";
-        echo "<TD NOWRAP $colorsides VALIGN=top WIDTH=20>";
-        echo "<P ALIGN=CENTER><FONT SIZE=3><B>$section</B></FONT></P>";
-        echo "</TD>";
+        echo "<tr>";
+        echo "<td nowrap $colorsides valign=top width=20>";
+        echo "<p align=center><font size=3><b>$section</b></font></p>";
+        echo "</td>";
 
-        echo "<TD VALIGN=top $colormain WIDTH=\"100%\">";
+        echo "<td valign=top $colormain width=\"100%\">";
 
         if (!empty($sections[$section])) {
             $thissection = $sections[$section];
@@ -160,7 +160,7 @@
         }
 
         if (isediting($course->id)) {
-            $thissection->summary .= "&nbsp;<A HREF=editsection.php?id=$thissection->id><IMG SRC=\"../pix/t/edit.gif\" BORDER=0 ALT=\"$streditsummary\"></A>";
+            $thissection->summary .= "&nbsp;<a href=editsection.php?id=$thissection->id><img src=\"$pixpath/t/edit.gif\" border=0 height=11 width=11 alt=\"$streditsummary\"></a>";
         }
 
         echo text_to_html($thissection->summary);
@@ -168,45 +168,45 @@
         print_section($course, $thissection, $mods, $modnamesused);
 
         if (isediting($course->id)) {
-            echo "<DIV ALIGN=right>";
+            echo "<div align=right>";
             popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&add=", 
                         $modnames, "section$section", "", "$stradd...", "mods", $stractivities);
-            echo "</DIV>";
+            echo "</div>";
         }
 
-        echo "</TD>";
-        echo "<TD NOWRAP $colorsides VALIGN=top ALIGN=CENTER WIDTH=10>";
-        echo "<FONT SIZE=1>";
+        echo "</td>";
+        echo "<td nowrap $colorsides valign=top align=center width=10>";
+        echo "<font size=1>";
         if (isset($USER->topic)) {
             $strshowalltopics = get_string("showalltopics");
-            echo "<A HREF=\"view.php?id=$course->id&topic=all\" TITLE=\"$strshowalltopics\"><IMG SRC=../pix/i/all.gif BORDER=0></A><BR><BR>";
+            echo "<a href=\"view.php?id=$course->id&topic=all\" title=\"$strshowalltopics\"><img src=\"$pixpath/i/all.gif\" height=25 width=16 border=0></a><br><br>";
         } else {
             $strshowonlytopic = get_string("showonlytopic", "", $section);
-            echo "<A HREF=\"view.php?id=$course->id&topic=$section\" TITLE=\"$strshowonlytopic\"><IMG SRC=../pix/i/one.gif BORDER=0></A><BR><BR>";
+            echo "<a href=\"view.php?id=$course->id&topic=$section\" title=\"$strshowonlytopic\"><img src=\"$pixpath/i/one.gif\" height=16 width=16 border=0></a><br><br>";
         }
         if (isediting($course->id) and $course->marker != $section) {
             $strmarkthistopic = get_string("markthistopic");
-            echo "<A HREF=\"view.php?id=$course->id&marker=$section\" TITLE=\"$strmarkthistopic\"><IMG SRC=../pix/i/marker.gif BORDER=0></A><BR><BR>";
+            echo "<a href=\"view.php?id=$course->id&marker=$section\" title=\"$strmarkthistopic\"><img src=\"$pixpath/i/marker.gif\" height=16 width=16 border=0></a><br><br>";
         }
-        echo "</TD>";
-        echo "</TR>";
-        echo "<TR><TD COLSPAN=3><IMG SRC=\"../pix/spacer.gif\" WIDTH=1 HEIGHT=1></TD></TR>";
+        echo "</td>";
+        echo "</tr>";
+        echo "<tr><td colspan=3><img src=\"../pix/spacer.gif\" width=1 height=1></td></tr>";
 
         $section++;
     }
-    echo "</TABLE>";
+    echo "</table>";
     
 
     if ($news or $course->showrecent) {
-        echo "</TD><TD WIDTH=210>";
+        echo "</td><td width=210>";
 
         /// Print all the news items.
 
         if ($news) {
             print_side_block_start(get_string("latestnews"), 210, "sideblocklatestnews");
-            echo "<FONT SIZE=\"-2\">";
+            echo "<font size=\"-2\">";
             forum_print_latest_discussions($news->id, $course->newsitems, "minimal", "", false);
-            echo "</FONT>";
+            echo "</font>";
             print_side_block_end();
         }
         
@@ -220,6 +220,6 @@
         print_spacer(1, 120, true);
     }
 
-    echo "</TD></TR></TABLE>\n";
+    echo "</td></tr></table>\n";
 
 ?>

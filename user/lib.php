@@ -1,8 +1,7 @@
 <?PHP  // $Id$
 
-$USER_SMALL_CLASS = 20;   // Below this is considered small
-$USER_LARGE_CLASS = 200;  // Above this is considered large
-$USER_HUGE_CLASS  = 500;  // Above this is considered too many to display
+define('USER_SMALL_CLASS', 20);   // Below this is considered small
+define('USER_LARGE_CLASS', 200);  // Above this is considered large
 
 /// FUNCTIONS ///////////////////////////////////////////////////////////
 

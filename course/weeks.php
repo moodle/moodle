@@ -23,22 +23,22 @@
 
 
 /// Layout the whole page as three big columns.
-    echo "<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 WIDTH=100%>";
+    echo "<table border=0 cellpadding=3 cellspacing=0 width=100%>";
 
 /// The left column ...
 
-    echo "<TR VALIGN=top><TD VALIGN=top WIDTH=180>";
+    echo "<tr valign=top><td valign=top width=180>";
 
 /// Links to people
-    $moddata[]="<A TITLE=\"".get_string("listofallpeople")."\" HREF=\"../user/index.php?id=$course->id\">".get_string("participants")."</A>";
-    $modicon[]="<IMG SRC=\"../user/users.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-    $editmyprofile = "<A TITLE=\"$USER->firstname $USER->lastname\" HREF=\"../user/edit.php?id=$USER->id&course=$course->id\">".get_string("editmyprofile")."</A>";
+    $moddata[]="<a title=\"".get_string("listofallpeople")."\" href=\"../user/index.php?id=$course->id\">".get_string("participants")."</a>";
+    $modicon[]="<img src=\"$pixpath/i/users.gif\" height=16 width=16 alt=\"\">";
+    $editmyprofile = "<a title=\"$USER->firstname $USER->lastname\" href=\"../user/edit.php?id=$USER->id&course=$course->id\">".get_string("editmyprofile")."</a>";
     if ($USER->description) {
         $moddata[]= $editmyprofile;
     } else {
-        $moddata[]= $editmyprofile." <BLINK>*</BLINK>";
+        $moddata[]= $editmyprofile." <blink>*</blink>";
     }
-    $modicon[]="<IMG SRC=\"../user/user.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+    $modicon[]="<img src=\"$pixpath/i/user.gif\" height=16 width=16 alt=\"\">";
     print_side_block(get_string("people"), "", $moddata, $modicon);
 
 
@@ -47,8 +47,8 @@
     $modicon = array();
     if ($modnamesused) {
         foreach ($modnamesused as $modname => $modfullname) {
-            $moddata[] = "<A HREF=\"../mod/$modname/index.php?id=$course->id\">".$modnamesplural[$modname]."</A>";
-            $modicon[] = "<IMG SRC=\"../mod/$modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
+            $moddata[] = "<a href=\"../mod/$modname/index.php?id=$course->id\">".$modnamesplural[$modname]."</a>";
+            $modicon[] = "<img src=\"$modpixpath/$modname/icon.gif\" height=16 width=16 alt=\"\">";
         }
     }
     print_side_block($stractivities, "", $moddata, $modicon);
@@ -76,14 +76,14 @@
     $thisweek = $sections[$week];
 
     if ($thisweek->summary or $thisweek->sequence or isediting($course->id)) {
-        echo "<TR>";
-        echo "<TD NOWRAP BGCOLOR=\"$THEME->cellheading\" class=\"weeklyoutlineside\" VALIGN=top WIDTH=20>&nbsp;</TD>";
-        echo "<TD VALIGN=top BGCOLOR=\"$THEME->cellcontent\" class=\"weeklyoutlinecontent\" WIDTH=\"100%\">";
+        echo "<tr>";
+        echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"weeklyoutlineside\" valign=top width=20>&nbsp;</td>";
+        echo "<td valign=top bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlinecontent\" width=\"100%\">";
 
         if (isediting($course->id)) {
-            $thisweek->summary .= "&nbsp;<A TITLE=\"$streditsummary\" ".
-                                  "HREF=\"editsection.php?id=$thisweek->id\"><IMG SRC=\"../pix/t/edit.gif\" ".
-                                  "BORDER=0 ALT=\"$streditsummary\"></A></P>";
+            $thisweek->summary .= "&nbsp;<a title=\"$streditsummary\" ".
+                                  "href=\"editsection.php?id=$thisweek->id\"><img height=11 width=11 src=\"$pixpath/t/edit.gif\" ".
+                                  "border=0 alt=\"$streditsummary\"></a></p>";
         }
     
         echo text_to_html($thisweek->summary);
@@ -91,10 +91,10 @@
         print_section($course, $thisweek, $mods, $modnamesused);
 
         if (isediting($course->id)) {
-            echo "<DIV ALIGN=right>";
+            echo "<div align=right>";
             popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$week&add=", 
                         $modnames, "section$week", "", "$stradd...", "mods", $stractivities);
-            echo "</DIV>";
+            echo "</div>";
         }
 
         echo "</TD>";
@@ -139,13 +139,13 @@
             $colormain  = "bgcolor=\"$THEME->cellcontent\" class=\"weeklyoutlinecontent\"";
         }
 
-        echo "<TR>";
-        echo "<TD NOWRAP $colorsides VALIGN=top WIDTH=20>";
-        echo "<P ALIGN=CENTER><FONT SIZE=3><B>$week</B></FONT></P>";
-        echo "</TD>";
+        echo "<tr>";
+        echo "<td nowrap $colorsides valign=top width=20>";
+        echo "<p align=center><font size=3><b>$week</b></font></p>";
+        echo "</td>";
 
-        echo "<TD $colormain VALIGN=top WIDTH=\"100%\">";
-        echo "<P><FONT SIZE=3 COLOR=\"$THEME->cellheading2\">$weekday - $endweekday</FONT></P>";
+        echo "<td $colormain valign=top width=\"100%\">";
+        echo "<p><font size=3 color=\"$THEME->cellheading2\">$weekday - $endweekday</font></p>";
 
         if (!empty($sections[$week])) {
             $thisweek = $sections[$week];
@@ -160,7 +160,7 @@
         }
 
         if (isediting($course->id)) {
-            $thisweek->summary .= "&nbsp;<A TITLE=\"$streditsummary\" HREF=\"editsection.php?id=$thisweek->id\"><IMG SRC=\"../pix/t/edit.gif\" BORDER=0 ALT=\"$streditsummary\"></A></P>";
+            $thisweek->summary .= "&nbsp;<a title=\"$streditsummary\" href=\"editsection.php?id=$thisweek->id\"><img src=\"$pixpath/t/edit.gif\" height=11 width=11 border=0 alt=\"$streditsummary\"></a></p>";
         }
 
         echo text_to_html($thisweek->summary);
@@ -168,41 +168,41 @@
         print_section($course, $thisweek, $mods, $modnamesused);
 
         if (isediting($course->id)) {
-            echo "<DIV ALIGN=right>";
+            echo "<div align=right>";
             popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$week&add=", 
                         $modnames, "section$week", "", "$stradd...");
-            echo "</DIV>";
+            echo "</div>";
         }
 
-        echo "</TD>";
-        echo "<TD NOWRAP $colorsides VALIGN=top ALIGN=CENTER WIDTH=10>";
-        echo "<FONT SIZE=1>";
+        echo "</td>";
+        echo "<td nowrap $colorsides valign=top align=center width=10>";
+        echo "<font size=1>";
         if (isset($USER->section)) {
             $strshowallweeks = get_string("showallweeks");
-            echo "<A HREF=\"view.php?id=$course->id&week=all\" TITLE=\"$strshowallweeks\"><IMG SRC=../pix/i/all.gif BORDER=0></A></FONT>";
+            echo "<a href=\"view.php?id=$course->id&week=all\" title=\"$strshowallweeks\"><img src=\"$pixpath/i/all.gif\" height=25 width=16 border=0></a></font>";
         } else {
             $strshowonlyweek = get_string("showonlyweek", "", $week);
-            echo "<A HREF=\"view.php?id=$course->id&week=$week\" TITLE=\"$strshowonlyweek\"><IMG SRC=../pix/i/one.gif BORDER=0></A></FONT>";
+            echo "<a href=\"view.php?id=$course->id&week=$week\" title=\"$strshowonlyweek\"><img src=\"$pixpath/i/one.gif\" height=16 width=16 border=0></a></font>";
         }
-        echo "</TD>";
-        echo "</TR>";
-        echo "<TR><TD COLSPAN=3><IMG SRC=\"../pix/spacer.gif\" WIDTH=1 HEIGHT=1></TD></TR>";
+        echo "</td>";
+        echo "</tr>";
+        echo "<tr><td colspan=3><img src=\"../pix/spacer.gif\" width=1 height=1></td></tr>";
 
         $week++;
         $weekdate = $nextweekdate;
     }
-    echo "</TABLE>";
+    echo "</table>";
     
     if (!empty($news) or !empty($course->showrecent)) {
-        echo "</TD><TD WIDTH=210>";
+        echo "</td><td width=210>";
 
         // Print all the news items.
 
         if (!empty($news)) {
             print_side_block_start(get_string("latestnews"), 210, "sideblocklatestnews");
-            echo "<FONT SIZE=\"-2\">";
+            echo "<font size=\"-2\">";
             forum_print_latest_discussions($news->id, $course->newsitems, "minimal", "", false);
-            echo "</FONT>";
+            echo "</font>";
             print_side_block_end();
         }
         
@@ -216,6 +216,6 @@
         print_spacer(1, 120, true);
     }
 
-    echo "</TD></TR></TABLE>\n";
+    echo "</td></tr></table>\n";
 
 ?>

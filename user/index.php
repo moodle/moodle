@@ -62,10 +62,16 @@
         $dsort = "u.$sort";
     }
 
-    if ($students = get_course_students($course->id, "$dsort $dir")) {
+    if (!$showall) {
+        $limit = "LIMIT ".USER_LARGE_CLASS;
+    } else {
+        $limit = "";
+    }
+
+    if ($students = get_course_students($course->id, "$dsort $dir $limit")) {
         $numstudents = count($students);
         echo "<h2 align=center>$numstudents $course->students</h2>";
-        if ($numstudents < $USER_SMALL_CLASS) {
+        if ($numstudents < USER_SMALL_CLASS) {
             foreach ($students as $student) {
                 print_user($student, $course, $string);
             }
@@ -109,19 +115,15 @@
             $table->cellpadding = 2;
             $table->cellspacing = 0;
             
-            $count = 0;
             foreach ($students as $student) {
-                $count++;
-                if (!$showall and $count > $USER_LARGE_CLASS) {
-                    break;
-                }
+
                 if ($student->lastaccess) {
                     $lastaccess = format_time(time() - $student->lastaccess, $string);
                 } else {
                     $lastaccess = $string->never;
                 }
 
-                if ($showall and $numstudents > $USER_LARGE_CLASS) {  // Don't show pictures
+                if ($showall and $numstudents > USER_LARGE_CLASS) {  // Don't show pictures
                     $picture = "";
                 } else {
                     $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
@@ -135,8 +137,9 @@
             }
             print_table($table);
 
-            if ($numstudents > $USER_LARGE_CLASS and !$showall) {
-                $moreinfo->count  = $USER_LARGE_CLASS;
+            if ($numstudents == USER_LARGE_CLASS and !$showall) {
+                $numstudents = count_records("user_students", "course", $course->id);
+                $moreinfo->count  = USER_LARGE_CLASS;
                 $moreinfo->things = strtolower($course->students);
                 echo "<center><p>".get_string("displayingfirst", "", $moreinfo);
                 echo " (<a href=\"index.php?id=$course->id&sort=$sort&dir=$dir&showall=1\">".get_string("showall", "", $numstudents)."</a>)";
