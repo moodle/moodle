@@ -73,7 +73,6 @@
     if ($data = data_submitted()) {
        
         $feedback = array();
-        $data = (array)$data;
 
         // Peel out all the data from variable names.
         foreach ($data as $key => $val) {
@@ -89,10 +88,10 @@
         foreach ($feedback as $num => $vals) {
             $submission = $submissions[$num];
             // Only update entries where feedback has actually changed.
-            if (($vals[g] <> $submission->grade) || ($vals[c] <> addslashes($submission->comment))) {
+            if (($vals['g'] <> $submission->grade) || ($vals['c'] <> addslashes($submission->comment))) {
                 unset($newsubmission);
-                $newsubmission->grade      = $vals[g];
-                $newsubmission->comment    = $vals[c];
+                $newsubmission->grade      = $vals['g'];
+                $newsubmission->comment    = $vals['c'];
                 $newsubmission->teacher    = $USER->id;
                 $newsubmission->timemarked = $timenow;
                 $newsubmission->mailed     = 0;           // Make sure mail goes out (again, even)

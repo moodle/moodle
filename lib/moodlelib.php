@@ -1143,7 +1143,7 @@ function check_browser_version($brand="MSIE", $version=5.5) {
 function can_use_richtext_editor() {
 /// Is the richedit editor enabled?
     global $USER, $CFG;
-    if ($USER->htmleditor and $CFG->htmleditor) {
+    if (!empty($USER->htmleditor) and !empty($CFG->htmleditor)) {
         return check_browser_version("MSIE", 5.5);
     }
     return false;

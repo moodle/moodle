@@ -21,8 +21,8 @@
     if (empty($form->resubmit)) {
         $form->resubmit = "";
     }
-    if (empty($form->grade)) {
-        $form->grade = "";
+    if (!isset($form->grade)) {
+        $form->grade = 100;
     }
     if (empty($form->maxbytes)) {
         $form->maxbytes = "";

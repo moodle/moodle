@@ -163,11 +163,11 @@ function match_referer($good_referer = "") {
 /// good_referer is not specified, use qualified_me as the good_referer 
     global $CFG;
 
-    if ($CFG->buggy_referer) {
+    if (!empty($CFG->buggy_referer)) {
         return true;
     }
 
-    if ($good_referer == "") { 
+    if (empty($good_referer)) { 
         $good_referer = qualified_me(); 
     }
     return $good_referer == get_referer();

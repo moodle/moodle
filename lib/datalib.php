@@ -955,7 +955,7 @@ function add_to_log($course, $module, $action, $url="", $info="") {
                                         '$url',
                                         '$info')");
 
-    if (!$result) {
+    if (!$result and ($CFG->debug > 7)) {
         echo "<P>Error: Could not insert a new entry to the Moodle log</P>";  // Don't throw an error
     }    
 }

@@ -298,7 +298,7 @@ function assignment_print_difference($time) {
 }
 
 function assignment_print_submission($assignment, $user, $submission, $teachers, $grades) {
-    global $THEME;
+    global $THEME, $USER;
 
     echo "\n<TABLE BORDER=1 CELLSPACING=0 valign=top cellpadding=10 align=center>";
 
@@ -433,7 +433,7 @@ function assignment_print_upload_form($assignment) {
 
     echo "<DIV ALIGN=CENTER>";
     echo "<FORM ENCTYPE=\"multipart/form-data\" METHOD=\"POST\" ACTION=upload.php>";
-    echo " <INPUT TYPE=hidden NAME=MAX_FILE_SIZE value=\"$assignment->maxfilesize\">";
+    echo " <INPUT TYPE=hidden NAME=MAX_FILE_SIZE value=\"$assignment->maxbytes\">";
     echo " <INPUT TYPE=hidden NAME=id VALUE=\"$assignment->id\">";
     echo " <INPUT NAME=\"newfile\" TYPE=\"file\" size=\"50\">";
     echo " <INPUT TYPE=submit NAME=save VALUE=\"".get_string("uploadthisfile")."\">";

@@ -62,14 +62,19 @@
         } else {
             $aa = "";
         }
+        if (!empty($choice->section)) {
+            $section = "$choice->section";
+        } else {
+            $section = "";
+        }
 
         if ($course->format == "weeks" || $course->format == "topics") {
-            $table->data[] = array ("$choice->section",
+            $table->data[] = array ($section,
                                     "<A HREF=\"view.php?id=$choice->coursemodule\">$choice->name</A>",
-                                    "$aa");
+                                    $aa);
         } else {
             $table->data[] = array ("<A HREF=\"view.php?id=$choice->coursemodule\">$choice->name</A>",
-                                    "$aa");
+                                    $aa);
         }
     }
     echo "<BR>";

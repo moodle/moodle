@@ -189,12 +189,12 @@
     }
     echo "</TABLE>";
     
-    if ($news or $course->showrecent) {
+    if (!empty($news) or !empty($course->showrecent)) {
         echo "</TD><TD WIDTH=210>";
 
         // Print all the news items.
 
-        if ($news) {
+        if (!empty($news)) {
             print_side_block_start(get_string("latestnews"), 210, "sideblocklatestnews");
             echo "<FONT SIZE=\"-2\">";
             forum_print_latest_discussions($news->id, $course->newsitems, "minimal", "DESC", false);
@@ -203,7 +203,7 @@
         }
         
         // Print all the recent activity
-        if ($course->showrecent) {
+        if (!empty($course->showrecent)) {
             print_side_block_start(get_string("recentactivity"), 210, "sideblockrecentactivity");
             print_recent_activity($course);
             print_side_block_end();
