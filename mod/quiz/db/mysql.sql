@@ -42,7 +42,7 @@ CREATE TABLE `quiz_answers` (
   `question` int(10) unsigned NOT NULL default '0',
   `answer` varchar(255) NOT NULL default '',
   `fraction` varchar(10) NOT NULL default '0.0',
-  `feedback` varchar(255) NOT NULL default '',
+  `feedback` text NOT NULL,
 
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM COMMENT='Answers, with a fractional grade (0-1) and feedback';

@@ -20,6 +20,9 @@ function quiz_upgrade($oldversion) {
         execute_sql(" INSERT INTO log_display VALUES ('quiz', 'attempt', 'quiz', 'name') ");
         execute_sql(" INSERT INTO log_display VALUES ('quiz', 'submit', 'quiz', 'name') ");
     }
+    if ($oldversion < 2002102600) {
+        execute_sql(" ALTER TABLE `quiz_answers` CHANGE `feedback` `feedback` TEXT NOT NULL ");
+    }
 
     return true;
 }
