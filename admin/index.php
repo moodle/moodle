@@ -76,20 +76,17 @@
 
     // Find and check all modules and load them up or upgrade them if necessary
 
-    $dir = opendir("$CFG->dirroot/mod");
-    while ($mod = readdir($dir)) {
-        if ($mod == "." || $mod == ".." || $mod == "CVS") {
-            continue;
-        }
 
+    if (!$mods = get_list_of_modules() ) {
+        error("No modules installed!");
+    }
+
+    foreach ($mods as $mod) {
         $fullmod = "$CFG->dirroot/mod/$mod";
-        if (filetype($fullmod) != "dir") {
-            continue;
-        }
 
         unset($module);
 
-        include_once("$CFG->dirroot/mod/$mod/version.php");  # defines $module with version etc
+        include_once("$fullmod/version.php");  # defines $module with version etc
 
         if (!isset($module)) {
             continue;

@@ -1513,8 +1513,8 @@ function add_to_log($course, $module, $action, $url="", $info="") {
 }
 
 function generate_password($maxlen=10) {
-/* returns a randomly generated password of length $maxlen.  inspired by
- * http://www.phpbuilder.com/columns/jesus19990502.php3 */
+// returns a randomly generated password of length $maxlen.  inspired by
+// http://www.phpbuilder.com/columns/jesus19990502.php3 
 
     global $CFG;
 
@@ -1527,6 +1527,53 @@ function generate_password($maxlen=10) {
     $filler1 = $fillers[rand(0, strlen($fillers) - 1)];
 
     return substr($word1 . $filler1 . $word2, 0, $maxlen);
+}
+
+function moodle_needs_upgrading() {
+// Checks version numbers of Main code and all modules to see
+// if there are any mismatches ... returns true or false
+    global $CFG;
+
+    include_once("$CFG->dirroot/version.php");  # defines $version and upgrades
+    if ($dversion = get_field("config", "value", "name", "version")) { 
+        if ($version > $dversion) {
+            return true;
+        }
+        if ($mods = get_list_of_modules()) {
+            foreach ($mods as $mod) {
+                $fullmod = "$CFG->dirroot/mod/$mod";
+                unset($module);
+                include_once("$fullmod/version.php");  # defines $module with version etc
+                if ($currmodule = get_record("modules", "name", $mod)) {
+                    if ($module->version > $currmodule->version) {
+                        return true;
+                    }
+                }
+            }
+        }
+    } else {
+        return true;
+    }
+    return false;
+
+
+}
+
+
+function get_list_of_modules() {
+    global $CFG;
+
+    $dir = opendir("$CFG->dirroot/mod");
+    while ($mod = readdir($dir)) {
+        if ($mod == "." || $mod == ".." || $mod == "CVS") {
+            continue;
+        }
+        if (filetype("$CFG->dirroot/mod/$mod") != "dir") {
+            continue;
+        }
+        $mods[] = $mod;
+    }
+    return $mods;
 }
 
 

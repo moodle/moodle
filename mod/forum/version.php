@@ -5,7 +5,7 @@
 //  This fragment is called by /admin/index.php
 ////////////////////////////////////////////////////////////////////////////////
 
-$module->version  = 2002080500;
+$module->version  = 2002080503;
 $module->cron     = 60;
 
 function forum_upgrade($oldversion) {

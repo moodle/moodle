@@ -10,7 +10,10 @@
         redirect("$CFG->wwwroot/admin/");
     }
 
-    if (isset($USER->id)) {
+    if (isadmin()) {
+        if (moodle_needs_upgrading()) {
+            redirect("$CFG->wwwroot/admin/");
+        }
         $headerbutton = update_course_icon($site->id);
     } else {
         $headerbutton = "<FONT SIZE=2><A HREF=\"login/\">".get_string("login")."</A></FONT>";
