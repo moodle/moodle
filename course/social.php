@@ -10,10 +10,6 @@
   <TR>
     <TD WIDTH="15%" VALIGN="TOP">
       <? 
-      //print_simple_box("News", $align="CENTER", $width="100%", $color="$THEME->cellheading");
-
-      //print_side_block("<A HREF=\"new.php?id=$course->id\">What's New!</A>", 
-      //                 "", "<FONT SIZE=1>...since your last login</FONT>");
       //if ($news = get_course_news_forum($course->id)) {
           //forum_latest_topics($news->id, 5, "minimal", "DESC", false);
       //}
