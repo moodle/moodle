@@ -192,21 +192,40 @@ function stripslashes_safe($string) {
 }
 
 if (!function_exists('str_ireplace')) {
-    function str_ireplace($find, $replace, $string ) {
+    function str_ireplace($find, $replace, $string) {
     /// This does a search and replace, ignoring case
     /// This function is only here because one doesn't exist yet in PHP
     /// Unlike str_replace(), this only works on single values (not arrays)
-    
-        $parts = explode(strtolower($find), strtolower($string));
-    
-        $pos = 0;
-    
-        foreach ($parts as $key => $part) {
-            $parts[$key] = substr($string, $pos, strlen($part));
-            $pos += strlen($part) + strlen($find);
+    /// Function from the PHP manual, by bradhuizenga@softhome.net
+
+        if (!is_array($find)) {
+            $find = array($find);
         }
-    
-        return (join($replace, $parts));
+
+        if(!is_array($replace)) {
+            if (!is_array($find)) {
+                $replace = array($replace);
+            } else {
+                // this will duplicate the string into an array the size of $find
+                $c = count($find);
+                $rString = $replace;
+                unset($replace);
+                for ($i = 0; $i < $c; $i++) {
+                    $replace[$i] = $rString;
+                }
+            }
+        }
+
+        foreach ($find as $fKey => $fItem) {
+            $between = explode(strtolower($fItem),strtolower($string));
+            $pos = 0;
+            foreach($between as $bKey => $bItem) {
+                $between[$bKey] = substr($string,$pos,strlen($bItem));
+                $pos += strlen($bItem) + strlen($fItem);
+            }
+            $string = implode($replace[$fKey],$between);
+        }
+        return ($string);
     }
 }
 
