@@ -25,6 +25,8 @@ function display() {
 
 
     add_to_log($this->course->id, "resource", "view", "view.php?id={$this->cm->id}", $this->resource->id, $this->cm->id);
+    $pagetitle = strip_tags($this->course->shortname.': '.$this->resource->name);
+
     print_header($pagetitle, $this->course->fullname, "$navigation {$this->resource->name}",
                  "", "", true, update_module_button($this->cm->id, $this->course->id, $strresource), navmenu($this->course, $this->cm));
 

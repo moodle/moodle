@@ -202,7 +202,8 @@ function display() {
     /// First, find out what sort of file we are dealing with.
     require_once("$CFG->dirroot/files/mimetypes.php");
 
-    $resourcetype = "";
+    $querystring = '';
+    $resourcetype = '';
     $embedded = false;
     $mimetype = mimeinfo("type", $this->resource->reference);
 
@@ -248,7 +249,7 @@ function display() {
 
     if (resource_is_url($this->resource->reference)) {
         $fullurl = $this->resource->reference;
-        if ($querystring) {
+        if (!empty($querystring)) {
             $urlpieces = parse_url($this->resource->reference);
             if (empty($urlpieces['query'])) {
                 $fullurl .= '?'.$querystring;
@@ -275,6 +276,8 @@ function display() {
     /// Check whether this is supposed to be a popup, but was called directly
 
     if ($this->resource->popup and !$inpopup) {    /// Make a page and a pop-up window
+
+        $pagetitle = strip_tags($this->course->shortname.': '.$this->resource->name);
 
         print_header($pagetitle, $this->course->fullname, "$navigation {$this->resource->name}", "", "", true, update_module_button($this->cm->id, $this->course->id, $strresource), navmenu($this->course, $this->cm));
 
@@ -322,7 +325,7 @@ function display() {
 
     /// If we are in a frameset, just print the top of it
 
-    if ($_GET['frameset'] == "top") {
+    if (!empty($_GET['frameset']) and $_GET['frameset'] == "top") {
         print_header($pagetitle, $this->course->fullname, "$navigation <a target=\"$CFG->framename\" href=\"$fullurl\">{$this->resource->name}</a>", "", "", true, update_module_button($this->cm->id, $this->course->id, $strresource), navmenu($this->course, $this->cm, "parent"));
 
         echo "<center><font size=-1>".text_to_html($this->resource->summary, true, false)."</font></center>";
