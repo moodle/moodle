@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 alpha (2004022200)
+      // moodle.php - created with Moodle 1.2 Beta + (2004030702)
 
 
 $string['action'] = 'Aktion';
@@ -16,6 +16,9 @@ $string['add'] = 'Hinzufügen';
 $string['addadmin'] = 'Verwalter hinzufügen';
 $string['addcreator'] = 'Kursersteller hinzufügen';
 $string['added'] = 'Hinzugefügt $a';
+$string['addedtogroup'] = 'Zur Gruppe $a hinzugefügt';
+$string['addedtogroupnot'] = 'Nicht zur Gruppe $a hinzugefügt';
+$string['addedtogroupnotenrolled'] = 'Nicht zur Gruppe $a hinzugefügt, weil Teilnehmer/in nicht im Kurs registriert ist';
 $string['addinganew'] = 'Neue Aktivität $a hinzufügen';
 $string['addinganewto'] = 'Füge $a->what ein zu $a->to';
 $string['addingdatatoexisting'] = 'Daten zu bestehenden  hinzufügen';
@@ -124,7 +127,7 @@ $string['clicktochange'] = 'Klicken um zu ändern';
 $string['closewindow'] = 'Dieses Fenster schließen';
 $string['comparelanguage'] = 'Sprache vergleichen und bearbeiten';
 $string['complete'] = 'Fertig';
-$string['configallowunenroll'] = 'Wenn Sie diesen Schalter auf \'Ja\' stellen, dann haben Teilnehmer/innen die Berechtigung sich selbst in einen Kurs einzuschreiben, wenn sie es wünschen. Anderenfalls können sie sich nicht selbst einschreiben, und der Einschreibevorgang wird gesteuert durch den/die Dozent/in und den/die Administrator/in.';
+$string['configallowunenroll'] = 'Wenn Sie diesen Schalter auf \'Ja\' stellen, dann haben Teilnehmer/innen die Berechtigung sich selbst von einem Kurs abzumelden. Anderenfalls kann eine abmeldung nur durch den/die  Trainer/in oder den/die Administrator/in erfolgen.';
 $string['configcachetext'] = 'Diese Einstellung führt zu Beschleunigungen wenn Sie größere Seiten betreiben oder Textfilter verwenden. Textkopien bleiben in ihrer ursprünglichen Fassung für die festgelegte Zeit bestehen. Eine zu niedrige Einstellung führt zu einer Verlangsamung, bei einer zu hohen Einstellung Einstellung dauert zu lange bis Texte aktualisiert werden (z.B. mit neuen Links)';
 $string['configcountry'] = 'Wenn Sie hier ein Land einstellen, wird dieses Land als Vorgabe für neue Benutzerkonten gewählt.  Um Benutzer/innen zu zwingen, ein Land zu wählen, lassen Sie dieses Feld leer.';
 $string['configdebug'] = 'Wenn Sie dies einschalten, werden die Fehlermeldungen von PHP erweitert, so dass mehr Warnungen ausgegeben werden. Dies ist nur nützlich für Entwickler.';
@@ -162,7 +165,6 @@ Leider erlauben nicht alle PHP-Server diese Methode, so dass Sie, sofern Sie Pro
 $string['configsmtphosts'] = 'Geben Sie hier den vollen Namen von einem oder mehreren lokalen SMTP-Servern an, die Moodle für den E-Mail-Versand benutzen soll (beispielsweise \'E-Mail.a.de\' oder \'E-Mail.a.de;E-Mail.b.de\'). Wenn Sie dieses frei lassen, wird Moodle die Standard-Methode von PHP zum Senden von E-Mails verwenden.';
 $string['configsmtpuser'] = 'Sofern Sie einen SMTP-Server angegeben haben und der Server Zugangsdaten erfordert, dann geben Sie hier Benutzernamen und Passwort an.';
 $string['configteacherassignteachers'] = 'Soll es Trainer/innen erlaubt werden, andere Trainer/innen den von ihnen unterrichteten Kursen zuzuordnen? Falls \'Nein\', können nur der Kursersteller und Administratoren den Kursen Trainer/innen zuordnen.';
-$string['configtextfilters'] = 'Textfilter interpretieren Texte in unterschiedlicher Weise. Geben Sie die relativen Pfade zu den Textfiltern an, die Sie verwenden wollen. Geben Sie sie in der Reihenfolge an, in der sie angewandt werden sollen. Trennen Sie die verschiedenen Filter durch ein Komma (z.B. mod/glossary/dynalink.php, filter/censor/censor.php).';
 $string['configtimezone'] = 'Stellen Sie hier die bevorzugte Zeitzone ein. Sie steuert die Zeitanzeige in Ihren Kursen. Jeder Teilnehmer kann selbst in seinem Profil eine eigene Zeitzone einstellen und damit Ihre Voreinstellung für sich aufheben. Die Einstellung \"Serverzeit\"  verwendet hier die Zeiteinstellung Ihres Internetservers. Die Einstellung \"Serverzeit\" im Nutzerprofil hingegen greift auf die Einstellung Ihres Moodleprogramms an dieser Stelle zurück.';
 $string['configunzip'] = 'Geben Sie hier den Pfad zum Programm unzip an (Nur Unix). Dieser wird für das Entpacken von ZIP-Archiven auf dem Server benötigt.';
 $string['configuration'] = 'Konfiguration';
@@ -201,6 +203,7 @@ $string['createuserandpass'] = 'Tragen Sie hier Ihren Benutzernamen und ein Kenn
 $string['createziparchive'] = 'ZIP-Archiv erstellen';
 $string['creatingcategoriesandquestions'] = 'Erstelle Kategorien und Fragen';
 $string['creatingcoursemodules'] = 'Erstelle Kurs-Module';
+$string['creatingevents'] = 'Termine erstellen';
 $string['creatinggroups'] = 'Gruppen einrichten';
 $string['creatinglogentries'] = 'Erstelle Log-Einträge';
 $string['creatingnewcourse'] = 'Erstelle neuen Kurs';
@@ -355,6 +358,7 @@ $string['files'] = 'Dateien';
 $string['filesfolders'] = 'Dateien/Ordner';
 $string['filloutallfields'] = 'Bitte füllen Sie alle Formular-Felder aus';
 $string['findmorecourses'] = 'Weitere Kurse finden...';
+$string['firstdayofweek'] = '0';
 $string['firstname'] = 'Vorname';
 $string['firsttime'] = 'Sind Sie das erste Mal hier?';
 $string['followingoptional'] = 'Die folgenden Angaben sind optional';
@@ -615,6 +619,7 @@ $string['notenrolled'] = '$a nimmt nicht an diesem Kurs teil.';
 $string['noteuserschangednonetocourse'] = 'Anmerkung: Kursnutzer müssen bei der Wiederherstellung von Nutzerdaten wiederhergestellt werden. Diese Einstellung wurde für Sie geändert.';
 $string['nothingnew'] = 'Nichts Neues seit Ihrem letzten Besuch';
 $string['notincluded'] = 'Nicht eingebunden';
+$string['notingroup'] = 'Diese Aktivität ist nur für Gruppenmitglieder zugänglich. Sie sind nicht Mitglied in dieser Gruppe.';
 $string['nousersmatching'] = 'Keine Nutzer bezüglich \'$a\' wurden gefunden';
 $string['nousersyet'] = 'Bislang keine Benutzer/in';
 $string['now'] = 'jetzt';
@@ -669,6 +674,7 @@ $string['question'] = 'Frage';
 $string['readinginfofrombackup'] = 'Lese Information vom Backup';
 $string['readme'] = 'LIESMICH';
 $string['recentactivity'] = 'Neueste Aktivitäten';
+$string['recentactivityreport'] = 'Vollständiger Bericht über alle Aktvititäten';
 $string['registration'] = 'Moodle Anmeldung';
 $string['registrationemail'] = 'E-Mail Benachrichtigung';
 $string['registrationinfo'] = '<p>Diese Seite ermöglicht es Ihnen, Ihre Moodle Seite auf moodle.org zu registrieren.
@@ -870,6 +876,7 @@ $string['wordforteachers'] = 'Ihre Bezeichnung für mehrere Trainer/innen';
 $string['wordforteacherseg'] = 'z.B. Lehrer/innen, Berater/innen, Moderator/innen usw.';
 $string['writingcategoriesandquestions'] = 'Schreibe Kategorien und Fragen';
 $string['writingcoursedata'] = 'Schreibe Kursdaten';
+$string['writingeventsinfo'] = 'Termininformationen eintragen';
 $string['writinggeneralinfo'] = 'Schreibe allgemeneine Information';
 $string['writinggroupsinfo'] = 'Schreibe Gruppeninformation';
 $string['writingheader'] = 'Schreibe Header';

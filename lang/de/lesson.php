@@ -1,15 +1,19 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.2 development (2004021700)
+      // lesson.php - created with Moodle 1.2 Beta + (2004030702)
 
 
+$string['actionaftercorrectanswer'] = 'Aktion nach der richtigen Antwort';
 $string['addanewpage'] = 'Eine neue Seite hinzufügen';
 $string['addpagehere'] = 'Eine neue Seite hier einfügen';
 $string['answer'] = 'Antwort';
+$string['answersfornumerical'] = 'Answers for Numerical questions should be matched pairs of Minimum and Maximum values';
 $string['attempt'] = 'Versuch: $a';
 $string['attempts'] = 'Versuche';
 $string['available'] = 'Verfügbar ab';
 $string['canretake'] = '$a kann wiederholen';
+$string['casesensitive'] = 'Gross-/Kleinschreibung beachten';
 $string['checknavigation'] = 'Navigation überprüfen';
+$string['checkquestion'] = 'Überprüfen der Frage';
 $string['confirmdeletionofthispage'] = 'Bitte bestätigen Sie das Löschen dieser Seite';
 $string['congratulations'] = 'Herzlichen Glückwunsch. Sie haben das Ende dieser Lektion erreicht.';
 $string['continue'] = 'Fortsetzen';
@@ -17,27 +21,48 @@ $string['deadline'] = 'Abgabezeitpunkt';
 $string['deletingpage'] = 'Löschen der Seite: $a';
 $string['displayofgrade'] = 'Anzeige der Bewertungen für Teilnehmer/innen:';
 $string['endoflesson'] = 'Ende der Lektion';
+$string['fileformat'] = 'Dateiformat';
+$string['firstanswershould'] = 'Die richtige Antwort sollte an der ersten Stelle stehen und zur nächsten Seite führen.';
 $string['gradeis'] = 'Ihre Note ist $a';
+$string['importquestions'] = 'Import von Fragen';
 $string['jumpto'] = 'Springen zu';
 $string['maximumnumberofanswers'] = 'Maximale Zahl der Antworten';
+$string['maximumnumberofattempts'] = 'Höchstzulässige Zahl der Versuche';
 $string['modulename'] = 'Lektion';
 $string['modulenameplural'] = 'Lektionen';
+$string['morethanoneanswer'] = 'Mehr als eine Antwort';
 $string['movepagehere'] = 'Verschieben der Seite an diese Stelle';
 $string['moving'] = 'Seite  $a verschieben';
+$string['movingtonextpage'] = 'Zur nächsten Seite gehen';
+$string['multipleanswer'] = 'Mehrere Antworten';
 $string['nextpage'] = 'Nächste Seite';
 $string['noanswer'] = 'Sie haben keine Antwort abgegeben';
 $string['noattemptrecordsfound'] = 'Keine aufgezeichneten Daten gefunden: Keine Bewertung vorgenommen';
+$string['normal'] = 'Normal - folgt den Pfad der Lektion';
 $string['numberofcorrectanswers'] = 'Zahl der richtigen Antwort(en): $a';
+$string['numberofcorrectmatches'] = 'Zahl der passenden  Paare: $a';
+$string['numberofpagestoshow'] = 'Zahl de Seiten (Karten), die gezeigt werden: $a';
 $string['numberofpagesviewed'] = 'Zahl der angesehenen Seiten: $a';
+$string['ordered'] = 'Geordnet';
 $string['outof'] = 'Außerhalb von $a';
 $string['page'] = 'Seite: $a';
 $string['pagecontents'] = 'Inhalt der Seite';
 $string['pagetitle'] = 'Seitentitel';
 $string['pleasecheckoneanswer'] = 'Bitte überprüfen Sie Ihre Antwort noch einmal';
+$string['pleasecheckoneormoreanswers'] = 'Bitte überprüfen Sie Ihre Antwort(en)';
+$string['pleaseenteryouranswerinthebox'] = 'Bitte tragen Sie Ihre Antwort in das entsprechende Feld ein.';
+$string['pleasematchtheabovepairs'] = 'Bitte vergleichen Sie die obigen Paare';
+$string['questiontype'] = 'Fragentyp';
 $string['response'] = 'Antwort';
 $string['sanitycheckfailed'] = 'Verständlichkeitsprüfung gescheitert: Der Versuch wurde gelöscht.';
 $string['savepage'] = 'Seite speichern';
+$string['showanunansweredpage'] = 'Zeige eine unbearbeitete Seite';
+$string['showanunseenpage'] = 'Zeige eine noch nicht gesehene Seite';
+$string['singleanswer'] = 'Eine Antwort';
+$string['thatsthecorrectanswer'] = 'Dies ist die richtige Antwort';
+$string['thatsthewronganswer'] = 'Dies ist ein falsche Antwort';
 $string['thispage'] = 'Diese Seite';
 $string['youhaveseen'] = 'Sie haben einige Seiten bereits früher besucht.<br />Wollen Sie an der Stelle fortsetzen an der Sie damals aufgehört haben?';
+$string['youranswer'] = 'Ihre Antwort';
 
 ?>
