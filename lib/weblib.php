@@ -3569,7 +3569,7 @@ function print_side_block_start($heading='', $attributes = array()) {
 function print_side_block_end($attributes = array()) {
     echo '</div></td></tr></tbody></table>';
     // js call to set block display state which is saved in cookie.
-    echo "\n <script language=\"JavaScript\"> <!-- //hide ";
+    echo "\n <script type='text/javascript'> <!-- //hide ";
     echo "\n containerDisplaySet(\"".$attributes['id']."\");";
     echo "\n // done hiding --> </script>";
     echo "\n";
