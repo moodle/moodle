@@ -1065,6 +1065,17 @@ function format_string ($string, $striplinks = false, $courseid=NULL ) {
 
     global $CFG, $course;
 
+    //We'll use a in-memory cache here to speed up repeated strings
+    static $strcache;
+
+    //Calculate md5
+    $md5 = md5($string.$striplinks);
+
+    //Fetch from cache if possible
+    if(isset($strcache[$md5])) {
+        return $strcache[$md5];
+    }
+
     if (empty($courseid)) {
         if (!empty($course->id)) {         // An ugly hack for better compatibility
             $courseid = $course->id;       // (copied from format_text)
@@ -1078,6 +1089,9 @@ function format_string ($string, $striplinks = false, $courseid=NULL ) {
     if ($striplinks) {  //strip links in string
         $string = preg_replace('/(<a[^>]+?>)(.+?)(<\/a>)/is','$2',$string);
     }
+
+    //Store to cache
+    $strcache[$md5] = $string;
 
     return $string;
 }
