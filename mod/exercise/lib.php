@@ -424,6 +424,51 @@ function exercise_print_recent_activity($course, $isteacher, $timestart) {
 }
 
 
+///////////////////////////////////////////////////////////////////////////////
+function exercise_refresh_events($courseid = 0) {
+// This standard function will check all instances of this module
+// and make sure there are up-to-date events created for each of them.
+// If courseid = 0, then every exercise event in the site is checked, else
+// only exercise events belonging to the course specified are checked.
+// This function is used, in its new format, by restore_refresh_events()
+
+    if ($courseid == 0) {
+        if (! $exercises = get_records("exercise")) {
+            return true;        
+        }   
+    } else {
+        if (! $exercises = get_records("exercise", "course", $courseid)) {
+            return true;
+        }
+    }
+    $moduleid = get_field('modules', 'id', 'name', 'exercise');
+    
+    foreach ($exercises as $exercise) {
+        $event = NULL;
+        $event->name        = addslashes($exercise->name);
+        $event->description = addslashes($exercise->description);
+        $event->timestart   = $exercise->deadline;
+
+        if ($event->id = get_field('event', 'id', 'modulename', 'exercise', 'instance', $exercise->id)) {
+            update_event($event);
+    
+        } else {
+            $event->courseid    = $exercise->course;
+            $event->groupid     = 0;
+            $event->userid      = 0;
+            $event->modulename  = 'exercise';
+            $event->instance    = $exercise->id; 
+            $event->eventtype   = 'deadline';
+            $event->timeduration = 0;
+            $event->visible     = get_field('course_modules', 'visible', 'module', $moduleid, 'instance', $exercise->id); 
+            add_event($event);
+        }
+
+    }
+    return true;
+}   
+
+
 /*******************************************************************/
 function exercise_update_instance($exercise) {
 // Given an object containing all the necessary data, 
