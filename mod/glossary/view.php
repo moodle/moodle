@@ -15,37 +15,6 @@
     optional_variable($currentview);  // browsing entries by categories?
     optional_variable($cat);  // categoryID
 
-    if ($l == "" and $search == "" and $eid == "") {
-    		$l = "A";
-    }
-    
-    if ( $currentview ) {
-          $currentview = strtolower($currentview);
-          if ( !$currentview ) {
-               $currentview = "";
-          } else {
-               if ( !$cat ) {
-                    $cat = 1;
-               }
-               $category = get_record("glossary_categories","id",$cat);
-          }
-    }
-
-    $search = trim(strip_tags($search));
-
-    if ($search and !$entryid ) {
-	  $l = "";
-        $searchterms = explode(" ", $search);    // Search for words independently
-        foreach ($searchterms as $key => $searchterm) {
-            if (strlen($searchterm) < 2) {
-                unset($searchterms[$key]);
-            }
-        }
-        $search = trim(implode(" ", $searchterms));
-    } elseif ( $eid ) {
-	  $search = "";
-    }
-
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
     }
@@ -59,117 +28,108 @@
     }
 
     require_login($course->id);
+    if ( !$course->visible ) {
+        notice(get_string("activityiscurrentlyhidden"));
+    }
 
     add_to_log($course->id, "glossary", "view", "view.php?id=$cm->id", "$glossary->id");
 
-/// Print the page header
+    $search = trim(strip_tags($search));
+    if ($search and !$entryid ) {
+	  $l = "";
+        $searchterms = explode(" ", $search);    // Search for words independently
+        foreach ($searchterms as $key => $searchterm) {
+            if (strlen($searchterm) < 2) {
+                unset($searchterms[$key]);
+            }
+        }
+        $search = trim(implode(" ", $searchterms));
+        $currentview = "";
+    } elseif ( $eid ) {
+         $search = "";
+    }
+    if ($l == "" and $search == "" and ($eid == "" or $eid == 0) ) {
+    		$l = "A";
+    } elseif ( $eid ) {
+          $l = "";
+    }
+    if ( $currentview ) {
+          $l = "";
+          $currentview = strtolower($currentview);
+          if ( $currentview ) {
+               if ( $cat ) {
+                    $category = get_record("glossary_categories","id",$cat);
+               }
+               if ( !$category ) {
+                    $cat = "";
+               }
+          }
+    }
+
+/// Printing the page header
 
     if ($course->category) {
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
     }
 
-    $strglossaries   = get_string("modulenameplural", "glossary");
-    $strglossary     = get_string("modulename", "glossary");
-    $strselectletter = get_string("selectletter", "glossary");
-    $strspecial      = get_string("special", "glossary");
-    $strallentries   = get_string("allentries", "glossary");
-    $strnoentries    = get_string("noentries", "glossary");
-    $straddentry     = get_string("addentry", "glossary");
-    $streditentry    = get_string("editentry", "glossary");
-    $strdeleteentry  = get_string("deleteentry", "glossary");
+     $strglossaries   = get_string("modulenameplural", "glossary");
+     $strglossary     = get_string("modulename", "glossary");
+     $strallcategories= get_string("allcategories", "glossary");
+     $straddentry     = get_string("addentry", "glossary");
+     $strnoentries    = get_string("noentries", "glossary");
 
     print_header("$course->shortname: $glossary->name", "$course->fullname",
                  "$navigation <A HREF=index.php?id=$course->id>$strglossaries</A> -> $glossary->name",
                   "", "", true, update_module_button($cm->id, $course->id, $strglossary),
                   navmenu($course, $cm));
 
-/// Print the main part of the page
-
-/// Printing the navigation links (letters to look for)
+/// Printing the header of the glossary
 
     echo "<p><center><b>$glossary->name<p>" ;
 
-    if ( !$course->visible ) {
-        notice(get_string("activityiscurrentlyhidden"));
-    }
-
     print_simple_box_start("center", "70%");
-      echo "<CENTER>$strselectletter";
-
-	?>
-	<form method="POST" action="view.php">
-	  <? p(get_string("searchconcept","glossary")) ?> <input type="text" name="search" size="20" value=""> <br><? p(get_string("searchindefinition","glossary")) ?> <input type="checkbox" name="includedefinition" value="1">
-	  <input type="submit" value="Search" name="searchbutton">
-	  <input type="hidden" name="id" value="<? p($cm->id) ?>">
-	</form>
-	<?
-
-      if ( $glossary->showspecial ) {
-          echo "<p><a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$id&l=SPECIAL\">$strspecial</a> | ";
-      }
-
-      if ( $glossary->showalphabet ) {
-           $alphabet = explode("|", get_string("alphabet","glossary"));
-           $letters_by_line = 14;
-           for ($i = 0; $i < count($alphabet); $i++) {
-               echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$id&l=$alphabet[$i]\">$alphabet[$i]</a>";
-               if ((int) ($i % $letters_by_line) != 0 or $i == 0) {
-                    echo " | ";
-               } else {
-                    echo "<br>";
-               }
+          echo "<table width=100% border=0><tr><td width=50% align=right>";
+     	?>
+     	<form method="POST" action="view.php">
+     	  <? p(get_string("searchconcept","glossary")) ?> <input type="text" name="search" size="20" value=""> <br><? p(get_string("searchindefinition","glossary")) ?> <input type="checkbox" name="includedefinition" value="1">
+     	  <input type="submit" value="Search" name="searchbutton">
+     	  <input type="hidden" name="id" value="<? p($cm->id) ?>">
+     	</form>
+     	<?
+          echo "</td><td valign=top align=right width=50%>";
+           if (isteacher($course->id) or $glossary->studentcanpost) {
+              $options = array ("id" => "$cm->id");
+              print_single_button("edit.php", $options, $straddentry );
            }
-      }
-      
-      if ( $glossary->showall ) {
-          echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$id&l=ALL\">$strallentries</a></p>";
-      }
-      
-      if (isteacher($course->id) or $glossary->studentcanpost) {
-         $options = array ("id" => "$cm->id");
-         echo "<CENTER>";
-         print_single_button("edit.php", $options, $straddentry );
-         echo "</CENTER>";
-      }
-
+           echo "</td></tr></table>";
     print_simple_box_end();
 
     echo "<p align=center>";
-    if ($l) {
-		$CurrentLetter = "";
-		if ($l == "ALL" or $l == "SPECIAL") {
-			if ( $l == "ALL" ) {
-	 			echo "<h2>$strallentries</h2><p>";
-			} elseif ($l == "SPECIAL") {
-	 			echo "<h2>$strspecial</h2><p>";
-			}
-		}
-	} elseif( $search ) {
-		echo get_string("search") . ": $search";
-	}
-
-     $data[0]->link = "view.php?id=$id&l=$l&eid=$eid&search=$search&includedefinition=$includedefinition";
+     $data[0]->link = "view.php?id=$id";
      $data[0]->caption = get_string("standardview","glossary");
      
-     $data[1]->link = "view.php?id=$id&l=$l&eid=$eid&search=$search&includedefinition=$includedefinition&currentview=categories&cat=$cat";
+     $data[1]->link = "view.php?id=$id&currentview=categories";
      $data[1]->caption = get_string("categoryview","glossary");
-     
-     $tCFG->TabTableBGColor = $THEME->cellcontent2;
-     $tCFG->TabTableWidth = "70%";
-     $tCFG->ActiveTabColor = $THEME->cellcontent2;
-     $tCFG->InactiveTabColor = $THEME->cellheading2;
-     $tCFG->TabsPerRow = 5;
-     $tCFG->TabSeparation = 4;
-     
-     if ( $cat ) {
+
+     if ( $currentview ) {
           $CurrentTab = 1;
      } else {
           $CurrentTab = 0;
      }
      print_tabbed_table_start($data, $CurrentTab, $tCFG);
      echo "<center>";
-     if ( $cat ) {
-          echo "<b>$category->name</b><hr>";
+     if ( $currentview ) {
+         glossary_print_categories_menu($course, $cm, $glossary, $category);
+     } else {
+         glossary_print_alphabet_menu($cm, $glossary, $l);
+     
+         if ($l) {
+     		$CurrentLetter = "";
+     	} elseif( $search ) {
+     		echo "<h3>" . get_string("search") . ": $search</h3>";
+     	}
+
+          echo "<hr>";
      }
 /// Printing the entries
 
@@ -185,11 +145,11 @@
         $DumpedDefinitions= 0;
         foreach ($allentries as $entry) {
             $DumpToScreen = 0;
-            $FirstLetter = strtoupper( ltrim( $entry->concept[0] ) );
+            $FirstLetter = strtoupper( substr(ltrim($entry->concept),0,strlen($l) ) );
             if ( $l ) {
                 if ( $l == "ALL" or $FirstLetter == $l) {
-                    if ( $CurrentLetter != $FirstLetter ) {
-                         $CurrentLetter = $FirstLetter;
+                    if ( $CurrentLetter != $FirstLetter[0] ) {
+                         $CurrentLetter = $FirstLetter[0];
 
 	                    if ( $glossary->displayformat == 0 ) {
 	                        if ( $DumpedDefinitions > 0) {
@@ -197,7 +157,9 @@
 	                        }
 	                        echo "\n<center><TABLE BORDER=0 CELLSPACING=0 width=95% valign=top cellpadding=10><tr><td align=center BGCOLOR=\"$THEME->cellheading2\">";
 	                    }
-	                    echo "<b>$CurrentLetter</b>";
+	                    if ( $l == "ALL" ) {
+                              echo "<b>$CurrentLetter</b>";
+                         }
 
 	                    if ( $glossary->displayformat == 0 ) {
 	                        echo "\n</center></td></tr></TABLE></center>";
@@ -211,7 +173,19 @@
                    $DumpToScreen = 1;
                 }
             } else {
-                $DumpToScreen = 1;
+                if ( $currentview ) {
+                    if ( $category ) {
+                         if ( record_exists("glossary_entries_categories","entryid",$entry->id, "categoryid",$category->id) ) {
+                              $DumpToScreen = 1;
+                         }
+                    } else {
+                         if ( ! record_exists("glossary_entries_categories","entryid",$entry->id) ) {
+                              $DumpToScreen = 1;
+                         }
+                    }
+                } else {
+                    $DumpToScreen = 1;
+                }
             }
 
             if ( $DumpToScreen ) {
@@ -229,7 +203,7 @@
                        $entry->concept = highlight($search,$concept);
                        $entry->definition = highlight($search,$definition);
                  }
-	             glossary_print_entry($course, $cm, $glossary, $entry);
+	             glossary_print_entry($course, $cm, $glossary, $entry,$currentview,$cat);
 
                  if ( $glossary->displayformat != 0 ) {
                  	echo "<p>";

@@ -9,59 +9,59 @@
 #
 
 CREATE TABLE prefix_glossary (
-     id int(10) unsigned NOT NULL auto_increment,
-     course int(10) unsigned NOT NULL default '0',
+     id SERIAL,
+     course int4 NOT NULL default '0',
      name varchar(255) NOT NULL default '',
-     studentcanpost tinyint(2) unsigned NOT NULL default '0',
-     allowduplicatedentries tinyint(2) unsigned NOT NULL default '0',
-     displayformat tinyint(2) unsigned NOT NULL default '0',
-     mainglossary tinyint(2) unsigned NOT NULL default '0',
-     showspecial tinyint(2) unsigned NOT NULL default '1',
-     showalphabet tinyint(2) unsigned NOT NULL default '1',
-     showall tinyint(2) unsigned NOT NULL default '1',
-     timecreated int(10) unsigned NOT NULL default '0',
-     timemodified int(10) unsigned NOT NULL default '0',
+     studentcanpost int2 NOT NULL default '0',
+     allowduplicatedentries int2 NOT NULL default '0',
+     displayformat int2 NOT NULL default '0',
+     mainglossary int2 NOT NULL default '0',
+     showspecial int2 NOT NULL default '1',
+     showalphabet int2 NOT NULL default '1',
+     showall int2 NOT NULL default '1',
+     timecreated int4 NOT NULL default '0',
+     timemodified int4 NOT NULL default '0',
      PRIMARY KEY  (id)
-) TYPE=MyISAM COMMENT='all glossaries';
+);
 
 #
 # Table structure for table `glossary_entries`
 #
 
 CREATE TABLE prefix_glossary_entries (
-     id int(10) unsigned NOT NULL auto_increment,
-     glossaryid int(10) unsigned NOT NULL default '0',
-     userid int(10) unsigned NOT NULL default '0',
+     id SERIAL,
+     glossaryid int4 NOT NULL default '0',
+     userid int4 NOT NULL default '0',
      concept varchar(255) NOT NULL default '',
      definition text NOT NULL,
-     format tinyint(2) unsigned NOT NULL default '0',
+     format int2 NOT NULL default '0',
      attachment VARCHAR(100) NOT NULL default '',
-     timecreated int(10) unsigned NOT NULL default '0',
-     timemodified int(10) unsigned NOT NULL default '0',
-     teacherentry tinyint(2) unsigned NOT NULL default '0',
-     PRIMARY KEY  (id)
-) TYPE=MyISAM COMMENT='all glossary entries';
+     timecreated int4 NOT NULL default '0',
+     timemodified int4 NOT NULL default '0',
+     teacherentry int2 NOT NULL default '0',
+     PRIMARY KEY(id)
+);
 
 #
 # Table structure for table `glossary_cageories`
 #
 
 CREATE TABLE prefix_glossary_categories (
-     id int(10) unsigned NOT NULL auto_increment,
-     glossaryid int(10) unsigned NOT NULL default '0',
+     id SERIAL,
+     glossaryid int4 NOT NULL default '0',
      name varchar(255) NOT NULL default '',
      PRIMARY KEY  (id)
-) TYPE=MyISAM COMMENT='all categories for glossary entries';
+);
 
 #
 # Table structure for table `glossary_entries_category`
 #
 
 CREATE TABLE prefix_glossary_entries_categories (
-     categoryid int(10) unsigned NOT NULL default '0',
-     entryid int(10) unsigned NOT NULL default '0',
+     categoryid int4 NOT NULL default '0',
+     entryid int4 NOT NULL default '0',
      PRIMARY KEY  (categoryid, entryid)
-) TYPE=MyISAM COMMENT='categories of each glossary entry';
+);
 
 #
 # Dumping data for table `log_display`

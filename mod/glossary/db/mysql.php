@@ -49,18 +49,10 @@ function glossary_upgrade($oldversion) {
                     `entryid` INT(10) UNSIGNED NOT NULL default '0',
                     PRIMARY KEY  (`categoryid`, `entryid`)
                     ) TYPE=MyISAM COMMENT='categories of each glossary entry'");
-                    
-          // creating a default category for every glossary
-        execute_sql("INSERT INTO `{$CFG->prefix}glossary_categories` (`glossaryid`, `name`)
-                    SELECT `id`, '" . get_string("main","glossary") . "' FROM `{$CFG->prefix}glossary`");
-                    
-
-          // setting the default category for every entry.
-        execute_sql("INSERT INTO `{$CFG->prefix}glossary_entries_categories` (`categoryid`, `entryid`)
-                    SELECT c.id, e.id
-                    FROM `{$CFG->prefix}glossary_entries` e, `{$CFG->prefix}glossary_categories` c
-                    WHERE e.glossaryid = c.glossaryid");
-
+     }
+     
+     if ( $oldversion < 2003092100 ) {
+          execute_sql("ALTER TABLE `{$CFG->prefix}glossary_entries_categories` CHANGE `categoryid` `categoryid` INT( 10 ) UNSIGNED DEFAULT '0' NOT NULL ");
      }
 
     return true;

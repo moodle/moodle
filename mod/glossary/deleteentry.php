@@ -50,24 +50,38 @@
 	if ( isteacher($cm->id) or $glossary->studentcanpost ) {
 		if ($go) {	// the operation was confirmed.
 			if ( $mode == "delete") {
+				glossary_delete_old_attachments($entry);
 				delete_records("glossary_entries","id", $entry);				
 				print_simple_box_start("center","40%", "#FFBBBB");
 				echo "<center>$entrydeleted"; //CAMBIAR
 				echo "</center>";
 				print_simple_box_end();
-			} elseif ($mode == "edit") {
 			}
     			print_footer($course);
-                  add_to_log($course->id, "glossary", "delete entry", "view.php?id=$cm->id", $entry);
-			redirect("view.php?id=$cm->id");
+                  add_to_log($course->id, "glossary", "delete entry", "view.php?id=$cm->id&currentview=$currentview&cat=$cat", $entry);
+			redirect("view.php?id=$cm->id&currentview=$currentview&cat=$cat");
 		} else {		// the operation has not been confirmed yet so ask the user to do so
 			if ( $mode == "delete") {				
 				print_simple_box_start("center","40%", "#FFBBBB");
-				echo "<center><b>$entryfields->concept</b><br>$strareyousuredelete"; //CAMBIAR
-				include("deleteentry.html");
-				echo "</center>";
+				echo "<center><b>$entryfields->concept</b><br>$strareyousuredelete";
+				
+				?>
+                    <form name="form" method="post" action="deleteentry.php">
+
+                    <input type="hidden" name=id 		   value="<?php p($cm->id) ?>">
+                    <input type="hidden" name=mode         value="delete">
+                    <input type="hidden" name=go       value="1">
+                    <input type="hidden" name=entry         value="<?php p($entry) ?>">
+                    <input type="hidden" name=currentview value=<? p($currentview) ?>>
+                    <input type="hidden" name=cat=<? p($cat) ?>>
+
+                    <input type="submit" value=" <?php print_string("yes")?> ">
+                    <input type=button value=" <?php print_string("no")?> " onclick="javascript:history.go(-1);">
+
+                    </form>
+               	</center>
+               	<?
 				print_simple_box_end();
-			} elseif ($mode == "edit") {
 			}
 		} 
 	} else {

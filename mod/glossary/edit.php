@@ -7,6 +7,9 @@ require_once("lib.php");
 require_variable($id);    // Course Module ID
 optional_variable($e);    // EntryID
 
+optional_variable($currentview);   // categories if by category?
+optional_variable($cat);    // CategoryID
+
 if (! $cm = get_record("course_modules", "id", $id)) {
     error("Course Module ID was incorrect");
 }
@@ -110,14 +113,23 @@ if ($e) {
                               }
                               set_field("glossary_entries", "attachment", $newfilename, "id", $newentry->id);
 
-                              add_to_log($course->id, "glossary", "add entry", "view.php?id=$cm->id&eid=$newentry->id", "$newentry->id");
+                              add_to_log($course->id, "glossary", "add entry", "view.php?id=$cm->id&eid=$newentry->id&currentview=$currentview&cat=$cat", "$newentry->id");
                        }
                 } else {
                     error("Could not insert this glossary entry because this concept already exist.");
                 }
           }
 
-          redirect("view.php?id=$cm->id&eid=$newentry->id");
+           delete_records("glossary_entries_categories","entryid",$entry);
+
+           if ( $categories ) {
+                $newcategory->entryid = $newentry->id;
+                foreach ($categories as $category) {
+                    $newcategory->categoryid =$category;
+                    insert_record("glossary_entries_categories",$newcategory);
+                }
+           }
+          redirect("view.php?id=$cm->id&eid=$newentry->id&currentview=$currentview&cat=$cat");
           die;
      }
 }

@@ -11,6 +11,31 @@
     </td>
 </tr>
 <tr valign=top>
+    <td align=right><p><b><?php echo get_string("categories","glossary") ?>:</b></p></td>
+    <td>	
+	<?
+		$categories = get_records("glossary_categories","glossaryid",$glossary->id);
+		echo "<select size=\"";
+		if ( count($categories) > 7 ) {
+			echo 7;
+		}else {
+			echo count($categories);
+		}
+		echo "\" name=\"categories[]\" multiple=\"yes\">";
+
+		foreach ( $categories as $category ) {
+			echo "  <option ";
+
+			if ( record_exists("glossary_entries_categories","entryid",$entry->id,"categoryid",$category->id) ) {
+				echo "selected " ;
+			}
+			echo "value=\"$category->id\">$category->name</option>\n";
+		}
+	?>
+	</select>
+    </td>
+</tr>
+<tr valign=top>
     <td align=right><p><b><? echo get_string("definition","glossary") ?>:</b></p>
     <font size="1">
      <?php
@@ -37,9 +62,6 @@
            $form->format = $defaultformat;
        }
        choose_from_menu(format_text_menu(), "format", $entry->format, ""); 
-	 if ($entry->id) {
-		echo "<input type=\"hidden\" name=entry value=\"$entry->id\">";
-   	 }
        echo "</p>";
     ?>
     </td>
@@ -58,7 +80,14 @@
 <tr>
 <td colspan=2>
 	<p align=center>
+	<? if ($entry->id) {
+		echo "<input type=\"hidden\" name=entry value=\"$entry->id\">";
+   	 }
+	?>
 	<input type="hidden" name=id value="<?=$cm->id ?>">
+	<input type="hidden" name=currentview value="<?=$currentview ?>">
+	<input type="hidden" name=cat value="<?=$cat ?>">
+
 	<input type="submit" value="<? print_string("savechanges") ?>">
 	<input type="reset" value="<? print_string("revert") ?>">
 	</P>

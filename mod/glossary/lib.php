@@ -5,6 +5,13 @@
 
 require_once("$CFG->dirroot/files/mimetypes.php");
 
+$tCFG->TabTableBGColor = $THEME->cellcontent2;
+$tCFG->TabTableWidth = "70%";
+$tCFG->ActiveTabColor = $THEME->cellcontent2;
+$tCFG->InactiveTabColor = $THEME->cellheading2;
+$tCFG->TabsPerRow = 5;
+$tCFG->TabSeparation = 4;
+
 function glossary_add_instance($glossary) {
 /// Given an object containing all the necessary data,
 /// (defined by the form in mod.html) this function
@@ -161,7 +168,7 @@ function glossary_get_entries($glossaryid, $entrylist) {
                             AND id IN ($entrylist)");
 }
 
-function glossary_print_entry($course, $cm, $glossary, $entry) {
+function glossary_print_entry($course, $cm, $glossary, $entry,$currentview="",$cat="") {
     global $THEME, $USET, $CFG;
     
     $PermissionGranted = 0;
@@ -180,14 +187,14 @@ function glossary_print_entry($course, $cm, $glossary, $entry) {
     }
     
     if ( $glossary->displayformat > 0 and $PermissionGranted ) {
-        glossary_print_entry_by_format($course, $cm, $glossary, $entry);
+        glossary_print_entry_by_format($course, $cm, $glossary, $entry,$currentview,$cat);
     } else {
-        glossary_print_entry_by_default($course, $cm, $glossary, $entry);
+        glossary_print_entry_by_default($course, $cm, $glossary, $entry,$currentview,$cat);
     }
 
 }
 
-function glossary_print_entry_by_default($course, $cm, $glossary, $entry) {
+function glossary_print_entry_by_default($course, $cm, $glossary, $entry,$currentview="",$cat="") {
     global $THEME, $USER;
 
     $colour = $THEME->cellheading2;
@@ -202,12 +209,12 @@ function glossary_print_entry_by_default($course, $cm, $glossary, $entry) {
     }
     echo "<b>$entry->concept</b>: ";
     echo format_text($entry->definition, $entry->format);
-    glossary_print_entry_icons($course, $cm, $glossary, $entry);
+    glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview,$cat);
     echo "</td>";
     echo "</TR>";
 }
 
-function glossary_print_entry_icons($course, $cm, $glossary, $entry) {
+function glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview="",$cat="") {
     global $THEME, $USER;
 
 	  if (isteacher($course->id) or $glossary->studentcanpost and $entry->userid == $USER->id) {
@@ -216,12 +223,12 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry) {
 			$mainglossary = get_record("glossary","mainglossary",1,"course",$course->id);
 			if ( $mainglossary ) {
 
-				echo "<a href=\"exportentry.php?id=$cm->id&entry=$entry->id\"><img  alt=\"" . get_string("exporttomainglossary","glossary") . "\"src=\"export.gif\" height=11 width=11 border=0></a> ";
+				echo "<a href=\"exportentry.php?id=$cm->id&entry=$entry->id&currentview=$currentview&cat=$cat\"><img  alt=\"" . get_string("exporttomainglossary","glossary") . "\"src=\"export.gif\" height=11 width=11 border=0></a> ";
 
 			}
 		}
-		echo "<a href=\"deleteentry.php?id=$cm->id&mode=delete&entry=$entry->id\"><img  alt=\"" . get_string("delete") . "\"src=\"../../pix/t/delete.gif\" height=11 width=11 border=0></a> ";
-	  	echo "<a href=\"edit.php?id=$cm->id&e=$entry->id\"><img  alt=\"" . get_string("edit") . "\" src=\"../../pix/t/edit.gif\" height=11 width=11 border=0></a>";
+		echo "<a href=\"deleteentry.php?id=$cm->id&mode=delete&entry=$entry->id&currentview=$currentview&cat=$cat\"><img  alt=\"" . get_string("delete") . "\"src=\"../../pix/t/delete.gif\" height=11 width=11 border=0></a> ";
+	  	echo "<a href=\"edit.php?id=$cm->id&e=$entry->id&currentview=$currentview&cat=$cat\"><img  alt=\"" . get_string("edit") . "\" src=\"../../pix/t/edit.gif\" height=11 width=11 border=0></a>";
 	  }
 }
 
@@ -597,4 +604,89 @@ function print_tabbed_table_end() {
      echo "</center><p></td></tr></table></center>";
 }
 
+function glossary_print_alphabet_menu($cm, $glossary, $l) {
+global $CFG, $THEME;
+     $strselectletter = get_string("selectletter", "glossary");
+     $strspecial      = get_string("special", "glossary");
+     $strallentries   = get_string("allentries", "glossary");
+
+     echo "<CENTER>$strselectletter";
+
+      if ( $glossary->showspecial ) {
+          if ( $l == "SPECIAL" ) {
+               echo "<p><b>$strspecial</b> | ";
+          } else {
+               echo "<p><a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&l=SPECIAL\">$strspecial</a> | ";
+          }
+      }
+
+      if ( $glossary->showalphabet ) {
+           $alphabet = explode("|", get_string("alphabet","glossary"));
+           $letters_by_line = 14;
+           for ($i = 0; $i < count($alphabet); $i++) {
+               if ( $l == $alphabet[$i] ) {
+                    echo "<b>$alphabet[$i]</b>";
+               } else {
+                    echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&l=$alphabet[$i]\">$alphabet[$i]</a>";
+               }
+               if ((int) ($i % $letters_by_line) != 0 or $i == 0) {
+                    echo " | ";
+               } else {
+                    echo "<br>";
+               }
+           }
+      }
+
+      if ( $glossary->showall ) {
+          if ( $l == "ALL" ) {
+               echo "<b>$strallentries</b></p>";
+          } else {
+               echo "<a href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&l=ALL\">$strallentries</a></p>";
+          }
+      }
+}
+function glossary_print_categories_menu($course, $cm, $glossary, $category) {
+global $CFG, $THEME;
+     echo "<table border=0 width=100%>";
+     echo "<tr>";
+
+     echo "<td align=center width=20%>";
+     if ( isteacher($course->id) ) {
+             $options['id'] = $cm->id;
+             $options['cat'] = $cat;
+             echo print_single_button("editcategories.php", $options, get_string("editcategories","glossary"), "get");
+     }
+     echo "</td>";
+
+     echo "<td align=center width=60%>";
+     echo "<b>";
+     if ( $category ) {
+        echo $category->name;
+     } else {
+        echo get_string("entrieswithoutcategory","glossary");
+     }
+     echo "</b></td>";
+     echo "<td align=center width=20%>";
+     $menu[0] = get_string("nocategorized","glossary");
+
+     $categories = get_records("glossary_categories", "glossaryid", $glossary->id, "name ASC");
+     if ( $categories ) {
+          foreach ($categories as $currentcategory) {
+                 $url = $currentcategory->id;
+                 if ($currentcategory->id == $category->id) {
+                     $selected = $url;
+                 }
+                 $menu[$url] = $currentcategory->name;
+          }
+     }
+
+     echo popup_form("$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&currentview=categories&cat=", $menu, "catmenu", $selected, get_string("jumpto"),
+                      "", "", false);
+
+     echo "</td>";
+     echo "</tr>";
+
+     echo "<tr><td colspan=3><hr></td></tr>";
+     echo "</table>";
+}
 ?>

@@ -1,6 +1,6 @@
 <?PHP  // $Id$
 
-function glossary_print_entry_by_format($course, $cm, $glossary, $entry) {
+function glossary_print_entry_by_format($course, $cm, $glossary, $entry,$currentview="",$cat="") {
     global $THEME, $USER;
 
 //    if ($entry->timemarked < $entry->modified) {
@@ -30,7 +30,7 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry) {
     if ($entry) {
 	  echo format_text($entry->definition, $entry->format);
 
-	  glossary_print_entry_icons($course, $cm, $glossary, $entry);
+	  glossary_print_entry_icons($course, $cm, $glossary, $entry,$currentview,$cat);
 
     } else {
 	  echo "<center>";
