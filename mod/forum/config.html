@@ -66,21 +66,27 @@
         <td align=right><p>forum_enablerssfeeds:</td>
         <td>
     <?php
-        if ($CFG->enablerssfeeds == 0) {
+        if (!isset($CFG->enablerssfeeds) || $CFG->enablerssfeeds == 0) {
             print_string("no");
         } else {
             unset($options);
             $options[0] = get_string("no");
             $options[1] = get_string("yes");
+
+            $forum_enablerssfeeds = false;
+            if (isset($CFG->forum_enablerssfeeds) && $CFG->forum_enablerssfeeds == 1) {
+                $forum_enablerssfeeds = true;
+            }
+
  
-            choose_from_menu ($options, "forum_enablerssfeeds", $CFG->forum_enablerssfeeds, "", "", "");
+            choose_from_menu ($options, "forum_enablerssfeeds", $forum_enablerssfeeds, "", "", "");
         }
     ?>
     </td>
     <td>
     <?php 
         print_string("configenablerssfeeds","forum");
-        if ($CFG->enablerssfeeds == 0) {
+        if (!isset($CFG->enablerssfeeds) || $CFG->enablerssfeeds == 0) {
             print_string("configenablerssfeedsdisabled");
         }
     ?>
