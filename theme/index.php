@@ -45,7 +45,7 @@
     if ($choose) {
         if (set_config("theme", $choose)) {
             print_heading(get_string("themesaved"));
-            print_continue("$CFG->wwwroot");
+            print_continue("$CFG->wwwroot/");
 
             if (file_exists("$choose/README.html")) {
                 print_simple_box_start("center");
