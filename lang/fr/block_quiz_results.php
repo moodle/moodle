@@ -1,8 +1,12 @@
 <?php // $Id$
 
-$string['bestgrades'] = 'Les $a meilleurs notes&nbsp;:';
+$string['bestgrade'] = 'La meilleure note&nbsp;:';
+$string['bestgrades'] = 'Les $a meilleures notes&nbsp;:';
+$string['bestgroupgrade'] = 'Le groupe avec la meilleure moyenne&nbsp;:';
 $string['bestgroupgrades'] = 'Les $a groupes avec la meilleure moyenne&nbsp;:';
+$string['worstgrade'] = 'La note la plus basse&nbsp;:';
 $string['worstgrades'] = 'Les $a notes les plus basses&nbsp;:';
+$string['worstgroupgrades'] = 'Le groupe avec la moyenne la plus basse&nbsp;:';
 $string['worstgroupgrades'] = 'Les $a groupes avec la moyenne la plus basse&nbsp;:';
 $string['formaltitle'] = 'Résultats du test';
 $string['config_select_quiz'] = 'De quel test voulez-vous afficher les résultats dans ce blocs&nbsp;?';
