@@ -998,8 +998,16 @@ function quiz_print_quiz_questions($quiz, $questions,
         }
 
         print_simple_box_start("center", "90%");
+        if ($quiz->timelimit > 0) {   // Hide the question when Javascript is off
+            echo '<noscript> <div style="visibility:hidden;"> </noscript>';   // Not quite working, though ...
+        }
+
         $nextquestionnumber = $QUIZ_QTYPES[$question->qtype]->print_question
                 ($nextquestionnumber, $quiz, $question, $readonly, $details);
+
+        if ($quiz->timelimit > 0) {   // Hide the question when Javascript is off
+            echo '<noscript> </div> </noscript>';   // Not quite working, though ...
+        }
         print_simple_box_end();
         echo "<br />";
     }
