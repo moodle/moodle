@@ -208,7 +208,7 @@
         
                         $newalias->entryid = $newentry->id;
                         $newalias->alias = $xmlalias['#']['NAME'][0]['#'];
-                        $newalias->id = insert_record("glossary_alias",$newalias));
+                        $newalias->id = insert_record("glossary_alias",$newalias);
                     }
 
                     if ( $catsincl ) {
