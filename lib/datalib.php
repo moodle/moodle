@@ -99,7 +99,58 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
             execute_sql("ALTER TABLE {$CFG->prefix}$table $operation $type $signed $default $null $after");
             break;
 
+        case "postgres7":        // From Petri Asikainen
 
+            //to prevent conflicts with reserved words
+            $field = "\"$field\"";
+            $oldfield = "\"$oldfield\"";
+
+            switch (strtolower($type)) {
+                case "integer":
+                    if ($size <= 2) {
+                        $type = "INT2";
+                    } 
+                    if ($size <= 4) {
+                        $type = "INT";
+                    }
+                    if  ($size > 4) {
+                        $type = "INT8";
+                    }
+                    break;
+                case "varchar":
+                    $type = "VARCHAR($size)";
+                    break;
+            }
+
+            $default = "DEFAULT '$default'";
+
+            //After is not implemented in postgesql
+            //if (!empty($after)) {
+            //    $after = "AFTER '$after'";
+            //}
+
+            if (!empty($oldfield)) {
+                execute_sql("ALTER TABLE {$CFG->prefix}$table RENAME COLUMN $oldfield TO $field");
+            } else {
+                execute_sql("ALTER TABLE {$CFG->prefix}$table ADD COLUMN $field $type");
+            }
+
+            /* SETTING OF COLUMN TO NULL/NOT NULL
+               IS NOT POSIBLE BEFORE POSTGRESQL 7.3
+               THIS COMMENTED OUT UNTIL  I FIGuRE OUT HOW GET POSTGESQL VERSION FROM ADODB
+
+            //update default values to table
+            if ($null == "NOT NULL") {
+              execute_sql("UPDATE {$CFG->prefix}$table SET $field=$default where $field=NULL");
+              execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field SET $null");
+            } else {
+               execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field DROP NOT NULL"
+            }
+            */
+  
+            execute_sql("ALTER TABLE {$CFG->prefix}$table ALTER COLUMN $field SET $default");
+
+            break;
 
         default:
             switch (strtolower($type)) {
