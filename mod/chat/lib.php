@@ -545,4 +545,21 @@ function chat_format_message($message, $courseid=0) {
 
 }
 
+function chat_get_participants($chatid) {
+//Returns the users with data in one chat
+//(users with records in chat_messages, students)
+
+    global $CFG;
+
+    //Get students
+    $students = get_records_sql("SELECT DISTINCT u.*
+                                 FROM {$CFG->prefix}user u,
+                                      {$CFG->prefix}chat_messages c
+                                 WHERE c.chatid = '$chatid' and
+                                       u.id = c.userid");
+
+    //Return students array (it contains an array of unique users)
+    return ($students);
+}
+
 ?>
