@@ -39,8 +39,10 @@
        }
        if ($form->type == "news") {
            print_string("namenews", "forum");
+           echo "<input type=\"hidden\" name=\"type\" value=\"news\">";
        } else if ($form->type == "social") {
            print_string("namesocial", "forum");
+           echo "<input type=\"hidden\" name=\"type\" value=\"social\">";
        } else {
            choose_from_menu($FORUM_TYPES, "type", $form->type, "");
            helpbutton("forumtype", get_string("forumtype", "forum"), "forum");
