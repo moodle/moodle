@@ -473,7 +473,9 @@ function replace_smilies($text) {
 /// Replaces all known smileys in the text with image equivalents
     global $CFG;
 
-    $emoticons = array(
+    static $runonce = false;
+    static $smilies = false;
+    static $emoticons = array(
         ':-)'  => 'smiley.gif',
         ':)'   => 'smiley.gif',
         ':-D'  => 'biggrin.gif',
@@ -498,9 +500,12 @@ function replace_smilies($text) {
         '}-]'  => 'evil.gif',
         );
 
-    foreach ($emoticons as $emoticon => $image){
-        $smilies[$emoticon] = "<IMG ALT=\"$emoticon\" WIDTH=15 HEIGHT=15 SRC=\"{$CFG->wwwroot}/pix/s/{$image}\">";
-    }
+    if($runonce == false):
+        foreach ($emoticons as $emoticon => $image){
+            $smilies[$emoticon] = "<IMG ALT=\"$emoticon\" WIDTH=15 HEIGHT=15 SRC=\"{$CFG->wwwroot}/pix/s/{$image}\">";
+        }
+        $runonce = true;
+    endif;
 
     return strtr($text, $smilies);
 }
