@@ -85,6 +85,10 @@ body {
     background-color:#C0CAD4;
 }
 
+.highlight2 {
+    color:#AA0000; /* highlight missing terms in forum search */
+}
+
 .dimmed_text {
     color:#AAAAAA;
 }
