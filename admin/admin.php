@@ -38,6 +38,7 @@
         "search",
         "searchagain",
         "toomanytoshow",
+        "searchresults"
         );
 
     foreach ($stringstoload as $stringtoload){

@@ -25,6 +25,7 @@
     $straddteacher    = get_string("addteacher");
     $strremoveteacher = get_string("removeteacher");
     $strsearch        = get_string("search");
+    $strsearchresults  = get_string("searchresults");
     $strsearchagain   = get_string("searchagain");
     $strtoomanytoshow   = get_string("toomanytoshow");
 
