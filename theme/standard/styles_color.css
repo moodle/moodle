@@ -401,15 +401,7 @@ table.message_search_results td {
 }
 
 
-/* weblib.php, wiki */
-.sideblockmain hr {
-    border-top-color:#999999;
-}
 
-/* wiki */
-.sideblockheading {
-    background-color: #EEEEEE;
-}
 
 /*****************************
 ***
@@ -538,17 +530,21 @@ table.minicalendar {
 .sideblock {
     border-color:#DDDDDD; /* borders */
 }
-.sideblockmain {
+.sideblock .heading {
+    background-color: #EEEEEE;
+}
+
+.sideblock .content {
     background-color:#FCFCFC;
 }
 
-.sideblocklist {
-    background-color:#FCFCFC;
-}
-
-.sideblockmain hr {
+.sideblock .content hr {
     border-top-color:#999999;
 }
+
+.sideblock .list {
+}
+
 
 /* Messaging */
 .message .author {

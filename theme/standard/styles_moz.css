@@ -115,7 +115,7 @@ table.minicalendar td {
     -moz-border-radius:4px;
 }
 
-.block_course_summary, .block_course_summary .sideblockmain {
+.block_course_summary, .block_course_summary .content {
     -moz-border-radius:20px;
 }
 
@@ -132,6 +132,11 @@ table.minicalendar td {
 }
 
 .sideblock {
+    -moz-border-radius-bottomleft:20px;
+    -moz-border-radius-bottomright:20px;
+}
+
+.sideblock .content {
     -moz-border-radius-bottomleft:20px;
     -moz-border-radius-bottomright:20px;
 }
@@ -161,7 +166,3 @@ table.minicalendar td {
     -moz-border-radius-bottomright:20px;
 }
 
-.sideblockmain, .sideblocklatestnews, .sideblockrecentactivity {
-    -moz-border-radius-bottomleft:20px;
-    -moz-border-radius-bottomright:20px;
-}

@@ -391,11 +391,11 @@ table.calendar-controls .next {
 ***
 ******************************/
 
-.sideblockheading {
+.sideblock .heading {
     text-align: left;
 }
 
-.sideblock .sideblockheading .commands {
+.sideblock .heading .commands {
     font-size: 0.75em;
 }
 
