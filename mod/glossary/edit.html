@@ -67,7 +67,7 @@ if (isset($errors)) {
         if ($newentry->usedynalink) {
             $selected = "checked";
         }
-    } elseif ( $CFG->cnflinkentry ) {
+    } elseif ( $CFG->glossary_linkentries ) {
         $selected = "checked";
     }
 ?> 
@@ -80,7 +80,7 @@ if (isset($errors)) {
         if ($newentry->casesensitive) {
             $selected = "checked";
         }
-    } elseif ( $CFG->cnfcasesensitive ) {
+    } elseif ( $CFG->glossary_casesensitive ) {
         $selected = "checked";
     }
 ?> 
@@ -93,7 +93,7 @@ if (isset($errors)) {
         if ($newentry->fullmatch) {
             $selected = "checked";
         }
-    } elseif ( $CFG->cnffullmatch ) {
+    } elseif ( $CFG->glossary_fullmatch ) {
         $selected = "checked";
     }
 ?> 
