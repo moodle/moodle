@@ -58,12 +58,13 @@
             }
             if ( $entries ) {
                 foreach ( $entries as $entry ) {
-                    $href_tag_begin = "<a target=\"entry\" title=\"" . strip_tags("$glossary->name: $entry->concept") ."\" href=\"$CFG->wwwroot/mod/glossary/showentry.php?courseid=$courseid&concept=$entry->concept\" ".
+                    $title = strip_tags("$glossary->name: $entry->concept");
+                    $href_tag_begin = "<acronym title=\"$title\"><a style=\"color:black\" target=\"entry\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/showentry.php?courseid=$courseid&concept=$entry->concept\" ".
                          "onClick=\"return openpopup('/mod/glossary/showentry.php?courseid=$courseid&concept=$entry->concept', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
 
                     $concept = trim(strip_tags($entry->concept));
 
-                    $text = glossary_link_concepts($text,$concept,$href_tag_begin);
+                    $text = glossary_link_concepts($text,$concept,$href_tag_begin, "</a></acronym>");
                 }
             }
         }
