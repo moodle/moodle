@@ -187,3 +187,6 @@ form {
 .generalboxcontent {
 }
 
+.feedbacktext {
+    color: <?PHP echo $THEME->cellheading2?>;
+}

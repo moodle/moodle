@@ -57,6 +57,8 @@
 
     if ($course->category) {
         $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
+    } else {
+        $navigation = "";
     }
     print_header("$course->shortname: $choice->name", "$course->fullname",
                  "$navigation <A HREF=index.php?id=$course->id>$strchoices</A> -> $choice->name", "", "", true,

@@ -27,7 +27,7 @@ function mimeinfo($element, $filename) {
         $result = $mimeinfo[strtolower($match[1])][$element];
     }
 
-    if ($result) {
+    if (!empty($result)) {
         return $result;
     } else {
         return $mimeinfo["xxx"][$element];   // By default

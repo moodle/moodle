@@ -654,7 +654,7 @@ function displaydir ($wdir) {
 
     echo "</FORM>";
     echo "<TD ALIGN=center>";
-    if (($USER->fileop == "move") && $USER->filesource <> $wdir) {
+    if (!empty($USER->fileop) and ($USER->fileop == "move") and ($USER->filesource <> $wdir)) {
         echo "<FORM ACTION=index.php METHOD=get>";
         echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
         echo " <INPUT TYPE=hidden NAME=wdir VALUE=\"$wdir\">";

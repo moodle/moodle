@@ -310,7 +310,7 @@ function quiz_get_attempt_responses($attempt) {
 function quiz_print_comment($text) {
     global $THEME;
 
-    echo "<FONT COLOR=\"$THEME->cellheading2\">".text_to_html($text, true, false)."</FONT>";
+    echo "<SPAN CLASS=feedbacktext>".text_to_html($text, true, false)."</SPAN>";
 }
 
 function quiz_print_correctanswer($text) {
