@@ -442,10 +442,7 @@ function forum_grades($forumid) {
     if (!$forum->assessed) {
         return false;
     }
-    if (!$scale = get_record("scale", "id", $forum->scale)) {
-        return false;
-    }
-    $scalemenu = make_menu_from_list($scale->scale);
+    $scalemenu = make_grades_menu($forum->scale);
 
     $currentuser = 0;
     $ratingsuser = array();
@@ -454,8 +451,18 @@ function forum_grades($forumid) {
         foreach ($ratings as $rating) {     // Ordered by user
             if ($currentuser and $rating->userid != $currentuser) {
                 if (!empty($ratingsuser)) {
-                    $return->grades[$currentuser] = forum_get_ratings_mean(0, $scalemenu, $ratingsuser);
-                    $return->grades[$currentuser] .= "<br />".forum_get_ratings_summary(0, $scalemenu, $ratingsuser);
+                    if ($forum->scale < 0) {
+                        $return->grades[$currentuser] = forum_get_ratings_mean(0, $scalemenu, $ratingsuser);
+                        $return->grades[$currentuser] .= "<br />".forum_get_ratings_summary(0, $scalemenu, $ratingsuser);
+                    } else {
+                        $total = 0;
+                        $count = 0;
+                        foreach ($ratingsuser as $ra) {
+                            $total += $ra;
+                            $count ++;
+                        }
+                        $return->grades[$currentuser] = format_float($total/$count, 2);
+                    }
                 } else {
                     $return->grades[$currentuser] = "";
                 }
@@ -465,8 +472,18 @@ function forum_grades($forumid) {
             $currentuser = $rating->userid;
         }
         if (!empty($ratingsuser)) {
-            $return->grades[$currentuser] = forum_get_ratings_mean(0, $scalemenu, $ratingsuser);
-            $return->grades[$currentuser] .= "<br />".forum_get_ratings_summary(0, $scalemenu, $ratingsuser);
+            if ($forum->scale < 0) {
+                $return->grades[$currentuser] = forum_get_ratings_mean(0, $scalemenu, $ratingsuser);
+                $return->grades[$currentuser] .= "<br />".forum_get_ratings_summary(0, $scalemenu, $ratingsuser);
+            } else {
+                $total = 0;
+                $count = 0;
+                foreach ($ratingsuser as $ra) {
+                    $total += $ra;
+                    $count ++;
+                }
+                $return->grades[$currentuser] = format_float((float)$total/(float)$count, 2);
+            }
         } else {
             $return->grades[$currentuser] = "";
         }
@@ -474,7 +491,11 @@ function forum_grades($forumid) {
         $return->grades = array();
     }
 
-    $return->maxgrade = "";
+    if ($forum->scale < 0) {
+        $return->maxgrade = "";
+    } else {
+        $return->maxgrade = $forum->scale;
+    }
     return $return;
 }
 
@@ -1947,8 +1968,7 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode) {
 
     $ratings = NULL;
     if ($forum->assessed and !empty($USER->id)) {
-        if ($scale = get_record("scale", "id", $forum->scale)) {
-            $ratings->scale = make_menu_from_list($scale->scale);
+        if ($ratings->scale = make_grades_menu($forum->scale)) {
             $ratings->assesstimestart = $forum->assesstimestart;
             $ratings->assesstimefinish = $forum->assesstimefinish;
             if ($forum->assessed == 2 and !isteacher($course->id)) {

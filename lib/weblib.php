@@ -1383,7 +1383,7 @@ function print_time_selector($hour, $minute, $currenttime=0) {
     choose_from_menu($minutes, $minute, $currentdate['minutes'], "");
 }
 
-function print_grade_menu($courseid, $name, $current) {
+function print_grade_menu($courseid, $name, $current, $includenograde=true) {
 /// Prints a grade menu (as part of an existing form) with help
 /// Showing all possible numerical grades and scales
 
@@ -1396,7 +1396,9 @@ function print_grade_menu($courseid, $name, $current) {
     foreach ($scales as $i => $scalename) {
         $grades[-$i] = "$strscale: $scalename";
     }
-    $grades[0] = get_string("nograde");
+    if ($includenograde) {
+        $grades[0] = get_string("nograde");
+    }
     for ($i=100; $i>=1; $i--) {
         $grades[$i] = $i;
     }

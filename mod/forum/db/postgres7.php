@@ -15,6 +15,10 @@ function forum_upgrade($oldversion) {
       table_column("forum", "", "assesstimefinish", "integer", "10", "unsigned", "0", "", "assesstimestart");
   }
 
+  if ($oldversion < 2003082502) {
+      execute_sql("UPDATE {$CFG->prefix}forum SET scale = (- scale)");
+  }
+
   return true;
 
 }

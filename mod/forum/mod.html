@@ -109,8 +109,8 @@
             helpbutton("ratings", get_string("allowratings", "forum"), "forum");
             echo "<br />";
 
-            echo get_string("scale").":";
-            print_scale_menu($course->id, "scale", $form->scale);
+            echo get_string("grade").":";
+            print_grade_menu($course->id, "scale", $form->scale, false);
             echo "<br />";
 
             echo "<input name=\"ratingtime\" type=checkbox value=1 ";
