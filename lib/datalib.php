@@ -65,8 +65,8 @@ function modify_database($sqlfile) {
 
 /// FUNCTIONS TO MODIFY TABLES ////////////////////////////////////////////
 
-function table_column($table, $oldfield, $field, $type="INTEGER", 
-                      $signed="UNSIGNED", $default="0", $null="NOT NULL", $after="") {
+function table_column($table, $oldfield, $field, $type="integer", $size="10",
+                      $signed="unsigned", $default="0", $null="not null", $after="") {
 /// Add a new field to a table, or modify an existing one (if oldfield is defined).
     global $CFG;
 
@@ -76,14 +76,11 @@ function table_column($table, $oldfield, $field, $type="INTEGER",
         case "mysqlt":
 
             switch (strtolower($type)) {
-                case "smallint":
-                    $type = "SMALLINT(6)";
-                    break;
                 case "integer":
-                    $type = "INT(10)";
+                    $type = "INTEGER($size)";
                     break;
-                case "bigint":
-                    $type = "INT(10)";
+                case "varchar":
+                    $type = "VARCHAR($size)";
                     break;
             }
 
@@ -106,10 +103,11 @@ function table_column($table, $oldfield, $field, $type="INTEGER",
 
         default:
             switch (strtolower($type)) {
-                case "tinyint":
                 case "integer":
-                case "bigint":
                     $type = "INTEGER";
+                    break;
+                case "varchar":
+                    $type = "VARCHAR";
                     break;
             }
 
@@ -489,13 +487,13 @@ function insert_record($table, $dataobject, $returnid=true) {
     foreach ($columns as $column) {
         if ($column->name <> "id") {
             if (isset($data[$column->name])) { 
-                if ($data[$column->name] == "" and !empty($column->has_default)) {
+                if ($data[$column->name] == "" and !empty($column->has_default) and !empty($column->default_value)) {
                     $ddd[$column->name] = $column->default_value;
                 } else {
                     $ddd[$column->name] = $data[$column->name];
                 }
             } else {
-                if (!empty($column->has_default)) {
+                if (!empty($column->has_default) and !empty($column->default_value)) {
                     $ddd[$column->name] = $column->default_value;
                 } 
             }
@@ -570,7 +568,7 @@ function update_record($table, $dataobject) {
 
     // Pull out data matching these fields
     foreach ($columns as $column) {
-        if ($column->name <> "id" && isset($data[$column->name]) ) {
+        if ($column->name <> "id" and isset($data[$column->name]) ) {
             $ddd[$column->name] = $data[$column->name];
         }
     }
