@@ -13,7 +13,7 @@ Michael:
  - Notify when page changes
 
 Unassigned or not ready:
- - Dump Pages
+ - Wiki HTML: http://moodle.org/mod/forum/discuss.php?d=8920
  - http://moodle.org/mod/forum/discuss.php?d=7768#36954
  - Image Thumbnails http://moodle.org/mod/forum/discuss.php?d=8351
  

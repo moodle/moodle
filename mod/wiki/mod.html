@@ -4,6 +4,9 @@
 <?php
     require("$CFG->dirroot/mod/wiki/lib.php");
 
+    if (!isset($form->id)) {
+        $form->id = '';
+    }
     if (!isset($form->name)) {
         $form->name = '';
     }
@@ -47,9 +50,15 @@
         $form->pagename = '';
     }
 
+    # Set other variables
+    if (!isset($id)) {
+        $id = '';
+    }
     /// If updating an existing wiki, find out if it has entries.
     if ($form->id) {
         $wikihasentries = wiki_has_entries($form);
+    } else {
+        $wikihasentries=false;
     }
 ?>
 
