@@ -452,7 +452,7 @@
             error("Only teachers can look at this page");
         }
 
-        $form = (object)$HTTP_POST_VARS;
+        $form = data_submitted();
         
         // let's not fool around here, dump the junk!
         delete_records("exercise_elements", "exerciseid", $exercise->id);
