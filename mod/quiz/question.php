@@ -61,7 +61,7 @@
             $streditingquestion;
     } else {
         $strediting = '<a href="edit.php?courseid='.$course->id.'">'.
-            get_string("editingquestions", "quiz").'</a> -> '.$streditingquestion;
+            get_string("editquestions", "quiz").'</a> -> '.$streditingquestion;
     }
 
     print_header_simple("$streditingquestion", "$streditingquestion",
