@@ -5,7 +5,7 @@ class CourseBlock_calendar_month extends MoodleBlock {
         $this->title = get_string('calendar', 'calendar');
         $this->content_type = BLOCK_TYPE_TEXT;
         $this->course = $course;
-        $this->version = 2004052000;
+        $this->version = 2004052400;
     }
 
     function get_content() {
@@ -35,20 +35,6 @@ class CourseBlock_calendar_month extends MoodleBlock {
 
         // We 'll need this later
         calendar_set_referring_course($courseshown);
-
-        // [pj] Let's leave this in, the above may not be the final solution
-        /*
-        if($courseshown !== false && is_int($SESSION->cal_show_course) && $SESSION->cal_show_course != $courseshown) {
-            // There is a filter in action that shows events from a course other than the current
-            // Change it to show only the current course
-            $SESSION->cal_show_course = $courseshown;
-        }
-        else if($courseshown !== false && is_array($SESSION->cal_show_course) && !in_array($courseshown, $SESSION->cal_show_course)) {
-            // Same as above, only there are many courses being shown. Unfortunately, not this one.
-            // Change it to show only the current course
-            $SESSION->cal_show_course = $courseshown;
-        }
-        */
 
         // Be VERY careful with the format for default courses arguments!
         // Correct formatting is [courseid] => 1 to be concise with moodlelib.php functions.
