@@ -40,11 +40,11 @@
                 }
             }
 		    die;
+
         } else {
             foreach ($err as $key => $value) {
                 $focus = "form.$key";
             }
-            
         }
 	}
 
@@ -77,13 +77,13 @@
 function validate_form(&$form, &$err) {
 
     if (empty($form->fullname))
-        $err["fullname"] = "Missing site name";
+        $err["fullname"] = get_string("missingsitename");
 
     if (empty($form->shortname))
-        $err["shortname"] = "Missing short site name";
+        $err["shortname"] = get_string("missingshortsitename");
 
     if (empty($form->summary))
-        $err["summary"] = "Missing site description";
+        $err["summary"] = get_string("missingsitedescription");
 
     return;
 }

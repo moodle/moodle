@@ -1,45 +1,49 @@
 <FORM METHOD="post" action="site.php" NAME="form">
 <TABLE cellpadding=9 cellspacing=0 >
 <tr valign=top>
-	<td><P>Full site name:</td>
+	<td align=right><P><? print_string("fullsitename") ?>:</td>
 	<td><input type="text" name="fullname" size=50 value="<? p($form->fullname) ?>">
 	<? formerr($err["fullname"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Short name for site (eg single word):</td>
+	<td align=right><P><? print_string("shortsitename") ?>:</td>
 	<td><input type="text" name="shortname" size=50 value="<? p($form->shortname) ?>">
 	<? formerr($err["shortname"]) ?>
 	</td>
 </tr>
 <tr valign=top>
-    <td><P>Front page description:</td>
+    <td align=right><P><? print_string("frontpagedescription") ?>:</P><BR>
+        <? helpbutton("text", get_string("helptext")) ?>
+    </td>
     <td><TEXTAREA NAME=summary COLS=50 ROWS=10 WRAP=virtual><? p($form->summary) ?></TEXTAREA>
     <? formerr($err["summary"]) ?>
     </td>
 </tr>
 <tr valign=top>
-        <td><P>Front page format:</td>
+        <td align=right><P><? print_string("frontpageformat") ?>:</td>
         <td><? 
-           $options = array("0" => "Show list of courses",
-                            "1" => "1 news item",
-                            "2" => "2 news items",
-                            "3" => "3 news items",
-                            "4" => "4 news items",
-                            "5" => "5 news items",
-                            "6" => "6 news items",
-                            "7" => "7 news items",
-                            "8" => "8 news items",
-                            "9" => "9 news items",
-                            "10" => "10 news items");
-           choose_from_menu ($options, "newsitems", "$form->newsitems");
+           $newsitem  = get_string("newsitem");
+           $newsitems = get_string("newsitems");
+           $options = array("0"  =>  get_string("showlistofcourses"),
+                            "1"  =>  "1 $newsitem",
+                            "2"  =>  "2 $newsitems",
+                            "3"  =>  "3 $newsitems",
+                            "4"  =>  "4 $newsitems",
+                            "5"  =>  "5 $newsitems",
+                            "6"  =>  "6 $newsitems",
+                            "7"  =>  "7 $newsitems",
+                            "8"  =>  "8 $newsitems",
+                            "9"  =>  "9 $newsitems",
+                            "10" => "10 $newsitems");
+           choose_from_menu ($options, "newsitems", "$form->newsitems", "");
            formerr($err["newsitems"]);
         ?>
         </td>
 </tr>
 <tr>
     <td></td>
-	<td><input type="submit" value="Update the site"></td>
+	<td><input type="submit" value="<? print_string("savechanges") ?>"></td>
 </tr>
 </TABLE>
 <INPUT type="hidden" name="id" value="<?=$form->id ?>">
