@@ -8,6 +8,10 @@ class block_html extends block_base {
         $this->version = 2004123000;
     }
 
+    function applicable_formats() {
+        return array('all' => true);
+    }
+
     function specialization() {
         // We allow empty titles
         $this->title = isset($this->config->title) ? $this->config->title : '';
