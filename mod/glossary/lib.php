@@ -22,6 +22,12 @@ function glossary_add_instance($glossary) {
 /// will create a new instance and return the id number
 /// of the new instance.
 
+    if ( !isset($glossary->globalglossary) ) {
+        $glossary->globalglossary = 0;
+    } elseif ( !isadmin() ) {
+        $glossary->globalglossary = 0;
+    }
+
     $glossary->timecreated = time();
     $glossary->timemodified = $glossary->timecreated;
 
@@ -35,6 +41,10 @@ function glossary_update_instance($glossary) {
 /// Given an object containing all the necessary data,
 /// (defined by the form in mod.html) this function
 /// will update an existing instance with new data.
+
+    if ( !isadmin() ) {
+        unset($glossary->globalglossary);
+    }
 
     $glossary->timemodified = time();
     $glossary->id = $glossary->instance;
@@ -1022,7 +1032,7 @@ function glossary_print_dynaentry($courseid, $entries) {
             if (! $course = get_record("course", "id", $glossary->course)) {
                 error("Glossary is misconfigured - don't know what course it's from");
             }
-            if (!$cm = get_coursemodule_from_instance("glossary", $entry->glossaryid, $courseid) ) {
+            if (!$cm = get_coursemodule_from_instance("glossary", $entry->glossaryid, $glossary->course) ) {
                 error("Glossary is misconfigured - don't know what course module it is ");
             }
             glossary_print_entry($course, $cm, $glossary, $entry);

@@ -38,6 +38,9 @@ if (!isset($form->studentcanpost)) {
 if (!isset($form->usedynalink)) {
     $form->usedynalink = 1;
 }
+if ( !isset($form->globalglossary) ) {
+    $form->globalglossary = 0;
+}
 ?>
 <FORM name="form" method="post" action="<?=$ME ?>">
 <CENTER>
@@ -67,6 +70,28 @@ if (!isset($form->usedynalink)) {
 </tr>
 <!-- More rows go in here... -->
 <?php
+if (isadmin() ) {
+?>
+<TR valign=top>
+    <TD align=right><P><B><?php echo get_string("isglobal", "glossary") ?>:</B></P></TD>
+    <TD>
+<?php
+    $selected = "";
+    if ( isset($form->globalglossary) ) {
+        if ($form->globalglossary) {
+            $selected = "checked";
+        }
+    }
+?> 
+  <input type="checkbox" name="globalglossary" value=1 <?PHP p($selected)?>> <?php helpbutton("globalglossary", get_string("globallossary", "glossary"), "glossary") ?>
+    </TD>
+</TR>
+<?php
+} else {
+   echo '<INPUT type="hidden" name=globalglossary value="' . $form->globalglossary . '">';
+}
+?>
+<?php
 $mainglossary = get_record("glossary","mainglossary",1,"course",$form->course);
 if (!$mainglossary or $mainglossary->id == $form->instance ) {
 ?>
@@ -78,7 +103,8 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
    if ( $form->mainglossary ) {
       echo "selected";
    }
-   ?>><?php echo get_string("mainglossary", "glossary") ?></option>
+?>>
+<?php echo get_string("mainglossary", "glossary") ?></option>
   <option value="0" <?php
    if ( !$form->mainglossary ) {
       echo "selected";

@@ -22,6 +22,7 @@ CREATE TABLE prefix_glossary (
      showall int2 NOT NULL default '1',
      allowcomments int2 NOT NULL default '0',
      usedynalink int2 NOT NULL default '1',
+     globalglossary int2 NOT NULL default '0',
      timecreated int4 NOT NULL default '0',
      timemodified int4 NOT NULL default '0',
      PRIMARY KEY  (id)

@@ -21,7 +21,7 @@ if (! $course = get_record("course", "id", $cm->course)) {
 
 require_login($course->id);
 
-if (isguest()) {
+if ( isguest() ) {
     error("Guests are not allowed to edit glossaries", $_SERVER["HTTP_REFERER"]);
 }
 
@@ -46,6 +46,34 @@ if ( $confirm ) {
     $newentry->casesensitive = $form->casesensitive;
     $newentry->fullmatch = $form->fullmatch;
     $newentry->timemodified = $timenow;		
+
+    if ($form->concept == '' or trim($form->text) == '' ) {
+        $errors = get_string('fillfields','glossary');
+        $strglossary = get_string("modulename", "glossary");
+        $strglossaries = get_string("modulenameplural", "glossary");
+        $stredit = get_string("edit");
+
+        if ($usehtmleditor = can_use_richtext_editor()) {
+            $defaultformat = FORMAT_HTML;
+            $onsubmit = "onsubmit=\"copyrichtext(form.text);\"";
+        } else {
+            $defaultformat = FORMAT_MOODLE;
+            $onsubmit = "";
+        }
+
+        print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
+             "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
+              <A HREF=\"index.php?id=$course->id\">$strglossaries</A> -> 
+              <A HREF=\"view.php?id=$cm->id\">$glossary->name</A> -> $stredit", "form.text",
+              "", true, "", navmenu($course, $cm));
+
+        print_heading($glossary->name);
+
+        include("edit.html");
+
+        print_footer($course);
+        die;
+    }
 
     if ($e) {
         $newentry->id = $e;
@@ -123,7 +151,7 @@ if ( $confirm ) {
             }
         }
     }
-    redirect("view.php?id=$cm->id&eid=$newentry->id");
+    redirect("view.php?id=$cm->id&eid=$newentry->id&tab=$tab&cat=$cat");
     die;
 } else {
     if ($e) {
@@ -154,7 +182,7 @@ $stredit = get_string("edit");
 
 if ($usehtmleditor = can_use_richtext_editor()) {
     $defaultformat = FORMAT_HTML;
-    $onsubmit = "onsubmit=\"copyrichtext(theform.text);\"";
+    $onsubmit = "onsubmit=\"copyrichtext(form.text);\"";
 } else {
     $defaultformat = FORMAT_MOODLE;
     $onsubmit = "";
@@ -163,7 +191,7 @@ if ($usehtmleditor = can_use_richtext_editor()) {
 print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
              "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> 
               <A HREF=\"index.php?id=$course->id\">$strglossaries</A> -> 
-              <A HREF=\"view.php?id=$cm->id\">$glossary->name</A> -> $stredit", "theform.text",
+              <A HREF=\"view.php?id=$cm->id\">$glossary->name</A> -> $stredit", "form.text",
               "", true, "", navmenu($course, $cm));
 
 print_heading($glossary->name);

@@ -10,7 +10,7 @@
                                   " where e.glossaryid = g.id and".
                                       " (e.casesensitive != 0 and ucase(concept) = '" . strtoupper(trim($concept)). "' or".
                                       " e.casesensitive = 0 and concept = '$concept') and".
-                                      " g.course = $courseid and".
+                                      " (g.course = $courseid or g.globalglossary) and".
                                       " e.usedynalink != 0 and g.usedynalink != 0");
     
     glossary_print_dynaentry($courseid, $entries);

@@ -23,6 +23,7 @@ CREATE TABLE prefix_glossary (
      allowcomments tinyint(2) unsigned NOT NULL default '0',
      usedynalink tinyint(2) unsigned NOT NULL default '1',
      defaultapproval tinyint(2) unsigned NOT NULL default '1',
+     globalglossary tinyint(2) unsigned NOT NULL default '0',
      timecreated int(10) unsigned NOT NULL default '0',
      timemodified int(10) unsigned NOT NULL default '0',
      PRIMARY KEY  (id)

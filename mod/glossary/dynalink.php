@@ -12,14 +12,14 @@
         $GLOSSARY_CONCEPT_IS_ENTRY = 0;
         $GLOSSARY_CONCEPT_IS_CATEGORY = 1;
 
-        $glossarieslist = get_records_select("glossary", "usedynalink != 0 and course = $courseid","id");
+//        $glossarieslist = get_records_select("glossary", "usedynalink != 0 and (course = $courseid or global != 0)","id");
+        $glossarieslist = get_records_select("glossary", "usedynalink != 0 and (course = $courseid or globalglossary != 0)","globalglossary, id");
         if ( $glossarieslist ) {
             $glossaries = "";
             foreach ( $glossarieslist as $glossary ) {
                 $glossaries .= "$glossary->id,";
             }
             $glossaries=substr($glossaries,0,-1);
-
 ///         sorting by the lenght of the concept in order to assure that large concepts 
 ///            could be linked first, if they exist in the text to parse
             switch ($CFG->dbtype) {
@@ -34,7 +34,7 @@
                 break;
             }
             
-            $entries = get_records_select("glossary_entries", "glossaryid IN ($glossaries) AND usedynalink != 0 and approved != 0","$ebylenght glossaryid","id,glossaryid,concept,casesensitive,$GLOSSARY_CONCEPT_IS_ENTRY category,fullmatch");
+            $entries = get_records_select("glossary_entries", "glossaryid IN ($glossaries) AND usedynalink != 0 and approved != 0 and concept != ''","$ebylenght glossaryid","id,glossaryid,concept,casesensitive,$GLOSSARY_CONCEPT_IS_ENTRY category,fullmatch");
             $categories  = get_records_select("glossary_categories", "glossaryid IN ($glossaries)", "$cbylenght glossaryid,id","id,glossaryid,name concept, 1 casesensitive,$GLOSSARY_CONCEPT_IS_CATEGORY category, 1 fullmatch");
             if ( $entries and $categories ) {
                 $concepts = array_merge($entries, $categories);
@@ -53,7 +53,6 @@
                         $glossary = get_record("glossary","id",$concept->glossaryid);
                         $lastglossary = $glossary->id;
                     }
-
                     if ( $concept->category ) {
                         if ( $lastcategory != $concept->id ) {
                             $category = get_record("glossary_categories","id",$concept->id);
@@ -128,9 +127,9 @@
         }
         // getting ride of all other tags
         $final = array();
-        preg_match_all('/<(.+?)>/is',$text,$list_of_words);
+        preg_match_all('/<(.+?)>/is',$text,$list_of_tags);
 
-        foreach (array_unique($list_of_words[0]) as $key=>$value) {
+        foreach (array_unique($list_of_tags[0]) as $key=>$value) {
             $final['<|'.$key.'|>'] = $value;
         }
 
@@ -149,9 +148,11 @@
         if ( $excludes ) {
             $text = str_replace(array_keys($excludes),$excludes,$text);
         }
-        if ( isset($words) and $fullmatch ) {
-            if ($words) {
-                $text = str_replace(array_keys($words),$words,$text);
+        if ( $fullmatch ) {
+            if ( isset($words) ) {
+                if ($words) {
+                    $text = str_replace(array_keys($words),$words,$text);
+                }
             }
         }
         return stripslashes($text);

@@ -1,6 +1,16 @@
 <center>
 <form name="form" method="post" <?=$onsubmit ?> action="edit.php" enctype="multipart/form-data">
 <table  class=generalbox cellpadding=5 bgcolor="<?php p($THEME->cellheading)?>">
+<?PHP
+if (isset($errors)) {
+?>
+    <tr valign=top>
+        <td colspan=2 align=center><strong><font color=red><?PHP p($errors) ?></font></strong>
+        </td>
+    </tr>
+<?PHP
+}
+?>
 <tr valign=top>
     <td align=right><p><b><?php echo get_string("concept","glossary") ?>:</b></p></td>
     <td>

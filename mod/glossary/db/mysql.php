@@ -118,6 +118,11 @@ function glossary_upgrade($oldversion) {
 
         execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('glossary', 'approve entry', 'glossary', 'name') ");
     }
+
+    if ( $oldversion < 2003102800 ) {
+        execute_sql( "ALTER TABLE `{$CFG->prefix}glossary`" .
+                     " ADD `globalglossary` TINYINT(2) UNSIGNED NOT NULL default '0' AFTER `defaultapproval`");
+    }
     return true;
 }
 
