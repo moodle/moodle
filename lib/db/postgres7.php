@@ -503,6 +503,13 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2004052800) {     /// First version tagged "1.4 development", version.php 1.227
+        // Add blockinfo to the site course
+        require_once($CFG->dirroot.'/lib/blocklib.php');
+        $site = get_site();
+        blocks_get_default_blocks($site->id, BLOCK_SITE_DEFAULT);
+    }
+
     if ($oldversion < 2004053000) {     /// set defaults for site course
         $site = get_site();
         set_field('course', 'numsections', 0, 'id', $site->id);
@@ -576,6 +583,10 @@ function main_upgrade($oldversion=0) {
         }
     }
         
+    if ($oldversion < 2004082900) {  // Make sure guest is "manual" too.
+        set_field('user', 'auth', 'manual', 'username', 'guest');
+    }
+
     return $result;
 
 }
