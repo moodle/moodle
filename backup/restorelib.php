@@ -368,6 +368,18 @@
                         $rec = get_record("course_sections","course",$restore->course_id,
                                                             "section","0");
                     }
+                    //New check. If section 0 doesn't exist, insert it here !!
+                    //Teorically this never should happen but, in practice, some users
+                    //have reported this issue. 
+                    if(!$rec) {
+                        $zero_sec->course = $restore->course_id;
+                        $zero_sec->section = 0;
+                        $zero_sec->summary = "";
+                        $zero_sec->sequence = "";
+                        $newid = insert_record("course_sections",$zero_sec);
+                        $rec->id = $newid;
+                        $rec->sequence = "";
+                    }
                     $newid = $rec->id;
                     $sequence = $rec->sequence;
                 }
@@ -428,16 +440,11 @@
                 }
                 //If all is OK, update sequence field in course_sections
                 if ($status) {
-                    $rec->id = $newid;
-                    $rec->sequence = $sequence;
-                    //Unset other fields before update (we don't want them)
-                    //Only need id and sequence !! Previously, existing bug 
-                    //because update without addslashes in summary
-                    unset($rec->course);
-                    unset($rec->section);
-                    unset($rec->summary);
-                    unset($rec->visible);
-                    $status = update_record("course_sections",$rec);
+                    if (isset($sequence)) {
+                        $update_rec->id = $newid;
+                        $update_rec->sequence = $sequence;
+                        $status = update_record("course_sections",$update_rec);
+                    }
                 }
             }
         } else {
