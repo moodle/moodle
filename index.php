@@ -61,7 +61,7 @@
                  '<meta name="description" content="'. s(strip_tags($site->summary)) .'" />',
                  true, '', $loginstring . $langmenu);
 
-    $editing = isediting($site->id);
+    $editing = $PAGE->user_is_editing();
 
     $pageblocks = blocks_get_by_page($PAGE);
 

@@ -119,6 +119,11 @@ global $CFG;
         execute_sql("ALTER TABLE {$CFG->prefix}course DROP COLUMN blockinfo");
     }
 
+    if ($oldversion < 2004112900 && $result) {
+        $result = $result && table_column('block_instance', 'pagetype', 'pagetype', 'varchar', '20', '');
+        $result = $result && table_column('block_instance', 'position', 'position', 'varchar', '10', '');
+    }
+
     //Finally, return result
     return $result;
 }

@@ -6,7 +6,7 @@
 // This is compared against the values stored in the database to determine 
 // whether upgrades should be performed (see lib/db/*.php)
 
-   $version = 2004111000;  // YYYYMMDD = date of first major branch release 1.4
+   $version = 2004111200;  // YYYYMMDD = date of first major branch release 1.4
                            //       XY = increments within a single day
 
    $release = '1.5 UNSTABLE DEVELOPMENT';    // Human-friendly version name

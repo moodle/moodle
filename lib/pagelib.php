@@ -48,15 +48,68 @@ class MoodlePage {
 
 /// Class Functions
 
+    // USER-RELATED THINGS
+
+    // By default, no user is editing anything and none CAN edit anything. Developers
+    // will have to override these settings to let Moodle know when it should grant
+    // editing rights to the user viewing the page.
+    function user_allowed_editing() {
+        trigger_error('Page class does not implement method <strong>user_allowed_editing()</strong>', E_USER_WARNING);
+        return false;
+    }
+    function user_is_editing() {
+        trigger_error('Page class does not implement method <strong>user_is_editing()</strong>', E_USER_WARNING);
+        return false;
+    }
+
+    // HTML OUTPUT SECTION
+
+    // We have absolutely no idea what derived pages are all about
+    function print_header($title) {
+        trigger_error('Page class does not implement method <strong>print_header()</strong>', E_USER_WARNING);
+        return;
+    }
+
+    // BLOCKS RELATED SECTION
+
+    // By default, pages don't have any blocks. Override this in your derived class if you need blocks.
     function blocks_get_positions() {
         return array();
     }
-    function url_get_path() {
+
+    // Thus there is no default block position. If you override the above you should override this one too.
+    // Because this makes sense only if blocks_get_positions() is overridden and because these two should
+    // be overridden as a group or not at all, this one issues a warning. The sneaky part is that this warning
+    // will only be seen if you override blocks_get_positions() but NOT blocks_default_position().
+    function blocks_default_position() {
+        trigger_error('Page class does not implement method <strong>blocks_default_position()</strong>', E_USER_WARNING);
         return NULL;
     }
+
+    // If you don't override this, newly constructed pages of this kind won't have any blocks.
+    function blocks_get_default() {
+        return '';
+    }
+
+    // If you don't override this, your blocks will not be able to change positions
+    function blocks_move_position(&$instance, $move) {
+        return $instance->position;
+    }
+
+    // SELF-REPORTING SECTION
+
+    // Derived classes HAVE to define their "home url"
+    function url_get_path() {
+        trigger_error('Page class does not implement method <strong>url_get_path()</strong>', E_USER_WARNING);
+        return NULL;
+    }
+
+    // It's not always required to pass any arguments to the home url, so this doesn't trigger any errors (sensible default)
     function url_get_parameters() {
         return array();
     }
+
+    // This should actually NEVER be overridden unless you have GOOD reason. Works fine as it is.
     function url_get_full($extraparams = array()) {
         $path = $this->url_get_path();
         if(empty($path)) {
@@ -80,44 +133,49 @@ class MoodlePage {
 
         return $path;
     }
+
+    // This forces implementers to actually hardwire their page identification constant in the class.
+    // Good thing, if you ask me. That way we can later auto-detect "installed" page types by querying
+    // the classes themselves in the future.
     function get_type() {
-        error('get_type() called on a page object which is not correctly implemented');
+        trigger_error('Page class does not implement method <strong>get_type()</strong>', E_USER_ERROR);
+        return NULL;
     }
+
+    // Simple stuff, do not override this.
     function get_id() {
         return $this->id;
     }
+
+    // "Sensible default" case here. Don't trigger any error.
     function get_format_name() {
         return NULL;
     }
-    function user_allowed_editing() {
-        return false;
-    }
-    function user_is_editing() {
-        return false;
-    }
 
+    // Initialize the data members of the parent class
     function init_quick($data) {
         $this->type = $data->pagetype;
         $this->id   = $data->pageid;
     }
 
+    function init_full() {
+        $this->full_init_done = true;
+    }
+
+    // DO NOT TOUCH! NEVER! SECTION
+
+    // Factory method MoodlePage::create_object(). Called with a pagetype identifier and possibly with
+    // its numeric ID. Returns a fully constructed MoodlePage subclass you can work with.
     function create_object($type, $id = NULL) {
 
         $data = new stdClass;
         $data->pagetype = $type;
         $data->pageid   = $id;
 
-        // This might be moved somewhere more easily accessible from the outside,
-        // as anyone that implements a new Page class will need to add a line here.
-        $typeids = array(
-            MOODLE_PAGE_COURSE => 'MoodlePage_Course'
-        );
+        $classname = MoodlePage::map_page_type($type);
 
-        if(!isset($typeids[$type])) {
-            error('Unrecognized type passed to MoodlePage::create_object: '. $type);
-        }
-
-        $object = &new $typeids[$type];
+        $object = &new $classname;
+        // TODO: subclassing check here
 
         if($object->get_type() !== $type) {
             // Somehow somewhere someone made a mistake
@@ -127,6 +185,28 @@ class MoodlePage {
         $object->init_quick($data);
         return $object;
     }
+
+    // Method map_page_type() is the way for your code to define its own Page subclasses and let Moodle recognize them.
+    // Use it to associate the textual identifier of your Page with the actual class name that has to be instantiated.
+    function map_page_type($type, $classname = NULL) {
+        static $mappings = array(
+            MOODLE_PAGE_COURSE => 'MoodlePage_Course'
+        );
+
+        if(!empty($type) && !empty($classname)) {
+            $mappings[$type] = $classname;
+        }
+        if(!isset($mappings[$type])) {
+            error('Page class mapping requested for unknown type: '.$type);
+        }
+
+        if(!class_exists($mappings[$type])) {
+            error('Page class mapping for id "'.$type.'" exists but class "'.$mappings[$type].'" is not defined');
+        }
+
+        return $mappings[$type];
+    }
+
 }
 
 
@@ -168,6 +248,8 @@ class MoodlePage_Course extends MoodlePage {
         $this->full_init_done = true;
     }
 
+    // USER-RELATED THINGS
+
     // When is a user said to have "editing rights" in this page? This would have something
     // to do with roles, in the future.
     function user_allowed_editing() {
@@ -180,7 +262,9 @@ class MoodlePage_Course extends MoodlePage {
         return isediting($this->id);
     }
 
-    // HTML output section. This function prints out the common part of the page's header.
+    // HTML OUTPUT SECTION
+
+    // This function prints out the common part of the page's header.
     // You should NEVER print the header "by hand" in other code.
     function print_header($title) {
         global $USER;
@@ -196,6 +280,8 @@ class MoodlePage_Course extends MoodlePage {
         print_header($title, $this->courserecord->fullname, $this->courserecord->shortname,
                      '', '', true, update_course_icon($this->courserecord->id), $loggedinas);
     }
+
+    // SELF-REPORTING SECTION
 
     // This is hardwired here so the factory method create_object() can be sure there was no mistake.
     // Also, it doubles as a way to let others inquire about our type.
@@ -233,7 +319,7 @@ class MoodlePage_Course extends MoodlePage {
         }
     }
 
-    // Blocks-related section
+    // BLOCKS RELATED SECTION
 
     // Which are the positions in this page which support blocks? Return an array containing their identifiers.
     // BE CAREFUL, ORDER DOES MATTER! In textual representations, lists of blocks in a page use the ':' character

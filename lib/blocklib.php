@@ -90,7 +90,9 @@ function block_load_class($blockname) {
     return class_exists($classname);
 }
 
-function blocks_get_missing($page, $pageblocks) {
+// This function returns an array with the IDs of any blocks that you can add to your page.
+// Parameters are passed by reference for speed; they are not modified at all.
+function blocks_get_missing(&$page, &$pageblocks) {
 
     $missingblocks = array();
     $allblocks = blocks_get_record();
@@ -147,7 +149,10 @@ function blocks_delete_instance($instance) {
                 '\' AND weight > '.$instance->weight, false);
 }
 
-function blocks_have_content($instances) {
+// Accepts an array of block instances and checks to see if any of them have content to display
+// (causing them to calculate their content in the process). Returns true or false. Parameter passed
+// by reference for speed; the array is actually not modified.
+function blocks_have_content(&$instances) {
     foreach($instances as $instance) {
         if(!$instance->visible) {
             continue;
@@ -174,8 +179,9 @@ function blocks_have_content($instances) {
     return false;
 }
 
-//This function prints one side of the blocks in the course main page
-function blocks_print_group($page, $instances) {
+// This function prints one group of blocks in a page
+// Parameters passed by reference for speed; they are not modified.
+function blocks_print_group(&$page, &$instances) {
     
     if(empty($instances)) {
         return;
@@ -222,8 +228,9 @@ function blocks_print_group($page, $instances) {
     }
 }
 
-//This iterates over an array of blocks and calculates the preferred width
-function blocks_preferred_width($instances) {
+// This iterates over an array of blocks and calculates the preferred width
+// Parameter passed by reference for speed; it's not modified.
+function blocks_preferred_width(&$instances) {
     $width = 0;
 
     if(empty($instances) || !is_array($instances)) {

@@ -5,4 +5,4 @@
 // database (blocks_version) to determine whether upgrades should
 // be performed (see db/backup_*.php)
 
-$blocks_version = 2004101900;   // The current version is a date (YYYYMMDDXX)
+$blocks_version = 2004111200;   // The current version is a date (YYYYMMDDXX)
