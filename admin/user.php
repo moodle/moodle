@@ -7,6 +7,7 @@
     optional_variable($newuser, "");
     optional_variable($delete, "");
     optional_variable($confirm, "");
+    optional_variable($confirmuser, "");
     optional_variable($sort, "name");
     optional_variable($dir, "ASC");
     optional_variable($page, 0);
@@ -107,7 +108,23 @@
         print_header("$site->shortname: $stredituser", $site->fullname, 
                      "<a href=\"index.php\">$stradministration</a> -> <a href=\"users.php\">$strusers</a> -> $stredituser");
 
-        if ($delete) {              // Delete a selected user, after confirmation
+        if ($confirmuser) {
+            if (!$user = get_record("user", "id", "$confirmuser")) {
+                error("No such user!");
+            }
+
+            unset($confirmeduser);
+            $confirmeduser->id = $confirmuser;
+            $confirmeduser->confirmed = 1;
+            $confirmeduser->timemodified = time();
+
+            if (update_record("user", $confirmeduser)) {
+                notify(get_string("userconfirmed", "", fullname($user, true)) );
+            } else {
+                notify(get_string("usernotconfirmed", "", fullname($user, true)));
+            }
+
+        } else if ($delete) {              // Delete a selected user, after confirmation
             if (!$user = get_record("user", "id", "$delete")) {
                 error("No such user!");
             }
@@ -241,8 +258,8 @@
             $users = $nusers;
         }
 
-        $table->head = array ($name, $email, $city, $country, $lastaccess, "", "");
-        $table->align = array ("left", "left", "left", "left", "left", "center", "center");
+        $table->head = array ($name, $email, $city, $country, $lastaccess, "", "", "");
+        $table->align = array ("left", "left", "left", "left", "left", "center", "center", "center");
         $table->width = "95%";
         foreach ($users as $user) {
             if ($user->id == $USER->id or $user->username == "changeme") {
@@ -255,6 +272,11 @@
             } else {
                 $strlastaccess = get_string("never");
             }
+            if ($user->confirmed == 0) {
+                $confirmbutton = "<a href=\"user.php?confirmuser=$user->id\">" . get_string("confirm") . "</a>";
+            } else {
+                $confirmbutton = "";
+            }
             $fullname = fullname($user, true);
             $table->data[] = array ("<a href=\"../user/view.php?id=$user->id&course=$site->id\">$fullname</a>",
                              "$user->email",
@@ -262,7 +284,8 @@
                              "$user->country",
                              $strlastaccess,
                              "<a href=\"../user/edit.php?id=$user->id&course=$site->id\">$stredit</a>",
-                             $deletebutton);
+                             $deletebutton,
+                             $confirmbutton);
         }
 
         echo "<table align=center cellpadding=10><tr><td>";
