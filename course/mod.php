@@ -35,13 +35,13 @@
                 // course_modules and course_weeks each contain a reference 
                 // to each other, so we have to update one of them twice.
 
-                if (! $mod->course_module = add_course_module($mod) ) {
+                if (! $mod->coursemodule = add_course_module($mod) ) {
                     error("Could not add a new course module");
                 }
                 if (! $weekid = add_mod_to_week($mod) ) {
                     error("Could not add the new course module to that week");
                 }
-                if (! set_field("course_modules", "week", $weekid, "id", $mod->course_module)) {
+                if (! set_field("course_modules", "week", $weekid, "id", $mod->coursemodule)) {
                     error("Could not update the course module with the correct week");
                 }   
                 add_to_log($mod->course, "course", "add mod", "../mod/$mod->modulename/view.php?id=$mod->coursemodule", "$mod->modulename $mod->instance"); 
@@ -245,9 +245,9 @@ function add_mod_to_week($mod) {
                               WHERE course = '$mod->course' AND week = '$mod->week'") ) {
 
         if ($cw->sequence) {
-            $newsequence = "$cw->sequence,$mod->course_module";
+            $newsequence = "$cw->sequence,$mod->coursemodule";
         } else {
-            $newsequence = "$mod->course_module";
+            $newsequence = "$mod->coursemodule";
         }
         if (!$rs = $db->Execute("UPDATE course_weeks SET sequence = '$newsequence' WHERE id = '$cw->id'")) {
             return 0;
@@ -260,7 +260,7 @@ function add_mod_to_week($mod) {
                                  SET course   = '$mod->course', 
                                      week     = '$mod->week',
                                      summary  = '',
-                                     sequence = '$mod->course_module' ")) {
+                                     sequence = '$mod->coursemodule' ")) {
             return 0;
         }
         // Get it out again - this is the most compatible way to determine the ID
