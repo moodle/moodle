@@ -66,6 +66,9 @@ if (!isset($CFG->forum_replytouser)) {
     set_config("forum_replytouser", true);  // Default maximum size for all forums
 }
 
+if (empty($USER->id) or isguest()) {
+    $CFG->forum_trackreadposts = false;  // This feature never works when a user isn't logged in
+}
 
 
 /// STANDARD FUNCTIONS ///////////////////////////////////////////////////////////
