@@ -48,7 +48,7 @@ Now I show the specific detailed status of every item in the process:
           Done in manual backups, config, logs and restore.
 28. DONE: Add course->theme, groups->them and user->theme. If no present,
           default blank.
-29. TODO: Add support for block instances in modules. Bug 2517.
+29. DONE: Add support for block instances in modules. Bug 2517. By Jon.
 30. DELAY:Add support for user->dstpreset. After talking with Jon, delayed
           because there isn't possible to recode it to destination server. But
           sometime we should think in a solution (STAMPS or CHECKSUMS of DSTs).
@@ -56,7 +56,7 @@ Now I show the specific detailed status of every item in the process:
 32. TODO: quiz_questions->hidden and quiz_responses->originalquestion
 33. TODO: quiz_question_version
 34. DONE: Group images aren't included at all in backup/restore. Bug 2674.
-35. TODO: New glossary log action: "view_entry".
+35. DONE: New glossary log action: "view_entry".
          
 Eloy (stronk7)
 23-01-2004
