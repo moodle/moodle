@@ -8,6 +8,7 @@ attachment             annexe
 authentication         authentification
 category               catégorie
 choice                 sondage
+connected              lié (merci à Jean-François Nadeau)
 cookies                cookies                 témoin
 course category	       discipline
 department             département
@@ -15,7 +16,7 @@ download               télécharger (vers votre ordinateur)
 email                  courriel, adresse de courriel
 emoticons              binettes
 entry                  contribution
-feedback               feedback                rétroaction
+feedback               feedback                rétroaction, remarque
 grade                  note ou niveau
 guest                  visiteur anonyme
 hit                    requête
@@ -26,6 +27,7 @@ offline                hors-ligne
 post                   message
 quiz                   test
 scale                  barème
+separated              détaché (merci à Jean-François Nadeau)
 server                 serveur
 social format	       informel
 topic                  thème
