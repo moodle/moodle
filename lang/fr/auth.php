@@ -1,5 +1,4 @@
-<?PHP // $Id$ 
-
+<?php // $Id$ 
 
 $string['auth_dbdescription'] = 'Cette méthode utilise une base de données externe afin de vérifier qu\'un nom d\'utilisateur et son mot de passe sont valides. Si le compte concerné est nouveau, il est possible de copier des données provenant de certains champs vers Moodle.';
 $string['auth_dbextrafields'] = 'Ces zones sont facultatives. Il vous est possible de remplir certains champs de Moodle avec des données provenant des <b>champs de la base de données externe</b>.<p>Si vous laissez ces zones vides, les valeurs par défaut seront utilisées.<p>Dans tous les cas, l\'utilisateur a la possibilité de modifier tous ces champs, une fois connecté.';
@@ -22,7 +21,7 @@ $string['auth_imaptitle'] = 'Utiliser un serveur IMAP';
 $string['auth_imaptype'] = 'Type de serveur IMAP. Les serveurs IMAP peuvent avoir différentes méthodes d\'authentification et de négociation.';
 $string['auth_ldap_bind_dn'] = 'Si vous souhaitez utiliser une connexion authentifiée au serveur LDAP pour chercher les utilisateurs, indiquez ici son nom de connexion. Quelque chose comme : « cn=ldapuser, o=Organisation, c=FR ».';
 $string['auth_ldap_bind_pw'] = 'Mot de passe pour cette connexion';
-$string['auth_ldap_contexts'] = 'Liste des noeuds de l\'annuaire LDAP, séparés par « ; », où les enregistrements des utilisateurs sont situés. Par exemple : « ou=Étudiants, o=Organisation, c=FR; ou=Professeurs, o=Organisation, c=FR ».';
+$string['auth_ldap_contexts'] = 'Liste des noeuds de l\'annuaire LDAP, séparés par « ; », où les enregistrements des utilisateurs sont situés. Par exemple : « ou=Étudiants, o=Organisation, c=FR; ou=Enseignants, o=Organisation, c=FR ».';
 $string['auth_ldap_create_context'] = 'Lors de l\'utilisation de la création d\'utilisateurs avec confirmation par courriel, indiquer ici le noeud où créer les utilisateurs. Pour des raisons de sécurité, ce noeud ne doit pas être le même que celui des autres utilisateurs. Il n\'est pas nécessaire d\'ajouter ce noeud à la variable ldap_context. Moodle cherchera automatiquement les utilisateurs dans ce noeud.';
 $string['auth_ldap_creators'] = 'Liste des groupes dont les membres ont le droit de créer des cours. Les groupes (en général, de la forme « cn=teachers,ou=staff,o=myorg ») sont séparés par des « ; ».';
 $string['auth_ldap_host_url'] = 'Indiquer le serveur LDAP sous form d\'URL comme ceci :<br>« ldap://ldap.organisation.fr/ »<br>ou :<br>« ldaps://ldap.organisation.fr/ »';
