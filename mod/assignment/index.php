@@ -56,7 +56,13 @@
             $submitted = get_string("no");
         }
         $due = userdate($assignment->timedue);
-        $link = "<A HREF=\"view.php?id=$assignment->coursemodule\">$assignment->name</A>";
+        if (!$assignment->visible) {
+            //Show dimmed if the mod is hidden
+            $link = "<A class=\"dimmed\" HREF=\"view.php?id=$assignment->coursemodule\">$assignment->name</A>";
+        } else {
+            //Show normal if the mod is visible
+            $link = "<A HREF=\"view.php?id=$assignment->coursemodule\">$assignment->name</A>";
+        }
         if ($assignment->section) {
             $section = "$assignment->section";
         } else {
