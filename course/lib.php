@@ -494,14 +494,12 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
 
     $totalcount = 0;  // Initialise
 
-    $db->debug = true;
     if (!$logs = get_logs($selector, $order, $page*$perpage, $perpage, $totalcount)) {
         notify("No logs found!");
         print_footer($course);
         exit;
     }
 
-    $db->debug = false;
     $count=0;
     $ldcache = array();
     $tt = getdate(time());
