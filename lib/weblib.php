@@ -1604,6 +1604,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
     $THEME->navigation = $navigation;
     $THEME->button     = $button;
     $THEME->menu       = $menu;
+    $navmenulist = isset($THEME->navmenulist) ? $THEME->navmenulist : '';
 
     if ($button == '') {
         $button = '&nbsp;';
@@ -1811,11 +1812,12 @@ function print_footer($course=NULL, $usercourse=NULL) {
     }
 
 /// Set up some other navigation links (passed from print_header by ugly hack)
-    $menu       = isset($THEME->menu) ? str_replace('navmenu', 'navmenufooter', $THEME->menu) : '';
-    $title      = isset($THEME->title) ? $THEME->title : '';
-    $button     = isset($THEME->button) ? $THEME->button : '';
-    $heading    = isset($THEME->heading) ? $THEME->heading : '';
-    $navigation = isset($THEME->navigation) ? $THEME->navigation : '';
+    $menu        = isset($THEME->menu) ? str_replace('navmenu', 'navmenufooter', $THEME->menu) : '';
+    $title       = isset($THEME->title) ? $THEME->title : '';
+    $button      = isset($THEME->button) ? $THEME->button : '';
+    $heading     = isset($THEME->heading) ? $THEME->heading : '';
+    $navigation  = isset($THEME->navigation) ? $THEME->navigation : '';
+    $navmenulist = isset($THEME->navmenulist) ? $THEME->navmenulist : '';
 
 
 /// Set the user link if necessary
@@ -3093,7 +3095,13 @@ function print_group_menu($groups, $groupmode, $currentgroup, $urlroot) {
  */
 function navmenu($course, $cm=NULL, $targetwindow='self') {
 
-    global $CFG;
+    global $CFG, $THEME;
+
+    if (empty($THEME->navmenuwidth)) {
+        $width = 50;
+    } else {
+        $width = $THEME->navmenuwidth;
+    }
 
     if ($cm) {
         $cm = $cm->id;
@@ -3123,6 +3131,10 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
 
     $sections = get_records('course_sections','course',$course->id,'section','section,visible,summary');
 
+    if (!empty($THEME->makenavmenulist)) {   /// A hack to produce an XHTML navmenu list for use in themes
+        $THEME->navmenulist = navmenulist($course, $sections, $modinfo, $isteacher, $strsection, $width=50, $cm);
+    }
+
     foreach ($modinfo as $mod) {
         if ($mod->mod == 'label') {
             continue;
@@ -3140,10 +3152,10 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
                 if ($course->format == 'weeks' or empty($thissection->summary)) {
                     $menu[] = '-------------- '. $strsection ." ". $mod->section .' --------------';
                 } else {
-                    if (strlen($thissection->summary) < 47) {
+                    if (strlen($thissection->summary) < ($width-3)) {
                         $menu[] = '-- '.$thissection->summary;
                     } else {
-                        $menu[] = '-- '.substr($thissection->summary, 0, 50).'...';
+                        $menu[] = '-- '.substr($thissection->summary, 0, $width).'...';
                     }
                 }
             }
@@ -3167,8 +3179,8 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
                 $strjumpto = '';
             } else {
                 $mod->name = strip_tags(format_string(urldecode($mod->name),true));
-                if (strlen($mod->name) > 55) {
-                    $mod->name = substr($mod->name, 0, 50).'...';
+                if (strlen($mod->name) > ($width+5)) {
+                    $mod->name = substr($mod->name, 0, $width).'...';
                 }
                 if (!$mod->visible) {
                     $mod->name = '('.$mod->name.')';
@@ -3194,6 +3206,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
                    "<input type=\"hidden\" name=\"id\" value=\"$nextmod->cm\" />".
                    "<input type=\"submit\" value=\"&gt;\" /></form>";
     }
+
     return '<table><tr>'.$logslink .'<td>'. $backmod .'</td><td>' .
             popup_form($CFG->wwwroot .'/mod/', $menu, 'navmenu', $selected, $strjumpto,
                        '', '', true, $targetwindow).
@@ -3213,24 +3226,10 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
  * @return string
  * @todo Finish documenting this function
  */
-function navmenulist($course, $width=50) {
+function navmenulist($course, $sections, $modinfo, $isteacher, $strsection, $width=50, $cmid=0) {
 
     global $CFG;
 
-    if (empty($course)) {
-        return '';
-    }
-
-    if ($course->format == 'weeks') {
-        $strsection = get_string('week');
-    } else {
-        $strsection = get_string('topic');
-    }
-
-    if (!$modinfo = unserialize($course->modinfo)) {
-        return '';
-    }
-    $isteacher = isteacher($course->id);
     $section = -1;
     $selected = '';
     $url = '';
@@ -3241,8 +3240,6 @@ function navmenulist($course, $width=50) {
     $logslink = NULL;
     $flag = false;
     $menu = array();
-
-    $sections = get_records('course_sections','course',$course->id,'section','section,visible,summary');
 
     $menu[] = '<ul>';
     foreach ($modinfo as $mod) {
@@ -3292,7 +3289,8 @@ function navmenulist($course, $width=50) {
             if (!$mod->visible) {
                 $mod->name = '('.$mod->name.')';
             }
-            $menu[] = '<li><a href="'.$CFG->wwwroot.'/mod/'.$url.'">'.$mod->name.'</a></li>';
+            $class = ($cmid == $mod->cm) ? ' class="selected"' : '';
+            $menu[] = '<li><a'.$class.' href="'.$CFG->wwwroot.'/mod/'.$url.'">'.$mod->name.'</a></li>';
             $previousmod = $mod;
         }
     }
