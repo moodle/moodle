@@ -70,7 +70,7 @@ if (isadmin()) {
 <tr valign="top">
     <td align="right"><?php print_string("firstname") ?>:</td>
     <td>
-    <?php if ($user_external && $CFG->auth_user_firstname_editlock){ ?>
+    <?php if (isset($CFG->auth_user_firstname_editlock)){ ?>
     <input type="hidden" name="firstname" value="<?php p($user->firstname) ?>" />
     <?php p($user->firstname) ?>
     <?php } else { ?>
@@ -82,7 +82,7 @@ if (isadmin()) {
 <tr valign="top">
     <td align="right"><?php print_string("lastname") ?>:</td>
     <td>
-    <?php if($user_external && $CFG->auth_user_lastname_editlock){ ?>
+    <?php if(isset($CFG->auth_user_lastname_editlock)){ ?>
     <input type="hidden" name="lastname" value="<?php p($user->lastname) ?>" />
     <?php p($user->lastname) ?>
     <?php } else { ?>
@@ -94,7 +94,7 @@ if (isadmin()) {
 <tr valign="top">
     <td align="right"><p><?php print_string("email") ?>:</td>
     <td>
-    <?php if($user_external && $CFG->auth_user_email_editlock){ ?>
+    <?php if(isset($CFG->auth_user_email_editlock)){ ?>
     <input type="hidden" name="email" value="<?php p($user->email) ?>" />
     <?php p($user->email) ?>
     <?php } else { ?>
@@ -164,7 +164,7 @@ if (isadmin()) {
 <tr valign="top">
     <td align="right"> <?php print_string("city") ?>:</td>
     <td>
-    <?php if($user_external && $CFG->auth_user_city_editlock){ ?>
+    <?php if(isset($CFG->auth_user_city_editlock)){ ?>
     <input type="hidden" name="city" value="<?php p($user->city) ?>" />
     <?php p($user->city) ?>
     <?php } else { ?>
@@ -182,7 +182,7 @@ if (isadmin()) {
         $user->country = $CFG->country;
     }
 
-    if($user_external && $CFG->auth_user_country_editlock){ ?>
+    if(isset($CFG->auth_user_country_editlock)){ ?>
         <input type="hidden" name="country" value="<?php p($user->country); ?>" />
         <?php p($user->country); 
     } else { 
@@ -198,7 +198,7 @@ if (isadmin()) {
                if (!$user->lang) {
                    $user->lang = $CFG->lang;
                }
-               if($user_external && $CFG->auth_user_lang_editlock){ ?>
+               if(isset($CFG->auth_user_lang_editlock)){ ?>
                    <input type="hidden" name="lang" value="<?php p($user->lang) ?>" />
                    <?php p($user->lang);
                } else { 
@@ -242,7 +242,7 @@ if (isadmin()) {
                formerr($err["description"]);
                echo "<br />";
            } ?>
-    <?php if($user_external && $CFG->auth_user_description_editlock){ ?>
+    <?php if(isset($CFG->auth_user_description_editlock)){ ?>
         <input type="hidden" name="description" value="<?php p($user->description) ?>" />
         <?php print format_text($user->description, FORMAT_MOODLE); 
     } else { 
@@ -316,7 +316,7 @@ if (isadmin()) {
 <tr valign="top">
     <td align="right"> <?php print_string("idnumber") ?>: </td>
     <td>
-    <?php if($user_external && $CFG->auth_user_idnumber_editlock){ ?>
+    <?php if(isset($CFG->auth_user_idnumber_editlock)){ ?>
     <input type="hidden" name="idnumber" value="<?php p($user->idnumber) ?>" />
     <?php p($user->idnumber) ?>
     <?php } else { ?>    
@@ -334,7 +334,7 @@ if (isadmin()) {
 <tr valign="top">
     <td align="right"> <?php print_string("department") ?>: </td>
     <td>
-    <?php if($user_external && $CFG->auth_user_department_editlock){ ?>
+    <?php if(isset( $CFG->auth_user_department_editlock)){ ?>
     <input type="hidden" name="department" value="<?php p($user->department) ?>" />
     <?php p($user->department) ?>
     <?php } else { ?>       
@@ -346,7 +346,7 @@ if (isadmin()) {
 <tr valign="top">
     <td align="right"> <?php print_string("phone") ?> 1: </td>
     <td>
-    <?php if($user_external && $CFG->auth_user_phone1_editlock){ ?>
+    <?php if(isset($CFG->auth_user_phone1_editlock)){ ?>
     <input type="hidden" name="phone1" value="<?php p($user->phone1) ?>" />
     <?php p($user->phone1) ?>
     <?php } else { ?>  
@@ -358,7 +358,7 @@ if (isadmin()) {
 <tr valign="top">
     <td align="right"> <?php print_string("phone") ?> 2: </td>
     <td>
-    <?php if($user_external && $CFG->auth_user_phone2_editlock){ ?>
+    <?php if(isset($CFG->auth_user_phone2_editlock)){ ?>
     <input type="hidden" name="phone2" value="<?php p($user->phone2) ?>" />
     <?php p($user->phone2) ?>
     <?php } else { ?>  
@@ -370,7 +370,7 @@ if (isadmin()) {
 <tr valign="top">
     <td align="right"> <?php print_string("address") ?>: </td>
     <td>
-    <?php if($user_external && $CFG->auth_user_address_editlock){ ?>
+    <?php if(isset($CFG->auth_user_address_editlock)){ ?>
     <input type="hidden" name="address" value="<?php p($user->address) ?>" />
     <?php p($user->address) ?>
     <?php } else { ?>  
