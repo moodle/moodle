@@ -72,7 +72,7 @@
         }
     }
 
-    if ($sort = lastaccess) {
+    if ($sort = "lastaccess") {
         $dsort = "s.timeaccess";
     } else {
         $dsort = "u.$sort";
