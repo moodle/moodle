@@ -580,8 +580,8 @@ function get_user_preferences($name=NULL, $default=NULL, $userid=NULL) {
  * @param int $hour The hour part to create timestamp of.
  * @param int $minute The minute part to create timestamp of.
  * @param int $second The second part to create timestamp of.
- * @param int $timezone ?
- * @return ?
+ * @param float $timezone 
+ * @return int timestamp
  * @todo Finish documenting this function
  */
 function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, $timezone=99, $applydst=true) {
@@ -671,13 +671,12 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
  * zero from %d, else mantain it.
  *
  * @uses HOURSECS
- * @param  int $date ?
- * @param string $format ?
- * @param int $timezone ?
+ * @param  int $date timestamp in GMT
+ * @param string $format strftime format
+ * @param float $timezone 
  * @param boolean $fixday If true (default) then the leading
  * zero from %d is removed. If false then the leading zero is mantained.
  * @return string
- * @todo Finish documenting this function
  */
 function userdate($date, $format='', $timezone=99, $fixday = true) {
 
@@ -723,7 +722,7 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
  *
  * @uses HOURSECS
  * @param int $time Timestamp in GMT
- * @param int $timezone ?
+ * @param float $timezone 
  * @return array An array that represents the date in user time
  * @todo Finish documenting this function
  */
@@ -731,20 +730,15 @@ function usergetdate($time, $timezone=99) {
 
     $timezone = get_user_timezone($timezone);
 
+    if (abs($timezone) > 13) {    // Server time
+        return getdate($date);
+    } 
+    
+    // There is no gmgetdate so we use gmdate instead
     $time += dst_offset_on($time);
+    $time += intval((float)$timezone * HOURSECS);
+    $datestring = gmdate('s i H d m Y w z l F', $time);
 
-    if (abs($timezone) > 13) {
-        $time += intval((float)date('O') * HOURSECS);
-        if(abs(date('O') > 12)) {
-            error('date("O") returns '.date('O').'!');
-        }
-    }
-    else {
-        $time += intval((float)$timezone * HOURSECS);
-    }
-
-    // This is independent of the server's TZ settings,
-    // unlike gmstrftime. It's also a bit faster this way.
     list(
         $getdate['seconds'],
         $getdate['minutes'],
@@ -756,7 +750,7 @@ function usergetdate($time, $timezone=99) {
         $getdate['yday'],
         $getdate['weekday'],
         $getdate['month']
-    ) = explode(' ', gmdate('s i H d m Y w z l F', $time));
+    ) = explode(' ', $datestring);
 
     return $getdate;
 }
@@ -767,9 +761,8 @@ function usergetdate($time, $timezone=99) {
  *
  * @uses HOURSECS
  * @param  int $date Timestamp in GMT
- * @param int $timezone ?
+ * @param float $timezone
  * @return int
- * @todo Finish documenting this function
  */
 function usertime($date, $timezone=99) {
 
@@ -784,10 +777,9 @@ function usertime($date, $timezone=99) {
  * Given a time, return the GMT timestamp of the most recent midnight
  * for the current user.
  *
- * @param  int $date Timestamp in GMT
- * @param int $timezone ?
+ * @param int $date Timestamp in GMT
+ * @param float $timezone ?
  * @return ?
- * @todo Finish documenting this function. Is timezone an int or float?
  */
 function usergetmidnight($date, $timezone=99) {
 
@@ -804,7 +796,6 @@ function usergetmidnight($date, $timezone=99) {
  *
  * @param float $timezone The user's timezone
  * @return string
- * @todo is $timezone an int or a float?
  */
 function usertimezone($timezone=99) {
 
@@ -829,9 +820,8 @@ function usertimezone($timezone=99) {
  *
  * @uses $CFG
  * @uses $USER
- * @param int $tz The user's timezone
+ * @param float $tz The user's timezone
  * @return int
- * @todo is $tz an int or a float?
  */
 function get_user_timezone($tz = 99) {
 
