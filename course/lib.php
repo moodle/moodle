@@ -1094,7 +1094,12 @@ function print_my_moodle() {
             print_course($course, "100%");
             echo "<br />\n";
         }
-        echo "<p align=\"center\"><a href=\"$CFG->wwwroot/course/\">".get_string("fulllistofcourses")."</a>...</p>";
+
+        echo "<table width=\"100%\"><tr><td align=\"center\">";
+        print_course_search();
+        echo "</td><td align=\"center\">";
+        print_single_button("index.php", NULL, get_string("fulllistofcourses"), "get");
+        echo "</td></tr></table>\n";
     } else {
         if (count_records("course_categories") > 1) {
             print_simple_box_start("center", "100%");
@@ -1107,6 +1112,18 @@ function print_my_moodle() {
 }
 
 
+function print_course_search($value="") {
+
+    global $CFG;
+
+    $strsearchcourses= get_string("searchcourses");
+
+    echo "<center><p align=\"center\" class=\"coursesearchbox\">";
+    echo "<form name=\"coursesearch\" action=\"$CFG->wwwroot/course/search.php\" method=\"get\">";
+    echo "<input type=\"text\" size=30 name=\"search\" value=\"$value\">";
+    echo "<input type=\"submit\" value=\"$strsearchcourses\">";
+    echo "</form></p></center>";
+}
 
 /// MODULE FUNCTIONS /////////////////////////////////////////////////////////////////
 

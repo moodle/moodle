@@ -35,6 +35,7 @@
             print_simple_box_start("center", "50%");
             print_whole_category_list();
             print_simple_box_end();
+            print_course_search();
         } else {
             $strfulllistofcourses = get_string("fulllistofcourses");
             print_header("$site->shortname: $strfulllistofcourses", $strfulllistofcourses, $strfulllistofcourses);
