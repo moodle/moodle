@@ -1,8 +1,0 @@
--------
-CREDITS
--------
-
-The Thryomanes Unicode true type font was created by Herman Miller (http://www.io.com/~hmiller/)
-who kindly released it for free. Many thanks to Herman for providing this font, which enables Moodle
-to come bundled with support for Greek graphs.
-
