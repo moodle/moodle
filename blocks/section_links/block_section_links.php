@@ -14,9 +14,9 @@ class CourseBlock_section_links extends MoodleBlock {
         }
         $this->content_type = BLOCK_TYPE_TEXT;
         $this->course = $course;
-        $this->version = 2004050500;
+        $this->version = 2004052800;
     }
-    
+
     function applicable_formats() {
         return (COURSE_FORMAT_WEEKS | COURSE_FORMAT_TOPICS);
     }
@@ -55,18 +55,27 @@ class CourseBlock_section_links extends MoodleBlock {
         }
         $text = '<font size=-1>';
         for ($i = $inc; $i <= $this->course->numsections; $i += $inc) {
+            $isvisible = get_field('course_sections', 'visible', 'course', $this->course->id, 'section', $i);
+            if (!$isvisible and !isteacher($this->course->id)) {
+                if ($i == $highlight) { 
+                    $highlight = 0;
+                }
+                continue;
+            }
+            $style = ($isvisible) ? '' : ' class="dimmed"';
             if ($i == $highlight) {
-                $text .= "<a href=\"$link$i\"><b>$i</b></a> ";
+                $text .= "<a href=\"$link$i\"$style><b>$i</b></a> ";
             } else {
-                $text .= "<a href=\"$link$i\">$i</a> ";
+                $text .= "<a href=\"$link$i\"$style>$i</a> ";
             }
         }
         if ($highlight) {
-            $text .= "<br><a href=\"$link$highlight\">$linktext</a>";
+            $isvisible = get_field('course_sections', 'visible', 'course', $this->course->id, 'section', $highlight);
+            $style = ($isvisible) ? '' : ' class="dimmed"';
+            $text .= "<br><a href=\"$link$highlight\"$style>$linktext</a>";
         }
-        
-        $this->content = New object;
-        $this->content->header = 'Hello';
+
+        $this->content = New stdClass;
         $this->content->footer = '';
         $this->content->text = $text;
         return $this->content;
