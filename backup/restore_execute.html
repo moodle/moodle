@@ -91,11 +91,11 @@
 
     //Now create users as needed 
     if ($status and ($restore->users == 0 or $restore->users == 1)) {
-        echo "<li>Creating users";
+        echo "<li>Creating users<br>";
         $status = restore_create_users($restore,$xml_file);
         //Now print info about the work done
         if ($status) {
-            $recs = get_records_sql("select old_id, info from {$CFG->prefix}backup_ids
+            $recs = get_records_sql("select old_id, new_id from {$CFG->prefix}backup_ids
                                      where backup_code = '$restore->backup_unique_code' and
                                      table_name = 'user'");
             //We've records
@@ -109,21 +109,23 @@
                 $other_count = 0;
                 //Iterate, filling counters
                 foreach ($recs as $rec) {
-                    if (strpos($rec->info,"new") !== false) {
+                    //Get full record, using backup_getids
+                    $record = backup_getid($restore->backup_unique_code,"user",$rec->old_id);
+                    if (strpos($record->info,"new") !== false) {
                         $new_count++;
                     } 
-                    if (strpos($rec->info,"exists") !== false) {
+                    if (strpos($record->info,"exists") !== false) {
                         $exists_count++;
                     }
-                    if (strpos($rec->info,"student")) {
+                    if (strpos($record->info,"student")) {
                         $student_count++;
-                    } else if (strpos($rec->info,"teacher")) {
+                    } else if (strpos($record->info,"teacher")) {
                         $teacher_count++;
-                    } else if (strpos($rec->info,"admin")) {
+                    } else if (strpos($record->info,"admin")) {
                         $admin_count++;
-                    } else if (strpos($rec->info,"coursecreator")) {
+                    } else if (strpos($record->info,"coursecreator")) {
                         $coursecreator_count++;
-                    } else if ($rec->info == "new" or $rec->info == "exists") {
+                    } else if ($record->info == "new" or $record->info == "exists") {
                         $other_count++;
                     }
                 }
@@ -173,10 +175,6 @@
     if ($status) {
         echo "<li>Creating Course Modules";
         $status = restore_create_modules($restore,$xml_file);
-        //If all is ok (and we have a counter)
-        if ($status and ($status !== true)) {   
-            //Inform about modules restores
-        }
     }
 
     
