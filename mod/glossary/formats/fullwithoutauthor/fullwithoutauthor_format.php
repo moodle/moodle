@@ -5,9 +5,6 @@ function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, 
 
     $colour = $THEME->cellheading2;
 
-    $user = get_record("user", "id", $entry->userid);
-    $strby = get_string("writtenby", "glossary");
-
     echo "\n<br /><table border=0 width=95% cellspacing=0 valign=top cellpadding=3 class=forumpost align=center>";
 
     echo "\n<tr>";
@@ -35,7 +32,7 @@ function glossary_show_entry_fullwithoutauthor($course, $cm, $glossary, $entry, 
         echo "\n<td width=100% colspan=\"2\" bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">";
 
         glossary_print_entry_definition($entry);
-        glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
+        $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
         echo ' ';
     } else {
         echo "<center>";

@@ -40,7 +40,7 @@ function glossary_show_entry_fullwithauthor($course, $cm, $glossary, $entry, $mo
         echo "\n<td width=100% colspan=\"2\" bgcolor=\"$THEME->cellcontent\" class=\"forumpostmessage\">";
 
         glossary_print_entry_definition($entry);
-        glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
+        $return = glossary_print_entry_lower_section($course, $cm, $glossary, $entry,$mode,$hook,$printicons,$ratings);
         echo ' ';
     } else {
         echo "<center>";
