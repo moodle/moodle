@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.3 (2004052500)
+      // survey.php - created with Moodle 1.3.1 (2004052501)
 
 
 $string['actual'] = 'Reàlais';
@@ -57,10 +57,15 @@ $string['attlsm3'] = 'Sadalïtà màcï¹anàs';
 $string['attlsmintro'] = 'Apsprie¹anà ...';
 $string['attlsname'] = 'ATTLS (20 jautàjumu versija)';
 $string['ciq1'] = 'Kad bijàt visvairàk aizñemts kà skolotàjs?';
+$string['ciq1short'] = 'Vistuvàkais';
 $string['ciq2'] = 'Kurà brïdï bijàt visvairàk atdalïti no màcïbàm?';
+$string['ciq2short'] = 'Vistàlàkais';
 $string['ciq3'] = 'Kàdas darbïbas no foruma Jþs uzskatàt par visnoderïgàkajàm?';
+$string['ciq3short'] = 'Izpalïdzïgs brïdis';
 $string['ciq4'] = 'Kàdas darbïbas no foruma Jþs uzskatàt par vismulsino¹àkajàm?';
+$string['ciq4short'] = 'Maldino¹s brïdis';
 $string['ciq5'] = 'Kàds notikums Jþs visvairàk pàrsteidza?';
+$string['ciq5short'] = 'Pàrsteidzo¹s brïdis';
 $string['ciqintro'] = 'Atceroties nesenos klases notikumus, atbildiet uz jautàjumiem.';
 $string['ciqname'] = 'Kritiski incidenti';
 $string['clicktocontinue'] = 'Turpinàt';
