@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.3 (2004052500)
+      // forum.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['addanewdiscussion'] = 'Pøidat nový pøíspìvek';
@@ -16,6 +16,7 @@ $string['configenablerssfeeds'] = 'Tímto povolíte funkci RSS kanálù pro v¹echna 
 $string['configlongpost'] = 'Pøíspìvek del¹í ne¾ tato vlo¾ená hodnota (HTML kód se nepoèítá) je pova¾ován za dlouhý.';
 $string['configmanydiscussions'] = 'Maximální poèet diskusí vo fóru zobrazovaný na jedné stránce.';
 $string['configmaxbytes'] = 'Výchozí maximální velikost pøílohy ve v¹ech fórech na tìchto stránkách (mù¾e být upravena nastavením kurzu a dal¹ími lokálními promìnnými)';
+$string['configreplytouser'] = 'Kdy¾ je pøíspìvek odesílán odbìratelùm, má email v poli Od: obsahovat adresu autora pøíspìvku? Pøíjemce tak mù¾e odpovídat pøímo autorovi emailem a ne pøes diskusní fórum. I kdy¾ je zde zvolena hodnota \'Ano\', u¾ivatelé si mohou ve svých profilech nastavit skrývání svém emailové adresy.';
 $string['configshortpost'] = 'Pøíspìvek krat¹í ne¾ tato vlo¾ená hodnota (HTML kód se nepoèítá) je pova¾ován za krátký.';
 $string['couldnotadd'] = 'Neznámá chyba! Nemohu pøidat vá¹ pøíspìvek';
 $string['couldnotdeleteratings'] = 'Je mi líto, ji¾ ohodnocený pøíspìvek nemù¾e být odstranìn';
@@ -25,8 +26,13 @@ $string['delete'] = 'Odstranit';
 $string['deleteddiscussion'] = 'Téma diskuse bylo odstranìno';
 $string['deletedpost'] = 'Pøíspìvek byl odstranìn';
 $string['deletesure'] = 'Jste si jistí, ¾e chcete odstranit tento pøíspìvek?';
+$string['digestmailheader'] = 'Toto je vas denni souhrn novych prispevku v diskusich na strankach $a->sitename. Chcete-li zmenit nastaveni techto odberu, jdete na $a->userprefs.';
+$string['digestmailprefs'] = 'vas uzivatelsky profil';
+$string['digestmailsubject'] = '$a: souhrn novych prispevku';
+$string['digestsentusers'] = 'Souhrnné emaily úspì¹nì zaslány $a u¾ivatelùm.';
 $string['discussion'] = 'Diskuse';
 $string['discussionmoved'] = 'Tato diskuse byla pøesunuta do \'$a\'.';
+$string['discussionname'] = 'Název diskuse';
 $string['discussions'] = 'Diskuse';
 $string['discussionsstartedby'] = 'Diskusi zahájil(a) $a';
 $string['discussionsstartedbyrecent'] = 'Diskusi právì zahájil(a) $a';
@@ -64,7 +70,7 @@ $string['modulenameplural'] = 'Fóra';
 $string['more'] = 'více';
 $string['movethisdiscussionto'] = 'Pøesunout tuto diskusi do ...';
 $string['namenews'] = 'Novinky';
-$string['namesocial'] = 'Spoleèenské fórum';
+$string['namesocial'] = 'Spoleèné fórum';
 $string['nameteacher'] = 'Uèitelské fórum';
 $string['newforumposts'] = 'Nové pøíspìvky';
 $string['nodiscussions'] = 'V tomto fóru zatím nejsou ¾ádná témata diskuse';
@@ -92,8 +98,13 @@ $string['postrating1'] = 'Vykazuje zejména INDIVIDUÁLNÍ poznávání';
 $string['postrating2'] = 'Rovnomìrnì samostatné i kolektivní';
 $string['postrating3'] = 'Vykazuje zejména KOLEKTIVNÍ poznávání';
 $string['posts'] = 'Pøíspìvky';
+$string['posttoforum'] = 'Poslat do fóra';
 $string['postupdated'] = 'Vá¹ pøíspìvek byl aktualizován';
+$string['processingdigest'] = 'Zpracovávám souhrnný email pro u¾ivatele $a';
 $string['processingpost'] = 'Zpracovávám pøíspìvek $a';
+$string['prune'] = 'Oddìlit';
+$string['prunedpost'] = 'Z pøíspìvku byla vytvoøena nová diskuse';
+$string['pruneheading'] = 'Oddìlit a pøesunout tento pøíspìvek do nové diskuse.';
 $string['rate'] = 'Hodnotit';
 $string['rating'] = 'Hodnocení';
 $string['ratingeveryone'] = 'Kdokoliv mù¾e hodnotit pøíspìvky';

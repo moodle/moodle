@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 (2004052500)
+      // moodle.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['action'] = 'Akce';
@@ -40,6 +40,7 @@ $string['adminhelpconfiguration'] = 'Nastavte, jak budou stránky vypadat a praco
 $string['adminhelpconfigvariables'] = 'Nastavte promìnné, které ovlivòují obecné fungování tìchto stránek';
 $string['adminhelpcourses'] = 'Nadefinujte kurzy a jejich kategorie a pøiøaïte k nim uèitele.';
 $string['adminhelpedituser'] = 'Projdìte seznam u¾ivatelských úètù a kterýkoliv z nich upravte';
+$string['adminhelpenrolments'] = 'Vyberte interní nebo externí zpùsob øízení zápisù do kurzù';
 $string['adminhelplanguage'] = 'Kontrola a úprava stávajícího jazyka';
 $string['adminhelplogs'] = 'Procházet protokoly aktivit na tìchto stránkách';
 $string['adminhelpmanageblocks'] = 'Správa instalovaných blokù a jejich nastavení';
@@ -56,7 +57,7 @@ $string['administrator'] = 'Správce';
 $string['administrators'] = 'Správci';
 $string['advancedfilter'] = 'Pokroèilý filtr';
 $string['again'] = 'znovu';
-$string['all'] = 'V¹echny';
+$string['all'] = 'V¹e';
 $string['allactivities'] = 'V¹echny èinnosti';
 $string['alldays'] = 'V¹echny dny';
 $string['allfieldsrequired'] = 'V¹echna pole jsou po¾adována';
@@ -70,7 +71,7 @@ $string['alphabet'] = 'A,Á,B,C,È,D,Ï,E,É,Ì,F,G,H,I,Í,J,K,L,M,N,Ò,O,Ó,P,Q,R,Ø,S,©
 $string['alphanumerical'] = 'Mù¾e obsahovat jen znaky abecedy a èíslice';
 $string['alreadyconfirmed'] = 'Registrace ji¾ byla potvrzena';
 $string['always'] = 'V¾dy';
-$string['answer'] = 'Odpovìdìt';
+$string['answer'] = 'Odpovìï';
 $string['areyousuretorestorethis'] = 'Pøejete si pokraèovat?';
 $string['areyousuretorestorethisinfo'] = 'Budete moci pøidat tuto zálohu k ji¾ existujícímu kurzu nebo z ní vytvoøit nový kurz.';
 $string['assessment'] = 'Hodnocení';
@@ -139,10 +140,12 @@ $string['closewindow'] = 'Zavøít toto okno';
 $string['comparelanguage'] = 'Porovnat a upravit souèasný jazyk';
 $string['complete'] = 'Podrobný';
 $string['configallowunenroll'] = 'Je-li toto nastaveno na \'Ano\', mohou se studenti sami vy¹krtávat z kurzù. Jinak je mù¾e z kurzu vy¹krtnout toliko uèitel nebo správce.';
+$string['configautologinguests'] = 'Mají být náv¹tìvníci va¹ich stránek automaticky pøihlá¹eni jako hosté, kdy¾ vstupují do kurzù, které umo¾ñují hostùm vstup?';
 $string['configcachetext'] = 'Na vìt¹ích stránkách nebo na stránkách, které pou¾ívají textové filtry, mù¾e toto nastavení provoz stránek výraznì urychlit. Po dobu urèenou zde zùstane zpracovaný text v mezipamìti a bude okam¾itì pou¾it. Nastavení pøíli¹ malé hodnoty mù¾e zobrazování stránek trochu zpomalit, nastavení pøíli¹ velké hodnoty zase zpùsobí, ¾e obnovení textu (napø. nové odkazy apod.) se projeví a¾ po del¹í dobì.';
 $string['configcountry'] = 'Pokud zde nastavíte zemi, pak bude pøednastavená pro v¹echny nové u¾ivatele. Zùstane-li toto pole prázdné, bude nutné nastavit zemi u ka¾dého nového u¾ivatele.';
 $string['configdebug'] = 'Pøi zapnutí dojde ke zvý¹ení vlastnosti PHP \'error_reporting\' a bude zobrazováno více varování. U¾iteèné hlavnì pro vývojáøe.';
 $string['configdeleteunconfirmed'] = 'Pou¾íváte-li ovìøování emailem, nastavíte tímto dobu, po kterou se bude èekat na potvrzení registrace. Po uplynutí této doby budou nepotvrzené ¾ádosti o zalo¾ení úètu odstranìny.';
+$string['configdigestmailtime'] = 'Lidem, kteøí si nastaví souhrnné odebírání novinek emailem, bude tento souhrn odesílán ka¾dý den. Tímto nastavujete, v kolik hodin budou tyto souhrnné emaily odesílány (první cron, který se spou¹tí po této hodinì, emaily ode¹le).';
 $string['configenablerssfeeds'] = 'Tímto nastavením povolujete funkce RSS kanálù napøíè celou instalací Moodle. Stále je¹tì musíte povolit funkce RSS u jednotlivých modulù v nabídce Správa modulù na stránce Správa.';
 $string['configenablerssfeedsdisabled'] = 'Toto nastavení není dostupné, proto¾e funkce RSS kanálù byly na tìchto stránkách zakázány. Chcete-li je povolit, jdìte do nabídky Promìnné na stránce Správa.';
 $string['configerrorlevel'] = 'Vyberte mno¾ství zobrazovaných varování PHP. Vìt¹inou je nejlep¹í volbou \'Normální\'.';
@@ -167,6 +170,7 @@ $string['configloglifetime'] = 'Toto urèuje dobu, po kterou jsou uchovávány prot
 $string['configlongtimenosee'] = 'Pokud se studenti nepøihlásí po velmi dlouhou dobu, jsou automaticky vy¹krtnuti z kurzù. Tento parametr urèuje maximální mo¾nou dobu, po kterou se student nemusí pøihlásit.';
 $string['configmaxbytes'] = 'Toto urèuje maximální mo¾nou velikost souborù nahrávaných uploadem na tyto stránky. Toto nastavení je limitováno PHP promìnnou upload_max_filesize a nastavením Apache LimitRequestBody. Na druhou stranu toto nastavení limituje velikosti, které lze nastavit na úrovni kurzù nebo modulù.';
 $string['configmaxeditingtime'] = 'Kolik èasu mají u¾ivatelé na opravu odeslaných pøíspìvkù. Doporuèujeme nastavit 30 minut.';
+$string['confignoreplyaddress'] = 'Emaily jsou nìkdy zasílány pod nìèím jménem (napø. pøíspìvky ve fórech). V pøípadech, kdy by se na email nemìlo odpovídat pøímo odesilateli (napø. proto¾e nechce zveøejòovat svou adresu), bude pou¾ita jako adresa odesílatele (adresa Od:) adresa zde uvedená.';
 $string['configopentogoogle'] = 'Povolíte-li toto nastavení, umo¾níte vyhledávaèi Google, aby vstoupil na va¹e stránky jako host. Navíc lidé, kteøí se k vám dostanou pøes vyhledávání v Google, budou automaticky pøihlá¹ení jako host. Pov¹imnìte si, ¾e toto umo¾ní transparentní pøístup pouze do kurzù, které mají povolen vstup hostù.';
 $string['configproxyhost'] = 'Pokud tento <B>server</B> pou¾ívá proxy (napø. firewall) pro pøipojení k Internetu, zadejte hostname a port proxy. Jinak nechejte pole prázdné.';
 $string['configsecureforms'] = 'Moodle mù¾e pou¾ívat vy¹¹í úroveò zabezpeèení pøi pøijímání údajù z webových formuláøù. Je-li tato volba povolena, pak je promìnná prohlí¾eèe HTTP_REFERER ovìøována proti aktuální adrese formuláøe. V nìkolika málo pøípadech v¹ak toto mù¾e zpùsobovat problémy, zejména pou¾ívá-li u¾ivatel firewall (napø. Zonealarm) nastavený tak, aby promìnnou HTTP_REFERER z webového provozu odøízl. Pøíznakem tohoto jsou problémy s formuláøi. Pokud tedy u¾ivatelé mají problém napøíklad na pøihla¹ovací stránce, mo¾ná budete chtít tuto metodu zakázat a tím ulehèit práci pøípadným útokùm na hesla u¾ivatelù (brute-force password attacks). Jste-li na pochybách, ponechejte zde hodnotu \'Ano\'.';
@@ -186,12 +190,14 @@ $string['confirm'] = 'Potvrzení';
 $string['confirmed'] = 'Va¹e registrace byla potvrzena';
 $string['confirmednot'] = 'Va¹e registrace je¹tì nebyla potvrzena!';
 $string['continue'] = 'Pokraèovat';
+$string['continuetocourse'] = 'Kliknìte zde pro vstup do kurzu';
 $string['cookiesenabled'] = 'Musíte povolit \'cookies\' ve va¹em prohlí¾eèi';
 $string['copy'] = 'kopie';
 $string['copyingcoursefiles'] = 'Kopíruji soubory kurzu';
 $string['copyinguserfiles'] = 'Kopíruji soubory u¾ivatele';
 $string['copyingzipfile'] = 'Kopíruji ZIP soubor';
 $string['copyrightnotice'] = 'Autorská práva';
+$string['cost'] = 'Cena';
 $string['country'] = 'Zemì';
 $string['course'] = 'Kurz';
 $string['courseavailable'] = 'Tento kurz je studentùm dostupný';
@@ -279,6 +285,9 @@ $string['down'] = 'Dolù';
 $string['downloadexcel'] = 'Stáhnout ve formátu Excel';
 $string['downloadtext'] = 'Stáhnout v textovém formátu';
 $string['doyouagree'] = 'Pøeèetli jste si tyto podmínky a rozumìli jim?';
+$string['duplicate'] = 'Duplikovat';
+$string['duplicatinga'] = 'Duplikuje se: $a';
+$string['duplicatingain'] = 'Duplikuje se $a->what v $a->in';
 $string['edit'] = 'Upravit $a';
 $string['editcoursesettings'] = 'Upravit nastavení kurzu';
 $string['editfiles'] = 'Upravit soubory';
@@ -298,9 +307,13 @@ Na strance \'$a->sitename\' je pozadovano zrizeni noveho uzivatelskeho uctu s va
 
 Potvrdte prosim tuto zadost na teto webove adrese:  $a->link
 
-Potrebujete-li pomoc, spojte se se spravcem stranek $a->admin';
+Toto je automaticky generovany email a neni nutne na nej odpovidat jeho odesilateli. Potrebujete-li pomoc, spojte se se spravcem stranek $a->admin';
 $string['emailconfirmationsubject'] = '$a: potvrzeni uctu';
 $string['emailconfirmsent'] = '<P>Na va¹i adresu <B>$a</B> byl odeslán email s jednoduchými pokyny k dokonèení va¹í registrace.<P>Narazíte-li na nìjaké obtí¾e, spojte se se správcem tìchto stránek.';
+$string['emaildigest'] = 'Typ souhrnných emailù';
+$string['emaildigestcomplete'] = 'Kompletní (dennì email s plným textem pøíspìvkù)';
+$string['emaildigestoff'] = 'Nepou¾ívat souhrny (jeden email na ka¾dý pøíspìvek)';
+$string['emaildigestsubjects'] = 'Pøedmìty (dennì email pouze s pøedmìty pøíspìvkù)';
 $string['emaildisable'] = 'Zobrazení emailové adresy zakázáno';
 $string['emaildisplay'] = 'Zobrazit email';
 $string['emaildisplaycourse'] = 'Zobrazovat mou emailovou adresu pouze dal¹ím úèastníkùm kurzu';
@@ -327,6 +340,9 @@ $string['enrolmentconfirmation'] = 'Chystáte zapsat sebe sama jako èlena tohoto 
 $string['enrolmentkey'] = 'Klíè k zápisu';
 $string['enrolmentkeyfrom'] = 'Tento kurz vy¾aduje \'klíè k zápisu\' - vstupní<br>heslo, které mù¾ete obdr¾et od $a';
 $string['enrolmentkeyhint'] = 'Tento klíè k zápisu nebyl správný, zkuste to je¹tì jednou<br>(Napovím vám - klíè zaèíná na \'$a\')';
+$string['enrolmentnew'] = 'Nový zápis v $a';
+$string['enrolmentnointernal'] = 'Ruèní zápisy nejsou momentálnì umo¾nìny.';
+$string['enrolments'] = 'Zápisy';
 $string['entercourse'] = 'Kliknìte pro vstup do kurzu';
 $string['enteremailaddress'] = 'Zadejte svou emailovou adresu, na kterou vám bude zasláno nové heslo.';
 $string['error'] = 'Chyba';
@@ -650,6 +666,10 @@ Na va¹i adresu $a->email byl odeslán email
 <B>s va¹ím novým heslem.</B>
 <P>
 Nové heslo bylo vygenerováno automaticky, tak¾e si jej mo¾ná budete chtít <A HREF=$a->link>zmìnit</A>.';
+$string['paymentinstant'] = 'Pomocí následujícího tlaèítka mù¾ete provést platbu a bìhem nìkolika minut se zapsat do kurzu!';
+$string['paymentrequired'] = 'Tento kurz je placený';
+$string['paymentsorry'] = 'Díky za va¹i platbu! Nane¹tìstí v¹ak je¹tì úplnì neprobìhla a dosud nejste registrováni pro vstup do kurzu \"$a->fullname\". Zkuste je¹tì chvíli poèkat a vstupte do kurzu znovu. Pokud problémy pøetrvají, kontaktujte va¹eho $a->teacher nebo správce tìchto stránek';
+$string['paymentthanks'] = 'Díky za va¹i platbu! Nyní jste zapsáni do kurzu:<br />\"$a\"';
 $string['people'] = 'Osoby';
 $string['personalprofile'] = 'Osobní profil';
 $string['phone'] = 'Telefon';
@@ -688,6 +708,7 @@ $string['rename'] = 'Pøejmenovat';
 $string['renamefileto'] = 'Pøejmenovat <b>$a</b> na';
 $string['required'] = 'Vy¾adováno';
 $string['requireskey'] = 'Tento kutz vy¾aduje klíè k zápisu';
+$string['requirespayment'] = 'Tento kurz vy¾aduje placený pøístup';
 $string['resortcoursesbyname'] = 'Pøeuspoøádat kurzy podle jména';
 $string['resources'] = 'Zdroje';
 $string['restore'] = 'Obnovit';
@@ -749,13 +770,14 @@ $string['sitefiles'] = 'Soubory';
 $string['sitelogs'] = 'Protokol stránek';
 $string['sitenews'] = 'Novinky stránek';
 $string['sites'] = 'Stránky';
+$string['sitesection'] = 'Zahrnout úvodní sekci';
 $string['sitesettings'] = 'Nastavení stránek';
 $string['size'] = 'Velikost';
 $string['sizeb'] = 'bytù';
 $string['sizegb'] = 'Gb';
 $string['sizekb'] = 'Kb';
 $string['sizemb'] = 'Mb';
-$string['socialheadline'] = 'Spoleèenská diskuse - nejnovìj¹í témata';
+$string['socialheadline'] = 'Spoleèná diskuse - nejnovìj¹í témata';
 $string['someallowguest'] = 'Nìkteré kurzy umo¾òují vstup pro hosty';
 $string['someerrorswerefound'] = 'Nìkteré informace chybìly nebo nebyly správné. Podrobnosti uvedeny dále.';
 $string['sortby'] = 'Tøídit podle';
@@ -825,7 +847,7 @@ $string['update'] = 'Aktualizovat';
 $string['updated'] = 'Aktualizováno $a';
 $string['updatemyprofile'] = 'Aktualizovat profil';
 $string['updatesevery'] = 'Aktualizovat ka¾dých $a vteøin';
-$string['updatethis'] = 'Aktualizovat tento $a';
+$string['updatethis'] = 'Aktualizovat tuto èinnost ($a)';
 $string['updatethiscourse'] = 'Aktualizovat tento kurz';
 $string['updatinga'] = 'Aktualizuji $a';
 $string['updatingain'] = 'Aktualizuji $a->what v $a->in';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.3 (2004052500)
+      // scorm.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['autocontinue'] = 'Automatické pokraèování';
@@ -8,6 +8,10 @@ $string['browsed'] = 'Procházeno';
 $string['browsemode'] = 'Re¾im procházení';
 $string['chooseapacket'] = 'Vybrat nebo aktualizovat balík SCORM';
 $string['completed'] = 'Dokonèeno';
+$string['configframesize'] = 'Velikost horního rámce s navigací v pixelech pøi procházení balíkem SCORM.';
+$string['configpopup'] = 'Má být pøi pøidávání nového balíku SCORM, který mù¾e být otevírán v novém popup oknì, tato mo¾nost implicitnì povolena?';
+$string['configpopupheight'] = 'Jaká má být implicitní vý¹ka nových popup oken';
+$string['configpopupresizable'] = 'Mají mít popup okna implicitnì promìnnou velikost?';
 $string['coursepacket'] = 'Balík kurzu';
 $string['coursestruct'] = 'Struktura kurzu';
 $string['datadir'] = 'Chyba souborového systému: Nelze vytvoøit adresáø s daty kurzu';
