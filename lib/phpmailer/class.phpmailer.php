@@ -119,7 +119,7 @@ class PHPMailer
      * is in a different directory than the PHP include path.  
      * @var string
      */
-    var $PluginDir         = "";
+    var $PluginDir         = '';
 
     /**
      *  Holds PHPMailer version.
@@ -226,6 +226,20 @@ class PHPMailer
     /////////////////////////////////////////////////
     // VARIABLE METHODS
     /////////////////////////////////////////////////
+
+    /**
+     * Constructor
+     * Hack for Moodle as class may be included from various locations
+     * SE 20041001
+     * @param void
+     * @return void
+     */
+    function PHPMailer () {
+        global $CFG;
+        $this->PluginDir = $CFG->libdir.'/phpmailer/';
+    }
+
+    
 
     /**
      * Sets message type to HTML.  
@@ -588,16 +602,18 @@ class PHPMailer
      * Sets the language for all class error messages.  Returns false 
      * if it cannot load the language file.  The default language type
      * is English.
+     * SE 20041001: Added '$this->PluginDir' for Moodle compatibility
+     *
      * @param string $lang_type Type of language (e.g. Portuguese: "br")
      * @param string $lang_path Path to the language file directory
      * @access public
      * @return bool
      */
     function SetLanguage($lang_type, $lang_path = "language/") {
-        if(file_exists($lang_path.'phpmailer.lang-'.$lang_type.'.php'))
-            include($lang_path.'phpmailer.lang-'.$lang_type.'.php');
+        if(file_exists($this->PluginDir.$lang_path.'phpmailer.lang-'.$lang_type.'.php'))
+            include($this->PluginDir.$lang_path.'phpmailer.lang-'.$lang_type.'.php');
         else if(file_exists($lang_path.'phpmailer.lang-en.php'))
-            include($lang_path.'phpmailer.lang-en.php');
+            include($this->PluginDir.$lang_path.'phpmailer.lang-en.php');
         else
         {
             $this->SetError("Could not load language file");
