@@ -56,6 +56,8 @@ $string['auth_nntpport'] = 'Server port (119 is the most common)';
 $string['auth_nntptitle'] = 'Use an NNTP server';
 $string['auth_nonedescription'] = 'Users can sign in and create valid accounts immediately, with no authentication against an external server and no confirmation via email.  Be careful using this option - think of the security and administration problems this could cause.';
 $string['auth_nonetitle'] = 'No authentication';
+$string['auth_pamtitle'] = 'PAM (Pluggable Authentication Modules)';
+$string['auth_pamdescription'] = 'This method uses PAM to access the native usernames on this server. You have to install <a href=\"http://www.math.ohio-state.edu/~ccunning/pam_auth/\" target=\"_blank\">PHP4 PAM Authentication</a> in order to use this module.';
 $string['auth_pop3description'] = 'This method uses a POP3 server to check whether a given username and password is valid.';
 $string['auth_pop3host'] = 'The POP3 server address. Use the IP number, not DNS name.';
 $string['auth_pop3mailbox'] = 'Name of the mailbox to attempt a connection with.  (usually INBOX)';
