@@ -2776,7 +2776,7 @@ function workshop_print_assessment($workshop, $assessment = false, $allowchanges
 			}
 			
 		// only show the grade if grading strategy > 0 and the grade is positive
-		if ($showgrades and $assessment->grade >= 0) { 
+		if ($showgrades and $workshop>gradingstrategy and $assessment->grade >= 0) { 
 			echo "<CENTER><B>".get_string("thegradeis", "workshop").": ".number_format($assessment->grade, 2)." (".
 				get_string("maximumgrade")." ".number_format($workshop->grade, 0).")</B></CENTER><BR CLEAR=ALL>\n";
 			}
