@@ -186,6 +186,7 @@ function forum_cron () {
                 $mailcount=0;
                 foreach ($users as $userto) {
                     $USER->lang = $userto->lang;  // Affects the language of get_string
+                    $canreply = forum_user_can_post($forum, $userto);
 
 
                     $by->name = "$userfrom->firstname $userfrom->lastname";
@@ -213,9 +214,11 @@ function forum_cron () {
                         $post->forum = $forum->id;
                         $posttext .= forum_print_attachments($post, "text");
                     }
-                    $posttext .= "---------------------------------------------------------------------\n";
-                    $posttext .= get_string("postmailinfo", "forum", $course->shortname)."\n";
-                    $posttext .= "$CFG->wwwroot/mod/forum/post.php?reply=$post->id\n";
+                    if ($canreply) {
+                        $posttext .= "---------------------------------------------------------------------\n";
+                        $posttext .= get_string("postmailinfo", "forum", $course->shortname)."\n";
+                        $posttext .= "$CFG->wwwroot/mod/forum/post.php?reply=$post->id\n";
+                    }
                     if ($canunsubscribe) {
                         $posttext .= "\n---------------------------------------------------------------------\n";
                         $posttext .= get_string("unsubscribe", "forum");
@@ -232,7 +235,7 @@ function forum_cron () {
                         } else {
                             $posthtml .= " -> <A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">$discussion->name</A></FONT></P>";
                         }
-                        $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, true, false, false);
+                        $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, $canreply, false, false);
 
                         if ($canunsubscribe) {
                             $posthtml .= "\n<BR><HR SIZE=1 NOSHADE><P ALIGN=RIGHT><FONT SIZE=1><A HREF=\"$CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\">".get_string("unsubscribe", "forum")."</A></FONT></P>";
@@ -1153,13 +1156,18 @@ function forum_user_can_post_discussion($forum) {
     }
 }
 
-function forum_user_can_post($forum) {
-// $forum is an object
-    global $USER;
+function forum_user_can_post($forum, $user=NULL) {
+// $forum, $user are objects
+
+    if ($user) {
+        $isteacher = isteacher($forum->course, $user->id);
+    } else {
+        $isteacher = isteacher($forum->course);
+    }
 
     if ($forum->type == "teacher") {
-        return isteacher($forum->course);
-    } else if (isteacher($forum->course)) {
+        return $isteacher;
+    } else if ($isteacher) {
         return true;
     } else {
         return $forum->open;
