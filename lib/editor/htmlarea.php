@@ -1437,11 +1437,11 @@ HTMLArea.prototype._createLink = function(link) {
             a = editor.getParentElement();
             var sel = editor._getSelection();
             var range = editor._createRange(sel);
-            if (!HTMLArea.is_ie) {
-                a = range.startContainer;
-                if (!/^a$/i.test(a.tagName))
-                    a = a.nextSibling;
-            }
+        //    if (!HTMLArea.is_ie) {           /// Removed by PJ and Martin, Moodle bug #1455
+        //        a = range.startContainer;
+        //        if (!/^a$/i.test(a.tagName))
+        //            a = a.nextSibling;
+        //    }
         } else a.href = param.f_href.trim();
         if (!/^a$/i.test(a.tagName))
             return false;
