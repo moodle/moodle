@@ -364,7 +364,7 @@ function stripslashes_recursive($var) {
  * @return string
  */
 function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
-    
+
     static $currentlang;
 
     if (empty($currentlang)) {
@@ -1960,7 +1960,7 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
                 }
             }
         }
-    
+
         if (!empty($THEME->blocksheets)) {     // Search for styles.php within block modules
             if ($mods = get_list_of_plugins('blocks')) {
                 foreach ($mods as $mod) {
@@ -1970,7 +1970,7 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
                 }
             }
         }
-    
+
         if (!empty($THEME->langsheets)) {     // Search for styles.php within the current language
             $lang = current_language();
             if (file_exists($CFG->dirroot.'/lang/'.$lang.'/styles.php')) {
@@ -2901,7 +2901,7 @@ function use_html_editor($name='', $editorhidebuttons='') {
     if (empty($name)) {
         echo "\n".'HTMLArea.replaceAll(config);'."\n";
     } else {
-        echo "\nHTMLArea.replace('$name', config);\n";
+        echo "\nHTMLArea.replace('edit-$name', config);\n";
     }
     echo '</script>'."\n";
 }
@@ -3141,7 +3141,7 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
     $sections = get_records('course_sections','course',$course->id,'section','section,visible,summary');
 
     if (!empty($THEME->makenavmenulist)) {   /// A hack to produce an XHTML navmenu list for use in themes
-        $THEME->navmenulist = navmenulist($course, $sections, $modinfo, 
+        $THEME->navmenulist = navmenulist($course, $sections, $modinfo,
                                           $isteacher, $strsection, $strjumpto, $width, $cm);
     }
 
@@ -3225,10 +3225,10 @@ function navmenu($course, $cm=NULL, $targetwindow='self') {
 
 
 /**
- * Given a course 
+ * Given a course
  * This function returns a small popup menu with all the
  * course activity modules in it, as a navigation menu
- * outputs a simple list structure in XHTML 
+ * outputs a simple list structure in XHTML
  * The data is taken from the serialised array stored in
  * the course record
  *
@@ -3478,9 +3478,9 @@ function print_scale_menu_helpbutton($courseid, $scale) {
 }
 
 /**
- * Print an error page displaying an error message.  
+ * Print an error page displaying an error message.
  * Old method, don't call directly in new code - use print_error instead.
- * 
+ *
  *
  * @uses $SESSION
  * @uses $CFG
@@ -3905,7 +3905,7 @@ function print_side_block($heading='', $content='', $list=NULL, $icons=NULL, $fo
         if ($footer) {
             echo '<div class="footer">'. $footer .'</div>';
         }
-        
+
     }
 
     print_side_block_end($attributes);
@@ -3937,9 +3937,9 @@ function print_side_block_start($heading='', $attributes = array()) {
     // else, it's tagged as a sideblock
 
     /*
-    
+
     // IE misery: if I do it this way, blocks which start hidden cannot be "unhidden"
-    
+
     // If there is a cookie to hide this thing, start it hidden
     if (!empty($attributes['id']) && isset($_COOKIE['hide:'.$attributes['id']])) {
         $attributes['class'] = 'hidden '.$attributes['class'];
@@ -4109,7 +4109,7 @@ function page_id_and_class(&$getid, &$getclass) {
  */
 function print_maintenance_message () {
     global $CFG, $SITE;
-    
+
     print_header(strip_tags($SITE->fullname), $SITE->fullname, 'home');
     print_simple_box_start('center');
     print_heading(get_string('sitemaintenance', 'admin'));
@@ -4135,7 +4135,7 @@ class tabobject {
         $this->text = $text;
     }
 
-    
+
     /// a method to look after the messy business of setting up a tab cell
     /// with all the appropriate classes and things
     function createtab ($selected=false, $inactive=false, $last=false) {
@@ -4157,19 +4157,19 @@ class tabobject {
     /// Set the class for inactive cells
         if ($inactive) {
             $cstr .= ' inactive';
-          
+
     /// Set the class for the selected cell
         } else if ($selected) {
             $cstr .= ' selected';
         }
-            
-            
+
+
     /// Are we on the last tab in this row?
         if ($last) {
             $cstr .= ' last';
             $astr = '<span>'.$astr.'</span>';
         }
-          
+
     /// Lets set up the tab cell
         $str .= '<td';
         if (!empty($cstr)) {
@@ -4217,46 +4217,46 @@ function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $return=false) {
         }
         $tabrows = array_merge($rearrows,$frontrows);
     }
-    
+
 /// $inactive must be an array
     if (!is_array($inactive)) {
         $inactive = array();
     }
 
-/// A table to encapsulate the tabs    
+/// A table to encapsulate the tabs
     $str = '<table class="tabs" cellspacing="0">';
     $str .= '<tr><td class="left side"></td><td>';
-    
+
     $rowcount = count($tabrows);
 /// Cycle through the tab rows
     foreach ($tabrows as $row) {
 
         $rowcount--;
-    
+
         $str .= '<table class="tabrow r'.$rowcount.'" cellspacing="0">';
         $str .= '<tr>';
-        
+
         $numberoftabs = count($row);
         $currenttab   = 0;
         $cstr         = '';
         $astr         = '';
-        
-        
+
+
     /// Cycle through the tabs
         foreach ($row as $tab) {
             $currenttab++;
 
-            $str .= $tab->createtab( ($selected == $tab->id), 
+            $str .= $tab->createtab( ($selected == $tab->id),
                                      (in_array($tab->id, $inactive)),
                                      ($currenttab == $numberoftabs) );
         }
-        
+
         $str .= '</tr>';
         $str .= '</table>';
     }
     $str .= '</td><td class="right side"></td></tr>';
     $str .= '</table>';
-    
+
     if ($return) {
         return $str;
     }
