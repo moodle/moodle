@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.2 development (2003111400)
+      // exercise.php - created with Moodle 1.2 development (2003121500)
 
 
 $string['absent'] = 'Afwezig';
@@ -7,6 +7,7 @@ $string['accumulative'] = 'Accumulatief';
 $string['action'] = 'Actie';
 $string['ago'] = '$a geleden';
 $string['allgradeshaveamaximumof'] = 'Alle cijfers hebben een maximum van: $a';
+$string['amend'] = 'Verbeter';
 $string['amendassessmentelements'] = 'Verbeter beoordelingselementen';
 $string['amendtitle'] = 'Verbeter titel';
 $string['assess'] = 'Beoordeel';
@@ -20,6 +21,7 @@ $string['assessments'] = 'Beoordelingen';
 $string['atthisstageyou'] = 'Je hebt nu een beoordeling afgewerkt.<br/>Misschien wil je je werk herzien met deze beoordeling in gedachte.<br/>Als je dat doet, vergeet dan niet om ook je beoordeling te herzien.<br/>Je kunt dit doen door hier onder op de Beoordeel opnieuw-link te klikken.';
 $string['awaitingassessmentbythe'] = 'Beoordeling van de $a verwacht';
 $string['awaitingfeedbackfromthe'] = 'Feedback van de $a verwacht';
+$string['clearlateflag'] = 'Toch niet te laat';
 $string['comment'] = 'Commentaar';
 $string['confirmdeletionofthisitem'] = 'Bevestig de verwijdering van $a';
 $string['correct'] = 'Juist';
@@ -99,8 +101,6 @@ $string['phase2'] = 'Laat $a beoordelingen en inzendingen toe';
 $string['phase2short'] = 'Open';
 $string['phase3'] = 'Stop $a opdrachten en inzendingen';
 $string['phase3short'] = 'Gesloten';
-$string['phase4'] = 'Toon de totaalcijfers en de scoretabel';
-$string['phase4short'] = 'Toon';
 $string['pleasegradetheassessment'] = 'Geef een cijfer voor de beoordeling van dit werkstuk door $a';
 $string['pleasesubmityourwork'] = 'Stuur je werk in met dit formulier';
 $string['pleaseusethisform'] = 'Vul dit formulier in wanneer je klaar bent<br/>met alle instructies van onderstaande
@@ -144,6 +144,7 @@ $string['suggestedgrade'] = 'Gesuggereerd cijfer';
 $string['teacherassessment'] = '$a Beoordeling';
 $string['teacherassessmenttable'] = '$a Beoordelingstabel';
 $string['teacherscomment'] = 'Commentaar van de leraar';
+$string['theexercise'] = 'De oefening';
 $string['theexerciseandthesubmissionby'] = 'De oefening en de inzending door $a';
 $string['thegradeis'] = 'Het cijfer is$a';
 $string['thereisfeedbackfromthe'] = 'Er is feedback van de $a';
