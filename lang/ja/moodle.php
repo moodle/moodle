@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 development (2004041800)
+      // moodle.php - created with Moodle 1.3 development (2004042600)
 
 
 $string['action'] = '操作';
@@ -825,6 +825,8 @@ $string['turneditingoff'] = '編集モード OFF';
 $string['turneditingon'] = '編集モード ON';
 $string['undecided'] = '未決定';
 $string['unenrol'] = '参加取消し';
+$string['unenrolallstudents'] = '全学生の参加取消し';
+$string['unenrolallstudentssure'] = '本当に全学生を参加取消しを行っても宜しいですか?';
 $string['unenrolme'] = '$a から参加を取消す';
 $string['unenrolsure'] = '$a をコースから登録抹消してもよろしいですか?';
 $string['unknowncategory'] = '無名のカテゴリ';
