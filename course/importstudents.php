@@ -89,6 +89,8 @@
         $alreadycourses = array();
     }
 
+    $alreadycourses[$course->id] = $course; // this should take the currrent course out of the search results.
+
     $numcourses = 0;
 
 
