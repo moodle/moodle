@@ -46,15 +46,21 @@ $ALLOWED_TAGS = "<p><br><b><i><u><font><table><tbody><span><div><tr><td><ol><ul>
 
 /// Functions
 
-function s($var="") {
+function s($var) {
 /// returns $var with HTML characters (like "<", ">", etc.) properly quoted,
 
+    if (empty($var)) {
+        return "";
+    }
     return htmlSpecialChars(stripslashes_safe($var));
 }
 
-function p($var="") {
+function p($var) {
 /// prints $var with HTML characters (like "<", ">", etc.) properly quoted,
 
+    if (empty($var)) {
+        echo "";
+    }
     echo htmlSpecialChars(stripslashes_safe($var));
 }
 
@@ -679,7 +685,7 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
         $meta = "<meta http-equiv=\"content-type\" content=\"text/html; charset=".get_string("thischarset")."\">\n$meta\n";
     }
 
-    if ($CFG->langdir == "RTL") {
+    if (!empty($CFG->langdir) and $CFG->langdir == "RTL") {
         $direction = " dir=\"rtl\"";
     } else {
         $direction = " dir=\"ltr\"";
