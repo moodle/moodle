@@ -5,10 +5,22 @@
 //  This fragment is called by /admin/index.php
 ////////////////////////////////////////////////////////////////////////////////
 
-    $module->fullname = "Journal";
-    $module->version  = "20011110";
-    $module->cron     = 0;
-    $module->search   = "";
+$module->fullname = "Journal";
+$module->version  = 200208010;
+$module->cron     = 60;
+$module->search   = "";
 
-?>
+function journal_upgrade($oldversion) {
+// This function does anything necessary to upgrade
+// older versions to match current functionality
 
+    $result = true;
+
+    if ($oldversion < 20020810) {
+        if (! execute_sql("ALTER TABLE `journal_entries` ADD `mailed` TINYINT(1) UNSIGNED DEFAULT '0' NOT NULL")) {
+            $result = false;
+        }
+    }
+    
+    return $result;
+}
