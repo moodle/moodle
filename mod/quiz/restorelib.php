@@ -142,7 +142,7 @@
             }
 
             //Do some output
-            echo "<ul><li>Category \"".$quiz_cat->name."\"<br>";
+            echo "<ul><li>".get_string("category")." \"".$quiz_cat->name."\"<br>";
             backup_flush(300);
 
             if ($newid) {
