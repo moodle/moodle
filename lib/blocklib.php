@@ -927,7 +927,7 @@ function blocks_get_config_default ($cformat='') {
         return $CFG->defaultblocks_override;
     }
     /// If not format is specified, return the site default.
-    else if ($cformat == '') {
+    else if ($cformat == '' || $cformat == 'site') {
         if (!empty($CFG->defaultblocks_site)) {
             return $CFG->defaultblocks_site;
         }
