@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.3.3 (2004052503)
+      // quiz.php - created with Moodle 1.4.1 (2004083101)
 
 
 $string['acceptederror'] = 'Margem de erro';
@@ -42,9 +42,11 @@ $string['category'] = 'Categoria';
 $string['categoryinfo'] = 'Informação da categoria';
 $string['categorymove'] = 'A categoria \'$a->name\' contém $a->count perguntas.  Por favor transfira-as para outra categoria.';
 $string['categorymoveto'] = 'Transfira-as  para esta categoria';
+$string['checkanswer'] = 'Selecionar';
 $string['choice'] = 'Escolha';
 $string['choices'] = 'Escolhas disponíveis';
 $string['choosedatasetproperties'] = 'Escolher propriedades do dataset';
+$string['close'] = 'Fechar exibição do formato de visualização';
 $string['confirmstartattempt'] = 'O questionário tem um limite de duração. Você tem certeza que quer iniciar?';
 $string['correctanswer'] = 'Resposta correta';
 $string['correctanswerformula'] = 'Corrijir fórmula de respostas';
@@ -180,6 +182,8 @@ $string['overdue'] = 'Expirado';
 $string['paragraphquestion'] = 'O Parágrafo-questão da linha $a não é suportado. A questão será ignorada.';
 $string['passworderror'] = 'Senha errada';
 $string['percentcorrect'] = 'por cento correto';
+$string['preview'] = 'Exibir formato de visualização';
+$string['previewquestion'] = 'Exibir formato de visualização da questão';
 $string['publish'] = 'Publicar';
 $string['publishedit'] = 'Você deve ter direitos de publicação de cursos para adicionar ou editar questões nesta categoria';
 $string['qti'] = 'IMS QTI format';

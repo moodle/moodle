@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.3.3 (2004052503)
+      // forum.php - created with Moodle 1.4.1 (2004083101)
 
 
 $string['addanewdiscussion'] = 'Adicionar um novo tópico de discussão';
@@ -43,6 +43,7 @@ $string['editing'] = 'Edição';
 $string['emptymessage'] = 'A sua mensagem não foi enviada. Normalmente isto acontece quando a mensagem ou o campo \"assunto\" estão em branco ou quando o anexo é grande demais. ';
 $string['everyonecanchoose'] = 'Todos podem fazer assinatura';
 $string['everyoneissubscribed'] = 'Todos são assinantes deste fórum';
+$string['existingsubscribers'] = 'Assinantes';
 $string['forcesubscribe'] = 'Obrigar  todos a serem assinantes';
 $string['forcesubscribeq'] = 'Obrigar  todos a serem assinantes?';
 $string['forum'] = 'Fórum';
@@ -100,6 +101,7 @@ $string['postrating3'] = 'Mostra sobretudo saber CONECTADO';
 $string['posts'] = 'Mensagens';
 $string['posttoforum'] = 'Enviar mensagem ao fórum';
 $string['postupdated'] = 'A sua mensagem foi atualizada';
+$string['potentialsubscribers'] = 'Potenciais assinantes';
 $string['processingdigest'] = 'Processando digest para o usuário $a';
 $string['processingpost'] = 'Processando mensagem $a';
 $string['prune'] = 'Interromper';
@@ -147,6 +149,8 @@ $string['subscriptions'] = 'Assinaturas';
 $string['unsubscribe'] = 'Suspender o recebimento de mensagens deste fórum via email';
 $string['unsubscribed'] = 'Cancelado o recebimento de cópias das mensagens via email ';
 $string['unsubscribeshort'] = 'Cancelar assinatura';
+$string['yesforever'] = 'Sim, sempre';
+$string['yesinitially'] = 'Sim, inicialmente';
 $string['youratedthis'] = 'Você avaliou este';
 $string['yournewtopic'] = 'Novo tópico de discussão';
 $string['yourreply'] = 'A sua resposta';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.3.3 (2004052503)
+      // auth.php - created with Moodle 1.4.1 (2004083101)
 
 
 $string['auth_dbdescription'] = 'Este método usa uma tabela de uma base de dados externa para verificar se a senha e o nome do usuário são válidos. Se a conta for nova, a informação de outros campos também deve ser copiada em Moodle.';
@@ -35,6 +35,7 @@ $string['auth_ldap_create_context'] = 'Se você ativar a confirmação via correio 
 $string['auth_ldap_creators'] = 'Lista dos grupos em que os membros tem permissão para criar novos cursos. Separe os grupos com \';\'. Por exemplo \'cn=teachers,ou=staff,o=myorg\'';
 $string['auth_ldap_host_url'] = 'Especifique o servidor LDAP usando o URL como \'ldap://ldap.myorg.com/\' ou \'ldaps://ldap.myorg.com/\'';
 $string['auth_ldap_memberattribute'] = 'Especifique o atributo do usuário quando pertence a um grupo. Normalmente o atributo é \'membro\'';
+$string['auth_ldap_objectclass'] = 'O filtro usado para a busca de nomes de usuários. Normalmente é definido algo semelhante a objectClass=posixAccount . O padrão objectClass=* retorna todos os objetos do LDAP.';
 $string['auth_ldap_search_sub'] = 'Inserir valor <> 0 se quiser procurar usuários nos sub-contextos.';
 $string['auth_ldap_update_userinfo'] = 'Atualizar os dados dos usuários (nome, sobrenome, endereço..) a partir do LDAP. Para informação sobre o mapeamento consulte /auth/ldap/attr_mappings.php';
 $string['auth_ldap_user_attribute'] = 'O atributo usado para nomear/procurar usuários. Geralmente \'cn\'.';
@@ -53,6 +54,7 @@ $string['auth_nonedescription'] = 'Os usuários podem criar contas válidas imedia
 $string['auth_nonetitle'] = 'Nenhuma autenticação';
 $string['auth_pop3description'] = 'Este método usa um servidor POP3 para verificar se o nome de usuário e a senha são válidos.';
 $string['auth_pop3host'] = 'Endereço do servidor POP3. Use o NÚMERO IP e não o nome DNS.';
+$string['auth_pop3mailbox'] = 'Nome do mailbox indicado para a conexão (normalmente INBOX)';
 $string['auth_pop3port'] = 'Porta do servidor  (normalmente 110)';
 $string['auth_pop3title'] = 'Use um servidor POP3';
 $string['auth_pop3type'] = 'Tipo de servidor. Se o seu servidor usar certificados de segurança, escolha pop3cert.';

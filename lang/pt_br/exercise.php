@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.3.3 (2004052503)
+      // exercise.php - created with Moodle 1.4.1 (2004083101)
 
 
 $string['absent'] = 'Ausente';
@@ -43,6 +43,7 @@ $string['edit'] = 'Editar';
 $string['editingassessmentelements'] = 'Editando elementos da avaliação';
 $string['element'] = 'Elemento';
 $string['elementweight'] = 'Peso do elemento';
+$string['enterpassword'] = 'Escrever senha';
 $string['entriessaved'] = 'Rgistros salvados';
 $string['errorbanded'] = 'Erro relacionado';
 $string['excellent'] = 'Excelente';
@@ -96,12 +97,14 @@ $string['noteonstudentassessments'] = '{nota do estudante/ avaliação das notas d
 $string['notgraded'] = 'Não foram dadas as notas';
 $string['notitlegiven'] = 'nenhum titulo';
 $string['numberofassessmentelements'] = 'Número de comentários, Elementos da Avaliação, Notas, Definições de critérios ou categorias de uma rubrica';
+$string['numberofcriterionelements'] = 'O número de elementos de critério deve ser superior a um.';
 $string['numberofentries'] = 'Número de registros';
 $string['numberofentriesinleaguetable'] = 'Número de registros na tabela';
 $string['numberofnegativeresponses'] = 'Núvero de respostas negativas';
 $string['onesubmission'] = 'Um envio';
 $string['optionaladjustment'] = 'Ajuste opcional';
 $string['overallgrade'] = 'Nota geral';
+$string['passwordprotectedexercise'] = 'Exercício protegido por senha';
 $string['phase'] = 'Fase';
 $string['phase1'] = 'Configurar exercício';
 $string['phase1short'] = 'Configurar';
@@ -163,8 +166,9 @@ $string['title'] = 'Título';
 $string['typeofscale'] = 'Tipo de escala';
 $string['unassessed'] = '$a não avaliados';
 $string['ungradedstudentassessments'] = '$a avaliações ainda sem nota';
-$string['usemaximum'] = 'Uso máximo';
-$string['usemean'] = 'Uso médio';
+$string['usemaximum'] = 'Usar máximo';
+$string['usemean'] = 'Usar médio';
+$string['usepassword'] = 'Usar senha';
 $string['verylax'] = 'Muito vago';
 $string['verypoor'] = 'Muito pobre';
 $string['verystrict'] = 'Muito preciso';
@@ -177,6 +181,7 @@ $string['weightforteacherassessments'] = 'Peso de $a avaliações';
 $string['weights'] = 'Pesos';
 $string['weightssaved'] = 'Pesos salvados';
 $string['weightsusedforoverallgrade'] = 'pesos usados para a avaliação geral';
+$string['wrongpassword'] = 'Senha errada';
 $string['yourassessment'] = 'A sua avaliação';
 $string['yourfeedbackgoeshere'] = 'O seu feedback';
 $string['yoursubmission'] = 'O seu envio';
