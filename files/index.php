@@ -123,7 +123,7 @@
         }
 
 
-        echo "<table border=0 align=center cellspacing=3 cellpadding=3 width=640>";
+        echo "<table border=\"0\" align=\"center\" cellspacing=\"3\" cellpadding=\"3\" width=\"640\">";
         echo "<tr>";
         echo "<td colspan=\"2\">";
 
@@ -540,11 +540,11 @@
                 echo $file;
                 print_simple_box_end();
                 echo "<br />";
-                echo "<p align=center>".get_string("areyousuretorestorethisinfo")."</p>";
+                echo "<p align=\"center\">".get_string("areyousuretorestorethisinfo")."</p>";
                 $restore_path = "$CFG->wwwroot/backup/restore.php";
                 notice_yesno (get_string("areyousuretorestorethis"),
-                                $restore_path."?id=".$id."&file=".cleardoubleslashes($id.$wdir."/".$file),
-                                "index.php?id=$id&wdir=$wdir&action=cancel");
+                                $restore_path."?id=".$id."&amp;file=".cleardoubleslashes($id.$wdir."/".$file),
+                                "index.php?id=$id&amp;wdir=$wdir&amp;action=cancel");
             } else {
                 displaydir($wdir);
             }
