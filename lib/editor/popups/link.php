@@ -9,12 +9,13 @@
         $course->fullname = "";   // Just to keep display happy, though browsing may fail
     }
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
 <title><?php print_string("insertlink","editor");?></title>
-<meta http-equiv="Content-Type" content="text/html; <?php print_string("thischarset");?>">
-<script language="JavaScript" type="text/javascript">
+<meta http-equiv="Content-Type" content="text/html; <?php print_string("thischarset");?>" />
+<script language="javascript" type="text/javascript">
 
 function onCancel() {
   window.close();
@@ -74,7 +75,6 @@ color: black;
 form { margin-bottom: 1px; margin-top: 1px; }
 </style>
 </head>
-
 <body>
 <div class="title"><?php print_string("insertlink","editor");?></div>
   <table width="450" border="0" cellspacing="0" cellpadding="2">
@@ -103,17 +103,17 @@ form { margin-bottom: 1px; margin-top: 1px; }
     <table border="0" cellpadding="2" cellspacing="0">
           <tr><td><?php print_string("selection","editor");?>: </td>
           <td><form name="idelete" id="idelete">
-          <input name="btnDelete" type="submit" id="btnDelete" value="<?php print_string("delete","editor");?>" onclick="return submit_form('delete');"></form></td>
+          <input name="btnDelete" type="submit" id="btnDelete" value="<?php print_string("delete","editor");?>" onclick="return submit_form('delete');" /></form></td>
           <td><form name="imove" id="imove">
-          <input name="btnMove" type="submit" id="btnMove" value="<?php print_string("move","editor");?>" onclick="return submit_form('move');"></form></td>
+          <input name="btnMove" type="submit" id="btnMove" value="<?php print_string("move","editor");?>" onclick="return submit_form('move');" /></form></td>
           <td><form name="izip" id="izip">
-          <input name="btnZip" type="submit" id="btnZip" value="<?php print_string("zip","editor");?>" onclick="return submit_form('zip');"></form></td>
+          <input name="btnZip" type="submit" id="btnZip" value="<?php print_string("zip","editor");?>" onclick="return submit_form('zip');" /></form></td>
           <td><form name="irename" id="irename" method="post" action="../coursefiles.php" target="fbrowser">
-          <input type="hidden" name="id" value="<?php print($course->id);?>">
-          <input type="hidden" name="wdir" value="">
-          <input type="hidden" name="file" value="">
-          <input type="hidden" name="action" value="rename">
-          <input name="btnRename" type="submit" id="btnRename" value="<?php print_string("rename","editor");?>"></form></td>
+          <input type="hidden" name="id" value="<?php print($course->id);?>" />
+          <input type="hidden" name="wdir" value="" />
+          <input type="hidden" name="file" value="" />
+          <input type="hidden" name="action" value="rename" />
+          <input name="btnRename" type="submit" id="btnRename" value="<?php print_string("rename","editor");?>" /></form></td>
           </tr>
     </table>
   </td>
@@ -127,19 +127,19 @@ form { margin-bottom: 1px; margin-top: 1px; }
       <td height="22"><?php
       if(isteacher($id)) { ?>
           <form name="cfolder" id="cfolder" action="../coursefiles.php" method="post" target="fbrowser">
-          <input type="hidden" name="id" value="<?php print($course->id);?>">
-          <input type="hidden" name="wdir" value="">
-          <input type="hidden" name="action" value="mkdir">
-          <input name="name" type="text" id="foldername" size="35">
-          <input name="btnCfolder" type="submit" id="btnCfolder" value="<?php print_string("createfolder","editor");?>" onclick="return checkvalue('foldername','cfolder');">
+          <input type="hidden" name="id" value="<?php print($course->id);?>" />
+          <input type="hidden" name="wdir" value="" />
+          <input type="hidden" name="action" value="mkdir" />
+          <input name="name" type="text" id="foldername" size="35" />
+          <input name="btnCfolder" type="submit" id="btnCfolder" value="<?php print_string("createfolder","editor");?>" onclick="return checkvalue('foldername','cfolder');" />
           </form>
           <form action="../coursefiles.php?id=<?php print($course->id);?>" method="post" enctype="multipart/form-data" name="uploader" target="fbrowser" id="uploader">
-          <input type="hidden" name="MAX_FILE_SIZE" value="<?php print($upload_max_filesize);?>">
-          <input type="hidden" name="id" VALUE="<?php print($course->id);?>">
-          <input type="hidden" name="wdir" value="">
-          <input type="hidden" name="action" value="upload">
-          <input type="file" name="userfile" id="userfile" size="35">
-          <input name="save" type="submit" id="save" onclick="return checkvalue('userfile','uploader');" value="<?php print_string("upload","editor");?>">
+          <input type="hidden" name="MAX_FILE_SIZE" value="<?php print($upload_max_filesize);?>" />
+          <input type="hidden" name="id" VALUE="<?php print($course->id);?>" />
+          <input type="hidden" name="wdir" value="" />
+          <input type="hidden" name="action" value="upload" />
+          <input type="file" name="userfile" id="userfile" size="35" />
+          <input name="save" type="submit" id="save" onclick="return checkvalue('userfile','uploader');" value="<?php print_string("upload","editor");?>" />
           </form>
           <?php
           } else {

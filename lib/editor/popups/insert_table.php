@@ -1,12 +1,14 @@
 <?php
     include("../../../config.php");
 ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=<?php print_string("thischarset");?>" />
   <title><?php print_string("inserttable","editor");?></title>
-<script type="text/javascript" src="popup.js"></script>
-<script type="text/javascript">
+<script language="javascript" type="text/javascript" src="popup.js"></script>
+<script language="javascript" type="text/javascript">
 
 function Init() {
   __dlg_init();
@@ -47,8 +49,6 @@ function onCancel() {
 
 <style type="text/css">
 html, body {
-  width: 410;
-  height: 240;
   background: ButtonFace;
   color: ButtonText;
   font: 11px Tahoma,Verdana,sans-serif;
@@ -75,9 +75,7 @@ border-bottom: 1px solid black; letter-spacing: 2px;
 }
 form { padding: 0px; margin: 0px; }
 </style>
-
 </head>
-
 <body onload="Init()">
 
 <div class="title"><?php print_string("inserttable","editor") ?></div>
@@ -99,7 +97,7 @@ form { padding: 0px; margin: 0px; }
     <td style="width: 4em; text-align: right"><?php print_string("width","editor") ?>:</td>
     <td><input type="text" name="f_width" id="f_width" size="5" title="Width of the table" value="100" /></td>
     <td><select size="1" name="f_unit" id="f_unit" title="Width unit">
-      <option value="%" selected="1"  ><?php print_string("percent","editor") ?></option>
+      <option value="%" selected="selected"  ><?php print_string("percent","editor") ?></option>
       <option value="px"              ><?php print_string("pixels","editor") ?></option>
       <option value="em"              >Em</option>
     </select></td>
@@ -118,7 +116,7 @@ form { padding: 0px; margin: 0px; }
 <div class="fl"><?php print_string("alignment","editor") ?>:</div>
 <select size="1" name="f_align" id="f_align"
   title="Positioning of this image">
-  <option value="" selected="1"                ><?php print_string("notset","editor") ?></option>
+  <option value="" selected="selected"                ><?php print_string("notset","editor") ?></option>
   <option value="left"                         ><?php print_string("left","editor") ?></option>
   <option value="right"                        ><?php print_string("right","editor") ?></option>
   <option value="texttop"                      ><?php print_string("texttop","editor") ?></option>
@@ -169,8 +167,6 @@ title="Space between content and border in cell" />
 <button type="button" name="ok" onclick="return onOK();"><?php print_string("ok","editor") ?></button>
 <button type="button" name="cancel" onclick="return onCancel();"><?php print_string("cancel","editor") ?></button>
 </div>
-
 </form>
-
 </body>
 </html>

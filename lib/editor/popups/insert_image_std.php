@@ -9,14 +9,16 @@
     }
     
 ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=<?php print_string("thischarset");?>" />
   <title><?php print_string("insertimage","editor");?></title>
 
-<script type="text/javascript" src="popup.js"></script>
+<script language="javascript" type="text/javascript" src="popup.js"></script>
 
-<script type="text/javascript">
+<script language="javascript" type="text/javascript">
 var preview_window = null;
 
 function Init() {
@@ -109,8 +111,6 @@ function onPreview() {
 
 <style type="text/css">
 html, body {
-  width: 450; 
-  height: 230;
   background: ButtonFace;
   color: ButtonText;
   font: 11px Tahoma,Verdana,sans-serif;
@@ -137,9 +137,7 @@ border-bottom: 1px solid black; letter-spacing: 2px;
 }
 form { padding: 0px; margin: 0px; }
 </style>
-
 </head>
-
 <body onload="Init()">
 
 <div class="title"><?php print_string("insertimage","editor");?></div>
@@ -161,12 +159,10 @@ form { padding: 0px; margin: 0px; }
     <td><input type="text" name="alt" id="f_alt" style="width:100%"
       title="For browsers that don't support images" /></td>
   </tr>
-
   </tbody>
 </table>
 
 <p />
-
 <fieldset style="float: left; margin-left: 5px;">
 <legend><?php print_string("layout","editor");?></legend>
 
@@ -221,8 +217,6 @@ title="Vertical padding" />
 <button type="button" name="ok" onclick="return onOK();"><?php print_string("ok","editor");?></button>
 <button type="button" name="cancel" onclick="return onCancel();"><?php print_string("cancel","editor");?></button>
 </div>
-
 </form>
-
 </body>
 </html>

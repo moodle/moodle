@@ -47,44 +47,28 @@
 <?php
     include("../../../config.php");
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html style="height: 270px;">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
 <head>
-<meta http-equiv="content-type" content="text/html; charset=<?php print_string("thischarset");?>">
+<meta http-equiv="content-type" content="text/html; charset=<?php print_string("thischarset");?>" />
 <style type="text/css">
-body {
-  background: ButtonFace;
-  color: ButtonText;
-  font: 11px Tahoma,Verdana,sans-serif;
-  margin: 0px;
-  padding: 0px;
-}
-body { padding: 5px; }
-table {
-  font: 11px Tahoma,Verdana,sans-serif;
-}
-form p {
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-
+<!--
+body { background: ButtonFace; color: ButtonText; font: 11px Tahoma,Verdana,sans-serif;
+margin: 0px; padding: 0px; }
+form p { margin-top: 5px; margin-bottom: 5px; }
 select, input, button { font: 11px Tahoma,Verdana,sans-serif; }
 button { width: 70px; }
 .space { padding: 2px; }
-
-.title { background: #ddf; color: #000; font-weight: bold; font-size: 120%; padding: 3px 10px; margin-bottom: 10px;
-border-bottom: 1px solid black; letter-spacing: 2px;
-}
+.title { background: #ddf; color: #000; font-weight: bold; font-size: 14px; padding: 3px 10px; margin-bottom: 10px;
+border-bottom: 1px solid black; letter-spacing: 2px; }
 form { padding: 0px; margin: 0px; }
-.chr {
-background-color: transparent;
-border: 1px solid #dcdcdc;
-font-family: "Times New Roman", times;
-font-size: small;
-}
+.chr { background-color: transparent; border: 1px solid #dcdcdc; font-family: "Times New Roman", times;
+font-size: small; }
+// -->
 </style>
-<script type="text/javascript" src="popup.js"></script>
-<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+<script language="javascript" type="text/javascript" src="popup.js"></script>
+<script language="javascript" type="text/javascript">
 <!--
 function Init() {
   __dlg_init();
@@ -126,7 +110,7 @@ function cancel() {
     return false;
 }
 //-->
-</SCRIPT>
+</script>
 <title><?php print_string("choosechar","editor");?></title>
 </head>
 <body onload="Init()">
@@ -138,11 +122,11 @@ function cancel() {
       <tr valign="top">
         <td>
 
-       <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+       <script language="javascript" type="text/javascript">
        <!--
        document.write(tab(7,32))
        //-->
-       </SCRIPT>
+       </script>
 
         </td>
       </tr>

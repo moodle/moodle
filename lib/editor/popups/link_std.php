@@ -9,14 +9,14 @@
         $course->fullname = "";   // Just to keep display happy, though browsing may fail
     }
 ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
-
 <head>
-<meta http-equiv="Content-Type" content="text/html; <?php print_string("thischarset");?>">
+<meta http-equiv="Content-Type" content="text/html; <?php print_string("thischarset");?>" />
   <title><?php print_string("insertlink","editor");?></title>
-  <script type="text/javascript" src="popup.js"></script>
-  <script type="text/javascript">
-
+  <script language="javascript" type="text/javascript" src="popup.js"></script>
+  <script language="javascript" type="text/javascript">
 function onTargetChanged() {
   var f = document.getElementById("f_other_target");
   if (this.value == "_other") {
@@ -25,13 +25,23 @@ function onTargetChanged() {
     f.focus();
   } else f.style.visibility = "hidden";
 };
-
 function Init() {
   //__dlg_translate(I18N);
   __dlg_init();
+
   var param = window.dialogArguments;
+  if(param.f_anchors) {
+      //anchors = param.f_anchors;
+      var anchor = document.getElementById('f_anchors');
+      for(var a in param.f_anchors) {
+        var opti = document.createElement('option');
+        opti.value = '#' + param.f_anchors[a];
+        opti.innerHTML = opti.value;
+        anchor.appendChild(opti);
+    }
+  }
   var target_select = document.getElementById("f_target");
-  if (param) {
+  if (param.f_href) {
       document.getElementById("f_href").value = param["f_href"];
       document.getElementById("f_title").value = param["f_title"];
       //comboSelectValue(target_select, param["f_target"]);
@@ -103,12 +113,17 @@ function onBrowse() {
     var newwin = window.open("link.php?id=<?php echo $id; ?>","",""+ settings +" left="+ lx +", top="+ tx +"");
     return false;
 }
+function seturl() {
+    var sel = document.getElementById('f_anchors');
+    var txt = sel.options[sel.selectedIndex].text;
+    if(txt != '----') {
+        var f_url = document.getElementById('f_href');
+        f_url.value = txt;
+    }
+}
 </script>
-
 <style type="text/css">
 html, body {
-  width: 400px;
-  height: 180px;
   background: ButtonFace;
   color: ButtonText;
   font: 11px Tahoma,Verdana,sans-serif;
@@ -130,13 +145,16 @@ border-bottom: 1px solid black; letter-spacing: 2px;
       padding: 2px; text-align: right;
 }
 </style>
-
 </head>
-
 <body onload="Init()">
 <div class="title"><?php print_string("insertlink","editor");?></div>
 
 <table border="0" style="width: 100%;">
+  <tr>
+    <td class="label"><?php print_string("anchors","editor");?>:</td>
+    <td><select id="f_anchors" onchange="seturl()">
+    <option value="">----</option></select></td>
+  </tr>
   <tr>
     <td class="label"><?php print_string("linkurl","editor");?>:</td>
     <td><input type="text" id="f_href" style="width: 100%" /></td>
@@ -159,7 +177,7 @@ border-bottom: 1px solid black; letter-spacing: 2px;
 </table>
 
 <div id="buttons">
-  <?php print(isteacher($id))? "<button type=\"button\" name=\"browse\" onclick=\"return onBrowse();\">".get_string("browse", "editor")."...</button>" : ""; ?>
+  <?php print(isteacher($id))? "<button type=\"button\" name=\"browse\" onclick=\"return onBrowse();\">".get_string("browse","editor")."</button>" : ""; ?>
   <button type="button" name="ok" onclick="return onOK();"><?php print_string("ok","editor");?></button>
   <button type="button" name="cancel" onclick="return onCancel();"><?php print_string("cancel","editor");?></button>
 </div>

@@ -33,16 +33,16 @@
                          'evil'       => '}-]' );
     
 ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=<?php print_string("thischarset");?>" />
-<meta name=vs_targetSchema content="HTML 4.0">
-<meta name="GENERATOR" content="Microsoft Visual Studio 7.0">
-<LINK rel="stylesheet" type="text/css" href="dialog.css">
-<title><?php print_string('insertsmile', 'editor') ?>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</title>
-<script type="text/javascript" src="popup.js"></script>
-
-<script language="JavaScript" type="text/javascript">
+<title><?php print_string('insertsmile', 'editor') ?></title>
+<link rel="stylesheet" href="dialog.css" type="text/css" />
+<script language="javascript" type="text/javascript" src="popup.js"></script>
+<script language="javascript" type="text/javascript">
+<!--
 function Init() {
   __dlg_init();
 }
@@ -65,23 +65,18 @@ function cancel() {
   __dlg_close(null);
   return false;
 };
+// -->
 </script>
-<style type="text/css">
-body {
-  width: 330;
-  height: 360;
-}
-</style>
 </head>
 <body onload="Init()">
-<table class="dlg" cellpadding="0" cellspacing="2" width="100%" height="100%">
+<table class="dlg" cellpadding="0" cellspacing="2" width="100%">
 <tr><td><table width="100%"><tr><td class="title" nowrap><?php print_string("chooseicon","editor") ?></td></tr></table></td></tr>
 <tr>
 <td>
     <table border="0" align="center" cellpadding="5">
       <tr valign="top">
         <td>
-        <table border="0" align="center">
+        <table border="0">
 <?php 
         $list = array('smiley', 'biggrin', 'wink', 'mixed', 'thoughtful', 
                       'tongueout', 'cool', 'approve', 'wideeyes', 'surprise');
@@ -124,7 +119,7 @@ body {
   </tr>
 <tr><td><table width="100%"><tr><td valign="middle" width="90%"><hr width="100%"></td></tr></table></td></tr>
 <tr><td align="right">
-    <button type="button" onclick="cancel()"><?php print_string("close","editor") ?></button></td></tr>
+    <button type="button" onclick="return cancel();"><?php print_string("close","editor") ?></button></td></tr>
 </table>
 </body>
 </html>

@@ -132,15 +132,6 @@ HTMLArea.Config = function () {
     this.imgURL = "images/";
     this.popupURL = "popups/";
 
-    /** CUSTOMIZING THE TOOLBAR
-     * -------------------------
-     *
-     * It is recommended that you customize the toolbar contents in an
-     * external file (i.e. the one calling HTMLArea) and leave this one
-     * unchanged.  That's because when we (InteractiveTools.com) release a
-     * new official version, it's less likely that you will have problems
-     * upgrading HTMLArea.
-     */
     this.toolbar = [
         [ "fontname", "space",
           "fontsize", "space",
@@ -153,7 +144,7 @@ HTMLArea.Config = function () {
           "lefttoright", "righttoleft", "separator",
           "insertorderedlist", "insertunorderedlist", "outdent", "indent", "separator",
           "forecolor", "hilitecolor", "separator",
-          "inserthorizontalrule", "createlink", "unlink", "insertimage", "inserttable",
+          "inserthorizontalrule", "createanchor", "createlink", "unlink", "insertimage", "inserttable",
           "insertsmile", "insertchar", "separator", "htmlmode", "separator", "popupeditor" ]
     ];
 
@@ -164,7 +155,7 @@ HTMLArea.Config = function () {
         "Tahoma":      'tahoma,arial,helvetica,sans-serif',
         "Times New Roman": 'times new roman,times,serif',
         "Verdana":     'verdana,arial,helvetica,sans-serif',
-        "impact":      'impact',
+        "Impact":           'impact',
         "WingDings":       'wingdings'
     };
 
@@ -196,20 +187,6 @@ HTMLArea.Config = function () {
             e.execCommand(cmd);
     };
 
-    // ADDING CUSTOM BUTTONS: please read below!
-    // format of the btnList elements is "ID: [ ToolTip, Icon, Enabled in text mode?, ACTION ]"
-    //    - ID: unique ID for the button.  If the button calls document.execCommand
-    //      it's wise to give it the same name as the called command.
-    //    - ACTION: function that gets called when the button is clicked.
-    //              it has the following prototype:
-    //                 function(editor, buttonName)
-    //              - editor is the HTMLArea object that triggered the call
-    //              - buttonName is the ID of the clicked button
-    //              These 2 parameters makes it possible for you to use the same
-    //              handler for more HTMLArea objects or for more different buttons.
-    //    - ToolTip: default tooltip, for cases when it is not defined in the -lang- file (HTMLArea.I18N)
-    //    - Icon: path to an icon image file for the button (TODO: use one image for all buttons!)
-    //    - Enabled in text mode: if false the button gets disabled for text-only mode; otherwise enabled all the time.
     this.btnList = {
         bold: [ "Bold", "ed_format_bold.gif", false, function(e) {e.execCommand("bold");} ],
         italic: [ "Italic", "ed_format_italic.gif", false, function(e) {e.execCommand("italic");} ],
@@ -228,6 +205,7 @@ HTMLArea.Config = function () {
         forecolor: [ "Font Color", "ed_color_fg.gif", false, function(e) {e.execCommand("forecolor");} ],
         hilitecolor: [ "Background Color", "ed_color_bg.gif", false, function(e) {e.execCommand("hilitecolor");} ],
         inserthorizontalrule: [ "Horizontal Rule", "ed_hr.gif", false, function(e) {e.execCommand("inserthorizontalrule");} ],
+        createanchor: [ "Create anchor", "ed_anchor.gif", false, function(e) {e.execCommand("createanchor", true);} ],
         createlink: [ "Insert Web Link", "ed_link.gif", false, function(e) {e.execCommand("createlink", true);} ],
         unlink: [ "Remove Link", "ed_unlink.gif", false, function(e) {e.execCommand("unlink");} ],
         insertimage: [ "Insert/Modify Image", "ed_image.gif", false, function(e) {e.execCommand("insertimage");} ],
@@ -247,29 +225,7 @@ HTMLArea.Config = function () {
         insertsmile: ["Insert Smiley", "em.icon.smile.gif", false, function(e) {e.execCommand("insertsmile");} ],
         insertchar: [ "Insert Char", "icon_ins_char.gif", false, function(e) {e.execCommand("insertchar");} ]
     };
-    /* ADDING CUSTOM BUTTONS
-     * ---------------------
-     *
-     * It is recommended that you add the custom buttons in an external
-     * file and leave this one unchanged.  That's because when we
-     * (InteractiveTools.com) release a new official version, it's less
-     * likely that you will have problems upgrading HTMLArea.
-     *
-     * Example on how to add a custom button when you construct the HTMLArea:
-     *
-     *   var editor = new HTMLArea("your_text_area_id");
-     *   var cfg = editor.config; // this is the default configuration
-     *   cfg.btnList["my-hilite"] =
-     *  [ function(editor) { editor.surroundHTML('<span style="background:yellow">', '</span>'); }, // action
-     *    "Highlight selection", // tooltip
-     *    "my_hilite.gif", // image
-     *    false // disabled in text mode
-     *  ];
-     *   cfg.toolbar.push(["linebreak", "my-hilite"]); // add the new button to the toolbar
-     *
-     * An alternate (also more convenient and recommended) way to
-     * accomplish this is to use the registerButton function below.
-     */
+
     // initialize tooltips from the I18N module and generate correct image path
     for (var i in this.btnList) {
         var btn = this.btnList[i];
@@ -280,23 +236,6 @@ HTMLArea.Config = function () {
     }
 };
 
-/** Helper function: register a new button with the configuration.  It can be
- * called with all 5 arguments, or with only one (first one).  When called with
- * only one argument it must be an object with the following properties: id,
- * tooltip, image, textMode, action.  Examples:
- *
- * 1. config.registerButton("my-hilite", "Hilite text", "my-hilite.gif", false, function(editor) {...});
- * 2. config.registerButton({
- *      id       : "my-hilite",      // the ID of your button
- *      tooltip  : "Hilite text",    // the tooltip
- *      image    : "my-hilite.gif",  // image to be displayed in the toolbar
- *      textMode : false,            // disabled in text mode
- *      action   : function(editor) { // called when the button is clicked
- *                   editor.surroundHTML('<span class="hilite">', '</span>');
- *                 },
- *      context  : "p"               // will be disabled if outside a <p> element
- *    });
- */
 HTMLArea.Config.prototype.registerButton = function(id, tooltip, image, textMode, action, context) {
     var the_id;
     if (typeof id == "string") {
@@ -320,12 +259,6 @@ HTMLArea.Config.prototype.registerButton = function(id, tooltip, image, textMode
     }
 };
 
-/** The following helper function registers a dropdown box with the editor
- * configuration.  You still have to add it to the toolbar, same as with the
- * buttons.  Call it like this:
- *
- * FIXME: add example
- */
 HTMLArea.Config.prototype.registerDropdown = function(object) {
     // check for existing id
     if (typeof this.customSelects[object.id] != "undefined") {
@@ -337,16 +270,6 @@ HTMLArea.Config.prototype.registerDropdown = function(object) {
     this.customSelects[object.id] = object;
 };
 
-/** Call this function to remove some buttons/drop-down boxes from the toolbar.
- * Pass as the only parameter a string containing button/drop-down names
- * delimited by spaces.  Note that the string should also begin with a space
- * and end with a space.  Example:
- *
- *   config.hideSomeButtons(" fontname fontsize textindicator ");
- *
- * It's useful because it's easier to remove stuff from the defaul toolbar than
- * create a brand new toolbar ;-)
- */
 HTMLArea.Config.prototype.hideSomeButtons = function(remove) {
     var toolbar = this.toolbar;
     for (var i in toolbar) {
@@ -404,9 +327,6 @@ HTMLArea.prototype._createToolbar = function () {
     // init first line
     newLine();
 
-    // updates the state of a toolbar element.  This function is member of
-    // a toolbar element object (unnamed objects created by createButton or
-    // createSelect functions below).
     function setButtonStatus(id, newval) {
         var oldval = this[id];
         var el = this.element;
@@ -433,10 +353,6 @@ HTMLArea.prototype._createToolbar = function () {
         }
     }; // END of function: setButtonStatus
 
-    // this function will handle creation of combo boxes.  Receives as
-    // parameter the name of a button as defined in the toolBar config.
-    // This function is called from createButton, above, if the given "txt"
-    // doesn't match a button.
     function createSelect(txt) {
         var options = null;
         var el = null;
@@ -447,13 +363,6 @@ HTMLArea.prototype._createToolbar = function () {
             case "fontsize":
             case "fontname":
             case "formatblock":
-            // the following line retrieves the correct
-            // configuration option because the variable name
-            // inside the Config object is named the same as the
-            // button/select in the toolbar.  For instance, if txt
-            // == "formatblock" we retrieve config.formatblock (or
-            // a different way to write it in JS is
-            // config["formatblock"].
             options = editor.config[txt];
             cmd = txt;
             break;
@@ -717,9 +626,6 @@ HTMLArea.prototype.generate = function () {
 
     if (!HTMLArea.is_ie) {
         iframe.style.borderWidth = "1px";
-    // iframe.frameBorder = "1";
-    // iframe.marginHeight = "0";
-    // iframe.marginWidth = "0";
     }
 
     // size the IFRAME according to user's prefs or initial textarea
@@ -795,9 +701,6 @@ HTMLArea.prototype.generate = function () {
         }
 
         if (HTMLArea.is_ie) {
-            // enable editable mode for IE.  For some reason this
-            // doesn't work if done in the same place as for Gecko
-            // (above).
             doc.body.contentEditable = true;
         }
 
@@ -899,14 +802,8 @@ HTMLArea.prototype.setFullHTML = function(html) {
     }
 };
 
-/***************************************************
- *  Category: PLUGINS
- ***************************************************/
+// Category: PLUGINS
 
-// this is the variant of the function above where the plugin arguments are
-// already packed in an array.  Externally, it should be only used in the
-// full-screen editor code, in order to initialize plugins with the same
-// parameters as in the opener window.
 HTMLArea.prototype.registerPlugin2 = function(plugin, args) {
     if (typeof plugin == "string")
         plugin = eval(plugin);
@@ -932,9 +829,6 @@ HTMLArea.prototype.registerPlugin = function() {
     this.registerPlugin2(plugin, args);
 };
 
-// static function that loads the required plugin and lang file, based on the
-// language loaded already for HTMLArea.  You better make sure that the plugin
-// _has_ that language, otherwise shit might happen ;-)
 HTMLArea.loadPlugin = function(pluginName) {
     var dir = _editor_url + "plugins/" + pluginName;
     var plugin = pluginName.replace(/([a-z])([A-Z])([a-z])/g,
@@ -958,9 +852,7 @@ HTMLArea.loadStyle = function(style, plugin) {
 };
 HTMLArea.loadStyle("htmlarea.css");
 
-/***************************************************
- *  Category: EDITOR UTILITIES
- ***************************************************/
+// Category: EDITOR UTILITIES
 
 // The following function is a slight variation of the word cleaner code posted
 // by Weeezl (user @ InteractiveTools forums).
@@ -1185,10 +1077,6 @@ HTMLArea.prototype.updateToolbar = function(noStatus) {
                     // FIXME: what do we do here?
                     break;
                 }
-                // HACK -- retrieve the config option for this
-                // combo box.  We rely on the fact that the
-                // variable in config has the same name as
-                // button name in the toolbar.
                 var options = this.config[cmd];
                 var k = 0;
                 // btn.element.selectedIndex = 0;
@@ -1308,11 +1196,6 @@ HTMLArea.prototype.getParentElement = function() {
         switch (sel.type) {
             case "Text":
             case "None":
-            // It seems that even for selection of type "None",
-            // there _is_ a parent element and it's value is not
-            // only correct, but very important to us.  MSIE is
-            // certainly the buggiest browser in the world and I
-            // wonder, God, how can Earth stand it?
             return range.parentElement();
             case "Control":
             return range.item(0);
@@ -1370,9 +1253,8 @@ HTMLArea.prototype.selectNodeContents = function(node, pos) {
     }
 };
 
-/** Call this function to insert HTML code at the current position.  It deletes
- * the selection, if any.
- */
+// Call this function to insert HTML code at the current position.  It deletes
+// the selection, if any.
 HTMLArea.prototype.insertHTML = function(html) {
     var sel = this._getSelection();
     var range = this._createRange(sel);
@@ -1392,10 +1274,8 @@ HTMLArea.prototype.insertHTML = function(html) {
     }
 };
 
-/**
- *  Call this function to surround the existing HTML code in the selection with
- *  your tags.  FIXME: buggy!  This function will be deprecated "soon".
- */
+// Call this function to surround the existing HTML code in the selection with
+// your tags.  FIXME: buggy!  This function will be deprecated "soon".
 HTMLArea.prototype.surroundHTML = function(startTag, endTag) {
     var html = this.getSelectedHTML();
     // the following also deletes the selection
@@ -1423,17 +1303,31 @@ HTMLArea.prototype.hasSelectedText = function() {
 
 HTMLArea.prototype._createLink = function(link) {
     var editor = this;
+    var allinks = editor._doc.getElementsByTagName('A');
+    var anchors = new Array();
+    for(var i = 0; i < allinks.length; i++) {
+        var attrname = allinks[i].getAttribute('name');
+        if((HTMLArea.is_ie ? attrname.length > 0 : attrname != null)) {
+            anchors[i] = allinks[i].getAttribute('name');
+        }
+    }
     var outparam = null;
     if (typeof link == "undefined") {
         link = this.getParentElement();
         if (link && !/^a$/i.test(link.tagName))
             link = null;
     }
-    if (link) outparam = {
+    if (link) {
+        outparam = {
         f_href   : HTMLArea.is_ie ? editor.stripBaseURL(link.href) : link.getAttribute("href"),
         f_title  : link.title,
-        f_target : link.target
+        f_target : link.target,
+        f_anchors: anchors
     };
+    } else {
+        outparam = {
+        f_anchors:anchors };
+    }
     this._popupDialog("link_std.php?id=<?php echo $id; ?>", function(param) {
         if (!param)
             return false;
@@ -1587,11 +1481,8 @@ HTMLArea.prototype._insertTable = function() {
         return true;
     }, null);
 };
-/******************************************************************
-* Moodle hack - insertSmile
-******************************************************************/
-/// since method insertimage doesn't work the same way in mozilla
-/// as it does in IE, let's go around this for both browsers.
+
+/// Moodle hack - insertSmile
 HTMLArea.prototype._insertSmile = function() {
     var sel = this._getSelection();
     var range = this._createRange(sel);
@@ -1603,7 +1494,6 @@ HTMLArea.prototype._insertSmile = function() {
         if (HTMLArea.is_ie) {
             range.pasteHTML(imgString);
         } else {
-            // insert the table
             editor.insertHTML(imgString);
         }
         return true;
@@ -1636,12 +1526,30 @@ HTMLArea.prototype._removelink = function() {
     this._doc.execCommand("unlink", false, null);
     this.focusEditor();
 };
-/************************************************************************
-* Moodle hack's ends
-************************************************************************/
-/***************************************************
- *  Category: EVENT HANDLERS
- ***************************************************/
+
+HTMLArea.prototype._createanchor = function () {
+    var editor = this;
+    var sel = this._getSelection();
+    var rng = this._createRange(sel);
+    var len = HTMLArea.is_ie ? rng.text.toString().length : sel.toString().length;
+    if(len < 1) {
+        alert("You must select text first!");
+        return false;
+    }
+    this._popupDialog("createanchor.php", function(objAn) {
+        if(!objAn) {
+            return false;
+        }
+        var str = '<a name="'+ objAn.anchor+'">';
+        str += HTMLArea.is_ie ? rng.text : sel ;
+        str += '</a>';
+        editor.insertHTML(str);
+    },null);
+};
+
+/// Moodle hack's ends
+//
+// Category: EVENT HANDLERS
 
 // el is reference to the SELECT object
 // txt is the name of the select field, as in config.toolbar
@@ -1683,6 +1591,7 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
             }
         }, HTMLArea._colorToRgb(this._doc.queryCommandValue(cmdID)));
         break;
+        case "createanchor": this._createanchor(); break;
         case "createlink":
         this._createLink();
         break;
@@ -1691,7 +1600,6 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
         // this object will be passed to the newly opened window
         HTMLArea._object = this;
         if (HTMLArea.is_ie) {
-            //if (confirm(HTMLArea.I18N.msg["IE-sucks-full-screen"]))
             {
                 window.open(this.popupURL("fullscreen.php?id=<?php print($id);?>"), "ha_fullscreen",
                     "toolbar=no,location=no,directories=no,status=no,menubar=no," +
@@ -2114,13 +2022,6 @@ HTMLArea.getHTML = function(root, outputRoot, editor) {
                 }
                 var value;
                 if (name != "style") {
-                    // IE5.5 reports 25 when cellSpacing is
-                    // 1; other values might be doomed too.
-                    // For this reason we extract the
-                    // values directly from the root node.
-                    // I'm starting to HATE JavaScript
-                    // development.  Browser differences
-                    // suck.
                     //
                     // Using Gecko the values of href and src are converted to absolute links
                     // unless we get them using nodeValue()
@@ -2128,9 +2029,6 @@ HTMLArea.getHTML = function(root, outputRoot, editor) {
                         value = root[a.nodeName];
                     } else {
                         value = a.nodeValue;
-                        // IE seems not willing to return the original values - it converts to absolute
-                        // links using a.nodeValue, a.value, a.stringValue, root.getAttribute("href")
-                        // So we have to strip the baseurl manually -/
                         if (HTMLArea.is_ie && (name == "href" || name == "src")) {
                             value = editor.stripBaseURL(value);
                         }
@@ -2250,11 +2148,6 @@ HTMLArea._colorToRgb = function(v) {
     return null;
 };
 
-// modal dialogs for Mozilla (for IE we're using the showModalDialog() call).
-
-// receives an URL to the popup dialog and a function that receives one value;
-// this function will get called after the dialog is closed, with the return
-// value of the dialog.
 HTMLArea.prototype._popupDialog = function(url, action, init) {
     Dialog(this.popupURL(url), action, init);
 };
@@ -2294,11 +2187,3 @@ HTMLArea.getElementById = function(tag, id) {
             return el;
     return null;
 };
-
-
-
-// EOF
-// Local variables: //
-// c-basic-offset:8 //
-// indent-tabs-mode:t //
-// End: //

@@ -9,24 +9,27 @@
     }
     
 ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=<?php print_string("thischarset");?>" />
 <title><?php print_string("insertimage","editor");?></title>
-<script type="text/javascript" src="popup.js"></script>
-<script type="text/javascript">
+<script language="javascript" type="text/javascript" src="popup.js"></script>
+<script language="javascript" type="text/javascript">
 var preview_window = null;
 
 function Init() {
   __dlg_init();
   var param = window.dialogArguments;
   if (param) {
+      var alt = param["f_url"].substring(param["f_url"].lastIndexOf('/') + 1);
       document.getElementById("f_url").value = param["f_url"];
-      document.getElementById("f_alt").value = param["f_alt"];
-      document.getElementById("f_border").value = param["f_border"];
+      document.getElementById("f_alt").value = param["f_alt"] ? param["f_alt"] : alt;
+      document.getElementById("f_border").value = parseInt(param["f_border"] || 0);
       document.getElementById("f_align").value = param["f_align"];
-      document.getElementById("f_vert").value = param["f_vert"];
-      document.getElementById("f_horiz").value = param["f_horiz"];
+      document.getElementById("f_vert").value = param["f_vert"] != -1 ? param["f_vert"] : 0;
+      document.getElementById("f_horiz").value = param["f_horiz"] != -1 ? param["f_horiz"] : 0;
       document.getElementById("f_width").value = param["f_width"];
       document.getElementById("f_height").value = param["f_height"];
       window.ipreview.location.replace('preview.php?id='+ <?php print($course->id);?> +'&imageurl='+ param.f_url);
@@ -144,8 +147,6 @@ function submit_form(dothis) {
 </script>
 <style type="text/css">
 html, body {
-width: 730;
-height: 540;
 margin: 2px;
 background-color: rgb(212,208,200);
 font-family: Tahoma, Verdana, sans-serif;
@@ -168,9 +169,7 @@ button { width: 70px; }
 .space { padding: 2px; }
 form { margin-bottom: 0px; margin-top: 0px; }
 </style>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 </head>
-
 <body onload="Init()">
   <div class="title"><?php print_string("insertimage","editor");?></div>
   <div class="space"></div>
@@ -264,12 +263,12 @@ form { margin-bottom: 0px; margin-top: 0px; }
           print_string("filebrowser","editor");
       } else {
           print "";
-      }?><br>
+      }?><br />
       <?php print(isteacher($id))?
 	  "<iframe id=\"ibrowser\" name=\"ibrowser\" src=\"".$CFG->wwwroot."/lib/editor/coursefiles.php?usecheckboxes=true&id=".$course->id."\" style=\"width: 100%; height: 200px;\"></iframe>":
 	  "";?>
       </td>
-      <td width="45%" valign="top"><?php print_string("preview","editor");?>:<br>
+      <td width="45%" valign="top"><?php print_string("preview","editor");?>:<br />
 	  <iframe id="ipreview" name="ipreview" src="about:blank" style="width: 100%; height: 200px;"></iframe>
       </td>
     </tr>
@@ -293,7 +292,7 @@ form { margin-bottom: 0px; margin-top: 0px; }
           <input type="hidden" name="action" value="rename" />
           <input name="btnRename" type="submit" id="btnRename" value="<?php print_string("rename","editor");?>" /></form></td>
           <tr></table>
-          <br>
+          <br />
           <?php 
           } else {
               print "";
@@ -336,6 +335,6 @@ form { margin-bottom: 0px; margin-top: 0px; }
           </td>
     </tr>
   </table>
-  <p>&nbsp; </p>
+  <p>&nbsp;</p>
 </body>
 </html>

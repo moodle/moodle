@@ -34,7 +34,8 @@
         $width = round($width / $division);
         $height = 190;
     }
-    
+    echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"\n";
+    echo "\t\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n";
     echo "<html>\n";
     echo "<head>\n";
     echo "<title>Preview</title>\n";
