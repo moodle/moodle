@@ -95,6 +95,11 @@ th {
     border-color: #000000;
 }
 
+.required {
+    background-color:#DDDDDD;
+}
+
+
 /* header styles */
 
 
@@ -110,12 +115,20 @@ th {
 .generalbox {
     border-color:#DDDDDD; /* borders */
 }
+.informationbox {
+    border-color:#DDDDDD; /* borders */
+}
 
 .admin .generalboxcontent {
     background-color:#EEEEEE; 
 }
 .admin .generalbox {
     border-color:#BBBBBB; 
+}
+
+.admin .informationbox {
+    border-color:#BBBBBB; 
+    background-color:#FFFFFF; 
 }
 
 .noticebox {

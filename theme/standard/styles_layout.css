@@ -110,6 +110,10 @@ form {
     border-width:1px;
     border-style:solid;
 }
+.informationbox {
+    border-width:1px;
+    border-style:solid;
+}
 
 
 /* summary of a user in a nice little box - weblib.php */
@@ -547,3 +551,8 @@ body#admin-blocks .generaltablecell {
     padding-top: 1px;
     padding-bottom: 1px;
 } 
+
+body#admin-config .confighelp {
+    display: block;
+    padding-bottom: 20px;
+}

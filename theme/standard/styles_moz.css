@@ -35,7 +35,21 @@
 }
 
 .noticebox {
-    -moz-border-radius:3px;
+    -moz-border-radius:5px;
+}
+
+.informationbox {
+    -moz-border-radius-topleft:3px;
+    -moz-border-radius-topright:3px;
+    -moz-border-radius-bottomleft:15px;
+    -moz-border-radius-bottomright:15px;
+}
+
+.informationboxcontent {
+    -moz-border-radius-topleft:3px;
+    -moz-border-radius-topright:3px;
+    -moz-border-radius-bottomleft:15px;
+    -moz-border-radius-bottomright:15px;
 }
 
 .userinfobox {
