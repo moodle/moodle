@@ -18,9 +18,10 @@ class flexible_table {
     var $use_pages      = false;
     var $use_initials   = false;
 
-    var $pagesize  = 30;
-    var $currpage  = 0;
-    var $totalrows = 0;
+    var $maxsortkeys = 2;
+    var $pagesize    = 30;
+    var $currpage    = 0;
+    var $totalrows   = 0;
 
     function flexible_table($uniqueid) {
         $this->uniqueid = $uniqueid;
@@ -141,8 +142,7 @@ class flexible_table {
             $SESSION->flextable = new stdClass;
             $SESSION->flextable->uniqueid = $this->uniqueid;
             $SESSION->flextable->collapse = array();
-            $SESSION->flextable->sortby   = '';
-            $SESSION->flextable->sortdir  = '';
+            $SESSION->flextable->sortby   = array();
             $SESSION->flextable->i_first  = '';
             $SESSION->flextable->i_last   = '';
         }
@@ -156,9 +156,8 @@ class flexible_table {
         else if(!empty($_GET['thide']) && isset($this->columns[$_GET['thide']])) {
             // Hide this column
             $this->sess->collapse[$_GET['thide']] = true;
-            if($this->sess->sortby == $_GET['thide']) {
-                $this->sess->sortby  = '';
-                $this->sess->sortdir = '';
+            if(array_key_exists($_GET['thide'], $this->sess->sortby)) {
+                unset($this->sess->sortby[$_GET['thide']]);
             }
         }
     
@@ -176,12 +175,21 @@ class flexible_table {
             ))
         {
             if(empty($this->sess->collapse[$_GET['tsort']])) {
-                if($this->sess->sortby == $_GET['tsort']) {
-                    $this->sess->sortdir = $this->sess->sortdir == SORT_ASC ? SORT_DESC : SORT_ASC;
+                if(array_key_exists($_GET['tsort'], $this->sess->sortby)) {
+                    // This key already exists somewhere. Change its sortorder and bring it to the top.
+                    $sortorder = $this->sess->sortby[$_GET['tsort']] == SORT_ASC ? SORT_DESC : SORT_ASC;
+                    unset($this->sess->sortby[$_GET['tsort']]);
+                    $this->sess->sortby = array_merge(array($_GET['tsort'] => $sortorder), $this->sess->sortby);
                 }
                 else {
-                    $this->sess->sortby  = $_GET['tsort'];
-                    $this->sess->sortdir = SORT_ASC;
+                    // Key doesn't exist, so just add it to the beginning of the array, ascending order
+                    $this->sess->sortby = array_merge(array($_GET['tsort'] => SORT_ASC), $this->sess->sortby);
+                }
+                // Finally, make sure that no more than $this->maxsortkeys are present into the array
+                if(!empty($this->maxsortkeys) && ($sortkeys = count($this->sess->sortby)) > $this->maxsortkeys) {
+                    while($sortkeys-- > $this->maxsortkeys) {
+                        array_pop($this->sess->sortby);
+                    }
                 }
             }
         }
@@ -247,8 +255,16 @@ class flexible_table {
             return false;
         }
         if(!empty($this->sess->sortby)) {
-            return $this->sess->sortby.($this->sess->sortdir == SORT_ASC ? ' ASC' : ' DESC');
+            $sortstring = '';
+            foreach($this->sess->sortby as $column => $order) {
+                if(!empty($sortstring)) {
+                    $sortstring .= ', ';
+                }
+                $sortstring .= $column.($order == SORT_ASC ? ' ASC' : ' DESC');
+            }
+            return $sortstring;
         }
+        return '';
     }
 
     function get_page_start() {
@@ -368,21 +384,28 @@ class flexible_table {
                 }
             }
 
+            $primary_sort_column = '';
+            $primary_sort_order  = '';
+            if(reset($this->sess->sortby)) {
+                $primary_sort_column = key($this->sess->sortby);
+                $primary_sort_order  = current($this->sess->sortby);
+            }
+
             switch($column) {
 
                 case 'fullname':
                 if($this->is_sortable) {
                     $icon_sort_first = $icon_sort_last = '';
-                    if($this->sess->sortby == 'firstname') {
-                        if($this->sess->sortdir == SORT_ASC) {
+                    if($primary_sort_column == 'firstname') {
+                        if($primary_sort_order == SORT_ASC) {
                             $icon_sort_first = ' <img src="'.$CFG->pixpath.'/t/down.gif" />';
                         }
                         else {
                             $icon_sort_first = ' <img src="'.$CFG->pixpath.'/t/up.gif" />';
                         }
                     }
-                    else if($this->sess->sortby == 'lastname') {
-                        if($this->sess->sortdir == SORT_ASC) {
+                    else if($primary_sort_column == 'lastname') {
+                        if($primary_sort_order == SORT_ASC) {
                             $icon_sort_last = ' <img src="'.$CFG->pixpath.'/t/down.gif" />';
                         }
                         else {
@@ -396,8 +419,8 @@ class flexible_table {
 
                 default:
                 if($this->is_sortable) {
-                    if($this->sess->sortby == $column) {
-                        if($this->sess->sortdir == SORT_ASC) {
+                    if($primary_sort_column == $column) {
+                        if($primary_sort_order == SORT_ASC) {
                             $icon_sort = ' <img src="'.$CFG->pixpath.'/t/down.gif" />';
                         }
                         else {
