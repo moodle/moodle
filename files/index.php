@@ -24,14 +24,6 @@
         error("Only teachers can edit files");
     }
 
-    if (!$CFG->zip) {
-        $CFG->zip = "/usr/bin/zip";
-    }
-
-    if (!$CFG->unzip) {
-        $CFG->unzip = "/usr/bin/unzip";
-    }
-
     function html_footer() {
         global $course;
         echo "</td></tr></table></body></html>";
@@ -336,13 +328,25 @@
             if (!empty($name)) {
                 html_header($course, $wdir);
                 $name = clean_filename($name);
-                $files = "";
-                foreach ($USER->filelist as $file) {
-                    $files .= basename($file);
-                    $files .= " ";
+                if (empty($CFG->zip)) {    // Use built-in php-based zip function
+                    $files = array();
+                    foreach ($USER->filelist as $file) {
+                        $files[] = "$basedir/$wdir$file";
+                    }
+                    include_once('../lib/pclzip/pclzip.lib.php');
+                    $archive = new PclZip("$basedir/$wdir/$name");
+                    if (($list = $archive->create($files,'',"$basedir/$wdir/")) == 0) {
+                        error($archive->errorInfo(true));
+                    }
+                } else {                   // Use external zip program
+                    $files = "";
+                    foreach ($USER->filelist as $file) {
+                        $files .= basename($file);
+                        $files .= " ";
+                    }
+                    $command = "cd $basedir/$wdir ; $CFG->zip -r $name $files";
+                    Exec($command);
                 }
-                $command = "cd $basedir/$wdir ; $CFG->zip -r $name $files";
-                Exec($command);
                 clearfilelist();
                 displaydir($wdir);
                     
@@ -382,19 +386,59 @@
         case "unzip":
             html_header($course, $wdir);
             if (!empty($file)) {
-                echo "<P ALIGN=CENTER>Unzipping $file:</P>";
-                print_simple_box_start("center");
-                echo "<PRE>";
+                $strname = get_string("name");
+                $strsize = get_string("size");
+                $strmodified = get_string("modified");
+                $strstatus = get_string("status");
+                $strok = get_string("ok");
+                $strunpacking = get_string("unpacking", "", $file);
+
+                echo "<P ALIGN=CENTER>$strunpacking:</P>";
+
                 $file = basename($file);
-                $command = "cd $basedir/$wdir ; $CFG->unzip -o $file 2>&1";
-                passthru($command);
-                echo "</PRE>";
-                print_simple_box_end();
+
+                if (empty($CFG->unzip)) {    // Use built-in php-based unzip function
+                    include_once('../lib/pclzip/pclzip.lib.php');
+                    $archive = new PclZip("$basedir/$wdir/$file");
+                    if (!$list = $archive->extract("$basedir/$wdir")) {
+                        error($archive->errorInfo(true));
+                    } else {  // print some output
+                        echo "<table cellpadding=\"4\" cellspacing=\"2\" border=\"0\" width=640>";
+                        echo "<tr><th align=left>$strname</th>";
+                        echo "<th align=right>$strsize</th>";
+                        echo "<th align=right>$strmodified</th>";
+                        echo "<th align=right>$strstatus</th></tr>";
+                        foreach ($list as $item) {
+                            echo "<tr>";
+                            $item['filename'] = str_replace("$basedir/$wdir/", "", $item['filename']);
+                            print_cell("left", $item['filename']);
+                            if (! $item['folder']) {
+                                print_cell("right", display_size($item['size']));
+                            } else {
+                                echo "<td>&nbsp;</td>";
+                            }
+                            $filedate  = userdate($item['mtime'], get_string("strftimedatetime"));
+                            print_cell("right", $filedate);
+                            print_cell("right", $item['status']);
+                            echo "</tr>";
+                        }
+                        echo "</table>";
+                    }
+                    
+                } else {                     // Use external unzip program
+                    print_simple_box_start("center");
+                    echo "<PRE>";
+                    $command = "cd $basedir/$wdir ; $CFG->unzip -o $file 2>&1";
+                    passthru($command);
+                    echo "</PRE>";
+                    print_simple_box_end();
+                }
+
                 echo "<CENTER><FORM ACTION=index.php METHOD=get>";
                 echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
                 echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
                 echo " <INPUT TYPE=hidden NAME=action VALUE=cancel>";
-                echo " <INPUT TYPE=submit VALUE=\"OK\">";
+                echo " <INPUT TYPE=submit VALUE=\"$strok\">";
                 echo "</FORM>";
                 echo "</CENTER>";
             } else {
@@ -402,6 +446,54 @@
             }
             html_footer();
             break;
+
+        case "listzip":
+            html_header($course, $wdir);
+            if (!empty($file)) {
+                $strname = get_string("name");
+                $strsize = get_string("size");
+                $strmodified = get_string("modified");
+                $strok = get_string("ok");
+                $strlistfiles = get_string("listfiles", "", $file);
+
+                echo "<P ALIGN=CENTER>$strlistfiles:</P>";
+                $file = basename($file);
+
+                include_once('../lib/pclzip/pclzip.lib.php');
+                $archive = new PclZip("$basedir/$wdir/$file");
+                if (!$list = $archive->listContent("$basedir/$wdir")) {
+                    notify($archive->errorInfo(true));
+
+                } else {
+                    echo "<table cellpadding=\"4\" cellspacing=\"2\" border=\"0\" width=640>";
+                    echo "<tr><th align=left>$strname</th><th align=right>$strsize</th><th align=right>$strmodified</th></tr>";
+                    foreach ($list as $item) {
+                        echo "<tr>";
+                        print_cell("left", $item['filename']);
+                        if (! $item['folder']) {
+                            print_cell("right", display_size($item['size']));
+                        } else {
+                            echo "<td>&nbsp;</td>";
+                        }
+                        $filedate  = userdate($item['mtime'], get_string("strftimedatetime"));
+                        print_cell("right", $filedate);
+                        echo "</tr>";
+                    }
+                    echo "</table>";
+                }
+                echo "<br><center><form action=index.php method=get>";
+                echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
+                echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
+                echo " <INPUT TYPE=hidden NAME=action VALUE=cancel>";
+                echo " <INPUT TYPE=submit VALUE=\"$strok\">";
+                echo "</FORM>";
+                echo "</CENTER>";
+            } else {
+                displaydir($wdir);
+            }
+            html_footer();
+            break;
+
 
         case "cancel";
             clearfilelist();
@@ -541,6 +633,7 @@ function displaydir ($wdir) {
     $strrename = get_string("rename");
     $stredit   = get_string("edit");
     $strunzip  = get_string("unzip");
+    $strlist   = get_string("list");
 
 
     echo "<FORM ACTION=\"index.php\" METHOD=post NAME=dirform>";
@@ -621,7 +714,8 @@ function displaydir ($wdir) {
             if ($icon == "text.gif" || $icon == "html.gif") {
                 $edittext = "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=edit\">$stredit</A>";
             } else if ($icon == "zip.gif") {
-                $edittext = "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=unzip\">$strunzip</A>";
+                $edittext = "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=unzip\">$strunzip</A>&nbsp;";
+                $edittext .= "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=listzip\">$strlist</A> ";
             } else {
                 $edittext = "";
             }
