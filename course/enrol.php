@@ -8,9 +8,19 @@
 
     require_login();
 
+    $strloginto = get_string("loginto", "", $course->shortname);
+    $strcourses = get_string("courses");
+
     if (! $course = get_record("course", "id", $id) ) {
         error("That's an invalid course id");
     }
+
+    if (! $site = get_site()) {
+        error("Could not find a site!");
+    }
+
+
+/// Check the submitted enrollment key if there is one
 
     if ($form = data_submitted()) {
 
@@ -39,13 +49,13 @@
                 add_to_log($course->id, "course", "enrol", "view.php?id=$course->id", "$USER->id");
             }
 
-            $USER->student["$id"] = true;
+            $USER->student[$course->id] = true;
             
             if ($SESSION->wantsurl) {
                 $destination = $SESSION->wantsurl;
                 unset($SESSION->wantsurl);
             } else {
-                $destination = "$CFG->wwwroot/course/view.php?id=$id";
+                $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
             }
 
     	    redirect($destination);
@@ -55,12 +65,25 @@
         }
     }
 
-    $strloginto = get_string("loginto", "", $course->shortname);
-    $strcourses = get_string("courses");
 
-    if (! $site = get_site()) {
-        error("Could not find a site!");
+/// Double check just in case they are actually enrolled already 
+/// This might occur if they were manually enrolled during this session
+    
+    if (record_exists("user_students", "userid", $USER->id, "course", $course->id)) {
+        $USER->student[$course->id] = true;
+
+        if ($SESSION->wantsurl) {
+            $destination = $SESSION->wantsurl;
+            unset($SESSION->wantsurl);
+        } else {
+            $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
+        }
+   
+        redirect($destination);
     }
+
+
+/// Automatically enrol into courses without password
 
     if ($course->password == "") {   // no password, so enrol
 
@@ -82,13 +105,13 @@
             }
             add_to_log($course->id, "course", "enrol", "view.php?id=$course->id", "$USER->id");
 
-            $USER->student["$id"] = true;
+            $USER->student[$course->id] = true;
         
             if ($SESSION->wantsurl) {
                 $destination = $SESSION->wantsurl;
                 unset($SESSION->wantsurl);
             } else {
-                $destination = "$CFG->wwwroot/course/view.php?id=$id";
+                $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
             }
     
             redirect($destination);
