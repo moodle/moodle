@@ -887,9 +887,15 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
 
 
 
-function forum_get_user_discussions($courseid, $userid) {
-/// Get all discussions started by a particular user in a course
+function forum_get_user_discussions($courseid, $userid, $groupid=0) {
+/// Get all discussions started by a particular user in a course (or group)
     global $CFG;
+
+    if ($groupid) {
+        $groupselect = " AND d.groupid = '$groupid' ";
+    } else  {
+        $groupselect = "";
+    }
 
     return get_records_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture, 
                                    f.type as forumtype, f.name as forumname, f.id as forumid
@@ -902,7 +908,7 @@ function forum_get_user_discussions($courseid, $userid) {
                                AND p.parent = 0 
                                AND p.userid = u.id 
                                AND u.id = '$userid' 
-                               AND d.forum = f.id
+                               AND d.forum = f.id $groupselect
                           ORDER BY p.created DESC");
 }
 
@@ -1861,16 +1867,16 @@ function forum_delete_post($post) {
 }
 
 
-function forum_print_user_discussions($courseid, $userid) {
+function forum_print_user_discussions($courseid, $userid, $groupid=0) {
     global $CFG, $USER;
 
     $maxdiscussions = 10;
     $countdiscussions = 0;
 
 
-    if ($discussions = forum_get_user_discussions($courseid, $userid)) {
+    if ($discussions = forum_get_user_discussions($courseid, $userid, $groupid=0)) {
         $user = get_record("user", "id", $userid);
-        echo "<HR>";
+        echo "<hr />";
         $fullname = fullname($user, isteacher($courseid));
         print_heading( get_string("discussionsstartedbyrecent", "forum", $fullname) );
         $replies = forum_count_discussion_replies();
@@ -2104,7 +2110,11 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
                 if (!empty($CFG->filterall)) {
                     $discussion->subject = filter_text($discussion->subject, $forum->course);
                 }
-                echo "<p><span class=\"smallinfohead\">".userdate($discussion->modified, $strftimerecent)." - $discussion->firstname</span><br />";
+                echo "<p><span class=\"smallinfohead\">".
+                     userdate($discussion->modified, $strftimerecent).
+                     " - ".
+                     fullname($discussion).
+                     "</span><br />";
                 echo "<span class=\"smallinfo\">$discussion->subject ";
                 echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->discussion\">";
                 echo $strmore."...</a></span>";
