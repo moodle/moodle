@@ -112,6 +112,7 @@ CREATE TABLE prefix_user (
    address varchar(70) default NULL,
    city varchar(20) default NULL,
    country char(2) default NULL,
+   lang varchar(5) NOT NULL default '',
    timezone float NOT NULL default '99',
    firstaccess integer NOT NULL default '0',
    lastaccess integer NOT NULL default '0',
