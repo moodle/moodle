@@ -143,6 +143,34 @@
   /// ending for the table
   echo "</table></td></tr></table>\n";
   
+  
+  /// print the miscellaneous settings information before the attendance roll
+  echo "<center><table align=\"center\" width=\"80\" class=\"generalbox\"".
+    "border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr>".
+    "<td bgcolor=\"#ffffff\" class=\"generalboxcontent\">";
+// this is the main table
+  echo "<table width=\"100%\" border=\"0\" valign=\"top\" align=\"center\" ".
+         "cellpadding=\"5\" cellspacing=\"1\" class=\"generaltable\">";
+  echo"<tr><th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">".
+	  get_string("dynsectionshort","attendance").":</th>\n";
+  echo"<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">".
+	  (($form->dynsection=="1")?"Yes":"No")."</th></tr>\n";
+  echo"<tr><th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">".
+	  get_string("autoattendshort","attendance").":</th>\n";
+  echo"<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">".
+	  (($form->autoattend=="1")?"Yes":"No")."</th></tr>\n";
+  echo"<tr><th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">".
+	  get_string("gradeshort","attendance").":</th>\n";
+  echo"<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">".
+	  (($form->grade=="1")?"Yes":"No")."</th></tr>\n";
+  if ($form->grade == "1") {
+    echo"<tr><th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">".
+	  get_string("maxgradeshort","attendance").":</th>\n";
+    echo"<th valign=\"top\" align=\"right\" nowrap class=\"generaltableheader\">".
+	  $form->maxgrade."</th></tr>\n";
+  }
+  echo "</table></td></table>\n";
+
 /// Finish the page
     print_footer($course);
 
