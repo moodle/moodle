@@ -56,13 +56,10 @@
 
     $nav = calendar_get_link_tag(get_string('calendar', 'calendar'), CALENDAR_URL.'view.php?view=upcoming&amp;', $now['mday'], $now['mon'], $now['year']);
 
-    optional_param('view', 'upcoming');
-    optional_param('cal_d', 0, PARAM_INT);
-    optional_param('cal_m', 0, PARAM_INT);
-    optional_param('cal_y', 0, PARAM_INT);
-    $day = $cal_d;
-    $mon = $cal_m;
-    $yr  = $cal_y;
+    $view = optional_param('view', 'upcoming');
+    $day = optional_param('cal_d', 0, PARAM_INT);
+    $mon = optional_param('cal_m', 0, PARAM_INT);
+    $yr  = optional_param('cal_y', 0, PARAM_INT);
     
     if(!checkdate($mon, $day, $yr)) {
         $day = intval($now['mday']);
