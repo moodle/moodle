@@ -24,7 +24,7 @@
         error("Course id is incorrect.");
     }
 
-    if ($course->category) {
+    if ($course->category or $CFG->forcelogin) {
         require_login($course->id);
     }
 
