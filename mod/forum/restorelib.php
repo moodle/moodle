@@ -329,6 +329,11 @@
         $forum_path = "";
         $temp_path = "";
 
+        //First, we check to "course_id" exists and create is as necessary
+        //in CFG->dataroot
+        $dest_dir = $CFG->dataroot."/".$restore->course_id;
+        $status = check_dir_exists($dest_dir,true);
+
         //First, locate course's moddata directory
         $moddata_path = $CFG->dataroot."/".$restore->course_id."/".$CFG->moddata;
   

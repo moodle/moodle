@@ -166,7 +166,12 @@
         $assignment_path = "";
         $temp_path = "";
 
-        //First, locate course's moddata directory
+        //First, we check to "course_id" exists and create is as necessary
+        //in CFG->dataroot
+        $dest_dir = $CFG->dataroot."/".$restore->course_id;
+        $status = check_dir_exists($dest_dir,true);
+
+        //Now, locate course's moddata directory
         $moddata_path = $CFG->dataroot."/".$restore->course_id."/".$CFG->moddata;
    
         //Check it exists and create it
