@@ -18,7 +18,7 @@ function display() {
     $course = $this->course;
     $resource = $this->resource; 
 
-    require_once("$CFG->dirroot/files/mimetypes.php");
+    require_once($CFG->libdir.'/filelib.php');
  
     $subdir = isset($_GET['subdir']) ? $_GET['subdir'] : '';
 

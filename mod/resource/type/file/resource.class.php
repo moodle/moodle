@@ -207,7 +207,7 @@ function display() {
             
 
     /// First, find out what sort of file we are dealing with.
-    require_once("$CFG->dirroot/files/mimetypes.php");
+    require_once($CFG->libdir.'/filelib.php');
 
     $querystring = '';
     $resourcetype = '';

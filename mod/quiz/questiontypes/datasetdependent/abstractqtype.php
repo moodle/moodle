@@ -4,7 +4,7 @@
 /// ABSTRACT SUPERCLASS FOR QUSTION TYPES THAT USE DATASETS ///
 ///////////////////////////////////////////////////////////////
 
-require_once($CFG->dirroot . '/files/mimetypes.php');
+require_once($CFG->libdir.'/filelib.php');
 
 define("LITERAL", "1");
 define("FILE", "2");

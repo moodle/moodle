@@ -1,6 +1,6 @@
 <?php
     require_once("../../config.php"); 
-    require_once("$CFG->dirroot/files/mimetypes.php");
+    require_once($CFG->libdir.'/filelib.php');
 
 # this is the upload/download plugin, which allows to put arbitrary binary
 # files into the ewiki database using the provided specialized form, or the
