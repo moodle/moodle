@@ -3,17 +3,22 @@
     require("../config.php");
 
 
-    if (! $CFG->wwwroot == "http://example.com") {
+    if ($CFG->wwwroot == "http://example.com/moodle") {
         error("Moodle has not been configured yet.  You need to to edit config.php first.");
     }
 
     // Check databases and modules and install as needed.
     if (! $db->Metatables() ) { 
         print_header("Setting up database", "Setting up database", "Setting up databases for the first time", "");
-        if (modify_database("$CFG->dirroot/admin/moodle-core.sql")) {
-            notify("Main databases set up successfully");
+
+        if (file_exists("$CFG->libdir/db/$CFG->dbtype.sql")) {
+            if (modify_database("$CFG->libdir/db/$CFG->dbtype.sql")) {
+                notify("Main databases set up successfully");
+            } else {
+                error("Error: Main databases NOT set up successfully");
+            }
         } else {
-            error("Error: Main databases NOT set up successfully");
+            error("Error: Your database ($CFG->dbtype) is not yet supported by Moodle.  See the lib/db directory.");
         }
         print_heading("<A HREF=\"index.php\">Continue</A>");
         die;
