@@ -2,41 +2,42 @@ README FOR CATALAN PLUGIN
 -------------------------
 
 
-TraducciÛ de Moodle al catal‡ coordinada pel CENT, Centre d'EducaciÛ i
-Noves Tecnologies de la Universitat Jaume I de CastellÛ.
+Traducció de Moodle al català coordinada pel CENT, Centre d'Educació i
+Noves Tecnologies de la Universitat Jaume I de Castelló.
 
 http://cent.uji.es
 mailto:cent@uji.es
 
-(Han col?laborat en aquesta traducciÛ: Jordi Adell, Clara AndrÈs, Puri
-AndrÈs, Carles Bellver, FermÌn Cueva i Joan Queralt Gil.)
+(Han col·laborat en aquesta traducció: Jordi Adell, Clara Andrés, Puri
+Andrés, Carles Bellver, Fermín Cueva i Joan Queralt Gil.)
 
-Teniu en compte, si us plau, que la traducciÛ no Ès completa al 100%.
-Podeu col?laborar enviant suggeriments, comentaris o correccions, o
-fent-vos c‡rrec de la traducciÛ d'un mÚdul (i dels fitxers d'ajuda
+Teniu en compte que la traducció no és completa al 100%.  Podeu
+col·laborar enviant suggeriments, comentaris o correccions, o fent-vos
+càrrec de la traducció d'un mòdul (i dels fitxers d'ajuda
 corresponents).
 
-Si us voleu fer c‡rrec d'un mÚdul, els ?nics requisits sÛn aquests:
+Si us voleu fer càrrec d'un mòdul, els únics requisits són aquests:
 
-1. Un bon nivell de catal‡ i d'anglËs.
+1. Un bon nivell de català i d'anglès.
 
-2. Una mica d'experiËncia en la traducciÛ de programari o de textos
-   sobre inform‡tica. Us recomanem que tingueu sempre a m‡ la Guia
-   d'estil i el Recull de termes de Softcatal‡:
+2. Una mica d'experiència en la traducció de programari o de textos
+   sobre informàtica. Us recomanem que tingueu sempre a mà la Guia
+   d'estil i el Recull de termes de Softcatalà:
 
    http://www.softcatala.org/projectes/eines/guiaestil/guiaestil.htm
    http://www.softcatala.org/projectes/eines/recull/recull.htm
 
-3. Familiaritat amb el mÚdul en q¸estiÛ.
+3. Que sigueu usuaris habituals i experiments del mòdul en qüestió.
 
-4. CompromÌs de mantenir i actualitzar la traducciÛ durant un temps.
+4. Que us comprometeu a mantenir i actualitzar la traducció durant un
+   temps.
 
-La llista de mÚduls Ès la seg¸ent. La majoria dels mÚduls no assignats
-els tenim igualment traduÔts al catal‡, perÚ aquestes traduccions no han
+La llista de mòduls és la següent. La majoria dels mòduls no assignats
+els tenim igualment traduïts al català, però aquestes traduccions no han
 estat revisades o actualitzades recentment, o manquen les ajudes, etc.
 
 
-M“DUL              ASSIGNAT A:
+MÒDUL              ASSIGNAT A:
 -----              -----------
 
 appointment.php    No assignat
@@ -71,7 +72,7 @@ docs/              No assignat
 
 
 ----
-Centre d'EducaciÛ i Noves Tecnologies (CENT) de la Universitat Jaume I de CastellÛ
+Centre d'Educació i Noves Tecnologies (CENT) de la Universitat Jaume I de Castelló
 http://cent.uji.es
 mailto:cent@uji.es
 
