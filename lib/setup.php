@@ -25,9 +25,9 @@
  *  - $USER->secret - The user's ?.
  *  - $USER->lang - The user's language choice.
  *
- * @global object(cfg) $CFG
+ * @global object(user) $USER 
  */
-global $CFG;
+global $USER;
 /**
  * $USER is a global instance of a typical $user record. 
  *
@@ -36,9 +36,9 @@ global $CFG;
  *  - $CFG->dataroot - Path to moodle index directory on server's filesystem.
  *  - $CFG->libroot  - Path to moodle's library folder on server's filesystem.
  *
- * @global object(user) $USER 
+ * @global object(cfg) $CFG
  */
-global $USER;
+global $CFG;
 /**
  * Definition of session type
  * @global object(session) $SESSION 
