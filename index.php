@@ -36,7 +36,7 @@
 
     print_header(strip_tags($site->fullname), "$site->fullname", "home", "",
                  "<meta name=\"description\" content=\"".s(strip_tags($site->summary))."\">",
-                 true, "", "<div align=right>$loginstring$langmenu</div>");
+                 true, "", "$loginstring$langmenu");
 
     $firstcolumn = false;  // for now
     $lastcolumn = false;   // for now
@@ -127,7 +127,7 @@
                  } else {
                      $subtext = get_string("subscribe", "forum");
                  }
-                 $headertext = "<table border=0 width=100% cellpadding=0 cellspacing=0><tr>
+                 $headertext = "<table border=0 width=100% cellpadding=0 cellspacing=0 class=headingblockcontent><tr>
                                 <td>$newsforum->name</td>
                                 <td align=right><font size=1>
                                 <a href=\"mod/forum/subscribe.php?id=$newsforum->id\">$subtext</a>

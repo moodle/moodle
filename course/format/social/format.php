@@ -76,7 +76,7 @@
           } else {
               $subtext = get_string("subscribe", "forum");
           }
-          $headertext = "<table border=0 width=100% cellpadding=0 cellspacing=0><tr><td>".
+          $headertext = "<table border=0 width=100% cellpadding=0 cellspacing=0 class=headingblockcontent><tr><td>".
                          get_string("socialheadline").
                          "</td><td align=right><font size=1>".
                          "<a href=\"../mod/forum/subscribe.php?id=$social->id\">$subtext</a></td>".
