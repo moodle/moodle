@@ -111,7 +111,7 @@
 
 /// Print Section
     if ($site->numsections > 0) {
-        print_simple_box_start('center', '100%', $THEME->cellcontent, 5, 'sitetopic');
+        print_simple_box_start('center', '100%', '', 5, 'sitetopic');
 
         /// If currently moving a file then show the current clipboard
         if (ismoving($site->id)) {
