@@ -58,6 +58,9 @@ class MoodleBlock {
         }
 
         $this->get_content();
+        if(!isset($this->content->footer)) {
+            $this->content->footer = '';
+        }
 
         switch($this->content_type) {
             case BLOCK_TYPE_NUKE:
