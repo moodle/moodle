@@ -21,7 +21,7 @@
 <h2>Manual del Desarrollador</h2>
 
 <p>Este documento describe un poco el diseño de Moodle y cómo se puede contribuir.</p>
-<p>Actuamente es un tanto escueto - &iexcl;con el tiempo se irá mejorando 
+<p>Actuamente es un tanto escueto - &iexcl;con el tiempo se irá mejorando
   la documentación!</p>
 <p>Secciones de este documento:</p>
 <ol>
@@ -67,13 +67,13 @@ diseñado de acuerdo con los siguientes criterios:</p>
 posible variedad de plataformas</strong><br>
 
     <br>
-    La plataforma de aplicaciones Web que funciona en la mayoría de las plataformas 
-    es PHP combinada con MySQL, y este es el entorno en el que Moodle ha sido 
-    desarrollado (sobre Linux, Windows, y Mac OS X). Moodle también usa la librería 
-    ADOdb para la abstracción de bases de datos, lo que significa que Moodle 
-    puede usar <a href="http://php.weblogs.com/ADOdb_manual#drivers">más de diez 
-    marcas diferentes de bases de datos</a> (desafortunadamente, a pesar de ello, 
-    no puede aún <em><strong>crear tablas</strong></em> en todas esas bases de 
+    La plataforma de aplicaciones Web que funciona en la mayoría de las plataformas
+    es PHP combinada con MySQL, y este es el entorno en el que Moodle ha sido
+    desarrollado (sobre Linux, Windows, y Mac OS X). Moodle también usa la librería
+    ADOdb para la abstracción de bases de datos, lo que significa que Moodle
+    puede usar <a href="http://php.weblogs.com/ADOdb_manual#drivers">más de diez
+    marcas diferentes de bases de datos</a> (desafortunadamente, a pesar de ello,
+    no puede aún <em><strong>crear tablas</strong></em> en todas esas bases de
     datos. Hablaremos más sobre esto más adelante).<br>
 
     <br>
@@ -87,17 +87,17 @@ modificar</strong><br>
     <br>
     Los primeros prototipos de Moodle (1999) se construyeron usando <a
 
- href="http://www.zope.org/" target="_top">Zope</a>, un avanzado servidor de aplicaciones 
-    Web orientado a objetos. Desafortunadamente me pareció que aunque la tecnología 
-    era bastante buena, tenía una curva de aprendizaje muy elevada y no era muy 
-    flexible en términos de administración del sistema. El lenguaje PHP, por otro 
-    lado, es muy fácil de aprender (especialmente si has hecho algo de programación 
-    usando cualquier otro lenguaje de script). Pronto tomé la decisión de evitar 
-    usar un diseño orientado a clases, con la finalidad, una vez más, de mantenerlo 
-    fácil de entender para los principiantes. La reutilización del código se archiva 
-    en librerías con funciones claramente tituladas y con una disposición de los 
-    archivos de script, consistente. PHP es también fácil de instalar (existen 
-    versiones ejecutables para todas las plataformas) y está ampliamente disponible, 
+ href="http://www.zope.org/" target="_top">Zope</a>, un avanzado servidor de aplicaciones
+    Web orientado a objetos. Desafortunadamente me pareció que aunque la tecnología
+    era bastante buena, tenía una curva de aprendizaje muy elevada y no era muy
+    flexible en términos de administración del sistema. El lenguaje PHP, por otro
+    lado, es muy fácil de aprender (especialmente si has hecho algo de programación
+    usando cualquier otro lenguaje de script). Pronto tomé la decisión de evitar
+    usar un diseño orientado a clases, con la finalidad, una vez más, de mantenerlo
+    fácil de entender para los principiantes. La reutilización del código se archiva
+    en librerías con funciones claramente tituladas y con una disposición de los
+    archivos de script, consistente. PHP es también fácil de instalar (existen
+    versiones ejecutables para todas las plataformas) y está ampliamente disponible,
     pues la mayoría de los servicios de alojamiento lo proporcionan como un estándar.<br>
 
     <br>
@@ -109,11 +109,11 @@ modificar</strong><br>
 versión a la siguiente</strong><br>
 
     <br>
-    Moodle sabe cuál es su versión (así como las versiones de todos los 
-    módulos) y se ha construido un mecanismo interno para que Moodle pueda actualizarse 
-    a sí mismo de forma apropiada a las nuevas versiones (por ejemplo, puede renombrar 
-    las tablas de las bases de datos o añadir nuevos campos). Usando CVS en Unix, 
-    por ejemplo, uno tan sólo tiene que hacer un "cvs update -d" y luego visitar 
+    Moodle sabe cuál es su versión (así como las versiones de todos los
+    módulos) y se ha construido un mecanismo interno para que Moodle pueda actualizarse
+    a sí mismo de forma apropiada a las nuevas versiones (por ejemplo, puede renombrar
+    las tablas de las bases de datos o añadir nuevos campos). Usando CVS en Unix,
+    por ejemplo, uno tan sólo tiene que hacer un "cvs update -d" y luego visitar
     la página principal del sitio para completar la actualización.<br>
 
     <br>
@@ -190,10 +190,10 @@ que puede ayudar.</p>
 
 <div style="padding-left: 3em;">
 
-  <p>Estos son con mucho los módulos más importantes, y se encuentran en el directorio 
-    "mod". Por defecto hay siete módulos: Tarea, Consulta, Foro, Diario, Cuestionario, 
-    Material, y Encuesta. Cada módulo está en un subdirectorio separado y consiste 
-    en los siguientes elementos obligatorios (más los scripts extra que son únicos 
+  <p>Estos son con mucho los módulos más importantes, y se encuentran en el directorio
+    "mod". Por defecto hay siete módulos: Tarea, Consulta, Foro, Diario, Cuestionario,
+    Recurso, y Encuesta. Cada módulo está en un subdirectorio separado y consiste
+    en los siguientes elementos obligatorios (más los scripts extra que son únicos
     para cada módulo):</p>
 
 <ul>
@@ -208,7 +208,7 @@ código de actualización</li>
 
   <li>icon.gif: un icono de 16x16 para el módulo</li>
 
-    <li>db/: volcados SQL de todas las tablas y datos requeridos de una base de 
+    <li>db/: volcados SQL de todas las tablas y datos requeridos de una base de
       datos (para cada tipo de base de datos)</li>
 
   <li>index.php: una página para presentar la lista de todas las
@@ -217,9 +217,9 @@ instancias en un curso</li>
 
   <li>view.php: una página para ver una instancia en particular</li>
 
-    <li>lib.php: cualquiera/todas las funciones definidas para el módulo deben 
-      estar aquí. Si el módulo se llama "chisme", entonces las funciones 
-      requeridas incluyen: 
+    <li>lib.php: cualquiera/todas las funciones definidas para el módulo deben
+      estar aquí. Si el módulo se llama "chisme", entonces las funciones
+      requeridas incluyen:
       <ul>
 
       <li>chisme_add_instance() - código para añadir una
@@ -276,7 +276,7 @@ Descomprímala y siga las instrucciones que hay en el documento "<span
 
     <p>Quizás también quiera antes enviar algo al <a
 
- href="http://moodle.org/mod/forum/view.php?id=44" target="_top">Foro &quot;<em>Activity 
+ href="http://moodle.org/mod/forum/view.php?id=44" target="_top">Foro &quot;<em>Activity
       modules</em>&quot; en &quot;<em>Using Moodle</em>&quot;</a>.</p>
 
 <p>&nbsp;</p>
@@ -327,7 +327,7 @@ página.</li>
 
 <ol>
 
-    <li>Copie una de las carpetas de tema existentes a una con un nuevo nombre. 
+    <li>Copie una de las carpetas de tema existentes a una con un nuevo nombre.
       Le recomiendo comenzar con uno de los temas estándar.</li>
 
   <li>Edite: config.php e inserte sus propios colores.</li>
@@ -346,8 +346,8 @@ apariencia radicalmente distinta para su sitio simplemente editando los
 
 colores que aparecen en el archivo config.php</p>
 
-  <p>Advierta también que las actualizaciones de Moodle <em>pueden</em> corromper 
-    ligeramente los temas, así que revise cuidadosamente las notas de al versión 
+  <p>Advierta también que las actualizaciones de Moodle <em>pueden</em> corromper
+    ligeramente los temas, así que revise cuidadosamente las notas de al versión
     si está usando un tema personalizado.</p>
 
 <p>En particular, Moodle 2.0 tendrá un sistema de
@@ -366,9 +366,9 @@ elementos en la página).</p>
 
     <p>Encontrará más discusión sobre esto en el <a
 
- href="http://moodle.org/mod/forum/view.php?id=46" target="_top">Foro &quot;<em>Themes</em>&quot; 
-      en &quot;<em>Using Moodle</em>&quot;</a>. Si usted crea un bonito tema que 
-      considera que otros podrían querer usar, &iexcl;por favor, envíelo en un 
+ href="http://moodle.org/mod/forum/view.php?id=46" target="_top">Foro &quot;<em>Themes</em>&quot;
+      en &quot;<em>Using Moodle</em>&quot;</a>. Si usted crea un bonito tema que
+      considera que otros podrían querer usar, &iexcl;por favor, envíelo en un
       archivo zip al foro sobre temas!.<br>
 
 </p>
@@ -391,7 +391,7 @@ subdirectorio del directorio "lang". La estructura del directorio
 
 "lang" es la que sigue:</p>
 
-  <p><strong>lang/en</strong> - directorio que contiene todos los archivos para 
+  <p><strong>lang/en</strong> - directorio que contiene todos los archivos para
     un idioma (por ejemplo, el inglés)</p>
 
 <ul>
@@ -407,21 +407,21 @@ subdirectorio del directorio "lang". La estructura del directorio
 
   <li>quiz.php - cadenas para el módulo del cuestionario</li>
 
-    <li>resource.php - cadenas para el módulo de materiales</li>
+    <li>resource.php - cadenas para el módulo de recursos</li>
 
   <li>survey.php - cadenas para el módulo de encuesta</li>
 
     <li>.... además de otros módulos si los hay.<br>
 
     <br>
-      Se llama a las cadenas desde los archivos usando las funciones: <strong><em>get_string()</em></strong><em> 
-      </em>o<em> <strong>print_string()</strong></em>. Cada cadena admite la sustitución 
-      de variables para ayudar a la ordenación de variables en diferentes idiomas. 
+      Se llama a las cadenas desde los archivos usando las funciones: <strong><em>get_string()</em></strong><em>
+      </em>o<em> <strong>print_string()</strong></em>. Cada cadena admite la sustitución
+      de variables para ayudar a la ordenación de variables en diferentes idiomas.
       Por ejemplo:<br>
 
     <br>
 
-$strdueby = get_string("assignmentdueby", "assignment",      
+$strdueby = get_string("assignmentdueby", "assignment",
 
 userdate($date)); <br>
 
@@ -462,14 +462,14 @@ ayuda sobre el texto");</p>
   </blockquote>
   <p>Tenga en cuenta que puede editar los idiomas en línea<em
 
- lang="en"></em>, usando las herramientas web de Administración bajo "Idioma". 
-    Esto hace que sea fácil no sólo crear nuevos idiomas sino también refinar 
-    los existentes. Si va a comenzar a crear un nuevo idioma por favor comuníquese 
+ lang="en"></em>, usando las herramientas web de Administración bajo "Idioma".
+    Esto hace que sea fácil no sólo crear nuevos idiomas sino también refinar
+    los existentes. Si va a comenzar a crear un nuevo idioma por favor comuníquese
     conmigo: <a href="http://dougiamas.com/" target="_top">Martin Dougiamas</a>.</p>
 
     <p>También querrá enviar un mensaje al <a
 
- href="http://moodle.org/mod/forum/view.php?id=43" target="_top">&quot;<em>General 
+ href="http://moodle.org/mod/forum/view.php?id=43" target="_top">&quot;<em>General
       Language forum</em>&quot; en &quot;<em>Using Moodle</em>&quot;</a>. </p>
 
 <p>Si usted está haciendo el mantenimiento de un idioma de
@@ -514,9 +514,9 @@ una base de datos determinada. Estos son los archivos que hay en <strong>lib/db<
 
 y dentro del subdirectorio <strong>db</strong> de cada módulo.</p>
 
-  <p>Actualmente, sólo se soportan totalmente de esta manera, MySQL y PostgreSQL 
+  <p>Actualmente, sólo se soportan totalmente de esta manera, MySQL y PostgreSQL
     (nadie ha escrito esquemas para otras marcas).</p>
-    <p>Moodle 1.2 usará un nuevo método de esquemas XML independientes de la base 
+    <p>Moodle 1.2 usará un nuevo método de esquemas XML independientes de la base
       de datos que hará que todo ésto no sea necesario.</p>
   <p>&nbsp;</p>
 
@@ -530,11 +530,11 @@ y dentro del subdirectorio <strong>db</strong> de cada módulo.</p>
 
 semanal, por temas y social.</p>
 
-  <p>Estos están un poco más conectados al resto del código (y, por tanto, son 
+  <p>Estos están un poco más conectados al resto del código (y, por tanto, son
     menos extendibles) pero sigue siendo bastante sencillo añadir nuevos módulos.</p>
 
-  <p>Si tiene cualquier idea para formatos diferentes que necesite o quiera ver 
-    integrados, póngase en contacto conmigo y yo haré mi mayor esfuerzo para tenerlos 
+  <p>Si tiene cualquier idea para formatos diferentes que necesite o quiera ver
+    integrados, póngase en contacto conmigo y yo haré mi mayor esfuerzo para tenerlos
     disponibles en futuras versiones.</p>
 
 <p>&nbsp;</p>
@@ -571,11 +571,11 @@ fallo que encuentre y quizás participar en la discusión
 
 sobre cómo arreglarlos.</p>
 
-  <p>"Fallos" no sólo incluye fallos de software de las versiones actuales de 
-    Moodle, sino también nuevas ideas, mejoras e incluso crítica constructiva 
-    de las actuales características. La belleza del código abierto radica en que 
-    cualquiera puede participar de alguna manera y ayudar a la creación de un 
-    producto mejor para que todos disfrutemos de él. &iexcl;En este proyecto sus 
+  <p>"Fallos" no sólo incluye fallos de software de las versiones actuales de
+    Moodle, sino también nuevas ideas, mejoras e incluso crítica constructiva
+    de las actuales características. La belleza del código abierto radica en que
+    cualquiera puede participar de alguna manera y ayudar a la creación de un
+    producto mejor para que todos disfrutemos de él. &iexcl;En este proyecto sus
     ideas son muy bienvenidas!</p>
 
 <p>&nbsp;</p>
@@ -586,7 +586,7 @@ sobre cómo arreglarlos.</p>
 
 <p style="text-align: center;">&iexcl;Gracias por usar Moodle!</p>
 <p style="text-align: center;"><br>
-  <a href="http://dougiamas.com/" target="_top">Martin Dougiamas</a> , Desarrollador 
+  <a href="http://dougiamas.com/" target="_top">Martin Dougiamas</a> , Desarrollador
   principal </p>
 
 <p>&nbsp;</p>
@@ -598,7 +598,7 @@ sobre cómo arreglarlos.</p>
 
 
 <p align="CENTER"><font size="1"><a href="." target="_top">Documentación de Moodle</a></font></p>
-<p align="CENTER"><font size="1">Version: $Id: developer.html,v 1.2 2001/12/09 
+<p align="CENTER"><font size="1">Version: $Id: developer.html,v 1.2 2001/12/09
   10:34:19 martin Exp $</font></p>
 </html>
 </body>
