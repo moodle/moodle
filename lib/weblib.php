@@ -1687,7 +1687,7 @@ function print_group_menu($groups, $groupmode, $currentgroup, $urlroot) {
 /// Prints an appropriate group selection menu
 
 /// Add an "All groups" to the start of the menu
-    $groupsmenu[0] = get_string("allgroups");
+    $groupsmenu[0] = get_string("allparticipants");
     foreach ($groups as $key => $groupname) {
         $groupsmenu[$key] = $groupname;
     }
