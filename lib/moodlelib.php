@@ -5648,27 +5648,81 @@ function bounded_number($min, $value, $max) {
 }
 
 
-function collect_performance_info() {
-    global $CFG;
-
-    $CFG->startpagetime = microtime();
-}
-
+/**
+ *** get_performance_info() pairs up with init_performance_info()
+ *** loaded in setup.php. Returns an array with 'html' and 'txt' 
+ *** values ready for use, and each of the individual stats provided
+ *** separately as well.
+ ***
+ **/
 function get_performance_info() {
-    global $CFG;
+    global $CFG, $PERF;
 
-    $info = '';
+    $info = array();
+    $info['html'] = $_SERVER['REQUEST_URI'] . ' '; // holds userfriendly HTML representation
+    $info['txt']  = $_SERVER['REQUEST_URI'] . ' '; // holds log-friendly representation
+
+    $info['realtime'] = microtime_diff($PERF->starttime, microtime());
+     
+    $info['html'] .= '<span class="timeused">'.$info['realtime'].' secs</span> ';
+    $info['txt'] .= 'time: '.$info['realtime'].'s ';
+
     if (function_exists('memory_get_usage')) {
-        $info .= '<span class="memoryused">'.$_SERVER['REQUEST_URI'].' RAM: '.memory_get_usage().'</span>';
-    }
-    if (isset($CFG->startpagetime)) {
-        $info .= '<span class="timeused">'.microtime_diff($CFG->startpagetime, microtime()).' secs</span>';
-    }
-
-    if ($info) {
-        return '<div class="performanceinfo">'.$info.'</div>';
+        $info['memory_total'] = memory_get_usage();
+        $info['memory_growth'] = memory_get_usage() - $PERF->startmemory;
+        $info['html'] .= '<span class="memoryused">RAM: '.display_size($info['memory_total']).'</span> ';
+        $info['txt']  .= 'memory_total: '.$info['memory_total'].'B (' . display_size($info['memory_total']).') memory_growth: '.$info['memory_growth'].'B ('.display_size($info['memory_growth']).') ';
     }
 
+    $inc = get_included_files();
+    //error_log(print_r($inc,1));
+    $info['includecount'] = count($inc);
+    $info['html'] .= '<span class="included">Included '.$info['includecount'].' files</span> ';
+    $info['txt']  .= 'includecount: '.$info['includecount'].' ';
+
+    if (!empty($PERF->dbqueries)) {
+        $info['dbqueries'] = $PERF->dbqueries;
+        $info['html'] .= '<span class="dbqueries">DB queries'.$info['dbqueries'].'</span> ';
+        $info['txt'] .= 'dbqueries: '.$info['dbqueries'].' ';
+    }
+
+    if (!empty($PERF->logwrites)) {
+        $info['logwrites'] = $PERF->logwrites;
+        $info['html'] .= '<span class="logwrites">Log writes '.$info['logwrites'].'</span> ';
+        $info['txt'] .= 'logwrites: '.$info['logwrites'].' ';
+    }
+
+    if (function_exists('posix_times')) {
+        $ptimes = posix_times();
+        foreach ($ptimes as $key => $val) {
+            $info[$key] = $ptimes[$key] -  $PERF->startposixtimes[$key];            
+        }
+        $info['html'] .= "<span class=\"posixtimes\">ticks: $info[ticks] user: $info[utime] sys: $info[stime] cuser: $info[cutime] csys: $info[cstime]</span> ";
+        $info['txt'] .= "ticks: $info[ticks] user: $info[utime] sys: $info[stime] cuser: $info[cutime] csys: $info[cstime] ";
+
+    }
+
+    // Grab the load average for the last minute
+    // /proc will only work under some linux configurations
+    // while uptime is there under MacOSX/Darwin and other unices
+    if (is_readable('/proc/loadavg') && $loadavg = @file('/proc/loadavg')) {
+        list($server_load) = explode(' ', $loadavg[0]);
+        unset($loadavg);
+    } else if ( is_executable('/usr/bin/uptime') && $loadavg = `/usr/bin/uptime` ) {
+        if (preg_match('/load averages?: (\d+:\d+)/', $loadavg, $matches)) {
+            $server_load = $matches[1];
+        } else {
+            trigger_error('Could not parse uptime output!');
+        }
+    }
+    if (!empty($server_load)) {
+        $info['serverload'] = $server_load;
+        $info['html'] .= '<span class="serverload">Load average: '.$info['serverload'].'%</span> ';
+        $info['txt'] .= 'serverload: '.$info['serverload'].'% ';
+    }
+    
+
+    $info['html'] = '<div class="performanceinfo">'.$info['html'].'</span>';
     return $info;
 }
 

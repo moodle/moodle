@@ -1834,12 +1834,14 @@ function print_footer($course=NULL, $usercourse=NULL) {
     }
 
 /// Provide some performance info if required
-
-    if ($CFG->debug > 7) {
-        $performanceinfo = get_performance_info();
-    } else {
-        $performanceinfo = '';
-    }
+    $performanceinfo = '';
+    if (!empty($CFG->perfdebug)) {
+        $perf = get_performance_info();
+        error_log("PERF: " . $perf['txt']);
+        if ($CFG->debug > 7) {
+            $performanceinfo = $perf['html'];
+        }
+    } 
 
 
 /// Include the actual footer file

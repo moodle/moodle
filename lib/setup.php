@@ -69,32 +69,9 @@ global $THEME;
         die;
     }
 
-/// Time to start counting
-    $PERF = new Object;
+/// Time to start counting    
     if(!empty($CFG->perfdebug)) {
-
-        if (function_exists('microtime')) {
-            $PERF->starttime = microtime();
-        }
-        if (function_exists('memory_get_usage')) {
-            $PERF->startmemory = memory_get_usage();
-        }
-        if (function_exists('posix_times')) {
-            $PERF->startposixtimes = posix_times();  
-        }
-        // Grab the load average for the last minute
-        // /proc will only work under some linux configurations
-        // while uptime is there under MacOSX/Darwin and other unices
-        if (is_readable('/proc/loadavg') && $loadavg = @file('/proc/loadavg')) {
-            list($PERF->server_load) = explode(' ', $loadavg[0]);
-            unset($loadavg);
-        } else if ( is_executable('/usr/bin/uptime') && $loadavg = `/usr/bin/uptime` ) {
-            if (preg_match('/load averages?: (\d+:\d+)/', $loadavg, $matches)) {
-                $PERF->server_load = $matches[1];
-            } else {
-                trigger_error('Could not parse uptime output!');
-            }
-        }
+        init_performance_info();        
     }
 
 /// If there are any errors in the standard libraries we want to know!
@@ -408,5 +385,33 @@ global $THEME;
             }
         }
     }
+
+/***
+ *** init_performance_info() {
+ ***
+ *** Initializes our performance info early.
+ *** 
+ *** Pairs up with get_performance_info() which is actually
+ *** in moodlelib.php. This function is here so that we can 
+ *** call it before all the libs are pulled in. 
+ ***
+ **/
+function init_performance_info() {
+
+    global $PERF;
+
+    $PERF = new Object;
+    $PERF->dbqueries = 0;   
+    $PERF->logwrites = 0;
+    if (function_exists('microtime')) {
+        $PERF->starttime = microtime();
+        }
+    if (function_exists('memory_get_usage')) {
+        $PERF->startmemory = memory_get_usage();
+    }
+    if (function_exists('posix_times')) {
+        $PERF->startposixtimes = posix_times();  
+    }
+}
 
 ?>
