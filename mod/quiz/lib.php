@@ -231,7 +231,196 @@ function quiz_print_quiz_questions($quiz, $results=NULL) {
     echo "<CENTER><INPUT TYPE=submit VALUE=\"".get_string("savemyanswers", "quiz")."\"></CENTER>";
     echo "</FORM>";
 }
+ 
+function quiz_get_default_category($courseid) {
+    if ($categories = get_records("quiz_categories", "course", $courseid, "id")) {
+        foreach ($categories as $category) {
+            return $category;   // Return the first one (lowest id)
+        }
+    }
 
+    // Otherwise, we need to make one
+    $category->name = get_string("miscellaneous", "quiz");
+    $category->info = get_string("miscellaneous", "quiz");
+    $category->course = $courseid;
+    $category->publish = 0;
+
+    if (!$category->id = insert_record("quiz_categories", $category)) {
+        notify("Error creating a default category!");
+        return false;
+    }
+    return $category;
+}
+
+function quiz_print_category_form($course, $current) {
+// Prints a form to choose categories
+
+    if (!$categories = get_records_sql_menu("SELECT id,name FROM quiz_categories 
+                                             WHERE course='$course->id' OR publish = '1'
+                                             ORDER by name ASC")) {
+        if (!$category = quiz_get_default_category($course->id)) {
+            notify("Error creating a default category!");
+            return false;
+        }
+        $categories[$category->id] = $category->name;
+    }
+    $strcategory = get_string("category", "quiz");
+    $strshow = get_string("show", "quiz");
+    $strrename = get_string("rename", "quiz");
+    $strdelete = get_string("delete");
+    $strnew = get_string("new");
+
+    echo "<FORM METHOD=POST ACTION=edit.php>"; 
+    echo "<B>$strcategory:</B>&nbsp;";
+    choose_from_menu($categories, "cat", "$current");
+    echo "<INPUT TYPE=submit NAME=catshow VALUE=\"$strshow\">";
+    echo "<INPUT TYPE=submit NAME=catrename VALUE=\"$strrename\">";
+    echo "<INPUT TYPE=submit NAME=catdelete VALUE=\"$strdelete\">";
+    echo "<INPUT TYPE=submit NAME=catnew VALUE=\"$strnew\">";
+    echo "</FORM>";
+}
+
+
+function quiz_print_question_list($questionlist) {
+// Prints a list of quiz questions in a small layout form with knobs
+
+    global $THEME;
+
+    if (!$questionlist) {
+        echo "<P align=center>";
+        print_string("noquestions", "quiz");
+        echo "</P>";
+        return;
+    }
+
+    $order = explode(",", $questionlist);
+
+    if (!$questions = get_records_sql("SELECT q.*, qg.grade FROM quiz_questions q, quiz_question_grades qg
+                                       WHERE q.id in ($questionlist) and qg.question = q.id")) {
+        error("No questions were found!");
+    }
+
+    $strorder = get_string("order");
+    $strquestionname = get_string("questionname", "quiz");
+    $strgrade = get_string("grade");
+    $strdelete = get_string("delete");
+    $stredit = get_string("edit");
+    $strmoveup = get_string("moveup");
+    $strmovedown = get_string("movedown");
+    $strsavegrades = get_string("savegrades", "quiz");
+
+    for ($i=100; $i>=0; $i--) {
+        $grades[$i] = $i;
+    }
+    $count = 0;
+    $sumgrade = 0;
+    $total = count($order);
+    echo "<FORM METHOD=post ACTION=edit.php>";
+    echo "<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=2 WIDTH=\"100%\">";
+    echo "<TR><TH COLSPAN=3>$strorder</TH><TH align=left>$strquestionname</TH><TH>$strgrade</TH><TH>$stredit</TH></TR>";
+    foreach ($order as $qnum) {
+        $count++;
+        echo "<TR BGCOLOR=\"$THEME->cellcontent\">";
+        echo "<TD>$count</TD>";
+        echo "<TD>";
+        if ($count != 1) {
+            echo "<A TITLE=\"$strmoveup\" HREF=\"edit.php?up=$qnum\"><IMG 
+                 SRC=\"../../pix/t/up.gif\" BORDER=0></A>";
+        }
+        echo "</TD>";
+        echo "<TD>";
+        if ($count != $total) {
+            echo "<A TITLE=\"$strmovedown\" HREF=\"edit.php?down=$qnum\"><IMG 
+                 SRC=\"../../pix/t/down.gif\" BORDER=0></A>";
+        }
+        echo "</TD>";
+        echo "<TD>".$questions[$qnum]->name."</TD>";
+        echo "<TD>";
+        choose_from_menu($grades, "q$qnum", $questions[$qnum]->grade, "");
+        echo "<TD>";
+            echo "<A TITLE=\"$strdelete\" HREF=\"edit.php?delete=$qnum\"><IMG 
+                 SRC=\"../../pix/t/delete.gif\" BORDER=0></A>&nbsp;";
+            echo "<A TITLE=\"$stredit\" HREF=\"question.php?id=$qnum\"><IMG 
+                 SRC=\"../../pix/t/edit.gif\" BORDER=0></A>";
+        echo "</TD>";
+
+        $sumgrade += $questions[$qnum]->grade;
+    }
+    echo "<TR><TD COLSPAN=3><TD ALIGN=right>";
+    echo "<INPUT TYPE=submit VALUE=\"$strsavegrades:\">";
+    echo "<INPUT TYPE=hidden NAME=grade VALUE=\"save\">";
+    echo "<TD ALIGN=LEFT BGCOLOR=\"$THEME->cellcontent\">";
+    echo "<B>$sumgrade</B>";
+    echo "</TD><TD></TD></TR>";
+    echo "</TABLE>";
+    echo "</FORM>";
+}
+
+
+function quiz_print_cat_question_list($categoryid) {
+// Prints a form to choose categories
+
+    global $THEME, $QUIZ_QUESTION_TYPE;
+
+    $strquestion = get_string("question", "quiz");
+    $strnoquestions = get_string("noquestions", "quiz");
+    $strselect = get_string("select", "quiz");
+    $strcreatenewquestion = get_string("createnewquestion", "quiz");
+    $strquestionname = get_string("questionname", "quiz");
+    $strdelete = get_string("delete");
+    $stredit = get_string("edit");
+    $straddselectedtoquiz = get_string("addselectedtoquiz", "quiz");
+
+    if (!$categoryid) {
+        echo "<P align=center>";
+        print_string("selectcategoryabove", "quiz");
+        echo "</P>";
+        return;
+    }
+
+    if (!$category = get_record("quiz_categories", "id", "$categoryid")) {
+        notify("Category not found!");
+        return;
+    }
+    echo "<P>$category->info</P>";
+
+    echo "<FORM METHOD=POST ACTION=question.php>"; 
+    echo "<B>$strquestion:</B>&nbsp;";
+    choose_from_menu($QUIZ_QUESTION_TYPE, "type", "", "");
+    echo "<INPUT TYPE=hidden NAME=category VALUE=\"$category->id\">";
+    echo "<INPUT TYPE=submit NAME=new VALUE=\"$strcreatenewquestion\">";
+    echo "</FORM>";
+
+    if (!$questions = get_records("quiz_questions", "category", $category->id)) {
+        echo "<P align=center>";
+        print_string("noquestions", "quiz");
+        echo "</P>";
+        return;
+    }
+
+    echo "<FORM METHOD=post ACTION=edit.php>";
+    echo "<TABLE BORDER=0 CELLPADDING=5 CELLSPACING=2 WIDTH=\"100%\">";
+    echo "<TR><TH width=10>$strselect</TH><TH width=* align=left>$strquestionname</TH><TH width=10>$stredit</TH></TR>";
+    foreach ($questions as $question) {
+        echo "<TR BGCOLOR=\"$THEME->cellcontent\">";
+        echo "<TD ALIGN=CENTER>";
+        echo "<INPUT TYPE=CHECKBOX NAME=q$question->id VALUE=\"1\">";
+        echo "</TD>";
+        echo "<TD>".$question->name."</TD>";
+        echo "<TD>";
+            echo "<A TITLE=\"$strdelete\" HREF=\"question.php?delete=$question->id\"><IMG 
+                 SRC=\"../../pix/t/delete.gif\" BORDER=0></A>&nbsp;";
+            echo "<A TITLE=\"$stredit\" HREF=\"question.php?id=$question->id\"><IMG 
+                 SRC=\"../../pix/t/edit.gif\" BORDER=0></A>";
+        echo "</TD></TR>";
+    }
+    echo "<TR><TD COLSPAN=3>";
+    echo "<INPUT TYPE=hidden NAME=add VALUE=\"1\">";
+    echo "<INPUT TYPE=submit VALUE=\"<< $straddselectedtoquiz\">";
+    echo "</TD></TR>";
+    echo "</TABLE>";
+    echo "</FORM>";
+}
 
 
 function quiz_get_user_attempts($quizid, $userid) {

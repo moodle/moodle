@@ -4,7 +4,8 @@
 <? include_once("$CFG->dirroot/mod/quiz/lib.php") ?>
 
 <H1 ALIGN=CENTER><FONT COLOR=RED>This module is not ready for use</FONT></H1>
-<FORM name="form" method="post" action="<?=$ME ?>">
+
+<FORM name="form" method="post" action="<?=$CFG->wwwroot?>/mod/quiz/edit.php">
 <CENTER>
 <TABLE cellpadding=5>
 <TR valign=top>
@@ -102,6 +103,7 @@
     </TD>
 </TR>
 </TABLE>
+<INPUT type="hidden" name=questions     value="<? p($form->questions) ?>">
 <!-- These hidden variables are always the same -->
 <INPUT type="hidden" name=course        value="<? p($form->course) ?>">
 <INPUT type="hidden" name=coursemodule  value="<? p($form->coursemodule) ?>">
@@ -110,6 +112,7 @@
 <INPUT type="hidden" name=modulename    value="<? p($form->modulename) ?>">
 <INPUT type="hidden" name=instance      value="<? p($form->instance) ?>">
 <INPUT type="hidden" name=mode          value="<? p($form->mode) ?>">
+<input type="hidden" name=destination   value="<?=$ME ?>">
 <INPUT type="submit" value="<? print_string("savechanges") ?>">
 </CENTER>
 </FORM>
