@@ -435,7 +435,7 @@ class quiz_file_format extends quiz_default_format {
 function repchar( $text ) {
     // escapes 'reserved' characters # = ~ { )
     $reserved = array( '#','=','~','{','}' );
-    $escaped = array( '\#','\=','~','\{','\}' );
+    $escaped = array( '\#','\=','\~','\{','\}' );
 
     return str_replace( $reserved, $escaped, $text ); 
     }
