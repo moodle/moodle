@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 aiming-for-beta-soon (2004082200)
+      // glossary.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['addcomment'] = 'コメントの追加';
@@ -28,20 +28,20 @@ $string['categories'] = 'カテゴリ';
 $string['category'] = 'カテゴリ';
 $string['categorydeleted'] = 'カテゴリが削除されました';
 $string['categoryview'] = 'カテゴリ順';
-$string['cnfallowcomments'] = '用語集のエントリーへのコメントをデフォルトで許可する場合に設定します。';
-$string['cnfallowdupentries'] = '用語集のエントリーをデフォルトで複写を許可する場合に設定します。';
-$string['cnfapprovalstatus'] = '学生による投稿のデフォルト認証ステータスを設定';
-$string['cnfcasesensitive'] = 'エントリーがリンクの場合、大文字小文字の区別をするかを設定します。';
+$string['cnfallowcomments'] = '用語集のエントリーへのコメントをデフォルトで許可する。';
+$string['cnfallowdupentries'] = '重複エントリーを許可する。';
+$string['cnfapprovalstatus'] = '学生による投稿を承認状態にする。';
+$string['cnfcasesensitive'] = 'エントリーがリンクの場合、大文字小文字の区別をする。';
 $string['cnfdefaulthook'] = '用語集が表示される時のデフォルトセクションを選択してください。';
 $string['cnfdefaultmode'] = '用語集が表示される時のデフォルトフレームを選択してください。';
-$string['cnffullmatch'] = 'エントリーがリンクの場合、ターゲットテキストと文字の大きさを合わせるべきか否かを設定します。';
-$string['cnflinkentry'] = 'デフォルトで自動的にエントリーがリンク付けられるか否かを設定します。';
-$string['cnflinkglossaries'] = 'デフォルトで自動的に用語集がリンク付けられるか否かを設定します。';
+$string['cnffullmatch'] = 'エントリーがリンクの場合、ターゲットテキストと文字の大小(大文字・小文字)を合わせる。';
+$string['cnflinkentry'] = 'エントリーの自動的リンクを行う。';
+$string['cnflinkglossaries'] = '自動リンクを行う。';
 $string['cnfrelatedview'] = '自動リンク及びエントリー表示における表示形式を選択してください。';
 $string['cnfshowgroup'] = 'グループ区切りを表示するか否か指定してください。';
 $string['cnfsortkey'] = 'デフォルトの並び替えキーを選択してください。';
 $string['cnfsortorder'] = 'デフォルトの並び替え順を選択してください。';
-$string['cnfstudentcanpost'] = 'デフォルトで学生がポスト出来るか否かを設定します。';
+$string['cnfstudentcanpost'] = '学生の投稿を許可する。';
 $string['comment'] = 'コメント';
 $string['commentdeleted'] = 'コメントが削除されました。';
 $string['comments'] = 'コメント';
@@ -153,9 +153,9 @@ $string['sortbylastupdate'] = '最終更新日時';
 $string['sortchronogically'] = '日付順の並び替え';
 $string['special'] = '特別';
 $string['standardview'] = '五十音順';
-$string['studentcanpost'] = '学生のエントリー追加を許可する';
+$string['studentcanpost'] = '学生のエントリー追加を許可する。';
 $string['totalentries'] = 'エントリー合計';
-$string['usedynalink'] = 'エントリーを自動的にリンクする';
+$string['usedynalink'] = 'エントリーを自動的にリンクする。';
 $string['waitingapproval'] = '承認待ち';
 $string['warningstudentcapost'] = '(用語集がメインで無い場合に適用)';
 $string['withauthor'] = '用語(著者有り)';
