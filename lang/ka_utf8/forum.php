@@ -1,6 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4.3 + (2004083134)
-
+      // forum.php - created with Moodle 1.4.4 (2004083140)
 
 
 $string['addanewtopic'] = 'ახალი თემის დამატება';
@@ -17,6 +16,8 @@ $string['intronews'] = 'სიახლეები და განცხად
 $string['modulename'] = 'ფორუმი';
 $string['modulenameplural'] = 'ფორუმები';
 $string['nameteacher'] = 'მასწავლებლების ფორუმი';
+$string['newforumposts'] = 'ფორუმის ახალი წერილები';
+$string['noposts'] = 'წერილები არ არის';
 $string['search'] = 'ძებნა';
 $string['searchforums'] = 'ფორუმებში ძებნა';
 

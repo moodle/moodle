@@ -1,7 +1,7 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.4.3 + (2004083134)
+      // survey.php - created with Moodle 1.4.4 (2004083140)
 
 
-$string['modulename'] = 'გამოკითხვა';
+$string['modulename'] = 'გამოკვლევა';
 
 ?>
