@@ -106,7 +106,7 @@
             if ($answer) {
                 echo "<td align=\"center\">";
                 echo "<input type=\"radio\" name=\"answer\" value=\"$key\" ".$answerchecked[$key]." alt=\"$answer\" />";
-                p($answer);
+                echo format_text($answer);
                 echo "</td>";
             }
         }
