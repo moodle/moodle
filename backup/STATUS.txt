@@ -4,7 +4,8 @@ STATUS $Id$
 This documment shows the current status of the backup/restore option.
 
 Backup:  WORKING. COMPLETED but only assignments, resources,
-                  choices, forums, journals and surveys.
+                  choices, forums, journals, quizzes (step 1)
+                  and surveys.
 
 Restore: WORKING. COMPLETED but only assignments, resources, 
                   choices and surveys.
@@ -50,6 +51,9 @@ Backup Details:
                  - Course.......................................DONE
                  - All..........................................DONE 
            - Logs...............................................DONE
+           - Categories and Questions.(STEP 1)..................IN PROGRESS
+              + categories......................................IN PROGRESS
+              + questions structure.............................IN PROGRESS
            - Mods Info..........................................IN PROGRESS
               x assignments.....................................DONE
                  + course data..................................DONE
@@ -67,14 +71,10 @@ Backup Details:
                  + course data..................................DONE
                  + user data....................................DONE
                  + files.(NOT EXISTS)...........................DONE
-              x peer graded assignments.........................IN PROGRESS
-                 + course data..................................NO EXISTS
-                 + user data....................................NO EXISTS
-                 + files........................................NO EXISTS
-              x quizzes.........................................IN PROGRESS
-                 + course data..................................NO EXISTS
-                 + user data....................................NO EXISTS
-                 + files........................................NO EXISTS
+              x quizzes.(STEP 2)................................DONE
+                 + course data..................................DONE
+                 + user data....................................DONE
+                 + files.(ARE COURSE FILES !!!).................DONE
               x resources.......................................DONE
                  + course data..................................DONE
                  + user data....................................DONE
@@ -150,6 +150,9 @@ Restore Details:
                  - None.........................................DONE
                  - Course.......................................DONE
                  - All..........................................DONE
+           - Categories and Questions.(STEP 1)..................NO EXISTS
+              + categories......................................NO EXISTS
+              + questions structure.............................NO EXISTS
            - Mods Info Prepare..................................DONE
               x read modules zone...............................DONE
               x separate every mod..............................DONE
@@ -171,11 +174,10 @@ Restore Details:
               x journals........................................NO EXISTS
                  + course data..................................NO EXISTS
                  + user data....................................NO EXISTS
-                 + files........................................NO EXISTS
-              x quizzes.........................................NO EXISTS
+              x quizzes.(STEP 2)................................NO EXISTS
                  + course data..................................NO EXISTS
                  + user data....................................NO EXISTS
-                 + files........................................NO EXISTS
+                 + files.(ARE COURSE FILES !!!).................NO EXISTS
               x resources.......................................DONE
                  + course data..................................DONE
                  + user data....................................DONE
@@ -184,6 +186,10 @@ Restore Details:
                  + course data..................................DONE
                  + user data....................................DONE
                  + files.(NOT EXISTS)...........................DONE
+              x workshops.......................................NO EXISTS
+                 + course data..................................NO EXISTS
+                 + user data....................................NO EXISTS
+                 + files........................................NO EXISTS
    - User files from temp.......................................DONE
    - Course files from temp.....................................DONE
    - Log entries................................................NO EXISTS
