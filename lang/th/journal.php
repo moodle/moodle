@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.0.8 (2003010601)
+      // journal.php - created with Moodle 1.0.9 Beta 1 (2003051600)
 
 
 $string['alwaysopen'] = "อ่านได้ตลอด";
@@ -7,7 +7,18 @@ $string['blankentry'] = "ข้อมูลว่าง";
 $string['daysavailable'] = "วันที่เริ่มให้เข้าอ่าน";
 $string['editingended'] = "ระยะเวลาในการแก้ไขหมดแล้ว";
 $string['editingends'] = "ระยะเวลาแก้ไขหมดใน ";
+$string['entries'] = "วารสารใหม่";
 $string['feedbackupdated'] = "อัพเดท feedback สำหรับ \$a วารสารที่เข้ามาแล้ว ";
+$string['journalmail'] = "\$a->teacher ได้ทำการตรวจงานวารสาร '\$a->journal' ของคุณแล้ว
+
+คุณสามารถดูผลการตรวจได้ที่:
+
+\$a->url";
+$string['journalmailhtml'] = "\$a->teacher ได้ทำการตรวจงานวารสาร 
+'<i>\$a->journal</i>' ของคุณแล้ว <br /><br />
+
+คุณสามารถดูผลการตรวจได้ที่:
+<a href=\\\"\$a->url\\\">ผลการตรวจ</a>.";
 $string['journalname'] = "ชื่อวารสาร";
 $string['journalquestion'] = "คำถามจากวารสาร";
 $string['journalrating1'] = "ไม่น่าพอใจ";

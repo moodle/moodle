@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.0.8 (2003010604)
+      // forum.php - created with Moodle 1.0.9 Beta 1 (2003051600)
 
 
 $string['addanewdiscussion'] = "ตั้งกระทู้";
@@ -11,21 +11,22 @@ $string['anyfile'] = "ไฟล์ทุกประเภท";
 $string['attachment'] = "Attachment";
 $string['bynameondate'] = "โดย  \$a->name - \$a->date";
 $string['couldnotadd'] = "ไม่สามารถ เพิ่มโพสต์ของคุณได้  มีข้อผิดพลาด";
-$string['couldnotdeleteratings'] = "ขออภัยค่ะ ไม่สามารถลบได้ เพราะ ว่ามีคนให้คะแนน เรียบร้อยแล้ว ";
-$string['couldnotdeletereplies'] = "ขออภัยค่ะ ไม่สามารถลบได้ เพราะมีคนตอบเรียบร้อยแล้ว";
+$string['couldnotdeleteratings'] = "ขออภัย ไม่สามารถลบได้ เพราะ ว่ามีคนให้คะแนน เรียบร้อยแล้ว ";
+$string['couldnotdeletereplies'] = "ขออภัย ไม่สามารถลบได้ เพราะมีคนตอบเรียบร้อยแล้ว";
 $string['couldnotupdate'] = "ไม่สามารถ อัพเดทโพสต์ของคุณได้ มีข้อผิดพลาด";
 $string['delete'] = "ลบ";
 $string['deleteddiscussion'] = "กระทู้นี้ถูกลบไปแล้ว";
 $string['deletedpost'] = "โพสต์ถูกลบไปแล้ว";
-$string['deletesure'] = "แน่ใจนะคะว่าต้องการลบ โพสต์นี้";
+$string['deletesure'] = "แน่ใจนะว่าต้องการลบ โพสต์นี้";
 $string['discussion'] = "กระทู้";
+$string['discussionmoved'] = "กระทู้นี้ได้ย้ายไปที่ '\$a'";
 $string['discussions'] = "กระทู้ทั้งหมด ";
 $string['discussionsstartedby'] = "กระทู้เริ่ม โดย \$a";
 $string['discussthistopic'] = "หัวข้อกระทู้";
 $string['eachuserforum'] = "หนึ่งคนหนึ่งกระทู้";
 $string['edit'] = "แก้ไข";
 $string['editing'] = "กำลังแก้ไข";
-$string['emptymessage'] = "โพสต์ของคุณมีข้อผิดพลาดค่ะ ลองตรวจสอบอีกครั้งว่า ไฟล์ที่ส่งไม่ใหญ่เกินไป และ เขียนข้อความแล้ว  ยังไม่ได้บันทึกโพสต์นี้ลงฐานข้อมูล";
+$string['emptymessage'] = "โพสต์ของคุณมีข้อผิดพลาด ลองตรวจสอบอีกครั้งว่า ไฟล์ที่ส่งไม่ใหญ่เกินไป และ เขียนข้อความแล้ว  ยังไม่ได้บันทึกโพสต์นี้ลงฐานข้อมูล";
 $string['everyonecanchoose'] = "ผู้ใช้สามารถเลือกที่จะเป็นสมาชิกของกระดานนี้";
 $string['everyoneissubscribed'] = "ทุกคนเป็นสมาชิกของกระดานนี้";
 $string['forcesubscribe'] = "ทุกคนต้องสมัครเป็นสมาชิกกระดานนี้";
@@ -52,6 +53,7 @@ $string['modethreaded'] = "แสดงคำตอบ แบบเป็นตัวหนังสือ";
 $string['modulename'] = "กระดานเสวนา";
 $string['modulenameplural'] = "กระดานเสวนาทั้งหมด";
 $string['more'] = "เพิ่มเติม";
+$string['movethisdiscussionto'] = "ย้ายกระทู้นี้ไปที่...";
 $string['namenews'] = "กระดานข่าว";
 $string['namesocial'] = "กระดานกลุ่มสนทนา";
 $string['nameteacher'] = "กระดานครูอาจารย์";
@@ -76,6 +78,7 @@ $string['postmailinfo'] = "นี่เป็นก้อปปี้ข้อความ จากโพสต์  \$a ใน เว็บไซต์
 $string['postrating1'] = "แสดงถึงการรู้แบบแยกส่วน";
 $string['postrating2'] = "ก้ำกึ่งมีทั้งรู้แบบแยกส่วนและเชื่อมโยง";
 $string['postrating3'] = "แสดงถึงการรู้แบบเชื่อมโยง";
+$string['posts'] = "โพสต์";
 $string['postupdated'] = "โพสต์ของคุณได้รับการอัพเดทแล้ว";
 $string['processingpost'] = "กำลังดำเนินการโพสต์ \$a";
 $string['rate'] = "ให้คะแนน";
@@ -99,7 +102,10 @@ $string['subscribe'] = "สมัครเป็นสมาชิกกระดาน";
 $string['subscribed'] = "เป็นสมาชิกเรียบร้อย";
 $string['subscribers'] = "สมาชิก";
 $string['subscribersto'] = "สมาชิกของ '\$a'";
+$string['subscription'] = "การเป็นสมาชิก";
+$string['subscriptions'] = "การเป็นสมาชิก";
 $string['unsubscribe'] = "ต้องการออกจากการเป็นสมาชิกกระดาน";
+$string['unsubscribed'] = "ไม่ได้เป็นสมาชิก";
 $string['youratedthis'] = "คุณให้คะแนน";
 $string['yournewtopic'] = "กระทู้ใหม่";
 $string['yourreply'] = "คำตอบ";

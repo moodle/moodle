@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.8 (2003010604)
+      // quiz.php - created with Moodle 1.0.9 Beta 1 (2003051600)
 
 
 $string['addquestions'] = "เพิ่มคำถาม";
@@ -21,6 +21,7 @@ $string['attemptsallowed'] = "จำนวนครั้งที่ให้ตอบ";
 $string['attemptsunlimited'] = "ตอบได้ไม่จำกัดจำนวนครั้ง";
 $string['backtoquiz'] = "กลับไปแก้ไขแบบทดสอบ";
 $string['bestgrade'] = "คะแนนดีที่สุด";
+$string['blackboard'] = "กระดานดำ";
 $string['caseno'] = "ไม่เป็นไร ตัวพิมพ์ใหญ่ตัวพิมพ์เล็กได้ทั้งนั้น";
 $string['casesensitive'] = "ดูด้วยว่าเป็นตัวพิมพ์ใหญ่พิมพ์เล็ก";
 $string['caseyes'] = "ใช่ ตัวพิมพ์ใหญ่พิมพ์เล็กต้องถูกต้อง";
@@ -56,17 +57,18 @@ $string['fileformat'] = "รูปแบบไฟล์";
 $string['filloutoneanswer'] = "คุณต้องเติมคำตอบอย่างน้อยหนึ่งคำตอบ ช่องว่างที่ว่างไว้จะไม่นำมาใช้";
 $string['filloutthreequestions'] = "คุณต้องเติมอย่างน้อยสามคำถาม คำถามที่ว่างไว้จะไม่นำมาใช้";
 $string['fillouttwochoices'] = "คุณต้องเติมคำตอบอย่างน้อยสองคำตอบ ช่องว่างที่ว่างไว้ จะไม่นำมาใช้";
-$string['fractionsaddwrong'] = "คะแนนที่คุณเลือก รวมแล้วไม่ได้ 100 เปอร์เซ็นต์ค่ะ
+$string['fractionsaddwrong'] = "คะแนนที่คุณเลือก รวมแล้วไม่ได้ 100 เปอร์เซ็นต์
 
 <BR>รวมแล้วได้ \$a%%
-<BR>ต้องการกลับไปแก้ไขรึเปล่าคะ?";
+<BR>ต้องการกลับไปแก้ไขรึเปล่า?";
 $string['fractionsnomax'] = "หนึ่งในคำตอบ ควร มีคะแนน 100%% เพื่อ
 <BR>ความเป็นไปได้ในการได้คะแนนเต็ม สำหรับคำถามข้อนี้
-<BR>ต้องการกลับไปแก้ไขรึเปล่าคะ?";
+<BR>ต้องการกลับไปแก้ไขรึเปล่า?";
 $string['gradeaverage'] = "คะแนนเฉลี่ย";
 $string['gradehighest'] = "คะแนนสูงสุด";
 $string['grademethod'] = "วิธีตัดเกรด";
-$string['guestsno'] = "ขออภัยค่ะ guest ไม่สามารถทำแบบทดสอบได้ ";
+$string['grades'] = "ระดับผลการเรียน";
+$string['guestsno'] = "ขออภัย guest ไม่สามารถทำแบบทดสอบได้ ";
 $string['imagedisplay'] = "ภาพที่ต้องการแสดง";
 $string['importquestions'] = "นำเข้าคำถามจากไฟล์";
 $string['introduction'] = "คำนำ";
@@ -103,9 +105,9 @@ $string['randomsamatch'] = "สุ่มจับคู่คำตอบแบบสั้นๆ";
 $string['randomsamatchcreate'] = "สร้างคำถามแบบจับคู่ โดยมีคำตอบอัตนัยสั้นๆ";
 $string['randomsamatchintro'] = "สำหรับคำถามแต่ละข้อ ให้เลือกคำตอบจากเมนู";
 $string['randomsamatchnumber'] = "จำนวนคำถามที่ต้องการเลือก";
-$string['readytosend'] = "คุณกำลังจะส่งแบบทดสอบค่ะ  ต้องการส่งรึเปล่าคะ";
+$string['readytosend'] = "คุณกำลังจะส่งแบบทดสอบ  ต้องการส่งรึเปล่า";
 $string['regrade'] = "ให้คะแนนแต่ละครั้งที่ทำใหม่";
-$string['regradecomplete'] = "ให้คะแนนแบบทดสอบแต่ละครั้งใหม่แล้วค่ะ";
+$string['regradecomplete'] = "ให้คะแนนแบบทดสอบแต่ละครั้งใหม่แล้ว";
 $string['regradecount'] = "คะแนน \$a->changed out of \$a->attempt  ได้รับการเปลี่ยนแปลงแล้ว";
 $string['rename'] = "เปลี่ยนชื่อ";
 $string['report'] = "รายงาน";
@@ -119,8 +121,8 @@ $string['selectall'] = "เลือกทั้งหมด";
 $string['selectcategoryabove'] = "เลือกประเภทข้างบน";
 $string['shortanswer'] = "เติมคำ";
 $string['show'] = "แสดง";
-$string['showcorrectanswer'] = "ต้องแสดงคำตอบ ใน feedback รึเปล่าคะ";
-$string['showfeedback'] = "ต้องการให้แสดง  feedback หลังตอบคำถามรึเปล่าคะ";
+$string['showcorrectanswer'] = "ต้องแสดงคำตอบ ใน feedback รึเปล่า";
+$string['showfeedback'] = "ต้องการให้แสดง  feedback หลังตอบคำถามรึเปล่า";
 $string['shuffleanswers'] = "สลับคำตอบ";
 $string['shufflequestions'] = "สลับคำถาม";
 $string['time'] = "เวลา";

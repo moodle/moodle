@@ -1,9 +1,16 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.0.8 (2003010601)
+      // assignment.php - created with Moodle 1.0.9 Beta 1 (2003051600)
 
 
 $string['allowresubmit'] = "อนุญาตให้ส่งการบ้านซ้ำอีกครั้ง";
 $string['assignmentdetails'] = "เนื้อหาของการบ้าน";
+$string['assignmentmail'] = "\$a->teacher  ได้ทำการตรวจงาน '\$a->assignment' ของคุณแล้ว
+
+คุณสามารถดูผลการตรวจได้ที่:
+
+\$a->url";
+$string['assignmentmailhtml'] = "\$a->teacher ได้ทำการตรวจงาน  '<i>\$a->assignment</i>'<br /><br />
+คุณสามารถดูผลการตรวจได้: <a href=\\\"\$a->url\\\"> โดยคลิ้กที่นี่ </a>.";
 $string['assignmentname'] = "หัวข้อการบ้าน ";
 $string['assignmenttype'] = "ประเภท";
 $string['description'] = "รายละเอียด";
@@ -30,9 +37,9 @@ $string['typeuploadsingle'] = "ส่งโดยให้อัพโหลดไฟล์";
 $string['uploadbadname'] = "ไฟล์นี้ มีชื่อที่ใช้ตัวอักษร ไม่ถูกต้อง ไม่สามารถทำการ อัพโหลดได้ กรุณาเปลี่ยนชื่อไฟล์";
 $string['uploadedfiles'] = "ไฟล์ที่อัพโหลดแล้ว";
 $string['uploaderror'] = "เกิดข้อขัดข้องในระหว่างการบันทึกไฟล์ลงบนเซิร์ฟเวอร์";
-$string['uploadfailnoupdate'] = "อัพโหลดไฟเรียบร้อยค่ะ แต่ไม่สามารถอัพเดท งานที่ส่งลงในแฟ้มงานของคุณ";
-$string['uploadfiletoobig'] = "ขออภัยค่ะ ไฟล์มีขนาดใหญ่เกินไป( ไฟล์ควรมีขนาดน้อยกว่า \$a bytes)";
-$string['uploadnofilefound'] = "หาไฟล์ไม่พบค่ะ กรุณาตรวจสอบว่าทำการเลือกไฟล์ ก่อนอัพโหลดหรือไม่";
+$string['uploadfailnoupdate'] = "อัพโหลดไฟเรียบร้อย แต่ไม่สามารถอัพเดท งานที่ส่งลงในแฟ้มงานของคุณ";
+$string['uploadfiletoobig'] = "ขออภัย ไฟล์มีขนาดใหญ่เกินไป( ไฟล์ควรมีขนาดน้อยกว่า \$a bytes)";
+$string['uploadnofilefound'] = "หาไฟล์ไม่พบ กรุณาตรวจสอบว่าทำการเลือกไฟล์ ก่อนอัพโหลดหรือไม่";
 $string['uploadnotregistered'] = "'\$a'  อัพโหลดเรียบร้อย  แต่ว่างานที่ส่งนี้ยังไม่ได้รับการลงทะเบียน ";
 $string['uploadsuccess'] = "อัพโหลดไฟล์ '\$a'   สำเร็จ";
 $string['viewfeedback'] = "ดูคะแนนของงานที่ส่งและ feedback จากผู้สอน";

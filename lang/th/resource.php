@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.0.7 (2002121000)
+      // resource.php - created with Moodle 1.0.9 Beta 1 (2003051600)
 
 
 $string['addresource'] = "เพิ่มแหล่งข้อมูล";
@@ -16,7 +16,7 @@ $string['neverseen'] = "ไม่เคยเห็น";
 $string['note'] = "หมายเหตุ";
 $string['notefile'] = "หากต้องการอัพโหลดไฟล์ สำหรับคอร์สนี้กรุณาใช้
 <A HREF=\$a >File Manager</A>.";
-$string['notypechosen'] = "คุณต้องเลือก ชนิด ค่ะ กรุณาใช้ปุ่ม  back เพื่อกลับไปเลือก";
+$string['notypechosen'] = "คุณต้องเลือก ชนิด  กรุณาใช้ปุ่ม  back เพื่อกลับไปเลือก";
 $string['resourcetype'] = "ชนิดของแหล่งข้อมูล";
 $string['resourcetype1'] = "อ้างอิง";
 $string['resourcetype2'] = "เว็บเพจ";
@@ -25,5 +25,6 @@ $string['resourcetype4'] = "บทความธรรมดา";
 $string['resourcetype5'] = "เว็บลิงค์";
 $string['resourcetype6'] = "บทความใช้ โค้ด html";
 $string['resourcetype7'] = "โปรแกรม";
+$string['resourcetype8'] = "รูปแบบ Wiki";
 
 ?>
