@@ -30,21 +30,22 @@
     if (match_referer() && isset($HTTP_POST_VARS)) {    // form submitted
         $form = (object)$HTTP_POST_VARS;
         if ($current) {
-            add_to_log("Update choice: $choice->name", $course->id);
             if (! update_choice_in_database($current, $form->answer)) {
                 error("Could not update your choice");
             }
+            add_to_log($course->id, "choice", "update", "view.php?id=$cm->id", "$choice->id");
         } else {
-            add_to_log("Save choice: $choice->name", $course->id);
             if (! add_new_choice_to_database($choice, $form->answer)) {
                 error("Could not save your choice");
             }
+            add_to_log($course->id, "choice", "add", "view.php?id=$cm->id", "$choice->id");
         }
         redirect("$CFG->wwwroot/course/view.php?id=$course->id");
         exit;
     }
 
-    add_to_log("View choice: $choice->name", $course->id);
+    add_to_log($course->id, "choice", "view", "view.php?id=$cm->id", "$choice->id");
+
     print_header("$course->shortname: $choice->name", "$course->fullname",
                  "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> -> 
                   <A HREF=index.php?id=$course->id>Choices</A> -> $choice->name", "");

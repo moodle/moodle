@@ -73,10 +73,10 @@
                 $count++;
             }
         }
-        add_to_log("Updated journal feedback: $journal->name ($count students)", $course->id);
+        add_to_log($course->id, "journal", "update feedback", "report.php?id=$cm->id", "$count students");
         notify("Journal feedback updated for $count students.");
     } else {
-        add_to_log("View journal responses: $journal->name", $course->id);
+        add_to_log($course->id, "journal", "view responses", "report.php?id=$cm->id", "$journal->id");
     }
 
 

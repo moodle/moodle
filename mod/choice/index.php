@@ -10,7 +10,7 @@
 
     require_login($course->id);
 
-    add_to_log("View list of all choices", $course->id);
+    add_to_log($course->id, "choice", "view all", "index?id=$course->id", "");
 
     print_header("$course->shortname: Choices", "$course->fullname",
                  "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> -> Choices", "");

@@ -25,7 +25,7 @@
         error("Survey ID was incorrect");
     }
 
-    add_to_log("Downloaded report as $type:  $survey->name", $course->id);
+    add_to_log($course->id, "survey", "download", "download.php?id=$cm->id&type=$type", "$survey->id");
 
 
 // Get all the questions and their proper order

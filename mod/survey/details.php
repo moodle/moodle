@@ -45,6 +45,7 @@
         <input type="hidden" name=template   value="<? p($form->template) ?>">
 
         <input type="hidden" name=course     value="<? p($form->course) ?>">
+        <input type="hidden" name=coursemodule     value="<? p($form->coursemodule) ?>">
         <input type="hidden" name=week       value="<? p($form->week) ?>">
         <input type="hidden" name=module     value="<? p($form->module) ?>">
         <input type="hidden" name=modulename value="<? p($form->modulename) ?>">

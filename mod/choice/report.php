@@ -22,7 +22,7 @@
         error("Course module is incorrect");
     }
 
-    add_to_log("View choices report", $course->id);
+    add_to_log($course->id, "choice", "report", "report.php?id=$cm->id", "$choice->id");
 
     print_header("$course->shortname: $choice->name: Responses", "$course->fullname",
                  "<A HREF=/course/view.php?id=$course->id>$course->shortname</A> ->

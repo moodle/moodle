@@ -14,7 +14,6 @@
 
 	if ($edit == "release") {
 		release_survey($id);
-		add_to_log("Survey released: $id");
 		unset($edit);
 	}
 
@@ -25,7 +24,6 @@
 			if (count($err) == 0) {
 				update_survey($survey);
 				notify("The survey \"$survey->name\" was updated.");
-				add_to_log("Survey update: $survey->name");
 				unset($edit);
 			}
 		} else {
@@ -41,7 +39,6 @@
 
 			} else if ($ss = $db->Execute("DELETE FROM surveys WHERE owner = $USER->id AND id = $id")) {
 				notify("The survey was deleted.");
-				add_to_log("Survey deleted: $id");
 
 			} else {
 				notify("Serious error: could not find any templates.");
@@ -62,7 +59,6 @@
                 $survey->name = "";
 				$survey->template = $template;
 				add_survey($survey);
-				add_to_log("Survey added: $survey->name");
 			} else {
 				notify("Serious error: could not find template $template");
 			}

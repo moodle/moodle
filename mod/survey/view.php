@@ -19,7 +19,6 @@
         error("Survey ID was incorrect");
     }
 
-    add_to_log("View survey $survey->name", $course->id);
 
     print_header("$course->shortname: $survey->name", "$course->fullname",
                  "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> ->
@@ -38,6 +37,7 @@
 //  Check the survey hasn't already been filled out.
 
     if (survey_already_done($survey->id, $USER->id)) {
+        add_to_log($course->id, "survey", "view graph", "view.php?id=$cm->id", "$survey->id");
         print_heading("You've completed this survey.  The graph below shows a summary of your results compared to the class averages.");
         echo "<CENTER>";
         echo "<IMG SRC=\"$CFG->wwwroot/mod/survey/graph.php?id=$cm->id&sid=$USER->id&type=student.png\">";
@@ -47,6 +47,7 @@
     }
 
 //  Start the survey form
+    add_to_log($course->id, "survey", "view form", "view.php?id=$cm->id", "$survey->id");
 
     echo "<FORM NAME=form METHOD=post ACTION=save.php>";
     echo "<INPUT TYPE=hidden NAME=id VALUE=$id>";

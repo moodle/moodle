@@ -10,7 +10,7 @@
     }
 
     require_login($course->id);
-    add_to_log("View all journals", $course->id);
+    add_to_log($course->id, "journal", "view all", "index.php?id=$course->id", "");
 
     print_header("$course->shortname: Journals", "$course->fullname",
                  "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> -> Journals", "");

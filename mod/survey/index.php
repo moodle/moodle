@@ -10,7 +10,8 @@
     }
 
     require_login($course->id);
-    add_to_log("View all surveys", $course->id);
+
+    add_to_log($course->id, "survey", "view all", "index.php?id=$course->id", "");
 
     print_header("$course->shortname: Surveys", "$course->fullname",
                  "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> -> Surveys", "");

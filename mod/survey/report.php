@@ -35,7 +35,7 @@
 
     if ($display)  { // Display the frame containing something.
 
-        add_to_log("View survey report: $survey->name", $course->id);
+        add_to_log($course->id, "survey", "view report", "report.php?id=$cm->id", "$survey->id");
         echo "<HEAD><TITLE>Report: $survey->name</TITLE>\n";
         echo "<FRAMESET COLS=150,* BORDER=1> ";
         echo "  <FRAME NAME=reportmenu SRC=\"report.php?action=menu&id=$id\"> \n";
@@ -67,7 +67,6 @@
         break;
 
       case "summary":
-        add_to_log("View survey report summary: $survey->name", $course->id);
         print_header("Overall Summary", "$survey->name: Overall Summary", "", "");
 
         print_heading("All scales, all students");
@@ -77,7 +76,6 @@
         break;
 
       case "scales":
-        add_to_log("View survey report scales: $survey->name", $course->id);
         print_header("Scales", "$survey->name: Scales", "", "");
 
         print_heading("All scales, all students");
@@ -110,7 +108,6 @@
         break;
 
       case "questions":
-        add_to_log("View survey report questions: $survey->name", $course->id);
         print_header("Analysis by Question", "$survey->name: Questions", "", "");
 
         if ($qid) {     // just get one multi-question
@@ -174,7 +171,6 @@
         break;
 
       case "question":
-        add_to_log("View survey report question: $survey->name", $course->id);
         if (!$question = get_record("survey_questions", "id", $qid)) {
             error("Question doesn't exist");
         }
@@ -218,7 +214,6 @@
 
       case "students":
 
-         add_to_log("View survey report students: $survey->name", $course->id);
          print_header("Analysis by Student", "$survey->name: Students", "", "");
         
          if (! $results = get_survey_responses($survey->id) ) {
@@ -247,9 +242,6 @@
                      notify("An error occurred while saving your notes.  Sorry.");
                  }
              }
-             add_to_log("Update survey analysis for $user->firstname $user->lastname: $survey->name", $course->id);
-         } else {
-             add_to_log("View survey report $user->firstname $user->lastname: $survey->name", $course->id);
          }
 
          print_heading("$user->firstname $user->lastname");
