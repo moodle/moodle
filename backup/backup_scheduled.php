@@ -23,7 +23,18 @@ function schedule_backup_cron() {
         return true;
     } else if (isset($backup_config->backup_sche_running) && $backup_config->backup_sche_running) {
         echo "...RUNNING\n";
-        return true;
+        //Now check if it's a really running task or something very old looking 
+        //for info in backup_logs to unlock status as necessary
+        $timetosee = 1800;   //Half an hour looking for activity
+        $timeafter = time() - $timetosee;
+        $numofrec = count_records_select ("backup_log","time > $timeafter");
+        if (!$numofrec) {
+            $timetoseemin = $timetosee/60;
+            echo "    No activity in last ".$timetoseemin." minutes. Unlocking status\n";
+        } else {
+            echo "    Scheduled backup seems to be running. Execution delayed\n";
+            return true;
+        }
     } else {
         echo "...OK\n";
         //Mark backup_sche_running
