@@ -181,11 +181,11 @@
                     $columndir = "ASC";
                 }
             } else {
-                $columndir = $dir == "asc" ? "desc":"asc";
+                $columndir = $dir == "ASC" ? "DESC":"ASC";
                 if ($column == "lastaccess") {
-                    $columnicon = $dir == "asc" ? "up":"down";
+                    $columnicon = $dir == "ASC" ? "up":"down";
                 } else {
-                    $columnicon = $dir == "asc" ? "down":"up";
+                    $columnicon = $dir == "ASC" ? "down":"up";
                 }
                 $columnicon = " <img src=\"$CFG->pixpath/t/$columnicon.gif\" />";
 
