@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.9 development (2003021600)
+      // quiz.php - created with Moodle 1.0.9 development (2003032500)
 
 
 $string['addquestions'] = "Lisää kysymyksiä";
@@ -42,6 +42,7 @@ $string['editcategories'] = "Muokkaa kategorioita";
 $string['editingmultichoice'] = "Muokataan monivalintaa";
 $string['editingquestion'] = "Muokkataan kysymystä";
 $string['editingquiz'] = "Muokkataan tenttiä";
+$string['editingrandommatch'] = "Muokataan sannaistettua kysymystä";
 $string['editingshortanswer'] = "Muokataan lyhyttehtävää";
 $string['editingtruefalse'] = "Muokataan tosi/epätosi tehtävää";
 $string['false'] = "Epätosi";
@@ -85,6 +86,9 @@ $string['quizclosed'] = "Tentti on suljettu \$a";
 $string['quiznotavailable'] = "Tentti on avoinna \$a lähtien";
 $string['quizopen'] = "Avaa tentti";
 $string['random'] = "Satunnaisesti";
+$string['randommatch'] = "Satunnaistettu kysymys";
+$string['randommatchintro'] = "Valitse jokaiselle kysymykselle vastaus valikosta.";
+$string['randommatchnumber'] = "Valittavien kysymysten määrä";
 $string['readytosend'] = "olet lähettämässä tentin arvosteltavaksi. Oletko varma että haluat jatkaa?";
 $string['regrade'] = "Arvioi uudelleen kaikki yritykset";
 $string['regradecomplete'] = "Kaikki yritykset on uudelleen arvioitu.";
