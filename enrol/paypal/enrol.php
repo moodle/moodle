@@ -35,7 +35,7 @@ function print_entry($course) {
     } else {
 
         print_header($strloginto, $course->fullname, 
-                     "<a href=\"$CFG->wwwroot/courses/\">$strcourses</a> -> $strloginto");
+                     "<a href=\"$CFG->wwwroot/course/\">$strcourses</a> -> $strloginto");
         print_course($course, "80%");
         print_simple_box_start("center");
 
