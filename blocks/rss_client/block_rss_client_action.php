@@ -94,7 +94,7 @@
         // error messages do not display and clutter up the moodle interface
         // however, we do lose out on seeing helpful messages like "cache hit", etc.
         ob_start();
-        $rss = fetch_rss($rss_record->url);
+        $rss = fetch_rss($url);
         $rsserror = ob_get_contents();
         ob_end_clean();
         
@@ -152,7 +152,7 @@
             // error messages do not display and clutter up the moodle interface
             // however, we do lose out on seeing helpful messages like "cache hit", etc.
             ob_start();
-            $rss = fetch_rss($url);
+            $rss = fetch_rss($rss_record->url);
             $rsserror = ob_get_contents();
             ob_end_clean();
             
