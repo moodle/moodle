@@ -140,7 +140,7 @@ function me() {
         return $_SERVER["PHP_SELF"];
 
     } else {
-        notify("Error: Could not find any of these web server variables: \$REQUEST_URI, \$PATH_INFO or \$PHP_SELF");
+        notify("Warning: Could not find any of these web server variables: \$REQUEST_URI, \$PATH_INFO or \$PHP_SELF");
     }
 }
 
@@ -148,12 +148,18 @@ function me() {
 function qualified_me() {
 /// like me() but returns a full URL 
 
-    if (empty($_SERVER["HTTP_HOST"])) {
-        notify("Error: could not find web server variable: \$HTTP_HOST");
+    if (!empty($_SERVER["HTTP_HOST"])) {
+        $hostname = $_SERVER["HTTP_HOST"];
+    } else if (!empty($_ENV["HTTP_HOST"])) {
+        $hostname = $_ENV["HTTP_HOST"];
+    } else if (!empty($_ENV["SERVER_NAME"])) {
+        $hostname = $_ENV["SERVER_NAME"];
+    } else {
+        notify("Warning: could not find the name of this server!");
     }
 
     $protocol = (isset($_SERVER["HTTPS"]) and $_SERVER["HTTPS"] == "on") ? "https://" : "http://";
-    $url_prefix = "$protocol".$_SERVER["HTTP_HOST"];
+    $url_prefix = $protocol.$hostname;
     return $url_prefix . me();
 }
 
@@ -996,7 +1002,7 @@ function print_date_selector($day, $month, $year, $currenttime=0) {
         $days[$i] = "$i";
     }
     for ($i=1; $i<=12; $i++) {
-        $months[$i] = userdate(mktime(0,0,0,$i,1,2000), "%B");
+        $months[$i] = userdate(gmmktime(12,0,0,$i,1,2000), "%B");
     }
     for ($i=2000; $i<=2010; $i++) {
         $years[$i] = $i;
