@@ -42,6 +42,12 @@
     header('Content-Type: text/html');
     header("Refresh: $CFG->chat_refresh_room; url=$refreshurl");
 
+    /// required stylesheets
+    $stylesheetshtml = '';
+    foreach ($CFG->stylesheets as $stylesheet) {
+        $stylesheetshtml .= '<link rel=\\"stylesheet\\" type=\\"text/css\\" href=\\"'.$stylesheet.'\\" />';
+    }
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
@@ -54,6 +60,7 @@
             parent.msg.document.open("text/html","replace");
             parent.msg.document.write("<html><head>");
             parent.msg.document.write("<meta http-equiv=\"content-type\" content=\"text/html; charset=<?php echo get_string('thischarset'); ?>\" />");
+            parent.msg.document.write("<?php echo $stylesheetshtml ?>");
             parent.msg.document.write("</head><body><div style=\"display: none\" id=\"msgStarted\">&nbsp;</div>");
         }
         <?php
