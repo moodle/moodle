@@ -9,7 +9,6 @@
 
     if (!empty($lang)) {
         $SESSION->lang = $lang;
-        save_session("SESSION");
     }
 
     if (!empty($sub)) {

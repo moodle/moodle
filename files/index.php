@@ -185,7 +185,6 @@
             if ($count = setfilelist($_POST)) {
                 $USER->fileop     = $action;
                 $USER->filesource = $wdir;
-                save_session("USER");
                 echo "<P align=center>$count files selected for moving. Now go to the destination and press \"Move files to here\".</P>";
             }
             displaydir($wdir);
@@ -463,7 +462,6 @@ function setfilelist($VARS) {
             $USER->filelist[] = rawurldecode($val);
         }
     }
-    save_session("USER");
     return $count;
 }
 
@@ -472,7 +470,6 @@ function clearfilelist() {
 
     $USER->filelist = array ();
     $USER->fileop = "";
-    save_session("USER");
 }
 
 
