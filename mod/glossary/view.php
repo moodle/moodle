@@ -3,12 +3,12 @@
     require_once("../../config.php");
     require_once("lib.php");
     $debug = 0;
-//    $CFG->startpagetime = microtime();            
+    $CFG->startpagetime = microtime();            
     
     require_variable($id);           // Course Module ID
     optional_variable($tab,GLOSSARY_NO_VIEW); // browsing entries by categories?
 
-    optional_variable($mode,"letter");  // [ "term"   | "entry"  | "cat"     | "date" | 
+    optional_variable($mode,"");  // [ "term"   | "entry"  | "cat"     | "date" | 
                                         //   "letter" | "search" | "author"  | "approval" ]
     optional_variable($hook,"");  // the term, entry, cat, etc... to look for based on mode
 
@@ -24,11 +24,6 @@
     optional_variable($show,"");       // [ concept | alias ] => mode=term hook=$show
     optional_variable($displayformat,-1);  // override of the glossary display format
 
-    if ( $show ) {
-        $mode = 'term';
-        $hook = $show;
-        $show = '';
-    }
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
     }     
@@ -51,11 +46,32 @@
         $entriesbypage = $CFG->glossary_entbypage;
     }
 
-/// setting the right fram for a "Continuous" glossary
-    if ( $glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS ) {
+/// setting the default values for the display mode of the current glossary
+/// only if the glossary is viewed by the first time
+    if ( $dp = get_record("glossary_displayformats","fid", $glossary->displayformat) ) {
+        $printpivot = $dp->showgroup;
+        if ( $mode == '' and $hook == '' and $show == '') {
+            $mode      = $dp->defaultmode;
+            $hook      = $dp->defaulthook;
+            $sortkey   = $dp->sortkey;
+            $sortorder = $dp->sortorder;            
+        }
+    } else {
+        $printpivot = 1;
+    }
+
+    if ( $displayformat == -1 ) {
+         $displayformat = $glossary->displayformat;
+    } 
+    if ( $displayformat == GLOSSARY_FORMAT_CONTINUOUS ) { 
         $mode = 'date';
     }
 
+    if ( $show ) {
+        $mode = 'term';
+        $hook = $show;
+        $show = '';
+    }
 /// Processing standard security processes
     $navigation = "";
     if ($course->category) {
@@ -98,6 +114,11 @@
     
     case 'entry':  /// Looking for a certain entry id
         $tab = GLOSSARY_STANDARD_VIEW;
+        if ( $dp = get_record("glossary_displayformats","fid", $glossary->displayformat) ) {
+            if ( $dp->relatedview >= 0 ) {
+                $displayformat = $dp->relatedview;
+            }
+        }
     break;
     
     case 'cat':    /// Looking for a certain cat
@@ -187,7 +208,7 @@
 
 /// Info box
     if ( $glossary->intro ) {
-        echo '<table align="center" width="70%" bgcolor="#FFFFFF" class="generaltab"><tr><td>';
+        echo '<table align="center" width="70%" bgcolor="#FFFFFF" class="generaltab" style="border-style: solid; border-width: 1px;"><tr><td>';
         echo format_text($glossary->intro);
         print_simple_box_end();
     }
@@ -259,10 +280,6 @@
         }
         echo $paging;
 
-        if ($glossary->displayformat == GLOSSARY_FORMAT_CONTINUOUS) {
-            $printpivot = 0;
-        }
-        
         foreach ($allentries as $entry) {
         /// Setting the pivot for the current entry
             $pivot = $entry->pivot;
@@ -278,7 +295,7 @@
         ///     the letter we are look for.
             $showentry = 1;
             if ( $mode == 'letter' and $hook != 'SPECIAL' and $hook != 'ALL' ) {
-                if ( substr($entry->concept, 0, strlen($hook)) != $hook ) {
+                if ( strtoupper(substr($entry->concept, 0, strlen($hook))) != strtoupper($hook) ) {
                     $showentry = 0;
                 }
             } 
@@ -337,7 +354,7 @@
                             
                             $user = get_record("user","id",$entry->uid);
                             print_user_picture($user->id, $course->id, $user->picture);
-                            $pivottoshow = $entry->uname;
+                            $pivottoshow = fullname($user, isteacher($course->id));;
                         } else {
                             echo '<td align="center">';
                         }
@@ -393,18 +410,18 @@
     echo '<p>';
     echo '</center>';
     glossary_print_tabbed_table_end();
-    if ( $debug ) {
+    if ( $debug and isadmin() ) {
         echo '<p>';
         print_simple_box("$sqlselect<br> $sqlfrom<br> $sqlwhere<br> $sqlorderby<br> $sqllimit","center","85%");
     }
 
 /// Finish the page
     print_footer($course);
-/*
+
     if (isadmin()) {
         echo "<p align=right><font size=-3>";
         echo microtime_diff($CFG->startpagetime, microtime());
         echo "</font></p>";
     }
-*/
+
 ?>
