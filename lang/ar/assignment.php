@@ -4,11 +4,11 @@
 
 $string['allowresubmit'] = 'ÇבÓדÇÍ ÈÅÚÇÏÉ ÇבÊÓבםד';
 $string['assignmentdetails'] = 'ÊÝÇÕםב ÇבדודÉ';
-$string['assignmentmail'] = 'a$->teacher ÞÇד םזÖÚ ÈÚÖ ÇבÊÕÍםÍÇÊ Úבל דודÊ‗ ÇבדÓבדÉ בÜ \'a$->assignment\'
+$string['assignmentmail'] = '$a->teacher ÞÇד םזÖÚ ÈÚÖ ÇבÊÕÍםÍÇÊ Úבל דודÊ‗ ÇבדÓבדÉ בÜ \'$a->assignment\'
 
-ÊÓÊØםÚ דÔÇוÏÊוÇ דÑÝÞÉ דÚ דודÊ‗ ÇבדÓבדÉa$->url';
-$string['assignmentmailhtml'] = 'a$->teacher ÞÇד ÈזÖÚ ÈÚÖ ÇבÊÕÍםÍÇÊ Úבל דודÊ‗ ÇבÊם Êד ÊÓבםדוÇ \'<i>a$->assignment</i>\'<br /><br />
- םםד‗ה‗ דÔÇוÏÊוÇ דÑÝÞÉ דÚ דודÊ‗<a href=\"a$->url\">assignment submission</a>.';
+ÊÓÊØםÚ דÔÇוÏÊוÇ דÑÝÞÉ דÚ דודÊ‗ ÇבדÓבדÉ$a->url';
+$string['assignmentmailhtml'] = '$a->teacher ÞÇד ÈזÖÚ ÈÚÖ ÇבÊÕÍםÍÇÊ Úבל דודÊ‗ ÇבÊם Êד ÊÓבםדוÇ \'<i>$a->assignment</i>\'<br /><br />
+ םםד‗ה‗ דÔÇוÏÊוÇ דÑÝÞÉ דÚ דודÊ‗<a href=\"$a->url\">assignment submission</a>.';
 $string['assignmentname'] = 'ÇÓד ÇבדודÉ';
 $string['assignmenttype'] = 'הזÚ ÇבדודÉ';
 $string['configmaxbytes'] = 'ÇבÍÌד ÇבדודÉ ÇבÇÝÊÑÇÖם בÌדםÚ ÇבדודÇÊ Ýם ÇבדזÞÚ (ÎÇÖÚ בדÍÏזÏםÉ ÇבדוהÌ ÇבÏÑÇÓם זÈÚÖ ÇבÅÚÏÇÏÇÊ)';

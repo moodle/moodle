@@ -13,13 +13,13 @@ $string['confirmclosure'] = 'цДй зАЛ Фтъ цД йшАч мФгяПг Цз  $a. гАмФгягй гАЦшАчи
 $string['deleteafter'] = 'гмпщ гАмФгягй гАЦшАчи хзо (гМгЦ)';
 $string['dialogueclosed'] = 'мФгя ЦшАч';
 $string['dialogueintro'] = 'ЦчоЦи мФгя';
-$string['dialoguemail'] = 'a$->userfrom чгЦ ЦД хежгщи Цгои лоМои АЦгойъ гАмФгяМи a$->dialogue 
+$string['dialoguemail'] = '$a->userfrom чгЦ ЦД хежгщи Цгои лоМои АЦгойъ гАмФгяМи $a->dialogue 
 йсйьз ЦтгЕойЕг ЦАмчи АЦгойъ гАмФгяМи:
 
-a$->url';
-$string['dialoguemailhtml'] = 'a$->userfrom чгЦ ЦД хежгщи Цгои лоМои АЦгойъ
-гАмФгяМи Аэ\'<i>a$->dialogue</i>\'<br /><br />
-йсйьз ЦтгЕойЕг ЦАмчи <a href=\"a$->url\">АмФгяъ</a>.';
+$a->url';
+$string['dialoguemailhtml'] = '$a->userfrom чгЦ ЦД хежгщи Цгои лоМои АЦгойъ
+гАмФгяМи Аэ\'<i>$a->dialogue</i>\'<br /><br />
+йсйьз ЦтгЕойЕг ЦАмчи <a href=\"$a->url\">АмФгяъ</a>.';
 $string['dialoguename'] = 'гсЦ гАмФгя';
 $string['dialogueopened'] = 'щйм гАмФгя Цз $a';
 $string['dialoguewith'] = 'мФгя Цз $a';

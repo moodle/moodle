@@ -6,7 +6,7 @@ $string['action'] = 'ÅÌÑÇÁ';
 $string['active'] = 'äÔØ';
 $string['activities'] = 'ÃäÔØÉ';
 $string['activity'] = 'äÔÇØ';
-$string['activityclipboard'] = 'äŞá åĞÇ ÇáäÔÇØ: <b>a$</b<=>';
+$string['activityclipboard'] = 'äŞá åĞÇ ÇáäÔÇØ: <b>$a</b<=>';
 $string['activityiscurrentlyhidden'] = 'ÚĞÑÇğ åĞÇ ÇáäÔÇØ ãÎİí ÍÇáíÇğ';
 $string['activitymodule'] = 'æÍÏÉ äÔÇØ';
 $string['activityreport'] = 'ÊŞÑíÑ ÇáäÔÇØ';
@@ -200,7 +200,7 @@ $string['currentlanguage'] = 'ÇááÛÉ ÇáÍÇáíÉ';
 $string['currentlocaltime'] = 'ÇáÊæŞíÊ ÇáãÍáí ÇáÍÇáí';
 $string['currentrelease'] = 'ãÚáæãÇÊ ÇáÃÕÏÇÑ ÇáÍÇáí';
 $string['currentversion'] = 'ÇáÃÕÏÇÑ ÇáÍÇáí';
-$string['databasechecking'] = 'ÊÍÏíË ŞÇÚÏÉ ÈíÇäÇÊ Moodle ãä äÓÎÉ a$->oldversion Åáì a$->newversion...';
+$string['databasechecking'] = 'ÊÍÏíË ŞÇÚÏÉ ÈíÇäÇÊ Moodle ãä äÓÎÉ $a->oldversion Åáì $a->newversion...';
 $string['databaseperformance'] = 'ÃÏÇÁ ŞÇÚÏÉ ÇáÈíÇäÇÊ';
 $string['databasesetup'] = 'ÊäÕíÈ ŞÇÚÏÉ ÇáÈíÇäÇÊ';
 $string['databasesuccess'] = 'Êã ÊÍÏíË ŞÇÚÏÉ ÇáÈíÇäÇÊ ÈäÌÇÍ';
@@ -234,9 +234,9 @@ $string['deletingexistingcoursedata'] = 'ÍĞİ ãÚáæãÇÊ ÇáãäåÌ ÇáÏÑÇÓí ÇáãæÌæÏÉ';
 $string['deletingolddata'] = 'ÍĞİ ãÚáæãÇÊ ÇáŞÏíãÉ';
 $string['department'] = 'ŞÓã';
 $string['description'] = 'ÇáæÕİ';
-$string['displayingfirst'] = 'İŞØ ÇáÇæá a$->count a$->things ÓíÚÑÖ';
+$string['displayingfirst'] = 'İŞØ ÇáÇæá $a->count $a->things ÓíÚÑÖ';
 $string['displayingrecords'] = 'ÚÑÖ $a ÇáÓÌáÇÊ';
-$string['displayingusers'] = 'ÚÑÖ ÇáãÓÊÎÏãíä a$->start Åáì a$->end';
+$string['displayingusers'] = 'ÚÑÖ ÇáãÓÊÎÏãíä $a->start Åáì $a->end';
 $string['documentation'] = 'ÊæËíŞ ãæÏá';
 $string['donotask'] = 'áÇ ÊÓÃá';
 $string['downloadexcel'] = 'ÊÍãíá İí ÊäÓíŞ ÅßÓá';
@@ -253,16 +253,16 @@ $string['edituser'] = 'ÍÑÑ ÈíÇäÇÊ ãÓÊÎÏã';
 $string['email'] = 'ÚäæÇä ÇáÈÑíÏ ÇáÅáßÊÑæäí';
 $string['emailagain'] = 'ÇáÈÑíÏ ÇáÅáßÊÑæäí ËÇäíÇğ';
 $string['emailconfirm'] = 'Şã ÈÊÃßíÏ ÇÔÊÑÇßß';
-$string['emailconfirmation'] = 'ãÑÍÈÇ a$->firstname,
-Êã ØáÈ ÇÔÊÑÇß ÌÏíÏ İí \'a$->sitename\'
+$string['emailconfirmation'] = 'ãÑÍÈÇ $a->firstname,
+Êã ØáÈ ÇÔÊÑÇß ÌÏíÏ İí \'$a->sitename\'
 ÈÇÓÊÎÏÇã ÚäæÇäß ÇáÈÑíÏí.
 áÊÃßíÏ ÇÔÊÑÇßß ÇáÌÏíÏ íÑÌì ÇáÇäÊŞÇá Åáì ÚäæÇä ÇáÅäÊÑäÊ ÇáÊÇáí:
-  a$->link
+  $a->link
 İí ÃÛáÈ ÈÑÇãÌ ÇáÈÑíÏ íÙåÑ Ğáß İí Ôßá ÑÇÈØÉ ÒÑŞÇÁ¡ æãÇ Úáíß ÅáÇ ÇáÖÛØ ÚáíåÇ. İÅĞÇ áã íÚãá Ğáß¡ Şã ÈŞÕ ÇáÚäæÇä æáÕŞå İí ÎÇäÉ ÇáÚäæÇä ÃÚáì ÚÇÑÖ ÇáÅäÊÑäÊ.
-ÊÍíÇÊ ãä \'a$->sitename\' ÇáãÏíÑ,
-a$->admin';
+ÊÍíÇÊ ãä \'$a->sitename\' ÇáãÏíÑ,
+$a->admin';
 $string['emailconfirmationsubject'] = '$a ÊÃßíÏ ÇáÍÓÇÈ:';
-$string['emailconfirmsent'] = '   <P>Êã ÅÑÓÇá ÈÑíÏ Åáì <B>a$</B>
+$string['emailconfirmsent'] = '   <P>Êã ÅÑÓÇá ÈÑíÏ Åáì <B>$a</B>
    <P>æÇáĞí íÍÊæí Úáì ÅÑÔÇÏÇÊ ÓåáÉ ÊÚíäß Úáì ÅÊãÇã ÇáÊÓÌíá
    <P>ÅĞÇ ÇÓÊãÑÊ ÇáãÔÇßá ÇÊÕá ÈãÏíÑ åĞÇ ÇáãæŞÚ';
 $string['emaildisplay'] = 'ÚÑÖ ÇáÈÑíÏ';
@@ -273,25 +273,25 @@ $string['emailexists'] = 'åĞÇ ÇáÚäæÇä ÇáÈÑíÏí ãæÌæÏ ÈÇáİÚá.';
 $string['emailformat'] = 'ÊäÓíŞ ÇáÈÑíÏ';
 $string['emailmustbereal'] = 'áÇÈÏ Ãä íßæä ÚäæÇä ÈÑíÏß ÇáÅáßÊÑæäí ÍŞíŞíÇ';
 $string['emailpasswordconfirmation'] = 'ÃåáÇ
-a$->firstname,
+$a->firstname,
 ÔÎÕ ãÇ(ÑÈãÇ ÃäÊ) ØáÈÊ ßáãÉ ÓÑ ÌÏíÏáÍÓÇÈß İí
-\'a$->sitename\'
+\'$a->sitename\'
 áÊÃßíÏ ÇáÚãáíÉ æÇáÍÕæá Úáì ßáãÉ ÇáÓÑ ÇáÌÏíÏÉ ÇáãÑÓáå áßá Úä ØÑíŞ ÇáÈÑíÏ ÇáÅáßÊÑæäí ÇĞåÈ Åáì ÇáÚäæÇä ÇáÊÇáí:
-a$->link
+$a->link
 İí ãÚÙã ÈÑÇãÌ ÇÓÊŞÈÇá ÇáÈÑíÏ ÇáÅáßÊÑæä ÓíÙåÑ åĞÇ ÇáÚäæÇä ÈÎØ ÇÒÑŞ äÔØ íßä ÇáäŞÑ Úáíå ÈÇáİÇÑå. İí ÍÇáÉ İÔá ÚãáíÉ ÇáäŞÑ ÈÇáİÇÑå¡ Şã ÈäÓÎ ÇáÚäæÇä ßÇãáÇ æáÕŞÉ İí ÎÇäÉ ÇáÚäæÇä ÈÇáãÊÕİÍ
 İí ÍÇáÉ ÑÛÈÊãß ÇáÍÕæá Úáì ãÓÇÚÏÉ¡ íãßäß ÇáÇÊÕÇá ÈãÏíÑ ÇáãæŞÚ
-a$->admin
+$a->admin
 ';
 $string['emailpasswordconfirmationsubject'] = '$a ÊÛíÑ ßáãÉ ÇáãÑæÑ:';
-$string['emailpasswordconfirmsent'] = 'ãä ÇáãİÊÑÖ Çäå ŞÏ Êã ÅÑÓÇá ÈÑíÏ ÅáßÊÑæäí Åáì ÚäæÇä ÈÑíÏß ÇáÅáßÊÑæäí<b>a$</b>
+$string['emailpasswordconfirmsent'] = 'ãä ÇáãİÊÑÖ Çäå ŞÏ Êã ÅÑÓÇá ÈÑíÏ ÅáßÊÑæäí Åáì ÚäæÇä ÈÑíÏß ÇáÅáßÊÑæäí<b>$a</b>
 <p>íÍÊæí Úáì áÊÇßíÏ æÅäåÇÁ ÊÛíÑ ßáãÉ ÇáÓÑ
 İí ÍÇáÉ ÍÕæá Úáì ÕÚæÈÇÊ Şã ÈÇáÇÊÕÇá ÈãÏíÑ ÇáãæŞÚ
 $a->admin';
 $string['emailpasswordsent'] = 'ÔßÑğÇ áÊÃßíÏ ÊÛííÑ ßáãÉ ÇáÓøÑø 
 <p>Êã ÅÑÓÇá ÈÑíÏ ÅáßÊÑæäí Åáì ÚäæÇä ÈÑíÏß ÇáÅáßÊÑæäí íÍÊæí Úáì ßáãÉ ÇáÓÑ ÇáÌÏíÏÉ
-<b>a$->email</b>
+<b>$a->email</b>
 <p>ßáãÉ ÇáÓÑ ÇáÌÏíÏ ÅäÔÆÊ ÂáíÇ¡ ÑÈãÇ ÊÑÛÈ İí
-<a href=a$->link>ÛíÑ ßáãÉ ÇáÓÑ ÇáÎÇÕÉ Èß</a>Åáí ÔÆ ÊÓÊØíÚ ÊĞßÑå';
+<a href=$a->link>ÛíÑ ßáãÉ ÇáÓÑ ÇáÎÇÕÉ Èß</a>Åáí ÔÆ ÊÓÊØíÚ ÊĞßÑå';
 $string['enrolledincourse'] = 'ãÓÌá İí ÇáãäåÌ ÇáÏÑÇÓí \"$a\"';
 $string['enrolledincoursenot'] = 'ÛíÑ ãÓÌá İí ÇáãäåÌ ÇáÏÑÇÓí \"$a\"';
 $string['enrolmentconfirmation'] = 'ÇäÊ Úáì æÔß ÇáÊÓÌíá ßÚÖæ İí åĞ ÇáãäåÌ ÇáÏÑÇÓí
@@ -396,8 +396,8 @@ $string['helpwiki'] = 'ßíİ ÊßÊÈ äÕ ÈÅÓÊÎÏÇã æíßí';
 $string['helpwriting'] = 'ÃßÊÈ ÈÏŞÉ';
 $string['hide'] = 'ÅÎİÇÁ';
 $string['hits'] = 'äÊÇÆÌ';
-$string['hitsoncourse'] = 'ÏÎæá Åáì a$->coursename ÈæÇÓØÉ a$->username';
-$string['hitsoncoursetoday'] = 'äÊÇÆÌ Çáíæã İí  a$->coursename ÈæÇÓØÉ a$->username';
+$string['hitsoncourse'] = 'ÏÎæá Åáì $a->coursename ÈæÇÓØÉ $a->username';
+$string['hitsoncoursetoday'] = 'äÊÇÆÌ Çáíæã İí  $a->coursename ÈæÇÓØÉ $a->username';
 $string['home'] = 'ÇáÕİÍÉ ÇáÑÆíÓíÉ';
 $string['hour'] = 'ÓÇÚÉ';
 $string['hours'] = 'ÓÇÚÇÊ';
@@ -451,7 +451,7 @@ $string['loginsite'] = 'ÏÎæá Åáì ÇáãæŞÚ';
 $string['loginsteps'] = 'ãÑÍÈÇ Èß! íãßäß ÅäÔÇÁ ÇÔÊÑÇß ÌÏíÏ İí åĞÇ ÇáãæŞÚ ÎáÇá áÍÙÇÊ æÇáÇÊÕÇá ÇáßÇãá ÈÇáãäÇåÌ ÇáÏÑÇÓíÉ æĞáß ÈÊÊÈÚ ÇáÎØæÇÊ ÇáÊÇáíÉ: 
 
    <OL size=2>
-   <LI>ÇãáÃ äãæĞÌ <A HREF=a$>New Account</A>.
+   <LI>ÇãáÃ äãæĞÌ <A HREF=$a>New Account</A>.
    <LI>Úáì ÇáİæÑ ÊÕáß ÑÓÇáÉ Úáì ÚäæÇäß ÇáÈÑíÏí.
    <LI>Şã ÈŞÑÇÁÉ ÇáÈÑíÏ æÇÖÛØ Úáì ÇáÑÇÈØÉ ÇáãæÌæÏÉ Èå.
    <LI>ÓíÊã ÊÃßíÏ ÇÔÊÑÇßß æíÓãÍ áß ÈÇáÏÎæá.
@@ -502,7 +502,7 @@ $string['missingurl'] = 'ãÄÔÑ ÇáãæŞÚ ãİŞæÏ';
 $string['missingusername'] = 'ÇÓã ÇáãÓÊÎÏã ãİŞæÏ';
 $string['modified'] = 'Êã ÇáÊÚÏíá';
 $string['moduledeleteconfirm'] = 'ÃäÊ Úáì æÔß ÇáŞíÇã ÈÍĞİ ÇáæÍÏå ÊãÇãÇ\'$a\'.ÚãáíÉ ÇáÍĞİ åĞå ÓÊÍĞİ ßá ãÇ ÊÚáŞ ÈåĞå ÇáæÍÏå ãä ŞÇÚÏÉ ÇáÈíÇäÇÊ. åá ÃäÊ İÚáÇ ÊÑÛÈ İí ÇáÇÓÊãÑÇÑ İí ÚãáíÉ ÇáÍĞİ¿';
-$string['moduledeletefiles'] = 'ßá ÇáÈíÇäÇ ÇáãÊÚáŞÉ ÈåĞå ÇáæÍÏå \'a$->module\'ŞÏ Êã ÍĞİåÇ. áÅäåÇÁ ÚãáíÉ ÇáÍĞ æÊÍäÈ ÇÚÇÏÉ ÊËíÊ åĞå ÇáæÍÏå Úáíß ÍĞİ ãÌáÏÇáæÍÏå ãä ÎÇÏãß:a$->directory';
+$string['moduledeletefiles'] = 'ßá ÇáÈíÇäÇ ÇáãÊÚáŞÉ ÈåĞå ÇáæÍÏå \'$a->module\'ŞÏ Êã ÍĞİåÇ. áÅäåÇÁ ÚãáíÉ ÇáÍĞ æÊÍäÈ ÇÚÇÏÉ ÊËíÊ åĞå ÇáæÍÏå Úáíß ÍĞİ ãÌáÏÇáæÍÏå ãä ÎÇÏãß:$a->directory';
 $string['modulesetup'] = 'ÊäÕíÈ ÌÏÇæá ÇáæÍÏÉ ÇáäãØíÉ';
 $string['modulesuccess'] = '$a Êã ÊäÕíÈ ÇáÌÏÇæá ÈÔßá ÕÍíÍ';
 $string['moodleversion'] = 'ÃÕÏÇÑ ãæÏá';
@@ -532,16 +532,16 @@ $string['new'] = 'ÌÏíÏ';
 $string['newaccount'] = 'ÇÔÊÑÇß ÌÏíÏ';
 $string['newcourse'] = 'ãäåÌ ÏÑÇÓí ÌÏíÏ';
 $string['newpassword'] = 'ßáãÉ ãÑæÑ ÌÏíÏÉ';
-$string['newpasswordtext'] = 'ãÑÍÈÇ a$->firstname,
+$string['newpasswordtext'] = 'ãÑÍÈÇ $a->firstname,
 ßáãÉ ÇáãÑæÑ ÇáÎÇÕÉ ÈÇÔÊÑÇßß Úáì ŞÏ Êã ÅÚÇÏÉ ÖÈØåÇ æÊã ÊÎÕíÕ ßáãÉ ãÑæÑ ÌÏíÏÉ ãÄŞÊÉ ÎÇÕÉ Èß
 ãÚáæãÇÊ ÇáÏÎæá ÇáÍÇáíÉ ÇáÎÇÕÉ Èß ÇáÂä:
-   ÇÓã ÇáãÓÊÎÏã: a$->username
-   ßáãÉ ÇáãÑæÑ: a$->newpassword
+   ÇÓã ÇáãÓÊÎÏã: $a->username
+   ßáãÉ ÇáãÑæÑ: $a->newpassword
 íÑÌì ÇáÇäÊŞÇá Åáì åĞå ÇáÕİÍÉ áÊÛííÑ ßáãÉ ÇáãÑæÑ:
-   a$->link
+   $a->link
 İí ÃÛáÈ ÈÑÇãÌ ÇáÈÑíÏ íÙåÑ Ğáß İí Ôßá ÑÇÈØÉ ÒÑŞÇÁ¡ æãÇ Úáíß ÅáÇ ÇáÖÛØ ÚáíåÇ. İÅĞÇ áã íÚãá Ğáß¡ Şã ÈŞÕ ÇáÚäæÇä æáÕŞå İí ÎÇäÉ ÇáÚäæÇä ÃÚáì ÚÇÑÖ ÇáÅäÊÑäÊ.
-ÊÍíÇÊ ãä \'a$->sitename\' ÇáãÏíÑ,
-a$->signoff
+ÊÍíÇÊ ãä \'$a->sitename\' ÇáãÏíÑ,
+$a->signoff
 ';
 $string['newpicture'] = 'ÕæÑÉ ÔÎÕíÉ ÌÏíÏÉ';
 $string['newsitem'] = 'ÈäÏ ÃÎÈÇÑíå';
@@ -602,10 +602,10 @@ $string['passwordconfirmchange'] = 'ÊÃßíÏ ÊÛíÑ ßáãÉ ÇáãÑæÑ';
 $string['passwordrecovery'] = 'äÚã¡ ÓÇÚÏäí Úáì ÇáÏÎæá';
 $string['passwordsdiffer'] = 'ßáãÇÊ ÇáãÑæÑ áÇ ÊÊØÇÈŞ';
 $string['passwordsent'] = 'Êã ÅÑÓÇá ßáãÉ ÇáãÑæÑ';
-$string['passwordsenttext'] = '   <P>Êã ÅÑÓÇá ÑÓÇáÉ Åáì ÇáÚäæÇä a$->email.
+$string['passwordsenttext'] = '   <P>Êã ÅÑÓÇá ÑÓÇáÉ Åáì ÇáÚäæÇä $a->email.
    <P><B>íÑÌì ÇáÈÍË İí ÇáÈÑíÏ Úä ßáãÉ ÇáãÑæÑ</B>
    <P>Êã ÅÕÏÇÑ ßáãÉ ãÑæÑ ÌÏíÏÉ¡ æÑÈãÇ ÑÛÈÊ İí
-   <A HREF=a$->link>İí ÊÛííÑåÇ Åáì ÔíÁ ÃÈÓØ ãä Ğáß ÍÊì íÓåá ÊĞßÑåÇ</A>.';
+   <A HREF=$a->link>İí ÊÛííÑåÇ Åáì ÔíÁ ÃÈÓØ ãä Ğáß ÍÊì íÓåá ÊĞßÑåÇ</A>.';
 $string['people'] = 'ÃÔÎÇÕ';
 $string['personalprofile'] = 'ãáİ ÇáÈíÇäÇÊ ÔÎÕí';
 $string['phone'] = 'åÇÊİ';
@@ -643,7 +643,7 @@ $string['removecreator'] = 'ÇÓÊÈÚÇÏ ãäÔÆ ãäåÌ ÏÑÇÓí';
 $string['removestudent'] = 'ÇÓÊÈÚÇÏ ØÇáÈ';
 $string['removeteacher'] = 'ÇÓÊÈÚÇÏ ãÏÑÓ';
 $string['rename'] = 'ÊÛííÑ ÇáÇÓã';
-$string['renamefileto'] = 'ÊÛííÑ ÇáÇÓã <b>a$</b> Åáí';
+$string['renamefileto'] = 'ÊÛííÑ ÇáÇÓã <b>$a</b> Åáí';
 $string['required'] = 'ãİÑæÖ';
 $string['requireskey'] = 'åĞÇ ÇáãäåÌ ÇáÏÑÇÓí ÈÍÇÌÉ Åáì ãİÊÇÍ ÇáÊÓÌíá';
 $string['resortcoursesbyname'] = 'ÑÊÈ ÇáãäÇåÌ ÇáÏÑÇÓíÉ ÈÇáÇÓã';
@@ -805,9 +805,9 @@ $string['weekhide'] = 'ÃÎİÇÁ åĞÇ ÇáÃÓÈæÚ ãä $a';
 $string['weeklyoutline'] = 'ãÎØØ ÃÓÈæÚí';
 $string['weekshow'] = 'ÚÑÖ åĞÇ ÇáÃÓÈæÚ áÜ $a';
 $string['welcometocourse'] = 'ãÑÍÈÇ İí $a';
-$string['welcometocoursetext'] = 'ãÑÍÈÇ İí a$->coursename!
+$string['welcometocoursetext'] = 'ãÑÍÈÇ İí $a->coursename!
 ãä ÇáÃÔíÇÁ ÇáÊí íÌÈ Ãä ÊİÚáåÇ ÇÈÊÏÇÁ Ãä ÊŞæã ÈÊÚÏíá ÇáÕİÍÉ ÇááãÍÉ ÇáÔÎÕíÉ ÎáÇá ÇáãäåÌ ÇáÏÑÇÓí ÍÊì äÚÑİ ÇáãÒíÏ Úäß
- a$->profileurl';
+ $a->profileurl';
 $string['whattocallzip'] = 'ãÇĞÇ ÊÑíÏ ÊÓãíÉ Çáãáİ ÇáãÖÛæØ¿';
 $string['withchosenfiles'] = 'ãÚ ÇáãáİÇÊ ÇáãÎÊÇÑÉ';
 $string['withoutuserdata'] = 'ãä ÛíÑ ãÚáæãÇÊ ãÓÊÎÏã';
