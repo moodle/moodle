@@ -92,18 +92,25 @@
 
         case "upload":
             html_header($course, $wdir);
-            if ($save) {
-                if (!is_uploaded_file($userfile['tmp_name']) and $userfile['size'] > 0) {
-                    echo "<P>Error: That was not a valid file.";
+            if (!empty($_FILES['userfile'])) {
+                $userfile = $_FILES['userfile'];
+            } else {
+                $save = false;
+            }
+            if (!empty($save)) {
+                if (!is_uploaded_file($userfile['tmp_name']) or $userfile['size'] == 0) {
+                    notify(get_string("uploadnofilefound"));
                 } else {
                     $userfile_name = clean_filename($userfile['name']);
                     if ($userfile_name) {
                         $newfile = "$basedir$wdir/$userfile_name";
                         if (move_uploaded_file($userfile['tmp_name'], $newfile)) {
-                            echo "Uploaded $userfile_name (".$userfile['type'].") to $wdir";
+                            $a = NULL;
+                            $a->file = "$userfile_name (".$userfile['type'].")";
+                            $a->directory = $wdir;
+                            print_string("uploadedfileto", "", $a);
                         } else {
-                            echo "A problem occurred while uploading '$userfile_name'";
-                            echo " (possibly it was too large)";
+                            notify(get_string("uploadproblem", "", $userfile_name));
                         }
                     }
                 }
@@ -113,23 +120,28 @@
                 $upload_max_filesize = get_max_upload_file_size();
                 $filesize = display_size($upload_max_filesize);
 
-                echo "<P>Upload a file (maximum size $filesize) into <B>$wdir</B>:";
+                $struploadafile = get_string("uploadafile");
+                $struploadthisfile = get_string("uploadthisfile");
+                $strmaxsize = get_string("maxsize", "", $filesize);
+                $strcancel = get_string("cancel");
+
+                echo "<P>$struploadafile ($strmaxsize) --> <B>$wdir</B>";
                 echo "<TABLE><TR><TD COLSPAN=2>";
                 echo "<FORM ENCTYPE=\"multipart/form-data\" METHOD=\"post\" ACTION=index.php>";
                 echo " <INPUT TYPE=hidden NAME=MAX_FILE_SIZE value=\"$upload_max_filesize\">";
                 echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
                 echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
                 echo " <INPUT TYPE=hidden NAME=action VALUE=upload>";
-                echo " <INPUT NAME=\"userfile\" TYPE=\"file\" size=\"50\">";
+                echo " <INPUT NAME=\"userfile\" TYPE=\"file\" size=\"60\">";
                 echo " </TD><TR><TD WIDTH=10>";
-                echo " <INPUT TYPE=submit NAME=save VALUE=\"Upload this file\">";
+                echo " <INPUT TYPE=submit NAME=save VALUE=\"$struploadthisfile\">";
                 echo "</FORM>";
                 echo "</TD><TD WIDTH=100%>";
                 echo "<FORM ACTION=index.php METHOD=get>";
                 echo " <INPUT TYPE=hidden NAME=id VALUE=$id>";
                 echo " <INPUT TYPE=hidden NAME=wdir VALUE=$wdir>";
                 echo " <INPUT TYPE=hidden NAME=action VALUE=cancel>";
-                echo " <INPUT TYPE=submit VALUE=\"Cancel\">";
+                echo " <INPUT TYPE=submit VALUE=\"$strcancel\">";
                 echo "</FORM>";
                 echo "</TD></TR></TABLE>";
             }

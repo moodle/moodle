@@ -5,7 +5,9 @@
 
     require_variable($id);          // Assignment ID
 
-    $newfile = $HTTP_POST_FILES["newfile"];
+    if (!empty($_FILES['newfile'])) {
+        $newfile = $_FILES['newfile'];
+    }
 
     if (! $assignment = get_record("assignment", "id", $id)) {
         error("Not a valid assignment ID");
@@ -41,7 +43,10 @@
         error("Sorry, an error in the system prevents you from uploading files: contact your teacher or system administrator");
     }
 
-    if (is_uploaded_file($newfile['tmp_name']) and $newfile['size'] > 0) {
+    if (empty($newfile)) {
+        notify(get_string("uploadnofilefound", "assignment") );
+
+    } else if (is_uploaded_file($newfile['tmp_name']) and $newfile['size'] > 0) {
         if ($newfile['size'] > $assignment->maxbytes) {
             notify(get_string("uploadfiletoobig", "assignment", $assignment->maxbytes));
         } else {

@@ -15,7 +15,7 @@
         $post->subject = strip_tags($post->subject);  // Strip all tags
         $post->message = clean_text($post->message, $post->format);   // Clean up any bad tags
 
-        $post->attachment = $HTTP_POST_FILES["attachment"];
+        $post->attachment = $_FILES["attachment"];
 
         if (!$post->subject and !$post->message) {
             error(get_string("emptymessage", "forum"));

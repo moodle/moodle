@@ -1159,10 +1159,10 @@ function forum_print_attachments($post, $return=NULL) {
 
 function forum_add_attachment($post, $newfile) {
 // $post is a full post record, including course and forum
-// $newfile is a full upload array from HTTP_POST_FILES
+// $newfile is a full upload array from $_FILES
 // If successful, this function returns the name of the file
 
-    if (!isset($newfile['name'])) {
+    if (empty($newfile['name'])) {
         return "";
     }
 
