@@ -97,11 +97,15 @@ if ($form->mode == "add") {
 	if (!isset($form->lessondefault)) {
 		$form->lessondefault = 0;
 	}
+	
+	$form->deleteattempts = "";
+
 	/// CDC-FLAG ///
 ?>
 
 <form name="form" method="post" action="<?php echo $ME ?>">
 <center>
+
 <table cellpadding=5>
 <tr valign=top>
     <td align=right><p><b><?php  print_string("name") ?>:</b></p></td>
@@ -407,6 +411,20 @@ if ($form->mode == "add") {
     ?>
     </td>
 </tr>
+<?php 
+	if ($form->mode != "add") {
+?>
+<tr>
+    <td align=right><p><b><?php  print_string("deleteattempts", "lesson"); ?>:</b></p></td>
+    <td>
+        <input type="text" name="deleteattempts" size=7 value="">
+		<?php helpbutton("deleteattempts", get_string("deleteattempts", "lesson"), "lesson"); ?>
+		<input type="hidden" name="deleteattemptsid" value="<?php echo $USER->id; ?>">
+    </td>
+</tr>
+<?php
+	}  // end if statement  if ($form->mode != "add") {
+?>
 
 </table>
 <!-- These hidden variables are always the same -->
