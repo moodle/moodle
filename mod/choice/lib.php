@@ -27,9 +27,9 @@ $CHOICE_DISPLAY = array (CHOICE_DISPLAY_HORIZONTAL   => get_string('displayhoriz
 /// Standard functions /////////////////////////////////////////////////////////
 
 function choice_user_outline($course, $user, $mod, $choice) {
-    if ($current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user->id)) {
-        $result->info = "'".choice_get_option_text($choice, $current->optionid)."'";
-        $result->time = $current->timemodified;
+    if ($answer = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $user->id)) {
+        $result->info = "'".choice_get_option_text($choice, $answer->optionid)."'";
+        $result->time = $answer->timemodified;
         return $result;
     }
     return NULL;
@@ -37,9 +37,9 @@ function choice_user_outline($course, $user, $mod, $choice) {
 
 
 function choice_user_complete($course, $user, $mod, $choice) {
-    if ($current = get_record('choice_answers', "choiceid", $choice->id, "userid", $user->id)) {
-        $result->info = "'".choice_get_option_text($choice, $current->optionid)."'";
-        $result->time = $current->timemodified;
+    if ($answer = get_record('choice_answers', "choiceid", $choice->id, "userid", $user->id)) {
+        $result->info = "'".choice_get_option_text($choice, $answer->optionid)."'";
+        $result->time = $answer->timemodified;
         echo get_string("answered", "choice").": $result->info , last updated ".userdate($result->time);
     } else {
         print_string("notanswered", "choice");
@@ -108,10 +108,10 @@ function choice_update_instance($choice) {
     foreach ($choice as $name => $value) {        
         $value = trim($value);
 
-        if (strstr($current, "oldoption")) {  // Old option
+        if (strstr($name, "oldoption")) {  // Old option
             if ($value) {
                 $option = NULL;
-                $option->id = substr($current, 10); // Get the ID of the answer that needs to be updated.
+                $option->id = substr($name, 10); // Get the ID of the answer that needs to be updated.
                 $option->text = $value;
                 $option->choiceid = $choice->id;
                 $option->timemodified = time();
