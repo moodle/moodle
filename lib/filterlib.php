@@ -149,7 +149,7 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
         }
 
     /// Finally we do our highlighting
-        if (!empty($CFG->filtermatchfirstonly)) {
+        if (!empty($CFG->filtermatchonepertext)) {
             $text = preg_replace('/('.$linkobject->phrase.')/'.$modifiers, 
                                       $linkobject->hreftagbegin.'$1'.$linkobject->hreftagend, $text, 1);
         } else {
