@@ -552,7 +552,7 @@ CREATE TABLE `prefix_user_coursecreators` (
 
 
 CREATE TABLE `prefix_course_meta` (
- `id` int(1) unsigned NOT NULL auto_increment,
+ `id` int(10) unsigned NOT NULL auto_increment,
  `parent_course` int(10) NOT NULL default 0,
  `child_course` int(10) NOT NULL default 0,
  PRIMARY KEY (`id`),

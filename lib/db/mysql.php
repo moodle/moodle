@@ -1126,7 +1126,7 @@ function main_upgrade($oldversion=0) {
         
         // add new table for meta courses.
         modify_database("","CREATE TABLE `prefix_course_meta` (
-            `id` int(1) unsigned NOT NULL auto_increment,
+            `id` int(10) unsigned NOT NULL auto_increment,
             `parent_course` int(10) NOT NULL default 0,
             `child_course` int(10) NOT NULL default 0,
             PRIMARY KEY (`id`),
@@ -1135,6 +1135,11 @@ function main_upgrade($oldversion=0) {
         );");
         // add flag to course field
         table_column('course','','metacourse','integer','1','','0','not null');
+    }
+
+    if ($oldversion < 2005012800) {
+        // fix a typo (int 1 becomes int 10) 
+        table_column('course_meta','id','id','integer','10','','0','not null');
     }
 
     return $result;
