@@ -105,7 +105,7 @@ if( !defined( "PHP_SIMPLE_XLS_GEN" ) ) {
            $this->ccol = 0;
            $this->crow++;
         }
-        $this->WriteNumber_pos( $this->crow, $this->ccol, &$value );
+        $this->WriteNumber_pos( $this->crow, $this->ccol, $value );
         $this->ccol++;
         return;
      }
@@ -117,7 +117,7 @@ if( !defined( "PHP_SIMPLE_XLS_GEN" ) ) {
            $this->ccol = 0;
            $this->crow++;
         }
-        $this->WriteText_pos( $this->crow, $this->ccol, &$value );
+        $this->WriteText_pos( $this->crow, $this->ccol, $value );
         $this->ccol++;
         return;
      }
