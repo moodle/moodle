@@ -51,16 +51,16 @@
             case REFERENCE: 
                 $strexamplereference = get_string("examplereference", "resource");
                 ?>
-                <tr valign=top>
-                    <td align=right nowrap>
+                <tr valign="top">
+                    <td align="right" nowrap>
                         <p><b><?=$strtypename?>:</b></p>
                     </td>
                     <td>
                         <textarea name="reference" rows=3 cols=50 wrap="virtual"><? p($form->reference) ?></textarea>
                     </td>
                 </tr>
-                <tr valign=top>
-                    <td align=right nowrap>
+                <tr valign="top">
+                    <td align="right" nowrap>
                         <p><b>(<?=$strexample?>)</b></p>
                     </td>
                     <td>
@@ -76,16 +76,16 @@
             case PROGRAM:
                 $strexampleurl = get_string("exampleurl", "resource");
                 ?>
-                <tr valign=top>
-                    <td align=right nowrap>
+                <tr valign="top">
+                    <td align="right" nowrap>
                         <p><b><?=$strtypename?>:</b></p>
                     </td>
                     <td>
-                        <input name="reference" size=\"100\" value="<? p($form->reference) ?>">
+                        <input name="reference" size="100" value="<? p($form->reference) ?>">
                     </td>
                 </tr>
-                <tr valign=top>
-                    <td align=right nowrap>
+                <tr valign="top">
+                    <td align="right" nowrap>
                         <p><b>(<?=$strexample?>)</b></p>
                     </td>
                     <td>
@@ -102,8 +102,8 @@
                 $strnote     = get_string("note", "resource");
                 $strnotefile = get_string("notefile", "resource", "$CFG->wwwroot/files/index.php?id=$course->id");
                 ?>
-                <tr valign=\"top\">
-                    <td align=\"right\" nowrap>
+                <tr valign="top">
+                    <td align="right" nowrap>
                         <p><b><?=$strfilename?>:</b></p>
                     </td>
                     <td>
@@ -117,8 +117,8 @@
                         ?>
                     </td>
                 </tr>
-                <tr valign=\"top\">
-                    <td align=\"right\" nowrap>
+                <tr valign="top">
+                    <td align="right" nowrap>
                         <p><b><?=$strnote?>:</b></p>
                     </td>
                     <td>
@@ -133,8 +133,8 @@
             case PLAINTEXT: 
                 $strfulltext = get_string("fulltext", "resource");
                 ?>
-                <tr valign=\"top\">
-                    <td align=\"right\" nowrap>
+                <tr valign="top">
+                    <td align="right" nowrap>
                         <p><b><?=$strfulltext?>:</b></p><br />
                         <font size="1">
                         <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br />
@@ -151,8 +151,8 @@
             case HTML:
                 $strhtmlfragment = get_string("htmlfragment", "resource");
                 ?>
-                <tr valign=top>
-                    <td align=right nowrap>
+                <tr valign="top">
+                    <td align="right" nowrap>
                         <p><b><?=$strhtmlfragment?>:</b></p><br />
                         <font size="1">
                         <? helpbutton("writing", get_string("helpwriting"), "moodle", true, true) ?><br />
