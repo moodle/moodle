@@ -13,7 +13,7 @@
 
     require_login($course->id);
 
-    add_to_log("View list of all profiles", $course->id);
+    add_to_log($course->id, "user", "view all", "index.php?id=$course->id", "");
 
     if ($course->category) {
         print_header("$course->shortname: Participants", "$course->fullname",

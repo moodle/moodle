@@ -100,7 +100,7 @@
             $usernew->timemodified = time();
 
             if (update_record("user", $usernew)) {
-                add_to_log("Updated own profile", $course->id);
+                add_to_log($course->id, "user", "update", "view.php?user=$user->id&course=$course->id", "");
 		        redirect("view.php?id=$user->id&course=$course->id", "Changes saved");
             } else {
                 error("Could not update the user record ($user->id)");

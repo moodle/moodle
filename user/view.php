@@ -23,7 +23,7 @@
 
     $fullname = "$user->firstname $user->lastname";
 
-    add_to_log("View profile: $fullname", $course);
+    add_to_log($course->id, "user", "view", "view.php?id=$user->id&course=$course->id", "$user->id");
 
     if ($course->category) {
         print_header("Personal profile: $fullname", "Personal profile: $fullname", 
