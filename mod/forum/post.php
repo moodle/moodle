@@ -355,7 +355,13 @@
                 error('Could not create new discussion');
             }
             
-            set_field('forum_posts', 'parent', 0, 'id', $post->id);
+            $post->parent = 0;
+            $post->name = $name;
+
+            if (!update_record("forum_posts", $post)) {
+                error('Could not update the original post');
+            }
+
             forum_change_discussionid($post->id, $newid);
             
             // set timemodified to time of last post in each discussion
@@ -375,22 +381,21 @@
             add_to_log($discussion->course, "forum", "prune post", 
                            "discuss.php?d=$newid", "$post->id", $cm->id);
 
-            redirect(forum_go_back_to("discuss.php?d=$newid"), 
-                         get_string("prunedpost", "forum"), 1);
+            redirect(forum_go_back_to("discuss.php?d=$newid"), get_string("prunedpost", "forum"), 1);
 
         } else { // User just asked to prune something
 
             $course = get_record('course', 'id', $forum->course);
             $strforums = get_string("modulenameplural", "forum");
             print_header("$course->shortname: $discussion->name: $post->subject", "$course->fullname",
-                         "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> ->
-                          <A HREF=\"../forum/index.php?id=$course->id\">$strforums</A> -> 
-                          <A HREF=\"view.php?f=$forum->id\">$forum->name</A> -> 
-                          <A HREF=\"discuss.php?d=$discussion->id\">$post->subject</A> -> ".
+                         "<a href=../../course/view.php?id=$course->id>$course->shortname</a> ->
+                          <a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> 
+                          <a href=\"view.php?f=$forum->id\">$forum->name</a> -> 
+                          <a href=\"discuss.php?d=$discussion->id\">$post->subject</a> -> ".
                           get_string("prune", "forum"), '', "", true, "", navmenu($course, $cm));
             
             print_heading(get_string('pruneheading', 'forum'));
-            echo '<CENTER>';
+            echo '<center>';
             
             include('prune.html');
                          
