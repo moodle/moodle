@@ -66,7 +66,7 @@
                 backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
                 //Now check if want to restore user data and do it.
-                if ($restore->mods[journal]->userinfo) {
+                if ($restore->mods['journal']->userinfo) {
                     //Restore journal_entries
                     $status = journal_entries_restore_mods ($mod->id, $newid,$info,$restore);
                 }

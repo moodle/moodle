@@ -64,7 +64,7 @@
                 backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
                 //Now check if want to restore user data and do it.
-                if ($restore->mods[choice]->userinfo) {
+                if ($restore->mods['choice']->userinfo) {
                     //Restore choice_answers
                     $status = choice_answers_restore_mods ($newid,$info,$restore);
                 }

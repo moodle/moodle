@@ -971,7 +971,7 @@
                 //We have to restore the question_grades now (course level table)
                 $status = quiz_question_grades_restore_mods($newid,$info,$restore);
                 //Now check if want to restore user data and do it.
-                if ($restore->mods[quiz]->userinfo) {
+                if ($restore->mods['quiz']->userinfo) {
                     //Restore quiz_attempts
                     $status = quiz_attempts_restore_mods ($newid,$info,$restore);
                     if ($status) {

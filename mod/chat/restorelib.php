@@ -60,7 +60,7 @@
                 backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
                 //Now check if want to restore user data and do it.
-                if ($restore->mods[chat]->userinfo) {
+                if ($restore->mods['chat']->userinfo) {
                     //Restore chat_messages
                     $status = chat_messages_restore_mods ($mod->id, $newid,$info,$restore);
                 }
