@@ -102,23 +102,25 @@
         include("$CFG->dataroot/cronextra.php");
     }
 
-    //Execute backup's cron
-    //Perhaps a long time and memory could help in large sites
-    ini_set("max_execution_time","3000");
-    ini_set("memory_limit","56M");
-    if (file_exists("$CFG->dirroot/backup/backup_scheduled.php") and
-        file_exists("$CFG->dirroot/backup/backuplib.php") and
-        file_exists("$CFG->dirroot/backup/lib.php")) {
-        include_once("$CFG->dirroot/backup/backup_scheduled.php");
-        include_once("$CFG->dirroot/backup/backuplib.php");
-        include_once("$CFG->dirroot/backup/lib.php");
-        echo "Running backups if required...\n";
-        flush();
-
-        if (! schedule_backup_cron()) {
-            echo "Something went wrong while performing backup tasks!!!\n";
-        } else {
-            echo "Backup tasks finished\n";
+    if (!isset($CFG->preventscheduledbackups)) {   // Defined in config.php
+        //Execute backup's cron
+        //Perhaps a long time and memory could help in large sites
+        set_time_limit(0);
+        ini_set("memory_limit","56M");
+        if (file_exists("$CFG->dirroot/backup/backup_scheduled.php") and
+            file_exists("$CFG->dirroot/backup/backuplib.php") and
+            file_exists("$CFG->dirroot/backup/lib.php")) {
+            include_once("$CFG->dirroot/backup/backup_scheduled.php");
+            include_once("$CFG->dirroot/backup/backuplib.php");
+            include_once("$CFG->dirroot/backup/lib.php");
+            echo "Running backups if required...\n";
+            flush();
+    
+            if (! schedule_backup_cron()) {
+                echo "Something went wrong while performing backup tasks!!!\n";
+            } else {
+                echo "Backup tasks finished\n";
+            }
         }
     }
 
