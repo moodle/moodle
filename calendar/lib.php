@@ -169,7 +169,7 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
                 $popupcontent .= '<div><a href=\\\''.CALENDAR_URL.'view.php?view=event&amp;id='.$events[$eventid]->id.'\\\'>'.addslashes(htmlspecialchars($events[$eventid]->name)).'</a></div>';
             }
 
-            $popupcaption = get_string('eventsfor', 'calendar', strftime(get_string('strftimedayshort'), usertime($events[$eventid]->timestart)));
+            $popupcaption = get_string('eventsfor', 'calendar', strftime(get_string('strftimedayshort'), $events[$eventid]->timestart));
             $popup = 'onmouseover="return overlib(\''.$popupcontent.'\', CAPTION, \''.$popupcaption.'\');" onmouseout="return nd();"';
 
             // Class and cell content
