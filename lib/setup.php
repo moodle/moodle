@@ -63,6 +63,14 @@
         setlocale ("LC_TIME", $CFG->lang);
     }
 
+// Check that PHP is of a sufficient version
+
+    if ( ! check_php_version("4.1.0") ) {
+        $version = phpversion();
+        print_heading("Sorry, Moodle requires PHP 4.1.0 or later (currently using version $version)");
+        die;
+    }
+
 // The following is a big hack to get around the problem of PHP installations
 // that have "register_globals" turned off (default since PHP 4.1.0).
 // Eventually I'll go through and upgrade all the code to make this unnecessary

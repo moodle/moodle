@@ -1641,6 +1641,13 @@ function iswindows() {
    return isset($WINDIR);
 }
 
+function check_php_version($version="4.1.0") {
+// Returns true is the current version of PHP is greater that the specified one
+    $minversion = intval(str_replace(".", "", $version));
+    $curversion = intval(str_replace(".", "", phpversion()));
+    return ($curversion >= $minversion);
+}
+
 
 
 ?>
