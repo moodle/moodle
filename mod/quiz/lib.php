@@ -795,33 +795,6 @@ function quiz_get_attempt_questions($quiz, $attempt, $attempting = false) {
                 $rawresponses[$qid]->id =
                         insert_record("quiz_responses", $rawresponses[$qid])
                 or error("Unable to create attemptonlast response for question $qid");
-                
-                ///////////////////////////////////////////
-                /// WORKAROUND FOR QUESTION TYPE RANDOM ///
-                ///////////////////////////////////////////
-                if (RANDOM == $question->qtype) {
-                    $randomqid = $prevresponses[$qid]->answer;
-                    if (empty($prevresponses[$randomqid]) || ereg(
-                            "(^|,)$randomqid(,|$)", $questionsinuse)) {
-                        // Ooops!
-                        // The randomly picked question has been included
-                        // among the fixed ones or did not get any response
-                        // in the previous attempt - either way the raw
-                        // responserecord created above needs to go!
-                        delete_records('quiz_responses', 'id',
-                                       $rawresponses[$qid]->id);
-                        unset($rawresponses[$qid]);
-
-                    } else if (empty($rawresponses[$randomqid])) {
-                        /// Also copy this response from the previous attempt
-                        $rawresponses[$randomqid] = $prevresponses[$randomqid];
-                        $rawresponses[$randomqid]->attempt = $attempt->id;
-                        $rawresponses[$randomqid]->id =
-                                insert_record('quiz_responses', $rawresponses[$randomqid])
-                        or error("Unable to create attemptonlast response for question $qid");
-
-                    }
-                } ////// END OF WORKAROUND ///////
             }
 
             /* Extract possible response and its wrapped questions */
@@ -857,19 +830,6 @@ function quiz_get_attempt_questions($quiz, $attempt, $attempting = false) {
                 $responserecord->answer = $QUIZ_QTYPES[$question->qtype]
                         ->convert_to_response_answer_field
                         ($questions[$question->id]->response);
-
-                ///////////////////////////////////////////
-                // WORKAROUND for question type RANDOM:
-                ///////////////////////////////////////////
-                if ($question->qtype == RANDOM and ereg(
-                        '^random([0-9]+)-(.*)$', $responserecord->answer, $afields)) {
-                    $responserecord->answer = $afields[1];
-                    insert_record("quiz_responses", $responserecord)
-                    or error("Unable to create an initial random response for question $question->id");
-
-                    $responserecord->question = $responserecord->answer;
-                    $responserecord->answer = $afields[2];
-                } ///   End of WORKAROUND //////////////////////
 
                 insert_record("quiz_responses", $responserecord)
                 or error("Unable to create initial response for question $question->id");
@@ -1687,31 +1647,6 @@ function quiz_save_attempt($quiz, $questions, $result, $attemptnum) {
         if (!empty($question->response)) {
             $responseanswerfield = $QUIZ_QTYPES[$question->qtype]
                     ->convert_to_response_answer_field($question->response);
-
-            ///////////////////////////////////////////
-            // WORKAROUND for question type RANDOM:
-            ///////////////////////////////////////////
-            if ($question->qtype == RANDOM) {
-
-                /// This will update the grade only
-                /// Everything else must already be in place...
-                if (!update_record('quiz_responses', $response)) {
-                    notify("Error while saving grade on random response");
-                    return false;
-                }
-
-                /// Rescue grade before fetching response record for actual question
-                $responsegradefield = $response->grade;
-
-                /// Fetch the response record containing
-                /// the response on the actual question
-                $response = get_record('quiz_responses',
-                        'attempt', $attempt->id, 'question', $response->answer);
-
-                $response->grade = $responsegradefield;
-                ereg('^random[0-9]+-(.*)$', $responseanswerfield, $afields);
-                $responseanswerfield = $afields[1];
-            } ///   End of WORKAROUND //////////////////////
 
             $response->answer = $responseanswerfield;
         } else {

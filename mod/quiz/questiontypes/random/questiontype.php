@@ -49,9 +49,6 @@ class quiz_random_qtype extends quiz_default_questiontype {
     }
 
     function convert_to_response_answer_field($questionresponse) {
-    /// THIS IS PART OF A WORKAROUND AS THIS IS THE ONLY
-    /// CASE WHERE IT IS NEEDED TO STORE TWO RESPONSE RECORDS...
-
         global $QUIZ_QTYPES;
 
         foreach ($questionresponse as $key => $response) {
@@ -70,8 +67,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
     function create_response($question, $nameprefix, $questionsinuse) {
     // It's for question types like RANDOMSAMATCH and RANDOM that
     // the true power of the pattern with this function comes to the surface.
-    // This implementation will stand even after a possible exclusion of
-    // the funtions extract_response and convert_to_response_answer_field
+
         global $CFG;
 
         if (!isset($this->catrandoms[$question->category])) {
@@ -110,35 +106,85 @@ class quiz_random_qtype extends quiz_default_questiontype {
 
     function extract_response($rawresponse, $nameprefix) {
         global $QUIZ_QTYPES;
+
+        /// The raw response records for random questions come in two flavours:
+        /// ---- 1 ----
+        /// For responses stored by Moodle version 1.5 and later the answer
+        /// field has the pattern random#-* where the # part is the numeric
+        /// question id of the actual question shown in the quiz attempt
+        /// and * represents the student response to that actual question.
+        /// ---- 2 ----
+        /// For responses stored by older Moodle versions - the answer field is
+        /// simply the question id of the actual question. The student response
+        /// to the actual question is stored in a separate response record.
+        /// -----------------------
+        /// This means that prior to Moodle version 1.5, random questions needed
+        /// two response records for storing the response to a single question.
+        /// From version 1.5 and later the question type random works like all
+        /// the other question types in that it now only needs one response
+        /// record per question.
+        /// Because updating the old response records to fit the new response
+        /// record format could need hours of CPU time and the equivalent
+        /// amount of down time for the Moodle site and because a response
+        /// storage with two response formats for random question only effect
+        /// this function, where the response record is translated, this
+        /// function is now able to handle both types of response record.
+
+
+        /*** Pick random question id from the answer field in a way that ***/
+        /*** works for both formats: ***/
+        if (!ereg('^(random)?([0-9]+)(-(.*))?$', $rawresponse->answer, $answerregs)) {
+            error("The answer value '$rawresponse->answer' for the response with "
+                    ."id=$rawresponse->id to the random question "
+                    ."$rawresponse->question is malformated."
+                    ." - No response can be extracted!");
+        }
+        $randomquestionid = $answerregs[2];
+
         if ($randomquestion = get_record('quiz_questions',
-                                         'id', $rawresponse->answer)) {
-            if ($randomresponse = get_record
+                                         'id', $randomquestionid)) {
+
+            if ($answerregs[1] && $answerregs[3]) {
+                /**** The raw response is formatted according to
+                /**** Moodle version 1.5 or later ****/
+                $randomresponse = $rawresponse;
+                $randomresponse->question = $randomquestionid;
+                $randomresponse->answer = $answerregs[4];
+
+            } else if ($randomresponse = get_record
                     ('quiz_responses', 'question', $rawresponse->answer,
                                        'attempt', $rawresponse->attempt)) {
+                /*** The response was stored by an older version  of Moodle */
+                /*** :-)  ***/
                 
+            } else {
+                notify("Error: Cannot find response to random question $randomquestionid");
+                unset($randomresponse);
+            }
+            
+            if (isset($randomresponse)) {
                 /// The prefered case:
-                // The response field for the random question was found
-                // the response array can be extracted:
+                /// There is a random question and a response field, from 
+                /// which the response array can be extracted:
 
                 $response = $QUIZ_QTYPES[$randomquestion->qtype]
                         ->extract_response($randomresponse,
                         quiz_qtype_nameprefix($randomquestion, $nameprefix));
 
             } else {
-                notify("Error: Cannot find response to random question $randomquestion->id");
 
                 /// Instead: workaround by creating a new response:
                 $response = $QUIZ_QTYPES[$randomquestion->qtype]
                         ->create_response($randomquestion,
                         quiz_qtype_nameprefix($randomquestion, $nameprefix),
-                        "$rawresponse->question,$rawresponse->answer");
+                        "$rawresponse->question,$randomquestionid");
                 // (That last argument is instead of $questionsinuse.
                 // It is not correct but it would be very messy to
                 // determine the correct value, while very few
                 // question types actually use it and they who do have
                 // good chances to execute properly anyway.)
             }
-            $response[$nameprefix] = $randomquestion->id;
+            $response[$nameprefix] = $randomquestionid;
             return $response;
         } else {
             notify("Error: Unable to find random question $rawresponse->question");
