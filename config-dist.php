@@ -121,15 +121,10 @@ $CFG->admin = 'admin';
 
 
 //=========================================================================
-// ALL DONE!  To continue your setup, visit your Moodle web page.
+// ALL DONE!  To continue your setup, visit your Moodle page with a browser
 //=========================================================================
 
-if (! @include_once("$CFG->dirroot/lib/setup.php"))  {    // Do not change this
-    echo "<p>Error detected in config.php</p>";
-    echo "<p>Error in: \$CFG->dirroot = '$CFG->dirroot';</p>";
-    echo "<p>Try this: \$CFG->dirroot = '".dirname(__FILE__)."';";
-    die;
-}
+require_once("$CFG->dirroot/lib/setup.php");    // Do not change this
 
 // MAKE SURE WHEN YOU EDIT THIS FILE THAT THERE ARE NO SPACES, BLANK LINES, 
 // RETURNS, OR ANYTHING ELSE AFTER THE TWO CHARACTERS ON THE NEXT LINE.
