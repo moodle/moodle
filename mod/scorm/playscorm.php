@@ -55,12 +55,14 @@
                      update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
         notice(get_string("activityiscurrentlyhidden"));
     }
-    
+    $scoid='';
     if (!empty($_POST["scoid"]))
     	    $scoid = "&scoid=".$_POST["scoid"];
+    $currentorg='';
     if (!empty($_POST['currentorg'])) {
 	$currentorg = $_POST['currentorg'];
     }
+    $mode = '';
     if (($scorm->popup != "") && (!empty($_POST["mode"])))
     	$mode = $_POST["mode"];
     if (($scorm->popup == "") && (!empty($_GET["mode"])))

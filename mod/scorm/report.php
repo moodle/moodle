@@ -1,6 +1,6 @@
 <?PHP  // $Id$
 
-// This script uses installed report plugins to print quiz reports
+// This script uses installed report plugins to print SCORM reports
 
     require_once("../../config.php");
     require_once("lib.php");
@@ -110,6 +110,4 @@
     if (empty($noheader)) {
         print_footer($course);
     }
-
-
 ?>
