@@ -8,18 +8,23 @@
     optional_variable($displayformat,-1);
 
     if (!empty($courseid)) {
-        $site = get_site();
-        if ($courseid != $site->id) {
+        $course = get_record("course", "id", $courseid);
+        if ($course->category) {
             require_login($courseid);
         }
-        $course = get_record("course", "id", $courseid);
 
         $strglossaries = get_string("modulenameplural", "glossary");
         $strsearch = get_string("search");
 
         $CFG->framename = "newwindow";
-        print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
-        "<a target=\"newwindow\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $strglossaries -> $strsearch", "", "", true, "&nbsp;", "&nbsp;");
+        if ($course->category) {
+            print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
+            "<a target=\"newwindow\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> $strglossaries -> $strsearch", "", "", true, "&nbsp;", "&nbsp;");
+        } else {
+            print_header(strip_tags("$course->shortname: $glossary->name"), "$course->fullname",
+            "$strglossaries -> $strsearch", "", "", true, "&nbsp;", "&nbsp;");
+        }
+
 
     } else {
         print_header();    // Needs to be something here to allow linking back to the whole glossary
