@@ -102,6 +102,26 @@
 </tr>
 
 <tr valign="top">
+    <td align="right"><b><?php print_string('questionsperpage', 'quiz') ?>:</b></td>
+    <td>
+    <?php
+        $perpage= array();
+        for ($i=0; $i<=50; ++$i) {
+            $perpage[$i] = $i;
+        }
+        $perpage[0] = get_string('allinone', 'quiz');
+
+        choose_from_menu($perpage, 'questionsperpage', $CFG->quiz_questionsperpage, '');
+        helpbutton('questionsperpage', get_string('questionsperpage'), 'quiz');
+     ?>
+    </td>
+  <td align="center">
+    <input type="hidden" name="quiz_fix_questionsperpage" value="0">
+    <input type="checkbox" name="quiz_fix_questionsperpage" value="1" <?php p($CFG->quiz_fix_questionsperpage ? "checked" : "") ?> />
+  </td>
+</tr>
+
+<tr valign="top">
   <td align="right"><b><?php print_string("shufflequestions", "quiz") ?>:</b></td>
   <td>
     <?php

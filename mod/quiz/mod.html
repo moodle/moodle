@@ -194,23 +194,25 @@
         ?>
         </td>
     </tr>
-<?php } ?>
+<?php } else $fix=1 ?>
 
-<tr valign="top">
-    <td align="right"><b><?php print_string('questionsperpage', 'quiz') ?>:</b></td>
-    <td>
-    <?php
-        $perpage= array();
-        for ($i=0; $i<=50; ++$i) {
-            $perpage[$i] = $i;
-        }
-        $perpage[0] = get_string('allinone', 'quiz');
-
-        choose_from_menu($perpage, 'questionsperpage', $form->questionsperpage, '');
-        helpbutton('questionsperpage', get_string('questionsperpage'), 'quiz');
-     ?>
-    </td>
-</tr>
+<?php if (!$CFG->quiz_fix_questionsperpage) { ?>
+    <tr valign="top">
+        <td align="right"><b><?php print_string('questionsperpage', 'quiz') ?>:</b></td>
+        <td>
+        <?php
+            $perpage= array();
+            for ($i=0; $i<=50; ++$i) {
+                $perpage[$i] = $i;
+            }
+            $perpage[0] = get_string('allinone', 'quiz');
+    
+            choose_from_menu($perpage, 'questionsperpage', $form->questionsperpage, '');
+            helpbutton('questionsperpage', get_string('questionsperpage'), 'quiz');
+         ?>
+        </td>
+    </tr>
+<?php } else $fix=1 ?>
 
 <?php if (!$CFG->quiz_fix_shufflequestions) { ?>
     <tr valign="top">
@@ -222,7 +224,7 @@
          ?>
         </td>
     </tr>
-<?php } ?>
+<?php } else $fix=1 ?>
 
 <?php if (!$CFG->quiz_fix_shuffleanswers) { ?>
     <tr valign="top">
@@ -234,7 +236,7 @@
          ?>
         </td>
     </tr>
-<?php } ?>
+<?php } else $fix=1 ?>
 
 <?php if (!$CFG->quiz_fix_attempts) { ?>
     <tr valign="top">
@@ -246,7 +248,7 @@
          ?>
         </td>
     </tr>
-<?php } ?>
+<?php } else $fix=1 ?>
 
 <?php if (!$CFG->quiz_fix_attemptonlast) { ?>
     <tr valign="top">
@@ -261,7 +263,7 @@
         ?>
         </td>
     </tr>
-<?php } ?>
+<?php } else $fix=1 ?>
 
 <?php if (!$CFG->quiz_fix_grademethod) { ?>
     <tr valign="top">
@@ -273,7 +275,7 @@
          ?>
         </td>
     </tr>
-<?php } ?>
+<?php } else $fix=1 ?>
 
 <?php if (!$CFG->quiz_fix_decimalpoints) { ?>
     <tr valign="top">
@@ -290,7 +292,7 @@
          ?>
         </td>
     </tr>
-<?php } ?>
+<?php } else $fix=1 ?>
 
 <?php if (!$CFG->quiz_fix_showfeedback) { ?>
     <tr valign="top">
@@ -302,7 +304,7 @@
          ?>
         </td>
     </tr>
-<?php } ?>
+<?php } else $fix=1 ?>
 
 <?php if (!$CFG->quiz_fix_showanswer) { ?>
     <tr valign="top">
@@ -314,7 +316,7 @@
          ?>
         </td>
     </tr>
-<?php } ?>
+<?php } else $fix=1 ?>
 
 <?php if (!$CFG->quiz_fix_allowreview) { ?>
     <tr valign="top">
@@ -326,7 +328,7 @@
          ?>
         </td>
     </tr>
-<?php } ?>
+<?php } else $fix=1 ?>
 
 <?php if (!$CFG->quiz_fix_maximumgrade) { ?>
     <tr valign="top">
@@ -338,7 +340,7 @@
          ?>
         </td>
     </tr>
-<?php } ?>
+<?php } else $fix=1 ?>
 
 <?php if (!$CFG->quiz_fix_popup) { ?>
     <tr valign="top">
@@ -350,7 +352,7 @@
          ?>
         </td>
     </tr>
-<?php } ?>
+<?php } else $fix=1 ?>
 
 <?php if (!$CFG->quiz_fix_password) { ?>
     <tr valign="top">
@@ -360,7 +362,7 @@
             <?php helpbutton("requirepassword", get_string("requirepassword", "quiz"), "quiz"); ?>
         </td>
     </tr>
-<?php } ?>
+<?php } else $fix=1 ?>
 
 <?php if (!$CFG->quiz_fix_subnet) { ?>
     <tr valign="top">
@@ -370,24 +372,36 @@
             <?php helpbutton("requiresubnet", get_string("requiresubnet", "quiz"), "quiz"); ?>
         </td>
     </tr>
-<?php } ?>
+<?php } else $fix=1 ?>
+
 <?php print_standard_coursemodule_settings($form); ?>
-</table>
 
 
+
+
+<?php if ($fix) { ?>
 
 <!-- Now comes a copy of the above but enclosed in a div with id optionsettings and with
      the conditions reversed, so that it shows exactly the options that are usually hidden.
-     The variable $fix is set to 1 if there is at least one fixed option.
      The visibility of this div is controlled by javascript. -->
+
+<tr><td colspan="2"><hr /></td></tr>
+<tr>
+    <td align="right"><b><?php print_string('advancedsettings') ?>:</b></td>
+    <td>
+        <input type="button" value="hide settings" id="optionsettingsbutton" onclick="javascript: return showhide('optionsettings');" />
+        <input type="hidden" name="optionsettingspref" id="optionsettingspref" value="<?php echo get_user_preferences('quiz_optionsettingspref', 0); ?>" />
+        <br />
+    </td>
+</tr>
+
+<tr><td colspan="2">
 
 <div id="optionsettings">
 
-<?php print_heading(get_string('advancedsettings')); ?>
+<table align="center">
 
-<table cellpadding="5">
-
-<?php if ($CFG->quiz_fix_timelimit) { $fix = 1; ?>
+<?php if ($CFG->quiz_fix_timelimit) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("timelimit", "quiz") ?>:</b></td>
         <td>
@@ -399,7 +413,25 @@
     </tr>
 <?php } ?>
 
-<?php if ($CFG->quiz_fix_shufflequestions) { $fix = 1; ?>
+<?php if ($CFG->quiz_fix_questionsperpage) { ?>
+    <tr valign="top">
+        <td align="right"><b><?php print_string('questionsperpage', 'quiz') ?>:</b></td>
+        <td>
+        <?php
+            $perpage= array();
+            for ($i=0; $i<=50; ++$i) {
+                $perpage[$i] = $i;
+            }
+            $perpage[0] = get_string('allinone', 'quiz');
+    
+            choose_from_menu($perpage, 'questionsperpage', $form->questionsperpage, '');
+            helpbutton('questionsperpage', get_string('questionsperpage'), 'quiz');
+         ?>
+        </td>
+    </tr>
+<?php } ?>
+
+<?php if ($CFG->quiz_fix_shufflequestions) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("shufflequestions", "quiz") ?>:</b></td>
         <td>
@@ -411,7 +443,7 @@
     </tr>
 <?php } ?>
 
-<?php if ($CFG->quiz_fix_shuffleanswers) { $fix = 1; ?>
+<?php if ($CFG->quiz_fix_shuffleanswers) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("shuffleanswers", "quiz") ?>:</b></td>
         <td>
@@ -423,7 +455,7 @@
     </tr>
 <?php } ?>
 
-<?php if ($CFG->quiz_fix_attempts) { $fix = 1; ?>
+<?php if ($CFG->quiz_fix_attempts) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("attemptsallowed", "quiz") ?>:</b></td>
         <td>
@@ -435,7 +467,7 @@
     </tr>
 <?php } ?>
 
-<?php if ($CFG->quiz_fix_attemptonlast) { $fix = 1; ?>
+<?php if ($CFG->quiz_fix_attemptonlast) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("eachattemptbuildsonthelast", "quiz") ?>:</b></td>
         <td>
@@ -450,7 +482,7 @@
     </tr>
 <?php } ?>
 
-<?php if ($CFG->quiz_fix_grademethod) { $fix = 1; ?>
+<?php if ($CFG->quiz_fix_grademethod) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("grademethod", "quiz") ?>:</b></td>
         <td>
@@ -462,7 +494,7 @@
     </tr>
 <?php } ?>
 
-<?php if ($CFG->quiz_fix_showfeedback) { $fix = 1; ?>
+<?php if ($CFG->quiz_fix_showfeedback) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("showfeedback", "quiz") ?>:</b></td>
         <td>
@@ -474,7 +506,7 @@
     </tr>
 <?php } ?>
 
-<?php if ($CFG->quiz_fix_showanswer) { $fix = 1; ?>
+<?php if ($CFG->quiz_fix_showanswer) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("showcorrectanswer", "quiz") ?>:</b></td>
         <td>
@@ -486,7 +518,7 @@
     </tr>
 <?php } ?>
 
-<?php if ($CFG->quiz_fix_allowreview) { $fix = 1; ?>
+<?php if ($CFG->quiz_fix_allowreview) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("allowreview", "quiz") ?>:</b></td>
         <td>
@@ -498,7 +530,7 @@
     </tr>
 <?php } ?>
 
-<?php if ($CFG->quiz_fix_maximumgrade) { $fix = 1; ?>
+<?php if ($CFG->quiz_fix_maximumgrade) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("maximumgrade") ?>:</b></td>
         <td>
@@ -510,7 +542,7 @@
     </tr>
 <?php } ?>
 
-<?php if ($CFG->quiz_fix_popup) { $fix = 1; ?>
+<?php if ($CFG->quiz_fix_popup) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("popup", "quiz") ?>:</b></td>
         <td>
@@ -522,7 +554,7 @@
     </tr>
 <?php } ?>
 
-<?php if ($CFG->quiz_fix_password) { $fix = 1; ?>
+<?php if ($CFG->quiz_fix_password) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("requirepassword", "quiz") ?>:</b></td>
         <td>
@@ -532,7 +564,7 @@
     </tr>
 <?php } ?>
 
-<?php if ($CFG->quiz_fix_subnet) { $fix = 1; ?>
+<?php if ($CFG->quiz_fix_subnet) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("requiresubnet", "quiz") ?>:</b></td>
         <td>
@@ -544,20 +576,14 @@
 
 </table>
 
-</div>
+</div></td></tr>
 
-<!-- Now show the button that the teacher can use to display and override the settings that were
-     fixed by the admin. -->
-<?php if ($fix) { ?>
-    <input type="button" value="hide settings" id="optionsettingsbutton" onclick="javascript: return showhide('optionsettings');" />
-    <input type="hidden" name="optionsettingspref" id="optionsettingspref" 
-                   value="<?php echo get_user_preferences('quiz_optionsettingspref', 0); ?>" />
-    <br />
 <?php } else { ?>
-    <input type="hidden" value="hide settings" id="optionsettingsbutton" />
-    <input type="hidden" name="optionsettingspref" id="optionsettingspref" 
-                   value="0" />
+<input type="hidden" value="hide settings" id="optionsettingsbutton" />
+<input type="hidden" name="optionsettingspref" id="optionsettingspref" value="0" />
 <?php } ?>
+
+</table>
 <br />
 
 <!-- these hidden variables are always the same -->
