@@ -1404,22 +1404,34 @@ HTMLArea.prototype._createLink = function(link) {
         f_anchors:anchors };
     }
     this._popupDialog("link_std.php?id=<?php print(isset($id) && !empty($id)) ? $id : ''; ?>", function(param) {
-        if (!param)
+        if (!param) {
             return false;
+        }
         var a = link;
         if (!a) {
             editor._doc.execCommand("createlink", false, param.f_href);
             a = editor.getParentElement();
             var sel = editor._getSelection();
             var range = editor._createRange(sel);
-        //    if (!HTMLArea.is_ie) {           /// Removed by PJ and Martin, Moodle bug #1455
-        //        a = range.startContainer;
-        //        if (!/^a$/i.test(a.tagName))
-        //            a = a.nextSibling;
-        //    }
-        } else a.href = param.f_href.trim();
-        if (!/^a$/i.test(a.tagName))
+            /// Removed by PJ and Martin, Moodle bug #1455
+            /// Removed uncommenting since it prevents this function
+            /// to read given attributes for <a> tag such as target, title etc...
+            if (!HTMLArea.is_ie) {
+                try {
+                    a = range.startContainer;
+                    if (!/^a$/i.test(a.tagName)) {
+                        a = a.nextSibling;
+                    }
+                } catch (e) {
+                        alert("Send this message to bug tracker: " + e);
+                }
+            }
+        } else {
+            a.href = param.f_href.trim();
+        }
+        if (!/^a$/i.test(a.tagName)) {
             return false;
+        }
         a.target = param.f_target.trim();
         a.title = param.f_title.trim();
         editor.selectNodeContents(a);
