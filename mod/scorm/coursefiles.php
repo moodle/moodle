@@ -238,7 +238,8 @@
         case "rename":
             if (!empty($name)) {
                 html_header($course, $wdir);
-                $name = clean_filename($name);
+                $name    = clean_filename($name);
+                $oldname = clean_filename($oldname);
                 if (file_exists($basedir.$wdir."/".$name)) {
                     echo "Error: $name already exists!";
                 } else if (!rename($basedir.$wdir."/".$oldname, $basedir.$wdir."/".$name)) {
