@@ -170,7 +170,11 @@
 
         $text = str_replace($final,array_keys($final),$text);
 
+        $list_of_words_cp = str_replace('{', '\{', $list_of_words_cp);
+        $list_of_words_cp = str_replace('+', '\+', $list_of_words_cp);
+
         $list_of_words_cp = "(".$list_of_words_cp.")";
+
         if ( $casesensitive ) {
             $text = ereg_replace("$list_of_words_cp", "$href_tag_begin"."\\1"."$href_tag_end", $text);
         } else {
