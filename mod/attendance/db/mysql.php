@@ -57,4 +57,3 @@ function attendance_upgrade($oldversion) {
 
 
 ?>
-
