@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.3 (2004052500)
+      // assignment.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['allowresubmit'] = 'อนุญาตให้ส่งการบ้านซ้ำอีกครั้ง';
@@ -19,9 +19,9 @@ $string['duedate'] = 'กำหนดส่ง ';
 $string['duedateno'] = 'ไม่มีกำหนดส่ง';
 $string['early'] = '$a  ก่อนกำหนด';
 $string['existingfiledeleted'] = 'ไฟล์ต่อไปนี้ถูกลบเรียบร้อยแล้ว : $a';
-$string['failedupdatefeedback'] = 'ไม่สามารถส่ง feedback ของงานไป $a';
-$string['feedback'] = 'feedback ';
-$string['feedbackupdated'] = 'ส่ง feedback ไป  $a คน';
+$string['failedupdatefeedback'] = 'ไม่สามารถส่งความเห็นที่มีต่องานไปยัง $a';
+$string['feedback'] = 'ความเห็นที่มีต่องาน';
+$string['feedbackupdated'] = 'ส่งความคิดเห็นที่มีต่องานไป  $a คน';
 $string['late'] = '$a ช้ากว่ากำหนด';
 $string['maximumgrade'] = 'คะแนนเต็ม';
 $string['maximumsize'] = 'ขนาดสูงสุด';
@@ -31,8 +31,8 @@ $string['newsubmissions'] = 'การบ้านที่ส่งแล้ว';
 $string['notgradedyet'] = 'ยังไม่ได้ให้คะแนน';
 $string['notsubmittedyet'] = 'ยังไม่ได้ส่งการบ้าน';
 $string['overwritewarning'] = 'คำเตือน: ถ้าส่งไฟล์อีกครั้ง ระบบจะทำการบันทึกไฟล์นี้ ทับไฟล์เดิมที่มีอยู่';
-$string['saveallfeedback'] = 'บันทึก feedback ทั้งหมด';
-$string['submissionfeedback'] = 'feedback ของงานที่ส่ง';
+$string['saveallfeedback'] = 'บันทึกความเห็นทั้งหมด';
+$string['submissionfeedback'] = 'ความเห็นที่มีต่อของงานที่ส่ง';
 $string['submissions'] = 'การบ้านที่ส่ง';
 $string['submitassignment'] = 'ส่งการบ้าน';
 $string['submitted'] = 'ทำการส่งเรียบร้อยแล้ว';

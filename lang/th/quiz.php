@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4 development (2004060400)
+      // quiz.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['acceptederror'] = 'คลาดเคลื่อนได้..';
@@ -75,6 +75,10 @@ $string['editingshortanswer'] = 'กำลังแก้ไขคำถามอัตนัย';
 $string['editingtruefalse'] = 'กำลังแก้ไข คำถามแบบ ถูก/ผิด';
 $string['editquestions'] = 'แก้ไขคำถาม';
 $string['errorsdetected'] = 'พบ $a ข้อผิดพลาด';
+$string['exportfilename'] = 'แบบทดสอบ';
+$string['exportname'] = 'ชื่อไฟล์';
+$string['exportnameformat'] = '%%Y%%m%%d-%%H%%M';
+$string['exportquestions'] = 'ส่งออกคำถามเป็นไฟล์';
 $string['false'] = 'ผิด';
 $string['feedback'] = 'Feedback';
 $string['fileformat'] = 'รูปแบบไฟล์';
@@ -127,8 +131,10 @@ $string['notenoughanswers'] = 'คำถามประเภทนี้ต้องการอย่างน้อย $a  คำตอบ';
 $string['notenoughsubquestions'] = 'ข้อมูลเกี่ยวกับคำถามย่อยๆ ยังไม่สมบูรณ์ คุณต้องการกลับไปแก้ไขหรือไม่';
 $string['numerical'] = 'แบบโจทย์ตัวเลข';
 $string['paragraphquestion'] = 'คำถามย่อหน้าดังกล่าวบรรทัดที่ $a ไม่ถูกต้อง ระบบจะไม่นำคำถามนี้มาใช้';
+$string['passworderror'] = 'ใส่รหัสผ่านผิดค่ะ';
 $string['percentcorrect'] = 'เปอร์เซ็นต์ที่ถูก';
 $string['publish'] = 'ใช้คำถามร่วมกับคนอื่น';
+$string['publishedit'] = 'คุณต้องได้รับอนุญาตในการเผยแพร่ก่อนค่ะ จึงจะสามารถเพิ่มหรือแก้ไขคำถามในประเภทดังกล่าวได้';
 $string['qti'] = 'รูปแบบ IMS QTI ';
 $string['question'] = 'คำถาม';
 $string['questioninuse'] = 'กำลังใช้คำถาม \'$a\' ';
@@ -164,6 +170,9 @@ $string['reportmulti_resp'] = 'คำตอบของแต่ละคน';
 $string['reportoverview'] = 'ภาพรวม';
 $string['reportregrade'] = 'ให้คะแนนใหม่';
 $string['reportsimplestat'] = 'สถิติอย่างง่าย';
+$string['requirepassword'] = 'ต้องใส่รหัสผ่าน';
+$string['requirepasswordmessage'] = 'คุณต้องมีรหัสผ่านในการทำแบบทดสอบนี้';
+$string['requiresubnet'] = 'ต้องมีที่อยู่เน็ตเวิร์ก';
 $string['review'] = 'Review';
 $string['save'] = 'บันทึก';
 $string['savegrades'] = 'บันทึกคะแนน';
@@ -179,6 +188,7 @@ $string['showcorrectanswer'] = 'ต้องแสดงคำตอบ ใน feedback หรือเปล่า';
 $string['showfeedback'] = 'ต้องการให้แสดง  feedback หลังตอบคำถามหรือไม่';
 $string['shuffleanswers'] = 'สลับคำตอบ';
 $string['shufflequestions'] = 'สลับคำถาม';
+$string['subneterror'] = 'ขออภัยค่ะ แบบทดสอบนี้ถูกล็อกเอาไว้สามารถทำได้ภายในที่ตั้งที่ระบุไว้เท่านั้น คอมพิวเตอร์ของคุณอยู่ในพื้นที่นอกเหนือจากเขตที่ระบุเอาไว้';
 $string['time'] = 'เวลา';
 $string['timecompleted'] = 'ทำเสร็จเมื่อ';
 $string['timeleft'] = 'เหลือเวลา';

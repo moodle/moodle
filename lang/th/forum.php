@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 development (2004060400)
+      // forum.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['addanewdiscussion'] = 'ตั้งกระทู้';
@@ -16,6 +16,7 @@ $string['configenablerssfeeds'] = 'สวิชต์นี้จะเปิดโอกาสให้ป้อน RSS ได้  คุณยังจะ
 $string['configlongpost'] = 'โพสต์ใดก็ตามที่ยาวมากกว่านี้จะถือว่ายาว (ยกเว้น html)';
 $string['configmanydiscussions'] = 'จำนวนความคิดเห็นที่ต้องการแสดงในหนึ่งหน้า';
 $string['configmaxbytes'] = 'ขนาดไฟล์สูงสุดที่สามารถแนบลงบนกระทู้ได้';
+$string['configreplytouser'] = 'ในกรณีที่ฟอรั่มทำการส่งเมลล์ออกไปต้องการให้ระบุชื่อผู้ส่งเป็นอีเมลของสมาชิกหรือไม่  ถึงแม้สมาชิกจะทำการซ่อนอีเมลของตนเองไว้ก็ตาม';
 $string['configshortpost'] = 'โพสต์ใดก็ตามที่ยาวต่ำกว่านี้จะถือว่าสั้น (ยกเว้น html)';
 $string['couldnotadd'] = 'ไม่สามารถ เพิ่มโพสต์ของคุณได้  มีข้อผิดพลาด';
 $string['couldnotdeleteratings'] = 'ขออภัยไม่สามารถลบได้ เพราะว่ามีคนให้คะแนนเรียบร้อยแล้ว ';
@@ -102,6 +103,7 @@ $string['postupdated'] = 'โพสต์ของคุณได้รับการอัพเดทแล้ว';
 $string['processingdigest'] = 'ประเมินผลการส่งอีเมลสำหรับ $a';
 $string['processingpost'] = 'กำลังดำเนินการโพสต์ $a';
 $string['prune'] = 'แยก';
+$string['prunedpost'] = 'กระทู้ใหม่สร้างขึ้นจากโพสต์ดังกล่าว';
 $string['pruneheading'] = 'แยกโพสต์โดยอัตโนมัติแล้วทำการย้ายไปยังกระทู้ใหม่';
 $string['rate'] = 'ให้คะแนน';
 $string['rating'] = 'คะแนน';

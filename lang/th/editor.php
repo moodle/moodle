@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.4 development (2004060400)
+      // editor.php - created with Moodle 1.4 development (2004070800)
 
 
 $string['about'] = 'เกี่ยวกับเครื่องมือแก้ไข';
@@ -47,6 +47,7 @@ $string['justifyleft'] = 'จัดให้มาทางซ้าย';
 $string['justifyright'] = 'จัดให้มาทางขวา';
 $string['layout'] = 'รูปแบบ';
 $string['left'] = 'ซ้าย';
+$string['lefttoright'] = 'จากซ้ายไปขวา';
 $string['linkproperties'] = 'คุณสมบัติของลิงก์';
 $string['linktarget'] = 'ที่หมาย';
 $string['linktargetblank'] = 'หน้าต่างใหม่';
@@ -57,6 +58,7 @@ $string['linktargettop'] = 'หน้าต่างเดียวกัน';
 $string['linktitle'] = 'หัวข้อ';
 $string['linkurl'] = 'URL';
 $string['middle'] = 'กลาง';
+$string['minimize'] = 'ย่อขนาด editor';
 $string['move'] = 'ย้าย';
 $string['normal'] = 'ปกติ';
 $string['notimage'] = 'ไฟล์ที่เลือกไม่ใช่ไฟล์รูปภาพ กรุณาเลือกรูปภาพ';
