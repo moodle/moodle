@@ -79,7 +79,7 @@ class quiz_file_format extends quiz_default_format {
 
             // Processing multiples lines strings
 
-            if (is_string($questiontext)) {
+            if (isset($questiontext) and is_string($questiontext)) {
                 if (ereg("^:",$line)) {
                     $question->questiontext = addslashes(trim($questiontext));
                     unset($questiontext);
@@ -90,7 +90,7 @@ class quiz_file_format extends quiz_default_format {
                 }
             }
 
-            if (is_string($answertext)) {
+            if (isset($answertext) and is_string($answertext)) {
                 if (ereg("^:",$line)) {
                     $answertext = addslashes(trim($answertext));
                     $question->answer[$currentchoice] = $answertext;
@@ -102,18 +102,18 @@ class quiz_file_format extends quiz_default_format {
                 }
             }
 
-            if (is_string($responstext)) {
+            if (isset($responsetext) and is_string($responsetext)) {
                 if (ereg("^:",$line)) {
-                    $question->subquestions[$currentchoice] = addslashes(trim($responstext));
-                    unset($responstext);
+                    $question->subquestions[$currentchoice] = addslashes(trim($responsetext));
+                    unset($responsetext);
                 }
                  else {
-                    $responstext .= str_replace('\:', ':', $line);
+                    $responsetext .= str_replace('\:', ':', $line);
                     continue;
                 }
             }
 
-            if (is_string($feedbacktext)) {
+            if (isset($feedbacktext) and is_string($feedbacktext)) {
                 if (ereg("^:",$line)) {
                     $question->feedback[$currentchoice] = addslashes(trim($feedbacktext));
                     unset($feedbacktext);
@@ -317,7 +317,7 @@ class quiz_file_format extends quiz_default_format {
             }
 
             if (eregi("^:R[0-9]+)",$line,$webct_options)) {
-                $responstext="";                // Start gathering next lines
+                $responsetext="";                // Start gathering next lines
                 $currentchoice=$webct_options[1];
                 continue;
             }
