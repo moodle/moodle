@@ -88,6 +88,7 @@ $string['backupfilename'] = 'backup';
 $string['backupfinished'] = 'Backup completed successfully';
 $string['backupincludemoduleshelp'] = 'Choose whether you want to include course modules, with or without user data, in automated backups';
 $string['backupkeephelp'] = 'How many recent backups for each course do you want to keep? (older ones will be deleted automatically)';
+$string['backuplogdetailed'] = 'Backup detailed log';
 $string['backuploglaststatus'] = 'Backup last status log';
 $string['backuplogshelp'] = 'If enabled, then course logs will be included in automated backups';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
