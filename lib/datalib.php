@@ -372,7 +372,7 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
 function column_type($table, $column) {
     global $CFG, $db;
 
-    if(!$rs = $db->Execute('SELECT '.$column.' FROM '.$CFG->prefix.$table.' WHERE 0')) {
+    if(!$rs = $db->Execute('SELECT '.$column.' FROM '.$CFG->prefix.$table.' LIMIT 0')) {
         return false;
     }
     
