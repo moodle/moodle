@@ -5,6 +5,7 @@ $string['modulename'] = "Attendance";
 $string['allmodulename'] = "All Attendance Rolls";
 $string['modulenameplural'] = "Attendance Rolls";
 $string['addmultiple'] = "Add Multiple Attendance Rolls";
+$string['addingmultiple'] = "Adding Multiple Attendance Rolls";
 #------------------------------------------------------------
 
 
@@ -13,7 +14,7 @@ $string['for'] = "for";
 $string['dayofroll'] = "Date to take roll for";
 $string['notes'] = "Exceptional information";
 $string['notesfor'] = "Exceptional information for";
-$string['hoursinclass'] = "Number of Hours in a Class Period";
+$string['hoursinclass'] = "Number of hours in a class period";
 $string['presentshort'] = "X";
 $string['tardyshort'] = "T";
 $string['absentshort'] = "A";
@@ -38,5 +39,14 @@ $string['startmulti'] = "Date for first attendance roll";
 $string['endmulti'] = "Date for last attendance roll";
 $string['choosedays'] = "Days of each week to take attendance";
 $string['dynamicsectionmulti'] = "Place rolls in their weekly section automatically";
-
+$string['hoursineachclass'] = "Number of Hours in each class period";
+$string['sunday'] = "Sun";
+$string['monday'] = "Mon";
+$string['tuesday'] = "Tue";
+$string['wednesday'] = "Wed";
+$string['thursday'] = "Thu";
+$string['friday'] = "Fri";
+$string['saturday'] = "Sat";
+$string['endbeforestart'] = "The end date is before the start date";
+$string['startafterend'] = "The start date is after the end of the course";
 ?>

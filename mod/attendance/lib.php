@@ -4,30 +4,60 @@
 
 // error_reporting(E_ALL);
 
+function attendance_add_module(&$mod) {
+//  global $mod;
+  require("../../course/lib.php");
+
+  if (! $mod->instance = attendance_add_instance($mod)) {
+      error("Could not add a new instance of $mod->modulename"); return 0;
+  }
+  // course_modules and course_sections each contain a reference 
+  // to each other, so we have to update one of them twice.
+
+  if (! $mod->coursemodule = add_course_module($mod) ) {
+      error("Could not add a new course module"); return 0;
+  }
+  if (! $sectionid = add_mod_to_section($mod) ) {
+      error("Could not add the new course module to that section"); return 0;
+  }
+  if (! set_field("course_modules", "section", $sectionid, "id", $mod->coursemodule)) {
+      error("Could not update the course module with the correct section"); return 0;
+  }   
+  add_to_log($mod->course, "course", "add mod", 
+             "../mod/$mod->modulename/view.php?id=$mod->coursemodule", 
+             "$mod->modulename $mod->instance"); 
+  rebuild_course_cache($mod->course);
+  
+}
+
 function attendance_add_instance($attendance) {
 	global $mod;
      $attendance->timemodified = time();
      $attendance->dynsection = !empty($attendance->dynsection) ? 1 : 0;
-     $attendance->day = make_timestamp($attendance->theyear, 
-			$attendance->themonth, $attendance->theday); 
+     if (empty($attendance->day)) {
+       $attendance->day = make_timestamp($attendance->theyear, 
+			   $attendance->themonth, $attendance->theday);
+     }
      $attendance->name=userdate($attendance->day, get_string("strftimedate"));
-	 if ($attendance->notes) { 
+	 if (isset($attendance->notes)) { 
 	 	$attendance->name = $attendance->name . " - " . $attendance->notes;
 	 }
 
-if (($attendance->dynsection) && ($course->format =="weeks")) { 
+if ($attendance->dynsection) { 
 	if ($mod->course) {
 		if (! $course = get_record("course", "id", $mod->course)) {
 			error("Course is misconfigured");
 		}
 	}
+  if ($course->format =="weeks") {
 //	floor($date_relative / 604800) + 1
-	$attendance->section = floor(($attendance->day - $course->startdate)/604800) +1;
-	if($attendance->section > $course->numsections){
-		$attendance->section = 0;
-	}
-	$attendance->section = "$attendance->section";
-	$mod->section = "$attendance->section";
+	  $attendance->section = floor(($attendance->day - $course->startdate)/604800) +1;
+	  if($attendance->section > $course->numsections){
+		  $attendance->section = 0;
+	  }
+	  $attendance->section = "$attendance->section";
+	  $mod->section = "$attendance->section";
+  }
 }
 	 // insert the main record first
 	 return $attendance->id = insert_record("attendance", $attendance);
@@ -48,20 +78,19 @@ function attendance_update_instance($attendance) {
 	 	$attendance->name = $attendance->name . " - " . 
 	 	  $attendance->notes;
 	 }  
-  if (($attendance->dynsection) && ($course->format =="weeks")) { 
+  if ($attendance->dynsection) { 
 	    //get info about the course
-		if ($mod->course) {
-			if (! $course = get_record("course", "id", $mod->course)) {
+		if ($attendance->course) {
+			if (! $course = get_record("course", "id", $attendance->course)) {
 				error("Course is misconfigured");
 			}
-		}
-		
+		}		
 		//work out which section this should be in
 		$attendance->section = floor(($attendance->day - $course->startdate)/604800) +1;
-		if($attendance->section > $course->numsections){
+		if (($attendance->section > $course->numsections) || ($attendance->section < 0)){
 			$attendance->section = 0;
 		}
-		$attendance->section = "$attendance->section";
+//		$attendance->section = "$attendance->section";
   }	
 	// get the data from the attendance grid
   if ($data = data_submitted()) {      
