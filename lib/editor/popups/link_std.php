@@ -13,7 +13,7 @@
 
 <head>
 <meta http-equiv="Content-Type" content="text/html; <?php print_string("thischarset");?>">
-  <title>Insert/Modify Link</title>
+  <title><?php print_string("insertlink","editor");?></title>
   <script type="text/javascript" src="popup.js"></script>
   <script type="text/javascript">
     window.resizeTo(400, 200);

@@ -1,10 +1,10 @@
 <?php
-	include("../../../config.php");
+    include("../../../config.php");
 ?>
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=<?php print_string("thischarset");?>" />
-  <title>Insert Table</title>
+  <title><?php print_string("inserttable","editor");?></title>
 <script type="text/javascript" src="popup.js"></script>
 <script type="text/javascript">
 

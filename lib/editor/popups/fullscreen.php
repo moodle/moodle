@@ -1,11 +1,11 @@
 <?php // $Id$
-	include("../../../config.php");
+    include("../../../config.php");
 ?>
 <html>
-<head><title>Fullscreen Editor</title>
+<head><title><?php print_string("fullscreen","editor");?></title>
 <style type="text/css">
 @import url(../htmlarea.css);
-html, body {	margin: 0px; border: 0px; background-color: buttonface; } </style>
+html, body {    margin: 0px; border: 0px; background-color: buttonface; } </style>
 
 
 <script type="text/javascript" src="../htmlarea.php<?php print($id != "")?"?id=$id":"";?>"></script>
@@ -39,8 +39,8 @@ var parent_object  = null;
 var editor         = null;      // to be initialized later [ function init() ]
 
 /* ---------------------------------------------------------------------- *\
-  Function    : 
-  Description : 
+  Function    :
+  Description :
 \* ---------------------------------------------------------------------- */
 
 function _CloseOnEsc(ev) {
@@ -62,7 +62,7 @@ function _CloseOnEsc(ev) {
 \* ---------------------------------------------------------------------- */
 
 function cloneObject(obj) {
-  var newObj          = new Object; 
+  var newObj          = new Object;
 
   // check for array objects
   if (obj.constructor.toString().indexOf("function Array(") == 1) {
@@ -77,7 +77,7 @@ function cloneObject(obj) {
     if (typeof node == 'object') { newObj[n] = cloneObject(node); }
     else                         { newObj[n] = node; }
   }
-  
+
   return newObj;
 }
 
@@ -115,7 +115,7 @@ function init() {
   config.height      = "auto";
 
   // change maximize button to minimize button
-  config.btnList["popupeditor"] = [ 'Minimize Editor', '<?php echo $CFG->wwwroot ?>/lib/editor/images/fullscreen_minimize.gif', true,
+  config.btnList["popupeditor"] = [ '<?php print_string("minimize","editor");?>', '<?php echo $CFG->wwwroot ?>/lib/editor/images/fullscreen_minimize.gif', true,
                                     function() { window.close(); } ];
 
   // generate editor and resize it

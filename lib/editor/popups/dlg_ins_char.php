@@ -127,7 +127,7 @@ function cancel() {
 }
 //-->
 </SCRIPT>
-<title>Insert Character</title>
+<title><?php print_string("choosechar","editor");?></title>
 </head>
 <body onload="Init()">
 <table class="dlg" cellpadding="0" cellspacing="2">
