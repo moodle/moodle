@@ -50,12 +50,14 @@
 		print_heading(get_string("choosecourse"));
 		print_simple_box_start("center");
         
-		foreach ($courses as $course) {
-		    if ($isadmin or isteacher($course->id, $USER->id)){
-			    echo "<a href=\"teacher.php?id=$course->id\">$course->fullname ($course->shortname)</a><br>\n";
-				$coursesfound = TRUE;
-			}
-		}	
+        if (!empty($courses)) {
+		    foreach ($courses as $course) {
+		        if ($isadmin or isteacher($course->id, $USER->id)){
+			        echo "<a href=\"teacher.php?id=$course->id\">$course->fullname ($course->shortname)</a><br>\n";
+				    $coursesfound = TRUE;
+			    }
+		    }	
+        }
 		
         print_simple_box_end();
         
