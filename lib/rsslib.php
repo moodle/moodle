@@ -393,10 +393,9 @@ function rss_display_feeds($rssid='none') {
  * @param string $act .
  * @param string $url .
  * @param int $rssid .
- * @param string $rsstype .
- * @param bool $printnow .
+ * @param bool $printnow True if the generated form should be printed out, false if the string should be returned from this function quietly
  */
-function rss_get_form($act, $url, $rssid, $rsstype, $printnow=true) {
+function rss_get_form($act, $url, $rssid, $printnow=true) {
     global $USER, $CFG, $_SERVER, $blockid, $blockaction;
     global $blogid; //hackish, but if there is a blogid it would be good to preserve it
     $stredit = get_string('edit');
