@@ -913,9 +913,17 @@ function forum_get_user_discussions($courseid, $userid, $groupid=0) {
 }
 
 
-function forum_subscribed_users($course, $forum) {
+function forum_subscribed_users($course, $forum, $groupid=0) {
 /// Returns list of user objects that are subscribed to this forum
     global $CFG;
+
+    if ($groupid) {
+        $grouptables = ", {$CFG->prefix}groups_members g";
+        $groupselect = " AND g.groupid = '$groupid' AND u.id = g.userid";
+    } else  {
+        $grouptables = "";
+        $groupselect = "";
+    }
 
     if ($forum->forcesubscribe) {
         if ($course->category) {
@@ -931,10 +939,10 @@ function forum_subscribed_users($course, $forum) {
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.emailstop,
                                    u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture, u.timezone, u.lang
                               FROM {$CFG->prefix}user u, 
-                                   {$CFG->prefix}forum_subscriptions s
+                                   {$CFG->prefix}forum_subscriptions s $grouptables
                              WHERE s.forum = '$forum->id'
                                AND s.userid = u.id 
-                               AND u.deleted <> 1
+                               AND u.deleted <> 1  $groupselect
                           ORDER BY u.email ASC");
 }
 
@@ -1923,6 +1931,10 @@ function forum_is_subscribed($userid, $forumid) {
 
 function forum_subscribe($userid, $forumid) {
 /// Adds user to the subscriber list
+
+    if (record_exists("forum_subscriptions", "userid", $userid, "forum", $forumid)) {
+        return true;
+    }
 
     $sub->userid  = $userid;
     $sub->forum = $forumid;
