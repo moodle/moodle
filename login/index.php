@@ -74,6 +74,10 @@
             unset($SESSION->lang);
             $SESSION->justloggedin = true;
 
+            add_to_log(SITEID, "user", "login", "view.php?id=$user->id&course=".SITEID, $user->id, 0, $user->id);
+
+            reset_login_count();
+
             if (user_not_fully_set_up($USER)) {
                 $site = get_site();
                 redirect("$CFG->wwwroot/user/edit.php?id=$USER->id&course=$site->id");
@@ -84,8 +88,6 @@
             } else {
                 redirect("$CFG->wwwroot/");      /// Go to the standard home page
             }
-    
-            reset_login_count();
 
             die;
     
