@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 development (2003122600)
+      // moodle.php - created with Moodle 1.2 development (2004010800)
 
 
 $string['action'] = 'Actie';
@@ -296,6 +296,8 @@ $string['emailpasswordconfirmsent'] = 'Er is een e-mail verstuurd naar jouw adre
 $string['emailpasswordsent'] = 'Bedankt voor de bevestiging van de wijziging van je wachtwoord.
 <p>Er is een e-mail met je nieuw wachtwoord naar <b>$a->email</b> gestuurd.
 <p>Het nieuwe wachtwoord werd automatisch gegenereerd. Misschien wil je het <a href=$a->link>wachtwoord veranderen</a> in iets wat je gemakkelijker kunt onthouden.';
+$string['enrolledincourse'] = 'Aangemeld in vak \"$a\"';
+$string['enrolledincoursenot'] = 'Niet aangemeld in vak \"$a\"';
 $string['enrolmentconfirmation'] = 'Je staat op het punt jezelf aan te melden als lid van dit vak.<br />Weet je zeker dat je dit wilt doen?';
 $string['enrolmentkey'] = 'Vaksleutel';
 $string['enrolmentkeyfrom'] = 'Dit vak vereist een \'Vaksleutel\', een eenmalig<BR>
@@ -422,7 +424,7 @@ $string['includecoursefiles'] = 'Voeg de bestanden voor het vak toe';
 $string['includecourseusers'] = 'Voeg de gebruikers van het vak toe';
 $string['included'] = 'Ingevoegd';
 $string['includelogentries'] = 'Voeg het logboek toe';
-$string['includemodules'] = 'Voeg&nbsp;modules&nbs;toe';
+$string['includemodules'] = 'Voeg&nbsp;modules&nbsp;toe';
 $string['includeneededusers'] = 'Voeg de nodige gebruikers toe';
 $string['includeuserfiles'] = 'Voeg gebruikersbestanden toe';
 $string['invalidemail'] = 'Ongeldig e-mail adres';

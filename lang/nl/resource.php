@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.2 development (2003121500)
+      // resource.php - created with Moodle 1.2 development (2004010800)
 
 
 $string['addresource'] = 'Voeg bron toe';
@@ -46,6 +46,8 @@ $string['newwindowopen'] = 'Toon deze bron in een popup venster';
 $string['note'] = 'Aantekening';
 $string['notefile'] = 'Gebruik <A HREF=$a>Bestandsbeheer</A> om meer bestanden naar de cursus te uploaden (zodat ze in deze lijst verschijnen).';
 $string['notypechosen'] = 'Je moet een soort kiezen. Gebruik de \'Back\'-knop om terug te gaan en het opnieuw te proberen.';
+$string['popupresource'] = 'Deze bron zou moeten in een popup venster verschijnen';
+$string['popupresourcelink'] = 'Als het dat niet deed, klik hier: $a';
 $string['resourcetype'] = 'Soort bron';
 $string['resourcetype1'] = 'Verwijzing';
 $string['resourcetype2'] = 'Website (binnen deze site)';

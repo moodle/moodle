@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.2 development (2003121500)
+      // exercise.php - created with Moodle 1.2 development (2004010800)
 
 
 $string['absent'] = 'Afwezig';
@@ -7,9 +7,9 @@ $string['accumulative'] = 'Accumulatief';
 $string['action'] = 'Actie';
 $string['ago'] = '$a geleden';
 $string['allgradeshaveamaximumof'] = 'Alle cijfers hebben een maximum van: $a';
-$string['amend'] = 'Verbeter';
-$string['amendassessmentelements'] = 'Verbeter beoordelingselementen';
-$string['amendtitle'] = 'Verbeter titel';
+$string['amend'] = 'Wijzig';
+$string['amendassessmentelements'] = 'Wijzig beoordelingselementen';
+$string['amendtitle'] = 'Wijzig titel';
 $string['assess'] = 'Beoordeel';
 $string['assessed'] = 'Beoordeeld';
 $string['assessment'] = 'Beoordeling';
@@ -91,7 +91,7 @@ $string['nowpleasemakeyourownassessment'] = 'Beoordeel nu zelf het werk van $a.<
 $string['numberofassessmentelements'] = 'Aantal commentaren, beoordelingselementen, cijfers, criteria of categorieën in een rubriek';
 $string['numberofentries'] = 'Aantal ingevoerde items';
 $string['numberofnegativeresponses'] = 'Aantal negatieve reacties';
-$string['onesubmission'] = 'Eën inzending';
+$string['onesubmission'] = 'Eén inzending';
 $string['optionaladjustment'] = 'Optionele wijziging';
 $string['overallgrade'] = 'Totaalcijfer';
 $string['phase'] = 'Fase';
@@ -99,7 +99,7 @@ $string['phase1'] = 'Instellingen oefening';
 $string['phase1short'] = 'Instellingen';
 $string['phase2'] = 'Laat $a beoordelingen en inzendingen toe';
 $string['phase2short'] = 'Open';
-$string['phase3'] = 'Stop $a opdrachten en inzendingen';
+$string['phase3'] = 'Toon cijfers en scoretabel';
 $string['phase3short'] = 'Gesloten';
 $string['pleasegradetheassessment'] = 'Geef een cijfer voor de beoordeling van dit werkstuk door $a';
 $string['pleasesubmityourwork'] = 'Stuur je werk in met dit formulier';
@@ -152,8 +152,8 @@ $string['thisisaresubmission'] = 'Dit is een herinzending door $a.<br/>Jouw beoo
 $string['title'] = 'Titel';
 $string['typeofscale'] = 'Schaal';
 $string['ungradedstudentassessments'] = '$a Beoordeling van een leerling zonder cijfer';
-$string['usemaximum'] = 'Gebruik het maximum';
-$string['usemean'] = 'Gebruik het belangrijkste';
+$string['usemaximum'] = 'Gebruik het beste cijfer';
+$string['usemean'] = 'Gebruik het gemiddelde';
 $string['verypoor'] = 'erg zwak';
 $string['view'] = 'Bekijk';
 $string['viewassessment'] = 'Bekijk beoordeling';
