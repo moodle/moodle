@@ -26,7 +26,11 @@
         if (! $course = get_record("course", "id", $forum->course)) {
             error("Forum is misconfigured - don't know what course it's from");
         }
-        $buttontext = "";
+        if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+            $buttontext = update_module_icon($cm->id, $course->id);
+        } else {
+            $buttontext = "";
+        }
 
     } else {
         error("Must specify a course module or a forum ID");
