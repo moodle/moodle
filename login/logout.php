@@ -12,6 +12,9 @@
     unset($_SESSION['USER']);
     unset($_SESSION['SESSION']);
 
+    unset($SESSION);
+    unset($USER);
+
     redirect($CFG->wwwroot);
 
 ?>
