@@ -355,7 +355,7 @@ function block_find($blockid, $leftblocks, $rightblocks) {
 }
 
 //This function prints the block to admin blocks as necessary
-function block_print_blocks_admin($course, $missingblocks) {
+function block_print_blocks_admin(&$course, $missingblocks) {
     if (isediting($course->id)) {
         $strblocks = get_string('blocks');
         $stradd    = get_string('add');
@@ -363,7 +363,7 @@ function block_print_blocks_admin($course, $missingblocks) {
             $blockdata = get_records_list('blocks', 'id', implode(',', $missingblocks));
             if ($blockdata !== false) {
                 foreach ($blockdata as $block) {
-                    $blockobject = block_instance($block->name, NULL);
+                    $blockobject = block_instance($block->name, $course);
                     if ($blockobject === false) {
                         continue;
                     }
