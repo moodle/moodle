@@ -5,6 +5,7 @@
 $string['beep'] = "ビープ";
 $string['chatintro'] = "紹介文";
 $string['chatname'] = "チャットルーム名";
+$string['currentchats'] = "アクティブなチャット";
 $string['enterchat'] = "クリックしてチャットに入室";
 $string['idle'] = "アイドル";
 $string['messagebeepseveryone'] = "\$a が全員にビープします!";

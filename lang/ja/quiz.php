@@ -2,6 +2,7 @@
       // quiz.php - created with Moodle 1.1 development (2003070400)
 
 
+$string['acceptederror'] = "エラー範囲";
 $string['addingquestions'] = "この部分ではデータベース内の質問を管理します。質問は整理しやすいようにカテゴリー毎に保存されます。質問はコース内の全てのクイズに利用出来ます。「公開」を選んだ場合は他のコースでも利用出来ます。<br /><br />質問のカテゴリーを選択又は作成した後に質問を作成・編集してください。このページの反対側にあるクイズにどの質問でも追加することが出来ます。
 ";
 $string['addquestions'] = "クイズを追加";
@@ -16,6 +17,7 @@ $string['answer'] = "答え";
 $string['answerhowmany'] = "解答方法";
 $string['answersingleno'] = "複数解答可能";
 $string['answersingleyes'] = "単一の解答のみ";
+$string['answerswithacceptederrormarginmustbenumeric'] = "受入れるエラー範囲は数字を設定してください";
 $string['attempt'] = "チャレンジ  \$a ";
 $string['attemptfirst'] = "初回得点";
 $string['attemptlast'] = "最終得点";
@@ -51,6 +53,7 @@ $string['editcategories'] = "カテゴリーを編集する";
 $string['editingdescription'] = "説明を編集する";
 $string['editingmatch'] = "マッチング解答方式を編集する";
 $string['editingmultichoice'] = "複数解答方式を編集する";
+$string['editingnumerical'] = "数字方式を編集する";
 $string['editingquestion'] = "質問を編集する";
 $string['editingquiz'] = "クイズを編集する";
 $string['editingrandom'] = "ランダム方式を編集する";
@@ -82,6 +85,7 @@ $string['introduction'] = "説明";
 $string['marks'] = "得点";
 $string['match'] = "マッチング";
 $string['matchanswer'] = "マッチング解答";
+$string['missingcorrectanswer'] = "正しい答えを設定してください";
 $string['missingname'] = "質問名が見つかりません";
 $string['missingquestiontext'] = "質問内容が見つかりません";
 $string['missingword'] = "穴埋め形式";
@@ -96,6 +100,7 @@ $string['noreview'] = "このクイズの復習を許可されていません";
 $string['noreviewuntil'] = "\$a までこのクイズの復習は出来ません";
 $string['notenoughsubquestions'] = "十分な副質問が定義されていません！<br>
 この質問を修正しますか？";
+$string['numerical'] = "数字方式";
 $string['publish'] = "公開";
 $string['qti'] = "IMS QTIフォーマット";
 $string['question'] = "質問";
