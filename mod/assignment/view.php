@@ -10,7 +10,7 @@
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
         }
-    
+
         if (! $course = get_record("course", "id", $cm->course)) {
             error("Course is misconfigured");
         }
@@ -56,7 +56,10 @@
             echo "<P align=right><A HREF=\"submissions.php?id=$assignment->id\">".
                   get_string("viewsubmissions", "assignment", $count)."</A></P>";
         }
+    } else if (!$cm->visible) {
+        notice(get_string("activityiscurrentlyhidden"));
     }
+
 
     $strdifference = format_time($assignment->timedue - time());
     if (($assignment->timedue - time()) < 0) {

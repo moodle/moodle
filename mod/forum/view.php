@@ -64,6 +64,10 @@
     print_header("$course->shortname: $forum->name", "$course->fullname",
                  "$navigation $forum->name", "", "", true, $buttontext, navmenu($course, $cm));
 
+    if (!$cm->visible and !isteacher($course->id)) {
+        notice(get_string("activityiscurrentlyhidden"));
+    }
+
     if ($USER) {
         $SESSION->fromdiscussion = "$FULLME";
         if (forum_is_forcesubscribed($forum->id)) {

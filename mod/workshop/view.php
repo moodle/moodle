@@ -78,6 +78,9 @@
 			}
 		}
 	elseif (!isguest()) { // it's a student then
+        if (!$cm->visible) {
+            notice(get_string("activityiscurrentlyhidden"));
+        }
 		switch ($workshop->phase) {
 			case 0 :
 			case 1 : $action = 'notavailable'; break;

@@ -60,6 +60,8 @@
             $answercount = 0;
         }
         echo "<P align=right><A HREF=\"report.php?id=$cm->id\">".get_string("viewallanswers","quiz",$answercount)."</A></P>";
+    } else if (!$cm->visible) {
+        notice(get_string("activityiscurrentlyhidden"));
     }
 
     $available = ($quiz->timeopen < $timenow and $timenow < $quiz->timeclose);

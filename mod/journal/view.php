@@ -43,6 +43,8 @@
             $entrycount = 0;
         }
         echo "<P align=right><A HREF=\"report.php?id=$cm->id\">".get_string("viewallentries","journal", $entrycount)."</A></P>";
+    } else if (!$cm->visible) {
+        notice(get_string("activityiscurrentlyhidden"));
     }
 
     echo "<CENTER>\n";

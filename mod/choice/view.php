@@ -71,6 +71,8 @@
             $responsecount = 0;
         }
         echo "<P align=right><A HREF=\"report.php?id=$cm->id\">".get_string("viewallresponses", "choice", $responsecount)."</A></P>";
+    } else if (!$cm->visible) {
+        notice(get_string("activityiscurrentlyhidden"));
     }
 
     print_simple_box( text_to_html($choice->text) , "center");

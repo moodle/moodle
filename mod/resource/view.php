@@ -30,6 +30,11 @@
         $navigation = "<A TARGET=\"{$CFG->framename}\" HREF=\"index.php?id=$course->id\">$strresources</A> ->";
     }
 
+    if (!$cm->visible and !isteacher($course->id)) {
+        print_header("$course->shortname: $resource->name", "$course->fullname", "$navigation $resource->name",
+                         "", "", true, update_module_button($cm->id, $course->id, $strresource), navmenu($course, $cm));
+        notice(get_string("activityiscurrentlyhidden"));
+    }
 
     switch ($resource->type) {
         case REFERENCE:

@@ -34,6 +34,8 @@
         $numusers = survey_count_responses($survey->id);
         echo "<P align=right><A HREF=\"report.php?id=$cm->id\">".
               get_string("viewsurveyresponses", "survey", $numusers)."</A></P>";
+    } else if (!$cm->visible) {
+        notice(get_string("activityiscurrentlyhidden"));
     }
 
     if (isguest()) {
@@ -48,9 +50,9 @@
         print_heading(get_string("surveycompleted", "survey"));
         $numusers = survey_count_responses($survey->id);
         print_heading(get_string("peoplecompleted", "survey", $numusers));
-        echo "<CENTER>";
+        echo "<center>";
         survey_print_graph("id=$cm->id&sid=$USER->id&type=student.png");
-        echo "</CENTER>";
+        echo "</center>";
         print_footer($course);
         exit;
     }
@@ -58,8 +60,8 @@
 //  Start the survey form
     add_to_log($course->id, "survey", "view form", "view.php?id=$cm->id", "$survey->id");
 
-    echo "<FORM NAME=form METHOD=post ACTION=save.php>";
-    echo "<INPUT TYPE=hidden NAME=id VALUE=$id>";
+    echo "<form name=form method=post action=save.php>";
+    echo "<input type=hidden name=id value=$id>";
 
     print_simple_box(text_to_html($survey->intro), "center", "80%");
 
@@ -76,25 +78,25 @@
         $question = $questions["$val"];
         $question->id = $val;
         
+        if ($question->text) {
+            $question->text = get_string($question->text, "survey");
+        }
+        if ($question->shorttext) {
+            $question->shorttext = get_string($question->shorttext, "survey");
+        }
         if ($question->type > 0) {
-            if ($question->text) {
-                $question->text = get_string($question->text, "survey");
-            }
-            if ($question->shorttext) {
-                $question->shorttext = get_string($question->shorttext, "survey");
-            }
             if ($question->intro) {
                 $question->intro = get_string($question->intro, "survey");
             }
             if ($question->options) {
                 $question->options = get_string($question->options, "survey");
             }
+        }
 
-            if ($question->multi) {
-                survey_print_multi($question);
-            } else {
-                survey_print_single($question);
-            }
+        if ($question->multi) {
+            survey_print_multi($question);
+        } else {
+            survey_print_single($question);
         }
     }
 
@@ -106,41 +108,45 @@
 
 ?>
 
-<CENTER>
-<BR>
-<SCRIPT>
+<center>
+<br />
+<script>
 <!-- // BEGIN
 function checkform() {
 
     var error=false;
 
     with (document.form) {
-    <? foreach ($checklist as $question => $default) {
-           echo "  if (".$question."[".$default."].checked) error=true;\n";
-    }?>
+    <?php
+       if (!empty($checklist)) {
+           foreach ($checklist as $question => $default) {
+               echo "  if (".$question."[".$default."].checked) error=true;\n";
+           }
+       }
+    ?>
     }
 
     if (error) {
-        alert("<?PHP print_string("questionsnotanswered", "survey") ?>");
+        alert("<?php print_string("questionsnotanswered", "survey") ?>");
     } else {
         document.form.submit();
     }
 }
 
-<?PHP echo "document.write('<INPUT TYPE=button VALUE=\"".get_string("clicktocontinuecheck", "survey")."\" onClick=\"checkform()\">');";  ?>
+<?php echo "document.write('<INPUT TYPE=button VALUE=\"".get_string("clicktocontinuecheck", "survey")."\" onClick=\"checkform()\">');";  ?>
 
 // END -->
 </SCRIPT>
 
-<NOSCRIPT>
+<noscript>
     <!-- Without Javascript, no checking is done -->
-    <INPUT TYPE="submit" VALUE="<? get_string("clicktocontinue", "survey") ?>">
-</NOSCRIPT>
+    <input type="submit" value="<? get_string("clicktocontinue", "survey") ?>">
+</noscript>
 
-</CENTER>
+</center>
 
 <?
-   echo "</FORM>";
+   echo "</form>";
 
    print_footer($course);
 
