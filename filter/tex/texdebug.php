@@ -1,0 +1,196 @@
+<?PHP // $Id$
+      // This function fetches math. images from the data directory
+      // If not, it obtains the corresponding TeX expression from the cache_tex db table
+      // and uses mimeTeX to create the image file
+
+    $nomoodlecookie = true;     // Because it interferes with caching
+
+    require_once("../../config.php");
+
+
+    $CFG->texfilterdir = "filter/tex";
+    $CFG->teximagedir = "filter/tex";
+
+    error_reporting(E_ALL);
+    $query = urldecode($_SERVER['QUERY_STRING']);
+
+    if ($query) {
+      $output = $query;
+      $splitpos = strpos($query,'&')-4;
+      $texexp = substr($query,4,$splitpos);
+      $md5 = md5($texexp);
+      if (strpos($query,'ShowDB') || strpos($query,'DeleteDB')) {
+	$texcache = get_record("cache_filters","filter","tex", "md5key", $md5);
+      }
+      if (strpos($query,'ShowDB')) {
+        if ($texcache) {
+	  $output = "DB cache_filters entry for $texexp\n";
+          $output .= "id = $texcache->id\n";
+          $output .= "filter = $texcache->filter\n";
+          $output .= "version = $texcache->version\n";
+          $output .= "md5key = $texcache->md5key\n";
+          $output .= "rawtext = $texcache->rawtext\n";
+          $output .= "timemodified = $texcache->timemodified\n";
+        } else {
+          $output = "DB cache_filters entry for $texexp not found\n";
+        }
+      }
+      if (strpos($query,'DeleteDB')) {
+        if ($texcache) {
+          $output = "Deleting DB cache_filters entry for $texexp\n";
+          $result =  delete_records("cache_filters","id",$texcache->id);
+          if ($result) {
+	    $result = 1;
+          } else {
+            $result = 0;
+          }
+          $output .= "Number of records deleted = $result\n";
+        } else {
+          $output = "Could not delete DB cache_filters entry for $texexp\nbecause it could not be found.\n";
+        }
+      }
+      if (strpos($query,'ShowImage')) {
+        tex2image($texexp);
+      } else {   
+        outputText($output);
+      }
+      exit;
+    }
+
+
+function outputText($texexp) {
+  header("Content-type: text/html");
+  echo "<html><body><pre>\n";
+  if ($texexp) {
+    $texexp = str_replace('<','&lt;',$texexp);
+    $texexp = str_replace('>','&gt;',$texexp);
+    $texexp = str_replace('"','&quot;',$texexp);
+    echo "$texexp\n\n";
+  } else {
+    echo "No text output available\n\n";
+  }
+  echo "</pre></body></html>\n";
+}
+
+function tex2image($texexp) {
+  global $CFG;
+  if ($texexp) {
+       $texexp = '\Large ' . $texexp;
+       $lifetime = 86400;
+       $image  = md5($texexp) . ".gif";
+       $filetype = 'image/gif';
+       if (!file_exists("$CFG->dataroot/$CFG->teximagedir")) {
+          make_upload_directory($CFG->teximagedir);
+       }
+       $pathname = "$CFG->dataroot/$CFG->teximagedir/$image";
+       $windows = 0;
+         switch (PHP_OS) {
+       case "Linux":
+           $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.linux -e $pathname ". escapeshellarg($texexp);
+       break;
+       case "WINNT":
+       case "WIN32":
+       case "Windows":
+           $windows = 1;
+           $texexp = str_replace('"','\"',$texexp);
+           $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.exe -e  $pathname \"$texexp\"";
+       break;
+       case "Darwin":
+           $cmd = "$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin -e $pathname ". escapeshellarg($texexp);
+       break;
+       }
+       system($cmd);
+  }
+  if ($texexp && file_exists($pathname)) {
+           $lastmodified = filemtime($pathname);
+           header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
+           header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
+           header("Cache-control: max_age = $lifetime"); // a day
+           header("Pragma: ");
+           header("Content-disposition: inline; filename=$image");
+           header("Content-length: ".filesize($pathname));
+           header("Content-type: $filetype");
+           readfile("$pathname");
+   } else {
+           if (!$windows) {
+             $cmd = "$cmd 2>&1";
+             echo `$cmd` . "<br>\n";
+           }
+           echo "Image not found!";
+   }
+}
+?>
+
+<html>
+<head><title>TeX Filter Debugger</title></head>
+<body>
+<?PHP
+  require_once("../../config.php");
+  $filename = "$CFG->dirroot/filter/tex/pix.php";
+  $PHP_OS = PHP_OS;
+  $handle = fopen($filename,"r");
+  $contents = fread($handle, filesize($filename));
+  fclose($handle);
+  if (!strpos($contents,'case "'. $PHP_OS . '":')) {
+    echo "<b>WARNING!</b> case \"$PHP_OS\": NOT found in pix.php!!!<br><br>";
+  }
+?>
+  <p>Please enter an algebraic expression <b>without</b> any surrounding $$ into
+       the text box below. (Click <a href="#help">here for help.</a>)
+          <form action="texdebug.php" method="get"
+           target="inlineframe">
+            <center>
+             <input type="text" name="tex" size=50
+                    value="\Large f(x)=\Bigint_{-\infty}^x~e^{-t^2}dt">
+            </center>
+           <ol>
+           <li>First click on this button <input type="submit" name="ShowDB" value="Show DB Entry">
+               to see the cache_filters database entry for this expression.</li>
+	   <li>If the database entry looks corrupt, click on this button to delete it:
+               <input type="submit" name="DeleteDB" value="Delete DB Entry"></li>
+           <li>Finally click on this button <input type="submit" name="ShowImage" value="Show Image">
+               to show a graphic image of the algebraic expression.</li>
+           </ol>
+          </form> <br> <br>
+       <center>
+          <iframe name="inlineframe" align="middle" width="80%" height="200">
+          &lt;p&gt;Something is wrong...&lt;/p&gt; 
+          </iframe>
+       </center> <br>
+<hr>
+<a name="help">
+<h2>Debugging Help</h2>
+</a>
+<p>First a brief overview of how the TeX filter works. The TeX filter first
+searches the database cache_filters table to see if this TeX expression had been
+processed before. If not, it adds a DB entry for that expression.  It then
+replaces the TeX expression by an &lt;img src=&quot;.../filter/tex/pix.php...&quot;&gt;
+tag.  The filter/tex/pix.php script then searches the database to find an
+appropriate gif image file for that expression and to create one if it doesn't exist.
+Here are a few common things that can go wrong and some suggestions on how
+you might try to fix them.</p>
+<ol>
+<li>Something had gone wrong on a previous occasion when the filter tried to
+process this expression. Then the database entry for that expression contains
+a bad TeX expression in the rawtext field (usually blank). You can fix this
+by clicking on &quot;Delete DB Entry&quot;</li>
+<li>The TeX to gif image conversion process does not work. If your server is
+running Unix, a likely cause is that the mimetex binary you are using is
+incompatible with your operating system. You can try compiling it from the
+C sources downloaded from <a href="http://www.forkosh.com/mimetex.zip">
+http://www.forkosh.com/mimetex.zip</a>, or looking for an appropriate
+binary at <a href="http://moodle.org/download/mimetex/">
+http://moodle.org/download/mimetex/</a>. You may then also need to
+edit your moodle/filter/tex/pix.php file to add 
+<br /><?PHP echo "case &quot;" . PHP_OS . "&quot;:" ;?><br ?> to the list of operating systems
+in the switch (PHP_OS) statement. Windows users may have a problem properly
+unzipping mimetex.exe. Make sure that mimetex.exe is is <b>PRECISELY</b>
+328192 bytes in size. If not, download a fresh copy from
+<a href="http://moodle.org/download/mimetex/windows/mimetex.exe">
+http://moodle.org/download/mimetex/windows/mimetex.exe</a>. 
+Another possible problem which may affect
+both Unix and Windows servers is that the web server doesn't have execute permission
+on the mimetex binary. In that case change permissions accordingly</li>
+</ol>
+</body>
+</html>
