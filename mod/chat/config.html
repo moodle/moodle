@@ -1,6 +1,15 @@
 <form method="post" action="module.php" name="form">
 
 <table cellpadding=9 cellspacing=0 >
+
+<tr>
+  <td colspan=3 align=center>
+     <div><b><?php print_string('generalconfig', 'chat')?></b></div>
+     <div style="font-size: 0.8em;">(<?php print_string('explaingeneralconfig', 'chat')?>)</div>
+  </td>
+</tr>
+
+
 <tr valign=top>
 	<td align=right><p>chat_method:</td>
 	<td>
@@ -13,18 +22,6 @@
     </td>
     <td>
     <?php print_string("configmethod", "chat") ?>
-    </td>
-</tr>
-
-<tr><td colspan=3 align=center><hr /><b><?php print_string('methodnormal', 'chat')?></b></td></tr>
-
-<tr valign=top>
-	<td align=right><p>chat_refresh_room:</td>
-	<td>
-    <input name=chat_refresh_room type=text size=5 value="<?php p($CFG->chat_refresh_room) ?>">
-    </td>
-    <td>
-    <?php print_string("configrefreshroom", "chat") ?>
     </td>
 </tr>
 <tr valign=top>
@@ -46,7 +43,29 @@
     </td>
 </tr>
 
-<tr><td colspan=3 align=center><hr /><b><?php print_string('methoddaemon', 'chat')?></b></td></tr>
+<tr>
+  <td colspan=3 align=center><hr />
+     <div><b><?php print_string('methodnormal', 'chat')?></b></div>
+     <div style="font-size: 0.8em;">(<?php print_string('explainmethodnormal', 'chat')?>)</div>
+  </td>
+</tr>
+
+<tr valign=top>
+	<td align=right><p>chat_refresh_room:</td>
+	<td>
+    <input name=chat_refresh_room type=text size=5 value="<?php p($CFG->chat_refresh_room) ?>">
+    </td>
+    <td>
+    <?php print_string("configrefreshroom", "chat") ?>
+    </td>
+</tr>
+
+<tr>
+  <td colspan=3 align=center><hr />
+     <div><b><?php print_string('methoddaemon', 'chat')?></b></div>
+     <div style="font-size: 0.8em;">(<?php print_string('explainmethoddaemon', 'chat')?>)</div>
+  </td>
+</tr>
 
 <tr valign=top>
 	<td align=right><p>chat_serverhost:</td>

@@ -1,32 +1,48 @@
 #!/usr/bin/php -q
 <?php
 
+// Browser quirks
 define('QUIRK_CHUNK_UPDATE', 0x0001);
 
-echo "Moodle chat daemon v1.0 on PHP ".phpversion()." (\$Id$)\n\n";
+// Connection telltale
+define('CHAT_CONNECTION',           0x10);
+// Connections: Incrementing sequence, 0x10 to 0x1f
+define('CHAT_CONNECTION_CHANNEL',   0x11);
+
+// Sidekick telltale
+define('CHAT_SIDEKICK',             0x20);
+// Sidekicks: Incrementing sequence, 0x21 to 0x2f
+define('CHAT_SIDEKICK_USERS',       0x21);
+define('CHAT_SIDEKICK_MESSAGE',     0x22);
+define('CHAT_SIDEKICK_BEEP',        0x23);
+
+$phpversion = phpversion();
+echo 'Moodle chat daemon v1.0 on PHP '.$phpversion." (\$Id$)\n\n";
 
 /// Set up all the variables we need   /////////////////////////////////////
 
 /// $CFG variables are now defined in database by chat/lib.php
 
-$_SERVER['PHP_SELF'] = "dummy";
-$_SERVER['SERVER_NAME'] = "dummy";
+$_SERVER['PHP_SELF']    = 'dummy';
+$_SERVER['SERVER_NAME'] = 'dummy';
 
 include('../../config.php');
 include('lib.php');
 
 $_SERVER['SERVER_NAME'] = $CFG->chat_serverhost;
-$_SERVER['PHP_SELF'] = "http://$CFG->chat_serverhost:$CFG->chat_serverport/mod/chat/chatd.php";
+$_SERVER['PHP_SELF']    = "http://$CFG->chat_serverhost:$CFG->chat_serverport/mod/chat/chatd.php";
 
 $safemode = ini_get('safe_mode');
 
+if($phpversion < '4.3') {
+    die("Error: The Moodle chat daemon requires at least PHP version 4.3 to run.\n       Since your version is $phpversion, you have to upgrade.\n\n");
+}
 if(!empty($safemode)) {
-    die("Error: Cannot run with PHP safe_mode = On. Turn off safe_mode.\n");
+    die("Error: Cannot run with PHP safe_mode = On. Turn off safe_mode in php.ini.\n");
 }
 
 @set_time_limit (0);
 set_magic_quotes_runtime(0);
-
 error_reporting(E_ALL);
 
 function chat_empty_connection() {
@@ -61,7 +77,7 @@ class ChatDaemon {
     var $_logfile_name      = 'chatd.log';
     var $_last_idle_poll    = 0;
 
-    var $conn_ufo  = array();     // Connections not identified yet
+    var $conn_ufo  = array();    // Connections not identified yet
     var $conn_side = array();    // Sessions with sidekicks waiting for the main connection to be processed
     var $conn_half = array();    // Sessions that have valid connections but not all of them
     var $conn_sets = array();    // Sessions with complete connection sets sets
@@ -73,13 +89,21 @@ class ChatDaemon {
         $this->_pcntl_exists        = function_exists('pcntl_fork');
         $this->_time_rest_socket    = 20;
         $this->_beepsoundsrc        = $GLOBALS['CFG']->wwwroot.'/mod/chat/beep.wav';
-        $this->_freq_update_records = 15;
-        $this->_freq_poll_idle_chat = 35;
+        $this->_freq_update_records = 20;
+        $this->_freq_poll_idle_chat = $GLOBALS['CFG']->chat_old_ping;
         $this->_stdout = fopen('php://stdout', 'w');
         if($this->_stdout) {
             // Avoid double traces for everything
             $this->_trace_to_console = false;
         }
+    }
+
+    function error_handler ($errno, $errmsg, $filename, $linenum, $vars) {
+        // Checks if an error needs to be suppressed due to @
+        if(error_reporting() != 0) {
+            $this->trace($errmsg.' on line '.$linenum, $errno);
+        }
+        return true;
     }
 
     function poll_idle_chats($now) {
@@ -113,6 +137,8 @@ class ChatDaemon {
         switch($level) {
             case E_USER_WARNING: $severity = '*IMPORTANT* '; break;
             case E_USER_ERROR:   $severity = ' *CRITICAL* '; break;
+            case E_NOTICE:
+            case E_WARNING:      $severity = ' *CRITICAL* [php] '; break;
         }
 
         $date = date('[Y-m-d H:i:s] ');
@@ -164,27 +190,20 @@ class ChatDaemon {
 //        return false;
     }
 
-    function update_lastmessageping($sessionid, $time = NULL) {
+    function user_lazy_update($sessionid) {
         // TODO: this can and should be written as a single UPDATE query
         if(empty($this->sets_info[$sessionid])) {
-            $this->trace('update_lastmessageping() called for an invalid SID: '.$sessionid, E_USER_WARNING);
+            $this->trace('user_lazy_update() called for an invalid SID: '.$sessionid, E_USER_WARNING);
             return false;
         }
 
-        if(empty($time)) {
-            $time = time();
-        }
+        $now = time();
 
-        // We 'll be cheating a little, and NOT updating lastmessageping
-        // as often as we have to, so we can save on DB queries (imagine MANY users)
-        $this->sets_info[$sessionid]['chatuser']->lastmessageping = $time;
-        $this->sets_info[$sessionid]['chatuser']->lastping        = $time;
-
-        // This will set it just fine for bookkeeping purposes.
-        if($time - $this->sets_info[$sessionid]['lastinfocommit'] > $this->_freq_update_records) {
+        // We 'll be cheating a little, and NOT updating the record data as
+        // often as we can, so that we save on DB queries (imagine MANY users)
+        if($now - $this->sets_info[$sessionid]['lastinfocommit'] > $this->_freq_update_records) {
             // commit to permanent storage
-            // $this->trace('Committing volatile lastmessageping for session '.$sessionid);
-            $this->sets_info[$sessionid]['lastinfocommit'] = $time;
+            $this->sets_info[$sessionid]['lastinfocommit'] = $now;
             update_record('chat_users', $this->sets_info[$sessionid]['chatuser']);
         }
         return true;
@@ -306,7 +325,9 @@ class ChatDaemon {
                 $this->message_broadcast($msg, $this->sets_info[$sessionid]['user']);
 
                 // Update that user's lastmessageping
-                $this->update_lastmessageping($sessionid, $msg->timestamp);
+                $this->sets_info[$sessionid]['chatuser']->lastping        = $msg->timestamp;
+                $this->sets_info[$sessionid]['chatuser']->lastmessageping = $msg->timestamp;
+                $this->user_lazy_update($sessionid);
 
                 // We did our work, but before slamming the door on the poor browser
                 // show the courtesy of responding to the HTTP request. Otherwise, some
@@ -352,20 +373,12 @@ class ChatDaemon {
                 $this->trace('writing users http response to handle '.$handle);
                 $this->write_data($handle, $header . $content);
 
-/*
-                $header  = "HTTP/1.1 200 OK\n";
-                $header .= "Connection: close\n";
-                $header .= "Date: ".date('r')."\n";
-                $header .= "Server: Moodle\n";
-                $header .= "Content-Type: text/html\n";
-                $header .= "Last-Modified: ".gmdate("D, d M Y H:i:s")." GMT\n";
-                $header .= "Cache-Control: no-cache, must-revalidate\n";
-                $header .= "Expires: Wed, 4 Oct 1978 09:32:45 GMT\n";
-                $header .= "\n";
-                $this->trace('writing users http response to handle '.$handle);
-                $this->write_data($handle, $header);
-*/
+                // Update that user's lastping
+                $this->sets_info[$sessionid]['chatuser']->lastping = time();
+                $this->user_lazy_update($sessionid);
+
             break;
+
             case CHAT_SIDEKICK_MESSAGE:
                 // Incoming message
 
@@ -402,7 +415,9 @@ class ChatDaemon {
                 $this->message_broadcast($msg, $this->sets_info[$sessionid]['user']);
 
                 // Update that user's lastmessageping
-                $this->update_lastmessageping($sessionid, $msg->timestamp);
+                $this->sets_info[$sessionid]['chatuser']->lastping        = $msg->timestamp;
+                $this->sets_info[$sessionid]['chatuser']->lastmessageping = $msg->timestamp;
+                $this->user_lazy_update($sessionid);
 
                 // We did our work, but before slamming the door on the poor browser
                 // show the courtesy of responding to the HTTP request. Otherwise, some
@@ -451,7 +466,7 @@ class ChatDaemon {
             return false;
         }
         $course = get_record('course', 'id', $chat->course); {
-        if($course === false) {
+       if($course === false) {
             $this->dismiss_half($sessionid);
             return false;
             }
@@ -553,7 +568,7 @@ class ChatDaemon {
                     if(isset($this->conn_sets[$sessionid])) {
                         // Yes, so regrettably we cannot promote you
                         $this->trace('Connection rejected: session '.$sessionid.' is already final');
-                        $this->dismiss_ufo($handle);
+                        $this->dismiss_ufo($handle, true, 'Your SID was rejected.');
                         return false;
                     }
 
@@ -607,7 +622,7 @@ class ChatDaemon {
     }
 
 
-    function dismiss_ufo($handle, $disconnect = true) {
+    function dismiss_ufo($handle, $disconnect = true, $message = NULL) {
         if(empty($this->conn_ufo)) {
             return false;
         }
@@ -615,7 +630,9 @@ class ChatDaemon {
             if($ufo->handle == $handle) {
                 unset($this->conn_ufo[$id]);
                 if($disconnect) {
-                    $this->write_data($handle, "You don't seem to be a valid client.\n");
+                    if(!empty($message)) {
+                        $this->write_data($handle, $message."\n\n");
+                    }
                     socket_shutdown($handle);
                     socket_close($handle);
                 }
@@ -626,7 +643,13 @@ class ChatDaemon {
     }
 
     function conn_accept() {
-        $handle = @socket_accept($this->listen_socket);
+        $read_socket = array($this->listen_socket);
+        $changed = socket_select($read_socket, $write = NULL, $except = NULL, 0, 0);
+
+        if(!$changed) {
+            return false;
+        }
+        $handle = socket_accept($this->listen_socket);
         if(!$handle) {
             return false;
         }
@@ -674,7 +697,7 @@ class ChatDaemon {
             {
 
                 // Simply give them the message
-                $output = chat_format_message_manually($message, 0, $sender, $info['user'], $info['lang']);
+                $output = chat_format_message_manually($message, $info['courseid'], $sender, $info['user'], $info['lang']);
                 $this->trace('Delivering message "'.$output->text.'" to '.$this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL]);
 
                 if($output->beep) {
@@ -737,7 +760,7 @@ class ChatDaemon {
         if(false === ($this->listen_socket = socket_create(AF_INET, SOCK_STREAM, 0))) {
             // Failed to create socket
             $lasterr = socket_last_error();
-            $this->fatal('Error: socket_create() failed: '. socket_strerror($lasterr).' ['.$lasterr.']');
+            $this->fatal('socket_create() failed: '. socket_strerror($lasterr).' ['.$lasterr.']');
         }
 
         //socket_close($DAEMON->listen_socket);
@@ -746,13 +769,13 @@ class ChatDaemon {
         if(!socket_bind($this->listen_socket, $CFG->chat_serverip, $CFG->chat_serverport)) {
             // Failed to bind socket
             $lasterr = socket_last_error();
-            $this->fatal('Error: socket_bind() failed: '. socket_strerror($lasterr).' ['.$lasterr.']');
+            $this->fatal('socket_bind() failed: '. socket_strerror($lasterr).' ['.$lasterr.']');
         }
 
         if(!socket_listen($this->listen_socket, $CFG->chat_servermax)) {
             // Failed to get socket to listen
             $lasterr = socket_last_error();
-            $this->fatal('Error: socket_listen() failed: '. socket_strerror($lasterr).' ['.$lasterr.']');
+            $this->fatal('socket_listen() failed: '. socket_strerror($lasterr).' ['.$lasterr.']');
         }
 
         // Socket has been initialized and is ready
@@ -760,7 +783,7 @@ class ChatDaemon {
 
         // [pj]: I really must have a good read on sockets. What exactly does this do?
         // http://www.unixguide.net/network/socketfaq/4.5.shtml is still not enlightening enough for me.
-        socket_set_option($this->listen_socket, SOL_SOCKET, SO_REUSEADDR, 1);
+        socket_setopt($this->listen_socket, SOL_SOCKET, SO_REUSEADDR, 1);
         socket_set_nonblock($this->listen_socket);
     }
 
@@ -800,20 +823,8 @@ class ChatDaemon {
 
 }
 
-// Connection telltale
-define('CHAT_CONNECTION',           0x10);
-// Connections: Incrementing sequence, 0x10 to 0x1f
-define('CHAT_CONNECTION_CHANNEL',   0x11);
-
-// Sidekick telltale
-define('CHAT_SIDEKICK',             0x20);
-// Sidekicks: Incrementing sequence, 0x21 to 0x2f
-define('CHAT_SIDEKICK_USERS',       0x21);
-define('CHAT_SIDEKICK_MESSAGE',     0x22);
-define('CHAT_SIDEKICK_BEEP',        0x23);
-
-
 $DAEMON = New ChatDaemon;
+set_error_handler(array($DAEMON, 'error_handler'));
 
 /// Check the parameters //////////////////////////////////////////////////////
 
@@ -872,17 +883,10 @@ if(!$DAEMON->query_start()) {
     die();
 }
 
-if (!function_exists('socket_set_option')) {
-    // PHP < 4.3
-    if (!function_exists('socket_setopt')) {
-        // No socket_setopt!
-        echo "Error: Neither socket_setopt() nor socket_set_option() exists.\n";
-        echo "Possibly PHP has not been compiled with --enable-sockets.\n\n";
-        die();
-    }
-    function socket_set_option($socket, $level, $name, $val) {
-        return socket_setopt($socket, $level, $name, $val);
-    }
+if (!function_exists('socket_setopt')) {
+    echo "Error: Function socket_setopt() does not exist.\n";
+    echo "Possibly PHP has not been compiled with --enable-sockets.\n\n";
+    die();
 }
 
 $DAEMON->init_sockets();
@@ -939,6 +943,9 @@ else {
 
 $DAEMON->trace('Started Moodle chatd on port '.$CFG->chat_serverport.', listening socket '.$DAEMON->listen_socket, E_USER_WARNING);
 
+/// Clear the decks of old stuff
+delete_records('chat_users', 'version', 'sockets');
+
 while(true) {
     $active = array();
 
@@ -959,7 +966,7 @@ while(true) {
                 if(!ereg('win=(chat|users|message|beep).*&chat_sid=([a-zA-Z0-9]*)&groupid=([0-9]*) HTTP', $data, $info)) {
                     // Malformed data
                     $DAEMON->trace('UFO with '.$handle.': Request with malformed data; connection closed', E_USER_WARNING);
-                    $DAEMON->dismiss_ufo($handle);
+                    $DAEMON->dismiss_ufo($handle, true, 'Request with malformed data; connection closed');
                     continue;
                 }
 
@@ -985,7 +992,7 @@ while(true) {
                         $type = CHAT_SIDEKICK_BEEP;
                         if(!ereg('beep=([^&]*)[& ]', $data, $info)) {
                             $DAEMON->trace('Beep sidekick did not contain a valid userid', E_USER_WARNING);
-                            $DAEMON->dismiss_ufo($handle);
+                            $DAEMON->dismiss_ufo($handle, true, 'Request with malformed data; connection closed');
                             continue;
                         }
                         else {
@@ -996,7 +1003,7 @@ while(true) {
                         $type = CHAT_SIDEKICK_MESSAGE;
                         if(!ereg('chat_message=([^&]*)[& ]chat_msgidnr=([^&]*)[& ]', $data, $info)) {
                             $DAEMON->trace('Message sidekick did not contain a valid message', E_USER_WARNING);
-                            $DAEMON->dismiss_ufo($handle);
+                            $DAEMON->dismiss_ufo($handle, true, 'Request with malformed data; connection closed');
                             continue;
                         }
                         else {
@@ -1005,7 +1012,7 @@ while(true) {
                     break;
                     default:
                         $DAEMON->trace('UFO with '.$handle.': Request with unknown type; connection closed', E_USER_WARNING);
-                        $DAEMON->dismiss_ufo($handle);
+                        $DAEMON->dismiss_ufo($handle, true, 'Request with unknown type; connection closed');
                         continue;
                     break;
                 }
