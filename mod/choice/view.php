@@ -87,7 +87,7 @@
         if ( $allanswers = get_records("choice_answers", "choiceid", $choice->id)) {            
             $responsecount = 0;
             foreach ($allanswers as $aa) {
-                if (isstudent($course->id, $aa->userid) or isteacher($course->id, $aa->userid, false)) { //check to make sure user is enrolled in course.
+                if (isstudent($course->id, $aa->userid) or isteacher($course->id, $aa->userid)) { //check to make sure user is enrolled in course.
                     $responsecount++;
                 }
             }
@@ -151,7 +151,7 @@
 
         echo "<center>";
         echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
-        if (isstudent($course->id) or isteacher($course->id, 0, false)) {
+        if (isstudent($course->id) or isteacher($course->id, 0)) {
             echo "<input type=\"submit\" value=\"".get_string("savemychoice","choice")."\" />";
         } else {
             print_string('havetologin', 'choice');
