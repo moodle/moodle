@@ -532,6 +532,7 @@ CREATE TABLE `prefix_user_teachers` (
   `timeend` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   `timeaccess` int(10) unsigned NOT NULL default '0',
+  `enrol` varchar(20) NOT NULL default '',  
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`),
   UNIQUE KEY `courseuserid` (course,userid),
