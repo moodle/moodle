@@ -7,6 +7,8 @@
         
     require_variable($id);    
     optional_variable($mode); 
+  
+    $mode = strip_tags(urldecode($mode));  //XSS
         
     require_login();
     if ( !isadmin() ) {

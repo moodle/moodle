@@ -11,6 +11,8 @@
     optional_variable($action,"add");     // Action to perform
     optional_variable($confirm,0);     // Confirm the action
 
+    $action = strip_tags(urldecode($action));  //XSS
+
     $action = strtolower($action);
 
     global $THEME, $USER, $CFG;
