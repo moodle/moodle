@@ -90,7 +90,11 @@
                 $modform->grades[$key] = 1;   // default score
             }
         }
-        $modform->questions = implode(",", $questions);
+        if ($questions) {
+            $modform->questions = implode(",", $questions);
+        } else {
+            $modform->questions = "";
+        }
     }
 
     if ($delete) { /// Delete a question from the list 

@@ -195,7 +195,7 @@ function  quiz_print_question($number, $questionid, $grade, $courseid) {
            if (!$options = get_record("quiz_shortanswer", "question", $question->id)) {
                notify("Error: Missing question options!");
            }
-           echo "<P>$question->question</P>";
+           echo text_to_html($question->questiontext);
            if ($question->image) {
                print_file_picture($question->image, $courseid, 200);
            }
@@ -218,7 +218,7 @@ function  quiz_print_question($number, $questionid, $grade, $courseid) {
            if (!$false->answer) {
                $false->answer = get_string("false", "quiz");
            }
-           echo "<P>$question->question</P>";
+           echo text_to_html($question->questiontext);
            if ($question->image) {
                print_file_picture($question->image, $courseid, 200);
            }
@@ -235,7 +235,7 @@ function  quiz_print_question($number, $questionid, $grade, $courseid) {
            if (!$answers = get_records_list("quiz_answers", "id", $options->answers)) {
                notify("Error: Missing question answers!");
            }
-           echo "<P>$question->question</P>";
+           echo text_to_html($question->questiontext);
            if ($question->image) {
                print_file_picture($question->image, $courseid, 200);
            }
@@ -286,7 +286,7 @@ function quiz_print_quiz_questions($quiz, $results=NULL) {
     echo "<INPUT TYPE=hidden NAME=q VALUE=\"$quiz->id\">";
     foreach ($questions as $key => $questionid) {
         print_simple_box_start("CENTER", "90%");
-        quiz_print_question($key+1, $questionid, $grades[$questionid]->grade, $course->id);
+        quiz_print_question($key+1, $questionid, $grades[$questionid]->grade, $quiz->course);
         print_simple_box_end();
         echo "<BR>";
     }
@@ -577,11 +577,11 @@ function quiz_save_best_grade($quiz, $user) {
 }
 
 
-function quiz_get_answer($question) {
+function quiz_get_answers($question) {
 // Given a question, returns the correct answers and grades
     switch ($question->type) {
         case SHORTANSWER;       // Could be multiple answers
-            return get_records_sql("SELECT a.*, sa.case, g.grade
+            return get_records_sql("SELECT a.*, sa.usecase, g.grade
                                       FROM quiz_shortanswer sa, quiz_answers a, quiz_question_grades g
                                      WHERE sa.question = '$question->id' 
                                        AND sa.question = a.question
@@ -702,9 +702,12 @@ function quiz_grade_attempt_results($quiz, $questions) {
     
     $result->sumgrades = 0;
 
+    global $db;
+    $db->debug=true;
+
     foreach ($questions as $question) {
-        if (!$answers = quiz_get_answer($question)) {
-            error("No answer defined for question id $question->id!");
+        if (!$answers = quiz_get_answers($question)) {
+            error("No answers defined for question id $question->id!");
         }
 
         $grade    = 0;   // default
@@ -719,7 +722,7 @@ function quiz_grade_attempt_results($quiz, $questions) {
                 }
                 foreach($answers as $answer) {  // There might be multiple right answers
                     $feedback[$answer->id] = $answer->feedback;
-                    if (!$answer->case) {       // Don't compare case
+                    if (!$answer->usecase) {       // Don't compare case
                         $answer->answer = strtolower($answer->answer);
                         $question->answer = strtolower($question->answer);
                     }

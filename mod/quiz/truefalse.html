@@ -16,14 +16,14 @@
 <TR valign=top>
     <TD align=right><P><B><? print_string("question", "quiz") ?>:</B></P></TD>
     <TD>
-        <textarea name="intro" rows=6 cols=50 wrap="virtual"><? p($question->question) ?></textarea>
+        <textarea name="questiontext" rows=6 cols=50 wrap="virtual"><? p($question->questiontext)?></textarea>
         <? helpbutton("text", get_string("helptext")); ?>
     </TD>
 </TR>
 <TR valign=top>
-    <TD align=right><P><B><? print_string("imageaddress", "quiz") ?>:</B></P></TD>
+    <TD align=right><P><B><? print_string("imagedisplay", "quiz") ?>:</B></P></TD>
     <TD>
-        <INPUT type="text" name="image" size=80 value="<? p($question->image) ?>">
+    <?  choose_from_menu($images, "image", "$question->image", get_string("none"),"",""); ?>
     </TD>
 </TR>
 

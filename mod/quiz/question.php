@@ -3,6 +3,7 @@
 
     require("../../config.php");
     require("lib.php");
+    require("../../files/mimetypes.php");
 
     optional_variable($id);
 
@@ -23,20 +24,6 @@
 
         $type = $question->type;
 
-        switch ($type) {
-            case SHORTANSWER:
-                print_heading(get_string("editingshortanswer", "quiz"));
-                require("shortanswer.html");
-            break;
-            case TRUEFALSE:
-                print_heading(get_string("editingtruefalse", "quiz"));
-                require("truefalse.html");
-            break;
-            case MULTICHOICE:
-                print_heading(get_string("editingmultichoice", "quiz"));
-                require("multichoice.html");
-            break;
-        }
 
     } else if ($category) {
         if (! $category = get_record("quiz_categories", "id", $category)) {
@@ -68,16 +55,133 @@
 
     if (match_referer() and isset($HTTP_POST_VARS)) {    // question submitted
 
+        $form = (object)$HTTP_POST_VARS;
+        
+        // First, save the basic question itself
+        $question->name         = $form->name;
+        $question->questiontext = $form->questiontext;
+        $question->image        = $form->image;
+
+        if ($question->id) { // Question already exists
+            if (!update_record("quiz_questions", $question)) {
+                error("Could not update question!");
+            }
+        } else {         // Question is a new one
+            $db->debug =true;
+            if (!$question->id = insert_record("quiz_questions", $question)) {
+                error("Could not insert new question!");
+            }
+        }
+
+        // Now to save all the answers and type-specific options
+
+        switch ($question->type) {
+            case SHORTANSWER:
+                // Delete all the old answers
+                delete_records("quiz_answers", "question", $question->id);
+                delete_records("quiz_shortanswer", "question", $question->id);
+
+                $answers = array();
+
+                // Insert all the new answers
+                foreach ($form->answer as $key => $formanswer) {
+                    if ($formanswer) {
+                        unset($answer);
+                        $answer->answer   = $formanswer;
+                        $answer->question = $question->id;
+                        $answer->fraction = $fraction[$key];
+                        $answer->feedback = $feedback[$key];
+                        if (!$answer->id = insert_record("quiz_answers", $answer)) {
+                            error("Could not insert quiz answer!");
+                        }
+                        $answers[] = $answer->id;
+                    }
+                }
+
+                unset($options);
+                $options->question = $question->id;
+                $options->answers = implode(",",$answers);
+                $options->usecase = $form->usecase;
+                if (!insert_record("quiz_shortanswer", $options)) {
+                    error("Could not insert quiz shortanswer options!");
+                }
+            break;
+            case TRUEFALSE:
+                delete_records("quiz_answers", "question", $question->id);
+                delete_records("quiz_truefalse", "question", $question->id);
+
+                $true->answer   = get_string("true", "quiz");
+                $true->question = $question->id;
+                $true->fraction = "1.0";
+                $true->feedback = $form->feedbacktrue;
+                if (!$true->id = insert_record("quiz_answers", $true)) {
+                    error("Could not insert quiz answer \"true\")!");
+                }
+
+                $false->answer   = get_string("false", "quiz");
+                $false->question = $question->id;
+                $false->fraction = "0";
+                $false->feedback = $form->feedbackfalse;
+                if (!$false->id = insert_record("quiz_answers", $false)) {
+                    error("Could not insert quiz answer \"false\")!");
+                }
+
+                unset($options);
+                $options->question = $question->id;
+                $options->true     = $true->id;
+                $options->false    = $false->id;
+                if (!insert_record("quiz_truefalse", $options)) {
+                    error("Could not insert quiz truefalse options!");
+                }
+            break;
+            case MULTICHOICE:
+                delete_records("quiz_answers", "question", $question->id);
+                delete_records("quiz_multichoice", "question", $question->id);
+
+                $answers = array();
+
+                // Insert all the new answers
+                foreach ($form->answer as $key => $formanswer) {
+                    if ($formanswer) {
+                        unset($answer);
+                        $answer->answer   = $formanswer;
+                        $answer->question = $question->id;
+                        $answer->fraction = $fraction[$key];
+                        $answer->feedback = $feedback[$key];
+                        if (!$answer->id = insert_record("quiz_answers", $answer)) {
+                            error("Could not insert quiz answer!");
+                        }
+                        $answers[] = $answer->id;
+                    }
+                }
+
+                unset($options);
+                $options->question = $question->id;
+                $options->answers = implode(",",$answers);
+                $options->single = $form->single;
+                if (!insert_record("quiz_multichoice", $options)) {
+                    error("Could not insert quiz multichoice options!");
+                }
+            break;
+            default:
+                error("Non-existent question type!");
+            break;
+        }
+
         redirect("edit.php");
 
     } 
 
-    $grades = array(100,90,80,75,70,66.66,60,50,40,33.33,30,25,20,10,5);
+    $grades = array(1,0.9,0.8,0.75,0.70,0.6666,0.60,0.50,0.40,0.3333,0.30,0.25,0.20,0.10,0.05,0);
     foreach ($grades as $grade) {
-        $gradeoptions[$grade] = "$grade %";
-        $gradeoptionsfull[$grade] = "$grade %";
-        $gradeoptionsfull[-$grade] = -$grade." %";
+        $percentage = 100 * $grade;
+        $neggrade = -$grade;
+        $gradeoptions["$grade"] = "$percentage %";
+        $gradeoptionsfull["$grade"] = "$percentage %";
+        $gradeoptionsfull["$neggrade"] = -$percentage." %";
     }
+    $gradeoptionsfull["0"] = $gradeoptions["0"] = get_string("none");
+
     arsort($gradeoptions, SORT_NUMERIC);
     arsort($gradeoptionsfull, SORT_NUMERIC);
 
@@ -85,6 +189,14 @@
                                              WHERE course='$course->id' OR publish = '1'
                                              ORDER by name ASC")) {
         error("No categories!");
+    }
+
+
+    $coursefiles = get_directory_list("$CFG->dataroot/$course->id", $CFG->moddata);
+    foreach ($coursefiles as $filename) {
+        if (mimeinfo("icon", $filename) == "image.gif") {
+            $images["$filename"] = $filename;
+        }
     }
 
     // Print the question editing form
