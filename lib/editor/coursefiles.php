@@ -553,7 +553,7 @@
             html_footer();
             break;
 
-        case "cancel";
+        case "cancel":
             clearfilelist();
 
         default:
