@@ -169,6 +169,7 @@ function table_column($table, $oldfield, $field, $type="integer", $size="10",
                 }
             } else {
                 execute_sql("ALTER TABLE {$CFG->prefix}$table ADD COLUMN $field $type");
+                execute_sql("UPDATE {$CFG->prefix}$table SET $field=$default");
             }
 
             if ($dbver >= "7.3") {
