@@ -121,13 +121,24 @@
 
     echo "</TD></TR></TABLE></TABLE>";
 
+    $internalpassword = false;
+    if ($CFG->auth == "email" or $CFG->auth == "none") {
+        $internalpassword = "$CFG->wwwroot/login/change_password.php";
+    }
+
 //  Print other functions
     echo "<CENTER><TABLE ALIGN=CENTER><TR>";
     if ($user->id == $USER->id and !isguest()) {
-        echo "<TD NOWRAP><P><FORM ACTION=\"$CFG->wwwroot/login/change_password.php\" METHOD=GET>";
-        echo "<INPUT type=hidden name=id value=\"$course->id\">";
-        echo "<INPUT type=submit value=\"".get_string("changepassword")."\">";
-        echo "</FORM></P></TD>";
+        if ($CFG->auth == "email" or $CFG->auth == "none") {
+            echo "<TD NOWRAP><P><FORM ACTION=\"$CFG->wwwroot/login/change_password.php\" METHOD=GET>";
+            echo "<INPUT type=hidden name=id value=\"$course->id\">";
+            echo "<INPUT type=submit value=\"".get_string("changepassword")."\">";
+            echo "</FORM></P></TD>";
+        } else if ($CFG->changepassword) {
+            echo "<TD NOWRAP><P><FORM ACTION=\"$CFG->changepassword\" METHOD=GET>";
+            echo "<INPUT type=submit value=\"".get_string("changepassword")."\">";
+            echo "</FORM></P></TD>";
+        }
     }
     if ((isstudent($course->id) and ($user->id == $USER->id) and !isguest()) or 
         (isteacher($course->id) and isstudent($course->id, $user->id)) ) {
