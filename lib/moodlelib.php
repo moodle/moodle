@@ -1050,12 +1050,12 @@ function get_course_users($courseid, $sort="u.lastaccess DESC") {
 
 /// MODULE FUNCTIONS /////////////////////////////////////////////////
 
-function get_coursemodule_from_instance($modulename, $instance, $course) {
+function get_coursemodule_from_instance($modulename, $instance, $courseid) {
 // Given an instance of a module, finds the coursemodule description
 
     return get_record_sql("SELECT cm.*, m.name
                            FROM course_modules cm, modules md, $modulename m 
-                           WHERE cm.course = '$course' AND 
+                           WHERE cm.course = '$courseid' AND 
                                  cm.deleted = '0' AND
                                  cm.instance = m.id AND 
                                  md.name = '$modulename' AND 
@@ -1064,13 +1064,13 @@ function get_coursemodule_from_instance($modulename, $instance, $course) {
 
 }
 
-function get_all_instances_in_course($modulename, $course, $sort="cw.section") {
+function get_all_instances_in_course($modulename, $courseid, $sort="cw.section") {
 // Returns an array of all the active instances of a particular
 // module in a given course.   Returns false on any errors.
 
     return get_records_sql("SELECT m.*,cw.section,cm.id as coursemodule 
                             FROM course_modules cm, course_sections cw, modules md, $modulename m 
-                            WHERE cm.course = '$course' AND 
+                            WHERE cm.course = '$courseid' AND 
                                   cm.instance = m.id AND 
                                   cm.deleted = '0' AND
                                   cm.section = cw.id AND 
@@ -1079,7 +1079,6 @@ function get_all_instances_in_course($modulename, $course, $sort="cw.section") {
                             ORDER BY $sort");
 
 }
-
 
 
 
