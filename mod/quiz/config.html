@@ -187,6 +187,25 @@
 </tr>
 
 <tr valign="top">
+  <td align="right"><b><?php print_string("decimalpoints", "quiz") ?>:</b></td>
+  <td>
+    <?php
+       unset($options);
+       $options[0] = '0';
+       $options[1] = '1';
+       $options[2] = '2';
+       $options[3] = '3';
+       choose_from_menu ($options, "quiz_decimalpoints", $CFG->quiz_decimalpoints, "", "", "");
+       helpbutton("decimalpoints", get_string("decimalpoints","quiz"), "quiz");
+    ?>
+  </td>
+  <td align="center">
+    <input type="hidden" name="quiz_fix_decimalpoints" value="0">
+    <input type="checkbox" name="quiz_fix_decimalpoints" value="1" <?php p($CFG->quiz_fix_decimalpoints ? "checked" : "") ?> />
+  </td>
+</tr>
+
+<tr valign="top">
   <td align="right"><b><?php print_string("showfeedback", "quiz") ?>:</b></td>
   <td>
     <?php

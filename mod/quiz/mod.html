@@ -54,6 +54,9 @@
     if (!isset($form->grademethod)) {
         $form->grademethod = $CFG->quiz_grademethod;
     }
+    if (!isset($form->decimalpoints)) {
+        $form->decimalpoints = $CFG->quiz_decimalpoints;
+    }
     if (!isset($form->feedback)) {
         $form->feedback = $CFG->quiz_showfeedback;
     }
@@ -267,6 +270,23 @@
         <?php
             choose_from_menu($QUIZ_GRADE_METHOD, "grademethod", "$form->grademethod", "");
             helpbutton("grademethod", get_string("grademethod","quiz"), "quiz");
+         ?>
+        </td>
+    </tr>
+<?php } ?>
+
+<?php if (!$CFG->quiz_fix_decimalpoints) { ?>
+    <tr valign="top">
+        <td align="right"><b><?php print_string("decimalpoints", "quiz") ?>:</b></td>
+        <td>
+         <?php
+            unset($options);
+            $options[0] = '0';
+            $options[1] = '1';
+            $options[2] = '2';
+            $options[3] = '3';
+            choose_from_menu($options, "decimalpoints", "$form->decimalpoints", "");
+            helpbutton("decimalpoints", get_string("decimalpoints","quiz"), "quiz");
          ?>
         </td>
     </tr>
