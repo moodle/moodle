@@ -93,7 +93,7 @@
                                    get_string("country"), " ");
             $table->align = array ("LEFT", "LEFT", "CENTER", "CENTER", "CENTER", "CENTER");
             foreach ($users as $user) {
-                $table->data[] = array ("<A HREF=\"../user/edit.php?id=$user->id&course=$site->id\">$user->firstname $user->lastname</A>",
+                $table->data[] = array ("<A HREF=\"../user/view.php?id=$user->id&course=$site->id\">$user->firstname $user->lastname</A>",
                                         "$user->email",
                                         "$user->city",
                                         $COUNTRIES[$user->country],
