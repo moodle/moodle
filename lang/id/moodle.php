@@ -241,6 +241,7 @@ $string['leavetokeep'] = "Biarkan kosong untuk memakai password yang lama";
 $string['license'] = "Lisensi GPL";
 $string['listofallpeople'] = "Daftar semua anggota";
 $string['livelogs'] = "Catatan dari beberapa jam terakhir";
+$string['locale'] = "id_ID";
 $string['location'] = "Lokasi";
 $string['loggedinas'] = "Anda login sebagai \$a.";
 $string['loggedinnot'] = "Anda belum login.";

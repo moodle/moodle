@@ -255,6 +255,7 @@ $string['leavetokeep'] = "現在のパスワードを使う場合は空白にしてください";
 $string['license'] = "GPLライセンス";
 $string['listofallpeople'] = "全員を表示する";
 $string['livelogs'] = "リアルタイムログの表示";
+$string['locale'] = "ja_JP";
 $string['location'] = "現在地";
 $string['loggedinas'] = "ログイン名 \$a ";
 $string['loggedinnot'] = "ログインしていません";

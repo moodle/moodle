@@ -200,6 +200,7 @@ $string['latestnews'] = "ÂÎÑ ÇáÃÎÈÇÑ";
 $string['listofallpeople'] = "ŞÇÆãÉ ÈÌãíÚ ÇáÃÔÎÇÕ";
 $string['license'] = "GPL ÑÎÕÉ";
 $string['livelogs'] = "ãáİÇÊ ÓÌáÇÊ ÍíÉ Úä ÇáÓÇÚÉ ÇáÃÎíÑÉ";
+$string['locale'] = "ar";
 $string['location'] = "ÇáãæŞÚ";
 $string['loggedinas'] = "Êã ÏÎæáß ÈÕİÉ \$a.";
 $string['loggedinnot'] = "áã íÊã ÏÎæáß.";

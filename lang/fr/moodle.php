@@ -205,6 +205,7 @@ $string['leavetokeep'] = "Laisser vide pour ne pas changer le mot de passe";
 $string['license'] = "Licence GPL";
 $string['listofallpeople'] = "Liste de tous les inscrits";
 $string['livelogs'] = "Évènements de l'heure passée";
+$string['locale'] = "fr_FR";
 $string['location'] = "Emplacement";
 $string['loggedinas'] = "« \$a » connecté";
 $string['loggedinnot'] = "Non connecté.";

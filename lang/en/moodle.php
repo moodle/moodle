@@ -244,6 +244,7 @@ $string['latestnews'] = "Latest news";
 $string['listofallpeople'] = "List of all people";
 $string['license'] = "GPL License";
 $string['livelogs'] = "Live logs from the past hour";
+$string['locale'] = "en_GB";
 $string['location'] = "Location";
 $string['loggedinas'] = "You are logged in as \$a ";
 $string['loggedinnot'] = "You are not logged in.";

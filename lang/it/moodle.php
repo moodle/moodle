@@ -237,6 +237,7 @@ $string['leavetokeep'] = "Lascia in bianco per conservare la tua attuale passwor
 $string['license'] = "Licenza GPL";
 $string['listofallpeople'] = "Lista di tutte le persone";
 $string['livelogs'] = "Logs dell'ultima ora";
+$string['locale'] = "it_IT";
 $string['location'] = "Località";
 $string['loggedinas'] = "Sei collegato come \$a.";
 $string['loggedinnot'] = "Non sei collegato.";

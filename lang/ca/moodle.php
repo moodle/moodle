@@ -196,6 +196,7 @@ $string['leavetokeep'] = "Deixa en blanc per tal de mantenir la contrasenya actu
 $string['license'] = "Llicència GPL";
 $string['listofallpeople'] = "Llistat de tota la gent";
 $string['livelogs'] = "Diaris de l'última hora";
+$string['locale'] = "ca_ES";
 $string['location'] = "Localització";
 $string['loggedinas'] = "Has entrat com \$a";
 $string['loggedinnot'] = "No has entrat";

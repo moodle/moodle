@@ -203,6 +203,7 @@ $string['leavetokeep'] = "Deixe espaço em branco para manter senha atual";
 $string['license'] = "Licensa GPL";
 $string['listofallpeople'] = "Lista de todas as pessoas";
 $string['livelogs'] = "Troncos ao vivo da última hora";
+$string['locale'] = "pt_BR";
 $string['location'] = "Localização";
 $string['loggedinas'] = "Você foi identificado como \$a.";
 $string['loggedinnot'] = "Você não foi identificado.";

@@ -236,6 +236,7 @@ $string['leavetokeep'] = "Pidä tyhjänä säilyttääksi nykyisen salasanasi.";
 $string['license'] = "GPL Lisenssi";
 $string['listofallpeople'] = "Kaikki henkilöt";
 $string['livelogs'] = "Anna viimeisen tunnin loki";
+$string['locale'] = "fi_FI";
 $string['location'] = "Sijainti";
 $string['loggedinas'] = "Olet kirjautunut nimellä  \$a.";
 $string['loggedinnot'] = "Et ole kirjauntunut.";

@@ -221,6 +221,7 @@ $string['leavetokeep'] = "Dejar en blanco para mantener la contraseña actual";
 $string['license'] = "Licencia GPL";
 $string['listofallpeople'] = "Lista total de personas";
 $string['livelogs'] = "Regsitros en vivo de la última hora";
+$string['locale'] = "es_MX";
 $string['location'] = "Ubicación";
 $string['loggedinas'] = "Ud. está en el sistema \$a.";
 $string['loggedinnot'] = "Ud. no está en el sistema.";

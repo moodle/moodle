@@ -231,6 +231,7 @@ $string['latestnews'] = "Siste nyheter";
 $string['listofallpeople'] = "Vis alle";
 $string['license'] = "(C) Kopibeskyttelse";
 $string['livelogs'] = "Aktive logger for den siste timen";
+$string['locale'] = "no_NO";
 $string['location'] = "Sted";
 $string['loggedinas'] = "Du er logget inn som \$a ";
 $string['loggedinnot'] = "Du er ikke logget inn.";

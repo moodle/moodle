@@ -236,6 +236,7 @@ $string['leavetokeep'] = "Passwort-Feld leer lassen, um momentanes Passwort zu b
 $string['license'] = "GPL-Lizenz";
 $string['listofallpeople'] = "Liste aller Leute";
 $string['livelogs'] = "Aktuelle Statistiken der letzten Stunde";
+$string['locale'] = "de_DE";
 $string['location'] = "Ort";
 $string['loggedinas'] = "Sie sind angemeldet als \$a";
 $string['loggedinnot'] = "Sie sind nicht angemeldet.";
