@@ -108,7 +108,7 @@
     print_group_picture($group, $course->id, true, false, false);
     echo '</div>';
     if ($group->description) {
-        print_simple_box($group->description, 'center', '50%');
+        print_simple_box(format_text($group->description), 'center', '50%');
     }
 
     echo '<br />';
