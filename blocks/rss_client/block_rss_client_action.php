@@ -113,8 +113,7 @@
         if ($rss === false) {
             print 'There was an error loading this rss feed. You may want to verify the url you have specified before using it.'; //Daryl Hawes note: localize this line
         } else {
-            print_object($rss);
-            
+
             $dataobject->id = $rssid;
             if (!empty($rss->channel['description'])) {
                 $dataobject->description = addslashes($rss->channel['description']);
