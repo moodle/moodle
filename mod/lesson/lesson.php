@@ -338,10 +338,17 @@
                     error("Continue: No answers found");
                 }
                 foreach ($answers as $answer) {
+                    // massage the wild cards (if present)
+                    if (strpos(' '.$answer->answer, '*')) {
+                        $answer->answer = str_replace('\*','@@@@@@', $answer->answer);
+                        $answer->answer = str_replace('*','.*', $answer->answer);
+                        $answer->answer = str_replace('@@@@@@', '\*', $answer->answer);
+                        $answer->answer = str_replace('+', '\+', $answer->answer);
+                    }
                     if (lesson_iscorrect($pageid, $answer->jumpto)) {
                         if ($page->qoption) {
                             // case sensitive
-                            if ($answer->answer == $useranswer) {
+                            if (ereg('^'.$answer->answer.'$', $useranswer)) {
                                 $correctanswer = true;
                                 $newpageid = $answer->jumpto;
                                 if (trim(strip_tags($answer->response))) {
@@ -350,7 +357,7 @@
                             }
                         } else {
                             // case insensitive
-                            if (strcasecmp($answer->answer, $useranswer) == 0) {
+                            if (eregi('^'.$answer->answer.'$', $useranswer)) {
                                 $correctanswer = true;
                                 $newpageid = $answer->jumpto;
                                 if (trim(strip_tags($answer->response))) {
@@ -361,7 +368,7 @@
                     } else {
                         // see if user typed in any of the wrong answers
                         // don't worry about case
-                        if (strcasecmp($answer->answer, $useranswer) == 0) {
+                        if (eregi('^'.$answer->answer.'$', $useranswer)) {
                             $newpageid = $answer->jumpto;
                             if (trim(strip_tags($answer->response))) {
                                 $response = $answer->response;
@@ -1250,6 +1257,12 @@
             for ($i = 0; $i < $lesson->maxanswers; $i++) {
                 // strip tags because the editor gives <p><br />...
                 // also save any answers where the editor is (going to be) used
+                if (!isset($form->answereditor[$i])) { // clean up check box
+                    $form->answereditor[$i] = 0;
+                }
+                if (!isset($form->responseeditor[$i])) { // clean up check box
+                    $form->responseeditor[$i] = 0;
+                }
                 if (trim(strip_tags($form->answer[$i])) or $form->answereditor[$i] or $form->responseeditor[$i]) {
                     if ($form->answerid[$i]) {
                         unset($oldanswer);
