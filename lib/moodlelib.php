@@ -91,22 +91,23 @@ define('HOURMINS', 60);
 /**
  * Parameter constants - if set then the parameter is cleaned of scripts etc
  */
-define('PARAM_RAW',     0x0000);
-define('PARAM_CLEAN',   0x0001);
-define('PARAM_INT',     0x0002);
-define('PARAM_INTEGER', 0x0002);  // Alias for PARAM_INT
-define('PARAM_ALPHA',   0x0004);
-define('PARAM_ACTION',  0x0004);  // Alias for PARAM_ALPHA
-define('PARAM_FORMAT',  0x0004);  // Alias for PARAM_ALPHA
-define('PARAM_NOTAGS',  0x0008);
-define('PARAM_FILE',    0x0010);
-define('PARAM_PATH',    0x0020);
-define('PARAM_HOST',    0x0040);  // FQDN or IPv4 dotted quad
-define('PARAM_URL',     0x0080);
-define('PARAM_LOCALURL',0x0180);  // NOT orthogonal to the others! Implies PARAM_URL!
+define('PARAM_RAW',      0x0000);
+define('PARAM_CLEAN',    0x0001);
+define('PARAM_INT',      0x0002);
+define('PARAM_INTEGER',  0x0002);  // Alias for PARAM_INT
+define('PARAM_ALPHA',    0x0004);
+define('PARAM_ACTION',   0x0004);  // Alias for PARAM_ALPHA
+define('PARAM_FORMAT',   0x0004);  // Alias for PARAM_ALPHA
+define('PARAM_NOTAGS',   0x0008);
+define('PARAM_FILE',     0x0010);
+define('PARAM_PATH',     0x0020);
+define('PARAM_HOST',     0x0040);  // FQDN or IPv4 dotted quad
+define('PARAM_URL',      0x0080);
+define('PARAM_LOCALURL', 0x0180);  // NOT orthogonal to the others! Implies PARAM_URL!
 define('PARAM_CLEANFILE',0x0200);
-define('PARAM_ALPHANUM',0x0400);  //numbers or letters only
-define('PARAM_BOOL',    0x0800);  //convert to value 1 or 0 using empty()
+define('PARAM_ALPHANUM', 0x0400);  //numbers or letters only
+define('PARAM_BOOL',     0x0800);  //convert to value 1 or 0 using empty()
+define('PARAM_CLEANHTML',0x1000);  //actual HTML code that you want cleaned and slashes removed
 
 /**
  * Definition of page types
@@ -305,6 +306,12 @@ function clean_param($param, $options) {
                 }
             }
         }
+    }
+
+    if ($options & PARAM_CLEANHTML) {
+        $param = stripslashes($param);         // Remove any slashes 
+        $param = clean_text($param);           // Sweep for scripts, etc
+        $param = trim($param);                 // Sweep for scripts, etc
     }
 
     return $param;
