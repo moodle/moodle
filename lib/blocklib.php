@@ -537,7 +537,7 @@ function upgrade_blocks_plugins($continueto) {
             print_heading($block->name);
             $updated_blocks = true;
             $db->debug = true;
-            set_time_limit(0);  // To allow slow databases to complete the long SQL
+            @set_time_limit(0);  // To allow slow databases to complete the long SQL
             if (!is_dir("$fullblock/db/") || modify_database("$fullblock/db/$CFG->dbtype.sql")) {
                 $db->debug = false;
                 if ($block->id = insert_record('blocks', $block)) {

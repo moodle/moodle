@@ -126,7 +126,7 @@
     if (!isset($CFG->disablescheduledbackups)) {   // Defined in config.php
         //Execute backup's cron
         //Perhaps a long time and memory could help in large sites
-        set_time_limit(0);
+        @set_time_limit(0);
         ini_set("memory_limit","56M");
         if (file_exists("$CFG->dirroot/backup/backup_scheduled.php") and
             file_exists("$CFG->dirroot/backup/backuplib.php") and

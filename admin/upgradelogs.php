@@ -20,7 +20,7 @@
 
 /// Turn off time limits, sometimes upgrades can be slow.
 
-    set_time_limit(0);
+    @set_time_limit(0);
 
 
 /// Print header

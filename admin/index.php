@@ -68,7 +68,7 @@
 
 /// Turn off time limits, sometimes upgrades can be slow.
 
-    set_time_limit(0);
+    @set_time_limit(0);
 
 /// Check if the main tables have been installed yet or not.
 
@@ -291,7 +291,7 @@
             print_heading($module->name);
             $updated_modules = true;
             $db->debug = true;
-            set_time_limit(0);  // To allow slow databases to complete the long SQL
+            @set_time_limit(0);  // To allow slow databases to complete the long SQL
             if (modify_database("$fullmod/db/$CFG->dbtype.sql")) {
                 $db->debug = false;
                 if ($module->id = insert_record("modules", $module)) {
