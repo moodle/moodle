@@ -28,7 +28,8 @@ Now I show the specific detailed status of every item in the process:
           (in backup process).
 18. TODO: If the course hasn't users and the importer is a teacher, make him
           teacher in the restored course.
-19. TODO: Move blocks code to libraries and use it in a standard way.
+19. DONE: Move blocks code to libraries and use it in a standard way. Now new
+          blocks are supported by scheduled backup.
 20. TODO: Review the lesson module completely! Check the upgrade process to
           mimic it.
 21. TODO: Review the workshop module completely! Check the upgrade process to

@@ -558,6 +558,12 @@ function schedule_backup_course_execute($preferences,$starttime = 0) {
             $status = backup_course_start($backup_file,$preferences);
         }
 
+        //Block info
+        if ($status) {
+            schedule_backup_log($starttime,$preferences->backup_course,"      blocks info");
+            $status = backup_course_blocks($backup_file,$preferences);
+        }
+
         //Section info
         if ($status) {
             schedule_backup_log($starttime,$preferences->backup_course,"      sections info");

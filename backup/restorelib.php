@@ -583,6 +583,66 @@
         return $status;
     }
 
+    //This function creates all the block stuff when restoring courses
+    //It calls selectively to  restore_create_block_instances() for 1.5 
+    //and above backups. Upwards compatible with old blocks.
+    function restore_create_blocks($restore, $backup_block_format, $blockinfo, $xml_file) {
+
+        $status = true;
+
+        delete_records('block_instance', 'pageid', $restore->course_id, 'pagetype', MOODLE_PAGE_COURSE);
+        if (empty($backup_block_format)) {     // This is a backup from Moodle < 1.5
+            if (empty($blockinfo)) {
+                echo " from pre 1.3";                                 //debug
+                // Looks like it's from Moodle < 1.3. Let's give the course default blocks...
+                $newpage = page_create_object(MOODLE_PAGE_COURSE, $restore->course_id);
+                blocks_repopulate_page($newpage);
+            } else {
+                echo " from 1.3-1.4";                                 //debug
+                // We just have a blockinfo field, this is a legacy 1.4 or 1.3 backup
+                $blockrecords = get_records_select('block', '', '', 'name, id');
+                $temp_blocks_l = array();
+                $temp_blocks_r = array();
+                @list($temp_blocks_l, $temp_blocks_r) = explode(':', $blockinfo);
+                $temp_blocks = array(BLOCK_POS_LEFT => explode(',', $temp_blocks_l), BLOCK_POS_RIGHT => explode(',', $temp_blocks_r));
+                foreach($temp_blocks as $blockposition => $blocks) {
+                    $blockweight = 0;
+                    foreach($blocks as $blockname) { 
+                        if(!isset($blockrecords[$blockname])) {
+                            // We don't know anything about this block!
+                            continue;
+                        }
+                        $blockinstance = new stdClass;
+                        // Remove any - prefix before doing the name-to-id mapping
+                        if(substr($blockname, 0, 1) == '-') {
+                            $blockname = substr($blockname, 1);
+                            $blockinstance->visible = 0;
+                        } else {
+                            $blockinstance->visible = 1;
+                        }
+                        $blockinstance->blockid  = $blockrecords[$blockname]->id;
+                        $blockinstance->pageid   = $restore->course_id;
+                        $blockinstance->pagetype = MOODLE_PAGE_COURSE;
+                        $blockinstance->position = $blockposition;
+                        $blockinstance->weight   = $blockweight;
+                        if(!$status = insert_record('block_instance', $blockinstance)) {
+                            $status = false;
+                        }
+                        ++$blockweight;
+                    }
+                }
+            }
+        } else if($info->backup_block_format == 'instances') {
+            echo " from 1.5";                                 //debug
+            if(!$status = restore_create_block_instances($restore,$xml_file)) {
+                $status = false;
+            }
+        }
+
+        return $status;
+
+    } 
+
     //This function creates all the block_instances from xml when restoring in a
     //new course
     function restore_create_block_instances($restore,$xml_file) {
@@ -3168,7 +3228,7 @@
 
     function restore_precheck($id,$file,$silent=false) {
         
-        global $CFG;
+        global $CFG, $SESSION;
 
         //Prepend dataroot to variable to have the absolute path
         $file = $CFG->dataroot."/".$file;
