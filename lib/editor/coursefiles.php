@@ -681,7 +681,7 @@ function displaydir ($wdir) {
     $fullpath = $basedir.$wdir;
 
     $directory = opendir($fullpath);             // Find all files
-    while (false !== ($file = readdir($currdir))) {
+    while (false !== ($file = readdir($directory))) {
         if ($file == "." || $file == "..") {
             continue;
         }
