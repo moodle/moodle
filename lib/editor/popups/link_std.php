@@ -151,11 +151,6 @@ border-bottom: 1px solid black; letter-spacing: 2px;
 
 <table border="0" style="width: 100%;">
   <tr>
-    <td class="label"><?php print_string("anchors","editor");?>:</td>
-    <td><select id="f_anchors" onchange="seturl()">
-    <option value="">----</option></select></td>
-  </tr>
-  <tr>
     <td class="label"><?php print_string("linkurl","editor");?>:</td>
     <td><input type="text" id="f_href" style="width: 100%" /></td>
   </tr>
@@ -171,6 +166,11 @@ border-bottom: 1px solid black; letter-spacing: 2px;
       <option value="_self"><?php print_string("linktargetself","editor");?></option>
       <option value="_top"><?php print_string("linktargettop","editor");?></option>
     </select>
+  <tr>
+    <td class="label"><?php print_string("anchors","editor");?>:</td>
+    <td><select id="f_anchors" onchange="seturl()">
+    <option value="">----</option></select></td>
+  </tr>
     <input type="text" name="f_other_target" id="f_other_target" size="10" style="visibility: hidden" />
     </td>
   </tr>
