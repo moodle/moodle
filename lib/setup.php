@@ -140,6 +140,9 @@
 /// Eventually I'll go through and upgrade all the code to make this unnecessary
 
     if (isset($_REQUEST)) {
+        if (isset($_REQUEST['CFG'])) {
+            unset($_REQUEST['CFG']);  // We don't want to overwrite $CFG!
+        }
         extract($_REQUEST);
     }
     if (isset($_SERVER)) { 

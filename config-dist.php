@@ -28,6 +28,7 @@
 //                                                                       //
 ///////////////////////////////////////////////////////////////////////////
 
+unset($CFG);  // Ignore this line
 
 //=========================================================================
 // 1. DATABASE SETUP
@@ -47,6 +48,9 @@ $CFG->dbhost    = "localhost";   // eg localhost or db.isp.com
 $CFG->dbname    = "moodle";      // database name, eg moodle
 $CFG->dbuser    = "username";    // your database username
 $CFG->dbpass    = "password";    // your database password
+
+$CFG->dbpersist = true;          // Use persistent database connection? 
+                                 // (should be 'true' for 99% of sites)
 
 $CFG->prefix    = "mdl_";        // Prefix to use for all table names
 
