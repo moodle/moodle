@@ -42,8 +42,9 @@
     $lastcolumn = false;   // for now
     $side = 175;
 
+    $site_summary_editbuttons = '';
     if (isediting($site->id)) {
-        $site->summary .= "<br><center><a href=\"$CFG->admin/site.php\"><img src=\"pix/i/edit.gif\" border=0></a>";
+        $site_summary_editbuttons = "<br><center><a href=\"$CFG->admin/site.php\"><img src=\"pix/i/edit.gif\" border=0></a>";
     }
 
     if ($site->summary) {
@@ -165,7 +166,8 @@
 
      if ($lastcolumn) {
          echo "<td width=\"30%\" valign=\"top\">";
-         print_simple_box($site->summary, "", "100%", $THEME->cellcontent2, 5, "siteinfo");
+         print_simple_box(format_text($site->summary, FORMAT_HTML).$site_summary_editbuttons, 
+                          "", "100%", $THEME->cellcontent2, 5, "siteinfo");
          print_spacer(1,$side);
          echo "</td>";
      }
