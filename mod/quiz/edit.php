@@ -190,7 +190,10 @@
             $strattemptsexist  = get_string("attemptsexist","quiz");
             $usercount = count_records("quiz_grades", "quiz", "$modform->instance");
             $strusers  = get_string("users");
-            notify("$strattemptsexist<br /><a href=\"report.php?id=$modform->instance\">$strviewallanswers ($usercount $strusers)</a>");
+            if (! $cm = get_coursemodule_from_instance("quiz", $modform->instance, $course->id)) {
+                error("Course Module ID was incorrect");
+            }
+            notify("$strattemptsexist<br /><a href=\"report.php?id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>");
         }
 
         ?>
