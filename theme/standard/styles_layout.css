@@ -192,20 +192,13 @@ table.formtable tbody th
  ***/
 
 #header-home {
-  padding:1em 0.5em;
-  height:2em;
 }
 
 #header {
-  padding:0.1em 0.5em;
 }
 
 .headermain {
   float:left;
-}
-
-#header .headermain {
-  margin:0.2em 0em;
 }
 
 .headermenu {
@@ -214,11 +207,11 @@ table.formtable tbody th
 }
 
 .navbar {
+  width:100%;
   padding:3px 0.5em;
   height:1.3em;
   border-width:1px;
   border-style:solid;
-  width:100%;
 }
 
 .navbar .breadcrumb {
