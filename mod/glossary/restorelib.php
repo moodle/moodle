@@ -10,7 +10,7 @@
     //                        |
     //                        |
     //                  glossary_entries
-    //               (UL,pk->id, fk->glossaryid,files)
+    //         (UL,pk->id, fk->glossaryid,files)
     //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
@@ -63,8 +63,8 @@
                 backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
                 //Now check if want to restore user data and do it.
-                    //Restore glossary_entries
-                    $status = glossary_entries_restore_mods($newid,$info,$restore);
+                //Restore glossary_entries
+                $status = glossary_entries_restore_mods($mod->id,$newid,$info,$restore);
             } else {
                 $status = false;
             }
@@ -80,62 +80,67 @@
     }
 
     //This function restores the glossary_entries
-    function glossary_entries_restore_mods($glossary_id,$info,$restore) {
+    function glossary_entries_restore_mods($old_glossary_id,$new_glossary_id,$info,$restore) {
 
         global $CFG;
 
         $status = true;
 
-        //Get the answers array
+        //Get the entries array
         $entries = $info['MOD']['#']['ENTRIES']['0']['#']['ENTRY'];
 
         //Iterate over entries
         for($i = 0; $i < sizeof($entries); $i++) {
-            $sub_info = $entries[$i];
-            //traverse_xmlize($sub_info);                                                                 //Debug
+            $ent_info = $entries[$i];
+            //traverse_xmlize($ent_info);                                                                 //Debug
             //print_object ($GLOBALS['traverse_array']);                                                  //Debug
             //$GLOBALS['traverse_array']="";                                                              //Debug
 
-		//We'll need this later!!
-            $oldid = backup_todb($sub_info['#']['ID']['0']['#']);
-            $olduserid = backup_todb($sub_info['#']['USERID']['0']['#']);
+            //We'll need this later!!
+            $oldid = backup_todb($ent_info['#']['ID']['0']['#']);
+            $olduserid = backup_todb($ent_info['#']['USERID']['0']['#']);
 
             //Now, build the GLOSSARY_ENTRIES record structure
-            $entry->glossaryid = $glossary_id;
-            $entry->userid = backup_todb($sub_info['#']['USERID']['0']['#']);
-            $entry->concept = backup_todb($sub_info['#']['CONCEPT']['0']['#']);
-            $entry->definition = backup_todb($sub_info['#']['DEFINITION']['0']['#']);
-            $entry->attachment = backup_todb($sub_info['#']['ATTACHMENT']['0']['#']);
-            $entry->timemodified = backup_todb($sub_info['#']['TIMEMODIFIED']['0']['#']);
-            $entry->teacherentry = backup_todb($sub_info['#']['TEACHERENTRY']['0']['#']);
+            $entry->glossaryid = $new_glossary_id;
+            $entry->userid = backup_todb($ent_info['#']['USERID']['0']['#']);
+            $entry->concept = backup_todb($ent_info['#']['CONCEPT']['0']['#']);
+            $entry->definition = backup_todb($ent_info['#']['DEFINITION']['0']['#']);
+            $entry->format = backup_todb($ent_info['#']['FORMAT']['0']['#']);
+            $entry->attachment = backup_todb($ent_info['#']['ATTACHMENT']['0']['#']);
+            $entry->timecreated = backup_todb($ent_info['#']['TIMECREATED']['0']['#']);
+            $entry->timemodified = backup_todb($ent_info['#']['TIMEMODIFIED']['0']['#']);
+            $entry->teacherentry = backup_todb($ent_info['#']['TEACHERENTRY']['0']['#']);
 
-           	//We have to recode the userid field
-           	$user = backup_getid($restore->backup_unique_code,"user",$entry->userid);
-           	if ($user) {
-               		$entry->userid = $user->new_id;
-           	}
-
-            if ( $entry->teacherentry or $restore->mods['glossary']->userinfo ) {
-
-	            //The structure is equal to the db, so insert the glossary_entries
-      	      $newid = insert_record ("glossary_entries",$entry);
+            //We have to recode the userid field
+            $user = backup_getid($restore->backup_unique_code,"user",$entry->userid);
+            if ($user) {
+                $entry->userid = $user->new_id;
+             }
+            //If it's a teacher entry or userinfo was selected, restore the entry
+            if ($entry->teacherentry or $restore->mods['glossary']->userinfo) {
+                //The structure is equal to the db, so insert the glossary_entries
+      	        $newid = insert_record ("glossary_entries",$entry);
 
             	//Do some output
-	          if (($i+1) % 50 == 0) {
-      	          echo ".";
+	        if (($i+1) % 50 == 0) {
+      	            echo ".";
             	    if (($i+1) % 1000 == 0) {
-                  	  echo "<br>";
-	                }
-      	          backup_flush(300);
-              }
-              if ($newid) {
-      	          //We have the newid, update backup_ids
-	                backup_putid($restore->backup_unique_code,"glossary_entries",$oldid,
-                             $newid);
-              } else {
-      	          $status = false;
-	          }
-			}
+                        echo "<br>";
+	            }
+      	            backup_flush(300);
+                }
+                if ($newid) {
+      	            //We have the newid, update backup_ids
+	            backup_putid($restore->backup_unique_code,"glossary_entries",$oldid,$newid);
+                    //Now copy moddata associated files if needed
+                    if ($entry->attachment) {
+                        $status = glossary_restore_files ($old_glossary_id, $new_glossary_id,
+                                                          $oldid, $newid, $restore);
+                    }
+                } else {
+      	            $status = false;
+	        }
+            }
         }
 
         return $status;
@@ -150,7 +155,7 @@
         $status = true;
         $todo = false;
         $moddata_path = "";
-        $forum_path = "";
+        $glossary_path = "";
         $temp_path = "";
 
         //First, we check to "course_id" exists and create is as necessary
@@ -158,7 +163,7 @@
         $dest_dir = $CFG->dataroot."/".$restore->course_id;
         $status = check_dir_exists($dest_dir,true);
 
-        //First, locate course's moddata directory
+        //Now, locate course's moddata directory
         $moddata_path = $CFG->dataroot."/".$restore->course_id."/".$CFG->moddata;
 
         //Check it exists and create it
