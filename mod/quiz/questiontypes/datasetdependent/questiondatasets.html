@@ -1,0 +1,58 @@
+<FORM name="theform" method="post" <?php echo $onsubmit ?> action="question.php">
+<CENTER>
+<INPUT type="hidden" name="nextwizardpage" value="calculated.html"/>
+<TABLE cellpadding=5>
+<?php if (!empty($datasets)) { ?>
+<TR valign="top">
+    <TD align="right"><B><?php  print_string("wildcard", "quiz") ?> </B></TD>
+    <TD align="right">{<?php foreach($datasets as $name => $tmp){break;} p($name) ?>}</TD>
+    <TD><B> - <?php  print_string("substitutedby", "quiz") ?></B></TD>
+    <TD align="left"><?php echo array_shift($datasets) ?></TD>
+</TR>
+<?php   foreach ($datasets as $name => $menu) { ?>    
+<TR valign="top">
+    <TD/>
+    <TD align="right">{<?php p($name) ?>}</TD>
+    <TD/>
+    <TD align="left"><?php echo $menu ?>
+</TR>
+<?php   }
+      } else { ?>
+<TR>
+<TD colspan="4"><?php print_string('nopossibledatasets', 'quiz') ?>
+<INPUT type="hidden" name="dataset[]" value="0"/>
+</TD>
+</TR>
+<?php } ?>
+<TR valign=top>
+    <TD/>
+    <TD/>
+    <TD/>
+    <TD>
+        <INPUT type="hidden" name="name"               value="<?php  p($question->name) ?>"/>
+        <INPUT type="hidden" name="questiontext"       value="<?php  p($question->questiontext) ?>"/>
+        <INPUT type="hidden" name="questiontextformat" value="<?php  p($question->questiontextformat) ?>"/>
+        <INPUT type="hidden" name="image"              value="<?php  p($question->image) ?>"/>
+        <?php foreach ($answers as $answer) { ?>
+        <INPUT type="hidden" name="answer[]"              value="<?php  p($answer->answer) ?>"/>
+        <INPUT type="hidden" name="fraction[]"            value="<?php  p($answer->fraction) ?>"/>
+        <INPUT type="hidden" name="feedback[]"            value="<?php  p($answer->feedback) ?>"/>
+        <INPUT type="hidden" name="tolerance[]"           value="<?php  p($answer->tolerance) ?>"/>
+        <INPUT type="hidden" name="tolerancetype[]"       value="<?php  p($answer->tolerancetype) ?>"/>
+        <INPUT type="hidden" name="correctanswerlength[]" value="<?php  p($answer->correctanswerlength) ?>"/>
+        <?php } ?>
+        <?php foreach ($units as $unit) { ?>
+        <INPUT type="hidden" name="multiplier[]"   value="<?php  p($unit->multiplier) ?>"/>
+        <INPUT type="hidden" name="unit[]"         value="<?php  p($unit->unit) ?>"/>
+        <?php } ?>
+    </TD>
+</TR>
+</TABLE>
+
+<INPUT type="hidden" name=id value="<?php  p($question->id) ?>">
+<INPUT type="hidden" name=qtype value="<?php  p($question->qtype) ?>">
+<INPUT type="hidden" name="category" value="<?php  p($question->category) ?>"/>
+<INPUT type="submit"      value="<?php  print_string("savechanges") ?>">
+</CENTER>
+</FORM>
+

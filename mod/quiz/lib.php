@@ -22,11 +22,13 @@ define("RANDOMSAMATCH", "6");
 define("DESCRIPTION",   "7");
 define("NUMERICAL",     "8");
 define("MULTIANSWER",   "9");
+define("CALCULATED",   "10");
 
 $QUIZ_QUESTION_TYPE = array ( MULTICHOICE   => get_string("multichoice", "quiz"),
                               TRUEFALSE     => get_string("truefalse", "quiz"),
                               SHORTANSWER   => get_string("shortanswer", "quiz"),
                               NUMERICAL     => get_string("numerical", "quiz"),
+                              CALCULATED    => get_string("calculated", "quiz"),
                               MATCH         => get_string("match", "quiz"),
                               DESCRIPTION   => get_string("description", "quiz"),
                               RANDOM        => get_string("random", "quiz"),
@@ -292,7 +294,6 @@ function quiz_load_questiontypes() {
         }
     }
 }
-
 
 /// FUNCTIONS ///////////////////////////////////////////////////////////////////
 
