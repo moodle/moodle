@@ -28,7 +28,7 @@ $string[''] = "";
 
         $strindivresp = get_string("indivresp", "quiz");
         $strname = get_string("name", "quiz");
-        $strgrade = get_string("grade", "quiz");
+        $strgrade = get_string("grade");
         $stritemanal = get_string("itemanal", "quiz");
         $strcorrresp = get_string("corrresp", "quiz");
         $strnoresponse = get_string("noresponse", "quiz");
