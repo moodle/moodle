@@ -136,23 +136,23 @@ function add_instance($resource) {
     $resource->timemodified = time();
 
     if (isset($resource->windowpopup)) {
-        $optionlist = array();
-        foreach ($RESOURCE_WINDOW_OPTIONS as $option) {
-            if (isset($resource->$option)) {
-                $optionlist[] = $option."=".$resource->$option;
+        if ($resource->windowpopup) {
+            $optionlist = array();
+            foreach ($RESOURCE_WINDOW_OPTIONS as $option) {
+                if (isset($resource->$option)) {
+                    $optionlist[] = $option."=".$resource->$option;
+                }
             }
-        }
-        $resource->popup = implode(',', $optionlist);
-        $resource->options = "";
-
-    } else if (isset($resource->windowpage)) {
-
-        if (isset($resource->framepage)) {
-            $resource->options = "frame";
-        } else {
+            $resource->popup = implode(',', $optionlist);
             $resource->options = "";
+        } else {
+            if (isset($resource->framepage)) {
+                $resource->options = "frame";
+            } else {
+                $resource->options = "";
+            }
+            $resource->popup = "";
         }
-        $resource->popup = "";
     }
 
     return insert_record("resource", $resource);
@@ -170,22 +170,23 @@ function update_instance($resource) {
     $resource->timemodified = time();
 
     if (isset($resource->windowpopup)) {
-        $optionlist = array();
-        foreach ($RESOURCE_WINDOW_OPTIONS as $option) {
-            if (isset($resource->$option)) {
-                $optionlist[] = $option."=".$resource->$option;
+        if ($resource->windowpopup) {
+            $optionlist = array();
+            foreach ($RESOURCE_WINDOW_OPTIONS as $option) {
+                if (isset($resource->$option)) {
+                    $optionlist[] = $option."=".$resource->$option;
+                }
             }
-        }
-        $resource->popup = implode(',', $optionlist);
-        $resource->options = "";
-
-    } else if (isset($resource->windowpage)) {
-        if (isset($resource->framepage)) {
-            $resource->options = "frame";
-        } else {
+            $resource->popup = implode(',', $optionlist);
             $resource->options = "";
+        } else {
+            if (isset($resource->framepage)) {
+                $resource->options = "frame";
+            } else {
+                $resource->options = "";
+            }
+            $resource->popup = "";
         }
-        $resource->popup = "";
     }
 
     return update_record("resource", $resource);

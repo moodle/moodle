@@ -479,6 +479,10 @@ function setup($form) {
     if ($form->instance) {     // Re-editing
         if (!$form->popup) {
             $windowtype = "page";   // No popup text => in page
+            foreach ($RESOURCE_WINDOW_OPTIONS as $optionname) {
+                $defaultvalue = "resource_popup$optionname";
+                $window->$optionname = $CFG->$defaultvalue;
+            }
         } else {
             $windowtype = "popup";
             $rawoptions = explode(',', $form->popup);

@@ -28,7 +28,9 @@
             var frameitem = [<?php echo $frameoption; ?>];
             var allitems = [<?php echo $alloptions; ?>];
         </script>
-        <input type="checkbox" name="windowpage" value=1 <?php echo ($windowtype == "page") ? "checked" : "" ?> onClick="lockoptions('form', 'windowpage', frameitem); document.form.windowpopup.checked=false; return lockoptions('form', 'windowpopup', popupitems);">
+        <input type="radio" name="windowpopup" value=0 <?php echo ($windowtype != "popup") ? "checked" : "" ?> 
+        onClick="lockoptions('form', 'windowpopup[0]', frameitem); 
+        return lockoptions('form', 'windowpopup[1]', popupitems);">
         <?php print_string("pagedisplay", "resource") ?>
         <ul>
             <input type="hidden" name="hframepage" value=0>
@@ -44,8 +46,9 @@
     </td>
     
     <td>
-        <input name="setnewwindow" type=hidden value=1>
-        <input name="windowpopup" type=checkbox value=1 onclick="lockoptions('form','windowpopup', popupitems); document.form.windowpage.checked=false; return lockoptions('form', 'windowpage', frameitem);">
+        <input name="windowpopup" type=radio value=1 <?php echo ($windowtype == "popup") ? "checked" : "" ?>
+        onclick="lockoptions('form', 'windowpopup[0]', frameitem); 
+        return lockoptions('form', 'windowpopup[1]', popupitems);">
         <?php p($strnewwindowopen) ?>
         <ul>
         <?php
@@ -70,15 +73,11 @@
         <?php
             if ($windowtype == "page") {
                 echo "<script>";
-                echo "lockoptions('form','windowpopup', popupitems);";
-                echo "document.form.windowpage.checked=true;";
-                echo "document.form.windowpopup.checked=false;";
+                echo "lockoptions('form','windowpopup[1]', popupitems);";
                 echo "</script>";
             } else {
                 echo "<script>";
-                echo "lockoptions('form','windowpage', frameitem);";
-                echo "document.form.windowpopup.checked=true;";
-                echo "document.form.windowpage.checked=false;";
+                echo "lockoptions('form','windowpopup[0]', frameitem);";
                 echo "</script>";
             }
         ?>
