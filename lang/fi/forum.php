@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 Beta (2004022400)
+      // forum.php - created with Moodle 1.2 Beta +++ (2004031300)
 
 
 $string['addanewdiscussion'] = 'Lisää uusi keskustelu';
@@ -124,8 +124,8 @@ $string['subscribe'] = 'Tilaa tämä foorumi';
 $string['subscribed'] = 'Tilaaja';
 $string['subscribers'] = 'Tilaajat';
 $string['subscribersto'] = 'Tilaa \'$a\'';
-$string['subscribestart'] = 'Ei toiminnassa';
-$string['subscribestop'] = 'Ei toiminnassa';
+$string['subscribestart'] = 'Lähetä kopiot viesteistä sähköpostitse';
+$string['subscribestop'] = 'Älä lähetä kopiota viesteistä sähköpostilla';
 $string['subscription'] = 'Tilaus';
 $string['subscriptions'] = 'Tilaukset';
 $string['unsubscribe'] = 'Poista tämän foorumin tilaus';
