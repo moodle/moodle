@@ -100,7 +100,7 @@ $string['type'] = "ÇáäæÚ";
 $string['category'] = "ÊÕäíÝ";
 $string['viewallanswers'] = "ÚÑÖ \$a ÇáÇãÊÍÇäÇÊ ÇáãäÌÒÉ";
 $string['yourfinalgradeis'] = "ÊÕäíÝß ÇáäåÇÆí Úä åÐÇ ÇáÇãÊÍÇä åæ \$a";
-$string[answersingleno] = "Multiple answers allowed";
-$string[readytosend] = "You are about to send your whole quiz to be graded.  Are you sure you want to continue?";
+$string[answersingleno] = "íÓãÍ ÈÊÚÏÏ ÇáÃÓÆáÉ";
+$string[readytosend] = "ÃäÊ ÈÕÏÏ ÅÑÓÇá ÇÎÊÈÇÑß ÈÇáßÇãá ááÊÞííã. åá ÃäÊ ãÊÃßÏ æÊÑíÏ ÇáÇÓÊãÑÇÑ¿";
 ?>
 

@@ -110,8 +110,8 @@ $string['yourreply'] = "ÑÏß";
 $string['openmode0'] = "áÇ ÊæÌÏ ãäÇÞÔÇÊ¡ áÇ ÊæÌÏ ÑÏæÏ";
 $string['openmode1'] = "áÇ ÊæÌÏ ãäÇÞÔÇÊ¡ áßä íÓãÍ ÈÇáÑÏæÏ";
 $string['openmode2'] = "íÓãÍ ÈÇáãäÇÞÔÇÊ æÇáÑÏæÏ";
-$string[nopostscontaining] = "No posts containing '\$a' were found";
-$string[postincontext] = "See this post in context";
-$string[searchresults] = "Search results";
+$string[nopostscontaining] = "áã íÊã ÇáÚËæÑ Úáì ÑÓÇÆá ÊÍÊæí Úáì '\$a'";
+$string[postincontext] = "ÃäÙÑ Åáì åÐå ÇáÑÓÇáÉ Ýí ÇáÓíÇÞ";
+$string[searchresults] = "äÊÇÆÌ ÇáÈÍË";
 
 ?>

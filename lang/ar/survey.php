@@ -5,16 +5,16 @@ $string['modulename'] = "ÇÓÊÈíÇä";
 $string['modulenameplural'] = "ÇÓÊÈíÇäÇÊ";
 #------------------------------------------------------------
 
-$string['actual'] = "æÇŞÚí";
-$string['allquestions'] = "ßá ÇáÃÓÆáÉ áßá ÇáØáÈÉ ";
-$string['allscales'] = "ßá ÇáãæÇÒíä, ßá ÇáØáÈÉ";
+$string['actual'] = "İÚáí";
+$string['allquestions'] = "ßá ÇáÃÓÆáÉ áßá ÇáÏÇÑÓíä ";
+$string['allscales'] = "ßá ÇáãæÇÒíä, ßá ÇáÏÇÑÓíä";
 $string['alreadysubmitted'] = "ÃäÊ ÈÇáİÚá ÓáãÊ ÇáÇÓÊÈíÇä";
 $string['analysisof'] = "ÊÍáíá á \$a";
 $string['ipreferthat'] = " ÃİÖá Ãä";
 $string['ifoundthat'] = "æÌÏÊ Ãä";
 $string['done'] = "Êã";
 $string['download'] = "ÊäÒíá";
-$string['downloadexcel'] = "ßäÒíá ÇáÈíÇäÇÊ İí ÌÏæá ÈÕíÛÉ  Excel ";
+$string['downloadexcel'] = "ÊäÒíá ÇáÈíÇäÇÊ İí ÌÏæá ÈÕíÛÉ  Excel ";
 $string['downloadinfo'] = "íãßäß ÊäÒíá ÇáÈíÇäÇÊ ÈÍÇáÊåÇ áåĞÇ ÇáÇÓÊÈíÇä ÈÔßá ãäÇÓÈ áÊÍáíáåÇ İí  Excel, SPSS Ãæ Ãí ÈÑÇãÌ ÃÎÑì.";
 $string['downloadtext'] = "ÊäÒíá ÇáÈíÇäÇÊ İí ãÌÑÏ ãáİ äÕæÕ";
 $string['editingasurvey'] = "ÊÚÏíá ÇáÇÓÊÈíÇä";
@@ -33,7 +33,7 @@ $string['report'] = "ÊŞÑíÑ ÇáÇÓÊÈíÇä";
 $string['scales'] = "äØÇŞÇÊ";
 $string['savednotes'] = "ãáÇÍÙÇÊß ÍİÙÊ";
 $string['seemoredetail'] = "ÇÖÛØ åäÇ áÊÑì ÊİÇÕíá ÃßËÑ";
-$string['selectedquestions'] = "ÇÎÊÑ ÓÄÇáÇ ãä ÇáäØÇŞ, ßá ÇáØáÈÉ";
+$string['selectedquestions'] = "ÇÎÊÑ ÓÄÇáÇ ãä ÇáäØÇŞ, ßá ÇáÏÇÑÓíä";
 $string['summary'] = "ãæÌÒ";
 $string['surveycompleted'] = "áŞÏ ÃßãáÊ åĞÇ ÇáÇÓÊÈíÇä.  ÇáÑÓã ÇáÈíÇäí íæÖÍ ãáÎÕ äÊÇÆÌß ãŞÇÑäÉ ÈÇáãÊæÓØ .";
 $string['surveyname'] = "ÇÓã ÇáÇÓÊÈíÇä";
@@ -43,50 +43,144 @@ $string['thanksforanswers'] = "ÔßÑÇ Úáì ÇáÅÌÇÈÉ Úáì ÇáÇÓÊÈíÇä, \$a";
 $string['time'] = "ÇáæŞÊ";
 $string['viewsurveyresponses'] = "ÚÑÖ \$a ÑÏæÏ ÇáÇÓÊÈíÇä";
 
-$string[actualclass] = "Class actual";
-$string[actualstudent] = "\$a actual";
-$string[attlsname] = "ATTLS (20 item version)";
-$string[attlsintro] = "The purpose of this questionnaire is to help us evaluate your attitudes towards thinking and learning.
-There are no 'right' or 'wrong' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.";$string[attls1] = "In evaluating what someone says, I focus on the quality of their argument, not on the person who's presenting it.";$string[attls1short] = "focus quality of argument";$string[attls2] = "I like playing devil's advocate - arguing the opposite of what someone is saying.";$string[attls2short] = "play devil's advocate";$string[attls3] = "I like to understand where other people are 'coming from', what experiences have led them to feel the way they do.";$string[attls3short] = "where people come from";$string[attls4] = "The most important part of my education has been learning to understand people who are very different to me.";$string[attls4short] = "understand different people";$string[attls5] = "I feel that the best way for me to achieve my own identity is to interact with a variety of other people.";$string[attls5short] = "interact with variety";$string[attls6] = "I enjoy hearing the opinions of people who come from backgrounds different to mine - it helps me to understand how the same things can be seen in such different ways.";$string[attls6short] = "enjoy hearing opinions";$string[attls7] = "I find that I can strengthen my own position through arguing with someone who disagrees with me.";$string[attls7short] = "strengthen by argue";$string[attls8] = "I am always interested in knowing why people say and believe the things they do.";$string[attls8short] = "know why people do";$string[attls9] = "I often find myself arguing with the authors of books that I read, trying to logically figure out why they're wrong.";$string[attls9short] = "argue with authors";$string[attls10] = "It's important for me to remain as objective as possible when I analyze something.";$string[attls10short] = "remain objective";$string[attls11] = "I try to think with people instead of against them.";$string[attls11short] = "think WITH people";$string[attls12] = "I have certain criteria I use in evaluating arguments.";$string[attls12short] = "use criteria to evaluate";$string[attls13] = "I'm more likely to try to understand someone else's opinion that to try to evaluate it.";$string[attls13short] = "try to understand";$string[attls14] = "I try to point out weaknesses in other people's thinking to help them clarify their arguments.";$string[attls14short] = "point out weaknesses";$string[attls15] = "I tend to put myself in other people's shoes when discussing controversial issues, to see why they think the way they do.";$string[attls15short] = "put myself in their shoes";$string[attls16] = "One could call my way of analysing things 'putting them on trial' because I am careful to consider all the evidence.";$string[attls16short] = "putting on trial";$string[attls17] = "I value the use of logic and reason over the incorporation of my own concerns when solving problems.";$string[attls17short] = "i value logic most";$string[attls18] = "I can obtain insight into opinions that differ from mine through empathy.";$string[attls18short] = "insight from empathy";$string[attls19] = "When I encounter people whose opinions seem alien to me, I make a deliberate effort to 'extend' myself into that person, to try to see how they could have those opinions.";$string[attls19short] = "make effort to extend";$string[attls20] = "I spend time figuring out what's 'wrong' with things. For example, I'll look for something in a literary interpretation that isn't argued well enough.";$string[attls20short] = "what's wrong?";$string[attlsmintro] = "In discussion ...";$string[attlsm1] = "Attitudes Towards Thinking and Learning";$string[attlsm2] = "Connected Learning";$string[attlsm3] = "Separate Learning";$string[clicktocontinue] = "Click here to continue";$string[clicktocontinuecheck] = "Click here to check and continue";$string[colles1] = "my learning focuses on issues that interest me.";$string[colles1short] = "focus on interesting issues";$string[colles2] = "what I learn is important for my professional practice.";$string[colles2short] = "important to my practice";$string[colles3] = "I learn how to improve my professional practice.";$string[colles3short] = "improve my practice";$string[colles4] = "what I learn connects well with my professional practice.";$string[colles4short] = "connects with my practice";$string[colles5] = "I think critically about how I learn.";$string[colles5short] = "I'm critical of my learning";$string[colles6] = "I think critically about my own ideas.";$string[colles6short] = "I'm critical of my own ideas";$string[colles7] = "I think critically about other students' ideas.";$string[colles7short] = "I'm critical of other students";$string[colles8] = "I think critically about ideas in the readings.";$string[colles8short] = "I'm critical of readings";$string[colles9] = "I explain my ideas to other students.";$string[colles9short] = "I explain my ideas";$string[colles10] = "I ask other students to explain their ideas.";$string[colles10short] = "I ask for explanations";$string[colles11] = "other students ask me to explain my ideas.";$string[colles11short] = "I'm asked to explain";$string[colles12] = "other students respond to my ideas.";$string[colles12short] = "students respond to me";$string[colles13] = "the tutor stimulates my thinking.";$string[colles13short] = "tutor stimulates thinking";$string[colles14] = "the tutor encourages me to participate.";$string[colles14short] = "tutor encourages me";$string[colles15] = "the tutor models good discourse.";$string[colles15short] = "tutor models discourse";$string[colles16] = "the tutor models critical self-reflection.";$string[colles16short] = "tutor models self-reflection";$string[colles17] = "other students encourage my participation.";$string[colles17short] = "students encourage me";$string[colles18] = "other students praise my contribution.";$string[colles18hort] = "students praise me";$string[colles19] = "other students value my contribution.";$string[colles19short] = "students value me";$string[colles20] = "other students empathise with my struggle to learn.";$string[colles20short] = "students empathise";$string[colles21] = "I make good sense of other students' messages.";$string[colles21short] = "I understand other students";$string[colles22] = "other students make good sense of my messages.";$string[colles22short] = "students understand me";$string[colles23] = "I make good sense of the tutor's messages.";$string[colles23short] = "I understand the tutor";$string[colles24] = "the tutor makes good sense of my messages.";$string[colles24short] = "tutor understands me";$string[collesaname] = "COLLES (Actual)";$string[collesaintro] = "The purpose of this survey is to help us understand how well the online delivery of this unit enabled you to learn.
-Each one of the 24 statements below asks about your experience in this unit.
-There are no 'right' or 'wrong' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.
-Your carefully considered responses will help us improve the way this unit is presented online in the future.
-Thanks very much.";
-$string[collesapname] = "COLLES (Preferred and Actual)";
-$string[collesapintro] = "The purpose of this questionnaire is to help us understand how well the online delivery of this unit enabled you to learn. 
-Each one of the 24 statements below asks you to compare your <B>preferred</B> (ideal) and <B>actual</B> experience in this unit.
-There are no 'right' or 'wrong' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.
-Your carefully considered responses will help us improve the way this unit is presented online in the future.
-Thanks very much.";
-$string[collespname] = "COLLES (Preferred)";
-$string[collespintro] = "The purpose of this survey is to help us understand what you value in an online learning experience.
+$string[actualclass] = "ÇáİÕá ÇáİÚáí";
+$string[actualstudent] = "\$a İÚáí";
+$string[attlsname] = "ATTLS (äÓÎÉ ĞÇÊ ÚÔÑíä ÈäÏÇ)";
+$string[attlsintro] = "ÇáÛÑÖ ãä åĞÇ ÇáÇÓÊÈíÇä åæ ãÓÇÚÏÊäÇ Úáì ÊŞííã ãæÇŞİß ÍíÇá ÇáÊİßíÑ æÇáÊÚáã¡ æáíÓ åäÇß ÃÓÆáÉ "ÕæÇÈ" Ãæ "ÎØÃ"¡ İäÍä áÇ íåãäÇ ÅáÇ ÇáÊÚÑİ Úáì ÑÃíß İŞØ¡ ÊÃßÏ ãä Ãä ÑÏæÏß Óæİ ÊÚÇãá ÈÃŞÕì ÏÑÌÉ ãä ÇáÓÑíÉ æáä ÊÄËÑ Úáì ÊŞííãß.";
+$string[attls1] = "ÚäÏãÇ ÃŞæã ÈÊŞííã ßáÇã ÔÎÕ ãÇ İÅääí ÃåÊã ÈãŞÇáÊå ÃßËÑ ãä ĞÇÊå.";
+$string[attls1short] = "ÇáÊÑßíÒ Úáì ÌæÏÉ ÇáÍæÇÑ";
+$string[attls2] = "ÃÍÈ ÇáÌÏá ãä ÃÌá ÇáÌÏá İÃÊÈäì ÇáÑÃí ÇáãäÇŞÖ áãÇ íŞæáå ÇáÂÎÑæä.";
+$string[attls2short] = "ÇáÌÏá ãä ÃÌá ÇáÌÏá";
+$string[attls3] = "ÃÍÈ Ãä ÃÊÚÑİ Úáì ÇáÈíÆÇÊ ÇáÊí ÃÊí ãäåÇ ÇáÂÎÑæä æÚáì ÇáãæÇŞİ ÇáÊí ŞÇÏÊåã Åáì ÊÈäí ãÇ íÚÊäŞæä.";
+$string[attls3short] = "ÈíÆÇÊ ÇáÂÎÑíä";
+$string[attls4] = "Ãåã ãÇ íÚäíäí İí ÇáÏÑÇÓÉ åæ ÇáÊãßä ãä İåã ÇáÂÎÑíä ÇáĞíä íÎÊáİæä Úäí ßãÇ æßíİÇ.";
+$string[attls4short] = "İåã ÇáÔÎÕíÇÊ ÇáÃÎÑì";
+$string[attls5] = "ÃÍÓ Ãä ÃİÖá ÇáØÑŞ áÊÍŞíŞ ÇáĞÇÊ åæ ÇáÊİÇÚá ãÚ ãÌãæÚÇÊ ãÎÊáİÉ ãä ÇáÈÔÑ.";
+$string[attls5short] = "ÇáÊİÇÚá ãÚ ãÎÊáİ ÇáÈÔÑ";
+$string[attls6] = "ÇÓÊãÊÚ ÈÇáÇÓÊãÇÚ Åáì ÂÑÇÁ ÇáÂÎÑíä ãä Ğæí ÇáÎáİíÇÊ ÇáãÎÊáİÉ Úäí¡ İĞáß íÓÇÚÏäí Úáì İåã ÇÎÊáÇİ ÇáÑÄì áäİÓ ÇáÔíÁ .";
+$string[attls6short] = "ÇÓÊãÊÚ ÈÇáÇÓÊãÇÚ Åáì ÇáÂÑÇÁ";
+$string[attls7] = "ÃÑì Ãä ÈÇÓÊØÇÚÊí ÊŞæíÉ ãÑßÒí ãä ÎáÇá ÇáÌÏÇá ãÚ ÇáãÎÇáİ.";
+$string[attls7short] = "ÇáÊŞæíÉ ãä ÎáÇá ÇáÌÏÇá";
+$string[attls8] = "ÃåÊã ÏÇÆãÇ ÈãÚÑİÉ ÇáÏÇİÚ Åáì ãÇ íŞæáå ÇáÂÎÑæä æíÚÊŞÏæä.";
+$string[attls8short] = "ãÚÑİÉ ÓÈÈ ãÇ íİÚáå ÇáÂÎÑæä";
+$string[attls9] = "ÛÇáÈÇ ãÇ ÃäÎÑØ İí ÍæÇÑ ÚŞáí ãÚ ßÊÇÈ ÇáßÊÈ ÇáÊí ÃŞÑÃåÇ İí ãÍÇæáÉ ááæÕæá Åáì ÓÈÈ ãäØŞí áßæäåã áíÓæÇ Úáì ÕæÇÈ.";
+$string[attls9short] = "ãÍÇæÑÉ ãÚ ÇáßÊÇÈ";
+$string[attls10] = "ÃÑì ãä ÇáÃåãíÉ ÈãßÇä Ãä ÃÍÊİÙ ÈÇáãæÖæÚíÉ ŞÏÑ ÇáÅãßÇä ÚäÏãÇ ÃŞæã ÈÊÍáíá ÔíÁ ãÇ.";
+$string[attls10short] = "ÇáÇÍÊİÇÙ ÈÇáãæÖæÚíÉ";
+$string[attls11] = "ÃÍÇæá ÇáÊİßíÑ ãÚ ÇáÂÎÑíä áÇ ãÎÇáİÊåã İí ÇáÑÃí.";
+$string[attls11short] = "ÇáÊİßíÑ ãÚ ÇáÂÎÑíä";
+$string[attls12] = "ÚäÏí ãÚÇííÑ ãÚíäÉ ÇÓÊÎÏãåÇ áÊŞííã ÇáÍæÇÑÇÊ.";
+$string[attls12short] = "ÇÓÊÎÏÇã ãÚÇííÑ ááÊŞííã";
+$string[attls13] = "Ããíá Åáì ãÍÇæáÉ İåã ÂÑÇÁ ÇáÂÎÑíä Ïæä ÊŞííãåÇ.";
+$string[attls13short] = "ãÍÇæáÉ Çáİåã";
+$string[attls14] = "ÃÍÇæá ÊÍÏíÏ äŞÇØ ÇáÖÚİ İí ÃÓÇáíÈ ÊİßíÑ ÇáÂÎÑíä İí ÓÈíá ãÓÇÚÏÊåã Úáì ÊæÖíÍ ÍæÇÑÇÊåã.";
+$string[attls14short] = "ÊÍÏíÏ äŞÇØ ÇáÖÚİ";
+$string[attls15] = "Ããíá Åáì æÖÚ äİÓí ãæÖÚ ÇáÂÎÑíä ÚäÏ ãäÇŞÔÉ ÃÍÏ ÇáŞÖÇíÇ ÇáÎáÇİíÉ áÃÊÚÑİ Úáì ÃÓÈÇÈ ÊİßíÑåã ÈÊáß ÇáØÑíŞÉ.";
+$string[attls15short] = "ÃÖÚ äİÓí ãæÖÚ ÇáÂÎÑíä";
+$string[attls16] = "íãßä Ãä íØáŞ ÇáÈÚÖ Úáì ÃÓáæÈí İí ÊÍáíá ÇáÃÔíÇÁ 'æÖÚ ÇáÃÔíÇÁ ÊÍÊ ÇáÇÎÊÈÇÑ' áÃääí ÔÏíÏ ÇáÍÑÕ Úáì ÇáäÙÑ İí ßá ÇáÃÏáÉ.";
+$string[attls16short] = "ÇÎÊÈÇÑ";
+$string[attls17] = "ÃŞÏã ÇÓÊÎÏÇã ÇáãäØŞ æÇáÚŞá Úáì ÇÓÊÕÍÇÈ ÃİßÇÑí ÇáÔÎÕíÉ ÚäÏ Íá ÇáãÔßáÇÊ.";
+$string[attls17short] = "ÃİÖá ÇáãäØŞ Ïæä ÓæÇå";
+$string[attls18] = "íŞæÏäí ÇáÊÚÇØİ Åáì ÇáÊÈÕÑ İí ÇáÂÑÇÁ ÇáÊí ÊÎÇáİäí. ";
+$string[attls18short] = "ÇáÊÈÕÑ ãä ÎáÇá ÇáÊÚÇØİ";
+$string[attls19] = "ÚäÏãÇ ÃÕÇÏİ ÃäÇÓÇ ÊÈÏæ ÂÑÇÄåã ÛÑíÈÉ ÈÇáäÓÈÉ áí ÃÍÇæá ÌÇåÏÇ İÑÖ äİÓí Úáíåã áÃÑì ßíİ ÊÈäæÇ åĞå ÇáÂÑÇÁ.";
+$string[attls19short] = "ÈĞá ÇáÌåÏ áİÑÖ ÇáäİÓ";
+$string[attls20] = "ÃŞÖí ÈÚÖ ÇáæŞÊ áÊÊÈÚ ÇáÎáá İí ÔíÁ ãÇ¡ ãËáÇ: ÃÊÊÈÚ ãæØä ÇáÚáÉ İí ÊÍáíá ÃÏÈí áã ÊÊã ãäÇŞÔÊå Úáì äÍæ æÇİ.";
+$string[attls20short] = "ãæØä ÇáÚáÉ";
+$string[attlsmintro] = "İí äŞÇÔ...";
+$string[attlsm1] = "ÈÚÖ ÇáãæÇŞİ ÍíÇá ÇáÊİßíÑ æÇáÊÚáã";
+$string[attlsm2] = "ÇáÊÚáã ÇáãÊÕá";
+$string[attlsm3] = "ÇáÊÚáã ÇáãÓÊŞá";
+$string[clicktocontinue] = "ÇÖÛØ åäÇ ááÇÓÊãÑÇÑ";
+$string[clicktocontinuecheck] = "ÇÖÛØ åäÇ ááÇÎÊíÇÑ Ëã ÇáÇÓÊãÑÇÑ";
+$string[colles1] = "ÃÑßÒ İí ÇáÊÚáã Úáì ŞÖÇíÇ Êåãäí.";
+$string[colles1short] = "ÇáÊÑßíÒ Úáì ÇáŞÖÇíÇ ÇáåÇãÉ";
+$string[colles2] = "ãÇ ÃÊÚáãå íãËá ÃåãíÉ ÈÇáäÓÈÉ áÃÏÇÆí Çáãåäí.";
+$string[colles2short] = "ãåã áÃÏÇÆí";
+$string[colles3] = "ÃÚÑİ ßíİ ÃÍÓä ãä ÃÏÇÆí Çáãåäí.";
+$string[colles3short] = "ÃÍÓä ãä ÃÏÇÆí";
+$string[colles4] = "ãÇ ÃÊÚáãå íÑÊÈØ ÇÑÊÈÇØÇ æËíŞÇ ÈÃÏÇÆí Çáãåäí.";
+$string[colles4short] = "áå ÕáÉ ÈÃÏÇÆí";
+$string[colles5] = "ÃİßÑ ÈÔßá äŞÏí İíãÇ ÃÊÚáãå.";
+$string[colles5short] = "ÃÊäÇæá ÊÚáíãí ÈÇáäŞÏ";
+$string[colles6] = "ÃÊäÇæá ÃİßÇÑí ÈÇáäŞÏ.";
+$string[colles6short] = "ÃäÊŞÏ ÃİßÇÑí";
+$string[colles7] = "ÃİßÑ İí ÂÑÇÁ ÇáÏÇÑÓíä ÇáÂÎÑíä Úáì äÍæ äŞÏí.";
+$string[colles7short] = "ÃÊäÇæá ÇáÏÇÑÓíä ÇáÂÎÑíä ÈÇáäŞÏ";
+$string[colles8] = "ÃÊäÇæá ÇáÃİßÇÑ ÇáÊí ÃÌÏåÇ İí ÇáŞÑÇÁÇÊ ÈÇáäŞÏ";
+$string[colles8short] = "ÃÊäÇæá ÇáŞÑÇÁÇÊ ÈÇáäŞÏ";
+$string[colles9] = "ÃÔÑÍ ÃİßÇÑí ááÏÇÑÓíä ÇáÂÎÑíä";
+$string[colles9short] = "ÃÔÑÍ ÃİßÇÑí";
+$string[colles10] = "ÃØáÈ ãä ÇáÏÇÑÓíä ÇáÂÎÑíä ÔÑÍ ÃİßÇÑåã";
+$string[colles10short] = "ÃØáÈ ÊİÓíÑÇÊ";
+$string[colles11] = "íØáÈ ãäí ÇáÏÇÑÓæä ÇáÂÎÑæä Ãä ÇÔÑÍ ÃİßÇÑí";
+$string[colles11short] = "íØáÈ ãäí Ãä ÃæÖÍ";
+$string[colles12] = "íÓÊÌíÈ ÇáÏÇÑÓæä ÇáÂÎÑæä áÃİßÇÑí";
+$string[colles12short] = "íÓÊÌíÈ ÇáÏÇÑÓæä áí";
+$string[colles13] = "íŞæã ÇáãÚáã ÈÅËÇÑÉ ÃİßÇÑí";
+$string[colles13short] = "íŞæã ÇáãÚáã ÈÅËÇÑÉ ÇáÃİßÇÑ";
+$string[colles14] = "íÔÌÚäí ÇáãÚáã Úáì ÇáãÔÇÑßÉ";
+$string[colles14short] = "íŞæã ÇáãÚáã ÈÊÔÌíÚí";
+$string[colles15] = "íÄÏí ÇáãÚáã äãæĞÌÇ ÌíÏÇ ááÍæÇÑ";
+$string[colles15short] = "íÄÏí ÇáãÚáã äãæĞÌÇ ááÍæÇÑ";
+$string[colles16] = "íŞÏã ÇáãÚáã äãæĞÌÇ äŞÏíÇ áÇÎÊÈÇÑ ÇáĞÇÊ";
+$string[colles16short] = "íŞÏã ÇáãÚáã äãæĞÌÇ áÇÎÊÈÇÑ ÇáĞÇÊ";
+$string[colles17] = "íÔÌÚäí ÇáÏÇÑÓæä Úáì ÇáãÔÇÑßÉ";
+$string[colles17short] = "íÔÌÚäí ÇáÏÇÑÓæä";
+$string[colles18] = "íËäí ÇáØáÇÈ Úáì ãÔÇÑßÊí";
+$string[colles18hort] = "íËäí ÇáÏÇÑÓæä Úáí";
+$string[colles19] = "íŞÏÑ ÇáÏÇÑÓæä ãÔÇÑßÊí";
+$string[colles19short] = "íŞÏÑäí ÇáÏÇÑÓæä";
+$string[colles20] = "íÊÚÇØİ ÇáÏÇÑÓæä ãÚ ãÌåæÏí áÃÊÚáã.";
+$string[colles20short] = "íÊÚÇØİ ÇáÏÇÑÓæä";
+$string[colles21] = "Ãİåã ÑÓÇÆá ÇáÏÇÑÓíä ÌíÏÇ";
+$string[colles21short] = "Ãİåã ÇáÏÇÑÓíä";
+$string[colles22] = "íİåã ÇáÏÇÑÓæä ÑÓÇÆáí ÌíÏÇ";
+$string[colles22short] = "íİåãäí ÇáÏÇÑÓæä";
+$string[colles23] = "Ãİåã ÑÓÇÆá ÇáãÚáã ÌíÏÇ";
+$string[colles23short] = "Ãİåã ÇáãÚáã";
+$string[colles24] = "íİåã ÇáãÚáã ÑÓÇÆáí ÌíÏÇ.";
+$string[colles24short] = "ÇáãÚáã íİåãäí"
+$string[collesaname] = "COLLES (İÚáí)";
+$string[collesaintro] = "íßãä ÇáÛÑÖ ãä åĞÇ ÇáÇÓÊÈíÇä İí ÇáãÓÇÚÏÉ Úáì İåã ãÏì ßİÇÁÉ ÇáÏæÑ ÇáĞí íÄÏíå ÇáÊæÕíá ÇáãÈÇÔÑ áÊãßíäß ãä ÇáÊÚáã.
+æíŞæã ßá ãä ÇáÃÑÈÚÉ æÚÔÑæä ÓÄÇáÇ ÊÇáíå ÈÓÄÇáß Úä ÊÌÑÈÊß ãÚ åĞå ÇáæÍÏÉ.
+ÇáÛÑÖ ãä åĞÇ ÇáÇÓÊÈíÇä åæ ãÓÇÚÏÊäÇ Úáì ÊŞííã ãæÇŞİß ÍíÇá ÇáÊİßíÑ æÇáÊÚáã¡ æáíÓ åäÇß ÃÓÆáÉ "ÕæÇÈ" Ãæ "ÎØÃ"¡ İäÍä áÇ íåãäÇ ÅáÇ ÇáÊÚÑİ Úáì ÑÃíß İŞØ¡ ÊÃßÏ ãä Ãä ÑÏæÏß Óæİ ÊÚÇãá ÈÃŞÕì ÏÑÌÉ ãä ÇáÓÑíÉ æáä ÊÄËÑ Úáì ÊŞííãß.
+ÑÏæÏß ÇáãÊÃäíÉ Óæİ ÊÓÇÚÏäÇ Úáì ÊÍÓíä ÇáÚÑÖ ÇáãÈÇÔÑ áåĞå ÇáæÍÏÉ  ãÓÊŞÈáÇ.
+ãÚ ÌÒíá ÇáÔßÑ";
+$string[collesapname] = "COLLES (ÇáãÃãæá æÇáİÚáí)";
+$string[collesapintro] = "íßãä ÇáÛÑÖ ãä åĞÇ ÇáÇÓÊÈíÇä İí ÇáãÓÇÚÏÉ Úáì İåã ãÏì ßİÇÁÉ ÇáÏæÑ ÇáĞí íÄÏíå ÇáÊæÕíá ÇáãÈÇÔÑ áÊãßíäß ãä ÇáÊÚáã. 
+ãä ÎáÇá ÇáÃÓÆáÉ ÇáÊÇáíÉ æÚÏÏåÇ 24 ÓÄÇáÇ íØáÈ ãäß ãŞÇÑäÉ ÊÌÑÈÊß <B>ÇáãÃãæáÉ</B> (ÇáãËÇáíÉ) ãÚ ÊÌÑÈÊß <B> ÇáæÇŞÚíÉ </B> İí åĞå ÇáæÍÏÉ.
+æáíÓ åäÇß ÃÓÆáÉ "ÕæÇÈ" Ãæ "ÎØÃ"¡ İäÍä áÇ íåãäÇ ÅáÇ ÇáÊÚÑİ Úáì ÑÃíß İŞØ¡ ÊÃßÏ ãä Ãä ÑÏæÏß Óæİ ÊÚÇãá ÈÃŞÕì ÏÑÌÉ ãä ÇáÓÑíÉ æáä ÊÄËÑ Úáì ÊŞííãß.
+ÑÏæÏß ÇáãÊÃäíÉ Óæİ ÊÓÇÚÏäÇ Úáì ÊÍÓíä ÇáÚÑÖ ÇáãÈÇÔÑ áåĞå ÇáæÍÏÉ  ãÓÊŞÈáÇ.
+ãÚ ÌÒíá ÇáÔßÑ";
+$string[collespname] = "COLLES (ÇáİÚáí)";
+$string[collespintro] = "íßãä ÇáÛÑÖ ãä åĞÇ ÇáÇÓÊÈíÇä İí ÇáãÓÇÚÏÉ Úáì ãÚÑİÉ ãÇ íÍæÒ ÊŞÏíÑß İí ÚãáíÉ ÇáÊÚáã Úáì ÇáÅäÊÑäÊ.
 
-Each one of the 24 statements below asks about your <B>preferred</B> (ideal) experience in this unit.
+ãä ÎáÇá ÇáÃÓÆáÉ ÇáÊÇáíÉ æÚÏÏåÇ 24 ÓÄÇáÇ ÊÓÃá Úä ÊÌÑÈÊß <B>ÇáãÃãæáÉ</B> (ÇáãËÇáíÉ) İí åĞå ÇáæÍÏÉ.
 
-There are no 'right' or 'wrong' answers; we are interested only in your opinion. Please be assured that your responses will be treated with a high degree of confidentiality, and will not affect your assessment.
+æáíÓ åäÇß ÃÓÆáÉ "ÕæÇÈ" Ãæ "ÎØÃ"¡ İäÍä áÇ íåãäÇ ÅáÇ ÇáÊÚÑİ Úáì ÑÃíß İŞØ¡ ÊÃßÏ ãä Ãä ÑÏæÏß Óæİ ÊÚÇãá ÈÃŞÕì ÏÑÌÉ ãä ÇáÓÑíÉ æáä ÊÄËÑ Úáì ÊŞííãß.
+ÑÏæÏß ÇáãÊÃäíÉ Óæİ ÊÓÇÚÏäÇ Úáì ÊÍÓíä ÇáÚÑÖ ÇáãÈÇÔÑ áåĞå ÇáæÍÏÉ  ãÓÊŞÈáÇ.
 
-Your carefully considered responses will help us improve the way this unit is presented online in the future.
-
-Thanks very much.";
-$string[collesm1] = "Relevance";
-$string[collesm1short] = "Relevance";
-$string[collesm2] = "Reflective Thinking";
-$string[collesm2short] = "Reflective Thinking";
-$string[collesm3] = "Interactivity";
-$string[collesm3short] = "Interactivity";
-$string[collesm4] = "Tutor Support";
-$string[collesm4short] = "Tutor Support";
-$string[collesm5] = "Peer Support";
-$string[collesm5short] = "Peer Support";
-$string[collesm6] = "Interpretation";
-$string[collesm6short] = "Interpretation";
-$string[collesmintro] = "In this online unit...";
-$string[howlong] = "How long did this survey take you to complete?";
-$string[howlongoptions] = "under 1 min,1-2 min,2-3 min,3-4 min,4-5-min,5-10 min,more than 10";
-$string[othercomments] = "Do you have any other comments?";
-$string[preferredclass] = "Class preferred";
-$string[preferredstudent] = "\$a preferred";
-$string[questionsnotanswered] = "Some of the multiple choice questions have not been answered.";
-$string[scaleagree5] = "Strongly disagree,Somewhat disagree,Neither agree nor disagree,Somewhat agree,Strongly agree";
-$string[scaletimes5] = "Almost Never,Seldom,Sometimes,Often,Almost Always";
+ãÚ ÌÒíá ÇáÔßÑ.";
+$string[collesm1] = "ÇáÕáÉ";
+$string[collesm1short] = "ÇáÕáÉ";
+$string[collesm2] = "ÇáÊİßíÑ ÇáãÊÃäí";
+$string[collesm2short] = "ÇáÊİßíÑ ÇáãÊÃäí";
+$string[collesm3] = "ÇáÊİÇÚá";
+$string[collesm3short] = "ÇáÊİÇÚá";
+$string[collesm4] = "ÏÚã ÇáãÚáã";
+$string[collesm4short] = "ÏÚã ÇáãÚáã";
+$string[collesm5] = "ÏÚã ÇáäÙíÑ";
+$string[collesm5short] = "ÏÚã ÇáäÙíÑ";
+$string[collesm6] = "ÊİÓíÑ";
+$string[collesm6short] = "ÊİÓíÑ";
+$string[collesmintro] = "İí åĞå ÇáæÍÏÉ ÇáãÈÇÔÑÉ...";
+$string[howlong] = "ßã ãä ÇáæŞÊ ÃãÖíÊ İí ÅÊãÇã åĞÇ ÇáÇÓÊÈíÇä¿";
+$string[howlongoptions] = "ÃŞá ãä ÏŞíŞÉ¡ 1-2 ÏŞíŞÉ¡ 2-3 ÏŞÇÆŞ¡ 3-4 ÏŞÇÆŞ¡ 4-5 ÏŞÇÆŞ¡ 5-10 ÏŞÇÆŞ¡ ÃßËÑ ãä 10 ÏŞÇÆŞ";
+$string[othercomments] = "åá áÏíß ÊÚáíŞÇÊ ÃÎÑì¿";
+$string[preferredclass] = "ÇáİÕá ÇáãÃãæá";
+$string[preferredstudent] = "\$a ãÃãæá";
+$string[questionsnotanswered] = "áã íÊã ÇáÅÌÇÈÉ Úáì ÈÚÖ ÇáÃÓÆáÉ ĞÇÊ ÇáÎíÇÑÇÊ ÇáãÊÚÏÏÉ.";
+$string[scaleagree5] = ÃÚÇÑÖ ÈÔÏÉ¡ ÃÚÇÑÖ ÈÚÖ ÇáÔíÁ,áÇ ÃÚÇÑÖ æáÇ ÃÊİŞ,ÃÊİŞ ÈÚÖ ÇáÔíÁ¡ ÇÊİŞ ÈÔÏÉ";
+$string[scaletimes5] = "İí ÇáÛÇáÈ áÇ¡ äÇÏÑÇ¡ ÃÍíÇäÇ¡ İí ÃßËÑ ÇáÃÍíÇä¡ ÊŞÑíÈÇ ÏÇÆãÇ";
 ?>
