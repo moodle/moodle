@@ -51,6 +51,8 @@ if (isset($_GET['beep'])) {
     update_record("chat_users", $chatuser);
 }
 
+$chatuser->lastping = time();
+update_record("chat_users", $chatuser);
 
 /// Delete users who are using text version and are old
 
