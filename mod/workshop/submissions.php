@@ -368,10 +368,11 @@
                 }
                 for ($i = 0; $i < $workshop->nelements; $i++) {
                     $sd[$i] = sqrt($var[$i] / ($n - 1));
-                    echo get_string("standarddeviation", "workshop", $i+1)."$sd[$i]<br />";
+                    echo get_string("standarddeviation", "workshop", $i+1)." $sd[$i]<br />";
                     if ($sd[$i] <= $minvar) {
                             get_string("standarddeviationnote", "workshop")."<br />\n";
                     }
+                echo "<br />\n";
                 }
 
                 // calculate the mean variance (error) if just guessing
@@ -598,7 +599,7 @@
                             $submissiongrade = $sum / $n;
                         }
                     }
-                    $totalgrade = ($assessmentgrade * $WORKSHOP_FWEIGHTS[$workshop->gradingweight] +
+                    $finalgrade = ($assessmentgrade * $WORKSHOP_FWEIGHTS[$workshop->gradingweight] +
                         $submissiongrade) / ($WORKSHOP_FWEIGHTS[$workshop->gradingweight] + 1.0);
         			if ($n) {
                         $table->data[] = array("$user->firstname $user->lastname", 
@@ -608,7 +609,7 @@
                             workshop_print_submission_assessments($workshop, $submission, "teacher"),
                             workshop_print_submission_assessments($workshop, $submission, "student"),
                             number_format($submissiongrade, 2),
-                            number_format($totalgrade, 2));
+                            number_format($finalgrade, 2));
                     } else {
         			    $table->data[] = array("$user->firstname $user->lastname", 
                             workshop_print_submission_title($workshop, $submission),
@@ -617,22 +618,23 @@
                             workshop_print_submission_assessments($workshop, $submission, "teacher"),
                             workshop_print_submission_assessments($workshop, $submission, "student"),
                             "<b>".get_string("noassessments", "workshop")."</b>",
-                            number_format($totalgrade, 2));
+                            number_format($finalgrade, 2));
                     }
                     // save grades in submission record
-                    set_field("workshop_submissions", "finalgrade", $submissiongrade, "id", $submission->id);
-                    set_field("workshop_submissions", "gradinggrade", $assessmentgrade, "id", 
+                    set_field("workshop_submissions", "finalgrade", intval($finalgrade + 0.5), "id", 
+                            $submission->id);
+                    set_field("workshop_submissions", "gradinggrade", intval($assessmentgrade + 0.5), "id", 
                             $submission->id);
                 }       
             } else {
                 // no submissions
-                $totalgrade = ($assessmentgrade * $WORKSHOP_FWEIGHTS[$workshop->gradingweight]) /
+                $finalgrade = ($assessmentgrade * $WORKSHOP_FWEIGHTS[$workshop->gradingweight]) /
                     ($WORKSHOP_FWEIGHTS[$workshop->gradingweight] + 1.0);
         		$table->data[] = array("$user->firstname $user->lastname", 
                             "-", workshop_print_user_assessments($workshop, $user),
                             number_format($assessmentgrade, 2), "-", "-",
                             get_string("nosubmission", "workshop"), 
-                            number_format($totalgrade,2));
+                            number_format($finalgrade,2));
             }
 		}
 		print_table($table);
