@@ -1,4 +1,4 @@
-<?php
+<?php // %Id%
 
 /**
 * Extend the base resource class for file resources

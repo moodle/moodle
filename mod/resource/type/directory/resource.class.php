@@ -1,4 +1,4 @@
-<?php
+<?php // %Id%
 
 class resource extends resource_base {
 
