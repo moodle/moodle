@@ -28,6 +28,8 @@ CREATE TABLE prefix_choice (
   answer6 varchar(255) default NULL,
   showunanswered integer NOT NULL default '0',
   publish integer NOT NULL default '0',
+  timeopen integer NOT NULL default '0',
+  timeclose integer NOT NULL default '0',
   timemodified integer NOT NULL default '0'
 );
 
