@@ -99,19 +99,36 @@ function lesson_update_instance($lesson) {
 		if ($userid = get_field("user", "id", "username", $lesson->deleteattempts)) {
 			if (delete_records("lesson_attempts", "lessonid", $lesson->id, "userid", $userid)) {
 				// email good
-				$message = "Successfully deleted attempts from \"$lesson->name\" lesson!<br>\r\n";
+				$message .= "Successfully deleted attempts from \"$lesson->name\" lesson!<br />";
 			} else {
 				// email couldnt delete
-				$message = "Failed to delete attempts from \"$lesson->name\" lesson!<br>\r\n";
+				$message .= "Failed to delete attempts from \"$lesson->name\" lesson!<br />";
 			}
+			if (delete_records("lesson_grades", "lessonid", $lesson->id, "userid", $userid)) {
+				// email good
+				$message .= "Successfully deleted grades from \"$lesson->name\" lesson!<br />";
+			} else {
+				// email couldnt delete
+				$message .= "Failed to delete grades from \"$lesson->name\" lesson!<br />";
+			}
+			if (delete_records("lesson_timer", "lessonid", $lesson->id, "userid", $userid)) {
+				// email good
+				$message .= "Successfully deleted time records from \"$lesson->name\" lesson!<br />";
+			} else {
+				// email couldnt delete
+				$message .= "Failed to delete time records from \"$lesson->name\" lesson!<br />";
+			}
+
 		} else {
 			// email couldnt find user
-			$message = "Could not find user in database.<br>\r\n";
+			$message .= "Could not find user in database.<br />";
 		}
-		$message .= "<br>\r\n User ID used: $lesson->deleteattempts <br>\r\n";
+		$message .= "<br /> User ID used: $lesson->deleteattempts <br />";
+		
+		$txt = format_text_email($message, FORMAT_HTML);
 		
 		if ($currentuser = get_record("user", "id", $lesson->deleteattemptsid)) {
-			email_to_user($currentuser, $currentuser, $subject, $message, $message);
+			email_to_user($currentuser, $currentuser, $subject, $txt, $message);
 		}
 		// unset lessondefault
 	}
