@@ -180,6 +180,20 @@ function get_record_sql($sql) {
     }
 }
 
+function get_record_select($table, $select="", $fields="*") {
+/// Gets one record from a table, as an object
+/// "select" is a fragment of SQL to define the selection criteria
+
+    global $CFG;
+
+    if ($select) {
+        $select = "WHERE $select";
+    }
+
+    return get_record_sql("SELECT $fields FROM $CFG->prefix$table $select");
+}
+
+
 function get_records($table, $field="", $value="", $sort="", $fields="*") {
 /// Get a number of records as an array of objects
 /// Can optionally be sorted eg "time ASC" or "time DESC"
@@ -510,48 +524,37 @@ function get_user_info_from_db($field, $value) {
 /// in the user record, as well as membership information
 /// Suitable for setting as $USER session cookie.
 
-    global $db, $CFG;
-
-    if (!$field || !$value) 
-        return false;
-
-    if (! $result = $db->Execute("SELECT * FROM {$CFG->prefix}user WHERE $field = '$value' AND deleted <> '1'")) {
-        error("Could not find any active users!");
-    }
-
-    if ( $result->RecordCount() == 1 ) {
-        $user = (object)$result->fields;
-
-        $rs = $db->Execute("SELECT course FROM {$CFG->prefix}user_students WHERE userid = '$user->id' ");
-        while (!$rs->EOF) {
-            $course = $rs->fields["course"];
-            $user->student["$course"] = true;
-            $rs->MoveNext();
-        }
-
-        $rs = $db->Execute("SELECT course FROM {$CFG->prefix}user_teachers WHERE userid = '$user->id' ");
-        while (!$rs->EOF) {
-            $course = $rs->fields["course"];
-            $user->teacher["$course"] = true;
-            $rs->MoveNext();
-        }
-
-        $rs = $db->Execute("SELECT * FROM {$CFG->prefix}user_admins WHERE userid = '$user->id' ");
-        while (!$rs->EOF) {
-            $user->admin = true;
-            $rs->MoveNext();
-        }
-
-        if ($course = get_site()) {
-            // Everyone is always a member of the top course
-            $user->student["$course->id"] = true;
-        }
-
-        return $user;
-
-    } else {
+    if (!$field or !$value) {
         return false;
     }
+
+    if (! $user = get_record_select("user", "$field = '$value' AND deleted <> '1'")) {
+        return false;
+    }
+
+    // Add membership information
+
+    if ($site = get_site()) { // Everyone is always a member of the top course
+        $user->student[$site->id] = true;
+    }
+
+    $students = get_records("user_students", "userid", $user->id);
+    foreach ($students as $student) {
+        $user->student[$student->course] = true;
+    }
+
+    $teachers = get_records("user_teachers", "userid", $user->id);
+    foreach ($teachers as $teacher) {
+        $user->teacher[$teacher->course] = true;
+    }
+
+    $admins = get_records("user_admins", "userid", $user->id);
+    foreach ($admins as $admin) {
+        $user->admin = true;
+        break;
+    }
+
+    return $user;
 }
 
 function update_user_in_db() {
