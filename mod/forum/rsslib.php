@@ -130,7 +130,8 @@
                                              u.firstname userfirstname,
                                              u.lastname userlastname,
                                              p.message postmessage,
-                                             p.created postcreated
+                                             p.created postcreated,
+                                             p.format postformat
                                       FROM {$CFG->prefix}forum_discussions d,
                                            {$CFG->prefix}forum_posts p,
                                            {$CFG->prefix}user u
@@ -152,7 +153,7 @@
                 $item->author = fullname($user);
                 $item->pubdate = $rec->postcreated;
                 $item->link = $CFG->wwwroot."/mod/forum/discuss.php?d=".$rec->discussionid;
-                $item->description = $rec->postmessage;
+                $item->description = format_text($rec->postmessage,$rec->postformat,NULL,$forum->course);
                 $items[] = $item;
                 $articlesleft--;
                 if ($articlesleft < 1) {
@@ -173,12 +174,13 @@
 
         if ($recs = get_records_sql ("SELECT p.id postid,
                                              d.id discussionid,
-                                             d.name discussionname,
                                              u.id userid,
                                              u.firstname userfirstname,
                                              u.lastname userlastname,
+                                             p.subject postsubject,
                                              p.message postmessage,
-                                             p.created postcreated
+                                             p.created postcreated,
+                                             p.format postformat
                                       FROM {$CFG->prefix}forum_discussions d,
                                            {$CFG->prefix}forum_posts p,
                                            {$CFG->prefix}user u
@@ -193,13 +195,13 @@
             foreach ($recs as $rec) {
                 unset($item);
                 unset($user);
-                $item->title = $rec->discussionname;
+                $item->title = $rec->postsubject;
                 $user->firstname = $rec->userfirstname;
                 $user->lastname = $rec->userlastname;
                 $item->author = fullname($user);
                 $item->pubdate = $rec->postcreated;
                 $item->link = $CFG->wwwroot."/mod/forum/discuss.php?d=".$rec->discussionid."&parent=".$rec->postid;
-                $item->description = $rec->postmessage;
+                $item->description = format_text($rec->postmessage,$rec->postformat,NULL,$forum->course);
                 $items[] = $item;
                 $articlesleft--;
                 if ($articlesleft < 1) {

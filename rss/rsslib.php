@@ -181,7 +181,7 @@ function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
 
 //This function returns the rss XML code for every item passed in the array
 //item->title: The title of the item
-//item->author: The author of the item
+//item->author: The author of the item. Optional !!
 //item->pubdate: The pubdate of the item
 //item->link: The link url of the item
 //item->description: The content of the item
@@ -197,6 +197,10 @@ function rss_add_items($items) {
             $result .= rss_full_tag("title",3,false,$item->title);
             $result .= rss_full_tag("link",3,false,$item->link);
             $result .= rss_full_tag("pubDate",3,false,date("r",$item->pubdate));
+            //Include the author if exists 
+            if (isset($item->author)) {
+                $item->description = get_string("byname","",$item->author)."<p>".$item->description;
+            }
             $result .= rss_full_tag("description",3,false,$item->description);
             $result .= rss_end_tag("item",2,true);
 

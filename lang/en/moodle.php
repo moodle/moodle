@@ -108,6 +108,7 @@ $string['blocks'] = 'Blocks';
 $string['blocksetup'] = 'Setting up block tables';
 $string['blocksuccess'] = '$a tables have been set up correctly';
 $string['bycourseorder'] = 'By course order';
+$string['byname'] = 'by $a';
 $string['cancel'] = 'Cancel';
 $string['categories'] = 'Course categories';
 $string['category'] = 'Category';
