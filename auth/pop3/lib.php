@@ -4,12 +4,6 @@
 // This code is completely untested so far  -  IT NEEDS TESTERS!
 // Looks like it should work though ...
 
-$CFG->auth_pop3host   = "127.0.0.1";  // Should be IP number
-$CFG->auth_pop3type   = "pop3";       // pop3, pop3cert
-$CFG->auth_pop3port   = "110";        // 110 is most common
-$CFG->auth_instructions = "Use the same username and password as your school email account";   // Instructions
-
-
 function auth_user_login ($username, $password) {
 // Returns true if the username and password work
 // and false if they are wrong or don't exist.
@@ -25,7 +19,11 @@ function auth_user_login ($username, $password) {
         break;
     }
 
-    if ($connection = imap_open($host, $username, $password, OP_HALFOPEN)) {
+    error_reporting(0);
+    $connection = imap_open($host, $username, $password, OP_HALFOPEN);
+    error_reporting(7);   
+
+    if ($connection) {
         imap_close($connection);
         return true;
 

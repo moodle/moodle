@@ -1,7 +1,6 @@
 <?PHP // $Id$
     require("../config.php");
 
-
     // Check if the guest user exists.  If not, create one.
     if (! record_exists("user", "username", "guest")) {
         $guest->username    = "guest"; 
@@ -85,10 +84,19 @@
     } else {
         $focus = "form.username";
     }
+
+    if ($CFG->auth == "email" or $CFG->auth == "none" or $CFG->auth_instructions) {
+        $show_instructions = true;
+    } else {
+        $show_instructions = false;
+    }
     
+    if (!$site = get_site()) {
+        error("No site found!");
+    }
     $loginsite = get_string("loginsite");
 
-    print_header($loginsite, $loginsite, get_string("login"), $focus); 
+    print_header("$site->fullname: $loginsite", "$loginsite", get_string("login"), $focus); 
     include("index_form.html");
     print_footer();
 

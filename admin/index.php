@@ -251,7 +251,8 @@
                          "<P><A HREF=\"../course/delete.php\">".get_string("deletecourse")."</A></P>".
                          "<P><A HREF=\"../course/categories.php\">".get_string("categories")."</A></P>";
     $table->data[0][2] = "<P><A HREF=\"user.php?newuser=true\">".get_string("addnewuser")."</A></P>".
-                         "<P><A HREF=\"user.php\">".get_string("edituser")."</A></P>";
+                         "<P><A HREF=\"user.php\">".get_string("edituser")."</A></P>".
+                         "<P><A HREF=\"auth.php\">".get_string("authentication")."</A></P>";
 
     print_table($table);
 

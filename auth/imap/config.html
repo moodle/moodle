@@ -1,0 +1,44 @@
+<tr valign="top">
+	<TD ALIGN=RIGHT><P>auth_imaphost:</TD>
+	<TD>
+        <INPUT name=auth_imaphost TYPE=text SIZE=30 VALUE="<?=$config->auth_imaphost?>">
+	<? formerr($err["ldap_host_url"]); ?>
+	</TD>
+    <TD>
+    <? print_string("auth_imaphost","auth") ?>
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>auth_imaptype:</TD>
+	<TD>
+    <? $imaptypes = array("imap","imapssl", "imapcert", "imaptls");
+       choose_from_menu($imaptypes, "auth_imaptype", $config->auth_imaptype, "");
+    ?>
+    </TD>
+    <TD>
+    <? print_string("auth_imaptype","auth") ?>
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>auth_imapport:</TD>
+	<TD>
+    <INPUT name=auth_imapport TYPE=text SIZE=6 VALUE="<?=$config->auth_imapport?>">
+    <? formerr($err["auth_imapport"]); ?>
+    </TD>
+    <TD>
+    <? print_string("auth_imapport","auth") ?>
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>auth_instructions:</TD>
+	<TD>
+    <TEXTAREA NAME=auth_instructions COLS=30 ROWS=10 WRAP=virtual><? p($config->auth_instructions) ?></TEXTAREA> 
+    </TD>
+    <TD>
+    <? print_string("authinstructions","auth") ?>
+    <? helpbutton("text", get_string("helptext")) ?>
+    </TD>
+</TR>

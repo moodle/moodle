@@ -1,0 +1,100 @@
+<tr valign="top">
+	<TD ALIGN=RIGHT><P>auth_dbhost:</TD>
+	<TD>
+        <INPUT name=auth_dbhost TYPE=text SIZE=30 VALUE="<?=$config->auth_dbhost?>">
+	<? formerr($err["auth_dbhost"]); ?>
+	</TD>
+    <TD>
+    <? print_string("auth_dbhost","auth") ?>
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>auth_dbtype:</TD>
+	<TD>
+    <? $dbtypes = array("access","ado_access", "ado", "ado_mssql", "borland_ibase", "csv", "db2", "fbsql", "firebird", "ibase", "informix72", "informix", "mssql", "mysql", "mysqlt", "oci805", "oci8", "oci8po", "odbc", "odbc_mssql", "odbc_oracle", "oracle", "postgres64", "postgres7", "postgres", "proxy", "sqlanywhere", "sybase", "vfp");
+       choose_from_menu($dbtypes, "auth_dbtype", $config->auth_dbtype, "");
+    ?>
+      
+    </TD>
+    <TD>
+    <? print_string("auth_dbtype","auth") ?>
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>auth_dbname:</TD>
+	<TD>
+    <INPUT name=auth_dbname TYPE=text SIZE=30 VALUE="<?=$config->auth_dbname?>">
+    <? formerr($err["auth_dbname"]); ?>
+    </TD>
+    <TD>
+    <? print_string("auth_dbname","auth") ?>
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>auth_dbuser:</TD>
+	<TD>
+    <INPUT name=auth_dbuser TYPE=text SIZE=30 VALUE="<?=$config->auth_dbuser?>">
+    <? formerr($err["auth_dbuser"]); ?>
+    </TD>
+    <TD>
+    <? print_string("auth_dbuser","auth") ?>
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>auth_dbpass:</TD>
+	<TD>
+    <INPUT name="auth_dbpass" TYPE="text" SIZE="30" VALUE="<?=$config->auth_dbpass?>">
+    <? formerr($err["auth_dbpass"]); ?>
+    </TD>
+    <TD>
+    <? print_string("auth_dbpass","auth") ?>
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>auth_dbtable:</TD>
+	<TD>
+    <INPUT name="auth_dbtable" TYPE="text" SIZE="30" VALUE="<?=$config->auth_dbtable?>">
+    <? formerr($err["auth_dbtable"]); ?>
+    </TD>
+    <TD>
+    <? print_string("auth_dbtable","auth") ?>
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>auth_dbfielduser:</TD>
+	<TD>
+    <INPUT name="auth_dbfielduser" TYPE="text" SIZE="30" VALUE="<?=$config->auth_dbfielduser?>">
+    <? formerr($err["auth_dbfielduser"]); ?>
+    </TD>
+    <TD>
+    <? print_string("auth_dbfielduser","auth") ?>
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>auth_dbfieldpass:</TD>
+	<TD>
+    <INPUT name="auth_dbfieldpass" TYPE="text" SIZE="30" VALUE="<?=$config->auth_dbfieldpass?>">
+    <? formerr($err["auth_dbfieldpass"]); ?>
+    </TD>
+    <TD>
+    <? print_string("auth_dbfieldpass","auth") ?>
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>auth_instructions:</TD>
+	<TD>
+    <TEXTAREA NAME=auth_instructions COLS=30 ROWS=10 WRAP=virtual><? p($config->auth_instructions) ?></TEXTAREA> 
+    </TD>
+    <TD>
+    <? print_string("authinstructions","auth") ?>
+    <? helpbutton("text", get_string("helptext")) ?>
+    </TD>
+</TR>

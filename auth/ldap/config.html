@@ -1,0 +1,74 @@
+<tr valign="top">
+	<TD ALIGN=RIGHT><P>ldap_host_url:</TD>
+	<TD>
+        <INPUT name=ldap_host_url TYPE=text SIZE=30 VALUE="<?=$config->ldap_host_url?>">
+	<? formerr($err["ldap_host_url"]); ?>
+	</TD>
+    <TD>
+    <? print_string("auth_ldap_host_url","auth") ?>
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>ldap_user_context(s):</TD>
+	<TD>
+    <INPUT name=ldap_contexts TYPE=text SIZE=30 VALUE="<?=$config->ldap_contexts?>">
+    <? formerr($err["ldap_contexts"]); ?>
+    </TD>
+    <TD>
+    <? print_string("auth_ldap_contexts","auth") ?>
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>ldap_user_attribute(s):</TD>
+	<TD>
+    <INPUT name=ldap_user_attribute TYPE=text SIZE=30 VALUE="<?=$config->ldap_user_attribute?>">
+    <? formerr($err["ldap_user_attribute"]); ?>
+    </TD>
+    <TD>
+    <? print_string("auth_ldap_user_attribute","auth") ?>
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>ldap_search_sub:</TD>
+	<TD>
+    <INPUT name=ldap_search_sub TYPE=text SIZE=1 VALUE="<?=$config->ldap_search_sub?>">
+    <? formerr($err["ldap_search_sub"]); ?>
+    </TD>
+    <TD>
+    <? print_string("auth_ldap_search_sub","auth") ?>
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>ldap_bind_dn:</TD>
+	<TD>
+    <INPUT name=ldap_bind_dn TYPE=text SIZE=30 VALUE="<?=$config->ldap_bind_dn?>">
+    <? formerr($err["ldap_bind_dn"]); ?>
+    </TD><TD>
+    <? print_string("auth_ldap_bind_dn","auth") ?>
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>ldap_bind_password:</TD>
+	<TD>
+    <INPUT name=ldap_bind_pw TYPE=text SIZE=30 VALUE="<?=$config->ldap_bind_pw?>">
+    <? formerr($err["ldap_bind_pw"]); ?>
+    </TD><TD>
+    <? print_string("auth_ldap_bind_pw","auth") ?>
+    </TD>
+</TR>
+
+<TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>auth_instructions:</TD>
+	<TD>
+    <TEXTAREA NAME=auth_instructions COLS=30 ROWS=10 WRAP=virtual><? p($config->auth_instructions) ?></TEXTAREA> 
+    </TD>
+    <TD>
+    <? print_string("authinstructions","auth") ?>
+    <? helpbutton("text", get_string("helptext")) ?>
+    </TD>
+</TR>

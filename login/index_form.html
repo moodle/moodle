@@ -2,12 +2,14 @@
 
 <TABLE WIDTH="90%" BORDER="0" CELLSPACING="10" CELLPADDING="5" ALIGN="CENTER">
   <TR>
-    <TD WIDTH="50%" bgcolor=<?=$THEME->cellheading2?>>
-      <P ALIGN="CENTER"><B><FONT SIZE=3><? print_string("returningtosite") ?></FONT></B></P>
-    </TD>
-    <TD WIDTH="50%" bgcolor=<?=$THEME->cellheading2?>>
-      <P ALIGN="CENTER"><B><FONT SIZE=3><? print_string("firsttime") ?></FONT></B></P>
-    </TD>
+    <? if ($show_instructions) { ?>
+        <TD WIDTH="50%" bgcolor=<?=$THEME->cellheading2?>>
+          <P ALIGN="CENTER"><B><FONT SIZE=3><? print_string("returningtosite") ?></FONT></B></P>
+        </TD>
+        <TD WIDTH="50%" bgcolor=<?=$THEME->cellheading2?>>
+          <P ALIGN="CENTER"><B><FONT SIZE=3><? print_string("firsttime") ?></FONT></B></P>
+        </TD>
+    <? } ?>
   </TR>
   <TR>
     <TD WIDTH="50%" VALIGN="TOP" bgcolor="<?=$THEME->cellheading?>"> <FONT SIZE=2> 
@@ -40,15 +42,17 @@
 	  </FORM>
       <FONT SIZE=2> 
       <BLOCKQUOTE>
-      <HR>
-        <P ALIGN=CENTER><? print_string("someallowguest") ?>:</P>
-        <CENTER>
-        <FORM NAME="form2" ACTION="index.php" METHOD=post>
-        <INPUT TYPE="hidden" NAME="username" VALUE="guest">
-        <INPUT TYPE="hidden" NAME="password" VALUE="guest">
-        <INPUT type="submit" NAME="Submit"   VALUE="<? print_string("loginguest") ?>">
-        </FORM>
-        </CENTER>
+    <? if ($CFG->guestloginbutton) {  ?>
+          <HR>
+            <P ALIGN=CENTER><? print_string("someallowguest") ?>:</P>
+            <CENTER>
+            <FORM NAME="form2" ACTION="index.php" METHOD=post>
+            <INPUT TYPE="hidden" NAME="username" VALUE="guest">
+            <INPUT TYPE="hidden" NAME="password" VALUE="guest">
+            <INPUT type="submit" NAME="Submit"   VALUE="<? print_string("loginguest") ?>">
+            </FORM>
+            </CENTER>
+    <? } ?>
       <HR>
         <P ALIGN=CENTER><? print_string("forgotten") ?></P> 
         <CENTER>
@@ -58,26 +62,31 @@
         </CENTER>
         </BLOCKQUOTE>
       </FONT> </TD>
-    <TD WIDTH="50%" VALIGN="TOP" bgcolor="<?=$THEME->cellheading?>">
-      <FONT SIZE=2>
-      <? switch ($CFG->auth) {
-           case "email":             ?>
-             <P><? print_string("loginsteps", "", "signup.php") ?></P>
-             </FONT>
-             <CENTER>
-             <FORM NAME="form4" ACTION="signup.php" METHOD=post>
-             <INPUT type="submit" NAME="Submit" VALUE="<? print_string("startsignup") ?>">
-             </FORM>
-             </CENTER>
-      <?     break;
-           case "none":
-             echo "<P>".get_string("loginstepsnone")."</P>";
-             break;
-           default:
-             echo format_text($CFG->auth_instructions);
-         }
-      ?>
+    <? if ($show_instructions) { ?>
+        <TD WIDTH="50%" VALIGN="TOP" bgcolor="<?=$THEME->cellheading?>">
+          <FONT SIZE=2>
+          <? switch ($CFG->auth) {
+               case "email":             ?>
+                 <P><? print_string("loginsteps", "", "signup.php") ?></P>
+                 </FONT>
+                 <CENTER>
+                 <FORM NAME="form4" ACTION="signup.php" METHOD=post>
+                 <INPUT type="submit" NAME="Submit" VALUE="<? print_string("startsignup") ?>">
+                 </FORM>
+                 </CENTER>
+          <?     break;
+               case "none":
+                 echo "<P>".get_string("loginstepsnone")."</P>";
+                 break;
+               default:
+                 echo "<BLOCKQUOTE>";
+                 echo format_text($CFG->auth_instructions);
+                 echo "</BLOCKQUOTE>";
+             }
+          ?>
+    
+          </TD>
+    <?  } ?>
 
-      </TD>
   </TR>
 </TABLE>
