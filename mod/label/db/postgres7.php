@@ -14,6 +14,10 @@ function label_upgrade($oldversion) {
         modify_database("", "INSERT INTO prefix_log_display VALUES ('label', 'add', 'quiz', 'name');");
         modify_database("", "INSERT INTO prefix_log_display VALUES ('label', 'update', 'quiz', 'name');");
     }
+    
+    if ($oldversion < 2004060401) {
+        modify_database('','CREATE INDEX prefix_label_course_idx ON prefix_label (course);');
+    }
 
     return true;
 }
