@@ -688,6 +688,7 @@ $string['newuser'] = '新規ユーザ';
 $string['newusers'] = '新規ユーザ';
 $string['next'] = '次へ';
 $string['no'] = 'No';
+$string['nobody'] = '無し';
 $string['nocoursesfound'] = 'キーワード \'$a\' でコースは見つかりませんでした。';
 $string['nocoursesyet'] = 'このカテゴリにコースはありません。';
 $string['noexistingadmins'] = '管理者が存在しません。これは重大なエラーでこのようなメッセージを表示させてはいけません。';
