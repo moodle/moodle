@@ -419,7 +419,7 @@
             $rec->new_id =$new_id;
             $rec->info = $info_to_save;
             
-            $status = insert_record ("backup_ids", $rec, false);
+            $status = insert_record ("backup_ids", $rec, false,"backup_code");
         }
         return $status;
     }
