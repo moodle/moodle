@@ -21,7 +21,7 @@
                        -> $streditingasurvey");
 
         if (!$form->name or !$form->template) {
-            error(get_string("filloutallfields"), $HTTP_REFERER);
+            error(get_string("filloutallfields"), $_SERVER["HTTP_REFERER"]);
         }
 
         print_simple_box_start("center", "", "$THEME->cellheading");

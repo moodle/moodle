@@ -56,16 +56,44 @@ function save_user_image($userid, $filename) {
 
     global $CFG;
 
+    if (empty($CFG->gdversion)) {
+        return false;
+    }
+
     $imageinfo = GetImageSize($filename);
     $image->width  = $imageinfo[0];
     $image->height = $imageinfo[1];
     $image->type   = $imageinfo[2];
 
     switch ($image->type) {
-        case 2: $im = ImageCreateFromJPEG($filename); break;
-        case 3: $im = ImageCreateFromPNG($filename); break;
-        default: return 0;
+        case 1: 
+            if (function_exists("ImageCreateFromGIF")) {
+                $im = ImageCreateFromGIF($filename); 
+            } else {
+                notice("GIF not supported on this server");
+                return false;
+            }
+            break;
+        case 2: 
+            if (function_exists("ImageCreateFromJPEG")) {
+                $im = ImageCreateFromJPEG($filename); 
+            } else {
+                notice("JPEG not supported on this server");
+                return false;
+            }
+            break;
+        case 3:
+            if (function_exists("ImageCreateFromPNG")) {
+                $im = ImageCreateFromPNG($filename); 
+            } else {
+                notice("PNG not supported on this server");
+                return false;
+            }
+            break;
+        default: 
+            return false;
     }
+
     if (function_exists("ImageCreateTrueColor") and $CFG->gdversion >= 2) {
         $im1 = ImageCreateTrueColor(100,100);
         $im2 = ImageCreateTrueColor(35,35);

@@ -10,7 +10,7 @@
     optional_variable($user);  // Force everyone to be subscribed to this forum?
 
     if (isguest()) {
-        error("Guests are not allowed to subscribe to posts.", $HTTP_REFERER);
+        error("Guests are not allowed to subscribe to posts.", $_SERVER["HTTP_REFERER"]);
     }
 
     if (! $forum = get_record("forum", "id", $id)) {
@@ -68,7 +68,7 @@
             add_to_log($course->id, "forum", "unsubscribe", "view.php?f=$forum->id", "$forum->id");
             redirect($returnto, get_string("nownotsubscribed", "forum", $info), 1);
         } else {
-            error("Could not unsubscribe you from that forum", "$HTTP_REFERER");
+            error("Could not unsubscribe you from that forum", $_SERVER["HTTP_REFERER"]);
         }
         
     } else { // subscribe
@@ -76,7 +76,7 @@
             add_to_log($course->id, "forum", "subscribe", "view.php?f=$forum->id", "$forum->id");
             redirect($returnto, get_string("nowsubscribed", "forum", $info), 1);
         } else {
-            error("Could not subscribe you to that forum", "$HTTP_REFERER");
+            error("Could not subscribe you to that forum", $_SERVER["HTTP_REFERER"]);
         }
     }
 

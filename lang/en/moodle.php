@@ -192,6 +192,7 @@ $string['fullname'] = "Full name";
 $string['fullsitename'] = "Full site name";
 $string['gd1'] = "GD 1.x is installed";
 $string['gd2'] = "GD 2.x is installed";
+$string['gdneed'] = "GD must be installed to see this graph";
 $string['gdnot'] = "GD is not installed";
 $string['gpl'] = "Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)
 

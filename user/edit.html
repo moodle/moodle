@@ -142,6 +142,9 @@ if (isadmin()) {
 <tr>
     <td colspan=2><BR><B><? print_string("followingoptional") ?>:</B></td>
 </tr>
+
+
+<? if (!empty($CFG->gdversion)) {  ?>
 <tr valign=top>
     <td><P><? print_string("newpicture") ?>:</td>
     <td>
@@ -153,6 +156,8 @@ if (isadmin()) {
     ?>
     </td>
 </tr>
+<? }  ?>
+
 <tr valign=top>
     <td><P><? print_string("webpage") ?>:</td>
     <td><input type="text" name="url" size=50 value="<? p($user->url) ?>">

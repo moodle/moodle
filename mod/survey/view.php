@@ -45,7 +45,7 @@
         $numusers = survey_count_responses($survey->id);
         print_heading(get_string("peoplecompleted", "survey", $numusers));
         echo "<CENTER>";
-        echo "<IMG HEIGHT=\"$SURVEY_GHEIGHT\" WIDTH=\"$SURVEY_GWIDTH\" SRC=\"$CFG->wwwroot/mod/survey/graph.php?id=$cm->id&sid=$USER->id&type=student.png\">";
+        survey_print_graph("id=$cm->id&sid=$USER->id&type=student.png");
         echo "</CENTER>";
         print_footer($course);
         exit;

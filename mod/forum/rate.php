@@ -7,7 +7,7 @@
     require("lib.php");
 
     if (isguest()) {
-        error("Guests are not allowed to rate posts.", $HTTP_REFERER);
+        error("Guests are not allowed to rate posts.", $_SERVER["HTTP_REFERER"]);
     }
 
     require_variable($id);  // The course these ratings are part of
@@ -18,9 +18,9 @@
 
     require_login($course->id);
 
-    if (isset($HTTP_POST_VARS)) {    // form submitted
+    if ($data = data_submitted("$CFG->wwwroot/mod/forum/discuss.php")) {    // form submitted
 
-        foreach ($HTTP_POST_VARS as $post => $rating) {
+        foreach ($data as $post => $rating) {
             if ($post == "id") {
                 continue;
             }
@@ -40,7 +40,7 @@
                 }
             }
         }
-        redirect($HTTP_REFERER, "Ratings saved");
+        redirect($_SERVER["HTTP_REFERER"], get_string("ratingssaved", "forum"));
 
     } else {
         error("This page was not accessed correctly");

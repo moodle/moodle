@@ -79,7 +79,7 @@
     }
 
     if (empty($SESSION->wantsurl)) {
-	    $SESSION->wantsurl = $HTTP_REFERER;
+	    $SESSION->wantsurl = $_SERVER["HTTP_REFERER"];
         save_session("SESSION");
     }
     

@@ -6,12 +6,12 @@
 
 // Make sure this is a legitimate posting
 
-    if (!isset($HTTP_POST_VARS)) {
+    if (!$formdata = data_submitted("$CFG->wwwroot/mod/survey/view.php")) {
         error("You are not supposed to use this script like that.");
     }
 
     if (isguest()) {
-        error("Guests are not allowed to answer surveys", $HTTP_REFERER);
+        error("Guests are not allowed to answer surveys", $_SERVER["HTTP_REFERER"]);
     }
 
     require_variable($id);    // Course Module ID
@@ -33,7 +33,7 @@
     add_to_log($course->id, "survey", "submit", "view.php?id=$cm->id", "$survey->id");
 
     if (survey_already_done($survey->id, $USER->id)) {
-        notice(get_string("alreadysubmitted", "survey"), $HTTP_REFERER);
+        notice(get_string("alreadysubmitted", "survey"), $_SERVER["HTTP_REFERER"]);
         exit;
     }
 
@@ -44,7 +44,7 @@
 
     $answers = array(); 
 
-    foreach ($HTTP_POST_VARS as $key => $val) {
+    foreach ($formdata as $key => $val) {
         if ($key <> "userid" && $key <> "id") {
             if ( substr($key,0,1) == "q") {  
                 $key = substr($key,1);   // keep everything but the 'q'

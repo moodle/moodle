@@ -94,7 +94,7 @@ function survey_user_complete($course, $user, $mod, $survey) {
     global $CFG;
 
     if (survey_already_done($survey->id, $user->id)) {
-        echo "<IMG SRC=\"$CFG->wwwroot/mod/survey/graph.php?id=$mod->id&sid=$user->id&type=student.png\">";
+        survey_print_graph("id=$mod->id&sid=$user->id&type=student.png");
     } else {
         print_string("notdone", "survey");
     }
@@ -376,6 +376,18 @@ function survey_question_color($qnum) {
         //return $qnum % 2 ? "#CCFFCC" : "#CCFFFF";
     } else {
         return $THEME->cellcontent;
+    }
+}
+
+function survey_print_graph($url) {
+    global $CFG, $SURVEY_GHEIGHT, $SURVEY_GWIDTH;
+
+    if (empty($CFG->gdversion)) {
+        echo "(".get_string("gdneed").")";
+
+    } else {
+        echo "<IMG HEIGHT=\"$SURVEY_GHEIGHT\" WIDTH=\"$SURVEY_GWIDTH\" BORDER=1".
+             " SRC=\"$CFG->wwwroot/mod/survey/graph.php?$url\">";
     }
 }
 

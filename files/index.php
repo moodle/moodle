@@ -163,7 +163,7 @@
 
             } else {
                 html_header($course, $wdir);
-                if (setfilelist($HTTP_POST_VARS)) {
+                if (setfilelist($_POST)) {
                     echo "<P ALIGN=CENTER>You are about to delete:</P>";
                     print_simple_box_start("center");
                     printfilelist($USER->filelist);
@@ -181,7 +181,7 @@
 
         case "move":
             html_header($course, $wdir);
-            if ($count = setfilelist($HTTP_POST_VARS)) {
+            if ($count = setfilelist($_POST)) {
                 $USER->fileop     = $action;
                 $USER->filesource = $wdir;
                 save_session("USER");
@@ -348,7 +348,7 @@
                     
             } else {
                 html_header($course, $wdir, "form.name");
-                if (setfilelist($HTTP_POST_VARS)) {
+                if (setfilelist($_POST)) {
                     echo "<P ALIGN=CENTER>You are about create a zip file containing:</P>";
                     print_simple_box_start("center");
                     printfilelist($USER->filelist);

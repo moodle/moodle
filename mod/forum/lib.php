@@ -1061,12 +1061,12 @@ function forum_print_search_form($course, $search="", $return=false, $type="") {
 
 
 function forum_set_return() {
-    global $CFG, $SESSION, $HTTP_REFERER;
+    global $CFG, $SESSION;
 
     if (! isset($SESSION->fromdiscussion)) {
         // If the referer is NOT a login screen then save it.
-        if (! strncasecmp("$CFG->wwwroot/login", $HTTP_REFERER, 300)) {
-            $SESSION->fromdiscussion = $HTTP_REFERER;
+        if (! strncasecmp("$CFG->wwwroot/login", $_SERVER["HTTP_REFERER"], 300)) {
+            $SESSION->fromdiscussion = $_SERVER["HTTP_REFERER"];
             save_session("SESSION");
         }
     }

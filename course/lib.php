@@ -756,7 +756,11 @@ function print_course_categories($categories, $selected="none", $width=180) {
 
 function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
     global $CFG;
-    echo "<IMG BORDER=0 SRC=\"$CFG->wwwroot/course/loggraph.php?id=$course->id&user=$userid&type=$type&date=$date\">";
+    if (empty($CFG->gdversion)) {
+        echo "(".get_string("gdneed").")";
+    } else {
+        echo "<IMG BORDER=0 SRC=\"$CFG->wwwroot/course/loggraph.php?id=$course->id&user=$userid&type=$type&date=$date\">";
+    }
 }
 
 

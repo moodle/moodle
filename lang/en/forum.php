@@ -81,6 +81,7 @@ $string['postupdated'] = "Your post was updated";
 $string['processingpost'] = "Processing post \$a";
 $string['rate'] = "Rate";
 $string['ratings'] = "Ratings";
+$string['ratingssaved'] = "Ratings saved";
 $string['readtherest'] = "Read the rest of this topic";
 $string['re'] = "Re:";    // Put in front of subjects that are replies to another post
 $string['repliesmany'] = "\$a replies so far";

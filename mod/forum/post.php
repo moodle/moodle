@@ -7,7 +7,7 @@
     require("lib.php");
 
     if (isguest()) {
-        error(get_string("noguestpost", "forum"), $HTTP_REFERER);
+        error(get_string("noguestpost", "forum"), $_SERVER["HTTP_REFERER"]);
     }
 
     if ($post = data_submitted()) {
@@ -73,7 +73,7 @@
 
     if (isset($forum)) {      // User is starting a new discussion in a forum
 
-        $SESSION->fromurl = $HTTP_REFERER;
+        $SESSION->fromurl = $_SERVER["HTTP_REFERER"];
         save_session("SESSION");
 
         if (! $forum = get_record("forum", "id", $forum)) {
@@ -227,7 +227,7 @@
             print_header();
             notice_yesno(get_string("deletesure", "forum"), 
                          "post.php?delete=$delete&confirm=$delete",
-                         $HTTP_REFERER);
+                         $_SERVER["HTTP_REFERER"]);
                          
             echo "<CENTER><HR>";
             forum_print_post($post, $forum->course, $ownpost=false, $reply=false, $link=false);

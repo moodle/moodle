@@ -120,9 +120,7 @@ function strip_querystring($url) {
 function get_referer() {
 /// returns the URL of the HTTP_REFERER, less the querystring portion 
 
-    global $HTTP_REFERER;
-
-    return strip_querystring(nvl($HTTP_REFERER));
+    return strip_querystring(nvl($_SERVER["HTTP_REFERER"]));
 }
 
 
@@ -132,16 +130,14 @@ function me() {
 /// return different things depending on a lot of things like your OS, Web
 /// server, and the way PHP is compiled (ie. as a CGI, module, ISAPI, etc.) 
 
-    global $REQUEST_URI, $PATH_INFO, $PHP_SELF;
+    if (!empty($_SERVER["REQUEST_URI"])) {
+        return $_SERVER["REQUEST_URI"];
 
-    if ($REQUEST_URI) {
-        return $REQUEST_URI;
+    } else if (!empty($_SERVER["PATH_INFO"])) {
+        return $_SERVER["PATH_INFO"];
 
-    } else if ($PATH_INFO) {
-        return $PATH_INFO;
-
-    } else if ($PHP_SELF) {
-        return $PHP_SELF;
+    } else if (!empty($_SERVER["PHP_SELF"])) {
+        return $_SERVER["PHP_SELF"];
 
     } else {
         notify("Error: Could not find any of these web server variables: \$REQUEST_URI, \$PATH_INFO or \$PHP_SELF");
@@ -152,14 +148,12 @@ function me() {
 function qualified_me() {
 /// like me() but returns a full URL 
 
-    global $HTTPS, $HTTP_HOST;
-
-    if (!$HTTP_HOST) {
+    if (empty($_SERVER["HTTP_HOST"])) {
         notify("Error: could not find web server variable: \$HTTP_HOST");
     }
 
-    $protocol = (isset($HTTPS) && $HTTPS == "on") ? "https://" : "http://";
-    $url_prefix = "$protocol$HTTP_HOST";
+    $protocol = (isset($_SERVER["HTTPS"]) and $_SERVER["HTTPS"] == "on") ? "https://" : "http://";
+    $url_prefix = "$protocol".$_SERVER["HTTP_HOST"];
     return $url_prefix . me();
 }
 
@@ -182,18 +176,19 @@ function match_referer($good_referer = "") {
 function data_submitted($url="") {
 /// Used on most forms in Moodle to check for data
 /// Returns the data as an object, if it's found.
+/// This object can be used in foreach loops without
+/// casting because it's cast to (array) automatically
 /// 
 /// Checks that submitted POST data exists, and also 
 /// checks the referer against the given url (it uses 
 /// the current page if none was specified.
 
-    global $HTTP_POST_VARS, $CFG;
-
-    if (empty($HTTP_POST_VARS)) {
+    if (empty($_POST)) {
         return false;
+
     } else {
         if (match_referer($url)) {
-            return (object)$HTTP_POST_VARS;
+            return (object)$_POST;
         } else {
             if ($CFG->debug > 10) {
                 notice("The form did not come from this page! (referer = ".get_referer().")");
@@ -306,15 +301,17 @@ function choose_from_menu ($options, $name, $selected="", $nothing="choose", $sc
         }
         $output .= ">$nothing</OPTION>\n";
     }
-    foreach ($options as $value => $label) {
-        $output .= "   <OPTION VALUE=\"$value\"";
-        if ($value == $selected) {
-            $output .= " SELECTED";
-        }
-        if ($label) {
-            $output .= ">$label</OPTION>\n";
-        } else {
-            $output .= ">$value</OPTION>\n";
+    if (!empty($options)) {
+        foreach ($options as $value => $label) {
+            $output .= "   <OPTION VALUE=\"$value\"";
+            if ($value == $selected) {
+                $output .= " SELECTED";
+            }
+            if ($label) {
+                $output .= ">$label</OPTION>\n";
+            } else {
+                $output .= ">$value</OPTION>\n";
+            }
         }
     }
     $output .= "</SELECT>\n";
@@ -674,10 +671,9 @@ function print_heading_with_help($text, $helppage, $module="moodle") {
 }
     
 function print_continue($link) {
-    global $HTTP_REFERER;
 
     if (!$link) {
-        $link = $HTTP_REFERER;
+        $link = $_SERVER["HTTP_REFERER"];
     }
 
     print_heading("<A HREF=\"$link\">".get_string("continue")."</A>");
@@ -1080,10 +1076,10 @@ function helpbutton ($page, $title="", $module="moodle", $image=true, $linktext=
 }
 
 function notice ($message, $link="") {
-    global $THEME, $HTTP_REFERER;
+    global $THEME;
 
     if (!$link) {
-        $link = $HTTP_REFERER;
+        $link = $_SERVER["HTTP_REFERER"];
     }
 
     echo "<BR>";

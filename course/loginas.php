@@ -19,7 +19,7 @@
         $USER->loggedin = true;
         $USER->site = $CFG->wwwroot;
         save_session("USER");
-        redirect($HTTP_REFERER);
+        redirect($_SERVER["HTTP_REFERER"]);
         exit;
     }
 

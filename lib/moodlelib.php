@@ -254,12 +254,12 @@ function require_login($courseid=0) {
 /// whether they are "logged in" or allowed to be in a particular course.
 /// If not, then it redirects them to the site login or course enrolment.
 
-    global $CFG, $SESSION, $USER, $FULLME, $HTTP_REFERER, $PHPSESSID;
+    global $CFG, $SESSION, $USER, $FULLME, $PHPSESSID;
       
     // First check that the user is logged in to the site.
     if (! (isset($USER->loggedin) and $USER->confirmed and ($USER->site == $CFG->wwwroot)) ) { // They're not
         $SESSION->wantsurl = $FULLME;
-        $SESSION->fromurl  = $HTTP_REFERER;
+        $SESSION->fromurl  = $_SERVER["HTTP_REFERER"];
         save_session("SESSION");
         $USER = NULL;
         save_session("USER");
@@ -458,9 +458,7 @@ function get_moodle_cookie() {
 
     $cookiename = "MOODLEID{$CFG->prefix}"; 
 
-    global $$cookiename;
-
-    return rc4decrypt($$cookiename);
+    return rc4decrypt($_COOKIE[$cookiename]);
 }
 
 
@@ -1124,12 +1122,11 @@ function check_php_version($version="4.1.0") {
 function check_browser_version($brand="MSIE", $version=5.5) {
 /// Checks to see if is a browser matches the specified
 /// brand and is equal or better version.
-    global $HTTP_USER_AGENT;
 
-    if (!$HTTP_USER_AGENT) {
+    if (empty($_SERVER["HTTP_USER_AGENT"])) {
         return false;
     }
-    $string = explode(";", $HTTP_USER_AGENT);
+    $string = explode(";", $_SERVER["HTTP_USER_AGENT"]);
     if (!isset($string[1])) {
         return false;
     }

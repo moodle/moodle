@@ -92,7 +92,9 @@
         print_header("$survey->name: $strsummary", "$strsummary - $strallscales");
 
         if (survey_count_responses($survey->id)) {
-            echo "<P ALIGN=CENTER><A HREF=\"report.php?action=scales&id=$id\"><IMG HEIGHT=$SURVEY_GHEIGHT WIDTH=$SURVEY_GWIDTH tail\" BORDER=1 SRC=\"graph.php?id=$id&type=overall.png\"></A>";
+            echo "<P ALIGN=CENTER><A HREF=\"report.php?action=scales&id=$id\">";
+            survey_print_graph("id=$id&type=overall.png");
+            echo "</A>";
         } else {
             echo "<P ALIGN=CENTER>".get_string("nobodyyet","survey")."</P>";
         }
@@ -120,8 +122,7 @@
                     continue;
                 }
                 echo "<P ALIGN=center><A TITLE=\"$strseemoredetail\" HREF=report.php?action=questions&id=$id&qid=$question->multi>";
-                echo "<IMG HEIGHT=$SURVEY_GHEIGHT WIDTH=$SURVEY_GWIDTH BORDER=1
-                       SRC=\"graph.php?id=$id&qid=$question->id&type=multiquestion.png\">";
+                survey_print_graph("id=$id&qid=$question->id&type=multiquestion.png");
                 echo "</A></P><BR>";
             } 
         }
@@ -173,13 +174,18 @@
                 foreach ($subquestionorder as $key => $val) {
                     $subquestion = $subquestions[$val];
                     if ($subquestion->type > 0) {
-                        echo "<P ALIGN=CENTER><A TITLE=\"$strseemoredetail\" HREF=\"report.php?action=question&id=$id&qid=$subquestion->id\">
-                              <IMG HEIGHT=\"$SURVEY_GHEIGHT\" WIDTH=\"$SURVEY_GWIDTH\" BORDER=1 SRC=\"graph.php?id=$id&qid=$subquestion->id&type=question.png\"></A></P>";
+                        echo "<P ALIGN=CENTER>";
+                        echo "<A TITLE=\"$strseemoredetail\" HREF=\"report.php?action=question&id=$id&qid=$subquestion->id\">";
+                        survey_print_graph("id=$id&qid=$subquestion->id&type=question.png");
+                        echo "</A></P>";
                     }
                 }
             } else if ($question->type > 0 ) {
-                echo "<P ALIGN=CENTER><A TITLE=\"$strseemoredetail\" HREF=\"report.php?action=question&id=$id&qid=$question->id\">
-                      <IMG HEIGHT=\"$SURVEY_GHEIGHT\" WIDTH=\"$SURVEY_GWIDTH\" BORDER=1 SRC=\"graph.php?id=$id&qid=$question->id&type=question.png\"></A></P>";
+                echo "<P ALIGN=CENTER>";
+                echo "<A TITLE=\"$strseemoredetail\" HREF=\"report.php?action=question&id=$id&qid=$question->id\">";
+                survey_print_graph("id=$id&qid=$question->id&type=question.png");
+                echo "</A></P>";
+
             } else {
                 echo "<H3>$question->text:</H3>";
                 if ($aaa = survey_get_user_answers($survey->id, $question->id)) {
@@ -287,7 +293,9 @@
          echo "</P>";
 
          // Print overall summary
-         echo "<P ALIGN=CENTER><IMG HEIGHT=$SURVEY_GHEIGHT WIDTH=$SURVEY_GWIDTH ALIGN=CENTER SRC=\"graph.php?id=$id&sid=$student&type=student.png\"></P>";
+         echo "<P ALIGN=CENTER>";
+         survey_print_graph("id=$id&sid=$student&type=student.png");
+         echo "</P>";
          
          // Print scales
          $questions = get_records_list("survey_questions", "id", $survey->questions);
@@ -307,9 +315,9 @@
                  if ($virtualscales && $question->type > 0) {  // Don't show non-virtual scales if virtual
                      continue;
                  }
-                 echo "<P ALIGN=center><A TITLE=\"$strseemoredetail\" HREF=report.php?action=questions&id=$id&qid=$question->multi>";
-                 echo "<IMG HEIGHT=$SURVEY_GHEIGHT WIDTH=$SURVEY_GWIDTH BORDER=1
-                        SRC=\"graph.php?id=$id&qid=$question->id&sid=$student&type=studentmultiquestion.png\">";
+                 echo "<P ALIGN=center>";
+                 echo "<A TITLE=\"$strseemoredetail\" HREF=report.php?action=questions&id=$id&qid=$question->multi>";
+                 survey_print_graph("id=$id&qid=$question->id&sid=$student&type=studentmultiquestion.png");
                  echo "</A></P><BR>";
              } 
          }

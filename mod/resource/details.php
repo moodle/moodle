@@ -26,7 +26,7 @@
                       "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> $strediting");
 
         if (!$form->name or !$form->type or !$form->summary) {
-            error(get_string("filloutallfields"), $HTTP_REFERER);
+            error(get_string("filloutallfields"), $_SERVER["HTTP_REFERER"]);
         }
 
         print_simple_box_start("center", "", "$THEME->cellheading");
@@ -167,7 +167,7 @@
                 break;
 
             default:
-                error(get_string("notypechosen", "resource"), $HTTP_REFERER);
+                error(get_string("notypechosen", "resource"), $_SERVER["HTTP_REFERER"]);
                 break;
         }
 

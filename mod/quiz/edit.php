@@ -14,7 +14,7 @@
     if ($modform and !empty($modform->course)) {    // form submitted from mod.html
 
         if (empty($modform->name) or empty($modform->intro)) {
-            error(get_string("filloutallfields"), $HTTP_REFERER);
+            error(get_string("filloutallfields"), $_SERVER["HTTP_REFERER"]);
         }
 
         $SESSION->modform = $modform;    // Save the form in the current session
@@ -77,7 +77,7 @@
     }
 
     if (!empty($add)) { /// Add a question to the current quiz
-        $rawquestions = $HTTP_POST_VARS;
+        $rawquestions = $_POST;
         if (!empty($modform->questions)) {
             $questions = explode(",", $modform->questions);
         }
@@ -114,7 +114,7 @@
     }
 
     if (!empty($setgrades)) { /// The grades have been updated, so update our internal list
-        $rawgrades = $HTTP_POST_VARS;
+        $rawgrades = $_POST;
         unset($modform->grades);
         foreach ($rawgrades as $key => $value) {    // Parse input for question -> grades
             if (substr($key, 0, 1) == "q") {

@@ -17,14 +17,14 @@
     } 
 
 
-    if (isset($course) && isset($HTTP_POST_VARS)) {    // add or update form submitted
+    if (isset($_POST["course"])) {    // add or update form submitted
 
         if (isset($SESSION->modform)) {   // Variables are stored in the session
             $mod = $SESSION->modform;
             unset($SESSION->modform);
             save_session("SESSION");
         } else {
-            $mod = (object)$HTTP_POST_VARS;
+            $mod = (object)$_POST;
         }
 
         require_login($mod->course);
@@ -118,7 +118,7 @@
             error("Could not cache module information!");
         }
 
-        redirect($HTTP_REFERER);
+        redirect($_SERVER["HTTP_REFERER"]);
         exit;
 
     } else if (isset($delete)) {   // value = course module
@@ -218,7 +218,7 @@
     } else if (isset($add)) {
 
         if (!$add) {
-            redirect($HTTP_REFERER);
+            redirect($_SERVER["HTTP_REFERER"]);
             die;
         }
 

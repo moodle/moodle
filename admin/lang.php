@@ -130,8 +130,8 @@
 
     } else if ($mode == "compare") {
 
-        if (isset($HTTP_POST_VARS['file'])){   // Save a file
-            $newstrings = $HTTP_POST_VARS;
+        if (isset($_POST['file'])){   // Save a file
+            $newstrings = $_POST;
             $file = $newstrings['file'];
             unset($newstrings['file']);
             if (lang_save_file($langdir, $file, $newstrings)) {

@@ -48,7 +48,7 @@
         $usernew->lastname  = strip_tags($usernew->lastname);
 
         if (find_form_errors($user, $usernew, $err)) {
-            if ($filename = valid_uploaded_file($imagefile)) { 
+            if ($filename = valid_uploaded_file($_FILES['imagefile'])) { 
                 $usernew->picture = save_user_image($user->id, $filename);
             }
 
@@ -57,7 +57,7 @@
         } else {
 		    $timenow = time();
 
-            if ($filename = valid_uploaded_file($imagefile)) { 
+            if ($filename = valid_uploaded_file($_FILES['imagefile'])) { 
                 $usernew->picture = save_user_image($user->id, $filename);
             } else {
                 $usernew->picture = $user->picture;
