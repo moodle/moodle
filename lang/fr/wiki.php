@@ -174,4 +174,10 @@ $string['withbinaries'] = 'Inclure les contenus binaires';
 $string['withvirtualpages'] = 'Inclure les liens wiki';
 $string['wrongversionrange'] = '$a n\'est pas un intervalle correct !';
 
+$string['tabedit']='Modifier';
+$string['tabview']='Afficher';
+$string['tabinfo']='Info';
+$string['tablinks']='Liens';
+$string['tabattachments']='Annexes';
+
 ?>
