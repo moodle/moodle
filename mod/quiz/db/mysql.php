@@ -105,6 +105,10 @@ function quiz_upgrade($oldversion) {
                              ) TYPE=MyISAM COMMENT='Options for numerical questions'; ");
     }
 
+	if ($oldversion < 2003072400) {
+        execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('quiz', 'review', 'quiz', 'name') ");
+    }
+
     return true;
 }
 

@@ -69,6 +69,11 @@ function quiz_upgrade($oldversion) {
                                ); ");
         modify_database ("", "CREATE INDEX prefix_quiz_numerical_answer_idx ON prefix_quiz_numerical (answer);");
     }
+
+	if ($oldversion < 2003072400) {
+        execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('quiz', 'review', 'quiz', 'name') ");
+    }
+
     return true;
 }
 

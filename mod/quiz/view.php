@@ -59,7 +59,7 @@
         } else {
             $answercount = 0;
         }
-        echo "<P align=right><A HREF=\"report.php?id=$cm->id\">".get_string("viewallanswers","quiz",$answercount)."</A></P>";
+        echo "<p align=right><a href=\"report.php?id=$cm->id\">".get_string("viewallanswers","quiz",$answercount)."</a></p>";
     } else if (!$cm->visible) {
         notice(get_string("activityiscurrentlyhidden"));
     }
@@ -102,7 +102,7 @@
 
     if ($numattempts) { 
         $table->head = array($strattempt, $strtimetaken, $strtimecompleted, "$strgrade / $quiz->grade");
-        $table->align = array("CENTER", "CENTER", "LEFT", "RIGHT");
+        $table->align = array("center", "center", "left", "right");
         $table->width = array("", "", "", "");
         foreach ($attempts as $attempt) {
             if ($timetaken = ($attempt->timefinish - $attempt->timestart)) {
@@ -112,10 +112,10 @@
             }
             $attemptgrade = format_float(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade);
             if ($attemptgrade == $mygrade) {
-                $attemptgrade = "<SPAN class=highlight>$attemptgrade</SPAN>";
+                $attemptgrade = "<span class=highlight>$attemptgrade</span>";
             }
             if (!$available and $quiz->review) {
-                $attemptgrade = "<A HREF=\"report.php?q=$quiz->id&review=$attempt->id\">$attemptgrade</A>";
+                $attemptgrade = "<a href=\"review.php?q=$quiz->id&attempt=$attempt->id\">$attemptgrade</a>";
             }
             $table->data[] = array( $attempt->attempt, 
                                     format_time($attempt->timefinish - $attempt->timestart),
@@ -126,11 +126,11 @@
     }
 
     if ($available) {
-        echo "<P ALIGN=CENTER>".get_string("quizavailable", "quiz", userdate($quiz->timeclose));
+        echo "<p align=center>".get_string("quizavailable", "quiz", userdate($quiz->timeclose));
     } else if ($timenow < $quiz->timeopen) {
-        echo "<P ALIGN=CENTER>".get_string("quiznotavailable", "quiz", userdate($quiz->timeopen));
+        echo "<p align=center>".get_string("quiznotavailable", "quiz", userdate($quiz->timeopen));
     } else {
-        echo "<P ALIGN=CENTER>".get_string("quizclosed", "quiz", userdate($quiz->timeclose));
+        echo "<p align=center>".get_string("quizclosed", "quiz", userdate($quiz->timeclose));
     }
 
 

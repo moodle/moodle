@@ -1234,9 +1234,9 @@ function quiz_get_user_attempts_string($quiz, $attempts, $bestgrade) {
     foreach ($attempts as $attempt) {
         $attemptgrade = format_float(($attempt->sumgrades / $quiz->sumgrades) * $quiz->grade);
         if ($attemptgrade == $bestgrade) {
-            $userattempts[] = "<SPAN CLASS=highlight><A HREF=\"report.php?q=$quiz->id&attempt=$attempt->id\">$attemptgrade</A></SPAN>";
+            $userattempts[] = "<span class=highlight><a href=\"review.php?q=$quiz->id&attempt=$attempt->id\">$attemptgrade</a></span>";
         } else {
-            $userattempts[] = "<A HREF=\"report.php?q=$quiz->id&attempt=$attempt->id\">$attemptgrade</A>";
+            $userattempts[] = "<a href=\"review.php?q=$quiz->id&attempt=$attempt->id\">$attemptgrade</a>";
         }
     }
     return implode(",", $userattempts);
@@ -1986,6 +1986,21 @@ function quiz_save_question_options($question) {
     return true;
 }
 
+
+function quiz_remove_unwanted_questions(&$questions, $quiz) {
+/// Used by review.php
+
+    $quizquestions = array();
+    $quizids = explode(",", $quiz->questions);
+    foreach ($quizids as $quizid) {
+        $quizquestions[$quizid] = true;
+    }
+    foreach ($questions as $key => $question) {
+        if (!isset($quizquestions[$question->id])) {
+            unset($questions[$key]);
+        }
+    }
+}
 
 
 
