@@ -1016,13 +1016,19 @@ function workshop_file_area_name($workshop, $submission) {
 }
 
 
-function workshop_get_assessments($submission) {
-	// Return all assessments for this submission provided they are after the editing time, ordered oldest first, newest last
+function workshop_get_assessments($submission, $all = '') {
+	// Return assessments for this submission ordered oldest first, newest last
+	// new assessments made withinthe editing time are NOT return unless the
+	// second argument is set to ALL
 	global $CFG;
 
-	$timenow = time();
-    return get_records_select("workshop_assessments", "(submissionid = $submission->id) AND 
-		(timecreated < $timenow - $CFG->maxeditingtime)", "timecreated DESC");
+	if ($all != 'ALL') {
+		$timenow = time();
+		return get_records_select("workshop_assessments", "(submissionid = $submission->id) AND 
+			(timecreated < $timenow - $CFG->maxeditingtime)", "timecreated DESC");
+	} else {
+		return get_records_select("workshop_assessments", "submissionid = $submission->id", "timecreated DESC");
+	}
 }
 
 

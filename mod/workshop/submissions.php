@@ -136,7 +136,7 @@
 			}
 		print_string("deleting", "workshop");
 		// first get any assessments...
-		if ($assessments = workshop_get_assessments($submission)) {
+		if ($assessments = workshop_get_assessments($submission, 'ALL')) {
 			foreach($assessments as $assessment) {
 				// ...and all the associated records...
 				delete_records("workshop_comments", "assessmentid", $assessment->id);
@@ -893,7 +893,7 @@
 			}
 		print_string("deleting", "workshop");
 		// first get any assessments...
-		if ($assessments = workshop_get_assessments($submission)) {
+		if ($assessments = workshop_get_assessments($submission, 'ALL')) {
 			foreach($assessments as $assessment) {
 				// ...and all the associated records...
 				delete_records("workshop_comments", "assessmentid", $assessment->id);
