@@ -870,6 +870,8 @@ function print_course_admin_links($course, $width=180) {
             $admindata[]="<a href=\"$CFG->changepassword\">".get_string("changepassword")."...</a>";
             $adminicon[]="<img src=\"$CFG->pixpath/i/user.gif\" height=16 width=16 alt=\"\">";
         }
+        $admindata[]="<a href=\"unenrol.php?id=$course->id\">".get_string("unenrolme", "", $course->shortname)."...</a>";
+        $adminicon[]="<img src=\"$CFG->pixpath/i/user.gif\" height=16 width=16 alt=\"\">";
     } 
 
     if (!empty($admindata)) {
