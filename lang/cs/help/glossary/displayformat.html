@@ -1,0 +1,43 @@
+<P ALIGN=CENTER><B>Zpùsob zobrazení</B></P>
+
+<P>Toto nastavení upøesòuje, jak se hesla slovníku budou zobrazovat. 
+Standardní zpùsoby zobrazení jsou tyto:</p>
+<blockquote>
+<dl>
+<dt><b>Prostý slovníkový styl</b></dt>
+<dd>Vypadá jako bì¾ný ti¹tìný slovník; nezobrazují se autoøi hesel
+a pøílohy jsou uvedeny ve formì odkazù.</dd>
+<dt><b>Seznam polo¾ek</b></dt>
+<dd>Zobrazí pouze heslová slova jako hypertextové odkazy; text hesla se 
+zobrazí po kliknutí na odkaz.</dd>
+<dt><b>Souvislý bez autora</b></dt>
+<dd>Zobrazuje hesla jedno za druhým, oddìlená pouze editaèními ikonami.</dd>
+<dt><b>Úplný vèetnì autora</b></dt>
+<dd>Zobrazení podobné jako ve fóru; zobrazuje se údaj o autorovi hesla, pøílohy 
+jsou uvedeny ve formì odkazù.</dd>
+<dt><b>Úplný bez autora</b></dt>
+<dd>Zobrazení podobné jako ve fóru; údaj o autorovi hesla se nezobrazuje, pøílohy 
+jsou uvedeny ve formì odkazù.</dd>
+<dt><b>Encyklopedie</b></dt>
+<dd>Stejný zpùsob zobrazení jako "Úplný vèetnì autora", ale pokud je pøílohou 
+obrázek, zobrazí se pøímo v textu hesla.</dd>
+<dt><b>FAQ (ÈKD:-)</b></dt>
+<dd>Vhodný pro zobrazení seznamù <b>è</b>asto <b>k</b>ladených <b>d</b>otazù. 
+Automaticky vkládá pøed heslové slovo (které v tomto pøípadì obsahuje znìní 
+dotazu) a pøed text hesla (obsahující odpovìï) slovo OTÁZKA, resp. ODPOVÌÏ.</dd>
+</dl>
+</blockquote>
+
+<hr>
+<p>Správci Moodlu mohou vytváøet nové zpùsoby zobrazení, a to následujícím 
+postupem:
+<ol>
+<li>Nahlédnìte do adresáøe mod/glossary/formats; pro ka¾dý existující zpùsob 
+zobrazení byste mìli vidìt soubor oznaèený èíslem.
+<li>Vytvoøte kopii jednoho z nich a oznaète ji jiným èíslem N (nezapomeòte, ¾e 
+0 a 1 jsou rezervovány).
+<li>Editací souboru vytvoøte vlastní formát (vy¾aduje jistou znalost PHP).
+<li>Nakonec vlo¾te do ka¾dého jazykového balíèku, který pou¾íváte, novou 
+promìnnou s názvem <b>displayformatN</b> a pøipojte krátké, ale výsti¾né 
+jméno pro nový formát.
+</ol>

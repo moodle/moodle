@@ -1,0 +1,63 @@
+<p align=center><b>Naèíst u¾ivatele</b></p>
+
+<p>Pøedev¹ím je nutno poznamenat, ¾e <b>obvykle není nutné importovat u¾ivatele 
+dávkovì</b> &ndash; chcete-li omezit mno¾ství administrátorské práce, seznamte 
+se nejprve s mo¾nostmi autentizace, které nevy¾adují manuální údr¾bu, jako je 
+napø. pøipojení k ji¾ existujícím externím databázím nebo vytváøení úètù 
+samotnými u¾ivateli. Viz stránku &quot;Metoda ovìøování&quot; ve správcovském 
+menu.</p>
+
+<p>Pokud jste si jisti, ¾e chcete importovat vìt¹í mno¾ství u¾ivatelských úètù z 
+textového souboru, musíte dodr¾et následující formát:</p>
+
+<ul>
+<li>Ka¾dý øádek souboru obsahuje právì jeden záznam.</li>
+<li>Ka¾dý záznam je tvoøen øadou údajù oddìlených èárkami.</li>
+<li>První záznam souboru má zvlá¹tní funkci &ndash; obsahuje seznam názvù polí, 
+které definují formát zbytku souboru.
+
+<blockquote>
+<p><b>Povinná pole</b>: tyto polo¾ky nesmí v prvním záznamu chybìt a musí být 
+vyplnìny u v¹ech u¾ivatelù.</p>
+
+<p></p>
+<font color="#990000" face="Courier New, Courier, mono">username, password, 
+firstname, lastname, email</font></p>
+
+<p><b>Standardnì vy¾adovaná pole</b>: jsou nepovinná &ndash; pokud nejsou pøítomna, jsou 
+automaticky doplnìna údaji z osobního profilu správce</p>
+
+<p><font color="#990000" face="Courier New, Courier, mono">institution, 
+department, city, country, lang, timezone</font></p>
+
+<p><b>Volitelná pole</b>: ve¹kerá dal¹í pole jsou nepovinná. Kurzy jsou 
+reprezentovány svými &quot;krátkými názvy&quot; &ndash; pokud jsou vyplnìny, 
+bude u¾ivatel do pøíslu¹ných kurzù automaticky zapsán jako student.</p>
+
+<p><font color="#990000" face="Courier New, Courier, mono">idnumber, icq, 
+phone1, phone2, address, url, description, mailformat, maildisplay, htmleditor, 
+autosubscribe, course1, course2, course3, course4, course5, group1, group2, 
+group3, group4, group5</font></p>
+</blockquote>
+</li>
+
+<li>Èárky obsa¾ené uvnitø údajù je nutné zapsat kódem &amp;#44; &ndash; skript 
+jej automaticky pøevede zpìt na èárky.</li>
+
+<li>Pro booleovská pole pou¾ijte 0 pro False (nepravda) a 1 pro True 
+(pravda).</li>
+
+<li>Poznámka: Pokud je u¾ivatel ji¾ registrován v Moodlu, získá skript z databáze 
+jeho <font face="Courier New, Courier, mono">userid</font> (jednoznaèný 
+identifikátor) a zapí¹e u¾ivatele jako studenta do urèených kurzù BEZ pøepsání 
+ostatních zadaných údajù.</li>
+</ul>
+
+<p>Následuje pøíklad platného souboru pro import:</p>
+
+<p><font size="-1" face="Courier New, Courier, mono">username, password, 
+firstname, lastname, email, idnumber, maildisplay, course1, group1<br>
+lazar, tajneheslo, Markéta, Lazarová, marketa@server.cz, cz, 3663737, 1, 
+Intro101, Skupina 1<br>
+janovak, heslotajne, Jan, Novák, janovak@kdesi.cz, en_us, 6736733, 0, 
+Advanced202, Skupina 3</font></p>

@@ -1,0 +1,94 @@
+<P align=center><B>Import souborù z formátu Course Test Manager</B></P>
+<P>Course Test Manager je softwarový balíèek, jeho¾ ¾ivotní cyklus se 
+chýlí ke konci. Spoleènost Course Technology u¾ v jeho vývoji nepokraèuje &ndash; 
+byl nahrazen novým systémem ExamView. Pøesto jsme se rozhodli tento 
+filtr vytvoøit, proto¾e a¾ doposud neexistoval zpùsob, jak exportovat úlohy 
+z formátu CTM do jiného bì¾nì u¾ívaného testového formátu.</P>
+
+<P>Pro import otázek z CTM musíte mít CTM nainstalován na poèítaèi s Windows a 
+mít na tomto poèítaèi pøístup k souborùm databáze MS Access. Pro pøístup k datùm 
+potøebujete dva datové soubory:</P>
+<UL>
+  <LI>system.mda &ndash; tento soubor se nachází v koøenovém adresáøi va¹í 
+  instalace CTM a v øeèi MS Access je obvykle nazýván "System Database". 
+  <LI>ctm.mdb &ndash; databáze obsahující testovací otázky. V CTM je pro ka¾dý 
+  kurz nainstalována jedna databáze. Nachází se v adresáøi umístìném o jednu 
+  úroveò ní¾e ne¾ instalaèní adresáø CTM.
+</LI></UL>
+
+<P>Import souborù CTM se li¹í v závislosti na tom, zda je Moodle provozován 
+v operaèním systému Windows nebo Linux. Bez ohledu to, v jakém operaèním 
+systému pracujete, potøebujete poèítaè s Windows (Windows 2000 nebo Windows XP) 
+umístìný na stejné síti jako systém Moodle; na tomto poèítaèi jsou bìhem 
+importu umístìny databáze otázek (v MS Access).</P>
+
+<P>Celý proces je o nìco jednodu¹¹í, pokud je Moodle provozován ve <B>Windows</B>. 
+Pro import z CTM zde staèí provést tyto kroky:</P>
+<OL>
+  <LI>Nahrajte soubor system.mda do Moodlu pomocí správce souborù. Nezále¾í na 
+  tom, do jakého kurzu soubor system.mda nahrajete, Moodle si jej najde kdekoliv. 
+  <LI>Zalo¾te v Moodlu test a pou¾ijte funkci "Importovat úlohy ze souboru". 
+  Vyberte pøíslu¹ný soubor ctm.mdb a pokraèujte v importu. Pokud jste 
+  postupovali správnì, zobrazí se vám stránka, na které si budete moci vybrat 
+  kategorii otázek, z ní¾ chcete importovat. Tento krok je sem zaøazen proto, ¾e 
+  databáze úloh v CTM jsou vzhledem k velkému mno¾ství otázek èasto èlenìny do 
+  kategorií (napø. podle kapitol uèebnice nebo oddílù kurzu).
+</LI></OL>
+
+<P>Pokud Moodle provozujete v operaèním systému <B>Linux</B>, bude import 
+úloh vy¾adovat instalaci speciálního softwaru <A href="http://odbcsock.sourceforge.net/" 
+target=_new><B>ODBC Socket Server</B></A>. Ten si musíte stáhnout a nainstalovat 
+na poèítaè s Windows, ve kterém je ulo¾ena databáze CTM. <B>Nepostupujte</B> 
+podle instalaèních pokynù uvedených v balíèku ODBC Socket Server. Jsou zbyteènì 
+komplikované! Postupujte radìji takto:</P>
+<OL>
+  <LI>Stáhnìte si instalaèní soubor <A href="http://odbcsock.sourceforge.net/" 
+  target=_new>z této stránky</A> a rozbalte ho v poèítaèi s Windows.
+  <LI>Zkopírujte soubor ODBCSocketServer.exe na vhodné místo, napø. do systémového 
+  adresáøe (pravdìpodobnì C:\WINNT\ nebo C:\Windows) nebo do adresáøe 
+  Program Files.
+  
+  <LI>Nainstalujte ODBC Socket Server jako slu¾bu, a to pøíkazem<BR>
+  <B>&lt;cesta&nbsp;k&nbsp;souboru&nbsp;&ndash;&nbsp;viz&nbsp;pøedchozí&nbsp;krok&gt;/ODBCSocketServer.exe&nbsp;/Service</B><BR>
+  To mù¾ete provést v menu Start-&gt;Spustit... nebo v pøíkazovém øádku 
+  operaèního systému.
+  
+  <LI>Otevøete správu slu¾eb jedním z tìchto tøí zpùsobù: (a) 
+  Start-&gt;Nastavení-&gt;Ovládací panely-&gt;Nástroje pro správu-&gt;Slu¾by; 
+  (b) pravým tlaèítkem kliknìte na <B>Tento poèítaè</B>, v nabídce vyberte 
+  Spravovat-&gt;Slu¾by a aplikace-&gt;Slu¾by; (c) pøíkazem <B>services.msc</B> 
+  v menu Start-&gt;Spustit...
+  
+  <LI>Ve správì slu¾eb kliknìte pravým tlaèítkem na ikonu ODBC Socket Server a 
+  vyberte polo¾ku <B>Start</B>. Jeho "stav" by se mìl zmìnit na Spu¹tìno 
+  (Started). Po dokonèení importu mù¾ete slu¾bu zase zastavit nebo zakázat. 
+  
+  <LI>Pøesvìdète se, zda se na poèítaèi nacházejí oba datové soubory system.mda 
+  a ctm.mdb a také ODBC ovladaè pro MS Access, který by mìl být souèástí ka¾dé 
+  instalace Windows (jeho pøítomnost ovìøíte tak, ¾e otevøete panel "Nástroje 
+  pro správu", poté panel "Datové zdroje" a na nìm kliknete na zálo¾ku 
+  "Ovladaèe").<BR>
+  Dále zjistìte, kde je nainstalován CTM a kde jsou umístìny soubory system.mda 
+  a ctm.mdb, ze kterých chcete importovat data. Poznamenejte si úplnou 
+  pøístupovou cestu k tìmto souborùm a také IP adresu nebo jméno poèítaèe 
+  s Windows. Obì tyto informace budete pøi importování potøebovat. 
+  
+  <LI>Nyní ji¾ mù¾ete zaèít s importováním databází úloh do Moodlu. Zalo¾te 
+  v Moodlu test a pou¾ijte funkci "Importovat úlohy ze souboru". <B>V TOMTO BODÌ 
+  SE POSTUP PRO LINUX LI©Í!</B> V POLI "Vlo¾it" MUSÍTE UVÉST 
+  ZÁSTUPNÝ SOUBOR. TENTO SOUBOR SE <B>NEBUDE</B> ZPRACOVÁVAT, SLOU®Í POUZE JAKO 
+  "©IDÍTKO" PRO IMPORTOVACÍ FORMULÁØ (MUSÍ V©AK SKUTEÈNÌ EXISTOVAT A MÍT 
+  NENULOVOU VELIKOST). INFORMACE O POU®ÍVANÉM SERVERU WINDOWS BUDETE MOCI UVÉST 
+  V DAL©ÍM KROKU. Otevøe se vám stránka, na které vyplníte IP adresu nebo jméno 
+  serveru Windows a pøístupovou cestu k souborùm system.mda a ctm.mdb (které 
+  jste si zapsali v pøedchozím kroku). Poté kliknìte na tlaèítko 
+  "Pøipojit k serveru". Pokud bylo v¹e nastaveno správnì, zobrazí se dal¹í 
+  formuláø, ve kterém budete moci vybrat kategorii úloh k importu. POKUD JSTE 
+  DOSPÌLI A® SEM, JE V©E NASTAVENO SPRÁVNÌ A MÙ®ETE ZAÈÍT IMPORTOVAT! 
+    </LI></OL>
+  
+<P>Pokud se bìhem importu zobrazila chybová hlá¹ení, mo¾ná oceníte následující 
+technickou informaci: k otevøení zásuvky (socket) i k výmìnì dotazu a výsledku 
+dotazu ve formátu XML pou¾ívá ODBC Socket Server port 9628. 
+Tøída pro import zpracuje výsledek dotazu ve formátu XML stejnì, jako by byl 
+zpracováván místní dotaz.</P>
