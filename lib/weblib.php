@@ -269,8 +269,8 @@ function text_to_html($text, $smiley=true, $para=true) {
     $text = eregi_replace(">([[:space:]]+)<", "><", $text);
 
     // Remove any returns that precede or follow HTML tags
-    $text = eregi_replace("([\n\r])+<", " <", $text);
-    $text = eregi_replace(">([\n\r])+", "> ", $text);
+    $text = eregi_replace("([\n\r])<", " <", $text);
+    $text = eregi_replace(">([\n\r])", "> ", $text);
 
     // Make URLs into links.   eg http://moodle.com/
     $text = eregi_replace("([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])", 
