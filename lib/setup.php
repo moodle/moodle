@@ -1,14 +1,69 @@
-<?php // $Id$
-//
-// setup.php
-// 
-// Sets up sessions, connects to databases and so on
-//
-// Normally this is only called by the main config.php file 
-// 
-// Normally this file does not need to be edited.
-//
-//////////////////////////////////////////////////////////////
+<?php
+/**
+ * setup.php - Sets up sessions, connects to databases and so on
+ *
+ * Normally this is only called by the main config.php file 
+ * Normally this file does not need to be edited. 
+ * @author Martin Dougiamas
+ * @version $Id$
+ * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @package moodlecore
+ */
+
+////// DOCUMENTATION IN PHPDOC FORMAT FOR MOODLE GLOBALS AND COMMON OBJECT TYPES /////////////
+/**
+ * This global variable is read in from the 'config' table.
+ *
+ * Some typical settings in the $CFG global:
+ *  - $USER->emailstop - Does the user want email sent to them?
+ *  - $USER->email - The user's email address.
+ *  - $USER->id - The unique integer identified of this user in the 'user' table.
+ *  - $USER->email - The user's email address.
+ *  - $USER->firstname - The user's first name.
+ *  - $USER->lastname - The user's last name.
+ *  - $USER->username - The user's login username.
+ *  - $USER->secret - The user's ?.
+ *  - $USER->lang - The user's language choice.
+ *
+ * @global object(cfg) $CFG
+ */
+global $CFG;
+/**
+ * $USER is a global instance of a typical $user record. 
+ *
+ * Items found in the user record:
+ *  - $CFG->wwwroot - Path to moodle index directory in url format.
+ *  - $CFG->dataroot - Path to moodle index directory on server's filesystem.
+ *  - $CFG->libroot  - Path to moodle's library folder on server's filesystem.
+ *
+ * @global object(user) $USER 
+ */
+global $USER;
+/**
+ * Definition of session type
+ * @global object(session) $SESSION 
+ */
+global $SESSION;
+/**
+ * Definition of course type
+ * @global object(course) $COURSE 
+ */
+global $COURSE;
+/**
+ * Definition of db type
+ * @global object(db) $db 
+ */
+global $db;
+/**
+ * $THEME is a global that defines the site theme.
+ *
+ * Items found in the theme record:
+ *  - $THEME->cellheading - Cell colors.
+ *  - $THEME->cellheading2 - Alternate cell colors.
+ *
+ * @global object(theme) $THEME 
+ */
+global $THEME;
 
     if (!isset($CFG->wwwroot)) {
         die;
@@ -23,9 +78,9 @@
 
 /// Connect to the database using adodb
 
-    $CFG->libdir   = "$CFG->dirroot/lib";
+    $CFG->libdir   = $CFG->dirroot .'/lib';
 
-    require_once("$CFG->libdir/adodb/adodb.inc.php"); // Database access functions
+    require_once($CFG->libdir .'/adodb/adodb.inc.php'); // Database access functions
 
     $db = &ADONewConnection($CFG->dbtype);         
 
@@ -37,25 +92,25 @@
         $dbconnected = $db->Connect($CFG->dbhost,$CFG->dbuser,$CFG->dbpass,$CFG->dbname);
     }
     if (! $dbconnected) {
-        echo "<font color=\"#990000\">";
-        echo "<p>Error: Moodle could not connect to the database.</p>";
-        echo "<p>It's possible the database itself is just not working at the moment.</p>";
-        echo "<p>The admin should 
-                 also check that the database details have been correctly specified in config.php</p>";
-        echo "<p>Database host: $CFG->dbhost<br />";
-        echo "Database name: $CFG->dbname<br />";
-        echo "Database user: $CFG->dbuser<br />";
+        echo '<font color="#990000">';
+        echo '<p>Error: Moodle could not connect to the database.</p>';
+        echo '<p>It\'s possible the database itself is just not working at the moment.</p>';
+        echo '<p>The admin should 
+                 also check that the database details have been correctly specified in config.php</p>';
+        echo '<p>Database host: '. $CFG->dbhost .'<br />';
+        echo 'Database name: '. $CFG->dbname .'<br />';
+        echo 'Database user: '. $CFG->dbuser .'<br />';
         if (!isset($CFG->dbpersist)) {
-            echo "<p>The admin should also try setting this in config.php:  $"."CFG->dbpersist = false; </p>";
+            echo '<p>The admin should also try setting this in config.php:  $'. CFG->dbpersist .' = false; </p>';
         }
-        echo "</font>";
+        echo '</font>';
         die;
     }
 
     error_reporting(E_ALL);       // Show errors from now on.
 
     if (!isset($CFG->prefix)) {   // Just in case it isn't defined in config.php
-        $CFG->prefix = "";
+        $CFG->prefix = '';
     }
 
 
@@ -68,9 +123,9 @@
 
 /// Load up standard libraries 
 
-    require_once("$CFG->libdir/weblib.php");          // Functions for producing HTML
-    require_once("$CFG->libdir/datalib.php");         // Functions for accessing databases
-    require_once("$CFG->libdir/moodlelib.php");       // Other general-purpose functions
+    require_once($CFG->libdir .'/weblib.php');          // Functions for producing HTML
+    require_once($CFG->libdir .'/datalib.php');         // Functions for accessing databases
+    require_once($CFG->libdir .'/moodlelib.php');       // Other general-purpose functions
 
 
 /// Increase memory limits if possible
@@ -85,6 +140,7 @@
         foreach ($configs as $config) {
             $CFG[$config->name] = $config->value;
         }
+
         $CFG = (object)$CFG;
         unset($configs);
         unset($config);
@@ -105,13 +161,13 @@
     }
 
 /// Set up smarty template system
-    require_once("$CFG->libdir/smarty/Smarty.class.php");  
+    require_once($CFG->libdir .'/smarty/Smarty.class.php');  
     $smarty = new Smarty;
-    $smarty->template_dir = "$CFG->dirroot/templates/$CFG->template";
-    if (!file_exists("$CFG->dataroot/cache")) {
+    $smarty->template_dir = $CFG->dirroot .'/templates/'. $CFG->template;
+    if (!file_exists($CFG->dataroot .'/cache')) {
         make_upload_directory('cache');
     }
-    $smarty->compile_dir = "$CFG->dataroot/cache";
+    $smarty->compile_dir = $CFG->dataroot .'/cache';
 
 /// Set session timeouts
     if (!empty($CFG->sessiontimeout)) {
@@ -119,10 +175,10 @@
     }
 
 /// Set custom session path
-    if (!file_exists("$CFG->dataroot/sessions")) {
+    if (!file_exists($CFG->dataroot .'/sessions')) {
         make_upload_directory('sessions');
     }
-    ini_set('session.save_path', "$CFG->dataroot/sessions");
+    ini_set('session.save_path', $CFG->dataroot .'/sessions');
 
 /// Set sessioncookie variable if it isn't already
     if (!isset($CFG->sessioncookie)) {
@@ -135,8 +191,8 @@
 
 /// Location of standard files
 
-    $CFG->wordlist    = "$CFG->libdir/wordlist.txt";
-    $CFG->javascript  = "$CFG->libdir/javascript.php";
+    $CFG->wordlist    = $CFG->libdir .'/wordlist.txt';
+    $CFG->javascript  = $CFG->libdir .'/javascript.php';
     $CFG->moddata     = 'moddata';
 
 
@@ -145,18 +201,18 @@
     if (!isset($CFG->theme)) {
         $CFG->theme = 'standard';
     }
-    include("$CFG->dirroot/theme/$CFG->theme/config.php");
+    include($CFG->dirroot .'/theme/'. $CFG->theme .'/config.php');
 
-    $CFG->stylesheet  = "$CFG->wwwroot/theme/$CFG->theme/styles.php";
-    $CFG->header      = "$CFG->dirroot/theme/$CFG->theme/header.html";
-    $CFG->footer      = "$CFG->dirroot/theme/$CFG->theme/footer.html";
+    $CFG->stylesheet  = $CFG->wwwroot .'/theme/'. $CFG->theme .'/styles.php';
+    $CFG->header      = $CFG->dirroot .'/theme/'. $CFG->theme .'/header.html';
+    $CFG->footer      = $CFG->dirroot .'/theme/'. $CFG->theme .'/footer.html';
 
     if (empty($THEME->custompix)) {
-        $CFG->pixpath = "$CFG->wwwroot/pix";
-        $CFG->modpixpath = "$CFG->wwwroot/mod";
+        $CFG->pixpath = $CFG->wwwroot .'/pix';
+        $CFG->modpixpath = $CFG->wwwroot .'/mod';
     } else {
-        $CFG->pixpath = "$CFG->wwwroot/theme/$CFG->theme/pix";
-        $CFG->modpixpath = "$CFG->wwwroot/theme/$CFG->theme/pix/mod";
+        $CFG->pixpath = $CFG->wwwroot .'/theme/'. $CFG->theme .'/pix';
+        $CFG->modpixpath = $CFG->wwwroot .'/theme/'. $CFG->theme .'/pix/mod';
     }
 
 
@@ -239,7 +295,7 @@
 /// majority of cases), use the stored locale specified by admin.
 
     if (isset($_GET['lang'])) {
-        if (!detect_munged_arguments($lang, 0) and file_exists("$CFG->dirroot/lang/$lang")) {
+        if (!detect_munged_arguments($lang, 0) and file_exists($CFG->dirroot .'/lang/'. $lang)) {
             $SESSION->lang = $lang;
             $SESSION->encoding = get_string('thischarset');
         }
