@@ -227,15 +227,15 @@ global $THEME;
 /// A hack to get around magic_quotes_gpc being turned off
 
     if (!ini_get_bool('magic_quotes_gpc') ) {
-        function stripslashes_deep($value) {
+        function addslashes_deep($value) {
             $value = is_array($value) ?
-                    array_map('stripslashes_deep', $value) :
-                    stripslashes($value);
+                    array_map('addslashes_deep', $value) :
+                    addslashes($value);
             return $value;
         }
-        $_POST = array_map('stripslashes_deep', $_POST);
-        $_GET = array_map('stripslashes_deep', $_GET);
-        $_COOKIE = array_map('stripslashes_deep', $_COOKIE);
+        $_POST = array_map('addslashes_deep', $_POST);
+        $_GET = array_map('addslashes_deep', $_GET);
+        $_COOKIE = array_map('addslashes_deep', $_COOKIE);
     }
 
 
