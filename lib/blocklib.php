@@ -9,6 +9,8 @@ define('BLOCK_MOVE_RIGHT',  0x02);
 define('BLOCK_MOVE_UP',     0x04);
 define('BLOCK_MOVE_DOWN',   0x08);
 
+define('BLOCK_SITE_DEFAULT', 'site_main_menu,admin,course_list:course_summary,calendar_month');
+
 function block_formats_to_array($formatstring) {
     $retval = array();
 
