@@ -1114,11 +1114,13 @@
     //It does this conversions:
     //    - $CFG->wwwroot -----------------------------> $@WWWROOT@$
     //    - /file.php/$courseid -----------------------> /file.php/$@COURSEID@$
+    //    - Links to forums everywhere (DB) are encoded.
     //
     function backup_encode_absolute_links($content) {
 
         global $CFG,$preferences;
 
+        //Now we encode calls to file.php or wwwroot
         $search = array ($CFG->wwwroot,
                          "/file.php/".$preferences->backup_course);
 
@@ -1127,9 +1129,17 @@
 
         $result = str_replace($search,$replace,$content);
 
-        //if ($result != $content) {                                                   //Debug
-        //    echo "\n<hr>".$content." \nchanged to \n".$result."<hr>\n";              //Debug
-        //}                                                                            //Debug
+        foreach ($preferences->mods as $name => $info) {
+            //Check if the xxxx_encode_content_links exists
+            $function_name = $name."_encode_content_links";
+            if (function_exists($function_name)) {
+                $result = $function_name($result,$preferences);
+            }
+        }
+
+        if ($result != $content && $CFG->debug>7) {                                  //Debug
+            echo "<br><hr>".$content."<br>changed to<br>".$result."<hr><br>";        //Debug
+        }                                                                            //Debug
 
         return $result;
     }

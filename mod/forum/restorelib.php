@@ -659,4 +659,231 @@
         }
         return $status;
     }
+
+    //Return a content decoded to support interactivities linking. Every module
+    //should have its own. They are called automatically from 
+    //forum_decode_content_links_caller() function in each module
+    //in the restore process
+    function forum_decode_content_links ($content,$restore) {
+
+        global $CFG;
+
+        $result = $content;
+
+        //Link to the list of forums
+
+        $searchstring='/\$@(FORUMINDEX)\*([0-9]+)@\$/';
+        //We look for it
+        preg_match_all($searchstring,$content,$foundset);
+        //If found, then we are going to look for its new id (in backup tables)
+        if ($foundset[0]) {
+            //print_object($foundset);                                     //Debug
+            //We get the needed variables here
+            $courseid = $restore->course_id;
+            //Now replace it
+            $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/forum/index.php?id='.$courseid,$result);
+        }
+
+        //Link to forum view by moduleid
+
+        $searchstring='/\$@(FORUMVIEWBYID)\*([0-9]+)@\$/';
+        //We look for it
+        preg_match_all($searchstring,$content,$foundset);
+        //If found, then we are going to look for its new id (in backup tables)
+        if ($foundset[0]) {
+            //print_object($foundset);                                     //Debug
+            //Iterate over foundset[2]. They are the old_ids
+            foreach($foundset[2] as $old_id) {
+                //We get the needed variables here (course_modules id)
+                $rec = backup_getid($restore->backup_unique_code,"course_modules",$old_id);
+                if($rec->new_id) {
+                    //Personalize the searchstring
+                    $searchstring='/\$@(FORUMVIEWBYID)\*('.$old_id.')@\$/';
+                    //Now replace it
+                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/forum/view.php?id='.$rec->new_id,$result);
+                }
+            }
+        }
+
+        //Link to forum view by forumid
+
+        $searchstring='/\$@(FORUMVIEWBYF)\*([0-9]+)@\$/';
+        //We look for it
+        preg_match_all($searchstring,$content,$foundset);
+        //If found, then we are going to look for its new id (in backup tables)
+        if ($foundset[0]) {
+            //print_object($foundset);                                     //Debug
+            //Iterate over foundset[2]. They are the old_ids
+            foreach($foundset[2] as $old_id) {
+                //We get the needed variables here (forum id)
+                $rec = backup_getid($restore->backup_unique_code,"forum",$old_id);
+                if($rec->new_id) {
+                    //Personalize the searchstring
+                    $searchstring='/\$@(FORUMVIEWBYF)\*('.$old_id.')@\$/';
+                    //Now replace it
+                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/forum/view.php?f='.$rec->new_id,$result);
+                }
+            }
+        }
+
+        //Link to forum discussion by discussionid
+
+        $searchstring='/\$@(FORUMDISCUSSIONVIEW)\*([0-9]+)@\$/';
+        //We look for it
+        preg_match_all($searchstring,$content,$foundset);
+        //If found, then we are going to look for its new id (in backup tables)
+        if ($foundset[0]) {
+            //print_object($foundset);                                     //Debug
+            //Iterate over foundset[2]. They are the old_ids
+            foreach($foundset[2] as $old_id) {
+                //We get the needed variables here (discussion id)
+                $rec = backup_getid($restore->backup_unique_code,"forum_discussions",$old_id);
+                if($rec->new_id) {
+                    //Personalize the searchstring
+                    $searchstring='/\$@(FORUMDISCUSSIONVIEW)\*('.$old_id.')@\$/';
+                    //Now replace it
+                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/forum/discuss.php?d='.$rec->new_id,$result);
+                }
+            }
+        }
+
+        //Link to forum discussion with parent syntax
+
+        $searchstring='/\$@(FORUMDISCUSSIONVIEWPARENT)\*([0-9]+)\*([0-9]+)@\$/';
+        //We look for it
+        preg_match_all($searchstring,$content,$foundset);
+        //If found, then we are going to look for its new id (in backup tables)
+        if ($foundset[0]) {
+            //print_object($foundset);                                     //Debug
+            //Iterate over foundset[2] and foundset[3]. They are the old_ids
+            foreach($foundset[2] as $key => $old_id) {
+                $old_id2 = $foundset[3][$key];
+                //We get the needed variables here (discussion id and post id)
+                $rec = backup_getid($restore->backup_unique_code,"forum_discussions",$old_id);
+                $rec2 = backup_getid($restore->backup_unique_code,"forum_posts",$old_id2);
+                if($rec->new_id && $rec2->new_id) {
+                    //Personalize the searchstring
+                    $searchstring='/\$@(FORUMDISCUSSIONVIEWPARENT)\*('.$old_id.')\*('.$old_id2.')@\$/';
+                    //Now replace it
+                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/forum/discuss.php?d='.$rec->new_id.'&parent='.$rec2->new_id,$result);
+                }
+            }
+        }
+
+        //Link to forum discussion with relative syntax
+
+        $searchstring='/\$@(FORUMDISCUSSIONVIEWINSIDE)\*([0-9]+)\*([0-9]+)@\$/';
+        //We look for it
+        preg_match_all($searchstring,$content,$foundset);
+        //If found, then we are going to look for its new id (in backup tables)
+        if ($foundset[0]) {
+            //print_object($foundset);                                     //Debug
+            //Iterate over foundset[2] and foundset[3]. They are the old_ids
+            foreach($foundset[2] as $key => $old_id) {
+                $old_id2 = $foundset[3][$key];
+                //We get the needed variables here (discussion id and post id)
+                $rec = backup_getid($restore->backup_unique_code,"forum_discussions",$old_id);
+                $rec2 = backup_getid($restore->backup_unique_code,"forum_posts",$old_id2);
+                if($rec->new_id && $rec2->new_id) {
+                    //Personalize the searchstring
+                    $searchstring='/\$@(FORUMDISCUSSIONVIEWINSIDE)\*('.$old_id.')\*('.$old_id2.')@\$/';
+                    //Now replace it
+                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/forum/discuss.php?d='.$rec->new_id.'#'.$rec2->new_id,$result);
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    //This function makes all the necessary calls to xxxx_decode_content_links()
+    //function in each module, passing them the desired contents to be decoded
+    //from backup format to destination site/course in order to mantain inter-activities
+    //working in the backup/restore process. It's called from restore_decode_content_links()
+    //function in restore process
+    function forum_decode_content_links_caller($restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        echo "<ul>";
+  
+        //FORUM: Decode every POST (message) in the coure
+        
+        //Check we are restoring forums
+        if ($restore->mods['forum']->restore == 1) {
+            echo "<li>".get_string("from")." ".get_string("modulenameplural","forum");
+            //Get all course posts
+            if ($posts = get_records_sql ("SELECT p.id, p.message
+                                       FROM {$CFG->prefix}forum_posts p,
+                                            {$CFG->prefix}forum_discussions d
+                                       WHERE d.course = $restore->course_id AND
+                                             p.discussion = d.id")) {
+                //Iterate over each post->message
+                $i = 0;   //Counter to send some output to the browser to avoid timeouts
+                foreach ($posts as $post) {
+                    //Increment counter
+                    $i++; 
+                    $content = $post->message;
+                    $result = forum_decode_content_links($content,$restore);
+                    if ($result != $content) {
+                        //Update record
+                        $post->message = $result;
+                        $status = update_record("forum_posts",$post);
+                        if ($CFG->debug>7) {
+                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
+                        }
+                    }
+                    //Do some output
+                    if (($i+1) % 5 == 0) {
+                        echo ".";
+                        if (($i+1) % 100 == 0) {
+                            echo "<br>";
+                        }
+                        backup_flush(300);
+                    }
+                }
+            }
+        }
+
+        //RESOURCE: Decode every RESOURCE (alltext) in the coure
+
+        //Check we are restoring resources
+        if ($restore->mods['resource']->restore == 1) {
+            echo "<li>".get_string("from")." ".get_string("modulenameplural","resource");
+            //Get all course resources
+            if ($resources = get_records_sql ("SELECT r.id, r.alltext
+                                       FROM {$CFG->prefix}resource r
+                                       WHERE r.course = $restore->course_id")) {
+                //Iterate over each resource->alltext
+                $i = 0;   //Counter to send some output to the browser to avoid timeouts
+                foreach ($resources as $resource) {
+                    //Increment counter
+                    $i++;
+                    $content = $resource->alltext;
+                    $result = forum_decode_content_links($content,$restore);
+                    if ($result != $content) {
+                        //Update record
+                        $resource->alltext = $result;
+                        $status = update_record("resource",$resource);
+                        if ($CFG->debug>7) {
+                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
+                        }
+                    }
+                    //Do some output
+                    if (($i+1) % 5 == 0) {
+                        echo ".";
+                        if (($i+1) % 100 == 0) {
+                            echo "<br>";
+                        }
+                        backup_flush(300);
+                    }
+                }
+            }
+        }
+
+        echo "</ul>";
+        return $status;
+    }
 ?>

@@ -77,6 +77,33 @@
         return $status;
     }
 
+    //This function makes all the necessary calls to xxxx_decode_content_links_caller()
+    //function in each module, passing them the desired contents to be decoded
+    //from backup format to destination site/course in order to mantain inter-activities
+    //working in the backup/restore process
+    function restore_decode_content_links($restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        echo "<ul>";
+        foreach ($restore->mods as $name => $info) {
+            //If the module is being restored
+            if ($info->restore == 1) {
+                //Check if the xxxx_decode_content_links_caller exists
+                $function_name = $name."_decode_content_links_caller";
+                if (function_exists($function_name)) {
+                    echo "<li>".get_string("modulenameplural",$name);
+                    $status = $function_name($restore);
+                }
+            }
+        }
+        echo "</ul>";
+
+        return $status;
+    }
+
     //This function read the xml file and store it data from the info zone in an object
     function restore_read_xml_info ($xml_file) {
 
@@ -1077,11 +1104,15 @@
     //It does this conversions:
     //    - $@WWWROOT@$ -------------------------------> $CFG->wwwroot
     //    - $@COURSEID@$ ------------------------------> $courseid
-    //                              
+    //
+    //Note: Inter-activities linking is being implemented as a final
+    //step in the restore execution, because we need to have it 
+    //finished to know all the oldid, newid equivaleces
     function restore_decode_absolute_links($content) {
                                      
         global $CFG,$restore;    
-        
+
+        //Now decode wwwroot and file.php calls
         $search = array ("$@WWWROOT@$",
                          "$@COURSEID@$");
         
@@ -1090,9 +1121,9 @@
     
         $result = str_replace($search,$replace,$content);
 
-        //if ($result != $content) {                                                   //Debug
-        //    echo "\n<hr>".$content." \nchanged to \n".$result."<hr>\n";              //Debug
-        //}                                                                            //Debug
+        if ($result != $content && $CFG->debug>7) {                                  //Debug
+            echo "<br><hr>".$content."<br>changed to<br>".$result."<hr><br>";        //Debug
+        }                                                                            //Debug
 
         return $result;
     }

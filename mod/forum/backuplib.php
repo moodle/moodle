@@ -284,10 +284,37 @@
         return $info;
     }
 
+    //Return a content encoded to support interactivities linking. Every module
+    //should have its own. They are called automatically from the backup procedure.
+    function forum_encode_content_links ($content,$preferences) {
 
+        $base = '\$@WWWROOT@\$';
+        //Link to the list of forums
+        $buscar="/(".$base."\/mod\/forum\/index.php\?id\=)([0-9]+)/";
+        $result= preg_replace($buscar,'$@FORUMINDEX*$2@$',$content);
 
+        //Link to forum view by moduleid
+        $buscar="/(".$base."\/mod\/forum\/view.php\?id\=)([0-9]+)/";
+        $result= preg_replace($buscar,'$@FORUMVIEWBYID*$2@$',$result);
 
+        //Link to forum view by forumid
+        $buscar="/(".$base."\/mod\/forum\/view.php\?f\=)([0-9]+)/";
+        $result= preg_replace($buscar,'$@FORUMVIEWBYF*$2@$',$result);
 
+        //Link to forum discussion with parent syntax
+        $buscar="/(".$base."\/mod\/forum\/discuss.php\?d\=)([0-9]+)\&parent\=([0-9]+)/";
+        $result= preg_replace($buscar,'$@FORUMDISCUSSIONVIEWPARENT*$2*$3@$',$result);
+
+        //Link to forum discussion with relative syntax
+        $buscar="/(".$base."\/mod\/forum\/discuss.php\?d\=)([0-9]+)\#([0-9]+)/";
+        $result= preg_replace($buscar,'$@FORUMDISCUSSIONVIEWINSIDE*$2*$3@$',$result);
+
+        //Link to forum discussion by discussionid
+        $buscar="/(".$base."\/mod\/forum\/discuss.php\?d\=)([0-9]+)/";
+        $result= preg_replace($buscar,'$@FORUMDISCUSSIONVIEW*$2@$',$result);
+
+        return $result;
+    }
 
     // INTERNAL FUNCTIONS. BASED IN THE MOD STRUCTURE
 

@@ -275,6 +275,14 @@
         }
     }
 
+    //Now, if all is OK, adjust inter-activity links
+    if ($status) {
+        echo "<li>".get_string("decodinginternallinks");
+        if (!$status = restore_decode_content_links($restore)) {
+            notify("Could not refresh events for activities!");
+        }
+    }
+
     //Now if all is OK, update:
     //   - course modinfo field 
     //   - categories table

@@ -126,7 +126,9 @@ Backup Details:
       - Modify the backup frontend..............................NOT EXISTS
       - Modify the backup of course_sections and course_modules.NOT EXISTS
       - Modify every module backuplib to work properly..........NOT EXISTS
-
+   - Encode every possible internal link........................IN PROGRESS
+      - Links to forums.........................................DONE
+      - Links to resources......................................NOT EXISTS
 Restore Details:
 ===============
    - Delete old entries at restore start........................DONE
@@ -243,6 +245,11 @@ Restore Details:
       - From database...........................................DONE
       - From filesystem.........................................DONE
    - Upload backup files........................................DONE
+   - Decode every possible internal link........................IN PROGRESS
+      - Links to forums.........................................IN PROGRESS
+         - From forums (post->message)..........................DONE
+         - From resources (resource->alltext)...................DONE
+      - Links to resources......................................NOT EXISTS
 
 ========== ========== ========== =========== =========== =========== ===
 
