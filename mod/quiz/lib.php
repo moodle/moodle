@@ -969,7 +969,7 @@ function quiz_save_attempt($quiz, $questions, $result, $attemptnum) {
         $response->attempt = $attempt->id;
         $response->question = $question->id;
         $response->grade = $result->grades[$question->id];
-        if ($question->answer) {
+        if (!empty($question->answer)) {
             $response->answer = implode(",",$question->answer);
         } else {
             $response->answer = "";
@@ -1064,7 +1064,7 @@ function quiz_grade_attempt_results($quiz, $questions) {
                     if ($answer->fraction > 0) {
                         $correct[$answer->id] = true;
                     }
-                    if ($question->answer) {
+                    if (!empty($question->answer)) {
                         foreach ($question->answer as $questionanswer) {
                             if ($questionanswer == $answer->id) {
                                 if ($answer->single) {

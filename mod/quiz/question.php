@@ -99,7 +99,11 @@
         // First, save the basic question itself
         $question->name         = $form->name;
         $question->questiontext = $form->questiontext;
-        $question->image        = $form->image;
+        if (empty($form->image)) {
+            $question->image = "";
+        } else {
+            $question->image = $form->image;
+        }
         $question->category     = $form->category;
 
         if (!$err = formcheck($question)) {
@@ -127,7 +131,7 @@
     
                     // Insert all the new answers
                     foreach ($form->answer as $key => $formanswer) {
-                        if ($formanswer) {
+                        if ($formanswer != "") {
                             unset($answer);
                             $answer->answer   = $formanswer;
                             $answer->question = $question->id;
@@ -198,7 +202,7 @@
     
                     // Insert all the new answers
                     foreach ($form->answer as $key => $formanswer) {
-                        if ($formanswer) {
+                        if ($formanswer != "") {
                             unset($answer);
                             $answer->answer   = $formanswer;
                             $answer->question = $question->id;
