@@ -1,6 +1,6 @@
 <?PHP // $Id$
 
-	require_once("../config.php");
+    require_once("../config.php");
 
     optional_variable($id);
 
@@ -12,52 +12,54 @@
 
     if ($frm = data_submitted()) {
 
-		validate_form($frm, $err);
+        validate_form($frm, $err);
 
-		update_login_count();
+        check_for_restricted_user($frm->username);
 
-		if (!count((array)$err)) {
-			$username = $frm->username;
-			$password = md5($frm->newpassword1);
+        update_login_count();
 
-			$user = get_user_info_from_db("username", $username);
+        if (!count((array)$err)) {
+            $username = $frm->username;
+            $password = md5($frm->newpassword1);
+
+            $user = get_user_info_from_db("username", $username);
 
             if (isguest($user->id)) {
                 error("Can't change guest password!");
             }
-			
-			if (set_field("user", "password", $password, "username", $username)) {
+            
+            if (set_field("user", "password", $password, "username", $username)) {
                 $user->password = $password;
             } else {
-				error("Could not set the new password");
+                error("Could not set the new password");
             }
 
-			$USER = $user;
-			$USER->loggedin = true;
+            $USER = $user;
+            $USER->loggedin = true;
             $USER->site = $CFG->wwwroot;   // for added security
 
-			set_moodle_cookie($USER->username);
+            set_moodle_cookie($USER->username);
 
-			reset_login_count();
+            reset_login_count();
 
             $strpasswordchanged = get_string("passwordchanged");
 
             if ($course->id) {
                 $fullname = fullname($USER, true);
-	            print_header($strpasswordchanged, $strpasswordchanged,
+                print_header($strpasswordchanged, $strpasswordchanged,
                              "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->
                               <A HREF=\"$CFG->wwwroot/user/index.php?id=$course->id\">".get_string("participants")."</A> ->
                               <A HREF=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id\">$fullname</A> -> $strpasswordchanged", $focus);
-			    notice($strpasswordchanged, "$CFG->wwwroot/user/view.php?id=$USER->id&course=$id");
+                notice($strpasswordchanged, "$CFG->wwwroot/user/view.php?id=$USER->id&course=$id");
             } else {
-			    print_header($strpasswordchanged, $strpasswordchanged, $strpasswordchanged, "");
-			    notice($strpasswordchanged, "$CFG->wwwroot/");
+                print_header($strpasswordchanged, $strpasswordchanged, $strpasswordchanged, "");
+                notice($strpasswordchanged, "$CFG->wwwroot/");
             }
 
-			print_footer();
-			exit;
-		}
-	}
+            print_footer();
+            exit;
+        }
+    }
 
 
 
@@ -65,31 +67,31 @@
         $frm->id = $id;
     }
 
-	if (empty($frm->username)) {
-    	$frm->username = get_moodle_cookie();
+    if (empty($frm->username)) {
+        $frm->username = get_moodle_cookie();
     }
 
-	if (!empty($frm->username)) {
-    	$focus = "form.password";
-	} else {
-    	$focus = "form.username";
-	}
+    if (!empty($frm->username)) {
+        $focus = "form.password";
+    } else {
+        $focus = "form.username";
+    }
 
     $strchangepassword = get_string("changepassword");
     if (!empty($course->id)) {
         $fullname = fullname($USER, true);
-	    print_header($strchangepassword, $strchangepassword,
+        print_header($strchangepassword, $strchangepassword,
                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->
                       <A HREF=\"$CFG->wwwroot/user/index.php?id=$course->id\">".get_string("participants")."</A> ->
                       <A HREF=\"$CFG->wwwroot/user/view.php?id=$USER->id&course=$course->id\">$fullname</A> -> $strchangepassword", $focus);
     } else {
-	    print_header($strchangepassword, $strchangepassword, $strchangepassword, $focus);
+        print_header($strchangepassword, $strchangepassword, $strchangepassword, $focus);
     }
 
     print_simple_box_start("center", "", $THEME->cellheading);
-	include("change_password_form.html");
+    include("change_password_form.html");
     print_simple_box_end();
-	print_footer();
+    print_footer();
 
 
 
@@ -106,7 +108,7 @@ function validate_form($frm, &$err) {
         $err->password = get_string("missingpassword");
 
     else if (!authenticate_user_login($frm->username, $frm->password))
-		$err->password = get_string("wrongpassword");
+        $err->password = get_string("wrongpassword");
 
     if (empty($frm->newpassword1))
         $err->newpassword1 = get_string("missingnewpassword");
