@@ -1257,7 +1257,8 @@
 
     //This function decode things to make restore multi-site fully functional
     //It does this conversions:
-    //    - $@FILEPHP@$ -------------------------------> $CFG->wwwroot/file.php/courseid
+    //    - $@FILEPHP@$ ---|------------> $CFG->wwwroot/file.php/courseid (slasharguments on)
+    //                     |------------> $CFG->wwwroot/file.php?file=/courseid (slasharguments off)
     //
     //Note: Inter-activities linking is being implemented as a final
     //step in the restore execution, because we need to have it 
@@ -1268,8 +1269,16 @@
 
         //Now decode wwwroot and file.php calls
         $search = array ("$@FILEPHP@$");
+
+        //Check for the status of the slasharguments config variable
+        $slash = $CFG->slasharguments;
         
-        $replace = array ($CFG->wwwroot."/file.php/".$restore->course_id);
+        //Build the replace string as needed
+        if ($slash == 1) {
+            $replace = array ($CFG->wwwroot."/file.php/".$restore->course_id);
+        } else {
+            $replace = array ($CFG->wwwroot."/file.php?file=/".$restore->course_id);
+        }
     
         $result = str_replace($search,$replace,$content);
 
