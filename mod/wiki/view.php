@@ -263,7 +263,7 @@
         echo '<tr>';
         
         /// Searchform
-        echo '<td align="left">';    
+        echo '<td align="center">';    
         wiki_print_search_form($cm->id, $q, $userid, $groupid, false);
         echo '</td>';
     
@@ -280,9 +280,8 @@
         }
         
         /// Formatting Rules
-        echo '<td align="center">';          
+        echo '<td align="right">';          
         helpbutton('howtowiki', get_string('howtowiki', 'wiki'), 'wiki');
-        echo get_string('howtowiki','wiki');
         echo '</td>';
         
         echo '</tr></table>';
