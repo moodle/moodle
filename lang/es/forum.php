@@ -78,11 +78,13 @@ $string['olderdiscussions'] = "mensajes anteriores";
 $string['openmode0'] = "No se pueden colocar temas ni respuestas ";
 $string['openmode1'] = "No se puede colocar temas, sólo respuestas";
 $string['openmode2'] = "Permitir nuevos temas y respuestas";
-$string['parent'] = "Mostrar mensaje anterior";
+$string['parent'] = "Mensajes anteriores";
 $string['parentofthispost'] = "Anterior a este mensaje";
 $string['postadded'] = "Su mensaje se ha colocado con éxito.<P>Tiene \$a para hacer cualquier cambio.";
 $string['postincontext'] = "Ver el mensaje en su contexto";
 $string['postmailinfo'] = "Esta es una copia del mensaje publicado en \$a.
+
+
 
 Para responder a este mensaje diríjase a:";
 $string['postrating1'] = "Muy individualista";
