@@ -110,10 +110,13 @@
 <P>&nbsp;</P>
 <H3><A NAME="database"></A>5. Create a database</H3>
 <blockquote>
-  <p>You need to create an empty database (eg "moodle") in your database system 
+<p>You need to create an empty database (eg "moodle") in your database system 
     along with a special user (eg "moodleuser") that has access to that database 
-    (and that database only. For example, don't use the "root" user for the moodle 
-    database in a production system - it's a security hazard). </p>
+    (and that database only. You could use the "root" user if you wanted to, but 
+    this is not recommended for a production system: if hackers manage to discover
+    the password then your whole database system would be at risk, rather than 
+    just one database.
+</p>
   <p>eg for MySQL: </p>
   <PRE>
    # mysql -u root -p
