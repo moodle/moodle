@@ -163,7 +163,7 @@ function find_form_errors(&$user, &$usernew, &$err) {
                 $err["username"] = get_string("usernameexists");
 
         } else {
-            $string = eregi_replace("[^(-\.[:alnum:])]", "", $user->username);
+            $string = eregi_replace("[^(-\.[:alnum:])]", "", $usernew->username);
             if (strcmp($user->username, $string)) 
                 $err["username"] = get_string("alphanumerical");
         }
