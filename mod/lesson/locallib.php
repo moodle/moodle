@@ -1131,6 +1131,26 @@ function lesson_check_nickname($name) {
 	}
 	return true;
 }
+
+/*******************************************************************/
+function lesson_clean_data_submitted() {
+//
+//
+	$form = data_submitted();
+	foreach ($form as $valuename => $formvalue) {
+		if (is_array($formvalue)) {
+			foreach ($formvalue as $index => $formsubvalue) {
+				$formvalue[$index] = clean_param($formsubvalue, PARAM_CLEAN);
+			}
+			$form->$valuename = $formvalue;
+		} else {
+			$form->$valuename = clean_param($formvalue, PARAM_CLEAN);
+		}
+	}
+	
+	return $form;
+}
+
 /// CDC-FLAG ///
 
 ?>
