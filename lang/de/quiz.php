@@ -120,6 +120,7 @@ $string['randomsamatchcreate'] = "Erzeuge zufällige Kurzantwort-Zuordnungsfragen
 $string['randomsamatchintro'] = "Wählen Sie für jede der folgenden Fragen die passende Antwort aus dem Menü aus";
 $string['randomsamatchnumber'] = "Nummer auszuwählender Fragen";
 $string['readytosend'] = "Sie sind dabei, Ihr ganzes Quiz zu senden, um benotet zu werden.  Sind Sie sicher, dass Sie weitermachen wollen?";
+$string['recentlyaddedquestion'] = "Aktuell hinzugefügte Frage!";
 $string['regrade'] = "Alle Versuche zurücksetzen";
 $string['regradecomplete'] = "Alle Versuche wurden zurückgesetzt";
 $string['regradecount'] = "\$a->changed von \$a->attempt Noten wurden geändert";
