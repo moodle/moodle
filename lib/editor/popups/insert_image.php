@@ -142,22 +142,22 @@ form { padding: 0px; margin: 0px; }
 
 <body onload="Init()">
 
-<div class="title"><?php print(get_string("insertimage","htmlarea"));?></div>
+<div class="title"><?php print(get_string("insertimage","editor"));?></div>
 
 <form action="" method="get">
 <table border="0" width="100%" style="padding: 0px; margin: 0px">
   <tbody>
 
   <tr>
-    <td style="width: 7em; text-align: right"><?php print(get_string("imageurl","htmlarea"));?>:</td>
+    <td style="width: 7em; text-align: right"><?php print(get_string("imageurl","editor"));?>:</td>
     <td><input type="text" name="url" id="f_url" style="width:75%"
       title="Enter the image URL here" />
       <button name="preview" onclick="return onPreview();"
-      title="Preview the image in a new window"><?php print(get_string("preview","htmlarea"));?></button>
+      title="Preview the image in a new window"><?php print(get_string("preview","editor"));?></button>
     </td>
   </tr>
   <tr>
-    <td style="width: 7em; text-align: right"><?php print(get_string("alternatetext","htmlarea"));?>:</td>
+    <td style="width: 7em; text-align: right"><?php print(get_string("alternatetext","editor"));?>:</td>
     <td><input type="text" name="alt" id="f_alt" style="width:100%"
       title="For browsers that don't support images" /></td>
   </tr>
@@ -168,28 +168,28 @@ form { padding: 0px; margin: 0px; }
 <p />
 
 <fieldset style="float: left; margin-left: 5px;">
-<legend><?php print(get_string("layout","htmlarea"));?></legend>
+<legend><?php print(get_string("layout","editor"));?></legend>
 
 <div class="space"></div>
 
-<div class="fl"><?php print(get_string("alignment","htmlarea"));?>:</div>
+<div class="fl"><?php print(get_string("alignment","editor"));?>:</div>
 <select size="1" name="align" id="f_align"
   title="Positioning of this image">
-  <option value=""                             ><?php print(get_string("notset","htmlarea"));?></option>
-  <option value="left"                         ><?php print(get_string("left","htmlarea"));?></option>
-  <option value="right"                        ><?php print(get_string("right","htmlarea"));?></option>
-  <option value="texttop"                      ><?php print(get_string("texttop","htmlarea"));?></option>
-  <option value="absmiddle"                    ><?php print(get_string("absmiddle","htmlarea"));?></option>
-  <option value="baseline" selected="1"        ><?php print(get_string("baseline","htmlarea"));?></option>
-  <option value="absbottom"                    ><?php print(get_string("absbottom","htmlarea"));?></option>
-  <option value="bottom"                       ><?php print(get_string("bottom","htmlarea"));?></option>
-  <option value="middle"                       ><?php print(get_string("middle","htmlarea"));?></option>
-  <option value="top"                          ><?php print(get_string("top","htmlarea"));?></option>
+  <option value=""                             ><?php print(get_string("notset","editor"));?></option>
+  <option value="left"                         ><?php print(get_string("left","editor"));?></option>
+  <option value="right"                        ><?php print(get_string("right","editor"));?></option>
+  <option value="texttop"                      ><?php print(get_string("texttop","editor"));?></option>
+  <option value="absmiddle"                    ><?php print(get_string("absmiddle","editor"));?></option>
+  <option value="baseline" selected="1"        ><?php print(get_string("baseline","editor"));?></option>
+  <option value="absbottom"                    ><?php print(get_string("absbottom","editor"));?></option>
+  <option value="bottom"                       ><?php print(get_string("bottom","editor"));?></option>
+  <option value="middle"                       ><?php print(get_string("middle","editor"));?></option>
+  <option value="top"                          ><?php print(get_string("top","editor"));?></option>
 </select>
 
 <p />
 
-<div class="fl"><?php print(get_string("borderthickness","htmlarea"));?>:</div>
+<div class="fl"><?php print(get_string("borderthickness","editor"));?>:</div>
 <input type="text" name="border" id="f_border" size="5"
 title="Leave empty for no border" />
 
@@ -198,17 +198,17 @@ title="Leave empty for no border" />
 </fieldset>
 
 <fieldset style="float:right; margin-right: 5px;">
-<legend><?php print(get_string("spacing","htmlarea"));?></legend>
+<legend><?php print(get_string("spacing","editor"));?></legend>
 
 <div class="space"></div>
 
-<div class="fr"><?php print(get_string("horizontal","htmlarea"));?>:</div>
+<div class="fr"><?php print(get_string("horizontal","editor"));?>:</div>
 <input type="text" name="horiz" id="f_horiz" size="5"
 title="Horizontal padding" />
 
 <p />
 
-<div class="fr"><?php print(get_string("vertical","htmlarea"));?>:</div>
+<div class="fr"><?php print(get_string("vertical","editor"));?>:</div>
 <input type="text" name="vert" id="f_vert" size="5"
 title="Vertical padding" />
 
@@ -219,10 +219,10 @@ title="Vertical padding" />
 <div style="margin-top: 85px; text-align: right;">
 <hr />
 <?php 
-print(isteacher($id))?"<button title=\"$course->fullname\" type=\"button\" name=\"browse\" onclick=\"set_url_value()\">".get_string("browse","htmlarea")."</button>&nbsp;\n":"";
+print(isteacher($id))?"<button title=\"$course->fullname\" type=\"button\" name=\"browse\" onclick=\"set_url_value()\">".get_string("browse","editor")."</button>&nbsp;\n":"";
 ?>
-<button type="button" name="ok" onclick="return onOK();"><?php print(get_string("ok","htmlarea"));?></button>
-<button type="button" name="cancel" onclick="return onCancel();"><?php print(get_string("cancel","htmlarea"));?></button>
+<button type="button" name="ok" onclick="return onOK();"><?php print(get_string("ok","editor"));?></button>
+<button type="button" name="cancel" onclick="return onCancel();"><?php print(get_string("cancel","editor"));?></button>
 </div>
 
 </form>

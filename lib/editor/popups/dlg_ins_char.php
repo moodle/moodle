@@ -123,7 +123,7 @@ function cancel() {
 </head>
 <body onload="Init()">
 <table class="dlg" cellpadding="0" cellspacing="2">
-<tr><td><table width="100%"><tr><td class="description" nowrap><?php print(get_string("choosechar","htmlarea"));?></td><td valign="middle" width="100%"><hr width="100%"></td></tr></table></td></tr>
+<tr><td><table width="100%"><tr><td class="description" nowrap><?php print(get_string("choosechar","editor"));?></td><td valign="middle" width="100%"><hr width="100%"></td></tr></table></td></tr>
 <tr>
 <td>
     <table border="0" align="center" cellpadding="5">
@@ -143,7 +143,7 @@ function cancel() {
   </tr>
 <tr><td><table width="100%"><tr><td valign="middle" width="90%"><hr width="100%"></td></tr></table></td></tr>
 <tr><td align="right">
-	<input type="button" value="<?php print(get_string("close","htmlarea"));?>" onclick="cancel()"></td></tr>
+	<input type="button" value="<?php print(get_string("close","editor"));?>" onclick="cancel()"></td></tr>
 </table>
 </body>
 </body>
