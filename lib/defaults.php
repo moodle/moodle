@@ -20,7 +20,7 @@
        "htmleditor"       =>  true,
        "proxyhost"        => "",
        "proxyport"        => "",
-       "maxeditingtime"   =>  1800
+       "maxeditingtime"   =>  1800,
        "guestloginbutton" =>  1
     );
 
