@@ -320,10 +320,14 @@ function print_recent_activity($course) {
     $timemaxrecent = time() - COURSE_MAX_RECENT_PERIOD;
     if ($timestart < $timemaxrecent) {
         $timestart = $timemaxrecent;
-        echo "<p>Logs start from: ".userdate($timestart)."</p>";
     }
 
-    if (! $logs = get_records_select("log", "time > '$timestart' AND course = '$course->id'", "time ASC")) {
+    if (! $logs = get_records_select("log", "time > '$timestart' AND ".
+                                            "course = '$course->id' AND ".
+                                            "module <> 'course' AND ".
+                                            "module <> 'user' AND ".
+                                            "action <> 'view' AND ".
+                                            "action <> 'view all' ", "time ASC")) {
         return;
     }
 
