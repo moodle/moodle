@@ -895,7 +895,9 @@ function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
     if ($categories = get_categories("$category->id")) {   // Print all the children recursively
         foreach ($categories as $cat) {
             if (!empty($category->id)) {
-                $parents[$cat->id]   = $parents[$category->id];
+                if (!empty($parents[$category->id])) {
+                    $parents[$cat->id]   = $parents[$category->id];
+                }
                 $parents[$cat->id][] = $category->id;
             }
             make_categories_list($list, $parents, $cat, $path);         
