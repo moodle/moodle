@@ -81,7 +81,13 @@ if (isadmin()) {
 </tr>
 <tr valign=top>
 	<td><P><? print_string("country") ?>:</td>
-	<td><? choose_from_menu ($COUNTRIES, "country", $user->country, get_string("selectacountry")."...", "", "") ?>
+	<td><? 
+
+    if (!$user->country and $CFG->country) {
+        $user->country = $CFG->country;
+    }
+    
+    choose_from_menu ($COUNTRIES, "country", $user->country, get_string("selectacountry")."...", "", "") ?>
 	<? formerr($err["country"]) ?>
 	</td>
 </tr>

@@ -40,6 +40,10 @@
 		}
 	}
 
+    if (!$user->country and $CFG->country) {
+        $user->country = $CFG->country;
+    }
+
     $newaccount = get_string("newaccount");
     $login = get_string("login");
 

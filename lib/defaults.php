@@ -21,6 +21,7 @@
        "proxyhost"        => "",
        "proxyport"        => "",
        "maxeditingtime"   =>  1800,
+       "country"          => "",
        "guestloginbutton" =>  1
     );
 

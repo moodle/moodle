@@ -36,6 +36,14 @@
     <? print_string("configlocale") ?>
     </TD>
 </TR>
+<tr valign=top>
+	<td align=right><P>country:</td>
+	<td><? choose_from_menu ($COUNTRIES, "country", $config->country, get_string("selectacountry"), "", "") ?>
+	</td>
+    <TD>
+    <? print_string("configcountry") ?>
+    </TD>
+</tr>
 <TR VALIGN=TOP>
 	<TD ALIGN=RIGHT><P>smtphosts:</TD>
 	<TD>

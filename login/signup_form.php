@@ -1,5 +1,5 @@
 <CENTER>
-<table cellpadding=20> <tr> <td bgcolor="<?=$THEME->cellcontent2 ?>">
+<table cellpadding=20> <tr> <td bgcolor="<?=$THEME->cellcontent2 ?>" class="generalbox">
 
 <form name="form" method="post" action="signup.php">
 <table>

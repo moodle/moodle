@@ -53,6 +53,7 @@ $string['chooseuser'] = "Choose a user";
 $string['city'] = "City/town";
 $string['closewindow'] = "Close this window";
 $string['comparelanguage'] = "Compare and edit current language";
+$string['configcountry'] = "If you set a country here, then this country will be selected by default on new user accounts.  To force users to choose a country, just leave this unset.";
 $string['configgdversion'] = "Indicate the version of GD that is installed.  The version shown by default is the one that has been auto-detected.  Don't change this unless you really know what you're doing.";
 $string['configerrorlevel'] = "Choose the amount of PHP warnings that you want to be displayed.  Normal is usually the best choice.";
 $string['confightmleditor'] = "Choose whether or not to allow use of the embedded HTML text editor. Even if you choose allow, this editor will only appear when the user is using a compatible browser (IE 5.5 or later).  Users can also choose not to use it.";
