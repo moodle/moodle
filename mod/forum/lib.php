@@ -918,7 +918,7 @@ function forum_print_discussion_header(&$post, $courseid, $ownpost=false, $reply
     echo "<tr class=\"forumpostheader\">";
 
     // Topic
-    echo "<td bgcolor=\"$THEME->cellheading2\" class=\"forumpostheadertopic\" valign=top width=\"100%\">";
+    echo "<td bgcolor=\"$THEME->cellheading2\" class=\"forumpostheadertopic\" width=\"100%\">";
     echo "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">$post->subject</a>";
     echo "</td>\n";
 
