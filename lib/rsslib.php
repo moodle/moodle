@@ -30,7 +30,7 @@ function rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext='') {
 //This function prints the icon (from theme) with the link to rss/file.php
 function rss_print_link($courseid, $userid, $modulename, $id, $tooltiptext='') {
 
-    echo rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext);
+    print rss_get_link($courseid, $userid, $modulename, $id, $tooltiptext);
 
 }
 //This function iterates over each module in the server to see if
@@ -153,33 +153,33 @@ function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
         $result .= "<rss version=\"2.0\">\n";
 
         //open the channel
-        $result .= rss_start_tag("channel",1,true);
+        $result .= rss_start_tag('channel', 1, true);
 
         //write channel info
-        $result .= rss_full_tag("title",2,false,$title);
-        $result .= rss_full_tag("link",2,false,$link);
-        $result .= rss_full_tag("description",2,false,$description);
+        $result .= rss_full_tag('title', 2, false, $title);
+        $result .= rss_full_tag('link', 2, false, $link);
+        $result .= rss_full_tag('description', 2, false, $description);
         if (!empty($USER->lang)) {
-            $result .= rss_full_tag("language",2,false,substr($USER->lang,0,2));
+            $result .= rss_full_tag('language', 2, false, substr($USER->lang,0,2));
         }
         $today = getdate();
-        $result .= rss_full_tag("copyright",2,false,"&copy; ".$today['year']." ".$site->fullname);
+        $result .= rss_full_tag('copyright', 2, false, '&copy; '. $today['year'] .' '. $site->fullname);
         if (!empty($USER->email)) {
-            $result .= rss_full_tag("managingEditor",2,false,$USER->email);
-            $result .= rss_full_tag("webMaster",2,false,$USER->email);
+            $result .= rss_full_tag('managingEditor', 2, false, $USER->email);
+            $result .= rss_full_tag('webMaster', 2, false, $USER->email);
         }
 
         //write image info
         $rsspix = $CFG->pixpath."/i/rsssitelogo.gif";
 
         //write the info 
-        $result .= rss_start_tag("image",2,true);
-        $result .= rss_full_tag("url",3,false,$rsspix);
-        $result .= rss_full_tag("title",3,false,"moodle");
-        $result .= rss_full_tag("link",3,false,$CFG->wwwroot);
-        $result .= rss_full_tag("width",3,false,"140");
-        $result .= rss_full_tag("height",3,false,"35");
-        $result .= rss_end_tag("image",2,true);
+        $result .= rss_start_tag('image', 2, true);
+        $result .= rss_full_tag('url', 3, false, $rsspix);
+        $result .= rss_full_tag('title', 3, false, 'moodle');
+        $result .= rss_full_tag('link', 3, false, $CFG->wwwroot);
+        $result .= rss_full_tag('width', 3, false, '140');
+        $result .= rss_full_tag('height', 3, false, '35');
+        $result .= rss_end_tag('image', 2, true);
     }
 
     if (!$status) {
@@ -230,9 +230,9 @@ function rss_standard_footer($title = NULL, $link = NULL, $description = NULL) {
     $result = "";
 
     //Close the chanel
-    $result .= rss_end_tag("channel",1,true);
+    $result .= rss_end_tag('channel', 1, true);
     ////Close the rss tag
-    $result .= "</rss>";
+    $result .= '</rss>';
 
     return $result;
 }
@@ -374,76 +374,24 @@ function rss_display_feeds($rssid='none') {
                 $deleteString .= '<img src="'. $CFG->pixpath .'/t/delete.gif" alt="'. get_string('delete');
                 $deleteString .= '" title="'. get_string('delete') .'" align="absmiddle" border="0" /></a>';
             }
-            echo '<tr class="forumpostmessage"><td><strong><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=view&rssid=';
-            echo $feed->id .'&blogid='. $blogid .'">'. $feed->title .'</a></strong><br />' ."\n";
-            echo '<a href="'. $feed->url .'">'. $feed->url .'</a><br />'."\n";
-            echo $feed->description .'<br />' ."\n";
-            echo '</td>';
-            echo '<td align="center">'. $editString .'</td>' ."\n";
-            echo '<td align="center">'. $deleteString .'</td>' ."\n";
-            echo '</tr>'."\n";
+            if (!empty($feed->preferredtitle)) {
+                $feedtitle = stripslashes_safe($feed->preferredtitle);
+            } else {
+                $feedtitle =  stripslashes_safe($feed->title);
+            }            
+            print '<tr class="forumpostmessage"><td><strong><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=view&rssid=';
+            print $feed->id .'&blogid='. $blogid .'">'. $feedtitle .'</a></strong><br />' ."\n";
+            print '<a href="'. $feed->url .'">'. $feed->url .'</a><br />'."\n";
+            print $feed->description .'<br />' ."\n";
+            print '</td>';
+            print '<td align="center">'. $editString .'</td>' ."\n";
+            print '<td align="center">'. $deleteString .'</td>' ."\n";
+            print '</tr>'."\n";
         }
     }
     if ($closeTable){
-        echo '</table>'."\n";
+        print '</table>'."\n";
     }
-}
-
-/**
- * @param string $act .
- * @param string $url .
- * @param int $rssid .
- * @param bool $printnow True if the generated form should be printed out, false if the string should be returned from this function quietly
- */
-function rss_get_form($act, $url, $rssid, $printnow=true) {
-    global $USER, $CFG, $_SERVER, $blockid, $blockaction;
-    global $blogid; //hackish, but if there is a blogid it would be good to preserve it
-    $stredit = get_string('edit');
-    $stradd = get_string('add');
-    $strupdatefeed = get_string('block_rss_update_feed', 'block_rss_client');
-    $straddfeed = get_string('block_rss_add_feed', 'block_rss_client');
-
-    $returnstring = '<table align="center"><tbody><tr><td>'."\n";
-
-    $returnstring .= '<form action="'. $_SERVER['PHP_SELF'] .'" method="POST" name="block_rss">'."\n";
-    if ($act == 'rss_edit') {
-        $returnstring .= $strupdatefeed; 
-    } else { 
-        $returnstring .= $straddfeed; 
-    }
-    $returnstring .= '<br /><input type="text" size="60" maxlength="256" name="url" value="';
-    if ($act == 'rss_edit') { 
-        $returnstring .= $url; 
-    } 
-
-    $returnstring .= '" />'."\n";
-
-    $returnstring .= '<input type="hidden" name="act" value="';
-    if ($act == 'rss_edit') {
-        $returnstring .= 'updfeed';
-    } else {
-        $returnstring .= 'addfeed';
-    }
-    $returnstring .= '" />'."\n";
-    if ($act == 'rss_edit') { 
-        $returnstring .= '<input type="hidden" name="rssid" value="'. $rssid .'" />'. "\n"; 
-    }
-    $returnstring .= '<input type="hidden" name="blogid" value="'. $blogid .'" />'."\n";
-    $returnstring .= '<input type="hidden" name="user" value="'. $USER->id .'" />'."\n";
-    $returnstring .= '<br /><input type="submit" value="';
-        $validatestring = "<a href=\"#\" onClick=\"window.open('http://feedvalidator.org/check.cgi?url='+document.block_rss.elements['url'].value,'validate','width=640,height=480,scrollbars=yes,status=yes,resizable=yes');return true;\">Validate</a>";
-    if ($act == 'rss_edit') {
-        $returnstring .= $stredit;
-    } else {
-        $returnstring .= $stradd;
-    }
-    $returnstring .= '" />&nbsp;'. $validatestring .'</form>'."\n";
-    $returnstring .= '</td></tr></tbody></table>'."\n";
-
-    if ($printnow){
-        print $returnstring;
-    }
-    return $returnstring;
 }
 
 /**
