@@ -939,6 +939,7 @@ function init_y_axis() {
   $axis_size       = $this->parameter['axis_size'];
   $axis_colour     = $this->parameter['axis_colour'];
   $axis_angle      = $this->parameter['y_axis_angle'];
+  $y_tick_labels   = $this->y_tick_labels;
 
   $this->calculated['y_axis_left']['has_data'] = FALSE;
   $this->calculated['y_axis_right']['has_data'] = FALSE;
@@ -979,7 +980,11 @@ function init_y_axis() {
   if ($this->parameter['y_axis_text_left']) {
     for ($i = 0; $i < $this->parameter['y_axis_gridlines']; $i++) { // calculate y axis text sizes
       // left y axis
-      $value = number_format($startLeft, $this->parameter['y_decimal_left'], $this->parameter['decimal_point'], $this->parameter['thousand_sep']);
+      if ($y_tick_labels) {
+        $value = $y_tick_labels[$i];
+      } else {
+        $value = number_format($startLeft, $this->parameter['y_decimal_left'], $this->parameter['decimal_point'], $this->parameter['thousand_sep']);
+      }
       $this->calculated['y_axis_left']['data'][$i]  = $startLeft;
       $this->calculated['y_axis_left']['text'][$i]  = $value; // text is formatted raw data
 
