@@ -22,9 +22,12 @@ Backup Details:
              - Check users......................................DONE
              - Check User Files.................................DONE
              - Check Course Files...............................DONE
-        - Launch Backup.........................................NO EXISTS
-        - Show progress.........................................NO EXISTS
-        - Determine Backup location.............................NO EXISTS
+        - Launch Backup.........................................DONE
+        - Show progress.........................................DONE
+        - Determine Backup location.............................DONE
+        - Delete old entries at backup startup..................IN PROGRESS
+             - From database....................................DONE
+             - From filesystem..................................NO EXISTS
    - Backup Items:..............................................IN PROGRESS
         - Backup Info data......................................IN PROGRESS
         - Course................................................NO EXISTS
@@ -79,6 +82,9 @@ Backup Details:
       - XML File................................................NO EXISTS
       - Course Files............................................NO EXISTS
       - User Files..............................................NO EXISTS
+   - Delete old entries at backup end...........................NO EXISTS
+      - From database...........................................NO EXISTS      
+      - From filesystem.........................................NO EXISTS
    - Browse backup files........................................DONE. TO FILE MANAGER
    - Obtain info about backup files.............................NO EXISTS
    - Download backup files......................................DONE. TO FILE MANAGER
@@ -95,6 +101,9 @@ Restore Details:
            - Existing course (import)...........................NO EXISTS
         - Launch Restore........................................NO EXISTS
         - Show progress.........................................NO EXISTS
+   - Delete old entries at restore start........................NO EXISTS    
+      - From database...........................................NO EXISTS
+      - From filesystem.........................................NO EXISTS   
    - Restore Items:.............................................NO EXISTS
         - Course................................................NO EXISTS
            - Course Summary Data................................NO EXISTS
@@ -148,6 +157,9 @@ Restore Details:
       - XML File................................................NO EXISTS
       - Course Files............................................NO EXISTS
       - User Files..............................................NO EXISTS
+   - Delete old entries at restore end.  .......................NO EXISTS   
+      - From database...........................................NO EXISTS
+      - From filesystem.........................................NO EXISTS
    - Obtain info about backup files.............................NO EXISTS
    - Upload backup files........................................DONE. TO FILE MANAGER
 
