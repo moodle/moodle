@@ -634,7 +634,34 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2004083128) { // one more index for email (for sorting)
        modify_database('','CREATE INDEX prefix_user_email_idx ON prefix_user (email);');
-     }
+    }
+
+    if ($oldversion < 2004083129) { // Undoing some module version mess from recent upgrade
+        if (get_field('modules', 'version', 'name', 'assignment') == '2004111200') {
+            set_field('modules', 'version', 2004060401, 'name', 'assignment');
+        }
+        if (get_field('modules', 'version', 'name', 'attendance') == '2004111200') {
+            set_field('modules', 'version', 2004060401, 'name', 'attendance');
+        }
+        if (get_field('modules', 'version', 'name', 'chat') == '2004121100') {
+            set_field('modules', 'version', 2004060401, 'name', 'chat');
+        }
+        if (get_field('modules', 'version', 'name', 'choice') == '2004111200') {
+            set_field('modules', 'version', 2004070103, 'name', 'choice');
+        }
+        if (get_field('modules', 'version', 'name', 'dialogue') == '2004111000') {
+            set_field('modules', 'version', 2004060401, 'name', 'dialogue');
+        }
+        if (get_field('modules', 'version', 'name', 'exercise') == '2004111200') {
+            set_field('modules', 'version', 2004062301, 'name', 'exercise');
+        }
+        if (get_field('modules', 'version', 'name', 'forum') == '2004111200') {
+            set_field('modules', 'version', 2004081801, 'name', 'forum');
+        }
+        if (get_field('modules', 'version', 'name', 'glossary') == '2004111200') {
+            set_field('modules', 'version', 2004080932, 'name', 'glossary');
+        }
+    }
  
     return $result;
 }
