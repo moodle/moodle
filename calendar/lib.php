@@ -1057,7 +1057,7 @@ function calendar_set_filters(&$courses, &$group, &$user, $defaultcourses = NULL
             else {
                 $grouparray = array();
                 foreach ($USER->groupmember as $courseid => $mgroupid) {
-                    if (in_array($courseid, $groupcourses)) {
+                    if (array_key_exists($courseid, $groupcourses)) {
                         $grouparray[] = $mgroupid;
                     }
                 }
