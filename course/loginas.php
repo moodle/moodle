@@ -26,6 +26,7 @@
 
     $USER = get_user_info_from_db("id", $user);
     $USER->loggedin = true;
+    $USER->realuser = $teacher_name;
 
     set_moodle_cookie($USER->username);
 
