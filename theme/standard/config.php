@@ -80,6 +80,23 @@ $THEME->langsheets = false;
 /// different styles.
 
 
+$THEME->resource_mp3player_colors = 
+ 'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&'.
+ 'iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&'.
+ 'font=Arial&fontColour=3333FF&buffer=10&waitForPlay=no&autoPlay=yes';
+
+/// With this you can control the colours of the "big" MP3 player 
+/// that is used for MP3 resources.
+
+
+$THEME->filter_mediaplugin_colors = 
+ 'bgColour=000000&btnColour=ffffff&btnBorderColour=cccccc&iconColour=000000&'.
+ 'iconOverColour=00cc00&trackColour=cccccc&handleColour=ffffff&loaderColour=ffffff&'.
+ 'waitForPlay=yes';
+
+/// ...And this controls the small embedded player
+
+
 $THEME->custompix = false;
 
 /// If true, then this theme must have a "pix" 
