@@ -34,8 +34,12 @@
 				$USER->loggedin = true;
 				$USER->confirmed = 1;
 
-				if ( ! empty($SESSION["wantsurl"]) ) {
-					$goto = $SESSION["wantsurl"];
+                save_session("USER");
+
+				if ( ! empty($SESSION->wantsurl) ) {
+					$goto = $SESSION->wantsurl;
+                    unset($SESSION->wantsurl);
+                    save_session("SESSION");
 					redirect("$goto");
         		}
  

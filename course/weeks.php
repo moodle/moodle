@@ -19,6 +19,7 @@
         } else {
             $USER->section = $week;
         }
+        save_session("USER");
     }
 
 

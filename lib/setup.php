@@ -38,6 +38,17 @@
         setlocale ("LC_TIME", $CFG->lang);
     }
 
+// The following is a big hack to get around the problem of PHP installations
+// that have "register_globals" turned off (default since PHP 4.1.0).
+// Eventually I'll go through and upgrade all the code to make this unnecessary
+
+   if (isset($_REQUEST)) {
+       extract($_REQUEST);
+   }
+   if (isset($_SERVER)) { 
+       extract($_SERVER);
+   }
+
 // Load up theme variables (colours etc)
 
     require("$CFG->dirroot/theme/$CFG->theme/config.php");
@@ -49,16 +60,16 @@
     require("$CFG->libdir/adodb/adodb.inc.php"); // Database access functions
     require("$CFG->libdir/adodb/tohtml.inc.php");// Database display functions
     require("$CFG->libdir/moodlelib.php");       // Various Moodle functions
+
     
 // Load up global environment variables
 
     class object {};
     
     session_start();
-    session_register("SESSION");    // Current session info 
-    session_register("USER");       // Current user info
-    if (! isset($SESSION)) $SESSION = new object;
-    if (! isset($USER))    $USER = new object;
+    if (! isset($_SESSION["SESSION"])) { $_SESSION["SESSION"] = new object; }
+    if (! isset($_SESSION["USER"]))    { $_SESSION["USER"]    = new object; }
+    extract($_SESSION);  // Makes $SESSION and $USER available for read-only access
 
     $FULLME = qualified_me();
     $ME     = strip_querystring($FULLME);
@@ -68,7 +79,6 @@
     ADOLoadCode($CFG->dbtype);          
     $db = &ADONewConnection();         
     $db->PConnect($CFG->dbhost,$CFG->dbuser,$CFG->dbpass,$CFG->dbname); 
-
 
 
 ?>

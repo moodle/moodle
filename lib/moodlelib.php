@@ -393,6 +393,7 @@ function error ($message, $link="") {
         if ( !empty($SESSION->fromurl) ) {
             $link = "$SESSION->fromurl";
             unset($SESSION->fromurl);
+            save_session("SESSION");
         } else {
             $link = "$CFG->wwwroot";
         }
@@ -455,7 +456,6 @@ function notice_yesno ($message, $linkyes, $linkno) {
 
 function redirect($url, $message="", $delay=0) {
 // Uses META tags to redirect the user, after printing a notice
-    global $THEME;
 
     echo "<META HTTP-EQUIV='Refresh' CONTENT='$delay; URL=$url'>";
 
@@ -895,6 +895,7 @@ function require_login($courseid=0) {
     if (! (isset( $USER->loggedin ) && $USER->confirmed) ) { 
         $SESSION->wantsurl = $FULLME;
         $SESSION->fromurl = $HTTP_REFERER;
+        save_session("SESSION");
         if ($PHPSESSID) { // Cookies not enabled.
             redirect("$CFG->wwwroot/login/?PHPSESSID=$PHPSESSID");
         } else {
@@ -920,6 +921,7 @@ function require_login($courseid=0) {
         // Not allowed in the course, so see if they want to enrol
 
         $SESSION->wantsurl = $FULLME;
+        save_session("SESSION");
         redirect("$CFG->wwwroot/course/enrol.php?id=$courseid");
         die;
     }
@@ -937,9 +939,11 @@ function update_login_count() {
     } else {
         $SESSION->logincount++;
     }
+    save_session("SESSION");
 
     if ($SESSION->logincount > $max_logins) {
         unset($SESSION->wantsurl);
+        save_session("SESSION");
         error("Sorry, you have exceeded the allowed number of login attempts. Restart your browser.");
     }
 }
@@ -1004,6 +1008,7 @@ function reset_login_count() {
     global $SESSION;
 
     $SESSION->logincount = 0;
+    save_session("SESSION");
 }
 
 
@@ -1022,6 +1027,13 @@ function get_moodle_cookie() {
     return rc4decrypt($MOODLEID);
 }
 
+
+function save_session($VAR) {
+// Copies temporary session variable to permanent sesson variable
+// eg $_SESSION["USER"] = $USER;
+    global $$VAR;
+    $_SESSION[$VAR] = $$VAR;
+}
 
 
 function verify_login($username, $password) {

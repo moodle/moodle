@@ -44,7 +44,7 @@
         $USER->loggedin = true;
         $USER->admin = true;
         $USER->teacher["$course->id"] = true;
-
+        save_session("USER");
     }
 
     require_login();
@@ -158,6 +158,7 @@
                 if ($usernew->id == $USER->id) {  // Reload admin
                     $USER = get_user_info_from_db("id", $usernew->id);
                     $USER->loggedin = true;
+                    save_session("USER");
 		            set_moodle_cookie($USER->username);
                 }
 		        redirect("index.php", "Changes saved");

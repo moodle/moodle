@@ -26,7 +26,8 @@
 <UL>
   <LI>a working installation of <A HREF="http://www.php.net/">PHP</A> (version 
     4.0.6 or better), including the <A HREF="http://www.boutell.com/gd/">GD</A> 
-    library for manipulating images.</LI>
+    library for manipulating images and with the "register_globals" variable 
+    turned ON (for now).</LI>
   <LI>a working database server (<A HREF="http://www.mysql.com/">MySQL</A>, PostgreSQL, 
     MSSQL, Oracle, Interbase, Foxpro, Access, ADO, Sybase, DB2 or ODBC).</LI>
 </UL>
@@ -56,6 +57,7 @@
     <LI>course/ - code to display and manage courses </LI>
     <LI>doc/ - help documentation for Moodle (eg this page)</LI>
     <LI>files/ - code to display and manage uploaded files</LI>
+    <LI>lang/ - texts in different languages, one directory per language </LI>
     <LI>lib/ - libraries of core Moodle code </LI>
     <LI>login/ - code to handle login and account creation </LI>
     <LI>mod/ - all Moodle course modules</LI>
@@ -122,8 +124,10 @@
   </P>
 </BLOCKQUOTE>
 <P>If you don't see this, then there must have been some problem with the database 
-  or the configuration settings you defined in config.php. Check these and try 
-  this page again.</P>
+  or the configuration settings you defined in config.php. Check also that your 
+  PHP installation has "register_globals" turned on (recent versions have this 
+  off by default).  You can check PHP variables by creating a little file containing
+  &lt? phpinfo ?&gt and looking at it through a browser.  Check all these and try this page again.</P>
 <P>Press the &quot;Continue&quot; link at the bottom of the page.</P>
 <P>Next you will see a similar page that sets up all the tables required by each 
   Moodle module. As before, they should all be green, otherwise you may be a problem 

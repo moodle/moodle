@@ -39,6 +39,8 @@
         $USER->help = false;
     }
 
+    save_session("USER");
+
     if (! $course->category) {      // This course is not a real course.
         redirect("$CFG->wwwroot");
     }

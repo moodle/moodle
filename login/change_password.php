@@ -27,9 +27,9 @@
 				error("Could not set the new password");
             }
 
-			unset($USER);
 			$USER = $user;
 			$USER->loggedin = true;
+            save_session("USER");
 
 			set_moodle_cookie($USER->username);
 

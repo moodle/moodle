@@ -1,8 +1,6 @@
 <?PHP // $Id$
 
 //  Collect ratings, store them, then return to where we came from
-//  Need to do some tricky business and store variables in the 
-//  SESSION variable, just in case 
 
 
     require("../../config.php");

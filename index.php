@@ -91,6 +91,7 @@
 
              if (isset($USER->id)) {
                  $SESSION->fromdiscussion = "$CFG->wwwroot";
+                 save_session($SESSION);
                  if (forum_is_subscribed($USER->id, $newsforum->id)) {
                      $subtext = get_string("unsubscribe", "forum");
                  } else {

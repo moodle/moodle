@@ -36,15 +36,15 @@
 
 		    $timenow = time();
 
-            if ($imagefile && $imagefile!="none") { 
-                $imageinfo = GetImageSize($imagefile);
+            if ($filename = valid_uploaded_file($imagefile)) { 
+                $imageinfo = GetImageSize($filename);
                 $image->width  = $imageinfo[0];
                 $image->height = $imageinfo[1];
                 $image->type   = $imageinfo[2];
     
                 switch ($image->type) {
-                    case 2: $im = ImageCreateFromJPEG($imagefile); break;
-                    case 3: $im = ImageCreateFromPNG($imagefile); break;
+                    case 2: $im = ImageCreateFromJPEG($filename); break;
+                    case 3: $im = ImageCreateFromPNG($filename); break;
                     default: error("Image must be in JPG or PNG format");
                 }
                 if (function_exists("ImageCreateTrueColor") and $CFG->gdversion >= 2) {
@@ -114,6 +114,7 @@
                 foreach ($usernew as $variable => $value) {
                     $USER->$variable = $value;
                 }
+                save_session("USER");
 		        redirect("view.php?id=$user->id&course=$course->id", "Changes saved");
             } else {
                 error("Could not update the user record ($user->id)");

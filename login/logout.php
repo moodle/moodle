@@ -4,6 +4,7 @@
     require("../config.php");
 
     $USER = NULL;
+    save_session("USER");
     redirect($HTTP_REFERER);
     exit;
 

@@ -70,6 +70,7 @@
         if ($SESSION->returnpage) {
             $return = $SESSION->returnpage;
             unset($SESSION->returnpage);
+            save_session("SESSION");
             redirect($return);
         } else {
             redirect("view.php?id=$mod->course");
@@ -79,6 +80,7 @@
 
     if (isset($return)) {  
         $SESSION->returnpage = $HTTP_REFERER;
+        save_session("SESSION");
     }
 
     if (isset($move)) {  

@@ -58,6 +58,7 @@
 
     if ($USER) {
         $SESSION->fromdiscussion = "$FULLME";
+        save_session("SESSION");
         if (forum_is_forcesubscribed($forum->id)) {
             $subtext = "Everyone is subscribed to this forum";
             if (isteacher($course->id)) {

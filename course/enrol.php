@@ -35,10 +35,12 @@
             }
 
             $USER->student["$id"] = true;
+            save_session("USER");
             
             if ($SESSION->wantsurl) {
                 $destination = $SESSION->wantsurl;
                 unset($SESSION->wantsurl);
+                save_session("SESSION");
             } else {
                 $destination = "$CFG->wwwroot/course/view.php?id=$id";
             }
@@ -68,10 +70,12 @@
         }
 
         $USER->student["$id"] = true;
+        save_session("USER");
         
         if ($SESSION->wantsurl) {
             $destination = $SESSION->wantsurl;
             unset($SESSION->wantsurl);
+            save_session("SESSION");
         } else {
             $destination = "$CFG->wwwroot/course/view.php?id=$id";
         }

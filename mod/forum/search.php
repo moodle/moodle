@@ -59,10 +59,16 @@
                 if (! $forum = get_record("forum", "id", "$discussion->forum")) {
                     error("Could not find forum $discussion->forum");
                 }
-                $post->subject = "<A HREF=\"index.php?id=$course->id&forum=$forum->id\">$forum->name</A> -> ".
-                                 "<A HREF=\"discuss.php?d=$discussion->id\">$discussion->name</A> -> ".
-                                 "<A HREF=\"discuss.php?d=$post->discussion&parent=$post->id\">$post->subject</A>";
 
+                $fullsubject = "<A HREF=\"view.php?f=$forum->id\">$forum->name</A>";
+                if ($forum->type != "single") {
+                    $fullsubject .= " -> <A HREF=\"discuss.php?d=$discussion->id\">$discussion->name</A>";
+                    if ($post->parent != 0) {
+                        $fullsubject .= " -> <A HREF=\"discuss.php?d=$post->discussion&parent=$post->id\">$post->subject</A>";
+                    }
+                }
+
+                $post->subject = $fullsubject;
                 $post->message = highlight("$search", $post->message);
 
                 $fulllink = "<P ALIGN=right><A HREF=\"discuss.php?d=$post->discussion&parent=$post->id\">See this post in context</A></P>";

@@ -36,4 +36,6 @@
 
     notice("You are now logged in as $student_name", "$CFG->wwwroot/course/view.php?id=$course->id");
 
+    save_session("USER");
+
 ?>

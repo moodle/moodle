@@ -36,6 +36,7 @@
     
             $USER = $user;
             $USER->loggedin = true;
+            save_session("USER");
     
             if (!update_user_in_db()) {
                 error("Weird error: User not found");
@@ -44,7 +45,7 @@
             if (!update_user_login_times()) {
                 error("Wierd error: could not update login records");
             }
-    
+
 		    set_moodle_cookie($USER->username);
 
     
@@ -53,6 +54,7 @@
 		    } else {
         	    header("Location: $SESSION->wantsurl");
 			    unset($SESSION->wantsurl);
+                save_session("SESSION");
 		    }
     
 		    reset_login_count();
@@ -63,9 +65,11 @@
             $errormsg = get_string("invalidlogin");
         }
     }
+
     
     if (empty($SESSION->wantsurl)) {
-	    $SESSION->wantsurl = $HTTP_REFERER;  
+	    $SESSION->wantsurl = $HTTP_REFERER;
+        save_session("SESSION");
     }
     
     if (!$frm->username) 
@@ -92,6 +96,7 @@ function update_user_login_times() {
 
     $USER->lastlogin = $USER->currentlogin;
     $USER->currentlogin = time();
+    save_session("USER");
 
     return $db->Execute("UPDATE user 
                          SET lastlogin='$USER->lastlogin', currentlogin='$USER->currentlogin'

@@ -48,7 +48,7 @@
       echo "</DIV>";
 
       // Print Admin links for teachers and admin.
-      if (isteacher($USER->id) || isadmin()) {
+      if (isteacher($course->id) || isadmin()) {
           print_simple_box("Admin", $align="CENTER", $width="100%", $color="$THEME->cellheading");
           $adminicon[]="<IMG SRC=\"../pix/i/edit.gif\" HEIGHT=16 WIDTH=16 ALT=\"Edit\">";
           if (isediting($course->id)) {
@@ -82,6 +82,7 @@
     
           forum_print_latest_discussions($social->id, 10, "plain", "DESC", false);
           $SESSION->fromdiscussion = "$CFG->wwwroot/course/view.php?id=$course->id";
+          save_session("SESSION");
 
       } else {
           notify("Could not find or create a social forum here");
