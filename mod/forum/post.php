@@ -156,11 +156,14 @@
         if (! $post = forum_get_post_full($delete)) {
             error("Post ID was incorrect");
         }
-        if ($post->user <> $USER->id) {
-            error("You can't delete other people's posts!");
-        }
         if (! $discussion = get_record("forum_discussions", "id", $post->discussion)) {
             error("This post is not part of a discussion!");
+        }
+        if (! $forum = get_record("forum", "id", $discussion->forum)) {
+            error("The forum number was incorrect ($discussion->forum)");
+        }
+        if (($post->user <> $USER->id) and !isteacher($forum->course)) {
+            error("You can't delete other people's posts!");
         }
 
         if (isset($confirm)) {    // User has confirmed the delete
@@ -176,17 +179,21 @@
 
             } else {
                 if (! $post->parent) {  // post is a discussion topic as well, so delete discussion
+                    if ($forum->type == "single") {
+                        notice("Sorry, but you are not allowed to delete that discussion!", 
+                                forum_go_back_to("discuss.php?d=$post->discussion"));
+                    }
                     forum_delete_discussion($discussion);
 
                     add_to_log($discussion->course, "forum", "delete discussion", "view.php?id=$discussion->forum", "$post->id");
                     redirect("view.php?f=$discussion->forum", 
-                             "Your discussion topic was deleted", 1);
+                             "The discussion topic has been deleted", 1);
 
-                } else if (delete_records("forum_posts", "id", $post->id)) {
+                } else if (forum_delete_post($post->id)) {
 
                     add_to_log($discussion->course, "forum", "delete post", "discuss.php?d=$post->discussion", "$post->id");
                     redirect(forum_go_back_to("discuss.php?d=$post->discussion"), 
-                             "Your post was deleted", 1);
+                             "The post has been deleted", 1);
                 } else {
                     error("An error occurred while deleting record $post->id");
                 }

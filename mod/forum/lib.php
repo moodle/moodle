@@ -196,15 +196,18 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         if ($age < $CFG->maxeditingtime) {
             echo "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?edit=$post->id\">".get_string("edit", "forum")."</A> | ";
         }
+    }
+    if ($ownpost or isteacher($courseid)) {
         echo "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">".get_string("delete", "forum")."</A>";
         if ($reply) {
-            echo "| <A HREF=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</A>";
+            echo "| ";
+        } else {
+            echo "&nbsp;&nbsp;";
         }
+    }
+    if ($reply) {
+        echo "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</A>";
         echo "&nbsp;&nbsp;";
-    } else {
-        if ($reply) {
-            echo "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</A>&nbsp;&nbsp;";
-        }
     }
 
 
@@ -422,6 +425,14 @@ function forum_delete_discussion($discussion) {
     return $result;
 }
 
+
+function forum_delete_post($postid) {
+   if (delete_records("forum_posts", "id", $postid)) {
+       delete_records("forum_ratings", "post", $postid);  // Just in case
+       return true;
+   }
+   return false;
+}
 
 
 function forum_print_user_discussions($courseid, $userid) {
