@@ -372,6 +372,8 @@ $string['emailenableclick'] = 'Click here to re-enable all email being sent to t
 $string['emailexists'] = 'This email address is already registered.';
 $string['emailformat'] = 'Email format';
 $string['emailmustbereal'] = 'Note: your email address must be a real one';
+$string['emailnotallowed'] = 'Email addresses in these domains are not allowed ($a)';
+$string['emailonlyallowed'] = 'This email is not one of those that are allowed ($a)';
 $string['emailpasswordconfirmation'] = 'Hi $a->firstname,
 
 Someone (probably you) has requested a new password for your
@@ -992,9 +994,12 @@ $string['updatingain'] = 'Updating $a->what in $a->in';
 $string['upload'] = 'Upload';
 $string['uploadafile'] = 'Upload a file';
 $string['uploadedfileto'] = 'Uploaded $a->file to $a->directory';
+$string['uploadformlimit'] = 'Uploaded file exceeded the maximum size limit set by the form';
 $string['uploadnofilefound'] = 'No file was found - are you sure you selected one to upload?';
 $string['uploadnotallowed'] = 'Uploads are not allowed';
+$string['uploadpartialfile'] = 'File was only partially uploaded';
 $string['uploadproblem'] = 'An unknown problem occurred while uploading the file \'$a\' (perhaps it was too large?)';
+$string['uploadserverlimit'] = 'Uploaded file exceeded the maximum size limit set by the server';
 $string['uploadthisfile'] = 'Upload this file';
 $string['uploadusers'] = 'Upload users';
 $string['usedinnplaces'] = 'Used in $a places';

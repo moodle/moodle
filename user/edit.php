@@ -246,12 +246,39 @@ function find_form_errors(&$user, &$usernew, &$err) {
     if (empty($usernew->country))
         $err["country"] = get_string("missingcountry");
 
-    if (! validate_email($usernew->email))
+    if (! validate_email($usernew->email)) {
         $err["email"] = get_string("invalidemail");
 
-    else if ($otheruser = get_record("user", "email", $usernew->email)) {
+    } else if ($otheruser = get_record("user", "email", $usernew->email)) {
         if ($otheruser->id <> $user->id) {
             $err["email"] = get_string("emailexists");
+        }
+    }
+    
+    if (empty($err["email"]) and !isadmin()) {
+        if (!empty($CFG->allowemailaddresses)) {
+            $allowed = explode(' ', $CFG->allowemailaddresses);
+            $err["email"] = get_string("emailonlyallowed", '', $CFG->allowemailaddresses);   // Default
+            foreach ($allowed as $allowedpattern) {
+                $allowedpattern = trim($allowedpattern);
+                if (!$allowedpattern) {
+                    continue;
+                }
+                if (strpos($usernew->email, $allowedpattern) !== false) {
+                    unset($err["email"]);
+                }
+            }
+        } else if (!empty($CFG->denyemailaddresses)) {
+            $denied = explode(' ', $CFG->denyemailaddresses);
+            foreach ($denied as $deniedpattern) {
+                $deniedpattern = trim($deniedpattern);
+                if (!$deniedpattern) {
+                    continue;
+                }
+                if (strpos($usernew->email, $deniedpattern) !== false) {
+                    $err->email = get_string("emailnotallowed", '', $CFG->denyemailaddresses);
+                }
+            }
         }
     }
 

@@ -181,6 +181,13 @@ $CFG->defaultblocks = 'participants,activity_modules,search_forums,admin,course_
 // Seconds for files to remain in caches. Decrease this if you are worried
 // about students being served outdated versions of uploaded files.
 //      $CFG->filelifetime = 86400;
+// 
+// The following two settings allow you to specify allowed domains for 
+// email addresses.  If the first one is set, then Moodle will DISALLOW
+// all domains EXCEPT those listed.  Otherwise, if the second one is set
+// then all addresses are ALLOWED EXCEPT those listed.
+//      $CFG->allowemailaddresses = "myschool.edu.au hotmail.com";
+//      $CFG->denyemailaddresses = "hotmail.com yahoo.com";
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
