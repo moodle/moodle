@@ -209,15 +209,15 @@ function scorm_grades($scormid) {
                     	$scores->{scorm_remove_spaces($data->cmi_core_lesson_status)}++;
             	}
             	if ($scores->completed)
-                    $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/completed.gif\" alt=\"".get_string('completed','scorm')."\" title=\"".get_string('completed','scorm')."\"> $scores->completed ";
+                    $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/completed.gif\" alt=\"".get_string('completed','scorm')."\" title=\"".get_string('completed','scorm')."\" /> $scores->completed ";
             	if ($scores->incomplete)
-                    $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/incomplete.gif\" alt=\"".get_string('incomplete','scorm')."\" title=\"".get_string('incomplete','scorm')."\"> $scores->incomplete ";
+                    $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/incomplete.gif\" alt=\"".get_string('incomplete','scorm')."\" title=\"".get_string('incomplete','scorm')."\" /> $scores->incomplete ";
             	if ($scores->failed)
-                    $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/failed.gif\" alt=\"".get_string('failed','scorm')."\" title=\"".get_string('failed','scorm')."\"> $scores->failed ";
+                    $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/failed.gif\" alt=\"".get_string('failed','scorm')."\" title=\"".get_string('failed','scorm')."\" /> $scores->failed ";
             	if ($scores->browsed)
-                    $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/browsed.gif\" alt=\"".get_string('browsed','scorm')."\" title=\"".get_string('browsed','scorm')."\"> $scores->browsed ";
+                    $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/browsed.gif\" alt=\"".get_string('browsed','scorm')."\" title=\"".get_string('browsed','scorm')."\" /> $scores->browsed ";
             	if ($scores->notattempted)
-                    $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/notattempted.gif\" alt=\"".get_string('notattempted','scorm')."\" title=\"".get_string('notattempted','scorm')."\"> $scores->notattempted ";
+                    $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/notattempted.gif\" alt=\"".get_string('notattempted','scorm')."\" title=\"".get_string('notattempted','scorm')."\" /> $scores->notattempted ";
             
             	$return->grades[$sco_user->userid]=$result;
             }

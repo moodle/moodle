@@ -357,7 +357,7 @@ function display() {
 
         if ($resourcetype == "image") {
             echo "<center><p>";
-            echo "<img title=\"{$resource->name}\" class=\"resourceimage\" src=\"$fullurl\">";
+            echo "<img title=\"{$resource->name}\" class=\"resourceimage\" src=\"$fullurl\" />";
             echo "</p></center>";
 
         } else if ($resourcetype == "mp3") {

@@ -636,7 +636,7 @@ function printfilelist($filelist) {
 
     foreach ($filelist as $file) {
         if (is_dir($basedir.$file)) {
-            echo "<img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\"> $file<br />";
+            echo "<img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" /> $file<br />";
             $subfilelist = array();
             $currdir = opendir($basedir.$file);
             while ($subfile = readdir($currdir)) {
@@ -648,7 +648,7 @@ function printfilelist($filelist) {
 
         } else {
             $icon = mimeinfo("icon", $file);
-            echo "<img src=\"$CFG->pixpath/f/$icon\"  height=\"16\" width=\"16\"> $file<br />";
+            echo "<img src=\"$CFG->pixpath/f/$icon\"  height=\"16\" width=\"16\" /> $file<br />";
         }
     }
 }
@@ -733,7 +733,7 @@ function displaydir ($wdir) {
             echo "<tr>";
 
             print_cell("center", "<input type=\"checkbox\" name=\"file$count\" value=\"$fileurl\" />");
-            print_cell("left", "<a href=\"".basename($ME)."?id=$id&wdir=$fileurl\"><img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" border=\"0\" alt=\"Folder\"></a> <a href=\"".basename($ME)."?id=$id&wdir=$fileurl\">".htmlspecialchars($dir)."</a>");
+            print_cell("left", "<a href=\"".basename($ME)."?id=$id&wdir=$fileurl\"><img src=\"$CFG->pixpath/f/folder.gif\" height=\"16\" width=\"16\" border=\"0\" alt=\"Folder\" /></a> <a href=\"".basename($ME)."?id=$id&wdir=$fileurl\">".htmlspecialchars($dir)."</a>");
             print_cell("right", "-");
             print_cell("right", $filedate);
             print_cell("right", "<a href=\"".basename($ME)."?id=$id&wdir=$wdir&file=$filesafe&action=rename\">$strrename</a>");
@@ -773,7 +773,7 @@ function displaydir ($wdir) {
 
             echo "<td align=\"left\" nowrap=\"nowrap\">";
             link_to_popup_window ($ffurl, "display",
-                                  "<img src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" border=\"0\" alt=\"file\">",
+                                  "<img src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" border=\"0\" alt=\"file\" />",
                                   480, 640);
             echo "<font size=\"-1\" face=\"Arial, Helvetica\">";
             link_to_popup_window ($ffurl, "display", htmlspecialchars($file), 480, 640);
@@ -798,7 +798,7 @@ function displaydir ($wdir) {
         }
     }
     echo "</table>";
-    echo "<hr width=\"640\" align=\"center\" noshade size=\"1\" />";
+    echo "<hr width=\"640\" align=\"center\" selected=\"selected\" size=\"1\" />";
 
     if (empty($wdir)) {
         $wdir = "/";
@@ -844,7 +844,7 @@ function displaydir ($wdir) {
         echo "</form>";
     echo "</td></tr>";
     echo "</table>";
-    echo "<hr width=\"640\" align=\"center\" NOSHADE size=\"1\">";
+    echo "<hr width=\"640\" align=\"center\" selected=\"selected\" size=\"1\" />";
 
 }
 

@@ -65,7 +65,7 @@
             var popupitems = [<?php echo $popupoptions; ?>];
             var allitems = [<?php echo $alloptions; ?>];
         </script>
-        <input type="radio" name="windowpopup" value="0" <?php echo ($windowtype != "popup") ? "checked" : "" ?> 
+        <input type="radio" name="windowpopup" value="0" <?php echo ($windowtype != "popup") ? "checked=\"checked\"" : "" ?> 
         onClick="return lockoptions('form', 'windowpopup[1]', popupitems);" />
         <b title="<?php print_string("pagedisplay", "resource") ?>"><?php print_string("pagewindow", "resource") ?></b>
     </td>
@@ -74,7 +74,7 @@
 <tr valign="top">
     
     <td colspan="2">
-        <input name="windowpopup" type="radio" value="1" <?php echo ($windowtype == "popup") ? "checked" : "" ?>
+        <input name="windowpopup" type="radio" value="1" <?php echo ($windowtype == "popup") ? "checked=\"checked\"" : "" ?>
         onclick=" return lockoptions('form', 'windowpopup[1]', popupitems);" />
         <b title="<?php p($strnewwindowopen) ?>"><?php p($strnewwindow) ?></b>
         <ul>
@@ -83,8 +83,8 @@
                 if ($name == "height" or $name == "width") {
                     continue;
                 }
-                echo "<input name=\"h$name\" type="hidden" value="0" />";
-                echo "<input name=\"$name\" type="checkbox" value="1" ".$window->$name." />";
+                echo "<input name=\"h$name\" type=\"hidden\" value=\"0\" />";
+                echo "<input name=\"$name\" type=\"checkbox\" value=\"1\" ".$window->$name." />";
                 $stringname = "str$name";
                 echo $$stringname."<br />";
             }

@@ -25,8 +25,8 @@
     $strupload      = get_string("upload");
 
     print_header_simple("$workshop->name : $strupload", "",
-                 "<a HREF=index.php?id=$course->id>$strworkshops</a> -> 
-                  <a HREF=\"view.php?a=$workshop->id\">$workshop->name</a> -> $strupload", 
+                 "<a href=\"index.php?id=$course->id\">$strworkshops</a> -> 
+                  <a href=\"view.php?a=$workshop->id\">$workshop->name</a> -> $strupload", 
                   "", "", true);
  /****
     if ($submissions = workshop_get_submissions($workshop, $USER)) {

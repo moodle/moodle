@@ -187,9 +187,9 @@
     	print_string("mode","scorm");
         echo ": <input type=\"radio\" id=\"b\" name=\"mode\" value=\"browse\" /><label for=\"b\">".get_string("browse","scorm")."</label>\n";
         if ($incomplete === true) {
-            echo "<input type=\"radio\" id=\"n\" name=\"mode\" value=\"normal\" checked /><label for=\"n\">".get_string("normal","scorm")."</label>\n";
+            echo "<input type=\"radio\" id=\"n\" name=\"mode\" value=\"normal\" checked=\"checked\" /><label for=\"n\">".get_string("normal","scorm")."</label>\n";
         } else {
-            echo "<input type=\"radio\" id=\"r\" name=\"mode\" value=\"review\" checked /><label for=\"r\">".get_string("review","scorm")."</label>\n";
+            echo "<input type=\"radio\" id=\"r\" name=\"mode\" value=\"review\" checked=\"checked\" /><label for=\"r\">".get_string("review","scorm")."</label>\n";
 	}
 	echo "</td>\n</tr>\n<tr><td align=\"center\">";
 	echo '<input type="hidden" name="scoid" />

@@ -32,7 +32,7 @@ if (isset($errors)) {
                 echo "  <option ";
                 if (isset($newentry->id)) {
                     if ( record_exists("glossary_entries_categories","entryid",$newentry->id,"categoryid",$category->id) ) {
-                        echo "selected " ;
+                        echo "selected=\"selected\" " ;
                     }
                 }
                 echo "value=\"$category->id\">$category->name</option>\n";
@@ -67,7 +67,7 @@ if (isset($errors)) {
         echo '<script>var items = [\'casesensitive\',\'fullmatch\'];</script>';
 
         if (!empty($newentry->usedynalink)) {
-            $selected = "checked";
+            $selected = "checked=\"checked\"";
         } else {
             $selected = "";
         }

@@ -132,13 +132,13 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
   <select size="1" name="mainglossary">
   <option value="1" <?php
    if ( $form->mainglossary ) {
-      echo "selected";
+      echo "selected=\"selected\"";
    }
 ?>>
 <?php echo get_string("mainglossary", "glossary") ?></option>
   <option value="0" <?php
    if ( !$form->mainglossary ) {
-      echo "selected";
+      echo "selected=\"selected\"";
    }
    ?>><?php echo get_string("secondaryglossary", "glossary") ?>
   </option>
@@ -157,12 +157,12 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
   <select size="1" name="studentcanpost">
   <option value="1" <?php
    if ( $form->studentcanpost ) {
-      echo "selected";
+      echo "selected=\"selected\"";
    }
    ?>><?php echo get_string("yes") ?></option>
   <option value="0" <?php
    if ( !$form->studentcanpost ) {
-      echo "selected";
+      echo "selected=\"selected\"";
    }
    ?>><?php echo get_string("no") ?>
   </option>
@@ -175,13 +175,13 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
   <select size="1" name="allowduplicatedentries">
   <option value="1" <?php
    if ( $form->allowduplicatedentries ) {
-      echo "selected";
+      echo "selected=\"selected\"";
    }
    ?> 
    ><?php echo get_string("yes") ?></option>
   <option value="0" <?php
    if ( !$form->allowduplicatedentries ) {
-      echo "selected";
+      echo "selected=\"selected\"";
    }
    ?>><?php echo get_string("no") ?>
   </option>
@@ -194,13 +194,13 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
   <select size="1" name="allowcomments">
   <option value="1" <?php
    if ( $form->allowcomments ) {
-      echo "selected";
+      echo "selected=\"selected\"";
    }
    ?> 
    ><?php echo get_string("yes") ?></option>
   <option value="0" <?php
    if ( !$form->allowcomments ) {
-      echo "selected";
+      echo "selected=\"selected\"";
    }
    ?>><?php echo get_string("no") ?>
   </option>
@@ -213,13 +213,13 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
   <select size="1" name="usedynalink">
   <option value="1" <?php
    if ( $form->usedynalink ) {
-      echo "selected";
+      echo "selected=\"selected\"";
    }
    ?> 
    ><?php echo get_string("yes") ?></option>
   <option value="0" <?php
    if ( !$form->usedynalink ) {
-      echo "selected";
+      echo "selected=\"selected\"";
    }
    ?>><?php echo get_string("no") ?>
   </option>
@@ -232,13 +232,13 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
   <select size="1" name="defaultapproval">
   <option value="1" <?php
    if ( $form->defaultapproval ) {
-      echo "selected";
+      echo "selected=\"selected\"";
    }
    ?> 
    ><?php echo get_string("yes") ?></option>
   <option value="0" <?php
    if ( !$form->defaultapproval ) {
-      echo "selected";
+      echo "selected=\"selected\"";
    }
    ?>><?php echo get_string("no") ?>
   </option>
@@ -282,13 +282,13 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
   <select size="1" name="showspecial">
   <option value="1" <?php
    if ( $form->showspecial ) {
-      echo "selected";
+      echo "selected=\"selected\"";
    }
    ?> 
    ><?php echo get_string("yes") ?></option>
   <option value="0" <?php
    if ( !$form->showspecial ) {
-      echo "selected";
+      echo "selected=\"selected\"";
    }
    ?>><?php echo get_string("no") ?>
   </option>
@@ -301,13 +301,13 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
   <select size="1" name="showalphabet">
   <option value="1" <?php
    if ( $form->showalphabet ) {
-      echo "selected";
+      echo "selected=\"selected\"";
    }
    ?> 
    ><?php echo get_string("yes") ?></option>
   <option value="0" <?php
    if ( !$form->showalphabet ) {
-      echo "selected";
+      echo "selected=\"selected\"";
    }
    ?>><?php echo get_string("no") ?>
   </option>
@@ -320,13 +320,13 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
   <select size="1" name="showall">
   <option value="1" <?php
    if ( $form->showall ) {
-      echo "selected";
+      echo "selected=\"selected\"";
    }
    ?> 
    ><?php echo get_string("yes") ?></option>
   <option value="0" <?php
    if ( !$form->showall ) {
-      echo "selected";
+      echo "selected=\"selected\"";
    }
    ?>><?php echo get_string("no") ?>
   </option>
@@ -339,13 +339,13 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
   <select size="1" name="editalways">
   <option value="1" <?php
    if ( $form->editalways ) {
-      echo "selected";
+      echo "selected=\"selected\"";
    }
    ?>
    ><?php echo get_string("yes") ?></option>
   <option value="0" <?php
    if ( !$form->editalways ) {
-      echo "selected";
+      echo "selected=\"selected\"";
    }
    ?>><?php echo get_string("no") ?>
   </option>

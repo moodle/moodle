@@ -68,7 +68,7 @@ function display() {
             navmenu($course, $this->cm));
 
     if (isteacheredit($course->id)) {
-        echo "<div align=\"right\"><img src=\"$CFG->pixpath/i/files.gif\" height=\"16\" width=\"16\" alt=\"\">&nbsp".
+        echo "<div align=\"right\"><img src=\"$CFG->pixpath/i/files.gif\" height=\"16\" width=\"16\" alt=\"\" />&nbsp".
             "<a href=\"$CFG->wwwroot/files/index.php?id={$course->id}&wdir=/{$resource->reference}$subdir\">".
             get_string("editfiles")."...</a></div>";
     }
@@ -119,7 +119,7 @@ function display() {
 
         echo '<tr>';
         echo '<td>';
-        echo "<img src=\"$CFG->pixpath/f/$icon\" width=\"16\" height=\"16\">";
+        echo "<img src=\"$CFG->pixpath/f/$icon\" width=\"16\" height=\"16\" />";
         echo '</td>';
         echo '<td nowrap="nowrap"><p>';
         if ($icon == 'folder.gif') {

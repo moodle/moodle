@@ -97,7 +97,7 @@ function lesson_choose_from_menu ($options, $name, $selected="", $nothing="choos
     if ($nothing) {
         $output .= "   <option value=\"$nothingvalue\"\n";
         if ($nothingvalue == $selected) {
-            $output .= " SELECTED";
+            $output .= " selected=\"selected\"";
         }
         $output .= ">$nothing</option>\n";
     }
@@ -105,7 +105,7 @@ function lesson_choose_from_menu ($options, $name, $selected="", $nothing="choos
         foreach ($options as $value => $label) {
             $output .= "   <option value=\"$value\"";
             if ($value == $selected) {
-                $output .= " SELECTED";
+                $output .= " selected=\"selected\"";
             }
             // stop zero label being replaced by array index value
             // if ($label) {

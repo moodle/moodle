@@ -49,7 +49,7 @@
     
     $navigation = "";
     if ($course->category) {
-        $navigation = "<a HREF=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
+        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
     }
 
     $strworkshops = get_string("modulenameplural", "workshop");
@@ -58,8 +58,8 @@
 
     // ... print the header and...
     print_header_simple("$workshop->name", "",
-                 "<a HREF=index.php?id=$course->id>$strworkshops</a> -> 
-                  <a HREF=\"view.php?id=$cm->id\">$workshop->name</a> -> $strassessments", 
+                 "<a href=\"index.php?id=$course->id\">$strworkshops</a> -> 
+                  <a href=\"view.php?id=$cm->id\">$workshop->name</a> -> $strassessments", 
                   "", "", true);
 
 	//...get the action 
@@ -79,26 +79,26 @@
 			error("Submission not found");
 			}
 		?>
-		<form NAME="commentform" ACTION="assessments.php" METHOD="post">
-		<input TYPE="HIDDEN" NAME="action" VALUE="insertcomment" />
-		<input TYPE="HIDDEN" NAME="id" VALUE="<?php echo $cm->id ?>" />
-		<input TYPE="HIDDEN" NAME="aid" VALUE="<?php echo $_REQUEST['aid'] ?>" />
+		<form name="commentform" action="assessments.php" method="post">
+		<input type="HIDDEN" name="action" value="insertcomment" />
+		<input type="HIDDEN" name="id" value="<?php echo $cm->id ?>" />
+		<input type="HIDDEN" name="aid" value="<?php echo $_REQUEST['aid'] ?>" />
 		<center>
-		<table CELLPADDING=5 BORDER=1>
+		<table cellpadding="5" border="1">
 		<?php
 
 		// now get the comment
-		echo "<tr valign=top>\n";
+		echo "<tr valign=\"top\">\n";
 
-		echo "	<td align=right><p><b>". get_string("comment", "workshop").":</b></p></td>\n";
+		echo "	<td align=\"right\"><p><b>". get_string("comment", "workshop").":</b></p></td>\n";
 
 		echo "	<td>\n";
 
-		echo "		<textarea name=\"comments\" rows=5 cols=75 wrap=\"virtual\">\n";
+		echo "		<textarea name=\"comments\" rows=\"5\" cols=\"75\" wrap=\"virtual\">\n";
 		echo "</textarea>\n";
 
 		echo "	</td></tr></table>\n";
-		echo "<input TYPE=submit VALUE=\"".get_string("savemycomment", "workshop")."\" />\n";
+		echo "<input type=\"submit\" value=\"".get_string("savemycomment", "workshop")."\" />\n";
 		echo "</center></form>\n";
 		echo "<p><center><b>".get_string("assessment", "workshop"). "</b></center>\n";
 		workshop_print_assessment($workshop, $assessment);
@@ -255,25 +255,25 @@
 			error("Edit Comment: Submission not found");
 			}
 		?>
-		<form NAME="gradingform" ACTION="assessments.php" METHOD="post">
-		<input TYPE="HIDDEN" NAME="action" VALUE="updatecomment" />
-		<input TYPE="HIDDEN" NAME="id" VALUE="<?php echo $cm->id ?>" />
-		<input TYPE="HIDDEN" NAME="cid" VALUE="<?php echo $_GET['cid'] ?>" />
+		<form name="gradingform" action="assessments.php" method="post">
+		<input type="HIDDEN" name="action" value="updatecomment" />
+		<input type="HIDDEN" name="id" value="<?php echo $cm->id ?>" />
+		<input type="HIDDEN" name="cid" value="<?php echo $_GET['cid'] ?>" />
 		<center>
-		<table CELLPADDING=5 BORDER=1>
+		<table cellpadding="5" border="1">
 		<?php
 
 		// now show the comment
-		echo "<tr valign=top>\n";
-		echo "	<td align=right><p><b>". get_string("comment", "workshop").":</b></p></td>\n";
+		echo "<tr valign=\"top\">\n";
+		echo "	<td align=\"right\"><p><b>". get_string("comment", "workshop").":</b></p></td>\n";
 		echo "	<td>\n";
-		echo "		<textarea name=\"comments\" rows=5 cols=75 wrap=\"virtual\">\n";
+		echo "		<textarea name=\"comments\" rows=\"5\" cols=\"75\" wrap=\"virtual\">\n";
 		if (isset($comment->comments)) {
 			echo $comment->comments;
 			}
 		echo "	    </textarea>\n";
 		echo "	</td></tr></table>\n";
-		echo "<input TYPE=submit VALUE=\"".get_string("savemycomment", "workshop")."\" />\n";
+		echo "<input type=\"submit\" value=\"".get_string("savemycomment", "workshop")."\" />\n";
 		echo "</center></form>\n";
 		workshop_print_assessment($workshop, $assessment);
 		}
@@ -296,7 +296,7 @@
 		<form name="form" method="post" action="assessments.php">
 		<input type="hidden" name="id" value="<?php echo $cm->id ?>" />
 		<input type="hidden" name="action" value="insertelements" />
-		<center><table cellpadding=5 border=1>
+		<center><table cellpadding="5" border="1">
 		<?php
 		
 		// get existing elements, if none set up appropriate default ones
@@ -319,12 +319,12 @@
 			case 0: // no grading
 				for ($i=0; $i<$workshop->nelements; $i++) {
 					$iplus1 = $i+1;
-					echo "<tr valign=top>\n";
-					echo "	<td ALIGN=RIGHT><p><b>". get_string("element","workshop")." $iplus1:</b></td>\n";
-					echo "<td><textarea name=\"description[]\" rows=3 cols=75 wrap=\"virtual\">".$elements[$i]->description."</textarea>\n";
+					echo "<tr valign=\"top\">\n";
+					echo "	<td align=\"right\"><p><b>". get_string("element","workshop")." $iplus1:</b></td>\n";
+					echo "<td><textarea name=\"description[]\" rows=\"3\" cols=\"75\" wrap=\"virtual\">".$elements[$i]->description."</textarea>\n";
 					echo "	</td></tr>\n";
-					echo "<tr valign=top>\n";
-					echo "	<td colspan=2 BGCOLOR=\"$THEME->cellheading2\">&nbsp;</td>\n";
+					echo "<tr valign=\"top\">\n";
+					echo "	<td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
 					echo "</tr>\n";
 				}
 				break;
@@ -336,24 +336,24 @@
 				}
 				for ($i=0; $i<$workshop->nelements; $i++) {
 					$iplus1 = $i+1;
-					echo "<tr valign=top>\n";
-					echo "	<td ALIGN=RIGHT><p><b>". get_string("element","workshop")." $iplus1:</b></td>\n";
-					echo "<td><textarea name=\"description[]\" rows=3 cols=75 wrap=\"virtual\">".$elements[$i]->description."</textarea>\n";
+					echo "<tr valign=\"top\">\n";
+					echo "	<td align=\"right\"><p><b>". get_string("element","workshop")." $iplus1:</b></td>\n";
+					echo "<td><textarea name=\"description[]\" rows=\"3\" cols=\"75\" wrap=\"virtual\">".$elements[$i]->description."</textarea>\n";
 					echo "	</td></tr>\n";
-					echo "<tr valign=top>\n";
-					echo "	<td align=right><p><b>". get_string("typeofscale", "workshop"). ":</b></p></td>\n";
+					echo "<tr valign=\"top\">\n";
+					echo "	<td align=\"right\"><p><b>". get_string("typeofscale", "workshop"). ":</b></p></td>\n";
 					echo "<td valign=\"top\">\n";
 					choose_from_menu($SCALES, "scale[]", $elements[$i]->scale, "");
 					if ($elements[$i]->weight == '') { // not set
 						$elements[$i]->weight = 11; // unity
 					}
 					echo "</tr>\n";
-					echo "<tr valign=top><td ALIGN=RIGHT><b>".get_string("elementweight", "workshop").":</b></td><td>\n";
+					echo "<tr valign=\"top\"><td align=\"right\"><b>".get_string("elementweight", "workshop").":</b></td><td>\n";
 					workshop_choose_from_menu($WORKSHOP_EWEIGHTS, "weight[]", $elements[$i]->weight, "");
 					echo "		</td>\n";
 					echo "</tr>\n";
-					echo "<tr valign=top>\n";
-					echo "	<td colspan=2 BGCOLOR=\"$THEME->cellheading2\">&nbsp;</td>\n";
+					echo "<tr valign=\"top\">\n";
+					echo "	<td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
 					echo "</tr>\n";
 				}
 				break;
@@ -361,32 +361,32 @@
 			case 2: // error banded grading
 				for ($i=0; $i<$workshop->nelements; $i++) {
 					$iplus1 = $i+1;
-					echo "<tr valign=top>\n";
-					echo "	<td ALIGN=RIGHT><p><b>". get_string("element","workshop")." $iplus1:</b></td>\n";
-					echo "<td><textarea name=\"description[$i]\" rows=3 cols=75 wrap=\"virtual\">".$elements[$i]->description."</textarea>\n";
+					echo "<tr valign=\"top\">\n";
+					echo "	<td align=\"right\"><p><b>". get_string("element","workshop")." $iplus1:</b></td>\n";
+					echo "<td><textarea name=\"description[$i]\" rows=\"3\" cols=\"75\" wrap=\"virtual\">".$elements[$i]->description."</textarea>\n";
 					echo "	</td></tr>\n";
 					if ($elements[$i]->weight == '') { // not set
 						$elements[$i]->weight = 11; // unity
 						}
 					echo "</tr>\n";
-					echo "<tr valign=top><td ALIGN=RIGHT><b>".get_string("elementweight", "workshop").":</b></td><td>\n";
+					echo "<tr valign=\"top\"><td align=\"right\"><b>".get_string("elementweight", "workshop").":</b></td><td>\n";
 					workshop_choose_from_menu($WORKSHOP_EWEIGHTS, "weight[]", $elements[$i]->weight, "");
 					echo "		</td>\n";
 					echo "</tr>\n";
-					echo "<tr valign=top>\n";
-					echo "	<td colspan=2 BGCOLOR=\"$THEME->cellheading2\">&nbsp;</td>\n";
+					echo "<tr valign=\"top\">\n";
+					echo "	<td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
 					echo "</tr>\n";
 				}
 				echo "</center></table><br />\n";
 				echo "<p><center><b>".get_string("gradetable","workshop")."</b></center>\n";
-				echo "<center><table cellpadding=5 border=1><tr><td ALIGN=\"CENTER\">".
+				echo "<center><table cellpadding=\"5\" border=\"1\"><tr><td align=\"CENTER\">".
 					get_string("numberofnegativeresponses", "workshop");
 				echo "</td><td>". get_string("suggestedgrade", "workshop")."</td></tr>\n";
 				for ($j = $workshop->grade; $j >= 0; $j--) {
 					$numbers[$j] = $j;
 				}
 				for ($i=0; $i<=$workshop->nelements; $i++) {
-					echo "<tr><td ALIGN=\"CENTER\">$i</td><td ALIGN=\"CENTER\">";
+					echo "<tr><td align=\"CENTER\">$i</td><td align=\"CENTER\">";
 					if (!isset($elements[$i])) {  // the "last one" will be!
 						$elements[$i]->description = "";
 						$elements[$i]->maxscore = 0;
@@ -403,15 +403,15 @@
 				}
 				for ($i=0; $i<$workshop->nelements; $i++) {
 					$iplus1 = $i+1;
-					echo "<tr valign=top>\n";
-					echo "	<td ALIGN=RIGHT><p><b>". get_string("criterion","workshop")." $iplus1:</b></td>\n";
-					echo "<td><textarea name=\"description[$i]\" rows=3 cols=75 wrap=\"virtual\">".$elements[$i]->description."</textarea>\n";
+					echo "<tr valign=\"top\">\n";
+					echo "	<td align=\"right\"><p><b>". get_string("criterion","workshop")." $iplus1:</b></td>\n";
+					echo "<td><textarea name=\"description[$i]\" rows=\"3\" cols=\"75\" wrap=\"virtual\">".$elements[$i]->description."</textarea>\n";
 					echo "	</td></tr>\n";
 					echo "<tr><td><b>". get_string("suggestedgrade", "workshop").":</b></td><td>\n";
 					choose_from_menu($numbers, "maxscore[$i]", $elements[$i]->maxscore, "");
 					echo "</td></tr>\n";
-					echo "<tr valign=top>\n";
-					echo "	<td colspan=2 BGCOLOR=\"$THEME->cellheading2\">&nbsp;</td>\n";
+					echo "<tr valign=\"top\">\n";
+					echo "	<td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
 					echo "</tr>\n";
 				}
 				break;
@@ -427,11 +427,11 @@
 				}
 				for ($i=0; $i<$workshop->nelements; $i++) {
 					$iplus1 = $i+1;
-					echo "<tr valign=top>\n";
-					echo "	<td ALIGN=RIGHT><p><b>". get_string("element","workshop")." $iplus1:</b></td>\n";
-					echo "<td><textarea name=\"description[$i]\" rows=3 cols=75 wrap=\"virtual\">".$elements[$i]->description."</textarea>\n";
+					echo "<tr valign=\"top\">\n";
+					echo "	<td align=\"right\"><p><b>". get_string("element","workshop")." $iplus1:</b></td>\n";
+					echo "<td><textarea name=\"description[$i]\" rows=\"3\" cols=\"75\" wrap=\"virtual\">".$elements[$i]->description."</textarea>\n";
 					echo "	</td></tr>\n";
-					echo "<tr valign=top><td ALIGN=RIGHT><b>".get_string("elementweight", "workshop").":</b></td><td>\n";
+					echo "<tr valign=\"top\"><td align=\"right\"><b>".get_string("elementweight", "workshop").":</b></td><td>\n";
 					workshop_choose_from_menu($WORKSHOP_EWEIGHTS, "weight[]", $elements[$i]->weight, "");
 					echo "		</td>\n";
 					echo "</tr>\n";
@@ -441,13 +441,13 @@
 						if (empty($rubrics[$i][$j])) {
 							$rubrics[$i][$j] = "";
 						}
-						echo "<tr valign=top>\n";
-						echo "	<td ALIGN=RIGHT><p><b>". get_string("grade","workshop")." $j:</b></td>\n";
-						echo "<td><textarea name=\"rubric[$i][$j]\" rows=3 cols=75 wrap=\"virtual\">".$rubrics[$i][$j]."</textarea>\n";
+						echo "<tr valign=\"top\">\n";
+						echo "	<td align=\"right\"><p><b>". get_string("grade","workshop")." $j:</b></td>\n";
+						echo "<td><textarea name=\"rubric[$i][$j]\" rows=\"3\" cols=\"75\" wrap=\"virtual\">".$rubrics[$i][$j]."</textarea>\n";
 						echo "	</td></tr>\n";
 						}
-					echo "<tr valign=top>\n";
-					echo "	<td colspan=2 BGCOLOR=\"$THEME->cellheading2\">&nbsp;</td>\n";
+					echo "<tr valign=\"top\">\n";
+					echo "	<td colspan=\"2\" bgcolor=\"$THEME->cellheading2\">&nbsp;</td>\n";
 					echo "</tr>\n";
 					}
 				break;
@@ -457,7 +457,7 @@
 		?>
 		</table>
 		<input type="submit" value="<?php  print_string("savechanges") ?>" />
-		<input type="submit" name=cancel value="<?php  print_string("cancel") ?>" />
+		<input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
 		</center>
 		</form>
 		<?php
@@ -509,30 +509,30 @@
 		workshop_print_assessment($workshop, $assessment);
 		
 		?>
-		<form NAME="gradingform" ACTION="assessments.php" METHOD="post">
-		<input TYPE="HIDDEN" NAME="action" VALUE="updategrading" />
-		<input TYPE="HIDDEN" NAME="id" VALUE="<?php echo $cm->id ?>" />
-		<input TYPE="HIDDEN" NAME="stype" VALUE="<?php echo $_GET['stype'] ?>" />
-		<input TYPE="HIDDEN" NAME="aid" VALUE="<?php echo $_GET['aid'] ?>" />
+		<form name="gradingform" action="assessments.php" method="post">
+		<input type="HIDDEN" name="action" value="updategrading" />
+		<input type="HIDDEN" name="id" value="<?php echo $cm->id ?>" />
+		<input type="HIDDEN" name="stype" value="<?php echo $_GET['stype'] ?>" />
+		<input type="HIDDEN" name="aid" value="<?php echo $_GET['aid'] ?>" />
 		<center>
-		<table CELLPADDING=5 BORDER=1>
+		<table cellpadding="5" border="1">
 		<?php
 
 		// now get the teacher's comment
-		echo "<tr valign=top>\n";
-		echo "	<td align=right><p><b>". get_string("teacherscomment", "workshop").":</b></p></td>\n";
+		echo "<tr valign=\"top\">\n";
+		echo "	<td align=\"right\"><p><b>". get_string("teacherscomment", "workshop").":</b></p></td>\n";
 		echo "	<td>\n";
-		echo "		<textarea name=\"teachercomment\" rows=5 cols=75 wrap=\"virtual\">\n";
+		echo "		<textarea name=\"teachercomment\" rows=\"5\" cols=\"75\" wrap=\"virtual\">\n";
 		if (isset($assessment->teachercomment)) {
 			echo $assessment->teachercomment;
 		}
 		echo "</textarea>\n";
 		echo "	</td>\n";
 		echo "</tr>\n";
-		echo "<tr><td ALIGN=RIGHT><b>".get_string("gradeforstudentsassessment", "workshop")."</td><td>\n";
+		echo "<tr><td align=\"right\"><b>".get_string("gradeforstudentsassessment", "workshop")."</td><td>\n";
 		choose_from_menu($num, "gradinggrade", $assessment->gradinggrade, "");
 		echo "</td></tr></table>\n";
-		echo "<input TYPE=submit VALUE=\"".get_string("savemygrading", "workshop")."\" />\n";
+		echo "<input type=\"submit\" value=\"".get_string("savemygrading", "workshop")."\" />\n";
 		echo "</center></form>\n";
 	}
 

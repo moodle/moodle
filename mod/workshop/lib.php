@@ -202,14 +202,14 @@ function workshop_cron () {
             $posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id\n";
             $posttext .= "---------------------------------------------------------------------\n";
             if ($sendto->mailformat == 1) {  // HTML
-                $posthtml = "<p><font FACE=sans-serif>".
-                    "<a HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
-                    "<a HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
-                    "<a HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a></font></p>";
-                $posthtml .= "<hr><font FACE=sans-serif>";
+                $posthtml = "<p><font face=\"sans-serif\">".
+                    "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
+                    "<a href=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
+                    "<a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a></font></p>";
+                $posthtml .= "<hr><font face=\"sans-serif\">";
                 $posthtml .= "<p>$msg</p>";
                 $posthtml .= "<p>".get_string("mail3", "workshop").
-                    " <a HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a>.</p></font><hr>";
+                    " <a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a>.</p></font><hr>";
             } else {
                 $posthtml = "";
             }
@@ -291,14 +291,14 @@ function workshop_cron () {
             $posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id\n";
             $posttext .= "---------------------------------------------------------------------\n";
             if ($sendto->mailformat == 1) {  // HTML
-                $posthtml = "<p><font FACE=sans-serif>".
-                  "<a HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
-                  "<a HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
-                  "<a HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a></font></p>";
-                $posthtml .= "<hr><font FACE=sans-serif>";
+                $posthtml = "<p><font face=\"sans-serif\">".
+                  "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
+                  "<a href=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
+                  "<a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a></font></p>";
+                $posthtml .= "<hr><font face=\"sans-serif\">";
                 $posthtml .= "<p>$msg</p>";
                 $posthtml .= "<p>".get_string("mail3", "workshop").
-                  " <a HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a>.</p></font><hr>";
+                  " <a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a>.</p></font><hr>";
             } 
             else {
               $posthtml = "";
@@ -391,14 +391,14 @@ function workshop_cron () {
                 $posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id\n";
                 $posttext .= "---------------------------------------------------------------------\n";
                 if ($sendto->mailformat == 1) {  // HTML
-                    $posthtml = "<p><font FACE=sans-serif>".
-                    "<a HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
-                    "<a HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
-                    "<a HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a></font></p>";
-                    $posthtml .= "<hr><font FACE=sans-serif>";
+                    $posthtml = "<p><font face=\"sans-serif\">".
+                    "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
+                    "<a href=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
+                    "<a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a></font></p>";
+                    $posthtml .= "<hr><font face=\"sans-serif\">";
                     $posthtml .= "<p>$msg</p>";
                     $posthtml .= "<p>".get_string("mail3", "workshop").
-                        " <a HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a>
+                        " <a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a>
                         .</p></font><hr>";
                     } 
                 else {
@@ -438,14 +438,14 @@ function workshop_cron () {
                 $posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id\n";
                 $posttext .= "---------------------------------------------------------------------\n";
                 if ($sendto->mailformat == 1) {  // HTML
-                    $posthtml = "<p><font FACE=sans-serif>".
-                    "<a HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
-                    "<a HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
-                    "<a HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a></font></p>";
-                    $posthtml .= "<hr><font FACE=sans-serif>";
+                    $posthtml = "<p><font face=\"sans-serif\">".
+                    "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
+                    "<a href=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
+                    "<a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a></font></p>";
+                    $posthtml .= "<hr><font face=\"sans-serif\">";
                     $posthtml .= "<p>$msg</p>";
                     $posthtml .= "<p>".get_string("mail3", "workshop").
-                        " <a HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a>.</p></font><hr>";
+                        " <a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a>.</p></font><hr>";
                     } 
                 else {
                     $posthtml = "";
@@ -534,14 +534,14 @@ function workshop_cron () {
             $posttext .= "   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id\n";
             $posttext .= "---------------------------------------------------------------------\n";
             if ($sendto->mailformat == 1) {  // HTML
-                $posthtml = "<p><font FACE=sans-serif>".
-                    "<a HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
-                    "<a HREF=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
-                    "<a HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a></font></p>";
-                $posthtml .= "<hr><font FACE=sans-serif>";
+                $posthtml = "<p><font face=\"sans-serif\">".
+                    "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
+                    "<a href=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
+                    "<a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a></font></p>";
+                $posthtml .= "<hr><font face=\"sans-serif\">";
                 $posthtml .= "<p>$msg</p>";
                 $posthtml .= "<p>".get_string("mail3", "workshop").
-                    " <a HREF=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a>.</p></font><hr>";
+                    " <a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a>.</p></font><hr>";
             } else {
               $posthtml = "";
             }
@@ -691,10 +691,10 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                     if (instance_is_visible("workshop",$tempmod)) {
                         $date = userdate($log->time, $strftimerecent);
                         if (isteacher($course->id, $log->userid)) {
-                            echo "<p><font size=1>$date - ".fullname($log)."<br />";
+                            echo "<p><font size=\"1\">$date - ".fullname($log)."<br />";
                             }
                         else { // don't break anonymous rule
-                            echo "<p><font size=1>$date - A $course->student<br />";
+                            echo "<p><font size=\"1\">$date - A $course->student<br />";
                             }
                         echo "\"<a href=\"$CFG->wwwroot/mod/workshop/$log->url\">";
                         echo "$log->name";
@@ -732,10 +732,10 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                     if (instance_is_visible("workshop",$tempmod)) {
                         $date = userdate($log->time, $strftimerecent);
                         if (isteacher($course->id, $log->userid)) {
-                            echo "<p><font size=1>$date - ".fullname($log)."<br />";
+                            echo "<p><font size=\"1\">$date - ".fullname($log)."<br />";
                             }
                         else { // don't break anonymous rule
-                            echo "<p><font size=1>$date - A $course->student<br />";
+                            echo "<p><font size=\"1\">$date - A $course->student<br />";
                             }
                         echo "\"<a href=\"$CFG->wwwroot/mod/workshop/$log->url\">";
                         echo "$log->name";
@@ -772,7 +772,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                     //Obtain the visible property from the instance
                     if (instance_is_visible("workshop",$tempmod)) {
                         $date = userdate($log->time, $strftimerecent);
-                        echo "<p><font size=1>$date - A $course->student<br />";
+                        echo "<p><font size=\"1\">$date - A $course->student<br />";
                         echo "\"<a href=\"$CFG->wwwroot/mod/workshop/$log->url\">";
                         echo "$log->name";
                         echo "</a>\"</font></p>";
@@ -807,7 +807,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                 //Obtain the visible property from the instance
                 if (instance_is_visible("workshop",$tempmod)) {
                     $date = userdate($log->time, $strftimerecent);
-                    echo "<p><font size=1>$date - $course->teacher<br />";
+                    echo "<p><font size=\"1\">$date - $course->teacher<br />";
                     echo "\"<a href=\"$CFG->wwwroot/mod/workshop/$log->url\">";
                     echo "$log->name";
                     echo "</a>\"</font></p>";
@@ -842,7 +842,7 @@ function workshop_print_recent_activity($course, $isteacher, $timestart) {
                     //Obtain the visible property from the instance
                     if (instance_is_visible("workshop",$tempmod)) {
                         $date = userdate($log->time, $strftimerecent);
-                        echo "<p><font size=1>$date - ".fullname($log)."<br />";
+                        echo "<p><font size=\"1\">$date - ".fullname($log)."<br />";
                         echo "\"<a href=\"$CFG->wwwroot/mod/workshop/$log->url\">";
                         echo "$log->name";
                         echo "</a>\"</font></p>";
@@ -1105,7 +1105,7 @@ function workshop_print_recent_mod_activity($activity, $course, $detail=false) {
 
     if ($detail) {
         echo "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
-            "height=16 width=16 alt=\"$activity->name\">  ";
+            "height=16 width=\"16\" alt=\"$activity->name\" />  ";
     }
     echo "<a href=\"$CFG->wwwroot/mod/workshop/view.php?" 
         . "#" . $activity->content->id . "\">".$activity->content->title;

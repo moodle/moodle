@@ -42,8 +42,8 @@
 
     // ... print the header and...
     print_header_simple("$workshop->name", "",
-                 "<a HREF=index.php?id=$course->id>$strworkshops</a> -> 
-                  <a HREF=\"view.php?id=$cm->id\">$workshop->name</a> -> $strsubmissions", 
+                 "<a href=\"index.php?id=$course->id\">$strworkshops</a> -> 
+                  <a href=\"view.php?id=$cm->id\">$workshop->name</a> -> $strsubmissions", 
                   "", "", true);
 
     //...get the action or set up an suitable default
@@ -80,7 +80,7 @@
         echo "  <td>\n";
         echo "      <input type=\"text\" name=\"title\" size=\"60\" maxlength=\"100\" value=\"$submission->title\" />\n";
         echo "  </td></tr></table>\n";
-        echo "<input type=submit VALUE=\"".get_string("amendtitle", "workshop")."\" />\n";
+        echo "<input type=\"submit\" value=\"".get_string("amendtitle", "workshop")."\" />\n";
         echo "</center></form>\n";
 
         }

@@ -451,7 +451,7 @@ function survey_print_single($question) {
     } else if ($question->type > 0) {     // Choose one of a number
         $strchoose = get_string("choose");
         echo "<select name=$question->id>";
-        echo "<option value=\"0\" SELECTED>$strchoose...</option>";
+        echo "<option value=\"0\" selected=\"selected\">$strchoose...</option>";
         $options = explode( ",", $question->options);
         foreach ($options as $key => $val) {
             $key++;
@@ -487,7 +487,7 @@ function survey_print_graph($url) {
 
     } else {
         echo "<img height=\"$SURVEY_GHEIGHT\" width=\"$SURVEY_GWIDTH\" border=\"1\"".
-             " src=\"$CFG->wwwroot/mod/survey/graph.php?$url\">";
+             " src=\"$CFG->wwwroot/mod/survey/graph.php?$url\" />";
     }
 }
 

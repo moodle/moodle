@@ -66,15 +66,15 @@
                     $submitted = userdate($submission->timecreated);
                 } 
                 else {
-                    $submitted = "<font COLOR=red>".userdate($submission->timecreated)."</font>";
+                    $submitted = "<font color=\"red\">".userdate($submission->timecreated)."</font>";
                 }
                 $due = userdate($workshop->deadline);
                 if (!$workshop->visible) {
                     //Show dimmed if the mod is hidden
-                    $link = "<a class=\"dimmed\" HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</a><br />";
+                    $link = "<a class=\"dimmed\" href=\"view.php?id=$workshop->coursemodule\">$workshop->name</a><br />";
                 } else {
                     //Show normal if the mod is visible
-                    $link = "<a HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</a><br />";
+                    $link = "<a href=\"view.php?id=$workshop->coursemodule\">$workshop->name</a><br />";
                 }
                 if (isstudent($course->id)) {
                     $link .= " ($submission->title)"; // show students the title of their submission(s)
@@ -100,10 +100,10 @@
             $due = userdate($workshop->deadline);
             if (!$workshop->visible) {
                 //Show dimmed if the mod is hidden
-                $link = "<a class=\"dimmed\" HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</a>";
+                $link = "<a class=\"dimmed\" href=\"view.php?id=$workshop->coursemodule\">$workshop->name</a>";
             } else {
                 //Show normal if the mod is visible
-                $link = "<a HREF=\"view.php?id=$workshop->coursemodule\">$workshop->name</a>";
+                $link = "<a href=\"view.php?id=$workshop->coursemodule\">$workshop->name</a>";
             }
             if ($course->format == "weeks" or $course->format == "topics") {
                     $table->data[] = array ($workshop->section, $link, $info, $submitted, $due);

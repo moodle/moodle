@@ -43,7 +43,7 @@
 
     // ...display header...
     print_header_simple("$workshop->name", "",
-                 "<a HREF=index.php?id=$course->id>$strworkshops</a> -> $workshop->name", 
+                 "<a href=\"index.php?id=$course->id\">$strworkshops</a> -> $workshop->name", 
                   "", "", true, update_module_button($cm->id, $course->id, $strworkshop), navmenu($course, $cm));
 
     // ...and if necessary set default action 
@@ -160,7 +160,7 @@
                 echo "<td align=\"center\">".number_format($gradinggrade + $grade, 1)."</td></tr>\n";
             }
         }
-        echo "</table><br CLEAR=ALL />\n";
+        echo "</table><br clear=\"all\" />\n";
 		workshop_print_key($workshop);
         if ($workshop->showleaguetable) {
 			workshop_print_league_table($workshop);
@@ -267,15 +267,15 @@
                             break;
                         }
                         if (workshop_count_assessments($lastsubmission)) {
-                            echo "<hr size=\"1\" noshade>";
+                            echo "<hr size=\"1\" noshade=\"noshade\" />";
                             print_heading(get_string("submitrevisedassignment", "workshop").":");
                             workshop_print_upload_form($workshop);
-                            echo "<hr size=\"1\" noshade>";
+                            echo "<hr size=\"1\" noshade=\"noshade\" />";
                         }
                     }
 				}
 				// allow user to list their submissions and assessments in a general way????
-				// print_heading("<a HREF=\"submissions.php?action=listallsubmissions&id=$cm->id\">".
+				// print_heading("<a href=\"submissions.php?action=listallsubmissions&id=$cm->id\">".
 				// 	get_string("listofallsubmissions", "workshop"));
 			}
 		}
@@ -291,7 +291,7 @@
 			
 		$strdifference = format_time($workshop->deadline - time());
 		if (($workshop->deadline - time()) < 0) {
-			$strdifference = "<font COLOR=RED>$strdifference</font>";
+			$strdifference = "<font color=\"red\">$strdifference</font>";
 		}
 		$strduedate = userdate($workshop->deadline)." ($strdifference)";
 	
@@ -300,7 +300,7 @@
 		// list previous submissions from teacher 
 		workshop_list_user_submissions($workshop, $USER);
 	
-		echo "<hr SIZE=1 NOSHADE>";
+		echo "<hr size=\"1\" noshade=\"noshade\" />";
 	
 		// print upload form
 		print_heading(get_string("submitassignment", "assignment").":");
@@ -413,10 +413,10 @@
                           workshop_count_student_submissions_for_assessment($workshop, $USER))."</a></b> \n";
                     helpbutton("gradingsubmissions", 
                             get_string("studentsubmissionsforassessment", "workshop"), "workshop");
-                    print_heading("<a HREF=\"submissions.php?id=$cm->id&action=displayfinalgrades\">".
+                    print_heading("<a href=\"submissions.php?id=$cm->id&action=displayfinalgrades\">".
                           get_string("displayoffinalgrades", "workshop")."</a>");
         }
-        print_heading("<a HREF=\"submissions.php?id=$cm->id&action=adminlist\">".
+        print_heading("<a href=\"submissions.php?id=$cm->id&action=adminlist\">".
             get_string("administration")."</a>");
     }
     

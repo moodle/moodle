@@ -111,19 +111,19 @@
         $sdate = '';
         switch ( strtolower($displayformat->defaultmode) ) {
         case 'letter': 
-            $sletter = ' SELECTED ';
+            $sletter = ' selected="selected" ';
         break;
         
         case 'cat': 
-            $scat = ' SELECTED ';
+            $scat = ' selected="selected" ';
         break;
         
         case 'date': 
-            $sdate = ' SELECTED ';
+            $sdate = ' selected="selected" ';
         break;
 
         case 'author': 
-            $sauthor = ' SELECTED ';
+            $sauthor = ' selected="selected" ';
         break;
         }
     ?>
@@ -148,19 +148,19 @@
         $snocategorised = '';
         switch ( strtolower($displayformat->defaulthook) ) {
         case 'all': 
-            $sall = ' SELECTED ';
+            $sall = ' selected="selected" ';
         break;
         
         case 'special': 
-            $sspecial = ' SELECTED ';
+            $sspecial = ' selected="selected" ';
         break;
         
         case '0': 
-            $sallcategories = ' SELECTED ';
+            $sallcategories = ' selected="selected" ';
         break;
 
         case '-1': 
-            $snocategorised = ' SELECTED ';
+            $snocategorised = ' selected="selected" ';
         break;
         }
     ?>
@@ -185,19 +185,19 @@
         $screation = '';
         switch ( strtolower($displayformat->sortkey) ) {
         case 'firstname': 
-            $sfname = ' SELECTED ';
+            $sfname = ' selected="selected" ';
         break;
         
         case 'lastname': 
-            $slname = ' SELECTED ';
+            $slname = ' selected="selected" ';
         break;
         
         case 'creation': 
-            $screation = ' SELECTED ';
+            $screation = ' selected="selected" ';
         break;
 
         case 'update': 
-            $supdate = ' SELECTED ';
+            $supdate = ' selected="selected" ';
         break;
         }
     ?>
@@ -220,11 +220,11 @@
         $sdesc = '';
         switch ( strtolower($displayformat->sortorder) ) {
         case 'asc': 
-            $sasc = ' SELECTED ';
+            $sasc = ' selected="selected" ';
         break;
         
         case 'desc': 
-            $sdesc = ' SELECTED ';
+            $sdesc = ' selected="selected" ';
         break;
         }
     ?>
@@ -244,9 +244,9 @@
         $yselected = "";
         $nselected = "";
         if ($displayformat->showgroup) {
-            $yselected = " SELECTED ";
+            $yselected = " selected=\"selected\" ";
         } else {
-            $nselected = " SELECTED ";
+            $nselected = " selected=\"selected\" ";
         }
     ?>
         <option value="1" <?php p($yselected) ?>><?php p($yes)?></option>
