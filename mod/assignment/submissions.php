@@ -48,7 +48,6 @@
     if ($submissions = assignment_get_all_submissions($assignment)) {
         foreach ($submissions as $submission) {
             $submissionbyuser[$submission->user] = $submission;
-            $submissionbyid[$submission->id]  = $submission;
         }
     }
 
@@ -65,12 +64,7 @@
     }
 
     if (isset($newsubmission)) {   // Get them all out again to be sure
-        if ($submissions = assignment_get_all_submissions($assignment)) {
-            foreach ($submissions as $submission) {
-                $submissionbyuser[$submission->user] = $submission;
-                $submissionbyid[$submission->id]  = $submission;
-            }
-        }
+        $submissions = assignment_get_all_submissions($assignment);
     }
 
 
@@ -91,7 +85,7 @@
         $timenow = time();
         $count = 0;
         foreach ($feedback as $num => $vals) {
-            $submission = $submissionbyid[$num];
+            $submission = $submissions[$num];
             // Only update entries where feedback has actually changed.
             if (($vals[g] <> $submission->grade) || ($vals[c] <> addslashes($submission->comment))) {
                 $newsubmission->grade      = $vals[g];
@@ -105,12 +99,9 @@
                 } else {
                     $count++;
                 }
-                $submissionbyuser[$submission->user]->grade      = $vals[g];
-                $submissionbyuser[$submission->user]->comment    = $vals[c];
-                $submissionbyuser[$submission->user]->teacher    = $USER->id;
-                $submissionbyuser[$submission->user]->timemarked = $timenow;
             }
         }
+        $submissions = assignment_get_all_submissions($assignment);
         add_to_log($course->id, "assignment", "update grades", "submissions.php?id=$assignment->id", "$count users");
         notify(get_string("feedbackupdated", "assignment", $count));
     } else {
@@ -123,8 +114,8 @@
 
     echo "<FORM ACTION=submissions.php METHOD=post>\n";
 
-    foreach ($users as $user) {
-        $submission = $submissionbyuser[$user->id];
+    foreach ($submissions as $submission) {
+        $user = $users[$submission->user];
         assignment_print_submission($assignment, $user, $submission, $teachers, $grades);
     }
 
