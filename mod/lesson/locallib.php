@@ -1143,31 +1143,6 @@ function lesson_check_nickname($name) {
     return true;
 }
 
-/*******************************************************************/
-function lesson_clean_data_submitted() {
-// this function runs through all post/get data submitted to a page
-// and runs clean_param on each
-// returns an object
-
-    // get the data
-    if ($form = data_submitted()) {
-        // run through and clean each form value
-          // detect arrays as well and process them accordingly
-        foreach ($form as $valuename => $formvalue) {
-            if (is_array($formvalue)) {
-                foreach ($formvalue as $index => $formsubvalue) {
-                    $formvalue[$index] = clean_param($formsubvalue, PARAM_CLEAN);
-                }
-                $form->$valuename = $formvalue;
-            } else {
-                $form->$valuename = clean_param($formvalue, PARAM_CLEAN);
-            }
-        }
-    }
-    
-    return $form;
-}
-
 /// CDC-FLAG ///
 
 ?>
