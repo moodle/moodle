@@ -145,6 +145,10 @@
                 $resourcetype = "mediaplayer";
                 $embedded = true;
 
+            } else if ($mimetype == "video/quicktime") {   // It's a Quicktime file
+                $resourcetype = "quicktime";
+                $embedded = true;
+
             } else if ($mimetype == "text/html") {    // It's a web page
                 $resourcetype = "html";
             }
@@ -269,19 +273,39 @@
                     echo '        standby="Loading Microsoft® Windows® Media Player components..." ';
                     echo '        id="msplayer" align="" type="application/x-oleobject">';
                     echo "<param name=\"Filename\" value=\"$fullurl\">";
-                    echo '<param name="ShowControls" value=true>';
-                    echo '<param name="AutoRewind" value=true>';
-                    echo '<param name="AutoStart" value=true>';
-                    echo '<param name="Autosize" value=true>';
-                    echo '<param name="EnableContextMenu" value=true>';
-                    echo '<param name="TransparentAtStart" value=false>';
-                    echo '<param name="AnimationAtStart" value=false>';
-                    echo '<param name="ShowGotoBar" value=false>';
-                    echo '<param name="EnableFullScreenControls" value=true>';
+                    echo '<param name="ShowControls" value=true />';
+                    echo '<param name="AutoRewind" value=true />';
+                    echo '<param name="AutoStart" value=true />';
+                    echo '<param name="Autosize" value=true />';
+                    echo '<param name="EnableContextMenu" value=true />';
+                    echo '<param name="TransparentAtStart" value=false />';
+                    echo '<param name="AnimationAtStart" value=false />';
+                    echo '<param name="ShowGotoBar" value=false />';
+                    echo '<param name="EnableFullScreenControls" value=true />';
                     echo "\n<embed src=\"$fullurl\" name=\"msplayer\" type=\"$mimetype\" ";
                     echo ' ShowControls="1" AutoRewind="1" AutoStart="1" Autosize="0" EnableContextMenu="1"';
                     echo ' TransparentAtStart="0" AnimationAtStart="0" ShowGotoBar="0" EnableFullScreenControls="1"';
                     echo ' pluginspage="http://www.microsoft.com/Windows/Downloads/Contents/Products/MediaPlayer/">';
+                    echo '</embed>';
+                    echo '</object>';
+                    echo "</p></center>";
+
+                } else if ($resourcetype == "quicktime") {  
+
+                    echo "<center><p>";
+                    echo '<object classid="CLSID:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"';
+                    echo '        codebase="http://www.apple.com/qtactivex/qtplugin.cab" ';
+                    echo '        height="450" width="600"';
+                    echo '        id="quicktime" align="" type="application/x-oleobject">';
+                    echo "<param name=\"src\" value=\"$fullurl\" />";
+                    echo '<param name="autoplay" value=true />';
+                    echo '<param name="controller" value=true />';
+                    echo '<param name="height" value=400 />';
+                    echo '<param name="width" value=600 />';
+                    echo "\n<embed src=\"$fullurl\" name=\"quicktime\" type=\"$mimetype\" ";
+                    echo ' height="450" width="600" ';
+                    echo ' autoplay="true" controller="true" ';
+                    echo ' pluginspage="http://quicktime.apple.com/">';
                     echo '</embed>';
                     echo '</object>';
                     echo "</p></center>";
