@@ -67,20 +67,20 @@ class CourseBlock_online_users extends MoodleBlock {
 
         if (empty($this->course->category)) {  // Site-level
             $courseselect = '';
-            $timeselect = "AND u.lastaccess > $timefrom";
+            $timeselect = "AND (s.timeaccess > $timefrom OR u.lastaccess > $timefrom)";
         } else {
             $courseselect = "AND s.course = '".$this->course->id."'";
             $timeselect = "AND s.timeaccess > $timefrom";
         }
 
-        $students = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, s.timeaccess
+        $students = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess, s.timeaccess
                                      FROM {$CFG->prefix}user u,
                                           {$CFG->prefix}user_students s
                                           $groupmembers
                                      WHERE u.id = s.userid $courseselect $groupselect $timeselect 
                                   ORDER BY s.timeaccess DESC");
 
-        $teachers = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, s.timeaccess
+        $teachers = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess, s.timeaccess
                                      FROM {$CFG->prefix}user u,
                                           {$CFG->prefix}user_teachers s
                                           $groupmembers
@@ -114,7 +114,7 @@ class CourseBlock_online_users extends MoodleBlock {
         if ($users !== null) {
             foreach ($users as $user) {
                 $this->content->text .= '<div style="text-align: left; font-size: 0.75em; padding-top: 5px;">';
-                $timeago = format_time(time() - $user->timeaccess);
+                $timeago = format_time(time() - max($user->timeaccess, $user->lastaccess)); //bruno to calculate correctly on frontpage 
                 if ($user->picture==0) {
                     $this->content->text .= '<img src="'.$CFG->pixpath.'/i/user.gif" style="height: 16px; width=16px; vertical-align: middle;" alt=""> ';
                 } else {
