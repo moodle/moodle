@@ -71,9 +71,6 @@
   -moz-border-radius-bottomleft:15px;
   -moz-border-radius-bottomright:15px;
 }
-.sitetopic {
-  -moz-border-radius:15px;
-}
 
 .sitetopiccontent {
   -moz-border-radius:15px;
@@ -83,7 +80,8 @@
   -moz-border-radius:3px;
 }
 
-.categoryboxcontent, .courseboxcontent {
+.categorybox, .categoryboxcontent, 
+.coursebox, .courseboxcontent {
   -moz-border-radius:20px;
 }
 

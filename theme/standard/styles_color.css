@@ -127,8 +127,11 @@ table.formtable tbody th {
 }
 
 .sitetopic {
-  background-color:#FFFFFF;
+}
+
+.sitetopiccontent {
   border-color:#DDDDDD;
+  background-color:#FFFFFF;
 }
 
 .dimmed_text {
