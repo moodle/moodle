@@ -113,7 +113,7 @@ class CourseBlock_online_users extends MoodleBlock {
         //Calculate minutes
         $minutes  = floor($timetoshowusers/60);
 
-        $this->content->text = "<font size=\"-2\"><div align=center>(".get_string("periodnminutes","block_online_users",$minutes).")</div></font>";
+        $this->content->text = "<font size=\"-2\"><div align=\"center\">(".get_string("periodnminutes","block_online_users",$minutes).")</div></font>";
 
         //Now, we have in users, the list of users to show
         //Because they are online
@@ -137,7 +137,7 @@ class CourseBlock_online_users extends MoodleBlock {
                 $table->align = array("right","left");
                 $table->cellpadding = 1;
                 $table->cellspacing = 1;
-                $table->data[] = array("<img src=\"$CFG->pixpath/i/user.gif\" height=16 width=16 alt=\"\">",$user->fullname);
+                $table->data[] = array("<img src=\"$CFG->pixpath/i/user.gif\" height=\"16\" width=\"16\" alt=\"\">",$user->fullname);
             }
             // Slightly hacky way to do it but...
             ob_start();
@@ -146,7 +146,7 @@ class CourseBlock_online_users extends MoodleBlock {
             ob_end_clean();
 */
         } else {
-            $this->content->text .= "<font size=\"-1\"><p align=center>".get_string("none")."</p></font>";
+            $this->content->text .= "<font size=\"-1\"><p align=\"center\">".get_string("none")."</p></font>";
         }
 
         return $this->content;

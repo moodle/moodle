@@ -63,7 +63,7 @@ class CourseBlock_section_links extends MoodleBlock {
         } else {
             $link = '#';
         }
-        $text = '<font size=-1>';
+        $text = '<font size="-1">';
         for ($i = $inc; $i <= $this->course->numsections; $i += $inc) {
             $isvisible = get_field('course_sections', 'visible', 'course', $this->course->id, 'section', $i);
             if (!$isvisible and !isteacher($this->course->id)) {
