@@ -32,6 +32,17 @@
         error("Course module is incorrect");
     }
 
+    if ($hook) {
+          if ($category = get_record("glossary_categories","id",$hook)) {
+              //Check it belongs to the same glossary
+              if ($category->glossaryid != $glossary->id) {
+                  error("Glossary is incorrect");
+              }
+          } else {
+              error("Category is incorrect");
+          }
+    }
+
     require_login($course->id);
 
      if ( !isteacher($course->id) ) {
@@ -49,7 +60,6 @@
                   navmenu($course, $cm));
 
      if ( $hook ) {
-          $category = get_record("glossary_categories","id",$hook);
 
           if ( $action == "edit" ) {
                if ( $confirm ) {
