@@ -104,6 +104,10 @@ function forum_upgrade($oldversion) {
   if ($oldversion < 2004013000) {
       table_column("forum_posts", "mailed", "mailed", "tinyint", "2");
   }
+
+  if ($oldversion < 2004020600) {
+      table_column("forum_discussions", "", "usermodified", "integer", "10", "unsigned", "0", "", "timemodified");
+  }
   
   return true;
 

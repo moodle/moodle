@@ -33,7 +33,8 @@ CREATE TABLE prefix_forum_discussions (
   userid integer NOT NULL default '0',
   groupid integer NOT NULL default '0',
   assessed integer NOT NULL default '1',
-  timemodified integer NOT NULL default '0'
+  timemodified integer NOT NULL default '0',
+  usermodified integer NOT NULL default '0'
 );
 # --------------------------------------------------------
 

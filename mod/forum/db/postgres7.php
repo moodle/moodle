@@ -43,6 +43,10 @@ function forum_upgrade($oldversion) {
       table_column("forum_discussions", "", "groupid", "integer", "10", "unsigned", "0", "", "userid");
   }
 
+  if ($oldversion < 2004020600) {
+      table_column("forum_discussions", "", "usermodified", "integer", "10", "unsigned", "0", "", "timemodified");
+  }
+
   return true;
 
 }

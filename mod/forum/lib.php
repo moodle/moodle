@@ -898,7 +898,8 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
         $postdata = "p.*";
     }
 
-    return get_records_sql("SELECT $postdata, d.timemodified, u.firstname, u.lastname, u.email, u.picture
+    return get_records_sql("SELECT $postdata, d.timemodified, d.usermodified, 
+                                   u.firstname, u.lastname, u.email, u.picture
                               FROM {$CFG->prefix}forum_discussions d, 
                                    {$CFG->prefix}forum_posts p,
                                    {$CFG->prefix}user u 
@@ -1774,6 +1775,7 @@ function forum_add_new_post($post) {
 
     // Update discussion modified date
     set_field("forum_discussions", "timemodified", $post->modified, "id", $post->discussion);
+    set_field("forum_discussions", "usermodified", $post->userid, "id", $post->discussion);
     
     return $post->id;
 }
@@ -1794,6 +1796,7 @@ function forum_update_post($post) {
 
     // Update discussion modified date
     set_field("forum_discussions", "timemodified", $post->modified, "id", $post->discussion);
+    set_field("forum_discussions", "usermodified", $post->userid, "id", $post->discussion);
 
     return update_record("forum_posts", $post);
 }
@@ -1835,6 +1838,7 @@ function forum_add_discussion($discussion) {
 
     $discussion->firstpost    = $post->id;
     $discussion->timemodified = $timenow;
+    $discussion->usermodified = $post->userid;
 
     if (! $discussion->id = insert_record("forum_discussions", $discussion) ) {
         delete_records("forum_posts", "id", $post->id);

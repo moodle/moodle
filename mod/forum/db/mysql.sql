@@ -36,6 +36,7 @@ CREATE TABLE prefix_forum_discussions (
   groupid int(10) unsigned NOT NULL default '0',
   assessed tinyint(1) NOT NULL default '1',
   timemodified int(10) unsigned NOT NULL default '0',
+  usermodified int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id)
 ) COMMENT='Forums are composed of discussions';
 # --------------------------------------------------------
