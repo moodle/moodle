@@ -5,12 +5,12 @@
     require_once("locallib.php");
     require_once("../../files/mimetypes.php");
 
-    optional_variable($id);        // question id
+    $id = optional_param('id');        // question id
 
-    optional_variable($qtype);
-    optional_variable($category);
+    $qtype = optional_param('qtype');
+    $category = optional_param('category');
     
-    optional_variable($copy, false); // true if a copy of the question should be created
+    $copy = optional_param('copy', false); // true if a copy of the question should be created
 
     if ($id) {
         if (! $question = get_record("quiz_questions", "id", $id)) {
@@ -70,8 +70,8 @@
                  "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a>".
                   " -> ".$strediting);
 
-    if (isset($delete)) {
-        if (isset($confirm)) {
+    if (isset($_REQUEST['delete'])) {
+        if (isset($confirm) and confirm_sesskey()) {
             if ($confirm == md5($delete)) {
                 if (!delete_records("quiz_questions", "id", $question->id)) {
                     error("An error occurred trying to delete question (id $question->id)");
@@ -128,7 +128,7 @@
         }
     }
 
-    if ($form = data_submitted()) {
+    if ($form = data_submitted() and confirm_sesskey()) {
         $question = $QUIZ_QTYPES[$qtype]->save_question($question, $form, $course);
     } 
 

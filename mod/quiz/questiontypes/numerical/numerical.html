@@ -135,6 +135,7 @@ for ($i=1; $i<count($units); $i++) {
 ?>
 </table>
 
+<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey; ?>" />
 <input type="hidden" name="id" value="<?php  p($question->id) ?>" />
 <input type="hidden" name="qtype" value="<?php  p($question->qtype) ?>" />
 <input type="submit" onclick="return determineMinAndMax();"  value="<?php  print_string("savechanges") ?>" />

@@ -1,242 +1,113 @@
 <form name="theform" method="post" action="question.php">
-
 <center>
-
 <table cellpadding="5">
-
 <tr valign="top">
-
     <td align="right"><b><?php  print_string("category", "quiz") ?>:</b></td>
-
     <td>
-
     <?php   quiz_category_select_menu($course->id, true, true, $question->category); ?>
-
     </td>
-
 </tr>
-
 <tr valign="top">
-
     <td align="right"><b><?php  print_string("questionname", "quiz") ?>:</b></td>
-
     <td>
-
         <input type="text" name="name" size="50" value="<?php  p($question->name) ?>" alt="<?php  print_string("questionname", "quiz") ?>" />
-
         <?php  if (isset($err["name"])) formerr($err["name"]); ?>
-
     </td>
-
 </tr>
-
 <tr valign="top">
-
     <td align="right"><b><?php  print_string("question", "quiz") ?>:</b>
-
     <br />
-
     <br />
-
     <br />
-
     <font size="1">
-
     <?php
-
            if ($usehtmleditor) {
-
                helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
-
            } else {
-
                helpbutton("text", get_string("helptext"), "moodle", true, true);
-
            }
-
     ?>
-
     </font>
-
     </td>
-
     <td>
-
         <?php  if (isset($err["questiontext"])) {
-
                formerr($err["questiontext"]); 
-
                echo "<br />";
-
            }
-
-
-
            print_textarea($usehtmleditor, 15, 60, 630, 300, "questiontext", $question->questiontext);
-
-
-
            if ($usehtmleditor) {
-
                echo '<input type="hidden" name="questiontextformat" value="'.FORMAT_HTML.'" />';
-
            } else {
-
                echo "<div align=\"right\">";
-
                print_string("formattexttype");
-
                echo ":&nbsp;";
-
                if (!isset($question->questiontextformat)) {
-
                    $question->questiontextformat = FORMAT_MOODLE;
-
                }
-
                choose_from_menu(format_text_menu(), "questiontextformat", $question->questiontextformat, "");
-
                helpbutton("textformat", get_string("helpformatting"));
-
                echo "</div>";
-
            }
-
         ?>
-
     </td>
-
 </tr>
-
 <tr valign="top">
-
     <td align="right"><b><?php  print_string("imagedisplay", "quiz") ?>:</b></td>
-
     <td>
-
     <?php   if (empty($images)) {
-
             print_string("noimagesyet");
-
         } else {
-
             choose_from_menu($images, "image", "$question->image", get_string("none"),"","");
-
         }
-
     ?>
-
     </td>
-
 </tr>
-
 <tr valign="top">
-
     <td align="right"><b><?php  print_string("casesensitive", "quiz") ?>:</b></td>
-
     <td>
-
     <?php 
-
         unset($menu);
-
         $menu[0] = get_string("caseno", "quiz");
-
         $menu[1] = get_string("caseyes", "quiz");
-
         choose_from_menu($menu, "usecase", "$options->usecase", "");
-
      ?>
-
     </td>
-
 </tr>
-
 <tr valign="top">
-
     <td align="right"><b><?php  print_string("correctanswers", "quiz") ?></b>:</td>
-
     <td>
-
         <?php  print_string("filloutoneanswer", "quiz") ?>
-
     </td>
-
-
 </tr>
-
-
 <?php 
-
     for ($i=1; $i<=QUIZ_MAX_NUMBER_ANSWERS; $i++) {
-
 ?>
-
-
-
 <tr valign="top">
-
     <td align="right"><b><?php  echo get_string("answer", "quiz")." $i";  ?>:</b></td>
-
     <td>
-
         <input type="text" name="answer[]" size="50" value="<?php  p($answers[$i-1]->answer) ?>" alt="<?php  echo get_string("answer", "quiz")." $i";  ?>" />&nbsp;&nbsp;
-
         <?php  print_string("grade");
-
            echo ":&nbsp;";
-
            choose_from_menu($gradeoptions, "fraction[]", $answers[$i-1]->fraction,""); ?>
-
         <br />
-
     </td>
-
 </tr>
-
 <tr valign="top">
-
     <td align="right"><b><?php  print_string("feedback", "quiz") ?>:</b></td>
-
     <td>
-
         <textarea name="feedback[]" rows="2" cols="50"><?php  p($answers[$i-1]->feedback) ?></textarea>
-
     </td>
-
 </tr>
-
-
-
 <tr valign="top">
-
     <td colspan="2">&nbsp;</td>
-
 </tr>
-
-
-
 <?php
-
     }
-
 ?>
-
-
-
 </table>
-
-
-
+<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey; ?>" />
 <input type="hidden" name="id" value="<?php  p($question->id) ?>" />
-
 <input type="hidden" name="qtype" value="<?php  p($question->qtype) ?>" />
-
 <input type="submit" value="<?php  print_string("savechanges") ?>" />
-
-
-
 </center>
-
 </form>
-
