@@ -239,9 +239,9 @@
             if (!empty($name)) {
                 html_header($course, $wdir);
                 $name = clean_filename($name);
-                if (file_exists($basedir.$wdir."/".$name)) {
+                if (file_exists("$basedir$wdir/$name")) {
                     echo "Error: $name already exists!";
-                } else if (!mkdir($basedir.$wdir."/".$name, $CFG->directorypermissions)) {
+                } else if (! make_upload_directory("$course->id/$wdir/$name")) {
                     echo "Error: could not create $name";
                 }
                 displaydir($wdir);
