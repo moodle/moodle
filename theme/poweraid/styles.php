@@ -207,5 +207,5 @@ select {
 }
 
 .teacheronly {
-    color: "#990000";
+    color: #990000;
 }

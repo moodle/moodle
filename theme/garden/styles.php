@@ -250,5 +250,5 @@ a.dimmed:hover {
 }
 
 .teacheronly {
-    color: "#990000";
+    color: #990000;
 }
