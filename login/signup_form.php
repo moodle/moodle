@@ -19,7 +19,13 @@
 	</td>
 </tr>
 <tr valign=top>
-	<td colspan=2><BR><P><B>Please supply some information about yourself:</td>
+	<td colspan=2><BR><P><B>Please supply some information about yourself:</B></P>
+</tr>
+<tr valign=top>
+	<td><P>Email address:</td>
+	<td><input type="text" name="email" size=25 value="<? pv($user->email) ?>">
+	<? formerr($err->email) ?>
+	</td>
 </tr>
 <tr valign=top>
 	<td><P>First name:</td>
@@ -34,15 +40,9 @@
 	</td>
 </tr>
 <tr valign=top>
-	<td><P>Curtin ID Number:</td>
+	<td><P>ID Number:</td>
 	<td><input type="text" name="idnumber" size=25 value="<? pv($user->idnumber) ?>"> (optional)
 	<? formerr($err->idnumber) ?>
-	</td>
-</tr>
-<tr valign=top>
-	<td><P>Email address:</td>
-	<td><input type="text" name="email" size=25 value="<? pv($user->email) ?>">
-	<? formerr($err->email) ?>
 	</td>
 </tr>
 <tr valign=top>
