@@ -36,7 +36,7 @@ class quiz_file_format extends quiz_default_format {
         $question = NULL;
         ///$comment added by T Robb
         $comment = NULL;
-        $text = implode($lines, " ");
+        $text = implode(" ", $lines);
 
         /// Find answer section
 
@@ -102,7 +102,6 @@ class quiz_file_format extends quiz_default_format {
             default:
                 $question->qtype = MULTICHOICE;
 
-                #$answers = swapshuffle($answers); 
                 foreach ($answers as $key => $answer) {
                     $answer = trim($answer);
 
@@ -110,7 +109,7 @@ class quiz_file_format extends quiz_default_format {
                     $answeight = 0;
                     if (strspn($answer,"1234567890%") > 0){
                         //Make sure that the percent sign is the last in the span
-                        if (strpos($answer,"%") == strspn($answer,"1234567890%")) {
+                        if (strpos($answer,"%") == strspn($answer,"1234567890%") - 1) {
                             $answeight0 = substr($answer,0,strspn($answer,"1234567890%"));
                             $answeight = round(($answeight0/100),2);
                             $answer = substr($answer,(strspn($answer,"1234567890%")));
@@ -130,7 +129,7 @@ class quiz_file_format extends quiz_default_format {
                         $comment = addslashes(substr(($answer),$hashpos+1));
                         $answer  = substr($answer,0,$hashpos);
                     } else {
-                        $comment = "";
+                        $comment = " ";
                     }
                     // End of Tom's addition
 
