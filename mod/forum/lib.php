@@ -1126,7 +1126,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
         $output .= "</div>";
     }
 
-    $output .= format_text($post->message, $post->format);
+    $output .= format_text($post->message, $post->format, NULL, $course->id);
 
     $output .= "<p align=right><font size=-1>";
 
@@ -1231,7 +1231,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
     if ($link and (strlen(strip_tags($post->message)) > $CFG->forum_longpost)) {
         // Print shortened version
-        echo format_text(forum_shorten_post($post->message), $post->format);
+        echo format_text(forum_shorten_post($post->message), $post->format, NULL, $courseid);
         $numwords = count_words(strip_tags($post->message));
         echo "<p><a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\">";
         echo get_string("readtherest", "forum");
@@ -1239,9 +1239,9 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     } else {
         // Print whole message
         if ($highlight) {
-            echo highlight($highlight, format_text($post->message, $post->format));
+            echo highlight($highlight, format_text($post->message, $post->format, NULL, $courseid));
         } else {
-            echo format_text($post->message, $post->format);
+            echo format_text($post->message, $post->format, NULL, $courseid);
         }
         echo $attachedimages; 
     }
