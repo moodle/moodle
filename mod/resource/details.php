@@ -29,6 +29,7 @@
             error(get_string("filloutallfields"), $_SERVER["HTTP_REFERER"]);
         }
 
+        $form->alltext = "";
         if ($form->instance) {
             $form->alltext = get_field("resource", "alltext", "id", "$form->instance");
         }
