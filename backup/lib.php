@@ -302,4 +302,35 @@
             }
         }
     }
+ 
+    //This function is used to insert records in the backup_ids table
+    function backup_putid ($backup_unique_code, $table, $old_id, $new_id, $info="") {
+
+        global $CFG;
+ 
+        $status = true;
+        
+        //First delete to avoid PK duplicates
+        $status = backup_delid($backup_unique_code, $table, $old_id);
+
+        $status = execute_sql("INSERT INTO {$CFG->prefix}backup_ids
+                                   (backup_code, table_name, old_id, new_id, info)
+                               VALUES 
+                                   ($backup_unique_code, '$table', '$old_id', '$new_id', '$info')",false);
+        return $status;
+    }
+
+    //This function is used to delete recods from the backup_ids table
+    function backup_delid ($backup_unique_code, $table, $old_id) {
+
+        global $CFG;
+
+        $status = true;
+
+        $status = execute_sql("DELETE FROM {$CFG->prefix}backup_ids
+                               WHERE backup_code = $backup_unique_code AND
+                                     table_name = '$table' AND
+                                     old_id = '$old_id'",false);
+        return $status;
+    }
 ?>

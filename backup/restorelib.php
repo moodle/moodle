@@ -65,6 +65,16 @@
         return $info;
     }
 
+    //This function read the xml file and store its data from the sections in a object
+    function restore_read_xml_sections ($xml_file) {
+
+        //We call the main read_xml function, with todo = SECTIONS
+        $info = restore_read_xml ($xml_file,"SECTIONS",false);
+print_object($info);
+
+        return $info;
+    }
+
     //This function prints the contents from the info parammeter passed
     function restore_print_info ($info) {
 
@@ -178,6 +188,187 @@
         }
         return $status;
     }
+
+    //This function create a new course record.
+    //When finished, course_header contains the id of the new course
+    function restore_create_new_course($restore,&$course_header) {
+
+        global $CFG;
+ 
+        $status = true;
+
+        $fullname = $course_header->course_fullname;
+        $shortname = $course_header->course_shortname;
+        $currentfullname = "";
+        $currentshortname = "";
+        $counter = 0;
+        //Iteratere while the name exists
+        do {
+            if ($counter) {
+                $suffixfull = get_string("copy")." ".$counter;
+                $suffixshort = $counter;
+            } else {
+                $suffixfull = "";
+                $suffixshort = "";
+            }
+            $currentfullname = $fullname." ".$suffixfull;
+            $currentshortname = $shortname."-".$suffixshort;
+            $course = get_record("course","fullname",addslashes($currentfullname));
+            $counter++;
+        } while ($course);
+
+        //New name = currentname
+        $course_header->course_fullname = $currentfullname;
+        $course_header->course_shortname = $currentshortname;
+        
+        //Now calculate the category
+        $category = get_record("course_categories","id",$course_header->category->id,
+                                                   "name",addslashes($course_header->category->name));
+        //If no exists, try by name only
+        if (!$category) {
+            $category = get_record("course_categories","name",addslashes($course_header->category->name));
+        }
+        //If no exists, get category id 1
+        if (!$category) {
+            $category = get_record("course_categories","id","1");
+        }
+        //If exists, put new category id
+        if ($category) {
+            $course_header->category->id = $category->id;
+            $course_header->category->name = $category->name;
+        //Error, cannot locate category
+        } else {
+            $course_header->category->id = 0;
+            $course_header->category->name = getstring("unknowcategory");
+            $status = false;
+        }
+
+        //Create the course_object
+        if ($status) {
+            $course->category = addslashes($course_header->category->id);
+            $course->password = addslashes($course_header->course_password);
+            $course->fullname = addslashes($course_header->course_fullname);
+            $course->shortname = addslashes($course_header->course_shortname);
+            $course->summary = addslashes($course_header->course_summary);
+            $course->format = addslashes($course_header->course_format);
+            $course->newsitems = addslashes($course_header->course_newsitems);
+            $course->teacher = addslashes($course_header->course_teacher);
+            $course->teachers = addslashes($course_header->course_teachers);
+            $course->student = addslashes($course_header->course_student);
+            $course->students = addslashes($course_header->course_students);
+            $course->guest = addslashes($course_header->course_guest);
+            $course->startdate = addslashes($course_header->course_startdate);
+            $course->numsections = addslashes($course_header->course_numsections);
+            $course->showrecent = addslashes($course_header->course_showrecent);
+            $course->marker = addslashes($course_header->course_marker);
+            $course->timecreated = addslashes($course_header->course_timecreated);
+            $course->timemodified = addslashes($course_header->course_timemodified);
+            //Now insert the record
+            $newid = insert_record("course",$course);
+            if ($newid) {
+                //save old and new course id
+                backup_putid ($restore->backup_unique_code,"course",$course_header->course_id,$newid);
+                //Replace old course_id in course_header
+                $course_header->course_id = $newid;
+            } else {
+                $status = false;
+            }
+        }
+
+        return $status;
+    }
+
+    //This function creates all the course_sections and course_modules from xml
+    function restore_create_sections($restore,$xml_file) {
+
+        global $CFG;   
+
+        $status = true;
+        //Check it exists
+        if (!file_exists($xml_file)) {
+            $status = false;
+        }
+        //Get info from xml
+        if ($status) {
+            $info = restore_read_xml_sections($xml_file);
+        }
+        //Put the info in the DB, recoding ids and saving the in backup tables
+
+        $sequence = "";
+
+        if ($info) {
+            //For each, section, save it to db
+            foreach ($info->sections as $key => $sect) {
+                $sequence = "";
+                $section->course = $restore->course_id;
+                $section->section = $sect->number;
+                $section->summary = $sect->summary;
+                $section->visible = $sect->visible;
+                $section->sequence = "";
+                //Save it to db
+                $newid = insert_record("course_sections",$section);
+                if ($newid) {
+                    //save old and new section id
+                    backup_putid ($restore->backup_unique_code,"course_sections",$key,$newid);
+                } else {
+                    $status = false;
+                }
+                //If all is OK, go with associated mods
+                if ($status) {
+                    //If we have mods in the section
+                    if ($sect->mods) {
+                        //For each mod inside section
+                        foreach ($sect->mods as $keym => $mod) {
+                            //Check if we've to restore this module
+                            if ($restore->mods[$mod->type]->restore) {
+                                //Get the module id from modules
+                                $module = get_record("modules","name",$mod->type);
+                                if ($module) {
+                                    $course_module->course = $restore->course_id;
+                                    $course_module->module = $module->id;
+                                    $course_module->section = $newid;
+                                    $course_module->added = $mod->added;
+                                    $course_module->deleted = $mod->deleted;
+                                    $course_module->score = $mod->score;
+                                    $course_module->visible = $mod->visible;
+                                    //NOTE: The instance is calculated and updaed in db in the
+                                    //      final step of the restore. We don't know it yet.
+                                    //Save it to db
+                                    $newidmod = insert_record("course_modules",$course_module); 
+                                    if ($newidmod) {
+                                        //save old and new module id
+                                        backup_putid ($restore->backup_unique_code,"course_modules",$keym,$newidmod);
+                                    } else {
+                                        $status = false;
+                                    }
+                                    //Now, calculate the sequence field
+                                    if ($status) {
+                                        if ($sequence) {
+                                            $sequence .= ",".$newidmod;
+                                        } else {
+                                            $sequence = $newidmod;
+                                        }
+                                    }
+                                } else {
+                                    $status = false;
+                                }
+                            }
+                        }
+                    }
+                }
+                //If all is OK, update sequence field in course_sections
+                if ($status) {
+                    $rec->id = $newid;
+                    $rec->sequence = $sequence;
+                    $status = update_record("course_sections",$rec);
+                }
+            }
+        } else {
+            $status = false;
+        }
+
+        return $status;
+    }
    
 
     //=====================================================================================
@@ -222,6 +413,17 @@
 
             //Check if we are into COURSE_HEADER zone
             //if ($this->tree[3] == "HEADER")                                                           //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
+        }
+
+        //This is the startTag handler we use where we are reading the sections zone (todo="SECTIONS")
+        function startElementSections($parser, $tagName, $attrs) {
+            //Refresh properties     
+            $this->level++;
+            $this->tree[$this->level] = $tagName;   
+
+            //Check if we are into SECTIONS zone
+            //if ($this->tree[3] == "SECTIONS")                                                         //Debug
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
         }
 
@@ -400,6 +602,97 @@
             }
         }
 
+        //This is the endTag handler we use where we are reading the sections zone (todo="SECTIONS")
+        function endElementSections($parser, $tagName) {
+            //Check if we are into SECTIONS zone
+            if ($this->tree[3] == "SECTIONS") {
+                //if (trim($this->content))                                                                     //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br>\n";           //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br>\n";          //Debug
+                //Dependig of different combinations, do different things
+                if ($this->level == 4) {
+                    switch ($tagName) {
+                        case "SECTION":
+                            //We've finalized a section, get it
+                            $this->info->sections[$this->info->tempsection->id]->number = $this->info->tempsection->number;
+                            $this->info->sections[$this->info->tempsection->id]->summary = $this->info->tempsection->summary;
+                            $this->info->sections[$this->info->tempsection->id]->visible = $this->info->tempsection->visible;
+                            unset($this->info->tempsection);
+                    }
+                }
+                if ($this->level == 5) {
+                    switch ($tagName) {
+                        case "ID":
+                            $this->info->tempsection->id = $this->getContents();
+                            break;
+                        case "NUMBER":
+                            $this->info->tempsection->number = $this->getContents();
+                            break;
+                        case "SUMMARY":
+                            $this->info->tempsection->summary = $this->getContents();
+                            break;
+                        case "VISIBLE":
+                            $this->info->tempsection->visible = $this->getContents();
+                            break;
+                    }
+                }
+                if ($this->level == 6) {
+                    switch ($tagName) {
+                        case "MOD":
+                            //We've finalized a section, get it
+                            $this->info->sections[$this->info->tempsection->id]->mods[$this->info->tempmod->id]->type = 
+                                $this->info->tempmod->type;
+                            $this->info->sections[$this->info->tempsection->id]->mods[$this->info->tempmod->id]->instance = 
+                                $this->info->tempmod->instance;
+                            $this->info->sections[$this->info->tempsection->id]->mods[$this->info->tempmod->id]->added = 
+                                $this->info->tempmod->added;
+                            $this->info->sections[$this->info->tempsection->id]->mods[$this->info->tempmod->id]->deleted = 
+                                $this->info->tempmod->deleted;
+                            $this->info->sections[$this->info->tempsection->id]->mods[$this->info->tempmod->id]->score = 
+                                $this->info->tempmod->score;
+                            $this->info->sections[$this->info->tempsection->id]->mods[$this->info->tempmod->id]->visible = 
+                                $this->info->tempmod->visible;
+                            unset($this->info->tempmod);
+                    }
+                }
+                if ($this->level == 7) {
+                    switch ($tagName) {
+                        case "ID":
+                            $this->info->tempmod->id = $this->getContents();
+                            break;
+                        case "TYPE":
+                            $this->info->tempmod->type = $this->getContents();
+                            break;
+                        case "INSTANCE":
+                            $this->info->tempmod->instance = $this->getContents();
+                            break;
+                        case "ADDED":
+                            $this->info->tempmod->added = $this->getContents();
+                            break;
+                        case "DELETED":
+                            $this->info->tempmod->deleted = $this->getContents();
+                            break;
+                        case "SCORE":
+                            $this->info->tempmod->score = $this->getContents();
+                            break;
+                        case "VISIBLE":
+                            $this->info->tempmod->visible = $this->getContents();
+                            break;
+                    }
+                }
+            }
+            //Clear things
+            $this->tree[$this->level] = "";
+            $this->level--;
+            $this->content = "";
+
+            //Stop parsing if todo = SECTIONS and tagName = SECTIONS (en of the tag, of course)
+            //Speed up a lot (avoid parse all)
+            if ($tagName == "SECTIONS") {
+                $this->finished = true;
+            }
+        }
+
         //This is the endTag default handler we use when todo is undefined
         function endElement($parser, $tagName) {
             if (trim($this->content))                                                                     //Debug
@@ -435,6 +728,9 @@
         } else if ($todo == "COURSE_HEADER") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementCourseHeader", "endElementCourseHeader");
+        } else if ($todo == "SECTIONS") {
+            //Define handlers to that zone
+            xml_set_element_handler($xml_parser, "startElementSections", "endElementSections");
         } else {
             //Define default handlers (must no be invoked when everything become finished)
             xml_set_element_handler($xml_parser, "startElementInfo", "endElementInfo");

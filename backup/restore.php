@@ -79,7 +79,7 @@
     } else if ($launch == "check") {
         include_once("restore_check.html");
     } else if ($launch == "execute") {
-        include_once("restore_check.html");
+        include_once("restore_execute.html");
     }
     print_simple_box_end();
 
