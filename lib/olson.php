@@ -498,7 +498,7 @@ function olson_parse_on ($on) {
                 trigger_error('Unknown last weekday: '.substr($on, 4));
             }
             else {
-                $rule['startday']  = -1                     // Start from end of month
+                $rule['startday']  = -1;                    // Start from end of month
                 $rule['weekday']   = $days[substr($on, 4)]; // Find the first such weekday
                 $rule['skipweeks'] = 0;                     // Don't skip any weeks.
             }
