@@ -614,6 +614,7 @@ $string['removeteacher'] = "Remove teacher";
 $string['rename'] = "Rename";
 $string['renamefileto'] = "Rename <b>\$a</b> to";
 $string['required'] = "Required";
+$string['resortcoursesbyname'] = "Resort courses by name";
 $string['resources'] = "Resources";
 $string['restore'] = "Restore";
 $string['restorecancelled'] = "Restore cancelled";

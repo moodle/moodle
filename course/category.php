@@ -38,11 +38,17 @@
 
 /// Rename the category if requested
 
-    if (!empty($rename)) {
+    if (!empty($_GET['rename'])) {
         $category->name = $rename;
         if (! set_field("course_categories", "name", $category->name, "id", $category->id)) {
             notify("An error occurred while renaming the category");
         }
+    }
+
+/// Resort the category if requested
+
+    if (!empty($_GET['resort'])) {
+        fix_course_sortorder($category->id, "fullname ASC");
     }
 
 
@@ -302,9 +308,15 @@
     if ($adminediting) {
         echo "<center>";
 
-    /// Print link to create a new course
+    /// Print button to re-sort courses by name
         unset($options);
-        $option["category"] = $category->id;
+        $options["id"] = $category->id;
+        $options["resort"] = "name";
+        print_single_button("category.php", $options, get_string("resortcoursesbyname"), "get");
+
+    /// Print button to create a new course
+        unset($options);
+        $options["category"] = $category->id;
         print_single_button("edit.php", $options, get_string("addnewcourse"), "get");
         echo "<br />";
 
