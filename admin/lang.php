@@ -161,7 +161,7 @@
         print_simple_box_end();
 
         
-        print_heading("$currentfile", "LEFT", 4);
+        print_heading("$currentfile", "center", 4);
 
         if (!file_exists("$langdir/$currentfile")) {
             if (!touch("$langdir/$currentfile")) {
