@@ -67,6 +67,7 @@ $string['resourcetypehtml'] = 'Composer une page web';
 $string['resourcetypelabel'] = 'Insérer une étiquette';
 $string['resourcetypetext'] = 'Composer une page de texte';
 $string['searchweb'] = 'Rechercher une page web';
+$string['serverurl'] = '$CFG->wwwroot';
 $string['variablename'] = 'Nom de la variable';
 
 // The following strings are to be deleted after 1.4 release
