@@ -9,6 +9,8 @@
     optional_variable($delete);
     optional_variable($confirm);
 
+    require_login();
+
     if (!isadmin()) {
         error("Only administrators can use this page!");
     }

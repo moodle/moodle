@@ -10,6 +10,7 @@
     optional_variable($up);
     optional_variable($down);
 
+    require_login();
 
     if (!isadmin()) {
         error("Only administrators can use this page!");

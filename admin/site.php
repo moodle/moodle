@@ -3,6 +3,7 @@
     require_once("../config.php");
 
     if ($site = get_site()) {
+        require_login();
         if (!isadmin()) {
             error("You need to be admin to edit this page");
         }
