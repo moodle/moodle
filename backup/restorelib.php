@@ -1417,7 +1417,7 @@
                     $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
                     //Call to xmlize for this portion of xml data (one MOD)
                     //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                                //Debug
-                    $data = xmlize($xml_data);
+                    $data = xmlize($xml_data,0);
                     //echo strftime ("%X",time())."<p>";                                                          //Debug
                     //traverse_xmlize($data);                                                                     //Debug
                     //print_object ($GLOBALS['traverse_array']);                                                  //Debug
@@ -1464,7 +1464,7 @@
                     $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
                     //Call to xmlize for this portion of xml data (one MOD)
                     echo "-XMLIZE: ".strftime ("%X",time()),"-";                                                  //Debug
-                    $data = xmlize($xml_data);         
+                    $data = xmlize($xml_data,0);         
                     echo strftime ("%X",time())."<p>";                                                            //Debug
                     //traverse_xmlize($data);                                                                     //Debug
                     //print_object ($GLOBALS['traverse_array']);                                                  //Debug
