@@ -61,7 +61,7 @@ function upgrade_enrol_plugins($return) {
             $upgrade_function = $module->name."_upgrade";
             if (function_exists($upgrade_function)) {
                 $db->debug=true;
-                if ($upgrade_function($currmodule->version)) {
+                if ($upgrade_function($CFG->$moduleversion)) {
                     $db->debug=false;
                     // OK so far, now update the modules record
                     set_config($moduleversion, $module->version);
@@ -69,12 +69,12 @@ function upgrade_enrol_plugins($return) {
                     echo "<hr />";
                 } else {
                     $db->debug=false;
-                    notify("Upgrading $module->name from $currmodule->version to $module->version FAILED!");
+                    notify("Upgrading $module->name from ".$CFG->$moduleversion." to $module->version FAILED!");
                 }
             }
             $updated_modules = true;
         } else {
-            error("Version mismatch: $module->name can't downgrade $currmodule->version -> $module->version !");
+            error("Version mismatch: $module->name can't downgrade ".$CFG->$moduleversion." -> $module->version !");
         }
     }
 
