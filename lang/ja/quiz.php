@@ -102,10 +102,10 @@ $string['fractionsaddwrong'] = '評価の合計が100%%に達していません。
 
 <br />現在合計 $a%%　です。
 
-<br />質問を修正しますか?';
-$string['fractionsnomax'] = 'この質問に対する評価を与えるために、<br />解答の一つは 100%% でなければなりません。 
+<br />戻って問題を修正しますか?';
+$string['fractionsnomax'] = 'この問題に対する評価を与えるために、<br />解答の一つは 100%% でなければなりません。 
 
-<br />質問を修正しますか?';
+<br />戻って問題を修正しますか?';
 $string['functiontakesatleasttwo'] = '関数 $a は少なくとも2つの引数を持つ必要があります。';
 $string['functiontakesnoargs'] = '関数 $a には引数はありません。';
 $string['functiontakesonearg'] = '関数 $a は厳密に1つの引数を持つ必要があります。';
@@ -163,10 +163,10 @@ $string['preview'] = 'プレビュー';
 $string['publish'] = '公開';
 $string['publishedit'] = 'このカテゴリへの問題の追加・編集を行うためにはコース公開に関する権限を有する必要があります。';
 $string['qti'] = 'IMS QTIフォーマット';
-$string['question'] = '質問';
-$string['questioninuse'] = '質問  \'$a\' は現在使用中です：';
-$string['questionname'] = '質問名';
-$string['questionnametoolong'] = '$a 行の問題名が長過ぎます(最大、半角255文字)。質問名を省略しました。';
+$string['question'] = '問題';
+$string['questioninuse'] = '問題  \'$a\' は現在使用中です：';
+$string['questionname'] = '問題名';
+$string['questionnametoolong'] = '$a 行の問題名が長過ぎます(最大、半角255文字)。問題名を省略しました。';
 $string['questions'] = '問題';
 $string['quizavailable'] = '小テストは $a まで利用できます。';
 $string['quizclose'] = '小テスト終了日';
@@ -183,7 +183,7 @@ $string['randomsamatch'] = 'ランダム記述組み合わせ問題';
 $string['randomsamatchcreate'] = 'ランダム記述組み合わせ問題を作成する';
 $string['randomsamatchintro'] = '各問題に合致する答えをメニューより選択してください。';
 $string['randomsamatchnumber'] = '選択問題数';
-$string['readytosend'] = '採点のために全ての小テストを送信します。本当に送信しても宜しいですか?';
+$string['readytosend'] = '評定のために全ての小テストを送信します。本当に送信しても宜しいですか?';
 $string['recentlyaddedquestion'] = '最新の問題!';
 $string['regrade'] = '全ての受験を最評定する';
 $string['regradecomplete'] = '全ての受験が再評定されました。';
@@ -226,20 +226,20 @@ $string['time'] = '時間';
 $string['timecompleted'] = '解答日時';
 $string['timeleft'] = '残り時間';
 $string['timelimit'] = '時間制限';
-$string['timelimitexeeded'] = '申し訳ございません! クイズの制限時間を経過しました!';
+$string['timelimitexeeded'] = '申し訳ございません! 小テストの制限時間を経過しました!';
 $string['timesup'] = '時間終了!';
 $string['timetaken'] = '所要時間';
 $string['tolerance'] = '許容範囲';
 $string['tolerancetype'] = '許容タイプ';
-$string['toomanyrandom'] = '要求されたランダム方式の質問数は、このカテゴリに含まれている数($a)より多くなっています!';
+$string['toomanyrandom'] = '要求されたランダム問題数は、このカテゴリに含まれている数($a)より多くなっています!';
 $string['true'] = '○';
 $string['truefalse'] = '○/×問題';
 $string['type'] = 'タイプ';
 $string['unit'] = '物理定数';
-$string['unknowntype'] = '$a 行の問題タイプはサポートされていません。問題は無視されます。';
+$string['unknowntype'] = '$a 行目の問題タイプはサポートされていません。問題は無視されます。';
 $string['unsupportedformulafunction'] = '関数 $a はサポートされていません。';
-$string['viewallanswers'] = '解答済み小テストを見る';
-$string['viewallreports'] = '$a の解答に関するレポートを見る';
+$string['viewallanswers'] = '終了した小テストを表示する';
+$string['viewallreports'] = '$a 受験に関するレポートを表示する';
 $string['warningsdetected'] = '$a の警告が見つかりました。';
 $string['webct'] = 'WebCTフォーマット';
 $string['wildcard'] = 'ワイルドカード';
