@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 Beta (2004022400)
+      // forum.php - created with Moodle 1.3 - (2004052400)
 
 
 $string['addanewdiscussion'] = 'Dodaj nowy temat dyskusji';
@@ -12,6 +12,7 @@ $string['anyfile'] = 'Jakikolwiek plik';
 $string['attachment'] = 'Za³±cznik';
 $string['bynameondate'] = ' $a->name  w dniu $a->date napisa³(a)';
 $string['configdisplaymode'] = ' Domy¶lny tryb wy¶wietlania dyskusji, je¶li nie wybrano innego.';
+$string['configenablerssfeeds'] = 'Umo¿liwia RSS feeds dla wszystkich forów dyskusyjnych. Musisz jednak i tak w³±czyæ obs³ugê feeds manualnie dla ka¿dego forum.';
 $string['configlongpost'] = ' Ka¿dy post o d³ugo¶ci przekraczaj±cej t± liczbê (nie uwzglêdniaj±c kodu HTML) jest uwa¿any za d³ugi.';
 $string['configmanydiscussions'] = ' Maksymalna ilo¶æ dyskusji pokazywanych na jednej stronie forum.';
 $string['configmaxbytes'] = 'Domy¶lna wielko¶æ plików dla wszystkich za³±czników na tej stronie (chyba, ¿e przedmiot b±d¼ ustawienia strony nak³adaj± jeszcze inne ograniczenia)';
@@ -110,6 +111,8 @@ $string['repliesmany'] = '$a odpowiedzi  (jak dot±d)';
 $string['repliesone'] = '$a odpowied¼ (jak dot±d)';
 $string['reply'] = 'Odpowiedz';
 $string['replyforum'] = 'Odpwiedz forum';
+$string['rsssubscriberssdiscussions'] = 'Wy¶wietl RSS feed dla $a dyskusji';
+$string['rsssubscriberssposts'] = 'Wy¶wietl RSS feed dla $a postów';
 $string['search'] = 'Szukaj';
 $string['searchforums'] = 'Szukaj w forach';
 $string['searcholderposts'] = 'Przeszukaj dawniejsze posty...';
@@ -120,7 +123,9 @@ $string['singleforum'] = 'Pojedyncza prosta dyskusja';
 $string['startedby'] = 'Rozpoczêta przez';
 $string['subject'] = 'Temat';
 $string['subscribe'] = 'Zapisz siê na to forum';
+$string['subscribeall'] = 'Zapisz wszystkich do tego forum';
 $string['subscribed'] = 'Zapisany na forum';
+$string['subscribenone'] = 'Wypisz wszystkich z tego forum';
 $string['subscribers'] = 'Zapisani na forum';
 $string['subscribersto'] = 'Zapisani na \'$a \'';
 $string['subscribestart'] = 'Przesy³aj mi kopie postów z tego forum poczt± elektroniczn±';
@@ -129,6 +134,7 @@ $string['subscription'] = 'Zapisanie siê na forum';
 $string['subscriptions'] = 'Zapisy na fora';
 $string['unsubscribe'] = 'Wypisz siê z tego forum';
 $string['unsubscribed'] = 'Wypisany z forum';
+$string['unsubscribeshort'] = 'Wypisz';
 $string['youratedthis'] = 'Oceni³e¶(a¶) to';
 $string['yournewtopic'] = 'Twoja nowa dyskusja';
 $string['yourreply'] = 'Twoja odpowied¼';

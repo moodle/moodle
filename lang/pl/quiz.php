@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.2 Beta (2004022400)
+      // quiz.php - created with Moodle 1.3 - (2004052400)
 
 
 $string['acceptederror'] = 'Zaakceptowany b³±d';
@@ -25,6 +25,7 @@ $string['attemptlast'] = 'Ostatnia próba';
 $string['attemptquiznow'] = 'Spróbuj teraz rozwi±zaæ quiz';
 $string['attempts'] = 'Próby';
 $string['attemptsallowed'] = 'Próby dostêpne';
+$string['attemptsexist'] = 'Ten quiz by³ ju¿ rozwi±zywany';
 $string['attemptsunlimited'] = 'Nielimitowana liczba prób';
 $string['backtoquiz'] = 'Powrót do edycji quizu';
 $string['bestgrade'] = 'Najlepsza ocena';
@@ -114,6 +115,7 @@ $string['noquestions'] = 'Nie dodano jeszcze ¿adnego pytania';
 $string['noresponse'] = 'Brak odpowiedzi';
 $string['noreview'] = 'Nie mo¿esz przegl±daæ tego quizu';
 $string['noreviewuntil'] = 'Nie mo¿esz przegl±daæ tego quizu do $a';
+$string['notenoughanswers'] = 'Ten typ pytañ wymaga przynajmniej $a odpowiedzi';
 $string['notenoughsubquestions'] = 'Nie zdefiniowano wystarczaj±cej liczby podpunktów pytañ! <br> Czy chcesz wróciæ i poprawiæ pytanie?';
 $string['numerical'] = 'Numeryczne';
 $string['paragraphquestion'] = 'Pytanie w bloku tekstu nie mo¿e byæ odnalezione na lini $a. Pytanie zostanie zignorowane';
@@ -131,6 +133,7 @@ $string['quizclosed'] = 'Ten quiz zosta³ zamkniêty $a';
 $string['quizcloses'] = 'Quiz koñczy siê';
 $string['quiznotavailable'] = 'Quiz nie bêdzie dostêpny do dnia $a';
 $string['quizopen'] = 'Otwórz quiz';
+$string['quizopens'] = 'Quiz siê otwiera';
 $string['random'] = 'Pytanie wybierane losowo';
 $string['randomcreate'] = 'Utwórz pytania wybierane losowo';
 $string['randomsamatch'] = 'Losowo wybierane pytania typu \'Dopasuj odpowied¼\'';
