@@ -199,6 +199,6 @@
 
     require("$CFG->dirroot/course/format/$course->format/format.php");  // Include the actual course format
 
-    print_footer();
+    print_footer(NULL, $course);
 
 ?>
