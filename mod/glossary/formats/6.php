@@ -10,7 +10,7 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry,$mode=""
     echo "\n<tr>";
     echo "<td width=100% bgcolor=\"$colour\">";
     if ($entry) {
-        echo "<b><a href=\"view.php?id=$cm->id&mode=entry&hook=$entry->id&displayformat=2\">";
+        echo "<b><a href=\"view.php?id=$cm->id&mode=entry&hook=$entry->id\">";
 
         glossary_print_entry_concept($entry);
         echo '</a></b> ';

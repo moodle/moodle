@@ -250,7 +250,10 @@ if (!$mainglossary or $mainglossary->id == $form->instance ) {
         if ( $pos = strpos($dir, ".") ) {
             $dir = substr($dir, 0, $pos );
             if ($dir != 0 and $dir != 1) {  // excluding basic formats
-                $formats[$dir] = get_string("displayformat$dir", "glossary");
+                $dp = get_record("glossary_displayformats","fid",$dir);
+                if ( !$dp or $dp->visible ) {
+                    $formats[$dir] = get_string("displayformat$dir", "glossary");
+                }
             }
         }
     }

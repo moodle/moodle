@@ -98,6 +98,23 @@ CREATE TABLE prefix_glossary_comments (
      PRIMARY KEY  (id)
 ) TYPE=MyISAM COMMENT='comments on glossary entries';
 
+CREATE TABLE prefix_glossary_displayformats (
+     id int(10) unsigned NOT NULL auto_increment,
+     fid int(10) unsigned NOT NULL default '0',
+     visible tinyint(2) unsigned NOT NULL default '1',
+
+     relatedview tinyint(3) NOT NULL default '-1',
+     showgroup tinyint(2) unsigned NOT NULL default '1',
+
+     defaultmode varchar(50) NOT NULL default '',
+     defaulthook varchar(50) NOT NULL default '',
+	 
+     sortkey varchar(50) NOT NULL default '',
+     sortorder varchar(50) NOT NULL default '',
+	 
+     PRIMARY KEY  (id)
+) TYPE=MyISAM COMMENT='Setting of the display formats';
+
 #
 # Dumping data for table `log_display`
 #

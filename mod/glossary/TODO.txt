@@ -6,6 +6,7 @@ Things that are in the inkpot yet:
     * Default view
 	* Default Order
 	* Show (or do not) the group breaks.
+        * Default view for automatic links, entry view, etc.
 	* What else? Post in http://moodle.org/mod/forum/view.php?id=742
 
 - Allow grading of entries

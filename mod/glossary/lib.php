@@ -879,7 +879,7 @@ for ($row = 0; $row < $numrows; $row++) {
                          $currentcolor = $tabcolor;
                          $currentstyle = 'generaltab';
                     }
-                    echo "<td class=\"$currentstyle\" width=\"$tabwidth%\" bgcolor=\"$currentcolor\" align=\"center\"><b>";
+                    echo "<td class=\"$currentstyle\" width=\"$tabwidth%\" bgcolor=\"$currentcolor\" align=\"center\" style=\"border-color: #000000; border-style: solid; border-width: 1px;\"><b>";
                     if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
                         echo "<a href=\"" . $data[$tabproccessed]->link . "\">";
                     }
@@ -925,7 +925,7 @@ for ($row = 0; $row < $numrows; $row++) {
                          $currentcolor = $tabcolor;
                          $currentstyle = 'generaltab';
                     }
-                    echo "<td class=\"$currentstyle\" width=\"$tabwidth%\" bgcolor=\"$currentcolor\" align=\"center\"><b>";
+                    echo "<td class=\"$currentstyle\" width=\"$tabwidth%\" bgcolor=\"$currentcolor\" align=\"center\" style=\"border-color: #000000; border-style: solid; border-width: 1px;\"><b>";
                     if ($tabproccessed != $currenttab and $data[$tabproccessed]->link) {
                         echo "<a href=\"" . $data[$tabproccessed]->link . "\">";
                     }
@@ -1289,8 +1289,10 @@ function glossary_print_dynaentry($courseid, $entries, $displayformat = -1) {
             }
             $dp = $displayformat;
             // Hard-coded until the Display formats manager is done.
-            if ( $dp == -1 and $glossary->displayformat == 6 ) {
-                $dp = 2;
+            if ( $dprecord = get_record("glossary_displayformats","fid", $glossary->displayformat) ) {
+                if ( $dprecord->relatedview >= 0 ) {
+                    $dp = $dprecord->relatedview;
+                }
             }
             glossary_print_entry($course, $cm, $glossary, $entry, "","",0,$dp);
         }

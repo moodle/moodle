@@ -174,6 +174,51 @@ function glossary_upgrade($oldversion) {
                      ADD `entbypage`  TINYINT(3) UNSIGNED NOT NULL DEFAULT '10' AFTER `globalglossary`" );
                      
     }
+
+    if ( $oldversion < 2003111800 ) {
+        execute_sql("CREATE TABLE `{$CFG->prefix}glossary_displayformats` (
+                    `id` INT(10) unsigned NOT NULL auto_increment,
+                    `fid` INT(10) UNSIGNED NOT NULL default '0',
+                    `visible` TINYINT(2) UNSIGNED NOT NULL default '1',
+                    `relatedview` TINYINT(3) NOT NULL default '-1',
+                    `showgroup` TINYINT(2) UNSIGNED NOT NULL default '1',
+                    `defaultmode` VARCHAR(50) NOT NULL default '',
+                    `defaulthook` VARCHAR(50) NOT NULL default '',
+                    `sortkey` VARCHAR(50) NOT NULL default '',
+                    `sortorder` VARCHAR(50) NOT NULL default '',
+                    PRIMARY KEY  (`id`)
+                    ) TYPE=MyISAM COMMENT='Setting of the display formats'");
+
+        // Default format
+        execute_sql(" INSERT INTO {$CFG->prefix}glossary_displayformats 
+                      (fid, relatedview, defaultmode, defaulthook, sortkey, sortorder, showgroup, visible)
+                      VALUES (0,0,'letter','ALL','CREATION','asc',1,1)");
+        // Continuous format
+        execute_sql(" INSERT INTO {$CFG->prefix}glossary_displayformats 
+                      (fid, relatedview, defaultmode, defaulthook, sortkey, sortorder, showgroup, visible)
+                      VALUES (1,1,'date','ALL','CREATION','asc',0,1)");
+        // Full w/author View
+        execute_sql(" INSERT INTO {$CFG->prefix}glossary_displayformats 
+                      (fid, relatedview, defaultmode, defaulthook, sortkey, sortorder, showgroup, visible)
+                      VALUES (2,2,'letter','ALL','CREATION','asc',1,1)");
+        // Encyclopedia
+        execute_sql(" INSERT INTO {$CFG->prefix}glossary_displayformats 
+                      (fid, relatedview, defaultmode, defaulthook, sortkey, sortorder, showgroup, visible)
+                      VALUES (3,3,'letter','ALL','CREATION','asc',1,1)");
+        // FAQ View
+        execute_sql(" INSERT INTO {$CFG->prefix}glossary_displayformats 
+                      (fid, relatedview, defaultmode, defaulthook, sortkey, sortorder, showgroup, visible)
+                      VALUES (4,4,'date','ALL','CREATION','asc',0,1)");
+        // Full w/o author View
+        execute_sql(" INSERT INTO {$CFG->prefix}glossary_displayformats 
+                      (fid, relatedview, defaultmode, defaulthook, sortkey, sortorder, showgroup, visible)
+                      VALUES (5,5,'letter','ALL','CREATION','asc',1,1)");
+        // Entry list
+        execute_sql(" INSERT INTO {$CFG->prefix}glossary_displayformats 
+                      (fid, relatedview, defaultmode, defaulthook, sortkey, sortorder, showgroup, visible)
+                      VALUES (6,0,'letter','ALL','CREATION','asc',1,1)");
+
+    }
     return true;
 }
 

@@ -105,6 +105,17 @@
     break;
     }  
 
+    switch ( $sortkey ) {    
+    case "CREATION": 
+        $sortkey = "timecreated";
+    break;
+    
+    case "UPDATE": 
+        $sortkey = "timemodified";
+    default:
+    break;
+    }
+
     include_once("sql.php");
     
     $entriesshown = 0;
@@ -119,95 +130,96 @@
     echo '<strong>' . $site->fullname . '</strong><br>';
     echo get_string("course") . ': <strong>' . $course->fullname . '</strong><br \>';
     echo get_string("modulename","glossary") . ': <strong>' . $glossary->name . '</strong><p>';
-    
-    foreach ($allentries as $entry) {
-    /// Setting the pivot for the current entry
-        $pivot = $entry->pivot;
-        if ( !$fullpivot ) {
-            $pivot = $pivot[0];
-        }            
-        
-    /// 
-    /// Validating special cases not covered by the SQL statement
-    /// 
-
-    /// if we're browsing by alphabet and the current concept does not begin with
-    ///     the letter we are look for.
-        $showentry = 1;
-        if ( $mode == 'letter' and $hook != 'SPECIAL' and $hook != 'ALL' ) {
-            if ( substr($entry->concept, 0, strlen($hook)) != $hook ) {
-                $showentry = 0;
-            }
-        } 
-        
-    /// if we're browsing for letter, looking for special characters not covered
-    ///     in the alphabet 
-        if ( $showentry and $hook == 'SPECIAL' ) {
-            $initial = $entry->concept[0];
-            for ($i = 0; $i < count($alphabet); $i++) {
-                $curletter = $alphabet[$i];
-                if ( $curletter == $initial ) {
-
-                    $showentry = 0;
-                    break;
-                }
-            }
-        } 
-
-    /// if we're browsing categories, looking for entries not categorised.
-        if ( $showentry and $mode == 'cat' and $hook == GLOSSARY_SHOW_NOT_CATEGORISED ) {
-            if ( record_exists("glossary_entries_categories", "entryid", $entry->id)) {
-                $showentry = 0;
-            } 
-        }
-
-    /// if the entry is not approved, deal with it based on the current view and
-    ///     user.
-        if ( $showentry and $mode != 'approval' ) {
-            if ( !$entry->approved and isteacher($course->id, $entry->userid) ) {
-                $showentry = 0;
+    if ( $allentries ) {
+        foreach ($allentries as $entry) {
+        /// Setting the pivot for the current entry
+            $pivot = $entry->pivot;
+            if ( !$fullpivot ) {
+                $pivot = $pivot[0];
             }            
-        }
-
-        /// ok, if it's a valid entry.. Print it.
-        if ( $showentry ) {
-
-            if ( $currentpivot != strtoupper($pivot) ) {  
-
-                // print the group break if apply
-                if ( $printpivot )  {
-                    $currentpivot = strtoupper($pivot);
-                    if ( !$tableisopen ) {
-                        echo '<table align="center" width="95%" bgcolor="#FFFFFF" style="border-style: solid; border-width: 1px;">';
-                        $tableisopen = 1;
-                    }
-
-                    echo '<tr>';
-                    $pivottoshow = $currentpivot;
-                    if ( isset($entry->uid) ) {
-                    // printing the user icon if defined (only when browsing authors)
-                        echo '<td colspan="2" align="left" style="border-style: solid; border-width: 1px;">';
-                        $pivottoshow = $entry->uname;
-                    } else {
-                        echo '<td colspan="2" align="center" style="border-style: solid; border-width: 1px;">';
-                    }
-
-                    echo "<strong><i>$pivottoshow</i></strong>" ;
-                    echo '</td>';
-                    echo '</tr>';
+            
+        /// 
+        /// Validating special cases not covered by the SQL statement
+        /// 
+    
+        /// if we're browsing by alphabet and the current concept does not begin with
+        ///     the letter we are look for.
+            $showentry = 1;
+            if ( $mode == 'letter' and $hook != 'SPECIAL' and $hook != 'ALL' ) {
+                if ( substr($entry->concept, 0, strlen($hook)) != $hook ) {
+                    $showentry = 0;
                 }
-            }
-
-            echo '<tr>';
-            echo '<td width="25%" align="right" valign="top"><b>'. $entry->concept . ': </b></td>';
-            echo '<td width="75%" style="border-style: solid; border-width: 1px;">';
+            } 
+            
+        /// if we're browsing for letter, looking for special characters not covered
+        ///     in the alphabet 
+            if ( $showentry and $hook == 'SPECIAL' ) {
+                $initial = $entry->concept[0];
+                for ($i = 0; $i < count($alphabet); $i++) {
+                    $curletter = $alphabet[$i];
+                    if ( $curletter == $initial ) {
     
-            if ( $entry->attachment) {
-                glossary_print_entry_attachment($entry);
-            }
-            echo strip_tags($entry->definition);
+                        $showentry = 0;
+                        break;
+                    }
+                }
+            } 
     
-            echo '<br><br></tr>';
+        /// if we're browsing categories, looking for entries not categorised.
+            if ( $showentry and $mode == 'cat' and $hook == GLOSSARY_SHOW_NOT_CATEGORISED ) {
+                if ( record_exists("glossary_entries_categories", "entryid", $entry->id)) {
+                    $showentry = 0;
+                } 
+            }
+    
+        /// if the entry is not approved, deal with it based on the current view and
+        ///     user.
+            if ( $showentry and $mode != 'approval' ) {
+                if ( !$entry->approved and isteacher($course->id, $entry->userid) ) {
+                    $showentry = 0;
+                }            
+            }
+    
+            /// ok, if it's a valid entry.. Print it.
+            if ( $showentry ) {
+    
+                if ( !$tableisopen ) {
+                    echo '<table align="center" width="95%" bgcolor="#FFFFFF" style="border-style: solid; border-width: 1px;">';
+                    $tableisopen = 1;
+                }
+                if ( $currentpivot != strtoupper($pivot) ) {  
+                    // print the group break if apply
+                    if ( $printpivot )  {
+                        $currentpivot = strtoupper($pivot);
+    
+                        echo '<tr>';
+                        $pivottoshow = $currentpivot;
+                        if ( isset($entry->uid) ) {
+                        // printing the user icon if defined (only when browsing authors)
+                            echo '<td colspan="2" align="left" style="border-style: solid; border-width: 1px;">';
+                            $user = get_record("user","id",$entry->uid);
+                            $pivottoshow = fullname($user, isteacher($course->id));
+                        } else {
+                            echo '<td colspan="2" align="center" style="border-style: solid; border-width: 1px;">';
+                        }
+    
+                        echo "<strong><i>$pivottoshow</i></strong>" ;
+                        echo '</td>';
+                        echo '</tr>';
+                    }
+                }
+    
+                echo '<tr>';
+                echo '<td width="25%" align="right" valign="top"><b>'. $entry->concept . ': </b></td>';
+                echo '<td width="75%" style="border-style: solid; border-width: 1px;">';
+        
+                if ( $entry->attachment) {
+                    glossary_print_entry_attachment($entry);
+                }
+                echo strip_tags($entry->definition);
+        
+                echo '<br><br></tr>';
+            }
         }
     }
     if ($tableisopen) {

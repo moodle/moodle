@@ -14,7 +14,6 @@
 /// fullpivot indicate if the whole pivot should be compared agasint the db or just the first letter
 /// printpivot indicate if the pivot should be printed or not
     $fullpivot = 1;
-    $printpivot = 1;
 
     $userid = '';
     if ( $USER->id ) {
@@ -77,7 +76,6 @@
             $where = "AND substr(ucase($usernamefield),1," .  strlen($hook) . ") = '" . strtoupper($hook) . "'";
         break;
         case 'mysql':
-            $usernametoshow = "CONCAT(CONCAT(u.firstname,' '), u.lastname)";
             if ( $sortkey == 'FIRSTNAME' ) {
                 $usernamefield = "CONCAT(CONCAT(u.firstname,' '), u.lastname)";
             } else {
@@ -90,7 +88,7 @@
             $where = '';
         }
 
-        $sqlselect  = "SELECT ge.id, $usernamefield pivot, $usernametoshow uname, u.id uid, ge.*";
+        $sqlselect  = "SELECT ge.id, $usernamefield pivot, u.id uid, ge.*";
         $sqlfrom    = "FROM {$CFG->prefix}glossary_entries ge, {$CFG->prefix}user u";
         $sqlwhere   = "WHERE ge.userid = u.id  AND
                              (ge.approved != 0 $userid)
@@ -170,7 +168,7 @@
                     $where = 'AND substr(ucase(concept),1,' .  strlen($hook) . ') = \'' . strtoupper($hook) . '\'';
                 break;
                 case 'mysql':
-                    $where = 'AND left(ucase(concept),' .  strlen($hook) . ") = '$hook'";
+                    $where = 'AND left(ucase(concept),' .  strlen($hook) . ") = '" . strtoupper($hook) . "'";
                 break;
                 }
             }

@@ -12,7 +12,6 @@
         $GLOSSARY_CONCEPT_IS_ENTRY = 0;
         $GLOSSARY_CONCEPT_IS_CATEGORY = 1;
 
-//        $glossarieslist = get_records_select("glossary", "usedynalink != 0 and (course = $courseid or global != 0)","id");
         $glossarieslist = get_records_select("glossary", "usedynalink != 0 and (course = $courseid or globalglossary != 0)","globalglossary, id");
         if ( $glossarieslist ) {
             $glossaries = "";
@@ -35,7 +34,7 @@
             }
             
             $entries = get_records_select("glossary_entries", "glossaryid IN ($glossaries) AND usedynalink != 0 and approved != 0 and concept != ''","$ebylenght glossaryid","id,glossaryid,concept,casesensitive,$GLOSSARY_CONCEPT_IS_ENTRY category,fullmatch");
-            $categories  = get_records_select("glossary_categories", "glossaryid IN ($glossaries) AND usedynalink != 0", "$cbylenght glossaryid,id","id,glossaryid,name concept, 1 casesensitive,$GLOSSARY_CONCEPT_IS_CATEGORY category, 1 fullmatch");
+            $categories  = get_records_select("glossary_categories", "glossaryid IN ($glossaries) AND usedynalink != 0", "$cbylenght glossaryid","id,glossaryid,name concept, 1 casesensitive,$GLOSSARY_CONCEPT_IS_CATEGORY category, 1 fullmatch");
             if ( $entries and $categories ) {
                 $concepts = array_merge($entries, $categories);
                 usort($concepts,'glossary_sort_entries_by_lenght');
@@ -49,19 +48,23 @@
                 $lastglossary = 0;
                 $lastcategory = 0;                
                 foreach ( $concepts as $concept ) {
-                    if ( $lastglossary != $concept->glossaryid ) {
-                        $glossary = get_record("glossary","id",$concept->glossaryid);
-                        $lastglossary = $glossary->id;
-                    }
                     if ( $concept->category ) {
                         if ( $lastcategory != $concept->id ) {
                             $category = get_record("glossary_categories","id",$concept->id);
                             $lastcategory = $concept->id;
+                            if ( $cm->instance != $category->glossaryid  ) {
+                                $cm = get_coursemodule_from_instance("glossary", $category->glossaryid, $courseid);
+                            }
                         }
-                        $cm = get_coursemodule_from_instance("glossary", $glossary->id, $courseid);						
+
                         $title = strip_tags("$glossary->name: " . get_string("category","glossary"). " $category->name");
                         $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&mode=cat&hook=$concept->id\">";
                     } else {
+                        if ( $lastglossary != $concept->glossaryid ) {
+                            $glossary = get_record("glossary","id",$concept->glossaryid);
+                            $lastglossary = $glossary->id;
+                        }
+
                         $concepttitle = urlencode($concept->concept);
                         $title = strip_tags("$glossary->name: $concepttitle");
                         $href_tag_begin = "<a target=\"entry\" class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/showentry.php?courseid=$courseid&concept=$concepttitle\" ".
@@ -73,9 +76,12 @@
                     $currentconcept = str_replace("*", "\*", $currentconcept);
                     if ( $currentconcept = trim(strip_tags($currentconcept)) ) {
                         if ( !$concept->category ) {
-                            if ( $aliases = get_records("glossary_alias","entryid",$concept->id) ) {
+                            if ( $aliases = get_records("glossary_alias","entryid",$concept->id, "alias") ) {
                                 foreach ($aliases as $alias) {
-                                    $currentconcept .= "|" . trim(strip_tags(str_replace("|", "\|", $alias->alias)));
+                                    $currentalias = str_replace("|", "\|", $alias->alias);
+                                    $currentalias = str_replace("'", "\'", $currentalias);
+                                    $currentalias = str_replace("*", "\*", $currentalias);
+                                    $currentconcept .= "|" . trim($currentalias);
                                 }
                             }
                         }
@@ -97,6 +103,7 @@
         if ($list_of_words_cp{strlen($list_of_words_cp)-1}=="|") {
             $list_of_words_cp{strlen($list_of_words_cp)-1}="";
         }
+
         $list_of_words_cp = trim($list_of_words_cp);
         if ($fullmatch) {
             $invalidprefixs = "([a-zA-Z0-9])";
@@ -153,18 +160,19 @@
         } else {
             $text = eregi_replace("$list_of_words_cp", "$href_tag_begin"."\\1"."$href_tag_end", $text);
         }
-        $text = str_replace(array_keys($final),$final,$text);
+
+        if ( $final ) {
+            $text = str_replace(array_keys($final),$final,$text);
+        }
         if ( $links ) {
             $text = str_replace(array_keys($links),$links,$text);
         }
         if ( $excludes ) {
             $text = str_replace(array_keys($excludes),$excludes,$text);
         }
-        if ( $fullmatch ) {
-            if ( isset($words) ) {
-                if ($words) {
-                    $text = str_replace(array_keys($words),$words,$text);
-                }
+        if ( $fullmatch and isset($words) ) {
+            if ($words) {
+                $text = str_replace(array_keys($words),$words,$text);
             }
         }
         return $text;

@@ -25,7 +25,7 @@ function glossary_print_entry_by_format($course, $cm, $glossary, $entry, $mode="
         glossary_print_entry_concept($entry);
 		echo "</b><br />";
 
-        echo "<font size=\"2\">$strby $user->firstname $user->lastname</font>";
+        echo "<font size=\"2\">$strby " . fullname($user, isteacher($course->id)) . "</font>";
         echo "&nbsp;&nbsp;<font size=1>(".get_string("lastedited").": ".
              userdate($entry->timemodified).")</font>";
         echo "</tr>";

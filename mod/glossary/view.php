@@ -58,6 +58,10 @@
         }
     } else {
         $printpivot = 1;
+        if ( $mode == '' and $hook == '' and $show == '') {
+            $mode = 'letter';
+            $hook = 'ALL';
+        }
     }
 
     if ( $displayformat == -1 ) {
