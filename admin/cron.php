@@ -14,6 +14,14 @@
     $FULLME = "cron";
 
     $starttime = microtime();
+    
+/// The current directory in PHP version 4.3.0 and above isn't necessarily the
+/// directory of the script when run from the command line. The require_once()
+/// would fail, so we'll have to chdir()
+
+    if (!isset($_SERVER['REMOTE_ADDR']) && isset($_SERVER['argv'][0])) {
+        chdir(dirname($_SERVER['argv'][0]));
+    }
 
     require_once("../config.php");
 
