@@ -36,25 +36,38 @@
 
     if ($course->format == "weeks") {
         $table->head  = array ($strweek, $strname, $strduedate, $strsubmitted);
-        $table->align = array ("CENTER", "LEFT", "LEFT", "LEFT");
+        $table->align = array ("center", "left", "left", "left");
     } else if ($course->format == "topics") {
         $table->head  = array ($strtopic, $strname, $strduedate, $strsubmitted);
-        $table->align = array ("CENTER", "LEFT", "LEFT", "LEFT");
+        $table->align = array ("center", "left", "left", "left");
     } else {
         $table->head  = array ($strname, $strduedate, $strsubmitted);
-        $table->align = array ("LEFT", "LEFT", "LEFT");
+        $table->align = array ("left", "left", "left");
     }
 
     foreach ($assignments as $assignment) {
-        if ($submission = assignment_get_submission($assignment, $USER)) {
-            if ($submission->timemodified <= $assignment->timedue) {
-                $submitted = userdate($submission->timemodified);
+        if (isteacher($course->id)) {
+            if ($assignment->type == OFFLINE) {
+                $submitted =  "<a href=\"submissions.php?id=$assignment->id\">" .
+                                get_string("viewfeedback", "assignment") . "</a>";
             } else {
-                $submitted = "<FONT COLOR=red>".userdate($submission->timemodified)."</FONT>";
+                $count = count_records_select("assignment_submissions",
+                                              "assignment = '$assignment->id' AND timemodified > 0");
+                $submitted = "<A HREF=\"submissions.php?id=$assignment->id\">" .
+                             get_string("viewsubmissions", "assignment", $count) . "</A>";
             }
         } else {
-            $submitted = get_string("no");
+            if ($submission = assignment_get_submission($assignment, $USER)) {
+                if ($submission->timemodified <= $assignment->timedue) {
+                  $submitted = userdate($submission->timemodified);
+                } else {
+                    $submitted = "<font color=red>".userdate($submission->timemodified)."</font>";
+                }
+            } else {
+                $submitted = get_string("no");
+            }
         }
+
         $due = userdate($assignment->timedue);
         if (!$assignment->visible) {
             //Show dimmed if the mod is hidden
@@ -76,7 +89,7 @@
         }
     }
 
-    echo "<BR>";
+    echo "<br />";
 
     print_table($table);
 
