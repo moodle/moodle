@@ -123,13 +123,13 @@ td.header {
 ******************************/
 /* many places */
 .generalbox {
-    border-color:#AAAAFF; /* borders */
+    border-color:#9999FF; /* borders */
 }
 .informationbox {
-    border-color:#AAAAFF; /* borders */
+    border-color:#9999FF; /* borders */
 }
 .feedbackbox {
-    border-color: #AAAAFF; /* borders */
+    border-color:#9999FF; /* borders */
 }
 .feedbackby {
     background-color:#BBBBBB;
@@ -151,7 +151,7 @@ td.header {
 }
 
 .noticebox {
-    border-color:#AAAAFF; /* borders */
+    border-color:#9999FF; /* borders */
 }
 
 .errorbox {
@@ -166,14 +166,14 @@ td.header {
 
 /* weblib.php table */
 .tabledivider {
-    border-color:#AAAAFF; /* borders */
+    border-color:#9999FF; /* borders */
 }
 
 
 /* entry-page index.php */ 
 .sitetopic {
     background-color:#FFFFFF; /* cellheading */
-    border-color:#AAAAFF; /* borders */
+    border-color:#9999FF; /* borders */
 }
 
 
@@ -195,13 +195,13 @@ td.header {
 ******************************/
 /* course, entry-page, login */
 .headingblock {
-    border-color:#AAAAFF; /* borders */
+    border-color:#9999FF; /* borders */
 }
 
 
 /* course */
 .headingblock .outline {
-    border-color:#AAAAFF; /* borders */
+    border-color:#9999FF; /* borders */
 }
 
 #course-view .section td {
@@ -240,7 +240,7 @@ td.header {
 
 .categoryboxcontent,
 .courseboxcontent {
-    border-color:#AAAAFF; /* borders */
+    border-color:#9999FF; /* borders */
     background: #FFFFFF;
 }
 
@@ -262,7 +262,7 @@ td.header {
 /* assignment, forum, glossary */
 .forumheaderlist,
 .forumpost {
-    border-color:#AAAAFF; /* borders */
+    border-color:#9999FF; /* borders */
 }
 
 .forumpost .content {
@@ -426,7 +426,7 @@ td.header {
 
 /* message */
 table.message_search_results td {
-    border-color:#AAAAFF; /* borders */
+    border-color:#9999FF; /* borders */
 }
 
 
@@ -566,7 +566,7 @@ table.minicalendar {
 /* sideblock */
 /* calendar, weblib.php, wiki */
 .sideblock {
-    border-color:#AAAAFF; /* borders */
+    border-color:#9999FF; /* borders */
 }
 .sideblock .header {
 }
