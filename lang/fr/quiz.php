@@ -24,6 +24,7 @@ $string['attemptlast'] = 'Dernière tentative';
 $string['attemptquiznow'] = 'Faire le test maintenant';
 $string['attempts'] = 'Tentatives';
 $string['attemptsallowed'] = 'Nombre de tentatives autorisées';
+$string['attemptsexist'] = 'Quelqu\'un a déjà effectué ce test';
 $string['attemptsunlimited'] = 'Nombre illimité de tentatives';
 $string['backtoquiz'] = 'Retour à l\'édition du test';
 $string['bestgrade'] = 'Meilleure note';
