@@ -453,14 +453,14 @@ function writequestion( $question ) {
             $answertext = 'FALSE';
             $feedback = $question->trueanswer->feedback;
         }
-        $expout .= $question->questiontext."{".$answertext;
+        $expout .= "::".$question->name."::".$question->questiontext."{".$answertext;
         if ($feedback!="") {
             $expout .= "#".$feedback;
         }
         $expout .= "}\n";
         break;
     case MULTICHOICE:
-        $expout .= $question->questiontext."{\n";
+        $expout .= "::".$question->name."::".$question->questiontext."{\n";
         foreach($question->answers as $answer) {
             if ($answer->fraction==1) {
                 $answertext = '=';
@@ -477,7 +477,7 @@ function writequestion( $question ) {
         $expout .= "}\n";
         break;
     case SHORTANSWER:
-        $expout .= $question->questiontext."{\n";
+        $expout .= "::".$question->name."::".$question->questiontext."{\n";
         foreach($question->answers as $answer) {
             $weight = 100 * $answer->fraction;
             $expout .= "\t=%".$weight."%".$answer->answer."#".$answer->feedback."\n";
@@ -485,9 +485,19 @@ function writequestion( $question ) {
         $expout .= "}\n";
         break;
     case NUMERICAL:
-        $expout .= $question->questiontext."{\n";
+        $expout .= "::".$question->name."::".$question->questiontext."{\n";
         $expout .= "\t#".$question->min."..".$question->max."#".$question->answer->feedback."\n";
         $expout .= "}\n";
+        break;
+    case MATCH:
+        $expout .= "::".$question->name."::".$question->questiontext."{\n";
+        foreach($question->subquestions as $subquestion) {
+            $expout .= "\t=".$subquestion->questiontext." -> ".$subquestion->answertext."\n";
+        }
+        $expout .= "}\n";
+        break;
+    case DESCRIPTION:
+        $expout .= "// DESCRIPTION type is not supported\n";
         break;
     default:
         error( "No handler for qtype $question->qtype for GIFT export" );
