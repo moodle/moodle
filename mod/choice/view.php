@@ -124,33 +124,24 @@
                     }
                 }
                 echo "</tr>";
+                echo "</table>";
                 break;
 
             case CHOICE_DISPLAY_VERTICAL:
                 echo "<table cellpadding=\"10\" cellspacing=\"10\" align=\"center\">";     
-                if ( $choice->release == CHOICE_RELEASE_ALWAYS OR ( $choice->release == CHOICE_RELEASE_AFTER_ANSWER and $current )) {            
-                    echo "<tr><td></td><td align=\"center\"><strong>".get_string("responses", "choice")."</strong></td></tr>";
-                }
-
                 foreach ($choice->option as $optionid => $text) {
-                    if ($answer) {                                                                 
+                    if ($text) {                                                                 
                         echo "<tr><td align=\"left\">";              
                         echo "<input type=\"radio\" name=\"answer\" value=\"".$optionid."\" ".$answerchecked[$optionid]." alt=\"$text\" />".
                               format_text($text, FORMAT_PLAIN);                            
                         echo "</td>";
-
-                        if ( $choice->release == CHOICE_RELEASE_ALWAYS OR ( $choice->release == CHOICE_RELEASE_AFTER_ANSWER and $current )) {            
-                            echo "<td align=\"center\">";
-                            echo count_records("choice_answers", "optionid", $optionid);
-                            echo "</td>";
-                        }
                         echo "</tr>";
                     }
                 }
+                echo "</table>";
                 break;
         }
 
-        echo "</table>";
         echo "<center>";
         echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
         if (isstudent($course->id) or isteacher($course->id, 0, false)) {
