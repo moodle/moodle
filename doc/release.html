@@ -16,10 +16,12 @@
      New methods just added include IMAP, POP3 and NNTP servers (including
      those using SSL or certificate-based authentication), and also 
      authentication against user-specified fields in ANY 
-     external database table.  In addition, Moodle now sports a cool 
+     external database table.  The login page can now be partially customised 
+     by the admin with personalised instructions, and the guest login can be 
+     hidden if desired.  In addition, Moodle now sports a cool 
      new admin GUI for configuring all of this, so it should be pretty 
-     easy to configure external authentication.
-     Many thanks to contributor Petri Asikainen for helping with the GUI.<BR><BR>
+     easy now to set up external authentication.
+     Many thanks to contributor Petri Asikainen for helping with the admin GUI.<BR><BR>
 
 <DT> Languages
 <DD> Complete new Norwegian translation (from Jøran Sørbø), and updates for several others.<BR><BR>
@@ -40,7 +42,7 @@
 <DD> <UL>
      <LI> Day value in dates (eg forum posts, weekly listing) are 
           now displayed correctly on Windows servers.
-     <LI> config-dist.php is now DOS format to make it easier for Windows users.
+     <LI> config-dist.php and README.txt is now in DOS format to make it easier for Windows users to get started (Unix users shouldn't be affected).
      <LI> Added a workaround (and new config switch in config-dist.php) for 
           some systems which have buggy referer variables.  This should help 
           those people getting "stuck" on a form during setup.
@@ -49,12 +51,15 @@
      <LI> Character set in email now matches current language.
      <LI> User pictures are now uploaded even if other fields have errors.
      <LI> Full-size user pictures on user profile page no longer clickable.
+     <LI> Long user listing now has a small notice at the bottom about automatic unenrolment
+     <LI> Unenrol and change password buttons are hidden for guest student
      <LI> Fixed occasional case where submitted assignments were sometimes having their owner changed.
      <LI> User log graphs are now faster, cleaner and translatable.
      <LI> Fixed HTML display errors with courses on front page.
      <LI> Admin and guest accounts now always work, even with external authentication activated.
      <LI> Slightly more security when writing/reading files (now checks for embedded scripting).
      <LI> The same user can now be deleted more than once (create, delete, recreate, delete caused error).
+     <LI> Language editor now works with multibyte languages (Thanks, Mits)
      </UL>
 
 </DL></UL>
