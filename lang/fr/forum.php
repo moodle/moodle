@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?php // $Id$ 
 
 
 $string['addanewdiscussion'] = 'Ajouter un nouveau sujet de discussion';
@@ -15,6 +15,7 @@ $string['configenablerssfeeds'] = 'Activation de l\'option des canaux RSS pour t
 $string['configlongpost'] = 'Tout message dépassant cette longueur (code HTML non compris) est considéré comme long message';
 $string['configmanydiscussions'] = 'Nombre maximum de discussions affichées sur une page';
 $string['configmaxbytes'] = 'Taille maximale de l\'ensemble des annexes de tous les forums du site (dépend des limites du cours et d\'autres réglages locaux)';
+$string['configreplytouser'] = 'Lorsqu\'un message est envoyé par courriel, doit-il contenir l\'adresse de courriel de son auteur, afin que le destinataire puisse l\'atteindre personnellement ? Même lorsque cette option est activée, les utilisateurs peuvent choisir dans leur profil de garder leur adresse secrète.';
 $string['configshortpost'] = 'Tout message plus court que cette longueur (code HTML non compris) est considéré comme message court';
 $string['couldnotadd'] = 'Impossible d\'ajouter votre message à cause d\'une erreur indéterminée';
 $string['couldnotdeleteratings'] = 'Désolé, la suppression de ce message n\'est plus possible car quelqu\'un l\'a déjà évalué';
@@ -77,6 +78,7 @@ $string['nomorepostscontaining'] = 'Plus aucun message contenant « $a » n\'a été
 $string['nonews'] = 'Aucune brève n\'a été encore publiée';
 $string['noposts'] = 'Aucun message';
 $string['nopostscontaining'] = 'Aucun message contenant « $a » n\'a été trouvé';
+$string['noreply'] = '';
 $string['nosubscribers'] = 'Personne encore ne reçoit de copie des messages de ce forum';
 $string['notingroup'] = 'Désolé, vous devez faire partie d\'un groupe pour consulter ce forum.';
 $string['nownotsubscribed'] = '$a->name NE recevra PAS de copies des messages du forum « $a->forum » par courriel.';
