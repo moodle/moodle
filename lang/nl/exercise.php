@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.2 development (2004010800)
+      // exercise.php - created with Moodle 1.2 development (2004011700)
 
 
 $string['absent'] = 'Afwezig';
@@ -57,7 +57,7 @@ $string['gradingstrategy'] = 'Beoordelingsstrategie';
 $string['handlingofmultiplesubmissions'] = 'Behandeling van meerdere inzendingen';
 $string['hidenamesfromstudents'] = 'Verberg namen van leerlingen';
 $string['incorrect'] = 'Fout';
-$string['leaguetable'] = 'scoretabel van ingezonden werk';
+$string['leaguetable'] = 'Scoretabel van ingezonden werk';
 $string['mail1'] = 'Je opdracht \'$a\' is beoordeeld door';
 $string['mail2'] = 'De commentaren en het cijfer kun je bekijken bij opdracht \'$a\' van de oefening';
 $string['mail3'] = 'Je kunt het zien in je opdracht van de oefening';
@@ -89,7 +89,7 @@ $string['notgraded'] = 'Nog geen cijfer gegeven';
 $string['notitlegiven'] = 'Nog geen titel gegeven';
 $string['nowpleasemakeyourownassessment'] = 'Beoordeel nu zelf het werk van $a.<br/>Merk op dat het beoordelingsformulier begint met de cijfers van het<br/>leerlingenformulier. Breng de nodige verbeteringen aan en <br/>klik dan op één van de knoppen onderaan de pagina.';
 $string['numberofassessmentelements'] = 'Aantal commentaren, beoordelingselementen, cijfers, criteria of categorieën in een rubriek';
-$string['numberofentries'] = 'Aantal ingevoerde items';
+$string['numberofentries'] = 'Aantal te tonen taken';
 $string['numberofnegativeresponses'] = 'Aantal negatieve reacties';
 $string['onesubmission'] = 'Eén inzending';
 $string['optionaladjustment'] = 'Optionele wijziging';
@@ -128,7 +128,7 @@ $string['scaleexcellent7'] = '7 punten schitterend/erg zwak schaal';
 $string['scalegood3'] = '3 punten goed/slecht schaal';
 $string['scalepresent'] = '2 punten aanwezig/afwezig schaal';
 $string['scaleyes'] = '2 punten ja/nee schaal';
-$string['specimenassessmentform'] = 'Voorbeeld beoordelingsformulier';
+$string['specimenassessmentform'] = 'Voorbeeld evaluatieformulier';
 $string['studentallowedtoresubmit'] = '$a TOEGELATEN om een herinzending te doen';
 $string['studentassessments'] = '$a Beoordelingen';
 $string['studentnotallowed'] = '$a NIET toegelaten om een herinzending te doen (of niet nodig)';
@@ -141,30 +141,30 @@ $string['submitexercisedescription'] = 'Stuur de beschrijving van de oefening in
 $string['submitted'] = 'Ingezonden';
 $string['submittedby'] = 'Ingezonden door';
 $string['suggestedgrade'] = 'Gesuggereerd cijfer';
-$string['teacherassessment'] = '$a Beoordeling';
-$string['teacherassessmenttable'] = '$a Beoordelingstabel';
+$string['teacherassessment'] = 'Evaluatie van $a';
+$string['teacherassessmenttable'] = 'Evaluatiestabel van $a';
 $string['teacherscomment'] = 'Commentaar van de leraar';
 $string['theexercise'] = 'De oefening';
 $string['theexerciseandthesubmissionby'] = 'De oefening en de inzending door $a';
 $string['thegradeis'] = 'Het cijfer is$a';
 $string['thereisfeedbackfromthe'] = 'Er is feedback van de $a';
-$string['thisisaresubmission'] = 'Dit is een herinzending door $a.<br/>Jouw beoordelingen van hun vorige inzending wordt getoond.<br/>Verbeter deze beoordeling nadat je de nieuwe inzending bekeken hebt<br/>en klik dan op één van de knoppen onderaan de pagina.';
+$string['thisisaresubmission'] = 'Dit is een herinzending door $a.<br/>Jouw beoordelingen van hun vorige inzending wordt getoond.<br/>Verbeter deze evaluatie nadat je de nieuwe inzending bekeken hebt<br/>en klik dan op één van de knoppen onderaan de pagina.';
 $string['title'] = 'Titel';
 $string['typeofscale'] = 'Schaal';
-$string['ungradedstudentassessments'] = '$a Beoordeling van een leerling zonder cijfer';
+$string['ungradedstudentassessments'] = '$a evaluatie van een leerling zonder cijfer';
 $string['usemaximum'] = 'Gebruik het beste cijfer';
-$string['usemean'] = 'Gebruik het gemiddelde';
+$string['usemean'] = 'Gebruik het gemiddelde cijfer';
 $string['verypoor'] = 'erg zwak';
 $string['view'] = 'Bekijk';
-$string['viewassessment'] = 'Bekijk beoordeling';
-$string['warningonamendingelements'] = 'WAARSCHUWING: Er zijn beoordelingen ingestuurd.<br/>Wijzig het aantal elementen, de beoordelingsschaal of de weging van de elementen NIET.';
+$string['viewassessment'] = 'Bekijk de evaluatie';
+$string['warningonamendingelements'] = 'WAARSCHUWING: Er zijn evaluaties ingestuurd.<br/>Wijzig het aantal elementen, de evaluatieschaal of de weging van de elementen NIET.';
 $string['weightederrorcount'] = 'Gewogen fouten telling: $a';
-$string['weightforgradingofassessments'] = 'Weging voor het quoteren van beoordelingen';
-$string['weightforteacherassessments'] = 'Weging voor $a beoordelingen';
+$string['weightforgradingofassessments'] = 'Weging van het cijfer voor de zelfevaluatie van de leerling';
+$string['weightforteacherassessments'] = 'Weging van de evaluatie van $a';
 $string['weights'] = 'Wegingen';
 $string['weightssaved'] = 'Wegingen bewaard';
 $string['weightsusedforoverallgrade'] = 'Wegingen gebruikt voor het totaalcijfer';
-$string['yourassessment'] = 'Jouw beoordeling';
+$string['yourassessment'] = 'Jouw evaluatie';
 $string['yourfeedbackgoeshere'] = 'Zet hier je feedback';
 $string['yoursubmission'] = 'Jouw inzending';
 
