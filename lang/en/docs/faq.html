@@ -43,26 +43,25 @@
 <p class="normaltext">If you still can't find any answers try posting your question 
   on the appropriate forum in <a href="http://moodle.org/mod/forum/index.php?id=5">Using 
   Moodle</a> - someone should be able to help you.</p>
-<h2>Installation problems</h2>
-<p class="normaltext"><a href="#php">PHP - is it installed and what version do 
-  I have?</a></p>
-<p class="normaltext"><a href="#blankpages">Why are all my pages blank?</a> </p>
-<p class="normaltext"><a href="#errorgetstring">My pages show fatal errors such 
-  as : call to undefined function: get_string()</a></p>
-<p class="normaltext"><a href="#headerssent">Why do I keep getting error messages 
-  about &quot;headers already sent&quot;?</a></p>
-<p class="normaltext"><a href="#failedopen">I keep getting this error: Failed 
-  opening required '/web/moodle/lib/setup.php'</a></p>
-<p>&nbsp;</p>
-<h2>General problems</h2>
-<p class="normaltext"><a href="#filenotfound">Whenever I try to access or view 
-  a file that I uploaded, I get an error &quot;File not Found&quot;</a></p>
-<hr>
-<h2>Installation problems</h2>
-<p class="normaltext">Most questions people have are related to installation, and most of these are 
-  related to the editing of config.php file. Following the <a href="http://moodle.org/doc/?file=install.html">installation 
-  instructions</a> carefully will usually result in a perfectly working system. 
-  Here are some of the most common problems that are encountered:</p>
+<p class="normaltext">Most questions people have are related to installation, 
+  and most of these are related to the editing of config.php file. Following the 
+  <a href="http://moodle.org/doc/?file=install.html">installation instructions</a> 
+  carefully will usually result in a perfectly working system. Here are some of 
+  the most common problems that are encountered:</p>
+<blockquote>
+<p class="normaltext"><a href="#php">PHP - is it installed and what version 
+    do I have?</a></p>
+  <p class="normaltext"><a href="#blankpages">Why are all my pages blank?</a> 
+  </p>
+  <p class="normaltext"><a href="#errorgetstring">My pages show fatal errors such 
+    as : call to undefined function: get_string()</a></p>
+  <p class="normaltext"><a href="#headerssent">Why do I keep getting error messages 
+    about &quot;headers already sent&quot;?</a></p>
+  <p class="normaltext"><a href="#failedopen">I keep getting this error: Failed 
+    opening required '/web/moodle/lib/setup.php'</a></p>
+  <p class="normaltext"><a href="#filenotfound">Whenever I try to access or view 
+    a file that I uploaded, I get an error &quot;File not Found&quot;</a></p>
+</blockquote>
 <p>&nbsp;</p>
 <h4 class="question"><a name="php"></a>PHP - is it installed and what version 
   do I have?</h4>
@@ -74,6 +73,7 @@
 </div>
 <p class="answer">If nothing happens then you don't have PHP installed. See the 
   installation docs for some information about where to download it for your computer.</p>
+<p class="answer">&nbsp;</p>
 <h4 class="question"><a name="blankpages"></a>Why are all my pages blank? </h4> 
 <p class="answer">Check the dirroot and/or dataroot in config.php. You must use 
   complete, absolute pathnames:</p>
@@ -111,6 +111,7 @@
   file. Sometimes text editors add these - for example Notepad on Windows - so 
   you may have to try a different text editor to remove these spaces or blank 
   lines completely. </p>
+<p class="answer">&nbsp;</p>
 <h4 class="question"><a name="failedopen"></a>I keep getting this error: Failed 
   opening required '/web/moodle/lib/setup.php'</h4>
 <p class="answer">In your config.php, the setting that you use for the dirroot 
@@ -118,12 +119,11 @@
   drive</strong>.</p>
 <p class="answer">Sometimes people only use the path from their home directory, 
   or relative to the root of the web server directory.</p>
-<p>&nbsp;</p>
-<h2>General problems</h2>
+<h2>&nbsp;</h2>
 <h3 class="question"><a name="filenotfound"></a>Whenever I try to access or view 
   a file that I uploaded, I get an error &quot;File not Found&quot;</h3>
 <p class="answer">For example: Not Found: The requested URL /moodle/file.php/2/myfile.jpg 
-  was not found on this server. </span></p>
+  was not found on this server. </p>
 <p class="answer">Your web server needs to be configured to allow the part of 
   the URL after a script name to be passed directly to the script. This is usually 
   enabled in Apache 1, but is usually disabled by default in Apache 2. To turn 
