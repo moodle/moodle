@@ -22,7 +22,7 @@
             error("Only administrators can use this page");
         }
 
-        if (! $site = get_record("course", "category", 0)) {
+        if (! $site = get_site()) {
             redirect("$CFG->wwwroot/admin/");
         }
     }

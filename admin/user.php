@@ -28,7 +28,7 @@
             error("User ID was incorrect (can't find it)");
         }
 
-        if (! $course = get_record("course", "category", 0)) {
+        if (! $course = get_site()) {
             error("Could not find site-level course");
         }
 

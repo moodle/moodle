@@ -79,7 +79,7 @@
     }
 
     // Set up the overall site name etc.
-    if (! $course = get_record("course", "category", 0)) {
+    if (! $site = get_site()) {
         redirect("site.php");
     }
 
@@ -93,7 +93,7 @@
 
     // At this point, the databases exist, and the user is an admin
 
-    print_header("$course->fullname: Administration Page","$course->fullname: Administration Page", "Admin");
+    print_header("$site->fullname: Administration Page","$site->fullname: Administration Page", "Admin");
 
     echo "<UL>";
     echo "<LI><B><A HREF=\"site.php\">Site settings</A></B>";
@@ -103,7 +103,6 @@
     echo "<LI><B>Delete a course</B>";
     echo "<LI><B>View Logs</B>";
     echo "</UL>";
-
 
     print_footer();
 ?>

@@ -192,7 +192,7 @@ function print_course($course) {
 
     global $CFG;
 
-    if (! $site = get_record("course", "category", "0") ) {
+    if (! $site = get_site()) {
         error("Could not find a site!");
     }
 

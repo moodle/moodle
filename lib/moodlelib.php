@@ -54,7 +54,7 @@ function print_navigation ($navigation) {
    global $CFG;
 
    if ($navigation) {
-       if (! $site = get_record("course", "category", 0)) {
+       if (! $site = get_site()) {
            $site->shortname = get_string("home");;
        }
        echo "<A TARGET=_top HREF=\"$CFG->wwwroot/\">$site->shortname</A> -> $navigation";
@@ -749,7 +749,7 @@ function get_user_info_from_db($field, $value) {
             $rs->MoveNext();
         }
 
-        if ($course = get_record("course", "category", 0)) {  
+        if ($course = get_site()) {
             // Everyone is always a member of the top course
             $user->student["$course->id"] = true;
         }
@@ -1094,16 +1094,19 @@ function get_directory_list( $rootdir ) {
 
 /// STRING TRANSLATION  ////////////////////////////////////////
 
-function print_string($identifier, $module="", $a="", $b="", $c="") {
-    echo get_string($identifier, $module, $a, $b, $c);
+function print_string($identifier, $module="", $a=NULL) {
+    echo get_string($identifier, $module, $a);
 }
 
 
-function get_string($identifier, $module="", $a="", $b="", $c="") {
+function get_string($identifier, $module="", $a=NULL) {
 // Return the translated string specified by $identifier as 
 // for $module.  Uses the same format files as STphp.
-// $a, $b and $c are optional variables that may be used 
+// $a is an object, string or number that can be used
 // within translation strings
+//
+// eg "hello \$a->firstname \$a->lastname"
+// or "hello \$a"
 
     global $CFG, $USER;
 
@@ -1153,20 +1156,6 @@ function get_string($identifier, $module="", $a="", $b="", $c="") {
 }
 
 
-function get_string_variable_list($string) {
-// This function is only used from get_string_from_file().
-    if (empty ($string))
-        return;
-
-    // Match on all variables in $string
-    $count = preg_match_all("/\\\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*/",
-                            $string, $matches);
-
-    // Return array of matches ($matches[0] is most useful)
-    return $matches;
-}
-
-
 function get_string_from_file($identifier, $langfile, $destination) {
 // This function is only used from get_string().
     include ($langfile);
@@ -1175,18 +1164,7 @@ function get_string_from_file($identifier, $langfile, $destination) {
         return false;
     }
 
-    $value = "sprintf(\"".$string[$identifier]."\");";
-    $variables = get_string_variable_list($value);
-    if (empty($variables[0]))
-        return "$destination = $value";
-    else {
-        foreach ($variables[0] as $variable) {
-            $variablecheck .= "if (!isset ($variable))\n" .
-                "die (\"Variable specified in translation " .
-                "not set.\");\n";
-        }
-        return "$variablecheck $destination = $value";
-    }
+    return "$destination = sprintf(\"".$string[$identifier]."\");";
 }
 
 

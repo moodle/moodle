@@ -2,7 +2,7 @@
 
 	require("../config.php");
 
-    $course = get_record("course", "category", 0);
+    $course = get_site();
 
 /// If data submitted, then process and store.
 
