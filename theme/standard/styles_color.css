@@ -255,6 +255,15 @@ th {
     background:#DDDDDD; 
 }
 
+.forumheaderlist .discussion .starter {
+    background:#DDDDDD; 
+}
+
+.forumheaderlist td {
+    border-color: #FFFFFF;
+}
+
+
 /* survey */
 #mod-survey-view .r0 {
     background-color: #EEEEEE;

@@ -221,6 +221,11 @@ h4 {
     font-size: 0.8em;
 }
 
+.forumheaderlist .discussion .lastpost {
+    font-size: 0.7em;
+}
+
+
 
 /* message */
 .message_summary_link {

@@ -292,6 +292,7 @@ table.formtable td {
 .forumpost {
     border-width:1px;
     border-style:solid;
+    border-collapse:separate;
 }
 
 .forumpost {
@@ -327,6 +328,28 @@ table.formtable td {
 .forumpostindent {
     margin-left: 30px;
 }
+
+.forumheaderlist {
+    width: 100%;
+}
+
+.forumheaderlist td {
+    border-width:1px 0px 0px 1px;
+    border-style:solid;
+}
+
+.forumheaderlist .replies {
+    text-align: center;
+}
+
+.forumheaderlist .picture {
+    width: 35px;
+}
+
+.forumheaderlist .discussion .starter {
+    vertical-align: center;
+}
+
 
 .unread {
     padding-right:2px;
