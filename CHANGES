@@ -1,3 +1,27 @@
+2002-08-15 Thursday 13:45  martin
+
+	* CHANGES: 
+	
+	Changes
+
+2002-08-15 Thursday 13:45  martin
+
+	* UPGRADING: 
+	
+	Brought this up to date, and reworded some stuff
+
+2002-08-15 Thursday 13:44  martin
+
+	* version.php, admin/index.php, lang/en/moodle.php: 
+	
+	Fixes to languages for admin (setting up and upgrading databases)
+
+2002-08-15 Thursday 13:43  martin
+
+	* user/view.php: 
+	
+	No point in being able to login as yourself
+
 2002-08-15 Thursday 12:37  martin
 
 	* index.php, lib/moodlelib.php: 
