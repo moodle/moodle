@@ -18,6 +18,7 @@ $string['assignmenttype'] = "Assignment type";
 $string['configmaxbytes'] = "Default maximum assignment size for all assignments on the site (subject to course limits and other local settings)";
 $string['description'] = "Description";
 $string['duedate'] = "Due date";
+$string['duedateno'] = "No due date";
 $string['early'] = "\$a early";
 $string['failedupdatefeedback'] = "Failed to update submission feedback for user \$a";
 $string['feedback'] = "Feedback";
