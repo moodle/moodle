@@ -41,7 +41,7 @@
 
     if ( $allanswers = get_records("choice_answers", "choice", $choice->id)) {
         foreach ($allanswers as $aa) {
-            $answers[$aa->user] = $aa;
+            $answers[$aa->userid] = $aa;
         }
     } else {
         $answers = array () ;

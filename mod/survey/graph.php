@@ -402,7 +402,7 @@
 
            if ($aaa) {
                foreach ($aaa as $a) {
-                   if ($a->user == $sid) {
+                   if ($a->userid == $sid) {
                        if ($a->answer1) {
                            $studbuckets1[$i] += $a->answer1;
                            $studcount1[$i]++;
@@ -548,7 +548,7 @@
        if ($aaa) {
            foreach ($aaa as $a) {
                $index = $indexof[$a->question];
-                   if ($a->user == $sid) {
+                   if ($a->userid == $sid) {
                        if ($a->answer1) {
                            $studbuckets1[$index] += $a->answer1;
                            $studcount1[$index]++;

@@ -22,7 +22,7 @@
         error("Course module is incorrect");
     }
 
-    $entry = get_record("journal_entries", "user", $USER->id, "journal", $journal->id);
+    $entry = get_record("journal_entries", "userid", $USER->id, "journal", $journal->id);
 
 
 /// If data submitted, then process and store.
@@ -43,7 +43,7 @@
 			}
             add_to_log($course->id, "journal", "update entry", "view.php?id=$cm->id", "$newentry->id");
 		} else {
-            $newentry->user = $USER->id;
+            $newentry->userid = $USER->id;
             $newentry->journal = $journal->id;
             $newentry->modified = $timenow;
             $newentry->text = $text;

@@ -140,8 +140,9 @@
             echo "</FORM></P></TD>";
         }
     }
-    if ((isstudent($course->id) and ($user->id == $USER->id) and !isguest()) or 
-        (isteacher($course->id) and isstudent($course->id, $user->id)) ) {
+    if ($course->category and 
+        ((isstudent($course->id) and ($user->id == $USER->id) and !isguest()) or 
+        (isteacher($course->id) and isstudent($course->id, $user->id))) ) {
         echo "<TD NOWRAP><P><FORM ACTION=\"../course/unenrol.php\" METHOD=GET>";
         echo "<INPUT type=hidden name=id value=\"$course->id\">";
         echo "<INPUT type=hidden name=user value=\"$user->id\">";

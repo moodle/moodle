@@ -23,7 +23,7 @@
         error("Course ID was incorrect");
     }
 
-    if (!isteacher($course->id) and $USER->id != $post->user) {
+    if (!isteacher($course->id) and $USER->id != $post->userid) {
         error("You can only look at results for posts you own");
     }
 

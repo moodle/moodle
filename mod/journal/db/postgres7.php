@@ -6,14 +6,5 @@ function journal_upgrade($oldversion) {
 
     $result = true;
 
-    if ($oldversion < 20020810) {
-       if (! execute_sql("ALTER TABLE `journal_entries` ADD `mailed` INTEGER DEFAULT '0' NOT NULL")) {
-           $result = false;
-       }
-    }
-    if ($oldversion < 2002101200) {
-       execute_sql(" ALTER TABLE `journal_entries` ADD `format` INTEGER DEFAULT '0' NOT NULL AFTER `text` ");
-    }
-    
     return $result;
 }

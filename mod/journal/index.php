@@ -49,7 +49,7 @@
 
     foreach ($journals as $journal) {
 
-        $entrytext = get_field("journal_entries", "text", "user", $USER->id, "journal", $journal->id");
+        $entrytext = get_field("journal_entries", "text", "userid", $USER->id, "journal", $journal->id");
 
         $journal->timestart  = $course->startdate + (($journal->section - 1) * 608400);
         if ($journal->daysopen) {

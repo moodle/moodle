@@ -41,7 +41,7 @@ CREATE TABLE prefix_forum_posts (
   id int(10) unsigned NOT NULL auto_increment,
   discussion int(10) unsigned NOT NULL default '0',
   parent int(10) unsigned NOT NULL default '0',
-  user int(10) unsigned NOT NULL default '0',
+  userid int(10) unsigned NOT NULL default '0',
   created int(10) unsigned NOT NULL default '0',
   modified int(10) unsigned NOT NULL default '0',
   mailed tinyint(1) unsigned NOT NULL default '0',
@@ -60,7 +60,7 @@ CREATE TABLE prefix_forum_posts (
 
 CREATE TABLE prefix_forum_ratings (
   id int(10) unsigned NOT NULL auto_increment,
-  user int(10) unsigned NOT NULL default '0',
+  userid int(10) unsigned NOT NULL default '0',
   post int(10) unsigned NOT NULL default '0',
   time int(10) unsigned NOT NULL default '0',
   rating tinyint(4) NOT NULL default '0',
@@ -74,7 +74,7 @@ CREATE TABLE prefix_forum_ratings (
 
 CREATE TABLE prefix_forum_subscriptions (
   id int(10) unsigned NOT NULL auto_increment,
-  user int(10) unsigned NOT NULL default '0',
+  userid int(10) unsigned NOT NULL default '0',
   forum int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
   UNIQUE KEY id (id)

@@ -14,6 +14,9 @@ function choice_upgrade($oldversion) {
         execute_sql(" ALTER TABLE `choice` ADD `answer5` varchar(255) NOT NULL AFTER `answer4`");
         execute_sql(" ALTER TABLE `choice` ADD `answer6` varchar(255) NOT NULL AFTER `answer5`");
     }
+    if ($oldversion < 2002122300) {
+        execute_sql("ALTER TABLE `choice_answers` CHANGE `user` `userid` INT(10) UNSIGNED DEFAULT '0' NOT NULL ");
+    }
     return true;
 }
 

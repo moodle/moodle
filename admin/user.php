@@ -28,7 +28,7 @@
             error("SERIOUS ERROR: Could not create admin user record !!!");
         }
 
-        $admin->user = $user->id;
+        $admin->userid = $user->id;
 
         if (! insert_record("user_admins", $admin)) {
             error("Could not make user $user->id an admin !!!");
@@ -42,7 +42,7 @@
             error("Could not find site-level course");
         }
 
-        $teacher->user = $user->id;
+        $teacher->userid = $user->id;
         $teacher->course = $site->id;
         $teacher->authority = 1;
         if (! insert_record("user_teachers", $teacher)) {

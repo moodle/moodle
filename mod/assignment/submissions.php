@@ -48,7 +48,7 @@
 /// Make some easy ways to reference submissions
     if ($submissions = assignment_get_all_submissions($assignment)) {
         foreach ($submissions as $submission) {
-            $submissionbyuser[$submission->user] = $submission;
+            $submissionbyuser[$submission->userid] = $submission;
         }
     }
 
@@ -56,7 +56,7 @@
     foreach($users as $user) {
         if (!isset($submissionbyuser[$user->id])) {  // Need to create empty entry
             $newsubmission->assignment = $assignment->id;
-            $newsubmission->user = $user->id;
+            $newsubmission->userid = $user->id;
             $newsubmission->timecreated = time();
             if (!insert_record("assignment_submissions", $newsubmission)) {
                 error("Could not insert a new empty submission");
@@ -97,7 +97,7 @@
                 $newsubmission->mailed     = 0;           // Make sure mail goes out (again, even)
                 $newsubmission->id         = $num;
                 if (! update_record("assignment_submissions", $newsubmission)) {
-                    notify(get_string("failedupdatefeedback", "assignment", $submission->user));
+                    notify(get_string("failedupdatefeedback", "assignment", $submission->userid));
                 } else {
                     $count++;
                 }
@@ -117,7 +117,7 @@
     echo "<FORM ACTION=submissions.php METHOD=post>\n";
 
     foreach ($submissions as $submission) {
-        $user = $users[$submission->user];
+        $user = $users[$submission->userid];
         assignment_print_submission($assignment, $user, $submission, $teachers, $grades);
     }
 

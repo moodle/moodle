@@ -44,7 +44,7 @@ INSERT INTO survey (id, course, template, days, timecreated, timemodified, name,
 CREATE TABLE survey_analysis (
   id SERIAL PRIMARY KEY,
   survey integer NOT NULL default '0',
-  "user" integer NOT NULL default '0',
+  userid integer NOT NULL default '0',
   notes text NOT NULL default ''
 );
 
@@ -60,7 +60,7 @@ CREATE TABLE survey_analysis (
 
 CREATE TABLE survey_answers (
   id SERIAL PRIMARY KEY,
-  "user" integer NOT NULL default '0',
+  userid integer NOT NULL default '0',
   survey integer NOT NULL default '0',
   question integer NOT NULL default '0',
   time integer default NULL,

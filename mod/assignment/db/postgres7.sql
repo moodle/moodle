@@ -23,7 +23,7 @@ CREATE TABLE assignment (
 CREATE TABLE assignment_submissions (
   id SERIAL PRIMARY KEY,
   assignment integer NOT NULL default '0',
-  "user" integer NOT NULL default '0',
+  userid integer NOT NULL default '0',
   timecreated integer NOT NULL default '0',
   timemodified integer NOT NULL default '0',
   numfiles integer NOT NULL default '0',

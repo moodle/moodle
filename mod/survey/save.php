@@ -65,7 +65,7 @@
     foreach ($answers as $key => $val) {
 
         $newdata->time = $timenow;
-        $newdata->user = $USER->id;
+        $newdata->userid = $USER->id;
         $newdata->survey = $survey->id;
         $newdata->question = $key;
         $newdata->answer1 = $val[0];

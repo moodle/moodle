@@ -40,7 +40,7 @@ CREATE TABLE prefix_choice (
 CREATE TABLE prefix_choice_answers (
   id int(10) unsigned NOT NULL auto_increment,
   choice int(10) unsigned NOT NULL default '0',
-  user int(10) unsigned NOT NULL default '0',
+  userid int(10) unsigned NOT NULL default '0',
   answer tinyint(4) NOT NULL default '0',
   timemodified int(10) NOT NULL default '0',
   PRIMARY KEY  (id),

@@ -52,7 +52,7 @@ CREATE TABLE quiz_answers (
 CREATE TABLE quiz_attempts (
   id SERIAL PRIMARY KEY,
   quiz integer NOT NULL default '0',
-  "user" integer NOT NULL default '0',
+  userid integer NOT NULL default '0',
   attempt integer NOT NULL default '0',
   sumgrades varchar(10) NOT NULL default '0.0',
   timestart integer NOT NULL default '0',
@@ -81,7 +81,7 @@ CREATE TABLE quiz_categories (
 CREATE TABLE quiz_grades (
   id SERIAL PRIMARY KEY,
   quiz integer NOT NULL default '0',
-  "user" integer NOT NULL default '0',
+  userid integer NOT NULL default '0',
   grade varchar(10) NOT NULL default '0.0',
   timemodified integer NOT NULL default '0'
 );

@@ -433,6 +433,8 @@ function insert_record($table, $dataobject, $returnid=true) {
 function update_record($table, $dataobject) {
 /// Update a record in a table
 /// $dataobject is an object containing needed data
+/// Relies on $dataobject having a variable "id" to 
+/// specify the record to update
 
     global $db, $CFG;
 
@@ -505,21 +507,21 @@ function get_user_info_from_db($field, $value) {
     if ( $result->RecordCount() == 1 ) {
         $user = (object)$result->fields;
 
-        $rs = $db->Execute("SELECT course FROM {$CFG->prefix}user_students WHERE user = '$user->id' ");
+        $rs = $db->Execute("SELECT course FROM {$CFG->prefix}user_students WHERE userid = '$user->id' ");
         while (!$rs->EOF) {
             $course = $rs->fields["course"];
             $user->student["$course"] = true;
             $rs->MoveNext();
         }
 
-        $rs = $db->Execute("SELECT course FROM {$CFG->prefix}user_teachers WHERE user = '$user->id' ");
+        $rs = $db->Execute("SELECT course FROM {$CFG->prefix}user_teachers WHERE userid = '$user->id' ");
         while (!$rs->EOF) {
             $course = $rs->fields["course"];
             $user->teacher["$course"] = true;
             $rs->MoveNext();
         }
 
-        $rs = $db->Execute("SELECT * FROM {$CFG->prefix}user_admins WHERE user = '$user->id' ");
+        $rs = $db->Execute("SELECT * FROM {$CFG->prefix}user_admins WHERE userid = '$user->id' ");
         while (!$rs->EOF) {
             $user->admin = true;
             $rs->MoveNext();
@@ -563,7 +565,7 @@ function adminlogin($username, $md5password) {
     return record_exists_sql("SELECT u.id 
                                 FROM {$CFG->prefix}user u, 
                                      {$CFG->prefix}user_admins a 
-                              WHERE u.id = a.user 
+                              WHERE u.id = a.userid 
                                 AND u.username = '$username' 
                                 AND u.password = '$md5password'");
 }
@@ -623,9 +625,11 @@ function get_admins() {
 
     global $CFG;
 
-    return get_records_sql("SELECT u.* FROM {$CFG->prefix}user u, {$CFG->prefix}user_admins a
-                            WHERE a.user = u.id
-                            ORDER BY u.id ASC");
+    return get_records_sql("SELECT u.* 
+                              FROM {$CFG->prefix}user u, 
+                                   {$CFG->prefix}user_admins a
+                             WHERE a.userid = u.id
+                             ORDER BY u.id ASC");
 }
 
 
@@ -651,7 +655,7 @@ function get_course_students($courseid, $sort="u.lastaccess DESC") {
     global $CFG;
 
     return get_records_sql("SELECT u.* FROM {$CFG->prefix}user u, {$CFG->prefix}user_students s
-                            WHERE s.course = '$courseid' AND s.user = u.id AND u.deleted = '0'
+                            WHERE s.course = '$courseid' AND s.userid = u.id AND u.deleted = '0'
                             ORDER BY $sort");
 }
 
@@ -661,7 +665,7 @@ function get_course_teachers($courseid, $sort="t.authority ASC") {
     global $CFG;
 
     return get_records_sql("SELECT u.*,t.authority,t.role FROM {$CFG->prefix}user u, {$CFG->prefix}user_teachers t
-                            WHERE t.course = '$courseid' AND t.user = u.id AND u.deleted = '0'
+                            WHERE t.course = '$courseid' AND t.userid = u.id AND u.deleted = '0'
                             ORDER BY $sort");
 }
 
@@ -680,8 +684,8 @@ function get_course_users($courseid, $sort="u.lastaccess DESC") {
     }
 
 ///    return get_records_sql("SELECT u.* FROM user u, user_students s, user_teachers t
-///                            WHERE (s.course = '$courseid' AND s.user = u.id) OR 
-///                                  (t.course = '$courseid' AND t.user = u.id)
+///                            WHERE (s.course = '$courseid' AND s.userid = u.id) OR 
+///                                  (t.course = '$courseid' AND t.userid = u.id)
 ///                            ORDER BY $sort");
 }
 
@@ -743,7 +747,7 @@ function get_users_longtimenosee($cutofftime) {
                                    {$CFG->prefix}user_students s
                              WHERE lastaccess > '0' 
                                AND lastaccess < '$cutofftime' 
-                               AND u.id = s.user 
+                               AND u.id = s.userid 
                           GROUP BY u.id");
 }
 
@@ -821,15 +825,23 @@ function add_to_log($course, $module, $action, $url="", $info="") {
     $timenow = time();
     $info = addslashes($info);
 
-    $result = $db->Execute("INSERT INTO log
-                            SET time = '$timenow', 
-                                user = '$USER->id',
-                                course = '$course',
-                                ip = '$REMOTE_ADDR', 
-                                module = '$module',
-                                action = '$action',
-                                url = '$url',
-                                info = '$info'");
+    $result = $db->Execute("INSERT INTO log (time,
+                                        userid,
+                                        course,
+                                        ip,
+                                        module,
+                                        action,
+                                        url,
+                                        info)
+                             VALUES ('$timenow',
+                                        '$USER->id',
+                                        '$course',
+                                        '$REMOTE_ADDR',
+                                        '$module',
+                                        '$action',
+                                        '$url',
+                                        '$info')");
+
     if (!$result) {
         echo "<P>Error: Could not insert a new entry to the Moodle log</P>";  // Don't throw an error
     }    
@@ -850,7 +862,7 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
 
     return get_records_sql("SELECT floor((`time` - $coursestart)/86400) as day, count(*) as num 
                             FROM {$CFG->prefix}log 
-                           WHERE user = '$userid' 
+                           WHERE userid = '$userid' 
                              AND course = '$courseid'
                              AND `time` > '$coursestart'
                         GROUP BY day ");
@@ -861,7 +873,7 @@ function get_logs_userday($userid, $courseid, $daystart) {
 
     return get_records_sql("SELECT floor((`time` - $daystart)/3600) as hour, count(*) as num
                             FROM {$CFG->prefix}log
-                           WHERE user = '$userid' 
+                           WHERE userid = '$userid' 
                              AND course = '$courseid'
                              AND `time` > '$daystart'
                         GROUP BY hour ");

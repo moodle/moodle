@@ -94,7 +94,7 @@
         $post->discussion = 0;           // ie discussion # not defined yet
         $post->parent = 0;
         $post->subject = "";
-        $post->user = $USER->id;
+        $post->userid = $USER->id;
         $post->message = "";
         $post->format = $defaultformat;
 
@@ -125,7 +125,7 @@
         $post->discussion  = $parent->discussion;
         $post->parent = $parent->id;
         $post->subject = $parent->subject;
-        $post->user = $USER->id;
+        $post->userid = $USER->id;
         $post->message = "";
         $post->format = $defaultformat;
 
@@ -141,7 +141,7 @@
         if (! $post = forum_get_post_full($edit)) {
             error("Post ID was incorrect");
         }
-        if ($post->user <> $USER->id) {
+        if ($post->userid <> $USER->id) {
             error("You can't edit other people's posts!");
         }
         if ((time() - $post->created) > $CFG->maxeditingtime) {
@@ -183,7 +183,7 @@
         if (! $forum = get_record("forum", "id", $discussion->forum)) {
             error("The forum number was incorrect ($discussion->forum)");
         }
-        if (($post->user <> $USER->id) and !isteacher($forum->course)) {
+        if (($post->userid <> $USER->id) and !isteacher($forum->course)) {
             error("You can't delete other people's posts!");
         }
 

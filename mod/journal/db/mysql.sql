@@ -33,7 +33,7 @@ CREATE TABLE prefix_journal (
 CREATE TABLE prefix_journal_entries (
   id int(10) unsigned NOT NULL auto_increment,
   journal int(10) unsigned NOT NULL default '0',
-  user int(10) unsigned NOT NULL default '0',
+  userid int(10) unsigned NOT NULL default '0',
   modified int(10) unsigned NOT NULL default '0',
   text text NOT NULL,
   format tinyint(2) NOT NULL default '0',

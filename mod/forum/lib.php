@@ -159,8 +159,8 @@ function forum_cron () {
             print_string("processingpost", "forum", $post->id);
             echo " ... ";
 
-            if (! $userfrom = get_record("user", "id", "$post->user")) {
-                echo "Could not find user $post->user\n";
+            if (! $userfrom = get_record("user", "id", "$post->userid")) {
+                echo "Could not find user $post->userid\n";
                 continue;
             }
 
@@ -349,7 +349,7 @@ function forum_grades($forumid) {
     }
     if ($ratings = forum_get_user_grades($forumid)) {
         foreach ($ratings as $rating) {
-            $u = $rating->user;
+            $u = $rating->userid;
             $r = $rating->rating;
             if (!isset($sumrating[$u])) {
                 $sumrating[$u][1] = 0;
@@ -376,34 +376,34 @@ function forum_get_post_full($postid) {
 /// Gets a post with all info ready for forum_print_post
     global $CFG;
 
-    return get_record_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture, u.id as userid
+    return get_record_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture
                             FROM {$CFG->prefix}forum_posts p, 
                                  {$CFG->prefix}user u 
                            WHERE p.id = '$postid' 
-                             AND p.user = u.id");
+                             AND p.userid = u.id");
 }
 
 function forum_get_discussion_posts($discussion, $sort) {
 /// Gets posts with all info ready for forum_print_post
     global $CFG;
 
-    return get_records_sql("SELECT p.*, u.id as userid, u.firstname, u.lastname, u.email, u.picture
+    return get_records_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture
                               FROM {$CFG->prefix}forum_posts p, 
                                    {$CFG->prefix}user u 
                              WHERE p.discussion = $discussion 
                                AND p.parent > 0 
-                               AND p.user = u.id $sort");
+                               AND p.userid = u.id $sort");
 }
 
 function forum_get_child_posts($parent) {
 /// Gets posts with all info ready for forum_print_post
     global $CFG;
 
-    return get_records_sql("SELECT p.*, u.id as userid, u.firstname, u.lastname, u.email, u.picture
+    return get_records_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture
                               FROM {$CFG->prefix}forum_posts p, 
                                    {$CFG->prefix}user u 
                              WHERE p.parent = '$parent' 
-                               AND p.user = u.id
+                               AND p.userid = u.id
                           ORDER BY p.created ASC");
 }
 
@@ -418,13 +418,13 @@ function forum_search_posts($search, $courseid) {
         $notteacherforum = "";
     }
 
-    return get_records_sql("SELECT p.*,u.firstname,u.lastname,u.email,u.picture,u.id as userid 
+    return get_records_sql("SELECT p.*,u.firstname,u.lastname,u.email,u.picture
                             FROM {$CFG->prefix}forum_posts p,  
                                  {$CFG->prefix}forum_discussions d, 
                                  {$CFG->prefix}user u, 
                                  {$CFG->prefix}forum f
                             WHERE (p.message LIKE '%$search%' OR p.subject LIKE '%$search%')
-                              AND p.user = u.id 
+                              AND p.userid = u.id 
                               AND p.discussion = d.id 
                               AND d.course = '$courseid' 
                               AND d.forum = f.id 
@@ -439,7 +439,7 @@ function forum_get_ratings($postid, $sort="u.firstname ASC") {
                               FROM {$CFG->prefix}forum_ratings r, 
                                    {$CFG->prefix}user u
                              WHERE r.post = '$postid' 
-                               AND r.user = u.id 
+                               AND r.userid = u.id 
                              ORDER BY $sort");
 }
 
@@ -458,7 +458,7 @@ function forum_get_user_posts($forumid, $userid) {
 /// Get all the posts for a user in a forum suitable for forum_print_post
     global $CFG;
 
-    return get_records_sql("SELECT p.*, u.id as userid, u.firstname, u.lastname, u.email, u.picture
+    return get_records_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture
                               FROM {$CFG->prefix}forum f, 
                                    {$CFG->prefix}forum_discussions d, 
                                    {$CFG->prefix}forum_posts p, 
@@ -466,8 +466,8 @@ function forum_get_user_posts($forumid, $userid) {
                              WHERE f.id = '$forumid' 
                                AND d.forum = f.id 
                                AND p.discussion = d.id
-                               AND p.user = '$userid' 
-                               AND p.user = u.id
+                               AND p.userid = '$userid' 
+                               AND p.userid = u.id
                           ORDER BY p.modified ASC");
 }
 
@@ -477,25 +477,25 @@ function forum_get_post_from_log($log) {
 
     if ($log->action == "add post") {
 
-        return get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, u.email, u.picture, u.id as userid
+        return get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, u.email, u.picture
                                  FROM {$CFG->prefix}forum_discussions d, 
                                       {$CFG->prefix}forum_posts p, 
                                       {$CFG->prefix}user u 
                                 WHERE p.id = '$log->info' 
                                   AND d.id = p.discussion 
-                                  AND p.user = u.id 
+                                  AND p.userid = u.id 
                                   AND u.deleted <> '1'");
 
 
     } else if ($log->action == "add discussion") {
 
-        return get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, u.email, u.picture, u.id as userid
+        return get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, u.email, u.picture
                                  FROM {$CFG->prefix}forum_discussions d, 
                                       {$CFG->prefix}forum_posts p, 
                                       {$CFG->prefix}user u 
                                 WHERE d.id = '$log->info' 
                                   AND d.firstpost = p.id 
-                                  AND p.user = u.id 
+                                  AND p.userid = u.id 
                                   AND u.deleted <> '1'");
     }
     return NULL;
@@ -506,7 +506,7 @@ function forum_get_user_grades($forumid) {
 /// Get all user grades for a forum
     global $CFG;
 
-    return get_records_sql("SELECT r.id, p.user, r.rating
+    return get_records_sql("SELECT r.id, p.userid, r.rating
                               FROM {$CFG->prefix}forum_discussions d, 
                                    {$CFG->prefix}forum_posts p, 
                                    {$CFG->prefix}forum_ratings r
@@ -538,14 +538,14 @@ function forum_count_unrated_posts($discussionid, $userid) {
                                    FROM {$CFG->prefix}forum_posts
                                   WHERE parent > 0 
                                     AND discussion = '$discussionid' 
-                                    AND user <> '$userid' ")) {
+                                    AND userid <> '$userid' ")) {
 
         if ($rated = get_record_sql("SELECT count(*) as num 
                                        FROM {$CFG->prefix}forum_posts p, 
                                             {$CFG->prefix}forum_ratings r
                                       WHERE p.discussion = '$discussionid'
                                         AND p.id = r.post 
-                                        AND r.user = '$userid'")) {
+                                        AND r.userid = '$userid'")) {
             $difference = $posts->num - $rated->num;
             if ($difference > 0) {
                 return $difference;
@@ -569,14 +569,14 @@ function forum_get_discussions($forum="0", $forum_sort="DESC", $user=0) {
     } else {
         $userselect = "";
     }
-    return get_records_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture, u.id as userid
+    return get_records_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture
                               FROM {$CFG->prefix}forum_discussions d, 
                                    {$CFG->prefix}forum_posts p, 
                                    {$CFG->prefix}user u 
                              WHERE d.forum = '$forum' 
                                AND p.discussion = d.id 
                                AND p.parent= 0 
-                               AND p.user = u.id $userselect
+                               AND p.userid = u.id $userselect
                           ORDER BY p.created $forum_sort");
 }
 
@@ -587,7 +587,7 @@ function forum_get_user_discussions($courseid, $userid) {
     global $CFG;
 
     return get_records_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture, 
-                                   u.id as userid, f.type as forumtype, f.name as forumname, f.id as forumid
+                                   f.type as forumtype, f.name as forumname, f.id as forumid
                               FROM {$CFG->prefix}forum_discussions d, 
                                    {$CFG->prefix}forum_posts p, 
                                    {$CFG->prefix}user u, 
@@ -595,7 +595,7 @@ function forum_get_user_discussions($courseid, $userid) {
                              WHERE d.course = '$courseid' 
                                AND p.discussion = d.id 
                                AND p.parent = 0 
-                               AND p.user = u.id 
+                               AND p.userid = u.id 
                                AND u.id = '$userid' 
                                AND d.forum = f.id
                           ORDER BY p.created ASC");
@@ -615,7 +615,7 @@ function forum_subscribed_users($course, $forum) {
                               FROM {$CFG->prefix}user u, 
                                    {$CFG->prefix}forum_subscriptions s
                              WHERE s.forum = '$forum->id'
-                               AND s.user = u.id 
+                               AND s.userid = u.id 
                                AND u.deleted <> 1");
 }
 
@@ -997,7 +997,7 @@ function forum_print_ratings($post) {
 function forum_print_rating($post, $user) {
     global $FORUM_POST_RATINGS;
 
-    if ($rating = get_record("forum_ratings", "user", $user, "post", $post)) {
+    if ($rating = get_record("forum_ratings", "userid", $user, "post", $post)) {
         if ($FORUM_POST_RATINGS[$rating->rating]) {
             echo "<FONT SIZE=-1>".get_string("youratedthis", "forum").": <FONT COLOR=green>";
             echo $FORUM_POST_RATINGS[$rating->rating];
@@ -1214,7 +1214,7 @@ function forum_add_discussion($discussion) {
 
     $post->discussion  = 0;
     $post->parent      = 0;
-    $post->user        = $USER->id;
+    $post->userid      = $USER->id;
     $post->created     = $timenow;
     $post->modified    = $timenow;
     $post->mailed      = 0;
@@ -1333,13 +1333,13 @@ function forum_is_subscribed($userid, $forumid) {
     if (forum_is_forcesubscribed($forumid)) {
         return true;
     }
-    return record_exists("forum_subscriptions", "user", $userid, "forum", $forumid);
+    return record_exists("forum_subscriptions", "userid", $userid, "forum", $forumid);
 }
 
 function forum_subscribe($userid, $forumid) {
 /// Adds user to the subscriber list
 
-    $sub->user  = $userid;
+    $sub->userid  = $userid;
     $sub->forum = $forumid;
 
     return insert_record("forum_subscriptions", $sub);
@@ -1347,7 +1347,7 @@ function forum_subscribe($userid, $forumid) {
 
 function forum_unsubscribe($userid, $forumid) {
 /// Removes user from the subscriber list
-    return delete_records("forum_subscriptions", "user", $userid, "forum", $forumid);
+    return delete_records("forum_subscriptions", "userid", $userid, "forum", $forumid);
 }
 
 
@@ -1482,7 +1482,7 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode) {
 
     global $USER;
 
-    $ownpost = ($USER->id == $post->user);
+    $ownpost = ($USER->id == $post->userid);
     $reply   = forum_user_can_post($forum);
 
     forum_print_post($post, $course->id, $ownpost, $reply, $link=false, $rate=false);
@@ -1541,7 +1541,7 @@ function forum_print_posts_flat($discussion, $course, $direction, $assessed, $re
 
     if ($posts = forum_get_discussion_posts($discussion, $sort)) {
         foreach ($posts as $post) {
-            $ownpost = ($USER->id == $post->user);
+            $ownpost = ($USER->id == $post->userid);
             forum_print_post($post, $course, $ownpost, $reply, $link, $assessed);
         }
     } else {
@@ -1559,7 +1559,7 @@ function forum_print_posts_threaded($parent, $course, $depth, $assessed, $reply)
 
             echo "<UL>";
             if ($depth > 0) {
-                $ownpost = ($USER->id == $post->user);
+                $ownpost = ($USER->id == $post->userid);
                 forum_print_post($post, $course, $ownpost, $reply, $link, $assessed);  // link=true?
                 echo "<BR>";
             } else {
@@ -1586,7 +1586,7 @@ function forum_print_posts_nested($parent, $course, $assessed, $reply) {
     if ($posts = forum_get_child_posts($parent)) {
         foreach ($posts as $post) {
 
-            $ownpost = ($USER->id == $post->user);
+            $ownpost = ($USER->id == $post->userid);
 
             echo "<UL>";
             forum_print_post($post, $course, $ownpost, $reply, $link, $assessed);

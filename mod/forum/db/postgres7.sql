@@ -38,7 +38,7 @@ CREATE TABLE forum_posts (
   id SERIAL PRIMARY KEY,
   discussion integer NOT NULL default '0',
   parent integer NOT NULL default '0',
-  "user" integer NOT NULL default '0',
+  userid integer NOT NULL default '0',
   created integer NOT NULL default '0',
   modified integer NOT NULL default '0',
   mailed integer NOT NULL default '0',
@@ -56,7 +56,7 @@ CREATE TABLE forum_posts (
 
 CREATE TABLE forum_ratings (
   id SERIAL PRIMARY KEY,
-  "user" integer NOT NULL default '0',
+  userid integer NOT NULL default '0',
   post integer NOT NULL default '0',
   time integer NOT NULL default '0',
   rating integer NOT NULL default '0'
@@ -69,7 +69,7 @@ CREATE TABLE forum_ratings (
 
 CREATE TABLE forum_subscriptions (
   id SERIAL PRIMARY KEY,
-  "user" integer NOT NULL default '0',
+  userid integer NOT NULL default '0',
   forum integer NOT NULL default '0'
 );
 # --------------------------------------------------------

@@ -358,10 +358,10 @@ function isadmin($userid=0) {
     global $USER;
 
     if (!$userid) {
-        return record_exists("user_admins", "user", $USER->id);
+        return record_exists("user_admins", "userid", $USER->id);
     }
 
-    return record_exists("user_admins", "user", $userid);
+    return record_exists("user_admins", "userid", $userid);
 }
 
 
@@ -377,7 +377,7 @@ function isteacher($courseid, $userid=0) {
         return $USER->teacher[$courseid];
     }
 
-    return record_exists("user_teachers", "user", $userid, "course", $courseid);
+    return record_exists("user_teachers", "userid", $userid, "course", $courseid);
 }
 
 
@@ -389,9 +389,9 @@ function isstudent($courseid, $userid=0) {
         return $USER->student[$courseid];
     }
 
-    $timenow = time();   // todo:  add time check below
+  //  $timenow = time();   // todo:  add time check below
 
-    return record_exists("user_students", "user", $userid, "course", $courseid);
+    return record_exists("user_students", "userid", $userid, "course", $courseid);
 }
 
 function isguest($userid=0) {
@@ -519,13 +519,13 @@ function enrol_student($user, $course) {
 /// Enrols a student in a given course
     global $db;
 
-    $record->user = $user;
+    $record->userid = $user;
     $record->course = $course;
     $record->start = 0;
     $record->end = 0;
     $record->time = time();
 
-    return insert_record("user", $record);
+    return insert_record("user_students", $record);
 }
 
 function unenrol_student($user, $course=0) {
@@ -536,14 +536,14 @@ function unenrol_student($user, $course=0) {
         /// First delete any crucial stuff that might still send mail
         if ($forums = get_records("forum", "course", $course)) {
             foreach ($forums as $forum) {
-                delete_records("forum_subscriptions", "forum", $forum->id, "user", $user);
+                delete_records("forum_subscriptions", "forum", $forum->id, "userid", $user);
             }
         }
-        return delete_records("user_students", "user", $user, "course", $course);
+        return delete_records("user_students", "userid", $user, "course", $course);
 
     } else {
-        delete_records("forum_subscriptions", "user", $user);
-        return delete_records("user_students", "user", $user);
+        delete_records("forum_subscriptions", "userid", $user);
+        return delete_records("user_students", "userid", $user);
     }
 }
 
@@ -556,13 +556,13 @@ function remove_teacher($user, $course=0) {
         /// First delete any crucial stuff that might still send mail
         if ($forums = get_records("forum", "course", $course)) {
             foreach ($forums as $forum) {
-                delete_records("forum_subscriptions", "forum", $forum->id, "user", $user);
+                delete_records("forum_subscriptions", "forum", $forum->id, "userid", $user);
             }
         }
-        return delete_records("user_teachers", "user", $user, "course", $course);
+        return delete_records("user_teachers", "userid", $user, "course", $course);
     } else {
-        delete_records("forum_subscriptions", "user", $user);
-        return delete_records("user_teachers", "user", $user);
+        delete_records("forum_subscriptions", "userid", $user);
+        return delete_records("user_teachers", "userid", $user);
     }
 }
 
@@ -570,7 +570,7 @@ function remove_admin($user) {
 /// Removes an admin from a site
     global $db;
 
-    return delete_records("user_admins", "user", $user);
+    return delete_records("user_admins", "userid", $user);
 }
 
 

@@ -45,7 +45,7 @@ INSERT INTO `prefix_survey` (`id`, `course`, `template`, `days`, `timecreated`, 
 CREATE TABLE prefix_survey_analysis (
   id int(10) unsigned NOT NULL auto_increment,
   survey int(10) unsigned NOT NULL default '0',
-  user int(10) unsigned NOT NULL default '0',
+  userid int(10) unsigned NOT NULL default '0',
   notes text NOT NULL,
   PRIMARY KEY  (id),
   UNIQUE KEY id (id)
@@ -63,7 +63,7 @@ CREATE TABLE prefix_survey_analysis (
 
 CREATE TABLE prefix_survey_answers (
   id int(10) unsigned NOT NULL auto_increment,
-  user int(10) unsigned NOT NULL default '0',
+  userid int(10) unsigned NOT NULL default '0',
   survey int(10) unsigned NOT NULL default '0',
   question int(10) unsigned NOT NULL default '0',
   time int(10) unsigned default NULL,

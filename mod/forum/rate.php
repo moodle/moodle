@@ -25,11 +25,11 @@
                 continue;
             }
             if ($rating) {
-                if (record_exists("forum_ratings", "user", $USER->id, "post", $post)) {
+                if (record_exists("forum_ratings", "userid", $USER->id, "post", $post)) {
                     error("You've rated this question before ($post)");
                 } else {
                     unset($newrating);
-                    $newrating->user = $USER->id;
+                    $newrating->userid = $USER->id;
                     $newrating->time = time();
                     $newrating->post = $post;
                     $newrating->rating = $rating;

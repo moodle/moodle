@@ -55,7 +55,7 @@ CREATE TABLE `prefix_quiz_answers` (
 CREATE TABLE `prefix_quiz_attempts` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `quiz` int(10) unsigned NOT NULL default '0',
-  `user` int(10) unsigned NOT NULL default '0',
+  `userid` int(10) unsigned NOT NULL default '0',
   `attempt` smallint(6) NOT NULL default '0',
   `sumgrades` varchar(10) NOT NULL default '0.0',
   `timestart` int(10) unsigned NOT NULL default '0',
@@ -86,7 +86,7 @@ CREATE TABLE `prefix_quiz_categories` (
 CREATE TABLE `prefix_quiz_grades` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `quiz` int(10) unsigned NOT NULL default '0',
-  `user` int(10) unsigned NOT NULL default '0',
+  `userid` int(10) unsigned NOT NULL default '0',
   `grade` varchar(10) NOT NULL default '0.0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`)

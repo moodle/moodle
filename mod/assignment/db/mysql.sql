@@ -25,7 +25,7 @@ CREATE TABLE `prefix_assignment` (
 CREATE TABLE `prefix_assignment_submissions` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `assignment` int(10) unsigned NOT NULL default '0',
-  `user` int(10) unsigned NOT NULL default '0',
+  `userid` int(10) unsigned NOT NULL default '0',
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   `numfiles` int(10) unsigned NOT NULL default '0',

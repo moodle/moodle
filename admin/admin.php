@@ -67,7 +67,7 @@
             }
         }
 
-        $admin->user = $user->id;
+        $admin->userid = $user->id;
         $admin->id = insert_record("user_admins", $admin);
         $admins[] = $user;
     }

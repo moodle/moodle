@@ -50,6 +50,12 @@ function forum_upgrade($oldversion) {
       execute_sql(" ALTER TABLE `forum_posts` ADD `format` TINYINT(2) UNSIGNED DEFAULT '0' NOT NULL AFTER `message` ");
   }
 
+  if ($oldversion < 2002122300) {
+      execute_sql("ALTER TABLE `forum_posts` CHANGE `user` `userid` INT(10) UNSIGNED DEFAULT '0' NOT NULL ");
+      execute_sql("ALTER TABLE `forum_ratings` CHANGE `user` `userid` INT(10) UNSIGNED DEFAULT '0' NOT NULL ");
+      execute_sql("ALTER TABLE `forum_subscriptions` CHANGE `user` `userid` INT(10) UNSIGNED DEFAULT '0' NOT NULL ");
+  }
+
   return true;
 
 }

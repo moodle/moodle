@@ -51,10 +51,8 @@ function resource_list_all_resources($courseid=0, $sort="name ASC", $recent=0) {
  
 
 function resource_user_outline($course, $user, $mod, $resource) {
-    if ($logs = get_records_sql("SELECT * FROM log
-                                 WHERE user='$user->id' AND module='resource' 
-                                       AND action='view' AND info='$resource->id'
-                                       ORDER BY time ASC")) {
+    if ($logs = get_records_select("log", "userid='$user->id' AND module='resource' 
+                                           AND action='view' AND info='$resource->id'", "time ASC")) {
 
         $numviews = count($logs);
         $lastlog = array_pop($logs);
@@ -71,11 +69,8 @@ function resource_user_outline($course, $user, $mod, $resource) {
 function resource_user_complete($course, $user, $mod, $resource) {
     global $CFG, $THEME;
 
-    if ($logs = get_records_sql("SELECT * FROM log
-                                 WHERE user='$user->id' AND module='resource' 
-                                       AND action='view' AND info='$resource->id'
-                                       ORDER BY time ASC")) {
-
+    if ($logs = get_records_select("log", "userid='$user->id' AND module='resource' 
+                                           AND action='view' AND info='$resource->id'", "time ASC")) {
         $numviews = count($logs);
         $lastlog = array_pop($logs);
 

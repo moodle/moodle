@@ -103,7 +103,7 @@ CREATE TABLE `prefix_course_sections` (
 CREATE TABLE `prefix_log` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `time` int(10) unsigned NOT NULL default '0',
-  `user` int(10) unsigned NOT NULL default '0',
+  `userid` int(10) unsigned NOT NULL default '0',
   `ip` varchar(15) NOT NULL default '',
   `course` int(10) unsigned NOT NULL default '0',
   `module` varchar(10) NOT NULL default '',
@@ -191,7 +191,7 @@ CREATE TABLE `prefix_user` (
 
 CREATE TABLE `prefix_user_admins` (
   `id` int(10) unsigned NOT NULL auto_increment,
-  `user` int(10) unsigned NOT NULL default '0',
+  `userid` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`)
 ) TYPE=MyISAM COMMENT='One record per administrator user';
@@ -203,10 +203,10 @@ CREATE TABLE `prefix_user_admins` (
 
 CREATE TABLE `prefix_user_students` (
   `id` int(10) unsigned NOT NULL auto_increment,
-  `user` int(10) unsigned NOT NULL default '0',
+  `userid` int(10) unsigned NOT NULL default '0',
   `course` int(10) unsigned NOT NULL default '0',
-  `start` int(10) unsigned NOT NULL default '0',
-  `end` int(10) unsigned NOT NULL default '0',
+  `timestart` int(10) unsigned NOT NULL default '0',
+  `timeend` int(10) unsigned NOT NULL default '0',
   `time` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`)
@@ -219,7 +219,7 @@ CREATE TABLE `prefix_user_students` (
 
 CREATE TABLE `prefix_user_teachers` (
   `id` int(10) unsigned NOT NULL auto_increment,
-  `user` int(10) unsigned NOT NULL default '0',
+  `userid` int(10) unsigned NOT NULL default '0',
   `course` int(10) unsigned NOT NULL default '0',
   `authority` int(10) NOT NULL default '3',
   `role` varchar(40) NOT NULL default '',

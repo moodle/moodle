@@ -106,10 +106,10 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
 // and so the next 86400 seconds worth of logs are printed.
 
     if ($course->category) {
-        $selector = "WHERE l.course='$course->id' AND l.user = u.id";
+        $selector = "WHERE l.course='$course->id' AND l.userid = u.id";
 
     } else {
-        $selector = "WHERE l.user = u.id";  // Show all courses
+        $selector = "WHERE l.userid = u.id";  // Show all courses
         if ($ccc = get_courses(-1)) {
             foreach ($ccc as $cc) {
                 $courses[$cc->id] = "$cc->shortname";
@@ -118,7 +118,7 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
     }
 
     if ($user) {
-        $selector .= " AND l.user = '$user'";
+        $selector .= " AND l.userid = '$user'";
     }
 
     if ($date) {
@@ -152,9 +152,9 @@ function print_log($course, $user=0, $date=0, $order="ORDER BY l.time ASC") {
         echo "<TD NOWRAP ALIGN=right><FONT SIZE=2>".userdate($log->time, "%A")."</TD>";
         echo "<TD NOWRAP><FONT SIZE=2>".userdate($log->time, "%d %B %Y, %I:%M %p")."</TD>";
         echo "<TD NOWRAP><FONT SIZE=2>";
-        link_to_popup_window("$CFG->wwwroot/lib/ipatlas/plot.php?address=$log->ip&user=$log->user", "ipatlas","$log->ip", 400, 700);
+        link_to_popup_window("$CFG->wwwroot/lib/ipatlas/plot.php?address=$log->ip&user=$log->userid", "ipatlas","$log->ip", 400, 700);
         echo "</TD>";
-        echo "<TD NOWRAP><FONT SIZE=2><A HREF=\"../user/view.php?id=$log->user&course=$log->course\"><B>$log->firstname $log->lastname</B></TD>";
+        echo "<TD NOWRAP><FONT SIZE=2><A HREF=\"../user/view.php?id=$log->userid&course=$log->course\"><B>$log->firstname $log->lastname</B></TD>";
         echo "<TD NOWRAP><FONT SIZE=2>";
         link_to_popup_window( make_log_url($log->module,$log->url), "fromloglive","$log->module $log->action", 400, 600);
         echo "</TD>";

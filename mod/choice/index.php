@@ -28,7 +28,7 @@
         notice("There are no choices", "../../course/view.php?id=$course->id");
     }
 
-    if ( $allanswers = get_records("choice_answers", "user", $USER->id)) {
+    if ( $allanswers = get_records("choice_answers", "userid", $USER->id)) {
         foreach ($allanswers as $aa) {
             $answers[$aa->choice] = $aa;
         }

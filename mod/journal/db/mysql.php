@@ -14,6 +14,10 @@ function journal_upgrade($oldversion) {
     if ($oldversion < 2002101200) {
        execute_sql(" ALTER TABLE `journal_entries` ADD `format` TINYINT(2) UNSIGNED DEFAULT '0' NOT NULL AFTER `text` ");
     }
+    if ($oldversion < 2002122300) {
+        execute_sql("ALTER TABLE `journal_entries` CHANGE `user` `userid` INT(10) UNSIGNED DEFAULT '0' NOT NULL ");
+    }
+
     
     return $result;
 }

@@ -3,8 +3,8 @@
     require("../../config.php");
     require("lib.php");
 
-    require_variable($id);       // course id
-    optional_variable($search, "");  // user id
+    require_variable($id);           // course id
+    optional_variable($search, "");  // search string
 
     $search = strip_tags($search);
 

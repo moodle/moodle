@@ -119,8 +119,8 @@ function assignment_cron () {
 
             echo "Processing assignment submission $submission->id\n";
 
-            if (! $user = get_record("user", "id", "$submission->user")) {
-                echo "Could not find user $post->user\n";
+            if (! $user = get_record("user", "id", "$submission->userid")) {
+                echo "Could not find user $post->userid\n";
                 continue;
             }
 
@@ -215,7 +215,7 @@ function assignment_grades($assignmentid) {
 /// Must return an array of grades, indexed by user, and a max grade.
 
     $return->grades = get_records_menu("assignment_submissions", "assignment", 
-                                       $assignmentid, "", "user,grade");
+                                       $assignmentid, "", "userid,grade");
     $return->maxgrade = get_field("assignment", "grade", "id", "$assignmentid");
     return $return;
 }
@@ -228,7 +228,7 @@ function assignment_log_info($log) {
                              FROM {$CFG->prefix}assignment a, 
                                   {$CFG->prefix}user u
                             WHERE a.id = '$log->info' 
-                              AND u.id = '$log->user'");
+                              AND u.id = '$log->userid'");
 }
 
 function assignment_get_all_submissions($assignment) {
@@ -237,7 +237,7 @@ function assignment_get_all_submissions($assignment) {
     return get_records_sql("SELECT a.* 
                               FROM {$CFG->prefix}assignment_submissions a, 
                                    {$CFG->prefix}user_students s
-                             WHERE a.user = s.user
+                             WHERE a.userid = s.userid
                                AND s.course = '$assignment->course'
                                AND a.assignment = '$assignment->id' 
                           ORDER BY a.timemodified DESC");
@@ -251,8 +251,8 @@ function assignment_get_users_done($assignment) {
                                    {$CFG->prefix}user_students s, 
                                    {$CFG->prefix}assignment_submissions a
                              WHERE s.course = '$assignment->course' 
-                               AND s.user = u.id
-                               AND u.id = a.user 
+                               AND s.userid = u.id
+                               AND u.id = a.userid 
                                AND a.assignment = '$assignment->id'
                           ORDER BY a.timemodified DESC");
 }
@@ -284,7 +284,7 @@ function assignment_file_area($assignment, $user) {
 }
 
 function assignment_get_submission($assignment, $user) {
-    return get_record("assignment_submissions", "assignment", $assignment->id, "user", $user->id);
+    return get_record("assignment_submissions", "assignment", $assignment->id, "userid", $user->id);
 }
 
 function assignment_print_difference($time) {

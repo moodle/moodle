@@ -32,7 +32,7 @@ CREATE TABLE journal (
 CREATE TABLE journal_entries (
   id SERIAL PRIMARY KEY,
   journal integer NOT NULL default '0',
-  "user" integer NOT NULL default '0',
+  userid integer NOT NULL default '0',
   modified integer NOT NULL default '0',
   text text NOT NULL default '',
   format integer NOT NULL default '0',

@@ -154,7 +154,7 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
 /// Used for user activity reports.
 /// $return->time = the time they did it
 /// $return->info = a short text description
-    if ($grade = get_record("quiz_grades", "user", $user->id, "quiz", $quiz->id)) {
+    if ($grade = get_record("quiz_grades", "userid", $user->id, "quiz", $quiz->id)) {
         
         if ($grade->grade) {
             $result->info = get_string("grade").": $grade->grade";
@@ -198,7 +198,7 @@ function quiz_cron () {
 function quiz_grades($quizid) {
 /// Must return an array of grades, indexed by user, and a max grade.
 
-    $return->grades = get_records_menu("quiz_grades", "quiz", $quizid, "", "user,grade");
+    $return->grades = get_records_menu("quiz_grades", "quiz", $quizid, "", "userid,grade");
     $return->maxgrade = get_field("quiz", "grade", "id", "$quizid");
     return $return;
 }
@@ -232,7 +232,7 @@ function quiz_get_grade_records($quiz) {
                             FROM {$CFG->prefix}quiz_grades qg, 
                                  {$CFG->prefix}user u
                             WHERE qg.quiz = '$quiz->id'
-                              AND qg.user = u.id");
+                              AND qg.userid = u.id");
 }
 
 function quiz_get_answers($question) {
@@ -794,7 +794,7 @@ function quiz_print_cat_question_list($categoryid) {
 
 function quiz_start_attempt($quizid, $userid, $numattempt) {
     $attempt->quiz = $quizid;
-    $attempt->user = $userid;
+    $attempt->userid = $userid;
     $attempt->attempt = $numattempt;
     $attempt->timestart = time();
     $attempt->timefinish = 0; 
@@ -805,12 +805,12 @@ function quiz_start_attempt($quizid, $userid, $numattempt) {
 
 function quiz_get_user_attempt_unfinished($quizid, $userid) {
 // Returns an object containing an unfinished attempt (if there is one)
-    return get_record("quiz_attempts", "quiz", $quizid, "user", $userid, "timefinish", 0);
+    return get_record("quiz_attempts", "quiz", $quizid, "userid", $userid, "timefinish", 0);
 }
 
 function quiz_get_user_attempts($quizid, $userid) {
 // Returns a list of all attempts by a user
-    return get_records_select("quiz_attempts", "quiz = '$quizid' AND user = '$userid' AND timefinish > 0", 
+    return get_records_select("quiz_attempts", "quiz = '$quizid' AND userid = '$userid' AND timefinish > 0", 
                               "attempt ASC");
 }
 
@@ -833,7 +833,7 @@ function quiz_get_user_attempts_string($quiz, $attempts, $bestgrade) {
 
 function quiz_get_best_grade($quizid, $userid) {
 /// Get the best current grade for a particular user in a quiz
-    if (!$grade = get_record("quiz_grades", "quiz", $quizid, "user", $userid)) {
+    if (!$grade = get_record("quiz_grades", "quiz", $quizid, "userid", $userid)) {
         return 0;
     }
 
@@ -852,7 +852,7 @@ function quiz_save_best_grade($quiz, $userid) {
     $bestgrade = quiz_calculate_best_grade($quiz, $attempts);
     $bestgrade = (($bestgrade / $quiz->sumgrades) * $quiz->grade);
 
-    if ($grade = get_record("quiz_grades", "quiz", $quiz->id, "user", $userid)) {
+    if ($grade = get_record("quiz_grades", "quiz", $quiz->id, "userid", $userid)) {
         $grade->grade = $bestgrade;
         $grade->timemodified = time();
         if (!update_record("quiz_grades", $grade)) {
@@ -861,7 +861,7 @@ function quiz_save_best_grade($quiz, $userid) {
         }
     } else {
         $grade->quiz = $quiz->id;
-        $grade->user = $userid;
+        $grade->userid = $userid;
         $grade->grade = round($bestgrade, 2);
         $grade->timemodified = time();
         if (!insert_record("quiz_grades", $grade)) {

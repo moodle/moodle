@@ -142,7 +142,7 @@
                 }
             }
 
-            $users[$attempt->user] = $attempt->user;
+            $users[$attempt->userid] = $attempt->userid;
         }
 
         if ($users) {
@@ -169,14 +169,14 @@
     $table->width = array(10, "*", "*", 20);
 
     foreach ($grades as $grade) {
-        $picture = print_user_picture($grade->user, $course->id, $grade->picture, false, true);
+        $picture = print_user_picture($grade->userid, $course->id, $grade->picture, false, true);
 
-        if ($attempts = quiz_get_user_attempts($quiz->id, $grade->user)) {
+        if ($attempts = quiz_get_user_attempts($quiz->id, $grade->userid)) {
             $userattempts = quiz_get_user_attempts_string($quiz, $attempts, $grade->grade);
         }
 
         $table->data[] = array ($picture, 
-                                "<A HREF=\"$CFG->wwwroot/user/view.php?id=$grade->user&course=$course->id\">$grade->firstname $grade->lastname</A>", 
+                                "<A HREF=\"$CFG->wwwroot/user/view.php?id=$grade->userid&course=$course->id\">$grade->firstname $grade->lastname</A>", 
                                 "$userattempts", round($grade->grade,0));
     }
 

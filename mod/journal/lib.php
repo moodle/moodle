@@ -9,7 +9,7 @@ $JOURNAL_RATING = array ("3" => get_string("journalrating3", "journal"),
 // STANDARD MODULE FUNCTIONS /////////////////////////////////////////////////////////
 
 function journal_user_outline($course, $user, $mod, $journal) {
-    if ($entry = get_record("journal_entries", "user", $user->id, "journal", $journal->id)) {
+    if ($entry = get_record("journal_entries", "userid", $user->id, "journal", $journal->id)) {
 
         $numwords = count(preg_split("/\w\b/", $entry->text)) - 1;
 
@@ -23,7 +23,7 @@ function journal_user_outline($course, $user, $mod, $journal) {
 
 function journal_user_complete($course, $user, $mod, $journal) {
 
-    if ($entry = get_record("journal_entries", "user", $user->id, "journal", $journal->id)) {
+    if ($entry = get_record("journal_entries", "userid", $user->id, "journal", $journal->id)) {
 
         print_simple_box_start();
         if ($entry->modified) {
@@ -58,8 +58,8 @@ function journal_cron () {
 
             echo "Processing journal entry $entry->id\n";
 
-            if (! $user = get_record("user", "id", "$entry->user")) {
-                echo "Could not find user $post->user\n";
+            if (! $user = get_record("user", "id", "$entry->userid")) {
+                echo "Could not find user $entry->userid\n";
                 continue;
             }
 
@@ -156,7 +156,7 @@ function journal_grades($journalid) {
 /// Must return an array of grades, indexed by user, and a max grade.
     global $JOURNAL_RATING;
 
-    if ($return->grades = get_records_menu("journal_entries", "journal", $journalid, "", "user,rating")) {
+    if ($return->grades = get_records_menu("journal_entries", "journal", $journalid, "", "userid,rating")) {
         foreach ($return->grades as $key => $value) {
             if ($value) {
                 $return->grades[$key] = $JOURNAL_RATING[$value];
@@ -179,9 +179,9 @@ function journal_get_users_done($journal) {
                                    {$CFG->prefix}user_students s, 
                                    {$CFG->prefix}user_teachers t, 
                                    {$CFG->prefix}journal_entries j
-                             WHERE ((s.course = '$journal->course' AND s.user = u.id) 
-                                OR  (t.course = '$journal->course' AND t.user = u.id))
-                               AND u.id = j.user 
+                             WHERE ((s.course = '$journal->course' AND s.userid = u.id) 
+                                OR  (t.course = '$journal->course' AND t.userid = u.id))
+                               AND u.id = j.userid 
                                AND j.journal = '$journal->id'
                           ORDER BY j.modified DESC");
 }
@@ -205,7 +205,7 @@ function journal_log_info($log) {
                                   {$CFG->prefix}user u
                             WHERE e.id = '$log->info' 
                               AND e.journal = j.id
-                              AND e.user = u.id");
+                              AND e.userid = u.id");
 }
 
 // OTHER JOURNAL FUNCTIONS ///////////////////////////////////////////////////////////////////

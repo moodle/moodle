@@ -38,7 +38,7 @@ CREATE TABLE choice (
 CREATE TABLE choice_answers (
   id SERIAL PRIMARY KEY,
   choice integer NOT NULL default '0',
-  "user" integer NOT NULL default '0',
+  userid integer NOT NULL default '0',
   answer integer NOT NULL default '0',
   timemodified integer NOT NULL default '0'
 );

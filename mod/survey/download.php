@@ -94,15 +94,15 @@
     }
    
     foreach ($aaa as $a) {
-        if (!$results["$a->user"]) { // init new array
-            $results["$a->user"]["time"] = $a->time;
+        if (!$results["$a->userid"]) { // init new array
+            $results["$a->userid"]["time"] = $a->time;
             foreach ($order as $key => $qid) {
-                $results["$a->user"]["$qid"]["answer1"] = "";
-                $results["$a->user"]["$qid"]["answer2"] = "";
+                $results["$a->userid"]["$qid"]["answer1"] = "";
+                $results["$a->userid"]["$qid"]["answer2"] = "";
             }
         }
-        $results["$a->user"]["$a->question"]["answer1"] = $a->answer1;
-        $results["$a->user"]["$a->question"]["answer2"] = $a->answer2;
+        $results["$a->userid"]["$a->question"]["answer1"] = $a->answer1;
+        $results["$a->userid"]["$a->question"]["answer2"] = $a->answer2;
     }
 
 
@@ -136,7 +136,7 @@
             if (! $u = get_record("user", "id", $user)) {
                 error("Error finding student # $user");
             }
-            if ($n = get_record("survey_analysis", "survey", $survey->id, "user", $user)) {
+            if ($n = get_record("survey_analysis", "survey", $survey->id, "userid", $user)) {
                 $notes = $n->notes;
             } else {
                 $notes = "No notes made";

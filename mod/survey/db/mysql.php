@@ -151,6 +151,10 @@ function survey_upgrade($oldversion) {
         execute_sql("UPDATE `survey_questions` SET `text` = 'attlsm2', `shorttext` = 'attlsm2', `options` = 'scaleagree5', `intro` = 'attlsmintro' WHERE `text` = 'Connected Learning'");
         execute_sql("UPDATE `survey_questions` SET `text` = 'attlsm3', `shorttext` = 'attlsm3', `options` = 'scaleagree5', `intro` = 'attlsmintro' WHERE `text` = 'Separate Learning'");
     }
+    if ($oldversion < 2002122300) {
+        execute_sql("ALTER TABLE `survey_analysis` CHANGE `user` `userid` INT(10) UNSIGNED DEFAULT '0' NOT NULL ");
+        execute_sql("ALTER TABLE `survey_answers` CHANGE `user` `userid` INT(10) UNSIGNED DEFAULT '0' NOT NULL ");
+    }
 
     return true;
 }

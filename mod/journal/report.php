@@ -26,7 +26,7 @@
     // make some easy ways to access the entries.
     if ( $eee = get_records("journal_entries", "journal", $journal->id)) {
         foreach ($eee as $ee) {
-            $entrybyuser[$ee->user] = $ee;
+            $entrybyuser[$ee->userid] = $ee;
             $entrybyentry[$ee->id]  = $ee;
         }
         
@@ -67,14 +67,14 @@
                 $newentry->mailed     = 0;           // Make sure mail goes out (again, even)
                 $newentry->id         = $num;
                 if (! update_record("journal_entries", $newentry)) {
-                    notify("Failed to update the journal feedback for user $entry->user");
+                    notify("Failed to update the journal feedback for user $entry->userid");
                 } else {
                     $count++;
                 }
-                $entrybyuser[$entry->user]->rating     = $vals[r];
-                $entrybyuser[$entry->user]->comment    = $vals[c];
-                $entrybyuser[$entry->user]->teacher    = $USER->id;
-                $entrybyuser[$entry->user]->timemarked = $timenow;
+                $entrybyuser[$entry->userid]->rating     = $vals[r];
+                $entrybyuser[$entry->userid]->comment    = $vals[c];
+                $entrybyuser[$entry->userid]->teacher    = $USER->id;
+                $entrybyuser[$entry->userid]->timemarked = $timenow;
             }
         }
         add_to_log($course->id, "journal", "update feedback", "report.php?id=$cm->id", "$count users");

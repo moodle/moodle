@@ -79,7 +79,7 @@
             }
         }
 
-        $teacher->user   = $user->id;
+        $teacher->userid   = $user->id;
         $teacher->course = $course->id;
         if ($teachers) {
             $teacher->authority = 2;

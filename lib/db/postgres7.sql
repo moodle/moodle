@@ -54,7 +54,7 @@ CREATE TABLE course_sections (
 CREATE TABLE log (
    id SERIAL PRIMARY KEY,
    time integer NOT NULL default '0',
-   "user" integer NOT NULL default '0',
+   userid integer NOT NULL default '0',
    ip varchar(15) NOT NULL default '',
    course integer NOT NULL default '0',
    module varchar(10) NOT NULL default '',
@@ -115,21 +115,21 @@ CREATE TABLE "user" (
 
 CREATE TABLE user_admins (
    id SERIAL PRIMARY KEY,
-   "user" integer NOT NULL default '0'
+   userid integer NOT NULL default '0'
 );
 
 CREATE TABLE user_students (
    id SERIAL PRIMARY KEY,
-   "user" integer NOT NULL default '0',
+   userid integer NOT NULL default '0',
    course integer NOT NULL default '0',
-   "start" integer NOT NULL default '0',
-   "end" integer NOT NULL default '0',
+   timestart integer NOT NULL default '0',
+   timeend integer NOT NULL default '0',
    time integer NOT NULL default '0'
 );
 
 CREATE TABLE user_teachers (
    id SERIAL PRIMARY KEY,
-   "user" integer NOT NULL default '0',
+   userid integer NOT NULL default '0',
    course integer NOT NULL default '0',
    authority integer NOT NULL default '3',
    role varchar(40) NOT NULL default ''

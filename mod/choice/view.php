@@ -19,7 +19,7 @@
         error("Course module is incorrect");
     }
 
-    if ($current = get_record("choice_answers", "choice", $choice->id, "user", $USER->id)) {
+    if ($current = get_record("choice_answers", "choice", $choice->id, "userid", $USER->id)) {
         $answerchecked[$current->answer] = "CHECKED";
     }
 
@@ -36,7 +36,7 @@
             add_to_log($course->id, "choice", "update", "view.php?id=$cm->id", "$choice->id");
         } else {
             $newanswer->choice = $choice->id;
-            $newanswer->user   = $USER->id;
+            $newanswer->userid = $USER->id;
             $newanswer->answer = $form->answer;
             $newanswer->timemodified = $timenow;
             if (! insert_record("choice_answers", $newanswer)) {

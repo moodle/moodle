@@ -59,7 +59,7 @@
                         }
                     } else {
                         $newsubmission->assignment   = $assignment->id;
-                        $newsubmission->user         = $USER->id;
+                        $newsubmission->userid       = $USER->id;
                         $newsubmission->timecreated  = time();
                         $newsubmission->timemodified = time();
                         $newsubmission->numfiles     = 1;
