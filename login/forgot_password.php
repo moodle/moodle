@@ -56,6 +56,8 @@
                 error("Could not set user secret string!");
             }
 
+            $user->emailstop = 0;    // Send mail even if sending mail was forbidden
+
             if (! send_password_change_confirmation_email($user)) {
                 error("Could not send you an email to confirm the password change");
             }
