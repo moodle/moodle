@@ -1,7 +1,12 @@
 <?PHP // $Id$ 
-      // block_course_summary.php - created with Moodle 1.4 development (2004060400)
+      // block_course_summary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
-$string['blockname'] = '&#1505;&#1497;&#1499;&#1493;&#1501; &#1511;&#1493;&#1512;&#1505;';
+$string['blockname'] = 'סיכום קורס';
+$string['parentlanguage'] = 'en';
+$string['siteinfo'] = 'מידע אודות האתר';
+$string['thischarset'] = 'ISO-8859-8-I';
+$string['thisdirection'] = 'rtl';
+$string['thislanguage'] = 'Hebrew';
 
 ?>

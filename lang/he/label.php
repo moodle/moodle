@@ -1,8 +1,13 @@
 <?PHP // $Id$ 
-      // label.php - created with Moodle 1.4 development (2004062600)
+      // label.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
-$string['modulename'] = '&#1514;&#1493;&#1493;&#1497;&#1514;';
-$string['modulenameplural'] = '&#1514;&#1493;&#1493;&#1497;&#1493;&#1514;';
+$string['labeltext'] = 'טקסט תווית';
+$string['modulename'] = 'תווית';
+$string['modulenameplural'] = 'תוויות';
+$string['parentlanguage'] = 'en';
+$string['thischarset'] = 'ISO-8859-8-I';
+$string['thisdirection'] = 'rtl';
+$string['thislanguage'] = 'Hebrew';
 
 ?>
