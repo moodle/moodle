@@ -1,4 +1,4 @@
-CREATE TABLE `enrol_paypal` (
+CREATE TABLE `prefix_enrol_paypal` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `business` varchar(255) NOT NULL default '',
   `receiver_email` varchar(255) NOT NULL default '',
