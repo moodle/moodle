@@ -254,7 +254,7 @@
         return $info;
     }
 
-    //This function read the xml file and store its data from the sections in a object
+    //This function read the xml file and store its data from the blocks in a object
     function restore_read_xml_blocks ($xml_file) {
 
         //We call the main read_xml function, with todo = BLOCKS
@@ -833,7 +833,7 @@
                                     $course_module->indent = $mod->indent;
                                     $course_module->visible = $mod->visible;
                                     $course_module->groupmode = $mod->groupmode;
-                                    $course_module->instance = null;
+                                    $course_module->instance = 0;
                                     //NOTE: The instance (new) is calculated and updated in db in the
                                     //      final step of the restore. We don't know it yet.
                                     //print_object($course_module);					//Debug
