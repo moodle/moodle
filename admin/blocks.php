@@ -74,7 +74,7 @@
             error("Block doesn't exist!");
         }
 
-        $strblockname = get_string('modulename', 'block_'.$block->name);
+        $strblockname = get_string('blockname', 'block_'.$block->name);
 
         if (!$_GET['confirm']) {
             notice_yesno(get_string('blockdeleteconfirm', '', $strblockname),
