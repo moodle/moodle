@@ -389,15 +389,17 @@ function chat_login_user($chatid, $version, $groupid, $course) {
             return false;
         }
 
-        $message->chatid    = $chatuser->chatid;
-        $message->userid    = $chatuser->userid;
-        $message->groupid   = $groupid;
-        $message->message   = 'enter';
-        $message->system    = 1;
-        $message->timestamp = time();
+        if ($version == 'header_js') {
+            $message->chatid    = $chatuser->chatid;
+            $message->userid    = $chatuser->userid;
+            $message->groupid   = $groupid;
+            $message->message   = 'enter';
+            $message->system    = 1;
+            $message->timestamp = time();
 
-        if (!insert_record('chat_messages', $message)) {
-            error('Could not insert a chat message!');
+            if (!insert_record('chat_messages', $message)) {
+                error('Could not insert a chat message!');
+            }
         }
     }
 

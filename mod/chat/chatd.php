@@ -531,7 +531,7 @@ class ChatDaemon {
         $this->dismiss_half($sessionid, false);
         $this->write_data($this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL], $CHAT_HTMLHEAD_JS);
         $this->trace('Connection accepted: '.$this->conn_sets[$sessionid][CHAT_CONNECTION_CHANNEL].', SID: '.$sessionid.' UID: '.$chatuser->userid.' GID: '.intval($groupid), E_USER_WARNING);
-/*
+
         // Finally, broadcast the "entered the chat" message
 
         $msg = &New stdClass;
@@ -544,7 +544,7 @@ class ChatDaemon {
 
         insert_record('chat_messages', $msg);
         $this->message_broadcast($msg, $this->sets_info[$sessionid]['user']);
-*/
+
         return true;
     }
 
