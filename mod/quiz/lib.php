@@ -924,6 +924,10 @@ function quiz_get_all_question_grades($questionlist, $quizid) {
 // Given a list of question IDs, finds grades or invents them to 
 // create an array of matching grades
 
+    if (empty($questionlist)) {
+        return array();
+    }
+
     $questions = quiz_get_question_grades($quizid, $questionlist);
 
     $list = explode(",", $questionlist);
