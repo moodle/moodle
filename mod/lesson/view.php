@@ -1175,7 +1175,7 @@
                         echo "<tr><td align=\"left\"><small><a href=\"import.php?id=$cm->id&amp;pageid=0\">".
                             get_string("importquestions", "lesson")."</a> | ".
                             "<a href=\"lesson.php?id=$cm->id&amp;action=addcluster&amp;pageid=0\">".
-                            get_string("addendofcluster", "lesson")."</a> | ".
+                            get_string("addcluster", "lesson")."</a> | ".
                             "<a href=\"lesson.php?id=$cm->id&action=addbranchtable&pageid=0\">".
                             get_string("addabranchtable", "lesson")."</a> | ".
                             "<a href=\"lesson.php?id=$cm->id&amp;action=addpage&amp;pageid=0\">".
