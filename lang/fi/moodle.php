@@ -213,13 +213,13 @@ $string['license'] = "GPL Lisenssi";
 $string['listofallpeople'] = "Kaikki henkilöt";
 $string['livelogs'] = "Anna viimeisen tunnin loki";
 $string['location'] = "Sijainti";
-$string['loggedinas'] = "Olet kijaantunut tunnuksella  \$a.";
-$string['loggedinnot'] = "Et ole kirjaantunut.";
-$string['login'] = "Kirjaannu";
-$string['loginas'] = "Kirjaannu toisena";
-$string['loginguest'] = "Kirjannu vieraana";
-$string['loginsite'] = "Kirjaannu sivustoon";
-$string['loginsteps'] = "Hei! Käytä hetki aikaa luodaksesi itsellesi käyttäjätunnus ja salasana sivustoon. Tämä mahdolistaa sivuston vapaan käytön.
+$string['loggedinas'] = "Olet kirjautunut nimellä  \$a.";
+$string['loggedinnot'] = "Et ole kirjauntunut.";
+$string['login'] = "Kirjaudu";
+$string['loginas'] = "Kirjaudu toisena";
+$string['loginguest'] = "Kirjaudu vieraana";
+$string['loginsite'] = "Kirjaudu sivustoon";
+$string['loginsteps'] = "Hei! Käytä hetki aikaa luodaksesi itsellesi käyttäjätunnus ja salasana sivustoon. Tämä mahdollistaa sivuston vapaan käytön.
    Jotkut kurssit saattavat myös vaatia kertakäyttöisen &quot;avaimen&quot; jonka saat myöhemmin. Luodaksi tunnuksen itsellesi sinum pitää:
    <OL size=2>
    <LI>Täyttää  <A HREF=\$a>uusi tunnus</A> lomake henkilötiedoillasi.
@@ -232,13 +232,13 @@ $string['loginsteps'] = "Hei! Käytä hetki aikaa luodaksesi itsellesi käyttäjätun
    </OL>";
 $string['loginstepsnone'] = "Hei! 
 <p>Jotta voisit käyttää kursseja, sinun pitää  luoda itsellesi käyytäjätunnus. Keksit vain itsellesi käyttätunnuksen ja salasanan ja käytät niitä tältä sivulta. Jos käyttäjätunnus on jo varattu, pitää sinun valita toinen käyttätunnus.</p>";
-$string['loginto'] = "Kirjaannu \$a";
-$string['loginusing'] = "Kirjaannu tästä käyttäen tunnusta ja salasanaasi";
-$string['logout'] = "Logout";
+$string['loginto'] = "Kirjaudu \$a";
+$string['loginusing'] = "Kirjaudu tästä käyttäen tunnusta ja salasanaasi";
+$string['logout'] = "Kirjaudu ulos";
 $string['logs'] = "Tapahtumat";
 $string['mainmenu'] = "Päävalikko";
 $string['makeafolder'] = "Luo kansio";
-$string['makeeditable'] = "Jos annan web-palveimelle kirjoitusoikeudet kansioon '\$a' . Voit muokata tätä tiedostoa suoraan tältä sivulta.";
+$string['makeeditable'] = "Jos annat web-palveimelle kirjoitusoikeudet kansioon '\$a' . Voit muokata tätä tiedostoa suoraan tältä sivulta.";
 $string['managedatabase'] = "Huolla tietokantaa";
 $string['markthistopic'] = "Merkitse tämä aihe aktiiviseksi.";
 $string['maximumchars'] = "Maksimi määrä \$a merkkejä";
@@ -338,7 +338,7 @@ $string['passwordchanged'] = "Salasana on vaihdettu";
 $string['passwordsdiffer'] = "Salasanat eivät täsmää";
 $string['passwordsent'] = "Salasana on lähetetty";
 $string['passwordsenttext'] = "   <P>Viesti on lähetetty osoiteeseen \$a->email.
-   <P><B>Tarkista vietistä uusi salsanasi</B>
+   <P><B>Tarkista viestistä uusi salasanasi</B>
    <P>uusi salasana on automaattisesti generoitu, joten haluat varmaan
    <A HREF=\$a->link>vaihtaa sen sen joksikin helpommin muistettavaksi</A>.";
 $string['people'] = "Henkilöt";
@@ -394,7 +394,7 @@ $string['stringsnotset'] = "Seuraavat merkkijonot eivät ole määriteltynä tiedost
 $string['success'] = "Valmis!";
 $string['summary'] = "Yhteenveto";
 $string['summaryof'] = "\$a Yhteenveto";
-$string['supplyinfo'] = "Olehyvä ja kerro jotain itsestäsi";
+$string['supplyinfo'] = "Ole hyvä ja kerro jotain itsestäsi";
 $string['teacheronly'] = "vain \$a :lle";
 $string['textformat'] = "Testi";
 $string['thanks'] = "Kiitokset";
