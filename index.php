@@ -42,27 +42,15 @@
   
          if ($sections[0]->sequence or isediting($site->id)) {
              get_all_mods($site->id, $mods, $modnames, $modnamesplural, $modnamesused);
-             print_simple_box(get_string("mainmenu"), "CENTER", $side, "$THEME->cellheading");
-         }   
-
-         if ($sections[0]->sequence) {
-             print_section($site, $sections[0], $mods, $modnamesused, true, $side);
-         }
-
-         if (isediting($site->id)) {
-             echo "<DIV ALIGN=right>";
-             popup_form("$CFG->wwwroot/course/mod.php?id=$site->id&section=0&add=", 
-                         $modnames, "section0", "", get_string("add")."...");
-             echo "</DIV>";
+             print_section_block(get_string("mainmenu"), $site, $sections[0], 
+                                 $mods, $modnames, $modnamesused, true, $side, isediting($site->id));
          }
 
          if ($site->newsitems > 0 ) {
              $categories = get_all_categories();
              if (count($categories) > 1) {
-                 print_simple_box(get_string("categories"), "CENTER", $side, "$THEME->cellheading");
                  print_course_categories($categories, "none", $side);
              } else {
-                 print_simple_box(get_string("courses"), "CENTER", $side, "$THEME->cellheading");
                  $category = array_shift($categories);
                  print_all_courses($category->id, "minimal", 10);
              }
@@ -83,7 +71,7 @@
      echo "<TD WIDTH=70% VALIGN=TOP>";
 
      if ($site->newsitems == 0 ) {
-         print_simple_box(get_string("availablecourses"), "CENTER", "100%", "$THEME->cellheading");
+         print_heading_block(get_string("availablecourses"));
          print_spacer(8,1);
          $categories = get_all_categories();
          if (count($categories) > 1) {
@@ -113,7 +101,7 @@
          } else {
              $headertext = get_string("sitenews");
          }
-         print_simple_box($headertext, "CENTER", "100%", $THEME->cellheading);
+         print_heading_block($headertext);
          print_spacer(8,1);
          forum_print_latest_discussions($newsforum->id, $site->newsitems);
      }

@@ -208,7 +208,7 @@ function print_all_courses($category="all", $style="full", $maxcount=999) {
                 }
             }   
             $fulllist = "<P><A HREF=\"$CFG->wwwroot/course/\">".get_string("fulllistofcourses")."</A>...";
-            print_side_block("", $moddata, "$fulllist", $modicon);
+            print_side_block(get_string("courses"), "", $moddata, $modicon, $fulllist);
 
         } else {
             foreach ($courses as $course) {
@@ -251,12 +251,14 @@ function print_course($course) {
         echo "</FONT></P>";
     }
     if ($course->guest) {
-        echo "<A TITLE=\"".get_string("allowguests")."\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-        echo "<IMG VSPACE=4 ALT=\"\" HEIGHT=16 WIDTH=16 BORDER=0 SRC=\"$CFG->wwwroot/user/user.gif\"></A>&nbsp;&nbsp;";
+        $strallowguests = get_string("allowguests");
+        echo "<A TITLE=\"$strallowguests\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
+        echo "<IMG VSPACE=4 ALT=\"$strallowguests\" HEIGHT=16 WIDTH=16 BORDER=0 SRC=\"$CFG->wwwroot/user/user.gif\"></A>&nbsp;&nbsp;";
     }
     if ($course->password) {
-        echo "<A TITLE=\"".get_string("requireskey")."\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
-        echo "<IMG VSPACE=4 ALT=\"\" HEIGHT=16 WIDTH=16 BORDER=0 SRC=\"$CFG->wwwroot/pix/i/key.gif\"></A>";
+        $strrequireskey = get_string("requireskey");
+        echo "<A TITLE=\"$strrequireskey\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">";
+        echo "<IMG VSPACE=4 ALT=\"$strrequireskey\" HEIGHT=16 WIDTH=16 BORDER=0 SRC=\"$CFG->wwwroot/pix/i/key.gif\"></A>";
     }
 
 
@@ -465,6 +467,40 @@ function get_all_categories() {
     return get_records_sql("SELECT * FROM course_categories ORDER by name");
 }
 
+function print_section_block($heading, $course, $section, $mods, $modnames, $modnamesused, 
+                             $absolute=true, $width="100%", $isediting=false) {
+
+    global $CFG;
+
+    $modinfo = unserialize($course->modinfo);
+    $moddata = array();
+    $modicon = array();
+    $editbuttons = "";
+
+    if ($section->sequence) {
+
+        $sectionmods = explode(",", $section->sequence);
+
+        foreach ($sectionmods as $modnumber) {
+            $mod = $mods[$modnumber];
+            if ($isediting) {
+                $editbuttons = make_editing_buttons($mod->id, $absolute);
+            }
+            $instancename = urldecode($modinfo[$modnumber]->name);
+            $modicon[] = "<img src=\"$CFG->wwwroot/mod/$mod->modname/icon.gif\" height=\"16\" width=\"16\" alt=\"$mod->modfullname\">";
+            $moddata[] = "<a title=\"$mod->modfullname\" href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</a><BR>$editbuttons";
+        }
+    }
+    if (isediting($site->id)) {
+        $editmenu = popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&section=0&add=", 
+                   $modnames, "section0", "", get_string("add")."...", "mods", get_string("activities"), true);
+        $editmenu = "<DIV ALIGN=right>$editmenu</DIV>";
+    }
+
+    print_side_block($heading, "", $moddata, $modicon, $editmenu, $width);
+}
+
+
 function print_section($course, $section, $mods, $modnamesused, $absolute=false, $width="100%") {
     global $CFG;
 
@@ -482,6 +518,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             echo " <FONT SIZE=2><A TITLE=\"$mod->modfullname\"";
             echo "   HREF=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">$instancename</A></FONT>";
             if (isediting($course->id)) {
+                echo "&nbsp;&nbsp;";
                 echo make_editing_buttons($mod->id, $absolute);
             }
             echo "<BR>\n";
@@ -490,33 +527,70 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     echo "</TD></TR></TABLE><BR>\n\n";
 }
 
-function print_side_block($heading="", $list=NULL, $footer="", $icons=NULL, $width=180) {
-    
-    echo "<TABLE WIDTH=\"$width\">\n";
-    echo "<TR><TD COLSPAN=2><P><B><FONT SIZE=2>$heading</TD></TR>\n";
-    if ($list) {
-        foreach($list as $key => $string) {
-            echo "<TR><TD VALIGN=top WIDTH=12>";
-            if ($icons[$key]) {
-                echo $icons[$key];
-            } else {
-                echo "";
-            }
-            echo "</TD>\n<TD WIDTH=100% VALIGN=top>";
-            echo "<P><FONT SIZE=2>$string</FONT></P>";
-            echo "</TD></TR>\n";
-        }
-    }
-    if ($footer) {
-        echo "<TR><TD></TD><TD ALIGN=left><P><FONT SIZE=2>$footer</TD></TR>\n";
-    }
-    echo "</TABLE><BR>\n\n";
+function print_heading_block($heading, $width="100%") {
+    global $THEME;
+
+    echo "<table width=\"$width\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">";
+    echo "<tr>";
+    echo "<td bgcolor=\"$THEME->borders\">";
+    echo "<table class=\"blockheading\" width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"5\">";
+    echo "<tr><td bgcolor=\"$THEME->cellheading\">";
+    echo stripslashes($heading);
+    echo "</td></tr></table>";
+    echo "</td></tr></table>";
 }
+
+function print_side_block($heading="", $content="", $list=NULL, $icons=NULL, $footer="", $width=180) {
+// Prints a nice side block with an optional header.  The content can either 
+// be a block of HTML or a list of text with optional icons.
+    
+    global $THEME;
+
+    echo "<table width=\"$width\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\">";
+    echo "<tr>";
+    echo "<td bgcolor=\"$THEME->borders\">";
+    echo "<table class=\"sideblock\" width=\"100%\" border=\"0\" cellspacing=\"1\" cellpadding=\"5\">";
+    if ($heading) {
+        echo "<tr>";
+        echo "<td class=\"sideblockheading\" bgcolor=\"$THEME->cellheading\">$heading</td>";
+        echo "</tr>";
+    }
+    if ($content) {
+        echo "<tr>";
+        echo "<td class=\"sideblockmain\" bgcolor=\"$THEME->cellcontent2\">$content</td>";
+        echo "</tr>";
+    } else {
+        echo "<tr><td class=\"sideblocklinks\" bgcolor=\"$THEME->cellcontent2\">";
+        echo "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"2\">";
+        foreach ($list as $key => $string) {
+            echo "<tr class=\"sideblockmain\" bgcolor=\"$THEME->cellcontent2\">";
+            if ($icons) {
+                echo "<td valign=\"top\" width=\"16\">".$icons[$key]."</td>";
+            }
+            echo "<td valign=\"top\" width=\"*\"><font size=\"-1\">$string</font></td>";
+            echo "</tr>";
+        }
+        if ($footer) {
+            echo "<tr class=\"sideblockmain\" bgcolor=\"$THEME->cellcontent2\">";
+            if ($icons) {
+                echo "<td valign=\"top\" width=\"16\">&nbsp;</td>";
+            }
+            echo "<td><font size=\"-1\">$footer</td>";
+            echo "</tr>";
+        }
+        echo "</table>";
+        echo "</td></tr>";
+    }
+
+    echo "</table></td>";
+    echo "</tr>";
+    echo "</table><br \>";
+}
+
 
 function print_admin_links ($siteid, $width=180) {
     global $THEME, $CFG;
     
-    print_simple_box(get_string("administration"), $align="CENTER", $width, $color="$THEME->cellheading");
     $icon = "<IMG SRC=\"$CFG->wwwroot/pix/i/settings.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
     $moddata[]="<A HREF=\"$CFG->wwwroot/admin/config.php\">".get_string("configvariables")."</A>";
     $modicon[]=$icon;
@@ -551,7 +625,9 @@ function print_admin_links ($siteid, $width=180) {
     $moddata[]="<A HREF=\"$CFG->wwwroot/admin/auth.php\">".get_string("authentication")."</A>";
     $modicon[]=$icon;
     $fulladmin = "<P><A HREF=\"$CFG->wwwroot/admin/\">".get_string("admin")."</A>...";
-    print_side_block("", $moddata, "$fulladmin", $modicon, $width);
+
+    print_side_block(get_string("administration"), "", $moddata, $modicon, $fulladmin, $width);
+
     echo "<IMG SRC=\"$CFG->wwwroot/pix/spacer.gif\" WIDTH=\"$width\" HEIGHT=1><BR>";
 }
 
@@ -590,8 +666,7 @@ function print_course_admin_links($course, $width=180) {
         $adminicon[]="<IMG SRC=\"$CFG->wwwroot/mod/forum/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
     }
 
-    print_simple_box(get_string("administration"), $align="CENTER", $width, $color="$THEME->cellheading");
-    print_side_block("", $admindata, "", $adminicon, $width);
+    print_side_block(get_string("administration"), "", $admindata, $adminicon, "", $width);
 }
 
 function print_course_categories($categories, $selected="none", $width=180) {
@@ -665,7 +740,7 @@ function print_course_categories($categories, $selected="none", $width=180) {
         if (isset($USER->id)) {
             $catdata[] = "<A HREF=\"$CFG->wwwroot/course/index.php?category=my\">".get_string("mycourses")."</A>";
         }
-        print_side_block("", $catdata, $showall.$mine, $caticon, $width);
+        print_side_block(get_string("categories"), "", $catdata, $caticon, $showall.$mine, $width);
     }
 }
 
@@ -875,8 +950,7 @@ function make_editing_buttons($moduleid, $absolute=false) {
     } else {
         $path = "";
     }
-    return "&nbsp; &nbsp; 
-          <A TITLE=\"$delete\" HREF=\"".$path."mod.php?delete=$moduleid\"><IMG 
+    return "<A TITLE=\"$delete\" HREF=\"".$path."mod.php?delete=$moduleid\"><IMG 
              SRC=".$path."../pix/t/delete.gif BORDER=0></A>
           <A TITLE=\"$moveup\" HREF=\"".$path."mod.php?id=$moduleid&move=-1\"><IMG 
              SRC=".$path."../pix/t/up.gif BORDER=0></A>

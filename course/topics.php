@@ -50,7 +50,6 @@
     echo "<TR VALIGN=top><TD VALIGN=top WIDTH=180>";
     
 /// Links to people
-    print_simple_box(get_string("people"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
     $moddata[]="<A TITLE=\"".get_string("listofallpeople")."\" HREF=\"../user/index.php?id=$course->id\">".get_string("participants")."</A>";
     $modicon[]="<IMG SRC=\"../user/users.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
     $editmyprofile = "<A TITLE=\"$USER->firstname $USER->lastname\" HREF=\"../user/view.php?id=$USER->id&course=$course->id\">".get_string("editmyprofile")."</A>";
@@ -60,7 +59,7 @@
         $moddata[]= $editmyprofile." <BLINK>*</BLINK>";
     }
     $modicon[]="<IMG SRC=\"../user/user.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-    print_side_block("", $moddata, "", $modicon);
+    print_side_block(get_string("people"), "", $moddata, $modicon);
 
 
 /// Links to all activity modules by type
@@ -72,14 +71,12 @@
             $modicon[] = "<IMG SRC=\"../mod/$modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
         }
     }
-    print_simple_box($stractivities, $align="CENTER", $width="100%", $color="$THEME->cellheading");
-    print_side_block("", $moddata, "", $modicon);
+    print_side_block($stractivities, "", $moddata, $modicon);
 
 /// Print a form to search forums
-    print_simple_box(get_string("search","forum"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
-    echo "<DIV ALIGN=CENTER>";
-    forum_print_search_form($course);
-    echo "</DIV>";
+    $searchform = forum_print_search_form($course, "", true);
+    $searchform = "<DIV ALIGN=\"CENTER\">$searchform</DIV>";
+    print_side_block(get_string("search","forum"), $searchform);
 
 /// Admin links and controls
     if (isteacher($course->id)) {

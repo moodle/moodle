@@ -804,16 +804,23 @@ function forum_print_mode_form($discussion, $mode) {
     echo "</P></CENTER>\n";
 }
 
-function forum_print_search_form($course, $search="") {
+function forum_print_search_form($course, $search="", $return=false) {
     global $CFG;
 
-    echo "<TABLE BORDER=0 CELLPADDING=10 CELLSPACING=0><TR><TD ALIGN=CENTER>";
-    echo "<FORM NAME=search ACTION=\"$CFG->wwwroot/mod/forum/search.php\">";
-    echo "<INPUT NAME=search TYPE=text SIZE=15 VALUE=\"$search\"><BR>";
-    echo "<INPUT VALUE=\"".get_string("searchforums", "forum")."\" TYPE=submit>";
-    echo "<INPUT NAME=id TYPE=hidden VALUE=\"$course->id\">";
-    echo "</FORM>";
-    echo "</TD></TR></TABLE>";
+    $output = "<TABLE BORDER=0 CELLPADDING=10 CELLSPACING=0><TR><TD ALIGN=CENTER>";
+    $output .= "<FORM NAME=search ACTION=\"$CFG->wwwroot/mod/forum/search.php\">";
+    $output .= "<FONT SIZE=\"-1\">";
+    $output .= "<INPUT NAME=search TYPE=text SIZE=15 VALUE=\"$search\"><BR>";
+    $output .= "<INPUT VALUE=\"".get_string("searchforums", "forum")."\" TYPE=submit>";
+    $output .= "</FONT>";
+    $output .= "<INPUT NAME=id TYPE=hidden VALUE=\"$course->id\">";
+    $output .= "</FORM>";
+    $output .= "</TD></TR></TABLE>";
+
+    if ($return) {
+        return $output;
+    }
+    echo $output;
 }
 
 

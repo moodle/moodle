@@ -39,7 +39,6 @@
     echo "<TR VALIGN=top><TD VALIGN=top WIDTH=180>";
 
 /// Links to people
-    print_simple_box(get_string("people"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
     $moddata[]="<A TITLE=\"".get_string("listofallpeople")."\" HREF=\"../user/index.php?id=$course->id\">".get_string("participants")."</A>";
     $modicon[]="<IMG SRC=\"../user/users.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
     $editmyprofile = "<A TITLE=\"$USER->firstname $USER->lastname\" HREF=\"../user/view.php?id=$USER->id&course=$course->id\">".get_string("editmyprofile")."</A>";
@@ -49,7 +48,7 @@
         $moddata[]= $editmyprofile." <BLINK>*</BLINK>";
     }
     $modicon[]="<IMG SRC=\"../user/user.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
-    print_side_block("", $moddata, "", $modicon);
+    print_side_block(get_string("people"), "", $moddata, $modicon);
 
 
 /// Then all the links to activities by type
@@ -61,14 +60,12 @@
             $modicon[] = "<IMG SRC=\"../mod/$modname/icon.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
         }
     }
-    print_simple_box($stractivities, $align="CENTER", $width="100%", $color="$THEME->cellheading");
-    print_side_block("", $moddata, "", $modicon);
+    print_side_block($stractivities, "", $moddata, $modicon);
 
 /// Print a form to search forums
-    print_simple_box(get_string("search","forum"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
-    echo "<DIV ALIGN=CENTER>";
-    forum_print_search_form($course);
-    echo "</DIV>";
+    $searchform = forum_print_search_form($course, "", true);
+    $searchform = "<DIV ALIGN=\"CENTER\">$searchform</DIV>";
+    print_side_block(get_string("search","forum"), $searchform);
     
 
 /// Admin links and controls
@@ -79,8 +76,7 @@
 
 /// Start main column
     echo "</TD><TD WIDTH=\"*\">";
-
-    print_simple_box(get_string("weeklyoutline"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
+    print_heading_block(get_string("weeklyoutline"));
 
     echo "<TABLE BORDER=0 CELLPADDING=8 CELLSPACING=0 WIDTH=100%>";
 
@@ -207,7 +203,7 @@
         // Print all the news items.
 
         if ($news) {
-            print_simple_box(get_string("latestnews"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
+            print_heading_block(get_string("latestnews"));
             print_simple_box_start("CENTER", "100%", $THEME->cellcontent, 3, 0);
             echo "<FONT SIZE=1>";
             forum_print_latest_discussions($news->id, $course->newsitems, "minimal", "DESC", false);
@@ -218,7 +214,7 @@
         
         // Print all the recent activity
         if ($course->showrecent) {
-            print_simple_box(get_string("recentactivity"), $align="CENTER", $width="100%", $color="$THEME->cellheading");
+            print_heading_block(get_string("recentactivity"));
             print_simple_box_start("CENTER", "100%", $THEME->cellcontent, 3, 0);
             print_recent_activity($course);
             print_simple_box_end();

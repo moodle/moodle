@@ -34,7 +34,6 @@
     if ($showcategories) {
         echo "<TABLE WIDTH=\"100%\" CELLPADDING=10 BORDER=0>";
         echo "<TR><TD WIDTH=180 VALIGN=TOP>";
-        print_simple_box($strcategories, "CENTER", 180, $THEME->cellheading);
         print_course_categories($categories, $category, 180);
         echo "</TD><TD WIDTH=\"100%\" VALIGN=TOP>";
     } else {
@@ -45,7 +44,7 @@
 
     if ($category) {
         if (isset($title)) {
-            print_simple_box($title, "CENTER", "100%", $THEME->cellheading);
+            print_heading_block($title);
         }
         echo "<BR>";
         print_all_courses($category);
