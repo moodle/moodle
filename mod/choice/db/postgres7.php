@@ -44,9 +44,9 @@ function choice_upgrade($oldversion) {
     if ($oldversion < 2005033000){ 
         execute_sql("ALTER TABLE {$CFG->prefix}choice_answers RENAME TO {$CFG->prefix}choice_responses;");
         execute_sql("CREATE TABLE {$CFG->prefix}choice_answers (id SERIAL PRIMARY KEY, choice integer NOT NULL default '0', answer TEXT, timemodified integer NOT NULL default '0');");
-        execute_sql("CREATE INDEX {$CFG->prefix}choice_answers_choice_idx ON {$CFG->prefix}_choice_answers (choice);");
-        execute_sql("ALTER TABLE {$CFG->prefix}choice ADD `display` INTEGER DEFAULT '0' NOT NULL AFTER `release` ");
-        execute_sql("ALTER TABLE {$CFG->prefix}choice_responses RENAME answer TO answerid");
+        execute_sql("CREATE INDEX {$CFG->prefix}choice_answers_choice_idx ON {$CFG->prefix}choice_answers (choice);");
+        table_column('choice','','display','integer','10','unsigned','0','not null');
+        table_column('choice_responses','answer','answerid','integer','10','unsigned','0','not null');
         
         //move old answers into new answer table.
         $records = get_records('choice');
@@ -65,12 +65,12 @@ function choice_upgrade($oldversion) {
         }
    
         //drop old fields
-        modify_database('','ALTER TABLE prefix_choice DROP `answer1`;');
-        modify_database('','ALTER TABLE prefix_choice DROP `answer2`;');
-        modify_database('','ALTER TABLE prefix_choice DROP `answer3`;');
-        modify_database('','ALTER TABLE prefix_choice DROP `answer4`;');
-        modify_database('','ALTER TABLE prefix_choice DROP `answer5`;');
-        modify_database('','ALTER TABLE prefix_choice DROP `answer6`;');
+        modify_database('','ALTER TABLE prefix_choice DROP answer1;');
+        modify_database('','ALTER TABLE prefix_choice DROP answer2;');
+        modify_database('','ALTER TABLE prefix_choice DROP answer3;');
+        modify_database('','ALTER TABLE prefix_choice DROP answer4;');
+        modify_database('','ALTER TABLE prefix_choice DROP answer5;');
+        modify_database('','ALTER TABLE prefix_choice DROP answer6;');
     
     }
     return true;
