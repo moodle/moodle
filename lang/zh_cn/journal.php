@@ -24,6 +24,6 @@ $string['noratinggiven'] = "没有评分可得";
 $string['overallrating'] = "全部的评分";
 $string['rate'] = "评分";
 $string['startoredit'] = "启动或编辑我的杂志条目";
-$string['viewallentries'] = "查看\$a个杂志条目";
+$string['viewallentries'] = "查看 \$a 个杂志条目";
 
 ?>

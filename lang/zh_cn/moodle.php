@@ -81,7 +81,7 @@ $string['createuserandpass'] = "´´½¨Ò»¸öĞÂµÄÓÃ»§ÃûºÍÃÜÂëÓÃÀ´µÇÂ¼";
 $string['createziparchive'] = "´´½¨zipÑ¹ËõÎÄ¼ş";
 $string['currentlanguage'] = "µ±Ç°ÓïÑÔÖÖÀà";
 $string['currentlocaltime'] = "ÄãµÄµ±µØÊ±¼ä";
-$string['databasechecking'] = "°ÑÊı¾İ¿â´Ó\$a->oldversion°æÉı¼¶µ½ \$a->newversion°æ...";
+$string['databasechecking'] = "°ÑÊı¾İ¿â´Ó \$a->oldversion °æÉı¼¶µ½ \$a->newversion °æ...";
 $string['databasesetup'] = "ÕıÔÚ°²×°Êı¾İ¿â";
 $string['databasesuccess'] = "Êı¾İ¿âÉı¼¶³É¹¦";
 $string['databaseupgrades'] = "Éı¼¶Êı¾İ¿â";
@@ -95,16 +95,16 @@ $string['defaultcoursesummary'] = "Ğ´Ò»¶Î¼òÃ÷ÓĞÈ¤µÄÎÄ×Ö½éÉÜÒ»ÏÂ¸Ã¿Î³Ì";
 $string['defaultcourseteacher'] = "½ÌÊ¦";
 $string['defaultcourseteachers'] = "½ÌÊ¦";
 $string['delete'] = "É¾³ı";
-$string['deletecheck'] = "É¾³ı\$aÂğ£¿";
-$string['deletecheckfull'] = "ÄãÕæµÄÈ·¶¨Òª³¹µ×É¾³ı\$aÂğ£¿";
+$string['deletecheck'] = "É¾³ı \$aÂğ£¿";
+$string['deletecheckfull'] = "ÄãÕæµÄÈ·¶¨Òª³¹µ×É¾³ı \$a Âğ£¿";
 $string['deletecompletely'] = "ÒÑ¾­ÍêÈ«É¾³ı";
 $string['deletecourse'] = "É¾³ıÒ»¸ö¿Î³Ì";
 $string['deletecoursecheck'] = "ÄãÕæµÄÈ·¶¨Òª³¹µ×É¾³ı¸Ã¿Î³Ì¼°ÆäËùÓĞÎÄ¼ş×ÊÁÏÂğ£¿";
 $string['deleted'] = "ÒÑ¾­É¾³ı";
-$string['deletedactivity'] = "ÒÑ¾­É¾³ı\$a";
-$string['deletedcourse'] = "\$aÒÑ¾­±»³¹µ×É¾³ı";
-$string['deletednot'] = "ÎŞ·¨É¾³ı\$a£¡";
-$string['deletingcourse'] = "ÕıÔÚÉ¾³ı\$a";
+$string['deletedactivity'] = "ÒÑ¾­É¾³ı \$a";
+$string['deletedcourse'] = "\$a ÒÑ¾­±»³¹µ×É¾³ı";
+$string['deletednot'] = "ÎŞ·¨É¾³ı \$a £¡";
+$string['deletingcourse'] = "ÕıÔÚÉ¾³ı \$a";
 $string['department'] = "Ïµ²¿";
 $string['description'] = "ÃèÊö";
 $string['displayingusers'] = "´Ó \$a->start µ½ \$a->end ÏÔÊ¾ÓÃ»§";
@@ -112,18 +112,18 @@ $string['documentation'] = "°ïÖúÎÄµµ";
 $string['downloadexcel'] = "ÒÔExcelÎÄ¼ş¸ñÊ½ÏÂÔØ";
 $string['downloadtext'] = "ÒÔ´¿ÎÄ±¾¸ñÊ½ÏÂÔØ";
 $string['doyouagree'] = "ÄãÒÑ¾­ÔÄ¶Á²¢Àí½âÁËÕâĞ©Ìõ¼şÂğ£¿";
-$string['edit'] = "±à¼­\$a";
+$string['edit'] = "±à¼­ \$a";
 $string['editcoursesettings'] = "±à¼­¿Î³ÌÉè¶¨";
-$string['editinga'] = "ÕıÔÚ±à¼­Ò»¸ö\$a";
+$string['editinga'] = "ÕıÔÚ±à¼­Ò»¸ö \$a";
 $string['editmyprofile'] = "±à¼­¸öÈË×ÊÁÏ";
 $string['editsummary'] = "±à¼­¸ÅÒª";
 $string['editthisactivity'] = "±à¼­Õâ¸ö»î¶¯ÏîÄ¿";
 $string['edituser'] = "±à¼­ÓÃ»§ÕÊºÅ";
 $string['email'] = "EmailµØÖ·";
 $string['emailconfirm'] = "È·ÈÏÄãµÄÕÊºÅ";
-$string['emailconfirmation'] = "\$a->lastname£º<br>
+$string['emailconfirmation'] = "\$a->lastname £º<br>
 &nbsp;&nbsp;&nbsp;&nbsp;ÄãºÃ£¡<br>
-&nbsp;&nbsp;&nbsp;&nbsp;¸Õ²ÅÄãÓÃÄãµÄµç×ÓÓÊÏäµØÖ·ÔÚ'\$a->sitename'ÉÏÉêÇëÁËÒ»¸öĞÂÕÊºÅ¡£
+&nbsp;&nbsp;&nbsp;&nbsp;¸Õ²ÅÄãÓÃÄãµÄµç×ÓÓÊÏäµØÖ·ÔÚ¡® \$a->sitename ¡¯ÉÏÉêÇëÁËÒ»¸öĞÂÕÊºÅ¡£
 
 
 &nbsp;&nbsp;&nbsp;&nbsp;Èç¹ûÒªÈ·ÈÏÄãµÄĞÂÕÊºÅ£¬Çëµã»÷ÒÔÏÂÁ´½Ó£º<br>
@@ -133,9 +133,9 @@ $string['emailconfirmation'] = "\$a->lastname£º<br>
 <br>&nbsp;&nbsp;&nbsp;&nbsp;ÔÚ¶àÊıµÄÓÊ¼şÈí¼şÖĞ£¬Õâ¸öµØÖ·Ó¦¸ÃÏÔÊ¾ÎªÀ¶É«µÄÁ´½Ó¡£Èç¹û²»ÊÇÕâÑù£¬Çë½«ÒÔÉÏµØÖ·¸´ÖÆÕ³Ìùµ½ÍøÒ³ä¯ÀÀÆ÷£¨±ÈÈçIE»ònetscapeµÈ£©µÄµØÖ·À¸£¬´ò¿ªÕâ¸öÍøÒ³¡£<br>
 ÖÂ
 &nbsp;&nbsp;&nbsp;&nbsp;¾´Àñ£¡
-<P align=right>'\$a->sitename'¹ÜÀíÔ±<br>
-\$a->admin</P>";
-$string['emailconfirmsent'] = "   <P>Ò»·âµç×ÓÓÊ¼şÒÑ¾­·¢ËÍµ½ÄãµÄµØÖ· <B>\$a</B>¡£
+<P align=right>¡® \$a->sitename ¡¯¹ÜÀíÔ±<br>
+\$a->admin </P>";
+$string['emailconfirmsent'] = "   <P>Ò»·âµç×ÓÓÊ¼şÒÑ¾­·¢ËÍµ½ÄãµÄµØÖ· <B> \$a </B>¡£
    <P>Õâ·âÓÊ¼ş¼òÒªËµÃ÷ÁËÄãÈçºÎÍê³É×¢²á¡£
    <P>Èç¹ûÄã»¹Óöµ½Ê²Ã´À§ÄÑ£¬ÇëºÍÍøÕ¾¹ÜÀíÔ±ÁªÏµ¡£";
 $string['emaildisplay'] = "EmailÏÔÊ¾";
@@ -147,7 +147,7 @@ $string['emailformat'] = "Email¸ñÊ½";
 $string['emailmustbereal'] = "×¢Òâ£ºÄãµÄemailµØÖ·±ØĞëÊÇÕæÊµµÄ";
 $string['enrolmentkey'] = "Ñ¡¿ÎÃÜÔ¿";
 $string['enrolmentkeyfrom'] = "¸Ã¿Î³ÌĞèÒª¡®Ñ¡¿ÎÃÜÔ¿¡¯¡ª¡ª<BR>
-Ò»¸ö´Ó\$a»ñµÃµÄÒ»´ÎĞÔÃÜÂë";
+Ò»¸ö´Ó \$a »ñµÃµÄÒ»´ÎĞÔÃÜÂë";
 $string['enrolmentkeyhint'] = "Õâ¸öÑ¡¿ÎÃÜÔ¿²»ÕıÈ·£¬ÇëÔÙÊÔÒ»´Î<BR>
 £¨ÌáÊ¾£ºÒÔ'\$a'¿ªÍ·£©";
 $string['entercourse'] = "µã»÷½øÈë¸Ã¿Î³Ì";
@@ -203,8 +203,8 @@ $string['helprichtext'] = "¹ØÓÚ¸»ÎÄ±¾¸ñÊ½HTML±à¼­Æ÷";
 $string['helptext'] = "ÈçºÎĞ´ÎÄ±¾";
 $string['hide'] = "Òş²Ø";
 $string['hits'] = "µã»÷´ÎÊı";
-$string['hitsoncourse'] = "\$a->usernameµã»÷\$a->coursenameµÄ´ÎÊı";
-$string['hitsoncoursetoday'] = "½ñÌì\$a->usernameµã»÷\$a->coursenameµÄ´ÎÊı";
+$string['hitsoncourse'] = "\$a->username µã»÷ \$a->coursename µÄ´ÎÊı";
+$string['hitsoncoursetoday'] = "½ñÌì \$a->username µã»÷ \$a->coursename µÄ´ÎÊı";
 $string['home'] = "Ö÷Ò³";
 $string['hour'] = "Ğ¡Ê±";
 $string['hours'] = "Ğ¡Ê±";
@@ -242,7 +242,7 @@ $string['loginguest'] = "×÷Îª·Ã¿ÍµÇÂ¼";
 $string['loginsite'] = "µÇÂ¼¸ÃÕ¾";
 $string['loginsteps'] = "àË£¬ÄãºÃ£¡ÎªÁËÍêÈ«·ÃÎÊËùÓĞ¿Î³Ì£¬Äã±ØĞë»¨Ò»Á½·ÖÖÓÊ±¼äÉêÇëÒ»¸öĞÂÕÊºÅ¡£¸÷¸ö¿Î³Ì¿ÉÄÜ»¹ĞèÒªÒ»¸öÒ»´ÎĞÔµÄ¡°Ñ¡¿ÎÃÜÔ¿¡±£¬ÓÃ¹ıÒ»´ÎÒÔºó¾Í²»ÔÙĞèÒª¡£Çë°´ÒÔÏÂ²½Öè£º
    <OL size=2>
-   <LI>ÌîĞ´<A HREF=\$a>×¢²áĞÂÕÊºÅ</A>ÉÏµÄ¹ØÓÚ¸öÈËÇé¿öµÄ±íµ¥¡£
+   <LI>ÌîĞ´<A HREF= \$a >×¢²áĞÂÕÊºÅ</A>ÉÏµÄ¹ØÓÚ¸öÈËÇé¿öµÄ±íµ¥¡£
    <LI>Ò»·âemail»áÂíÉÏ·¢ËÍµ½ÄãµÄemailĞÅÏäÖĞ¡£
    <LI>ÔÄ¶ÁÕâ·âemail£¬µã»÷ĞÅÖĞ°üº¬µÄÍøÒ³Á´½Ó¡£
    <LI>ÄãµÄÕÊºÅ»áÂíÉÏµÃµ½È·ÈÏ£¬¶øÄãÒ²½«µÇÂ¼µ½±¾Õ¾ÖĞ¡£
@@ -251,13 +251,13 @@ $string['loginsteps'] = "àË£¬ÄãºÃ£¡ÎªÁËÍêÈ«·ÃÎÊËùÓĞ¿Î³Ì£¬Äã±ØĞë»¨Ò»Á½·ÖÖÓÊ±¼äÉêÇ
    <LI>ÕâÊ±Äã¿ÉÒÔÍêÈ«·ÃÎÊ¿Î³Ì¡£´Ó´ËºóÄãÖ»ĞèÊäÈëÄã¸öÈËµÄÓÃ»§ÃûºÍÃÜÂë£¨ÔÚ±¾Ò³ÃæµÄ±íµ¥ÖĞ£©ÒÔµÇÂ¼²¢½øÈëÈÎÒ»¸öÄãÒÑ×¢²áµÄ¿Î³Ì¡£
    </OL>";
 $string['loginstepsnone'] = "àË£¡<P>ÎªÁËÍêÈ«·ÃÎÊ¿Î³ÌÄã±ØĞëÉêÇëÒ»¸öĞÂÕÊºÅ¡£<P>ÄãËùĞèÒª×öµÄÊÇ´´½¨Ò»¸öÓÃ»§ÃûºÍÃÜÂë£¬²¢ÔÚ±¾Ò³ÃæÖĞÊ¹ÓÃ¡£<P>Èç¹û±ğÈËÒÑ¾­ÉêÇëÁËÏàÍ¬µÄÓÃ»§Ãû£¬Ö»ºÃÇëÄãÎ¯ÇüÒ»ÏÂÓÃ±ğµÄÓÃ»§ÃûÖØÊÔ¡£";
-$string['loginto'] = "µÇÂ¼µ½\$a";
+$string['loginto'] = "µÇÂ¼µ½ \$a";
 $string['loginusing'] = "ÓÃÄãµÄÓÃ»§ÃûºÍÃÜÂëÔÚ´ËµÇÂ¼";
 $string['logout'] = "µÇÀë";
 $string['logs'] = "ÈÕÖ¾";
 $string['mainmenu'] = "Ö÷²Ëµ¥";
 $string['makeafolder'] = "ĞÂ½¨Ò»¸öÎÄ¼ş¼Ğ";
-$string['makeeditable'] = "Èç¹ûÄãÉèÖÃ'\$a'ÎªWeb·şÎñÆ÷£¨ÀıÈçapache£©¿ÉĞ´£¬ÄÇÃ´Äã¿ÉÒÔÔÚ´ËÒ³ÖĞÖ±½Ó±à¼­¸ÃÎÄ¼ş";
+$string['makeeditable'] = "Èç¹ûÄãÉèÖÃ' \$a 'ÎªWeb·şÎñÆ÷£¨ÀıÈçapache£©¿ÉĞ´£¬ÄÇÃ´Äã¿ÉÒÔÔÚ´ËÒ³ÖĞÖ±½Ó±à¼­¸ÃÎÄ¼ş";
 $string['managedatabase'] = "¹ÜÀíÊı¾İ¿â";
 $string['markthistopic'] = "±ê¼Ç¸Ã»°ÌâÎªµ±Ç°»°Ìâ";
 $string['maximumchars'] = "×î¶à \$a ¸ö×Ö·û";
@@ -304,9 +304,9 @@ $string['never'] = "´Ó²»";
 $string['new'] = "ĞÂ";
 $string['newaccount'] = "ĞÂÕÊºÅ";
 $string['newpassword'] = "ĞÂÃÜÂë";
-$string['newpasswordtext'] = "\$a->lastname£º<br>
+$string['newpasswordtext'] = "\$a->lastname £º<br>
 &nbsp;&nbsp;&nbsp;&nbsp;ÄãºÃ£¡ 
-<br>&nbsp;&nbsp;&nbsp;&nbsp;ÄãÔÚ'\$a->sitename'ÉÏµÄÕÊºÅÃÜÂëÒÑ±»ÖØÉè£¬ÕâÊÇÄãĞÂµÄÁÙÊ±ÃÜÂë¡£
+<br>&nbsp;&nbsp;&nbsp;&nbsp;ÄãÔÚ¡® \$a->sitename ¡¯ÉÏµÄÕÊºÅÃÜÂëÒÑ±»ÖØÉè£¬ÕâÊÇÄãĞÂµÄÁÙÊ±ÃÜÂë¡£
 
 <br>&nbsp;&nbsp;&nbsp;&nbsp;ÏÖÔÚÄãµÄµÇÂ¼ĞÅÏ¢ÊÇ£º
 <br>&nbsp;&nbsp;&nbsp;&nbsp;   ÓÃ»§Ãû£º \$a->username
@@ -361,10 +361,10 @@ $string['passwordchanged'] = "ÃÜÂëÒÑ±»¸ü¸Ä";
 $string['passwordrecovery'] = "ÊÇµÄ£¬°ïÎÒµÇÂ¼°É";
 $string['passwordsdiffer'] = "ÕâĞ©ÃÜÂë²»¶Ô";
 $string['passwordsent'] = "ÃÜÂëÒÑ±»·¢ËÍ";
-$string['passwordsenttext'] = "   <P>Ò»·âemailÒÑ¾­ËÍµ½ÄãµÄÓÊÏä\$a->email¡£
+$string['passwordsenttext'] = "   <P>Ò»·âemailÒÑ¾­ËÍµ½ÄãµÄÓÊÏä \$a->email¡£
    <P><B>Çë²éÊÕÄãµÄemailÒÔ»ñÈ¡ÃÜÂë¡£</B>
    <P>Õâ¸öĞÂÃÜÂëÊÇ×Ô¶¯Éú³ÉµÄ£¬ËùÒÔÄã¿ÉÄÜĞèÒªµã»÷
-   <A HREF=\$a->link>ÕâÀï</A>¸Ä³ÉÄã×Ô¼ºÈİÒ×¼ÇµÄÃÜÂë¡£";
+   <A HREF= \$a->link >ÕâÀï</A>¸Ä³ÉÄã×Ô¼ºÈİÒ×¼ÇµÄÃÜÂë¡£";
 $string['people'] = "ÈËÎï";
 $string['personalprofile'] = "¸öÈË×ÊÁÏ";
 $string['phone'] = "µç»°";
@@ -417,11 +417,11 @@ $string['someerrorswerefound'] = "¿ÉÄÜÓĞĞ©ĞÅÏ¢È±Ê§»òÓĞÎó¡£ÏêÏ¸Çé¿öÇë¿´ÏÂÃæ¡£";
 $string['startdate'] = "¿Î³Ì¿ªÊ¼ÈÕÆÚ";
 $string['startsignup'] = "ÏÖÔÚ¾ÍÒÔÉêÇëÒ»¸öĞÂÕÊºÅ¿ªÊ¼°É£¡";
 $string['status'] = "×´Ì¬";
-$string['stringsnotset'] = "ÒÔÏÂ×Ö´®ÔÚ\$aÖĞÃ»ÓĞ¶¨Òå";
+$string['stringsnotset'] = "ÒÔÏÂ×Ö´®ÔÚ \$a ÖĞÃ»ÓĞ¶¨Òå";
 $string['studentnotallowed'] = "±§Ç¸£¬Äã×÷Îª'\$a'²»ÄÜ½øÈë¸Ã¿Î³Ì";
 $string['success'] = "³É¹¦";
 $string['summary'] = "¸ÅÒª";
-$string['summaryof'] = "\$aµÄ¸ÅÒª";
+$string['summaryof'] = "\$a µÄ¸ÅÒª";
 $string['supplyinfo'] = "ÇëÌá¹©Ò»Ğ©¹ØÓÚÄã×Ô¼ºµÄĞÅÏ¢";
 $string['teacheronly'] = "\$a ×¨ÓÃ";
 $string['textediting'] = "ÔÚ±à¼­ÎÄ±¾Ê±";
@@ -446,7 +446,7 @@ $string['unenrol'] = "ÍËÑ¡";
 $string['unenrolme'] = "ÎÒÒªÍËÑ¡ \$a";
 $string['unenrolsure'] = "ÄãÈ·¶¨ÒªÍËÑ¡¸Ã¿Î³Ì \$a £¿";
 $string['unsafepassword'] = "²»°²È«µÄÃÜÂë¡ª¡ªÊÔÊÔ±ğµÄ°É";
-$string['unusedaccounts'] = "ÕÊºÅ\$aÌì²»ÓÃ½«ÊÓ×÷ÍËÑ¡¡£";
+$string['unusedaccounts'] = "ÕÊºÅ \$a Ìì²»ÓÃ½«ÊÓ×÷ÍËÑ¡¡£";
 $string['unzip'] = "½âÑ¹";
 $string['update'] = "¸üĞÂ";
 $string['updated'] = "ÒÑ¸üĞÂµÄ \$a";

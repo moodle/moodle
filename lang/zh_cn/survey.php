@@ -189,8 +189,8 @@ $string['surveycompleted'] = "你已经完成了该问卷。以下图表概要显示了你的结果与班
 $string['surveyname'] = "问卷名称";
 $string['surveysaved'] = "问卷已保存";
 $string['surveytype'] = "问卷类型";
-$string['thanksforanswers'] = "\$a，谢谢你回答了这个问卷！";
+$string['thanksforanswers'] = "\$a ，谢谢你回答了这个问卷！";
 $string['time'] = "时间";
-$string['viewsurveyresponses'] = "查看\$a个调查答卷";
+$string['viewsurveyresponses'] = "查看 \$a 个调查答卷";
 
 ?>
