@@ -38,11 +38,12 @@ function journal_user_complete($course, $user, $mod, $journal) {
     }
 }
 
+
 function journal_user_complete_index($course, $user, $journal, $journalopen, $heading) {
 /// Prints a journal, entry and feedback ... used on the journal index page.
 
     if (isteacher($course->id)) {
-        $entrycount = count_records("journal_entries", "journal", $journal->id);
+        $entrycount = journal_count_entries($journal, get_current_group($course->id));
         $entryinfo  = "&nbsp;(<a href=\"report.php?id=$journal->coursemodule\">".get_string("viewallentries","journal", $entrycount)."</a>)";
     } else {
         $entryinfo = "";
@@ -317,6 +318,42 @@ function journal_get_users_done($journal) {
     }
     return(array_merge($studentjournals, $teacherjournals));
 }
+
+function journal_count_entries($journal, $groupid=0) {
+/// Counts all the journal entries (optionally in a given group)
+
+    global $CFG, $db;
+
+    if ($groupid) {     /// How many in a particular group?
+        return count_records_sql("SELECT COUNT(*) 
+                                     FROM {$CFG->prefix}journal_entries j,
+                                          {$CFG->prefix}groups_members g
+                                    WHERE j.journal = $journal->id 
+                                      AND g.groupid = '$groupid' 
+                                      AND j.userid = g.userid");
+
+    } else { /// Count all the entries from the whole course
+        $studentjournals = count_records_sql("SELECT COUNT(*)
+                                                 FROM {$CFG->prefix}journal_entries j,
+                                                      {$CFG->prefix}user u, 
+                                                      {$CFG->prefix}user_students s
+                                                WHERE j.userid = u.id
+                                                  AND s.userid = u.id 
+                                                  AND j.journal = $journal->id
+                                                  AND s.course = $journal->course ");
+
+        $teacherjournals = count_records_sql("SELECT COUNT(*)
+                                                 FROM {$CFG->prefix}journal_entries j,
+                                                      {$CFG->prefix}user u, 
+                                                      {$CFG->prefix}user_teachers t
+                                                WHERE j.userid = u.id
+                                                  AND t.userid = u.id 
+                                                  AND j.journal = $journal->id
+                                                  AND t.course = $journal->course ");
+        return ($studentjournals + $teacherjournals);
+    }
+}
+
 
 function journal_get_unmailed_graded($cutofftime) {
     global $CFG;

@@ -37,8 +37,18 @@
                   update_module_button($cm->id, $course->id, $strjournal), navmenu($course, $cm));
 
     if (isteacher($course->id)) {
-        $entrycount = count_records("journal_entries", "journal", $journal->id);
-        echo "<p align=right><a href=\"report.php?id=$cm->id\">".get_string("viewallentries","journal", $entrycount)."</a></p>";
+        $currentgroup = get_current_group($course->id);
+        if ($currentgroup and isteacheredit($course->id)) {
+            $group = get_record("groups", "id", $currentgroup);
+            $groupname = " ($group->name)";
+        } else {
+            $groupname = "";
+        }
+        $entrycount = journal_count_entries($journal, $currentgroup);
+
+        echo "<p align=right><a href=\"report.php?id=$cm->id\">".
+              get_string("viewallentries","journal", $entrycount)."</a>$groupname</p>";
+
     } else if (!$cm->visible) {
         notice(get_string("activityiscurrentlyhidden"));
     }
