@@ -19,14 +19,19 @@
         error("Course module is incorrect");
     }
 
-    for ($i=1; $i <= $CHOICE_MAX_NUMBER; $i++) {
-        $answerchecked[$i] = '';
+    if ($choice->option) {
+        foreach ($choice->option as $optionid => $text) {
+            $answerchecked[$optionid] = '';
+        }
     }
-    if (isset($USER->id) and $current = get_record("choice_responses", "choice", $choice->id, "userid", $USER->id)) {
-        $answerchecked[$current->answerid] = 'CHECKED';
+
+    if (isset($USER->id) && $current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $USER->id)) {
+        $answerchecked[$current->optionid] = 'checked="checked"';
     } else {
         $current = false;
     }
+
+/// Submit any new data if there is any
 
     if ($form = data_submitted()) {
         $timenow = time();
@@ -37,18 +42,19 @@
         } else {
             if ($current) {
                 $newanswer = $current;
-                $newanswer->answerid = $form->answer;
+                $newanswer->optionid = $form->answer;
                 $newanswer->timemodified = $timenow;
-                if (! update_record("choice_responses", $newanswer)) {
-                    error("Could not update your choice");
+                if (! update_record("choice_answers", $newanswer)) {
+                    error("Could not update your choice because of a database error");
                 }
                 add_to_log($course->id, "choice", "choose again", "view.php?id=$cm->id", $choice->id, $cm->id);
             } else {
-                $newanswer->choice = $choice->id;
+                $newanswer = NULL;
+                $newanswer->choiceid = $choice->id;
                 $newanswer->userid = $USER->id;
-                $newanswer->answerid = $form->answer;
+                $newanswer->optionid = $form->answer;
                 $newanswer->timemodified = $timenow;
-                if (! insert_record("choice_responses", $newanswer)) {
+                if (! insert_record("choice_answers", $newanswer)) {
                     error("Could not save your choice");
                 }
                 add_to_log($course->id, "choice", "choose", "view.php?id=$cm->id", $choice->id, $cm->id);
@@ -57,6 +63,9 @@
         redirect("view.php?id=$cm->id");
         exit;
     }
+
+
+/// Display the choice and possibly results
 
     $strchoice = get_string("modulename", "choice");
     $strchoices = get_string("modulenameplural", "choice");
@@ -75,12 +84,12 @@
     }
 
     if (isteacher($course->id)) {
-        if ( $allanswers = get_records("choice_responses", "choice", $choice->id)) {
+        if ( $allanswers = get_records("choice_answers", "choiceid", $choice->id)) {
             $responsecount = count($allanswers);
         } else {
             $responsecount = 0;
         }
-        echo "<p align=\"right\"><a href=\"report.php?id=$cm->id\">".get_string("viewallresponses", "choice", $responsecount)."</a></p>";
+        echo "<div align=\"right\"><a href=\"report.php?id=$cm->id\">".get_string("viewallresponses", "choice", $responsecount)."</a></div>";
     } else if (!$cm->visible) {
         notice(get_string("activityiscurrentlyhidden"));
     }
@@ -90,7 +99,7 @@
     }
 
 
-    // print the form
+/// Print the form
 
     if ($choice->timeopen > time() ) {
         print_simple_box(get_string("notopenyet", "choice", userdate($choice->timeopen)), "center");
@@ -102,42 +111,45 @@
     // They haven't made their choice yet or updates allowed and choice is open
 
         echo "<form name=\"form\" method=\"post\" action=\"view.php\">";        
-                switch ($choice->display) {
-                case "0":     //horizontal display mode.
-                    echo "<table cellpadding=\"20\" cellspacing=\"20\" align=\"center\"><tr>";
-                    foreach ($choice->answer as $key => $answer) {
-                        if ($answer) {                                                 
+
+        switch ($choice->display) {
+            case CHOICE_DISPLAY_HORIZONTAL:
+                echo "<table cellpadding=\"20\" cellspacing=\"20\" align=\"center\"><tr>";
+                foreach ($choice->option as $optionid => $text) {
+                    if ($text) {                                                 
+                        echo "<td align=\"center\">";
+                        echo "<input type=\"radio\" name=\"answer\" value=\"".$optionid."\" ".$answerchecked[$optionid]." alt=\"$text\" />";                
+                        echo format_text($text);
+                        echo "</td>";
+                    }
+                }
+                echo "</tr>";
+                break;
+
+            case CHOICE_DISPLAY_VERTICAL:
+                echo "<table cellpadding=\"10\" cellspacing=\"10\" align=\"center\">";     
+                if ( $choice->release == CHOICE_RELEASE_ALWAYS OR ( $choice->release == CHOICE_RELEASE_AFTER_ANSWER and $current )) {            
+                    echo "<tr><td></td><td align=\"center\"><strong>".get_string("responses", "choice")."</strong></td></tr>";
+                }
+
+                foreach ($choice->option as $optionid => $text) {
+                    if ($answer) {                                                                 
+                        echo "<tr><td align=\"left\">";              
+                        echo "<input type=\"radio\" name=\"answer\" value=\"".$optionid."\" ".$answerchecked[$optionid]." alt=\"$text\" />".
+                              format_text($text, FORMAT_PLAIN);                            
+                        echo "</td>";
+
+                        if ( $choice->release == CHOICE_RELEASE_ALWAYS OR ( $choice->release == CHOICE_RELEASE_AFTER_ANSWER and $current )) {            
                             echo "<td align=\"center\">";
-                            echo "<input type=\"radio\" name=\"answer\" value=\"".$choice->answerid[$key]."\" ".$answerchecked[$key]." alt=\"$answer\" />";                
-                            echo format_text($answer);
+                            echo count_records("choice_answers", "optionid", $optionid);
                             echo "</td>";
                         }
+                        echo "</tr>";
                     }
-                    echo "</tr>";
-                    break;
-                case "1":    //vertical display mode
-                    echo "<table cellpadding=\"10\" cellspacing=\"10\" align=\"center\">";     
-		            if ( $choice->release == CHOICE_RELEASE_ALWAYS OR ( $choice->release == CHOICE_RELEASE_AFTER_ANSWER and $current )) {            
-                        echo "<tr><td></td><td align=\"center\"><strong>".get_string("responses", "choice")."</strong></td></tr>";
-                    }
-                                  
-                    foreach ($choice->answer as $key => $answer) {
-                        if ($answer) {                                                                 
-                            echo "<tr><td align=\"left\">";              
-                            echo "<input type=\"radio\" name=\"answer\" value=\"".$choice->answerid[$key]."\" ".$answerchecked[$key]." alt=\"$answer\" />".format_text($answer, FORMAT_PLAIN);                			
-				            echo "</td>";
-				           			            
-				            if ( $choice->release == CHOICE_RELEASE_ALWAYS OR ( $choice->release == CHOICE_RELEASE_AFTER_ANSWER and $current )) {            
-				                echo "<td align=\"center\">";
-				                echo count_records("choice_responses", "answer", $choice->answerid[$key]);
-     			                echo "</td>";
-     			            }
-	                        echo "</tr>";
-	                    }
-	                }
-					break;
                 }
-        
+                break;
+        }
+
         echo "</table>";
         echo "<center>";
         echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
@@ -162,10 +174,11 @@
         print_heading(get_string("responses", "choice"));
 
         if ($currentgroup) {
-            $users = get_group_users($currentgroup, "u.firstname ASC");
+            $users = get_group_users($currentgroup, "u.firstname ASC", '', 'u.id, u.picture, u.firstname, u.lastname');
         } else {
-            $users = get_course_users($course->id, "u.firstname ASC");
+            $users = get_course_users($course->id, "u.firstname ASC", '', 'u.id, u.picture, u.firstname, u.lastname');
         }
+
 
         if (!$users) {
             print_heading(get_string("nousersyet"));
@@ -173,7 +186,7 @@
             exit;
         }
 
-        if ( $allresponses = get_records("choice_responses", "choice", $choice->id)) {
+        if ($allresponses = get_records("choice_answers", "choiceid", $choice->id)) {
             foreach ($allresponses as $aa) {
                 $answers[$aa->userid] = $aa;
             }
@@ -183,20 +196,20 @@
 
         $timenow = time();
 
-        foreach ($choice->answer as $key => $answer) {
-            $useranswer[$key] = array();
+        foreach ($choice->option as $optionid => $text) {
+            $useranswer[$optionid] = array();
         }
         foreach ($users as $user) {
             if (!empty($user->id) and !empty($answers[$user->id])) {
                 $answer = $answers[$user->id];
-                $useranswer[(int)$answer->answerid][] = $user;
+                $useranswer[(int)$answer->optionid][] = $user;
             } else {
                 $useranswer[0][] = $user;
             }
         }
-        foreach ($choice->answer as $key => $answer) {
-            if (!$choice->answer[$key]) {
-                unset($useranswer[$key]);     // Throw away any data that doesn't apply
+        foreach ($choice->option as $optionid => $text) {
+            if (!$choice->option[$optionid]) {
+                unset($useranswer[$optionid]);     // Throw away any data that doesn't apply
             }
         }
         ksort($useranswer);
@@ -210,30 +223,30 @@
 
             echo "<table cellpadding=\"5\" cellspacing=\"10\" align=\"center\">";
             echo "<tr>";
-            foreach ($useranswer as $key => $answer) {
-                if ($key) {
-                    echo "<th class=\"col$key\" width=\"$tablewidth%\">";
+            foreach ($useranswer as $optionid => $userlist) {
+                if ($optionid) {
+                    echo "<th class=\"col$optionid\" width=\"$tablewidth%\">";
                 } else if ($choice->showunanswered) {
-                    echo "<th class=\"col$key\" width=\"$tablewidth%\">";
+                    echo "<th class=\"col$optionid\" width=\"$tablewidth%\">";
                 } else {
                     continue;
                 }
-                echo format_string(choice_get_answer($choice, $key));
+                echo format_string(choice_get_option_text($choice, $optionid));
                 echo "</th>";
             }
             echo "</tr><tr>";
 
-            foreach ($useranswer as $key => $answer) {
-                if ($key) {
-                    echo "<td class=\"col$key\" width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\">";
+            foreach ($useranswer as $optionid => $userlist) {
+                if ($optionid) {
+                    echo "<td class=\"col$optionid\" width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\">";
                 } else if ($choice->showunanswered) {
-                    echo "<td class=\"col$key\" width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\">";
+                    echo "<td class=\"col$optionid\" width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\">";
                 } else {
                     continue;
                 }
 
                 echo "<table width=\"100%\">";
-                foreach ($answer as $user) {
+                foreach ($userlist as $user) {
                     echo "<tr><td width=\"10\" nowrap=\"nowrap\">";
                     print_user_picture($user->id, $course->id, $user->picture);
                     echo "</td><td width=\"100%\" nowrap=\"nowrap\">";
@@ -253,38 +266,38 @@
 
             echo "<table cellpadding=\"5\" cellspacing=\"10\" align=\"center\">";
             echo "<tr>";
-            foreach ($useranswer as $key => $answer) {
-                if ($key) {
+            foreach ($useranswer as $optionid => $userlist) {
+                if ($optionid) {
                     echo "<th width=\"$tablewidth%\">";
                 } else if ($choice->showunanswered) {
                     echo "<th width=\"$tablewidth%\">";
                 } else {
                     continue;
                 }
-                echo choice_get_answer($choice, $key);
+                echo choice_get_option_text($choice, $optionid);
                 echo "</th>";
             }
             echo "</tr>";
 
             $maxcolumn = 0;
-            foreach ($useranswer as $key => $answer) {
-                if (!$key and !$choice->showunanswered) {
+            foreach ($useranswer as $optionid => $userlist) {
+                if (!$optionid and !$choice->showunanswered) {
                     continue;
                 }
-                $column[$key] = count($answer);
-                if ($column[$key] > $maxcolumn) {
-                    $maxcolumn = $column[$key];
+                $column[$optionid] = count($userlist);
+                if ($column[$optionid] > $maxcolumn) {
+                    $maxcolumn = $column[$optionid];
                 }
             }
 
             echo "<tr>";
-            foreach ($useranswer as $key => $answer) {
-                if (!$key and !$choice->showunanswered) {
+            foreach ($useranswer as $optionid => $userlist) {
+                if (!$optionid and !$choice->showunanswered) {
                     continue;
                 }
                 $height = 0;
                 if ($maxcolumn) {
-                    $height = $COLUMN_HEIGHT * ((float)$column[$key] / (float)$maxcolumn);
+                    $height = $COLUMN_HEIGHT * ((float)$column[$optionid] / (float)$maxcolumn);
                 }
                 echo "<td valign=\"bottom\" align=\"center\">";
                 echo "<img src=\"column.png\" height=\"$height\" width=\"49\" alt=\"\" />";
@@ -293,11 +306,11 @@
             echo "</tr>";
 
             echo "<tr>";
-            foreach ($useranswer as $key => $answer) {
-                if (!$key and !$choice->showunanswered) {
+            foreach ($useranswer as $optionid => $userlist) {
+                if (!$optionid and !$choice->showunanswered) {
                     continue;
                 }
-                echo "<td align=\"center\">".$column[$key]."</td>";
+                echo "<td align=\"center\">".$column[$optionid]."</td>";
             }
             echo "</tr></table>";
 
