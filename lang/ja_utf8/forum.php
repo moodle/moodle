@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -68,6 +68,7 @@ $string['markunread'] = '未読にする';
 $string['maxattachmentsize'] = '最大添付ファイルサイズ';
 $string['maxtimehaspassed'] = '申し訳ございません、この投稿 ( $a ) に対する最大編集回数を超えました!';
 $string['message'] = 'メッセージ';
+$string['missingsearchterms'] = '次の検索語はメッセージのHTMLマークアップのみに表示されます。';
 $string['modeflatnewestfirst'] = '返信を新しいものからフラット表示';
 $string['modeflatoldestfirst'] = '返信を古いものからフラット表示';
 $string['modenested'] = '返信をネスト表示';

@@ -1,5 +1,5 @@
 <?php // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
 
 
 $string['auth_common_settings'] = '一般設定';
@@ -21,7 +21,7 @@ $string['auth_editlock_expl'] = '<p><b>ロック値:</b> この設定を「Yes�
 $string['auth_emaildescription'] = 'メールによるアカウント確定はデフォルトの認証方法です。ユーザが新しいユーザ名とパスワードを選択してサインアップした場合、アカウント確定用メールがユーザのメールアドレスに送信されます。このメールにはユーザがアカウントを確定するためのリンクが記入されています。アカウント確定後のログインではMoodleデータベースに保存されているユーザ名とパスワードのみを確認します。';
 $string['auth_emailtitle'] = 'Emailベースの認証';
 $string['auth_fccreators'] = 'メンバーがコースの作成を許可されているグループの一覧です。複数のグループは「;」で分けてください。グループ名はFirstClassサーバと厳密に同じ名前にしてください。システムは、大文字と小文字を区別します。';
-$string['auth_fcdescription'] = 'ここでは、ユーザ名とパスワードが正しいか否かをチェックするためにFisrtClassサーバを使用します。';
+$string['auth_fcdescription'] = 'ここでは、ユーザ名とパスワードが正しいかチェックするためにFisrtClassサーバを使用します。';
 $string['auth_fcfppport'] = 'サーバポート ( 3333が最も一般的 )';
 $string['auth_fchost'] = 'FirstClassサーバアドレス。IPアドレスまたはDNS名を使用してください。';
 $string['auth_fcpasswd'] = '上記アカウントのパスワード。';
@@ -80,6 +80,8 @@ $string['auth_pop3mailbox'] = '接続を試みるメールボックス名(通常
 $string['auth_pop3port'] = 'サーバーポート ( 110が一般的です )';
 $string['auth_pop3title'] = 'POP3サーバを使用';
 $string['auth_pop3type'] = 'サーバタイプです。もし認証が必要な場合はpop3certを選択してください。';
+$string['auth_shibbolethdescription'] = 'ここでは、ユーザのチェックおよびアカウントの作成を行うためにShibbolethサーバに接続することができます。';
+$string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_updatelocal'] = 'ローカルデータの更新';
 $string['auth_updatelocal_expl'] = '<p><b>ローカルデータの更新:</b> この設定を「Yes」にした場合、このフィールドは(外部認証を通して)ログイン毎またはユーザの同期毎に更新されます。更新されるローカルフィールドはロックする必要があります。</p>';
 $string['auth_updateremote'] = '外部データの更新';
