@@ -1,10 +1,10 @@
 /*******************************************************************
-styles_color.css
+ styles_color.css
     
-This CSS file contains all color definitions like background-color,
-font-color, border-color etc.
+ This CSS file contains all color definitions like 
+ background-color, font-color, border-color etc.
 
-Styles are organised into the following sections:
+ Styles are organised into the following sections:
 
     core
     header
@@ -20,30 +20,14 @@ Styles are organised into the following sections:
     tabs
     user
 
-    modules
-        assignment
-        chat
-        choice
-        forum
-        glossary
-        journal
-        label
-        lesson
-        quiz
-        resource
-        scorm
-        survey
-        wiki
-        workshop
+    various modules
 
 *******************************************************************/
 
+/***
+ ***  Core
+ ***/
 
-/*******************************************************************
-*** Core
-*******************************************************************/
-
-/* basic styles */
 a:link,
 a:visited {
     color:#0000FF;
@@ -68,7 +52,6 @@ a.autolink.glossary:hover {
     cursor: help;
 }
 
-/* general styles */
 body {
     background-color:#AAAAFF;
     color:#000066;
@@ -82,7 +65,7 @@ table.formtable tbody th {
     background: none;
 }
 .highlight {
-    background-color:#AAFFAA; /* highlight */
+    background-color:#AAFFAA;
 }
 
 .highlight2 {
@@ -110,22 +93,21 @@ table.formtable tbody th {
     background-color:#DDDDDD;
 }
 
-/* many places */
 .generalbox {
-    border-color:#9999FF; /* borders */
+    border-color:#9999FF;
 }
 .informationbox {
-    border-color:#9999FF; /* borders */
+    border-color:#9999FF;
 }
 .feedbackbox {
-    border-color: #888888; /* borders */
+    border-color: #888888;
 }
 .feedbackby {
     background-color:#BBBBBB;
 }
 
 .noticebox {
-    border-color:#9999FF; /* borders */
+    border-color:#9999FF;
 }
 
 .errorbox {
@@ -134,15 +116,13 @@ table.formtable tbody th {
     background-color:#990000;
 }
 
-/* weblib.php table */
 .tabledivider {
-    border-color:#9999FF; /* borders */
+    border-color:#9999FF;
 }
 
-/* entry-page index.php */ 
 .sitetopic {
-    background-color:#FFFFFF; /* cellheading */
-    border-color:#9999FF; /* borders */
+    background-color:#FFFFFF;
+    border-color:#9999FF;
 }
 
 .dimmed_text {
@@ -177,17 +157,17 @@ table.formtable tbody th {
 
 
 
-/*******************************************************************
-*** Header
-*******************************************************************/
+/***
+ *** Header
+ ***/
 
-/*******************************************************************
-*** Footer
-*******************************************************************/
+/***
+ *** Footer
+ ***/
 
-/*******************************************************************
-*** Admin
-*******************************************************************/
+/***
+ *** Admin
+ ***/
 
 .admin .generalboxcontent {
     background-color:#EEEEEE; 
@@ -206,20 +186,12 @@ body#admin-index .c0 {
 
 
 
-/*******************************************************************
-*** Blocks
-*******************************************************************/
-
-.rssclientlink {
-    border-top-color:#DDDDDD;
-}
-
-.rssclientdescription {
-    color:#555555;
-}
+/***
+ *** Blocks
+ ***/
 
 .sideblock {
-    border-color:#9999FF; /* borders */
+    border-color:#9999FF;
 }
 
 .sideblock .header {
@@ -245,13 +217,12 @@ body#admin-index .c0 {
 
 
 
-/*******************************************************************
-*** Calendar
-*******************************************************************/
+/***
+ *** Calendar
+ ***/
 
 #calendar .maincalendar,
-#calendar .sidecalendar
-{
+#calendar .sidecalendar {
     border-color: #DDDDDD;
 }
 
@@ -269,8 +240,7 @@ table.minicalendar {
 
 #calendar .maincalendar .eventlist .event .topic,
 #calendar .maincalendar .eventlist .event .picture,
-#calendar .maincalendar .eventlist .event .side
-{
+#calendar .maincalendar .eventlist .event .side {
     background-color:#EEEEEE;
 }
 
@@ -341,7 +311,7 @@ table.minicalendar {
 }
 
 .cal_popup_fg {
-    background-color:#FFFFFF; /* cellcontent */
+    background-color:#FFFFFF;
 }
 
 .cal_popup_bg {
@@ -350,25 +320,24 @@ table.minicalendar {
 }
 #calendar .maincalendar .filters table,
 #calendar .sidecalendar .filters table,
-.sideblock.block_calendar_month .filters table
-{
+.block_calendar_month .filters table {
     background-color: #EEEEEE;
 }
 
 
 
-/*******************************************************************
-*** Course
-*******************************************************************/
+/***
+ *** Course
+ ***/
 
 /* course, entry-page, login */
 .headingblock {
-    border-color:#9999FF; /* borders */
+    border-color:#9999FF;
 }
 
 /* course */
 .headingblock .outline {
-    border-color:#9999FF; /* borders */
+    border-color:#9999FF;
 }
 
 #course-view .section td {
@@ -407,7 +376,7 @@ table.minicalendar {
 
 .categoryboxcontent,
 .courseboxcontent {
-    border-color:#9999FF; /* borders */
+    border-color:#9999FF;
     background: #FFFFFF;
 }
 body#course-user .section {
@@ -416,25 +385,25 @@ body#course-user .section {
 
 
 
-/*******************************************************************
-*** Doc
-*******************************************************************/
+/***
+ *** Doc
+ ***/
 
-/*******************************************************************
-*** Login
-*******************************************************************/
+/***
+ *** Login
+ ***/
 
 .loginbox .content {
-    border-color:#9999FF; /* borders */
+    border-color:#9999FF;
 }
 
 
-/*******************************************************************
-*** Message
-*******************************************************************/
+/***
+ *** Message
+ ***/
 
 table.message_search_results td {
-    border-color:#9999FF; /* borders */
+    border-color:#9999FF;
 }
 
 .message .author {
@@ -449,9 +418,9 @@ table.message_search_results td {
 }
 
 
-/*******************************************************************
-*** Tabs
-*******************************************************************/
+/***
+ *** Tabs
+ ***/
 
 .tablink a:link,
 .tablink a:visited {
@@ -494,9 +463,9 @@ table.message_search_results td {
 }
 
 
-/*******************************************************************
-*** User
-*******************************************************************/
+/***
+ *** User
+ ***/
 
 .userpicture {
     background:#EEEEEE; 
@@ -512,41 +481,41 @@ table.message_search_results td {
 }
 
 
-/*******************************************************************
-*** Modules: Assignment
-*******************************************************************/
+/***
+ *** Modules: Assignment
+ ***/
 
 .assignmentsubmission {
 }
 
 .assignmentnew .assignmentfeedback{
-    background-color:#DDDDDD; /* cellheading2 */
+    background-color:#DDDDDD;
 }   
     
 .assignmentold .assignmentfeedback{
-    background-color:#BBBBBB; /* cellheading */
+    background-color:#BBBBBB;
 }
 
 .assignmentheading {
-    background-color:#BBBBBB; /* cellheading */
+    background-color:#BBBBBB;
 }
 
 
-/*******************************************************************
-*** Modules: Chat
-*******************************************************************/
+/***
+ *** Modules: Chat
+ ***/
 
-/*******************************************************************
-*** Modules: Choice
-*******************************************************************/
+/***
+ *** Modules: Choice
+ ***/
 
-/*******************************************************************
-*** Modules: Forum
-*******************************************************************/
+/***
+ *** Modules: Forum
+ ***/
 
 .forumheaderlist,
 .forumpost {
-    border-color:#9999FF; /* borders */
+    border-color:#9999FF;
 }
 
 .forumpost .content {
@@ -584,7 +553,7 @@ table.message_search_results td {
     background: none;
 }
 
-#mod-forum-discuss .unread .forumpostmessage {
+#mod-forum-discuss .unread .forumpost .message {
     border-color: #FFD991; 
 } 
 
@@ -595,9 +564,9 @@ table.message_search_results td {
 }
 
 
-/*******************************************************************
-*** Modules: Glossary
-*******************************************************************/
+/***
+ *** Modules: Glossary
+ ***/
 
 .entryboxheader {
     border-color: #BBBBBB;
@@ -646,26 +615,26 @@ table.message_search_results td {
 }
 
 
-/*******************************************************************
-*** Modules: Journal
-*******************************************************************/
+/***
+ *** Modules: Journal
+ ***/
 
 #mod-journal-view .feedbackbox .left,
 #mod-journal-view .feedbackbox .entryheader {
     background-color: #dddddd;
 }
 
-/*******************************************************************
-*** Modules: Label
-*******************************************************************/
+/***
+ *** Modules: Label
+ ***/
 
-/*******************************************************************
-*** Modules: Lesson
-*******************************************************************/
+/***
+ *** Modules: Lesson
+ ***/
 
-/*******************************************************************
-*** Modules: Quiz
-*******************************************************************/
+/***
+ *** Modules: Quiz
+ ***/
 
 body#mod-quiz-report table#attempts td {
     border-color: #dddddd;
@@ -675,17 +644,17 @@ body#mod-quiz-report table#attempts .r1 {
 }
 
 
-/*******************************************************************
-*** Modules: Resource
-*******************************************************************/
+/***
+ *** Modules: Resource
+ ***/
 
-/*******************************************************************
-*** Modules: Scorm
-*******************************************************************/
+/***
+ *** Modules: Scorm
+ ***/
 
-/*******************************************************************
-*** Modules: Survey
-*******************************************************************/
+/***
+ *** Modules: Survey
+ ***/
 
 #mod-survey-view .r0 {
     background-color: #EEEEEE;
@@ -695,20 +664,20 @@ body#mod-quiz-report table#attempts .r1 {
 }
 
 
-/*******************************************************************
-*** Modules: Wiki
-*******************************************************************/
+/***
+ *** Modules: Wiki
+ ***/
 
-/*******************************************************************
-*** Modules: Workshop
-*******************************************************************/
+/***
+ *** Modules: Workshop
+ ***/
 
 .workshoppostpicture {
-    background-color:#FEE6B9; /* cellcontent2 */
+    background-color:#FEE6B9;
 }
 
 .workshopassessmentheading {
-    background-color:#DDDDDD; /* cellheading2 */
+    background-color:#DDDDDD;
 }
 
 

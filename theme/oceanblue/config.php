@@ -6,7 +6,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 
-$THEME->sheets = array('styles_layout', 'styles_fonts', 'styles_color', 'styles_moz');
+$THEME->sheets = array('styles_layout', 'styles_fonts', 'styles_color');
 
 /// This variable is an array containing the names of all the 
 /// stylesheet files you want included in this theme, and in what order
@@ -24,8 +24,7 @@ $THEME->standardsheets = true;
 /// This parameter can be used, for example, to prevent 
 /// having to override too many classes.
 /// Note that the trailing .css should not be included
-/// eg $THEME->standardsheets = array('styles_layout', 'styles_fonts', 
-///                                   'styles_color', 'styles_moz');
+/// eg $THEME->standardsheets = array('styles_layout','styles_fonts','styles_color');
 ////////////////////////////////////////////////////////////////////////////////
 
 
@@ -51,25 +50,26 @@ $THEME->parentsheets = false;
 /// This parameter can be used, for example, to prevent 
 /// having to override too many classes.
 /// Note that the trailing .css should not be included
-/// eg $THEME->standardsheets = array('styles_layout', 'styles_fonts', 
-///                                   'styles_color', 'styles_moz');
+/// eg $THEME->parentsheets = array('styles_layout','styles_fonts','styles_color');
 ////////////////////////////////////////////////////////////////////////////////
 
 
-$THEME->modsheets = false;  
+$THEME->modsheets = true;  
 
-/// By setting this to true, then this theme will search for 
+/// When this is enabled, then this theme will search for 
 /// files named "styles.php" inside all Activity modules and 
 /// include them.   This allows modules to provide some basic 
 /// layouts so they work out of the box.
+/// It is HIGHLY recommended to leave this enabled.
 
 
-$THEME->blocksheets = false;  
+$THEME->blocksheets = true;  
 
-/// By setting this to true, then this theme will search for 
+/// When this is enabled, then this theme will search for 
 /// files named "styles.php" inside all Block modules and 
 /// include them.   This allows Blocks to provide some basic 
 /// layouts so they work out of the box.
+/// It is HIGHLY recommended to leave this enabled.
 
 
 $THEME->langsheets = false;  

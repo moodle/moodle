@@ -1,10 +1,10 @@
 /*******************************************************************
-styles_layout.css
+ styles_layout.css
     
-This CSS file contains all layout definitions like positioning,
-floats, margins, paddding, borders etc.
+ This CSS file contains all layout definitions like positioning,
+ floats, margins, paddding, borders etc.
 
-Styles are organised into the following sections:
+ Styles are organised into the following sections:
     core
     header
     footer
@@ -19,28 +19,14 @@ Styles are organised into the following sections:
     tabs
     user
 
-    modules
-        assignment
-        chat
-        choice
-        forum
-        glossary
-        journal
-        label
-        lesson
-        quiz
-        resource
-        scorm
-        survey
-        wiki
-        workshop
+    various modules
 
 *******************************************************************/
 
 
-/*******************************************************************
-*** Core
-*******************************************************************/
+/***
+ *** Core
+ ***/
 
 h1.main,
 h2.main,
@@ -193,9 +179,9 @@ table.formtable tbody th
 }
 
 
-/*******************************************************************
-*** Header
-*******************************************************************/
+/***
+ *** Header
+ ***/
 
 #header-home {
     padding:1em 0.5em;
@@ -234,18 +220,18 @@ table.formtable tbody th
 }
 
 
-/*******************************************************************
-*** Footer
-*******************************************************************/
+/***
+ *** Footer
+ ***/
 
 #footer {
     text-align:center;
 }
 
 
-/*******************************************************************
-*** Admin
-*******************************************************************/
+/***
+ *** Admin
+ ***/
 
 body#admin-index .c0 {
     vertical-align: top;
@@ -269,33 +255,10 @@ body#admin-config .confighelp {
 }
 
 
-/*******************************************************************
-*** Blocks
-*******************************************************************/
+/***
+ *** Blocks
+ ***/
 
-/* block_search_forums.php */
-
-.block_search_forums.sideblock .searchform {
-    text-align: center;
-}
-
-.block_search_forums.sideblock .searchform img {
-    vertical-align: middle;
-}
-
-/* block_rss_client.php */
-.rssclientlink {
-    padding-bottom:5px;
-    border-top:1px solid;
-}
-
-.rssclientdescription {
-    padding-left:10px;
-    padding-bottom:8px;
-}
-
-
-/* sideblock */
 .sideblock .content h3,
 .sideblock .content h2 {
     text-align: left;
@@ -369,58 +332,17 @@ body#admin-config .confighelp {
 .sideblock .header .icon.edit {
     margin-right: 6px;
 }
-.sideblock.block_quiz_results table.grades .number, .block_quiz_results table.grades .grade {
-    text-align: right;
-}
 
-.sideblock.block_quiz_results {
-    text-align: center;
-}
-
-.sideblock.block_quiz_results table.grades {
-    text-align: left;
-}
-
-.sideblock.block_calendar_upcoming .event .date {
-    text-align:right;
+.sideblock .head {
+    margin-top: 5px;
 }
 
 
 
-/* sideblock weblib.php */
-.block_course_summary .content {
-    padding:10px;
-}
 
-/* blocklib.php */
-
-.block_adminblock .content {
-    text-align: center;
-    padding: 10px;
-}
-
-/* block_quiz_results.php */
-.block_quiz_results table.grades {
-    width: 100%;
-}
-
-.block_quiz_results table.grades caption {
-    margin: 1em 0px 0px 0px;
-    border-bottom: 1px solid;
-}
-
-.block_quiz_results table.grades .number, .block_quiz_results table.grades .grade {
-    width: 10%;
-}
-
-.block_quiz_results h1 {
-    margin: 4px;
-}
-
-
-/*******************************************************************
-*** Calendar
-*******************************************************************/
+/***
+ *** Calendar
+ ***/
 
 #calendar {
     width: 100%;
@@ -480,8 +402,7 @@ table.minicalendar td {
 }
 
 #calendar .maincalendar .filters table,
-#calendar .sidecalendar .filters table,
-.sideblock.block_calendar_month .filters table
+#calendar .sidecalendar .filters table
 {
     border-collapse:separate;
     border-spacing: 2px;
@@ -493,9 +414,7 @@ table.minicalendar td {
     padding: 0px 10px;
 }
 
-#calendar .sidecalendar .filters,
-.sideblock.block_calendar_month .filters
-{
+#calendar .sidecalendar .filters {
     padding: 5px;
 }
 
@@ -591,12 +510,7 @@ table.minicalendar th {
 .minicalendar .event_global,
 .minicalendar .event_course,
 .minicalendar .event_group,
-.minicalendar .event_user,
-.block_calendar_month .event_global,
-.block_calendar_month .event_course,
-.block_calendar_month .event_group,
-.block_calendar_month .event_user
-{
+.minicalendar .event_user {
     border:2px solid !important;
 }
 
@@ -660,9 +574,9 @@ table.calendar-controls .next {
 }
 
 
-/*******************************************************************
-*** Course
-*******************************************************************/
+/***
+ *** Course
+ ***/
 .activitydate, .activityhead {
     text-align:center;
 }
@@ -779,9 +693,9 @@ body#course-user .section h2 {
 
 
 
-/*******************************************************************
-*** Doc
-*******************************************************************/
+/***
+ *** Doc
+ ***/
 
 body#doc-contents h1 {
     margin: 1em 0px 0px 0px;
@@ -795,9 +709,9 @@ body#doc-contents ul {
 }
 
 
-/*******************************************************************
-*** Login
-*******************************************************************/
+/***
+ *** Login
+ ***/
 
 .loginbox .content {
     border-width:1px;
@@ -809,9 +723,10 @@ body#doc-contents ul {
     background-image:url(gradient.jpg);
 }
 
-/*******************************************************************
-*** Message
-*******************************************************************/
+
+/***
+ *** Message
+ ***/
 
 .message_link {
     vertical-align:middle;
@@ -835,9 +750,9 @@ table.message_search_results td {
 }
 
 
-/*******************************************************************
-*** Tabs
-*******************************************************************/
+/***
+ *** Tabs
+ ***/
 
 .tabs {
     width: auto;
@@ -875,9 +790,9 @@ table.message_search_results td {
 }
 
 
-/*******************************************************************
-*** User
-*******************************************************************/
+/***
+ *** User
+ ***/
 
 .userinfobox {
     margin-bottom:5px;
@@ -937,21 +852,21 @@ body#user-index #longtimenosee {
 }
 
 
-/*******************************************************************
-*** Modules: Assignment
-*******************************************************************/
+/***
+ *** Modules: Assignment
+ ***/
 
-/*******************************************************************
-*** Modules: Chat
-*******************************************************************/
+/***
+ *** Modules: Chat
+ ***/
 
-/*******************************************************************
-*** Modules: Choice
-*******************************************************************/
+/***
+ *** Modules: Choice
+ ***/
 
-/*******************************************************************
-*** Modules: Forum
-*******************************************************************/
+/***
+ *** Modules: Forum
+ ***/
 
 .forumheaderlist,
 .forumpost {
@@ -1063,15 +978,15 @@ body#mod-forum-search .introcontent {
     padding-left: 3px;
     padding-right: 3px;
 }
-#mod-forum-discuss .unread .forumpostmessage {
+#mod-forum-discuss .unread .forumpost .message {
     border-style: solid;
     border-width: 2px;
 }
 
 
-/*******************************************************************
-*** Modules: Glossary
-*******************************************************************/
+/***
+ *** Modules: Glossary
+ ***/
 
 .glossarypost .commands {
     width: 200px;
@@ -1191,15 +1106,20 @@ body#mod-forum-search .introcontent {
 }
 
 
-/*******************************************************************
-*** Modules: Journal
-*******************************************************************/
+/***
+ *** Modules: Journal
+ ***/
 #mod-journal-view .lastedit,
 #mod-journal-view .editend {
     margin: 5px;
+    text-align: center;
 }
 #mod-journal-view .feedbackbox {
     width: 75%;
+    border-collapse: separate;
+}
+#mod-journal-view .entrycontent {
+    padding: 3px;
 }
 #mod-journal-view .picture {
     width: 35px;
@@ -1207,18 +1127,23 @@ body#mod-forum-search .introcontent {
 #mod-journal-view .grade {
     text-align: right;
 }
+#mod-journal-view .info {
+    margin-bottom: 5px;
+    text-align: right;
+}
 
-/*******************************************************************
-*** Modules: Label
-*******************************************************************/
 
-/*******************************************************************
-*** Modules: Lesson
-*******************************************************************/
+/***
+ *** Modules: Label
+ ***/
 
-/*******************************************************************
-*** Modules: Quiz
-*******************************************************************/
+/***
+ *** Modules: Lesson
+ ***/
+
+/***
+ *** Modules: Quiz
+ ***/
 
 .feedbacktext {
     display:block;
@@ -1265,23 +1190,23 @@ body#mod-quiz-report .controls {
 
 
 
-/*******************************************************************
-*** Modules: Resource
-*******************************************************************/
+/***
+ *** Modules: Resource
+ ***/
 
-/*******************************************************************
-*** Modules: Scorm
-*******************************************************************/
+/***
+ *** Modules: Scorm
+ ***/
 
-/*******************************************************************
-*** Modules: Survey
-*******************************************************************/
+/***
+ *** Modules: Survey
+ ***/
 
-/*******************************************************************
-*** Modules: Wiki
-*******************************************************************/
+/***
+ *** Modules: Wiki
+ ***/
 
-/*******************************************************************
-*** Modules: Workshop
-*******************************************************************/
+/***
+ *** Modules: Workshop
+ ***/
 
