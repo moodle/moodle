@@ -1,7 +1,6 @@
 <?PHP // $Id$ 
       // moodle.php - created with Moodle 1.0.6 dev 3 (2002102101)
 
-
 $string['action'] = "Aktion";
 $string['activities'] = "Aktivitäten";
 $string['activity'] = "Aktivität";
