@@ -730,15 +730,16 @@ function auth_user_update($olduser, $newuser) {
  *
  * @param mixed $username    Username
  * @param mixed $newpassword Plaintext password
+ * @param mixed $oldpassword Plaintext old password to bind ldap with
  * @return boolean result
  *
  */
-function auth_user_update_password($username, $newpassword) {
+function auth_user_update_password($username, $newpassword ) {
 /// called when the user password is updated -- it assumes it is called by an admin
 /// or that you've otherwise checked the user's credentials
 /// IMPORTANT: $newpassword must be cleartext, not crypted/md5'ed
 
-    global $CFG;
+    global $CFG, $USER;
     $result = false;
      
     $ldapconnection = auth_ldap_connect();
@@ -749,15 +750,62 @@ function auth_user_update_password($username, $newpassword) {
         error_log('LDAP Error in auth_user_update_password(). No DN for: ' . $username); 
         return false;
     }
-    // send ldap the password in cleartext, it will md5 it itself
-    $result = ldap_modify($ldapconnection, $user_dn, array('userPassword' => $newpassword));
-    
-    if(!$result){
-        error_log('LDAP Error in auth_user_update_password(). Error code: ' 
-                  . ldap_errno($ldapconnection) . '; Error string : '
-                  . ldap_err2str(ldap_errno($ldapconnection)));
+
+    switch ($CFG->ldap_user_type) {
+        case 'edir':
+            //Change password
+            $result = ldap_modify($ldapconnection, $user_dn, array('userPassword' => $newpassword));
+            if(!$result){
+                error_log('LDAP Error in auth_user_update_password(). Error code: '
+                          . ldap_errno($ldapconnection) . '; Error string : '
+                          . ldap_err2str(ldap_errno($ldapconnection)));
+            }
+            //Update password expiration time, grace logins count
+            $search_attribs = array($CFG->ldap_expireattr, 'passwordExpirationInterval','loginGraceLimit' );
+            $sr = ldap_read($ldapconnection, $user_dn, 'objectclass=*', $search_attribs);
+            if ($sr)  {
+                $info=auth_ldap_get_entries($ldapconnection, $sr);
+                $newattrs = array();
+                if (!empty($info[0][$CFG->ldap_expireattr][0])) {
+                    //Set expiration time only if passwordExpirationInterval is defined
+                    if (!empty($info[0]['passwordExpirationInterval'][0])) {
+                       $expirationtime = time() + $info[0]['passwordExpirationInterval'][0]; 
+                       $ldapexpirationtime = auth_ldap_unix2expirationtime($expirationtime);
+                       $newattrs['passwordExpirationTime'] = $ldapexpirationtime;
+                    }    
+
+                    //set gracelogin count
+                    if (!empty($info[0]['loginGraceLimit'][0])) {
+                       $newattrs['loginGraceRemaining']= $info[0]['loginGraceLimit'][0]; 
+                    }
+
+                    //Store attribute changes to ldap
+                    $result = ldap_modify($ldapconnection, $user_dn, $newattrs);
+                    if(!$result){
+                       error_log('LDAP Error in auth_user_update_password() when modifying expirationtime and/or gracelogins. Error code: '
+                                 . ldap_errno($ldapconnection) . '; Error string : '
+                                 . ldap_err2str(ldap_errno($ldapconnection)));
+                    }
+                }
+            } else {
+                error_log('LDAP Error in auth_user_update_password() when reading password expiration time. Error code: '
+                          . ldap_errno($ldapconnection) . '; Error string : '
+                          . ldap_err2str(ldap_errno($ldapconnection)));
+            }    
+            break;
+        default:
+            $usedconnection = &$ldapconnection;
+            // send ldap the password in cleartext, it will md5 it itself
+            $result = ldap_modify($ldapconnection, $user_dn, array('userPassword' => $newpassword));
+            if(!$result){
+                error_log('LDAP Error in auth_user_update_password(). Error code: ' 
+                        . ldap_errno($ldapconnection) . '; Error string : '
+                        . ldap_err2str(ldap_errno($ldapconnection)));
+            }
+
     }
-    
+
+        
     @ldap_close($ldapconnection);
 
     return $result;
@@ -785,37 +833,7 @@ function auth_ldap_suppported_usertypes (){
     return $types;
 }    
 
-/**
- * return binaryfields of selected usertype
- *
- *
- * @return array
- */
-
-function auth_ldap_getbinaryfields () {
-    global $CFG;
-    $binaryfields = array (
-                        'edir' => array('guid'),
-                        'rfc2703' => array(),
-                        'rfc2703bis' => array(),
-                        'samba' => array(),
-                        'ad' => array(),
-                        'default' => '*'
-                        );
-    if (!empty($CFG->ldap_user_type)) {
-        return $binaryfields[$CFG->ldap_user_type];   
-    } else {
-        return $binaryfields['default'];
-    }    
-}   
-
-function auth_ldap_isbinary ($field) {
-    if (!isset($field)) {
-        return null ;
-    }    
-    return array_search($field, auth_ldap_getbinaryfields());
-}    
-    
+   
 /**
  * initializes needed variables for ldap-module
  *
@@ -875,6 +893,37 @@ function auth_ldap_getdefaults(){
 }
 
 /**
+ * return binaryfields of selected usertype
+ *
+ *
+ * @return array
+ */
+
+function auth_ldap_getbinaryfields () {
+    global $CFG;
+    $binaryfields = array (
+                        'edir' => array('guid'),
+                        'rfc2703' => array(),
+                        'rfc2703bis' => array(),
+                        'samba' => array(),
+                        'ad' => array(),
+                        'default' => '*'
+                        );
+    if (!empty($CFG->ldap_user_type)) {
+        return $binaryfields[$CFG->ldap_user_type];   
+    } else {
+        return $binaryfields['default'];
+    }    
+}   
+
+function auth_ldap_isbinary ($field) {
+    if (!isset($field)) {
+        return null ;
+    }    
+    return array_search($field, auth_ldap_getbinaryfields());
+}    
+ 
+/**
  * set $CFG-values for ldap_module
  * 
  * Get default configuration values with auth_ldap_getdefaults() 
@@ -914,7 +963,7 @@ function auth_ldap_init () {
 /**
  * take expirationtime and return it as unixseconds
  * 
- * takes expriration timestamp readed from ldap
+ * takes expriration timestamp as readed from ldap
  * returns it as unix seconds
  * depends on $CFG->usertype variable
  *
@@ -934,7 +983,7 @@ function auth_ldap_expirationtime2unix ($time) {
             $hr=substr($time,8,2);
             $min=substr($time,10,2);
             $sec=substr($time,12,2);
-            $result = mktime($hr,$min,$sec,$mo,dt,$yr); 
+            $result = mktime($hr,$min,$sec,$mo,$dt,$yr); 
             break;
         case 'posix':
             $result = $time * DAYSECS ; //The shadowExpire contains the number of DAYS between 01/01/1970 and the actual expiration date
@@ -943,6 +992,28 @@ function auth_ldap_expirationtime2unix ($time) {
             error('CFG->ldap_user_type not defined or function auth_ldap_expirationtime2unix does not support selected type!');
     }        
     return $result;
+}
+
+/**
+ * takes unixtime and return it formated for storing in ldap
+ *
+ * @param integer unix time stamp
+ */
+function auth_ldap_unix2expirationtime ($time) {
+    global $CFG;
+    $result = false;
+    switch ($CFG->ldap_user_type) {
+        case 'edir':
+            $result=date('YmdHis').'Z';  
+            break;
+        case 'posix':
+            $result = $time ; //Already in correct format
+            break;
+        default:  
+            error('CFG->ldap_user_type not defined or function auth_ldap_unixi2expirationtime does not support selected type!');
+    }        
+    return $result;
+
 }
 
 /*
