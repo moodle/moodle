@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.0.6.4 (2002112400)
+      // quiz.php - created with Moodle 1.0.7 (2002121000)
 
 
 $string['addselectedtoquiz'] = "選択したものをクイズに追加する";
@@ -26,7 +26,7 @@ $string['caseyes'] = "解答は合致しなければなりません";
 $string['categories'] = "カテゴリー";
 $string['category'] = "カテゴリー";
 $string['categoryinfo'] = "詳細";
-$string['categorymove'] = "カテゴリー '\$a->name' には \$a->count の質問があります。他のカテゴリーを選んでください。";
+$string['categorymove'] = "カテゴリー \$a->name には \$a->count の質問があります。他のカテゴリーを選んでください。";
 $string['categorymoveto'] = "このカテゴリーに移動する";
 $string['choice'] = "選択";
 $string['choices'] = "利用可能な選択";
@@ -80,6 +80,7 @@ $string['quizclosed'] = "このクイズは \$a に閉じられます";
 $string['quiznotavailable'] = "クイズは  \$a まで利用できません";
 $string['quizopen'] = "クイズ公開日";
 $string['random'] = "ランダム";
+$string['readytosend'] = "採点のために全てのクイズを送信します。本当に送信してもよろしいですか?";
 $string['regrade'] = "全解答を再評価する";
 $string['regradecomplete'] = "全解答が再評価されました";
 $string['regradecount'] = "\$a->attempt 中 \$a->changed の評点が変更されました ";

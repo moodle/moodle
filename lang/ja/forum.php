@@ -2,7 +2,7 @@
       // forum.php - created with Moodle 1.0.7 (2002121000)
 
 
-$string['addanewdiscussion'] = "ディスカッションのトピックを追加";
+$string['addanewdiscussion'] = "トピックを追加";
 $string['allowchoice'] = "全ての人が選択可能にする";
 $string['allowdiscussions'] = "\$a  はこのフォーラムに投稿可能ですか?";
 $string['allowratings'] = "投稿を評価可能にしますか?";
@@ -39,9 +39,9 @@ $string['generalforum'] = "標準フォーラム";
 $string['generalforums'] = "総合フォーラム";
 $string['inforum'] = "\$a";
 $string['intronews'] = "ニュースとお知らせ";
-$string['introsocial'] = "何でも投稿可能な制限無しフォーラムです";
-$string['introteacher'] = "教師専用のフォーラムです";
-$string['learningforums'] = "ラーニングフォーラム";
+$string['introsocial'] = "投稿制限無しフォーラム";
+$string['introteacher'] = "教師専用フォーラム";
+$string['learningforums'] = "学習フォーラム";
 $string['maxtimehaspassed'] = "申し訳ございません、この投稿(\$a)に対する最大編集回数を超えました!";
 $string['message'] = "メッセージ";
 $string['modeflatnewestfirst'] = "返信を新しいものからフラット表示";
@@ -58,7 +58,7 @@ $string['newforumposts'] = "新規投稿";
 $string['nodiscussions'] = "トピックはありません";
 $string['noguestpost'] = "申し訳ございません、ゲストは投稿できません";
 $string['noposts'] = "投稿がありません";
-$string['nopostscontaining'] = " '\$a' が含まれる投稿は見つかりませんでした";
+$string['nopostscontaining'] = " \$a が含まれる投稿は見つかりませんでした";
 $string['nosubscribers'] = "このフォーラムには参加者はいません";
 $string['nownotsubscribed'] = "\$a->name 宛に「 \$a->forum 」のコピーは送信されました。";
 $string['nowsubscribed'] = "\$a->name 宛に「 \$a->forum 」のコピーが送信されました。";
@@ -115,10 +115,10 @@ $string['subject'] = "題名";
 $string['subscribe'] = "このフォーラムに参加する";
 $string['subscribed'] = "参加";
 $string['subscribers'] = "参加者";
-$string['subscribersto'] = " '\$a' の参加者";
-$string['unsubscribe'] = "このフォーラムから登録抹消する";
+$string['subscribersto'] = "\$a の参加者";
+$string['unsubscribe'] = "このフォーラムから登録を抹消する";
 $string['youratedthis'] = "あなたの評価";
-$string['yournewtopic'] = "新規ディスカッショントピック";
+$string['yournewtopic'] = "新規トピック";
 $string['yourreply'] = "あなたの返信";
 
 ?>
