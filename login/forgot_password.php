@@ -34,8 +34,8 @@
 		}
 	}
 
-	if ( empty($frm->email) ) {
-		if ( $username = get_moodle_cookie() ) {
+	if (empty($frm->email)) {
+		if ($username = get_moodle_cookie() ) {
 			$frm->email = get_field("user", "email", "username", "$username");
 		}
 	}

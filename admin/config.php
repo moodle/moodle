@@ -68,10 +68,10 @@
 
 /// Otherwise fill and print the form.
 
-    if (!isset($config)) {
+    if (empty($config)) {
         $config = $CFG;
     }
-    if (!isset($focus)) {
+    if (empty($focus)) {
         $focus = "";
     }
 

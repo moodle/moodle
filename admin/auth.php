@@ -18,6 +18,7 @@
 
 	if ($config = data_submitted()) {
 
+        $config = (array)$config;
         validate_form($config, $err);
 
         if (count($err) == 0) {
@@ -39,7 +40,7 @@
 
 /// Otherwise fill and print the form.
 
-    if (!isset($config)) {
+    if (empty($config)) {
         $config = $CFG;
     }
 

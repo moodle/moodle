@@ -508,7 +508,7 @@ function authenticate_user_login($username, $password) {
 
     $md5password = md5($password);
 
-    if (!isset($CFG->auth)) {
+    if (empty($CFG->auth)) {
         $CFG->auth = "email";    // Default authentication module
     }
 

@@ -65,17 +65,18 @@
         $frm->id = $id;
     }
 
-	if (!$frm->username)
+	if (empty($frm->username)) {
     	$frm->username = get_moodle_cookie();
+    }
 
-	if ($frm->username) {
+	if (!empty($frm->username)) {
     	$focus = "form.password";
 	} else {
     	$focus = "form.username";
 	}
 
     $strchangepassword = get_string("changepassword");
-    if ($course->id) {
+    if (!empty($course->id)) {
 	    print_header($strchangepassword, $strchangepassword,
                      "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->
                       <A HREF=\"$CFG->wwwroot/user/index.php?id=$course->id\">".get_string("participants")."</A> ->

@@ -39,7 +39,7 @@
 
 /// Otherwise fill and print the form.
 
-    if (! $form ) {
+    if (empty($form)) {
         $form = $section;
     }
 

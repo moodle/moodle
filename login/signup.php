@@ -37,7 +37,7 @@
         $focus = 'form.' . array_shift(array_flip(get_object_vars($err)));
     }
 
-    if (!$user->country and $CFG->country) {
+    if (empty($user->country) and !empty($CFG->country)) {
         $user->country = $CFG->country;
     }
 
