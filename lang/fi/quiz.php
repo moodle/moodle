@@ -1,26 +1,102 @@
-<?PHP // $Id$
+<?PHP // $Id$ 
+      // quiz.php - created with Moodle 1.0.6.3 dev (2002111200)
 
-#------------------------------------------------------------
-$string['modulename'] = "Kysely";
-$string['modulenameplural'] = "Kyselyt";
-#------------------------------------------------------------
 
+$string['addselectedtoquiz'] = "Lis‰‰ valittu kyselyyn";
+$string['alreadysubmitted'] = "N‰ytt‰isi silt‰ ett‰ olet jo l‰hett‰nyt t‰m‰n vastauksen.";
 $string['alwaysavailable'] = "Aina esill‰";
 $string['answer'] = "Vastaus";
+$string['answerhowmany'] = "Yksi vai usempia vastuksia";
+$string['answersingleno'] = "Salli useat vastaukset";
+$string['answersingleyes'] = "Vain yksi vastaus";
 $string['attempt'] = "Yritys \$a";
 $string['attemptfirst'] = "Ensimm‰inen yritys";
 $string['attemptlast'] = "Viimeinen yritys";
+$string['attemptquiznow'] = "Yrit‰ kysely‰ nyt";
 $string['attempts'] = "Yritykset";
 $string['attemptsallowed'] = "Yrityst‰ sallittu";
 $string['attemptsunlimited'] = "Rajattomasti yrityksi‰";
-$string['daysavailable'] = "p‰iv‰‰ esill‰";
+$string['backtoquiz'] = "Takaisin kyselyn muokkaukseen";
+$string['bestgrade'] = "Paras luokitus";
+$string['caseno'] = "Ei, kirjainkoolla ei ole merkityst‰";
+$string['casesensitive'] = "Kirjainkoko";
+$string['caseyes'] = "Kyll‰, kirjain koon pit‰‰ t‰sm‰t‰";
+$string['categories'] = "Kategoriat";
+$string['category'] = "Kategoria";
+$string['categoryinfo'] = "Kategorian tiedot";
+$string['categorymove'] = "Kategoria '\$a->name' sis‰lt‰‰ '\$a->count' kysymyst‰. Ole hyv‰ ja valitse joku toinen kategoria johon siirr‰t ne.";
+$string['categorymoveto'] = "Siirr‰ valitut t‰h‰n kategoriaan.";
+$string['choice'] = "Valitse";
+$string['choices'] = "Vaihtoehdot";
+$string['correctanswer'] = "Oikea vastaus";
+$string['correctanswers'] = "Oikeat vastaukset";
+$string['createnewquestion'] = "Luo uusi kysymys";
+$string['daysavailable'] = "P‰iv‰‰ esill‰";
+$string['default'] = "Oletus";
+$string['defaultinfo'] = "Oletus kategoria kysymyksille.";
+$string['deletequestioncheck'] = "Oletko varma ett‰ haluat poistaa '\$a'?";
+$string['editcategories'] = "Muokkaa kategorioita";
+$string['editingmultichoice'] = "Muokataan monivalintaa";
+$string['editingquestion'] = "Muokkataan kysymyst‰";
+$string['editingquiz'] = "Muokkataan kysely‰";
+$string['editingshortanswer'] = "Muokataan lyhytteht‰v‰‰";
+$string['editingtruefalse'] = "Muokataan tosi/ep‰tosi teht‰v‰‰";
 $string['false'] = "Ep‰tosi";
+$string['feedback'] = "Palaute";
+$string['filloutoneanswer'] = "Sinun pit‰‰ t‰ytt‰‰ v‰hint‰‰n yksi vastaus. Tyhji‰ vastuksia ei k‰ytet‰.";
+$string['fillouttwochoices'] = "Sinun pit‰‰ valita v‰hint‰‰n kaksi vaihtoehtoa. Tyhji‰ vaihtoehtoja ei k‰ytet‰.";
+$string['fractionsaddwrong'] = "Valitsemasi luokittelu ei ole 100%% asti<br>, vaan \$a%%.<br>
+Haluatko palata ja korjata t‰m‰n kysymyksen?";
+$string['fractionsnomax'] = "Yhden vastuksista pit‰isi olla %%100, <br> jotta k‰ytt‰j‰n on mahdollista saada t‰ydet pisteet<br> t‰st‰ kysymyksest‰.
+Haluatko palata ja korjata t‰m‰n kysymyksen?";
 $string['gradeaverage'] = "Keskiarvo pisteist‰";
 $string['gradehighest'] = "Ylimm‰t pisteet";
 $string['grademethod'] = "Pisteytys tapa";
+$string['guestsno'] = "Pahus, vieraat eiv‰t voi katsella tai t‰ytt‰‰ kyselyit‰.";
+$string['imagedisplay'] = "N‰ytett‰v‰ kuva";
 $string['introduction'] = "Johdanto";
 $string['marks'] = "Pistett‰";
+$string['modulename'] = "Kysely";
+$string['modulenameplural'] = "Kyselyt";
+$string['multichoice'] = "Monivalinta";
+$string['noanswers'] = "Vastausta ei ole valittu!";
+$string['noattempts'] = "Kukaan ei ole yritt‰nyt t‰t‰ kysely‰.";
+$string['nomoreattempts'] = "Enemp‰‰ erityksi‰ ei sallita";
+$string['noquestions'] = "Kysymyksi‰ ei ole viel‰ lis‰tty.";
+$string['publish'] = "Julkaise";
+$string['question'] = "Kysymys";
+$string['questioninuse'] = "Kysymys '\$a' on jo k‰ytˆss‰:";
+$string['questionname'] = "Kysymyksen nimi";
+$string['questions'] = "Kysymykset";
+$string['quizavailable'] = "Kysely on t‰ytett‰viss‰ \$a saakka.";
+$string['quizclose'] = "Sulje kysely";
+$string['quizclosed'] = "Kysely on suljettu \$a";
+$string['quiznotavailable'] = "Kysely on avoinna \$a l‰htien";
+$string['quizopen'] = "Avaa kysely";
+$string['random'] = "Satunnaisesti";
+$string['regrade'] = "Uudelleen arvio kaikki yritykset";
+$string['regradecomplete'] = "KAikki yritykset on uudelleen arvioitu.";
+$string['regradecount'] = "\$a->changed / \$a->attempt yrityksen arviointi muuttui.";
+$string['rename'] = "Uudelleen nime‰";
+$string['report'] = "Raportit";
+$string['save'] = "Tallenna";
+$string['savegrades'] = "Tallenna arvioinnit";
 $string['savemyanswers'] = "Tallenna vastaukseni";
-$string['showfeedback'] = "N‰yt‰ palaute vastamisen j‰lkeen?";
+$string['savequiz'] = "Tallenna koko kysely";
+$string['score'] = "Tulos";
+$string['select'] = "Valitse";
+$string['selectcategoryabove'] = "Valitse kategoria ylh‰‰lt‰";
+$string['shortanswer'] = "Lyhyt vastaus";
+$string['show'] = "N‰yt‰";
 $string['showcorrectanswer'] = "N‰yt‰ oikeat vastaukset vastaamisen j‰lkeen?";
+$string['showfeedback'] = "N‰yt‰ palaute vastamisen j‰lkeen?";
+$string['time'] = "Aika";
+$string['timecompleted'] = "Suoritettu";
+$string['timetaken'] = "Suoritusaika";
 $string['true'] = "Tosi";
+$string['truefalse'] = "Tosi/Ep‰tosi";
+$string['type'] = "Tyyppi";
+$string['viewallanswers'] = "Katso \$a suoritetut kyselyt";
+$string['yourfinalgradeis'] = "Lopulline tulosesi t‰st‰ kyselyst‰ on: \$a";
+
+?>
