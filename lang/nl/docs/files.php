@@ -26,6 +26,5 @@ $string['-development'] = "Ontwikkeling";
 $string['developer.html'] = "Ontwikkelaarsgids";
 $string['coding.html'] = "Code Gids";
 $string['cvs.html'] = "CVS Gebruiken";
-
-
+$string['translation.html'] = "Vertalen";
 ?>
