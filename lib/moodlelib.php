@@ -401,10 +401,13 @@ function isteacher($courseid, $userid=0) {
 function iscreator ($userid=0) {
 /// Can user create new courses?
     global $USER;
+    if (empty($USER->id)) {
+        return false;
+    }
     if (isadmin($userid)) {  // admins can do anything
         return true;
     }
-	if (empty($userid)) {
+    if (empty($userid)) {
         return record_exists("user_coursecreators", "userid", $USER->id);
     }
 
