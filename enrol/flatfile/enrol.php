@@ -179,7 +179,7 @@ function process_config($config) {
                     switch ($fields[1]) {
                         case "student":
                             if ($fields[0] == "add") {
-                                if (! enrol_student($user->id, $course->id, $fields[4], $fields[5])) {
+                                if (! enrol_student($user->id, $course->id, $fields[4], $fields[5], 'flatfile')) {
                                     $elog = "Error enrolling in course\n";
                                 }
                             } else {
@@ -191,7 +191,7 @@ function process_config($config) {
 
                         case "teacher":
                             if ($fields[0] == "add") {
-                                if (! add_teacher($user->id, $course->id, 0, '', $fields[4], $fields[5])) {
+                                if (! add_teacher($user->id, $course->id, 0, '', $fields[4], $fields[5], 'flatfile')) {
                                     $elog = "Error adding teacher to course\n";
                                 }
                             } else {
@@ -203,7 +203,7 @@ function process_config($config) {
 
                         case "teacheredit":
                             if ($fields[0] == "add") {
-                                if (! add_teacher($user->id, $course->id, 1, '', $fields[4], $fields[5])) {
+                                if (! add_teacher($user->id, $course->id, 1, '', $fields[4], $fields[5], 'flatfile')) {
                                     $elog = "Error adding teacher to course\n";
                                 }
                             } else {
