@@ -345,7 +345,7 @@ global $EXERCISE_FWEIGHTS;
 		// first get the teacher's grade for the best submission
 		if ($bestgrades = exercise_get_best_submission_grades($exercise)) {
 			foreach ($bestgrades as $grade) {
-				$return->grades[$grade->userid] = $grade->grade * 
+				$usergrade[$grade->userid] = $grade->grade * 
 					$EXERCISE_FWEIGHTS[$exercise->teacherweight] * $scaling;
 			}
 		}
@@ -353,7 +353,7 @@ global $EXERCISE_FWEIGHTS;
 	else { // use mean values
 		if ($meangrades = exercise_get_mean_submission_grades($exercise)) {
 			foreach ($meangrades as $grade) {
-				$return->grades[$grade->userid] = $grade->grade * 
+				$usergrade[$grade->userid] = $grade->grade * 
 					$EXERCISE_FWEIGHTS[$exercise->teacherweight] * $scaling;
 			}
 		}
@@ -362,12 +362,18 @@ global $EXERCISE_FWEIGHTS;
 	if ($assessments = exercise_get_teacher_submission_assessments($exercise)) {
 		foreach ($assessments as $assessment) {
 			// add the grading grade if the student's work has been assessed
-			if (isset($return->grades[$assessment->userid])) {
-				$return->grades[$assessment->userid] += $assessment->gradinggrade * 
+			if (isset($usergrade[$assessment->userid])) {
+				$usergrade[$assessment->userid] += $assessment->gradinggrade * 
 					$EXERCISE_FWEIGHTS[$exercise->gradingweight] * $scaling * 100.0 / COMMENTSCALE;
 			}
 		}
 	}
+    // tidy the numbers and set up the return array
+    if (isset($usergrade)) {
+        foreach ($usergrade as $userid => $g) {
+            $return->grades[$userid] = number_format($g, 1);
+        }
+    }
     $return->maxgrade = $exercise->grade;
     
     return $return;
@@ -1088,8 +1094,10 @@ function exercise_get_mean_grade($submission) {
 ///////////////////////////////////////////////////////////////////////////////////////////////
 function exercise_get_mean_submission_grades($exercise) {
 // Returns the mean grades of students' submissions
+// ignores hot assessments
 	global $CFG;
 	
+    $timenow = time();
 	$grades = get_records_sql("SELECT DISTINCT u.userid, AVG(a.grade) grade FROM 
                         {$CFG->prefix}exercise_submissions s, 
 						{$CFG->prefix}exercise_assessments a, {$CFG->prefix}user_students u 
@@ -1097,6 +1105,7 @@ function exercise_get_mean_submission_grades($exercise) {
                               AND s.userid = u.userid
 							  AND s.exerciseid = $exercise->id
 							  AND a.submissionid = s.id
+                              AND a.timecreated < $timenow
 							  GROUP BY u.userid");
     return $grades;
 }
