@@ -468,7 +468,7 @@ function get_array_of_activities($courseid) {
                                $mod[$seq]->extra = urlencode("onClick=\"return ".
                                                    "openpopup('/mod/resource/view.php?id=".
                                                    $mod[$seq]->cm.
-                                                   "','resource','$resource->alltext');\"");
+                                                   "','resource$resource->id','$resource->alltext');\"");
                            }
                        }
                    }
