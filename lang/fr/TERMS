@@ -1,51 +1,6 @@
-Anglais                Français                Canadien-français
+Version: $Id$
 
-account                compte
-activity               activité
-assessment             évaluation
-assignment             devoir
-attachment             annexe
-attendance             
-authentication         authentification
-category               catégorie
-choice                 sondage
-connected              lié (merci à Jean-François Nadeau)
-cookie                 cookie                  témoin
-course category	       discipline
-department             département
-dialogue               dialogue
-download               télécharger (vers votre ordinateur)
-email                  courriel, adresse de courriel
-emoticons              binettes
-entry                  contribution (dans les forums)
-entry                  entrée (dans les glossaires)
-exercise               exercice
-feedback               feedback                rétroaction, remarque
-glossary               glossaire
-grade                  note ou niveau
-guest                  visiteur anonyme
-hit                    requête
-journal                journal
-label                  étiquette
-login                  connexion, se connecter
-logs                   journaux d'activité
-offline                hors-ligne
-post                   message
-quiz                   test
-scale                  barème
-separated              détaché (merci à Jean-François Nadeau)
-server                 serveur
-social format	       format informel
-smilies                binettes
-submission             (devoir, document) remis, rendus
-submit                 remettre
-survey                 consultation pédagogique
-teacher                enseignant
-topic                  thème
-topics format	       format thématique
-upload                 envoyer, déposer, télécharger vers le serveur
-user                   utilisateur
-username               nom d'utilisateur
-webquest
-weekly format          format hebdomadaire
-workshop               atelier
+La liste des termes utilisés pour la traduction est maintenant disponible
+dans le glossaire du cours "Moodle en français" à l'URL suivante :
+http://moodle.org/mod/glossary/view.php?id=997
+

@@ -1,3 +1,5 @@
+Version: $Id$
+
 French Translation
 ------------------
 
@@ -14,73 +16,22 @@ J'ai également incorporé les fichiers d'aide (dossier help) et
 workshop.php traduits pour nos amis du Canada francophone par Jean-François
 Nadeau, et que j'ai légèrement adaptés.
 
-J'ai légèrement modifié la liste des termes choisis par Sébastien.
-Vous trouvez ci-dessous cette liste modifiée par mes soins. Elle comprend
-en outre certains termes canadiens-français qui diffèrent de l'usage du
-français d'Europe.
+Une liste des termes utilisés pour la traduction est disponible dans le
+glossaire du cours "Moodle en français" à l'URL suivante :
+http://moodle.org/mod/glossary/view.php?id=997
 
-Je suis conscient que certains choix ne sont pas toujours appropriés.
-Si vous avez d'autres suggestions, merci de me les envoyer.
+Cette liste comprend certains termes canadiens-français qui diffèrent
+de l'usage du français d'Europe.
 
-Anglais                Français                Canadien-français
-
-account                compte
-activity               activité
-assessment             évaluation
-assignment             devoir
-attachment             annexe
-attendance             
-authentication         authentification
-category               catégorie
-choice                 sondage
-connected              lié (merci à Jean-François Nadeau)
-cookie                 cookie                  témoin
-course category	       discipline
-department             département
-dialogue               dialogue
-download               télécharger (vers votre ordinateur)
-email                  courriel, adresse de courriel
-emoticons              binettes
-entry                  contribution (dans les forums)
-entry                  entrée (dans les glossaires)
-exercise               exercice
-feedback               feedback                rétroaction, remarque
-glossary               glossaire
-grade                  note ou niveau
-guest                  visiteur anonyme
-hit                    requête
-journal                journal
-label                  étiquette
-login                  connexion, se connecter
-logs                   journaux d'activité
-offline                hors-ligne
-post                   message
-quiz                   test
-scale                  barème
-separated              détaché (merci à Jean-François Nadeau)
-server                 serveur
-social format	       format informel
-smilies                binettes
-submission             (devoir, document) remis, rendus
-submit                 remettre
-survey                 consultation pédagogique
-teacher                enseignant
-topic                  thème
-topics format	       format thématique
-upload                 envoyer, déposer, télécharger vers le serveur
-user                   utilisateur
-username               nom d'utilisateur
-webquest
-weekly format          format hebdomadaire
-workshop               atelier
-
+Si vous avez d'autres suggestions concernant la traduction de certains
+termes, merci de me les communiquer.
 
 TODO
   Beaucoup de choses encore. Entre autres :
   - trouver une bonne traduction de "Reflective Thinking" ;
-  - traduire les nouveaux fichiers de documentation introduits avec
-    Moodle 1.2 ;
-  - traduire les textes des nouveaux modules de Moodle 1.2.
+  - traduire les fichiers d'aide des modules "Dialogue" et "Exercise"
+  - traduire la documentation du module "Attendance" (non inclus en
+    standard)
 
 Voici quelques liens que j'utilise :
   - Dictionnaire de l'internaute
