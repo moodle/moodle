@@ -890,7 +890,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
         $postdata = "p.*";
     }
 
-    return get_records_sql("SELECT $postdata, d.timemodified, d.usermodified,
+    return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified,
                                    u.firstname, u.lastname, u.email, u.picture
                               FROM {$CFG->prefix}forum_discussions d,
                                    {$CFG->prefix}forum_posts p,
@@ -1121,7 +1121,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
             }
         }
         if ($reply) {
-            $output .= " | <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("replyforum", "forum")."</a>";
+            $output .= "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("replyforum", "forum")."</a>";
         }
         $output .= "&nbsp;&nbsp;";
     } else {
@@ -1250,6 +1250,12 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
             echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?edit=$post->id\">$stredit</a> | ";
         }
     }
+    
+    if (isteacheredit($courseid) and $post->parent) {
+        echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?prune=$post->id\" title=\"".get_string('pruneheading', 'forum').'">'.
+            get_string("prune", "forum")."</a> | ";
+    }
+    
     if ($ownpost or $isteacher) {
         if (!record_exists("forum_posts", "parent", $post->id)) {
             echo "<a href=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">$strdelete</a>";
@@ -2149,6 +2155,9 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         } else {
             $ownpost=false;
         }
+        // Use discussion name instead of subject of first post
+        $discussion->subject = $discussion->name;
+
         switch ($forum_style) {
             case "minimal":
                 if (!empty($CFG->filterall)) {
@@ -2450,6 +2459,18 @@ function forum_print_recent_mod_activity($activity, $course, $detail=false) {
     echo "</table>";
 
     return;
+}
+
+function forum_change_discussionid($postid, $discussionid) {
+/// recursively sets the discussion field to $discussionid on $postid and all its children
+/// used when pruning a post
+    set_field('forum_posts', 'discussion', $discussionid, 'id', $postid);
+    if ($posts = get_records('forum_posts', 'parent', $postid)) {
+        foreach ($posts as $post) {
+            forum_change_discussionid($post->id, $discussionid);
+        }
+    }
+    return true;
 }
 
 ?>

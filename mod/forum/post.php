@@ -322,6 +322,84 @@
         die;
 
 
+    } else if (isset($prune)) {  // Teacher is pruning
+        
+        if (! $post = forum_get_post_full($prune)) {
+            error("Post ID was incorrect");
+        }
+        if (! $discussion = get_record("forum_discussions", "id", $post->discussion)) {
+            error("This post is not part of a discussion!");
+        }
+        if (! $forum = get_record("forum", "id", $discussion->forum)) {
+            error("The forum number was incorrect ($discussion->forum)");
+        }
+        if (!isteacher($forum->course)) {
+            error("You can't prune discussions!");
+        }
+        if (!$post->parent) {
+            error('This is already the first post in the discussion');
+        }
+
+        if (isset($_REQUEST['name'])) {    // User has confirmed the prune
+            
+            $newdiscussion->course = $discussion->course;
+            $newdiscussion->forum = $discussion->forum;
+            $newdiscussion->name = $name;
+            $newdiscussion->firstpost = $post->id;
+            $newdiscussion->userid = $discussion->userid;
+            $newdiscussion->groupid = $discussion->groupid;
+            $newdiscussion->assessed = $discussion->assessed;
+            $newdiscussion->usermodified = $post->userid;
+            
+            if (!$newid = insert_record('forum_discussions', $newdiscussion)) {
+                error('Could not create new discussion');
+            }
+            
+            set_field('forum_posts', 'parent', 0, 'id', $post->id);
+            forum_change_discussionid($post->id, $newid);
+            
+            // set timemodified to time of last post in each discussion
+            $lastpost = get_record_sql("SELECT MAX(modified) AS time
+                                              FROM {$CFG->prefix}forum_posts 
+                                              WHERE discussion = '$discussion->id'");
+            set_field('forum_discussions', 'timemodified', $lastpost->time, 'id', $discussion->id);
+            $lastpost = get_record_sql("SELECT MAX(modified) AS time
+                                              FROM {$CFG->prefix}forum_posts 
+                                              WHERE discussion = '$newid'");
+            set_field('forum_discussions', 'timemodified', $lastpost->time, 'id', $newid);            
+
+
+            if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $forum->course)) { // For the logs
+                $cm->id = 0;
+            }
+            add_to_log($discussion->course, "forum", "prune post", 
+                           "discuss.php?d=$newid", "$post->id", $cm->id);
+
+            redirect(forum_go_back_to("discuss.php?d=$newid"), 
+                         get_string("prunedpost", "forum"), 1);
+
+        } else { // User just asked to prune something
+
+            $course = get_record('course', 'id', $forum->course);
+            $strforums = get_string("modulenameplural", "forum");
+            print_header("$course->shortname: $discussion->name: $post->subject", "$course->fullname",
+                         "<A HREF=../../course/view.php?id=$course->id>$course->shortname</A> ->
+                          <A HREF=\"../forum/index.php?id=$course->id\">$strforums</A> -> 
+                          <A HREF=\"view.php?f=$forum->id\">$forum->name</A> -> 
+                          <A HREF=\"discuss.php?d=$discussion->id\">$post->subject</A> -> ".
+                          get_string("prune", "forum"), '', "", true, "", navmenu($course, $cm));
+            
+            print_heading(get_string('pruneheading', 'forum'));
+            echo '<CENTER>';
+            
+            include('prune.html');
+                         
+            forum_print_post($post, $forum->course, $ownpost=false, $reply=false, $link=false);
+        }
+
+        die;
+
+
     } else {
         error("No operation specified");
 

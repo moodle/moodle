@@ -27,7 +27,7 @@ $string['deletedpost'] = 'The post has been deleted';
 $string['deletesure'] = 'Are you sure you want to delete this post?';
 $string['discussion'] = 'Discussion';
 $string['discussionmoved'] = 'This discussion has been moved to \'$a\'.';
-$string['discussions'] = 'Discussions';
+$string['discussionname'] = 'Discussion name';
 $string['discussionsstartedby'] = 'Discussions started by $a';
 $string['discussionsstartedbyrecent'] = 'Discussions recently started by $a';
 $string['discussthistopic'] = 'Discuss this topic';
@@ -87,6 +87,7 @@ $string['parentofthispost'] = 'Parent of this post';
 $string['postadded'] = 'Your post was successfully added.<P>You have $a to edit it if you want to make any changes.';
 $string['postincontext'] = 'See this post in context';
 $string['postmailinfo'] = 'This is a copy of a message posted on the $a website.
+
 To add your reply via the website, click on this link:';
 $string['postrating1'] = 'Mostly Separate Knowing';
 $string['postrating2'] = 'Separate and Connected';
@@ -94,6 +95,8 @@ $string['postrating3'] = 'Mostly Connected Knowing';
 $string['posts'] = 'Posts';
 $string['postupdated'] = 'Your post was updated';
 $string['processingpost'] = 'Processing post $a';
+$string['prune'] = 'Break off';
+$string['pruneheading'] = 'Break off post and move to a new discussion';
 $string['rate'] = 'Rate';
 $string['rating'] = 'Rating';
 $string['ratingeveryone'] = 'Everyone can rate posts';
