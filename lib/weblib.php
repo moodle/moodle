@@ -460,12 +460,12 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL) {
 /// $text is raw text (originally from a user)
 /// $format is one of the format constants, defined above
 
-    global $CFG;
+    global $CFG, $course;
 
     switch ($format) {
         case FORMAT_HTML:
             replace_smilies($text);
-            return $text;
+            return filter_text($text);
             break;
 
         case FORMAT_PLAIN:
@@ -477,7 +477,8 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL) {
             break;
 
         case FORMAT_WIKI:
-            return wiki_to_html($text);
+            $text = wiki_to_html($text);
+            return filter_text($text);
             break;
 
         default:  // FORMAT_MOODLE or anything else
@@ -487,7 +488,9 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL) {
             if (!isset($options->para)) {
                 $options->para=true;
             }
-            return text_to_html($text, $options->smiley, $options->para);
+            $text = text_to_html($text, $options->smiley, $options->para);
+            return filter_text($text);
+
             break;
     }
 }
@@ -519,6 +522,35 @@ function format_text_email($text, $format) {
             break;
     }
 }
+
+
+function filter_text($text) {
+/// Given some text in HTML format, this function will pass it 
+/// through any filters that have been defined in $CFG->textfilterx
+/// The variable defines a filepath to a file containing the 
+/// filter function.  The file must contain a variable called 
+/// $textfilter_function which contains the name of the function
+/// with $course->id and $text parameters
+
+    global $CFG, $course;   // A dirty hack right now ... should not be assumed global
+
+    if (empty($course->id)) {
+        return $text;
+    }
+
+    for ($i=1; $i<=10; $i++) {
+        $variable = "textfilter$i";
+        if (empty($CFG->$variable)) {   /// No more filters
+            return $text;
+        }
+        if (is_readable("$CFG->dirroot/".$CFG->$variable)) {
+            include("$CFG->dirroot/".$CFG->$variable);
+            $text = $textfilter_function($course->id, $text);
+        }
+    }
+    return $text;
+}
+
 
 function clean_text($text, $format) {
 /// Given raw text (eg typed in by a user), this function cleans it up 
@@ -606,14 +638,6 @@ function text_to_html($text, $smiley=true, $para=true) {
 
 /// Make returns into HTML newlines.
     $text = nl2br($text);
-
-/// Insert links to library pages if Library is being used
-    if (!empty($CFG->librarypath)) {
-        if (file_exists("$CFG->dirroot/$CFG->librarypath/librarylib.php")) {
-            include_once("$CFG->dirroot/$CFG->librarypath/librarylib.php");
-            $text = librarytexttohtml($text);
-        }       
-    }       
 
 /// Turn smileys into images.
     if ($smiley) {

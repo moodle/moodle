@@ -124,6 +124,17 @@ $CFG->directorypermissions = 0777;
 
 $CFG->admin = 'admin';
 
+//=========================================================================
+// 7. TEXT FILTERS  (most people can just ignore this setting)
+//=========================================================================
+// This is a new and experimental feature that allows text filters to 
+// be used on all printed texts in Moodle.  To add text filters, you
+// need to specify the path to a file that contains a standard textfilter.
+// The numbers need to start at one and increment up to ten.
+// 
+// eg   $CFG->textfilter1 = "mod/glossary/dynalink.php";
+//      $CFG->textfilter2 = "library/librarylib.php";
+
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser

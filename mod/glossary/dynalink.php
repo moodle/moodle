@@ -1,5 +1,11 @@
 <?PHP
 
+    $textfilter_function = 'glossary_dynamic_link';
+
+    if (function_exists($textfilter_function)) {
+        return;
+    }
+
     function glossary_dynamic_link($courseid, $text,$glossaryid = NULL) {
     global $CFG;
     static $entries;     // to avoid repeated calls to database
