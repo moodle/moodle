@@ -115,10 +115,8 @@
                 displaydir($wdir);
                     
             } else {
-                if (! $filesize = ini_get("upload_max_filesize")) {
-                    $filesize = "5M";
-                }
-                $upload_max_filesize = get_real_size($filesize);
+                $upload_max_filesize = get_max_upload_file_size();
+                $filesize = display_size($upload_max_filesize);
 
                 echo "<P>Upload a file (maximum size $filesize) into <B>$wdir</B>:";
                 echo "<TABLE><TR><TD COLSPAN=2>";
@@ -476,21 +474,6 @@ function printfilelist($filelist) {
 }
 
 
-function display_size($file) {
-    $file_size = filesize($file);
-    if ($file_size >= 1073741824) {
-        $file_size = round($file_size / 1073741824 * 100) / 100 . "g";
-    } else if ($file_size >= 1048576) {
-        $file_size = round($file_size / 1048576 * 100) / 100 . "m";
-    } else if ($file_size >= 1024) {
-        $file_size = round($file_size / 1024 * 100) / 100 . "k";
-    } else { 
-        $file_size = $file_size . "b";
-    }
-    return $file_size;
-}
-
-
 function print_cell($alignment="center", $text="&nbsp;") {
     echo "<TD ALIGN=\"$alignment\" NOWRAP>";
     echo "<FONT SIZE=\"-1\" FACE=\"Arial, Helvetica\">";
@@ -610,7 +593,8 @@ function displaydir ($wdir) {
                                   480, 640);
             echo "</FONT></TD>";
 
-            print_cell("right", display_size($filename));
+            $file_size = filesize($filename);
+            print_cell("right", display_size($file_size));
             print_cell("right", $filedate);
             if ($icon == "text.gif" || $icon == "html.gif") {
                 $edittext = "<A HREF=\"index.php?id=$id&wdir=$wdir&file=$fileurl&action=edit\">$stredit</A>";
