@@ -1259,7 +1259,7 @@ function get_course_users($courseid, $sort="timeaccess DESC") {
 */
 function get_site_users($sort="u.lastaccess DESC", $select="") {
 
-    global $CFG, $db;
+    global $CFG;
 
 
     if ($select) {
@@ -1268,22 +1268,26 @@ function get_site_users($sort="u.lastaccess DESC", $select="") {
         $selectinfo = "u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat,".
                       "u.email, u.emailstop, u.city, u.country, u.lastaccess, u.lastlogin, u.picture, u.lang, u.timezone";
     }
-                  
 
-    if (!$students = get_records_sql("SELECT $selectinfo from {$CFG->prefix}user u, {$CFG->prefix}user_students s
-                                      WHERE s.userid = u.id GROUP BY u.id ORDER BY $sort")) {
-        $students = array();
+    if (!$users = get_records_sql("SELECT $selectinfo from {$CFG->prefix}user u, {$CFG->prefix}user_students s
+                                    WHERE s.userid = u.id GROUP BY u.id ORDER BY $sort")) {
+        $users = array();
     }
-    if (!$teachers = get_records_sql("SELECT $selectinfo from {$CFG->prefix}user u, {$CFG->prefix}user_teachers t
+
+    if ($teachers = get_records_sql("SELECT $selectinfo from {$CFG->prefix}user u, {$CFG->prefix}user_teachers t
                                       WHERE t.userid = u.id GROUP BY u.id ORDER BY $sort")) {
-        $teachers = array();
+        foreach ($teachers as $teacher) {
+            $users[$teacher->id] = $teacher;
+        }
     }
-    if (!$admins = get_records_sql("SELECT $selectinfo from {$CFG->prefix}user u, {$CFG->prefix}user_admins a
+
+    if ($admins = get_records_sql("SELECT $selectinfo from {$CFG->prefix}user u, {$CFG->prefix}user_admins a
                                       WHERE a.userid = u.id GROUP BY u.id ORDER BY $sort")) {
-        $admins = array();
+        foreach ($admins as $admin) {
+            $users[$admin->id] = $admin;
+        }
     }
-    $users = array_merge($teachers, $students);
-    $users = array_merge($users, $admins);
+
     return $users;
 }
 
