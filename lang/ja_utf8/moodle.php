@@ -258,6 +258,7 @@ $string['createaccount'] = 'アカウントの作成';
 $string['createfolder'] = '$a にフォルダを作成する';
 $string['createuserandpass'] = 'ユーザ名(英数字)とパスワードを入力してください。';
 $string['createziparchive'] = 'zip書庫を作成';
+$string['creatingblocks'] = 'ブロックｋの作成';
 $string['creatingcategoriesandquestions'] = 'カテゴリと質問の作成';
 $string['creatingcoursemodules'] = 'コースモジュールの作成';
 $string['creatingevents'] = 'イベントの作成';
