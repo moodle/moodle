@@ -66,10 +66,8 @@ if ( $confirm ) {
 
         if ($usehtmleditor = can_use_richtext_editor()) {
             $defaultformat = FORMAT_HTML;
-            $onsubmit = "onsubmit=\"copyrichtext(form.text);\"";
         } else {
             $defaultformat = FORMAT_MOODLE;
-            $onsubmit = "";
         }
 
         print_header_simple(strip_tags("$glossary->name"), "",
@@ -240,10 +238,8 @@ $stredit = get_string("edit");
 
 if ($usehtmleditor = can_use_richtext_editor()) {
     $defaultformat = FORMAT_HTML;
-    $onsubmit = "onsubmit=\"copyrichtext(form.text);\"";
 } else {
     $defaultformat = FORMAT_MOODLE;
-    $onsubmit = "";
 }
 
 print_header_simple(strip_tags("$glossary->name"), "",
