@@ -14,7 +14,10 @@
        $student = strtolower($course->student);
        require("$CFG->dirroot/mod/forum/lib.php");
        asort($FORUM_TYPES);
-       choose_from_menu($FORUM_TYPES, "type", $form->type);
+       if (! $form->type) {
+           $form->type = "general";
+       }
+       choose_from_menu($FORUM_TYPES, "type", $form->type, "");
        helpbutton("forumtype", get_string("forumtype", "forum"), "forum");
     ?>
 
