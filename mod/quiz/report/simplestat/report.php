@@ -456,7 +456,11 @@ class quiz_report extends quiz_default_report {
 
     /// Check to see if groups are being used in this quiz
         if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-            $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id&mode=simplestat");
+            if (empty($download)) {  // Display menu too
+                $currentgroup = setup_and_print_groups($course, $groupmode, "report.php?id=$cm->id&mode=simplestat");
+            } else {
+                $currentgroup = get_current_group($course->id);
+            }
         } else {
             $currentgroup = false;
         }
