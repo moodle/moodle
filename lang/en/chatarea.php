@@ -32,3 +32,5 @@ $string['newatbottom'] = "New enteries at bottom of page";
 $string['simplehtml'] = "Simple HTML only";
 $string['nohtml'] = "No HTML allowed";
 
+
+?>
