@@ -36,7 +36,7 @@
     
             $emailconfirm = get_string("emailconfirm");
             print_header($emailconfirm, $emailconfirm, $emailconfirm);
-            notice(get_string("emailconfirmsent", "", $user->email), $CFG->wwwroot);
+            notice(get_string("emailconfirmsent", "", $user->email), "$CFG->wwwroot/");
             exit;
         }
     }

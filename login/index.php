@@ -60,7 +60,7 @@
                 redirect("$CFG->wwwroot/user/edit.php?id=$USER->id&course=$site->id");
 
             } else if (empty($SESSION->wantsurl)) {
-                redirect($CFG->wwwroot);
+                redirect("$CFG->wwwroot/");
 
             } else {
                 $wantsurl = $SESSION->wantsurl;

@@ -62,6 +62,6 @@
         }
     }
 
-    redirect($CFG->wwwroot);
+    redirect("$CFG->wwwroot/");
 
 ?>

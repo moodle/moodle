@@ -50,7 +50,7 @@
 			    notice($strpasswordchanged, "$CFG->wwwroot/user/view.php?id=$USER->id&course=$id");
             } else {
 			    print_header($strpasswordchanged, $strpasswordchanged, $strpasswordchanged, "");
-			    notice($strpasswordchanged, "$CFG->wwwroot");
+			    notice($strpasswordchanged, "$CFG->wwwroot/");
             }
 
 			print_footer();

@@ -15,6 +15,6 @@
     unset($SESSION);
     unset($USER);
 
-    redirect($CFG->wwwroot);
+    redirect("$CFG->wwwroot/");
 
 ?>
