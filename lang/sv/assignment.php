@@ -35,6 +35,4 @@ $string['uploadsuccess'] = "Uppladdningen av '\$a' lyckades";
 $string['viewfeedback'] = "Visa uppgiftsbetyg och återkoppling";
 $string['viewsubmissions'] = "Visa \$a inskickade bidrag";
 $string['yoursubmission'] = "Ditt inskickade bidrag";
-
 ?>
-
