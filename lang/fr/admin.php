@@ -114,6 +114,7 @@ $string['sitemaintenancemode'] = 'Mode maintenance';
 $string['sitemaintenanceon'] = 'Votre site est actuellement en mode maintenance (seuls les administrateurs peuvent se connecter et utiliser le site).';
 $string['sitemaintenanceoff'] = 'Le mode maintenance a été désactivé et le site fonctionne à nouveau normalement';
 $string['sitemaintenancewarning'] = 'Votre site est actuellement en mode maintenance (seuls les administrateurs peuvent se connecter). Pour revenir à un fonctionnement normal du site, veuillez <a href=\"maintenance.php\">désactiver le mode maintenance</a>.';
+$string['tabselectedtofront'] = 'Dans les tables avec onglets, la rangée contenant l\'onglet sélectionné doit-il être ramené au premier plan&nbsp;?';
 $string['timezonenotforced'] = 'Les utilisateurs peuvent choisir leur fuseau horaire';
 $string['timezoneisforcedto'] = 'Imposer à tous les utilisateurs l\'utilisation du fuseau horaire';
 $string['timezones'] = 'Fuseaux horaires';
