@@ -18,8 +18,8 @@ function display() {
     $course = $this->course;
     $resource = $this->resource; 
 
-    require_once("../../files/mimetypes.php");
-
+    require_once("$CFG->dirroot/files/mimetypes.php");
+ 
     $subdir = isset($_GET['subdir']) ? $_GET['subdir'] : '';
 
     add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
