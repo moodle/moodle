@@ -705,6 +705,10 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
         $mail->IsMail();                               // use PHP mail() = sendmail
     }
 
+    $adminuser = get_admin();
+
+    $mail->Sender   = "$adminuser->email";
+
     $mail->From     = "$from->email";
     $mail->FromName = "$from->firstname $from->lastname";
     $mail->Subject  =  stripslashes($subject);
@@ -724,7 +728,6 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml="", $a
 
     if ($attachment && $attachname) {
         if (ereg( "\\.\\." ,$attachment )) {    // Security check for ".." in dir path
-            $adminuser = get_admin();
             $mail->AddAddress("$adminuser->email", "$adminuser->firstname $adminuser->lastname");
             $mail->AddStringAttachment("Error in attachment.  User attempted to attach a filename with a unsafe name.", "error.txt", "8bit", "text/plain");
         } else {
