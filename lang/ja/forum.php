@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.2 development (2003091600)
+      // forum.php - created with Moodle 1.2 development (2003101200)
 
 
 $string['addanewdiscussion'] = "ディスカッショントピックを追加";
@@ -14,6 +14,7 @@ $string['bynameondate'] = "\$a->date - \$a->name の投稿";
 $string['configdisplaymode'] = "表示モードが設定されていない場合のデフォルト表示モードです。";
 $string['configlongpost'] = "この文字長以上の長さ(HTMLは含まない)は長いと考えられます。";
 $string['configmanydiscussions'] = "フォーラムページに表示されるディスカッションの最大数";
+$string['configmaxbytes'] = "全てのフォーラム添付ファイルに関するデフォルトの最大サイズ(コース制限及び他のローカル設定に従います)";
 $string['configshortpost'] = "この文字長以下の長さ(HTMLは含まない)は長いと考えられます。";
 $string['couldnotadd'] = "エラーのため投稿出来ませんでした";
 $string['couldnotdeleteratings'] = "申し訳ございません、評価済みのため削除出来ませんでした";
@@ -50,6 +51,7 @@ $string['introsocial'] = "投稿制限無しフォーラム";
 $string['introteacher'] = "教師専用フォーラム";
 $string['lastpost'] = "最新の投稿";
 $string['learningforums'] = "学習フォーラム";
+$string['maxattachmentsize'] = "最大添付ファイルサイズ";
 $string['maxtimehaspassed'] = "申し訳ございません、この投稿(\$a)に対する最大編集回数を超えました!";
 $string['message'] = "メッセージ";
 $string['modeflatnewestfirst'] = "返信を新しいものからフラット表示";
