@@ -104,6 +104,9 @@
                         $form->timeduration = 0;
                     }
                 }
+                else if($form->duration == 2) {
+                    $form->timeduration = $form->minutes * 60;
+                }
                 else {
                     $form->timeduration = 0;
                 }
@@ -245,11 +248,20 @@
                 $form->timeduration = $event->timeduration;
                 $form->id = $event->id;
                 $form->format = $defaultformat;
-                if($event->timeduration) {
+                if($event->timeduration > 3600) {
+                    // More than one hour, so default to normal duration mode
                     $form->duration = 1;
+                    $form->minutes = '';
+                }
+                else if($event->timeduration) {
+                    // Up to one hour, "minutes" mode probably is better here
+                    $form->duration = 2;
+                    $form->minutes = $event->timeduration / 60;
                 }
                 else {
+                    // No duration
                     $form->duration = 0;
+                    $form->minutes = '';
                 }
             }
             print_side_block_start(get_string('editevent', 'calendar'), '', 'mycalendar');
@@ -469,7 +481,7 @@ function validate_form(&$form, &$err) {
     if($form->duration == 2 and !($form->minutes > 0 and $form->minutes < 1000)) {
         $err['minutes'] = get_string('errorinvalidminutes', 'calendar');
     }
-    if ($form->repeat and !($form->repeats > 1 and $form->repeats < 100)) {
+    if (!empty($form->repeat) and !($form->repeats > 1 and $form->repeats < 100)) {
         $err['repeats'] = get_string('errorinvalidrepeats', 'calendar');
     }
     if(!empty($form->courseid)) {
