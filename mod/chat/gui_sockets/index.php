@@ -18,7 +18,7 @@
         error('Course Module ID was incorrect');
     }
 
-    require_login($course->id);
+    require_login($course->id, false, $cm);
 
     if (isguest()) {
         error('Guest does not have access to chat rooms');

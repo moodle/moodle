@@ -20,7 +20,7 @@
     }
 
 
-    require_login($course->id);
+    require_login($course->id, false);
 
     if (!isteacher($course->id)) {
         error("Only the teacher can import questions!");
@@ -39,7 +39,7 @@
         if (empty($_FILES['newfile'])) {      // file was just uploaded
             notify(get_string("uploadproblem") );
         }
-        
+
         if ((!is_uploaded_file($_FILES['newfile']['tmp_name']) or $_FILES['newfile']['size'] == 0)) {
             notify(get_string("uploadnofilefound") );
 
@@ -72,7 +72,7 @@
             print_footer($course);
             exit;
         }
-    } 
+    }
 
     /// Print upload form
 

@@ -55,11 +55,7 @@
         error("Course is misconfigured");
     }
 
-    require_login($course->id);
-    if (!$cm->visible and !isteacher($course->id)) {
-        print_header();
-        notice(get_string('activityiscurrentlyhidden'), $CFG->wwwroot.'/course/view.php?id='.$course->id);
-    }
+    require_login($course->id, false, $cm);
 
     $navigation = "";
     if ($course->category) {

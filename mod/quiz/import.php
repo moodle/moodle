@@ -15,7 +15,7 @@
         error("This category doesn't belong to a valid course!");
     }
 
-    require_login($course->id);
+    require_login($course->id, false);
 
     if (!isteacher($course->id)) {
         error("Only the teacher can import quiz questions!");
@@ -82,7 +82,7 @@
 
     /// Print upload form
 
-    if (!$categories = quiz_get_category_menu($course->id, true)) {
+    if (!$categories = quiz_get_category_menu($course->id, false)) {
         error("No categories!");
     }
 

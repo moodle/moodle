@@ -8,12 +8,7 @@
         error("Course ID is incorrect");
     }
 
-    if ($course->category) {
-        require_login($course->id);
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
-    } else {
-        $navigation = '';
-    }
+    require_course_login($course);
 
     add_to_log($course->id, "scorm", "view all", "index.php?id=$course->id", "");
 
@@ -25,7 +20,7 @@
     $strsummary = get_string("summary");
     $strlastmodified = get_string("lastmodified");
 
-    print_header("$course->shortname: $strscorms", "$course->fullname", "$navigation $strscorms", 
+    print_header_simple("$strscorms", "", "$navigation $strscorms",
                  "", "", true, "", navmenu($course));
 
     if ($course->format == "weeks" or $course->format == "topics") {
@@ -77,6 +72,6 @@
 
     print_footer($course);
 
- 
+
 ?>
 

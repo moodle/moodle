@@ -21,7 +21,7 @@
         error("Course module is incorrect");
     }
 
-    require_login($course->id);
+    require_login($course->id, false);
     if (!isteacher($course->id)) {
         error("You must be a teacher to use this page.");
     }
@@ -45,7 +45,7 @@
         "$navigation <a href=\"index.php?id=$course->id\">$strglossaries</a> -> $glossary->name",
         "", "", true, update_module_button($cm->id, $course->id, $strglossary),
         navmenu($course, $cm));
-    
+
     echo '<div id="glossary-export" class="glossary">';  // glossary-export wrapper start
 
     echo '<p align="center"><font size="3"><b>' . stripslashes_safe($glossary->name);

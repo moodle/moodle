@@ -6,9 +6,6 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    if (isguest()) {
-        error("Guests are not allowed to rate entries.", $_SERVER["HTTP_REFERER"]);
-    }
 
     require_variable($id);  // The course these ratings are part of
 
@@ -17,6 +14,10 @@
     }
 
     require_login($course->id);
+
+    if (isguest()) {
+        error("Guests are not allowed to rate entries.", $_SERVER["HTTP_REFERER"]);
+    }
 
     if ($data = data_submitted("$CFG->wwwroot/mod/glossary/view.php")) {    // form submitted
 

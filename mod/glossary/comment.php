@@ -18,15 +18,15 @@
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
-    } 
+    }
 
     if (! $course = get_record("course", "id", $cm->course)) {
         error("Course is misconfigured");
-    } 
+    }
 
     if (! $glossary = get_record("glossary", "id", $cm->instance)) {
         error("Course module is incorrect");
-    } 
+    }
 
     if (! $entry = get_record("glossary_entries", "id", $eid)) {
         error("Entry is incorrect");
@@ -36,15 +36,13 @@
         if (! $comment = get_record("glossary_comments", "id", $cid)) {
             error("Comment is incorrect");
         }
-    } 
+    }
 
-    require_login($course->id);    
-    if (!$cm->visible and !isteacher($course->id)) {
-        notice(get_string("activityiscurrentlyhidden"));
-    } 
+    require_login($course->id, false, $cm);
+
     if (isguest()) {
         error("Guests are not allowed to post comments", $_SERVER["HTTP_REFERER"]);
-    }    
+    }
     add_to_log($course->id, "glossary", "view", "view.php?id=$cm->id", "$glossary->id",$cm->id);
 
     switch ( $action ){
@@ -70,7 +68,7 @@
             "<a href=index.php?id=$course->id>$strglossaries</a> -> <a href=view.php?id=$cm->id>$glossary->name</a> -> <a href=comments.php?id=$cm->id&amp;eid=$entry->id>$strcomments</a> -> " . $straction,
             "", "", true, update_module_button($cm->id, $course->id, $strglossary),
             navmenu($course, $cm));
-    
+
     echo "<center>";
 
 /// Input section
@@ -83,7 +81,7 @@
                 error("You can't delete comments in this glossary!");
             }
         if ( $confirm ) {
-            delete_records("glossary_comments","id", $cid);             
+            delete_records("glossary_comments","id", $cid);
 
             print_simple_box_start("center","40%", "#FFBBBB");
             echo "<center>" . get_string("commentdeleted","glossary") . "</center>";
@@ -188,7 +186,7 @@
             }
             include("comment.html");
 
-            if ($usehtmleditor) { 
+            if ($usehtmleditor) {
                 use_html_editor("text");
             }
         }

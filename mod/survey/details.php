@@ -2,13 +2,13 @@
 
     require_once("../../config.php");
 
-    if ($form = data_submitted($destination)) { 
+    if ($form = data_submitted($destination)) {
 
         if (! $course = get_record("course", "id", $form->course)) {
             error("This course doesn't exist");
         }
 
-        require_login($course->id);
+        require_login($course->id, false);
 
         if (!isteacher($course->id)) {
             error("You can't modify this course!");
@@ -42,7 +42,7 @@
                 </font>
             </td>
             <td>
-                <textarea name="intro" rows="20" cols="50" wrap="virtual"><?php 
+                <textarea name="intro" rows="20" cols="50" wrap="virtual"><?php
                 if ($form->intro) {
                     p($form->intro);
                 } else {

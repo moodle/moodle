@@ -21,7 +21,7 @@
         error('Course is misconfigured');
     }
 
-    require_login($course->id);
+    require_login($course->id, false, $cm);
 
     $isteacher     = isteacher($course->id);
     $isteacheredit = isteacheredit($course->id);

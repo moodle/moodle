@@ -2551,10 +2551,10 @@ function forum_print_latest_discussions($forum_id=0, $forum_numdiscussions=5,
         if (! $course = get_record("course", "id", $forum->course)) {
             error("Could not find the course this forum belongs to!");
         }
-
-        if ($course->category) {
-            require_login($course->id);
+        if (! $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+            error("Course Module ID was incorrect");
         }
+        require_course_login($course, true, $cm);
 
     } else {
         if (! $course = get_record("course", "category", 0)) {

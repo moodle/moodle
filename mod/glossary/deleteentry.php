@@ -28,7 +28,7 @@
         error("Entry ID was incorrect");
     }
 
-    require_login($course->id);
+    require_login($course->id, false, $cm);
 
     if (isguest()) {
         error("Guests are not allowed to edit or delete entries", $_SERVER["HTTP_REFERER"]);
@@ -45,8 +45,8 @@
     $strareyousuredelete = get_string("areyousuredelete","glossary");
 
     print_header_simple("$glossary->name", "",
-                 "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> $glossary->name", 
-                  "", "", true, update_module_button($cm->id, $course->id, $strglossary), 
+                 "<a href=\"index.php?id=$course->id\">$strglossaries</a> -> $glossary->name",
+                  "", "", true, update_module_button($cm->id, $course->id, $strglossary),
                   navmenu($course, $cm));
 
 
@@ -59,7 +59,7 @@
     }
 
 /// If data submitted, then process and store.
-    
+
     if ($confirm) { // the operation was confirmed.
         // if it is an imported entry, just delete the relation
 
@@ -77,7 +77,7 @@
             delete_records("glossary_comments", "entryid",$entry->id);
             delete_records("glossary_alias", "entryid", $entry->id);
             delete_records("glossary_ratings", "entryid", $entry->id);
-            delete_records("glossary_entries","id", $entry->id);                
+            delete_records("glossary_entries","id", $entry->id);
         }
 
         add_to_log($course->id, "glossary", "delete entry", "view.php?id=$cm->id&amp;mode=$prevmode&amp;hook=$hook", $entry->id,$cm->id);

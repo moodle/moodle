@@ -20,15 +20,15 @@
         error("Course module is incorrect");
     }
 
-    require_login($course->id);
+    require_login($course->id, false, $cm);
 
     $strexercises = get_string("modulenameplural", "exercise");
     $strexercise  = get_string("modulename", "exercise");
     $strupload      = get_string("upload");
 
     print_header_simple("$exercise->name : $strupload", "",
-                 "<a href=\"index.php?id=$course->id\">$strexercises</a> -> 
-                  <a href=\"view.php?id=$cm->id\">$exercise->name</a> -> $strupload", 
+                 "<a href=\"index.php?id=$course->id\">$strexercises</a> ->
+                  <a href=\"view.php?id=$cm->id\">$exercise->name</a> -> $strupload",
                   "", "", true);
 
     // check that this is not a "rapid" second submission, caused by using the back button
@@ -46,12 +46,12 @@
             }
         }
     }
-                    
+
     // check existence of title
     if (!$title = $_POST['title']) {
         notify(get_string("notitlegiven", "exercise") );
     }
-    else {  
+    else {
         require_once($CFG->dirroot.'/lib/uploadlib.php');
         $um = new upload_manager('newfile',false,false,$course,false,$exercise->maxbytes);
         if ($um->preprocess_files()) {
@@ -82,7 +82,7 @@
             if (!set_field("exercise_submissions", "resubmit", 0, "exerciseid", $exercise->id, "userid", $USER->id)) {
                 error("Exercise Upload: unable to reset resubmit flag");
             }
-        } 
+        }
         // upload manager will print errors.
     }
     print_continue("view.php?id=$cm->id");

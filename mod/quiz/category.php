@@ -14,7 +14,7 @@
         redirect("edit.php");
     }
 
-    require_login($course->id);
+    require_login($course->id, false);
 
     if (!isteacheredit($course->id)) {
         error("Only teachers authorized to edit the course '{$course->fullname}' can use this page!");

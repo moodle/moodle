@@ -1,14 +1,14 @@
 <?php    // $Id$
-    /// This file allows to manage the default behave of the display formats
-    
+    /// This file allows to manage the default behaviour of the display formats
+
     require_once("../../config.php");
     require_once("lib.php");
     global $CFG, $THEME;
-        
-    require_variable($id);    
-  
+
+    require_variable($id);
+
     $mode = optional_param('mode');
-        
+
     require_login();
     if ( !isadmin() ) {
         error("You must be an admin to use this page.");
@@ -16,7 +16,7 @@
     if (!$site = get_site()) {
         error("Site isn't defined!");
     }
-    
+
     if ( !$displayformat = get_record("glossary_formats","id",$id) ) {
         error ("Invalid Glossary Format");
     }
@@ -34,19 +34,19 @@
         redirect("../../$CFG->admin/module.php?sesskey=$USER->sesskey&module=glossary#formats");
         die;
     } elseif ( $mode == 'edit' and $form) {
-        
+
         $displayformat->popupformatname = $form->popupformatname;
         $displayformat->showgroup   = $form->showgroup;
         $displayformat->defaultmode = $form->defaultmode;
         $displayformat->defaulthook = $form->defaulthook;
         $displayformat->sortkey     = $form->sortkey;
         $displayformat->sortorder   = $form->sortorder;
-        
+
         update_record("glossary_formats",$displayformat);
         redirect("../../$CFG->admin/module.php?sesskey=$USER->sesskey&module=glossary#formats");
         die;
     }
-    
+
     $stradmin = get_string("administration");
     $strconfiguration = get_string("configuration");
     $strmanagemodules = get_string("managemodules");
@@ -84,14 +84,14 @@
         $recformats = glossary_get_available_formats();
 
         $formats = array();
-    
+
         //Take names
         foreach ($recformats as $format) {
            $formats[$format->name] = get_string("displayformat$format->name", "glossary");
         }
         //Sort it
         asort($formats);
-        
+
         choose_from_menu($formats,'popupformatname',$displayformat->popupformatname);
      ?>
         </td>
@@ -103,25 +103,25 @@
         <td align="right" width="20%"><?php print_string('defaultmode','glossary'); ?></td>
         <td>
         <select size="1" name="defaultmode">
-    <?php 
+    <?php
         $sletter = '';
         $scat = '';
         $sauthor = '';
         $sdate = '';
         switch ( strtolower($displayformat->defaultmode) ) {
-        case 'letter': 
+        case 'letter':
             $sletter = ' selected="selected" ';
         break;
-        
-        case 'cat': 
+
+        case 'cat':
             $scat = ' selected="selected" ';
         break;
-        
-        case 'date': 
+
+        case 'date':
             $sdate = ' selected="selected" ';
         break;
 
-        case 'author': 
+        case 'author':
             $sauthor = ' selected="selected" ';
         break;
         }
@@ -140,25 +140,25 @@
         <td align="right" width="20%"><?php print_string('defaulthook','glossary'); ?></td>
         <td>
         <select size="1" name="defaulthook">
-    <?php 
+    <?php
         $sall = '';
         $sspecial = '';
         $sallcategories = '';
         $snocategorised = '';
         switch ( strtolower($displayformat->defaulthook) ) {
-        case 'all': 
+        case 'all':
             $sall = ' selected="selected" ';
         break;
-        
-        case 'special': 
+
+        case 'special':
             $sspecial = ' selected="selected" ';
         break;
-        
-        case '0': 
+
+        case '0':
             $sallcategories = ' selected="selected" ';
         break;
 
-        case '-1': 
+        case '-1':
             $snocategorised = ' selected="selected" ';
         break;
         }
@@ -177,25 +177,25 @@
         <td align="right" width="20%"><?php print_string('defaultsortkey','glossary'); ?></td>
         <td>
         <select size="1" name="sortkey">
-    <?php 
+    <?php
         $sfname = '';
         $slname = '';
         $supdate = '';
         $screation = '';
         switch ( strtolower($displayformat->sortkey) ) {
-        case 'firstname': 
+        case 'firstname':
             $sfname = ' selected="selected" ';
         break;
-        
-        case 'lastname': 
+
+        case 'lastname':
             $slname = ' selected="selected" ';
         break;
-        
-        case 'creation': 
+
+        case 'creation':
             $screation = ' selected="selected" ';
         break;
 
-        case 'update': 
+        case 'update':
             $supdate = ' selected="selected" ';
         break;
         }
@@ -214,15 +214,15 @@
         <td align="right" width="20%"><?php print_string('defaultsortorder','glossary'); ?></td>
         <td>
         <select size="1" name="sortorder">
-    <?php 
+    <?php
         $sasc = '';
         $sdesc = '';
         switch ( strtolower($displayformat->sortorder) ) {
-        case 'asc': 
+        case 'asc':
             $sasc = ' selected="selected" ';
         break;
-        
-        case 'desc': 
+
+        case 'desc':
             $sdesc = ' selected="selected" ';
         break;
         }
@@ -263,8 +263,8 @@
     <input type="hidden" name="id"    value="<?php p($id) ?>" />
     <input type="hidden" name="mode"    value="edit" />
     <?php
-    
-    print_simple_box_end();    
+
+    print_simple_box_end();
     echo '</form>';
 
     print_footer();

@@ -33,7 +33,7 @@
         }
     }
 
-    require_login($course->id);
+    require_login($course->id, false, $cm);
 
 
 /// Set number for next attempt:

@@ -13,7 +13,7 @@
         error("Course is misconfigured");
     }
 
-    require_login($course->id);
+    require_login($course->id, false, $cm);
 
     if (! $survey = get_record("survey", "id", $cm->instance)) {
         error("Survey ID was incorrect");
@@ -91,7 +91,7 @@
                 }
             }
         }
-   
+
         print_footer($course);
         exit;
     }
@@ -116,7 +116,7 @@
     foreach ($questionorder as $key => $val) {
         $question = $questions["$val"];
         $question->id = $val;
-        
+
         if ($question->type >= 0) {
 
             if ($question->text) {

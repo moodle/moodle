@@ -9,7 +9,7 @@
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
-        }   
+        }
         if (! $course = get_record("course", "id", $cm->course)) {
             error("Course is misconfigured");
         }
@@ -28,7 +28,7 @@
         }
     }
 
-    require_login($course->id);
+    require_login($course->id, true, $cm);
 
     add_to_log($course->id, "attendance", "view", "view.php?id=$cm->id", $attendance->id, $cm->id);
 
@@ -39,8 +39,8 @@
     $strteacheredit = get_string("teacheredit", "attendance");
 
     print_header_simple($attendance->name, "",
-                 "<a href=index.php?id=$course->id>$strattendances</a> -> $attendance->name", 
-                  "", "", true, update_module_button($cm->id, $course->id, $strattendance), 
+                 "<a href=index.php?id=$course->id>$strattendances</a> -> $attendance->name",
+                  "", "", true, update_module_button($cm->id, $course->id, $strattendance),
                   navmenu($course, $cm));
 
 /// Print the main part of the page
@@ -66,9 +66,9 @@
      }
    } else {
        $sroll = array(); //just to set default value
-   }    
+   }
 
-   // get the list of attendance records for all hours of the given day and 
+   // get the list of attendance records for all hours of the given day and
    // put it in the array for use in the attendance table
     $strviewall = get_string("viewall", "attendance");
     $strviewweek = get_string("viewweek", "attendance");
@@ -119,8 +119,8 @@
   $i=0;
   $A = get_string("absentshort","attendance");
   $T = get_string("tardyshort","attendance");
-  $P = get_string("presentshort","attendance");  
-  
+  $P = get_string("presentshort","attendance");
+
 
   if ($students) foreach ($students as $student) {
     echo "<tr><td align=\"left\" nowrap class=\"generaltablecell\" style=\"border-top: 1px solid;\">".$student->lastname."</td>\n";
@@ -142,8 +142,8 @@
   }
   /// ending for the table
   echo "</table></td></tr></table>\n";
-  
-  
+
+
   /// print the miscellaneous settings information before the attendance roll
   echo "<center><table align=\"center\" width=\"80\" class=\"generalbox\"".
     "border=\"0\" cellpadding=\"0\" cellspacing=\"0\"><tr>".

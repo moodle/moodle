@@ -14,7 +14,7 @@
         if (! $course = get_record("course", "id", $cm->course)) {
             error("Course is misconfigured");
         }
-    
+
         if (! $assignment = get_record("assignment", "id", $cm->instance)) {
             error("Course module is incorrect");
         }
@@ -31,7 +31,7 @@
         }
     }
 
-    require_course_login($course);
+    require_course_login($course, true, $cm);
 
     add_to_log($course->id, "assignment", "view", "view.php?id=$cm->id", $assignment->id, $cm->id);
 
@@ -39,7 +39,7 @@
     $strassignment  = get_string("modulename", "assignment");
 
     print_header_simple($assignment->name, "",
-                 "<a href=\"index.php?id=$course->id\">$strassignments</a> -> $assignment->name", 
+                 "<a href=\"index.php?id=$course->id\">$strassignments</a> -> $assignment->name",
                   "", "", true, update_module_button($cm->id, $course->id, $strassignment), navmenu($course, $cm));
 
     if (isteacher($course->id)) {
@@ -115,9 +115,9 @@
             } else {
                 print_heading(get_string("notsubmittedyet","assignment"));
             }
-        
+
             echo '<hr size="1" noshade="noshade" />';
-        
+
             if ($submission and $submission->timemarked) {
                 print_heading(get_string("submissionfeedback", "assignment").":", "center");
                 if (isset($scalegrades)) {
@@ -136,7 +136,7 @@
             }
         }
     }
-    
+
     print_footer($course);
 
 ?>

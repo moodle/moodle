@@ -11,7 +11,7 @@
     printdialogue
     showdialogues
     updatesubject
-    
+
 ************************************************/
 
     require_once("../../config.php");
@@ -32,18 +32,18 @@
         error("Course module dialogue is incorrect");
     }
 
-    require_login($course->id);
-    
+    require_login($course->id, false, $cm);
+
     // set up some general variables
     $usehtmleditor = can_use_html_editor();
 
     $strdialogues = get_string("modulenameplural", "dialogue");
     $strdialogue  = get_string("modulename", "dialogue");
-    
+
     // ... print the header and...
     print_header_simple("$dialogue->name", "",
-                 "<a href=\"index.php?id=$course->id\">$strdialogues</a> -> 
-                  <a hre=\"view.php?id=$cm->id\">$dialogue->name</a>", 
+                 "<a href=\"index.php?id=$course->id\">$strdialogues</a> ->
+                  <a hre=\"view.php?id=$cm->id\">$dialogue->name</a>",
                   "", "", true);
 
 
@@ -79,8 +79,8 @@
         add_to_log($course->id, "dialogue", "closed", "view.php?id=$cm->id", "$conversationid");
         redirect("view.php?id=$cm->id&amp;pane=$pane", get_string("dialogueclosed", "dialogue"));
     }
-    
-    
+
+
     /****************** confirm close ************************************/
     elseif ($action == 'confirmclose' ) {
 
@@ -101,11 +101,11 @@
             }
         }
         $pane = $_GET['pane'];
-        notice_yesno(get_string("confirmclosure", "dialogue", fullname($user)), 
-             "dialogues.php?action=closeconversation&amp;id=$cm->id&amp;cid=$conversation->id&amp;pane=$pane", 
+        notice_yesno(get_string("confirmclosure", "dialogue", fullname($user)),
+             "dialogues.php?action=closeconversation&amp;id=$cm->id&amp;cid=$conversation->id&amp;pane=$pane",
              "view.php?id=$cm->id&amp;pane=$pane");
     }
-    
+
     /****************** get subject ************************************/
     elseif ($action == 'getsubject' ) {
 
@@ -120,14 +120,14 @@
         echo "<input type=\"hidden\" name=\"pane\" value=\"".p($_GET[pane])."\"/>\n";
         echo "<table align=\"center\" border=\"1\" width=\"60%\">\n";
         echo "<tr><td align=\"right\"><b>".get_string("subject", "dialogue")."</b></td>";
-        echo "<td><input type=\"text\" size=\"50\" maxsize=\"100\" name=\"subject\" 
+        echo "<td><input type=\"text\" size=\"50\" maxsize=\"100\" name=\"subject\"
                 value=\"\" /></td></tr>\n";
         echo "<tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"".
             get_string("addsubject", "dialogue")."\" /></td></tr>\n";
         echo "</table></form>\n";
     }
-    
-        
+
+
     /****************** insert conversation entries ******************************/
     elseif ($action == 'insertentries' ) {
 
@@ -146,8 +146,8 @@
                     $item->dialogueid = $dialogue->id;
                     $item->conversationid = $conversation->id;
                     $item->userid = $USER->id;
-                    $item->timecreated = time(); 
-                    // reverse the dialogue mail default 
+                    $item->timecreated = time();
+                    // reverse the dialogue mail default
                     $item->mailed = !$dialogue->maildefault;
                     $item->text = clean_text($_POST[$textarea_name]);
                     if (!$item->id = insert_record("dialogue_entries", $item)) {
@@ -156,12 +156,12 @@
                     if (!set_field("dialogue_conversations", "lastid", $USER->id, "id", $conversation->id)) {
                         error("Insert Dialogue Entries: could not set lastid");
                     }
-                    if (!set_field("dialogue_conversations", "timemodified", $timenow, "id", 
+                    if (!set_field("dialogue_conversations", "timemodified", $timenow, "id",
                             $conversation->id)) {
                         error("Insert Dialogue Entries: could not set lastid");
                     }
                     // reset seenon time
-                    if (!set_field("dialogue_conversations", "seenon", 0, "id", 
+                    if (!set_field("dialogue_conversations", "seenon", 0, "id",
                             $conversation->id)) {
                         error("Insert Dialogue Entries: could not reset seenon");
                     }
@@ -170,19 +170,19 @@
                 }
             }
         }
-        redirect("view.php?id=$cm->id&amp;pane={$_POST['pane']}", get_string("numberofentriesadded", 
+        redirect("view.php?id=$cm->id&amp;pane={$_POST['pane']}", get_string("numberofentriesadded",
                     "dialogue", $n));
     }
-    
+
     /****************** list closed conversations *********************************/
     elseif ($action == 'listclosed') {
-    
+
         print_simple_box( text_to_html($dialogue->intro) , "center");
         echo "<br />";
-        
+
         dialogue_list_closed_conversations($dialogue);
     }
-        
+
     /****************** open conversation ************************************/
     elseif ($action == 'openconversation' ) {
 
@@ -206,7 +206,7 @@
             }
             if ($recipients) {
                 $n = 0;
-                foreach ($recipients as $recipient) { 
+                foreach ($recipients as $recipient) {
                     if ($recipient->id == $USER->id) { // teacher could be member of a group
                         continue;
                     }
@@ -231,7 +231,7 @@
                     $entry->dialogueid = $dialogue->id;
                     $entry->conversationid = $conversation->id;
                     $entry->userid = $USER->id;
-                    $entry->timecreated = time(); 
+                    $entry->timecreated = time();
                     // reverse the dialogue default value
                     $entry->mailed = !$dialogue->maildefault;
                     $entry->text = clean_text($_POST['firstentry']);
@@ -252,7 +252,7 @@
                     }
                     redirect("view.php?id=$cm->id", get_string("dialogueopened", "dialogue", $group->name));
                 } else { // all participants
-                    redirect("view.php?id=$cm->id", get_string("dialogueopened", "dialogue", 
+                    redirect("view.php?id=$cm->id", get_string("dialogueopened", "dialogue",
                                 get_string("allparticipants")));
                 }
             } else {
@@ -263,44 +263,44 @@
             }
         }
     }
-    
+
 
     /****************** print dialogue (allowing new entry)********************/
     elseif ($action == 'printdialogue') {
-    
+
         // if (!$conversation = get_record("dialogue_conversations", "id", $_GET['cid'])) {
         //     error("Print Dialogue: can not get conversation record");
         // }
-            
+
         print_simple_box( text_to_html($dialogue->intro) , "center");
         echo "<br />";
-        
+
         dialogue_print_conversation($dialogue, $conversation);
     }
-    
+
 
     /****************** show dialogues ****************************************/
     elseif ($action == 'showdialogues') {
-    
+
         if (!$conversation = get_record("dialogue_conversations", "id", $_GET['cid'])) {
             error("Show Dialogue: can not get conversation record");
         }
-            
+
         print_simple_box( text_to_html($dialogue->intro) , "center");
         echo "<br />";
-        
+
         dialogue_show_conversation($dialogue, $conversation);
         dialogue_show_other_conversations($dialogue, $conversation);
     }
-    
+
 
     /****************** update subject ****************************************/
     elseif ($action == 'updatesubject') {
-    
+
         if (!$conversation = get_record("dialogue_conversations", "id", $_POST['cid'])) {
             error("Update Subject: can not get conversation record");
         }
-            
+
         if (!$_POST['subject']) {
             redirect("view.php?id=$cm->id&amp;pane=$_POST[pane]", get_string("nosubject", "dialogue"));
         } elseif (!set_field("dialogue_conversations", "subject", clean_text($_POST['subject']), "id", $_POST['cid'])) {
@@ -308,7 +308,7 @@
         }
         redirect("view.php?id=$cm->id&amp;pane=$_POST[pane]", get_string("subjectadded", "dialogue"));
     }
-    
+
 
     /*************** no man's land **************************************/
     else {

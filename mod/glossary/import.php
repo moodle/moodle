@@ -27,7 +27,7 @@
         error("Course module is incorrect");
     }
 
-    require_login($course->id);
+    require_login($course->id, false);
     if (!isteacher($course->id)) {
         error("You must be a teacher to use this page.");
     }

@@ -899,11 +899,19 @@ function sesskey() {
 }
 
 /**
+ * This function checks that the current user is logged in and has the
+ * required privileges
+ *
  * This function checks that the current user is logged in, and optionally
- * whether they are "logged in" or allowed to be in a particular course.
- * If not, then it redirects them to the site login or course enrolment.
- * $autologinguest determines whether visitors should automatically be
- * logged in as guests provide {@link $CFG}->autologinguests is set to 1
+ * whether they are allowed to be in a particular course and view a particular
+ * course module.
+ * If they are not logged in, then it redirects them to the site login unless
+ * $autologinguest is set and {@link $CFG}->autologinguests is set to 1 in which 
+ * case they are automatically logged in as guests.
+ * If $courseid is given and the user is not enrolled in that course then the
+ * user is redirected to the course enrolment page.
+ * If $cm is given and the coursemodule is hidden and the user is not a teacher
+ * in the course then the user is redirected to the course home page.
  *
  * @uses $CFG
  * @uses $SESSION
@@ -911,11 +919,11 @@ function sesskey() {
  * @uses $FULLME
  * @uses SITEID
  * @uses $MoodleSession
- * @param int $courseid The course in question
- * @param boolean $autologinguest ?
- * @todo Finish documenting this function
+ * @param int $courseid id of the course
+ * @param boolean $autologinguest 
+ * @param $cm course module object
  */
-function require_login($courseid=0, $autologinguest=true) {
+function require_login($courseid=0, $autologinguest=true, $cm=null) {
 
     global $CFG, $SESSION, $USER, $FULLME, $MoodleSession;
 
@@ -988,8 +996,11 @@ function require_login($courseid=0, $autologinguest=true) {
 
     // Next, check if the user can be in a particular course
     if ($courseid) {
-        if ($courseid == SITEID) {
-            return;   // Anyone can be in the site course
+        if ($courseid == SITEID) { // Anyone can be in the site course
+            if (isset($cm) and !$cm->visible and !isteacher(SITEID)) { // Not allowed to see module, send to course page
+                redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
+            }
+            return;   
         }
         if (!empty($USER->student[$courseid]) or !empty($USER->teacher[$courseid]) or !empty($USER->admin)) {
             if (isset($USER->realuser)) {   // Make sure the REAL person can also access this course
@@ -997,6 +1008,9 @@ function require_login($courseid=0, $autologinguest=true) {
                     print_header();
                     notice(get_string('studentnotallowed', '', fullname($USER, true)), $CFG->wwwroot .'/');
                 }
+            }
+            if (isset($cm) and !$cm->visible and !isteacher($courseid)) { // Not allowed to see module, send to course page
+                redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
             }
             return;   // user is a member of this course.
         }
@@ -1014,6 +1028,9 @@ function require_login($courseid=0, $autologinguest=true) {
                     notice(get_string('guestsnotallowed', '', $course->fullname), "$CFG->wwwroot/login/index.php");
                     break;
                 case 1: // Guests allowed
+                    if (isset($cm) and !$cm->visible) { // Not allowed to see module, send to course page
+                        redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
+                    }
                     return;
                 case 2: // Guests allowed with key (drop through)
                     break;
@@ -1036,6 +1053,9 @@ function require_login($courseid=0, $autologinguest=true) {
             }
             $guest_name = fullname($USER, true);
             add_to_log($course->id, "course", "loginas", "../user/view.php?id=$course->id&$USER->id$", "$realname -> $guest_name");
+            if (isset($cm) and !$cm->visible) { // Not allowed to see module, send to course page
+                redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
+            }
             return;
         }
 
@@ -1055,13 +1075,13 @@ function require_login($courseid=0, $autologinguest=true) {
  * @param int $courseid The course in question
  * @param boolean $autologinguest Allow autologin guests if that is wanted
  */
-function require_course_login($course, $autologinguest=true) {
+function require_course_login($course, $autologinguest=true, $cm=null) {
     global $CFG;
     if ($CFG->forcelogin) {
         require_login();
     }
     if ($course->category) {
-        require_login($course->id, $autologinguest);
+        require_login($course->id, $autologinguest, $cm);
     }
 }
 

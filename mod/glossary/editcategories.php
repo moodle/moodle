@@ -18,7 +18,7 @@
     $mode   = optional_param('mode');   // cat
 
     $action = strtolower($action);
-        
+
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
     }
@@ -42,7 +42,7 @@
         }
     }
 
-    require_login($course->id);
+    require_login($course->id, false);
 
     if ( !isteacher($course->id) ) {
         error("You must be a teacher to use this page.");
@@ -93,14 +93,14 @@
                 print_footer($course);
 
                 add_to_log($course->id, "glossary", "delete category", "editcategories.php?id=$cm->id", $hook,$cm->id);
-                    
+
                 redirect("editcategories.php?id=$cm->id");
             } else {
                 echo "<p align=\"center\">" . get_string("delete"). " " . get_string("category","glossary") . "<font size=\"3\">";
 
                 print_simple_box_start("center","40%", "#FFBBBB");
                 echo "<center><b>".format_text($category->name)."</b><br>";
-                
+
                 $num_entries = count_records("glossary_entries_categories","categoryid",$category->id);
                 if ( $num_entries ) {
                     print_string("deletingnoneemptycategory","glossary");
@@ -136,12 +136,12 @@
             $dupcategory = get_record("glossary_categories","$lcase(name)",strtolower($name),"glossaryid",$glossary->id);
             if ( $dupcategory ) {
                 echo "<p align=\"center\">" . get_string("add"). " " . get_string("category","glossary") . "<font size=\"3\">";
-                    
+
                 print_simple_box_start("center","40%", "#FFBBBB");
                 echo "<center>" . get_string("duplicatedcategory","glossary") ."</center>";
                 echo "</center>";
                 print_simple_box_end();
-                
+
                 print_footer($course);
 
                 redirect("editcategories.php?id=$cm->id&amp;action=add&&amp;name=$name");
@@ -154,7 +154,7 @@
 
                 if ( ! $cat->id = insert_record("glossary_categories", $cat) ) {
                     error("Weird error. The category was not inserted.");
-                        
+
                     redirect("editcategories.php?id=$cm->id");
                 } else {
                     add_to_log($course->id, "glossary", "add category", "editcategories.php?id=$cm->id", $cat->id,$cm->id);
@@ -166,7 +166,7 @@
             require "editcategories.html";
         }
     }
-     
+
     if ( $action ) {
         print_footer();
         die;
@@ -186,7 +186,7 @@
           <?php p(get_string("action")) ?></b></td>
         </tr>
         <tr><td width="100%" colspan="2"  bgcolor="<?php p($THEME->cellheading2)?>">
-        
+
         <table width="100%">
 
 <?php
@@ -210,21 +210,21 @@
                ?>
                </b></td>
              </tr>
-             
+
              <?php
           }
      }
 ?>
         </table>
-        
+
         </td>
         <tr>
         <td width="100%" colspan="2"  align="center" bgcolor="<?php p($THEME->cellheading2)?>">
             <?php
-            
+
              $options['id'] = $cm->id;
              $options['action'] = "add";
-             
+
              echo "<table border=\"0\"><tr><td align=\"right\">";
              echo print_single_button("editcategories.php", $options, get_string("add") . " " . get_string("category","glossary"), "get");
              echo "</td><td align=\"left\">";

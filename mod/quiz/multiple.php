@@ -22,7 +22,7 @@
         error('Course ID is incorrect');
     }
 
-    require_login($course->id);
+    require_login($course->id, false);
 
     if (!isteacher($course->id)) {
         error('Only teachers can use this page!');
@@ -122,7 +122,7 @@
 
     print_heading_with_help($strcreatemultiple, 'createmultiple', 'quiz');
 
-    if (!$categories = quiz_get_category_menu($course->id, true)) {
+    if (!$categories = quiz_get_category_menu($course->id, false)) {
         error('No categories!');
     }
 
@@ -144,7 +144,7 @@
     print_string('category', 'quiz');
     echo ':</td><td>';
     // choose_from_menu($categories, "category", "$category->id", "");
-    quiz_category_select_menu($course->id, true, true, $category->id );
+    quiz_category_select_menu($course->id, false, true, $category->id );
     echo '</tr>';
 
     echo '<tr><td align="right">';

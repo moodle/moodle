@@ -13,7 +13,7 @@
         error("Course is misconfigured");
     }
 
-    require_login($course->id);
+    require_login($course->id, true, $cm);
 
     if (! $journal = get_record("journal", "id", $cm->instance)) {
         error("Course module is incorrect");
@@ -50,7 +50,7 @@
     }
 
     echo "<center>\n";
-    
+
     $journal->intro = trim($journal->intro);
 
     if (!empty($journal->intro)) {
@@ -96,7 +96,7 @@
             } else {
                 echo format_text($entry->text, $entry->format);
             }
-            
+
         } else {
             echo "<b><i>".get_string("notstarted","journal")."</i></b>";
         }

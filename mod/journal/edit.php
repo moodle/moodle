@@ -12,7 +12,7 @@
         error("Course is misconfigured");
     }
 
-    require_login($course->id);
+    require_login($course->id, false, $cm);
 
     if (isguest()) {
         error("Guests are not allowed to edit journals", $_SERVER["HTTP_REFERER"]);
@@ -52,8 +52,8 @@
                 error("Could not insert a new journal entry");
             }
             add_to_log($course->id, "journal", "add entry", "view.php?id=$cm->id", "$newentry->id", $cm->id);
-        } 
-        
+        }
+
         redirect("view.php?id=$cm->id");
         die;
     }
@@ -69,14 +69,14 @@
     } else {
         $defaultformat = FORMAT_MOODLE;
     }
-    
+
     if (empty($entry)) {
         $entry->text = "";
         $entry->format = $defaultformat;
     }
 
     print_header_simple("$journal->name", "",
-                 "<a href=\"index.php?id=$course->id\">$strjournals</a> -> 
+                 "<a href=\"index.php?id=$course->id\">$strjournals</a> ->
                   <a href=\"view.php?id=$cm->id\">$journal->name</a> -> $stredit", "",
                   "", true, "", navmenu($course, $cm));
 

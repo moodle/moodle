@@ -11,11 +11,11 @@
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
         }
-    
+
         if (! $course = get_record("course", "id", $cm->course)) {
             error("Course is misconfigured");
         }
-    
+
         if (! $scorm = get_record("scorm", "id", $cm->instance)) {
             error("Course module is incorrect");
         }
@@ -32,7 +32,7 @@
         }
     }
 
-    require_login($course->id);
+    require_login($course->id, false);
 
     if (!isteacher($course->id)) {
         error("You are not allowed to use this script");
@@ -48,36 +48,36 @@
         } else {
             $navigation = '';
         }
-    
+
         $strscorms = get_string("modulenameplural", "scorm");
         $strscorm  = get_string("modulename", "scorm");
         $strreport  = get_string("report", "scorm");
-    
+
         print_header("$course->shortname: $scorm->name", "$course->fullname",
-                     "$navigation <a href=\"index.php?id=$course->id\">$strscorms</a> 
-                      -> <a href=\"view.php?id=$cm->id\">$scorm->name</a> -> $strreport", 
+                     "$navigation <a href=\"index.php?id=$course->id\">$strscorms</a>
+                      -> <a href=\"view.php?id=$cm->id\">$scorm->name</a> -> $strreport",
                      "", "", true);
-    
+
         print_heading($scorm->name);
     }
     if ($scoes =get_records_select("scorm_scoes","scorm='$scorm->id' ORDER BY id")) {
-    	if ($sco_users=get_records_select("scorm_sco_users", "scormid='$scorm->id' GROUP BY userid")) {
-        		
-        	$strname  = get_string("name");
+        if ($sco_users=get_records_select("scorm_sco_users", "scormid='$scorm->id' GROUP BY userid")) {
 
-        	$table->head = array("&nbsp;", $strname);
-        	$table->align = array("center", "left");
-        	$table->wrap = array("nowrap", "nowrap");
-        	$table->width = "100%";
-        	$table->size = array(10, "*");
-        	foreach ($scoes as $sco) {
-        		if ($sco->launch!="") {
-        		    $table->head[]=scorm_string_round($sco->title);
-        		    $table->align[] = "center";
-        			$table->wrap[] = "nowrap";
-        			$table->size[] = "*";
-        		}
-        	}
+            $strname  = get_string("name");
+
+            $table->head = array("&nbsp;", $strname);
+            $table->align = array("center", "left");
+            $table->wrap = array("nowrap", "nowrap");
+            $table->width = "100%";
+            $table->size = array(10, "*");
+            foreach ($scoes as $sco) {
+                if ($sco->launch!="") {
+                    $table->head[]=scorm_string_round($sco->title);
+                    $table->align[] = "center";
+                    $table->wrap[] = "nowrap";
+                    $table->size[] = "*";
+                }
+            }
 
             foreach ($sco_users as $sco_user) {
                 $user_data = scorm_get_scoes_records($sco_user);
@@ -93,19 +93,19 @@
                         $scoreview = "<br />".get_string("score","scorm").":&nbsp;".$data->cmi_core_score_raw;
                     if ( $data->cmi_core_lesson_status == "")
                         $data->cmi_core_lesson_status = "not attempted";
-                    $row[]="<img src=\"pix/".scorm_remove_spaces($data->cmi_core_lesson_status).".gif\" 
+                    $row[]="<img src=\"pix/".scorm_remove_spaces($data->cmi_core_lesson_status).".gif\"
                         alt=\"".get_string(scorm_remove_spaces($data->cmi_core_lesson_status),"scorm")."\"
                         title=\"".get_string(scorm_remove_spaces($data->cmi_core_lesson_status),"scorm")."\">&nbsp;"
                         .$data->cmi_core_total_time.$scoreview;
                 }
-                $table->data[] = $row; 
+                $table->data[] = $row;
             }
-    
-        	print_table($table);
-        
-    	} else {
-    		notice("No users to report");
-    	}
+
+            print_table($table);
+
+        } else {
+            notice("No users to report");
+        }
     }
     if (empty($noheader)) {
         print_footer($course);

@@ -7,11 +7,7 @@
 
     require_variable($id);      // The forum to subscribe or unsubscribe to
     optional_variable($force);  // Force everyone to be subscribed to this forum?
-    optional_variable($user);  
-
-    if (isguest()) {
-        error("Guests are not allowed to subscribe to forums.", $_SERVER["HTTP_REFERER"]);
-    }
+    optional_variable($user);
 
     if (! $forum = get_record("forum", "id", $id)) {
         error("Forum ID was incorrect");
@@ -19,6 +15,16 @@
 
     if (! $course = get_record("course", "id", $forum->course)) {
         error("Forum doesn't belong to a course!");
+    }
+
+    if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
+        if (groupmode($course, $cm) and !isteacheredit($course->id)) {   // Make sure user is allowed
+            if (! mygroupid($course->id)) {
+                error("Sorry, but you must be a group member to subscribe.");
+            }
+        }
+    } else {
+        $cm->id = NULL;
     }
 
     if ($user) {
@@ -32,26 +38,16 @@
         $user = $USER;
     }
 
-    if ($course->category) {
-        require_login($forum->course);
-    } else {
-        require_login();
+    require_course_login($course, false, $cm);
+
+    if (isguest()) {
+        error("Guests are not allowed to subscribe to forums.", $_SERVER["HTTP_REFERER"]);
     }
 
     if ($forum->type == "teacher") {
         if (!isteacher($course->id)) {
             error("You must be a $course->teacher to subscribe to this forum");
         }
-    }
-
-    if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
-        if (groupmode($course, $cm) and !isteacheredit($course->id)) {   // Make sure user is allowed
-            if (! mygroupid($course->id)) {
-                error("Sorry, but you must be a group member to subscribe.");
-            }
-        }
-    } else {
-        $cm->id = NULL;
     }
 
     $returnto = forum_go_back_to("index.php?id=$course->id");
@@ -80,7 +76,7 @@
         } else {
             error("Could not unsubscribe you from that forum", $_SERVER["HTTP_REFERER"]);
         }
-        
+
     } else { // subscribe
         if (forum_subscribe($user->id, $forum->id) ) {
             add_to_log($course->id, "forum", "subscribe", "view.php?f=$forum->id", $forum->id, $cm->id);

@@ -21,13 +21,11 @@
         error("Course ID is incorrect - discussion is faulty");
     }
 
-    if ($CFG->forcelogin) {
-        require_login();
+    if (! $cm = get_coursemodule_from_instance("forum", $discussion->forum, $course->id)) {
+        error("Course Module ID was incorrect");
     }
 
-    if ($course->category) {
-        require_login($course->id);
-    }
+    require_course_login($course, false, $cm);
 
     if (!empty($move)) {
         if (!isteacher($course->id)) {

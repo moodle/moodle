@@ -4,11 +4,11 @@
 
     require_once("../../config.php");
     require_once("lib.php");
-    
+
     require_variable($id);                         // Course Module ID
-    optional_variable($sortorder,"asc");           // Sorting order 
+    optional_variable($sortorder,"asc");           // Sorting order
     optional_variable($offset,0,PARAM_INT);        // number of entries to bypass
-    optional_variable($displayformat,-1); 
+    optional_variable($displayformat,-1);
 
     $mode    = required_param('mode');             // mode to show the entries
     $hook    = optional_param('hook','ALL');       // what to show
@@ -16,31 +16,23 @@
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
-    } 
-    
+    }
+
     if (! $course = get_record("course", "id", $cm->course)) {
         error("Course is misconfigured");
-    } 
-    
+    }
+
     if (! $glossary = get_record("glossary", "id", $cm->instance)) {
         error("Course module is incorrect");
-    } 
-    
+    }
+
     if ( !$entriesbypage = $glossary->entbypage ) {
         $entriesbypage = $CFG->glossary_entbypage;
     }
 
     print_header();
 
-    if ($CFG->forcelogin) {
-        require_login();
-    }
-
-    require_course_login($course);
-
-    if (!$cm->visible and !isteacher($course->id)) {
-        notice(get_string("activityiscurrentlyhidden"));
-    }
+    require_course_login($course, true, $cm);
 
     if (!isteacher($course->id) and !$glossary->allowprintview) {
         notice(get_string('printviewnotallowed', 'glossary'));
@@ -75,9 +67,9 @@
         }
     }
     if ( $sortkey = strtoupper($sortkey) ) {
-        if ($sortkey != 'CREATION' and 
-            $sortkey != 'UPDATE' and 
-            $sortkey != 'FIRSTNAME' and 
+        if ($sortkey != 'CREATION' and
+            $sortkey != 'UPDATE' and
+            $sortkey != 'FIRSTNAME' and
             $sortkey != 'LASTNAME'
             ) {
             $sortkey = '';
@@ -88,7 +80,7 @@
     case 'entry':  /// Looking for a certain entry id
         $tab = GLOSSARY_STANDARD_VIEW;
     break;
-    
+
     case 'cat':    /// Looking for a certain cat
         $tab = GLOSSARY_CATEGORY_VIEW;
         if ( $hook > 0 ) {
@@ -111,20 +103,20 @@
         $tab = GLOSSARY_DATE_VIEW;
         if ( !$sortkey ) {
             $sortkey = 'UPDATE';
-        } 
+        }
         if ( !$sortorder ) {
             $sortorder = 'desc';
         }
     break;
-    
+
     case 'author':  /// Looking for entries, browsed by author
         $tab = GLOSSARY_AUTHOR_VIEW;
         if ( !$hook ) {
             $hook = 'ALL';
-        } 
+        }
         if ( !$sortkey ) {
             $sortkey = 'FIRSTNAME';
-        } 
+        }
         if ( !$sortorder ) {
             $sortorder = 'asc';
         }
@@ -134,13 +126,13 @@
     default:
         $tab = GLOSSARY_STANDARD_VIEW;
         if ( !$hook ) {
-            $hook = 'ALL';  
-        } 
+            $hook = 'ALL';
+        }
     break;
-    }  
+    }
 
     include_once("sql.php");
-    
+
     $entriesshown = 0;
     $currentpivot = '';
     if ( $hook == 'SPECIAL' ) {
@@ -159,10 +151,10 @@
             $pivot = $entry->pivot;
             if ( !$fullpivot ) {
                 $pivot = $pivot[0];
-            }            
-            
+            }
+
             // If there's  group break
-            if ( $currentpivot != strtoupper($pivot) ) {  
+            if ( $currentpivot != strtoupper($pivot) ) {
 
                 // print the group break if apply
                 if ( $printpivot )  {

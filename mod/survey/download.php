@@ -16,7 +16,7 @@
         error("Course is misconfigured");
     }
 
-    require_login($course->id);
+    require_login($course->id, false);
 
     if (!isteacher($course->id)) {
         error("Sorry, only teachers can see this.");
@@ -46,7 +46,7 @@
 
     foreach ($order as $key => $qid) {  // Do we have virtual scales?
         $question = $questions[$qid];
-        if ($question->type < 0) { 
+        if ($question->type < 0) {
             $virtualscales = true;
             break;
         }
@@ -65,7 +65,7 @@
         } else {
             $addlist = $qid;
         }
-        
+
         if ($virtualscales && ($question->type < 0)) {        // only use them
             $fullorderlist .= $addlist;
 
@@ -103,7 +103,7 @@
     if (! $aaa = get_records("survey_answers", "survey", "$survey->id", "time ASC")) {
         error("There are no answers for this survey yet.");
     }
-   
+
     foreach ($aaa as $a) {
         if (!$group or isset($users[$a->userid])) {
             if (!$results["$a->userid"]) { // init new array
@@ -175,7 +175,7 @@
             $myxls->write_string($row,$col++, userdate($results["$user"]["time"], "%d-%b-%Y %I:%M:%S %p") );
 //          $myxls->write_number($row,$col++,$results["$user"]["time"],$date);
             $myxls->write_string($row,$col++,$notes);
-    
+
             foreach ($order as $key => $qid) {
                 $question = $questions["$qid"];
                 if ($question->type == "0" || $question->type == "1" || $question->type == "3" || $question->type == "-1")  {
@@ -195,7 +195,7 @@
 
 // Print header to force download
 
-    header("Content-Type: application/download\n"); 
+    header("Content-Type: application/download\n");
 
     $downloadfilename = clean_filename("$course->shortname $survey->name");
     header("Content-Disposition: attachment; filename=\"$downloadfilename.txt\"");

@@ -50,7 +50,7 @@
         error("This course doesn't exist");
     }
 
-    require_login($course->id);
+    require_login($course->id, false);
 
     if (!isteacheredit($course->id)) {
         error("You can't modify this course!");

@@ -10,7 +10,7 @@
         error("Course ID is incorrect");
     }
 
-    require_login($course->id);
+    require_course_login($course);
     add_to_log($course->id, "workshop", "view all", "index.php?id=$course->id", "");
 
     $strworkshops = get_string("modulenameplural", "workshop");
@@ -62,7 +62,7 @@
             foreach ($submissions as $submission) {
                 if ($submission->timecreated <= $workshop->submissionend) {
                     $submitted = userdate($submission->timecreated);
-                } 
+                }
                 else {
                     $submitted = "<font color=\"red\">".userdate($submission->timecreated)."</font>";
                 }
@@ -80,14 +80,14 @@
                     if ($workshop->wtype) {
                         if (workshop_count_assessments($submission)) {
                             $info = get_string("gradeforassessments", "workshop").
-                                ": $gradinggrade/$workshop->gradinggrade; ".get_string("gradeforsubmission", 
+                                ": $gradinggrade/$workshop->gradinggrade; ".get_string("gradeforsubmission",
                                 "workshop").": $grade/$workshop->grade";
                         } else {
                             $info = get_string("gradeforassessments", "workshop").
-                                ": $gradinggrade/$workshop->gradinggrade; ".get_string("gradeforsubmission", 
+                                ": $gradinggrade/$workshop->gradinggrade; ".get_string("gradeforsubmission",
                                 "workshop").": ".get_string("noassessments", "workshop");
                         }
-                     } else { // simple assignemnt, don't show grading grade 
+                     } else { // simple assignemnt, don't show grading grade
                         $info = get_string("gradeforsubmission", "workshop").": $grade/$workshop->grade";
                     }
                     if ($workshop->releasegrades > $timenow) {
@@ -96,7 +96,7 @@
                 }
                 if ($course->format == "weeks" or $course->format == "topics") {
                     $table->data[] = array ($workshop->section, $link, $info, $submitted, $due);
-                } 
+                }
                 else {
                     $table->data[] = array ($link, $info, $submitted, $due);
                 }
@@ -120,7 +120,7 @@
             }
             if ($course->format == "weeks" or $course->format == "topics") {
                     $table->data[] = array ($workshop->section, $link, $info, $submitted, $due);
-            } 
+            }
             else {
                 $table->data[] = array ($link, $info, $submitted, $due);
             }

@@ -14,11 +14,11 @@
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
         }
-    
+
         if (! $course = get_record("course", "id", $cm->course)) {
             error("Course is misconfigured");
         }
-    
+
         if (! $quiz = get_record("quiz", "id", $cm->instance)) {
             error("Course module is incorrect");
         }
@@ -40,7 +40,7 @@
     }
 
 
-    require_login($course->id);
+    require_login($course->id, false, $cm);
 
     if (!isteacher($course->id)) {
         if (!$quiz->review) {
@@ -76,8 +76,8 @@
     $stroverdue = get_string("overdue", "quiz");
 
     print_header_simple("$quiz->name", "",
-                 "<a href=\"index.php?id=$course->id\">$strquizzes</a> 
-                  -> <a href=\"view.php?id=$cm->id\">$quiz->name</a> -> $strreview", 
+                 "<a href=\"index.php?id=$course->id\">$strquizzes</a>
+                  -> <a href=\"view.php?id=$cm->id\">$quiz->name</a> -> $strreview",
                  "", "", true);
 
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib

@@ -17,11 +17,7 @@
         error("Course module is incorrect");
     }
 
-    require_login($course->id);
-    if (!$cm->visible and !isteacher($course->id)) {
-        print_header();
-        notice(get_string('activityiscurrentlyhidden'), $CFG->wwwroot.'/course/view.php?id='.$course->id);
-    }
+    require_login($course->id, false, $cm);
 
     $strworkshops = get_string('modulenameplural', 'workshop');
     $strworkshop = get_string('modulename', 'workshop');

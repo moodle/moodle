@@ -37,7 +37,7 @@
         }
     }
 
-    require_login($course->id);
+    require_login($course->id, false, $cm);
     
     // if no questions have been set up yet redirect to edit.php
     if (!$quiz->questions and isteacheredit($course->id)) {

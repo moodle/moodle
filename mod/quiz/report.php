@@ -14,11 +14,11 @@
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
         }
-    
+
         if (! $course = get_record("course", "id", $cm->course)) {
             error("Course is misconfigured");
         }
-    
+
         if (! $quiz = get_record("quiz", "id", $cm->instance)) {
             error("Course module is incorrect");
         }
@@ -35,7 +35,7 @@
         }
     }
 
-    require_login($course->id);
+    require_login($course->id, false);
 
     if (!isteacher($course->id)) {
         error("You are not allowed to use this script");
@@ -45,21 +45,21 @@
 
 /// Print the page header
     if (empty($noheader)) {
-    
+
         $strquizzes = get_string("modulenameplural", "quiz");
         $strquiz  = get_string("modulename", "quiz");
         $strreport  = get_string("report", "quiz");
-    
+
         print_header_simple("$quiz->name", "",
-                     "<a href=\"index.php?id=$course->id\">$strquizzes</a> 
-                      -> <a href=\"view.php?id=$cm->id\">$quiz->name</a> -> $strreport", 
+                     "<a href=\"index.php?id=$course->id\">$strquizzes</a>
+                      -> <a href=\"view.php?id=$cm->id\">$quiz->name</a> -> $strreport",
                      "", "", true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
-    
+
         print_heading($quiz->name);
-    
+
 
     /// Print list of available quiz reports
-    
+
         $allreports = get_list_of_plugins("mod/quiz/report");
         $reportlist = array ("overview", "regrade");   // Standard reports we want to show first
 

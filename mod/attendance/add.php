@@ -17,7 +17,7 @@ if (isset($_POST["course"]))  {
       $mod = (object)$_POST;
   }
 
-  if (isset($cancel)) {  
+  if (isset($cancel)) {
       if (!empty($SESSION->returnpage)) {
           $return = $SESSION->returnpage;
           unset($SESSION->returnpage);
@@ -40,30 +40,30 @@ if (isset($_POST["course"]))  {
 
 /* // set the information for the new instances
      $attendance->dynsection = !empty($attendance->dynsection) ? 1 : 0;
-     $attendance->day = make_timestamp($attendance->theyear, 
-			$attendance->themonth, $attendance->theday); 
+     $attendance->day = make_timestamp($attendance->theyear,
+            $attendance->themonth, $attendance->theday);
      $attendance->name=userdate($attendance->day, get_string("strftimedate"));
-	 if ($attendance->notes) { 
-	 	$attendance->name = $attendance->name . " - " . $attendance->notes;
-	 }
+     if ($attendance->notes) {
+        $attendance->name = $attendance->name . " - " . $attendance->notes;
+     }
 */
   $curdate = make_timestamp($mod->startyear, $mod->startmonth, $mod->startday);
   $stopdate = make_timestamp($mod->endyear, $mod->endmonth, $mod->endday);
-  $enddate = $curdate + $mod->numsections * 604800;  
+  $enddate = $curdate + $mod->numsections * 604800;
   if ($curdate > $stopdate) {
-  	error(get_string("endbeforestart", "attendance"));
-	}
+    error(get_string("endbeforestart", "attendance"));
+    }
   if ($enddate < $curdate) {
-  	error(get_string("startafterend", "attendance"));
-	}
+    error(get_string("startafterend", "attendance"));
+    }
   if ($stopdate > $enddate) {
       // if stop date is after end of course, just move it to end of course
-			$stopdate = $enddate;
-	}
+            $stopdate = $enddate;
+    }
   while ($curdate <= $stopdate) {
     $mod->day = $curdate;
     $mod->name=userdate($mod->day, get_string("strftimedate"));
-	  if (isset($mod->notes)) {$mod->name = $mod->name . " - " . $mod->notes;}
+      if (isset($mod->notes)) {$mod->name = $mod->name . " - " . $mod->notes;}
     switch(userdate($curdate, "%u")) {
       case 1: if (!empty($mod->mon)) {attendance_add_module($mod);}break;
       case 2: if (!empty($mod->tue)) {attendance_add_module($mod);}break;
@@ -75,7 +75,7 @@ if (isset($_POST["course"]))  {
     } // switch
     $curdate = $curdate + 86400; // add one day to the date
   } // while for days
-      
+
   if (!empty($SESSION->returnpage)) {
       $return = $SESSION->returnpage;
       unset($SESSION->returnpage);
@@ -84,13 +84,13 @@ if (isset($_POST["course"]))  {
       redirect("index.php?id=$mod->course");
   }
   exit;
-  
+
 } else {
 /// -----------------------------------------------------------------------------------
 /// ------------------ SECTION FOR MAKING THE FORM TO BE POSTED -----------------------
 /// -----------------------------------------------------------------------------------
 
-/// @include_once("$CFG->dirroot/mod/attendance/lib.php"); 
+/// @include_once("$CFG->dirroot/mod/attendance/lib.php");
 /// error_reporting(E_ALL);
 
         require_variable($id);
@@ -132,8 +132,8 @@ if (isset($_POST["course"]))  {
 
     if ($course->category) {
         print_header("$course->shortname: $streditinga", "$course->fullname",
-                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> 
-                      <a href=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</a> -> 
+                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
+                      <a href=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</a> ->
                       $streditinga", "form.name", "", false);
     } else {
         print_header("$course->shortname: $streditinga", "$course->fullname",
@@ -148,7 +148,7 @@ if (isset($_POST["course"]))  {
         print_heading_with_help($pageheading, "mods", $module->name, $icon);
         print_simple_box_start('center');
 
- 
+
 /// Print the main part of the page
 
    // adaptation of mod code to view code needs this:
@@ -255,7 +255,7 @@ for ($i=2;$i<=24;$i++){ $opt[$i] = $i; } ?>
 for ($i=0;$i<=100;$i++){ $opt2[$i] = $i; } ?>
 <tr valign=top>
     <td align=right><p><b><?php print_string("maxgradevalue", "attendance") ?>:</b></p></td>
-    <td  colspan="3" align="left"><?php choose_from_menu($opt2, "maxgrade", $form->maxgrade, "0","","0"); 
+    <td  colspan="3" align="left"><?php choose_from_menu($opt2, "maxgrade", $form->maxgrade, "0","","0");
    helpbutton("maxgrade", get_string("maxgradevalue","attendance"), "attendance");
 ?></td>
 </tr>

@@ -54,13 +54,8 @@
         $buttontext = forum_print_search_form($course, $search, true, "plain");
     }
 
-    if ($CFG->forcelogin) {
-        require_login();
-    }
+    require_course_login($course, true, $cm);
 
-    if ($course->category) {
-        require_login($course->id);
-    }
     $navigation = "<a href=\"index.php?id=$course->id\">$strforums</a> ->";
 
     if ($forum->type == "teacher") {

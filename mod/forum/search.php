@@ -24,9 +24,7 @@
         error("Course id is incorrect.");
     }
 
-    if ($course->category or $CFG->forcelogin) {
-        require_login($course->id);
-    }
+    require_course_login($course);
 
     add_to_log($course->id, "forum", "search", "search.php?id=$course->id&amp;search=".urlencode($search), $search);
 

@@ -454,7 +454,9 @@
 
     // $course, $forum are defined.  $discussion is for edit and reply only.
 
-    require_login($course->id);
+    $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
+
+    require_login($course->id, false, $cm);
 
 
     if ($post->discussion) {
@@ -486,8 +488,6 @@
 
 
     $navmiddle = "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> <a href=\"view.php?f=$forum->id\">$forum->name</a>";
-
-    $cm = get_coursemodule_from_instance("forum", $forum->id, $course->id);
 
     if (empty($discussion->name)) {
         $discussion->name = $forum->name;

@@ -13,7 +13,7 @@
         error("Course is misconfigured");
     }
 
-    require_course_login($course);
+    require_course_login($course, false, $cm);
 
     if (!$choice = choice_get_choice($cm->instance)) {
         error("Course module is incorrect");
@@ -89,16 +89,16 @@
 
 
     // print the form
-    
+
     if ($choice->timeopen > time() ) {
         print_simple_box(get_string("notopenyet", "choice", userdate($choice->timeopen)), "center");
         print_footer();
         exit;
     }
 
-    if ( (!$current or $choice->allowupdate) and ($choice->timeclose >= time() or $choice->timeclose == 0) ) { 
+    if ( (!$current or $choice->allowupdate) and ($choice->timeclose >= time() or $choice->timeclose == 0) ) {
     // They haven't made their choice yet or updates allowed and choice is open
-    
+
         echo "<form name=\"form\" method=\"post\" action=\"view.php\">";
         echo "<table cellpadding=\"20\" cellspacing=\"20\" align=\"center\"><tr>";
 
@@ -110,7 +110,7 @@
                 echo "</td>";
             }
         }
-    
+
         echo "</tr></table>";
         echo "<center>";
         echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
@@ -124,14 +124,14 @@
 
     }
 
-    
+
 
     // print the results
 
     if (  $choice->release == CHOICE_RELEASE_ALWAYS or
         ( $choice->release == CHOICE_RELEASE_AFTER_ANSWER and $current ) or
         ( $choice->release == CHOICE_RELEASE_AFTER_CLOSE and $choice->timeclose <= time() ) )  {
-    
+
         print_heading(get_string("responses", "choice"));
 
         if ($currentgroup) {
@@ -156,7 +156,7 @@
 
         $timenow = time();
 
-        foreach ($choice->answer as $key => $answer) {  
+        foreach ($choice->answer as $key => $answer) {
             $useranswer[$key] = array();
         }
         foreach ($users as $user) {
@@ -167,7 +167,7 @@
                 $useranswer[0][] = $user;
             }
         }
-        foreach ($choice->answer as $key => $answer) {  
+        foreach ($choice->answer as $key => $answer) {
             if (!$choice->answer[$key]) {
                 unset($useranswer[$key]);     // Throw away any data that doesn't apply
             }
@@ -195,7 +195,7 @@
                 echo "</th>";
             }
             echo "</tr><tr>";
-        
+
             foreach ($useranswer as $key => $answer) {
                 if ($key) {
                     echo "<td class=\"col$key\" width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\">";
@@ -204,7 +204,7 @@
                 } else {
                     continue;
                 }
-    
+
                 echo "<table width=\"100%\">";
                 foreach ($answer as $user) {
                     echo "<tr><td width=\"10\" nowrap=\"nowrap\">";
@@ -214,7 +214,7 @@
                     echo "</td></tr>";
                 }
                 echo "</table>";
-        
+
                 echo "</td>";
             }
             echo "</tr></table>";
@@ -277,7 +277,7 @@
             break;
         }
     }
-    
+
     print_footer($course);
 
 

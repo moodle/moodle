@@ -20,7 +20,7 @@
         $cm->id = 0;
     }
 
-    require_login($course->id);
+    require_login($course->id, false, $cm);
 
     if (!isteacher($course->id)) {
         error("This page is for teachers only");

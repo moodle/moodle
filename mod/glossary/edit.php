@@ -20,7 +20,7 @@ if (! $course = get_record("course", "id", $cm->course)) {
     error("Course is misconfigured");
 }
 
-require_login($course->id);
+require_login($course->id, false, $cm);
 
 if ( isguest() ) {
     error("Guests are not allowed to edit glossaries", $_SERVER["HTTP_REFERER"]);

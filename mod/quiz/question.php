@@ -50,7 +50,7 @@
         error("Could not find question type: '$qtype'");
     }
 
-    require_login($course->id);
+    require_login($course->id, false);
 
     if (!isteacheredit($course->id)) {
         error("You can't modify these questions!");
@@ -130,7 +130,7 @@
     arsort($gradeoptions, SORT_NUMERIC);
     arsort($gradeoptionsfull, SORT_NUMERIC);
 
-    if (!$categories = quiz_get_category_menu($course->id, true)) {
+    if (!$categories = quiz_get_category_menu($course->id, false)) {
         error("No categories!");
     }
 

@@ -4,7 +4,7 @@
     require_once("lib.php");
 
 // Check that all the parameters have been provided.
- 
+
     require_variable($id);           // Course Module ID
     optional_variable($action, "");  // What to look at
     optional_variable($qid, "0");    // Question id
@@ -17,7 +17,7 @@
         error("Course is misconfigured");
     }
 
-    require_login($course->id);
+    require_login($course->id, false);
 
     if (!isteacher($course->id)) {
         error("Sorry, only teachers can see this.");
@@ -66,7 +66,7 @@
 /// Check to see if groups are being used in this survey
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
         $menuaction = $action == "student" ? "students" : $action;
-        $currentgroup = setup_and_print_groups($course, $groupmode, 
+        $currentgroup = setup_and_print_groups($course, $groupmode,
                                        "report.php?id=$cm->id&amp;action=$menuaction&amp;qid=$qid");
     } else {
         $currentgroup = 0;
@@ -145,7 +145,7 @@
                     echo "<p align=\"center\"><a title=\"$strseemoredetail\" href=\"report.php?action=questions&amp;id=$id&amp;qid=$question->multi\">";
                     survey_print_graph("id=$id&amp;qid=$question->id&amp;group=$currentgroup&amp;type=multiquestion.png");
                     echo "</a></p><br />";
-                } 
+                }
             }
         }
 
@@ -277,9 +277,9 @@
                 $table->data[] = array(
                        print_user_picture($a->userid, $course->id, $a->picture, false, true, true),
                        "<a href=\"report.php?id=$id&amp;action=student&amp;student=$a->userid\">".fullname($a)."</a>",
-                       userdate($a->time), 
+                       userdate($a->time),
                        $answer1, $answer2);
-    
+
             }
         }
 
@@ -290,7 +290,7 @@
       case "students":
 
          print_heading(get_string("analysisof", "survey", "$course->students"));
-        
+
          if (! $results = survey_get_responses($survey->id, $currentgroup) ) {
              notify(get_string("nobodyyet","survey"));
          } else {
@@ -334,9 +334,9 @@
              echo "<p align=\"center\">";
              survey_print_graph("id=$id&amp;sid=$student&amp;type=student.png");
              echo "</p>";
-         
+
              // Print scales
-     
+
              foreach ($questionorder as $key => $val) {
                  $question = $questions[$val];
                  if ($question->type < 0) {  // We have some virtual scales.  Just show them.
@@ -344,7 +344,7 @@
                      break;
                  }
              }
-     
+
              foreach ($questionorder as $key => $val) {
                  $question = $questions[$val];
                  if ($question->multi) {
@@ -355,9 +355,9 @@
                      echo "<a title=\"$strseemoredetail\" href=\"report.php?action=questions&amp;id=$id&amp;qid=$question->multi\">";
                      survey_print_graph("id=$id&amp;qid=$question->id&amp;sid=$student&amp;type=studentmultiquestion.png");
                      echo "</a></p><br />";
-                 } 
+                 }
              }
-         }        
+         }
 
          // Print non-scale questions
 
@@ -395,7 +395,7 @@
          echo "</blockquote>";
          echo "</form>";
          echo "</center>";
- 
+
 
          break;
 
@@ -413,7 +413,7 @@
         $options["type"] = "txt";
         print_single_button("download.php", $options, get_string("downloadtext", "survey"));
         echo '</center>';
-    
+
         break;
 
     }

@@ -1,16 +1,11 @@
 <?PHP  // $Id$
 /// Extended by Michael Schneider
-/// This page prints a particular instance of wiki
-
 
     require_once("../../config.php");
     require_once("lib.php");
 
-
-    require_login($course->id);
-
-
     optional_variable($id);    // Course Module ID, or
+    optional_variable($a);     // wiki ID
     optional_variable($page, false);    // Pagename
     optional_variable($confirm, "");
     optional_variable($action,"");    // Admin Action
@@ -43,6 +38,8 @@
             error("Course Module ID was incorrect");
         }
     }
+
+    require_login($course->id, false, $cm);
 
     /// Build the ewsiki script constant
     $ewbase = 'view.php?id='.$id;
@@ -343,4 +340,4 @@
     print_footer($course);
     exit;
 
-?> 
+?>

@@ -4,7 +4,7 @@
     require_once("lib.php");
 
     require_variable($id);    // Assignment
-    optional_variable($sort, "timemodified"); 
+    optional_variable($sort, "timemodified");
     optional_variable($dir, "DESC");
     optional_variable($timenow, 0);
 
@@ -21,7 +21,7 @@
         error("Course Module ID was incorrect");
     }
 
-    require_login($course->id);
+    require_login($course->id, false, $cm);
 
     if (!isteacher($course->id)) {
         error("Only teachers can look at this page");
@@ -33,8 +33,8 @@
     $strsaveallfeedback = get_string("saveallfeedback", "assignment");
 
     print_header_simple($assignment->name, "",
-                 "<a href=\"index.php?id=$course->id\">$strassignments</a> -> 
-                  <a href=\"view.php?a=$assignment->id\">$assignment->name</a> -> $strsubmissions", 
+                 "<a href=\"index.php?id=$course->id\">$strassignments</a> ->
+                  <a href=\"view.php?a=$assignment->id\">$assignment->name</a> -> $strsubmissions",
                   "", "", true, update_module_button($cm->id, $course->id, $strassignment), navmenu($course, $cm));
 
 /// Check to see if groups are being used in this assignment
@@ -84,13 +84,13 @@
 
 /// If data is being submitted, then process it
     if ($data = data_submitted()) {
-       
+
         $feedback = array();
         // Peel out all the data from variable names.
         foreach ($data as $key => $val) {
             if (!in_array($key, array("id", "timenow"))) {
                 $type = substr($key,0,1);
-                $num  = substr($key,1); 
+                $num  = substr($key,1);
                 $feedback[$num][$type] = $val;
             }
         }
@@ -111,7 +111,7 @@
                 // Make sure that we aren't overwriting any recent feedback from other teachers. (see bug #324)
                 if ($timewas < $submission->timemarked && (!empty($submission->grade)) && (!empty($submission->comment))) {
                     notify(get_string("failedupdatefeedback", "assignment", fullname($users[$submission->userid]))
-                    . "<br />" . get_string("grade") . ": $newsubmission->grade" 
+                    . "<br />" . get_string("grade") . ": $newsubmission->grade"
                     . "<br />" . get_string("feedback", "assignment") . ": $newsubmission->comment\n");
                 } else { //print out old feedback and grade
                     if (empty($submission->timemodified)) {   // eg for offline assignments
@@ -174,7 +174,7 @@
         echo "<input type=\"submit\" value=\"$strsaveallfeedback\" />";
         echo "</center>";
     }
-    
+
     $grades = make_grades_menu($assignment->grade);
 
     foreach ($submissions as $submission) {
@@ -190,7 +190,7 @@
         echo "</center>";
         echo "</form>";
     }
-    
+
     print_footer($course);
- 
+
 ?>

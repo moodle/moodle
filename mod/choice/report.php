@@ -13,7 +13,7 @@
         error("Course module is misconfigured");
     }
 
-    require_login($course->id);
+    require_login($course->id, false, $cm);
 
     if (!isteacher($course->id)) {
         error("Only teachers can look at this page");
@@ -62,7 +62,7 @@
 
     $timenow = time();
 
-    foreach ($choice->answer as $key => $answer) {  
+    foreach ($choice->answer as $key => $answer) {
         $useranswer[$key] = array();
     }
     foreach ($users as $user) {
@@ -73,7 +73,7 @@
         }
         $useranswer[(int)$answer->answer][] = $user;
     }
-    foreach ($choice->answer as $key => $answer) {  
+    foreach ($choice->answer as $key => $answer) {
         if (!$choice->answer[$key]) {
             unset($useranswer[$key]);     // Throw away any data that doesn't apply
         }
@@ -111,6 +111,6 @@
 
     print_footer($course);
 
- 
+
 ?>
 

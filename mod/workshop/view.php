@@ -35,7 +35,7 @@
         error("Course module is incorrect");
     }
 
-    require_login($course->id);
+    require_login($course->id, false, $cm);
 
     $strworkshops = get_string("modulenameplural", "workshop");
     $strworkshop  = get_string("modulename", "workshop");

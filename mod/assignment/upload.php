@@ -17,15 +17,15 @@
         error("Course Module ID was incorrect");
     }
 
-    require_login($course->id);
+    require_login($course->id, false, $cm);
 
     $strassignments = get_string("modulenameplural", "assignment");
     $strassignment  = get_string("modulename", "assignment");
     $strupload      = get_string("upload");
 
     print_header_simple("$assignment->name : $strupload", "",
-                 "<a href=index.php?id=$course->id>$strassignments</a> -> 
-                  <a href=\"view.php?a=$assignment->id\">$assignment->name</a> -> $strupload", 
+                 "<a href=index.php?id=$course->id>$strassignments</a> ->
+                  <a href=\"view.php?a=$assignment->id\">$assignment->name</a> -> $strupload",
                   "", "", true);
 
     if ($submission = get_record("assignment_submissions", "assignment", $assignment->id, "userid", $USER->id)) {
@@ -62,7 +62,7 @@
             } else {
                 notify(get_string("uploadnotregistered", "assignment", $newfile_name) );
             }
-        } 
+        }
     }
     // upload class will take care of printing out errors.
 

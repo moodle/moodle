@@ -13,7 +13,7 @@
         error("Course module is misconfigured");
     }
 
-    require_login($course->id);
+    require_login($course->id, false);
 
     if (!isteacher($course->id)) {
         error("Only teachers can look at this page");
@@ -29,7 +29,7 @@
             $entrybyuser[$ee->userid] = $ee;
             $entrybyentry[$ee->id]  = $ee;
         }
-        
+
     } else {
         $entrybyuser  = array () ;
         $entrybyentry = array () ;
@@ -52,7 +52,7 @@
 
 /// Process incoming data if there is any
     if ($data = data_submitted()) {
-       
+
         $feedback = array();
         $data = (array)$data;
 
@@ -60,7 +60,7 @@
         foreach ($data as $key => $val) {
             if ($key <> "id") {
                 $type = substr($key,0,1);
-                $num  = substr($key,1); 
+                $num  = substr($key,1);
                 $feedback[$num][$type] = $val;
             }
         }
@@ -140,8 +140,8 @@
             echo "</form>";
         }
     }
-    
+
     print_footer($course);
- 
+
 ?>
 

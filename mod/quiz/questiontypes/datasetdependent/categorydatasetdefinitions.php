@@ -17,7 +17,7 @@
         error("This category doesn't belong to a valid course!");
     }
 
-    require_login($course->id);
+    require_login($course->id, false);
 
     if (!isteacheredit($course->id)) {
         error("Only the teacher can import quiz questions!");

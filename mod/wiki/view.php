@@ -44,9 +44,7 @@
         $_REQUEST["id"] = $id;
     }
 
-    if ($course->category or !empty($CFG->forcelogin)) {
-        require_login($course->id);
-    }
+    require_course_login($course, true, $cm);
 
     /// Add the course module 'groupmode' to the wiki object, for easy access.
     $wiki->groupmode = $cm->groupmode;

@@ -41,12 +41,7 @@
         }
     }
 
-    require_course_login($course);
-
-    if (!$cm->visible and !isteacher($course->id)) {
-        print_header();
-        notice(get_string("activityiscurrentlyhidden"));
-    }
+    require_course_login($course, true, $cm);
 
     add_to_log($course->id, 'chat', 'view', "view.php?id=$cm->id", $chat->id, $cm->id);
 
@@ -59,7 +54,7 @@
         blocks_execute_url_action($PAGE, $pageblocks);
         $pageblocks = blocks_get_by_page($PAGE);
     }
-    
+
     $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
 
 
