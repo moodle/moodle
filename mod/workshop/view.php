@@ -319,16 +319,16 @@
             }
         }
         /// Print admin links
-        echo "<td align=\"right\"><b><a href=\"view.php?id=$cm->id&amp;action=showdescription\">".
-            get_string("showdescription", 'workshop')."</a></b> \n";
-
-        echo "<br /><b><a href=\"submissions.php?id=$cm->id&amp;action=adminlist\">".
-            get_string("administration")."</a></b> \n";
+        echo "<td align=\"right\">";
+        echo "<a href=\"submissions.php?id=$cm->id&amp;action=adminlist\">".
+            get_string("administration")."</a>\n";
 
         echo '</td></tr>';
 
         echo '<tr><td>';
         workshop_print_assignment_info($workshop);
+        print_heading("<a href=\"view.php?id=$cm->id&amp;action=showdescription\">".
+               get_string("showdescription", 'workshop')."</a>");
         echo '</td></tr>';
 
         /// Print grade tables /////////////////////////////////////////////////
