@@ -3,9 +3,9 @@
 
 /// If config.php exists already then we are not needed.
 
-if (file_exists('./config.php')) {
+if (file_exists('./config.php')) { 
     header('Location: index.php');
-    die();
+    die;
 } else {
     $configfile = './config.php';
 }
@@ -103,23 +103,19 @@ if (isset($_GET['help'])) {
 }
 
 
+
 //==========================================================================//
 
-/// Any special action we need to take?
+/// Are we in config download mode?
 
-if(isset($_POST['specialaction'])) {
-    switch($_POST['specialaction']) {
-        case 'downloadconfig':
-            $str = generate_config_php();
-            header('Content-Type: text/plain');
-            header('Content-Disposition: attachment; filename="config.php"');
-            header('Content-Length: '.strlen($str));
-            header('Connection: Close');
-            echo $str;
-            die();
-        break;
-    }
+if (isset($_GET['download'])) {
+    header("Content-Type: application/download\n"); 
+    header("Content-Disposition: attachment; filename=\"config.php\"");
+    echo $INSTALL['config'];
+    exit;
 }
+
+
 
 //==========================================================================//
 
@@ -135,20 +131,20 @@ if (isset($_POST['stage'])) {
     } else {
         $nextstage = $_POST['stage'] - 1;
     }
-
+    
     if ($nextstage < 0) $nextstage = 0;
-
+    
 
     /// Store any posted data
     foreach ($_POST as $setting=>$value) {
         $INSTALL[$setting] = $value;
     }
-
+    
 } else {
 
     $goforward = true;
     $nextstage = 0;
-
+    
 }
 
 
@@ -160,31 +156,32 @@ if (isset($_POST['stage'])) {
 if ($INSTALL['stage'] == 2) {
 
     error_reporting(0);
-
-    /// check wwwroot
-    if (($fh = @fopen($INSTALL['wwwroot'].'/install.php', 'r')) === false) {
-        $errormsg = get_string('wwwrooterror', 'install');
+    
+            
+    /// check dirroot
+    if (($fh = @fopen($INSTALL['dirroot'].'/install.php', 'r')) === false ) {
+        $CFG->dirroot = dirname(__FILE__);
+        $INSTALL['dirroot'] = dirname(__FILE__);
+        $errormsg = get_string('dirrooterror', 'install');
     } else {
         fclose($fh);
+            
+        $CFG->dirroot = $INSTALL['dirroot'];
 
-        /// check dirroot
-        if (($fh = @fopen($INSTALL['dirroot'].'/install.php', 'r')) === false ) {
-            $CFG->dirroot = dirname(__FILE__);
-            $INSTALL['dirroot'] = dirname(__FILE__);
-            $errormsg = get_string('dirrooterror', 'install');
+        /// check wwwroot
+        if (($fh = @fopen($INSTALL['wwwroot'].'/install.php', 'r')) === false) {
+            $errormsg = get_string('wwwrooterror', 'install');
         } else {
             fclose($fh);
-
-            $CFG->dirroot = $INSTALL['dirroot'];
 
             /// check dataroot
             $CFG->dataroot = $INSTALL['dataroot'];
             if (make_upload_directory('sessions', false) === false ) {
                 $errormsg = get_string('datarooterror', 'install');
-            }
+            }            
         }
     }
-
+    
 
     if (!empty($errormsg)) $nextstage = 2;
 
@@ -203,7 +200,7 @@ if ($INSTALL['stage'] == 3) {
     if (empty($INSTALL['dbname'])) {
         $INSTALL['dbname'] = 'moodle';
     }
-
+    
     /// different format for postgres7 by socket
     if ($INSTALL['dbtype'] == 'postgres7' and ($INSTALL['dbhost'] == 'localhost' || $INSTALL['dbhost'] == '127.0.0.1')) {
         $INSTALL['dbhost'] = "user='{$INSTALL['dbuser']}' password='{$INSTALL['dbpass']}' dbname='{$INSTALL['dbname']}'";
@@ -218,11 +215,11 @@ if ($INSTALL['stage'] == 3) {
 
     $db = &ADONewConnection($INSTALL['dbtype']);
 
-    error_reporting(0);  // Hide errors
-
+    error_reporting(0);  // Hide errors 
+    
     if (! $dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'],$INSTALL['dbname'])) {
         /// The following doesn't seem to work but we're working on it
-        /// If you come up with a solution for creating a database in MySQL
+        /// If you come up with a solution for creating a database in MySQL 
         /// feel free to put it in and let us know
         if ($dbconnected = $db->Connect($INSTALL['dbhost'],$INSTALL['dbuser'],$INSTALL['dbpass'])) {
             switch ($INSTALL['dbtype']) {   /// Try to create a database
@@ -275,11 +272,43 @@ if ($nextstage == 4 or $INSTALL['stage'] == 4) {
 /// Try to open config file for writing.
 
 if ($nextstage == 5) {
+
+    $str  = '<?php  /// Moodle Configuration File '."\r\n";
+    $str .= "\r\n";
+
+    $str .= 'unset($CFG);'."\r\n";
+    $str .= "\r\n";
+
+    $str .= '$CFG->dbtype    = \''.$INSTALL['dbtype']."';\r\n";
+    $str .= '$CFG->dbhost    = \''.$INSTALL['dbhost']."';\r\n";
+    if ($INSTALL['dbtype'] == 'mysql') {
+        $str .= '$CFG->dbname    = \''.$INSTALL['dbname']."';\r\n";
+        $str .= '$CFG->dbuser    = \''.$INSTALL['dbuser']."';\r\n";
+        $str .= '$CFG->dbpass    = \''.$INSTALL['dbpass']."';\r\n";
+    }
+    $str .= '$CFG->dbpersist =  false;'."\r\n";
+    $str .= '$CFG->prefix    = \''.$INSTALL['prefix']."';\r\n";
+    $str .= "\r\n";
+
+    $str .= '$CFG->wwwroot   = \''.$INSTALL['wwwroot']."';\r\n";
+    $str .= '$CFG->dirroot   = \''.$INSTALL['dirroot']."';\r\n";
+    $str .= '$CFG->dataroot  = \''.$INSTALL['dataroot']."';\r\n";
+    $str .= "\r\n";
+
+    $str .= '$CFG->directorypermissions = 0777;'."\r\n";
+    $str .= "\r\n";
+
+    $str .= 'require_once("$CFG->dirroot/lib/setup.php");'."\r\n";
+    $str .= '// MAKE SURE WHEN YOU EDIT THIS FILE THAT THERE ARE NO SPACES, BLANK LINES,'."\r\n";
+    $str .= '// RETURNS, OR ANYTHING ELSE AFTER THE TWO CHARACTERS ON THE NEXT LINE.'."\r\n";
+    $str .= '?>';
+
     if (( $configsuccess = ($fh = @fopen($configfile, 'w')) ) !== false) {
-        $str = generate_config_php();
         fwrite($fh, $str);
         fclose($fh);
     }
+
+    $INSTALL['config'] = $str;
 }
 
 
@@ -301,13 +330,11 @@ if ($nextstage == 5) {
 
 <body>
 
-<table align="center">
-</table>
-
 
 <?php
 if (isset($_GET['help'])) {
     print_install_help($_GET['help']);
+    close_window_button();
 } else {
 ?>
 
@@ -330,26 +357,51 @@ if (isset($_GET['help'])) {
 
     <tr>
         <td class="td_main" colspan="2">
-
+    
 <?php
 
 if (!empty($errormsg)) echo "<p class=\"errormsg\" align=\"center\">$errormsg</p>\n";
 
 
 if ($nextstage == 5) {
-    if ($configsuccess) {
-        echo "<p>".get_string('configfilewritten', 'install')."</p>\n";
-    } else {
-        echo "<p>".get_string('configfilenotwritten', 'install')."</p>";
-        echo '<form name="installform" method="post" action="install.php"><p>';
-        echo '<input type="hidden" name="specialaction" value="downloadconfig" />';
-        echo '<input type="submit" name="download" value="'.get_string('downloadconfigphp').'" />';
-        echo '</p></form>';
-        echo "<hr />\n";
-    }
+    $INSTALL['stage'] = 0;
     $options = array();
     $options['lang'] = $INSTALL['language'];
-    print_single_button("index.php", $options, get_string('continue')."  &raquo;");
+    if ($configsuccess) {
+        echo "<p>".get_string('configfilewritten', 'install')."</p>\n";
+
+        echo "<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" width=\"100%\">\n";
+        echo "<tr>\n";
+        echo "<td width=\"33.3%\">&nbsp;</td>\n";
+        echo "<td width=\"33.3%\">&nbsp;</td>\n";
+        echo "<td width=\"33.3%\" align=\"right\">\n";        
+        print_single_button("index.php", $options, get_string('continue')."  &raquo;");
+        echo "</td>\n";
+        echo "</tr>\n";
+        echo "</table>\n";
+
+    } else {
+        echo "<p class=\"errormsg\">".get_string('configfilenotwritten', 'install')."</p>";
+        
+        echo "<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" width=\"100%\">\n";
+        echo "<tr>\n";
+        echo "<td width=\"33.3%\">&nbsp;</td>\n";
+        echo "<td width=\"33.3%\" align=\"center\">\n";        
+        $installoptions = array();
+        $installoptions['download'] = 1; 
+        print_single_button("install.php", $installoptions, get_string('download', 'install'));
+        echo "</td>\n";
+        echo "<td width=\"33.3%\" align=\"right\">\n";        
+        print_single_button("index.php", $options, get_string('continue')."  &raquo;");
+        echo "</td>\n";
+        echo "</tr>\n";
+        echo "</table>\n";
+
+        echo "<hr />\n";
+        echo "<div style=\"text-align: left\">\n";
+        print_object(htmlentities($str));
+        echo "</div>\n";
+    }
 } else {
     $formaction = (isset($_GET['configfile'])) ? "install.php?configfile=".$_GET['configfile'] : "install.php";
     form_table($nextstage, $formaction);
@@ -377,7 +429,7 @@ if ($nextstage == 5) {
 
 
 
-<?php
+<?php 
 
 //==========================================================================//
 
@@ -418,23 +470,21 @@ function form_table($nextstage = 0, $formaction = "install.php") {
             break;
         case 1: /// Compatibilty check
             $compatsuccess = true;
-
+            
             /// Check that PHP is of a sufficient version
-            print_compatibility_row(check_php_version("4.1.0"), get_string('PHPversion', 'install'), get_string('PHPversionerror', 'install'), 'phpversionhelp');
-            /// Check safe mode
-            print_compatibility_row(!ini_get_bool('safe_mode'), get_string('safemode', 'install'), get_string('safemodeerror', 'install'), 'safemodehelp');
+            print_compatibility_row(check_php_version("4.1.0"), get_string('phpversion', 'install'), get_string('phpversionerror', 'install'), 'phpversionhelp');
             /// Check session auto start
             print_compatibility_row(!ini_get_bool('session.auto_start'), get_string('sessionautostart', 'install'), get_string('sessionautostarterror', 'install'), 'sessionautostarthelp');
-            /// Check session save path
-            print_compatibility_row(!ini_get_bool('session.save_path'), get_string('sessionsavepath', 'install'), get_string('sessionsavepatherror', 'install'), 'sessionsavepathhelp');
             /// Check magic quotes
             print_compatibility_row(!ini_get_bool('magic_quotes_runtime'), get_string('magicquotesruntime', 'install'), get_string('magicquotesruntimeerror', 'install'), 'magicquotesruntimehelp');
+            /// Check safe mode 
+            print_compatibility_row(!ini_get_bool('safe_mode'), get_string('safemode', 'install'), get_string('safemodeerror', 'install'), 'safemodehelp', true);
             /// Check file uploads
-            print_compatibility_row(ini_get_bool('file_uploads'), get_string('fileuploads', 'install'), get_string('fileuploadserror', 'install'), 'fileuploadshelp');
+            print_compatibility_row(ini_get_bool('file_uploads'), get_string('fileuploads', 'install'), get_string('fileuploadserror', 'install'), 'fileuploadshelp', true);
             /// Check GD version
-            print_compatibility_row(check_gd_version(), get_string('gdversion', 'install'), get_string('gdversionerror', 'install'), 'gdversionhelp');
+            print_compatibility_row(check_gd_version(), get_string('gdversion', 'install'), get_string('gdversionerror', 'install'), 'gdversionhelp', true);
             /// Check memory limit
-            print_compatibility_row(check_memory_limit(), get_string('memorylimit', 'install'), get_string('memorylimiterror', 'install'), 'memorylimithelp');
+            print_compatibility_row(check_memory_limit(), get_string('memorylimit', 'install'), get_string('memorylimiterror', 'install'), 'memorylimithelp', true);
 
 
             break;
@@ -520,15 +570,18 @@ function form_table($nextstage = 0, $formaction = "install.php") {
         default:
     }
 ?>
+
+    <tr>
+        <td colspan="<?php echo ($nextstage == 1) ? '3' : '2'; ?>">
+
+            <?php echo ($nextstage < 5) ? "<input type=\"submit\" name=\"next\" value=\"".get_string('next')."  &raquo;\" style=\"float: right\"/>\n" : "&nbsp;\n" ?>
+            <?php echo ($nextstage > 0) ? "<input type=\"submit\" name=\"prev\" value=\"&laquo;  ".get_string('previous')."\" style=\"float: left\"/>\n" : "&nbsp;\n" ?>
+
+        </td>
+
+    </tr>
+    
     </table>
-
-    <div class="nav">
-        <div style="float: right;"><?php echo ($nextstage < 5) ? "<input type=\"submit\" name=\"next\" value=\"".get_string('next')."  &raquo;\" />\n" : "&nbsp;\n" ?></div>
-        <div style="float: left;"><?php echo ($nextstage > 0) ? "<input type=\"submit\" name=\"prev\" value=\"&laquo;  ".get_string('previous')."\" />\n" : "&nbsp;\n" ?></div>
-        <div style="clear: left; height: 2px;">&nbsp;</div>
-    </div>
-
-
     </form>
 
 <?php
@@ -538,18 +591,20 @@ function form_table($nextstage = 0, $formaction = "install.php") {
 
 //==========================================================================//
 
-function print_compatibility_row($success, $testtext, $errormessage, $helpfield='') {
+function print_compatibility_row($success, $testtext, $errormessage, $helpfield='', $caution=false) {
     echo "<tr>\n";
-    echo "<td class=\"td_left\" valign=\"top\" nowrap><p>$testtext</p></td>\n";
+    echo "<td class=\"td_left\" valign=\"top\" nowrap width=\"160\"><p>$testtext</p></td>\n";
     if ($success) {
-         echo "<td valign=\"top\"><p class=\"p_pass\">".get_string('pass', 'install')."</p></td>\n";
-         echo "<td valign=\"top\">&nbsp;</td>\n";
+        echo "<td valign=\"top\"><p class=\"p_pass\">".get_string('pass', 'install')."</p></td>\n";
+        echo "<td valign=\"top\">&nbsp;</td>\n";
     } else {
-         echo "<td valign=\"top\"><p class=\"p_fail\">".get_string('fail', 'install')."</p></td>\n";
-         echo "<td valign=\"top\">";
-         echo "<p>$errormessage ";
-         install_helpbutton("install.php?help=$helpfield");
-         echo "</p></td>\n";
+        echo "<td valign=\"top\"";
+        echo ($caution) ? "<p class=\"p_caution\">".get_string('caution', 'install') : "<p class=\"p_fail\">".get_string('fail', 'install');
+        echo "</p></td>\n";
+        echo "<td valign=\"top\">";
+        echo "<p>$errormessage ";
+        install_helpbutton("install.php?help=$helpfield");
+        echo "</p></td>\n";
     }
     echo "</tr>\n";
     return $success;
@@ -568,13 +623,12 @@ function install_helpbutton($url, $title='') {
     echo "onClick=\"return window.open('$url', 'Help', 'menubar=0,location=0,scrollbars,resizable,width=500,height=400')\">";
     echo "</a>\n";
 }
-
+    
 
 
 //==========================================================================//
 
 function print_install_help($help) {
-    echo "<p class=\"p_help\">";
     switch ($help) {
         case 'phpversionhelp':
             print_string($help, 'install', phpversion());
@@ -585,7 +639,6 @@ function print_install_help($help) {
         default:
             print_string($help, 'install');
     }
-    echo "</p>\n";
 }
 
 
@@ -615,52 +668,13 @@ function check_memory_limit() {
 
 //==========================================================================//
 
-function generate_config_php() {
-    global $INSTALL;
-
-    $str  = '<?php  /// Moodle Configuration File '."\n";
-    $str .= "\n";
-
-    $str .= 'unset($CFG);'."\n";
-    $str .= "\n";
-
-    $str .= '$CFG->dbtype    = \''.$INSTALL['dbtype']."';\n";
-    $str .= '$CFG->dbhost    = \''.$INSTALL['dbhost']."';\n";
-    if ($INSTALL['dbtype'] == 'mysql') {
-        $str .= '$CFG->dbname    = \''.$INSTALL['dbname']."';\n";
-        $str .= '$CFG->dbuser    = \''.$INSTALL['dbuser']."';\n";
-        $str .= '$CFG->dbpass    = \''.$INSTALL['dbpass']."';\n";
-    }
-    $str .= '$CFG->dbpersist =  false;'."\n";
-    $str .= '$CFG->prefix    = \''.$INSTALL['prefix']."';\n";
-    $str .= "\n";
-
-    $str .= '$CFG->wwwroot   = \''.$INSTALL['wwwroot']."';\n";
-    $str .= '$CFG->dirroot   = \''.$INSTALL['dirroot']."';\n";
-    $str .= '$CFG->dataroot  = \''.$INSTALL['dataroot']."';\n";
-    $str .= "\n";
-
-    $str .= '$CFG->directorypermissions = 0777;'."\n";
-    $str .= "\n";
-
-    $str .= 'require_once("$CFG->dirroot/lib/setup.php");'."\n";
-    $str .= '// MAKE SURE WHEN YOU EDIT THIS FILE THAT THERE ARE NO SPACES, BLANK LINES,'."\n";
-    $str .= '// RETURNS, OR ANYTHING ELSE AFTER THE TWO CHARACTERS ON THE NEXT LINE.'."\n";
-    $str .= '?>';
-
-    return $str;
-}
-
-
-//==========================================================================//
-
 function css_styles() {
 ?>
 
 <style type="text/css">
 
     body { background-color: #ffeece; }
-    p {
+    p, li { 
         font-family: helvetica, arial, sans-serif;
         font-size: 10pt;
     }
@@ -670,7 +684,7 @@ function css_styles() {
         font-weight: bold;
     }
     blockquote {
-        font-family: helvetica, arial, sans-serif;
+        font-family: courier, monospace;
         font-size: 10pt;
     }
     .install_table {
@@ -718,6 +732,10 @@ function css_styles() {
         color: red;
         font-weight: bold;
     }
+    .p_caution {
+        color: #ff6600;
+        font-weight: bold;
+    }
     .p_help {
         text-align: center;
         font-family: helvetica, arial, sans-serif;
@@ -725,10 +743,7 @@ function css_styles() {
         font-weight: bold;
         color: #333333;
     }
-    div.nav {
-        margin: 6px;
-    }
-
+        
 </style>
 
 <?php
