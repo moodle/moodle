@@ -97,6 +97,7 @@ $string['missingquestiontext'] = "Missing question text";
 $string['missingword'] = "Missing word format";
 $string['multianswer'] = "Embedded Answers (Cloze)";
 $string['multichoice'] = "Multiple Choice";
+$string['name'] = "Name";
 $string['noanswers'] = "No answers were selected!";
 $string['noattempts'] = "No attempts have been made on this quiz";
 $string['nomoreattempts'] = "No more attempts are allowed";
