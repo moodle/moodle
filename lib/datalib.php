@@ -1313,7 +1313,7 @@ function get_users($get=true, $search="", $confirmed=false, $exceptions="", $sor
              $LIKE = "LIKE";
              break;
         case "postgres7":
-             $fullname = " firstname||\" \"||lastname ";
+             $fullname = " firstname||' '||lastname ";
              $LIKE = "ILIKE";
              break;
         default: 
@@ -1365,7 +1365,7 @@ function get_users_listing($sort, $dir="ASC", $page=1, $recordsperpage=20, $sear
              break;
         case "postgres7":
              $limit = "LIMIT $recordsperpage OFFSET ".($page);
-             $fullname = " firstname||\" \"||lastname ";
+             $fullname = " firstname||' '||lastname ";
              $LIKE = "ILIKE";
              break;
         default: 
