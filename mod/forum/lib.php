@@ -372,7 +372,7 @@ function forum_grades($forumid) {
     if (!$forum->assessed) {
         return false;
     }
-    if ($ratings = get_records_sql("SELECT p.user, r.rating
+    if ($ratings = get_records_sql("SELECT r.id, p.user, r.rating
                                       FROM forum_discussions d, forum_posts p, forum_ratings r
                                      WHERE d.forum = '$forumid' 
                                        AND p.discussion = d.id
