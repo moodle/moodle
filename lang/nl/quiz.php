@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005030501)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -12,6 +12,8 @@ $string['addquestionstoquiz'] = 'Voeg vragen aan de huidige test toe';
 $string['addrandom1'] = 'Voeg toe';
 $string['addrandom2'] = 'willekeurige vragen';
 $string['addselectedtoquiz'] = 'Voeg het geselecteerde toe aan de test';
+$string['addtoquiz'] = 'Voeg toe aan test';
+$string['affectedstudents'] = 'Leerling $a';
 $string['aiken'] = 'Aikenopmaak';
 $string['allinone'] = 'Onbeperkt';
 $string['allowreview'] = 'Sta nalezen toe';
@@ -45,6 +47,8 @@ $string['casesensitive'] = 'Gevoeligheid voor hoofd/kleine letters';
 $string['caseyes'] = 'Ja, hoofd/kleine letters moeten exact hetzelfde zijn';
 $string['categories'] = 'Categorieën  ';
 $string['category'] = 'Categorie';
+$string['categoryadded'] = 'Categorie \'$a\' is toegevoegd';
+$string['categorydeleted'] = 'Categorie \'$a\' is verwijderd';
 $string['categoryinfo'] = 'Info over de categorie';
 $string['categorymove'] = 'De categorie \'$a->name\' bevat $a->count vragen. Kies alsjeblieft een categorie om deze vragen naar te verplaatsen';
 $string['categorymoveto'] = 'Verplaats ze naar deze categorie';
@@ -154,6 +158,7 @@ $string['link'] = 'Link';
 $string['listitems'] = 'Lijst van items in de test';
 $string['literal'] = 'Jokertekens';
 $string['loguniform'] = 'aantal cijfers, logaritmisch uniforme distrubutie';
+$string['makecopy'] = 'Bewaar als nieuwe vraag';
 $string['marks'] = 'Punten';
 $string['match'] = 'Koppelen';
 $string['matchanswer'] = 'Koppel antwoord';
@@ -237,6 +242,8 @@ $string['regradecount'] = '$a->changed van de $a->attempt cijfers zijn gewijzigd
 $string['relative'] = 'Relatief';
 $string['remove'] = 'Verwijder';
 $string['rename'] = 'Hernoem';
+$string['replace'] = 'Vervang';
+$string['replacementoptions'] = 'Vervang in';
 $string['report'] = 'Rapporten';
 $string['reportfullstat'] = 'Gedetailleerde cijfers';
 $string['reportmulti_percent'] = 'Verschillende percentages';
@@ -267,6 +274,7 @@ $string['shortanswer'] = 'Kort antwoord';
 $string['show'] = 'Laat zien';
 $string['showcorrectanswer'] = 'In de feedback, de juiste antwoorden laten zien?';
 $string['showfeedback'] = 'Feedback laten zien na het beantwoorden?';
+$string['showhidden'] = 'Toon ook oude vragen';
 $string['shuffleanswers'] = 'Mix de antwoorden';
 $string['shufflequestions'] = 'Mix de vragen';
 $string['significantfigures'] = 'met $a';
