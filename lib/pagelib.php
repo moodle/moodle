@@ -49,9 +49,15 @@ function page_create_object($type, $id = NULL) {
  */
 
 function page_map_class($type, $classname = NULL) {
-    static $mappings = array(
-        MOODLE_PAGE_COURSE => 'page_course'
-    );
+    static $mappings = NULL;
+    
+    if($mappings === NULL) {
+        $mappings = array(
+            MOODLE_PAGE_COURSE => 'page_course'
+        );
+        print_object('Debug info - initial mappings:');
+        var_dump($mappings);
+    }
 
     if(!empty($type) && !empty($classname)) {
         $mappings[$type] = $classname;
