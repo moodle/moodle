@@ -25,6 +25,11 @@
 
     require_once("../config.php");
 
+    function trace($string, $eol="\n") {
+        fwrite(STDOUT, $string.$eol);
+        flush();
+    }
+
     if (!$alreadyadmin = isadmin()) {
         unset($_SESSION['USER']);
         unset($USER);
@@ -36,10 +41,11 @@
     echo "<pre>\n";
 
     $timenow  = time();
-    echo "Server Time: ".date('r',$timenow)."\n\n";
+    trace("Server Time: ".date('r',$timenow)."\n\n");
 
 /// Run all cron jobs for each module
 
+    trace("Starting activity modules");
     if ($mods = get_records_select("modules", "cron > 0 AND (($timenow - lastcron) > cron)")) {
         foreach ($mods as $mod) {
             $libfile = "$CFG->dirroot/mod/$mod->name/lib.php";
@@ -47,15 +53,18 @@
                 include_once($libfile);
                 $cron_function = $mod->name."_cron";
                 if (function_exists($cron_function)) {
+                    trace("Processing module function $cron_function ...", '');
                     if ($cron_function()) {
                         if (! set_field("modules", "lastcron", $timenow, "id", $mod->id)) {
-                            echo "Error: could not update timestamp for $mod->fullname\n";
+                            trace("Error: could not update timestamp for $mod->fullname");
                         }
                     }
+                    trace("done.");
                 }
             }
         }
     }
+    trace("Finished activity modules");
 
 /// Run all core cron jobs, but not every time since they aren't too important.
 /// These don't have a timer to reduce load, so we'll use a random number 
@@ -65,7 +74,7 @@
     $random100 = rand(0,100);
 
     if ($random100 < 20) {     // Approximately 20% of the time.
-        echo "Running clean-up tasks...\n";
+        trace("Running clean-up tasks...");
 
         /// Unenrol users who haven't logged in for $CFG->longtimenosee
 
@@ -74,7 +83,7 @@
             if ($students = get_users_longtimenosee($longtime)) {
                 foreach ($students as $student) {
                     if (unenrol_student($student->userid, $student->course)) {
-                        echo "Deleted student enrolment for user $student->userid from course $student->course\n";
+                        trace("Deleted student enrolment for user $student->userid from course $student->course");
                     }
                 }
             }
@@ -91,6 +100,7 @@
                 }
             }
         }
+        flush();
     
     
         /// Delete duplicate enrolments (don't know what causes these yet - expired sessions?)
@@ -102,6 +112,7 @@
                                      "AND course = '$user->course' AND id <> '$user->id'");
             }
         }
+        flush();
     
     
         /// Delete old logs to save space (this might need a timer to slow it down...)
@@ -110,6 +121,7 @@
             $loglifetime = $timenow - ($CFG->loglifetime * 3600 * 24);
             delete_records_select("log", "time < '$loglifetime'");
         }
+        flush();
 
         /// Delete old cached texts
 
@@ -117,14 +129,17 @@
             $cachelifetime = time() - $CFG->cachetext;
             delete_records_select("cache_text", "timemodified < '$cachelifetime'");
         }
+        flush();
 
         if (!empty($CFG->notifyloginfailures)) {
             notify_login_failures();
         }
+        flush();
 
     } // End of occasional clean-up tasks
 
     if (file_exists("$CFG->dataroot/cronextra.php")) {
+        trace("Running extra commands in $CFG->dataroot/cronextra.php ...");
         include("$CFG->dataroot/cronextra.php");
     }
 
@@ -141,13 +156,12 @@
             include_once("$CFG->dirroot/backup/backuplib.php");
             include_once("$CFG->dirroot/backup/lib.php");
             require_once ("$CFG->libdir/blocklib.php");
-            echo "Running backups if required...\n";
-            flush();
+            trace("Running backups if required...");
     
             if (! schedule_backup_cron()) {
-                echo "Something went wrong while performing backup tasks!!!\n";
+                trace("ERORR: Something went wrong while performing backup tasks!!!");
             } else {
-                echo "Backup tasks finished\n";
+                trace("Backup tasks finished.");
             }
         }
     }
@@ -155,13 +169,12 @@
     if (!empty($CFG->enablerssfeeds)) {  //Defined in admin/variables page
         if (file_exists("$CFG->dirroot/rss/rsslib.php")) {
             include_once("$CFG->dirroot/rss/rsslib.php");
-            echo "Running rssfeeds if required...\n";
-            flush();
+            trace("Running rssfeeds if required...");
 
             if ( ! cron_rss_feeds()) {
-                echo "Something went wrong while generating rssfeeds!!!\n";
+                trace("Something went wrong while generating rssfeeds!!!");
             } else {
-                echo "Rssfeeds finished\n";
+                trace("Rssfeeds finished");
             }
         }
     }
@@ -171,16 +184,16 @@
     $enrol = new enrolment_plugin();
     $enrol->cron();
     if (!empty($enrol->log)) {
-        echo $enrol->log;
+        trace($enrol->log);
     }
 
     //Unset session variables and destroy it
     @session_unset();
     @session_destroy();
 
-    echo "Cron script completed correctly\n";
+    trace("Cron script completed correctly");
 
     $difftime = microtime_diff($starttime, microtime());
-    echo "Execution took ".$difftime." seconds\n"; 
+    trace("Execution took ".$difftime." seconds"); 
 
 ?>
