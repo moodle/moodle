@@ -522,3 +522,8 @@ body#admin-index .c0 {
     vertical-align: top;
     background: #FAFAFA;
 } 
+
+body#admin-modules .generaltablecell {
+    padding-top: 1px;
+    padding-bottom: 1px;
+} 
