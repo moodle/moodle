@@ -107,14 +107,12 @@ if (isadmin() ) {
     <td align="right"><b><?php echo get_string("isglobal", "glossary") ?>:</b></td>
     <td align="left">
 <?php
-    $selected = "";
-    if ( isset($form->globalglossary) ) {
-        if ($form->globalglossary) {
-            $selected = "checked";
-        }
+    $selected = '';
+    if ($form->globalglossary) {
+        $selected = 'checked="checked"';
     }
 ?> 
-  <input type="checkbox" name="globalglossary" value="1" selected="<?php p($selected)?>" /> <?php helpbutton("globalglossary", get_string("globalglossary", "glossary"), "glossary") ?>
+<input type="checkbox" name="globalglossary" value="1" <?php p($selected)?> /> <?php helpbutton("globalglossary", get_string("globalglossary", "glossary"), "glossary") ?>
     </td>
 </tr>
 <?php
