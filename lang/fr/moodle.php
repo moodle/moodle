@@ -712,6 +712,7 @@ $string['no'] = 'Non';
 $string['nobody'] = 'Personne';
 $string['nocoursesfound'] = 'Aucun cours contenant les mots « $a » n\'a été trouvé';
 $string['nocoursesyet'] = 'Il n\'y a pas encore de cours';
+$string['nodstpresets'] = 'L\'administrateur n\'a pas activé le support de l\'heure d\'été.';
 $string['noexistingadmins'] = 'Il n\'y a aucun administrateur ! Ceci est une erreur sérieuse et ne devrait pas pouvoir se produire.';
 $string['noexistingcreators'] = 'Il n\'y a pas de responsables de cours';
 $string['noexistingstudents'] = 'Il n\'y a pas d\'étudiants';
