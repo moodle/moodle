@@ -1,7 +1,7 @@
 <?PHP // $Id$ 
       // glossary.php - created with Moodle 1.1 Beta (2003082001)
 
-$string['addentry'] = "Add entry";
+$string['addentry'] = "Add a new entry";
 $string['allentries'] = "ALL";
 $string['allcategories'] = "All Categories";
 $string['allowduplicatedentries'] = "Duplicated entries allowed";
