@@ -175,6 +175,16 @@
                 $_POST[$key] = $var;
             }
         }
+        foreach ($_COOKIE as $key => $var) {
+            if (!is_array($var)) {
+                $_COOKIE[$key] = addslashes($var);
+            } else {
+                foreach ($var as $arrkey => $arrvar) {
+                    $var[$arrkey] = addslashes($arrvar);
+                }
+                $_COOKIE[$key] = $var;
+            }
+        }
     }
 
 
@@ -196,7 +206,11 @@
 /// Load up global environment variables
 
     class object {};
-    
+
+    unset(${'MoodleSession'.$CFG->sessioncookie});
+    unset($_GET['MoodleSession'.$CFG->sessioncookie]);
+    unset($_POST['MoodleSession'.$CFG->sessioncookie]);
+
     if (!isset($nomoodlecookie)) {
         session_name('MoodleSession'.$CFG->sessioncookie);
         @session_start();
@@ -209,6 +223,10 @@
     
         $SESSION = &$_SESSION['SESSION'];   // Makes them easier to reference
         $USER    = &$_SESSION['USER'];
+    }
+    else {
+        $SESSION = NULL;
+        $USER    = NULL;
     }
 
     if (defined('FULLME')) {     // Usually in command-line scripts like admin/cron.php
