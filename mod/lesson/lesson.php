@@ -24,7 +24,7 @@
 	require_once("styles.php");
 
 	
-	require_variable($id);    // Course Module ID
+	$id = required_param('id', PARAM_INT);    // Course Module ID
  
     // get some esential stuff...
 	if (! $cm = get_record("course_modules", "id", $id)) {
@@ -70,7 +70,7 @@
 	    }
 
         // first get the preceeding page
-        $pageid = $_GET['pageid'];
+        $pageid = required_param('pageid', PARAM_INT);
             
         // set of jump array
         $jump[0] = get_string("thispage", "lesson");
@@ -97,16 +97,16 @@
         // give teacher a blank proforma
 		print_heading_with_help(get_string("addabranchtable", "lesson"), "overview", "lesson");
         ?>
-        <form name="form" method="post" action="lesson.php">
-        <input type="hidden" name="id" value="<?PHP echo $cm->id ?>">
+        <form name="form" method="post" action="lesson.php" />
+        <input type="hidden" name="id" value="<?PHP echo $cm->id ?>" />
         <input type="hidden" name="action" value="insertpage">
-        <input type="hidden" name="pageid" value="<?PHP echo $_GET['pageid'] ?>">
-        <input type="hidden" name="qtype" value="<?PHP echo LESSON_BRANCHTABLE ?>">
+        <input type="hidden" name="pageid" value="<?PHP echo $pageid ?>" />
+        <input type="hidden" name="qtype" value="<?PHP echo LESSON_BRANCHTABLE ?>" />
         <center><table cellpadding=5 border=1>
         <tr><td align="center">
         <tr valign="top">
         <td><b><?php print_string("pagetitle", "lesson"); ?>:</b><br />
-        <!-- //CDC hidden-label added.--><label for="title" class="hidden-label">Title</label><input type="text" id="title" name="title" size="80" maxsize="255" value=""></td></tr>
+        <!-- //CDC hidden-label added.--><label for="title" class="hidden-label">Title</label><input type="text" id="title" name="title" size="80" maxsize="255" value="" /></td></tr>
         <?PHP
         echo "<tr><td><b>";
         echo get_string("pagecontents", "lesson").":</b><br />\n";
@@ -115,9 +115,9 @@
 		echo "</td></tr>\n";
 		/// CDC-FLAG /// 6/16/04
 		echo "<tr><td>\n";
-		echo "<center><input name=\"layout\" type=\"checkbox\" value=\"1\" CHECKED>";
+		echo "<center><input name=\"layout\" type=\"checkbox\" value=\"1\" CHECKED />";
 		echo get_string("arrangebuttonshorizontally", "lesson")."\n";
-		echo "<br><input name=\"display\" type=\"checkbox\" value=\"1\" CHECKED>";
+		echo "<br><input name=\"display\" type=\"checkbox\" value=\"1\" CHECKED />";
 		echo get_string("displayinleftmenu", "lesson");
 		echo "</center>\n";
 		echo "</td></tr>\n";
@@ -141,8 +141,8 @@
         // close table and form
         ?>
         </table><br />
-        <input type="submit" value="<?php  print_string("addabranchtable", "lesson") ?>">
-        <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
+        <input type="submit" value="<?php  print_string("addabranchtable", "lesson") ?>" />
+        <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
         </center>
         </form>
         <?PHP
@@ -157,7 +157,7 @@
 	    }
 
         // first get the preceeding page
-        $pageid = $_GET['pageid'];
+        $pageid = required_param('pageid', PARAM_INT);
             
         $timenow = time();
         
@@ -221,7 +221,7 @@
 
         // first get the preceeding page
 		// if $pageid = 0, then we are inserting a new page at the beginning of the lesson
-        $pageid = $_GET['pageid'];
+        $pageid = required_param('pageid', PARAM_INT);
             
         $timenow = time();
         
@@ -286,7 +286,7 @@
 	    }
 
         // first get the preceeding page
-        $pageid = $_GET['pageid'];
+        $pageid = required_param('pageid', PARAM_INT);
             
         $timenow = time();
         
@@ -337,7 +337,7 @@
 	    }
 
         // first get the preceeding page
-        $pageid = $_GET['pageid'];
+        $pageid = required_param('pageid', PARAM_INT);
             
         // set of jump array
         $jump[0] = get_string("thispage", "lesson");
@@ -378,7 +378,7 @@
         <form name="form" method="post" action="lesson.php">
         <input type="hidden" name="id" value="<?PHP echo $cm->id ?>">
         <input type="hidden" name="action" value="insertpage">
-        <input type="hidden" name="pageid" value="<?PHP echo $_GET['pageid'] ?>">
+        <input type="hidden" name="pageid" value="<?PHP echo $pageid ?>">
 		<center><table cellpadding=5 border=1>
   		<?php
 		    echo "<tr><td align=\"center\"><b>";
@@ -386,7 +386,7 @@
 			echo helpbutton("questiontype", get_string("questiontype", "lesson"), "lesson")."<br>";
 			if (isset($_GET['qtype'])) {
 				lesson_qtype_menu($LESSON_QUESTION_TYPE, $_GET['qtype'], 
-								  "lesson.php?id=$cm->id&action=addpage&pageid=".$_GET['pageid'].$linkadd);
+								  "lesson.php?id=$cm->id&action=addpage&pageid=".$pageid.$linkadd);
 				// NoticeFix rearraged
 				if ( $_GET['qtype'] == LESSON_SHORTANSWER || $_GET['qtype'] == LESSON_MULTICHOICE || !isset($_GET['qtype']) ) {  // only display this option for Multichoice and shortanswer
 					if ($_GET['qtype'] == LESSON_SHORTANSWER) {
@@ -399,7 +399,7 @@
 				}
 			} else {
 				lesson_qtype_menu($LESSON_QUESTION_TYPE, LESSON_MULTICHOICE, 
-								  "lesson.php?id=$cm->id&action=addpage&pageid=".$_GET['pageid'].$linkadd);
+								  "lesson.php?id=$cm->id&action=addpage&pageid=".$pageid.$linkadd);
 				echo "<br><br><b>".get_string("multianswer", "lesson").":</b> \n";
 				echo " <label for=\"qoption\" class=\"hidden-label\">Question Option</label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\"/>"; //CDC hidden label added.
 				helpbutton("questionoption", get_string("questionoption", "lesson"), "lesson");
@@ -439,7 +439,7 @@
 						/// CDC-FLAG ///
 						if($lesson->custom) {
 							if ($i) {
-								echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"-1\" size=\"5\">";
+								echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"0\" size=\"5\">";
 							} else {
 								echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"1\" size=\"5\">";
 							}
@@ -489,7 +489,7 @@
 							lesson_choose_from_menu($jump, "jumpto[$i]", 0, "");
 							helpbutton("jumpto", get_string("jump", "lesson"), "lesson");
 							if($lesson->custom) {
-								echo get_string("wronganswerscore", "lesson").": <input type=\"text\" name=\"score[$i]\" value=\"-1\" size=\"5\">";
+								echo get_string("wronganswerscore", "lesson").": <input type=\"text\" name=\"score[$i]\" value=\"0\" size=\"5\">";
 							}
 							echo "</td></tr>\n";
 						}
@@ -519,7 +519,7 @@
 						/// CDC-FLAG ///
 						if($lesson->custom) {
 							if ($i) {
-								echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"-1\" size=\"5\">";
+								echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"0\" size=\"5\">";
 							} else {
 								echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"1\" size=\"5\">";
 							}
@@ -550,7 +550,7 @@
 				/// CDC-FLAG ///
 				if($lesson->custom) {
 					if ($i) {
-						echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"-1\" size=\"5\">";
+						echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"0\" size=\"5\">";
 					} else {
 						echo get_string("score", "lesson")." $iplus1: <input type=\"text\" name=\"score[$i]\" value=\"1\" size=\"5\">";
 					}
@@ -577,10 +577,7 @@
 	    	error("Only teachers can look at this page");
 	    }
 
-		if (empty($_GET['pageid'])) {
-			error("Confirm delete: pageid missing");
-		}
-        $pageid = $_GET['pageid'];
+        $pageid = required_param('pageid', PARAM_INT);
         if (!$thispage = get_record("lesson_pages", "id", $pageid)) {
             error("Confirm delete: the page record not found");
         }
@@ -699,7 +696,7 @@
         if (empty($_POST['pageid'])) {
 			error("Continue: pageid missing");
 		}
-        $pageid = $_POST['pageid'];
+        $pageid = required_param('pageid', PARAM_INT);
         if (!$page = get_record("lesson_pages", "id", $pageid)) {
             error("Continue: Page record not found");
         }
@@ -715,7 +712,7 @@
                     $noanswer = true;
                     break;
                 }
-				$useranswer = stripslashes_safe($useranswer);
+				$useranswer = clean_param($useranswer, PARAM_CLEAN);
 				
 	            if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
                     error("Continue: No answers found");
@@ -741,8 +738,8 @@
                     $noanswer = true;
                     break;
                 }
-				$userresponse = $useranswer;
-				$useranswer = stripslashes_safe($useranswer);
+				$useranswer = clean_param($useranswer, PARAM_CLEAN);
+				$userresponse = addslashes($useranswer);
 				
                 if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
                     error("Continue: No answers found");
@@ -817,7 +814,7 @@
                     $noanswer = true;
                     break;
                 }
-                $answerid = $_POST['answerid']; 
+                $answerid = required_param('answerid', PARAM_INT); 
                 if (!$answer = get_record("lesson_answers", "id", $answerid)) {
                     error("Continue: answer record not found");
                 } 
@@ -847,7 +844,7 @@
                 if ($page->qoption) {
                     // MULTIANSWER allowed, user's answer is an array
                     if (isset($_POST['answer'])) {
-                        $useranswers = $_POST['answer'];
+                        $useranswers = optional_param('answer');
                     } else {
                         $noanswer = true;
                         break;
@@ -946,7 +943,7 @@
                         $noanswer = true;
                         break;
                     }
-                    $answerid = $_POST['answerid']; 
+					$answerid = required_param('answerid', PARAM_INT); 
                     if (!$answer = get_record("lesson_answers", "id", $answerid)) {
                         error("Continue: answer record not found");
                     }
@@ -976,7 +973,7 @@
             /// CDC-FLAG /// 6/14/04  -- added responses    
             case LESSON_MATCHING :
                 if (isset($_POST['response'])) {
-                    $response = $_POST['response'];
+                    $response = optional_param('response');
                 } else {
                     $noanswer = true;
                     break;
@@ -1055,10 +1052,12 @@
                 $response = '';
                 $newpageid = 0;
 
-                if (!$useranswer = (float) $_POST['answer']) {
+                if (isset($_POST['answer'])) {
+					$useranswer = (float) optional_param('answer');  // just doing default PARAM_CLEAN, not doing PARAM_INT because it could be a float
+				} else {
                     $noanswer = true;
                     break;
-                }
+				}
 				$userresponse = $useranswer;
                 if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
                     error("Continue: No answers found");
@@ -1106,7 +1105,7 @@
 
             case LESSON_BRANCHTABLE:
                 $noanswer = false;
-                $newpageid = $_POST['jumpto'];
+                $newpageid = optional_param('jumpto', NULL, PARAM_INT);
 				/// CDC-FLAG /// 6/15/04 going to insert into lesson_branch				
 				if ($newpageid == LESSON_RANDOMBRANCH) {
 					$branchflag = 1;
@@ -1122,7 +1121,7 @@
 				unset($branch);
 				$branch->lessonid = $lesson->id;
 				$branch->userid = $USER->id;
-				$branch->pageid = $_POST['pageid'];
+				$branch->pageid = $pageid;
 				$branch->retry = $retries;
 				$branch->flag = $branchflag;
 				$branch->timeseen = time();
@@ -1138,7 +1137,7 @@
 					if (isteacher($course->id)) {
 						 $newpageid = LESSON_NEXTPAGE;
 					} else {
-						 $newpageid = lesson_unseen_question_jump($lesson->id, $USER->id, $_POST['pageid']);  // this may return 0 //CDC Chris Berri.....this is where it sets the next page id for unseen?
+						 $newpageid = lesson_unseen_question_jump($lesson->id, $USER->id, $pageid);  // this may return 0 //CDC Chris Berri.....this is where it sets the next page id for unseen?
 					}
 				}
 				/// CDC-FLAG 6/15/04 ///
@@ -1153,7 +1152,7 @@
 /* CDC-FLAG */  } elseif ($newpageid == LESSON_PREVIOUSPAGE) {
 					$newpageid = $page->prevpageid;
 				} elseif ($newpageid == LESSON_RANDOMPAGE) {
-					$newpageid = lesson_random_question_jump($lesson->id, $_POST['pageid']);
+					$newpageid = lesson_random_question_jump($lesson->id, $pageid);
 				} elseif ($newpageid == LESSON_RANDOMBRANCH) {  // 6/15/04
 					$newpageid = lesson_unseen_branch_jump($lesson->id, $USER->id);
 				}
@@ -1405,7 +1404,7 @@
 			}
 		}
 		echo "</form>\n";
-		
+
 		if ($lesson->displayleft) {
 			echo "</div><!-- close slidepos class -->"; //CDC Chris Berri for styles, closes slidepos.
 		} elseif ($lesson->slideshow) {
@@ -1425,7 +1424,7 @@
 		if (empty($_GET['pageid'])) {
 			error("Delete: pageid missing");
 		}
-        $pageid = $_GET['pageid'];
+        $pageid = required_param('pageid', PARAM_INT);
 	    if (!$thispage = get_record("lesson_pages", "id", $pageid)) {
 		    error("Delete: page record not found");
         }
@@ -1483,12 +1482,13 @@
 	    }
 
         // get the page
-        if (!$page = get_record("lesson_pages", "id", $_GET['pageid'])) {
+		$pageid = required_param('pageid', PARAM_INT);
+        if (!$page = get_record("lesson_pages", "id", $pageid)) {
             error("Edit page: page record not found");
         }
 		
 		if (isset($_GET['qtype'])) {
-			$page->qtype = $_GET['qtype'];
+			$page->qtype = required_param('qtype', PARAM_INT);
 		}
 		
         // set of jump array
@@ -1531,7 +1531,7 @@
         <form name="editpage" method="post" action="lesson.php">
         <input type="hidden" name="id" value="<?PHP echo $cm->id ?>">
         <input type="hidden" name="action" value="updatepage">
-        <input type="hidden" name="pageid" value="<?PHP echo $_GET['pageid'] ?>">
+        <input type="hidden" name="pageid" value="<?PHP echo $pageid ?>">
         <input type="hidden" name="redisplay" value="0">
         <center><table cellpadding=5 border=1>
    		<?php
@@ -1939,9 +1939,9 @@
         ?>
         </table><br />
         <input type="button" value="<?php print_string("redisplaypage", "lesson") ?>" 
-            onClick="document.editpage.redisplay.value=1;document.editpage.submit();">
-        <input type="submit" value="<?php  print_string("savepage", "lesson") ?>">
-        <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>">
+            onClick="document.editpage.redisplay.value=1;document.editpage.submit();" />
+        <input type="submit" value="<?php  print_string("savepage", "lesson") ?>" />
+        <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
         </center>
         </form>
         <?PHP
@@ -1956,8 +1956,9 @@
 	    }
 
         $timenow = time();
-		$form = data_submitted();
-        
+		
+		$form = lesson_clean_data_submitted();
+
         if ($form->pageid) {
             // the new page is not the first page
             if (!$page = get_record("lesson_pages", "id", $form->pageid)) {
@@ -2143,7 +2144,7 @@
 	    	error("Only teachers can look at this page");
 	    }
 
-        $pageid = $_GET['pageid'];
+        $pageid = required_param('pageid', PARAM_INT);
         $title = get_field("lesson_pages", "title", "id", $pageid);
         print_heading(get_string("moving", "lesson", $title));
         
@@ -2183,11 +2184,11 @@
 	    	error("Only teachers can look at this page");
 	    }
 
-        $pageid = $_GET['pageid']; //  page to move
+        $pageid = required_param('pageid', PARAM_INT); //  page to move
         if (!$page = get_record("lesson_pages", "id", $pageid)) {
             error("Moveit: page not found");
         }
-        $after = $_GET['after']; // target page
+        $after = required_param('after', PARAM_INT); // target page
 
         print_heading(get_string("moving", "lesson", $page->title));
         
@@ -2285,7 +2286,7 @@
 	    }
 
         $timenow = time();
-		$form = data_submitted();
+		$form = lesson_clean_data_submitted();
 
         $page->id = $form->pageid;
         $page->timemodified = $timenow;
