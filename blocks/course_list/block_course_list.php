@@ -1,4 +1,4 @@
-<?PHP //$Id$
+Ad<?PHP //$Id$
 
 class CourseBlock_course_list extends MoodleBlock {
     function CourseBlock_course_list ($course) {
@@ -6,6 +6,25 @@ class CourseBlock_course_list extends MoodleBlock {
         $this->content_type = BLOCK_TYPE_LIST;
         $this->course = $course;
         $this->version = 2005052600;
+    }
+    
+    function has_config() {
+        return true;
+    }
+
+    function print_config() {
+        global $CFG, $THEME;
+        print_simple_box_start('center', '', $THEME->cellheading);
+        include($CFG->dirroot.'/blocks/'.$this->name().'/config.html');
+        print_simple_box_end();
+        return true;
+    }
+
+    function handle_config($config) {
+        foreach ($config as $name => $value) {
+            set_config($name, $value);
+        }
+        return true;
     }
 
     function applicable_formats() {
@@ -31,8 +50,15 @@ class CourseBlock_course_list extends MoodleBlock {
             $icon  = "<img src=\"$CFG->wwwroot/theme/$CFG->theme/pix/i/course.gif\"".
                      " height=\"16\" width=\"16\" alt=\"".get_string("course")."\">";
         }
+        
+        $adminseesall = true;
+        if (isset($CFG->block_course_list_adminview)) {
+           if ( $CFG->block_course_list_adminview == 'own'){
+               $adminseesall = false;
+           }
+        }
 
-        if (isset($USER->id) and !isadmin()) {    // Just print My Courses
+        if (isset($USER->id) and !(isadmin() and $adminseesall)) {    // Just print My Courses
             if ($courses = get_my_courses($USER->id)) {
                 foreach ($courses as $course) {
                     if (!$course->category) {
