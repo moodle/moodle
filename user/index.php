@@ -50,15 +50,25 @@
     if ($students = get_course_students($course->id, "$sort $dir")) {
         $numstudents = count($students);
         echo "<H2 align=center>$numstudents $course->students</H2>";
-        if ($numstudents < 30) {
+        if ($numstudents < $USER_SMALL_CLASS) {
             foreach ($students as $student) {
                 print_user($student, $course, $string);
             }
         } else {  // Print one big table with abbreviated info
-            $table->head = array ("&nbsp;",
-                 "$string->name <A HREF=\"index.php?id=$course->id&sort=u.firstname&dir=ASC\"><IMG BORDER=0 SRC=\"../pix/t/down.gif\"></A>",
-                 "$string->location <A HREF=\"index.php?id=$course->id&sort=u.country&dir=ASC\"><IMG BORDER=0 SRC=\"../pix/t/down.gif\"></A>",
-                 "$string->lastaccess <A HREF=\"index.php?id=$course->id&sort=u.lastaccess&dir=DESC\"><IMG BORDER=0 SRC=\"../pix/t/down.gif\"></A>");
+            if ($sort == "u.firstname") {
+                $name       = "$string->name";
+                $location   = "<A HREF=\"index.php?id=$course->id&sort=u.country&dir=ASC\">$string->location</A>";
+                $lastaccess = "<A HREF=\"index.php?id=$course->id&sort=u.lastaccess&dir=DESC\">$string->lastaccess</A>";
+            } else if ($sort == "u.country") {
+                $name       = "<A HREF=\"index.php?id=$course->id&sort=u.firstname&dir=ASC\">$string->name</A>";
+                $location   = "$string->location";
+                $lastaccess = "<A HREF=\"index.php?id=$course->id&sort=u.lastaccess&dir=DESC\">$string->lastaccess</A>";
+            } else {
+                $name       = "<A HREF=\"index.php?id=$course->id&sort=u.firstname&dir=ASC\">$string->name</A>";
+                $location   = "<A HREF=\"index.php?id=$course->id&sort=u.country&dir=ASC\">$string->location</A>";
+                $lastaccess = "$string->lastaccess";
+            }
+            $table->head = array ("&nbsp;", $name, $location, $lastaccess);
             $table->align = array ("LEFT", "LEFT", "LEFT", "LEFT");
             $table->size = array ("35", "*", "*", "*");
             
@@ -72,8 +82,8 @@
 
                 $table->data[] = array (print_user_picture($student->id, $course->id, $student->picture, false, true),
                     "<B><A HREF=\"$CFG->wwwroot/user/view.php?id=$student->id&course=$course->id\">$student->firstname $student->lastname</A></B>",
-                    "$student->city, ".$COUNTRIES["$student->country"],
-                    "$lastaccess");
+                    "<FONT SIZE=2>$student->city, ".$COUNTRIES["$student->country"]."</FONT>",
+                    "<FONT SIZE=2>$lastaccess</FONT>");
             }
             print_table($table, 2, 0);
         }

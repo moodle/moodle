@@ -1,5 +1,7 @@
 <?PHP  // $Id$
 
+$USER_SMALL_CLASS = 30;   // Affects listing display
+
 /// FUNCTIONS ///////////////////////////////////////////////////////////
 
 function ImageCopyBicubic ($dst_img, $src_img, $dst_x, $dst_y, $src_x, $src_y, $dst_w, $dst_h, $src_w, $src_h) {
