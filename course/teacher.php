@@ -16,7 +16,7 @@
         error("Course ID was incorrect (can't find it)");
     }
 
-    if (!iscreator() and isteacher($course->id)) {
+    if (!isteacheredit($course->id)) {
         error("You must be an administrator or course creator to use this page.");
     }
 
