@@ -147,14 +147,26 @@ class graph {
 // init all text - title, labels, and axis text.
 function init() {
 
+  /// Moodle mods:  overrides the font path and encodings
 
-  /// Moodle mods:  overrides the font path
   global $CFG;
+
+  /// A default.ttf is searched for in this order:
+  ///      lang/xx/fonts
+  ///      lib/
+  ///      lang/en
+
   $currlang = current_language();
-  $fontpath = $CFG->dirroot."/lang/$currlang/fonts/";
-  if (!file_exists("$fontpath"."default.ttf")) {
-      $fontpath = $CFG->dirroot."/lang/en/fonts/";
+  if (file_exists("$CFG->dirroot/lang/$currlang/fonts/default.ttf")) {
+      $fontpath = "$CFG->dirroot/lang/$currlang/fonts/";
+
+  } else if (file_exists("$CFG->libdir/default.ttf")) {
+      $fontpath = "$CFG->libdir/";
+
+  } else {
+      $fontpath = "$CFG->dirroot/lang/en/fonts/";
   }
+
   $this->parameter['path_to_fonts'] = $fontpath;
 
   if (file_exists("$fontpath"."lang_decode.php")) {
