@@ -411,7 +411,7 @@
         $strrename= get_string("rename");
         echo '<form name="renameform" action="category.php" method="post">';
         echo '<input type="hidden" name="id" value="'.$category->id.'" />';
-        echo '<input type="text" size="30" name="rename" value="'.s($category->name).'" />';
+        echo '<input type="text" size="30" name="rename" value="'.s($category->name).'" alt="'.$strrename.'" />';
         echo '<input type="submit" value="'.$strrename.'" />';
         echo "</form>";
         echo "<br />";

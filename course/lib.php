@@ -1282,7 +1282,9 @@ function print_course($course, $width="100%") {
     echo $enrol->get_access_icons($course);
 
     echo '</td><td valign="top" width="50%" class="courseboxsummary">';
-    echo '<p><font size="2">'.filter_text(text_to_html($course->summary), $course->id).'</font></p>';
+    $options = NULL;
+    $options->noclean = true;
+    echo format_text($course->summary, FORMAT_MOODLE, $options,  $course->id);
     echo "</td></tr>";
     echo "</table>";
 
