@@ -623,24 +623,24 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
 
     if (!$menu and $navigation) {
         if (isset($USER->id)) {
-            $menu = "<FONT SIZE=2><A TARGET=_parent HREF=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</A></FONT>";
+            $menu = "<font size=2><a target=_parent href=\"$CFG->wwwroot/login/logout.php\">".get_string("logout")."</a></font>";
         } else {
-            $menu = "<FONT SIZE=2><A TARGET=_parent HREF=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</A></FONT>";
+            $menu = "<font size=2><a target=_parent href=\"$CFG->wwwroot/login/index.php\">".get_string("login")."</a></font>";
         }
     }
 
     // Specify character set ... default is iso-8859-1 but some languages might need something else
     // Could be optimised by carrying the charset variable around in $USER
     if (current_language() == "en") {
-        $meta = "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=iso-8859-1\">\n$meta\n";
+        $meta = "<meta http-equiv=\"content-type\" content=\"text/html; charset=iso-8859-1\">\n$meta\n";
     } else {
-        $meta = "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=".get_string("thischarset")."\">\n$meta\n";
+        $meta = "<meta http-equiv=\"content-type\" content=\"text/html; charset=".get_string("thischarset")."\">\n$meta\n";
     }
 
     if ($CFG->langdir == "RTL") {
-        $direction = " DIR=\"RTL\"";
+        $direction = " dir=\"rtl\"";
     } else {
-        $direction = " DIR=\"LTR\"";
+        $direction = " dir=\"ltr\"";
     }
  
     if (!$cache) {   // Do everything we can to prevent clients and proxies caching
