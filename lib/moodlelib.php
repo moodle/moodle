@@ -816,6 +816,7 @@ function unenrol_student($userid, $courseid=0) {
 
     } else {
         delete_records("forum_subscriptions", "userid", $userid);
+        delete_records("groups_members", "userid", $userid);
         return delete_records("user_students", "userid", $userid);
     }
 }
