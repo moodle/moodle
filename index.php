@@ -76,8 +76,6 @@
             // but I'm not sure if it's worth the complexity increase...
             $pageblocks = blocks_get_by_page($PAGE);
         }
-
-        $missingblocks = blocks_get_missing($PAGE, $pageblocks);
     }
 
     optional_variable($preferred_width_left,  blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]));
@@ -216,8 +214,8 @@
             echo '<br />';
         }
         blocks_print_group($PAGE, $pageblocks[BLOCK_POS_RIGHT]);
-        if ($editing && !empty($missingblocks)) {
-            blocks_print_adminblock($PAGE, $missingblocks);
+        if ($editing) {
+            blocks_print_adminblock($PAGE, $pageblocks);
         }
         echo '</td>';
     }

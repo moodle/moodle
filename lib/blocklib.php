@@ -542,12 +542,14 @@ function blocks_get_by_page($page) {
 }
 
 //This function prints the block to admin blocks as necessary
-function blocks_print_adminblock($page, $missingblocks) {
+function blocks_print_adminblock(&$page, &$pageblocks) {
     global $USER;
 
-    $strblocks = get_string('blocks');
-    $stradd    = get_string('add');
+    $missingblocks = blocks_get_missing($page, $pageblocks);
+
     if (!empty($missingblocks)) {
+        $strblocks = get_string('blocks');
+        $stradd    = get_string('add');
         foreach ($missingblocks as $blockid) {
             $block = blocks_get_record($blockid);
             $blockobject = block_instance($block->name);

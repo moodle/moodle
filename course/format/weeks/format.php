@@ -259,8 +259,8 @@
     if(blocks_have_content($pageblocks[BLOCK_POS_RIGHT]) || $editing) {
         echo '<td style="vertical-align: top; width: '.$preferred_width_right.'px;" id="right-column">';
         blocks_print_group($PAGE, $pageblocks[BLOCK_POS_RIGHT]);
-        if ($editing && !empty($missingblocks)) {
-            blocks_print_adminblock($PAGE, $missingblocks);
+        if ($editing) {
+            blocks_print_adminblock($PAGE, $pageblocks);
         }
         echo '</td>';
     }
