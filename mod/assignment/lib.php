@@ -149,26 +149,27 @@ function assignment_cron () {
             $strassignments = get_string("modulenameplural", "assignment");
             $strassignment  = get_string("modulename", "assignment");
 
+            unset($assignmentinfo);
+            $assignmentinfo->teacher = "$teacher->firstname $teacher->lastname";
+            $assignmentinfo->assignment = "$submission->name";
+            $assignmentinfo->url = "$CFG->wwwroot/mod/assignment/view.php?id=$mod->id";
+
             $postsubject = "$course->shortname: $strassignments: $submission->name";
             $posttext  = "$course->shortname -> $strassignments -> $submission->name\n";
             $posttext .= "---------------------------------------------------------------------\n";
-            $posttext .= "$teacher->firstname $teacher->lastname has posted some feedback on your\n";
-            $posttext .= "assignment submission for '$submission->name'\n\n";
-            $posttext .= "You can see it appended to your assignment submission:\n";
-            $posttext .= "   $CFG->wwwroot/mod/assignment/view.php?id=$mod->id\n";
+            $posttext .= get_string("assignmentmail", "assignment", $assignmentinfo);
             $posttext .= "---------------------------------------------------------------------\n";
+
             if ($user->mailformat == 1) {  // HTML
-                $posthtml = "<P><FONT FACE=sans-serif>".
-              "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> ->".
-              "<A HREF=\"$CFG->wwwroot/mod/assignment/index.php?id=$course->id\">$strassignments</A> ->".
-              "<A HREF=\"$CFG->wwwroot/mod/assignment/view.php?id=$mod->id\">$submission->name</A></FONT></P>";
-              $posthtml .= "<HR><FONT FACE=sans-serif>";
-              $posthtml .= "<P>$teacher->firstname $teacher->lastname has posted some feedback on your";
-              $posthtml .= " assignment submission for '<B>$submission->name</B>'</P>";
-              $posthtml .= "<P>You can see it <A HREF=\"$CFG->wwwroot/mod/assignment/view.php?id=$mod->id\">";
-              $posthtml .= "appended to your assignment submission</A>.</P></FONT><HR>";
+                $posthtml = "<p><font face=\"sans-serif\">".
+                "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
+                "<a href=\"$CFG->wwwroot/mod/assignment/index.php?id=$course->id\">$strassignments</a> ->".
+                "<a href=\"$CFG->wwwroot/mod/assignment/view.php?id=$mod->id\">$submission->name</a></font></p>";
+                $posthtml .= "<hr><font face=\"sans-serif\">";
+                $posthtml .= "<p>".get_string("assignmentmailhtml", "assignment", $assignmentinfo)."</p>";
+                $posthtml .= "</font><hr>";
             } else {
-              $posthtml = "";
+                $posthtml = "";
             }
 
             if (! email_to_user($user, $teacher, $postsubject, $posttext, $posthtml)) {

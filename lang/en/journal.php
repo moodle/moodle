@@ -13,6 +13,15 @@ $string['editingends'] = "Editing period ends";
 $string['editingended'] = "Editing period has ended";
 $string['entries'] = "Entries";
 $string['feedbackupdated'] = "Feedback updated for \$a entries";
+$string['journalmail'] = "\$a->teacher has posted some feedback on your
+journal entry for '\$a->journal'
+
+You can see it appended to your journal entry:
+
+    \$a->url";
+$string['journalmailhtml'] = "\$a->teacher has posted some feedback on your
+journal entry for '<i>\$a->journal</i>'<br /><br />
+You can see it appended to your <a href=\\\"\$a->url\\\">journal entry</a>.";
 $string['journalname'] = "Journal name";
 $string['journalquestion'] = "Journal question";
 $string['journalrating1'] = "Not satisfactory";
