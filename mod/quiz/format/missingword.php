@@ -64,6 +64,10 @@ class quiz_file_format extends quiz_default_format {
             return false;
         }
 
+        if (count($answers) == 1) {
+            return false;
+        }
+
         $answers = $this->swapshuffle($answers);
 
         foreach ($answers as $key => $answer) {

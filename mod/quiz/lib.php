@@ -747,6 +747,7 @@ function quiz_print_cat_question_list($categoryid) {
     $strimportquestions = get_string("importquestions", "quiz");
     $strnoquestions = get_string("noquestions", "quiz");
     $strselect = get_string("select", "quiz");
+    $strselectall = get_string("selectall", "quiz");
     $strcreatenewquestion = get_string("createnewquestion", "quiz");
     $strquestionname = get_string("questionname", "quiz");
     $strdelete = get_string("delete");
@@ -824,8 +825,9 @@ function quiz_print_cat_question_list($categoryid) {
         echo "</TR>";
     }
     echo "<TR><TD COLSPAN=3>";
-    echo "<INPUT TYPE=hidden NAME=add VALUE=\"1\">";
-    echo "<INPUT TYPE=submit VALUE=\"<< $straddselectedtoquiz\">";
+    echo "<INPUT TYPE=submit NAME=add VALUE=\"<< $straddselectedtoquiz\">";
+    //echo "<INPUT TYPE=submit NAME=delete VALUE=\"XX Delete selected\">";
+    echo "<INPUT type=button onclick=\"checkall()\" value=\"$strselectall\">";
     echo "</TD></TR>";
     echo "</TABLE>";
     echo "</FORM>";
