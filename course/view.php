@@ -10,7 +10,6 @@
     $name        = optional_param('name');
     $edit        = optional_param('edit');
     $idnumber    = optional_param('idnumber');
-    $blockaction = optional_param('blockaction');
 
     if (empty($id) && empty($name)) {
         error("Must specify course id or short name");
@@ -53,7 +52,7 @@
     }
 
     $PAGE = page_create_object(PAGE_COURSE_VIEW, $course->id);
-    $pageblocks = blocks_get_by_page($PAGE);
+    $pageblocks = blocks_setup($PAGE);
 
     if (!isset($USER->editing)) {
         $USER->editing = false;
@@ -76,13 +75,6 @@
 
         if (isset($show) && confirm_sesskey()) {
             set_section_visible($course->id, $show, '1');
-        }
-
-        if (!empty($blockaction)) {
-            blocks_execute_url_action($PAGE, $pageblocks);
-            // This re-query could be eliminated by judicious programming in blocks_execute_action(),
-            // but I 'm not sure if it's worth the complexity increase...
-            $pageblocks = blocks_get_by_page($PAGE);
         }
 
         if (!empty($section)) {

@@ -10,7 +10,6 @@
     $id          = optional_param('id', 0, PARAM_INT);
     $c           = optional_param('c', 0, PARAM_INT);
     $edit        = optional_param('edit', '');
-    $blockaction = optional_param('blockaction');
 
     if ($id) {
         if (! $cm = get_record('course_modules', 'id', $id)) {
@@ -47,16 +46,9 @@
 
 // Initialize $PAGE, compute blocks
 
-    $PAGE = page_create_instance($chat->id);
-    $pageblocks = blocks_get_by_page($PAGE);
-
-    if (!empty($blockaction)) {
-        blocks_execute_url_action($PAGE, $pageblocks);
-        $pageblocks = blocks_get_by_page($PAGE);
-    }
-
+    $PAGE       = page_create_instance($chat->id);
+    $pageblocks = blocks_setup($PAGE);
     $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
-
 
 /// Print the page header
 

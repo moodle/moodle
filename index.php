@@ -18,8 +18,6 @@
     require_once($CFG->dirroot .'/mod/resource/lib.php');
     require_once($CFG->dirroot .'/mod/forum/lib.php');
 
-    $blockaction = optional_param('blockaction');
-
     if (empty($SITE)) {
         redirect($CFG->wwwroot .'/'. $CFG->admin .'/index.php');
     }
@@ -55,16 +53,8 @@
     }
 
     $PAGE       = page_create_object(PAGE_COURSE_VIEW, SITEID);
-    $pageblocks = blocks_get_by_page($PAGE);
+    $pageblocks = blocks_setup($PAGE);
     $editing    = $PAGE->user_is_editing();
-
-    if (!empty($blockaction)) {
-        blocks_execute_url_action($PAGE, $pageblocks);
-        // This re-query could be eliminated by judicious programming in blocks_execute_action(),
-        // but I'm not sure if it's worth the complexity increase...
-        $pageblocks = blocks_get_by_page($PAGE);
-    }
-
     $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),  BLOCK_L_MAX_WIDTH);
     $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), BLOCK_R_MAX_WIDTH);
 
