@@ -2413,11 +2413,11 @@ function make_table($table) {
         $fontsize = '<font size="'. $table->fontsize .'">';
     }
 
-    $output =  '<table width="'. $table->width .'" valign="top" align="'. $table->tablealign .'" ';
+    $output =  '<table width="'. $table->width .'" align="'. $table->tablealign .'" ';
     $output .= ' cellpadding="'. $table->cellpadding .'" cellspacing="'. $table->cellspacing .'" class="'. $table->class .'">'."\n";
 
     if (!empty($table->head)) {
-        $output .= '<tr>';
+        $output .= '<tr valign="top">';
         foreach ($table->head as $key => $heading) {
             if (!isset($size[$key])) {
                 $size[$key] = '';
