@@ -381,7 +381,9 @@ $string['enrolmentkeyhint'] = 'That enrolment key was incorrect, please try agai
 (Here\'s a hint - it starts with \'$a\')';
 $string['enrolmentnew'] = 'New enrolment in $a';
 $string['enrolmentnointernal'] = 'Manual enrolments are currently not enabled';
+$string['enrolmentnotyet'] = 'Sorry, you can not access this course until <br /> $a';
 $string['enrolments'] = 'Enrolments';
+$string['enrolperiod'] = 'Enrolment period';
 $string['entercourse'] = 'Click to enter this course';
 $string['enteremailaddress'] = 'Enter in your email address to reset your 
    password and have the new password sent to you via email.';
@@ -931,6 +933,7 @@ $string['unenrolallstudentssure'] = 'Are you sure you want to completely unenrol
 $string['unenrolme'] = 'Unenrol me from $a';
 $string['unenrolsure'] = 'Are you sure you want to unenrol $a from this course?';
 $string['unknowncategory'] = 'Unknown category';
+$string['unlimited'] = 'Unlimited';
 $string['unpacking'] = 'Unpacking $a';
 $string['unsafepassword'] = 'Unsafe password - try something else';
 $string['unusedaccounts'] = 'Accounts unused for more than $a days are automatically unenrolled';

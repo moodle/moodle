@@ -2,7 +2,7 @@
       // resource.php - created with Moodle 1.2 development (2003120700)
 
 
-$string['addresource'] = 'Add resource';
+$string['addresource'] = 'Add a resource';
 $string['chooseafile'] = 'Choose or upload a file';
 $string['configdefaulturl'] = 'This value is used to prefill the URL form when creating a new URL-based resource.';
 $string['configfilterexternalpages'] = 'Enabling this setting will cause all external resources (web pages, uploaded HTML files) to be processed by the currently defined site filters (such as glossary autolinks, for example).  Turning this option on may cause your course pages to slow down significantly - use with caution and only if you really need it.';
@@ -61,10 +61,10 @@ $string['popupresourcelink'] = 'If it didn\'t, click here: $a';
 $string['resourcetype'] = 'Type of resource';
 $string['resourcetypedirectory'] = 'Display a directory';
 $string['resourcetypefile'] = 'Link to a file or web site';
-$string['resourcetypehtml'] = 'Compose a new web page';
+$string['resourcetypehtml'] = 'Compose a web page';
 $string['resourcetypelabel'] = 'Insert a label';
 $string['resourcetypereference'] = 'Post a reference';
-$string['resourcetypetext'] = 'Compose a new text page';
+$string['resourcetypetext'] = 'Compose a text page';
 $string['searchweb'] = 'Search for web page';
 $string['variablename'] = 'Variable name';
 ?>
