@@ -202,11 +202,11 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
                     $popupicon = $CFG->pixpath.'/c/user.gif';
                     $popupalt  = '';
                 }
-                $popupcontent .= '<div><img height=16 width=16 src="'.$popupicon.'" style="vertical-align: middle; margin-right: 4px;" alt="'.$popupalt.'" /><a href="'.$dayhref.'">'.$event->name.'</a></div>';
+                $popupcontent .= '<div><img height="16" width="16" src="'.$popupicon.'" style="vertical-align: middle; margin-right: 4px;" alt="'.$popupalt.'" /><a href="'.$dayhref.'">'.$event->name.'</a></div>';
             }
 
             $popupcaption = get_string('eventsfor', 'calendar', userdate($events[$eventid]->timestart, $strftimetimedayshort));
-            $popupcontent = str_replace("'", "\'", htmlSpecialChars($popupcontent));
+            $popupcontent = str_replace("'", "\'", htmlspecialchars($popupcontent));
             $popup = 'onmouseover="return overlib(\''.$popupcontent.'\', CAPTION, \''.$popupcaption.'\');" onmouseout="return nd();"';
 
             // Class and cell content
