@@ -90,10 +90,10 @@
     
             if ( $xmlglossary['NAME'][0]['#'] ) {
                 unset($glossary);
-                $glossary->name                   = $xmlglossary['NAME'][0]['#'];
+                $glossary->name                   = addslashes(utf8_decode($xmlglossary['NAME'][0]['#']));
         		$glossary->course                 = $course->id;
                 $glossary->globalglossary         = $xmlglossary['GLOBALGLOSSARY'][0]['#'];
-        		$glossary->intro                  = $xmlglossary['INTRO'][0]['#'];
+        		$glossary->intro                  = addslashes(utf8_decode($xmlglossary['INTRO'][0]['#']));
                 $glossary->showspecial            = $xmlglossary['SHOWSPECIAL'][0]['#'];
                 $glossary->showalphabet           = $xmlglossary['SHOWALPHABET'][0]['#'];
                 $glossary->showall                = $xmlglossary['SHOWALL'][0]['#'];
@@ -151,8 +151,8 @@
             $xmlentry = $xmlentries[$i];
 
             unset($newentry);
-            $newentry->concept          = $xmlentry['#']['CONCEPT'][0]['#'];
-            $newentry->definition       = $xmlentry['#']['DEFINITION'][0]['#'];
+            $newentry->concept          = addslashes(utf8_decode($xmlentry['#']['CONCEPT'][0]['#']));
+            $newentry->definition       = addslashes(utf8_decode($xmlentry['#']['DEFINITION'][0]['#']));
 
             $permissiongranted = 1;
             if ( $newentry->concept and $newentry->definition ) {
