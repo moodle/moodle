@@ -259,13 +259,12 @@ class block_base {
      * Sets class $edit_controls var with correct block manipulation links.
      *
      * @uses $CFG
-     * @uses $THEME
      * @uses $USER
      * @param stdObject $options ?
      * @todo complete documenting this function. Define $options.
      */
     function _add_edit_controls($options) {
-        global $CFG, $THEME, $USER;
+        global $CFG, $USER;
 
         if (!isset($this->str)) {
             $this->str->delete    = get_string('delete');
@@ -278,14 +277,6 @@ class block_base {
             $this->str->configure = get_string('configuration');
         }
 
-        $path = $CFG->wwwroot.'/course';
-
-        if (empty($THEME->custompix)) {
-            $pixpath = $path .'/../pix';
-        } else {
-            $pixpath = $path .'/../theme/'. $CFG->theme .'/pix';
-        }
- 
         $movebuttons = '<div style="float: right; font-size: 0.75em; margin-top: 0.3em;">';
 
         if ($this->instance->visible) {
@@ -300,31 +291,31 @@ class block_base {
         $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey));
      
         $movebuttons .= '<a style="margin-right: 6px; margin-left: 2px;" title="'. $title .'" href="'.$script.'&amp;blockaction=toggle">' .
-                        '<img src="'. $pixpath.$icon .'" alt="'.$title.'" /></a>';
+                        '<img src="'. $CFG->pixpath.$icon .'" alt="'.$title.'" /></a>';
 
         if ($options & BLOCK_CONFIGURE) {
             $movebuttons .= '<a style="margin-right: 6px; margin-left: 2px;" title="'. $this->str->configure .'" href="'.$script.'&amp;blockaction=config">' .
-                            '<img src="'. $pixpath .'/t/edit.gif" alt="'. $this->str->configure .'" /></a>';
+                            '<img src="'. $CFG->pixpath .'/t/edit.gif" alt="'. $this->str->configure .'" /></a>';
         }
 
         $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->delete .'" href="'.$script.'&amp;blockaction=delete">' .
-                        '<img src="'. $pixpath .'/t/delete.gif" alt="'. $this->str->delete .'" /></a> ';
+                        '<img src="'. $CFG->pixpath .'/t/delete.gif" alt="'. $this->str->delete .'" /></a> ';
 
         if ($options & BLOCK_MOVE_LEFT) {
             $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->moveleft .'" href="'.$script.'&amp;blockaction=moveleft">' .
-                            '<img src="'. $pixpath .'/t/left.gif" alt="'. $this->str->moveleft .'" /></a>';
+                            '<img src="'. $CFG->pixpath .'/t/left.gif" alt="'. $this->str->moveleft .'" /></a>';
         }
         if ($options & BLOCK_MOVE_UP) {
             $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->moveup .'" href="'.$script.'&amp;blockaction=moveup">' .
-                            '<img src="'. $pixpath .'/t/up.gif" alt="'. $this->str->moveup .'" /></a>';
+                            '<img src="'. $CFG->pixpath .'/t/up.gif" alt="'. $this->str->moveup .'" /></a>';
         }
         if ($options & BLOCK_MOVE_DOWN) {
             $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->movedown .'" href="'.$script.'&amp;blockaction=movedown">' .
-                            '<img src="'. $pixpath .'/t/down.gif" alt="'. $this->str->movedown .'" /></a>';
+                            '<img src="'. $CFG->pixpath .'/t/down.gif" alt="'. $this->str->movedown .'" /></a>';
         }
         if ($options & BLOCK_MOVE_RIGHT) {
             $movebuttons .= '<a style="margin-right: 2px; margin-left: 2px;" title="'. $this->str->moveright .'" href="'.$script.'&amp;blockaction=moveright">' .
-                            '<img src="'. $pixpath .'/t/right.gif" alt="'. $this->str->moveright .'" /></a>';
+                            '<img src="'. $CFG->pixpath .'/t/right.gif" alt="'. $this->str->moveright .'" /></a>';
         }
 
         $movebuttons .= '</div>';
@@ -390,7 +381,6 @@ class block_base {
      * You don't need to override this if you're satisfied with the above
      *
      * @uses $CFG
-     * @uses $THEME
      * @return boolean
      */
     function config_print() {
@@ -399,8 +389,8 @@ class block_base {
         if (!$this->has_config()) {
             return false;
         }
-        global $CFG, $THEME;
-        print_simple_box_start('center', '', $THEME->cellheading);
+        global $CFG;
+        print_simple_box_start('center', '', '', 5, 'blockconfigglobal');
         include($CFG->dirroot.'/blocks/'. $this->name() .'/config_global.html');
         print_simple_box_end();
         return true;
@@ -516,7 +506,6 @@ class block_base {
      * You don't need to override this if you're satisfied with the above
      *
      * @uses $CFG
-     * @uses $THEME
      * @return boolean
      * @todo finish documenting this function
      */
@@ -526,10 +515,10 @@ class block_base {
         if (!$this->instance_allow_multiple() && !$this->instance_allow_config()) {
             return false;
         }
-        global $CFG, $THEME;
+        global $CFG;
 
         if (is_file($CFG->dirroot .'/blocks/'. $this->name() .'/config_instance.html')) {
-            print_simple_box_start('center', '', $THEME->cellheading);
+            print_simple_box_start('center', '', '', 5, 'blockconfiginstance');
             include($CFG->dirroot .'/blocks/'. $this->name() .'/config_instance.html');
             print_simple_box_end();
         } else {
