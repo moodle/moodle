@@ -30,7 +30,7 @@
         error("Survey ID was incorrect");
     }
 
-    add_to_log($course->id, "survey", "submit", "view.php?id=$cm->id", "$survey->id");
+    add_to_log($course->id, "survey", "submit", "view.php?id=$cm->id", "$survey->id", "$cm->id");
 
     if (survey_already_done($survey->id, $USER->id)) {
         notice(get_string("alreadysubmitted", "survey"), $_SERVER["HTTP_REFERER"]);

@@ -30,7 +30,7 @@
         error("You can not view these chat reports");
     }
 
-    add_to_log($course->id, "chat", "view", "view.php?id=$cm->id", "$chat->id");
+    add_to_log($course->id, "chat", "view", "view.php?id=$cm->id", "$chat->id", "$cm->id");
 
 /// Print the page header
 
