@@ -48,6 +48,11 @@ th {
     background-color: <?PHP echo $THEME->cellheading?>;
 }
 
+ul {
+   margin-bottom: 5px;
+   margin-top: 0px;
+}
+
 form { 
     margin-bottom: 0;
 }
@@ -137,13 +142,33 @@ form {
 
 .weeklyoutlineside {
     background-image: url(<?PHP echo "$themeurl"?>/texture2.jpg);
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
 }
 
 .weeklyoutlinesidehighlight {
     background-image: url(<?PHP echo "$themeurl"?>/texture3.jpg);
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
 }
 
 .weeklyoutlinecontent {
+    border-width: 0px;
+    border-top: 1px;
+    border-bottom: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.weeklyoutlinecontenthighlight {
+    background: #FDFBF1;
+    border-width: 0px;
+    border-top: 1px;
+    border-bottom: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
 }
 
 .topicsoutline {
@@ -151,14 +176,34 @@ form {
 
 .topicsoutlineside {
     background-image: url(<?PHP echo "$themeurl"?>/texture2.jpg);
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
 }
 
 .topicsoutlinesidehighlight {
     background-image: url(<?PHP echo "$themeurl"?>/texture3.jpg);
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
 }
 
 .topicsoutlinecontent {
+    border-width: 0px;
+    border-top: 1px;
+    border-bottom: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
 }
+
+.topicsoutlinecontenthighlight {
+    border-width: 0px;
+    border-top: 1px;
+    border-bottom: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
 
 .forumpost {
     border-width: 1px;

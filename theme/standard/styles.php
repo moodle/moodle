@@ -148,6 +148,9 @@ form {
 .weeklyoutlinecontent {
 }
 
+.weeklyoutlinecontenthighlight {
+}
+
 
 .topicsoutline {
 }
@@ -159,6 +162,9 @@ form {
 }
 
 .topicsoutlinecontent {
+}
+
+.topicsoutlinecontenthighlight {
 }
 
 

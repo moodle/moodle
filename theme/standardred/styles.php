@@ -12,23 +12,19 @@
 
 /// From here on it's nearly a normal stylesheet.
 /// First are some CSS definitions for normal tags, 
-/// then custom tags follow.  
+/// then custom tags follow.
 ///
-/// New classes always get added to the end of the file.
-///
-/// Note that a group of standard colours are all 
-/// defined in config.php in this directory.  The
-/// reason for this is because Moodle uses the same
-/// colours to provide oldstyle formatting for 
-/// browsers without CSS.
-///
-/// You can hardcode colours in this file if you 
-/// don't care about this.
+/// Note that colours are all defined in config.php
+/// in this directory
 
 ?>
 
+body {
+    font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+    background-image: url(<?PHP echo "$themeurl"?>/texture1.jpg);
+}
 
-body, td, th {
+td, th {
     font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
 }
 
@@ -52,11 +48,14 @@ th {
     background-color: <?PHP echo $THEME->cellheading?>;
 }
 
+ul {
+   margin-bottom: 5px;
+   margin-top: 0px;
+}
+
 form { 
     margin-bottom: 0;
 }
-
-
 
 
 
@@ -65,21 +64,31 @@ form {
 }
 
 .headingblock {
-    background-image: url(<?PHP echo "$themeurl"?>/gradient.jpg);
+    background-image: url(<?PHP echo "$themeurl"?>/texture3.jpg);
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
 }
 
 .navbar {
-    background-image: url(<?PHP echo "$themeurl"?>/gradient.jpg);
+    background-image: url(<?PHP echo "$themeurl"?>/texture3.jpg);
+}
+
+.generalbox {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.generalboxcontent {
+    background-image: url(<?PHP echo "$themeurl"?>/texture2.jpg);
 }
 
 .generaltable {
 }
 
 .generaltableheader {
-    background-image: url(<?PHP echo "$themeurl"?>/gradient.jpg);
+    background-image: url(<?PHP echo "$themeurl"?>/texture3.jpg);
 }
 
 .generaltablecell {
@@ -92,75 +101,24 @@ form {
 }
 
 .sideblockheading {
-    background-image: url(<?PHP echo "$themeurl"?>/gradient.jpg);
+    background-image: url(<?PHP echo "$themeurl"?>/texture3.jpg);
 }
 
 .sideblockmain {
+    background-image: url(<?PHP echo "$themeurl"?>/texture2.jpg);
 }
 
 .sideblocklinks {
+    background-image: url(<?PHP echo "$themeurl"?>/texture2.jpg);
 }
 
 .sideblocklatestnews {
+    background-image: url(<?PHP echo "$themeurl"?>/texture2.jpg);
 }
 
 .sideblockrecentactivity {
+    background-image: url(<?PHP echo "$themeurl"?>/texture2.jpg);
 }
-
-.outlineheadingblock {
-    background-image: url(<?PHP echo "$themeurl"?>/gradient.jpg);
-    border-width: 1px;
-    border-color: <?PHP echo $THEME->borders?>;
-    border-style: solid;
-}
-
-.forumpost {
-    border-width: 1px;
-    border-color: <?PHP echo $THEME->borders?>;
-    border-style: solid;
-}
-
-.forumpostheader {
-}
-
-.forumpostheadertopic {
-}
-
-.forumpostpicture {
-}
-
-.forumpostside {
-}
-
-.forumpostmessage {
-}
-
-
-.weeklyoutline {
-}
-
-.weeklyoutlineside {
-}
-
-.weeklyoutlinesidehighlight {
-}
-
-.weeklyoutlinecontent {
-}
-
-
-.topicsoutline {
-}
-
-.topicsoutlineside {
-}
-
-.topicsoutlinesidehighlight {
-}
-
-.topicsoutlinecontent {
-}
-
 
 .siteinfo {
     border-width: 1px;
@@ -169,15 +127,105 @@ form {
 }
 
 .siteinfocontent {
+    background-image: url(<?PHP echo "$themeurl"?>/texture2.jpg);
 }
 
-
-.generalbox {
+.outlineheadingblock {
+    background-image: url(<?PHP echo "$themeurl"?>/texture3.jpg);
     border-width: 1px;
     border-color: <?PHP echo $THEME->borders?>;
     border-style: solid;
 }
 
-.generalboxcontent {
+.weeklyoutline {
 }
 
+.weeklyoutlineside {
+    background-image: url(<?PHP echo "$themeurl"?>/texture2.jpg);
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.weeklyoutlinesidehighlight {
+    background-image: url(<?PHP echo "$themeurl"?>/texture3.jpg);
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.weeklyoutlinecontent {
+    border-width: 0px;
+    border-top: 1px;
+    border-bottom: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.weeklyoutlinecontenthighlight {
+    background: #FDFBF1;
+    border-width: 0px;
+    border-top: 1px;
+    border-bottom: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.topicsoutline {
+}
+
+.topicsoutlineside {
+    background-image: url(<?PHP echo "$themeurl"?>/texture2.jpg);
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.topicsoutlinesidehighlight {
+    background-image: url(<?PHP echo "$themeurl"?>/texture3.jpg);
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.topicsoutlinecontent {
+    border-width: 0px;
+    border-top: 1px;
+    border-bottom: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.topicsoutlinecontenthighlight {
+    border-width: 0px;
+    border-top: 1px;
+    border-bottom: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+
+.forumpost {
+    border-width: 1px;
+    border-color: <?PHP echo $THEME->borders?>;
+    border-style: solid;
+}
+
+.forumpostheader {
+    background-image: url(<?PHP echo "$themeurl"?>/texture2.jpg);
+}
+
+.forumpostheadertopic {
+    background-image: url(<?PHP echo "$themeurl"?>/texture3.jpg);
+}
+
+.forumpostpicture {
+    background-image: url(<?PHP echo "$themeurl"?>/texture2.jpg);
+}
+
+.forumpostside {
+    background-image: url(<?PHP echo "$themeurl"?>/texture2.jpg);
+}
+
+.forumpostmessage {
+}
