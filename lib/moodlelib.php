@@ -1088,32 +1088,27 @@ function document_file($file, $include=true) {
 
     global $CFG;
 
+    $file = clean_filename($file);
+
     if (empty($file)) {
-        echo "Error 404";
         return false;
     }
 
-    $lang = current_language();
+    $langs = array(current_language(), get_string("parentlanguage"), "en");
 
-    $file = clean_filename($file);
+    foreach ($langs as $lang) {
+        $info->filepath = "$CFG->dirroot/lang/$lang/docs/$file";
+        $info->urlpath  = "$CFG->wwwroot/lang/$lang/docs/$file";
 
-    $info->filepath = "$CFG->dirroot/lang/$lang/docs/$file";
-    $info->urlpath  = "$CFG->wwwroot/lang/$lang/docs/$file";
-
-    if (!file_exists($info->filepath)) {
-        $info->filepath = "$CFG->dirroot/lang/en/docs/$file";
-        $info->urlpath  = "$CFG->wwwroot/lang/en/docs/$file";
-        if (!file_exists($info->filepath)) {
-            error("Error 404 - $file does not exist");
-            return NULL;
+        if (file_exists($info->filepath)) {
+            if ($include) {
+                include($info->filepath);
+            }
+            return $info;
         }
     }
 
-    if ($include) {
-        include($info->filepath);
-    }
-
-    return $info;
+    return false;
 }
 
 
