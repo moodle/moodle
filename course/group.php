@@ -18,7 +18,7 @@
 
 
     if ($group and (isteacheredit($course->id) or $course->groupmode == VISIBLEGROUPS)) {
-        if (! $group = get_record("group", "id", $group)) {
+        if (! $group = get_record("groups", "id", $group)) {
             error('Specified group could not be found!', "groups.php?id=$course->id");
         }
     } else if (! $group = get_current_group($course->id, 'full')) {
