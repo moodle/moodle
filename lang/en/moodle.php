@@ -135,6 +135,7 @@ $string['category'] = 'Category';
 $string['categoryadded'] = 'The category \'$a\' was added';
 $string['categorydeleted'] = 'The category \'$a\' was deleted';
 $string['categoryduplicate'] = 'A category named \'$a\' already exists!';
+$string['censorbadwords'] = 'shit,fuck,dick,cunt,whore,slut,wank';
 $string['changedpassword'] = 'Changed password';
 $string['changepassword'] = 'Change password';
 $string['changessaved'] = 'Changes saved';

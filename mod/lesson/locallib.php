@@ -1127,13 +1127,13 @@ function lesson_qtype_menu($qtypes, $selected="", $link="", $onclick="") {
 /*******************************************************************/
 function lesson_check_nickname($name) {
 // used to check high score nicknames.
-// checks nickname agains a list of "bad words" in filter.php
+// checks nickname against a list of "bad words"
 
-    if ($name == NULL) {
+    if (empty($name)) {
         return false;
     }
     
-    require_once('filter.php');
+    $filterwords = explode(',', get_string('censorbadwords'));
     
     foreach ($filterwords as $filterword) {
         if (strstr($name, $filterword)) {
