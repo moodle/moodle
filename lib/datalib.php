@@ -1190,7 +1190,7 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
 }
 
 
-function get_my_courses($userid, $sort="fullname ASC") {
+function get_my_courses($userid, $sort="visible DESC,fullname ASC") {
 
     global $CFG;
 
