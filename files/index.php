@@ -184,7 +184,7 @@
 
         case "move":
             html_header($course, $wdir);
-            if ($count = setfilelist($_POST)) {
+            if (($count = setfilelist($_POST)) and confirm_sesskey()) {
                 $USER->fileop     = $action;
                 $USER->filesource = $wdir;
                 echo "<p align=\"center\">";
@@ -197,7 +197,7 @@
 
         case "paste":
             html_header($course, $wdir);
-            if (isset($USER->fileop) and $USER->fileop == "move") {
+            if (isset($USER->fileop) and ($USER->fileop == "move") and confirm_sesskey()) {
                 foreach ($USER->filelist as $file) {
                     $shortfile = basename($file);
                     $oldfile = $basedir.$file;
@@ -291,7 +291,7 @@
 
         case "edit":
             html_header($course, $wdir);
-            if (isset($text)) {
+            if (isset($text) and confirm_sesskey()) {
                 $fileptr = fopen($basedir.$file,"w");
                 fputs($fileptr, stripslashes($text));
                 fclose($fileptr);
@@ -318,6 +318,7 @@
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
                 echo " <input type=\"hidden\" name=\"file\" value=\"$file\" />";
                 echo " <input type=\"hidden\" name=\"action\" value=\"edit\" />";
+                echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
                 print_textarea($usehtmleditor, 25, 80, 680, 400, "text", $contents);
                 echo "</td></tr><tr><td>";
                 echo " <input type=\"submit\" value=\"".get_string("savechanges")."\" />";
@@ -540,8 +541,9 @@ function setfilelist($VARS) {
     foreach ($VARS as $key => $val) {
         if (substr($key,0,4) == "file") {
             $count++;
+            $val = rawurldecode($val);
             if (!detect_munged_arguments($val, 0)) {
-                $USER->filelist[] = rawurldecode($val);
+                $USER->filelist[] = $val;
             }
         }
     }
@@ -731,6 +733,7 @@ function displaydir ($wdir) {
     echo "<tr><td>";
     echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />";
     echo "<input type=\"hidden\" name=\"wdir\" value=\"$wdir\" /> ";
+    echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
     $options = array (
                    "move" => "$strmovetoanotherfolder",
                    "delete" => "$strdeletecompletely",
@@ -747,6 +750,7 @@ function displaydir ($wdir) {
         echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
         echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
         echo " <input type=\"hidden\" name=\"action\" value=\"paste\" />";
+        echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
         echo " <input type=\"submit\" value=\"$strmovefilestohere\" />";
         echo "</form>";
     }
