@@ -74,8 +74,8 @@ function print_footer ($course=NULL) {
         if ($course == "home") {   // special case for site home page - please do not remove
             $homelink  = "<P ALIGN=center><A TITLE=\"Moodle $CFG->release ($CFG->version)\" HREF=\"http://moodle.com/\">";
             $homelink .= "<BR><IMG WIDTH=130 HEIGHT=19 SRC=\"pix/madewithmoodle2.gif\" BORDER=0></A></P>";
-
             $course = get_site();
+            $homepage = true;
         } else {
             $homelink = "<A TARGET=_top HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A>";
         }
