@@ -2,6 +2,7 @@
       // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
+$string['adminprimarynoedit'] = 'El administrador primario no puede ser editado por otros';
 $string['confirmsesskeybad'] = 'Lo sentimos, pero su clave de sesión no ha podido ser confirmada para llevar a cabo esta acción. Esta característica de seguridad previene contra la ejecución en su nombre (accidental o maliciosa) de funciones importantes. Por favor, asegúrese de que realmente deseaba ejecutar esta función.';
 $string['coursegroupunknown'] = 'No se ha especificado el curso correspondiente al grupo $a';
 $string['erroronline'] = 'Error en la línea $a';
@@ -13,6 +14,7 @@ $string['invalidfieldname'] = '\"$a\" no es un nombre válido';
 $string['missingfield'] = 'Falta el campo \"$a\"';
 $string['modulerequirementsnotmet'] = 'El módulo \"$a->modulename\" ($a->moduleversion) no se puede instalar debido a que requiere una versión más nueva de Moodle (esta versión es la $a->currentmoodle, y el módulo requiere la $a->requiremoodle).';
 $string['notavailable'] = 'No disponible en este momento';
+$string['onlyeditown'] = 'Sólo puede editar su propia información';
 $string['parentlanguage'] = 'es';
 $string['processingstops'] = 'El procesamiento acaba aquí. Se ignoran los demás registros.';
 $string['restricteduser'] = 'Lo sentimos, su cuenta \"$a\" no puede hacer esto.';
