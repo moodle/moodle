@@ -1955,134 +1955,107 @@ function get_site () {
 }
 
 /**
- * Returns list of courses, for whole site, or category
- *
- * @uses $CFG
- * @uses $USER
- * @param int $categoryid ?
- * @param string $sort ?
- * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return array  An array of {@link $COURSE} records
- * @todo Finish documenting this function
- */
-function get_courses($categoryid='all', $sort='c.sortorder ASC', $fields='c.*') {
-/// This function deliberately uses PHP to do the checking at the end, 
-/// because MySQL has been known to really bog down when trying to do a JOIN
-/// on the 'course' and 'user_teachers' table at the same time.
+* Returns list of courses, for whole site, or category
+*
+* Returns list of courses, for whole site, or category
+*
+* @param    type description
+*
+* Important: Using c.* for fields is extremely expensive because 
+*            we are using distinct. You almost _NEVER_ need all the fields
+*            in such a large SELECT
+*/
+function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") {
 
     global $USER, $CFG;
-
-    $select = array();
-
-    if ($categoryid != 'all') {
-        $select[] = "c.category = '$categoryid'";
+    
+    $categoryselect = "";
+    if ($categoryid != "all" && is_numeric($categoryid)) {
+        $categoryselect = "c.category = '$categoryid'";
     }
 
-    /// Admins can always see invisible courses
-    /// Creators can always see invisible courses
-    /// Teachers can only see their own invisible courses  <- needs detailed checking
-    /// Students can't see invisible courses at all
-    /// Guests can't see invisible courses at all
-
-    $visiblecourses = '';
-    $showallinvisible = iscreator();     // includes admins
-    $hideallinvisible = empty($USER->id) || (!isteacher());
-
-    if ($hideallinvisible) {
-        $select[] = 'c.visible > 0';
+    $teachertable = "";
+    $visiblecourses = "";
+    $sqland = "";
+    if (!empty($categoryselect)) {
+        $sqland = "AND ";
     }
-
-    if ($select) {
-        $selectsql = $CFG->prefix .'course c WHERE '. implode(' AND ', $select);
-    } else {
-        $selectsql = $CFG->prefix .'course c ';
-    }
-
-    $courses = get_records_sql('SELECT '. $fields .' FROM '. $selectsql .' ORDER BY '. $sort);
-
-    if ($courses and (!$hideallinvisible) and (!$showallinvisible)) { // For ordinary users we need to check visibility
-        foreach ($courses as $key => $course) {
-            if ($course->visible == 0) {          // Invisible course, let's check if we are a teacher
-                if (!isteacher($course->id)) {    // We shouldn't see this
-                    unset($courses[$key]);
-                }
-            }
+    if (!empty($USER->id)) {  // May need to check they are a teacher
+        if (!iscreator()) {
+            $visiblecourses = "$sqland ((c.visible > 0) OR t.userid = '$USER->id')";
+            $teachertable = "LEFT JOIN {$CFG->prefix}user_teachers t ON t.course = c.id";
         }
+    } else {
+        $visiblecourses = "$sqland c.visible > 0";
     }
 
-    return $courses;
+    if ($categoryselect or $visiblecourses) {
+        $selectsql = "{$CFG->prefix}course c $teachertable WHERE $categoryselect $visiblecourses";
+    } else {
+        $selectsql = "{$CFG->prefix}course c $teachertable";
+    }
+
+
+    return get_records_sql("SELECT ".((!empty($teachertable)) ? " DISTINCT " : "")." $fields FROM $selectsql ".((!empty($sort)) ? "ORDER BY $sort" : ""));
 }
 
-/**
- * Returns list of courses, for whole site, or category
- *
- * Similar to get_courses, but allows paging
- *
- * @uses $CFG
- * @uses $USER
- * @param int $categoryid ?
- * @param string $sort ?
- * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @param int $totalcount Passed by reference. ?
- * @param int $limitfrom ?
- * @param int $limitnum ? 
- * @return array An array of {@link $COURSE} records
- * @todo Finish documenting this function
- */
-function get_courses_page($categoryid='all', $sort='c.sortorder ASC', $fields='c.*',
-                          &$totalcount, $limitfrom='', $limitnum='') {
 
-/// This function deliberately uses PHP to do the checking at the end, 
-/// because MySQL has been known to really bog down when trying to do a JOIN
-/// on the 'course' and 'user_teachers' table at the same time.
+/**
+* Returns list of courses, for whole site, or category
+*
+* Similar to get_courses, but allows paging
+*
+* @param    type description
+*
+* Important: Using c.* for fields is extremely expensive because 
+*            we are using distinct. You almost _NEVER_ need all the fields
+*            in such a large SELECT
+*/
+function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c.*",
+                          &$totalcount, $limitfrom="", $limitnum="") {
 
     global $USER, $CFG;
 
-    $select = array();
-
-    if ($categoryid != 'all') {
-        $select[] = 'c.category = \''. $categoryid .'\'';
+    $categoryselect = "";
+    if ($categoryid != "all") {
+        $categoryselect = "c.category = '$categoryid'";
     }
 
-    /// Admins can always see invisible courses
-    /// Creators can always see invisible courses
-    /// Teachers can only see their own invisible courses  <- needs detailed checking
-    /// Students can't see invisible courses at all
-    /// Guests can't see invisible courses at all
-
-    $visiblecourses = '';
-    $showallinvisible = iscreator();     // includes admins
-    $hideallinvisible = empty($USER->id) || (!isteacher());
-
-    if ($hideallinvisible) {
-        $select[] = 'c.visible > 0';
+    $teachertable = "";
+    $visiblecourses = "";
+    $sqland = "";
+    if (!empty($categoryselect)) {
+        $sqland = "AND ";
     }
-
-    if ($select) {
-        $selectsql = $CFG->prefix .'course c WHERE '.implode(' AND ', $select);
-    } else {
-        $selectsql = $CFG->prefix .'course c ';
-    }
-
-    $courses = get_records_sql('SELECT '. $fields .' FROM '. $selectsql .' ORDER BY '. $sort);
-
-    if ($courses and (!$hideallinvisible) and (!$showallinvisible)) { // For ordinary users we need to check visibility
-        foreach ($courses as $key => $course) {
-            if ($course->visible == 0) {          // Invisible course, let's check if we are a teacher
-                if (!isteacher($course->id)) {    // We shouldn't see this
-                    unset($courses[$key]);
-                }
-            }
+    if (!empty($USER)) {  // May need to check they are a teacher
+        if (!iscreator()) {
+            $visiblecourses = "$sqland ((c.visible > 0) OR t.userid = '$USER->id')";
+            $teachertable = "LEFT JOIN {$CFG->prefix}user_teachers t ON t.course=c.id";
         }
+    } else {
+        $visiblecourses = "$sqland c.visible > 0";
     }
 
-    $totalcount = count($courses);
-
-    if ($courses and ($limitfrom or $limitnum)) {
-        $courses = array_slice($courses, (int)$limitfrom, (int)$limitnum);
+    if ($limitfrom !== "") {
+        switch ($CFG->dbtype) {
+            case "mysql":
+                 $limit = "LIMIT $limitfrom,$limitnum";
+                 break;
+            case "postgres7":
+                 $limit = "LIMIT $limitnum OFFSET $limitfrom";
+                 break;
+            default:
+                 $limit = "LIMIT $limitnum,$limitfrom";
+        }
+    } else {
+        $limit = "";
     }
 
-    return $courses;
+    $selectsql = "{$CFG->prefix}course c $teachertable WHERE $categoryselect $visiblecourses";
+
+    $totalcount = count_records_sql("SELECT COUNT(DISTINCT c.id) FROM $selectsql");
+
+    return get_records_sql("SELECT DISTINCT $fields FROM $selectsql ".((!empty($sort)) ? "ORDER BY $sort" : "")." $limit");
 }
 
 
