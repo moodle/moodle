@@ -10,6 +10,8 @@
         error(get_string("noguestpost", "forum"), $_SERVER["HTTP_REFERER"]);
     }
 
+    require_login();   // Script is useless unless they're logged in
+
     if ($post = data_submitted()) {
 
         $post->subject = strip_tags($post->subject);  // Strip all tags
@@ -20,8 +22,6 @@
         if (!$post->subject and !$post->message) {
             error(get_string("emptymessage", "forum"));
         }
-
-        require_login();
 
         if ($post->edit) {           // Updating a post
             $post->id = $post->edit;

@@ -1066,8 +1066,13 @@ function forum_set_return() {
     global $CFG, $SESSION;
 
     if (! isset($SESSION->fromdiscussion)) {
+        if (!empty($_SERVER['HTTP_REFERER'])) {
+            $referer = $_SERVER['HTTP_REFERER'];
+        } else {
+            $referer = "";
+        }
         // If the referer is NOT a login screen then save it.
-        if (! strncasecmp("$CFG->wwwroot/login", $_SERVER["HTTP_REFERER"], 300)) {
+        if (! strncasecmp("$CFG->wwwroot/login", $referer, 300)) {
             $SESSION->fromdiscussion = $_SERVER["HTTP_REFERER"];
             save_session("SESSION");
         }
