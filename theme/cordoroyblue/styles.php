@@ -741,7 +741,6 @@ TABLE.formtable TD {
 }
 
 #block_course_summary, #block_course_summary .sideblockmain {
-    -moz-border-radius: 20px;
 }
  
 #block_course_summary .sideblockmain {
