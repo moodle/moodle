@@ -1246,13 +1246,19 @@ function get_users($get=true, $search="", $confirmed=false, $exceptions="", $sor
     switch ($CFG->dbtype) {
         case "mysql":
              $fullname = " CONCAT(firstname,\" \",lastname) ";
+             $LIKE = "LIKE";
+             break;
+        case "postgres7":
+             $fullname = " firstname||\" \"||lastname ";
+             $LIKE = "ILIKE";
              break;
         default: 
              $fullname = " firstname||\" \"||lastname ";
+             $LIKE = "ILIKE";
     }
 
     if ($search) {
-        $search = " AND ($fullname LIKE '%$search%' OR email LIKE '%$search%') ";
+        $search = " AND ($fullname $LIKE '%$search%' OR email $LIKE '%$search%') ";
     }
 
     if ($confirmed) {
@@ -1291,18 +1297,21 @@ function get_users_listing($sort, $dir="ASC", $page=1, $recordsperpage=20, $sear
         case "mysql":
              $limit = "LIMIT $page,$recordsperpage";
              $fullname = " CONCAT(firstname,\" \",lastname) ";
+             $LIKE = "LIKE";
              break;
         case "postgres7":
              $limit = "LIMIT $recordsperpage OFFSET ".($page);
              $fullname = " firstname||\" \"||lastname ";
+             $LIKE = "ILIKE";
              break;
         default: 
              $limit = "LIMIT $recordsperpage,$page";
              $fullname = " firstname||\" \"||lastname ";
+             $LIKE = "LIKE";
     }
 
     if ($search) {
-        $search = " AND ($fullname LIKE '%$search%' OR email LIKE '%$search%') ";
+        $search = " AND ($fullname $LIKE '%$search%' OR email $LIKE '%$search%') ";
     }
 
     return get_records_sql("SELECT id, username, email, firstname, lastname, city, country, lastaccess  
