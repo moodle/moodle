@@ -479,7 +479,7 @@ function ewiki_page($id=false) {
 
    #-- selected page
    if (!isset($_REQUEST)) {
-      $_REQUEST = @array_merge($HTTP_GET_VARS, $HTTP_POST_VARS);
+      $_REQUEST = @array_merge($_GET, $_POST);
    }
    if (!strlen($id)) {
       $id = ewiki_id();

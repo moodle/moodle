@@ -587,7 +587,7 @@
             error("Only teachers can look at this page");
         }
 
-        $form = (object)$HTTP_POST_VARS;
+        $form = data_submitted();
         
         // let's not fool around here, dump the junk!
         delete_records("workshop_elements", "workshopid", $workshop->id);
@@ -751,8 +751,8 @@
         $timenow = time();
         // don't fiddle about, delete all the old and add the new!
         delete_records("workshop_grades", "assessmentid",  $assessment->id);
-        
-        $form = (object)$HTTP_POST_VARS;
+
+        $form = data_submitted();
         
         //determine what kind of grading we have
         switch ($workshop->gradingstrategy) {
