@@ -264,23 +264,29 @@
         echo '<table border="0" width="100%">';
         echo '<tr>';
         
+        echo '<td>';
+        helpbutton('howtowiki', get_string('howtowiki', 'wiki'), 'wiki');
         if ($canedit) {
           $iconstr="";
           $editicon= '<img hspace=1 alt="'.get_string("editthispage","wiki").'" height=16 width=16 border=0 src="'.$CFG->pixpath.'/t/edit.gif">';
           $infoicon= '<img hspace=1 alt="'.get_string("pageinfo","wiki").'" height=16 width=16 border=0 src="'.$CFG->pixpath.'/i/info.gif">';
+
           if($ewiki_action!="edit" && !in_array($wikipage, $specialpages)) {          
-            $iconstr='<a title="'.get_string("editthispage","wiki").'" href="'.EWIKI_SCRIPT.'&wikipage=edit/'.$ewiki_id.'">'.$editicon."</a>";
-          } else {
-            $iconstr=$editicon;
+            $iconstr.='<a title="'.get_string("editthispage","wiki").'" href="'.EWIKI_SCRIPT.'&wikipage=edit/'.$ewiki_id.'">'.$editicon."</a>";
           }
+          else {
+            $iconstr.=$editicon;
+          }
+
           if($ewiki_action!="info" && !in_array($wikipage, $specialpages)) {                      
             $iconstr.='<a title="'.get_string("pageinfo","wiki").'" href="'.EWIKI_SCRIPT.'&wikipage=info/'.$ewiki_id.'">'.$infoicon."</a>";
-          } else {
+          }
+          else {
             $iconstr.=$infoicon;
           }
-          echo "<td>$iconstr</td>";
+          echo $iconstr;
         }
-
+        echo '</td>';
         echo '<td>';
         wiki_print_page_actions($cm->id, $specialpages, $ewiki_id, $ewiki_action, $wiki->ewikiacceptbinary, $canedit);
         echo '</td>';    
