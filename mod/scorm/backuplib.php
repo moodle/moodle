@@ -49,6 +49,7 @@
                 fwrite ($bf,full_tag("AUTO",4,false,$scorm->auto));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$scorm->timemodified));
                 $status = backup_scorm_scoes($bf,$preferences,$scorm->id);
+ 
                 //if we've selected to backup users info, then execute backup_scorm_sco_users
                 if ($status) {
                     if ($preferences->mods["scorm"]->userinfo) {
@@ -62,6 +63,7 @@
             if ($status) {
                 $status = backup_scorm_files($bf,$preferences);    
             }
+            
         }
         return $status;
     }

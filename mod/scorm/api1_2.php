@@ -23,7 +23,7 @@
 	cmi.core.lesson_mode = "<?php echo $mode; ?>";
 	
 	cmi.core.score = new Object();
-	cmi.core.score._children = "raw";
+	cmi.core.score._children = "raw,min,max";
 	cmi.core.score.raw = "<?php echo $sco_user->cmi_core_score_raw; ?>";
 	cmi.suspend_data = "<?php echo $sco_user->cmi_suspend_data; ?>";
 	cmi.launch_data = "<?php echo $sco_user->cmi_launch_data; ?>";
@@ -98,6 +98,7 @@ function SCORMapi() {
     function LMSSetValue (param,value) {
 	if (Initialized) {
 	    //top.status="SET "+param+" = "+value;
+	    //top.alert("SET "+param+" = "+value);
 	    switch (param) {
 		case "cmi.core.session_time":
 		    cmi.core.total_time = AddTime(cmi.core.total_time, value);
@@ -116,6 +117,9 @@ function SCORMapi() {
 		    return "true";
 		break;
 		case "cmi.core.score.raw":
+		case "cmi.core.score.min":
+		case "cmi.core.score.max":
+		    //top.alert("SET "+param+" = "+value);
 		    if ((parseFloat(value,10)).toString() != value) {
 			errorCode = 405;
 			return "false";
