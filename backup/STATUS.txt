@@ -172,10 +172,10 @@ Restore Details:
                  + course data..................................DONE
                  + user data....................................DONE
                  + files.(NOT EXISTS)...........................DONE
-              x quizzes.(STEP 2)................................NO EXISTS
-                 + course data..................................NO EXISTS
-                 + user data....................................NO EXISTS
-                 + files.(ARE COURSE FILES !!!).................NO EXISTS
+              x quizzes.(STEP 2)................................IN PROGRESS
+                 + course data..................................IN PROGRESS
+                 + user data....................................IN PROGRESS
+                 + files.(ARE COURSE FILES !!!).................IN PROGRESS
               x resources.......................................DONE
                  + course data..................................DONE
                  + user data....................................DONE
