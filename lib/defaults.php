@@ -7,6 +7,7 @@
        "theme"          => "standard",
        "lang"           => "en",
        "locale"         => "en",
+       "auth"           => "email",
        "smtphosts"      => "",
        "gdversion"      =>  1,
        "longtimenosee"  =>  100,

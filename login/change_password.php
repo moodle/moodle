@@ -76,7 +76,7 @@ function validate_form($frm, &$err) {
     else if (empty($frm->password))
         $err->password = get_string("missingpassword");
 
-    else if (!verify_login($frm->username, $frm->password))
+    else if (!authenticate_user_login($frm->username, $frm->password))
 		$err->password = get_string("wrongpassword");
 
     if (empty($frm->newpassword1))

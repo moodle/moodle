@@ -968,8 +968,7 @@ function update_user_in_db() {
        return false;
 
    $timenow = time();
-   if ($db->Execute("UPDATE LOW_PRIORITY user SET lastIP='$REMOTE_ADDR', lastaccess='$timenow' 
-                                               WHERE id = '$USER->id' ")) {
+   if ($db->Execute("UPDATE user SET lastIP='$REMOTE_ADDR', lastaccess='$timenow' WHERE id = '$USER->id' ")) {
        return true;
    } else {
        return false;
@@ -1007,8 +1006,6 @@ function require_login($courseid=0) {
             }
             if (!$USER->email) {            // User logged in, but has not set up profile!
                                             // This can occur with external authentication
-                $USER->email = "spam";      // To prevent auth loops
-                save_session("USER");
                 redirect("$CFG->wwwroot/user/edit.php?id=$USER->id&course=$courseid");
                 die;
             }
@@ -1204,18 +1201,53 @@ function save_session($VAR) {
 }
 
 
-function verify_login($username, $password) {
+function create_user_record($username, $password) {
+// Creates a bare-bones user record 
+    global $REMOTE_ADDR;
 
-    $user = get_user_info_from_db("username", $username);
+    $newuser->username = $username;
+    $newuser->password = md5($password);
+    $newuser->confirmed = 1;
+    $newuser->lastIP = $REMOTE_ADDR;
+    $newuser->timemodified = time();
 
-    if (! $user) {
-        return false;
-    } else if ( $user->password == md5($password) and ! $user->deleted ) {
-        return $user;
-    } else {
-        return false;
+    if (insert_record("user", $newuser)) {
+        return get_user_info_from_db("username", $username);
     }
+    return false;
 }
+
+function authenticate_user_login($username, $password) {
+// Given a username and password, this function looks them 
+// up using the currently selected authentication mechanism,
+// and if the authentication is successful, it returns a 
+// valid $user object from the 'user' table.
+//
+// Uses auth_ functions from the currently active auth module
+
+    global $CFG;
+
+    if (!isset($CFG->auth)) {
+        $CFG->auth = "email";    // Default authentication module
+    }
+
+    require("$CFG->dirroot/auth/$CFG->auth/lib.php");
+
+    if (auth_user_login($username, $password)) {  // Successful authentication
+
+        if ($user = get_user_info_from_db("username", $username)) {
+            if (md5($password) <> $user->password) {
+                set_field("user", "password", md5($password), "username", $username);
+            }
+            return $user;
+
+        } else {
+            return create_user_record($username, $password);
+        }
+    }
+    return false;
+}
+
 
 function get_site () {
 // Returns $course object of the top-level site.

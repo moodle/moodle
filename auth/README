@@ -1,0 +1,35 @@
+This directory contains authentication modules.
+
+Each of these modules describes a different way to 
+check that a user has provided a correct 
+
+   - username, and 
+   - password.
+
+Even when external forms of authentication are being
+used, Moodle still maintains the internal "user" table 
+with all the associated information about that user such
+as name, email address and so on.
+
+The active method is set by the admin on the Configuration page.
+
+
+email - authentication by email  (DEFAULT METHOD)
+
+    - user fills out form with email address
+    - email sent to user with link 
+    - user clicks on link in email to confirm
+    - user account is created
+    - user can log in
+
+
+none  - no authentication at all .. very insecure!!
+    
+    - user logs in using ANY username and password
+    - if the username doesn't already exist then
+      a new account is created
+    - when user tries to access a course they 
+      are forced to set up their account details
+
+
+ldap  - Uses an external LDAP server

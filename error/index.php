@@ -17,7 +17,7 @@
     
     print_header("$site->fullname:Error", "$site->fullname: Error 404", "", "form.text");
 
-    print_simple_box("An unusual error occurred (tried to reach a page that doesn't exist).<P align=center>$REQUEST_URI", "center", "", "$THEME->cellheading");
+    print_simple_box("An unusual error occurred (tried to reach a page that doesn't exist).<P align=center>$REDIRECT_URL", "center", "", "$THEME->cellheading");
   
 ?>
   

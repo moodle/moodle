@@ -15,7 +15,17 @@
         error("Course ID was incorrect");
     }
 
-	require_login($course->id);
+    if ($user->confirmed and !$user->email) {
+        // Special case which can only occur when a new account 
+        // has just been created by EXTERNAL authentication
+        // This is the only page in Moodle that has the exception
+        // so that users can set up their accounts
+        $newaccount  = true;
+
+    } else {
+        $newaccount  = false;
+	    require_login($course->id);
+    }
 
     if ($USER->id <> $user->id and !isadmin()) {
         error("You can only edit your own information");
@@ -148,28 +158,33 @@
     
 /// Otherwise fill and print the form.
 
-    $editmyprofile = get_string("editmyprofile");
-    $participants = get_string("participants");
+    $streditmyprofile = get_string("editmyprofile");
+    $strparticipants = get_string("participants");
+    $strnewuser = get_string("newuser");
 
-    if ($user->firstname and $user->lastname) {
-        $userfullname = "$user->firstname $user->lastname";
-        if ($course->category) {
-	        print_header("$course->fullname: $editmyprofile", "$course->fullname: $editmyprofile",
-                        "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
-                        -> <A HREF=\"index.php?id=$course->id\">$participants</A>
-                        -> <A HREF=\"view.php?id=$user->id&course=$course->id\">$userfullname</A> 
-                        -> $editmyprofile", "");
+    if (($user->firstname and $user->lastname) or $newaccount) {
+        if ($newaccount) {
+            $userfullname = $strnewuser;
         } else {
-	        print_header("$course->fullname: $editmyprofile", "$course->fullname",
+            $userfullname = "$user->firstname $user->lastname";
+        }
+        if ($course->category) {
+	        print_header("$course->fullname: $streditmyprofile", "$course->fullname: $streditmyprofile",
+                        "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> 
+                        -> <A HREF=\"index.php?id=$course->id\">$strparticipants</A>
+                        -> <A HREF=\"view.php?id=$user->id&course=$course->id\">$userfullname</A> 
+                        -> $streditmyprofile", "");
+        } else {
+	        print_header("$course->fullname: $streditmyprofile", "$course->fullname",
                          "<A HREF=\"view.php?id=$user->id&course=$course->id\">$userfullname</A> 
-                          -> $editmyprofile", "");
+                          -> $streditmyprofile", "");
         }
     } else {
-        $userfullname = get_string("newuser");
+        $userfullname = $strnewuser;
         $straddnewuser = get_string("addnewuser");
 
         $stradministration = get_string("administration");
-	    print_header("$course->fullname: $editmyprofile", "$course->fullname",
+	    print_header("$course->fullname: $streditmyprofile", "$course->fullname",
                      "<A HREF=\"$CFG->wwwroot/admin\">$stradministration</A> ->
                       $straddnewuser", "");
     }

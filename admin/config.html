@@ -2,6 +2,22 @@
 
 <TABLE cellpadding=9 cellspacing=0 >
 <TR VALIGN=TOP>
+	<TD ALIGN=RIGHT><P>auth:</TD>
+	<TD>
+    <? $modules = get_list_of_plugins("auth");
+       foreach ($modules as $module) {
+           $options[$module] = $module;
+       }
+       choose_from_menu ($options, "auth", $config->auth, "", "", "");
+       formerr($err["auth"]);
+       unset($options);
+    ?>
+    </TD>
+    <TD>
+    <? print_string("configauth") ?>
+    </TD>
+</TR>
+<TR VALIGN=TOP>
 	<TD ALIGN=RIGHT><P>lang:</TD>
 	<TD>
     <? choose_from_menu (get_list_of_languages(), "lang", $config->lang, "", "", "");

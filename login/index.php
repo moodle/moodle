@@ -22,7 +22,7 @@
     if (match_referer() && isset($HTTP_POST_VARS)) {    // form submitted
 
         $frm = (object)$HTTP_POST_VARS;
-        $user = verify_login($frm->username, $frm->password);
+        $user = authenticate_user_login($frm->username, $frm->password);
 
 	    update_login_count();
 
