@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.2 Beta + (2004030702)
+      // moodle.php - created with Moodle 1.2 Beta ++ (2004031100)
 
 
 $string['action'] = 'Actie';
@@ -407,6 +407,7 @@ $string['groupmode'] = 'Groepsmodus';
 $string['groupmodeforce'] = 'Verplicht groepsmodus';
 $string['groupmy'] = 'Mijn groep';
 $string['groupnonmembers'] = 'Personen niet in een groep';
+$string['groupnotamember'] = 'Je behoort niet tot die groep';
 $string['grouprandomassign'] = 'Wijs willekeurig aan een groep toe';
 $string['groupremove'] = 'Verwijder geselecteerde groep';
 $string['groupremovemembers'] = 'Verwijder geselecteerde leden';
