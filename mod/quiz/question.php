@@ -261,7 +261,7 @@
             if (!empty($question->id)) {
                 $options = get_record("quiz_multichoice", "question", $question->id);
             } else {
-                $options->single = "";
+                $options->single = 1;
             }
             if (!empty($options->answers)) {
                 $answersraw = get_records_list("quiz_answers", "id", $options->answers);
