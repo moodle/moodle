@@ -105,16 +105,6 @@
     </td>
 </tr>
 <tr valign=top>
-    <td align="right"><P><?php  print_string("hiddensections") ?>:</td>
-    <td><?php
-    unset($choices);
-    $choices["0"] = get_string("hiddensectionscollapsed");
-    $choices["1"] = get_string("hiddensectionsinvisible");
-    choose_from_menu ($choices, "hiddensections", $form->hiddensections, "");
-    helpbutton("coursehiddensections", get_string("hiddensections")); ?>
-    </td>
-</tr>
-<tr valign=top>
     <td align="right"><P><?php  print_string("enrolmentkey") ?>:</td>
     <td><input type="text" name="password" size=25 value="<?php  p($form->password) ?>">
     <?php  helpbutton("enrolmentkey", get_string("enrolmentkey")) ?>
@@ -130,6 +120,16 @@
     $choices["2"] = get_string("guestskey");
     choose_from_menu ($choices, "guest", $form->guest, "");
     helpbutton("guestaccess", get_string("opentoguests")); ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align="right"><P><?php  print_string("hiddensections") ?>:</td>
+    <td><?php
+    unset($choices);
+    $choices["0"] = get_string("hiddensectionscollapsed");
+    $choices["1"] = get_string("hiddensectionsinvisible");
+    choose_from_menu ($choices, "hiddensections", $form->hiddensections, "");
+    helpbutton("coursehiddensections", get_string("hiddensections")); ?>
     </td>
 </tr>
 <tr valign=top>
