@@ -66,7 +66,7 @@
        $graph->y_data['answers1']   = $buckets1;
        $graph->y_format['answers1'] = array('colour' => 'ltblue','bar' => 'fill','legend' =>'actual','bar_size' => 0.4);
        $graph->y_data['answers2']   = $buckets2;
-       $graph->y_format['answers2'] = array('colour' =>'ltgreen','bar' => 'fill','legend' =>'preferred','bar_size' => 0.2);
+       $graph->y_format['answers2'] = array('colour' =>'ltorange','bar' => 'fill','legend' =>'preferred','bar_size' => 0.2);
 
        $graph->parameter['legend']        = 'outside-top';
        $graph->parameter['legend_border'] = 'black';
@@ -170,13 +170,13 @@
        $graph->y_format['answers1'] = array('colour' => 'ltblue', 'line' => 'line',  'point' => 'square', 
                                             'shadow_offset' => 4, 'legend' => 'actual');
        $graph->y_data['answers2']   = $buckets2;
-       $graph->y_format['answers2'] = array('colour' => 'ltgreen', 'line' => 'line', 'point' => 'square', 
+       $graph->y_format['answers2'] = array('colour' => 'ltorange', 'line' => 'line', 'point' => 'square', 
                                                 'shadow_offset' => 4, 'legend' => 'preferred');
        $graph->y_data['stdev1']   = $stdev1;
        $graph->y_format['stdev1'] = array('colour' => 'ltltblue', 'bar' => 'fill', 
                                             'shadow_offset' => '4', 'legend' => 'none', 'bar_size' => 0.3);
        $graph->y_data['stdev2']   = $stdev2;
-       $graph->y_format['stdev2'] = array('colour' => 'ltltgreen', 'bar' => 'fill', 
+       $graph->y_format['stdev2'] = array('colour' => 'ltltorange', 'bar' => 'fill', 
                                             'shadow_offset' => '4', 'legend' => 'none', 'bar_size' => 0.2);
        $graph->offset_relation['stdev1'] = 'answers1';
        $graph->offset_relation['stdev2'] = 'answers2';
@@ -296,14 +296,14 @@
        $graph->y_format['answers1'] = array('colour' => 'ltblue', 'line' => 'line',  'point' => 'square', 
                                             'shadow_offset' => 4, 'legend' => 'actual');
        $graph->y_data['answers2']   = $buckets2;
-       $graph->y_format['answers2'] = array('colour' => 'ltgreen', 'line' => 'line', 'point' => 'square', 
+       $graph->y_format['answers2'] = array('colour' => 'ltorange', 'line' => 'line', 'point' => 'square', 
                                                 'shadow_offset' => 4, 'legend' => 'preferred');
 
        $graph->y_data['stdev1']   = $stdev1;
        $graph->y_format['stdev1'] = array('colour' => 'ltltblue', 'bar' => 'fill', 
                                             'shadow_offset' => '4', 'legend' => 'none', 'bar_size' => 0.3);
        $graph->y_data['stdev2']   = $stdev2;
-       $graph->y_format['stdev2'] = array('colour' => 'ltltgreen', 'bar' => 'fill', 
+       $graph->y_format['stdev2'] = array('colour' => 'ltltorange', 'bar' => 'fill', 
                                             'shadow_offset' => '4', 'legend' => 'none', 'bar_size' => 0.2);
        $graph->offset_relation['stdev1'] = 'answers1';
        $graph->offset_relation['stdev2'] = 'answers2';
@@ -441,19 +441,19 @@
        $graph->y_format['answers1'] = array('colour' => 'ltblue', 'line' => 'line',  'point' => 'square', 
                                             'shadow_offset' => 0.1, 'legend' => 'class actual');
        $graph->y_data['answers2']   = $buckets2;
-       $graph->y_format['answers2'] = array('colour' => 'ltgreen', 'line' => 'line', 'point' => 'square', 
+       $graph->y_format['answers2'] = array('colour' => 'ltorange', 'line' => 'line', 'point' => 'square', 
                                                 'shadow_offset' => 0.1, 'legend' => 'class preferred');
        $graph->y_data['studanswers1']   = $studbuckets1;
        $graph->y_format['studanswers1'] = array('colour' => 'blue', 'line' => 'line',  'point' => 'square', 
                                             'shadow_offset' => 4, 'legend' => 'student actual');
        $graph->y_data['studanswers2']   = $studbuckets2;
-       $graph->y_format['studanswers2'] = array('colour' => 'green', 'line' => 'line', 'point' => 'square', 
+       $graph->y_format['studanswers2'] = array('colour' => 'orange', 'line' => 'line', 'point' => 'square', 
                                                 'shadow_offset' => 4, 'legend' => 'student preferred');
        $graph->y_data['stdev1']   = $stdev1;
        $graph->y_format['stdev1'] = array('colour' => 'ltltblue', 'bar' => 'fill', 
                                             'shadow_offset' => 0.1, 'legend' => 'none', 'bar_size' => 0.3);
        $graph->y_data['stdev2']   = $stdev2;
-       $graph->y_format['stdev2'] = array('colour' => 'ltltgreen', 'bar' => 'fill', 
+       $graph->y_format['stdev2'] = array('colour' => 'ltltorange', 'bar' => 'fill', 
                                             'shadow_offset' => 0.1, 'legend' => 'none', 'bar_size' => 0.2);
        $graph->offset_relation['stdev1'] = 'answers1';
        $graph->offset_relation['stdev2'] = 'answers2';
@@ -585,19 +585,19 @@
        $graph->y_format['answers1'] = array('colour' => 'ltblue', 'line' => 'line',  'point' => 'square', 
                                             'shadow_offset' => 0.1, 'legend' => 'class actual');
        $graph->y_data['answers2']   = $buckets2;
-       $graph->y_format['answers2'] = array('colour' => 'ltgreen', 'line' => 'line', 'point' => 'square', 
+       $graph->y_format['answers2'] = array('colour' => 'ltorange', 'line' => 'line', 'point' => 'square', 
                                                 'shadow_offset' => 0.1, 'legend' => 'class preferred');
        $graph->y_data['studanswers1']   = $studbuckets1;
        $graph->y_format['studanswers1'] = array('colour' => 'blue', 'line' => 'line',  'point' => 'square', 
                                             'shadow_offset' => 4, 'legend' => 'student actual');
        $graph->y_data['studanswers2']   = $studbuckets2;
-       $graph->y_format['studanswers2'] = array('colour' => 'green', 'line' => 'line', 'point' => 'square', 
+       $graph->y_format['studanswers2'] = array('colour' => 'orange', 'line' => 'line', 'point' => 'square', 
                                                 'shadow_offset' => 4, 'legend' => 'student preferred');
        $graph->y_data['stdev1']   = $stdev1;
        $graph->y_format['stdev1'] = array('colour' => 'ltltblue', 'bar' => 'fill', 
                                             'shadow_offset' => 0.1, 'legend' => 'none', 'bar_size' => 0.3);
        $graph->y_data['stdev2']   = $stdev2;
-       $graph->y_format['stdev2'] = array('colour' => 'ltltgreen', 'bar' => 'fill', 
+       $graph->y_format['stdev2'] = array('colour' => 'ltltorange', 'bar' => 'fill', 
                                             'shadow_offset' => 0.1, 'legend' => 'none', 'bar_size' => 0.2);
        $graph->offset_relation['stdev1'] = 'answers1';
        $graph->offset_relation['stdev2'] = 'answers2';
