@@ -202,7 +202,12 @@ function assignment_get_submission($assignment, $user) {
 }
 
 function assignment_get_all_submissions($assignment) {
-    return get_records("assignment_submissions", "assignment", $assignment->id, "timemodified DESC");
+// Return all assignment submissions by ENROLLED students
+    return get_records_sql("SELECT a.* FROM assignment_submissions a, user_students s
+                            WHERE a.user = s.user
+                              AND s.course = '$assignment->course'
+                              AND a.assignment = '$assignment->id' 
+                              ORDER BY a.timemodified DESC");
 }
 
 function assignment_get_users_done($assignment) {
