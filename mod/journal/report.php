@@ -60,20 +60,20 @@
             $entry = $entrybyentry[$num];
             // Only update entries where feedback has actually changed.
             if (($vals[r] <> $entry->rating) || ($vals[c] <> addslashes($entry->comment))) {
-                $newentry->rating = $vals[r];
-                $newentry->comment = $vals[c];
-                $newentry->teacher = $USER->id;
+                $newentry->rating     = $vals[r];
+                $newentry->comment    = $vals[c];
+                $newentry->teacher    = $USER->id;
                 $newentry->timemarked = $timenow;
-                $newentry->id = $num;
+                $newentry->mailed     = 0;           // Make sure mail goes out (again, even)
+                $newentry->id         = $num;
                 if (! update_record("journal_entries", $newentry)) {
                     notify("Failed to update the journal feedback for user $entry->user");
-                    print_object($newentry);
                 } else {
                     $count++;
                 }
-                $entrybyuser[$entry->user]->rating = $vals[r];
-                $entrybyuser[$entry->user]->comment = $vals[c];
-                $entrybyuser[$entry->user]->teacher = $USER->id;
+                $entrybyuser[$entry->user]->rating     = $vals[r];
+                $entrybyuser[$entry->user]->comment    = $vals[c];
+                $entrybyuser[$entry->user]->teacher    = $USER->id;
                 $entrybyuser[$entry->user]->timemarked = $timenow;
             }
         }
