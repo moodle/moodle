@@ -331,7 +331,7 @@ function link_to_popup_window ($url, $name="popup", $linkname="click here",
     $fullscreen = 0;
 
     $link = "<a target=\"$name\" title=\"$title\" href=\"$CFG->wwwroot$url\" ".
-           "onClick=\"return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>\n";
+           "onclick=\"return openpopup('$url', '$name', '$options', $fullscreen);\">$linkname</a>\n";
     if ($return) {
         return $link;
     } else {
@@ -469,7 +469,7 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
         $nothing = get_string("choose")."...";
     }
 
-    $startoutput = "<form method=\"get\" target=\"{$CFG->framename}\" name=\"$formname\">";
+    $startoutput = '<form action="" method="get" target="'.$CFG->framename.'" name="'.$formname.'">';
     $output = "<select name=\"popup\" onchange=\"$targetwindow.location=document.$formname.popup.options[document.$formname.popup.selectedIndex].value\">\n";
 
     if ($nothing != "") {
@@ -483,7 +483,7 @@ function popup_form ($common, $options, $formname, $selected="", $nothing="choos
         } else {
             $output .= "   <option value=\"$common$value\"";
             if ($value == $selected) {
-                $output .= " selected=\"true\"";
+                $output .= ' selected="selected"';
             }
         }
         if ($label) {
