@@ -176,7 +176,7 @@ function print_forum_latest_topics($forum_id=0, $forum_numtopics=5, $forum_style
             $topiccount++;
 
             if ($forum_numtopics && ($topiccount > $forum_numtopics)) {
-                echo "<P ALIGN=right><A HREF=\"$CFG->wwwroot/mod/discuss/index.php?forum=$forum->id\">Older topics</A> ...</P>";
+                echo "<P ALIGN=right><A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">Older topics</A> ...</P>";
                 break;
             }
             if ($replies[$topic->discuss]) {
