@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.4 beta (2004082300)
+      // chat.php - created with Moodle 1.4 development (2004080300)
 
 
 $string['beep'] = 'campanella';
@@ -22,10 +22,6 @@ $string['deletesessionsure'] = 'Sei sicuro di voler cancellare questa sessione?'
 $string['donotusechattime'] = 'Non pubblicare le ore di discussione';
 $string['enterchat'] = 'Clicca qui per entrare ora';
 $string['errornousers'] = 'Non riesco a trovare utenti!';
-$string['explaingeneralconfig'] = 'Queste impostazioni hanno <strong>sempre</strong> effetto';
-$string['explainmethoddaemon'] = 'Queste impostazioni importano soltanto se avete selezionato \"Server chat\" per chat_method';
-$string['explainmethodnormal'] = 'Queste impostazioni importano soltanto se avete selezionato \"Metodo normale\" per chat_method';
-$string['generalconfig'] = 'Configurazione generale';
 $string['helpchatting'] = 'Aiuto per la chat';
 $string['idle'] = 'Inattivo';
 $string['messagebeepseveryone'] = '$a richiama tutti!';
@@ -39,7 +35,6 @@ $string['modulename'] = 'Chat';
 $string['modulenameplural'] = 'Chat';
 $string['neverdeletemessages'] = 'Non cancellare i messaggi';
 $string['nextsession'] = 'Prossima seesione programmata';
-$string['noguests'] = 'La chat non è disponibile agli ospiti';
 $string['nomessages'] = 'Nessun messaggio ancora';
 $string['repeatdaily'] = 'Alla stessa ora tutti i giorni';
 $string['repeatnone'] = 'Nessuna ripetizione - pubblica solo l\'orario specificato';

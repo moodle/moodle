@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 development (2004082600)
+      // moodle.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['action'] = '操作';
@@ -74,7 +74,7 @@ $string['allowguests'] = 'このコースはゲストユーザも利用出来ます。';
 $string['allowinternal'] = '内部登録も許可する';
 $string['allownot'] = '許可しない';
 $string['allparticipants'] = '全参加者';
-$string['alphabet'] = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z';
+$string['alphabet'] = 'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,あ,い,う,え,お,か,き,く,け,こ,さ,し,す,せ,そ,た,ち,つ,て,と,な,に,ぬ,ね,の,は,ひ,ふ,へ,ほ,ま,み,む,め,も,や,ゆ,よ,わ,を';
 $string['alphanumerical'] = '半角英数字のみ入力';
 $string['alreadyconfirmed'] = '登録作業は既に完了しています。';
 $string['always'] = '常に';
@@ -148,6 +148,7 @@ $string['closewindow'] = 'ウィンドウを閉じる';
 $string['comparelanguage'] = '言語の比較・編集';
 $string['complete'] = '詳細';
 $string['configallowunenroll'] = '\'Yes\'に設定した場合、学生はいつでも好きな時にコースの参加を取り消すことが出来ます。\'No\'に設定した場合、学生は参加取消しを行うことは出来ず、参加に関する全てを教師及び管理者がコントロールします。';
+$string['configallusersaresitestudents'] = 'サイトの表紙にある活動では、全てのユーザを学生と考えても宜しいですか? 答えが「Yes」の場合、承認されたユーザは学生として、これらの活動に参加することが出来ます。答えが「No」の場合、少なくとも一つのコースに登録済みのユーザのみが表紙の活動に参加することが出来ます。';
 $string['configautologinguests'] = 'コースにゲストでアクセスした時に、ビジターを自動的にゲストとしてログインさせますか?';
 $string['configcachetext'] = '大きなサイトまたはテキストフィルターを使用しているサイトでは、この設定を行うことで処理速度を上げることが出来ます。テキストのコピーは、処理に適した形で一定時間保持されます。この数値を小さくし過ぎると処理速度を若干落とすことになりますが、大きすぎるとリフレッシュするまでのテキストの保持が長くなりすぎます(例 新しいリンク)。';
 $string['configcountry'] = 'ここで国を設定した場合、新規アカウントのユーザに初期値として表示されます。ユーザに国を選ばせる場合は何も選択しないでください。';

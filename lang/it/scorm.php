@@ -1,8 +1,7 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4 ready tomorrow (2004083000)
+      // scorm.php - created with Moodle 1.4 development (2004080300)
 
 
-$string['asset'] = 'Asset';
 $string['attr_error'] = 'Valore non valido per l\'attributo ($a->attr) del tag $a->tag.';
 $string['autocontinue'] = 'Continuazione automatica';
 $string['badmanifest'] = 'Trovati alcuni errori nel manifest: controlla l\'elenco';

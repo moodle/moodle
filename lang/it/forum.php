@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4 ready tomorrow (2004083000)
+      // forum.php - created with Moodle 1.4 development (2004062600)
 
 
 $string['addanewdiscussion'] = 'Aggiungi un nuovo argomento di discussione';
@@ -43,7 +43,6 @@ $string['editing'] = 'Modifica';
 $string['emptymessage'] = 'Qualche é andato storto con il tuo messaggio. Forse lo hai lasciato in bianco, oppure l\'allegato era troppo grande.I tuoi cambiamenti NON sono stati salvati.';
 $string['everyonecanchoose'] = 'Tutti possono scegliere l\'iscrizione';
 $string['everyoneissubscribed'] = 'Iscrizione obbligatoria a questo forum in quanto ciò è previsto dal docente';
-$string['existingsubscribers'] = 'Utenti iscritti';
 $string['forcesubscribe'] = 'Obbligare ognuno all\'iscrizione';
 $string['forcesubscribeq'] = 'Obbligare tutti all\'iscrizione?';
 $string['forum'] = 'Forum';
@@ -101,7 +100,6 @@ $string['postrating3'] = 'Le esposizioni in genere, sono CONNESSE ai saperi';
 $string['posts'] = 'Messaggi';
 $string['posttoforum'] = 'Invia al forum';
 $string['postupdated'] = 'Il tuo messaggio è stato aggiornato';
-$string['potentialsubscribers'] = 'Utenti non iscritti';
 $string['processingdigest'] = 'Elaborazione mail della raccolta per l\'utente $a';
 $string['processingpost'] = 'Elaborazione del messaggio $a';
 $string['prune'] = 'Interrotto';
@@ -149,8 +147,6 @@ $string['subscriptions'] = 'Iscrizioni';
 $string['unsubscribe'] = 'Cancella la tua iscrizione da questo forum';
 $string['unsubscribed'] = 'Iscrizione cancellata';
 $string['unsubscribeshort'] = 'Disiscrivi';
-$string['yesforever'] = 'Si, per sempre';
-$string['yesinitially'] = 'Si, inizialmente';
 $string['youratedthis'] = 'Hai già votato questo';
 $string['yournewtopic'] = 'Il tuo nuovo argomento di discussione';
 $string['yourreply'] = 'La tua replica';

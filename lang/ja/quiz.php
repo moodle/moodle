@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 development (2004082300)
+      // quiz.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -89,7 +89,7 @@ $string['false'] = '×';
 $string['feedback'] = 'フィードバック';
 $string['file'] = 'ファイル';
 $string['fileformat'] = 'ファイルフォーマット';
-$string['filloutoneanswer'] = '1つ以上の解答可能な質問を入力してください。空白は使用できません。';
+$string['filloutoneanswer'] = '1つ以上の解答可能な回答を入力してください。空白は使用できません。';
 $string['filloutthreequestions'] = '少なくとも3つの質問を入力してください。空白は使用できません。';
 $string['fillouttwochoices'] = '2つ以上の選択を入力してください。空白は使用できません。';
 $string['fractionsaddwrong'] = '評価の合計が100%%に達していません。

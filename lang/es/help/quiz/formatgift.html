@@ -53,7 +53,7 @@
 
      El Sol nace por el Este.{T}</pre>
 
-        <p><u>Juego de Coincidencias:</u><br />
+        <p><u>Emparejamiento:</u><br />
         Las parejas coincidentes comienzan con un signo igual(=) y se separan con 
 				este símbolo: ->. Debe haber al menos tres parejas coincidentes.</p>
 
@@ -128,16 +128,16 @@ La sección de respuestas para las preguntas numéricas debe comenzar con el signo
 <p><u> Respuesta automática al alumno:</u><br /> Estas respuestas pueden ser incluídas 
 para cada respuesta del alumno, continuando esta respuesta con un signo #, también 
 conocida como un "Hash mark"), y la respuesta deseada.</p>
-<pre>     Cuál es la respuesta a estas opciones múltiples?{
-     ~Respuesta equivocada#Respuesta-comentario sobre la mala respuesta
-     ~Otra respuesta equivocada#Respuesta-comentario acerca de la mala respuesta
-     =Respuesta correcta#Muy bien!}
-     
-     ¿Quién descubrió América?{
-     =Colón#excelente respuesta!
-     =Cristóbal Colón#¡Excelente respuesta!}
-     
-     Napoleón descubrió América.{FALSE#¡No, bestia!.}</pre>
+<pre>&nbsp;&nbsp;&nbsp;&nbsp; Cuál es la respuesta a estas opciones múltiples?{
+&nbsp;&nbsp;&nbsp;&nbsp; ~Respuesta equivocada#Respuesta-comentario sobre la mala respuesta
+&nbsp;&nbsp;&nbsp;&nbsp; ~Otra respuesta equivocada#Respuesta-comentario acerca de la mala respuesta
+&nbsp;&nbsp;&nbsp;&nbsp; =Respuesta correcta#Muy bien!}
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp; ¿Quién descubrió América?{
+&nbsp;&nbsp;&nbsp;&nbsp; =Colón#excelente respuesta!
+&nbsp;&nbsp;&nbsp;&nbsp; =Cristóbal Colón#¡Excelente respuesta!}
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp; Napoleón descubrió América.{FALSE#¡No, bestia!.}</pre>
 
 <p>En las preguntas de opciones múltiples, la respuesta automática que se muestra 
 es sólo la que corresponde a la opción que marcó el alumno. En las preguntas 
@@ -150,23 +150,23 @@ respuesta automática sólo si seleccionó Verdadero.</p>
 <p><u>Pesos Porcentuales de Respuesta:</u><br />
 Los Pesos porcentuales de respuesta están disponibles tanto para las opciones 
 múltiples como para las preguntas de respuesta corta. Estos pesos pueden ser 
-incluídos a continuación de la tilde(en el caso de Opción Múltiple) o del signo 
+incluidos a continuación de la tilde (en el caso de Opción Múltiple) o del signo 
 igual (para Respuesta Corta) con el porcentaje deseado de ponderación encerrado 
 entre signos de porcentaje (ej., %50%). Esta opción se puede combinar con 
 comentarios y respuestas automáticas.</p>
-<pre>     Pregunta Difícil.{~Respuesta equivocada ~%50%Respuesta 'a medias' =respuesta 
-correcta completa}
-          
-     ::El pueblo de Jesús::Jesús era del pueblo de{
-     ~Jerusalén#Esta era una ciudad importante, pero no es la respuesta correcta.
-     ~%25%Belén#Nació allí, pero no creció en ese pueblo.
-     ~%50%Galilea#Sea más específico.
-     =Nazaret#¡Correcto! ¡Eso es!}.
-     
-     ::El pueblo de Jesús:: Jesús era del pueblo de {
-     =Nazaret#¡Correcto! ¡Eso es!
-     =%75%Nazeret#Correcto, pero mal escrito.
-     =%25%Belén#Nació allí, pero no era de ese pueblo.}</pre>
+<pre>&nbsp;&nbsp;&nbsp;&nbsp; Pregunta Difícil.{~Respuesta equivocada ~%50%Respuesta 'a medias' =respuesta
+        correcta completa}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp; ::El pueblo de Jesús::Jesús era del pueblo de{
+&nbsp;&nbsp;&nbsp;&nbsp; ~Jerusalén#Esta era una ciudad importante, pero no es la respuesta correcta.
+&nbsp;&nbsp;&nbsp;&nbsp; ~%25%Belén#Nació allí, pero no creció en ese pueblo.
+&nbsp;&nbsp;&nbsp;&nbsp; ~%50%Galilea#Sea más específico.
+&nbsp;&nbsp;&nbsp;&nbsp; =Nazaret#¡Correcto! ¡Eso es!}.
+&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp; ::El pueblo de Jesús:: Jesús era del pueblo de {
+&nbsp;&nbsp;&nbsp;&nbsp; =Nazaret#¡Correcto! ¡Eso es!
+&nbsp;&nbsp;&nbsp;&nbsp; =%75%Nazeret#Correcto, pero mal escrito.
+&nbsp;&nbsp;&nbsp;&nbsp; =%25%Belén#Nació allí, pero no era de ese pueblo.}</pre>
 <p>Observe que los últimos dos ejemplos son esencialmente la misma pregunta, 
 la primera como una opción múltiple, la otra como una respuesta corta.</p>
 
@@ -188,21 +188,21 @@ múltiple se desea seleccionar dos o más respuestas para obtener el máximo puntaj
 para esa pregunta. La opción de respuestas múltiples estará habilitada asignando 
 pesos parciales a múltiples respuestas, mientras que no se otorga a ninguna 
 respuesta el carácter de 'correcto'.</p>
-<pre>     ¿Qué valores puede asumir la raíz cuadrada de 4?{
-          ~cero
-          ~%50%2
-          ~%50%-2
-          ~séis }</pre>
+<pre>&nbsp;&nbsp;&nbsp;&nbsp; ¿Qué valores puede asumir la raíz cuadrada de 4?{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ~cero
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ~%50%2
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ~%50%-2
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ~séis }</pre>
  <p>Observe que no hay ningún signo igual (=) en ninguna respuesta, y que éstas 
  deben sumar en total no más de 100%; de lo contrario, Moodle devolverá un error. 
  Para evitar que los estudiantes hagan trampa y obtengan el 100% haciendo clic 
  en todas las respuestas, es preferible incluir pesos de respuesta negativos para 
  las respuestas erróneas.</p>
-<pre>     Qué valores puede asumir la raíz cuadrada de 4?{
-          ~%-50%cero
-          ~%50%2
-          ~%50%-2
-          ~%-50%séis }</pre>
+<pre>&nbsp;&nbsp;&nbsp;&nbsp; Qué valores puede asumir la raíz cuadrada de 4?{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ~%-50%cero
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ~%50%2
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ~%50%-2
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ~%-50%séis }</pre>
 
         <p><u>Otras opciones:</u><br />
         Otras opciones se encuentran disponibles editando directamente el filtro de 
@@ -215,7 +215,7 @@ cambiando de &quot;0&quot; a &quot;1&quot; en la siguiente línea:<br />
 <h3>SOLUCIÓN a PROBLEMAS</h3>
 <p>La codificación del texto del archivo debe ser la misma que la de la instalación 
 del Moodle. </p>
-<p>Un archivo de preguntas de ejemplo(en inglés) puede ser encontrado aquí: 
+<p>Un archivo de preguntas de ejemplo (en inglés) puede ser encontrado aquí: 
 <a href="../../../../mod/quiz/format/gift/examples.txt">gift/examples.txt</a>.</p> <p></p>
 <h3>CRÉDITOS</h3>
  <p>Este filtro fue escrito gracias a la colaboración de muchos miembros de la 

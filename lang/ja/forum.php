@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 development (2004082300)
+      // forum.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -148,6 +148,8 @@ $string['subscriptions'] = 'メール通知登録';
 $string['unsubscribe'] = 'メール通知解除';
 $string['unsubscribed'] = 'メール通知を解除しました。';
 $string['unsubscribeshort'] = 'メール通知解除';
+$string['yesforever'] = 'Yes, 無期限';
+$string['yesinitially'] = 'Yes, 最初のみ';
 $string['youratedthis'] = 'あなたの評価';
 $string['yournewtopic'] = '新規トピック';
 $string['yourreply'] = 'あなたの返信';

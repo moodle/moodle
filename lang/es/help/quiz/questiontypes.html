@@ -2,28 +2,64 @@
   
 <P>Usted puede agregar varios tipos diferentes de preguntas a un categoría:</P>  
   
-<P><B>Múltiple Opción</B></P>  
+<P><B>Opción Múltiple</B></P>  
 <UL>  
 <P>En respuesta a una pregunta (la cual puede incluir una imagen) el alumno puede 
 escoger entre múltiples respuestas. Hay dos tipos de preguntas de opción múltiple: 
 de respuesta única y de respuesta múltiple.  
-<P>Más información: <?php  helpbutton("multichoice", "", "quiz")  ?></P></UL>  
+<p align=right><a href="help.php?file=multichoice.html&module=quiz">Más información sobre preguntas de Opción múltiple</a></p></UL>  
   
 <P><B>Respuesta Corta</B></P>  
 <UL>  
 <P>En respuesta a una pregunta (la cual puede incluir una imagen) el alumno escribe 
 una palabra o frase. Hay varias posibles respuestas correctas, con diferentes puntuaciones. Las respuestas pueden o no ser sensibles a las mayúsculas. </ P>  
-<P>Más información: <?php  helpbutton("shortanswer", "", "quiz") ?></P></UL>
+<p align=right><a href="help.php?file=shortanswer.html&module=quiz">Más información sobre preguntas de Respuesta Corta</a></p></UL>
+
+<P><B>Numérica</B></P>
+<UL>
+<P>Desde el punto de vista de un alumno, una pregunta numérica es muy semejante a una pregunta de respuesta corta. La diferencia es que la pregunta numérica es un número y permite un margen de error. Esto permite habilitar un rango continuo de posibles respuestas acertadas.
+</P>
+<p align=right><a href="help.php?file=numerical.html&module=quiz">Más información sobre la preguntas numéricas</a></p>
+</UL>
 
 <P><B>Verdadero/Falso</B></P>  
 <UL>  
 <P>En respuesta a una pregunta (la cual puede incluir una imagen), el alumno selecciona 
 de entre dos opciones: Verdadero o Falso.  
-</P>  
-<P>Más información: <?php  helpbutton("truefalse", "", "quiz") ?></P></UL>
+</P>  <p align=right><a href="help.php?file=truefalse.html&module=quiz">Más información sobre preguntas de Verdadero/Falso</a></p></UL>
+
+<P><B>Emparejamiento</B></P>
+<UL>
+<P>Presenta una lista de preguntas junto con una lista de respuestas. El alumno debe seleccionar la respuesta correcta que corresponda a cada pregunta de la lista.
+</P>
+<p align=right><a href="help.php?file=match.html&module=quiz">Más información sobre la preguntas de Emparejamiento</a></p>
+</UL>
+
+<P><B>Preguntas incrustadas (Cloze)</B></P>
+<UL>
+<p>Es un tipo que permite pregunta muy flexibles, consiste en un texto que puede integrar (en formato Moodle) varias preguntas de tipo opción múltiple, preguntas cortas y numéricas.
+</P>
+<p align=right><a href="help.php?file=multianswer.html&module=quiz">Más información de preguntas integradas</a></p>
+</UL>
+
+<P><B>Emparejamiento aleatorias de respuesta corta</B></P>
+<UL>
+<P>Desde el punto de vista de un alumno, esta pregunta es muy semejante a una pregunta de emparejamiento.
+   La diferencia es que la subpreguntas son elegidas aleatoriamente en la preguntas de respuesta corta de la categoría.
+</P>
+<p align=right><a href="help.php?file=randomsamatch.html&module=quiz">Más información sobre preguntas aleatorias de emparejamiento</a></p>
+</UL>
 
 <P><B>Aleatoria</B></P>  
 <UL>  
-<P>(Aún no implementada) Le permite seleccionar un número de preguntas que serán 
+<P>Le permite seleccionar un número de preguntas que serán 
 aleatoriamente seleccionadas cada vez que un estudiante intenta el examen.</P>  
-<P>Más información: <?php  helpbutton("random", "", "quiz") ?></P></UL>
+<p align=right><a href="help.php?file=random.html&module=quiz">Más información 
+sobre preguntas aleatorias</a></p></UL>
+<P><B>Descripción</B></P>
+<UL>
+<P>Este formato no es un pregunta real.  Sólo muestra un texto (y si lo desea algún gráfico)
+ sin necesidad de responder.  Puede ser útil, por ejemplo, para dar información previa antes de un grupo de preguntas.
+</P>
+<p align=right><a href="help.php?file=description.html&module=quiz">Más información sobre pregunta de Descripción</a></p>
+</UL>
