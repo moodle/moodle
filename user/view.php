@@ -127,11 +127,13 @@
         echo "<INPUT type=hidden name=user value=\"$user->id\">";
         echo "<INPUT type=submit value=\"".get_string("activityreport")."\">";
         echo "</FORM></P></TD>";
-        echo "<TD NOWRAP><P><FORM ACTION=\"../course/loginas.php\" METHOD=GET>";
-        echo "<INPUT type=hidden name=id value=\"$course->id\">";
-        echo "<INPUT type=hidden name=user value=\"$user->id\">";
-        echo "<INPUT type=submit value=\"".get_string("loginas")."\">";
-        echo "</FORM></P></TD>";
+        if ($user->id != $USER->id) {
+            echo "<TD NOWRAP><P><FORM ACTION=\"../course/loginas.php\" METHOD=GET>";
+            echo "<INPUT type=hidden name=id value=\"$course->id\">";
+            echo "<INPUT type=hidden name=user value=\"$user->id\">";
+            echo "<INPUT type=submit value=\"".get_string("loginas")."\">";
+            echo "</FORM></P></TD>";
+        }
     }
     echo "</TR></TABLE></CENTER>\n";
 
