@@ -143,6 +143,30 @@ CREATE TABLE `prefix_course_sections` (
 ) TYPE=MyISAM;
 # --------------------------------------------------------
 
+# 
+# Table structure for table `dst_preset`
+# 
+
+CREATE TABLE `prefix_dst_preset` (
+  `id` int(10) NOT NULL auto_increment,
+  `name` char(48) NOT NULL default '',
+  `apply_offset` tinyint(3) NOT NULL default '0',
+  `activate_index` tinyint(1) NOT NULL default '1',
+  `activate_day` tinyint(1) NOT NULL default '1',
+  `activate_month` tinyint(2) NOT NULL default '1',
+  `activate_time` char(5) NOT NULL default '03:00',
+  `deactivate_index` tinyint(1) NOT NULL default '1',
+  `deactivate_day` tinyint(1) NOT NULL default '1',
+  `deactivate_month` tinyint(2) NOT NULL default '2',
+  `deactivate_time` char(5) NOT NULL default '03:00',
+  `last_change` int(10) NOT NULL default '0',
+  `next_change` int(10) NOT NULL default '0',
+  `current_offset` tinyint(3) NOT NULL default '0',
+  PRIMARY KEY  (`id`)
+) TYPE=MyISAM;
+
+# --------------------------------------------------------
+
 #
 # Table structure for table `event`
 #
@@ -274,6 +298,41 @@ CREATE TABLE `prefix_log_display` (
   `mtable` varchar(20) NOT NULL default '',
   `field` varchar(40) NOT NULL default ''
 ) TYPE=MyISAM COMMENT='For a particular module/action, specifies a moodle table/field.';
+# --------------------------------------------------------
+
+#
+# Table structure for table `message`
+#
+
+CREATE TABLE `prefix_message` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `useridfrom` int(10) NOT NULL default '0',
+  `useridto` int(10) NOT NULL default '0',
+  `message` text NOT NULL,
+  `timemodified` int(10) NOT NULL default '0',
+  `messagetype` varchar(50) NOT NULL default '',
+  PRIMARY KEY  (`id`),
+  KEY `useridfrom` (`useridfrom`),
+  KEY `useridto` (`useridto`)
+) TYPE=MyISAM COMMENT='Stores all unread messages';
+# --------------------------------------------------------
+
+#
+# Table structure for table `message_read`
+#
+
+CREATE TABLE `prefix_message_read` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `useridfrom` int(10) NOT NULL default '0',
+  `useridto` int(10) NOT NULL default '0',
+  `message` text NOT NULL,
+  `timemodified` int(10) NOT NULL default '0',
+  `messagetype` varchar(50) NOT NULL default '',
+  `mailed` tinyint(1) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `useridfrom` (`useridfrom`),
+  KEY `useridto` (`useridto`)
+) TYPE=MyISAM COMMENT='Stores all messages that have been read';
 # --------------------------------------------------------
 
 #

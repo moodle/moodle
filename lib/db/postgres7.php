@@ -781,7 +781,53 @@ function main_upgrade($oldversion=0) {
     if ($oldversion < 2004121400) {
         table_column('groups', '', 'password', 'varchar', '50', '', '', 'not null', 'description');
     }
-    
+
+    if ($oldversion < 2004121600) {
+        modify_database('',"CREATE TABLE prefix_dst_preset (
+                                id SERIAL PRIMARY KEY,
+                                name varchar(48) NOT NULL default '',
+                                apply_offset integer NOT NULL default '0',
+                                activate_index integer NOT NULL default '1',
+                                activate_day integer NOT NULL default '1',
+                                activate_month integer NOT NULL default '1',
+                                activate_time char(5) NOT NULL default '03:00',
+                                deactivate_index integer NOT NULL default '1',
+                                deactivate_day integer NOT NULL default '1',
+                                deactivate_month integer NOT NULL default '2',
+                                deactivate_time char(5) NOT NULL default '03:00',
+                                last_change int(10) NOT NULL default '0',
+                                next_change int(10) NOT NULL default '0',
+                                current_offset integer NOT NULL default '0'
+                             ) TYPE=MyISAM;");
+
+
+        modify_database('',"CREATE TABLE prefix_message (
+                               id SERIAL PRIMARY KEY,
+                               useridfrom integer NOT NULL default '0',
+                               useridto integer NOT NULL default '0',
+                               message text,
+                               timemodified integer NOT NULL default '0',
+                               messagetype varchar(50) NOT NULL default ''
+                            );
+
+                            CREATE INDEX prefix_message_useridfrom_idx ON prefix_message (useridfrom);
+                            CREATE INDEX prefix_message_useridto_idx ON prefix_message (useridto);
+
+                            CREATE TABLE prefix_message_read (
+                               id SERIAL PRIMARY KEY,
+                               useridfrom integer NOT NULL default '0',
+                               useridto integer NOT NULL default '0',
+                               message text,
+                               timemodified integer NOT NULL default '0',
+                               messagetype varchar(50) NOT NULL default '',
+                               mailed integer NOT NULL default '0'
+                            );
+
+                            CREATE INDEX prefix_message_read_useridfrom_idx ON prefix_message_read (useridfrom);
+                            CREATE INDEX prefix_message_read_useridto_idx ON prefix_message_read (useridto);
+                            ");
+    }
+                                
     return $result;
 }
 
