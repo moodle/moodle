@@ -131,7 +131,7 @@ function print_table($table) {
 //     $table->align     is an array of column alignments
 //     $table->data[]    is an array of arrays containing the data.
 
-    if ( $table->align) {
+    if ($table->align) {
         foreach ($table->align as $key => $aa) {
             if ($aa) {
                 $align[$key] = "ALIGN=\"$aa\"";
@@ -141,10 +141,8 @@ function print_table($table) {
         }
     }
 
-    echo "<BR>";
-
-    print_simple_box_start("CENTER","","#FFFFFF",0);
-    echo "<TABLE BORDER=0 valign=top align=center cellpadding=10 cellspacing=1>\n";
+    print_simple_box_start("CENTER", "80%", "#FFFFFF", 0);
+    echo "<TABLE WIDTH=100% BORDER=0 valign=top align=center cellpadding=10 cellspacing=1>\n";
 
     if ($table->head) {
         echo "<TR>";

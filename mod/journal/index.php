@@ -64,6 +64,7 @@
         }
     }
 
+    echo "<BR>";
     print_table($table);
 
     print_footer($course);

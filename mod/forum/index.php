@@ -32,25 +32,35 @@
 
     $can_subscribe = (isstudent($course->id) || isteacher($course->id) || isadmin());
     if ($can_subscribe) {
-        $newtable->head = array ("Forum", "Description", "Topics", "Subscribed");
+        $table->head = array ("Forum", "Description", "Topics", "Subscribed");
     } else {
-        $newtable->head = array ("Forum", "Description", "Topics");
+        $table->head = array ("Forum", "Description", "Topics");
     }
-    $newtable->align = array ("LEFT", "LEFT", "CENTER", "CENTER");
+    $table->align = array ("LEFT", "LEFT", "CENTER", "CENTER");
 
 
     if ($forums = get_records("forum", "course", $id, "name ASC")) {
-        $table = $newtable;
         foreach ($forums as $forum) {
-            if ($forum->type == "teacher") {
-                if (!isteacher($course->id)) {
-                    continue;
-                }
+            switch ($forum->type) {
+                case "discussion":
+                case "general":
+                case "eachuser":
+                    $contentforums[] = $forum;
+                    break;
+                case "teacher": 
+                    if (isteacher($course->id)) {
+                        $generalforums[] = $forum;
+                    }
+                    break;
+                default:
+                    $generalforums[] = $forum;
+                    break;
             }
-            if ($forum->type == "eachuser" or $forum->type == "discussion") {
-                continue;    // Display these later on.
-            }       
+        }
+    }
 
+    if ($generalforums) {
+        foreach ($generalforums as $forum) {
             $count = count_records("discuss", "forum", "$forum->id");
 
             if ($can_subscribe) {
@@ -69,22 +79,13 @@
                                   "$count");
             }
         }
-        if ($table) {
-            print_heading("General Forums");
-            print_table($table);
-            $table = $newtable;
-        }
+        print_heading("General Forums");
+        print_table($table);
+        unset($table->data);
+    } 
 
-        foreach ($forums as $forum) {
-            if ($forum->type == "teacher") {
-                if (!isteacher($course->id)) {
-                    continue;
-                }
-            }
-            if ($forum->type != "eachuser" and $forum->type != "discussion") {
-                continue;
-            }       
-
+    if ($contentforums) {
+        foreach ($contentforums as $forum) {
             $count = count_records("discuss", "forum", "$forum->id");
 
             if ($can_subscribe) {
@@ -103,10 +104,8 @@
                                   "$count");
             }
         }
-        if ($table) {
-            print_heading("Forums about course content");
-            print_table($table);
-        }
+        print_heading("Course content");
+        print_table($table);
     }
 
     echo "<DIV ALIGN=CENTER>";
