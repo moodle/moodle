@@ -722,8 +722,10 @@ function get_user_info_from_db($field, $value) {
 
     if ($students = get_records("user_students", "userid", $user->id)) {
         foreach ($students as $student) {
-            $user->student[$student->course] = true;
-            $user->zoom[$student->course] = $student->zoom;
+            if (get_field("course", "visible", "id", $student->course)) {
+                $user->student[$student->course] = true;
+                $user->zoom[$student->course] = $student->zoom;
+            }
         }
     }
 
@@ -796,14 +798,25 @@ function get_courses($category=0, $sort="fullname ASC") {
 /// Returns list of courses
 
     if ($category > 0) {          // Return all courses in one category
-        return get_records("course", "category", $category, $sort);
+        $courses = get_records("course", "category", $category, $sort);
 
     } else if ($category < 0) {   // Return all courses, even the site
-        return get_records("course", "", "", $sort);
+        $courses = get_records("course", "", "", $sort);
 
     } else {                      // Return all courses, except site
-        return get_records_select("course", "category > 0", $sort);
+        $courses = get_records_select("course", "category > 0", $sort);
     }
+
+    if ($courses) {  /// Remove unavailable courses from the list
+        foreach ($courses as $key => $course) {
+            if (!$course->visible) {
+                if (!isteacher($course->id)) {
+                    unset($courses[$key]);
+                }
+            }
+        }
+    }
+    return $courses;
 }
 
 function get_categories() {

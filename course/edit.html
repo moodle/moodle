@@ -22,6 +22,16 @@
 	</td>
 </tr>
 <tr valign=top>
+	<td><P><? print_string("availability") ?>:</td>
+	<td><?
+    unset($choices);
+    $choices["0"] = get_string("courseavailablenot");
+    $choices["1"] = get_string("courseavailable");
+    choose_from_menu ($choices, "visible", $form->visible, "");
+    helpbutton("courseavailability", get_string("availability")); ?>
+	</td>
+</tr>
+<tr valign=top>
 	<td><P><? print_string("enrolmentkey") ?>:</td>
 	<td><input type="text" name="password" size=25 value="<? p($form->password) ?>">
     <? helpbutton("enrolmentkey", get_string("enrolmentkey")) ?>
@@ -31,6 +41,7 @@
 <tr valign=top>
 	<td><P><? print_string("opentoguests") ?>:</td>
 	<td><?
+    unset($choices);
     $choices["0"] = get_string("guestsno");
     $choices["1"] = get_string("guestsyes");
     $choices["2"] = get_string("guestskey");

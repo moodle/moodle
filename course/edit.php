@@ -116,6 +116,7 @@
             $form->showrecent = 1;
             $form->category = 1;
             $form->id = "";
+            $form->visible = 1;
         }
     }
 

@@ -168,6 +168,10 @@ function main_upgrade($oldversion=0) {
         table_column("user", "", "autosubscribe", "integer", "1", "unsigned", "1", "", "htmleditor");
     }
 
+    if ($oldversion < 2003072100) {
+        table_column("course", "", "visible", "integer", "1", "unsigned", "1", "", "marker");
+    }
+
     return $result;
 }
 ?>    

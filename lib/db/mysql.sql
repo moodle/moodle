@@ -46,6 +46,7 @@ CREATE TABLE `prefix_course` (
   `numsections` smallint(5) unsigned NOT NULL default '1',
   `showrecent` smallint(5) unsigned NOT NULL default '1',
   `marker` int(10) unsigned NOT NULL default '0',
+  `visible` int(10) unsigned NOT NULL default '1',
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`)
