@@ -153,10 +153,10 @@ function validate_form($course, &$form, &$err) {
     if ($form->startdate > $form->enddate)
         $err["startdate"] = "Starts after it ends!";
 
-    if (($form->startdate < time()) && ($course->format <> $form->format)) {
-        $err["format"] = "Can't change the format now";
-        $form->format = $course->format;
-    }
+#    if (($form->startdate < time()) && ($course->format <> $form->format)) {
+#        $err["format"] = "Can't change the format now";
+#        $form->format = $course->format;
+#    }
 
     if (! $form->category)
         $err["category"] = "You need to choose a category";
