@@ -1935,7 +1935,7 @@ function user_login_string($course, $user=NULL) {
         $loggedinas = get_string('loggedinnot', 'moodle').
                       " (<a target=\"{$CFG->framename}\" href=\"$wwwroot/login/index.php\">".get_string('login').'</a>)';
     }
-    return $loggedinas;
+    return '<div class="logininfo">'.$loggedinas.'</div>';
 }
 
 /**
