@@ -1,0 +1,103 @@
+<?PHP // $Id$
+
+#------------------------------------------------------------
+$string['modulename'] = "Qüestionari";
+$string['modulenameplural'] = "Qüestionaris";
+#------------------------------------------------------------
+
+$string['addselectedtoquiz'] = "Afegir la selecció al qüestionari";
+$string['alwaysavailable'] = "Disponible sempre";
+$string['alreadysubmitted'] = "Sembla que ja has enviat aquest qüestionari";
+$string['answer'] = "Resposta";
+$string['answerhowmany'] = "Una resposta o múltiples respostes?";
+$string['answersingleyes'] = "Només una resposta";
+$string['answersingleno']  = "Múltiples respostes";
+$string['attempt'] = "Intent \$a";
+$string['attemptfirst'] = "Primer intent";
+$string['attemptlast'] = "Darrer intent";
+$string['attemptquiznow'] = "Començar el qüestionari";
+$string['attempts'] = "Intents";
+$string['attemptsallowed'] = "Intents permesos";
+$string['attemptsunlimited'] = "Intents il·limitats";
+$string['backtoquiz'] = "Tornar a l'edició del qüestionari";
+$string['bestgrade'] = "Millor nota";
+$string['casesensitive'] = "Majúscules i minúscules";
+$string['caseyes'] = "Distingir majúscules i minúscules";
+$string['caseno'] = "No distingir majúscules i minúscules";
+$string['categories'] = "Categories";
+$string['category'] = "Categoria";
+$string['categoryinfo'] = "Informació sobre la categoria";
+$string['categorymove'] = "La categoria '\$a->name' conté \$a->count preguntes.  Tria una altra categoria per traslladar-les.";
+$string['categorymoveto'] = "Traslladar a aquesta categoria";
+$string['choice'] = "Opció";
+$string['choices'] = "Opcions disponibles";
+$string['correctanswer'] = "Resposta correcta";
+$string['correctanswers'] = "Respostes correctes";
+$string['createnewquestion'] = "Crear una nova pregunta";
+$string['daysavailable'] = "Dies disponible";
+$string['default'] = "Per defecte";
+$string['defaultinfo'] = "La categoria per defecte per a les preguntes.";
+$string['deletequestioncheck'] = "Estàs absolutament segur que vols esborrar '\$a'?";
+$string['editcategories'] = "Editar categories";
+$string['editingquiz'] = "Editar qüestionari";
+$string['editingquestion'] = "Editar una pregunta";
+$string['editingshortanswer'] = "Editar una pregunta de resposta breu";
+$string['editingtruefalse'] = "Editar una pregunta de vertader/fals";
+$string['editingmultichoice'] = "Editar una pregunta de múltiples opcions";
+$string['false'] = "Fals";
+$string['feedback'] = "Comentari";
+$string['filloutoneanswer'] = "Has d'emplenar almenys una possible resposta. Les respostes en blanc no compten.";
+$string['fillouttwochoices'] = "Has d'emplenar almenys dues opcions. Les opcions en blanc no compten.";
+$string['fractionsaddwrong'] = "Les qualificacions que has donat no sumen 100%%
+(sumen \$a%%).
+<BR>Vols tornar enrere i corregir-ho?";
+$string['fractionsnomax'] = "Una de les respostes ha de valer 100%%, per tal que siga
+<BR>possible obtenir la qualificació màxima en aquesta pregunta.
+<BR>Vols tornar enrere i corregir-ho?";
+$string['gradeaverage'] = "Nota mitjana";
+$string['gradehighest'] = "Nota més alta";
+$string['grademethod'] = "Mètode de qualificació";
+$string['guestsno'] = "Ho lamentem, els invitats no poden veure els qüestionaris";
+$string['imagedisplay'] = "Imatge que es mostrarà";
+$string['introduction'] = "Introducció";
+$string['marks'] = "Marques";
+$string['multichoice'] = "Opcions múltiples";
+$string['noanswers'] = "No s'ha seleccionat cap resposta!";
+$string['noattempts'] = "Aquest qüestionari no s'ha contestat";
+$string['nomoreattempts'] = "No es permeten més intents";
+$string['noquestions'] = "Encara no s'han afegit preguntes";
+$string['publish'] = "Publicar";
+$string['question'] = "Pregunta";
+$string['questioninuse'] = "La pregunta '\$a' s'està utilitzant actualment:";
+$string['questions'] = "Preguntes";
+$string['questionname'] = "Títol de la pregunta";
+$string['quizavailable'] = "El qüestionari està disponible fins: \$a";
+$string['quizclose'] = "Tancar el qüestionari";
+$string['quizclosed'] = "Aquest qüestionari es va tancar el \$a";
+$string['quizopen'] = "Obrir el qüestionari";
+$string['quiznotavailable'] = "Aquest qüestionari estarà disponible a partir de: \$a";
+$string['random'] = "Selecció aleatòria";
+$string['regrade'] = "Recalcular les qualificacions";
+$string['regradecomplete'] = "S'han recalculat totes les qualificacions";
+$string['regradecount'] = "S'han modificat \$a->changed / \$a->attempt qualificacions";
+$string['rename'] = "Canviar el nom";
+$string['report'] = "Informes";
+$string['save'] = "Guardar";
+$string['savegrades'] = "Guardar qualificacions";
+$string['savemyanswers'] = "Guardar les meues respostes";
+$string['savequiz'] = "Guardar tot el qüestionari";
+$string['score'] = "Puntuació bruta";
+$string['select'] = "Seleccionar";
+$string['selectcategoryabove'] = "Seleccionar una categoria";
+$string['shortanswer'] = "Resposta breu";
+$string['show'] = "Mostrar";
+$string['showfeedback'] = "Mostrar comentaris al final?";
+$string['showcorrectanswer'] = "Incloure la resposta correcta amb els comentaris?";
+$string['time'] = "Temps";
+$string['timetaken'] = "Temps emprat";
+$string['timecompleted'] = "Completat";
+$string['true'] = "Vertader";
+$string['truefalse'] = "Vertader/Fals";
+$string['type'] = "Tipus";
+$string['viewallanswers'] = "Veure \$a qüestionaris completats";
+$string['yourfinalgradeis'] = "La teva qualificació final en aquest qüestionari és \$a";

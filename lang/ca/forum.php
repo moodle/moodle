@@ -1,0 +1,131 @@
+<?PHP // $Id$ 
+      // forum.php - created with Moodle 1.0.5 beta 1 (2002092500)
+
+
+$string['addanewdiscussion'] = "Afegir un tema de debat";
+$string['allowchoice'] = "Permetre elegir a tothom";
+$string['allowdiscussions'] = "Pot un \$a començar un nou debat?";
+$string['allowratings'] = "Permetre valorar els missatges?";
+$string['allowsdiscussions'] = "Aquest fòrum permet a cadascú començar un tema de debat.";
+$string['anyfile'] = "Qualsevol fitxer";
+$string['attachment'] = "Fitxer adjunt";
+$string['bynameondate'] = "per \$a->name - \$a->date";
+$string['canstudentsstart'] = "Pot un \$a començar un nou debat?";
+$string['couldnotadd'] = "Un error desconegut ha impedit afegir el teu missatge";
+$string['couldnotdeleteratings'] = "Ho lamentem, no es pot esborrar perquè ja l'han valorat altres";
+$string['couldnotdeletereplies'] = "Ho lamentem, no es pot esborrar perquè ja ha tingut contestacions";
+$string['couldnotupdate'] = "Un error desconegut ha impedit actualitzar el teu missatge";
+$string['delete'] = "Esborrar";
+$string['deleteddiscussion'] = "Tema de debat esborrat";
+$string['deletedpost'] = "Missatge esborrat";
+$string['deletesure'] = "Segur que vols esborrar aquest missatge?";
+$string['discussion'] = "Debat";
+$string['discussions'] = "Debats";
+$string['discussionsstartedby'] = "Debats començats per \$a";
+$string['discussthistopic'] = "Debatre aquest tema";
+$string['eachuserforum'] = "Cada persona envia un debat";
+$string['edit'] = "Editar";
+$string['editing'] = "Editant";
+$string['emptymessage'] = "El teu missatge presentava algun problema. Potser l'havies deixat en blanc, o el fitxer adjunt era massa gran. Els canvis NO s'han guardat.";
+$string['everyonecanchoose'] = "Cadascú pot elegir subscriure's";
+$string['everyoneissubscribed'] = "Tothom està subscrit a aquest fòrum";
+$string['forcesubscribe'] = "Forçar que tothom estiga subscrit";
+$string['forcesubscribeq'] = "Forçar que tothom estiga subscrit?";
+$string['forum'] = "Fòrum";
+$string['forumintro'] = "Introducció al fòrum";
+$string['forumname'] = "Nom del fòrum";
+$string['forums'] = "Fòrums";
+$string['forumtype'] = "Tipus de fòrum";
+$string['generalforum'] = "Fòrum estàndard per a ús general";
+$string['generalforums'] = "Fòrums generals";
+$string['inforum'] = "en \$a";
+$string['intronews'] = "Anuncis i notícies generals";
+$string['introsocial'] = "Un fòrum obert per a xarrar sobre qualsevol cosa que es vulga";
+$string['introteacher'] = "Un fòrum només per a notes i debats del professorat";
+$string['learningforums'] = "Fòrums per a aprendre";
+$string['maxtimehaspassed'] = "Ho lamentem, ha passat el temps màxim per a editar aquest missatge! (\$a)";
+$string['message'] = "Missatge";
+$string['modeflatnewestfirst'] = "Mostrar llista de rèpliques començant per la més nova";
+$string['modeflatoldestfirst'] = "Mostrar llista de rèpliques començant per la més antiga";
+$string['modenested'] = "Mostrar rèpliques escalonades";
+$string['modethreaded'] = "Mostrar rèpliques per temes";
+$string['modulename'] = "Fòrum";
+$string['modulenameplural'] = "Fòrums";
+$string['more'] = "més";
+$string['namenews'] = "Nou fòrum";
+$string['namesocial'] = "Fòrum social";
+$string['nameteacher'] = "Fòrum del professorat";
+$string['newforumposts'] = "Nous enviaments als fòrums";
+$string['nodiscussions'] = "Encara no hi ha cap tema de debat en aquest fòrum";
+$string['noguestpost'] = "Ho lamentem, els usuaris invitats no poden enviar missatges";
+$string['noposts'] = "No hi ha missatges";
+$string['nosubscribers'] = "Encara no hi ha subscriptors en aquest fòrum";
+$string['nownotsubscribed'] = "\$a->name NO rebrrà còpies de '\$a->forum' per correu electrònic.";
+$string['nowsubscribed'] = "\$a->name rebrà còpies de '\$a->forum' per correu electrònic.";
+$string['numposts'] = "\$a missatges";
+$string['olderdiscussions'] = "Debats anteriors";
+$string['parentofthispost'] = "Missatge original";
+$string['postadded'] = "S'ha afegit el teu missatge.<P>Tens \$a per a editar-lo si vols fer algun canvi.";
+$string['postingtip'] = "<B>Suggeriments:</B>
+
+Quan envies una resposta:
+
+<UL>
+
+<LI>llegeix el missatge original amb molt de compte i practica l'empatia
+
+<LI>busca els aspectes que pugues comentar
+
+</UL>
+
+
+
+Mentre escrius:
+
+<UL>
+
+<LI>mira que les teues respostes siguen curtes i centra't en el tema
+
+<LI>explica les teus idees clarament
+
+<LI>pensa preguntes que podries fer
+
+</UL>";
+$string['postmailinfo'] = "Açò és una còpia d'un missatge enviat al lloc web \$a.
+
+Per a afegir la teua resposta via web, fes clic en aquest enllaç:";
+$string['postrating1'] = "Mostra sobretot coneixements SEPARATS";
+$string['postrating2'] = "Tant separats com connectats";
+$string['postrating3'] = "Mostra sobretot coneixements CONNECTATS";
+$string['postupdated'] = "S'ha actualitzat el teu missatge.";
+$string['processingpost'] = "Processant missatge \$a";
+$string['rate'] = "Valoració";
+$string['ratings'] = "Valoracions";
+$string['re'] = "Re:";
+$string['readtherest'] = "Llegir la resta del tema";
+$string['repliesmany'] = "\$a respostes fins ara";
+$string['repliesone'] = "\$a resposta fins ara";
+$string['reply'] = "Contestar";
+$string['search'] = "Buscar";
+$string['searchforums'] = "Buscar en els fòrums";
+$string['sendinratings'] = "Enviar les meues últimes valoracions";
+$string['showsubscribers'] = "Mostra els subscriptors";
+$string['singleforum'] = "Un debat simple";
+$string['subject'] = "Títol";
+$string['subscribe'] = "Subscriure's a aquest fòrum";
+$string['subscribed'] = "Subscrit";
+$string['subscribers'] = "Subscriptors";
+$string['subscribersto'] = "Subscriptors de '\$a'";
+$string['unsubscribe'] = "Cancel·lar la subscripció a aquest fòrum";
+$string['youratedthis'] = "La teua valoració";
+$string['yournewtopic'] = "Nou tema de debat";
+$string['yourreply'] = "La teua resposta";
+
+$string[nopostscontaining] = "No s'ha trobat cap missatge que continga '\$a'";
+$string[openmode0] = "Debats no, respostes no";
+$string[openmode1] = "Debats no, però respostes sí";
+$string[openmode2] = "Debats i respostes sí";
+$string[postincontext] = "Veure aquest missatge en el seu context";
+$string[searchresults] = "Resultats de la recerca";
+
+?>
