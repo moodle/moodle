@@ -3,7 +3,7 @@
 
 
 $string['coursesummary'] = 'Kurssi yhteenveto';
-$string['pagedescription'] = 'Kurssi/ sivuston kuvaus';
+$string['pagedescription'] = 'Kurssin/Sivuston kuvaus';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
 $string['thislanguage'] = 'Suomi';

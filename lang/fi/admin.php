@@ -2,8 +2,8 @@
       // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
-$string['blockinstances'] = 'ilmentymät';
-$string['blockmultiple'] = 'monenkertainen';
+$string['blockinstances'] = 'Ilmentymät';
+$string['blockmultiple'] = 'Monenkertainen';
 $string['cachetext'] = 'Tekstivälimuistin kesto';
 $string['change'] = 'muutos';
 $string['filteruploadedfiles'] = 'Suodata lähetettyjä tiedostoja';
