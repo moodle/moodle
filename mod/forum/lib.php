@@ -227,13 +227,13 @@ function forum_cron () {
   
                     if ($userto->mailformat == 1) {  // HTML
                         $posthtml = "<P><FONT FACE=sans-serif>".
-                        "<A HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> ".
-                        "<A HREF=\"$CFG->wwwroot/mod/forum/index.php?id=$course->id\">$strforums</A> -> ".
-                        "<A HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">$forum->name</A>";
+                        "<A TARGET=\"_blank\" HREF=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</A> -> ".
+                        "<A TARGET=\"_blank\" HREF=\"$CFG->wwwroot/mod/forum/index.php?id=$course->id\">$strforums</A> -> ".
+                        "<A TARGET=\"_blank\" HREF=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">$forum->name</A>";
                         if ($discussion->name == $forum->name) {
                             $posthtml .= "</FONT></P>";
                         } else {
-                            $posthtml .= " -> <A HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">$discussion->name</A></FONT></P>";
+                            $posthtml .= " -> <A TARGET=\"_blank\" HREF=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">$discussion->name</A></FONT></P>";
                         }
                         $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, $canreply, false, false);
 
@@ -526,12 +526,12 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     if ($ownpost) {
         $output .= "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">".get_string("delete", "forum")."</A>";
         if ($reply) {
-            $output .= " | <A HREF=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</A>";
+            $output .= " | <A TARGET=\"_blank\" HREF=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</A>";
         }
         $output .= "&nbsp;&nbsp;";
     } else {
         if ($reply) {
-            $output .= "<A HREF=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</A>&nbsp;&nbsp;";
+            $output .= "<A TARGET=\"_blank\" HREF=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("reply", "forum")."</A>&nbsp;&nbsp;";
         }
     }
 
