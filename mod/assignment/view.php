@@ -57,6 +57,9 @@
     }
 
     $strdifference = format_time($assignment->timedue - time());
+    if (($assignment->timedue - time()) < 0) {
+        $strdifference = "<FONT COLOR=RED>$strdifference</FONT>";
+    }
     $strduedate = userdate($assignment->timedue)." ($strdifference)";
 
     print_simple_box_start("CENTER");
