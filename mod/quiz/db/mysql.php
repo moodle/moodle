@@ -92,7 +92,7 @@ function quiz_upgrade($oldversion) {
         table_column("quiz", "", "shuffleanswers", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "shufflequestions");
     }
 
-	if ($oldversion < 2003071001) {
+    if ($oldversion < 2003071001) {
 
         modify_database ("", " CREATE TABLE `prefix_quiz_numerical` (
                                `id` int(10) unsigned NOT NULL auto_increment,
@@ -105,8 +105,21 @@ function quiz_upgrade($oldversion) {
                              ) TYPE=MyISAM COMMENT='Options for numerical questions'; ");
     }
 
-	if ($oldversion < 2003072400) {
+    if ($oldversion < 2003072400) {
         execute_sql(" INSERT INTO {$CFG->prefix}log_display VALUES ('quiz', 'review', 'quiz', 'name') ");
+    }
+
+    if ($oldversion < 2003072901) {
+        modify_database ("", " CREATE TABLE `prefix_quiz_multianswers` (
+                               `id` int(10) unsigned NOT NULL auto_increment,
+                                `question` int(10) unsigned NOT NULL default '0',
+                                `answers` varchar(255) NOT NULL default '',
+                                `positionkey` varchar(255) NOT NULL default '',
+                                `answertype` smallint(6) NOT NULL default '0',
+                                `norm` int(10) unsigned NOT NULL default '1',
+                                PRIMARY KEY  (`id`),
+                                KEY `question` (`question`)
+                              ) TYPE=MyISAM COMMENT='Options for multianswer questions'; ");
     }
 
     return true;

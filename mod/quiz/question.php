@@ -320,6 +320,11 @@
             require("description.html");
         break;
 
+        case MULTIANSWER:
+            print_heading_with_help(get_string("editingmultianswer", "quiz"), "multianswer", "quiz");
+            require("editmultianswer.php");
+        break;
+
         case NUMERICAL:
             // This will only support one answer of the type NUMERICAL
             // However, lib.php has support for multiple answers

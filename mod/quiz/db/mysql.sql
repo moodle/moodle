@@ -243,7 +243,23 @@ CREATE TABLE `prefix_quiz_truefalse` (
   PRIMARY KEY  (`id`),
   KEY `question` (`question`)
 ) TYPE=MyISAM COMMENT='Options for True-False questions';
+# --------------------------------------------------------
 
+#
+# Table structure for table `quiz_multianswers`
+#
+
+CREATE TABLE `prefix_quiz_multianswers` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `question` int(10) unsigned NOT NULL default '0',
+  `answers` varchar(255) NOT NULL default '',
+  `positionkey` varchar(255) NOT NULL default '',
+  `answertype` smallint(6) NOT NULL default '0',
+  `norm` int(10) unsigned NOT NULL default '1',
+  PRIMARY KEY  (`id`),
+  KEY `question` (`question`)
+) TYPE=MyISAM COMMENT='Options for multianswer questions'
+# --------------------------------------------------------
 
 INSERT INTO prefix_log_display VALUES ('quiz', 'view', 'quiz', 'name');
 INSERT INTO prefix_log_display VALUES ('quiz', 'report', 'quiz', 'name');

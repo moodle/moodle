@@ -21,6 +21,7 @@ define("MATCH",         "5");
 define("RANDOMSAMATCH", "6");
 define("DESCRIPTION",   "7");
 define("NUMERICAL",     "8");
+define("MULTIANSWER",   "9");
 
 $QUIZ_QUESTION_TYPE = array ( MULTICHOICE   => get_string("multichoice", "quiz"),
                               TRUEFALSE     => get_string("truefalse", "quiz"),
@@ -29,13 +30,15 @@ $QUIZ_QUESTION_TYPE = array ( MULTICHOICE   => get_string("multichoice", "quiz")
                               MATCH         => get_string("match", "quiz"),
                               DESCRIPTION   => get_string("description", "quiz"),
                               RANDOM        => get_string("random", "quiz"),
-                              RANDOMSAMATCH => get_string("randomsamatch", "quiz")
+                              RANDOMSAMATCH => get_string("randomsamatch", "quiz"),
+                              MULTIANSWER   => get_string("multianswer", "quiz")
                               );
 
 $QUIZ_FILE_FORMAT = array ( "custom"   => get_string("custom", "quiz"),
                             "missingword" => get_string("missingword", "quiz"),
                             "blackboard" => get_string("blackboard", "quiz"),
-                            "aon" => "AON"
+                            "aon" => "AON",
+                            "multianswer" => get_string("multianswer", "quiz")
                             );
 
 define("QUIZ_PICTURE_MAX_HEIGHT", "600");   // Not currently implemented
@@ -258,9 +261,15 @@ function quiz_get_grade_records($quiz) {
                               AND qg.userid = u.id");
 }
 
-function quiz_get_answers($question) {
+function quiz_get_answers($question, $answerids=NULL) {
 // Given a question, returns the correct answers for a given question
     global $CFG;
+
+    if (empty($answerids)) {
+        $answeridconstraint = '';
+    } else {
+        $answeridconstraint = " AND a.id IN ($answerids) ";
+    }
 
     switch ($question->qtype) {
         case SHORTANSWER:       // Could be multiple answers
@@ -268,7 +277,8 @@ function quiz_get_answers($question) {
                                       FROM {$CFG->prefix}quiz_shortanswer sa,  
                                            {$CFG->prefix}quiz_answers a
                                      WHERE sa.question = '$question->id' 
-                                       AND sa.question = a.question ");
+                                       AND sa.question = a.question "
+                                  . $answeridconstraint);
 
         case TRUEFALSE:         // Should be always two answers
             return get_records("quiz_answers", "question", $question->id);
@@ -278,7 +288,8 @@ function quiz_get_answers($question) {
                                       FROM {$CFG->prefix}quiz_multichoice mc, 
                                            {$CFG->prefix}quiz_answers a
                                      WHERE mc.question = '$question->id' 
-                                       AND mc.question = a.question ");
+                                       AND mc.question = a.question "
+                                  . $answeridconstraint);
 
         case MATCH:
             return get_records("quiz_match_sub", "question", $question->id);
@@ -296,7 +307,8 @@ function quiz_get_answers($question) {
                                       FROM {$CFG->prefix}quiz_numerical n,
                                            {$CFG->prefix}quiz_answers a
                                      WHERE a.question = '$question->id'
-                                       AND n.answer = a.id ");
+                                       AND n.answer = a.id "
+                                  . $answeridconstraint);
 
         case DESCRIPTION:
             return true; // there are no answers for description
@@ -304,6 +316,21 @@ function quiz_get_answers($question) {
         case RANDOM:
             return quiz_get_answers
                     (get_record('quiz_questions', 'id', $question->random));
+
+        case MULTIANSWER:       // Includes subanswers
+            $multianswers = get_records('quiz_multianswers',
+                                   'question', $question->id);
+            $virtualquestion->id = $question->id;
+
+            $answers = array();
+            foreach ($multianswers as $multianswer) {
+                $virtualquestion->qtype = $multianswer->answertype;
+                // Recursive call for subanswers
+                $multianswer->subanswers = quiz_get_answers
+                        ($virtualquestion, $multianswer->answers);
+                $answers[] = $multianswer;
+            }
+            return $answers;
 
         default:
             return false;
@@ -317,7 +344,7 @@ function quiz_get_attempt_responses($attempt, $quiz) {
 // for regrading using quiz_grade_attempt_results()
     global $CFG;
    
-    if (!$responses = get_records_sql("SELECT q.id, q.qtype, q.category, q.questiontext, r.answer 
+    if (!$responses = get_records_sql("SELECT q.id, q.qtype, q.category, q.questiontext, q.defaultgrade, r.answer 
                                         FROM {$CFG->prefix}quiz_responses r, 
                                              {$CFG->prefix}quiz_questions q
                                        WHERE r.attempt = '$attempt->id' 
@@ -397,6 +424,9 @@ function quiz_print_question_icon($question, $editlink=true) {
             break;
         case NUMERICAL:
             echo '<img border=0 height=16 width=16 src="pix/nu.gif">';
+            break;
+        case MULTIANSWER:
+            echo '<img border=0 height=16 width=16 src="pix/mu.gif">';
             break;
     }
     if ($editlink) {
@@ -726,6 +756,73 @@ function quiz_print_question($number, $question, $grade, $courseid,
            }
            echo "</table>";
            break;
+
+       case MULTIANSWER:
+           // For this question type, we better print the image on top:
+           if ($question->image) {
+               print_file_picture($question->image, $question->course);
+           }
+
+            $qtextremaining = text_to_html($question->questiontext);
+            // The regex will recognize text snippets of type {#X} where the X can be any text not containg } or white-space characters.
+            while (ereg('\{#([^[:space:]}]*)}', $qtextremaining, $regs)) {
+
+                $qtextsplits = explode($regs[0], $qtextremaining, 2);
+                echo $qtextsplits[0];
+                $qtextremaining = $qtextsplits[1];
+
+                $multianswer = get_record('quiz_multianswers',
+                                          'question', $question->id,
+                                          'positionkey', $regs[1]);
+                
+                $inputname= " name=\"q{$realquestion->id}ma$multianswer->id\" ";
+                
+                if (!empty($response)
+                    && $responseitems = explode('-', array_shift($response), 2))
+                {
+                    $responsefractiongrade = (float)$responseitems[0];
+                    $actualresponse = $responseitems[1];
+
+                    if (1.0 == $responsefractiongrade) {
+                        $style = '"background-color:lime"';
+                    } else if (0.0 < $responsefractiongrade) {
+                        $style = '"background-color:yellow"';
+                    } else { // The response must have been totally wrong:
+                        $style = '"background-color:red"';
+                    }
+                } else {
+                    $responsefractiongrade = 0.0;
+                    $actualresponse = '';
+                    $style = '"background-color:white"';
+                }
+
+                switch ($multianswer->answertype) {
+                    case SHORTANSWER:
+                    case NUMERICAL:
+                        echo " <input style=$style $inputname value=\"$actualresponse\" type=\"TEXT\" size=\"8\"/> ";
+                    break;
+                    case MULTICHOICE:
+                        echo (" <select style=$style $inputname>");
+                        $answers = get_records_list("quiz_answers", "id", $multianswer->answers);
+                        echo ('<option></option>'); // Default empty option 
+                        foreach ($answers as $answer) {
+                            if ($answer->id == $actualresponse) {
+                                $selected = 'selected';
+                            } else {
+                                $selected = '';
+                            }
+                            echo "<option value=\"$answer->id\" $selected>$answer->answer</option>";
+                        }
+                        echo ("</select> ");
+                    break;
+                    default:
+                        error("Unable to recognized answertype $answer->answertype");
+                    break;
+                }
+            }
+            // Print the final piece of question text:
+            echo $qtextremaining;
+            break;
 
        case RANDOM:
            echo "<P>Random questions should not be printed this way!</P>";
@@ -1561,6 +1658,46 @@ function quiz_grade_attempt_question_result($question, $answers) {
             }
             break;
 
+        case MULTIANSWER:
+            // Default setting that avoids a possible divide by zero:
+            $subquestion->grade = 1.0;
+
+            foreach ($question->answer as $questionanswer) {
+                
+                // Resetting default values for subresult:
+                $subresult->grade = 0.0;
+                $subresult->correct = array();
+                $subresult->feedback = array();
+
+                // Resetting subquestion responses:
+                $subquestion->answer = array();
+
+                $qarr = explode('-', $questionanswer, 2);
+                $subquestion->answer[] = $qarr[1];  // Always single answer for subquestions
+                foreach ($answers as $multianswer) {
+                    if ($multianswer->id == $qarr[0]) {
+                        $subquestion->qtype = $multianswer->answertype;
+                        $subquestion->grade = $multianswer->norm;
+                        $subresult = quiz_grade_attempt_question_result
+                                ($subquestion, $multianswer->subanswers);
+                        break;
+                    }
+                }
+
+                // Summarize subquestion results:
+                $grade += $subresult->grade;
+                $feedback[] = $subresult->feedback[0];
+                $correct[]  = $subresult->correct[0];
+
+                // Each response instance also contains the partial
+                // fraction grade for the response:
+                $response[] = $subresult->grade/$subquestion->grade
+                              . '-' . $subquestion->answer[0];
+            }
+            // Normalize grade:
+            $grade *= $question->grade/($question->defaultgrade);
+            break;
+
         case DESCRIPTION:  // Descriptions are not graded.
             break;
 
@@ -1999,6 +2136,52 @@ function quiz_save_question_options($question) {
             }
         break;
 
+        case MULTIANSWER:
+            if (!$oldmultianswers = get_records("quiz_multianswers", "question", $question->id, "id ASC")) {
+                $oldmultianswers = array();
+            }
+
+            // Insert all the new multi answers
+            foreach ($question->answers as $dataanswer) {
+                if ($oldmultianswer = array_shift($oldmultianswers)) {  // Existing answer, so reuse it
+                    $multianswer = $oldmultianswer;
+                    $multianswer->positionkey = $dataanswer->positionkey;
+                    $multianswer->norm = $dataanswer->norm;
+                    $multianswer->answertype = $dataanswer->answertype;
+
+                    if (! $multianswer->answers = quiz_save_multianswer_alternatives
+                            ($question->id, $dataanswer->answertype,
+                             $dataanswer->alternatives, $oldmultianswer->answers))
+                    {
+                        $result->error = "Could not update multianswer alternatives! (id=$multianswer->id)";
+                        return $result;
+                    }
+                    if (!update_record("quiz_multianswers", $multianswer)) {
+                        $result->error = "Could not update quiz multianswer! (id=$multianswer->id)";
+                        return $result;
+                    }
+                } else {    // This is a completely new answer
+                    unset($multianswer);
+                    $multianswer->question = $question->id;
+                    $multianswer->positionkey = $dataanswer->positionkey;
+                    $multianswer->norm = $dataanswer->norm;
+                    $multianswer->answertype = $dataanswer->answertype;
+
+                    if (! $multianswer->answers = quiz_save_multianswer_alternatives
+                            ($question->id, $dataanswer->answertype,
+                             $dataanswer->alternatives))
+                    {
+                        $result->error = "Could not insert multianswer alternatives! (questionid=$question->id)";
+                        return $result;
+                    }
+                    if (!insert_record("quiz_multianswers", $multianswer)) {
+                        $result->error = "Could not insert quiz multianswer!";
+                        return $result;
+                    }
+                }
+            }
+        break;
+
         case RANDOM:
         break;
 
@@ -2031,6 +2214,145 @@ function quiz_remove_unwanted_questions(&$questions, $quiz) {
     }
 }
 
+function quiz_save_multianswer_alternatives
+        ($questionid, $answertype, $alternatives, $oldalternativeids= NULL)
+{
+// Returns false if something goes wrong,
+// otherwise the ids of the answers.
 
+    if (empty($oldalternativeids)
+        or $oldalternatives =
+            get_records_list('quiz_answers', 'id', $oldalternativeids))
+    {
+        $oldalternatives = array();
+    }
+
+    $alternativeids = array();
+
+    foreach ($alternatives as $altdata) {
+
+        if ($altold = array_shift($oldalternatives)) { // Use existing one...
+            $alt = $altold;
+            $alt->answer = $altdata->answer;
+            $alt->fraction = $altdata->fraction;
+            $alt->feedback = $altdata->feedback;
+            if (!update_record("quiz_answers", $alt)) {
+                return false;
+            }
+
+        } else { // Completely new one
+            unset($alt);
+            $alt->question= $questionid;
+            $alt->answer = $altdata->answer;
+            $alt->fraction = $altdata->fraction;
+            $alt->feedback = $altdata->feedback;
+            if (! $alt->id = insert_record("quiz_answers", $alt)) {
+                return false;
+            }
+        }
+
+        // For the answer type numerical, each alternative has individual options:
+        if ($answertype == NUMERICAL) {
+            if ($numericaloptions =
+                    get_record('quiz_numerical', 'answer', $alt->id))
+            {
+                // Reuse existing numerical options
+                $numericaloptions->min = $altdata->min;
+                $numericaloptions->max = $altdata->max;
+                if (!update_record('quiz_numerical', $numericaloptions)) {
+                    return false;
+                }
+            } else {
+                // New numerical options
+                $numericaloptions->answer = $alt->id;
+                $numericaloptions->question = $questionid;
+                $numericaloptions->min = $altdata->min;
+                $numericaloptions->max = $altdata->max;
+                if (!insert_record("quiz_numerical", $numericaloptions)) {
+                    return false;
+                }
+            }
+        } else { // Delete obsolete numerical options
+            delete_records('quiz_numerical', 'answer', $alt->id);
+        } // end if NUMERICAL
+
+        $alternativeids[] = $alt->id;
+    } // end foreach $alternatives
+    $answers = implode(',', $alternativeids);
+
+    // Removal of obsolete alternatives from answers and quiz_numerical:
+    while ($altobsolete = array_shift($oldalternatives)) {
+        delete_records("quiz_answers", "id", $altobsolete->id);
+        
+        // Possibly obsolute numerical options are also to be deleted:
+        delete_records("quiz_numerical", 'answer', $alt->id);
+    }
+
+    // Common alternative options and removal of obsolete options
+    switch ($answertype) {
+        case NUMERICAL:
+            if (!empty($oldalternativeids)) {
+                delete_records('quiz_shortanswer', 'answers', 
+$oldalternativeids);
+                delete_records('quiz_multichoice', 'answers', 
+$oldalternativeids);
+            }
+            break;
+        case SHORTANSWER:
+            if (!empty($oldalternativeids)) {
+                delete_records('quiz_multichoice', 'answers', 
+$oldalternativeids);
+                $options = get_record('quiz_shortanswer',
+                                      'answers', $oldalternativeids);
+            } else {
+                unset($options);
+            }
+            if (empty($options)) {
+                // Create new shortanswer options
+                $options->question = $questionid;
+                $options->usecase = 0;
+                $options->answers = $answers;
+                if (!insert_record('quiz_shortanswer', $options)) {
+                    return false;
+                }
+            } else if ($answers != $oldalternativeids) {
+                // Shortanswer options needs update:
+                $options->answers = $answers;
+                if (!update_record('quiz_shortanswer', $options)) {
+                    return false;
+                }
+            }
+            break;
+        case MULTICHOICE:
+            if (!empty($oldalternativeids)) {
+                delete_records('quiz_shortanswer', 'answers', 
+$oldalternativeids);
+                $options = get_record('quiz_multichoice',
+                                      'answers', $oldalternativeids);
+            } else {
+                unset($options);
+            }
+            if (empty($options)) {
+                // Create new multichoice options
+                $options->question = $questionid;
+                $options->layout = 0;
+                $options->single = 1;
+                $options->answers = $answers;
+                if (!insert_record('quiz_multichoice', $options)) {
+                    return false;
+                }
+            } else if ($answers != $oldalternativeids) {
+                // Multichoice options needs update:
+                $options->answers = $answers;
+                if (!update_record('quiz_multichoice', $options)) {
+                    return false;
+                }
+            }
+            break;
+        default:
+            return false;
+    }
+    return $answers;       
+}
 
 ?>

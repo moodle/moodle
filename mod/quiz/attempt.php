@@ -105,6 +105,9 @@
             } else if (ereg('^q([0-9]+)r([0-9]+)$', $key, $keyregs)) { // Random-style answers
                 $questions[$keyregs[1]]->answer[] = "$keyregs[2]-$value";
         
+            } else if (ereg('^q([0-9]+)ma([0-9]+)$', $key, $keyregs)) { // Multi-answer questions
+                $questions[$keyregs[1]]->answer[] = "$keyregs[2]-$value";
+
             } else if ('shuffleorder' == $key) {
                 $shuffleorder = explode(",", $value);   // Actual order questions were given in
             
