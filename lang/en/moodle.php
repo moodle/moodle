@@ -681,6 +681,7 @@ $string['scalescustomno'] = 'No custom scales have been created yet';
 $string['scalesstandard'] = 'Standard scales';
 $string['scalestip'] = 'To create custom scales, use the \'Scales...\' link in your course administration menu.';
 $string['schedule'] = 'Schedule';
+$string['scheduledbackupstatus'] = 'Scheduled backup status';
 $string['search'] = 'Search';
 $string['searchagain'] = 'Search again';
 $string['searchcourses'] = 'Search courses';
