@@ -59,6 +59,9 @@
                 case "Darwin":
                     system("$CFG->dirroot/$CFG->texfilterdir/mimetex.darwin -e $pathname ". escapeshellarg($texexp) );
                 break;
+                default:
+                    system("$CFG->dirroot/$CFG->texfilterdir/mimetex -e $pathname ". escapeshellarg($texexp) );
+                break;
             }
         }
     }
