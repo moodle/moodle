@@ -2,7 +2,7 @@
 //Moodle wersja polska, Adam Pawelczak, Michal Wozniak, Lukasz Wrona (crow1@interia.pl)
 //Modul assignment.php
 
-$string['allowresubmit'] = "Zezwól na wielokrotne przesy³anie";
+$string['allowresubmit'] = "Zezwól na wielokrotne przesy³anie rozwi±zania";
 
 $string['assignmentdetails'] = " Szczegó³y zadania";
 
@@ -38,6 +38,8 @@ $string['modulenameplural'] = " Zadania";
 
 $string['newsubmissions'] = " Przes³ane rozwi±zania";
 
+$string['notgradedyet'] = "Jeszcze nie oceniono";
+
 $string['notsubmittedyet'] = " Nic jeszcze nie przes³ano";
 
 $string['overwritewarning'] = " UWAGA: Ponowne przes³anie zast±pi twoje aktualne rozwi±zanie";
@@ -54,7 +56,7 @@ $string['submitted'] = " Przes³ano";
 
 $string['typeoffline'] = "Dzia³ania wykonywane w trybie off-line";
 
-$string['typeuploadsingle'] = " Prze¶lij jeden plik";
+$string['typeuploadsingle'] = " Wymagane przes³anie jednego pliku";
 
 $string['uploadbadname'] = " Nazwa pliku zawiera³a nieprawid³owe znaki i nie mog³a zostaæ przes³ana";
 

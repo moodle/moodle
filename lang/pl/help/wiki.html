@@ -75,6 +75,10 @@ Lista koñczy siê na pustej linii. Listy mog± dowolnie siê zagnie¿d¿aæ, a listy z
 Mo¿esz wpisaæ odno¶nik, a nastêpnie (bez znaku odstêpu) tekst, który ma byæ wy¶wietlany, umieszczony w nawiasach. Przyk³ad :  </em>http://www.google.com/(Szukaj z Google)</em> zostanie przet³umaczone na 
 <a href="http://www.google.com/">Szukaj z Google</a>.
 
+<p>Odno¶niki do adresów e-mail mog± byæ realizowane w taki sam sposób, np.:</p>
+<p>nikt@przyklad.com(U¿ytkownik testowy) zostanie przet³umaczone na 
+<a href="mailto:nikt@przyklad.com">U¿ytkownik testowy</a></p>
+
 <h3>Odno¶niki do modu³ów Moodle</h3>
 
 <p> Je¶li znasz numer id Moodle (szukaj ?id=nn na koñcu adresu modu³u), oraz nazwê modu³u, mo¿esz stworzyæ odno¶nik bezpo¶rednio do niego korzystaj±c z nastêpuj±cej sk³adni : </p>
@@ -100,4 +104,24 @@ Mo¿esz wpisaæ odno¶nik, a nastêpnie (bez znaku odstêpu) tekst, który ma byæ wy¶w
   <li> liczba x liczba jest zmieniane na prawid³owy znak mno¿enia.
   <li>Linia rozpoczynaj±ca siê od przynajmniej czterech my¶lników jest zmieniana na poziom± liniê.
 </ul>  
+
+<h3>Sprawdzanie pisowni (Do¶wiadczalnie)</h3>
+
+<p>Narzêdzie formatuj±ce wiki mo¿e zostaæ prze³±czone w tryb sprawdzania pisowni. Umie¶æ poni¿sz± liniê w dokumencie. Ca³y tekst znajduj±cy siê poni¿ej tej linii zostanie sprawdzony...
+
+<pre>
+!SPELL:kod_jêzyka:wariant_jêzyka
+
+Przyk³ady:
+!SPELL:en:british
+!SPELL:pl
+</pre>
+
+<p>"kod_jêzyka" powinien zostaæ zast±piony odpowiednim kodem (np. EN, PL itp.),"wariant_jêzyka" (wraz z przecinkiem) jest argumentem opcjonalnym. W przypadku jêzyka angielskiego (kod EN) mo¿e przyk³adowo przyjmowaæ warto¶ci "american", "british", lub "canadian". Jêzyk polski dostêpny jest jedynie w jednej wersji i drugi argument mo¿na spokojnie pomin±æ.</p>
+
+<p>Po zakoñczeniu pracy narzêdzia sprawdzaj±cego pisowniê wszystkie nieznane s³owa zostan± zaznaczone. Sugerowane zmiany pojawiaj± siê po najechaniu myszk± na dane s³owo.</p>
+
+<p><em>UWAGA: Sprawdzanie pisowni korzysta z bibliotek <strong>pspell</strong>. Zarówno one jak i s³owniki musz± byæ umieszczone na Twoim serwerze, aby narzêdzie dzia³a³o. Platforma Windows nie jest obs³ugiwana.
+</em></p>
+
 

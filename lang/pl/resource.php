@@ -8,6 +8,8 @@ $string['modulenameplural'] = " Zasoby";
 
 $string['addresource'] = " Dodaj zasób";
 
+$string['configframesize'] = " Kiedy strona WWW lub przes³any plik jest wy¶wietlany wewn±trz ramki, ta warto¶æ jest rozmiarem (podanym w pikselach) górnej ramki (zawieraj±cej nawigacjê)";
+
 $string['editingaresource'] = " Modyfikacja zasobu";
 
 $string['example'] = " Przyk³ad";
@@ -23,6 +25,30 @@ $string['fulltext'] = " Pe³na tre¶æ";
 $string['htmlfragment'] = " Fragment HTML";
 
 $string['neverseen'] = " Nigdy nie widziany";
+
+$string['newdirectories'] = "Pokazuj odno¶niki do katalogów";
+
+$string['newfullscreen'] = "Zape³nij ca³y ekran";
+
+$string['newheight'] = "Domy¶lna wysoko¶æ okna (w pikselach)";
+
+$string['newlocation'] = "Pokazuj pasek lokacji";
+
+$string['newmenubar'] = "Pokazuj pasek menu";
+
+$string['newresizable'] = "Zezwól na zmianê rozmiaru okna";
+
+$string['newscrollbars'] = "Zezwól na przewijanie okna";
+
+$string['newstatus'] = "Pokazuj pasek statusu";
+
+$string['newtoolbar'] = "Pokazuj pasek narzêdzi";
+
+$string['newwidth'] = "Domy¶lna szeroko¶æ okna (w pikselach)";
+
+$string['newwindow'] = " Nowe okno";
+
+$string['newwindowopen'] = " Pokazuj zasoby w nowym oknie";
 
 $string['note'] = " Uwaga";
 
