@@ -9,8 +9,6 @@
 
     require("../config.php");
 
-    global $USER;
-
     $id      = required_param('id', PARAM_INT);
     $file    = optional_param('file', '', PARAM_PATH);
     $wdir    = optional_param('wdir', '', PARAM_PATH);
