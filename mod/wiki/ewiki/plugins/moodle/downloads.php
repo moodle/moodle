@@ -299,7 +299,7 @@ function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
 
    $id = $row["id"];
    $p_title = basename($meta["Content-Location"]);
-   $p_time = strftime("%c", $row["created"]);
+   $p_time = userdate($row["created"]);
    
    
    $p_hits = ($row["hits"] ? $row["hits"] : "0");
