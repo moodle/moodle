@@ -20,6 +20,10 @@
         if (! unenrol_student_in_course($USER->id, $course->id)) {
             error("An error occurred while trying to unenrol you.");
         }
+
+        // remove some other things
+        delete_records("discuss_subscriptions", "user", $USER->id);
+
         add_to_log($course->id, "course", "unenrol", "view.php?id=$course->id", "$USER->id");
 
         unset($USER->student["$id"]);
