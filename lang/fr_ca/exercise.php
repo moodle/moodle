@@ -107,6 +107,7 @@ $string['numberofnegativeresponses'] = 'Nombre de réponses négatives';
 $string['onesubmission'] = 'Un travail remis';
 $string['optionaladjustment'] = 'Ajustement facultatif';
 $string['overallgrade'] = 'Note finale';
+$string['parentlanguage'] = 'fr';
 $string['passwordprotectedexercise'] = 'Exercice protégé par mot de passe';
 $string['phase'] = 'Phase';
 $string['phase1'] = 'Mise en place de l\'exercice';
@@ -171,6 +172,7 @@ $string['theexercise'] = 'L\'exercice';
 $string['theexerciseandthesubmissionby'] = 'L\'exercice et le travail remis par $a';
 $string['thegradeis'] = 'La note est $a';
 $string['thereisfeedbackfromthe'] = 'Vous avez un feedback de la part de $a';
+$string['thisdirection'] = 'ltr';
 $string['thisisaresubmission'] = 'This is a Re-submission by $a.<br />Your assessment of their previous submission is shown.<br />
 	After looking at the new submission, please Amend this assessment<br />
 	and click on one of the buttons at the foot of the page.';

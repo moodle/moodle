@@ -15,6 +15,7 @@ $string['modulenameplural'] = 'Consultations';
 $string['mustchooseone'] = 'Vous devez choisir une réponse avant de sauvegarder. Rien n\'a été sauvegardé.';
 $string['notanswered'] = 'Pas encore répondu';
 $string['notopenyet'] = 'Désolé, cette activité n\'est pas disponible avant le $a.';
+$string['parentlanguage'] = 'fr';
 $string['privacy'] = 'Confidentialité des résultats';
 $string['publish'] = 'Publication des résultats';
 $string['publishafteranswer'] = 'Afficher les résultats à l\'étudiant après qu\'il a répondu.';
@@ -27,6 +28,7 @@ $string['responses'] = 'Réponses';
 $string['responsesto'] = 'Réponses à $a';
 $string['savemychoice'] = 'Enregistrer ma réponse';
 $string['showunanswered'] = 'Montrer les colonnes pour les réponses non-répondues';
+$string['thisdirection'] = 'ltr';
 $string['timerestrict'] = 'Restreindre la consultation à cette période';
 $string['viewallresponses'] = 'Voir les $a réponses';
 

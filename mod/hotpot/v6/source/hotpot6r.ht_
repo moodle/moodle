@@ -1,0 +1,8 @@
+
+[inclReadingTitle]
+<h3 class="ExerciseSubtitle">[strReadingTitle]</h3>
+[/inclReadingTitle]
+<div class="ReadingText">
+[strReadingText]
+</div>
+

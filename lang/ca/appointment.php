@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // appointment.php - created with Moodle 1.5.3+ (2005060230)
+      // appointment.php - created with Moodle 1.3 development (2004040500)
 
 
 $string['allowresubmit'] = 'Permet tornar a trametre';

@@ -16,9 +16,9 @@ define('COURSE_MAX_RECENT_PERIOD', 172800);  // Two days, in seconds
 
 define('COURSE_MAX_SUMMARIES_PER_PAGE', 10); // courses
 
-define('COURSE_MAX_COURSES_PER_DROPDOWN',1000); //  max courses in log dropdown before switching to optional
+define('COURSE_MAX_COURSES_PER_DROPDOWN',5000); //  max courses in log dropdown before switching to optional
 
-define('COURSE_MAX_USERS_PER_DROPDOWN',1000); //  max users in log dropdown before switching to optional
+define('COURSE_MAX_USERS_PER_DROPDOWN',5000); //  max users in log dropdown before switching to optional
 
 define("FRONTPAGENEWS",           0);
 define("FRONTPAGECOURSELIST",     1);
@@ -31,6 +31,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
     global $USER, $CFG;
 
     $isteacher = isteacher($course->id);
+
     if ($advancedfilter) {
 
         // Get all the possible users
@@ -136,7 +137,7 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
             $numdates++;
         }
 
-        if ($selecteddate === "lastlogin") {
+        if ($selecteddate == "lastlogin") {
             $selecteddate = $USER->lastlogin;
         }
 
@@ -242,6 +243,38 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
         $showcourses = 1;
     }
    
+    if ($course->category && $selectedgroup) {
+        $sql = 'SELECT COUNT(ut.id) '.
+               'FROM '.$CFG->prefix.'groups_members gm '.
+               ' JOIN '.$CFG->prefix.'user_teachers  ut ON gm.userid=ut.userid '.
+               'WHERE ut.course='.$course->id.' AND gm.groupid='.$selectedgroup;
+        $numteachers = count_records_sql($sql); 
+        // students
+        $sql = 'SELECT COUNT(us.id) '.
+               'FROM '.$CFG->prefix.'groups_members gm '.
+               ' JOIN '.$CFG->prefix.'user_students us ON gm.userid=us.userid '.
+               'WHERE us.course='.$course->id.' AND gm.groupid='.$selectedgroup;
+        $numstudents = count_records_sql($sql); 
+        // add
+        $numusers = $numstudents + $numteachers;
+    }
+    else if ($course->category || !$CFG->allusersaresitestudents) {
+        $sql = "SELECT COUNT(t.id) FROM {$CFG->prefix}user_teachers t
+                            WHERE t.course = '$course->id'";
+        $numusers = count_records_sql($sql);
+        $sql = "SELECT count(s.id) FROM {$CFG->prefix}user_students s 
+                            WHERE s.course = '$course->id'";
+        $numusers = $numusers + count_records_sql($sql);
+    }
+    else if (!$course->category && $CFG->allusersaresitestudents) {
+        $numusers = get_users(false, '', true,'','','','',0,9999,'id');
+    }
+
+    if ($numusers < COURSE_MAX_USERS_PER_DROPDOWN && !$showusers) {
+        $showusers = 1;
+    }
+    
+
     /// Setup for group handling.
     $isteacher = isteacher($course->id);
     $isteacheredit = isteacheredit($course->id);
@@ -261,21 +294,17 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
     // Get all the possible users
     $users = array();
 
-    if ($course->category) {
-        if ($selectedgroup) {   // If using a group, only get users in that group.
-            $courseusers = get_group_users($selectedgroup, 'u.lastname ASC', '', 'u.id, u.firstname, u.lastname, u.idnumber');
-        } else {
-            $courseusers = get_course_users($course->id, '', '', 'u.id, u.firstname, u.lastname, u.idnumber');
-        }
-    } else {
-        $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname, u.idnumber");
-    }
-    
-    if (count($courseusers) < COURSE_MAX_USERS_PER_DROPDOWN && !$showusers) {
-        $showusers = 1;
-    }
-
     if ($showusers) {
+        if ($course->category) {
+            if ($selectedgroup) {   // If using a group, only get users in that group.
+                $courseusers = get_group_users($selectedgroup, 'u.lastname ASC', '', 'u.id, u.firstname, u.lastname');
+            } else {
+                $courseusers = get_course_users($course->id, '', '', 'u.id, u.firstname, u.lastname');
+            }
+        } else {
+            $courseusers = get_site_users("u.lastaccess DESC", "u.id, u.firstname, u.lastname");
+        }
+
         if ($courseusers) {
             foreach ($courseusers as $courseuser) {
                 $users[$courseuser->id] = fullname($courseuser, $isteacher);
@@ -372,11 +401,11 @@ function print_log_selector_form($course, $selecteduser=0, $selecteddate="today"
         $selecteddate = $today;
     }
 
-    echo "<center>\n";
-    echo "<form action=\"log.php\" method=\"get\">\n";
-    echo "<input type=\"hidden\" name=\"chooselog\" value=\"1\" />\n";
-    echo "<input type=\"hidden\" name=\"showusers\" value=\"$showusers\" />\n";
-    echo "<input type=\"hidden\" name=\"showcourses\" value=\"$showcourses\" />\n";
+    echo '<center>';
+    echo '<form action="log.php" method="get">';
+    echo '<input type="hidden" name="chooselog" value="1" />';
+    echo '<input type="hidden" name="showusers" value="'.$showusers.'" />';
+    echo '<input type="hidden" name="showcourses" value="'.$showcourses.'" />';
     if (isadmin() && $showcourses) { 
         choose_from_menu ($courses, "id", $course->id, "");
     } else {
@@ -549,24 +578,24 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
     $strftimedatetime = get_string("strftimedatetime");
     $isteacher = isteacher($course->id);
 
-    echo "<p align=\"center\">\n";
+    echo '<p align="center">';
     print_string("displayingrecords", "", $totalcount);
-    echo "</p>\n";
+    echo "</p>";
 
 
     print_paging_bar($totalcount, $page, $perpage, "$url&amp;perpage=$perpage&amp;");
 
-    echo "<table class=\"logtable\" border=\"0\" align=\"center\" cellpadding=\"3\" cellspacing=\"0\">\n";
-    echo "<tr>";
+    echo '<table class="logtable" border="0" align="center" cellpadding="3" cellspacing="0">';
+    echo '<tr>';
     if ($course->id == SITEID) {
-        echo "<th class=\"c0 header\">".get_string('course')."</th>\n";
+        echo '<th class="c0 header">'.get_string('course').'</th>';
     }
-    echo "<th class=\"c1 header\">".get_string('time')."</th>\n";
-    echo "<th class=\"c2 header\">".get_string('ip_address')."</th>\n";
-    echo "<th class=\"c3 header\">".get_string('fullname')."</th>\n";
-    echo "<th class=\"c4 header\">".get_string('action')."</th>\n";
-    echo "<th class=\"c5 header\">".get_string('info')."</th>\n";
-    echo "</tr>\n";
+    echo '<th class="c1 header">'.get_string('time').'</th>';
+    echo '<th class="c2 header">'.get_string('ip_address').'</th>';
+    echo '<th class="c3 header">'.get_string('fullname').'</th>';
+    echo '<th class="c4 header">'.get_string('action').'</th>';
+    echo '<th class="c5 header">'.get_string('info').'</th>';
+    echo '</tr>';
 
     $row = 1;
     foreach ($logs as $log) {
@@ -597,26 +626,22 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
 
         echo '<tr class="r'.$row.'">';
         if ($course->id == SITEID) {
-            echo "<td class=\"r$row c0\" nowrap=\"nowrap\">\n";
-            echo "    <a href=\"view.php?id={$log->course}\">".$courses[$log->course]."</a>\n";
-            echo "</td>\n";
+            echo '<td class="r'.$row.' c0" nowrap="nowrap"><a href="view.php?id='.$log->course.'">'.$courses[$log->course].'</a></td>';
         }
-        echo "<td class=\"r$row c1\" nowrap=\"nowrap\" align=\"right\">".userdate($log->time, '%a').
-             ' '.userdate($log->time, $strftimedatetime)."</td>\n";
-        echo "<td class=\"r$row c2\" nowrap=\"nowrap\">\n";
-        link_to_popup_window("/iplookup/index.php?ip=$log->ip&amp;user=$log->userid", 'iplookup',$log->ip, 400, 700);
-        echo "</td>\n";
+        echo '<td class="r'.$row.' c1" nowrap="nowrap" align="right">'.userdate($log->time, '%a').
+             ' '.userdate($log->time, $strftimedatetime).'</td>';
+        echo '<td class="r'.$row.' c2" nowrap="nowrap">';
+        link_to_popup_window("/lib/ipatlas/plot.php?address=$log->ip&amp;user=$log->userid", 'ipatlas',$log->ip, 400, 700);
+        echo '</td>';
         $fullname = fullname($log, $isteacher);
-        echo "<td class=\"r$row c3\" nowrap=\"nowrap\">\n";
-        echo "    <a href=\"../user/view.php?id={$log->userid}&amp;course={$log->course}\">$fullname</a>\n";
-        echo "</td>\n";
-        echo "<td class=\"r$row c4\" nowrap=\"nowrap\">\n";
+        echo '<td class="r'.$row.' c3" nowrap="nowrap"><a href="../user/view.php?id='."$log->userid&amp;course=$log->course".'">'.$fullname.'</a></td>';
+        echo '<td class="r'.$row.' c4" nowrap="nowrap">';
         link_to_popup_window( make_log_url($log->module,$log->url), 'fromloglive',"$log->module $log->action", 400, 600);
-        echo "</td>\n";;
-        echo "<td class=\"r$row c5\" nowrap=\"nowrap\">{$log->info}</td>\n";
-        echo "</tr>\n";
+        echo '</td>';
+        echo '<td class="r'.$row.' c5" nowrap="nowrap">'.$log->info.'</td>';
+        echo '</tr>';
     }
-    echo "</table>\n";
+    echo '</table>';
 
     print_paging_bar($totalcount, $page, $perpage, "$url&amp;perpage=$perpage&amp;");
 }
@@ -629,41 +654,6 @@ function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
     } else {
         echo '<img src="'.$CFG->wwwroot.'/course/loggraph.php?id='.$course->id.
              '&amp;user='.$userid.'&amp;type='.$type.'&amp;date='.$date.'" alt="" />';
-    }
-}
-
-
-function print_overview($courses) {
-
-    global $CFG, $USER;
-
-
-    $htmlarray = array();
-    if ($modules = get_records('modules')) {
-        foreach ($modules as $mod) {
-            if (file_exists(dirname(dirname(__FILE__)).'/mod/'.$mod->name.'/lib.php')) {
-                require_once(dirname(dirname(__FILE__)).'/mod/'.$mod->name.'/lib.php');
-                $fname = $mod->name.'_print_overview';
-                if (function_exists($fname)) {
-                    $fname($courses,$htmlarray);
-                }
-            }
-        }
-    }
-
-    foreach ($courses as $course) {
-        print_simple_box_start("center", '400', '', 5, "coursebox");
-        $linkcss = '';
-        if (empty($course->visible)) {
-            $linkcss = 'class="dimmed"';
-        }
-        print_heading('<a title="'.$course->fullname.'" '.$linkcss.' href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->fullname.'</a>');
-        if (array_key_exists($course->id,$htmlarray)) {
-            foreach ($htmlarray[$course->id] as $modname => $html) {
-                echo $html;
-            }
-        }
-        print_simple_box_end();
     }
 }
 
@@ -1112,31 +1102,15 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
         foreach ($resourceraw as $type => $name) {
             $resources["resource&amp;type=$type"] = $name;
         }
-        if (course_allowed_module($course,'label')) {
-            $resources['label'] = get_string('resourcetypelabel', 'resource');
-        }
+        $resources['label'] = get_string('resourcetypelabel', 'resource');
     }
 
     $output  = '<div style="text-align: right">';
-    if (course_allowed_module($course,'resource')) {
-        $resourceallowed = true;
-        $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&amp;sesskey=$USER->sesskey&amp;add=",
-                              $resources, "ressection$section", "", $straddresource, 'resource/types', $straddresource, true);
-    }
+    $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&amp;sesskey=$USER->sesskey&amp;add=",
+                $resources, "ressection$section", "", $straddresource, 'resource/types', $straddresource, true);
 
     if ($vertical) {
         $output .= '<div>';
-    }
-
-    // we need to loop through the forms and check to see if we can add them.
-    foreach ($modnames as $key) {
-        if (!course_allowed_module($course,$key))
-            unset($modnames[strtolower($key)]);
-    }
-    
-    // this is stupid but labels get put into resource, so if resource is hidden and label is not, we're in trouble.
-    if (course_allowed_module($course,'label') && empty($resourceallowed)) {
-        $modnames['label'] = get_string('modulename', 'label');
     }
 
     $output .= ' ';
@@ -1182,14 +1156,6 @@ function make_categories_list(&$list, &$parents, $category=NULL, $path="") {
 /// Given an empty array, this function recursively travels the
 /// categories, building up a nice list for display.  It also makes
 /// an array that list all the parents for each category.
-
-    // initialize the arrays if needed
-    if (!is_array($list)) {
-        $list = array(); 
-    }
-    if (!is_array($parents)) {
-        $parents = array(); 
-    }
 
     if ($category) {
         if ($path) {
@@ -1259,21 +1225,6 @@ function print_whole_category_list($category=NULL, $displaylist=NULL, $parentsli
     }
 }
 
-// this function will return $options array for choose_from_menu, with whitespace to denote nesting.
-
-function make_categories_options() {
-    make_categories_list($cats,$parents);
-    foreach ($cats as $key => $value) {
-        if (array_key_exists($key,$parents)) {
-            if ($indent = count($parents[$key])) {
-                for ($i = 0; $i < $indent; $i++) {
-                    $cats[$key] = '&nbsp;'.$cats[$key];
-                }
-            }
-        }
-    }
-    return $cats;
-}
 
 function print_category_info($category, $depth) {
 /// Prints the category info in indented fashion
@@ -1290,18 +1241,16 @@ function print_category_info($category, $depth) {
 
     $catlinkcss = $category->visible ? '' : ' class="dimmed" ';
 
-    $frontpage = explode(',', $CFG->frontpage);
-    $frontpage = $frontpage?array_flip($frontpage):array();
-    if (isset($frontpage[FRONTPAGECOURSELIST])) {
+    if ($CFG->frontpage == FRONTPAGECOURSELIST) {
         $catimage = '<img src="'.$CFG->pixpath.'/i/course.gif" width="16" height="16" border="0" alt="" />';
     } else {
-        $catimage = "&nbsp;";
+        $catimage = "&nbsp";
     }
 
     echo "\n\n".'<table border="0" cellpadding="3" cellspacing="0" width="100%">';
 
-    if (isset($frontpage[FRONTPAGECOURSELIST])) {
-        $courses = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.guest,c.cost,c.currency');
+    if ($CFG->frontpage == FRONTPAGECOURSELIST) {
+        $courses = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.guest,c.cost');
 
         echo "<tr>";
 
@@ -1380,14 +1329,14 @@ function print_courses($category, $width="100%") {
         $categories = get_categories(0);  // Parent = 0   ie top-level categories only
         if (count($categories) == 1) {
             $category   = array_shift($categories);
-            $courses    = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher,c.cost,c.currency');
+            $courses    = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher,c.cost');
         } else {
-            $courses    = get_courses('all', 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher,c.cost,c.currency');
+            $courses    = get_courses('all', 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher,c.cost');
         }
         unset($categories);
     } else {
         $categories = get_categories($category->id);  // sub categories
-        $courses    = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher,c.cost,c.currency');
+        $courses    = get_courses($category->id, 'c.sortorder ASC', 'c.id,c.sortorder,c.visible,c.fullname,c.shortname,c.password,c.summary,c.teacher,c.cost');
     }
 
     if ($courses) {
@@ -1395,14 +1344,7 @@ function print_courses($category, $width="100%") {
             print_course($course, $width);
         }
     } else {
-        print_heading(get_string('nocoursesyet'));
-        if (iscreator()) {
-            $options = array();
-            $options['category'] = $category->id;
-            echo '<div class="addcoursebutton" align="center">';
-            print_single_button($CFG->wwwroot.'/course/edit.php', $options, get_string('addnewcourse'));
-            echo '</div>';
-        }
+        print_heading(get_string("nocoursesyet"));
     }
 
 }
@@ -1410,7 +1352,7 @@ function print_courses($category, $width="100%") {
 
 function print_course($course, $width="100%") {
 
-    global $CFG, $USER;
+    global $CFG;
 
     static $enrol;
 
@@ -1504,20 +1446,20 @@ function print_course_search($value="", $return=false, $format="plain") {
     if ($format == 'plain') {
         $output  = '<form name="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
         $output .= '<center><p align="center" class="coursesearchbox">';
-        $output .= '<input type="text" size="30" name="search" alt="'.s($strsearchcourses).'" value="'.s($value).'" />';
-        $output .= '<input type="submit" value="'.s($strsearchcourses).'" />';
+        $output .= '<input type="text" size="30" name="search" alt="'.$strsearchcourses.'" value="'.$value.'" />';
+        $output .= '<input type="submit" value="'.$strsearchcourses.'" />';
         $output .= '</p></center></form>';
     } else if ($format == 'short') {
         $output  = '<form name="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
         $output .= '<center><p align="center" class="coursesearchbox">';
-        $output .= '<input type="text" size="12" name="search" alt="'.s($strsearchcourses).'" value="'.s($value).'" />';
-        $output .= '<input type="submit" value="'.s($strsearchcourses).'" />';
+        $output .= '<input type="text" size="12" name="search" alt="'.$strsearchcourses.'" value="'.$value.'" />';
+        $output .= '<input type="submit" value="'.$strsearchcourses.'" />';
         $output .= '</p></center></form>';
     } else if ($format == 'navbar') {
         $output  = '<form name="coursesearch" action="'.$CFG->wwwroot.'/course/search.php" method="get">';
         $output .= '<table border="0" cellpadding="0" cellspacing="0"><tr><td nowrap="nowrap">';
-        $output .= '<input type="text" size="20" name="search" alt="'.s($strsearchcourses).'" value="'.s($value).'" />';
-        $output .= '<input type="submit" value="'.s($strsearchcourses).'" />';
+        $output .= '<input type="text" size="20" name="search" alt="'.$strsearchcourses.'" value="'.$value.'" />';
+        $output .= '<input type="submit" value="'.$strsearchcourses.'" />';
         $output .= '</td></tr></table>';
         $output .= '</form>';
     }
@@ -1670,22 +1612,6 @@ function move_section($course, $section, $move) {
     // if the focus is on the section that is being moved, then move the focus along
     if (isset($USER->display[$course->id]) and ($USER->display[$course->id] == $section)) {
         course_set_display($course->id, $sectiondest);
-    }
-
-    // Check for duplicates.
-    // There is a very rare case that some sections in the same course have the same section id.
-    if (($count_section = count_records('course_sections', 'course', $course->id) - 1) != $course->numsections) {
-        $sections = get_records_select('course_sections', "course = $course->id AND section > 0", 'section ASC');
-        $n = 1;
-        foreach ($sections as $section) {
-            if (!set_field('course_sections', 'section', $n, 'id', $section->id)) {
-                return false;
-            }
-            $n++;
-        }
-        if (!set_field('course', 'numsections', $count_section, 'id', $course->id)) {
-            return false;
-        }
     }
     return true;
 }
@@ -1901,7 +1827,7 @@ function print_groupmode_setting($form, $course=NULL) {
     if ($course->groupmode or (!$course->groupmodeforce)) {
         echo '<tr valign="top">';
         echo '<td align="right"><b>'.get_string('groupmode').':</b></td>';
-        echo '<td align="left">';
+        echo '<td>';
         unset($choices);
         $choices[NOGROUPS] = get_string('groupsnone');
         $choices[SEPARATEGROUPS] = get_string('groupsseparate');
@@ -1938,108 +1864,12 @@ function print_visible_setting($form, $course=NULL) {
     
     echo '<tr valign="top">';
     echo '<td align="right"><b>'.get_string('visibletostudents','',moodle_strtolower($course->students)).':</b></td>';
-    echo '<td align="left">';
+    echo '<td>';
     unset($choices);
     $choices[1] = get_string('show');
     $choices[0] = get_string('hide');
     choose_from_menu($choices, 'visible', $visible, '', '', 0, false, $hiddensection);
     echo '</td></tr>';
 } 
-
-function update_restricted_mods($course,$mods) {
-    delete_records("course_allowed_modules","course",$course->id);
-    if (empty($course->restrictmodules)) {
-        return;
-    }
-    else {
-        foreach ($mods as $mod) {
-            if ($mod == 0)
-                continue; // this is the 'allow none' option
-            $am->course = $course->id;
-            $am->module = $mod;
-            insert_record("course_allowed_modules",$am);
-        }
-    }
-}
-
-/**
- * This function will take an int (module id) or a string (module name)
- * and return true or false, whether it's allowed in the given course (object)
- * $mod is not allowed to be an object, as the field for the module id is inconsistent 
- * depending on where in the code it's called from (sometimes $mod->id, sometimes $mod->module)
- */
-
-function course_allowed_module($course,$mod) {
-    if (empty($course->restrictmodules)) {
-        return true;
-    }
-    if (isadmin()) {
-        return true;
-    }
-    if (is_numeric($mod)) {
-        $modid = $mod;
-    } else if (is_string($mod)) {
-        if ($mod = get_field("modules","id","name",strtolower($mod)))
-            $modid = $mod;
-    }
-    if (empty($modid)) {
-        return false;
-    }
-    return (record_exists("course_allowed_modules","course",$course->id,"module",$modid));
-}
-
-/***
- *** Efficiently moves many courses around while maintaining
- *** sortorder in order.
- *** 
- *** $courseids is an array of course ids
- ***
- **/
-
-function move_courses ($courseids, $categoryid) {
-
-    global $CFG;
-
-    if (!empty($courseids)) {
-       
-            $courseids = array_reverse($courseids); 
-
-            foreach ($courseids as $courseid) {
-                                      
-                if (! $course  = get_record("course", "id", $courseid)) {
-                    notify("Error finding course $courseid");
-                } else {
-                    // figure out a sortorder that we can use in the destination category
-                    $sortorder = get_field_sql('SELECT MIN(sortorder)-1 AS min
-                                                    FROM ' . $CFG->prefix . 'course WHERE category=' . $categoryid);
-                    if ($sortorder === false) {
-                        // the category is empty
-                        // rather than let the db default to 0
-                        // set it to > 100 and avoid extra work in fix_coursesortorder()                        
-                        $sortorder = 200;
-                    } else if ($sortorder < 10) {
-                        fix_course_sortorder($categoryid);
-                    }
-
-                    $course->category  = $categoryid;
-                    $course->sortorder = $sortorder;
-                    $course->fullname = addslashes($course->fullname);
-                    $course->shortname = addslashes($course->shortname);
-                    $course->summary = addslashes($course->summary);
-                    $course->password = addslashes($course->password);
-                    $course->teacher = addslashes($course->teacher);
-                    $course->teachers = addslashes($course->teachers);
-                    $course->student = addslashes($course->student);
-                    $course->students = addslashes($course->students);
-                    
-                    if (!update_record('course', $course)) {
-                        notify("An error occurred - course not moved!");
-                    }
-                }
-            }
-            fix_course_sortorder();
-        }    
-    return true;
-}
 
 ?>

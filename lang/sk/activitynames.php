@@ -1,7 +1,7 @@
 <?PHP // $Id$ 
-      // activitynames.php - created with Moodle 1.6 development (2005052400)
+      // activitynames.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
-$string['filtername'] = 'Automatické prepojenie názvov aktivít';
+$string['filtername'] = 'Automatické prelinkovanie názvov aktivít';
 
 ?>

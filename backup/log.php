@@ -4,7 +4,7 @@
     require_once("../config.php");
     require_once("../backup/lib.php");
 
-    $courseid = optional_param('courseid',0,PARAM_INT);
+    optional_variable($courseid);
 
     require_login();
 

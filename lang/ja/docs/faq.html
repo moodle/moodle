@@ -1,13 +1,11 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
 <title>Moodle Docs: 良くある質問 (FAQ)</title>
-<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
-<meta http-equiv="Content-Type" content="text/html; EUC-JP" />
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+<meta http-equiv="Content-Type" content="text/html; charset=EUC-JP">
 </head>
 
-<body>
+<body bgcolor="#FFFFFF">
 <h1>良くある質問 (FAQ)</h1>
 <p class="normaltext">
 このページにはMoodleのインストールにおいて最も尋ねられる質問を記します。
@@ -20,19 +18,21 @@ Moodle</a>コースを参照してください。あなたの問題が既に議論されている可能性があり
 使ってフォーラム内を検索してください。
 答えが見つからない場合は、適切なフォーラムに問題を投稿してください - 通常は誰かが助けてくれます。</p>
 
+
 <p class="normaltext">
 様々な方法を試してみても問題が解決しない場合で、ファイアーウォールの背後でMoodleを動かしている場合は、必須の機能または
 必要なコミュニケーションをブロックしないように、ファイアーウォールを再設定されることをお勧めします。
 ファイアーウォールがMoodleに影響を及ぼすことはほとんどありませんが、ファイアーウォールの設定ミスにより
 Moodleの機能に影響を及ぼすことがあります。
 
-<p class="normaltext">該当する答えを閲覧するときは下記のリンクをお使いください:</p>
 
-<p class="questionlink"><a href="#filenotfound">アップロードしたファイルへアクセスまたは閲覧するときに、いつも「File not Found」というメッセージが表示されます。</a></p>
+<p class="normaltext">該当する答えを閲覧する時は下記のリンクをお使いください:</p>
+
+<p class="questionlink"><a href="#filenotfound">アップロードしたファイルへアクセスまたは閲覧する時に、いつも「File not Found」というメッセージが表示されます。</a></p>
 
 <p class="questionlink"><a href="#php">PHP - どのバージョンがインストールされていますか?</a></p>
 
-<p class="questionlink"><a href="#blankpages">なぜ、すべてのページが真っ白ですか?</a></p>
+<p class="questionlink"><a href="#blankpages">なぜ、全てのページが真っ白ですか?</a></p>
 
 <p class="questionlink"><a href="#errorgetstring">次のような致命的エラーが表示されます : call to undefined function: get_string()</a></p>
 
@@ -48,7 +48,7 @@ Moodleの機能に影響を及ぼすことがあります。
 
 <p class="questionlink"><a href="#loginsetting">ログインしてもログインリンクが変わりません。ログインして自由にサイトを閲覧できます。</a></p>
 
-<p class="questionlink"><a href="#resource1">リソースを追加するときにエラーメッセージが表示されます。</a></p>
+<p class="questionlink"><a href="#resource1">リソースを追加する時にエラーメッセージが表示されます。</a></p>
 
 <p class="questionlink"><a href="#noadmin">初期設定プロセスにおいて、管理者アカウントの作成を聞かれません!</a></p>
 
@@ -62,7 +62,8 @@ Moodleの機能に影響を及ぼすことがあります。
 
 <p class="questionlink">&nbsp;</p>
 
-<h3><a name="filenotfound"></a>アップロードしたファイルへアクセスまたは閲覧するときに、いつも「File not Found」というメッセージが表示されます。</h3>
+
+<h3><a name="filenotfound"></a>アップロードしたファイルへアクセスまたは閲覧する時に、いつも「File not Found」というメッセージが表示されます。</h3>
 
 <p class="answer">例えば: Not Found: The requested URL /moodle/file.php/2/myfile.jpg was not found on this server. と表示される場合。</p>
 
@@ -93,7 +94,7 @@ Apache 1では通常この設定がなされていますが、Apache 2では設定されていません。
 
 <p class="answer">&nbsp;</p>
 
-<h3><a name="blankpages"></a>なぜ、すべてのページが真っ白ですか?</h3> 
+<h3><a name="blankpages"></a>なぜ、全てのページが真っ白ですか?</h3> 
 
 <p class="answer">config.phpにあるdirroot変数の内容を確認してください。dirrootには絶対パスを使用する必要があります。例:</p>
 
@@ -154,6 +155,7 @@ HTMLページとして保存している可能性が考えられます。</p>
 
 <p class="answer">&nbsp;</p>
 
+
 <h3><a name="sessiontmp"></a>session_startに関するエラーメッセージが表示され続けます。</h3>
 
 <p class="answer">下記のようなエラーが表示される場合は:</p>
@@ -197,7 +199,7 @@ HTMLページとして保存している可能性が考えられます。</p>
 
 <p>$CFG-&gt;dirroot = "";</p></td></tr></tbody></table>
 
-<p class="answer">いくつかのサーバで発生する小さなバグだと思われます。実際のパスではなく、エラーチェックメカニズムにエラーの原因があります。これを修正するには、admin/index.phpで下記の行(66行目)を見つけて: </p>
+<p class="answer">いくつかのサーバで発生する小さなバグだと思われます。実際のパスでは無く、エラーチェックメカニズムにエラーの原因があります。これを修正するには、admin/index.phpで下記の行(66行目)を見つけて: </p>
 
 <p class="answercode">if ($dirroot != $CFG->dirroot) {</p>
 
@@ -213,7 +215,7 @@ HTMLページとして保存している可能性が考えられます。</p>
 
 <p class="answer">&nbsp;</p>
 
-<h3><a name="resource1"></a>リソースを追加するときにエラーメッセージが表示されます。</h3>
+<h3><a name="resource1"></a>リソースを追加する時にエラーメッセージが表示されます。</h3>
 
 <p class="answer">あなたはApacheを使用していると考えられます。その場合、config.phpの$CFG->wwwroot設定が実際のURLと異なっている可能性があります。
 また、管理画面にある詳細設定の"<b>secureforms</b>"を「No」にすることを試してみてください。</p>
@@ -224,7 +226,7 @@ HTMLページとして保存している可能性が考えられます。</p>
 
 <p class="answer">これは、Moodleバージョン1.0.9までの既知のバグです。現在は、メインコードおよびバージョン1.1において修正されています。</p>
 
-<p class="answer">これはすべての人に影響する訳ではなく、Moodleをインストールする際に他のプログラムによって書き出された「user」「admin」「teacher」
+<p class="answer">これは全ての人に影響する訳ではなく、Moodleをインストールする際に他のプログラムによって書き出された「user」「admin」「teacher」
 という名称のクッキーがブラウザ内にある場合に生じます。</p>
 
 <p class="answer">対処方法として、インストールの前にブラウザよりこれらのクッキーを削除する、別のブラウザを使う、moodle/admin/user.phpファイルの先頭近くに次の行を挿入する方法があります:</p>
@@ -237,10 +239,10 @@ HTMLページとして保存している可能性が考えられます。</p>
 
 <h3><a name="nologin"></a>全くログインできません - ログイン画面より先に進みません。</h3>
 
-<p class="answer">多くは、あなたのコンピュータ(Moodleサーバではなく)がリファラ情報を取り除くファイアーウォールを使用している場合に起こります。
+<p class="answer">多くは、あなたのコンピュータ(Moodleサーバでは無く)がリファラ情報を取り除くファイアーウォールを使用している場合に起こります。
 Norton firewall製品をMoodleが動作するように設定変更する場合の説明は<a href="http://service1.symantec.com/SUPPORT/nip.nsf/46f26a2d6dafb0a788256bc7005c3fa3/b9b47ad7eddd343b88256c6b006a85a8?OpenDocument&src=bar_sch_nam">こちら</a>をご覧ください。</p>
 
-<p class="answer">サーバの管理者は、管理画面の詳細設定にある「<b>secureforms</b>」を「No」にすることで、すべてのユーザのためにこの問題を解消することができます。</p>
+<p class="answer">サーバの管理者は、管理画面の詳細設定にある「<b>secureforms</b>」を「No」にすることで、全てのユーザのためにこの問題を解消することができます。</p>
 
 <p class="answer">別の可能性として、サーバにおいてセッションに関する設定が正しく行われていないことが挙げられます。http://yourserver/moodle/lib/session-test.php を実行することで、セッションの設定をテストすることができます。</p>
 
@@ -270,6 +272,7 @@ Norton firewall製品をMoodleが動作するように設定変更する場合の説明は<a href="http
 
 <p class="answercode">&nbsp;</p>
 
+
 <h3><a name="locale"></a>なぜ、Moodleサイトが正確に時間と日付を表示しないのですか?</h3>
 
 <p class="answer">各言語は、日付を正確に表示するために、特定の言語コード(<strong>ロケール</strong>コードと呼ばれます)を必要とします。
@@ -286,7 +289,7 @@ Norton firewall製品をMoodleが動作するように設定変更する場合の説明は<a href="http
 
 <h3><a name="cron"></a>内容を記載したメールがフォーラムより送信されません。</h3>
 
-<p class="answer">Moodleのフォーラム、課題より自動的にメールを送信させるには、cronを正しく設定する<strong>必要</strong>があります。
+<p class="answer">Moodleのフォーラム、日誌、課題より自動的にメールを送信させるには、cronを正しく設定する<strong>必要</strong>があります。
 同じプロセスで、登録未承認ユーザの削除や古い学生の登録抹消等の、多くのクリーンアップタスクを実行します。</p>
 
 <p class="answer">基本的に、スクリプトhttp://yoursite/admin/cron.phpを定期的に呼ぶ設定をする必要があります。<a href="./?file=install.html#cron">
@@ -305,7 +308,7 @@ Norton firewall製品をMoodleが動作するように設定変更する場合の説明は<a href="http
 
 <p align="right"><strong><em>このFAQの整備にご協力頂いたJohn Eyre氏に感謝します。</em></strong></p>
 
-<p align="center"><font size="1"><a href="." target="_top">Moodleドキュメンテーション</a></font></p>
+<p align="center"><font size="1"><a href="." target="_top">Moodle文書</a></font></p>
 
 <p align="center"><font size="1">Version: $Id: faq.html,v 1.6 2003/03/30 13:54:28 
 

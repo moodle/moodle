@@ -63,45 +63,26 @@
     //from backup format to destination site/course in order to mantain inter-activities
     //working in the backup/restore process
     function restore_decode_content_links($restore) {
+
+        global $CFG;
+
         $status = true;
 
-        if (!defined('RESTORE_SILENTLY')) {
-            echo "<ul>";
-        }
+        echo "<ul>";
         foreach ($restore->mods as $name => $info) {
             //If the module is being restored
             if ($info->restore == 1) {
                 //Check if the xxxx_decode_content_links_caller exists
                 $function_name = $name."_decode_content_links_caller";
                 if (function_exists($function_name)) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo "<li>".get_string ("from")." ".get_string("modulenameplural",$name);
-                        echo '</li>';
-                    }
+                    echo "<li>".get_string ("to")." ".get_string("modulenameplural",$name);
                     $status = $function_name($restore);
+                    echo '</li>';
                 }
             }
         }
-        if (!defined('RESTORE_SILENTLY')) {
-            echo "</ul>";
-        }
-        
-        // TODO: process all html text also in blocks too
-        
+        echo "</ul>";
         return $status;
-    }
-    
-    //This function is called from all xxxx_decode_content_links_caller(),
-    //its task is to ask all modules (maybe other linkable objects) to restore
-    //links to them.
-    function restore_decode_content_links_worker($content,$restore) {
-        foreach($restore->mods as $name => $info) {
-            $function_name = $name."_decode_content_links";
-            if (function_exists($function_name)) {
-                $content = $function_name($content,$restore);
-            }
-        }
-        return $content;
     }
 
     //This function converts all the wiki texts in the restored course
@@ -111,26 +92,20 @@
 
         $status = true;
 
-        if (!defined('RESTORE_SILENTLY')) {
-            echo "<ul>";
-        }
+        echo "<ul>";
         foreach ($restore->mods as $name => $info) {
             //If the module is being restored
             if ($info->restore == 1) {
                 //Check if the xxxx_restore_wiki2markdown exists
                 $function_name = $name."_restore_wiki2markdown";
                 if (function_exists($function_name)) {
+                    echo "<li>".get_string("modulenameplural",$name);
                     $status = $function_name($restore);
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo "<li>".get_string("modulenameplural",$name);
-                        echo '</li>';
-                    }
+                    echo '</li>';
                 }
             }
         }
-        if (!defined('RESTORE_SILENTLY')) {
-            echo "</ul>";
-        }
+        echo "</ul>";
         return $status;
     }
 
@@ -348,19 +323,6 @@
                     } else {
                         $tab[$elem][1] = get_string("included")." ".get_string("withoutuserdata");
                     }
-                    if (is_array($mod->instances) && count($mod->instances)) {
-                        foreach ($mod->instances as $instance) {
-                            if ($instance->backup) {
-                                $elem++;
-                                $tab[$elem][0] = $instance->name;
-                                if ($instance->userinfo == 'true') {
-                                    $tab[$elem][1] = get_string("included")." ".get_string("withuserdata");
-                                } else {
-                                    $tab[$elem][1] = get_string("included")." ".get_string("withoutuserdata");
-                                }
-                            }
-                        }
-                    }
                 }
                 $elem++;
             }
@@ -471,10 +433,9 @@
             }
             $currentfullname = $fullname.$suffixfull;
             $currentshortname = $shortname.$suffixshort;
-            $coursefull  = get_record("course","fullname",addslashes($currentfullname));
-            $courseshort = get_record("course","shortname",addslashes($currentshortname));
+            $course = get_record("course","fullname",addslashes($currentfullname));
             $counter++;
-        } while ($coursefull || $courseshort);
+        } while ($course);
 
         //New name = currentname
         $course_header->course_fullname = $currentfullname;
@@ -537,16 +498,11 @@
             //$course->showrecent = addslashes($course_header->course_showrecent);   INFO: This is out in 1.3
             $course->maxbytes = addslashes($course_header->course_maxbytes);
             $course->showreports = addslashes($course_header->course_showreports);
-            if (isset($course_header->course_groupmode)) {
-                $course->groupmode = addslashes($course_header->course_groupmode);
-            }
-            if (isset($course_header->course_groupmodeforce)) {
-                $course->groupmodeforce = addslashes($course_header->course_groupmodeforce);
-            }
+            $course->groupmode = addslashes($course_header->course_groupmode);
+            $course->groupmodeforce = addslashes($course_header->course_groupmodeforce);
             $course->lang = addslashes($course_header->course_lang);
             $course->theme = addslashes($course_header->course_theme);
             $course->cost = addslashes($course_header->course_cost);
-            $course->currency = addslashes($course_header->course_currency);
             $course->marker = addslashes($course_header->course_marker);
             $course->visible = addslashes($course_header->course_visible);
             $course->hiddensections = addslashes($course_header->course_hiddensections);
@@ -870,51 +826,45 @@
                     if (!empty($sect->mods)) {
                         //For each mod inside section
                         foreach ($sect->mods as $keym => $mod) {
-                            //Check if we've to restore this module (and instance) 
+                            //Check if we've to restore this module
                             if ($restore->mods[$mod->type]->restore) {
-                                if (!is_array($restore->mods[$mod->type]->instances)  // we don't care about per instance
-                                    || (array_key_exists($mod->instance,$restore->mods[$mod->type]->instances) 
-                                        && !empty($restore->mods[$mod->type]->instances[$mod->instance]->restore))) {
-                                    //Get the module id from modules
-                                    $module = get_record("modules","name",$mod->type);
-                                    if ($module) {
-                                        $course_module->course = $restore->course_id;
-                                        $course_module->module = $module->id;
-                                        $course_module->section = $newid;
-                                        $course_module->added = $mod->added;
-                                        $course_module->deleted = $mod->deleted;
-                                        $course_module->score = $mod->score;
-                                        $course_module->indent = $mod->indent;
-                                        $course_module->visible = $mod->visible;
-                                        if (isset($mod->groupmode)) {
-                                            $course_module->groupmode = $mod->groupmode;
-                                        }
-                                        $course_module->instance = 0;
-                                        //NOTE: The instance (new) is calculated and updated in db in the
-                                        //      final step of the restore. We don't know it yet.
-                                        //print_object($course_module);					//Debug
-                                        //Save it to db
-                                        $newidmod = insert_record("course_modules",$course_module); 
-                                        if ($newidmod) {
-                                            //save old and new module id
-                                            //In the info field, we save the original instance of the module
-                                            //to use it later
-                                            backup_putid ($restore->backup_unique_code,"course_modules",
-                                                          $keym,$newidmod,$mod->instance);
-                                        } else {
-                                            $status = false;
-                                        }
-                                        //Now, calculate the sequence field
-                                        if ($status) {
-                                            if ($sequence) {
-                                                $sequence .= ",".$newidmod;
-                                            } else {
-                                                $sequence = $newidmod;
-                                            }
-                                        }
+                                //Get the module id from modules
+                                $module = get_record("modules","name",$mod->type);
+                                if ($module) {
+                                    $course_module->course = $restore->course_id;
+                                    $course_module->module = $module->id;
+                                    $course_module->section = $newid;
+                                    $course_module->added = $mod->added;
+                                    $course_module->deleted = $mod->deleted;
+                                    $course_module->score = $mod->score;
+                                    $course_module->indent = $mod->indent;
+                                    $course_module->visible = $mod->visible;
+                                    $course_module->groupmode = $mod->groupmode;
+                                    $course_module->instance = 0;
+                                    //NOTE: The instance (new) is calculated and updated in db in the
+                                    //      final step of the restore. We don't know it yet.
+                                    //print_object($course_module);					//Debug
+                                    //Save it to db
+                                    $newidmod = insert_record("course_modules",$course_module); 
+                                    if ($newidmod) {
+                                        //save old and new module id
+                                        //In the info field, we save the original instance of the module
+                                        //to use it later
+                                        backup_putid ($restore->backup_unique_code,"course_modules",
+                                                                $keym,$newidmod,$mod->instance);
                                     } else {
                                         $status = false;
                                     }
+                                    //Now, calculate the sequence field
+                                    if ($status) {
+                                        if ($sequence) {
+                                            $sequence .= ",".$newidmod;
+                                        } else {
+                                            $sequence = $newidmod;
+                                        }
+                                    }
+                                } else {
+                                    $status = false;
                                 }
                             }
                         }
@@ -978,9 +928,7 @@
                         $status = insert_record ('course_meta',$dbmetacourse);
                     } else {
                         //Child course not found, notice!
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo '<ul><li>'.get_string ('childcoursenotfound').' ('.$child->id.'/'.$child->idnumber.'/'.$child->shortname.')</li></ul>';
-                        }
+                        echo '<ul><li>'.get_string ('childcoursenotfound').' ('.$child->id.'/'.$child->idnumber.'/'.$child->shortname.')</li></ul>';
                     }
                 }
                 //Now, recreate student enrolments...
@@ -1012,16 +960,12 @@
                             //Now, recreate student enrolments in parent course
                             sync_metacourse($dbcourse->id);
                         } else {
-                            //Parent course isn't metacourse, notice!
-                            if (!defined('RESTORE_SILENTLY')) {
-                                echo '<ul><li>'.get_string ('parentcoursenotmetacourse').' ('.$parent->id.'/'.$parent->idnumber.'/'.$parent->shortname.')</li></ul>';
-                            }
+                        //Parent course isn't metacourse, notice!
+                        echo '<ul><li>'.get_string ('parentcoursenotmetacourse').' ('.$parent->id.'/'.$parent->idnumber.'/'.$parent->shortname.')</li></ul>';
                         }
                     } else {
                         //Parent course not found, notice!
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo '<ul><li>'.get_string ('parentcoursenotfound').' ('.$parent->id.'/'.$parent->idnumber.'/'.$parent->shortname.')</li></ul>';
-                        }
+                        echo '<ul><li>'.get_string ('parentcoursenotfound').' ('.$parent->id.'/'.$parent->idnumber.'/'.$parent->shortname.')</li></ul>';
                     }
                 }
             }
@@ -1052,12 +996,9 @@
                 $preferencescount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_preferences');
                 $letterscount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_letter');
                 $categoriescount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_category');
-
                 if ($preferencescount || $letterscount || $categoriescount) {
                     //Start ul
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo '<ul>';
-                    }
+                    echo '<ul>';
                     //Number of records to get in every chunk
                     $recordset_size = 2;
                     //Flag to mark if we must continue
@@ -1066,9 +1007,7 @@
                     //If there aren't preferences, stop
                     if (!$preferencescount) {
                         $continue = false;
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo '<li>'.get_string('backupwithoutgradebook','grade').'</li>';
-                        }
+                        echo '<li>'.get_string('backupwithoutgradebook','grade').'</li>';
                     }
 
                     //If we are restoring to an existing course and it has advanced disabled, stop
@@ -1077,18 +1016,14 @@
                         if ($pref_rec = get_record('grade_preferences','courseid',$restore->course_id,'preference',0)) {
                             if ($pref_rec->value == 0) {
                                 $continue = false;
-                                if (!defined('RESTORE_SILENTLY')) {
-                                    echo '<li>'.get_string('respectingcurrentdata','grade').'</li>';
-                                }
+                                echo '<li>'.get_string('respectingcurrentdata','grade').'</li>';
                             }
                         }
                     }
 
                     //Process preferences
                     if ($preferencescount && $continue) {
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo '<li>'.get_string('preferences','grades').'</li>';
-                        }
+                        echo '<li>'.get_string('preferences','grades').'</li>';
                         $counter = 0;
                         while ($counter < $preferencescount) {
                             //Fetch recordset_size records in each iteration
@@ -1101,7 +1036,7 @@
                                 foreach ($recs as $rec) {
                                     //Get the full record from backup_ids
                                     $data = backup_getid($restore->backup_unique_code,'grade_preferences',$rec->old_id);
-                                    if ($data) {
+                                   if ($data) {
                                         //Now get completed xmlized object
                                         $info = $data->info;
                                         //traverse_xmlize($info);                            //Debug
@@ -1117,18 +1052,16 @@
                                         if (!$prerec = get_record('grade_preferences','courseid',$dbrec->courseid,'preference',$dbrec->preference)) {
                                             $status = insert_record('grade_preferences',$dbrec);
                                         }
-                                    }
-                                    //Increment counters
-                                    $counter++;
-                                    //Do some output
-                                    if ($counter % 1 == 0) {
-                                        if (!defined('RESTORE_SILENTLY')) {
+
+                                        //Do some output
+                                        $counter++;
+                                        if ($counter % 1 == 0) {
                                             echo ".";
                                             if ($counter % 20 == 0) {
                                                 echo "<br />";
                                             }
+                                            backup_flush(300);
                                         }
-                                        backup_flush(300);
                                     }
                                 }
                             }
@@ -1139,10 +1072,8 @@
                     //If destination course has letters, skip restoring letters
                     $hasletters = get_records('grade_letter', 'courseid', $restore->course_id);
 
-                    if ($letterscount && $continue && !$hasletters) {
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo '<li>'.get_string('letters','grades').'</li>';
-                        }
+                    if ($preferencescount && $continue && !$hasletters) {
+                        echo '<li>'.get_string('letters','grades').'</li>';
                         $counter = 0;
                         while ($counter < $letterscount) {
                             //Fetch recordset_size records in each iteration
@@ -1155,7 +1086,7 @@
                                 foreach ($recs as $rec) {
                                     //Get the full record from backup_ids
                                     $data = backup_getid($restore->backup_unique_code,'grade_letter',$rec->old_id);
-                                    if ($data) {
+                                   if ($data) {
                                         //Now get completed xmlized object
                                         $info = $data->info;
                                         //traverse_xmlize($info);                            //Debug
@@ -1169,18 +1100,16 @@
 
                                         //Structure is equal to db, insert record
                                         $status = insert_record('grade_letter',$dbrec);
-                                    }
-                                    //Increment counters
-                                    $counter++;
-                                    //Do some output
-                                    if ($counter % 1 == 0) {
-                                        if (!defined('RESTORE_SILENTLY')) {
+
+                                        //Do some output
+                                        $counter++;
+                                        if ($counter % 1 == 0) {
                                             echo ".";
                                             if ($counter % 20 == 0) {
                                                 echo "<br />";
                                             }
+                                            backup_flush(300);
                                         }
-                                        backup_flush(300);
                                     }
                                 }
                             }
@@ -1189,9 +1118,7 @@
 
                     //Process categories
                     if ($categoriescount && $continue) {
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo '<li>'.get_string('categories','grades').'</li>';
-                        }
+                        echo '<li>'.get_string('categories','grades').'</li>';
                         $counter = 0;
                         $countercat = 0;
                         while ($countercat < $categoriescount) {
@@ -1199,13 +1126,13 @@
                             $recs = get_records_select("backup_ids","table_name = 'grade_category' AND backup_code = '$restore->backup_unique_code'",
                                                        "old_id",
                                                        "old_id, old_id",
-                                                       $countercat,
+                                                       $counter,
                                                        $recordset_size);
                             if ($recs) {
                                 foreach ($recs as $rec) {
                                     //Get the full record from backup_ids
                                     $data = backup_getid($restore->backup_unique_code,'grade_category',$rec->old_id);
-                                    if ($data) {
+                                   if ($data) {
                                         //Now get completed xmlized object
                                         $info = $data->info;
                                         //traverse_xmlize($info);                            //Debug
@@ -1284,11 +1211,9 @@
                                                                 //Do some output
                                                                 $counter++;
                                                                 if ($counter % 20 == 0) {
-                                                                    if (!defined('RESTORE_SILENTLY')) {
-                                                                        echo ".";
-                                                                        if ($counter % 400 == 0) {
-                                                                            echo "<br />";
-                                                                        }
+                                                                    echo ".";
+                                                                    if ($counter % 400 == 0) {
+                                                                        echo "<br />";
                                                                     }
                                                                     backup_flush(300);
                                                                 }
@@ -1308,27 +1233,22 @@
                                                 $order++;
                                             }
                                         }
-                                    }
-                                    //Increment counters
-                                    $countercat++;
-                                    //Do some output
-                                    if ($countercat % 1 == 0) {
-                                        if (!defined('RESTORE_SILENTLY')) {
+                                        //Do some output
+                                        $countercat++;
+                                        if ($countercat % 1 == 0) {
                                             echo ".";
                                             if ($countercat % 20 == 0) {
                                                 echo "<br />";
                                             }
+                                            backup_flush(300);
                                         }
-                                        backup_flush(300);
                                     }
                                 }
                             }
                         }
                     }
-                    if (!defined('RESTORE_SILENTLY')) {
                     //End ul
-                        echo '</ul>';
-                    }
+                    echo '</ul>';
                 }
             }
         }                
@@ -1610,17 +1530,13 @@
                 $contactcount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'message_contacts');
                 if ($unreadcount || $readcount || $contactcount) {
                     //Start ul
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo '<ul>';
-                    }
+                    echo '<ul>';
                     //Number of records to get in every chunk
                     $recordset_size = 4;
 
                     //Process unread
                     if ($unreadcount) {
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo '<li>'.get_string('unreadmessages','message').'</li>';
-                        }
+                        echo '<li>'.get_string('unreadmessages','message').'</li>';
                         $counter = 0;
                         while ($counter < $unreadcount) {
                             //Fetch recordset_size records in each iteration
@@ -1668,11 +1584,9 @@
                                     //Do some output
                                     $counter++;
                                     if ($counter % 10 == 0) {
-                                        if (!defined('RESTORE_SILENTLY')) {
-                                            echo ".";
-                                            if ($counter % 200 == 0) {
-                                                echo "<br />";
-                                            }
+                                        echo ".";
+                                        if ($counter % 200 == 0) {
+                                            echo "<br />";
                                         }
                                         backup_flush(300);
                                     }
@@ -1683,9 +1597,7 @@
 
                     //Process read
                     if ($readcount) {
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo '<li>'.get_string('readmessages','message').'</li>';
-                        }
+                        echo '<li>'.get_string('readmessages','message').'</li>';
                         $counter = 0;
                         while ($counter < $readcount) {
                             //Fetch recordset_size records in each iteration
@@ -1735,11 +1647,9 @@
                                     //Do some output
                                     $counter++;
                                     if ($counter % 10 == 0) {
-                                        if (!defined('RESTORE_SILENTLY')) {
-                                            echo ".";
-                                            if ($counter % 200 == 0) {
-                                                echo "<br />";
-                                            }
+                                        echo ".";
+                                        if ($counter % 200 == 0) {
+                                            echo "<br />";
                                         }
                                         backup_flush(300);
                                     }
@@ -1750,9 +1660,7 @@
 
                     //Process contacts
                     if ($contactcount) {
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo '<li>'.strtolower(get_string('contacts','message')).'</li>';
-                        }
+                        echo '<li>'.strtolower(get_string('contacts','message')).'</li>';
                         $counter = 0;
                         while ($counter < $contactcount) {
                             //Fetch recordset_size records in each iteration
@@ -1796,11 +1704,9 @@
                                     //Do some output
                                     $counter++;
                                     if ($counter % 10 == 0) {
-                                        if (!defined('RESTORE_SILENTLY')) {
-                                            echo ".";
-                                            if ($counter % 200 == 0) {
-                                                echo "<br />";
-                                            }
+                                        echo ".";
+                                        if ($counter % 200 == 0) {
+                                            echo "<br />";
                                         }
                                         backup_flush(300);
                                     }
@@ -1808,10 +1714,8 @@
                             }
                         }
                     }
-                    if (!defined('RESTORE_SILENTLY')) {
-                        //End ul
-                        echo '</ul>';
-                    }
+                    //End ul
+                    echo '</ul>';
                 }
             }
         }
@@ -1998,7 +1902,7 @@
                 //Iterate over each group
                 foreach ($groups as $group) {
                     //Get record from backup_ids
-                    $data = backup_getid($restore->backup_unique_code,"groups",$group->id);
+                    $data = backup_getid($restore->backup_unique_code,"group",$group->id);
                     //Init variables
                     $create_group = false;
 
@@ -2097,13 +2001,12 @@
 
             //The structure is equal to the db, so insert the groups_members
             $newid = insert_record ("groups_members",$group_member);
+
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -2204,7 +2107,7 @@
                             }
  
                             //We have to recode the groupid field
-                            $group = backup_getid($restore->backup_unique_code,"groups",$eve->groupid);
+                            $group = backup_getid($restore->backup_unique_code,"group",$eve->groupid);
                             if ($group) {
                                 $eve->groupid = $group->new_id;
                             } else {
@@ -2260,9 +2163,7 @@
         $result = str_replace($search,$replace,$content);
 
         if ($result != $content && $CFG->debug>7) {                                  //Debug
-            if (!defined('RESTORE_SILENTLY')) {
-                echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';        //Debug
-            }
+            echo "<br /><hr />".$content."<br />changed to<br />".$result."<hr /><br />";        //Debug
         }                                                                            //Debug
 
         return $result;
@@ -2307,16 +2208,14 @@
                             //Only if destination doesn't exists
                             if (!file_exists($dest_dir."/".$data->new_id)) {
                                 $status = backup_copy_file($rootdir."/".$dir,
-                                              $dest_dir."/".$data->new_id,true);
+                                              $dest_dir."/".$data->new_id);
                                 $counter ++;
                             }
                             //Do some output
                             if ($counter % 2 == 0) {
-                                if (!defined('RESTORE_SILENTLY')) {
-                                    echo ".";
-                                    if ($counter % 40 == 0) {
-                                        echo "<br />";
-                                    }
+                                echo ".";
+                                if ($counter % 40 == 0) {
+                                echo "<br />";
                                 }
                                 backup_flush(300);
                             }
@@ -2365,16 +2264,14 @@
                     //If that group exists in backup_ids
                     if ($data) {
                         if (!file_exists($dest_dir."/".$data->new_id)) {
-                            $status = backup_copy_file($rootdir."/".$dir, $dest_dir."/".$data->new_id,true);
+                            $status = backup_copy_file($rootdir."/".$dir, $dest_dir."/".$data->new_id);
                             $counter ++;
                         }
                         //Do some output
                         if ($counter % 2 == 0) {
-                            if (!defined('RESTORE_SILENTLY')) {
-                                echo ".";
-                                if ($counter % 40 == 0) {
-                                    echo "<br />";
-                                }
+                            echo ".";
+                            if ($counter % 40 == 0) {
+                                echo "<br />";
                             }
                             backup_flush(300);
                         } 
@@ -2419,16 +2316,14 @@
                     //Only if destination file/dir doesn exists
                     if (!file_exists($dest_dir."/".$dir)) {
                         $status = backup_copy_file($rootdir."/".$dir,
-                                      $dest_dir."/".$dir,true);
+                                      $dest_dir."/".$dir);
                         $counter ++;
                     }
                     //Do some output
                     if ($counter % 2 == 0) {       
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo ".";
-                            if ($counter % 40 == 0) {       
-                                echo "<br />";
-                            }
+                        echo ".";
+                        if ($counter % 40 == 0) {       
+                        echo "<br />";
                         }
                         backup_flush(300);
                     }
@@ -2461,31 +2356,24 @@
             //in backup_ids->info will be the real info (serialized)
             $info = restore_read_xml_modules($restore,$xml_file);
         }
+
         //Now, if we have anything in info, we have to restore that mods
         //from backup_ids (calling every mod restore function)
         if ($info) {
             if ($info !== true) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo '<ul>';
-                }
+                echo '<ul>';
                 //Iterate over each module
                 foreach ($info as $mod) {
-                    if (!is_array($restore->mods[$mod->modtype]->instances)  // we don't care about per instance
-                        || (array_key_exists($mod->id,$restore->mods[$mod->modtype]->instances) 
-                            && !empty($restore->mods[$mod->modtype]->instances[$mod->id]->restore))) {
-                        $modrestore = $mod->modtype."_restore_mods";
-                        if (function_exists($modrestore)) {
-                            //print_object ($mod);                                                //Debug
-                            $status = $modrestore($mod,$restore);
-                        } else {
-                            //Something was wrong. Function should exist.
-                            $status = false;
-                        }
+                    $modrestore = $mod->modtype."_restore_mods";
+                    if (function_exists($modrestore)) {
+                        //print_object ($mod);                                                //Debug
+                        $status = $modrestore($mod,$restore);
+                    } else {
+                        //Something was wrong. Function should exist.
+                        $status = false;
                     }
                 }
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo '</ul>';
-                }
+                echo '</ul>';
             }
         } else {
             $status = false;
@@ -2584,11 +2472,9 @@
                         //Do some output
                         $counter++;
                         if ($counter % 10 == 0) {
-                            if (!defined('RESTORE_SILENTLY')) {
-                                echo ".";
-                                if ($counter % 200 == 0) {
-                                    echo "<br />";
-                                }
+                            echo ".";
+                            if ($counter % 200 == 0) {
+                                echo "<br />";
                             }
                             backup_flush(300);
                         }
@@ -2619,10 +2505,6 @@
             $log->info = $log->course;
             $toinsert = true;
             break;
-        case "guest":
-            $log->url = "view.php?id=".$log->course;
-            $toinsert = true;
-            break;
         case "user report":
             //recode the info field (it's the user id)
             $user = backup_getid($restore->backup_unique_code,"user",$log->info);
@@ -2630,7 +2512,7 @@
                 $log->info = $user->new_id;
                 //Now, extract the mode from the url field
                 $mode = substr(strrchr($log->url,"="),1);
-                $log->url = "user.php?id=".$log->course."&user=".$log->info."&mode=".$mode;
+                $log->url = "user.php?id=".$log->course."&amp;user=".$log->info."&amp;mode=".$mode;
                 $toinsert = true;
             }
             break;
@@ -2756,7 +2638,7 @@
             $user = backup_getid($restore->backup_unique_code,"user",$log->info);
             if ($user) {
                 $log->info = $user->new_id;
-                $log->url = "view.php?id=".$log->info."&course=".$log->course;
+                $log->url = "view.php?id=".$log->info."&amp;course=".$log->course;
                 $toinsert = true;
             }
             break;
@@ -2765,25 +2647,7 @@
             $user = backup_getid($restore->backup_unique_code,"user",$log->info);
             if ($user) {
                 $log->info = $user->new_id;
-                $log->url = "view.php?id=".$log->info."&course=".$log->course;
-                $toinsert = true;
-            }
-            break;
-        case "login":
-            //recode the info field (it's the user id)
-            $user = backup_getid($restore->backup_unique_code,"user",$log->info);
-            if ($user) {
-                $log->info = $user->new_id;
-                $log->url = "view.php?id=".$log->info."&course=".$log->course;
-                $toinsert = true;
-            }
-            break;
-        case "logout":
-            //recode the info field (it's the user id)
-            $user = backup_getid($restore->backup_unique_code,"user",$log->info);
-            if ($user) {
-                $log->info = $user->new_id;
-                $log->url = "view.php?id=".$log->info."&course=".$log->course;
+                $log->url = "view.php?id=".$log->info."&amp;course=".$log->course;
                 $toinsert = true;
             }
             break;
@@ -2800,7 +2664,7 @@
             $user = backup_getid($restore->backup_unique_code,"user",$userid);
             if ($user) {
                 $log->info = "";
-                $log->url = "view.php?id=".$user->new_id."&course=".$log->course;
+                $log->url = "view.php?id=".$user->new_id."&amp;course=".$log->course;
                 $toinsert = true;
             }
             break;
@@ -3304,23 +3168,6 @@
                                 break;
                         }
                     }
-                    if ($this->level == 7) {
-                        switch ($tagName) {
-                            case "ID":
-                                $this->info->tempId = $this->getContents();
-                                $this->info->mods[$this->info->tempName]->instances[$this->info->tempId]->id = $this->info->tempId;
-                                break;
-                            case "NAME":
-                                $this->info->mods[$this->info->tempName]->instances[$this->info->tempId]->name = $this->getContents();
-                                break;
-                            case "INCLUDED":
-                                $this->info->mods[$this->info->tempName]->instances[$this->info->tempId]->backup = $this->getContents();
-                                break;
-                            case "USERINFO":
-                                $this->info->mods[$this->info->tempName]->instances[$this->info->tempId]->userinfo = $this->getContents();
-                                break;
-                        }
-                    }
                 }
             }
 
@@ -3424,9 +3271,6 @@
                             break;
                         case "COST":
                             $this->info->course_cost = $this->getContents();
-                            break;
-                        case "CURRENCY":
-                            $this->info->course_currency = $this->getContents();
                             break;
                         case "MARKER":
                             $this->info->course_marker = $this->getContents();
@@ -3811,11 +3655,9 @@
 
                             //Do some output   
                             if ($this->counter % 10 == 0) {
-                                if (!defined('RESTORE_SILENTLY')) {
-                                    echo ".";
-                                    if ($this->counter % 200 == 0) {
-                                        echo "<br />";
-                                    }
+                                echo ".";
+                                if ($this->counter % 200 == 0) {
+                                echo "<br />";
                                 }
                                 backup_flush(300);
                             }
@@ -4249,7 +4091,7 @@
                     //Get id and from data
                     $group_id = $data["GROUP"]["#"]["ID"]["0"]["#"];
                     //Save to db
-                    $status = backup_putid($this->preferences->backup_unique_code,"groups",$group_id,
+                    $status = backup_putid($this->preferences->backup_unique_code,"group",$group_id,
                                      null,$data);
                     //Create returning info
                     $ret_info->id = $group_id;
@@ -4366,8 +4208,6 @@
                     unset($this->temp);
                 }
             }
-
-
 
             //Stop parsing if todo = MODULES and tagName = MODULES (en of the tag, of course)
             //Speed up a lot (avoid parse all)
@@ -4533,31 +4373,25 @@
         }
         //Get info from parser
         $info = $moodle_parser->info;
-
+        
         //Clear parser mem
         xml_parser_free($xml_parser);
 
-        if ($status && !empty($info)) {
+        if ($status && $info) {
             return $info;
         } else {
             return $status;
         }
     }
 
-    /**
-     * @param string $errorstr passed by reference, if silent is true,
-     * errorstr will be populated and this function will return false rather than calling error() or notify()
-     * @param boolean $noredirect (optional) if this is passed, this function will not print continue, or 
-     * redirect to the next step in the restore process, instead will return $backup_unique_code
-     */
-    function restore_precheck($id,$file,&$errorstr,$noredirect=false) {
+    function restore_precheck($id,$file,$silent=false) {
         
         global $CFG, $SESSION;
 
         //Prepend dataroot to variable to have the absolute path
         $file = $CFG->dataroot."/".$file;
         
-        if (!defined('RESTORE_SILENTLY')) {
+        if (empty($silent)) {
             //Start the main table
             echo "<table cellpadding=\"5\">";
             echo "<tr><td>";
@@ -4568,29 +4402,19 @@
 
         //Check the file exists 
         if (!is_file($file)) {
-            if (!defined('RESTORE_SILENTLY')) {
-                error ("File not exists ($file)");
-            } else {
-                $errorstr = "File not exists ($file)";
-                return false;
-            }
+            error ("File not exists ($file)");
         }
         
         //Check the file name ends with .zip
         if (!substr($file,-4) == ".zip") {
-            if (!defined('RESTORE_SILENTLY')) {
-                error ("File has an incorrect extension");
-            } else {
-                $errorstr = 'File has an incorrect extension';
-                return false;
-            }
+            error ("File has an incorrect extension");
         }
         
         //Now calculate the unique_code for this restore
         $backup_unique_code = time();
         
         //Now check and create the backup dir (if it doesn't exist)
-        if (!defined('RESTORE_SILENTLY')) {
+        if (empty($silent)) {
             echo "<li>".get_string("creatingtemporarystructures").'</li>';
         }
         $status = check_and_create_backup_dir($backup_unique_code);
@@ -4601,7 +4425,7 @@
         
         //Now delete old data and directories under dataroot/temp/backup
         if ($status) {   
-            if (!defined('RESTORE_SILENTLY')) {
+            if (empty($silent)) {
                 echo "<li>".get_string("deletingolddata").'</li>';
             }
             $status = backup_delete_old_data();
@@ -4609,56 +4433,39 @@
         
         //Now copy he zip file to dataroot/temp/backup/backup_unique_code
         if ($status) {
-            if (!defined('RESTORE_SILENTLY')) {
+            if (empty($silent)) {
                 echo "<li>".get_string("copyingzipfile").'</li>';
             }
             if (! $status = backup_copy_file($file,$CFG->dataroot."/temp/backup/".$backup_unique_code."/".basename($file))) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Error copying backup file. Invalid name or bad perms.");
-                } else {
-                    $errorstr = "Error copying backup file. Invalid name or bad perms";
-                    return false;
-                }
+                notify("Error copying backup file. Invalid name or bad perms.");
             }
         }
         
         //Now unzip the file
         if ($status) {
-            if (!defined('RESTORE_SILENTLY')) {
+            if (empty($silent)) {
                 echo "<li>".get_string("unzippingbackup").'</li>';
             }
             if (! $status = restore_unzip ($CFG->dataroot."/temp/backup/".$backup_unique_code."/".basename($file))) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Error unzipping backup file. Invalid zip file.");
-                } else {
-                    $errorstr = "Error unzipping backup file. Invalid zip file.";
-                    return false;
-                }
+                notify("Error unzipping backup file. Invalid zip file.");
             }
         }
 
         //Check for Blackboard backups and convert
         if ($status){
             require_once("$CFG->dirroot/backup/bb/restore_bb.php");
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("checkingforbbexport");
-            }
+            echo "<li>".get_string("checkingforbbexport");
             $status = blackboard_convert($CFG->dataroot."/temp/backup/".$backup_unique_code);
         }
         
         //Now check for the moodle.xml file
         if ($status) {
             $xml_file  = $CFG->dataroot."/temp/backup/".$backup_unique_code."/moodle.xml";
-            if (!defined('RESTORE_SILENTLY')) {
+            if (empty($silent)) {
                 echo "<li>".get_string("checkingbackup").'</li>';
             }
             if (! $status = restore_check_moodle_file ($xml_file)) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Error checking backup file. Invalid or corrupted.");
-                } else {
-                    $errorstr = "Error checking backup file. Invalid or corrupted.";
-                    return false;
-                }
+                notify("Error checking backup file. Invalid or corrupted.");
             }
         }
         
@@ -4667,7 +4474,7 @@
         
         //Now read the info tag (all)
         if ($status) {
-            if (!defined('RESTORE_SILENTLY')) {
+            if (empty($silent)) {
                 echo "<li>".get_string("readinginfofrombackup").'</li>';
             }
             //Reading info from file
@@ -4676,7 +4483,7 @@
             $course_header = restore_read_xml_course_header ($xml_file);
         }
         
-        if (!defined('RESTORE_SILENTLY')) {
+        if (empty($silent)) {
             //End the main ul
             echo "</ul>";
             
@@ -4698,14 +4505,10 @@
         //Now we print in other table, the backup and the course it contains info
         if ($info and $course_header and $status) {
             //First, the course info
-            if (!defined('RESTORE_SILENTLY')) {
-                $status = restore_print_course_header($course_header);
-            }
+            $status = restore_print_course_header($course_header);
             //Now, the backup info
             if ($status) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    $status = restore_print_info($info);
-                }
+                $status = restore_print_info($info);
             }
         }
         
@@ -4718,7 +4521,7 @@
         //Finally, a little form to continue
         //with some hidden fields
         if ($status) {
-            if (!defined('RESTORE_SILENTLY')) {
+            if (empty($silent)) {
                 echo "<br /><center>";
                 $hidden["backup_unique_code"] = $backup_unique_code;
                 $hidden["launch"]             = "form";
@@ -4728,21 +4531,12 @@
                 echo "</center>";
             }
             else {
-                if (empty($noredirect)) {
-                    redirect($CFG->wwwroot.'/backup/restore.php?backup_unique_code='.$backup_unique_code.'&launch=form&file='.$file.'&id='.$id);
-                } else {
-                    return $backup_unique_code;
-                }
+                redirect($CFG->wwwroot.'/backup/restore.php?backup_unique_code='.$backup_unique_code.'&launch=form&file='.$file.'&id='.$id);
             }
         }
         
         if (!$status) {
-            if (!defined('RESTORE_SILENTLY')) {
-                error ("An error has ocurred");
-            } else {
-                $errorstr = "An error has occured"; // helpful! :P
-                return false;
-            }
+            error ("An error has ocurred");
         }
         return true;
     }
@@ -4751,7 +4545,6 @@
         global $SESSION;
         $restore->backup_unique_code=$backup_unique_code;
         $restore->users = 2; // yuk
-        $restore->course_files = $SESSION->restore->restore_course_files;
         if ($allmods = get_records("modules")) {
             foreach ($allmods as $mod) {
                 $modname = $mod->name;
@@ -4762,7 +4555,6 @@
                 }
             }
         }
-        return true;
     }
 
     function backup_to_restore_array($backup,$k=0) {
@@ -4784,556 +4576,6 @@
             $restore = $backup;
         }
         return $restore;
-    }
-
-    /** 
-     * compatibility function
-     * checks for per-instance backups AND 
-     * older per-module backups
-     * and returns whether userdata has been selected.
-     */
-    function restore_userdata_selected($restore,$modname,$modid) {
-        // check first for per instance array
-        if (!empty($restore->mods[$modname]->instances)) { // supports per instance
-            return array_key_exists($modid,$restore->mods[$modname]->instances) 
-                && !empty($restore->mods[$modname]->instances[$modid]->userinfo);
-        }
-        return !empty($restore->mods[$modname]->userinfo);
-    }
-
-    function restore_execute(&$restore,$info,$course_header,&$errorstr) {
-        global $CFG;
-        $status = true;
-        //Checks for the required files/functions to restore every module
-        //and include them
-        if ($allmods = get_records("modules") ) {
-            foreach ($allmods as $mod) {
-                $modname = $mod->name;
-                $modfile = "$CFG->dirroot/mod/$modname/restorelib.php";
-                //If file exists and we have selected to restore that type of module
-                if ((file_exists($modfile)) and ($restore->mods[$modname]->restore)) {
-                    include_once($modfile);
-                }
-            }
-        }
-
-        if (!defined('RESTORE_SILENTLY')) {
-            //Start the main table
-            echo "<table cellpadding=\"5\">";
-            echo "<tr><td>";
-            
-            //Start the main ul
-            echo "<ul>";
-        }
-        
-        //Localtion of the xml file
-        $xml_file  = $CFG->dataroot."/temp/backup/".$restore->backup_unique_code."/moodle.xml";
-        
-        //If we've selected to restore into new course
-        //create it (course)
-        //Saving conversion id variables into backup_tables
-        if ($restore->restoreto == 2) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("creatingnewcourse");
-            }
-            $oldidnumber = $course_header->course_idnumber;
-            if (!$status = restore_create_new_course($restore,$course_header)) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Error while creating the new empty course.");
-                } else {
-                    $errorstr = "Error while creating the new empty course.";
-                    return false;
-                }
-            }
-            
-            //Print course fullname and shortname and category
-            if ($status) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo "<ul>";
-                    echo "<li>".$course_header->course_fullname." (".$course_header->course_shortname.")".'</li>';
-                    echo "<li>".get_string("category").": ".$course_header->category->name.'</li>';
-                    if (!empty($oldidnumber)) {
-                        echo "<li>".get_string("nomoreidnumber","moodle",$oldidnumber)."</li>";
-                    }
-                    echo "</ul></li>";
-                    //Put the destination course_id
-                }
-                $restore->course_id = $course_header->course_id;
-            }
-        } else {
-            $course = get_record("course","id",$restore->course_id);
-            if ($course) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo "<li>".get_string("usingexistingcourse"); 
-                    echo "<ul>";
-                    echo "<li>".get_string("from").": ".$course_header->course_fullname." (".$course_header->course_shortname.")".'</li>';
-                    echo "<li>".get_string("to").": ".$course->fullname." (".$course->shortname.")".'</li>';
-                    if (($restore->deleting)) {
-                        echo "<li>".get_string("deletingexistingcoursedata").'</li>';
-                    } else {
-                        echo "<li>".get_string("addingdatatoexisting").'</li>';
-                    }
-                    echo "</ul></li>";
-                }
-                //If we have selected to restore deleting, we do it now.
-                if ($restore->deleting) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo "<li>".get_string("deletingolddata").'</li>';
-                    }
-                    $status = remove_course_contents($restore->course_id,false) and 
-                        delete_dir_contents($CFG->dataroot."/".$restore->course_id,"backupdata");
-                    if ($status) {
-                        //Now , this situation is equivalent to the "restore to new course" one (we
-                        //have a course record and nothing more), so define it as "to new course"
-                        $restore->restoreto = 2;
-                    } else {
-                        if (!defined('RESTORE_SILENTLY')) {
-                            notify("An error occurred while deleting some of the course contents.");
-                        } else {
-                            $errrostr = "An error occurred while deleting some of the course contents.";
-                            return false;
-                        }
-                    }
-                }
-            } else {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Error opening existing course.");
-                    $status = false;
-                } else {
-                    $errorstr = "Error opening existing course.";
-                    return false;
-                }
-            }
-        }
-        
-        //Now create the course_sections and their associated course_modules
-        if ($status) {
-            //Into new course
-            if ($restore->restoreto == 2) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo "<li>".get_string("creatingsections").'</li>';
-                }
-                if (!$status = restore_create_sections($restore,$xml_file)) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        notify("Error creating sections in the existing course.");
-                    } else {
-                        $errorstr = "Error creating sections in the existing course.";
-                        return false;
-                    }
-                }
-                //Into existing course
-            } else if ($restore->restoreto == 0 or $restore->restoreto == 1) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo "<li>".get_string("checkingsections").'</li>';
-                }
-                if (!$status = restore_create_sections($restore,$xml_file)) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        notify("Error creating sections in the existing course.");
-                    } else {
-                        $errorstr = "Error creating sections in the existing course.";
-                        return false;
-                    } 
-                }
-                //Error
-            } else {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Neither a new course or an existing one was specified.");
-                    $status = false;
-                } else {
-                    $errorstr = "Neither a new course or an existing one was specified.";
-                    return false;
-                }
-            }
-        }
-
-        //Now create users as needed 
-        if ($status and ($restore->users == 0 or $restore->users == 1)) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("creatingusers")."<br />";
-            }
-            if (!$status = restore_create_users($restore,$xml_file)) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore users.");
-                } else {
-                    $errorstr = "Could not restore users.";
-                    return false;
-                }
-            }
-            //Now print info about the work done
-            if ($status) {
-                $recs = get_records_sql("select old_id, new_id from {$CFG->prefix}backup_ids
-                                     where backup_code = '$restore->backup_unique_code' and
-                                     table_name = 'user'");
-                //We've records
-                if ($recs) {
-                    $new_count = 0;
-                    $exists_count = 0;
-                    $student_count = 0;
-                    $teacher_count = 0;
-                    $counter = 0;
-                    //Iterate, filling counters
-                    foreach ($recs as $rec) {
-                        //Get full record, using backup_getids
-                        $record = backup_getid($restore->backup_unique_code,"user",$rec->old_id);
-                        if (strpos($record->info,"new") !== false) {
-                            $new_count++;
-                        } 
-                        if (strpos($record->info,"exists") !== false) {
-                            $exists_count++;
-                        }
-                        if (strpos($record->info,"student") !== false) {
-                            $student_count++;
-                        } else if (strpos($record->info,"teacher") !== false) {
-                            $teacher_count++;
-                        }
-                        //Do some output
-                        $counter++;
-                        if ($counter % 10 == 0) {
-                            if (!defined('RESTORE_SILENTLY')) {
-                                echo ".";
-                                if ($counter % 200 == 0) {
-                                    echo "<br />";
-                                }
-                            }
-                            backup_flush(300);
-                        }
-                    }
-                    if (!defined('RESTORE_SILENTLY')) {
-                        //Now print information gathered
-                        echo " (".get_string("new").": ".$new_count.", ".get_string("existing").": ".$exists_count.")";
-                        echo "<ul>";
-                        echo "<li>".get_string("students").": ".$student_count.'</li>';
-                        echo "<li>".get_string("teachers").": ".$teacher_count.'</li>';
-                        echo "</ul>";
-                    }
-                } else {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        notify("No users were found!");
-                    } // no need to return false here, it's recoverable.
-                }
-            }
-        }
-        
-        //Now create metacourse info
-        if ($status and $restore->metacourse) {
-            //Only to new courses!
-            if ($restore->restoreto == 2) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo "</li><li>".get_string("creatingmetacoursedata");
-                }
-                if (!$status = restore_create_metacourse($restore,$xml_file)) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        notify("Error creating metacourse in the course.");
-                    } else {
-                        $errorstr = "Error creating metacourse in the course.";
-                        return false;
-                    }
-                }
-            }
-        }
-        
-
-        //Now create categories and questions as needed (STEP1)
-        if ($status and ($restore->mods['quiz']->restore)) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "</li><li>".get_string("creatingcategoriesandquestions");
-                echo "<ul>";
-            }
-            if (!$status = restore_create_questions($restore,$xml_file)) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore categories and questions!");
-                } else {
-                    $errorstr = "Could not restore categories and questions!";
-                    return false;
-                }
-            }
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "</ul></li>";
-            }
-        }
-
-        //Now create user_files as needed
-        if ($status and ($restore->user_files)) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("copyinguserfiles");
-            }
-            if (!$status = restore_user_files($restore)) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore user files!");
-                } else {
-                    $errorstr = "Could not restore user files!";
-                    return false;
-                }
-            }
-            //If all is ok (and we have a counter)
-            if ($status and ($status !== true)) {
-                //Inform about user dirs created from backup
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo "<ul>";
-                    echo "<li>".get_string("userzones").": ".$status;
-                    echo "</li></ul>";
-                }
-            }
-        }
-
-        //Now create course files as needed
-        if ($status and ($restore->course_files)) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "</li><li>".get_string("copyingcoursefiles")."</li>";
-            }
-            if (!$status = restore_course_files($restore)) {
-                if (empty($status)) {
-                    notify("Could not restore course files!");
-                } else {
-                    $errorstr = "Could not restore course files!";
-                    return false;
-                }
-            }
-            //If all is ok (and we have a counter)
-            if ($status and ($status !== true)) {
-                //Inform about user dirs created from backup
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo "<ul>";
-                    echo "<li>".get_string("filesfolders").": ".$status;
-                    echo "</ul>";
-                }       
-            }
-        }
-
-        //Now create messages as needed
-        if ($status and ($restore->messages)) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("creatingmessagesinfo");
-            }
-            if (!$status = restore_create_messages($restore,$xml_file)) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore messages!");
-                } else {
-                    $errorstr = "Could not restore messages!";
-                    return false;
-                }
-            }
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "</li>";
-            }
-        }
-
-        //Now create scales as needed
-        if ($status) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("creatingscales").'</li>';
-            }
-            if (!$status = restore_create_scales($restore,$xml_file)) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore custom scales!");
-                } else {
-                    $errorstr = "Could not restore custom scales!";
-                    return false;
-                }
-            }
-        }
-
-        //Now create groups as needed
-        if ($status) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("creatinggroups").'</li>';
-            }
-            if (!$status = restore_create_groups($restore,$xml_file)) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore groups!");
-                } else {
-                    $errorstr = "Could not restore groups!";
-                    return false;
-                }
-            }
-        }
-        
-        //Now create events as needed
-        if ($status) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("creatingevents").'</li>';
-            }
-            if (!$status = restore_create_events($restore,$xml_file)) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore course events!");
-                } else {
-                    $errorstr = "Could not restore course events!";
-                    return false;
-                }
-            }
-        }
-
-        //Now create course modules as needed
-        if ($status) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("creatingcoursemodules");
-            } 
-            if (!$status = restore_create_modules($restore,$xml_file)) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore modules!");
-                } else {
-                    $errorstr = "Could not restore modules!";
-                    return false;
-                }
-            }
-        }
-
-        //Now create gradebook as needed -- AFTER modules!!!
-        if ($status) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("creatinggradebook");
-            } 
-            if (!$status = restore_create_gradebook($restore,$xml_file)) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore gradebook!");
-                } else {
-                    $errorstr = "Could not restore gradebook!";
-                    return false;
-                }
-            }
-        }
-
-        //Bring back the course blocks -- do it AFTER the modules!!!
-        if($status) {
-            //If we are deleting and bringing into a course or making a new course, same situation
-            if($restore->restoreto == 0 || $restore->restoreto == 2) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo '<li>'.get_string('creatingblocks').'</li>';
-                }
-                if (!$status = restore_create_blocks($restore, $info->backup_block_format, $course_header->blockinfo, $xml_file)) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        notify('Error while creating the course blocks');
-                    } else {
-                        $errorstr = "Error while creating the course blocks";
-                        return false;
-                    }
-                }
-            }
-        }
-
-        //Now create log entries as needed
-        if ($status and ($restore->logs)) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "</li><li>".get_string("creatinglogentries");
-            }
-            if (!$status = restore_create_logs($restore,$xml_file)) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not restore logs!");
-                } else {
-                    $errorstr = "Could not restore logs!";
-                    return false;
-                }
-            }
-        }    
-
-        //Now, if all is OK, adjust the instance field in course_modules !!
-        if ($status) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "</li><li>".get_string("checkinginstances").'</li>';
-            }
-            if (!$status = restore_check_instances($restore)) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not adjust instances in course_modules!");
-                } else {
-                    $errorstr = "Could not adjust instances in course_modules!";
-                    return false;
-                }
-            }
-        }
-
-        //Now, if all is OK, adjust activity events
-        if ($status) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("refreshingevents").'</li>';
-            }
-            if (!$status = restore_refresh_events($restore)) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not refresh events for activities!");
-                } else {
-                    $errorstr = "Could not refresh events for activities!";
-                    return false;
-                }
-            }
-        }
-
-        //Now, if all is OK, adjust inter-activity links
-        if ($status) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("decodinginternallinks");
-            }
-            if (!$status = restore_decode_content_links($restore)) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not refresh events for activities!");
-                } else {
-                    $errorstr = "Could not refresh events for activities!";
-                    return false;
-                }
-            }
-        }
-
-        //Now, with backup files prior to version 2005041100,
-        //convert all the wiki texts in the course to markdown
-        if ($status && $restore->backup_version < 2005041100) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("convertingwikitomarkdown");
-            }
-            if (!$status = restore_convert_wiki2markdown($restore)) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not convert wiki texts to markdown!");
-                } else {
-                    $errorstr = "Could not convert wiki texts to markdown!";
-                    return false;
-                }
-            }
-        }
-
-        //Now if all is OK, update:
-        //   - course modinfo field 
-        //   - categories table
-        //   - add user as teacher
-        if ($status) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "</li><li>".get_string("checkingcourse").'</li>';
-            } 
-            //modinfo field
-            rebuild_course_cache($restore->course_id);
-            //categories table
-            $course = get_record("course","id",$restore->course_id); 
-            fix_course_sortorder();
-            //Make the user a teacher if the course hasn't teachers (bug 2381)
-            if (!isadmin()) {
-                if (!$checktea = get_records('user_teachers','course', $restore->course_id)) {
-                    //Add the teacher to the course
-                    $status = add_teacher($USER->id, $restore->course_id);
-                }
-            }
-        }
-
-        //Cleanup temps (files and db)
-        if ($status) {
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("cleaningtempdata").'</li>';
-            }
-            if (!$status = clean_temp_data ($restore)) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    notify("Could not clean up temporary data from files and database");
-                } else {
-                    $errorstr = "Could not clean up temporary data from files and database";
-                    return false;
-                }
-            }
-        }
-
-        if (!defined('RESTORE_SILENTLY')) {
-            //End the main ul
-            echo "</ul>";
-            
-            //End the main table     
-            echo "</td></tr>";
-            echo "</table>";
-        }
-
-        return $status;
     }
 
 ?>

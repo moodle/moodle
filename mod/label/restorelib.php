@@ -43,9 +43,7 @@
             $newid = insert_record ("label",$label);
 
             //Do some output     
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","label")." \"".format_string(stripslashes($label->name),true)."\"</li>";
-            }
+            echo "<li>".get_string("modulename","label")." \"".format_string(stripslashes($label->name),true)."\"</li>";
             backup_flush(300);
 
             if ($newid) {
@@ -60,45 +58,6 @@
             $status = false;
         }
 
-        return $status;
-    }
-
-    function label_decode_content_links_caller($restore) {
-        global $CFG;
-        $status = true;
-
-        if ($labels = get_records_sql ("SELECT l.id, l.content
-                                   FROM {$CFG->prefix}label l
-                                   WHERE l.course = $restore->course_id")) {
-            $i = 0;   //Counter to send some output to the browser to avoid timeouts
-            foreach ($labels as $label) {
-                //Increment counter
-                $i++;
-                $content = $label->content;
-                $result = restore_decode_content_links_worker($content,$restore);
-
-                if ($result != $content) {
-                    //Update record
-                    $label->content = addslashes($result);
-                    $status = update_record("label", $label);
-                    if ($CFG->debug>7) {
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
-                        }
-                    }
-                }
-                //Do some output
-                if (($i+1) % 5 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 100 == 0) {
-                            echo "<br />";
-                        }
-                    }
-                    backup_flush(300);
-                }
-            }
-        }
         return $status;
     }
 
@@ -133,9 +92,7 @@
             }
             break;
         default:
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
-            }
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
             break;
         }
 

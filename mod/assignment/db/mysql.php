@@ -154,11 +154,6 @@ function assignment_upgrade($oldversion) {
         table_column('assignment', '', 'preventlate', 'integer', '2', 'unsigned', '0', 'not null', 'resubmit');
     }
 
-    if ($oldversion < 2005060100) {
-        include_once("$CFG->dirroot/mod/assignment/lib.php");
-        assignment_refresh_events();
-    }
-
 
 /// These lines ALWAYS need to be here at the end of this file.  Don't mess with them. :-)
     include_once("$CFG->dirroot/mod/assignment/lib.php");

@@ -57,7 +57,7 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
         return true;
     }
 
-    function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
+    function create_session_and_responses(&$question, &$state, $quiz, $attempt) {
         // Choose a random shortanswer question from the category:
         // We need to make sure that no question is used more than once in the
         // quiz. Therfore the following need to be excluded:
@@ -65,8 +65,8 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
         // 2. All random questions
         // 3. All questions that are already chosen by an other random question
         global $QUIZ_QTYPES;
-        if (!isset($cmoptions->questionsinuse)) {
-            $cmoptions->questionsinuse = $cmoptions->questions;
+        if (!isset($quiz->questionsinuse)) {
+            $quiz->questionsinuse = $quiz->questions;
         }
 
         if ($question->options->subcats) {
@@ -76,7 +76,7 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
             $categorylist = $question->category;
         }
 
-        $saquestions = $this->get_sa_candidates($categorylist, $cmoptions->questionsinuse);
+        $saquestions = $this->get_sa_candidates($categorylist, $quiz->questionsinuse);
 
         $count  = count($saquestions);
         $wanted = $question->options->choose;
@@ -131,23 +131,23 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
             }
 
             if (!$QUIZ_QTYPES[$wrappedquestion->qtype]
-             ->create_session_and_responses($wrappedquestion, $state, $cmoptions,
+             ->create_session_and_responses($wrappedquestion, $state, $quiz,
              $attempt)) {
                 return false;
             }
             $wrappedquestion->name_prefix = $question->name_prefix;
             $wrappedquestion->maxgrade    = $question->maxgrade;
-            $cmoptions->questionsinuse .= ",$wrappedquestion->id";
+            $quiz->questionsinuse .= ",$wrappedquestion->id";
             $state->options->subquestions[$key] = clone($wrappedquestion);
         }
 
         // Shuffle the answers if required
         $subquestionids = array_values(array_map(create_function('$val',
          'return $val->id;'), $state->options->subquestions));
-        if ($cmoptions->shuffleanswers) {
+        if ($quiz->shuffleanswers) {
            $subquestionids = swapshuffle($subquestionids);
         }
-
+        $state->options->order = $subquestionids;
         // Create empty responses
         foreach ($subquestionids as $val) {
             $state->responses[$val] = '';
@@ -172,6 +172,7 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
             $state->responses = array();
             foreach ($responses as $response) {
                 $state->responses[$response[0]] = $response[1];
+                $state->options->order[] = $response[0];
                 if (!$wrappedquestion = get_record('quiz_questions', 'id',
                  $response[0])) {
                     notify("Couldn't get question (id=$response[0])!");
@@ -182,20 +183,6 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
                     notify("Couldn't get question options (id=$response[0])!");
                     return false;
                 }
-
-                // Now we overwrite the $question->options->answers field to only
-                // *one* (the first) correct answer. This loop can be deleted to
-                // take all answers into account (i.e. put them all into the
-                // drop-down menu.
-                $foundcorrect = false;
-                foreach ($wrappedquestion->options->answers as $answer) {
-                    if ($foundcorrect || $answer->fraction != 1.0) {
-                        unset($wrappedquestion->options->answers[$answer->id]);
-                    } else if (!$foundcorrect) {
-                        $foundcorrect = true;
-                    }
-                }
-
                 if (!$QUIZ_QTYPES[$wrappedquestion->qtype]
                  ->restore_session_and_responses($wrappedquestion, $state)) {
                     notify("Couldn't restore session of question (id=$response[0])!");

@@ -12,9 +12,9 @@
 
 ////// DOCUMENTATION IN PHPDOC FORMAT FOR MOODLE GLOBALS AND COMMON OBJECT TYPES /////////////
 /**
- * $USER is a global instance of a typical $user record.
+ * This global variable is read in from the 'config' table.
  *
- * Items found in the user record:
+ * Some typical settings in the $CFG global:
  *  - $USER->emailstop - Does the user want email sent to them?
  *  - $USER->email - The user's email address.
  *  - $USER->id - The unique integer identified of this user in the 'user' table.
@@ -29,9 +29,9 @@
  */
 global $USER;
 /**
- * This global variable is read in from the 'config' table.
+ * $USER is a global instance of a typical $user record.
  *
- * Some typical settings in the $CFG global:
+ * Items found in the user record:
  *  - $CFG->wwwroot - Path to moodle index directory in url format.
  *  - $CFG->dataroot - Path to moodle index directory on server's filesystem.
  *  - $CFG->libroot  - Path to moodle's library folder on server's filesystem.
@@ -65,33 +65,9 @@ global $db;
  */
 global $THEME;
 
-/**
- * HTTPSPAGEREQUIRED is a global to define if the page being displayed must run under HTTPS. 
- * 
- * It's primary goal is to allow 100% HTTPS pages when $CFG->loginhttps is enabled. Default to false.
- * It's enabled only by the httpsrequired() function and used in some pages to update some URLs
-*/
-global $HTTPSPAGEREQUIRED;
-
-
-/// First try to detect some attacks on older buggy PHP versions
-    if (isset($_REQUEST['GLOBALS']) || isset($_COOKIE['GLOBALS']) || isset($_FILES['GLOBALS'])) {
-        die('Fatal: Illegal GLOBALS overwrite attempt detected!');
-    }
-
-
     if (!isset($CFG->wwwroot)) {
-        trigger_error('Fatal: $CFG->wwwroot is not configured! Exiting.');
         die;
     }
-
-/// Set httpswwwroot default value (this variable will replace $CFG->wwwroot
-/// inside some URLs used in HTTPSPAGEREQUIRED pages.
-    $CFG->httpswwwroot = $CFG->wwwroot;
-
-    $CFG->libdir   = $CFG->dirroot .'/lib';
-
-    require_once($CFG->libdir .'/setuplib.php');        // Functions that MUST be loaded first
 
 /// Time to start counting    
     init_performance_info();        
@@ -110,6 +86,7 @@ global $HTTPSPAGEREQUIRED;
 
 /// Connect to the database using adodb
 
+    $CFG->libdir   = $CFG->dirroot .'/lib';
 
     require_once($CFG->libdir .'/adodb/adodb.inc.php'); // Database access functions
 
@@ -143,15 +120,6 @@ global $HTTPSPAGEREQUIRED;
         die;
     }
 
-    /// Set the client/server and connection to utf8 if necessary
-    if ($dbconnected && $CFG->unicodedb) {
-        if ($db->databaseType == 'mysql') {
-            $db->Execute("SET NAMES 'utf8'");
-        } else if ($db->databaseType == 'postgres7') {
-            $db->Execute("SET NAMES 'utf8'");
-        }
-    }
-
     error_reporting(E_ALL);       // Show errors from now on.
 
     if (!isset($CFG->prefix)) {   // Just in case it isn't defined in config.php
@@ -167,8 +135,7 @@ global $HTTPSPAGEREQUIRED;
 
 
 /// Load up standard libraries
-    
-    require_once($CFG->libdir .'/textlib.class.php');   // Functions to handle multibyte strings
+
     require_once($CFG->libdir .'/weblib.php');          // Functions for producing HTML
     require_once($CFG->libdir .'/datalib.php');         // Functions for accessing databases
     require_once($CFG->libdir .'/moodlelib.php');       // Other general-purpose functions
@@ -180,7 +147,21 @@ global $HTTPSPAGEREQUIRED;
 
 
 /// Load up any configuration from the config table
-    $CFG = get_config();
+
+    if ($configs = get_records('config')) {
+        $CFG = (array)$CFG;
+        foreach ($configs as $config) {
+            if (!isset($CFG[$config->name])) {
+                $CFG[$config->name] = $config->value;
+            } else {
+                error_log("\$CFG->$config->name in config.php overrides database setting");
+            }
+        }
+
+        $CFG = (object)$CFG;
+        unset($configs);
+        unset($config);
+    }
 
 /// Turn on SQL logging if required
     if (!empty($CFG->logsql)) {
@@ -270,7 +251,6 @@ global $HTTPSPAGEREQUIRED;
 
 
 /// A hack to get around magic_quotes_gpc being turned off
-/// It is strongly recommended to enable "magic_quotes_gpc"!
 
     if (!ini_get_bool('magic_quotes_gpc') ) {
         function addslashes_deep($value) {
@@ -282,60 +262,21 @@ global $HTTPSPAGEREQUIRED;
         $_POST = array_map('addslashes_deep', $_POST);
         $_GET = array_map('addslashes_deep', $_GET);
         $_COOKIE = array_map('addslashes_deep', $_COOKIE);
-        $_REQUEST = array_map('addslashes_deep', $_REQUEST);
-        if (!empty($_SERVER['REQUEST_URI'])) {
-            $_SERVER['REQUEST_URI'] = addslashes($_SERVER['REQUEST_URI']);
-        }
-        if (!empty($_SERVER['QUERY_STRING'])) {
-            $_SERVER['QUERY_STRING'] = addslashes($_SERVER['QUERY_STRING']);
-        }
-        if (!empty($_SERVER['HTTP_REFERER'])) {
-            $_SERVER['HTTP_REFERER'] = addslashes($_SERVER['HTTP_REFERER']);
-        }
-       if (!empty($_SERVER['PATH_INFO'])) {
-            $_SERVER['PATH_INFO'] = addslashes($_SERVER['PATH_INFO']);
-        }
-        if (!empty($_SERVER['PHP_SELF'])) {
-            $_SERVER['PHP_SELF'] = addslashes($_SERVER['PHP_SELF']);
-        }
-        if (!empty($_SERVER['PATH_TRANSLATED'])) {
-            $_SERVER['PATH_TRANSLATED'] = addslashes($_SERVER['PATH_TRANSLATED']);
-        }
     }
 
 
 /// The following is a hack to get around the problem of PHP installations
 /// that have "register_globals" turned off (default since PHP 4.1.0).
-/// This hack will be removed in 1.6.
-/// It is strongly recommended to disable "register_globals"!
-/// $CFG->disableglobalshack=true in config.php will override this (for dev testing)
+/// Eventually I'll go through and upgrade all the code to make this unnecessary
 
-    if (empty($CFG->disableglobalshack)) {
-        if (!empty($CFG->detect_unchecked_vars)) {
-            global $UNCHECKED_VARS;
-            $UNCHECKED_VARS->url = $_SERVER['PHP_SELF'];
-            $UNCHECKED_VARS->vars = array();
-        }
-    
-        if (isset($_GET)) {
-            extract($_GET, EXTR_SKIP);    // Skip existing variables, ie CFG
-            if (!empty($CFG->detect_unchecked_vars)) {
-                foreach ($_GET as $key => $val) {
-                    $UNCHECKED_VARS->vars[$key]=$val;
-                }
-            }
-        }
-        if (isset($_POST)) {
-            extract($_POST, EXTR_SKIP);   // Skip existing variables, ie CFG
-            if (!empty($CFG->detect_unchecked_vars)) {
-                foreach ($_POST as $key => $val) {
-                    $UNCHECKED_VARS->vars[$key]=$val;
-                }
-            }
-        }
-        if (isset($_SERVER)) {
-            extract($_SERVER);
-        }
+    if (isset($_GET)) {
+        extract($_GET, EXTR_SKIP);    // Skip existing variables, ie CFG
+    }
+    if (isset($_POST)) {
+        extract($_POST, EXTR_SKIP);   // Skip existing variables, ie CFG
+    }
+    if (isset($_SERVER)) {
+        extract($_SERVER);
     }
 
 
@@ -343,24 +284,9 @@ global $HTTPSPAGEREQUIRED;
 
     class object {};
 
-    //discard session ID from POST, GET and globals to tighten security,
-    //this session fixation prevention can not be used in cookieless mode
-    if (empty($CFG->usesid)) {
-        unset(${'MoodleSession'.$CFG->sessioncookie});
-        unset($_GET['MoodleSession'.$CFG->sessioncookie]);
-        unset($_POST['MoodleSession'.$CFG->sessioncookie]);
-    }
-    //compatibility hack for Moodle Cron, cookies not deleted, but set to "deleted"
-    if (!empty($_COOKIE['MoodleSession'.$CFG->sessioncookie]) && $_COOKIE['MoodleSession'.$CFG->sessioncookie] == "deleted") {
-        unset($_COOKIE['MoodleSession'.$CFG->sessioncookie]);
-    }
-    if (!empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie]) && $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] == "deleted") {
-        unset($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie]);
-    }
-    if (!empty($CFG->usesid) && empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
-        require_once("$CFG->dirroot/lib/cookieless.php");
-        sid_start_ob();
-    }
+    unset(${'MoodleSession'.$CFG->sessioncookie});
+    unset($_GET['MoodleSession'.$CFG->sessioncookie]);
+    unset($_POST['MoodleSession'.$CFG->sessioncookie]);
 
     if (!isset($nomoodlecookie)) {
         session_name('MoodleSession'.$CFG->sessioncookie);
@@ -368,11 +294,12 @@ global $HTTPSPAGEREQUIRED;
         if (! isset($_SESSION['SESSION'])) {
             $_SESSION['SESSION'] = new object;
             $_SESSION['SESSION']->session_test = random_string(10);
-            if (!empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie])) {
-                $_SESSION['SESSION']->has_timed_out = true;
+            if (empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie])) {
+                setcookie('MoodleSessionTest'.$CFG->sessioncookie, $_SESSION['SESSION']->session_test, 0, '/');
+                $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] = $_SESSION['SESSION']->session_test;
+            } else {
+                $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] = 'error!!';
             }
-            setcookie('MoodleSessionTest'.$CFG->sessioncookie, $_SESSION['SESSION']->session_test, 0, '/');
-            $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] = $_SESSION['SESSION']->session_test;
         }
         if (! isset($_SESSION['USER']))    {
             $_SESSION['USER']    = new object;
@@ -417,20 +344,17 @@ global $HTTPSPAGEREQUIRED;
     }
 
     if (!isset($CFG->theme)) {
-        $CFG->theme = 'standardwhite';
+        $CFG->theme = 'standard';
     }
 
     theme_setup();  // Sets up theme global variables
 
-/// now do a session test to prevent random user switching - observed on some PHP/Apache combinations,
-/// disable checks when working in cookieless mode
-    if (empty($CFG->usesid) || !empty($_COOKIE['MoodleSession'.$CFG->sessioncookie])) {
-        if ($SESSION != NULL) {
-            if (empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie])) {
-                report_session_error();
-            } else if (isset($SESSION->session_test) && $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] != $SESSION->session_test) {
-                report_session_error();
-            }
+/// now do a session test to prevent random user switching
+    if ($SESSION != NULL) {
+        if (empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie])) {
+            report_session_error();
+        } else if ($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] != $SESSION->session_test) {
+            report_session_error();
         }
     }
 
@@ -443,14 +367,13 @@ global $HTTPSPAGEREQUIRED;
 /// majority of cases), use the stored locale specified by admin.
 
     if (isset($_GET['lang'])) {
-        if (!detect_munged_arguments($lang, 0) and (file_exists($CFG->dataroot .'/lang/'. $lang) or 
-                                                    file_exists($CFG->dirroot .'/lang/'. $lang))) {
+        if (!detect_munged_arguments($lang, 0) and file_exists($CFG->dirroot .'/lang/'. $lang)) {
             $SESSION->lang = $lang;
             $SESSION->encoding = get_string('thischarset');
         }
     }
     if (empty($CFG->lang)) {
-        $CFG->lang = !empty($CFG->unicodedb) ? 'en_utf8' : 'en';
+        $CFG->lang = "en";
     }
 
     moodle_setlocale();
@@ -467,8 +390,6 @@ global $HTTPSPAGEREQUIRED;
             }
             if (empty($_SESSION['USER']) and !empty($_SERVER['HTTP_REFERER'])) {
                 if (strpos($_SERVER['HTTP_REFERER'], 'google') !== false ) {
-                    $USER = guest_user();
-                } else if (strpos($_SERVER['HTTP_REFERER'], 'altavista') !== false ) {
                     $USER = guest_user();
                 }
             }
@@ -491,41 +412,47 @@ global $HTTPSPAGEREQUIRED;
 /// Apache log intergration. In apache conf file one can use ${MOODULEUSER}n in
 /// LogFormat to get the current logged in username in moodle.
     if ($USER && function_exists('apache_note') && !empty($CFG->apacheloguser)) {
-        $apachelog_username = clean_filename($USER->username);
-        $apachelog_name = clean_filename($USER->firstname. " ".$USER->lastname);
-        $apachelog_userid = $USER->id;
-        if (isset($USER->realuser)) {
-            if ($realuser = get_record('user', 'id', $USER->realuser)) {
-                $apachelog_username = clean_filename($realuser->username." as ".$apachelog_username);
-                $apachelog_name = clean_filename($realuser->firstname." ".$realuser->lastname ." as ".$apachelog_name);
-                $apachelog_userid = clean_filename($realuser->id." as ".$apachelog_userid);
-            }
-        }
         switch ($CFG->apacheloguser) {
             case 3:
-                $logname = $apachelog_username;
+                $logname = clean_filename($USER->username);
                 break;
             case 2:
-                $logname = $apachelog_name;
+                $logname = clean_filename($USER->firstname." ".$USER->lastname);
                 break;
             case 1:
             default:
-                $logname = $apachelog_userid;
+                $logname = $USER->id;
                 break;
         }
         apache_note('MOODLEUSER', $logname);
     }
 
-/// Adjust ALLOWED_TAGS
-    adjust_allowed_tags();
+/***
+ *** init_performance_info() {
+ ***
+ *** Initializes our performance info early.
+ *** 
+ *** Pairs up with get_performance_info() which is actually
+ *** in moodlelib.php. This function is here so that we can 
+ *** call it before all the libs are pulled in. 
+ ***
+ **/
+function init_performance_info() {
 
+    global $PERF;
 
-/// Use a custom script replacement if one exists
-    if (!empty($CFG->customscripts)) {
-        if (($customscript = custom_script_path()) !== false) {
-            require ($customscript);
+    $PERF = new Object;
+    $PERF->dbqueries = 0;   
+    $PERF->logwrites = 0;
+    if (function_exists('microtime')) {
+        $PERF->starttime = microtime();
         }
+    if (function_exists('memory_get_usage')) {
+        $PERF->startmemory = memory_get_usage();
     }
-
+    if (function_exists('posix_times')) {
+        $PERF->startposixtimes = posix_times();  
+    }
+}
 
 ?>

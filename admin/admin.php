@@ -5,9 +5,9 @@
     
     define("MAX_USERS_PER_PAGE", 50);
 
-    $add = optional_param('add', "", PARAM_ALPHA);
-    $remove = optional_param('remove', '', PARAM_ALPHA);
-    $search = optional_param('search', '', PARAM_ALPHA);
+    optional_variable($add, "");
+    optional_variable($remove, "");
+    optional_variable($search, "");
 
     if (! $site = get_site()) {
         redirect("$CFG->wwwroot/$CFG->admin/index.php");

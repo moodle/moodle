@@ -40,9 +40,13 @@ a.dimmed:visited {
 a:hover {
   color:#F00
 }
-a.autolink {
-  background-color:#FFEDCE;
-  border-bottom:1px solid #A74;
+a.autolink:link,
+a.autolink:visited {
+  color:#000;
+  background-color:transparent
+}
+a.autolink.glossary:hover {
+  cursor:help
 }
 body {
   background-color:#FFF
@@ -354,7 +358,7 @@ table.minicalendar {
 }
 #calendar .today,
 .minicalendar .today {
-  border-color:#DDD !important
+  border-color:#000 !important
 }
 .cal_popup_fg {
   background-color:#FFF
@@ -436,15 +440,6 @@ table.minicalendar {
 }
 #course-user .logtable .r1 {
   background-color:#DFDFDF
-}
-#course-view .section.hidden *,
-#course-view .section.hidden .content,
-#course-view .section.hidden .side {
-  border-color:#EEE;
-  color:#AAA
-}
-#course-view .section.hidden .left {
-  background-color:#EEE
 }
 
 /***
@@ -580,9 +575,10 @@ table.message_search_results td {
  *** Modules:Glossary
  ***/
  
-.mod-glossary #content {
- background-color:#F9FAFA
-}
+ .mod-glossary #content {
+   background-color:#F9FAFA
+ }
+
 .entryboxheader {
   border-color:#BBB
 }
@@ -591,8 +587,7 @@ table.message_search_results td {
   background-color:#FFF
 }
 .glossarypost {
-  border-color:#DDD;
-  background-color:#FFF
+  border-color:#DDD
 }
 .glossarypost .entryheader,
 .glossarypost .entryapproval,

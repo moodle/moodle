@@ -15,7 +15,7 @@ function glossary_show_entry_faq($course, $cm, $glossary, $entry, $mode="", $hoo
         glossary_print_entry_concept($entry);
         echo '</span><br />';
 
-        echo '<span class="time">('.get_string('lastedited').': '.
+        echo '<span class="author">('.get_string('lastedited').': '.
              userdate($entry->timemodified).')</span>';
         echo '</td>';
         echo '<td class="entryattachment">';

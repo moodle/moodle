@@ -4,20 +4,21 @@
     require_once("lib.php");
     require_once("$CFG->libdir/rsslib.php");
 
-    $id = optional_param('id', 0, PARAM_INT);           // Course Module ID
-    $g  = optional_param('g', 0, PARAM_INT);            // Glossary ID
+    optional_variable($id);           // Course Module ID
+    optional_variable($g);            // Glossary ID
 
-    $tab  = optional_param('tab', GLOSSARY_NO_VIEW, PARAM_ALPHA);    // browsing entries by categories?
-    $displayformat = optional_param('displayformat',-1, PARAM_INT);  // override of the glossary display format
+    optional_variable($tab,GLOSSARY_NO_VIEW); // browsing entries by categories?
 
-    $mode       = optional_param('mode', 'approval', PARAM_ALPHA);   // term entry cat date letter search author approval
-    $hook       = optional_param('hook', 'ALL', PARAM_CLEAN);        // the term, entry, cat, etc... to look for based on mode
-    $fullsearch = optional_param('fullsearch', 0,PARAM_INT);         // full search (concept and definition) when searching?
-    $sortkey    = optional_param('sortkey', 'CREATION', PARAM_ALPHA);// Sorted view: CREATION | UPDATE | FIRSTNAME | LASTNAME...
-    $sortorder  = optional_param('sortorder', 'ASC', PARAM_ALPHA);   // it defines the order of the sorting (ASC or DESC)
-    $offset     = optional_param('offset', 0,PARAM_INT);             // entries to bypass (for paging purposes)
-    $page       = optional_param('page', 0,PARAM_INT);               // Page to show (for paging purposes)
-    $show       = optional_param('show', '', PARAM_ALPHA);           // [ concept | alias ] => mode=term hook=$show
+    optional_variable($displayformat,-1);  // override of the glossary display format
+
+    $mode       = optional_param('mode');        // term entry cat date letter search author approval
+    $hook       = optional_param('hook');        // the term, entry, cat, etc... to look for based on mode
+    $fullsearch = optional_param('fullsearch',0);// full search (concept and definition) when searching?
+    $sortkey    = optional_param('sortkey');     // Sorted view: CREATION | UPDATE | FIRSTNAME | LASTNAME...
+    $sortorder  = optional_param('sortorder');   // it defines the order of the sorting (ASC or DESC)
+    $offset     = optional_param('offset',0,PARAM_INT);    // entries to bypass (for paging purpouses)
+    $page       = optional_param('page',0,PARAM_INT);      // Page to show (for paging purpouses)
+    $show       = optional_param('show');        // [ concept | alias ] => mode=term hook=$show
 
     if (!empty($id)) {
         if (! $cm = get_record("course_modules", "id", $id)) {
@@ -47,9 +48,6 @@
     if ($CFG->forcelogin) {
         require_login();
     }
-
-/// Loading the textlib singleton instance. We are going to need it.
-    $textlib = textlib_get_instance();
 
 /// redirecting if adding a new entry
     if ($tab == GLOSSARY_ADDENTRY_VIEW ) {
@@ -126,9 +124,15 @@
     case 'search': /// looking for terms containing certain word(s)
         $tab = GLOSSARY_STANDARD_VIEW;
 
-        //Clean a bit the search string
-        $hook = trim(strip_tags($hook));
+        $searchterms = trim(strip_tags($hook));
 
+        $searchterms = explode(' ', $searchterms); // Search for words independently
+        foreach ($searchterms as $key => $searchterm) {
+            if (strlen($searchterm) < 2) {
+                unset($searchterms[$key]);
+            }
+        }
+        $hook = trim(implode(' ', $searchterms));
     break;
 
     case 'entry':  /// Looking for a certain entry id
@@ -254,7 +258,7 @@
 
     echo '<input type="submit" value="'.$strsearch.'" name="searchbutton" /> ';
     if ($mode == 'search') {
-        echo '<input type="text" name="hook" size="20" value="'.s($hook).'" alt="'.$strsearch.'" /> ';
+        echo '<input type="text" name="hook" size="20" value="'.$hook.'" alt="'.$strsearch.'" /> ';
     } else {
         echo '<input type="text" name="hook" size="20" value="" alt="'.$strsearch.'" /> ';
     }
@@ -284,14 +288,7 @@
 
     if ($allentries) {
 
-        //Decide if we must show the ALL link in the pagebar
-        $specialtext = '';
-        if ($glossary->showall) {
-            $specialtext = get_string("allentries","glossary");
-        }
-
-        //Build paging bar
-        $paging = glossary_get_paging_bar($count, $page, $entriesbypage, "view.php?id=$id&mode=$mode&hook=$hook&sortkey=$sortkey&sortorder=$sortorder&fullsearch=$fullsearch&",9999,10,'&nbsp;&nbsp;', $specialtext, -1);
+        $paging = glossary_get_paging_bar($count, $page, $entriesbypage, "view.php?id=$id&mode=$mode&hook=$hook&sortkey=$sortkey&sortorder=$sortorder&fullsearch=$fullsearch&",9999,10,'&nbsp;&nbsp;', get_string("allentries","glossary"), -1);
 
         echo '<div class="paging">';
         echo $paging;
@@ -319,16 +316,15 @@
             /// Setting the pivot for the current entry
             $pivot = $entry->pivot;
             if ( !$fullpivot ) {
-                $pivot = $textlib->substr($pivot, 0, 1, current_charset());
-                $upperpivot = $textlib->strtoupper($pivot, current_charset());
+                $pivot = substr($pivot, 0, 1);
             }            
             
             /// if there's a group break
-            if ( $currentpivot != $upperpivot ) {
+            if ( $currentpivot != strtoupper($pivot) ) {
 
                 // print the group break if apply
                 if ( $printpivot )  {
-                    $currentpivot = $upperpivot;
+                    $currentpivot = strtoupper($pivot);
 
                     echo '<div>';
                     echo '<table cellspacing="0" class="categoryheader">';
@@ -357,22 +353,7 @@
 
             /// highlight the term if necessary
             if ($mode == 'search') {
-                //We have to strip any word starting by + and take out words starting by -
-                //to make highlight works properly
-                $searchterms = explode(' ', $hook);    // Search for words independently
-                foreach ($searchterms as $key => $searchterm) {
-                    if (preg_match('/^\-/',$searchterm)) {
-                        unset($searchterms[$key]);
-                    } else {
-                        $searchterms[$key] = preg_replace('/^\+/','',$searchterm);
-                    }
-                    //Avoid highlight of <2 len strings. It's a well known hilight limitation.
-                    if (strlen($searchterm) < 2) {
-                        unset($searchterms[$key]);
-                    }
-                }
-                $strippedsearch = implode(' ', $searchterms);    // Rebuild the string
-                $entry->highlight = $strippedsearch;
+                $entry->highlight = $hook;
             }
 
             /// and finally print the entry.

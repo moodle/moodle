@@ -1,14 +1,14 @@
 <?php //$Id$
-// Print an error page condition
-require_once('../../config.php');
 
-$error = required_param('error', PARAM_CLEAN);
+    require_once('../../config.php');
 
-print_header(get_string('error'), 
-              get_string('error'), 
-              get_string('error') );
+    require_variable($error);
 
-print clean_text(urldecode($error));
+    print_header(get_string('error'), 
+                 get_string('error'), 
+                 get_string('error') );
 
-print_footer();
+    print clean_text(urldecode($error));
+
+    print_footer();
 ?>

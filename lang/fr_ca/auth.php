@@ -69,6 +69,7 @@ $string['chooseauthmethod'] = 'Choisir une méthode d\'authentification';
 $string['guestloginbutton'] = 'Bouton pour visiteur anonyme';
 $string['instructions'] = 'Instructions';
 $string['md5'] = 'Cryptage MD5';
+$string['parentlanguage'] = 'fr';
 $string['plaintext'] = 'Texte en clair';
 $string['showguestlogin'] = 'Vous pouvez choisir de montrer ou non le bouton de connexion en tant que visiteur anonyme sur la page de connexion.';
 

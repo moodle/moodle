@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_rss_client.php - created with Moodle 1.6 development (2005101200)
+      // block_rss_client.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['addfeed'] = '¥Ë¥å¡¼¥¹¥Õ¥£¡¼¥ÉURL¤òÄÉ²Ã:';
@@ -8,13 +8,13 @@ $string['addnew'] = 'RSS¤ÎÄÉ²Ã';
 $string['choosefeedlabel'] = '¤³¤Î¥Ö¥í¥Ã¥¯¤Ç»ÈÍÑ¤¹¤ë¥Õ¥£¡¼¥É¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤:';
 $string['clientchannellink'] = '¥½¡¼¥¹¥µ¥¤¥È ...';
 $string['clientnumentries'] = '¥Ö¥í¥Ã¥¯¤ËÉ½¼¨¤¹¤ëRSS¥ê¥ó¥¯¿ô';
-$string['clientshowchannellinklabel'] = '¥ª¥ê¥¸¥Ê¥ë¥µ¥¤¥È ( ¥Á¥ã¥ó¥Í¥ë¥ê¥ó¥¯ ) ¤Î¥ê¥ó¥¯¤òÉ½¼¨¤·¤Þ¤¹¤«? ( ¥Ë¥å¡¼¥¹¥Õ¥£¡¼¥É¤Ë¥ê¥ó¥¯¤¬Äó¶¡¤µ¤ì¤Æ¤¤¤Ê¤¤¾ì¹ç¡¢¥ê¥ó¥¯¤ÏÉ½¼¨¤µ¤ì¤Þ¤»¤ó¤Î¤ÇÃí°Õ¤·¤Æ¤¯¤À¤µ¤¤¡£ )';
+$string['clientshowchannellinklabel'] = '¥ª¥ê¥¸¥Ê¥ë¥µ¥¤¥È ( ¥Á¥ã¥ó¥Í¥ë¥ê¥ó¥¯ ) ¤Î¥ê¥ó¥¯¤òÉ½¼¨¤·¤Þ¤¹¤«? ( ¥Ë¥å¡¼¥¹¥Õ¥£¡¼¥É¤Ë¥ê¥ó¥¯¤¬Äó¶¡¤µ¤ì¤Æ¤¤¤Ê¤¤¾ì¹ç¡¢¥ê¥ó¥¯¤ÏÉ½¼¨¤µ¤ì¤Þ¤»¤ó¡£ )';
 $string['clientshowimagelabel'] = 'ÍøÍÑ²ÄÇ½¤Ê¾ì¹ç¡¢¥Á¥ã¥ó¥Í¥ë¥¤¥á¡¼¥¸¤òÉ½¼¨¤¹¤ë:';
 $string['configblock'] = '¤³¤Î¥Ö¥í¥Ã¥¯¤ÎÀßÄê';
 $string['couldnotfindfeed'] = '»ØÄê¤µ¤ì¤¿ID¤Î¥Õ¥£¡¼¥É¤¬¸«¤Ä¤«¤ê¤Þ¤»¤ó¤Ç¤·¤¿¡£';
-$string['customtitlelabel'] = '¥«¥¹¥¿¥à¥¿¥¤¥È¥ë ( ¥Õ¥£¡¼¥É¤è¤êÄó¶¡¤µ¤ì¤¿¥¿¥¤¥È¥ë¤ò»ÈÍÑ¤¹¤ë¾ì¹ç¤Ï¶õÇò ):';
+$string['customtitlelabel'] = '¥«¥¹¥¿¥à¥¿¥¤¥È¥ë ( ¥Õ¥£¡¼¥É¤è¤êÄó¶¡¤µ¤ì¤¿¥¿¥¤¥È¥ë¤ò»ÈÍÑ¤¹¤ë¾ì¹ç¤Ï¶õÇò )';
 $string['deletefeedconfirm'] = 'ËÜÅö¤Ë¤³¤Î¥Õ¥£¡¼¥É¤òºï½ü¤·¤Æ¤â¤è¤í¤·¤¤¤Ç¤¹¤«?';
-$string['displaydescriptionlabel'] = '³Æ¥ê¥ó¥¯¤ÎÆâÍÆ¤òÉ½¼¨¤·¤Þ¤¹¤«?';
+$string['displaydescriptionlabel'] = '³Æ¥ê¥ó¥¯¤ÎÀâÌÀ¤òÉ½¼¨¤·¤Þ¤¹¤«?';
 $string['editfeeds'] = 'RSS/Atom¥Ë¥å¡¼¥¹¥Õ¥£¡¼¥É¤Î¹ØÆÉÅÐÏ¿¡¢²ò½ü¤ÎÊÔ½¸';
 $string['editnewsfeeds'] = '¥Ë¥å¡¼¥¹¥Õ¥£¡¼¥É¤ÎÊÔ½¸';
 $string['editrssblock'] = 'RSS¥Ø¥Ã¥É¥é¥¤¥ó¥Ö¥í¥Ã¥¯¤ÎÊÔ½¸';
@@ -27,13 +27,13 @@ $string['feedsconfigurenewinstance'] = 'RSS¥Õ¥£¡¼¥É¤ÎÉ½¼¨ÀßÄê¤ò¤¹¤ë¤Ë¤Ï¡¢¤³¤³¤ò¥
 $string['feedstitle'] = '¥ê¥â¡¼¥ÈRSS¥Õ¥£¡¼¥É';
 $string['feedupdated'] = '¥Ë¥å¡¼¥¹¥Õ¥£¡¼¥É¤¬¹¹¿·¤µ¤ì¤Þ¤·¤¿¡£';
 $string['findmorefeeds'] = '¤µ¤é¤ËRSS¥Õ¥£¡¼¥É¤òÃµ¤¹';
-$string['managefeeds'] = '¤¹¤Ù¤Æ¤Î¥Õ¥£¡¼¥É¤Î´ÉÍý';
+$string['managefeeds'] = 'Á´¤Æ¤Î¥Õ¥£¡¼¥É¤Î´ÉÍý';
 $string['nofeeds'] = '¤³¤Î¥µ¥¤¥È¤ÇÀßÄê¤µ¤ì¤¿RSS¥Õ¥£¡¼¥É¤Ï¤¢¤ê¤Þ¤»¤ó¡£';
 $string['pickfeed'] = '¥Ë¥å¡¼¥¹¥Õ¥£¡¼¥É¤ò¼èÆÀ';
 $string['remotenewsfeed'] = '¥ê¥â¡¼¥È¥Ë¥å¡¼¥¹¥Õ¥£¡¼¥É';
-$string['seeallfeeds'] = '¤¹¤Ù¤Æ¤Î¥Õ¥£¡¼¥É¤òÉ½¼¨';
+$string['seeallfeeds'] = 'Á´¤Æ¤Î¥Õ¥£¡¼¥É¤òÉ½¼¨';
 $string['shownumentrieslabel'] = '¥Ö¥í¥Ã¥¯¤ËÉ½¼¨¤¹¤ëºÇÂç¥¨¥ó¥È¥ê¿ô';
-$string['submitters'] = 'Ã¯¤¬¿·¤·¤¤RSS¥Õ¥£¡¼¥É¤òÀßÄê¤Ç¤­¤Þ¤¹¤«? ¤¢¤Ê¤¿¤Î¥µ¥¤¥È¤Î¤¹¤Ù¤Æ¤Î¥á¥ó¥Ð¡¼¤¬¼«Ê¬¤Î¥Ú¡¼¥¸¤Ë¥Õ¥£¡¼¥É¤òÄÉ²Ã¤¹¤ë¤³¤È¤¬¤Ç¤­¤Þ¤¹¡£';
+$string['submitters'] = 'Ã¯¤¬¿·¤·¤¤RSS¥Õ¥£¡¼¥É¤òÀßÄê¤Ç¤­¤Þ¤¹¤«? ¤¢¤Ê¤¿¤Î¥µ¥¤¥È¤ÎÁ´¤Æ¤Î¥á¥ó¥Ð¡¼¤¬¼«Ê¬¤Î¥Ú¡¼¥¸¤Ë¥Õ¥£¡¼¥É¤òÄÉ²Ã¤¹¤ë¤³¤È¤¬¤Ç¤­¤Þ¤¹¡£';
 $string['timeout'] = '¥¿¥¤¥à¥¢¥¦¥È';
 $string['timeoutdesc'] = 'RSS¥Õ¥£¡¼¥É¤Î¥­¥ã¥Ã¥·¥åÊÝÂ¸´ü´Ö ( Ê¬ )';
 $string['updatefeed'] = '¥Ë¥å¡¼¥¹¥Õ¥£¡¼¥ÉURL¤Î¹¹¿·:';

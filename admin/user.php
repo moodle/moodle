@@ -2,20 +2,20 @@
 
     require_once("../config.php");
 
-    $newuser = optional_param('newuser', "");
-    $delete = optional_param('delete', "");
-    $confirm = optional_param('confirm', "");
-    $confirmuser = optional_param('confirmuser', "");
-    $sort = optional_param('sort', "name", PARAM_ALPHA);
-    $dir = optional_param('dir', "ASC");
-    $page = optional_param('page', 0);
-    $search = optional_param('search', "");
+    optional_variable($newuser, "");
+    optional_variable($delete, "");
+    optional_variable($confirm, "");
+    optional_variable($confirmuser, "");
+    optional_variable($sort, "name");
+    optional_variable($dir, "ASC");
+    optional_variable($page, 0);
+    optional_variable($search, "");
     if (!empty($search)) {
         $search=trim($search);
     }
-    $lastinitial = optional_param('lastinitial', "");     // only show students with this last initial
-    $firstinitial = optional_param('firstinitial', "");    // only show students with this first initial
-    $perpage = optional_param('perpage', 30, PARAM_INT);       // how many per page
+    optional_variable($lastinitial, "");     // only show students with this last initial
+    optional_variable($firstinitial, "");    // only show students with this first initial
+    optional_variable($perpage, "30");       // how many per page
 
     unset($user);
     unset($admin);
@@ -226,7 +226,7 @@
         echo "<center><p align=\"center\">";
         echo get_string("firstname")." : ";
         if ($firstinitial) {
-            echo " <a href=\"user.php?sort=firstname&amp;dir=ASC&amp;".
+            echo " <a href=\"user.php?sort=firstname&amp;dir=ASC&".
                  "perpage=$perpage&amp;lastinitial=$lastinitial\">$strall</a> ";
         } else {
             echo " <b>$strall</b> ";
@@ -235,7 +235,7 @@
             if ($letter == $firstinitial) {
                 echo " <b>$letter</b> ";
             } else {
-                echo " <a href=\"user.php?sort=firstname&amp;dir=ASC&amp;".
+                echo " <a href=\"user.php?sort=firstname&amp;dir=ASC&".
                      "perpage=$perpage&amp;lastinitial=$lastinitial&amp;firstinitial=$letter\">$letter</a> ";
             }
         }
@@ -245,7 +245,7 @@
 
         echo get_string("lastname")." : ";
         if ($lastinitial) {
-            echo " <a href=\"user.php?sort=lastname&amp;dir=ASC&amp;".
+            echo " <a href=\"user.php?sort=lastname&amp;dir=ASC&".
                  "perpage=$perpage&amp;firstinitial=$firstinitial\">$strall</a> ";
         } else {
             echo " <b>$strall</b> ";
@@ -254,7 +254,7 @@
             if ($letter == $lastinitial) {
                 echo " <b>$letter</b> ";
             } else {
-                echo " <a href=\"user.php?sort=lastname&amp;dir=ASC&amp;".
+                echo " <a href=\"user.php?sort=lastname&amp;dir=ASC&".
                      "perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$letter\">$letter</a> ";
             }
         }
@@ -310,7 +310,7 @@
                 if ($user->id == $USER->id or $user->username == "changeme") {
                     $deletebutton = "";
                 } else {
-                    $deletebutton = "<a href=\"user.php?delete=$user->id&amp;sesskey=$USER->sesskey\">$strdelete</a>";
+                    $deletebutton = "<a href=\"user.php?delete=$user->id&sesskey=$USER->sesskey\">$strdelete</a>";
                 }
                 if ($user->lastaccess) {
                     $strlastaccess = format_time(time() - $user->lastaccess);
@@ -318,7 +318,7 @@
                     $strlastaccess = get_string("never");
                 }
                 if ($user->confirmed == 0) {
-                    $confirmbutton = "<a href=\"user.php?confirmuser=$user->id&amp;sesskey=$USER->sesskey\">" . get_string("confirm") . "</a>";
+                    $confirmbutton = "<a href=\"user.php?confirmuser=$user->id&sesskey=$USER->sesskey\">" . get_string("confirm") . "</a>";
                 } else {
                     $confirmbutton = "";
                 }
@@ -336,21 +336,21 @@
 
         echo "<table class=\"searchbox\" align=\"center\" cellpadding=\"10\"><tr><td>";
         echo "<form action=\"user.php\" method=\"get\">";
-        echo "<input type=\"text\" name=\"search\" value=\"$search\" size=\"20\" />";
-        echo "<input type=\"submit\" value=\"$strsearch\" />";
+        echo "<input type=\"text\" name=\"search\" value=\"$search\" size=\"20\">";
+        echo "<input type=\"submit\" value=\"$strsearch\">";
         if ($search) {
-            echo "<input type=\"button\" onclick=\"document.location='user.php';\" value=\"$strshowallusers\" />";
+            echo "<input type=\"button\" onclick=\"document.location='user.php';\" value=\"$strshowallusers\">";
         }
         echo "</form>";
         echo "</td></tr></table>";
-        print_heading("<a href=\"user.php?newuser=true&amp;sesskey=$USER->sesskey\">".get_string("addnewuser")."</a>");
+        print_heading("<a href=\"user.php?newuser=true&sesskey=$USER->sesskey\">".get_string("addnewuser")."</a>");
 
         if (!empty($table)) {
             print_table($table);
             print_paging_bar($usercount, $page, $perpage,
                              "user.php?sort=$sort&amp;dir=$dir&amp;perpage=$perpage".
                              "&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;search=$search&amp;");
-            print_heading("<a href=\"user.php?newuser=true&amp;sesskey=$USER->sesskey\">".get_string("addnewuser")."</a>");
+            print_heading("<a href=\"user.php?newuser=true&sesskey=$USER->sesskey\">".get_string("addnewuser")."</a>");
         }
 
 

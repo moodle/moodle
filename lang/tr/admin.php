@@ -1,25 +1,18 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.6 development (2005101200)
+      // admin.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['adminseesallevents'] = 'Yöneticiler bütün olaylarý görür';
 $string['adminseesownevents'] = 'Yöneticiler diðer kullanýcýlar gibidir';
-$string['availablelangs'] = 'Kullanýlabilir Dil Paketleri';
-$string['backgroundcolour'] = 'Arkaplan Rengi';
-$string['badwordsconfig'] = 'Kötü kelimeleri virgülle ayýrarak girin';
-$string['badwordsdefault'] = 'Belirtilen liste boþsa, dil paketinde geçen kelimeler kullanýlacaktýr.';
-$string['badwordslist'] = 'Kötü Kelime Listesi';
 $string['blockinstances'] = 'Kullaným';
 $string['blockmultiple'] = 'Çoklu';
 $string['cachetext'] = 'Yazý önbelleði ömrü';
 $string['calendarsettings'] = 'Takvim';
 $string['change'] = 'deðiþtir';
-$string['configallowcoursethemes'] = 'Etkinleþtirseniz, kurslarýn kendi temalarýný ayarlamasýna izin verirsiniz. Kurs temalarý diðer bütün temalarý (site, kullanýcý veya oturum temalarý) yok sayar.';
-$string['configallowunenroll'] = 'Bu seçenek \'Evet\' ise öðrenciler istedikleri zaman kendi kendilerine kurstan kayýtlarýný silebilirler. Diðer durumda buna izin verilmez ve sadece yöneticiler ve eðitimciler tarafýndan bu iþ kontrol edilir.';
-$string['configallowuserthemes'] = 'Etkinleþtirirseniz, kullanýcýlar kendi temalarýný ayarlayabileceklerdir. Kullanýcý temalarý site temasýný yok sayar (ancak kurs temasýný deðil).';
-$string['configclamactlikevirus'] = 'Dosya VÝRÜSLÜ olarak muamele görsün';
+$string['configallowunenroll'] = 'Bu seçenek \'Evet\' ise öðrenciler istedikleri zaman kendi kendilerine kurstan kayýtlarýný sildirebilirler. Diðer durumda buna izin verilmez ve sadece yöneticiler ve eðitimciler bu iþi yapmalýdýr.';
+$string['configclamactlikevirus'] = 'Dosya VÝRÜS olarak muamele görsün';
 $string['configclamdonothing'] = 'Dosya SAÐLAM olarak muamele görsün';
-$string['configclamfailureonupload'] = 'Clam\'ý yüklenen dosyalarý taramasý için yapýlandýrdýysanýz, fakat yol yanlýþ belirtilir veya programýn çalýþmasý sýrasýnda bilinmeyen bir sebepten dolayý hata oluþursa nasýl davranýlacak? \'Dosya VÝRÜSLÜ olarak muamele görsün\'ü seçerseniz dosya karantina klasörüne taþýnýr ya da silinir. \'Dosya SAÐLAM olarak muamele görsün\'ü seçerseniz dosya normal þekilde yüklenir. Ayný zamanda yöneticilere clam programýnda hata oluþtuðu bildirilir. \'Dosya VÝRÜSLÜ olarak muamele görsün\'ü seçer ve bazý sebeplerden dolayý clamýn çalýþmasý hata ile sonuçlanýrsa (genellikle pathtoclam yolu yanlýþ girilirse olur), TÜM dosyalar belirtilen karantina klasörüne taþýnýr ya da silinir. Bu ayarý deðiþtirirken DÝKKATLÝ olun.';
+$string['configclamfailureonupload'] = 'Clam\'ý yüklenen dosyalarý taramasý için yapýlandýrdýysanýz, fakat yol yanlýþ belirtilir veya programýn çalýþmasý sýrasýnda bilinmeyen bir sebepten dolayý hata oluþursa nasýl davranýlacak? \'Dosya VÝRÜS olarak muamele görsün\'ü seçerseniz dosya karantina klasörüne taþýnýr ya da silinir. \'Dosya SAÐLAM olarak muamele görsün\'ü seçerseniz dosya normal þekilde yüklenir. Ayný zamanda yöneticilere clam programýnda hata oluþtuðu bildirilir. \'Dosya VÝRÜS olarak muamele görsün\'ü seçer ve bazý sebeplerden dolayý clamýn çalýþmasý hata ile sonuçlanýrsa (genellikle pathtoclam yolu yanlýþ girilirse olur), TÜM dosyalar belirtilen karantina klasörüne taþýnýr ya da silinir. Bu ayarý deðiþtirirken DÝKKATLÝ olun.';
 $string['configcountry'] = 'Buradan bir ülke seçerseniz, yeni kullanýcýlar için bu ülke varsayýlan olarak seçili olacaktýr. Ülke seçmeyi zorunlu tutmak istiyorsanýz, bu seçeneði ayarlamayýn.';
 $string['configdebug'] = 'Bu seçeneði açýk tutarsanýz PHP\'deki error_reporting metodu daha fazla uyarý mesajý gösterecektir. Bu, geliþtiriciler için kullanýþlýdýr.';
 $string['configdeleteunconfirmed'] = 'Bu, email yetkilendirmesi kullanýyorsanýz, kullanýcýnýn ne kadar sürede bu emali onaylamasý gerektiðini belirtir. Bu süreden sonra, onyalanmaýþ eski hesaplar silinecektir.';
@@ -43,9 +36,7 @@ $string['configsectionmaintenance'] = 'Bakým';
 $string['configsectionmisc'] = 'Çeþitli';
 $string['configsectionoperatingsystem'] = 'Ýþletim Sistemi';
 $string['configsectionpermissions'] = 'Ýzinler';
-$string['configsectionrequestedcourse'] = 'Kurs istekleri';
 $string['configsectionsecurity'] = 'Güvenlik';
-$string['configsectionstats'] = 'Ýstatistikler';
 $string['configsectionuser'] = 'Kullanýcý';
 $string['configsessioncookie'] = 'Bu seçenek Moodle oturumlarý için kullanýlan çerezlerin adýný ayarlar. Bu seçenek isteðe baðlýdýr, ancak ayný anda ayný web sitesi birden çok moodle kopyasý ile çalýþýyorsa bu seçenek oluþan karýþýklýðý ortadan kaldýrýr.';
 $string['configsessiontimeout'] = 'Bu siteye giriþ yapan kullanýcýlar uzun süre iþlem yapmazlarsa (sayfalarý gezinmezse) ne kadar süre içinde oturum sona erecek?';
@@ -56,9 +47,7 @@ $string['configvariables'] = 'Deðiþkenler';
 $string['configwarning'] = 'Bu ayarlarý deðiþtirirken dikkatli olun. Bilmediðiniz deðerleri girmeniz sorunlara sebep olabilir.';
 $string['configzip'] = 'Zip programýnýn yerini belirtin (Sadece Unix için, isteðe baðlýdýr). Belirtilirse, sunucuda zip arþivi oluþturmak için bu kullanýlacaktýr. Boþ býrakýrsanýz, zip arþivi oluþturmak için dahili iþlemler kullanýlacaktýr.';
 $string['confirmation'] = 'Onay';
-$string['confirminstall'] = 'Dil paketini kurmak üzereseniz ($a), emin misiniz?';
 $string['cronwarning'] = '<a href=\"cron.php\">cron.php bakým programý</a> son 24 saattir çalýþmýyor. <br /><a href=\"../doc/?frame=install.html&sub=cron\">Kurulum belgesi</a> bunu nasýl otomatikleþtireceðinizi açýklýyor.';
-$string['density'] = 'Yoðunluk';
 $string['edithelpdocs'] = 'Yardým belgelerini düzenle';
 $string['editstrings'] = 'Ýfadeleri düzenle';
 $string['filterall'] = 'Tüm ifadeleri filtrele';
@@ -73,46 +62,15 @@ $string['helpweekenddays'] = 'Hangi günler \"Hafta sonu\" olarak deðerlendirilec
 $string['importtimezones'] = 'Zaman dilimleri listesinin tamamýný güncelle';
 $string['importtimezonescount'] = '$a->source \'dan $a->count kayýt çýkartýldý';
 $string['importtimezonesfailed'] = 'Hiç kaynak bulunamadý! (Kötü haber)';
-$string['incompatibleblocks'] = 'Uyumsuz Bloklar';
-$string['install'] = 'Kur';
-$string['installedlangs'] = 'Kurulu Dil Paketleri';
-$string['langimportsuccess'] = 'Dil Paketi baþarýyla güncellendi';
-$string['langpackremoved'] = 'Dil paketinin kaldýrýlmasý tamamlandý';
-$string['latexpreamble'] = 'LaTeX Önsözü';
-$string['latexsettings'] = 'LaTeX Göstericisi Ayarlarý';
-$string['mediapluginavi'] = '.AVI filtresini etkinleþtir';
-$string['mediapluginflv'] = '.FLV filtresini etkinleþtir';
-$string['mediapluginmov'] = '.MOV filtresini etkinleþtir';
-$string['mediapluginmp3'] = '.MP3 filtresini etkinleþtir';
-$string['mediapluginmpg'] = '.MPG filtresini etkinleþtir';
-$string['mediapluginswf'] = '.SWF filtresini etkinleþtir';
-$string['mediapluginwmv'] = '.WMV filtresini etkinleþtir';
+$string['nodstpresetsexist'] = 'YSU (Yaz Saati Uygulamasý) önceden ayarlanmadýðý için YSU desteði kaldýrýldý. Aþaðýdaki butonu kullanarak bir kaç ön ayar yapmanýz gerekiyor. ';
 $string['optionalmaintenancemessage'] = 'Ýsteðe baðlý bakým mesajý';
-$string['pathconvert'] = '<i>convert</i> binari yolu';
-$string['pathdvips'] = '<i>dvips</i> binari yolu';
-$string['pathlatex'] = '<i>latex</i> binari yolu';
-$string['pleaseregister'] = 'Bu butonu silmek için lütfen kaydolun';
 $string['sitemaintenance'] = 'Bu siteye þu anda bakým yapýlýyor ve þimdilik eriþilemez';
 $string['sitemaintenancemode'] = 'Bakým modu';
 $string['sitemaintenanceoff'] = 'Bakým modu pasifleþtirildi ve site þu anda tekrar normal çalýþýyor';
 $string['sitemaintenanceon'] = 'Siteniz þu anda bakým modunda (sadece yöneticiler girþ yapabilir ve siteyi kullanabilir)';
 $string['sitemaintenancewarning'] = 'Siteniz þu anda bakým modunda (sadece yöneticiler girþ yapabilir). Bu siteyi normal haline döndürmek için <a href=\"maintenance.php\">bakým modunu pasifleþtirin</a>.';
-$string['stickyblocks'] = 'Sabit bloklar';
-$string['stickyblockscourseview'] = 'Kurs sayfasý';
-$string['stickyblocksmymoodle'] = 'Kiþisel Moodle';
-$string['stickyblockspagetype'] = 'Yapýlandýrýlacak sayfa tipi';
-$string['therewereerrors'] = 'Verinizde hatalar var';
 $string['timezoneforced'] = 'Bu site yöneticisi tarafýndan zorunlu tutuldu';
 $string['timezoneisforcedto'] = 'Bütün kullanýcýlarý kullanmaya zorunlu tut';
 $string['timezonenotforced'] = 'Kullanýcýlar kendi zaman dilimini seçebilsin';
-$string['uninstall'] = 'Kaldýr';
-$string['uninstallconfirm'] = 'Dil Paketini ($a)  kaldýrmak üzeresiniz, emin misiniz?';
-$string['upgradelogs'] = 'Tam iþlevsellik için, eski kayýt dosyalarýnýz güncellenmeli. <a href=\"$a\">Daha fazla bilgi</a>';
-$string['upgradesure'] = 'Moodle dosyalarýný deðiþti ve otomatik olarak sunucunuzu þu sürüme terfi etmek üzeresiniz:
-<p><b>$a</b></p>
-<p>Bunu yaptýðýnýzda tekrar geri dönemezsiniz.</p> 
-<p>Bu sunucuyu bu sürüme terfi etmek istediðinizden emin misiniz?</p>';
-$string['upgradingdata'] = 'Veri güncelleniyor';
-$string['upgradinglogs'] = 'Loglar güncelleniyor';
 
 ?>

@@ -3,4 +3,8 @@
 
 
 $string['blockname'] = '社会活動';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
+
 ?>

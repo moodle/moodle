@@ -70,7 +70,7 @@ function choice_add_instance($choice) {
         foreach ($choice as $name => $value) {        
             if (strstr($name, "newoption")) {   /// New option
                 $value = trim($value);
-                if (isset($value) && $value <> '') {
+                if ($value) {
                     $option = NULL;
                     $option->text = $value;
                     $option->choiceid = $choice->id;
@@ -110,7 +110,7 @@ function choice_update_instance($choice) {
         $value = trim($value);
 
         if (strstr($name, "oldoption")) {  // Old option
-            if (isset($value) && $value <> '') {
+            if ($value) {
                 $option = NULL;
                 $option->id = substr($name, 9); // Get the ID of the answer that needs to be updated.
                 $option->text = $value;
@@ -122,7 +122,7 @@ function choice_update_instance($choice) {
                 delete_records("choice_options", "id", substr($name, 9));
             }
         } else if (strstr($name, "newoption")) {   /// New option
-            if (isset($value)&& $value <> '') {
+            if ($value) {
                 $option = NULL;
                 $option->text = $value;
                 $option->choiceid = $choice->id;
@@ -205,14 +205,6 @@ function choice_get_choice($choiceid) {
         }
     }
     return false;
-}
-
-function choice_get_view_actions() {
-    return array('view','view all','report');
-}
-
-function choice_get_post_actions() {
-    return array('choose','choose again');
 }
 
 ?>

@@ -704,6 +704,7 @@ $string['order'] = 'Urutan';
 $string['other'] = 'Lain-lain';
 $string['outline'] = 'Gambaran';
 $string['page'] = 'Mukasurat';
+$string['parentlanguage'] = 'Bahasa utama';
 $string['participants'] = 'Peserta';
 $string['password'] = 'Katakunci';
 $string['passwordchanged'] = 'Katakunci telah diubah';

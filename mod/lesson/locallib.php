@@ -1,5 +1,5 @@
 <?php
-/// mnielsen
+/// mnielsen @ CDC
 /// locallib.php is the new lib file for lesson module.
 /// including locallib.php is the same as including the old lib.php
     
@@ -21,6 +21,7 @@ if (!defined("LESSON_NEXTPAGE")) {
 if (!defined("LESSON_EOL")) {
     define("LESSON_EOL", -9); // End of Lesson
     }
+/// CDC-FLAG 6/14/04 ///
 if (!defined("LESSON_UNSEENBRANCHPAGE")) {
     define("LESSON_UNSEENBRANCHPAGE", -50); // Unseen branch page
     }
@@ -36,6 +37,7 @@ if (!defined("LESSON_RANDOMBRANCH")) {
 if (!defined("LESSON_CLUSTERJUMP")) {
     define("LESSON_CLUSTERJUMP", -80); // random within a cluster
     }
+/// CDC-FLAG ///    
 if (!defined("LESSON_UNDEFINED")) {
     define("LESSON_UNDEFINED", -99); // undefined
     }
@@ -52,7 +54,7 @@ if (!defined("LESSON_MULTICHOICE")) { // if you change the value of this (WHICH 
 if (!defined("LESSON_RANDOM")) {
     define("LESSON_RANDOM",        "4");
 }
-if (!defined("LESSON_MATCHING")) { // if you change the value of this (WHICH YOU SHOULDNT) then you need to change it in restorelib.php, in mysql.php and postgres7.php as well
+if (!defined("LESSON_MATCHING")) { // if you change the value of this (WHICH YOU SHOULDNT) then you need to change it in restorelib.php as well
     define("LESSON_MATCHING",      "5");
 }
 if (!defined("LESSON_RANDOMSAMATCH")) {
@@ -67,6 +69,7 @@ if (!defined("LESSON_NUMERICAL")) {
 if (!defined("LESSON_MULTIANSWER")) {
     define("LESSON_MULTIANSWER",   "9");
 }
+/// CDC-FLAG /// 6/16/04
 if (!defined("LESSON_ESSAY")) {
     define("LESSON_ESSAY", "10");
 }
@@ -76,13 +79,14 @@ if (!defined("LESSON_CLUSTER")) {
 if (!defined("LESSON_ENDOFCLUSTER")) {
     define("LESSON_ENDOFCLUSTER",   "31");
 }
+/// CDC-FLAG ///
 
 $LESSON_QUESTION_TYPE = array ( LESSON_MULTICHOICE => get_string("multichoice", "quiz"),
                               LESSON_TRUEFALSE     => get_string("truefalse", "quiz"),
                               LESSON_SHORTANSWER   => get_string("shortanswer", "quiz"),
                               LESSON_NUMERICAL     => get_string("numerical", "quiz"),
                               LESSON_MATCHING      => get_string("match", "quiz"),
-                              LESSON_ESSAY           => get_string("essay", "lesson")
+                              LESSON_ESSAY           => get_string("essay", "lesson")  /// CDC-FLAG 6/16/04
 //                            LESSON_DESCRIPTION   => get_string("description", "quiz"),
 //                            LESSON_RANDOM        => get_string("random", "quiz"),
 //                            LESSON_RANDOMSAMATCH => get_string("randomsamatch", "quiz"),
@@ -178,10 +182,7 @@ function lesson_save_question_options($question) {
                     $answer->jumpto = LESSON_NEXTPAGE;
                     $answer->timecreated   = $timenow;
                     $answer->grade = $question->fraction[$key] * 100;
-                    $min = $question->answer[$key] - $question->tolerance[$key];
-                    $max = $question->answer[$key] + $question->tolerance[$key];
-                    $answer->answer   = $min.":".$max;
-                    // $answer->answer   = $question->min[$key].":".$question->max[$key]; original line for min/max
+                    $answer->answer   = $question->min[$key].":".$question->max[$key];
                     $answer->response = $question->feedback[$key];
                     if (!$answer->id = insert_record("lesson_answers", $answer)) {
                         $result->error = "Could not insert numerical quiz answer!";
@@ -259,7 +260,7 @@ function lesson_save_question_options($question) {
                     $answer->pageid   = $question->id;
                     $answer->timecreated   = $timenow;
                     $answer->grade = $question->fraction[$key] * 100;
-                    // changed some defaults
+                    /// CDC-FLAG changed some defaults
                     /* Original Code
                     if ($answer->grade > 50 ) {
                         $answer->jumpto = LESSON_NEXTPAGE;
@@ -430,7 +431,7 @@ function lesson_choose_from_menu ($options, $name, $selected="", $nothing="choos
         $javascript = "";
     }
 
-    $output = "<label for=$name class=hidden-label>$name</label><SELECT id=$name NAME=$name $javascript>\n";
+    $output = "<label for=$name class=hidden-label>$name</label><SELECT id=$name NAME=$name $javascript>\n"; //CDC hidden label added.
     if ($nothing) {
         $output .= "   <OPTION VALUE=\"$nothingvalue\"\n";
         if ($nothingvalue == $selected) {
@@ -473,12 +474,14 @@ function lesson_iscorrect($pageid, $jumpto) {
         return false;
     } elseif ($jumpto == LESSON_NEXTPAGE) {
         return true;
+    /// CDC-FLAG 6/21/04 ///
     } elseif ($jumpto == LESSON_UNSEENBRANCHPAGE) {
         return true;
     } elseif ($jumpto == LESSON_RANDOMPAGE) {
         return true;
     } elseif ($jumpto == LESSON_CLUSTERJUMP) {
         return true;
+    /// CDC-FLAG ///
     } elseif ($jumpto == LESSON_EOL) {
         return true;
     }
@@ -497,6 +500,7 @@ function lesson_iscorrect($pageid, $jumpto) {
     return false; // should never be reached
 }
 
+/// CDC-FLAG ///
 /*******************************************************************/
 function lesson_display_branch_jumps($lesson_id, $pageid) {
 // this fucntion checks to see if a page is a branch or is
@@ -887,12 +891,10 @@ function lesson_print_tree_menu($lessonid, $pageid, $id, $showpages=false) {
     if(!$pages = get_records_select("lesson_pages", "lessonid = $lessonid")) {
         error("Error: could not find lesson pages");
     }
-    echo '<ul>';
     while ($pageid != 0) {
         lesson_print_tree_link_menu($pages[$pageid], $id, true);            
         $pageid = $pages[$pageid]->nextpageid;
     }
-    echo '</ul>';
 }
 
 /*******************************************************************/
@@ -913,21 +915,28 @@ function lesson_print_tree_link_menu($page, $id, $showpages=false) {
     
     // set up some variables  NoticeFix  changed whole function
     $output = "";
-    $class = ' class="leftmenu_not_selected_link" ';
+    $close = false;
+    $link="id=$id&amp;action=navigation&amp;pageid=".$page->id;
+    
+    $output = "<li>";
     
     if (isset($_REQUEST['pageid'])) {
         if($page->id == $_REQUEST['pageid']) { 
-            $class = ' class="leftmenu_selected_link" '; 
+            $close=true; 
+            $output.="<em>"; 
         } 
     }
     
-    $output .= '<li>';
+    $output .= "<a href=\"view.php?id=$id&amp;action=navigation&amp;pageid=$page->id\">".format_string($page->title,true)."</a>\n"; 
     
-    $output .= "<a $class href=\"view.php?id=$id&amp;action=navigation&amp;pageid=$page->id\">".format_string($page->title,true)."</a>\n"; 
-      
-    $output .= "</li>";     
-
+    if($close) {
+        $output.="</em>";
+    }    
+    $output .= "</li>";
+    
+    
     echo $output;
+
 } 
 
 /*******************************************************************/
@@ -979,12 +988,12 @@ function lesson_print_tree($pageid, $lessonid, $cmid, $pixpath) {
         echo $output;        
         if (count($pages) > 1) {
             echo "<a title=\"move\" href=\"lesson.php?id=$cmid&action=move&pageid=".$pages[$pageid]->id."\">\n".
-                "<img src=\"$pixpath/t/move.gif\" hspace=\"2\" height=11 width=11 alt=\"move\" border=0></a>\n";
+                "<img src=\"$pixpath/t/move.gif\" hspace=\"2\" height=11 width=11 alt=\"move\" border=0></a>\n"; //CDC alt text added.
         }
         echo "<a title=\"update\" href=\"lesson.php?id=$cmid&amp;action=editpage&amp;pageid=".$pages[$pageid]->id."\">\n".
             "<img src=\"$pixpath/t/edit.gif\" hspace=\"2\" height=11 width=11 alt=\"edit\" border=0></a>\n".
             "<a title=\"delete\" href=\"lesson.php?id=$cmid&amp;sesskey=".$USER->sesskey."&amp;action=confirmdelete&amp;pageid=".$pages[$pageid]->id."\">\n".
-            "<img src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=11 width=11 alt=\"delete\" border=0></a>\n";
+            "<img src=\"$pixpath/t/delete.gif\" hspace=\"2\" height=11 width=11 alt=\"delete\" border=0></a>\n"; //CDC alt text added.
 
         echo "</tr></td>";
         $pageid = $pages[$pageid]->nextpageid;
@@ -1019,7 +1028,7 @@ function lesson_calculate_ongoing_score($lesson, $userid, $retries, $return=fals
         }
         $nviewed = count($temp); // this counts number of Questions the user viewed
         if ($nviewed != 0) {
-            $thegrade = round(100 * $ncorrect / $nviewed, 5);
+            $thegrade = intval(100 * $ncorrect / $nviewed);
         } else {
             $thegrade = 0;
         }
@@ -1084,7 +1093,7 @@ function lesson_calculate_ongoing_score($lesson, $userid, $retries, $return=fals
             }
             
             $bestscore = array_sum($bestscores);
-            $thegrade = round(100 * $score / $bestscore, 5);
+            $thegrade = intval(100 * $score / $bestscore);
         }
             
         
@@ -1134,141 +1143,6 @@ function lesson_check_nickname($name) {
     return true;
 }
 
-/**
- * Prints out a Progress Bar which depicts a user's progress within a lesson.
- *
- * Currently works best with a linear lesson.  Clusters are counted as a single page.
- * Also, only viewed branch tables and questions that have been answered correctly count
- * toward lesson completion (or progress).  Only Students can see the Progress bar as well.
- *
- * @param object $lesson The lesson that the user is currently taking.
- * @param object $course The course that the to which the lesson belongs.
- * @return boolean The return is not significant as of yet.  Will return true/false.
- * @author Mark Nielsen
- **/
-function lesson_print_progress_bar($lesson, $course) {
-    global $CFG, $USER;
-    
-    // lesson setting to turn progress bar on or off
-    if (!$lesson->progressbar) {
-        return false;
-    }
-    
-    // catch teachers
-    if (isteacher($course->id)) {
-        notify(get_string('progressbarteacherwarning', 'lesson', $course->teachers));
-        return false;
-    }
-    if (!isset($USER->modattempts[$lesson->id])) {
-        // all of the lesson pages
-        if (!$pages = get_records('lesson_pages', 'lessonid', $lesson->id)) {
-            return false;
-        } else {
-            foreach ($pages as $page) {
-                if ($page->prevpageid == 0) {
-                    $pageid = $page->id;  // find the first page id
-                    break;
-                }
-            }
-        }
-    
-        // current attempt number
-        if (!$ntries = count_records("lesson_grades", "lessonid", $lesson->id, "userid", $USER->id)) {
-            $ntries = 0;  // may not be necessary
-        }
-    
-        $viewedpageids = array();
-    
-        // collect all of the correctly answered questions
-        if ($viewedpages = get_records_select("lesson_attempts", "lessonid = $lesson->id AND userid = $USER->id AND retry = $ntries AND correct = 1", 'timeseen DESC', 'pageid, id')) {
-            $viewedpageids = array_keys($viewedpages);
-        }
-        // collect all of the branch tables viewed
-        if ($viewedbranches = get_records_select("lesson_branch", "lessonid = $lesson->id AND userid = $USER->id AND retry = $ntries", 'timeseen DESC', 'pageid, id')) {
-            $viewedpageids = array_merge($viewedpageids, array_keys($viewedbranches));
-        }
-
-        // Filter out the following pages:
-        //      End of Cluster
-        //      End of Branch
-        //      Pages found inside of Clusters
-        // Do not filter out Cluster Page(s) because we count a cluster as one.
-        // By keeping the cluster page, we get our 1
-        $validpages = array(); 
-        while ($pageid != 0) {
-            if ($pages[$pageid]->qtype == LESSON_CLUSTER) {
-                $clusterpageid = $pageid; // copy it
-                $validpages[$clusterpageid] = 1;  // add the cluster page as a valid page
-                $pageid = $pages[$pageid]->nextpageid;  // get next page
-            
-                // now, remove all necessary viewed paged ids from the viewedpageids array.
-                while ($pages[$pageid]->qtype != LESSON_ENDOFCLUSTER and $pageid != 0) {
-                    if (in_array($pageid, $viewedpageids)) {
-                        unset($viewedpageids[array_search($pageid, $viewedpageids)]);  // remove it
-                        // since the user did see one page in the cluster, add the cluster pageid to the viewedpageids
-                        if (!in_array($clusterpageid, $viewedpageids)) { 
-                            $viewedpageids[] = $clusterpageid;
-                        }
-                    }
-                    $pageid = $pages[$pageid]->nextpageid;
-                }
-            } elseif ($pages[$pageid]->qtype == LESSON_ENDOFCLUSTER or $pages[$pageid]->qtype == LESSON_ENDOFBRANCH) {
-                // dont count these, just go to next
-                $pageid = $pages[$pageid]->nextpageid;
-            } else {
-                // a counted page
-                $validpages[$pageid] = 1;
-                $pageid = $pages[$pageid]->nextpageid;
-            }
-        }    
-    
-        // progress calculation as a percent
-        $progress = round(count($viewedpageids)/count($validpages), 2) * 100; 
-    } else {
-        $progress = 100;
-    }
-
-    // print out the Progress Bar.  Attempted to put as much as possible in the style sheets.
-    echo '<div class="progress_bar" align="center">';
-    echo '<table class="progress_bar_table"><tr>';
-    if ($progress != 0) {  // some browsers do not repsect the 0 width.
-        echo '<td width="'.$progress.'%" class="progress_bar_completed">';
-        echo '</td>';
-    }
-    echo '<td class="progress_bar_todo">';
-    echo '<div class="progress_bar_token"></div>';
-    echo '</td>';
-    echo '</tr></table>';
-    echo '</div>';
-    
-    return true;
-}
-
-/**
- * Determines if a user can view the left menu.  The determining factor
- * is whether a user has a grade greater than or equal to the lesson setting
- * of displayleftif
- *
- * @param object $lesson Lesson object of the current lesson
- * @return boolean 0 if the user cannot see, or $lesson->displayleft to keep displayleft unchanged
- * @author Mark Nielsen
- **/
-function lesson_displayleftif($lesson) {
-    global $CFG, $USER;
-    
-    if (!empty($lesson->displayleftif)) {
-        // get the current user's max grade for this lesson
-        if ($maxgrade = get_record_sql('SELECT userid, MAX(grade) AS maxgrade FROM '.$CFG->prefix.'lesson_grades WHERE userid = '.$USER->id.' AND lessonid = '.$lesson->id.' GROUP BY userid')) {
-            if ($maxgrade->maxgrade < $lesson->displayleftif) {
-                return 0;  // turn off the displayleft
-            }
-        } else {
-            return 0; // no grades
-        }
-    }
-    
-    // if we get to here, keep the original state of displayleft lesson setting
-    return $lesson->displayleft;
-}
+/// CDC-FLAG ///
 
 ?>

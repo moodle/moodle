@@ -2,17 +2,12 @@ Shibboleth Authentication for Moodle
 -------------------------------------------------------------------------------
 
 Requirements:
-- Moodle 1.5 or later
+- Moodle 1.5 or later. Versions prior to 1.5 may also work with Shibboleth
+  authentication (contact Lukas  Haemmerle <haemmerle@switch.ch> for further 
+  instructions)
 - Shibboleth target 1.1 or later. See documentation for your Shibboleth 
   federation on how to set up Shibboleth.
-
-Changes:
-- 11. 2004: Created by Markus Hagman
-- 05. 2005: Modifications to login process by Martin Dougiamas
-- 05. 2005: Various extensions and fixes by Lukas Haemmerle
-- 06. 2005: Adaptions to new field locks and plugin config structures by Marting
-            Langhoff and Lukas Haemmerle
-- 10. 2005: Added better error messages and moved text to language directories
+- Modifications to login process by Martin Dougiamas
 
 Moodle Configuration with Dual login
 -------------------------------------------------------------------------------
@@ -145,13 +140,14 @@ Example file:
 <?PHP
 
     // Set the zip code and the adress
-    if ($_SERVER[$pluginconfig->field_map_address] != '')
+    if ($_SERVER[$CFG->auth_shib_user_address] != '')
     {
         // $address contains something like 'SWITCH$Limmatquai 138$CH-8021 Zurich'
         // We want to split this up to get: 
         // institution, street, zipcode, city and country
-        $address = $_SERVER[$pluginconfig->field_map_address];
+        $address = $_SERVER[$CFG->auth_shib_user_address];
         list($institution, $street, $zip_city) = split('\$', $address);
+        
         ereg(' (.+)',$zip_city, $regs);
         $city = $regs[1];
         
@@ -168,7 +164,8 @@ Example file:
 
 Bugs
 --------------------------------------------------------------------------------
-Please send bug reports concerning the Shibboleth part to 
+The current implementation has not yet been extensively tested. So there may be
+bugs. Please send bug reports concerning the Shibboleth part to 
 Lukas Haemmerle <haemmerle@switch.ch>
 
 --------------------------------------------------------------------------------

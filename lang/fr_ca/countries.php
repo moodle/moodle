@@ -242,6 +242,6 @@ $string['ZA'] = 'Afrique du Sud';
 $string['ZM'] = 'Zambie';
 $string['ZR'] = 'Zaïre';
 $string['ZW'] = 'Zimbabwe';
-
+$string['parentlanguage'] = 'fr';
 
 ?>

@@ -116,7 +116,7 @@
                  }
 
                  //now restore the answers for this choice.
-                 if (restore_userdata_selected($restore,'choice',$mod->id)) {
+                 if ($restore->mods['choice']->userinfo) {
                     //Restore choice_answers
                     $status = choice_answers_restore_mods($newid,$info,$restore);     
                  }                               
@@ -125,9 +125,7 @@
             }
 
             //Do some output     
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","choice")." \"".format_string(stripslashes($choice->name),true)."\"</li>";
-            }
+            echo "<li>".get_string("modulename","choice")." \"".format_string(stripslashes($choice->name),true)."\"</li>";
             backup_flush(300);
 
         } else {
@@ -166,11 +164,9 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -236,11 +232,9 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -251,114 +245,6 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
                              $newid);
             } else {
                 $status = false;
-            }
-        }
-
-        return $status;
-    }
-
-    //Return a content decoded to support interactivities linking. Every module
-    //should have its own. They are called automatically from
-    //choice_decode_content_links_caller() function in each module
-    //in the restore process
-    function choice_decode_content_links ($content,$restore) {
-            
-        global $CFG;
-            
-        $result = $content;
-                
-        //Link to the list of choices
-                
-        $searchstring='/\$@(CHOICEINDEX)\*([0-9]+)@\$/';
-        //We look for it
-        preg_match_all($searchstring,$content,$foundset);
-        //If found, then we are going to look for its new id (in backup tables)
-        if ($foundset[0]) {
-            //print_object($foundset);                                     //Debug
-            //Iterate over foundset[2]. They are the old_ids
-            foreach($foundset[2] as $old_id) {
-                //We get the needed variables here (course id)
-                $rec = backup_getid($restore->backup_unique_code,"course",$old_id);
-                //Personalize the searchstring
-                $searchstring='/\$@(CHOICEINDEX)\*('.$old_id.')@\$/';
-                //If it is a link to this course, update the link to its new location
-                if($rec->new_id) {
-                    //Now replace it
-                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/choice/index.php?id='.$rec->new_id,$result);
-                } else { 
-                    //It's a foreign link so leave it as original
-                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/choice/index.php?id='.$old_id,$result);
-                }
-            }
-        }
-
-        //Link to choice view by moduleid
-
-        $searchstring='/\$@(CHOICEVIEWBYID)\*([0-9]+)@\$/';
-        //We look for it
-        preg_match_all($searchstring,$result,$foundset);
-        //If found, then we are going to look for its new id (in backup tables)
-        if ($foundset[0]) {
-            //print_object($foundset);                                     //Debug
-            //Iterate over foundset[2]. They are the old_ids
-            foreach($foundset[2] as $old_id) {
-                //We get the needed variables here (course_modules id)
-                $rec = backup_getid($restore->backup_unique_code,"course_modules",$old_id);
-                //Personalize the searchstring
-                $searchstring='/\$@(CHOICEVIEWBYID)\*('.$old_id.')@\$/';
-                //If it is a link to this course, update the link to its new location
-                if($rec->new_id) {
-                    //Now replace it
-                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/choice/view.php?id='.$rec->new_id,$result);
-                } else {
-                    //It's a foreign link so leave it as original
-                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/choice/view.php?id='.$old_id,$result);
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    //This function makes all the necessary calls to xxxx_decode_content_links()
-    //function in each module, passing them the desired contents to be decoded
-    //from backup format to destination site/course in order to mantain inter-activities
-    //working in the backup/restore process. It's called from restore_decode_content_links()
-    //function in restore process
-    function choice_decode_content_links_caller($restore) {
-        global $CFG;
-        $status = true;
-        
-        if ($choices = get_records_sql ("SELECT c.id, c.text
-                                   FROM {$CFG->prefix}choice c
-                                   WHERE c.course = $restore->course_id")) {
-                                               //Iterate over each choice->text
-            $i = 0;   //Counter to send some output to the browser to avoid timeouts
-            foreach ($choices as $choice) {
-                //Increment counter
-                $i++;
-                $content = $choice->text;
-                $result = restore_decode_content_links_worker($content,$restore);
-                if ($result != $content) {
-                    //Update record
-                    $choice->text = addslashes($result);
-                    $status = update_record("choice",$choice);
-                    if ($CFG->debug>7) {
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
-                        }
-                    }
-                }
-                //Do some output
-                if (($i+1) % 5 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 100 == 0) {
-                            echo "<br />";
-                        }
-                    }
-                    backup_flush(300);
-                }
             }
         }
 
@@ -393,11 +279,9 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 20 == 0) {
-                            echo "<br />";
-                        }
+                    echo ".";
+                    if (($i+1) % 20 == 0) {
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -486,9 +370,7 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
             }
             break;
         default:
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
-            }
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
             break;
         }
 

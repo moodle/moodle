@@ -28,11 +28,10 @@ class quiz_default_format {
 
 /// Importing functions
 
-    function importpreprocess($category, $course=NULL ) {
+    function importpreprocess($category) {
     /// Does any pre-processing that may be desired
 
         $this->category = $category;  // Important
-        $this->course = $course;
 
         return true;
     }

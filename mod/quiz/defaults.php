@@ -19,7 +19,7 @@
        'quiz_timelimit' => 0,
        'quiz_optionflags' => 1,
        'quiz_penaltyscheme' => 1,
-       'quiz_adaptive' => QUIZ_ADAPTIVE,
+       'quiz_adaptive' => 1,
 
        'quiz_fix_review' => 0,
        'quiz_fix_attemptonlast' => 0,
@@ -34,9 +34,7 @@
        'quiz_fix_subnet' => 0,
        'quiz_fix_timelimit' => 0,
        'quiz_fix_adaptive' => 0,
-       'quiz_fix_penaltyscheme' => 0,
-	   
-	   'attemptuniqueid' => 0
+       'quiz_fix_penaltyscheme' => 0
     );
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.5 ALPHA (2005042300)
+      // dialogue.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032800)
 
 
 $string['addmynewentries'] = 'הוסף את רישומי החדשים';
@@ -29,7 +29,6 @@ $string['everybody'] = 'כולם';
 $string['furtherinformation'] = 'מידע נוסף';
 $string['lastentry'] = 'רישום אחרון';
 $string['maildefault'] = 'שלח ברירת מחדל ';
-$string['mailnotification'] = 'הודעה בדוא\"ל';
 $string['modulename'] = 'דיאלוג';
 $string['modulenameplural'] = 'דיאלוגים';
 $string['namehascloseddialogue'] = '$a סגר דיאלוג';

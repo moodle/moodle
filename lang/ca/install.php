@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5.3+ (2005060230)
+      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
 $string['admindirerror'] = 'El directori d\'administració especificat és incorrecte';
@@ -13,13 +13,6 @@ $string['configfilenotwritten'] = 'La seqüència d\'instal·lació no ha estat capa
 $string['configfilewritten'] = 'S\'ha creat amb èxit el fitxer config.php';
 $string['configurationcomplete'] = 'S\'ha completat la configuració';
 $string['database'] = 'Base de dades';
-$string['databasecreationsettings'] = 'Ara cal configurar els paràmetres de la base de dades on s\'emmagatzemara la majoria de dades de Moodle. L\'instal·lador Moodle4Windows crearà automàticament aquesta base de dades amb els paràmetres que especifiqueu aquí.<br /><br /><br />
-<b>Tipus:</b> mysql (determinat per l\'instal·lador).<br />
-<b>Servidor:</b> localhost (determinat per l\'instal·lador.<br />
-<b>Nom:</b> nom de la base de dades, p. ex. moodle.<br />
-<b>Usuari:</b> root (determinat per l\'instal·lador).<br />
-<b>Contrasenya</b>: la vostra contrasenya per a la base de dades.<br />
-<b>Prefix de les taules:</b>: prefix opcional per als noms de les taules.';
 $string['databasesettings'] = 'Ara heu de configurar la base de dades on s\'emmagatzemaran la major part de les dades de Moodle. Aquesta base de dades s\'ha de crear abans i cal tenir un nom d\'usuari i una contrasenya amb accés a ella.<br />
 <br /> <br />
 <b>Tipus:</b> mysql o postgres7<br />
@@ -66,16 +59,6 @@ $string['gdversionhelp'] = '<p>Sembla que el vostre servidor no té instal·lat el
 <p>Per afegir GD al PHP en Unix, compileu el PHP amb el paràmetre --with-gd.</p>
 
 <p>En Windows generalment es pot editar el fitxer php.ini i treure el comentari de la línia que porti la referència a libgd.dll.</p>';
-$string['globalsquotes'] = 'Gestió insegura dels globals';
-$string['globalsquoteserror'] = 'Arregleu els paràmetres del vostre PHP: inhabiliteu register_globals i/o habiliteu magic_quotes_gpc';
-$string['globalsquoteshelp'] = '<p>No s\'aconsella tenir inhabilitat Magic Quotes GPC i tenir alhora habilitat Register Globals.</p>
-
-<p>La configuració recomanada és <b>magic_quotes_gpc = On</b> i <b>register_globals = Off</b> en el fitxer php.ini</p>
-
-<p>Si no teniu accés al php.ini, potser podreu afegir les línies següents en un fitxer anomenat .htaccess dins del directori Moodle:
-<blockquote>php_value magic_quotes_gpc On</blockquote>
-<blockquote>php_value register_globals Off</blockquote>
-</p> ';
 $string['installation'] = 'Instal·lació';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Hauria d\'estar desactivat';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.6 development (2005101200)
+      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
 $string['action'] = '- - Acties - -';
@@ -75,7 +75,7 @@ $string['flagsset'] = 'Markering gewijzigd';
 $string['flagtxt'] = 'TXT';
 $string['flagwr'] = 'WR';
 $string['for'] = 'voor';
-$string['forbidden'] = 'Je hebt niet het recht om deze pagina te bekijken.';
+$string['forbidden'] = 'Je hebt het recht niet deze pagina te bekijken.';
 $string['groups'] = 'Groepen';
 $string['hits'] = '$a hits';
 $string['howtooperate'] = 'Hoe gebruiken';
@@ -102,7 +102,7 @@ $string['mostoftenchangedpages'] = 'Meest gewijzigde pagina\'s';
 $string['mostvisitedpages'] = 'Meest bezochte pagina\'s';
 $string['newestpages'] = 'Nieuwste pagina\'s';
 $string['noadministrationaction'] = 'Geen beheersactie gegeven';
-$string['nocandidatestoremove'] = 'Geen kandidaatpagina\'s om te verwijderen. Kies \'$a\'om alle pagina\'s te tonen';
+$string['nocandidatestoremove'] = 'Geen kandidaat pagina\'s om te verwijderen. Kies \'$a\'om alle pagina\'s te tonen';
 $string['nochangestorevert'] = 'Er zijn geen wijzigingen om terug te draaien';
 $string['nohtml'] = 'Geen HTML';
 $string['nolinksfound'] = 'Geen links gevonden op de pagina';
@@ -115,11 +115,11 @@ $string['offline'] = 'OFF LINE';
 $string['optional'] = 'Optioneel';
 $string['orphanedpage'] = 'Ongelinkte pagina';
 $string['orphanedpages'] = 'Ongelinkte pagina\'s';
-$string['otherwikis'] = 'Andere Wiki\'s';
+$string['otherwikis'] = 'Andere Wikis';
 $string['ownerunknown'] = 'onbekend';
 $string['pageactions'] = 'Pagina-activiteiten';
 $string['pageindex'] = 'Indexpagina';
-$string['pageinfo'] = 'Pagina-informatie';
+$string['pageinfo'] = 'Paginainformatie';
 $string['pagename'] = 'Paginanaam';
 $string['pagenamechoice'] = '- of -';
 $string['pageslinkingto'] = 'Pagina\'s gelinkt aan deze pagina';
@@ -144,7 +144,6 @@ $string['safehtml'] = 'Veilige HTML';
 $string['save'] = 'Bewaar';
 $string['searchwiki'] = 'Zoeken in Wiki';
 $string['setpageflags'] = 'Zet paginavlaggen';
-$string['showversions'] = 'Toon versies:';
 $string['sitemap'] = 'Kaart van de site';
 $string['smfor'] = 'Kaart van de site voor';
 $string['status'] = 'Status';
@@ -165,7 +164,7 @@ $string['uplerror'] = 'Erg jammer, maar het liep fout tijdens het uploaden van h
 $string['uplinsect'] = 'Upload naar';
 $string['uplnewnam'] = 'Bewaar met een andere bestandsnaam';
 $string['upload0'] = 'Gebruik dit formulier om een bepaald bestand te uploaden naar de wiki:';
-$string['uploadedon'] = 'Geüpload op';
+$string['uploadedon'] = 'Geüploaded op';
 $string['uploadpicturebutton'] = 'Upload';
 $string['uplok'] = 'Je bestand is goed geüpload';
 $string['version'] = 'Versie';

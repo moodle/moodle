@@ -10,7 +10,7 @@
 */
 
 // Load functions for the RQP-SOAP binding
-require_once($CFG->dirroot . '/mod/quiz/questiontypes/rqp/rqp.php');
+require_once('rqp.php');
 
 // Remote item processing flags (cached from server)
 define('REMOTE_TEMPLATE', 4);

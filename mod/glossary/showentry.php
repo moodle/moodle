@@ -2,10 +2,10 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $concept  = optional_param('concept', '', PARAM_CLEAR);
-    $courseid = optional_param('courseid', 0, PARAM_INT);
-    $eid      = optional_param('eid', 0, PARAM_INT); // glossary entry id
-    $displayformat = optional_param('displayformat',-1, PARAM_INT);
+    optional_variable($concept);
+    optional_variable($courseid,0);
+    optional_variable($eid,0); // glossary entry id
+    optional_variable($displayformat,-1);
 
     if ($CFG->forcelogin) {
         require_login();

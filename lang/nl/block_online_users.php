@@ -5,5 +5,8 @@
 $string['blockname'] = 'Gebruikers on line';
 $string['configtimetosee'] = 'Aantal minuten na activiteit dat een gebruiker als on line beschouwd wordt';
 $string['periodnminutes'] = 'laatste $a minuten';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Nederlands';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.6 development (2005052400)
+      // scorm.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['asset'] = 'Hodnota';
@@ -23,7 +23,6 @@ $string['errorlogs'] = 'Záznamy o chybách';
 $string['exit'] = 'Opusti» SCORM kurz';
 $string['expcoll'] = 'Rozbali»/Zabali»';
 $string['failed'] = 'Zlyhalo';
-$string['firstaccess'] = 'Prvý prístup';
 $string['found'] = 'Manifest bol nájdený';
 $string['frameheight'] = 'Táto hodnota nastaví východziu hodnotu vý¹ky rámu SCO';
 $string['framewidth'] = 'Táto hodnota nastaví východziu hodnotu ¹írky rámu SCO';
@@ -32,10 +31,9 @@ $string['gradehighest'] = 'Najvy¹¹í poèet bodov';
 $string['grademethod'] = 'Metóda bodovania';
 $string['gradescoes'] = 'Scoes situácia';
 $string['gradesum'] = 'Celkový poèet bodov';
-$string['guestsno'] = 'Hos»ovským pou¾ívateµom nie je povolené zobrazenie SCORM kurzov';
+$string['guestsno'] = 'Hos»ovským u¾ívateµom nie je povolené zobrazenie SCORM kurzov';
 $string['height'] = 'Vý¹ka';
 $string['incomplete'] = 'Nedokonèené';
-$string['lastaccess'] = 'Posledný prístup';
 $string['missing_attribute'] = 'Chýba atribút $a->attr v tagu $a->tag';
 $string['missing_tag'] = 'Chýba tag $a->tag';
 $string['mode'] = 'Re¾im';
@@ -44,14 +42,12 @@ $string['modulenameplural'] = 'SCORMy';
 $string['next'] = 'Pokraèova»';
 $string['no_attributes'] = 'Tag $a->tag musí ma» atribúty';
 $string['no_children'] = 'Tag $a->tag musí ma» deti';
-$string['noactivity'] = '®iadna správa';
 $string['nomanifest'] = 'Manifest nebol nájdený';
 $string['noreports'] = '®iadna správa na zobrazenie';
 $string['normal'] = 'Normálny';
 $string['not_corr_type'] = 'Nesúlad typov v tagu $a->tag';
 $string['notattempted'] = 'Bez pokusov';
-$string['organization'] = 'Organizácia';
-$string['organizations'] = 'Organizácie';
+$string['organizations'] = 'Organizácia';
 $string['packagedir'] = 'Chyba v systéme súborov: Nedá sa vytvori» adresár s balíkom';
 $string['passed'] = 'Pre¹iel';
 $string['php5'] = 'PHP 5 (DOMXML rodná kni¾nica)';
@@ -63,11 +59,10 @@ $string['report'] = 'Správa';
 $string['review'] = 'Znovu prehliadnu»';
 $string['scoes'] = 'Scoes';
 $string['score'] = 'Skóre';
-$string['syntax'] = 'Chyba v syntaxi';
+$string['syntax'] = 'Chyba v syntaxe';
 $string['tag_error'] = 'Neznámy tag ($a->tag) s týmto obsahom: $a->value';
 $string['too_many_attributes'] = 'Tag $a->tag má príli¹ mnoho atribútov';
 $string['too_many_children'] = 'Tag $a->tag má príli¹ mnoho detí';
-$string['totaltime'] = 'Èas';
 $string['trackingloose'] = 'UPOZORNENIE: Údaje o priechode týmto SCORM balíkom budú stratené!';
 $string['validateascorm'] = 'Overi» SCORM balík';
 $string['validation'] = 'Výsledok overovania';

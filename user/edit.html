@@ -41,7 +41,6 @@ if (isadmin()) {
     echo "</tr>\n";
 
     $modules = get_list_of_plugins("auth");
-    $auth_options = array();
     foreach ($modules as $module) {
         $auth_options[$module] = get_string("auth_$module"."title", "auth");
     } 
@@ -134,24 +133,6 @@ if (isadmin()) {
     choose_from_menu ($choices, "mailformat", $user->mailformat, "") ?>
     </td>
 </tr>
-<?php if (!empty($CFG->allowusermailcharset)) { ?>
-<tr>
-    <th><?php print_string("emailcharset") ?>:</th>
-    <td><?php
-        $mailcharset = get_user_preferences('mailcharset', '0', $user->id);
-        unset($choices);
-        unset($charsets);
-        $charsets = get_list_of_charsets();
-        if (!empty($CFG->sitemailcharset)) {
-            $choices['0'] = get_string('site').' ('.$CFG->sitemailcharset.')';
-        } else {
-            $choices['0'] = get_string('default').' ('.current_charset().')';
-        }
-        $choices = array_merge($choices, $charsets);
-        choose_from_menu($choices, 'mailcharset', $mailcharset, ''); ?>
-    </td>
-</tr>
-<?php } ?>
 <tr>
     <th><?php print_string('emaildigest') ?>:</th>
     <td><?php
@@ -171,7 +152,7 @@ if (isadmin()) {
     choose_from_menu ($choices, "autosubscribe", $user->autosubscribe, "") ?>
     </td>
 </tr>
-<?php if (!empty($CFG->forum_trackreadposts)) { ?>
+<?php if ($CFG->forum_trackreadposts) { ?>
 <tr>
     <th><?php print_string("trackforums") ?>:</th>
     <td><?php
@@ -258,7 +239,7 @@ if (isadmin()) {
             formerr($err["description"]);
             echo "<br />";
         }
-        print_textarea($usehtmleditor, 10, 50, 50, 10, 'description', "$user->description");
+        print_textarea(false, 10, 50, 50, 10, 'description', "$user->description");
         helpbutton("text", get_string("helptext"));
     ?>
     </td>

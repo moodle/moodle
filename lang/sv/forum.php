@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.6 development (2005101200)
+      // forum.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['addanewdiscussion'] = 'Lägg till ett nytt diskussionsämne';
@@ -10,8 +10,6 @@ $string['allowchoice'] = 'Tillåt alla att välja';
 $string['allowdiscussions'] = 'Kan en $a göra inlägg i detta forum?';
 $string['allowratings'] = 'Vill Du att det ska vara tillåtet att bedöma/värdera inlägg?';
 $string['allowsdiscussions'] = 'Detta forum tillåter var och en att starta ett diskussionsämne.';
-$string['allsubscribe'] = 'Prenumerera på alla forum';
-$string['allunsubscribe'] = 'Säg upp alla prenumerationer på forum';
 $string['anyfile'] = 'Vilken fil som helst';
 $string['attachment'] = 'Bilaga';
 $string['bynameondate'] = 'av $a->name - $a->date';
@@ -47,9 +45,6 @@ $string['discussions'] = 'Diskussionsämnen';
 $string['discussionsstartedby'] = '$a  inledde det här diskussionsämnet';
 $string['discussionsstartedbyrecent'] = 'Diskussioner som nyligen har inletts av \'$a\'.';
 $string['discussthistopic'] = 'Diskutera detta ämne';
-$string['displayend'] = 'Visa slut';
-$string['displayperiod'] = 'Visa period';
-$string['displaystart'] = 'Visa start';
 $string['eachuserforum'] = 'Var och en  bidrar med ett  diskussionsämne';
 $string['edit'] = 'Redigera';
 $string['editedby'] = 'Redigerad av  $a->name - $a->date';
@@ -105,11 +100,8 @@ $string['nonews'] = 'Inga nya inlägg ännu';
 $string['noposts'] = 'Inga inlägg';
 $string['nopostscontaining'] = 'Det gick inte att hitta  några inlägg som innehåller \'$a\' ';
 $string['nosubscribers'] = 'Det finns ännu inga prenumeranter på detta forum';
-$string['nothingnew'] = 'Ingenting nytt för $a';
 $string['notingroup'] = 'Du måste tyvärr vara med i en grupp för att se detta forum.';
 $string['notrackforum'] = 'Spåra inte olästa meddelanden';
-$string['nowallsubscribed'] = 'Alla forum i $a är prenumererade';
-$string['nowallunsubscribed'] = 'Alla forum i $a är inte prenumererade';
 $string['nownotsubscribed'] = '$a->name kommmer INTE få kopior av \'$a->forum\' med e-post.';
 $string['nownottracking'] = ' $a->name spårar inte längre \'$a->forum\'. ';
 $string['nowsubscribed'] = '$a->name kommer få kopior av \'$a->forum\' med e-post.';
@@ -120,8 +112,6 @@ $string['oldertopics'] = 'Äldre ämnen';
 $string['openmode0'] = 'Inga diskussionsämnen, inga svar';
 $string['openmode1'] = 'Inga diskussionsämnen, men svar är tillåtna';
 $string['openmode2'] = 'Diskussionsämnen och svar är tillåtna';
-$string['overviewnumpostssince'] = '$a inlägg sedan senaste inloggning';
-$string['overviewnumunread'] = 'totalt $a olästa';
 $string['parent'] = 'Visa \'föräldern\' till detta inlägg';
 $string['parentofthispost'] = 'Föräldern till detta inlägg';
 $string['postadded'] = 'Ditt inlägg har lagts till.<p>Du har $a för att redigera det om Du vill göra ändringar.';
@@ -191,7 +181,6 @@ $string['subscribestart'] = 'Skicka e-postkopior av inlägg i detta forum till mi
 $string['subscribestop'] = 'Skicka INTE e-postkopior av inlägg i detta forum  till mig ';
 $string['subscription'] = 'Prenumeration';
 $string['subscriptions'] = 'Prenumerationer';
-$string['timestartenderror'] = 'Slutdatumet kan inte vara tidigare än startdatumet';
 $string['trackforum'] = 'Spåra olästa meddelanden';
 $string['tracking'] = 'Spåra';
 $string['trackingoff'] = 'Av';

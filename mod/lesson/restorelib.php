@@ -58,8 +58,6 @@
             $lesson->modattempts = backup_todb($info['MOD']['#']['MODATTEMPTS']['0']['#']);
             $lesson->password = backup_todb($info['MOD']['#']['PASSWORD']['0']['#']);
             $lesson->usepassword = backup_todb($info['MOD']['#']['USEPASSWORD']['0']['#']);
-            $lesson->dependency = backup_todb($info['MOD']['#']['DEPENDENCY']['0']['#']);
-            $lesson->conditions = backup_todb($info['MOD']['#']['CONDITIONS']['0']['#']);
             $lesson->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
             $lesson->custom = backup_todb($info['MOD']['#']['CUSTOM']['0']['#']);
             $lesson->ongoing = backup_todb($info['MOD']['#']['ONGOING']['0']['#']);
@@ -74,7 +72,6 @@
             $lesson->maxtime = backup_todb($info['MOD']['#']['MAXTIME']['0']['#']);
             $lesson->retake = backup_todb($info['MOD']['#']['RETAKE']['0']['#']);
             $lesson->tree = backup_todb($info['MOD']['#']['TREE']['0']['#']);
-            $lesson->mediafile = backup_todb($info['MOD']['#']['MEDIAFILE']['0']['#']);
             $lesson->slideshow = backup_todb($info['MOD']['#']['SLIDESHOW']['0']['#']);
             $lesson->width = backup_todb($info['MOD']['#']['WIDTH']['0']['#']);
             $lesson->height = backup_todb($info['MOD']['#']['HEIGHT']['0']['#']);
@@ -90,9 +87,7 @@
             $newid = insert_record("lesson", $lesson);
 
             //Do some output
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","lesson")." \"".format_string(stripslashes($lesson->name),true)."\"</li>";
-            }
+            echo "<li>".get_string("modulename","lesson")." \"".format_string(stripslashes($lesson->name),true)."\"</li>";
             backup_flush(300);
 
             if ($newid) {
@@ -100,11 +95,10 @@
                 backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
                 //We have to restore the lesson pages which are held in their logical order...
-                $userdata = restore_userdata_selected($restore,"lesson",$mod->id);
-                $status = lesson_pages_restore_mods($newid,$info,$restore,$userdata);
+                $status = lesson_pages_restore_mods($newid,$info,$restore);
                 //...and the user grades, high scores, and timer (if required)
                 if ($status) {
-                    if ($userdata) {
+                    if ($restore->mods["lesson"]->userinfo) {
                         if(!lesson_grades_restore_mods($newid,$info,$restore)) {
                             return false;
                         }
@@ -129,7 +123,7 @@
     }
 
     //This function restores the lesson_pages
-    function lesson_pages_restore_mods($lessonid,$info,$restore,$userdata=false) {
+    function lesson_pages_restore_mods($lessonid,$info,$restore) {
 
         global $CFG;
 
@@ -174,11 +168,9 @@
 
             //Do some output
             if (($i+1) % 10 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 200 == 0) {
-                        echo "<br>";
-                    }
+                echo ".";
+                if (($i+1) % 200 == 0) {
+                    echo "<br>";
                 }
                 backup_flush(300);
             }
@@ -187,11 +179,11 @@
                 //We have the newid, update backup_ids (restore logs will use it!!)
                 backup_putid($restore->backup_unique_code,"lesson_pages", $oldid, $newid);
                 //We have to restore the lesson_answers table now (a page level table)
-                $status = lesson_answers_restore($lessonid,$newid,$page_info,$restore,$userdata);
+                $status = lesson_answers_restore($lessonid,$newid,$page_info,$restore);
                 
                 //Need to update useranswer field (which has answer id's in it)
                 //for matching and multi-answer multi-choice questions
-                if ($userdata) { // first check to see if we even have to do this
+                if ($restore->mods["lesson"]->userinfo) {  // firs check to see if we even have to do this
                     // if multi-answer multi-choice question or matching
                     if (($page->qtype == 3 && $page->qoption) ||
                          $page->qtype == 5) {
@@ -218,7 +210,7 @@
                 }        
                 
                 // backup branch table info for branch tables.
-                if ($status && $userdata) {
+                if ($status && $restore->mods["lesson"]->userinfo) {
                     if (!lesson_branch_restore($lessonid,$newid,$page_info,$restore)) {
                         return false;
                     }
@@ -248,7 +240,7 @@
 
 
     //This function restores the lesson_answers
-    function lesson_answers_restore($lessonid,$pageid,$info,$restore,$userdata=false) {
+    function lesson_answers_restore($lessonid,$pageid,$info,$restore) {
 
         global $CFG;
 
@@ -256,24 +248,6 @@
 
         //Get the lesson_answers array (optional)
         if (isset($info['#']['ANSWERS']['0']['#']['ANSWER'])) {
-            // The following chunk of code is a fix for matching questions made
-            // pre moodle 1.5.  Matching questions need two answer fields designated
-            // for correct and wrong responses before the rest of the answer fields.
-            if ($restore->backup_version <= 2004083124) {  // Backup version for 1.4.5+
-                if ($ismatching = get_record('lesson_pages', 'id', $pageid)) {  // get the page we just inserted
-                    if ($ismatching->qtype == 5) { // check to make sure it is a matching question
-                        $time = time();  // this may need to be changed
-                        // make our 2 response answers
-                        $newanswer->lessonid = $lessonid;
-                        $newanswer->pageid = $pageid;
-                        $newanswer->timecreated = $time;
-                        $newanswer->timemodified = 0;
-                        insert_record('lesson_answers', $newanswer);
-                        insert_record('lesson_answers', $newanswer);
-                    }
-                }
-            }
-
             $answers = $info['#']['ANSWERS']['0']['#']['ANSWER'];
 
             //Iterate over lesson_answers
@@ -304,11 +278,9 @@
 
                 //Do some output
                 if (($i+1) % 10 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 200 == 0) {
-                            echo "<br>";
-                        }
+                    echo ".";
+                    if (($i+1) % 200 == 0) {
+                        echo "<br>";
                     }
                     backup_flush(300);
                 }
@@ -318,7 +290,7 @@
                     // field in attempts.  This is done in the lesson_pages_restore_mods
                     backup_putid($restore->backup_unique_code,"lesson_answers", $oldid, $newid);                                 
 
-                    if ($userdata) {
+                    if ($restore->mods['lesson']->userinfo) {
                         //We have to restore the lesson_attempts table now (a answers level table)
                         $status = lesson_attempts_restore($lessonid, $pageid, $newid, $answer_info, $restore);
                     }
@@ -372,11 +344,9 @@
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 1000 == 0) {
-                            echo "<br>";
-                        }
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br>";
                     }
                     backup_flush(300);
                 }
@@ -425,11 +395,9 @@
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 1000 == 0) {
-                            echo "<br>";
-                        }
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br>";
                     }
                     backup_flush(300);
                 }
@@ -484,11 +452,9 @@
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 1000 == 0) {
-                            echo "<br>";
-                        }
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br>";
                     }
                     backup_flush(300);
                 }
@@ -534,11 +500,9 @@
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 1000 == 0) {
-                            echo "<br>";
-                        }
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br>";
                     }
                     backup_flush(300);
                 }
@@ -589,11 +553,9 @@
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 1000 == 0) {
-                            echo "<br>";
-                        }
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br>";
                     }
                     backup_flush(300);
                 }
@@ -658,11 +620,9 @@
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 1000 == 0) {
-                            echo "<br>";
-                        }
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br>";
                     }
                     backup_flush(300);
                 }
@@ -675,118 +635,7 @@
 
         return $status;
     }
-
-    //Return a content decoded to support interactivities linking. Every module
-    //should have its own. They are called automatically from
-    //lesson_decode_content_links_caller() function in each module
-    //in the restore process
-    function lesson_decode_content_links ($content,$restore) {
-            
-        global $CFG;
-            
-        $result = $content;
-                
-        //Link to the list of lessons
-                
-        $searchstring='/\$@(LESSONINDEX)\*([0-9]+)@\$/';
-        //We look for it
-        preg_match_all($searchstring,$content,$foundset);
-        //If found, then we are going to look for its new id (in backup tables)
-        if ($foundset[0]) {
-            //print_object($foundset);                                     //Debug
-            //Iterate over foundset[2]. They are the old_ids
-            foreach($foundset[2] as $old_id) {
-                //We get the needed variables here (course id)
-                $rec = backup_getid($restore->backup_unique_code,"course",$old_id);
-                //Personalize the searchstring
-                $searchstring='/\$@(LESSONINDEX)\*('.$old_id.')@\$/';
-                //If it is a link to this course, update the link to its new location
-                if($rec->new_id) {
-                    //Now replace it
-                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/lesson/index.php?id='.$rec->new_id,$result);
-                } else { 
-                    //It's a foreign link so leave it as original
-                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/lesson/index.php?id='.$old_id,$result);
-                }
-            }
-        }
-
-        //Link to lesson view by moduleid
-
-        $searchstring='/\$@(LESSONVIEWBYID)\*([0-9]+)@\$/';
-        //We look for it
-        preg_match_all($searchstring,$result,$foundset);
-        //If found, then we are going to look for its new id (in backup tables)
-        if ($foundset[0]) {
-            //print_object($foundset);                                     //Debug
-            //Iterate over foundset[2]. They are the old_ids
-            foreach($foundset[2] as $old_id) {
-                //We get the needed variables here (course_modules id)
-                $rec = backup_getid($restore->backup_unique_code,"course_modules",$old_id);
-                //Personalize the searchstring
-                $searchstring='/\$@(LESSONVIEWBYID)\*('.$old_id.')@\$/';
-                //If it is a link to this course, update the link to its new location
-                if($rec->new_id) {
-                    //Now replace it
-                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/lesson/view.php?id='.$rec->new_id,$result);
-                } else {
-                    //It's a foreign link so leave it as original
-                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/lesson/view.php?id='.$old_id,$result);
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    //This function makes all the necessary calls to xxxx_decode_content_links()
-    //function in each module, passing them the desired contents to be decoded
-    //from backup format to destination site/course in order to mantain inter-activities
-    //working in the backup/restore process. It's called from restore_decode_content_links()
-    //function in restore process
-    function lesson_decode_content_links_caller($restore) {
-        global $CFG;
-        $status = true;
-        
-        //Process every lesson PAGE in the course
-        if ($pages = get_records_sql ("SELECT p.id, p.contents
-                                   FROM {$CFG->prefix}lesson_pages p,
-                                        {$CFG->prefix}lesson l
-                                   WHERE l.course = $restore->course_id AND
-                                         p.lessonid = l.id")) {
-            //Iterate over each page->message
-            $i = 0;   //Counter to send some output to the browser to avoid timeouts
-            foreach ($pages as $page) {
-                //Increment counter
-                $i++;
-                $content = $page->contents;
-                $result = restore_decode_content_links_worker($content,$restore);
-                if ($result != $content) {
-                    //Update record
-                    $page->contents = addslashes($result);
-                    $status = update_record("lesson_pages",$page);
-                    if ($CFG->debug>7) {
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
-                        }
-                    }
-                }
-                //Do some output
-                if (($i+1) % 5 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 100 == 0) {
-                            echo "<br />";
-                        }
-                    }
-                    backup_flush(300);
-                }
-            }
-        }
-
-        return $status;
-    }
-
+    
     //This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
     function lesson_restore_logs($restore,$log) {
@@ -855,9 +704,7 @@
             }
             break;
         default:
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
-            }
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br>";                 //Debug
             break;
         }
 

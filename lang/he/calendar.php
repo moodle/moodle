@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 ALPHA (2005042300)
+      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['calendar'] = 'לוח שנה';
@@ -8,11 +8,18 @@ $string['clickhide'] = 'לחץ כדי להסתיר';
 $string['clickshow'] = 'לחץ כדי להראות';
 $string['confirmeventdelete'] = 'האם אתה בטוח שאתה רוצה למחוק ארוע זה?';
 $string['courseevents'] = 'ארועי קורס';
+$string['day'] = 'יום';
 $string['dayview'] = 'מראה יום';
 $string['daywithnoevents'] = 'אין ארועים ביום זה';
 $string['default'] = 'ברירת מחדל';
 $string['deleteevent'] = 'מחק ארוע';
 $string['detailedmonthview'] = 'מראה חודש מפורט';
+$string['dstadjusttime'] = 'הזז מועד';
+$string['dstat'] = 'ב';
+$string['dstby'] = 'עד';
+$string['dsthumanreadable'] = 'ב-$a->activate_index $a->activate_weekday של כל $a->activate_month, הזז את השעה $a->offset minutes $a->direction. שינוי זה בתוקף עד ש-$a->deactivate_index $a->deactivate_weekday של $a->deactivate_month.';
+$string['dstof'] = 'של';
+$string['dstonthe'] = 'ב';
 $string['durationminutes'] = 'משך זמן בדקות';
 $string['durationnone'] = 'ללא משך זמן';
 $string['durationuntil'] = 'עד';
@@ -36,23 +43,29 @@ $string['eventstarttime'] = 'זמן התחלה';
 $string['eventtime'] = 'זמן';
 $string['eventview'] = 'פרטי אירוע';
 $string['expired'] = 'פג תוקף';
+$string['explain_dstpreset'] = 'באפשרותך לבחור באיזה אזור להשתמש בהגדרות DST, אם בכלל, מרשימת האפשרויות.';
+$string['explain_dstpresetforced'] = 'מנהל האתר אינו מאפשר למשתמשים לשנות אפשרות זו.';
 $string['explain_lookahead'] = 'זה קובע את מספר הימים (המירבי) עד להתחלת אירוע, שאירוע שמתחיל תוך מספר זה של ימים יוצג כאירוע ממשמש ובא. אירועים שמתחילים תוך מספר ימים רב יותר לעולם לא יוצגו כממשמים ובאים. אנא שים לב כי <strong>כי אין שום ערובה</strong> כי כל האירועים המתחילים במסגרת זמן זו יוצגו.אם ישנם יותר מדי (יותר מהעדפת \"מירב האירועים הממשמשים ובאים\") אז האירועים הרחוקים ביותר לא יוצגו.';
 $string['explain_maxevents'] = 'זה קובע את המספר המירבי של אירועים ממשמשים ובאים שאפשר להציג. אם תבחר כאן מספר גדול זה אפשרי שתצוגות אירועים ממשמשים ובאים ימלאו חלק גדול מחלל הצג שלך.';
 $string['explain_persistflt'] = 'אם מאופשר, Moodle יזכור את הגדרות הסינון של הארוע האחרון, וישחזר אותם באופן אוטומטי בכל פעם שתכנס לחשבון.';
 $string['explain_startwday'] = 'שבועות לוח שנה יוצגו כמתחילים ביום שתבחר פה.';
 $string['explain_timeformat'] = 'אתה יכול לבחור לראות זמנים בפורמט של 12 או 24 שעות. אם תבחר \"ברירת מחדל\", אז הפורמט יבחר אוטומטית לפי השפה שאתה משתמש בה באתר.';
+$string['first'] = 'ראשון';
 $string['fri'] = 'שישי';
 $string['friday'] = 'שישי';
 $string['globalevents'] = 'ארועים עולמיים';
 $string['gotocalendar'] = 'לך ללוח שנה';
 $string['groupevents'] = 'ארועים קבוצתיים';
 $string['hidden'] = 'מוסתר';
+$string['last'] = 'אחרון';
 $string['manyevents'] = '$a ארועים';
 $string['mon'] = 'שני';
 $string['monday'] = 'שני';
 $string['monthlyview'] = 'מראה חודשי';
 $string['newevent'] = 'ארוע חדש';
+$string['notusingdst'] = 'לא משתמש ב-DST';
 $string['noupcomingevents'] = 'אין ארועים מתוכננים';
+$string['nth'] = '{$a}';
 $string['oneevent'] = 'ארוע אחד';
 $string['pref_lookahead'] = 'ארועים מתוכננים';
 $string['pref_maxevents'] = 'מספר מירבי של ארועים מתוכננים';
@@ -61,8 +74,6 @@ $string['pref_startwday'] = 'יום ראשון של שבוע';
 $string['pref_timeformat'] = 'פורמט תצוגת זמן';
 $string['preferences'] = 'העדפות';
 $string['preferences_available'] = 'העדפותיך האישיות';
-$string['repeateditall'] = 'החל את השינויים לכל אירועי $a בסדרה חוזרת זו';
-$string['repeateditthis'] = 'החל את השינוי על ארוע זה בלבד';
 $string['repeatnone'] = 'אין חזרות';
 $string['repeatweeksl'] = 'חזור כל שבוע, יצירת הכל';
 $string['repeatweeksr'] = 'ארועים';
@@ -76,6 +87,8 @@ $string['thu'] = 'חמישי';
 $string['thursday'] = 'חמישי';
 $string['timeformat_12'] = '12 שעות (am-pm)';
 $string['timeformat_24'] = '24 שעות';
+$string['timeforward'] = 'קדימה';
+$string['timerewind'] = 'אחורה';
 $string['today'] = 'היום';
 $string['tomorrow'] = 'מחר';
 $string['tt_deleteevent'] = 'מחק ארוע';
@@ -99,6 +112,5 @@ $string['userevents'] = 'ארועי משתמשים';
 $string['wed'] = 'רביעי';
 $string['wednesday'] = 'רביעי';
 $string['yesterday'] = 'אתמול';
-$string['youcandeleteallrepeats'] = 'ארוע זה הוא חלק מסדרת ארועים חוזרת. באפשרותך למחוק ארוע זה בלבד, או את כל $a הארועים בסדרה בבת אחת.';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.5 + (2005060201)
+      // journal.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['alwaysopen'] = 'Stále pøístupná';
@@ -16,7 +16,6 @@ $string['journalquestion'] = 'Téma poznámek';
 $string['journalrating1'] = 'Nedostateèné';
 $string['journalrating2'] = 'Uspokojivé';
 $string['journalrating3'] = 'Vynikající';
-$string['mailsubject'] = 'Poznamky - odpoved';
 $string['modulename'] = 'Poznámky';
 $string['modulenameplural'] = 'Poznámky';
 $string['newjournalentries'] = 'Nový záznam do poznámek';

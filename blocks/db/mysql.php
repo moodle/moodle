@@ -58,7 +58,7 @@ global $CFG;
         if(!empty($records)) {
             foreach($records as $block) {
                 $block->multiple = 0;
-                insert_record('block', $block, false);
+                insert_record('block', $block);
             }
         }
 
@@ -82,7 +82,7 @@ global $CFG;
             return false;
         }
 
-        $records = get_records('course', '','','', 'id, shortname, blockinfo');
+        $records = get_records('course');
         if(!empty($records)) {
             foreach($records as $thiscourse) {
                 // The @ suppresses a notice emitted if there is no : in the string
@@ -98,7 +98,7 @@ global $CFG;
                         $instance->weight     = $weight;
                         $instance->visible    = ($blk > 0) ? 1 : 0;
                         $instance->configdata = '';
-                        insert_record('block_instance', $instance, false);
+                        insert_record('block_instance', $instance);
                     }
                 }
                 if(!empty($right)) {
@@ -112,7 +112,7 @@ global $CFG;
                         $instance->weight     = $weight;
                         $instance->visible    = ($blk > 0) ? 1 : 0;
                         $instance->configdata = '';
-                        insert_record('block_instance', $instance, false);
+                        insert_record('block_instance', $instance);
                     }
                 }
             }
@@ -143,24 +143,6 @@ global $CFG;
         }
     }
 
-    if ($oldversion < 2005081600) {
-         $result = $result && modify_database('',"CREATE TABLE `prefix_block_pinned` (
-           `id` int(10) not null auto_increment,
-           `blockid` int(10) not null default '0',
-           `pagetype` varchar(20) not null default '',
-           `position` varchar(10) not null default '',
-           `weight` tinyint(3) not null default '0',
-           `visible` tinyint(1) not null default '0',
-           `configdata` text not null default '',
-           PRIMARY KEY(`id`)
-          ) TYPE=MyISAM;");
-    }
-    
-    if ($oldversion < 2005090200) {
-        execute_sql("ALTER TABLE {$CFG->prefix}block_instance ADD INDEX pagetype (pagetype);",false);  // do it silently, in case it's already there from 1.5
-        modify_database('','ALTER TABLE prefix_block_pinned ADD INDEX pagetype (pagetype);');
-    }
-    
     //Finally, return result
     return $result;
 }

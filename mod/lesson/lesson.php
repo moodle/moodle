@@ -5,7 +5,7 @@
 
     addbranchtable
     addendofbranch
-    addcluster
+    addcluster      /// CDC-FLAG /// added two new items
     addendofcluster
     addpage
     confirmdelete

@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // appointment.php - created with Moodle 1.6 development (2005101200)
+<?php // $Id$ 
+      // appointment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['allowresubmit'] = '再提出を許可';
@@ -21,7 +21,7 @@ $string['newsubmissions'] = '予約が登録されました。';
 $string['notgradedyet'] = '未評価';
 $string['notsubmittedyet'] = '未登録';
 $string['overwritewarning'] = '警告: 再度アップロードすると現在の提出物は置き換えられます。';
-$string['saveallfeedback'] = 'すべてのフィードバックを保存';
+$string['saveallfeedback'] = '全てのフィードバックを保存';
 $string['submissionfeedback'] = '提出物のフィードバック';
 $string['submissions'] = '提出物';
 $string['submitappointment'] = 'このフォームを利用して予約を登録してください。';

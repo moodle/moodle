@@ -523,7 +523,7 @@ function quiz_upgrade($oldversion) {
                                  template_vars text NOT NULL
                                );");
 
-        modify_database ('', "CREATE TABLE prefix_quiz_rqp_types (
+        modify_database ('', "CREATE TABLE prefix_quiz_rqp_type (
                                 id SERIAL PRIMARY KEY,
                                 name varchar(255) NOT NULL default '',
                                 rendering_server varchar(255) NOT NULL default '',
@@ -531,7 +531,7 @@ function quiz_upgrade($oldversion) {
                                 flags integer NOT NULL default '0'
                               );");
 
-        modify_database ('', "CREATE UNIQUE INDEX prefix_quiz_rqp_types_name_uk ON prefix_quiz_rqp_types (name);");
+        modify_database ('', "CREATE UNIQUE INDEX prefix_quiz_rqp_type_name_uk ON prefix_quiz_rqp_type (name);");
 
         commit_sql();
     }
@@ -809,165 +809,6 @@ function quiz_upgrade($oldversion) {
         modify_database('','ALTER TABLE prefix_quiz_attemptonlast_datasets ADD CONSTRAINT prefix_quiz_category_userid_unique UNIQUE (category,userid);');
     }
 
-    if ($oldversion < 2005060300) {
-        // We need to remove some duplicate entries that may be present in some databases
-        // due to a faulty restore script
-
-        // Remove duplicate entries from quiz_numerical
-        if ($dups = get_records_sql("
-                SELECT question, answer, count(*) as num
-                FROM {$CFG->prefix}quiz_numerical
-                GROUP BY question, answer
-                HAVING count(*) > 1"
-            )) {
-            foreach ($dups as $dup) {
-                $ids = get_records_sql("
-                    SELECT id, id
-                    FROM {$CFG->prefix}quiz_numerical
-                    WHERE question = '$dup->question'
-                    AND answer = '$dup->answer'"
-                );
-                $skip = true;
-                foreach ($ids as $id) {
-                    if ($skip) {
-                        $skip = false;
-                    } else {
-                        delete_records('quiz_numerical','id', $id->id);
-                    }
-                }
-            }
-        }
-
-        // Remove duplicate entries from quiz_shortanswer
-        if ($dups = get_records_sql("
-                SELECT question, answers, count(*) as num
-                FROM {$CFG->prefix}quiz_shortanswer
-                GROUP BY question, answers
-                HAVING count(*) > 1"
-            )) {
-            foreach ($dups as $dup) {
-                $ids = get_records_sql("
-                    SELECT id, id
-                    FROM {$CFG->prefix}quiz_shortanswer
-                    WHERE question = '$dup->question'
-                    AND answers = '$dup->answers'"
-                );
-                $skip = true;
-                foreach ($ids as $id) {
-                    if ($skip) {
-                        $skip = false;
-                    } else {
-                        delete_records('quiz_shortanswer','id', $id->id);
-                    }
-                }
-            }
-        }
-
-        // Remove duplicate entries from quiz_multichoice
-        if ($dups = get_records_sql("
-                SELECT question, answers, count(*) as num
-                FROM {$CFG->prefix}quiz_multichoice
-                GROUP BY question, answers
-                HAVING count(*) > 1"
-            )) {
-            foreach ($dups as $dup) {
-                $ids = get_records_sql("
-                    SELECT id, id
-                    FROM {$CFG->prefix}quiz_multichoice
-                    WHERE question = '$dup->question'
-                    AND answers = '$dup->answers'"
-                );
-                $skip = true;
-                foreach ($ids as $id) {
-                    if ($skip) {
-                        $skip = false;
-                    } else {
-                        delete_records('quiz_multichoice','id', $id->id);
-                    }
-                }
-            }
-        }
-
-        //Search all the orphan categories (those whose course doesn't exist)
-        //and process them, deleting or moving them to site course - Bug 2459
-
-        //Set debug to false
-        $olddebug = $db->debug;
-        $db->debug = false;
-
-        //Iterate over all the quiz_categories records to get their course id
-        if ($courses = get_records_sql ("SELECT DISTINCT course as id, course
-                                         FROM {$CFG->prefix}quiz_categories")) {
-            //Iterate over courses
-            foreach ($courses as $course) {
-                //If the course doesn't exist, orphan category found!
-                //Process it with quiz_delete_course(). It will do all the hard work.
-                if (!record_exists('course', 'id', $course->id)) {
-                    require_once("$CFG->dirroot/mod/quiz/lib.php");
-                    quiz_delete_course($course);
-                }
-            }
-        }
-        //Reset rebug to its original state
-        $db->debug = $olddebug;
-    }
-
-    if ($oldversion < 2005060301) {
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_rqp_type RENAME TO '.$CFG->prefix.'quiz_rqp_types');
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_rqp_type_id_seq RENAME TO '.$CFG->prefix.'rqp_types_id_seq');
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_rqp_types ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'quiz_rqp_types_id_seq\')');
-        execute_sql('DROP INDEX '.$CFG->prefix.'quiz_rqp_type_name_uk');
-        execute_sql('CREATE UNIQUE INDEX '.$CFG->prefix.'quiz_rqp_types_name_uk ON '.$CFG->prefix.'quiz_rqp_types (name);');
-
-    }
-    
-    if ($oldversion < 2005060302) { // Mass cleanup of bad postgres upgrade scripts
-        execute_sql('CREATE UNIQUE INDEX '.$CFG->prefix.'quiz_newest_states_attempt_idx ON '.$CFG->prefix.'quiz_newest_states (attemptid, questionid)',false);
-        execute_sql('ALTER TABLE ONLY '.$CFG->prefix.'quiz_attemptonlast_datasets DROP CONSTRAINT '.$CFG->prefix.'quiz_category_userid_unique',false);
-        execute_sql('ALTER TABLE ONLY '.$CFG->prefix.'quiz_attemptonlast_datasets ADD CONSTRAINT '.$CFG->prefix.'quiz_attemptonlast_datasets_category_userid UNIQUE (category, userid)',false);
-        execute_sql('ALTER TABLE ONLY '.$CFG->prefix.'quiz_question_instances DROP CONSTRAINT '.$CFG->prefix.'quiz_question_grades_pkey',false);
-        execute_sql('ALTER TABLE ONLY '.$CFG->prefix.'quiz_question_instances ADD CONSTRAINT '.$CFG->prefix.'quiz_question_instances_pkey PRIMARY KEY (id)',false);
-        execute_sql('ALTER TABLE ONLY '.$CFG->prefix.'quiz_question_versions DROP CONSTRAINT '.$CFG->prefix.'quiz_question_version_pkey',false);
-        execute_sql('ALTER TABLE ONLY '.$CFG->prefix.'quiz_question_versions ADD CONSTRAINT '.$CFG->prefix.'quiz_question_versions_pkey PRIMARY KEY (id)',false);
-        execute_sql('ALTER TABLE ONLY '.$CFG->prefix.'quiz_states DROP CONSTRAINT '.$CFG->prefix.'quiz_responses_pkey',false);
-        execute_sql('ALTER TABLE ONLY '.$CFG->prefix.'quiz_states ADD CONSTRAINT '.$CFG->prefix.'quiz_states_pkey PRIMARY KEY (id)',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz ALTER decimalpoints SET NOT NULL',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz ALTER optionflags SET NOT NULL',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz ALTER penaltyscheme SET NOT NULL',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz ALTER popup SET NOT NULL',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz ALTER questionsperpage SET NOT NULL',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz ALTER review SET NOT NULL',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_answers ALTER answer SET NOT NULL',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_attempts ALTER layout SET NOT NULL',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_attempts ALTER preview SET NOT NULL',false);
-
-        table_column('quiz_calculated','correctanswerformat','correctanswerformat','integer','16','unsigned','2');
-
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_categories ALTER parent SET NOT NULL',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_categories ALTER sortorder SET NOT NULL',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_grades ALTER grade SET NOT NULL',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_multianswers ALTER sequence SET NOT NULL',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_numerical ALTER tolerance SET NOT NULL',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_questions ALTER hidden SET NOT NULL',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_questions ALTER length SET NOT NULL',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_questions ALTER parent SET NOT NULL',false);
-
-        table_column('quiz_questions','penalty','penalty','real','','UNSIGNED','0.1');
-
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_states ALTER answer SET NOT NULL',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_states ALTER event SET NOT NULL',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_states ALTER originalquestion SET NOT NULL',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_states ALTER penalty SET NOT NULL',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_states ALTER raw_grade SET NOT NULL',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_states ALTER seq_number SET NOT NULL',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_states ALTER timestamp SET NOT NULL',false);
-    }
-
-    if ($oldversion < 2005100500) {
-        // clean up an old mistake.
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_question_version_id_seq RENAME TO '.$CFG->prefix.'quiz_question_versions_id_seq',false);
-        execute_sql('ALTER TABLE '.$CFG->prefix.'quiz_question_versions ALTER COLUMN id SET DEFAULT nextval(\''.$CFG->prefix.'quiz_question_versions_id_seq\')',false);
-    }
 
     return true;
 }

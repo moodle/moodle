@@ -11,9 +11,10 @@
     $q           = optional_param('q',  0, PARAM_INT);  // quiz ID
     $edit        = optional_param('edit', '');
 
+
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
-            error("There is no coursemodule with id $id");
+            error("Course Module ID was incorrect");
         }
 
         if (! $course = get_record("course", "id", $cm->course)) {
@@ -21,18 +22,18 @@
         }
 
         if (! $quiz = get_record("quiz", "id", $cm->instance)) {
-            error("The quiz with id $cm->instance corresponding to this coursemodule $id is missing");
+            error("Course module is incorrect");
         }
 
     } else {
         if (! $quiz = get_record("quiz", "id", $q)) {
-            error("There is no quiz with id $q");
+            error("Course module is incorrect");
         }
         if (! $course = get_record("course", "id", $quiz->course)) {
-            error("The course with id $quiz->course that the quiz with id $q belongs to is missing");
+            error("Course is misconfigured");
         }
         if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
-            error("The course module for the quiz with id $q is missing");
+            error("Course Module ID was incorrect");
         }
     }
 
@@ -64,10 +65,7 @@
         }
     }
 
-    //only check pop ups if the user is not a teacher, and popup is set
-    
-    $bodytags = (isteacher($course->id) or !$quiz->popup)?'':'onload="popupchecker(\'This section of the test is in secure mode, this means that you need to take the quiz in a secure window. Please turn off your popup blocker. Thank you.\');"';
-    $PAGE->print_header($course->shortname.': %fullname%','',$bodytags);
+    $PAGE->print_header($course->shortname.': %fullname%');
 
     echo '<table id="layout-table"><tr>';
 
@@ -79,7 +77,7 @@
 
     echo '<td id="middle-column">';
 
-    $available = ($quiz->timeopen < $timenow and ($timenow < $quiz->timeclose or !$quiz->timeclose)) || $isteacher;
+    $available = ($quiz->timeopen < $timenow and $timenow < $quiz->timeclose) || $isteacher;
 
 // Print the main part of the page
 
@@ -91,8 +89,7 @@
     print_heading(format_string($quiz->name));
 
     if (trim(strip_tags($quiz->intro))) {
-        $formatoptions->noclean = true;
-        print_simple_box(format_text($quiz->intro, FORMAT_MOODLE, $formatoptions), "center");
+        print_simple_box(format_text($quiz->intro), "center");
     }
 
     if ($quiz->attempts > 1) {
@@ -105,7 +102,7 @@
         if ($quiz->timelimit) {
             echo "<p align=\"center\">".get_string("quiztimelimit","quiz", format_time($quiz->timelimit * 60))."</p>";
         }
-        quiz_view_dates($quiz);
+        echo "<p align=\"center\">".get_string("quizavailable", "quiz", userdate($quiz->timeclose));
     } else if ($timenow < $quiz->timeopen) {
         echo "<p align=\"center\">".get_string("quiznotavailable", "quiz", userdate($quiz->timeopen));
     } else {
@@ -116,15 +113,13 @@
     // This is all the teacher will get
     if ($isteacher) {
         
-        if ($attemptcount = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0)) {
+        $attemptcount = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0);
 
-            $strviewallanswers  = get_string("viewallanswers", "quiz", $attemptcount);
-            $usercount = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
-            $strusers  = $course->students;
-    
-            notify("<a href=\"report.php?mode=overview&amp;id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>");
-        }
-        echo '</td></tr></table>';
+        $strviewallanswers  = get_string("viewallanswers", "quiz", $attemptcount);
+        $usercount = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)');
+        $strusers  = $course->students;
+
+        notify("<a href=\"attempts.php?id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>");
         print_footer($course);
         exit;
     }
@@ -136,10 +131,9 @@
             $wwwroot = str_replace('http','https', $wwwroot);
         }
 
-        notice_yesno(get_string('guestsno', 'quiz').'<br /><br />'.get_string('liketologin'),
+        notice_yesno(get_string('guestno', 'quiz').'<br /><br />'.get_string('liketologin'),
                      $wwwroot, $_SERVER['HTTP_REFERER']);
         print_footer($course);
-        echo '</td></tr></table>';
         exit;
     }
 
@@ -169,6 +163,7 @@
 /// Now print table with existing attempts
 
     if ($numattempts) {
+
     /// prepare table header
         if ($quiz->grade and $quiz->sumgrades) { // Grades used so have more columns in table
             if ($quiz->grade <> $quiz->sumgrades) {
@@ -201,30 +196,18 @@
                 $strconfirmstartattempt = addslashes(get_string("confirmstartattempt","quiz"));
                 $datecompleted  = "\n".'<script language="javascript" type="text/javascript">';
                 $datecompleted .= "\n<!--\n"; // -->
-                if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
-                    $attempturl=sid_process_url("attempt.php?id=$cm->id");
-                } else {
-                    $attempturl="attempt.php?id=$cm->id";
-                };
                 if (!empty($quiz->popup)) {
                     $datecompleted .= "var windowoptions = 'left=0, top=0, height='+window.screen.height+
                      ', width='+window.screen.width+', channelmode=yes, fullscreen=yes, scrollbars=yes, '+
                      'resizeable=no, directories=no, toolbar=no, titlebar=no, location=no, status=no, '+
                      'menubar=no';\n";
                     $jslink  = 'javascript:';
-                    if ($quiz->timelimit && !$quiz->attempts) {
-                        $strconfirmstartattempt = addslashes(get_string("confirmstartattempt","quiz"));
-                        $jslink .=  "if (confirm(\'$strconfirmstartattempt\')) ";
-                    } else if ($quiz->timelimit && $quiz->attempts) {
-                        $strconfirmstartattempt = addslashes(get_string("confirmstartattempttimelimit","quiz",$quiz->attempts));
-                        $jslink .=  "if (confirm(\'$strconfirmstartattempt\')) ";
-                    } else if ($quiz->attempts && !$quiz->timelimit) {
-                        $strconfirmstartattempt = addslashes(get_string("confirmstartattemptnotimelimit","quiz",$quiz->attempts));
-                        $jslink .=  "if (confirm(\'$strconfirmstartattempt\')) ";
+                    if ($quiz->timelimit) {
+                        $jslink .=  "if (confirm('$strconfirmstartattempt')) ";
                     }
-                    $jslink .= "var popup = window.open(\\'$attempturl\\', \\'quizpopup\\', windowoptions);";
+                    $jslink .= "var popup = window.open(\\'attempt.php?id=$cm->id\\', \\'quizpopup\\', windowoptions);";
                 } else {
-                    $jslink = $attempturl;
+                    $jslink = "attempt.php?id=$cm->id";
                 }
 
                 $linktext = get_string('continueattemptquiz', 'quiz');
@@ -236,7 +219,7 @@
                 $datecompleted .= '</noscript>';
             } else { // attempt was not completed but is also not available any more.
                 $timetaken = format_time($quiz->timeclose - $attempt->timestart);
-                $datecompleted = $quiz->timeclose ? userdate($quiz->timeclose) : '';
+                $datecompleted = userdate($quiz->timeclose);
             }
 
         /// prepare strings for attempt number, mark and grade
@@ -294,20 +277,12 @@
         print_heading(get_string("noquestions", "quiz"));
     } else {
         if ($numattempts < $quiz->attempts or !$quiz->attempts) {
-          
             if ($available) {
                 $options["id"] = $cm->id;
                 if ($numattempts and $quiz->grade) {
                     print_heading("$strbestgrade: $mygrade / $quiz->grade.");
                 }
-                if ($quiz->timelimit && !$quiz->attempts) {
-                    $strconfirmstartattempt = addslashes(get_string("confirmstartattempt","quiz"));
-                } else if ($quiz->timelimit && $quiz->attempts) {
-                    $strconfirmstartattempt = addslashes(get_string("confirmstartattempttimelimit","quiz",$quiz->attempts));
-                } else if ($quiz->attempts && !$quiz->timelimit) {
-                    $strconfirmstartattempt = addslashes(get_string("confirmstartattemptnotimelimit","quiz",$quiz->attempts));
-                }
-
+                $strconfirmstartattempt = addslashes(get_string("confirmstartattempt","quiz"));
                 echo "<br />";
                 echo "</p>";
                 echo "<div align=\"center\">";
@@ -335,10 +310,10 @@
         if (!($quiz->review & QUIZ_REVIEW_RESPONSES)) {
             return false;
         }
-        if ((!$quiz->timeclose or time() < $quiz->timeclose) and !($quiz->review & QUIZ_REVIEW_OPEN)) {
+        if ((time() < $quiz->timeclose) and !($quiz->review & QUIZ_REVIEW_OPEN)) {
             return false;
         }
-        if (($quiz->timeclose and time() > $quiz->timeclose) and !($quiz->review & QUIZ_REVIEW_CLOSED)) {
+        if ((time() > $quiz->timeclose) and !($quiz->review & QUIZ_REVIEW_CLOSED)) {
             return false;
         }
         return true;

@@ -44,11 +44,7 @@
     require_once($CFG->dirroot.'/course/lib.php');
     require_once($CFG->dirroot.'/calendar/lib.php');
 
-    $course = optional_param('course', 0);
-    $view = optional_param('view', 'upcoming');
-    $day  = optional_param('cal_d', 0, PARAM_INT);
-    $mon  = optional_param('cal_m', 0, PARAM_INT);
-    $yr   = optional_param('cal_y', 0, PARAM_INT);
+    optional_variable($_GET['course'], 0);
 
     if(!$site = get_site()) {
         redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
@@ -60,6 +56,10 @@
 
     $nav = calendar_get_link_tag(get_string('calendar', 'calendar'), CALENDAR_URL.'view.php?view=upcoming&amp;', $now['mday'], $now['mon'], $now['year']);
 
+    $view = optional_param('view', 'upcoming');
+    $day  = optional_param('cal_d', 0, PARAM_INT);
+    $mon  = optional_param('cal_m', 0, PARAM_INT);
+    $yr   = optional_param('cal_y', 0, PARAM_INT);
     
     if(!checkdate($mon, $day, $yr)) {
         $day = intval($now['mday']);
@@ -83,9 +83,9 @@
     }
 
     // If a course has been supplied in the URL, change the filters to show that one
-    if (!empty($course)) {
-        if ($course = get_record('course', 'id', $course)) {
-            if ($course->id == SITEID) {
+    if (!empty($_GET['course'])) {
+        if ($course = get_record('course', 'id', $_GET['course'])) {
+            if ($course->id == 1) {
                 // If coming from the home page, show all courses
                 $SESSION->cal_courses_shown = calendar_get_default_courses(true);
                 calendar_set_referring_course(0);
@@ -108,7 +108,7 @@
 
     // Let's see if we are supposed to provide a referring course link
     // but NOT for the "main page" course
-    if ($SESSION->cal_course_referer != SITEID &&
+    if ($SESSION->cal_course_referer > 1 &&
        ($shortname = get_field('course', 'shortname', 'id', $SESSION->cal_course_referer)) !== false) {
         // If we know about the referring course, show a return link and ALSO require login!
         require_login();
@@ -261,7 +261,7 @@ function calendar_show_day($d, $m, $y, $courses, $groups, $users) {
 }
 
 function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
-    global $CFG, $SESSION, $USER, $CALENDARDAYS;
+    global $CFG, $SESSION, $USER;
     global $day, $mon, $yr;
 
     $getvars = 'from=month&amp;cal_d='.$day.'&amp;cal_m='.$mon.'&amp;cal_y='.$yr; // For filtering
@@ -343,10 +343,11 @@ function calendar_show_month_detailed($m, $y, $courses, $groups, $users) {
     echo '<table class="calendarmonth"><tr class="weekdays">'; // Begin table. First row: day names
 
     // Print out the names of the weekdays
+    $days = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
     for($i = $display->minwday; $i <= $display->maxwday; ++$i) {
         // This uses the % operator to get the correct weekday no matter what shift we have
         // applied to the $display->minwday : $display->maxwday range from the default 0 : 6
-        echo '<th>'.get_string($CALENDARDAYS[$i % 7], 'calendar').'</th>';
+        echo '<th>'.get_string($days[$i % 7], 'calendar').'</th>';
     }
 
     echo '</tr><tr>'; // End of day names; prepare for day numbers
@@ -558,7 +559,7 @@ function calendar_course_filter_selector($getvars = '') {
 
     unset($courses[SITEID]);
 
-    $courseoptions[SITEID] = get_string('fulllistofcourses');
+    $courseoptions[1] = get_string('fulllistofcourses');
     foreach ($courses as $course) {
         $courseoptions[$course->id] = $course->shortname;
     }

@@ -1,16 +1,18 @@
 <P ALIGN=CENTER><B>Editor HTML</B></P>
+
 <P>Disponibilit&agrave;: <B>
 <?php  if (!$CFG->htmleditor) {
-       print_string(&quot;htmleditordisabledadmin&quot;);
-   } else if (!$USER-&gt;htmleditor) {
-       print_string(&quot;htmleditordisabled&quot;);
+       print_string("htmleditordisabledadmin");
+   } else if (!$USER->htmleditor) {
+       print_string("htmleditordisabled");
    } else if (!can_use_richtext_editor()) {
-       print_string(&quot;htmleditordisabledbrowser&quot;);
+       print_string("htmleditordisabledbrowser");
    } else {
-       print_string(&quot;htmleditoravailable&quot;);
+       print_string("htmleditoravailable");
    }
-?&gt;
+?>
 </B></P>
+
 <P>L'editor HTML mette a disposizione una interfaccia
   tipo word-processor direttamente all'interno di una pagina web, permettendo
   di creare contenuti   HTML in modo intuitivo. Inoltre, l'editor HTML ha una
@@ -23,16 +25,19 @@
   da menu oppure utilizzare la combinazione di tasti Control-C (copia) e Control-V
   (incolla).
 </UL>
+
 <P><B>Aggiunta di immagini<img border="0" hspace="10" src="lib/editor/images/ed_image.gif"></B></P>
 <UL>
 <P>Se disponete di immagini accessibili via web tramite una URL, potete inserirle
   all'interno del testo HTML tramite il pulsante &quot;Inserici immagine&quot;.
 </UL>
+
 <P><B>Aggiunta di tabelle<img border="0" hspace="10" src="lib/editor/images/insert_table.gif"></B></P>
 <UL>
 <P>Per impaginare i vostri testi, avete a disposizione il pulsante &quot;Inserisci
   tabella&quot; nella barra degli strumenti.
 </UL>
+
 <P><B>Aggiunta di link<img border="0" hspace="10" src="lib/editor/images/ed_link.gif"></B></P>
 <UL>
 <P>Per aggiungere un link al testo, per prima cosa dovete selezionare il testo
@@ -41,6 +46,7 @@
   URL
   da collegare.
 </UL>
+
 
 <P><B>Aggiunta d&igrave; faccine (emoticons) <img border="0" hspace="10" src="pix/s/smiley.gif" width="15" height="15"></B></P>
 <UL>
@@ -161,4 +167,5 @@
 </table>
 <p>&nbsp;  </p>
 </UL>
+
 

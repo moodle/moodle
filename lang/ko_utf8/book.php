@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // book.php - created with Moodle 1.5 ALPHA (2005051500)
+      // book.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['addafter'] = '새 문단 작성';
@@ -29,12 +29,16 @@ $string['numbering0'] = '없음';
 $string['numbering1'] = '번호';
 $string['numbering2'] = '탄약';
 $string['numbering3'] = '문단변경';
+$string['parentlanguage'] = '한국어';
 $string['printbook'] = '책 전체를 인쇄';
 $string['printchapter'] = '이 문단을 인쇄';
 $string['printdate'] = '인쇄날짜';
 $string['printedby'] = '인쇄자';
 $string['relinking'] = '재접속';
 $string['subchapter'] = '부문단';
+$string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['toc'] = '목차';
 $string['tocwidth'] = '모든 책들의 목차의 폭을 선택하십시오.';
 $string['top'] = '위';

@@ -1,25 +1,27 @@
 <?php
 
     require_once("../../config.php");
-    require_once('locallib.php');
+    require_once("lib.php");
 
-    $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
-    $a = optional_param('a', '', PARAM_INT);         // scorm ID
-    $scoid = required_param('scoid', '', PARAM_INT);  // sco ID
-    $mode = optional_param('mode', '', PARAM_ALPHA); // navigation mode
-    $attempt = required_param('attempt', '', PARAM_INT); // new attempt
+    optional_variable($id);    // Course Module ID, or
+    optional_variable($a);     // scorm ID
+    require_variable($scoid);  // sco ID
+    optional_variable($mode);  // navigation mode
 
-    if (!empty($id)) {
+    if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
         }
+    
         if (! $course = get_record("course", "id", $cm->course)) {
             error("Course is misconfigured");
         }
+    
         if (! $scorm = get_record("scorm", "id", $cm->instance)) {
             error("Course module is incorrect");
         }
-    } else if (!empty($a)) {
+
+    } else {
         if (! $scorm = get_record("scorm", "id", $a)) {
             error("Course module is incorrect");
         }
@@ -29,20 +31,18 @@
         if (! $cm = get_coursemodule_from_instance("scorm", $scorm->id, $course->id)) {
             error("Course Module ID was incorrect");
         }
-    } else {
-        error('A required parameter is missing');
     }
 
     require_login($course->id, false, $cm);
     
-    if ($usertrack=scorm_get_tracks($scoid,$USER->id,$attempt)) {
+    if ($usertrack=scorm_get_tracks($scoid,$USER->id)) {
         $userdata = $usertrack;
     } else {
         $userdata->status = '';
-        $userdata->score_raw = '';
+        $userdata->scorre_raw = '';
     }
-    $userdata->student_id = addslashes($USER->username);
-    $userdata->student_name = addslashes($USER->lastname .', '. $USER->firstname);
+    $userdata->student_id = $USER->username;
+    $userdata->student_name = $USER->lastname .', '. $USER->firstname;
     $userdata->mode = 'normal';
     if (isset($mode)) {
         $userdata->mode = $mode;
@@ -78,6 +78,7 @@
 ?>
 
 var errorCode = "0";
+
 function underscore(str) {
     return str.replace(/\./g,"__");
 }

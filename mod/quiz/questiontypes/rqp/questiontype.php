@@ -11,7 +11,7 @@
 */
 
 require_once($CFG->dirroot . '/mod/quiz/questiontypes/rqp/lib.php');
-require_once($CFG->dirroot . '/mod/quiz/questiontypes/rqp/remote.php');
+require_once('remote.php');
 
 /**
 * RQP question type class
@@ -61,15 +61,14 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
             quiz_rqp_debug_soap($item);
             return $result;
         }
-        if ($item->error) {
-            $result->notice = $item->error;
+        if ($item->sourceErrors) {
+            array_walk($item->sourceErrors,
+             create_function('&$val', '$val = $val->message;'));
+            $result->notice = get_string('invalidsource', 'quiz', $options) .
+             '<br />' . implode('<br />', array_values($item->sourceErrors));
             return $result;
         }
-        if ($item->warning) {
-            $result->notice = $item->warning;
-            return $result;
-        }
-        // Time dependent items are not supported yet
+        // Time dependent items are not supported by the quiz module yet
         if ($item->timeDependent) {
             $result->noticeyesno = get_string('notimedependentitems', 'quiz');
             return $result;
@@ -153,11 +152,12 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
     * @param object $question The question for which the session is to be created.
     * @param object $state    The state to create the session for. This is passed by
     *                         reference and will be updated.
-    * @param object $cmoptions (not used)
-    * @param object $attempt  The attempt for which the session is to be
+    * @param object $quiz     The quiz for which the session is to be started.
+    *                         (not used)
+    * @param object $attempt  The quiz attempt for which the session is to be
     *                         started. (not used)
     */
-    function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
+    function create_session_and_responses(&$question, &$state, $quiz, $attempt) {
         $state->responses = array('' => '');
         $state->options->persistent_data = '';
         $state->options->template_vars = array();
@@ -205,17 +205,8 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
         $options->persistent_data = $state->options->persistent_data;
         $options->template_vars =
          quiz_rqp_implode($state->options->template_vars);
-        if ($state->update) {
-            if (!$options->id = get_field('quiz_rqp_states', 'id', 'stateid', $state->id)) {
-                return false;
-            }
-            if (!update_record('quiz_rqp_states', $options)) {
-                return false;
-            }
-        } else {
-            if (!insert_record('quiz_rqp_states', $options)) {
-                return false;
-            }
+        if (!insert_record('quiz_rqp_states', $options)) {
+            return false;
         }
         return true;
     }
@@ -234,11 +225,11 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
     *                         ->responses. The last graded state is in
     *                         ->last_graded (hence the most recently graded
     *                         responses are in ->last_graded->responses).
-    * @param object $cmoptions
+    * @param object $quiz     The quiz to which the question belongs.
     * @param object $options  An object describing the rendering options.
     */
     function print_question_formulation_and_controls(&$question, &$state,
-     $cmoptions, $options) {
+     $quiz, $options) {
 
         // Use the render output created during grading if it exists
         if (isset($state->options->renderoutput)) {
@@ -321,18 +312,18 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
     * Prints the submit and validate buttons
     * @param object $question The question for which the buttons are to be printed
     * @param object $state    The state the question is in (not used)
-    * @param object $cmoptions
+    * @param object $quiz     The quiz to which the question belongs.
     * @param object $options  An object describing the rendering options.
     *                         (not used. This function should only have been called
     *                         if the options were such that the buttons are required)
     */
-    function print_question_submit_buttons(&$question, &$state, $cmoptions, $options) {
+    function print_question_submit_buttons(&$question, &$state, $quiz, $options) {
         echo '<input type="submit" name="';
         echo $question->name_prefix;
         echo 'validate" value="';
         print_string('validate', 'quiz');
         echo '" />&nbsp;';
-        if ($cmoptions->optionflags & QUIZ_ADAPTIVE) {
+        if ($quiz->optionflags & QUIZ_ADAPTIVE) {
             echo '<input type="submit" name="';
             echo $question->name_prefix;
             echo 'mark" value="';
@@ -359,9 +350,9 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
     *                         close the question session (preventing any further
     *                         attempts at this question) by setting
     *                         $state->event to QUIZ_EVENTCLOSE.
-    * @param object $cmoptions
+    * @param object $quiz     The quiz to which the question belongs.
     */
-    function grade_responses(&$question, &$state, $cmoptions) {
+    function grade_responses(&$question, &$state, $quiz) {
         // Perform the grading and rendering
         $output = remote_render($question, $state, QUIZ_EVENTGRADE == $state->event
          || QUIZ_EVENTCLOSE == $state->event, 'normal');

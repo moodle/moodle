@@ -110,7 +110,7 @@ function wiki_format( $wiki_source,
       $o .= "<hr>\n";
       continue;
     } elseif ( strpos( $line, "&lt;!--" ) === 0 ) {
-      $o .= "<!-- " . s( str_replace( "--", "__", substr($line, 7) ) ) . " -->\n";
+      $o .= "<!-- " . htmlentities( str_replace( "--", "__", substr($line, 7) ) ) . " -->\n";
       continue;
     }
 

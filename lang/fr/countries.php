@@ -73,7 +73,7 @@ $string['FO'] = 'Îles Féroe';
 $string['FJ'] = 'Fidji';
 $string['FI'] = 'Finlande';
 $string['FR'] = 'France';
-$string['FX'] = 'France';
+$string['FX'] = 'France métropolitaine';
 $string['GF'] = 'Guyane Française';
 $string['PF'] = 'Polynésie Française';
 $string['TF'] = 'Terres Australes Françaises';
@@ -237,7 +237,7 @@ $string['WA'] = 'Pays de Galles';
 $string['WF'] = 'Wallis et Futuna';
 $string['EH'] = 'Sahara Occidental';
 $string['YE'] = 'Yémen';
-$string['ZR'] = 'République Démocratique du Congo';
+$string['ZR'] = 'Zaïre';
 $string['ZM'] = 'Zambie';
 $string['ZW'] = 'Zimbabwe';
 

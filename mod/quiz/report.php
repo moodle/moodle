@@ -5,14 +5,14 @@
     require_once("../../config.php");
     require_once("locallib.php");
 
-    $id = optional_param('id',0,PARAM_INT);    // Course Module ID, or
-    $q = optional_param('q',0,PARAM_INT);     // quiz ID
+    optional_variable($id);    // Course Module ID, or
+    optional_variable($q);     // quiz ID
 
-    $mode = optional_param('mode', 'overview', PARAM_ALPHA);        // Report mode
+    optional_variable($mode, "simplestat");        // Report mode
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
-            error("There is no coursemodule with id $id");
+            error("Course Module ID was incorrect");
         }
 
         if (! $course = get_record("course", "id", $cm->course)) {
@@ -20,18 +20,18 @@
         }
 
         if (! $quiz = get_record("quiz", "id", $cm->instance)) {
-            error("The quiz with id $cm->instance corresponding to this coursemodule $id is missing");
+            error("Course module is incorrect");
         }
 
     } else {
         if (! $quiz = get_record("quiz", "id", $q)) {
-            error("There is no quiz with id $q");
+            error("Course module is incorrect");
         }
         if (! $course = get_record("course", "id", $quiz->course)) {
-            error("The course with id $quiz->course that the quiz with id $q belongs to is missing");
+            error("Course is misconfigured");
         }
         if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
-            error("The course module for the quiz with id $q is missing");
+            error("Course Module ID was incorrect");
         }
     }
 
@@ -50,13 +50,33 @@
     // Moodle 1.5 model (they will not yet have the timestamp set)
     if ($attempts = get_records_sql("SELECT a.*".
            "  FROM {$CFG->prefix}quiz_attempts a, {$CFG->prefix}quiz_states s".
-           " WHERE a.quiz = '$quiz->id' AND s.attempt = a.uniqueid AND s.timestamp = 0")) {
+           " WHERE a.quiz = '$quiz->id' AND s.attempt = a.id AND s.timestamp = 0")) {
         foreach ($attempts as $attempt) {
             quiz_upgrade_states($attempt);
         }
     }
 
     add_to_log($course->id, "quiz", "report", "report.php?id=$cm->id", "$quiz->id", "$cm->id");
+
+
+/* Code moved into each plugin report.php 
+/// Define some strings
+
+    $strquizzes = get_string("modulenameplural", "quiz");
+    $strquiz  = get_string("modulename", "quiz");
+
+/// Print the page header
+
+    print_header_simple(format_string($quiz->name), "",
+                 "<a href=\"index.php?id=$course->id\">$strquizzes</a>
+                  -> ".format_string($quiz->name),
+                 "", "", true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
+
+/// Print the tabs
+
+    $currenttab = 'reports';
+    include('tabs.php');
+*/
 
 /// Open the selected quiz report and display it
 

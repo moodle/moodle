@@ -59,9 +59,9 @@ global $CFG;
         if(!empty($records)) {
             foreach($records as $block) {
                 $block->multiple = 0;
-                insert_record('block', $block, false);
+                unset($block->id);
+                insert_record('block', $block);
             }
-            execute_sql("SELECT setval('{$CFG->prefix}block_id_seq', (SELECT MAX(id) FROM {$CFG->prefix}block), true)");
         }
 
         execute_sql("DROP TABLE {$CFG->prefix}blocks");
@@ -81,7 +81,7 @@ global $CFG;
             return false;
         }
         
-        $records = get_records('course', '','','', 'id, shortname, blockinfo');
+        $records = get_records('course');
         if(!empty($records)) {
             foreach($records as $thiscourse) {
                 // The @ suppresses a notice emitted if there is no : in the string
@@ -97,7 +97,7 @@ global $CFG;
                         $instance->weight     = $weight;
                         $instance->visible    = ($blk > 0) ? 1 : 0;
                         $instance->configdata = '';
-                        insert_record('block_instance', $instance, false);
+                        insert_record('block_instance', $instance);
                     }
                 }
                 if(!empty($right)) {
@@ -111,7 +111,7 @@ global $CFG;
                         $instance->weight     = $weight;
                         $instance->visible    = ($blk > 0) ? 1 : 0;
                         $instance->configdata = '';
-                        insert_record('block_instance', $instance, false);
+                        insert_record('block_instance', $instance);
                     }
                 }
             }
@@ -136,31 +136,6 @@ global $CFG;
                 }
             }
         }
-    }
-
-    if ($oldversion < 2005022401 && $result) { // Mass cleanup of bad upgrade scripts
-        execute_sql("CREATE INDEX {$CFG->prefix}block_instance_pageid_idx ON {$CFG->prefix}block_instance (pageid)",false); // this one should be quiet...
-        modify_database('','ALTER TABLE prefix_block_instance ALTER pagetype SET DEFAULT \'\'');
-        modify_database('','ALTER TABLE prefix_block_instance ALTER position SET DEFAULT \'\'');
-        modify_database('','ALTER TABLE prefix_block_instance ALTER pagetype SET NOT NULL');
-        modify_database('','ALTER TABLE prefix_block_instance ALTER position SET NOT NULL');
-    }
-
-    if ($oldversion < 2005081600) {
-         $result = $result && modify_database('',"CREATE TABLE prefix_block_pinned ( 
-            id SERIAL8 PRIMARY KEY,
-            blockid INT8 NOT NULL default 0,
-            pagetype varchar(20) NOT NULL default '',
-            position varchar(10) NOT NULL default '',
-            weight INT NOT NULL default 0,
-            visible INT NOT NULL default 0,
-            configdata text NOT NULL default 0
-          );");
-     }
-
-    if ($oldversion < 2005090200) {
-        execute_sql("CREATE INDEX {$CFG->prefix}block_instance_pagetype_idx ON {$CFG->prefix}block_instance (pagetype);",false); // do it silently, in case it's already there from 1.5
-        modify_database('','CREATE INDEX prefix_block_pinned_pagetype_idx ON prefix_block_pinned (pagetype);');
     }
 
     //Finally, return result

@@ -52,15 +52,6 @@ a.autolink.glossary:hover {
   cursor: help;
 }
 
-img.userpicture,
-img.grouppicture {
-  border-color:#000
-}
-
-.block_online_users .listentry img {
-  border:#888
-}
-
 body {
   background-color:#FAFAFA;
 }
@@ -128,10 +119,6 @@ table.formtable tbody th {
   color:#ffffff;
   border-color:#660000;
   background-color:#990000;
-}
-
-.errorboxcontent {
-  background-color:#FFBBBB;
 }
 
 .tabledivider {
@@ -228,27 +215,7 @@ body#admin-index .c0 {
   background-color: #FAFAFA;
 }
 
-body#admin-blocks table#blocks .r0,
-body#admin-blocks table#incompatible .r0 {
-  background-color: #f0f0f0;
-}
 
-body#admin-blocks table#blocks .r1,
-body#admin-blocks table#incompatible .r1 {
-  background-color: #fafafa;
-}
-
-body#admin-blocks table#incompatible td.c0 {
-  color: #ff0000;
-}
-
-table.flexible  .r0 {
-  background-color: #f0f0f0;
-}
-
-table.flexible .r1 {
-  background-color: #fafafa;
-}
 
 /***
  *** Blocks
@@ -583,17 +550,10 @@ table.message_search_results td {
   border-color: #DDDDDD;
 }
 
+
 /***
  *** Modules: Chat
  ***/
-
-#mod-chat-gui_header_js-jsupdate .text {
-  color:#000
-}
-#mod-chat-gui_header_js-jsupdate .event,
-#mod-chat-gui_header_js-jsupdate .title {
-  color:#888
-}
 
 /***
  *** Modules: Choice
@@ -738,35 +698,6 @@ body#mod-quiz-report table#attempts .r1 {
  *** Modules: Resource
  ***/
 
-.ims-nav-dimmed {
-  color: #AAAAAA;
-  text-decoration: none;
-}
-
-.ims-nav-button a:link,
-.ims-nav-button a:visited,
-.ims-nav-button a:hover {
-  color: #000;
-  text-decoration: none;
-}
-
-.ims-nav-dimmed,
-.ims-nav-button a:link,
-.ims-nav-button a:visited {
-  border-top: 1px solid #cecece;
-  border-bottom: 2px solid #4a4a4a;
-  border-left: 1px solid #cecece;
-  border-right: 2px solid #4a4a4a;
-}
-
-.ims-nav-button a:hover {
-  border-bottom: 1px solid #cecece;
-  border-top: 2px solid #4a4a4a;
-  border-right: 1px solid #cecece;
-  border-left: 2px solid #4a4a4a;
-}
-
-
 /***
  *** Modules: Scorm
  ***/
@@ -799,6 +730,3 @@ body#mod-quiz-report table#attempts .r1 {
   background-color:#DDDDDD;
 }
 
-.error {
-  color:#ff0000;
-}

@@ -42,7 +42,7 @@
         if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
             $buttontext = update_module_button($cm->id, $course->id, $strforum);
         } else {
-            $cm->id = 0;
+            $cm->id = NULL;
             $cm->visible = 1;
             $cm->course = $course->id;
             $buttontext = "";
@@ -66,7 +66,7 @@
         }
     }
 
-    if ($cm->id) {
+    if ($cm) {
         add_to_log($course->id, "forum", "view forum", "view.php?id=$cm->id", "$forum->id", $cm->id);
     } else {
         add_to_log($course->id, "forum", "view forum", "view.php?f=$forum->id", "$forum->id");
@@ -83,16 +83,15 @@
 /// Check to see if groups are being used in this forum
 /// and if so, set $currentgroup to reflect the current group
 
-    $changegroup = isset_param('group') ? $group : -1;  // Group change requested?
+    $changegroup = isset($_GET['group']) ? $_GET['group'] : -1;  // Group change requested?
 
     if ($forum->type == "teacher") {
         $groupmode = NOGROUPS;
     } else {
         $groupmode = groupmode($course, $cm);   // Groups are being used
     }
-    
     $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
-    
+
     if ($groupmode and ($currentgroup === false) and !isteacheredit($course->id)) {
         print_heading(get_string("notingroup", "forum"));
         print_footer($course);
@@ -104,14 +103,7 @@
 
     echo '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr valign="top">';
 
-    ///2 ways to do this, 1. we can changed the setup_and_print_groups functions
-    ///in moodlelib, taking in 1 more parameter, and tell the function when to
-    ///allow student menus, 2, we can just use this code to explicitly print this
-    ///menu for students in forums.
-
-    //now we need a menu for separategroups as well!
     if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
-        //the following query really needs to change
         if ($groups = get_records_menu("groups", "courseid", $course->id, "name ASC", "id,name")) {
             echo '<td>';
             print_group_menu($groups, $groupmode, $currentgroup, "view.php?id=$cm->id");
@@ -119,23 +111,6 @@
         }
     }
 
-    //only print menus the student is in any course
-    else if ($groupmode == SEPARATEGROUPS){
-        $validgroups = array();
-        //get all the groups this guy is in in this course
-
-        if ($p = user_group($course->id,$USER->id)){
-            //extract the name and id for the group
-            foreach ($p as $index => $object){
-                $validgroups[$object->id] = $object->name;
-            }
-            //print_r($validgroups);
-            echo '<td>';
-            //print them in the menu
-            print_group_menu($validgroups, $groupmode, $currentgroup, "view.php?id=$cm->id",0);
-            echo '</td>';
-        }
-     }
 
     if (!empty($USER->id)) {
         echo '<td align="right" class="subscription">';
@@ -152,10 +127,6 @@
             }
             echo '</span>';
 
-        } else if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE) {
-            $strsubscriptionsoff = get_string('disallowsubscribe','forum');
-            echo $strsubscriptionsoff;
-            helpbutton("subscription", $strsubscriptionsoff, "forum");
         } else {
             $streveryonecanchoose = get_string("everyonecanchoose", "forum");
             $strforcesubscribe = get_string("forcesubscribe", "forum");
@@ -219,16 +190,6 @@
 
     echo '</tr></table>';
 
-    if (!empty($forum->blockafter) && !empty($forum->blockperiod)) {
-        $a->blockafter = $forum->blockafter;
-        $a->blockperiod = get_string('secondstotime'.$forum->blockperiod);
-        notify(get_string('thisforumisthrottled','forum',$a));
-    }
-
-    if ($forum->type == 'qanda' && !isteacher($forum->course)) {
-        notify(get_string('qandanotify','forum'));
-    }
-
     $forum->intro = trim($forum->intro);
 
     switch ($forum->type) {
@@ -259,7 +220,7 @@
             if (forum_user_can_post_discussion($forum)) {
                 print_string("allowsdiscussions", "forum");
             } else {
-                echo '&nbsp;';
+                echo '&nbsp';
             }
             echo '</p>';
             if (!empty($showall)) {
@@ -287,8 +248,6 @@
             } else {
                 forum_print_latest_discussions($course, $forum, $CFG->forum_manydiscussions, 'header', '', $currentgroup, $groupmode, $page);
             }
-            
-            
             break;
     }
 

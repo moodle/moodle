@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<schema>
+
+  <table name="attendance">
+
+    <field name="id" type="I" size="10">
+      <KEY/>
+      <AUTOINCREMENT/>
+    </field>
+
+    <field name="name" type="C" size="255">
+      <NOTNULL/>
+    </field>
+
+    <field name="course" type="I" size="10">
+      <NOTNULL/>
+    </field>
+
+    <field name="day" type="I" size="10">
+      <NOTNULL/>
+    </field>
+
+    <field name="hours" type="I1" size="1">
+      <NOTNULL/>
+    </field>
+
+    <field name="roll" type="I1" size="1">
+      <NOTNULL/>
+    </field>
+
+    <field name="notes" type="C" size="64">
+      <NOTNULL/>
+    </field>
+
+    <field name="timemodified" type="I1" size="1">
+      <NOTNULL/>
+    </field>
+
+    <field name="dynsection" type="I1" size="1">
+      <NOTNULL/>
+    </field>
+
+    <field name="edited" type="I1" size="1">
+      <NOTNULL/>
+    </field>
+
+    <field name="autoattend" type="I1" size="1">
+      <NOTNULL/>
+    </field>
+
+  </table>
+
+  <table name="attendance_roll">
+
+    <field name="id" type="I" size="11">
+      <KEY/>
+      <AUTOINCREMENT/>
+    </field>
+
+    <field name="dayid" type="I" size="10">
+      <NOTNULL/>
+    </field>
+
+    <field name="userid" type="I" size="11">
+      <NOTNULL/>
+    </field>
+
+    <field name="hour" type="I1" size="1">
+      <NOTNULL/>
+    </field>
+
+    <field name="status" type="I" size="11">
+      <NOTNULL/>
+    </field>
+
+    <field name="notes" type="C" size="64">
+      <NOTNULL/>
+    </field>
+
+  </table>
+
+  <sql>
+    <descr>Insert 1 row for testing only...comment out later</descr>
+    <query platform="postgres|postgres7">
+      insert into attendance(id,name,course,day,hours,roll,notes,timemodified,dynsection,edited,autoattend) values (1,'1',1,1,1,1,'1',1,1,1,1)
+    </query>
+    <query platform="mysql">
+      insert into attendance(id,name,course,day,hours,roll,notes,timemodified,dynsection,edited,autoattend) values (1,'1',1,1,1,1,'1',1,1,1,1)
+    </query>
+    <query platform="oci8po">
+      insert into attendance(id,name,course,day,hours,roll,notes,timemodified,dynsection,edited,autoattend) values (1,'1',1,1,1,1,'1',1,1,1,1)
+    </query>
+  </sql>
+</schema>
+

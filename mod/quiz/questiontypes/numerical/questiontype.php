@@ -70,22 +70,17 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
     }
 
     function get_default_numerical_unit(&$question) {
-        $unit = new stdClass;
-        $unit->unit = '';
-        $unit->multiplier = 1.0;
         if (!isset($question->options->units[0])) {
-            // do nothing
+            return '';
         } else if (1.0 === (float)$question->options->units[0]->multiplier) {
-            $unit->unit = $question->options->units[0]->unit;
+            return $question->options->units[0];
         } else {
-            foreach ($question->options->units as $u) {
+            foreach ($question->options->units as $unit) {
                 if (1.0 === (float)$unit->multiplier) {
-                    $unit->unit = $u->unit;
-                    break;
+                    return $unit;
                 }
             }
         }
-        return $unit;
     }
 
     function save_question_options($question) {
@@ -151,21 +146,6 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
                         return $result;
                     }
                 }
-
-                // delete old answer records
-                if (!empty($oldanswers)) {
-                    foreach($oldanswers as $oa) {
-                        delete_records('quiz_answers', 'id', $oa->id);
-                    }
-                }
-
-                // delete old answer records
-                if (!empty($oldoptions)) {
-                    foreach($oldoptions as $oo) {
-                        delete_records('quiz_numerical', 'id', $oo->id);
-                    }
-                }
-
             }
         }
     }
@@ -249,7 +229,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
             return ($response == $answer->answer);
         }
     }
-
+    
     // ULPGC ecastro
     function check_response(&$question, &$state){
         $answers = &$question->options->answers;
@@ -261,20 +241,20 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
         return false;
     }
 
-    function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
+    function print_question_formulation_and_controls(&$question, &$state, $quiz, $options) {
     /// This implementation is very similar to the code used by question type SHORTANSWER
 
         $answers = &$question->options->answers;
         $correctanswers = $this->get_correct_responses($question, $state);
-        $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
+        $readonly = empty($options->readonly) ? '' : 'disabled="disabled"';
         $nameprefix = $question->name_prefix;
 
         /// Print question text and media
 
         echo format_text($question->questiontext,
                          $question->questiontextformat,
-                         NULL, $cmoptions->course);
-        quiz_print_possible_question_image($question);
+                         NULL, $quiz->course);
+        quiz_print_possible_question_image($quiz->id, $question);
 
         /// Print input controls
 
@@ -309,12 +289,12 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
         }
     }
 
-    function grade_responses(&$question, &$state, $cmoptions) {
+    function grade_responses(&$question, &$state, $quiz) {
         $answers     = &$question->options->answers;
         $state->raw_grade = 0;
         foreach($answers as $answer) {
             if($this->test_response($question, $state, $answer)) {
-                if ($state->raw_grade < $answer->fraction) {
+                if (empty($state->raw_grade) && $state->raw_grade < $answer->fraction) {
                     $state->raw_grade = $answer->fraction;
                 }
             }
@@ -345,7 +325,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
         $unit = $this->get_default_numerical_unit($question);
         if (is_array($question->options->answers)) {
             foreach ($question->options->answers as $aid=>$answer) {
-                unset ($r);
+                unset ($r); 
                 $r->answer = $answer->answer;
                 $r->credit = $answer->fraction;
                 $this->get_tolerance_interval($answer);
@@ -364,7 +344,7 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
         }
         $result->id = $question->id;
         $result->responses = $answers;
-        return $result;
+        return $result;        
     }
 
     function get_tolerance_interval(&$answer) {

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.6 development (2005101200)
+      // forum.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['addanewdiscussion'] = 'Aggiungi un nuovo argomento di discussione';
@@ -7,9 +7,9 @@ $string['addanewtopic'] = 'Aggiungi un nuovo argomento';
 $string['advancedsearch'] = 'Ricerca avanzata';
 $string['allforums'] = 'Tutti i forum';
 $string['allowchoice'] = 'Scegli';
-$string['allowdiscussions'] = 'Possibilità di un(o) $a di scrivere in questo forum';
+$string['allowdiscussions'] = 'Può $a scrivere in questo forum?';
 $string['allowratings'] = 'Permettere la valutazione dei messaggi?';
-$string['allowsdiscussions'] = 'Questo forum permette a tutti di iniziare una nuova discussione.';
+$string['allowsdiscussions'] = 'Questo forum permette a ciscuna persona di dare inizio a una discussione.';
 $string['anyfile'] = 'Qualunque file';
 $string['attachment'] = 'Allegato';
 $string['bynameondate'] = 'di $a->name - $a->date';
@@ -100,7 +100,6 @@ $string['nonews'] = 'Nessuna News é stata ancora spedita';
 $string['noposts'] = 'Nessun messaggio';
 $string['nopostscontaining'] = 'Nessun messaggio contenente \'$a\' è stato trovato';
 $string['nosubscribers'] = 'Non ci sono ancora iscritti per questo forum';
-$string['nothingnew'] = 'Niente di nuovo per $a';
 $string['notingroup'] = 'Spiacente, ma devi appartenere ad un gruppo per poter vedere questo forum.';
 $string['notrackforum'] = 'non tracciare i messaggi non letti';
 $string['nownotsubscribed'] = '$a->name NON riceverà copie di \'$a->forum\' via email.';
@@ -113,8 +112,6 @@ $string['oldertopics'] = 'Vecchi argomenti';
 $string['openmode0'] = 'Discussioni e risposte non permesse';
 $string['openmode1'] = 'Discussioni non permesse ma risposte consentite';
 $string['openmode2'] = 'Discussioni e risposte sono permesse';
-$string['overviewnumpostssince'] = '$a messaggio dall\'ultimo accesso';
-$string['overviewnumunread'] = '$a totale non letti';
 $string['parent'] = 'Mostra superiore';
 $string['parentofthispost'] = 'Padre di questo messaggio';
 $string['postadded'] = 'Il tuo messaggio è stato aggiunto con successo.<br />Hai $a  a disposizione se desideri apportare delle modifiche.';

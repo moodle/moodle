@@ -48,7 +48,7 @@ function multilang_filter($courseid, $text) {
 
     // [pj] I don't know about you but I find this new implementation funny :P
 
-    $search = '/(<(?:lang|span) lang="[a-zA-Z0-9_-]*".*?>.+?<\/(?:lang|span)>\s*)+/is';
+    $search = '/(<(?:lang|span) lang="[a-zA-Z_-]*".*?>.+?<\/(?:lang|span)>\s*)+/is';
     return preg_replace_callback($search, 'multilang_filter_impl', $text);
 }
 
@@ -63,46 +63,29 @@ function multilang_filter_impl($langblock) {
     $CFG->currenttextiscacheable = false;
 
     if(empty($preflangs)) {
-        /// Get current languages (utf and simple)
+        /// Get current language
         $currentlang = current_language();
-        $currentlangsimple = '';
-        /// If it's a utf8 lang, use the basic one too
-        if (strstr($currentlang, '_utf8') !== false) {
-            $currentlangsimple = str_replace('_utf8', '', $currentlang);
+    
+        /// Get parent language
+        $langfile = "$CFG->dirroot/lang/$currentlang/moodle.php";
+        if ($result = get_string_from_file("parentlanguage", "$langfile", "\$parentlang")) {
+            eval($result);
         }
     
-        /// Get parent language of $currentlang (utf and simple)
-        $parentlang = get_string('parentlanguage');
-        $parentlangsimple = '';
-        if (substr($parentlang, 0, 1) == '[') {
-            $parentlang = '';
-        }
-        /// If it's a utf8 lang, use the basic one too
-        if (strstr($parentlang, '_utf8') !== false) {
-            $parentlangsimple = str_replace('_utf8', '', $parentlang);
-        }
-
         /// Fill in the array of preffered languages
         $preflangs = array();
         $preflangs[] = $currentlang;     /// First, the current lang
-        if (!empty($currentlangsimple)) {
-            $preflangs[] = $currentlangsimple; /// The simple (non utf8) lang
-        }
         if (!empty($parentlang)) {
             $preflangs[] = $parentlang; /// Then, if available, the parent lang
         }
-        if (!empty($parentlangsimple)) {
-            $preflangs[] = $parentlangsimple; /// And the simple (non utf8) parent lang
-        }
-        if ($currentlang != 'en' && $currentlang != 'en_utf8') {
-            $preflangs[] = 'en_utf8';        /// Finally, if not used, add the en langs
-            $preflangs[] = 'en';
+        if ($currentlang != 'en') {
+            $preflangs[] = 'en';        /// Finally, if not used, add the en lang
         }
     }
 
     // Setup is done, now do multilang replacement on the match we 've been called for
 
-    $searchtosplit = '/<(?:lang|span) lang="([a-zA-Z0-9_-]*)".*?>(.+?)<\/(?:lang|span)>/is';
+    $searchtosplit = '/<(?:lang|span) lang="([a-zA-Z_-]*)".*?>(.+?)<\/(?:lang|span)>/is';
     preg_match_all($searchtosplit, $langblock[0], $langlist);
 
     /// Get the existing sections langs

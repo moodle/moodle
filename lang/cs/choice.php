@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.5 + (2005060201)
+      // choice.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['addmorechoices'] = 'Pøidat více anket';

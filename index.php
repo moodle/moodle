@@ -94,7 +94,7 @@
             if (ismoving($SITE->id)) {
                 $stractivityclipboard = strip_tags(get_string('activityclipboard', '', addslashes($USER->activitycopyname)));
                 echo '<p><font size="2">';
-                echo "$stractivityclipboard&nbsp;&nbsp;(<a href=\"course/mod.php?cancelcopy=true&amp;sesskey=$USER->sesskey\">". get_string('cancel') .'</a>)';
+                echo "$stractivityclipboard&nbsp;&nbsp;(<a href=\"course/mod.php?cancelcopy=true\">". get_string('cancel') .'</a>)';
                 echo '</font></p>';
             }
 
@@ -119,65 +119,62 @@
         }
     }
 
-    foreach (explode(',',$CFG->frontpage) as $v) {
-        switch ($v) {     /// Display the main part of the front page.
-            case strval(FRONTPAGENEWS):
-                if ($SITE->newsitems) { // Print forums only when needed
-                    require_once($CFG->dirroot .'/mod/forum/lib.php');
-
-                    if (! $newsforum = forum_get_course_forum($SITE->id, 'news')) {
-                        error('Could not find or create a main news forum for the site');
-                    }
-
-                    if (isset($USER->id)) {
-                        $SESSION->fromdiscussion = $CFG->wwwroot;
-                        if (forum_is_subscribed($USER->id, $newsforum->id)) {
-                            $subtext = get_string('unsubscribe', 'forum');
-                        } else {
-                            $subtext = get_string('subscribe', 'forum');
-                        }
-                        $headertext = '<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr>'.
-                            '<td><div class="title">'.$newsforum->name.'</div></td>'.
-                            '<td><div class="link"><a href="mod/forum/subscribe.php?id='.$newsforum->id.'">'.$subtext.'</a></div></td>'.
-                            '</tr></table>';
-                    } else {
-                        $headertext = $newsforum->name;
-                    }
-
-                    print_heading_block($headertext);
-                    forum_print_latest_discussions($SITE, $newsforum, $SITE->newsitems);
+    switch ($CFG->frontpage) {     /// Display the main part of the front page.
+        case FRONTPAGENEWS:
+            if ($SITE->newsitems) { // Print forums only when needed
+                require_once($CFG->dirroot .'/mod/forum/lib.php');
+    
+                if (! $newsforum = forum_get_course_forum($SITE->id, 'news')) {
+                    error('Could not find or create a main news forum for the site');
                 }
-            break;
-
-            case FRONTPAGECOURSELIST:
-            case FRONTPAGECATEGORYNAMES:
-
-                if (isloggedin() && !isset($USER->admin) && empty($CFG->disablemycourses)) {
-                    print_heading_block(get_string('mycourses'));
-                    print_my_moodle();
+    
+                if (isset($USER->id)) {
+                    $SESSION->fromdiscussion = $CFG->wwwroot;
+                    if (forum_is_subscribed($USER->id, $newsforum->id)) {
+                        $subtext = get_string('unsubscribe', 'forum');
+                    } else {
+                        $subtext = get_string('subscribe', 'forum');
+                    }
+                    $headertext = '<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr>'.
+                          '<td><div class="title">'.$newsforum->name.'</div></td>'.
+                          '<td><div class="link"><a href="mod/forum/subscribe.php?id='.$newsforum->id.'">'.$subtext.'</a></div></td>'.
+                          '</tr></table>';
                 } else {
-                    if (count_records('course_categories') > 1) {
-                        if ($v == FRONTPAGECOURSELIST) {
-                            print_heading_block(get_string('availablecourses'));
-                        } else {
-                            print_heading_block(get_string('categories'));
-                        }
-                        print_simple_box_start('center', '100%', '', 5, 'categorybox');
-                        print_whole_category_list();
-                        print_simple_box_end();
-                        print_course_search('', false, 'short');
-                    } else {
-                        print_heading_block(get_string('availablecourses'));
-                        print_courses(0, '100%');
-                    }
+                    $headertext = $newsforum->name;
                 }
-            break;
+    
+                print_heading_block($headertext);
+                forum_print_latest_discussions($SITE, $newsforum, $SITE->newsitems);
+            }
+        break;
 
-            case FRONTPAGETOPICONLY:    // Do nothing!!  :-)
-            break;
+        case FRONTPAGECOURSELIST:
+        case FRONTPAGECATEGORYNAMES:
 
-        }
-        echo '<br />';
+            if (isloggedin() && !isset($USER->admin) && empty($CFG->disablemycourses)) {
+                print_heading_block(get_string('mycourses'));
+                print_my_moodle();
+            } else {
+                if (count_records('course_categories') > 1) {
+                    if ($CFG->frontpage == FRONTPAGECOURSELIST) {
+                        print_heading_block(get_string('availablecourses'));
+                    } else {
+                        print_heading_block(get_string('categories'));
+                    }
+                    print_simple_box_start('center', '100%', '', 5, 'categorybox');
+                    print_whole_category_list();
+                    print_simple_box_end();
+                    print_course_search('', false, 'short');
+                } else {
+                    print_heading_block(get_string('availablecourses'));
+                    print_courses(0, '100%');
+                }
+            }
+        break;
+
+        case FRONTPAGETOPICONLY:    // Do nothing!!  :-)
+        break;
+
     }
 
     echo '</td>';

@@ -1,8 +1,7 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.6 development (2005052400)
+      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
-$string['adminprimarynoedit'] = 'áÇíãßä ááÃÎÑíä ÊÍÑíÑ ÇáãÏíÑ ÇáÑÆíÓí ';
 $string['coursegroupunknown'] = 'ÇáãäåÌ ÇáãÊØÇÈŞ ãÚ ÇáãÌãæÚÉ $a áã íÍÏÏ';
 $string['erroronline'] = 'ÎØÇÁ İí ÓØÑ $a';
 $string['fieldrequired'] = '\"$a\" ÍŞá ãØáæÈ';
@@ -14,10 +13,7 @@ $string['missingfield'] = 'ÇáÍŞá \"$a\" ÛíÑ ãæÌæÏ';
 $string['modulerequirementsnotmet'] = 'ÇáæÍÏ \" $a->modulename\" ($a->moduleversion) áÇíãßä ÊËÈÊåÇ ÇáÂä. ÃäåÇ ÊÊØáÈ ÃÕÏÇÑ ÌÏíÏ áãæÏá 
 (ÃäÊ ÊÓÊÎÏã ÇáÂä $a->currentmoodle, æÊÍÊÇÌ $a ->requiremoodle)';
 $string['notavailable'] = 'ÛíÑ ãÊæİÑ ÍÇáíÇ';
-$string['onlyeditown'] = 'ÊÓÊØíÚ ÊÍÑíÑ ãÚáæãÇÊß İŞØ';
-$string['processingstops'] = 'ÇáãÚÇáÌÉ ÊŞİ åäÇÁ. Êã ÊÌÇåá ÇáÓÌáÇÊ ÇáãÊÈŞíÉ';
 $string['restricteduser'] = 'ÚĞÑÇ¡ ÍÓÇÈß ÇáÍÇáí \"$a\" áÇ íÎæáß ááŞíÇã ÈĞáß';
-$string['sessionerroruser'] = 'ÇäÊåÊ ÌáÓÊß¡ ÇáÑÌÇÁ ÇáÏÎæá ËÇäíÇ';
 $string['unknowncourse'] = 'ÇÓã ÇáãäåÌ ÇáÏÑÇÓí ÛíÑ ãÚÑæİ \"$a\"';
 $string['usernotaddederror'] = 'ÇáãÓÊÎÏã \"$a\" áã íÊã ÅÖÇİÊå - ÎØÇÁ ÛíÑ ãÚÑæİ';
 $string['usernotaddedregistered'] = 'ÇáãÓÊÎÏã \"$a\" - íÊã ÊÓÌíáå ãÓÈŞÇğ';

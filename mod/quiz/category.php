@@ -456,7 +456,7 @@ class quiz_category_object {
         echo '<p><form action="category.php" method="post">';
         echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
         echo '<input type="hidden" name="id" value="'. $this->course->id . '" />';
-        echo '<input type="hidden" name="updateid" value="' . $category->id . '" />';
+        echo '<input type="hidden" name="updateid" value=' . $category->id . '" />';
         print_table($edittable);
         echo '</form></p>';
     }
@@ -591,7 +591,7 @@ class quiz_category_object {
             if (!$category2 = get_record("quiz_categories", "id", $destcategoryid)) {  // security
                 error("No such category $destcategoryid!", "category.php?id={$this->course->id}");
             }
-            if (! set_field('quiz_questions', 'category', $category2, 'category', $category1)) {
+            if (! quiz_move_questions($category->id, $category2->id)) {
                 error("Error while moving questions from category '$category->name' to '$category2->name'", "category.php?id={$this->course->id}");
             }
 

@@ -6,17 +6,9 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $id      = required_param('id', PARAM_INT);          // Category id
-    $page    = optional_param('page', 0, PARAM_INT);     // which page to show
-    $perpage = optional_param('perpage', 20, PARAM_INT); // how many per page
-    $edit = optional_param('edit','',PARAM_ALPHA);
-    $hide = optional_param('hide',0,PARAM_INT);
-    $show = optional_param('show',0,PARAM_INT);
-    $moveup = optional_param('moveup',0,PARAM_INT);
-    $movedown = optional_param('movedown',0,PARAM_INT);
-    $moveto = optional_param('moveto',0,PARAM_INT);
-    $rename = optional_param('rename','');
-    $resort = optional_param('resort','');
+    require_variable($id);    // Category id
+    optional_variable($page, "0");     // which page to show
+    optional_variable($perpage, "20"); // how many per page
 
     if (!$site = get_site()) {
         error("Site isn't defined!");
@@ -31,7 +23,7 @@
     }
 
     if (iscreator()) {
-        if (!empty($edit) and confirm_sesskey()) {
+        if (isset($_GET['edit']) and confirm_sesskey()) {
             if ($edit == "on") {
                 $USER->categoryediting = true;
             } else if ($edit == "off") {
@@ -55,8 +47,8 @@
 
     if (isadmin()) {
         /// Rename the category if requested
-        if (!empty($rename) and confirm_sesskey()) {
-            $category->name = $rename;
+        if (!empty($_POST['rename']) and confirm_sesskey()) {
+            $category->name = $_POST['rename'];
             if (! set_field("course_categories", "name", $category->name, "id", $category->id)) {
                 notify("An error occurred while renaming the category");
             }
@@ -64,7 +56,7 @@
 
         /// Resort the category if requested
 
-        if (!empty($resort) and confirm_sesskey()) {
+        if (!empty($_GET['resort']) and confirm_sesskey()) {
             if ($courses = get_courses($category->id, "fullname ASC", 'c.id,c.fullname,c.sortorder')) {
                 // move it off the range
                 $count = get_record_sql('SELECT MAX(sortorder) AS max, 1
@@ -126,26 +118,47 @@
 
     /// Move a specified course to a new category
 
-        if (!empty($moveto) and $data = data_submitted() and confirm_sesskey()) {   // Some courses are being moved
+        if (isset($moveto) and $data = data_submitted() and confirm_sesskey()) {   // Some courses are being moved
 
             if (! $destcategory = get_record("course_categories", "id", $data->moveto)) {
                 error("Error finding the category");
             }
 
-            
-            $courses = array();        
-            foreach ( $data as $key => $value ) {
-                if (preg_match('/^c\d+$/', $key)) {
-                    array_push($courses, substr($key, 1));
+            unset($data->moveto);
+            unset($data->id);
+            unset($data->sesskey);
+
+            if ($data) {
+                foreach ($data as $code => $junk) {
+
+                    $courseid = substr($code, 1);
+
+                    if (! record_exists('course', 'id', $courseid)) {
+                        notify('Error finding a course');
+                    } else {
+                        // figure out a sortorder that we can use in the destination category
+                        $sortorder = get_field_sql('SELECT MIN(sortorder)-1 AS min
+                                                    FROM ' . $CFG->prefix . 'course WHERE category=' . $destcategory->id) || 1000;
+
+                        $newcourse = new stdClass;
+                        $newcourse->id        = $courseid;
+                        $newcourse->category  = $destcategory->id;
+                        $newcourse->sortorder = $sortorder;
+
+                        if (!update_record('course', $newcourse)) {
+                            notify("An error occurred - course not moved!");
+                        }
+                        fix_course_sortorder();
+                    }
                 }
-            } 
-            move_courses($courses, $data->moveto);
+                $category = get_record('course_categories', 'id', $category->id);   // Refresh it
+            }
         }
 
     /// Hide or show a course
 
-        if ((!empty($hide) or !empty($show)) and confirm_sesskey()) {
-            if (!empty($hide)) {
+        if ((isset($hide) or isset($show)) and confirm_sesskey()) {
+            if (isset($hide)) {
                 $course = get_record("course", "id", $hide);
                 $visible = 0;
             } else {
@@ -162,7 +175,7 @@
 
     /// Move a course up or down
 
-        if ((!empty($moveup) or !empty($movedown)) and confirm_sesskey()) {
+        if ((isset($moveup) or isset($movedown)) and confirm_sesskey()) {
 
             $movecourse = NULL;
             $swapcourse = NULL;
@@ -176,7 +189,7 @@
                                          FROM ' . $CFG->prefix . 'course WHERE category=' . $category->id);
             $max = $max->max + 100;
 
-            if (!empty($moveup)) {
+            if (isset($moveup)) {
                 $movecourse = get_record('course', 'id', $moveup);
                 $swapcourse = get_record('course',
                                          'category',  $category->id,
@@ -282,20 +295,10 @@
         $count = 0;
         $abletomovecourses = false;  // for now
 
-        // Checking if we are at the first or at the last page, to allow courses to
-        // be moved up and down beyond the paging border
-        if ($totalcount > $perpage) {
-            $atfirstpage = ($page == 0);
-            $atlastpage = (($page + 1) == ceil($totalcount / $perpage));
-        } else {
-            $atfirstpage = true;
-            $atlastpage = true;
-        }
-
         foreach ($courses as $acourse) {
             $count++;
-            $up = ($count > 1 || !$atfirstpage);
-            $down = ($count < $numcourses || !$atlastpage);
+            $up = ($count == 1) ? false : true;
+            $down = ($count == $numcourses) ? false : true;
 
             $linkcss = $acourse->visible ? "" : ' class="dimmed" ';
             echo '<tr>';
@@ -313,11 +316,11 @@
                          '<img src="'.$CFG->pixpath.'/t/delete.gif" height="11" width="11" border="0" alt="" /></a> ';
                     if (!empty($acourse->visible)) {
                         echo '<a title="'.$strhide.'" href="category.php?id='.$category->id.'&amp;page='.$page.
-                             '&amp;perpage='.$perpage.'&amp;hide='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
+                             '&amp;hide='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
                              '<img src="'.$CFG->pixpath.'/t/hide.gif" height="11" width="11" border="0" alt="" /></a> ';
                     } else {
                         echo '<a title="'.$strshow.'" href="category.php?id='.$category->id.'&amp;page='.$page.
-                             '&amp;perpage='.$perpage.'&amp;show='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
+                             '&amp;show='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
                              '<img src="'.$CFG->pixpath.'/t/show.gif" height="11" width="11" border="0" alt="" /></a> ';
                     }
 
@@ -330,7 +333,7 @@
 
                     if ($up) {
                         echo '<a title="'.$strmoveup.'" href="category.php?id='.$category->id.'&amp;page='.$page.
-                             '&amp;perpage='.$perpage.'&amp;moveup='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
+                             '&amp;moveup='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
                              '<img src="'.$CFG->pixpath.'/t/up.gif" height="11" width="11" border="0" alt="" /></a> ';
                     } else {
                         echo '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /> ';
@@ -338,7 +341,7 @@
 
                     if ($down) {
                         echo '<a title="'.$strmovedown.'" href="category.php?id='.$category->id.'&amp;page='.$page.
-                             '&amp;perpage='.$perpage.'&amp;movedown='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
+                             '&amp;movedown='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
                              '<img src="'.$CFG->pixpath.'/t/down.gif" height="11" width="11" border="0" alt="" /></a> ';
                     } else {
                         echo '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /> ';
@@ -419,9 +422,6 @@
         echo '<input type="submit" value="'.$strrename.'" />';
         echo "</form>";
         echo "<br />";
-
-        print_course_search();
-
     }
     echo "</center>";
 

@@ -8,5 +8,8 @@ $string['description'] = 'Tämä on Moodlen normaali tapa kursseille rekisteröitym
 <li>Kurssilla voi olla rekisteröitymisavain ja jokainen joka tietä avaimen voi liittyä kurssille.</li>
 </ul>';
 $string['enrolname'] = 'Sisäinen rekisteröityminen';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Suomi';
 
 ?>

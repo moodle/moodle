@@ -1,6 +1,6 @@
 <?php /// $Id$
 
-$string['filtername'] = "Többnyelvû tartalom";
+$string['filtername'] = "Több nyelvû tartalom";
 
 ?>
 

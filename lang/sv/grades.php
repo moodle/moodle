@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // grades.php - created with Moodle 1.6 development (2005101200)
+      // grades.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['addcategory'] = 'Lägg till en kategori';
@@ -42,21 +42,20 @@ $string['gradeitemaddusers'] = 'Ta inte med i betyg/omdöme';
 $string['gradeitemmembersselected'] = 'Inte med i betyg/omdöme';
 $string['gradeitemnonmembers'] = 'Med i betyg/omdöme';
 $string['gradeitemremovemembers'] = 'Ta med i betyg/omdöme';
-$string['gradeitems'] = 'Komponent för betyg/omdömen';
+$string['gradeitems'] = 'Element för betyg/omdömen';
 $string['gradeletter'] = 'Bokstav för betyg/omdöme';
 $string['gradeletterhelp'] = 'Hjälp angående bokstavsbetyg/omdömen';
 $string['gradeletternote'] = 'För att ta bort en bokstav för betyg/omdöme så tömmer Du bara vilken som helst av de<br />tre textrutorna på den bokstaven och bekräftar.';
 $string['gradepreferenceshelp'] = 'Hjälp angående inställningar för betyg/omdömen';
 $string['grades'] = 'Betyg/omdömen';
 $string['gradeweighthelp'] = 'Hjälp angående viktning av betyg/omdömen ';
-$string['hideadvanced'] = 'Dölj avancerade egenskaper';
 $string['hidecategory'] = 'Dold';
 $string['highgradeascending'] = 'Sortera enligt stigande skala för höga betyg/omdömen';
 $string['highgradedescending'] = 'Sortera enligt fallande skala för höga betyg/omdömen';
 $string['highgradeletter'] = 'Hög/a';
 $string['incorrectcourseid'] = 'ID för kurs var felaktigt';
-$string['item'] = 'Komponent';
-$string['items'] = 'Komponenter';
+$string['item'] = 'Element';
+$string['items'] = 'Element';
 $string['lettergrade'] = 'Bokstavsbetyg/omdöme';
 $string['lettergradenonnumber'] = 'Lågt och/eller högt betyg/omdöme var icke-numeriskt för';
 $string['letters'] = 'Bokstäver';
@@ -66,7 +65,7 @@ $string['max'] = 'Högsta';
 $string['maxgrade'] = 'Max betyg/omdöme';
 $string['median'] = 'Medel';
 $string['min'] = 'Lägsta';
-$string['mode'] = 'Läge';
+$string['mode'] = 'Mod';
 $string['no'] = 'Ingen';
 $string['nocategories'] = 'Det gick inte att hitta eller lägga till kategorier för betyg/omdömen för denna kurs';
 $string['nocategoryview'] = 'Ingen kategori att visa med';
@@ -76,7 +75,6 @@ $string['nolettergrade'] = 'Inget bokstavsbetyg/omdöme för ';
 $string['nomode'] = 'NA';
 $string['nonnumericweight'] = 'Mottaget icke-numeriskt värde för';
 $string['nonweightedpct'] = 'icke-viktat %%';
-$string['notteachererror'] = 'Du måste vara lärare för att få använda det här';
 $string['pctoftotalgrade'] = '%% av sammanlagda betyget/omdömet';
 $string['percent'] = 'Procent';
 $string['percentascending'] = 'Sortera stigande enligt procent';
@@ -106,7 +104,7 @@ $string['sortbylastname'] = 'Sortera efter efternamn';
 $string['standarddeviation'] = 'Standaravvikelse';
 $string['stats'] = 'Statistik';
 $string['statslink'] = 'Stats';
-$string['student'] = 'Student/elev/deltagare/lärande';
+$string['student'] = 'StudentIelev/deltagare/lärande';
 $string['total'] = 'Summa';
 $string['totalweight100'] = 'Den sammanlagda viktningen är lika med 100';
 $string['totalweightnot100'] = 'Den sammanlagda viktningen är inte lika med 100';

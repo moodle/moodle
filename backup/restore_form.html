@@ -5,18 +5,18 @@
     //capabilities.
 
     //Get objects from session
-    if (!($info = $SESSION->info)) {
-      error( 'info object missing from session' );
-    }
-    if (!($course_header = $SESSION->course_header)) {
-      error( 'course_header object missing from session' );
-    }
+    $info = $SESSION->info;
+    $course_header = $SESSION->course_header;
 
     //Check that we have all we need
     //backup_unique_code
-    $backup_unique_code = required_param( 'backup_unique_code' );
+    require_variable($backup_unique_code);
     //file
-    $file = required_param( 'file' );
+    require_variable($file);
+    //info
+    require_variable($info);
+    //course_header
+    require_variable($course_header);
 
     //Check login
     require_login();
@@ -114,35 +114,9 @@ function selectItemInMenuByName(formId, menuName, selectIndex ) {
         myLen = menuName.length;
         myName = myForm.elements[i].name;
         myType = myForm.elements[i].type;
-        if (myName.substring(0,myLen) == menuName && myType == "select-one") {
+        if (myName.substring(0,myLen) == menuName && myType == "select-one")
             myForm.elements[i].options[selectIndex].selected = true;
         }
-    }
-}
-
-function selectItemInRadioByName(formId, radioName, selectIndex ) {
-    myForm = document.getElementById(formId)
-    for (i=0,n=myForm.elements.length;i<n;i++) {
-        myLen = radioName.length;
-        myName = myForm.elements[i].name;
-        myType = myForm.elements[i].type;
-        if (myName.substring(0,myLen) == radioName && myType == "radio") {
-            myRadioGroup = myForm.elements[myName];
-            myRadioGroup[selectIndex].checked = true;
-        }
-    }
-}
-
-function selectItemInCheckboxByName(formId, checkName, checked ) {
-    myForm = document.getElementById(formId)
-    for (i=0,n=myForm.elements.length;i<n;i++) {
-        myLen = checkName.length;
-        myName = myForm.elements[i].name;
-        myType = myForm.elements[i].type;
-        if (myName.substring(0,myLen) == checkName && myType == "checkbox") {
-            myForm.elements[i].checked = checked;
-        }
-    }
 }
 -->
 </script>
@@ -156,7 +130,7 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
     echo "<tr>";
     echo "<td align=\"right\"><b>";
     echo get_string("restoreto").":</b>";
-    echo "</td><td colspan=\"3\">";
+    echo "</td><td>";
     if (isteacheredit($id) and !iscreator()) {
         $restore_restoreto_options[0] = get_string("currentcoursedeleting");
         $restore_restoreto_options[1] = get_string("currentcourseadding");
@@ -169,30 +143,20 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
     choose_from_menu($restore_restoreto_options, "restore_restoreto", $restore_restoreto, "");
     echo "</td></tr>";
     //Line
-    echo "<tr><td colspan=\"4\"><hr /></td></tr>";
+    echo "<tr><td colspan=\"2\"><hr /></td></tr>";
     //Now, check modules and info and show posibilities
     if ($allmods = get_records("modules") ) {
-        //Print option to select/deselect everything with 1 click.
+        //Print option to select/deselect every "with user info" popup. For Gustav, lol, Eloy :-)
         echo "<tr>";
-        echo "<td align=\"right\">";
-        echo '<b>'.get_string("include").":</b>";
-        echo "</td><td>";
-        echo "<a href=\"javascript:void(0);\" onclick=\"selectItemInCheckboxByName('form1', 'restore_', true);\">".
+        echo "<td colspan=\"2\" align=\"right\"><font size=\"-1\">";
+        echo get_string("userdata").":";
+        echo "<a href=\"javascript:void(0);\" onclick=\"selectItemInMenuByName('form1', 'restore_user_info_', '1');\">".
              get_string("all")."</a>/";
-        echo "<a href=\"javascript:void(0);\" onclick=\"selectItemInCheckboxByName('form1', 'restore_', false);\">".
+        echo "<a href=\"javascript:void(0);\" onclick=\"selectItemInMenuByName('form1', 'restore_user_info_', '0');\">".
              get_string("none")."</a>";
-        echo "</td>";
-        echo "<td align=\"right\">";
-        echo '<b>&nbsp;</b>';
-        echo "</td><td>";
-        echo "<a href=\"javascript:void(0);\" onclick=\"selectItemInCheckboxByName('form1', 'restore_user_info_', true);\">".
-             get_string("all")."</a>/";
-        echo "<a href=\"javascript:void(0);\" onclick=\"selectItemInCheckboxByName('form1', 'restore_user_info_', false);\">".
-             get_string("none")."</a>";
-        echo "</td>";
+        echo "</font></td>";
         echo "</tr>";
-        echo "<tr><td colspan=\"4\"><hr /></td></tr>";
-        $currentrow = 0;
+        echo "<tr><td colspan=\"2\"><hr /></td></tr>";
         foreach ($allmods as $mod) {
             $modname = $mod->name;
             $modrestore = $modname."_restore_mods";
@@ -205,51 +169,25 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
                     //Now check that we have that module info in the backup file
                     if (isset($info->mods[$modname]) && $info->mods[$modname]->backup == "true") {
                         //Print the full tr
-                        echo "<tr class=\"r".$currentrow."\">";
-                        echo "<td align=\"right\">&nbsp;";
-                        echo "</td><td>";
-                        $restore_options[1] = get_string("yes");
+                        echo "<tr>";
+                        echo "<td align=\"right\"><b>";
+                        echo get_string("include")." ". get_string("modulenameplural",$modname).":";
+                        echo "</b></td><td>";
                         $restore_options[0] = get_string("no"); 
-                        //choose_from_menu($restore_options, $restore_var, $$restore_var, "");
-                        //choose_from_radio($restore_options, $restore_var, $$restore_var);
-                        //Print the checkbox
-                        print_checkbox($restore_var, $$restore_var, $$restore_var, get_string("modulenameplural",$modname),'','selectItemInCheckboxByName(\'form1\',\'restore_'.$modname.'\',this.checked)');
+                        $restore_options[1] = get_string("yes");
+                        choose_from_menu($restore_options, $restore_var, $$restore_var, "");
                         //If backup contains user data, then show menu, else fix it to
                         //without user data
-                        echo "</td><td align=\"right\">&nbsp;";
-                        echo "</td><td>";
                         if ($info->mods[$modname]->userinfo == "true") {
-                            $restore_user_options[1] = get_string("yes");
-                            $restore_user_options[0] = get_string("no"); 
-                            //choose_from_menu($restore_user_options, $user_info_var, $$user_info_var, "");
-                            //choose_from_radio($restore_user_options, $user_info_var, $$user_info_var);
-                            print_checkbox($user_info_var, $$user_info_var, $$user_info_var, get_string("userdata"),'','selectItemInCheckboxByName(\'form1\',\'restore_user_info_'.$modname.'\',this.checked)');
+                            $restore_user_options[0] = get_string("withoutuserdata"); 
+                            $restore_user_options[1] = get_string("withuserdata");
+                            choose_from_menu($restore_user_options, $user_info_var, $$user_info_var, "");
                         } else {
                             //Module haven't userdata
                             echo get_string("withoutuserdata");
                             echo "<input type=\"hidden\" name=\"$user_info_var\" value=\"0\" />";
                         }
                         echo "</td></tr>";
-                        $instances = $info->mods[$modname]->instances;
-                        if (!empty($instances) && is_array($instances)) {
-                            echo '<tr><td></td><td colspan="3"><table class="restore-form-instances">';
-                            foreach ($instances as $instance) {
-                                echo '<tr><td>';
-                                $var = 'restore_'.$modname.'_instance_'.$instance->id;
-                                $$var = optional_param($var,1);
-                                print_checkbox($var,$$var,$$var,$instance->name,$instance->name,'this.form.elements[\'restore_'.$modname.'\'].checked=1;');
-                                echo '</td><td align="right">&nbsp;';
-                                $var = 'restore_user_info_'.$modname.'_instance_'.$instance->id;
-                                $$var = optional_param($var,1);
-                                if ($info->mods[$modname]->instances[$instance->id]->userinfo == 'true') {
-                                    print_checkbox($var,$$var,$$var,get_string('userdata'),'','this.form.elements[\'restore_user_info_'.$modname.'\'].checked=1;');
-                                } else {
-                                    echo '<input type="hidden" name="'.$var.'" value="0" />';
-                                }
-                                echo '</td></tr>';
-                            }
-                            echo '</table></td></tr>';
-                        }
                     } else {
                         //Module isn't restorable
                         echo "<input type=\"hidden\" name=\"$restore_var\" value=\"0\" />";
@@ -265,16 +203,15 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
                 echo "<input type=\"hidden\" name=\"$restore_var\" value=\"0\" />";
                 echo "<input type=\"hidden\" name=\"$user_info_var\" value=\"0\" />";
             }
-            $currentrow = ($currentrow + 1) % 2;
         }
         //Line
-        echo "<tr><td colspan=\"4\"><hr /></td></tr>";
+        echo "<tr><td colspan=\"2\"><hr /></td></tr>";
 
         //Now print the Metacourse tr
         echo "<tr>";
-        echo "<td align=\"right\" colspan=\"2\"><b>";
+        echo "<td align=\"right\"><b>";
         echo get_string("metacourse").":";                                               
-        echo "</b></td><td colspan=\"2\">";
+        echo "</b></td><td>";
         //If metacourse are in the backup file, show menu, else fixed to no
         if ($info->backup_metacourse == "true") {
             $metacourse_options[0] = get_string("no");
@@ -287,9 +224,9 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
         echo "</td></tr>";
         //Now print the Users tr
         echo "<tr>";
-        echo "<td align=\"right\" colspan=\"2\"><b>";
+        echo "<td align=\"right\"><b>";
         echo get_string("users").":";
-        echo "</b></td><td colspan=\"2\">";
+        echo "</b></td><td>";
         //If some user is present in the backup file
         if ($info->backup_users == "all" or $info->backup_users == "course") {
             //If all users are in the backup file
@@ -308,9 +245,9 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
 
         //Now print the Logs tr
         echo "<tr>";
-        echo "<td align=\"right\" colspan=\"2\"><b>";
+        echo "<td align=\"right\"><b>";
         echo get_string("logs").":";                                               
-        echo "</b></td><td colspan=\"2\">";
+        echo "</b></td><td>";
         //If logs are in the backup file, show menu, else fixed to no
         if ($info->backup_logs == "true") {
             $log_options[0] = get_string("no");
@@ -324,9 +261,9 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
 
         //Now print the User Files tr
         echo "<tr>";
-        echo "<td align=\"right\" colspan=\"2\"><b>";
+        echo "<td align=\"right\"><b>";
         echo get_string ("userfiles").":";
-        echo "</b></td><td colspan=\"2\">";
+        echo "</b></td><td>";
         //If user files are in the backup file, show menu, else fixed to no
         if ($info->backup_user_files == "true") {
             $user_file_options[0] = get_string("no"); 
@@ -340,9 +277,9 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
 
         //Now print the Course Files tr
         echo "<tr>";
-        echo "<td align=\"right\" colspan=\"2\"><b>";
+        echo "<td align=\"right\"><b>";
         echo get_string ("coursefiles").":";
-        echo "</b></td><td colspan=\"2\">";
+        echo "</b></td><td>";
         echo "<input type=\"hidden\" name=\"backup_unique_code\" value=\"$backup_unique_code\" />";
         echo "<input type=\"hidden\" name=\"file\" value=\"$file\" />";
         //If course files are in the backup file, show menu, else fixed to no
@@ -358,19 +295,19 @@ function selectItemInCheckboxByName(formId, checkName, checked ) {
 
         //Now print the Messages tr
         echo "<tr>";
-        echo "<td align=\"right\" colspan=\"2\"><b>";
+        echo "<td align=\"right\"><b>";
         
         //This tr is slighty different. Everything becomes hidden if
         //we haven't messages is the backup, to avoid confusions to users.
         //If messages are in the backup file, show menu, else fixed to no and show nothing
         if ($info->backup_messages == "true") {
             echo get_string ('messages','message').":";
-            echo "</b></td><td colspan=\"2\">";
+            echo "</b></td><td>";
             $message_options[0] = get_string("no");
             $message_options[1] = get_string("yes");
             choose_from_menu($message_options, "restore_messages", $restore_messages, "");
         } else {
-            echo "&nbsp;</b></td><td colspan=\"2\">";
+            echo "&nbsp;</b></td><td>";
             echo "<input type=\"hidden\" name=\"restore_messages\" value=\"0\" />";
         }
         echo "</td></tr>";

@@ -1,19 +1,19 @@
 <?PHP // $Id$ 
-      // message.php - created with Moodle 1.6 development (2005101200)
+      // message.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['addcontact'] = 'コンタクトリストに追加';
 $string['addsomecontacts'] = '誰かにメッセージを送信する場合や、このページにショートカットを作成する場合は、上にある<a href=\"$a\">検索タブ</a>を使用してください。';
 $string['addsomecontactsincoming'] = 'これらのメッセージは、あなたのコンタクトリストに登録されていない人から受信しています。コンタクトに人を追加したい場合は、名前の隣にある「コンタクトリストに追加」アイコンをクリックしてください。';
 $string['ago'] = '$a 前';
-$string['allmine'] = 'すべての送受信メッセージ';
-$string['allstudents'] = 'コースの学生間のすべてのメッセージ';
-$string['allusers'] = 'すべてのユーザのすべてのメッセージ';
+$string['allmine'] = '全ての送受信メッセージ';
+$string['allstudents'] = 'コースの学生間の全てのメッセージ';
+$string['allusers'] = '全てのユーザの全てのメッセージ';
 $string['backupmessageshelp'] = ' 「Yes」にした場合、自動バックアップにインスタントメッセージが含まれます。';
 $string['beepnewmessage'] = 'メッセージが届いたら音を鳴らす。';
 $string['blockcontact'] = '受信拒否';
 $string['blockedmessages'] = '拒否ユーザの $a 件のto/fromメッセージ';
-$string['blocknoncontacts'] = 'コンタクトリストに登録されていないユーザから送信されるすべてのメッセージを拒否する。';
+$string['blocknoncontacts'] = 'コンタクトリストに登録されていないユーザから送信される全てのメッセージを拒否する。';
 $string['contactlistempty'] = 'あなたのコンタクトリストは空です。';
 $string['contacts'] = 'コンタクト';
 $string['context'] = 'コンテクスト';
@@ -51,11 +51,11 @@ $string['savemysettings'] = '設定の保存';
 $string['search'] = '検索';
 $string['searchforperson'] = '人の検索';
 $string['searchmessages'] = 'メッセージの検索';
-$string['sendmessage'] = 'メッセージの送信';
+$string['sendmessage'] = 'メッセージを送信';
 $string['sendmessageto'] = '$a にメッセージを送信';
 $string['settings'] = '設定';
 $string['settingssaved'] = '設定が保存されました。';
-$string['showmessagewindow'] = 'メッセージが届いたら自動的にウィンドウを表示する。 ( ブラウザのポップアップブロックを解除してください )';
+$string['showmessagewindow'] = 'メッセージが届いたら自動的にウインドウを表示する。 ( ブラウザのポップアップブロックを解除してください )';
 $string['strftimedaydatetime'] = '%%Y/%%m/%%d (%%a) %%I:%%M %%p';
 $string['timenosee'] = 'オンライン表示期間 ( 分 )';
 $string['timesent'] = '送信回数';

@@ -6,19 +6,19 @@
 
     require_once("../../config.php");
     require_once("lib.php");
-    #require_once("$CFG->dirroot/course/lib.php"); // For side-blocks
+#    require_once("$CFG->dirroot/course/lib.php"); // For side-blocks
 
-    $ewiki_action = optional_param('ewiki_action', '', PARAM_ALPHA);     // Action on Wiki-Page
-    $id           = optional_param('id', 0, PARAM_INT);                  // Course Module ID, or
-    $wid          = optional_param('wid', 0, PARAM_INT);                 // Wiki ID
-    $page         = optional_param('page', false);       // Wiki Page Name
-    $q            = optional_param('q',"");              // Search Context
-    $userid       = optional_param('userid', 0, PARAM_INT);              // User wiki.
-    $groupid      = optional_param('groupid', 0, PARAM_INT);             // Group wiki.
-    $canceledit   = optional_param('canceledit','', PARAM_ALPHA);          // Editing has been cancelled
+    optional_variable($ewiki_action,"");     // Action on Wiki-Page
+    optional_variable($id);     // Course Module ID, or
+    optional_variable($wid);    // Wiki ID
+    optional_variable($page, false);     // Wiki Page Name
+    optional_variable($q,"");    // Search Context
+    optional_variable($userid, 0);     // User wiki.
+    optional_variable($groupid, 0);    // Group wiki.
+    optional_variable($canceledit,"");    // Editing has been cancelled
 
-    // Only want to add edit log entries if we have made some changes ie submitted a form
-    $editsave = optional_param('thankyou', '');
+/// Only want to add edit log entries if we have made some changes ie submitted a form
+    $editsave = optional_param('thankyou');
     
 
 
@@ -37,7 +37,6 @@
 
     } else {
         if (! $wiki = get_record("wiki", "id", $wid)) {
-echo "here?";
             error("Course module is incorrect");
         }
         if (! $course = get_record("course", "id", $wiki->course)) {
@@ -63,8 +62,9 @@ echo "here?";
 
 /// Globally disable CamelCase, if the option is selected for this wiki.
     $moodle_disable_camel_case = ($wiki->disablecamelcase == 1);
-    
+
     if (($wiki_entry = wiki_get_default_entry($wiki, $course, $userid, $groupid))) {
+
 ///     ################# EWIKI Part ###########################
 ///     The wiki_entry->pagename is set to the specified value of the wiki,
 ///     or the default value in the 'lang' file if the specified value was empty.
@@ -215,7 +215,6 @@ echo "here?";
     else {
         $content = '';
         $content2 = '<div align="center">'.get_string('nowikicreated', 'wiki').'</div>';
-        
     }
 
     # Group wiki, ...: No page and no ewiki_title
@@ -251,11 +250,10 @@ echo "here?";
     /// Print Page
     echo '    <div id="wikiPageActions">
     ';
+
     /// The top row contains links to other wikis, if applicable.
     if ($wiki_list = wiki_get_other_wikis($wiki, $USER, $course, $wiki_entry->id)) {
-        //echo "wiki list ";print_r($wiki_list);
         $selected="";
-        
         if (isset($wiki_list['selected'])) {
             $selected = $wiki_list['selected'];
             unset($wiki_list['selected']);

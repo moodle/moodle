@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 + (2005060201)
+      // wiki.php - created with Moodle 1.4.1 (2004083101)
 
 
 $string['action'] = '-- Ação --';
@@ -42,7 +42,7 @@ $string['disabledpage'] = 'Esta página atualmente não está disponível';
 $string['doesnotexist'] = 'Esta página ainda não existe. Para criar esta página, clique o botão Editar.';
 $string['downloadaszip'] = 'Arquivo Zip para download';
 $string['downloadtimes'] = '$a downloads';
-$string['dwnlnofiles'] = 'Nenhum arquivo disponível para download';
+$string['dwnlnofiles'] = 'Ainda não foi feito o upload de nenhum arquivo';
 $string['dwnlsection'] = 'Area de download';
 $string['editform1'] = 'Não se preocupe muito com o lay-out do texto, isto pode ser melhorado depois';
 $string['editform2'] = 'Todas as mudanças nos textos do wiki são registradas. Escreva apenas conteúdos relevantes e faça mudanças significativas.';
@@ -63,9 +63,9 @@ $string['exportsuccessful'] = 'Exportação bem sucedida';
 $string['exportto'] = 'Exportar para';
 $string['fetchback'] = 'Recuperar';
 $string['file'] = 'Arquivo';
-$string['filedownload'] = 'Download de arquivos';
+$string['filedownload'] = 'Download de arquivo';
 $string['fileisoftype'] = 'Tipo de arquivo';
-$string['filtername'] = 'Link automático de página wiki';
+$string['filtername'] = 'Auto-linking de página wiki';
 $string['flagbin'] = 'BIN';
 $string['flaghtm'] = 'HTM';
 $string['flagoff'] = 'OFF';
@@ -118,7 +118,7 @@ $string['orphanedpages'] = 'Páginas órfãs';
 $string['otherwikis'] = 'Outros Wikis';
 $string['ownerunknown'] = 'desconhecido';
 $string['pageactions'] = 'Ações da página';
-$string['pageindex'] = 'Índice das páginas';
+$string['pageindex'] = 'Índice da página';
 $string['pageinfo'] = 'Informações sobre a página';
 $string['pagename'] = 'Nome da página';
 $string['pagenamechoice'] = '- ou -';
@@ -144,7 +144,6 @@ $string['safehtml'] = 'HTML seguro';
 $string['save'] = 'Salvar';
 $string['searchwiki'] = 'Buscar';
 $string['setpageflags'] = 'Definir flags da página';
-$string['showversions'] = 'Mostrar versões:';
 $string['sitemap'] = 'Mapa do site';
 $string['smfor'] = 'Mapa de';
 $string['status'] = 'Status';
@@ -160,7 +159,6 @@ $string['tabview'] = 'Visualizar';
 $string['thanksforcontribution'] = 'Obrigada pela sua colaboração';
 $string['thispageisntlinkedfromanywhereelse'] = 'Nenhuma outra página contém links a esta.';
 $string['updatedpages'] = 'Páginas atualizadas';
-$string['updatedwikipages'] = 'Páginas wiki atualizadas';
 $string['uplerror'] = 'Não foi possível enviar o arquivo ao servidor.';
 $string['uplinsect'] = 'Enviar a';
 $string['uplnewnam'] = 'Salvar com outro nome de arquivo';
@@ -176,12 +174,12 @@ $string['viewpage'] = 'Ver página';
 $string['viewsmfor'] = 'Ver mapa do site';
 $string['wantedpages'] = 'Páginas encomendadas';
 $string['wikidefaultpagename'] = 'Indice';
-$string['wikiexport'] = 'Exportar páginas';
+$string['wikiexport'] = 'Exportar paginas';
 $string['wikiexportcomment'] = 'Aqui você pode configurar as características de exportação';
 $string['wikilinkoptions'] = 'Opções de auto-linking do wiki';
 $string['wikilinks'] = 'Wiki Links';
 $string['wikiname'] = 'Nome da página';
-$string['wikistartederror'] = 'Não é mais possível modificar porquê o wiki já tem conteúdos';
+$string['wikistartederror'] = 'Não é mais possivel modificar porquê o wiki já tem conteúdos';
 $string['wikitype'] = 'Tipo';
 $string['wikiusage'] = 'Uso do Wiki';
 $string['withbinaries'] = 'Incluir conteúdo binario';

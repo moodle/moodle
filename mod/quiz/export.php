@@ -4,21 +4,15 @@
     require_once("../../config.php");
     require_once("locallib.php");
 
-    $category = required_param('category',PARAM_INT);
-    $courseid = required_param('courseid',PARAM_INT);
-    $format = optional_param('format','', PARAM_CLEANFILE );
-    $exportfilename = optional_param('exportfilename','',PARAM_CLEANFILE );
+    require_variable($category);
+    optional_variable($format);
 
     if (! $category = get_record("quiz_categories", "id", $category)) {
         error("This wasn't a valid category!");
     }
 
-    if (! $categorycourse = get_record("course", "id", $category->course)) {
+    if (! $course = get_record("course", "id", $category->course)) {
         error("This category doesn't belong to a valid course!");
-    }
-
-    if (! $course = get_record("course", "id", $courseid)) {
-        error("Course does not exist!");
     }
 
     require_login($course->id, false);
@@ -36,45 +30,42 @@
     $strquizzes = get_string('modulenameplural', 'quiz');
     $streditingquiz = get_string(isset($SESSION->modform->instance) ? "editingquiz" : "editquestions", "quiz");
 
-    $dirname = get_string("exportfilename","quiz");
     print_header_simple("$strexportquestions", "$strexportquestions",
-                 "<a href=\"$CFG->wwwroot/mod/$dirname/index.php?id=$course->id\">$strquizzes</a>".
+                 "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a>".
                   " -> <a href=\"edit.php\">$streditingquiz</a> -> $strexportquestions");
 
-    if (!empty($format)) {   /// Filename
+    if ($form = data_submitted()) {   /// Filename
 
-        if (!confirm_sesskey()) {
-            echo( 'Sesskey error' );
-        }
+        $form->format = clean_filename($form->format);
 
-        if (! is_readable("format/$format/format.php")) {
+        if (! is_readable("format/$form->format/format.php")) {
             error('Format not known ('.clean_text($form->format).')');
         }
 
         require("format.php");  // Parent class
-        require("format/$format/format.php");
+        require("format/$form->format/format.php");
 
-        $classname = "quiz_format_$format";
-        $quiz_format = new $classname();
+        $classname = "quiz_format_$form->format";
+        $format = new $classname();
 
-        if (! $quiz_format->exportpreprocess($category, $course)) {   // Do anything before that we need to
+        if (! $format->exportpreprocess($category, $course)) {   // Do anything before that we need to
             error("Error occurred during pre-processing!",
                     "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
         }
 
-        if (! $quiz_format->exportprocess($exportfilename)) {         // Process the export data
+        if (! $format->exportprocess($exportfilename)) {         // Process the export data
             error("Error occurred during processing!",
                     "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
         }
 
-        if (! $quiz_format->exportpostprocess()) {                    // In case anything needs to be done after
+        if (! $format->exportpostprocess()) {                    // In case anything needs to be done after
             error("Error occurred during post-processing!",
                     "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
         }
         echo "<hr />";
 
         // link to download the finished file
-        $file_ext = $quiz_format->export_file_extension();
+        $file_ext = $format->export_file_extension();
         $download_str = get_string( 'download', 'quiz' );
         $downloadextra_str = get_string( 'downloadextra','quiz' );
         if ($CFG->slasharguments) {
@@ -93,48 +84,50 @@
 
     /// Print upload form
 
+    if (!$categories = quiz_get_category_menu($course->id, false)) {
+        error("No categories!");
+    }
+
     // get valid formats to generate dropdown list
     $fileformatnames = get_import_export_formats( "export" );
 
     // get filename
-    if (empty($exportfilename)) {
+    if (!isset($exportfilename)) {
         $exportfilename = default_export_filename($course, $category);
     }
 
     print_heading_with_help($strexportquestions, "export", "quiz");
 
     print_simple_box_start("center");
-    echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"export.php\">\n";
-    echo "<input type=\"hidden\" name=\"sesskey\" value=\"" . sesskey() . "\" />\n";
-    echo "<table cellpadding=\"5\">\n";
+    echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"export.php\">";
+    echo "<table cellpadding=\"5\">";
 
-    echo "<tr><td align=\"right\">\n";
+    echo "<tr><td align=\"right\">";
     print_string("category", "quiz");
     echo ":</td><td>";
-    echo str_replace('&nbsp;', '', $category->name) . " ($categorycourse->shortname)";
-    echo "</td></tr>\n";
+    echo str_replace('&nbsp;', '', $categories[$category->id]) . " ($course->shortname)";
+    echo "</td></tr>";
 
     echo "<tr><td align=\"right\">";
     print_string("fileformat", "quiz");
     echo ":</td><td>";
     choose_from_menu($fileformatnames, "format", "gift", "");
     helpbutton("export", $strexportquestions, "quiz");
-    echo "</td></tr>\n";
+    echo "</td></tr>";
 
     echo "<tr><td align=\"right\">";
     print_string("exportname", "quiz" );
     echo ":</td><td>";
     echo "<input type=\"text\" size=\"40\" name=\"exportfilename\" value=\"$exportfilename\" />";
-    echo "</td></tr>\n";
+    echo "</td></tr>";
 
     echo "<tr><td align=\"center\" colspan=\"2\">";
     echo " <input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
-    echo " <input type=\"hidden\" name=\"courseid\" value=\"$course->id\" />";
     echo " <input type=\"submit\" name=\"save\" value=\"".get_string("exportquestions","quiz")."\" />";
-    echo "</td></tr>\n";
+    echo "</td></tr>";
 
-    echo "</table>\n";
-    echo "</form>\n";
+    echo "</table>";
+    echo "</form>";
     print_simple_box_end();
 
     print_footer($course);

@@ -19,7 +19,6 @@
         redirect($CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
 
-    $form->assignmenttype = clean_param($form->assignmenttype, PARAM_SAFEDIR);
 
     require_once("$CFG->dirroot/mod/assignment/type/$form->assignmenttype/assignment.class.php");
 

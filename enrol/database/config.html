@@ -1,9 +1,4 @@
 <table cellspacing="0" cellpadding="5" border="0" align="center">
-<tr>
-<th colspan="2">
-    <?php print_string("server_settings", "enrol_database") ?>
-</td>
-</tr>
 <tr valign="top">
     <td align="right">enrol_dbtype:</td>
     <td>
@@ -78,9 +73,7 @@
     <?php  print_string("dbtable","enrol_database") ?>
     </td>
 </tr>
-<th colspan="2">
-    <?php print_string("field_mapping", "enrol_database") ?>
-</td>
+
 <tr valign="top">
     <td align="right">enrol_localcoursefield:</td>
     <td>
@@ -121,52 +114,6 @@
     </td>
 </tr>
 
-<tr>
-   <th colspan="2">
-        <?php print_string("enrol_ldap_autocreation_settings", "enrol_ldap") ?>
-   </td>
-</tr>
-<tr valign="top">
-    <td align="right">enrol_db_autocreate:</td>
-    <td>
-    <?php
-       choose_from_menu(array('0'=>'no','1'=>'yes'), "enrol_db_autocreate", $frm->enrol_db_autocreate, "");
-           if (isset($err["enrol_db_autocreate"])) formerr($err["enrol_db_autocreate"]); 
-    ?>
-    </td>
-    <td>
-    <?php  print_string("autocreate","enrol_database") ?>
-    </td>
-</tr>
-<tr valign="top">
-        <td align="right">enrol_db_category:</td>
-        <td>
-    <?php
-           $displaylist = array();
-           $parentlist = array();
-           make_categories_list($displaylist, $parentlist);
-           choose_from_menu($displaylist, "enrol_db_category", $frm->enrol_db_category, "");
-           
-    ?>
-    <?php  if (isset($err["enrol_db_category"])) formerr($err["enrol_db_category"]); ?>
-    </td><td>
-    <?php  print_string("category","enrol_database") ?>
-    </td>
-</tr>
-
-<tr valign="top">
-        <td align="right">enrol_db_template:</td>
-        <td>
-    <input name="enrol_db_template" type="text" size="30" value="<?php echo $frm->enrol_db_template?>">
-    <?php  if (isset($err["enrol_db_template"])) formerr($err["enrol_db_template"]); ?>
-    </td><td>
-    <?php  print_string("template","enrol_database") ?>
-    </td>
-</tr>
-
-<th colspan="2">
-    <?php print_string("general_options", "enrol_database") ?>
-</td>
 <tr valign="top">
     <td align="right">enrol_allowinternal:</td>
     <td>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.5.3+ (2005060230)
+      // survey.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
 $string['actual'] = 'Actual';
@@ -178,19 +178,19 @@ $string['question'] = 'Pregunta';
 $string['questions'] = 'Preguntes';
 $string['questionsnotanswered'] = 'Algunes de les preguntes amb opció múltiple no han estat contestades.';
 $string['report'] = 'Informe de l’enquesta';
-$string['savednotes'] = 'S’han desat les vostres notes';
+$string['savednotes'] = 'Les teves notes s’han desat';
 $string['scaleagree5'] = 'en total desacord, una mica en desacord, ni d’acord ni en desacord, una mica d’acord, totalment d’acord';
 $string['scales'] = 'Escales';
-$string['scaletimes5'] = 'gairebé mai, rarament, de vegades, sovint, gairebé sempre';
-$string['seemoredetail'] = 'Feu clic aquí per veure més detalls';
+$string['scaletimes5'] = 'casi mai, rara vegada, de vegades, sovintment, casi sempre';
+$string['seemoredetail'] = 'Fes clic aquí per a veure més detalls';
 $string['selectedquestions'] = 'Preguntes seleccionades d’una escala, tots els estudiants';
-$string['summary'] = 'Resum';
-$string['surveycompleted'] = 'Heu completat l’enquesta. La gràfica següent resumeix els teus resultats comparats amb la mitjana de la classe.';
+$string['summary'] = 'Resumen';
+$string['surveycompleted'] = 'Has completat l’enquesta. La gràfica següent mostra els teus resultats comparats amb la mitja de la classe.';
 $string['surveyname'] = 'Nom de l’enquesta';
-$string['surveysaved'] = 'S\'ha desat l\'enquesta';
+$string['surveysaved'] = 'Enquesta desada';
 $string['surveytype'] = 'Tipus d’enquesta';
-$string['thanksforanswers'] = 'Gràcies por contestar l\'enquesta, $a';
+$string['thanksforanswers'] = 'Gràcies por respondre a aquesta enquesta, $a';
 $string['time'] = 'Temps';
-$string['viewsurveyresponses'] = 'Visualitza $a respostes a l’enquesta';
+$string['viewsurveyresponses'] = 'Veure les teves respostes a l’enquesta $a ';
 
 ?>

@@ -4,8 +4,7 @@
     require_once("lib.php");
     require_once("$CFG->libdir/rsslib.php");
 
-    $id = optional_param('id',0,PARAM_INT);          // course
-    $subscribe = optional_param('subscribe',null,PARAM_INT);    // Subscribe/Unsubscribe all forums
+    optional_variable($id);          // course
 
     if ($id) {
         if (! $course = get_record("course", "id", $id)) {
@@ -124,31 +123,6 @@
         }
     }
 
-    /// Do course wide subscribe/unsubscribe
-    if (!is_null($subscribe) && !isguest()) {
-        $allforums = array_merge($generalforums, $learningforums);
-        if ($allforums) {
-            foreach ($allforums as $forum) {
-                if (!forum_is_forcesubscribed($forum->id)) {
-                    $subscribed = forum_is_subscribed($USER->id, $forum->id);
-                    if ($subscribe && !$subscribed) {
-                        forum_subscribe($USER->id, $forum->id);
-                    } elseif (!$subscribe && $subscribed) {
-                        forum_unsubscribe($USER->id, $forum->id);
-                    }
-                }
-            }
-        }
-        $returnto = forum_go_back_to("index.php?id=$course->id");
-        if ($subscribe) {
-            add_to_log($course->id, "forum", "subscribeall", "index.php?id=$course->id", $course->id);
-            redirect($returnto, get_string("nowallsubscribed", "forum", $course->shortname), 1);
-        } else {
-            add_to_log($course->id, "forum", "unsubscribeall", "index.php?id=$course->id", $course->id);
-            redirect($returnto, get_string("nowallunsubscribed", "forum", $course->shortname), 1);
-        }
-    }
-
     /// First, let's process the general forums and build up a display
 
     if ($generalforums) {
@@ -192,7 +166,7 @@
             }
 
             $introoptions->para=false;
-            $forum->intro = shorten_text(trim(format_text($forum->intro, FORMAT_HTML, $introoptions)), $CFG->forum_shortpost);
+            $forum->intro = format_text(shorten_text(trim($forum->intro), $CFG->forum_shortpost), FORMAT_HTML, $introoptions);
 
             if ($forum->visible) {
                 $forumlink = "<a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
@@ -237,11 +211,7 @@
                             $subscribed = $strno;
                             $subtitle = get_string("subscribe", "forum");
                         }
-                        if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE && !isteacher($forum->course)) {
-                            $sublink = '-';
-                        } else {
-                            $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
-                        }
+                        $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
                     }
                 }
                 $row = array ($forumlink, $forum->intro, $discussionlink);
@@ -250,7 +220,7 @@
                     $row[] = $trackedlink;    // Tracking.
                 }
                 $row[] = $sublink;
-                if ($show_rss) {
+                if (!empty($rsslink)) {
                     $row[] = $rsslink;
                 }
                 $generaltable->data[] = $row;
@@ -260,7 +230,7 @@
                     $row[] = $unreadlink;
                     $row[] = $trackedlink;    // Tracking.
                 }
-                if ($show_rss) {
+                if (!empty($rsslink)) {
                     $row[] = $rsslink;
                 }
                 $generaltable->data[] = $row;
@@ -336,7 +306,7 @@
                 }
 
                 $introoptions->para=false;
-                $forum->intro = shorten_text(trim(format_text($forum->intro, FORMAT_HTML, $introoptions)), $CFG->forum_shortpost);
+                $forum->intro = format_text(shorten_text(trim($forum->intro), $CFG->forum_shortpost), FORMAT_HTML, $introoptions);
 
                 if ($forum->section != $currentsection) {
                     $printsection = $forum->section;
@@ -403,7 +373,7 @@
                         $row[] = $trackedlink;    // Tracking.
                     }
                     $row[] = $sublink;
-                    if ($show_rss) {
+                    if (!empty($rsslink)) {
                         $row[] = $rsslink;
                     }
                     $learningtable->data[] = $row;
@@ -414,7 +384,7 @@
                         $row[] = $unreadlink;
                         $row[] = $trackedlink;    // Tracking.
                     }
-                    if ($show_rss) {
+                    if (!empty($rsslink)) {
                         $row[] = $rsslink;
                     }
                     $learningtable->data[] = $row;
@@ -433,15 +403,6 @@
     } else {
         print_header("$course->shortname: $strforums", "$course->fullname", "$strforums",
                     "", "", true, $searchform, navmenu($course));
-    }
-
-    if (!isguest()) {
-        echo '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr valign="top"><td align="right" class="subscription">';
-        echo '<span class="helplink">';
-        echo '<a href="index.php?id='.$course->id.'&amp;subscribe=1">'.get_string('allsubscribe', 'forum').'</a>';
-        echo '<br />';
-        echo '<a href="index.php?id='.$course->id.'&amp;subscribe=0">'.get_string('allunsubscribe', 'forum').'</a>';
-        echo '</span></td></tr></table>';
     }
 
     if ($generalforums) {

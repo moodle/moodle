@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5.3+ (2005060230)
+      // resource.php - created with Moodle 1.4.5 (2004083150)
 
 
 $string['addresource'] = 'Добавить ресурс';
@@ -75,6 +75,6 @@ $string['resourcetypehtml'] = 'Веб-страница';
 $string['resourcetypelabel'] = 'Пояснение';
 $string['resourcetypetext'] = 'Текстовая страница';
 $string['searchweb'] = 'Искать веб-страницу';
-$string['variablename'] = 'Имя переменной';
+$string['variablename'] = 'Изменяемое имя';
 
 ?>

@@ -82,20 +82,13 @@
             $newid = insert_record ("resource",$resource);
 
             //Do some output     
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","resource")." \"".format_string(stripslashes($resource->name),true)."\"</li>";
-            }
+            echo "<li>".get_string("modulename","resource")." \"".format_string(stripslashes($resource->name),true)."\"</li>";
             backup_flush(300);
 
             if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
-
-                // restore any associated files...
-                if ($resource->type == 'file' || $resource->type == 'directory' || $resource->type == 'ims') {
-                    resource_restore_files($mod->id,$newid,$resource,$restore);
-                }
    
             } else {
                 $status = false;
@@ -176,46 +169,232 @@
     //working in the backup/restore process. It's called from restore_decode_content_links()
     //function in restore process
     function resource_decode_content_links_caller($restore) {
+
         global $CFG;
+
         $status = true;
 
-        if ($resources = get_records_sql ("SELECT r.id, r.alltext, r.summary
-                                   FROM {$CFG->prefix}resource r
-                                   WHERE r.course = $restore->course_id")) {
+        echo "<ul>";
 
-            $i = 0;   //Counter to send some output to the browser to avoid timeouts
-            foreach ($resources as $resource) {
-                //Increment counter
-                $i++;
-                $content1 = $resource->alltext;
-                $content2 = $resource->summary;
-                $result1 = restore_decode_content_links_worker($content1,$restore);
-                $result2 = restore_decode_content_links_worker($content2,$restore);
+        //ASSIGNMENT: Decode every ASSIGNMENT (description) in the coure
 
-                if ($result1 != $content1 || $result2 != $content2) {
-                    //Update record
-                    $resource->alltext = addslashes($result1);
-                    $resource->summary = addslashes($result2);
-                    $status = update_record("resource",$resource);
-                    if ($CFG->debug>7) {
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo '<br /><hr />'.htmlentities($content1).'<br />changed to<br />'.htmlentities($result1).'<hr /><br />';
-                            echo '<br /><hr />'.htmlentities($content2).'<br />changed to<br />'.htmlentities($result2).'<hr /><br />';
+        //Check we are restoring assignments
+        if ($restore->mods['assignment']->restore == 1) {
+            echo "<li>".get_string("from")." ".get_string("modulenameplural","assignment").'</li>';
+            //Get all course assignments
+            if ($assignments = get_records_sql ("SELECT a.id, a.description
+                                       FROM {$CFG->prefix}assignment a
+                                       WHERE a.course = $restore->course_id")) {
+                //Iterate over each assignment->description
+                $i = 0;   //Counter to send some output to the browser to avoid timeouts
+                foreach ($assignments as $assignment) {
+                    //Increment counter
+                    $i++;
+                    $content = $assignment->description;
+                    $result = resource_decode_content_links($content,$restore);
+                    if ($result != $content) {
+                        //Update record
+                        $assignment->description = addslashes($result);
+                        $status = update_record("assignment",$assignment);
+                        if ($CFG->debug>7) {
+                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
                         }
                     }
+                    //Do some output
+                    if (($i+1) % 5 == 0) {
+                        echo ".";
+                        if (($i+1) % 100 == 0) {
+                            echo "<br>";
+                        }
+                        backup_flush(300);
+                    }
                 }
-                //Do some output
-                if (($i+1) % 5 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
+            }
+        }
+ 
+        //FORUM: Decode every POST (message) in the coure
+
+        //Check we are restoring forums
+        if ($restore->mods['forum']->restore == 1) {
+            echo "<li>".get_string("from")." ".get_string("modulenameplural","forum").'</li>';
+            //Get all course posts
+            if ($posts = get_records_sql ("SELECT p.id, p.message
+                                       FROM {$CFG->prefix}forum_posts p,
+                                            {$CFG->prefix}forum_discussions d
+                                       WHERE d.course = $restore->course_id AND
+                                             p.discussion = d.id")) {
+                //Iterate over each post->message
+                $i = 0;   //Counter to send some output to the browser to avoid timeouts
+                foreach ($posts as $post) {
+                    //Increment counter
+                    $i++;
+                    $content = $post->message;
+                    $result = resource_decode_content_links($content,$restore);
+                    if ($result != $content) {
+                        //Update record
+                        $post->message = addslashes($result);
+                        $status = update_record("forum_posts",$post);
+                        if ($CFG->debug>7) {
+                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
+                        }
+                    }
+                    //Do some output
+                    if (($i+1) % 5 == 0) {
                         echo ".";
                         if (($i+1) % 100 == 0) {
                             echo "<br />";
                         }
+                        backup_flush(300);
                     }
-                    backup_flush(300);
                 }
             }
         }
+
+        //FORUM: Decode every FORUM (intro) in the coure
+
+        //Check we are restoring forums
+        if ($restore->mods['forum']->restore == 1) {
+            //Get all course forums
+            if ($forums = get_records_sql ("SELECT f.id, f.intro
+                                       FROM {$CFG->prefix}forum f
+                                       WHERE f.course = $restore->course_id")) {
+                //Iterate over each forum->intro
+                $i = 0;   //Counter to send some output to the browser to avoid timeouts
+                foreach ($forums as $forum) {
+                    //Increment counter
+                    $i++;
+                    $content = $forum->intro;
+                    $result = resource_decode_content_links($content,$restore);
+                    if ($result != $content) {
+                        //Update record
+                        $forum->intro = addslashes($result);
+                        $status = update_record("forum",$forum);
+                        if ($CFG->debug>7) {
+                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
+                        }
+                    }
+                    //Do some output
+                    if (($i+1) % 5 == 0) {
+                        echo ".";
+                        if (($i+1) % 100 == 0) {
+                            echo "<br />";
+                        }
+                        backup_flush(300);
+                    }
+                }
+            }
+        }
+
+        //LESSON: Decode every LESSON PAGE (contents) in the coure
+        
+        //Check we are restoring lessons
+        if ($restore->mods['lesson']->restore == 1) {
+            echo "<li>".get_string("from")." ".get_string("modulenameplural","lesson").'</li>';           
+            //Get all course lesson pages
+            if ($pages = get_records_sql ("SELECT p.id, p.contents                                        
+                                       FROM {$CFG->prefix}lesson l,
+                                            {$CFG->prefix}lesson_pages p
+                                       WHERE l.course = $restore->course_id AND
+                                             p.lessonid = l.id")) {
+                //Iterate over each lesson page
+                $i = 0;   //Counter to send some output to the browser to avoid timeouts
+                foreach ($pages as $page) {
+                    //Increment counter
+                    $i++;
+                    $content = $page->contents;
+                    $result = resource_decode_content_links($content,$restore);
+                    if ($result != $content) {
+                        //Update record 
+                        $page->contents = addslashes($result); 
+                        $status = update_record("lesson_pages",$page);
+                        if ($CFG->debug>7) {
+                            echo "<br><hr>".$content."<br>changed to</br>".$result."<hr><br>";
+                        }
+                    }
+                    //Do some output
+                    if (($i+1) % 5 == 0) {
+                        echo ".";
+                        if (($i+1) % 100 == 0) {
+                            echo "<br>";
+                        }
+                        backup_flush(300);
+                    }
+                }
+            }
+        }
+
+        //RESOURCE: Decode every RESOURCE (alltext) in the coure
+
+        //Check we are restoring resources
+        if ($restore->mods['resource']->restore == 1) {
+            echo "<li>".get_string("from")." ".get_string("modulenameplural","resource").'</li>';
+            //Get all course resources
+            if ($resources = get_records_sql ("SELECT r.id, r.alltext
+                                       FROM {$CFG->prefix}resource r
+                                       WHERE r.course = $restore->course_id")) {
+                //Iterate over each resource->alltext
+                $i = 0;   //Counter to send some output to the browser to avoid timeouts
+                foreach ($resources as $resource) {
+                    //Increment counter
+                    $i++;
+                    $content = $resource->alltext;
+                    $result = resource_decode_content_links($content,$restore);
+                    if ($result != $content) {
+                        //Update record
+                        $resource->alltext = addslashes($result);
+                        $status = update_record("resource",$resource);
+                        if ($CFG->debug>7) {
+                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
+                        }
+                    }
+                    //Do some output
+                    if (($i+1) % 5 == 0) {
+                        echo ".";
+                        if (($i+1) % 100 == 0) {
+                            echo "<br />";
+                        }
+                        backup_flush(300);
+                    }
+                }
+            }
+        }
+
+        //RESOURCE: Decode every RESOURCE (summary) in the coure
+
+        //Check we are restoring resources
+        if ($restore->mods['resource']->restore == 1) {
+            //Get all course resources
+            if ($resources = get_records_sql ("SELECT r.id, r.summary
+                                       FROM {$CFG->prefix}resource r
+                                       WHERE r.course = $restore->course_id")) {
+                //Iterate over each resource->summary
+                $i = 0;   //Counter to send some output to the browser to avoid timeouts
+                foreach ($resources as $resource) {
+                    //Increment counter
+                    $i++;
+                    $content = $resource->summary;
+                    $result = resource_decode_content_links($content,$restore);
+                    if ($result != $content) {
+                        //Update record
+                        $resource->summary = addslashes($result);
+                        $status = update_record("resource",$resource);
+                        if ($CFG->debug>7) {
+                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
+                        }
+                    }
+                    //Do some output
+                    if (($i+1) % 5 == 0) {
+                        echo ".";
+                        if (($i+1) % 100 == 0) {
+                            echo "<br />";
+                        }
+                        backup_flush(300);
+                    }
+                }
+            }
+        }
+
+        echo "</ul>";
         return $status;
     }
 
@@ -247,11 +426,9 @@
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 20 == 0) {
-                            echo "<br />";
-                        }
+                    echo ".";
+                    if (($i+1) % 20 == 0) {
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -308,9 +485,7 @@
             $status = true;
             break;
         default:
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
-            }
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
             break;
         }
 
@@ -319,42 +494,4 @@
         }
         return $status;
     }   
-
-    function resource_restore_files($oldid,$newid,$resource,$restore) {
-        global $CFG;
-
-        $status = true;
-        $status = check_dir_exists($CFG->dataroot."/".$restore->course_id,true);
-
-        // we need to do anything referenced by $resource->reference and anything in moddata/resource/instance
-
-        // do referenced files/dirs first.
-        $temp_path = $CFG->dataroot."/temp/backup/".$restore->backup_unique_code.'/course_files/'.$resource->reference;
-        if (file_exists($temp_path)) { // ok, it was backed up, restore it.
-            $new_path = $CFG->dataroot.'/'.$restore->course_id.'/'.$resource->reference;
-        
-            // if this is somewhere deeply nested we need to do all the structure stuff first.....
-            $bits = explode('/',$resource->reference);
-            $newbit = '';
-            for ($i = 0; $i< count($bits)-1; $i++) {
-                $newbit .= $bits[$i].'/';
-                $status = $status && check_dir_exists($CFG->dataroot.'/'.$restore->course_id.'/'.$newbit,true);
-            }
-            $status = $status && backup_copy_file($temp_path,$new_path);
-        }
-
-        // and now for moddata.
-        $temp_path = $CFG->dataroot."/temp/backup/".$restore->backup_unique_code.
-            "/moddata/resource/".$oldid;
-        if (file_exists($temp_path)) { // there's something to back up, restore it.
-            $new_path = $CFG->dataroot."/".$restore->course_id."/".$CFG->moddata;
-            $status = $status && check_dir_exists($new_path,true);
-            $new_path .= '/resource';
-            $status = $status && check_dir_exists($new_path,true);
-            $new_path .= '/'.$newid;
-            $status = $status && backup_copy_file($temp_path,$new_path);
-        }
-        return $status;
-    }
-
 ?>

@@ -1,8 +1,8 @@
 <?PHP // $Id$ 
-      // block_section_links.php - created with Moodle 1.6 development (2005053000)
+      // block_section_links.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
-$string['blockname'] = 'Odkazy na sekcie';
+$string['blockname'] = 'Prepojenia sekcií';
 $string['jumptocurrenttopic'] = 'Ís» na aktuálnu tému';
 $string['jumptocurrentweek'] = 'Ís» na aktuálny tý¾deò';
 $string['topics'] = 'Témy';

@@ -1,11 +1,3 @@
-<?php
-if (!isset($discussion->timestart)) {
-    $discussion->timestart = 0;
-}
-if (!isset($discussion->timeend)) {
-    $discussion->timeend = 0;
-}
-?>
 <form name="theform" method="post" action="post.php" enctype="multipart/form-data">
 <table border="0" cellpadding="5">
 <tr valign="top">
@@ -59,7 +51,7 @@ if (!isset($discussion->timeend)) {
     <?php 
        if (forum_is_forcesubscribed($forum->id)) {
            print_string("everyoneissubscribed", "forum");
-       } else if ($forum->forcesubscribe != FORUM_DISALLOWSUBSCRIBE  || isteacher($forum->course)){
+       } else {
            unset($options);
            if (forum_is_subscribed($USER->id, $post->forum)) {
                $options[0] = get_string("subscribestart", "forum");
@@ -74,8 +66,6 @@ if (!isset($discussion->timeend)) {
                $options[1] = get_string("subscribestart", "forum");
                choose_from_menu($options, "subscribe", $default, "");
            }
-       } else if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE) {
-           print_string('disallowsubscribe','forum');
        }
        helpbutton("subscription", get_string("subscription", "forum"), "forum"); 
     ?>
@@ -96,41 +86,6 @@ if (!isset($discussion->timeend)) {
     echo '&nbsp;';
     print_string("maxsize", "", display_size($maxbytes)); 
     ?>
-    </td>
-</tr>
-
-<?php } ?>
-
-
-<?php if ($forum->type == 'news' && !$post->parent) {  //  This is the first post of a discussion in news forum  ?>
-
-<tr valign="top">
-    <td align="right"><b><?php print_string("displayperiod", "forum") ?>:<br />(<?php print_string("optional") ?>)&nbsp;</b></td>
-    <td>
-        <table cellpadding="0" cellspacing="0">
-            <tr>
-                <td align="right"><?php print_string('displaystart', "forum") ?>: </td>
-                <td><?php
-                    print_date_selector("timestartday", "timestartmonth", "timestartyear", $discussion->timestart);
-                    print_string('disable');
-                    echo ': ';
-                    print_checkbox('timestartdisabled', 1, empty($discussion->timestart));
-                    helpbutton("displayperiod", get_string("displayperiod", "forum"), "forum");
-                    ?></td>
-            </tr>
-            <tr>
-                <td height="18" colspan="2"> </td>
-            </tr>
-            <tr>
-                <td align="right"><?php print_string('displayend', "forum") ?>: </td>
-                <td><?php
-                    print_date_selector("timeendday", "timeendmonth", "timeendyear", $discussion->timeend);
-                    print_string('disable');
-                    echo ': ';
-                    print_checkbox('timeenddisabled', 1, empty($discussion->timeend));
-                    ?></td>
-            </tr>
-        </table>
     </td>
 </tr>
 

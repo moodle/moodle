@@ -67,14 +67,12 @@ if ( empty($INSTALL['language']) and empty($_POST['language']) ) {
 
 $SESSION->lang = (!empty($_POST['language'])) ? $_POST['language'] : $INSTALL['language'];
 $CFG->dirroot = $INSTALL['dirroot'];
-$CFG->libdir = $INSTALL['dirroot'].'/lib';
 $CFG->dataroot = $INSTALL['dataroot'];
 $CFG->directorypermissions = 00777;
 
 
 /// Include some moodle libraries
 
-require_once('./lib/setuplib.php');
 require_once('./lib/moodlelib.php');
 require_once('./lib/weblib.php');
 require_once('./lib/adodb/adodb.inc.php');
@@ -495,8 +493,6 @@ function form_table($nextstage = 0, $formaction = "install.php") {
             print_compatibility_row(!ini_get_bool('session.auto_start'), get_string('sessionautostart', 'install'), get_string('sessionautostarterror', 'install'), 'sessionautostarthelp');
             /// Check magic quotes
             print_compatibility_row(!ini_get_bool('magic_quotes_runtime'), get_string('magicquotesruntime', 'install'), get_string('magicquotesruntimeerror', 'install'), 'magicquotesruntimehelp');
-            /// Check unsupported PHP configuration
-            print_compatibility_row(ini_get_bool('magic_quotes_gpc') || (!ini_get_bool('register_globals')), get_string('globalsquotes', 'install'), get_string('globalsquoteserror', 'install'), 'globalsquoteshelp');
             /// Check safe mode 
             print_compatibility_row(!ini_get_bool('safe_mode'), get_string('safemode', 'install'), get_string('safemodeerror', 'install'), 'safemodehelp', true);
             /// Check file uploads

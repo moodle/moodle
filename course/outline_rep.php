@@ -7,9 +7,9 @@
 
     $modes = array("outline", "complete", "todaylogs", "alllogs");
 
-    $id = required_param('id',PARAM_INT);       // course id
-    $page = optional_param('page', 0, PARAM_INT);
-    $perpage = optional_param('perpage', 100, PARAM_INT);
+    require_variable($id);       // course id
+    optional_variable($page, "0");
+    optional_variable($perpage, "100");
 
     require_login();
 

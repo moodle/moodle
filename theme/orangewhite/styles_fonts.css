@@ -31,12 +31,13 @@
 .clearer {
   font-size:1px
 }
-/** font {
+* font {
   font-size:100%
-}*/
+}
 body {
   font-family:Verdana, Arial, Helvetica, sans-serif;
-  font-size:100%
+  font-size:100%;
+  letter-spacing:0.02em
 }
 th {
   font-weight:bold
@@ -48,13 +49,6 @@ a:visited {
 a:hover {
   text-decoration:underline
 }
-a.autolink {
-  font-size:100% !important;
-}
-a.autolink:hover {
-  text-decoration:none;
-  cursor:help
-}
 h1.main,
 h2.main,
 h3.main,
@@ -64,30 +58,22 @@ h6.main {
   font-weight:bold
 }
 h1 {
-  font-size:1.2em
+  font-size:1.4em
 }
 h2 {
-  font-size:1em
+  font-size:1.2em
 }
 h3 {
-  font-size:0.8em
+  font-size:1em
 }
 h4 {
-  font-size:0.7em
-}
-pre code {
-  font-size:1.2em
+  font-size:0.8em
 }
 .bold {
   font-weight:bold
 }
 .generalboxcontent {
   font-size:0.8em
-}
-.generaltable .header {
-  font-size:0.9em;
-  font-weight:normal;
-  white-space:normal !important
 }
 .warning {
   font-weight:bold;
@@ -103,9 +89,6 @@ pre code {
 }
 .pagingbar .thispage {
   font-weight:bold
-}
-.paging {
-  font-size:0.8em
 }
 .categorybox .category,
 .categorybox .category {
@@ -186,14 +169,10 @@ table.formtable tbody th {
 #admin-config .r1 {
   font-size:0.9em
 }
-#admin-config #content > center {
-  font-size:0.8em
-}
 
 /***
  *** Blocks
  ***/
- 
 .sideblock {
   font-size:0.7em
 }
@@ -202,10 +181,6 @@ table.formtable tbody th {
 }
 .sideblock .content {
   line-height:1.2em
-}
-.sideblock .content *,
-.sideblock .content .message {
-  text-align:left
 }
 .sideblock .content h3,
 .sideblock .content h2 {
@@ -223,9 +198,7 @@ table.formtable tbody th {
 .sideblock .date {
   font-style:italic
 }
-.activitydate, .activityhead {
-  /*font-size:0.8em*/
-}
+
 
 /***
  *** Calendar
@@ -265,16 +238,14 @@ table.formtable tbody th {
 table.minicalendar {
   font-size:0.85em
 }
-.cal_popup_close {
+.cal_popup_caption {
   font-family:sans-serif;
   font-size:0.8em;
   font-weight:bold
 }
-.cal_popup_bg {
-  font-size:1.2em
-}
-.cal_popup_cg {
-  font-size:0.95em;
+.cal_popup_close {
+  font-family:sans-serif;
+  font-size:0.8em;
   font-weight:bold
 }
 #calendar .maincalendar .calendar-controls .current {
@@ -283,14 +254,10 @@ table.minicalendar {
 .block_calendar_month .filters {
   font-size:0.9em
 }
-.block_calendar_month .day {
-  text-align:center
-}
 
 /***
  *** Course
  ***/
-
 #course-view .section {
   font-size:0.8em;
   line-height:1.4em
@@ -311,6 +278,9 @@ table.minicalendar {
   font-weight:bold
 }
 .course .generalbox{
+  font-size:0.8em
+}
+.activitydate, .activityhead {
   font-size:0.8em
 }
 .weeklydatetext {
@@ -334,7 +304,6 @@ table.minicalendar {
 /***
  *** Doc
  ***/
-
 body#doc-contents h1 {
   font-size:0.9em
 }
@@ -406,8 +375,8 @@ body#doc-contents ul {
 /***
  *** User
  ***/
-
-#user-view .userinfobox .content {
+ 
+#user-view .userinfobox .list {
   font-size:0.8em
 }
 #course-user .section .content td {
@@ -422,6 +391,7 @@ body#doc-contents ul {
 #course-log .logtable {
   font-size:0.8em
 }
+
 .userinfobox .username {
   font-weight:bold
 }
@@ -434,21 +404,21 @@ body#doc-contents ul {
  ***/
 
 #mod-assignment-index .cell {
-  font-size:0.85em
+  font-size:0.9em
 }
 /***
  *** Modules:Chat
  ***/
 
 #mod-chat-index .cell {
-  font-size:0.85em
+  font-size:0.9em
 }
 /***
  *** Modules:Choice
  ***/
 
 #mod-choice-index .cell {
-  font-size:0.85em
+  font-size:0.9em
 }
   
 /***
@@ -477,8 +447,8 @@ body#doc-contents ul {
 body#mod-forum-search .introcontent {
   font-weight:bold
 }
-body#mod-forum-index .cell {
-  font-size:0.85em
+body#mod-forum-index .generalbox .cell {
+  font-size:0.9em
 }
 
 /***
@@ -499,9 +469,6 @@ body#mod-forum-index .cell {
 .glossarypost .entryheader .time {
   font-style:italic
 }
-.glossarypopup {
-  font-size:0.8em
-}
 .concept {
   font-weight:bold
 }
@@ -517,7 +484,7 @@ body#mod-forum-index .cell {
   font-size:0.8em
 }
 #mod-glossary-index .cell {
-  font-size:0.85em
+  font-size:0.9em
 }
 
 /***
@@ -540,7 +507,7 @@ body#mod-forum-index .cell {
   font-style:italic
 }
 #mod-journal-index .cell {
-  font-size:0.85em
+  font-size:0.9em
 }
 /***
  *** Modules:Label
@@ -551,7 +518,7 @@ body#mod-forum-index .cell {
  ***/
 
 #mod-lesson-index .cell {
-  font-size:0.85em
+  font-size:0.9em
 }
 /***
  *** Modules:Quiz
@@ -561,7 +528,7 @@ body#mod-forum-index .cell {
   font-size:0.7em
 }
 #mod-quiz-index .cell {
-  font-size:0.85em
+  font-size:0.9em
 }
 
 /***
@@ -569,37 +536,37 @@ body#mod-forum-index .cell {
  ***/
 
 #mod-resource-index .cell {
-  font-size:0.85em
+  font-size:0.9em
 }
-/*.mod-resource font {
+.mod-resource font {
   font-size:0.8em
-}*/
+}
 
 /***
  *** Modules:Scorm
  ***/
 
 #mod-scorm-index .cell {
-  font-size:0.85em
+  font-size:0.9em
 }
 /***
  *** Modules:Survey
  ***/
 
 #mod-survey-index .cell {
-  font-size:0.85em
+  font-size:0.9em
 }
 /***
  *** Modules:Wiki
  ***/
 
 #mod-wiki-index .cell {
-  font-size:0.85em
+  font-size:0.9em
 }
 /***
  *** Modules:Workshop
  ***/
 
 #mod-workshop-index .cell {
-  font-size:0.85em
+  font-size:0.9em
 }

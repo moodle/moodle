@@ -2,12 +2,12 @@
 
 $string['allowresubmit'] = 'Permettre plusieurs remises d\'un devoir';
 $string['assignmentdetails'] = 'Détails du devoir';
-$string['assignmentmail'] = '$a->teacher a écrit un feedback concernant votre devoir «&nbsp;$a->assignment&nbsp;»
+$string['assignmentmail'] = '$a->teacher a écrit un feedback concernant votre devoir « $a->assignment »
 
 Vous pouvez le consulter en annexe à votre devoir :
 
 $a->url';
-$string['assignmentmailhtml'] = '$a->teacher a écrit un feedback concernant votre devoir rendu «&nbsp;<em>$a->assignment</em>&nbsp;»<br /><br />
+$string['assignmentmailhtml'] = '$a->teacher a écrit un feedback concernant votre devoir rendu « <em>$a->assignment</em> »<br /><br />
 
 Vous pouvez le consulter en annexe à <a href=\'$a->url\'>votre devoir</a>.';
 $string['assignmentname'] = 'Nom du devoir';
@@ -15,15 +15,14 @@ $string['assignmenttype'] = 'Type du devoir';
 $string['availabledate'] = 'Disponible dès le';
 $string['comment'] = 'Commentaire';
 $string['commentinline'] = 'Commentaire dans le texte';
-$string['configitemstocount'] = 'Nature des éléments à compter comme devoirs remis dans les devoirs en ligne.';
 $string['configmaxbytes'] = 'Taille maximale par défaut de tous les devoirs du site (sujet aux limites des cours et autres réglages locaux)';
 $string['description'] = 'Description';
-$string['duedate'] = 'À rendre jusqu\'au';
+$string['duedate'] = 'À rendre le';
 $string['duedateno'] = 'Pas de date de retour';
 $string['early'] = 'En avance de $a';
 $string['editmysubmission'] = 'Modifier mon devoir';
 $string['emailteachers'] = 'Envoyer aux enseignants les alertes par courriel';
-$string['emailteachermail'] = '$a->username a modifié son travail remis pour le devoir «&nbsp;$a->assignment&nbsp;».
+$string['emailteachermail'] = '$a->username a modifié son travail remis pour le devoir « $a->assignment ».
 
 Ce travail est disponible ici :
 
@@ -35,11 +34,9 @@ $string['failedupdatefeedback'] = 'Impossible d\'enregistrer le feedback pour $a
 $string['feedback'] = 'Feedback';
 $string['feedbackfromteacher'] = 'Feedback de l\'enseignant';
 $string['feedbackupdated'] = 'Feedback enregistré pour $a utilisateurs';
-$string['guestnoupload'] = 'Désolé, les utilisateurs invités de sont pas autorisé à déposer des fichiers';
-$string['guestnosubmit'] = 'Désolé, les utilisateurs invités de sont pas autorisé à remettre un devoir';
 $string['helpoffline'] = '<p>Cette option est utile pour une tâche à effectuer en dehors de Moodle, par exemple ailleurs sur le web ou en présentiel.</p> <p>Les étudiants peuvent voir une description de la consigne, mais ne peuvent déposer quoi que ce soit. La notation fonctionne normalement, et les étudiants reçoivent notification de leur note.</p>';
 $string['helponline'] = '<p>Ce type de devoir permet de demander à l\'étudiant d\'écrire un texte à l\'aide d\'outils d\'édition habituels. Les enseignants peuvent noter les travaux en ligne, ajouter des commentaires dans le texte ou y effectuer des modifications.</p> <p>(Si vous connaissez bien les versions antérieures de Moodle, vous observerez que ce type de devoir offre la même fonction que l\'ancien module <i>Journal</i>.)</p>';
-$string['helpuploadsingle'] = '<p>Ce type de devoir permet à chaque participant de déposer un fichier de n\'importe quel type.</p> <p>Ce peut être par exemple un document PDF ou Word, ou une image, un site web compressé ou n\'importe quoi d\'autre.</p>';
+$string['helpuploadsingle'] = '<p>Ce type de devoir permet chaque participant de déposer un fichier de n\'importe quel type.</p> <p>Ce peut être par exemple un document PDF ou Word, ou une image, un site web compressé ou n\'importe quoi d\'autre.</p>';
 $string['late'] = 'En retard de $a';
 $string['maximumgrade'] = 'Note maximale';
 $string['maximumsize'] = 'Taille maximale';
@@ -47,13 +44,10 @@ $string['modulename'] = 'Devoir';
 $string['modulenameplural'] = 'Devoirs';
 $string['newsubmissions'] = 'Devoirs rendus';
 $string['noassignments'] = 'Il n\'y a pas encore de devoir';
-$string['noattempts'] = 'Personne n\'a encore fait ce devoir';
 $string['notgradedyet'] = 'Pas encore de note';
 $string['notsubmittedyet'] = 'Pas encore rendu';
 $string['overwritewarning'] = 'Attention ! un nouvel envoi remplacera votre devoir déjà remis';
-$string['pagesize'] = 'Documents affichés par page';
 $string['preventlate'] = 'Empêcher les remises en retard';
-$string['quickgrade'] = 'Permettre évaluation rapide';
 $string['saveallfeedback'] = 'Enregistrer tous mes feedbacks';
 $string['submission'] = 'Devoir rendu';
 $string['submissionfeedback'] = 'Feedback du devoir';
@@ -70,8 +64,8 @@ $string['uploaderror'] = 'Une erreur est survenue lors de l\'enregistrement du f
 $string['uploadfailnoupdate'] = 'Le fichier a été correctement déposé, mais il n\'a pas été possible de mettre à jour votre devoir !';
 $string['uploadfiletoobig'] = 'Désolé, la taille de ce fichier est trop grande (taille maximale: $a octets)';
 $string['uploadnofilefound'] = 'Aucun fichier n\'a été trouvé, êtes-vous certain d\'en avoir choisi un à déposer ?';
-$string['uploadnotregistered'] = '«&nbsp;$a&nbsp;» a été correctement déposé, mais votre devoir n\'a pu être enregistré !';
-$string['uploadsuccess'] = '«&nbsp;$a&nbsp;» a été correctement déposé';
+$string['uploadnotregistered'] = '« $a » a été correctement déposé, mais votre devoir n\'a pu être enregistré !';
+$string['uploadsuccess'] = '« $a » a été correctement déposé';
 $string['viewfeedback'] = 'Afficher les notes et feedbacks des devoirs';
 $string['viewsubmissions'] = 'Afficher les $a devoirs rendus';
 $string['yoursubmission'] = 'Votre devoir';

@@ -1,13 +1,11 @@
 <?php  // $Id$
        // Fetches an external URL and passes it through the filters
 
-    die; //not used anymore, please FIX SC #99 before enabling
-
     require_once("../../config.php");
     require_once("lib.php");
 
-    $id = required_param('id', PARAM_INT);     // Course Module ID
-    $url = required_param('url', PARAM_URL);    // url to fetch
+    require_variable($id);     // Course Module ID
+    require_variable($url);    // url to fetch
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");

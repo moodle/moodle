@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 Beta (2005052300)
+      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
 
 
 $string['absent'] = 'Ausente';
@@ -109,9 +109,9 @@ $string['gradeforsubmission'] = 'Calificación del Envío';
 $string['gradegiventoassessment'] = 'Calificación otorgada a la evaluación';
 $string['gradeofsubmission'] = 'Calificación del Envío: $a';
 $string['grades'] = 'Calificaciones';
-$string['gradesforassessmentsare'] = 'Las calificaciones de las evaluaciones son hasta $a';
+$string['gradesforassessmentsare'] = 'Las calificaciones de las evaluaciones están fuera de $a';
 $string['gradesforstudentsassessment'] = 'Calificaciones para la evaluación de $a';
-$string['gradesforsubmissionsare'] = 'Las calificaciones de los envíos son hasta $a';
+$string['gradesforsubmissionsare'] = 'Las calificaciones de los envíos están fuera de $a';
 $string['gradetable'] = 'Tabla de Calificaciones';
 $string['gradingallassessments'] = 'Calificando todas las evaluaciones';
 $string['gradinggrade'] = 'Calificación de calificaciones';

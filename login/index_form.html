@@ -1,4 +1,4 @@
-<table width="90%" border="0" cellpadding="5" align="center" class="loginbox">
+<table width="90%" border="0" cellspacing="10" cellpadding="5" align="center" class="loginbox">
 <?php if ($show_instructions) { ?>
   <tr>
     <th width="50%" class="header left">
@@ -11,16 +11,9 @@
 <?php } ?>
   <tr>
     <td width="50%" align="center" valign="top" class="content left">
-      <p><?php print_string("loginusing") ?>:
-        <?php
-        if (empty($CFG->usesid))
-        {
-            echo "<br />(";
-            print_string("cookiesenabled");
-            echo ")";
-            helpbutton("cookies", get_string("cookiesenabled"));
-        }
-        ?><br /><?php formerr($errormsg) ?>
+      <p><?php print_string("loginusing") ?>:<br />
+        (<?php print_string("cookiesenabled");?>) 
+         <?php helpbutton("cookies", get_string("cookiesenabled"))?><br /><?php formerr($errormsg) ?>
       </p>
       <form action="index.php" method="post" name="login" id="login">
         <table border="0" align="center">
@@ -62,16 +55,22 @@
         </form>
 <?php } ?>
 
-<?php
-    $changebuttonname = get_string("passwordrecovery");
-    $sesskey = sesskey();
+<?php if ($CFG->changepassword or is_internal_auth() ) {
+          if (is_internal_auth()) {
+              $changepassword = "forgot_password.php";
+              $changebuttonname = get_string("senddetails");
+          } else {
+              $changepassword = $CFG->changepassword;
+              $changebuttonname = get_string("passwordrecovery");
+          }
 ?>
       <hr width="80%" />
       <p><?php print_string("forgotten") ?></p> 
-        <form action="forgot_password.php" method="post" name="changepassword">
-          <input type="hidden" name="sesskey" value="<?php echo $sesskey; ?>" />
+        <form action="<?php p($changepassword) ?>" method="get" name="changepassword">
           <input type="submit" value="<?php p($changebuttonname) ?>" />
         </form>
+<?php } ?>
+
     </td>
 
 <?php if ($show_instructions) { ?>

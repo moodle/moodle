@@ -5,12 +5,12 @@ require_once('lib.php');
 
 global $CFG, $USER;
 
-$id = required_param('id', PARAM_INT);                // Course Module ID
-$e  = optional_param('e', 0, PARAM_INT);              // EntryID
-$confirm = optional_param('confirm',0, PARAM_INT);    // proceed. Edit the edtry
+require_variable($id);    // Course Module ID
+optional_variable($e);    // EntryID
+optional_variable($confirm,0);    // proceed. Edit the edtry
 
-$mode = optional_param('mode', '', PARAM_ALPHA);      // categories if by category?
-$hook = optional_param('hook', '', PARAM_ALPHANUM);   // CategoryID
+$mode = optional_param('mode'); // categories if by category?
+$hook = optional_param('hook'); // CategoryID
 
 if (! $cm = get_record("course_modules", "id", $id)) {
     error("Course Module ID was incorrect");

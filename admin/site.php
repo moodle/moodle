@@ -25,13 +25,8 @@
 
         if (count($err) == 0) {
 
-            $form->frontpage = array_flip($form->frontpage);
-            unset($form->frontpage[0]);
-            $form->frontpage = array_flip($form->frontpage);
-            asort($form->frontpage);
-            $form->frontpage = implode(',',array_flip($form->frontpage));
             set_config("frontpage", $form->frontpage);
-            if (!$form->frontpage) {
+            if ($form->frontpage == FRONTPAGETOPICONLY) {
                 $form->numsections = 1;    // Force the topic display for this format
             }
 
@@ -98,7 +93,11 @@
         $form->frontpage = $CFG->frontpage;
 
     } else {
-        $form->frontpage = FRONTPAGECOURSELIST;  // Show course list by default
+        if ($form->newsitems > 0) {
+            $form->frontpage = 0;
+        } else {
+            $form->frontpage = 1;
+        }
         set_config("frontpage", $form->frontpage);
     }
 

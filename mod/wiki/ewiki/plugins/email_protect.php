@@ -125,7 +125,7 @@
              $html .= '<input type="hidden" name="'.EWIKI_UP_ENCEMAIL.'" value="' . $email . '" />';
              foreach (array_merge($_GET, $_POST) as $var=>$value) {
                 if (($var != "id") && ($var != EWIKI_UP_ENCEMAIL) && ($var != EWIKI_UP_NOSPAMBOT)) {
-                   $html .= '<input type="hidden" name="' . s($var) . '" value="' . s($value) . '" />';
+                   $html .= '<input type="hidden" name="' . htmlentities($var) . '" value="' . htmlentities($value) . '" />';
                 }
              }
              $html .= '<input type="checkbox" name="'.EWIKI_UP_NOSPAMBOT.'" value="true" /> ' . ewiki_t("PROTE4") . '<br /><br />';

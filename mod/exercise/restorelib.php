@@ -75,9 +75,7 @@
             $newid = insert_record ("exercise",$exercise);
 
             //Do some output     
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","exercise")." \"".format_string(stripslashes($exercise->name),true)."\"</li>";
-            }
+            echo "<li>".get_string("modulename","exercise")." \"".format_string(stripslashes($exercise->name),true)."\"</li>";
             backup_flush(300);
 
             if ($newid) {
@@ -128,11 +126,9 @@
 
             //Do some output
             if (($i+1) % 10 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 200 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 200 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -178,11 +174,9 @@
 
                 //Do some output
                 if (($i+1) % 10 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 200 == 0) {
-                            echo "<br />";
-                        }
+                    echo ".";
+                    if (($i+1) % 200 == 0) {
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -227,7 +221,7 @@
             $submission->late = backup_todb($sub_info['#']['LATE']['0']['#']);
 
             // always save the exercise descriptions and optionally the student submissions
-            if ($submission->isexercise or restore_userdata_selected($restore,'exercise',$old_exercise_id)) {
+            if ($submission->isexercise or $restore->mods["exercise"]->userinfo) {
                 //We have to recode the userid field
                 $user = backup_getid($restore->backup_unique_code,"user",$olduserid);
                 if ($user) {
@@ -239,11 +233,9 @@
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 1000 == 0) {
-                            echo "<br />";
-                        }
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -256,7 +248,7 @@
                     //Now copy moddata associated files
                     $status = exercise_restore_files($oldid, $newid,$restore); 
                     //Now we need to restore exercise_assessments (user level table)
-                    if ($status and restore_userdata_selected($restore,'exercise',$old_exercise_id)) {
+                    if ($status and $restore->mods['exercise']->userinfo) {
                         $status = exercise_assessments_restore($new_exercise_id, $newid,$sub_info,$restore);
                     }
                 } else {
@@ -313,11 +305,9 @@
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 1000 == 0) {
-                            echo "<br />";
-                        }
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -370,11 +360,9 @@
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 1000 == 0) {
-                            echo "<br />";
-                        }
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }

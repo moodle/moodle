@@ -1,5 +1,5 @@
-<?PHP // $Id$
-
+<?PHP // $Id$ 
+      // questionnaire.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['alreadyfilled'] = '이 설문지를 이미 제출했습니다. 감사합니다.';
@@ -12,4 +12,8 @@ $string['qmanagetitle'] = '설문 관리 phpESP';
 $string['qtype'] = '유형';
 $string['questionnaireid'] = '설문 결과';
 $string['respondenttype'] = '답변 유형';
+$string['thischarset'] = 'euc-kr';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = '&#54620;&#44397;&#50612;';
+
 ?>

@@ -11,7 +11,6 @@ define('FORUM_MODE_NESTED', 3);
 
 define('FORUM_FORCESUBSCRIBE', 1);
 define('FORUM_INITIALSUBSCRIBE', 2);
-define('FORUM_DISALLOWSUBSCRIBE',3);
 
 define('FORUM_TRACKING_OFF', 0);
 define('FORUM_TRACKING_OPTIONAL', 1);
@@ -25,9 +24,7 @@ $FORUM_LAYOUT_MODES = array ( FORUM_MODE_FLATOLDEST => get_string('modeflatoldes
 // These are course content forums that can be added to the course manually
 $FORUM_TYPES   = array ('general'    => get_string('generalforum', 'forum'),
                         'eachuser'   => get_string('eachuserforum', 'forum'),
-                        'single'     => get_string('singleforum', 'forum'),
-                        'qanda'      => get_string('qandaforum', 'forum')
-                        );
+                        'single'     => get_string('singleforum', 'forum') );
 
 $FORUM_OPEN_MODES   = array ('2' => get_string('openmode2', 'forum'),
                              '1' => get_string('openmode1', 'forum'),
@@ -114,10 +111,8 @@ function forum_add_instance($forum) {
         $discussion->name     = $forum->name;
         $discussion->intro    = $forum->intro;
         $discussion->assessed = $forum->assessed;
-        $discussion->format   = $forum->format;
-        $discussion->mailnow  = false;
 
-        if (! forum_add_discussion($discussion, $discussion->intro)) {
+        if (! forum_add_discussion($discussion)) {
             error('Could not add the discussion for this forum');
         }
     }
@@ -200,7 +195,7 @@ function forum_delete_instance($id) {
 
     if ($discussions = get_records('forum_discussions', 'forum', $forum->id)) {
         foreach ($discussions as $discussion) {
-            if (! forum_delete_discussion($discussion, true)) {
+            if (! forum_delete_discussion($discussion)) {
                 $result = false;
             }
         }
@@ -330,11 +325,6 @@ function forum_cron () {
                                 }
                             }
                         }
-                    }
-                    
-                    // make sure we're allowed to see it...
-                    if (!forum_user_can_see_post($forum,$discussion,$post,$userto)) {
-                        continue;
                     }
 
                     if ($userto->maildigest > 0) {
@@ -743,97 +733,6 @@ function forum_user_complete($course, $user, $mod, $forum) {
     }
 }
 
-function forum_print_overview($courses,&$htmlarray) {
-    global $USER, $CFG;
-    
-    if (empty($courses) || !is_array($courses) || count($courses) == 0) {
-        return array();
-    }
-
-    if (!$forums = get_all_instances_in_courses('forum',$courses)) {
-        return;
-    }
-
-    $strforum = get_string('modulename','forum');
-    $strnumunread = get_string('overviewnumunread','forum');
-    $strnumpostssince = get_string('overviewnumpostssince','forum');
-
-    // get all forum logs in ONE query (much better!)
-    $sql = "SELECT instance,cmid,l.course,COUNT(l.id) as count FROM {$CFG->prefix}log l "
-        ." JOIN {$CFG->prefix}course_modules cm ON cm.id = cmid "
-        ." WHERE (";
-    foreach ($courses as $course) {
-        $sql .= '(l.course = '.$course->id.' AND l.time > '.$course->lastaccess.') OR ';
-    }
-    $sql = substr($sql,0,-3); // take off the last OR
-
-    $sql .= ") AND l.module = 'forum' AND action LIKE 'add post%' "
-        ." AND userid != ".$USER->id." GROUP BY cmid,l.course,instance";
-    
-    if (!$new = get_records_sql($sql)) {
-        $new = array(); // avoid warnings
-    }
-    
-    // also get all forum tracking stuff ONCE.
-    $trackingforums = array();
-    foreach ($forums as $forum) {
-        if (forum_tp_can_track_forums($forum)) {
-            $trackingforums[$forum->id] = $forum;
-        }
-    }
-    
-    if (count($trackingforums) > 0) {
-        $cutoffdate = isset($CFG->forum_oldpostdays) ? (time() - ($CFG->forum_oldpostdays*24*60*60)) : 0;
-        $sql = 'SELECT d.forum,d.course,COUNT(p.id) AS count '.
-            ' FROM '.$CFG->prefix.'forum_posts p '.
-            ' JOIN '.$CFG->prefix.'forum_discussions d ON p.discussion = d.id '.
-            ' LEFT JOIN '.$CFG->prefix.'forum_read r ON r.postid = p.id AND r.userid = '.$USER->id.' WHERE (';
-        foreach ($courses as $course) {
-            $sql .= '(d.course = '.$course->id.' AND (d.groupid = -1 OR d.groupid = 0 OR d.groupid = '.get_current_group($course->id,false).')) OR ';
-        }
-        $sql = substr($sql,0,-3); // take off the last OR
-        $sql .= ') AND p.modified >= '.$cutoffdate.' AND r.id is NULL GROUP BY d.forum,d.course';
-
-        if (!$unread = get_records_sql($sql)) {
-            $unread = array();
-        }
-    } else {
-        $unread = array();
-    }
-
-    foreach ($forums as $forum) {
-        $str = '';
-        $count = 0;
-        $thisunread = 0;
-        $showunread = false;
-        // either we have something from logs, or trackposts, or nothing.
-        if (array_key_exists($forum->id, $new) && !empty($new[$forum->id])) {
-            $count = $new[$forum->id]->count;
-        }
-        if (array_key_exists($forum->id,$unread)) {
-            $thisunread = $unread[$forum->id]->count;
-            $showunread = true;
-        }
-        if ($count > 0 || $thisunread > 0) {
-            $str .= '<a title="'.$strforum.'" href="'.$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id.'">'
-                .$strforum.': '.$forum->name.'</a><br />';
-            $str .= $count.' '.$strnumpostssince."<br />";
-            if (!empty($showunread)) {
-                $str .= $thisunread .' '.$strnumunread.'<br />';
-            }
-        }
-        if (!empty($str)) { 
-            if (!array_key_exists($forum->course,$htmlarray)) {
-                $htmlarray[$forum->course] = array();
-            }
-            if (!array_key_exists('forum',$htmlarray[$forum->course])) {
-                $htmlarray[$forum->course]['forum'] = ''; // initialize, avoid warnings
-            }
-            $htmlarray[$forum->course]['forum'] .= $str;
-        }
-    }    
-}
-
 function forum_print_recent_activity($course, $isteacher, $timestart) {
 /// Given a course and a date, prints a summary of all the new
 /// messages posted in the course since that date
@@ -887,8 +786,7 @@ function forum_print_recent_activity($course, $isteacher, $timestart) {
                     $groupmode[$post->forum] = groupmode($course, $cm[$post->forum]);
                 }
                 if ($groupmode[$post->forum]) {
-                    //hope i didn't break anything
-                    if (!@in_array($mygroupid, $post->groupid))/*$mygroupid != $post->groupid*/{
+                    if ($mygroupid != $post->groupid) {
                         continue;
                     }
                 }
@@ -1040,7 +938,7 @@ function forum_scale_used ($forumid,$scaleid) {
 
     $rec = get_record("forum","id","$forumid","scale","-$scaleid");
 
-    if (!empty($rec) && !empty($scaleid)) {
+    if (!empty($rec)  && !empty($scaleid)) {
         $return = true;
     }
 
@@ -1092,7 +990,7 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
 /// Returns a list of posts found using an array of search terms
 /// eg   word  +word -word
 ///
-    global $CFG, $USER;
+    global $CFG;
     require_once($CFG->libdir.'/searchlib.php');
 
     if (!isteacher($courseid)) {
@@ -1103,13 +1001,8 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
         if ($groupid) {
             $separategroups = SEPARATEGROUPS;
             $selectgroup = " AND ( NOT (cm.groupmode='$separategroups'".
-                                      " OR (c.groupmode='$separategroups' AND c.groupmodeforce='1') )";//.
-            foreach ($groupid as $index => $value){
-                $selectgroup .= " OR d.groupid = '$value'";
-            }
-            $selectgroup .= ")";
-
-                               //  " OR d.groupid = '$groupid')";
+                                      " OR (c.groupmode='$separategroups' AND c.groupmodeforce='1') )".
+                                 " OR d.groupid = '$groupid')";
             $selectcourse = " AND d.course = '$courseid' AND c.id='$courseid'";
             $coursetable = ", {$CFG->prefix}course c";
         } else {
@@ -1128,12 +1021,6 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
         } else {
             $selectcourse = " AND d.course = '$courseid'";
         }
-    }
-
-    $timelimit = '';
-    if (!((isadmin() and !empty($CFG->admineditalways)) || isteacher($courseid))) {
-        $now = time();
-        $timelimit = " AND (d.userid = $USER->id OR ((d.timestart = 0 OR d.timestart <= $now) AND (d.timeend = 0 OR d.timeend > $now)))";
     }
 
     $limit = sql_paging_limit($page, $recordsperpage);
@@ -1177,7 +1064,7 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
                   {$CFG->prefix}user u $onlyvisibletable $coursetable
              WHERE ($messagesearch)
                AND p.userid = u.id
-               AND p.discussion = d.id $selectcourse $notteacherforum $onlyvisible $selectgroup $timelimit $extrasql";
+               AND p.discussion = d.id $selectcourse $notteacherforum $onlyvisible $selectgroup $extrasql";
 
     $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
 
@@ -1200,41 +1087,22 @@ function forum_get_ratings($postid, $sort="u.firstname ASC") {
 function forum_get_unmailed_posts($starttime, $endtime) {
 /// Returns a list of all new posts that have not been mailed yet
     global $CFG;
-    $now = time();
     return get_records_sql("SELECT p.*, d.course
                               FROM {$CFG->prefix}forum_posts p,
                                    {$CFG->prefix}forum_discussions d
                              WHERE p.mailed = 0
-                               AND (p.created >= '$starttime' OR d.timestart > 0)
+                               AND p.created >= '$starttime'
                                AND p.created < '$endtime'
                                AND p.discussion = d.id
-                               AND ((d.timestart = 0 OR d.timestart <= '$now')
-                               AND (d.timeend = 0 OR d.timeend > '$now'))
                           ORDER BY p.modified ASC");
 }
 
 function forum_mark_old_posts_as_mailed($endtime) {
 /// Marks posts before a certain time as being mailed already
     global $CFG;
-/// Find out posts those are not showing immediately so we can exclude them
-    $now = time();
-    $delayed_posts = get_records_sql("SELECT p.id, p.discussion
-                                        FROM {$CFG->prefix}forum_posts p,
-                                             {$CFG->prefix}forum_discussions d
-                                       WHERE p.mailed = 0
-                                         AND p.discussion = d.id
-                                         AND d.timestart > '$now'");
-    $delayed_ids = array();
-    if ($delayed_posts) {
-        foreach ($delayed_posts as $post) {
-            $delayed_ids[] = $post->id;
-        }
-    } else {
-        $delayed_ids[] = 0;
-    }
     return execute_sql("UPDATE {$CFG->prefix}forum_posts
                            SET mailed = '1'
-                         WHERE id NOT IN (".implode(',',$delayed_ids).") AND created < '$endtime' AND mailed ='0'");
+                         WHERE created < '$endtime' AND mailed ='0'");
 }
 
 function forum_get_user_posts($forumid, $userid) {
@@ -1372,18 +1240,7 @@ function forum_count_unrated_posts($discussionid, $userid) {
 function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
                                $user=0, $fullpost=true, $visiblegroups=-1, $limit=0, $userlastmodified=false) {
 /// Get all discussions in a forum
-    global $CFG, $USER;
-
-    if ((isadmin() and !empty($CFG->admineditalways)) || isteacher(get_field('forum', 'course', 'id', $forum))) {
-        $timelimit = '';
-    } else {
-        $now = time();
-        $timelimit = " AND ((d.timestart = 0 OR d.timestart <= '$now') AND (d.timeend = 0 OR d.timeend > '$now')";
-        if (!empty($USER->id)) {
-            $timelimit .= " OR d.userid = '$USER->id'";
-        }
-        $timelimit .= ')';
-    }
+    global $CFG;
 
     if ($user) {
         $userselect = " AND u.id = '$user' ";
@@ -1420,20 +1277,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
         $umtable = ' LEFT JOIN '.$CFG->prefix.'user um on (d.usermodified = um.id)';
     }
 
-    //TODO: there must be a nice way to do this that keeps both postgres and mysql 3.2x happy but I can't find it right now.
-    if ($CFG->dbtype == 'postgres7') {
-        return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
-                                   u.firstname, u.lastname, u.email, u.picture $umfields
-                              FROM {$CFG->prefix}forum_discussions d
-                              JOIN {$CFG->prefix}forum_posts p ON p.discussion = d.id
-                              JOIN {$CFG->prefix}user u ON p.userid = u.id
-                                   $umtable
-                             WHERE d.forum = '$forum'
-                               AND p.parent = 0
-                                   $timelimit $groupselect $userselect 
-                          ORDER BY $forumsort $limit");
-    } else {
-        return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
+    return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
                                    u.firstname, u.lastname, u.email, u.picture $umfields
                               FROM {$CFG->prefix}forum_discussions d,
                                    {$CFG->prefix}forum_posts p,
@@ -1442,10 +1286,8 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
                              WHERE d.forum = '$forum'
                                AND p.discussion = d.id
                                AND p.parent = 0
-                               AND p.userid = u.id
-                                   $timelimit $groupselect $userselect 
+                               AND p.userid = u.id $groupselect $userselect 
                           ORDER BY $forumsort $limit");
-    }
 }
 
 
@@ -1475,6 +1317,7 @@ function forum_get_user_discussions($courseid, $userid, $groupid=0) {
                                AND d.forum = f.id $groupselect
                           ORDER BY p.created DESC");
 }
+
 
 function forum_subscribed_users($course, $forum, $groupid=0) {
 /// Returns list of user objects that are subscribed to this forum
@@ -1692,42 +1535,11 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link=false,
                           $ratings=NULL, $footer="", $highlight="", $post_read=-99) {
 
-    global $USER, $CFG, $SESSION;
+    global $USER, $CFG;
 
     static $stredit, $strdelete, $strreply, $strparent, $strprune, $strpruneheading, $threadedmode, $isteacher, $adminedit;
 
     static $strmarkread, $strmarkunread, $istracked;
-
-    if (!forum_user_can_see_post($post->forum,$post->discussion,$post)) {
-        if (empty($SESSION->forum_search)) {
-            // just viewing, return
-            return;
-        } 
-        echo '<a name="'.$post->id.'"></a>';
-        echo '<table cellspacing="0" class="forumpost">';
-        echo '<tr class="header"><td class="picture left">';
-        //        print_user_picture($post->userid, $courseid, $post->picture);
-        echo '</td>';
-        if ($post->parent) {
-            echo '<td class="topic">';
-        } else {
-            echo '<td class="topic starter">';
-        }
-        echo '<div class="subject">'.get_string('forumsubjecthidden','forum').'</div>';
-        echo '<div class="author">';
-        print_string('forumauthorhidden','forum');
-        echo '</div></td></tr>';
-        
-        echo '<tr><td class="left side">';
-        echo '&nbsp;';
-        
-        /// Actual content
-        
-        echo '</td><td class="content">'."\n";
-        echo get_string('forumbodyhidden','forum');
-        echo '</td></tr></table>';
-        return;
-    }
 
     if (empty($stredit)) {
         $stredit = get_string('edit', 'forum');
@@ -1867,12 +1679,6 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     }
 
     $age = time() - $post->created;
-    /// Hack for allow to edit news posts those are not displayed yet until they are displayed
-    if (!$post->parent
-        && get_field('forum', 'type', 'id', $post->forum) == 'news'
-        && get_field_sql("SELECT id FROM {$CFG->prefix}forum_discussions WHERE id = $post->discussion AND timestart > ".time())) {
-        $age = 0;
-    }
     if ($ownpost or $adminedit) {
         if (($age < $CFG->maxeditingtime) or $adminedit) {
             $commands[] =  '<a href="'.$CFG->wwwroot.'/mod/forum/post.php?edit='.$post->id.'">'.$stredit.'</a>';
@@ -2009,7 +1815,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
         if (!empty($group->picture) and empty($group->hidepicture)) {
             print_group_picture($group, $forum->course, false, false, true);
         } else if (isset($group->id)) {
-            echo '<a href="'.$CFG->wwwroot.'/user/index.php?id='.$forum->course.'&amp;group='.$group->id.'">'.$group->name.'</a>';
+            echo '<a href="'.$CFG->wwwroot.'/course/group.php?id='.$forum->course.'&amp;group='.$group->id.'">'.$group->name.'</a>';
         }
         echo "</td>\n";
     }
@@ -2051,7 +1857,6 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
     echo '<td class="lastpost">';
     $usedate = (empty($post->timemodified)) ? $post->modified : $post->timemodified;  // Just in case
     $parenturl = (empty($post->lastpostid)) ? '' : '&amp;parent='.$post->lastpostid;
-    $usermodified->id        = $post->usermodified;
     $usermodified->firstname = $post->umfirstname;
     $usermodified->lastname  = $post->umlastname;
     echo '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$post->usermodified.'&amp;course='.$forum->course.'">'.
@@ -2365,28 +2170,30 @@ function forum_print_attachments($post, $return=NULL) {
     if ($basedir = forum_file_area($post)) {
         if ($files = get_directory_list($basedir)) {
             $strattachment = get_string("attachment", "forum");
+            $strpopupwindow = get_string("popupwindow");
             foreach ($files as $file) {
                 $icon = mimeinfo("icon", $file);
                 if ($CFG->slasharguments) {
-                    $ffurl = "$CFG->wwwroot/file.php/$filearea/$file";
+                    $ffurl = "file.php/$filearea/$file";
                 } else {
-                    $ffurl = "$CFG->wwwroot/file.php?file=/$filearea/$file";
+                    $ffurl = "file.php?file=/$filearea/$file";
                 }
-                $image = "<img border=\"0\" src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" alt=\"\" />";
+                $image = "<img border=\"0\" src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" alt=\"$strpopupwindow\" />";
 
                 if ($return == "html") {
-                    $output .= "<a href=\"$ffurl\">$image</a> ";
-                    $output .= "<a href=\"$ffurl\">$file</a><br />";
+                    $output .= "<a href=\"$CFG->wwwroot/$ffurl\">$image</a> ";
+                    $output .= "<a href=\"$CFG->wwwroot/$ffurl\">$file</a><br />";
 
                 } else if ($return == "text") {
-                    $output .= "$strattachment $file:\n$ffurl\n";
+                    $output .= "$strattachment $file:\n$CFG->wwwroot/$ffurl\n";
 
                 } else {
                     if ($icon == "image.gif") {    // Image attachments don't get printed as links
-                        $imagereturn .= "<br /><img src=\"$ffurl\" alt=\"\" />";
+                        $imagereturn .= "<br /><img src=\"$CFG->wwwroot/$ffurl\" alt=\"\" />";
                     } else {
-                        echo "<a href=\"$ffurl\">$image</a> ";
-                        echo "<a href=\"$ffurl\">$file</a><br />";
+                        link_to_popup_window("/$ffurl", "attachment", $image, 500, 500, $strattachment);
+                        echo "<a href=\"$CFG->wwwroot/$ffurl\">$file</a>";
+                        echo "<br />";
                     }
                 }
             }
@@ -2468,7 +2275,7 @@ function forum_update_post($post,&$message) {
         $data->date = userdate($post->modified);
         $editedby = get_string('editedby', 'forum', $data);
         if ($post->format == FORMAT_HTML) {
-            $post->message .= '<p>(<span class="edited">'.$editedby.'</span>)</p>';
+            $post->message .= '<p>(<i><span class="edited">'.$editedby.'</span></i>)</p>';
         } else {
             $post->message .= "\n\n(".$editedby.')';
         }
@@ -2555,7 +2362,7 @@ function forum_add_discussion($discussion,&$message) {
 }
 
 
-function forum_delete_discussion($discussion, $fulldelete=false) {
+function forum_delete_discussion($discussion) {
 // $discussion is a discussion record object
 
     $result = true;
@@ -2567,7 +2374,7 @@ function forum_delete_discussion($discussion, $fulldelete=false) {
             if (! delete_records("forum_ratings", "post", "$post->id")) {
                 $result = false;
             }
-            if (! forum_delete_post($post, $fulldelete)) {
+            if (! forum_delete_post($post)) {
                 $result = false;
             }
         }
@@ -2699,18 +2506,12 @@ function forum_user_has_posted_discussion($forumid, $userid) {
     }
 }
 
-function forum_user_has_posted($forumid,$did,$userid) {
-    return record_exists('forum_posts','discussion',$did,'userid',$userid);
-}
-
-function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode='') {
+function forum_user_can_post_discussion($forum, $currentgroup=false) {
 // $forum is an object
-    global $USER, $SESSION;
+    global $USER;
 
     if ($forum->type == "eachuser") {
         return (! forum_user_has_posted_discussion($forum->id, $USER->id));
-    } else if ($forum->type == 'qanda') {
-        return isteacher($forum->course);
     } else if ($forum->type == "teacher") {
         return isteacher($forum->course);
     } else if ($currentgroup) {
@@ -2718,13 +2519,7 @@ function forum_user_can_post_discussion($forum, $currentgroup=false, $groupmode=
     } else if (isteacher($forum->course)) {
         return true;
     } else {
-        //else it might be group 0 in visible mode
-        if ($groupmode == VISIBLEGROUPS){
-            return ($forum->open == 2 AND ismember($currentgroup));
-        }
-        else {
-            return ($forum->open == 2);
-        }
+        return ($forum->open == 2);
     }
 }
 
@@ -2746,117 +2541,6 @@ function forum_user_can_post($forum, $user=NULL) {
     }
 }
 
-//checks to see if a user can view a particular post
-function forum_user_can_view_post($post, $course, $user=NULL){
-
-    global $CFG, $USER;
-
-    if (!$user){
-        $user = $USER;
-    }
-
-    $SQL = 'SELECT f.id, f.type, fd.course, fd.groupid FROM '.
-           $CFG->prefix.'forum_posts fp, '.
-           $CFG->prefix.'forum_discussions fd, '.
-           $CFG->prefix.'forum f
-           WHERE fp.id = '.$post.'
-           AND fp.discussion = fd.id
-           AND fd.forum = f.id';
-           
-    $forumcourse = get_record_sql($SQL);
-    if (isteacheredit($forumcourse->course)){
-        return true;    //if is editting teacher, you can see all post for this course
-    }
-
-    if ($forumcourse->type == 'teacher'){    //teacher type forum
-        return isteacher($forumcourse->course);
-    }
-
-    //first of all, the user must be in this course
-    if (!(isstudent($forumcourse->course) or 
-          isteacher($forumcourse->course) or 
-          ($course->id == SITEID && !$CFG->forcelogin) or 
-          (isguest() && $course->guest) )){
-        return false;
-    }
-
-    if (! $cm = get_coursemodule_from_instance('forum', $forumcourse->id, $forumcourse->course)) {
-        return false;
-    }
-
-    //if a group is specified, and the forum is in SPG mode
-    if (($forumcourse->groupid != -1) and ($cm->groupmode == SEPARATEGROUPS)){
-        //check membership
-        return ismember($forumcourse->groupid);
-    }
-    else {    //if visiblegorups or no groups,
-        return true;
-    }
-}
-
-function forum_user_can_see_discussion($forum,$discussion,$user=NULL) {
-    global $USER;
-
-    if (empty($user) || empty($user->id)) {
-        $user = $USER;
-    }
-
-    // retrive objects (yuk)
-    if (is_numeric($forum)) {
-        if (!$forum = get_record('forum','id',$forum)) {
-            return false;
-        }
-    }
-    if (is_numeric($discussion)) {
-        if (!$discussion = get_record('forum_discussions','id',$discussion)) {
-            return false;
-        }
-    }
-    if ($forum->type == 'qanda') {
-        return (forum_user_has_posted($forum->id,$discussion->id,$user->id) || isteacher($forum->course));
-    }
-    return true;
-}
-    
-
-function forum_user_can_see_post($forum,$discussion,$post,$user=NULL) {
-    global $USER;
-
-    if (empty($user) || empty($user->id)) {
-        $user = $USER;
-    }
-
-    // retrive objects (yuk)
-    if (is_numeric($forum)) {
-        if (!$forum = get_record('forum','id',$forum)) {
-            return false;
-        }
-    }
-    if (isteacher($forum->course)) {
-        return true;
-    }
-    if (is_numeric($discussion)) {
-        if (!$discussion = get_record('forum_discussions','id',$discussion)) { 
-            return false;
-        }
-    }
-    if (is_numeric($post)) {
-        if (!$post = get_record('forum_posts','id',$post)) {
-            return false;
-        }
-    }
-    
-    if (!isset($post->id) && isset($post->parent)) {
-        $post->id = $post->parent;
-    }
-    
-    if ($forum->type == 'qanda') {
-        $firstpost = forum_get_firstpost_from_discussion($discussion->id);
-        return (forum_user_has_posted($forum->id,$discussion->id,$user->id) || $firstpost->id == $post->id || isteacher($forum->course));
-    }
-    return true;
-}
-
 
 /**
 * Prints the discussion view screen for a forum.
@@ -2874,6 +2558,7 @@ function forum_user_can_see_post($forum,$discussion,$post,$user=NULL) {
 function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $displayformat='plain', $sort='',
                                         $currentgroup=-1, $groupmode=-1, $page=-1) {
     global $CFG, $USER;
+
 
 /// Sort out some defaults
 
@@ -2910,16 +2595,13 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
     }
 
 /// If the user can post discussions, then this is a good place to put the button for it
-    //add group mode in there, to test for visible group
-    if (forum_user_can_post_discussion($forum, $currentgroup, $groupmode)) {
+
+    if (forum_user_can_post_discussion($forum, $currentgroup)) {
         echo '<div class="singlebutton forumaddnew">';
         echo "<form name=\"newdiscussionform\" method=\"get\" action=\"$CFG->wwwroot/mod/forum/post.php\">";
         echo "<input type=\"hidden\" name=\"forum\" value=\"$forum->id\" />";
         echo '<input type="submit" value="';
-        echo ($forum->type == 'news') ? get_string('addanewtopic', 'forum') 
-            : (($forum->type == 'qanda') 
-               ? get_string('addanewquestion','forum') 
-               : get_string('addanewdiscussion', 'forum'));
+        echo ($forum->type == 'news') ? get_string('addanewtopic', 'forum') : get_string('addanewdiscussion', 'forum');
         echo '" />';
         echo '</form>';
         echo "</div>\n";
@@ -2934,8 +2616,6 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
         echo '<div class="forumnodiscuss">';
         if ($forum->type == 'news') {
             echo '('.get_string('nonews', 'forum').')';
-        } else if ($forum->type == 'qanda') {
-            echo '('.get_string('noquestions','forum').')';
         } else {
             echo '('.get_string('nodiscussions', 'forum').')';
         }
@@ -3235,9 +2915,6 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
                     $ratingsmenuused = true;
                 }
             } else {
-                if (!forum_user_can_see_post($post->forum,$post->discussion,$post)) {
-                    continue;
-                }
                 $by->name = fullname($post, isteacher($courseid));
                 $by->date = userdate($post->modified);
 
@@ -3649,29 +3326,11 @@ function forum_tp_count_forum_read_records($userid, $forumid, $groupid=false) {
         $groupsel = ' AND (d.groupid = '.$groupid.' OR d.groupid = -1)';
     }
 
-    if ($CFG->dbtype === 'postgres7') {
-        // this query takes 20ms, vs several minutes for the one below
-        $sql = " SELECT COUNT (DISTINCT u.id ) " 
-            .  " FROM ( "
-            .  "   SELECT  p.id " 
-            .  "   FROM  {$CFG->prefix}forum_posts p "
-            .  "       JOIN {$CFG->prefix}forum_discussions d ON p.discussion = d.id "
-            .  "       JOIN {$CFG->prefix}forum_read r ON p.id = r.postid"
-            .  "   WHERE d.forum = $forumid $groupsel "
-            .  "         AND r.userid= $userid"
-            .  "   UNION"
-            .  "   SELECT  p.id"
-            .  "   FROM  {$CFG->prefix}forum_posts p "
-            .  "         JOIN {$CFG->prefix}forum_discussions d ON p.discussion = d.id "
-            .  "   WHERE d.forum = $forumid $groupsel "
-            .  "         AND p.modified < $cutoffdate"
-            .  ") u";
-   } else {
-        $sql = 'SELECT COUNT(DISTINCT p.id) '.
-            'FROM '.$CFG->prefix.'forum_posts p,'.$CFG->prefix.'forum_read r,'.$CFG->prefix.'forum_discussions d '.
-            'WHERE d.forum = '.$forumid.$groupsel.' AND p.discussion = d.id AND '.
-            '((p.id = r.postid AND r.userid = '.$userid.') OR p.modified < '.$cutoffdate.' ) ';
-    }
+    $sql = 'SELECT COUNT(DISTINCT p.id) '.
+           'FROM '.$CFG->prefix.'forum_posts p,'.$CFG->prefix.'forum_read r,'.$CFG->prefix.'forum_discussions d '.
+           'WHERE d.forum = '.$forumid.$groupsel.' AND p.discussion = d.id AND '.
+                '((p.id = r.postid AND r.userid = '.$userid.') OR p.modified < '.$cutoffdate.' ) ';
+
     return (count_records_sql($sql));
 }
 
@@ -3767,12 +3426,6 @@ function forum_tp_get_untracked_forums($userid, $courseid=false) {
 function forum_tp_can_track_forums($forum=false, $user=false) {
     global $USER, $CFG;
 
-    // if possible, avoid expensive
-    // queries
-    if (empty($CFG->forum_trackreadposts)) {
-        return false;
-    }
-
     if ($user === false) {
         /// Must be logged in and not a guest.
         $isauser = isloggedin() && !isguest();
@@ -3787,14 +3440,15 @@ function forum_tp_can_track_forums($forum=false, $user=false) {
     } else {
         /// Work toward always passing an object...
         if (is_numeric($forum)) {
-            $forum = get_record('forum', 'id', $forum, '','','','', 'id,trackingtype');
+            $forum = get_record('forum', 'id', $forum);
         }
 
         $forumallows = ($forum->trackingtype == FORUM_TRACKING_OPTIONAL);
         $forumforced = ($forum->trackingtype == FORUM_TRACKING_ON);
     }
 
-    return ($isauser && ($forumforced || ($forumallows && !empty($user->trackforums))));
+    return ($isauser && $CFG->forum_trackreadposts && 
+            ($forumforced || ($forumallows && !empty($user->trackforums))));
 }
 
 /**
@@ -3867,7 +3521,9 @@ function forum_tp_clean_read_records() {
             delete_records('forum_read', 'id', $oldreadpost->id);
         }
     }
+
 }    
+
 
 /**
  * Sets the last post for a given discussion
@@ -3881,10 +3537,10 @@ function forum_discussion_update_last_post($discussionid) {
     }
     
 /// Use SQL to find the last post for this discussion
-    $sql = 'SELECT id, userid, modified '.
+    $sql = 'SELECT `id`, `userid`, `modified` '.
            'FROM '.$CFG->prefix.'forum_posts '.
-           'WHERE discussion='.$discussionid.' '.
-           'ORDER BY modified DESC ';
+           'WHERE `discussion`='.$discussionid.' '.
+           'ORDER BY `modified` DESC ';
 
 /// Lets go find the last post
     if (($lastpost = get_record_sql($sql, true))) {
@@ -3901,75 +3557,5 @@ function forum_discussion_update_last_post($discussionid) {
 /// or we couldn't update the discussion record (weird x2)
     return false;
 }
-
-
-function forum_get_view_actions() {
-    return array('view discussion','search','forum','forums','subscribers');
-}
-
-function forum_get_post_actions() {
-    return array('add discussion','add post','delete discussion','delete post','move discussion','prune post','update post');
-}
-
-///this function returns all the separate forum ids, given a courseid
-//@ param int $courseid
-//@ return array
-function forum_get_separate_modules($courseid) {
-
-    global $CFG,$db;
-    $forummodule = get_record("modules", "name", "forum");
-    
-    $sql = 'SELECT f.id, f.id FROM '.$CFG->prefix.'forum f, '.$CFG->prefix.'course_modules cm WHERE
-           f.id = cm.instance AND cm.module ='.$forummodule->id.' AND cm.visible = 1 AND cm.course = '.$courseid.'
-           AND cm.groupmode ='.SEPARATEGROUPS;
-
-    return get_records_sql($sql);
-
-}
-
-function forum_check_throttling($forum) {
-    global $USER,$CFG;
-
-    if (is_numeric($forum)) {
-        $forum = get_record('forum','id',$forum);
-    }
-    if (!is_object($forum)) {
-        return false;  // this is broken.
-    }
-    
-    if (empty($forum->blockafter)) {
-        return true;
-    }
-    
-    if (empty($forum->blockperiod)) {
-        return true;
-    }
-    
-    if (isteacher($forum->course)) {
-        return true;
-    }
-
-    // get the number of posts in the last period we care about
-    $timenow = time();
-    $timeafter = $timenow - $forum->blockperiod;
-    
-    $numposts = count_records_sql('SELECT COUNT(p.id) FROM '.$CFG->prefix.'forum_posts p'
-                                  .' JOIN '.$CFG->prefix.'forum_discussions d'
-                                  .' ON p.discussion = d.id WHERE d.forum = '.$forum->id
-                                  .' AND p.userid = '.$USER->id.' AND p.created > '.$timeafter);
-
-    $a->blockafter = $forum->blockafter;
-    $a->numposts = $numposts;
-    $a->blockperiod = get_string('secondstotime'.$forum->blockperiod);
-    
-    if ($forum->blockafter <= $numposts) {
-        error(get_string('forumblockingtoomanyposts','error',$a),$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id);
-    }
-    if ($forum->warnafter <= $numposts) {
-        notify(get_string('forumblockingalmosttoomanyposts','forum',$a));
-    }
-
-    
-}
-
+         
 ?>

@@ -41,11 +41,13 @@ h6.main {
 #layout-table {
   width:100%;
   border-collapse:separate;
+  margin-top: 8px;
 }
 
 #layout-table #left-column,
 #layout-table #middle-column,
-#layout-table #right-column {
+#layout-table #right-column
+{
   vertical-align:top;
 }
 
@@ -53,6 +55,7 @@ h6.main {
   padding-left:12px;
   padding-right:12px;
 }
+
 
 .clearer {
   clear:both;
@@ -79,13 +82,6 @@ table {
 a img {
   border:none;
 }
-
-img.userpicture,
-img.grouppicture,
-.block_online_users .listentry img {
-  border: 0px none
-}
-
 .notifyproblem {
   text-align: center;
   padding: 10px;
@@ -103,44 +99,34 @@ img.grouppicture,
 }
 
 .generalbox#intro {
+  text-align:center;
 }
 
 .noticebox {
   border-width:1px;
   border-style:solid;
 }
-
 .errorbox {
   border-width:1px;
   border-style:solid;
   margin: 1em 15%;
   width: 70%;
 }
-
 .errorbox .title {
   padding: 5px;
 }
-
-.errorboxcontent {
-  padding: 5px;
-}
-
 .informationbox {
   border-width:1px;
   border-style:solid;
 }
-
 .feedbackbox {
   border-width:1px;
   border-style:solid;
 }
-
 .feedbackby {
 }
-
 .feedback {
 }
-
 .initialbar {
   text-align: center;
 }
@@ -169,11 +155,9 @@ img.grouppicture,
 .pagingbar {
   text-align:center;
 }
-
 .pagingbar a {
   padding-left: 10px;
 }
-
 .pagingbar .thispage {
   padding-left: 10px;
 }
@@ -190,12 +174,6 @@ table.formtable tbody td,
 table.formtable tbody th
 {
   padding: 5px;
-}
-
-table.formtable tbody .htmlarea td,
-table.formtable tbody .htmlarea th
-{
-  padding: 0px;
 }
 
 .paging {
@@ -293,28 +271,13 @@ form.popupform {
 }
 
 
-/***
- *** Content
- ***/
-
-#content {
-  margin-top:8px;
-}
-
-#admin-index #content {
-  margin-top:0;
-}
 
 /***
  *** Admin
  ***/
- 
+
 body#admin-index .c0 {
   vertical-align: top;
-} 
-
-body#admin-index .c1 {
-  vertical-align: middle;
 } 
 
 body#admin-modules table.generaltable td.cell,
@@ -323,54 +286,15 @@ body#admin-modules .generaltablecell {
   padding-bottom: 2px;
 } 
 
-body#admin-blocks table#blocks,
-body#admin-blocks table#incompatible {
-  width: 70%;
-  margin: auto;
-}
-
-body#admin-blocks table#blocks th,
-body#admin-blocks table#incompatible th,
-body#admin-blocks table#blocks td.cell,
-body#admin-blocks table#incompatible td.cell {
-  padding: 4px;
-  text-align: center;
-  vertical-align: middle;
+body#admin-blocks table.generaltable td.cell,
+body#admin-blocks .generaltablecell {
+  padding-top: 1px;
+  padding-bottom: 1px;
 } 
 
-body#admin-blocks table#blocks td.c0,
-body#admin-blocks table#blocks th.c0,
-body#admin-blocks table#incompatible td.c0,
-body#admin-blocks table#incompatible th.c0 {
-  text-align: left;
-}
-
-body#admin-blocks 
 body#admin-config .confighelp {
   display: block;
   padding-bottom: 20px;
-}
-
-table.flexible td.cell {
-  padding-top: 2px;
-  padding-bottom: 2px;
-} 
-
-table.flexible {
-  width: 70%;
-  margin: auto;
-}
-
-table.flexible thi, 
-table.flexible td.cell {
-  padding: 4px;
-  text-align: center;
-  vertical-align: middle;
-} 
-
-table.flexible td.c0,
-table.flexible th.c0 {
-  text-align: left;
 }
 
 
@@ -450,10 +374,6 @@ table.flexible th.c0 {
   padding: 2px;
 }
 
-.sideblock .content .message {
-  text-align:center  
-}
-
 .sideblock .footer {
   margin-bottom: 4px;
   text-align:center;
@@ -474,10 +394,6 @@ table.flexible th.c0 {
 
 .blockconfiginstancecontent .tabs {
   margin-bottom: 0px;
-}
-
-.block_online_users .listentry {
-  padding-top:5px;
 }
 
 /***
@@ -725,14 +641,10 @@ table.calendar-controls .next {
   width: 30%;
 }
 
-#calendar .indent {
-    padding-left: 20px;
-}
 
 /***
  *** Course
  ***/
- 
 .activitydate, .activityhead {
   text-align:center;
 }
@@ -747,10 +659,6 @@ table.calendar-controls .next {
   border-width:1px;
   border-left:0px;
   border-right:0px;
-}
-
-* html #course-view .section .content .commands {
-  clear: both;
 }
 
 #course-view .section .side {
@@ -799,7 +707,6 @@ body#course-view .unread {
 body#course-enrol .generalbox {
   margin-top: 20px;
 }
-
 body#course-enrol .coursebox {
   margin-top: 20px;
 }
@@ -898,20 +805,11 @@ body#grade-index .grades .weighted {
   text-align: right;
 }
 
-.backup-form-instances {
-   margin:0px 20px 0px 20px;
-}
-.restore-form-instances {
-   margin:0px 20px 0px 20px;
-}
+
 
 /***
  *** Login
  ***/
-
-.loginbox {
-  margin-top:7px;
-}
 
 .loginbox .content {
   border-width:1px;
@@ -1080,54 +978,10 @@ table.groupinfobox {
   width: 100px;
   vertical-align: top;
 }
-
-body#user-index h2 {
-  text-align: center;
-}
-
-body#user-index #longtimenosee,
-body#user-index #showall {
-  text-align: center;
-}
-
-body#user-index #showall {
-  margin: 10px 0px;
-}
-
-body#user-index table#teachers,
-body#user-index table#students {
-  margin: auto;
-  width: 80%;
-}
-body#user-index table#teachers td,
-body#user-index table#teachers th,
-body#user-index table#students td,
-body#user-index table#students th {
-  vertical-align: middle;
-  text-align: left;
-  padding: 4px;
-}
-
-body#user-index table.controls {
-  width: 100%;
-}
-body#user-index table.controls tr {
-  vertical-align: top;
-}
-body#user-index table.controls td.right,
-body#user-index table.controls td.left {
-  padding: 4px;
-}
-body#user-index table.controls .right {
-  text-align: right;
-}
-body#course-participation h2 {
+body#user-index #longtimenosee {
   text-align:center;
 }
-body#course-participation #showall {
-  text-align:center;
-  margin: 10px 0px;
-}
+
 
 /***
  *** Modules: Assignment
@@ -1136,19 +990,6 @@ body#course-participation #showall {
 /***
  *** Modules: Chat
  ***/
-
-#mod-chat-gui_header_js-jsupdate {
-  margin:10px
-}
-#mod-chat-gui_header_js-jsupdate .chat-event,
-#mod-chat-gui_header_js-jsupdate .chat-message {
-  width:100%;
-  padding:0;
-  margin-top:7px
-}
-#mod-chat-gui_header_js-jsupdate .picture {
-  width:40px
-}
 
 /***
  *** Modules: Choice
@@ -1301,11 +1142,6 @@ body#mod-forum-search .introcontent {
 .glossarypost .commands {
   width: 200px;
   white-space: nowrap;
-}
-
-#mod-glossary-comments .glossarypost,
-#mod-glossary-comment .glossarypost {
-      margin-top: 15px;
 }
 
 .entryboxheader {
@@ -1461,12 +1297,10 @@ body#mod-forum-search .introcontent {
 
 .feedbacktext {
   display:block;
-  text-align:right;
 }
 
 body#mod-quiz-report table#attempts,
-body#mod-quiz-report table#commands,
-body#mod-quiz-report table#itemanalysis
+body#mod-quiz-report table#commands
 {
   width: 80%;
   margin: auto;
@@ -1490,7 +1324,9 @@ body#mod-quiz-report table#attempts td {
   border-right-width: 1px;
   border-left-style: solid;
   border-right-style: solid;
-  vertical-align: middle;
+}
+.feedbacktext {
+  text-align:right;
 }
 body#mod-quiz-report table#attempts .header {
   text-align: left;
@@ -1502,25 +1338,11 @@ body#mod-quiz-report .controls {
   text-align: center;
 }
 
-.navbutton form {
-  display: inline;
-  }
+
 
 /***
  *** Modules: Resource
  ***/
-
-.ims-nav-bar {
-  position: absolute; 
-  top: 2px; 
-  left: 2px;
-}
-
-.ims-nav-button a,
-.ims-nav-dimmed {
-  padding-left:1em;
-  padding-right:1em;
-}
 
 /***
  *** Modules: Scorm

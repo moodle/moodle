@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5.3+ (2005060230)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['alternatelogin'] = 'Si introduïu un URL aquí, s\'utilitzarà com a pàgina d\'entrada d\'aquest lloc. Aquesta pàgina hauria de contenir un formulari, amb la propietat \'action\' igual a <strong>$a</strong> i que retornés els camps <strong>username</strong> i <strong>password</strong>.<br />Tingueu cura de no escriure un URL incorrecte, ja que podríeu impedir l\'entrada dels usuaris en aquest lloc.<br />Si deixeu en blanc aquest paràmetre s\'utilitzarà la pàgina d\'entrada per defecte.';
@@ -17,8 +17,6 @@ $string['auth_cas_text'] = 'Connexió segura';
 $string['auth_cas_version'] = 'Versió de CAS';
 $string['auth_casdescription'] = 'Aquest mètode utilitza un servidor CAS (Central Authentication Service, Servei Central d\'Autenticació) per autenticar els usuaris en un entorn Single Sign On (SSO, inscripció única). També podeu fer servir autenticació LDAP. Si el nom d\'usuari i la contrasenya són vàlids d\'acord amb el CAS, Moodle crea un nou usuari en la seva base de dades i si escau agafa els atributs del LDAP. En les entrades següents només es verifiquen el nom d\'usuari i la contrasenya.';
 $string['auth_castitle'] = 'Servidor CAS (SSO)';
-$string['auth_changepasswordhelp'] = 'Ajuda del canvi de contrasenya';
-$string['auth_changepasswordurl'] = 'URL de canvi de contrasenya';
 $string['auth_common_settings'] = 'Paràmetres comuns';
 $string['auth_data_mapping'] = 'Mapatge de dades';
 $string['auth_dbdescription'] = 'Aquest mètode utilitza una taula d\'una base de dades externa per comprovar si un nom d\'usuari i una contrasenya són vàlids. Si el compte és nou, aleshores també es pot copiar en Moodle informació d\'altres camps.';
@@ -33,6 +31,8 @@ $string['auth_dbtable'] = 'Nom de la taula';
 $string['auth_dbtitle'] = 'Utilitza una base de dades externa';
 $string['auth_dbtype'] = 'Tipus de base de dades (vg. la <A HREF=../lib/adodb/readme.htm#drivers>documentació sobre ADOdb</A>)';
 $string['auth_dbuser'] = 'Nom d\'usuari amb accés de lectura a la base de dades';
+$string['auth_editlock'] = 'Bloqueja valor';
+$string['auth_editlock_expl'] = '<p><b>Bloqueja valor:</b> si habiliteu aquesta opció, impedireu que els usuaris i administradors de Moodle editen aquest fitxer directament. Utilitzeu aquesta opció si manteniu aquestes dades en un sistema d\'autenticació extern.</p>';
 $string['auth_emaildescription'] = 'La confirmació per correu electrònic és el mètode d\'autenticació per defecte. Quan l\'usuari es registra i tria el seu nom d\'usuari i contrasenya, se li envia un missatge per confirmar les dades. Aquest missatge conté un enllaç segur a una pàgina en la qual l\'usuari pot confirmar el seu compte. En les connexions següents simplement es compara el nom d\'usuari i la contrasenya amb els valors guardats a la base de dades de Moodle.';
 $string['auth_emailtitle'] = 'Autenticació basada en el correu electrònic';
 $string['auth_fccreators'] = 'Llista de grups als membres dels quals els és permès de crear nous cursos. Separeu els diferents grups amb \';\'. Els noms han de ser exactament iguals als del servidor FirstClass. El sistema distingeix majúscules i minúscules.';
@@ -42,17 +42,13 @@ $string['auth_fchost'] = 'Adreça del servidor FirstClass. Utilitzeu el número IP
 $string['auth_fcpasswd'] = 'Contrasenya d\'aquest compte.';
 $string['auth_fctitle'] = 'Utilitza un servidor FirstClass';
 $string['auth_fcuserid'] = 'Userid del compte FirstClass amb conjunt de privilegis de \'Subaministrador\'.';
-$string['auth_fieldlock'] = 'Bloca valor';
-$string['auth_fieldlock_expl'] = '<p><b>Bloca valor:</b> si l\'habiliteu, impedirà que els usuaris i administradors de Moodle editin el camp directament. Utilitzeu aquesta opció quan aquestes es mantinguin en un sistema d\'autenticació extern.';
-$string['auth_fieldlocks'] = 'Bloca camps d\'usuari';
-$string['auth_fieldlocks_help'] = '<p>Podeu blocar els camps de dades d\'usuari. Això és útil en llocs on els administradors mantenen manualment les dades dels usuaris tot editant els registres d\'usuari o per mitjà de l\'opció de càrrega d\'usuaris. Si bloqueu camps requerits per Moodle, assegureu-vos que aquestes dades s\'introdueixen en crear els comptes d\'usuari, o en cas contrari no es podran utilitzar els comptes.</p><p>Considereu la possibilitat d\'utilitzar el mode \'Desblocat si està buit\' per evitar aquest problema.</p>';
 $string['auth_imapdescription'] = 'Aquest mètode utilitza un servidor IMAP per comprovar si un nom d\'usuari i una contrasenya són vàlids.';
 $string['auth_imaphost'] = 'L\'adreça del servidor IMAP. Ha de ser el número IP, no el nom del DNS.';
 $string['auth_imapport'] = 'El número de port del servidor IMAP. Generalment és el 143 o el 993.';
 $string['auth_imaptitle'] = 'Utilitza un servidor IMAP';
 $string['auth_imaptype'] = 'Tipus de servidor IMAP. Els servidors IMAP poden tenir diferents tipus d\'autenticació i negociació.';
-$string['auth_ldap_bind_dn'] = 'Si voleu utilitzar el bind-user per cercar usuaris, especifiqueu-ho aquí. Per exemple \'cn=ldapuser,ou=public,o=org\'';
-$string['auth_ldap_bind_pw'] = 'Contrasenya del bind-user.';
+$string['auth_ldap_bind_dn'] = 'Si voleu utilitzar l\'usuari de vinculació (<i>bind-user</i>) per cercar usuaris, especifiqueu-ho aquí. Una cosa semblant a \'cn=ldapuser,ou=public,o=org\'';
+$string['auth_ldap_bind_pw'] = 'Contrasenya del <i>bind-user</i>.';
 $string['auth_ldap_bind_settings'] = 'Paràmetres de vinculació';
 $string['auth_ldap_contexts'] = 'Llista de contextos en què estan ubicats els usuaris. Separeu els contextos amb \';\'. Per exemple: \'ou=users,o=org; ou=others,o=org\'';
 $string['auth_ldap_create_context'] = 'Si activeu la creació d\'usuaris mitjançant confirmació per correu electrònic, especifiqueu en quin context s\'han de crear els usuaris. Aquest context ha de ser diferent del d\'altres usuaris per tal de prevenir problemes de seguretat. No cal afegir aquest context a ldap_context-variable. Moodle cercarà els usuaris en aquest context automàticament.';
@@ -68,7 +64,6 @@ $string['auth_ldap_memberattribute'] = 'Especifiqueu l\'atribut de membre de l\'
 $string['auth_ldap_objectclass'] = 'Filtre utilitzat per nomenar/cercar usuaris. Generalment es defineix quelcom semblant a objectClass=posixAccount. Per defecte objectClass=*, que retorna tots els objectes de LDAP.';
 $string['auth_ldap_opt_deref'] = 'Determina com es manegen els àlies en les cerques. Seleccioneu un dels valors següents: \"No\" (LDAP_DEREF_NEVER) o \"Sí\" (LDAP_DEREF_ALWAYS)';
 $string['auth_ldap_passwdexpire_settings'] = 'Paràmetres LDAP de venciment de contrasenyes';
-$string['auth_ldap_preventpassindb'] = 'Seleccioneu \'sí\' per impedir que les contrasenyes s\'emmagatzemin en la base de dades de Moodle.';
 $string['auth_ldap_search_sub'] = 'Poseu el valor <> 0 si voleu cercar els usuaris en subcontextos.';
 $string['auth_ldap_server_settings'] = 'Paràmetres del servidor LDAP';
 $string['auth_ldap_update_userinfo'] = 'Actualitzeu la informació dels usuaris (nom, cognoms, adreça...) d\'LDAP a Moodle. Especifiqueu els paràmetres de \"Mapatge de dades\" segons les vostres necessitats.';
@@ -100,13 +95,12 @@ $string['auth_pop3mailbox'] = 'Nom de la bústia amb la qual es fa la connexió (g
 $string['auth_pop3port'] = 'Número de port del servidor (el 110 és el més habitual)';
 $string['auth_pop3title'] = 'Utilitza un servidor POP3';
 $string['auth_pop3type'] = 'Tipus de servidor. Si el vostre servidor utilitza seguretat per certificat, trieu pop3cert.';
-$string['auth_shib_convert_data'] = 'API de modificació de dades';
 $string['auth_shibbolethdescription'] = 'Amb aquest mètode us podeu connectar a un servidor Shibboleth per verificar i crear nous comptes';
 $string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_updatelocal'] = 'Actualitza dades locals';
-$string['auth_updatelocal_expl'] = '<p><b>Actualitza dades locals:</b> si habiliteu aquesta opció, el camp s\'actualitzarà (amb les dades externes d\'autenticació) cada vegada que l\'usuari entri o quan es faci una sincronització d\'usuaris. Els camps definits per actualitzar-se localment haurien d\'estar blocats.</p>';
+$string['auth_updatelocal_expl'] = '<p><b>Actualitza dades locals:</b> si habiliteu aquesta opció, el camp s\'actualitzarà (amb les dades externes d\'autenticació) cada vegada que l\'usuari entri o quan es faci una sincronització d\'usuaris. Els camps definits per actualitzar-se localment haurien d\'estar bloquejats.</p>';
 $string['auth_updateremote'] = 'Actualitza dades externes';
-$string['auth_updateremote_expl'] = '<p>Actualitza dades externes:</b> si habiliteu aquesta opció, les dades externes d\'autenticació s\'actualitzaran quan s\'actualitzi el registre de l\'usuari. Els camps s\'haurien de desblocar per permetre l\'edició.</p>';
+$string['auth_updateremote_expl'] = '<p>Actualitza dades externes:</b> si habiliteu aquesta opció, les dades externes d\'autenticació s\'actualitzaran quan s\'actualitzi el registre de l\'usuari. Els camps s\'haurien de desbloquejar per permetre l\'edició.</p>';
 $string['auth_updateremote_ldap'] = '<p><b>Nota:</b> actualitzar dades LDAP externes requreix definir binddn i dindpw amb un bind-user que tingui privilegis d\'edició en tots els registres d\'usuari. Actualment no preserva valors múltiples en els atributs i suprimeix els valors extra quan es fa l\'actualització.</p>';
 $string['auth_user_create'] = 'Habilita la creació d\'usuaris';
 $string['auth_user_creation'] = 'Els nous usuaris (anònims) poden crear comptes d\'usuari en la font d\'autenticació externa i confirmar-los via correu electrònic. Si habiliteu aquesta opció, recordeu de configurar també opcions específiques del mòdul per a la creació d\'usuaris.';
@@ -116,27 +110,16 @@ $string['authinstructions'] = 'Aquí podeu posar instruccions per als vostres usu
 $string['changepassword'] = 'URL per a canvi de contrasenya';
 $string['changepasswordhelp'] = 'Aquí podeu especificar una adreça en la qual els usuaris puguin recuperar o canviar la seua contrasenya si se n\'han oblidat. Aquesta opció apareixerà en forma de botó a la pàgina d\'entrada. Si la deixeu en blanc no apareixerà el botó.';
 $string['chooseauthmethod'] = 'Trieu un mètode d\'autenticació: ';
-$string['createchangepassword'] = 'Crea si està buit - imposa canvi';
-$string['createpassword'] = 'Crea si està buit';
 $string['forcechangepassword'] = 'Imposa canvi de contrasenya';
 $string['forcechangepassword_help'] = 'Obliga els usuaris a canviar la contrasenya la pròxima vegada que entrien en Moodle.';
 $string['forcechangepasswordfirst_help'] = 'Obliga els usuaris a canviar la contrasenya la pròxima vegada que entrien en Moodle.';
 $string['guestloginbutton'] = 'Botó d\'entrada de visitants';
-$string['infilefield'] = 'Camp requerit en el fitxer';
 $string['instructions'] = 'Instruccions';
-$string['locked'] = 'Blocat';
 $string['md5'] = 'Xifratge MD5';
-$string['passwordhandling'] = 'Gestió del camp de contrasenya';
 $string['plaintext'] = 'Text net';
 $string['showguestlogin'] = 'Podeu ocultar o mostrar el botó d\'entrada com a visitant a la pàgina d\'entrada.';
 $string['stdchangepassword'] = 'Utilitza la pàgina estàndard de canvi de contrasenya';
 $string['stdchangepassword_expl'] = 'Si el sistema extern d\'autenticació permet canvis de contrasenya per mitjà de Moodle, commuteu aquest paràmetre a Sí. Aquest paràmetre substitueix l\'\"URL per a canvi de contrasenya\".';
 $string['stdchangepassword_explldap'] = 'NOTA: s\'aconsella que utilitzeu LDAP sobre un túnel xifrat SSL (ldaps://) si el servidor LDAP és remot.';
-$string['unlocked'] = 'Desblocat';
-$string['unlockedifempty'] = 'Desblocat si està buit';
-$string['update_never'] = 'Mai';
-$string['update_oncreate'] = 'En crear';
-$string['update_onlogin'] = 'En cada entrada';
-$string['update_onupdate'] = 'En actualitzar';
 
 ?>

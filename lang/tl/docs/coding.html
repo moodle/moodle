@@ -1,13 +1,11 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
 <title>Moodle Doks: Alituntunin sa Pagcode</title>
 <link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
 <meta http-equiv="Content-Type" content="text/html;
-charset=iso-8859-15" />
+charset=iso-8859-15">
 </head>
-<body>
+<body bgcolor="#FFFFFF">
 <h1>Mga Alituntunin sa Pagcode ng Moodle</h1>
 <p class="normaltext">
 Alinmang proyekto na pinagtutulungtulungan ng maraming tao ay
@@ -25,18 +23,18 @@ na sumunod sa mga istandard na ito hangga't maaari.
 <h2>Pangkalahatang Patakaran</h2>
 
 <ol class="normaltext">
-  <li class="spaced">Dapat gamitin ng lahat ng code file ang ekstensiyong
+  <li class="spaced">Dapat gamitin ng lahat ng code file ang extensiong
 .php.</li>
   <li class="spaced">Dapat gamitin ng lahat ng template file ang
 extensiong .html.</li>
-  <li class="spaced">Dapat gamitin ng lahat ng text file ang  estilong-Unix
+  <li class="spaced">Dapat gamitin ng lahat ng text file ang  Unix-style
 na text format (ang karamihang text editor ay may ganitong option).</li>
   <li class="spaced">Dapat 'full' tag ang gamitin ng lahat ng php tag
 tulad ng <font color="#339900">&lt;?php ?&gt;</font> ... sa halip
 na  'short' tag tulad ng <font color="#339900">&lt;? ?&gt;</font>. 
   </li>
 
-  <li class="spaced">Dapat panatilihin ang mga umiiral na copyright notice.
+  <li class="spaced">Dapat panatilihin ang mga copyright notice.
 Maaari kang magdagdag ng sarili mo kung kinakailangan.</li> 
 
 <li class="spaced">Dapat kasama ng bawat file ang main config.php file.</li>   
@@ -45,7 +43,7 @@ Maaari kang magdagdag ng sarili mo kung kinakailangan.</li>
 na-authenticate ng wasto, gamit ang require_login() at isadmin(),
 isteacher(), iscreator() o isstudent().</li>
 
-  <li class="spaced">Dapat gamitin ng lahat ng pag-access sa mga database
+  <li class="spaced">Dapat gamitin ng lahat ng pagaccess sa mga database
 ang mga function sa lib/datalib.php hangga't maaari - ginagawa nitong
 magkaroon ng compatibility sa maraming uri ng database.  Makikita mo na
 posible ang halos lahat ng gusto mong gawin sa pamamagitan ng mga
@@ -88,8 +86,8 @@ kailangan ding baguhin upang tumuro sa mga pinakabagong bersiyon. </li>
     </p>
 </li>
 
-  <li class="spaced">Awtomatikong nilalagyan ng magic_quotes (anuman ang kaayusan ng PHP) ang
-pumapasok na datos mula sa browser (na ipinadala sa pamamagitan ng GET o
+  <li class="spaced">Awtomatikong nilalagyan ng magic_quotes ang
+pumpasok na datos mula sa browser (na ipinadala sa pamamagitan ng GET o
 POST) upang ligtas na maipasok ito nang diretso sa database.  Lahat ng
 iba pang raw na datos (mula sa files, o mula sa mga database) ay
 kailangang lagyan ng escape sa pamamagitan ng <font
@@ -144,7 +142,7 @@ kaya pakisunod naman.
   <li class="spaced">Dapat ay simpleng Ingles na salita na nasa
 lowercase ang gagamitin sa mga <strong>pangalan ng function</strong>,
 at dapat itong magsimula sa pangalan ng modyul para maiwasan ang
-pagkakagulo ng mga modyul.  Dapat ay palaging may makatwirang default
+pagkakagulo ng mga modyul.  Dapat ay palaging may sensible na default
 ang mga parameter, kung maaari.  Tandaan na walang space sa pagitan ng
 pangalan ng function at ng sumusunod na (bracket).
 <br />
@@ -187,35 +185,17 @@ pamamagitan ng iisang pansipi hangga't maaari, para mapabilis ito.
       $var = 'a very, very long string with a '.$single.' variable in it';<br />
       $var = &quot;some $text with $many variables $within it&quot;; </font></p>
   </li>
-
-  <li class="spaced">Dapat magdagdag ng mga 
-<strong>comment</strong> hangga't maaari, upang maipaliwanag ang daloy at layunin ng mga function at variable.
-
- <ul>
-     <li>Ang bawat function (at class) ay dapat gamitan ng popular na
-         <a target="_blank" href="http://www.phpdoc.org/">phpDoc format</a>.
-          Pinapahintulutan nito ang awtomatikong paglikha ng dokumentasyon ng code.</li>
-     <li>Ang mga inline na comment ay dapat gamitan ng estilong // , na ihinanay nang maayos upang umangkop ito sa code at umayon ito sa linya nito.
-</li>
-     </ul>
-  
-  
-   <p class="examplecode"><font color="#FF8000">
-/**<br />
- * The description should be first, with asterisks laid out exactly<br />
- * like this example.  If you want to refer to a another function,<br />
- * do it like this: {@link clean_param()}.  Then, add descriptions <br />
- * for each parameter as follows.<br />
- *<br />
- * @param int    $postid The PHP type is followed by the variable name<br />
- * @param array  $scale The PHP type is followed by the variable name<br />
- * @param array  $ratings The PHP type is followed by the variable name<br />
- * @return mixed<br />
- */</font><br />
-<font color="#006600">function </font><font color="#0000BB">forum_get_ratings_mean</font><font color="#007700">(</font><font color="#0000BB">$postid</font><font color="#007700">, 
+  <li class="spaced">Dapat gumamit ng dalawa o tatlong slash ang mga 
+<strong>comment</strong> at ihanay ito nang maayos sa code.
+    <p class="examplecode"><font color="#006600">function </font><font color="#0000BB">forum_get_ratings_mean</font><font color="#007700">(</font><font color="#0000BB">$postid</font><font color="#007700">, 
       </font><font color="#0000BB">$scale</font><font color="#007700">, </font><font color="#0000BB">$ratings</font><font color="#007700">=</font><font color="#0000BB">NULL</font><font color="#007700">) 
-      {<br /></font>
-      &nbsp;&nbsp;&nbsp;&nbsp;<font color="#007700">if (!</font><font color="#0000BB">$ratings</font><font color="#007700">) 
+      {<br />
+      </font><font color="#FF8000">/// Return the mean rating of a post given 
+      to the current user by others.<br />
+      /// Scale is an array of possible ratings in the scale<br />
+      /// Ratings is an optional simple array of actual ratings (just integers)<br />
+      <br />
+      &nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#007700">if (!</font><font color="#0000BB">$ratings</font><font color="#007700">) 
       {<br />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$ratings 
       </font><font color="#007700">= array(); &nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#FF8000">// 
@@ -229,9 +209,8 @@ pamamagitan ng iisang pansipi hangga't maaari, para mapabilis ito.
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach 
       (</font><font color="#0000BB">$rates </font><font color="#007700">as </font><font color="#0000BB">$rate</font><font color="#007700">) 
       {</font> <br />
-      ....etc </p>
+      ....atbp </p>
   </li>
-
   <li class="spaced">Dapat gumamit ng maraming <strong>space</strong> -
 huwag kang matakot na medyo magkalayo-layo ang mga bagay para mas
 malinaw itong basahin.  Sa pangkalahatan, dapat magkaroon ng isang space
@@ -262,7 +241,7 @@ sa pagitan ng mga bracket at variable o function:
   </li>
 </ol>
 <p>&nbsp;</p>
-<h2>Mga balangkas ng database</h2>
+<h2>Mga structure ng database</h2>
 <ol class="normaltext">
   <li class="spaced">Dapat magka-auto-incrementing <strong>id</strong>
 field (INT10) ang bawat table bilang primary na index.
@@ -280,7 +259,7 @@ ang bawat instance</li>
 ng modyul</li>
     </ul>
   </li>
-  <li class="spaced">Ang iba pang table na kaugnay ng isang modyul na
+  <li class="spaced">Ang iba pang tabale na kaugnay ng isang modyul na
 naglalaman ng impormasyon hinggil sa mga 'things' ay dapat pangalanan ng 
 <strong>widget_things</strong> (pansinin ang plural).
 </li>
@@ -305,63 +284,9 @@ kasalukuyang timestamp na nakuha sa pamamgitan ng PHP
 <strong>time</strong>() function. </li>
 
 </ol>
-
-<p>&nbsp;</p>
-<h2>Mga Isyu hinggil sa Seguridad (at paghandle ng datos ng form at URL)
-</h2>
-<ol class="normaltext">
-
-  <li class="spaced">Huwag aasa sa 'register_globals'. <strong>Ang bawat</strong> variable ay dapat ininitialise nang wasto sa <strong>bawat</strong> code file. Kailangan ay kitang-kita kung saan nagmula ang variable</li>
-
-  <li class="spaced">Iinitialise ang lahat ng array at object, kahit walang lamant. <code>$a = array()</code>
-    o <code>$obj = new stdClass();</code>.</li>
-
-  <li class="spaced">Huwag gagamitin ang <code>optional_variable()</code> na function. Sa halip ay gamitin ang <code>optional_param()</code> na function.  Piliin ang wastong halaga na PARAM_XXXX para sa uri ng datos na inaasahan mo.  Para matsek at maiset ang isang opsiyonal na halaga para sa isang variable, gamitin ang function na <code>set_default()</code>.</li>
-
-  <li class="spaced">Huwag gagamitin ang function na <code>require_variable()</code>. Sa halip ay gamitin ang function na <code>required_param()</code>.  Piliin ang wastong halaga na 
-PARAM_XXXX para sa uri ng datos na inaasahan mo.</li>
-
-  <li class="spaced">Ingatan ang paggamit ng <code>data_submitted()</code>. Kailangan munang linisin ang datos bago gamitin</li>
-
-  <li class="spaced">Huwag gagamitin ang <code>$_GET</code>, <code>$_POST</code> o <code>$_REQUEST</code>. Gamitin ang angkop na <code>required_param()</code> o <code>optional_param()</code> na angkop sa pangangailangan mo.</li>
-
-  <li class="spaced">Huwag magtsek ng aksiyon sa pamamagitan ng tulad ng
-<code>if (isset($_GET['something']))</code>.   Gamitin ang e.g., <code>$something = optional_param( 'something',-1,PARAM_INT )</code> at pagkatapos ay gawin ang angkop na test para matiyak kung nasa inaasahang range ng value ito e.g., <code>if ($something>=0) {...</code>.</li>
-
-  <li class="spaced">Hangga't maaari, pangkatin ang lahat ng 
- <code>required_param()</code>, <code>optional_param()</code> mo at iba pang pag-initialise ng variable sa simula ng bawat file, para madali silang matagpuan.</li>
-
-  <li class="spaced">Gumamit ng mekanismong
-'sesskey' upang maprotektahan ang mga form handling routine sa mga atake.
-Payak na halimbawa ng paggamit:  kapag nilikha ang form, isama ang <code>&lt;input type="hidden" name="sesskey" value="&lt;?php echo sesskey(); ?&gt;" /&gt;</code>.
-Kapag iprinoseso mo ang form tsekin sa pamamagitan ng <code>if (!confirm_sesskey()) {error('Bad Session Key');}</code>.</li> 
-
-  <li class="spaced">Kailangang 'linisin' ang lahat ng filename sa pamamagitan ng 
-function na <code>clean_filename()</code>, kung hindi pa ito nagagawa sa pamamagitan ng angkop na paggamit ng <code>required_param()</code> o <code>optional_param()</code>
-    </li>
-
-  <li class="spaced">Ang anumang datos na binasa mula sa database ay dapat idaan sa 
-<code>addslashes()</code> bago ito isulat pabalik sa database.  Maaaring tirahin ang isang buong object ng datos sa isang iglap sa pamamagitan ng <code>addslashes_object()</code>.</li>
-
-  <li class="spaced">Hangga't maaari, ang datos na iimbakin sa database ay kailangang manggaling sa 
- <code>POST</code> data (mula sa isang fom na may <code>method="POST"</code>) sa halip na <code>GET</code> data (ab, datos mula sa URL line).</li>
-
-  <li class="spaced">Huwag gagamitin ang datos mula sa 
-<code>$_SERVER</code> hangga't maiiwasan.  May mga suliranin ito sa potability.
-</li>
-
-  <li class="spaced">Kung hindi pa nagagawa sa ibang lugar, tiyakin na ang lahat ng datos na isinulat sa database ay dumaan sa function na <code>clean_param()</code> sa pamamagitan ng angkop na PARAM_XXXX para sa uri ng datos.</li>
-
-  <li class="spaced">Kung magsusulat ka ng pasadyang SQL code, tiyakin na wasto ito.  Mag-ingat sa mga nawawalang quote sa palibot ng mga halaga.  Posibleng SQL 'injection' exploit.</li>
-
-  <li class="spaced">Tsekin ang lahat ng datos (lalo na ang isinusulat sa database) sa 
-<strong>bawat</strong> file na ginagamit ito.  Huwag asahan na gagawin ito sa ibang lugar.
-</li>
-
-  <li class="spaced">Ang mga bloke ng code na isasama ay dapat mayroong tiyak na balangkas na PHP (hal. class declaration, function definition atbp.) - ang straight na bloke ng code ay nagpopromote ng dinaiinitialise na paggamit ng variable.</li>
-</ol>
 <hr />
-<p align="center"><font size="1"><a href="." target="_top">Dokumentasyon ng Moodle</a></font></p>
-<p align="center"><font size="1">Version: $Id$</font></p>
+<p align="CENTER"><font size="1"><a href="."
+target="_top">Dokumentasyon ng Moodle</a></font></p>
+<p align="CENTER"><font size="1">Bersiyon: $Id$</font></p>
 </body>
 </html>

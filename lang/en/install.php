@@ -27,16 +27,6 @@ $string['databasesettings'] = '    Now you need to configure the database where 
        <b>User:</b> your database username<br />
        <b>Password:</b> your database password<br />
        <b>Tables Prefix:</b> optional prefix to use for all table names';
-$string['databasecreationsettings'] = '    Now you need to configure the database settings where most Moodle data
-    will be stored.  This database will be created automatically by the Moodle4Windows installer
-    with the settings specified below.<br />
-    <br /> <br />
-       <b>Type:</b> fixed to \"mysql\" by the installer<br />
-       <b>Host:</b> fixed to \"localhost\" by the installer<br />
-       <b>Name:</b> database name, eg moodle<br />
-       <b>User:</b> fixed to \"root\" by the installer<br />
-       <b>Password:</b> your database password<br />
-       <b>Tables Prefix:</b> optional prefix to use for all table names';
 $string['dataroot'] = 'Data Directory';
 $string['datarooterror'] = 'The \'Data Directory\' you specified could not be found or created.  Either correct the path or create that directory manually.';
 $string['dbconnectionerror'] = 'We could not connect to the database you specified. Please check your database settings.';
@@ -88,18 +78,6 @@ $string['gdversionhelp'] = '<p>Your server does not seem to have GD installed.</
 <p>To add GD to PHP under Unix, compile PHP using the --with-gd parameter.</p>
 
 <p>Under Windows you can usually edit php.ini and uncomment the line referencing libgd.dll.</p>';
-$string['globalsquotes'] = 'Insecure Handling of Globals';
-$string['globalsquoteserror'] = 'Fix your PHP settings: disable register_globals and/or enable magic_quotes_gpc';
-$string['globalsquoteshelp'] = '<p>Combination of disabled Magic Quotes GPC and enabled Register Globals both at the same time is not recommended.</p>
-
-<p>The recommended setting is <b>magic_quotes_gpc = On</b> and <b>register_globals = Off</b> in your php.ini</p>
-
-<p>If you don\'t have access to your php.ini, you might be able to place the following line in a file 
-   called .htaccess within your Moodle directory:
-   <blockquote>php_value magic_quotes_gpc On</blockquote>
-   <blockquote>php_value register_globals Off</blockquote>
-</p>   
-   ';
 $string['installation'] = 'Installation';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'This should be off';

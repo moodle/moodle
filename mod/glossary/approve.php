@@ -3,11 +3,11 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $id  = required_param('id', PARAM_INT);     // Course Module ID
-    $eid = optional_param('eid', 0,  PARAM_INT);    // Entry ID
+    require_variable($id);           // Course Module ID
+    optional_variable($eid);         // Entry ID
 
-    $mode = optional_param('mode','approval', PARAM_ALPHA);
-    $hook = optional_param('hook','ALL', PARAM_CLEAN);
+    $mode = optional_param('mode','approval');
+    $hook = optional_param('hook','ALL');
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");

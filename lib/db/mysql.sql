@@ -24,21 +24,6 @@ CREATE TABLE `prefix_config` (
 # --------------------------------------------------------
 
 #
-# Table structure for table `config_plugins`
-#
-
-CREATE TABLE `prefix_config_plugins` (
-  `id`         int(10) unsigned NOT NULL auto_increment,
-  `plugin`     varchar(100) NOT NULL default 'core',
-  `name`       varchar(100) NOT NULL default '',
-  `value`      text NOT NULL default '',
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `plugin_name` (`plugin`, `name`)
-) TYPE=MyISAM COMMENT='Moodle modules and plugins configuration variables';
-# --------------------------------------------------------
-
-
-#
 # Table structure for table `course`
 #
 
@@ -50,10 +35,10 @@ CREATE TABLE `prefix_course` (
   `fullname` varchar(254) NOT NULL default '',
   `shortname` varchar(15) NOT NULL default '',
   `idnumber` varchar(100) NOT NULL default '',
-  `summary` text NOT NULL default '',
+  `summary` text NOT NULL,
   `format` varchar(10) NOT NULL default 'topics',
   `showgrades` smallint(2) unsigned NOT NULL default '1',
-  `modinfo` longtext NOT NULL default '',
+  `modinfo` longtext NOT NULL,
   `newsitems` smallint(5) unsigned NOT NULL default '1',
   `teacher` varchar(100) NOT NULL default 'Teacher',
   `teachers` varchar(100) NOT NULL default 'Teachers',
@@ -73,18 +58,9 @@ CREATE TABLE `prefix_course` (
   `lang` varchar(10) NOT NULL default '',
   `theme` varchar(50) NOT NULL default '',
   `cost` varchar(10) NOT NULL default '',
-  `currency` char(3) NOT NULL default 'USD',
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   `metacourse` int(1) unsigned NOT NULL default '0',
-  `requested` int(1) unsigned NOT NULL default '0',
-  `restrictmodules` int(1) unsigned NOT NULL default '0',
-  `expirynotify` tinyint(1) unsigned NOT NULL default '0',
-  `expirythreshold` int(10) unsigned NOT NULL default '0',
-  `notifystudents` tinyint(1) unsigned NOT NULL default '0',  
-  `enrollable` tinyint(1) unsigned NOT NULL default '1',
-  `enrolstartdate` int(10) unsigned NOT NULL default '0',
-  `enrolenddate` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `category` (`category`),
   KEY `idnumber` (`idnumber`),
@@ -99,14 +75,12 @@ CREATE TABLE `prefix_course` (
 CREATE TABLE `prefix_course_categories` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(255) NOT NULL default '',
-  `description` text NOT NULL default '',
+  `description` text NOT NULL,
   `parent` int(10) unsigned NOT NULL default '0',
   `sortorder` int(10) unsigned NOT NULL default '0',
   `coursecount` int(10) unsigned NOT NULL default '0',
   `visible` tinyint(1) NOT NULL default '1',
   `timemodified` int(10) unsigned NOT NULL default '0',
-  `depth` int(10) unsigned NOT NULL default '0',
-  `path` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`)
 ) TYPE=MyISAM COMMENT='Course categories';
@@ -176,45 +150,13 @@ CREATE TABLE `prefix_course_sections` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `course` int(10) unsigned NOT NULL default '0',
   `section` int(10) unsigned NOT NULL default '0',
-  `summary` text NOT NULL default '',
+  `summary` text NOT NULL,
   `sequence` text NOT NULL default '',
   `visible` tinyint(1) NOT NULL default '1',
   PRIMARY KEY  (`id`),
   KEY `coursesection` (course,section)
 ) TYPE=MyISAM;
 # --------------------------------------------------------
-
-# 
-# Table structure for table `course_request`
-#
-
-CREATE TABLE `prefix_course_request`  (
-  `id` int(10) unsigned NOT NULL auto_increment,
-  `fullname` varchar(254) NOT NULL default '',
-  `shortname` varchar(15) NOT NULL default '',
-  `summary` text NOT NULL default '',
-  `reason` text NOT NULL default '',
-  `requester` int(10) NOT NULL default 0,
-  `password` varchar(50) NOT NULL default '',
-  PRIMARY KEY (`id`),
-  KEY `shortname` (`shortname`)
-) TYPE=MyISAM;
-# ---------------------------------------------------------
-
-#
-# Table structure for table `coursre_allowed_modules`
-# 
-
-CREATE TABLE `prefix_course_allowed_modules` (
-   `id` int(10) unsigned NOT NULL auto_increment,
-   `course` int(10) unsigned NOT NULL default 0,
-   `module` int(10) unsigned NOT NULL default 0,
-   PRIMARY KEY (`id`),
-   KEY `course` (`course`),
-   KEY `module` (`module`)
-) TYPE=MyISAM;
-
-------------------------------------------------------------
 
 #
 # Table structure for table `event`
@@ -223,7 +165,7 @@ CREATE TABLE `prefix_course_allowed_modules` (
 CREATE TABLE `prefix_event` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(255) NOT NULL default '',
-  `description` text NOT NULL default '',
+  `description` text NOT NULL,
   `format` int(4) unsigned NOT NULL default '0',
   `courseid` int(10) unsigned NOT NULL default '0',
   `groupid` int(10) unsigned NOT NULL default '0',
@@ -235,8 +177,6 @@ CREATE TABLE `prefix_event` (
   `timestart` int(10) unsigned NOT NULL default '0',
   `timeduration` int(10) unsigned NOT NULL default '0',
   `visible` tinyint(4) NOT NULL default '1',
-  `uuid` char(36) NOT NULL default '',
-  `sequence` int(10) unsigned NOT NULL default '1',
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `id` (`id`),
@@ -256,7 +196,7 @@ CREATE TABLE `prefix_cache_filters` (
   `filter` varchar(32) NOT NULL default '',
   `version` int(10) unsigned NOT NULL default '0',
   `md5key` varchar(32) NOT NULL default '',
-  `rawtext` text NOT NULL default '',
+  `rawtext` text NOT NULL,
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `filtermd5key` (filter,md5key)
@@ -271,7 +211,7 @@ CREATE TABLE `prefix_cache_filters` (
 CREATE TABLE `prefix_cache_text` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `md5key` varchar(32) NOT NULL default '',
-  `formattedtext` longtext NOT NULL default '',
+  `formattedtext` longtext NOT NULL,
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (`id`),
   KEY `md5key` (`md5key`)
@@ -370,7 +310,7 @@ CREATE TABLE `prefix_groups` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `courseid` int(10) unsigned NOT NULL default '0',
   `name` varchar(254) NOT NULL default '',
-  `description` text NOT NULL default '',
+  `description` text NOT NULL,
   `password` varchar(50) NOT NULL default '',
   `lang` varchar(10) NOT NULL default 'en',
   `theme` varchar(50) NOT NULL default '',
@@ -443,7 +383,7 @@ CREATE TABLE `prefix_message` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `useridfrom` int(10) NOT NULL default '0',
   `useridto` int(10) NOT NULL default '0',
-  `message` text NOT NULL default '',
+  `message` text NOT NULL,
   `format` int(4) unsigned NOT NULL default '0',
   `timecreated` int(10) NOT NULL default '0',
   `messagetype` varchar(50) NOT NULL default '',
@@ -461,7 +401,7 @@ CREATE TABLE `prefix_message_read` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `useridfrom` int(10) NOT NULL default '0',
   `useridto` int(10) NOT NULL default '0',
-  `message` text NOT NULL default '',
+  `message` text NOT NULL,
   `format` int(4) unsigned NOT NULL default '0',
   `timecreated` int(10) NOT NULL default '0',
   `timeread` int(10) NOT NULL default '0',
@@ -515,8 +455,8 @@ CREATE TABLE `prefix_scale` (
   `courseid` int(10) unsigned NOT NULL default '0',
   `userid` int(10) unsigned NOT NULL default '0',
   `name` varchar(255) NOT NULL default '',
-  `scale` text NOT NULL default '',
-  `description` text NOT NULL default '',
+  `scale` text NOT NULL,
+  `description` text NOT NULL,
   `timemodified` int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
   KEY `courseid` (`courseid`)
@@ -529,10 +469,10 @@ CREATE TABLE `prefix_scale` (
 #
 
 CREATE TABLE `prefix_sessions` (
-  `sesskey` char(32) NOT null default '',
-  `expiry` int(11) unsigned NOT null default '0',
-  `expireref` varchar(64) default '',
-  `data` text NOT null default '',
+  `sesskey` char(32) NOT null,
+  `expiry` int(11) unsigned NOT null,
+  `expireref` varchar(64),
+  `data` text NOT null,
   PRIMARY KEY (`sesskey`), 
   KEY (`expiry`) 
 ) TYPE=MyISAM COMMENT='Optional database session storage, not used by default';
@@ -606,7 +546,7 @@ CREATE TABLE `prefix_user` (
   `secret` varchar(15) default NULL,
   `picture` tinyint(1) default NULL,
   `url` varchar(255) default NULL,
-  `description` text default '',
+  `description` text,
   `mailformat` tinyint(1) unsigned NOT NULL default '1',
   `maildigest` tinyint(1) unsigned NOT NULL default '0',
   `maildisplay` tinyint(2) unsigned NOT NULL default '2',
@@ -726,119 +666,13 @@ CREATE TABLE `prefix_user_coursecreators` (
 #
 
 CREATE TABLE `adodb_logsql` (
- `created` datetime NOT NULL default '0000-00-00 00:00:00',
- `sql0` varchar(250) NOT NULL default '',
- `sql1` text NOT NULL default '',
- `params` text NOT NULL default '',
- `tracer` text NOT NULL default '',
- `timer` decimal(16,6) NOT NULL default '0'
+ `created` datetime NOT NULL,
+ `sql0` varchar(250) NOT NULL,
+ `sql1` text NOT NULL,
+ `params` text NOT NULL,
+ `tracer` text NOT NULL,
+ `timer` decimal(16,6) NOT NULL
 );
-
-CREATE TABLE `prefix_stats_daily` (
-   `id` int(10) unsigned NOT NULL auto_increment,
-   `courseid` int(10) unsigned NOT NULL default 0,
-   `timeend` int(10) unsigned NOT NULL default 0,
-   `students` int(10) unsigned NOT NULL default 0,
-   `teachers` int(10) unsigned NOT NULL default 0,
-   `activestudents` int(10) unsigned NOT NULL default 0,
-   `activeteachers` int(10) unsigned NOT NULL default 0,
-   `studentreads` int(10) unsigned NOT NULL default 0,
-   `studentwrites` int(10) unsigned NOT NULL default 0,
-   `teacherreads` int(10) unsigned NOT NULL default 0,
-   `teacherwrites` int(10) unsigned NOT NULL default 0,
-   `logins` int(10) unsigned NOT NULL default 0,
-   `uniquelogins` int(10) unsigned NOT NULL default 0,
-   PRIMARY KEY (`id`),
-   KEY `courseid` (`courseid`),
-   KEY `timeend` (`timeend`)
-);
-
-CREATE TABLE prefix_stats_weekly (
-   `id` int(10) unsigned NOT NULL auto_increment,
-   `courseid` int(10) unsigned NOT NULL default 0,
-   `timeend` int(10) unsigned NOT NULL default 0,
-   `students` int(10) unsigned NOT NULL default 0,
-   `teachers` int(10) unsigned NOT NULL default 0,
-   `activestudents` int(10) unsigned NOT NULL default 0,
-   `activeteachers` int(10) unsigned NOT NULL default 0,
-   `studentreads` int(10) unsigned NOT NULL default 0,
-   `studentwrites` int(10) unsigned NOT NULL default 0,
-   `teacherreads` int(10) unsigned NOT NULL default 0,
-   `teacherwrites` int(10) unsigned NOT NULL default 0,
-   `logins` int(10) unsigned NOT NULL default 0,
-   `uniquelogins` int(10) unsigned NOT NULL default 0,
-   PRIMARY KEY (`id`),
-   KEY `courseid` (`courseid`),
-   KEY `timeend` (`timeend`)	 
-);
-
-CREATE TABLE prefix_stats_monthly (
-   `id` int(10) unsigned NOT NULL auto_increment,
-   `courseid` int(10) unsigned NOT NULL default 0,
-   `timeend` int(10) unsigned NOT NULL default 0,
-   `students` int(10) unsigned NOT NULL default 0,
-   `teachers` int(10) unsigned NOT NULL default 0,
-   `activestudents` int(10) unsigned NOT NULL default 0,
-   `activeteachers` int(10) unsigned NOT NULL default 0,
-   `studentreads` int(10) unsigned NOT NULL default 0,
-   `studentwrites` int(10) unsigned NOT NULL default 0,
-   `teacherreads` int(10) unsigned NOT NULL default 0,
-   `teacherwrites` int(10) unsigned NOT NULL default 0,
-   `logins` int(10) unsigned NOT NULL default 0,
-   `uniquelogins` int(10) unsigned NOT NULL default 0,
-   PRIMARY KEY (`id`),
-   KEY `courseid` (`courseid`),
-   KEY `timeend` (`timeend`)	 
-);
-
-CREATE TABLE prefix_stats_user_daily (
-   `id` int(10) unsigned NOT NULL auto_increment,
-   `courseid` int(10) unsigned NOT NULL default 0,
-   `userid` int(10) unsigned NOT NULL default 0,
-   `roleid` int(10) unsigned NOT NULL default 0,
-   `timeend` int(10) unsigned NOT NULL default 0,
-   `reads` int(10) unsigned NOT NULL default 0,
-   `writes` int(10) unsigned NOT NULL default 0,
-   `stattype` varchar(30) NOT NULL default '',
-   PRIMARY KEY (`id`),
-   KEY `courseid` (`courseid`),
-   KEY `userid` (`userid`),
-   KEY `roleid` (`roleid`),
-   KEY `timeend` (`timeend`)	
-);
-
-CREATE TABLE prefix_stats_user_weekly (
-   `id` int(10) unsigned NOT NULL auto_increment,
-   `courseid` int(10) unsigned NOT NULL default 0,
-   `userid` int(10) unsigned NOT NULL default 0,
-   `roleid` int(10) unsigned NOT NULL default 0,
-   `timeend` int(10) unsigned NOT NULL default 0,
-   `reads` int(10) unsigned NOT NULL default 0,
-   `writes` int(10) unsigned NOT NULL default 0,
-   `stattype` varchar(30) NOT NULL default '',
-   PRIMARY KEY (`id`),
-   KEY `courseid` (`courseid`),
-   KEY `userid` (`userid`),
-   KEY `roleid` (`roleid`),
-   KEY `timeend` (`timeend`)	
-);
-
-CREATE TABLE prefix_stats_user_monthly (
-   `id` int(10) unsigned NOT NULL auto_increment,
-   `courseid` int(10) unsigned NOT NULL default 0,
-   `userid` int(10) unsigned NOT NULL default 0,
-   `roleid` int(10) unsigned NOT NULL default 0,
-   `timeend` int(10) unsigned NOT NULL default 0,
-   `reads` int(10) unsigned NOT NULL default 0,
-   `writes` int(10) unsigned NOT NULL default 0,
-   `stattype` varchar(30) NOT NULL default '',
-   PRIMARY KEY (`id`),
-   KEY `courseid` (`courseid`),
-   KEY `userid` (`userid`),
-   KEY `roleid` (`roleid`),
-   KEY `timeend` (`timeend`)	
-);
-
 
 INSERT INTO prefix_log_display VALUES ('user', 'view', 'user', 'CONCAT(firstname," ",lastname)');
 INSERT INTO prefix_log_display VALUES ('course', 'user report', 'user', 'CONCAT(firstname," ",lastname)');

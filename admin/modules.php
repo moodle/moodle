@@ -4,10 +4,10 @@
     require_once("../config.php");
     require_once("../course/lib.php");
 
-    $disable = optional_param('disable');
-    $enable = optional_param('enable');
-    $delete = optional_param('delete');
-    $confirm = optional_param('confirm');
+    optional_variable($disable);
+    optional_variable($enable);
+    optional_variable($delete);
+    optional_variable($confirm);
 
     require_login();
 

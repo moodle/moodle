@@ -5,16 +5,6 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $edit = optional_param( 'edit','',PARAM_ALPHA );
-    $delete = optional_param( 'delete',0,PARAM_INT );
-    $hide = optional_param( 'hide',0,PARAM_INT );
-    $show = optional_param( 'show',0,PARAM_INT );
-    $sure = optional_param( 'sure','',PARAM_CLEAN );
-    $move = optional_param( 'move',0,PARAM_INT );
-    $moveto = optional_param( 'moveto',-1,PARAM_INT );
-    $moveup = optional_param( 'moveup',0,PARAM_INT );
-    $movedown = optional_param( 'movedown',0,PARAM_INT );
-
     if (!$site = get_site()) {
         error("Site isn't defined!");
     }
@@ -24,7 +14,7 @@
     }
 
     if (isadmin()) {
-        if (!empty($edit) and confirm_sesskey()) {
+        if (isset($_GET['edit']) and confirm_sesskey()) {
             if ($edit == "on") {
                 $USER->categoriesediting = true;
             } else if ($edit == "off") {
@@ -58,14 +48,12 @@
             print_courses(0, "80%");
         }
 
-        echo "<center>";
         if (iscreator()) {       // Print link to create a new course
+            echo "<center>";
             print_single_button("edit.php", NULL, get_string("addnewcourse"), "get");
+            echo "</center>";
         }
-        if (!empty($CFG->enablecourserequests)) {
-            print_single_button('request.php',NULL, get_string('requestcourse'),"get");
-        }
-        echo "</center>";
+            
         print_footer();
         exit;
     }
@@ -113,7 +101,7 @@
 
 /// Delete a category if necessary
 
-    if (!empty($delete) and confirm_sesskey()) {
+    if (isset($delete) and confirm_sesskey()) {
         if ($deletecat = get_record("course_categories", "id", $delete)) {
             if (!empty($sure) && $sure == md5($deletecat->timemodified)) {
                 /// Send the children categories to live with their grandparent
@@ -166,7 +154,7 @@
 
 /// Move a category to a new parent if required
 
-    if (!empty($move) and ($moveto>=0) and confirm_sesskey()) {
+    if (isset($move) and isset($moveto) and confirm_sesskey()) {
         if ($tempcat = get_record("course_categories", "id", $move)) {
             if ($tempcat->parent != $moveto) {
                 if (! set_field("course_categories", "parent", $moveto, "id", $tempcat->id)) {
@@ -178,8 +166,8 @@
 
 
 /// Hide or show a category 
-    if ((!empty($hide) or !empty($show)) and confirm_sesskey()) {
-        if (!empty($hide)) {
+    if ((isset($hide) or isset($show)) and confirm_sesskey()) {
+        if (isset($hide)) {
             $tempcat = get_record("course_categories", "id", $hide);
             $visible = 0;
         } else {
@@ -199,12 +187,12 @@
 
 /// Move a category up or down
 
-    if ((!empty($moveup) or !empty($movedown)) and confirm_sesskey()) {
+    if ((isset($moveup) or isset($movedown)) and confirm_sesskey()) {
         
         $swapcategory = NULL;
         $movecategory = NULL;
 
-        if (!empty($moveup)) {
+        if (isset($moveup)) {
             if ($movecategory = get_record("course_categories", "id", $moveup)) {
                 $categories = get_categories("$movecategory->parent");
 
@@ -216,7 +204,7 @@
                 }
             }
         }
-        if (!empty($movedown)) {
+        if (isset($movedown)) {
             if ($movecategory = get_record("course_categories", "id", $movedown)) {
                 $categories = get_categories("$movecategory->parent");
 
@@ -311,7 +299,6 @@
     unset($options);
     $options["category"] = $category->id;
     print_single_button("edit.php", $options, get_string("addnewcourse"), "get");
-    print_single_button('pending.php',NULL, get_string('coursespending'),"get");
     echo "<br />";
     echo "</center>";
 

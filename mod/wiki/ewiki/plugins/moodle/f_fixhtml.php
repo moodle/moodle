@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /*
    This filter plugin implements minimal html tag balancing, and can also
@@ -54,7 +54,7 @@ function ewiki_html_tag_balancer(&$html) {
    $len = strlen($html);
    $done = "";
    $pos = 0;
-   $loop = (int)$len / 3;
+   $loop = 1000;
    while (($pos < $len) && $loop--) {
 
       #-- search next tag

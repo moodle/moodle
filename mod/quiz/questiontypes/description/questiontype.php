@@ -27,12 +27,12 @@ class quiz_description_qtype extends quiz_default_questiontype {
         return true;
     }
 
-    function print_question(&$question, &$state, $number, $cmoptions, $options) {
+    function print_question(&$question, &$state, $number, $quiz, $options) {
         print_simple_box_start('center', '90%');
         echo format_text($question->questiontext,
                          $question->questiontextformat,
-                         NULL, $cmoptions->course);
-        quiz_print_possible_question_image($question);
+                         NULL, $quiz->course);
+        quiz_print_possible_question_image($quiz->id, $question);
         print_simple_box_end('center', '90%');
     }
 
@@ -45,7 +45,7 @@ class quiz_description_qtype extends quiz_default_questiontype {
         return 0;
     }
 
-    function grade_responses(&$question, &$state, $cmoptions) {
+    function grade_responses(&$question, &$state, $quiz) {
         $state->raw_grade = 0;
         $state->penalty = 0;
     }

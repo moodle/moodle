@@ -1,59 +1,50 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.6 development (2005060201)
+      // assignment.php - created with Moodle 1.1.1 (2003091111)
 
 
-$string['allowresubmit'] = 'اجازه ارسال مجدد';
-$string['assignmentdetails'] = 'چزئیات حواله اسناد';
-$string['assignmentmail'] = '$a->استاد بازخورد ارسال کرده برای حواله اسناد \'$a->assignment\'
-
-شما می توانید آنرا در ادامه حواله اسناد خود ببینید:
-
-    $a->url';
-$string['assignmentmailhtml'] = 'برای مدارک شما پاسخ به $a->teacher 
- \'<i>$a->assignment</i>\'فرستاده است<br /><br />
-شما میتوانید آن را در <a href=\"$a->url\">مشاهده کنید</a>.';
-$string['assignmentname'] = 'نام حواله';
-$string['assignmenttype'] = 'نوع حواله';
-$string['configmaxbytes'] = 'تعریف حداکثر اندازه در نظر گرفته شده برای مدارک بر حسب آنچه در کرس درسی و تنظیمات معین شده است';
-$string['description'] = 'توضیحات';
-$string['duedate'] = 'اتاریخ انقضا';
-$string['duedateno'] = 'بدون تاریخ انقضا';
-$string['early'] = 'اولیه $a ';
-$string['emailteachermail'] = 'قابل مشاهده است $a->url به روز رسانی کرده است که در\'$a->assignment\'مدارک ارائه را برای$a->username 
-
-    ';
-$string['emailteachermailhtml'] = 'قابل مشاهده است<a href=\"$a->url\">به روز رسانی کرده است که در سایت  <i>\'$a->assignment\'</i><br /><br />مدارک ارائه را برای$a->username  ';
-$string['emailteachers'] = 'به معلمینmailاعلام ';
-$string['existingfiledeleted'] = ' $a فایل مورد نظر حذف شده است';
-$string['failedupdatefeedback'] = 'به روز نمیشود $aبازخورد  واگذاری کاربر';
-$string['feedback'] = 'بازخورد';
-$string['feedbackupdated'] = ' نفر به روز رسانی شد $a بازخورد ارائه ها برای';
-$string['late'] = '$a late';
-$string['maximumgrade'] = 'حداکثر نمره';
-$string['maximumsize'] = 'حداکثر اندازه';
-$string['modulename'] = 'مدرک';
-$string['modulenameplural'] = 'مدارک';
-$string['newsubmissions'] = 'مدارک ارائه شده';
-$string['notgradedyet'] = 'نمره ای در حال حاضر وجود ندارد';
-$string['notsubmittedyet'] = 'ارائه ای در حال حاضر وجود ندارد';
-$string['overwritewarning'] = ' اخطار:در صورت دوباره فرستادن مدارک مدارک جدید جایگزین مدارک قبلی خواهد شد';
-$string['saveallfeedback'] = 'تمام بازخورد های مرا ذخیره کن';
-$string['submissionfeedback'] = 'بازخورد ارائه';
-$string['submissions'] = 'ارائه ها';
-$string['submitassignment'] = 'ارائه مدارک این فرم';
-$string['submitted'] = 'ارائه شد';
-$string['typeoffline'] = 'فعالیت آفلاین';
-$string['typeuploadsingle'] = 'فرستادن یک تک فایل';
-$string['uploadbadname'] = 'نام این فایل دارای کاراکرهای ناشناخته ای ات و همین سبب اشکال در فرستادن میشود';
-$string['uploadedfiles'] = 'فایلها فرستاده شد';
-$string['uploaderror'] = 'مشکلی در ذخیره سازی فایل برروی سرور به وجود آمده است';
-$string['uploadfailnoupdate'] = '!فایل به درستی فرستاده شده است اما در به روز رسانی مدارک شما مشکل وجود دارد';
-$string['uploadfiletoobig'] = 'بایت وجود دارد $a متاسفانه فایل مورد نظر بسیار بزرگ است  دراینجا محدودیت)';
-$string['uploadnofilefound'] = 'فایلی با این نام پیدا نشد آیا مطمئنید فایل را درست برای فرستادن انتخاب کرده اید';
-$string['uploadnotregistered'] = '  فرسناده شد اما ارائه ثبت نشد \'$a\' ';
-$string['uploadsuccess'] = ' با موفقیت فرستاده شد \'$a\' ';
-$string['viewfeedback'] = 'مشاهده مدارک نمرات و بازخورد';
-$string['viewsubmissions'] = ' $a مشاهده مدارک ارائه شده';
-$string['yoursubmission'] = 'ارائه شما';
+$string['allowresubmit'] = "اجازه ارسال دوباره داده شود";
+$string['assignmentdetails'] = "جز&#1574;يات تکليف";
+$string['assignmentmail'] = "\$a->teacher جوابي براي ارسال تکليف شما
+براي '\$a->assignment' ارسال کرده
+مي توانيد آنرا چسبيده به ارسال خود ببينيد:
+\$a->url";
+$string['assignmentmailhtml'] = "\$a->teacher جوابي براي ارسال تکليف شما براي '<i>\$a->assignment</i>'ارسال کرده
+<br /><br />
+مي توانيد آنرا چسبيده به <a href=\\\"\$a->url\\\">ارسال خود</a>.ببينيد";
+$string['assignmentname'] = "نام تکليف";
+$string['assignmenttype'] = "نوع تکليف";
+$string['description'] = "توصيف";
+$string['duedate'] = "تاريخ برگشت";
+$string['early'] = "\$a زود است";
+$string['failedupdatefeedback'] = "خطايي در بروزرساني جواب \$a پيش آمد";
+$string['feedback'] = "پاسخ";
+$string['feedbackupdated'] = "جواب براي \$a نفر بروز شد.";
+$string['late'] = "\$a دير است";
+$string['maximumgrade'] = "حداکثر نمره";
+$string['maximumsize'] = "حداکثر اندازه";
+$string['modulename'] = "&#1578;&#1603;&#1604;&#1610;&#1601;";
+$string['modulenameplural'] = "تکليفها";
+$string['newsubmissions'] = "تکليفهاي ارسال شده";
+$string['notgradedyet'] = "هنوز نمره داده نشده";
+$string['notsubmittedyet'] = "هنوز ارسال نکرده است";
+$string['overwritewarning'] = "اخطار: ارسال جديد جايگزين قبلي مي شود";
+$string['saveallfeedback'] = "تمام جواب من را ذخيره کن";
+$string['submissionfeedback'] = "جواب براي ارسال";
+$string['submissions'] = "تکليفهاي ارسال شده";
+$string['submitassignment'] = "تکليف خود را با استفاده از اين فرم بفرستيد";
+$string['submitted'] = "ارسال شده";
+$string['typeoffline'] = "تکليف خانگي";
+$string['typeuploadsingle'] = "ارسال فايل";
+$string['uploadbadname'] = "اين فايل شامل کاراکترهاي عجيب بود و ارسال نشد";
+$string['uploadedfiles'] = "فايلهاي فرستاده شده";
+$string['uploaderror'] = "خطايي در ذخيره کردن فايل در سرور پيش آمد";
+$string['uploadfailnoupdate'] = "فايل فرستاده شد اما با مورد قبلي جايگزين نشد";
+$string['uploadfiletoobig'] = "ببخشيد، اندازه فايل خيلي بزرگ است (حداکثر اندازه\$a bytes)";
+$string['uploadnofilefound'] = "فايلي نيست - آيا مطم&#1574;نيد موردي را براي ارسال انتخاب کرديد؟";
+$string['uploadnotregistered'] = "'\$a' فرستاده شد ولي بنام شما ثبت نشد.";
+$string['uploadsuccess'] = "'\$a' با موفقيت ارسال شد";
+$string['viewfeedback'] = "ديدن نمرات تکليف و پاسخ دادن به آنها";
+$string['viewsubmissions'] = "ديدن \$a تکليف ارسال شده";
+$string['yoursubmission'] = "ارسال شما";
 
 ?>

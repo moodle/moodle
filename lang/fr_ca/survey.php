@@ -171,6 +171,7 @@ $string['nobodyyet'] = 'Personne n\'a encore répondu à ce sondage';
 $string['notdone'] = 'Pas encore répondu';
 $string['notes'] = 'Votre analyse et notes personnelles';
 $string['othercomments'] = 'Avez-vous d\'autres commentaires';
+$string['parentlanguage'] = 'fr';
 $string['peoplecompleted'] = '$a personnes ont répondu à ce sondage pour l\'instant';
 $string['preferred'] = 'Préféré';
 $string['preferredclass'] = 'Cours préféré';

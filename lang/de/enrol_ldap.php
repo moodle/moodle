@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_ldap.php - created with Moodle 1.6 development (2005060201)
+      // enrol_ldap.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['description'] = '<p>Sie können LDAP Server nutzen, um automatisch Eintragungen zu kontrollieren. Es wird angenommen, dass der LDAP tree Gruppen enthält, die zu Kursen gehören und dass jede der Gruppen/Kurse Einträge von Teilnehmern hat.</p>
@@ -23,7 +23,6 @@ $string['enrol_ldap_course_settings'] = 'Kurseintragung-Einstellung';
 $string['enrol_ldap_course_shortname'] = 'Option: LDAP Feld für den Kurznamen';
 $string['enrol_ldap_course_summary'] = 'Opton: LDAP Feld für die Zusammenfassung';
 $string['enrol_ldap_editlock'] = 'Schlüsselwert';
-$string['enrol_ldap_general_options'] = 'Allgemeine Optionen';
 $string['enrol_ldap_host_url'] = 'LDAP host in URL-form definieren, z.B.
 \'ldap://ldap.myorg.com/\'
 or \'ldaps://ldap.myorg.com/\'';

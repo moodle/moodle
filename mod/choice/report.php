@@ -41,13 +41,15 @@
     }
 
     if ($currentgroup) {
-        $users = get_group_users($currentgroup, "u.firstname ASC", '', 'u.id, u.picture, u.firstname, u.lastname');
+        $users = get_group_users($currentgroup, "u.firstname ASC", '', 'u.id, u.picture, u.firstname, u.lastname') + get_admins();
     } else {
         $users = get_course_users($course->id, "u.firstname ASC", '', 'u.id, u.picture, u.firstname, u.lastname') + get_admins();
     }
 
     if (!$users) {
-        print_heading(get_string("nousersyet"));        
+        print_heading(get_string("nousersyet"));
+        print_footer($course);
+        exit;
     }
 
     if ($allresponses = get_records("choice_answers", "choiceid", $choice->id)) {
@@ -80,50 +82,53 @@
     
     //print spreadsheet if one is asked for:
     if ($download == "xls") {
-        require_once("$CFG->libdir/excellib.class.php");
-  
-    /// Calculate file nale 
-        $filename = clean_filename("$course->shortname ".strip_tags(format_string($choice->name,true))).'.xls';
-    /// Creating a workbook
-        $workbook = new MoodleExcelWorkbook("-");
-    /// Send HTTP headers
-        $workbook->send($filename);
-    /// Creating the first worksheet
-        $myxls =& $workbook->add_worksheet('Responses');
 
-    /// Print names of all the fields
+        require_once("$CFG->libdir/excel/Worksheet.php");
+        require_once("$CFG->libdir/excel/Workbook.php");
+  
+      // HTTP headers
+      $filename = clean_filename("$course->shortname ".strip_tags(format_string($choice->name,true))).'.xls';
+  
+      header("Content-type: application/vnd.ms-excel");
+      header("Content-Disposition: attachment; filename=$filename" );
+      header("Expires: 0");
+      header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
+      header("Pragma: public");
+  
+      // Creating a workbook
+      $workbook = new Workbook("-");
+      // Creating the first worksheet
+      $myxls =& $workbook->add_worksheet('Responses');
+
         $myxls->write_string(0,0,get_string("lastname"));
         $myxls->write_string(0,1,get_string("firstname"));
         $myxls->write_string(0,2,get_string("idnumber"));
         $myxls->write_string(0,3,get_string("choice","choice"));
               
+        
     /// generate the data for the body of the spreadsheet
-        $i=0;  
-        $row=1;
-        if ($users) {
-            foreach ($users as $user) {
-                if (!empty($answers[$user->id]) && !($answers[$user->id]->optionid==0 && isadmin($user->id)) && 
-                    (!($answers[$user->id]->optionid==0 && isteacher($course->id, $user->id) && !(isteacheredit($course->id, $user->id)) ) ) &&  
-                    !($choice->showunanswered==0 && $answers[$user->id]->optionid==0)  ) { //make sure admins and hidden teachers are not shown in not answered yet column, and not answered only shown if set in config page.
+      $i=0;  
+      $row=1;
+      if ($users) foreach ($users as $user) {
+          if (!($answers[$user->id]->optionid==0 && isadmin($user->id)) && 
+              (!($answers[$user->id]->optionid==0 && isteacher($course->id, $user->id) && !(isteacheredit($course->id, $user->id)) ) ) &&  
+              !($choice->showunanswered==0 && $answers[$user->id]->optionid==0)  ) { //make sure admins and hidden teachers are not shown in not answered yet column, and not answered only shown if set in config page.
 
-                    $myxls->write_string($row,0,$user->lastname);
-                    $myxls->write_string($row,1,$user->firstname);
-                    $studentid=(!empty($user->idnumber) ? $user->idnumber : " ");
-                    $myxls->write_string($row,2,$studentid);
-                    $useroption = choice_get_option_text($choice, $answers[$user->id]->optionid);
-                    if (isset($useroption)) {
-                        $myxls->write_string($row,3,format_string($useroption,true));
-                    }                 
-                    $row++;
-                }
-                $pos=4;
-            }
-        }
-
-    /// Close the workbook
-        $workbook->close();
-
-        exit;
+                  $myxls->write_string($row,0,$user->lastname);
+                  $myxls->write_string($row,1,$user->firstname);
+                  $studentid=(($user->idnumber != "") ? $user->idnumber : " ");
+                  $myxls->write_string($row,2,$studentid);
+                  $useroption = choice_get_option_text($choice, $answers[$user->id]->optionid);
+                  if (isset($useroption)) {
+                      $myxls->write_string($row,3,format_string($useroption,true));
+                  }                 
+                  $row++;
+          }
+         $pos=4;
+      }        
+  
+      $workbook->close();
+      exit;
     } 
     // print text file     
     if ($download == "txt") {

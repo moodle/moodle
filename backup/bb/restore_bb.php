@@ -3,7 +3,6 @@
 // into a Moodle course export.  It assumes an unzipped directory and makes in-place alterations.
   
 // Ziba Scott <ziba@linuxbox.com> 10-25-04
-require_once('xsl_emulate_xslt.inc');
   
 function get_subdirs($directory){
     $opendirectory = opendir( $directory );
@@ -34,7 +33,7 @@ function blackboard_convert($dir){
 
 
     // Check for a Blackboard manifest file
-    if (is_readable($dir.'/imsmanifest.xml') && !is_readable($dir.'/moodle.xml')){
+    if (is_readable($dir.'/imsmanifest.xml')){
 
         if (!function_exists('xslt_create')) {  // XSLT MUST be installed for this to work
             notify('You need the XSLT library installed in PHP to open this Blackboard file');

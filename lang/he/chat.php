@@ -26,6 +26,7 @@ $string['modulenameplural'] = 'צ\'אטים';
 $string['neverdeletemessages'] = 'לעולם אל תמחוק הודעות';
 $string['nextsession'] = 'האסיפה המתוכננת הבאה';
 $string['nomessages'] = 'אין הודעות עדיין';
+$string['parentlanguage'] = 'en';
 $string['repeatdaily'] = 'באותו זמן בכל יום';
 $string['repeatnone'] = 'ללא חזרות - פרסם את הזמן המפורט בלבד ';
 $string['repeattimes'] = 'חזור על האסיפות';
@@ -35,6 +36,9 @@ $string['seesession'] = 'ראה אסיפה זו';
 $string['sessions'] = 'אסיפות צ\'אט';
 $string['strftimemessage'] = '%%H:%%M';
 $string['studentseereports'] = 'כולם יכולים לראות אסיפות ישנות';
+$string['thischarset'] = 'ISO-8859-8-I';
+$string['thisdirection'] = 'rtl';
+$string['thislanguage'] = '&#1506;&#1489;&#1512;&#1497;&#1514;';
 $string['viewreport'] = 'ראה אסיפות צ\'אט ישנות';
 
 ?>

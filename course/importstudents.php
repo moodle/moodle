@@ -8,10 +8,10 @@
  
     define("MAX_COURSES_PER_PAGE", 1000);
 
-    $id = required_param('id',PARAM_INT);         // course id
-    $add = optional_param('add', '', PARAM_ALPHA);
-    $remove = optional_param('remove', '', PARAM_ALPHA);
-    $search = optional_param('search', '', PARAM_ALPHA); // search string
+    require_variable($id);         // course id
+    optional_variable($add, "");
+    optional_variable($remove, "");
+    optional_variable($search, ""); // search string
 
     if (! $site = get_site()) {
         redirect("$CFG->wwwroot/$CFG->admin/index.php");
@@ -27,8 +27,8 @@
         redirect("$CFG->wwwroot/course/student.php?id=$course->id");
     }
 
-    if (!isadmin() || !isteacheredit($course->id)) {
-        error("You must be an admin or a teacher of this course");
+    if (!isadmin()) {
+        error("You must be an admin");
     }
 
 
@@ -66,16 +66,14 @@
         if (!empty($frm->add) and !empty($frm->addselect) and confirm_sesskey()) {
             $timestart = $timeend = 0;
             foreach ($frm->addselect as $addcourse) {
-                set_time_limit(10);
                 if (!add_to_metacourse($course->id,$addcourse)) {
                     error("Could not add the selected course to this meta course!");
                 }
             }
         } else if (!empty($frm->remove) and !empty($frm->removeselect) and confirm_sesskey()) {
             foreach ($frm->removeselect as $removecourse) {
-                set_time_limit(10);
                 if (! remove_from_metacourse($course->id,$removecourse)) {
-                    error("Could not remove the selected course from this meta course!");
+                    error("Could not remove the selected course to this meta course!");
                 }
             }
         } else if (!empty($frm->showall) and confirm_sesskey()) {

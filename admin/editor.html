@@ -3,7 +3,7 @@
 <table border="0" cellpadding="4" cellspacing="2">
 <tr>
     <td align="right" valign="top">htmleditor:</td>
-    <td valign="top">
+    <td valign="top"> 
     <?php
        unset($options);
        $options[0] = get_string("allownot");
@@ -179,7 +179,7 @@
         <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/spell-check.gif" width="18" height="18" alt="<?php print_string("spellcheck","editor");?>" title="<?php print_string("spellcheck","editor");?>" /></td>
         <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_html.gif" width="18" height="18" alt="<?php print_string("htmlmode","editor");?>" title="<?php print_string("htmlmode","editor");?>" /></td>
         <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/fullscreen_maximize.gif" width="18" height="18" alt="<?php print_string("popupeditor","editor");?>" title="<?php print_string("popupeditor","editor");?>" /></td>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_replace.gif" width="18" height="18" alt="<?php print_string("popupeditor","editor");?>" title="<?php print_string("searchandreplace","editor");?>" /></td>
+        <td>&nbsp;</td>
     </tr>
     <tr>
         <td><input type="checkbox" name="buttons[inserthorizontalrule]"<?php print(in_array("inserthorizontalrule", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
@@ -193,34 +193,6 @@
         <td><input type="checkbox" name="buttons[spellcheck]"<?php print(in_array("spellcheck", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
         <td><input type="checkbox" name="buttons[htmlmode]"<?php print(in_array("htmlmode", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
         <td><input type="checkbox" name="buttons[popupeditor]"<?php print(in_array("popupeditor", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td><input type="checkbox" name="buttons[search_replace]"<?php print(in_array("search_replace", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-    </tr>
-    <tr>
-        <td><img src="<?php echo $CFG->wwwroot ?>/lib/editor/images/ed_nolink.gif" width="18" height="18" alt="<?php print_string("horizontalrule","editor");?>" title="<?php print_string("nolink","editor");?>" /></td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-    </tr>
-    <tr>
-        <td><input type="checkbox" name="buttons[nolink]"<?php print(in_array("nolink", $buttons)) ? " checked=\"checked\"" : "" ;?> /></td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
-        <td>&nbsp;</td>
         <td>&nbsp;</td>
     </tr>
     </table>

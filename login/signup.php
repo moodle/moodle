@@ -3,9 +3,6 @@
     require_once("../config.php");
     require_once("../auth/$CFG->auth/lib.php");
 
-    //HTTPS is potentially required in this page
-    httpsrequired();
-
     if ($CFG->auth != 'email' and (empty($CFG->auth_user_create) or !(function_exists('auth_user_create'))) ) {
         error("Sorry, you may not use this page.");
     }
@@ -53,7 +50,7 @@
     }
 
     if (!empty($err)) {
-        $focus = "form.".array_shift($temparr = array_flip(get_object_vars($err)));
+        $focus = "form.".array_shift(array_flip(get_object_vars($err)));
     } else {
         $focus = "";
     }

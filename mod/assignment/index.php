@@ -57,10 +57,6 @@
 
     foreach ($assignments as $assignment) {
 
-        if (!file_exists($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php')) {
-            continue;
-        }
-
         require_once ($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');
         $assignmentclass = 'assignment_'.$assignment->assignmenttype;
         $assignmentinstance = new $assignmentclass($assignment->coursemodule);
@@ -76,7 +72,7 @@
 
         $type = $types[$assignment->assignmenttype];
 
-        $due = $assignment->timedue ? userdate($assignment->timedue) : '-';
+        $due = userdate($assignment->timedue);
         if (!$assignment->visible) {
             //Show dimmed if the mod is hidden
             $link = "<a class=\"dimmed\" href=\"view.php?id=$assignment->coursemodule\">".format_string($assignment->name,true)."</a>";

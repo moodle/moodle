@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 + (2005060201)
+      // install.php - created with Moodle 1.4.2 (2004083120)
 
 
 $string['admindirerror'] = 'O diretório  admin indicado não é correto';
@@ -14,14 +14,6 @@ $string['configfilenotwritten'] = 'O script do instalador não conseguiu criar o 
 $string['configfilewritten'] = 'config.php foi criado com sucesso';
 $string['configurationcomplete'] = 'Configuração terminada';
 $string['database'] = 'Base de dados';
-$string['databasecreationsettings'] = 'Agora é necessário configurar a base de dados que vai arquivar os dados de Moodle. Esta base de dados vai ser criada automaticamente pelo instalador Moodle4Windows com as opções definidas abaixo.<br />
-<br /> <br />
-<b>Tipo:</b> definido como \"mysql\" pelo instalador<br />
-<b>Host:</b> definido como \"localhost\" pelo instalador<br />
-<b>Nome:</b> nome da base de dados, ex. moodle<br />
-<b>Usuário:</b> definido como \"root\" pelo instalador<br />
-<b>Senha:</b> a senha da sua base de dados<br />
-<b>Prefixo das tabelas:</b> prefixo opcional a ser usado no nome de todas as tabelas';
 $string['databasesettings'] = 'Agora você precisa configurar a base de dados em que os dados de Moodle serão conservados. Esta base de dados deve ter sido criada anterirmente bem como o nome de usuário e a senha necessários ao acesso..<br />
 <br /> <br />
 <b>Tipo:</b> mysql ou postgres7<br />
@@ -64,19 +56,6 @@ $string['gdversionhelp'] = '<p>parece que o seu servidor não tem o GD instalado.
 <p>GD é uma library de PHP necessária à elaboração de imagens como os fotos do perfil do usuário e os gráficos de estatísticas. Moodle funciona sem o GD mas a elaboração de imagens não será possível.</p>
 <p>para adicionar o GD ao PHP emUnix, compile o PHP usando o parâmetro --with-gd .</p>
 <p>Em Windows edite php.ini and cancele o comentário à linha que se refere a libgd.dll.</p>';
-$string['globalsquotes'] = 'Tratamento de Globais sem Segurança';
-$string['globalsquoteserror'] = 'Corrija a configuração do seu PHP: desabilitar register_globals e/ou habilitar magic_quotes_gpc';
-$string['globalsquoteshelp'] = '<p>Não é aconselhável habilitar Register Globals e desabilitar Magic Quotes GPC ao mesmo tempo.</p>
-
-<p>A configuração aconselhada é
-<b>magic_quotes_gpc = On</b> e
-<b>register_globals = Off</b> no seu php.ini</p>
-
-<p>Se você não tem acesso ao seu php.ini, adicione a seguinte linha de código no arquivo .htaccess do diretório principal do seu Moodle:
-<blockquote>php_value magic_quotes_gpc On</blockquote>
-<blockquote>php_value register_globals Off</blockquote>
-</p> 
-';
 $string['installation'] = 'Instalação';
 $string['magicquotesruntime'] = 'Run Time Magic Quotes ';
 $string['magicquotesruntimeerror'] = 'Isto deve estar desativado';
@@ -103,7 +82,7 @@ Com esta operação Moodle será capaz de configurar o limite de memória sózinho.</
 <p>Alguns servidores não aceitam este procedimento e <b>todas</b> as páginas PHP do servidor ficam bloqueadas ou imprimem mensagens de erro. Neste caso será necessário cancelar o arquivo .htaccess .</p>
 </li></ol> ';
 $string['mysqlextensionisnotpresentinphp'] = 'O pHP não foi configurado corretamente com a extensão MySQL e não pode comunicar com a base de dados. Controle o seu php.ini ou faça a recompilação do PHP.';
-$string['pass'] = 'OK';
+$string['pass'] = 'Senha';
 $string['phpversion'] = 'Versão do PHP';
 $string['phpversionerror'] = 'A versão do PHP não deve ser inferior a 4.1.0';
 $string['phpversionhelp'] = '<p>Moodle requer a versão 4.1.0 de PHP ou posterior.</p>

@@ -5,14 +5,6 @@ CREATE TABLE prefix_config (
    CONSTRAINT prefix_config_name_uk UNIQUE (name)
 );
 
-CREATE TABLE prefix_config_plugins (
-   id     SERIAL PRIMARY KEY,
-   plugin varchar(100) NOT NULL default 'core',
-   name   varchar(100) NOT NULL default '',
-   value  text NOT NULL default '',
-   CONSTRAINT prefix_config_plugins_plugin_name_uk UNIQUE (plugin, name)
-);
-
 CREATE TABLE prefix_course (
    id SERIAL PRIMARY KEY,
    category integer NOT NULL default '0',
@@ -44,18 +36,9 @@ CREATE TABLE prefix_course (
    lang varchar(10) NOT NULL default '',
    theme varchar(50) NOT NULL default '',
    cost varchar(10) NOT NULL default '',
-   currency varchar(3) NOT NULL default 'USD',
    timecreated integer NOT NULL default '0',
    timemodified integer NOT NULL default '0',
-   metacourse integer NOT NULL default '0',
-   requested integer NOT NULL default '0',
-   restrictmodules integer NOT NULL default '0',
-   expirynotify integer NOT NULL default '0',
-   expirythreshold integer NOT NULL default '0',
-   notifystudents integer NOT NULL default '0',
-   enrollable integer NOT NULL default '1',
-   enrolstartdate integer NOT NULL default '0',
-   enrolenddate integer NOT NULL default '0'
+   metacourse integer NOT NULL default '0'
 );
 
 CREATE UNIQUE INDEX prefix_course_category_sortorder_uk ON prefix_course (category,sortorder);
@@ -70,9 +53,7 @@ CREATE TABLE prefix_course_categories (
    sortorder integer NOT NULL default '0',
    coursecount integer NOT NULL default '0',
    visible integer NOT NULL default '1',
-   timemodified integer NOT NULL default '0',
-   depth integer NOT NULL default '0',
-   path varchar(255) NOT NULL default ''
+   timemodified integer NOT NULL default '0'
 );
 
 CREATE TABLE prefix_course_display (
@@ -122,27 +103,6 @@ CREATE TABLE prefix_course_sections (
 
 CREATE INDEX prefix_course_sections_coursesection_idx ON prefix_course_sections (course,section);
 
-CREATE TABLE prefix_course_request (
-   id SERIAL PRIMARY KEY,
-   fullname varchar(254) NOT NULL default '',
-   shortname varchar(15) NOT NULL default '',
-   summary text NOT NULL default '',
-   reason text NOT NULL default '',
-   requester INTEGER NOT NULL default 0,
-   password varchar(50) NOT NULL default ''
-);
-
-CREATE INDEX prefix_course_request_shortname_idx ON prefix_course_request (shortname);
-
-CREATE TABLE prefix_course_allowed_modules (
-   id SERIAL PRIMARY KEY,
-   course INTEGER NOT NULL default 0,
-   module INTEGER NOT NULL default 0
-);
-         
-CREATE INDEX prefix_course_allowed_modules_course_idx ON prefix_course_allowed_modules (course);
-CREATE INDEX prefix_course_allowed_modules_module_idx ON prefix_course_allowed_modules (module);
-
 CREATE TABLE prefix_event (
    id SERIAL PRIMARY KEY,
    name varchar(255) NOT NULL default '',
@@ -158,8 +118,6 @@ CREATE TABLE prefix_event (
    timestart integer NOT NULL default '0',
    timeduration integer NOT NULL default '0',
    visible integer NOT NULL default '1',
-   uuid char(36) NOT NULL default '',
-   sequence integer NOT NULL default '1',
    timemodified integer NOT NULL default '0'
 );
 
@@ -208,8 +166,8 @@ CREATE TABLE prefix_grade_letter (
   id SERIAL PRIMARY KEY,
   courseid integer NOT NULL default '0',
   letter varchar(8) NOT NULL default 'NA',
-  grade_high decimal(6,2) NOT NULL default '100.00',
-  grade_low decimal(6,2) NOT NULL default '0.00'
+  grade_high decimal(4,2) NOT NULL default '100.00',
+  grade_low decimal(4,2) NOT NULL default '0.00'
 );
 
 CREATE INDEX prefix_grade_letter_courseid_idx ON prefix_grade_letter (courseid);
@@ -478,7 +436,6 @@ CREATE TABLE prefix_user_students (
 CREATE UNIQUE INDEX prefix_user_students_courseuserid_uk ON prefix_user_students (course,userid);
 CREATE INDEX prefix_user_students_userid_idx ON prefix_user_students (userid);
 CREATE INDEX prefix_user_students_enrol_idx ON prefix_user_students (enrol);
-CREATE INDEX prefix_user_students_timeaccess_idx ON prefix_user_students (timeaccess);
 
 CREATE TABLE prefix_user_teachers (
    id SERIAL PRIMARY KEY,
@@ -503,8 +460,6 @@ CREATE TABLE prefix_user_coursecreators (
    userid int8  NOT NULL default '0'
 );
 
-CREATE INDEX prefix_user_coursecreators_userid_idx ON prefix_user_coursecreators (userid);
-
 CREATE TABLE adodb_logsql (
    created timestamp NOT NULL,
    sql0 varchar(250) NOT NULL,
@@ -514,110 +469,6 @@ CREATE TABLE adodb_logsql (
    timer decimal(16,6) NOT NULL
 );
 
-CREATE TABLE prefix_stats_daily (
-   id SERIAL PRIMARY KEY,
-   courseid INTEGER NOT NULL default 0,
-   timeend INTEGER NOT NULL default 0,
-   students INTEGER NOT NULL default 0,
-   teachers INTEGER NOT NULL default 0,
-   activestudents INTEGER NOT NULL default 0,
-   activeteachers INTEGER NOT NULL default 0,
-   studentreads INTEGER NOT NULL default 0,
-   studentwrites INTEGER NOT NULL default 0,
-   teacherreads INTEGER NOT NULL default 0,
-   teacherwrites INTEGER NOT NULL default 0,
-   logins INTEGER NOT NULL default 0,
-   uniquelogins INTEGER NOT NULL default 0
-);
-
-CREATE INDEX prefix_stats_daily_courseid_idx ON prefix_stats_daily (courseid);
-CREATE INDEX prefix_stats_daily_timeend_idx ON prefix_stats_daily (timeend);
-
-CREATE TABLE prefix_stats_weekly (
-   id SERIAL PRIMARY KEY,
-   courseid INTEGER NOT NULL default 0,
-   timeend INTEGER NOT NULL default 0,
-   students INTEGER NOT NULL default 0,
-   teachers INTEGER NOT NULL default 0,
-   activestudents INTEGER NOT NULL default 0,
-   activeteachers INTEGER NOT NULL default 0,
-   studentreads INTEGER NOT NULL default 0,
-   studentwrites INTEGER NOT NULL default 0,
-   teacherreads INTEGER NOT NULL default 0,
-   teacherwrites INTEGER NOT NULL default 0,
-   logins INTEGER NOT NULL default 0,
-   uniquelogins INTEGER NOT NULL default 0
-);
-
-CREATE INDEX prefix_stats_weekly_courseid_idx ON prefix_stats_weekly (courseid);
-CREATE INDEX prefix_stats_weekly_timeend_idx ON prefix_stats_weekly (timeend);
-
-CREATE TABLE prefix_stats_monthly (
-   id SERIAL PRIMARY KEY,
-   courseid INTEGER NOT NULL default 0,
-   timeend INTEGER NOT NULL default 0,
-   students INTEGER NOT NULL default 0,
-   teachers INTEGER NOT NULL default 0,
-   activestudents INTEGER NOT NULL default 0,
-   activeteachers INTEGER NOT NULL default 0,
-   studentreads INTEGER NOT NULL default 0,
-   studentwrites INTEGER NOT NULL default 0,
-   teacherreads INTEGER NOT NULL default 0,
-   teacherwrites INTEGER NOT NULL default 0,
-   logins INTEGER NOT NULL default 0,
-   uniquelogins INTEGER NOT NULL default 0
-);
-
-CREATE INDEX prefix_stats_monthly_courseid_idx ON prefix_stats_monthly (courseid);
-CREATE INDEX prefix_stats_monthly_timeend_idx ON prefix_stats_monthly (timeend);
-
-CREATE TABLE prefix_stats_user_daily (
-   id SERIAL PRIMARY KEY,
-   courseid INTEGER NOT NULL default 0,
-   userid INTEGER NOT NULL default 0,
-   roleid INTEGER NOT NULL default 0,
-   timeend INTEGER NOT NULL default 0,
-   reads INTEGER NOT NULL default 0,
-   writes INTEGER NOT NULL default 0,
-   stattype varchar(30) NOT NULL default ''
-);
-         
-CREATE INDEX prefix_stats_user_daily_courseid_idx ON prefix_stats_user_daily (courseid);
-CREATE INDEX prefix_stats_user_daily_userid_idx ON prefix_stats_user_daily (userid);
-CREATE INDEX prefix_stats_user_daily_roleid_idx ON prefix_stats_user_daily (roleid);
-CREATE INDEX prefix_stats_user_daily_timeend_idx ON prefix_stats_user_daily (timeend);
-
-CREATE TABLE prefix_stats_user_weekly (
-   id SERIAL PRIMARY KEY,
-   courseid INTEGER NOT NULL default 0,
-   userid INTEGER NOT NULL default 0,
-   roleid INTEGER NOT NULL default 0,
-   timeend INTEGER NOT NULL default 0,
-   reads INTEGER NOT NULL default 0,
-   writes INTEGER NOT NULL default 0,
-   stattype varchar(30) NOT NULL default ''
-);
-         
-CREATE INDEX prefix_stats_user_weekly_courseid_idx ON prefix_stats_user_weekly (courseid);
-CREATE INDEX prefix_stats_user_weekly_userid_idx ON prefix_stats_user_weekly (userid);
-CREATE INDEX prefix_stats_user_weekly_roleid_idx ON prefix_stats_user_weekly (roleid);
-CREATE INDEX prefix_stats_user_weekly_timeend_idx ON prefix_stats_user_weekly (timeend);
-
-CREATE TABLE prefix_stats_user_monthly (
-   id SERIAL PRIMARY KEY,
-   courseid INTEGER NOT NULL default 0,
-   userid INTEGER NOT NULL default 0,
-   roleid INTEGER NOT NULL default 0,
-   timeend INTEGER NOT NULL default 0,
-   reads INTEGER NOT NULL default 0,
-   writes INTEGER NOT NULL default 0,
-   stattype varchar(30) NOT NULL default ''
-);
-         
-CREATE INDEX prefix_stats_user_monthly_courseid_idx ON prefix_stats_user_monthly (courseid);
-CREATE INDEX prefix_stats_user_monthly_userid_idx ON prefix_stats_user_monthly (userid);
-CREATE INDEX prefix_stats_user_monthly_roleid_idx ON prefix_stats_user_monthly (roleid);
-CREATE INDEX prefix_stats_user_monthly_timeend_idx ON prefix_stats_user_monthly (timeend);
 
 INSERT INTO prefix_log_display VALUES ('user', 'view', 'user', 'firstname||\' \'||lastname');
 INSERT INTO prefix_log_display VALUES ('course', 'user report', 'user', 'firstname||\' \'||lastname');

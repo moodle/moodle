@@ -1,7 +1,7 @@
 <?php
 /*
 
-  version V4.66 28 Sept 2005 (c) 2000-2005 John Lim. All rights reserved.
+  version V4.60 24 Jan 2005 (c) 2000-2005 John Lim. All rights reserved.
 
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
@@ -131,10 +131,7 @@ class ADODB_oci8 extends ADOConnection {
 			$rs->MoveNext();
 		}
 		$rs->Close();
-		if (empty($retarr))
-			return  $false;
-		else 
-			return $retarr;
+		return (empty($retarr)) ? $false : $retarr;
 	}
 	
 	function Time()
@@ -227,7 +224,7 @@ NATSOFT.DOMAIN =
 				:
 				OCILogon($argUsername,$argPassword, $argDatabasename,$this->charSet);
 		}
-		if (!$this->_connectionID) return false;
+		if ($this->_connectionID === false) return false;
 		if ($this->_initdate) {
 			$this->Execute("ALTER SESSION SET NLS_DATE_FORMAT='".$this->NLS_DATE_FORMAT."'");
 		}
@@ -287,10 +284,10 @@ NATSOFT.DOMAIN =
 		return 'TO_DATE('.adodb_date($this->fmtTimeStamp,$ts).",'RRRR-MM-DD, HH:MI:SS AM')";
 	}
 	
-	function RowLock($tables,$where,$flds='1 as ignore') 
+	function RowLock($tables,$where) 
 	{
 		if ($this->autoCommit) $this->BeginTrans();
-		return $this->GetOne("select $flds from $tables where $where for update");
+		return $this->GetOne("select 1 as ignore from $tables where $where for update");
 	}
 	
 	function &MetaTables($ttype=false,$showSchema=false,$mask=false) 
@@ -496,14 +493,6 @@ NATSOFT.DOMAIN =
 				$s .= 'AM';
 				break;
 				
-			case 'w':
-				$s .= 'D';
-				break;
-				
-			case 'l':
-				$s .= 'DAY';
-				break;
-				
 			default:
 			// handle escape characters...
 				if ($ch == '\\') {
@@ -670,7 +659,7 @@ NATSOFT.DOMAIN =
 		if ($this->session_sharing_force_blob) $this->Execute('ALTER SESSION SET CURSOR_SHARING=EXACT');
 		$commit = $this->autoCommit;
 		if ($commit) $this->BeginTrans();
-		$rs = $this->_Execute($sql,$arr);
+		$rs = $this->Execute($sql,$arr);
 		if ($rez = !empty($rs)) $desc->save($val);
 		$desc->free();
 		if ($commit) $this->CommitTrans();
@@ -709,46 +698,6 @@ NATSOFT.DOMAIN =
 		return $rez;
 	}
 
-		/**
-	 * Execute SQL 
-	 *
-	 * @param sql		SQL statement to execute, or possibly an array holding prepared statement ($sql[0] will hold sql text)
-	 * @param [inputarr]	holds the input data to bind to. Null elements will be set to null.
-	 * @return 		RecordSet or false
-	 */
-	function &Execute($sql,$inputarr=false) 
-	{
-		if ($this->fnExecute) {
-			$fn = $this->fnExecute;
-			$ret =& $fn($this,$sql,$inputarr);
-			if (isset($ret)) return $ret;
-		}
-		if ($inputarr) {
-			#if (!is_array($inputarr)) $inputarr = array($inputarr);
-			
-			$element0 = reset($inputarr);
-			
-			# is_object check because oci8 descriptors can be passed in
-			if (is_array($element0) && !is_object(reset($element0))) {
-				if (is_string($sql))
-					$stmt = $this->Prepare($sql);
-				else
-					$stmt = $sql;
-					
-				foreach($inputarr as $arr) {
-					$ret =& $this->_Execute($stmt,$arr);
-					if (!$ret) return $ret;
-				}
-			} else {
-				$ret =& $this->_Execute($sql,$inputarr);
-			}
-			
-		} else {
-			$ret =& $this->_Execute($sql,false);
-		}
-
-		return $ret;
-	}
 	
 	/*
 		Example of usage:
@@ -803,10 +752,8 @@ NATSOFT.DOMAIN =
 			$hasref = false;
 			
 		$rs =& $this->Execute($stmt);
-		if ($rs) {
-			if ($rs->databaseType == 'array') OCIFreeCursor($stmt[4]);
-			else if ($hasref) $rs->_refcursor = $stmt[4];
-		}
+		if ($rs->databaseType == 'array') OCIFreeCursor($stmt[4]);
+		else if ($hasref) $rs->_refcursor = $stmt[4];
 		return $rs;
 	}
 	
@@ -939,6 +886,7 @@ NATSOFT.DOMAIN =
 	*/ 
 	function _query($sql,$inputarr)
 	{
+		
 		if (is_array($sql)) { // is prepared sql
 			$stmt = $sql[1];
 			
@@ -1049,10 +997,10 @@ NATSOFT.DOMAIN =
 		if (!$this->_connectionID) return;
 		
 		if (!$this->autoCommit) OCIRollback($this->_connectionID);
-		if (count($this->_refLOBs) > 0) {
-			foreach ($this ->_refLOBs as $key => $value) {
-				$this->_refLOBs[$key]['LOB']->free();
-				unset($this->_refLOBs[$key]);
+		if (count($this -> _refLOBs) > 0) {
+			foreach ($this -> _refLOBs as $key => $value) {
+				$this -> _refLOBs[$key] -> free();
+				unset($this -> _refLOBs[$key]);
 			}
 		}
 		OCILogoff($this->_connectionID);
@@ -1158,7 +1106,7 @@ SELECT /*+ RULE */ distinct b.column_name
 	 */
 	function qstr($s,$magic_quotes=false)
 	{	
-		//$nofixquotes=false;
+	$nofixquotes=false;
 	
 		if ($this->noNullStrings && strlen($s)==0)$s = ' ';
 		if (!$magic_quotes) {	
@@ -1310,39 +1258,6 @@ class ADORecordset_oci8 extends ADORecordSet {
 		return false;
 	}
 	
-	/*
-	# does not work as first record is retrieved in _initrs(), so is not included in GetArray()
-	function &GetArray($nRows = -1) 
-	{
-	global $ADODB_OCI8_GETARRAY;
-	
-		if (true ||  !empty($ADODB_OCI8_GETARRAY)) {
-			# does not support $ADODB_ANSI_PADDING_OFF
-	
-			//OCI_RETURN_NULLS and OCI_RETURN_LOBS is set by OCIfetchstatement
-			switch($this->adodbFetchMode) {
-			case ADODB_FETCH_NUM:
-			
-				$ncols = @OCIfetchstatement($this->_queryID, $results, 0, $nRows, OCI_FETCHSTATEMENT_BY_ROW+OCI_NUM);
-				$results = array_merge(array($this->fields),$results);
-				return $results;
-				
-			case ADODB_FETCH_ASSOC: 
-				if (ADODB_ASSOC_CASE != 2 || $this->databaseType != 'oci8') break;
-				
-				$ncols = @OCIfetchstatement($this->_queryID, $assoc, 0, $nRows, OCI_FETCHSTATEMENT_BY_ROW);
-				$results =& array_merge(array($this->fields),$assoc);
-				return $results;
-			
-			default:
-				break;
-			}
-		}
-			
-		$results =& ADORecordSet::GetArray($nRows);
-		return $results;
-		
-	} */
 	
 	/* Optimize SelectLimit() by using OCIFetch() instead of OCIFetchInto() */
 	function &GetArrayLimit($nrows,$offset=-1) 

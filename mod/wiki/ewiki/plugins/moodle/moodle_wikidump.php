@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 # ToDo: Binary Content
 #       Binary Linking
 /*

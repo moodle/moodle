@@ -662,6 +662,7 @@ $string['order'] = 'Rradha';
 $string['other'] = 'Tjetër';
 $string['outline'] = 'Skica';
 $string['page'] = 'Faqja';
+$string['parentlanguage'] = ' ';
 $string['participants'] = 'Pjesëmarrësit';
 $string['password'] = 'Fjalëkalimi';
 $string['passwordchanged'] = 'Fjalëkalimi u ndryshua';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.5 + (2005060201)
+      // journal.php - created with Moodle 1.2 Beta (2004022400)
 
 
 $string['alwaysopen'] = '永遠開放使用';
@@ -10,13 +10,12 @@ $string['editingends'] = '可編輯期限已過';
 $string['entries'] = '項目';
 $string['feedbackupdated'] = '更新 $a 的資料';
 $string['journalmail'] = '$a->teacher 已經在“ $a->journal ”中為你寫了反饋意見。 你可以在這裏看到反饋意見： $a->url';
-$string['journalmailhtml'] = '$a->teacher 已經在<i>“ $a->journal ”</i>中為你寫了反饋意見。<br/><br/> 你可以在<a href=\"$a->url\">這裏</a>看到反饋意見：';
+$string['journalmailhtml'] = '$a->teacher 已經在<i>“ $a->journal ”</i>中為你寫了反饋意見。<br/><br/> 你可以在<a href="$a->url">這裏</a>看到反饋意見：';
 $string['journalname'] = '心得報告名稱';
 $string['journalquestion'] = '歷程紀錄問題';
 $string['journalrating1'] = '不滿意';
 $string['journalrating2'] = '滿意';
 $string['journalrating3'] = '超棒';
-$string['mailsubject'] = '心得回饋';
 $string['modulename'] = '心得報告';
 $string['modulenameplural'] = '心得報告';
 $string['newjournalentries'] = '新的歷程紀錄';

@@ -40,34 +40,7 @@ function lesson_upgrade($oldversion) {
         table_column("lesson_answers", "", "flags", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "grade");
     }
 
-    if ($oldversion < 2004060501) {
-        // matching questions need 2 records for responses and the
-        // 2 records must appear before the old ones.  So, delete the old ones,
-        // create the 2 needed, then re-insert the old ones for each matching question.
-        if ($matchingquestions = get_records('lesson_pages', 'qtype', 5)) {  // get our matching questions
-            foreach ($matchingquestions as $matchingquestion) {
-                if ($answers = get_records('lesson_answers', 'pageid', $matchingquestion->id)) { // get answers
-                    if (delete_records('lesson_answers',  'pageid', $matchingquestion->id)) {  // delete them
-                        $time = time();
-                        // make our 2 response answers
-                        $newanswer->lessonid = $matchingquestion->lessonid;
-                        $newanswer->pageid = $matchingquestion->id;
-                        $newanswer->timecreated = $time;
-                        $newanswer->timemodified = 0;
-                        insert_record('lesson_answers', $newanswer);
-                        insert_record('lesson_answers', $newanswer);
-                        // insert our old answers
-                        foreach ($answers as $answer) {
-                            $answer->timecreated = $time;
-                            $answer->timemodified = 0;
-                            insert_record('lesson_answers', (object) array_map('addslashes', (array)$answer));
-                        }
-                    }
-                }
-            }
-        }
-    }
-
+    // CDC-FLAG
     if ($oldversion < 2004072100) {
         execute_sql(" create table ".$CFG->prefix."lesson_high_scores
                     ( id int(10) unsigned not null auto_increment,
@@ -171,6 +144,8 @@ function lesson_upgrade($oldversion) {
         execute_sql(" ALTER TABLE `{$CFG->prefix}lesson_default` ADD `modattempts` tinyint(3) unsigned NOT NULL default '0' AFTER practice");
     }
 
+    // CDC-FLAG end    
+
     if ($oldversion < 2004111200) {
         execute_sql("ALTER TABLE {$CFG->prefix}lesson DROP INDEX course;",false);
         execute_sql("ALTER TABLE {$CFG->prefix}lesson_answers DROP INDEX lessonid;",false); 
@@ -189,33 +164,7 @@ function lesson_upgrade($oldversion) {
         modify_database('','ALTER TABLE prefix_lesson_pages ADD INDEX lessonid (lessonid);');
     }
    
-    if ($oldversion < 2005060900) {
-        table_column('lesson_grades', 'grade', 'grade', 'float', '', 'unsigned', '0', 'not null');
-    }
-    
-    if ($oldversion < 2005061500) {
-        table_column('lesson', '', 'mediafile', 'varchar', '255', '', '', 'not null', 'tree');
-    }
-    
-    if ($oldversion < 2005063000) {
-        table_column('lesson', '', 'dependency', 'int', '10', 'unsigned', '0', 'not null', 'usepassword');
-        table_column('lesson', '', 'conditions', 'text', '', '', '', 'not null', 'dependency');
-    }
-    
-    if ($oldversion < 2005101900) {
-        table_column('lesson', '', 'progressbar', 'tinyint', '3', 'unsigned', '0', 'not null', 'displayleft');
-        table_column('lesson', '', 'displayleftif', 'int', '3', 'unsigned', '0', 'not null', 'displayleft');
-    }
-    
-    if ($oldversion < 2005102800) {
-        table_column('lesson', '', 'mediaclose', 'tinyint', '3', 'unsigned', '0', 'not null', 'mediafile');
-        table_column('lesson', '', 'mediaheight', 'int', '10', 'unsigned', '100', 'not null', 'mediafile');
-        table_column('lesson', '', 'mediawidth', 'int', '10', 'unsigned', '650', 'not null', 'mediafile');
-    }
 
-	if ($oldversion < 2005110200) {
-        table_column('lesson', '', 'activitylink', 'int', '10', 'unsigned', '0', 'not null', 'tree');
-	}
          
     return true;
 }

@@ -30,6 +30,5 @@ $string['enrol_ldap_course_idnumber'] = 'Champ correspondant avec l\'identificat
 $string['enrol_ldap_course_shortname'] = 'Facultatif&nbsp;: champ LDAP d\'où tirer le nom abrégé du cours.';
 $string['enrol_ldap_course_fullname']  = 'Facultatif&nbsp;: champ LDAP d\'où tirer le nom complet du cours.';
 $string['enrol_ldap_course_summary']   = 'Facultatif&nbsp;: champ LDAP d\'où tirer le résumé du cours.';                                                                                                                                                
-$string['enrol_ldap_general_options']   = 'Options générales';
-
+                                    
 ?>

@@ -12,5 +12,8 @@ $string['qmanagetitle'] = 'Tutkimuksen hallinnointi phpESP';
 $string['qtype'] = 'Tyyppi';
 $string['questionnaireid'] = 'Kysely';
 $string['respondenttype'] = 'Vastaajan tyyppi';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Suomi';
 
 ?>

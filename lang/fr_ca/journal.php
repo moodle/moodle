@@ -25,9 +25,11 @@ $string['noratinggiven'] = 'Aucune évaluation fournie';
 $string['notopenuntil'] = 'Ce journal ne sera pas ouvert avant';
 $string['notstarted'] = 'Vous n\'avez pas encore écrit dans ce journal';
 $string['overallrating'] = 'Évaluation générale';
+$string['parentlanguage'] = 'fr';
 $string['rate'] = 'Évaluation';
 $string['saveallfeedback'] = 'Sauvegarder toutes mes rétroactions';
 $string['startoredit'] = 'Commencer ou modifier mon journal';
+$string['thisdirection'] = 'ltr';
 $string['viewallentries'] = 'Voir toutes les entrées dans ce journal';
 
 ?>

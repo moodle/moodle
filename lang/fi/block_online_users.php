@@ -5,5 +5,8 @@
 $string['blockname'] = 'Online käyttäjät';
 $string['configtimetosee'] = 'Montako minuuttia käyttäjän näytetään olevan online tilassa';
 $string['periodnminutes'] = 'viimeinen $a minuuttia';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Suomi';
 
 ?>

@@ -1,7 +1,6 @@
 <?xml version='1.0'?>
 <xsl:stylesheet version="1.0"
      xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-     <xsl:output method="xml" encoding="UTF-8" />
 <xsl:template match="/">
   <MOODLE_BACKUP>
    <INFO>
@@ -55,8 +54,8 @@
       </MOD>
       <MOD>
         <NAME>quiz</NAME>
-        <INCLUDED>false</INCLUDED>
-        <USERINFO>false</USERINFO>
+        <INCLUDED>true</INCLUDED>
+        <USERINFO>true</USERINFO>
       </MOD>
       <MOD>
         <NAME>resource</NAME>
@@ -65,18 +64,18 @@
       </MOD>
       <MOD>
         <NAME>scorm</NAME>
-        <INCLUDED>false</INCLUDED>
-        <USERINFO>false</USERINFO>
+        <INCLUDED>true</INCLUDED>
+        <USERINFO>true</USERINFO>
       </MOD>
       <MOD>
         <NAME>survey</NAME>
-        <INCLUDED>false</INCLUDED>
-        <USERINFO>false</USERINFO>
+        <INCLUDED>true</INCLUDED>
+        <USERINFO>true</USERINFO>
       </MOD>
       <MOD>
         <NAME>wiki</NAME>
-        <INCLUDED>false</INCLUDED>
-        <USERINFO>false</USERINFO>
+        <INCLUDED>true</INCLUDED>
+        <USERINFO>true</USERINFO>
       </MOD>
       <MOD>
         <NAME>workshop</NAME>
@@ -85,7 +84,7 @@
       </MOD>
       <USERS>course</USERS>
       <LOGS>false</LOGS>
-      <USERFILES>false</USERFILES>
+      <USERFILES>true</USERFILES>
       <COURSEFILES>true</COURSEFILES>
     </DETAILS>
   </INFO>
@@ -149,13 +148,7 @@
       <TEACHERS>Teachers</TEACHERS>
       <STUDENT>Student</STUDENT>
       <STUDENTS>Students</STUDENTS>
-      <GUEST>
-        <xsl:choose>
-          <xsl:when test="FLAGS/ALLOWGUESTS/@value = 'true' ">1</xsl:when>
-          <xsl:when test="FLAGS/ALLOWGUESTS/@value = 'false' ">0</xsl:when>
-          <xsl:otherwise></xsl:otherwise>
-        </xsl:choose>
-      </GUEST>
+      <GUEST>0</GUEST>
       <STARTDATE>1094270400</STARTDATE>
       <ENROLPERIOD>0</ENROLPERIOD>
       <NUMSECTIONS>10</NUMSECTIONS>
@@ -166,13 +159,7 @@
       <LANG></LANG>
       <COST></COST>
       <MARKER>0</MARKER>
-      <VISIBLE>
-        <xsl:choose>
-          <xsl:when test="FLAGS/ISAVAILABLE/@value = 'true' ">1</xsl:when>
-          <xsl:when test="FLAGS/ISAVAILABLE/@value = 'false' ">0</xsl:when>
-          <xsl:otherwise></xsl:otherwise>
-        </xsl:choose>
-      </VISIBLE>
+      <VISIBLE>1</VISIBLE>
       <HIDDENSECTIONS>0</HIDDENSECTIONS>
       <TIMECREATED>1094240775</TIMECREATED>
       <TIMEMODIFIED>1094240775</TIMEMODIFIED>
@@ -210,8 +197,7 @@
       <VISIBLE>1</VISIBLE>
       <MODS>
         
-      <xsl:choose>
-        <xsl:when test="$recurse = 'true'">
+        <xsl:if test="$recurse = 'true'">
           <xsl:variable name="mod_number" select="substring-after(@identifierref,'res')"/>
           <xsl:call-template name="item_recurse_files" >
                 <xsl:with-param name="mod_number" select="$mod_number"/>
@@ -219,11 +205,12 @@
                 <xsl:with-param name="recurse" select="$recurse" />
           </xsl:call-template>
         
-        </xsl:when>
+        </xsl:if>
 
-        <xsl:when test="$recurse = 'false'">
+        <xsl:if test="$recurse = 'false'">
         <xsl:for-each select="item">
           <xsl:variable name="mod_number" select="substring-after(@identifierref,'res')"/>
+            <xsl:if test="document(concat(@identifierref,'.dat'))/CONTENT/FLAGS/ISFOLDER/@value != 'true' or document(concat(@identifierref,'.dat'))/EXTERNALLINK/DESCRIPTION/FLAGS/ISHTML/@value ='true'">
             <!-- Create one section-mod -->
             <xsl:for-each select="document(concat(@identifierref,'.dat'))">
               <xsl:call-template name="section_mod">
@@ -232,9 +219,10 @@
               </xsl:call-template>
             </xsl:for-each>
             
+           </xsl:if>
        </xsl:for-each> 
-        </xsl:when>
-      </xsl:choose>
+        </xsl:if>
+  
 
       </MODS>
     </SECTION>
@@ -276,6 +264,7 @@
   <xsl:choose>
       <!-- Detected one or more files -->
       <xsl:when test="CONTENT/FILES/FILEREF/RELFILE/@value != ''">
+        
         <!-- Create a label -->
         <xsl:call-template name="section_mod_generic">
           <xsl:with-param name="mod_number" ><xsl:value-of select="$mod_number"/></xsl:with-param>
@@ -285,12 +274,12 @@
         
         <!-- Create a resource for each file -->
         <xsl:for-each select="CONTENT/FILES/FILEREF">
-         <xsl:call-template name="section_mod_generic">
+        <xsl:call-template name="section_mod_generic">
           <xsl:with-param name="mod_number" ><xsl:value-of select="$mod_number"/>0<xsl:value-of select="position()"/></xsl:with-param>
               <xsl:with-param name="indent" select="$indent + 1"/>
               <xsl:with-param name="type" >resource</xsl:with-param>
-         </xsl:call-template>
-        </xsl:for-each>
+        </xsl:call-template>
+      </xsl:for-each>
         
       </xsl:when>
 
@@ -330,16 +319,6 @@
               <xsl:with-param name="indent" select="$indent"/>
               <xsl:with-param name="type" >resource</xsl:with-param>
         </xsl:call-template>
-      </xsl:when>
-
-      <!-- Detected staffinfo -->
-      <xsl:when test="STAFFINFO/COURSEID/@value != '' ">
-        <!-- Create a resource -->
-        <xsl:call-template name="section_mod_generic">
-              <xsl:with-param name="mod_number" select="$mod_number"/>
-              <xsl:with-param name="indent" select="$indent"/>
-              <xsl:with-param name="type" >resource</xsl:with-param>
-            </xsl:call-template> -->
       </xsl:when>
       <xsl:otherwise>
       </xsl:otherwise>
@@ -409,7 +388,6 @@
 <!-- Creates one module-file entry -->
 <xsl:template name="module_file" >
    <xsl:param name="mod_number">1. </xsl:param>
-   <xsl:param name="summary"/>
   <MOD>
     <ID><xsl:value-of select="$mod_number"/></ID>
     <MODTYPE>resource</MODTYPE>
@@ -423,41 +401,12 @@
       <xsl:value-of select="CONTENTID/@value"/>/<xsl:value-of select="RELFILE/@value"/>
     </REFERENCE>
     <SUMMARY>
-     <xsl:value-of select="$summary"/>
+      summary broken
+     <xsl:value-of select="MAINDATA/TEXT"/>
     </SUMMARY>
     <ALLTEXT></ALLTEXT>
     <POPUP></POPUP>
     <OPTIONS>frame</OPTIONS>
-    <TIMEMODIFIED>1094240775</TIMEMODIFIED>
-  </MOD>
-</xsl:template>
-
-<!-- Creates one module-text-staffinfo entry -->
-<!-- TODO staff photo -->
-<xsl:template name="module_text_staffinfo" >
-   <xsl:param name="mod_number">1. </xsl:param>
-  <MOD>
-    <ID><xsl:value-of select="$mod_number"/></ID>
-    <MODTYPE>resource</MODTYPE>
-    <NAME>
-      <xsl:value-of select="CONTACT/NAME/FORMALTITLE/@value"/><xsl:text> </xsl:text><xsl:value-of select="CONTACT/NAME/GIVEN/@value"/><xsl:text> </xsl:text><xsl:value-of select="CONTACT/NAME/FAMILY/@value"/>
-    </NAME>
-    <TYPE>text</TYPE>
-    <REFERENCE></REFERENCE>
-    <SUMMARY>
-      <xsl:value-of select="CONTACT/NAME/FORMALTITLE/@value"/><xsl:text> </xsl:text><xsl:value-of select="CONTACT/NAME/GIVEN/@value"/><xsl:text> </xsl:text><xsl:value-of select="CONTACT/NAME/FAMILY/@value"/>
-    </SUMMARY>
-    <ALLTEXT>
-      Title:<xsl:value-of select="CONTACT/NAME/FORMALTITLE/@value"/>
-      Given Name:<xsl:value-of select="CONTACT/NAME/GIVEN/@value"/>
-      Family Name:<xsl:value-of select="CONTACT/NAME/FAMILY/@value"/>
-      Phone:<xsl:value-of select="CONTACT/PHONE"/>
-      Office Hours:<xsl:value-of select="CONTACT/OFFICE/HOURS"/>
-      Office Address:<xsl:value-of select="CONTACT/OFFICE/ADDRESS"/>
-      Homepage:<xsl:value-of select="HOMEPAGE/@value"/>
-    </ALLTEXT>
-    <POPUP></POPUP>
-    <OPTIONS></OPTIONS>
     <TIMEMODIFIED>1094240775</TIMEMODIFIED>
   </MOD>
 </xsl:template>
@@ -538,9 +487,6 @@
           <xsl:apply-templates select="//EXTERNALLINK">
             <xsl:with-param name="mod_number" select="$mod_number"/>
           </xsl:apply-templates>
-          <xsl:apply-templates select="//STAFFINFO">
-            <xsl:with-param name="mod_number" select="$mod_number"/>
-          </xsl:apply-templates>
     </xsl:for-each>
   </xsl:for-each>
 </xsl:template>
@@ -560,16 +506,6 @@
 
 </xsl:template>
 
-<!-- Create a STAFFINFO module entry -->
-<xsl:template match="STAFFINFO">
-   <xsl:param name="mod_number">1. </xsl:param>
-       <!-- Every staffinfo module will have a label module describing it -->
-       <xsl:call-template name="module_text_staffinfo">
-        <xsl:with-param name="mod_number" select="$mod_number"/>
-       </xsl:call-template>
-
-</xsl:template>
-
 <!-- Create a CONTENT module entry -->
 <xsl:template match="CONTENT">
    <xsl:param name="mod_number">1. </xsl:param>
@@ -583,12 +519,9 @@
         <xsl:with-param name="mod_number" select="$mod_number"/>
        </xsl:call-template>
        
-       <xsl:variable name="summary" select="MAINDATA/TEXT"/>
-       
       <xsl:for-each select="FILES/FILEREF">
        <xsl:call-template name="module_file">
         <xsl:with-param name="mod_number" ><xsl:value-of select="$mod_number"/>0<xsl:value-of select="position()"/></xsl:with-param>
-        <xsl:with-param name="summary" ><xsl:value-of select="$summary"/></xsl:with-param>
        </xsl:call-template>
       </xsl:for-each>
 

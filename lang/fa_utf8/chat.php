@@ -1,56 +1,41 @@
-<?PHP // $Id$ 
-      // chat.php - created with Moodle 1.6 development (2005060201)
+<?PHP // $Id$
 
+#------------------------------------------------------------
+$string['modulename'] = "&#1711;&#1601;&#1578;&#1711;&#1608;";
 
-$string['beep'] = 'صدا زدن';
-$string['chatintro'] = 'مقدمه';
-$string['chatname'] = 'نام اتاق گپ';
-$string['chatreport'] = 'جلسه های گفتگو';
-$string['chattime'] = 'زمان بعدی برای گپ';
-$string['configmethod'] = 'روش عادی گفتگو مشترکین را مجبور می کند تا به طور منظم با سرور تماس بگیرند تا بروز شوند.این روش پیکربندی خاصی ندارد و در همه جا کار می کند ولی به خاطر تعداد زیاد گفتگو کننده ها بار زیادی روی سرور ایجاد می کند';
-$string['configoldping'] = 'بعد از چه مدت باید فرض شودکه کاربرخارج شده است؟';
-$string['configrefreshroom'] = 'هر چند ثانیه یکبار باید گپ تازه شود؟.  شاید سریع به نظر رسد ولی بار زیاد می شود';
-$string['configrefreshuserlist'] = 'هر چند ثانیه یکبار باید کاربران تازه شوند؟';
-$string['configserverhost'] = 'نام میزبان رایانه در جایی که سرور خدماتی قرار دارد';
-$string['configserverip'] = 'آدرس IP عددی که با نام میزبان مطابقت می کند';
-$string['configservermax'] = 'حداکثر تعداد مجاز مشتریان';
-$string['configserverport'] = 'پورت مخصوص به استفاده از خدمات سرور';
-$string['currentchats'] = 'گپ های فعال';
-$string['currentusers'] = 'کاربران در حال حاضر';
-$string['deletesession'] = 'پاک کردن گفتگو';
-$string['deletesessionsure'] = 'آیا مطمئن هستید که می خواهید این گفتگو را پاک کنید؟';
-$string['donotusechattime'] = 'زمان گپ را منتشر نکن';
-$string['enterchat'] = 'برای ورود به گپ اینجا را کلیک کنید';
-$string['errornousers'] = 'هیچ کاربری یافت نشد!';
-$string['explaingeneralconfig'] = '  تنظیمات <strong>همیشه</strong>موثر است';
-$string['explainmethoddaemon'] = 'تنظیمات <strong>فقط</strong>زمانی موثر هستند که شما گزینه
- \"Chat server daemon\"را انتخاب کنید';
-$string['explainmethodnormal'] = 'تنظیمات <strong>فقط</strong> در صورتی موثر خواهند بود که شما گزینه \"روش معمولی\" را انتخاب کنید';
-$string['generalconfig'] = 'پیکر بندی عمومی';
-$string['helpchatting'] = 'راهنمایی برای چت';
-$string['idle'] = 'بیکار';
-$string['messagebeepseveryone'] = '$a همه را صدا زد';
-$string['messagebeepsyou'] = '$a شما را صدا زد';
-$string['messageenter'] = '$a الان وارد گپ شد';
-$string['messageexit'] = '$a از گپ خاج شد';
-$string['messages'] = 'پیام ها';
-$string['methoddaemon'] = 'سرور خدمات دهنده گپ';
-$string['methodnormal'] = 'روش معمولی';
-$string['modulename'] = 'گپ';
-$string['modulenameplural'] = 'گپ ها';
-$string['neverdeletemessages'] = 'هیچ وقت پیامها را پاک نکن';
-$string['nextsession'] = 'جلسه بعد';
-$string['noguests'] = 'گپ برای میهمانان مهیا نیست';
-$string['nomessages'] = 'هیچ پیامی وجود ندارد';
-$string['repeatdaily'] = 'هر روز در این زمان';
-$string['repeatnone'] = 'فقط زمان مورد نظر رامنتشر کن';
-$string['repeattimes'] = 'تکرار جلسات گفتگو';
-$string['repeatweekly'] = 'هر هفته در این زمان';
-$string['savemessages'] = 'ذخیره کردن گپ های قبل';
-$string['seesession'] = 'مشاهده این جلسه';
-$string['sessions'] = 'جلسات گفتگو';
-$string['strftimemessage'] = '%%H:%%M';
-$string['studentseereports'] = 'همه می توانند جلسات قبل را مشاهده کنند';
-$string['viewreport'] = 'مشاهده جلسات قبل';
-
+$string['modulenameplural'] = "گفتگوها";
+#------------------------------------------------------------
+$string['beep'] = "صدا زدن";
+$string['chatintro'] = "مقدمه";
+$string['chatname'] = "نام اتاق گفتگو";
+$string['chatreport'] = "جلسه هاي گفتگو";
+$string['chattime'] = "زمان بعدي براي گفتگو";
+$string['configrefreshroom'] = "هر چند ثانيه يکبار بايد خود گفتگو تازه شود؟ (اگر کم باشد شايد سريع بنظر رسد ولي بار زياد مي شود)";
+$string['configrefreshuserlist'] = "هر چند ثانيه يکبار بايد کاربران تازه شوند؟";
+$string['configoldping'] = "بعد از چه مدت بايد فرض شود که کاربر خارج شده است؟";
+$string['currentchats'] = "گفتگوهاي فعال";
+$string['currentusers'] = "کاربران در حال حاضر";
+$string['donotusechattime'] = "زمان گفتگو را منتشر نکن";
+$string['enterchat'] = "براي ورود به گفتگو اينجا را کليک کنيد";
+$string['errornousers'] = "هيچ کاربري يافت نشد!";
+$string['helpchatting'] = "راهنمايي براي گفتگو";
+$string['idle'] = "بيکار";
+$string['messagebeepseveryone'] = "\$a همه را صدا زد";
+$string['messagebeepsyou'] = "\$a شما را صدا زد";
+$string['messageenter'] = "\$a الان وارد گفتگو شد";
+$string['messageexit'] = "\$a از گفتگو خارج شد";
+$string['messages'] = "پيامها";
+$string['neverdeletemessages'] = "هيچوقت پيامها را پاک نکن";
+$string['nextsession'] = "جلسه بعدي";
+$string['nomessages'] = "هيچ پيامي وجود ندارد";
+$string['repeatnone'] = "فقط زمان مورد نظر را منتشر کن";
+$string['repeatdaily'] = "هر روز در اين زمان";
+$string['repeattimes'] = "تکرار جلسات گفتگو";
+$string['repeatweekly'] = "هر هفته در اين زمان";
+$string['savemessages'] = "ذخيره کردن گفتگوهاي قبل";
+$string['sessions'] = "جلسات گفتگو";
+$string['seesession'] = "مشاهده اين جلسه";
+$string['strftimemessage'] = "%%H:%%M";
+$string['studentseereports'] = "همه مي توانند جلسات قبل را مشاهده کنند";
+$string['viewreport'] = "مشاهده جلسات قبل";
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.6 development (2005101200)
+      // survey.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['actual'] = '実体験';
@@ -10,7 +10,7 @@ $string['allscales'] = '全評価尺度、全学生';
 $string['alreadysubmitted'] = 'この調査は完了しています';
 $string['analysisof'] = '$a の分析';
 $string['answers'] = '回答';
-$string['attls1'] = '発言を評価する場合、誰が発言したのかではなく、議論の質に集中します。';
+$string['attls1'] = '発言を評価する場合、誰が発言したのかでは無く、議論の質に集中します。';
 $string['attls10'] = '何かを分析する場合にはできる限り客観的な考えを持つことが重要です。';
 $string['attls10short'] = '客観的に考える';
 $string['attls11'] = '人に反対せずに一緒に考える。';
@@ -23,7 +23,7 @@ $string['attls14'] = '議論を明確にするために他の人の考え方の弱点を指摘します。';
 $string['attls14short'] = '弱点を指摘する';
 $string['attls15'] = '議論する場合、他の人がなぜそのように考えるのか理解するために相手の立場に立って考える傾向があります。';
 $string['attls15short'] = '相手の立場に立つ';
-$string['attls16'] = '私の分析方法は\'試してみる\'方法と呼べます。なぜならすべての証拠を慎重に考慮したいからです。';
+$string['attls16'] = '私の分析方法は\'試してみる\'方法と呼べます。なぜなら全ての証拠を慎重に考慮したいからです。';
 $string['attls16short'] = '試してみる';
 $string['attls17'] = '問題を解決する場合、論理と動機を重要視します。';
 $string['attls17short'] = '論理を重要視する';

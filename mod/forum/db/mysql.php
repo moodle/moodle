@@ -205,20 +205,6 @@ function forum_upgrade($oldversion) {
       table_column('forum','','trackingtype','tinyint','2', 'unsigned', '1', '', 'forcesubscribe');
   }
 
-  if ($oldversion < 2005111100) {
-      table_column('forum_discussions','','timestart','integer');
-      table_column('forum_discussions','','timeend','integer');
-  }
-  
-  if ($oldversion < 2006011600) {
-      execute_sql("alter table ".$CFG->prefix."forum change column type type enum('single','news','general','social','eachuser','teacher','qanda') not null default 'general'");
-  }
-
-  if ($oldversion < 2006011601) {
-      table_column('forum','','warnafter');
-      table_column('forum','','blockafter');
-      table_column('forum','','blockperiod');
-  }
 
   return true;
   

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.6 development (2005052400)
+      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
 
 
 $string['allowresubmit'] = 'ÇáÓãÇÍ ÈÅÚÇÏÉ ÇáÊÓáíã';
@@ -11,51 +11,33 @@ $string['assignmentmailhtml'] = '$a->teacher ŞÇã ÈæÖÚ ÈÚÖ ÇáÊÕÍíÍÇÊ Úáì ãåãÊß Çá
  ííãßäß ãÔÇåÏÊåÇ ãÑİŞÉ ãÚ ãåãÊß<a href=\"$a->url\">assignment submission</a>.';
 $string['assignmentname'] = 'ÇÓã ÇáãåãÉ';
 $string['assignmenttype'] = 'äæÚ ÇáãåãÉ';
-$string['availabledate'] = 'ãÊÇÍ ãä';
-$string['comment'] = 'ÊÚáíŞ (ÚáŞ)';
-$string['commentinline'] = 'Şã ÈÊÚáíŞ İí äİÓ ÇáÓØÑ';
 $string['configmaxbytes'] = 'ÇáÍÌã ÇáãåãÉ ÇáÇİÊÑÇÖí áÌãíÚ ÇáãåãÇÊ İí ÇáãæŞÚ (ÎÇÖÚ áãÍÏæÏíÉ ÇáãåäÌ ÇáÏÑÇÓí æÈÚÖ ÇáÅÚÏÇÏÇÊ)';
 $string['description'] = 'ÇáæÕİ';
 $string['duedate'] = 'ÊÇÑíÎ ÇáÅäåÇÁ';
 $string['duedateno'] = 'áÇ íæÌÏ ãæÚÏ ááÊÓáíã';
 $string['early'] = '$a ãÈßÑ';
-$string['editmysubmission'] = 'ÍÑÑ ÊÓáíãí';
 $string['emailteachermail'] = '$a->username ŞÇã ÈÊÍÏíË ÇáãåãÉÇáãŞÏãÉ áÜ \'$a->assignment\' æåĞå ÇáãåãÉ ãæÌæÏÉ İí: $a->url';
 $string['emailteachermailhtml'] = '$a->username ŞÇã ÈÊÍÏíË ÇáãåãÉÇáãŞÏãÉ áÜ <i>\'$a->assignment\'</i><br /><br /> æåí <a href=\"$a->url\">available on the web site</a>.';
 $string['emailteachers'] = 'ÈÑíÏ ÅáßÊÑæäí ÊäÈíåí ááãÚáãæä';
-$string['emptysubmission'] = 'áã ÊŞã ÈÊÓáíã Ãí ÔÆ';
 $string['existingfiledeleted'] = 'Êã ÍĞ ÇáãáİÇÊ ÇáãæÌæÏÉ :a$';
 $string['failedupdatefeedback'] = 'ÊÚĞÑ ÊÍÏíË ÊÚáíŞ ÇáãÓÊÎÏã Úáì ÇáÑÓÇáÉ $a ';
 $string['feedback'] = 'ÊÕÍíÍ';
-$string['feedbackfromteacher'] = 'ÊÕÍíÍ ãä ÇáÜ $a';
 $string['feedbackupdated'] = 'ÊÍÏíË ÇáÊÚáíŞÇÊ$a  ÇáäÇÓ';
-$string['helpoffline'] = '<p>åĞÇ ãİíÏ ÚäÏ ãÇíßæä ÜÇĞíÉ ÇáãåãÉ ÎÇÑÌ ãæÏá. ãä Çáããßä Ãä Êßæä İí ãæŞÚ ÃÎÑ Ãæ İí ŞÇÚÉ ÏÑÇÓíÉ ÊŞáíÏíÉ.</p><p> ÓíÊãßä ÇáØáÇÈ ãä ãÔÇåÏÉ ÊæÕíİ ÇáãåãÉ¡ æáßä áä íÓÊØíÚæä ÊÍãíá ÇáãáİÇÊ Ãæ Ãí ÔÆ ÃÎÑ. ÊÕÍíÍ ÇáÃÚãÇá ÈÔßá ØÈíÚí¡ æÓíÍÕá ÇáØáÇÈ Úáì ÃÔÚÇÑÇÊ ÈÏÑÌÇÊåã.';
-$string['helponline'] = '<p>äæÚ ÇáãåãÉ åĞå íØáÈ ãä ÇáØáÇÈ ÊÍÑíÑ ÇáäÕ ÈÃÓÊÎÏÇã ÃÏæÇÊ ÇáÊÍÑíÑ ÇáÚÇÏíÉ. íÊÓÊØíÚ ÇáãÚáãæä ÊÕÍíÍåÇ ãÈÇÔÑÉ¡ ææÖÚ ÇáÊÚáíŞÇÊ Ãæ ÇáÊÚÏíáÇÊ İí äİÓ ÇáÓØÑ.</p>
-<p> (áæ ßäÊ Úáì ÏÑÇíÉ ÈÅÕÏÑÇÊ ãæÏá ÇáÓÇÈŞÉ İÓÊáÇÍØ Ãä äæÚ ÇáãåãÉ åĞÇ íŞæã ÈäİÓ ÇáÚãá ÇáĞí ßÇäÊ ÊŞæã ÈÚ æÍÏÉ ÇáãĞßÑÇÊ)</p>
-';
-$string['helpuploadsingle'] = '<p>äæÚ ÇáãåãÉ åĞå íÓãÍ áßá ãÓÊÎÏã ÊÍãíá ãáİ æÇÍÏ ãä Ãí äæÚ ßÇä.</p>
-<p> åĞÇ ãä Çáããßä Ãä íßæä æËíŞÉ ãÚÇáÌ ßáãÇÊ¡ ãæŞÚ ãÖÛæØ¡ ÕæÑÉ¡ Ãæ Ãí ÔÆ ÊŞæã ÈØáÈå ãäåã ááŞíÇã ÈÊÓáíãå.</p>';
 $string['late'] = '$a ãÊÃÎÑ';
 $string['maximumgrade'] = 'ÇáÏÑÌÉ ÇáŞÕæì';
 $string['maximumsize'] = 'ÍÌã Çáãáİ';
 $string['modulename'] = 'ãåãÉ';
 $string['modulenameplural'] = 'ãåÇã';
 $string['newsubmissions'] = 'ãåÇã Êã ÊÓáíãåÇ';
-$string['noassignments'] = 'áÇ íæÌÏ ãåÇã ÈÚÏ';
-$string['noattempts'] = 'áã íÊã ÇáŞíÇã ÈÃí ãÍÇæáÇÊ İí åĞå ÇáãåãÉ';
 $string['notgradedyet'] = 'áã ÊÚØì ÏÑÌÉ ÈÚÏ';
 $string['notsubmittedyet'] = 'áã ÊÓáã ÈÚÏ';
 $string['overwritewarning'] = 'ÊÍĞíÑ: ÇáÊÍãíá ãÑÉ ÃÎÑì ÓíŞæã ÈÇÓÊÈÏÇá ÇáÍÇáí';
-$string['preventlate'] = 'ÃãäÚ ÊÓáíã ÇáãåÇã ÇáãÊÃÎÑ';
 $string['saveallfeedback'] = 'ÇÍİÙ ÌãíÚ ÊÕÍíÍÇÊí';
-$string['submission'] = 'ÊÓáíã';
 $string['submissionfeedback'] = 'ÊÚáíŞ ÇáÑÓÇáÉ ÇáãÓáãÉ';
 $string['submissions'] = 'ÑÓÇáÇÊ ãÓáãÉ';
-$string['submissionsaved'] = 'Êã ÍİÙ ÇáÊÛíÑÇÊ ÇáÊí ŞãÊ ÈåÇ';
 $string['submitassignment'] = 'Şã ÈÊÓáíã ãåãÊß ÈÇÓÊÎÏÇã åĞÇ ÇáäãæĞÌ';
 $string['submitted'] = 'Êã ÇáÊÓáíã';
 $string['typeoffline'] = 'äÔÇØ ÈÏæä ÇÊÕÇá';
-$string['typeonline'] = 'äÕ ãÈÇÔÑ';
 $string['typeuploadsingle'] = 'ÊÍãíá ãáİ æÇÍÏ';
 $string['uploadbadname'] = 'íÍÊæí ÇÓã åĞÇ Çáãáİ Úáì ÍÑæİ ÛÑíÈÉ æáĞÇ ÊÚĞÑ ÊÍãíáå.';
 $string['uploadedfiles'] = 'ÇáãáİÇÊ ÇáãÍãáÉ';

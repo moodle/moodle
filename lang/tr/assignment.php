@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.6 development (2005101200)
+      // assignment.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['allowresubmit'] = 'Tekrar göndermeye izin ver';
@@ -38,7 +38,6 @@ $string['failedupdatefeedback'] = 'Bu kullanýcýnýn gönderdiði geribildirim günce
 $string['feedback'] = 'Geribildirim';
 $string['feedbackfromteacher'] = '$a \'den geribildirim';
 $string['feedbackupdated'] = 'Bu kullanýcýnýn gönderdiði geribildirim güncellenmiþtir $a kiþi';
-$string['guestnoupload'] = 'Üzgünüz, konuklarýn dosya göndermesine izin verilmemektedir.';
 $string['helpoffline'] = '<p>Bu ödev türü site dýþý bir ödev verdiðinizde kullanýþlýdýr.</p>
 <p>Öðrenciler ödev ile ilgili açýklamayý okurlar ancak herhangi bir dosya yükleyemezler.
 Bu ödev türünde öðrenciye bir ödev verip size getirmelerini isteyebilirsiniz. Daha sonra
@@ -55,13 +54,10 @@ $string['modulename'] = 'Ödev';
 $string['modulenameplural'] = 'Ödevler';
 $string['newsubmissions'] = 'Gönderilmiþ Ödevler';
 $string['noassignments'] = 'Henüz bir ödev yok';
-$string['noattempts'] = 'Bu ödev için uygulama yapýlmadý';
 $string['notgradedyet'] = 'Henüz notlandýrýlmamýþ';
 $string['notsubmittedyet'] = 'Henüz gönderilmemiþ';
 $string['overwritewarning'] = 'Uyarý: Yüklediðiniz dosyayla DEÐÝÞTÝRÝLECEKTÝR';
-$string['pagesize'] = 'Her sayfada görünen gönderi';
 $string['preventlate'] = 'Geç kalan gönderileri engelle';
-$string['quickgrade'] = 'Hýzlý notlandýrmaya izin ver';
 $string['saveallfeedback'] = 'Tüm geribildirimlerimi kaydet';
 $string['submission'] = 'Gönderi';
 $string['submissionfeedback'] = 'Geribildirim Gönderimi';

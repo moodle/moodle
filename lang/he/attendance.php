@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.5 ALPHA (2005042300)
+      // attendance.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032800)
 
 
 $string['absentlong'] = 'חסר';
@@ -15,19 +15,19 @@ $string['choosedays'] = 'ימים של כל שבוע לרשימת נוכחות';
 $string['dayofroll'] = 'תאריך בדיקת נוכחות ';
 $string['defaultautoattend'] = 'האם לרשום נוכחות על פי דוחות פעילות של משתמשים או על פי ברירת מחדל';
 $string['defaultdynamicsection'] = 'האם להעביר רשימת נוכחות לשבוע הנכון על פי ברירת מחדל';
-$string['defaultgrade'] = 'האם להפוך את רשימות הנוכחות לניתנות להערכה על פי ברירת מחדל';
+$string['defaultgrade'] = ' האם להפוך את רשימות הנוכחות לניתנות להערכה על פי ברירת מחדל';
 $string['defaulthoursinclass'] = 'כמה שעות צריכות להיות ברשימת נוכחות על פי ברירת מחדל';
 $string['defaultmaxgrade'] = 'על פי ברירת מחדל מהו הציון המירבי שניתן לתת לנוכחות מלאה';
 $string['defaultstudentstatus'] = 'מצב השתתפות התלמיד על פי ברירת מחדל ברשימות נוכחות חדשות';
-$string['downloadexcelfull'] = 'הורד גיליון אלקטרוני מלא בפורמט Excel';
-$string['downloadexceltotals'] = 'הורד גיליון אלקטרוני מקוצר בפורמט Excel';
-$string['downloadtextfull'] = 'הורד דוח טקסט מלא';
-$string['downloadtexttotals'] = 'הורד דוח טקסט מקוצר';
+$string['downloadexcelfull'] = 'הורד גיליון Excel מלא';
+$string['downloadexceltotals'] = 'הורד גיליון Excel מקוצר';
+$string['downloadtextfull'] = 'הורד דוח Text מלא';
+$string['downloadtexttotals'] = 'הורד דוח Text מקוצר';
 $string['dynamicsection'] = 'קבע שבוע לנוכחות על בסיס תאריך זה';
 $string['dynamicsectionmulti'] = 'מקם רשימות נוכחות ביחידות השבועיות שלהם באופן אוטומטי';
 $string['dynsectionshort'] = 'הועבר באופן דינמי ליחידה';
 $string['endbeforestart'] = 'תאריך הסיום הינו לפני תאריך ההתחלה';
-$string['endmulti'] = 'תאריך לרשימת נוכחות אחרונה';
+$string['endmulti'] = 'ץאריך לרשימת נוכחות אחרונה';
 $string['for'] = 'בשביל';
 $string['friday'] = 'שישי';
 $string['gradeshort'] = 'הוערך';
@@ -37,11 +37,9 @@ $string['hoursinfullreport'] = 'מספר שעות הנוכחות המירבי שיכול להופיע על דף דוח 
 $string['maxgradeshort'] = 'ציון מינימלי';
 $string['maxgradevalue'] = 'ערך ציון מירבי עבור נוכחות מלאה';
 $string['modulename'] = 'נוכחות';
-$string['modulenameplural'] = 'רשימות נוכחות';
+$string['modulenameplural'] = 'רשימות נוחכות';
 $string['monday'] = 'שני';
-$string['norolls'] = 'בקורס זה אין רשימות נוכחות';
-$string['notes'] = 'מידע חריג';
-$string['notesfor'] = 'מידע חריג עבור';
+$string['norolls'] = 'בקורס זה אין רשימות נוחכות';
 $string['noviews'] = 'מצטערים, לא קיים מידע על חשבונך כאן ';
 $string['of'] = 'של';
 $string['pages'] = 'עמודים';

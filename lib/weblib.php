@@ -38,9 +38,6 @@
  * @package moodlecore
  */
 
-/// We are going to uses filterlib functions here
-require_once("$CFG->libdir/filterlib.php");
-
 /// Constants
 
 /// Define text formatting types ... eventually we can add Wiki, BBcode etc
@@ -78,13 +75,17 @@ define('FORMAT_MARKDOWN', '4');   // Markdown-formatted text http://daringfireba
  * @global string $ALLOWED_TAGS
  */
 $ALLOWED_TAGS =
-'<p><br><b><i><u><font><table><tbody><span><div><tr><td><th><ol><ul><dl><li><dt><dd><h1><h2><h3><h4><h5><h6><hr><img><a><strong><emphasis><em><sup><sub><address><cite><blockquote><pre><strike><param><acronym><nolink><lang><tex><algebra><math><mi><mn><mo><mtext><mspace><ms><mrow><mfrac><msqrt><mroot><mstyle><merror><mpadded><mphantom><mfenced><msub><msup><msubsup><munder><mover><munderover><mmultiscripts><mtable><mtr><mtd><maligngroup><malignmark><maction><cn><ci><apply><reln><fn><interval><inverse><sep><condition><declare><lambda><compose><ident><quotient><exp><factorial><divide><max><min><minus><plus><power><rem><times><root><gcd><and><or><xor><not><implies><forall><exists><abs><conjugate><eq><neq><gt><lt><geq><leq><ln><log><int><diff><partialdiff><lowlimit><uplimit><bvar><degree><set><list><union><intersect><in><notin><subset><prsubset><notsubset><notprsubset><setdiff><sum><product><limit><tendsto><mean><sdev><variance><median><mode><moment><vector><matrix><matrixrow><determinant><transpose><selector><annotation><semantics><annotation-xml><tt><code>';
+'<p><br><b><i><u><font><table><tbody><span><div><tr><td><th><ol><ul><dl><li><dt><dd><h1><h2><h3><h4><h5><h6><hr><img><a><strong><emphasis><em><sup><sub><address><cite><blockquote><pre><strike><embed><object><param><acronym><nolink><lang><tex><algebra><mat
+h><mi><mn><mo><mtext><mspace><ms><mrow><mfrac><msqrt><mroot><mstyle><merror><mpadded><mphantom><mfenced><msub><msup><msubsup><munder><mover><munderover><mmultiscripts><mtable><mtr><mtd><maligngroup><malignmark><maction><cn><ci><apply><reln><fn><interval><
+inverse><sep><condition><declare><lambda><compose><ident><quotient><exp><factorial><divide><max><min><minus><plus><power><rem><times><root><gcd><and><or><xor><not><implies><forall><exists><abs><conjugate><eq><neq><gt><lt><geq><leq><ln><log><int><diff><par
+tialdiff><lowlimit><uplimit><bvar><degree><set><list><union><intersect><in><notin><subset><prsubset><notsubset><notprsubset><setdiff><sum><product><limit><tendsto><mean><sdev><variance><median><mode><moment><vector><matrix><matrixrow><determinant><transpo
+se><selector><annotation><semantics><annotation-xml><tt><code>';
 
 /**
  * Allowed protocols - array of protocols that are safe to use in links and so on
  * @global string $ALLOWED_PROTOCOLS
  */
-$ALLOWED_PROTOCOLS = array('http', 'https', 'ftp', 'news', 'mailto', 'rtsp', 'teamspeak', 'gopher', 'mms',
+$ALLOWED_PROTOCOLS = array('http', 'https', 'ftp', 'news', 'mailto', 'rtsp', 'teamspeak', 'gopher', 
                            'color', 'callto', 'cursor', 'text-align', 'font-size', 'font-weight', 'font-style', 
                            'border', 'margin', 'padding');   // CSS as well to get through kses
 
@@ -101,10 +102,11 @@ $ALLOWED_PROTOCOLS = array('http', 'https', 'ftp', 'news', 'mailto', 'rtsp', 'te
  * @return string
  */
 function s($var) {
-    if ($var == '0') {  // for integer 0, boolean false, string '0'
-        return '0';
+
+    if (empty($var)) {
+        return '';
     }
-    return preg_replace("/&amp;(#\d+);/i", "&$1;", htmlspecialchars(stripslashes_safe($var)));
+    return htmlSpecialChars(stripslashes_safe($var));
 }
 
 /**
@@ -117,7 +119,11 @@ function s($var) {
  * @return string
  */
 function p($var) {
-    echo s($var);
+
+    if (empty($var)) {
+        echo '';
+    }
+    echo htmlSpecialChars(stripslashes_safe($var));
 }
 
 
@@ -278,7 +284,7 @@ function match_referer($goodreferer = '') {
 
     $referer = get_referer();
 
-    return (($referer == $goodreferer) or ($referer == $CFG->wwwroot .'/') or ($referer == $CFG->wwwroot .'/index.php'));
+    return (($referer == $goodreferer) or ($referer == $CFG->wwwroot .'/'));
 }
 
 /**
@@ -369,8 +375,6 @@ function stripslashes_recursive($var) {
  * Given some normal text this function will break up any
  * long words to a given size by inserting the given character
  *
- * It's multibyte savvy and doesn't change anything inside html tags.
- *
  * @param string $string the string to be modified
  * @param int $maxsize maximum length of the string to be returned
  * @param string $cutchar the string used to represent word breaks
@@ -378,21 +382,23 @@ function stripslashes_recursive($var) {
  */
 function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
 
-/// Loading the textlib singleton instance. We are going to need it.
-    $textlib = textlib_get_instance();
+    static $currentlang;
 
-/// First of all, save all the tags inside the text to skip them
-    $tags = array();
-    filter_save_tags($string,$tags);
+    if (empty($currentlang)) {
+        $currentlang = current_language();
+    }
 
-/// Process the string adding the cut when necessary
+    if (in_array(substr($currentlang,0,2), array('ja', 'kn', 'sr', 'vi', 'zh'))) {  // Multibyte languages
+        return $string;
+    }
+
     $output = '';
-    $length = $textlib->strlen($string, current_charset());
+    $length = strlen($string);
     $wordlength = 0;
 
     for ($i=0; $i<$length; $i++) {
-        $char = $textlib->substr($string, $i, 1, current_charset());
-        if ($char == ' ' or $char == "\t" or $char == "\n" or $char == "\r" or $char == "<" or $char == ">") {
+        $char = $string[$i];
+        if ($char == ' ' or $char == "\t" or $char == "\n" or $char == "\r") {
             $wordlength = 0;
         } else {
             $wordlength++;
@@ -403,12 +409,6 @@ function break_up_long_words($string, $maxsize=20, $cutchar=' ') {
         }
         $output .= $char;
     }
-
-/// Finally load the tags back again
-    if (!empty($tags)) {
-        $output = str_replace(array_keys($tags), $tags, $output);
-    }
-
     return $output;
 }
 
@@ -660,8 +660,7 @@ function close_window($delay=0) {
  * @param    type description
  * @todo Finish documenting this function
  */
-function choose_from_menu ($options, $name, $selected='', $nothing='choose', $script='', 
-                           $nothingvalue='0', $return=false, $disabled=false, $tabindex=0) {
+function choose_from_menu ($options, $name, $selected='', $nothing='choose', $script='', $nothingvalue='0', $return=false, $disabled=false) {
 
     if ($nothing == 'choose') {
         $nothing = get_string('choose') .'...';
@@ -670,10 +669,6 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
     $attributes = ($script) ? 'onchange="'. $script .'"' : '';
     if ($disabled) {
         $attributes .= ' disabled="disabled"';
-    }
-
-    if ($tabindex) {
-        $attributes .= ' tabindex="'.$tabindex.'"';
     }
 
     $output = '<select id="menu'.$name.'" name="'. $name .'" '. $attributes .'>' . "\n";
@@ -687,7 +682,7 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
     if (!empty($options)) {
         foreach ($options as $value => $label) {
             $output .= '   <option value="'. $value .'"';
-            if ((string)$value == (string)$selected) {
+            if ($value == $selected) {
                 $output .= ' selected="selected"';
             }
             if ($label === '') {
@@ -705,179 +700,6 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
         echo $output;
     }
 }
-
-/**
- * Just like choose_from_menu, but takes a nested array (2 levels) and makes a dropdown menu
- * including option headings with the first level.
- */
-function choose_from_menu_nested($options,$name,$selected='',$nothing='choose',$script = '',
-                                 $nothingvalue=0,$return=false,$disabled=false,$tabindex=0) {
-
-   if ($nothing == 'choose') {
-        $nothing = get_string('choose') .'...';
-    }
-
-    $attributes = ($script) ? 'onchange="'. $script .'"' : '';
-    if ($disabled) {
-        $attributes .= ' disabled="disabled"';
-    }
-
-    if ($tabindex) {
-        $attributes .= ' tabindex="'.$tabindex.'"';
-    }
-
-    $output = '<select id="menu'.$name.'" name="'. $name .'" '. $attributes .'>' . "\n";
-    if ($nothing) {
-        $output .= '   <option value="'. $nothingvalue .'"'. "\n";
-        if ($nothingvalue === $selected) {
-            $output .= ' selected="selected"';
-        }
-        $output .= '>'. $nothing .'</option>' . "\n";
-    }
-    if (!empty($options)) {
-        foreach ($options as $section => $values) {
-            $output .= '   <optgroup label="'.$section.'">'."\n";
-            foreach ($values as $value => $label) {
-                $output .= '   <option value="'. $value .'"';
-                if ((string)$value == (string)$selected) {
-                    $output .= ' selected="selected"';
-                }
-                if ($label === '') {
-                    $output .= '>'. $value .'</option>' . "\n";
-                } else {
-                    $output .= '>'. $label .'</option>' . "\n";
-                }
-            }
-            $output .= '   </optgroup>'."\n";
-        }
-    }
-    $output .= '</select>' . "\n";
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
-}
-
-
-/**
- * Given an array of values, creates a group of radio buttons to be part of a form
- * 
- * @param array  $options  An array of value-label pairs for the radio group (values as keys)
- * @param string $name     Name of the radiogroup (unique in the form)
- * @param string $checked  The value that is already checked
- */
-function choose_from_radio ($options, $name, $checked='') {
-
-    static $idcounter = 0;
-
-    if (!$name) {
-        $name = 'unnamed';
-    }
-
-    $output = '<span class="radiogroup '.$name."\">\n";
-
-    if (!empty($options)) {
-        $currentradio = 0;
-        foreach ($options as $value => $label) {
-            $htmlid = 'auto-rb'.sprintf('%04d', ++$idcounter);
-            $output .= ' <span class="radioelement '.$name.' rb'.$currentradio."\">";
-            $output .= '<input name="'.$name.'" id="'.$htmlid.'" type="radio" value="'.$value.'"';
-            if ($value == $checked) {
-                $output .= ' checked="checked"';
-            }
-            if ($label === '') {
-                $output .= ' /> <label for="'.$htmlid.'">'.  $value .'</label></span>' .  "\n";
-            } else {
-                $output .= ' /> <label for="'.$htmlid.'">'.  $label .'</label></span>' .  "\n";
-            }
-            $currentradio = ($currentradio + 1) % 2;
-        }
-    }
-
-    $output .= '</span>' .  "\n";
-
-    echo $output;
-}
-
-/** Display an standard html checkbox with an optional label
- *
- * @param string  $name    The name of the checkbox
- * @param string  $value   The valus that the checkbox will pass when checked
- * @param boolean $checked The flag to tell the checkbox initial state
- * @param string  $label   The label to be showed near the checkbox
- * @param string  $alt     The info to be inserted in the alt tag
- */
-function print_checkbox ($name, $value, $checked = true, $label = '', $alt = '', $script='',$return=false) {
-
-    static $idcounter = 0;
-
-    if (!$name) {
-        $name = 'unnamed';
-    }
-
-    if (!$alt) {
-        $alt = 'checkbox';
-    }
-
-    if ($checked) {
-        $strchecked = ' checked="checked"';
-    }
-
-    $htmlid = 'auto-cb'.sprintf('%04d', ++$idcounter);
-    $output  = '<span class="checkbox '.$name."\">";
-    $output .= '<input name="'.$name.'" id="'.$htmlid.'" type="checkbox" value="'.$value.'" alt="'.$alt.'"'.$strchecked.' '.((!empty($script)) ? ' onClick="'.$script.'" ' : '').' />';
-    if(!empty($label)) {
-        $output .= ' <label for="'.$htmlid.'">'.$label.'</label>';
-    }
-    $output .= '</span>'."\n";
-
-    if (empty($return)) {
-        echo $output;
-    } else {
-        return $output;
-    }
-
-}
-
-/** Display an standard html text field with an optional label
- *
- * @param string  $name    The name of the text field
- * @param string  $value   The value of the text field
- * @param string  $label   The label to be showed near the text field
- * @param string  $alt     The info to be inserted in the alt tag
- */
-function print_textfield ($name, $value, $alt = '',$size=50,$maxlength= 0,$return=false) {
-
-    static $idcounter = 0;
-
-    if (empty($name)) {
-        $name = 'unnamed';
-    }
-
-    if (empty($alt)) {
-        $alt = 'textfield';
-    }
-
-    if (!empty($maxlength)) {
-        $maxlength = ' maxlength="'.$maxlength.'" ';
-    }
-
-    $htmlid = 'auto-tf'.sprintf('%04d', ++$idcounter);
-    $output  = '<span class="textfield '.$name."\">";
-    $output .= '<input name="'.$name.'" id="'.$htmlid.'" type="text" value="'.$value.'" size="'.$size.'" '.$maxlength.' alt="'.$alt.'" />';
- 
-    $output .= '</span>'."\n";
-
-    if (empty($return)) {
-        echo $output;
-    } else {
-        return $output;
-    }
-
-}
-
 
 /**
  * Implements a complete little popup form
@@ -950,14 +772,7 @@ function popup_form($common, $options, $formname, $selected='', $nothing='choose
             continue;
 
         } else {
-           if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()]))
-            {
-                $url=sid_process_url( $common . $value );
-            } else
-            {
-                $url=$common . $value;
-            }
-            $optstr = '   <option value="' . $url . '"';
+            $optstr = '   <option value="' . $common . $value . '"';
 
             if ($value == $selected) {
                 $optstr .= ' selected="selected"';
@@ -1188,20 +1003,12 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 
     global $CFG, $course;
 
-    if (!isset($options->noclean)) {
-        $options->noclean=false;
-    }
-    if (!isset($options->smiley)) {
-        $options->smiley=true;
-    }
-    if (!isset($options->filter)) {
-        $options->filter=true;
-    }
-    if (!isset($options->para)) {
-        $options->para=true;
-    }
-    if (!isset($options->newlines)) {
-        $options->newlines=true;
+    if (!empty($CFG->cachetext)) {
+        $time = time() - $CFG->cachetext;
+        $md5key = md5($text);
+        if ($cacheitem = get_record_select('cache_text', "md5key = '$md5key' AND timemodified > '$time'")) {
+            return $cacheitem->formattedtext;
+        }
     }
 
     if (empty($courseid)) {
@@ -1210,31 +1017,19 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
         }
     }
 
-    if (!empty($CFG->cachetext)) {
-        $time = time() - $CFG->cachetext;
-        $md5key = md5($text.'-'.$courseid.$options->noclean.$options->smiley.$options->filter.$options->para.$options->newlines);
-        if ($cacheitem = get_record_select('cache_text', "md5key = '$md5key' AND timemodified > '$time'")) {
-            return $cacheitem->formattedtext;
-        }
-    }
-
     $CFG->currenttextiscacheable = true;   // Default status - can be changed by any filter
-    
+
     switch ($format) {
         case FORMAT_HTML:
-            if (!empty($options->smiley)) {
-                replace_smilies($text);
-            }
-            if (empty($options->noclean)) {
+            replace_smilies($text);
+            if (!isset($options->noclean)) {
                 $text = clean_text($text, $format);
             }
-            if (!empty($options->filter)) {
-                $text = filter_text($text, $courseid);
-            }
+            $text = filter_text($text, $courseid);
             break;
 
         case FORMAT_PLAIN:
-            $text = s($text); 
+            $text = htmlentities($text);
             $text = rebuildnolinktag($text);
             $text = str_replace('  ', '&nbsp; ', $text);
             $text = nl2br($text);
@@ -1245,32 +1040,33 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             $text = '<p>NOTICE: Wiki-like formatting has been removed from Moodle.  You should not be seeing
                      this message as all texts should have been converted to Markdown format instead.
                      Please post a bug report to http://moodle.org/bugs with information about where you
-                     saw this message.</p>'.s($text);
+                     saw this message.</p>'.$text;
             break;
 
         case FORMAT_MARKDOWN:
             $text = markdown_to_html($text);
-            if (!empty($options->smiley)) {
-                replace_smilies($text);
-            }
-            if (empty($options->noclean)) {
+            if (!isset($options->noclean)) {
                 $text = clean_text($text, $format);
             }
-            
-            if (!empty($options->filter)) {
-                $text = filter_text($text, $courseid);
-            }
+            replace_smilies($text);
+            $text = filter_text($text, $courseid);
             break;
 
         default:  // FORMAT_MOODLE or anything else
+            if (!isset($options->smiley)) {
+                $options->smiley=true;
+            }
+            if (!isset($options->para)) {
+                $options->para=true;
+            }
+            if (!isset($options->newlines)) {
+                $options->newlines=true;
+            }
             $text = text_to_html($text, $options->smiley, $options->para, $options->newlines);
-            if (empty($options->noclean)) {
+            if (!isset($options->noclean)) {
                 $text = clean_text($text, $format);
             }
-            
-            if (!empty($options->filter)) {
-                $text = filter_text($text, $courseid);
-            }
+            $text = filter_text($text, $courseid);
             break;
     }
 
@@ -1326,7 +1122,7 @@ function format_string ($string, $striplinks = false, $courseid=NULL ) {
     static $strcache;
 
     //Calculate md5
-    $md5 = md5($string.'<+>'.$striplinks);
+    $md5 = md5($string.$striplinks);
 
     //Fetch from cache if possible
     if(isset($strcache[$md5])) {
@@ -1414,6 +1210,7 @@ function filter_text($text, $courseid=NULL) {
     global $CFG;
 
     require_once($CFG->libdir.'/filterlib.php');
+
     if (!empty($CFG->textfilters)) {
         $textfilters = explode(',', $CFG->textfilters);
         foreach ($textfilters as $textfilter) {
@@ -1808,8 +1605,8 @@ function highlightfast($needle, $haystack) {
 function print_header ($title='', $heading='', $navigation='', $focus='', $meta='',
                        $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='') {
 
-    global $USER, $CFG, $THEME, $SESSION, $ME, $SITE, $HTTPSPAGEREQUIRED;
-    
+    global $USER, $CFG, $THEME, $SESSION, $ME, $SITE;
+
 /// This is an ugly hack to be replaced later by a proper global $COURSE
     global $course;
     if (!empty($course->lang)) {
@@ -1822,15 +1619,6 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
         }
     }
 
-/// We have to change some URLs in styles if we are in a $HTTPSPAGEREQUIRED page
-    if (!empty($HTTPSPAGEREQUIRED)) {
-        $CFG->themewww = str_replace('http', 'https', $CFG->themewww);
-        $CFG->pixpath = str_replace('http', 'https', $CFG->pixpath);
-        $CFG->modpixpath = str_replace('http', 'https', $CFG->modpixpath);
-        foreach ($CFG->stylesheets as $key => $stylesheet) {
-            $CFG->stylesheets[$key] = str_replace('http', 'https', $stylesheet);
-        }
-    }
 
 /// Add the required stylesheets
     $stylesheetshtml = '';
@@ -1894,12 +1682,18 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
     }
 
 
-    $encoding = current_charset();
-    if (!empty($CFG->courselang)) {
+    if (!empty($CFG->unicode)) {
+        $encoding = 'utf-8';
+    } else if (!empty($CFG->courselang)) {
+        $encoding = get_string('thischarset');
         moodle_setlocale();
+    } else {
+        if (!empty($SESSION->encoding)) {
+            $encoding = $SESSION->encoding;
+        } else {
+            $SESSION->encoding = $encoding = get_string('thischarset');
+        }
     }
-    $SESSION->encoding = $encoding;
-
     $meta = '<meta http-equiv="content-type" content="text/html; charset='. $encoding .'" />'. "\n". $meta ."\n";
     if (!$usexml) {
         @header('Content-type: text/html; charset='.$encoding);
@@ -2078,12 +1872,12 @@ function print_footer($course=NULL, $usercourse=NULL) {
 
 /// Provide some performance info if required
     $performanceinfo = '';
-    if (defined('MDL_PERF') || $CFG->debug > 7 || $CFG->perfdebug > 7) {
+    if (defined('MDL_PERF') || $CFG->debug > 7) {
         $perf = get_performance_info();
         if (defined('MDL_PERFTOLOG')) {
             error_log("PERF: " . $perf['txt']);
         }
-        if (defined('MDL_PERFTOFOOT') || $CFG->debug > 7 || $CFG->perfdebug > 7) {
+        if (defined('MDL_PERFTOFOOT') || $CFG->debug > 7) {
             $performanceinfo = $perf['html'];
         }
     }
@@ -2147,8 +1941,6 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
 
     if (empty($themename)) {
         $themename = current_theme();  // So we have something.  Normally not needed.
-    } else {
-        $themename = clean_param($themename, PARAM_SAFEDIR);
     }
 
     if (!empty($forceconfig)) {        // Page wants to use the config from this theme instead
@@ -2350,12 +2142,11 @@ function user_login_string($course=NULL, $user=NULL) {
     if (isset($user->id) and $user->id) {
         $fullname = fullname($user, true);
         $username = "<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a>";
-        $instudentview = (!empty($USER->studentview)) ? get_string('instudentview') : '';
         if (isguest($user->id)) {
             $loggedinas = $realuserinfo.get_string('loggedinasguest').
                       " (<a target=\"{$CFG->framename}\" href=\"$wwwroot/login/index.php\">".get_string('login').'</a>)';
         } else {
-            $loggedinas = $realuserinfo.get_string('loggedinas', 'moodle', $username).' '.$instudentview.
+            $loggedinas = $realuserinfo.get_string('loggedinas', 'moodle', $username).
                       " (<a target=\"{$CFG->framename}\" href=\"$CFG->wwwroot/login/logout.php\">".get_string('logout').'</a>)';
         }
     } else {
@@ -2372,16 +2163,14 @@ function user_login_string($course=NULL, $user=NULL) {
  * @param string $navigation The breadcrumbs string to be printed
  */
 function print_navigation ($navigation) {
-   global $CFG, $USER;
+   global $CFG;
 
    if ($navigation) {
        if (! $site = get_site()) {
-           $site->shortname = get_string('home');
+           $site->shortname = get_string('home');;
        }
        $navigation = str_replace('->', '&raquo;', $navigation);
-       echo '<a target="'. $CFG->framename .'" href="'. $CFG->wwwroot.((!isadmin() && !empty($USER->id) && !empty($CFG->mymoodleredirect) && !isguest())
-                                                                       ? '/my' : '') .'/">'. $site->shortname .'</a> &raquo; '. $navigation;
-
+       echo '<a target="'. $CFG->framename .'" href="'. $CFG->wwwroot .'/">'. $site->shortname .'</a> &raquo; '. $navigation;
    }
 }
 
@@ -2616,19 +2405,18 @@ function print_user_picture($userid, $courseid, $picture, $size=0, $returnstring
     } else {
         $file = 'f2';
     }
-    $class = "userpicture";
     if ($picture) {  // Print custom user picture
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
-            $src =  $CFG->wwwroot .'/user/pix.php/'. $userid .'/'. $file .'.jpg"';
+            $output .= '<img class="userpicture" align="middle" src="'. $CFG->wwwroot .'/user/pix.php/'. $userid .'/'. $file .'.jpg"'.
+                       ' border="0" width="'. $size .'" height="'. $size .'" alt="" />';
         } else {
-            $src =  $CFG->wwwroot .'/user/pix.php?file=/'. $userid .'/'. $file .'.jpg"';
+            $output .= '<img class="userpicture" align="middle" src="'. $CFG->wwwroot .'/user/pix.php?file=/'. $userid .'/'. $file .'.jpg"'.
+                       ' border="0" width="'. $size .'" height="'. $size .'" alt="" />';
         }
     } else {         // Print default user pictures (use theme version if available)
-        $class .= " defaultuserpic";
-        $src =  "$CFG->pixpath/u/$file.png\"";
-    }
-    $output .= "<img class=\"$class\" align=\"middle\" src=\"$src".
+        $output .= "<img align=\"middle\" src=\"$CFG->pixpath/u/$file.png\"".
                    " border=\"0\" width=\"$size\" height=\"$size\" alt=\"\" />";
+    }
     if ($link) {
         $output .= '</a>';
     }
@@ -2648,7 +2436,7 @@ function print_user_picture($userid, $courseid, $picture, $size=0, $returnstring
  * @param user $user A {@link $USER} object representing a user
  * @param course $course A {@link $COURSE} object representing a course
  */
-function print_user($user, $course, $messageselect=false) {
+function print_user($user, $course) {
 
     global $CFG, $USER;
 
@@ -2686,13 +2474,6 @@ function print_user($user, $course, $messageselect=false) {
         $isadmin   = isadmin();
     }
 
-/// Get the hidden field list
-    if ($isteacher || $isadmin) {
-        $hiddenfields = array();
-    } else {
-        $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
-    }
-
     echo '<table class="userinfobox">';
     echo '<tr>';
     echo '<td class="left side">';
@@ -2707,26 +2488,24 @@ function print_user($user, $course, $messageselect=false) {
     if ($user->maildisplay == 1 or ($user->maildisplay == 2 and $course->category and !isguest()) or $isteacher) {
         echo $string->email .': <a href="mailto:'. $user->email .'">'. $user->email .'</a><br />';
     }
-    if (($user->city or $user->country) and (!isset($hiddenfields['city']) or !isset($hiddenfields['country']))) {
+    if ($user->city or $user->country) {
         echo $string->location .': ';
-        if ($user->city && !isset($hiddenfields['city'])) {
+        if ($user->city) {
             echo $user->city;
         }
-        if (!empty($countries[$user->country]) && !isset($hiddenfields['country'])) {
-            if ($user->city && !isset($hiddenfields['city'])) {
+        if (!empty($countries[$user->country])) {
+            if ($user->city) {
                 echo ', ';
             }
             echo $countries[$user->country];
         }
         echo '<br />';
     }
-    if (!isset($hiddenfields['lastaccess'])) {
-        if ($user->lastaccess) {
-            echo $string->lastaccess .': '. userdate($user->lastaccess);
-            echo '&nbsp ('. format_time(time() - $user->lastaccess, $datestring) .')';
-        } else {
-            echo $string->lastaccess .': '. $string->never;
-        }
+    if ($user->lastaccess) {
+        echo $string->lastaccess .': '. userdate($user->lastaccess);
+        echo '&nbsp ('. format_time(time() - $user->lastaccess, $datestring) .')';
+    } else {
+        echo $string->lastaccess .': '. $string->never;
     }
     echo '</div></td><td class="links">';
 
@@ -2743,16 +2522,6 @@ function print_user($user, $course, $messageselect=false) {
         }
     }
     echo '<a href="'. $CFG->wwwroot .'/user/view.php?id='. $user->id .'&amp;course='. $course->id .'">'. $string->fullprofile .'...</a>';
-
-    if (!empty($messageselect) && $isteacher) {
-        echo '<br /><input type="checkbox" name="';
-        if (isteacher($course->id, $user->id)) {
-            echo 'teacher';
-        } else {
-            echo 'user';
-        }
-        echo $user->id.'" /> ';
-    }
 
     echo '</td></tr></table>';
 }
@@ -2920,7 +2689,7 @@ function print_table($table) {
     $countcols = 0;
 
     if (!empty($table->head)) {
-        $countcols = count($table->head);
+        $countcols = count($table->head);;
         echo '<tr>';
         foreach ($table->head as $key => $heading) {
 
@@ -3131,7 +2900,6 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
     }
 
     if ($usehtmleditor) {
-
         if (!empty($courseid) and isteacher($courseid)) {
             echo ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea.php?id='. $courseid .'"></script>'."\n" : '';
         } else {
@@ -3153,11 +2921,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
     }
 
     echo '<textarea id="edit-'. $name .'" name="'. $name .'" rows="'. $rows .'" cols="'. $cols .'">';
-    if ($usehtmleditor) {
-        echo htmlspecialchars(stripslashes_safe($value)); // needed for editing of cleaned text!
-    } else {
-        p ($value);
-    }
+    p($value);
     echo '</textarea>'."\n";
 }
 
@@ -3216,65 +2980,10 @@ function update_course_icon($courseid) {
             $edit = 'on';
         }
         return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/view.php\">".
-            "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
-            "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
-            "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />".
-            "<input type=\"submit\" value=\"$string\" /></form>";
+               "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
+               "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
+               "<input type=\"submit\" value=\"$string\" /></form>";
     }
-}
-
-/**
- * Returns a turn student view on/off button for course in a self contained form.
- *
- * @uses $CFG
- * @uses $USER
- * @param int $courseid The course  to update by id as found in 'course' table
- * @return string
- */
-function update_studentview_button($courseid) {
-
-    global $CFG, $USER;
-
-    if (isteacheredit($courseid,0,true)) {
-        if (!empty($USER->studentview)) {
-            $svstring = get_string('studentviewoff');
-            $svedit = 'off';
-        } else {
-            $svstring = get_string('studentviewon');
-            $svedit = 'on';
-        }
-        $button = "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/view.php\">".
-            "<input type=\"hidden\" name=\"id\" value=\"$courseid\" />".
-            "<input type=\"hidden\" name=\"studentview\" value=\"$svedit\" />".
-            "<input type=\"hidden\" name=\"sesskey\" value=\"".sesskey()."\" />".
-            "<input type=\"submit\" value=\"$svstring\" /></form>";
-        return $button;
-    }
-}
-
-/**
- * Returns a turn edit on/off button for course in a self contained form.
- * Used to be an icon, but it's now a simple form button
- *
- * @uses $CFG
- * @uses $USER
- * @param int $courseid The course  to update by id as found in 'course' table
- * @return string
- */
-function update_mymoodle_icon() {
-
-    global $CFG, $USER;
-    
-    if (!empty($USER->editing)) {
-        $string = get_string('updatemymoodleoff');
-        $edit = 'off';
-    } else {
-        $string = get_string('updatemymoodleon');
-        $edit = 'on';
-    }
-    return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/my/index.php\">".
-        "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
-        "<input type=\"submit\" value=\"$string\" /></form>";
 }
 
 /**
@@ -3286,11 +2995,6 @@ function update_mymoodle_icon() {
  */
 function update_module_button($moduleid, $courseid, $string) {
     global $CFG, $USER;
-
-    // do not display if studentview is on
-    if (!empty($USER->studentview)) {
-        return '';
-    }
 
     if (isteacheredit($courseid)) {
         $string = get_string('updatethis', '', $string);
@@ -3358,33 +3062,6 @@ function update_categories_button() {
 }
 
 /**
- * Prints the editing button on search results listing
- * For bulk move courses to another category
- */
-
-function update_categories_search_button($search,$page,$perpage) {
-    global $CFG, $USER;
-
-    if (isadmin()) {
-        if (!empty($USER->categoriessearchediting)) {
-            $string = get_string("turneditingoff");
-            $edit = "off";
-            $perpage = 30;
-        } else {
-            $string = get_string("turneditingon");
-            $edit = "on";
-        }
-        return "<form target=\"$CFG->framename\" method=\"get\" action=\"$CFG->wwwroot/course/search.php\">".
-               "<input type=\"hidden\" name=\"edit\" value=\"$edit\" />".
-               "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />".
-               "<input type=\"hidden\" name=\"search\" value=\"$search\" />".
-               "<input type=\"hidden\" name=\"page\" value=\"$page\" />".
-               "<input type=\"hidden\" name=\"perpage\" value=\"$perpage\" />".
-               "<input type=\"submit\" value=\"$string\" /></form>";
-    }
-}
-
-/**
  * Prints the editing button on group page
  *
  * @uses $CFG
@@ -3441,15 +3118,12 @@ function update_groups_button($courseid) {
  * @param int $groupmode ?
  * @param string $currentgroup ?
  * @param string $urlroot ?
- * @param boolean $showall: if set to 0, it is a student in separate groups, do not display all participants
  * @todo Finish documenting this function
  */
-function print_group_menu($groups, $groupmode, $currentgroup, $urlroot, $showall=1) {
+function print_group_menu($groups, $groupmode, $currentgroup, $urlroot) {
 
 /// Add an "All groups" to the start of the menu
-    if ($showall){
-        $groupsmenu[0] = get_string('allparticipants');
-    }
+    $groupsmenu[0] = get_string('allparticipants');
     foreach ($groups as $key => $groupname) {
         $groupsmenu[$key] = $groupname;
     }
@@ -3735,7 +3409,7 @@ function print_date_selector($day, $month, $year, $currenttime=0) {
  * @param int $step ?
  * @todo Finish documenting this function
  */
-function print_time_selector($hour, $minute, $currenttime=0, $step=5 ,$return=false) {
+function print_time_selector($hour, $minute, $currenttime=0, $step=5) {
 
     if (!$currenttime) {
         $currenttime = time();
@@ -3750,9 +3424,8 @@ function print_time_selector($hour, $minute, $currenttime=0, $step=5 ,$return=fa
     for ($i=0; $i<=59; $i+=$step) {
         $minutes[$i] = sprintf("%02d",$i);
     }
-
-    return choose_from_menu($hours,   $hour,   $currentdate['hours'],   '','','',$return)
-        .choose_from_menu($minutes, $minute, $currentdate['minutes'], '','','',$return);
+    choose_from_menu($hours,   $hour,   $currentdate['hours'],   '');
+    choose_from_menu($minutes, $minute, $currentdate['minutes'], '');
 }
 
 /**
@@ -3868,14 +3541,12 @@ function print_scale_menu_helpbutton($courseid, $scale) {
 function error ($message, $link='') {
     global $CFG, $SESSION;
 
-    @header('HTTP/1.0 404 Not Found');
-
     print_header(get_string('error'));
     echo '<br />';
 
     $message = clean_text($message);   // In case nasties are in here
 
-    print_simple_box($message, '', '', '', '', 'errorbox');
+    print_simple_box($message, 'center', '', '#FFBBBB', 5, 'errorbox');
 
     if (!$link) {
         if ( !empty($SESSION->fromurl) ) {
@@ -3887,9 +3558,6 @@ function error ($message, $link='') {
     }
     print_continue($link);
     print_footer();
-    for ($i=0;$i<512;$i++) {  // Padding to help IE work with 404
-        echo ' ';
-    }
     die;
 }
 
@@ -4055,27 +3723,18 @@ function notice_yesno ($message, $linkyes, $linkno) {
  */
 function redirect($url, $message='', $delay='0') {
 
-    global $CFG;
-
-    //$url     = clean_text($url);
-    if (!empty($CFG->usesid) && !isset($_COOKIE[session_name()])) {
-       $url = sid_process_url($url);
-    }
-
+    $url     = clean_text($url);
     $message = clean_text($message);
 
     $url = html_entity_decode($url); // for php < 4.3.0 this is defined in moodlelib.php
     $url = str_replace(array("\n", "\r"), '', $url); // some more cleaning
     $encodedurl = htmlentities($url);
-    $tmpstr = clean_text('<a href="'.$encodedurl.'" />'); //clean encoded URL
-    $encodedurl = substr($tmpstr, 9, strlen($tmpstr)-13);
-    $url = addslashes(html_entity_decode($encodedurl));
 
     if (empty($message)) {
         echo '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />';
         echo '<script type="text/javascript">'. "\n" .'<!--'. "\n". "location.replace('$url');". "\n". '//-->'. "\n". '</script>';   // To cope with Mozilla bug
     } else {
-
+        
         if (empty($delay)) {
             $delay = 3;  // There's no point having a message with no delay
         }
@@ -4208,7 +3867,7 @@ function obfuscate_mailto($email, $label='', $dimmed=false) {
 var an equal sign, then the page number.
  * @param string $pagevar This is the variable name that you use for the page number in your code (ie. 'tablepage', 'blogpage', etc)
  */
-function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page',$nocurr=false) {
+function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page') {
 
     $maxdisplay = 18;
 
@@ -4222,7 +3881,7 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page
         $lastpage = ceil($totalcount / $perpage);
         if ($page > 15) {
             $startpage = $page - 10;
-            echo '&nbsp;<a href="'. $baseurl . $pagevar .'=0">1</a>&nbsp;...';
+            echo '&nbsp<a href="'. $baseurl . $pagevar .'=0">1</a>&nbsp;...';
         } else {
             $startpage = 0;
         }
@@ -4230,7 +3889,7 @@ function print_paging_bar($totalcount, $page, $perpage, $baseurl, $pagevar='page
         $displaycount = 0;
         while ($displaycount < $maxdisplay and $currpage < $lastpage) {
             $displaypage = $currpage+1;
-            if ($page == $currpage && empty($nocurr)) {
+            if ($page == $currpage) {
                 echo '&nbsp;&nbsp;'. $displaypage;
             } else {
                 echo '&nbsp;&nbsp;<a href="'. $baseurl . $pagevar .'='. $currpage .'">'. $displaypage .'</a>';
@@ -4361,7 +4020,7 @@ function print_side_block_start($heading='', $attributes = array()) {
 /**
  * Print table ending tags for a side block box.
  */
-function print_side_block_end($attributes = array()) {
+function print_side_block_end($attributes) {
     global $CFG;
 
     echo '</div></div>';
@@ -4480,7 +4139,7 @@ function page_id_and_class(&$getid, &$getclass) {
     static $id    = NULL;
 
     if(empty($class) || empty($id)) {
-        $path = str_replace($CFG->httpswwwroot.'/', '', $ME);  //Because the page could be HTTPSPAGEREQUIRED
+        $path = str_replace($CFG->wwwroot.'/', '', $ME);
         $path = str_replace('.php', '', $path);
         if (substr($path, -1) == '/') {
             $path .= 'index';
@@ -4488,10 +4147,6 @@ function page_id_and_class(&$getid, &$getclass) {
         if (empty($path) || $path == 'index') {
             $id    = 'site-index';
             $class = 'course';
-        } else if (substr($path, 0, 5) == 'admin') {
-            $id    = str_replace('/', '-', $path);
-            $id    = str_replace('admin2', 'admin', $id);
-            $class = 'admin';
         } else {
             $id    = str_replace('/', '-', $path);
             $class = explode('-', $id);
@@ -4518,17 +4173,7 @@ function print_maintenance_message () {
     print_footer();
 }
 
-/**
- * Adjust the list of allowed tags based on $CFG->allowobjectembed and user roles (admin)
- */
-function adjust_allowed_tags() {
 
-    global $CFG, $ALLOWED_TAGS;
-
-    if (!empty($CFG->allowobjectembed)) {
-        $ALLOWED_TAGS .= '<embed><object>';
-    }
-}
 
 /// Some code to print tabs
 

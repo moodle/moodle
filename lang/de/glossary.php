@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.6 development (2005101200)
+      // glossary.php - created with Moodle 1.4.3 (2004083130)
 
 
 $string['addcomment'] = 'Kommentar einfügen';
@@ -53,7 +53,7 @@ $string['concepts'] = 'Einträge';
 $string['configenablerssfeeds'] = 'Diese Einstellung ermöglicht die Nutzung der RSS-Feeds für alle Foren. Jedes Forum muss einzeln für den RSS-Feed aktiviert werden.';
 $string['currentglossary'] = 'Derzeitiges Glossar';
 $string['dateview'] = 'Suche nach Datum';
-$string['defaultapproval'] = 'Beiträge ohne Prüfung freigeben';
+$string['defaultapproval'] = 'Freigabe vor Veröffentlichung';
 $string['definition'] = 'Definition';
 $string['definitions'] = 'Definitionen';
 $string['deleteentry'] = 'Eintrag löschen';
@@ -84,7 +84,7 @@ $string['entryalreadyexist'] = 'Der Eintrag existiert bereits.';
 $string['entryapproved'] = 'Der Eintrag wurde eingefügt.';
 $string['entrydeleted'] = 'Eintrag gelöscht';
 $string['entryexported'] = 'Der Eintrag wurde erfolgreich exportiert.';
-$string['entryishidden'] = '( Dieser Eintrag ist derzeit nicht sichtbar.)';
+$string['entryishidden'] = '( Dieser Eintrag ist gegenwärtig nicht sichtbar.)';
 $string['entryleveldefaultsettings'] = 'Grundeinstellung für Einträge';
 $string['entrysaved'] = 'Der Eintrag wurde gespeichert';
 $string['entryupdated'] = 'Der Eintrag wurde aktualisiert.';
@@ -146,7 +146,7 @@ $string['rejectedentries'] = 'Abgelehnte Einträge';
 $string['rejectionrpt'] = 'Übersicht über abgelegte Beiträge';
 $string['rsssubscriberss'] = 'Anzeige von RSS Feed für \'$a\' -Konzepte';
 $string['searchindefinition'] = 'Volltextsuche';
-$string['secondaryglossary'] = 'Standardglossar (nicht kursübergreifend)';
+$string['secondaryglossary'] = 'Zweites Glossar';
 $string['sendinratings'] = 'Einsenden meiner letzten Bewertungen';
 $string['showall'] = 'Alle Beiträge anzeigen';
 $string['showalphabet'] = 'Anzeige nach Alphabet.';

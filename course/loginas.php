@@ -4,9 +4,9 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $id = required_param('id',PARAM_INT); // course id
-    $user = optional_param('user',0,PARAM_INT);   // login as this user
-    $return = optional_param('return','',PARAM_CLEAN); // return to the page we came from
+    require_variable($id);      // course id
+    optional_variable($user);   // login as this user
+    optional_variable($return); // return to the page we came from
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID was incorrect");

@@ -28,8 +28,7 @@ $QUIZ_QUESTION_TYPE = array ( MULTICHOICE   => get_string("multichoice", "quiz")
                               MATCH         => get_string("match", "quiz"),
                               DESCRIPTION   => get_string("description", "quiz"),
                               RANDOMSAMATCH => get_string("randomsamatch", "quiz"),
-                              MULTIANSWER   => get_string("multianswer", "quiz"),
-                              ESSAY         => get_string("essay", "quiz")
+                              MULTIANSWER   => get_string("multianswer", "quiz")
                               );
 // add remote question types
 if ($rqp_types = get_records('quiz_rqp_types')) {
@@ -72,8 +71,8 @@ function quiz_delete_quiz_question($id, &$modform) {
         // Delete all states associated with all attempts for this question in the quiz.
         if ($attempts = get_records('quiz_attempts', 'quiz', $modform->instance)) {
             foreach ($attempts as $attempt) {
-                delete_records('quiz_states', 'question', $question, 'attempt', $attempt->uniqueid);
-                delete_records('quiz_newest_states', 'questionid', $question, 'attemptid', $attempt->uniqueid);
+                delete_records('quiz_states', 'question', $question, 'attempt', $attempt->id);
+                delete_records('quiz_newest_states', 'questionid', $question, 'attemptid', $attempt->id);
             }
         }
         // Delete all instances of the question in the quiz (there
@@ -195,8 +194,10 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true) {
         echo "<p align=\"center\">";
         print_string("noquestions", "quiz");
         echo "</p>";
-        return 0;
+        return;
     }
+
+    $order = explode(",", $quiz->questions);
 
     if (!$questions = get_records_sql("SELECT q.*,c.course
                               FROM {$CFG->prefix}quiz_questions q,
@@ -206,19 +207,13 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true) {
         echo "<p align=\"center\">";
         print_string("noquestions", "quiz");
         echo "</p>";
-        return 0;
+        return;
     }
 
     $count = 0;
     $qno = 1;
     $sumgrade = 0;
-    $order = explode(",", $quiz->questions);
-    $lastindex = count($order)-1;
-    // If the list does not end with a pagebreak then add it on.
-    if ($order[$lastindex] != 0) {
-        $order[] = 0;
-        $lastindex++;
-    }
+    $total = count($order);
     echo "<form method=\"post\" action=\"edit.php\">";
     echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
 
@@ -234,17 +229,17 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true) {
                 echo '<td><hr noshade="noshade" /></td>';
                 echo '<td width="50">Page break</td>';
                 echo '<td><hr noshade="noshade" /></td><td width="45">';
-                if ($count > 1) {
+                if ($count != 1) {
                     echo "<a title=\"$strmoveup\" href=\"edit.php?up=$count&amp;sesskey=$USER->sesskey\"><img
-                         src=\"$CFG->pixpath/t/up.gif\" border=\"0\" alt=\"$strmoveup\" /></a>";
+                         src=\"../../pix/t/up.gif\" border=\"0\" alt=\"$strmoveup\" /></a>";
                 }
                 echo '&nbsp;';
-                if ($count < $lastindex) {
+                if ($count < $total-1) {
                     echo "<a title=\"$strmovedown\" href=\"edit.php?down=$count&amp;sesskey=$USER->sesskey\"><img
-                         src=\"$CFG->pixpath/t/down.gif\" border=\"0\" alt=\"$strmovedown\" /></a>";
+                         src=\"../../pix/t/down.gif\" border=\"0\" alt=\"$strmovedown\" /></a>";
 
                     echo "<a title=\"$strremove\" href=\"edit.php?delete=$count&amp;sesskey=$USER->sesskey\">
-                          <img src=\"$CFG->pixpath/t/delete.gif\" border=\"0\" alt=\"$strremove\" /></a>";
+                          <img src=\"../../pix/t/delete.gif\" border=\"0\" alt=\"$strremove\" /></a>";
                 }
                 echo '</td></tr></table></td>';
                 echo '<td colspan="2">&nbsp;</td></tr>';
@@ -262,13 +257,13 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true) {
         echo "<td>";
         if ($count != 0) {
             echo "<a title=\"$strmoveup\" href=\"edit.php?up=$count&amp;sesskey=$USER->sesskey\"><img
-                 src=\"$CFG->pixpath/t/up.gif\" border=\"0\" alt=\"$strmoveup\" /></a>";
+                 src=\"../../pix/t/up.gif\" border=\"0\" alt=\"$strmoveup\" /></a>";
         }
         echo "</td>";
         echo "<td>";
-        if ($count < $lastindex-1) {
+        if ($count != $total-2) {
             echo "<a title=\"$strmovedown\" href=\"edit.php?down=$count&amp;sesskey=$USER->sesskey\"><img
-                 src=\"$CFG->pixpath/t/down.gif\" border=\"0\" alt=\"$strmovedown\" /></a>";
+                 src=\"../../pix/t/down.gif\" border=\"0\" alt=\"$strmovedown\" /></a>";
         }
         echo "</td>";
 
@@ -293,19 +288,18 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true) {
         }
         echo '</td><td align="center">';
 
-        $context = $quiz->id ? '&amp;contextquiz='.$quiz->id : '';
-        $quiz_id = $quiz->id ? '&amp;quizid=' . $quiz->id : '';
-        echo "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/mod/quiz/preview.php?id=$qnum$quiz_id','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\">
-              <img src=\"$CFG->pixpath/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>";
         if ($canedit) {
+            $context = $quiz->id ? '&amp;contextquiz='.$quiz->id : '';
+            $quiz_id = $quiz->id ? '&amp;quizid=' . $quiz->id : '';
+            echo "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/mod/quiz/preview.php?id=$qnum$quiz_id','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\">
+                  <img src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>";
             echo "<a title=\"$stredit\" href=\"question.php?id=$qnum$context\">
-                  <img src=\"$CFG->pixpath/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>";
+                  <img src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>";
+            if ($allowdelete) {
+                echo "<a title=\"$strremove\" href=\"edit.php?delete=$count&amp;sesskey=$USER->sesskey\">
+                      <img src=\"../../pix/t/removeright.gif\" border=\"0\" alt=\"$strremove\" /></a>";
+            }
         }
-        if ($allowdelete) {
-            echo "<a title=\"$strremove\" href=\"edit.php?delete=$count&amp;sesskey=$USER->sesskey\">
-                  <img src=\"$CFG->pixpath/t/removeright.gif\" border=\"0\" alt=\"$strremove\" /></a>";
-        }
-
         echo "</td>";
         $count++;
         $sumgrade += $quiz->grades[$qnum];
@@ -432,15 +426,15 @@ function quiz_print_category_form($course, $current, $recurse=1, $showhidden=fal
 *
 * @param object $course   The course object
 * @param int $categoryid  The id of the question category to be displayed
-* @param int $quizid      The quiz id if we are in the context of a particular quiz, 0 otherwise
+* @param boolean $quizselected True if we are in the context of a particular quiz
 * @param int $recurse     This is 1 if subcategories should be included, 0 otherwise
 * @param int $page        The number of the page to be displayed
 * @param int $perpage     Number of questions to show per page
 * @param boolean $showhidden   True if also hidden questions should be displayed
 */
-function quiz_print_cat_question_list($course, $categoryid, $quizid,
- $recurse=1, $page, $perpage, $showhidden=false, $sortorder='qtype, name ASC') {
-    global $QUIZ_QUESTION_TYPE, $USER, $CFG;
+function quiz_print_cat_question_list($course, $categoryid, $quizselected=true,
+ $recurse=1, $page, $perpage, $showhidden=false) {
+    global $QUIZ_QUESTION_TYPE, $USER;
 
     $strcategory = get_string("category", "quiz");
     $strquestion = get_string("question", "quiz");
@@ -463,15 +457,11 @@ function quiz_print_cat_question_list($course, $categoryid, $quizid,
     $strcreatemultiple = get_string("createmultiple", "quiz");
     $strpreview = get_string("preview","quiz");
 
-    $strsortalpha  = get_string("sortalpha", "quiz");
-    $strsortage    = get_string("sortage", "quiz");
-    $strsortsubmit = get_string("sortsubmit", "quiz");
-
     if (!$categoryid) {
         echo "<p align=\"center\"><b>";
         print_string("selectcategoryabove", "quiz");
         echo "</b></p>";
-        if ($quizid) {
+        if ($quizselected) {
             echo "<p>";
             print_string("addingquestions", "quiz");
             echo "</p>";
@@ -510,7 +500,7 @@ function quiz_print_cat_question_list($course, $categoryid, $quizid,
         helpbutton("import", $strimportquestions, "quiz");
         echo ' | ';
     }
-    echo "<a href=\"export.php?category={$category->id}&amp;courseid={$course->id}\">$strexportquestions</a>";
+    echo '<a href="export.php?category='.$category->id.'">'.$strexportquestions.'</a>';
     helpbutton("export", $strexportquestions, "quiz");
     echo '</font></td></tr>';
 
@@ -530,16 +520,11 @@ function quiz_print_cat_question_list($course, $categoryid, $quizid,
         return;
     }
 
-    if (!$questions = get_records_select('quiz_questions', "category IN ($categorylist) AND parent = '0' $showhidden", $sortorder, '*', $page*$perpage, $perpage)) {
-        // There are no questions on the requested page.
-        $page = 0;
-        if (!$questions = get_records_select('quiz_questions', "category IN ($categorylist) AND parent = '0' $showhidden", $sortorder, '*', 0, $perpage)) {
-            // There are no questions at all
-            echo "<p align=\"center\">";
-            print_string("noquestions", "quiz");
-            echo "</p>";
-            return;
-        }
+    if (!$questions = get_records_select('quiz_questions', "category IN ($categorylist) AND parent = '0' $showhidden", 'qtype, name ASC', '*', $page*$perpage, $perpage)) {
+        echo "<p align=\"center\">";
+        print_string("noquestions", "quiz");
+        echo "</p>";
+        return;
     }
 
     print_paging_bar($totalnumber, $page, $perpage,
@@ -551,41 +536,38 @@ function quiz_print_cat_question_list($course, $categoryid, $quizid,
     echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
     print_simple_box_start('center', '100%', '#ffffff', 0);
     echo '<table id="categoryquestions" cellspacing="0"><tr>';
-    $actionwidth = $canedit ? 95 : 70;
-    echo "<th width=\"$actionwidth\" nowrap=\"nowrap\" class=\"header\">$straction</th>";
-    $sortoptions = array('qtype, name ASC' => $strsortalpha,
-                         'id ASC' => $strsortage);
-    $orderselect  = choose_from_menu ($sortoptions, 'sortorder', $sortorder, false, 'this.form.submit();', '0', true);
-    $orderselect .= '<noscript><input type="submit" value="'.$strsortsubmit.'" /></noscript>';
-    echo "<th width=\"100%\" align=\"left\" nowrap=\"nowrap\" class=\"header\">$strquestionname $orderselect</th>
+    if ($canedit) {
+        echo "<th width=\"95\" nowrap=\"nowrap\" class=\"header\">$straction</th>";
+    }
+    echo "<th width=\"100%\" align=\"left\" nowrap=\"nowrap\" class=\"header\">$strquestionname</th>
     <th nowrap=\"nowrap\" class=\"header\">$strtype</th>";
     echo "</tr>\n";
     foreach ($questions as $question) {
         if ($question->qtype == RANDOM) {
             //continue;
         }
-        echo "<tr>\n<td>\n";
-        if ($quizid) {
-            echo "<a title=\"$straddtoquiz\" href=\"edit.php?addquestion=$question->id&amp;sesskey=$USER->sesskey\"><img
-                  src=\"$CFG->pixpath/t/moveleft.gif\" border=\"0\" alt=\"$straddtoquiz\" /></a>&nbsp;";
-        }
-        echo "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/mod/quiz/preview.php?id=$question->id&quizid=$quizid','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\"><img
-              src=\"$CFG->pixpath/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>&nbsp;";
+        echo "<tr>\n";
         if ($canedit) {
-            echo "<a title=\"$stredit\" href=\"question.php?id=$question->id\"><img
-                 src=\"$CFG->pixpath/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>&nbsp;";
-            // hide-feature
-            if($question->hidden) {
-                echo "<a title=\"$strrestore\" href=\"question.php?id=$question->id&amp;hide=0&amp;sesskey=$USER->sesskey\"><img
-                     src=\"$CFG->pixpath/t/restore.gif\" border=\"0\" alt=\"$strrestore\" /></a>";
-            } else {
-                echo "<a title=\"$strdelete\" href=\"question.php?id=$question->id&amp;delete=$question->id\"><img
-                     src=\"$CFG->pixpath/t/delete.gif\" border=\"0\" alt=\"$strdelete\" /></a>";
-            }
+            echo "<td>\n";
+                if ($quizselected) {
+                    echo "<a title=\"$straddtoquiz\" href=\"edit.php?addquestion=$question->id&amp;sesskey=$USER->sesskey\"><img
+                     src=\"../../pix/t/moveleft.gif\" border=\"0\" alt=\"$straddtoquiz\" /></a>&nbsp;";
+                }
+                echo "<a title=\"$strpreview\" href=\"javascript:void();\" onClick=\"openpopup('/mod/quiz/preview.php?id=$question->id','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\"><img
+                      src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>&nbsp;";
+                echo "<a title=\"$stredit\" href=\"question.php?id=$question->id\"><img
+                     src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>&nbsp;";
+                // hide-feature
+                if($question->hidden) {
+                    echo "<a title=\"$strrestore\" href=\"question.php?id=$question->id&amp;hide=0&amp;sesskey=$USER->sesskey\"><img
+                         src=\"../../pix/t/restore.gif\" border=\"0\" alt=\"$strrestore\" /></a>";
+                } else {
+                    echo "<a title=\"$strdelete\" href=\"question.php?id=$question->id&amp;delete=$question->id\"><img
+                         src=\"../../pix/t/delete.gif\" border=\"0\" alt=\"$strdelete\" /></a>";
+                }
+                echo "&nbsp;<input title=\"$strselect\" type=\"checkbox\" name=\"q$question->id\" value=\"1\" />";
+            echo "</td>\n";
         }
-        echo "&nbsp;<input title=\"$strselect\" type=\"checkbox\" name=\"q$question->id\" value=\"1\" />";
-        echo "</td>\n";
-
         if ($question->hidden) {
             echo '<td class="dimmed_text">'.$question->name."</td>\n";
         } else {
@@ -604,19 +586,17 @@ function quiz_print_cat_question_list($course, $categoryid, $quizid,
     echo '<table class="quiz-edit-selected"><tr><td colspan="2">';
     echo '<a href="javascript:select_all_in(\'TABLE\', null, \'categoryquestions\');">'.$strselectall.'</a> /'.
      ' <a href="javascript:deselect_all_in(\'TABLE\', null, \'categoryquestions\');">'.$strselectnone.'</a>'.
-     '</td><td align="right"><b>&nbsp;'.get_string('withselected', 'quiz').':</b></td></tr><tr><td>';
-    if ($quizid) {
+     '</td><td align="right"><b>'.get_string('withselected', 'quiz').':</b></td></tr><tr><td>';
+    if ($quizselected) {
         echo "<input type=\"submit\" name=\"add\" value=\"<< $straddtoquiz\" />\n";
         echo '</td><td>';
     }
-    if ($canedit) {
-        echo '<input type="submit" name="deleteselected" value="'.$strdelete."\" /></td><td>\n";
-        echo '<input type="submit" name="move" value="'.get_string('moveto', 'quiz')."\" />\n";
-        quiz_category_select_menu($course->id, false, true, $category->id);
-    }
+    echo '<input type="submit" name="deleteselected" value="'.$strdelete."\" /></td><td>\n";
+    echo '<input type="submit" name="move" value="'.get_string('moveto', 'quiz')."\" />\n";
+    quiz_category_select_menu($course->id, false, true, $category->id);
     echo "</td></tr></table>";
 
-    if ($quizid) {
+    if ($quizselected) {
         for ($i=1;$i<=10; $i++) {
             $randomcount[$i] = $i;
         }

@@ -4,37 +4,27 @@
     confirm_sesskey();
 
     // left menu code
-    // check to see if the user can see the left menu
-    if (!isteacher($course->id)) {
-        $lesson->displayleft = lesson_displayleftif($lesson);
-    }
     if ($lesson->displayleft) {
        if($firstpageid = get_field('lesson_pages', 'id', 'lessonid', $lesson->id, 'prevpageid', 0)) {
+               echo '<table><tr valign="top"><td>';
             // print the pages
-            echo '<table><tr valign="top"><td>';
-            // skip navigation link
-            echo '<a href="#maincontent" class="skip">'.get_string('skip', 'lesson').'</a>';
-            echo '<form name="lessonpages2" method="post" action="view.php">'."\n";
-            echo '<input type="hidden" name="id" value="'. $cm->id .'" />'."\n";
-            echo '<input type="hidden" name="action" value="navigation" />'."\n";
-            echo '<input type="hidden" name="pageid" />'."\n";
-                echo '<div class="leftmenu_container">'."\n";
-                    echo '<div class="leftmenu_title">'.get_string('lessonmenu', 'lesson').'</div>'."\n";
-                    echo '<div class="leftmenu_courselink">';
-                    echo "<a href=\"../../course/view.php?id=$course->id\">".get_string("mainmenu", "lesson")."</a>";
-                    echo '</div>'."\n";
-                    echo '<div class="leftmenu_links">'."\n";
+            echo '<form name="lessonpages2" method="post" action="view.php">';
+            echo '<input type="hidden" name="id" value="'. $cm->id .'" />';
+            echo '<input type="hidden" name="action" value="navigation" />';
+            echo '<input type="hidden" name="pageid" />';
+                    echo "<table><tr><td valign=\"top\">";
+                    echo "<div class=\"leftmenutable\">".get_string('lessonmenu', 'lesson')."<br />";
+                    echo "<div class=\"main\">";
+                    echo "<a href=\"../../course/view.php?id=$course->id\">".get_string("mainmenu", "lesson")."</a><br />";                                    echo "</div>";
+                    echo '<div class="leftmenu">';
                     lesson_print_tree_menu($lesson->id, $firstpageid, $cm->id);
-                    echo '</div>'."\n";
-                echo '</div>'."\n";
-            echo '</form>'."\n";
+                    echo '</div></div></td></tr></table>'; //close lmlinks
+            echo '</form>';
             echo '</td><td align="center" width="100%">';
-            // skip to anchor
-            echo '<a name="maincontent" id="maincontent" title="'.get_string('anchortitle', 'lesson').'"></a>';
         }
     }
 
-    // This is the warning msg for teachers to inform them that cluster and unseen does not work while logged in as a teacher
+    /// CDC-FLAG /// 6/21/04  This is the warning msg for teachers to inform them that cluster and unseen does not work while logged in as a teacher
     if(isteacher($course->id)) {
         if (execute_teacherwarning($lesson->id)) {
             $warningvars->cluster = get_string("clusterjump", "lesson");
@@ -42,8 +32,9 @@
             echo "<p align=\"center\">".get_string("teacherjumpwarning", "lesson", $warningvars)."</p>";
         }
     }        
+    /// CDC-FLAG ///
 
-    // This is the code updates the lesson time for a timed test
+    /// CDC-FLAG /// 6/14/04 -- This is the code updates the lesson time for a timed test
     // get time information for this user
     if (!isteacher($course->id)) {
         if (!$timer = get_records_select('lesson_timer', "lessonid = $lesson->id AND userid = $USER->id", 'starttime')) {
@@ -91,6 +82,7 @@
             error("Error: could not update lesson_timer table");
         }
     }
+    /// CDC-FLAG ///            
 
     // record answer (if necessary) and show response (if none say if answer is correct or not)
     if (empty($_POST['pageid'])) {
@@ -107,6 +99,7 @@
     $isessayquestion = false; // use this to turn off review button on essay questions
     $newpageid = 0; // stay on the page
     switch ($page->qtype) {
+        /// CDC-FLAG ///
          case LESSON_ESSAY :
             $isessayquestion = true;
             if (!$useranswer = $_POST['answer']) {
@@ -119,7 +112,7 @@
                 error("Continue: No answers found");
             }
             $correctanswer = false;
-            $response = get_string('defaultessayresponse', 'lesson');
+            $response = "Your essay will be graded by the course instructor.";
             foreach ($answers as $answer) {
                 $answerid = $answer->id;
                 $newpageid = $answer->jumpto;
@@ -133,58 +126,66 @@
             $userresponse = addslashes(serialize($userresponse));
         
              break;
+        /// CDC-FLAG ///
          case LESSON_SHORTANSWER :
             if (!$useranswer = $_POST['answer']) {
                 $noanswer = true;
                 break;
-            }            
-            $useranswer = stripslashes(clean_param($useranswer, PARAM_CLEAN));
+            }
+            $useranswer = clean_param($useranswer, PARAM_CLEAN);
             $userresponse = addslashes($useranswer);
-
+        
             if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
                 error("Continue: No answers found");
             }
-
             foreach ($answers as $answer) {
-                // massage the wild cards (if present)
-                if (strpos(' '.$answer->answer, '*')) {
-                    $answer->answer = str_replace('\*','@@@@@@', $answer->answer);
-                    $answer->answer = str_replace('*','.*', $answer->answer);
-                    $answer->answer = str_replace('@@@@@@', '\*', $answer->answer);    
-                }
-                $answer->answer = str_replace('.*','@@@@@@', $answer->answer);
-                $answer->answer = preg_quote($answer->answer, '/');
-                $answer->answer = str_replace('@@@@@@', '.*', $answer->answer);    
-
-                if (lesson_iscorrect($pageid, $answer->jumpto) or 
-                    ($lesson->custom && $answer->score > 0) ) {
+                /// CDC-FLAG ///
+                if ($lesson->custom && $answer->score > 0) {
                     if ($page->qoption) {
                         // case sensitive
-                        if (preg_match('/^'.$answer->answer.'$/', $useranswer)) {
+                        if ($answer->answer == $useranswer) {
                             $correctanswer = true;
                             $answerid = $answer->id;
                             $newpageid = $answer->jumpto;
                             if (trim(strip_tags($answer->response))) {
                                 $response = $answer->response;
                             }
-                            break;
                         }
                     } else {
                         // case insensitive
-                        if (preg_match('/^'.$answer->answer.'$/i', $useranswer)) {
+                        if (strcasecmp($answer->answer, $useranswer) == 0) {
                             $correctanswer = true;
                             $answerid = $answer->id;
                             $newpageid = $answer->jumpto;
                             if (trim(strip_tags($answer->response))) {
                                 $response = $answer->response;
                             }
-                            break;
+                        }
+                    }
+                } elseif (lesson_iscorrect($pageid, $answer->jumpto) && !$lesson->custom) {  /// CDC-FLAG 6/21/04 ///
+                    if ($page->qoption) {
+                        // case sensitive
+                        if ($answer->answer == $useranswer) {
+                            $correctanswer = true;
+                            $newpageid = $answer->jumpto;
+                            if (trim(strip_tags($answer->response))) {
+                                $response = $answer->response;
+                            }
+                        }
+                    } else {
+                        // case insensitive
+                        if (strcasecmp($answer->answer, $useranswer) == 0) {
+                            $correctanswer = true;
+                            $newpageid = $answer->jumpto;
+                            if (trim(strip_tags($answer->response))) {
+                                $response = $answer->response;
+                            }
                         }
                     }
                 } else {
                     // see if user typed in any of the wrong answers
                     // don't worry about case
-                    if (preg_match('/^'.$answer->answer.'$/i', $useranswer)) {
+                    if (strcasecmp($answer->answer, $useranswer) == 0) {
                         $newpageid = $answer->jumpto;
                         $answerid = $answer->id;
                         if (trim(strip_tags($answer->response))) {
@@ -214,6 +215,7 @@
             if (lesson_iscorrect($pageid, $answer->jumpto)) {
                 $correctanswer = true;
             }
+            /* CDC-FLAG */  
             if ($lesson->custom) {
                 if ($answer->score > 0) {
                     $correctanswer = true;
@@ -221,6 +223,7 @@
                     $correctanswer = false;
                 }
             }
+            /// CDC-FLAG 6/21/04 ///
             $newpageid = $answer->jumpto;
             if (!$response = trim($answer->response)) {
                 if ($correctanswer) {
@@ -253,7 +256,7 @@
                 $nhits = 0;
                 $correctresponse = '';
                 $wrongresponse = '';
-                // this is for custom scores.  If score on answer is positive, it is correct                    
+                /// CDC-FLAG /// 6/11/04 this is for custom scores.  If score on answer is positive, it is correct                    
                 if ($lesson->custom) {
                     $ncorrect = 0;
                     $nhits = 0;
@@ -318,6 +321,7 @@
                         }
                     }
                 }
+                /// CDC-FLAG ///
                 if ((count($useranswers) == $ncorrect) and ($nhits == $ncorrect)) {
                     $correctanswer = true;
                     if (!$response = $correctresponse) {
@@ -343,6 +347,7 @@
                 if (lesson_iscorrect($pageid, $answer->jumpto)) {
                     $correctanswer = true;
                 }
+                /* CDC-FLAG */
                 if ($lesson->custom) {
                     if ($answer->score > 0) {
                         $correctanswer = true;
@@ -350,6 +355,7 @@
                         $correctanswer = false;
                     }
                 }
+                /// CDC-FLAG ///
                 $newpageid = $answer->jumpto;
                 if (!$response = trim($answer->response)) {
                     if ($correctanswer) {
@@ -360,6 +366,8 @@
                 }
             }
             break;
+        
+        /// CDC-FLAG /// 6/14/04  -- added responses    
         case LESSON_MATCHING :
             if (isset($_POST['response']) && is_array($_POST['response'])) { // only arrays should be submitted
                 $response = array();
@@ -415,6 +423,7 @@
                         break;
                     }
                 }
+                // NoticeFix
                 if (isset($correctpageid)) {
                     $newpageid = $correctpageid;
                 }
@@ -438,6 +447,7 @@
                 $answerid = $wronganswerid;
             }
             break;
+            /// CDC-FLAG ///
 
         case LESSON_NUMERICAL :
             // set defaults
@@ -471,6 +481,7 @@
                     if (lesson_iscorrect($pageid, $newpageid)) {
                         $correctanswer = true;
                     }
+                    /// CDC-FLAG ///
                     if ($lesson->custom) {
                         if ($answer->score > 0) {
                             $correctanswer = true;
@@ -479,6 +490,7 @@
                             $correctanswer = false;
                         }
                     }
+                    /// CDC-FLAG ///
                     break;
                 }
             }
@@ -496,7 +508,7 @@
         case LESSON_BRANCHTABLE:
             $noanswer = false;
             $newpageid = optional_param('jumpto', NULL, PARAM_INT);
-            // going to insert into lesson_branch                
+            /// CDC-FLAG /// 6/15/04 going to insert into lesson_branch                
             if ($newpageid == LESSON_RANDOMBRANCH) {
                 $branchflag = 1;
             } else {
@@ -519,15 +531,17 @@
             if (!insert_record("lesson_branch", $branch)) {
                 error("Error: could not insert row into lesson_branch table");
             }
+            /// CDC-FLAG ///
 
-            //  this is called when jumping to random from a branch table
+            /// CDC-FLAG ///  this is called when jumping to random from a branch table
             if($newpageid == LESSON_UNSEENBRANCHPAGE) {
                 if (isteacher($course->id)) {
                      $newpageid = LESSON_NEXTPAGE;
                 } else {
-                     $newpageid = lesson_unseen_question_jump($lesson->id, $USER->id, $pageid);  // this may return 0
+                     $newpageid = lesson_unseen_question_jump($lesson->id, $USER->id, $pageid);  // this may return 0 //CDC Chris Berri.....this is where it sets the next page id for unseen?
                 }
             }
+            /// CDC-FLAG 6/15/04 ///
             // convert jumpto page into a proper page id
             if ($newpageid == 0) {
                 $newpageid = $pageid;
@@ -536,13 +550,14 @@
                     // no nextpage go to end of lesson
                     $newpageid = LESSON_EOL;
                 }
-            } elseif ($newpageid == LESSON_PREVIOUSPAGE) {
+    /* CDC-FLAG */  } elseif ($newpageid == LESSON_PREVIOUSPAGE) {
                 $newpageid = $page->prevpageid;
             } elseif ($newpageid == LESSON_RANDOMPAGE) {
                 $newpageid = lesson_random_question_jump($lesson->id, $pageid);
-            } elseif ($newpageid == LESSON_RANDOMBRANCH) {
+            } elseif ($newpageid == LESSON_RANDOMBRANCH) {  // 6/15/04
                 $newpageid = lesson_unseen_branch_jump($lesson->id, $USER->id);
             }
+            /// CDC-FLAG ///
             // no need to record anything in lesson_attempts            
             redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$newpageid");
             print_footer($course);
@@ -568,7 +583,7 @@
                 $attempt->useranswer = $userresponse;
             }
             $attempt->timeseen = time();
-            // dont want to insert the attempt if they ran out of time
+            /// CDC-FLAG /// -- dont want to insert the attempt if they ran out of time
             if (!$outoftime) {
                 // if allow modattempts, then update the old attempt record, otherwise, insert new answer record
                 if (isset($USER->modattempts[$lesson->id])) {
@@ -578,6 +593,7 @@
                     error("Continue: attempt not inserted");
                 }
             }
+            /// CDC-FLAG ///
             if (!$correctanswer and ($newpageid == 0)) {
                 // wrong answer and student is stuck on this page - check how many attempts 
                 // the student has had at this page/question
@@ -647,7 +663,7 @@
             }
         }
     
-        // this calculates the ongoing score
+        /// CDC-FLAG 6/21/04 ///  this calculates the ongoing score
         if ($lesson->ongoing) {
             if (isteacher($course->id)) {
                 echo "<div align=\"center\">".get_string("teacherongoingwarning", "lesson")."</div><br>";
@@ -659,6 +675,7 @@
                 lesson_calculate_ongoing_score($lesson, $USER->id, $ntries);
             }
         }
+        /// CDC-FLAG ///
 
         // display response (if there is one - there should be!)
         if ($response) {
@@ -675,15 +692,14 @@
                     print_simple_box(get_string("secondpluswrong", "lesson"), "center");
                 }
             } else {
-                $options = new stdClass;
-                $options->noclean = true;
-                print_simple_box(format_text($response, FORMAT_MOODLE, $options), 'center');
+                print_simple_box(format_text($response), 'center');
             }
             echo "</td></tr></table>\n";
         }
     }
 
-    // this is where some jump numbers are interpreted
+
+    /// CDC-FLAG 6/18/04 ///  - this is where some jump numbers are interpreted
     if($outoftime) {
         $newpageid = LESSON_EOL;  // ran out of time for the test, so go to eol
     } elseif (isset($USER->modattempts[$lesson->id])) {
@@ -711,7 +727,7 @@
             error("Error: could not find page");
         }
         if ($page->qtype == LESSON_CLUSTER) {
-            $newpageid = lesson_cluster_jump($lesson->id, $USER->id, $page->id);
+            $newpageid = LESSON_CLUSTERJUMP;
         } elseif ($page->qtype == LESSON_ENDOFCLUSTER) {
             $jump = get_field("lesson_answers", "jumpto", "pageid", $page->id, "lessonid", $lesson->id);
             if ($jump == LESSON_NEXTPAGE) {
@@ -750,7 +766,6 @@
         }
     }
 
-    // NOTE:  Should this code be coverted from form/javascript to just longer links with the variables in the url?
     echo "<form name=\"pageform\" method =\"post\" action=\"view.php\">\n";
     echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\">\n";
     echo "<input type=\"hidden\" name=\"action\" value=\"navigation\">\n";
@@ -759,20 +774,20 @@
     if (isset($USER->modattempts[$lesson->id])) {
         echo "<p align=\"center\">".
             get_string("savechangesandeol", "lesson")."<br /><br />".
-            "<div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.pageform.pageid.value=".LESSON_EOL.";document.pageform.submit();\">".
-            get_string("savechanges", "lesson")."</a></div></p>\n";
+            "<input type=\"submit\" onClick='pageform.pageid.value=".LESSON_EOL.";' name=\"save\" value=\"".
+            get_string("savechanges", "lesson")."\"></p>\n";
         echo "<p align=\"center\">".get_string("or", "lesson")."<br /><br />".
             get_string("continuetoanswer", "lesson")."</p>\n";
     }
 
     if ($lesson->review && !$correctanswer && !$noanswer && !$isessayquestion) {
-        echo "<p><div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.pageform.pageid.value=$pageid;document.pageform.submit();\">".
-            get_string("reviewquestionback", "lesson")."</a></div></p>\n";
-        echo "<p><div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.pageform.submit();\">".
-            get_string("reviewquestioncontinue", "lesson")."</a></div></p>\n";
+        echo "<p align=\"center\"><input type=\"submit\" onClick='pageform.pageid.value=$pageid;' name=\"review\" value=\"".
+            get_string("reviewquestionback", "lesson")."\"></p>\n";
+        echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
+            get_string("reviewquestioncontinue", "lesson")."\"></p>\n";
     } else {
-        echo "<p><div align=\"center\" class=\"lessonbutton standardbutton\"><a href=\"javascript:document.pageform.submit();\">".
-            get_string("continue", "lesson")."</a></div></p>\n";
+        echo "<p align=\"center\"><input type=\"submit\" name=\"continue\" value=\"".
+            get_string("continue", "lesson")."\"></p>\n";
     }
     echo "</form>\n";
 

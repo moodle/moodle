@@ -1,42 +1,41 @@
 <?PHP // $Id$ 
-      // block_rss_client.php - created with Moodle 1.6 development (2005053000)
+      // client.php - created with Moodle 1.5 ALPHA (2005051500)
 
-
-$string['addfeed'] = 'Prida» nové zdrojové URL:';
-$string['addheadlineblock'] = 'Prida»  RSS blok';
+$string['addfeed'] = 'Prida» URL pre kanál noviniek:';
+$string['addheadlineblock'] = 'Prida»  RSS hlavièku bloku';
 $string['addnew'] = 'Prida» nové';
-$string['choosefeedlabel'] = 'Vyberte si zdroje, ktoré chcete, aby boli aktívne v tomto bloku:';
+$string['choosefeedlabel'] = 'Vyberte si kanály, ktoré chcete, aby boli aktívne v tomto bloku:';
 $string['clientchannellink'] = 'Zdrojová stránka...';
-$string['clientnumentries'] = 'Východzí poèet zobrazovaných polo¾iek z jedného zdroja.';
-$string['clientshowchannellinklabel'] = 'Má by» zobrazený odkaz na pôvodné stránky (odkaz na kanál)? (Ak nie je odkaz v zdroji k dispozícii, nebude sa zobrazova»):';
+$string['clientnumentries'] = 'Východiskové nastavenie poètu záznamov v jednom kanáli';
+$string['clientshowchannellinklabel'] = 'Má by» zobrazený odkaz na domovskú stránku (odkaz na kanál)? (Poznámka - berte prosím na vedomie, ¾e ak tento odkaz nie je podporovaný v kanáli noviniek, potom nebude zobrazený):';
 $string['clientshowimagelabel'] = 'Zobrazi» obrázok kanálu, ak je dostupný:';
-$string['configblock'] = 'Nastavi» tento blok';
-$string['couldnotfindfeed'] = 'Nena¹iel sa zdroj s id';
-$string['customtitlelabel'] = 'Vlastný nadpis (ak ponecháte prázdne, pou¾ije sa nadpis dodaný zdrojom):';
-$string['deletefeedconfirm'] = 'Ste si istý, ¾e chcete odstráni» tento zdroj?';
+$string['configblock'] = 'Konfigurova» tento blok';
+$string['couldnotfindfeed'] = 'Systém nena¹iel kanál s id';
+$string['customtitlelabel'] = 'Vlastný titul (ponechajte prázdne aby sa pou¾il titul z kanálu):';
+$string['deletefeedconfirm'] = 'Ste si istý, ¾e chcete vymaza» tento kanál?';
 $string['displaydescriptionlabel'] = 'Zobrazi» popis ka¾dého odkazu?';
-$string['editfeeds'] = 'Upravi», odobera» alebo neodobera» RSS/Atom novinky';
-$string['editnewsfeeds'] = 'Upravi» zdroj noviniek';
-$string['editrssblock'] = 'Upravi» RSS blok';
-$string['feed'] = 'Zdroj noviniek';
-$string['feedadded'] = 'Bol pridaný zdroj noviniek';
-$string['feeddeleted'] = 'Zdroj noviniek bol odstránený';
-$string['feeds'] = 'Zdroje noviniek';
-$string['feedsaddedit'] = 'Prida»/Upravi» zdroje noviniek';
-$string['feedsconfigurenewinstance'] = 'Tento blok zatiaµ nemô¾e zobrazova» ¾iadny RSS zdroj. Najprv ho musíte nastavi», kliknutím sem.';
-$string['feedstitle'] = 'Vzdialené RSS zdroje';
-$string['feedupdated'] = 'Zdroj noviniek bol aktualizovaný';
-$string['findmorefeeds'] = 'Nájs» ïal¹ie RSS zdroje';
-$string['managefeeds'] = 'Spravova» v¹etky moje RSS zdroje';
-$string['nofeeds'] = 'Táto web stránka nemá definované ¾iadne RSS zdroje.';
-$string['pickfeed'] = 'Vybra» zdroj noviniek';
-$string['remotenewsfeed'] = 'Vzdialený RSS zdroj noviniek';
-$string['seeallfeeds'] = 'Zobrazi» v¹etky zdroje';
-$string['shownumentrieslabel'] = 'Maximálny poèet polo¾iek na zobrazovanie v jednom bloku';
-$string['submitters'] = 'Kto bude oprávnený definova» nové RSS zdroje? Definované zdroje budú dostupné na ktorejkoµvek stránke v rámci www stránok Moodle.';
+$string['editfeeds'] = 'Upravi», prihlási» alebo odhlási» sa z RSS/Atom noviniek';
+$string['editnewsfeeds'] = 'Upravi» kanál noviniek';
+$string['editrssblock'] = 'Upravi» RSS hlavièku bloku';
+$string['feed'] = 'Kanál noviniek';
+$string['feedadded'] = 'Bol pridaný kanál s novinkami';
+$string['feeddeleted'] = 'Kanál s novinkami bol vymazaný';
+$string['feedupdated'] = 'Kanál s novinkami bol aktualizovaný';
+$string['feeds'] = 'Kanál s novinkami';
+$string['feedsaddedit'] = 'Prida»/Upravi» kanál s novinkami';
+$string['feedsconfigurenewinstance'] = 'Predtým ako mô¾e tento blok zobrazova» RSS kanály, je potrebné ho nakonfigurova», kliknutím na tento odkaz.';
+$string['feedstitle'] = 'Vzdialený RSS kanál';
+$string['findmorefeeds'] = 'Nájs» viac RSS kanálov';
+$string['managefeeds'] = 'Spravova» v¹etky moje RSS kanály';
+$string['nofeeds'] = 'Pre túto web stránku nie sú definované ¾iadne RSS kanály';
+$string['pickfeed'] = 'Vybra» kanál s novinkami';
+$string['remotenewsfeed'] = 'Vzdialený kanál s novinkami';
+$string['seeallfeeds'] = 'Prezrie» si v¹etky kanály';
+$string['shownumentrieslabel'] = 'Maximálny poèet záznamov na zobrazovanie v jednom bloku';
+$string['submitters'] = 'Kto bude oprávnený definova» nové RSS kanály? Definované kanály budú dostupné na ktorejkoµvek stránke v rámci celých va¹ich www stránok.';
 $string['timeout'] = 'blockrsstimeout';
-$string['timeoutdesc'] = 'Èas v minútach, poèas ktorého sa budú uchováva» RSS zdroje vo vyrovnávacej pamäti (cache).';
-$string['updatefeed'] = 'Aktualizova» URL zdroje noviniek';
-$string['validatefeed'] = 'Overi» validitu zdroja';
+$string['timeoutdesc'] = 'Èas v minútach, poèas ktorého sa bude uchováva» RSS kanál vo vyrovnávacej pamäti.';
+$string['updatefeed'] = 'Aktualizova» URL pre kanál s novinkami';
+$string['validatefeed'] = 'Skontrolova» kanál';
 
 ?>

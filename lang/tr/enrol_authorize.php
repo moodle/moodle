@@ -1,117 +1,22 @@
 <?PHP // $Id$ 
-      // enrol_authorize.php - created with Moodle 1.6 development (2005101200)
+      // enrol_authorize.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
-$string['adminauthorizeccapture'] = 'Sipariþi Ýnceleme ve Otomatik-Çekme Ayarlarý';
-$string['adminauthorizeemail'] = 'Email Gönderme Ayarlarý';
-$string['adminauthorizesettings'] = 'Authorize.net Ayarlarý';
-$string['adminauthorizewide'] = 'Site Geneli Ayarlarý';
-$string['adminavs'] = 'Authorize.net hesabýnýzda AVS\'yi (Adres Doðrulama Sistemi) etkinleþtirdiyseniz bunu seçin. Kullanýcý ödeme formunu doldururken cadde, ülke, posta kodu gibi adres alanlarý istenir.';
-$string['admincronsetup'] = 'Cron.php bakým betiði son 24 saattir çalýþmýyor. <br />Otomatik-çekme özelliðini kullanmak istiyorsanýz cron etkin olmalý.<br /><a href=\"../doc/?frame=install.html&sub=cron\">Cronu ayarlayýn</a> veya an_review\'i tekrar seçili durumdan kaldýrýn. <br />Otomatik-çekmeyi etkinleþtirmezseniz ve 30 gün içinde iþlemleri incelemezseniz iþlem iptal edilir.<br />Ödemeleri 30 gün içinde elle kabul etmek veya iptal etmek istiyorsanýz an_review\'i seçin an_capture_day alanýna \'0\' girin.';
-$string['adminemailexpired'] = 'Ýþlem iptal olmadan önce yöneticilere <b>$a</b> gün önceden \'onaylanmýþ/çekilmeyi bekliyor\' durumundaki sipariþlerin sayýsýný içeren bir uyarý mesajý gönder. (0=email gönderme pasif, varsayýlan=2, en fazla=5)<br />Sipariþi elle incelemeyi etkinleþtirdiyseniz bu kullanýþlýdýr (an_review=seçili, an_capture_day=0).';
-$string['adminhelpcapture'] = 'Ödemeleri sadece elle kabul etmek/iptal etmek deðil, ayný zamanda ödemenin iptal olmasýný engellemek için otomatik-çekmeyi de kullanmak istiyorum. Ne yapmam gerekiyor?
-
-- Cronu ayarlayýn.
-- an_review\'i seçin.
-- an_capture_day alanýna 1 ile 29 arasýnda bir sayý girin. Kredi kartýndan para çekilecek ve an_capture_day gün içinde çekmezseniz kullanýcý kursa kaydedilecek.';
-$string['adminhelpreview'] = 'Ödemeleri elle nasýl kabul veya reddeceðim?
-
-- an_review\'i seçin.
-- an_capture_day alanýna \'0\' girin.
-
-Öðrenciler kart numarasýný girdikten hemen sonra nasýl kursa kaydolurlar?
-
-- an_review\'i seçili durumdan kaldýrýn.';
-$string['adminneworder'] = 'Deðerli Yönetici,
-
-Yeni bir bekleyen sipariþ aldýnýz:
-
-Sipariþ no: $a->orderid
-Ýþlem ID: $a->transid
-Kullanýcý: $a->user
-Kurs: $a->course
-Miktar: $a->amount
-
-OTOMATÝK-ÇEKME ETKÝN MÝ?: $a->acstatus
-
-Otomatik çekme etkinse kredi kartýndan $a->captureon tarihinde çekilecek ve öðrencinin derse kaydý yapýlacak. Diðer durumda $a->expireon tarihinde süresi dolacak ve bu tarihten sonra çekilemeyecek.
-
-Ayrýca aþaðýdaki linki týklayarak ödemeyi derhal kabul veya reddedebilir ve öðrenciyi derse kaydedebilirsiniz:
-$a->url';
-$string['adminnewordersubject'] = '$a->course: Bekleyen Yeni Sipariþ($a->orderid)';
-$string['adminpendingorders'] = 'Otomatik-çekme özelliðini etkinleþtirmediniz.<br />PROVÝZYON durumundaki toplam $a->count iþlem kontrol etmezseniz iptal edilecek. <br /> Ödemeleri kabul etmek/reddetmek için <a href=\'$a->url\'>Ödeme Yönetimi</a> sayfasýna gidin.';
-$string['adminreview'] = 'Kredi kartýndan çekmeden önce sipariþi incele.';
-$string['amount'] = 'Miktar';
 $string['anlogin'] = 'Authorize.net: Kullanýcý adý';
-$string['anpassword'] = 'Authorize.net: Þifre';
+$string['anpassword'] = 'Authorize.net: Þifre (gerekli deðil)';
 $string['anreferer'] = 'Authorize.net hesabýnýzda URL referer ayarý yaptýysanýz buraya yazýnýz. Bu, web isteðinde \"Referer: URL\" baþlýðýný gönderir.';
-$string['antestmode'] = 'Ýþlemleri deneme modunda çalýþtýr (para çekilmez)';
+$string['antestmode'] = 'Authorize.net: Ýþlemleri test et';
 $string['antrankey'] = 'Authorize.net: Ýþlem Anahtarý (Transaction Key)';
-$string['authorizedpendingcapture'] = 'Onaylanmýþ / Çekilmeyi Bekliyor';
-$string['canbecredit'] = '$a->upto\'a kadar geri ödenebilir';
-$string['cancelled'] = 'Ýptal edilmiþ';
-$string['capture'] = 'Çek';
-$string['capturedpendingsettle'] = 'Çekilmiþ / Ödeme Bekleniyor';
-$string['capturedsettled'] = 'Çekilmiþ / Ödenmiþ';
-$string['capturetestwarn'] = 'Çekme çalýþýyor olarak görünüyor fakat deneme modunda kayýt güncellenmedi';
-$string['captureyes'] = 'Para kredi kartýndan çekilecek ve öðrencinin derse kaydý yapýlacak. Emin misiniz?';
 $string['ccexpire'] = 'Geçerlilik Tarihi';
-$string['ccexpired'] = 'Kredi kartýnýn süresi geçmiþ';
 $string['ccinvalid'] = 'Geçersiz kart numarasý';
 $string['ccno'] = 'Kredi Kartý No';
 $string['cctype'] = 'Kredi Kartý Tipi';
-$string['ccvv'] = 'Onay Kodu';
+$string['ccvv'] = 'CV2';
 $string['ccvvhelp'] = 'Kartýn arkasýna bakýnýz (son 3 rakam)';
-$string['choosemethod'] = 'Kursun kayýt anahtarýný biliyorsanýz giriniz. Diðer durumda bu kurs için ödeme yapmanýz gerekiyor.';
-$string['chooseone'] = 'Aþaðýdaki iki alandan birini veya ikisini doldurun';
-$string['credittestwarn'] = 'Geri ödeme çalýþýyor olarak görünüyor fakat deneme modunda yeni kayýt eklenmedi';
-$string['cutofftime'] = 'Hesap Kesim Zamaný. Hesap kesimi en son ne zaman yapýlacak?';
-$string['delete'] = 'Sil';
-$string['description'] = 'Authorize.net modülü Kredi Kartý saðlayýcýlarýyla ücretli kurslar ayarlamanýza olanak verir. Bir kursun ücreti sýfýr ise öðrencilere ödeme yapmalarý için bir istekte bulunulmaz. Sitenin geneli için ayarlayabileceðiniz varsayýlan bir tutar vardýr ve her bir dersin ücretini tek tek de ayarlayabilirsiniz. Kurs ücreti ayarlanýrsa site genelindeki ücret yoksayýlýr..<br /><br /><b>Not:</b> Kurs ayarlarýnda kayýt anahtarýný girdiyseniz öðrenciler bu anahtara göre de kayýt olma seçeneðine sahip olabileceklerdir. Bu, öðrecilerden bazýlarýnýn ödeme yaparak bazýlarýnýn da kayýt anahtarýna göre kayýt olmasýný istiyorsanýz kullanýþlýdýr.';
+$string['description'] = 'Authorize.net modülü Kredi Kartý saðlayýcýlarýyla ücretli kurslar ayarlamanýza olanak verir. Bir kursun ücreti sýfýr ise öðrencilere ödeme yapmalarý için bir istekte bulunulmaz. Sitenin geneli için ayarlayabileceðiniz varsayýlan bir tutar vardýr ve her bir dersin ücretini tek tek de ayarlayabilirsiniz. Kurs ücreti ayarlanýrsa site genelindeki ücret yoksayýlýr.';
 $string['enrolname'] = 'Authorize.net Kredi Kartý Saðlayýcýsý';
-$string['expired'] = 'Süresi dolmuþ';
-$string['howmuch'] = 'Ne kadar?';
-$string['httpsrequired'] = 'Üzgünüz, isteðinizi þu anda yerine getiremiyoruz. Bu sitenin ayarý doðru yapýlandýrýlmamýþ.
-<br /><br />
-Tarayýcýnýzýn alt tarafýnda sarý bir kilit görmüyorsanýz kredi kartý numaranýzý girmeyiniz. Bu, sizinle sunucu arasýnda gidip gelen verinin þifrelendiði anlamýna gelir. Böylece 2 bilgisayar arasýnda akan bilgi korunmuþ olur ve kredi kartý numaranýz internet üzerinden yakalanamaz.';
-$string['logindesc'] = 'Bu seçenek AÇIK olmalý.
-<br /><br />
-<a href=\"$a->url\">Loginhttps</a> seçeneðini Deðiþkenler/Güvenlik bölümünden ayarlayabilirsiniz.
-<br /><br />
-Bu seçenek aktif ise sadece giriþ ve ödeme sayfalarý için güvenli baðlantý (https) kullanýlacaktýr.';
 $string['nameoncard'] = 'Kart Üzerindeki Ýsim';
-$string['noreturns'] = 'Geri ödeme yok';
-$string['notsettled'] = 'Faturalandýrýlmamýþ';
-$string['orderid'] = 'Sipariþ ID';
-$string['paymentmanagement'] = 'Ödeme Yönetimi';
-$string['paymentpending'] = '$a->orderid numaralý ödemeniz bu kurs için onay bekliyor.';
-$string['pendingordersemail'] = 'Deðerli Yönetici,
-
-2 gün içinde onay bekleyen $a->pending iþlemi kabul etmezseniz süresi dolacak ve iptal edilecek.
-
-Otomatik-çekmeyi etkinleþtirmediðiniz için bu uyarý mesajý size gönderilmiþtir. Bu durumda ödemeleri elle kabul veya reddetmelisiniz.
-
-Ödemeleri kabul/reddetmek için:
-$a->url
-
-Otomatik-çekmeyi etkinleþtirmek için:
-$a->enrolurl';
-$string['refund'] = 'Geri Öde';
-$string['refunded'] = 'Geri ödenmiþ';
-$string['returns'] = 'Geri ödemeler';
-$string['reviewday'] = '<b>$a</b> gün içinde eðitimci veya yönetici sipariþi incelemezse kredi kartýndan otomatik olarak parayý çek. CRON ETKÝN OLMALI. <br /> (0 gün otomatik çekme aktif deðil anlamýna gelir ve ayný zamanda eðitimci veya yöneticinin sipariþi kendisi inceleyeceðini zorunlu tutar. Otomatik çekmeyi etinleþtirmezseniz veya 30 gün içinde sipariþi incelemezseniz iþlem iptal edilir.)';
-$string['reviewnotify'] = 'Ödemeniz incelenecek. Bir kaç gün içinde eðitimcinizden bir email bekleyin.';
 $string['sendpaymentbutton'] = 'Ödemeyi Yap';
-$string['settled'] = 'Faturalandýrýlmýþ';
-$string['settlementdate'] = 'Hesap Kesim Tarihi';
-$string['subvoidyes'] = 'Geri ödenen $a->transid nolu iþlem iptal edilecek ve hesabýnýza $a->amount yüklenecek. Emin misiniz?';
-$string['tested'] = 'Denendi';
-$string['testmode'] = '[DENEME MODU]';
-$string['transid'] = 'Ýþlem ID';
-$string['unenrolstudent'] = 'Öðrencinin ders kaydýný sil?';
-$string['void'] = 'Ýptal et';
-$string['voidtestwarn'] = 'Ýptal etme çalýþýyor olarak görünüyor fakat deneme modunda kayýt güncellenmedi';
-$string['voidyes'] = 'Ýþlem iptal edilecek. Emin misiniz?';
 $string['zipcode'] = 'Posta Kodu';
 
 ?>

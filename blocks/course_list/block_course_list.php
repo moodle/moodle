@@ -1,7 +1,5 @@
 <?PHP //$Id$
 
-include_once($CFG->dirroot . '/course/lib.php');
-
 class block_course_list extends block_list {
     function init() {
         $this->title = get_string('courses');
@@ -79,10 +77,9 @@ class block_course_list extends block_list {
                 } else {
                     $this->content->items = array();
                     $this->content->icons = array();
-                    $this->content->footer = get_string('nocoursesyet').'<br /><br />';
-                    if (iscreator()) {
-                        $this->content->footer .= '<a href="'.$CFG->wwwroot.'/course/edit.php?category='.$category->id.'">'.get_string("addnewcourse").'</a>...';
-                    }
+                    $this->content->footer = get_string('nocoursesyet').'<br /><br />'.
+                            '<a href="'.$CFG->wwwroot.'/course/edit.php?category='.$category->id.'">'.
+                            get_string("addnewcourse").'</a>...';
                 }
                 $this->title = get_string('courses');
             }

@@ -35,13 +35,13 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package moodlecore
  */
- 
-/// CONSTANTS (Encased in phpdoc proper comments)/////////////////////////
+/// CONSTANTS /////////////////////////////////////////////////////////////
 
 /**
  * Used by some scripts to check they are being called by Moodle
  */
 define('MOODLE_INTERNAL', true);
+
 
 /**
  * No groups used?
@@ -58,7 +58,6 @@ define('SEPARATEGROUPS', 1);
  */
 define('VISIBLEGROUPS', 2);
 
-/// Date and time constants ///
 /**
  * Time constant - the number of seconds in a week
  */
@@ -89,119 +88,32 @@ define('DAYMINS', 1440);
  */
 define('HOURMINS', 60);
 
-/// Parameter constants - every call to optional_param(), required_param()  ///
-/// or clean_param() should have a specified type of parameter.  //////////////
-
 /**
- * PARAM_RAW specifies a parameter that is not cleaned/processed in any way.
+ * Parameter constants - if set then the parameter is cleaned of scripts etc
  */
 define('PARAM_RAW',      0x0000);
-
-/**
- * PARAM_CLEAN - obsoleted, please try to use more specific type of parameter.
- * It was one of the first types, that is why it is abused so much ;-)
- */
 define('PARAM_CLEAN',    0x0001);
-
-/**
- * PARAM_INT - integers only, use when expecting only numbers.
- */
 define('PARAM_INT',      0x0002);
-
-/**
- * PARAM_INTEGER - an alias for PARAM_INT
- */
-define('PARAM_INTEGER',  0x0002);
-
-/**
- * PARAM_ALPHA - contains only english letters.
- */
+define('PARAM_INTEGER',  0x0002);  // Alias for PARAM_INT
 define('PARAM_ALPHA',    0x0004);
-
-/**
- * PARAM_ACTION - an alias for PARAM_ALPHA, use for various actions in formas and urls
- * @TODO: should we alias it to PARAM_ALPHANUM ?
- */
-define('PARAM_ACTION',   0x0004);
-
-/**
- * PARAM_FORMAT - an alias for PARAM_ALPHA, use for names of plugins, formats, etc.
- * @TODO: should we alias it to PARAM_ALPHANUM ?
- */
-define('PARAM_FORMAT',   0x0004);
-
-/**
- * PARAM_NOTAGS - all html tags are stripped from the text. Do not abuse this type.
- */
+define('PARAM_ACTION',   0x0004);  // Alias for PARAM_ALPHA
+define('PARAM_FORMAT',   0x0004);  // Alias for PARAM_ALPHA
 define('PARAM_NOTAGS',   0x0008);
-
-/**
- * PARAM_FILE - safe file name, all dangerous chars are stripped, protects against XSS, SQL injections and directory traversals
- */
 define('PARAM_FILE',     0x0010);
-
-/**
- * PARAM_PATH - safe relative path name, all dangerous chars are stripped, protects against XSS, SQL injections and directory traversals
- * note: the leading slash is not removed, window drive letter is not allowed
- */
 define('PARAM_PATH',     0x0020);
-
-/**
- * PARAM_HOST - expected fully qualified domain name (FQDN) or an IPv4 dotted quad (IP address)
- */
-define('PARAM_HOST',     0x0040);
-
-/**
- * PARAM_URL - expected properly formatted URL.
- */
+define('PARAM_HOST',     0x0040);  // FQDN or IPv4 dotted quad
 define('PARAM_URL',      0x0080);
-
-/**
- * PARAM_LOCALURL - expected properly formatted URL as well as one that refers to the local server itself. (NOT orthogonal to the others! Implies PARAM_URL!)
- */
-define('PARAM_LOCALURL', 0x0180);
-
-/**
- * PARAM_CLEANFILE - safe file name, all dangerous and regional chars are removed,
- * use when you want to store a new file submitted by students
- * @TODO: fix clean_filename() to handle UTF8 properly
- */
+define('PARAM_LOCALURL', 0x0180);  // NOT orthogonal to the others! Implies PARAM_URL!
 define('PARAM_CLEANFILE',0x0200);
+define('PARAM_ALPHANUM', 0x0400);  //numbers or letters only
+define('PARAM_BOOL',     0x0800);  //convert to value 1 or 0 using empty()
+define('PARAM_CLEANHTML',0x1000);  //actual HTML code that you want cleaned and slashes removed
+define('PARAM_ALPHAEXT', 0x2000);  // PARAM_ALPHA plus the chars in quotes: "/-_" allowed
 
 /**
- * PARAM_ALPHANUM - expected numbers and letters only.
- */
-define('PARAM_ALPHANUM', 0x0400);
-
-/**
- * PARAM_BOOL - converts input into 0 or 1, use for switches in forms and urls.
- */
-define('PARAM_BOOL',     0x0800);
-
-/**
- * PARAM_CLEANHTML - cleans submitted HTML code and removes slashes
- * note: do not forget to addslashes() before storing into database!
- */
-define('PARAM_CLEANHTML',0x1000);
-
-/**
- * PARAM_ALPHAEXT the same contents as PARAM_ALPHA plus the chars in quotes: "/-_" allowed,
- * suitable for include() and require()
- * @TODO: should we rename this function to PARAM_SAFEDIRS??
- */
-define('PARAM_ALPHAEXT', 0x2000);
-
-/**
- * PARAM_SAFEDIR - safe directory name, suitable for include() and require()
- */
-define('PARAM_SAFEDIR',  0x4000);
-
-/// Page types ///
-/**
- * PAGE_COURSE_VIEW is a definition of a page type. For more information on the page class see moodle/lib/pagelib.php.
+ * Definition of page types
  */
 define('PAGE_COURSE_VIEW', 'course-view');
-
 
 /// PARAMETER HANDLING ////////////////////////////////////////////////////
 
@@ -216,17 +128,10 @@ define('PAGE_COURSE_VIEW', 'course-view');
  *    $id = required_param('id');
  *
  * @param string $varname the name of the parameter variable we want
- * @param int $options a bit field that specifies any cleaning needed
+ * @param integer $options a bit field that specifies any cleaning needed
  * @return mixed
  */
 function required_param($varname, $options=PARAM_CLEAN) {
-
-    // detect_unchecked_vars addition
-    global $CFG;
-    if (!empty($CFG->detect_unchecked_vars)) {
-        global $UNCHECKED_VARS;
-        unset ($UNCHECKED_VARS->vars[$varname]);
-    }
 
     if (isset($_POST[$varname])) {       // POST has precedence
         $param = $_POST[$varname];
@@ -250,17 +155,10 @@ function required_param($varname, $options=PARAM_CLEAN) {
  *
  * @param string $varname the name of the parameter variable we want
  * @param mixed  $default the default value to return if nothing is found
- * @param int $options a bit field that specifies any cleaning needed
+ * @param integer $options a bit field that specifies any cleaning needed
  * @return mixed
  */
 function optional_param($varname, $default=NULL, $options=PARAM_CLEAN) {
-
-    // detect_unchecked_vars addition
-    global $CFG;
-    if (!empty($CFG->detect_unchecked_vars)) {
-        global $UNCHECKED_VARS;
-        unset ($UNCHECKED_VARS->vars[$varname]);
-    }
 
     if (isset($_POST[$varname])) {       // POST has precedence
         $param = $_POST[$varname];
@@ -274,60 +172,17 @@ function optional_param($varname, $default=NULL, $options=PARAM_CLEAN) {
 }
 
 /**
- * HACK ALERT! Do not use this function, it will be removed soon!!
- * @todo Remove this function soon!
- */
-function isset_param($varname) {
-  if (isset($_GET[$varname])) {
-    return true;
-  }
-  if (isset($_POST[$varname])) {
-    return true;
-  }
-  return false;
-}
-
-/**
  * Used by {@link optional_param()} and {@link required_param()} to
  * clean the variables and/or cast to specific types, based on
  * an options field.
- * <code>
- * $course->format = clean_param($course->format, PARAM_ALPHA);
- * $selectedgrade_item = clean_param($selectedgrade_item, PARAM_CLEAN);
- * </code>
  *
- * @uses $CFG
- * @uses PARAM_CLEAN
- * @uses PARAM_INT
- * @uses PARAM_INTEGER
- * @uses PARAM_ALPHA
- * @uses PARAM_ALPHANUM
- * @uses PARAM_NOTAGS
- * @uses PARAM_ALPHATEXT
- * @uses PARAM_BOOL
- * @uses PARAM_SAFEDIR
- * @uses PARAM_CLEANFILE
- * @uses PARAM_FILE
- * @uses PARAM_PATH
- * @uses PARAM_HOST
- * @uses PARAM_URL
- * @uses PARAM_LOCALURL
- * @uses PARAM_CLEANHTML
  * @param mixed $param the variable we are cleaning
- * @param int $options a bit field that specifies the cleaning needed. This field is specified by combining PARAM_* definitions together with a logical or.
+ * @param integer $options a bit field that specifies the cleaning needed
  * @return mixed
  */
 function clean_param($param, $options) {
 
     global $CFG;
-
-    if (is_array($param)) {              // Let's loop
-        $newparam = array();
-        foreach ($param as $key => $value) {
-            $newparam[$key] = clean_param($value, $options);
-        }
-        return $newparam;
-    }
 
     if (!$options) {
         return $param;                   // Return raw value
@@ -360,22 +215,11 @@ function clean_param($param, $options) {
     }
 
     if ($options & PARAM_BOOL) {         // Convert to 1 or 0
-        $tempstr = strtolower($param);
-        if ($tempstr == 'on') {
-            $param = 1;
-        } else if ($tempstr == 'off') {
-            $param = 0;
-        } else {
-            $param = empty($param) ? 0 : 1;
-        }
+        $param = empty($param) ? 0 : 1;
     }
 
     if ($options & PARAM_NOTAGS) {       // Strip all tags completely
         $param = strip_tags($param);
-    }
-
-    if ($options & PARAM_SAFEDIR) {     // Remove everything not a-zA-Z0-9_-
-        $param = eregi_replace('[^a-zA-Z0-9_-]', '', $param);
     }
 
     if ($options & PARAM_CLEANFILE) {    // allow only safe characters
@@ -486,12 +330,12 @@ function clean_param($param, $options) {
  * matches that of the current user.
  *
  * @param string $sesskey optionally provided sesskey
- * @return bool
+ * @return boolean
  */
 function confirm_sesskey($sesskey=NULL) {
     global $USER;
 
-    if (!empty($USER->ignoresesskey) || !empty($CFG->ignoresesskey)) {
+    if (!empty($USER->ignoresesskey)) {
         return true;
     }
 
@@ -517,10 +361,6 @@ function confirm_sesskey($sesskey=NULL) {
  * @param mixed $default the value to return if $var is unset
  */
 function require_variable($var) {
-    global $CFG;
-    if (!empty($CFG->disableglobalshack)) {
-      error( 'The require_variable() function is deprecated.' );
-    }
     if (! isset($var)) {
         error('A required parameter was missing');
     }
@@ -531,127 +371,44 @@ function require_variable($var) {
  * Ensure that a variable is set
  *
  * If $var is undefined set it (by reference), otherwise return $var.
+ * This function will soon be made obsolete by {@link optional_param()}
  *
  * @param mixed $var the variable which may be unset
  * @param mixed $default the value to return if $var is unset
  */
 function optional_variable(&$var, $default=0) {
-    global $CFG;
-    if (!empty($CFG->disableglobalshack)) {
-      error( "The optional_variable() function is deprecated ($var, $default)." );
-    }
     if (! isset($var)) {
         $var = $default;
     }
 }
-
 
 /**
  * Set a key in global configuration
  *
  * Set a key/value pair in both this session's {@link $CFG} global variable
  * and in the 'config' database table for future sessions.
- * 
- * Can also be used to update keys for plugin-scoped configs in config_plugin table. 
- * In that case it doesn't affect $CFG. 
  *
  * @param string $name the key to set
  * @param string $value the value to set
- * @param string $plugin (optional) the plugin scope
  * @uses $CFG
  * @return bool
  */
-function set_config($name, $value, $plugin=NULL) {
+function set_config($name, $value) {
 /// No need for get_config because they are usually always available in $CFG
 
     global $CFG;
 
-    if (empty($plugin)) {
-        $CFG->$name = $value;  // So it's defined for this invocation at least
-        
-        if (get_field('config', 'name', 'name', $name)) {
-            return set_field('config', 'value', $value, 'name', $name);
-        } else {
-            $config->name = $name;
-            $config->value = $value;
-            return insert_record('config', $config);
-        }
-    } else { // plugin scope
-        if ($id = get_field('config_plugins', 'id', 'name', $name, 'plugin', $plugin)) {
-            return set_field('config_plugins', 'value', $value, 'id', $id);
-        } else {
-            $config->plugin = $plugin;
-            $config->name   = $name;
-            $config->value  = $value;
-            return insert_record('config_plugins', $config);
-        }
-    }
-}
 
-/**
- * Get configuration values from the global config table 
- * or the config_plugins table.
- *
- * If called with no parameters it will do the right thing
- * generating $CFG safely from the database without overwriting
- * existing values.  
- *
- * @param string $plugin 
- * @param string $name 
- * @uses $CFG
- * @return hash-like object or single value
- *
- */
-function get_config($plugin=NULL, $name=NULL) {
+    $CFG->$name = $value;  // So it's defined for this invocation at least
 
-    global $CFG;
-
-    if (!empty($name)) { // the user is asking for a specific value
-        if (!empty($plugin)) {
-            return get_record('config_plugins', 'plugin' , $plugin, 'name', $name);
-        } else {
-            return get_record('config', 'name', $name);
-        }
-    }
-
-    // the user is after a recordset
-    if (!empty($plugin)) {
-        if ($configs=get_records('config_plugins', 'plugin', $plugin, '', 'name,value')) {
-            $configs = (array)$configs;
-            $localcfg = array();
-            foreach ($configs as $config) {
-                $localcfg[$config->name] = $config->value;
-            }
-            return (object)$localcfg;
-        } else {
-            return false;
-        }
+    if (get_field('config', 'name', 'name', $name)) {
+        return set_field('config', 'value', $value, 'name', $name);
     } else {
-        // this was originally in setup.php
-        if ($configs = get_records('config')) {
-            $localcfg = (array)$CFG;
-            foreach ($configs as $config) {
-                if (!isset($localcfg[$config->name])) {
-                    $localcfg[$config->name] = $config->value;
-                } else {
-                    if ($localcfg[$config->name] != $config->value ) { 
-                        // complain if the DB has a different
-                        // value than config.php does
-                        error_log("\$CFG->{$config->name} in config.php ({$localcfg[$config->name]}) overrides database setting ({$config->value})");
-                    }
-                }
-            }
-            
-            $localcfg = (object)$localcfg;
-            return $localcfg;
-        } else {
-            // preserve $CFG if DB returns nothing or error
-            return $CFG;
-        }
-        
+        $config->name = $name;
+        $config->value = $value;
+        return insert_record('config', $config);
     }
 }
-
 
 /**
  * Refresh current $USER session global variable with all their current preferences.
@@ -681,12 +438,12 @@ function reload_user_preferences() {
  * Sets a preference for the current user
  * Optionally, can set a preference for a different user object
  * @uses $USER
- * @todo Add a better description and include usage examples. Add inline links to $USER and user functions in above line.
-
+ * @todo Add a better description and include usage examples.
  * @param string $name The key to set as preference for the specified user
  * @param string $value The value to set forthe $name key in the specified user's record
  * @param int $userid A moodle user ID
- * @return bool
+ * @todo Add inline links to $USER and user functions in above line.
+ * @return boolean
  */
 function set_user_preference($name, $value, $otheruser=NULL) {
 
@@ -737,7 +494,7 @@ function set_user_preference($name, $value, $otheruser=NULL) {
  * @uses $USER
  * @param string  $name The key to unset as preference for the specified user
  * @param int $userid A moodle user ID
- * @return bool
+ * @return boolean
  */
 function unset_user_preference($name, $userid=NULL) {
 
@@ -752,12 +509,6 @@ function unset_user_preference($name, $userid=NULL) {
         }
     }
 
-    //Delete the preference from $USER
-    if (isset($USER->preference[$name])) {
-        unset($USER->preference[$name]);
-    }
-    
-    //Then from DB
     return delete_records('user_preferences', 'userid', $userid, 'name', $name);
 }
 
@@ -766,7 +517,7 @@ function unset_user_preference($name, $userid=NULL) {
  * Sets a whole array of preferences for the current user
  * @param array $prefarray An array of key/value pairs to be set
  * @param int $userid A moodle user ID
- * @return bool
+ * @return boolean
  */
 function set_user_preferences($prefarray, $userid=NULL) {
 
@@ -841,14 +592,13 @@ function get_user_preferences($name=NULL, $default=NULL, $userid=NULL) {
 /**
  * Given date parts in user time produce a GMT timestamp.
  *
- * @param int $year The year part to create timestamp of
- * @param int $month The month part to create timestamp of
- * @param int $day The day part to create timestamp of
- * @param int $hour The hour part to create timestamp of
- * @param int $minute The minute part to create timestamp of
- * @param int $second The second part to create timestamp of
- * @param float $timezone ?
- * @param bool $applydst ?
+ * @param int $year The year part to create timestamp of.
+ * @param int $month The month part to create timestamp of.
+ * @param int $day The day part to create timestamp of.
+ * @param int $hour The hour part to create timestamp of.
+ * @param int $minute The minute part to create timestamp of.
+ * @param int $second The second part to create timestamp of.
+ * @param float $timezone
  * @return int timestamp
  * @todo Finish documenting this function
  */
@@ -857,9 +607,9 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
     $timezone = get_user_timezone_offset($timezone);
 
     if (abs($timezone) > 13) {
-        $time = mktime((int)$hour, (int)$minute, (int)$second, (int)$month, (int)$day, (int)$year);
+        $time = mktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year);
     } else {
-        $time = gmmktime((int)$hour, (int)$minute, (int)$second, (int)$month, (int)$day, (int)$year);
+        $time = gmmktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year);
         $time = usertime($time, $timezone);
         if($applydst) {
             $time -= dst_offset_on($time);
@@ -941,7 +691,7 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
  * @param  int $date timestamp in GMT
  * @param string $format strftime format
  * @param float $timezone
- * @param bool $fixday If true (default) then the leading
+ * @param boolean $fixday If true (default) then the leading
  * zero from %d is removed. If false then the leading zero is mantained.
  * @return string
  */
@@ -997,7 +747,7 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
  *
  * @uses HOURSECS
  * @param int $time Timestamp in GMT
- * @param float $timezone ?
+ * @param float $timezone
  * @return array An array that represents the date in user time
  * @todo Finish documenting this function
  */
@@ -1109,7 +859,7 @@ function usertimezone($timezone=99) {
  *
  * @uses $CFG
  * @uses $USER
- * @param float $tz If this value is provided and not equal to 99, it will be returned as is and no other settings will be checked
+ * @param float $tz The user's timezone
  * @return int
  */
 function get_user_timezone_offset($tz = 99) {
@@ -1129,17 +879,6 @@ function get_user_timezone_offset($tz = 99) {
     }
 }
 
-/**
- * Returns a float or a string which denotes the user's timezone
- * A float value means that a simple offset from GMT is used, while a string (it will be the name of a timezone in the database)
- * means that for this timezone there are also DST rules to be taken into account
- * Checks various settings and picks the most dominant of those which have a value
- *
- * @uses $USER
- * @uses $CFG
- * @param float $tz If this value is provided and not equal to 99, it will be returned as is and no other settings will be checked
- * @return mixed
- */
 function get_user_timezone($tz = 99) {
     global $USER, $CFG;
 
@@ -1159,14 +898,6 @@ function get_user_timezone($tz = 99) {
     return is_numeric($tz) ? (float) $tz : $tz;
 }
 
-/**
- * ?
- *
- * @uses $CFG
- * @uses $db
- * @param string $timezonename ?
- * @return object
- */
 function get_timezone_record($timezonename) {
     global $CFG, $db;
     static $cache = NULL;
@@ -1183,17 +914,12 @@ function get_timezone_record($timezonename) {
                             WHERE name = '.$db->qstr($timezonename).' ORDER BY year DESC', true);
 }
 
-/**
- * ?
- *
- * @uses $CFG
- * @uses $USER
- * @param ? $fromyear ?
- * @param ? $to_year ?
- * @return bool
- */
 function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
-    global $CFG, $SESSION;
+    global $CFG, $USER;
+
+    if (empty($USER)) {
+        return false;
+    }
 
     $usertz = get_user_timezone();
 
@@ -1202,13 +928,13 @@ function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
         return false;
     }
 
-    if (!empty($SESSION->dst_offsettz) && $SESSION->dst_offsettz != $usertz) {
+    if (!empty($USER->dstoffsettz) && $USER->dstoffsettz != $usertz) {
         // We have precalculated values, but the user's effective TZ has changed in the meantime, so reset
-        unset($SESSION->dst_offsets);
-        unset($SESSION->dst_range);
+        unset($USER->dstoffsets);
+        unset($USER->dstrange);
     }
 
-    if (!empty($SESSION->dst_offsets) && empty($from_year) && empty($to_year)) {
+    if (!empty($USER->dstoffsets) && empty($from_year) && empty($to_year)) {
         // Repeat calls which do not request specific year ranges stop here, we have already calculated the table
         // This will be the return path most of the time, pretty light computationally
         return true;
@@ -1217,13 +943,13 @@ function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
     // Reaching here means we either need to extend our table or create it from scratch
 
     // Remember which TZ we calculated these changes for
-    $SESSION->dst_offsettz = $usertz;
+    $USER->dstoffsettz = $usertz;
 
-    if(empty($SESSION->dst_offsets)) {
+    if(empty($USER->dstoffsets)) {
         // If we 're creating from scratch, put the two guard elements in there
-        $SESSION->dst_offsets = array(1 => NULL, 0 => NULL);
+        $USER->dstoffsets = array(1 => NULL, 0 => NULL);
     }
-    if(empty($SESSION->dst_range)) {
+    if(empty($USER->dstrange)) {
         // If creating from scratch
         $from = max((empty($from_year) ? intval(date('Y')) - 3 : $from_year), 1971);
         $to   = min((empty($to_year)   ? intval(date('Y')) + 3 : $to_year),   2035);
@@ -1235,28 +961,28 @@ function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
         }
 
         // Take note of which years we have processed for future calls
-        $SESSION->dst_range = array($from, $to);
+        $USER->dstrange = array($from, $to);
     }
     else {
         // If needing to extend the table, do the same
         $yearstoprocess = array();
 
-        $from = max((empty($from_year) ? $SESSION->dst_range[0] : $from_year), 1971);
-        $to   = min((empty($to_year)   ? $SESSION->dst_range[1] : $to_year),   2035);
+        $from = max((empty($from_year) ? $USER->dstrange[0] : $from_year), 1971);
+        $to   = min((empty($to_year)   ? $USER->dstrange[1] : $to_year),   2035);
 
-        if($from < $SESSION->dst_range[0]) {
+        if($from < $USER->dstrange[0]) {
             // Take note of which years we need to process and then note that we have processed them for future calls
-            for($i = $from; $i < $SESSION->dst_range[0]; ++$i) {
+            for($i = $from; $i < $USER->dstrange[0]; ++$i) {
                 $yearstoprocess[] = $i;
             }
-            $SESSION->dst_range[0] = $from;
+            $USER->dstrange[0] = $from;
         }
-        if($to > $SESSION->dst_range[1]) {
+        if($to > $USER->dstrange[1]) {
             // Take note of which years we need to process and then note that we have processed them for future calls
-            for($i = $SESSION->dst_range[1] + 1; $i <= $to; ++$i) {
+            for($i = $USER->dstrange[1] + 1; $i <= $to; ++$i) {
                 $yearstoprocess[] = $i;
             }
-            $SESSION->dst_range[1] = $to;
+            $USER->dstrange[1] = $to;
         }
     }
 
@@ -1275,8 +1001,8 @@ function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
     }
 
     // Remove ending guard (first element of the array)
-    reset($SESSION->dst_offsets);
-    unset($SESSION->dst_offsets[key($SESSION->dst_offsets)]);
+    reset($USER->dstoffsets);
+    unset($USER->dstoffsets[key($USER->dstoffsets)]);
 
     // Add all required change timestamps
     foreach($yearstoprocess as $y) {
@@ -1293,19 +1019,19 @@ function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
             continue;
         }
         if($changes['dst'] != 0) {
-            $SESSION->dst_offsets[$changes['dst']] = $preset->dstoff * MINSECS;
+            $USER->dstoffsets[$changes['dst']] = $preset->dstoff * MINSECS;
         }
         if($changes['std'] != 0) {
-            $SESSION->dst_offsets[$changes['std']] = 0;
+            $USER->dstoffsets[$changes['std']] = 0;
         }
     }
 
     // Put in a guard element at the top
-    $maxtimestamp = max(array_keys($SESSION->dst_offsets));
-    $SESSION->dst_offsets[($maxtimestamp + DAYSECS)] = NULL; // DAYSECS is arbitrary, any "small" number will do
+    $maxtimestamp = max(array_keys($USER->dstoffsets));
+    $USER->dstoffsets[($maxtimestamp + DAYSECS)] = NULL; // DAYSECS is arbitrary, any "small" number will do
 
     // Sort again
-    krsort($SESSION->dst_offsets);
+    krsort($USER->dstoffsets);
 
     return true;
 }
@@ -1337,14 +1063,18 @@ function dst_changes_for_year($year, $timezone) {
 
 // $time must NOT be compensated at all, it has to be a pure timestamp
 function dst_offset_on($time) {
-    global $SESSION;
+    global $USER;
 
-    if(!calculate_user_dst_table() || empty($SESSION->dst_offsets)) {
+    if(!calculate_user_dst_table()) {
         return 0;
     }
 
-    reset($SESSION->dst_offsets);
-    while(list($from, $offset) = each($SESSION->dst_offsets)) {
+    if(empty($USER) || empty($USER->dstoffsets)) {
+        return 0;
+    }
+
+    reset($USER->dstoffsets);
+    while(list($from, $offset) = each($USER->dstoffsets)) {
         if($from <= $time) {
             break;
         }
@@ -1360,19 +1090,19 @@ function dst_offset_on($time) {
     // moves toward the stopping condition, so will always end.
 
     if($from == 0) {
-        // We need a year smaller than $SESSION->dst_range[0]
-        if($SESSION->dst_range[0] == 1971) {
+        // We need a year smaller than $USER->dstrange[0]
+        if($USER->dstrange[0] == 1971) {
             return 0;
         }
-        calculate_user_dst_table($SESSION->dst_range[0] - 5, NULL);
+        calculate_user_dst_table($USER->dstrange[0] - 5, NULL);
         return dst_offset_on($time);
     }
     else {
-        // We need a year larger than $SESSION->dst_range[1]
-        if($SESSION->dst_range[1] == 2035) {
+        // We need a year larger than $USER->dstrange[1]
+        if($USER->dstrange[1] == 2035) {
             return 0;
         }
-        calculate_user_dst_table(NULL, $SESSION->dst_range[1] + 5);
+        calculate_user_dst_table(NULL, $USER->dstrange[1] + 5);
         return dst_offset_on($time);
     }
 }
@@ -1433,25 +1163,10 @@ function find_day_in_month($startday, $weekday, $month, $year) {
     }
 }
 
-/**
- * Calculate the number of days in a given month
- *
- * @param int $month The month whose day count is sought
- * @param int $year The year of the month whose day count is sought
- * @return int
- */
 function days_in_month($month, $year) {
    return intval(date('t', mktime(12, 0, 0, $month, 1, $year, 0)));
 }
 
-/**
- * Calculate the position in the week of a specific calendar day
- *
- * @param int $day The day of the date whose position in the week is sought
- * @param int $month The month of the date whose position in the week is sought
- * @param int $year The year of the date whose position in the week is sought
- * @return int
- */
 function dayofweek($day, $month, $year) {
     // I wonder if this is any different from
     // strftime('%w', mktime(12, 0, 0, $month, $daysinmonth, $year, 0));
@@ -1460,14 +1175,9 @@ function dayofweek($day, $month, $year) {
 
 /// USER AUTHENTICATION AND LOGIN ////////////////////////////////////////
 
-/**
- * Makes sure that $USER->sesskey exists, if $USER itself exists. It sets a new sesskey
- * if one does not already exist, but does not overwrite existing sesskeys. Returns the
- * sesskey string if $USER exists, or boolean false if not.
- *
- * @uses $USER
- * @return string
- */
+// Makes sure that $USER->sesskey exists, if $USER itself exists. It sets a new sesskey
+// if one does not already exist, but does not overwrite existing sesskeys. Returns the
+// sesskey string if $USER exists, or boolean false if not.
 function sesskey() {
     global $USER;
 
@@ -1504,8 +1214,8 @@ function sesskey() {
  * @uses SITEID
  * @uses $MoodleSession
  * @param int $courseid id of the course
- * @param bool $autologinguest
- * @param object $cm course module object
+ * @param boolean $autologinguest
+ * @param $cm course module object
  */
 function require_login($courseid=0, $autologinguest=true, $cm=null) {
 
@@ -1518,7 +1228,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
             $SESSION->fromurl  = $_SERVER['HTTP_REFERER'];
         }
         $USER = NULL;
-        if ($autologinguest and $CFG->autologinguests and $courseid and ($courseid == SITEID or get_field('course','guest','id',$courseid)) ) {
+        if ($autologinguest and $CFG->autologinguests and $courseid and get_field('course','guest','id',$courseid)) {
             $loginguest = '?loginguest=true';
         } else {
             $loginguest = '';
@@ -1586,13 +1296,6 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
             }
             return;
         }
-        if (! $course = get_record('course', 'id', $courseid)) {
-            error('That course doesn\'t exist');
-        }
-        if (!(isteacher($courseid) || !empty($USER->admin)) && (!$course->visible || !course_parent_visible($course))) {
-            print_header();
-            notice(get_string('coursehidden'), $CFG->wwwroot .'/');
-        }
         if (!empty($USER->student[$courseid]) or !empty($USER->teacher[$courseid]) or !empty($USER->admin)) {
             if (isset($USER->realuser)) {   // Make sure the REAL person can also access this course
                 if (!isteacher($courseid, $USER->realuser)) {
@@ -1604,6 +1307,13 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
                 redirect($CFG->wwwroot.'/course/view.php?id='.$cm->course, get_string('activityiscurrentlyhidden'));
             }
             return;   // user is a member of this course.
+        }
+        if (! $course = get_record('course', 'id', $courseid)) {
+            error('That course doesn\'t exist');
+        }
+        if (!$course->visible) {
+            print_header();
+            notice(get_string('coursehidden'), $CFG->wwwroot .'/');
         }
         if ($USER->username == 'guest') {
             switch ($course->guest) {
@@ -1658,7 +1368,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
  *
  * @uses $CFG
  * @param object $course The course object in question
- * @param bool $autologinguest Allow autologin guests if that is wanted
+ * @param boolean $autologinguest Allow autologin guests if that is wanted
  * @param object $cm Course activity module if known
  */
 function require_course_login($course, $autologinguest=true, $cm=null) {
@@ -1676,7 +1386,7 @@ function require_course_login($course, $autologinguest=true, $cm=null) {
  * last login to now.
  *
  * @uses $USER
- * @return bool
+ * @return boolean
  */
 function update_user_login_times() {
     global $USER;
@@ -1693,7 +1403,7 @@ function update_user_login_times() {
  * Determines if a user has completed setting up their account.
  *
  * @param user $user A {@link $USER} object to test for the existance of a valid name and email
- * @return bool
+ * @return boolean
  */
 function user_not_fully_set_up($user) {
     return ($user->username != 'guest' and (empty($user->firstname) or empty($user->lastname) or empty($user->email) or over_bounce_threshold($user)));
@@ -1738,7 +1448,7 @@ function set_send_count($user,$reset=false) {
         $pref->name = 'email_send_count';
         $pref->value = 1;
         $pref->userid = $user->id;
-        insert_record('user_preferences',$pref, false);
+        insert_record('user_preferences',$pref);
     }
 }
 
@@ -1756,7 +1466,7 @@ function set_bounce_count($user,$reset=false) {
         $pref->name = 'email_bounce_count';
         $pref->value = 1;
         $pref->userid = $user->id;
-        insert_record('user_preferences',$pref, false);
+        insert_record('user_preferences',$pref);
     }
 }
 
@@ -1822,18 +1532,6 @@ function check_for_restricted_user($username=NULL, $redirect='') {
     }
 }
 
-function is_restricted_user($username){
-    global $CFG;
-    
-    if (!empty($CFG->restrictusers)) {
-        $names = explode(',', $CFG->restrictusers);
-        if (in_array($username, $names)) {
-            return true;
-        }
-    }
-    return false;
-}
-
 function sync_metacourses() {
 
     global $CFG;
@@ -1854,14 +1552,14 @@ function sync_metacourses() {
 
 function sync_metacourse($metacourseid) {
 
-    global $CFG;
+    global $CFG,$db;
 
     if (!$metacourse = get_record("course","id",$metacourseid)) {
         return false;
     }
 
-    if (count_records('course_meta','parent_course',$metacourseid) == 0) {
-        // if there are no child courses for this meta course, nuke the enrolments
+
+    if (count_records('course_meta','parent_course',$metacourseid) == 0) { // if there are no child courses for this meta course, nuke the enrolments
         if ($enrolments = get_records('user_students','course',$metacourseid,'','userid,1')) {
             foreach ($enrolments as $enrolment) {
                 unenrol_student($enrolment->userid,$metacourseid);
@@ -1870,65 +1568,84 @@ function sync_metacourse($metacourseid) {
         return true;
     }
 
-    // first get the list of child courses
-    $c_courses = get_records('course_meta','parent_course',$metacourseid);
-    $instr = '';
-    foreach ($c_courses as $c) {
-        $instr .= $c->child_course.',';
-    }
-    $instr = substr($instr,0,-1);
+    // this will return a list of userids from user_student for enrolments in the metacourse that shouldn't be there.
+    $sql = "SELECT parent.userid,max(child.course) as course
+            FROM {$CFG->prefix}course_meta meta
+              JOIN {$CFG->prefix}user_students parent
+                ON meta.parent_course = parent.course
+              LEFT OUTER JOIN {$CFG->prefix}user_students child
+                ON child.course = meta.child_course
+                AND child.userid = parent.userid
+              WHERE  meta.parent_course = $metacourseid
+              GROUP BY child.course,parent.userid
+              ORDER BY parent.userid,child.course";
 
-    // now get the list of valid enrolments in the child courses
-    $sql = 'SELECT DISTINCT userid,1 FROM '.$CFG->prefix.'user_students WHERE course IN ('.$instr.')';
-    $enrolments = get_records_sql($sql);
-    
-    // put it into a nice array we can happily use array_diff on.
-    $ce = array();
-    if (!empty($enrolments)) {
-        foreach ($enrolments as $en) {
-            $ce[] = $en->userid;
+    $res = $db->Execute($sql);
+
+    //iterate results
+    $enrolmentstodelete = array();
+    while( !$res->EOF && isset($res->fields) ) {
+        $enrolmentstodelete[] = $res->fields;
+        $res->MoveNext();
+    }
+
+    if (!empty($enrolmentstodelete)) {
+        $last->id = 0;
+        $last->course = 0;
+        foreach ($enrolmentstodelete as $enrolment) {
+            $enrolment = (object)$enrolment;
+            if (count($enrolmentstodelete) == 1 && empty($enrolment->course)) {
+                unenrol_student($enrolment->userid,$metacourseid);
+                break;
+            }
+            if ($last->id != $enrolment->userid) { // we've changed
+                if (empty($last->course) && !empty($last->id)) {
+                    unenrol_student($last->id,$metacourseid); // doing it this way for forum subscriptions etc.
+                }
+                $last->course = 0;
+                $last->id = $enrolment->userid;
+            }
+
+            if (!empty($enrolment->course)) {
+                $last->course = $enrolment->course;
+            }
+        }
+        if (!empty($last->id) && empty($last->course)) {
+            unenrol_student($last->id,$metacourseid); // doing it this way for forum subscriptions etc.
         }
     }
 
-    // now get the list of current enrolments in the meta course.
-    $sql = 'SELECT userid,1 FROM '.$CFG->prefix.'user_students WHERE course = '.$metacourseid;
-    $enrolments = get_records_sql($sql);
 
-    $me = array();
-    if (!empty($enrolments)) {
-        foreach ($enrolments as $en) {
-            $me[] = $en->userid;
+    // this will return a list of userids that need to be enrolled in the metacourse
+    $sql = "SELECT DISTINCT child.userid,1
+            FROM {$CFG->prefix}course_meta meta
+              JOIN {$CFG->prefix}user_students child
+                 ON meta.child_course = child.course
+              LEFT OUTER JOIN {$CFG->prefix}user_students parent
+                 ON meta.parent_course = parent.course
+                 AND parent.userid = child.userid
+                 WHERE parent.course IS NULL
+                 AND meta.parent_course = $metacourseid";
+
+    if ($userstoadd = get_records_sql($sql)) {
+        foreach ($userstoadd as $user) {
+            enrol_student($user->userid,$metacourseid);
         }
     }
 
-    $enrolmentstodelete = array_diff($me,$ce);
-    $userstoadd = array_diff($ce,$me);
-
-    foreach ($enrolmentstodelete as $userid) {
-        unenrol_student($userid,$metacourseid);
-    }
-    foreach ($userstoadd as $userid) {
-        enrol_student($userid,$metacourseid,0,0,'metacourse');
-    }
-    
     // and next make sure that we have the right start time and end time (ie max and min) for them all.
     if ($enrolments = get_records('user_students','course',$metacourseid,'','id,userid')) {
         foreach ($enrolments as $enrol) {
             if ($maxmin = get_record_sql("SELECT min(timestart) AS timestart, max(timeend) AS timeend
-               FROM {$CFG->prefix}user_students u,
-                    {$CFG->prefix}course_meta mc 
-               WHERE u.course = mc.child_course 
-               AND userid = $enrol->userid
+               FROM {$CFG->prefix}user_students u JOIN {$CFG->prefix}course_meta mc ON u.course = mc.child_course WHERE userid = $enrol->userid
                AND mc.parent_course = $metacourseid")) {
                 $enrol->timestart = $maxmin->timestart;
                 $enrol->timeend = $maxmin->timeend;
-                $enrol->enrol = 'metacourse'; // just in case it wasn't there earlier.
                 update_record('user_students',$enrol);
             }
         }
     }
     return true;
-
 }
 
 /**
@@ -1972,7 +1689,7 @@ function remove_from_metacourse($metacourseid, $courseid) {
  * Determines if a user is currently logged in
  *
  * @uses $USER
- * @return bool
+ * @return boolean
  */
 function isloggedin() {
     global $USER;
@@ -1986,9 +1703,10 @@ function isloggedin() {
  *
  * @uses $USER
  * @param int $userid The id of the user as is found in the 'user' table
- * @staticvar array $admins List of users who have been found to be admins by user id
- * @staticvar array $nonadmins List of users who have been found not to be admins by user id
- * @return bool
+ * @staticvar array $admin ?
+ * @staticvar array $nonadmins ?
+ * @return boolean
+ * @todo Complete documentation for this function
  */
 function isadmin($userid=0) {
     global $USER;
@@ -2027,11 +1745,11 @@ function isadmin($userid=0) {
  * Determines if a user is a teacher (or better)
  *
  * @uses $USER
- * @uses $CFG
  * @param int $courseid The id of the course that is being viewed, if any
  * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
- * @param bool $includeadmin If true this function will return true when it encounters an admin user.
- * @return bool
+ * @param boolean $includeadmin If true this function will return true when it encounters an admin user.
+ * @return boolean
+ * @todo Finish documenting this function
  */
 function isteacher($courseid=0, $userid=0, $includeadmin=true) {
 /// Is the user able to access this course as a teacher?
@@ -2039,9 +1757,6 @@ function isteacher($courseid=0, $userid=0, $includeadmin=true) {
 
     if (empty($userid)) {                           // we are relying on $USER
         if (empty($USER) or empty($USER->id)) {     // not logged in so can't be a teacher
-            return false;
-        }
-        if (!empty($USER->studentview)) {
             return false;
         }
         if (!empty($USER->teacher) and $courseid) {   // look in session cache
@@ -2074,8 +1789,9 @@ function isteacher($courseid=0, $userid=0, $includeadmin=true) {
  *
  * @uses $USER
  * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
- * @param bool $includeadmin If true this function will return true when it encounters an admin user.
- * @return bool
+ * @param boolean $includeadmin If true this function will return true when it encounters an admin user.
+ * @return boolean
+ * @todo Finish documenting this function
  */
 function isteacherinanycourse($userid=0, $includeadmin=true) {
     global $USER;
@@ -2103,16 +1819,10 @@ function isteacherinanycourse($userid=0, $includeadmin=true) {
  * @uses $USER
  * @param int $courseid The id of the course that is being edited
  * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
- * @param bool $ignorestudentview true = don't do check for studentview mode
- * @return boo
+ * @return boolean
  */
-function isteacheredit($courseid, $userid=0, $ignorestudentview=false) {
+function isteacheredit($courseid, $userid=0) {
     global $USER;
-
-    // we can't edit in studentview
-    if (!empty($USER->studentview) and !$ignorestudentview) {
-        return false;
-    }
 
     if (isadmin($userid)) {  // admins can do anything
         return true;
@@ -2136,7 +1846,7 @@ function isteacheredit($courseid, $userid=0, $ignorestudentview=false) {
  *
  * @uses $USER
  * @param int $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user.
- * @return bool
+ * @return boolean
  */
 function iscreator ($userid=0) {
     global $USER;
@@ -2164,7 +1874,7 @@ function iscreator ($userid=0) {
  * @uses SITEID
  * @param int $courseid The id of the course being tested
  * @param int $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user.
- * @return bool
+ * @return boolean
  */
 function isstudent($courseid, $userid=0) {
     global $USER, $CFG;
@@ -2193,11 +1903,7 @@ function isstudent($courseid, $userid=0) {
     }
 
     if (!$userid) {
-        if (empty($USER->studentview)) {
-            return (!empty($USER->student[$courseid]));
-        } else {
-            return(!empty($USER->teacher[$courseid]) or isadmin());
-        }
+        return !empty($USER->student[$courseid]);
     }
 
   //  $timenow = time();   // todo:  add time check below
@@ -2210,7 +1916,7 @@ function isstudent($courseid, $userid=0) {
  *
  * @uses $USER
  * @param int $userid The user being tested. You can set this to 0 or leave it blank to test the currently logged in user.
- * @return bool
+ * @return boolean
  */
 function isguest($userid=0) {
     global $USER;
@@ -2231,11 +1937,11 @@ function isguest($userid=0) {
  * @uses $USER
  * @param int $courseid The id of the course being tested
  * @param user $user A {@link $USER} object. If null then the currently logged in user is used.
- * @return bool
+ * @return boolean
  */
 function isediting($courseid, $user=NULL) {
     global $USER;
-    if (!$user) {
+    if (!$user){
         $user = $USER;
     }
     if (empty($user->editing)) {
@@ -2249,7 +1955,7 @@ function isediting($courseid, $user=NULL) {
  *
  * @uses $USER
  * @param int $courseid The id of the course being tested
- * @return bool
+ * @return boolean
  */
 function ismoving($courseid) {
     global $USER;
@@ -2267,11 +1973,10 @@ function ismoving($courseid) {
  * The result may depend on system settings
  * or language.  'override' will force both names
  * to be used even if system settings specify one.
- *
  * @uses $CFG
  * @uses $SESSION
- * @param object $user A {@link $USER} object to get full name of
- * @param bool $override If true then the name will be first name followed by last name rather than adhering to fullnamedisplay setting.
+ * @param    type description
+ * @todo Finish documenting this function
  */
 function fullname($user, $override=false) {
 
@@ -2360,7 +2065,7 @@ function get_moodle_cookie() {
  *
  * @uses $CFG
  * @param string $auth Form of authentication required
- * @return bool
+ * @return boolean
  * @todo Outline auth types and provide code example
  */
 function is_internal_auth($auth='') {
@@ -2382,6 +2087,7 @@ function is_internal_auth($auth='') {
  * @uses $CFG
  * @uses $db
  * @return array User field/column names
+ * @todo Finish documenting this function
  */
 function get_user_fieldnames() {
 
@@ -2400,7 +2106,7 @@ function get_user_fieldnames() {
  * @param string $username New user's username to add to record
  * @param string $password New user's password to add to record
  * @param string $auth Form of authentication required
- * @return object A {@link $USER} object
+ * @return user A {@link $USER} object
  * @todo Outline auth types and provide code example
  */
 function create_user_record($username, $password, $auth='') {
@@ -2426,11 +2132,7 @@ function create_user_record($username, $password, $auth='') {
 
     $newuser->auth = (empty($auth)) ? $CFG->auth : $auth;
     $newuser->username = $username;
-    if(empty($CFG->{$newuser->auth.'_preventpassindb'})){  //Prevent passwords in Moodle's DB
-        $newuser->password = md5($password);
-    } else {
-        $newuser->password = 'not cached';  //Unusable password
-    }
+    $newuser->password = md5($password);
     $newuser->lang = $CFG->lang;
     $newuser->confirmed = 1;
     $newuser->lastIP = getremoteaddr();
@@ -2439,7 +2141,7 @@ function create_user_record($username, $password, $auth='') {
     if (insert_record('user', $newuser)) {
          $user = get_complete_user_data('username', $newuser->username);
          if($CFG->{'auth_'.$newuser->auth.'_forcechangepassword'}){
-             set_user_preference('auth_forcepasswordchange', 1, $user->id);
+             set_user_preference('auth_forcepasswordchange', 1, $user);
          }
          return $user;
     }
@@ -2459,17 +2161,11 @@ function update_user_record($username) {
     if (function_exists('auth_get_userinfo')) {
         $username = trim(moodle_strtolower($username)); /// just in case check text case
 
-        $oldinfo = get_record('user', 'username', $username, '','','','', 'username, auth');
-        $authconfig = get_config('auth/' . $oldinfo->auth);
-
         if ($newinfo = auth_get_userinfo($username)) {
-            $newinfo = truncate_userinfo($newinfo);
             foreach ($newinfo as $key => $value){
-                $confkey = 'field_updatelocal_' . $key;
-                if (!empty($authconfig->$confkey) && $authconfig->$confkey === 'onlogin') {
+                if (!empty($CFG->{'auth_user_' . $key. '_updatelocal'})) {
                     $value = addslashes(stripslashes($value));   // Just in case
-                    set_field('user', $key, $value, 'username', $username) 
-                        || error_log("Error updating $key for $username");
+                    set_field('user', $key, $value, 'username', $username);
                 }
             }
         }
@@ -2590,13 +2286,8 @@ function authenticate_user_login($username, $password) {
             if (empty($user->auth)) {             // For some reason auth isn't set yet
                 set_field('user', 'auth', $auth, 'username', $username);
             }
-            if (empty($CFG->{$user->auth.'_preventpassindb'})){   //Calculate the password to update
-                $passfield = $md5password;
-            } else {
-                 $passfield = 'not cached';
-            }
-            if ($passfield <> $user->password) {   // Update local copy of password for reference
-                set_field('user', 'password',  $passfield, 'username', $username); //Update password
+            if ($md5password <> $user->password) {   // Update local copy of password for reference
+                set_field('user', 'password', $md5password, 'username', $username);
             }
             if (!is_internal_auth()) {            // update user record from external DB
                 $user = update_user_record($username);
@@ -2624,17 +2315,6 @@ function authenticate_user_login($username, $password) {
                 }
             }
         }
-
-    /// Log in to a second system if necessary
-        if (!empty($CFG->sso)) {
-            include_once($CFG->dirroot .'/sso/'. $CFG->sso .'/lib.php');
-            if (function_exists('sso_user_login')) {
-                if (!sso_user_login($username, $password)) {   // Perform the signon process
-                    notify('Second sign-on failed');
-                }
-            }
-        }
-
         return $user;
 
     } else {
@@ -2701,8 +2381,7 @@ function get_complete_user_data($field, $value) {
     if ($groups = get_records('groups_members', 'userid', $user->id)) {
         foreach ($groups as $groupmember) {
             $courseid = get_field('groups', 'courseid', 'id', $groupmember->groupid);
-            //change this to 2D array so we can put multiple groups in a course
-            $user->groupmember[$courseid][] = $groupmember->groupid;
+            $user->groupmember[$courseid] = $groupmember->groupid;
         }
     }
 
@@ -2734,18 +2413,18 @@ function get_user_info_from_db($field, $value) {  // For backward compatibility
  * for the current SESSION
  */
 function set_login_session_preferences() {
-    global $SESSION, $CFG;
+    global $SESSION;
 
     $SESSION->justloggedin = true;
 
     unset($SESSION->lang);
     unset($SESSION->encoding);
-    $SESSION->encoding = current_charset();
+    $SESSION->encoding = get_string('thischarset');
 
     // Restore the calendar filters, if saved
     if (intval(get_user_preferences('calendar_persistflt', 0))) {
         include_once($CFG->dirroot.'/calendar/lib.php');
-        calendar_set_filters_status(get_user_preferences('calendav_savedflt', 0xff));
+        calendar_set_filters_status(get_user_preferences('calendar_savedflt', 0xff));
     }
 }
 
@@ -2753,19 +2432,14 @@ function set_login_session_preferences() {
 /**
  * Enrols (or re-enrols) a student in a given course
  *
- * NOTE: Defaults to 'manual' enrolment - enrolment plugins 
- * must set it explicitly.
- *
- * @uses $CFG
- * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
  * @param int $courseid The id of the course that is being viewed
+ * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
  * @param int $timestart ?
  * @param int $timeend ?
- * @param string $enrol ?
- * @return bool
+ * @return boolean
  * @todo Finish documenting this function
  */
-function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='manual') {
+function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='') {
 
     global $CFG;
 
@@ -2776,12 +2450,15 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='man
         return false;
     }
     // enrol the student in any parent meta courses...
-    if ($parents = get_records('course_meta', 'child_course', $courseid)) {
+    if ($parents = get_records('course_meta','child_course',$courseid)) {
         foreach ($parents as $parent) {
-            enrol_student($userid, $parent->parent_course, $timestart, $timeend,'metacourse');
+            enrol_student($userid, $parent->parent_course,$timestart,$timeend,$enrol);
         }
     }
 
+    if (empty($enrol)) {
+        $enrol = $CFG->enrol;   // Default current method
+    }
     if ($student = get_record('user_students', 'userid', $userid, 'course', $courseid)) {
         $student->timestart = $timestart;
         $student->timeend = $timeend;
@@ -2808,10 +2485,9 @@ function enrol_student($userid, $courseid, $timestart=0, $timeend=0, $enrol='man
  *
  * @param int $courseid The id of the course that is being viewed, if any
  * @param int $userid The id of the user that is being tested against.
- * @return bool
+ * @return boolean
  */
 function unenrol_student($userid, $courseid=0) {
-    global $CFG;
 
     if ($courseid) {
         /// First delete any crucial stuff that might still send mail
@@ -2825,14 +2501,10 @@ function unenrol_student($userid, $courseid=0) {
                 delete_records('groups_members', 'groupid', $group->id, 'userid', $userid);
             }
         }
-        // unenrol the student from any parent meta courses...
+        // enrol the student in any parent meta courses...
         if ($parents = get_records('course_meta','child_course',$courseid)) {
             foreach ($parents as $parent) {
-                if (!record_exists_sql('SELECT us.id FROM '.$CFG->prefix.'user_students us, '
-                                       .$CFG->prefix.'course_meta cm WHERE cm.child_course = us.course
-                                        AND us.userid = '.$userid .' AND us.course != '.$courseid)) {
-                    unenrol_student($userid, $parent->parent_course);
-                }
+                unenrol_student($userid, $parent->parent_course);
             }
         }
         return delete_records('user_students', 'userid', $userid, 'course', $courseid);
@@ -2847,15 +2519,14 @@ function unenrol_student($userid, $courseid=0) {
 /**
  * Add a teacher to a given course
  *
- * @uses $USER
- * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
+  * @uses $USER
  * @param int $courseid The id of the course that is being viewed, if any
+ * @param int $userid The id of the user that is being tested against. Set this to 0 if you would just like to test against the currently logged in user.
  * @param int $editall ?
  * @param string $role ?
  * @param int $timestart ?
  * @param int $timeend ?
- * @param string $enrol ?
- * @return bool
+ * @return boolean
  * @todo Finish documenting this function
  */
 function add_teacher($userid, $courseid, $editall=1, $role='', $timestart=0, $timeend=0, $enrol='manual') {
@@ -2891,10 +2562,9 @@ function add_teacher($userid, $courseid, $editall=1, $role='', $timestart=0, $ti
     $teacher->course  = $courseid;
     $teacher->editall = $editall;
     $teacher->role    = $role;
-    $teacher->enrol   = $enrol;
     $teacher->timemodified = time();
-    $teacher->timestart = $timestart;
-    $teacher->timeend = $timeend;
+    $newteacher->timestart = $timestart;
+    $newteacher->timeend = $timeend;
     if ($student = get_record('user_students', 'userid', $userid, 'course', $courseid)) {
         $teacher->timestart = $student->timestart;
         $teacher->timeend = $student->timeend;
@@ -2909,7 +2579,7 @@ function add_teacher($userid, $courseid, $editall=1, $role='', $timestart=0, $ti
     delete_records('user_students', 'userid', $userid, 'course', $courseid); // Unenrol as student
 
     /// Add forum subscriptions for new users
-    require_once($CFG->dirroot.'/mod/forum/lib.php');
+    require_once('../mod/forum/lib.php');
     forum_add_user($userid, $courseid);
 
     return insert_record('user_teachers', $teacher);
@@ -2922,7 +2592,7 @@ function add_teacher($userid, $courseid, $editall=1, $role='', $timestart=0, $ti
  *
  * @param int $courseid The id of the course that is being viewed, if any
  * @param int $userid The id of the user that is being tested against.
- * @return bool
+ * @return boolean
  */
 function remove_teacher($userid, $courseid=0) {
     if ($courseid) {
@@ -2954,7 +2624,7 @@ function remove_teacher($userid, $courseid=0) {
  * Add a creator to the site
  *
  * @param int $userid The id of the user that is being tested against.
- * @return bool
+ * @return boolean
  */
 function add_creator($userid) {
 
@@ -2971,9 +2641,9 @@ function add_creator($userid) {
 /**
  * Remove a creator from a site
  *
- * @uses $db
+  * @uses $db
  * @param int $userid The id of the user that is being tested against.
- * @return bool
+ * @return boolean
  */
 function remove_creator($userid) {
     global $db;
@@ -2986,7 +2656,7 @@ function remove_creator($userid) {
  *
  * @uses SITEID
  * @param int $userid The id of the user that is being tested against.
- * @return bool
+ * @return boolean
  */
 function add_admin($userid) {
 
@@ -3011,10 +2681,10 @@ function add_admin($userid) {
 /**
  * Removes an admin from a site
  *
- * @uses $db
- * @uses SITEID
+  * @uses $db
+  * @uses SITEID
  * @param int $userid The id of the user that is being tested against.
- * @return bool
+ * @return boolean
  */
 function remove_admin($userid) {
     global $db;
@@ -3033,8 +2703,8 @@ function remove_admin($userid) {
  * @uses $SESSION
  * @uses $CFG
  * @param int $courseid The id of the course that is being viewed
- * @param bool $showfeedback Set this to false to suppress notifications from being printed as the functions performs its steps.
- * @return bool
+ * @param boolean $showfeedback Set this to false to suppress notifications from being printed as the functions performs its steps.
+ * @return boolean
  */
 function remove_course_contents($courseid, $showfeedback=true) {
 
@@ -3065,7 +2735,7 @@ function remove_course_contents($courseid, $showfeedback=true) {
                             if ($moddelete($instance->id)) {
                                 $count++;
                             } else {
-                                notify('Could not delete '. $modname .' instance '. $instance->id .' ('. format_string($instance->name) .')');
+                                notify('Could not delete '. $modname .' instance '. $instance->id .' ('. $instance->name .')');
                                 $result = false;
                             }
                         }
@@ -3175,40 +2845,40 @@ function remove_course_contents($courseid, $showfeedback=true) {
 
     // Delete gradebook stuff
 
-    if (delete_records("grade_category", "courseid", $course->id)) {
-      if ($showfeedback) {
-	notify("$strdeleted grade categories");
-      }
-    } else {
-      $result = false;
+    if (delete_records("grade_category", "course", $course->id)) {
+        if ($showfeedback) {
+            notify("$strdeleted grade categories");
+        } else {
+            $result = false;
+        }
     }
-    if (delete_records("grade_exceptions", "courseid", $course->id)) {
-      if ($showfeedback) {
-	notify("$strdeleted grade exceptions");
-      }
-    } else {
-      $result = false;
+    if (delete_records("grade_exceptions", "course", $course->id)) {
+        if ($showfeedback) {
+            notify("$strdeleted grade exceptions");
+        } else {
+            $result = false;
+        }
     }
-    if (delete_records("grade_item", "courseid", $course->id)) {
-      if ($showfeedback) {
-	notify("$strdeleted grade items");
-      }
-    } else {
-      $result = false;
+    if (delete_records("grade_item", "course", $course->id)) {
+        if ($showfeedback) {
+            notify("$strdeleted grade items");
+        } else {
+            $result = false;
+        }
+    }       
+    if (delete_records("grade_letter", "course", $course->id)) {
+        if ($showfeedback) {
+            notify("$strdeleted grade letters");
+        } else {
+            $result = false;
+        }
     }
-    if (delete_records("grade_letter", "courseid", $course->id)) {
-      if ($showfeedback) {
-	notify("$strdeleted grade letters");
-      }
-    } else {
-      $result = false;
-    }
-    if (delete_records("grade_preferences", "courseid", $course->id)) {
-      if ($showfeedback) {
-	notify("$strdeleted grade preferences");
-      }
-    } else {
-      $result = false;
+    if (delete_records("grade_preferences", "course", $course->id)) {
+        if ($showfeedback) {
+            notify("$strdeleted grade preferences");
+        } else {
+            $result = false;
+        }
     }
 
 
@@ -3242,13 +2912,13 @@ function remove_course_contents($courseid, $showfeedback=true) {
  * @uses $SESSION
  * @uses $CFG
  * @param int $courseid The id of the course that is being viewed
- * @param bool $showfeedback Set this to false to suppress notifications from being printed as the functions performs its steps.
- * @param bool $removestudents ?
- * @param bool $removeteachers ?
- * @param bool $removegroups ?
- * @param bool $removeevents ?
- * @param bool $removelogs ?
- * @return bool
+ * @param boolean $showfeedback Set this to false to suppress notifications from being printed as the functions performs its steps.
+ * @param boolean $removestudents ?
+ * @param boolean $removeteachers ?
+ * @param boolean $removegroups ?
+ * @param boolean $removeevents ?
+ * @param boolean $removelogs ?
+ * @return boolean
  * @todo Finish documenting this function
  */
 function remove_course_userdata($courseid, $showfeedback=true,
@@ -3357,67 +3027,45 @@ function remove_course_userdata($courseid, $showfeedback=true,
 
 }
 
+
+
 /// GROUPS /////////////////////////////////////////////////////////
 
 
 /**
- * Determines if the user a member of the given group
- *
- * @uses $USER
- * @param int $groupid The group to check the membership of
- * @param int $userid The user to check against the group
- * @return bool
- */
+* Returns a boolean: is the user a member of the given group?
+*
+* @param    type description
+ * @todo Finish documenting this function
+*/
 function ismember($groupid, $userid=0) {
     global $USER;
 
     if (!$groupid) {   // No point doing further checks
         return false;
     }
-    //if groupid is supplied in array format
+
     if (!$userid) {
         if (empty($USER->groupmember)) {
             return false;
         }
-        //changed too for multiple groups
         foreach ($USER->groupmember as $courseid => $mgroupid) {
-            //need to loop one more time...
-            if (is_array($mgroupid)) {
-                foreach ($mgroupid as $index => $mygroupid) {
-                    if ($mygroupid == $groupid) {
-                        return true;
-                    }
-                }
-            } else if ($mygroupid == $groupid) {
+            if ($mgroupid == $groupid) {
                 return true;
             }
         }
         return false;
     }
 
-    if (is_array($groupid)){
-        foreach ($groupid as $index => $val){
-            if (record_exists('groups_members', 'groupid', $val, 'userid', $userid)){
-                return true;
-            }
-        }
-    }
-    else {
-        return record_exists('groups_members', 'groupid', $groupid, 'userid', $userid);
-    }
-    return false;
-
-    //else group id is in single format
-
-    //return record_exists('groups_members', 'groupid', $groupid, 'userid', $userid);
+    return record_exists('groups_members', 'groupid', $groupid, 'userid', $userid);
 }
 
 /**
  * Add a user to a group, return true upon success or if user already a group member
  *
- * @param int $groupid  The group id to add user to
- * @param int $userid   The user id to add to the group
- * @return bool
+ * @param groupid  The group id
+ * @param userid   The user id
+ * @todo Finish documenting this function
  */
 function add_user_to_group ($groupid, $userid) {
     if (ismember($groupid, $userid)) return true;
@@ -3429,18 +3077,18 @@ function add_user_to_group ($groupid, $userid) {
 
 
 /**
- * Get the group ID of the current user in the given course
+ * Returns the group ID of the current user in the given course
  *
  * @uses $USER
  * @param int $courseid The course being examined - relates to id field in 'course' table.
- * @return int
+ * @todo Finish documenting this function
  */
 function mygroupid($courseid) {
     global $USER;
+
     if (empty($USER->groupmember[$courseid])) {
         return 0;
     } else {
-        //this is an array of ids >.<
         return $USER->groupmember[$courseid];
     }
 }
@@ -3451,7 +3099,7 @@ function mygroupid($courseid) {
  * NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS
  *
  * @param course $course A {@link $COURSE} object
- * @param object $cm A course module object
+ * @param array? $cm A course module object
  * @return int A group mode (NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS)
  */
 function groupmode($course, $cm=null) {
@@ -3470,6 +3118,7 @@ function groupmode($course, $cm=null) {
  * @param int $courseid The course being examined - relates to id field in 'course' table.
  * @param int $groupid The group being examined.
  * @return int Current group id which was set by this function
+ * @todo Finish documenting this function
  */
 function set_current_group($courseid, $groupid) {
     global $SESSION;
@@ -3481,21 +3130,20 @@ function set_current_group($courseid, $groupid) {
 /**
  * Gets the current group for the current user as an id or an object
  *
- * @uses $USER
+ * @uses $CFG
  * @uses $SESSION
  * @param int $courseid The course being examined - relates to id field in 'course' table.
- * @param bool $full If true, the return value is a full record object. If false, just the id of the record.
+ * @param boolean $full If true, the return value is a full record object. If false, just the id of the record.
+ * @todo Finish documenting this function
  */
 function get_current_group($courseid, $full=false) {
     global $SESSION, $USER;
-    
+
     if (!isset($SESSION->currentgroup[$courseid])) {
         if (empty($USER->groupmember[$courseid]) or isteacheredit($courseid)) {
-            
             return 0;
         } else {
-            //trying to add a hack >.<, always first select the first one in list
-            $SESSION->currentgroup[$courseid] = $USER->groupmember[$courseid][0];
+            $SESSION->currentgroup[$courseid] = $USER->groupmember[$courseid];
         }
     }
 
@@ -3519,6 +3167,7 @@ function get_current_group($courseid, $full=false) {
  * @param int $groupid Will try to use this optional parameter to
  *            reset the current group for the user
  * @return int|false Returns the current group id or false if error.
+ * @todo Finish documenting this function
  */
 function get_and_set_current_group($course, $groupmode, $groupid=-1) {
 
@@ -3537,25 +3186,12 @@ function get_and_set_current_group($course, $groupmode, $groupid=-1) {
             if (isteacheredit($course->id)) {          // Sets current default group
                 $currentgroupid = set_current_group($course->id, $group->id);
 
-            } else if ($groupmode == VISIBLEGROUPS) {
-                  // All groups are visible
-                //if (ismember($group->id)){
-                    $currentgroupid = set_current_group($course->id, $group->id);//set this since he might post
-                /*)}else {
-                    $currentgroupid = $group->id;*/
-            } else if ($groupmode == SEPARATEGROUPS) { // student in separate groups switching
-                if (ismember($group->id)){//check if is a member
-                    $currentgroupid = set_current_group($course->id, $group->id); //might need to set_current_group?
-                }
-                else {
-                    echo ($group->id);
-                    notify('you do not belong to this group!',error);
-                }
+            } else if ($groupmode == VISIBLEGROUPS) {  // All groups are visible
+                $currentgroupid = $group->id;
             }
         }
     } else {             // When groupid = 0 it means show ALL groups
-        //this is changed, non editting teacher needs access to group 0 as well, for viewing work in visible groups (need to set current group for multiple pages)
-        if (isteacheredit($course->id) OR (isteacher($course->id) AND ($groupmode == VISIBLEGROUPS))) {          // Sets current default group
+        if (isteacheredit($course->id)) {          // Sets current default group
             $currentgroupid = set_current_group($course->id, 0);
 
         } else if ($groupmode == VISIBLEGROUPS) {  // All groups are visible
@@ -3580,12 +3216,10 @@ function get_and_set_current_group($course, $groupmode, $groupid=-1) {
  * @param course $course A {@link $COURSE} object
  * @param int $groupmode Either NOGROUPS, SEPARATEGROUPS or VISIBLEGROUPS
  * @param string $urlroot ?
- * @return int|false
+ * @todo Finish documenting this function
  */
 function setup_and_print_groups($course, $groupmode, $urlroot) {
 
-    global $USER, $SESSION; //needs his id, need to hack his groups in session
-    
     if (isset($_GET['group'])) {
         $changegroup = $_GET['group'];  /// 0 or higher
     } else {
@@ -3593,46 +3227,21 @@ function setup_and_print_groups($course, $groupmode, $urlroot) {
     }
 
     $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
+
     if ($currentgroup === false) {
         return false;
     }
 
     if ($groupmode == SEPARATEGROUPS and !isteacheredit($course->id) and !$currentgroup) {
-        //we are in separate groups and the current group is group 0, as last set.
-        //this can mean that either, this guy has no group
-        //or, this guy just came from a visible all forum, and he left when he set his current group to 0 (show all)
-        
-        //for the second situation, we need to perform the trick and get him a group.
-        $courseid = $course->id;
-        if (!empty($USER->groupmember[$courseid])){
-            $currentgroup = get_and_set_current_group($course, $groupmode, $USER->groupmember[$courseid][0]);
-        }
-        else {//else he has no group in this course
-            print_heading(get_string('notingroup'));
-            print_footer($course);
-            exit;
-        }
+        print_heading(get_string('notingroup'));
+        print_footer($course);
+        exit;
     }
 
     if ($groupmode == VISIBLEGROUPS or ($groupmode and isteacheredit($course->id))) {
         if ($groups = get_records_menu('groups', 'courseid', $course->id, 'name ASC', 'id,name')) {
             echo '<div align="center">';
             print_group_menu($groups, $groupmode, $currentgroup, $urlroot);
-            echo '</div>';
-        }
-    }//added code here to allow non-editting teacher to swap in-between his own groups
-    //added code for students in separategrous to swtich groups
-    else if ($groupmode == SEPARATEGROUPS and (isteacher($course->id) or isstudent($course->id))) {
-        $validgroups = array();
-        //get all the groups this guy is in in this course
-        if ($p = user_group($course->id,$USER->id)){
-            //extract the name and id for the group
-            foreach ($p as $index => $object){
-                $validgroups[$object->id] = $object->name;
-            }
-            echo '<div align="center">';
-            //print them in the menu
-            print_group_menu($validgroups, $groupmode, $currentgroup, $urlroot,0);
             echo '</div>';
         }
     }
@@ -3648,7 +3257,7 @@ function generate_email_processing_address($modid,$modargs) {
     }
 
     $header = $CFG->mailprefix . substr(base64_encode(pack('C',$modid)),0,2).$modargs;
-    return $header . substr(md5($header.$CFG->siteidentifier),0,16).'@'.$CFG->maildomain;
+    return $header . substr(md5($header.$CFG->sitesecret),0,16).'@'.$CFG->maildomain;
 }
 
 
@@ -3660,7 +3269,7 @@ function moodle_process_email($modargs,$body) {
             if ($user = get_record_select("user","id=$userid","id,email")) {
                 // check the half md5 of their email
                 $md5check = substr(md5($user->email),0,16);
-                if ($md5check == substr($modargs, -16)) {
+                if ($md5check = substr($modargs, -16)) {
                     set_bounce_count($user);
                 }
                 // else maybe they've already changed it?
@@ -3677,7 +3286,7 @@ function moodle_process_email($modargs,$body) {
  * Send an email to a specified user
  *
  * @uses $CFG
- * @uses $FULLME
+ * @uses $_SERVER
  * @uses SITEID
  * @param user $user  A {@link $USER} object
  * @param user $from A {@link $USER} object
@@ -3686,9 +3295,9 @@ function moodle_process_email($modargs,$body) {
  * @param string $messagehtml complete html version of the message (optional)
  * @param string $attachment a file on the filesystem, relative to $CFG->dataroot
  * @param string $attachname the name of the file (extension indicates MIME)
- * @param bool $usetrueaddress determines whether $from email address should
+ * @param boolean $usetrueaddress determines whether $from email address should
  *          be sent out. Will be overruled by user profile setting for maildisplay
- * @return bool|string Returns "true" if mail was sent OK, "emailstop" if email
+ * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email
  *          was blocked by user and "false" if there was another sort of error.
  */
 function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $attachment='', $attachname='', $usetrueaddress=true, $repyto='', $replytoname='') {
@@ -3699,7 +3308,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     if (!empty($course->lang)) {   // Course language is defined
         $CFG->courselang = $course->lang;
     }
-    if (!empty($course->theme)) {   // Course theme is defined
+    if (!empty($course->theme)) {   // Course language is defined
         $CFG->coursetheme = $course->theme;
     }
 
@@ -3723,7 +3332,10 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
     $mail->Version = 'Moodle '. $CFG->version;           // mailer version
     $mail->PluginDir = $CFG->libdir .'/phpmailer/';      // plugin directory (eg smtp plugin)
 
-    $mail->CharSet = current_charset(true);              //User charset, recalculating it in each call
+
+    if (current_language() != 'en') {
+        $mail->CharSet = get_string('thischarset');
+    }
 
     if ($CFG->smtphosts == 'qmail') {
         $mail->IsQmail();                              // use Qmail system
@@ -3775,7 +3387,7 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
         $mail->AddReplyTo($replyto,$replytoname);
     }
 
-    $mail->Subject = substr(stripslashes($subject), 0, 900);
+    $mail->Subject  =  stripslashes($subject);
 
     $mail->AddAddress($user->email, fullname($user) );
 
@@ -3827,48 +3439,11 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml='', $a
 }
 
 /**
- * Sets specified user's password and send the new password to the user via email.
- *
- * @uses $CFG
- * @param user $user A {@link $USER} object
- * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email
- *          was blocked by user and "false" if there was another sort of error.
- */
-function setnew_password_and_mail($user) {
-
-    global $CFG;
-
-    $site  = get_site();
-    $from = get_admin();
-
-    $newpassword = generate_password();
-
-    if (! set_field('user', 'password', md5($newpassword), 'id', $user->id) ) {
-        trigger_error('Could not set user password!');
-        return false;
-    }
-
-    $a->firstname   = $user->firstname;
-    $a->sitename    = $site->fullname;
-    $a->username    = $user->username;
-    $a->newpassword = $newpassword;
-    $a->link        = $CFG->wwwroot .'/login/';
-    $a->signoff     = fullname($from, true).' ('. $from->email .')';
-
-    $message = get_string('newusernewpasswordtext', '', $a);
-
-    $subject  = $site->fullname .': '. get_string('newusernewpasswordsubj');
-                
-    return email_to_user($user, $from, $subject, $message);
-
-}
-
-/**
  * Resets specified user's password and send the new password to the user via email.
  *
  * @uses $CFG
  * @param user $user A {@link $USER} object
- * @return bool|string Returns "true" if mail was sent OK, "emailstop" if email
+ * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email
  *          was blocked by user and "false" if there was another sort of error.
  */
 function reset_password_and_mail($user) {
@@ -3878,35 +3453,17 @@ function reset_password_and_mail($user) {
     $site  = get_site();
     $from = get_admin();
 
-    $external = false;
-    if (!is_internal_auth($user->auth)) {
-        include_once($CFG->dirroot . '/auth/' . $user->auth . '/lib.php');
-        if (empty($CFG->{'auth_'.$user->auth.'_stdchangepassword'}) 
-            || !function_exists('auth_user_update_password')) {
-            trigger_error("Attempt to reset user password for user $user->username with Auth $user->auth.");
-            return false;
-        } else {
-            $external = true;
-        }
-    }
-
     $newpassword = generate_password();
 
-    if ($external) {
-        if (!auth_user_update_password($user->username, $newpassword)) {
-            error("Could not set user password!");
-        }
-    } else {
-        if (! set_field("user", "password", md5($newpassword), "id", $user->id) ) {
-            error("Could not set user password!");
-        }
+    if (! set_field('user', 'password', md5($newpassword), 'id', $user->id) ) {
+        error('Could not set user password!');
     }
 
     $a->firstname = $user->firstname;
     $a->sitename = $site->fullname;
     $a->username = $user->username;
     $a->newpassword = $newpassword;
-    $a->link = $CFG->httpswwwroot .'/login/change_password.php';
+    $a->link = $CFG->wwwroot .'/login/change_password.php';
     $a->signoff = fullname($from, true).' ('. $from->email .')';
 
     $message = get_string('newpasswordtext', '', $a);
@@ -3922,7 +3479,7 @@ function reset_password_and_mail($user) {
  *
  * @uses $CFG
  * @param user $user A {@link $USER} object
- * @return bool|string Returns "true" if mail was sent OK, "emailstop" if email
+ * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email
  *          was blocked by user and "false" if there was another sort of error.
  */
  function send_confirmation_email($user) {
@@ -3957,8 +3514,9 @@ function reset_password_and_mail($user) {
  *
  * @uses $CFG
  * @param user $user A {@link $USER} object
- * @return bool|string Returns "true" if mail was sent OK, "emailstop" if email
+ * @return boolean|string Returns "true" if mail was sent OK, "emailstop" if email
  *          was blocked by user and "false" if there was another sort of error.
+ * @todo Finish documenting this function
  */
 function send_password_change_confirmation_email($user) {
 
@@ -3969,7 +3527,7 @@ function send_password_change_confirmation_email($user) {
 
     $data->firstname = $user->firstname;
     $data->sitename = $site->fullname;
-    $data->link = $CFG->httpswwwroot .'/login/forgot_password.php?p='. $user->secret .'&s='. $user->username;
+    $data->link = $CFG->wwwroot .'/login/forgot_password.php?p='. $user->secret .'&s='. $user->username;
     $data->admin = fullname($from).' ('. $from->email .')';
 
     $message = get_string('emailpasswordconfirmation', '', $data);
@@ -3983,9 +3541,8 @@ function send_password_change_confirmation_email($user) {
  * Check that an email is allowed.  It returns an error message if there
  * was a problem.
  *
- * @uses $CFG
- * @param  string $email Content of email
- * @return string|false
+ * @param    type description
+ * @todo Finish documenting this function
  */
 function email_is_not_allowed($email) {
 
@@ -4023,6 +3580,52 @@ function email_is_not_allowed($email) {
 
 /// FILE HANDLING  /////////////////////////////////////////////
 
+/**
+ * Create a directory.
+ *
+ * @uses $CFG
+ * @param string $directory  a string of directory names under $CFG->dataroot eg  stuff/assignment/1
+ * param boolean $shownotices If true then notification messages will be printed out on error.
+ * @return string|false Returns full path to directory if successful, false if not
+ */
+function make_upload_directory($directory, $shownotices=true) {
+
+    global $CFG;
+
+    $currdir = $CFG->dataroot;
+
+    umask(0000);
+
+    if (!file_exists($currdir)) {
+        if (! mkdir($currdir, $CFG->directorypermissions)) {
+            if ($shownotices) {
+                notify('ERROR: You need to create the directory '. $currdir .' with web server write access');
+            }
+            return false;
+        }
+        if ($handle = fopen($currdir.'/.htaccess', 'w')) {   // For safety
+            @fwrite($handle, "deny from all\r\n");
+            @fclose($handle);
+        }
+    }
+
+    $dirarray = explode('/', $directory);
+
+    foreach ($dirarray as $dir) {
+        $currdir = $currdir .'/'. $dir;
+        if (! file_exists($currdir)) {
+            if (! mkdir($currdir, $CFG->directorypermissions)) {
+                if ($shownotices) {
+                    notify('ERROR: Could not find or create a directory ('. $currdir .')');
+                }
+                return false;
+            }
+            //@chmod($currdir, $CFG->directorypermissions);  // Just in case mkdir didn't do it
+        }
+    }
+
+    return $currdir;
+}
 
 /**
  * Makes an upload directory for a particular module.
@@ -4030,6 +3633,7 @@ function email_is_not_allowed($email) {
  * @uses $CFG
  * @param int $courseid The id of the course in question - maps to id field of 'course' table.
  * @return string|false Returns full path to directory if successful, false if not
+ * @todo Finish documenting this function
  */
 function make_mod_upload_directory($courseid) {
     global $CFG;
@@ -4053,6 +3657,7 @@ function make_mod_upload_directory($courseid) {
  *
  * @param string $newfile File to be verified
  * @return string Current name of file on disk if true
+ * @todo Finish documenting this function
  */
 function valid_uploaded_file($newfile) {
     if (empty($newfile)) {
@@ -4117,7 +3722,7 @@ function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0) 
 }
 
 /**
- * Related to {@link get_max_upload_file_size()} - this function returns an
+ * Related to the above function - this function returns an
  * array of possible sizes in an array, translated to the
  * local language.
  *
@@ -4160,8 +3765,9 @@ function get_max_upload_sizes($sitebytes=0, $coursebytes=0, $modulebytes=0) {
  *
  * @uses $_FILES
  * @param array $filearray  A 1-dimensional sub-array of the $_FILES array
- * @param bool $returnerror If true then a string error message will be returned. Otherwise the user will be notified of the error in a notify() call.
- * @return bool|string
+ * @param boolean $returnerror ?
+ * @return boolean
+ * @todo Finish documenting this function
  */
 function print_file_upload_error($filearray = '', $returnerror = false) {
 
@@ -4222,9 +3828,9 @@ function print_file_upload_error($filearray = '', $returnerror = false) {
  *
  * @param string $rootdir  ?
  * @param string $excludefile  If defined then the specified file/directory is ignored
- * @param bool $descend  ?
- * @param bool $getdirs  If true then (sub)directories are included in the output
- * @param bool $getfiles  If true then files are included in the output
+ * @param boolean $descend  ?
+ * @param boolean $getdirs  If true then (sub)directories are included in the output
+ * @param boolean $getfiles  If true then files are included in the output
  * @return array An array with all the filenames in
  * all subdirectories, relative to the given rootdir
  * @todo Finish documenting this function. Add examples of $excludefile usage.
@@ -4277,7 +3883,7 @@ function get_directory_list($rootdir, $excludefile='', $descend=true, $getdirs=f
  * itself
  *
  * @param string $dirName - full path to directory
- * @return bool true if successful, false if error
+ * @return boolean true if successful, false if error
 **/
  
 function delDirContents($dirName) {
@@ -4313,17 +3919,6 @@ function delDirContents($dirName) {
  */
 function get_directory_size($rootdir, $excludefile='') {
 
-    global $CFG;
-
-    // do it this way if we can, it's much faster
-    if (!empty($CFG->pathtodu) && is_executable(trim($CFG->pathtodu))) {
-        $command = trim($CFG->pathtodu).' -sk --apparent-size '.escapeshellarg($rootdir);
-        exec($command,$output,$return);
-        if (is_array($output)) {
-            return get_real_size(intval($output[0]).'k'); // we told it to return k.
-        }
-    }
-    
     $size = 0;
 
     if (!is_dir($rootdir)) {          // Must be a directory
@@ -4524,32 +4119,6 @@ function current_language() {
     }
 }
 
-/* Return the code of the current charset
- * based in some config options and the lang being used
- * caching it per request.
- * @param $ignorecache to skip cached value and recalculate it again
- * @uses $CFG
- * @return string
- */
-function current_charset($ignorecache = false) {
-
-    global $CFG;
-
-    static $currentcharset;
-
-    if (!empty($currentcharset) and !$ignorecache) { /// Cached. Return it.
-        return $currentcharset;
-    }
-
-    if (!empty($CFG->unicode) || !empty($CFG->unicodedb)) {
-        $currentcharset = 'UTF-8';
-    } else {
-        $currentcharset = get_string('thischarset');
-    }
-
-    return $currentcharset;
-}
-
 /**
  * Prints out a translated string.
  *
@@ -4576,30 +4145,6 @@ function current_charset($ignorecache = false) {
  */
 function print_string($identifier, $module='', $a=NULL) {
     echo get_string($identifier, $module, $a);
-}
-
-/**
- * fix up the optional data in get_string()/print_string() etc
- * ensure possible sprintf() format characters are escaped correctly
- * needs to handle arbitrary strings and objects
- * @param mixed $a An object, string or number that can be used
- * @return mixed the supplied parameter 'cleaned'
- */
-function clean_getstring_data( $a ) {
-    if (is_string($a)) {
-        return str_replace( '%','%%',$a );
-    }
-    elseif (is_object($a)) {
-        $a_vars = get_object_vars( $a );
-        $new_a_vars = array();
-        foreach ($a_vars as $fname => $a_var) {
-            $new_a_vars[$fname] = clean_getstring_data( $a_var );
-        }
-        return (object)$new_a_vars;
-    } 
-    else {
-        return $a;
-    }
 }
 
 /**
@@ -4660,29 +4205,9 @@ function get_string($identifier, $module='', $a=NULL) {
 
     global $course;     /// Not a nice hack, but quick
     if (empty($CFG->courselang)) {
-        if (is_object($course) and isset($course->lang)) {
+        if (isset($course->lang)) {
             $CFG->courselang = $course->lang;
         }
-    }
-
-/// Depending upon $CFG->unicodedb, we are going to check moodle.php or langconfig.php,
-/// default to a different lang pack, and redefine the module for some special strings
-/// that, under 1.6 lang packs, reside under langconfig.php
-    $langconfigstrs = array('alphabet', 'backupnameformat', 'firstdayofweek', 'locale', 'oldcharset',
-                            'parentlanguage', 'strftimedate', 'strftimedateshort', 'strftimedatetime',
-                            'strftimedaydate', 'strftimedaydatetime', 'strftimedayshort', 'strftimedaytime',
-                            'strftimemonthyear', 'strftimerecent', 'strftimerecentfull', 'strftimetime',
-                            'thischarset', 'thisdirection', 'thislanguage');
-
-    if (!empty($CFG->unicodedb)) {
-        $filetocheck = 'langconfig.php';
-        $defaultlang = 'en_utf8';
-        if (in_array($identifier, $langconfigstrs)) {
-            $module = 'langconfig';  //This strings are under langconfig.php for 1.6 lang packs
-        }
-    } else {
-        $filetocheck = 'moodle.php';
-        $defaultlang = 'en';
     }
 
     $lang = current_language();
@@ -4691,19 +4216,9 @@ function get_string($identifier, $module='', $a=NULL) {
         $module = 'moodle';
     }
 
-    // if $a happens to have % in it, double it so sprintf() doesn't break
-    if ($a) {
-        $a = clean_getstring_data( $a );
-    }
-
 /// Define the two or three major locations of language strings for this module
 
-    if ($module == 'install') {
-        $locations = array( $CFG->dirroot.'/install/lang/', $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
-    } else {
-        $locations = array( $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
-    }
-
+    $locations = array( $CFG->dataroot.'/lang/',  $CFG->dirroot.'/lang/' );
     if ($module != 'moodle') {
         if (strpos($module, 'block_') === 0) {  // It's a block lang file
             $locations[] =  $CFG->dirroot .'/blocks/'.substr($module, 6).'/lang/';
@@ -4715,14 +4230,6 @@ function get_string($identifier, $module='', $a=NULL) {
 /// First check all the normal locations for the string in the current language
 
     foreach ($locations as $location) {
-        $locallangfile = $location.$lang.'_local'.'/'.$module.'.php';    //first, see if there's a local file
-        if (file_exists($locallangfile)) {
-            if ($result = get_string_from_file($identifier, $locallangfile, "\$resultstring")) {
-                eval($result);
-                return $resultstring;
-            }
-        }
-        //if local directory not found, or particular string does not exist in local direcotry
         $langfile = $location.$lang.'/'.$module.'.php';
         if (file_exists($langfile)) {
             if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
@@ -4733,29 +4240,18 @@ function get_string($identifier, $module='', $a=NULL) {
     }
 
 /// If the preferred language was English we can abort now
-    if ($lang == $defaultlang) {
+    if ($lang == 'en') {
         return '[['. $identifier .']]';
     }
 
 /// Is a parent language defined?  If so, try to find this string in a parent language file
 
     foreach ($locations as $location) {
-        $langfile = $location.$lang.'/'.$filetocheck;
+        $langfile = $location.$lang.'/moodle.php';
         if (file_exists($langfile)) {
             if ($result = get_string_from_file('parentlanguage', $langfile, "\$parentlang")) {
                 eval($result);
                 if (!empty($parentlang)) {   // found it!
-
-                    //first, see if there's a local file for parent
-                    $locallangfile = $location.$parentlang.'_local'.'/'.$module.'.php';    
-                    if (file_exists($locallangfile)) {
-                        if ($result = get_string_from_file($identifier, $locallangfile, "\$resultstring")) {
-                            eval($result);
-                            return $resultstring;
-                        }
-                    }
-
-                    //if local directory not found, or particular string does not exist in local direcotry
                     $langfile = $location.$parentlang.'/'.$module.'.php';
                     if (file_exists($langfile)) {
                         if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
@@ -4771,16 +4267,7 @@ function get_string($identifier, $module='', $a=NULL) {
 /// Our only remaining option is to try English
 
     foreach ($locations as $location) {
-        $locallangfile = $location.$defaultlang.'_local/'.$module.'.php';    //first, see if there's a local file
-        if (file_exists($locallangfile)) {
-            if ($result = get_string_from_file($identifier, $locallangfile, "\$resultstring")) {
-                eval($result);
-                return $resultstring;
-            }
-        }
-
-        //if local_en not found, or string not found in local_en
-        $langfile = $location.$defaultlang.'/'.$module.'.php';
+        $langfile = $location.'en/'.$module.'.php';
 
         if (file_exists($langfile)) {
             if ($result = get_string_from_file($identifier, $langfile, "\$resultstring")) {
@@ -4842,21 +4329,15 @@ function get_strings($array, $module='') {
 
 /**
  * Returns a list of language codes and their full names
- * hides the _local files from everyone.
+ *
  * @uses $CFG
  * @return array An associative array with contents in the form of LanguageCode => LanguageName
+ * @todo Finish documenting this function
  */
 function get_list_of_languages() {
     global $CFG;
 
     $languages = array();
-
-/// Depending upon $CFG->unicodedb, we are going to check moodle.php or langconfig.php
-    if (!empty($CFG->unicodedb)) {
-        $filetocheck = 'langconfig.php';
-    } else {
-        $filetocheck = 'moodle.php';
-    }
 
     if ( (!defined('FULLME') || FULLME !== 'cron')
          && !empty($CFG->langcache) && file_exists($CFG->dataroot .'/cache/languages')) {
@@ -4875,58 +4356,22 @@ function get_list_of_languages() {
     if (!empty($CFG->langlist)) {       // use admin's list of languages
         $langlist = explode(',', $CFG->langlist);
         foreach ($langlist as $lang) {
-            $lang = trim($lang);   //Just trim spaces to be a bit more permissive
-            if (strstr('_local',$lang)!==false) {
-                continue;
-            }
-        /// Search under dirroot/lang
-            if (file_exists($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck)) {
-                include($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck);
-                if (!empty($string['thislanguage'])) {
-                    $languages[$lang] = $string['thislanguage'].' ('. $lang .')';
-                }
-                unset($string);
-            }
-        /// And moodledata/lang
-            if (file_exists($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck)) {
-                include($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck);
-                if (!empty($string['thislanguage'])) {
-                    $languages[$lang] = $string['thislanguage'].' ('. $lang .')';
-                }
+            if (file_exists($CFG->dirroot .'/lang/'. $lang .'/moodle.php')) {
+                include($CFG->dirroot .'/lang/'. $lang .'/moodle.php');
+                $languages[$lang] = $string['thislanguage'].' ('. $lang .')';
                 unset($string);
             }
         }
     } else {
-    /// Fetch langs from moodle/lang directory
-        $langdirs = get_list_of_plugins('lang');
-    /// Fetch langs from moodledata/lang directory
-        $langdirs2 = get_list_of_plugins('lang', '', $CFG->dataroot);
-    /// Merge both lists of langs
-        $langdirs = array_merge($langdirs, $langdirs2);
-    /// Sort all
-        asort($langdirs);
-    /// Get some info from each lang (first from moodledata, then from moodle)
+        if (!$langdirs = get_list_of_plugins('lang')) {
+            return false;
+        }
         foreach ($langdirs as $lang) {
-            if (strstr('_local',$lang)!==false) {
-                continue;
-            }
-            if (file_exists($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck)) {
-                include($CFG->dataroot .'/lang/'. $lang .'/'. $filetocheck);
-                if (!empty($string['thislanguage'])) {
-                    $languages[$lang] = $string['thislanguage'] .' ('. $lang .')';
-                }
-                unset($string);
-            }
-            if (file_exists($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck)) {
-                include($CFG->dirroot .'/lang/'. $lang .'/'. $filetocheck);
-                if (!empty($string['thislanguage'])) {
-                    $languages[$lang] = $string['thislanguage'] .' ('. $lang .')';
-                }
-                unset($string);
-            }
+            @include($CFG->dirroot .'/lang/'. $lang .'/moodle.php');
+            $languages[$lang] = $string['thislanguage'] .' ('. $lang .')';
+            unset($string);
         }
     }
-
     if ( defined('FULLME') && FULLME === 'cron' && !empty($CFG->langcache)) {
         if ($file = fopen($CFG->dataroot .'/cache/languages', 'w')) {
             foreach ($languages as $key => $value) {
@@ -4936,27 +4381,8 @@ function get_list_of_languages() {
         } 
     }
 
+
     return $languages;
-}
-
-/**
- * Returns a list of charset codes. It's hardcoded, so they should be added manually
- * (cheking that such charset is supported by the texlib library!)
- *
- * @return array And associative array with contents in the form of charset => charset
- */
-function get_list_of_charsets() {
-
-    $charsets = array(
-        'EUC-JP'     => 'EUC-JP',
-        'ISO-2022-JP'=> 'ISO-2022-JP',
-        'ISO-8859-1' => 'ISO-8859-1',
-        'SHIFT-JIS'  => 'SHIFT-JIS',
-        'UTF-8'      => 'UTF-8');
-
-    asort($charsets);
-
-    return $charsets;
 }
 
 /**
@@ -4964,38 +4390,27 @@ function get_list_of_charsets() {
  *
  * @uses $CFG
  * @uses $USER
- * @return array
+ * @return string?
+ * @todo Finish documenting this function.
  */
 function get_list_of_countries() {
     global $CFG, $USER;
 
     $lang = current_language();
 
-    if (!empty($CFG->unicodedb)) {
-        $defaultlang = 'en_utf8';
-    } else {
-        $defaultlang = 'en';
-    }
-
-    if (!file_exists($CFG->dirroot .'/lang/'. $lang .'/countries.php') &&
-        !file_exists($CFG->dataroot.'/lang/'. $lang .'/countries.php')) {
+    if (!file_exists($CFG->dirroot .'/lang/'. $lang .'/countries.php')) {
         if ($parentlang = get_string('parentlanguage')) {
-            if (file_exists($CFG->dirroot .'/lang/'. $parentlang .'/countries.php') ||
-                file_exists($CFG->dataroot.'/lang/'. $parentlang .'/countries.php')) {
+            if (file_exists($CFG->dirroot .'/lang/'. $parentlang .'/countries.php')) {
                 $lang = $parentlang;
             } else {
-                $lang = $defaultlang;  // countries.php must exist in this pack
+                $lang = 'en';  // countries.php must exist in this pack
             }
         } else {
-            $lang = $defaultlang;  // countries.php must exist in this pack
+            $lang = 'en';  // countries.php must exist in this pack
         }
     }
-    
-    if (file_exists($CFG->dataroot .'/lang/'. $lang .'/countries.php')) {
-        include($CFG->dataroot .'/lang/'. $lang .'/countries.php');
-    } else if (file_exists($CFG->dirroot .'/lang/'. $lang .'/countries.php')) {
-        include($CFG->dirroot .'/lang/'. $lang .'/countries.php');
-    }
+
+    include($CFG->dirroot .'/lang/'. $lang .'/countries.php');
 
     if (!empty($string)) {
         asort($string);
@@ -5043,7 +4458,8 @@ function get_list_of_themes() {
  * Returns a list of picture names in the current language
  *
  * @uses $CFG
- * @return array
+ * @return string?
+ * @todo Finish documenting this function.
  */
 function get_list_of_pixnames() {
     global $CFG;
@@ -5071,7 +4487,8 @@ function get_list_of_pixnames() {
  * Returns a list of picture names in the current language
  *
  * @uses $CFG
- * @return array
+ * @return string?
+ * @todo Finish documenting this function.
  */
 function get_list_of_timezones() {
     global $CFG;
@@ -5105,40 +4522,6 @@ function get_list_of_timezones() {
     return $timezones;
 }
 
-/**
- * Returns a list of currencies in the current language
- *
- * @uses $CFG
- * @uses $USER
- * @return array
- */
-function get_list_of_currencies() {
-    global $CFG, $USER;
-
-    $lang = current_language();
-
-    if (!file_exists($CFG->dirroot .'/lang/'. $lang .'/currencies.php')) {
-        if ($parentlang = get_string('parentlanguage')) {
-            if (file_exists($CFG->dirroot .'/lang/'. $parentlang .'/currencies.php')) {
-                $lang = $parentlang;
-            } else {
-                $lang = 'en';  // currencies.php must exist in this pack
-            }
-        } else {
-            $lang = 'en';  // currencies.php must exist in this pack
-        }
-    }
-
-    include($CFG->dirroot .'/lang/'. $lang .'/currencies.php');
-
-    if (!empty($string)) {
-        asort($string);
-    }
-
-    return $string;
-}
-
-
 
 /**
  * Can include a given document file (depends on second
@@ -5146,7 +4529,7 @@ function get_list_of_currencies() {
  *
  * @uses $CFG
  * @param string $file ?
- * @param bool $include ?
+ * @param boolean $include ?
  * @return ?
  * @todo Finish documenting this function
  */
@@ -5177,16 +4560,17 @@ function document_file($file, $include=true) {
 }
 
 /**
- * Function to raise the memory limit to a new value.
- * Will respect the memory limit if it is higher, thus allowing
- * settings in php.ini, apache conf or command line switches
- * to override it
- *
- * The memory limit should be expressed with a string (eg:'64M')
- *
- * @param string $newlimit the new memory limit
- * @return bool
- */
+* Function to raise the memory limit to a new value.
+* Will respect the memory limit if it is higher, thus allowing
+* settings in php.ini, apache conf or command line switches
+* to override it
+*
+* The memory limit should be expressed with a string (eg:'64M')
+*
+* Return boolean
+*
+* @param    value    string with the new memory limit
+*/
 function raise_memory_limit ($newlimit) {
 
     if (empty($newlimit)) {
@@ -5330,6 +4714,7 @@ function endecrypt ($pwd, $data, $case) {
  *    <li><b>$event->visible</b> - 0 if the event should be hidden (e.g. because the activity that created it is hidden)
  *  </ul>
  * @return int The id number of the resulting record
+ * @todo Finish documenting this function
  */
  function add_event($event) {
 
@@ -5360,7 +4745,8 @@ function endecrypt ($pwd, $data, $case) {
  *
  * @uses $CFG
  * @param array $event An associative array representing an event from the calendar table. The event will be identified by the id field.
- * @return bool
+ * @return boolean
+ * @todo Finish documenting this function
  */
 function update_event($event) {
 
@@ -5459,35 +4845,25 @@ function show_event($event) {
  * Lists plugin directories within some directory
  *
  * @uses $CFG
- * @param string $plugin dir under we'll look for plugins (defaults to 'mod')
- * @param string $exclude dir name to exclude from the list (defaults to none)
- * @param string $basedir full path to the base dir where $plugin resides (defaults to $CFG->dirroot)
- * @return array of plugins found under the requested parameters
+ * @param string $plugin ?
+ * @param string $exclude ?
+ * @return array
+ * @todo Finish documenting this function
  */
-function get_list_of_plugins($plugin='mod', $exclude='', $basedir='') {
+function get_list_of_plugins($plugin='mod', $exclude='') {
 
     global $CFG;
 
-    $plugins = array();
-
-    if (empty($basedir)) {
-        $basedir = $CFG->dirroot .'/'. $plugin;
-    } else {
-        $basedir = $basedir .'/'. $plugin;
-    }
-    if (file_exists($basedir) && filetype($basedir) == 'dir') {
-        $dirhandle = opendir($basedir);
-        while (false !== ($dir = readdir($dirhandle))) {
-            $firstchar = substr($dir, 0, 1);
-            if ($firstchar == '.' or $dir == 'CVS' or $dir == '_vti_cnf' or $dir == $exclude) {
-                continue;
-            }
-            if (filetype($basedir .'/'. $dir) != 'dir') {
-                continue;
-            }
-            $plugins[] = $dir;
+    $basedir = opendir($CFG->dirroot .'/'. $plugin);
+    while (false !== ($dir = readdir($basedir))) {
+        $firstchar = substr($dir, 0, 1);
+        if ($firstchar == '.' or $dir == 'CVS' or $dir == '_vti_cnf' or $dir == $exclude) {
+            continue;
         }
-        closedir($dirhandle);
+        if (filetype($CFG->dirroot .'/'. $plugin .'/'. $dir) != 'dir') {
+            continue;
+        }
+        $plugins[] = $dir;
     }
     if ($plugins) {
         asort($plugins);
@@ -5499,7 +4875,8 @@ function get_list_of_plugins($plugin='mod', $exclude='', $basedir='') {
  * Returns true if the current version of PHP is greater that the specified one.
  *
  * @param string $version The version of php being tested.
- * @return bool
+ * @return boolean
+ * @todo Finish documenting this function
  */
 function check_php_version($version='4.1.0') {
     return (version_compare(phpversion(), $version) >= 0);
@@ -5513,7 +4890,8 @@ function check_php_version($version='4.1.0') {
  * @uses $_SERVER
  * @param string $brand The browser identifier being tested
  * @param int $version The version of the browser
- * @return bool
+ * @return boolean
+ * @todo Finish documenting this function
  */
  function check_browser_version($brand='MSIE', $version=5.5) {
     $agent = $_SERVER['HTTP_USER_AGENT'];
@@ -5532,12 +4910,13 @@ function check_php_version($version='4.1.0') {
           }
 
           // the proper string - Gecko/CCYYMMDD Vendor/Version
-          // Faster version and work-a-round No IDN problem.
-          if (preg_match("/Gecko\/([0-9]+)/i", $agent, $match)) {
-              if ($match[1] > $version) {
+          if (ereg("^([a-zA-Z]+)/([0-9]+\.[0-9]+) \((.*)\) (.*)$", $agent, $match)) {
+              if (ereg("^([Gecko]+)/([0-9]+)",$match[4], $reldate)) {
+                  if ($reldate[2] > $version) {
                       return true;
                   }
               }
+          }
           break;
 
 
@@ -5572,7 +4951,7 @@ function check_php_version($version='4.1.0') {
  * Contributed by jdell @ unr.edu
  *
  * @param string $ini_get_arg ?
- * @return bool
+ * @return boolean
  * @todo Finish documenting this function
  */
 function ini_get_bool($ini_get_arg) {
@@ -5602,6 +4981,7 @@ function ini_get_bool($ini_get_arg) {
  *
  * @return string|false Returns false if editor is not being used, otherwise
  * returns 'MSIE' or 'Gecko'.
+ * @todo Finish documenting this function
  */
  function can_use_html_editor() {
     global $USER, $CFG;
@@ -5665,7 +5045,8 @@ function check_gd_version() {
  * if there are any mismatches
  *
  * @uses $CFG
- * @return bool
+ * @return boolean
+ * @todo Finish documenting this function
  */
 function moodle_needs_upgrading() {
     global $CFG;
@@ -5706,6 +5087,7 @@ function moodle_needs_upgrading() {
  * @uses $CFG
  * @uses $db
  * @uses HOURSECS
+ * @todo Finish documenting this function. Add long description with more detail on what it does.
  */
 function notify_login_failures() {
     global $CFG, $db;
@@ -5856,23 +5238,6 @@ function count_words($string) {
     return count(preg_split("/\w\b/", $string)) - 1;
 }
 
-/** Count letters in a string.
- *
- * Letters are defined as chars not in tags and different from whitespace.
- *
- * @param string $string The text to be searched for letters.
- * @return int The count of letters in the specified text.
- */
-function count_letters($string) {
-/// Loading the textlib singleton instance. We are going to need it.
-    $textlib = textlib_get_instance();
-
-    $string = strip_tags($string); // Tags are out now
-    $string = ereg_replace('[[:space:]]*','',$string); //Whitespace are out now
-
-    return $textlib->strlen($string, current_charset());
-}
-
 /**
  * Generate and return a random string of the specified length.
  *
@@ -5975,6 +5340,7 @@ function getweek ($startdate, $thedate) {
  *
  * @param int $maxlength  The maximum size of the password being generated.
  * @return string
+ * @todo Finish documenting this function
  */
 function generate_password($maxlen=10) {
     global $CFG;
@@ -6235,7 +5601,7 @@ function make_unique_id_code($extra='') {
  *
  * @param string $addr    The address you are checking
  * @param string $subnetstr    The string of subnet addresses
- * @return bool
+ * @return boolean
  */
 function address_in_subnet($addr, $subnetstr) {
 
@@ -6261,26 +5627,6 @@ function address_in_subnet($addr, $subnetstr) {
     }
 
     return $found;
-}
-
-/**
- * This function sets the $HTTPSPAGEREQUIRED global 
- * (used in some parts of moodle to change some links)
- * and calculate the proper wwwroot to be used
- *
- * By using this function properly, we can ensure 100% https-ized pages
- * at our entire discretion (login, forgot_password, change_password)
- */
-function httpsrequired() {
-
-    global $CFG, $HTTPSPAGEREQUIRED;
-
-    if (!empty($CFG->loginhttps)) {
-        $HTTPSPAGEREQUIRED = true;
-        $CFG->httpswwwroot = str_replace('http:', 'https:', $CFG->wwwroot);
-    } else {
-        $CFG->httpswwwroot = $CFG->wwwroot;
-    }
 }
 
 /**
@@ -6430,14 +5776,6 @@ function unzip_file ($zipfile, $destination = '', $showstatus = true) {
         return false;
     }
 
-    //Clear $zipfile
-    $zipfile = cleardoubleslashes($zipfile);
-
-    //Check zipfile exists
-    if (!file_exists($zipfile)) {
-        return false;
-    }
-
     //If no destination, passed let's go with the same directory
     if (empty($destination)) {
         $destination = $zippath;
@@ -6562,66 +5900,15 @@ function unzip_show_status ($list,$removepath) {
  */
  function getremoteaddr() {
     if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-        return cleanremoteaddr($_SERVER['HTTP_CLIENT_IP']);
+        return $_SERVER['HTTP_CLIENT_IP'];
     }
     if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        return cleanremoteaddr($_SERVER['HTTP_X_FORWARDED_FOR']);
+        return $_SERVER['HTTP_X_FORWARDED_FOR'];
     }
     if (!empty($_SERVER['REMOTE_ADDR'])) {
-        return cleanremoteaddr($_SERVER['REMOTE_ADDR']);
+        return $_SERVER['REMOTE_ADDR'];
     }
     return '';
-}
-
-/** 
- * Cleans a remote address ready to put into the log table
- */
-function cleanremoteaddr($addr) {
-    $originaladdr = $addr;
-    $matches = array();
-    // first get all things that look like IP addresses.
-    if (!preg_match_all('/(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/',$addr,$matches,PREG_SET_ORDER)) {
-        return '';
-    }
-    $goodmatches = array();
-    $lanmatches = array();
-    foreach ($matches as $match) {
-        //        print_r($match);
-        // check to make sure it's not an internal address.
-        // the following are reserved for private lans...
-        // 10.0.0.0 - 10.255.255.255
-        // 172.16.0.0 - 172.31.255.255
-        // 192.168.0.0 - 192.168.255.255
-        // 169.254.0.0 -169.254.255.255 
-        $bits = explode('.',$match[0]);
-        if (count($bits) != 4) {
-            // weird, preg match shouldn't give us it.
-            continue;
-        }
-        if (($bits[0] == 10) 
-            || ($bits[0] == 172 && $bits[1] >= 16 && $bits[1] <= 31)
-            || ($bits[0] == 192 && $bits[1] == 168)
-            || ($bits[0] == 169 && $bits[1] == 254)) {
-            $lanmatches[] = $match[0];
-            continue;
-        }
-        // finally, it's ok
-        $goodmatches[] = $match[0];
-    }
-    if (!count($goodmatches)) {
-        // perhaps we have a lan match, it's probably better to return that.
-        if (!count($lanmatches)) {
-            return '';
-        } else {
-            return array_pop($lanmatches);
-        }
-    } 
-    if (count($goodmatches) == 1) {
-        return $goodmatches[0];
-    }
-    error_log("NOTICE: cleanremoteaddr gives us something funny: $originaladdr had ".count($goodmatches)." matches");
-    // we need to return something, so
-    return array_pop($goodmatches);
 }
 
 /**
@@ -6649,10 +5936,6 @@ if(!function_exists('html_entity_decode')) {
  * simulates this behaviour for PHP < 5.0.0.
  * See also: http://mjtsai.com/blog/2004/07/15/php-5-object-references/
  *
- * Modified 2005-09-29 by Eloy (from Julian Sedding proposal)
- * Found a better implementation (more checks and possibilities) from PEAR:
- * http://cvs.php.net/co.php/pear/PHP_Compat/Compat/Function/clone.php
- * 
  * @param object $obj
  * @return object
  */
@@ -6660,20 +5943,6 @@ if(!check_php_version('5.0.0')) {
 // the eval is needed to prevent PHP 5 from getting a parse error!
 eval('
     function clone($obj) {
-    /// Sanity check
-        if (!is_object($obj)) {
-            user_error(\'clone() __clone method called on non-object\', E_USER_WARNING);
-            return;
-        }
-
-    /// Use serialize/unserialize trick to deep copy the object
-        $obj = unserialize(serialize($obj));
-
-    /// If there is a __clone method call it on the "new" class
-        if (method_exists($obj, \'__clone\')) {
-            $obj->__clone();
-        }
-
         return $obj;
     }
 ');
@@ -6720,14 +5989,6 @@ function bounded_number($min, $value, $max) {
     return $value;
 }
 
-function array_is_nested($array) {
-    foreach ($array as $value) {
-        if (is_array($value)) {
-            return true;
-        }
-    }
-    return false;
-}
 
 /**
  *** get_performance_info() pairs up with init_performance_info()
@@ -6851,62 +6112,8 @@ function report_session_error() {
     } else {
         set_config('session_error_counter', 1);
     }
-    redirect($FULLME, get_string('sessionerroruser2', 'error'), 5);
+    redirect($FULLME, get_string('sessionerroruser', 'error'), 2);
 }
-
-
-/**
- * Detect if an object or a class contains a given property
- * will take an actual object or the name of a class
- * @param mix $obj Name of class or real object to test
- * @param string $property name of property to find
- * @return bool true if property exists
- */
-function object_property_exists( $obj, $property ) {
-    if (is_string( $obj )) {
-        $properties = get_class_vars( $obj );
-    }
-    else {
-        $properties = get_object_vars( $obj );
-    }
-    return array_key_exists( $property, $properties );
-}
-
-
-/**
- * Detect a custom script replacement in the data directory that will
- * replace an existing moodle script
- * @param string $urlpath path to the original script
- * @return string full path name if a custom script exists
- * @return bool false if no custom script exists
- */
-function custom_script_path($urlpath='') {
-    global $CFG;
-
-    if (empty($urlpath) or (strpos($CFG->wwwroot, $urlpath) === false) ) {
-        $urlpath = qualified_me();
-        if (!$urlpath) return false;
-    }
-
-    // Strip wwwroot out
-    $scriptpath = str_replace($CFG->wwwroot, $CFG->dataroot.'/customscripts', $urlpath);
-
-    /// Strip the query string out
-    $parts = parse_url($scriptpath);
-    $scriptpath = $parts['path'];
-
-    /// put an index.php on the end if no explicit script name present
-    if (rtrim($scriptpath, '/') != $scriptpath) {
-        $scriptpath .= 'index.php';
-    }
-
-    if (file_exists($scriptpath)) {
-        return $scriptpath;
-    } else {
-        return false;
-    }
-}
-
 
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:

@@ -13,6 +13,7 @@ $string['dead'] = 'Mort';
 $string['evil'] = 'Démoniaque';
 $string['kiss'] = 'Baiser';
 $string['mixed'] = 'Indécis';
+$string['parentlanguage'] = 'fr';
 $string['sad'] = 'Triste';
 $string['shy'] = 'Gêné';
 $string['sleepy'] = 'Endormi';

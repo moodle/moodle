@@ -76,7 +76,7 @@ CREATE TABLE `prefix_exercise_elements` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `exerciseid` int(10) unsigned NOT NULL default '0',
   `elementno` tinyint(3) unsigned NOT NULL default '0',
-  `description` text NOT NULL default '',
+  `description` text NOT NULL,
   `scale` tinyint(3) unsigned NOT NULL default '0',
   `maxscore` tinyint(3) unsigned NOT NULL default '1',
   `weight` tinyint(3) unsigned NOT NULL default '11',
@@ -95,7 +95,7 @@ CREATE TABLE `prefix_exercise_rubrics` (
   `exerciseid` int(10) unsigned NOT NULL default '0',
   `elementno` int(10) unsigned NOT NULL default '0',
   `rubricno` tinyint(3) unsigned NOT NULL default '0',
-  `description` text NOT NULL default '',
+  `description` text NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `exerciseid` (`exerciseid`)
 ) COMMENT='Info about the rubrics marking scheme';

@@ -31,43 +31,26 @@
         $journals = get_records ("journal","course",$preferences->backup_course,"id");
         if ($journals) {
             foreach ($journals as $journal) {
-                if (backup_mod_selected($preferences,'journal',$journal->id)) {
-                    $status = journal_backup_one_mod($bf,$preferences,$journal);
+                //Start mod
+                fwrite ($bf,start_tag("MOD",3,true));
+                //Print journal data
+                fwrite ($bf,full_tag("ID",4,false,$journal->id));
+                fwrite ($bf,full_tag("MODTYPE",4,false,"journal"));
+                fwrite ($bf,full_tag("NAME",4,false,$journal->name));
+                fwrite ($bf,full_tag("INTRO",4,false,$journal->intro));
+                fwrite ($bf,full_tag("INTROFORMAT",4,false,$journal->introformat));
+                fwrite ($bf,full_tag("DAYS",4,false,$journal->days));
+                fwrite ($bf,full_tag("ASSESSED",4,false,$journal->assessed));
+                fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$journal->timemodified));
+
+                //if we've selected to backup users info, then execute backup_journal_entries
+                if ($preferences->mods["journal"]->userinfo) {
+                    $status = backup_journal_entries($bf,$preferences,$journal->id);
                 }
+                //End mod
+                $status =fwrite ($bf,end_tag("MOD",3,true));
             }
         }
-        return $status;
-    }
-
-    function journal_backup_one_mod($bf,$preferences,$journal) {
-
-        global $CFG;
-    
-        if (is_numeric($journal)) {
-            $journal = get_record('journal','id',$journal);
-        }
-    
-        $status = true;
-
-        //Start mod
-        fwrite ($bf,start_tag("MOD",3,true));
-        //Print journal data
-        fwrite ($bf,full_tag("ID",4,false,$journal->id));
-        fwrite ($bf,full_tag("MODTYPE",4,false,"journal"));
-        fwrite ($bf,full_tag("NAME",4,false,$journal->name));
-        fwrite ($bf,full_tag("INTRO",4,false,$journal->intro));
-        fwrite ($bf,full_tag("INTROFORMAT",4,false,$journal->introformat));
-        fwrite ($bf,full_tag("DAYS",4,false,$journal->days));
-        fwrite ($bf,full_tag("ASSESSED",4,false,$journal->assessed));
-        fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$journal->timemodified));
-
-        //if we've selected to backup users info, then execute backup_journal_entries
-        if (backup_userdata_selected($preferences,'journal',$journal->id)) {
-            $status = backup_journal_entries($bf,$preferences,$journal->id);
-        }
-        //End mod
-        $status =fwrite ($bf,end_tag("MOD",3,true));
-
         return $status;
     }
 
@@ -108,14 +91,7 @@
     }
  
    ////Return an array of info (name,value)
-   function journal_check_backup_mods($course,$user_data=false,$backup_unique_code, $instances=null) {
-       if (!empty($instances) && is_array($instances) && count($instances)) {
-           $info = array();
-           foreach ($instances as $id => $instance) {
-               $info += journal_check_backup_mods_instances($instance,$backup_unique_code);
-           }
-           return $info;
-       }
+   function journal_check_backup_mods($course,$user_data=false,$backup_unique_code) {
         //First the course data
         $info[0][0] = get_string("modulenameplural","journal");
         if ($ids = journal_ids ($course)) {
@@ -136,23 +112,6 @@
         return $info;
     }
 
-   ////Return an array of info (name,value)
-   function journal_check_backup_mods_instances($instance,$backup_unique_code) {
-        //First the course data
-        $info[$instance->id.'0'][0] = '<b>'.$instance->name.'</b>';
-        $info[$instance->id.'0'][1] = '';
-
-        //Now, if requested, the user_data
-        if (!empty($instance->userdata)) {
-            $info[$instance->id.'1'][0] = get_string("entries","journal");
-            if ($ids = journal_entry_ids_by_instance ($instance->id)) {
-                $info[$instance->id.'1'][1] = count($ids);
-            } else {
-                $info[$instance->id.'1'][1] = 0;
-            }
-        }
-        return $info;
-    }
 
 
 
@@ -180,15 +139,5 @@
                                       {$CFG->prefix}journal a
                                  WHERE a.course = '$course' AND
                                        s.journal = a.id");
-    }
-
-    //Returns an array of journal entries id
-    function journal_entry_ids_by_instance ($instanceid) {
-
-        global $CFG;
-
-        return get_records_sql ("SELECT s.id , s.journal
-                                 FROM {$CFG->prefix}journal_entries s
-                                 WHERE s.journal = $instanceid");
     }
 ?>

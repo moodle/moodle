@@ -116,7 +116,7 @@ function glossary_filter($courseid, $text) {
 
             if ($concept->category) {       // Link to a category
                 $title = strip_tags($glossaryname.': '.$strcategory.' '.$concept->concept);
-                $href_tag_begin = '<a class="glossary autolink glossaryid'.$concept->glossaryid.'" title="'.$title.'" '.
+                $href_tag_begin = '<a class="glossary autolink" title="'.$title.'" '.
                                   'href="'.$CFG->wwwroot.'/mod/glossary/view.php?g='.$concept->glossaryid.
                                   '&amp;mode=cat&amp;hook='.$concept->id.'">';
             } else {
@@ -127,7 +127,7 @@ function glossary_filter($courseid, $text) {
                     $encodedconcept = urlencode($concept->concept);
                     $title = str_replace('"', "'", strip_tags($glossaryname.': '.$concept->concept));
                 }
-                $href_tag_begin = '<a target="entry" class="glossary autolink glossaryid'.$concept->glossaryid.'" title="'.$title.'" '.
+                $href_tag_begin = '<a target="entry" class="glossary autolink" title="'.$title.'" '.
                                   'href="'.$CFG->wwwroot.'/mod/glossary/showentry.php?courseid='.$courseid.
                                   '&amp;concept='.$encodedconcept.'" '.
                                   'onclick="return openpopup(\'/mod/glossary/showentry.php?courseid='.$courseid.

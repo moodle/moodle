@@ -16,11 +16,6 @@ a:hover {
     color: #990000;
 }
 
-a.dimmed:link,
-a.dimmed:visited {
-  color:#AAAAAA;
-}
-
 h1 {
   background-color: #C6BDA8;
   border-color: #333333;
@@ -71,15 +66,6 @@ div.header {
   border-color:#C6BDA8;
   background-color:#FFFFFF;
 }
-
-.highlight {
-  background-color:#C6BDA8;
-}
-
-.highlight2 {
-  color:#C6BDA8; /* highlight missing terms in forum search */
-}
-
 
 
 /***
@@ -133,11 +119,6 @@ div.header {
 .sideblock.hidden .header .hide-show img.hide-show-image {
   background: url('../../pix/t/switch_plus.gif') no-repeat bottom;
 }
-
-.sideblock .content .post .head .date,
-.sideblock .content .post .head .name {
-  color: #000000;
-  }
 
 /***
  *** Calendar
@@ -238,28 +219,15 @@ table.minicalendar tr td.weekend {
   border-color: #C6BDA8;
 }
 
-#course-view .section.main .content {
+#course-view .section .content {
   border-color: #C6BDA8;
   background-color: #FFFFFF;
 }
 
-#course-view .section.main .side {
+#course-view .section .side {
   border-color: #C6BDA8;
   background-color: #FFFFFF;
 }
-
-#course-view .current .right.side,
-#course-view .current .left.side {
-  background-color: #C6BDA8;
-}
-
-#course-view .section.hidden .content,
-#course-view .section.hidden .side {
-  border-color:#C6BDA8;
- }
-
-
-
 
 /***
  *** Tabs

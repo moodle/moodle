@@ -19,19 +19,7 @@
         $stylesheetshtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />';
     }
 
-/// Select encoding
-    $encoding = current_charset();
-
-/// Select direction
-    if ( get_string('thisdirection') == 'rtl' ) {
-        $direction = ' dir="rtl"';
-    } else {
-        $direction = ' dir="ltr"';
-    }
-
-    echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
-    echo "<html $direction>\n<head>\n";
-    echo '<meta http-equiv="content-type" content="text/html; charset='.$encoding.'" />';
+    echo '<head>';
     echo $stylesheetshtml;
 
 /// Script parameters
@@ -83,6 +71,9 @@
         echo 'parent.messages.document.write(\''.$message."\\n');\n";
         echo 'parent.messages.scroll(1,5000000);';
         echo "\n-->\n</script>\n\n";
+
+        $date = usergetdate($message->timecreated);
+        $datestring = $date['year'].$date['mon'].$date['mday'];
 
         add_to_log(SITEID, 'message', 'write', 'history.php?user1='.$user->id.'&amp;user2='.$USER->id.'#m'.$messageid, $user->id);
     }

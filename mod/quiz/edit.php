@@ -38,14 +38,10 @@
 
     require_login();
 
-    $courseid  = optional_param('courseid');
-    $quizid    = optional_param('quizid');
-    $page      = optional_param('page', -1);
-    $perpage   = optional_param('perpage', 20);
-    $sortorder = optional_param('sortorder', 'qtype, name ASC');
-    if (preg_match("/[';]/", $sortorder)) {
-        error("Incorrect use of the parameter 'sortorder'");
-    }
+    $courseid = optional_param('courseid');
+    $quizid   = optional_param('quizid');
+    $page     = optional_param('page', -1);
+    $perpage  = optional_param('perpage', 20);
 
     $strquizzes = get_string('modulenameplural', 'quiz');
     $strquiz = get_string('modulename', 'quiz');
@@ -83,16 +79,10 @@
 
         add_to_log($courseid, 'quiz', 'editquestions', "index.php?id=$courseid");
 
-    } else if (!empty($sortorder)) {
-        // no quiz or course was specified so we need to use the stored modform
-        if (isset($SESSION->modform)) {
-            $modform = $SESSION->modform;
-        } else {
-            exit;
-        }
     } else {
-        // we might get here after editing a question in
-        // a popup window. So close window automatically.
+        // no quiz or course was specified so we need to use the stored modform
+        if (!isset($SESSION->modform)) { // we will get here after editing a question in
+            // a popup window. So close window automatically.
 ?>
 <script type="text/javascript">
 <!--
@@ -105,12 +95,9 @@ if (self.name == 'editquestion') {
 <?php notify(get_string('pleaseclose', 'quiz')); ?>
 </noscript>
 <?php
-        // no quiz or course was specified so we need to use the stored modform
-        if (isset($SESSION->modform)) {
-            $modform = $SESSION->modform;
-        } else {
             exit;
         }
+        $modform = $SESSION->modform;
     }
 
     if (! $course = get_record("course", "id", $modform->course)) {
@@ -354,8 +341,6 @@ if (self.name == 'editquestion') {
 
     if (isset($_REQUEST['cat'])) { /// coming from category selection drop-down menu
         $modform->category = $cat;
-        $page = 0;
-        $modform->page = 0;
     }
 
     if(isset($_REQUEST['recurse'])) {
@@ -419,13 +404,14 @@ if (self.name == 'editquestion') {
         if (! $cm = get_coursemodule_from_instance("quiz", $modform->instance, $course->id)) {
             error("Course Module ID was incorrect");
         }
+        notify("$strattemptsexist<br /><a href=\"attempts.php?id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>");
+
         echo "<center>\n";
-        echo "$strattemptsexist<br /><a href=\"report.php?mode=overview&amp;id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>";
         echo "<form target=\"_parent\" method=\"get\" action=\"$CFG->wwwroot/mod/quiz/edit.php\">\n";
         echo "    <input type=\"hidden\" name=\"courseid\" value=\"$course->id\" />\n";
         echo "    <input type=\"submit\" value=\"".get_string("editcatquestions", "quiz")."\" />\n";
         echo "</form>";
-        echo "</center><br/ >\n";
+        echo "</center>\n";
 
         $sumgrades = quiz_print_question_list($modform, false, $SESSION->quiz_showbreaks);
         if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $modform->instance)) {
@@ -483,7 +469,7 @@ if (self.name == 'editquestion') {
     // continues with list of questions
     print_simple_box_start("center", "100%");
     quiz_print_cat_question_list($course, $modform->category,
-                                 isset($modform->instance) ? $modform->instance : 0, $SESSION->quiz_recurse, $page, $perpage, $SESSION->quiz_showhidden, $sortorder);
+                                 isset($modform->instance), $SESSION->quiz_recurse, $page, $perpage, $SESSION->quiz_showhidden);
     print_simple_box_end();
     if (!isset($modform->instance)) {
         print_continue("index.php?id=$modform->course");

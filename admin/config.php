@@ -30,19 +30,10 @@
         validate_form($config, $err);
 
         if (count($err) == 0) {
+            print_header();
             foreach ($config as $name => $value) {
                 if ($name == "sessioncookie") {
                     $value = eregi_replace("[^a-zA-Z]", "", $value);
-                }
-                if ($name == "defaultallowedmodules") {
-                    $value = implode(',',$value);
-                }
-                if ($name == 'hiddenuserfields') {
-                    if (in_array('none', $value)) {
-                        $value = '';
-                    } else {
-                        $value = implode(',',$value);
-                    }
                 }
                 unset($conf);
                 $conf->name  = $name;
@@ -118,7 +109,6 @@
     print_simple_box_start('center');
     
     echo '<form method="post" action="config.php" name="form">';
-    echo '<center><input type="submit" value="'.get_string('savechanges').'" /></center>';
 
 /// Cycle through each section of the configuration
     foreach ($configvars as $sectionname=>$section) {

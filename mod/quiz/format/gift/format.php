@@ -82,8 +82,8 @@ class quiz_format_gift extends quiz_default_format {
     function escapedchar_pre($string) {
         //Replaces escaped control characters with a placeholder BEFORE processing
         
-        $escapedcharacters = array("\\#",    "\\=",    "\\{",    "\\}",    "\\~",    "\\n"   );  //dlnsk
-        $placeholders      = array("&&035;", "&&061;", "&&123;", "&&125;", "&&126;", "&&010" );  //dlnsk
+        $escapedcharacters = array("\\#",    "\\=",    "\\{",    "\\}",    "\\~"   );
+        $placeholders      = array("&&035;", "&&061;", "&&123;", "&&125;", "&&126;");
 
         $string = str_replace("\\\\", "&&092;", $string);
         $string = str_replace($escapedcharacters, $placeholders, $string);
@@ -93,13 +93,14 @@ class quiz_format_gift extends quiz_default_format {
 
     function escapedchar_post($string) {
         //Replaces placeholders with corresponding character AFTER processing is done
-        $placeholders = array("&&035;", "&&061;", "&&123;", "&&125;", "&&126;", "&&010"); //dlnsk
-        $characters   = array("#",      "=",      "{",      "}",      "~",      "\n"   ); //dlnsk
+        $placeholders = array("&&035;", "&&061;", "&&123;", "&&125;", "&&126;");
+        $characters   = array("#",      "=",      "{",      "}",      "~"     );
         $string = str_replace($placeholders, $characters, $string);
         return $string;
     }
 
     function check_answer_count( $min, $answers, $text ) {
+      // max is always 10 of course!
       $countanswers = count($answers);
       if ($countanswers < $min) {
         if ($this->displayerrors) {
@@ -110,6 +111,14 @@ class quiz_format_gift extends quiz_default_format {
          return false;
        }
 
+       if ($countanswers>10) {
+         if ($this->displayerrors) {
+           $errormessage = get_string( 'importmax10error', 'quiz' );
+             echo "<p>$text</p>\n";
+             echo "<p>$errormessage</p>";
+           }
+           return false;
+         }
        return true;
     }
 
@@ -473,8 +482,8 @@ class quiz_format_gift extends quiz_default_format {
 function repchar( $text, $format=0 ) {
     // escapes 'reserved' characters # = ~ { ) and removes new lines
     // also pushes text through format routine
-    $reserved = array( '#', '=', '~', '{', '}', "\n","\r");
-    $escaped =  array( '\#','\=','\~','\{','\}','\n',''  ); //dlnsk
+    $reserved = array( '#','=','~','{','}',"\n","\r" );
+    $escaped = array( '\#','\=','\~','\{','\}',' ','' );
 
     $newtext = str_replace( $reserved, $escaped, $text ); 
     $format = 0; // turn this off for now

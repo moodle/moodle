@@ -3,7 +3,7 @@
     require("../config.php");
     require("$CFG->dirroot/mod/forum/lib.php");
 
-    $confirm = optional_param('confirm');
+    optional_variable($confirm);
 
     require_login();
 
@@ -28,7 +28,7 @@
     print_header("$site->shortname: $stradministration: $strupgradingdata", "$site->fullname", 
                  "<a href=\"index.php\">$stradministration</a> -> $strupgradingdata");
 
-    if (empty($confirm)) {
+    if (empty($_GET['confirm'])) {
         notice_yesno(get_string("upgradeforumreadinfo", "admin"), 
                      "upgradeforumread.php?confirm=true&sesskey=$USER->sesskey", 
                      "index.php");

@@ -13,6 +13,9 @@
     if (empty($form->assignmenttype)) {
         $form->assignmenttype = "uploadsingle";
     }
+    if (empty($form->resubmit)) {
+        $form->resubmit = "";
+    }
     if (!isset($form->grade)) {
         $form->grade = 100;
     }
@@ -25,8 +28,14 @@
     if (!isset($form->preventlate)) {
         $form->preventlate = 0;
     }
+    if (!isset($form->grade)) {
+        $form->grade = 100;
+    }
     if (empty($form->maxbytes)) {
         $form->maxbytes = $CFG->assignment_maxbytes;
+    }
+    if (empty($form->timedue)) {
+        $form->timedue = "";
     }
 
 ?>
@@ -142,12 +151,10 @@
     <?php
        $ASSIGNMENT_TYPES = assignment_types();
        choose_from_menu($ASSIGNMENT_TYPES, 'assignmenttype', $form->assignmenttype, '');
-       helpbutton('types', get_string('assignmenttype', 'assignment'), 'assignment');
+       helpbutton('assignment/types', get_string('assignmenttype', 'assignment'), 'moodle');
     ?>
     </td>
 </tr>
-
-<?php print_standard_coursemodule_settings($form); ?>
 
 </table>
 <br />

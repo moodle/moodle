@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim#natsoft.com.my). All rights reserved.
+V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim#natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -473,8 +473,7 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/odbc/htm/od
 		}
 		$rs->Close(); //-- crashes 4.03pl1 -- why?
 		
-		if (empty($retarr)) $retarr = false;
-		return $retarr;
+		return empty($retarr) ? $false : $retarr;
 	}
 	
 	function Prepare($sql)
@@ -712,9 +711,9 @@ class ADORecordSet_odbc extends ADORecordSet {
 	
 	function _fetch()
 	{
-
+		
 		if ($this->_has_stupid_odbc_fetch_api_change)
-			$rez = @odbc_fetch_into($this->_queryID,$this->fields);
+			$rez = @odbc_fetch_into($this->_queryID,$this->fields,$row);
 		else {
 			$row = 0;
 			$rez = @odbc_fetch_into($this->_queryID,$row,$this->fields);
@@ -735,4 +734,5 @@ class ADORecordSet_odbc extends ADORecordSet {
 	}
 
 }
+
 ?>

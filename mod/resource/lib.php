@@ -36,10 +36,6 @@ if (!isset($CFG->resource_allowlocalfiles)) {
     set_config("resource_allowlocalfiles", "0");
 }
 
-if (!isset($CFG->resource_hide_repository)) {
-    set_config("resource_hide_repository", "1");
-}
-
 define('RESOURCE_LOCALPATH', 'LOCALPATH');
 
 $RESOURCE_WINDOW_OPTIONS = array('resizable', 'scrollbars', 'directories', 'location',
@@ -125,78 +121,6 @@ function resource_base($cmid=0) {
 * Display function does nothing in the base class
 */
 function display() {
-
-}
-
-
-/**
-* Display the resource with the course blocks.
-*/
-function display_course_blocks_start() {
-
-    global $CFG;
-    global $USER;
-
-    require_once($CFG->libdir.'/blocklib.php');
-    require_once($CFG->libdir.'/pagelib.php');
-
-    $PAGE = page_create_object(PAGE_COURSE_VIEW, $this->course->id);
-    $this->PAGE = $PAGE;
-    $pageblocks = blocks_setup($PAGE);
-
-    $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]), 210);
-
-/// Print the page header
-
-    if (!empty($edit) && $PAGE->user_allowed_editing()) {
-        if ($edit == 'on') {
-            $USER->editing = true;
-        } else if ($edit == 'off') {
-            $USER->editing = false;
-        }
-    }
-    $morebreadcrumbs = array($this->strresources   => 'index.php?id='.$this->course->id,
-                             $this->resource->name => '');
-
-    $PAGE->print_header($this->course->shortname.': %fullname%', $morebreadcrumbs);
-
-    echo '<table id="layout-table"><tr>';
-
-    if((blocks_have_content($pageblocks, BLOCK_POS_LEFT) || $PAGE->user_is_editing())) {
-        echo '<td style="width: '.$blocks_preferred_width.'px;" id="left-column">';
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_LEFT);
-        echo '</td>';
-    }
-
-    echo '<td id="middle-column">';
-    echo '<div id="resource">';
-
-}
-
-
-/**
- * Finish displaying the resource with the course blocks
- */
-function display_course_blocks_end() {
-
-    global $CFG;
-
-    $PAGE = $this->PAGE;
-    $pageblocks = blocks_setup($PAGE);
-    $blocks_preferred_width = bounded_number(180, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 210);
-
-    echo '</div>';
-    echo '</td>';
-
-    if((blocks_have_content($pageblocks, BLOCK_POS_RIGHT) || $PAGE->user_is_editing())) {
-        echo '<td style="width: '.$blocks_preferred_width.'px;" id="right-column">';
-        blocks_print_group($PAGE, $pageblocks, BLOCK_POS_RIGHT);
-        echo '</td>';
-    }
-
-    echo '</tr></table>';
-
-    print_footer($this->course);
 
 }
 
@@ -325,10 +249,14 @@ function update_instance($resource) {
 }
 
 
-function delete_instance($resource) {
-// Given an object containing the resource data
+function delete_instance($id) {
+// Given an ID of an instance of this module,
 // this function will permanently delete the instance
 // and any data that depends on it.
+
+    if (! $resource = get_record("resource", "id", "$id")) {
+        return false;
+    }
 
     $result = true;
 
@@ -382,7 +310,7 @@ function resource_delete_instance($id) {
     $resourceclass = "resource_$resource->type";
     $res = new $resourceclass();
 
-    return $res->delete_instance($resource);
+    return $res->delete_instance($id);
 }
 
 
@@ -614,7 +542,7 @@ function resource_is_url($path) {
 
 function resource_get_resource_types() {
 /// Returns a menu of current resource types, in standard order
-    global $resource_standard_order, $CFG;
+    global $resource_standard_order;
 
     $resources = array();
 
@@ -627,22 +555,10 @@ function resource_get_resource_types() {
     /// Drop-in extra resource types
     $resourcetypes = get_list_of_plugins('mod/resource/type');
     foreach ($resourcetypes as $resourcetype) {
-        if (!empty($CFG->{'resource_hide_'.$resourcetype})) {  // Not wanted
-            continue;
-        }
         if (!in_array($resourcetype, $resources)) {
             $resources[$resourcetype] = get_string("resourcetype$resourcetype", 'resource');
         }
     }
     return $resources;
 }
-
-function resource_get_view_actions() {
-    return array('view','view all');
-}
-
-function resource_get_post_actions() {
-    return array();
-}
-
 ?>

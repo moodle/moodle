@@ -4,9 +4,8 @@
 
     require_once('../config.php');
     require_once($CFG->libdir.'/blocklib.php');
-    require_once($CFG->libdir.'/tablelib.php');
 
-    $confirm  = optional_param('confirm', 0, PARAM_INT);
+    optional_variable($_GET['confirm'], 0);
     $hide     = optional_param('hide', 0, PARAM_INT);
     $show     = optional_param('show', 0, PARAM_INT);
     $delete   = optional_param('delete', 0, PARAM_INT);
@@ -43,6 +42,7 @@
 
     print_heading($strmanageblocks);
 
+
 /// If data submitted, then process and store.
 
     if (!empty($hide) && confirm_sesskey()) {
@@ -73,17 +73,12 @@
             error("Block doesn't exist!");
         }
 
-        if (!block_is_compatible($block->name)) {
-            $strblockname = $block->name;
-        }
-        else {
-            $blockobject = block_instance($block->name);
-            $strblockname = $blockobject->get_title();
-        }
+        $blockobject = block_instance($block->name);
+        $strblockname = $blockobject->get_title();
 
-        if (!$confirm) {
+        if (!$_GET['confirm']) {
             notice_yesno(get_string('blockdeleteconfirm', '', $strblockname),
-                         'blocks.php?delete='.$block->id.'&amp;confirm=1&amp;sesskey='.$USER->sesskey,
+                         'blocks.php?delete='.$block->id.'&amp;confirm=1&sesskey='.$USER->sesskey,
                          'blocks.php');
             print_footer();
             exit;
@@ -128,12 +123,9 @@
         error('No blocks found!');  // Should never happen
     }
 
-    $incompatible = array();
-
     foreach ($blocks as $block) {
         if(!block_is_compatible($block->name)) {
             notify('Block '. $block->name .' is not compatible with the current version of Mooodle and needs to be updated by a programmer.');
-            $incompatible[] = $block;
             continue;
         }
         if(($blockobject = block_instance($block->name)) === false) {
@@ -152,23 +144,17 @@
 
 /// Print the table of all blocks
 
-    $table = new flexible_table('admin-blocks-compatible');
-
-    $table->define_columns(array('name', 'instances', 'version', 'hideshow', 'multiple', 'delete', 'settings'));
-    $table->define_headers(array($strname, $strcourses, $strversion, $strhide.'/'.$strshow, $strmultiple, $strdelete, $strsettings));
-    $table->define_baseurl($CFG->wwwroot.'/admin/blocks.php');
-
-    $table->set_attribute('cellspacing', '0');
-    $table->set_attribute('id', 'blocks');
-    $table->set_attribute('class', 'generaltable generalbox');
-
-    $table->setup();
+    $table->head  = array ($strname, $strcourses, $strversion, $strhide.'/'.$strshow, $strmultiple, $strdelete, $strsettings);
+    $table->align = array ('left', 'right', 'left', 'center', 'center', 'center', 'center');
+    $table->wrap = array ('nowrap', '', '', '', '', '', '');
+    $table->size = array ('100%', '10', '10', '10', '10','12');
+    $table->width = '100';
 
     foreach ($blockbyname as $blockname => $blockid) {
 
         $blockobject = $blockobjects[$blockid];
 
-        $delete = '<a href="blocks.php?delete='.$blockid.'&amp;sesskey='.$USER->sesskey.'">'.$strdelete.'</a>';
+        $delete = '<a href="blocks.php?delete='.$blockid.'&sesskey='.$USER->sesskey.'">'.$strdelete.'</a>';
 
         $settings = ''; // By default, no configuration
         if($blockobject->has_config()) {
@@ -179,26 +165,26 @@
         $class = ''; // Nothing fancy, by default
 
         if ($blocks[$blockid]->visible) {
-            $visible = '<a href="blocks.php?hide='.$blockid.'&amp;sesskey='.$USER->sesskey.'" title="'.$strhide.'">'.
+            $visible = '<a href="blocks.php?hide='.$blockid.'&sesskey='.$USER->sesskey.'" title="'.$strhide.'">'.
                        '<img src="'.$CFG->pixpath.'/i/hide.gif" height="16" width="16" alt="" /></a>';
         } else {
-            $visible = '<a href="blocks.php?show='.$blockid.'&amp;sesskey='.$USER->sesskey.'" title="'.$strshow.'">'.
+            $visible = '<a href="blocks.php?show='.$blockid.'&sesskey='.$USER->sesskey.'" title="'.$strshow.'">'.
                        '<img src="'.$CFG->pixpath.'/i/show.gif" height="16" width="16" alt="" /></a>';
             $class = ' class="dimmed_text"'; // Leading space required!
         }
         if ($blockobject->instance_allow_multiple()) {
             if($blocks[$blockid]->multiple) {
-                $multiple = '<span style="white-space: nowrap;">'.get_string('yes').' (<a href="blocks.php?multiple='.$blockid.'&amp;sesskey='.$USER->sesskey.'">'.get_string('change', 'admin').'</a>)</span>';
+                $multiple = '<nobr>'.get_string('yes').' (<a href="blocks.php?multiple='.$blockid.'&sesskey='.$USER->sesskey.'">'.get_string('change', 'admin').'</a>)</nobr>';
             }
             else {
-                $multiple = '<span style="white-space: nowrap;">'.get_string('no').' (<a href="blocks.php?multiple='.$blockid.'&amp;sesskey='.$USER->sesskey.'">'.get_string('change', 'admin').'</a>)</span>';
+                $multiple = '<nobr>'.get_string('no').' (<a href="blocks.php?multiple='.$blockid.'&sesskey='.$USER->sesskey.'">'.get_string('change', 'admin').'</a>)</nobr>';
             }
         }
         else {
             $multiple = '';
         }
 
-        $table->add_data(array(
+        $table->data[] = array(
             '<span'.$class.'>'.$blockobject->get_title().'</span>',
             $count,
             $blockobject->get_version(),
@@ -206,34 +192,10 @@
             $multiple,
             $delete,
             $settings
-        ));
+        );
     }
 
-    $table->print_html();
-
-    if(!empty($incompatible)) {
-        print_heading(get_string('incompatibleblocks', 'admin'));
-
-        $table = new flexible_table('admin-blocks-incompatible');
-        
-        $table->define_columns(array('block', 'delete'));
-        $table->define_headers(array($strname, $strdelete));
-        $table->define_baseurl($CFG->wwwroot.'/admin/blocks.php');
-    
-        $table->set_attribute('cellspacing', '0');
-        $table->set_attribute('id', 'incompatible');
-        $table->set_attribute('class', 'generaltable generalbox');
-    
-        $table->setup();
-
-        foreach ($incompatible as $block) {
-            $table->add_data(array(
-                $block->name,
-                '<a href="blocks.php?delete='.$block->id.'&amp;sesskey='.$USER->sesskey.'">'.$strdelete.'</a>',
-            ));
-        }
-        $table->print_html();
-    }
+    print_table($table);
 
     print_footer();
 

@@ -4,7 +4,7 @@
     <?php echo $meta ?>
     <meta name="keywords" content="moodle, <?php echo $title ?> " />
     <title><?php echo $title ?></title>
-    <link rel="shortcut icon" href="<?php echo $CFG->wwwroot.'/theme/'.current_theme() ?>/favicon.ico" />
+    <link rel="shortcut icon" href="<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>/favicon.ico" />
     <?php include("$CFG->javascript"); ?>
 </head>
 
@@ -23,21 +23,23 @@
         <div class="headermain"><?php echo $heading ?></div>
         <div class="headermenu"><?php echo $menu ?></div>
     </div>
-    <div class="navbar">
+    <div class="clearer"></div>
+    <div id="nav-bar">
     </div>
 <?php } else if ($heading) {  // This is what gets printed on any other page with a heading 
 ?>
     <div id="header">
         <div class="headermain"><?php echo $heading ?></div>
         <div class="headermenu"><?php echo $menu ?></div>
-        <!-- <div class="headermenu"><div id="new-menu"><?php echo $navmenulist ?></div></div> -->
     </div>
 <?php } ?>
+    <div class="clearer"></div>
 <?php if ($navigation) { // This is the navigation table with breadcrumbs  ?>
-    <div class="navbar">
-        <div class="breadcrumb"><?php print_navigation("$navigation"); ?></div>
-        <div class="navbutton"><?php echo $button; ?></div>
+    <div id="nav-bar">
+        <div id="breadcrumb"><?php print_navigation("$navigation"); ?></div>
+        <div id="navbutton"><?php echo $button; ?></div>
     </div>
 <?php } ?>
+    <div class="clearer"></div>
     <!-- END OF HEADER -->
 <div id="content">

@@ -27,7 +27,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
         $answercount = 0;
         foreach ($question->subquestions as $key=>$questiontext) {
             $answertext = $question->subanswers[$key];
-            if (!empty($questiontext) or !empty($answertext)) {
+            if (!empty($questiontext) and !empty($answertext)) {
                 $answercount++;
             }
         }
@@ -42,7 +42,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
         // Insert all the new question+answer pairs
         foreach ($question->subquestions as $key => $questiontext) {
             $answertext = $question->subanswers[$key];
-            if (!empty($questiontext) or !empty($answertext)) {
+            if (!empty($questiontext) and !empty($answertext)) {
                 if ($subquestion = array_shift($oldsubquestions)) {  // Existing answer, so reuse it
                     $subquestion->questiontext = $questiontext;
                     $subquestion->answertext   = $answertext;
@@ -61,13 +61,6 @@ class quiz_match_qtype extends quiz_default_questiontype {
                     }
                 }
                 $subquestions[] = $subquestion->id;
-            }
-        }
-
-        // delete old subquestions records
-        if (!empty($oldsubquestions)) {
-            foreach($oldsubquestions as $os) {
-                delete_records('quiz_match_sub', 'id', $os->id);
             }
         }
 
@@ -94,7 +87,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
         return true;
     }
 
-    function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
+    function create_session_and_responses(&$question, &$state, $quiz, $attempt) {
         if (!$state->options->subquestions = get_records('quiz_match_sub',
          'question', $question->id)) {
            notify('Error: Missing subquestions!');
@@ -112,15 +105,19 @@ class quiz_match_qtype extends quiz_default_questiontype {
             $answer->fraction = 1.0;
             $state->options->subquestions[$key]->options
              ->answers[$subquestion->id] = clone($answer);
-
-            $state->responses[$key] = '';
         }
 
         // Shuffle the answers if required
-        if ($cmoptions->shuffleanswers) {
-           $state->options->subquestions = swapshuffle_assoc($state->options->subquestions);
+        $subquestionids = array_values(array_map(create_function('$val',
+         'return $val->id;'), $state->options->subquestions));
+        if ($quiz->shuffleanswers) {
+           $subquestionids = swapshuffle($subquestionids);
         }
-
+        $state->options->order = $subquestionids;
+        // Create empty responses
+        foreach ($subquestionids as $val) {
+            $state->responses[$val] = '';
+        }
         return true;
     }
 
@@ -132,18 +129,16 @@ class quiz_match_qtype extends quiz_default_questiontype {
         $responses = array_map(create_function('$val',
          'return explode("-", $val);'), $responses);
 
-        if (!$questions = get_records('quiz_match_sub',
+        // Restore the previous responses
+        $state->responses = array();
+        foreach ($responses as $response) {
+            $state->responses[$response[0]] = $response[1];
+        }
+
+        if (!$state->options->subquestions = get_records('quiz_match_sub',
          'question', $question->id)) {
            notify('Error: Missing subquestions!');
            return false;
-        }
-
-        // Restore the previous responses and place the questions into the state options
-        $state->responses = array();
-        $state->options->subquestions = array();
-            foreach ($responses as $response) {
-                $state->responses[$response[0]] = $response[1];
-            $state->options->subquestions[$response[0]] = $questions[$response[0]];
         }
 
         foreach ($state->options->subquestions as $key => $subquestion) {
@@ -165,8 +160,10 @@ class quiz_match_qtype extends quiz_default_questiontype {
     function save_session_and_responses(&$question, &$state) {
         // Serialize responses
         $responses = array();
-        foreach ($state->options->subquestions as $key => $subquestion) {
-            $responses[] = $key.'-'.($state->responses[$key] ? $state->responses[$key] : 0);
+        foreach ($state->responses as $key => $val) {
+            if ($key != '') {
+                $responses[] = "$key-$val";
+            }
         }
         $responses = implode(',', $responses);
 
@@ -190,13 +187,12 @@ class quiz_match_qtype extends quiz_default_questiontype {
         return empty($responses) ? null : $responses;
     }
 
-    function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
+    function print_question_formulation_and_controls(&$question, &$state, $quiz, $options) {
         $subquestions   = $state->options->subquestions;
         $correctanswers = $this->get_correct_responses($question, $state);
         $nameprefix     = $question->name_prefix;
         $answers        = array();
         $responses      = &$state->responses;
-
 
         foreach ($subquestions as $subquestion) {
             foreach ($subquestion->options->answers as $sub) {
@@ -211,22 +207,22 @@ class quiz_match_qtype extends quiz_default_questiontype {
         if (!empty($question->questiontext)) {
             echo format_text($question->questiontext,
                              $question->questiontextformat,
-                             NULL, $cmoptions->course);
+                             NULL, $quiz->course);
         }
-        quiz_print_possible_question_image($question);
+        quiz_print_possible_question_image($quiz->id, $question);
 
         ///// Print the input controls //////
         echo '<table border="0" cellpadding="10" align="right">';
         foreach ($subquestions as $key => $subquestion) {
+
             /// Subquestion text:
             echo '<tr><td align="left" valign="top">';
             echo format_text($subquestion->questiontext,
-                $question->questiontextformat, NULL, $cmoptions->course);
+                $question->questiontextformat, NULL, $quiz->course);
             echo '</td>';
 
             /// Drop-down list:
-            ///added rc4encrypt here
-            $menuname = $nameprefix.rc4encrypt($subquestion->id);
+            $menuname = $nameprefix.$subquestion->id;
             $response = isset($state->responses[$subquestion->id])
                         ? $state->responses[$subquestion->id] : '0';
             if ($options->readonly
@@ -238,7 +234,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
                 $class = '';
             }
             echo "<td align=\"right\" valign=\"top\" $class>";
-            
+
             choose_from_menu($answers, $menuname, $response, 'choose', '', 0,
              false, $options->readonly);
 
@@ -256,7 +252,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
         echo '</table>';
     }
 
-    function grade_responses(&$question, &$state, $cmoptions) {
+    function grade_responses(&$question, &$state, $quiz) {
         $subquestions = $state->options->subquestions;
         $responses    = &$state->responses;
 

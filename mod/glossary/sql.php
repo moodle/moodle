@@ -188,7 +188,9 @@
             $searchterms = explode(" ",$hook);
 
             foreach ($searchterms as $searchterm) {
-
+                if (strlen($searchterm) < 2) {
+                    continue;
+                }
                 if ($conceptsearch) {
                     $conceptsearch .= " AND ";
                 }

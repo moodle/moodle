@@ -79,7 +79,7 @@
             continue;
         }
 
-        include($CFG->themedir.$theme.'/config.php');
+        include_once($CFG->themedir.$theme.'/config.php');
 
         $readme = '';
         $screenshot = '';
@@ -114,7 +114,6 @@
         } else {
             echo '<td valign="top">';
         }
-
         if (isset($THEME->sheets)) {
             echo '<p style="font-size:1.5em;font-style:bold;">'.$theme.'</p>';
         } else {

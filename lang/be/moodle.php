@@ -786,6 +786,7 @@ $string['pageheaderconfigablock'] = 'Афармленне блоку ў %%fullname%%';
 $string['parentcoursenotfound'] = 'Бацькоўскі курс не знойдзены';
 $string['parentcoursenotmetacourse'] = 'Бацькоўскі курс не з\'яўляецца метакурсам';
 $string['parentfolder'] = 'Бацькоўская тэчка';
+$string['parentlanguage'] = 'be';
 $string['participants'] = 'Удзельнікі';
 $string['password'] = 'Пароль';
 $string['passwordchanged'] = 'Пароль быў зменены';

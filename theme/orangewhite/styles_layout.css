@@ -54,11 +54,9 @@ h6.main {
   padding:5px
 }
 #layout-table #middle-column {
-  width:auto;
+  /*width:auto;*/
+  width:50%;
   padding:5px
-}
-#layout-table #middle-column .topics {
-  width:95%
 }
 #layout-table #right-column {
   width:22%;
@@ -68,15 +66,9 @@ h6.main {
 #middle-column .section .side {
   border:0 none
 }
-.generalbox {
-  width:90%
-}
 .generaltable th.header {
   border-left:1px solid;
   border-right:1px solid;
-}
-.generaltable .smallinfo p {
-  margin-top:0
 }
 .sitetopiccontent {
   border:0 none
@@ -166,10 +158,6 @@ h6.main {
 #site-index #content {
   margin:0
 }
-#user-edit .userpicture,
-#user-view .userpicture {
-  margin-top:10px
-}
 
 /***
  *** Admin
@@ -236,20 +224,11 @@ h6.main {
   padding-bottom:0.2em;
   border-bottom:1px solid
 }
-.block_rss_client .link {
-  border-top:0 none
-}
 
 /***
  *** Calendar
  ***/
 
-#calendar .today,
-.minicalendar .today {
-  padding-top:0;
-  padding-bottom:0;
-  border:1px solid !important
-}
 #calendar .maincalendar .calendarmonth {
   width:75%
 }
@@ -257,7 +236,6 @@ h6.main {
 /***
  *** Course
  ***/
-
 #site-index .headingblock {
   border:0 none
 }
@@ -270,20 +248,15 @@ h6.main {
 #course-view .topics {
   margin:0 0.5em 0 1em
 }
-#course-view .section .left {
-  width:0.8em
-}
+#course-view .section .left,
 #course-view .section .right {
-  width:30px
+  width:0.8em
 }
 #course-view .section .left a {
   display:none
 }
 #course-view .section .spacer {
   height:2em
-}
-#course-view .section .activity .spacer {
-  height:12px
 }
 #course-view .section .content .section {
   margin-top:0;
@@ -326,9 +299,6 @@ h6.main {
   border-left:1px solid;
   border-right:1px solid
 }
-#mod-forum-index .generalbox {
-  width:100%
-}
   
 /***
  *** Modules:Glossary
@@ -336,9 +306,6 @@ h6.main {
 
 .glossarydisplay {
   border-bottom:5px solid
-}
-.glossarypopup {
-  margin-top:0.5em
 }
 
 /***

@@ -1,6 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>    
 
 <head>
     
@@ -9,7 +7,7 @@
 <link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
     
 <meta http-equiv="Content-Type" content="text/html;
-charset=iso-8859-15" />
+charset=iso-8859-15">
 <style type="text/css">
 <!--
 .style3 {color: #660000}
@@ -17,27 +15,27 @@ charset=iso-8859-15" />
 </style>
 </head>
 
-<body>
+<body bgcolor="#FFFFFF">
 <h1>Pag-iinstol ng Moodle</h1>
 <h2>Huwag mag-panic! <img
 src="http://moodle.org/pix/s/smiley.gif"></h2>
 <blockquote>
 
-  <p>Ipinapaliwanag ng gabay na ito kung paano mag-instol ng Moodle sa
+  <p>Ipinapaliwang ng gabay na ito kung paano mag-instol ng Moodle sa
 unang pagkakataon.  Ang ilan sa mga hakbang ay maraming detalye upang
-masakop ang mayorya ng mga posibleng kaayusan ng web server,  kaya't
+masaklaw ang mayorya ng mga posibleng set-up ng web server,  kaya't
 mukhang medyo mahaba at komplikado ang dokumentong ito.  Huwag
-mag-panic, kapag alam na ninyo kung paano ito gawin, maiiinstol ninyo ang
+mag-panic, kapag alam na ninyo kung paano ito gawin, maiintol ninyo ang
 Moodle sa loob ng ilang minuto!
 </p>
 
   <p>Kung may mga nararanasan kang problema, pakibasa nang mabuti ang
 dokumentong ito - ang mga karaniwang problema ay nasasagot dito.  Kung
-may problema ka pa rin, makakahingi ka ng tulong sa <a target="_blank"
+may problema ka pa rin, makakahingi ka ng tulong sa <a target="_new"
 href="http://moodle.org/help">Moodle Help</a></p>
 
   <p>Ang isa pang opsiyon ay kumontak ka ng 
-<a target="_blank" href="http://moodle.com/hosting/">kumpanyang
+<a target="_new" href="http://moodle.com/hosting/">kumpanyang
 nagho-host ng web site</a> na ganap na makapagmementina ng Moodle para
 sa iyo, para mabalewala mo na ang babasahing ito at dumiretso na sa
 pagtuturo!
@@ -51,19 +49,19 @@ wastong lugar</a> </li>
     <li><a href="#site">Balangkas ng site</a></li>
     <li><a href="#installer">Patakbuhin ang installer script para
 makalikha ng config.php</a>      <ul>
-        <li><a href="#webserver">Tsekin ang mga kaayusan ng web server</a></li>
+        <li><a href="#webserver">Tsekin ang mga web server setting</a></li>
         <li><a href="#database">Paglikha ng database</a></li>
         <li><a href="#data">Paglikha ng direktoryo ng datos</a></li>
         </ul>
     </li>
     <li><a href="#admin">Tumungo sa pahina ng admin para maipagpatuloy
 ang pag-configure</a></li>
-    <li><a href="#cron">Isaayos ang cron</a></li>
+    <li><a href="#cron">I-set-up ang cron</a></li>
     <li><a href="#course">Lumikha ng bagong kurso</a></li>
      </ol>
   <p>&nbsp;</p>
 </blockquote>
-<h3 class="sectionheading"><a id="requirements" name="requirements"></a>1. Mga
+<h3 class="sectionheading"><a name="requirements"></a>1. Mga
 Kinakailangan</h3>
 <blockquote> 
   <p>Ang Moodle ay pangunahing dinebelop sa Linux na gumagamit ng
@@ -101,7 +99,7 @@ plataporma.
   <p>&nbsp;</p>
 </blockquote>
 
-<h3 class="sectionheading"><a id="downloading" name="downloading"></a>2. I-download at
+<h3 class="sectionheading"><a name="downloading"></a>2. I-download at
 kopyahin ang mga file sa wastong lugar </h3> <blockquote>
   <p>May dalawang paraan sa pagkuha ng Moodle, bilang isang compressed
 package at sa pamamagitan ng CVS.  Ipinaliliwanag ito ng detalyado sa
@@ -113,11 +111,11 @@ pangalang &quot;moodle&quot;, na naglalaman ng ilang file at folder.
 </p>
   <p>Maaari mong ilagay ang buong folder sa direktoryo ng web server
 document mo, kaya ang magiging lokasyon ng site ay
-<b>http://webservermo.com/moodle</b>, o puwede mong kopyahin ang lahat
+<b>http://yourwebserver.com/moodle</b>, o puwede mong kopyahin ang lahat
 ng nilalaman sa punong direktoryo ng web server, kaya ang site ay
-magiging <b>http://webservermo.com</b>.</p>
+magiging <b>http://yourwebserver.com</b>.</p>
   <p> Kung idina-download mo ang Moodle sa lokal mong kompyuter bago mo
-ito iaplowd sa web site mo, mas mabuting iaplowd ang buong archive
+ito i-upload sa web site mo, mas mabuting i-upload ang buong archive
 bilang isang file lamang, pagkatapos ay i-unpack na lamang ito sa
 server.  Kahit ang mga web hosting interface tulad ng Cpanel ay
 pinapahintulutan kang mag-uncompress ng mga archive sa  &quot;File
@@ -125,7 +123,7 @@ Manager&quot;. </p>
 
 </blockquote>
 <p>&nbsp;</p>
-<h3 class="sectionheading"><a id="site" name="site"></a>3. Balangkas ng site</h3>
+<h3 class="sectionheading"><a name="site"></a>3. Balangkas ng site</h3>
 <blockquote>
   <p> Puwede mo nang laktawan ang seksiyong ito, gayunpaman narito ang
 mabilisang lagom ng mga nilalaman ng Moodle folder, para maging pamilyar
@@ -136,7 +134,7 @@ ka sa program:</p>
       <td width="130" valign="top">config.php</td>
       <td valign="top">-</td>
       <td valign="top">
-naglalaman ng mga basic na kaayusan.  Hindi kasama sa Moodle ang file na
+naglalaman ng mga basic na setting.  Hindi kasama sa Moodle ang file na
 ito - kailangan mo itong likhain.</td>
     </tr>
       <tr>
@@ -148,7 +146,7 @@ config.php </td>
       <tr><td valign="top">version.php</td>
       <td valign="top">-</td>
       <td valign="top">
-binibigyang depinisyon ang kasalukuyang bersiyon ng Moodle code
+idini-define ang kasalukuyang bersiyon ng Moodle code
       </td></tr>
       <tr><td valign="top">index.php</td>
       <td valign="top">-</td>
@@ -167,42 +165,42 @@ kalendaryo</li>
       <li>course/ - code para sa pagdispley at pamamahala ng mga kurso</li>
       <li>doc/ - tulong na dokumentasyon para sa Moodle (eg ang pahinang
 ito)</li>
-      <li>files/ - code para sa pagdispley at pamamahala ng mga inaplowd
+      <li>files/ - code para sa pagdispley at pamamahala ng mga inapload
 na file
 </li>
       <li>lang/ - mga tekstong may sari-saring wika, isang direktoryo
 bawat wika</li>
       <li>lib/ - mga library ng core na Moodle code</li>
-      <li>login/ - code para sa pag-handle ng log-in at paglikha ng
+      <li>login/ - code para sa pag-handle ng login at paglikha ng
 account</li>
       <li>mod/ - lahat ng pangunahing Moodle course module ay naririto</li>
-      <li>pix/ - generic na mga larawan ng site</li>
+      <li>pix/ - generic na mga graphic ng site</li>
       <li>theme/ - pakete/balat ng tema para mabago ang itsura ng site.</li>
       <li>user/ - code para magdispley at pamahalaan ang mga user</li>
     </ul>
     <p>&nbsp;</p>
   </blockquote>
 </blockquote>
-<h3 class="sectionheading"><a id="installer" name="installer"></a>4. Patakbuhin ang
-script na pang-instol upang malikha ang config.php </h3>
+<h3 class="sectionheading"><a name="installer"></a>4. Patakbuhin ang
+Installer script upang malikha ang config.php </h3>
 <blockquote>
-  <p>Para mapatakbo ang script na pang-instol (install.php), pasukin lamang
+  <p>Para mapatakbo ang installer script (install.php), pasukin lamang
 ang inyong punong URL ng Moodle sa pamamagitan ng web browser, o pasukin
-ang <strong>http://servermo/install.php</strong> nang direkta. </p>
-  <p>(Tatangkain ng Pang-instol na mag-set ng session cookie.  Kung
+ang <strong>http://yourserver/install.php</strong> ng direkta. </p>
+  <p>(Tatangkain ng Installer na mag-set ng session cookie.  Kung
 makakuha ka ng isang popup na babala sa browser mo, tiyakin na tinanggap
 mo ang cookie!) </p>
-  <p>Makikita ng Moodle na kailangang isaayos ito, at dadalhin ka sa
+  <p>Makikita ng Moodle na kailangang i-configure ito, at dadalhin ka sa
 ilang screen na tutulong sa iyong lumikha ng bagong configuration file
 na may pangalang <strong>config.php. </strong> Sa katapusan ng proseso,
 tatangkain ng Moodle na isulat ang file sa tamang lokasyon, kundi man
 puwede mong pindutin ang isang buton para ma-download ito mula sa
-pang-instol, at pagkatapos ay iaplowd ang config.php sa punong Moodle
+installer, at pagkatapos ay i-upload ang config.php sa punong Moodle
 direktoryo sa server.</p>
   <p>Habang ginagawa ang mga ito, susubukin ng installer ang server
 environment mo at magmumungkahi ng paraan kung paano malulutas ang
 anumang suliranin.  Para sa karaniwang problema, sapat na ang mga
-mungkahing ito para malutas ang mga iyon, pero kung hindi malutas, tingnan mo sa
+mungkahing ito para malutas, pero kung hindi malutas, tingnan mo sa
 ibaba ang iba pang impormasyon hinggil sa mga kadalasang nagbibigay sa
 iyo ng problema.<br />
   </p>
@@ -216,7 +214,7 @@ Pangkalahatang web server setting
     <p> Una, tiyakin na naka-set-up ang web server mo na gamitin ang
 index.php bilang default na pahina (marahil ay kasama ng index.html,
 default.htm at iba pa).</p>
-    <p>Sa Apache, magagawa ito sa pamamagitan ng DirectoryIndex na
+    <p>Sa Apache, magagawa ito sa pamamagitan ng DirectoryIndex
 parameter sa inyong httpd.conf file. Ganito ang karaniwang itsura ng sa akin:
 </p>
     <blockquote>
@@ -249,7 +247,8 @@ bersiyon ng PHP) na iba ang setting.  Idini-define ito sa
 configuration file ng PHP (na karaniwang tinatawag na php.ini):</p>
 
     <blockquote>
-      <pre>magic_quotes_gpc = 1    (mas mabuti pero hindi kinakailangan)
+      <pre>magic_quotes_gpc = 1    (mas mabuti pero hindi
+kinakailangan)
 magic_quotes_runtime = 0    (kailangan)
 file_uploads = 1
 session.auto_start = 0
@@ -281,7 +280,7 @@ php_flag file_uploads 1
 php_flag session.auto_start 0
 php_flag session.bug_compat_warn 0</pre>
     </blockquote>
-    <p>Maaari mo ring i-define ang maksimum na laki ng inaaplowd na
+    <p>Maaari mo ring i-define ang maksimum na laki ng ina-upload na
 file:
         
 </p>
@@ -304,7 +303,7 @@ Unix shell:
     </blockquote>
   </blockquote>
 <p>&nbsp;</p>
-<h3 class="sectionheading"><a id="database" name="database"></a>4.2 Paglikha
+<h3 class="sectionheading"><a name="database"></a>4.2 Paglikha
 ng database</h3>
 
   <blockquote>
@@ -313,7 +312,7 @@ ng database</h3>
 (eg "<em>moodle</em>") sa database system mo na may espesyal na user
 (eg "moodleuser")na may access sa database (at tanging database na
 yaon).  Maaari mong gamitin ang "root" user kung gusto mo ng test
-server, pero hindi ito inirerekomenda para sa isang production system:
+server, pero hindi ito inirerekomenda para sa isang production syste:
 Kapag natuklasan ng mga hacker ang password, hindi lamang ang isang
 database ang nasa panganib kundi ang buong database system.
 </p>
@@ -363,7 +362,7 @@ binanggit sa itaas sa pamamagitan ng pag-type ng mga command.
   </blockquote>
   <p>&nbsp;</p>
   
-<h3 class="sectionheading"><a id="data" name="data"></a>4.3 Paglikha ng
+<h3 class="sectionheading"><a name="data"></a>4.3 Paglikha ng
 direktoryo ng datos</h3>
   <blockquote>
     
@@ -413,7 +412,7 @@ para sa iyo.</p>
 </blockquote>
 
 </blockquote> 
-<h3 class="sectionheading"><a id="admin" name="admin"></a>5. Tumungo
+<h3 class="sectionheading"><a name="admin"></a>5. Tumungo
 sa pahina ng admin para makapagpatuloy sa pagko-configure </h3>
 <blockquote> 
   <p>Kapag ang basic na <strong>config.php</strong> ay nalikha ng wasto
@@ -442,10 +441,11 @@ itsura:
       unsigned NOT NULL default '0', enddate int(10) unsigned NOT NULL default 
       '0', timemodified int(10) unsigned NOT NULL default '0', PRIMARY KEY (id)) 
       TYPE=MyISAM</p>
-    <p><font color="#006600">TAGUMPAY</font></p>
+    <p><font color="#006600">SUCCESS</font></p>
   </blockquote>
 
-  <p>...at patuloy, tapos ay susundan ng: <font color="#006600">Matagumpay na naisaayos ang mga pangunahing database.</font> </p>
+  <p>...at patuloy, tapos ay susundan ng: <font color="#006600">Main
+databases set up successfully.</font> </p>
   <blockquote>
     <p class="style3">Kapag hindi mo nakita ang mga ito, maaaring
 nagkaproblema sa database o sa configuration setting na na-define sa
@@ -497,7 +497,7 @@ anumang oras para baguhin), tapos ay pindutin ang
 na user para ma-access ang mga pahina ng admin.  Punan ang mga kinakailangang
 detalye ng pangalan mo, email atbp., tapos ay iklik ang 
 &quot;Isave ang mga pagbabago&quot;. Hindi lahat ng field ay kailangan, pero
-kapag may mahalagang field kang nakaligtaan, huhudyatan kang muli para sagutan
+kapag may mahalagang field kang nakaligtaan ipo-prompt kang muli para sagutan
 ang mga ito.
   </p>
 
@@ -515,7 +515,7 @@ mapasok ang pahinang pang-administrasyon sa mga susunod na pagkakataon.
       </blockquote>
     </blockquote>
 
-    <p class="style3">(Kung dahil sa anumang bagay ay nahinto ang pag-iinstol mo,
+    <p class="style3">(Kung dahil sa anumang bagay ay nahinto ang install mo,
 o kung nagka-system error na pumipigil sa iyong mag-log-in gamit ang admin
 account, kadalasan ay makapagla-log-in ka sa pamamagitan ng default na username
 na &quot;<strong>admin</strong>&quot;, na may password na
@@ -544,7 +544,7 @@ bagay na kailangang gawin (tingnan ang sususunod na seksiyon hinggil sa cron).
 
 </blockquote>
 <p>&nbsp;</p>
-<h3 class="sectionheading"><a id="cron" name="cron"></a>6. Isaayos ang cron -- IMPORTANTE! </h3>
+<h3 class="sectionheading"><a name="cron"></a>6. Iset-up ang cron -- IMPORTANTE! </h3>
 <blockquote> 
 
   <p>Kailangan ng pagmamanman sa ilang modyul ng Moodle upang
@@ -591,6 +591,7 @@ pagpapatakbo nito nang direkta sa pamamagitan ng inyong browser:
   <p>Pagkatapos, kailangan mong magsaayos ng isang paraan ng
 pagpapatakbo ng script nang awtomatiko at regular.
 </p>
+
 
   <p><b>Sa sistemang Windows</b></p>
   <blockquote>
@@ -679,7 +680,7 @@ pamamagitan ng ":q!" (alisin ang mga panipi).
   <p>&nbsp;</p>
   <p></p>
 </blockquote>
-<h3 class="sectionheading"><a id="course" name="course"></a>7. Lumikha ng bagong kurso</h3>
+<h3 class="sectionheading"><a name="course"></a>7. Lumikha ng bagong kurso</h3>
 <blockquote>
 
   <p>Ngayo't tumatakbo na nang maayos ang Moodle, bakit di ka lumikha ng
@@ -695,18 +696,19 @@ maaaring baguhin mamaya ng mga guro.  Tandaan na ang dilaw na help icon
 ay nakakalat para magbigay ng contextual na tulong sa anumang aspeto.
 </p>
 
+
   <p>Pindutin ang &quot;Isave ang mga binago&quot;, at ipapasa ka sa
 isang bagong form kung saan puwede kang magtakda ng guro sa kurso.
 Maaari mo lamang idagdag ang mga user account na mayroon na sa form na
 ito - kung gusto mong lumikha ng bagong account ng guro, hilingin mo ang
 guro na lumikha ng account para sa sarili niya (tingnan ang pahinang
-panglog-in), o lumikha ng isa para sa kanila sa pamamagitan ng
-&quot;Magdagdag ng bagong user&quot; sa pahinang
+pang-log-in), o lumikha ng isa para sa kanila sa pamamagitan ng
+&quot;Magdagdag ng isang bagong user&quot; sa pahinang
 Admin.
 </p>
 
   <p>Pag natapos na ito, puwede nang lagyan ng pasadyang katangian ang
-kurso, at magagawa ito sa pamamagitan ng &quot;Mga Kurso&quot; na link sa
+kurso, at magagawa ito sa pamamagitan ng &quot;Courses&quot; link sa
 home page.
 </p>
 
@@ -725,7 +727,7 @@ target="_blank">pagdodonate</a> para matulungan kami sa gastusin!
 </blockquote>
 <p>&nbsp;</p>
 <p align="CENTER"><font size="1"><a href="." target="_top">Dokumentasyon ng Moodle</a></font></p>
-<p align="center"><font size="1">Version: $Id$</font></p>
+<p align="CENTER"><font size="1">Bersiyon: $Id$</font></p>
 </body>
 
 </html>

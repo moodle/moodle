@@ -17,6 +17,7 @@ $string['filelockedmailsubject'] = 'Erreur importante : fichier d\'inscriptions'
 $string['location'] = 'Emplacement du fichier';
 $string['mailadmin'] = 'Avertir l\'administrateur par courriel';
 $string['mailusers'] = 'Avertir les utilisateurs par courriel';
-
+$string['parentlanguage'] = 'fr';
+$string['thisdirection'] = 'ltr';
 
 ?>

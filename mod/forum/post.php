@@ -6,12 +6,6 @@
     require_once('lib.php');
 
     $reply = optional_param('reply', 0, PARAM_INT);
-    $forum = optional_param('forum', 0, PARAM_INT);
-    $edit = optional_param('edit', 0, PARAM_INT);
-    $delete = optional_param('delete', 0, PARAM_INT);
-    $prune = optional_param('prune',0,PARAM_INT);
-    $name = optional_param('name','',PARAM_CLEAN);
-    $confirm = optional_param('confirm',0,PARAM_INT);
 
     if (isguest()) {
         $wwwroot = $CFG->wwwroot.'/login/index.php';
@@ -79,7 +73,7 @@
             $errordestination = $SESSION->fromurl;
         }
 
-        $post->subject = strip_tags($post->subject, '<lang><span>');        // Strip all tags except lang
+        $post->subject = strip_tags($post->subject, '<lang>');        // Strip all tags except lang
 
         //$post->message = clean_text($post->message, $post->format);   // Clean up any bad tags
 
@@ -95,37 +89,6 @@
         } else if ($post->edit) {           // Updating a post
             $post->id = $post->edit;
             $message = '';
-
-            //fix for bug #4314
-            if (!$realpost = get_record('forum_posts','id',$post->id)){
-                $realpost = new object;
-                $realpost->userid = -1;
-            }
-
-            if ($realpost->userid <> $USER->id && !isadmin()){
-                error ("you can not update this post");
-            }
-
-            if (get_field('forum', 'type', 'id', $forum) == 'news' && !$post->parent) {
-                $updatediscussion->id = $post->discussion;
-                if (empty($post->timestartdisabled)) {
-                    $updatediscussion->timestart = make_timestamp($post->timestartyear, $post->timestartmonth, $post->timestartday);
-                } else {
-                    $updatediscussion->timestart = 0;
-                }
-                if (empty($post->timeenddisabled)) {
-                    $updatediscussion->timeend = make_timestamp($post->timeendyear, $post->timeendmonth, $post->timeendday);
-                } else {
-                    $updatediscussion->timeend = 0;
-                }
-                if (empty($post->timeenddisabled) && $updatediscussion->timeend <= $updatediscussion->timestart) {
-                    $post->error = get_string('timestartenderror', 'forum');
-                } elseif (!update_record('forum_discussions', $updatediscussion)) {
-                    error(get_string("couldnotupdate", "forum"), $errordestination);
-                }
-            }
-            if (!isset($post->error)) {
-
             if (forum_update_post($post,$message)) {
 
                 add_to_log($course->id, "forum", "update post",
@@ -147,7 +110,6 @@
             }
             exit;
 
-            }
         } else if ($post->discussion) { // Adding a new post to an existing discussion
             $message = '';
             if ($post->id = forum_add_new_post($post,$message)) {
@@ -173,28 +135,9 @@
             exit;
 
         } else {                     // Adding a new discussion
-            $post->mailnow = empty($post->mailnow) ? 0 : 1;
             $discussion = $post;
             $discussion->name  = $post->subject;
             $discussion->intro = $post->message;
-            $newstopic = false;
-            if (get_field('forum', 'type', 'id', $forum) == 'news' && !$post->parent) {
-                $newstopic = true;
-            }
-            if ($newstopic && empty($post->timestartdisabled)) {
-                $discussion->timestart = make_timestamp($post->timestartyear, $post->timestartmonth, $post->timestartday);
-            } else {
-                $discussion->timestart = 0;
-            }
-            if ($newstopic && empty($post->timeenddisabled)) {
-                $discussion->timeend = make_timestamp($post->timeendyear, $post->timeendmonth, $post->timeendday);
-            } else {
-                $discussion->timeend = 0;
-            }
-            if ($newstopic && empty($post->timeenddisabled) && $discussion->timeend <= $discussion->timestart) {
-                $post->error = get_string('timestartenderror', 'forum');
-            } else {
-
             $message = '';
             if ($discussion->id = forum_add_discussion($discussion,$message)) {
 
@@ -216,9 +159,7 @@
             } else {
                 error(get_string("couldnotadd", "forum"), $errordestination);
             }
-
             exit;
-            }
         }
     }
 
@@ -250,25 +191,9 @@
             if (! $discussion = get_record("forum_discussions", "id", $post->discussion)) {
                 error("This post is not part of a discussion! ($post->discussion)");
             }
-        } else {
-            $discussion = new stdClass();
-            $newstopic = false;
-            if ($forum->type == 'news' && !$post->parent) {
-                $newstopic = true;
-            }
-            if ($newstopic && empty($post->timestartdisabled)) {
-                $discussion->timestart = make_timestamp($post->timestartyear, $post->timestartmonth, $post->timestartday);
-            } else {
-                $discussion->timestart = 0;
-            }
-            if ($newstopic && empty($post->timeenddisabled)) {
-                $discussion->timeend = make_timestamp($post->timeendyear, $post->timeendmonth, $post->timeendday);
-            } else {
-                $discussion->timeend = 0;
-            }
         }
 
-    } else if (!empty($forum)) {      // User is starting a new discussion in a forum
+    } else if (isset($forum)) {      // User is starting a new discussion in a forum
 
         $SESSION->fromurl = $_SERVER["HTTP_REFERER"];
 
@@ -329,7 +254,7 @@
         if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
             if (groupmode($course, $cm) and !isteacheredit($course->id)) {   // Make sure user can post here
                 $mygroupid = mygroupid($course->id);
-                if (!((empty($mygroupid) and $discussion->groupid == -1) || (ismember($discussion->groupid)/*$mygroupid == $discussion->groupid*/))) {
+                if (!((empty($mygroupid) and $discussion->groupid == -1) || ($mygroupid == $discussion->groupid))) {
                     error("Sorry, but you can not post in this discussion.");
                 }
             }
@@ -356,7 +281,7 @@
 
         unset($SESSION->fromdiscussion);
 
-    } else if (!empty($edit)) {  // User is editing their own post
+    } else if (isset($edit)) {  // User is editing their own post
 
         $adminedit = (isadmin() and !empty($CFG->admineditalways));
 
@@ -365,6 +290,9 @@
         }
         if (($post->userid <> $USER->id) and !$adminedit) {
             error("You can't edit other people's posts!");
+        }
+        if (((time() - $post->created) > $CFG->maxeditingtime) and !$adminedit) {
+            error( get_string("maxtimehaspassed", "forum", format_time($CFG->maxeditingtime)) );
         }
         if ($post->parent) {
             if (! $parent = forum_get_post_full($post->parent)) {
@@ -376,11 +304,6 @@
         }
         if (! $forum = get_record("forum", "id", $discussion->forum)) {
             error("The forum number was incorrect ($discussion->forum)");
-        }
-        if (!($forum->type == 'news' && !$post->parent && $discussion->timestart > time())) {
-            if (((time() - $post->created) > $CFG->maxeditingtime) and !$adminedit) {
-                error( get_string("maxtimehaspassed", "forum", format_time($CFG->maxeditingtime)) );
-            }
         }
         if (! $course = get_record("course", "id", $discussion->course)) {
             error("The course number was incorrect ($discussion->course)");
@@ -396,7 +319,7 @@
         unset($SESSION->fromdiscussion);
 
 
-    } else if (!empty($delete)) {  // User is deleting a post
+    } else if (isset($delete)) {  // User is deleting a post
 
         if (! $post = forum_get_post_full($delete)) {
             error("Post ID was incorrect");
@@ -420,7 +343,7 @@
 
         $replycount = forum_count_replies($post);
 
-        if (!empty($confirm)) {    // User has confirmed the delete
+        if (isset($confirm)) {    // User has confirmed the delete
 
             if ($post->totalscore) {
                 notice(get_string("couldnotdeleteratings", "forum"),
@@ -496,7 +419,7 @@
         die;
 
 
-    } else if (!empty($prune)) {  // Teacher is pruning
+    } else if (isset($prune)) {  // Teacher is pruning
 
         if (!$post = forum_get_post_full($prune)) {
             error("Post ID was incorrect");
@@ -517,7 +440,7 @@
             $cm->id = 0;
         }
 
-        if (!empty($name)) {    // User has confirmed the prune
+        if (isset($_GET['name'])) {    // User has confirmed the prune
 
             $newdiscussion->course = $discussion->course;
             $newdiscussion->forum = $discussion->forum;
@@ -527,8 +450,6 @@
             $newdiscussion->groupid = $discussion->groupid;
             $newdiscussion->assessed = $discussion->assessed;
             $newdiscussion->usermodified = $post->userid;
-            $newdiscussion->timestart = $discussion->timestart;
-            $newdiscussion->timeend = $discussion->timeend;
 
             if (!$newid = insert_record('forum_discussions', $newdiscussion)) {
                 error('Could not create new discussion');
@@ -640,20 +561,6 @@
 
     }
 
-// checkup
-    if (!empty($parent) && !forum_user_can_see_post($forum,$discussion,$post)) {
-        error("You cannot reply to this post");
-    }
-    if (empty($parent) && !forum_user_can_post_discussion($forum)) {
-        error("You cannot start a new discussion in this forum");
-    }
-
-    if ($forum->type == 'qanda' && !isteacher($forum->course) && !forum_user_has_posted($forum->id,$discussion->id,$USER->id)) {
-        notify(get_string('qandanotify','forum'));
-    }
-
-    forum_check_throttling($forum);
-
     if (!empty($parent)) {
         forum_print_post($parent, $course->id, $ownpost=false, $reply=false, $link=false);
         if (empty($post->edit)) {
@@ -662,9 +569,7 @@
             } else {
                 $user_read_array = array();
             }
-            if ($forum->type != 'qanda' || forum_user_can_see_discussion($forum,$discussion)) {
-                forum_print_posts_threaded($parent->id, $course->id, 0, false, false, $user_read_array, $discussion->forum);
-            }
+            forum_print_posts_threaded($parent->id, $course->id, 0, false, false, $user_read_array, $discussion->forum);
         }
         print_heading(get_string("yourreply", "forum").':');
     } else {
@@ -672,11 +577,7 @@
         if (!empty($forum->intro)) {
             print_simple_box(format_text($forum->intro), 'center');
         }
-        if ($forum->type == 'qanda') {
-            print_heading(get_string('yournewquestion','forum'));
-        } else {
-            print_heading(get_string('yournewtopic', 'forum'));
-        }
+        print_heading(get_string('yournewtopic', 'forum'));
     }
     echo '<center>';
     if (!empty($post->error)) {

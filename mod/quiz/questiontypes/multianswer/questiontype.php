@@ -20,14 +20,14 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
     }
 
     function get_question_options(&$question) {
-        global $QUIZ_QTYPES;
-
         // Get relevant data indexed by positionkey from the multianswers table
-        if (!$sequence = get_field('quiz_multianswers', 'sequence', 'question', $question->id)) {
+        if (!$sequence = get_field('quiz_multianswers', 'sequence', 'question',
+         $question->id)) {
             notify('Error: Missing question options!');
             return false;
         }
 
+        global $QUIZ_QTYPES;
         $wrappedquestions = get_records_list('quiz_questions', 'id', $sequence);
 
         // We want an array with question ids as index and the positions as values
@@ -35,8 +35,10 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         array_walk($sequence, create_function('&$val', '$val++;'));
 
         foreach ($wrappedquestions as $wrapped) {
-            if (!$QUIZ_QTYPES[$wrapped->qtype]->get_question_options($wrapped)) {
-                notify("Unable to get options for questiontype {$wrapped->qtype} (id={$wrapped->id})");
+            if (!$QUIZ_QTYPES[$wrapped->qtype]
+             ->get_question_options($wrapped)) {
+                error("Unable to recognized questiontype " .
+                $wrapped->qtype);
             }
             $wrapped->maxgrade = $wrapped->defaultgrade;
             $question->options->questions[$sequence[$wrapped->id]] = clone($wrapped);
@@ -47,7 +49,8 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
 
     function save_question_options($question) {
         global $QUIZ_QTYPES;
-        if (!$oldwrappedids = get_records('quiz_questions', 'parent', $question->id, '', 'id, id')) {
+        if (!$oldwrappedids =
+         get_records('quiz_questions', 'parent', $question->id, '', 'id, id')) {
          // We need to select 'id, id' because the first one is consumed by
          // get_records.
             $oldwrappedids = array();
@@ -93,7 +96,8 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
     }
 
     function save_question($authorizedquestion, $form, $course) {
-        $question = quiz_qtype_multianswer_extract_question ($form->questiontext);
+        $question =
+         quiz_qtype_multianswer_extract_question ($form->questiontext);
         if (isset($authorizedquestion->id)) {
             $question->id = $authorizedquestion->id;
             $question->version = $form->version = $authorizedquestion->version;
@@ -115,7 +119,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         return parent::save_question($question, $form, $course);
     }
 
-    function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
+    function create_session_and_responses(&$question, &$state, $quiz, $attempt) {
         $state->responses = array();
         foreach ($question->options->questions as $key => $wrapped) {
             $state->responses[$key] = '';
@@ -163,17 +167,18 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         return $responses;
     }
 
-    function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
+    function print_question_formulation_and_controls(&$question, &$state, $quiz,
+     $options) {
         global $QUIZ_QTYPES;
         $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
         $nameprefix = $question->name_prefix;
 
         // For this question type, we better print the image on top:
-        quiz_print_possible_question_image($question);
+        quiz_print_possible_question_image($quiz->id, $question);
 
         $qtextremaining = format_text($question->questiontext,
                                       $question->questiontextformat,
-                                      NULL, $cmoptions->course);
+                                      NULL, $quiz->course);
 
         $strfeedback = get_string('feedback', 'quiz');
 
@@ -255,11 +260,11 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
                 }
 
                 /// Determine style
-                if (!empty($chosenanswer) && $options->correct_responses) {
+                if (!empty($chosenanswer)) {
                     if (!isset($chosenanswer->fraction)
                             || $chosenanswer->fraction <= 0.0) {
                         // The response must have been totally wrong:
-                        $style = 'style="background-color:red"';
+                        $style = ' style="background-color:red" ';
 
                     } else if ($chosenanswer->fraction >= 1.0) {
                         // The response was correct!!
@@ -269,9 +274,8 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
                         // This response did at least give some credit:
                         $style = 'style="background-color:yellow"';
                     }
-                } else {
-                    $style = '';
                 }
+
             }
 
             // Print the input control
@@ -293,8 +297,7 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
                    echo '</select>';
                    break;
                default:
-                   error("Unable to recognized questiontype ($wrapped->qtype) of
-                          question part $positionkey.");
+                   error("Unable to recognized answertype $answer->answertype");
                    break;
            }
         }
@@ -303,16 +306,15 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         echo $qtextremaining;
     }
 
-    function grade_responses(&$question, &$state, $cmoptions) {
+    function grade_responses(&$question, &$state, $quiz) {
         global $QUIZ_QTYPES;
         $teststate = clone($state);
         $state->raw_grade = 0;
         foreach($question->options->questions as $key => $wrapped) {
-            $state->responses[$key] = html_entity_decode($state->responses[$key]);
             $teststate->responses = array('' => $state->responses[$key]);
             $teststate->raw_grade = 0;
             if (false === $QUIZ_QTYPES[$wrapped->qtype]
-             ->grade_responses($wrapped, $teststate, $cmoptions)) {
+             ->grade_responses($wrapped, $teststate, $quiz)) {
                 return false;
             }
             $state->raw_grade += $teststate->raw_grade;
@@ -357,40 +359,19 @@ function quiz_qtype_multianswer_extract_question($text) {
 //// quiz/format/multianswer/format.php
 ////////////////////////////////////////////////
 
-
-    // Undo the automatic addslashes, because we want to analyze the text - we need to remember this later and addslashes again!
-    $text = stripslashes($text);
-
-    // We need to allow entities (e.g. &#1085;) in answers. This is difficulty,
-    // because the '#' character is used as delimiter between answer and
-    // feedback as well as inside entities. The HTML editor automatically
-    // replaces '&' with '&amp;', so we undo this to get back the entities we
-    // originally wanted. However, this code leaves all &amp; alone, if they
-    // are not followed by 2 to 9 characters and a final semicolon. This allows
-    // to have an answer end on '&' with the feedback (e.g. answer&amp;#feedback).
-    // When the plain text editor is used, the &amp; needs to be typed out
-    // explicitly in this case.
-    $text = preg_replace('/&amp;(#[0-9a-fx]{2,6}?);/', '&$1;', $text);
-
     // REGULAR EXPRESSION CONSTANTS
     // I do not know any way to make this easier
     // Regexes are always awkard when defined but more comprehensible
     // when used as constants in the executive code
 
-    // Handle the entity encoded ampersand in entities (e.g. &amp;lt; -> &lt;)
-    $text = preg_replace('/&amp;(.{2,9}?;)/', '&${1}', $text);
-    $text = stripslashes($text);
-
     // ANSWER_ALTERNATIVE regexes
+
     define("ANSWER_ALTERNATIVE_FRACTION_REGEX",
            '=|%(-?[0-9]+)%');
-    // for the syntax '(?<!' see http://www.perl.com/doc/manual/html/pod/perlre.html#item_C
     define("ANSWER_ALTERNATIVE_ANSWER_REGEX",
-            '.+?(?<!\\\\|&)(?=[~#}]|$)');
-            //'[^~#}]+');
+            '[^~#}]+');
     define("ANSWER_ALTERNATIVE_FEEDBACK_REGEX",
-            '.*?(?<!\\\\)(?=[~}]|$)');
-            //'[//^~}]*');
+            '[^~}]*');
     define("ANSWER_ALTERNATIVE_REGEX",
            '(' . ANSWER_ALTERNATIVE_FRACTION_REGEX .')?'
            . '(' . ANSWER_ALTERNATIVE_ANSWER_REGEX . ')'
@@ -424,7 +405,7 @@ function quiz_qtype_multianswer_extract_question($text) {
             . '(' . ANSWER_ALTERNATIVE_REGEX
             . '(~'
             . ANSWER_ALTERNATIVE_REGEX
-            . ')*)\}' );
+            . ')*)}' );
 
     // Parenthesis positions for singulars in ANSWER_REGEX
     define("ANSWER_REGEX_NORM", 1);
@@ -438,25 +419,25 @@ function quiz_qtype_multianswer_extract_question($text) {
 ////////////////////////////////////////
 
     $question = new stdClass;
-    $question->qtype = MULTIANSWER;
-    $question->questiontext = $text;
+    $question->qtype= MULTIANSWER;
+    $question->questiontext= $text;
     $question->options->questions = array();
     $question->defaultgrade = 0; // Will be increased for each answer norm
 
     for ($positionkey=1
-        ; preg_match('/'.ANSWER_REGEX.'/', $question->questiontext, $answerregs)
+        ; ereg(ANSWER_REGEX, $question->questiontext, $answerregs)
         ; ++$positionkey ) {
         $wrapped = new stdClass;
         $wrapped->defaultgrade = $answerregs[ANSWER_REGEX_NORM]
             or $wrapped->defaultgrade = '1';
-        if (!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_NUMERICAL])) {
+        if ($answerregs[ANSWER_REGEX_ANSWER_TYPE_NUMERICAL]) {
             $wrapped->qtype = NUMERICAL;
             $wrapped->multiplier = array();
             $wrapped->units      = array();
-        } else if(!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_SHORTANSWER])) {
+        } else if($answerregs[ANSWER_REGEX_ANSWER_TYPE_SHORTANSWER]) {
             $wrapped->qtype = SHORTANSWER;
             $wrapped->usecase = 0;
-        } else if(!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE])) {
+        } else if($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE]){
             $wrapped->qtype = MULTICHOICE;
             $wrapped->single = 1;
         } else {
@@ -470,11 +451,11 @@ function quiz_qtype_multianswer_extract_question($text) {
         $wrapped->answer   = array();
         $wrapped->fraction = array();
         $wrapped->feedback = array();
-        $wrapped->questiontext = addslashes($answerregs[0]); // here we don't want multianswer_escape, because this is editing time information
+        $wrapped->questiontext = $answerregs[0];
         $wrapped->questiontextformat = 0;
 
         $remainingalts = $answerregs[ANSWER_REGEX_ALTERNATIVES];
-        while (preg_match('/~?'.ANSWER_ALTERNATIVE_REGEX.'/', $remainingalts, $altregs)) {
+        while (ereg(ANSWER_ALTERNATIVE_REGEX, $remainingalts, $altregs)) {
             if ('=' == $altregs[ANSWER_ALTERNATIVE_REGEX_FRACTION]) {
                 $wrapped->fraction[] = '1';
             } else if ($percentile =
@@ -483,25 +464,20 @@ function quiz_qtype_multianswer_extract_question($text) {
             } else {
                 $wrapped->fraction[] = '0';
             }
-            $wrapped->feedback[] = multianswer_escape(
-             isset($altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK])
-             ? $altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK] : '');
-            if (!empty($answerregs[ANSWER_REGEX_ANSWER_TYPE_NUMERICAL])
+            $wrapped->feedback[] = $altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK];
+            if ($answerregs[ANSWER_REGEX_ANSWER_TYPE_NUMERICAL]
                     && ereg(NUMERICAL_ALTERNATIVE_REGEX,
                             $altregs[ANSWER_ALTERNATIVE_REGEX_ANSWER],
                             $numregs) )
             {
-                $wrapped->answer[] =
-                 multianswer_escape($numregs[NUMERICAL_CORRECT_ANSWER]);
+                $wrapped->answer[] = $numregs[NUMERICAL_CORRECT_ANSWER];
                 if ($numregs[NUMERICAL_ABS_ERROR_MARGIN]) {
-                    $wrapped->tolerance[] =
-                     $numregs[NUMERICAL_ABS_ERROR_MARGIN];
+                    $wrapped->tolerance = $numregs[NUMERICAL_ABS_ERROR_MARGIN];
                 } else {
-                    $wrapped->tolerance[] = 0;
+                    $wrapped->tolerance = 0;
                 }
             } else { // Tolerance can stay undefined for non numerical questions
-                $wrapped->answer[] = multianswer_escape(
-                 $altregs[ANSWER_ALTERNATIVE_REGEX_ANSWER]);
+                $wrapped->answer[] = $altregs[ANSWER_ALTERNATIVE_REGEX_ANSWER];
             }
             $tmp = explode($altregs[0], $remainingalts, 2);
             $remainingalts = $tmp[1];
@@ -512,15 +488,7 @@ function quiz_qtype_multianswer_extract_question($text) {
         $question->questiontext = implode("{#$positionkey}",
                     explode($answerregs[0], $question->questiontext, 2));
     }
-    $question->questiontext = multianswer_escape($question->questiontext);
     return $question;
-}
-
-function multianswer_escape($text) {
-    $text = str_replace("&amp;", "&", $text);
-    $text = str_replace('\#', '#', $text);
-    $text = html_entity_decode($text);
-    return addslashes($text);
 }
 
 ?>

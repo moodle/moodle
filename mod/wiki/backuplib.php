@@ -31,75 +31,50 @@
         ////Iterate over wiki table
         if ($wikis = get_records ("wiki","course", $preferences->backup_course,"id")) {
             foreach ($wikis as $wiki) {
-                if (backup_mod_selected($preferences,'wiki',$wiki->id)) {
-                    wiki_backup_one_mod($bf,$preferences,$wiki);
+                //Start mod
+                fwrite ($bf,start_tag("MOD",3,true));
+                //Print assignment data
+                fwrite ($bf,full_tag("ID",4,false,$wiki->id));
+                fwrite ($bf,full_tag("MODTYPE",4,false,"wiki"));
+                fwrite ($bf,full_tag("NAME",4,false,$wiki->name));
+                fwrite ($bf,full_tag("SUMMARY",4,false,$wiki->summary));
+                fwrite ($bf,full_tag("PAGENAME",4,false,$wiki->wtype));
+                fwrite ($bf,full_tag("WTYPE",4,false,$wiki->wtype));
+                fwrite ($bf,full_tag("EWIKIPRINTTITLE",4,false,$wiki->ewikiprinttitle));
+                fwrite ($bf,full_tag("HTMLMODE",4,false,$wiki->htmlmode));
+                fwrite ($bf,full_tag("EWIKIACCEPTBINARY",4,false,$wiki->ewikiacceptbinary));
+                fwrite ($bf,full_tag("DISABLECAMELCASE",4,false,$wiki->disablecamelcase));
+                fwrite ($bf,full_tag("SETPAGEFLAGS",4,false,$wiki->setpageflags));
+                fwrite ($bf,full_tag("STRIPPAGES",4,false,$wiki->strippages));
+                fwrite ($bf,full_tag("REMOVEPAGES",4,false,$wiki->removepages));
+                fwrite ($bf,full_tag("REVERTCHANGES",4,false,$wiki->revertchanges));
+                fwrite ($bf,full_tag("INITIALCONTENT",4,false,$wiki->initialcontent));
+                fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$wiki->timemodified));
+
+                //backup entries and pages
+                if ($preferences->mods["wiki"]->userinfo) {
+                    $status=backup_wiki_entries($bf,$preferences,$wiki->id, $preferences->mods["wiki"]->userinfo);
                 }
+
+                //End mod
+                 fwrite ($bf,end_tag("MOD",3,true));
             }
         }
-       
-        return $status;
-    }
-
-    function wiki_backup_one_mod($bf,$preferences,$wiki) {
-
-        $status = true;
-
-        if (is_numeric($wiki)) {
-            $wiki = get_record('wiki','id',$wiki);
+        //if we've selected to backup users info, then backup files too
+        if ($status) {
+            if ($preferences->mods["wiki"]->userinfo) {
+                $status = backup_wiki_files($bf,$preferences);    
+            }
         }
-        
-        //Start mod
-        fwrite ($bf,start_tag("MOD",3,true));
-        //Print assignment data
-        fwrite ($bf,full_tag("ID",4,false,$wiki->id));
-        fwrite ($bf,full_tag("MODTYPE",4,false,"wiki"));
-        fwrite ($bf,full_tag("NAME",4,false,$wiki->name));
-        fwrite ($bf,full_tag("SUMMARY",4,false,$wiki->summary));
-        fwrite ($bf,full_tag("PAGENAME",4,false,$wiki->wtype));
-        fwrite ($bf,full_tag("WTYPE",4,false,$wiki->wtype));
-        fwrite ($bf,full_tag("EWIKIPRINTTITLE",4,false,$wiki->ewikiprinttitle));
-        fwrite ($bf,full_tag("HTMLMODE",4,false,$wiki->htmlmode));
-        fwrite ($bf,full_tag("EWIKIACCEPTBINARY",4,false,$wiki->ewikiacceptbinary));
-        fwrite ($bf,full_tag("DISABLECAMELCASE",4,false,$wiki->disablecamelcase));
-        fwrite ($bf,full_tag("SETPAGEFLAGS",4,false,$wiki->setpageflags));
-        fwrite ($bf,full_tag("STRIPPAGES",4,false,$wiki->strippages));
-        fwrite ($bf,full_tag("REMOVEPAGES",4,false,$wiki->removepages));
-        fwrite ($bf,full_tag("REVERTCHANGES",4,false,$wiki->revertchanges));
-        fwrite ($bf,full_tag("INITIALCONTENT",4,false,$wiki->initialcontent));
-        fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$wiki->timemodified));
-        
-        //backup entries and pages
-        if (backup_userdata_selected($preferences,'wiki',$wiki->id)) {
-            $status = backup_wiki_entries($bf,$preferences,$wiki->id, $preferences->mods["wiki"]->userinfo);
-            $status = backup_wiki_files_instance($bf,$preferences,$wiki->id);
-        }
-        
-        //End mod
-        fwrite ($bf,end_tag("MOD",3,true));
-        
         return $status;
-    }
-
-    function wiki_check_backup_mods_instances($instance,$backup_unique_code) {
-        $info[$instance->id.'0'][0] = $instance->name;
-        $info[$instance->id.'0'][1] = '';
-        // wiki_check_backup_mods ignores userdata, so we do too.
-        return $info;
     }
 
     ////Return an array of info (name,value)
-    function wiki_check_backup_mods($course,$user_data=false,$backup_unique_code,$instances=null) {
-        if (!empty($instances) && is_array($instances) && count($instances)) {
-            $info = array();
-            foreach ($instances as $id => $instance) {
-                $info += wiki_check_backup_mods_instances($instance,$backup_unique_code);
-            }
-            return $info;
-        }
-        //First the course data
-        $info[0][0] = get_string("modulenameplural","wiki");
-        $info[0][1] = count_records("wiki", "course", "$course");
-        return $info;
+    function wiki_check_backup_mods($course,$user_data=false,$backup_unique_code) {
+         //First the course data
+         $info[0][0] = get_string("modulenameplural","wiki");
+         $info[0][1] = count_records("wiki", "course", "$course");
+         return $info;
     }
 
      //Backup wiki_entries contents (executed from wiki_backup_mods)
@@ -172,28 +147,6 @@
         return $status;
     }
     
-    function backup_wiki_files_instance($bf,$preferences,$instancid) {
-
-        global $CFG;
-        
-        $status = true;
-        
-        //First we check to moddata exists and create it as necessary
-        //in temp/backup/$backup_code  dir
-        $status = check_and_create_moddata_dir($preferences->backup_unique_code);
-        $status = check_dir_exists($CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/wiki/",true);
-        //Now copy the forum dir
-        if ($status) {
-            //Only if it exists !! Thanks to Daniel Miksik.
-            if (is_dir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/wiki/".$instanceid)) {
-                $status = backup_copy_file($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/wiki/".$instanceid,
-                                           $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/wiki/".$instanceid);
-            }
-        }
-
-        return $status;
-    }
-
     //Backup wiki binary files
     function backup_wiki_files($bf,$preferences) {
 
@@ -208,39 +161,13 @@
         if ($status) {
             //Only if it exists !! Thanks to Daniel Miksik.
             if (is_dir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/wiki")) {
-                $handle = opendir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/wiki");
-                while (false!==($item = readdir($handle))) {
-                    if ($item != '.' && $item != '..' && is_dir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/wiki/".$item)
-                        && array_key_exists($item,$preferences->mods['wiki']->instances)
-                        && !empty($preferences->mods['wiki']->instances[$item]->backup)) {
-                        $status = backup_copy_file($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/wiki/".$item,
-                                                   $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/wiki/",$item);
-                    }
-                }
+                $status = backup_copy_file($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/wiki",
+                                           $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/wiki");
             }
         }
 
         return $status;
 
-    }
-
-    //Return a content encoded to support interactivities linking. Every module
-    //should have its own. They are called automatically from the backup procedure.
-    function wiki_encode_content_links ($content,$preferences) {
-
-        global $CFG;
-
-        $base = preg_quote($CFG->wwwroot,"/");
-
-        //Link to the list of wikis
-        $buscar="/(".$base."\/mod\/wiki\/index.php\?id\=)([0-9]+)/";
-        $result= preg_replace($buscar,'$@WIKIINDEX*$2@$',$content);
-
-        //Link to wiki view by moduleid
-        $buscar="/(".$base."\/mod\/wiki\/view.php\?id\=)([0-9]+)/";
-        $result= preg_replace($buscar,'$@WIKIVIEWBYID*$2@$',$result);
-
-        return $result;
     }
 
 ?>

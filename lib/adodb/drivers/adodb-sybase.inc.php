@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.66 28 Sept 2005  (c) 2000-2005 John Lim. All rights reserved.
+V4.60 24 Jan 2005  (c) 2000-2005 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -86,18 +86,17 @@ class ADODB_sybase extends ADOConnection {
 	}
 	
 	// http://www.isug.com/Sybase_FAQ/ASE/section6.1.html#6.1.4
-	function RowLock($tables,$where,$flds='top 1 null as ignore') 
+	function RowLock($tables,$where) 
 	{
 		if (!$this->_hastrans) $this->BeginTrans();
 		$tables = str_replace(',',' HOLDLOCK,',$tables);
-		return $this->GetOne("select $flds from $tables HOLDLOCK where $where");
+		return $this->GetOne("select top 1 null as ignore from $tables HOLDLOCK where $where");
 		
 	}	
 		
 	function SelectDB($dbName) 
 	{
-		$this->database = $dbName;
-		$this->databaseName = $dbName; # obsolete, retained for compat with older adodb versions
+		$this->databaseName = $dbName;
 		if ($this->_connectionID) {
 			return @sybase_select_db($dbName);		
 		}
@@ -157,10 +156,6 @@ class ADODB_sybase extends ADOConnection {
 			$rs =& ADOConnection::SelectLimit($sql,$nrows,$offset,$inputarr,$secs2cache);
 			return $rs;
 		}
-		
-		$nrows = (integer) $nrows;
-		$offset = (integer) $offset;
-		
 		$cnt = ($nrows >= 0) ? $nrows : 999999999;
 		if ($offset > 0 && $cnt) $cnt += $offset;
 		
@@ -293,7 +288,7 @@ class ADORecordset_sybase extends ADORecordSet {
 		}
 		if (!$mode) $this->fetchMode = ADODB_FETCH_ASSOC;
 		else $this->fetchMode = $mode;
-		$this->ADORecordSet($id,$mode);
+		return $this->ADORecordSet($id,$mode);
 	}
 	
 	/*	Returns: an object containing field information. 

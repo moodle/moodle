@@ -1,28 +1,5 @@
 <?php // $Id$
 
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-// Moodle - Modular Object-Oriented Dynamic Learning Environment         //
-//          http://moodle.org                                            //
-//                                                                       //
-// Copyright (C) 1999-2004  Martin Dougiamas  http://dougiamas.com       //
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
-
 /// Editing interface to edit all the groups in a course
 
     require_once('../config.php');
@@ -65,22 +42,16 @@
                  "-> $strgroups", "", "", true, '', user_login_string($course, $USER));
 
 
+
 /// First, process any inputs there may be.
 
     if ($data = data_submitted() and confirm_sesskey()) {
-
-        // Clean ALL incoming parameters which go in SQL queries here for good measure
-        $data->id      = required_param('id', PARAM_INT);
-        $data->groups  = optional_param('groups', 0, PARAM_INT);
-        $data->groupid = optional_param('groupid', 0, PARAM_INT);
-        $data->members = optional_param('members', array(), PARAM_INT);
 
         if (!empty($data->nonmembersadd)) {            /// Add people to a group
             if (!empty($data->nonmembers) and !empty($data->groupid)) {
                 $groupmodified = false;
                 foreach ($data->nonmembers as $userid) {
-                    //since we allow people to be in more than 1 group, this has to go.
-                    if (!ismember($data->groupid,$userid)) {// Just to make sure (another teacher could be editing)
+                    if (!user_group($course->id, $userid)) {  // Just to make sure (another teacher could be editing)
                         $record->groupid = $data->groupid;
                         $record->userid = $userid;
                         $record->timeadded = time();
@@ -105,9 +76,6 @@
 
         } else if (!empty($data->groupsremove)) {      /// Remove a group, all members become nonmembers
             if (!empty($data->groups)) {
-                if(!isset($groups[$data->groups])) {
-                    error("This is not a valid group to remove");
-                }
                 delete_records("groups", "id", $data->groups);
                 delete_records("groups_members", "groupid", $data->groups);
                 unset($groups[$data->groups]);
@@ -134,8 +102,8 @@
             if (!empty($data->members) and !empty($data->groupid)) {
                 foreach ($data->members as $userid) {
                     delete_records('groups_members', 'userid', $userid, "groupid", $data->groupid);
+                    set_field('groups', 'timemodified', time(), 'id', $data->groupid);
                 }
-                set_field('groups', 'timemodified', time(), 'id', $data->groupid);
             }
             $selectedgroup = $data->groupid;
 
@@ -148,7 +116,6 @@
 
 /// Calculate data ready to create the editing interface
 
-    $strmemberincourse = get_string('memberincourse');
     $strgroupnonmembers = get_string('groupnonmembers');
     $strgroupmembersselected = get_string('groupmembersselected');
     $strgroupremovemembers = get_string('groupremovemembers');
@@ -196,9 +163,7 @@
             if ($groupusers = get_group_users($group->id)) {
                 foreach ($groupusers as $groupuser) {
                     $listmembers[$group->id][$groupuser->id] = $nonmembers[$groupuser->id];
-                    //we do not remove people from $nonmembers, everyone is displayed
-                    //this is to enable people to be registered in multiple groups
-                    //unset($nonmembers[$groupuser->id]);
+                    unset($nonmembers[$groupuser->id]);
                     $countusers++;
                 }
                 natcasesort($listmembers[$group->id]);
@@ -211,7 +176,7 @@
     natcasesort($nonmembers);
 
     if (empty($selectedgroup)) {    // Choose the first group by default
-        if ($selectedgroup = array_shift($temparr = array_keys($listgroups))) {
+        if ($selectedgroup = array_shift(array_keys($listgroups))) {
             $members = $listmembers[$selectedgroup];
         }
     } else {

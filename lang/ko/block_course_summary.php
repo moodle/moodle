@@ -1,7 +1,9 @@
-<?PHP // $Id$
+<?PHP // $Id$ 
+      // block_course_summary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
+$string['thischarset'] = 'euc-kr';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 
-$string['coursesummary'] = '배움터 요약';
-$string['pagedescription'] = '배움터/사이트 설명';
 ?>

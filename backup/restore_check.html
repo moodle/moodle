@@ -20,10 +20,13 @@
         unset($restore);
     }
 
-    // check for session objects
-    if (empty($info) or empty($course_header)) {
-      error( 'important information missing from SESSION' );
-    }
+    //Check required objects from session
+
+    //info
+    require_variable($info);
+
+    //course_header
+    require_variable($course_header);
 
     //If the restore object doesn't exist, we are going
     //to check every variable individually and create it
@@ -31,40 +34,33 @@
     if (!isset($restore)) {
         //Check that we have all we need
         //backup_unique_code
-        $backup_unique_code = required_param( 'backup_unique_code' );
+        require_variable($backup_unique_code);
         //file
-        $file = required_param( 'file');
+        require_variable($file);
         //Checks for the required restoremod parameters
         if ($allmods = get_records("modules")) {
             foreach ($allmods as $mod) {
                 $modname = $mod->name;
                 $var = "restore_".$modname;
-                $$var = optional_param( $var,0); 
+                require_variable($$var); 
                 $var = "restore_user_info_".$modname;
-                $$var = optional_param( $var,0);
-                $instances = $info->mods[$mod->name]->instances;
-                foreach ($instances as $instance) {
-                    $var = 'restore_'.$modname.'_instance_'.$instance->id;
-                    $$var = optional_param($var,0);
-                    $var = 'restore_user_info_'.$modname.'_instance_'.$instance->id;
-                    $$var = optional_param($var,0);
-                }
+                require_variable($$var);
             }
         }
         //restoreto
-        $restore_restoreto = required_param('restore_restoreto');
+        require_variable($restore_restoreto);
         //restore_metacourse
-        $restore_metacourse = required_param('restore_metacourse');
+        require_variable($restore_metacourse);
         //restore_users
-        $restore_users = required_param('restore_users');
+        require_variable($restore_users);
         //restore_logs
-        $restore_logs = required_param('restore_logs');
+        require_variable($restore_logs);
         //restore_user_files
-        $restore_user_files = required_param('restore_user_files');
+        require_variable($restore_user_files);
         //restore_course_files
-        $restore_course_files = required_param('restore_course_files');
+        require_variable($restore_course_files);
         //restore_messages
-        $restore_messages = required_param('restore_messages');
+        require_variable($restore_messages);
 
         //Check we've selected a course
         if (!isset($course_id)) {
@@ -82,14 +78,6 @@
                 $restore->mods[$modname]->restore=$$var;
                 $var = "restore_user_info_".$modname;
                 $restore->mods[$modname]->userinfo=$$var;
-
-                $instances = $info->mods[$mod->name]->instances;
-                foreach ($instances as $instance) {
-                    $var = 'restore_'.$modname.'_instance_'.$instance->id;
-                    $restore->mods[$modname]->instances[$instance->id]->restore = $$var;
-                    $var = 'restore_user_info_'.$modname.'_instance_'.$instance->id;
-                    $restore->mods[$modname]->instances[$instance->id]->userinfo = $$var;
-                }
             }
         }
         $restore->restoreto=$restore_restoreto;
@@ -164,19 +152,11 @@
 
     //Now, select the course if needed
     if (($restore->restoreto == 0 or $restore->restoreto == 1) and ($restore->course_id == 0) and (iscreator())) {
-        if ($courses = get_courses("all","c.fullname","c.id,c.fullname,c.shortname,c.visible")) {
+        if ($courses = get_courses("all","c.fullname","c.id,c.fullname,c.shortname")) {
             print_heading(get_string("choosecourse"));
             print_simple_box_start("center");
             foreach ($courses as $course) {
-                if (!isteacheredit($course->id)) {
-                    continue;
-                }
-                if (empty($course->visible)) {
-                    $optdimmed = ' class="dimmed" ';
-                } else {
-                    $optdimmed = '';
-                }
-                echo "<a $optdimmed href=\"restore.php?course_id=$course->id&launch=check&id=$id&file=$file\">$course->fullname ($course->shortname)</a><br />";
+                echo "<a href=\"restore.php?course_id=$course->id&launch=check&id=$id&file=$file\">$course->fullname ($course->shortname)</a><br />";
             }
             print_simple_box_end();
         } else {
@@ -185,12 +165,6 @@
         }
     //Checks everything and execute restore
     } else if ((($restore->restoreto == 0 or $restore->restoreto == 1) and ($restore->course_id != 0)) or ($restore->restoreto == 2)) {
-        //Final access control check
-        if ($restore->course_id == 0 and !iscreator()) {
-            error("You need to be a creator or admin to restore into new course!");
-        } else if ($restore->course_id != 0 and !isteacheredit($restore->course_id)) {
-            error("You need to be an edit teacher or admin to restore into selected course!");
-        }
         $show_continue_button = true;
         //Check if we've selected any mod's user info and restore->users 
         //is set to none. Change it to course and inform.

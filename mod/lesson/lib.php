@@ -1,5 +1,5 @@
 <?PHP  // $Id$ 
-        // modified by mnielsen
+        // modified by mnielsen @ CDC
         /// Update:  The lib.php now contains only the functions that are
         /// used outside of the lesson module.  All functions (I hope) that are only local
         /// are now in locallib.php.
@@ -28,33 +28,13 @@ function lesson_add_instance($lesson) {
             $lesson->deadlinemonth, $lesson->deadlineday, $lesson->deadlinehour, 
             $lesson->deadlineminute);
     
-    if(empty($lesson->timespent) or !is_numeric($lesson->timespent) or $lesson->timespent < 0) {
-        $lesson->timespent = 0;
-    }
-    if(!isset($lesson->completed)) {
-        $lesson->completed = 0;
-    }
-    if(empty($lesson->gradebetterthan) or !is_numeric($lesson->timespent) or $lesson->gradebetterthan < 0) {
-        $lesson->gradebetterthan = 0;
-    } else if ($lesson->gradebetterthan > 100) {
-        $lesson->gradebetterthan = 100;
-    }
-    // conditions for dependency
-    $conditions = new stdClass;
-    $conditions->timespent = $lesson->timespent;
-    $conditions->completed = $lesson->completed;
-    $conditions->gradebetterthan = $lesson->gradebetterthan;
-    $lesson->conditions = addslashes(serialize($conditions));
-    unset($lesson->timespent);
-    unset($lesson->completed);
-    unset($lesson->gradebetterthan);
-    
+    /// CDC-FLAG ///
     if (!empty($lesson->password)) {
         $lesson->password = md5($lesson->password);
     } else {
         unset($lesson->password);
     }
-    
+    /// CDC-FLAG ///
     if (!$lesson->id = insert_record("lesson", $lesson)) {
         return false; // bad
     }
@@ -126,32 +106,13 @@ function lesson_update_instance($lesson) {
             $lesson->deadlineminute);
     $lesson->id = $lesson->instance;
 
-    if(empty($lesson->timespent) or !is_numeric($lesson->timespent) or $lesson->timespent < 0) {
-        $lesson->timespent = 0;
-    }
-    if(!isset($lesson->completed)) {
-        $lesson->completed = 0;
-    }
-    if(empty($lesson->gradebetterthan) or !is_numeric($lesson->timespent) or $lesson->gradebetterthan < 0) {
-        $lesson->gradebetterthan = 0;
-    } else if ($lesson->gradebetterthan > 100) {
-        $lesson->gradebetterthan = 100;
-    }
-    // conditions for dependency
-    $conditions = new stdClass;
-    $conditions->timespent = $lesson->timespent;
-    $conditions->completed = $lesson->completed;
-    $conditions->gradebetterthan = $lesson->gradebetterthan;
-    $lesson->conditions = addslashes(serialize($conditions));
-    unset($lesson->timespent);
-    unset($lesson->completed);
-    unset($lesson->gradebetterthan);
-
+    /// CDC-FLAG ///
     if (!empty($lesson->password)) {
         $lesson->password = md5($lesson->password);
     } else {
         unset($lesson->password);
     }
+    /// CDC-FLAG ///
 
     if ($lesson->lessondefault) {
         $lessondefault = $lesson;
@@ -429,7 +390,7 @@ function lesson_grades($lessonid) {
     }
     
     // convert grades from percentages and tidy the numbers
-    if (!$lesson->practice) {  // dont display practice lessons
+    if (!$lesson->practice) {  // dont display practice lessons CDC-FLAG
         if ($grades) {
             foreach ($grades as $userid => $grade) {
                 $return->grades[$userid] = number_format($grade * $lesson->grade / 100.0, 1);
@@ -461,13 +422,4 @@ function lesson_get_participants($lessonid) {
     //Return students array (it contains an array of unique users)
     return ($students);
 }
-
-function lesson_get_view_actions() {
-    return array('view','view all');
-}
-
-function lesson_get_post_actions() {
-    return array('end','start');
-}
-
 ?>

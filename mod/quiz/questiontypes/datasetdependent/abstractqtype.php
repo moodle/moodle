@@ -18,12 +18,12 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
         return 'datasetdependent';
     }
 
-    function save_question_options($question) {
+    function save_question_options($question, $options) {
         // Default does nothing...
         return true;
     }
 
-    function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
+    function create_session_and_responses(&$question, &$state, $quiz, $attempt) {
         // Find out how many datasets are available
         global $CFG;
         if(!$maxnumber = (int)get_field_sql(
@@ -33,13 +33,14 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
                             WHERE b.question = $question->id
                             AND   a.id = b.datasetdefinition")) {
             error("Couldn't get the specified dataset for a calculated " .
-                  "question! (question: {$question->id}");
+                  "question! (question: {$question->id}, " .
+                  "datasetnumber: {$datasetnumber})");
         }
 
         // Choose a random dataset
-        $state->options->datasetitem = rand(1, $maxnumber);
+        $state->options->datasetnumber = rand(1, $maxnumber);
         $state->options->dataset =
-         $this->pick_question_dataset($question,$state->options->datasetitem);
+         $this->pick_question_dataset($question,$state->options->datasetnumber);
         $state->responses = array('' => '');
         return true;
     }
@@ -50,22 +51,22 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
             notify ("Wrongly formatted raw response answer " .
                    "{$state->responses['']}! Could not restore session for " .
                    " question #{$question->id}.");
-            $state->options->datasetitem = 1;
+            $state->options->datasetnumber = 1;
             $state->options->dataset = array();
             $state->responses = array('' => '');
             return false;
         }
 
         // Restore the chosen dataset
-        $state->options->datasetitem = $regs[1];
+        $state->options->datasetnumber = $regs[1];
         $state->options->dataset =
-         $this->pick_question_dataset($question,$state->options->datasetitem);
+         $this->pick_question_dataset($question,$state->options->datasetnumber);
         $state->responses = array('' => $regs[2]);
         return true;
     }
 
     function save_session_and_responses(&$question, &$state) {
-        $responses = 'dataset'.$state->options->datasetitem.'-'.
+        $responses = 'dataset'.$state->options->datasetnumber.'-'.
          $state->responses[''];
 
         // Set the legacy answer field
@@ -76,7 +77,7 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
         return true;
     }
 
-    function print_question_formulation_and_controls(&$question, &$state, $cmoptions,
+    function print_question_formulation_and_controls(&$question, &$state, $quiz,
      $options) {
         // Substitute variables in questiontext before giving the data to the
         // virtual type for printing
@@ -89,19 +90,30 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
         $question->questiontext = $this->substitute_variables(
          $question->questiontext, $state->options->dataset);
         $virtualqtype->print_question_formulation_and_controls($question,
-         $state, $cmoptions, $options);
+         $state, $quiz, $options);
     }
 
-    function grade_responses(&$question, &$state, $cmoptions) {
+    function get_correct_responses(&$question, &$state) {
+        foreach ($question->options->answers as $answer) {
+            $answer->answer = $this->substitute_variables(
+             $answer->answer, $state->options->dataset);
+            if (((float) $answer->fraction) === 1.0) {
+                return array('' => $answer->answer);
+            }
+        }
+        return null;
+    }
+
+    function grade_responses(&$question, &$state, $quiz) {
         // Forward the grading to the virtual qtype
         foreach ($question->options->answers as $answer) {
             $answer->answer = $this->substitute_variables($answer->answer,
              $state->options->dataset);
         }
         $virtualqtype = $this->get_virtual_qtype();
-        return $virtualqtype->grade_responses($question, $state, $cmoptions) ;
+        return $virtualqtype->grade_responses($question, $state, $quiz) ;
     }
-
+    
     // ULPGC ecastro
     function check_response(&$question, &$state) {
         // Forward the checking to the virtual qtype
@@ -112,6 +124,9 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
         $virtualqtype = $this->get_virtual_qtype();
         return $virtualqtype->check_response($question, $state) ;
     }
+
+
+
 
     function substitute_variables($str, $dataset) {
         foreach ($dataset as $name => $value) {
@@ -144,311 +159,139 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
         return isset($form->backtoquiz);
     }
 
-    // This gets called by editquestion.php after the standard question is saved
-    function print_next_wizard_page(&$question, &$form, $course) {
-        global $CFG, $USER, $SESSION;
+    function save_question($question, $form, $course, $subtypeoptions=false) {
+    // For dataset dependent questions a wizard is used for editing
+    // questions. Therefore calls from question.php are ignored.
+    // Instead questions are saved when this method is called by
+    // editquestion.php
 
-        // Catch invalid navigation & reloads
-        if (empty($question->id) && empty($SESSION->datasetdependent)) {
-            redirect('edit.php', 'The page you are loading has expired.', 3);
-        }
+        if ($subtypeoptions) {
+            // Let's save the question
+            // We need to save the question first (in order to get the id)
+            // We then save the dataset definitions and finally we
+            // save the subtype options...
 
-        // See where we're coming from
-        switch($form->wizardpage) {
-            case 'question':
-                require("$CFG->dirroot/mod/quiz/questiontypes/datasetdependent/datasetdefinitions.php");
-                break;
-            case 'datasetdefinitions':
-            case 'datasetitems':
-                require("$CFG->dirroot/mod/quiz/questiontypes/datasetdependent/datasetitems.php");
-                break;
-            default:
-                error('Incorrect or no wizard page specified!');
-                break;
-        }
-    }
-
-    function save_question($question, &$form, $course) {
-        // For dataset dependent questions a wizard is used for editing
-        // questions. Therefore saving the question is delayed until
-        // we're through with the whole wizard.
-        global $SESSION;
-        // $this->validate_form($form);
-
-        // We need to return a valid question object (incl. id) if we're in the
-        // edit case. If it is a new question we don't necessarily need to
-        // return a valid question object
-
-        // See where we're coming from
-        switch($form->wizardpage) {
-            case 'question': // coming from the first page, creating the second
-                if (empty($form->id)) {
-                    $SESSION->datasetdependent = new stdClass;
-                    $SESSION->datasetdependent->questionform = $form;
-                } else {
-                    $question = parent::save_question($question, $form, $course);
+            // Save question
+            if (!empty($question->id)) { // Question already exists
+                $question->version++;  // Update version number of question
+                if (!update_record("quiz_questions", $question)) {
+                    error("Could not update question!");
                 }
-                break;
-            case 'datasetdefinitions':
-                if (empty($form->id)) {
-                    if (isset($SESSION->datasetdependent->questionform)) {
-                        $SESSION->datasetdependent->definitionform = $form;
-                    } else {
-                        // Something went wrong, go back to the first page
-                        redirect("question.php?category={$question->category}" .
-                                 "&qtype={$question->qtype}");
-                    }
-                } else {
-                    $this->save_dataset_definitions($form);
+            } else {   // Question is a new one
+                // Set the unique code (not to be changed)
+                $question->stamp = make_unique_id_code();
+                $question->version = 1;
+                if (!$question->id=insert_record("quiz_questions", $question)) {
+                    error("Could not insert new question!");
                 }
-                break;
-            case 'datasetitems':
-                if (empty($form->id) && isset($form->addbutton)) {
-                    $question = parent::save_question($question,
-                     $SESSION->datasetdependent->questionform, $course);
-                    $SESSION->datasetdependent->definitionform->id = $form->id = $question->id;
-                    $this->save_dataset_definitions($SESSION->datasetdependent->definitionform);
-                    unset($SESSION->datasetdependent);
-                }
-                break;
-            default:
-                error('Incorrect or no wizard page specified!');
-                break;
-        }
-        return $question;
-    }
+            }
 
-    function get_dataset_definitions($form) {
-        $datasetdefs = array();
-        if (!empty($form->id)) {
+            // Save datasets
             global $CFG;
-            $sql = "SELECT i.*
-                    FROM {$CFG->prefix}quiz_question_datasets d,
-                         {$CFG->prefix}quiz_dataset_definitions i
-                    WHERE d.question = '$form->id'
-                    AND   d.datasetdefinition = i.id
-                   ";
-            if ($records = get_records_sql($sql)) {
-                foreach ($records as $r) {
-                    $datasetdefs["$r->type-$r->category-$r->name"] = $r;
+            $datasetdefinitions = get_records_sql( // Indexed by name...
+                "SELECT a.name, a.id, a.type, a.category
+                  FROM {$CFG->prefix}quiz_dataset_definitions a,
+                       {$CFG->prefix}quiz_question_datasets b
+                  WHERE a.id = b.datasetdefinition
+                    AND b.question = $question->id");
+
+            foreach ($form->dataset as $dataset) {
+                if (!$dataset) {
+                    continue; // The no dataset case...
                 }
-            }
-        }
 
-        $datasets = empty($form->dataset) ? $form->definition : $form->dataset;
-        foreach ($datasets as $dataset) {
-            if (!$dataset) {
-                continue; // The no dataset case...
-            }
-
-            if (!isset($datasetdefs[$dataset])) {
                 list($type, $category, $name) = explode('-', $dataset, 3);
-                $datasetdef = new stdClass;
+
+                if (isset($datasetdefinitions[$name])
+                        and $datasetdefinitions[$name]->type == $type
+                        and $datasetdefinitions[$name]->category == $category) {
+                    // Keep this dataset as it already fulfills our dreams
+                    // by preventing it from being deleted
+                    unset($datasetdefinitions[$name]);
+                    continue;
+                }
+
+                // We need to create a new datasetdefinition
+                unset ($datasetdef);
                 $datasetdef->type = $type;
                 $datasetdef->name = $name;
-                $datasetdef->category  = $category;
-                $datasetdef->itemcount = 0;
-                $datasetdef->options   = '';
-                $datasetdefs[$dataset] = clone($datasetdef);
-            }
-        }
-        return $datasetdefs;
-    }
+                $datasetdef->category = $category;
 
-    function save_dataset_definitions($form) {
-        // Save datasets
-        $datasetdefinitions = $this->get_dataset_definitions($form);
-        $tmpdatasets = array_flip($form->dataset);
-        $defids = array_keys($datasetdefinitions);
-        foreach ($defids as $defid) {
-            $datasetdef = &$datasetdefinitions[$defid];
-            if (isset($datasetdef->id)) {
-                // This dataset is not used any more, delete it
-                if (!isset($tmpdatasets[$defid])) {
-                    delete_records('quiz_question_datasets',
-                               'question', $form->id,
-                               'datasetdefinition', $datasetdef->id);
-                    if ($datasetdef->category == 0) { // Question local dataset
-                        delete_records('quiz_dataset_definitions',
-                         'id', $datasetdef->id);
-                        delete_records('quiz_dataset_items',
-                         'definition', $datasetdef->id);
-                    }
+                if (!$datasetdef->id = insert_record(
+                        'quiz_dataset_definitions', $datasetdef)) {
+                    error("Unable to create dataset $name");
                 }
-                // This has already been saved or just got deleted
-                unset($datasetdefinitions[$defid]);
-                continue;
-            }
 
-            if (!$datasetdef->id = insert_record(
-                    'quiz_dataset_definitions', $datasetdef)) {
-                error("Unable to create dataset $defid");
-            }
-
-            if (0 != $datasetdef->category) {
-                // We need to look for already existing
-                // datasets in the category.
-                // By first creating the datasetdefinition above we
-                // can manage to automatically take care of
-                // some possible realtime concurrence
-                if ($olderdatasetdefs = get_records_select(
-                        'quiz_dataset_definitions',
-                        "type = '$datasetdef->type'
-                        AND name = '$datasetdef->name'
-                        AND category = '$datasetdef->category'
-                        AND id < $datasetdef->id
-                        ORDER BY id DESC")) {
-
-                    while ($olderdatasetdef = array_shift($olderdatasetdefs)) {
+                if ($category) {
+                    // We need to look for already existing
+                    // datasets in the category.
+                    // By first creating the datasetdefinition above we
+                    // can manage to automatically take care of
+                    // some possible realtime concurrence
+                    while ($olderdatasetdef = get_record_select(
+                            'quiz_dataset_definitions',
+                            " type = '$type' AND name = '$name'
+                            AND category = '$category'
+                            AND id < $datasetdef->id ")) {
+                        // Use older dataset instead:
                         delete_records('quiz_dataset_definitions',
-                                   'id', $datasetdef->id);
+                                       'id', $datasetdef->id);
                         $datasetdef = $olderdatasetdef;
                     }
                 }
-            }
 
-            // Create relation to this dataset:
-            $questiondataset = new stdClass;
-            $questiondataset->question = $form->id;
-            $questiondataset->datasetdefinition = $datasetdef->id;
-            if (!insert_record('quiz_question_datasets',
-                               $questiondataset)) {
-                error("Unable to create relation to dataset $name");
-            }
-            unset($datasetdefinitions[$defid]);
-        }
-
-        // Remove local obsolete datasets as well as relations
-        // to datasets in other categories:
-        if (!empty($datasetdefinitions)) {
-            foreach ($datasetdefinitions as $def) {
-                delete_records('quiz_question_datasets',
-                               'question', $form->id,
-                               'datasetdefinition', $def->id);
-
-                if ($def->category == 0) { // Question local dataset
-                    delete_records('quiz_dataset_definitions', 'id', $def->id);
-                    delete_records('quiz_dataset_items',
-                                   'definition', $def->id);
+                // Create relation to this dataset:
+                unset($questiondataset);
+                $questiondataset->question = $question->id;
+                $questiondataset->datasetdefinition = $datasetdef->id;
+                if (!insert_record('quiz_question_datasets',
+                                   $questiondataset)) {
+                    error("Unable to create relation to dataset $name");
                 }
             }
-        }
-    }
 
+            // Remove local obsolete datasets as well as relations
+            // to datasets in other categories:
+            if (!empty($datasetdefinitions)) {
+                foreach ($datasetdefinitions as $def) {
+                    delete_records('quiz_question_datasets',
+                                   'question', $question->id,
+                                   'datasetdefinition', $def->id);
 
-
-/*
-
-    function save_question($question, &$form, $course) {
-        // For dataset dependent questions a wizard is used for editing
-        // questions. Therefore saving the question is delayed until
-        // we're through with the whole wizard.
-        global $SESSION;
-        $this->validate_form($form);
-
-        // See where we're coming from
-        switch($form->wizardpage) {
-            case 'question':
-                unset($SESSION->datasetdependent); // delete any remaining data
-                                                   // from previous wizards
-                if (empty($form->id)) {
-                    $SESSION->datasetdependent->question = $form;
-                    $question = $this->create_runtime_question($question, $form);
-                } else {
-                    $question = parent::save_question($question, $form, $course);
+                    if ($def->category == 0) { // Question local dataset
+                        delete_records('quiz_dataset_definitions', 'id', $def->id);
+                        delete_records('quiz_dataset_items',
+                                       'definition', $def->id);
+                    }
                 }
-                break;
-            case 'datasetdefinitions':
-                $SESSION->datasetdependent->datasetdefinitions = $form;
-                if (empty($form->id)) {
-                    $question = $this->create_runtime_question($question, $SESSION->datasetdependent->question);
-                } else {
-                    $this->save_dataset_definitions($form);
-                    $this->get_question_options($question);
-                    //unset($SESSION->datasetdependent->datasetdefinitions);
-                }
-                //$this->get_question_options($question);
-                break;
-            case 'datasets':
-                if (!empty($form->addbutton) && isset($SESSION->datasetdependent->question)) {
-                    echo "saving";
-                    $question = parent::save_question($question, $SESSION->datasetdependent->question, $course);
-                    $SESSION->datasetdependent->datasetdefinitions->id = $question->id;
-                    $this->save_dataset_definitions($SESSION->datasetdependent->datasetdefinitions);
-                    //$this->get_dataset_definitions($question);
-                    unset($SESSION->datasetdependent);
-                }
-                dump($question);
-                if (empty($question->id)) {
-                    $question = $this->create_runtime_question($question, $SESSION->datasetdependent->question);
-                } else {
-                    $this->get_question_options($question);
-                }
+            }
 
-                break;
-            default:
-                error('Incorrect or no wizard page specified!');
-                break;
-        }
-        return $question;
-    }
+            // Save subtype options
+            $this->save_question_options($question, $subtypeoptions);
+            return $question;
 
-*/
-
-/*
-    function create_runtime_question($question, $form) {
-        $question->name               = trim($form->name);
-        $question->questiontext       = trim($form->questiontext);
-        $question->questiontextformat = $form->questiontextformat;
-        $question->parent             = isset($form->parent)? $form->parent : 0;
-        $question->length = $this->actual_number_of_questions($question);
-        $question->penalty = isset($form->penalty) ? $form->penalty : 0;
-
-        if (empty($form->image)) {
-            $question->image = "";
+        } else if (empty($form->editdatasets)) {
+            // Parse for common question entries and
+            // continue with editquestion.php by returning the question
+            $question->name               = $form->name;
+            $question->questiontext       = $form->questiontext;
+            $question->questiontextformat = $form->questiontextformat;
+            if (empty($form->image)) {
+                $question->image = "";
+            } else {
+                $question->image = $form->image;
+            }
+            if (isset($form->defaultgrade)) {
+                $question->defaultgrade = $form->defaultgrade;
+            }
+            return $question;
         } else {
-            $question->image = $form->image;
+            return $question;
         }
-
-        if (empty($question->name)) {
-            $question->name = strip_tags($question->questiontext);
-            if (empty($question->name)) {
-                $question->name = '-';
-            }
-        }
-
-        if ($question->penalty > 1 or $question->penalty < 0) {
-            $question->errors['penalty'] = get_string('invalidpenalty', 'quiz');
-        }
-
-        if (isset($form->defaultgrade)) {
-            $question->defaultgrade = $form->defaultgrade;
-        }
-        return $question;
     }
-*/
 
-/*
-    function validate_form($form) {
-        switch($form->wizardpage) {
-            case 'question':
-                error('Validation for the wizardpage "question" needs to be ' .
-                      'defined in the inheriting questiontype.');
-            case 'datasetdefinitions':
-                // Nothing to validate
-                $SESSION->datasetdependent->datasetdefinitions = $form;
-                break;
-            case 'datasets':
-                break;
-            default:
-                error('Incorrect or no wizard page specified!');
-                break;
-        }
-        return true;
-    }
-*/
 /// Dataset functionality
-    function pick_question_dataset($question, $datasetitem) {
+    function pick_question_dataset($question, $datasetnumber) {
         // Select a dataset in the following format:
         // An array indexed by the variable names (d.name) pointing to the value
         // to be substituted
@@ -461,10 +304,10 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
                         WHERE q.question = $question->id
                         AND q.datasetdefinition = d.id
                         AND d.id = i.definition
-                        AND i.number = $datasetitem")) {
+                        AND i.number = $datasetnumber")) {
             error("Couldn't get the specified dataset for a dataset dependent " .
                   "question! (question: {$question->id}, " .
-                  "datasetitem: {$datasetitem})");
+                  "datasetnumber: {$datasetnumber})");
         }
         array_walk($dataset, create_function('&$val', '$val = $val->value;'));
         return $dataset;
@@ -519,7 +362,7 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
         return $datasetdefs;
     }
 
-    function dataset_options($form, $name) {
+    function dataset_options($question, $name) {
 
         // First options - it is not a dataset...
         $options['0'] = get_string('nodataset', 'quiz');
@@ -531,7 +374,7 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
                    FROM {$CFG->prefix}quiz_dataset_definitions a,
                         {$CFG->prefix}quiz_question_datasets b
                   WHERE a.id = b.datasetdefinition
-                    AND b.question = '$form->id'
+                    AND b.question = '$question->id'
                     AND a.name = '$name'")
         or $currentdatasetdef->type = '0';
         foreach (array( LITERAL, FILE, LINK) as $type) {
@@ -550,10 +393,10 @@ class quiz_dataset_dependent_questiontype extends quiz_default_questiontype {
                    FROM {$CFG->prefix}quiz_dataset_definitions a,
                         {$CFG->prefix}quiz_question_datasets b
                   WHERE a.id = b.datasetdefinition
-                    AND a.category = '$form->category'
+                    AND a.category = '$question->category'
                     AND a.name = '$name'");
         foreach(array( LITERAL, FILE, LINK) as $type) {
-            $key = "$type-$form->category-$name";
+            $key = "$type-$question->category-$name";
             if (isset($categorydatasetdefs[$type])
                     and $categorydef = $categorydatasetdefs[$type]) {
                 if ($currentdatasetdef->type == $type

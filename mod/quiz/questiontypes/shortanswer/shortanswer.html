@@ -88,7 +88,7 @@
     </td>
 </tr>
 <?php
-    for ($i=1; $i<=count($answers); $i++) {
+    for ($i=1; $i<=QUIZ_MAX_NUMBER_ANSWERS; $i++) {
 ?>
 <tr valign="top">
     <td align="right"><b><?php  echo get_string("answer", "quiz")." $i";  ?>:</b></td>

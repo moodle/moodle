@@ -11,12 +11,6 @@
 **   Support of rejoinders
 **
 ** $Log$
-** Revision 1.2  2005/05/31 15:19:00  thepurpleblob
-** merged from STABLE
-**
-** Revision 1.1.2.1  2005/05/31 15:17:20  thepurpleblob
-** Took out dos line endings
-**
 ** Revision 1.1  2005/05/16 08:12:40  thepurpleblob
 ** Added support for Examview import.
 **

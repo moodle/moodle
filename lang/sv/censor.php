@@ -1,8 +1,8 @@
 <?PHP // $Id$ 
-      // censor.php - created with Moodle 1.5 ALPHA (2005051500)
+      // censor.php - created with Moodle 1.3 Beta (2004051100)
 
 
-$string['badwords'] = 'skit, knulla, fitta, kuk, kukhuvud, arsle, djävul, jävla, djävla, fan, neger, jude, blatte, penis, pick, vagina, fittslickare, flata, bög, bögjävel, runka, skithål, röv, rövhål, rövbög, hora';
 $string['filtername'] = 'Censur av ord';
+$string['badwords'] = 'shit,fucked,fucker,fuck,dickhead,dick,cockhead,cock,cunt,asshole,arsehole,prick,bitch,jism,whore,slut,wanker,wank,bastard,dildo,masturbate,orgasm,penis,nigger,pussy,vagina,skit,knulla,kuk,fitta,runka,neger,hora,rövknullare,bög,flata';
 
 ?>

@@ -5,10 +5,10 @@
 
     define("MAX_USERS_PER_PAGE", 50);
 
-    $id = required_param('id',PARAM_INT);         // course id
-    $add = optional_param('add', '', PARAM_ALPHA);
-    $remove = optional_param('remove', '', PARAM_ALPHA);
-    $search = optional_param('search', '', PARAM_CLEAN); // search string
+    require_variable($id);         // course id
+    optional_variable($add, "");
+    optional_variable($remove, "");
+    optional_variable($search, ""); // search string
 
     require_login();
 
@@ -55,6 +55,16 @@
     }
 
 
+
+/// Print headers
+
+    print_header("$course->shortname: $strassignteachers", 
+                 "$course->fullname", 
+                 "<a href=\"index.php\">$strcourses</a> -> ".
+                 "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> ".
+                 "$strassignteachers", "");
+
+
 /// If data submitted, then process and store.
 
     if ($form = data_submitted() and confirm_sesskey()) {
@@ -84,18 +94,9 @@
         redirect("teacher.php?id=$course->id", get_string("changessaved"));
     }
 
-
-/// Print headers
-
-    print_header("$course->shortname: $strassignteachers", 
-                 "$course->fullname", 
-                 "<a href=\"index.php\">$strcourses</a> -> ".
-                 "<a href=\"view.php?id=$course->id\">$course->shortname</a> -> ".
-                 "$strassignteachers", "");
-
 /// Add a teacher if one is specified
 
-    if (!empty($add) and confirm_sesskey()) {
+    if (!empty($_GET['add']) and confirm_sesskey()) {
         if (! add_teacher($add, $course->id)) {
             error("Could not add that teacher to this course!");
         }
@@ -103,7 +104,7 @@
 
 /// Remove a teacher if one is specified.
 
-    if (!empty($remove) and confirm_sesskey()) {
+    if (!empty($_GET['remove']) and confirm_sesskey()) {
         if (! remove_teacher($remove, $course->id)) {
             error("Could not remove that teacher from this course!");
         }
@@ -157,7 +158,7 @@
             }
     
             $table->data[] = array ($picture, fullname($teacher, true), $authority,
-                                    "<input type=\"text\" name=\"r$teacher->id\" value=\"$teacher->role\" size=\"30\" maxlength=\"40\" />",
+                                    "<input type=\"text\" name=\"r$teacher->id\" value=\"$teacher->role\" size=\"30\" />",
                                     $editall, $removelink);
         }
         $teacherlist = implode(",",$teacherarray);

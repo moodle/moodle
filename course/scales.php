@@ -4,13 +4,12 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $id = required_param('id', PARAM_INT);             // course id
-    $scaleid = optional_param('scaleid',0,PARAM_INT);       // scale id
-    $action = optional_param('action','undefined',PARAM_ALPHA);        // action to execute
-    $name = optional_param('name','',PARAM_CLEAN);          // scale name
-    $description = optional_param('description','',PARAM_CLEAN);   // scale description
-    $scalescale = optional_param('scalescale');         // scale scale
-    $list = optional_param('list');
+    require_variable($id);             // course id
+    optional_variable($scaleid);       // scale id
+    optional_variable($action,"undefined");        // action to execute
+    optional_variable($name);          // scale name
+    optional_variable($description);   // scale description
+    optional_variable($scalescale);         // scale scale
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID was incorrect");
@@ -304,11 +303,11 @@
         }
     }
 
-    if (!empty($list)) {       /// Just list the scales (in a helpwindow)
+    if (isset($_GET['list'])) {       /// Just list the scales (in a helpwindow)
 
         print_header($strscales);
 
-        if (isset_param('scale')) {
+        if (isset($_GET['scale'])) {
             if ($scale = get_record("scale", "id", "$scale")) {
                 $scalemenu = make_menu_from_list($scale->scale);
 

@@ -61,8 +61,7 @@ class block_online_users extends block_base {
                                           {$CFG->prefix}user_students s
                                           $groupmembers
                                      WHERE u.id = s.userid $courseselect $groupselect $timeselect 
-                                  ORDER BY s.timeaccess DESC ".sql_paging_limit(0,20))) {
-
+                                  ORDER BY s.timeaccess DESC")) {
             foreach ($students as $student) {
                 $student->fullname = fullname($student);
                 $users[$student->id] = $student;
@@ -73,7 +72,7 @@ class block_online_users extends block_base {
             if ($siteusers = get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.picture, u.lastaccess
                                      FROM {$CFG->prefix}user u
                                      WHERE u.lastaccess > $timefrom AND u.username <> 'guest'
-                                  ORDER BY u.lastaccess DESC ".sql_paging_limit(0,20))) {
+                                  ORDER BY u.lastaccess DESC")) {
                 foreach ($siteusers as $siteuser) {
                     $siteuser->fullname = fullname($siteuser);
                     $siteuser->timeaccess = $siteuser->lastaccess;
@@ -98,15 +97,24 @@ class block_online_users extends block_base {
         //Calculate minutes
         $minutes  = floor($timetoshowusers/60);
 
-        $this->content->text = "<div class=\"message\">(".get_string("periodnminutes","block_online_users",$minutes).")</div>";
+        $this->content->text = "<center><font size=\"-2\">(".get_string("periodnminutes","block_online_users",$minutes).")</font></center>";
 
         //Now, we have in users, the list of users to show
         //Because they are online
         if (!empty($users)) {
             foreach ($users as $user) {
-                $this->content->text .= '<div class="listentry">';
+                $this->content->text .= '<div style="text-align: left; font-size: 0.75em; padding-top: 5px;">';
                 $timeago = format_time(time() - max($user->timeaccess, $user->lastaccess)); //bruno to calculate correctly on frontpage 
-                $this->content->text .= print_user_picture($user->id, $this->instance->pageid, $user->picture, 16, true).' ';
+                if ($user->picture) {
+                    if ($CFG->slasharguments) {
+                        $imgtag = '<img src="'.$CFG->wwwroot.'/user/pix.php/'.$user->id.'/f2.jpg" style="height: 16px; width:16px; vertical-align: middle;" alt="" /> ';
+                    } else {
+                        $imgtag = '<img src="'.$CFG->wwwroot.'/user/pix.php?file=/'.$user->id.'/f2.jpg" style="height: 16px; width:16px; vertical-align: middle;" alt="" /> ';
+                    }
+                    $this->content->text .= $imgtag;
+                } else {
+                    $this->content->text .= '<img src="'.$CFG->pixpath.'/i/user.gif" style="height: 16px; width:16px; vertical-align: middle;" alt="" /> ';
+                }
                 $this->content->text .= '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$this->instance->pageid.'" title="'.$timeago.'">'.$user->fullname.'</a>';
                 if (!empty($USER->id) and ($USER->id != $user->id) and !empty($CFG->messaging) and !isguest()) {  // Only when logged in
                     $this->content->text .= '&nbsp;<a target="message_'.$user->id.'" href="'.$CFG->wwwroot.'/message/discussion.php?id='.$user->id.'" onclick="return openpopup(\'/message/discussion.php?id='.$user->id.'\', \'message_'.$user->id.'\', \'menubar=0,location=0,scrollbars,status,resizable,width=400,height=500\', 0);"><img height="11" width="11" src="'.$CFG->pixpath.'/t/message.gif" alt="" /></a>';
@@ -114,7 +122,7 @@ class block_online_users extends block_base {
                 $this->content->text .= '</div>';
             }
         } else {
-            $this->content->text .= "<div class=\"message\">".get_string("none")."</div>";
+            $this->content->text .= "<center><font size=\"-1\">".get_string("none")."</font></center>";
         }
 
         return $this->content;

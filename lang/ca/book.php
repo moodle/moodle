@@ -24,8 +24,8 @@ $string['numbering3'] = 'Indentat';
 $string['chapterscount'] = 'Capítols';
 
 $string['addafter'] = 'Afegeix un nou capítol';
-$string['confchapterdelete'] = 'Realment voleu esborrar aquest capítol?';
-$string['confchapterdeleteall'] = 'Realment voleu esborrar aquest capítol i tots els seus subcapítols?';
+$string['confchapterdelete'] = 'Realment voleu suprimir aquest capítol?';
+$string['confchapterdeleteall'] = 'Realment voleu suprimir aquest capítol i tots els seus subcapítols?';
 
 $string['printbook'] = 'Imprimeix el llibre sencer';
 $string['printchapter'] = 'Imprimeix aquest capítol';
@@ -33,7 +33,7 @@ $string['printdate'] = 'Data';
 $string['printedby'] = 'Imprès per';
 $string['top'] = 'amunt';
 
-$string['navprev'] = 'Prèvi';
+$string['navprev'] = 'Anterior';
 $string['navnext'] = 'Següent';
 $string['navexit'] = 'Sortir del llibre';
 
@@ -41,9 +41,10 @@ $string['importingchapters'] = 'S\'estan important capítols al llibre';
 $string['import'] = 'Importa';
 $string['doimport'] = 'Importa';
 $string['importing'] = 'S\'està important';
-$string['relinking'] = 'S\'està reenllaçant';
-$string['importinfo'] = 'Importa el directori o el fitxer HTML seleccionat.<br />Els capítols estan ordenats alfabèticament pel nom del fitxer.';
+$string['relinking'] = 'S\'estan refent els enllaços';
+$string['importinfo'] = 'Importa el directori o el fitxer HTML seleccionat.<br />Els capÌtols estan ordenats alfabËticament pel nom del fitxer.';
 $string['maindirectory'] = 'Directori principal';
 $string['fileordir'] = 'Fitxer o directori';
 
 ?>
+

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.6 development (2005101200)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['addresource'] = 'Material hinzufügen';
@@ -23,7 +23,6 @@ $string['configpopupwidth'] = 'Welche Breite sollen Popup-Fenster haben (Voreins
 $string['configsecretphrase'] = 'Dieser versteckte Wert wird verwandt, um einen verschlüsselten Wert zu erstellen, der als Parameter an andere Ressourcen gesandt wird. Der verschlüsselte Code wird erstellt von einem md5 Wert der derzeitigen IP Adresse in Verbindung mit dem eingegenen Wert. Z.B. code = md5(IP.secretphrase). Dies erlaubt der angesprochenen Ressource die Verbindung für erhöhte Sicherheit zu überprüfen.';
 $string['configwebsearch'] = 'Wenn eine URL als Webseite oder Link eingefügt wird soll diese Seite dem Benutzer bei der Suche nach einer URL unterstützen.';
 $string['configwindowsettings'] = 'Stellen Sie die Anfangswerte für die Fenstereinstellungen im Formular zur Bereitstellung neuer Arbeitsunterlagen ein. Nach dem ersten Öffnen kann diese individuell angepasst werden.';
-$string['deploy'] = 'Verwenden';
 $string['directlink'] = 'Direkter Link zu dieser Datei';
 $string['directoryinfo'] = 'Alle Dateien im ausgewählten Verzeichnis werden angezeigt';
 $string['display'] = 'Fenster';
@@ -39,7 +38,6 @@ $string['filtername'] = 'Automatische Verlinkung von Arbeitsunterlagen';
 $string['frameifpossible'] = 'Zeigt das Arbeitsmaterial in einem Frame. Die Seitennavigation bleibt sichtbar';
 $string['fulltext'] = 'Text-/Webseite';
 $string['htmlfragment'] = 'HTML-Teil';
-$string['imspackageloaded'] = 'Paket geladen';
 $string['localfile'] = 'Lokale Datei';
 $string['localfilechoose'] = 'Wählen Sie eine lokale Datei aus (z.B. CD-ROM Laufwerk)';
 $string['localfilehelp'] = 'Hilfe zur Anzeige lokaler Dateien';
@@ -50,7 +48,6 @@ $string['localfileselect'] = 'Diesen Dateipfad auswählen.';
 $string['maindirectory'] = 'Hauptverzeichnis für Dateien';
 $string['modulename'] = 'Arbeitsmaterial';
 $string['modulenameplural'] = 'Arbeitsmaterialien';
-$string['navigationbuttons'] = 'Navigationsbuttons';
 $string['neverseen'] = 'Nie gelesen';
 $string['newdirectories'] = 'Die Verzeichnis-Verknüpfungen anzeigen';
 $string['newfullscreen'] = 'Den ganzen Bildschirm ausfüllen';
@@ -66,11 +63,9 @@ $string['newwindow'] = 'Neues Fenster';
 $string['newwindowopen'] = 'Dieses Quelle in einem neuen Popup-Fenster anzeigen';
 $string['notallowedlocalfileaccess'] = 'Der Zugriff auf lokale Dateiressourcen ist zur Zeit nicht aktiviert. Daher sind die Materialien nicht verfügbar.';
 $string['note'] = 'Anmerkung';
-$string['notefile'] = 'Um mehr als eine Datei für diesen Kurs hochzuladen (damit diese in der Liste erscheinen) benutzen Sie bitte den 
+$string['notefile'] = 'Um mehr als eine Datei für diesen Kurs hochzuladen (damit dieses in der Liste erscheinen) benutzen Sie bitte den 
 <a href=\"$a\">Datei-Manager</a>.';
 $string['notypechosen'] = 'Sie müssen einen Typ auswählen. Verwenden Sie den Zurück-Knopf und probieren Sie es erneut';
-$string['packagechanged'] = 'Dieses IMS Contentpaket hat gewechselt';
-$string['packagenotdeplyed'] = 'Dieses IMS Contentpaket wird nicht verwendet';
 $string['pagedisplay'] = 'Zeigt das Arbeitsmaterial im derzeitigen Fenster';
 $string['pagewindow'] = 'Gleiches Fenster';
 $string['pan'] = 'Pan';
@@ -78,7 +73,6 @@ $string['parameter'] = 'Einstellung';
 $string['parameters'] = 'Einstellungen';
 $string['popupresource'] = 'Diese Quelle erscheint in einem Pop-Up-Fenster';
 $string['popupresourcelink'] = 'Wenn es nicht klappt, klicken Sie hier $a';
-$string['redeploy'] = 'Nochmal verwenden';
 $string['resourcetype'] = 'Typ der Quelle';
 $string['resourcetype1'] = 'Referenz';
 $string['resourcetype2'] = 'Internet-Seite';
@@ -91,17 +85,12 @@ $string['resourcetype8'] = 'Wiki-Text';
 $string['resourcetype9'] = 'Verzeichnis';
 $string['resourcetypedirectory'] = 'Ein Verzeichnis anzeigen';
 $string['resourcetypefile'] = 'Link auf Datei oder Webseite';
-$string['resourcetypehtml'] = 'Erstellen einer Textseite (mit Editor)';
-$string['resourcetypeims'] = 'IMS Contentpaket verwenden';
-$string['resourcetypelabel'] = 'Überschrift/Text auf Kursseite einfügen';
-$string['resourcetyperepository'] = 'Link auf ein Bibliotheksobjekt';
-$string['resourcetypetext'] = 'Erstellen einer Textseite (ohne Editor)';
+$string['resourcetypehtml'] = 'Erstellen einer Webseite';
+$string['resourcetypelabel'] = 'Bezeichnung einfügen';
+$string['resourcetypetext'] = 'Erstellen einer Textseite';
 $string['searchweb'] = 'Suche nach einer Webseite';
 $string['serverurl'] = 'Server URL ($a->wwwroot)';
-$string['showcourseblocks'] = 'Kursblöcke anzeigen';
-$string['tableofcontents'] = 'Inhaltsverzeichnis';
 $string['variablename'] = 'Name der Variable';
-$string['viewims'] = 'IMS  Contentpaket anzeigen';
 $string['vol'] = 'Vol';
 
 ?>

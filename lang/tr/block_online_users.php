@@ -1,9 +1,9 @@
 <?PHP // $Id$ 
-      // block_online_users.php - created with Moodle 1.6 development (2005081700)
+      // block_online_users.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
-$string['blockname'] = 'Çevrimiçi Kullanýcýlar';
-$string['configtimetosee'] = 'Bir kullanýcýnýn ne kadar süre hareketsiz kaldýktan sonra artýk çevrimiçi sayýlmayacaðý süre (dk)';
+$string['blockname'] = 'Online Kullanýcýlar';
+$string['configtimetosee'] = 'Bir kullanýcýnýn online olarak algýlanacaðý dakika';
 $string['periodnminutes'] = 'Son $a dakika';
 
 ?>

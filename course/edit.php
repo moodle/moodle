@@ -5,13 +5,12 @@
     require_once("lib.php");
     require_once("$CFG->libdir/blocklib.php");
 
-    $id = optional_param('id', 0, PARAM_INT); // course id
-    $category = optional_param('category', 0, PARAM_INT); // possible default category
+    $id       = (int)optional_param('id', 0);         // course id
+    $category = (int)optional_param('category', 0);   // possible default category
 
     require_login();
    
     $disable_meta = false;
-    $focus = "";
 
     if ($id) {
         if (! $course = get_record("course", "id", $id)) {
@@ -60,19 +59,6 @@
         }
 
         $form->startdate = make_timestamp($form->startyear, $form->startmonth, $form->startday);
-        $form->category = clean_param($form->category, PARAM_INT);
-
-        if (empty($form->enrolstartdisabled)) {
-            $form->enrolstartdate = make_timestamp($form->enrolstartyear, $form->enrolstartmonth, $form->enrolstartday);
-        } else {
-            $form->enrolstartdate = 0;
-        }
-
-        if (empty($form->enrolenddisabled)) {
-            $form->enrolenddate = make_timestamp($form->enrolendyear, $form->enrolendmonth, $form->enrolendday);
-        } else {
-            $form->enrolenddate = 0;
-        }
 
         $form->format = optional_param('format', 'social', PARAM_ALPHA);
 
@@ -80,14 +66,8 @@
 
         if (count($err) == 0) {
 
-            $allowedmods = array();
-            if (!empty($form->allowedmods)) {
-                $allowedmods = $form->allowedmods;
-                unset($form->allowedmods);
-            }
-            
             $form->timemodified = time();
-            
+
             if (!empty($course)) {
                 // Test for and remove blocks which aren't appropriate anymore
                 $page = page_create_object(PAGE_COURSE_VIEW, $course->id);
@@ -96,10 +76,6 @@
                 // Update with the new data
                 if (update_record('course', $form)) {
                     add_to_log($course->id, "course", "update", "edit.php?id=$id", "");
-                    if (isadmin()) {
-                        $course->restrictmodules = $form->restrictmodules;
-                        update_restricted_mods($course,$allowedmods);
-                    }
                     fix_course_sortorder();
                     redirect($page->url_get_full(), get_string('changessaved'));
                 } else {
@@ -120,11 +96,6 @@
                     // Setup the blocks
                     $page = page_create_object(PAGE_COURSE_VIEW, $newcourseid);
                     blocks_repopulate_page($page); // Return value not checked because you can always edit later
-
-                    if (isadmin()) {
-                        $course = get_record("course","id",$newcourseid);
-                        update_restricted_mods($course,$allowedmods);
-                    }
 
                     $section = NULL;
                     $section->course = $newcourseid;   // Create a default section.
@@ -186,7 +157,6 @@
             $form->numsections = 10;
             $form->idnumber = '';
             $form->cost = '';
-            $form->currency = empty($CFG->enrol_currency) ? 'USD' : $CFG->enrol_currency;
             $form->newsitems = 5;
             $form->showgrades = 1;
             $form->groupmode = 0;
@@ -209,6 +179,10 @@
         }
     }
 
+    if (empty($focus)) {
+        $focus = "";
+    }
+
     $form->categories = get_records_select_menu("course_categories", "", "name", "id,name");
 
     $courseformats = get_list_of_plugins("course/format");
@@ -217,29 +191,6 @@
     foreach ($courseformats as $courseformat) {
         $form->courseformats["$courseformat"] = get_string("format$courseformat");
     }
-
-    if (empty($allowedmods)) {
-        $allowedmods = array();
-        if (!empty($course)) {
-            if ($am = get_records("course_allowed_modules","course",$course->id)) {
-                foreach ($am as $m) {
-                    $allowedmods[] = $m->module;
-                }
-            } else {
-                if (empty($course->restrictmodules)) {
-                    $allowedmods = explode(',',$CFG->defaultallowedmodules);
-                } // it'll be greyed out but we want these by default anyway.
-            }
-        } else {
-            if ($CFG->restrictmodulesfor == 'all') {
-                $allowedmods = explode(',',$CFG->defaultallowedmodules);
-                if (!empty($CFG->restrictbydefault)) {
-                    $form->restrictmodules = 1;
-                }
-            }
-        }
-    }
-
 
     $usehtmleditor = can_use_html_editor();
 
@@ -276,10 +227,6 @@
 /// Functions /////////////////////////////////////////////////////////////////
 
 function validate_form($course, &$form, &$err) {
-
-    if (empty($form->enrolenddisabled) && $form->enrolenddate <= $form->enrolstartdate) {
-        $err["enroldate"] = get_string("enrolenddaterror");
-    }
 
     if (empty($form->fullname))
         $err["fullname"] = get_string("missingfullname");

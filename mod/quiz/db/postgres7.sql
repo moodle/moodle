@@ -81,7 +81,6 @@ CREATE TABLE prefix_quiz_attemptonlast_datasets (
 
 CREATE TABLE prefix_quiz_attempts (
   id SERIAL PRIMARY KEY,
-  uniqueid integer NOT NULL default '0',
   quiz integer NOT NULL default '0',
   userid integer NOT NULL default '0',
   attempt integer NOT NULL default '0',
@@ -89,7 +88,7 @@ CREATE TABLE prefix_quiz_attempts (
   timestart integer NOT NULL default '0',
   timefinish integer NOT NULL default '0',
   timemodified integer NOT NULL default '0',
-  layout text NOT NULL default '',
+  layout text NOT NULL,
   preview integer NOT NULL default '0'
 );
 
@@ -273,7 +272,6 @@ CREATE TABLE prefix_quiz_numerical (
   tolerance varchar(255) NOT NULL default '0.0'
 );
 
-CREATE INDEX prefix_quiz_numerical_answer_idx ON prefix_quiz_numerical (answer);
 CREATE INDEX prefix_quiz_numerical_question_idx ON prefix_quiz_numerical (question);
 
 # --------------------------------------------------------
@@ -412,7 +410,7 @@ CREATE TABLE prefix_quiz_rqp_states (
 # Table structure for table prefix_quiz_rqp_type
 #
 
-CREATE TABLE prefix_quiz_rqp_types (
+CREATE TABLE prefix_quiz_rqp_type (
   id SERIAL PRIMARY KEY,
   name varchar(255) NOT NULL default '',
   rendering_server varchar(255) NOT NULL default '',
@@ -420,7 +418,7 @@ CREATE TABLE prefix_quiz_rqp_types (
   flags integer NOT NULL default '0'
 );
 
-CREATE UNIQUE INDEX prefix_quiz_rqp_types_name_uk ON prefix_quiz_rqp_types (name);
+CREATE UNIQUE INDEX prefix_quiz_rqp_type_name_uk ON prefix_quiz_rqp_type (name);
 
 
 # --------------------------------------------------------
@@ -450,7 +448,7 @@ CREATE TABLE prefix_quiz_states (
   question integer NOT NULL default '0',
   originalquestion integer NOT NULL default '0',
   seq_number integer NOT NULL default '0',
-  answer text NOT NULL default '',
+  answer text NOT NULL,
   timestamp integer NOT NULL default '0',
   event integer NOT NULL default '0',
   grade varchar(10) NOT NULL default '0.0',

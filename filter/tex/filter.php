@@ -69,7 +69,7 @@ function string_file_picture_tex($imagefile, $tex= "", $height="", $width="", $a
           $output .= urlencode($tex) . "', 'popup', 'menubar=0,location=0,scrollbars,";
           $output .= "resizable,width=300,height=240', 0);\">";
         }
-        $output .= "<img class=\"texrender\" border=\"0\" $title $height $width alt=\"\" src=\"";
+        $output .= "<img border=\"0\" $title $height $width alt=\"\" src=\"";
         if ($CFG->slasharguments) {        // Use this method if possible for better caching
             $output .= "$CFG->wwwroot/$CFG->texfilterdir/pix.php/$imagefile";
         } else {
@@ -88,7 +88,7 @@ function tex_filter ($courseid, $text) {
     global $CFG;
 
     /// Do a quick check using stripos to avoid unnecessary work
-    if (!preg_match('/<tex/i',$text) and !strstr($text,'$$') and !strstr($text,'\\[') and !preg_match('/\[tex/i',$text)) { //added one more tag (dlnsk)
+    if (!preg_match('/<tex/i',$text) and !strstr($text,'$$')) {
         return $text;
     }
 
@@ -108,6 +108,7 @@ function tex_filter ($courseid, $text) {
 #    if ($discussion->forum != 130) {
 #        return $text;
 #    }
+
     $text .= ' ';
     preg_match_all('/\$(\$\$+?)([^\$])/s',$text,$matches);
     for ($i=0;$i<count($matches[0]);$i++) {
@@ -119,16 +120,11 @@ function tex_filter ($courseid, $text) {
 
     // <tex> TeX expression </tex>
     // or $$ TeX expression $$
-    // or \[ TeX expression \]          // original tag of MathType and TeXaide (dlnsk)
-    // or [tex] TeX expression [/tex]   // somtime it's more comfortable than <tex> (dlnsk)
-    preg_match_all('/<tex>(.+?)<\/tex>|\$\$(.+?)\$\$|\\\\\[(.+?)\\\\\]|\\[tex\\](.+?)\\[\/tex\\]/is', $text, $matches);
+    preg_match_all('/<tex>(.+?)<\/tex>|\$\$(.+?)\$\$/is', $text, $matches);  
     for ($i=0; $i<count($matches[0]); $i++) {
-        $texexp = $matches[1][$i] . $matches[2][$i] . $matches[3][$i] . $matches[4][$i];
+        $texexp = $matches[1][$i] . $matches[2][$i];
         $texexp = str_replace('<nolink>','',$texexp);
         $texexp = str_replace('</nolink>','',$texexp);
-        $texexp = str_replace('<span class="nolink">','',$texexp);
-        $texexp = str_replace('</span>','',$texexp);
-        $texexp = eregi_replace("<br[[:space:]]*\/?>", '', $texexp);  //dlnsk
         $align = "middle";
         if (preg_match('/^align=bottom /',$texexp)) {
           $align = "text-bottom";

@@ -28,6 +28,7 @@
         } else {
             $newpage->qoption = 0;
         }
+        /// CDC-FLAG /// 6/16/04
         if (isset($form->layout)) {
             $newpage->layout = clean_param($form->layout, PARAM_INT);
         } else {
@@ -38,9 +39,11 @@
         } else {
             $newpage->display = 0;
         }
+        /// CDC-FLAG ///
         $newpage->title = clean_param($form->title, PARAM_CLEANHTML);
-        $newpage->contents = trim($form->contents);
+        $newpage->contents = clean_param(trim($form->contents), PARAM_CLEANHTML);
         $newpage->title = addslashes($newpage->title);
+        $newpage->contents = addslashes($newpage->contents);
         $newpageid = insert_record("lesson_pages", $newpage);
         if (!$newpageid) {
             error("Insert page: new page not inserted");
@@ -70,6 +73,7 @@
             } else {
                 $newpage->qoption = 0;
             }
+            /// CDC-FLAG /// 6/16/04                
             if (isset($form->layout)) {
                 $newpage->layout = clean_param($form->layout, PARAM_INT);
             } else {
@@ -80,9 +84,11 @@
             } else {
                 $newpage->display = 0;
             }                
+            /// CDC-FLAG ///
             $newpage->title = clean_param($form->title, PARAM_CLEANHTML);
-            $newpage->contents = trim($form->contents);
+            $newpage->contents = clean_param(trim($form->contents), PARAM_CLEANHTML);
             $newpage->title = addslashes($newpage->title);
+               $newpage->contents = addslashes($newpage->contents);
             $newpageid = insert_record("lesson_pages", $newpage);
             if (!$newpageid) {
                 error("Insert page: new first page not inserted");
@@ -99,6 +105,7 @@
             } else {
                 $newpage->qoption = 0;
             }
+            /// CDC-FLAG /// 6/16/04
             if (isset($form->layout)) {
                 $newpage->layout = clean_param($form->layout, PARAM_INT);
             } else {
@@ -109,9 +116,11 @@
             } else {
                 $newpage->display = 0;
             }                
+            /// CDC-FLAG ///
             $newpage->title = clean_param($form->title, PARAM_CLEANHTML);
-            $newpage->contents = trim($form->contents);
+            $newpage->contents = clean_param(trim($form->contents), PARAM_CLEANHTML);
             $newpage->title = addslashes($newpage->title);
+               $newpage->contents = addslashes($newpage->contents);
             $newpageid = insert_record("lesson_pages", $newpage);
             if (!$newpageid) {
                 error("Insert page: first page not inserted");
@@ -123,6 +132,7 @@
         }
     }
     // now add the answers
+    /// CDC-FLAG 6/16/04 added new code to handle essays
     if ($form->qtype == LESSON_ESSAY) {
         $newanswer->lessonid = $lesson->id;
         $newanswer->pageid = $newpageid;
@@ -147,18 +157,22 @@
                 $newanswer->lessonid = $lesson->id;
                 $newanswer->pageid = $newpageid;
                 $newanswer->timecreated = $timenow;
-                $newanswer->answer = trim($form->answer[$i]);
+                $newanswer->answer = clean_param(trim($form->answer[$i]), PARAM_CLEANHTML);
+                $newanswer->answer = addslashes($newanswer->answer);
                 if (isset($form->response[$i])) {
-                    $newanswer->response = trim($form->response[$i]);
+                    $newanswer->response = clean_param(trim($form->response[$i]), PARAM_CLEANHTML);
+                    $newanswer->response = addslashes($newanswer->response);
                 }
                 if (isset($form->jumpto[$i])) {
                     $newanswer->jumpto = clean_param($form->jumpto[$i], PARAM_INT);
                 }
+                /// CDC-FLAG ///
                 if ($lesson->custom) {
                     if (isset($form->score[$i])) {
                         $newanswer->score = clean_param($form->score[$i], PARAM_INT);
                     }
                 }
+                /// CDC-FLAG ///
                 $newanswerid = insert_record("lesson_answers", $newanswer);
                 if (!$newanswerid) {
                     error("Insert Page: answer record $i not inserted");
@@ -180,6 +194,6 @@
             }
         }
     }
-
+    /// CDC-FLAG ///
     redirect("view.php?id=$cm->id", get_string('insertedpage', 'lesson'));
 ?>

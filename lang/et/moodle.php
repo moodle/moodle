@@ -826,6 +826,7 @@ $string['pageheaderconfigablock'] = 'Konfigureeri blokki  %%täisnimega%%';
 $string['parentcoursenotfound'] = 'Vanem kursus ei ole leitud';
 $string['parentcoursenotmetacourse'] = 'Vanem kursus ei ole meta kursus';
 $string['parentfolder'] = 'Vanema kaustad';
+$string['parentlanguage'] = 'en';
 $string['participants'] = 'Osalejad';
 $string['password'] = 'Salasõna';
 $string['passwordchanged'] = 'Salasõna on muudetud';

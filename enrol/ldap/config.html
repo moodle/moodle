@@ -1,91 +1,36 @@
 <?php // initialize variables
 
 // general
-if (!isset ($frm->enrol_ldap_host_url)) {
-    $frm->enrol_ldap_host_url = '';
-}
-if (!isset ($frm->enrol_ldap_version )) {
-    $frm->enrol_ldap_version = '';
-}
-if (!isset ($frm->enrol_ldap_bind_dn)) {
-    $frm->enrol_ldap_bind_dn = '';
-}
-if (!isset ($frm->enrol_ldap_bind_pw)) {
-    $frm->enrol_ldap_bind_pw = '';
-}
-if (!isset ($frm->enrol_ldap_search_sub)) {
-    $frm->enrol_ldap_search_sub = '0';
-}
+optional_variable($frm->enrol_ldap_host_url, '');
+optional_variable($frm->enrol_ldap_version, '');
+optional_variable($frm->enrol_ldap_bind_dn, '');
+optional_variable($frm->enrol_ldap_bind_pw, '');
+optional_variable($frm->enrol_ldap_search_sub, '0');
 // student & teacher enrol
-if (!isset ($frm->enrol_ldap_student_contexts)) {
-     $frm->enrol_ldap_student_contexts = '';
-}
-if (!isset ($frm->enrol_ldap_student_memberattribute)) {
-     $frm->enrol_ldap_student_memberattribute = '';
-}
-if (!isset ($frm->enrol_ldap_teacher_contexts)) {
-     $frm->enrol_ldap_teacher_contexts = '';
-}
-if (!isset ($frm->enrol_ldap_teacher_memberattribute)) {
-     $frm->enrol_ldap_teacher_memberattribute = '';
-}
-if (!isset ($frm->enrol_ldap_objectclass)) {
-     $frm->enrol_ldap_objectclass = '';
-}
-if (!isset ($frm->enrol_ldap_course_idnumber_updatelocal)) {
-     $frm->enrol_ldap_course_idnumber_updatelocal = '';
-}
+optional_variable($frm->enrol_ldap_student_contexts, '');
+optional_variable($frm->enrol_ldap_student_memberattribute, '');
+optional_variable($frm->enrol_ldap_teacher_contexts, '');
+optional_variable($frm->enrol_ldap_teacher_memberattribute, '');
+optional_variable($frm->enrol_ldap_objectclass, '');
+optional_variable($frm->enrol_ldap_course_idnumber_updatelocal, '');
 // fields
-if (!isset ($frm->enrol_ldap_course_idnumber)) {
-    $frm->enrol_ldap_course_idnumber = '';
-}
-if (!isset ($frm->enrol_ldap_course_idnumber_updatelocal)) {
-    $frm->enrol_ldap_course_idnumber_updatelocal = false;
-}
-if (!isset ($frm->enrol_ldap_course_idnumber_editlock)) {
-    $frm->enrol_ldap_course_idnumber_editlock = false;
-}
-if (!isset ($frm->enrol_ldap_course_fullname)) {
-    $frm->enrol_ldap_course_fullname = '';
-}
-if (!isset ($frm->enrol_ldap_course_fullname_updatelocal)) {
-    $frm->enrol_ldap_course_fullname_updatelocal = false;
-}
-if (!isset ($frm->enrol_ldap_course_fullname_editlock)) {
-    $frm->enrol_ldap_course_fullname_editlock = false;
-}
-if (!isset ($frm->enrol_ldap_course_shortname)) {
-    $frm->enrol_ldap_course_shortname = '';
-     }
-if (!isset ($frm->enrol_ldap_course_shortname_updatelocal)) {
-    $frm->enrol_ldap_course_shortname_updatelocal = false;
-}
-if (!isset ($frm->enrol_ldap_course_shortname_editlock)) {
-    $frm->enrol_ldap_course_shortname_editlock = false;
-}
-if (!isset ($frm->enrol_ldap_course_summary)) {
-    $frm->enrol_ldap_course_summary = '';
-}
-if (!isset ($frm->enrol_ldap_course_summary_updatelocal)) {
-    $frm->enrol_ldap_course_summary_updatelocal = false;
-}
-if (!isset ($frm->enrol_ldap_course_summary_editlock)) {
-    $frm->enrol_ldap_course_summary_editlock = false;
-}
+optional_variable($frm->enrol_ldap_course_idnumber, '');
+optional_variable($frm->enrol_ldap_course_idnumber_updatelocal, false);
+optional_variable($frm->enrol_ldap_course_idnumber_editlock,    false);
+optional_variable($frm->enrol_ldap_course_fullname, '');
+optional_variable($frm->enrol_ldap_course_fullname_updatelocal, false);
+optional_variable($frm->enrol_ldap_course_fullname_editlock,    false);
+optional_variable($frm->enrol_ldap_course_shortname, '');
+optional_variable($frm->enrol_ldap_course_shortname_updatelocal, false);
+optional_variable($frm->enrol_ldap_course_shortname_editlock,    false);
+optional_variable($frm->enrol_ldap_course_summary, '');
+optional_variable($frm->enrol_ldap_course_summary_updatelocal, false);
+optional_variable($frm->enrol_ldap_course_summary_editlock,    false);
 // autocreate
-if (!isset ($frm->enrol_ldap_autocreate)) {
-    $frm->enrol_ldap_autocreate = false;
-}
-if (!isset ($frm->enrol_ldap_category)) {
-    $frm->enrol_ldap_category = 1;
-}
-if (!isset ($frm->enrol_ldap_template)) {
-    $frm->enrol_ldap_template = '';
-}
-// general options
-if (!isset ($frm->enrol_allowinternal)) {
-    $frm->enrol_allowinternal = false;
-}
+optional_variable($frm->enrol_ldap_autocreate, false);
+optional_variable($frm->enrol_ldap_category, 1);
+optional_variable($frm->enrol_ldap_template, '');
+
 ?>
 
 <table cellspacing="0" cellpadding="5" border="0" align="center">
@@ -143,10 +88,10 @@ if (!isset ($frm->enrol_allowinternal)) {
     <td align="right">ldap_search_sub:</td>
     <td>
 <?php
-    $choices = array();
+    $choices = array();;
     $choices["0"] = get_string("no");
     $choices["1"] = get_string("yes");
-    choose_from_menu ($choices, "enrol_ldap_search_sub", $frm->enrol_ldap_search_sub, "");
+    choose_from_menu ($choices, "enrol_ldap_search_sub", $form->enrol_ldap_search_sub, "");
 ?>
     <?php  if (isset($err["enrol_ldap_search_sub"])) formerr($err["enrol_ldap_search_sub"]); ?>
     </td><td>
@@ -358,22 +303,6 @@ if (!isset ($frm->enrol_allowinternal)) {
     <?php  if (isset($err["enrol_ldap_template"])) formerr($err["enrol_ldap_template"]); ?>
     </td><td>
     <?php  print_string("enrol_ldap_template","enrol_ldap") ?>
-    </td>
-</tr>
-
-<tr>
-   <td colspan="2">
-        <h4><?php print_string("enrol_ldap_general_options", "enrol_ldap") ?> </h4>
-   </td>
-</tr>
-
-<tr valign="top">
-	<td align="right">enrol_allowinternal:</td>
-	<td>
-        <input type="checkbox" name="enrol_allowinternal" <?php if ($frm->enrol_allowinternal) echo "checked=\"true\"" ?> />
-    </td>
-    <td>
-    <?php  print_string('allowinternal') ?>
     </td>
 </tr>
 

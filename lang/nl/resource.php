@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.6 development (2005101200)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
 $string['addresource'] = 'Bron toevoegen';
@@ -9,10 +9,10 @@ $string['configallowlocalfiles'] = 'Laat toe om bij het maken van een nieuwe bro
 $string['configdefaulturl'] = 'Deze waarde wordt gebruikt om een deel van de URL in te vullen wanneer er een nieuwe URL-gebaseerde bron gemaakt wordt.';
 $string['configfilterexternalpages'] = 'Door deze instelling in te schakelen zullen alle externe bronnen (webpagina\'s, geüploade HTML-pagina\'s) verwerkt worden door de sitefilters (zoals de autolinks van de woordenlijst bijvoorbeeld). Door deze optie in te schakelen kan je site behoorlijk vertragen - gebruik dit voorzichtig en alleen als je het echt nodig hebt';
 $string['configframesize'] = 'Als een webpagina of een geüpload bestand binnen een frame wordt weergegeven, dan is deze waarde de hoogte (in pixels) van het bovenste frame (dat de navigatie bevat).';
-$string['configparametersettings'] = 'Dit stelt de standaardwaarden in voor het \"Parameters\"-instellingspaneel van het formulier voor het invoeren van nieuwe bronnen. De voorkeur van de individuele gebruiker wordt na een eerste toegang verder gebruikt. ';
+$string['configparametersettings'] = 'Dit stelt de standaardwaarden voor het \"Parameters\" instellingspaneel van het formulier voor het invoeren van nieuwe bronnen. De voorkeur van de individuele gebruiker wordt na een eerste toegang verder gebruikt. ';
 $string['configpopup'] = 'Als een nieuwe bron toegevoegd wordt die in een popup-venster getoond kan worden, moet dat dan de standaardoptie zijn?';
 $string['configpopupdirectories'] = 'Wil je dat in popup-vensters standaard de links naar mappen getoond worden?';
-$string['configpopupheight'] = 'Wat is de standaardhoogte voor popup-vensters?';
+$string['configpopupheight'] = 'Welke hoogte is de standaardhoogte voor popup-vensters?';
 $string['configpopuplocation'] = 'Wil je dat popup-vensters standaard een adresbalk hebben?';
 $string['configpopupmenubar'] = 'Wil je dat popup-venster standaard een menubalk hebben?';
 $string['configpopupresizable'] = 'Wil je dat de grootte van popup-vensters standaard kan gewijzigd worden?';
@@ -23,7 +23,6 @@ $string['configpopupwidth'] = 'Hoe breed zou een popup-venster standaard moeten 
 $string['configsecretphrase'] = 'Deze geheime zin wordt gebruikt om de geëncrypteerde code te genereren die naar sommige bronnen als een parameter kan meegestuurd worden. De geëncrypteerde code wordt gemaakt met een md5-waarde van het IP-adress van de huidige gebruiker samen met je geheime zin. ie code = md5(IP.secretphrase). Dit laat de bron op de bestemming toe de connectie te controleren voor extra veiligheid.';
 $string['configwebsearch'] = 'Wanneer je een URL als webpagina of link toevoegt, wordt deze plaats aangeboden als een site om de gebruiker te helpen de URL te zoeken.';
 $string['configwindowsettings'] = 'Dit stelt de standaardwaarden voor het \"Venster\" instellingspaneel van het formulier voor het invoeren van nieuwe bronnen. De voorkeur van de individuele gebruiker wordt na een eerste toegang verder gebruikt.';
-$string['deploy'] = 'Verdeel';
 $string['directlink'] = 'Rechtstreekse link naar dit bestand';
 $string['directoryinfo'] = 'Alle bestanden in de gekozen map zullen getoond worden.';
 $string['display'] = 'Venster';
@@ -39,17 +38,15 @@ $string['filtername'] = 'Automatisch linken van bronnen';
 $string['frameifpossible'] = 'Toon de bron in een frame, zodat de navigatie zichtbaar blijft';
 $string['fulltext'] = 'Volledige tekst';
 $string['htmlfragment'] = 'HTML-fragment';
-$string['imspackageloaded'] = 'Pakket geladen';
 $string['localfile'] = 'Lokaal bestand';
 $string['localfilechoose'] = 'Kies een lokaal bestand (CD-ROM)';
 $string['localfilehelp'] = 'Help bij het tonen van lokale bestanden';
-$string['localfileinfo'] = '<p>Kies een bestand van je computer. Het bestand zal  niet geüpload worden naar de website, maar Moodle zal hetzelfde bestand zoeken op de computer van iedereen die deze bron bekijkt.</p><p>Dit is vooral nuttig wanneer je grote bestanden op een standaard CD-ROM bewaart en die verdeelt onder je leerlingen. Elke leerling kan zijn eigen lokale pad kiezen voor zulke bestanden, door <a href=\"$a\" target=\"_blank\">zijn gebruikersprofiel te bewerken</a>.</p>';
-$string['localfilepath'] = 'Om je eigen lokale pad voor deze bron in te stellen, kies je een bestand van de schijf (gewoonlijk CD-ROM-station) van je computer waard dit bestand staat. Het bestand zal niet geüpload worden, maar de bestandslocatie zal bewaard worden en gebruikt worden voor alle lokale bestanden.';
+$string['localfileinfo'] = '<p>Kies een bestand van je computer. Het bestand zal  niet geüploadet worden naar de website, maar Moodle zal hetzelfde bestand zoeken op de computer van iedereen die deze bron bekijkt.</p><p>Dit is vooral nuttig wanneer je grote bestanden op een standaard CD-ROM bewaart en die verdeelt onder je leerlingen. Elke leerling kan zijn eigen lokale pad kiezen voor zulke bestanden, door <a href=\"$a\" target=\"_blank\">zijn gebruikersprofiel te bewerken</a>.</p>';
+$string['localfilepath'] = 'Om je eigen lokale pad voor deze bron in te stellen, kies je een bestand van de schijf (gewoonlijk CD-ROM-station) van je computer waard dit bestand staat. Het bestand zal niet geüploadet worden, maar de bestandslocatie zal bewaard worden en gebruikt worden voor alle lokale bestanden.';
 $string['localfileselect'] = 'Kies dit bestandspad';
 $string['maindirectory'] = 'Hoofdmap';
 $string['modulename'] = 'Bron';
 $string['modulenameplural'] = 'Bronnen';
-$string['navigationbuttons'] = 'Navigatieknoppen';
 $string['neverseen'] = 'Nooit bekeken';
 $string['newdirectories'] = 'Toon de links naar de mappen';
 $string['newfullscreen'] = 'Vul het volledige scherm';
@@ -67,22 +64,19 @@ $string['notallowedlocalfileaccess'] = 'Toegang tot lokale bestanden is op dit m
 $string['note'] = 'Aantekening';
 $string['notefile'] = 'Gebruik <a href=\"$a\">Bestandsbeheer</a> om meer bestanden naar de cursus te uploaden (zodat ze in deze lijst verschijnen).';
 $string['notypechosen'] = 'Je moet een soort kiezen. Gebruik de \'Back\'-knop om terug te gaan en het opnieuw te proberen.';
-$string['packagechanged'] = 'Dit IMS-pakket is gewijzigd.';
-$string['packagenotdeplyed'] = 'Dit IMS-pakket is niet verdeeld.';
 $string['pagedisplay'] = 'Toon deze bron in het huidige venster';
 $string['pagewindow'] = 'Zelfde venster';
 $string['pan'] = 'Pan';
 $string['parameter'] = 'Parameter';
 $string['parameters'] = 'Parameters';
-$string['popupresource'] = 'Deze bron zou in een popup-venster moeten verschijnen';
+$string['popupresource'] = 'Deze bron zou moeten in een popup-venster verschijnen';
 $string['popupresourcelink'] = 'Als ze dat niet deed, klik hier: $a';
-$string['redeploy'] = 'Opnieuw verdelen';
 $string['resourcetype'] = 'Soort bron';
 $string['resourcetype1'] = 'Verwijzing';
 $string['resourcetype2'] = 'Webpagina';
-$string['resourcetype3'] = 'Geüpload bestand';
+$string['resourcetype3'] = 'Geüploaded bestand';
 $string['resourcetype4'] = 'Platte tekst';
-$string['resourcetype5'] = 'Weblink';
+$string['resourcetype5'] = 'Web link';
 $string['resourcetype6'] = 'HTML-tekst';
 $string['resourcetype7'] = 'Programma';
 $string['resourcetype8'] = 'Wiki-achtige tekst';
@@ -90,16 +84,11 @@ $string['resourcetype9'] = 'Map';
 $string['resourcetypedirectory'] = 'Map tonen';
 $string['resourcetypefile'] = 'Bestand/website linken';
 $string['resourcetypehtml'] = 'Webpagina maken';
-$string['resourcetypeims'] = 'Verdeel een IMS-pakket';
 $string['resourcetypelabel'] = 'Label toevoegen';
-$string['resourcetyperepository'] = 'Link naar een opslagobject';
 $string['resourcetypetext'] = 'Tekstpagina maken';
 $string['searchweb'] = 'Zoek webpagina\'s';
 $string['serverurl'] = 'Server URL ($a->wwwroot)';
-$string['showcourseblocks'] = 'Toon de cursusblokken';
-$string['tableofcontents'] = 'Inhoudstafel';
 $string['variablename'] = 'Variable naam';
-$string['viewims'] = 'Toon IMS-pakket';
 $string['vol'] = 'Vol';
 
 ?>

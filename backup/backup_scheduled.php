@@ -363,46 +363,26 @@ function schedule_backup_course_configure($course,$starttime = 0) {
                        $var = "exists_".$modname;
                        $$var = true;
                        $count++;
-                       
-                       // PENNY NOTES: I have moved from here to the closing brace inside 
-                       // by two sets of ifs()
-                       // to avoid the backup failing on a non existant backup.
-                       // If the file/function/whatever doesn't exist, we don't want to set this
-                       // this module in backup preferences at all.
-                       //Check data
-                       //Check module info
-                       $var = "backup_".$modname;
-                       if (!isset($$var)) {
-                           $$var = $backup_config->backup_sche_modules;
-                       }
-                       //Now stores all the mods preferences into an array into preferences
-                       $preferences->mods[$modname]->backup = $$var;
-                       
-                       //Check include user info
-                       $var = "backup_user_info_".$modname;
-                       if (!isset($$var)) {
-                           $$var = $backup_config->backup_sche_withuserdata;
-                       }
-                       //Now stores all the mods preferences into an array into preferences
-                       $preferences->mods[$modname]->userinfo = $$var;
-                       //And the name of the mod
-                       $preferences->mods[$modname]->name = $modname;
                    }
                 }
-            }
-        }
-        // now set instances
-        if ($coursemods = get_course_mods($course->id)) {
-            foreach ($coursemods as $mod) {
-                if (array_key_exists($mod->modname,$preferences->mods)) { // we are to backup this module
-                    if (empty($preferences->mods[$mod->modname]->instances)) {
-                        $preferences->mods[$mod->modname]->instances = array(); // avoid warnings
-                    }
-                    $preferences->mods[$mod->modname]->instances[$mod->instance]->backup = $preferences->mods[$modname]->backup;
-                    $preferences->mods[$mod->modname]->instances[$mod->instance]->userinfo = $preferences->mods[$modname]->userinfo;
-                    // there isn't really a nice way to do this...
-                    $preferences->mods[$mod->modname]->instances[$mod->instance]->name = get_field($mod->modname,'name','id',$mod->instance);
+                //Check data
+                //Check module info
+                $var = "backup_".$modname;
+                if (!isset($$var)) {
+                    $$var = $backup_config->backup_sche_modules;
                 }
+                //Now stores all the mods preferences into an array into preferences
+                $preferences->mods[$modname]->backup = $$var;
+
+                //Check include user info
+                $var = "backup_user_info_".$modname;
+                if (!isset($$var)) {
+                    $$var = $backup_config->backup_sche_withuserdata;
+                }
+                //Now stores all the mods preferences into an array into preferences
+                $preferences->mods[$modname]->userinfo = $$var;
+                //And the name of the mod
+                $preferences->mods[$modname]->name = $modname;
             }
         }
     }

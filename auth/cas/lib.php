@@ -1,5 +1,5 @@
 <?PHP
-// $Id$
+// $Id: lib.php
 // author: romuald Lorthioir
 //CHANGELOG:
 //16/03/2005 Use of LDAP Module
@@ -13,7 +13,6 @@ This Module is using the /auth/cas/index_form.html.
 This module is using the LDAP Module so you need the /auth/ldap directory.
 You can see /auth/ldap/lib.php for the other functions.
 */
-defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
 define('AUTH_LDAP_NAME', 'cas'); // for ldap module
 require_once($CFG->dirroot.'/config.php');
@@ -99,9 +98,12 @@ function cas_authenticate_user_login ($username, $password) {
 
    global $CFG;
    $cas_validate=true;
-   phpCAS::client($CFG->cas_version,$CFG->cas_hostname,(int)$CFG->cas_port,$CFG->cas_baseuri);
+
+   phpCAS::client($CFG->cas_version,$CFG->cas_hostname,(Integer)$CFG->cas_port,$CFG->cas_baseuri);
    phpCAS::setLang($CFG->cas_language);
-   phpCAS::forceAuthentication();
+   if (!phpCAS::isAuthenticated()){
+      phpCAS::authenticateIfNeeded();
+   }
    if ($CFG->cas_create_user=="0"){
       if (record_exists('user', 'username', phpCAS::getUser())) {
          $user = authenticate_user_login(phpCAS::getUser(), 'cas');
@@ -133,13 +135,12 @@ function cas_automatic_authenticate ($user="") {
    global $CFG;
    if (!$cas_validate){
         $cas_validate=true;
-        phpCAS::client($CFG->cas_version,$CFG->cas_hostname,(int)$CFG->cas_port,$CFG->cas_baseuri);
+        phpCAS::client($CFG->cas_version,$CFG->cas_hostname,(Integer)$CFG->cas_port,$CFG->cas_baseuri);
         phpCAS::setLang($CFG->cas_language);
-        $cas_user_exist=phpCAS::checkAuthentication();
-        if (!$cas_user_exist && !$CFG->guestloginbutton){
-           $cas_user_exist=phpCAS::forceAuthentication();
+        if (!phpCAS::isAuthenticated() && !$CFG->guestloginbutton){
+           phpCAS::authenticateIfNeeded();
         }
-        if ($cas_user_exist){
+        if (phpCAS::isAuthenticated()){
            if ($CFG->cas_create_user=="0"){
               if (record_exists('user', 'username', phpCAS::getUser())) {
                  $user = authenticate_user_login(phpCAS::getUser(), 'cas');
@@ -164,6 +165,5 @@ function cas_automatic_authenticate ($user="") {
       return $user;
    }
 }
-
 
 ?>

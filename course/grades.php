@@ -4,9 +4,8 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $id = required_param('id',0,PARAM_INT);              // course id
-    $download = optional_param('download', '');   // to download data 
-    $group = optional_param('group',0,PARAM_INT );
+    require_variable($id);              // course id
+    optional_variable($download, "");   // to download data 
 
     require_login();
 
@@ -25,8 +24,8 @@
 
 /// Check to see if groups are being used in this course
     if ($groupmode = groupmode($course)) {   // Groups are being used
-        if (isset_param('group')) {
-            $changegroup = $group;  /// 0 or higher
+        if (isset($_GET['group'])) {
+            $changegroup = $_GET['group'];  /// 0 or higher
         } else {
             $changegroup = -1;              /// This means no group change was specified
         }
@@ -149,18 +148,23 @@
 
 /// OK, we have all the data, now present it to the user
     if ($download == "xls" and confirm_sesskey()) {
-        require_once("../lib/excellib.class.php");
+        require_once("../lib/excel/Worksheet.php");
+        require_once("../lib/excel/Workbook.php");
 
-    /// Calculate file name
-        $downloadfilename = clean_filename("$course->shortname $strgrades.xls");
-    /// Creating a workbook
-        $workbook = new MoodleExcelWorkbook("-");
-    /// Sending HTTP headers
-        $workbook->send($downloadfilename);
-    /// Adding the worksheet
+// HTTP headers
+        header("Content-type: application/vnd.ms-excel");
+        $downloadfilename = clean_filename("$course->shortname $strgrades");
+        header("Content-Disposition: attachment; filename=\"$downloadfilename.xls\"");
+        header("Expires: 0");
+        header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
+        header("Pragma: public");
+
+/// Creating a workbook
+        $workbook = new Workbook("-");
         $myxls =& $workbook->add_worksheet($strgrades);
     
-    /// Print names of all the fields
+/// Print names of all the fields
+
         $myxls->write_string(0,0,get_string("firstname"));
         $myxls->write_string(0,1,get_string("lastname"));
         $myxls->write_string(0,2,get_string("idnumber"));
@@ -174,7 +178,8 @@
         $myxls->write_string(0,$pos,get_string("total"));
     
     
-    /// Print all the lines of data.
+/// Print all the lines of data.
+
         $i = 0;
         foreach ($grades as $studentid => $studentgrades) {
             $i++;
@@ -195,8 +200,7 @@
             }
             $myxls->write_number($i,$j,$totals[$student->id]);
         }
-
-    /// Close the workbook
+        
         $workbook->close();
     
         exit;

@@ -11,7 +11,7 @@
  */
 
 /**
- * upgrade_enrol_plugins
+ * short description (optional)
  *
  * long description
  *
@@ -214,19 +214,7 @@ function upgrade_activity_modules($return) {
                 error($module->name .' tables could NOT be set up successfully!');
             }
         }
-
-    /// Check submodules of this module if necessary
-
-        include_once($fullmod.'/lib.php');  // defines upgrading function
-
-        $submoduleupgrade = $module->name.'_upgrade_submodules';
-        if (function_exists($submoduleupgrade)) {
-            $submoduleupgrade();
-        }
-
-
-    /// Run any defaults or final code that is necessary for this module
-
+        
         if ( is_readable($fullmod .'/defaults.php')) {
             // Insert default values for any important configuration variables
             unset($defaults);
@@ -243,51 +231,8 @@ function upgrade_activity_modules($return) {
 
     if (!empty($updated_modules)) {
         print_continue($return);
-        print_footer();
         die;
     }
 }
 
-/** 
- * This function will return FALSE if the lock fails to be set (ie, if it's already locked)
- *
- * @param string  $name ?
- * @param bool  $value ?
- * @param int  $staleafter ?
- * @param bool  $clobberstale ?
- * @todo Finish documenting this function
- */
-function set_cron_lock($name,$value=true,$staleafter=7200,$clobberstale=false) {
-
-    if (empty($name)) {
-        mtrace("Tried to get a cron lock for a null fieldname");
-        return false;
-    }
-
-    if (empty($value)) {
-        set_config($name,0);
-        return true;
-    }
-
-    if ($config = get_record('config','name',$name)) {
-        if (empty($config->value)) {
-            set_config($name,time());
-        } else {
-            // check for stale.
-            if ((time() - $staleafter) > $config->value) {
-                mtrace("STALE LOCKFILE FOR $name - was $config->value");
-                if (!empty($clobberstale)) {
-                    set_config($name,time());
-                    return true;
-                }
-            } else {
-                return false; // was not stale - ie, we're ok to still be running.
-            }
-        }
-    }
-    else {
-        set_config($name,time());
-    }
-    return true;
-}
 ?>

@@ -15,6 +15,6 @@ $string['localuserfield'] = 'Nom du champ (table des utilisateurs locale) utilis
 $string['parentlanguage'] = 'fr';
 $string['remotecoursefield'] = 'Nom du champ de la base de données externe contenant l\'identifiant du cours';
 $string['remoteuserfield'] = 'Nom du champ de la base de données externe contenant l\'identifiant de l\'utilisateur';
-
+$string['thisdirection'] = 'ltr';
 
 ?>

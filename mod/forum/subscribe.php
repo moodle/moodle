@@ -5,9 +5,9 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $id = required_param('id',0,PARAM_INT);      // The forum to subscribe or unsubscribe to
-    $force = optional_param('force','',PARAM_ALPHA);  // Force everyone to be subscribed to this forum?
-    $user = optional_param('user',0,PARAM_INT);
+    require_variable($id);      // The forum to subscribe or unsubscribe to
+    optional_variable($force);  // Force everyone to be subscribed to this forum?
+    optional_variable($user);
 
     if (! $forum = get_record("forum", "id", $id)) {
         error("Forum ID was incorrect");
@@ -24,7 +24,7 @@
             }
         }
     } else {
-        $cm->id = 0;
+        $cm->id = NULL;
     }
 
     if ($user) {
@@ -38,7 +38,7 @@
         $user = $USER;
     }
 
-    require_login($course->id, false, $cm);
+    require_course_login($course, false, $cm);
 
     if (isguest()) {   // Guests can't subscribe
         $wwwroot = $CFG->wwwroot.'/login/index.php';
@@ -97,9 +97,6 @@
         }
 
     } else { // subscribe
-        if ($forum->forcesubscribe == FORUM_DISALLOWSUBSCRIBE && !isteacher($forum->course)) {
-            error(get_string('disallowsubscribe'),$_SERVER["HTTP_REFERER"]);
-        }
         if (forum_subscribe($user->id, $forum->id) ) {
             add_to_log($course->id, "forum", "subscribe", "view.php?f=$forum->id", $forum->id, $cm->id);
             redirect($returnto, get_string("nowsubscribed", "forum", $info), 1);

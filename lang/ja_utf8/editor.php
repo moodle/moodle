@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.6 development (2005101200)
+      // editor.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['about'] = 'エディタに関して';
@@ -38,7 +38,7 @@ $string['fontsize'] = 'フォントサイズ';
 $string['forecolor'] = 'フォント色';
 $string['formatblock'] = 'フォーマット';
 $string['fullscreen'] = 'フルスクリーンエディタ';
-$string['heading'] = '見出し';
+$string['heading'] = 'Heading';
 $string['height'] = '高さ';
 $string['hilitecolor'] = '背景色';
 $string['horizontal'] = '水平';
@@ -52,7 +52,7 @@ $string['insertlink'] = 'リンクの挿入';
 $string['insertsmile'] = 'スマイリーの挿入';
 $string['inserttable'] = 'テーブルの挿入';
 $string['italic'] = 'イタリック';
-$string['itemsreplaced'] = '項目が置換されました!';
+$string['itemsreplaced'] = 'アイテムが置換されました!';
 $string['justifycenter'] = '中央寄せ';
 $string['justifyfull'] = '均等';
 $string['justifyleft'] = '左寄せ';
@@ -62,11 +62,11 @@ $string['left'] = '左';
 $string['lefttoright'] = '左→右';
 $string['linkproperties'] = 'リンク属性';
 $string['linktarget'] = 'ターゲット';
-$string['linktargetblank'] = '新しいウィンドウ';
+$string['linktargetblank'] = '新しいウインドウ';
 $string['linktargetnone'] = '無し';
 $string['linktargetother'] = 'その他';
 $string['linktargetself'] = '同一フレーム';
-$string['linktargettop'] = '同一ウィンドウ';
+$string['linktargettop'] = '同一ウインドウ';
 $string['linktitle'] = 'タイトル';
 $string['linkurl'] = 'URL';
 $string['matchcase'] = '大文字・小文字を区別する';
@@ -86,14 +86,14 @@ $string['path'] = 'パス';
 $string['percent'] = 'パーセント';
 $string['pixels'] = 'ピクセル';
 $string['popupeditor'] = 'エディタを大きくする';
-$string['preformatted'] = '整形済み';
+$string['preformatted'] = '整形された';
 $string['preview'] = 'プレビュー';
 $string['properties'] = '属性';
 $string['redo'] = 'やり直す';
 $string['regularexpressions'] = '通常の表現を使う';
 $string['removelink'] = 'リンクの削除';
 $string['rename'] = 'リネーム';
-$string['replaceall'] = 'すべてを置換';
+$string['replaceall'] = '全てを置換';
 $string['replacewith'] = '置換';
 $string['right'] = '右';
 $string['righttoleft'] = '右→左';

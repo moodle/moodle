@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.5 ALPHA (2005051500)
+      // dialogue.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['addmynewentries'] = '새 글 추가하기';
@@ -25,7 +25,6 @@ $string['everybody'] = '모든사람';
 $string['furtherinformation'] = '상세 정보';
 $string['lastentry'] = '마지막 항목';
 $string['maildefault'] = '메일 기본';
-$string['mailnotification'] = '메일 명시';
 $string['modulename'] = '대화';
 $string['modulenameplural'] = '대화';
 $string['namehascloseddialogue'] = '$a 께서 대화를 닫음';
@@ -60,6 +59,9 @@ $string['studenttostudent'] = '학생이 학생에게';
 $string['subject'] = '주제';
 $string['subjectadded'] = '주제가 추가됨';
 $string['teachertostudent'] = '교사가 학생에게';
+$string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['typefirstentry'] = '여기에 첫째 글을 쓰세요.';
 $string['typefollowup'] = '여기에 다음 내용을 쓰세요';
 $string['typeofdialogue'] = '대화의 유형';

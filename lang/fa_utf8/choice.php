@@ -1,33 +1,20 @@
-<?PHP // $Id$ 
-      // choice.php - created with Moodle 1.6 development (2005060201)
+<?PHP // $Id$
 
-
-$string['allowupdate'] = 'امکان بروز رسانی انتخاب';
-$string['answered'] = 'پاسخ داده شد';
-$string['choice'] = 'گزینه $a';
-$string['choiceclose'] = 'تا';
-$string['choicename'] = 'نام';
-$string['choiceopen'] = 'آزاد';
-$string['choicetext'] = 'متن سوال';
-$string['havetologin'] = 'قبل از تایید انتخاب باید وارد شوید';
-$string['modulename'] = 'گزینه';
-$string['modulenameplural'] = 'گزینه ها';
-$string['mustchooseone'] = 'باید قبل از ذخیره سازی یک جواب انتخاب کنید. هیچ چیز ذخیره نشده است.';
-$string['notanswered'] = 'هنوز پاسخ داده نشده است';
-$string['notopenyet'] = 'متاسفانه این موضوع در دسترس نیست تا$a';
-$string['privacy'] = 'اختصاصی بودن نتایج';
-$string['publish'] = 'نتایج انتشار';
-$string['publishafteranswer'] = 'نمایش نتایج به دانشجویان پس از پاخ دهی';
-$string['publishafterclose'] = 'نشان دادن نتایج به دانشجوان در صورت بسته شدن انتخاب';
-$string['publishalways'] = 'نمایش همیشگی نتایج به دانشجویان';
-$string['publishanonymous'] = 'انتشار نتایج برای همه، نمایش ندادن نام دانشجویان';
-$string['publishnames'] = 'انتشار کامل نتایج و نمایش نام ها و گزینه ها';
-$string['publishnot'] = 'نتایج را برای دانشجویان منتشر نکن';
-$string['responses'] = 'جواب ها';
-$string['responsesto'] = 'پاسخ ها به $a';
-$string['savemychoice'] = 'ذخیره انتخاب';
-$string['showunanswered'] = 'نمایش ستون های بی جواب';
-$string['timerestrict'] = 'محدود کردن پاسخ دهی در این بازه زمانی';
-$string['viewallresponses'] = 'نمایش $a پاسخ ها';
-
+#------------------------------------------------------------
+$string['modulename'] = "&#1587;&#1574;&#1608;&#1575;&#1604; &#1711;&#1586;&#1610;&#1606;&#1607; &#1575;&#1610;";
+$string['modulenameplural'] = "سوالهاي گزينه اي";
+#------------------------------------------------------------
+$string['answered'] = "پاسخ داده شد";
+$string['choice'] = "گزينه \$a";
+$string['choicename'] = "نام";
+$string['choicetext'] = "متن گزينه";
+$string['notanswered'] = "هنوز جواب نداده است";
+$string['publish'] = "انتشار نتايج";
+$string['publishanonymous'] = "نتايج بدون اسم دانشجويان نمايش داده شود";
+$string['publishnames'] = "نتايج بطور کامل منتشر شوند";
+$string['publishnot'] = "نتايج منتشر نشود";
+$string['responses'] = "پاسخها";
+$string['responsesto'] = "پاسخ به \$a";
+$string['savemychoice'] = "انتخاب من را ذخيره کن";
+$string['viewallresponses'] = "ديدن \$a پاسخ";
 ?>

@@ -3,7 +3,6 @@
 require_once("$CFG->dirroot/enrol/enrol.class.php");
 require_once("$CFG->dirroot/course/lib.php");
 require_once("$CFG->dirroot/lib/blocklib.php");
-require_once("$CFG->dirroot//lib/pagelib.php");
 
 $CFG->enrol_localcoursefield = 'idnumber';
 
@@ -46,7 +45,7 @@ function get_user_courses(&$user, $type) {
     $ldap_connection = $this->enrol_ldap_connect();
     if (!$ldap_connection) {
         @ldap_close($ldap_connection);
-        notify("LDAP-module cannot connect to server: $CFG->ldap_host_url");
+        error("LDAP-module cannot connect to server: $CFG->ldap_host_url");
         return false;
     }
     
@@ -98,12 +97,12 @@ function get_user_courses(&$user, $type) {
                 $CFG->debug=10;
                 if ($type === 'student') { // enrol
                    error_log("Enrolling student $user->id ($user->username) in course $course_obj->id ($course_obj->shortname) ");
-                   if (!  enrol_student($user->id, $course_obj->id, 0, 0, 'ldap')){
+                   if (!  enrol_student($user->id, $course_obj->id, NULL,NULL, 'ldap')){
                         error_log("Failed to enrol student $user->id ($user->username) into course $course_obj->id ($course_obj->shortname)");
                    }
                 } else if ($type === 'teacher') {
                       error_log("Enrolling teacher $user->id ($user->username) in course $course_obj->id ($course_obj->shortname)");
-                    add_teacher($user->id, $course_obj->id, 1, '', 0, 0,'ldap');
+                    add_teacher($user->id, $course_obj->id, NULL,NULL,NULL, NULL,'ldap');
                 }
                 $CFG->debug=0;
             }
@@ -151,7 +150,7 @@ function sync_enrolments($type, $enrol) {
     $ldap_connection = $this->enrol_ldap_connect();
     if (!$ldap_connection) {
         @ldap_close($ldap_connection);
-        notify("LDAP-module cannot connect to server: $CFG->ldap_host_url");
+        error("LDAP-module cannot connect to server: $CFG->ldap_host_url");
         return false;
     }
     
@@ -181,7 +180,7 @@ function sync_enrolments($type, $enrol) {
     if (!empty($CFG->enrol_ldap_objectclass)){ 
         $ldap_search_pattern='(objectclass='.$CFG->enrol_ldap_objectclass.')';
     } else {
-       $ldap_search_pattern="(objectclass=*)";
+       $ldap_search_pattern="(objectclass='*')";
         
     }
 
@@ -298,13 +297,13 @@ function sync_enrolments($type, $enrol) {
                         if (!get_record($table{$type}, 'course', $course_obj->id, 
                                         'userid', $member, 'enrol', 'ldap')){
                             if($type === 'student'){
-                                if (enrol_student($member, $course_obj->id, 0, 0, 'ldap')){
+                                if (enrol_student($member, $course_obj->id, NULL,NULL, 'ldap')){
                                     print "Enrolled $type $member ($ldapmember) into course $course_obj->id ($course_obj->shortname)\n";
                                 } else {
                                     print "Failed to enrol $type $member ($ldapmember) into course $course_obj->id ($course_obj->shortname)\n";
                                 }
                             } else { // teacher
-                                if (add_teacher($member, $course_obj->id, 1,'',0,0,'ldap')){
+                                if (add_teacher($member, $course_obj->id, NULL,NULL,NULL, NULL,'ldap')){
                                     print "Enrolled $type $member ($ldapmember) into course $course_obj->id ($course_obj->shortname)\n";
                                 } else {
                                     print "Failed to enrol $type $member ($ldapmember) into course $course_obj->id ($course_obj->shortname)\n";
@@ -363,99 +362,65 @@ function config_form($frm) {
 /// Override the base process_config() function
 function process_config($config) {
 
-    if (!isset ($config->enrol_ldap_host_url)) {
-        $config->enrol_ldap_host_url = '';
-    }
+    optional_variable($config->enrol_ldap_host_url, '');
     set_config('enrol_ldap_host_url', $config->enrol_ldap_host_url);
 
-    if (!isset ($config->enrol_ldap_version)) {
-        $config->enrol_ldap_version = '';
-    }
+    optional_variable($config->enrol_ldap_version, '');
     set_config('enrol_ldap_version', $config->enrol_ldap_version);
     
-    if (!isset ($config->enrol_ldap_bind_dn)) {
-        $config->enrol_ldap_bind_dn = '';
-    }
+    optional_variable($config->enrol_ldap_bind_dn, '');
     set_config('enrol_ldap_bind_dn', $config->enrol_ldap_bind_dn);
-
-    if (!isset ($config->enrol_ldap_bind_pw)) {
-        $config->enrol_ldap_bind_pw = '';
-    }
+    
+    optional_variable($config->enrol_ldap_bind_pw, '');
     set_config('enrol_ldap_bind_pw', $config->enrol_ldap_bind_pw);    
     
-    if (!isset ($config->enrol_ldap_student_contexts)) {
-         $config->enrol_ldap_student_contexts = '';
-    }
+    optional_variable($config->enrol_ldap_student_contexts, '');
     set_config('enrol_ldap_student_contexts', $config->enrol_ldap_student_contexts);    
     
-    if (!isset ($config->enrol_ldap_student_memberattribute)) {
-         $config->enrol_ldap_student_memberattribute = '';
-    }
+    optional_variable($config->enrol_ldap_student_memberattribute, '');
     set_config('enrol_ldap_student_memberattribute', $config->enrol_ldap_student_memberattribute);    
-    if (!isset ($config->enrol_ldap_teacher_contexts)) {
-         $config->enrol_ldap_teacher_contexts = '';
-    }
+    
+    optional_variable($config->enrol_ldap_teacher_contexts, '');
     set_config('enrol_ldap_teacher_contexts', $config->enrol_ldap_teacher_contexts);   
     
-    if (!isset ($config->enrol_ldap_teacher_memberattribute)) {
-         $config->enrol_ldap_teacher_memberattribute = '';
-    }
+    optional_variable($config->enrol_ldap_teacher_memberattribute, '');
     set_config('enrol_ldap_teacher_memberattribute', $config->enrol_ldap_teacher_memberattribute);    
-    if (!isset ($config->enrol_ldap_objectclass)) {
-        $config->enrol_ldap_objectclass = '';
-    }
+    
+    optional_variable($config->enrol_ldap_objectclass, '');
     set_config('enrol_ldap_objectclass', $config->enrol_ldap_objectclass);    
     
-    if (!isset ($config->enrol_ldap_category)) {
-        $config->enrol_ldap_category  = '';
-    }
+    optional_variable($config->enrol_ldap_category, '');
     set_config('enrol_ldap_category', $config->enrol_ldap_category);    
     
-    if (!isset ($config->enrol_ldap_template)) {
-        $config->enrol_ldap_template = '';
-    }
+    optional_variable($config->enrol_ldap_template, '');
     set_config('enrol_ldap_template', $config->enrol_ldap_template);    
     
-    if (!isset ($config->enrol_ldap_course_fullname)) {
-        $config->enrol_ldap_course_fullname = '';
-    }
+    optional_variable($config->enrol_ldap_course_fullname, '');
     set_config('enrol_ldap_course_fullname', $config->enrol_ldap_course_fullname);    
 
-    if (!isset ($config->enrol_ldap_course_shortname)) {
-        $config->enrol_ldap_course_shortname = '';
-    }
+    optional_variable($config->enrol_ldap_course_shortname, '');
     set_config('enrol_ldap_course_shortname', $config->enrol_ldap_course_shortname);    
-    
-    if (!isset ($config->enrol_ldap_course_summary)) {
-        $config->enrol_ldap_course_summary = '';
-    }
+        
+    optional_variable($config->enrol_ldap_course_summary, '');
     set_config('enrol_ldap_course_summary', $config->enrol_ldap_course_summary);    
     
-    if (!isset ($config->enrol_ldap_course_idnumber)) {
-        $config->enrol_ldap_course_idnumber = '';
-    }
+    optional_variable($config->enrol_ldap_course_idnumber, '');
     set_config('enrol_ldap_course_idnumber', $config->enrol_ldap_course_idnumber); 
     
-    if (!isset ($config->enrol_localcoursefield)) {
-        $config->enrol_localcoursefield = '';
-    }
+    optional_variable($config->enrol_localcoursefield, '');
     set_config('enrol_localcoursefield', $config->enrol_localcoursefield);
     
-    if (!isset ($config->enrol_ldap_user_memberfield)) {
-        $config->enrol_ldap_user_memberfield = '';
-    }
+    optional_variable($config->enrol_ldap_user_memberfield, '');
     set_config('enrol_ldap_user_memberfield', $config->enrol_ldap_user_memberfield); 
     
-    if (!isset ($config->enrol_ldap_search_sub)) {
-        $config->enrol_ldap_search_sub = '0';
-    }
+    optional_variable($config->enrol_ldap_search_sub, '0');
     set_config('enrol_ldap_search_sub', $config->enrol_ldap_search_sub); 
     
-    if (!isset ($config->enrol_ldap_autocreate)) {
-        $config->enrol_ldap_autocreate = '0';
-    }
+    optional_variable($config->enrol_ldap_autocreate, '0');
     set_config('enrol_ldap_autocreate', $config->enrol_ldap_autocreate);                 
-   
+    
+    
+
     if (!isset($config->enrol_allowinternal)) {
         $config->enrol_allowinternal = '';
     }
@@ -476,19 +441,10 @@ function enrol_ldap_connect(){
             ldap_set_option($result, LDAP_OPT_PROTOCOL_VERSION, $CFG->enrol_ldap_version);
         }
 
-        if (!empty($CFG->enrol_ldap_bind_dn)) {
-            $bind = ldap_bind( $result,
-                                 $CFG->enrol_ldap_bind_dn, 
-                                 $CFG->enrol_ldap_bind_pw );
-            if (!$bind) {
-                notify("Error in binding to LDAP server");
-                trigger_error("Error in binding to LDAP server $!");
-            }
-
-        }
         return $result;
+
     } else {
-        notify("LDAP-module cannot connect to server: $CFG->enrol_ldap_host_url");
+        error("LDAP-module cannot connect to server: $CFG->enrol_ldap_host_url");
         return false;
     }
 }
@@ -502,14 +458,14 @@ function enrol_ldap_bind($ldap_connection){
     if ( ! empty($CFG->enrol_ldap_bind_dn) ){
         //bind with search-user
         if (!ldap_bind($ldap_connection, $CFG->enrol_ldap_bind_dn,$CFG->enrol_ldap_bind_pw)){
-            notify("Error: could not bind ldap with ldap_bind_dn/pw");
+            error("Error: could not bind ldap with ldap_bind_dn/pw");
             return false;
         }
 
     } else {
         //bind anonymously 
         if ( !ldap_bind($ldap_connection)){
-            notify("Error: could not bind ldap anonymously");
+            error("Error: could not bind ldap anonymously");
             return false;
         }  
     }
@@ -603,6 +559,7 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
     $course->teacher  = 'Teacher';
     $course->teachers = 'Teachers';
     $course->format = 'topics';
+    $course->blockinfo = blocks_get_default_blocks();
     
     // override defaults with template course
     if(!empty($CFG->enrol_ldap_template)){
@@ -625,7 +582,7 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
     }
 
     if(!empty($CFG->enrol_ldap_course_summary)){ // optional
-        $course->summary   = $course_ext[$CFG->enrol_ldap_course_summary][0];
+        $course->summary   = $course_ext->{$CFG->enrol_ldap_course_summary}[0];
     }
     if(!empty($CFG->enrol_ldap_category)){ // optional ... but ensure it is set!
         $course->category   = $CFG->enrol_ldap_category;
@@ -651,9 +608,6 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
         $section->course = $newcourseid;   // Create a default section.
         $section->section = 0;
         $section->id = insert_record("course_sections", $section);
-        $page = page_create_object(PAGE_COURSE_VIEW, $newcourseid);
-        blocks_repopulate_page($page); // Return value no
-
 
         if(!$skip_fix_course_sortorder){ 
             fix_course_sortorder(); 
@@ -661,7 +615,7 @@ function create_course ($course_ext,$skip_fix_course_sortorder=0){
         add_to_log($newcourseid, "course", "new", "view.php?id=$newcourseid", "enrol/ldap auto-creation");
     } else {
         error_log("Could not create new course from LDAP from DN:" . $course_ext['dn']);
-        notify("Serious Error! Could not create the new course!");
+        error("Serious Error! Could not create the new course!");
         return false;
     }
     

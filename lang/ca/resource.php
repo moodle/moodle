@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5.3+ (2005060230)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['addresource'] = 'Afegeix un recurs';
@@ -23,7 +23,6 @@ $string['configpopupwidth'] = 'Quina amplada han de tenir per defecte les noves 
 $string['configsecretphrase'] = 'Aquesta frase secreta s\'utilitza per produir un valor de codi xifrat que es pot enviar a alguns recursos com a paràmetre. El codi xifrat és el valor md5 de l\'adreça IP de l\'usuari concatenada amb la frase secreta. Això permet que el recurs de destinació verifiqui la connexió per a més seguretat.';
 $string['configwebsearch'] = 'Quan s\'està afegint un URL com a pàgina web o com a enllaç web, aquesta ubicació s\'ofereix a l\'usuari per ajudar-lo a cercar l\'URL que desitgi.';
 $string['configwindowsettings'] = 'Defineix el valor per defecte de la secció de configuració de la Finestra quan s\'afegeixen alguns nous recursos. Després de la primera vegada esdevé una preferència individual de l\'usuari.';
-$string['deploy'] = 'Desplega';
 $string['directlink'] = 'Enllaç directe a aquest fitxer';
 $string['directoryinfo'] = 'Es visualitzaran tots els fitxers del directori escollit.';
 $string['display'] = 'Finestra';
@@ -39,7 +38,6 @@ $string['filtername'] = 'Enllaços automàtics a recursos';
 $string['frameifpossible'] = 'Posa el recurs en un marc per mantenir visible la navegació local';
 $string['fulltext'] = 'Text complet';
 $string['htmlfragment'] = 'Fragment HTML';
-$string['imspackageloaded'] = 'S\'ha carregat el paquet.';
 $string['localfile'] = 'Fitxer local';
 $string['localfilechoose'] = 'Trieu un fitxer local (CD-ROM)';
 $string['localfilehelp'] = 'Ajuda per a la visualització de fitxers locals';
@@ -49,7 +47,6 @@ $string['localfileselect'] = 'Trieu el camí d\'aquest fitxer';
 $string['maindirectory'] = 'Directori principal';
 $string['modulename'] = 'Recurs';
 $string['modulenameplural'] = 'Recursos';
-$string['navigationbuttons'] = 'Botons de navegació';
 $string['neverseen'] = 'Mai vist';
 $string['newdirectories'] = 'Mostra la barra d\'enllaços del navegador';
 $string['newfullscreen'] = 'Omple la pantalla completa';
@@ -67,15 +64,12 @@ $string['notallowedlocalfileaccess'] = 'Actualment l\'accés als fitxers locals e
 $string['note'] = 'Nota';
 $string['notefile'] = 'Per penjar més fitxers al curs (de manera que apareguin en aquesta llista) feu servir l\'<a href=\"$a\">Gestor de fitxers</a>.';
 $string['notypechosen'] = 'Heu de triar un tipus. Torneu enrere i proveu una altra vegada.';
-$string['packagechanged'] = 'Aquest paquet de continguts IMS ha canviat.';
-$string['packagenotdeplyed'] = 'Aquest paquet de continguts IMS no s\'ha desplegat.';
 $string['pagedisplay'] = 'Visualitza aquest recurs dins de la finestra actual';
 $string['pagewindow'] = 'La mateixa finestra';
 $string['parameter'] = 'Paràmetre';
 $string['parameters'] = 'Paràmetres';
 $string['popupresource'] = 'Aquest recurs ha d\'aparèixer en una finestra emergent.';
 $string['popupresourcelink'] = 'Si no, feu clic aquí: $a';
-$string['redeploy'] = 'Torna a desplegar';
 $string['resourcetype'] = 'Tipus de recurs';
 $string['resourcetype1'] = 'Referència';
 $string['resourcetype2'] = 'Pàgina web';
@@ -89,15 +83,10 @@ $string['resourcetype9'] = 'Directori';
 $string['resourcetypedirectory'] = 'Visualitza un directori';
 $string['resourcetypefile'] = 'Enllaça un fitxer o lloc web';
 $string['resourcetypehtml'] = 'Compon una pàgina web';
-$string['resourcetypeims'] = 'Desplega un paquet de continguts IMS';
 $string['resourcetypelabel'] = 'Insereix una etiqueta';
-$string['resourcetyperepository'] = 'Enllaç a un repositori';
 $string['resourcetypetext'] = 'Compon una pàgina de text';
 $string['searchweb'] = 'Cerca una pàgina web';
 $string['serverurl'] = 'URL del servidor ($a->wwwroot)';
-$string['showcourseblocks'] = 'Mostra els blocs del curs';
-$string['tableofcontents'] = 'Taula de continguts';
 $string['variablename'] = 'Nom de variable';
-$string['viewims'] = 'Visualitza paquet IMS CP';
 
 ?>

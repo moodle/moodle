@@ -11,8 +11,59 @@
 */
 
 require_once($CFG->libdir.'/pagelib.php');
-require_once($CFG->dirroot.'/mod/quiz/constants.php');
 
+/// CONSTANTS ///////////////////////////////////////////////////////////////////
+
+
+/**#@+
+* Option flags for $quiz->optionflags
+*/
+/**
+* Whether the quiz is to be run in adaptive mode
+*/
+define('QUIZ_ADAPTIVE', 1);
+
+/**
+* Determines if when checking whether an answer should
+* be checked against all previous ones to see if it is duplicate
+*/
+define('QUIZ_IGNORE_DUPRESP', 2);
+
+/**#@-*/
+
+/**
+* If start and end date for the quiz are more than this many seconds apart
+* they will be represented by two separate events in the calendar
+*/
+define("QUIZ_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
+
+/**#@+
+* The different review options are stored in the bits of $quiz->review
+* These constants help to extract the options
+*/
+/**
+* The first 6 bits refer to the time immediately after the attempt
+*/
+define('QUIZ_REVIEW_IMMEDIATELY', 64-1);
+/**
+* the next 6 bits refer to the time after the attempt but while the quiz is open
+*/
+define('QUIZ_REVIEW_OPEN', 4096-64);
+/**
+* the final 6 bits refer to the time after the quiz closes
+*/
+define('QUIZ_REVIEW_CLOSED', 262144-4096);
+
+// within each group of 6 bits we determine what should be shown
+define('QUIZ_REVIEW_RESPONSES', 1+64+4096);    // Show responses
+define('QUIZ_REVIEW_SCORES', 2*4161);   // Show scores
+define('QUIZ_REVIEW_FEEDBACK', 4*4161); // Show feedback
+define('QUIZ_REVIEW_ANSWERS', 8*4161);  // Show correct answers
+// Some handling of worked solutions is already in the code but not yet fully supported
+// and not switched on in the user interface.
+define('QUIZ_REVIEW_SOLUTIONS', 16*4161);  // Show solutions
+// the 6th bit is as yet unused
+/**#@-*/
 
 /// FUNCTIONS ///////////////////////////////////////////////////////////////////
 
@@ -26,22 +77,10 @@ function quiz_add_instance($quiz) {
 
     $quiz->created      = time();
     $quiz->timemodified = time();
-    // The following is adapted from the assignment module
-    if (empty($quiz->dueenable)) {
-        $quiz->timeclose = 0;
-    } else {
-        $quiz->timeclose = make_timestamp($quiz->dueyear, $quiz->duemonth, 
-                                              $quiz->dueday, $quiz->duehour, 
-                                              $quiz->dueminute);
-    }
-    if (empty($quiz->availableenable)) {
-        $quiz->timeopen = 0;
-        $quiz->preventlate = 0;
-    } else {
-        $quiz->timeopen = make_timestamp($quiz->availableyear, $quiz->availablemonth, 
-                                                    $quiz->availableday, $quiz->availablehour, 
-                                                    $quiz->availableminute);
-    }
+    $quiz->timeopen = make_timestamp($quiz->openyear, $quiz->openmonth, $quiz->openday,
+                                     $quiz->openhour, $quiz->openminute, 0);
+    $quiz->timeclose = make_timestamp($quiz->closeyear, $quiz->closemonth, $quiz->closeday,
+                                      $quiz->closehour, $quiz->closeminute, 0);
 
     if (empty($quiz->name)) {
         if (empty($quiz->intro)) {
@@ -62,48 +101,34 @@ function quiz_add_instance($quiz) {
 
     delete_records('event', 'modulename', 'quiz', 'instance', $quiz->id);  // Just in case
 
-    unset($event);
+    $event = NULL;
+    $event->name        = $quiz->name;
     $event->description = $quiz->intro;
     $event->courseid    = $quiz->course;
     $event->groupid     = 0;
     $event->userid      = 0;
     $event->modulename  = 'quiz';
     $event->instance    = $quiz->id;
+    $event->eventtype   = 'open';
     $event->timestart   = $quiz->timeopen;
     $event->visible     = instance_is_visible('quiz', $quiz);
+    $event->timeduration = ($quiz->timeclose - $quiz->timeopen);
 
-    if ($quiz->timeclose and $quiz->timeopen) {
-        // we have both a start and an end date
-        $event->eventtype   = 'open';
-        $event->timeduration = ($quiz->timeclose - $quiz->timeopen);
+    if ($event->timeduration > QUIZ_MAX_EVENT_LENGTH) {  /// Long durations create two events
+        $event2 = $event;
 
-        if ($event->timeduration > QUIZ_MAX_EVENT_LENGTH) {  /// Long durations create two events
-    
-            $event->name          = $quiz->name.' ('.get_string('quizopens', 'quiz').')';
-            $event->timeduration  = 0;
-            add_event($event);
-    
-            $event->timestart    = $quiz->timeclose;
-            $event->eventtype    = 'close';
-            $event->name         = $quiz->name.' ('.get_string('quizcloses', 'quiz').')';
-            unset($event->id);
-            add_event($event);
-        } else { // single event with duration
-            $event->name        = $quiz->name;
-            add_event($event);
-        }
-    } elseif ($quiz->timeopen) { // only an open date
-        $event->name          = $quiz->name.' ('.get_string('quizopens', 'quiz').')';
-        $event->eventtype   = 'open';
-        $event->timeduration = 0;
-        add_event($event);
-    } elseif ($quiz->timeclose) { // only a closing date
-        $event->name         = $quiz->name.' ('.get_string('quizcloses', 'quiz').')';
-        $event->timestart    = $quiz->timeclose;
-        $event->eventtype    = 'close';
-        $event->timeduration = 0;
-        add_event($event);
+        $event->name         .= ' ('.get_string('quizopens', 'quiz').')';
+        $event->timeduration  = 0;
+
+        $event2->timestart    = $quiz->timeclose;
+        $event2->eventtype    = 'close';
+        $event2->timeduration = 0;
+        $event2->name        .= ' ('.get_string('quizcloses', 'quiz').')';
+
+        add_event($event2);
     }
+
+    add_event($event);
 
     return $quiz->id;
 }
@@ -117,23 +142,12 @@ function quiz_update_instance($quiz) {
     quiz_process_options($quiz);
 
     $quiz->timemodified = time();
-    // The following is adapted from the assignment module
-    if (empty($quiz->dueenable)) {
-        $quiz->timeclose = 0;
-    } else {
-        $quiz->timeclose = make_timestamp($quiz->dueyear, $quiz->duemonth, 
-                                              $quiz->dueday, $quiz->duehour, 
-                                              $quiz->dueminute);
+    if (isset($quiz->openyear)) { // this would not be set if we come from edit.php
+        $quiz->timeopen = make_timestamp($quiz->openyear, $quiz->openmonth, $quiz->openday,
+                                         $quiz->openhour, $quiz->openminute, 0);
+        $quiz->timeclose = make_timestamp($quiz->closeyear, $quiz->closemonth, $quiz->closeday,
+                                          $quiz->closehour, $quiz->closeminute, 0);
     }
-    if (empty($quiz->availableenable)) {
-        $quiz->timeopen = 0;
-        $quiz->preventlate = 0;
-    } else {
-        $quiz->timeopen = make_timestamp($quiz->availableyear, $quiz->availablemonth, 
-                                                    $quiz->availableday, $quiz->availablehour, 
-                                                    $quiz->availableminute);
-    }
-
     $quiz->id = $quiz->instance;
 
     if (!update_record("quiz", $quiz)) {
@@ -162,38 +176,24 @@ function quiz_update_instance($quiz) {
     $event->userid      = 0;
     $event->modulename  = 'quiz';
     $event->instance    = $quiz->id;
+    $event->eventtype   = 'open';
     $event->timestart   = $quiz->timeopen;
     $event->visible     = instance_is_visible('quiz', $quiz);
-    if ($quiz->timeclose and $quiz->timeopen) {
-        // we have both a start and an end date
-        $event->eventtype   = 'open';
-        $event->timeduration = ($quiz->timeclose - $quiz->timeopen);
+    $event->timeduration = ($quiz->timeclose - $quiz->timeopen);
 
-        if ($event->timeduration > QUIZ_MAX_EVENT_LENGTH) {  /// Long durations create two events
-    
-            $event->name          = $quiz->name.' ('.get_string('quizopens', 'quiz').')';
-            $event->timeduration  = 0;
-            add_event($event);
-    
-            $event->timestart    = $quiz->timeclose;
-            $event->eventtype    = 'close';
-            $event->name         = $quiz->name.' ('.get_string('quizcloses', 'quiz').')';
-            unset($event->id);
-            add_event($event);
-        } else { // single event with duration
-            $event->name        = $quiz->name;
-            add_event($event);
-        }
-    } elseif ($quiz->timeopen) { // only an open date
+    if ($event->timeduration > QUIZ_MAX_EVENT_LENGTH) {  /// Long durations create two events
+
         $event->name          = $quiz->name.' ('.get_string('quizopens', 'quiz').')';
-        $event->eventtype   = 'open';
-        $event->timeduration = 0;
+        $event->timeduration  = 0;
         add_event($event);
-    } elseif ($quiz->timeclose) { // only a closing date
-        $event->name         = $quiz->name.' ('.get_string('quizcloses', 'quiz').')';
+
         $event->timestart    = $quiz->timeclose;
         $event->eventtype    = 'close';
-        $event->timeduration = 0;
+        $event->name         = $quiz->name.' ('.get_string('quizcloses', 'quiz').')';
+        unset($event->id);
+        add_event($event);
+    } else { // single event with duration
+        $event->name        = $quiz->name;
         add_event($event);
     }
 
@@ -214,13 +214,7 @@ function quiz_delete_instance($id) {
 
     if ($attempts = get_records("quiz_attempts", "quiz", "$quiz->id")) {
         foreach ($attempts as $attempt) {
-            if (! delete_records("quiz_states", "attempt", "$attempt->uniqueid")) {
-                $result = false;
-            }
-            if (! delete_records("quiz_newest_states", "attemptid", "$attempt->uniqueid")) {
-                $result = false;
-            }
-            if (! delete_records("quiz_newest_states", "attemptid", "$attempt->id")) {
+            if (! delete_records("quiz_states", "attempt", "$attempt->id")) {
                 $result = false;
             }
         }
@@ -258,132 +252,30 @@ function quiz_delete_instance($id) {
     return $result;
 }
 
-/**
- * Given a course object, this function will clean up anything that
- * would be leftover after all the instances were deleted.
- * In this case, all non-used quiz categories are deleted and
- * used categories (by other courses) are moved to site course.
- *
- * @param object $course an object representing the course to be analysed
- * @param boolean $feedback to specify if the process must output a summary of its work
- * @return boolean
- */
-function quiz_delete_course($course, $feedback=true) {
+function quiz_delete_course($course) {
+/// Given a course object, this function will clean up anything that
+/// would be leftover after all the instances were deleted
+/// In this case, all non-publish quiz categories and questions
 
-    global $CFG;
-
-    //To detect if we have created the "container category"
-    $concatid = 0;
-
-    //The "container" category we'll create if we need if
-    $contcat = new object;
-
-    //To temporary store changes performed with parents
-    $parentchanged = array();
-
-    //To store feedback to be showed at the end of the process
-    $feedbackdata   = array();
-
-    //Cache some strings
-    $strcatcontainer=get_string('containercategorycreated', 'quiz');
-    $strcatmoved   = get_string('usedcategorymoved', 'quiz');
-    $strcatdeleted = get_string('unusedcategorydeleted', 'quiz');
-
-    if ($categories = get_records('quiz_categories', 'course', $course->id, 'parent', 'id, parent, name, course')) {
-        require_once("locallib.php");
-        //Sort categories following their tree (parent-child) relationships
-        $categories = sort_categories_by_tree($categories);
-
-        foreach ($categories as $cat) {
-
-            //Get the full record
-            $category = get_record('quiz_categories', 'id', $cat->id);
-
-            //Check if the category is being used anywhere
-            if($usedbyquiz = quizzes_category_used($category->id,true)) {
-                //It's being used. Cannot delete it, so:
-                //Create a container category in SITEID course if it doesn't exist
-                if (!$concatid) {
-                    $concat->course = SITEID;
-                    if (!isset($course->shortname)) {
-                        $course->shortname = 'id=' . $course->id;
-                    }
-                    $concat->name = get_string('savedfromdeletedcourse', 'quiz', $course->shortname);
-                    $concat->info = $concat->name;
-                    $concat->publish = 1;
-                    $concat->stamp = make_unique_id_code();
-                    $concatid = insert_record('quiz_categories', $concat);
-
-                    //Fill feedback
-                    $feedbackdata[] = array($concat->name, $strcatcontainer);
+    if ($categories = get_records_select("quiz_categories", "course = '$course->id' AND publish = '0'")) {
+        foreach ($categories as $category) {
+            if ($questions = get_records("quiz_questions", "category", $category->id)) {
+                foreach ($questions as $question) {
+                    delete_records("quiz_answers", "question", $question->id);
+                    delete_records("quiz_match", "question", $question->id);
+                    delete_records("quiz_match_sub", "question", $question->id);
+                    delete_records("quiz_multianswers", "question", $question->id);
+                    delete_records("quiz_multichoice", "question", $question->id);
+                    delete_records("quiz_numerical", "question", $question->id);
+                    delete_records("quiz_randommatch", "question", $question->id);
+                    delete_records("quiz_responses", "question", $question->id);
+                    delete_records("quiz_shortanswer", "question", $question->id);
+                    delete_records("quiz_truefalse", "question", $question->id);
                 }
-                //Move the category to the container category in SITEID course
-                $category->course = SITEID;
-                //Assign to container if the category hasn't parent or if the parent is wrong (not belongs to the course)
-                if (!$category->parent || !isset($categories[$category->parent])) {
-                    $category->parent = $concatid;
-                }
-                //If it's being used, its publish field should be 1
-                $category->publish = 1;
-                //Let's update it
-                update_record('quiz_categories', $category);
-
-                //Save this parent change for future use
-                $parentchanged[$category->id] = $category->parent;
-
-                //Fill feedback
-                $feedbackdata[] = array($category->name, $strcatmoved);
-
-            } else {
-                //Category isn't being used so:
-                //Delete it completely (questions and category itself)
-                //deleting questions....not perfect until implemented in question classes (see bug 3366)
-                if ($questions = get_records("quiz_questions", "category", $category->id)) {
-                    foreach ($questions as $question) {
-                        delete_records("quiz_answers", "question", $question->id);
-                        delete_records("quiz_match", "question", $question->id);
-                        delete_records("quiz_match_sub", "question", $question->id);
-                        delete_records("quiz_multianswers", "question", $question->id);
-                        delete_records("quiz_multichoice", "question", $question->id);
-                        delete_records("quiz_numerical", "question", $question->id);
-                        delete_records("quiz_numerical_units", "question", $question->id);
-                        delete_records("quiz_calculated", "question", $question->id);
-                        delete_records("quiz_question_datasets", "question", $question->id);
-                        delete_records("quiz_randomsamatch", "question", $question->id);
-                        delete_records("quiz_shortanswer", "question", $question->id);
-                        delete_records("quiz_truefalse", "question", $question->id);
-                        delete_records("quiz_rqp", "question", $question->id);
-                        delete_records("quiz_essay", "question", $question->id);
-                        delete_records("quiz_states", "question", $question->id);
-                        delete_records("quiz_newest_states", "questionid", $question->id);
-                        delete_records("quiz_question_versions", "oldquestion", $question->id);
-                        delete_records("quiz_question_versions", "newquestion", $question->id);
-                    }
-                    delete_records("quiz_questions", "category", $category->id);
-                }
-                //delete the category
-                delete_records('quiz_categories', 'id', $category->id);
-
-                //Save this parent change for future use
-                if (!empty($category->parent)) {
-                    $parentchanged[$category->id] = $category->parent;
-                } else {
-                    $parentchanged[$category->id] = $concatid;
-                }
-
-                //Update all its child categories to re-parent them to grandparent.
-                set_field ('quiz_categories', 'parent', $parentchanged[$category->id], 'parent', $category->id);
-
-                //Fill feedback
-                $feedbackdata[] = array($category->name, $strcatdeleted);
+                delete_records("quiz_questions", "category", $category->id);
             }
         }
-        //Inform about changes performed if feedback is enabled
-        if ($feedback) {
-            $table->head = array(get_string('category','quiz'), get_string('action'));
-            $table->data = $feedbackdata;
-            print_table($table);
-        }
+        return delete_records("quiz_categories", "course", $course->id);
     }
     return true;
 }
@@ -686,7 +578,7 @@ function quiz_process_options(&$form) {
     $review = 0;
 
     if (!empty($form->adaptive)) {
-        $optionflags |= QUIZ_ADAPTIVE;
+        $optionflags += QUIZ_ADAPTIVE;
     }
 
     if (isset($form->responsesimmediately)) {
@@ -756,20 +648,9 @@ function quiz_process_options(&$form) {
 
     $form->review = $review;
     $form->optionflags = $optionflags;
-    
-    // The following implements the time limit check box
-    if (empty($form->timelimitenable) or $form->timelimit < 1) {
-        $form->timelimit = 0;
-    }
 
 }
 
-function quiz_get_view_actions() {
-    return array('view','view all','report');
-}
 
-function quiz_get_post_actions() {
-    return array('attempt','editquestions','review','submit');
-}
 
 ?>

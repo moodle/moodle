@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.6 development (2005101200)
+      // install.php - created with Moodle 1.4.3 + (2004083134)
 
 
 $string['admindirerror'] = 'Den katalog för administration som är angiven är felaktig';
 $string['admindirname'] = 'Katalog för administration';
-$string['admindirsetting'] = 'Ett litet fåtal webbvärdar (t ex hotell) använder /admin som en speciell URL som Du får tillgång till för att kunna använda en kontrollpanel e d. Tyvärr så stämmer detta inte så bra överens med standardplaceringen av Moodles sidor för administration. Du kan ordna till det genom att döpa om admin katalogen i Din installation och skriva in detta nya namn här. Till exempel: <br/> <br /><b>moodleadmin</b><br /> <br /> Detta kommer att rätta till länkarna till admin i Moodle';
+$string['admindirsetting'] = 'Ett litet fåtal webbvärdar (t ex hotell) använder /admin som en speciell URL som Du får tillgång till för att kunna använda en kontrollpanel e d. Tyvärr så stämmer detta inte så bra överens med standardplaceringen av Moodles sidor för administration. Du kan ordna till det genom att döpa om admin katalogen i Din installation och skriva in detta nya namn här. Till exempel: <br/> <br /><b>moodleadmin</b><br /> <br /> Detta kommer att rätta till länkarna till admin i Moodle';
 $string['caution'] = 'Varning';
 $string['chooselanguage'] = 'Välj ett språk';
 $string['compatibilitysettings'] = 'Kontrollerar Dina PHP-inställningar';
@@ -12,15 +12,8 @@ $string['configfilenotwritten'] = 'Skriptet för installationen kunde inte automa
 $string['configfilewritten'] = 'config.php har skapats framgångsrikt';
 $string['configurationcomplete'] = 'Konfigurationen är  genomförd';
 $string['database'] = 'Databas';
-$string['databasecreationsettings'] = 'Nu behöver Du konfigurera inställningarna i databasen där det mesta av data i Moodle kommer att lagras. Den här databasen kommer att skapas automatiskt av Moodle4Windows-installeraren med de inställningar som anges nedan.
-<br /><b>Typ:</b> fixerad till \"mysql\" av installeraren
-<br /><b>Värd:</b> fixerad till \"localhost\" av installeraren
-<br /><b>Namn:</b> databasnamn, t.ex. Moodle  
-<br /><b>Användare:</b> fixerad till \"root\" av installeraren
-<br /><b>Lösenord:</b> lösenordet till Din databas
-<br /><b>Prefix för tabeller:</b> valfritt prefix som används för alla tabeller';
 $string['databasesettings'] = 'Nu behöver Du konfigurera den databas där det mesta av Moodles data kommer att sparas. Den här databasen måste redan vara skapad och det måste ingå ett användarnamn och ett lösenord som Du kan använda.<br />
-<br /> <br />
+<br /> <br />
 <b>Typ:</b> mysql eller postgres7<br />
 <b>Värd:</b> t ex localhost eller db.isp.com<br />
 <b>Namn:</b> namn på databasen, t ex moodle<br />
@@ -60,15 +53,6 @@ $string['gdversionhelp'] = '<p>Det verkar som om GD inte är installerat på Din s
 <p>GD är ett bibliotek som är nödvändigt i PHP om Moodle ska kunna bearbeta bilder (som t ex bilderna i användarprofilerna) eller skapa nya (som t ex graferna till loggarna). Moodle kommer fortfarande att fungera utan GD men dessa funktioner kommer alltså att saknas. </p>
 <p>Om Du vill lägga till GD under UNIX, så får Du kompilera PHP genom att använda parametern --with-gd.</p>
 <p>Under Windows kan Du vanligtvis redigera php.ini och ta bort kommentarmarkeringen för den rad som refererar till libgd.dll</p>';
-$string['globalsquotes'] = 'Inte säker hantering av globala variabler';
-$string['globalsquoteserror'] = 'Ordna till Dina inställningar för PHP: avaktivera register_globals och/eller avaktivera magic_quotes_gpc';
-$string['globalsquoteshelp'] = '<p>Kombinationen av avaktiverade Magic Quotes GPC och aktiverade Register Globals samtidigt rekommenderas inte.</p>
-
-<p>Den rekommenderade inställningen är <b>magic_quotes_gpc = On</b> och <b>register_globals = Off</b> i Din php.ini</p>
-
-<p>Om Du inte har tillgång till Din php.ini, så kanske Du kan placera följande rad i en fil som kallas .htaccess inne i Din Moodle-katalog:
-<blockquote>php_value magic_quotes_gpc On</blockquote>
-<blockquote>php_value register_globals Off</blockquote>';
 $string['installation'] = 'Installation';
 $string['magicquotesruntime'] = 'körtid för \'Magiska citat\'';
 $string['magicquotesruntimeerror'] = 'Det här bör vara \'off\'';

@@ -1,42 +1,39 @@
 <?PHP // $Id$ 
-      // block_rss_client.php - created with Moodle 1.5 Beta (2005052300)
+      // client.php - created with Moodle 1.4.3 + (2004083131)
 
 
-$string['addfeed'] = 'Lägg till en URL för inmatning av nyheter:';
-$string['addheadlineblock'] = 'Lägg till ett block med RSS rubriker';
-$string['addnew'] = 'Lägg till  Ny';
-$string['choosefeedlabel'] = 'Välj vilka inmatningar som Du vill göra tillgängliga i det här blocket:';
-$string['clientchannellink'] = 'Den webbplats som är källa';
-$string['clientnumentries'] = 'Standardantal bidrag att visa per inmatning';
-$string['clientshowchannellinklabel'] = 'Vill Du visa en länk till den ursprungliga webbplatsen (kanallänk)? (OBS! Om det inte finns någon inmatningslänk i nyhetsinmatningen så kommer ingen länk att visas):';
-$string['clientshowimagelabel'] = 'Visa kanalens bild om den är tillgänglig:';
-$string['configblock'] = 'Konfigurera det här blocket';
-$string['couldnotfindfeed'] = 'Det gick inte att hitta någon inmatning med id';
-$string['customtitlelabel'] = 'Standardtitel (lämna detta tomt för att använda den titel som kommer med inmatningen):';
+$string['addfeed'] = 'Lägg till en URL för inmatning av nyheter';
+$string['addheadlineblock'] = 'Lägg till ett block för RSS-rubriker';
+$string['addnew'] = 'Lägg till nytt';
+$string['choosefeedlabel'] = 'Välj de inmatningar som Du vill göra tillgängliga i det här blocket:';
+$string['clientchannellink'] = 'Den webbplats som är målet';
+$string['clientnumentries'] = 'Antal rss-länkar, per block,  som ska visas. ';
+$string['clientshowchannellinklabel'] = 'Vill Du visa en länk till den ursprungliga webbplatsen (kanallänk)? (Observera att om det inte finns någon inmatningslänk med i nyhetsinmatningen så kommer ingen länk att visas):';
+$string['clientshowimagelabel'] = 'VIsa kanalbild om den är tillgänglig: ';
+$string['couldnotfindfeed'] = 'Det gick inte att hitta inmatning med id';
+$string['customtitlelabel'] = 'Standardtitel (lämna det tom för att använda den titel som kommer med inmatningen)';
 $string['deletefeedconfirm'] = 'Är Du säker på att Du vill ta bort den här inmatningen?';
-$string['displaydescriptionlabel'] = 'Visa beskrivningen av varje länk?';
-$string['editfeeds'] = 'Redigera, prenumera eller avaktivera prenumeration från RSS/Atom nyhetsinmatning.';
+$string['displaydescriptionlabel'] = 'Visa varje länks beskrivning?';
+$string['editfeeds'] = 'Redigera, prenumerera eller avbeställ prenumeration på nyhetsinmatningar från RSS/Atom ';
 $string['editnewsfeeds'] = 'Redigera nyhetsinmatningar';
-$string['editrssblock'] = 'Redigera ett block med RSS rubriker';
-$string['feed'] = 'Inmatning';
-$string['feedadded'] = 'En nyhetsinmatning har lagts till ';
-$string['feeddeleted'] = 'En nyhetsinmatning har tagits bort';
-$string['feeds'] = 'Nyhetsinmatningar';
-$string['feedsaddedit'] = 'Lägg till/redigera inmatningar';
-$string['feedsconfigurenewinstance'] = 'Klicka här för att konfigurera detta block så att det visar RSS-inmatningar.';
-$string['feedstitle'] = 'Fjärrinmatningar av RSS';
+$string['editrssblock'] = 'Redigera block för RSS-rubriker';
+$string['feed'] = 'Nyhetsinmatningar';
+$string['feedadded'] = 'Nyhetsinmatning har lagts till';
+$string['feeddeleted'] = 'Nyhetsinmatning har tagits bort';
 $string['feedupdated'] = 'Nyhetsinmatning har uppdaterats';
-$string['findmorefeeds'] = 'Hitta fler rss-inmatningar';
-$string['managefeeds'] = 'Hantera alla mina inmatningar';
-$string['nofeeds'] = 'Det finns inga RSS-inmatningar som har definierats för den hör webbplatsen.';
+$string['feeds'] = 'Nyhetsinmatningar';
+$string['feedsaddedit'] = 'Lägg till/redigera nyhetsinmatningar ';
+$string['feedstitle'] = 'Fjärrstyrda RSS-inmatningar ';
+$string['findmorefeeds'] = 'Hitta fler RSS-inmatningar ';
+$string['nofeeds'] = 'Det finns inga fler RSS-inmatningar som är definierade för den här webbplatsen.';
 $string['pickfeed'] = 'Välj en nyhetsinmatning';
-$string['remotenewsfeed'] = 'Fjärrinmatning av nyheter';
+$string['remotenewsfeed'] = 'Fjärrstyrd nyhetsinmatning';
 $string['seeallfeeds'] = 'Visa alla inmatningar';
-$string['shownumentrieslabel'] = 'Maximalt antal bidrag att visa per block.';
-$string['submitters'] = 'Vem ska behörighet att definiera nya rss-inmatningar? Definierade inmatningar finns tillgängliga för vilken sida som helst på Din webbplats.';
+$string['shownumentrieslabel'] = 'Max antal bidrag att visa per block';
+$string['submitters'] = 'Vem kan definiera nya RSS-inmatningar? Inmatningar blir tillgängliga för alla medlemmar på Din webbplats och de kan lägga till dem till sina egna sidor.';
 $string['timeout'] = 'blockrsstimeout';
-$string['timeoutdesc'] = 'Tid räknat i minuter som en RSS-inmatning finns kvar i cache.';
-$string['updatefeed'] = 'Uppdatera en URL för nyhetsinmatning:';
+$string['timeoutdesc'] = 'Tid i minuter som en RSS-inmatning sparas i cache.';
+$string['updatefeed'] = 'Uppdatera en URL för nyhetsinmatning';
 $string['validatefeed'] = 'Validera inmatning';
 
 ?>

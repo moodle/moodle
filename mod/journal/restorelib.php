@@ -59,9 +59,7 @@
             $newid = insert_record ("journal",$journal);
 
             //Do some output
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","journal")." \"".format_string(stripslashes($journal->name),true)."\"</li>";
-            }
+            echo "<li>".get_string("modulename","journal")." \"".format_string(stripslashes($journal->name),true)."\"</li>";
             backup_flush(300);
 
             if ($newid) {
@@ -69,7 +67,7 @@
                 backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
                 //Now check if want to restore user data and do it.
-                if (restore_userdata_selected($restore,'journal',$mod->id)) {
+                if ($restore->mods['journal']->userinfo) {
                     //Restore journal_entries
                     $status = journal_entries_restore_mods ($mod->id, $newid,$info,$restore);
                 }
@@ -134,11 +132,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -185,11 +181,9 @@
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 20 == 0) {
-                            echo "<br />";
-                        }
+                    echo ".";
+                    if (($i+1) % 20 == 0) {
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -217,11 +211,9 @@
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 20 == 0) {
-                            echo "<br />";
-                        }
+                    echo ".";
+                    if (($i+1) % 20 == 0) {
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -317,9 +309,7 @@
             $status = true;
             break;
         default:
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
-            }
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
             break;
         }
 

@@ -60,18 +60,17 @@ Now I show the specific detailed status of every item in the process:
 33. DONE: quiz_question_version
 34. DONE: Group images aren't included at all in backup/restore. Bug 2674.
 35. DONE: New glossary log action: "view_entry".
-36. DONE: Add support for quiz log action: "editquestions".
+36. PROG: Add support for quiz log action: "editquestions". Bug 2778 pending!
 37. DONE: Convert module ids in every Wiki reference to other activities.
 38. DONE: Convert every wiki formatted text to markdown. Bye, wikies! ;-)
 39. DONE: Add backup/restore of new grade tables.
 40. DONE: event->repeatid.
 41. DONE: Add support to forum_track_prefs table. Not necessary. MD. Skipped.
 42. DONE: Add user->trackforums (MD did).
-43. DONE: Add forum->trackingtype
-44. DONE: Review SCORM module. Bug 3404 seems to break restore. Solved by Bobo.
-45. DONE: Modify QUIZ  module restore for pre1.5 courses (Eloy)
+43. TODO: Add forum->trackingtype
+44. TODO: Review SCORM module.
+45. DONE: Modify QUIZ  module restore for pre1.5 courses.
 46. TODO: Modify QUIZ  module 1.5 <==> 1.5 backup & restore (Gustav's team)
-47. DONE: Orphan categories thing in quiz module need final solution. Bug 2459 is 95% solved.
-          (only a nice interface is required to re-assign site categories to other courses).
+47. TODO: Orphan categories thing in quiz module need final solution.
          
 Maintained by Eloy (stronk7)

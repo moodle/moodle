@@ -1,7 +1,42 @@
 README FOR CATALAN PLUGIN
 -------------------------
 
-La traducciÃ³ de Moodle al catalÃ Ã©s obra de la comunita"Moodle en catalÃ "
-<http://moodle.org/course/view.php?id=39>. Va ser iniciada en 2002 pel CENT,
-Centre d'EducaciÃ³ i Noves Tecnologies de la Univrsitat Jaume I de CastellÃ.,
+
+La traducció de Moodle al català és obra de la comunitat "Moodle en català"
+<http://moodle.org/course/view.php?id=39>. Va ser iniciada en 2002 pel CENT, 
+Centre d'Educació i Noves Tecnologies de la Universitat Jaume I de Castelló, 
+que hi continua donant suport tècnic.
+
+Per actualitzar la traducció de Moodle al català en la vostra instal·lació
+de Moodle, descomprimiu aquest fitxer ca.zip dins del directori lang.
+
+Teniu en compte que la traducció no és completa al 100%.  Podeu col·laborar 
+enviant suggeriments, comentaris o correccions, o fent-vos càrrec de la 
+traducció d'un mòdul complet (i dels fitxers d'ajuda corresponents).
+
+Si us voleu fer càrrec d'un mòdul, els únics requisits són aquests:
+
+1. Un bon nivell de català i d'anglès.
+
+2. Una mica d'experiència en la traducció de programari o de textos
+   sobre informàtica. Us recomanem que tingueu sempre a mà la Guia
+   d'estil i el Recull de termes de Softcatalà:
+
+   http://www.softcatala.org/projectes/eines/guiaestil/guiaestil.htm
+   http://www.softcatala.org/projectes/eines/recull/recull.htm
+
+3. Que sigueu (o penseu ser) usuaris habituals del mòdul en qüestió.
+
+La llista de mòduls i de persones que se'n fan càrrec, i els mòduls encara
+no assignats a ningú, es poden consultar en aquesta pàgina:
+
+http://moodle.org/mod/resource/view.php?id=2945
+
+
+----
+Centre d'Educació i Noves Tecnologies (CENT)
+de la Universitat Jaume I de Castelló
+http://cent.uji.es
+mailto:cent@uji.es
+
 

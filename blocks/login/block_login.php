@@ -27,20 +27,16 @@ class block_login extends block_base {
             $wwwroot = str_replace("http://", "https://", $CFG->wwwroot);
         }
 
-        if ($CFG->auth == 'email') {
+        if (is_internal_auth()) {
             $signup = $wwwroot . '/login/signup.php';
             $forgot = $wwwroot . '/login/forgot_password.php';
         } else {
-            if (!empty($CFG->{'auth_'.$CFG->auth.'_stdchangepassword'})
-                || $CFG->changepassword
-                || is_internal_auth() ) {
-                if (is_internal_auth() || !empty($CFG->{'auth_'.$CFG->auth.'_stdchangepassword'})) {
-                    $forgot =  $wwwroot . '/login/forgot_password.php';
-                }
-                else {
-                    $forgot = $CFG->changepassword;
-                }
+            if (!empty($CFG->changepassword)) {
+                $forgot = $CFG->changepassword;
+            } else {
+                $forgot = '';
             }
+            $signup = $wwwroot . '/login/index.php';  // to see instructions!
         }
 
         $username = get_moodle_cookie() === 'nobody' ? '' : get_moodle_cookie();

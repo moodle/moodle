@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
     require_once("../../config.php"); 
     require_once($CFG->libdir.'/filelib.php');
 
@@ -341,7 +341,7 @@ function ewiki_entry_downloads($row, $show_section=0, $fullinfo=false) {
    $info->type = $p_ct;
    $info->url =  ewiki_script_binary("", $row["id"]);
    $info->title = $p_title;
-   $info->comment = format_text($p_comment);
+   $info->comment = $p_comment;
 
    if ($fullinfo) {
         if ($user = get_record('user', 'id', $row['userid'])) {

@@ -2,8 +2,8 @@
 
     require_once("../../config.php");
 
-    $id = optional_param('id',0,PARAM_INT);    // Course Module ID, or
-    $l = optional_param('l',0,PARAM_INT);     // Label ID
+    optional_variable($id);    // Course Module ID, or
+    optional_variable($l);     // Label ID
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {

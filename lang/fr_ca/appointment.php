@@ -21,6 +21,7 @@ $string['newsubmissions'] = 'Rendez-vous soumis';
 $string['notgradedyet'] = 'Pas noté encore';
 $string['notsubmittedyet'] = 'Pas soumis encore';
 $string['overwritewarning'] = 'Attention : si vous téléversez de nouveau votre travail, vous remplacerez la copie déjà remise';
+$string['parentlanguage'] = 'fr';
 $string['saveallfeedback'] = 'Sauvegarder toutes mes rétroactions';
 $string['submissionfeedback'] = 'Rétroaction sur le travail';
 $string['submissions'] = 'Travaux ';

@@ -146,25 +146,6 @@ function forum_upgrade($oldversion) {
       modify_database('','CREATE INDEX prefix_forum_track_user_forum_idx ON prefix_forum_track_prefs (userid, forumid);');
   }
 
-  if ($oldversion < 2005042601) { // Mass cleanup of bad postgres upgrade scripts
-      modify_database('','ALTER TABLE prefix_forum ALTER trackingtype SET NOT NULL');
-  }
-
-  if ($oldversion < 2005111100) {
-      table_column('forum_discussions','','timestart','integer');
-      table_column('forum_discussions','','timeend','integer');
-  }
-
-  if ($oldversion < 2006011600) {
-      execute_sql("ALTER TABLE {$CFG->prefix}forum DROP CONSTRAINT {$CFG->prefix}forum_type");
-      execute_sql("ALTER TABLE {$CFG->prefix}forum ADD CONSTRAINT {$CFG->prefix}forum_type CHECK (type IN ('single','news','general','social','eachuser','teacher','qanda')) ");
-  }
-
-  if ($oldversion < 2006011601) {
-      table_column('forum','','warnafter');
-      table_column('forum','','blockafter');
-      table_column('forum','','blockperiod');
-  }
 
   return true;
 

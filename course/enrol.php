@@ -7,7 +7,7 @@
     require_once("lib.php");
     require_once("$CFG->dirroot/enrol/$CFG->enrol/enrol.php");
 
-    $id = required_param('id',PARAM_INT);
+    require_variable($id);
 
     require_login();
 
@@ -17,12 +17,6 @@
 
     if (! $site = get_site()) {
         error("Could not find a site!");
-    }
-
-/// Check if the course is a meta course
-    if ($course->metacourse) {
-        print_header_simple();
-        notice(get_string('coursenotaccessible'), $CFG->wwwroot);
     }
 
     check_for_restricted_user($USER->username);
@@ -63,15 +57,6 @@
             print_header();
             notice($message, $CFG->wwwroot);
         }
-    }
-
-/// Check if the course is enrollable
-    if (!$course->enrollable ||
-            ($course->enrollable == 2 && $course->enrolstartdate > 0 && $course->enrolstartdate > time()) ||
-            ($course->enrollable == 2 && $course->enrolenddate > 0 && $course->enrolenddate <= time())
-            ) {
-        print_header_simple();
-        notice(get_string('notenrollable'), $CFG->wwwroot);
     }
 
 /// Check the submitted enrollment key if there is one

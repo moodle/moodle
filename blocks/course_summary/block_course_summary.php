@@ -23,9 +23,6 @@ class block_course_summary extends block_base {
             return '';
         }
 
-        if (empty($this->instance->pageid)) {
-            $this->instance->pageid = SITEID;
-        }
         $course  = get_record('course', 'id', $this->instance->pageid);
         
         $this->content = New stdClass;

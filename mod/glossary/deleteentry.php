@@ -3,12 +3,12 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $id      = required_param('id', PARAM_INT);          // course module ID
-    $confirm = optional_param('confirm', 0, PARAM_INT);  // commit the operation?
-    $entry   = optional_param('entry', 0, PARAM_INT);    // entry id
+    require_variable($id);    // course module ID
+    optional_variable($confirm);  // commit the operation?
+    optional_variable($entry);  // entry id
 
     $prevmode = required_param('prevmode');
-    $hook = optional_param('hook', '', PARAM_CLEAN);
+    $hook = optional_param('hook');
 
     $strglossary = get_string("modulename", "glossary");
     $strglossaries = get_string("modulenameplural", "glossary");
@@ -64,11 +64,9 @@
         // if it is an imported entry, just delete the relation
 
         if ( $entry->sourceglossaryid ) {
-            $dbentry = new stdClass;
-            $dbentry->id = $entry->id;
-            $dbentry->glossaryid = $entry->sourceglossaryid;
-            $dbentry->sourceglossaryid = 0;
-            if (! update_record('glossary_entries', $dbentry)) {
+            $entry->glossaryid = $entry->sourceglossaryid;
+            $entry->sourceglossaryid = 0;
+            if (! update_record("glossary_entries", $entry)) {
                 error("Could not update your glossary");
             }
 

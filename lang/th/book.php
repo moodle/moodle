@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // book.php - created with Moodle 1.4.5 + (2004083150)
+      // book.php - created with Moodle 1.4.1+ (2004083101)
 
 
 $string['addafter'] = 'เพิ่มบทใหม่';
@@ -21,9 +21,10 @@ $string['importingchapters'] = 'กำลังนำเข้าบทนี้ลงในหนังสือ';
 $string['maindirectory'] = 'ไดเรกทอรีหลัก';
 $string['modulename'] = 'หนังสือ';
 $string['modulenameplural'] = 'หนังสือ';
+$string['navexit'] = 'ออกจากการสร้างหนังสือ';
 $string['navnext'] = 'ต่อไป';
 $string['navprev'] = 'ก่อนหน้า';
-$string['numbering'] = 'ลำดับย่อหน้า';
+$string['numbering'] = 'เลขหน้า';
 $string['numbering0'] = 'ไม่มี';
 $string['numbering1'] = 'ตัวเลข';
 $string['numbering2'] = 'บูลเล็ท';
@@ -34,6 +35,9 @@ $string['printdate'] = 'วันที่';
 $string['printedby'] = 'พิมพ์โดย';
 $string['relinking'] = 'ลิงก์ใหม่';
 $string['subchapter'] = 'บทย่อย';
+$string['thischarset'] = 'TIS-620';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Thai';
 $string['toc'] = 'สารบาญ';
 $string['tocwidth'] = 'เลือกความกว้างของสารบาญสำหรับหนังสือ';
 $string['top'] = 'ขึ้นข้างบน';

@@ -78,7 +78,7 @@
         
                     //Insert the record id. backup_users decide it.
                     //When all users
-                    $status = insert_record('backup_ids', $backupids_rec, false);
+                    $status = insert_record("backup_ids",$backupids_rec,false,"backup_code");
                     $count_users++;
                 }
                 //Do some output     
@@ -271,7 +271,7 @@
                     $status = execute_sql("INSERT INTO {$CFG->prefix}backup_files
                                                (backup_code, file_type, path, old_id)
                                            VALUES
-                                               ('$backup_unique_code','user','".addslashes($dir)."','$userid')",false);
+                                               ('$backup_unique_code','user','$dir','$userid')",false);
                 }
                 //Do some output
                 backup_flush(30);
@@ -315,7 +315,7 @@
                     $status = execute_sql("INSERT INTO {$CFG->prefix}backup_files
                                                   (backup_code, file_type, path)
                                            VALUES
-                                              ('$backup_unique_code','course','".addslashes($dir)."')",false);
+                                              ('$backup_unique_code','course','$dir')",false);
                 }
             //Do some output
             backup_flush(30);
@@ -414,20 +414,13 @@
     }
 
     //Return the xml start tag 
-    function start_tag($tag,$level=0,$endline=false,$attributes=null) {
+    function start_tag($tag,$level=0,$endline=false) {
         if ($endline) {
            $endchar = "\n";
         } else {
            $endchar = "";
         }
-        $attrstring = '';
-        if (!empty($attributes) && is_array($attributes)) {
-            foreach ($attributes as $key => $value) {
-                $attrstring .= " ".xml_tag_safe_content($key)."=\"".
-                    xml_tag_safe_content($value)."\"";
-            }
-        }
-        return str_repeat(" ",$level*2)."<".strtoupper($tag).$attrstring.">".$endchar;
+        return str_repeat(" ",$level*2)."<".strtoupper($tag).">".$endchar;
     }
     
     //Return the xml end tag 
@@ -441,37 +434,18 @@
     }
     
     //Return the start tag, the contents and the end tag
-    function full_tag($tag,$level=0,$endline=true,$content,$attributes=null) {
-
-        global $CFG;
-
+    function full_tag($tag,$level=0,$endline=true,$content,$to_utf=true) {
         //Here we encode absolute links
         $content = backup_encode_absolute_links($content);
-
-        $st = start_tag($tag,$level,$endline,$attributes);
-
-        $co = xml_tag_safe_content($content);
-
-        $et = end_tag($tag,0,true);
-
-        return $st.$co.$et;
-    }
-
-
-    function xml_tag_safe_content($content) {
-        global $CFG;
-        //If enabled, we strip all the control chars from the text but tabs, newlines and returns
-        //because they are forbiden in XML 1.0 specs. The expression below seems to be
-        //UTF-8 safe too because it simply ignores the rest of characters.
-        $content = preg_replace("/(?(?=[[:cntrl:]])[^\n\r\t])/is","",$content);
-        if (!empty($CFG->unicodedb)) {
-            // Don't perform the conversion. Contents are Unicode.
-            $content = preg_replace("/\r\n|\r/", "\n", htmlspecialchars($content));
+        $st = start_tag($tag,$level,$endline);
+        $co="";
+        if ($to_utf) {
+            $co = preg_replace("/\r\n|\r/", "\n", utf8_encode(htmlspecialchars($content)));
         } else {
-            // Perform the conversion. Contents aren't Unicode.
-            $content = preg_replace("/\r\n|\r/", "\n", utf8_encode(htmlspecialchars($content)));
-        } 
-        return $content; 
+            $co = preg_replace("/\r\n|\r/", "\n", htmlspecialchars($content));
+        }
+        $et = end_tag($tag,0,true);
+        return $st.$co.$et;
     }
 
     //Prints General info about the course
@@ -512,39 +486,13 @@
                 $included = "true";
                 if ($element->userinfo) {
                     $userinfo = "true";
-                } 
+                }
             }
             //Prints the mod start
             fwrite ($bf,start_tag("MOD",3,true));
             fwrite ($bf,full_tag("NAME",4,false,$element->name));
             fwrite ($bf,full_tag("INCLUDED",4,false,$included));
             fwrite ($bf,full_tag("USERINFO",4,false,$userinfo));
-
-            if (is_array($preferences->mods[$element->name]->instances)
-                && count($preferences->mods[$element->name]->instances)) {
-                fwrite ($bf, start_tag("INSTANCES",4,true));
-                foreach ($preferences->mods[$element->name]->instances as $id => $object) {
-                    if (!empty($object->backup)) {
-                        //Calculate info
-                        $included = "false";
-                        $userinfo = "false";
-                        if ($object->backup) {
-                            $included = "true";
-                            if ($object->userinfo) {
-                                $userinfo = "true";
-                            }
-                        }
-                        fwrite ($bf, start_tag("INSTANCE",5,true));
-                        fwrite ($bf, full_tag("ID",5,false,$id));
-                        fwrite ($bf, full_tag("NAME",5,false,$object->name));
-                        fwrite ($bf, full_tag("INCLUDED",5,false,$included)) ;
-                        fwrite ($bf, full_tag("USERINFO",5,false,$userinfo));
-                        fwrite ($bf, end_tag("INSTANCE",5,true));
-                    }
-                }
-                fwrite ($bf, end_tag("INSTANCES",4,true));
-            }
-                
                  
             //Print the end
             fwrite ($bf,end_tag("MOD",3,true));
@@ -649,7 +597,6 @@
             fwrite ($bf,full_tag("LANG",3,false,$course->lang));
             fwrite ($bf,full_tag("THEME",3,false,$course->theme));
             fwrite ($bf,full_tag("COST",3,false,$course->cost));
-            fwrite ($bf,full_tag("CURRENCY",3,false,$course->currency));
             fwrite ($bf,full_tag("MARKER",3,false,$course->marker));
             fwrite ($bf,full_tag("VISIBLE",3,false,$course->visible));
             fwrite ($bf,full_tag("HIDDENSECTIONS",3,false,$course->hiddensections));
@@ -985,14 +932,6 @@
                if ($first_record) {
                    fwrite ($bf,start_tag("MODS",4,true));
                    $first_record = false;
-               }
-               // if we're doing selected instances, check that too.
-               if (is_array($preferences->mods[$moduletype]->instances) 
-                   && count($preferences->mods[$moduletype]->instances)
-                   && (!array_key_exists($course_module[$tok]->instance,$preferences->mods[$moduletype]->instances)
-                       || empty($preferences->mods[$moduletype]->instances[$course_module[$tok]->instance]->backup))) {
-                   $tok = strtok(",");
-                   continue;
                }
                //Print mod info from course_modules
                fwrite ($bf,start_tag("MOD",5,true));
@@ -1660,29 +1599,14 @@
 
         $status = true;
 
-        require_once($CFG->dirroot.'/mod/'.$module.'/backuplib.php');
-
-        if (is_array($preferences->mods[$module]->instances)) {
-            $onemodbackup = $module.'_backup_one_mod';
-            if (function_exists($onemodbackup)) {
-                foreach ($preferences->mods[$module]->instances as $instance => $object) {
-                    if (!empty($object->backup)) {
-                        $status = $onemodbackup($bf,$preferences,$instance);
-                    }
-                }
-            }  else {
-                $status = false;
-            }
-        } else { // whole module.
-            //First, re-check if necessary functions exists
-            $modbackup = $module."_backup_mods";
-            if (function_exists($modbackup)) {
-                //Call the function
-                $status = $modbackup($bf,$preferences);
-            } else {
-                //Something was wrong. Function should exist.
-                $status = false;
-            }
+        //First, re-check if necessary functions exists
+        $modbackup = $module."_backup_mods";
+        if (function_exists($modbackup)) {
+            //Call the function
+            $status = $modbackup($bf,$preferences);
+        } else {
+            //Something was wrong. Function should exist.
+            $status = false;
         }
    
         return $status; 
@@ -1726,7 +1650,7 @@
         }
 
         if ($result != $content && $CFG->debug>7) {                                  //Debug
-            echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';        //Debug
+            echo "<br /><hr />".$content."<br />changed to<br />".$result."<hr /><br />";        //Debug
         }                                                                            //Debug
 
         return $result;
@@ -1920,120 +1844,4 @@
 
         return $status;
     }
-
-    /** 
-     * compatibility function
-     * with new granular backup
-     * we need to know 
-     */
-    function backup_userdata_selected($preferences,$modname,$modid) {
-        return ((empty($preferences->mods[$modname]->instances)
-                 && !empty($preferences->mods[$modname]->userinfo)) 
-                || (is_array($preferences->mods[$modname]->instances) 
-                    && array_key_exists($modid,$preferences->mods[$modname]->instances)
-                    && !empty($preferences->mods[$modname]->instances[$modid]->userinfo)));
-    }
-
-
-    function backup_mod_selected($preferences,$modname,$modid) {
-        return ((empty($preferences->mods[$modname]->instances)
-                 && !empty($preferences->mods[$modname]->backup)) 
-                || (is_array($preferences->mods[$modname]->instances) 
-                    && array_key_exists($modid,$preferences->mods[$modname]->instances)
-                    && !empty($preferences->mods[$modname]->instances[$modid]->backup)));
-    }
-
-    /* 
-     * Checks for the required files/functions to backup every mod
-     * And check if there is data about it
-     */
-    function backup_fetch_prefs_from_request(&$preferences,&$count,$course) {
-        global $CFG,$SESSION;
-        
-        // check to see if it's in the session already
-        if (!empty($SESSION->backupprefs)  && array_key_exists($course->id,$SESSION->backupprefs) && !empty($SESSION->backupprefs[$course->id])) {
-            $sprefs = $SESSION->backupprefs[$course->id];
-            $preferences = $sprefs;
-            // refetch backup_name just in case.
-            $bn = optional_param('backup_name','',PARAM_FILE);
-            if (!empty($bn)) {
-                $preferences->backup_name = $bn;
-            }
-            $count = 1;
-            return true;
-        }
-            
-        if ($allmods = get_records("modules") ) {
-            foreach ($allmods as $mod) {
-                $modname = $mod->name;
-                $modfile = "$CFG->dirroot/mod/$modname/backuplib.php";
-                $modbackup = $modname."_backup_mods";
-                $modbackupone = $modname."_backup_one_mod";
-                $modcheckbackup = $modname."_check_backup_mods";
-                if (!file_exists($modfile)) {
-                    continue;
-                }
-                include_once($modfile);
-                if (!function_exists($modbackup) || !function_exists($modcheckbackup)) {
-                    continue;
-                }
-                $var = "exists_".$modname;
-                $preferences->$var = true;
-                $count++;
-                // check that there are instances and we can back them up individually
-                if (!count_records('course_modules','course',$course->id,'module',$mod->id) || !function_exists($modbackupone)) {
-                    continue;
-                }
-                $var = 'exists_one_'.$modname;
-                $preferences->$var = true;
-                $varname = $modname.'_instances';
-                $preferences->$varname = get_all_instances_in_course($modname,$course);
-                foreach ($preferences->$varname as $instance) {
-                    $preferences->mods[$modname]->instances[$instance->id]->name = $instance->name;
-                    $var = 'backup_'.$modname.'_instance_'.$instance->id;
-                    $$var = optional_param($var,0);
-                    $preferences->$var = $$var;
-                    $preferences->mods[$modname]->instances[$instance->id]->backup = $$var;
-                    $var = 'backup_user_info_'.$modname.'_instance_'.$instance->id;
-                    $$var = optional_param($var,0);
-                    $preferences->$var = $$var;
-                    $preferences->mods[$modname]->instances[$instance->id]->userinfo = $$var;
-                    $var = 'backup_'.$modname.'_instances';
-                    $preferences->$var = 1; // we need this later to determine what to display in modcheckbackup.
-                }
-
-                //Check data
-                //Check module info
-                $preferences->mods[$modname]->name = $modname;
-
-                $var = "backup_".$modname;
-                $$var = optional_param( $var,0);
-                $preferences->$var = $$var;
-                $preferences->mods[$modname]->backup = $$var;
-
-                //Check include user info
-                $var = "backup_user_info_".$modname;
-                $$var = optional_param( $var,0);       
-                $preferences->$var = $$var;
-                $preferences->mods[$modname]->userinfo = $$var;
-
-            }
-        }
-        
-        //Check other parameters
-        $preferences->backup_metacourse = optional_param('backup_metacourse',1,PARAM_INT);
-        $preferences->backup_users = optional_param('backup_users',1,PARAM_INT);
-        $preferences->backup_logs = optional_param('backup_logs',0,PARAM_INT);
-        $preferences->backup_user_files = optional_param('backup_user_files',1,PARAM_INT);
-        $preferences->backup_course_files = optional_param('backup_course_files',1,PARAM_INT);
-        $preferences->backup_messages = optional_param('backup_messages',1,PARAM_INT);
-        $preferences->backup_course = $course->id;
-        $preferences->backup_name = required_param('backup_name',PARAM_FILE );
-        $preferences->backup_unique_code =  required_param('backup_unique_code');
-
-        // put it (back) in the session
-       $SESSION->backupprefs[$course->id] = $preferences;
-    }
-
-
 ?>

@@ -132,7 +132,6 @@ class PGTStorageFile extends PGTStorage
       default:
 	phpCAS::error('unknown PGT file storage format (`'.CAS_PGT_STORAGE_FILE_FORMAT_PLAIN.'\' and `'.CAS_PGT_STORAGE_FILE_FORMAT_XML.'\' allowed)');
       }
-      phpCAS::traceEnd();      
     }
 
   // ########################################################################

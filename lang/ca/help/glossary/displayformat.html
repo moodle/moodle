@@ -1,24 +1,31 @@
-<p align="center"><b>Format de visualització</b></p>
+<p align="center"><b>Format de visualitzaci&oacute;</b></p>
 
-<p>Aquest paràmetre especifica la manera de visualitzar cada entrada dins del glossari. Els formats per defecte són:</p>
+<p>Aquest par&agrave;metre especifica la manera de visualitzar cada entrada dins del glossari. Els formats per defecte s&oacute;n:</p>
 
 <blockquote>
 <dl>
 <dt><b>Diccionari simple</b>:</dt>
-<dd>Sembla un diccionari convencional amb entrades separades. No es visualitzen els autors i els fitxers adjunts apareixen com a enllaços.</dd>
+<dd>Sembla un diccionari convencional amb entrades separades. No es visualitzen els autors i els fitxers adjunts apareixen com a enlla&ccedil;os.</dd>
 <dt><b>Continuat</b>:</dt>
-<dd>Mostra les entrades una rere l'altra sense cap mena de separació més que les icones d'edició.</dd>
+<dd>Mostra les entrades una rere l'altra sense cap mena de separaci&oacute; m&eacute;s que les icones d'editar.</dd>
 <dt><b>Complet amb autor</b>:</dt>
-<dd>Un format de visualització estil fòrum amb les dades de l'autor. Els fitxers adjunts es mostren com a enllaços.</dd>
+<dd>Un format de visualitzaci&oacute; estil f&ograve;rum amb les dades de l'autor. Els fitxers adjunts es mostren com a enlla&ccedil;os.</dd>
 <dt><b>Complet sense autor</b>:</dt>
-<dd>Un format de visualització estil fòrum, sense dades de l'autor. Els fitxers adjunts es mostren com a enllaços.</dd>
-<dt><b>Enciclopèdia</b>:</dt>
-<dd>Com el 'Complet amb autor' però les imatges adjuntes es visualitzen dins de l'entrada.</dd>
-<dt><b>PMF</b>:</dt>
-<dd>Útil per a visualitzar llistes de preguntes freqüents. Afegeix automàticament les paraules PREGUNTA i RESPOSTA al concepte i a la definició respectivament.</dd>
+<dd>Un format de visualitzaci&oacute; estil f&ograve;rum sense dades de l'autor. Els fitxers adjunts es mostren com a enlla&ccedil;os.</dd>
+<dt><b>Enciclop&egrave;dia</b>:</dt>
+<dd>Com el 'Complet amb autor' per&ograve; les imatges adjuntes es mostren dins de l'entrada.</dd>
+<dt><b>FAQ</b>:</dt>
+<dd>&Uacute;til per visualitzar llistes de preguntes freq&uuml;ents (Frequently Asked Questions). Afegeix autom&agrave;ticament les paraules PREGUNTA i RESPOSTA respectivament al concepte i a la definici&oacute;.</dd>
 </dl>
 </blockquote>
 
 <hr />
 
-<p>Els administradors de Moodle poden crear nous formats seguint les instruccions del fitxer <b>mod/glossary/formats/README.txt</b>.</p>
+<p>Els administradors de Moodle poden crear nous formats aix&iacute;:</p>
+
+<ol>
+<li>Mireu dins de mod/glossary/formats ... veureu un fitxer numerat per a cada un dels formats existents.
+<li>Copieu un d'aquests i anomeneu-lo amb un altre n&uacute;mero N (teniu en compte que 0 i 1 estan reservats).
+<li>Editeu aquest fitxer com calgui per crear el vostre format (es necessiten coneixements de PHP).
+<li>Finalment, inseriu una nova entrada en cada paquet d'idioma que utilitzeu, que s'ha de dir <b>displayformatN</b>, i doneu-li un nom breu per&ograve; explicatiu.
+</ol>

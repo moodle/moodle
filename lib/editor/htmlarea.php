@@ -1,20 +1,10 @@
 <?php
     include("../../config.php");
 
-    $id = optional_param('id', 0, PARAM_INT);
-
     $lastmodified = filemtime("htmlarea.php");
     $lifetime = 1800;
 
-    // Commenting this out since it's creating problems
-    // where solution seem to be hard to find...
-    // http://moodle.org/mod/forum/discuss.php?d=34376
-    //if ( function_exists('ob_gzhandler') ) {
-    //    ob_start("ob_gzhandler");
-    //}
-
-    $charset = get_string('thischarset');
-    header("Content-type: application/x-javascript; charset: $charset");  // Correct MIME type
+    header("Content-type: application/x-javascript");  // Correct MIME type
     header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
     header("Expires: " . gmdate("D, d M Y H:i:s", time() + $lifetime) . " GMT");
     header("Cache-control: max_age = $lifetime");
@@ -682,7 +672,6 @@ HTMLArea.prototype.generate = function () {
     if (!editor.config.fullPage) {
         html = "<html>\n";
         html += "<head>\n";
-        html += '<meta http-equiv="content-type" content="text/html; charset=<?php echo $charset; ?>" />\n';
         if (editor.config.baseURL)
             html += '<base href="' + editor.config.baseURL + '" />';
         html += '<style type="text/css">\n' + editor.config.pageStyle + "td { border: 1px dotted gray; }</style>\n";
@@ -1893,14 +1882,7 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
             }
         } catch (e) {
             if (HTMLArea.is_gecko) {
-                if (confirm("<?php
-                    $strmoz = get_string('cutpastemozilla','editor');
-                    $strmoz = preg_replace("/[\n|\r]+/", "", $strmoz);
-                    $strmoz = str_replace('<br />', '\\n', $strmoz);
-
-                    echo addslashes($strmoz);
-
-                    ?>"))
+                if (confirm("<?php echo str_replace('<br />', '\\n', get_string('cutpastemozilla','editor')) ?>"))
                     window.open("http://moodle.org/mozillahelp");
             }
         }
@@ -1966,7 +1948,7 @@ HTMLArea.prototype._editorEvent = function(ev) {
             case 'j': cmd = "justifyfull"; break;
             case 'z': cmd = "undo"; break;
             case 'y': cmd = "redo"; break;
-            case 'v': if (! HTMLArea.is_gecko ) { cmd = "paste"; } break;
+            case 'v': cmd = "paste"; break;
 
             case '0': cmd = "killword"; break;
 

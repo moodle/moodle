@@ -90,10 +90,6 @@ h4 {
   text-align: center;
 }
 
-.errorboxcontent {
-  text-align: center;
-}
-
 .pagingbar .title {
   font-weight: bold;
 }
@@ -181,23 +177,6 @@ table.formtable tbody th {
   text-align: right;
 }
 
-body#admin-blocks table#incompatible td.c0 {
-  font-weight: bold;
-}
-
-body#admin-index .explanation {
-  font-size: 0.7em;
-  vertical-align: bottom;
-}
-
-body#admin-index .copyright {
-  text-align: center;
-  font-size: 0.8em;
-}
-
-body#admin-environment table .environmenttable {
-  font-size: 0.8em;
-}
 
 /***
  *** Blocks
@@ -213,19 +192,10 @@ body#admin-environment table .environmenttable {
   line-height:1.2em;
 }
 
-.sideblock a {
-  line-height:1.2em
-}
-
 .sideblock .content h3,
 .sideblock .content h2 {
   font-size:1.0em;
 }
-
-.sideblock .content .message {
-  font-size:0.9em
-}
-
 .sideblock .header .commands {
   font-size:0.9em;
 }
@@ -246,11 +216,6 @@ body#admin-environment table .environmenttable {
 
 .block_site_main_menu .footer select {
   font-size: 0.8em;
-}
-
-.block_online_users .listentry {
-  text-align:left;
-  font-size:0.75em
 }
 
 /***
@@ -482,10 +447,6 @@ body#grade-index .grades .header {
   font-size: 0.7em;
 }
 
-body#user-index #longtimenosee {
-  font-size: 0.8em;
-}
-
 
 /***
  *** Modules: Assignment
@@ -525,8 +486,7 @@ body#user-index #longtimenosee {
   font-size: 0.8em;
 }
 .forumpost .commands,
-.forumpost .link,
-.forumpost .footer {
+.forumpost .link {
   font-size: 0.9em;
 }
 .forumheaderlist .discussion .lastpost {
@@ -539,9 +499,6 @@ body#mod-forum-index .generalbox .cell {
   font-size: 0.80em;
 }
 
-.forumpost .edited {
-  font-style: italic;
-}
 
 
 /***
@@ -551,17 +508,19 @@ body#mod-forum-index .generalbox .cell {
 .glossarypost .commands {
   font-size: 0.8em;
 }
-.glossarypost .author {
+.glossarypost .entryheader .author,
+.glossarypost .entryheader .time {
   font-size: 0.8em;
 }
-.glossarypost .time {
-  font-size: 0.8em;
+.glossarypost .entryheader .time {
+  font-style: italic;
 }
 .concept {
   font-weight: bold;
 }
-.glossarycomment .author {
+.glossarycomment .time {
   font-size: 0.8em;
+  font-style: italic;
 }
 .entrylowersection .aliases {
   font-size: 0.8em;
@@ -630,11 +589,6 @@ body#mod-forum-index .generalbox .cell {
  ***/
 
 #mod-resource-index .cell {
-  font-size:0.8em;
-}
-
-.ims-nav-dimmed,
-.ims-nav-button {
   font-size:0.8em;
 }
 

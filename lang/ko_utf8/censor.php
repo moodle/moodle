@@ -1,8 +1,10 @@
 <?PHP // $Id$ 
-      // censor.php - created with Moodle 1.6 development (2005060201)
+      // censor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
-$string['badwords'] = '남자나 성기나 여자의 음부에 관련된 용어나, 욕설들은 사용하실수 없습니다.';
 $string['filtername'] = '문자 검열';
+$string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 
 ?>

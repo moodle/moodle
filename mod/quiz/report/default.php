@@ -21,7 +21,7 @@ class quiz_default_report {
         return true;
     }
 
-    function print_header_and_tabs($cm, $course, $quiz, $reportmode="overview"){
+    function print_header_and_tabs($cm, $course, $quiz, $reportmode="simplestat"){
     /// Define some strings
         $strquizzes = get_string("modulenameplural", "quiz");
         $strquiz  = get_string("modulename", "quiz");

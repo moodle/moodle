@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_quiz_results.php - created with Moodle 1.6 development (2005090100)
+      // block_quiz_results.php - created with Moodle 1.4.3 + (2004083131)
 
 
 $string['bestgrade'] = 'Det högsta betyget:';
@@ -10,10 +10,6 @@ $string['config_format_absolute'] = 'Absoluta tal';
 $string['config_format_fraction'] = 'Fraktioner';
 $string['config_format_percentage'] = 'Procent';
 $string['config_grade_format'] = 'Visa betyg/omdömen som:';
-$string['config_name_format'] = 'Nivå av privat integritet för visade resultat';
-$string['config_names_anon'] = 'Anonyma resultat';
-$string['config_names_full'] = 'Visa hela namnet';
-$string['config_names_id'] = 'Vísa bara ID-nummer';
 $string['config_no_quizzes_in_course'] = 'Den här kursen innehåller inga aktiviteter av typen test. Du måste lägga till åtminstone ett innan Du kan använda det här blocket på rätt sätt.';
 $string['config_select_quiz'] = 'Från vilket test ska det här blocket visa resultat?';
 $string['config_show_best'] = 'Hur många av de högsta betygen/omdömena vill Du visa? (Välj \'0\' för att avaktivera)';

@@ -104,7 +104,7 @@ function page_map_class($type, $classname = NULL) {
         }
     }
 
-    if (empty($classname) && !class_exists($mappings[$type])) {
+    if (!class_exists($mappings[$type])) {
         if ($CFG->debug > 7) {
             error('Page class mapping for id "'.$type.'" exists but class "'.$mappings[$type].'" is not defined');
         }
@@ -239,11 +239,7 @@ class page_base {
         }
 
         $params = $this->url_get_parameters();
-        if (!empty($params)) {
-            $params = array_merge($params, $extraparams);
-        } else {
-            $params = $extraparams;
-        }
+        $params = array_merge($params, $extraparams);
 
         if(empty($params)) {
             return $path;
@@ -297,12 +293,6 @@ class page_base {
     function init_full() {
         $this->full_init_done = true;
     }
-
-
-    // is this  page always editable, regardless of anything else?
-    function edit_always() {
-        return (isadmin() &&  defined('ADMIN_STICKYBLOCKS'));
-    }
 }
 
 
@@ -323,7 +313,7 @@ class page_course extends page_base {
     // Do any validation of the officially recognized bits of the data and forward to parent.
     // Do NOT load up "expensive" resouces (e.g. SQL data) here!
     function init_quick($data) {
-        if(empty($data->pageid) && !defined('ADMIN_STICKYBLOCKS')) {
+        if(empty($data->pageid)) {
             error('Cannot quickly initialize page: empty course id');
         }
         parent::init_quick($data);
@@ -337,11 +327,8 @@ class page_course extends page_base {
         if($this->full_init_done) {
             return;
         }
-        if (empty($this->id)) {
-            $this->id = 0; // avoid db errors
-        }
         $this->courserecord = get_record('course', 'id', $this->id);
-        if(empty($this->courserecord) && !defined('ADMIN_STICKYBLOCKS')) {
+        if(empty($this->courserecord)) {
             error('Cannot fully initialize page: invalid course id '. $this->id);
         }
         $this->full_init_done = true;
@@ -352,18 +339,12 @@ class page_course extends page_base {
     // When is a user said to have "editing rights" in this page? This would have something
     // to do with roles, in the future.
     function user_allowed_editing() {
-        if (isadmin() && defined('ADMIN_STICKYBLOCKS')) {
-            return true;
-        }
         return isteacheredit($this->id);
     }
 
     // Is the user actually editing this page right now? This would have something
     // to do with roles, in the future.
     function user_is_editing() {
-        if (isadmin() && defined('ADMIN_STICKYBLOCKS')) {
-            return true;
-        }
         return isediting($this->id);
     }
 
@@ -407,11 +388,10 @@ class page_course extends page_base {
 
         // The "Editing On" button will be appearing only in the "main" course screen
         // (i.e., no breadcrumbs other than the default one added inside this function)
-        $buttons = update_course_icon($this->courserecord->id ) . update_studentview_button( $this->courserecord->id );
-        $buttons = empty($morebreadcrumbs) ? $buttons : '&nbsp;';
+        $button = empty($morebreadcrumbs) ? update_course_icon($this->courserecord->id) : '&nbsp;';
 
         print_header($title, $this->courserecord->fullname, $crumbtext,
-                     '', '', true, $buttons, user_login_string($this->courserecord, $USER));
+                     '', '', true, $button, user_login_string($this->courserecord, $USER));
     }
 
     // SELF-REPORTING SECTION
@@ -436,9 +416,6 @@ class page_course extends page_base {
     // This should return a fully qualified path to the URL which is responsible for displaying us.
     function url_get_path() {
         global $CFG;
-        if (defined('ADMIN_STICKYBLOCKS')) {
-            return $CFG->wwwroot.'/admin/stickyblocks.php';
-        }
         if($this->id == SITEID) {
             return $CFG->wwwroot .'/index.php';
         }
@@ -450,9 +427,6 @@ class page_course extends page_base {
     // This should return an associative array of any GET/POST parameters that are needed by the URL
     // which displays us to make it work. If none are needed, return an empty array.
     function url_get_parameters() {
-        if (defined('ADMIN_STICKYBLOCKS')) {
-            return array('pt' => ADMIN_STICKYBLOCKS);
-        }
         if($this->id == SITEID) {
             return array();
         }

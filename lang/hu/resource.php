@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032600)
+      // resource.php - created with Moodle 1.4 (2004083100)
 
 
 $string['addresource'] = 'Tananyag hozzáadása';
@@ -23,7 +23,6 @@ $string['configpopupwidth'] = 'Az elõbukkanó ablakok alapbeállításban milyen szé
 $string['configsecretphrase'] = 'Ez a titkos kifejezés azon kódolt érték elõállítására szolgál, amelyet bizonyos tananyagok  pareméterként kaphatnak meg. A titkos kód a felhasználók IP-címének md5-értéke és a titkos kifejezés egyesítésébõl származik: md5(IP.kifejezés). Ezzel a céltananyag a fokozott biztonság érdekében ellenõrizheti a csatlakozást. ';
 $string['configwebsearch'] = 'URL weboldalként vagy ugrópontként való beszúrásakor ez a hely segíti a felhasználót a keresett URL megtalálásában.';
 $string['configwindowsettings'] = 'Ez új tananyag beszúrásakor beállítja az ablakbeállítások alapértékét. Az elsõ alkalmat követõen ez egy egyéni felhasználói preferencia lesz.  ';
-$string['deploy'] = 'Használatba vétel';
 $string['directlink'] = 'Közvetlen ugópont ehhez a fájlhoz';
 $string['directoryinfo'] = 'A kiválasztott könyvtár minden állománya látszani fog.';
 $string['display'] = 'Ablak';
@@ -39,7 +38,6 @@ $string['filtername'] = 'Tananyagnév automatikus csatolása';
 $string['frameifpossible'] = 'Helyezze a tananyagot keretbe, hogy a navigálás látható maradjon';
 $string['fulltext'] = 'Szöveg';
 $string['htmlfragment'] = 'HTML részlet';
-$string['imspackageloaded'] = 'Csomag betöltve.';
 $string['localfile'] = 'Helyi állomány';
 $string['localfilechoose'] = 'Helyi állomány (CD-ROM) kiválasztása';
 $string['localfilehelp'] = 'Súgó helyi állományok megjelenítéséhez';
@@ -49,7 +47,6 @@ $string['localfileselect'] = 'Ezen útvonal kiválasztása.';
 $string['maindirectory'] = 'Fõ állományok könyvtára';
 $string['modulename'] = 'Tananyag';
 $string['modulenameplural'] = 'Tananyagok';
-$string['navigationbuttons'] = 'Navigációs gombok';
 $string['neverseen'] = 'Ismeretlen';
 $string['newdirectories'] = 'Könyvtárkapcsolatok látsszanak';
 $string['newfullscreen'] = 'Teljes képernyõs';
@@ -65,10 +62,9 @@ $string['newwindow'] = 'Új ablak';
 $string['newwindowopen'] = 'Ez a tananyag új ablakban jelenjen meg';
 $string['notallowedlocalfileaccess'] = 'A helyi állományok elérése jelenleg ki van kapcsolva, így a forrás nem elérhetõ.';
 $string['note'] = 'Megjegyzés';
-$string['notefile'] = 'Egy vagy több fájl kurzusba való feltöltéséhez (hogy a felsorolásban megjelenjenek) használja a <a href=\"$a\">Fájlmenedzsert</a>.';
+$string['notefile'] = 'Egy vagy több fájl kurzusba való feltöltéséhez (hogy a felsorolásban megjelenjenek) használja a 
+<a href=\"$a\">Fájlmenedzsert</a>.';
 $string['notypechosen'] = 'Típust kell választania. A Vissza gombbal menjen az elõzõ oldalra és próbálja újból.';
-$string['packagechanged'] = 'Ez az IMS-csomag módosult.';
-$string['packagenotdeplyed'] = 'Az IMS-csomag nincs használatba véve.';
 $string['pagedisplay'] = 'A tananyagot a mostani ablakban mutassa';
 $string['pagewindow'] = 'Ugyanaz az ablak';
 $string['pan'] = 'Tálca';
@@ -76,7 +72,6 @@ $string['parameter'] = 'Paraméter';
 $string['parameters'] = 'Paraméterek';
 $string['popupresource'] = 'Ennek a tananyagnak elõbukkanó ablakban kell megjelenni.';
 $string['popupresourcelink'] = 'Ha nem, kattintson ide: $a';
-$string['redeploy'] = 'Újbóli használat';
 $string['resourcetype'] = 'Tananyag típusa';
 $string['resourcetype1'] = 'Hivatkozás';
 $string['resourcetype2'] = 'Weboldal';
@@ -90,16 +85,11 @@ $string['resourcetype9'] = 'Könyvtár';
 $string['resourcetypedirectory'] = 'Könyvtár kijelzése';
 $string['resourcetypefile'] = 'Kapcsolás állományhoz vagy honlaphoz';
 $string['resourcetypehtml'] = 'Weboldal létrehozása';
-$string['resourcetypeims'] = 'IMS-csomag nincs használatba vétele';
 $string['resourcetypelabel'] = 'Címke beszúrása';
-$string['resourcetyperepository'] = 'Kapcsolás adattárbeli objektumhoz';
 $string['resourcetypetext'] = 'Szöveges oldal létrehozása';
 $string['searchweb'] = 'Weboldal keresése';
 $string['serverurl'] = 'Szerver URL-je ($a->wwwroot)';
-$string['showcourseblocks'] = 'Kurzusblokkok megjelenítése';
-$string['tableofcontents'] = 'Tartalomjegyzék';
 $string['variablename'] = 'Változó neve';
-$string['viewims'] = 'IMS-csomag megtekintése';
 $string['vol'] = 'Vol';
 
 ?>

@@ -56,13 +56,6 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
             }
         }
 
-        // delete old answer records
-        if (!empty($oldanswers)) {
-            foreach($oldanswers as $oa) {
-                delete_records('quiz_answers', 'id', $oa->id);
-            }
-        }
-
         if ($options = get_record("quiz_truefalse", "question", $question->id)) {
             // No need to do anything, since the answer IDs won't have changed
             // But we'll do it anyway, just for robustness
@@ -123,17 +116,17 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
     * Prints the main content of the question including any interactions
     */
     function print_question_formulation_and_controls(&$question, &$state,
-            $cmoptions, $options) {
+            $quiz, $options) {
 
         $answers = &$question->options->answers;
         $correctanswers = $this->get_correct_responses($question, $state);
-        $readonly = $options->readonly ? ' readonly="readonly"' : '';
+        $readonly = $options->readonly ? ' disabled="disabled"' : '';
 
         // Print question formulation
         echo format_text($question->questiontext,
                          $question->questiontextformat,
-                         NULL, $cmoptions->course);
-        quiz_print_possible_question_image($question);
+                         NULL, $quiz->course);
+        quiz_print_possible_question_image($quiz->id, $question);
 
         // Update the answer strings
         $stranswer = get_string('answer', 'quiz');
@@ -199,20 +192,17 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
 
         // Print the controls
         $inputname = ' name="'.$question->name_prefix.'" ';
-        $trueid    = $question->name_prefix.'true';
-        $falseid   = $question->name_prefix.'false';
         echo '<table align="right" cellpadding="5"><tr><td align="right">';
         echo $stranswer . ':&nbsp;&nbsp;</td>';
         echo '<td' . $truecorrect . '>';
         echo '<input type="radio"' . $truechecked . $readonly . $inputname;
-        echo 'id="'.$trueid . '" value="' . $answers['true']->id . '" alt="';
-        echo s($answers['true']->answer) . '" /><label for="'.$trueid . '">';
-        echo s($answers['true']->answer) . '</label>';
+        echo 'value="' . $answers['true']->id . '" alt="';
+        echo s($answers['true']->answer) . '" />' . s($answers['true']->answer);
         echo '</td><td' . $falsecorrect . '>';
         echo '<input type="radio"' . $falsechecked . $readonly . $inputname;
-        echo 'id="'.$falseid . '" value="' . $answers['false']->id . '" alt="';
-        echo s($answers['false']->answer) . '" /><label for="'.$falseid . '">';
-        echo s($answers['false']->answer) . '</label>';
+        echo 'value="' . $answers['false']->id . '" alt="';
+        echo s($answers['false']->answer) . '" />';
+        p($answers['false']->answer);
         if (!empty($marked) && (!$options->readonly || $marked !== $selected)) {
             /* This should never happen but it is here both for robustness and
             to serve as an example for question type authors */
@@ -234,7 +224,7 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
         }
     }
 
-    function grade_responses(&$question, &$state, $cmoptions) {
+    function grade_responses(&$question, &$state, $quiz) {
         $teststate = clone($state);
 	    $teststate->raw_grade = 0;
         foreach($question->options->answers as $answer) {
@@ -253,16 +243,6 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
         $state->penalty = 1;
 
         return true;
-    }
-
-    function get_actual_response($question, $state) {
-        $answers = $question->options->answers;
-        if (!empty($state->responses)) {
-                $responses[] = ($answers['true']->id == $state->responses['']) ? get_string("true", "quiz") : get_string("false", "quiz");
-        } else {
-            $responses[] = '';
-        }
-        return $responses;
     }
 }
 //// END OF CLASS ////

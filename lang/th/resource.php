@@ -1,11 +1,10 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.6 development (2005101200)
+      // resource.php - created with Moodle 1.4.2 (2004083125)
 
 
 $string['addresource'] = 'เพิ่มแหล่งข้อมูล';
 $string['chooseafile'] = 'เลือกหรืออัพโหลดไฟล์';
 $string['chooseparameter'] = 'เลือกตัวแปร';
-$string['configallowlocalfiles'] = 'เมื่อมีการสร้างแหล่งข้อมูลประเภทไฟล์ขึ้น โดยที่ทำการลิงก์ไปยังไฟล์ที่อยู่ในคอมพิวเตอร์ หรือไฟล์ออฟไลน์เช่นใน CD หรือในฮาร์ดดิสก์ มีประโยชน์ในกรณีที่ต้องเข้าไปศึกษาเนื้อหาเพิ่มเติมใน CD  การใช้งานในข้อนี้ต้องปรับเปลี่ยนการตั้งค่า security  ของบราวเซอร์ที่คุณใช้งาน';
 $string['configdefaulturl'] = 'ใช้ค่านี้ที่จะกรอกฟอร์ม URL อัตโนมัติเมื่อต้องการสร้างแหล่งข้อมูล URL ใหม่';
 $string['configfilterexternalpages'] = 'การเลือกการตั้งค่าแบบนี้จะส่งผลให้แหล่งข้อมูลภายนอก (เว็บเพจ หรือไฟล์htmlต่างๆที่ถูกอัพโหลด) ถูกจัดใหม่ด้วยค่าที่ไซต์ได้กำหนดไว้  และเมื่อคุณเลือกการตั้งค่าแบบนี้อาจจะทำให้การเปิดดูรายวิชาเรียนช้าลงอย่างมาก  ฉะนั้นกรุณาใช้ด้วยความระมัดระวัง  และใช้ต่อเมื่อจำเป็นเท่านั้น';
 $string['configframesize'] = 'เมื่อแสดงเว็บเพจหรืออัพโหลดไฟล์ในกรอบ ขนาดของค่านี้ (พิกเซล) คือค่าของขนาดกรอบบน ';
@@ -23,7 +22,6 @@ $string['configpopupwidth'] = 'กำหนดความกว้างของหน้าต่างที่จะปรากฏขึ้นมา';
 $string['configsecretphrase'] = 'ประโยคลับที่ใช้ในการใส่รหัสโค้ดเมื่อมีการส่งแหล่งข้อมูลในรูปแบบของตัวแปร  โค้ดดังกล่าวนี้จะมีการใส่รหัสในรูปแบบ md5  ไอพีที่คุณใช้ ตามด้วยประโยคลับ   เช่น code = md5(IP.secretphrase) เพื่อความปลอดภัยที่มากขึ้น';
 $string['configwebsearch'] = 'ในการที่จะเพิ่ม URL ให้เป็นเว็บลิงก์หรือเว็บเพจ  จุดตรงนี้จะช่วยให้สมาชิกสามารถค้นหา URL ที่ต้องการได้ง่ายขึ้น';
 $string['configwindowsettings'] = 'ตั้งค่าหน้าต่างในการเพิ่มแหล่งข้อมูลใหม่ ค่านี้จะเป็นค่าที่ระบบจำไว้สำหรับสมาชิกแต่ละคน';
-$string['deploy'] = 'บังคับ';
 $string['directlink'] = 'ลิงก์ไปยังไฟล์นี้';
 $string['directoryinfo'] = 'แสดงไฟล์ที่เลือกทั้งหมดในไดเรกทอรีนี้';
 $string['display'] = 'หน้าต่าง';
@@ -33,48 +31,37 @@ $string['example'] = 'ตัวอย่าง';
 $string['exampleurl'] = 'http://www.example.com/somedirectory/somefile.html';
 $string['fetchclienterror'] = 'พบข้อผิดพลาดในการเรียกดูเว็บเพจที่คุณต้องการ (อาจเกิดจาก URL ไม่ถูกต้อง)';
 $string['fetcherror'] = 'พบข้อผิดพลาดในการเรียกดูเว็บเพจ';
-$string['fetchservererror'] = 'พบข้อผิดพลาดในเซิร์ฟเวอร์ในระหว่างการเรียกดูเว็บเพจ (อาจเกิดจากความผิดพลาดของโปรแกรม)</p>';
+$string['fetchservererror'] = 'พบข้อผิดพลาดในเซิร์ฟเวอร์ในระหว่างการเรียกดูเว็บเพจ (อาจเกิดจากความผิดพลาดของโปรแกรม)';
 $string['filename'] = 'ชื่อไฟล์';
 $string['filtername'] = 'ลิงก์ไปยังแหล่งข้อมูลอัตโนมัติ';
 $string['frameifpossible'] = 'ใส่แหล่งข้อมูลไว้ในเฟรมเพื่อให้มองเห็น site navigation';
 $string['fulltext'] = 'เนื้อหาเต็ม';
 $string['htmlfragment'] = 'HTML fragment';
-$string['imspackageloaded'] = 'โหลดแพกเกจ';
-$string['localfile'] = 'ไฟล์ Local';
-$string['localfilechoose'] = 'เลือกไฟล์จาก CD-ROM';
-$string['localfilehelp'] = 'ช่วยเหลือในการแสดงไฟล์';
-$string['localfileinfo'] = 'เลือกไฟล์จากคอมพิวเตอร์ของท่าน ไฟล์ดังกล่าวจะไม่มีการอัพโหลดขึ้นไปยังเว็บไซต์ Moodle จะค้นหาไฟล์ตามที่อยู่ที่ระบุภายในเครื่องของผู้ใช้ที่กำลังศึกษาแหล่งข้อมูลนั้น ๆ  มีประโยชน์สำหรับการศึกษาข้อมูลผ่านซีดีรอม นักเรียนแต่ละคนสามารถแก้ไข path ของไฟล์นั้น ๆได้โดยการคลิกที่ <a href=\"$a\" target=\"_blank\">แก้ไขประวัติส่วนตัว</a>.</p>';
-$string['localfilepath'] = 'ในการตั้งค่า path สำหรับแหล่งข้อมูลนั้น เลือกไฟล์ต่าง ๆ จากซีดีรอม หรือไฟล์ที่อยู่ในเครื่องของคุณ ไฟล์ดังกล่าวจะไม่มีการอัพโหลดขึ้นสู่เว็บไซต์';
-$string['localfileselect'] = 'เลือก path ของไฟล์';
 $string['maindirectory'] = 'ไดเรกทอรีหลัก';
 $string['modulename'] = 'แหล่งข้อมูล';
 $string['modulenameplural'] = 'แหล่งข้อมูล';
-$string['navigationbuttons'] = 'ปุ่ม navigation ';
 $string['neverseen'] = 'ไม่เคยเห็น';
-$string['newdirectories'] = 'แสดงลิงก์ไปยังไดเรกทอรี';
+$string['newdirectories'] = 'แสดงลิงก์ไปยังไดเรคทอรี่';
 $string['newfullscreen'] = 'แสดงเต็มหน้าจอ';
-$string['newheight'] = 'ความสูงของหน้าต่างที่ตั้งไว้(พิกเซล)';
+$string['newheight'] = 'ความสูงของวินโดว์ปกติ (พิกเซล)';
 $string['newlocation'] = 'แสดงแถบใส่ url';
 $string['newmenubar'] = 'แสดงแถบเมนู';
-$string['newresizable'] = 'อนุญาตให้เปลี่ยนขนาดของหน้าต่าง';
-$string['newscrollbars'] = 'อนุญาตให้เลื่อนหน้าต่างขึ้นลงได้';
+$string['newresizable'] = 'อนุญาตให้เปลี่ยนขนาดของวินโดว์';
+$string['newscrollbars'] = 'อนุญาตให้มีการสกรอลในวินโดว์';
 $string['newstatus'] = 'แสดงแถบสถานะ';
 $string['newtoolbar'] = 'แสดงแถบเครื่องมือ';
-$string['newwidth'] = 'ความกว้างของหน้าต่างที่ตั้งไว้ (พิกเซล)';
+$string['newwidth'] = 'ความกว้างของวินโดว์ที่ตั้งไว้ (พิกเซล)';
 $string['newwindow'] = 'หน้าต่างใหม่';
 $string['newwindowopen'] = 'แสดงแหล่งข้อมูลในหน้าต่างใหม่';
-$string['notallowedlocalfileaccess'] = 'ปิดการใช้งานการเข้าถึงไฟล์ในคอมพิวเตอร์ ไม่สามารถใช้แหล่งข้อมูลนี้ได้ในขณะนี้';
 $string['note'] = 'หมายเหตุ';
 $string['notefile'] = 'หากต้องการอัพโหลดไฟล์ สำหรับรายวิชานี้กรุณาใช้
-<A HREF=$a >File Manager</A>.';
+<a href="\$a\">File Manager</a>.';
 $string['notypechosen'] = 'คุณต้องเลือกประเภท กรุณาใช้ปุ่ม  back เพื่อกลับไปเลือก';
-$string['packagechanged'] = 'เปลี่ยนแปลง IMS CP';
-$string['packagenotdeplyed'] = 'IMS CP นี้ไม่สามารถใช้งานได้';
 $string['pagedisplay'] = 'แสดงแหล่งข้อมูลในหน้าต่างปัจจุบัน';
 $string['pagewindow'] = 'หน้าต่างเดิม';
-$string['pan'] = 'กวาด';
 $string['parameter'] = 'พารามิเตอร์';
 $string['parameters'] = 'พารามิเตอร์';
+$string['parentlanguage'] = 'en';
 $string['popupresource'] = 'แหล่งข้อมูลนี้ควรจะปรากฎในหน้าต่างถัดไป';
 $string['popupresourcelink'] = 'ถ้าไม่ปรากฏ  คลิกที่นี่ค่ะ: $a';
 $string['resourcetype'] = 'ประเภทของแหล่งข้อมูล';
@@ -90,16 +77,12 @@ $string['resourcetype9'] = 'ไดเรกทอรี';
 $string['resourcetypedirectory'] = 'ไดเรกทอรี';
 $string['resourcetypefile'] = 'ไฟล์หรือเว็บไซต์';
 $string['resourcetypehtml'] = 'หน้าเว็บเพจ';
-$string['resourcetypeims'] = 'ใช้ IMS CP';
 $string['resourcetypelabel'] = 'Label';
-$string['resourcetyperepository'] = 'ลิงก์ไปยังออปเจ็ก';
 $string['resourcetypetext'] = 'หน้าตัวหนังสือธรรมดา';
 $string['searchweb'] = 'ค้นหาเว็บเพจ';
-$string['serverurl'] = 'URL เซิร์ฟเวอร์ ($a->wwwroot)';
-$string['showcourseblocks'] = 'แสดงบล็อครายวิชา';
-$string['tableofcontents'] = 'สารบาญ';
+$string['thischarset'] = 'TIS-620';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Thai';
 $string['variablename'] = 'ชื่อตัวแปร';
-$string['viewims'] = 'ดูแพ็กเกจ IMS CP';
-$string['vol'] = 'Vol';
 
 ?>

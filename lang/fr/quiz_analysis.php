@@ -1,29 +1,31 @@
 <?php // $Id$
 
 $string['analysisoptions'] = 'Options d\'analyse';
-$string['analysistitle'] = 'Table d\'analyse éléments';
-$string['attemptsall'] = 'Toutes tentatives';
 $string['attemptselection'] = 'Tentatives à analyser pour l\'utilisateur ';
-$string['attemptsfirst'] = 'Première tentative';
-$string['attemptshighest'] = 'Meilleure note';
-$string['attemptslast'] = 'Dernière tentative';
-$string['dicsindextitle'] = 'Index<br />discr.';
-$string['disccoefftitle'] = 'Coeff.<br />discr.';
-$string['downloadooo'] = 'Télécharger en format OpenOffice';
-$string['facilitytitle'] = '%% Correct<br />Facility';
 $string['lowmarkslimit'] = 'Ne pas analyser si le score est inférieur à ';
+$string['attemptsall'] = 'Toutes tentatives';
+$string['attemptshighest'] = 'Meilleure note';
+$string['attemptsfirst'] = 'Première tentative';
+$string['attemptslast'] = 'Dernière tentative';
 $string['pagesize'] = 'Questions par page&nbsp;: ';
-$string['qcounttitle'] = 'Nombre Q.';
+$string['analysistitle'] = 'Table d\'analyse éléments';
+$string['reportanalysis'] = 'Rapport d\'analyse éléments';
+$string['downloadooo'] = 'Télécharger en format OpenOffice';
+
 $string['qidtitle'] = 'Q#';
 $string['qnametitle'] = 'Nom question';
 $string['qtexttitle'] = 'Texte question';
+$string['qcounttitle'] = 'Nombre Q.';
 $string['qtypetitle'] = 'Type Q.';
-$string['quizreportdir'] = 'rapports_tests';
-$string['rcounttitle'] = 'Nombre<br />réponse';
-$string['reportanalysis'] = 'Rapport d\'analyse éléments';
 $string['responsestitle'] = 'Texte réponse';
 $string['rfractiontitle'] = 'Points<br />partiels';
+$string['rcounttitle'] = 'Nombre<br />Réponse';
 $string['rpercenttitle'] = 'R. %%';
+$string['facilitytitle'] = '%% Correct<br />Facility';
 $string['stddevtitle'] = 'Éc. Type';
+$string['dicsindextitle'] = 'Index<br />disc.';
+$string['disccoefftitle'] = 'Coeff.<br />disc.';
+
+$string['quizreportdir'] = 'rapports_tests';
 
 ?>

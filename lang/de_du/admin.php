@@ -1,7 +1,10 @@
 <?PHP // $Id$ 
       // admin.php - created with Moodle 1.3.1 + (2004052501)
 
-
+$string['parentlanguage'] = 'de';
+$string['thischarset'] = 'ISO-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'ISO-8859-1';
 $string['cachetext'] = 'Dauer der Gültigkeit für Cache';
 $string['filteruploadedfiles'] = 'Filter für hochgeladene Dateien';
 $string['upgradelogs'] = 'Für die vollständige Funktionsfähigkeit müssen die alten Log-Daten aktualisiert werden. <a href=\"$a\">More information</a>';

@@ -242,5 +242,8 @@ $string['ZA'] = 'Южная Африка';
 $string['ZM'] = 'Замбия';
 $string['ZR'] = 'Заир';
 $string['ZW'] = 'Зимбабве';
+$string['parentlanguage'] = 'ru';
+$string['thischarset'] = 'windows-1251';
+$string['thisdirection'] = 'ltr';
 
 ?>

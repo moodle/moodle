@@ -42,104 +42,48 @@
         $forums = get_records ("forum","course",$preferences->backup_course,"id");
         if ($forums) {
             foreach ($forums as $forum) {
-                if (backup_mod_selected($preferences,'forum',$forum->id)) {
-                    $status = forum_backup_one_mod($bf,$preferences,$forum);
-                    // backup files happens in backup_one_mod now too.
+                //Start mod
+                fwrite ($bf,start_tag("MOD",3,true));
+                //Print forum data
+                fwrite ($bf,full_tag("ID",4,false,$forum->id));
+                fwrite ($bf,full_tag("MODTYPE",4,false,"forum"));
+                fwrite ($bf,full_tag("TYPE",4,false,$forum->type));
+                fwrite ($bf,full_tag("NAME",4,false,$forum->name));
+                fwrite ($bf,full_tag("INTRO",4,false,$forum->intro));
+                fwrite ($bf,full_tag("OPEN",4,false,$forum->open));
+                fwrite ($bf,full_tag("ASSESSED",4,false,$forum->assessed));
+                fwrite ($bf,full_tag("ASSESSPUBLIC",4,false,$forum->assesspublic));
+                fwrite ($bf,full_tag("ASSESSTIMESTART",4,false,$forum->assesstimestart));
+                fwrite ($bf,full_tag("ASSESSTIMEFINISH",4,false,$forum->assesstimefinish));
+                fwrite ($bf,full_tag("MAXBYTES",4,false,$forum->maxbytes));
+                fwrite ($bf,full_tag("SCALE",4,false,$forum->scale));
+                fwrite ($bf,full_tag("FORCESUBSCRIBE",4,false,$forum->forcesubscribe));
+                fwrite ($bf,full_tag("RSSTYPE",4,false,$forum->rsstype));
+                fwrite ($bf,full_tag("RSSARTICLES",4,false,$forum->rssarticles));
+                fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$forum->timemodified));
+
+                //if we've selected to backup users info, then execute backup_forum_suscriptions and
+                //backup_forum_discussions
+                if ($preferences->mods["forum"]->userinfo) {
+                    $status = backup_forum_subscriptions($bf,$preferences,$forum->id);
+                    if ($status) {
+                        $status = backup_forum_discussions($bf,$preferences,$forum->id);
+                    }
+                    if ($status) {
+                        $status = backup_forum_read($bf,$preferences,$forum->id);
+                    }
                 }
+                //End mod
+                $status =fwrite ($bf,end_tag("MOD",3,true));
+            }
+        }
+        //if we've selected to backup users info, then backup files too
+        if ($status) {
+            if ($preferences->mods["forum"]->userinfo) {
+                $status = backup_forum_files($bf,$preferences);    
             }
         }
         return $status;
-    }
-
-
-    function forum_backup_one_mod($bf,$preferences,$forum) {
-    
-        global $CFG;
-        
-        if (is_numeric($forum)) {
-            $forum = get_record('forum','id',$forum);
-        }
-        $instanceid = $forum->id;
-        
-        $status = true;
-        
-        //Start mod
-        fwrite ($bf,start_tag("MOD",3,true));
-        //Print forum data
-        fwrite ($bf,full_tag("ID",4,false,$forum->id));
-        fwrite ($bf,full_tag("MODTYPE",4,false,"forum"));
-        fwrite ($bf,full_tag("TYPE",4,false,$forum->type));
-        fwrite ($bf,full_tag("NAME",4,false,$forum->name));
-        fwrite ($bf,full_tag("INTRO",4,false,$forum->intro));
-        fwrite ($bf,full_tag("OPEN",4,false,$forum->open));
-        fwrite ($bf,full_tag("ASSESSED",4,false,$forum->assessed));
-        fwrite ($bf,full_tag("ASSESSPUBLIC",4,false,$forum->assesspublic));
-        fwrite ($bf,full_tag("ASSESSTIMESTART",4,false,$forum->assesstimestart));
-        fwrite ($bf,full_tag("ASSESSTIMEFINISH",4,false,$forum->assesstimefinish));
-        fwrite ($bf,full_tag("MAXBYTES",4,false,$forum->maxbytes));
-        fwrite ($bf,full_tag("SCALE",4,false,$forum->scale));
-        fwrite ($bf,full_tag("FORCESUBSCRIBE",4,false,$forum->forcesubscribe));
-        fwrite ($bf,full_tag("TRACKINGTYPE",4,false,$forum->trackingtype));
-        fwrite ($bf,full_tag("RSSTYPE",4,false,$forum->rsstype));
-        fwrite ($bf,full_tag("RSSARTICLES",4,false,$forum->rssarticles));
-        fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$forum->timemodified));
-        fwrite ($bf,full_tag("WARNAFTER",4,false,$forum->warnafter));
-        fwrite ($bf,full_tag("BLOCKAFTER",4,false,$forum->blockafter));
-        fwrite ($bf,full_tag("BLOCKPERIOD",4,false,$forum->blockperiod));
-        
-        //if we've selected to backup users info, then execute backup_forum_suscriptions and
-        //backup_forum_discussions
-        if (backup_userdata_selected($preferences,'forum',$forum->id)) {
-            $status = backup_forum_subscriptions($bf,$preferences,$forum->id);
-            if ($status) {
-                $status = backup_forum_discussions($bf,$preferences,$forum->id);
-            }
-            if ($status) {
-                $status = backup_forum_read($bf,$preferences,$forum->id);
-            }
-            if ($status) {
-                $status = backup_forum_files_instance($bf,$preferences,$forum->id);
-            }
-        }
-        //End mod
-        $status =fwrite ($bf,end_tag("MOD",3,true));
-        return $status;
-    }
-
-
-    function forum_check_backup_mods_instances($instance,$backup_unique_code) {
-        $info[$instance->id.'0'][0] = '<b>'.$instance->name.'</b>';
-        $info[$instance->id.'0'][1] = '';
-        if (!empty($instance->userdata)) {
-            $info[$instance->id.'1'][0] = get_string("subscriptions","forum");
-            if ($ids = forum_subscription_ids_by_instance ($instance->id)) {
-                $info[$instance->id.'1'][1] = count($ids);
-            } else {
-                $info[$instance->id.'1'][1] = 0;
-            }
-            //Discussions
-            $info[$instance->id.'2'][0] = get_string("discussions","forum");
-            if ($ids = forum_discussion_ids_by_instance ($instance->id)) {
-                $info[$instance->id.'2'][1] = count($ids);
-            } else {
-                $info[$instance->id.'2'][1] = 0;
-            }
-            //Posts
-            $info[$instance->id.'3'][0] = get_string("posts","forum");
-            if ($ids = forum_post_ids_by_instance ($instance->id)) {
-                $info[$instance->id.'3'][1] = count($ids);
-            } else {
-                $info[$instance->id.'3'][1] = 0;
-            }
-            //Ratings
-            $info[$instance->id.'4'][0] = get_string("ratings","forum");
-            if ($ids = forum_rating_ids_by_instance ($instance->id)) {
-                $info[$instance->id.'4'][1] = count($ids);
-            } else {
-                $info[$instance->id.'4'][1] = 0;
-            }
-        }
-        return $info;
     }
 
     //Backup forum_subscriptions contents (executed from forum_backup_mods)     
@@ -195,8 +139,6 @@
                 fwrite ($bf,full_tag("ASSESSED",6,false,$for_dis->assessed));
                 fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$for_dis->timemodified));
                 fwrite ($bf,full_tag("USERMODIFIED",6,false,$for_dis->usermodified));
-                fwrite ($bf,full_tag("TIMESTART",6,false,$for_dis->timestart));
-                fwrite ($bf,full_tag("TIMEEND",6,false,$for_dis->timeend));
                 //Now print posts to xml
                 $status = backup_forum_posts($bf,$preferences,$for_dis->id);
                 //End discussion
@@ -314,6 +256,7 @@
     //Backup forum files because we've selected to backup user info
     //and files are user info's level
     function backup_forum_files($bf,$preferences) {
+
         global $CFG;
 
         $status = true;
@@ -325,15 +268,8 @@
         if ($status) {
             //Only if it exists !! Thanks to Daniel Miksik.
             if (is_dir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/forum")) {
-                $handle = opendir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/forum");
-                while (false!==($item = readdir($handle))) {
-                    if ($item != '.' && $item != '..' && is_dir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/forum/".$item)
-                        && array_key_exists($item,$preferences->mods['forum']->instances)
-                        && !empty($preferences->mods['forum']->instances[$item]->backup)) {
-                        $status = backup_copy_file($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/forum/".$item,
-                                                   $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/forum/",$item);
-                    }
-                }
+                $status = backup_copy_file($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/forum",
+                                           $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/forum");
             }
         }
 
@@ -341,41 +277,9 @@
 
     }
 
-
-    //Backup forum files because we've selected to backup user info
-    //and files are user info's level
-    function backup_forum_files_instance($bf,$preferences,$instanceid) {
-        global $CFG;
-
-        $status = true;
-
-        //First we check to moddata exists and create it as necessary
-        //in temp/backup/$backup_code  dir
-        $status = check_and_create_moddata_dir($preferences->backup_unique_code);
-        $status = check_dir_exists($CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/forum/",true);
-        //Now copy the forum dir
-        if ($status) {
-            //Only if it exists !! Thanks to Daniel Miksik.
-            if (is_dir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/forum/".$instanceid)) {
-                $status = backup_copy_file($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/forum/".$instanceid,
-                                           $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/forum/".$instanceid);
-            }
-        }
-
-        return $status;
-
-    }
 
    ////Return an array of info (name,value)
-   function forum_check_backup_mods($course,$user_data=false,$backup_unique_code,$instances=null) {
-       
-       if (!empty($instances) && is_array($instances) && count($instances)) {
-           $info = array();
-           foreach ($instances as $id => $instance) {
-               $info += forum_check_backup_mods_instances($instance,$backup_unique_code);
-           }
-           return $info;
-       }
+   function forum_check_backup_mods($course,$user_data=false,$backup_unique_code) {
         //First the course data
         $info[0][0] = get_string("modulenameplural","forum");
         if ($ids = forum_ids ($course)) {
@@ -477,16 +381,6 @@
                                        s.forum = a.id");
     }
 
-    //Returns an array of forum subscriptions id 
-    function forum_subscription_ids_by_instance($instanceid) {
- 
-        global $CFG;
-        
-        return get_records_sql ("SELECT s.id , s.forum
-                                 FROM {$CFG->prefix}forum_subscriptions s
-                                 WHERE s.forum = $instanceid");
-    }
-
     //Returns an array of forum discussions id
     function forum_discussion_ids_by_course ($course) {
 
@@ -497,16 +391,6 @@
                                       {$CFG->prefix}forum a 
                                  WHERE a.course = '$course' AND
                                        s.forum = a.id"); 
-    }
-
-    //Returns an array of forum discussions id
-    function forum_discussion_ids_by_instance ($instanceid) {
-
-        global $CFG;
-
-        return get_records_sql ("SELECT s.id , s.forum      
-                                 FROM {$CFG->prefix}forum_discussions s   
-                                 WHERE s.forum = $instanceid"); 
     }
 
     //Returns an array of forum posts id
@@ -523,18 +407,6 @@
                                        p.discussion = s.id");
     }
 
-    //Returns an array of forum posts id
-    function forum_post_ids_by_instance ($instanceid) {
-
-        global $CFG;
-
-        return get_records_sql ("SELECT p.id , p.discussion, s.forum
-                                 FROM {$CFG->prefix}forum_posts p,
-                                      {$CFG->prefix}forum_discussions s
-                                 WHERE s.forum = $instanceid AND
-                                       p.discussion = s.id");
-    }
-
     //Returns an array of ratings posts id      
     function forum_rating_ids_by_course ($course) {      
 
@@ -547,20 +419,6 @@
                                       {$CFG->prefix}forum a    
                                  WHERE a.course = '$course' AND
                                        s.forum = a.id AND   
-                                       p.discussion = s.id AND
-                                       r.post = p.id");
-    }
-
-    //Returns an array of ratings posts id      
-    function forum_rating_ids_by_instance ($instanceid) {      
-
-        global $CFG;
-
-        return get_records_sql ("SELECT r.id, r.post, p.discussion, s.forum
-                                 FROM {$CFG->prefix}forum_ratings r,
-                                      {$CFG->prefix}forum_posts p,
-                                      {$CFG->prefix}forum_discussions s
-                                 WHERE s.forum = $instanceid AND   
                                        p.discussion = s.id AND
                                        r.post = p.id");
     }

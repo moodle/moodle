@@ -4,5 +4,8 @@
 
 $string['modulename'] = '웹탐색';
 $string['modulenameplural'] = '웹탐색(들)';
+$string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 
 ?>

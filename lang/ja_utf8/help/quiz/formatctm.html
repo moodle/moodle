@@ -27,18 +27,18 @@ ExamViewと呼ばれる新しいテストマネージャーが、Course Test Man
 CTMテストバンクがしばしば、本の章またはコースのセクションのようにカテゴリ分けされた大量の問題を含んでいることが
 あるからです。</li></ol>
 
-<p><b>Linuxベース</b>のmoodleシステムでは、<a href="http://odbcsock.sourceforge.net/" target="_new"><b>ODBC Socket Server</b></a>
+<p><b>Linuxベース</b>のmoodleシステムでは、<a href="http://odbcsock.sourceforge.net/" target="_new"><b>ODBCソケットサーバ</b></a>
 と呼ばれるサードパーティのソフトウェアコンポーネントが必要です。LinuxにCTMデータベースをインポートするには、最初にこの小さな
 ネットワークプログラムを、CTMデータベースを入れているWindowsシステムにダウンロードしてインストールする必要があります。
-ODBC Socket Serverのインストール手順に<b>従わないで</b>ください。それらは、必要以上にさらに複雑になっています! 
+ODBCソケットサーバのインストール手順に<b>従わないで</b>ください。それらは、必要以上にさらに複雑になっています! 
 代わりに、下記の手順に従って、あなたのWindowsシステムにこのプログラムをインストールしてください:</p>
 
 <ol><li>Windowsシステムに移って、<a href="http://odbcsock.sourceforge.net/" target="_new">
 このサイト</a>よりダウンロードしたファイルをunzipしてください。</li>
-<li>Copy the binary ODBCSocketServer.exeバイナリを、システムディレクトリ(恐らく C:WINNT または C:Windows)
+<li>Copy the binary ODBCSocketServer.exeバイナリを、システムディレクトリ(恐らく C:\WINNT\ または C:\Windows)
 または、Program Filesディレクトリ等の、削除することの無い場所にコピーしてください。</li> 
 
-<li>次のコマンドを使って、ODBC Socket Serverをサービスとしてインストールしてください:<br />
+<li>次のコマンドを使って、ODBCソケットサーバをサービスとしてインストールしてください:<br />
 <b>&lt;path you copied the file to in the step above&gt;ODBCSocketServer.exe /Service</b><br />
 このコマンドは、スタート-&gt;ファイル名を... 画面、またはコマンドプロンプトから実行することができます。</li>
 
@@ -61,7 +61,7 @@ WindowsサーバのIPアドレスまたはホスト名と同様に、これら�
 インポートプロセスを開始させるために、アップロードフィールドにダミーファイルを指定してください。このフィールドに入れたファイルは、<b>処理されません</b>。
 ここでは、インポートフォームに対する代替的な値を入れるだけです。次に、Windowsサーバに関する情報を指定する画面が表示されます。次に、systemおよびtestbank
 データベースと同様に、Windows ODBC Socket Serverのホスト名を入力する画面が表示されます。前のステップで指定した情報を入力して、「サーバに接続する」ボタンを
-クリックしてください。すべてが正しく設定された場合、データベースから問題をインポートするために、サブカテゴリを選択するフォームが表示されます。
+クリックしてください。全てが正しく設定された場合、データベースから問題をインポートするために、サブカテゴリを選択するフォームが表示されます。
 このステップがある理由は、CTMテストバンクがしばしば、本の章またはコースのセクションのようにカテゴリ分けされた大量の問題を含んでいることがあるからです。
 あなたがこのステップにエラーメッセージ無しに到達した場合、Socket Serverの設定は正しく設定されて、問題をMOODLEにインポートするところまで来ています!</li>
 </ol>

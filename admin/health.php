@@ -7,8 +7,6 @@
     define('SEVERITY_SIGNIFICANT', 'significant');
     define('SEVERITY_CRITICAL',    'critical');
 
-    $resetsesserrorcounter = optional_param( 'resetsesserrorcounter' );
-
     require_login();
     if (!isadmin()) {
         error('Only the admin can use this page');
@@ -500,7 +498,7 @@ class problem_000011 extends problem_base {
     }
     function solution() {
         global $CFG;
-        if (!empty($resetsesserrorcounter)) {
+        if (isset($_GET['resetsesserrorcounter'])) {
             if (get_field('config', 'name', 'name', 'session_error_counter')) {
                 delete_records('config', 'name', 'session_error_counter');
             }

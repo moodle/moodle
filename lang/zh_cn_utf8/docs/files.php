@@ -5,7 +5,7 @@
 $string['-about'] = "关于Moodle";
 $string['intro.html'] = "简介";
 $string['background.html'] = "背景";
-$string['philosophy.html'] = "理念";
+$string['philosophy.html'] = "原理";
 $string['licence.html'] = "授权";
 $string['features.html'] = "特性";
 $string['release.html'] = "发行说明";
@@ -23,7 +23,7 @@ $string['teacher.html'] = "教师手册";
 $string['other.html'] = "其它文档";
 
 $string['-development'] = "开发";
-$string['developer.html'] = "开发文档";
+$string['developer.html'] = "开放文档";
 $string['coding.html'] = "编码准则";
 $string['cvs.html'] = "使用CVS";
 $string['translation.html'] = "翻译";

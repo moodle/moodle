@@ -4,7 +4,7 @@
 
 $string['-about'] = "Sobre Moodle";
 $string['intro.html'] = "Introducció";
-$string['background.html'] = "Antecedents";
+$string['background.html'] = "Rerefons";
 $string['philosophy.html'] = "Filosofia";
 $string['licence.html'] = "Llicència";
 $string['features.html'] = "Característiques";
@@ -26,6 +26,6 @@ $string['-development'] = "Desenvolupament";
 $string['developer.html'] = "Manual de desenvolupament";
 $string['coding.html'] = "Guia de codificació";
 $string['cvs.html'] = "Ús del CVS";
-$string['translation.html'] = "Traducció";
+
 
 ?>

@@ -5,7 +5,7 @@
 
     require_once("../config.php");
 
-    $numusers = optional_param('numusers', 0, PARAM_INT);
+    optional_variable($numusers, 0);
 
     require_login();
 
@@ -31,7 +31,6 @@
     $struser = get_string("user");
     $strusers = get_string("users");
     $strusersnew = get_string("usersnew");
-    $strusersupdated = get_string("usersupdated");
     $struploadusers = get_string("uploadusers");
     $straddnewuser = get_string("importuser");
 
@@ -62,15 +61,6 @@
     $um = new upload_manager('userfile',false,false,null,false,0);
     if ($um->preprocess_files()) {
         $filename = $um->files['userfile']['tmp_name'];
-
-        // Large files are likely to take their time and memory. Let PHP know
-        // that we'll take longer, and that the process should be recycled soon
-        // to free up memory.
-        @set_time_limit(0);
-        @raise_memory_limit("128M");
-        if (function_exists('apache_child_terminate')) { 
-            @apache_child_terminate();
-        }
 
         //Fix mac/dos newlines
         $text = my_file_get_contents($filename);
@@ -118,20 +108,6 @@
                           "group4" => 1,
                           "group5" =>1);
 
-        // form data cleanup
-        $frmpassword         = optional_param('frmpassword',         '',     PARAM_ALPHA);
-        $updateaccounts      = optional_param('updateaccounts',      false,  PARAM_BOOL);
-        $allowrenames         = optional_param('allowrenames',         false,  PARAM_BOOL);
-
-        if ($frmpassword === 'create') {
-            unset($required['password']);
-            $optional['password'] = 1;
-        }
-
-        if ($allowrenames) {
-            $optional['oldusername'] = 1;
-        }
-
         // --- get header (field names) ---
         $header = split($csv_delimiter, fgets($fp,1024));
         // check for valid field names
@@ -152,16 +128,6 @@
         }
         $linenum = 2; // since header is line 1
 
-        $usersnew     = 0;
-        $usersupdated = 0;
-        $userserrors  = 0;
-        $renames      = 0;
-        $renameerrors = 0;
-
-        // Will use this course array a lot
-        // so fetch it early and keep it in memory
-        $courses = get_courses("all",'c.sortorder','c.id,c.shortname,c.fullname,c.sortorder');
-
         while (!feof ($fp)) {
             foreach ($optionalDefaults as $key => $value) {
                 $user->$key = addslashes($adminuser->$key);
@@ -175,7 +141,7 @@
             }
             if ($record[$header[0]]) {
                 // add a new user to the database
-                $newuser = optional_param('newuser', "", PARAM_CLEAN); 
+                optional_variable($newuser, ""); 
 
                 // add fields to object $user
                 foreach ($record as $name => $value) {
@@ -187,7 +153,7 @@
                               'uploaduser.php?sesskey='.$USER->sesskey);
                     }
                     // password needs to be encrypted
-                    else if ($name == "password" && !empty($value)) {
+                    else if ($name == "password") {
                         $user->password = md5($value);
                     }
                     else if ($name == "username") {
@@ -212,7 +178,7 @@
                 $addgroup[2] = $user->group3;
                 $addgroup[3] = $user->group4;
                 $addgroup[4] = $user->group5;
-
+                $courses = get_courses("all",'c.sortorder','c.id,c.shortname,c.fullname,c.sortorder');
                 for ($i=0; $i<5; $i++) {
                     $courseid[$i]=0;
                 }
@@ -223,73 +189,20 @@
                         }
                     }
                 }
-
-                if ($user->username === 'changeme') {
-                    notify(get_string('invaliduserchangeme', 'admin'));
-                    $userserrors++;
-                    continue;
-                }
-
-                // before insert/update, check whether we should be updating 
-                // an old record instead
-                if ($allowrenames && !empty($user->oldusername) ) {
-                    $user->oldusername = moodle_strtolower($user->oldusername);
-                    if ($olduser = get_record('user','username',$user->oldusername)) {
-                        if (set_field('user', 'username', $user->username, 'username', $user->oldusername)) {
-                            notify(get_string('userrenamed', 'admin') . " : $user->oldusername $user->username");
-                            $renames++;
-                        } else {
-                            notify(get_string('usernotrenamedexists', 'error') . " : $user->oldusername $user->username");
-                            $renameerrors++;
-                            continue;
-                        }
-                    } else {
-                        notify(get_string('usernotrenamedmissing', 'error') . " : $user->oldusername $user->username");
-                        $renameerrors++;
-                        continue;
-                    }
-                }
-
-                if ($olduser = get_record("user","username",$username)) {
-                    if ($updateaccounts) { 
-                        // Record is being updated
-                        $user->id = $olduser->id;
-                        if (update_record('user', $user)) {
-                            notify("$user->id , $user->username ".get_string('useraccountupdated', 'admin'));
-                            $usersupdated++;
-                        } else {
-                            notify(get_string('usernotupdatederror', 'error', $username));
-                            $userserrors++;
-                            continue;
-                        }
-                    } else {
-                        //Record not added - user is already registered
+                if (get_record("user","username",$username) || !($user->id = insert_record("user", $user))) {
+                    if (!$user = get_record("user", "username", "changeme")) {   // half finished user from another time
+                        //Record not added - probably because user is already registered
                         //In this case, output userid from previous registration
                         //This can be used to obtain a list of userids for existing users
-                        notify("$user->id ".get_string('usernotaddedregistered', 'error', $username));
-                        $userserrors++;
-                        continue; 
+                        if ($user = get_record("user","username",$username)) {
+                            notify("$user->id ".get_string('usernotaddedregistered', 'error', $username));
+                        } else {
+                            notify(get_string('usernotaddederror', 'error', $username));
+                        } 
                     }
-
-                } else { // new user 
-                    if ($user->id = insert_record("user", $user)) {
-                        notify("$struser: $user->id = $user->username");
-                        $usersnew++;
-                        if (empty($user->password) && $frmpassword === 'create') {
-                            // passwords will be created and sent out on cron
-                            insert_record('user_preferences', array( userid => $user->id, 
-                                                                     name   => 'create_password',
-                                                                     value  => 1));
-                            insert_record('user_preferences', array( userid => $user->id, 
-                                                                     name   => 'auth_forcepasswordchange',
-                                                                     value  => 1));
-                        }
-                    } else {
-                        // Record not added -- possibly some other error
-                        notify(get_string('usernotaddederror', 'error', $username));
-                        $userserrors++;
-                        continue;
-                    }
+                } else if ($user->username != "changeme") {
+                    notify("$struser: $user->id = $user->username");
+                    $numusers++;
                 }
                 for ($i=0; $i<5; $i++) {
                     if ($addcourse[$i] && !$courseid[$i]) {
@@ -345,20 +258,13 @@
             }
         }
         fclose($fp);
-        notify("$strusersnew: $usersnew");
-        notify(get_string('usersupdated', 'admin') . ": $usersupdated");
-        notify(get_string('errors', 'admin') . ": $userserrors");
-        if ($allowrenames) {
-            notify(get_string('usersrenamed', 'admin') . ": $renames");
-            notify(get_string('renameerrors', 'admin') . ": $renameerrors");
-        }
+        notify("$strusersnew: $numusers");
+
         echo '<hr />';
     }
 
 /// Print the form
     print_heading_with_help($struploadusers, 'uploadusers');
-
-    $noyesoptions = array( get_string('no'), get_string('yes') );
 
     $maxuploadsize = get_max_upload_file_size();
     echo '<center>';
@@ -366,26 +272,8 @@
          $strchoose.':<input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'">'.
          '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'">'.
          '<input type="file" name="userfile" size="30">'.
-         '<input type="submit" value="'.$struploadusers.'">';
-    print_heading(get_string('settings'));
-    echo '<table>';
-    echo '<tr><td>' . get_string('passwordhandling', 'auth') . "</td><td>";
-    $passwordopts = array( infile => get_string('infilefield',    'auth'),
-                           create => get_string('createpassword', 'auth'),                           
-                          );
-    choose_from_menu($passwordopts, 'frmpassword', 'infile');
-    echo "</td></tr>";
-
-    echo '<tr><td>' . get_string('updateaccounts', 'admin')  . "</td><td>";
-    choose_from_menu($noyesoptions, 'updateaccounts', 0);
-    echo "</td></tr>";
-
-    echo '<tr><td>' . get_string('allowrenames', 'admin')  . "</td><td>";
-    choose_from_menu($noyesoptions, 'allowrenames', 0);
-    echo "</td></tr>";
-
-    echo '</table>';
-    echo '</form></br>';
+         '<input type="submit" value="'.$struploadusers.'">'.
+         '</form></br>';
     echo '</center>';
 
     print_footer($course);

@@ -279,16 +279,13 @@ class block_base {
             $title = $this->str->show;
         }
 
-        if (empty($this->instance->pageid)) {
-            $this->instance->pageid = 0;
-        }
         $page   = page_create_object($this->instance->pagetype, $this->instance->pageid);
         $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey));
      
         $movebuttons .= '<a class="icon hide" title="'. $title .'" href="'.$script.'&amp;blockaction=toggle">' .
                         '<img src="'. $CFG->pixpath.$icon .'" alt="'.$title.'" /></a>';
 
-        if ($options & BLOCK_CONFIGURE && $this->user_can_edit()) {
+        if ($options & BLOCK_CONFIGURE) {
             $movebuttons .= '<a class="icon edit" title="'. $this->str->configure .'" href="'.$script.'&amp;blockaction=config">' .
                             '<img src="'. $CFG->pixpath .'/t/edit.gif" alt="'. $this->str->configure .'" /></a>';
         }
@@ -399,6 +396,8 @@ class block_base {
      * @return boolean
      */
     function config_save($data) {
+        // Default behavior: save all variables as $CFG properties
+        // You don't need to override this if you 're satisfied with the above
         foreach ($data as $name => $value) {
             set_config($name, $value);
         }
@@ -421,6 +420,7 @@ class block_base {
      * @return int
      */
     function preferred_width() {
+        // Default case: the block wants to be 180 pixels wide
         return 180;
     }
     
@@ -429,15 +429,17 @@ class block_base {
      * @return boolean
      */
     function hide_header() {
+        //Default, false--> the header is shown
         return false;
     }
 
     /**
-     * Default case: an id with the instance and a class with our name in it
+     * Default case: just an id for the block, with our name in it
      * @return array
      * @todo finish documenting this function
      */
     function html_attributes() {
+        // Default case: an id with the instance and a class with our name in it
         return array('id' => 'inst'.$this->instance->id, 'class' => 'block_'. $this->name());
     }
     
@@ -527,14 +529,10 @@ class block_base {
      * @return boolean
      * @todo finish documenting this function
      */
-    function instance_config_save($data,$pinned=false) {
+    function instance_config_save($data) {
         $data = stripslashes_recursive($data);
         $this->config = $data;
-        $table = 'block_instance';
-        if (!empty($pinned)) {
-            $table = 'block_pinned';
-        }
-        return set_field($table, 'configdata', base64_encode(serialize($data)), 'id', $this->instance->id);
+        return set_field('block_instance', 'configdata', base64_encode(serialize($data)), 'id', $this->instance->id);
     }
 
     /**
@@ -542,53 +540,8 @@ class block_base {
      * @return boolean
      * @todo finish documenting this function
      */
-    function instance_config_commit($pinned=false) {
-        $table = 'block_instance';
-        if (!empty($pinned)) {
-            $table = 'block_pinned';
-        }
-        return set_field($table, 'configdata', base64_encode(serialize($this->config)), 'id', $this->instance->id);
-    }
-
-     /**
-     * Do any additional initialization you may need at the time a new block instance is created
-     * @return boolean
-     * @todo finish documenting this function
-     */
-    function instance_create() {
-        return true;
-    }
-
-     /**
-     * Delete everything related to this instance if you have been using persistent storage other than the configdata field.
-     * @return boolean
-     * @todo finish documenting this function
-     */
-    function instance_delete() {
-        return true;
-    }
-
-     /**
-     * Allows the block class to have a say in the user's ability to edit (i.e., configure) blocks of this type.
-     * The framework has first say in whether this will be allowed (e.g., no editing allowed unless in edit mode)
-     * but if the framework does allow it, the block can still decide to refuse.
-     * @return boolean
-     * @todo finish documenting this function
-     */
-    function user_can_edit() {
-        return true;
-    }
-
-     /**
-     * Allows the block class to have a say in the user's ability to create new instances of this block.
-     * The framework has first say in whether this will be allowed (e.g., no adding allowed unless in edit mode)
-     * but if the framework does allow it, the block can still decide to refuse.
-     * This function has access to the complete page object, the creation related to which is being determined.
-     * @return boolean
-     * @todo finish documenting this function
-     */
-    function user_can_addto(&$page) {
-        return true;
+    function instance_config_commit() {
+        return set_field('block_instance', 'configdata', base64_encode(serialize($this->config)), 'id', $this->instance->id);
     }
 
 }

@@ -740,7 +740,7 @@ function quiz_upgrade($oldversion) {
 
         // Remove duplicate entries from quiz_numerical
         if ($dups = get_records_sql("
-                SELECT question, answer, count(*) as num
+                SELECT question, answer, count(*) num
                 FROM {$CFG->prefix}quiz_numerical
                 GROUP BY question, answer
                 HAVING count(*) > 1"
@@ -765,7 +765,7 @@ function quiz_upgrade($oldversion) {
 
         // Remove duplicate entries from quiz_shortanswer
         if ($dups = get_records_sql("
-                SELECT question, answers, count(*) as num
+                SELECT question, answers, count(*) num
                 FROM {$CFG->prefix}quiz_shortanswer
                 GROUP BY question, answers
                 HAVING count(*) > 1"
@@ -790,7 +790,7 @@ function quiz_upgrade($oldversion) {
 
         // Remove duplicate entries from quiz_multichoice
         if ($dups = get_records_sql("
-                SELECT question, answers, count(*) as num
+                SELECT question, answers, count(*) num
                 FROM {$CFG->prefix}quiz_multichoice
                 GROUP BY question, answers
                 HAVING count(*) > 1"
@@ -812,62 +812,6 @@ function quiz_upgrade($oldversion) {
                 }
             }
         }
-    }
-
-    if ($oldversion < 2005060300) {
-        //Search all the orphan categories (those whose course doesn't exist)
-        //and process them, deleting or moving them to site course - Bug 2459
-
-        //Set debug to false
-        $olddebug = $db->debug;
-        $db->debug = false;
-
-        //Iterate over all the quiz_categories records to get their course id
-        if ($courses = get_records_sql ("SELECT DISTINCT course as id, course
-                                         FROM {$CFG->prefix}quiz_categories")) {
-            //Iterate over courses
-            foreach ($courses as $course) {
-                //If the course doesn't exist, orphan category found!
-                //Process it with quiz_delete_course(). It will do all the hard work.
-                if (!record_exists('course', 'id', $course->id)) {
-                    require_once("$CFG->dirroot/mod/quiz/lib.php");
-                    quiz_delete_course($course);
-                }
-            }
-        }
-        //Reset rebug to its original state
-        $db->debug = $olddebug;
-    }
-
-    if ($oldversion < 2005062600) {
-        modify_database ('', "
-            CREATE TABLE `prefix_quiz_essay` (
-                `id` int(10) unsigned NOT NULL auto_increment,
-                `question` int(10) unsigned NOT NULL default '0',
-                `answer` varchar(255) NOT NULL default '',
-                PRIMARY KEY  (`id`),
-                KEY `question` (`question`)
-           ) TYPE=MyISAM COMMENT='Options for essay questions'");
-    
-        modify_database ('', "
-            CREATE TABLE `prefix_quiz_essay_states` (
-              `id` int(10) unsigned NOT NULL auto_increment,
-              `stateid` int(10) unsigned NOT NULL default '0',
-              `graded` tinyint(4) unsigned NOT NULL default '0',
-              `fraction` varchar(10) NOT NULL default '0.0',
-              `response` text NOT NULL,
-              PRIMARY KEY  (`id`)
-            ) TYPE=MyISAM COMMENT='essay question type specific state information'");
-    }
-
-    if ($oldversion < 2005070202) {
-        // add new unique id to prepare the way for lesson module to have its own attempts table
-        table_column('quiz_attempts', '', 'uniqueid', 'integer', '10', 'unsigned', '0', 'not null', 'id');
-        // initially we can use the id as the unique id because no other modules use attempts yet.
-        execute_sql("UPDATE {$CFG->prefix}quiz_attempts SET uniqueid = id", false);
-        // we set $CFG->attemptuniqueid to the next available id
-        $record = get_record_sql("SELECT max(id)+1 AS nextid FROM {$CFG->prefix}quiz_attempts");
-        set_config('attemptuniqueid', empty($record->nextid) ? 1 : $record->nextid);
     }
 
     return true;

@@ -4,9 +4,9 @@
 
 // Todo:
     // the restoration of the parent and sortorder fields in the category table needs
-    // a lot more thought. We should probably use a library function to add the category
+    // a lot more thought. We should probably use a library function to add the category 
     // rather than just writing it to the database
-
+    
     // whereever it says "/// We have to recode the .... field" we should put in a check
     // to see if the recoding was successful and throw an appropriate error otherwise
 
@@ -135,7 +135,7 @@
             $quiz_cat->parent = backup_todb($info['QUESTION_CATEGORY']['#']['PARENT']['0']['#']);
             $quiz_cat->sortorder = backup_todb($info['QUESTION_CATEGORY']['#']['SORTORDER']['0']['#']);
 
-            if ($catfound = restore_get_best_quiz_category($quiz_cat, $restore->course)) {
+            if ($catfound = restore_get_best_quiz_category($quiz_cat, $restore->course)) {            
                 $newid = $catfound;
             } else {
                 if (!$quiz_cat->stamp) {
@@ -146,14 +146,10 @@
 
             //Do some output
             if ($newid) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo "<li>".get_string('category', 'quiz')." \"".$quiz_cat->name."\"<br />";
-                }
+                echo "<li>".get_string('category', 'quiz')." \"".$quiz_cat->name."\"<br />";
             } else {
                 //We must never arrive here !!
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo "<li>".get_string('category', 'quiz')." \"".$quiz_cat->name."\" Error!<br />";
-                }
+                echo "<li>".get_string('category', 'quiz')." \"".$quiz_cat->name."\" Error!<br />";
                 $status = false;
             }
             backup_flush(300);
@@ -168,9 +164,7 @@
             } else {
                 $status = false;
             }
-            if (!defined('RESTORE_SILENTLY')) {
-                echo '</li>';
-            }
+            echo '</li>';
         }
 
         return $status;
@@ -181,7 +175,6 @@
         global $CFG;
 
         $status = true;
-        $restored_questions = array();
 
         //Get the questions array
         $questions = $info['QUESTION_CATEGORY']['#']['QUESTIONS']['0']['#']['QUESTION'];
@@ -213,7 +206,7 @@
 
             ////We have to recode the parent field
             // This should work alright because we ordered the questions appropriately during backup so that
-            // questions that can be parents are restored first
+        // questions that can be parents are restored first
             if ($question->parent and $parent = backup_getid($restore->backup_unique_code,"quiz_questions",$question->parent)) {
                 $question->parent = $parent->new_id;
             }
@@ -234,32 +227,22 @@
                 $creatingnewquestion = true;
             }
 
+            //Do some output
+            if (($i+1) % 2 == 0) {
+                echo ".";
+                if (($i+1) % 40 == 0) {
+                    echo "<br />";
+                }
+                backup_flush(300);
+            }
             //Save newid to backup tables
             if ($newid) {
                 //We have the newid, update backup_ids
                 backup_putid($restore->backup_unique_code,"quiz_questions",$oldid,
                              $newid);
             }
-
-            $restored_questions[$i] = new stdClass;
-            $restored_questions[$i]->newid  = $newid;
-            $restored_questions[$i]->oldid  = $oldid;
-            $restored_questions[$i]->qtype  = $question->qtype;
-            $restored_questions[$i]->is_new = $creatingnewquestion;
-        }
-
-        // Loop again, now all the question id mappings exist, so everything can
-        // be restored.
-        for($i = 0; $i < sizeof($questions); $i++) {
-            $que_info = $questions[$i];
-
-            $newid = $restored_questions[$i]->newid;
-            $oldid = $restored_questions[$i]->oldid;
-            $question->qtype = $restored_questions[$i]->qtype;
-
-
             //If it's a new question in the DB, restore it
-            if ($restored_questions[$i]->is_new) {
+            if ($creatingnewquestion) {
                 //Now, restore every quiz_answers in this question
                 $status = quiz_restore_answers($oldid,$newid,$que_info,$restore);
                 //Now, depending of the type of questions, invoke different functions
@@ -285,9 +268,8 @@
                     $status = quiz_restore_calculated($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "11") {
                     $status = quiz_restore_rqp($oldid,$newid,$que_info,$restore);
-                } else if ($question->qtype == "12") {
-                    $status = quiz_restore_essay($oldid,$newid,$que_info,$restore);
-                }
+        }
+                
             } else {
                 //We are NOT creating the question, but we need to know every quiz_answers
                 //map between the XML file and the database to be able to restore the states
@@ -317,17 +299,6 @@
                 } else if ($question->qtype == "10") {
                     //Calculated question. Nothing to remap
                 }
-            }
-
-            //Do some output
-            if (($i+1) % 2 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 40 == 0) {
-                        echo "<br />";
-                    }
-                }
-                backup_flush(300);
             }
         }
         return $status;
@@ -364,11 +335,9 @@
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 1000 == 0) {
-                            echo "<br />";
-                        }
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -426,11 +395,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -495,11 +462,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -550,11 +515,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -616,11 +579,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -666,11 +627,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -744,11 +703,9 @@
                                                       "answertext",$match_sub->answertext);
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -801,11 +758,9 @@
                                                       "positionkey",$multianswer->positionkey);
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -848,11 +803,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -883,13 +836,13 @@
 
             //Now, build the QUIZ_NUMERICAL record structure
             $numerical->question = $new_question_id;
-            $numerical->answer = backup_todb($num_info['#']['ANSWER']['0']['#']);
+            $numerical->answers = backup_todb($num_info['#']['ANSWERS']['0']['#']);
             $numerical->tolerance = backup_todb($num_info['#']['TOLERANCE']['0']['#']);
 
             ////We have to recode the answer field
-            $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$numerical->answer);
+            $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$numerical->answers);
             if ($answer) {
-                $numerical->answer = $answer->new_id;
+                $numerical->answers = $answer->new_id;
             }
 
             //The structure is equal to the db, so insert the quiz_numerical
@@ -897,11 +850,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -952,11 +903,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -997,29 +946,33 @@
 
             //Now, build the QUIZ_MULTIANSWER record structure
             $multianswer->question = $new_question_id;
-            $multianswer->sequence = backup_todb($mul_info['#']['SEQUENCE']['0']['#']);
+            $multianswer->answers = backup_todb($mul_info['#']['ANSWERS']['0']['#']);
+            $multianswer->positionkey = backup_todb($mul_info['#']['POSITIONKEY']['0']['#']);
+            $multianswer->answertype = backup_todb($mul_info['#']['ANSWERTYPE']['0']['#']);
+            $multianswer->norm = backup_todb($mul_info['#']['NORM']['0']['#']);
 
-            //We have to recode the sequence field (a list of question ids)
-            //Extracts question id from sequence
-            $sequence_field = "";
+            //We have to recode the answers field (a list of answers id)
+            //Extracts answer id from sequence
+            $answers_field = "";
             $in_first = true;
-            $tok = strtok($multianswer->sequence,",");
+            $tok = strtok($multianswer->answers,",");
             while ($tok) {
                 //Get the answer from backup_ids
-                $question = backup_getid($restore->backup_unique_code,"quiz_questions",$tok);
-                if ($question) {
+                $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$tok);
+                if ($answer) {
                     if ($in_first) {
-                        $sequence_field .= $question->new_id;
+                        $answers_field .= $answer->new_id;
                         $in_first = false;
                     } else {
-                        $sequence_field .= ",".$question->new_id;
+                        $answers_field .= ",".$answer->new_id;
                     }
                 }
                 //check for next
                 $tok = strtok(",");
             }
             //We have the answers field recoded to its new ids
-            $multianswer->sequence = $sequence_field;
+            $multianswer->answers = $answers_field;
+
             //The structure is equal to the db, so insert the quiz_multianswers
             $newid = insert_record ("quiz_multianswers",$multianswer);
 
@@ -1031,15 +984,13 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
-/*
+
             //If we have created the quiz_multianswers record, now, depending of the
             //answertype, delegate the restore to every qtype function
             if ($newid) {
@@ -1053,7 +1004,6 @@
             } else {
                 $status = false;
             }
-*/
         }
 
         return $status;
@@ -1088,54 +1038,6 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
-                }
-                backup_flush(300);
-            }
-
-            if (!$newid) {
-                $status = false;
-            }
-        }
-
-        return $status;
-    }
-    
-    function quiz_restore_essay ($old_question_id,$new_question_id,$info,$restore) {
-
-        global $CFG;
-
-        $status = true;
-
-        //Get the truefalse array
-        $essays = $info['#']['ESSAY'];
-
-        //Iterate over truefalse
-        for($i = 0; $i < sizeof($essays); $i++) {
-            $essay_info = $essays[$i];
-            //traverse_xmlize($tru_info);                                                                 //Debug
-            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
-            //$GLOBALS['traverse_array']="";                                                              //Debug
-
-            //Now, build the QUIZ_TRUEFALSE record structure
-            $essay->question = $new_question_id;
-            $essay->answer = backup_todb($essay_info['#']['ANSWER']['0']['#']);
-
-            ////We have to recode the answer field
-            $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$essay->answer);
-            if ($answer) {
-                $essay->answer = $answer->new_id;
-            }
-
-            //The structure is equal to the db, so insert the quiz_truefalse
-            $newid = insert_record ("quiz_essay",$essay);
-
-            //Do some output
-            if (($i+1) % 50 == 0) {
                 echo ".";
                 if (($i+1) % 1000 == 0) {
                     echo "<br />";
@@ -1150,6 +1052,7 @@
 
         return $status;
     }
+
 
     function quiz_restore_numerical_units ($old_question_id,$new_question_id,$info,$restore) {
 
@@ -1358,9 +1261,7 @@
             $newid = insert_record ("quiz",$quiz);
 
             //Do some output
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","quiz")." \"".format_string(stripslashes($quiz->name),true)."\"</li>";
-            }
+            echo "<li>".get_string("modulename","quiz")." \"".format_string(stripslashes($quiz->name),true)."\"</li>";
             backup_flush(300);
 
             if ($newid) {
@@ -1372,7 +1273,7 @@
                 //We have to restore the question_versions now (course level table)
                 $status = quiz_question_versions_restore_mods($newid,$info,$restore);
                 //Now check if want to restore user data and do it.
-                if (restore_userdata_selected($restore,'quiz',$mod->id)) {
+                if ($restore->mods['quiz']->userinfo) {
                     //Restore quiz_attempts
                     $status = quiz_attempts_restore_mods ($newid,$info,$restore);
                     if ($status) {
@@ -1426,11 +1327,9 @@
 
             //Do some output
             if (($i+1) % 10 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 200 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 200 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -1499,11 +1398,9 @@
 
             //Do some output
             if (($i+1) % 10 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 200 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 200 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -1523,12 +1420,7 @@
     //This function restores the quiz_attempts
     function quiz_attempts_restore_mods($quiz_id,$info,$restore) {
 
-        notify("Restoring quiz without user attempts. Restoring of user attempts will be implemented in Moodle 1.5.1");
-        return true;
-
         global $CFG;
-        
-        include($CFG->dirroot.'/mod/quiz/questionlib.php');
 
         $status = true;
 
@@ -1563,22 +1455,17 @@
                 $attempt->userid = $user->new_id;
             }
 
-            //Set the uniqueid field
-            $attempt->uniqueid = quiz_new_attempt_uniqueid();
-
             //We have to recode the layout field (a list of questions id and pagebreaks)
-            $attempt->layout = quiz_recode_layout($attempt->layout, $restore);
+        $attempt->layout = quiz_recode_layout($attempt->layout, $restore);
 
             //The structure is equal to the db, so insert the quiz_attempts
             $newid = insert_record ("quiz_attempts",$attempt);
 
             //Do some output
             if (($i+1) % 10 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 200 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 200 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -1814,11 +1701,9 @@
 
             //Do some output
             if (($i+1) % 10 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 200 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 200 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -1829,7 +1714,6 @@
                              $newid);
                 //Now process question type specific state information
                 $status = quiz_rqp_states_restore_mods($newid,$res_info,$restore);
-                $status = quiz_essay_states_restore_mods($newid,$res_info,$restore);
             } else {
                 $status = false;
             }
@@ -1852,20 +1736,20 @@
             $newest_state->sumpenalty = backup_todb($res_info['#']['SUMPENALTY']['0']['#']);
 
             //We have to recode the question field
-            $question = backup_getid($restore->backup_unique_code,"quiz_questions",$newest_state->questionid);
+            $question = backup_getid($restore->backup_unique_code,"quiz_questions",$newest_state->question);
             if ($question) {
-                $newest_state->questionid = $question->new_id;
+                $newest_state->question = $question->new_id;
             }
 
             //We have to recode the newest field
             $state = backup_getid($restore->backup_unique_code,"quiz_states",$newest_state->newest);
-            if ($state) {
+            if ($staten) {
                 $newest_state->newest = $state->new_id;
             }
 
             //We have to recode the newgraded field
             $state = backup_getid($restore->backup_unique_code,"quiz_states",$newest_state->newgraded);
-            if ($state) {
+            if ($staten) {
                 $newest_state->newgraded = $state->new_id;
             }
 
@@ -1877,7 +1761,7 @@
         return $status;
     }
 
-    //This function restores the quiz_rqp_states
+    //This function restores the quiz_states
     function quiz_rqp_states_restore_mods($state_id,$info,$restore) {
 
         global $CFG;
@@ -1899,30 +1783,6 @@
         }
 
     return $status;
-    }
-    
-    //This function restores the quiz_essay_states
-    function quiz_essay_states_restore_mods($state_id,$info,$restore) {
-
-        global $CFG;
-
-        $status = true;
-
-        //Get the quiz_essay_state
-        $essay_state = $info['#']['ESSAY_STATE']['0'];
-        if ($essay_state) {
-
-            //Now, build the ESSAY_STATES record structure
-            $state->stateid = $state_id;
-            $state->graded = backup_todb($essay_state['#']['GRADED']['0']['#']);
-            $state->fraction = backup_todb($essay_state['#']['FRACTION']['0']['#']);
-            $state->response = backup_todb($essay_state['#']['RESPONSE']['0']['#']);
-
-            //The structure is equal to the db, so insert the quiz_states
-            $newid = insert_record ("quiz_essay_states",$state);
-        }
-
-        return $status;
     }
 
     //This function restores the quiz_grades
@@ -1963,11 +1823,9 @@
 
             //Do some output
             if (($i+1) % 10 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 200 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 200 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -1978,114 +1836,6 @@
                              $newid);
             } else {
                 $status = false;
-            }
-        }
-
-        return $status;
-    }
-
-    //Return a content decoded to support interactivities linking. Every module
-    //should have its own. They are called automatically from
-    //quiz_decode_content_links_caller() function in each module
-    //in the restore process
-    function quiz_decode_content_links ($content,$restore) {
-            
-        global $CFG;
-            
-        $result = $content;
-                
-        //Link to the list of quizs
-                
-        $searchstring='/\$@(QUIZINDEX)\*([0-9]+)@\$/';
-        //We look for it
-        preg_match_all($searchstring,$content,$foundset);
-        //If found, then we are going to look for its new id (in backup tables)
-        if ($foundset[0]) {
-            //print_object($foundset);                                     //Debug
-            //Iterate over foundset[2]. They are the old_ids
-            foreach($foundset[2] as $old_id) {
-                //We get the needed variables here (course id)
-                $rec = backup_getid($restore->backup_unique_code,"course",$old_id);
-                //Personalize the searchstring
-                $searchstring='/\$@(QUIZINDEX)\*('.$old_id.')@\$/';
-                //If it is a link to this course, update the link to its new location
-                if($rec->new_id) {
-                    //Now replace it
-                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/quiz/index.php?id='.$rec->new_id,$result);
-                } else { 
-                    //It's a foreign link so leave it as original
-                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/quiz/index.php?id='.$old_id,$result);
-                }
-            }
-        }
-
-        //Link to quiz view by moduleid
-
-        $searchstring='/\$@(QUIZVIEWBYID)\*([0-9]+)@\$/';
-        //We look for it
-        preg_match_all($searchstring,$result,$foundset);
-        //If found, then we are going to look for its new id (in backup tables)
-        if ($foundset[0]) {
-            //print_object($foundset);                                     //Debug
-            //Iterate over foundset[2]. They are the old_ids
-            foreach($foundset[2] as $old_id) {
-                //We get the needed variables here (course_modules id)
-                $rec = backup_getid($restore->backup_unique_code,"course_modules",$old_id);
-                //Personalize the searchstring
-                $searchstring='/\$@(QUIZVIEWBYID)\*('.$old_id.')@\$/';
-                //If it is a link to this course, update the link to its new location
-                if($rec->new_id) {
-                    //Now replace it
-                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/quiz/view.php?id='.$rec->new_id,$result);
-                } else {
-                    //It's a foreign link so leave it as original
-                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/quiz/view.php?id='.$old_id,$result);
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    //This function makes all the necessary calls to xxxx_decode_content_links()
-    //function in each module, passing them the desired contents to be decoded
-    //from backup format to destination site/course in order to mantain inter-activities
-    //working in the backup/restore process. It's called from restore_decode_content_links()
-    //function in restore process
-    function quiz_decode_content_links_caller($restore) {
-        global $CFG;
-        $status = true;
-        
-        if ($quizs = get_records_sql ("SELECT q.id, q.intro
-                                   FROM {$CFG->prefix}quiz q
-                                   WHERE q.course = $restore->course_id")) {
-                                               //Iterate over each quiz->intro
-            $i = 0;   //Counter to send some output to the browser to avoid timeouts
-            foreach ($quizs as $quiz) {
-                //Increment counter
-                $i++;
-                $content = $quiz->intro;
-                $result = restore_decode_content_links_worker($content,$restore);
-                if ($result != $content) {
-                    //Update record
-                    $quiz->intro = addslashes($result);
-                    $status = update_record("quiz",$quiz);
-                    if ($CFG->debug>7) {
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
-                        }
-                    }
-                }
-                //Do some output
-                if (($i+1) % 5 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 100 == 0) {
-                            echo "<br />";
-                        }
-                    }
-                    backup_flush(300);
-                }
             }
         }
 
@@ -2119,11 +1869,9 @@
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 20 == 0) {
-                            echo "<br />";
-                        }
+                    echo ".";
+                    if (($i+1) % 20 == 0) {
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -2198,7 +1946,7 @@
                     //Get the new_id of the attempt (to recode the url field)
                     $att = backup_getid($restore->backup_unique_code,"quiz_attempts",$attid);
                     if ($att) {
-                        $log->url = "review.php?id=".$log->cmid."&attempt=".$att->new_id;
+                        $log->url = "review.php?id=".$log->cmid."&amp;attempt=".$att->new_id;
                         $log->info = $mod->new_id;
                         $status = true;
                     }
@@ -2215,7 +1963,7 @@
                     //Get the new_id of the attempt (to recode the url field)
                     $att = backup_getid($restore->backup_unique_code,"quiz_attempts",$attid);
                     if ($att) {
-                        $log->url = "review.php?id=".$log->cmid."&attempt=".$att->new_id;
+                        $log->url = "review.php?id=".$log->cmid."&amp;attempt=".$att->new_id;
                         $log->info = $mod->new_id;
                         $status = true;
                     }
@@ -2232,7 +1980,7 @@
                     //Get the new_id of the attempt (to recode the url field)
                     $att = backup_getid($restore->backup_unique_code,"quiz_attempts",$attid);
                     if ($att) {
-                        $log->url = "review.php?id=".$log->cmid."&attempt=".$att->new_id;
+                        $log->url = "review.php?id=".$log->cmid."&amp;attempt=".$att->new_id;
                         $log->info = $mod->new_id;
                         $status = true;
                     }
@@ -2251,9 +1999,7 @@
             }
             break;
         default:
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
-            }
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
             break;
         }
 
@@ -2266,16 +2012,16 @@
     function quiz_recode_layout($layout, $restore) {
         //Recodes the quiz layout (a list of questions id and pagebreaks)
 
-        //Extracts question id from sequence
-        if ($questionids = explode(',', $layout)) {
-            foreach ($questionids as $id => $questionid) {
-            if ($questionid) { // If it iss zero then this is a pagebreak, don't translate
-                $newq = backup_getid($restore->backup_unique_code,"quiz_questions",$questionid);
-                $questionids[$id] = $newq->new_id;
-            }
-            }
+    //Extracts question id from sequence
+    if ($questionids = explode(',', $layout)) {
+        foreach ($questionids as $id => $questionid) {
+        if ($questionid) { // If it iss zero then this is a pagebreak, don't translate
+            $newq = backup_getid($restore->backup_unique_code,"quiz_questions",$questionid);
+            $questionids[$id] = $newq->new_id;
         }
-        return implode(',', $questionids);
+        }
+    }
+    return implode(',', $questionids);
     }
 
 ?>

@@ -101,7 +101,7 @@
                         // see if n is = to the retry
                         if ($n == $attempt->retry) {
                             // get grade info
-                            $usergrade = round($grade->grade, 2); // round it here so we only have to do it once
+                            $usergrade = $grade->grade;
                             break;
                         }
                         $n++; // if not equal, then increment n
@@ -165,7 +165,7 @@
                 foreach ($tries as $try) {
                 // start to build up the link
                     $temp = "<a href=\"report.php?id=$cm->id&amp;action=detail&amp;userid=".$try["userid"]."&amp;try=".$try["try"]."\">";
-                    if ($try["grade"] !== NULL) { // if NULL then not done yet
+                    if ($try["grade"] != NULL) { // if NULL then not done yet
                         // this is what the link does when the user has completed the try
                         $timetotake = $try["timeend"] - $try["timestart"];
 
@@ -186,7 +186,7 @@
                     $attempts[] = $temp;
 
                     // run these lines for the stats only if the user finnished the lesson
-                    if ($try["grade"] !== NULL) {
+                    if ($try["grade"] != NULL) {
                         $numofattempts++;
                         $avescore += $try["grade"];
                         $avetime += $timetotake;
@@ -408,12 +408,9 @@
             $answerpage = new stdClass;
             $data ='';
             $answerdata = new stdClass;
-            
+
             $answerpage->title = format_string($page->title);
-            
-            $options = new stdClass;
-            $options->noclean = true;
-            $answerpage->contents = format_text($page->contents, FORMAT_MOODLE, $options);
+            $answerpage->contents = format_text($page->contents);
 
             // get the page qtype
             switch ($page->qtype) {
@@ -586,11 +583,11 @@
                                     $answerdata->answers[] = array(get_string("nooneansweredthisquestion", "lesson"), " ");
                                 }
                                 $i++;
-                            } else if ($answer->id == $useranswer->answerid && $useranswer != NULL) {
+                            } else if ($answer->answer == $useranswer->useranswer && $useranswer != NULL) {
                                 // get in here when a user answer matches one of the answers to the page
                                 $data = "<input type=\"text\" size=\"50\" disabled=\"disabled\" readonly=\"readonly\" value=\"$useranswer->useranswer\">";
-                                if (isset($pagestats[$page->id][$useranswer->useranswer])) {
-                                    $percent = $pagestats[$page->id][$useranswer->useranswer] / $pagestats[$page->id]["total"] * 100;
+                                if (isset($pagestats[$page->id][$answer->answer])) {
+                                    $percent = $pagestats[$page->id][$answer->answer] / $pagestats[$page->id]["total"] * 100;
                                     $percent = round($percent, 2);
                                     $percent .= "% ".get_string("enteredthis", "lesson");
                                 } else {
@@ -614,11 +611,11 @@
                                 } else {
                                     $answerdata->score = get_string("didnotreceivecredit", "lesson");
                                 }
-                            } elseif ($answer == end($answers) && empty($answerdata) && $useranswer != NULL) {
+                            } elseif ($answer == end($answers) && !isset($answerdata) && $useranswer != NULL) {
                                 // get in here when what the user entered is not one of the answers
                                 $data = "<input type=\"text\" size=\"50\" disabled=\"disabled\" readonly=\"readonly\" value=\"$useranswer->useranswer\">";
-                                if (isset($pagestats[$page->id][$useranswer->useranswer])) {
-                                    $percent = $pagestats[$page->id][$useranswer->useranswer] / $pagestats[$page->id]["total"] * 100;
+                                if (isset($pagestats[$page->id][$answer->answer])) {
+                                    $percent = $pagestats[$page->id][$answer->answer] / $pagestats[$page->id]["total"] * 100;
                                     $percent = round($percent, 2);
                                     $percent .= "% ".get_string("enteredthis", "lesson");
                                 } else {
@@ -803,11 +800,9 @@
 
             if (!$grades = get_records_select("lesson_grades", "lessonid = $lesson->id and userid = $userid", "completed", "*", $try, 1)) {
                 $grade = -1;
-                $completed = -1;
             } else {
                 $grade = current($grades);
-                $completed = $grade->completed;
-                $grade = round($grade->grade, 2);
+                $grade = $grade->grade;
             }
             if (!$times = get_records_select("lesson_timer", "lessonid = $lesson->id and userid = $userid", "starttime", "*", $try, 1)) {
                 $timetotake = -1;

@@ -18,7 +18,6 @@ $string['assignmenttype'] = 'Assignment type';
 $string['availabledate'] = 'Available from';
 $string['comment'] = 'Comment';
 $string['commentinline'] = 'Comment inline';
-$string['configitemstocount'] = 'Nature of items to be counted for student submissions in online assignments.';
 $string['configmaxbytes'] = 'Default maximum assignment size for all assignments on the site (subject to course limits and other local settings)';
 $string['description'] = 'Description';
 $string['duedate'] = 'Due date';
@@ -42,8 +41,6 @@ $string['failedupdatefeedback'] = 'Failed to update submission feedback for user
 $string['feedback'] = 'Feedback';
 $string['feedbackfromteacher'] = 'Feedback from the $a';
 $string['feedbackupdated'] = 'Submissions feedback updated for $a people';
-$string['guestnoupload'] = 'Sorry, guests are not allowed to upload';
-$string['guestnosubmit'] = 'Sorry, guests are not allowed to submit an assignment';
 $string['helpoffline'] = '<p>This is useful when the assignment is performed outside of Moodle.  It could be
    something elsewhere on the web or face-to-face.</p><p>Students can see a description of the assignment, 
    but can\'t upload files or anything.  Grading works normally, and students will get notifications of 
@@ -66,9 +63,7 @@ $string['noattempts'] = 'No attempts have been made on this assignment';
 $string['notgradedyet'] = 'Not graded yet';
 $string['notsubmittedyet'] = 'Not submitted yet';
 $string['overwritewarning'] = 'Warning: uploading again will REPLACE your current submission';
-$string['pagesize'] = 'Submissions shown per page';
 $string['preventlate'] = 'Prevent late submissions';
-$string['quickgrade'] = 'Allow quick grading';
 $string['saveallfeedback'] = 'Save all my feedback';
 $string['submission'] = 'Submission';
 $string['submissionfeedback'] = 'Submission feedback';

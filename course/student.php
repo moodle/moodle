@@ -5,10 +5,10 @@
 
     define("MAX_USERS_PER_PAGE", 5000);
 
-    $id = required_param('id',PARAM_INT); // course id
-    $add = optional_param('add', "", PARAM_ALPHA);
-    $remove = optional_param('remove', "", PARAM_ALPHA);
-    $search = optional_param('search', "", PARAM_CLEAN); // search string
+    require_variable($id);         // course id
+    optional_variable($add, "");
+    optional_variable($remove, "");
+    optional_variable($search, ""); // search string
 
     if (! $site = get_site()) {
         redirect("$CFG->wwwroot/$CFG->admin/index.php");

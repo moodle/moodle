@@ -3,5 +3,8 @@
 
 
 $string['filtername'] = 'Aktiviteettien automaattinen linkitys';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Suomi';
 
 ?>

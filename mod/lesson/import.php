@@ -3,7 +3,6 @@
 
     require_once("../../config.php");
     require_once("lib.php");
-    require_once("locallib.php");
 
     $id     = required_param('id', PARAM_INT);         // Course Module ID
     $pageid = optional_param('pageid', '', PARAM_INT); // Page ID
@@ -51,11 +50,10 @@
             }
 
             require("format.php");  // Parent class
-            require("$CFG->dirroot/mod/quiz/locallib.php"); // for the constants used in quiz/format/<format>/format.php
+            require("$CFG->dirroot/mod/quiz/lib.php"); // for the constants used in quiz/format/<format>/format.php
             require("$CFG->dirroot/mod/quiz/format/$form->format/format.php");
 
-            $classname = "quiz_format_$form->format";
-            $format = new $classname();
+            $format = new quiz_file_format();
 
             if (! $format->importpreprocess()) {             // Do anything before that we need to
                 error("Error occurred during pre-processing!");

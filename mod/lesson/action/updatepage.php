@@ -7,25 +7,12 @@
     }
 
     confirm_sesskey();
-    
-    $redirect = optional_param('redirect', '', PARAM_ALPHA);
 
     $timenow = time();
     $form = data_submitted();
 
     $page = new stdClass;
     $page->id = clean_param($form->pageid, PARAM_INT);
-    
-    // check to see if the cancel button was pushed
-    if (optional_param('cancel', '', PARAM_ALPHA)) {
-        if ($redirect == 'navigation') {
-            // redirect to viewing the page
-            redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$page->id");
-        } else {
-            redirect("view.php?id=$cm->id");
-        }
-    }
-
     $page->timemodified = $timenow;
     $page->qtype = clean_param($form->qtype, PARAM_INT);
     if (isset($form->qoption)) {
@@ -33,6 +20,7 @@
     } else {
         $page->qoption = 0;
     }
+    /// CDC-FLAG /// 6/16/04
     if (isset($form->layout)) {
         $page->layout = clean_param($form->layout, PARAM_INT);
     } else {
@@ -43,10 +31,11 @@
     } else {
         $page->display = 0;
     }
+    /// CDC-FLAG ///        
     $page->title = clean_param($form->title, PARAM_CLEANHTML);
-    $page->contents = trim($form->contents);
+    $page->contents = clean_param(trim($form->contents), PARAM_CLEANHTML);
     $page->title = addslashes($page->title);
-    
+    $page->contents = addslashes($page->contents);
     if (!update_record("lesson_pages", $page)) {
         error("Update page: page not updated");
     }
@@ -83,23 +72,25 @@
         for ($i = 0; $i < $lesson->maxanswers; $i++) {
             // strip tags because the editor gives <p><br />...
             // also save any answers where the editor is (going to be) used
-            if (trim(strip_tags($form->answer[$i])) or isset($form->answereditor[$i]) or isset($form->responseeditor[$i])) {
+            if (trim(strip_tags($form->answer[$i])) or $form->answereditor[$i] or $form->responseeditor[$i]) {
                 if ($form->answerid[$i]) {
                     $oldanswer = new stdClass;
                     $oldanswer->id = clean_param($form->answerid[$i], PARAM_INT);
-                    $oldanswer->flags = optional_param("answereditor[$i]", 0, PARAM_INT) * LESSON_ANSWER_EDITOR +
-                        optional_param("responseeditor[$i]", 0, PARAM_INT) * LESSON_RESPONSE_EDITOR;
+                    $oldanswer->flags = clean_param($form->answereditor[$i], PARAM_INT) * LESSON_ANSWER_EDITOR +
+                        clean_param($form->responseeditor[$i], PARAM_INT) * LESSON_RESPONSE_EDITOR;
                     $oldanswer->timemodified = $timenow;
-                    $oldanswer->answer = trim($form->answer[$i]);
+                    $oldanswer->answer = clean_param(trim($form->answer[$i]), PARAM_CLEANHTML);
+                    $oldanswer->answer = addslashes($oldanswer->answer);
                     if (isset($form->response[$i])) {
-                        $oldanswer->response = trim($form->response[$i]);
-                    } else {
-                        $oldanswer->response = '';
+                        $oldanswer->response = clean_param(trim($form->response[$i]), PARAM_CLEANHTML);
+                        $oldanswer->response = addslashes($oldanswer->response);
                     }
                     $oldanswer->jumpto = clean_param($form->jumpto[$i], PARAM_INT);
+                    /// CDC-FLAG ///
                     if ($lesson->custom) {
                         $oldanswer->score = clean_param($form->score[$i], PARAM_INT);
                     }
+                    /// CDC-FLAG ///
                     if (!update_record("lesson_answers", $oldanswer)) {
                         error("Update page: answer $i not updated");
                     }
@@ -108,15 +99,19 @@
                     $newanswer = new stdClass; // need to clear id if more than one new answer is ben added
                     $newanswer->lessonid = $lesson->id;
                     $newanswer->pageid = $page->id;
-                    $newanswer->flags = optional_param("answereditor[$i]", 0, PARAM_INT) * LESSON_ANSWER_EDITOR +
-                        optional_param("responseeditor[$i]", 0, PARAM_INT) * LESSON_RESPONSE_EDITOR;
+                    $newanswer->flags = clean_param($form->answereditor[$i], PARAM_INT) * LESSON_ANSWER_EDITOR +
+                        clean_param($form->responseeditor[$i], PARAM_INT) * LESSON_RESPONSE_EDITOR;
                     $newanswer->timecreated = $timenow;
-                    $newanswer->answer = trim($form->answer[$i]);
+                    $newanswer->answer = clean_param(trim($form->answer[$i]), PARAM_CLEANHTML);
+                    $newanswer->answer = addslashes($newanswer->answer);
                     if (isset($form->response[$i])) {
-                        $newanswer->response = trim($form->response[$i]);
+                        $newanswer->response = clean_param(trim($form->response[$i]), PARAM_CLEANHTML);
+                        $newanswer->answer = addslashes($newanswer->answer);
                     }
                     $newanswer->jumpto = clean_param($form->jumpto[$i], PARAM_INT);
+                    /// CDC-FLAG ///
                     $newanswer->score = clean_param($form->score[$i], PARAM_INT);
+                    /// CDC-FLAG ///
                     $newanswerid = insert_record("lesson_answers", $newanswer);
                     if (!$newanswerid) {
                         error("Update page: answer record not inserted");
@@ -134,8 +129,8 @@
                     } else {
                         $oldanswer = new stdClass;
                         $oldanswer->id = clean_param($form->answerid[$i], PARAM_INT);
-                        $oldanswer->flags = optional_param("answereditor[$i]", 0, PARAM_INT) * LESSON_ANSWER_EDITOR +
-                        optional_param("responseeditor[$i]", 0, PARAM_INT) * LESSON_RESPONSE_EDITOR;
+                        $oldanswer->flags = clean_param($form->answereditor[$i], PARAM_INT) * LESSON_ANSWER_EDITOR +
+                            clean_param($form->responseeditor[$i], PARAM_INT) * LESSON_RESPONSE_EDITOR;
                         $oldanswer->timemodified = $timenow;
                         $oldanswer->answer = NULL;
                         if (!update_record("lesson_answers", $oldanswer)) {
@@ -151,12 +146,8 @@
             }
         }
     }
-
     if ($form->redisplay) {
-        redirect("lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id&amp;redirect=$redirect");
-    } else if ($redirect == 'navigation') {
-        // takes us back to viewing the page
-        redirect("view.php?id=$cm->id&amp;action=navigation&amp;pageid=$page->id", get_string('updatedpage', 'lesson'));
+        redirect("lesson.php?id=$cm->id&amp;action=editpage&amp;pageid=$page->id");
     } else {
         redirect("view.php?id=$cm->id", get_string('updatedpage', 'lesson'));
     }

@@ -6,12 +6,12 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $d      = required_param('d', PARAM_INT);         // Discussion ID
-    $parent = optional_param('parent', 0, PARAM_INT); // If set, then display this post and all children.
-    $mode   = optional_param('mode', 0, PARAM_INT);   // If set, changes the layout of the thread
-    $move   = optional_param('move', 0, PARAM_INT);   // If set, moves this discussion to another forum
-    $mark   = optional_param('mark', 0, PARAM_INT);   // Used for tracking read posts if user initiated.
-    $postid = optional_param('postid', 0, PARAM_INT); // Used for tracking read posts if user initiated.
+    require_variable($d);       // Discussion ID
+    optional_variable($parent); // If set, then display this post and all children.
+    optional_variable($mode);   // If set, changes the layout of the thread
+    optional_variable($move);   // If set, moves this discussion to another forum
+    optional_variable($mark);   // Used for tracking read posts if user initiated.
+    optional_variable($postid); // Used for tracking read posts if user initiated.
 
     if (! $discussion = get_record("forum_discussions", "id", $d)) {
         error("Discussion ID was incorrect or no longer exists");
@@ -30,15 +30,6 @@
 
         if (!isteacher($course->id)) {
             error("You must be a $course->teacher to view this forum");
-        }
-
-    } elseif ($forum->type == "news") {
-        if (!((isadmin() and !empty($CFG->admineditalways))
-            || isteacher($course->id)
-            || $USER->id == $discussion->userid
-            || (($discussion->timestart == 0 || $discussion->timestart <= time())
-            && ($discussion->timeend == 0 || $discussion->timeend > time())))) {
-            error('Discussion ID was incorrect or no longer exists', "$CFG->wwwroot/mod/forum/view.php?f=$forum->id");
         }
 
     } else {
@@ -71,6 +62,7 @@
         }
     }
 
+
     $logparameters = "d=$discussion->id";
     if ($parent) {
         $logparameters .= "&amp;parent=$parent";
@@ -101,11 +93,6 @@
     } else {
         $parent = $discussion->firstpost;
         $navtail = format_string($discussion->name);
-    }
-    
-    //check if user can view this post
-    if (!forum_user_can_view_post($parent,$course)){
-        error('You do not have permissions to view this post');
     }
 
     if (! $post = forum_get_post_full($parent)) {
@@ -151,15 +138,13 @@
         $groupmode = groupmode($course, $cm);
     }
 
-                                       
-    
     if ($groupmode and !isteacheredit($course->id)) {   // Groups must be kept separate
-        //change this to ismember
-        $mygroupid = mygroupid($course->id);//only useful if 0, otherwise it's an array now
+        $mygroupid = mygroupid($course->id);
+
         if ($groupmode == SEPARATEGROUPS) {
             require_login();
 
-            if ((empty($mygroupid) and $discussion->groupid == -1) || (ismember($discussion->groupid) || $mygroupid == $discussion->groupid)) {
+            if ((empty($mygroupid) and $discussion->groupid == -1) || ($mygroupid == $discussion->groupid)) {
                 $canreply = true;
             } elseif ($discussion->groupid == -1) {
                 $canreply = false;
@@ -170,10 +155,9 @@
             }
 
         } else if ($groupmode == VISIBLEGROUPS) {
-            $canreply = ((empty($mygroupid) and $discussion->groupid == -1) || (ismember($discussion->groupid) || $mygroupid == $discussion->groupid));
+            $canreply = ((empty($mygroupid) and $discussion->groupid == -1) || ($mygroupid == $discussion->groupid));
         }
     }
-
 
 
 /// Print the controls across the top
@@ -218,19 +202,10 @@
     }
     echo "</td></tr></table>";
 
-    if (!empty($forum->blockafter) && !empty($forum->blockperiod)) {
-        $a->blockafter = $forum->blockafter;
-        $a->blockperiod = get_string('secondstotime'.$forum->blockperiod);
-        notify(get_string('thisforumisthrottled','forum',$a));
-    }
-
-    if ($forum->type == 'qanda' && !isteacher($forum->course) && !forum_user_has_posted($forum->id,$discussion->id,$USER->id)) {
-        notify(get_string('qandanotify','forum'));
-    }
-
     if (isset($discussionmoved)) {
         notify(get_string("discussionmoved", "forum", format_string($forum->name,true)));
     }
+
 
 /// Print the actual discussion
 

@@ -253,8 +253,7 @@ function display() {
 
     /// Set up some variables
 
-    $inpopup_param = optional_param( 'inpopup','' );
-    $inpopup = !empty( $inpopup_param );
+    $inpopup = !empty($_GET["inpopup"]);
 
     if (resource_is_url($resource->reference)) {
         $fullurl = $resource->reference;
@@ -346,13 +345,11 @@ function display() {
 
     /// Now check whether we need to display a frameset
 
-    $frameset = optional_param( 'frameset','' );
-    if (empty($frameset) and !$embedded and !$inpopup and ($resource->options == "frame")) {
-        $encoding = current_charset();
+    if (empty($_GET['frameset']) and !$embedded and !$inpopup and $resource->options == "frame") {
         echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Frameset//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd\">\n";
         echo "<html dir=\"ltr\">\n";
         echo '<head>';
-        echo '<meta http-equiv="content-type" content="text/html; charset='.$encoding.'" />';
+        echo '<meta http-equiv="content-type" content="text/html; charset=iso-8859-1" />';
         echo "<title>{$course->shortname}: ".strip_tags(format_string($resource->name,true))."</title></head>\n";
         echo "<frameset rows=\"$CFG->resource_framesize,*\">";
         echo "<frame src=\"view.php?id={$cm->id}&amp;type={$resource->type}&amp;frameset=top\" />";
@@ -374,7 +371,7 @@ function display() {
 
     /// If we are in a frameset, just print the top of it
 
-    if (!empty( $frameset ) and ($frameset == "top") ) {
+    if (!empty($_GET['frameset']) and $_GET['frameset'] == "top") {
         print_header($pagetitle, $course->fullname, "$this->navigation ".format_string($resource->name), "", "", true, update_module_button($cm->id, $course->id, $this->strresource), navmenu($course, $cm, "parent"));
 
         $options->para = false;

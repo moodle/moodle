@@ -3,14 +3,12 @@
 #
 
 CREATE TABLE `prefix_backup_files` (
-  `id` int(10) unsigned NOT NULL auto_increment,
   `backup_code` int(10) unsigned NOT NULL default '0',
   `file_type` varchar(10) NOT NULL default '',
   `path` varchar(255) NOT NULL default '',
   `old_id` int(10) unsigned default NULL,
   `new_id` int(10) unsigned default NULL,
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `backup_files_uk` (`backup_code`,`file_type`,`path`)
+  PRIMARY KEY  (`backup_code`,`file_type`,`path`)
 ) TYPE=MyISAM COMMENT='To store and recode ids to user and course files.';
 # --------------------------------------------------------
 
@@ -19,14 +17,12 @@ CREATE TABLE `prefix_backup_files` (
 #
 
 CREATE TABLE `prefix_backup_ids` (
-  `id` int(10) unsigned NOT NULL auto_increment,
   `backup_code` int(12) unsigned NOT NULL default '0',
   `table_name` varchar(30) NOT NULL default '',
   `old_id` int(10) unsigned NOT NULL default '0',
   `new_id` int(10) unsigned default NULL,
   `info` mediumtext,
-  PRIMARY KEY  (`id`),
-  UNIQUE KEY `backup_ids_uk` (`backup_code` ,`table_name`,`old_id`)
+  PRIMARY KEY  (`backup_code`,`table_name`,`old_id`)
 ) TYPE=MyISAM COMMENT='To store and convert ids in backup/restore';
 # --------------------------------------------------------
 

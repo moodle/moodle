@@ -9,15 +9,10 @@ CREATE TABLE prefix_scorm (
   reference varchar(255) NOT NULL default '',
   maxgrade real NOT NULL default '0',
   grademethod integer NOT NULL default '0',
-  maxattempt integer NOT NULL default '1',
   launch integer NOT NULL default '0',
   summary text NOT NULL default '',
-  hidebrowse integer NOT NULL default '0',
-  hidetoc integer NOT NULL default '0',
-  hidenav integer NOT NULL default '0',
+  browsemode integer NOT NULL default '0',
   auto integer NOT NULL default '0',
-  popup integer NOT NULL default '0',
-  options varchar(255) NOT NULL default '',
   width integer NOT NULL default '800',
   height integer NOT NULL default '600',
   timemodified integer NOT NULL default '0'
@@ -54,7 +49,7 @@ CREATE TABLE prefix_scorm_scoes_track (
   scoid integer NOT NULL default '0',
   element varchar(255) NOT NULL default '',
   value text NOT NULL default '',
-  timemodified integer NOT NULL default '0',
+  timemodified integer NOT NULL default '0'
   UNIQUE (userid, scormid, scoid, element)
 );
 

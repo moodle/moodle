@@ -1,11 +1,10 @@
 <?PHP // $Id$ 
-      // flash.php - created with Moodle 1.6 development (2005090100)
+      // flash.php - created with Moodle 1.4.3 + (2004083134)
 
 
 $string['accesses'] = 'Tillgång till  Flash aktiviteter.';
 $string['allresultsheading'] = 'Lista över alla resultat från $a. Bara tillgängliga för (distans)lärare eller admin.';
 $string['answers'] = 'Avgivna svar och betyg/omdömen';
-$string['browsersize'] = 'Avgivna svar och betyg/omdömen';
 $string['col_headings_ans_q_no'] = 'Fråga nummer';
 $string['col_headings_answer'] = 'Avgivet svar';
 $string['col_headings_answers'] = 'Avgivna svar';
@@ -18,60 +17,26 @@ $string['col_headings_timemodified_date'] = 'Svar registrerade klockan';
 $string['col_headings_user_firstname'] = 'Användarens förnamn';
 $string['col_headings_user_fullname'] = 'Användare';
 $string['col_headings_user_lastname'] = 'Användarens efternamn';
-$string['defaultfeedback'] = '\'%%answer%%\' på %%time%% sekunder';
-$string['defaultguestfeedback'] = 'Svarade på %%time%% sekunder';
 $string['dotest'] = 'Klicka här för att göra testet';
 $string['downloadcsv'] = 'Ladda ner som kommaseparerade värden (csv fil)';
-$string['feedback'] = 'Återkoppling';
-$string['fonts'] = 'Ladda in dessa typsnittsfiler i förväg för den här aktiviteten';
 $string['gradingmethod'] = 'Metod för betygssättning/avgivande av omdöme';
-$string['gradingmethod_0'] = 'Inga betyg/omdömen';
 $string['gradingmethod_ave'] = 'Medelbetyg/omdöme för varje fråga';
 $string['gradingmethod_best'] = 'Bästa betyg/omdöme  för varje fråga';
 $string['gradingmethod_best_q'] = 'Betyg/omdöme för det bästa försöket på hela testet';
 $string['gradingmethod_first'] = 'Bara det första försöket på testet får ett betyg/omdöme';
 $string['gradingmethod_last'] = 'Betyg/omdöme för det sista försöket på testet.';
 $string['gradingmethodused'] = 'Metod för betygssättning/avgivande av omdöme på det här testet : {$a}.';
-$string['guestfeedback'] = 'Återkoppling för gästanvändare';
-$string['htmlandembedded'] = 'Om att använda inbäddade typsnitt i text som är formaterad i HTML.';
-$string['ignore'] = 'Inte besvarad';
 $string['modulename'] = 'Flash-aktivitet';
 $string['modulenameplural'] = 'Flash -aktiviteter';
 $string['movie'] = 'Film';
-$string['moviesize'] = 'Fast dimensionering i pixel enligt värden i \'publicera inställningar\'.';
 $string['nextpage'] = 'Nästa sida';
-$string['nofonts'] = 'Inga typsnittsfiler har installerats';
-$string['nogrades'] = 'Det har inte registrerats några resultat för den här aktiviteten.';
-$string['noheader'] = 'Nej';
-$string['noofquestions'] = 'Antal frågor';
+$string['nogrades'] = 'Det hra inte registrerats några resultat för den här aktiviteten.';
 $string['not_answered'] = 'Du har inte gjort något försök att besvara den här frågan.';
 $string['not_taken'] = 'Du har inte genomfört det här testet än.';
-$string['orderfont'] = 'Typsnitt för fråga av typen \"ordna\"';
 $string['resultsheading'] = '{$a->fullname}\'s resultat av $a->flashname';
-$string['right'] = 'Rätt';
 $string['see_all_results'] = 'Visa alla resultat på det här testet';
-$string['selectgrades'] = 'Betygsätttning för fråga av typen \"att välja text\"';
-$string['show_limited'] = 'Klicka här för att endast visa de senaste 25 svaren';
-$string['show_unlimited'] = 'Klicka här för att visa alla $a svar';
-$string['showgrades'] = 'Visa betyg/omdömen på sidan för resultat';
-$string['showheader'] = 'Visa rubrik och sidfot och navigation ovanför eller under filmen.';
-$string['showing_limited'] = 'Visar endast de sista 25 av $a svar.';
-$string['showing_one_attempt'] = 'Visar svar/betyg/omdömen endast från ett tillfälle.<br />(Övergripande betyg/omdöme är för ALLA försök.)';
-$string['showing_unlimited'] = 'Visar alla $a svar';
-$string['size'] = 'Filmens storlek';
-$string['splash'] = 'Text för HTML splash-sida';
-$string['supported_tags'] = 'Om HTML i Flash';
 $string['taken_test_n_times'] = 'Har genomfört testet $a gånger';
-$string['taken_test_n_times_most_recent'] = 'Test genomfört $a->n gånger - den senaste $a->lasttime';
-$string['taken_test_n_times_most_recent_first'] = 'Test genomfört $a->n gånger - första gången:  $a->firsttime<br />den senaste $a->lasttime';
 $string['timemodified'] = 'Testet har genomförts den ';
-$string['usepreloader'] = 'Använda en förladdare';
-$string['usepreloader_mxli'] = 'Ja, använd laddaren och spåraren för Flash MX lärande interaktioner';
-$string['usepreloader_no'] = 'Ingen förladdare';
-$string['usepreloader_normal'] = 'Ja, använd standardtypsnittet och filmladdaren';
-$string['usesplash'] = 'Använd en HTML splash-sida';
-$string['wrong'] = 'Fel';
-$string['yesheader'] = 'Ja';
 $string['yourgrade'] = 'Ditt ({$a->fullname}) betyg/omdöme för den här aktiviteten : $a->grade av $a->maxgrade.';
 $string['yourresultsheading'] = 'Ditt({$a->fullname}) resultat på $a->flashname';
 

@@ -154,6 +154,7 @@ $string['overallocation'] = 'Déséquilibre - trop d\'allocations';
 $string['overallpeergrade'] = 'Note totale des pairs$a';
 $string['overallteachergrade'] = 'Note totale du professeur: $a';
 $string['ownwork'] = 'Mon travail';
+$string['parentlanguage'] = 'fr';
 $string['percentageofassessments'] = 'Pourcentage d\'évaluations à rejeter';
 $string['phase'] = 'Étape';
 $string['phase1'] = 'Création du travail';

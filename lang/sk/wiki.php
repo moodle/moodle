@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.6 development (2005052400)
+      // wiki.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['action'] = '-- Akcia --';
@@ -30,7 +30,7 @@ $string['choosewikilinks'] = '-- Vyberte Wiki odkazy --';
 $string['comment'] = 'Komentár';
 $string['contentsize'] = 'Veµkos» obsahu';
 $string['created'] = 'Vytvorené';
-$string['deletemewikiword'] = 'Odstráni»Ma';
+$string['deletemewikiword'] = 'Odstráni»Mòa';
 $string['deletemewikiwordfound'] = 'Na stránke nájdených $a';
 $string['deletepage'] = 'Odstráni» stránku';
 $string['deleteversions'] = 'Koµko posledných verzií odstráni»?';
@@ -39,7 +39,7 @@ $string['diff'] = 'Rozdiely';
 $string['differences'] = 'Rozdiely na stránke $a->pagename medzi verziou $a->new_ver a $a->old_ver.';
 $string['disablecamel'] = 'Zakáza» vytváranie odkazov z WikiSlov';
 $string['disabledpage'] = 'Táto stránka nie je momentálne dostupná';
-$string['doesnotexist'] = 'Táto stránka nie je vytvorená, ak ju chcete vytvori», kliknite prosím na tlaèítko Uprav.';
+$string['doesnotexist'] = 'Táto stránka nie je vytvorená, ak ju chcete vytvori», kliknite prosím na tlaèídlo Uprav.';
 $string['downloadaszip'] = 'ZIP archív pre stiahnutie';
 $string['downloadtimes'] = 'Stiahnuté $a krát';
 $string['dwnlnofiles'] = 'Zatiaµ neboli poslané ¾iadne súbory';
@@ -79,7 +79,7 @@ $string['forbidden'] = 'Nemáte oprávnenie pre prístup k tejto stránke';
 $string['groups'] = 'Skupiny';
 $string['hits'] = 'zobrazené $a-krát';
 $string['howtooperate'] = 'Ako spracova»';
-$string['howtowiki'] = 'Ako pou¾íva» wiki';
+$string['howtowiki'] = 'Ako pou¾ívat wiki';
 $string['html'] = 'HTML formát';
 $string['htmlmode'] = 'HTML re¾im';
 $string['htmlonly'] = 'Iba HTML';
@@ -106,7 +106,7 @@ $string['nocandidatestoremove'] = 'Neboli nájdení ¾iadni kandidáti na odstráneni
 $string['nochangestorevert'] = 'Nie sú ¾iadne zmeny na vrátenie';
 $string['nohtml'] = 'Bez HTML';
 $string['nolinksfound'] = 'Na stránke nebol nájdený ¾iadny odkaz';
-$string['noregexp'] = 'Toto musí by» fixný re»azec, nedá sa pou¾íva» * ani regulárne výrazy. Doporuèujeme pou¾i» IP adresy alebo názvy poèítaèov útoèníkov, samozrejme bez èísla portu (to sa zväè¹uje s ka¾dým HTTP prístupom).';
+$string['noregexp'] = 'Toto musí by» fixný re»azec, nedá sa pou¾íva» * ani regulárne výrazy. Doporuèujeme pou¾í» IP adresy alebo názvy poèítaèov útoèníkov, samozrejme bez èísla portu (to sa zväè¹uje s ka¾dým HTTP prístupom).';
 $string['notadministratewiki'] = 'Nemáte oprávnenie spravova» toto wiki!';
 $string['nothingtostrip'] = 'Nie sú tu ¾iadne stránky s viac ako jednou verziou.';
 $string['nowikicreated'] = 'V tomto wiki neboli vytvorené ¾iadne polo¾ky.';
@@ -138,7 +138,7 @@ $string['revertallsince'] = 'Aj ïal¹ie verzie a odstráò aj v¹etky neskor¹ie zmen
 $string['revertchanges'] = 'Vráti» zmeny';
 $string['revertlastonly'] = 'Iba ak to bola posledná zmena';
 $string['revertpages'] = 'Hromadné vrátenie zmien';
-$string['revertpagescheck'] = 'Naozaj chcete vráti» nasledujúce zmeny?';
+$string['revertpagescheck'] = 'Naozaj chcete vráti» následujúce zmeny?';
 $string['revertthe'] = 'Aj ïal¹ie verzie ale odstráò iba ovplyvnené stránky';
 $string['safehtml'] = 'Bezpeèné HTML';
 $string['save'] = 'Ulo¾i»';

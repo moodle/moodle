@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5.2 + (2005060223)
+      // admin.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['adminseesallevents'] = 'Správci vidí v¹echny události';
@@ -11,7 +11,6 @@ $string['calendarsettings'] = 'Kalendáø';
 $string['change'] = 'zmìnit';
 $string['configallowcoursethemes'] = 'Tato mo¾nost povoluje nastavení vlastních motivù v kurzech. Motivy kurzù mají pøednost pøed v¹emi ostatními motivy (tj. pøed motivem stránek, u¾ivatele èi sezení)';
 $string['configallowemailaddresses'] = 'Chcete-li omezit v¹echny nové emailové adresy pouze na urèité domény. pak je zde uveïte oddìlené mezerou. V¹echny ostatní domény budou odmítnuty. Pøíklad: <strong>naseskola.cz .msmt.cz .edu.cz</strong>';
-$string['configallowobjectembed'] = 'Výchozí bezpeènostní opatøení nedovoluje normálním u¾ivatelùm vkládat multimediální objekty (napø. Flash) pomocí znaèek EMBED a OBJECT v jejich HTML textu. Bezpeèné vkládání multimediálních objektù zaji¹»uje jeden z tzv. filtrù. Chcete-li pøesto povolit uvedené znaèky, povolte tuto mo¾nost.';
 $string['configallowunenroll'] = 'Je-li toto nastaveno na \'Ano\', mohou se studenti sami vy¹krtávat z kurzù. Jinak je mù¾e z kurzu vy¹krtnout toliko uèitel nebo správce.';
 $string['configallowuserblockhiding'] = 'Chcete u¾ivatelùm povolit zasouvání/vysouvání postranních blokù na tìchto strínkách? Tato fièurinka pou¾ívá Javascript a pomocí cookies si pamatuje stav ka¾dého rolovatelného bloku. V¾dy je ovlivòován pouze pohled pøíslu¹ného u¾ivatele.';
 $string['configallowuserthemes'] = 'Tímto povolíte u¾ivatelùm nastavit si vlastní motiv. Motiv u¾ivatele má pøednost pøed motivem stránek, ale nikoliv pøed motivem kurzu.';
@@ -62,7 +61,6 @@ $string['confignotifyloginfailures'] = 'Pøi neúspì¹ném pøihlá¹ení mohou být zasí
 $string['confignotifyloginthreshold'] = 'Je-li aktivní upozoròování na neúspì¹ná pøihlá¹ení, po kolika neúspì¹ných pokusech na jednoho u¾ivatele nebo jednu IP adresu se má upozornìní rozeslat?';
 $string['configopentogoogle'] = 'Povolíte-li toto nastavení, umo¾níte vyhledávaèi Google, aby vstoupil na va¹e stránky jako host. Navíc lidé, kteøí se k vám dostanou pøes vyhledávání v Google, budou automaticky pøihlá¹ení jako host. Pov¹imnìte si, ¾e toto umo¾ní transparentní pøístup pouze do kurzù, které mají povolen vstup hostù.';
 $string['configpathtoclam'] = 'Cesta k antivirovému programu Clam AV. Pravdìpodobnì nìco jako /usr/bin/clamscan nebo /usr/bin/clamdscan. Toto musíte nastavit, chcete-li spou¹tet Clam AV.';
-$string['configpathtodu'] = 'Cesta k programu du (disk usage). Pravdìpodobnì nìco jako /usr/bin/du. Zadáním této cesty se urychlí generování stránek, které zobrazují obsah adresáøe s mnoha soubory.';
 $string['configproxyhost'] = 'Pokud tento <b>server</b> pou¾ívá proxy (napø. firewall) pro pøipojení k Internetu, zadejte hostname a port proxy. Jinak nechejte pole prázdné.';
 $string['configquarantinedir'] = 'Chcete-li, aby Clam AV pøesouval infikované soubory do karantény, vlo¾te sem adresáø, který bude tuto funkci zastávat. Webový server musí mít práva zápisu do tohoto adresáøe. Pokud necháte pole prázdné, popø. pokud nebude vlo¾ený adresáø existovat èi nebude zapisovatelný, budou infikované soubory odstranìny. Adresáø zapisujte bez koncového lomítka.';
 $string['configrunclamonupload'] = 'Spoustìt Clam AV na nahrávané soubory? Budete muset vlo¾it platnou pathtoclam. Clam AV je volnì ¹íøitelný antivirový program, který si mù¾ete stáhnout z http://clamav.net/';
@@ -91,7 +89,7 @@ $string['configvariables'] = 'Promìnné';
 $string['configwarning'] = 'S úpravou tìchto hodnot buïte opatrní - nezvyklé hodnoty mohou zpùsobovat problémy.';
 $string['configzip'] = 'Zadejte umístìní programu zip (volitelné). Pokud je zadáno, bude Moodle pou¾ívat tento program k vytváøení zip archívù na serveru. Jinak bude pou¾ívat vlastní knihovny.';
 $string['confirmation'] = 'Potvrzení';
-$string['cronwarning'] = 'Skript <a href=\"cron.php\">cron.php</a>, který má na starosti bì¾nou údr¾bu serveru, nebyl bìhem posledních 24 hodin spu¹tìn.<br /><a href=\"../doc/?frame=install.html&#8834;=cron\">Instalaèní pøíruèka</a> vysvìtluje, jak se dá nezbytná údr¾ba va¹eho serveru zautomatizovat.';
+$string['cronwarning'] = 'Skript <a href=\"cron.php\">cron.php</a>, který má na starosti bì¾nou údr¾bu serveru, nebyl bìhem posledních 24 hodin spu¹tìn.<br /><a href=\"../doc/?frame=install.html&sub=cron\">Instalaèní pøíruèka</a> vysvìtluje, jak se dá nezbytná údr¾ba va¹eho serveru zautomatizovat.';
 $string['edithelpdocs'] = 'Upravit nápovìdu a dokumentaci';
 $string['editstrings'] = 'Upravit textové øetìzce';
 $string['filterall'] = 'Filtrovat v¹echny øetìzce';
@@ -107,15 +105,13 @@ $string['helpweekenddays'] = 'Které z dnù v týdnu se mají pova¾ovat za \"víkend\
 $string['importtimezones'] = 'Aktualizovat kompletní seznam èasových pásem';
 $string['importtimezonescount'] = '$a->count polo¾ek bylo importováno z $a->source';
 $string['importtimezonesfailed'] = 'Nenalezeny ¾ádné zdroje! (to je ¹patná zpráva)';
-$string['incompatibleblocks'] = 'Nekompatibilní bloky';
+$string['nodstpresetsexist'] = 'Podpora zimního a letního èasu (DST) není ¾ádným u¾ivatelùm k dispozici, nebo» nebylo provedeno její pøednastavení. Chcete-li DST pøednastavit, pou¾ijte následující tlaèítko.';
 $string['optionalmaintenancemessage'] = 'Volitelná zpráva o údr¾bì';
-$string['pleaseregister'] = 'Chcete-li se zbavit tohoto tlaèítka, registrujte va¹e Moodle stránky';
 $string['sitemaintenance'] = 'Momentálnì pracujeme na údr¾bì tìchto stránek a nejsou proto doèasnì k dispozici';
 $string['sitemaintenancemode'] = 'Re¾im údr¾by';
 $string['sitemaintenanceoff'] = 'Re¾im údr¾by byl vypnut a stránky zase bì¾í v normálním re¾imu.';
 $string['sitemaintenanceon'] = 'Va¹e stránky jsou momentálnì v re¾imu údr¾by (pouze správci se teï mohou pøihlásit a pou¾ívat tyto stránky).';
 $string['sitemaintenancewarning'] = 'Va¹e stránky jsou momentálnì v re¾imu údr¾by (pouze správci se teï mohou pøihlásit). K návratu do bì¾ného re¾imu <a href=\"maintenance.php\">vypnìte re¾im údr¾by</a>.';
-$string['tabselectedtofront'] = 'Má se v tabulkách, které pou¾ívají navigaci pomocí zálo¾ek, pøesunout øádek s právì vybranou zálo¾kou do popøedí?';
 $string['therewereerrors'] = 'Va¹e data obsahovala chyby';
 $string['timezoneforced'] = 'Toto je vnuceno správcem stránek';
 $string['timezoneisforcedto'] = 'Vnutit pou¾ívání v¹em u¾ivatelùm';

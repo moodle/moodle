@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // countries.php - created with Moodle 1.5.2 + (2005060222)
+      // countries.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['AD'] = 'Andorra';
@@ -122,7 +122,6 @@ $string['KR'] = 'Etelä-Korea';
 $string['KW'] = 'Kuwait';
 $string['KY'] = 'Caymansaaret';
 $string['KZ'] = 'Kazakstan';
-$string['LA'] = 'Laos';
 $string['LB'] = 'Libanon';
 $string['LC'] = 'Saint Lucia';
 $string['LI'] = 'Liechtenstein';
@@ -242,5 +241,8 @@ $string['ZA'] = 'Etelä-Afrikka';
 $string['ZM'] = 'Zambia';
 $string['ZR'] = 'Zaire';
 $string['ZW'] = 'Zimbabwe';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Suomi';
 
 ?>

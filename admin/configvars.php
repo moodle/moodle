@@ -74,9 +74,6 @@ class configvar {
     $misc['debug'] = new configvar (get_string('configdebug', 'admin'),
         choose_from_menu ($options, 'debug', $config->debug, '', '', '', true) );
 
-    $misc['perfdebug'] = new configvar (get_string('configperfdebug', 'admin'),
-        choose_from_menu ($options, 'perfdebug', $config->perfdebug, '', '', '', true) );
-
 /// enablerssfeeds
 class configvarrss extends configvar {
     function display_warning() {
@@ -88,8 +85,7 @@ class configvarrss extends configvar {
         choose_from_menu ($noyesoptions, 'enablerssfeeds', $config->enablerssfeeds, '', '', '', true),
         '<font color="red"> You need to add XML support to your PHP installation.</font>' );
 
-    $misc['mymoodleredirect'] = new configvar (get_string('configmymoodleredirect','admin'),
-        choose_from_menu($noyesoptions,'mymoodleredirect',$config->mymoodleredirect,'','','',true));
+
 
 
 ////////////////////////////////////////////////////////////////////
@@ -138,9 +134,6 @@ class configvarrss extends configvar {
 /// unzip
     $operatingsystem['unzip'] = new configvar (get_string('configunzip', 'admin'),
         '<input name="unzip" type="text" size="30" value="'.s($config->unzip).'" alt="unzip" />' );
-
-    $operatingsystem['pathtodu'] = new configvar(get_string('configpathtodu', 'admin'),
-        '<input name="pathtodu" type="text" size="30" value="'.s($config->pathtodu).'" alt="pathtodu" />');                                                
 
 /// slasharguments
     unset($options);
@@ -208,76 +201,7 @@ class configvarrss extends configvar {
     $permissions['messaging'] = new configvar (get_string('configmessaging', 'admin'),
         choose_from_menu ($noyesoptions, 'messaging', $config->messaging, '', '', '', true) );
 
-/// allowobjectembed
-    $permissions['allowobjectembed'] = new configvar (get_string('configallowobjectembed', 'admin'),
-        choose_from_menu ($noyesoptions, 'allowobjectembed', $config->allowobjectembed, '', '', '', true) );
 
-
-    unset($options);
-    $options['none'] = 'No courses';
-    $options['all'] = 'All courses';
-    $options['requested'] = 'Requested courses';
-
-    $permissions['restrictmodulesfor'] = new configvar (get_string('configrestrictmodulesfor','admin'),
-   ' <script language="JavaScript">
-    function togglemodules(index) {
-        if (index == 0) {
-            document.getElementById(\'allowedmodules\').disabled=true;
-        }
-        else {
-            document.getElementById(\'allowedmodules\').disabled=false;
-        }
-    }
-    </script>'.
-        choose_from_menu($options,'restrictmodulesfor',$config->restrictmodulesfor,'','togglemodules(this.selectedIndex);','',true) );
-
-    $permissions['restrictbydefault'] = new configvar (get_string('configrestrictbydefault','admin'),
-        choose_from_menu($noyesoptions, 'restrictbydefault',$config->restrictbydefault,'','','',true) );
-
-    $allowstr = '<select name="defaultallowedmodules[]" id="allowedmodules" multiple="multiple" size="10"'.((empty($config->restrictmodulesfor)) ? "disabled=\"disabled\"" : "").'>';
-
-    $allowedmodules = array();
-    if (!empty($config->defaultallowedmodules)) {
-        $allowedmodules = explode(',',$config->defaultallowedmodules);
-    }
-
-//  On a fresh install of Moodle, this could be empty; prevent a warning on the following loop.
-    if (!$mods = get_records("modules")) {
-        $mods = array();
-    }
-    $s = "selected=\"selected\"";
-    $allowstr .= '<option value="0" '.((empty($allowedmodules)) ? $s : '').'>'.get_string('allownone').'</option>'."\n";
-    foreach ($mods as $mod) {
-        $selected = "";
-        if (in_array($mod->id,$allowedmodules)) 
-            $selected = $s;
-        $allowstr .= '<option '.$selected.' value="'.$mod->id.'">'.$mod->name.'</option>'."\n";
-    }  
-    $allowstr .= '</select>';
-
-    $permissions['defaultallowedmoules'] = new configvar (get_string('configdefaultallowedmodules','admin'),$allowstr);
-
-
-/// course requests
-    $reqcourse['enablecourserequests'] = new configvar (get_string('configenablecourserequests', 'admin'),
-        choose_from_menu ($noyesoptions,'enablecourserequests',$config->enablecourserequests,'','','',true) );
-
-/// default category for course requests
-    require_once($CFG->dirroot.'/course/lib.php');
-    $reqcourse['defaultrequestedcategory'] = new configvar (get_string('configdefaultrequestedcategory', 'admin'),
-        choose_from_menu (make_categories_options(), 'defaultrequestedcategory',$config->defaultrequestedcategory,'','','',true) );
-
-    $reqcourse['requestedteachername'] = new configvar (get_string('configrequestedteachername','admin'),
-        '<input type="text" name="requestedteachername" size="20" maxlength="100" value="'.s($config->requestedteachername).'" />');
-
-    $reqcourse['requestedteachersname'] = new configvar (get_string('configrequestedteachersname','admin'),
-        '<input type="text" name="requestedteachersname" size="20" maxlength="100" value="'.s($config->requestedteachersname).'" />');
-
-    $reqcourse['requestedstudentname'] = new configvar (get_string('configrequestedstudentname','admin'),
-        '<input type="text" name="requestedstudentname" size="20" maxlength="100" value="'.s($config->requestedstudentname).'" />');
-
-    $reqcourse['requestedstudentsname'] = new configvar (get_string('configrequestedstudentsname','admin'),
-        '<input type="text" name="requestedstudentsname" size="20" maxlength="100" value="'.s($config->requestedstudentsname).'" />');
 
 ////////////////////////////////////////////////////////////////////
 /// INTERFACE config variables
@@ -375,23 +299,6 @@ class configvarrss extends configvar {
     $user['autologinguests'] = new configvar (get_string('configautologinguests', 'admin'),
         choose_from_menu ($noyesoptions, 'autologinguests', $config->autologinguests, '', '', '', true) );
 
-/// hiddenuserfields
-    $fields = array('none', 'description', 'city', 'country', 'webpage', 'icqnumber', 'skypeid', 'yahooid', 'aimid', 'msnid', 'lastaccess');
-    if (empty($config->hiddenuserfields)) {
-        $config->hiddenuserfields = 'none';
-    }
-    $configfields = array_flip(explode(',', $config->hiddenuserfields));
-    $fieldoptions = '';
-    foreach ($fields as $value) {
-        $fieldoptions .= '<option value="'.$value.'"';
-        if (isset($configfields[$value])) {
-            $fieldoptions .= ' selected="selected"';
-        }
-        $fieldoptions .= '>'.get_string($value).'</option>';
-    }
-
-    $user['hiddenuserfields'] = new configvar (get_string('confighiddenuserfields', 'admin'),
-        '<select id="menuhiddenuserfields" name="hiddenuserfields[]" size="10" multiple="multiple">'.$fieldoptions.'</select>' );
 
 
 
@@ -554,66 +461,10 @@ class configvarrss extends configvar {
     $mail['denyemailaddresses'] = new configvar (get_string('configdenyemailaddresses', 'admin'),
         '<input name="denyemailaddresses" type="text" size="60" value="'.s($config->denyemailaddresses).'" alt="denyemailaddresses" />' );
 
-/// sitemailcharset
-    unset($options);
-    unset($charsets);
-    $charsets = get_list_of_charsets();
-    $options['0'] = get_string('none');
-    $options = array_merge($options, $charsets);
-    $mail['sitemailcharset'] = new configvar (get_string('configsitemailcharset', 'admin'),
-        choose_from_menu($options, 'sitemailcharset', $config->sitemailcharset, '', '', '', true));
 
-/// allowusermailcharset
-    $mail['allowusermailcharset'] = new configvar (get_string('configallowusermailcharset', 'admin'),
-        choose_from_menu($noyesoptions, 'allowusermailcharset', $config->allowusermailcharset, '', '', '', true));
 
-/// enable stats
-    $stats['enablestats'] = new configvar (get_string('configenablestats','admin'),
-        choose_from_menu($noyesoptions, 'enablestats', $config->enablestats, '', '', '', true) );
 
-    unset($options);
-    $options['none'] = get_string('none');
-    $options[60*60*24*7] = get_string('numweeks','moodle',1);
-    $options[60*60*24*14] = get_string('numweeks','moodle',2);
-    $options[60*60*24*21] = get_string('numweeks','moodle',3);
-    $options[60*60*24*28] = get_string('nummonths','moodle',1);
-    $options[60*60*24*56] = get_string('nummonths','moodle',2);
-    $options[60*60*24*84] = get_string('nummonths','moodle',3);
-    $options[60*60*24*112] = get_string('nummonths','moodle',4);
-    $options[60*60*24*140] = get_string('nummonths','moodle',5);
-    $options[60*60*24*168] = get_string('nummonths','moodle',6);
-    $options['all'] = get_string('all');
-    
-    $stats['statsfirstrun'] = new configvar (get_string('configstatsfirstrun','admin'),
-       choose_from_menu($options,'statsfirstrun',$config->statsfirstrun,'','','',true) );
 
-    unset($options);
-    $options[0] = get_string('untilcomplete');
-    $options[60*60] = '1 '.get_string('hour');
-    $options[60*60*2] = '2 '.get_string('hours');
-    $options[60*60*3] = '3 '.get_string('hours');
-    $options[60*60*4] = '4 '.get_string('hours');
-    $options[60*60*5] = '5 '.get_string('hours');
-    $options[60*60*6] = '6 '.get_string('hours');
-    $options[60*60*7] = '7 '.get_string('hours');
-    $options[60*60*8] = '8 '.get_string('hours');
-
-    if (empty($config->statsruntimestarthour)) {
-        $config->statsruntimestarthour = 0;
-    }
-    if (empty($config->statsruntimestartminute)) {
-        $config->statsruntimestartminute = 0;
-    }
-
-    $stats['statsmaxruntime'] = new configvar (get_string('configstatsmaxruntime','admin'),
-      choose_from_menu($options,'statsmaxruntime',$config->statsmaxruntime,'','','',true) );                                        
-
-    $stats['statsruntimestart'] = new configvar (get_string('configstatsruntimestart','admin'),
-      print_time_selector("statsruntimestarthour","statsruntimestartminute",make_timestamp(2000,1,1,$config->statsruntimestarthour,$config->statsruntimestartminute),5,true) );
-
-    $stats['statsuserthreshold'] = new configvar (get_string('configstatsuserthreshold','admin'),
-      '<input type="text" name="statsuserthreshold" size="4" value="'.$config->statsuserthreshold.'" />');
-                                              
 
 ////////////////////////////////////////////////////////////////////
 
@@ -624,8 +475,6 @@ class configvarrss extends configvar {
     $configvars['mail']            = $mail;
     $configvars['user']            = $user;
     $configvars['permissions']     = $permissions;
-    $configvars['requestedcourse'] = $reqcourse;
     $configvars['misc']            = $misc;
-    $configvars['stats']           = $stats;
 
 ?>

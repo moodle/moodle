@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?PHP  //$Id$
 //
 // This file keeps track of upgrades to Moodle's
 // backup/restore utility.
@@ -23,34 +23,10 @@ function backup_upgrade($oldversion=0) {
 
     $result = true;
 
-    if ($oldversion < 2006011600 and $result) {
-        $result = execute_sql("DROP TABLE {$CFG->prefix}backup_files");
-        if ($result) {
-            $result = execute_sql("CREATE TABLE {$CFG->prefix}backup_files (
-                          id SERIAL PRIMARY KEY,
-                          backup_code integer NOT NULL default '0',
-                          file_type varchar(10) NOT NULL default '',
-                          path varchar(255) NOT NULL default '',
-                          old_id integer default NULL,
-                          new_id integer default NULL,
-                          CONSTRAINT backup_files_uk UNIQUE (backup_code, file_type, path))");
-        }
-        if ($result) {
-            $result = execute_sql("DROP TABLE {$CFG->prefix}backup_ids");
-        }
-        if ($result) {
-            $result = execute_sql("CREATE TABLE {$CFG->prefix}backup_ids (
-                          id SERIAL PRIMARY KEY,
-                          backup_code integer NOT NULL default '0',
-                          table_name varchar(30) NOT NULL default '',
-                          old_id integer NOT NULL default '0',
-                          new_id integer default NULL,
-                          info text,
-                          CONSTRAINT backup_ids_uk UNIQUE (backup_code, table_name, old_id))");
-        }
-    }
 
-    //Finally, return result
+
+
+
     return $result;
 
 }

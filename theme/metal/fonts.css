@@ -1,4 +1,0 @@
-/* make some small fonts a little bigger */
-.logininfo, .helplink, .minicalendar *, .link, .footer {
-  font-size: 9pt !important;
-}

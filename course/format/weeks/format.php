@@ -10,10 +10,12 @@
     define('BLOCK_R_MIN_WIDTH', 100);
     define('BLOCK_R_MAX_WIDTH', 210);
 
-    $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),  
-                                            BLOCK_L_MAX_WIDTH);
-    $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 
-                                            BLOCK_R_MAX_WIDTH);
+    optional_variable($preferred_width_left,  blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]));
+    optional_variable($preferred_width_right, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]));
+    $preferred_width_left = min($preferred_width_left, BLOCK_L_MAX_WIDTH);
+    $preferred_width_left = max($preferred_width_left, BLOCK_L_MIN_WIDTH);
+    $preferred_width_right = min($preferred_width_right, BLOCK_R_MAX_WIDTH);
+    $preferred_width_right = max($preferred_width_right, BLOCK_R_MIN_WIDTH);
 
     if (isset($week)) {
         $displaysection = course_set_display($course->id, $week);
@@ -82,7 +84,7 @@
     $thissection = $sections[$section];
 
     if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
-        echo '<tr id="section-0" class="section main">';
+        echo '<tr id="section-0" class="section">';
         echo '<td class="left side">&nbsp;</td>';
         echo '<td class="content">';
         
@@ -106,7 +108,7 @@
         echo '</td>';
         echo '<td class="right side">&nbsp;</td>';
         echo '</tr>';
-        echo '<tr class="section separator"><td colspan="3" class="spacer"></td></tr>';
+        echo '<tr class="section"><td colspan="3" class="spacer"></td></tr>';
 
     }
 
@@ -167,8 +169,10 @@
                 $sectionstyle = '';
             }
 
-            echo '<tr id="section-'.$section.'" class="section main'.$sectionstyle.'">';
-            echo '<td class="left side">&nbsp;</td>';
+            echo '<tr id="section-'.$section.'" class="section'.$sectionstyle.'">';
+            echo '<td class="left side">';
+            echo '<a name="'.$section.'">'.$section.'</a>';
+            echo '</td>';
 
             echo '<td class="content">';
             if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
@@ -198,7 +202,7 @@
             echo '<td class="right side">';
 
             if ($displaysection == $section) {
-                echo '<a href="view.php?id='.$course->id.'&amp;week=all#section-'.$section.'" title="'.$strshowallweeks.'">'.
+                echo '<a href="view.php?id='.$course->id.'&amp;week=all#'.$section.'" title="'.$strshowallweeks.'">'.
                      '<img src="'.$CFG->pixpath.'/i/all.gif" height="25" width="16" border="0" /></a><br />';
             } else {
                 $strshowonlyweek = get_string("showonlyweek", "", $section);
@@ -208,25 +212,25 @@
 
             if (isediting($course->id)) {
                 if ($thissection->visible) {        // Show the hide/show eye
-                    echo '<a href="view.php?id='.$course->id.'&amp;hide='.$section.'&amp;sesskey='.$USER->sesskey.'#section-'.$section.'" title="'.$strweekhide.'">'.
+                    echo '<a href="view.php?id='.$course->id.'&amp;hide='.$section.'&amp;sesskey='.$USER->sesskey.'#'.$section.'" title="'.$strweekhide.'">'.
                          '<img src="'.$CFG->pixpath.'/i/hide.gif" vspace="3" height="16" width="16" border="0" alt="" /></a><br />';
                 } else {
-                    echo '<a href="view.php?id='.$course->id.'&amp;show='.$section.'&amp;sesskey='.$USER->sesskey.'#section-'.$section.'" title="'.$strweekhide.'">'.
+                    echo '<a href="view.php?id='.$course->id.'&amp;show='.$section.'&amp;sesskey='.$USER->sesskey.'#'.$section.'" title="'.$strweekhide.'">'.
                          '<img src="'.$CFG->pixpath.'/i/show.gif" vspace="3" height="16" width="16" border="0" alt="" /></a><br />';
                 }
                 if ($section > 1) {                       // Add a arrow to move section up
-                    echo '<a href="view.php?id='.$course->id.'&amp;section='.$section.'&amp;move=-1&amp;sesskey='.$USER->sesskey.'#section-'.($section-1).'" title="'.$strmoveup.'">'.
+                    echo '<a href="view.php?id='.$course->id.'&amp;section='.$section.'&amp;move=-1&amp;sesskey='.$USER->sesskey.'#'.($section-1).'" title="'.$strmoveup.'">'.
                          '<img src="'.$CFG->pixpath.'/t/up.gif" vspace="3" height="11" width="11" border="0" alt="" /></a><br />';
                 }
 
                 if ($section < $course->numsections) {    // Add a arrow to move section down
-                    echo '<a href="view.php?id='.$course->id.'&amp;section='.$section.'&amp;move=1&amp;sesskey='.$USER->sesskey.'#section-'.($section+1).'" title="'.$strmovedown.'">'.
+                    echo '<a href="view.php?id='.$course->id.'&amp;section='.$section.'&amp;move=1&amp;sesskey='.$USER->sesskey.'#'.($section+1).'" title="'.$strmovedown.'">'.
                          '<img src="'.$CFG->pixpath.'/t/down.gif" vspace="3" height="11" width="11" border="0" alt="" /></a><br />';
                 }
             }
 
             echo '</td></tr>';
-            echo '<tr class="section separator"><td colspan="3" class="spacer"></td></tr>';
+            echo '<tr class="section"><td colspan="3" class="spacer"></td></tr>';
         }
 
         $section++;

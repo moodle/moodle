@@ -1,5 +1,6 @@
 <form name="theform" method="post" action="question.php">
 <center>
+<input type="hidden" name="nextwizardpage" value="calculated.html"/>
 <table cellpadding="5">
 <?php if (!empty($datasets)) { ?>
 <tr valign="top">
@@ -8,7 +9,7 @@
     <td><b> - <?php  print_string("substitutedby", "quiz") ?></b></td>
     <td align="left"><?php echo array_shift($datasets) ?></td>
 </tr>
-<?php   foreach ($datasets as $name => $menu) { ?>
+<?php   foreach ($datasets as $name => $menu) { ?>    
 <tr valign="top">
     <td/>
     <td align="right">{<?php p($name) ?>}</td>
@@ -23,12 +24,27 @@
 </td>
 </tr>
 <?php } ?>
+<tr valign="top">
+    <td/>
+    <td/>
+    <td/>
+    <td>
+        <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey; ?>" />
+        <input type="hidden" name="name"               value="<?php  p($question->name) ?>" />
+        <input type="hidden" name="questiontext"       value="<?php  p($question->questiontext) ?>" />
+        <input type="hidden" name="questiontextformat" value="<?php  p($question->questiontextformat) ?>" />
+        <input type="hidden" name="image"              value="<?php  p($question->image) ?>" />
+        <?php if (!empty($hiddeninputnames)) foreach ($hiddeninputnames as $key => $hiddeninputname) { ?>
+            <input type="hidden" name="<?php p($hiddeninputname) ?>"
+                                value="<?php p($hiddeninputvalues[$key]) ?>" />
+        <?php } ?>
+    </td>
+</tr>
 </table>
+
 <input type="hidden" name="id" value="<?php  p($question->id) ?>" />
 <input type="hidden" name="qtype" value="<?php  p($question->qtype) ?>" />
 <input type="hidden" name="category" value="<?php  p($question->category) ?>" />
-<input type="hidden" name="sesskey" value="<?php p(sesskey()) ?>" />
-<input type="hidden" name="wizardpage" value="datasetdefinitions" />
 <input type="submit"      value="<?php  print_string("savechanges") ?>" />
 </center>
 </form>

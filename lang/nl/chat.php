@@ -2,7 +2,7 @@
       // chat.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
-$string['beep'] = 'Piep';
+$string['beep'] = 'Beep';
 $string['chatintro'] = 'Inleidende tekst';
 $string['chatname'] = 'Naam van deze chatroom';
 $string['chatreport'] = 'Chatsessies';
@@ -50,6 +50,9 @@ $string['seesession'] = 'Bekijk deze sessie';
 $string['sessions'] = 'Chatsessies';
 $string['strftimemessage'] = '%%H:%%M';
 $string['studentseereports'] = 'Iedereen kan voorbije chatsessies bekijken';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Nederlands';
 $string['viewreport'] = 'Bekijk voorbije chatsessies';
 
 ?>

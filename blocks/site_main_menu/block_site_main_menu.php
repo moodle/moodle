@@ -3,7 +3,7 @@
 class block_site_main_menu extends block_list {
     function init() {
         $this->title = get_string('mainmenu');
-        $this->version = 2005061300;
+        $this->version = 2004052700;
     }
 
     function applicable_formats() {
@@ -17,7 +17,7 @@ class block_site_main_menu extends block_list {
             return $this->content;
         }
 
-        $this->content = new stdClass;
+        $this->content = New stdClass;
         $this->content->items = array();
         $this->content->icons = array();
         $this->content->footer = '';
@@ -33,12 +33,13 @@ class block_site_main_menu extends block_list {
         $ismoving  = ismoving($this->instance->pageid);
 
         $sections = get_all_sections($this->instance->pageid);
-
-        if(!empty($sections) && isset($sections[0])) {
-            $section = $sections[0];
+        if(empty($sections) or !isset($sections[0])) {
+            return $this->content;
         }
 
-        if (!empty($section) || $isediting) {
+        $section = $sections[0];
+
+        if (!empty($section->sequence) || $isediting) {
             get_all_mods($this->instance->pageid, $mods, $modnames, $modnamesplural, $modnamesused);
         }
 
@@ -60,7 +61,7 @@ class block_site_main_menu extends block_list {
             $this->content->items[] = $USER->activitycopyname.'&nbsp;(<a href="'.$CFG->wwwroot.'/course/mod.php?cancelcopy=true&amp;sesskey='.$USER->sesskey.'">'.$strcancel.'</a>)';
         }
 
-        if (!empty($section) && !empty($section->sequence)) {
+        if (!empty($section->sequence)) {
             $sectionmods = explode(',', $section->sequence);
             foreach ($sectionmods as $modnumber) {
                 if (empty($mods[$modnumber])) {

@@ -10,7 +10,7 @@
         error("Guests are not allowed to rate posts.", $_SERVER["HTTP_REFERER"]);
     }
 
-    $id = required_param('id',PARAM_INT);  // The course these ratings are part of
+    require_variable($id);  // The course these ratings are part of
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID was incorrect");
@@ -36,7 +36,6 @@
                 continue;
             }
 
-            $postid = (int)$postid;
             $lastpostid = $postid;
 
             if ($oldrating = get_record("forum_ratings", "userid", $USER->id, "post", $postid)) {

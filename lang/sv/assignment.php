@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.6 development (2005101200)
+      // assignment.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['allowresubmit'] = 'Låt användarna skicka om sina bidrag';
@@ -14,7 +14,6 @@ $string['assignmenttype'] = 'Uppgiftens typ';
 $string['availabledate'] = 'Tillgänglig fr.o.m.';
 $string['comment'] = 'Kommentar';
 $string['commentinline'] = 'Kommentar inne i dokument';
-$string['configitemstocount'] = 'Typ av komponenter som ska räknas för studenters/elevers/deltagares/lärandes inskickade uppgifter online';
 $string['configmaxbytes'] = 'Standardinställningen för den maximala storleken på inskickade uppgifter. Du kan också ställa in ett eget värde för varje kurs och även andra lokala begränsningar är möjliga.';
 $string['description'] = 'Beskrivning';
 $string['duedate'] = 'Stoppdatum/tid';
@@ -25,16 +24,14 @@ $string['emailteachermail'] = '$a->username har uppdaterat sina inskickade uppgi
  \'$a->assignment\'';
 $string['emailteachermailhtml'] = '$a->username har uppdaterat sina inskickade uppgiftslösningar för <i>\'$a->assignment\'</i><br /><br />De är <a href=\"$a->url\"> tillgängliga på webbplatsen.';
 $string['emailteachers'] = 'Skicka ett e-postmeddelande med information till distanslärarna';
-$string['emptysubmission'] = 'Du har inte skickat in någonting än';
 $string['existingfiledeleted'] = 'Befintlig fil har tagits bort: &a';
 $string['failedupdatefeedback'] = 'Uppdateringen av återkopplingen för det inskickade bidraget av användaren $a fungerade inte';
 $string['feedback'] = 'Återkoppling';
 $string['feedbackfromteacher'] = 'Återkoppling på inskickade uppgiftslösningar för $a personer har uppdaterats';
 $string['feedbackupdated'] = 'Återkopplingen för inskickade bidrag för $a användare har uppdaterats';
-$string['guestnoupload'] = 'Gäster får tyvärr inte ladda upp någonting.';
-$string['helpoffline'] = 'Det här är användbart när en uppgift ska lösas <br />utanför Moodle. Det kan vara något någon <br /> annanstans på webben eller f2f.<br /> <br /> Studenter/elever/deltagare/lärande kan se en <br /> beskrivning av uppgiften men de kan inte ladda <br />upp någonting. Betyg/omdömen kan Du avge som<br /> vanligt och studenterna/eleverna/deltagarna/de<br />lärande kommer att få meddelanden om sina betyg/omdömen.';
-$string['helponline'] = 'Den här typen av uppgift ber användaren att <br /> redigera en text genom att använda den vanliga <br />redigeraren. (Distans)lärare kan sedan sätta <br />betyg/avge omdömen om detta online och t.o.m.<br />  lägga till kommentarer eller ändringar inne i texten.';
-$string['helpuploadsingle'] = 'Den här typen av uppgift gör det möjligt för alla<br />användare att ladda upp en enskild fil av valfritt<br />format. Det kan vara ett Word-dokument,<br />en bild, en zippad webbplats eller vad helst <br />Du ber dem ladda upp.</p> ';
+$string['helpoffline'] = '<p>Det här är användbart när en uppgift ska lösas utanför Moodle. Det kan vara något någon annanstans på webben eller f2f.</p><p>Studenter/elever/deltagare/lärande kan se en beskrivning av uppgiften men de kan inte ladda upp någonting. Betyg/omdömen kan Du avge som vanligt och studenterna/eleverna/deltagarna/de lärande kommer att få meddelanden om sina betyg/omdömen.</p>';
+$string['helponline'] = '<p>Den här typen av uppgift ber användaren att redigera en text genom att använda den vanliga redigeraren. (Distans)lärare kan sedan sätta betyg/avge omdömen om detta online och t.o.m. lägga till kommentarer eller ändringar inne i texten.</p><p>';
+$string['helpuploadsingle'] = '<p>Den här typen av uppgift gör det möjligt för alla användare att ladda upp en enskild fil av valfritt format.</p><p>Det kan vara ett Word-dokument, en bild, en zippad webbplats eller vad helst Du ber dem ladda upp.</p> ';
 $string['late'] = '$a sent';
 $string['maximumgrade'] = 'Maximum betyg';
 $string['maximumsize'] = 'Maximum storlek';
@@ -42,14 +39,10 @@ $string['modulename'] = 'Uppgift';
 $string['modulenameplural'] = 'Uppgifter';
 $string['newsubmissions'] = 'Uppgifterna är inskickade';
 $string['noassignments'] = 'Det finns inga uppgifter ännu.';
-$string['noattempts'] = 'Det har inte gjorts några försök att lösa den här uppgiften.';
 $string['notgradedyet'] = 'Ännu ej bedömd';
 $string['notsubmittedyet'] = 'Ännu inte inskickade uppgifter';
 $string['overwritewarning'] = 'Varning: uppladdning igen kommer att ERSÄTTA Ditt nuvarande redan inskickade bidrag';
-$string['pagesize'] = 'Antal inskickade uppgifter som visas per sida';
-$string['preventlate'] = 'Förhindra att någon skickar in försenade uppgiftslösningar';
-$string['quickgrade'] = 'Tillåt snabb betygssättning';
-$string['saveallfeedback'] = 'Spara alla mina återkopplingar';
+$string['saveallfeedback'] = 'Spara alla återkopplingar';
 $string['submission'] = 'Inskickad uppgift';
 $string['submissionfeedback'] = 'Återkoppling för inskickad uppgift';
 $string['submissions'] = 'Inskickade uppgifter';

@@ -780,12 +780,5 @@ function exercise_print_submission_title($exercise, $submission) {
     }
 }
 
-function exercise_get_view_actions() {
-    return array('view','view all','display');
-}
-
-function exercise_get_post_actions() {
-    return array('assess','delete','grade','open','set up','submit');
-}
 
 ?>

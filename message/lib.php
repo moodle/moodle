@@ -1023,12 +1023,17 @@ function message_get_participants() {
 
     global $CFG;
 
-        return get_records_sql("SELECT useridfrom as id,1 FROM {$CFG->prefix}message
-                           UNION SELECT useridto as id,1 FROM {$CFG->prefix}message
-                           UNION SELECT useridfrom as id,1 FROM {$CFG->prefix}message_read
-                           UNION SELECT useridto as id,1 FROM {$CFG->prefix}message_read
-                           UNION SELECT userid as id,1 FROM {$CFG->prefix}message_contacts
-                           UNION SELECT contactid as id,1 from {$CFG->prefix}message_contacts");
+    return get_records_sql("SELECT DISTINCT u.id, u.id
+                              FROM {$CFG->prefix}user as u,
+                                   {$CFG->prefix}message as m, 
+                                   {$CFG->prefix}message_read as mr,
+                                   {$CFG->prefix}message_contacts as mc
+                             WHERE m.useridfrom = u.id 
+                                OR m.useridto = u.id
+                                OR mr.useridfrom = u.id
+                                OR mr.useridto = u.id
+                                OR mc.userid = u.id
+                                OR mc.contactid = u.id");
 }
 
 ?>

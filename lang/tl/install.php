@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.6 development (2005060201)
+      // install.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['admindirerror'] = 'Malî ang ibinigay na direktoryong pang-admin';
@@ -17,14 +17,6 @@ $string['configfilenotwritten'] = 'Hindi awtomatikong nakalikha ang installer sc
 $string['configfilewritten'] = 'matagumpay na nalikha ang config.php';
 $string['configurationcomplete'] = 'Nakumpleto na ang pagsasaayos';
 $string['database'] = 'Database';
-$string['databasecreationsettings'] = 'Ngayon ay kailangan mong isaayos ang kaayusan ng database kung saan iiimbakin ang karamihan sa datos ng Moodle.  Awtomatikong lilikhain ang database na ito ng pang-instol na Moodle4Windows na may mga kaayusang itinatakda sa ibaba.<br />
-<br /> <br />
-<b>Uri:</b> ipinirmi ng pang-instol sa \"mysql\"<br />
-<b>Host:</b> ipinirmi ng pang-instol sa \"localhost\"<br />
-<b>Pangalan:</b> pangalan ng database, hal. moodle<br />
-<b>User:</b> ipinirmi ng pang-instol sa \"root\"<br />
-<b>Password:</b> ang password ng database mo<br />
-<b>Unlapi ng Teybol:</b> opsiyonal na unlapi na gagamitin sa lahat ng pangalan ng teybol';
 $string['databasesettings'] = '    Ngayon ay kailangan mong isaayos ang database kung saan iimbakin
     ang karamihan sa datos ng Moodle.  Dapat ay nalikha na ang database na ito
     at may username at password na upang mapasok ito.<br />
@@ -34,11 +26,11 @@ $string['databasesettings'] = '    Ngayon ay kailangan mong isaayos ang database
        <b>Pangalan:</b> pangalan ng database, eg moodle<br />
        <b>User:</b> ang iyong database username<br />
        <b>Password:</b> ang iyong database password<br />
-       <b>Unlapi ng mga Teybol:</b> opsiyonal na prefix na gagamitin sa lahat ng pangalan ng teybol';
+       <b>Prefix ng mga Teybol:</b> opsiyonal na prefix na gagamitin sa lahat ng pangalan ng teybol';
 $string['dataroot'] = 'Direktoryo ng Datos';
 $string['datarooterror'] = 'Hindi matagpuan o malikha ang \'Direktoryo ng Datos\' na ibinigay mo.  Alin sa dalawa, iwasto mo ang landas o lumikha ng direktoryo nang mano-mano.';
 $string['dbconnectionerror'] = 'Hindi kami makakonekta sa ibinigay mong database.  Pakitsek ang kaayusan mo ng database.';
-$string['dbcreationerror'] = 'Nagka-Error sa paglikha ng database.  Hindi malikha ang ibinigay na pangalan ng database nang may mga ibinigay na  kaayusan';
+$string['dbcreationerror'] = 'Error sa paglikha ng database.  Hindi malikha ang ibinigay na pangalan ng database nang may mga ibinigay na  kaayusan';
 $string['dbhost'] = 'Host Server';
 $string['dbpass'] = 'Password';
 $string['dbprefix'] = 'Prefix ng mga teybol';
@@ -48,7 +40,7 @@ $string['directorysettings'] = '<p>Pakikumpirma ang mga lokasyon ng instalasyong
 <p><b>Web Address:</b>
 Ibigay ang buong web address kung saan papasukin ang Moodle.
 Kung ang web site mo ay mapapasok sa pamamagitan ng maraming URL piliin ang
-pinakaangkop para sa mga mag-aaral mo.  Huwag lalagyan ng 
+pina-angkop para sa mga mag-aaral mo.  Huwag lalagyan ng 
 slash sa dulo.</p>
 
 <p><b>Direktoryo ng Moodle:</b>

@@ -3,5 +3,8 @@
 
 
 $string['filtername'] = 'Tex表記法';
+$string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 
 ?>

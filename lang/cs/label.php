@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // label.php - created with Moodle 1.5 + (2005060201)
+      // label.php - created with Moodle 1.2 development (2003111400)
 
 
 $string['labeltext'] = 'Text popisku';

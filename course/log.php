@@ -4,18 +4,17 @@
     require_once('../config.php');
     require_once('lib.php');
 
-    $id = required_param('id',PARAM_INT);// Course ID
-    $group = optional_param('group', -1, PARAM_INT); // Group to display
-    $user = optional_param('user', 0, PARAM_INT); // User to display
-    $date = optional_param('date', 0, PARAM_CLEAN); // Date to display
-    $modname = optional_param('modname', ''); // course_module->id
-    $modid = optional_param('modid', ''); // course_module->id
-    $modaction = optional_param('modaction', ''); // an action as recorded in the logs
-    $page = optional_param('page', '0', PARAM_INT);     // which page to show
-    $perpage = optional_param('perpage', '100', PARAM_INT); // how many per page 
-    $showcourses = optional_param('showcourses',0,PARAM_INT); // whether to show courses if we're over our limit.
-    $showusers = optional_param('showusers',0,PARAM_INT); // whether to show users if we're over our limit.
-    $chooselog = optional_param('chooselog',0,PARAM_INT);
+    require_variable($id);    // Course ID
+    optional_variable($group, -1); // Group to display
+    optional_variable($user, 0); // User to display
+    optional_variable($date, 0); // Date to display
+    optional_variable($modname, ''); // course_module->id
+    optional_variable($modid, ''); // course_module->id
+    optional_variable($modaction, ''); // an action as recorded in the logs
+    optional_variable($page, '0');     // which page to show
+    optional_variable($perpage, '100'); // how many per page 
+    optional_variable($showcourses,0); // whether to show courses if we're over our limit.
+    optional_variable($showusers,0); // whether to show users if we're over our limit.
 
     require_login();
 
@@ -38,7 +37,7 @@
 
     session_write_close();
 
-    if (!empty($chooselog)) {
+    if (!empty($_GET['chooselog'])) {
         $userinfo = get_string('allparticipants');
         $dateinfo = get_string('alldays');
 
@@ -65,8 +64,6 @@
         print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")");
 
         print_log_selector_form($course, $user, $date, $modname, $modid, $modaction, $group, $showcourses, $showusers);
-        
-        echo '<p align="center">[ <a href="'.$CFG->wwwroot.'/course/stats.php?course='.$course->id.'">'.get_string('seealsostats').'</a> ]</p>';
 
         print_log($course, $user, $date, 'l.time DESC', $page, $perpage, 
                   "log.php?id=$course->id&amp;chooselog=1&amp;user=$user&amp;date=$date&amp;modid=$modid&amp;modaction=$modaction&amp;group=$group", 
@@ -91,10 +88,6 @@
         echo '<center><h3>';
         link_to_popup_window('/course/loglive.php?id='. $course->id,'livelog', get_string('livelogs'), 500, 800);
         echo '</h3></center>';
-
-        $activityreport = get_string( 'activityreport' );
-        echo "<center><a href=\"{$CFG->wwwroot}/course/outline_rep.php?id={$course->id}\">";
-        echo "$activityreport</a></center>\n";
     }
 
     print_footer($course);

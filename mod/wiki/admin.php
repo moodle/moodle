@@ -4,13 +4,15 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $id      = optional_param('id', '', PARAM_INT);        // Course Module ID, or
-    $a       = optional_param('a', '', PARAM_INT);         // wiki ID
-    $page    = optional_param('page', false, PARAM_CLEAN); // Pagename
-    $confirm = optional_param('confirm', '', PARAM_RAW);
-    $action  = optional_param('action', '', PARAM_ACTION); // Admin Action
-    $userid  = optional_param('userid', 0, PARAM_INT);     // User wiki.
-    $groupid = optional_param('groupid', 0, PARAM_INT);    // Group wiki.
+    optional_variable($id);    // Course Module ID, or
+    optional_variable($a);     // wiki ID
+    optional_variable($page, false);    // Pagename
+    optional_variable($confirm, "");
+    optional_variable($action,"");    // Admin Action
+    optional_variable($userid, 0);     // User wiki.
+    optional_variable($groupid, 0);    // Group wiki.
+
+    $action = clean_text($action);
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
@@ -70,10 +72,9 @@
       error(get_string("notadministratewiki","wiki"));
     }
 
-    $canedit = wiki_can_edit_entry($wiki_entry, $wiki, $USER, $course);
     # Check for dangerous events (hacking) !
     if(in_array($action,array("removepages","strippages","revertpages"))) {
-      if(!($wiki->wtype=="student" || ($wiki->wtype=="group" and $canedit) || isteacher($course->id))) {
+      if(!($wiki->wtype=="student" || isteacher($course->id))) {
         add_to_log($course->id, "wiki", "hack", "", $wiki->name.": Tried to trick admin.php with action=$action.");
         error("Hack attack detected !");
       }

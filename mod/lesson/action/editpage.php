@@ -8,8 +8,6 @@
 
     // get the page
     $pageid = required_param('pageid', PARAM_INT);
-    $redirect = optional_param('redirect', '', PARAM_ALPHA);
-    
     if (!$page = get_record("lesson_pages", "id", $pageid)) {
         error("Edit page: page record not found");
     }
@@ -22,6 +20,7 @@
     $jump = array();
     $jump[0] = get_string("thispage", "lesson");
     $jump[LESSON_NEXTPAGE] = get_string("nextpage", "lesson");
+    //// CDC-FLAG 6/18/04 /////
     $jump[LESSON_PREVIOUSPAGE] = get_string("previouspage", "lesson");
     if(lesson_display_branch_jumps($lesson->id, $page->id)) {
         $jump[LESSON_UNSEENBRANCHPAGE] = get_string("unseenpageinbranch", "lesson");
@@ -33,6 +32,7 @@
     if(lesson_display_cluster_jump($lesson->id, $page->id) && $page->qtype != LESSON_BRANCHTABLE && $page->qtype != LESSON_ENDOFCLUSTER) {
         $jump[LESSON_CLUSTERJUMP] = get_string("clusterjump", "lesson");
     }
+    //// CDC-FLAG /////        
     $jump[LESSON_EOL] = get_string("endoflesson", "lesson");
     if (!$apageid = get_field("lesson_pages", "id", "lessonid", $lesson->id, "prevpageid", 0)) {
         error("Edit page: first page not found");
@@ -42,7 +42,7 @@
             if (!$apage = get_record("lesson_pages", "id", $apageid)) {
                 error("Edit page: apage record not found");
             }
-            // removed != LESSON_ENDOFBRANCH...
+            /// CDC-FLAG /// 6/15/04 removed != LESSON_ENDOFBRANCH...
             if (trim($page->title)) { // ...nor nuffin pages
                 $jump[$apageid] = strip_tags(format_string($apage->title,true));
             }
@@ -55,12 +55,11 @@
     // give teacher a proforma
     ?>
     <form name="editpage" method="post" action="lesson.php">
-    <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
+    <input type="hidden" name="id" value="<?PHP echo $cm->id ?>">
     <input type="hidden" name="action" value="updatepage">
-    <input type="hidden" name="pageid" value="<?php echo $pageid ?>" />
-    <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>" />        
-    <input type="hidden" name="redirect" value="<?php echo $redirect ?>" />        
-    <input type="hidden" name="redisplay" value="0" />
+    <input type="hidden" name="pageid" value="<?PHP echo $pageid ?>">
+    <input type="hidden" name="sesskey" value="<?PHP echo $USER->sesskey ?>">        
+    <input type="hidden" name="redisplay" value="0">
     <center>
        <?php
         switch ($page->qtype) {
@@ -72,24 +71,24 @@
                                   "document.editpage.redisplay.value=1;document.editpage.submit();");
                 echo "<p><b>".get_string("multianswer", "lesson").":</b> \n";
                 if ($page->qoption) {
-                    echo "<label for=\"qoption\" class=\"hidden-label\">Question Option</label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\" checked=\"checked\"/>";
+                    echo "<label for=\"qoption\" class=\"hidden-label\">Question Option</label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\" checked=\"checked\"/>"; //CDC hidden label added.
                 } else {
-                    echo "<label for=\"qoption\" class=\"hidden-label\">Question Option</label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\"/>";
+                    echo "<label for=\"qoption\" class=\"hidden-label\">Question Option</label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\"/>"; //CDC hidden label added.
                 }
                 helpbutton("questionoption", get_string("questionoption", "lesson"), "lesson");
                 echo "</p>\n";
                 break;
             case LESSON_SHORTANSWER :
                 echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
-                echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br>";
+                echo helpbutton("questiontype", get_string("questiontype", "lesson"), "lesson")."<br>";
                 lesson_qtype_menu($LESSON_QUESTION_TYPE, $page->qtype, 
                                   "lesson.php?id=$cm->id&action=editpage&pageid=$page->id",
                                   "document.editpage.redisplay.value=1;document.editpage.submit();");
                 echo "<p><b>".get_string("casesensitive", "lesson").":</b> \n";
                 if ($page->qoption) {
-                    echo "<label for=\"qoption\" class=\"hidden-label\">Question Option</label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\" checked=\"checked\"/>";
+                    echo "<label for=\"qoption\" class=\"hidden-label\">Question Option</label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\" checked=\"checked\"/>"; //CDC hidden label added.
                 } else {
-                    echo "<label for=\"qoption\" class=\"hidden-label\">Question Option</label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\"/>";
+                    echo "<label for=\"qoption\" class=\"hidden-label\">Question Option</label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\"/>"; //CDC hidden label added.
                 }
                 helpbutton("questionoption", get_string("questionoption", "lesson"), "lesson");
                 echo "</p>\n";
@@ -99,7 +98,7 @@
             case LESSON_MATCHING :
             case LESSON_NUMERICAL :
                 echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
-                echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br>";
+                echo helpbutton("questiontype", get_string("questiontype", "lesson"), "lesson")."<br>";
                 lesson_qtype_menu($LESSON_QUESTION_TYPE, $page->qtype, 
                                   "lesson.php?id=$cm->id&action=editpage&pageid=$page->id",
                                   "document.editpage.redisplay.value=1;document.editpage.submit();");
@@ -109,7 +108,7 @@
     <table cellpadding="5" class="generalbox" border="1">
     <tr valign="top">
     <td><b><?php print_string("pagetitle", "lesson"); ?>:</b><br />
-    <!-- hidden-label added.--><label for="title" class="hidden-label">Title</label><input type="text" id="title" name="title" size="80" maxsize="255" value="<?php p($page->title) ?>"></td>
+    <!-- //CDC hidden-label added.--><label for="title" class="hidden-label">Title</label><input type="text" id="title" name="title" size="80" maxsize="255" value="<?php p($page->title) ?>"></td>
     </tr>
     <?PHP
     echo "<tr><td><b>";
@@ -121,6 +120,7 @@
     switch ($page->qtype) {
         case LESSON_BRANCHTABLE :
             echo "<input type=\"hidden\" name=\"qtype\" value=\"$page->qtype\">\n";
+            /// CDC-FLAG /// 6/16/04
             echo "<tr><td>\n";
             echo "<center>";
             if ($page->layout) {
@@ -137,6 +137,7 @@
             }                
             echo get_string("displayinleftmenu", "lesson")."<center>\n";
             echo "</td></tr>\n";
+            /// CDC-FLAG ///                                
             echo "<tr><td><b>".get_string("branchtable", "lesson")."</b> \n";
             break;
         case LESSON_CLUSTER :
@@ -166,14 +167,14 @@
                         if ($flags & LESSON_ANSWER_EDITOR) {
                             echo " [".get_string("useeditor", "lesson").": ".
                                 "<label for=\"answereditor[$n]\" class=\"hidden-label\">answereditor[$n]</label><input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" 
-                                checked=\"checked\">";
+                                checked=\"checked\">"; //CDC hidden label added.
                             helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                             echo "]<br />\n";
                             print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
                             use_html_editor("answer[$n]"); // switch on the editor
                         } else {
                             echo " [".get_string("useeditor", "lesson").": ".
-                                "<label for=\"answereditor[$n]\" class=\"hidden-label\">answereditor[$n]</label><input type=\"checkbox\" id=\answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\">";
+                                "<label for=\"answereditor[$n]\" class=\"hidden-label\">answereditor[$n]</label><input type=\"checkbox\" id=\answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\">"; //CDC hidden label.
                             helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                             echo "]<br />\n";
                             print_textarea(false, 6, 70, 630, 300, "answer[$n]", $answer->answer);
@@ -183,14 +184,14 @@
                         if ($flags & LESSON_ANSWER_EDITOR) {
                             echo " [".get_string("useeditor", "lesson").": ".
                                 "<label for=\"answereditor[$n]\" class=\"hidden-label\">answereditor[$n]</label><input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" 
-                                checked=\"checked\">";
+                                checked=\"checked\">"; //CDC hidden label added.
                             helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                             echo "]<br />\n";
                             print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
                             use_html_editor("answer[$n]"); // switch on the editor
                         } else {
                             echo " [".get_string("useeditor", "lesson").": ".
-                                "<label for=\"answereditor[$n]\" class=\"hidden-label\">answereditor[$n]</label><input type=\"checkbox\" id=\answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\">";
+                                "<label for=\"answereditor[$n]\" class=\"hidden-label\">answereditor[$n]</label><input type=\"checkbox\" id=\answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\">"; //CDC hidden label.
                             helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                             echo "]<br />\n";
                             print_textarea(false, 6, 70, 630, 300, "answer[$n]", $answer->answer);
@@ -201,14 +202,14 @@
                         if ($flags & LESSON_ANSWER_EDITOR) {
                             echo " [".get_string("useeditor", "lesson").": ".
                                 "<label for=\"answereditor[$n]\" class=\"hidden-label\">answereditor[$n]</label><input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" 
-                                checked=\"checked\">"; 
+                                checked=\"checked\">"; //CDC hidden label added.
                             helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                             echo "]<br />\n";
                             print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
                             use_html_editor("answer[$n]"); // switch on the editor
                         } else {
                             echo " [".get_string("useeditor", "lesson").": ".
-                                "<label for=\"answereditor[$n]\" class=\"hidden-label\">answereditor[$n]</label><input type=\"checkbox\" id=\answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\">";
+                                "<label for=\"answereditor[$n]\" class=\"hidden-label\">answereditor[$n]</label><input type=\"checkbox\" id=\answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\">"; //CDC hidden label.
                             helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                             echo "]<br />\n";
                             print_textarea(false, 6, 70, 630, 300, "answer[$n]", $answer->answer);
@@ -218,14 +219,14 @@
                         if ($flags & LESSON_RESPONSE_EDITOR) {
                             echo " [".get_string("useeditor", "lesson").": ".
                                 "<label for=\"responseeditor[$n]\" class=\"hidden-label\">responseeditor[$n]</label><input type=\"checkbox\" id=\"responseeditor[$n]\" name=\"responseeditor[$n]\" value=\"1\" 
-                                checked=\"checked\">";
+                                checked=\"checked\">"; //CDC hidden label added.
                             helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                             echo "]<br />\n";
                             print_textarea($usehtmleditor, 20, 70, 630, 300, "response[$n]", $answer->response);
                             use_html_editor("response[$n]"); // switch on the editor
                         } else {
                             echo " [".get_string("useeditor", "lesson").": ".
-                                "<label for=\"responseeditor[$n]\" class=\"hidden-label\">responseeditor[$n]</label><input type=\"checkbox\" id=\"responseeditor[$n]\" name=\"responseeditor[$n]\" value=\"1\">";
+                                "<label for=\"responseeditor[$n]\" class=\"hidden-label\">responseeditor[$n]</label><input type=\"checkbox\" id=\"responseeditor[$n]\" name=\"responseeditor[$n]\" value=\"1\">"; //CDC hidden label added.
                             helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                             echo "]<br />\n";
                             print_textarea(false, 6, 70, 630, 300, "response[$n]", $answer->response);
@@ -241,14 +242,14 @@
                     if ($flags & LESSON_ANSWER_EDITOR) {
                         echo " [".get_string("useeditor", "lesson").": ".
                             "<label for=\"answereditor[$n]\" class=\"hidden-label\">answereditor[$n]</label><input type=\"checkbox\" id=\"answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\" 
-                            checked=\"checked\">";
+                            checked=\"checked\">"; //CDC hidden label added.
                         helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                         echo "]<br />\n";
                         print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
                         use_html_editor("answer[$n]"); // switch on the editor
                     } else {
                         echo " [".get_string("useeditor", "lesson").": ".
-                            "<label for=\"answereditor[$n]\" class=\"hidden-label\">answereditor[$n]</label><input type=\"checkbox\" id=\answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\">";
+                            "<label for=\"answereditor[$n]\" class=\"hidden-label\">answereditor[$n]</label><input type=\"checkbox\" id=\answereditor[$n]\" name=\"answereditor[$n]\" value=\"1\">"; //CDC hidden label.
                         helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                         echo "]<br />\n";
                         print_textarea(false, 6, 70, 630, 300, "answer[$n]", $answer->answer);
@@ -258,14 +259,14 @@
                     if ($flags & LESSON_RESPONSE_EDITOR) {
                         echo " [".get_string("useeditor", "lesson").": ".
                             "<label for=\"responseeditor[$n]\" class=\"hidden-label\">responseeditor[$n]</label><input type=\"checkbox\" id=\"responseeditor[$n]\" name=\"responseeditor[$n]\" value=\"1\" 
-                            checked=\"checked\">";
+                            checked=\"checked\">"; //CDC hidden label added.
                         helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                         echo "]<br />\n";
                         print_textarea($usehtmleditor, 20, 70, 630, 300, "response[$n]", $answer->response);
                         use_html_editor("response[$n]"); // switch on the editor
                     } else {
                         echo " [".get_string("useeditor", "lesson").": ".
-                            "<label for=\"responseeditor[$n]\" class=\"hidden-label\">responseeditor[$n]</label><input type=\"checkbox\" id=\"responseeditor[$n]\" name=\"responseeditor[$n]\" value=\"1\">";
+                            "<label for=\"responseeditor[$n]\" class=\"hidden-label\">responseeditor[$n]</label><input type=\"checkbox\" id=\"responseeditor[$n]\" name=\"responseeditor[$n]\" value=\"1\">"; //CDC hidden label added.
                         helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                         echo "]<br />\n";
                         print_textarea(false, 6, 70, 630, 300, "response[$n]", $answer->response);
@@ -277,11 +278,11 @@
                     if ($flags & LESSON_ANSWER_EDITOR) {
                         echo " [".get_string("useeditor", "lesson").": ".
                             "<label for=\"answereditor[$n]\" class=\"hidden-label\">answereditor[$n]</label><input type=\"checkbox\" name=\"answereditor[$n]\" value=\"1\" 
-                            checked=\"checked\">";
+                            checked=\"checked\">"; //CDC hidden label added.
                         helpbutton("useeditor", get_string("useeditor", "lesson"), "lesson");
                         echo "]<br />\n";
                         print_textarea($usehtmleditor, 20, 70, 630, 300, "answer[$n]", $answer->answer);
-                        use_html_editor("answer[$n]"); // switch on the editor
+                        use_html_editor("answer[$n]"); // switch on the editor  CDC-FLAG added in this line... editor would not turn on w/o it
                     } else {
                         echo " [".get_string("useeditor", "lesson").": ".
                             "<input type=\"checkbox\" name=\"answereditor[$n]\" value=\"1\">";
@@ -347,7 +348,7 @@
             }                
         }
     }
-    if ($page->qtype != LESSON_ENDOFBRANCH && $page->qtype != LESSON_CLUSTER && $page->qtype != LESSON_ENDOFCLUSTER) {
+    if ($page->qtype != LESSON_ENDOFBRANCH && $page->qtype != LESSON_CLUSTER && $page->qtype != LESSON_ENDOFCLUSTER) {  /// CDC-FLAG 6/17/04 added to the condition ///
         if ($page->qtype == LESSON_MATCHING) {
             $maxanswers = $lesson->maxanswers + 2;
         } else {

@@ -26,7 +26,8 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
             return false;
         }
 
-        if (!$question->options->answers = get_records_select('quiz_answers', 'id IN ('.$question->options->answers.')')) {
+        if (!$question->options->answers = get_records('quiz_answers', 'question',
+         $question->id)) {
            notify('Error: Missing question answers!');
            return false;
         }
@@ -66,9 +67,9 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         foreach ($question->answer as $key => $dataanswer) {
             if ($dataanswer != "") {
                 if ($answer = array_shift($oldanswers)) {  // Existing answer, so reuse it
-                    $answer->answer     = $dataanswer;
-                    $answer->fraction   = $question->fraction[$key];
-                    $answer->feedback   = $question->feedback[$key];
+                    $answer->answer   = $dataanswer;
+                    $answer->fraction = $question->fraction[$key];
+                    $answer->feedback = $question->feedback[$key];
                     if (!update_record("quiz_answers", $answer)) {
                         $result->error = "Could not update quiz answer! (id=$answer->id)";
                         return $result;
@@ -113,13 +114,6 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
             }
         }
 
-        // delete old answer records
-        if (!empty($oldanswers)) {
-            foreach($oldanswers as $oa) {
-                delete_records('quiz_answers', 'id', $oa->id);
-            }
-        }
-
         /// Perform sanity checks on fractional grades
         if ($options->single) {
             if ($maxfraction != 1) {
@@ -138,11 +132,11 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         return true;
     }
 
-    function create_session_and_responses(&$question, &$state, $cmoptions, $attempt) {
+    function create_session_and_responses(&$question, &$state, $quiz, $attempt) {
         // Shuffle the answers if required
         $answerids = array_values(array_map(create_function('$val',
          'return $val->id;'), $question->options->answers));
-        if ($cmoptions->shuffleanswers) {
+        if ($quiz->shuffleanswers) {
            $answerids = swapshuffle($answerids);
         }
         $state->options->order = $answerids;
@@ -241,11 +235,11 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         }
     }
 
-    function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
+    function print_question_formulation_and_controls(&$question, &$state, $quiz, $options) {
 
         $answers = &$question->options->answers;
         $correctanswers = $this->get_correct_responses($question, $state);
-        $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
+        $readonly = empty($options->readonly) ? '' : 'disabled="disabled"';
 
         $formatoptions = new stdClass;
         $formatoptions->para = false;
@@ -253,8 +247,8 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         // Print formulation
         echo format_text($question->questiontext,
                          $question->questiontextformat,
-                         NULL, $cmoptions->course);
-        quiz_print_possible_question_image($question);
+                         NULL, $quiz->course);
+        quiz_print_possible_question_image($quiz->id, $question);
 
         // Print input controls and alternatives
         echo '<table align="right">';
@@ -266,28 +260,26 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         foreach ($state->options->order as $key => $aid) {
             $answer = &$answers[$aid];
             $qnumchar = chr(ord('a') + $key);
-            $checked = '';
 
             echo '<tr><td valign="top">';
 
             if ($question->options->single) {
                 $type = 'type="radio"';
-                $name   = "name=\"{$question->name_prefix}\"";
-                if (isset($state->responses['']) and $aid == $state->responses['']) {
-                    $checked = 'checked="checked"';
-                }
+                $name = "name=\"{$question->name_prefix}\"";
+                $checked = $aid == $state->responses['']
+                         ? 'checked="checked"' : '';
             } else {
                 $type = ' type="checkbox" ';
-                $name   = "name=\"{$question->name_prefix}{$aid}\"";
+                $name = "name=\"{$question->name_prefix}$aid\"";
                 $checked = isset($state->responses[$aid])
                          ? 'checked="checked"' : '';
             }
-            $id   = $question->name_prefix . $aid;
-            $fullid = "id=\"$id\"";
+
 
             // Print the control
-            echo "<input $readonly $fullid $name $checked $type value=\"$aid\"" .
-                 "alt=\"" . s($answer->answer) . '" />';
+            echo "<input $readonly $name $checked $type value=\"$aid\" alt=\""
+             . s($answer->answer) . '" />';
+
             echo '</td>';
 
             // Print the text by the control highlighting if correct responses
@@ -295,14 +287,14 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
             // the single selection case or has a positive score in the multiple
             // selection case
             if ($options->readonly && $options->correct_responses &&
-                is_array($correctanswers) && in_array($aid, $correctanswers)) {
-                echo '<td valign="top" class="highlight"><label for="'.$id.'">'.
+             in_array($aid, $correctanswers)) {
+                echo '<td valign="top" class="highlight">' .
                  format_text("$qnumchar. $answer->answer", FORMAT_MOODLE ,
-                 $formatoptions) . '</label></td>';
+                 $formatoptions) . '</td>';
             } else {
-                echo '<td valign="top"><label for="'.$id.'">'.
+                echo '<td valign="top">' .
                  format_text("$qnumchar. $answer->answer", FORMAT_MOODLE,
-                 $formatoptions) . '</label></td>';
+                 $formatoptions) . '</td>';
             }
 
             // Print feedback by selected options if feedback is on
@@ -319,7 +311,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         echo '</td></tr></table>';
     }
 
-    function grade_responses(&$question, &$state, $cmoptions) {
+    function grade_responses(&$question, &$state, $quiz) {
         $answers      = $question->options->answers;
         $testedstate = clone($state);
         $teststate    = clone($state);

@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // block_course_list.php - created with Moodle 1.4.3 + (2004083134)
+      // block_course_list.php - created with Moodle 1.3.3 (2004052503)
 
 
 $string['allcourses'] = 'Administratoriai mato visus kursus';
 $string['blockname'] = 'Kursø sàraðas';
-$string['configadminview'] = ' Kà administratorius matys kuso sàraðo bloke?';
+$string['configadminview'] = ' ';
 $string['owncourses'] = 'Administratoriai mato savus kursus';
 
 ?>

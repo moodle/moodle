@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.6 development (2005101200)
+      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['admindirerror'] = 'De adminmap die je opgeeft is niet juist';
 $string['admindirname'] = 'Adminmap';
-$string['admindirsetting'] = 'Enkele webhosts gebruiken /admin als speciale URL  om je toegang te geven tot een controlepaneel of iets dergelijks. Jammer genoeg geeft dit conflicten met de standaardmap voor de Moodle-beheerpagina\'s. Je kunt dit toch aan het werk krijgen door de adminmap van jouw installatie te hernoemen en deze nieuwe mapnaam hier te zetten. Bijvoorbeeld <br /> <br /><b>moodleadmin</b><br /> <br />. Dit zal alle beheerlinks in Moodle aanpassen.';
+$string['admindirsetting'] = 'Enkele webhosts gebruiken /admin als speciale URL  om je toegang te geven tot een controlepaneel of iets dergelijks. Jammer genoeg geeft dit conflicten met de standaardmap voor de Moodle-beheerpagina\'s. Je kunt dit toch aan het werk krijgen door de adminmap van jouw installatie te hernoemen en deze nieuwe mapnaam hier te zetten. Bijvoorbeeld <br />&nbsp;<br /><b>moodleadmin</b><br />&nbsp;<br />. Dit zal alle beheerlinks in Moodle aanpassen.';
 $string['caution'] = 'Opgelet';
 $string['chooselanguage'] = 'Kies een taal';
 $string['compatibilitysettings'] = 'Bezig je PHP-instellingen te controleren ...';
@@ -12,16 +12,8 @@ $string['configfilenotwritten'] = 'Het installatiescript kon het bestand config.
 $string['configfilewritten'] = 'Het maken van config.php is gelukt';
 $string['configurationcomplete'] = 'De configuratie is volledig';
 $string['database'] = 'Databank';
-$string['databasecreationsettings'] = 'Nu moet je de databank configureren waar de meeste gegevens van Moodle bewaard zullen worden. Deze databank zal automatisch gecreëerd worden door de Moodle4Windows installatietechnologie met de onderstaande instellingen.<br />
-<br /> <br />
-<b>Type:</b> vastgezet op \"mysql\" door de installatie.<br />
-<b>Host:</b> vastgezet op \"localhost\" door de installatie.<br />
-<b>Naam:</b> naam voor de databank, bijvoorbeeld moodle<br />
-<b>Gebruiker:</b> vastgezet op \"root\" door de installatie.<br />
-<b>Wachtwoord:</b> jouw wachtwoord voor de databank.<br />
-<b>Tabelvoorvoegsel:</b> optionneel voorvoegsel om de naam van alle tabellen mee te beginnen.';
 $string['databasesettings'] = 'Nu moet je de databank voor de gegevens van Moodle configureren. Deze databank zou je al aangemaakt moeten hebben, samen met een gebruikersnaam en wachtwoord voor toegang tot die databank.<br />
-<br /> <br />
+<br />&nbsp;<br />
 <b>Type:</b> mysql of postgres7<br />
 <b>Host Server:</b> bv localhost of db.isp.com<br />
 <b>Naam:</b> databanknaam, bv moodle<br />
@@ -62,16 +54,6 @@ $string['gdversionhelp'] = '<p>Blijkbaar is GD niet geïnstalleerd op je server.<
 <p>PHP heeft de GD-bibliotheek nodig om afbeeldingen te kunnen maken (zoals de grafieken van de logbestanden) en te verwerken (zoals de profielbestanden van de gebruikers). Moodle zal werken zonder GD - alleen deze mogelijkheden zullen het niet doen.</p>
 <p>Om GD toe te voegen aan PHP op een Unixmachine moet je PHP compileren met de --with-gd parameter.</p>
 <p>Onder Windows kun je gewoonlijk php.ini bewerken en de commentaartekens voor de lijn met libgd.dll verwijderen.</p>';
-$string['globalsquotes'] = 'Inveilige behandeling van globals';
-$string['globalsquoteserror'] = 'Zet je PHP instellingen juist: schakel register_globals uit en/of schakel magic_quotes_gpc in';
-$string['globalsquoteshelp'] = '<p>De combinatie van uitgeschakelde Magic Quotes GPC en ingeschakelde Register Globals tegelijk wordt sterk afgeraden.</p>
-
-<p>De aanbevolen instelling is<b>magic_quotes_gpc = On</b> en <b>register_globals = Off</b> in je php.ini</p>
-
-<p>Als je geen toegang hebt tot php.ini, dan kun je misschien volgende lijn toevoegen in het bestand .htaccess in je Moodlemap:
-<blockquote>php_value magic_quotes_gpc On</blockquote>
-<blockquote>php_value register_globals Off</blockquote>
-</p> ';
 $string['installation'] = 'Installatie';
 $string['magicquotesruntime'] = 'Magic Quotes runtime';
 $string['magicquotesruntimeerror'] = 'Dit moet uitgeschakeld zijn';
@@ -106,6 +88,9 @@ $string['sessionautostart'] = 'Session Auto Start';
 $string['sessionautostarterror'] = 'Dit moet uitgeschakeld zijn';
 $string['sessionautostarthelp'] = '<p>Moodle heeft session support nodig en zal zonder niet werken.</p>
 <p>Sessies kunnen ingeschakeld worden in het php.ini-bestand ... zoek naar de session.auto_start parameter.</p>';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Nederlands';
 $string['wwwroot'] = 'Web adres';
 $string['wwwrooterror'] = 'Het webadres lijkt niet geldig te zijn - deze Moodle-installatie is blijkbaar niet op die plaats.';
 

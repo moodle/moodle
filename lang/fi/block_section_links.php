@@ -5,6 +5,9 @@
 $string['blockname'] = 'Osio linkit';
 $string['jumptocurrenttopic'] = 'Siirry nykyiseen aiheeseen';
 $string['jumptocurrentweek'] = 'Siirry nykyiseen viikkoon';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Suomi';
 $string['topics'] = 'Aiheet';
 $string['weeks'] = 'Viikot';
 

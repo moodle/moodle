@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5.2 + (2005060222)
+      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
 
 
 $string['action'] = '-- Toiminto --';
@@ -39,7 +39,7 @@ $string['diff'] = 'Erot';
 $string['differences'] = 'Erot versioiden $a->new_ver ja $a->old_ver sivulla $a->pagename.';
 $string['disablecamel'] = 'Est‰ KameliKirjasinLinkitt‰minen';
 $string['disabledpage'] = 'T‰m‰ sivu ei ole t‰ll‰ hetkell‰ saatavilla';
-$string['doesnotexist'] = 'T‰t‰ sivua ei ole viel‰ tehty, napsauta Muokkaa-painiketta jos haluat luoda t‰m‰n sivun';
+$string['doesnotexist'] = 'T‰t‰ sivua ei ole viel‰ tehty, klikkaa Muokkaa-painiketta jos haluat luoda t‰m‰n sivun';
 $string['downloadaszip'] = 'Ladattava zip-paketti';
 $string['downloadtimes'] = 'Ladattu $a kertaa';
 $string['dwnlnofiles'] = 'Tiedostoja ei ole viel‰ l‰hetetty';
@@ -144,7 +144,6 @@ $string['safehtml'] = 'Turvallinen HTML';
 $string['save'] = 'Tallenna';
 $string['searchwiki'] = 'Etsi Wikist‰';
 $string['setpageflags'] = 'Aseta sivun liput';
-$string['showversions'] = 'N‰yt‰ versiot:';
 $string['sitemap'] = 'Sivukartta';
 $string['smfor'] = 'Sivukartta';
 $string['status'] = 'Tila';
@@ -160,7 +159,6 @@ $string['tabview'] = 'Katso';
 $string['thanksforcontribution'] = 'Kiitokset osallistumisesta';
 $string['thispageisntlinkedfromanywhereelse'] = 'T‰t‰ sivua ei ole linkitetty minnek‰‰n';
 $string['updatedpages'] = 'P‰ivitetyt sivut';
-$string['updatedwikipages'] = 'P‰ivitettiin wiki-sivut';
 $string['uplerror'] = 'Pahus, jotain meni pieleen tiedoston l‰hett‰misess‰';
 $string['uplinsect'] = 'L‰het‰';
 $string['uplnewnam'] = 'Tallenna toisella nimell‰';

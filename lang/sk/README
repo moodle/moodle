@@ -1,32 +1,20 @@
 $Id$
 
 Slovenský jazyk (ISO-8859-2)
--------------------------------------------------------------------------------
+----------------------------
 
-Autori
--------------------------------------------------------------------------------
 Martina Majorová (MM), CIT FEM SPU, e-mail: Martina.Majorova@fem.uniag.sk
 Juraj Chlebec (JCH), CIT FEM SPU, e-mail: Juraj.Chlebec@fem.uniag.sk
 Radik Kalakay, Projekt VECIT 9-2003 - ISO-8859-2
-a dalsi...
-
-Novinky
--------------------------------------------------------------------------------
-25-05-2005
-* takmer kompletny preklad retazcov bol umiestneny do Moodle CVS. Teraz je 
-  potrebne vychytat chyby, preklepy a zle formulacie. Pripomienky su vitane! 
-  (JCH)
 
 06-05-2005
-* hotove casti prekladov verzii 1.4.4 a 1.5a poslane Martinovi Dougiamasovi 
-  (JCH)
+* hotove preklady verzie 1.4.4 a 1.5a poslane Martinovi Dougiamasovi (JCH)
 
 05-09-2003
 * zmena kodovania na windows-1250 v dosledku pouzitej databazy
 * ukoncene preklady vo vsetkych moduloch verzie 1.1
 * niektore casti este potrebuju vylepsit
-* oznacovanie verzii zavadzam podla aktualnej verzie Moodla (napr. v1.1 pre 
-  verziu Moodle 1.1)
+* oznacovanie verzii zavadzam podla aktualnej verzie Moodla (napr. v1.1 pre verziu Moodle 1.1)
 * niektoré výrazy z povodnej verzie Moodle je nutné zmeni» - nejednotnos»
 
 01-09-2003

@@ -42,8 +42,19 @@
         font-size: 1.6em;
         margin: 10px;
     }
-    .header #doc_author, .header #doc_version, .header #doc_translator {
+    .header #doc_author {
         text-align: right;
+    }
+    .header #doc_author:before {
+        content: "Author: ";
+        font-weight: bold;
+    }
+    .header #doc_version {
+        text-align: right;
+    }
+    .header #doc_version:before {
+        content: "Version: ";
+        font-weight: bold;
     }
     .code {
         border-top: 1px #FFC85F solid;
@@ -110,8 +121,8 @@
 <div class="header">
     <h1>MOODLE DEVELOPER DOCUMENTATION</h1>
     <div id="doc_subject">BLOCKS</div>
-    <div id="doc_author"><strong>Author:</strong> Jon Papaioannou (pj@uom.gr)</div>
-    <div id="doc_version"><strong>Version:</strong> $Id$</div>
+    <div id="doc_author">Jon Papaioannou (pj@uom.gr)</div>
+    <div id="doc_version">$Id$</div>
 </div>
 
 <h2>A Step-by-step Guide To Creating Blocks</h2>

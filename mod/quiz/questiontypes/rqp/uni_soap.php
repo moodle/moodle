@@ -2,13 +2,13 @@
 
 // Web services wrapper library script
 
-if (check_php_version('5') && class_exists('SoapClient')) {
+if (class_exists('SoapClient')) {
     // Use the native PHP5 support
-    require_once($CFG->dirroot . '/mod/quiz/questiontypes/rqp/uni_soap.php5');
+    require_once('uni_soap.php5');
 }
 else{
     // Use nuSOAP instead
-    require_once($CFG->dirroot . '/mod/quiz/questiontypes/rqp/nusoap.php');
+    require_once('nusoap.php');
 
     function make_soap_fault($faultcode, $faultstring, $faultactor='', $detail='', $faultname='', $headerfault='') {
         return new soap_fault($faultcode, $faultactor, $faultstring, $detail);

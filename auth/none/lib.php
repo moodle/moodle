@@ -9,7 +9,7 @@ function auth_user_login ($username, $password) {
         return ($user->password == md5($password));
     }
 
-    return true;
+    return false;
 }
 
 

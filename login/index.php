@@ -4,17 +4,6 @@
 
     $loginguest = optional_param('loginguest', false); // determines whether visitors are logged in as guest automatically
 
-/// Check for timed out sessions
-    if (!empty($SESSION->has_timed_out)) {
-        $session_has_timed_out = true;
-        $SESSION->has_timed_out = false;
-    } else {
-        $session_has_timed_out = false;
-    }
-
-    //HTTPS is potentially required in this page
-    httpsrequired();
-
 /// Check if the guest user exists.  If not, create one.
     if (! record_exists("user", "username", "guest")) {
         $guest->auth        = "manual"; 
@@ -59,7 +48,12 @@
     } else {
         $currlang = current_language();
         $langs    = get_list_of_languages();
-        $langmenu = popup_form ("$CFG->httpswwwroot/login/index.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
+        if (empty($CFG->loginhttps)) {
+            $wwwroot = $CFG->wwwroot;
+        } else {
+            $wwwroot = str_replace('http','https',$CFG->wwwroot);
+        }
+        $langmenu = popup_form ("$wwwroot/login/index.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
     }
 
     $loginsite = get_string("loginsite");
@@ -91,29 +85,19 @@
 
 /// Check if the user has actually submitted login data to us
 
-    if (empty($CFG->usesid) and $frm and (get_moodle_cookie() == '') and ($frm->username!='guest') and !$user and empty($CFG->alternateloginurl)) {    // Login without cookie
+    if ($frm and (get_moodle_cookie() == '')) {    // Login without cookie
 
         $errormsg = get_string("cookiesnotenabled");
 
-    } else  if ($frm) {                             // Login WITH cookies
+    } else if ($frm) {                             // Login WITH cookies
 
         $frm->username = trim(moodle_strtolower($frm->username));
-
-        if ($CFG->auth == 'none' && empty($CFG->extendedusernamechars)) {
-            $string = eregi_replace("[^(-\.[:alnum:])]", "", $frm->username);
-            if (strcmp($frm->username, $string)) {
-                $errormsg = get_string('username').': '.get_string("alphanumerical");
-                $user = null;
-            }
-        }
 
         if (($frm->username == 'guest') and empty($CFG->guestloginbutton)) {
             $user = false;    /// Can't log in as guest if guest button is disabled
             $frm = false;
         } else if (!$user) {
-            if (empty($errormsg)) {
-                $user = authenticate_user_login($frm->username, $frm->password);
-            }
+            $user = authenticate_user_login($frm->username, $frm->password);
         }
         update_login_count();
 
@@ -139,7 +123,7 @@
         
         
             //Select password change url
-            if (is_internal_auth($USER->auth) || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
+            if (is_internal_auth() || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
                 $passwordchangeurl=$CFG->wwwroot.'/login/change_password.php';
             } elseif($CFG->changepassword) {
                 $passwordchangeurl=$CFG->changepassword;
@@ -166,10 +150,7 @@
                 unset($SESSION->wantsurl);
 
             } else {
-                $urltogo = $CFG->wwwroot.'/my';      /// Go to the standard home page
-                if (isadmin() || empty($CFG->mymoodleredirect) || isguest()) {
-                    $urltogo = $CFG->wwwroot;       /// not needed by admins or guests or when it's turned off
-                }
+                $urltogo = $CFG->wwwroot.'/';      /// Go to the standard home page
                 unset($SESSION->wantsurl);         /// Just in case
             }
 
@@ -199,9 +180,7 @@
             exit;
     
         } else {
-            if (empty($errormsg)) {
-                $errormsg = get_string("invalidlogin");
-            }
+            $errormsg = get_string("invalidlogin");
         }
     }
 
@@ -211,10 +190,7 @@
 /// First, let's remember where the user was trying to get to before they got here
 
     if (empty($SESSION->wantsurl)) {
-        $SESSION->wantsurl = (array_key_exists('HTTP_REFERER',$_SERVER) && 
-                              $_SERVER["HTTP_REFERER"] != $CFG->wwwroot && 
-                              $_SERVER["HTTP_REFERER"] != $CFG->wwwroot.'/')
-            ? $_SERVER["HTTP_REFERER"] : NULL;
+        $SESSION->wantsurl = array_key_exists('HTTP_REFERER',$_SERVER) ? $_SERVER["HTTP_REFERER"] : $CFG->wwwroot; 
     }
 
     if (!empty($loginurl)) {   // We don't want the standard forms, go elsewhere
@@ -226,10 +202,6 @@
 
     if (empty($errormsg)) {
         $errormsg = '';
-    }
-    
-    if ($session_has_timed_out) {
-        $errormsg = get_string('sessionerroruser', 'error');
     }
 
     if (get_moodle_cookie() == '') {   

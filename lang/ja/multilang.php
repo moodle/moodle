@@ -3,5 +3,8 @@
 
 
 $string['filtername'] = '多言語コンテンツ';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 
 ?>

@@ -33,7 +33,7 @@
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
-            error("There is no coursemodule with id $id");
+            error("Course Module ID was incorrect");
         }
 
         if (! $course = get_record("course", "id", $cm->course)) {
@@ -41,18 +41,18 @@
         }
 
         if (! $quiz = get_record("quiz", "id", $cm->instance)) {
-            error("The quiz with id $cm->instance corresponding to this coursemodule $id is missing");
+            error("Course module is incorrect");
         }
 
     } else {
         if (! $quiz = get_record("quiz", "id", $q)) {
-            error("There is no quiz with id $q");
+            error("Course module is incorrect");
         }
         if (! $course = get_record("course", "id", $quiz->course)) {
-            error("The course with id $quiz->course that the quiz with id $q belongs to is missing");
+            error("Course is misconfigured");
         }
         if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
-            error("The course module for the quiz with id $q is missing");
+            error("Course Module ID was incorrect");
         }
     }
 
@@ -62,7 +62,7 @@
 // Get number for the next or unfinished attempt
     if(!$attemptnumber = (int)get_field_sql('SELECT MAX(attempt)+1 FROM ' .
      "{$CFG->prefix}quiz_attempts WHERE quiz = '{$quiz->id}' AND " .
-     "userid = '{$USER->id}' AND timefinish > 0 AND preview != 1")) {
+     "userid = '{$USER->id}' AND timefinish > 0")) {
         $attemptnumber = 1;
     }
 
@@ -92,11 +92,7 @@
         $currenttab = 'preview';
         include('tabs.php');
     } else {
-        if ($quiz->attempts != 1) {
-            print_heading(format_string($quiz->name).' - '.$strattemptnum);
-        } else {
-            print_heading(format_string($quiz->name));
-        }
+        print_heading(format_string($quiz->name));
     }
 
 /// Check availability
@@ -108,9 +104,7 @@
         exit;
     }
 
-    $numberofpreviousattempts = count_records_select('quiz_attempts', "quiz = '{$quiz->id}' AND " .
-        "userid = '{$USER->id}' AND timefinish > 0 AND preview != 1");
-    if ($quiz->attempts and $numberofpreviousattempts >= $quiz->attempts) {
+    if ($quiz->attempts and $attemptnumber > $quiz->attempts) {
         error(get_string('nomoreattempts', 'quiz'), "view.php?id={$cm->id}");
     }
 
@@ -132,7 +126,7 @@
             }
             echo "<br />\n";
 
-            echo "<form name=\"passwordform\" method=\"post\" action=\"attempt.php?id=$cm->id\" autocomplete=\"off\">\n";
+            echo "<form name=\"passwordform\" method=\"post\" action=\"attempt.php?id=$cm->id\">\n";
             print_simple_box_start("center");
 
             echo "<div align=\"center\">\n";
@@ -168,7 +162,6 @@
     $attempt = get_record('quiz_attempts', 'quiz', $quiz->id,
      'userid', $USER->id, 'timefinish', 0);
 
-    $newattempt = false;
     if (!$attempt) {
         // Check if this is a preview request from a teacher
         // in which case the previous previews should be deleted
@@ -179,12 +172,11 @@
                 delete_records('quiz_grades', 'quiz', $quiz->id, 'userid', $USER->id);
                 foreach ($oldattempts as $oldattempt) {
                     // there should only be one but we loop just in case
-                    delete_records('quiz_states', 'attempt', $oldattempt->uniqueid);
-                    delete_records('quiz_newest_states', 'attemptid', $oldattempt->uniqueid);
+                    delete_records('quiz_states', 'attempt', $oldattempt->id);
+                    delete_records('quiz_newest_states', 'attemptid', $oldattempt->id);
                 }
             }
         }
-        $newattempt = true;
         // Start a new attempt and initialize the question sessions
         $attempt = quiz_create_attempt($quiz, $attemptnumber);
         // If this is an attempt by a teacher mark it as a preview
@@ -213,7 +205,7 @@
                            "$quiz->id", $cm->id);
         }
     }
-    if (!$attempt->timestart) { // shouldn't really happen, just for robustness
+    if ($attempt->timestart) { // shouldn't really happen, just for robustness
         $attempt->timestart = time();
     }
 
@@ -222,15 +214,11 @@
     // list of questions needed by page
     $pagelist = quiz_questions_on_page($attempt->layout, $page);
 
-    if ($newattempt) {
-        $questionlist = quiz_questions_in_quiz($attempt->layout);
-    } else {
-        $questionlist = $pagelist;
-    }
-
     // add all questions that are on the submitted form
     if ($questionids) {
-        $questionlist .= ','.$questionids;
+        $questionlist = $pagelist.','.$questionids;
+    } else {
+        $questionlist = $pagelist;
     }
 
     if (!$questionlist) {
@@ -255,15 +243,8 @@
 
     // Restore the question sessions to their most recent states
     // creating new sessions where required
-    if (!$states = quiz_get_states($questions, $quiz, $attempt)) {
+    if (!$states = quiz_restore_question_sessions($questions, $quiz, $attempt)) {
         error('Could not restore question sessions');
-    }
-
-    // Save all the newly created states
-    if ($newattempt) {
-        foreach ($questions as $i => $question) {
-            quiz_save_question_session($questions[$i], $states[$i]);
-        }
     }
 
 
@@ -318,7 +299,7 @@
         // Find all the questions for this attempt for which the newest
         // state is not also the newest graded state
         if ($closequestions = get_records_select('quiz_newest_states',
-         "attemptid = $attempt->uniqueid AND newest != newgraded", '', 'questionid, questionid')) {
+         "attemptid = $attempt->id AND newest != newgraded", '', 'questionid, questionid')) {
 
             // load all the questions
             $closequestionlist = implode(',', array_keys($closequestions));
@@ -337,7 +318,7 @@
             }
 
             // Restore the question sessions
-            if (!$closestates = quiz_get_states($closequestions, $quiz, $attempt)) {
+            if (!$closestates = quiz_restore_question_sessions($closequestions, $quiz, $attempt)) {
                 error('Could not restore question sessions');
             }
 
@@ -367,7 +348,7 @@
 /// Check access to quiz page
 
     // check the quiz times
-    if ($timestamp < $quiz->timeopen || ($quiz->timeclose and $timestamp > $quiz->timeclose)) {
+    if (($timestamp < $quiz->timeopen || $timestamp > $quiz->timeclose)) {
         if ($isteacher) {
             notify(get_string('notavailabletostudents', 'quiz'));
         } else {
@@ -381,18 +362,17 @@
 
 /// Print the quiz page ////////////////////////////////////////////////////////
 
-/// Print the preview heading
+/// Print the attempt number or preview heading
     if ($isteacher) {
-        print_heading(get_string('previewquiz', 'quiz', format_string($quiz->name)));
+        print_heading(get_string('previewquiz', 'quiz'));
         unset($buttonoptions);
         $buttonoptions['q'] = $quiz->id;
         $buttonoptions['forcenew'] = true;
         echo '<center>';
         print_single_button($CFG->wwwroot.'/mod/quiz/attempt.php', $buttonoptions, get_string('startagain', 'quiz'));
         echo '</center>';
-        if ($quiz->popup) {
-            notify(get_string('popupnotice', 'quiz'));
-        }
+    } else {
+        print_heading($strattemptnum);
     }
 
 /// Start the form
@@ -401,7 +381,7 @@
         ?>
         <script language="javascript" type="text/javascript">
         <!--
-            document.write("<form name=\"responseform\" method=\"post\" action=\"attempt.php\" autocomplete=\"off\">\n");
+            document.write("<form name=\"responseform\" method=\"post\" action=\"attempt.php\">\n");
         // -->
         </script>
         <noscript>
@@ -409,7 +389,7 @@
         </noscript>
         <?php
     } else {
-        echo "<form name=\"responseform\" method=\"post\" action=\"attempt.php\" autocomplete=\"off\">\n";
+        echo "<form name=\"responseform\" method=\"post\" action=\"attempt.php\">\n";
     }
 
     // Add a hidden field with the quiz id
@@ -475,7 +455,7 @@
     echo "</form>\n";
 
 
-    $secondsleft = ($quiz->timeclose ? $quiz->timeclose : 999999999999) - time();
+    $secondsleft = $quiz->timeclose - time();
     // If time limit is set include floating timer.
     if ($quiz->timelimit > 0) {
 
@@ -491,6 +471,10 @@
         if ($secondsleft > 0 and $secondsleft < 24*3600) {  // less than a day remaining
             include('jsclock.php');
         }
+    }
+
+    if (!$isteacher) {
+        include('attempt_close_js.php');
     }
 
     // Finish the page

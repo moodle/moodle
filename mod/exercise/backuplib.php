@@ -47,60 +47,43 @@
         $exercises = get_records ("exercise","course",$preferences->backup_course,"id");
         if ($exercises) {
             foreach ($exercises as $exercise) {
-                if (backup_mod_selected($preferences,'exercise',$exercise->id)) {
-                    $status = exercise_backup_one_mod($bf,$preferences,$exercise);
+                //Start mod
+                fwrite ($bf,start_tag("MOD",3,true));
+                //Print exercise data
+                fwrite ($bf,full_tag("ID",4,false,$exercise->id));
+                fwrite ($bf,full_tag("MODTYPE",4,false,"exercise"));
+                fwrite ($bf,full_tag("NAME",4,false,$exercise->name));
+                fwrite ($bf,full_tag("NELEMENTS",4,false,$exercise->nelements));
+                fwrite ($bf,full_tag("PHASE",4,false,$exercise->phase));
+                fwrite ($bf,full_tag("GRADINGSTRATEGY",4,false,$exercise->gradingstrategy));
+                fwrite ($bf,full_tag("USEMAXIMUM",4,false,$exercise->usemaximum));
+                fwrite ($bf,full_tag("ASSESSMENTCOMPS",4,false,$exercise->assessmentcomps));
+                fwrite ($bf,full_tag("ANONYMOUS",4,false,$exercise->anonymous));
+                fwrite ($bf,full_tag("MAXBYTES",4,false,$exercise->maxbytes));
+                fwrite ($bf,full_tag("DEADLINE",4,false,$exercise->deadline));
+                fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$exercise->timemodified));
+                fwrite ($bf,full_tag("GRADE",4,false,$exercise->grade));
+                fwrite ($bf,full_tag("GRADINGGRADE",4,false,$exercise->gradinggrade));
+                fwrite ($bf,full_tag("SHOWLEAGUETABLE",4,false,$exercise->showleaguetable));
+                fwrite ($bf,full_tag("USEPASSWORD",4,false,$exercise->usepassword));
+                fwrite ($bf,full_tag("PASSWORD",4,false,$exercise->password));
+                //Now we backup exercise elements
+                $status = backup_exercise_elements($bf,$preferences,$exercise->id);
+                //Now we backup any teacher submissions (these are an integral part of the exercise)
+                $status = backup_exercise_submissions($bf, $preferences, $exercise->id);
+                //End mod
+                $status =fwrite ($bf,end_tag("MOD",3,true));
+                //we need to backup the teacher files (the exercise descriptions)
+                $status = backup_exercise_teacher_files($bf, $preferences, $exercise->id);
+                //if we've selected to backup users info, then backup files too
+                if ($status) {
+                    if ($preferences->mods["exercise"]->userinfo) {
+                        $status = backup_exercise_student_files($bf,$preferences, $exercise->id);
+                    }
                 }
             }
         }
         return $status;  
-    }
-
-    function exercise_backup_one_mod($bf,$preferences,$exercise) {
-
-        global $CFG;
-    
-        if (is_numeric($exercise)) {
-            $exercise = get_record('exercise','id',$exercise);
-        }
-    
-        $status = true;
-
-        //Start mod
-        fwrite ($bf,start_tag("MOD",3,true));
-        //Print exercise data
-        fwrite ($bf,full_tag("ID",4,false,$exercise->id));
-        fwrite ($bf,full_tag("MODTYPE",4,false,"exercise"));
-        fwrite ($bf,full_tag("NAME",4,false,$exercise->name));
-        fwrite ($bf,full_tag("NELEMENTS",4,false,$exercise->nelements));
-        fwrite ($bf,full_tag("PHASE",4,false,$exercise->phase));
-        fwrite ($bf,full_tag("GRADINGSTRATEGY",4,false,$exercise->gradingstrategy));
-        fwrite ($bf,full_tag("USEMAXIMUM",4,false,$exercise->usemaximum));
-        fwrite ($bf,full_tag("ASSESSMENTCOMPS",4,false,$exercise->assessmentcomps));
-        fwrite ($bf,full_tag("ANONYMOUS",4,false,$exercise->anonymous));
-        fwrite ($bf,full_tag("MAXBYTES",4,false,$exercise->maxbytes));
-        fwrite ($bf,full_tag("DEADLINE",4,false,$exercise->deadline));
-        fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$exercise->timemodified));
-        fwrite ($bf,full_tag("GRADE",4,false,$exercise->grade));
-        fwrite ($bf,full_tag("GRADINGGRADE",4,false,$exercise->gradinggrade));
-        fwrite ($bf,full_tag("SHOWLEAGUETABLE",4,false,$exercise->showleaguetable));
-        fwrite ($bf,full_tag("USEPASSWORD",4,false,$exercise->usepassword));
-        fwrite ($bf,full_tag("PASSWORD",4,false,$exercise->password));
-        //Now we backup exercise elements
-        $status = backup_exercise_elements($bf,$preferences,$exercise->id);
-        //Now we backup any teacher submissions (these are an integral part of the exercise)
-        $status = backup_exercise_submissions($bf, $preferences, $exercise->id);
-        //End mod
-        $status =fwrite ($bf,end_tag("MOD",3,true));
-        //we need to backup the teacher files (the exercise descriptions)
-        $status = backup_exercise_teacher_files($bf, $preferences, $exercise->id);
-        //if we've selected to backup users info, then backup files too
-        if ($status) {
-            if (backup_userdata_selected($preferences,'exercise',$exercise->id)) {
-                $status = backup_exercise_student_files($bf,$preferences, $exercise->id);
-            }
-        }
-
-        return $status;
     }
 
     //Backup exercise_elements contents (executed from exercise_backup_mods)
@@ -194,14 +177,14 @@
                 fwrite ($bf,full_tag("ISEXERCISE",6,false,$submission->isexercise));       
                 fwrite ($bf,full_tag("LATE",6,false,$submission->late));       
                 //Now we backup any exercise assessments (if student data required)
-                if (backup_userdata_selected($preferences,'exercise',$exerciseid)) {
+                if ($preferences->mods["exercise"]->userinfo) {
                     $status = backup_exercise_assessments($bf,$preferences,$exerciseid,$submission->id);
                 }
                 //End submission
                 $status =fwrite ($bf,end_tag("SUBMISSION",5,true));
             }
             //if we've selected to backup users info, then backup the student submisions
-            if (backup_userdata_selected($preferences,'exercise',$exerciseid)) {
+            if ($preferences->mods["exercise"]->userinfo) {
                 $exercise_submissions = get_records_select("exercise_submissions","exerciseid = $exerciseid
                         AND isexercise = 0");
                 //If there is submissions
@@ -379,14 +362,7 @@
     } 
 
     //Return an array of info (name,value)
-    function exercise_check_backup_mods($course,$user_data=false,$backup_unique_code,$instances=null) {
-        if (!empty($instances) && is_array($instances) && count($instances)) {
-            $info = array();
-            foreach ($instances as $id => $instance) {
-                $info += exercise_check_backup_mods_instances($instance,$backup_unique_code);
-            }
-            return $info;
-        }
+    function exercise_check_backup_mods($course,$user_data=false,$backup_unique_code) {
         //First the course data
         $info[0][0] = get_string("modulenameplural","exercise");
         if ($ids = exercise_ids ($course)) {
@@ -402,24 +378,6 @@
                 $info[1][1] = count($ids);
             } else {
                 $info[1][1] = 0;
-            }
-        }
-        return $info;
-    }
-
-    //Return an array of info (name,value)
-    function exercise_check_backup_mods_instances($instance,$backup_unique_code) {
-        //First the course data
-        $info[$instance->id.'0'][0] = '<b>'.$instance->name.'</b>';
-        $info[$instance->id.'0'][1] = '';
-
-        //Now, if requested, the user_data
-        if (!empty($instance->userdata)) {
-            $info[$instance->id.'1'][0] = get_string("submissions","exercise");
-            if ($ids = exercise_submission_ids_by_instance ($instance->id)) { 
-                $info[$instance->id.'1'][1] = count($ids);
-            } else {
-                $info[$instance->id.'1'][1] = 0;
             }
         }
         return $info;
@@ -452,15 +410,5 @@
                                       {$CFG->prefix}exercise w
                                  WHERE w.course = '$course' AND
                                        s.exerciseid = w.id");
-    }
-
-    //Returns an array of exercise_submissions id
-    function exercise_submission_ids_by_instance ($instanceid) {
-
-        global $CFG;
-
-        return get_records_sql ("SELECT s.id , s.exerciseid
-                                 FROM {$CFG->prefix}exercise_submissions s
-                                 WHERE s.exerciseid = $instanceid");
     }
 ?>

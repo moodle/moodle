@@ -25,7 +25,7 @@
 /// Print the header
 
     if ($course->category) {
-        $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->";
+        $navigation = "<A HREF=\"../../course/view.php?id=$course->id\">$course->shortname</A> ->";
     }
 
     print_header("$course->shortname: $strlessons", "$course->fullname", "$navigation $strlessons", "", "", true, "", navmenu($course));
@@ -49,13 +49,13 @@
 
     if ($course->format == "weeks") {
         $table->head  = array ($strweek, $strname, $strgrade, $strdeadline);
-        $table->align = array ("center", "left", "center", "center");
+        $table->align = array ("CENTER", "LEFT", "CENTER", "CENTER");
     } else if ($course->format == "topics") {
         $table->head  = array ($strtopic, $strname, $strgrade, $strdeadline);
-        $table->align = array ("center", "left", "center", "center");
+        $table->align = array ("CENTER", "LEFT", "CENTER", "CENTER");
     } else {
         $table->head  = array ($strname, $strgrade, $strdeadline);
-        $table->align = array ("left", "center", "center");
+        $table->align = array ("LEFT", "CENTER", "CENTER");
     }
 
     foreach ($lessons as $lesson) {
@@ -70,7 +70,7 @@
         if ($lesson->deadline > $timenow) {
             $due = userdate($lesson->deadline);
         } else {
-            $due = "<font color=\"red\">".userdate($lesson->deadline)."</font>";
+            $due = "<FONT COLOR=\"red\">".userdate($lesson->deadline)."</FONT>";
         }
 
         if ($course->format == "weeks" or $course->format == "topics") {
@@ -98,7 +98,7 @@
         }
     }
 
-    echo "<br />";
+    echo "<BR>";
 
     print_table($table);
 

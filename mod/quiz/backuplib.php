@@ -103,31 +103,25 @@
     //    (course independent)
 
     //Insert necessary category ids to backup_ids table
-    function insert_category_ids ($course,$backup_unique_code,$instances=null) {
+    function insert_category_ids ($course,$backup_unique_code) {
         global $CFG;
 
         //Create missing categories and reasign orphaned questions
         fix_orphaned_questions($course);
-        
-        // defaults
-        $where = "q.course = '$course' AND g.quiz = q.id AND ";
-        $from = ", {$CFG->prefix}quiz q";
-        // but if we have an array of quiz ids, use those instead.
-        if (!empty($instances) && is_array($instances) && count($instances)) {
-            $where = ' g.quiz IN ('.implode(',',array_keys($instances)).')  AND '; 
-        }
 
         //Detect used categories (by category in questions)
         $status = execute_sql("INSERT INTO {$CFG->prefix}backup_ids
                                    (backup_code, table_name, old_id)
                                SELECT DISTINCT $backup_unique_code,'quiz_categories',t.category
                                FROM {$CFG->prefix}quiz_questions t,
-                                    {$CFG->prefix}quiz_question_instances g
-                                    $from
-                               WHERE $where g.question = t.id",false);
+                                    {$CFG->prefix}quiz_question_instances g,
+                                    {$CFG->prefix}quiz q
+                               WHERE q.course = '$course' AND
+                                     g.quiz = q.id AND
+                                     g.question = t.id",false);
 
         //Now, foreach detected category, we look for their parents upto 0 (top category)
-        $categories = get_records_sql("SELECT old_id, old_id
+        $categories = get_records_sql("SELECT old_id, old_id 
                                        FROM {$CFG->prefix}backup_ids
                                        WHERE backup_code = $backup_unique_code AND
                                              table_name = 'quiz_categories'");
@@ -196,7 +190,7 @@
             }
         }
     }
-
+    
     //Delete category ids from backup_ids table
     function delete_category_ids ($backup_unique_code) {
         global $CFG;
@@ -303,8 +297,6 @@
                     $status = quiz_backup_calculated($bf,$preferences,$question->id);
                 } else if ($question->qtype == "11") {
                     $status = quiz_backup_rqp($bf,$preferences,$question->id);
-                } else if ($question->qtype == "12") {
-                    $status = quiz_backup_essay($bf,$preferences,$question->id);
                 }
                 //End question
                 $status =fwrite ($bf,end_tag("QUESTION",5,true));
@@ -467,7 +459,7 @@
             foreach ($numericals as $numerical) {
                 $status =fwrite ($bf,start_tag("NUMERICAL",$level,true));
                 //Print numerical contents
-                fwrite ($bf,full_tag("ANSWER",$level+1,false,$numerical->answer));
+                fwrite ($bf,full_tag("ANSWERS",$level+1,false,$numerical->answers));
                 fwrite ($bf,full_tag("TOLERANCE",$level+1,false,$numerical->tolerance));
                 //Now backup numerical_units
                 $status = quiz_backup_numerical_units($bf,$preferences,$question,7);
@@ -499,8 +491,21 @@
                 $status =fwrite ($bf,start_tag("MULTIANSWER",7,true));
                 //Print multianswer contents
                 fwrite ($bf,full_tag("ID",8,false,$multianswer->id));
-                fwrite ($bf,full_tag("QUESTION",8,false,$multianswer->question));
-                fwrite ($bf,full_tag("SEQUENCE",8,false,$multianswer->sequence));
+                fwrite ($bf,full_tag("ANSWERS",8,false,$multianswer->answers));
+                fwrite ($bf,full_tag("POSITIONKEY",8,false,$multianswer->positionkey));
+                fwrite ($bf,full_tag("ANSWERTYPE",8,false,$multianswer->answertype));
+                fwrite ($bf,full_tag("NORM",8,false,$multianswer->norm));
+                //Depending of the ANSWERTYPE, we must encode different info
+                //to be able to re-create records in quiz_shortanswer, quiz_multichoice and
+                //quiz_numerical
+                if ($multianswer->answertype == "1") {
+                    $status = quiz_backup_shortanswer($bf,$preferences,$question,8,false);
+                } else if ($multianswer->answertype == "3") {
+                    $status = quiz_backup_multichoice($bf,$preferences,$question,8,false);
+                } else if ($multianswer->answertype == "8") {
+                    $status = quiz_backup_numerical($bf,$preferences,$question,8,false);
+                }
+
                 $status =fwrite ($bf,end_tag("MULTIANSWER",7,true));
             }
             //Print multianswers footer
@@ -568,30 +573,6 @@
                 fwrite ($bf,full_tag("MAXSCORE",7,false,$rqp->maxscore));
                 $status =fwrite ($bf,end_tag("RQP",6,true));
             }
-        }
-        return $status;
-    }
-    
-    //This function backups the data in an essay question (qtype=12) and its
-    //asociated data
-    function quiz_backup_essay($bf,$preferences,$question) {
-
-        global $CFG;
-
-        $status = true;
-
-        $essays = get_records('quiz_essay', 'question', $question, "id");
-        //If there are essays
-        if ($essays) {
-            //Iterate over each essay
-            foreach ($essays as $essay) {
-                $status = fwrite ($bf,start_tag("ESSAY",6,true));
-                //Print essay contents
-                fwrite ($bf,full_tag("ANSWER",7,false,$essay->answer));                
-                $status = fwrite ($bf,end_tag("ESSAY",6,true));
-            }
-            //Now print quiz_answers
-            $status = quiz_backup_answers($bf,$preferences,$question);
         }
         return $status;
     }
@@ -715,62 +696,6 @@
 
     }
 
-
-    function quiz_backup_one_mod($bf,$preferences,$quiz) {
-        $status = true;
-
-        if (is_numeric($quiz)) {
-            $quiz = get_record('quiz','id',$quiz);
-        }
-        
-        //Start mod
-        fwrite ($bf,start_tag("MOD",3,true));
-        //Print quiz data
-        fwrite ($bf,full_tag("ID",4,false,$quiz->id));
-        fwrite ($bf,full_tag("MODTYPE",4,false,"quiz"));
-        fwrite ($bf,full_tag("NAME",4,false,$quiz->name));
-        fwrite ($bf,full_tag("INTRO",4,false,$quiz->intro));
-        fwrite ($bf,full_tag("TIMEOPEN",4,false,$quiz->timeopen));
-        fwrite ($bf,full_tag("TIMECLOSE",4,false,$quiz->timeclose));
-        fwrite ($bf,full_tag("OPTIONFLAGS",4,false,$quiz->optionflags));
-        fwrite ($bf,full_tag("PENALTYSCHEME",4,false,$quiz->penaltyscheme));
-        fwrite ($bf,full_tag("ATTEMPTS_NUMBER",4,false,$quiz->attempts));
-        fwrite ($bf,full_tag("ATTEMPTONLAST",4,false,$quiz->attemptonlast));
-        fwrite ($bf,full_tag("GRADEMETHOD",4,false,$quiz->grademethod));
-        fwrite ($bf,full_tag("DECIMALPOINTS",4,false,$quiz->decimalpoints));
-        fwrite ($bf,full_tag("REVIEW",4,false,$quiz->review));
-        fwrite ($bf,full_tag("QUESTIONSPERPAGE",4,false,$quiz->questionsperpage));
-        fwrite ($bf,full_tag("SHUFFLEQUESTIONS",4,false,$quiz->shufflequestions));
-        fwrite ($bf,full_tag("SHUFFLEANSWERS",4,false,$quiz->shuffleanswers));
-        fwrite ($bf,full_tag("QUESTIONS",4,false,$quiz->questions));
-        fwrite ($bf,full_tag("SUMGRADES",4,false,$quiz->sumgrades));
-        fwrite ($bf,full_tag("GRADE",4,false,$quiz->grade));
-        fwrite ($bf,full_tag("TIMECREATED",4,false,$quiz->timecreated));
-        fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$quiz->timemodified));
-        fwrite ($bf,full_tag("TIMELIMIT",4,false,$quiz->timelimit));
-        fwrite ($bf,full_tag("PASSWORD",4,false,$quiz->password));
-        fwrite ($bf,full_tag("SUBNET",4,false,$quiz->subnet));
-        fwrite ($bf,full_tag("POPUP",4,false,$quiz->popup));
-        //Now we print to xml question_instances (Course Level)
-        $status = backup_quiz_question_instances($bf,$preferences,$quiz->id);
-        //Now we print to xml question_versions (Course Level)
-        $status = backup_quiz_question_versions($bf,$preferences,$quiz->id);
-        //if we've selected to backup users info, then execute:
-        //    - backup_quiz_grades
-        //    - backup_quiz_attempts
-        if (backup_userdata_selected($preferences,'quiz',$quiz->id) && $status) {
-            $status = backup_quiz_grades($bf,$preferences,$quiz->id);
-            if ($status) {
-                $status = backup_quiz_attempts($bf,$preferences,$quiz->id);
-            }
-        }
-        //End mod
-        $status =fwrite ($bf,end_tag("MOD",3,true));
-        
-        return $status;
-    }
-
-
 //STEP 2. Backup quizzes and associated structures
     //    (course dependent)
     function quiz_backup_mods($bf,$preferences) {
@@ -783,9 +708,49 @@
         $quizzes = get_records ("quiz","course",$preferences->backup_course,"id");
         if ($quizzes) {
             foreach ($quizzes as $quiz) {
-                if (backup_mod_selected($preferences,'quiz',$quiz->id)) {
-                    $status = quiz_backup_one_mod($bf,$preferences,$quiz);
+                //Start mod
+                fwrite ($bf,start_tag("MOD",3,true));
+                //Print quiz data
+                fwrite ($bf,full_tag("ID",4,false,$quiz->id));
+                fwrite ($bf,full_tag("MODTYPE",4,false,"quiz"));
+                fwrite ($bf,full_tag("NAME",4,false,$quiz->name));
+                fwrite ($bf,full_tag("INTRO",4,false,$quiz->intro));
+                fwrite ($bf,full_tag("TIMEOPEN",4,false,$quiz->timeopen));
+                fwrite ($bf,full_tag("TIMECLOSE",4,false,$quiz->timeclose));
+                fwrite ($bf,full_tag("OPTIONFLAGS",4,false,$quiz->optionflags));
+                fwrite ($bf,full_tag("PENALTYSCHEME",4,false,$quiz->penaltyscheme));
+                fwrite ($bf,full_tag("ATTEMPTS_NUMBER",4,false,$quiz->attempts));
+                fwrite ($bf,full_tag("ATTEMPTONLAST",4,false,$quiz->attemptonlast));
+                fwrite ($bf,full_tag("GRADEMETHOD",4,false,$quiz->grademethod));
+                fwrite ($bf,full_tag("DECIMALPOINTS",4,false,$quiz->decimalpoints));
+                fwrite ($bf,full_tag("REVIEW",4,false,$quiz->review));
+                fwrite ($bf,full_tag("QUESTIONSPERPAGE",4,false,$quiz->questionsperpage));
+                fwrite ($bf,full_tag("SHUFFLEQUESTIONS",4,false,$quiz->shufflequestions));
+                fwrite ($bf,full_tag("SHUFFLEANSWERS",4,false,$quiz->shuffleanswers));
+                fwrite ($bf,full_tag("QUESTIONS",4,false,$quiz->questions));
+                fwrite ($bf,full_tag("SUMGRADES",4,false,$quiz->sumgrades));
+                fwrite ($bf,full_tag("GRADE",4,false,$quiz->grade));
+                fwrite ($bf,full_tag("TIMECREATED",4,false,$quiz->timecreated));
+                fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$quiz->timemodified));
+                fwrite ($bf,full_tag("TIMELIMIT",4,false,$quiz->timelimit));
+                fwrite ($bf,full_tag("PASSWORD",4,false,$quiz->password));
+                fwrite ($bf,full_tag("SUBNET",4,false,$quiz->subnet));
+                fwrite ($bf,full_tag("POPUP",4,false,$quiz->popup));
+                //Now we print to xml question_instances (Course Level)
+                $status = backup_quiz_question_instances($bf,$preferences,$quiz->id);
+                //Now we print to xml question_versions (Course Level)
+                $status = backup_quiz_question_versions($bf,$preferences,$quiz->id);
+                //if we've selected to backup users info, then execute:
+                //    - backup_quiz_grades
+                //    - backup_quiz_attempts
+                if ($preferences->mods["quiz"]->userinfo and $status) {
+                    $status = backup_quiz_grades($bf,$preferences,$quiz->id);
+                    if ($status) {
+                        $status = backup_quiz_attempts($bf,$preferences,$quiz->id);
+                    }
                 }
+                //End mod
+                $status =fwrite ($bf,end_tag("MOD",3,true));
             }
         }
         return $status;
@@ -900,7 +865,6 @@
                 $status =fwrite ($bf,start_tag("ATTEMPT",5,true));
                 //Print attempt contents
                 fwrite ($bf,full_tag("ID",6,false,$attempt->id));
-                fwrite ($bf,full_tag("UNIQUEID",6,false,$attempt->uniqueid));
                 fwrite ($bf,full_tag("USERID",6,false,$attempt->userid));
                 fwrite ($bf,full_tag("ATTEMPTNUM",6,false,$attempt->attempt));
                 fwrite ($bf,full_tag("SUMGRADES",6,false,$attempt->sumgrades));
@@ -910,7 +874,7 @@
                 fwrite ($bf,full_tag("LAYOUT",6,false,$attempt->layout));
                 fwrite ($bf,full_tag("PREVIEW",6,false,$attempt->preview));
                 //Now write to xml the states (in this attempt)
-                $status = backup_quiz_states ($bf,$preferences,$attempt->uniqueid);
+                $status = backup_quiz_states ($bf,$preferences,$attempt->id);
                 //End attempt
                 $status =fwrite ($bf,end_tag("ATTEMPT",5,true));
             }
@@ -949,7 +913,6 @@
                 fwrite ($bf,full_tag("PENALTY",8,false,$state->penalty));
                 // now back up question type specific state information
                 $status = backup_quiz_rqp_state ($bf,$preferences,$state->id);
-                $status = backup_quiz_essay_state ($bf,$preferences,$state->id);
                 //End state
                 $status =fwrite ($bf,end_tag("STATE",7,true));
             }
@@ -969,7 +932,7 @@
                 fwrite ($bf,full_tag("ID",8,false,$newest_state->id));
                 fwrite ($bf,full_tag("QUESTIONID",8,false,$newest_state->questionid));
                 fwrite ($bf,full_tag("NEWEST",8,false,$newest_state->newest));
-                fwrite ($bf,full_tag("NEWGRADED",8,false,$newest_state->newgraded));
+                fwrite ($bf,full_tag("NEWESTGRADED",8,false,$newest_state->newestgraded));
                 fwrite ($bf,full_tag("SUMPENALTY",8,false,$newest_state->sumpenalty));
                 //End newest_state
                 $status =fwrite ($bf,end_tag("NEWEST_STATE",7,true));
@@ -980,38 +943,6 @@
         return $status;
     }
 
-    function quiz_check_backup_mods_instances($instance,$backup_unique_code) {
-        // the keys in this array need to be unique as they get merged...
-        $info[$instance->id.'0'][0] = '<b>'.$instance->name.'</b>';
-        $info[$instance->id.'0'][1] = '';
-
-        //Categories
-        $info[$instance->id.'1'][0] = get_string("categories","quiz");
-        if ($ids = quiz_category_ids_by_backup ($backup_unique_code)) {
-            $info[$instance->id.'1'][1] = count($ids);
-        } else {
-            $info[$instance->id.'1'][1] = 0;
-        }
-        //Questions
-        $info[$instance->id.'2'][0] = get_string("questions","quiz");
-        if ($ids = quiz_question_ids_by_backup ($backup_unique_code)) {
-            $info[$instance->id.'2'][1] = count($ids);
-        } else {
-            $info[$instance->id.'2'][1] = 0;
-        }
-
-        //Now, if requested, the user_data
-        if (!empty($instance->userdata)) {
-            //Grades
-            $info[$instance->id.'3'][0] = get_string("grades");
-            if ($ids = quiz_grade_ids_by_instance ($instance->id)) {
-                $info[$instance->id.'3'][1] = count($ids);
-            } else {
-                $info[$instance->id.'3'][1] = 0;
-            }
-        }
-        return $info;
-    }
 
     //Backup quiz_rqp_state contents (executed from backup_quiz_states)
     function backup_quiz_rqp_state ($bf,$preferences,$state) {
@@ -1020,7 +951,7 @@
 
         $status = true;
 
-        $rqp_state = get_record("quiz_rqp_states","stateid",$state);
+        $rqp_state = get_record("quiz_rqp_states","stateid",$state,"id");
         //If there is a state
         if ($rqp_state) {
             //Write start tag
@@ -1034,44 +965,15 @@
         }
         return $status;
     }
-    
-    //Backup quiz_essay_state contents (executed from backup_quiz_states)
-    function backup_quiz_essay_state ($bf,$preferences,$state) {
 
-        global $CFG;
 
-        $status = true;
 
-        $essay_state = get_record("quiz_essay_states", "stateid", $state);
-        //If there is a state
-        if ($essay_state) {
-            //Write start tag
-            $status =fwrite ($bf,start_tag("ESSAY_STATE",8,true));
-            //Print state contents
-            fwrite ($bf,full_tag("GRADED",9,false,$essay_state->graded));
-            fwrite ($bf,full_tag("FRACTION",9,false,$essay_state->fraction));
-            fwrite ($bf,full_tag("RESPONSE",9,false,$essay_state->response));
-            //Write end tag
-            $status =fwrite ($bf,end_tag("ESSAY_STATE",8,true));
-        }
-        return $status;
-    }
-    
    ////Return an array of info (name,value)
-/// $instances is an array with key = instanceid, value = object (name,id,userdata)
-   function quiz_check_backup_mods($course,$user_data=false,$backup_unique_code,$instances=null) {
-
+   function quiz_check_backup_mods($course,$user_data=false,$backup_unique_code) {
         //Deletes data from mdl_backup_ids (categories section)
         delete_category_ids ($backup_unique_code);
         //Create date into mdl_backup_ids (categories section)
-        insert_category_ids ($course,$backup_unique_code,$instances);
-        if (!empty($instances) && is_array($instances) && count($instances)) {
-            $info = array();
-            foreach ($instances as $id => $instance) {
-                $info += quiz_check_backup_mods_instances($instance,$backup_unique_code);
-            }
-            return $info;
-        }
+        insert_category_ids ($course,$backup_unique_code);
         //First the course data
         $info[0][0] = get_string("modulenameplural","quiz");
         if ($ids = quiz_ids ($course)) {
@@ -1108,24 +1010,6 @@
         return $info;
     }
 
-    //Return a content encoded to support interactivities linking. Every module
-    //should have its own. They are called automatically from the backup procedure.
-    function quiz_encode_content_links ($content,$preferences) {
-
-        global $CFG;
-
-        $base = preg_quote($CFG->wwwroot,"/");
-
-        //Link to the list of quizs
-        $buscar="/(".$base."\/mod\/quiz\/index.php\?id\=)([0-9]+)/";
-        $result= preg_replace($buscar,'$@QUIZINDEX*$2@$',$content);
-
-        //Link to quiz view by moduleid
-        $buscar="/(".$base."\/mod\/quiz\/view.php\?id\=)([0-9]+)/";
-        $result= preg_replace($buscar,'$@QUIZVIEWBYID*$2@$',$result);
-
-        return $result;
-    }
 
 // INTERNAL FUNCTIONS. BASED IN THE MOD STRUCTURE
 
@@ -1171,15 +1055,6 @@
                                       {$CFG->prefix}quiz_grades g
                                  WHERE a.course = '$course' and
                                        g.quiz = a.id");
-    }
-
-    function quiz_grade_ids_by_instance($instanceid) {
-
-        global $CFG;
-
-        return get_records_sql ("SELECT g.id, g.quiz
-                                 FROM {$CFG->prefix}quiz_grades g
-                                 WHERE g.quiz = $instanceid");
     }
 
 ?>

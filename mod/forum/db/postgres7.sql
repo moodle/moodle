@@ -5,7 +5,7 @@
 CREATE TABLE prefix_forum (
   id SERIAL PRIMARY KEY,
   course integer NOT NULL default '0',
-  type varchar(10) CHECK (type IN ('single','news','general','social','eachuser','teacher','qanda')) NOT NULL default 'general',
+  type varchar(10) CHECK (type IN ('single','news','general','social','eachuser','teacher')) NOT NULL default 'general',
   name varchar(255) NOT NULL default '',
   intro text NOT NULL default '',
   open integer NOT NULL default '2',
@@ -19,10 +19,7 @@ CREATE TABLE prefix_forum (
   trackingtype integer NOT NULL default '1',
   rsstype integer NOT NULL default '0',
   rssarticles integer NOT NULL default '0',
-  timemodified integer NOT NULL default '0',
-  warnafter integer NOT NULL default '0',
-  blockafter integer NOT NULL default '0',
-  blockperiod integer NOT NULL default '0'
+  timemodified integer NOT NULL default '0'
 );
 
 CREATE INDEX prefix_forum_course_idx ON prefix_forum (course);
@@ -42,9 +39,7 @@ CREATE TABLE prefix_forum_discussions (
   groupid integer NOT NULL default '0',
   assessed integer NOT NULL default '1',
   timemodified integer NOT NULL default '0',
-  usermodified integer NOT NULL default '0',
-  timestart integer NOT NULL default '0',
-  timeend integer NOT NULL default '0'
+  usermodified integer NOT NULL default '0'
 );
 
 CREATE INDEX prefix_forum_discussions_forum_idx ON prefix_forum_discussions (forum);

@@ -1,6 +1,6 @@
 <?php
 /*
-V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.  
+V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.  
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -52,7 +52,6 @@ class ADODB_ibase extends ADOConnection {
 	var $hasAffectedRows = false;
 	var $poorAffectedRows = true;
 	var $blobEncodeType = 'C';
-	var $role = false;
 	
 	function ADODB_ibase() 
 	{
@@ -66,11 +65,7 @@ class ADODB_ibase extends ADOConnection {
 		if (!function_exists('ibase_pconnect')) return null;
 		if ($argDatabasename) $argHostname .= ':'.$argDatabasename;
 		$fn = ($persist) ? 'ibase_pconnect':'ibase_connect';
-		if ($this->role)
-			$this->_connectionID = $fn($argHostname,$argUsername,$argPassword,
-					$this->charSet,$this->buffers,$this->dialect,$this->role);
-		else	
-			$this->_connectionID = $fn($argHostname,$argUsername,$argPassword,
+		$this->_connectionID = $fn($argHostname,$argUsername,$argPassword,
 					$this->charSet,$this->buffers,$this->dialect);
 		
 		if ($this->dialect != 1) { // http://www.ibphoenix.com/ibp_60_del_id_ds.html
@@ -191,7 +186,7 @@ class ADODB_ibase extends ADOConnection {
 	{
         // save old fetch mode
         global $ADODB_FETCH_MODE;
-        $false = false;
+        
         $save = $ADODB_FETCH_MODE;
         $ADODB_FETCH_MODE = ADODB_FETCH_NUM;
         if ($this->fetchMode !== FALSE) {
@@ -212,7 +207,7 @@ class ADODB_ibase extends ADOConnection {
 	            $this->SetFetchMode($savem);
 	        }
 	        $ADODB_FETCH_MODE = $save;
-            return $false;
+            return FALSE;
         }
         
         $indexes = array ();
@@ -486,8 +481,8 @@ class ADODB_ibase extends ADOConnection {
 		$rs = $this->Execute(sprintf($this->metaColumnsSQL,strtoupper($table)));
 	
 		$ADODB_FETCH_MODE = $save;
-		$false = false;
 		if ($rs === false) {
+			$false = false;
 			return $false;
 		}
 		
@@ -533,8 +528,7 @@ class ADODB_ibase extends ADOConnection {
 			$rs->MoveNext();
 		}
 		$rs->Close();
-		if ( empty($retarr)) return $false;
-		else return $retarr;	
+		return empty($retarr) ? false : $retarr;	
 	}
 	
 	function BlobEncode( $blob ) 

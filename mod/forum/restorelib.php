@@ -61,13 +61,9 @@
             $forum->maxbytes = backup_todb($info['MOD']['#']['MAXBYTES']['0']['#']);
             $forum->scale = backup_todb($info['MOD']['#']['SCALE']['0']['#']);
             $forum->forcesubscribe = backup_todb($info['MOD']['#']['FORCESUBSCRIBE']['0']['#']);
-            $forum->trackingtype = backup_todb($info['MOD']['#']['TRACKINGTYPE']['0']['#']);
             $forum->rsstype = backup_todb($info['MOD']['#']['RSSTYPE']['0']['#']);
             $forum->rssarticles = backup_todb($info['MOD']['#']['RSSARTICLES']['0']['#']);
             $forum->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
-            $forum->warnafter = backup_todb($info['MOD']['#']['WARNAFTER']['0']['#']);
-            $forum->blockafter = backup_todb($info['MOD']['#']['BLOCKAFTER']['0']['#']);
-            $forum->blockperiod = backup_todb($info['MOD']['#']['BLOCKPERIOD']['0']['#']);
 
             //We have to recode the scale field if it's <0 (positive is a grade, not a scale)
             if ($forum->scale < 0) {
@@ -95,9 +91,7 @@
             }
 
             //Do some output
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","forum")." \"".format_string(stripslashes($forum->name),true)."\"";
-            }
+            echo "<li>".get_string("modulename","forum")." \"".format_string(stripslashes($forum->name),true)."\"";
             backup_flush(300);
 
             if ($newid) {
@@ -105,7 +99,7 @@
                 backup_putid($restore->backup_unique_code,$mod->modtype,
                              $mod->id, $newid);
                 //Now check if want to restore user data and do it.
-                if (restore_userdata_selected($restore,'forum',$mod->id)) {
+                if ($restore->mods['forum']->userinfo) {
                     //Restore forum_subscriptions
                     $status = forum_subscriptions_restore_mods ($newid,$info,$restore);
                     if ($status) {
@@ -163,11 +157,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -215,8 +207,6 @@
             $discussion->assessed = backup_todb($dis_info['#']['ASSESSED']['0']['#']);
             $discussion->timemodified = backup_todb($dis_info['#']['TIMEMODIFIED']['0']['#']);
             $discussion->usermodified = backup_todb($dis_info['#']['USERMODIFIED']['0']['#']);
-            $discussion->timestart = backup_todb($dis_info['#']['TIMESTART']['0']['#']);
-            $discussion->timeend = backup_todb($dis_info['#']['TIMEEND']['0']['#']);
 
             //We have to recode the userid field
             $user = backup_getid($restore->backup_unique_code,"user",$discussion->userid);
@@ -241,11 +231,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -348,11 +336,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -414,11 +400,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -563,11 +547,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -616,11 +598,9 @@
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 20 == 0) {
-                            echo "<br />";
-                        }
+                    echo ".";
+                    if (($i+1) % 20 == 0) {
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -644,28 +624,6 @@
                 $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
                 if ($mod) {
                     $log->url = "view.php?id=".$log->cmid;
-                    $log->info = $mod->new_id;
-                    $status = true;
-                }
-            }
-            break;
-        case "mark read":
-            if ($log->cmid) {
-                //Get the new_id of the module (to recode the url and info fields)
-                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
-                if ($mod) {
-                    $log->url = "view.php?f=".$mod->new_id;
-                    $log->info = $mod->new_id;
-                    $status = true;
-                }
-            }
-            break;
-        case "start tracking":
-            if ($log->cmid) {
-                //Get the new_id of the module (to recode the url and info fields)
-                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
-                if ($mod) {
-                    $log->url = "view.php?f=".$mod->new_id;
                     $log->info = $mod->new_id;
                     $status = true;
                 }
@@ -782,22 +740,7 @@
                     //Get the post record from database
                     $dbpos = get_record("forum_posts","id","$pos->new_id");
                     if ($dbpos) {
-                        $log->url = "discuss.php?d=".$dbpos->discussion."&parent=".$pos->new_id;
-                        $log->info = $pos->new_id;
-                        $status = true;
-                    }
-                }
-            }
-            break;
-        case "prune post":
-            if ($log->cmid) {
-                //Get the new_id of the post (to recode the url and info field)
-                $pos = backup_getid($restore->backup_unique_code,"forum_posts",$log->info);
-                if ($pos) {
-                    //Get the post record from database
-                    $dbpos = get_record("forum_posts","id","$pos->new_id");
-                    if ($dbpos) {
-                        $log->url = "discuss.php?d=".$dbpos->discussion;
+                        $log->url = "discuss.php?d=".$dbpos->discussion."&amp;parent=".$pos->new_id;
                         $log->info = $pos->new_id;
                         $status = true;
                     }
@@ -812,7 +755,7 @@
                     //Get the post record from database
                     $dbpos = get_record("forum_posts","id","$pos->new_id");
                     if ($dbpos) {
-                        $log->url = "discuss.php?d=".$dbpos->discussion."&parent=".$pos->new_id;
+                        $log->url = "discuss.php?d=".$dbpos->discussion."&amp;parent=".$pos->new_id;
                         $log->info = $pos->new_id;
                         $status = true;
                     }
@@ -832,13 +775,11 @@
             }
             break;
         case "search":
-            $log->url = "search.php?id=".$log->course."&search=".urlencode($log->info);
+            $log->url = "search.php?id=".$log->course."&amp;search=".urlencode($log->info);
             $status = true;
             break;
         default:
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
-            }
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
             break;
         }
 
@@ -1021,79 +962,158 @@
     //working in the backup/restore process. It's called from restore_decode_content_links()
     //function in restore process
     function forum_decode_content_links_caller($restore) {
+
         global $CFG;
+
         $status = true;
-        
-        //Process every POST (message) in the course
-        if ($posts = get_records_sql ("SELECT p.id, p.message
-                                   FROM {$CFG->prefix}forum_posts p,
-                                        {$CFG->prefix}forum_discussions d
-                                   WHERE d.course = $restore->course_id AND
-                                         p.discussion = d.id")) {
-            //Iterate over each post->message
-            $i = 0;   //Counter to send some output to the browser to avoid timeouts
-            foreach ($posts as $post) {
-                //Increment counter
-                $i++;
-                $content = $post->message;
-                $result = restore_decode_content_links_worker($content,$restore);
-                if ($result != $content) {
-                    //Update record
-                    $post->message = addslashes($result);
-                    $status = update_record("forum_posts",$post);
-                    if ($CFG->debug>7) {
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
+
+        echo "<ul>";
+
+        //FORUM: Decode every POST (message) in the coure
+
+        //Check we are restoring forums
+        if ($restore->mods['forum']->restore == 1) {
+            echo "<li>".get_string("from")." ".get_string("modulenameplural","forum").'</li>';
+            //Get all course posts
+            if ($posts = get_records_sql ("SELECT p.id, p.message
+                                       FROM {$CFG->prefix}forum_posts p,
+                                            {$CFG->prefix}forum_discussions d
+                                       WHERE d.course = $restore->course_id AND
+                                             p.discussion = d.id")) {
+                //Iterate over each post->message
+                $i = 0;   //Counter to send some output to the browser to avoid timeouts
+                foreach ($posts as $post) {
+                    //Increment counter
+                    $i++;
+                    $content = $post->message;
+                    $result = forum_decode_content_links($content,$restore);
+                    if ($result != $content) {
+                        //Update record
+                        $post->message = addslashes($result);
+                        $status = update_record("forum_posts",$post);
+                        if ($CFG->debug>7) {
+                            echo "<br /><hr />".$content."<br />changed to<br />".$result."<hr /><br />";
                         }
                     }
-                }
-                //Do some output
-                if (($i+1) % 5 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
+                    //Do some output
+                    if (($i+1) % 5 == 0) {
                         echo ".";
                         if (($i+1) % 100 == 0) {
                             echo "<br />";
                         }
+                        backup_flush(300);
                     }
-                    backup_flush(300);
                 }
             }
         }
 
-        //Process every FORUM (intro) in the course
-        if ($forums = get_records_sql ("SELECT f.id, f.intro
-                                   FROM {$CFG->prefix}forum f
-                                   WHERE f.course = $restore->course_id")) {
-            //Iterate over each forum->intro
-            $i = 0;   //Counter to send some output to the browser to avoid timeouts
-            foreach ($forums as $forum) {
-                //Increment counter
-                $i++;
-                $content = $forum->intro;
-                $result = restore_decode_content_links_worker($content,$restore);
-                if ($result != $content) {
-                    //Update record
-                    $forum->intro = addslashes($result);
-                    $status = update_record("forum",$forum);
-                    if ($CFG->debug>7) {
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
+        //FORUM: Decode every FORUM (intro) in the coure
+
+        //Check we are restoring forums
+        if ($restore->mods['forum']->restore == 1) {
+            //Get all course forums
+            if ($forums = get_records_sql ("SELECT f.id, f.intro
+                                       FROM {$CFG->prefix}forum f
+                                       WHERE f.course = $restore->course_id")) {
+                //Iterate over each forum->intro
+                $i = 0;   //Counter to send some output to the browser to avoid timeouts
+                foreach ($forums as $forum) {
+                    //Increment counter
+                    $i++;
+                    $content = $forum->intro;
+                    $result = forum_decode_content_links($content,$restore);
+                    if ($result != $content) {
+                        //Update record
+                        $forum->intro = addslashes($result);
+                        $status = update_record("forum",$forum);
+                        if ($CFG->debug>7) {
+                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
                         }
                     }
-                }
-                //Do some output
-                if (($i+1) % 5 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
+                    //Do some output
+                    if (($i+1) % 5 == 0) {
                         echo ".";
                         if (($i+1) % 100 == 0) {
                             echo "<br />";
                         }
+                        backup_flush(300);
                     }
-                    backup_flush(300);
-                    }
+                }
             }
         }
 
+        //RESOURCE: Decode every RESOURCE (alltext) in the coure
+
+        //Check we are restoring resources
+        if ($restore->mods['resource']->restore == 1) {
+            echo "<li>".get_string("from")." ".get_string("modulenameplural","resource").'</li>';
+            //Get all course resources
+            if ($resources = get_records_sql ("SELECT r.id, r.alltext
+                                       FROM {$CFG->prefix}resource r
+                                       WHERE r.course = $restore->course_id")) {
+                //Iterate over each resource->alltext
+                $i = 0;   //Counter to send some output to the browser to avoid timeouts
+                foreach ($resources as $resource) {
+                    //Increment counter
+                    $i++;
+                    $content = $resource->alltext;
+                    $result = forum_decode_content_links($content,$restore);
+                    if ($result != $content) {
+                        //Update record
+                        $resource->alltext = addslashes($result);
+                        $status = update_record("resource",$resource);
+                        if ($CFG->debug>7) {
+                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
+                        }
+                    }
+                    //Do some output
+                    if (($i+1) % 5 == 0) {
+                        echo ".";
+                        if (($i+1) % 100 == 0) {
+                            echo "<br />";
+                        }
+                        backup_flush(300);
+                    }
+                }
+            }
+        }
+
+        //RESOURCE: Decode every RESOURCE (summary) in the coure
+
+        //Check we are restoring resources
+        if ($restore->mods['resource']->restore == 1) {
+            //Get all course resources
+            if ($resources = get_records_sql ("SELECT r.id, r.summary
+                                       FROM {$CFG->prefix}resource r
+                                       WHERE r.course = $restore->course_id")) {
+                //Iterate over each resource->summary
+                $i = 0;   //Counter to send some output to the browser to avoid timeouts
+                foreach ($resources as $resource) {
+                    //Increment counter
+                    $i++;
+                    $content = $resource->summary;
+                    $result = forum_decode_content_links($content,$restore);
+                    if ($result != $content) {
+                        //Update record
+                        $resource->summary = addslashes($result);
+                        $status = update_record("resource",$resource);
+                        if ($CFG->debug>7) {
+                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
+                        }
+                    }
+                    //Do some output
+                    if (($i+1) % 5 == 0) {
+                        echo ".";
+                        if (($i+1) % 100 == 0) {
+                            echo "<br />";
+                        }
+                        backup_flush(300);
+                    }
+                }
+            }
+        }
+
+        echo "</ul>";
         return $status;
     }
 ?>

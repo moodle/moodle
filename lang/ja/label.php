@@ -5,5 +5,8 @@
 $string['labeltext'] = 'ラベルテキスト';
 $string['modulename'] = 'ラベル';
 $string['modulenameplural'] = 'ラベル';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 
 ?>

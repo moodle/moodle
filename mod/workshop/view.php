@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php  // $Id: view.php, v1.1 23 Aug 2003
 
 /*************************************************
     ACTIONS handled are:
@@ -17,11 +17,10 @@
     require("lib.php");
     require("locallib.php");
 
-    $id = required_param('id',PARAM_INT);    // Course Module ID
-    $action = optional_param('action', '',PARAM_ALPHA);
-    $sort = optional_param('sort', 'lastname');
-    $dir = optional_param('dir', 'ASC');
-    $group = optional_param('group',-1,PARAM_INT);
+    require_variable($id);    // Course Module ID
+    optional_variable($action, '');
+    optional_variable($sort, "lastname");
+    optional_variable($dir, "ASC");
 
     $timenow = time();
 
@@ -304,8 +303,7 @@
 
         /// Check to see if groups are being used in this workshop
         /// and if so, set $currentgroup to reflect the current group
-        // $changegroup = isset($_GET['_param('group',0,PARAM_INT);group']) ? $_GET['group'] : -1;  // Group change requested?
-        $changegroup = $group;
+        $changegroup = isset($_GET['group']) ? $_GET['group'] : -1;  // Group change requested?
         $groupmode = groupmode($course, $cm);   // Groups are being used?
         $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
 

@@ -3,10 +3,6 @@
 
     require_once("../config.php");
 
-    $topframe = optional_param( 'topframe', '', PARAM_ALPHA);
-    $bottomframe = optional_param( 'bottomframe', '', PARAM_ALPHA);
-    $do = optional_param( 'do','',PARAM_ALPHA);
-
     require_login();
 
     if (!isadmin()) {
@@ -17,13 +13,13 @@
     $stradministration = get_string("administration");
     $site = get_site();
 
-    if (!empty($topframe)) {
+    if (isset($topframe)) {
         print_header("$site->shortname: $strdatabaseperformance", "$site->fullname", 
                      "<a target=\"$CFG->framename\" href=\"index.php\">$stradministration</a> -> Database performance");
         exit;
     }
 
-    if (!empty($bottomframe) or !empty($do)) {
+    if (isset($bottomframe) or isset($_GET['do'])) {
         $perf =&NewPerfMonitor($db);
         $perf->UI($pollsecs=5);
         exit;

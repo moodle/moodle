@@ -62,8 +62,6 @@ define ('CALENDAR_URL', $CFG->wwwroot.'/calendar/');
 define ('CALENDAR_TF_24', '%H:%M');
 define ('CALENDAR_TF_12', '%I:%M %p');
 
-$CALENDARDAYS = array('sunday','monday','tuesday','wednesday','thursday','friday','saturday');
-
 // Initialize the session variables here to be sure
 calendar_session_vars();
 
@@ -115,20 +113,6 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
     if($startwday < $display->minwday) {
         $startwday += 7;
     }
-
-    // TODO: THIS IS TEMPORARY CODE!
-    // [pj] I was just reading through this and realized that I when writing this code I was probably
-    // asking for trouble, as all these time manipulations seem to be unnecessary and a simple
-    // make_timestamp would accomplish the same thing. So here goes a test:
-    //$test_start = make_timestamp($y, $m, 1);
-    //$test_end   = make_timestamp($y, $m, $display->maxdays, 23, 59, 59);
-    //if($test_start != usertime($display->tstart) - dst_offset_on($display->tstart)) {
-        //notify('Failed assertion in calendar/lib.php line 126; display->tstart = '.$display->tstart.', dst_offset = '.dst_offset_on($display->tstart).', usertime = '.usertime($display->tstart).', make_t = '.$test_start);
-    //}
-    //if($test_end != usertime($display->tend) - dst_offset_on($display->tend)) {
-        //notify('Failed assertion in calendar/lib.php line 130; display->tend = '.$display->tend.', dst_offset = '.dst_offset_on($display->tend).', usertime = '.usertime($display->tend).', make_t = '.$test_end);
-    //}
-
 
     // Get the events matching our criteria. Don't forget to offset the timestamps for the user's TZ!
     $whereclause = calendar_sql_where(
@@ -341,7 +325,6 @@ function calendar_get_upcoming($courses, $groups, $users, $daysinfuture, $maxeve
     }
 
     if($events !== false) {
-
         foreach($events as $event) {
 
             if($processed >= $display->maxevents) {
@@ -553,7 +536,7 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
 }
 
 function calendar_top_controls($type, $data) {
-    global $CFG, $CALENDARDAYS;
+    global $CFG;
     $content = '';
     if(!isset($data['d'])) {
         $data['d'] = 1;
@@ -612,10 +595,11 @@ function calendar_top_controls($type, $data) {
         break;
         case 'day':
             $data['d'] = $date['mday']; // Just for convenience
+            $dayname = calendar_wday_name($date['weekday']);
             $prevdate = usergetdate(make_timestamp($data['y'], $data['m'], $data['d'] - 1));
             $nextdate = usergetdate(make_timestamp($data['y'], $data['m'], $data['d'] + 1));
-            $prevname = calendar_wday_name($CALENDARDAYS[$prevdate['wday']]);
-            $nextname = calendar_wday_name($CALENDARDAYS[$nextdate['wday']]);
+            $prevname = calendar_wday_name($prevdate['weekday']);
+            $nextname = calendar_wday_name($nextdate['weekday']);
             $content .= '<table class="calendar-controls"><tr>';
             $content .= '<td class="previous"><a href="'.calendar_get_link_href('view.php?view=day&amp;', $prevdate['mday'], $prevdate['mon'], $prevdate['year']).'">&lt;&lt; '.$prevname."</a></td>\n";
 
@@ -643,8 +627,6 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL) {
 
     $groupevents = true;
     $getvars = '';
-   
-    $id = optional_param( 'id',0,PARAM_INT );
 
     switch($type) {
         case 'event':
@@ -654,12 +636,12 @@ function calendar_filter_controls($type, $vars = NULL, $course = NULL) {
             $getvars = '&amp;from='.$type;
         break;
         case 'course':
-            if (isset_param('id')) {
-                $getvars = '&amp;from=course&amp;id='.$id;
+            if (isset($_GET['id'])) {
+                $getvars = '&amp;from=course&amp;id='.$_GET['id'];
             } else {
                 $getvars = '&amp;from=course';
             }
-            if (isset($course->groupmode) and $course->groupmode == NOGROUPS and $course->groupmodeforce) {
+            if (isset($course->groupmode) and !$course->groupmode and $course->groupmodeforce) {
                 $groupevents = false;
             }
         break;
@@ -1072,21 +1054,18 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
 
                     // The first time we get in here, retrieve all groupmodes at once
                     if($groupmodes === NULL) {
-                        $groupmodes = get_records_list('course', 'id', implode(',', $groupcourses), '', 'id, groupmode, groupmodeforce');
+                        $groupmodes = get_records_list('course', 'id', implode(',', $groupcourses), '', 'id, groupmode');
                     }
 
                     // If this course has groups, show events from all of them
-                    if(isset($groupmodes[$courseid]) && ($groupmodes[$courseid]->groupmode != NOGROUPS || !$groupmodes[$courseid]->groupmodeforce) && ($grouprecords = get_groups($courseid)) !== false) {
+                    if(isset($groupmodes[$courseid]) && $groupmodes[$courseid]->groupmode != NOGROUPS && ($grouprecords = get_groups($courseid)) !== false) {
                         $grouparray = array_merge($grouparray, array_keys($grouprecords));
                     }
                 }
 
                 // Otherwise (not editing teacher) show events from the group he is a member of
                 else if(isset($USER->groupmember[$courseid])) {
-                    //changed to 2D array
-                    foreach ($USER->groupmember[$courseid] as $groupid){
-                        $grouparray[] = $groupid;
-                    }
+                    $grouparray[] = $USER->groupmember[$courseid];
                 }
             }
             if(empty($grouparray)) {
@@ -1148,10 +1127,10 @@ function calendar_get_default_courses($ignoreref = false) {
         }
     }
     if(isset($USER->student) && is_array($USER->student)) {
-        $courses = $courses + $USER->student;
+        $courses = $USER->student;
     }
     if(isset($USER->teacher) && is_array($USER->teacher)) {
-        $courses = $courses + $USER->teacher;
+        $courses = $USER->teacher;
     }
     return $courses;
 }

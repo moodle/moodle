@@ -4,21 +4,16 @@
 
     $id = optional_param('id', SITEID);
 
-    //HTTPS is potentially required in this page
-    httpsrequired();
-
     if (!$course = get_record('course', 'id', $id)) {
         error('No such course!');
     }
 
-    // did we get here because of a force password change
-    $forcepassword = !empty($USER->preference['auth_forcepasswordchange']);
-
-    if (!$forcepassword) {  // Don't redirect if they just got sent here
+    if (empty($USER->preference['auth_forcepasswordchange'])) {  // Don't redirect if they just got sent here
         require_login($id);
     }
-
+    
     if ($frm = data_submitted()) {
+
         validate_form($frm, $err);
 
         check_for_restricted_user($frm->username);
@@ -62,18 +57,14 @@
             }
             
             /// Are we admin logged in as someone else? If yes then we need to retain our real identity.
-            if (!empty($USER->realuser)) {
-                $realuser = $USER->realuser;
-            }
+            if (!empty($USER->realuser)) $realuser = $USER->realuser;
             
-            $USER = clone($user); // Get a fresh copy
+            $USER = $user;
 
-            if (!empty($realuser)) {
-                $USER->realuser = $realuser;
-            }
+            if (!empty($realuser)) $USER->realuser = $realuser;
 
             // register success changing password
-            unset_user_preference('auth_forcepasswordchange', $user->id);
+            unset_user_preference('auth_forcepasswordchange');
 
             set_moodle_cookie($USER->username);
 
@@ -140,28 +131,15 @@
  *****************************************************************************/
 function validate_form($frm, &$err) {
 
-    global $USER;
-
-    $validpw = authenticate_user_login($frm->username, $frm->password);
-
     if (empty($frm->username)){
         $err->username = get_string('missingusername');
     } else {
         if (!isadmin() and empty($frm->password)){
             $err->password = get_string('missingpassword');
         } else {  
-            if (!isadmin()) {
-                //require non adminusers to give valid password
-                if(!$validpw) {
-                    $err->password = get_string('wrongpassword');
-                }
-            }
-            else {
-                // don't allow anyone to change the primary admin's password
-                $mainadmin = get_admin();
-                if($frm->username == $mainadmin->username && $mainadmin->id != $USER->id) { // the primary admin can change their own password!
-                    $err->username = get_string('adminprimarynoedit');
-                }
+            //require non adminusers to give valid password
+            if (!isadmin() && !authenticate_user_login($frm->username, $frm->password)){
+                $err->password = get_string('wrongpassword');
             }
         }
     }

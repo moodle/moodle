@@ -82,8 +82,12 @@ $string['forcechangepasswordfirst_help'] = 'אלץ משתמשים לשנות את הסיסמא שלהם בנס
 $string['guestloginbutton'] = 'כפתור התחברות לאורחים';
 $string['instructions'] = 'הוראות';
 $string['md5'] = 'הצפנת MD5 ';
+$string['parentlanguage'] = 'en';
 $string['plaintext'] = 'טקסט פשוט';
 $string['showguestlogin'] = 'אתה יכול להחביא או להראות את כפתור ההתחברות לאורחים בעמוד ההתחברות.';
 $string['stdchangepassword'] = 'השתמש בדף שינוי סיסמא סטנדרטי';
+$string['thischarset'] = 'ISO-8859-8-I';
+$string['thisdirection'] = 'rtl';
+$string['thislanguage'] = '&#1506;&#1489;&#1512;&#1497;&#1514;';
 
 ?>

@@ -5,5 +5,8 @@
 $string['labeltext'] = 'Labeltekst';
 $string['modulename'] = 'Label';
 $string['modulenameplural'] = 'Labels';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Nederlands';
 
 ?>

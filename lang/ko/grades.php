@@ -76,7 +76,6 @@ $string['nolettergrade'] = '편지 성적이 없습니다.';
 $string['nomode'] = '지원되지 않습니다.';
 $string['nonnumericweight'] = '비수치의 가치를 받습니다.';
 $string['nonweightedpct'] = '웨이트 퍼센트가 없습니다.';
-$string['notteachererror'] = '당신은 이 특징을 사용할수 있는 선생님이 되어야만 합니다.';
 $string['pctoftotalgrade'] = '총 성적의 퍼센트';
 $string['percent'] = '퍼센트';
 $string['percentascending'] = '퍼센트 상승의 종류';

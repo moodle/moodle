@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.6 development (2005060201)
+      // auth.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['alternatelogin'] = 'Kapag nagpasok ka ng URL dito, gagamitin ito bilang pahinang panglog-in para sa site na ito.  Dapat maglaman ang pahina ng isang form na ang action property ay nakatakda sa <strong>\'$a\'</strong> at mga  return field na <strong>username</strong> at <strong>password</strong>.<br />Ingatan na huwag makapagpasok ng maling URL, kundi\'y masasarhan kayo ng site na ito.<br />Iwanang blangko ang kaayusang ito upang gamitin ang default na pahinang panglog-in.';
@@ -17,10 +17,6 @@ $string['auth_cas_text'] = 'Ligtas na koneksiyon';
 $string['auth_cas_version'] = 'Bersiyon ng CAS';
 $string['auth_casdescription'] = 'Ang paraang ito ay gumagait ng CAS server (Central Authentication Service) upang ma-authenticate ang mga user sa isang Single Sign On environment (SSO). Maaari ka ring gumamit ng simpleng LDAP na pag-aauthenticate, kung ang ibinigay na username at password ay tanggap ayon sa CAS, lilikha ang Moodle ng bagong user entry sa database nito, gamit ang mga user attribute mula sa LDAP kung kinakailangan.  Sa mga susunod na paglog-in, tanging ang username at password ang tsetsekin.';
 $string['auth_castitle'] = 'Gumamit ng CAS server (SSO)';
-$string['auth_changepasswordhelp'] = 'Palitan ang pantulong sa password';
-$string['auth_changepasswordhelp_expl'] = 'Ipakita ang pantulong para sa nawawalang password sa mga user na nawala ang kanilang $a na password.  Ipapakita ito kasama na o kapalit ng <strong>Baguhin ang Password na URL</strong> o dili kaya\'y Internal na pagbabago ng password ng Moodle.';
-$string['auth_changepasswordurl'] = 'Baguhin ang URL ng password';
-$string['auth_changepasswordurl_expl'] = 'Itakda ang url na ipapadala sa mga user na naiwala ang kanilang $a password. Itakda ang <strong>Gamitin ang istandard na Baguhin ang Password na pahina</strong> sa <strong>Hindi</strong>.';
 $string['auth_common_settings'] = 'Kaayusang para sa lahat';
 $string['auth_data_mapping'] = 'Data mapping';
 $string['auth_dbdescription'] = 'Gumagamit ang paraang ito ng panlabas na database teybol upang masuri kung ang ibinigay na username at password ay tanggap.  Kung bago ang account, ang impormasyon sa iba pang field ay maaari ring kopyahin ng Moodle.';
@@ -35,6 +31,8 @@ $string['auth_dbtable'] = 'Pangalan ng teybol sa database';
 $string['auth_dbtitle'] = 'Gumamit ng panlabas na database';
 $string['auth_dbtype'] = 'Ang uri ng database (Tingnan ang <a href=\"../lib/adodb/readme.htm#drivers\">Dokumentasyon ng ADOdb</a> para sa detalye)';
 $string['auth_dbuser'] = 'Username na may karapatang basahin ang database';
+$string['auth_editlock'] = 'Ikandado ang halaga';
+$string['auth_editlock_expl'] = '<p><b>Ikandado ang halaga:</b> Kapag binuhay, ay pipigil sa mga Moodle user at admin na editin ang field nang direkta.  Gamitin ang opsiyong ito kung pinapanatili mo ang datos na ito sa panlabas na auth system. </p>';
 $string['auth_emaildescription'] = 'Ang email confirmation ang default na paraan ng pag-aauthenticate.  Kapag nag-sign-up ang user at napili na nila ang sarili nilang username at password, may ipapadalang confirmation email sa email address ng user.  Ang email na ito ay may ligtas na link sa isang pahina na maaaring kumpirmahin ng user ang account niya.  Sa mga susunod na log-in ay itsetsek na lamang ang username at password kung nasa Moodle database nga ito.';
 $string['auth_emailtitle'] = 'Pag-aauthenticate na nakabatay sa email';
 $string['auth_fccreators'] = 'Listahan ng mga pangkat na ang mga miyembro ay pinapahintulutan na lumikha ng mga bagong kurso.  Paghiwalayin ang maraming pangkat ng \';\'. Ang mga pangalan ay kailangang baybayin nang katulad-na-katulad ng nasa FirstClass server. Mahalaga sa sistema ang pagkakaiba ng laki ng mga titik (case-sensitive).';
@@ -44,10 +42,6 @@ $string['auth_fchost'] = 'Ang address ng FirstClass server. Gamitin ang IP numbe
 $string['auth_fcpasswd'] = 'Password para sa account na nasa itaas.';
 $string['auth_fctitle'] = 'Gumamit ng FirstClass server';
 $string['auth_fcuserid'] = 'Userid para sa FirstClass account na may pribilehiyong \'Subadministrator\' na itinakda.';
-$string['auth_fieldlock'] = 'Ikandado ang halaga';
-$string['auth_fieldlock_expl'] = '<p><b>Ikandado ang halaga:</b> Kapag binuhay, ay pipigil sa mga Moodle user at admin na editin ang field nang direkta.  Gamitin ang opsiyong ito kung pinapanatili mo ang datos na ito sa panlabas na auth system. </p>';
-$string['auth_fieldlocks'] = 'Ikandado ang mga field ng user';
-$string['auth_fieldlocks_help'] = '<p>Maari mong ikandado ang mga data field ng user.  Kapakipakinabang para sa mga site na ang datos ng user ay minementina ng administrador nang mano-mano; sa pamamagitan ng pag-edit ng mga rekord ng user o pag-aaplowd gámit ang \'Iaplowd ang mga user\' na pasilidad.  Kung ikinakandado mo ang mga field na kinakailangan ng Moodle, tiyakin ninyo na ibibigay ninyo ang datos na ito sa paglikha ng mga account ng user &emdash; kundi ay hindi magagamit ang mga account.</p><p>Pag-isipan ninyo kung mas mabuting itakda ang mode ng pagkandado sa \'Dinakakandado kung walang laman\' upang maiwasan ang problemang ito.</p>';
 $string['auth_imapdescription'] = 'Gumagamit ang paraang ito ng IMAP server upang matsek kung tanggap ang ibinigay na username at password.';
 $string['auth_imaphost'] = 'Ang address ng IMAP server.  Gamitin ang IP number, huwag ang DNS name.';
 $string['auth_imapport'] = 'Port number ng IMAP server.  Ito ay karaniwang 143 o 993.';
@@ -70,7 +64,6 @@ $string['auth_ldap_memberattribute'] = 'Opsiyonal: Nananaig sa user member attri
 $string['auth_ldap_objectclass'] = 'Opsiyonal: Nananaig sa objectClass na ginagamit sa pagpapangalan/paghahanap ng mga user sa ldap_user_type.  Kadalasan ay hindi mo na kailangang baguhin ito.';
 $string['auth_ldap_opt_deref'] = 'Itinatakda kung paano hinahandle ang mga alias kapag naghahanap.  Piliin ang isa sa mga sumusunod na halaga:  \"Hindi\" (LDAP_DEREF_NEVER) o \"Oo\" (LDAP_DEREF_ALWAYS) ';
 $string['auth_ldap_passwdexpire_settings'] = 'LDAP password expiration settings.';
-$string['auth_ldap_preventpassindb'] = 'Piliin ang oo upang huwag maimbak ang mga password sa DB ng Moodle.';
 $string['auth_ldap_search_sub'] = 'Hanapin ang mga user mula sa subcontext.';
 $string['auth_ldap_server_settings'] = 'Kaayusan ng LDAP server';
 $string['auth_ldap_update_userinfo'] = 'Baguhin ang impormasyon ng user (unang pangalan, apelyido, tirahan..) mula LDAP hanggang Moodle.  Itakda ang kaayusan ng \"Data mapping\" alinsunod sa pangangailangan mo.';
@@ -114,10 +107,11 @@ $string['auth_shib_only_description'] = 'Tsekan ang opsiyon na ito kung ipatutup
 $string['auth_shib_username_description'] = 'Pangalan ng webserver Shibboleth environment baryabol na gagamitin bilang Moodle username';
 $string['auth_shibboleth_login'] = 'Shibboleth Log-in';
 $string['auth_shibboleth_manual_login'] = 'Mano-manong Log-in';
-$string['auth_shibbolethdescription'] = 'Sa pamamagitan ng paraang ito, ang mga user ay lilikhain at iaauthenticate sa pamamagitan ng <a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>. <br>Tiyakin ninyo na nabasa ninyo ang <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> ng Shibboleth, ito ay para sa kung paano iaayos ang Moodle mo na may Shibboleth';
+$string['auth_shibbolethdescription'] = 'Sa pamamagitan ng paraang ito, ang mga user ay lilikhain at iaauthenticate sa pamamagitan ng <a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>. <br>Tiyakin ninyo na nabasa ninyo ang <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> ng Shibboleth, ito ay para sa kung paano iaayos ang Moodle mo na may Shibboleth
+';
 $string['auth_shibbolethtitle'] = 'Shibboleth';
-$string['auth_updatelocal'] = 'Baguhin ang lokal';
-$string['auth_updatelocal_expl'] = '<p><b>Baguhin ang lokal:</b> Kapag binuhay, ang field ay babaguhin (mula sa panlabas na auth) tuwing maglalog-in ang user o may user synchronization.  Dapat ikandado ang field na isinaayos na magpanibago nang lokal.</p>';
+$string['auth_updatelocal'] = 'Baguhin ang lokal na datos';
+$string['auth_updatelocal_expl'] = '<p><b>Baguhin ang lokal na datos:</b> Kapag binuhay, ang field ay babaguhin (mula sa panlabas na auth) tuwing maglalog-in ang user o may user synchronization.  Dapat ikandado ang field na inayos na lokal ang pagbabago.</p>';
 $string['auth_updateremote'] = 'Baguhin ang panlabas na datos';
 $string['auth_updateremote_expl'] = '<p><b>Baguhin ang panlabas na datos:</b> Kapag binuhay, babaguhin ang panlabas na auth kpag ang rekord ng user ay binago.  Dapat alisin ang kandado ng mga field upang mapahintulutan ang pag-eedit.</p>';
 $string['auth_updateremote_ldap'] = '<p><b>Tandaan:</b> Ang pagbabago ng panlabas na datos ng LDAP ay nangangailangan na iayos mo ang binddn at bindpw na maging isang bind-user na may pribelehiyo na mag-edit ng lahat ng rekord ng user.  Sa kasalukuyan ay hindi nito pinananatili ang mga attribute na marami ang halaga, at tatanggalin nito ang labis na halaga kapag may binago na ito. </p>';
@@ -129,27 +123,16 @@ $string['authinstructions'] = 'Dito ay maaari kang magbigay ng panuto sa mga use
 $string['changepassword'] = 'Baguhin ang password URL';
 $string['changepasswordhelp'] = 'Dito ay maitatakda mo ang lokasyon ng pahina kung saan maaaring makuha mulî o mabago ng mga user ang username/password nila, sakaling nakalimutan nila ito.  Ipapakita ito sa mga user bilang isang buton sa pahina na panglog-in at sa kanilang pahina na pang-user.  Kapag iniwan mo itong blangko ang buton ay hindi makikita.';
 $string['chooseauthmethod'] = 'Pumilì ng paraan ng pag-aauthenticate: ';
-$string['createchangepassword'] = 'Likhain kung nawawalâ - ipilit ang pagbabago';
-$string['createpassword'] = 'Likhain kung nawawalâ';
 $string['forcechangepassword'] = 'Ipilit ang pagpapalit ng password';
 $string['forcechangepassword_help'] = 'Pilitin ang mga user na palitan ang password nila sa susunod nilang log-in sa Moodle.';
 $string['forcechangepasswordfirst_help'] = 'Pilitin ang mga user na palitan ang password nila sa unang log-in nila sa Moodle.';
 $string['guestloginbutton'] = 'Buton na panlog-in ng bisita';
-$string['infilefield'] = 'Kinakailangan ang field sa file';
 $string['instructions'] = 'Mga Panuto';
-$string['locked'] = 'Nakakandado';
 $string['md5'] = 'MD5 encryption';
-$string['passwordhandling'] = 'Kung paano gagamitin ang field ng password';
 $string['plaintext'] = 'Plain text';
 $string['showguestlogin'] = 'Maari mong itago o ilantad ang buton na panlog-in ng bisita sa pahinang panlog-in.';
 $string['stdchangepassword'] = 'Gumamit ng istandard na Pahinang Pampalit ng Password';
 $string['stdchangepassword_expl'] = 'Kung pinapahintulutan ng panlabas na sistemang pan-authenticate ang pagbabago ng password sa pamamagitan ng Moodle, iswits ito sa Oo.  Nananaig ang kaayusang ito sa \'Baguhin ang Password URL\'.';
 $string['stdchangepassword_explldap'] = 'TANDAAN:  Iminumungkahi na gumamit kayo ng LDAP sa isang SSL encrypted tunnel (ldaps://) kung nasa ibang lugar ang LDAP server.';
-$string['unlocked'] = 'Dinakakandado';
-$string['unlockedifempty'] = 'Dinakakandado kung walang laman';
-$string['update_never'] = 'Dikailanman';
-$string['update_oncreate'] = 'Sa paglikha';
-$string['update_onlogin'] = 'Sa tuwing maglalog-in';
-$string['update_onupdate'] = 'sa pagpapanibago';
 
 ?>

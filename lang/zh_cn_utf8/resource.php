@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5.3+ (2005060230)
+      // resource.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['addresource'] = '添加资源';
 $string['chooseafile'] = '选择或上传一个文件';
 $string['chooseparameter'] = '选择一个参数';
-$string['configallowlocalfiles'] = '允许在创建新文件资源时使用指向本地文件系统的链接，如光驱或者硬盘。这对于学生都在一个教室内访问网络驱动器或CD上的文件是很有用出的。是用这个功能可能要修改您的浏览器的安全设置。';
+$string['configallowlocalfiles'] = '允许在创建新文件资源时使用指向本地文件系统的链接，如光驱或者硬盘。这对于学生都在一个教室内访问网络驱动器或CD上的文件是很有用出的。是用这个功能可能要修改你的浏览器的安全设置。';
 $string['configdefaulturl'] = '当添加一个基于URL的资源时，该值用于预填URL表格.';
 $string['configfilterexternalpages'] = '使用该值将使所有外部资源(网页,上传的HTML文件) 按当前设定过滤(如词汇自动链接).使用此项将拖慢访问速度 - 当您确实需要时再谨慎的使用它.';
 $string['configframesize'] = '当页面或上传的文件显示在框架中时,该象素值设定顶层框架的大小';
@@ -30,7 +30,7 @@ $string['editingaresource'] = '编辑资源';
 $string['encryptedcode'] = '加密代码';
 $string['example'] = '例子';
 $string['exampleurl'] = 'http://www.example.com/somedirectory/somefile.html';
-$string['fetchclienterror'] = '当试图下载网页时您的Web客户程序发生错误(可能是错误的URL)。';
+$string['fetchclienterror'] = '当试图下载网页时你的Web客户程序发生错误(可能是错误的URL)。';
 $string['fetcherror'] = '当试图下载网页时发生错误。';
 $string['fetchservererror'] = '当试图下载网页时远程服务器发生错误(可能是程序错误)。';
 $string['filename'] = '文件名';
@@ -64,7 +64,7 @@ $string['notallowedlocalfileaccess'] = '访问本地文件的功能已禁用，�
 $string['note'] = '注意';
 $string['notefile'] = '要上载更多文件到课程中（这样它们就会出现于该列表），请用 
 <a href=\"$a\">文件管理器</a>.';
-$string['notypechosen'] = '您必需选择一个类型。用浏览器的后退按钮退回并重试。';
+$string['notypechosen'] = '你必需选择一个类型。用浏览器的后退按钮退回并重试。';
 $string['pagedisplay'] = '在当前窗口显示此资源';
 $string['pagewindow'] = '同一窗口';
 $string['pan'] = '平衡';
@@ -86,7 +86,6 @@ $string['resourcetypedirectory'] = '显示一个目录';
 $string['resourcetypefile'] = '链接到文件或站点';
 $string['resourcetypehtml'] = '编写网页';
 $string['resourcetypelabel'] = '插入标签';
-$string['resourcetyperepository'] = '链接到仓库中的对象';
 $string['resourcetypetext'] = '编写文本页';
 $string['searchweb'] = '搜索网页';
 $string['serverurl'] = '服务器链接($a->wwwroot)';

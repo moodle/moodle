@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.6 development (2005101200)
+      // choice.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['addmorechoices'] = '更多选项';
@@ -19,7 +19,7 @@ $string['limit'] = '限制';
 $string['limitanswers'] = '限制允许的最多次数';
 $string['modulename'] = '投票';
 $string['modulenameplural'] = '投票';
-$string['mustchooseone'] = '保存前必须先选择一个答案。没有数据被保存。';
+$string['mustchooseone'] = '保存前必须先选择一个答案。保存失败。';
 $string['notanswered'] = '未答';
 $string['notopenyet'] = '对于起，此活动在{$a}之后才可用';
 $string['privacy'] = '结果公开/保密';
@@ -33,7 +33,7 @@ $string['publishnot'] = '不向学生公布结果';
 $string['responses'] = '回答';
 $string['responsesto'] = '回答{$a}';
 $string['savemychoice'] = '保存我的选择';
-$string['showunanswered'] = '显示未回答的列';
+$string['showunanswered'] = '显示未被回答的问题的列';
 $string['spaceleft'] = '个可用空间';
 $string['spacesleft'] = '个可用空间';
 $string['taken'] = '已选';

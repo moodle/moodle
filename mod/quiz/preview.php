@@ -121,7 +121,7 @@
         $SESSION->quizpreview->questionid = $id;
         // Create an empty session for the question
         if (!$newstates =
-         quiz_get_states($questions, $quiz, $attempt)) {
+         quiz_restore_question_sessions($questions, $quiz, $attempt)) {
             error(get_string('newattemptfail', 'quiz'));
         }
         $SESSION->quizpreview->states = array($newstates);
@@ -187,7 +187,7 @@
     p($questions[$id]->name);
     echo "</p>\n";
     $number = 1;
-    echo "<form method=\"post\" action=\"preview.php\" autocomplete=\"off\">\n";
+    echo "<form method=\"post\" action=\"preview.php\">\n";
     echo "<input type=\"hidden\" name=\"id\" value=\"$id\" />\n";
     echo "<input type=\"hidden\" name=\"quizid\" value=\"$quizid\" />\n";
     echo "<input type=\"hidden\" name=\"continue\" value=\"1\" />\n";

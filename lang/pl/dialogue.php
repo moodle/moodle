@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.6 development (2005072200)
+      // dialogue.php - created with Moodle 1.4 (2004083100)
 
 
 $string['addmynewentries'] = 'Dodaj moje nowe dialogi';
@@ -23,7 +23,6 @@ $string['everybody'] = 'Ka¿dy z ka¿dym';
 $string['furtherinformation'] = 'Dalsze informacje';
 $string['lastentry'] = 'Ostatni wpis';
 $string['maildefault'] = 'Wy¶lij emaila z nowym wpisem';
-$string['mailnotification'] = 'Powiadomienie poczt± elektorniczn±';
 $string['modulename'] = 'Dialog';
 $string['modulenameplural'] = 'Dialogi';
 $string['namehascloseddialogue'] = '$a zakoñczy³ dialog';

@@ -18,9 +18,7 @@
 function mediaplugin_filter($courseid, $text) {
     global $CFG, $THEME;
 
-    include "defaultsettings.php";
-
-    if ($CFG->filter_mediaplugin_enable_mp3) {
+    if (empty($CFG->filter_mediaplugin_ignore_mp3)) {
         static $c;
 
         if (empty($c)) {
@@ -31,7 +29,7 @@ function mediaplugin_filter($courseid, $text) {
             }
         }
         $c = htmlentities($c);
-        $search = '/<a(.*?)href=\"([^<]+)\.mp3\"([^>]*)>(.*?)<\/a>/is';
+        $search = '/<a(.*?)href=\"([^<]+)\.mp3\"([^>]*)>(.*?)<\/a>/i';
 
         $replace  = '\\0&nbsp;<object class="mediaplugin mp3" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
         $replace .= ' codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
@@ -51,67 +49,26 @@ function mediaplugin_filter($courseid, $text) {
         $text = preg_replace($search, $replace, $text);
     }
 
-    if ($CFG->filter_mediaplugin_enable_swf) {
-        $search = array(
-                '/<a(.*?)href=\"([^<]+)\.swf\?d=([\d]{1,3}%?)x([\d]{1,3}%?)\"([^>]*)>(.*?)<\/a>/is',
-                '/<a(.*?)href=\"([^<]+)\.swf\"([^>]*)>(.*?)<\/a>/is'
-                );
+    if (empty($CFG->filter_mediaplugin_ignore_swf)) {
+        $search = '/<a(.*?)href=\"([^<]+)\.swf\"([^>]*)>(.*?)<\/a>/i';
 
-        $replace = array();
-
-        $replace[0]  = '\\0<p class="mediaplugin swf"><object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
-        $replace[0] .= ' codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
-        $replace[0] .= ' width="\\3" height="\\4" id="mp3player">';
-        $replace[0] .= " <param name=\"movie\" value=\"\\2.swf\" />";
-        $replace[0] .= ' <param name="quality" value="high" />';
-        $replace[0] .= ' <param name="AllowScriptAccess" value="never" />';
-        $replace[0] .= " <embed src=\"\\2.swf\" ";
-        $replace[0] .= '  quality="high" width="\\3" height="\\4" name="flashfilter" AllowScriptAccess="never" ';
-        $replace[0] .= ' type="application/x-shockwave-flash" ';
-        $replace[0] .= ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
-        $replace[0] .= '</embed>';
-        $replace[0] .= '</object></p>';
-
-        $replace[1]  = '\\0<p class="mediaplugin swf"><object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
-        $replace[1] .= ' codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
-        $replace[1] .= ' width="400" height="300" id="mp3player">';
-        $replace[1] .= " <param name=\"movie\" value=\"\\2.swf\" />";
-        $replace[1] .= ' <param name="quality" value="high" />';
-        $replace[1] .= ' <param name="AllowScriptAccess" value="never" />';
-        $replace[1] .= " <embed src=\"\\2.swf\" ";
-        $replace[1] .= '  quality="high" width="400" height="300" name="flashfilter" AllowScriptAccess="never" ';
-        $replace[1] .= ' type="application/x-shockwave-flash" ';
-        $replace[1] .= ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
-        $replace[1] .= '</embed>';
-        $replace[1] .= '</object></p>';
-
-        $text = preg_replace($search, $replace, $text);
-
-    }
-
-    if ($CFG->filter_mediaplugin_enable_flv) {
-        $search = '/<a(.*?)href=\"([^<]+)\.flv\"([^>]*)>(.*?)<\/a>/is';
-            
-        $replace  = '\\0&nbsp;<object class="mediaplugin flv" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
+        $replace  = '\\0<p class="mediaplugin swf"><object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"';
         $replace .= ' codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,0,0" ';
-        $replace .= ' width="480" height="360" id="flvplayer">';
-        $replace .= " <param name=\"movie\" value=\"$CFG->wwwroot/filter/mediaplugin/flvplayer.swf?file=\\2.flv\" />";
+        $replace .= ' width="400" height="300" id="mp3player">';
+        $replace .= " <param name=\"movie\" value=\"\\2.swf\" />";
         $replace .= ' <param name="quality" value="high" />';
-        $replace .= ' <param name="bgcolor" value="#FFFFFF" />';
-        $replace .= ' <param name="flashvars" value="'.$c.'" />';
-        $replace .= " <embed src=\"$CFG->wwwroot/filter/mediaplugin/flvplayer.swf?file=\\2.flv\" ";
-        $replace .= "  quality=\"high\" bgcolor=\"#FFFFFF\" width=\"480\" height=\"360\" name=\"flvplayer\" ";
+        $replace .= " <embed src=\"\\2.swf\" ";
+        $replace .= "  quality=\"high\" width=\"400\" height=\"300\" name=\"flashfilter\" ";
         $replace .= ' type="application/x-shockwave-flash" ';
-        $replace .= ' flashvars="'.$c.'" ';
         $replace .= ' pluginspage="http://www.macromedia.com/go/getflashplayer">';
         $replace .= '</embed>';
-        $replace .= '</object>&nbsp;';
+        $replace .= '</object></p>';
     
         $text = preg_replace($search, $replace, $text);
     }
 
-    if ($CFG->filter_mediaplugin_enable_mov) {
-        $search = '/<a(.*?)href=\"([^<]+)\.mov\"([^>]*)>(.*?)<\/a>/is';
+    if (empty($CFG->filter_mediaplugin_ignore_mov)) {
+        $search = '/<a(.*?)href=\"([^<]+)\.mov\"([^>]*)>(.*?)<\/a>/i';
 
         $replace  = '\\0<p class="mediaplugin mov"><object classid="CLSID:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B"';
         $replace .= '        codebase="http://www.apple.com/qtactivex/qtplugin.cab" ';
@@ -132,8 +89,8 @@ function mediaplugin_filter($courseid, $text) {
         $text = preg_replace($search, $replace, $text);
     }
 
-    if ($CFG->filter_mediaplugin_enable_wmv) {
-        $search = '/<a(.*?)href=\"([^<]+)\.wmv\"([^>]*)>(.*?)<\/a>/is';
+    if (empty($CFG->filter_mediaplugin_ignore_wmv)) {
+        $search = '/<a(.*?)href=\"([^<]+)\.wmv\"([^>]*)>(.*?)<\/a>/i';
 
         $replace  = '\\0<p class="mediaplugin wmv"><object classid="CLSID:22D6f312-B0F6-11D0-94AB-0080C74C7E95"';
         $replace .= ' codebase="http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab#Version=5,1,52,701" ';
@@ -159,8 +116,8 @@ function mediaplugin_filter($courseid, $text) {
         $text = preg_replace($search, $replace, $text);
     }
 
-    if ($CFG->filter_mediaplugin_enable_mpg) {
-        $search = '/<a(.*?)href=\"([^<]+)\.(mpe?g)\"([^>]*)>(.*?)<\/a>/is';
+    if (empty($CFG->filter_mediaplugin_ignore_mpg)) {
+        $search = '/<a(.*?)href=\"([^<]+)\.(mpe?g)\"([^>]*)>(.*?)<\/a>/i';
 
         $replace = '\\0<p class="mediaplugin mpg"><object width="240" height="180">';
         $replace .= '<param name="src" value="\\2.\\3" />';
@@ -172,8 +129,8 @@ function mediaplugin_filter($courseid, $text) {
         $text = preg_replace($search, $replace, $text);
     }
 
-    if ($CFG->filter_mediaplugin_enable_avi) {
-        $search = '/<a(.*?)href=\"([^<]+)\.avi\"([^>]*)>(.*?)<\/a>/is';
+    if (empty($CFG->filter_mediaplugin_ignore_avi)) {
+        $search = '/<a(.*?)href=\"([^<]+)\.avi\"([^>]*)>(.*?)<\/a>/i';
 
         $replace = '\\0<p class="mediaplugin avi"><object width="240" height="180">';
         $replace .= '<param name="src" value="\\2.avi" />';

@@ -12,8 +12,8 @@ class block_calendar_month extends block_base {
 
     function get_content() {
         global $USER, $CFG, $SESSION;
-        $cal_m = optional_param( 'cal_m', 0, PARAM_INT );
-        $cal_y = optional_param( 'cal_y', 0, PARAM_INT );
+        optional_variable($_GET['cal_m']);
+        optional_variable($_GET['cal_y']);
 
         require_once($CFG->dirroot.'/calendar/lib.php');
         
@@ -25,24 +25,24 @@ class block_calendar_month extends block_base {
         $this->content->text = '';
         $this->content->footer = '';
 
-        // [pj] To me it looks like this if would never be needed, but Penny added it 
-        // when committing the /my/ stuff. Reminder to discuss and learn what it's about.
-        // It definitely needs SOME comment here!
-        if (!empty($this->instance->pageid)) {
-            $courseshown = $this->instance->pageid;
-        }
-        else {
-            $courseshown = SITEID;
-        }
+        if (empty($this->instance)) { // Overrides: use no course at all
 
-        if($courseshown == SITEID) {
-            // Being displayed at site level. This will cause the filter to fall back to auto-detecting
-            // the list of courses it will be grabbing events from.
-            $filtercourse = NULL;
-        }
-        else {
-            // Forcibly filter events to include only those from the particular course we are in.
-            $filtercourse = array($courseshown => 1);
+            $courseshown = false;
+            $filtercourse = array();
+
+        } else {
+
+            $courseshown = $this->instance->pageid;
+
+            if($courseshown == SITEID) {
+                // Being displayed at site level. This will cause the filter to fall back to auto-detecting
+                // the list of courses it will be grabbing events from.
+                $filtercourse = NULL;
+            }
+            else {
+                // Forcibly filter events to include only those from the particular course we are in.
+                $filtercourse = array($courseshown => 1);
+            }
         }
 
         // We 'll need this later
@@ -54,15 +54,15 @@ class block_calendar_month extends block_base {
         if ($courseshown == SITEID) {
             // For the front page
             $this->content->text .= calendar_overlib_html();
-            $this->content->text .= calendar_top_controls('frontpage', array('m' => $cal_m, 'y' => $cal_y));
-            $this->content->text .= calendar_get_mini($courses, $group, $user, $cal_m, $cal_y);
+            $this->content->text .= calendar_top_controls('frontpage', array('m' => $_GET['cal_m'], 'y' => $_GET['cal_y']));
+            $this->content->text .= calendar_get_mini($courses, $group, $user, $_GET['cal_m'], $_GET['cal_y']);
             // No filters for now
 
         } elseif (!empty($courseshown)) {
             // For any other course
             $this->content->text .= calendar_overlib_html();
-            $this->content->text .= calendar_top_controls('course', array('id' => $courseshown, 'm' => $cal_m, 'y' => $cal_y));
-            $this->content->text .= calendar_get_mini($courses, $group, $user, $cal_m, $cal_y);
+            $this->content->text .= calendar_top_controls('course', array('id' => $courseshown, 'm' => $_GET['cal_m'], 'y' => $_GET['cal_y']));
+            $this->content->text .= calendar_get_mini($courses, $group, $user, $_GET['cal_m'], $_GET['cal_y']);
             $course = get_record('course', 'id', $this->instance->pageid);
             $this->content->text .= '<div class="filters">'.calendar_filter_controls('course', '', $course).'</div>';
             

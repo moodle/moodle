@@ -27,7 +27,6 @@
     }
 
     require_once("../config.php");
-    require_once($CFG->dirroot.'/lib/adminlib.php');
 
     if (!$alreadyadmin = isadmin()) {
         unset($_SESSION['USER']);
@@ -35,8 +34,6 @@
         unset($_SESSION['SESSION']);
         unset($SESSION);
         $USER = get_admin();      /// Temporarily, to provide environment for this script
-        // we need to override the admin timezone to the moodle timezone!
-        $USER->timezone = $CFG->timezone;
     }
 
     //unset test cookie, user must login again anyway
@@ -107,28 +104,12 @@
         $oneweek = $timenow - ($CFG->deleteunconfirmed * 3600);
         if ($users = get_users_unconfirmed($oneweek)) {
             foreach ($users as $user) {
-                if (delete_records('user', 'id', $user->id)) {
+                if (delete_records("user", "id", $user->id)) {
                     mtrace("Deleted unconfirmed user for ".fullname($user, true)." ($user->id)");
                 }
             }
         }
         flush();
-
-
-
-        /// Delete users who haven't completed profile within required period
-
-        $oneweek = $timenow - ($CFG->deleteunconfirmed * 3600);
-        if ($users = get_users_not_fully_set_up($oneweek)) {
-            foreach ($users as $user) {
-                if (delete_records('user', 'id', $user->id)) {
-                    mtrace("Deleted not fully setup user $user->username ($user->id)");
-                }
-            }
-        }
-        flush();
-
-
     
         /// Delete old logs to save space (this might need a timer to slow it down...)
     
@@ -153,31 +134,6 @@
 
         sync_metacourses();
 
-        //
-        // generate new password emails for users 
-        //
-        mtrace('checking for create_password');
-        if (count_records('user_preferences', 'name', 'create_password', 'value', '1')) {
-            mtrace('creating passwords for new users');
-            $newusers = get_records_sql("SELECT  u.id as id, u.email, u.firstname, 
-                                                u.lastname, u.username,
-                                                p.id as prefid 
-                                        FROM {$CFG->prefix}user u 
-                                             JOIN {$CFG->prefix}user_preferences p ON u.id=p.userid
-                                        WHERE p.name='create_password' AND p.value=1 AND u.email !='' ");
-
-            foreach ($newusers as $newuserid => $newuser) {
-                $newuser->emailstop = 0; // send email regardless
-                // email user                               
-                if (setnew_password_and_mail($newuser)) {
-                    // remove user pref
-                    delete_records('user_preferences', 'id', $newuser->prefid);
-                } else {
-                    trigger_error("Could not create and mail new user password!");
-                }
-            }
-        }
-
     } // End of occasional clean-up tasks
 
 
@@ -186,12 +142,6 @@
         //Perhaps a long time and memory could help in large sites
         @set_time_limit(0);
         @raise_memory_limit("128M");
-        if (function_exists('apache_child_terminate')) {
-            // if we are running from Apache, give httpd a hint that 
-            // it can recycle the process after it's done. Apache's 
-            // memory management is truly awful but we can help it.
-            @apache_child_terminate();
-        }
         if (file_exists("$CFG->dirroot/backup/backup_scheduled.php") and
             file_exists("$CFG->dirroot/backup/backuplib.php") and
             file_exists("$CFG->dirroot/backup/lib.php") and
@@ -227,51 +177,6 @@
     $enrol->cron();
     if (!empty($enrol->log)) {
         mtrace($enrol->log);
-    }
-
-    if (!empty($CFG->enablestats)) {
-
-        // check we're not before our runtime
-        $timetocheck = strtotime("$CFG->statsruntimestarthour:$CFG->statsruntimestartminute today");
-
-        if (time() > $timetocheck) {
-            $time = 60*60*20; // set it to 20 here for first run... (overridden by $CFG)
-            $clobber = true;
-            if (!empty($CFG->statsmaxruntime)) {
-                $time = $CFG->statsmaxruntime+(60*30); // add on half an hour just to make sure (it could take that long to break out of the loop)
-            }
-            if (!get_field_sql('SELECT id FROM '.$CFG->prefix.'stats_daily LIMIT 1')) {
-                // first run, set another lock. we'll check for this in subsequent runs to set the timeout to later for the normal lock.
-                set_cron_lock('statsfirstrunlock',true,$time,true);
-                $firsttime = true;
-            }
-            $time = 60*60*2; // this time set to 2.. (overridden by $CFG)
-            if (!empty($CFG->statsmaxruntime)) {
-                $time = $CFG->statsmaxruntime+(60*30); // add on half an hour to make sure (it could take that long to break out of the loop)
-            }
-            if ($config = get_record('config','name','statsfirstrunlock')) {
-                if (!empty($config->value)) {
-                    $clobber = false; // if we're on the first run, just don't clobber it.
-                }
-            }
-            if (set_cron_lock('statsrunning',true,$time, $clobber)) {
-                require_once($CFG->dirroot.'/lib/statslib.php');
-                $return = stats_cron_daily();
-                if (stats_check_runtime() && $return == STATS_RUN_COMPLETE) {
-                    stats_cron_weekly();
-                }
-                if (stats_check_runtime() && $return == STATS_RUN_COMPLETE) {
-                    $return = $return && stats_cron_monthly();
-                }
-                if (stats_check_runtime() && $return == STATS_RUN_COMPLETE) {
-                    stats_clean_old();
-                }
-                set_cron_lock('statsrunning',false);
-                if (!empty($firsttime)) {
-                    set_cron_lock('statsfirstrunlock',false);
-                }
-            }
-        }
     }
 
     //Unset session variables and destroy it

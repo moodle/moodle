@@ -2,8 +2,8 @@
 
     require_once("../config.php");
 
-    $mode = optional_param('mode', '', PARAM_ALPHA);
-    $currentfile = optional_param('currentfile', 'moodle.php', PARAM_FILE);
+    optional_variable($mode, "");
+    optional_variable($currentfile, "moodle.php");
 
     require_login();
 
@@ -54,15 +54,6 @@
                  '', '', true, $button);
 
     if (!$mode) {
-        print_simple_box_start('center','80%');
-        echo '<table align="center" width="100%"><tr><td width="50%" align="center">';
-        print_string('managelang','admin');
-        echo '</td><td align="center" width="50%">';
-        print_string('editlang','admin');
-        echo '</td></tr><tr><td>';
-        print_string('lang16notify','admin');
-        echo '<p /><a href="langimport.php">'.get_string('langimport','admin').'</a>';
-        echo '</td><td>';
         $currlang = current_language();
         $langs = get_list_of_languages();
         echo "<table align=\"center\"><tr><td align=\"right\">";
@@ -71,13 +62,11 @@
         echo popup_form ("$CFG->wwwroot/$CFG->admin/lang.php?lang=", $langs, "chooselang", $currlang, "", "", "", true);
         echo '</td></tr><tr><td colspan="2">';
         $options["lang"] = $currentlang;
-        //print_single_button("http://moodle.org/download/lang/", $options, get_string("latestlanguagepack"));
+        print_single_button("http://moodle.org/download/lang/", $options, get_string("latestlanguagepack"));
         echo "</td></tr></table>";
         print_heading("<a href=\"lang.php?mode=missing\">$strmissingstrings</a>");
         print_heading("<a href=\"lang.php?mode=compare\">$streditstrings</a>");
         print_heading("<a href=\"langdoc.php\">$stredithelpdocs</a>");
-        echo '</td></tr></table>';
-        print_simple_box_end();
         print_footer();
         exit;
     }
@@ -101,22 +90,23 @@
         // For each file, check that a counterpart exists, then check all the strings
     
         foreach ($stringfiles as $file) {
+            if (!file_exists("$langdir/$file")) {
+                if (!touch("$langdir/$file")) {
+                    echo "<p><font color=\"red\">".get_string("filemissing", "", "$langdir/$file")."</font></p>";
+                    continue;
+                }
+            }
+    
             unset($string);
             include("$enlangdir/$file");
             $enstring = $string;  
-            
+    
             unset($string);
-
-            if (file_exists("$langdir/$file")) {
-                include("$langdir/$file");
-            } else {
-                notify(get_string("filemissing", "", "$langdir/$file"));
-                $string = array();
-            }
+            include("$langdir/$file");
     
             $first = true;
             foreach ($enstring as $key => $value) {
-                if (empty($string[$key])) {
+                if (!isset($string[$key]) or $string[$key] == "") {
                     $value = htmlspecialchars($value);
                     $value = str_replace("$"."a", "\\$"."a", $value);
                     $value = str_replace("%%","%",$value);

@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // quiz_analysis.php - created with Moodle 1.5 + (2005060201)
+      // quiz_analysis.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['analysisoptions'] = 'Analiz seçenekleri';
 $string['analysistitle'] = 'Öge Analiz Tablosu';
 $string['attemptsall'] = 'Tüm uygulamalar';
-$string['attemptselection'] = 'Her bir kullanýcý için yapýlacak uygulama analizi';
+$string['attemptselection'] = 'Her bir kullanýcý için hangi uygulamalar analiz yapýlacak:';
 $string['attemptsfirst'] = 'Ýlk uygulama';
 $string['attemptshighest'] = 'En yüksek not';
 $string['attemptslast'] = 'Son uygulama';
@@ -20,10 +20,8 @@ $string['qnametitle'] = 'Soru adý';
 $string['qtexttitle'] = 'Soru metni';
 $string['qtypetitle'] = 'S. tipi';
 $string['quizreportdir'] = 'sinav_sonuclari';
-$string['rcounttitle'] = 'Cevap<br />Sayýsý';
 $string['reportanalysis'] = 'Öge Analiz Raporu';
 $string['responsestitle'] = 'Cevap metni';
-$string['rpercenttitle'] = 'C.%%';
 $string['stddevtitle'] = 'SS';
 
 ?>

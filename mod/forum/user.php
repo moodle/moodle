@@ -5,16 +5,11 @@
     require_once('../../config.php');
     require_once('lib.php');
 
-    $course  = required_param('course');     // course id
-    $id      = optional_param('id');       // user id
+    $id      = required_param('id');       // user id
+    $course    = required_param('course');     // course id
     $mode    = optional_param('mode', 'posts');
     $page    = optional_param('page', 0);
     $perpage = optional_param('perpage', 5);
-
-    if (empty($id)) {         // See your own profile by default
-        require_login();
-        $id = $USER->id;
-    }
 
     if (! $user = get_record("user", "id", $id)) {
         error("User ID is incorrect");
@@ -49,16 +44,11 @@
     $currenttab = $mode;
     include($CFG->dirroot.'/user/tabs.php');   /// Prints out tabs as part of user page
 
-    $isseparategroups = /*(($course->groupmode == SEPARATEGROUPS and
+    $isseparategroups = ($course->groupmode == SEPARATEGROUPS and
                          $course->groupmodeforce and
-                         !isteacheredit($course->id))*/forum_get_separate_modules($course->id);
+                         !isteacheredit($course->id));
 
-    //editting teacher can view everything so do not pass in groupid
-    if (isteacheredit ($course->id)){
-        $isseparategroups = false;
-    }
-
-    $groupid = $isseparategroups ? /*get_current_group*/mygroupid($course->id) : NULL;
+    $groupid = $isseparategroups ? get_current_group($course->id) : NULL;
 
     switch ($mode) {
         case 'posts' :

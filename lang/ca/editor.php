@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5.3+ (2005060230)
+      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['about'] = 'Referent a aquest editor';
@@ -29,7 +29,6 @@ $string['createanchor'] = 'Crea àncora';
 $string['createfolder'] = 'Crea una carpeta';
 $string['createlink'] = 'Insereix un enllaç web';
 $string['cut'] = 'Talla la selecció';
-$string['cutpastemozilla'] = 'Malauradament, a hores d\'ara no podeu utilitzar les dreceres normals del teclat (ni tan sols el botó Enganxa) per a enganxar text dins d\'aquest editor en línia. Això es deu a una característica de seguretat que hi ha en algunes versions dels navegadors Mozilla i Firefox.<br /><br />Hi ha tres maneres conegudes de fer-ho que podeu provar:<br /> (1) En compte de CTRL-v, utilitzeu SHIFT-Insert <br /> (2) Utilitzeu el menú Edició->Enganxa del vostre navegador<br /> (3) Canvieu les preferències del vostre navegador editant el fitxer user.js. <br /><br />Feu clic en el botó D\'acord més avall per obtenir més ajuda, o Cancel·la per tornar a l\'editor';
 $string['delete'] = 'Suprimeix';
 $string['filebrowser'] = 'Explorador de fitxers';
 $string['findwhat'] = 'Cerca';

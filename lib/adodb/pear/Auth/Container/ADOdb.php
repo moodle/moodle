@@ -402,8 +402,7 @@ class Auth_Container_ADOdb extends Auth_Container
 }
 
 function showDbg( $string ) {
-	print "
--- $string</P>";
+	print "<P>$string</P>";
 }
 function dump( $var, $str, $vardump = false ) {
 	print "<H4>$str</H4><pre>";

@@ -144,7 +144,6 @@ $string['safehtml'] = 'Safe HTML';
 $string['save'] = 'Save';
 $string['searchwiki'] = 'Search Wiki';
 $string['setpageflags'] = 'Set page flags';
-$string['showversions'] = 'Show versions:';
 $string['sitemap'] = 'Sitemap';
 $string['smfor'] = 'Sitemap for';
 $string['status'] = 'Status';

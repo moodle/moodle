@@ -1,6 +1,35 @@
 <!-- This page defines the form to create or edit an instance of this module -->
 <!-- It is used from /course/mod.php.  The whole instance is available as $form. -->
 
+<!-- Some javascript to allow for the hiding of advanced options
+     This code was derived from mod.html in the resource module -->
+<script language="javascript" type="text/javascript">
+    function showhide (id, set) {
+        divobj = document.getElementById(id);
+        butobj = document.getElementById(id+'button');
+        prefobj = document.getElementById(id+'pref');
+        if (set == true) {
+            if (prefobj.value == '1') {
+                divobj.style.display = 'block';
+                butobj.value = '<?php print_string("hideadvancedsettings") ?>';
+            } else {
+                divobj.style.display = 'none';
+                butobj.value = '<?php print_string("showadvancedsettings") ?>...';
+            }
+        } else {
+            if (prefobj.value == '1') {
+                divobj.style.display = 'none';
+                butobj.value = '<?php print_string("showadvancedsettings") ?>...';
+                prefobj.value = '0';
+            } else {
+                divobj.style.display = 'block';
+                butobj.value = '<?php print_string("hideadvancedsettings") ?>';
+                prefobj.value = '1';
+            }
+        }
+    }
+</script>
+
 <?php
     require_once("$CFG->dirroot/mod/quiz/locallib.php");
 /// Ensure that all form variables are initialized
@@ -64,9 +93,6 @@
     if (!isset($form->penaltyscheme)) {
         $form->penaltyscheme = $CFG->quiz_penaltyscheme;
     }
-    if (empty($form->timedue)) {
-        $form->timedue = "";
-    }
 
     $fix = 0; // This will later be set to 1 if some of the variables have been fixed by the admin.
 
@@ -84,11 +110,7 @@
     }
 
 ?>
-<script type="text/javascript" language="javascript">
-    var dueitems = ['dueday','duemonth','dueyear','duehour', 'dueminute'];
-    var availableitems = ['availableday','availablemonth','availableyear','availablehour', 'availableminute'];
-    var timelimititems = ['timelimit'];
-</script>
+
 
 <form name="form" method="post" action="mod.php">
 
@@ -99,7 +121,7 @@
 
 <tr valign="top">
     <td align="right"><b><?php print_string("name") ?>:</b></td>
-    <td align="left">
+    <td>
         <input type="text" name="name" size="40" value="<?php p($form->name) ?>" />
     </td>
 </tr>
@@ -117,7 +139,7 @@
         }
       ?>
     </td>
-    <td align="left">
+    <td>
         <?php
            print_textarea($usehtmleditor, 20, 50, 680, 400, "intro", $form->intro);
         ?>
@@ -125,52 +147,41 @@
 </tr>
 
 <tr valign="top">
-   <td align="right"><b><?php print_string("availabledate","assignment") ?>:</b></td>
-    <td align="left">
-        <input name="availableenable" type="checkbox" value="1" alt="<?php print_string('availabledate', 'assignment') ?>" onclick="return lockoptions('form', 'availableenable', availableitems)" <?php if ($form->timeopen) echo 'checked="checked"' ?> />
+    <td align="right"><b><?php print_string("quizopen", "quiz") ?>:</b></td>
+    <td>
     <?php
-           print_date_selector("availableday", "availablemonth", "availableyear", $form->timeopen);
-           echo "&nbsp;-&nbsp;";
-           print_time_selector("availablehour", "availableminute", $form->timeopen);
-           helpbutton('timeopen', get_string('quizopens', 'quiz'), 'quiz');
+        if (!$form->timeopen and $course->format == "weeks") {
+            $form->timeopen  = $course->startdate + (($form->section - 1) * 608400);
+        }
+        print_date_selector("openday", "openmonth", "openyear", $form->timeopen);
+        print_time_selector("openhour", "openminute", $form->timeopen);
+        helpbutton("timeopen", get_string("quizopen","quiz"), "quiz");
      ?>
-        <input type="hidden" name="havailableday"    value="0" />
-        <input type="hidden" name="havailablemonth"  value="0" />
-        <input type="hidden" name="havailableyear"   value="0" />
-        <input type="hidden" name="havailablehour"   value="0" />
-        <input type="hidden" name="havailableminute" value="0" />
     </td>
 </tr>
 
 <tr valign="top">
-    <td align="right"><b><?php print_string("duedate", "assignment") ?>:</b></td>
-    <td align="left">
-        <input name="dueenable" type="checkbox" value="1" alt="<?php print_string('duedate', 'assignment') ?>" onclick="return lockoptions('form', 'dueenable', dueitems)" <?php if ($form->timeclose) echo 'checked="checked"' ?> />
+    <td align="right"><b><?php print_string("quizclose", "quiz") ?>:</b></td>
+    <td>
     <?php
-           print_date_selector("dueday", "duemonth", "dueyear", $form->timeclose);
-           echo "&nbsp;-&nbsp;";
-           print_time_selector("duehour", "dueminute", $form->timeclose);
-           helpbutton('timeopen', get_string('quizcloses', 'quiz'), 'quiz');
+        if (!$form->timeclose and $course->format == "weeks") {
+            $form->timeclose  = $course->startdate + (($form->section) * 608400);
+        }
+        print_date_selector("closeday", "closemonth", "closeyear", $form->timeclose);
+        print_time_selector("closehour", "closeminute", $form->timeclose);
+        helpbutton("timeopen", get_string("quizclose","quiz"), "quiz");
      ?>
-        <input type="hidden" name="hdueday"    value="0" />
-        <input type="hidden" name="hduemonth"  value="0" />
-        <input type="hidden" name="hdueyear"   value="0" />
-        <input type="hidden" name="hduehour"   value="0" />
-        <input type="hidden" name="hdueminute" value="0" />
     </td>
 </tr>
 
 <?php if (!$CFG->quiz_fix_timelimit) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("timelimit", "quiz") ?>:</b></td>
-        <td align="left">
-            <input name="timelimitenable" type="checkbox" value="1" alt="<?php print_string('timelimit', 'quiz') ?>" onclick="return lockoptions('form', 'timelimitenable', timelimititems)" <?php if ($form->timelimit) echo 'checked="checked"' ?> />
-            <input type="text" name="timelimit" size="3" value="<?php p($form->timelimit ? $form->timelimit : '') ?>" />
-            <?php 
-                print_string('minutes');
-                helpbutton("timelimit", get_string("quiztimer","quiz"), "quiz");
-            ?>
-            <input type="hidden" name="htimelimit"    value="0" />
+        <td>
+        <?php
+            print_timer_selector($form->timelimit, get_string("minutes","quiz"));
+            helpbutton("timelimit", get_string("quiztimer","quiz"), "quiz");
+        ?>
         </td>
     </tr>
 <?php } else $fix=1 ?>
@@ -178,7 +189,7 @@
 <?php if (!$CFG->quiz_fix_questionsperpage) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string('questionsperpage', 'quiz') ?>:</b></td>
-         <td align="left">
+        <td>
         <?php
             $perpage= array();
             for ($i=0; $i<=50; ++$i) {
@@ -187,7 +198,7 @@
             $perpage[0] = get_string('allinone', 'quiz');
 
             choose_from_menu($perpage, 'questionsperpage', $form->questionsperpage, '');
-            helpbutton('questionsperpage', get_string('questionsperpage', 'quiz'), 'quiz');
+            helpbutton('questionsperpage', get_string('questionsperpage'), 'quiz');
          ?>
         </td>
     </tr>
@@ -196,7 +207,7 @@
 <?php if (!$CFG->quiz_fix_shufflequestions) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("shufflequestions", "quiz") ?>:</b></td>
-         <td align="left">
+        <td>
         <?php
             choose_from_menu($yesnooptions, "shufflequestions", "$form->shufflequestions", "");
             helpbutton("shufflequestions", get_string("shufflequestions","quiz"), "quiz");
@@ -208,7 +219,7 @@
 <?php if (!$CFG->quiz_fix_shuffleanswers) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("shuffleanswers", "quiz") ?>:</b></td>
-         <td align="left">
+        <td>
         <?php
             choose_from_menu($yesnooptions, "shuffleanswers", "$form->shuffleanswers", "");
             helpbutton("shuffleanswers", get_string("shuffleanswers","quiz"), "quiz");
@@ -220,7 +231,7 @@
 <?php if (!$CFG->quiz_fix_attempts) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("attemptsallowed", "quiz") ?>:</b></td>
-         <td align="left">
+        <td>
         <?php
             choose_from_menu($attemptoptions, "attempts", "$form->attempts", "");
             helpbutton("attempts", get_string("attemptsallowed","quiz"), "quiz");
@@ -232,7 +243,7 @@
 <?php if (!$CFG->quiz_fix_attemptonlast) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("eachattemptbuildsonthelast", "quiz") ?>:</b></td>
-         <td align="left">
+        <td>
         <?php
             choose_from_menu($yesnooptions, "attemptonlast",
                              "$form->attemptonlast", "");
@@ -247,7 +258,7 @@
 <?php if (!$CFG->quiz_fix_grademethod) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("grademethod", "quiz") ?>:</b></td>
-         <td align="left">
+        <td>
         <?php
             choose_from_menu($QUIZ_GRADE_METHOD, "grademethod", "$form->grademethod", "");
             helpbutton("grademethod", get_string("grademethod","quiz"), "quiz");
@@ -259,9 +270,9 @@
 <?php if (!$CFG->quiz_fix_adaptive) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("adaptive", "quiz") ?>:</b></td>
-         <td align="left">
+        <td>
         <?php
-            choose_from_menu($yesnooptions, "adaptive", ($form->optionflags & QUIZ_ADAPTIVE) ? 1 : 0, "");
+            choose_from_menu($yesnooptions, "adaptive", $form->optionflags & QUIZ_ADAPTIVE, "");
             helpbutton("adaptive", get_string("adaptive","quiz"), "quiz");
          ?>
         </td>
@@ -271,7 +282,7 @@
 <?php if (!$CFG->quiz_fix_penaltyscheme) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("penaltyscheme", "quiz") ?>:</b></td>
-         <td align="left">
+        <td>
         <?php
             choose_from_menu($yesnooptions, "penaltyscheme", "$form->penaltyscheme", "");
             helpbutton("penaltyscheme", get_string("penaltyscheme","quiz"), "quiz");
@@ -283,7 +294,7 @@
 <?php if (!$CFG->quiz_fix_decimalpoints) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("decimalpoints", "quiz") ?>:</b></td>
-         <td align="left">
+        <td>
          <?php
             unset($options);
             $options[0] = '0';
@@ -299,14 +310,14 @@
 
 <?php if (!$CFG->quiz_fix_review) {
     echo '<tr valign="top">';
-    include($CFG->dirroot . '/mod/quiz/reviewoptions.html');
+    include('reviewoptions.html');
     echo '</tr>';
 } else $fix=1 ?>
 
 <?php if (!$CFG->quiz_fix_popup) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("popup", "quiz") ?>:</b></td>
-         <td align="left">
+        <td>
         <?php
             choose_from_menu($yesnooptions, "popup", "$form->popup", "");
             helpbutton("popup", get_string("popup","quiz"), "quiz");
@@ -318,7 +329,7 @@
 <?php if (!$CFG->quiz_fix_password) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("requirepassword", "quiz") ?>:</b></td>
-         <td align="left">
+        <td>
             <input type="text" name="password" size="40" value="<?php p($form->password) ?>" />
             <?php helpbutton("requirepassword", get_string("requirepassword", "quiz"), "quiz"); ?>
         </td>
@@ -328,7 +339,7 @@
 <?php if (!$CFG->quiz_fix_subnet) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("requiresubnet", "quiz") ?>:</b></td>
-         <td align="left">
+        <td>
             <input type="text" name="subnet" size="40" value="<?php p($form->subnet) ?>" />
             <?php helpbutton("requiresubnet", get_string("requiresubnet", "quiz"), "quiz"); ?>
         </td>
@@ -342,47 +353,19 @@
 
 <?php if ($fix) { ?>
 
+<!-- Now comes a copy of the above but enclosed in a div with id optionsettings and with
+     the conditions reversed, so that it shows exactly the options that are usually hidden.
+     The visibility of this div is controlled by javascript. -->
+
+<tr><td colspan="2"><hr /></td></tr>
 <tr>
-    <td align="right"><b><?php print_string('advancedsettings') ?>:</b>
-        <!-- Some javascript to allow for the hiding of advanced options
-         This code was derived from mod.html in the resource module -->
-        <script language="javascript" type="text/javascript">
-            function showhide (id, set) {
-                divobj = document.getElementById(id);
-                butobj = document.getElementById(id+'button');
-                prefobj = document.getElementById(id+'pref');
-                if (set == true) {
-                    if (prefobj.value == '1') {
-                        divobj.style.display = 'block';
-                        butobj.value = '<?php print_string("hideadvancedsettings") ?>';
-                    } else {
-                        divobj.style.display = 'none';
-                        butobj.value = '<?php print_string("showadvancedsettings") ?>...';
-                    }
-                } else {
-                    if (prefobj.value == '1') {
-                        divobj.style.display = 'none';
-                        butobj.value = '<?php print_string("showadvancedsettings") ?>...';
-                        prefobj.value = '0';
-                    } else {
-                        divobj.style.display = 'block';
-                        butobj.value = '<?php print_string("hideadvancedsettings") ?>';
-                        prefobj.value = '1';
-                    }
-                }
-            }
-        </script>
-    </td>
-     <td align="left">
+    <td align="right"><b><?php print_string('advancedsettings') ?>:</b></td>
+    <td>
         <input type="button" value="hide settings" id="optionsettingsbutton" onclick="javascript: return showhide('optionsettings');" />
         <input type="hidden" name="optionsettingspref" id="optionsettingspref" value="<?php echo get_user_preferences('quiz_optionsettingspref', 0); ?>" />
         <br />
     </td>
 </tr>
-
-<!-- Now comes a copy of the options fields in a div with id optionsettings and with
-     the conditions reversed, so that it shows exactly the options that are usually hidden.
-     The visibility of this div is controlled by javascript. -->
 
 <tr><td colspan="2">
 
@@ -393,14 +376,11 @@
 <?php if ($CFG->quiz_fix_timelimit) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("timelimit", "quiz") ?>:</b></td>
-        <td align="left">
-            <input name="timelimitenable" type="checkbox" value="1" alt="<?php print_string('timelimit', 'quiz') ?>" onclick="return lockoptions('form', 'timelimitenable', timelimititems)" <?php if ($form->timelimit) echo 'checked="checked"' ?> />
-            <input type="text" name="timelimit" size="3" value="<?php p($form->timelimit ? $form->timelimit : '') ?>" />
-            <?php 
-                print_string('minutes');
-                helpbutton("timelimit", get_string("quiztimer","quiz"), "quiz");
-            ?>
-            <input type="hidden" name="htimelimit"    value="0" />
+        <td>
+        <?php
+            print_timer_selector($form->timelimit, get_string("minutes","quiz"));
+            helpbutton("timelimit", get_string("quiztimer","quiz"), "quiz");
+        ?>
         </td>
     </tr>
 <?php } ?>
@@ -408,7 +388,7 @@
 <?php if ($CFG->quiz_fix_questionsperpage) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string('questionsperpage', 'quiz') ?>:</b></td>
-         <td align="left">
+        <td>
         <?php
             $perpage= array();
             for ($i=0; $i<=50; ++$i) {
@@ -426,7 +406,7 @@
 <?php if ($CFG->quiz_fix_shufflequestions) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("shufflequestions", "quiz") ?>:</b></td>
-         <td align="left">
+        <td>
         <?php
             choose_from_menu($yesnooptions, "shufflequestions", "$form->shufflequestions", "");
             helpbutton("shufflequestions", get_string("shufflequestions","quiz"), "quiz");
@@ -438,7 +418,7 @@
 <?php if ($CFG->quiz_fix_shuffleanswers) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("shuffleanswers", "quiz") ?>:</b></td>
-         <td align="left">
+        <td>
         <?php
             choose_from_menu($yesnooptions, "shuffleanswers", "$form->shuffleanswers", "");
             helpbutton("shuffleanswers", get_string("shuffleanswers","quiz"), "quiz");
@@ -450,7 +430,7 @@
 <?php if ($CFG->quiz_fix_attempts) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("attemptsallowed", "quiz") ?>:</b></td>
-         <td align="left">
+        <td>
         <?php
             choose_from_menu($attemptoptions, "attempts", "$form->attempts", "");
             helpbutton("attempts", get_string("attemptsallowed","quiz"), "quiz");
@@ -461,7 +441,7 @@
 <?php if ($CFG->quiz_fix_attemptonlast) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("eachattemptbuildsonthelast", "quiz") ?>:</b></td>
-         <td align="left">
+        <td>
         <?php
             choose_from_menu($yesnooptions, "attemptonlast",
                              "$form->attemptonlast", "");
@@ -475,7 +455,7 @@
 <?php if ($CFG->quiz_fix_grademethod) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("grademethod", "quiz") ?>:</b></td>
-         <td align="left">
+        <td>
         <?php
             choose_from_menu($QUIZ_GRADE_METHOD, "grademethod", "$form->grademethod", "");
             helpbutton("grademethod", get_string("grademethod","quiz"), "quiz");
@@ -487,9 +467,9 @@
 <?php if ($CFG->quiz_fix_adaptive) { $fix = 1; ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("adaptive", "quiz") ?>:</b></td>
-         <td align="left">
+        <td>
         <?php
-            choose_from_menu($yesnooptions, "adaptive", ($form->optionflags & QUIZ_ADAPTIVE) ? 1 : 0, "");
+            choose_from_menu($yesnooptions, "adaptive", $form->optionflags & QUIZ_ADAPTIVE, "");
             helpbutton("adaptive", get_string("adaptive","quiz"), "quiz");
          ?>
         </td>
@@ -499,7 +479,7 @@
 <?php if ($CFG->quiz_fix_penaltyscheme) { $fix = 1; ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("penaltyscheme", "quiz") ?>:</b></td>
-         <td align="left">
+        <td>
         <?php
             choose_from_menu($yesnooptions, "penaltyscheme", "$form->penaltyscheme", "");
             helpbutton("penaltyscheme", get_string("penaltyscheme","quiz"), "quiz");
@@ -511,7 +491,7 @@
 <?php if ($CFG->quiz_fix_decimalpoints) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("decimalpoints", "quiz") ?>:</b></td>
-         <td align="left">
+        <td>
          <?php
             unset($options);
             $options[0] = '0';
@@ -527,14 +507,14 @@
 
 <?php if ($CFG->quiz_fix_review) {
     echo '<tr valign="top">';
-    include($CFG->dirroot . '/mod/quiz/reviewoptions.html');
+    include('reviewoptions.html');
     echo '</tr>';
 } ?>
 
 <?php if ($CFG->quiz_fix_popup) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("popup", "quiz") ?>:</b></td>
-         <td align="left">
+        <td>
         <?php
             choose_from_menu($yesnooptions, "popup", "$form->popup", "");
             helpbutton("popup", get_string("popup","quiz"), "quiz");
@@ -546,7 +526,7 @@
 <?php if ($CFG->quiz_fix_password) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("requirepassword", "quiz") ?>:</b></td>
-         <td align="left">
+        <td>
             <input type="text" name="password" size="40" value="<?php p($form->password) ?>" />
             <?php helpbutton("requirepassword", get_string("requirepassword", "quiz"), "quiz"); ?>
         </td>
@@ -556,7 +536,7 @@
 <?php if ($CFG->quiz_fix_subnet) { ?>
     <tr valign="top">
         <td align="right"><b><?php print_string("requiresubnet", "quiz") ?>:</b></td>
-         <td align="left">
+        <td>
             <input type="text" name="subnet" size="40" value="<?php p($form->subnet) ?>" />
             <?php helpbutton("requiresubnet", get_string("requiresubnet", "quiz"), "quiz"); ?>
         </td>
@@ -566,11 +546,12 @@
 
 
 </table>
-<script language="javascript" type="text/javascript">
-    showhide('optionsettings', true);
-</script>
+
 </div></td></tr>
 
+<?php } else { ?>
+<input type="hidden" value="hide settings" id="optionsettingsbutton" />
+<input type="hidden" name="optionsettingspref" id="optionsettingspref" value="0" />
 <?php } ?>
 
 </table>
@@ -596,10 +577,6 @@
 </center>
 </form>
 
-<script type="text/javascript">
-<?php 
-    if (!$form->timeclose) echo "lockoptions('form','dueenable', dueitems);";
-    if (!$form->timeopen) echo "lockoptions('form','availableenable', availableitems);";
-    if (!$form->timelimit) echo "lockoptions('form','timelimitenable', timelimititems);";
-?>
+<script language="javascript" type="text/javascript">
+    showhide('optionsettings', true);
 </script>

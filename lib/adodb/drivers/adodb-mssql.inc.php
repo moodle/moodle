@@ -1,6 +1,6 @@
 <?php
 /* 
-V4.66 28 Sept 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
+V4.60 24 Jan 2005  (c) 2000-2005 John Lim (jlim@natsoft.com.my). All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence. 
@@ -75,7 +75,7 @@ class ADODB_mssql extends ADOConnection {
 	var $dataProvider = "mssql";
 	var $replaceQuote = "''"; // string to use to replace quotes
 	var $fmtDate = "'Y-m-d'";
-	var $fmtTimeStamp = "'Y-m-d H:i:s'";
+	var $fmtTimeStamp = "'Y-m-d h:i:sA'";
 	var $hasInsertID = true;
 	var $substr = "substring";
 	var $length = 'len';
@@ -103,6 +103,7 @@ class ADODB_mssql extends ADOConnection {
 	var $uniqueOrderBy = true;
 	var $_bindInputArray = true;
 	
+	
 	function ADODB_mssql() 
 	{		
 		$this->_has_mssql_init = (strnatcmp(PHP_VERSION,'4.1.0')>=0);
@@ -125,7 +126,6 @@ class ADODB_mssql extends ADOConnection {
 		$row = $this->GetRow($stmt);
 		
 		//$row = $this->GetRow("execute sp_server_info 2");
-		
 		
 		if ($this->fetchMode === false) {
 			$ADODB_FETCH_MODE = $savem;
@@ -306,10 +306,10 @@ class ADODB_mssql extends ADOConnection {
 		
 		See http://www.swynk.com/friends/achigrik/SQL70Locks.asp
 	*/
-	function RowLock($tables,$where,$flds='top 1 null as ignore') 
+	function RowLock($tables,$where) 
 	{
 		if (!$this->transCnt) $this->BeginTrans();
-		return $this->GetOne("select $flds from $tables with (ROWLOCK,HOLDLOCK) where $where");
+		return $this->GetOne("select top 1 null as ignore from $tables with (ROWLOCK,HOLDLOCK) where $where");
 	}
 	
 	
@@ -401,13 +401,13 @@ order by constraint_name, referenced_table_name, keyno";
 						 $tmpAr=$ar=array(); 
 						 while($tmpAr=@mssql_fetch_row($rs)) 
 								 $ar[]=$tmpAr[0]; 
-						@mssql_select_db($this->database); 
+						@mssql_select_db($this->databaseName); 
 						 if(sizeof($ar)) 
 								 return($ar); 
 						 else 
 								 return(false); 
 				 } else { 
-						 @mssql_select_db($this->database); 
+						 @mssql_select_db($this->databaseName); 
 						 return(false); 
 				 } 
 		 } 
@@ -436,8 +436,7 @@ order by constraint_name, referenced_table_name, keyno";
 		$ADODB_FETCH_MODE = $savem;
 		
 		if ($a && sizeof($a)>0) return $a;
-		$false = false;
-		return $false;	  
+		return false;	  
 	}
 
 	
@@ -458,8 +457,7 @@ order by constraint_name, referenced_table_name, keyno";
  
 	function SelectDB($dbName) 
 	{
-		$this->database = $dbName;
-		$this->databaseName = $dbName; # obsolete, retained for compat with older adodb versions
+		$this->databaseName = $dbName;
 		if ($this->_connectionID) {
 			return @mssql_select_db($dbName);		
 		}
@@ -737,7 +735,6 @@ class ADORecordset_mssql extends ADORecordSet {
 		if ($mode === false) { 
 			global $ADODB_FETCH_MODE;
 			$mode = $ADODB_FETCH_MODE;
-
 		}
 		$this->fetchMode = $mode;
 		return $this->ADORecordSet($id,$mode);
@@ -784,17 +781,15 @@ class ADORecordset_mssql extends ADORecordSet {
 		fields in a certain query result. If the field offset isn't specified, the next field that wasn't yet retrieved by
 		fetchField() is retrieved.	*/
 
-	function &FetchField($fieldOffset = -1) 
+	function FetchField($fieldOffset = -1) 
 	{
 		if ($fieldOffset != -1) {
-			$f = @mssql_fetch_field($this->_queryID, $fieldOffset);
+			return @mssql_fetch_field($this->_queryID, $fieldOffset);
 		}
 		else if ($fieldOffset == -1) {	/*	The $fieldOffset argument is not provided thus its -1 	*/
-			$f = @mssql_fetch_field($this->_queryID);
+			return @mssql_fetch_field($this->_queryID);
 		}
-		$false = false;
-		if (empty($f)) return $false;
-		return $f;
+		return null;
 	}
 	
 	function _seek($row) 

@@ -36,13 +36,13 @@ if ($SITE = get_site()) {
  *
  * @uses $db
  * @param string $command The sql string you wish to be executed.
- * @param bool $feedback Set this argument to true if the results generated should be printed. Default is true.
+ * @param boolean $feedback Set this argument to true if the results generated should be printed. Default is true.
  * @return string
  */
 function execute_sql($command, $feedback=true) {
 /// Completely general function - it just runs some SQL and reports success.
 
-    global $db, $CFG;
+    global $db;
 
     $olddebug = $db->debug;
 
@@ -86,20 +86,6 @@ function begin_sql() {
     }
     return true;
 }
-/**
-* on DBs that support it, commit the transaction 
-*/
-function rollback_sql() {
-/// Completely general function - it just runs some SQL and reports success.
-
-    global $CFG;
-    if ($CFG->dbtype === 'postgres7') {
-        return execute_sql('ROLLBACK', false);
-    }
-    return true;
-}
-
-
 
 /**
  * returns db specific uppercase function
@@ -110,11 +96,11 @@ function db_uppercase() {
 
     case "postgres7":
         return "upper";
-
+        break;
     case "mysql":
     default:
         return "ucase";
-
+        break;
     }
 }
 
@@ -127,11 +113,11 @@ function db_lowercase() {
 
     case "postgres7":
         return "lower";
-
+        break;
     case "mysql":
     default:
         return "lcase";
-
+        break;
     }
 }
 
@@ -161,7 +147,7 @@ function commit_sql() {
  * @param string $sqlfile The path where a file with sql commands can be found on the server.
  * @param string $sqlstring If no path is supplied then a string with semicolon delimited sql 
  * commands can be supplied in this argument.
- * @return bool Returns true if databse was modified successfully.
+ * @return boolean Returns true if databse was modified successfully.
  */
 function modify_database($sqlfile='', $sqlstring='') {
 
@@ -249,10 +235,6 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
                     $type = 'VARCHAR('. $size .')';
                     $signed = '';
                     break;
-                case 'char':
-                    $type = 'CHAR('. $size .')';
-                    $signed = '';
-                    break;
             }
 
             if (!empty($oldfield)) {
@@ -268,6 +250,7 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
             }
 
             return execute_sql('ALTER TABLE '. $CFG->prefix . $table .' '. $operation .' '. $type .' '. $signed .' '. $default .' '. $null .' '. $after);
+            break;
 
         case 'postgres7':        // From Petri Asikainen
             //Check db-version
@@ -295,10 +278,6 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
                 case 'varchar':
                     $type = 'VARCHAR('. $size .')';
                     break;
-                case 'char':
-                    $type = 'CHAR('. $size .')';
-                    $signed = '';
-                    break;
             }
 
             $default = '\''. $default .'\'';
@@ -320,7 +299,7 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
             if ($dbver >= '7.3') {
                 // modifying 'not null' is posible before 7.3
                 //update default values to table
-                if (strtoupper($null) == 'NOT NULL') {
+                if ($null == 'NOT NULL') {
                     execute_sql('UPDATE '. $CFG->prefix . $table .' SET '. $field .'='. $default .' WHERE '. $field .' IS NULL');
                     execute_sql('ALTER TABLE '. $CFG->prefix . $table .' ALTER COLUMN '. $field .' SET '. $null);
                 } else {
@@ -356,6 +335,7 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
             execute_sql('ALTER TABLE '. $CFG->prefix . $table .' RENAME COLUMN '. $field .' TO '. $realfield);
 
             return execute_sql('COMMIT');
+            break;
 
         default:
             switch (strtolower($type)) {
@@ -381,6 +361,8 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
 
             execute_sql('ALTER TABLE '. $CFG->prefix . $table .' ALTER COLUMN '. $field .' SET '. $null);
             return execute_sql('ALTER TABLE '. $CFG->prefix . $table .' ALTER COLUMN '. $field .' SET '. $default);
+            break;
+
     }
 }
 
@@ -411,78 +393,111 @@ function column_type($table, $column) {
 /// GENERIC FUNCTIONS TO CHECK AND COUNT RECORDS ////////////////////////////////////////
 
 /**
- * Test whether a record exists in a table where all the given fields match the given values.
- *
- * The record to test is specified by giving up to three fields that must
- * equal the corresponding values.
+ * Returns true or false depending on whether the specified record exists
  *
  * @uses $CFG
- * @param string $table The table to check.
- * @param string $field1 the first field to check (optional).
- * @param string $value1 the value field1 must have (requred if field1 is given, else optional).
- * @param string $field2 the second field to check (optional).
- * @param string $value2 the value field2 must have (requred if field2 is given, else optional).
- * @param string $field3 the third field to check (optional).
- * @param string $value3 the value field3 must have (requred if field3 is given, else optional).
- * @return bool true if a matching record exists, else false.
+ * @param string $table The database table to be checked for the record.
+ * @param string $field1 The first table field to be checked for a given value. Do not supply a field1 string to leave out a WHERE clause altogether.
+ * @param string $value1 The value to match if field1 is specified.
+ * @param string $field2 The second table field to be checked for a given value. 
+ * @param string $value2 The value to match if field2 is specified.
+ * @param string $field3 The third table field to be checked for a given value. 
+ * @param string $value3 The value to match if field3 is specified.
+ * @return boolean True if record exists
  */
 function record_exists($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
 
     global $CFG;
 
-    $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
+    if ($field1) {
+        $select = 'WHERE '. $field1 .' = \''. $value1 .'\'';
+        if ($field2) {
+            $select .= ' AND '. $field2 .' = \''. $value2 .'\'';
+            if ($field3) {
+                $select .= ' AND '. $field3 .' = \''. $value3 .'\'';
+            }
+        }
+    } else {
+        $select = '';
+    }
 
     return record_exists_sql('SELECT * FROM '. $CFG->prefix . $table .' '. $select .' LIMIT 1');
 }
 
 
 /**
- * Test whether a SQL SELECT statement returns any records.
- *
- * This function returns true if the SQL statement executes
- * without any errors and returns at least one record.
- *
- * @param string $sql The SQL statement to execute.
- * @return bool true if the SQL executes without errors and returns at least one record.
- */
+* Determine whether a specified record exists.
+*
+* This function returns true if the SQL executed returns records.
+*
+* @uses $CFG
+* @uses $db
+* @param string $sql The SQL statement to be executed.
+* @return boolean
+*/
 function record_exists_sql($sql) {
-    $rs = get_recordset_sql($sql);
 
-    if ($rs && $rs->RecordCount() > 0) {
+    global $CFG, $db;
+
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+
+    if (!$rs = $db->Execute($sql)) {
+        if (isset($CFG->debug) and $CFG->debug > 7) {
+            notify($db->ErrorMsg().'<br /><br />'.$sql);
+        }
+        if (!empty($CFG->dblogerror)) {
+            $debug=array_shift(debug_backtrace());
+            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
+        }
+        return false;
+    }
+
+    if ( $rs->RecordCount() ) {
         return true;
     } else {
         return false;
     }
-}
+	}
+
 
 /**
- * Count the records in a table where all the given fields match the given values.
+ * Get all specified records from the specified table and return the count of them
  *
  * @uses $CFG
- * @param string $table The table to query.
- * @param string $field1 the first field to check (optional).
- * @param string $value1 the value field1 must have (requred if field1 is given, else optional).
- * @param string $field2 the second field to check (optional).
- * @param string $value2 the value field2 must have (requred if field2 is given, else optional).
- * @param string $field3 the third field to check (optional).
- * @param string $value3 the value field3 must have (requred if field3 is given, else optional).
+ * @param string $table The database table to be checked against.
+ * @param string $field1 The first table field to be checked for a given value. Do not supply a field1 string to leave out a WHERE clause altogether.
+ * @param string $value1 The value to match if field1 is specified.
+ * @param string $field2 The second table field to be checked for a given value. 
+ * @param string $value2 The value to match if field2 is specified.
+ * @param string $field3 The third table field to be checked for a given value. 
+ * @param string $value3 The value to match if field3 is specified.
  * @return int The count of records returned from the specified criteria.
  */
 function count_records($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
 
     global $CFG;
 
-    $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
+    if ($field1) {
+        $select = 'WHERE '. $field1 .' = \''. $value1 .'\'';
+        if ($field2) {
+            $select .= ' AND '. $field2 .' = \''. $value2 .'\'';
+            if ($field3) {
+                $select .= ' AND '. $field3 .' = \''. $value3 .'\'';
+            }
+        }
+    } else {
+        $select = '';
+    }
 
     return count_records_sql('SELECT COUNT(*) FROM '. $CFG->prefix . $table .' '. $select);
 }
 
 /**
- * Count the records in a table which match a particular WHERE clause.
+ * Get all the records and count them
  *
  * @uses $CFG
  * @param string $table The database table to be checked against.
- * @param string $select A fragment of SQL to be used in a WHERE clause in the SQL call.
+ * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
  * @param string $countitem The count string to be used in the SQL call. Default is COUNT(*).
  * @return int The count of records returned from the specified criteria.
  */
@@ -497,28 +512,38 @@ function count_records_select($table, $select='', $countitem='COUNT(*)') {
     return count_records_sql('SELECT '. $countitem .' FROM '. $CFG->prefix . $table .' '. $select);
 }
 
+
 /**
- * Get the result of a SQL SELECT COUNT(...) query.
- *
- * Given a query that counts rows, return that count. (In fact,
- * given any query, return the first field of the first record
- * returned. However, this method should only be used for the
- * intended purpose.) If an error occurrs, 0 is returned.
+ * Get all the records returned from the specified SQL call and return the count of them
  *
  * @uses $CFG
  * @uses $db
  * @param string $sql The SQL string you wish to be executed.
- * @return int the count. If an error occurrs, 0 is returned.
+ * @return int The count of records returned from the specified SQL string.
  */
 function count_records_sql($sql) {
-    $rs = get_recordset_sql($sql);
-    
-    if ($rs) {
-        return $rs->fields[0];
-    } else {
-        return 0;   
+
+    global $CFG, $db;
+
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+
+    $rs = $db->Execute($sql);
+    if (!$rs) {
+        if (isset($CFG->debug) and $CFG->debug > 7) {
+            notify($db->ErrorMsg() .'<br /><br />'. $sql);
+        }
+        if (!empty($CFG->dblogerror)) {
+            $debug=array_shift(debug_backtrace());
+            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
+        }
+        return 0;
     }
+
+    return $rs->fields[0];
 }
+
+
+
 
 /// GENERIC FUNCTIONS TO GET, INSERT, OR UPDATE DATA  ///////////////////////////////////
 
@@ -526,20 +551,27 @@ function count_records_sql($sql) {
  * Get a single record as an object
  *
  * @uses $CFG
- * @param string $table The table to select from.
- * @param string $field1 the first field to check (optional).
- * @param string $value1 the value field1 must have (requred if field1 is given, else optional).
- * @param string $field2 the second field to check (optional).
- * @param string $value2 the value field2 must have (requred if field2 is given, else optional).
- * @param string $field3 the third field to check (optional).
- * @param string $value3 the value field3 must have (requred if field3 is given, else optional).
- * @return mixed a fieldset object containing the first mathcing record, or false if none found.
+ * @param    string  $table The name of the table to select from
+ * @param    string  $field1 The name of the field for the first criteria
+ * @param    string  $value1 The value of the field for the first criteria
+ * @param    string  $field2 The name of the field for the second criteria
+ * @param    string  $value2 The value of the field for the second criteria
+ * @param    string  $field3 The name of the field for the third criteria
+ * @param    string  $value3 The value of the field for the third criteria
+ * @return   object(fieldset) A fieldset object containing the first record selected
  */
 function get_record($table, $field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields='*') {
 
-    global $CFG;
+    global $CFG ;
 
-    $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
+    $select = 'WHERE '. $field1 .' = \''. $value1 .'\'';
+
+    if ($field2) {
+        $select .= ' AND '. $field2 .' = \''. $value2 .'\'';
+        if ($field3) {
+            $select .= ' AND '. $field3 .' = \''. $value3 .'\'';
+        }
+    }
 
     return get_record_sql('SELECT '.$fields.' FROM '. $CFG->prefix . $table .' '. $select);
 }
@@ -556,28 +588,34 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
  * @param string $sql The SQL string you wish to be executed.
  * @return Found record as object. False if not found or error
  */
-function get_record_sql($sql, $expectmultiple=false, $nolimit=false) {
+function get_record_sql($sql, $expectmultiple=false) {
 
-    global $CFG;
+    global $db, $CFG;
 
     if (isset($CFG->debug) && $CFG->debug > 7 && !$expectmultiple) {    // Debugging mode - don't use limit
-       $limit = '';
-    } else if ($nolimit) {
        $limit = '';
     } else {
        $limit = ' LIMIT 1';    // Workaround - limit to one record
     }
 
-    if (!$rs = get_recordset_sql($sql . $limit)) {
-        return false;   
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+
+    if (!$rs = $db->Execute($sql . $limit)) {
+        if (isset($CFG->debug) and $CFG->debug > 7) {    // Debugging mode - print checks
+            notify( $db->ErrorMsg() . '<br /><br />'. $sql . $limit );
+        }
+        if (!empty($CFG->dblogerror)) {
+            $debug=array_shift(debug_backtrace());
+            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql$limit");
+        }
+        return false;
     }
-    
-    $recordcount = $rs->RecordCount();
 
-    if ($recordcount == 0) {          // Found no records
-        return false; 
+    if (!$recordcount = $rs->RecordCount()) {
+        return false;                 // Found no records
+    }
 
-    } else if ($recordcount == 1) {    // Found one record
+    if ($recordcount == 1) {          // Found one record
         return (object)$rs->fields;
 
     } else {                          // Error: found more than one record
@@ -601,7 +639,7 @@ function get_record_sql($sql, $expectmultiple=false, $nolimit=false) {
  * @param string $table The database table to be checked against.
  * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return object|false Returns an array of found records (as objects) or false if no records or error occured.
+ * @return array|false Returns an array of found records (as objects) or false if no records or error occured.
  */
 function get_record_select($table, $select='', $fields='*') {
 
@@ -614,72 +652,33 @@ function get_record_select($table, $select='', $fields='*') {
     return get_record_sql('SELECT '. $fields .' FROM '. $CFG->prefix . $table .' '. $select);
 }
 
-/**
- * Get a number of records as an ADODB RecordSet.
- *
- * Selects records from the table $table.
- * 
- * If specified, only records where the field $field has value $value are retured.
- * 
- * If specified, the results will be sorted as specified by $sort. This
- * is added to the SQL as "ORDER BY $sort". Example values of $sort
- * mightbe "time ASC" or "time DESC".
- * 
- * If $fields is specified, only those fields are returned.
- * Use this wherever possible to reduce memory requirements.
- * 
- * If you only want some of the records, specify $limitfrom and $limitnum.
- * The query will skip the first $limitfrom records (according to the sort
- * order) and then return the next $limitnum records. If either of $limitfrom
- * or $limitnum is specified, both must be present.
- * 
- * The return value is an ADODB RecordSet object
- * @link http://phplens.com/adodb/reference.functions.adorecordset.html
- * if the query succeeds. If an error occurrs, false is returned.
- *
- * @param string $table the table to query.
- * @param string $field a field to check (optional).
- * @param string $value the value the field must have (requred if field1 is given, else optional).
- * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
- * @param string $fields a comma separated list of fields to return (optional, by default all fields are returned).
- * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
- * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
- * @return mixed an ADODB RecordSet object, or false if an error occured.
- */
-function get_recordset($table, $field='', $value='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
-
-    if ($field) {
-        $select = "$field = '$value'";
-    } else {
-        $select = '';
-    }
-    
-    return get_recordset_select($table, $select, $sort, $fields, $limitfrom, $limitnum);
-}
 
 /**
- * Get a number of records as an ADODB RecordSet.
+ * Get a number of records as an array of objects
  *
- * If given, $select is used as the SELECT parameter in the SQL query,
- * otherwise all records from the table are returned.
- * 
- * Other arguments and the return type as for @see function get_recordset. 
+ * Can optionally be sorted eg "time ASC" or "time DESC"
+ * If "fields" is specified, only those fields are returned
+ * The "key" is the first column returned, eg usually "id"
+ * limitfrom and limitnum must both be specified or not at all
  *
  * @uses $CFG
- * @param string $table the table to query.
- * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
- * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
- * @param string $fields a comma separated list of fields to return (optional, by default all fields are returned).
- * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
- * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
- * @return mixed an ADODB RecordSet object, or false if an error occured.
+ * @param string $table The database table to be checked against.
+  * @param string $field The database field name to search
+  * @param string $value The value to search for in $field
+  * @param string $sort Sort order (as valid SQL sort parameter)
+ * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @param int $limitfrom Return a subset of results starting at this value (*must* set $limitnum)
+ * @param int $limitnum Return a subset of results, return this number (*must* set $limitfrom)
+ * @return array|false Returns an array of found records (as objects) or false if no records or error occured.
  */
-function get_recordset_select($table, $select='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
+function get_records($table, $field='', $value='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
 
     global $CFG;
 
-    if ($select) {
-        $select = ' WHERE '. $select;
+    if ($field) {
+        $select = 'WHERE '. $field .' = \''. $value .'\'';
+    } else {
+        $select = '';
     }
 
     if ($limitfrom !== '') {
@@ -689,54 +688,98 @@ function get_recordset_select($table, $select='', $sort='', $fields='*', $limitf
     }
 
     if ($sort) {
-        $sort = ' ORDER BY '. $sort;
+        $sort = 'ORDER BY '. $sort;
     }
 
-    return get_recordset_sql('SELECT '. $fields .' FROM '. $CFG->prefix . $table . $select . $sort .' '. $limit);
+    return get_records_sql('SELECT '. $fields .' FROM '. $CFG->prefix . $table .' '. $select .' '. $sort .' '. $limit);
 }
 
 /**
- * Get a number of records as an ADODB RecordSet.
+ * Get a number of records as an array of objects
  *
- * Only records where $field takes one of the values $values are returned.
- * $values should be a comma-separated list of values, for example "4,5,6,10"
- * or "'foo','bar','baz'".
- * 
- * Other arguments and the return type as for @see function get_recordset. 
+ * Can optionally be sorted eg "time ASC" or "time DESC"
+ * "select" is a fragment of SQL to define the selection criteria
+ * The "key" is the first column returned, eg usually "id"
+ * limitfrom and limitnum must both be specified or not at all
  *
- * @param string $table the table to query.
- * @param string $field a field to check (optional).
- * @param string $values the value the field must have (requred if field1 is given, else optional).
- * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
- * @param string $fields a comma separated list of fields to return (optional, by default all fields are returned).
- * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
- * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
- * @return mixed an ADODB RecordSet object, or false if an error occured.
+ * @uses $CFG
+ * @param string $table The database table to be checked against.
+ * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
+ * @param string $sort  Sort order (as valid SQL sort parameter)
+ * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @param int $limitfrom Return a subset of results starting at this value (*must* set $limitnum)
+ * @param int $limitnum Return a subset of results, return this number (*must* set $limitfrom)
+ * @return array|false Returns an array of found records (as objects) or false if no records or error occured.
  */
-function get_recordset_list($table, $field='', $values='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
+function get_records_select($table, $select='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
+
+    global $CFG;
+
+    if ($select) {
+        $select = 'WHERE '. $select;
+    }
+
+    if ($limitfrom !== '') {
+        $limit = sql_paging_limit($limitfrom, $limitnum);
+    } else {
+        $limit = '';
+    }
+
+    if ($sort) {
+        $sort = 'ORDER BY '. $sort;
+    }
+
+    return get_records_sql('SELECT '. $fields .' FROM '. $CFG->prefix . $table .' '. $select .' '. $sort .' '. $limit);
+}
+
+
+/**
+ * Get a number of records as an array of objects
+ *
+ * Differs from get_records() in that the values variable
+ * can be a comma-separated list of values eg  "4,5,6,10"
+ * Can optionally be sorted eg "time ASC" or "time DESC"
+ * The "key" is the first column returned, eg usually "id"
+ *
+ * @uses $CFG
+ * @param string $table The database table to be checked against.
+ * @param string $field The field to search
+ * @param string $values Comma separated list of possible value
+ * @param string $sort Sort order (as valid SQL sort parameter)
+ * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @return array|false Returns an array of found records (as objects) or false if no records or error occured.
+ */
+function get_records_list($table, $field='', $values='', $sort='', $fields='*') {
+
+    global $CFG;
 
     if ($field) {
-        $select = "$field IN ($values)";
+        $select = 'WHERE '. $field .' IN ( '. $values .')';
     } else {
         $select = '';
     }
 
-    return get_recordset_select($table, $select, $sort, $fields, $limitfrom, $limitnum);
+    if ($sort) {
+        $sort = 'ORDER BY '. $sort;
+    }
+
+    return get_records_sql('SELECT '. $fields .' FROM '. $CFG->prefix . $table .' '. $select .' '. $sort);
 }
 
+
+
 /**
- * Get a number of records as an ADODB RecordSet.
+ * Get a number of records as an array of objects
  *
- * $sql must be a complete SQL query.
- *  
- * The return type is as for @see function get_recordset. 
+ * The "key" is the first column returned, eg usually "id"
+ * The sql statement is provided as a string.
  *
  * @uses $CFG
  * @uses $db
- * @param string $sql the SQL select query to execute.
- * @return mixed an ADODB RecordSet object, or false if an error occured.
+ * @param string $sql The SQL string you wish to be executed.
+ * @return array|false Returns an array of found records (as objects) or false if no records or error occured.
  */
-function get_recordset_sql($sql) {
+function get_records_sql($sql) {
 
     global $CFG, $db;
 
@@ -753,17 +796,7 @@ function get_recordset_sql($sql) {
         return false;
     }
 
-    return $rs;
-}
-
-/**
- * Utility function used by the following 4 methods.
- * 
- * @param object an ADODB RecordSet object.
- * @return mixed mixed an array of objects, or false if an error occured or the RecordSet was empty.
- */
-function recordset_to_array($rs) {
-    if ($rs && $rs->RecordCount() > 0) {
+    if ( $rs->RecordCount() > 0 ) {
         if ($records = $rs->GetAssoc(true)) {
             foreach ($records as $key => $record) {
                 $objects[$key] = (object) $record;
@@ -778,211 +811,164 @@ function recordset_to_array($rs) {
 }
 
 /**
- * Get a number of records as an array of objects.
- *
- * Convenience call -- use only for small datasets. 
- * Consider using @see function get_recordset instead.
- *
- * Arguments as for @see function get_recordset.
- * 
- * If the query succeeds and returns at least one record, the
- * return value is an array of objects, one object for each
- * record found. The array key is the value from the first 
- * column of the result set. The object associated with that key
- * has a member variable for each column of the results.
- *
- * @param string $table the table to query.
- * @param string $field a field to check (optional).
- * @param string $value the value the field must have (requred if field1 is given, else optional).
- * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
- * @param string $fields a comma separated list of fields to return (optional, by default all fields are returned).
- * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
- * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
- * @return mixed an array of objects, or false if no records were found or an error occured.
- */
-function get_records($table, $field='', $value='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
-    $rs = get_recordset($table, $field, $value, $sort, $fields, $limitfrom, $limitnum);
-    return recordset_to_array($rs);
-}
-
-/**
- * Get a number of records as an array of objects.
- *
- * Convenience call -- use only for small datasets. 
- * Consider using @see function get_recordset_select instead.
- *
- * Arguments as for @see function get_recordset_select.
- * Return value as for @see function get_records.
- *
- * @param string $table the table to query.
- * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
- * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
- * @param string $fields a comma separated list of fields to return (optional, by default all fields are returned).
- * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
- * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
- * @return mixed an array of objects, or false if no records were found or an error occured.
- */
-function get_records_select($table, $select='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
-    $rs = get_recordset_select($table, $select, $sort, $fields, $limitfrom, $limitnum);
-    return recordset_to_array($rs);
-}
-
-/**
- * Get a number of records as an array of objects.
- *
- * Convenience call -- use only for small datasets. 
- * Consider using @see function get_recordset_list instead.
- *
- * Arguments as for @see function get_recordset_list.
- * Return value as for @see function get_records.
- *
+* Get a number of first two columns in records as an associative array of objects
+*
+* Can optionally be sorted eg "time ASC" or "time DESC"
+* If "fields" is specified, only those fields are returned
+* The "key" is the first column returned, eg usually "id"
+*
+ * @uses $CFG
  * @param string $table The database table to be checked against.
- * @param string $field The field to search
- * @param string $values Comma separated list of possible value
- * @param string $sort Sort order (as valid SQL sort parameter)
+ * @param string $field The name of the field to search
+ * @param string $value The value to search for
+ * @param string $sort Sort order (optional) - a valid SQL order parameter
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return mixed an array of objects, or false if no records were found or an error occured.
- */
-function get_records_list($table, $field='', $values='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
-    $rs = get_recordset_list($table, $field, $values, $sort, $fields, $limitfrom, $limitnum);
-    return recordset_to_array($rs);
+ * @return array|boolean An associative array with the results from the SQL call. False if error.
+*/
+function get_records_menu($table, $field='', $value='', $sort='', $fields='*') {
+
+    global $CFG;
+
+    if ($field) {
+        $select = 'WHERE '. $field .' = \''. $value .'\'';
+    } else {
+        $select = '';
+    }
+
+    if ($sort) {
+        $sort = 'ORDER BY '. $sort;
+    }
+
+    return get_records_sql_menu('SELECT '. $fields .' FROM '. $CFG->prefix . $table .' '. $select .' '. $sort);
 }
 
-/**
- * Get a number of records as an array of objects.
- *
- * Convenience call -- use only for small datasets. 
- * Consider using @see function get_recordset_sql instead.
- *
- * Arguments as for @see function get_recordset_sql.
- * Return value as for @see function get_records.
- * 
- * @param string $sql the SQL select query to execute.
- * @return mixed an array of objects, or false if no records were found or an error occured.
- */
-function get_records_sql($sql) {
-    $rs = get_recordset_sql($sql);
-    return recordset_to_array($rs);
-}
 
 /**
- * Utility function used by the following 3 methods.
+ * Get a number of records (first 2 columns)  as an associative array of values
  * 
- * @param object an ADODB RecordSet object with two columns.
- * @return mixed an associative array, or false if an error occured or the RecordSet was empty.
+ * Can optionally be sorted eg "time ASC" or "time DESC"
+ * "select" is a fragment of SQL to define the selection criteria
+ * Returns associative array of first two fields
+ *
+ * @uses $CFG
+ * @param string $table The database table to be checked against.
+ * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
+ * @param string $sort Sort order (optional) - a valid SQL order parameter
+ * @param string $fields A comma separated list of fields to be returned from the chosen table.
+ * @return array|boolean  An associative array with the results from the SQL call. False if error
  */
-function recordset_to_menu($rs) {
-    if ($rs && $rs->RecordCount() > 0) {
+function get_records_select_menu($table, $select='', $sort='', $fields='*') {
+
+    global $CFG;
+
+    if ($select) {
+        $select = 'WHERE '. $select;
+    }
+
+    if ($sort) {
+        $sort = 'ORDER BY '. $sort;
+    }
+
+    return get_records_sql_menu('SELECT '. $fields .' FROM '. $CFG->prefix . $table .' '. $select .' '. $sort);
+}
+
+
+/**
+ * Retrieve an associative array of the first two columns returned from a SQL statment.
+ *
+ * Given a SQL statement, this function returns an associative
+ * array of the first two columns.  This is most useful in
+ * combination with the {@link choose_from_menu()} function to create
+ * a form menu.
+ *
+ * @uses $CFG
+ * @uses $db
+ * @param string $sql The SQL string you wish to be executed.
+ * @return array|boolean An associative array with the results from the SQL call. False if error.
+ * @todo Finish documenting this function
+ */
+function get_records_sql_menu($sql) {
+
+    global $CFG, $db;
+
+
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+
+    if (!$rs = $db->Execute($sql)) {
+        if (isset($CFG->debug) and $CFG->debug > 7) {
+            notify($db->ErrorMsg() .'<br /><br />'. $sql);
+        }
+        if (!empty($CFG->dblogerror)) {
+            $debug=array_shift(debug_backtrace());
+            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
+        }
+        return false;
+    }
+
+    if ( $rs->RecordCount() > 0 ) {
         while (!$rs->EOF) {
             $menu[$rs->fields[0]] = $rs->fields[1];
             $rs->MoveNext();
         }
         return $menu;
+
     } else {
         return false;
     }
 }
 
 /**
- * Get the first two columns from a number of records as an associative array.
+ * Get a single field from a database record
  *
- * Arguments as for @see function get_recordset.
- * 
- * If no errors occur, and at least one records is found, the return value
- * is an associative whose keys come from the first field of each record,
- * and whose values are the corresponding second fields. If no records are found,
- * or an error occurs, false is returned.
- *
- * @param string $table the table to query.
- * @param string $field a field to check (optional).
- * @param string $value the value the field must have (requred if field1 is given, else optional).
- * @param string $sort an order to sort the results in (optional, a valid SQL ORDER BY parameter).
- * @param string $fields a comma separated list of fields to return (optional, by default all fields are returned).
- * @return mixed an associative array, or false if no records were found or an error occured.
- */
-function get_records_menu($table, $field='', $value='', $sort='', $fields='*') {
-    $rs = get_recordset($table, $field, $value, $sort, $fields);
-    return recordset_to_menu($rs);
-}
-
-/**
- * Get the first two columns from a number of records as an associative array.
- *
- * Arguments as for @see function get_recordset_select.
- * Return value as for @see function get_records_menu.
- *
+ * @uses $CFG
+ * @uses $db
  * @param string $table The database table to be checked against.
- * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
- * @param string $sort Sort order (optional) - a valid SQL order parameter
- * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return mixed an associative array, or false if no records were found or an error occured.
- */
-function get_records_select_menu($table, $select='', $sort='', $fields='*') {
-    $rs = get_recordset_select($table, $select, $sort, $fields);
-    return recordset_to_menu($rs);
-}
-
-/**
- * Get the first two columns from a number of records as an associative array.
- *
- * Arguments as for @see function get_recordset_sql.
- * Return value as for @see function get_records_menu.
- *
- * @param string $sql The SQL string you wish to be executed.
- * @return mixed an associative array, or false if no records were found or an error occured.
- */
-function get_records_sql_menu($sql) {
-    $rs = get_recordset_sql($sql);
-    return recordset_to_menu($rs);
-}
-
-/**
- * Get a single value from a table row where all the given fields match the given values.
- *
- * @param string $table the table to query.
- * @param string $return the field to return the value of.
- * @param string $field1 the first field to check (optional).
- * @param string $value1 the value field1 must have (requred if field1 is given, else optional).
- * @param string $field2 the second field to check (optional).
- * @param string $value2 the value field2 must have (requred if field2 is given, else optional).
- * @param string $field3 the third field to check (optional).
- * @param string $value3 the value field3 must have (requred if field3 is given, else optional).
- * @return mixed the specified value, or false if an error occured.
+ * @param string $field1 The first table field to be checked for a given value. Do not supply a field1 string to leave out a WHERE clause altogether.
+ * @param string $value1 The value to match if field1 is specified.
+ * @param string $field2 The second table field to be checked for a given value. 
+ * @param string $value2 The value to match if field2 is specified.
+ * @param string $field3 The third table field to be checked for a given value. 
+ * @param string $value3 The value to match if field3 is specified.
+ * @return mixed|false Returns the value return from the SQL statment or false if an error occured.
+ * @todo Finish documenting this function
  */
 function get_field($table, $return, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
-   
-    global $CFG;
-    $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
 
-    $rs = get_recordset_sql('SELECT ' . $return . ' FROM ' . $CFG->prefix . $table . ' ' . $select);
+    global $db, $CFG;
 
-    if ($rs && $rs->RecordCount() == 1) {
+    $select = 'WHERE '. $field1 .' = \''. $value1 .'\'';
+
+    if ($field2) {
+        $select .= ' AND '. $field2 .' = \''. $value2 .'\'';
+        if ($field3) {
+            $select .= ' AND '. $field3 .' = \''. $value3 .'\'';
+        }
+    }
+
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+
+    $rs = $db->Execute('SELECT '. $return .' FROM '. $CFG->prefix . $table .' '. $select);
+    if (!$rs) {
+        if (isset($CFG->debug) and $CFG->debug > 7) {
+            notify($db->ErrorMsg() .'<br /><br />SELECT '. $return .' FROM '. $CFG->prefix . $table .' '. $select);
+        }
+        if (!empty($CFG->dblogerror)) {
+            $debug=array_shift(debug_backtrace());
+            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  SELECT $return FROM $CFG->prefix$table $select");
+        }
+        return false;
+    }
+
+    if ( $rs->RecordCount() == 1 ) {
         return $rs->fields[$return];
     } else {
         return false;
     }
 }
 
-/**
- * Get a single value from a table.
- *
- * @param string $sql an SQL statement expected to return a single value.
- * @return mixed the specified value, or false if an error occured.
- */
-function get_field_sql($sql) {
-
-    $rs = get_recordset_sql($sql);
-
-    if ($rs && $rs->RecordCount() == 1) {
-        return $rs->fields[0];
-    } else {
-        return false;
-    }
-}
 
 /**
- * Get an array of data from one or more fields from a database 
- * use to get a column, or a series of distinct values
+ * Get a single field from a database record
  *
  * @uses $CFG
  * @uses $db
@@ -990,7 +976,7 @@ function get_field_sql($sql) {
  * @return mixed|false Returns the value return from the SQL statment or false if an error occured.
  * @todo Finish documenting this function
  */
-function get_fieldset_sql($sql) {
+function get_field_sql($sql) {
 
     global $db, $CFG;
 
@@ -1008,33 +994,27 @@ function get_fieldset_sql($sql) {
         return false;
     }
 
-    if ( $rs->RecordCount() > 0 ) {
-        $results = array();
-        while (!$rs->EOF) {
-            array_push($results, $rs->fields[0]);
-            $rs->MoveNext();
-        }
-        return $results;
+    if ( $rs->RecordCount() == 1 ) {
+        return $rs->fields[0];
     } else {
         return false;
     }
 }
 
 /**
- * Set a single field in the table row where all the given fields match the given values.
+ * Set a single field in a database record
  *
  * @uses $CFG
  * @uses $db
  * @param string $table The database table to be checked against.
- * @param string $newfield the field to set.
- * @param string $newvalue the value to set the field to.
- * @param string $field1 the first field to check (optional).
- * @param string $value1 the value field1 must have (requred if field1 is given, else optional).
- * @param string $field2 the second field to check (optional).
- * @param string $value2 the value field2 must have (requred if field2 is given, else optional).
- * @param string $field3 the third field to check (optional).
- * @param string $value3 the value field3 must have (requred if field3 is given, else optional).
- * @return mixed An ADODB RecordSet object with the results from the SQL call or false.
+ * @param string $field1 The first table field to be checked for a given value. Do not supply a field1 string to leave out a WHERE clause altogether.
+ * @param string $value1 The value to match if field1 is specified.
+ * @param string $field2 The second table field to be checked for a given value. 
+ * @param string $value2 The value to match if field2 is specified.
+ * @param string $field3 The third table field to be checked for a given value. 
+ * @param string $value3 The value to match if field3 is specified.
+ * @return array An associative array with the results from the SQL call.
+ * @todo Verify return type
  */
 function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $value2='', $field3='', $value3='') {
 
@@ -1042,24 +1022,32 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
-    $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
+    $select = 'WHERE '. $field1 .' = \''. $value1 .'\'';
+
+    if ($field2) {
+        $select .= ' AND '. $field2 .' = \''. $value2 .'\'';
+        if ($field3) {
+            $select .= ' AND '. $field3 .' = \''. $value3 .'\'';
+        }
+    }
 
     return $db->Execute('UPDATE '. $CFG->prefix . $table .' SET '. $newfield  .' = \''. $newvalue .'\' '. $select);
 }
 
 /**
- * Delete the records from a table where all the given fields match the given values.
+ * Delete one or more records from a table
  *
  * @uses $CFG
  * @uses $db
- * @param string $table the table to delete from.
- * @param string $field1 the first field to check (optional).
- * @param string $value1 the value field1 must have (requred if field1 is given, else optional).
- * @param string $field2 the second field to check (optional).
- * @param string $value2 the value field2 must have (requred if field2 is given, else optional).
- * @param string $field3 the third field to check (optional).
- * @param string $value3 the value field3 must have (requred if field3 is given, else optional).
- * @return mixed An ADODB RecordSet object with the results from the SQL call or false.
+ * @param string $table The database table to be checked against.
+ * @param string $field1 The first table field to be checked for a given value. Do not supply a field1 string to leave out a WHERE clause altogether.
+ * @param string $value1 The value to match if field1 is specified.
+ * @param string $field2 The second table field to be checked for a given value. 
+ * @param string $value2 The value to match if field2 is specified.
+ * @param string $field3 The third table field to be checked for a given value. 
+ * @param string $value3 The value to match if field3 is specified.
+ * @return array An associative array with the results from the SQL call.
+ * @todo Verify return type
  */
 function delete_records($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
 
@@ -1067,7 +1055,17 @@ function delete_records($table, $field1='', $value1='', $field2='', $value2='', 
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
-    $select = where_clause($field1, $value1, $field2, $value2, $field3, $value3);
+    if ($field1) {
+        $select = 'WHERE '. $field1 .' = \''. $value1 .'\'';
+        if ($field2) {
+            $select .= ' AND '. $field2 .' = \''. $value2 .'\'';
+            if ($field3) {
+                $select .= ' AND '. $field3 .' = \''. $value3 .'\'';
+            }
+        }
+    } else {
+        $select = '';
+    }
 
     return $db->Execute('DELETE FROM '. $CFG->prefix . $table .' '. $select);
 }
@@ -1079,7 +1077,7 @@ function delete_records($table, $field1='', $value1='', $field2='', $value2='', 
  * @uses $db
  * @param string $table The database table to be checked against.
  * @param string $select A fragment of SQL to be used in a where clause in the SQL call (used to define the selection criteria).
- * @return object A PHP standard object with the results from the SQL call.
+ * @return array An associative array with the results from the SQL call.
  * @todo Verify return type.
  */
 function delete_records_select($table, $select='') {
@@ -1105,36 +1103,33 @@ function delete_records_select($table, $select='') {
  * @uses $CFG
  * @param string $table The database table to be checked against.
  * @param array $dataobject A data object with values for one or more fields in the record
- * @param bool $returnid Should the id of the newly created record entry be returned? If this option is not requested then true/false is returned.
+ * @param boolean $returnid Should the id of the newly created record entry be returned? If this option is not requested then true/false is returned.
  * @param string $primarykey The primary key of the table we are inserting into (almost always "id")
  */
 function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
     global $db, $CFG;
-    static $empty_rs_cache;
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
-    /// In Moodle we always use auto-numbering fields for the primary key
-    /// so let's unset it now before it causes any trouble later
-    unset($dataobject->{$primarykey});
-
-    /// Get an empty recordset. Cache for multiple inserts.
-    if (empty($empty_rs_cache[$table])) {
-        /// Execute a dummy query to get an empty recordset
-        if (!$empty_rs_cache[$table] = $db->Execute('SELECT * FROM '. $CFG->prefix . $table .' WHERE '. $primarykey  .' = \'-1\'')) {
-            return false;
-        }
+/// Execute a dummy query to get an empty recordset
+    if (!$rs = $db->Execute('SELECT * FROM '. $CFG->prefix . $table .' WHERE '. $primarykey  .' = \'-1\'')) {
+        return false;
     }
 
-    $rs = $empty_rs_cache[$table];
+/// In Moodle we always use auto-numbering fields for the primary ID
+/// so let's unset it now before it causes any trouble
+
+    unset($dataobject->id);
 
     /// Postgres doesn't have the concept of primary key built in
     /// and will return the OID which isn't what we want.
     /// The efficient and transaction-safe strategy is to 
     /// move the sequence forward first, and make the insert
     /// with an explicit id.
-    if ( $CFG->dbtype === 'postgres7' && $returnid == true ) {
+    if ( empty($dataobject->{$primarykey}) 
+         && $CFG->dbtype === 'postgres7'      
+         && $returnid == true ) {        
         if ($nextval = (int)get_field_sql("SELECT NEXTVAL('{$CFG->prefix}{$table}_{$primarykey}_seq')")) {
             $dataobject->{$primarykey} = $nextval;            
         } 
@@ -1218,7 +1213,7 @@ function addslashes_object( $dataobject ) {
  * @uses $db
  * @param string $table The database table to be checked against.
  * @param array $dataobject An object with contents equal to fieldname=>fieldvalue. Must have an entry for 'id' to map to the table specified.
- * @return bool
+ * @return boolean
  * @todo Finish documenting this function. Dataobject is actually an associateive array, correct?
  */
 function update_record($table, $dataobject) {
@@ -1282,7 +1277,7 @@ function update_record($table, $dataobject) {
  * @uses $CFG
  * @param string $username The name of the user to be tested for admin rights
  * @param string $md5password The password supplied by the user in md5 encrypted format.
- * @return bool
+ * @return boolean
  */
 function adminlogin($username, $md5password) {
 
@@ -1331,7 +1326,8 @@ function get_admin () {
  * Returns list of all admins
  *
  * @uses $CFG
- * @return object
+ * @return array An array of {@link $USER} records.
+ * @todo Finish documenting this function
  */
 function get_admins() {
 
@@ -1348,7 +1344,8 @@ function get_admins() {
  * Returns list of all creators
  *
  * @uses $CFG
- * @return object
+ * @return array An array of {@link $USER} objects.
+ * @todo Finish documenting this function
  */
 function get_creators() {
 
@@ -1365,7 +1362,7 @@ function get_courses_in_metacourse($metacourseid) {
     global $CFG;
 
     $sql = "SELECT c.id,c.shortname,c.fullname FROM {$CFG->prefix}course c, {$CFG->prefix}course_meta mc WHERE mc.parent_course = $metacourseid
-        AND mc.child_course = c.id ORDER BY c.shortname";
+        AND mc.child_course = c.id";
 
     return get_records_sql($sql);
 }
@@ -1383,8 +1380,8 @@ function get_courses_notin_metacourse($metacourseid,$count=false) {
     $alreadycourses = get_courses_in_metacourse($metacourseid);
     
     $sql .= " FROM {$CFG->prefix}course c WHERE ".((!empty($alreadycourses)) ? "c.id NOT IN (".implode(',',array_keys($alreadycourses)).")
-    AND " : "")." c.id !=$metacourseid and c.id != ".SITEID." and c.metacourse != 1 ".((empty($count)) ? " ORDER BY c.shortname" : "");
-    
+    AND " : "")." c.id !=$metacourseid and c.id != ".SITEID." and c.metacourse != 1";
+
     return get_records_sql($sql);
 }
 
@@ -1419,7 +1416,7 @@ function get_teacher($courseid) {
  *
  * @uses $CFG
  * @param int $courseid The course in question.
- * @return object|false  {@link $USER} records or false if error.
+ * @return array|false An array of {@link $USER} records or false if error.
  * @todo Finish documenting this function
  */
 function get_recent_enrolments($courseid, $timestart) {
@@ -1457,7 +1454,7 @@ function get_recent_enrolments($courseid, $timestart) {
  * @param string $search ?
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
  * @param string $exceptions ?
- * @return object
+ * @return array An array of {@link $USER} records.
  * @todo Finish documenting this function
  */
 function get_course_students($courseid, $sort='s.timeaccess', $dir='', $page=0, $recordsperpage=99999,
@@ -1599,7 +1596,7 @@ function count_course_students($course, $search='', $firstinitial='', $lastiniti
  * @param int $courseid The course in question.
  * @param string $sort ?
  * @param string $exceptions ? 
- * @return object
+ * @return array An array of {@link $USER} records.
  * @todo Finish documenting this function
  */
 function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='') {
@@ -1630,7 +1627,7 @@ function get_course_teachers($courseid, $sort='t.authority ASC', $exceptions='')
  * @param string $sort ?
  * @param string $exceptions ?
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return object
+ * @return array An array of {@link $USER} records.
  * @todo Finish documenting this function
  */
 function get_course_users($courseid, $sort='timeaccess DESC', $exceptions='', $fields='') {
@@ -1663,7 +1660,7 @@ function get_course_users($courseid, $sort='timeaccess DESC', $exceptions='', $f
  * @param string $searchtext ?
  * @param string $sort ?
  * @param string $exceptions ? 
- * @return object
+ * @return array  An array of {@link $USER} records.
  * @todo Finish documenting this function
  */
 function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions='') {
@@ -1731,7 +1728,7 @@ function search_users($courseid, $groupid, $searchtext, $sort='', $exceptions=''
  * @uses SITEID
  * @deprecated Use {@link get_course_users()} instead.
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return object|false  {@link $USER} records or false if error.
+ * @return array|false  An array of {@link $USER} records or false if error.
  * @todo Finish documenting this function. The return type need to be better defined.
  */
 function get_site_users($sort='u.lastaccess DESC', $fields='*', $exceptions='') {
@@ -1744,9 +1741,9 @@ function get_site_users($sort='u.lastaccess DESC', $fields='*', $exceptions='') 
  * Returns a subset of users
  *
  * @uses $CFG
- * @param bool $get If false then only a count of the records is returned
+ * @param boolean $get If false then only a count of the records is returned
  * @param string $search A simple string to search for
- * @param bool $confirmed A switch to allow/disallow unconfirmed users
+ * @param boolean $confirmed A switch to allow/disallow unconfirmed users
  * @param array(int) $exceptions A list of IDs to ignore, eg 2,4,5,8,9,10
  * @param string $sort A SQL snippet for the sorting criteria to use
  * @param string $firstinitial ?
@@ -1754,7 +1751,7 @@ function get_site_users($sort='u.lastaccess DESC', $fields='*', $exceptions='') 
  * @param string $page ?
  * @param string $recordsperpage ?
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return object|false|int  {@link $USER} records unless get is false in which case the integer count of the records found is returned. False is returned if an error is encountered.
+ * @return array|false|int  An array of {@link $USER} records unless get is false in which case the integer count of the records found is returned. False is returned if an error is encountered.
  * @todo Finish documenting this function. The return type needs to be better defined.
  */
 function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sort='firstname ASC',
@@ -1815,7 +1812,7 @@ function get_users($get=true, $search='', $confirmed=false, $exceptions='', $sor
  * @param string $search ?
  * @param string $firstinitial ?
  * @param string $lastinitial ?
- * @returnobject {@link $USER} records
+ * @return array  An array of {@link $USER} records
  * @todo Finish documenting this function
  */
 
@@ -1856,10 +1853,13 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
 
 
 /**
- * Full list of users that have confirmed their accounts.
+ * shortdesc (optional)
+ *
+ * longdesc
  *
  * @uses $CFG
- * @return object
+ * @return array  An array of {@link $USER} records
+ * @todo Finish documenting this function
  */
 function get_users_confirmed() {
     global $CFG;
@@ -1873,11 +1873,13 @@ function get_users_confirmed() {
 
 
 /**
- * Full list of users that have not yet confirmed their accounts.
+ * shortdesc (optional)
+ *
+ * longdesc
  *
  * @uses $CFG
  * @param string $cutofftime ?
- * @return object  {@link $USER} records
+ * @return array  An array of {@link $USER} records
  * @todo Finish documenting this function
  */
 function get_users_unconfirmed($cutofftime=2000000000) {
@@ -1891,34 +1893,13 @@ function get_users_unconfirmed($cutofftime=2000000000) {
 
 
 /**
- * Full list of bogus accounts that are probably not ever going to be used
- *
- * @uses $CFG
- * @param string $cutofftime ?
- * @return object  {@link $USER} records
- * @todo Finish documenting this function
- */
-
-function get_users_not_fully_set_up($cutofftime=2000000000) {
-    global $CFG;
-    return get_records_sql("SELECT *
-                             FROM {$CFG->prefix}user
-                            WHERE confirmed = 1
-                             AND lastaccess > 0
-                             AND lastaccess < '$cutofftime'
-                             AND deleted = 0
-                             AND (lastname = '' OR firstname = '' OR email = '')");
-}
-
-
-/**
  * shortdesc (optional)
  *
  * longdesc
  *
  * @uses $CFG
  * @param string $cutofftime ?
- * @return object  {@link $USER} records
+ * @return array  An array of {@link $USER} records
  * @todo Finish documenting this function
  */
 function get_users_longtimenosee($cutofftime) {
@@ -1937,7 +1918,8 @@ function get_users_longtimenosee($cutofftime) {
  * @uses $CFG
  * @param int $courseid The id of the course in question.
  * @param int $userid The id of the user in question as found in the 'user' table 'id' field.
- * @return object
+ * @return array
+ * @todo Finish documenting this function
  */
 function get_groups($courseid, $userid=0) {
     global $CFG;
@@ -1963,7 +1945,7 @@ function get_groups($courseid, $userid=0) {
  * @param int $groupid The group in question.
  * @param string $sort ?
  * @param string $exceptions ?
- * @return object
+ * @return array
  * @todo Finish documenting this function
  */
 function get_group_users($groupid, $sort='u.lastaccess DESC', $exceptions='', $fields='u.*') {
@@ -1973,14 +1955,7 @@ function get_group_users($groupid, $sort='u.lastaccess DESC', $exceptions='', $f
     } else {
         $except = '';
     }
-    // in postgres, you can't have things in sort that aren't in the select, so...
-    $extrafield = str_replace('ASC','',$sort);
-    $extrafield = str_replace('DESC','',$extrafield);
-    $extrafield = trim($extrafield);
-    if (!empty($extrafield)) {
-        $extrafield = ','.$extrafield;
-    }
-    return get_records_sql("SELECT DISTINCT $fields $extrafield
+    return get_records_sql("SELECT DISTINCT $fields
                               FROM {$CFG->prefix}user u,
                                    {$CFG->prefix}groups_members m
                              WHERE m.groupid = '$groupid'
@@ -1994,7 +1969,7 @@ function get_group_users($groupid, $sort='u.lastaccess DESC', $exceptions='', $f
  * Currently unimplemented.
  * @uses $CFG
  * @param int $courseid The course in question.
- * @return object
+ * @return array
  */
 function get_users_not_in_group($courseid) {
     global $CFG;
@@ -2006,32 +1981,18 @@ function get_users_not_in_group($courseid) {
  * Returns an array of user objects
  *
  * @uses $CFG
- * @param int $groupid The group(s) in question.
+ * @param int $groupid The group in question.
  * @param string $sort How to sort the results
- * @return object (changed to groupids)
+ * @return array
  */
-function get_group_students($groupids, $sort='u.lastaccess DESC') {
-
+function get_group_students($groupid, $sort='u.lastaccess DESC') {
     global $CFG;
-
-    if (is_array($groupids)){
-        $groups = $groupids;
-        $groupstr = '(m.groupid = '.array_shift($groups);
-        foreach ($groups as $index => $value){
-            $groupstr .= ' OR m.groupid = '.$value;
-        }
-        $groupstr .= ')';
-    }
-    else {
-        $groupstr = 'm.groupid = '.$groupids;
-    }
-
     return get_records_sql("SELECT DISTINCT u.*
                               FROM {$CFG->prefix}user u,
                                    {$CFG->prefix}groups_members m,
                                    {$CFG->prefix}groups g,
                                    {$CFG->prefix}user_students s
-                             WHERE $groupstr
+                             WHERE m.groupid = '$groupid'
                                AND m.userid = u.id
                                AND m.groupid = g.id
                                AND g.courseid = s.course
@@ -2039,13 +2000,14 @@ function get_group_students($groupids, $sort='u.lastaccess DESC') {
                           ORDER BY $sort");
 }
 
+
 /**
  * Returns list of all the teachers who can access a group
  *
  * @uses $CFG
  * @param int $courseid The course in question.
  * @param int $groupid The group in question.
- * @return object
+ * @return array
  */
 function get_group_teachers($courseid, $groupid) {
 /// Returns a list of all the teachers who can access a group
@@ -2057,7 +2019,7 @@ function get_group_teachers($courseid, $groupid) {
             if (($teacher->authority > 0) and ismember($groupid, $teacher->id)) {  // Specific group teachers
                 continue;
             }
-            unset($teachers[$key]);
+            unset($teacher[$key]);
         }
     }
     return $teachers;
@@ -2070,20 +2032,18 @@ function get_group_teachers($courseid, $groupid) {
  * @uses $CFG
  * @param int $courseid The course in question.
  * @param int $userid The id of the user as found in the 'user' table.
- * @param int $groupid The id of the group the user is in.
- * @return object
+ * @return array
  * @todo Finish documenting this function
  */
 function user_group($courseid, $userid) {
     global $CFG;
 
-    return get_records_sql("SELECT g.*
+    return get_record_sql("SELECT g.*
                              FROM {$CFG->prefix}groups g,
                                   {$CFG->prefix}groups_members m
                              WHERE g.courseid = '$courseid'
                                AND g.id = m.groupid
-                               AND m.userid = '$userid'
-                               ORDER BY name ASC");
+                               AND m.userid = '$userid'");
 }
 
 
@@ -2154,13 +2114,8 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
         $selectsql = "{$CFG->prefix}course c $teachertable";
     }
 
-    $extrafield = str_replace('ASC','',$sort);
-    $extrafield = str_replace('DESC','',$extrafield);
-    $extrafield = trim($extrafield);
-    if (!empty($extrafield)) {
-        $extrafield = ','.$extrafield;
-    }
-    return get_records_sql("SELECT ".((!empty($teachertable)) ? " DISTINCT " : "")." $fields $extrafield FROM $selectsql ".((!empty($sort)) ? "ORDER BY $sort" : ""));
+
+    return get_records_sql("SELECT ".((!empty($teachertable)) ? " DISTINCT " : "")." $fields FROM $selectsql ".((!empty($sort)) ? "ORDER BY $sort" : ""));
 }
 
 
@@ -2215,32 +2170,25 @@ function get_courses_page($categoryid="all", $sort="c.sortorder ASC", $fields="c
 
 
 /**
- * List of courses that a user is a member of.
+ * shortdesc (optional)
+ *
+ * longdesc
  *
  * @uses $CFG
- * @param int $userid The user of interest
+ * @param int $userid ?
  * @param string $sort ?
- * @return object {@link $COURSE} records
+ * @return array  An array of {@link $COURSE} records
+ * @todo Finish documenting this function
  */
 function get_my_courses($userid, $sort='visible DESC,sortorder ASC') {
 
-    global $CFG, $USER;
+    global $CFG;
 
     $course = array();
 
     if ($students = get_records('user_students', 'userid', $userid, '', 'id, course')) {
         foreach ($students as $student) {
             $course[$student->course] = $student->course;
-        }
-    }
-
-    if (count($course) > 0) {
-        if ($courses = get_records_list('course', 'id', implode(',', $course))) {
-            foreach ($courses as $k => $c) {
-                if (empty($USER->admin) && (!$c->visible || !course_parent_visible($c))) {
-                    unset($course[$c->id]);
-                }
-            }
         }
     }
     if ($teachers = get_records('user_teachers', 'userid', $userid, '', 'id, course')) {
@@ -2270,7 +2218,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC') {
 
 
 /**
- * A list of courses that match a search
+ * Returns a list of courses that match a search
  *
  * @uses $CFG
  * @param array $searchterms ?
@@ -2278,7 +2226,7 @@ function get_my_courses($userid, $sort='visible DESC,sortorder ASC') {
  * @param int $page ?
  * @param int $recordsperpage ?
  * @param int $totalcount Passed in by reference. ?
- * @return object {@link $COURSE} records
+ * @return array  An array of {@link $COURSE} records
  * @todo Finish documenting this function
  */
 function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $recordsperpage=50, &$totalcount) {
@@ -2334,7 +2282,7 @@ function get_courses_search($searchterms, $sort='fullname ASC', $page=0, $record
 
     if ($courses) {  /// Remove unavailable courses from the list
         foreach ($courses as $key => $course) {
-            if (!$course->visible || !course_parent_visible($course)) {
+            if (!$course->visible) {
                 if (!isteacher($course->id)) {
                     unset($courses[$key]);
                     $totalcount--;
@@ -2365,7 +2313,7 @@ function get_categories($parent='none', $sort='sortorder ASC') {
     if ($categories) {  /// Remove unavailable categories from the list
         $creator = iscreator();
         foreach ($categories as $key => $category) {
-            if (!$category->visible || !category_parent_visible($category->parent)) {
+            if (!$category->visible) {
                 if (!$creator) {
                     unset($categories[$key]);
                 }
@@ -2385,38 +2333,20 @@ function get_categories($parent='none', $sort='sortorder ASC') {
 * $safe (bool) prevents it from assuming category-sortorder is unique, used to upgrade
 *       safely from 1.4 to 1.5
 */
-function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') {
-    
+function fix_course_sortorder($categoryid=0, $n=0, $safe=0) {
+
     global $CFG;
 
     $count = 0;
     
-    $catgap    = 1000; // "standard" category gap
-    $tolerance = 200;  // how "close" categories can get
-    
-    if ($categoryid > 0){
-        // update depth and path
-        $cat   = get_record('course_categories', 'id', $categoryid);
-        if ($cat->parent == 0) {
-            $depth = 0;
-            $path  = '';
-        } else if ($depth == 0 ) { // doesn't make sense; get from DB
-            // this is only called if the $depth parameter looks dodgy
-            $parent = get_record('course_categories', 'id', $cat->parent);
-            $path  = $parent->path;
-            $depth = $parent->depth;
-        }
-        $path  = $path . '/' . $categoryid;
-        $depth = $depth + 1;
+    $catgap    = 1000; # "standard" category gap
+    $tolerance = 200;  # how "close" categories can get
 
-        set_field('course_categories', 'path',  addslashes($path),  'id', $categoryid);        
-        set_field('course_categories', 'depth', $depth, 'id', $categoryid);        
-    }
 
     // get some basic info about courses in the category
     $info = get_record_sql('SELECT MIN(sortorder) AS min, 
                                    MAX(sortorder) AS max,
-                                   COUNT(sortorder)  AS count                                   
+                                   COUNT(sortorder)  AS count
                             FROM ' . $CFG->prefix . 'course 
                             WHERE category=' . $categoryid);
     if (is_object($info)) { // no courses?
@@ -2490,7 +2420,7 @@ function fix_course_sortorder($categoryid=0, $n=0, $safe=0, $depth=0, $path='') 
 
     if ($categories = get_categories($categoryid)) {
         foreach ($categories as $category) {
-            $n = fix_course_sortorder($category->id, $n, $safe, $depth, $path);
+            $n = fix_course_sortorder($category->id, $n, $safe);
         }
     }
 
@@ -2546,9 +2476,12 @@ function make_default_scale() {
 /**
  * Returns a menu of all available scales from the site as well as the given course
  *
+ * Returns a menu of all available scales from the site as well as the given course
+ *
  * @uses $CFG
  * @param int $courseid The id of the course as found in the 'course' table.
- * @return object
+ * @return array
+ * @todo Finish documenting this function
  */
 function get_scales_menu($courseid=0) {
 
@@ -2597,7 +2530,7 @@ function update_timezone_records($timezones) {
  *
  * @uses $CFG
  * @param int $courseid The id of the course as found in the 'course' table.
- * @return object
+ * @return array
  * @todo Finish documenting this function
  */
 function get_course_mods($courseid) {
@@ -2618,7 +2551,7 @@ function get_course_mods($courseid) {
  * @param string $modulename ?
  * @param string $instance ?
  * @param int $courseid The id of the course as found in the 'course' table.
- * @return object
+ * @return array
  * @todo Finish documenting this function
  */
 function get_coursemodule_from_instance($modulename, $instance, $courseid=0) {
@@ -2639,63 +2572,6 @@ function get_coursemodule_from_instance($modulename, $instance, $courseid=0) {
 
 }
 
-/**
- * Returns an array of all the active instances of a particular module in given courses, sorted in the order they are defined
- *
- * Returns an array of all the active instances of a particular
- * module in given courses, sorted in the order they are defined
- * in the course.   Returns false on any errors.
- *
- * @uses $CFG
- * @param string  $modulename The name of the module to get instances for
- * @param array(courses)  $courses This depends on an accurate $course->modinfo
- * @todo Finish documenting this function. Is a course object to be documented as object(course) or array(course) since a coures object is really just an associative array, not a php object?
- */
-function get_all_instances_in_courses($modulename,$courses) {
-    global $CFG;
-    if (empty($courses) || !is_array($courses) || count($courses) == 0) {
-        return array();
-    }
-    if (!$rawmods = get_records_sql("SELECT cm.id as coursemodule, m.*,cw.section,cm.visible as visible,cm.groupmode, cm.course
-                            FROM {$CFG->prefix}course_modules cm,
-                                 {$CFG->prefix}course_sections cw,
-                                 {$CFG->prefix}modules md,
-                                 {$CFG->prefix}$modulename m
-                            WHERE cm.course IN (".implode(',',array_keys($courses)).") AND
-                                  cm.instance = m.id AND
-                                  cm.section = cw.id AND
-                                  md.name = '$modulename' AND
-                                  md.id = cm.module")) {
-        return array();
-    }
-
-    $outputarray = array();
-
-    foreach ($courses as $course) {
-        // Hide non-visible instances from students
-        if (isteacher($course->id)) {
-            $invisible = -1;
-        } else {
-            $invisible = 0;
-        }
-        
-        if (!$modinfo = unserialize($course->modinfo)) {
-            continue;
-        }
-        foreach ($modinfo as $mod) {
-            if ($mod->mod == $modulename and $mod->visible > $invisible) {
-                $instance = $rawmods[$mod->cm];
-                if (!empty($mod->extra)) {
-                    $instance->extra = $mod->extra;
-                }
-                $outputarray[] = $instance;
-            }
-        }
-    }
-
-    return $outputarray;
-
-}
 
 /**
  * Returns an array of all the active instances of a particular module in a given course, sorted in the order they are defined
@@ -2762,7 +2638,7 @@ function get_all_instances_in_course($modulename, $course) {
  * @uses $CFG
  * @param $moduletype ?
  * @param $module ?
- * @return bool
+ * @return boolean
  * @todo Finish documenting this function
  */
 function instance_is_visible($moduletype, $module) {
@@ -2816,7 +2692,7 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
 
     global $db, $CFG, $USER;
 
-    if ($cm === '' || is_null($cm)) { // postgres won't translate empty string to its default
+    if ($cm === '') { // postgres won't translate empty string to its default
         $cm = 0;
     }
 
@@ -2833,9 +2709,8 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
 
     $timenow = time();
     $info = addslashes($info);
-    if (!empty($url)) { // could break doing html_entity_decode on an empty var.
-        $url = html_entity_decode($url); // for php < 4.3.0 this is defined in moodlelib.php
-    }
+    $url = html_entity_decode($url); // for php < 4.3.0 this is defined in moodlelib.php
+
 
     if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; $PERF->logwrites++;};
 
@@ -2871,7 +2746,7 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
  * @param string $limitfrom ?
  * @param int $limitnum ?
  * @param int $totalcount Passed in by reference.
- * @return object
+ * @return array
  * @todo Finish documenting this function
  */
 function get_logs($select, $order='l.time DESC', $limitfrom='', $limitnum='', &$totalcount) {
@@ -2931,7 +2806,7 @@ function get_logs_usercourse($userid, $courseid, $coursestart) {
  * @param int $userid The id of the user as found in the 'user' table.
  * @param int $courseid The id of the course as found in the 'course' table.
  * @param string $daystart ?
- * @return object
+ * @return array
  * @todo Finish documenting this function
  */
 function get_logs_userday($userid, $courseid, $daystart) {
@@ -2963,6 +2838,7 @@ function get_logs_userday($userid, $courseid, $daystart) {
  * @param string $lastlogin The date from which we are searching
  * @return int
  */
+
 function count_login_failures($mode, $username, $lastlogin) {
 
     $select = 'module=\'login\' AND action=\'error\' AND time > '. $lastlogin;
@@ -3001,10 +2877,6 @@ function print_object($object) {
 /**
  * Returns the proper SQL to do paging
  *
- * @uses $CFG
- * @param string $page Offset page number
- * @param string $recordsperpage Number of records per page
- * @return string
  */
 function sql_paging_limit($page, $recordsperpage) {
     global $CFG;
@@ -3020,8 +2892,6 @@ function sql_paging_limit($page, $recordsperpage) {
 /**
  * Returns the proper SQL to do LIKE in a case-insensitive way
  *
- * @uses $CFG
- * @return string
  */
 function sql_ilike() {
     global $CFG;
@@ -3038,29 +2908,23 @@ function sql_ilike() {
 /**
  * Returns the proper SQL to do LIKE in a case-insensitive way
  *
- * @uses $CFG
- * @param string $firstname User's first name
- * @param string $lastname User's last name
- * @return string
  */
-function sql_fullname($firstname='firstname', $lastname='lastname') {
+function sql_fullname($firstname='firstname',$lastname='lastname') {
     global $CFG;
 
     switch ($CFG->dbtype) {
         case 'mysql':
-             return ' CONCAT('. $firstname .'," ",'. $lastname .') ';
+             return ' CONCAT('.$firstname.'," ",'.$lastname.') ';
         case 'postgres7':
-             return " ". $firstname ."||' '||". $lastname ." ";
+             return " ".$firstname."||' '||".$lastname." ";
         default:
-             return ' '. $firstname .'||" "||'. $lastname .' ';
+             return ' '.$firstname.'||" "||'.$lastname.' ';
     }
 }
 
 /**
  * Returns the proper SQL to do IS NULL
- * @uses $CFG
- * @param string $fieldname The field to add IS NULL to
- * @return string
+ *
  */
 function sql_isnull($fieldname) {
     global $CFG;
@@ -3071,91 +2935,6 @@ function sql_isnull($fieldname) {
         default:
              return $fieldname.' IS NULL';
     }
-}
-
-/** 
- * Prepare a SQL WHERE clause to select records where the given fields match the given values.
- * 
- * Prepares a where clause of the form
- *     WHERE field1 = value1 AND field2 = value2 AND field3 = value3
- * except that you need only specify as many arguments (zero to three) as you need.
- * 
- * @param string $field1 the first field to check (optional).
- * @param string $value1 the value field1 must have (requred if field1 is given, else optional).
- * @param string $field2 the second field to check (optional).
- * @param string $value2 the value field2 must have (requred if field2 is given, else optional).
- * @param string $field3 the third field to check (optional).
- * @param string $value3 the value field3 must have (requred if field3 is given, else optional).
- */
-function where_clause($field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
-    if ($field1) {
-        $select = "WHERE $field1 = '$value1'";
-        if ($field2) {
-            $select .= " AND $field2 = '$value2'";
-            if ($field3) {
-                $select .= " AND $field3 = '$value3'";
-            }
-        }
-    } else {
-        $select = '';
-    }
-    return $select;
-}
-
-/**
- * Checks for pg or mysql > 4
- */
-
-function check_db_compat() {
-    global $CFG,$db;
-    
-    if ($CFG->dbtype == 'postgres7') {
-        return true;
-    }
-    
-    if (!$rs = $db->Execute("SELECT version();")) {
-        return false;
-    }
-
-    if (intval($rs->fields[0]) <= 3) {
-        return false;
-    }
-
-    return true;
-}
-
-function course_parent_visible($course = null) {
-    return category_parent_visible($course->category);
-}
-
-function category_parent_visible($parent = 0) {
-    
-    static $visible;
-
-    if (!$parent) {
-        return true;
-    }
-    
-    if (empty($visible)) {
-        $visible = array(); // initialize
-    }
-
-    if (array_key_exists($parent,$visible)) {
-        return $visible[$parent];
-    }
-    
-    $category = get_record('course_categories', 'id', $parent);
-    $list = explode('/', preg_replace('/^\/(.*)$/', '$1', $category->path));
-    $list[] = $parent;
-    $parents = get_records_list('course_categories', 'id', implode(',', $list), 'depth DESC');
-    $v = true;
-    foreach ($parents as $p) {
-        if (!$p->visible) {
-            $v = false;
-        }
-    }
-    $visible[$parent] = $v; // now cache it
-    return $v;
 }
 
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:

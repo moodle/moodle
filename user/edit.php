@@ -57,10 +57,9 @@
 
 
     // load the relevant auth libraries
-    if (!empty($user->auth)) { 
+    if ($user->auth) { 
         $auth = $user->auth;
         if (!file_exists("$CFG->dirroot/auth/$auth/lib.php")) {
-            trigger_error("Can't find auth module $auth , default to internal.");
             $auth = "manual";    // Can't find auth module, default to internal
         }
         require_once("$CFG->dirroot/auth/$auth/lib.php");
@@ -95,22 +94,9 @@
         
         $usernew->maildisplay   = clean_param($usernew->maildisplay,   PARAM_INT);
         $usernew->mailformat    = clean_param($usernew->mailformat,    PARAM_INT);
-        if ($CFG->allowusermailcharset) {
-            $usernew->mailcharset = clean_param($usernew->mailcharset, PARAM_CLEAN);
-            if (!empty($usernew->mailcharset)) {
-                set_user_preference('mailcharset', $usernew->mailcharset, $user->id);
-            }
-        } else {
-            unset_user_preference('mailcharset', $user->id);
-        }
         $usernew->maildigest    = clean_param($usernew->maildigest,    PARAM_INT);
         $usernew->autosubscribe = clean_param($usernew->autosubscribe, PARAM_INT);
-        if (!empty($CFG->htmleditor)) {
-            $usernew->htmleditor    = clean_param($usernew->htmleditor,    PARAM_INT);
-        }
-        else {
-            unset( $usernew->htmleditor );
-        }
+        $usernew->htmleditor    = clean_param($usernew->htmleditor,    PARAM_INT);
         $usernew->emailstop     = clean_param($usernew->emailstop,     PARAM_INT);
 
         if (isset($usernew->timezone)) {
@@ -140,13 +126,11 @@
         // override locked values
         if (!isadmin()) {      
             $fields = get_user_fieldnames();
-            $authconfig = get_config( 'auth/' . $user->auth );
             foreach ($fields as $field) {
-                $configvariable = 'field_lock_' . $field;  
-                if ( $authconfig->{$configvariable} === 'locked'
-                     || ($authconfig->{$configvariable} === 'unlockedifempty' && !empty($user->$field)) ) {
-                    if (!empty( $user->$field)) {
-                        $usernew->$field = $user->$field;
+                $configvariable = 'auth_user_'.$field.'_editlock';
+                if (!empty($CFG->$configvariable)) {
+                    if (isset($usernew->$field) && $user->$field !== $usernew->$field) {
+                        $usernew->$field = $user->$field;                    
                     }
                 }
             }
@@ -211,7 +195,6 @@
                 $usernew->url = "http://".$usernew->url;
             }
 
-            $userold = get_record('user','id',$usernew->id);
             if (update_record("user", $usernew)) {
                 if (function_exists("auth_user_update")){
                     // pass a true $userold here 
@@ -239,18 +222,9 @@
                     }
                     if (isset($USER->newadminuser)) {
                         unset($USER->newadminuser);
-                        redirect("$CFG->wwwroot/", get_string('changessaved'));
+                        redirect("$CFG->wwwroot/", get_string("changessaved"));
                     }
-                    if (!empty($SESSION->wantsurl)) {  // User may have been forced to edit account, so let's 
-                                                       // send them to where they wanted to go originally
-                        $wantsurl = $SESSION->wantsurl;
-                        $SESSION->wantsurl = '';       // In case unset doesn't work as expected
-                        unset($SESSION->wantsurl);
-                        redirect($wantsurl, get_string('changessaved'));
-                    } else {
-                        redirect("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id", 
-                                  get_string("changessaved"));
-                    }
+                    redirect("$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id", get_string("changessaved"));
                 } else {
                     redirect("$CFG->wwwroot/$CFG->admin/user.php", get_string("changessaved"));
                 }
@@ -261,8 +235,6 @@
     }
 
 /// Otherwise fill and print the form.
-
-    $usehtmleditor = can_use_html_editor();
 
     $streditmyprofile = get_string("editmyprofile");
     $strparticipants = get_string("participants");
@@ -342,11 +314,9 @@
         echo '<script type="text/javascript">'."\n";
         echo '<!--'."\n";
 
-        $authconfig = get_config( 'auth/' . $user->auth );
-        foreach ($fields as $field) {            
-            $configvariable = 'field_lock_' . $field;
-            if ( $authconfig->{$configvariable} === 'locked'
-                 || ($authconfig->{$configvariable} === 'unlockedifempty' && !empty($user->$field)) ) {
+        foreach ($fields as $field) {
+            $configvariable = 'auth_user_'.$field.'_editlock';
+            if (!empty($CFG->$configvariable)) {
                 echo "eval('document.form.$field.disabled=true');\n";
             }
         }
@@ -356,10 +326,6 @@
     }
 
     print_simple_box_end();
-
-    if ($usehtmleditor) {
-        use_html_editor("description");
-    }
 
     if (!isset($USER->newadminuser)) {
         print_footer($course);

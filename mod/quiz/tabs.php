@@ -21,20 +21,20 @@
     $inactive = array();
 
     $row[] = new tabobject('info', "view.php?q=$quiz->id", get_string('info', 'quiz'));
-    $row[] = new tabobject('reports', "report.php?q=$quiz->id", get_string('reports', 'quiz'));
+    $row[] = new tabobject('attempts', "attempts.php?q=$quiz->id", get_string('attempts', 'quiz'));
     $row[] = new tabobject('preview', "attempt.php?q=$quiz->id", get_string('preview', 'quiz'));
     if (isteacheredit($course->id)) {
         $row[] = new tabobject('edit', "edit.php?quizid=$quiz->id", get_string('editquiz', 'quiz'));
-        $row[] = new tabobject('manualgrading', "grading.php?quizid=$quiz->id", get_string("manualgrading", "quiz")); 
         //$row[] = new tabobject('update', "$CFG->wwwroot/course/mod.php?update=$cm->id&amp;sesskey=$USER->sesskey", get_string('updatethis', '', get_string('modulename', 'quiz')));
     }
+    $row[] = new tabobject('reports', "report.php?q=$quiz->id", get_string('reports', 'quiz'));
 
     $tabs[] = $row;
 
     if ($currenttab == 'reports' and isset($mode)) {
         $inactive[] = 'reports';
         $allreports = get_list_of_plugins("mod/quiz/report");
-        $reportlist = array ('overview', 'regrade', 'analysis');   // Standard reports we want to show first
+        $reportlist = array ('simplestat', 'fullstat');   // Standard reports we want to show first
 
         foreach ($allreports as $report) {
             if (!in_array($report, $reportlist)) {

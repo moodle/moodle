@@ -8,6 +8,7 @@ $string['description'] = 'Contrôle des inscriptions par défaut. Un étudiant peut
 <li>on peut définir dans un cours une « clef d\'inscription » (une sorte de mot de passe). Quiconque possède cette clef a la possibilité de s\'inscrire soi-même à ce cours.</li>
 </ul>';
 $string['enrolname'] = 'Inscription interne';
-
+$string['parentlanguage'] = 'fr';
+$string['thisdirection'] = 'ltr';
 
 ?>

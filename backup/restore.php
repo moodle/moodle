@@ -14,11 +14,11 @@
     require_once("$CFG->libdir/wiki_to_markdown.php" );
 
     //Optional
-    $id = optional_param( 'id' );
-    $file = optional_param( 'file' );;
-    $cancel = optional_param( 'cancel' );
-    $launch = optional_param( 'launch' );
-    $to = optional_param( 'to' );
+    optional_variable($id);
+    optional_variable($file);
+    optional_variable($cancel);
+    optional_variable($launch);
+    optional_variable($to);
 
     //Check login       
     require_login();
@@ -112,7 +112,7 @@
     
     //Adjust some php variables to the execution of this script
     @ini_set("max_execution_time","3000");
-    raise_memory_limit("128M");
+    raise_memory_limit("memory_limit","128M");
 
     //Call the form, depending the step we are
 

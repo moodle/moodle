@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.6 development (2005052400)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
 
 
 $string['addresource'] = 'ÃÖÝ ãæÑÏ';
@@ -33,10 +33,6 @@ $string['filtername'] = 'ÑÈØ Âáí áÃÓãÇÁ ÇáãæÇÑÏ';
 $string['frameifpossible'] = 'ÖÚ ÇáãæÑÏ Ýí ÇáÇØÇÑ áÌÚá ÑæÇÈØ ÇáÊäÞá Ýí ÇáãæÞÚ ÙÇåÑÉ';
 $string['fulltext'] = 'ÇáäÕ ÈÇáßÇãá';
 $string['htmlfragment'] = 'ÔØÑ ãä HTML';
-$string['localfile'] = 'ãáÝ ãÍáí';
-$string['localfilechoose'] = 'ÇÎÊÑ ãáÝ ãÍáí (ÞÑÕ ãÏãÌ)';
-$string['localfilehelp'] = 'ÇáãÓÇÚÏÉ áÚÑÖ ÇáãáÝÇÊ ÇáãÍáíÉ';
-$string['localfileselect'] = 'ÇÎÊÑ åÐÇ ÇáãÓÇÑ ááãáÝ';
 $string['maindirectory'] = 'ãÌáÏ ÇáãáÝÇÊ ÇáÑÆíÓíÉ';
 $string['modulename'] = 'ãæÑÏ';
 $string['modulenameplural'] = 'ãæÇÑÏ';
@@ -76,7 +72,6 @@ $string['resourcetypehtml'] = 'ÃÚÏ ÕÝÍÉ æíÈ';
 $string['resourcetypelabel'] = 'ÇÏÑÌ ãáÕÞÉ';
 $string['resourcetypetext'] = 'ÇÚÏ ÕÝÍÉ äÕíÉ';
 $string['searchweb'] = 'ÇÈÍË Úä ÕÝÍÉ æíÈ';
-$string['serverurl'] = 'ÚäæÇä ÇáÎÇÏã  ($a->wwwroot)';
 $string['variablename'] = 'ÇÓã ÇáãÊÛíÑÇÊ';
 
 ?>

@@ -17,5 +17,8 @@ $string['filelockedmailsubject'] = '重大なエラー:エンロールメントファイル';
 $string['location'] = 'ファイルの場所';
 $string['mailadmin'] = '管理者にメール通知';
 $string['mailusers'] = 'ユーザにメール通知';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.6 development (2005090100)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['addresource'] = 'Lägg till resurs';
@@ -23,7 +23,6 @@ $string['configpopupwidth'] = 'Vilket ska det förinställda standardvalet för bre
 $string['configsecretphrase'] = 'Den här hemliga frasen används för att skapa det krypterade kodvärde som kan skickas till vissa resurser som en parameter. Den krypterade koden skapas av ett md5-värde av current_users (den aktuelle användarens) IP-adress konkatenerad med Din hemliga fras. t ex code = md5(IP.secretphrase). Detta gör det möjligt för målresursen att verifiera uppkopplingen som en extra säkerhetsåtgärd.';
 $string['configwebsearch'] = 'När Du lägger till en URL som en webbsida eller en webblänk så erbjuds användaren denna plats som en webbsajt. Detta för att hjälpa användaren att hitta det denne söker. ';
 $string['configwindowsettings'] = 'Detta ställer in standardvärdet för rutan för inställningar i Windows när Du lägger till nya resurser. Efter det att Du har gjort detta en första gång så blir detta en individuell inställning för varje användare.';
-$string['deploy'] = 'Lägg ut';
 $string['directlink'] = 'Direktlänk till den här filen';
 $string['directoryinfo'] = 'Alla filer i den valda katalogen kommer att visas.';
 $string['display'] = 'Visa';
@@ -40,7 +39,6 @@ $string['frameifpossible'] = 'Placera en resurs i en ram för att webbplatsens
 navigation ska fortsätta att vara synlig';
 $string['fulltext'] = 'Full text';
 $string['htmlfragment'] = 'HTML-fragment';
-$string['imspackageloaded'] = 'Paketet har laddats upp';
 $string['localfile'] = 'Lokal fil';
 $string['localfilechoose'] = 'Välj en lokal fil (CD-ROM)';
 $string['localfilehelp'] = 'Hjälp till att visa lokala filer';
@@ -50,7 +48,6 @@ $string['localfileselect'] = 'Välj den här sökvägen för filer';
 $string['maindirectory'] = 'HTML fragment';
 $string['modulename'] = 'Resurs';
 $string['modulenameplural'] = 'Resurser';
-$string['navigationbuttons'] = 'Knappar för navigation';
 $string['neverseen'] = 'Aldrig sedd';
 $string['newdirectories'] = 'Visa länkarna till biblioteket';
 $string['newfullscreen'] = 'Visa helskärm';
@@ -68,8 +65,6 @@ $string['notallowedlocalfileaccess'] = 'Tillgången till lokala filer är f.n. ava
 $string['note'] = 'OBS';
 $string['notefile'] = 'För att ladda upp fler filer till kursen (så att de uppträder i denna lista) använd <A HREF=$a >Filhanteraren</A>.';
 $string['notypechosen'] = 'Du måste välja typ.  Använd tillbakaknappen för att gå tillbaka och försöka igen.';
-$string['packagechanged'] = 'Det här IMS-paketet med innehåll har ändrats';
-$string['packagenotdeplyed'] = 'Det här IMS-paketet med innehåll har inte lagts ut';
 $string['pagedisplay'] = 'Visa den här resursen i det aktuella fönstret ';
 $string['pagewindow'] = 'Samma fönster';
 $string['pan'] = 'Pan';
@@ -90,16 +85,11 @@ $string['resourcetype9'] = 'Katalog';
 $string['resourcetypedirectory'] = 'Visa en katalog';
 $string['resourcetypefile'] = 'Länk till  fil eller  webbplats';
 $string['resourcetypehtml'] = 'Utforma en webbsida';
-$string['resourcetypeims'] = 'Lägg ut ett IMS-paket med innehåll ';
 $string['resourcetypelabel'] = 'Infoga en etikett';
-$string['resourcetyperepository'] = 'Länk till ett arkiverat objekt ';
 $string['resourcetypetext'] = 'Utforma en textsida';
 $string['searchweb'] = 'Sök en webbsida';
 $string['serverurl'] = 'URL till servern ($a->wwwroot)';
-$string['showcourseblocks'] = 'Visa kursblocken';
-$string['tableofcontents'] = 'Innehåöösförteckning';
 $string['variablename'] = 'Namn på variabel';
-$string['viewims'] = 'Visa IMS-paket med innehåll';
 $string['vol'] = 'Vol';
 
 ?>

@@ -7,11 +7,11 @@
 
     $modes = array("outline", "complete", "todaylogs", "alllogs");
 
-    $id = required_param('id',PARAM_INT);       // course id
-    $user = required_param('user',PARAM_INT);     // user id
-    $mode = optional_param('mode', "todaylogs", PARAM_ALPHA);
-    $page = optional_param('page', 0, PARAM_INT);
-    $perpage = optional_param('perpage', 100, PARAM_INT);
+    require_variable($id);       // course id
+    require_variable($user);     // user id
+    optional_variable($mode, "todaylogs");
+    optional_variable($page, "0");
+    optional_variable($perpage, "100");
 
     require_login();
 
@@ -78,69 +78,7 @@
             print_log($course, $user->id, 0, "l.time DESC", $page, $perpage, 
                       "user.php?id=$course->id&amp;user=$user->id&amp;mode=$mode");
             break;
-        case 'stats':
 
-            if (empty($CFG->enablestats)) {
-                error("Stats is not enabled.");
-            }
-
-            require_once($CFG->dirroot.'/lib/statslib.php');
-
-            stats_check_uptodate($course->id);
-
-            $earliestday = get_field_sql('SELECT timeend FROM '.$CFG->prefix.'stats_user_daily ORDER BY timeend LIMIT 1');
-            $earliestweek = get_field_sql('SELECT timeend FROM '.$CFG->prefix.'stats_user_weekly ORDER BY timeend LIMIT 1');
-            $earliestmonth = get_field_sql('SELECT timeend FROM '.$CFG->prefix.'stats_user_monthly ORDER BY timeend LIMIT 1');
-    
-            if (empty($earliestday)) $earliestday = time();
-            if (empty($earliestweek)) $earliestweek = time();
-            if (empty($earliestmonth)) $earliestmonth = time();
-            
-            $now = stats_get_base_daily();
-            $lastweekend = stats_get_base_weekly();
-            $lastmonthend = stats_get_base_monthly();
-
-            $timeoptions = stats_get_time_options($now,$lastweekend,$lastmonthend,$earliestday,$earliestweek,$earliestmonth);
-
-            if (empty($timeoptions)) { 
-                error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/user.php?id='.$course->id.'&user='.$user->id.'&mode=outline');
-            }
-
-            // use the earliest.
-            $time = array_pop(array_keys($timeoptions));
-            
-            $param = stats_get_parameters($time,STATS_REPORT_USER_VIEW,$course->id,STATS_MODE_DETAILED);
-
-            $param->table = 'user_'.$param->table;
-
-            $sql = 'SELECT timeend,'.$param->fields.' FROM '.$CFG->prefix.'stats_'.$param->table.' WHERE '
-            .(($course->id == SITEID) ? '' : ' courseid = '.$course->id.' AND ')
-                .' userid = '.$user->id
-                .' AND timeend >= '.$param->timeafter
-                .$param->extras
-                .' ORDER BY timeend DESC';
-            $stats = get_records_sql($sql);
-
-            if (empty($stats)) {
-                error(get_string('nostatstodisplay'), $CFG->wwwroot.'/course/user.php?id='.$course->id.'&user='.$user->id.'&mode=outline');
-            }
-
-            echo '<center><img src="'.$CFG->wwwroot.'/course/statsgraph.php?mode='.STATS_MODE_DETAILED.'&course='.$course->id.'&time='.$time.'&report='.STATS_REPORT_USER_VIEW.'&userid='.$user->id.'" /></center>';
-
-            $stats = stats_fix_zeros($stats,$param->timeafter,$param->table,(!empty($param->line2)),(!empty($param->line3)));
-            
-            $table = new object();
-            $table->align = array('left','center','center','center');
-            $param->table = str_replace('user_','',$param->table);
-            $table->head = array(get_string('periodending','moodle',$param->table),$param->line1,$param->line2,$param->line3);
-            foreach  ($stats as $stat) {
-                $a = array(userdate($stat->timeend,get_string('strftimedate'),$CFG->timezone),$stat->line1);
-                $a[] = $stat->line2;
-                $a[] = $stat->line3;
-                $table->data[] = $a;
-            }
-            print_table($table);
-            break;
         case "outline" :
         case "complete" :
         default:
@@ -239,7 +177,7 @@ function print_outline_row($mod, $instance, $result) {
     echo "   <a title=\"$mod->modfullname\"";
     echo "   href=\"../mod/$mod->modname/view.php?id=$mod->id\">".format_string($instance->name,true)."</a></td>";
     echo "<td>&nbsp;&nbsp;&nbsp;</td>";
-    echo "<td valign=\"top\">";
+    echo "<td valign=\"top\" bgcolor=\"white\">";
     if (isset($result->info)) {
         echo "$result->info";
     } else {
@@ -247,7 +185,7 @@ function print_outline_row($mod, $instance, $result) {
     }
     echo "</td>";
     echo "<td>&nbsp;&nbsp;&nbsp;</td>";
-    if (!empty($result->time)) {
+    if (isset($result->time)) {
         $timeago = format_time(time() - $result->time);
         echo "<td valign=\"top\" nowrap=\"nowrap\">".userdate($result->time)." ($timeago)</td>";
     }

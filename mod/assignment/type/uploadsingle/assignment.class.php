@@ -5,39 +5,6 @@
  *
  */
 class assignment_uploadsingle extends assignment_base {
-    
-
-    function print_student_answer($userid, $return=false){
-           global $CFG, $USER;
-       
-        $filearea = $this->file_area_name($userid);
-
-        $output = '';
-    
-        if ($basedir = $this->file_area($userid)) {
-            if ($files = get_directory_list($basedir)) {
-                
-                foreach ($files as $key => $file) {
-                    require_once($CFG->libdir.'/filelib.php');
-                    
-                    $icon = mimeinfo('icon', $file);
-                    
-                    if ($CFG->slasharguments) {
-                        $ffurl = "$CFG->wwwroot/file.php/$filearea/$file";
-                    } else {
-                        $ffurl = "$CFG->wwwroot/file.php?file=/$filearea/$file";
-                    }
-                    //died right here
-                    //require_once($ffurl);                
-                    $output = '<img align="middle" src="'.$CFG->pixpath.'/f/'.$icon.'" height="16" width="16" alt="'.$icon.'" />'.
-                            '<a href="'.$ffurl.'" >'.$file.'</a><br />';
-                }
-            }
-        }
-
-        $output = '<div class="files">'.$output.'</div>';
-        return $output;    
-    }
 
     function assignment_uploadsingle($cmid=0) {
         parent::assignment_base($cmid);
@@ -64,7 +31,7 @@ class assignment_uploadsingle extends assignment_base {
             }
         }
 
-        if ($this->isopen() && (!$filecount || $this->assignment->resubmit || !$submission->timemarked)) {
+        if ($this->isopen() && (!$filecount || $this->assignment->resubmit)) {
             $this->view_upload_form();
         }
 
@@ -74,13 +41,10 @@ class assignment_uploadsingle extends assignment_base {
 
     function view_upload_form() {
         global $CFG;
-        $struploadafile = get_string("uploadafile");
-        $strmaxsize = get_string("maxsize", "", display_size($this->assignment->maxbytes));
 
         echo '<center>';
         echo '<form enctype="multipart/form-data" method="post" '.
              "action=\"$CFG->wwwroot/mod/assignment/upload.php\">";
-        echo "<p>$struploadafile ($strmaxsize)</p>";
         echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
         require_once($CFG->libdir.'/uploadlib.php');
         upload_print_form_fragment(1,array('newfile'),false,null,0,$this->assignment->maxbytes,false);
@@ -93,18 +57,13 @@ class assignment_uploadsingle extends assignment_base {
     function upload() {
         global $CFG, $USER;
 
-        if (isguest($USER->id)) {
-            error(get_string('guestnoupload','assignment'));
-        }
-
         $this->view_header(get_string('upload'));
 
-        $filecount = $this->count_user_files($USER->id);
-        $submission = $this->get_submission($USER->id);
-        if ($this->isopen() && (!$filecount || $this->assignment->resubmit || !$submission->timemarked)) {
+        if (!$this->isopen()) {
+            notify(get_string("uploadfailnoupdate", "assignment"));
+        } else {
             if ($submission = $this->get_submission($USER->id)) {
-                //TODO: change later to ">= 0", to prevent resubmission when graded 0
-                if (($submission->grade > 0) and !$this->assignment->resubmit) {
+                if ($submission->grade and !$this->assignment->resubmit) {
                     notify(get_string('alreadygraded', 'assignment'));
                 }
             }
@@ -119,19 +78,18 @@ class assignment_uploadsingle extends assignment_base {
                     $submission->timemodified = time();
                     $submission->numfiles     = 1;
                     $submission->comment = addslashes($submission->comment);
-                    unset($submission->data1);  // Don't need to update this.
-                    unset($submission->data2);  // Don't need to update this.
                     if (update_record("assignment_submissions", $submission)) {
-                        add_to_log($this->course->id, 'assignment', 'upload', 
-                                'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
                         $this->email_teachers($submission);
                         print_heading(get_string('uploadedfile'));
                     } else {
                         notify(get_string("uploadfailnoupdate", "assignment"));
                     }
                 } else {
-                    $newsubmission = $this->prepare_new_submission($USER->id);
-                    $newsubmission->numfiles = 1;
+                    $newsubmission->assignment   = $this->assignment->id;
+                    $newsubmission->userid       = $USER->id;
+                    $newsubmission->timecreated  = time();
+                    $newsubmission->timemodified = time();
+                    $newsubmission->numfiles     = 1;
                     if (insert_record('assignment_submissions', $newsubmission)) {
                         add_to_log($this->course->id, 'assignment', 'upload', 
                                 'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
@@ -142,8 +100,6 @@ class assignment_uploadsingle extends assignment_base {
                     }
                 }
             }
-        } else {
-            notify(get_string("uploaderror", "assignment")); //submitting not allowed!
         }
 
         print_continue('view.php?id='.$this->cm->id);
@@ -158,16 +114,9 @@ class assignment_uploadsingle extends assignment_base {
     function process_feedback() {                 
                 
         global $USER;
-         
+                    
         if (!$feedback = data_submitted()) {      // No incoming data?
             return false;
-        }     
-                          
-        ///For save and next, we need to know the userid to save, and the userid to go...
-        ///We use a new hidden field in the form, and set it to -1. If it's set, we use this
-        ///as the userid to store...
-        if ((int)$feedback->saveuserid !== -1){
-            $feedback->userid = $feedback->saveuserid;
         }       
         
         if (!empty($feedback->cancel)) {          // User hit cancel button
@@ -182,10 +131,7 @@ class assignment_uploadsingle extends assignment_base {
         $newsubmission->teacher    = $USER->id;
         $newsubmission->mailed     = 0;       // Make sure mail goes out (again, even)
         $newsubmission->timemarked = time();
-
-        unset($newsubmission->data1);  // Don't need to update this.
-        unset($newsubmission->data2);  // Don't need to update this.
-
+        
         if (! update_record('assignment_submissions', $newsubmission)) {
             return false;
         }

@@ -1,4 +1,4 @@
-<?php //$Id$
+<?php
     require_once($CFG->libdir .'/rsslib.php');
 ?>
 <table cellpadding="9" cellspacing="0">
@@ -17,7 +17,6 @@
         <?php print_string('clientnumentries', 'block_rss_client') ?>
     </td>
 </tr>
-
 <tr valign="top">
     <td align="right">block_rss_timeout:</td>
     <td>
@@ -32,7 +31,6 @@
         <?php print_string('timeout', 'block_rss_client') ?>
     </td>
 </tr>
-
 <tr valign="top">
     <td align="right">block_rss_client_submitters:</td>
     <td>
@@ -42,15 +40,13 @@
                        $selected = '0';
                        $CFG->block_rss_client_submitters = 0;
                 }
-
+                // SUBMITTERS_ALL_ACCOUNT_HOLDERS => get_string('everybody')
                 // removed everybody option for 1.5 beta
                 // things are not quite working yet to allow this - revisit later
                 // also 'everybody' should be 'site members' or something clearer since
                 // it does not include guests
-                $options = array ( 
-                                  SUBMITTERS_ALL_ACCOUNT_HOLDERS => get_string('everybody'),
-                                  SUBMITTERS_ADMIN_ONLY => get_string('administrators'),
-                                  SUBMITTERS_ADMIN_AND_TEACHER => get_string('administratorsandteachers') );
+                $options = array ( SUBMITTERS_ADMIN_ONLY => get_string('administrators'),
+                      SUBMITTERS_ADMIN_AND_TEACHER => get_string('administratorsandteachers') );
 
                 choose_from_menu ($options, 'block_rss_client_submitters', $selected);
         ?>
@@ -60,16 +56,13 @@
     </td>
 </tr>
 
+
 <tr>
     <td colspan="3" align="center">
     <input type="submit" value="<?php print_string('savechanges') ?>"></td>
 </tr>
 <tr>
-    <td colspan="3" align="center"><a href=" <?php echo $CFG->wwwroot; ?>/blocks/rss_client/block_rss_client_action.php?id=<?php 
-    if (!isset($id)) {
-        $id = '';
-    }
-    echo $id; ?>"><?php print_string('feedsaddedit', 'block_rss_client')?></a></center><br /><br />
+    
+    <td colspan="3" align="center"><a href=" <?php echo $CFG->wwwroot; ?>/blocks/rss_client/block_rss_client_action.php?courseid=<?php echo $courseid; ?>"><?php print_string('feedsaddedit', 'block_rss_client')?></a></center><br /><br />
     </td>
-    </tr>
 </table>

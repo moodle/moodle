@@ -14,11 +14,6 @@
             return $text;
         }
 
-        // if we don't have a courseid, we can't run the query, so
-        if (empty($courseid)) {
-            return $text;
-        }
-        
     /// Create a list of all the resources to search for.  It may be cached already.
 
         if (empty($resourcelist)) {
@@ -34,14 +29,10 @@
 
             foreach ($resources as $resource) {
                 $currentname = trim($resource->name);
-                $strippedname = strip_tags($currentname);
-                /// Avoid empty or unlinkable resource names
-                if (!empty($strippedname)) {
-                    $resourcelist[] = new filterobject($currentname,
-                            '<a class="resource autolink" title="'.$strippedname.'" href="'.
-                             $CFG->wwwroot.'/mod/resource/view.php?r='.$resource->id.'" target="'.$CFG->framename.'">', 
-                             '</a>', false, true);
-                }
+                $resourcelist[] = new filterobject($currentname,
+                        '<a class="resource autolink" title="'.strip_tags($currentname).'" href="'.
+                         $CFG->wwwroot.'/mod/resource/view.php?r='.$resource->id.'">', 
+                         '</a>', false, true);
             }
 
         }

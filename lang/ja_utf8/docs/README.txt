@@ -1,15 +1,16 @@
-Moodleドキュメンテーション
+Moodle documentation
 --------------------
 
-あなたが、このドキュメンテーションを他の言語に翻訳したい場合、
-下記の内容を提案します:
+If you want to translate this documentation into another language,
+I would suggest that you:
 
- 1) あなたの言語パックが見つからない場合、英語バージョンのファイルが自動的に
-    使用されるため、英語バージョンのファイルをこのディレクトリに入れないでください。
+ 1) don't include English versions of the files in this directory
+    because they will be used automatically anyway if it is missing
+    from your language pack.
 
- 2) 言語ファイルは下記の順番で翻訳してください ( 重要度が高いものから最初に ):
+ 2) translate them in this order (starting with the important ones):
   
-    重要度が最高
+    MOST IMPORTANT
     |-------------------
     |
     |   - files.php
@@ -40,6 +41,8 @@ Moodleドキュメンテーション
     |   - license.html
     |
     |-------------------
-    重要度が最低
+    LEAST IMPORTANT
 
- 3) credits.htmlは翻訳しないでください - このファイルは頻繁に更新されます。
+ 3) Please don't translate credits.html at all - it changes too much.
+
+

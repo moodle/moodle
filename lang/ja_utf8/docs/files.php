@@ -15,7 +15,7 @@ $string['credits.html'] = "謝辞";
 $string['-installation'] = "管理";
 $string['install.html'] = "インストール";
 $string['faq.html'] = "インストール FAQ";
-$string['installamp.html'] = "Apache、MySQL、PHP";
+$string['installamp.html'] = "アパッチ、MySQL、PHPのインストール";
 $string['upgrade.html'] = "アップグレード";
 
 $string['-usage'] = "Moodleの利用";
@@ -27,5 +27,6 @@ $string['developer.html'] = "開発者マニュアル";
 $string['coding.html'] = "コーディングガイド";
 $string['cvs.html'] = "CVSの使用";
 $string['translation.html'] = "翻訳";
+
 
 ?>

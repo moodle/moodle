@@ -37,6 +37,8 @@
             $moduleprefix = '';
         }
 
+        print_header();
+
         foreach ($config as $name => $value) {
             set_config($moduleprefix.$name, $value);
         }
@@ -46,7 +48,7 @@
 
 /// Otherwise print the form.
 
-    $module = optional_param('module', '', PARAM_CLEANFILE);
+    $module = required_param('module', '', PARAM_CLEANFILE);
     require_once("$CFG->dirroot/mod/$module/lib.php");
 
     $stradmin = get_string("administration");

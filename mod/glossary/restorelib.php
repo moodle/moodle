@@ -113,9 +113,7 @@
             $newid = insert_record ("glossary",$glossary);
 
             //Do some output
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","glossary")." \"".format_string(stripslashes($glossary->name),true)."\"</li>";
-            }
+            echo "<li>".get_string("modulename","glossary")." \"".format_string(stripslashes($glossary->name),true)."\"</li>";
             backup_flush(300);
 
             if ($newid) {
@@ -184,17 +182,15 @@
                 $entry->sourceglossaryid = $source->new_id;
             }
             //If it's a teacher entry or userinfo was selected, restore the entry
-            if ($entry->teacherentry or restore_userdata_selected($restore,'glossary',$old_glossary_id)) {
+            if ($entry->teacherentry or $restore->mods['glossary']->userinfo) {
                 //The structure is equal to the db, so insert the glossary_entries
                 $newid = insert_record ("glossary_entries",$entry);
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 1000 == 0) {
-                            echo "<br />";
-                        }
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -259,11 +255,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -312,11 +306,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -352,11 +344,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -398,11 +388,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -452,11 +440,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -523,151 +509,6 @@
         return $status;
     }
 
-    //Return a content decoded to support interactivities linking. Every module
-    //should have its own. They are called automatically from
-    //glossary_decode_content_links_caller() function in each module
-    //in the restore process
-    function glossary_decode_content_links ($content,$restore) {
-            
-        global $CFG;
-            
-        $result = $content;
-                
-        //Link to the list of glossarys
-                
-        $searchstring='/\$@(GLOSSARYINDEX)\*([0-9]+)@\$/';
-        //We look for it
-        preg_match_all($searchstring,$content,$foundset);
-        //If found, then we are going to look for its new id (in backup tables)
-        if ($foundset[0]) {
-            //print_object($foundset);                                     //Debug
-            //Iterate over foundset[2]. They are the old_ids
-            foreach($foundset[2] as $old_id) {
-                //We get the needed variables here (course id)
-                $rec = backup_getid($restore->backup_unique_code,"course",$old_id);
-                //Personalize the searchstring
-                $searchstring='/\$@(GLOSSARYINDEX)\*('.$old_id.')@\$/';
-                //If it is a link to this course, update the link to its new location
-                if($rec->new_id) {
-                    //Now replace it
-                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/glossary/index.php?id='.$rec->new_id,$result);
-                } else { 
-                    //It's a foreign link so leave it as original
-                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/glossary/index.php?id='.$old_id,$result);
-                }
-            }
-        }
-
-        //Link to glossary view by moduleid
-
-        $searchstring='/\$@(GLOSSARYVIEWBYID)\*([0-9]+)@\$/';
-        //We look for it
-        preg_match_all($searchstring,$result,$foundset);
-        //If found, then we are going to look for its new id (in backup tables)
-        if ($foundset[0]) {
-            //print_object($foundset);                                     //Debug
-            //Iterate over foundset[2]. They are the old_ids
-            foreach($foundset[2] as $old_id) {
-                //We get the needed variables here (course_modules id)
-                $rec = backup_getid($restore->backup_unique_code,"course_modules",$old_id);
-                //Personalize the searchstring
-                $searchstring='/\$@(GLOSSARYVIEWBYID)\*('.$old_id.')@\$/';
-                //If it is a link to this course, update the link to its new location
-                if($rec->new_id) {
-                    //Now replace it
-                    $result= preg_replace($searchstring,$CFG->wwwroot.'/mod/glossary/view.php?id='.$rec->new_id,$result);
-                } else {
-                    //It's a foreign link so leave it as original
-                    $result= preg_replace($searchstring,$restore->original_wwwroot.'/mod/glossary/view.php?id='.$old_id,$result);
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    //This function makes all the necessary calls to xxxx_decode_content_links()
-    //function in each module, passing them the desired contents to be decoded
-    //from backup format to destination site/course in order to mantain inter-activities
-    //working in the backup/restore process. It's called from restore_decode_content_links()
-    //function in restore process
-    function glossary_decode_content_links_caller($restore) {
-        global $CFG;
-        $status = true;
-        
-        //Process every glossary ENTRY in the course
-        if ($entries = get_records_sql ("SELECT e.id, e.definition
-                                   FROM {$CFG->prefix}glossary_entries e,
-                                        {$CFG->prefix}glossary g
-                                   WHERE g.course = $restore->course_id AND
-                                         e.glossaryid = g.id")) {
-            //Iterate over each post->message
-            $i = 0;   //Counter to send some output to the browser to avoid timeouts
-            foreach ($entries as $entry) {
-                //Increment counter
-                $i++;
-                $content = $entry->definition;
-                $result = restore_decode_content_links_worker($content,$restore);
-                if ($result != $content) {
-                    //Update record
-                    $entry->definition = addslashes($result);
-                    $status = update_record("glossary_entries",$entry);
-                    if ($CFG->debug>7) {
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
-                        }
-                    }
-                }
-                //Do some output
-                if (($i+1) % 5 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 100 == 0) {
-                            echo "<br />";
-                        }
-                    }
-                    backup_flush(300);
-                }
-            }
-        }
-
-        //Process every glossary (intro) in the course
-        if ($glossarys = get_records_sql ("SELECT g.id, g.intro
-                                   FROM {$CFG->prefix}glossary g
-                                   WHERE g.course = $restore->course_id")) {
-            //Iterate over each glossary->intro
-            $i = 0;   //Counter to send some output to the browser to avoid timeouts
-            foreach ($glossarys as $glossary) {
-                //Increment counter
-                $i++;
-                $content = $glossary->intro;
-                $result = restore_decode_content_links_worker($content,$restore);
-                if ($result != $content) {
-                    //Update record
-                    $glossary->intro = addslashes($result);
-                    $status = update_record("glossary",$glossary);
-                    if ($CFG->debug>7) {
-                        if (!defined('RESTORE_SILENTLY')) {
-                            echo '<br /><hr />'.htmlentities($content).'<br />changed to<br />'.htmlentities($result).'<hr /><br />';
-                        }
-                    }
-                }
-                //Do some output
-                if (($i+1) % 5 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 100 == 0) {
-                            echo "<br />";
-                        }
-                    }
-                    backup_flush(300);
-                }
-            }
-        }
-
-        return $status;
-    }
-
     //This function converts texts in FORMAT_WIKI to FORMAT_MARKDOWN for
     //some texts in the module
     function glossary_restore_wiki2markdown ($restore) {
@@ -700,11 +541,9 @@
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 20 == 0) {
-                            echo "<br />";
-                        }
+                    echo ".";
+                    if (($i+1) % 20 == 0) {
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -734,11 +573,9 @@
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 20 == 0) {
-                            echo "<br />";
-                        }
+                    echo ".";
+                    if (($i+1) % 20 == 0) {
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -832,7 +669,7 @@
                 //Get the new_id of the glossary_entry (to recode the info and url field)
                 $ent = backup_getid($restore->backup_unique_code,"glossary_entries",$log->info);
                 if ($ent) {
-                    $log->url = "view.php?id=".$log->cmid."&mode=entry&hook=".$ent->new_id;
+                    $log->url = "view.php?id=".$log->cmid."&amp;mode=entry&amp;hook=".$ent->new_id;
                     $log->info = $ent->new_id;
                     $status = true;
                 }
@@ -928,9 +765,7 @@
             }
             break;
         default:
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
-            }
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
             break;
         }
 

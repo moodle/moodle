@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 + (2005060201)
+      // forum.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['addanewdiscussion'] = 'Pøidat nový pøíspìvek';
@@ -23,7 +23,7 @@ $string['configoldpostdays'] = 'Po kolika dnech se bude jakýkoliv pøíspìvek pova
 $string['configreplytouser'] = 'Kdy¾ je pøíspìvek odesílán odbìratelùm, má email v poli Od: obsahovat adresu autora pøíspìvku? Pøíjemce tak mù¾e odpovídat pøímo autorovi emailem a ne pøes diskusní fórum. I kdy¾ je zde zvolena hodnota \'Ano\', u¾ivatelé si mohou ve svých profilech nastavit skrývání svém emailové adresy.';
 $string['configshortpost'] = 'Pøíspìvek krat¹í ne¾ tato vlo¾ená hodnota (HTML kód se nepoèítá) je pova¾ován za krátký.';
 $string['configtrackreadposts'] = 'Zvolte \'ano\', chcete-li pro ka¾dého u¾ivatele zaznamenávat stav pøíspìvkù pøeèteno/nepøeèteno ';
-$string['configusermarksread'] = 'Pøi \'ano\' si musí u¾ivatelé sami oznaèit pøíspìvek jako pøeètený. Pøi \'ne\' se pøíspìvek po zobrazení automaticky nastaví jako pøeètený.';
+$string['configusermarksread'] = 'Pøi \'ano\' si musí u¾ivatel sám oznaèovat pøíspìvek jako pøeètený. Pøi \'ne\' se pøíspìvek po zobrazení automaticky nastaví jako pøeètený.';
 $string['couldnotadd'] = 'Neznámá chyba! Nemohu pøidat vá¹ pøíspìvek';
 $string['couldnotdeleteratings'] = 'Je mi líto, ji¾ ohodnocený pøíspìvek nemù¾e být odstranìn';
 $string['couldnotdeletereplies'] = 'Je mi líto, pøíspìvek, na který ji¾ bylo odpovìzeno, nemù¾e být odstranìn';
@@ -94,18 +94,18 @@ $string['newforumposts'] = 'Nové pøíspìvky';
 $string['nodiscussions'] = 'V tomto fóru zatím nejsou ¾ádná témata diskuse';
 $string['noguestpost'] = 'Je mi líto, hosté nemohou pøispívat do diskuse';
 $string['noguestsubscribe'] = 'Je mi líto, hosté nemohou odebírat pøíspìvky emailem.';
-$string['noguesttracking'] = 'Je mi líto, hosté si nemohou zapnout oznaèování nepøeètených pøíspìvkù';
+$string['noguesttracking'] = 'Je mi líto, hosté si nemohou zapnout zvýrazòování nepøeètených pøíspìvkù';
 $string['nomorepostscontaining'] = 'Nebyly nalezeny ¾ádné dal¹í pøíspìvky obsahující \'$a\'';
 $string['nonews'] = 'Dosud nebyly vlo¾eny ¾ádné novinky';
 $string['noposts'] = 'Bez pøíspìvkù';
 $string['nopostscontaining'] = 'Nebyly nalezeny ¾ádné pøíspìvky obsahující \'$a\'';
 $string['nosubscribers'] = 'V tomto fóru zatím nikdo neodebírá nové pøíspìvky emailem';
 $string['notingroup'] = 'Je mi líto, ale pro prohlí¾ení tohoto fóra musíte být èlenem skupiny.';
-$string['notrackforum'] = 'Neoznaèovat nepøeètené pøíspìvky';
+$string['notrackforum'] = 'Nezvýrazòovat nepøeètené pøíspìvky';
 $string['nownotsubscribed'] = '$a->name: odebírání pøíspìvkù z \'$a->forum\' VYPNUTO.';
-$string['nownottracking'] = '$a->name: oznaèování nepøeètených pøíspìvkù v \'$a->forum\' VYPNUTO.';
+$string['nownottracking'] = '$a->name: zobrazování nepøeètených pøíspìvkù v \'$a->forum\' VYPNUTO.';
 $string['nowsubscribed'] = '$a->name: odebírání pøíspìvkù z \'$a->forum\' ZAPNUTO.';
-$string['nowtracking'] = '$a->name: oznaèování nepøeètených pøíspìvkù v \'$a->forum\' ZAPNUTO.';
+$string['nowtracking'] = '$a->name: zobrazování nepøeètených pøíspìvkù v \'$a->forum\' ZAPNUTO.';
 $string['numposts'] = '$a pøíspìvkù';
 $string['olderdiscussions'] = 'Star¹í diskuse';
 $string['oldertopics'] = 'Star¹í témata';
@@ -181,12 +181,12 @@ $string['subscribestart'] = 'Posílej mi emailem kopie pøíspìvkù v tomto fóru';
 $string['subscribestop'] = 'Nechci dostávat emailem kopie pøíspìvkù v tomto fóru';
 $string['subscription'] = 'Odebírání';
 $string['subscriptions'] = 'Odebírání';
-$string['trackforum'] = 'Oznaèovat nepøeètené pøíspìvky';
-$string['tracking'] = 'Oznaèování';
+$string['trackforum'] = 'Zobrazovat nepøeètené pøíspìvky';
+$string['tracking'] = 'Zobrazování';
 $string['trackingoff'] = 'Vypnuto';
 $string['trackingon'] = 'Zapnuto';
 $string['trackingoptional'] = 'Volitelné';
-$string['trackingtype'] = 'Mají se v tomto fóru oznaèovat nepøeètené pøíspìvky?';
+$string['trackingtype'] = 'Zobrazování nepøeètených pøíspìvkù';
 $string['unread'] = 'Nepøeètených';
 $string['unreadposts'] = 'Nepøeètených pøíspìvkù';
 $string['unreadpostsnumber'] = '$a nepøeètených pøíspìvkù';

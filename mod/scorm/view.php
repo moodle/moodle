@@ -4,13 +4,12 @@
 /// (Replace scorm with the name of your module)
 
     require_once("../../config.php");
-    require_once('locallib.php');
+    require_once("lib.php");
 
-    $id = optional_param('id', '', PARAM_INT);       // Course Module ID, or
-    $a = optional_param('a', '', PARAM_INT);         // scorm ID
-    //$organization = optional_param('organization', '', PARAM_INT); // organization ID
+    optional_variable($id);    // Course Module ID, or
+    optional_variable($a);     // scorm ID
 
-    if (!empty($id)) {
+    if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
         }
@@ -20,7 +19,7 @@
         if (! $scorm = get_record("scorm", "id", $cm->instance)) {
             error("Course module is incorrect");
         }
-    } else if (!empty($a)) {
+    } else {
         if (! $scorm = get_record("scorm", "id", $a)) {
             error("Course module is incorrect");
         }
@@ -30,8 +29,6 @@
         if (! $cm = get_coursemodule_from_instance("scorm", $scorm->id, $course->id)) {
             error("Course Module ID was incorrect");
         }
-    } else {
-        error('A required parameter is missing');
     }
 
     require_login($course->id, false, $cm);
@@ -67,8 +64,7 @@
                      '', '', true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
 
         if (isteacher($course->id)) {
-            $trackedusers = get_record('scorm_scoes_track', 'scormid', $scorm->id, '', '', '', '', 'count(distinct(userid)) as c');
-            if ($trackedusers->c > 0) {
+            if ($trackedusers = get_record('scorm_scoes_track', 'scormid', $scorm->id, '', '', '', '', 'count(distinct(userid)) as c')) {
                 echo "<div class=\"reportlink\"><a target=\"{$CFG->framename}\" href=\"report.php?id=$cm->id\">".get_string('viewallreports','scorm',$trackedusers->c).'</a></div>';
             } else {
                 echo '<div class="reportlink">'.get_string('noreports','scorm').'</div>';
@@ -79,7 +75,92 @@
         print_heading(format_string($scorm->name));
 
         print_simple_box(format_text($scorm->summary), 'center', '70%', '', 5, 'generalbox', 'intro');
-        scorm_view_display($USER, $scorm, 'view.php?id='.$cm->id, $cm);
+
+        if (isguest()) {
+            print_heading(get_string("guestsno", "scorm"));
+            print_footer($course);
+            exit;
+        }
+        print_simple_box_start('center');
+?>
+        <div class="structurehead"><?php print_string('coursestruct','scorm') ?></div>
+<?php
+        $organization = $scorm->launch;
+        if ($orgs = get_records_select_menu('scorm_scoes',"scorm='$scorm->id' AND organization='' AND launch=''",'id','id,title')) {
+            if (count($orgs) > 1) {
+                if (isset($_POST['organization'])) {
+                    $organization = $_POST['organization'];
+                }
+?>
+            <div class='center'>
+		<?php print_string('organizations','scorm') ?>
+                <form name='changeorg' method='post' action='view.php?id=<?php echo $cm->id ?>'>
+                    <?php choose_from_menu($orgs, 'organization', "$organization", '','submit()') ?>
+                </form>
+            </div>
+<?php
+            }
+        }
+        $orgidentifier = '';
+        if ($org = get_record('scorm_scoes','id',$organization)) {
+            if (($org->organization == '') && ($org->launch == '')) {
+                $orgidentifier = $org->identifier;
+            } else {
+                $orgidentifier = $org->organization;
+            }
+        }
+?>
+            <?php $incomplete = scorm_display_structure($scorm,'structurelist',$orgidentifier); ?>
+    <?php print_simple_box_end(); ?>
+    <div class="center">
+        <form name="theform" method="post" action="playscorm.php?id=<?php echo $cm->id ?>">
+<?php
+    if ($scorm->browsemode == 1) {
+        print_string("mode","scorm");
+        echo ': <input type="radio" id="b" name="mode" value="browse" /><label for="b">'.get_string('browse','scorm').'</label>'."\n";
+        if ($incomplete === true) {
+            echo '<input type="radio" id="n" name="mode" value="normal" checked="checked" /><label for="n">'.get_string('normal','scorm')."</label>\n";
+        } else {
+            echo '<input type="radio" id="r" name="mode" value="review" checked="checked" /><label for="r">'.get_string('review','scorm')."</label>\n";
+        }
+    } else {
+        if ($incomplete === true) {
+            echo '<input type="hidden" name="mode" value="normal" />'."\n";
+        } else {
+            echo '<input type="hidden" name="mode" value="review" />'."\n";
+        }
+    }
+?>
+            <br />
+            <input type="hidden" name="scoid" />
+            <input type="hidden" name="currentorg" value="<?php echo $orgidentifier ?>" />
+            <input type="submit" value="<? print_string('entercourse','scorm') ?>" />
+        </form>
+    </div>
+<script language="javascript" type="text/javascript">
+<!--
+    function playSCO(scoid) {
+        document.theform.scoid.value = scoid;
+        document.theform.submit();
+    }
+
+    function expandCollide(which,list) {
+        var nn=document.ids?true:false
+    var w3c=document.getElementById?true:false
+    var beg=nn?"document.ids.":w3c?"document.getElementById(":"document.all.";
+    var mid=w3c?").style":".style";
+
+        if (eval(beg+list+mid+".display") != "none") {
+            which.src = "pix/plus.gif";
+            eval(beg+list+mid+".display='none';");
+        } else {
+            which.src = "pix/minus.gif";
+            eval(beg+list+mid+".display='block';");
+        }
+    }
+-->
+</script>
+<?php
         print_footer($course);
     }
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5.3+ (2005060230)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
 
 
 $string['addanewdiscussion'] = 'Colocar un nuevo tema de discusión aquí';
@@ -10,8 +10,6 @@ $string['allowchoice'] = 'Permitir a todos escoger';
 $string['allowdiscussions'] = 'Permitir que cualquier $a abra nuevos temas';
 $string['allowratings'] = 'Permitir la calificación de los mensajes';
 $string['allowsdiscussions'] = 'Foro abierto a todos';
-$string['allsubscribe'] = 'Suscribir a todos los foros';
-$string['allunsubscribe'] = 'Dar de baja de todos los foros';
 $string['anyfile'] = 'Cualquier archivo';
 $string['attachment'] = 'Archivo adjunto';
 $string['bynameondate'] = 'de $a->name - $a->date';
@@ -47,9 +45,6 @@ $string['discussions'] = 'Temas';
 $string['discussionsstartedby'] = 'Tema comenzado por $a';
 $string['discussionsstartedbyrecent'] = 'Tema recientemente comenzado por $a';
 $string['discussthistopic'] = 'Ver mensajes';
-$string['displayend'] = 'Mostrar final';
-$string['displayperiod'] = 'Mostrar período';
-$string['displaystart'] = 'Mostrar inicio';
 $string['eachuserforum'] = 'Cada persona plantea un tema';
 $string['edit'] = 'Editar';
 $string['editedby'] = 'Editado por $a->name - $a->date';
@@ -105,11 +100,8 @@ $string['nonews'] = 'Sin novedades aún';
 $string['noposts'] = 'No hay mensajes';
 $string['nopostscontaining'] = 'No se encontraron mensajes con \'$a\'';
 $string['nosubscribers'] = 'Nadie se ha suscrito aún a este foro';
-$string['nothingnew'] = 'Nada nuevo para $a';
 $string['notingroup'] = 'Lo sentimos, pero debe formar parte del grupo para poder ver este foro.';
 $string['notrackforum'] = 'No rastrear mensajes no leídos';
-$string['nowallsubscribed'] = 'Todos los foros en $a están suscritos.';
-$string['nowallunsubscribed'] = 'Todos los foros en $a están dados de baja.';
 $string['nownotsubscribed'] = '$a->name no recibirá copias de \'$a->forum\' por correo.';
 $string['nownottracking'] = '$a->name ya no está rastreando \'$a->forum\'.';
 $string['nowsubscribed'] = '$a->name recibirá copias de \'$a->forum\' por correo.';
@@ -120,8 +112,6 @@ $string['oldertopics'] = 'Temas antiguos';
 $string['openmode0'] = 'No se pueden colocar temas ni respuestas ';
 $string['openmode1'] = 'No se pueden colocar temas, sólo respuestas';
 $string['openmode2'] = 'Permitir nuevos temas y respuestas';
-$string['overviewnumpostssince'] = '$a mensajes desde la última entrada';
-$string['overviewnumunread'] = '$a totales no leídos';
 $string['parent'] = 'Mostrar mensaje anterior';
 $string['parentofthispost'] = 'Anterior a este mensaje';
 $string['postadded'] = 'Su mensaje se ha colocado con éxito.<P>Tiene $a para hacer cualquier cambio.';
@@ -165,7 +155,7 @@ $string['search'] = 'Buscar';
 $string['searchdatefrom'] = 'Los mensajes deben ser más recientes que éste';
 $string['searchdateto'] = 'Los mensajes deben ser más antiguos que éste';
 $string['searchforumintro'] = 'Por favor, introduzca los términos de búsqueda en uno o más de los campos siguientes:';
-$string['searchforums'] = 'Buscar en foros';
+$string['searchforums'] = 'Buscar foros';
 $string['searchfullwords'] = 'Estas palabras deberían aparecer como palabras completas';
 $string['searchnotwords'] = 'Estas palabras NO deberían incluirse';
 $string['searcholderposts'] = 'Buscar mensajes antiguos...';
@@ -192,7 +182,6 @@ $string['subscribestart'] = 'Deseo recibir copias de este foro por correo';
 $string['subscribestop'] = 'No deseo recibir copias de este foro por correo';
 $string['subscription'] = 'Suscripción';
 $string['subscriptions'] = 'Suscripciones';
-$string['timestartenderror'] = 'La fecha final no puede ser anterior a la inicial';
 $string['trackforum'] = 'Rastrear mensajes no leídos';
 $string['tracking'] = 'Rastrear';
 $string['trackingoff'] = 'Desconectado';

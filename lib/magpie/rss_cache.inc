@@ -93,14 +93,10 @@ class RSSCache {
             return 0;
         }
         
-        if ($filesize = filesize($cache_file) ) {
-        	$data = fread( $fp, filesize($cache_file) );
-        	$rss = $this->unserialize( $data );
+        $data = fread( $fp, filesize($cache_file) );
+        $rss = $this->unserialize( $data );
         
-        	return $rss;
-    	}
-    	
-    	return 0;
+        return $rss;
     }
 
 /*=======================================================================*\
@@ -134,18 +130,6 @@ class RSSCache {
         }
     }
 
-	function cache_age( $cache_key ) {
-		$filename = $this->file_name( $url );
-		if ( file_exists( $filename ) ) {
-			$mtime = filemtime( $filename );
-            $age = time() - $mtime;
-			return $age;
-		}
-		else {
-			return -1;	
-		}
-	}
-	
 /*=======================================================================*\
     Function:   serialize
 \*=======================================================================*/     

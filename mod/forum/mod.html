@@ -1,6 +1,4 @@
 <?php
-    include_once($CFG->dirroot.'/mod/forum/lib.php');
-
     if (!isset($form->name)) {
         $form->name = '';
     }
@@ -43,16 +41,6 @@
     if (!isset($form->trackingtype)) {
         $form->trackingtype = FORUM_TRACKING_OPTIONAL;
     }
-    if (!isset($form->warnafter)) {
-        $form->warnafter = 0;
-    }
-    if (!isset($form->blockafter)) {
-        $form->blockafter = 0;
-    }
-    if (!isset($form->blockperiod)) {
-        $form->blockperiod = 0;
-    }
-
 ?>
 <form name="form" method="post" action="mod.php">
 <table cellpadding="5">
@@ -124,7 +112,6 @@
             $options[0] = get_string('no');
             $options[1] = get_string('yesforever', 'forum');
             $options[FORUM_INITIALSUBSCRIBE] = get_string('yesinitially', 'forum');
-            $options[FORUM_DISALLOWSUBSCRIBE] = get_string('disallowsubscribe','forum');
             choose_from_menu($options, 'forcesubscribe', $form->forcesubscribe, '');
             helpbutton('subscription2', get_string('forcesubscribeq', 'forum'), 'forum');
         ?>
@@ -255,7 +242,7 @@
             print_string('ratingtime', 'forum');
 
             echo '</td></tr>';
-            echo '<tr><td>&nbsp;</td><td>';
+            echo '<tr><td>&nbsp</td><td>';
             
             echo '<table align="left"><tr><td align="right" nowrap="nowrap">';
             echo get_string('from').': ';
@@ -297,34 +284,6 @@
         ?>
     </td>
 </tr>
-<tr>
-    <td align="right" valign="top"><b><?php print_string("warnafter", "forum") ?>:</b></td>
-    <td><input type="text" name="warnafter" value="<?php p($form->warnafter); ?>" /><?php
-        helpbutton('manageposts', get_string('warnafter', 'forum'),'forum'); ?>
-    </td>
-</tr>
-<tr>
-    <td align="right" valign="top"><b><?php print_string("blockafter", "forum") ?>:</b></td>
-    <td><input type="text" name="blockafter" value="<?php p($form->blockafter); ?>" /><?php
-        helpbutton('manageposts', get_string('blockafter', 'forum'),'forum'); ?>
-    </td>
-</tr>
-<tr>
-    <td align="right" valign="top"><b><?php print_string("blockperiod", "forum") ?>:</b></td>
-    <td><?php
-         unset($options);
-         $options[0] = get_string('blockperioddisabled','forum');
-         $options[60*60*24]   = '1 '.get_string('day');
-         $options[60*60*24*2] = '2 '.get_string('days');
-         $options[60*60*24*3] = '3 '.get_string('days');
-         $options[60*60*24*4] = '4 '.get_string('days');
-         $options[60*60*24*5] = '5 '.get_string('days');
-         $options[60*60*24*6] = '6 '.get_string('days');
-         $options[60*60*24*7] = '1 '.get_string('week');
-         choose_from_menu($options,'blockperiod',$form->blockperiod,'');
-         helpbutton('manageposts', get_string('blockperiod', 'forum'),'forum'); ?>
-    </td>
-</tr>
 <?php print_standard_coursemodule_settings($form); ?>
 </table>
 <center>
@@ -336,7 +295,6 @@
 <input type="hidden" name="modulename" value="<?php  p($form->modulename) ?>" />
 <input type="hidden" name="instance"   value="<?php  p($form->instance) ?>" />
 <input type="hidden" name="mode"       value="<?php  p($form->mode) ?>" />
-<input type="hidden" name="format"     value="<?php  echo $defaultformat; ?>" />
 <input type="submit" value="<?php  print_string("savechanges") ?>" />
 <input type="submit" name="cancel" value="<?php  print_string("cancel") ?>" />
 </center>

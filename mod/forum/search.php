@@ -39,7 +39,7 @@
     if ($timetorestrict) {
         $dateto = make_timestamp($toyear, $tomonth, $today, $tohour, $tominute);
     } else {
-        $dateto = optional_param('dateto', 0, PARAM_INT);      // Ending date
+        $dateto = optional_param('datefrom', 0, PARAM_INT);      // Ending date
     }
 
 
@@ -161,7 +161,7 @@
 
     print_heading("$strsearchresults: $totalcount");
 
-    print_paging_bar($totalcount, $page, $perpage, "search.php?search=".urlencode(stripslashes($search))."&amp;id=$course->id&amp;perpage=$perpage&amp;");
+    print_paging_bar($totalcount, $page, $perpage, "search.php?search=$search&amp;id=$course->id&amp;perpage=$perpage&amp;");
 
     //added to implement highlighting of search terms found only in HTML markup
     //fiedorow - 9/2/2005
@@ -176,7 +176,6 @@
             $searchterms[$key] = preg_replace('/^\+/','',$searchterm);
         }
     }
-    $strippedsearch = implode(' ', $searchterms);    // Rebuild the string
 
     foreach ($posts as $post) {
 
@@ -187,8 +186,8 @@
             error("Could not find forum $discussion->forum");
         }
 
-        $post->subject = highlight($strippedsearch, $post->subject);
-        $discussion->name = highlight($strippedsearch, $discussion->name);
+        $post->subject = highlight("$strippedsearch", $post->subject);
+        $discussion->name = highlight("$strippedsearch", $discussion->name);
 
         $fullsubject = "<a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
         if ($forum->type != 'single') {
@@ -225,14 +224,12 @@
 
         $fulllink = "<a href=\"discuss.php?d=$post->discussion#$post->id\">".get_string("postincontext", "forum")."</a>";
         //search terms already highlighted - fiedorow - 9/2/2005
-        $SESSION->forum_search = true;
         forum_print_post($post, $course->id, false, false, false, false, $fulllink);
-        unset($SESSION->forum_search);
 
         echo "<br />";
     }
 
-    print_paging_bar($totalcount, $page, $perpage, "search.php?search=".urlencode(stripslashes($search))."&amp;id=$course->id&amp;perpage=$perpage&amp;");
+    print_paging_bar($totalcount, $page, $perpage, "search.php?search=".urlencode($search)."&amp;id=$course->id&amp;perpage=$perpage&amp;");
 
     print_footer($course);
 

@@ -1,29 +1,14 @@
 <?php //$Id$
 
-/*******************************************************************
-* This file contains one class which defines a block for display on
-* any Moodle page. This block can be configured to display the contents
-* of a remote RSS news feed in your web site.
-*
-* @author Daryl Hawes
-* @version  $Id$
-* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
-* @package base
-******************************************************************/
-
 // Developer's debug assistant - if true then the display string will not cache, only
 // the magpie object's built in caching will be used
 define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
 
-/**
- * This class is for a block which defines a block for display on
- * any Moodle page. 
- */
- class block_rss_client extends block_base {
+class block_rss_client extends block_base {
 
     function init() {
         $this->title = get_string('feedstitle', 'block_rss_client');
-        $this->version = 2005111400;
+        $this->version = 2004112000;
     }
 
     function preferred_width() {
@@ -40,7 +25,7 @@ define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
             $this->title = get_string('remotenewsfeed', 'block_rss_client');
         }
     }
-
+    
     function get_content() {
         global $CFG, $editing;
 
@@ -51,11 +36,11 @@ define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
         }
 
         $this->content = new stdClass;
-        $this->content->text   = '';
         $this->content->footer = '';
-
+        
         if (empty($this->instance)) {
             // We're being asked for content without an associated instance
+            $this->content->text = '';
             return $this->content;
         }
 
@@ -103,16 +88,14 @@ define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
         if ( $userisloggedin && ($submitters == SUBMITTERS_ALL_ACCOUNT_HOLDERS || ($submitters == SUBMITTERS_ADMIN_AND_TEACHER && $isteacher)) ) {
 
             $page = page_create_object($this->instance->pagetype, $this->instance->pageid);
-            if ($page->user_allowed_editing()) { // for SUBMITTERS_ALL_ACCOUNT_HOLDERS we're going to run into trouble later if we show it and then they don't have write access to the page.
-                if (isset($this->config)) {
-                    // this instance is configured - show Add/Edit feeds link
-                    $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'managefeeds', 'id' => $this->courseid));
-                    $output .= '<div align="center"><a title="'. get_string('feedsaddedit', 'block_rss_client') .'" href="'. $script .'">'. get_string('feedsaddedit', 'block_rss_client') .'</a></div>';
-                } else {
-                    // this instance has not been configured yet - show configure link
-                    $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'configblock', 'id' => $this->courseid));
-                    $output .= '<div align="center"><a title="'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'" href="'. $script.'">'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'</a></div>';
-                }
+            if (isset($this->config)) {
+                // this instance is configured - show Add/Edit feeds link
+                $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'managefeeds'));
+                $output .= '<div align="center"><a title="'. get_string('feedsaddedit', 'block_rss_client') .'" href="'. $script .'">'. get_string('feedsaddedit', 'block_rss_client') .'</a></div>';
+            } else {
+                // this instance has not been configured yet - show configure link
+                $script = $page->url_get_full(array('instanceid' => $this->instance->id, 'sesskey' => $USER->sesskey, 'blockaction' => 'config', 'currentaction' => 'configblock'));
+                $output .= '<div align="center"><a title="'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'" href="'. $script.'">'. get_string('feedsconfigurenewinstance', 'block_rss_client') .'</a></div>';
             }
         }
 
@@ -130,11 +113,11 @@ define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
                 $count ++;
             }
         }
-
+        
         $this->content->text = $output;
         return $this->content;
     }
-
+    
     function instance_allow_multiple() {
         return true;
     }
@@ -146,7 +129,7 @@ define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
     function instance_allow_config() {
         return true;
     }
-
+    
     /**
      * @param int $rssid The feed to be displayed
      * @param bool $display_description Should the description information from the feed be displayed or simply the title?
@@ -161,9 +144,9 @@ define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
         require_once($CFG->libdir .'/rsslib.php');
         require_once(MAGPIE_DIR .'rss_fetch.inc');
         if (!defined('MAGPIE_OUTPUT_ENCODING')) {
-            define('MAGPIE_OUTPUT_ENCODING', current_charset());  // see bug 3107
+            define('MAGPIE_OUTPUT_ENCODING', get_string('thischarset'));  // see bug 3107
         }
-
+        
         // Check if there is a cached string which has not timed out.
         if (BLOCK_RSS_SECONDARY_CACHE_ENABLED &&
                 isset($this->config->{'rssid'. $rssid}) && 
@@ -176,6 +159,7 @@ define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
 
         $rss_record = get_record('block_rss_client', 'id', $rssid);
         if (isset($rss_record) && isset($rss_record->id)) {
+                    
             // By capturing the output from fetch_rss this way
             // error messages do not display and clutter up the moodle interface
             // however, we do lose out on seeing helpful messages like "cache hit", etc.
@@ -183,7 +167,7 @@ define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
             $rss = fetch_rss($rss_record->url);
             $rsserror = ob_get_contents();
             ob_end_clean();
-
+            
             if ($rss === false) {
                 if ($CFG->debug && !empty($rsserror)) {
                     // There was a failure in loading the rss feed, print link to full error text
@@ -196,9 +180,9 @@ define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
             }
 
             if (empty($rss_record->preferredtitle)) {
-                $feedtitle = $this->format_title($rss->channel['title']);
+                $feedtitle = stripslashes_safe(rss_unhtmlentities($rss->channel['title']));
             } else {
-                $feedtitle = $this->format_title($rss_record->preferredtitle);
+                $feedtitle = stripslashes_safe($rss_record->preferredtitle);
             }
 //            print_object($rss);
             if (isset($this->config) && 
@@ -214,28 +198,25 @@ define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
 
             $formatoptions->para = false;
 
-            // first we must verify that the rss feed is loaded
-            // by checking $rss and $rss->items exist before using them
-            if (empty($rss) || empty($rss->items)) {
-                return '';
-            }
-
             foreach ($rss->items as $item) {
+                $item['title'] = stripslashes_safe(rss_unhtmlentities($item['title']));
+                $item['description'] = stripslashes_safe(rss_unhtmlentities($item['description']));
                 if ($item['title'] == '') {
                     // no title present, use portion of description
                     $item['title'] = substr(strip_tags($item['description']), 0, 20) . '...';
                 } else {
                     $item['title'] = break_up_long_words($item['title'], 30);
                 }
-
+        
                 if ($item['link'] == '') {
                     $item['link'] = $item['guid'];
                 }
 
                 $item['link'] = str_replace('&', '&amp;', $item['link']);
 
-                $returnstring .= '<div class="link"><a href="'. $item['link'] .'" target="_blank">'. $item['title'] . '</a></div>' ."\n";
+                $returnstring .= '<div class="link"><a href="'. $item['link'] .'" target="_new">'. $item['title'] . '</a></div>' ."\n";
 
+                
                 if ($display_description && !empty($item['description'])) {
                     $item['description'] = break_up_long_words($item['description'], 30);
                     $returnstring .= '<div class="description">'.
@@ -262,26 +243,12 @@ define('BLOCK_RSS_SECONDARY_CACHE_ENABLED', true);
                 $this->title = $feedtitle;
             }
         }
-
+        
         // store config setting for this rssid so we do not need to read from file each time
         $this->config->{'rssid'. $rssid} = addslashes($returnstring);
         $this->config->{'rssid'. $rssid .'timestamp'} = $now; 
         $this->instance_config_save($this->config);
         return $returnstring;
     }
-
-     // just strips the title down and adds ... for excessively long titles.
-     function format_title($title,$max=64) {
-
-     /// Loading the textlib singleton instance. We are going to need it.
-         $textlib = textlib_get_instance();
-
-         if ($textlib->strlen($title,current_charset()) <= $max) {
-             return $title;
-         }
-         else {
-             return $textlib->substr($title,0,$max-3,current_charset()).'...';
-         }
-     }
 }
 ?>

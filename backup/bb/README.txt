@@ -1,9 +1,10 @@
-Ziba Scott <ziba@linuxbox.com> 06/23/05
+Ziba Scott <ziba@linuxbox.com> 11/19/04
 
-This is a utility to convert Blackboard Course export zip files into
-Moodle course export zip files. It has been successfully tested with
-Blackboard 5.5 and Moodle 1.4.1 and Moodle CVS. There is minimal 
-Blackboard 6 support.  It will convert:
+This is a beta demonstration of a utility to convert Blackboard
+Course export zip files into Moodle course export zip files. It
+has been successfully tested with Blackboard 5.5 and
+Moodle 1.4.1 and Moodle CVS. There is minimal Blackboard 6 support.
+It will convert:
 
     * Course Name/Title
     * Forum Topics
@@ -11,14 +12,17 @@ Blackboard 6 support.  It will convert:
     * Assignments 
     * External Links 
 
+The current status of this project is
+exploration/proof-of-concept. We have successfully converted
+basic Blackboard course information as well as course documents
+and forum topics using the XSLT methods described above. 
 
 AUTOMATED OPERATION:
   
   REQUIREMENTS FOR WEB INTERFACE:
     *Moodle 1.4.1 or greater
-    *PHP 4.3 compiled with --enable-xslt  --with-xslt-sablot options
+    *PHP compiled with --enable-xslt  --with-xslt-sablot options
     (Check php.net for instructions on enabling xslt for your platform)
-    *Alternatively, PHP 5 compiled with xml and xsl support (-with-xsl)
   
   INSTALLATION:
     *Unpack this file into the "backup" directory
@@ -32,11 +36,10 @@ MANUAL OPERATION:
     *An XSLT 1.0 processor (like Sablotron)
     *A zipping utility
 
-  REQUIREMENTS FOR COMMAND LINE INTERFACE:
+  REQUIREMENTS FOR WEB INTERFACE:
 
     *Linux/Unix
-    *PHP 4 compiled with --enable-xslt  --with-xslt-sablot options.
-    *PHP 5 compiled with -with-xsl and the default xml support left in.
+    *PHP compiled with --enable-xslt  --with-xslt-sablot options.
     *Apache with write access to /tmp
     *A commandline zipping utility
     

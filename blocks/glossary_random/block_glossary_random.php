@@ -118,12 +118,9 @@ class block_glossary_random extends block_base {
 
         // select glossaries to put in dropdown box ...
         $glossaries = get_records_select_menu('glossary', 'course='.$this->course->id,'name','id,name');
-
         //format menu texts to avoid html and to filter multilang values
-        if(!empty($glossaries)) {
-            foreach($glossaries as $key => $value) {
-                $glossaries[$key] = strip_tags(format_string($value,true));
-            }
+        foreach($glossaries as $key => $value) {
+            $glossaries[$key] = strip_tags(format_string($value,true));
         }
 
         // and select quotetypes to put in dropdown box

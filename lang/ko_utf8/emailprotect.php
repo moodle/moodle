@@ -1,7 +1,9 @@
 <?PHP // $Id$ 
-      // emailprotect.php - created with Moodle 1.5 ALPHA (2005051500)
+      // emailprotect.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
-$string['filtername'] = 'E-mail보호';
+$string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 
 ?>

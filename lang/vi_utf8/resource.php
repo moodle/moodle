@@ -1,4 +1,4 @@
-<?php // $Id$ 
+﻿<?php // $Id$ 
       // resource.php - created with Moodle 1.2 development (2003120700)
 
 
@@ -78,8 +78,5 @@ $string['resourcetypehtml'] = 'Soạn thảo một trang web';
 $string['resourcetypelabel'] = 'Chèn một nhãn';
 $string['resourcetypetext'] = 'Soạn thảo một trang văn bản';
 $string['searchweb'] = 'Tìm kiếm trang web';
-$string['serverurl'] = 'URL của server ($a->wwwroot)';
-$string['showcourseblocks'] = 'Hiển thị các khối của cua học';
 $string['variablename'] = 'Tên biến';
-$string['vol'] = 'Vol';
 ?>

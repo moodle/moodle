@@ -143,7 +143,6 @@ $string['safehtml'] = 'HTML sûr';
 $string['save'] = 'Enregistrer';
 $string['searchwiki'] = 'Recherche dans le wiki';
 $string['setpageflags'] = 'Fixer les attributs de la page';
-$string['showversions'] = 'Afficher les versions&nbsp;';
 $string['sitemap'] = 'Carte du site';
 $string['smfor'] = 'Carte du site pour';
 $string['status'] = 'Statut';

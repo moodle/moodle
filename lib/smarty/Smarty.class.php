@@ -50,7 +50,7 @@ if (!defined('SMARTY_DIR')) {
 }
 
 if (!defined('SMARTY_CORE_DIR')) {
-    define('SMARTY_CORE_DIR', SMARTY_DIR . 'core' . DIRECTORY_SEPARATOR);
+    define('SMARTY_CORE_DIR', SMARTY_DIR . 'internals' . DIRECTORY_SEPARATOR);
 }
 
 define('SMARTY_PHP_PASSTHRU',   0);

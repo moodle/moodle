@@ -1,5 +1,6 @@
 <P ALIGN=CENTER><B>Formato di visualizzazione</B></P>
-<P>Questa impostazione specifica il modo in cui ogni termine del Glossario sar&agrave; visualizzato. I formati default sono:</p>
+
+<P>Questa impostazione specifica il modo in cui ogni termine del Glossario sarà visualizzato. I formati default sono:</p>
 <blockquote>
 <dl>
 <dt><b>Dizionario semplice</b>:</dt>
@@ -16,11 +17,12 @@
 <dd>Utile per mostrare liste di FAQ (Frequently Asked Questions). Automaticamente aggiunge le parole DOMANDA e RISPOSTA nei campi 'concetto' e 'definizione' rispettivamente.</dd>
 </dl>
 </blockquote>
+
 <hr>
 <p>Gli Amministratori di Moodle possono creare nuovi formati, nel seguente modo:
 <ol>
 <li> Cercare in mod/glossary/formats ... si dovrebbe vedere un file numerato per ogni formato esistente.
 <li> Copiare uno di questi file e rinominarlo con un nuovo numero N (notare che 0 e 1 sono riservati).
-<li> Editare questo file per creare il proprio formato (&egrave; richiesta un p&ograve; di conoscenza di PHP).
+<li> Editare questo file per creare il proprio formato (è richiesta un pò di conoscenza di PHP).
 <li> Infine, inserire una nuova entry in ogni lingua che si usa (language pack) chiamata <b>displayformatN</b>, e darle un nome corto ma significativo.
 </ol>

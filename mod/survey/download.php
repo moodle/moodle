@@ -4,9 +4,9 @@
 
 // Check that all the parameters have been provided.
 
-    $id    = required_param('id', PARAM_INT);    // Course Module ID
-    $type  = optional_param('type', 'xls', PARAM_ALPHA);
-    $group = optional_param('group', 0, PARAM_INT);
+    require_variable($id);    // Course Module ID
+    optional_variable($type, "xls");
+    optional_variable($group, 0);
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -106,7 +106,7 @@
 
     foreach ($aaa as $a) {
         if (!$group or isset($users[$a->userid])) {
-            if (empty($results["$a->userid"])) { // init new array
+            if (!$results["$a->userid"]) { // init new array
                 $results["$a->userid"]["time"] = $a->time;
                 foreach ($order as $key => $qid) {
                     $results["$a->userid"]["$qid"]["answer1"] = "";
@@ -121,15 +121,18 @@
 // Output the file as a valid Excel spreadsheet if required
 
     if ($type == "xls") {
-        require_once("$CFG->libdir/excellib.class.php");
+        require_once("$CFG->libdir/excel/Worksheet.php");
+        require_once("$CFG->libdir/excel/Workbook.php");
 
-    /// Calculate file name
-        $downloadfilename = clean_filename("$course->shortname ".strip_tags(format_string($survey->name,true))).'.xls';
-    /// Creating a workbook
-        $workbook = new MoodleExcelWorkbook("-");
-    /// Sending HTTP headers
-        $workbook->send($downloadfilename);
-    /// Creating the first worksheet
+        header("Content-type: application/vnd.ms-excel");
+        $downloadfilename = clean_filename("$course->shortname ".strip_tags(format_string($survey->name,true)));
+        header("Content-Disposition: attachment; filename=$downloadfilename.xls");
+        header("Expires: 0");
+        header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
+        header("Pragma: public");
+
+        $workbook = new Workbook("-");
+        // Creating the first worksheet
         $myxls =& $workbook->add_worksheet(substr(strip_tags(format_string($survey->name,true)), 0, 31));
 
         $header = array("surveyid","surveyname","userid","firstname","lastname","email","idnumber","time", "notes");

@@ -242,6 +242,9 @@ $string['ZA'] = 'דרום אפריקה';
 $string['ZM'] = 'זמביה';
 $string['ZR'] = 'זאיר';
 $string['ZW'] = 'זימבבואה';
-
+$string['parentlanguage'] = 'en';
+$string['thischarset'] = 'ISO-8859-8-I';
+$string['thisdirection'] = 'rtl';
+$string['thislanguage'] = '&#1506;&#1489;&#1512;&#1497;&#1514;';
 
 ?>

@@ -266,7 +266,7 @@ function handle_questions_media(&$questions, $path, $courseid) {
         $this->add_qti_info($questions);
         
         // copy files used by the main questions to the export directory
-        $result = $this->handle_questions_media($questions, $path, $courseid);
+        $result = $this->handle_questions_media(&$questions, $path, $courseid);
         if ($result !== true) {
             notify(implode("<br />", $result));
         }
@@ -427,9 +427,9 @@ function handle_questions_media(&$questions, $path, $courseid) {
                 if ($localfile) {
                     // create the http url that the player will need to access the file
                     if ($CFG->slasharguments) {        // Use this method if possible for better caching
-                        $questions[$key]->mediaurl = "$CFG->wwwroot/file.php/$question->image";
+                        $questions[$key]->mediaurl = "$CFG->wwwroot/mod/quiz/quizfile.php/$quizid/$question->id/$question->image";
                     } else {
-                        $questions[$key]->mediaurl = "$CFG->wwwroot/file.php?file=$question->image";
+                        $questions[$key]->mediaurl = "$CFG->wwwroot/mod/quiz/quizfile.php?file=/$quizid/$question->id/$question->image";
                     } 
                 } else {
                     $questions[$key]->mediaurl = $question->image;
@@ -599,8 +599,8 @@ function xml_entitize(&$collection) {
             break;
         case NUMERICAL:
             $qanswer = array_pop( $question->options->answers );
-            $smarty->assign('lowerbound', $qanswer->answer - $qanswer->tolerance);        
-            $smarty->assign('upperbound', $qanswer->answer + $qanswer->tolerance);        
+            $smarty->assign('lowerbound', $qanswer->answer - $question->options->tolerance);        
+            $smarty->assign('upperbound', $qanswer->answer + $question->options->tolerance);        
             $smarty->assign('answer', $qanswer->answer);        
             $expout = $smarty->fetch('numerical.tpl');
             break;

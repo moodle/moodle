@@ -9,6 +9,11 @@
     $enable  = optional_param('enable', '');                  // enable email
     $disable = optional_param('disable', '');                 // disable email
 
+    if (!empty($SESSION->wantsurl)) {
+        $wantsurl = $SESSION->wantsurl;
+        unset($SESSION->wantsurl);
+        redirect($wantsurl);
+    }
 
     if (empty($id)) {         // See your own profile by default
         require_login();
@@ -23,15 +28,13 @@
         error("No such course id");
     }
 
-    if (!empty($CFG->forcelogin) || $course->id != SITEID) {
+    if ($course->category) {
         require_login($course->id);
-    }
-
-    if (!empty($CFG->forceloginforprofiles)) {
-        require_login();
+    } else if ($CFG->forcelogin or !empty($CFG->forceloginforprofiles)) {
         if (isguest()) {
             redirect("$CFG->wwwroot/login/index.php");
         }
+        require_login();
     }
 
     add_to_log($course->id, "user", "view", "view.php?id=$user->id&course=$course->id", "$user->id");
@@ -57,17 +60,7 @@
     if (groupmode($course) == SEPARATEGROUPS and !isteacheredit($course->id)) {   // Groups must be kept separate
         require_login();
 
-        ///this is changed because of mygroupid
-        $gtrue = false;
-        if ($mygroups = mygroupid($course->id)){
-            foreach ($mygroups as $group){
-                if (ismember($group, $user->id)){
-                    $gtrue = true;
-                }
-            }
-        }
-        
-        if (!$currentuser && !isteacheredit($course->id, $user->id) && !$gtrue) {
+        if (!$currentuser && !isteacheredit($course->id, $user->id) && !ismember(mygroupid($course->id), $user->id)) {
             print_header("$personalprofile: ", "$personalprofile: ",
                          "<a href=\"../course/view.php?id=$course->id\">$course->shortname</a> ->
                           <a href=\"index.php?id=$course->id\">$participants</a>",
@@ -75,9 +68,9 @@
             error(get_string("groupnotamember"), "../course/view.php?id=$course->id");
         }
     }
-  
+
     if ($course->id == SITEID and !$currentuser) {  // To reduce possibility of "browsing" userbase at site level
-        if ($CFG->forceloginforprofiles and !isteacherinanycourse() and !isteacherinanycourse($user->id)) {  // Teachers can browse and be browsed at site level. If not forceloginforprofiles, allow access (bug #4366)
+        if (!isteacherinanycourse() and !isteacherinanycourse($user->id) ) {  // Teachers can browse and be browsed at site level
             print_header("$personalprofile: ", "$personalprofile: ",
                           "<a href=\"index.php?id=$course->id\">$participants</a>",
                           "", "", true, "&nbsp;", navmenu($course));
@@ -111,12 +104,6 @@
         print_heading(get_string("userdeleted"));
     }
 
-/// Get the hidden field list
-    if (isteacher($course->id) || isadmin()) {
-        $hiddenfields = array();  // teachers and admins are allowed to see everything
-    } else {
-        $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
-    }
 
 /// Print tabs at top
 /// This same call is made in:
@@ -126,6 +113,8 @@
     $currenttab = 'profile';
     include('tabs.php');
 
+
+
     echo "<table width=\"80%\" align=\"center\" border=\"0\" cellspacing=\"0\" class=\"userinfobox\">";
     echo "<tr>";
     echo "<td width=\"100\" valign=\"top\" class=\"side\">";
@@ -134,7 +123,7 @@
 
     // Print the description
 
-    if ($user->description && !isset($hiddenfields['description'])) {
+    if ($user->description) {
         echo format_text($user->description, FORMAT_MOODLE)."<hr />";
     }
 
@@ -142,19 +131,9 @@
 
     echo '<table border="0" cellpadding="0" cellspacing="0" class="list">';
 
-    if (($user->city or $user->country) and (!isset($hiddenfields['city']) or !isset($hiddenfields['country']))) {
-        $location = '';
-        if ($user->city && !isset($hiddenfields['city'])) {
-            $location .= $user->city;
-        }
-        if (!empty($countries[$user->country]) && !isset($hiddenfields['country'])) {
-            if ($user->city && !isset($hiddenfields['country'])) {
-                $location .= ', ';
-            }
-            $countries = get_list_of_countries();
-            $location .= $countries[$user->country];
-        }
-        print_row(get_string("location").":", $location);
+    if ($user->city or $user->country) {
+        $countries = get_list_of_countries();
+        print_row(get_string("location").":", "$user->city, ".$countries["$user->country"]);
     }
 
     if (isteacher($course->id)) {
@@ -176,11 +155,11 @@
         $emailswitch = '';
 
         if (isteacheredit($course->id) or $currentuser) {   /// Can use the enable/disable email stuff
-            if (!empty($enable)) {     /// Recieved a parameter to enable the email address
+            if (!empty($_GET['enable'])) {     /// Recieved a parameter to enable the email address
                 set_field('user', 'emailstop', 0, 'id', $user->id);
                 $user->emailstop = 0;
             }
-            if (!empty($disable)) {     /// Recieved a parameter to disable the email address
+            if (!empty($_GET['disable'])) {     /// Recieved a parameter to disable the email address
                 set_field('user', 'emailstop', 1, 'id', $user->id);
                 $user->emailstop = 1;
             }
@@ -216,24 +195,24 @@
         print_row(get_string("email").":", obfuscate_mailto($user->email, '', $user->emailstop)."$emailswitch");
     }
 
-    if ($user->url && !isset($hiddenfields['webpage'])) {
+    if ($user->url) {
         print_row(get_string("webpage").":", "<a href=\"$user->url\">$user->url</a>");
     }
 
-    if ($user->icq && !isset($hiddenfields['icqnumber'])) {
+    if ($user->icq) {
         print_row(get_string('icqnumber').':',"<a href=\"http://web.icq.com/wwp?uin=$user->icq\">$user->icq <img src=\"http://web.icq.com/whitepages/online?icq=$user->icq&amp;img=5\" width=\"18\" height=\"18\" border=\"0\" alt=\"\" /></a>");
     }
 
-    if ($user->skype && !isset($hiddenfields['skypeid'])) {
+    if ($user->skype) {
         print_row(get_string('skypeid').':','<a href="callto:'.urlencode($user->skype).'">'.s($user->skype).'</a>');
     }
-    if ($user->yahoo && !isset($hiddenfields['yahooid'])) {
+    if ($user->yahoo) {
         print_row(get_string('yahooid').':', '<a href="http://edit.yahoo.com/config/send_webmesg?.target='.s($user->yahoo).'&amp;.src=pg">'.s($user->yahoo).'</a>');
     }
-    if ($user->aim && !isset($hiddenfields['aimid'])) {
+    if ($user->aim) {
         print_row(get_string('aimid').':', '<a href="aim:goim?screenname='.s($user->aim).'">'.s($user->aim).'</a>');
     }
-    if ($user->msn && !isset($hiddenfields['msnid'])) {
+    if ($user->msn) {
         print_row(get_string('msnid').':', s($user->msn));
     }
 
@@ -242,46 +221,27 @@
             $courselisting = '';
             foreach ($mycourses as $mycourse) {
                 if ($mycourse->visible and $mycourse->category) {
-                    if ($mycourse->id != $course->id){
-                        $courselisting .= "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$mycourse->id\">$mycourse->fullname</a>, ";
-                    }
-                    else {
-                        $courselisting .= "$mycourse->fullname, ";
-                    }
+                    $courselisting .= "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$mycourse->id\">$mycourse->fullname</a>, ";
                 }
             }
             print_row(get_string('courses').':', rtrim($courselisting,', '));
         }
     }
 
-    if (!isset($hiddenfields['lastaccess'])) {
-        if ($user->lastaccess) {
-            $datestring = userdate($user->lastaccess)."&nbsp; (".format_time(time() - $user->lastaccess).")";
-        } else {
-            $datestring = get_string("never");
-        }
-        print_row(get_string("lastaccess").":", $datestring);
+    if ($user->lastaccess) {
+        $datestring = userdate($user->lastaccess)."&nbsp; (".format_time(time() - $user->lastaccess).")";
+    } else {
+        $datestring = get_string("never");
     }
-
-    $groupstr = '';
-
-    ///printing groups
-    if (isteacher($course->id)){
-        if ($mygroups = user_group($course->id, $user->id)){
-            foreach ($mygroups as $group){
-                $groupstr .= link_to_popup_window('/user/index.php?id='.$course->id.'&amp;group='.$group->id,'popup',$group->name,400,500,'edit group','none',true).", ";
-            }
-        }
-    print_row(get_string("group").":", rtrim($groupstr, ', '));
-    }
-    ///End of printing groups
+    print_row(get_string("lastaccess").":", $datestring);
 
     echo "</table>";
 
     echo "</td></tr></table>";
 
+
     $internalpassword = false;
-    if (is_internal_auth($USER->auth) or (!empty($CFG->{'auth_'.$USER->auth.'_stdchangepassword'}))) {
+    if (is_internal_auth() or (!empty($CFG->{'auth_'.$USER->auth.'_stdchangepassword'}))) {
         if (empty($CFG->loginhttps)) {
             $internalpassword = "$CFG->wwwroot/login/change_password.php";
         } else {
@@ -291,8 +251,7 @@
 
 //  Print other functions
     echo '<div class="buttons"><table align="center"><tr>';
-
-    if ($currentuser and !isguest() and !is_restricted_user($USER->username)) {
+    if ($currentuser and !isguest()) {
         if ($internalpassword ) {
             echo "<td nowrap=\"nowrap\"><form action=\"$internalpassword\" method=\"get\">";
             echo "<input type=\"hidden\" name=\"id\" value=\"$course->id\" />";
@@ -347,6 +306,7 @@
     }
     echo "<td></td>";
     echo "</tr></table></div>\n";
+
 
     print_footer($course);
 

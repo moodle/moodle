@@ -29,20 +29,7 @@ function online_assignment_cleanup($output=false) {
         echo '<center>';
     }
 
-
-    /// We don't want to run this code if we are doing an upgrade from an assignment
-    /// version earlier than 2005041400
-    /// because the assignment type field will not exist
-    $amv = get_field('modules', 'version', 'name', 'assignment');
-    if ((int)$amv < 2005041400) {
-        if ($output) {
-            echo '</center>';
-        }
-        return;
-    }
-
-
-    /// get the module id for assignments from db
+    // get the module id for assignments from db
     $arecord = get_record('modules', 'name', 'assignment');
     $aid = $arecord->id;
 
@@ -57,7 +44,7 @@ function online_assignment_cleanup($output=false) {
         if ($output) print_heading($fullname);
 
         /// retrieve a list of sections beyond what is currently being shown
-        $sql = 'SELECT * FROM '.$CFG->prefix.'course_sections WHERE course='.$course->id.' AND section>'.$course->numsections.' ORDER BY section ASC';
+        $sql = 'SELECT * FROM '.$CFG->prefix.'course_sections WHERE `course`='.$course->id.' AND `section`>'.$course->numsections.' ORDER BY `section` ASC';
         if (!($xsections = get_records_sql($sql))) {
             if ($output) echo 'No extra sections<br />';
             continue;

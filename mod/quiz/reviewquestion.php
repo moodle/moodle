@@ -18,7 +18,8 @@
     $stateid = optional_param('state', 0, PARAM_INT); // state id
     $attemptid = optional_param('attempt', 0, PARAM_INT); // attempt id
     $questionid = optional_param('question', 0, PARAM_INT); // attempt id
-    $number = optional_param('number', 0, PARAM_INT);  // question number
+
+    $number = required_param('number', PARAM_INT);  // question number
 
     if ($stateid) {
         if (! $state = get_record('quiz_states', 'id', $stateid)) {
@@ -31,13 +32,13 @@
         if (! $attempt = get_record('quiz_attempts', 'id', $attemptid)) {
             error('No such attempt ID exists');
         }
-        if (! $neweststateid = get_field('quiz_newest_states', 'newest', 'attemptid', $attempt->uniqueid, 'questionid', $questionid)) {
+        if (! $neweststate = get_field('quiz_newest_states', 'newest', 'attemptid', $attemptid, 'questionid', $questionid)) {
             // newest_state not set, probably because this is an old attempt from the old quiz module code
-            if (! $state = get_record('quiz_states', 'question', $questionid, 'attempt', $attempt->uniqueid)) {
+            if (! $state = get_record('quiz_states', 'question', $questionid, 'attempt', $attemptid)) {
                 error('Invalid question id');
             }
         } else {
-            if (! $state = get_record('quiz_states', 'id', $neweststateid)) {
+            if (! $state = get_record('quiz_states', 'id', $neweststate->newest)) {
                 error('Invalid state id');
             }
         }
@@ -70,10 +71,10 @@
             error(get_string("noreview", "quiz"));
         }
         if ((time() - $attempt->timefinish) > 120) { // always allow review right after attempt
-            if (!$quiz->timeclose or time() < $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_OPEN)) {
+            if (time() < $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_OPEN)) {
                 error(get_string("noreviewuntil", "quiz", userdate($quiz->timeclose)));
             }
-            if ($quiz->timeclose and time() >= $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_CLOSED)) {
+            if (time() >= $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_CLOSED)) {
                 error(get_string("noreview", "quiz"));
             }
         }
@@ -94,7 +95,7 @@
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
 /// Print heading
-    print_heading(format_string($question->name));
+    print_heading(format_string($quiz->name));
 
     $instance = get_record('quiz_question_instances', 'quiz', $quiz->id, 'question', $question->id);
     $question->instance = $instance->id;
@@ -108,35 +109,6 @@
     $options = quiz_get_reviewoptions($quiz, $attempt, $isteacher);
     $options->validation = ($state->event == QUIZ_EVENTVALIDATE);
     $options->history = 'all';
-
-/// Print infobox
-    $table->align  = array("right", "left");
-    if ($attempt->userid <> $USER->id) {
-        // Print user picture and name
-        $student = get_record('user', 'id', $attempt->userid);
-        $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
-        $table->data[] = array($picture, fullname($student, true));
-    }
-    // print quiz name
-    $table->data[] = array(get_string('modulename', 'quiz').':', format_string($quiz->name));
-    if ($isteacher and count($attempts = get_records_select('quiz_attempts', "quiz = '$quiz->id' AND userid = '$attempt->userid'", 'attempt ASC')) > 1) {
-        // print list of attempts
-        $attemptlist = '';
-        foreach ($attempts as $at) {
-            $attemptlist .= ($at->id == $attempt->id)
-                ? '<b>'.$at->attempt.'</b>, '
-                : '<a href="reviewquestion.php?attempt='.$at->id.'&amp;question='.$question->id.'&amp;number='.$number.'">'.$at->attempt.'</a>, ';
-        }
-        $table->data[] = array(get_string('attempts', 'quiz').':', trim($attemptlist, ' ,'));
-    }
-    if ($state->timestamp) {
-        // print time stamp
-        $table->data[] = array(get_string("completedon", "quiz").':', userdate($state->timestamp));
-    }
-    // Print info box unless it is empty
-    if ($table->data) {
-        print_table($table);
-    }
 
     quiz_print_quiz_question($question, $state, $number, $quiz, $options);
 

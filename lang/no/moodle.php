@@ -647,6 +647,7 @@ $string['order'] = 'Sortering';
 $string['other'] = 'Andre';
 $string['outline'] = 'Kontur';
 $string['page'] = 'Side';
+$string['parentlanguage'] = 'Overordnet reservespråk';
 $string['participants'] = 'Deltagere';
 $string['password'] = 'Passord';
 $string['passwordchanged'] = 'Passord er endret';

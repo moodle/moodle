@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.5 + (2005060201)
+      // exercise.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
 
 
 $string['absent'] = 'Chybí';
@@ -43,7 +43,7 @@ $a cvièení zpøístupnìno. Je také mo¾no vytvoøit sadu variant tého¾ cvièení
 nebo úlohy, opìt ve Wordu nebo v HTML a zkopírovat je do cvièení pøedtím, ne¾ 
 ho budou mít $a zpøístupnìno.';
 $string['detailsofassessment'] = 'Podrobnosti hodnocení';
-$string['displayoffinalgrades'] = 'Zobrazení koneèných známek';
+$string['displayoffinalgrades'] = 'Zobrazení koneèného poètu bodù';
 $string['doubleupload'] = 'Varování: toto øe¹ení bylo pravdìpodobnì posláno
 dvakrát. Bì¾te na stránku Správy a zjistìte, zda tento u¾ivatel
 podal dvì øe¹ení v krátkém èasovém intervalu. Døíve ne¾ budete pokraèovat,

@@ -1,40 +1,36 @@
 <?php // $Id$ 
 
-$string['addfeed'] = 'Đưa địa chỉ URL đọc tin: ';
-$string['addheadlineblock'] = 'Đưa khối đọc RSS';
-$string['addnew'] = 'Đưa thêm';
-$string['choosefeedlabel'] = 'Chọn các các nguồn tin bạn muốn hiển thị trên khối này:';
-$string['clientchannellink'] = 'Site nguồn...';
-$string['clientnumentries'] = 'Số tin mặc định để hiển thị mỗi nguồn.';
-$string['clientshowchannellinklabel'] = 'Có hiển thị liên kết tới site nguồn cung cấp tin? (Chú ý nếu không có nguồn nào được cung cấp trong khối thì không liên kết nào được hiển thị) :';
-$string['clientshowimagelabel'] = 'Hiển thị ảnh nguồn tin nếu có :';
-$string['configblock'] = 'Cấu hình khối này';
-$string['couldnotfindfeed'] = 'Không thể tìm nguồn tin với id';
-$string['customtitlelabel'] = 'Tiêu đề yêu thích (nếu để trống thì dùng tiêu đề có ở nguồn tin):';
-$string['deletefeedconfirm'] = 'Bạn có chắc chắn muốn xóa tin này?';
-$string['displaydescriptionlabel'] = 'Hiển thị mô tả?';
-$string['editfeeds'] = 'Chỉnh sửa, đăng kí hoặc không đăng kí từ các nguồn RSS/Atom';
-$string['editnewsfeeds'] = 'Soạn thảo các nguồn tin';
-$string['editrssblock'] = 'Chỉnh sửa khối đọc tin RSS';
-$string['feedadded'] = 'Nguồn tin đã được đưa thêm';
-$string['feeddeleted'] = 'Nguồn tin đã được xóa';
-$string['feed'] = 'Nguồn tin';
-$string['feedsaddedit'] = 'Đưa thêm/chỉnh sửa các nguồn tin';
-$string['feedsconfigurenewinstance'] = 'Nhấn chuột vào đây để cấu hình khối hiển thị các tin thông qua RSS.';
-$string['feeds'] = 'Các nguồn tin';
-$string['feedstitle'] = 'Đọc tin qua RSS';
-$string['feedupdated'] = 'Nguồn tin được cập nhật';
-$string['findmorefeeds'] = 'Tìm thêm các nguồn tin RSS';
-$string['managefeeds'] = 'Quản lý các nguồn tin của tôi';
-$string['nofeeds'] = 'Hiện tại hhông có nguồn RSS nào.';
-$string['pickfeed'] = 'Chọn một nguồn tin';
-$string['remotenewsfeed'] = 'Đọc tin qua RSS';
-$string['seeallfeeds'] = 'Xem tất cả các nguồn';
-$string['shownumentrieslabel'] = 'Số tin lớn nhất xuất hiện trong mỗi khối.';
-$string['submitters'] = 'Ai sẽ được phép xác định nguồn tin mới? Các nguồn tin có thể hiển thị ở bất kỳ trang nào của site.';
+$string['feedstitle'] = 'Gỡ bỏ RSS Feeds';
+$string['feedsaddedit'] = 'Thêm/Soạn thảo Feeds';
+$string['remotenewsfeed'] = 'Gỡ bỏ Feed tin tức';
+$string['feedupdated'] = 'feed tin tức được cập nhật';
+$string['feedadded'] = 'feed tin tức được thêm';
+$string['feeddeleted'] = 'feed tin tức được xoá';
+
+$string['numentries'] = 'Số các kết nối của rss để nhìn thấy trên mỗi khối.';
+$string['submitters'] = 'Ai có thể định nghĩa rss feeds mới ? Feeds được tạo ra có sẵn đối với bất kỳ thành viên nào của site với mục đích thêm chúng tới các trang  của riêng họ.';
+$string['choosefeed'] = 'Chọn một feed để hiển thị trong khối này :';
+$string['nofeeds'] = 'Không có RSS feeds nào được định nghĩa đối với site này.';
+$string['editnewsfeeds'] = 'Soạn thảo feeds tin tức';
+$string['shownumentries'] = 'Số mục tối đa để hiển thị ra đối với mỗi khối.';
+$string['displaydescription'] = 'Hiển thị từng phần mô tả của kết nối ?';
+
+$string['couldnotfindfeed'] = 'Không thể tìm thấy feed với id';
+$string['feed'] = 'Feed';
+$string['findmorefeeds'] = 'Tìm rss feeds nhiều hơn';
+
+$string['deletefeedconfirm'] = 'Bạn có chắc chắn muốn xoá feed này?';
 $string['timeout'] = 'blockrsstimeout';
-$string['timeoutdesc'] = 'Thời gian để lưu RSS của nguồn tin trong cache.';
-$string['updatefeed'] = 'Cập nhật URL của nguồn tin: ';
-$string['validatefeed'] = 'Kiểm tra tính đúng đắn của nguồn tin';
+$string['timeoutdesc'] = 'Thời gian để một RSS feed hoạt động trong bộ nhớ đệm.';
+$string['addheadlineblock'] = 'Thêm khối tiêu đề cho RSS ';
+$string['pickfeed'] = 'Chọn lựa một feed tin tức ';
+$string['feeds'] = 'Feeds tin tức';
+$string['feed'] = 'Feed tin tức';
+$string['editfeeds'] = 'Soạn thảo, tham gia hoặc không tham gia dựa vào RSS/Atom feeds tin tức';
+$string['seeallfeeds'] = 'Nhìn thấy tất cả feeds';
+$string['editrssblock'] = 'Soạn thảo khối tiêu đề RSS';
+
+$string['addnew'] = 'Thêm mới';
+$string['wordtitle'] = 'Tiêu đề';
 
 ?>

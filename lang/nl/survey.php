@@ -203,6 +203,9 @@ $string['surveyname'] = 'De naam van het onderzoek';
 $string['surveysaved'] = 'Het onderzoek is bewaard';
 $string['surveytype'] = 'Soort onderzoek';
 $string['thanksforanswers'] = 'Bedankt voor het invullen van dit onderzoek, $a';
+$string['thischarset'] = 'iso-8859-1';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Nederlands';
 $string['time'] = 'Tijd';
 $string['viewsurveyresponses'] = 'Bekijk $a ingevulde onderzoeken';
 

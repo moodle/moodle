@@ -1,18 +1,7 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.6 development (2005052400)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
 
 
-$string['alternateloginurl'] = 'ÃÓÊÈÏá ÚäæÇä ÇáÏÎæá';
-$string['auth_cas_enabled'] = 'İí ÍÇáÉ ÑÛÈÊß İí ÇÓÊÎÏÇã ÊæËíŞ  CAS Şã äÔÛíá åĞÇ.';
-$string['auth_cas_hostname'] = 'ÇÓã ÇáãÓÊÖíİ áÎÇÏã CAS <br />Úáì ÓÈíá ÇáãËÇá: host.domain.fr';
-$string['auth_cas_invalidcaslogin'] = 'ÚĞÑÇó¡ áŞÏ ÃÎİŞÊ ãÍÇæáÊ ÏÎæáß - ÈÑÈãÇ ÃäÊ ÛíÑ ãÎæá ááŞíÇã ÈĞáß.';
-$string['auth_cas_language'] = 'ÇááÛÇÊ ÇáãÎÊÇÑÉ';
-$string['auth_cas_logincas'] = 'ÇáÏÎæá Úä ØÑíŞ ÃÊÕÇá Ããä';
-$string['auth_cas_port'] = 'ãäİĞ ÎÇÏã ÎÏãÉ ÇáÊæËíŞ ÇáãÑßÒíÉ';
-$string['auth_cas_server_settings'] = 'ÅÚÏÇÏÇÊ ÎÇÏã ÎÏãÉ ÇáÊæËíŞ ÇáãÑßÒíÉ';
-$string['auth_cas_text'] = 'ÃÊÕÇá Ããä';
-$string['auth_cas_version'] = 'ÕÏÇÑ ÎÏãÉ ÇáÊæËíŞ ÇáãÑßÒíÉ';
-$string['auth_castitle'] = 'ÃÓÊÎÏã ÎÇÏã ÎÏãÉ ÇáÊæËíŞ ÇáãÑßÒíÉ';
 $string['auth_common_settings'] = 'ÇáÃÚÏÇÏÇÊ ÇáÚÇãå';
 $string['auth_data_mapping'] = 'ÊÎØíØ ÇáãÚáæãÇÊ';
 $string['auth_dbdescription'] = 'íÓÊÎÏã åĞÇ ÇáÃÓáæÈ ÌÏæá ÈíÇäÇÊ ÎÇÑÌí ááÊÍŞŞ ãä ÕÍÉ ÇÓã ÇáãÓÊÎÏã æßáãÉ ÇáãÑæÑ. æİí ÍÇáÉ ÇáÍÓÇÈÇÊ ÇáÌÏíÏÉ İŞÏ íÊã äÓÎ ÇáãÚáæãÇÊ ãä ÇáÍŞæá ÇáÃÎÑì ÃíÖÇ æäŞáåÇ Åáì äÙÇã Moodle.';
@@ -68,7 +57,6 @@ $string['auth_nntpport'] = 'ãäİĞ ÇáãÒæÏ (119 åæ ÇáÃßËÑ ÔíæÚÇ)';
 $string['auth_nntptitle'] = 'ÇÓÊÎÏã ãÒæÏ NNTP';
 $string['auth_nonedescription'] = 'íãßä ááãÓÊÎÏãíä ÇáÊæŞíÚ Ëã ÅäÔÇÁ ÍÓÇÈÇÊ ÕÍíÍÉ Úáì ÇáİæÑ¡ Ïæä ÍÇÌÉ ááÊæËíŞ İí ãŞÇÈá ãÒæÏ ÎÇÑÌí Ãæ Åáì ÇáÊæßíÏ ãä ÎáÇá ÇáÈÑíÏ ÇáÅáßÊÑæäí. íäÕÍ ÈÇáÍÑÕ Úä ÇÓÊÎÏÇã åĞÇ ÇáÎíÇÑ - æÊÏíÑ ÚæÇŞÈ ãÔÇßá ÇáÍãÇíÉ æÇáÅÏÇÑÉ ÇáÊí ŞÏ ÊäÊÌ Úäå.';
 $string['auth_nonetitle'] = 'áÇ íæÌÏ ÊæËíŞ';
-$string['auth_pamtitle'] = 'ÈÇã (æÍÏÇÊ ÊæËíŞ ŞÇÈáÉ áÊæÕíá)';
 $string['auth_passwordisexpired'] = 'ÇäÊåÊ ÕáÇÍíÉ ßáãÉ ãÑæÑß. åá ÊÑÛÈ İí ÊÛíÑåÇÇáÂä¿';
 $string['auth_passwordwillexpire'] = 'ÓÊäÊåí ÕáÇÍíÉ ßáãÉ ãÑæÑß ÎáÇá $a. åá ÊÑÛÈ İí ÊÛíÑåÇÇáÂä¿';
 $string['auth_pop3description'] = 'íÓÊÎÏã åĞÇ ÇáÃÓáæÈ ãÒæÏ ÈÑÊæßæá ãßÊÈ ÇáÈÑíÏ3 POP3 ááÊÃßÏ ãä ÕÍÉ ÇÓã ÇáãÓÊÎÏã æßáãÉ ÇáãÑæÑ.';
@@ -77,8 +65,6 @@ $string['auth_pop3mailbox'] = 'ÇÓã ÕäÏæŞ ÇáÈÑíÏÇáãÑÛæÈ ÇáÃÊÕÇá Èå (ÚÇÏÉ ÕäÏæŞ Çá
 $string['auth_pop3port'] = 'ãäİĞ ÇáãÒæÏ (110 åí ÇáÃßËÑ ÔíæÚÇ)';
 $string['auth_pop3title'] = 'ÇÓÊÎÏã ãÒæÏ POP3';
 $string['auth_pop3type'] = 'äæÚ ÇáãÒæÏ. ÅĞÇ ßÇä ãÒæÏß íÓÊÎÏã ÍãÇíÉ ÇáÔåÇÏÉ¡ Şã ÈÇÎÊíÇÑ pop3cert.';
-$string['auth_shib_convert_data'] = 'ÊÚÏíá ÇáÈíÇäÇÊ API';
-$string['auth_shibboleth_manual_login'] = 'ÇáÏÎæá ÇáíÏæí';
 $string['auth_updatelocal'] = 'ÍĞË ÇáãÚáæãÇÊ ÇáãÍáíÉ';
 $string['auth_updateremote'] = 'ÍÏË ÇáãÚáãæãÇÊ ÇáÎÇÑÌíÉ';
 $string['auth_user_create'] = 'Êãßíä ÅäÔÇÁ ãÓÊÎÏã';

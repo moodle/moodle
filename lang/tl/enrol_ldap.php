@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_ldap.php - created with Moodle 1.5 ALPHA (2005051500)
+      // enrol_ldap.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['description'] = '<p>Maaari kang gumamit ng LDAP server para makontrol ang pagpapaenrol mo.
@@ -39,7 +39,6 @@ $string['enrol_ldap_course_settings'] = 'Kaayusang ng pag-eenrol sa kurso';
 $string['enrol_ldap_course_shortname'] = 'Opsiyonal: LDAP field na pagkukunan ng maikling pangalan.';
 $string['enrol_ldap_course_summary'] = 'Opsiyonal: LDAP field na pagkukunan ng buod.';
 $string['enrol_ldap_editlock'] = 'Ikandado ang halaga';
-$string['enrol_ldap_general_options'] = 'Mga Pangkalahatang Opsiyon';
 $string['enrol_ldap_host_url'] = 'Itakda ang  LDAP host sa anyong URL tulad ng
                                   \'ldap://ldap.myorg.com/\' 
                                   o \'ldaps://ldap.myorg.com/\'';

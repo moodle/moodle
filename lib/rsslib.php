@@ -159,7 +159,6 @@ function rss_standard_header($title = NULL, $link = NULL, $description = NULL) {
         $result .= rss_full_tag('title', 2, false, $title);
         $result .= rss_full_tag('link', 2, false, $link);
         $result .= rss_full_tag('description', 2, false, $description);
-        $result .= rss_full_tag('generator', 2, false, 'Moodle');
         if (!empty($USER->lang)) {
             $result .= rss_full_tag('language', 2, false, substr($USER->lang,0,2));
         }
@@ -205,10 +204,6 @@ function rss_add_items($items) {
     if (!empty($items)) {
         foreach ($items as $item) {
             $result .= rss_start_tag('item',2,true);
-            //Include the category if exists (some rss readers will use it to group items)
-            if (isset($item->category)) {
-                $result .= rss_full_tag('category',3,false,$item->category);
-            }
             $result .= rss_full_tag('title',3,false,$item->title);
             $result .= rss_full_tag('link',3,false,$item->link);
             $result .= rss_full_tag('pubDate',3,false,date('r',$item->pubdate));
@@ -218,10 +213,9 @@ function rss_add_items($items) {
                 //We put it in the description instead because it's more important 
                 //for moodle than most other feeds, and most rss software seems to ignore
                 //the author field ...
-                $item->description = get_string('byname','',$item->author).'. &nbsp;<p />'.$item->description.'</p>';
+                $item->description = get_string('byname','',$item->author).'. &nbsp;<p>'.$item->description.'</p>';
             }
             $result .= rss_full_tag('description',3,false,$item->description);
-            $result .= rss_add_enclosures($item);
             $result .= rss_end_tag('item',2,true);
 
         }
@@ -335,9 +329,9 @@ define('MAGPIE_CACHE_ON', true); //might want to expose as an admin config optio
 define('MAGPIE_CACHE_FRESH_ONLY', false); //should be exposed as an admin config option
 define('MAGPIE_CACHE_AGE', $CFG->block_rss_timeout);
 if ($CFG->debug) {
-    define('MAGPIE_DEBUG', $CFG->debug); // magpie, like moodle, takes an integer debug
+    define('MAGPIE_DEBUG', true);
 } else {
-    define('MAGPIE_DEBUG', 0); // 0 is DEBUG off for magpie
+    define('MAGPIE_DEBUG', false);
 }
 
 // defines for config var block_rss_client_submitters
@@ -346,11 +340,10 @@ define('SUBMITTERS_ADMIN_ONLY', 1);
 define('SUBMITTERS_ADMIN_AND_TEACHER', 2);
 
 /**
- * @param int $courseid The id of the course the user is currently viewing
  * @param int $userid If present only entries added by this userid will be displayed
  * @param int $rssid If present the rss entry matching this id alone will be displayed
  */
-function rss_display_feeds($courseid='', $userid='', $rssid='') {
+function rss_display_feeds($userid='', $rssid='') {
     global $db, $USER, $CFG;
     global $blogid; //hackish, but if there is a blogid it would be good to preserve it
 
@@ -359,12 +352,12 @@ function rss_display_feeds($courseid='', $userid='', $rssid='') {
     $select = '';
 
     if (!isadmin()) {
-        $userid = $USER->id;
+     	$userid = $USER->id;
     }
 
     if ($userid != '' && is_numeric($userid)) {
-        // if a user is specified and not an admin then only show their own feeds
-        $select = 'userid='. $userid;
+	    // if a user is specified and not an admin then only show their own feeds
+	    $select = 'userid='. $userid;
     } else if ($rssid != ''){
         $select = 'id='. $rssid;
     }
@@ -395,18 +388,18 @@ function rss_display_feeds($courseid='', $userid='', $rssid='') {
 
             if ($feed->userid == $USER->id || isadmin()) {
                 
-                $feedicons = '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $courseid .'&amp;act=rssedit&amp;rssid='. $feed->id .'&blogid='. $blogid .'">'.
+                $feedicons = '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=rss_edit&amp;rssid='. $feed->id .'&blogid='. $blogid .'">'.
                              '<img src="'. $CFG->pixpath .'/t/edit.gif" alt="'. get_string('edit').'" title="'. get_string('edit') .'" /></a>&nbsp;'.
                              
-                             '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $courseid .'&amp;act=delfeed&amp;rssid='. $feed->id.'&amp;blogid='. $blogid .'" 
-                onclick="return confirm(\''. get_string('deletefeedconfirm', 'block_rss_client') .'\');">'.
+                             '<a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=delfeed&amp;rssid='. $feed->id.'&amp;blogid='. $blogid .'" onclick="return confirm(\''. get_string('deletefeedconfirm', 'block_rss_client') .'\');">'.
                              '<img src="'. $CFG->pixpath .'/t/delete.gif" alt="'. get_string('delete').'" title="'. get_string('delete') .'" /></a>';
             }
             else {
                 $feedicons = '';
             }
 
-            $feedinfo = '<div class="title"><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?id='. $courseid .'&amp;act=view&rssid='.$feed->id .'&blogid='. $blogid .'">'. $feedtitle .'</a></div><div class="url"><a href="'. $feed->url .'">'. $feed->url .'</a></div><div class="description">'.$feed->description.'</div>';
+            $feedinfo = '<div class="title"><a href="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php?act=view&rssid='.$feed->id .'&blogid='. $blogid .'">'
+                        .$feedtitle .'</a></div><div class="url"><a href="'. $feed->url .'">'. $feed->url .'</a></div><div class="description">'.$feed->description.'</div>';
             
             $table->add_data(array($feedinfo, $feedicons));
         }
@@ -416,24 +409,26 @@ function rss_display_feeds($courseid='', $userid='', $rssid='') {
 
 }
 
-
 /**
- * Wrapper function for rss_get_form
+ *   translates HTML special characters back to ASCII
+ * RSS feeds may have encoded html commands which we want to translate properly
+ * to display as intended rather than as source (html script visible in feed)
+ * This function taken from Simplog - www.simplog.net
  */
-function rss_print_form($act='none', $url='', $rssid='', $preferredtitle='', $courseid='') {
-    print rss_get_form($act, $url, $rssid, $preferredtitle, $courseid);
+function rss_unhtmlentities($string) {
+    $trans_tbl = get_html_translation_table (HTML_ENTITIES);
+    $trans_tbl = array_flip ($trans_tbl);
+    return strtr ($string, $trans_tbl);
 }
-
 
 /**
  * Prints or returns a form for managing rss feed entries.
- * @param string $act The current action. If "rssedit" then and "update" button is used, otherwise "add" is used.
- * @param string $url The url of the feed that is being updated or NULL
- * @param int $rssid The dataabse id of the feed that is being updated or NULL
- * @param int $id The id of the course that is currently being viewed if applicable
- * @return string Either the form is printed directly and nothing is returned or the form is returned as a string
+ * @param string $act .
+ * @param string $url .
+ * @param int $rssid .
+ * @param bool $printnow True if the generated form should be printed out, false if the string should be returned from this function quietly
  */
-function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $courseid='') {
+function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $printnow=true) {
     global $USER, $CFG, $_SERVER, $blockid, $blockaction;
     global $blogid; //hackish, but if there is a blogid it would be good to preserve it
     $stredit = get_string('edit');
@@ -441,112 +436,52 @@ function rss_get_form($act='none', $url='', $rssid='', $preferredtitle='', $cour
     $strupdatefeed = get_string('updatefeed', 'block_rss_client');
     $straddfeed = get_string('addfeed', 'block_rss_client');
     
-    $returnstring = '<table align="center"><tbody><tr><td>'."\n";    
+    $returnstring = '<table align="center"><tbody><tr><td>'."\n";
+    
     $returnstring .= '<form action="'. $CFG->wwwroot .'/blocks/rss_client/block_rss_client_action.php" method="POST" name="block_rss">'."\n";
-
-    if ($act == 'rssedit') {
+    if ($act == 'rss_edit') {
         $returnstring .= $strupdatefeed; 
     } else { 
         $returnstring .= $straddfeed; 
     }
-
     $returnstring .= "\n".'<br /><input type="text" size="60" maxlength="256" name="url" value="';
-    if ($act == 'rssedit') { 
+    if ($act == 'rss_edit') { 
         $returnstring .= $url; 
     }
-
     $returnstring .= '" />'."\n";
     $returnstring .= '<br />'. get_string('customtitlelabel', 'block_rss_client');
-//    $returnstring .= '<br /><input type="text" size="60" maxlength="64" name="preferredtitle" value="';
-    $returnstring .= '<br /><input type="text" size="60" maxlength="128" name="preferredtitle" value="';
-
-    if ($act == 'rssedit') { 
+    $returnstring .= '<br /><input type="text" size="60" maxlength="64" name="preferredtitle" value="';
+    if ($act == 'rss_edit') { 
         $returnstring .= $preferredtitle; 
     }
-
     $returnstring .= '" />'."\n";
-    $returnstring .= '<input type="hidden" name="act" value="';
 
-    if ($act == 'rssedit') {
+    $returnstring .= '<input type="hidden" name="act" value="';
+    if ($act == 'rss_edit') {
         $returnstring .= 'updfeed';
     } else {
         $returnstring .= 'addfeed';
     }
-
     $returnstring .= '" />'."\n";
-    if ($act == 'rssedit') { 
+    if ($act == 'rss_edit') { 
         $returnstring .= '<input type="hidden" name="rssid" value="'. $rssid .'" />'. "\n"; 
     }
-
-    $returnstring .= '<input type="hidden" name="id" value="'. $courseid .'" />'."\n";
     $returnstring .= '<input type="hidden" name="blogid" value="'. $blogid .'" />'."\n";
     $returnstring .= '<input type="hidden" name="user" value="'. $USER->id .'" />'."\n";
     $returnstring .= '<br /><input type="submit" value="';
     $validatestring = "<a href=\"#\" 
 onClick=\"window.open('http://feedvalidator.org/check.cgi?url='+document.block_rss.elements['url'].value,'validate','width=640,height=480,scrollbars=yes,status=yes,resizable=yes');return true;\">". get_string('validatefeed', 'block_rss_client')."</a>";
-
-    if ($act == 'rssedit') {
+    if ($act == 'rss_edit') {
         $returnstring .= $stredit;
     } else {
         $returnstring .= $stradd;
     }
-
     $returnstring .= '" />&nbsp;'. $validatestring .'</form>'."\n";
     $returnstring .= '</td></tr></tbody></table>'."\n";
-    return $returnstring;
-}
 
-
-/**
-* Adds RSS Media Enclosures for "podcasting" by examining links to media files
-* 
-* @param    $item     object representing an RSS item
-* @return   string    RSS enclosure tags
-* @author   Hannes Gassert <hannes@mediagonal.ch>
-*/
-function rss_add_enclosures($item){
-
-    $returnstring = '';
-    $rss_text = $item->description;
-    
-    // take into account attachments (e.g. from forum)
-    if (isset($item->attachments) && is_array($item->attachments)) {
-        foreach ($item->attachments as $attachment){
-            $rss_text .= " <a href='$attachment'/>"; //just to make sure the regexp groks it
-        }
+    if ($printnow){
+        print $returnstring;
     }
-    
-    // list of media file extensions and their respective mime types
-    // could/should we put this to some more central place?
-    $mediafiletypes = array(
-        'mp3'  => 'audio/mpeg',
-        'm3u'  => 'audio/x-mpegurl',
-        'pls'  => 'audio/x-mpegurl',
-        'ogg'  => 'application/ogg',
-        'm4b'  => 'audio/x-m4b',
-        'mpeg' => 'video/mpg',
-        'mpg'  => 'video/mpg',
-        'mov'  => 'video/quicktime',
-        'avi'  => 'video/x-msvideo',
-        'wmv'  => 'video/x-msvideo'
-    );
-
-    // regular expression (hopefully) matching all links to media files
-    $medialinkpattern = '@href\s*=\s*(\'|")(\S+(' . implode('|', array_keys($mediafiletypes)) . '))\1@Usie';
-
-    if (!preg_match_all($medialinkpattern, $rss_text, $matches)){
-        return $returnstring;
-    }
-
-    // loop over matches of regular expression 
-    for ($i = 0; $i < count($matches[2]); $i++){
-        $url = htmlspecialchars($matches[2][$i]);
-        $type = $mediafiletypes[strtolower($matches[3][$i])];               
-
-        // the rss_*_tag functions can't deal with methods, unfortunately
-        $returnstring .= "\n<enclosure url='$url' type='$type' />\n";
-    }
-    
     return $returnstring;
 }
 ?>

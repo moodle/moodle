@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.5 ALPHA (2005051500)
+      // attendance.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['absentlong'] = 'Walâ';
@@ -16,7 +16,7 @@ $string['dayofroll'] = 'Petsa na tsetsekin ang nagsipasok';
 $string['defaultautoattend'] = 'Kung ang pagtsek na pagpasok batay sa log ng aktibidad ng user ay gagawing default';
 $string['defaultdynamicsection'] = 'Kung ililipat ba ang talaan ng pagpasok sa wastong linggo bilang default';
 $string['defaultgrade'] = 'Kung ang namamarkahang talaan ng pagpasok ang gagawing default';
-$string['defaulthoursinclass'] = 'Ilang oras dapat magkaroon sa isang default na talaan ng pagpasok';
+$string['defaulthoursinclass'] = 'Ilang oras dapat magkaroon sa isang default na tallan ng pagpasok';
 $string['defaultmaxgrade'] = 'Kung ano dapat maging default na maksimum na halaga ng marka para sa kumpletong pagpasok';
 $string['defaultstudentstatus'] = 'Ang default na kalagayan ng pagpasok ng mag-aaral sa mga bagong talaan ng pagpasok';
 $string['downloadexcelfull'] = 'Idownlowd ang Buong  Excel Spreadsheet';

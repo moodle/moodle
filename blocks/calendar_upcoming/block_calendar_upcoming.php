@@ -8,8 +8,8 @@ class block_calendar_upcoming extends block_base {
 
     function get_content() {
         global $USER, $CFG, $SESSION;
-        $cal_m = optional_param( 'cal_m', 0, PARAM_INT );
-        $cal_y = optional_param( 'cal_y', 0, PARAM_INT );
+        optional_variable($_GET['cal_m']);
+        optional_variable($_GET['cal_y']);
 
         require_once($CFG->dirroot.'/calendar/lib.php');
 
@@ -27,12 +27,8 @@ class block_calendar_upcoming extends block_base {
             $this->content->footer = '';
 
         } else {
-            if (!empty($this->instance->pageid)) {
-                $courseshown = $this->instance->pageid;
-            }
-            else {
-                $courseshown = SITEID;
-            }
+
+            $courseshown = $this->instance->pageid;
             $this->content->footer = '<br /><a href="'.$CFG->wwwroot.
                                      '/calendar/view.php?view=upcoming&amp;course='.$courseshown.'">'.
                                       get_string('gotocalendar', 'calendar').'</a>...';

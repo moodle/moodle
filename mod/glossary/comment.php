@@ -4,11 +4,13 @@
     require_once('../../config.php');
     require_once('lib.php');
 
-    $id   = required_param('id', PARAM_INT);             // Course Module ID
-    $eid  = required_param('eid', PARAM_INT);            // Entry ID
-    $cid  = optional_param('cid', 0, PARAM_INT);         // Comment ID
-    $confirm = optional_param('confirm',0, PARAM_INT);  // Confirm the action
-    $action = optional_param('action','add', PARAM_ALPHA);
+    require_variable($id);             // Course Module ID
+    require_variable($eid);            // Entry ID
+    optional_variable($cid,0);         // Comment ID
+
+    optional_variable($confirm,0);     // Confirm the action
+
+    $action = optional_param('action','add');
 
     $action = strtolower($action);
 
@@ -167,7 +169,7 @@
 
         } else {
             /// original glossary entry
-            glossary_print_entry($course, $cm, $glossary, $entry, 'approval', '', false);
+            glossary_print_entry($course, $cm, $glossary, $entry, '', '', false);
             echo '<br />';
 
             if ($usehtmleditor = can_use_html_editor()) {

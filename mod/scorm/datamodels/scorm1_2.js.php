@@ -57,6 +57,7 @@ function SCORMapi1_2() {
         'cmi.core.student_name':{'defaultvalue':'<?php echo $userdata->student_name ?>', 'mod':'r', 'writeerror':'403'},
         'cmi.core.lesson_location':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.lesson_location'})?$userdata->{'cmi.core.lesson_location'}:'' ?>', 'format':CMIString256, 'mod':'rw', 'writeerror':'405'},
         'cmi.core.credit':{'defaultvalue':'<?php echo $userdata->credit ?>', 'mod':'r', 'writeerror':'403'},
+        //'cmi.core.credit':{'defaultvalue':'credit', 'mod':'r', 'writeerror':'403'},  
         'cmi.core.lesson_status':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.lesson_status'})?$userdata->{'cmi.core.lesson_status'}:'' ?>', 'format':CMIStatus, 'mod':'rw', 'writeerror':'405'},
         'cmi.core.entry':{'defaultvalue':'<?php echo $userdata->entry ?>', 'mod':'r', 'writeerror':'403'},
         'cmi.core.score._children':{'defaultvalue':score_children, 'mod':'r', 'writeerror':'402'},
@@ -166,11 +167,6 @@ function SCORMapi1_2() {
         errorCode = "0";
         if (param == "") {
             if (!Initialized) {
-                <?php 
-                    if (($CFG->debug > 7) && (isadmin())) {
-                        echo 'alert("Initialized");';
-                    }
-                ?>
                 Initialized = true;
                 errorCode = "0";
                 return "true";
@@ -187,22 +183,17 @@ function SCORMapi1_2() {
         errorCode = "0";
         if (param == "") {
             if (Initialized) {
-                <?php 
-                    if (($CFG->debug > 7) && (isadmin())) {
-                        echo 'alert("Finished");';
-                    }
-                ?>
                 Initialized = false;
                 result = StoreData(cmi,true);
                 if (nav.event != '') {
                     if (nav.event == 'continue') {
-                        setTimeout('top.document.location=top.next;',500);
+                        setTimeout('top.nextSCO();',500);
                     } else {
-                        setTimeout('top.document.location=top.prev;',500);
+                        setTimeout('top.prevSCO();',500);
                     }
                 } else {
                     if (<?php echo $scorm->auto ?> == 1) {
-                        setTimeout('top.document.location=top.next;',500);
+                        setTimeout('top.nextSCO();',500);
                     }
                 }    
                 return "true";
@@ -232,11 +223,6 @@ function SCORMapi1_2() {
                         }
                             if (subelement == element) {
                             errorCode = "0";
-                            <?php 
-                                if (($CFG->debug > 7) && (isadmin())) {
-                                    echo 'alert(element+": "+eval(element));';
-                                }
-                            ?>
                             return eval(element);
                         } else {
                             errorCode = "0"; // Need to check if it is the right errorCode
@@ -347,11 +333,6 @@ function SCORMapi1_2() {
                                         eval(element+'="'+value+'";');
                                     }
                                     errorCode = "0";
-                                    <?php 
-                                        if (($CFG->debug > 7) && (isadmin())) {
-                                            echo 'alert(element+":= "+value);';
-                                        }
-                                    ?>
                                     return "true";
                                 }
                             }
@@ -481,17 +462,15 @@ function SCORMapi1_2() {
                 element = parent+'.'+property;
                 expression = new RegExp(CMIIndex,'g');
                 elementmodel = element.replace(expression,'.n.');
-                if (elementmodel != "cmi.core.session_time") {
-                    if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
-                        if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
-                            elementstring = '&'+underscore(element)+'='+escape(data[property]);
-                            if ((typeof eval('datamodel["'+elementmodel+'"].defaultvalue')) != "undefined") {
-                                if (eval('datamodel["'+elementmodel+'"].defaultvalue') != data[property]) {
-                                    datastring += elementstring;
-                                }
-                            } else {
+                if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
+                    if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
+                        elementstring = '&'+underscore(element)+'='+escape(data[property]);
+                        if ((typeof eval('datamodel["'+elementmodel+'"].defaultvalue')) != "undefined") {
+                            if (eval('datamodel["'+elementmodel+'"].defaultvalue') != data[property]) {
                                 datastring += elementstring;
                             }
+                        } else {
+                            datastring += elementstring;
                         }
                     }
                 }
@@ -502,18 +481,14 @@ function SCORMapi1_2() {
 
     function StoreData(data,storetotaltime) {
         if (storetotaltime) {
-            if (cmi.core.lesson_status == 'not attempted') {
-                cmi.core.lesson_status = 'completed';
-            }
             if (cmi.core.lesson_mode == 'normal') {
                 if (cmi.core.credit == 'credit') {
-                    if (cmi.core.lesson_status == 'completed') {
-                        if (cmi.student_data.mastery_score != '') {
-                            if (parseFloat(cmi.core.score.raw) >= parseFloat(cmi.student_data.mastery_score)) {
-                                cmi.core.lesson_status = 'passed';
-                            } else {
-                                cmi.core.lesson_status = 'failed';
-                            }
+                    cmi.core.lesson_status = 'completed';
+                    if (cmi.student_data.mastery_score != '') {
+                        if (cmi.core.score.raw >= cmi.student_data.mastery_score) {
+                            cmi.core.lesson_status = 'passed';
+                        } else {
+                            cmi.core.lesson_status = 'failed';
                         }
                     }
                 }
@@ -528,9 +503,7 @@ function SCORMapi1_2() {
         } else {
             datastring = CollectData(data,'cmi');
         }
-        datastring += '&attempt=<?php echo $attempt ?>';
-        datastring += '&scoid=<?php echo $sco->id ?>';
-        
+        //popupwin(datastring);
         var myRequest = NewHttpReq();
         result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&sesskey=<?php p($USER->sesskey) ?>"+datastring);
         results = result.split('\n');

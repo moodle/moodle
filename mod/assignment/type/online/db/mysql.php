@@ -42,6 +42,7 @@ function assignment_online_upgrade($oldversion)  {
 
                 $assignment->id = insert_record('assignment', $assignment);
 
+
             /// Now create a new course module record
 
                 $oldcm = get_coursemodule_from_instance('journal', $journal->id, $journal->course);
@@ -57,13 +58,7 @@ function assignment_online_upgrade($oldversion)  {
                 
             /// And locate it above the old one
 
-                if (!$section = get_record('course_sections', 'id', $oldcm->section)) {
-                    $section->section = 0;  // So it goes somewhere!
-                }
-
                 $newcm->coursemodule = $newcm->id;
-                $newcm->section      = $section->section;  // need relative reference
-
                 if (! $sectionid = add_mod_to_section($newcm, $oldcm) ) {  // Add it before Journal
                     error("Could not add the new course module to that section");
                 }
@@ -101,19 +96,10 @@ function assignment_online_upgrade($oldversion)  {
     /// Hide the whole Journal module (but not individual items, just to make undo easier)
         set_field('modules', 'visible', 0, 'name', 'journal');
 
-        if($journals === false) {
-            notify('The Journal module is becoming obsolete and being replaced by the superior Online Assignments, and  
-                    it has been disabled on your site.  If you really want Journal back, you can enable it using the 
-                    "eye" icon here:  Admin >> Modules >> Journal.');
-        }
-        else {
-            notify('The Journal module is becoming obsolete and being replaced by the superior Online Assignments.  
-                    It has been disabled on your site, and the '.count($journals).' Journal activites you had have been
-                    converted into Online Assignments.  If you really want Journal back, you can enable it using the 
-                    "eye" icon here:  Admin >> Modules >> Journal.');
-        }
+        notify('The Journal module is becoming obsolete and being replaced by the superior Online Assignments.  
+                It has been disabled on your site, and the '.count($journals).' Journal activites you had have been
+                converted into Online Assignments.  If you really want Journal back, you can enable it using the 
+                "eye" icon here:  Admin >> Modules >> Journal.');
     }
-
-    return true;
 
 }

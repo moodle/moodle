@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.6 development (2005090100)
+      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['action'] = '--- Aktion ---';
@@ -102,7 +102,7 @@ $string['mostoftenchangedpages'] = 'Meist veränderte Seiten';
 $string['mostvisitedpages'] = 'Meist besuchte Seiten';
 $string['newestpages'] = 'Neueste Seiten';
 $string['noadministrationaction'] = 'Keine Administrationsmöglichkeit vorhanden';
-$string['nocandidatestoremove'] = 'Keine Seiten zum Entfernen vorhanden, wählen Sie $a, um alle Seiten anzuzeigen.';
+$string['nocandidatestoremove'] = 'Keine Seiten zum Entfernen vorhanden, wählen Sie §a, um alle Seiten anzuzeigen.';
 $string['nochangestorevert'] = 'Keine Veränderung vorhanden, die rückgängig gemacht werden können';
 $string['nohtml'] = 'Kein HTML';
 $string['nolinksfound'] = 'Keine Links auf der Seite gefunden.';
@@ -144,7 +144,6 @@ $string['safehtml'] = 'Sicheres HTML';
 $string['save'] = 'Speichern';
 $string['searchwiki'] = 'Wiki durchsuchen';
 $string['setpageflags'] = 'Seiteneinstellungen setzen';
-$string['showversions'] = 'Versionen anzeigen:';
 $string['sitemap'] = 'Sitemap';
 $string['smfor'] = 'Sitemap für';
 $string['status'] = 'Status';

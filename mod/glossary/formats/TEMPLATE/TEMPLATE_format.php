@@ -23,10 +23,7 @@ function glossary_show_entry_TEMPLATE($course, $cm, $glossary, $entry, $mode='',
 
         //Use this code to show author's name
         //Comments: Configuration not supported
-        $fullname = fullname($user, isteacher($course->id));
-        $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
-        $by->date = userdate($entry->timemodified);
-        echo '<span class="author">'.get_string('bynameondate', 'forum', $by).'</span>' . '<br />';
+        echo '<span class="author">'.$strby.' '.fullname($user, isteacher($course->id)) . '<br />';
 
         //Use this code to show modification date
         //Comments: Configuration not supported

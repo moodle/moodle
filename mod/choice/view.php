@@ -147,7 +147,7 @@
                     }
                     $maxans = $choice->maxanswers[$optionid];
                     
-                    if (isset($text)) { 
+                    if ($text) { 
                     echo "<td align=\"center\" valign=\"top\">";
                     echo "<input type=\"radio\" name=\"answer\" value=\"".$optionid."\" ".$answerchecked[$optionid]." alt=\"".strip_tags(format_text($text))."\"";
                     if ($choice->limitanswers && ($countanswers >= $maxans) && !($answerchecked[$optionid]) ) {
@@ -220,7 +220,7 @@
 
         echo "<center>";
         echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />";
-        if (!isguest()) {
+        if (isstudent($course->id) or isteacher($course->id, 0)) {
             echo "<input type=\"submit\" value=\"".get_string("savemychoice","choice")."\" />";
         } else {
             print_string('havetologin', 'choice');
@@ -241,7 +241,7 @@
         print_heading(get_string("responses", "choice"));
 
         if ($currentgroup) {
-            $users = get_group_users($currentgroup, "u.firstname ASC", '', 'u.id, u.picture, u.firstname, u.lastname');
+            $users = get_group_users($currentgroup, "u.firstname ASC", '', 'u.id, u.picture, u.firstname, u.lastname') + get_admins();
         } else {
             $users = get_course_users($course->id, "u.firstname ASC", '', 'u.id, u.picture, u.firstname, u.lastname') + get_admins();
         }
@@ -249,6 +249,8 @@
 
         if (!$users) {
             print_heading(get_string("nousersyet"));
+            print_footer($course);
+            exit;
         }
 
         if ($allresponses = get_records("choice_answers", "choiceid", $choice->id)) {

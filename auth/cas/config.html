@@ -1,27 +1,13 @@
 <?php
     require_once('languages.php');
     // Initialize vars
-    if (!isset ($config->cas_hostname)) {
-        $config->cas_hostname = "";
-    }
-    if (!isset ($config->cas_port)) {
-        $config->cas_port = "";
-    }
-    if (!isset ($config->cas_version)) {
-        $config->cas_version = "";
-    }
-    if (!isset ($config->cas_baseuri)) {
-        $config->cas_baseuri = "";
-    }
-    if (!isset ($config->cas_language)) {
-        $config->cas_language = "";
-    }
-    if (!isset ($config->cas_use_cas)) {
-        $config->cas_use_cas = "";
-    }
-    if (!isset ($config->cas_create_user)) {
-        $config->cas_create_user = "0";
-    }
+    optional_variable($config->cas_hostname,"");
+    optional_variable($config->cas_port,"");
+    optional_variable($config->cas_version,"");
+    optional_variable($config->cas_baseuri,"");
+    optional_variable($config->cas_language,"");
+    optional_variable($config->cas_use_cas,"");
+    optional_variable($config->cas_create_user,"0");
 ?>
 
 

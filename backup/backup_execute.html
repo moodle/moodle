@@ -26,8 +26,92 @@
         error("Site not found!");
     }
 
-    $preferences = new StdClass;
-    backup_fetch_prefs_from_request($preferences,$count,$course);
+   //Checks for the required files/functions to backup every mod
+    //And check if there is data about it
+    $count = 0;
+    if ($allmods = get_records("modules") ) {
+        foreach ($allmods as $mod) {
+            $modname = $mod->name;
+            $modfile = "$CFG->dirroot/mod/$modname/backuplib.php";
+            $modbackup = $modname."_backup_mods";
+            $modcheckbackup = $modname."_check_backup_mods";
+            if (file_exists($modfile)) {
+               include_once($modfile);
+               if (function_exists($modbackup) and function_exists($modcheckbackup)) {
+                   $var = "exists_".$modname;
+                   $$var = true;
+                   $count++;
+               }
+            }
+            //Check data
+            //Check module info
+            $var = "backup_".$modname;
+            if (!isset($$var)) {
+                //Every undefined backup_XXXX isn't exported
+                $$var = 0;
+            }
+            //Now stores all the mods preferences into an array into preferences
+            $preferences->mods[$modname]->backup = $$var;
+
+            //Check include user info
+            $var = "backup_user_info_".$modname;
+            if (!isset($$var)) {
+                $$var = 1;
+            }
+            //Now stores all the mods preferences into an array into preferences
+            $preferences->mods[$modname]->userinfo = $$var; 
+            //And the name of the mod
+            $preferences->mods[$modname]->name = $modname;
+        }
+    }
+
+    //Check other parameters
+    if (!isset($backup_metacourse)) {
+        $backup_metacourse = 1;
+    }
+    $preferences->backup_metacourse = $backup_metacourse;
+   
+    if (!isset($backup_users)) {
+        $backup_users = 1;
+    }
+    $preferences->backup_users = $backup_users;
+   
+    if (!isset($backup_logs)) {
+        $backup_logs = 0;
+    }
+    $preferences->backup_logs = $backup_logs;
+
+    if (!isset($backup_user_files)) {
+        $backup_user_files = 1;
+   }
+    $preferences->backup_user_files = $backup_user_files;
+
+    if (!isset($backup_course_files)) {
+        $backup_course_files = 2;
+    }
+    $preferences->backup_course_files = $backup_course_files;
+
+    if (!isset($backup_messages)) {
+        $backup_messages = 1;
+    }
+    $preferences->backup_messages = $backup_messages;
+
+    if (!isset($id)) {
+        error ("Course not specified");
+    }
+    $preferences->backup_course = $id;
+
+    if (!isset($backup_name)) {
+        error ("Backup name not specified");
+    }
+    //We clean it again (to prevent diacritics entered manually)
+    $preferences->backup_name = clean_filename($backup_name);
+
+    if (!isset($backup_unique_code)) {
+        error ("Backup unique code not specified");
+    }
+    $preferences->backup_unique_code = $backup_unique_code;
+
     //Another Info
     $preferences->moodle_version = $CFG->version;
     $preferences->moodle_release = $CFG->release;
@@ -61,10 +145,10 @@
     //Check for temp and backup and backup_unique_code directory
     //Create them as needed
     echo "<li>".get_string("creatingtemporarystructures").'</li>';
-    $status = check_and_create_backup_dir($preferences->backup_unique_code);
+    $status = check_and_create_backup_dir($backup_unique_code);
     //Empty dir
     if ($status) {
-        $status = clear_backup_dir($preferences->backup_unique_code);
+        $status = clear_backup_dir($backup_unique_code);
     }
 
     //Delete old_entries from backup tables
@@ -81,7 +165,7 @@
         echo "<ul>";
         echo "<li>".get_string("writingheader").'</li>';
         //Obtain the xml file (create and open) and print prolog information
-        $backup_file = backup_open_xml($preferences->backup_unique_code);
+        $backup_file = backup_open_xml($backup_unique_code);
         echo "<li>".get_string("writinggeneralinfo").'</li>';
         //Prints general info about backup to file
         if ($backup_file) {
@@ -127,7 +211,7 @@
         echo "</ul></li>";
 
         //User info
-        if ($status) {
+        if ($status && $preferences->backup_users) {
             echo "<li>".get_string("writinguserinfo").'</li>';
             if (!$status = backup_user_info($backup_file,$preferences)) {
                 notify("An error occurred while backing up user info");
@@ -147,7 +231,6 @@
         //questions structure (step 1). See notes on mod/quiz/backuplib.php
         if ($status and $preferences->mods['quiz']->backup) {
             echo "<li>".get_string("writingcategoriesandquestions").'</li>';
-            require_once($CFG->dirroot.'/mod/quiz/backuplib.php');
             if (!$status = quiz_backup_question_categories($backup_file,$preferences)) {
                 notify("An error occurred while backing up quiz categories");
             }
@@ -318,8 +401,6 @@
         }
         error_log($filename);
         $SESSION->import_preferences = $preferences;
-        print_continue($CFG->wwwroot.'/course/import/activities/index.php?id='.$to.'&fromcourse='.$id.'&filename='.$filename);
+        print_continue($CFG->wwwroot.'/course/import.php?id='.$to.'&fromcourse='.$id.'&filename='.$filename);
     }
-
-    $SESSION->backupprefs[$course->id] = null; // unset it so we're clear next time.
 ?>

@@ -10,15 +10,10 @@ CREATE TABLE prefix_scorm (
   version varchar(9) NOT NULL default '',
   maxgrade float(3) NOT NULL default '0',
   grademethod tinyint(2) NOT NULL default '0',
-  maxattempt int(10) NOT NULL default '1',
   launch int(10) unsigned NOT NULL default '0',
-  summary text NOT NULL default '',
-  hidebrowse tinyint(1) NOT NULL default '0',
-  hidetoc tinyint(1) NOT NULL default '0',
-  hidenav tinyint(1) NOT NULL default '0',
+  summary text NOT NULL,
+  browsemode tinyint(2) NOT NULL default '0',
   auto tinyint(1) unsigned NOT NULL default '0',
-  popup tinyint(1) unsigned NOT NULL default '0',
-  options varchar(255) NOT NULL default '',
   width int(10) unsigned NOT NULL default '800',
   height int(10) unsigned NOT NULL default '600',
   timemodified int(10) unsigned NOT NULL default '0',
@@ -55,7 +50,6 @@ CREATE TABLE prefix_scorm_scoes_track (
   userid int(10) unsigned NOT NULL default '0',
   scormid int(10) NOT NULL default '0',
   scoid int(10) unsigned NOT NULL default '0',
-  attempt int(10) unsigned NOT NULL default '1',
   element varchar(255) NOT NULL default '',
   value longtext NOT NULL default '',
   timemodified int(10) unsigned NOT NULL default '0',
@@ -63,8 +57,8 @@ CREATE TABLE prefix_scorm_scoes_track (
   KEY userid (userid),
   KEY scormid (scormid),
   KEY scoid (scoid),
-  KEY element (element),
-  UNIQUE track (userid, scormid, scoid, attempt, element)
+  KEY elemeny (element),
+  UNIQUE track (userid, scormid, scoid, element)
 ) TYPE=MyISAM;
 
 #

@@ -173,58 +173,7 @@ function scorm_upgrade($oldversion) {
      if ($oldversion < 2005052200) {
        table_column("scorm_scoes_track", "", "timemodified", "integer", "", "", "0", "NOT NULL", "value");
     }
-    
-    if ($oldversion < 2005052301) { // Mass cleanup of bad upgrade scripts
-        execute_sql("DROP INDEX {$CFG->prefix}scorm_scoes_track_scormid_idx", false);
-        execute_sql("DROP INDEX {$CFG->prefix}scorm_scoes_track_userid_idx", false);
-        execute_sql("DROP INDEX {$CFG->prefix}scorm_scoes_track_scoid_idx", false);
-        modify_database('','CREATE INDEX prefix_scorm_scoes_track_scorm_idx ON  prefix_scorm_scoes_track (scormid);');
-        modify_database('','CREATE INDEX prefix_scorm_scoes_track_user_idx ON  prefix_scorm_scoes_track (userid);');
-        modify_database('','CREATE INDEX prefix_scorm_scoes_track_sco_idx ON  prefix_scorm_scoes_track (scoid);');
-        execute_sql("DROP INDEX {$CFG->prefix}scorm_scoes_track_track_idx", false);
-        modify_database('','ALTER TABLE ONLY prefix_scorm_scoes_track DROP CONSTRAINT prefix_scorm_scoes_track_pkey');
-        modify_database('','ALTER TABLE ONLY prefix_scorm_scoes_track ADD CONSTRAINT prefix_scorm_scoes_track_pkey PRIMARY KEY (id)');
-        modify_database('','ALTER TABLE ONLY prefix_scorm_scoes_track ADD UNIQUE (userid, scormid, scoid, element)');
-        modify_database('','ALTER TABLE prefix_scorm ALTER browsemode SET DEFAULT 0');
-        modify_database('','ALTER TABLE prefix_scorm DROP version');
-        table_column('scorm_scoes','datafromlms','datafromlms','VARCHAR','255','','');
-        table_column('scorm_scoes','maxtimeallowed','maxtimeallowed','VARCHAR','19','','');
-    }
 
-    if ($oldversion < 2005062700) {
-       table_column("scorm", "", "popup", "integer", "", "", "0", "NOT NULL", "auto");
-    }
-    
-    if ($oldversion < 2005070600) {
-        table_column("scorm", "", "hidetoc", "integer", "", "", "0", "NOT NULL", "browsemode");
-        $scorms = get_records_select("scorm","1","id ASC");
-        table_column("scorm", "browsemode", "hidebrowse", "integer", "", "", "0", "NOT NULL", "");
-        if (!empty($scorms)) {
-            foreach($scorms as $scorm) {
-                if ($scorm->browsemode = 1) {
-                    $scorm->hidebrowse = 0;
-            	} else {
-                    $scorm->hidebrowse = 1;
-                }
-                update_record('scorm',$scorm);
-            }
-        }
-    }
-
-    if ($oldversion < 2005092500) {
-        table_column("scorm", "", "hidenav", "integer", "", "", "0", "NOT NULL", "hidetoc");
-        table_column("scorm", "", "options", "varchar", "255", "", "", "NOT NULL","popup");
-    }
-    
-    if ($oldversion < 2005092600) {
-        table_column("scorm_scoes_track", "", "attempt", "integer", "", "UNSIGNED", "1", "NOT NULL", "scoid"); 
-        execute_sql("DROP INDEX {$CFG->prefix}scorm_scoes_track_scormid_idx", false);
-        modify_database('',"CREATE UNIQUE INDEX prefix_scorm_scoes_track_uk ON prefix_scorm_scoes_track(userid,scormid,scoid,attempt,element);");
-    }
-
-    if ($oldversion < 2005102800) {
-        table_column("scorm", "", "maxattempt", "integer", "", "UNSIGNED", "1", "NOT NULL", "maxgrade"); 
-    }
     return true;
 }
 ?>

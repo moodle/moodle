@@ -19,7 +19,7 @@
     require("lib.php");
     require("locallib.php");
 
-    $id = required_param('id', PARAM_INT);    // Course Module ID
+    require_variable($id);    // Course Module ID
 
     // get some esential stuff...
     if (! $cm = get_record("course_modules", "id", $id)) {
@@ -49,7 +49,7 @@
 
     // ...and if necessary set default action
 
-    $action = optional_param('action', '', PARAM_ALPHA);
+    optional_variable($action);
     if (isteacher($course->id)) {
         if (empty($action)) { // no action specified, either go straight to elements page else the admin page
             // has the assignment any elements

@@ -4,8 +4,8 @@
     require_once('../../config.php');
     require_once('lib.php');
 
-    $id  = required_param('id', PARAM_INT);           // Course Module ID
-    $eid = required_param('eid', PARAM_INT);          // Entry ID
+    require_variable($id);           // Course Module ID
+    require_variable($eid);         // Entry ID
 
     global $USER, $CFG;
 

@@ -143,6 +143,12 @@ $CFG->admin = 'admin';
 // This is especially useful for demonstration teacher accounts
 //      $CFG->restrictusers = 'teacher,fred,jim';
 //
+// Turning this on will make Moodle filter more than usual, including
+// forum subjects, activity names and so on (in ADDITION to the normal
+// texts like forum postings, journals etc).  This is mostly only useful
+// when using the multilang filter.   This feature may not be complete.
+//      $CFG->filterall = true;
+//
 // Setting this to true will enable admins to edit any post at any time
 //      $CFG->admineditalways = true;
 //
@@ -213,21 +219,6 @@ $CFG->admin = 'admin';
 // a phrase occurs in a given page.  Otherwise all are matched.
 //      $CFG->filtermatchoneperpage = true;
 //
-// Enabling this will allow custom scripts to replace existing moodle scripts.
-// For example: if $CFG->dataroot/customscripts/course/view.php exists then
-// it will be used instead of $CFG->wwwroot/course/view.php
-// At present this will only work for files that include config.php and are called
-// as part of the url (index.php is implied).
-// Some examples are:
-//      http://my.moodle.site/course/view.php
-//      http://my.moodle.site/index.php
-//      http://my.moodle.site/admin            (index.php implied)
-// Custom scripts should not include config.php
-// Warning: Replacing standard moodle scripts may pose security risks and/or may not
-// be compatible with upgrades. Use this option only if you are aware of the risks
-// involved. 
-//      $CFG->customscripts = true;
-//
 // Performance profiling 
 // 
 //   If you set Debug to "Yes" in the Configuration->Variables page some
@@ -266,24 +257,18 @@ $CFG->admin = 'admin';
 //     $CFG->apacheloguser = 3; // Log username. 
 // To get the values logged in Apache's log, add to your httpd.conf
 // the following statements. In the General part put:
-//     LogFormat "%h %l %{MOODLEUSER}n %t \"%r\" %s %b \"%{Referer}i\" \"%{User-Agent}i\"" moodleformat
+//     LogFormat "%h %l %{MOODLEUSER}n %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"" moodleformat
 // And in the part specific to your Moodle install / virtualhost:
 //     CustomLog "/your/path/to/log" moodleformat
 // CAUTION: Use of this option will expose usernames in the Apache log,
 // If you are going to publish your log, or the output of your web stats analyzer
 // this will weaken the security of your website.
 // 
-// NOTE: if you are using custompix in your theme, see /fixpix.php.
+
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
 //=========================================================================
-if ($CFG->wwwroot == 'http://example.com/moodle') {
-    echo "<p>Error detected in configuration file</p>";
-    echo "<p>Your server address can not be: \$CFG->wwwroot = 'http://example.com/moodle';</p>";
-    die;
-}
-
 if (file_exists("$CFG->dirroot/lib/setup.php"))  {       // Do not edit
     include_once("$CFG->dirroot/lib/setup.php");
 } else {

@@ -1,14 +1,12 @@
-<?php  // $Id$
+<?php  // $Id: assess.php
 
     require("../../config.php");
     require("lib.php");
     require("locallib.php");
 
-    $id = required_param('id',PARAM_INT);   // Submission ID
-    $allowcomments = optional_param('allowcomments', false);
-    $redirect = optional_param('redirect', '');
-    $frameset = optional_param('frameset','',PARAM_ALPHA);
-    $sid = optional_param('sid',0,PARAM_INT);
+    require_variable($sid);   // Submission ID
+    optional_variable($allowcomments, false);
+    optional_variable($redirect, '');
 
     if (! $submission = get_record('workshop_submissions', 'id', $sid)) {
         error("Incorrect submission id");
@@ -35,7 +33,7 @@
 
     /// Now check whether we need to display a frameset
 
-    if (empty($frameset)) {
+    if (empty($_GET['frameset'])) {
         echo "<head><title>{$course->shortname}: ".format_string($workshop->name,true)."</title></head>\n";
         echo "<frameset rows=\"50%,*\" border=\"10\">";
         echo "<frame src=\"assess.php?id=$id&amp;sid=$sid&amp;frameset=top&amp;redirect=$redirect\" border=\"10\">";
@@ -46,7 +44,7 @@
 
     /// top frame with the navigation bar and the assessment form
 
-    if ($frameset == "top") {
+    if (!empty($_GET['frameset']) and $_GET['frameset'] == "top") {
 
         print_header_simple(format_string($workshop->name), "",
                      "<a href=\"index.php?id=$course->id\">$strworkshops</a> ->

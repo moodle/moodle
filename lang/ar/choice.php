@@ -1,8 +1,7 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.5 ALPHA (2005050600)
+      // choice.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005011000)
 
 
-$string['addmorechoices'] = 'ÃÖÝ ÎíÇÑÇÊ ÃßËÑ';
 $string['allowupdate'] = 'ÇÓãÍ áÊÍãíá ÇáÎíÇÑÇÊ';
 $string['answered'] = 'ÃÌíÈ Úäå';
 $string['choice'] = 'ÇÎÊíÇÑ  $a ';
@@ -10,13 +9,7 @@ $string['choiceclose'] = 'ÍÊì';
 $string['choicename'] = 'ÇÓã ÇáÇÎÊíÇÑ';
 $string['choiceopen'] = 'ãÝÊæÍ';
 $string['choicetext'] = 'äÕ ÇáÇÎÊíÇÑ';
-$string['displayhorizontal'] = 'ÇÚÑÖ ÃÝÞíÇð';
-$string['displaymode'] = 'ØÑíÞÉ ÇáÚÑÖ';
-$string['displayvertical'] = 'ÃÚÑÖ ÚãæÏíÇ';
-$string['full'] = '(ßÇãá)';
 $string['havetologin'] = 'íÌÈ Úáíß ÇáÏÎæá ÞÈá Ãä ÊÊãßä ãä ÊÓáíã ÎíÇÑÇÊß';
-$string['limit'] = 'ãÍÏÏ';
-$string['limitanswers'] = 'ÍÏÏ ÚÏÏ ÇáÃÌÇÈÇÊ ÇáãÓãæÍ ÈåÇ';
 $string['modulename'] = 'ÇáÇÎÊíÇÑ';
 $string['modulenameplural'] = 'ÇáÇÎÊíÇÑÇÊ';
 $string['mustchooseone'] = 'íÌÈ Úáíß ÇÎÊíÇÑ ÅÌÇÈÉ ÞÈá Ãä ÊÍÝÙ. áã ÍÝÙ Ãí ÔíÆ';
@@ -34,11 +27,7 @@ $string['responses'] = 'ÅÌÇÈÇÊ';
 $string['responsesto'] = 'ÅÌÇÈÇÊ áÜ  $a ';
 $string['savemychoice'] = 'ÍÝÙ ÇáÇÎÊíÇÑ';
 $string['showunanswered'] = 'ÇÙåÑ ÇáÃÓÆáÉ ÇáÊì áã íÊã ÇáÇÌÇÈÉ ÚáíåÇ Ýí åíÆÉ ÚÇãæÏ';
-$string['spaceleft'] = 'ÇáãÓÇÍÉ ÇáãÊÇÍÉ';
-$string['spacesleft'] = 'ÇáãÓÇÍÇÊ ÇáãÊÇÍÉ';
-$string['taken'] = 'ÇÓÊÎÏã';
 $string['timerestrict'] = 'ÍÏÏ ÇáÇÌÇÈÉ ÍÓÈ åÐå ÇáÝÊÑÉ ÇáÒãäíÉ';
 $string['viewallresponses'] = 'ãÚÇíäÉ $a  ÅÌÇÈÇÊ    ';
-$string['yourselection'] = 'ÃÎÊíÇÑß';
 
 ?>

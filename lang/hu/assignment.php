@@ -1,5 +1,5 @@
-<?php // $Id$
-// assignment.php - created with Moodle 1.2 + (2004032100)
+<?PHP // $Id$ 
+      // assignment.php - created with Moodle 1.4 (2004083100)
 
 
 $string['allowresubmit'] = 'Ismételt leadás engedélyezése';
@@ -12,7 +12,6 @@ $string['assignmenttype'] = 'Feladat típusa';
 $string['availabledate'] = 'Elérhetõ innen';
 $string['comment'] = 'Megjegyzés';
 $string['commentinline'] = 'Sorközi megjegyzés';
-$string['configitemstocount'] = 'Online feladatokban a tanulói leadott munkákhoz megszámolandó tételek jellege.';
 $string['configmaxbytes'] = 'Az adott portálon az összes feladat alapbeállítás szerinti maximális mérete (a kurzustól és egyéb helyi beállításoktól függõen)';
 $string['description'] = 'Leírás';
 $string['duedate'] = 'Határidõ';
@@ -27,13 +26,11 @@ $a->url';
 $string['emailteachermailhtml'] = '$a->username frissítette  <i>\'$a->assignment\'</i> feladathoz leeadott munkáját<br /><br />
 Megtalálható <a href=\"$a->url\">ezen a hálószemen</a>.';
 $string['emailteachers'] = 'Tanárok figyelmeztetése e-mailben';
-$string['emptysubmission'] = 'Még semmit nem adott le';
 $string['existingfiledeleted'] = 'Meglévõ fájl törölve: $a';
 $string['failedupdatefeedback'] = 'A leadott munka véleményezésének a frissítése $a számára nem sikerült';
 $string['feedback'] = 'Visszajelzés';
 $string['feedbackfromteacher'] = 'Visszajelzés  $a részérõl';
 $string['feedbackupdated'] = 'A leadott munka visszajelzése frissítve $a számára';
-$string['guestnoupload'] = 'Vendégek nem tölthetnek fel állományokat.';
 $string['helpoffline'] = '<p>Ez akkor hasznos, amikor a feladat végrehajtása a Moodle-on kívül történik. Erre sor kerülhet valahol máshol a weben, illetve tantermi órán.</p><p>A tanulók látják a feladat leírását, de nem tudnak állományokat feltölteni. A pontozás a szokásos módon történik, a tanulók pontjaikról értesítést kapnak.</p>';
 $string['helponline'] = '<p>Ezen feladattípus esetén a felhasználók szokásos szerkesztõjükkel szerkesztenek szöveget. A tanárok online pontozhatnak, sõt, sorközi megjegyzéseket tehetnek vagy változtathatnak a szövegen.</p>
 <p>(A Moodle régebbi változataiban ez a feladattípus a régi naplóval volt azonos.)</p>';
@@ -45,11 +42,9 @@ $string['modulename'] = 'Feladat';
 $string['modulenameplural'] = 'Feladatok';
 $string['newsubmissions'] = 'Feladatok leadva';
 $string['noassignments'] = 'Még nincsenek feladatok';
-$string['noattempts'] = 'Ezzel a feladattal még nem próbálkoztak';
 $string['notgradedyet'] = 'Még nincs pontozva';
 $string['notsubmittedyet'] = 'Még nincs leadva';
 $string['overwritewarning'] = 'Vigyázat: az újrafeltöltés FELÜLÍRJA a most leadott munkát';
-$string['preventlate'] = 'Kései leadások megakadályozása';
 $string['saveallfeedback'] = 'Minden visszajelzésem mentése';
 $string['submission'] = 'Leadott munka';
 $string['submissionfeedback'] = 'Leadott munka véleményezése';

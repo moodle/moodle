@@ -17,8 +17,7 @@
     $name    = optional_param('name', '', PARAM_FILE);
     $oldname = optional_param('oldname', '', PARAM_FILE);
     $choose  = optional_param('choose', '', PARAM_CLEAN);
-    $userfile= optional_param('userfile','',PARAM_FILE);
-    $save = optional_param( 'save','' );
+
 
     if ($choose) {
         if (count(explode('.', $choose)) != 2) {
@@ -168,7 +167,7 @@
                 // um will take care of error reporting.
                 displaydir($wdir);
             } else {
-                $upload_max_filesize = get_max_upload_file_size($CFG->maxbytes, $course->maxbytes);
+                $upload_max_filesize = get_max_upload_file_size($CFG->maxbytes);
                 $filesize = display_size($upload_max_filesize);
 
                 $struploadafile = get_string("uploadafile");
@@ -223,8 +222,8 @@
                     print_simple_box_end();
                     echo "<br />";
                     notice_yesno (get_string("deletecheckfiles"), 
-                                "index.php?id=$id&amp;wdir=$wdir&amp;action=delete&amp;confirm=1&amp;sesskey=$USER->sesskey&amp;choose=$choose",
-                                "index.php?id=$id&amp;wdir=$wdir&amp;action=cancel&amp;choose=$choose");
+                                "index.php?id=$id&amp;wdir=$wdir&amp;action=delete&amp;confirm=1&amp;sesskey=$USER->sesskey",
+                                "index.php?id=$id&amp;wdir=$wdir&amp;action=cancel");
                 } else {
                     displaydir($wdir);
                 }
@@ -303,7 +302,7 @@
             html_footer();
             break;
 
-        case "makedir":
+        case "mkdir":
             if (!empty($name) and confirm_sesskey()) {
                 html_header($course, $wdir);
                 $name = clean_filename($name);
@@ -325,7 +324,7 @@
                 echo ' <input type="hidden" name="choose" value="'.$choose.'">';
                 echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
                 echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
-                echo " <input type=\"hidden\" name=\"action\" value=\"makedir\" />";
+                echo " <input type=\"hidden\" name=\"action\" value=\"mkdir\" />";
                 echo " <input type=\"text\" name=\"name\" size=\"35\" />";
                 echo " <input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
                 echo " <input type=\"submit\" value=\"$strcreate\" />";
@@ -647,8 +646,6 @@ function displaydir ($wdir) {
     $straction = get_string("action");
     $strmakeafolder = get_string("makeafolder");
     $struploadafile = get_string("uploadafile");
-    $strselectall = get_string("selectall");
-    $strselectnone = get_string("deselectall");
     $strwithchosenfiles = get_string("withchosenfiles");
     $strmovetoanotherfolder = get_string("movetoanotherfolder");
     $strmovefilestohere = get_string("movefilestohere");
@@ -691,7 +688,7 @@ function displaydir ($wdir) {
             if ($dir == '..') {
                 $fileurl = rawurlencode(dirname($wdir));
                 print_cell();
-                print_cell('left', '<a href="index.php?id='.$id.'&amp;wdir='.$fileurl.'&amp;choose='.$choose.'"><img src="'.$CFG->pixpath.'/f/parent.gif" height="16" width="16" alt="'.get_string('parentfolder').'" /></a> <a href="index.php?id='.$id.'&amp;wdir='.$fileurl.'&amp;choose='.$choose.'">'.get_string('parentfolder').'</a>', 'name');
+                print_cell('left', '<a href="index.php?id='.$id.'&amp;wdir='.$fileurl.'"><img src="'.$CFG->pixpath.'/f/parent.gif" height="16" width="16" alt="'.get_string('parentfolder').'" /></a> <a href="index.php?id='.$id.'&amp;wdir='.$fileurl.'">'.get_string('parentfolder').'</a>', 'name');
                 print_cell();
                 print_cell();
                 print_cell();
@@ -757,7 +754,7 @@ function displaydir ($wdir) {
             print_cell("right", $filedate, 'date');
 
             if ($choose) {
-                $edittext = "<strong><a onclick=\"return set_value('$selectfile')\" href=\"#\">$strchoose</a></strong>&nbsp;";
+                $edittext = "<b><a onMouseDown=\"return set_value('$selectfile')\" href=\"\">$strchoose</a></b>&nbsp;";
             } else {
                 $edittext = '';
             }
@@ -817,13 +814,9 @@ function displaydir ($wdir) {
         echo ' <input type="hidden" name="choose" value="'.$choose.'">';
         echo " <input type=\"hidden\" name=\"id\" value=\"$id\" />";
         echo " <input type=\"hidden\" name=\"wdir\" value=\"$wdir\" />";
-        echo " <input type=\"hidden\" name=\"action\" value=\"makedir\" />";
+        echo " <input type=\"hidden\" name=\"action\" value=\"mkdir\" />";
         echo " <input type=\"submit\" value=\"$strmakeafolder\" />";
         echo "</form>";
-    echo "</td>";
-    echo "<td align=\"right\">";
-        echo " <input type=\"button\" value=\"$strselectall\" onClick=\"checkall();\" />";
-        echo " <input type=\"button\" value=\"$strselectnone\" onClick=\"uncheckall();\" />";
     echo "</td>";
     echo "<td align=\"right\">";
         echo "<form action=\"index.php\" method=\"get\">";

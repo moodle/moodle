@@ -5,14 +5,17 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $id = required_param('id', PARAM_INT);                       // Course Module ID, or
-    $usedynalink = optional_param('usedynalink', 0, PARAM_INT);  // category ID
-    $confirm     = optional_param('confirm', 0, PARAM_INT);      // confirm the action
-    $name        = optional_param('name', '', PARAM_ALPHANUM);  // confirm the name
+    require_variable($id);    // Course Module ID, or
+    optional_variable($usedynalink);  // category ID
+    optional_variable($confirm);  // confirm the action
 
-    $action = optional_param('action', '', PARAM_ALPHA ); // what to do
-    $hook   = optional_param('hook', '', PARAM_ALPHANUM); // category ID
-    $mode   = optional_param('mode', '', PARAM_ALPHA);   // cat
+    optional_variable($name);  // confirm the name
+
+    $name = clean_text($name);
+
+    $action = optional_param('action'); // what to do
+    $hook   = optional_param('hook',0); // category ID
+    $mode   = optional_param('mode');   // cat
 
     $action = strtolower($action);
 

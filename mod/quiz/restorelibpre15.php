@@ -132,14 +132,10 @@
 
             //Do some output
             if ($newid) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo "<li>".get_string('category', 'quiz')." \"".$quiz_cat->name."\"<br />";
-                }
+                echo "<li>".get_string('category', 'quiz')." \"".$quiz_cat->name."\"<br />";
             } else {
-                if (!defined('RESTORE_SILENTLY')) {
-                    //We must never arrive here !!
-                    echo "<li>".get_string('category', 'quiz')." \"".$quiz_cat->name."\" Error!<br />";
-                }
+                //We must never arrive here !!
+                echo "<li>".get_string('category', 'quiz')." \"".$quiz_cat->name."\" Error!<br />";
                 $status = false;
             }
             backup_flush(300);
@@ -154,9 +150,7 @@
             } else {
                 $status = false;
             }
-            if (!defined('RESTORE_SILENTLY')) {
-                echo '</li>';
-            }
+            echo '</li>';
         }
 
         return $status;
@@ -253,11 +247,9 @@
 
             //Do some output
             if (($i+1) % 2 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 40 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 40 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -358,11 +350,9 @@
 
                 //Do some output
                 if (($i+1) % 50 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 1000 == 0) {
-                            echo "<br />";
-                        }
+                    echo ".";
+                    if (($i+1) % 1000 == 0) {
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -421,11 +411,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -493,11 +481,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -548,11 +534,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -617,11 +601,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -667,11 +649,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -745,11 +725,9 @@
                                                       "answertext",$match_sub->answertext);
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -792,11 +770,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -852,11 +828,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -914,11 +888,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -1011,11 +983,9 @@
 
             //Do some output
             if (($i+1) % 50 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 1000 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 1000 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -1292,9 +1262,7 @@
             $newid = insert_record ("quiz",$quiz);
 
             //Do some output
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "<li>".get_string("modulename","quiz")." \"".format_string(stripslashes($quiz->name),true)."\"</li>";
-            }
+            echo "<li>".get_string("modulename","quiz")." \"".format_string(stripslashes($quiz->name),true)."\"</li>";
             backup_flush(300);
 
             if ($newid) {
@@ -1306,7 +1274,7 @@
                 //We have to restore the question_versions now (course level table)
                 $status = quiz_question_versions_restore_pre15_mods($newid,$info,$restore);
                 //Now check if want to restore user data and do it.
-                if (restore_userdata_selected($restore,'quiz',$mod->id)) {
+                if ($restore->mods['quiz']->userinfo) {
                     //Restore quiz_attempts
                     $status = quiz_attempts_restore_pre15_mods ($newid,$info,$restore, $quiz->questions);
                     if ($status) {
@@ -1360,11 +1328,9 @@
 
             //Do some output
             if (($i+1) % 10 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 200 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 200 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -1433,11 +1399,9 @@
 
             //Do some output
             if (($i+1) % 10 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 200 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 200 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -1497,20 +1461,16 @@
             if (isteacher($restore->course_id,$attempt->userid)) {
                 $attempt->preview = 1;
             }
-
-            //Set the uniqueid field
-            $attempt->uniqueid = quiz_new_attempt_uniqueid();
+            
 
             //The structure is equal to the db, so insert the quiz_attempts
             $newid = insert_record ("quiz_attempts",$attempt);
 
             //Do some output
             if (($i+1) % 10 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 200 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 200 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -1756,11 +1716,9 @@
 
             //Do some output
             if (($i+1) % 10 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 200 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 200 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -1815,11 +1773,9 @@
 
             //Do some output
             if (($i+1) % 10 == 0) {
-                if (!defined('RESTORE_SILENTLY')) {
-                    echo ".";
-                    if (($i+1) % 200 == 0) {
-                        echo "<br />";
-                    }
+                echo ".";
+                if (($i+1) % 200 == 0) {
+                    echo "<br />";
                 }
                 backup_flush(300);
             }
@@ -1863,11 +1819,9 @@
                 //Do some output
                 $i++;
                 if (($i+1) % 1 == 0) {
-                    if (!defined('RESTORE_SILENTLY')) {
-                        echo ".";
-                        if (($i+1) % 20 == 0) {
-                            echo "<br />";
-                        }
+                    echo ".";
+                    if (($i+1) % 20 == 0) {
+                        echo "<br />";
                     }
                     backup_flush(300);
                 }
@@ -1942,7 +1896,7 @@
                     //Get the new_id of the attempt (to recode the url field)
                     $att = backup_getid($restore->backup_unique_code,"quiz_attempts",$attid);
                     if ($att) {
-                        $log->url = "review.php?id=".$log->cmid."&attempt=".$att->new_id;
+                        $log->url = "review.php?id=".$log->cmid."&amp;attempt=".$att->new_id;
                         $log->info = $mod->new_id;
                         $status = true;
                     }
@@ -1959,7 +1913,7 @@
                     //Get the new_id of the attempt (to recode the url field)
                     $att = backup_getid($restore->backup_unique_code,"quiz_attempts",$attid);
                     if ($att) {
-                        $log->url = "review.php?id=".$log->cmid."&attempt=".$att->new_id;
+                        $log->url = "review.php?id=".$log->cmid."&amp;attempt=".$att->new_id;
                         $log->info = $mod->new_id;
                         $status = true;
                     }
@@ -1976,7 +1930,7 @@
                     //Get the new_id of the attempt (to recode the url field)
                     $att = backup_getid($restore->backup_unique_code,"quiz_attempts",$attid);
                     if ($att) {
-                        $log->url = "review.php?id=".$log->cmid."&attempt=".$att->new_id;
+                        $log->url = "review.php?id=".$log->cmid."&amp;attempt=".$att->new_id;
                         $log->info = $mod->new_id;
                         $status = true;
                     }
@@ -1995,9 +1949,7 @@
             }
             break;
         default:
-            if (!defined('RESTORE_SILENTLY')) {
-                echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
-            }
+            echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
             break;
         }
 

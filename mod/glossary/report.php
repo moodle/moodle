@@ -4,7 +4,7 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $id = required_param('id', PARAM_INT);
+    require_variable($id);
     global $USER;
     
     if (! $entry = get_record("glossary_entries", "id", $id)) {
@@ -42,10 +42,10 @@
     } else {
         echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"3\" class=\"generalbox\" width=\"100%\">";
         echo "<tr>";
-        echo "<th class=\"header\">&nbsp;</th>";
-        echo "<th class=\"header\"><a href=\"report.php?id=$entry->id&amp;sort=u.firstname\">$strname</a></th>";
-        echo "<th width=\"100%\" class=\"header\"><a href=\"report.php?id=$entry->id&amp;sort=r.rating\">$strrating</a></th>";
-        echo "<th class=\"header\"><a href=\"report.php?id=$entry->id&amp;sort=r.time\">$strtime</a></th>";
+        echo "<th>&nbsp;</th>";
+        echo "<th><a href=\"report.php?id=$entry->id&amp;sort=u.firstname\">$strname</a></th>";
+        echo "<th width=\"100%\"><a href=\"report.php?id=$entry->id&amp;sort=r.rating\">$strrating</a></th>";
+        echo "<th><a href=\"report.php?id=$entry->id&amp;sort=r.time\">$strtime</a></th>";
         foreach ($ratings as $rating) {
             if (isteacher($glossary->course, $rating->id)) {
                 echo '<tr class="teacher">';
@@ -53,11 +53,11 @@
                 echo '<tr>';
             }
             echo '<td class="picture">';
-            print_user_picture($rating->id, $glossary->course, $rating->picture, false, false, true, true);
+            print_user_picture($rating->id, $glossary->course, $rating->picture);
             echo '</td>';
-            echo '<td nowrap="nowrap" class="author"><a target="_blank" href="'.$CFG->wwwroot.'/user/view.php?id='.$rating->id.'&amp;course='.$glossary->course.'">'.fullname($rating).'</a></td>';
-            echo '<td nowrap="nowrap" align="center" class="rating">'.$scalemenu[$rating->rating].'</td>';
-            echo '<td nowrap="nowrap" align="center" class="time">'.userdate($rating->time).'</td>';
+            echo '<td nowrap="nowrap" class="author">'.fullname($rating).'</td>';
+            echo '<td nowrap="nowrap" align="center" class="author">'.$scalemenu[$rating->rating].'</td>';
+            echo '<td nowrap="nowrap" align="center" class="author">'.userdate($rating->time).'</td>';
             echo "</tr>\n";
         }
         echo "</table>";

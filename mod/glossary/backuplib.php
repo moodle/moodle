@@ -38,64 +38,47 @@
         $glossaries = get_records ("glossary","course",$preferences->backup_course,"mainglossary");
         if ($glossaries) {
             foreach ($glossaries as $glossary) {
-                if (backup_mod_selected($preferences,'glossary',$glossary->id)) {
-                    $status = glossary_backup_one_mod($bf,$preferences,$glossary);
+                //Start mod
+                fwrite ($bf,start_tag("MOD",3,true));
+                //Print glossary data
+                fwrite ($bf,full_tag("ID",4,false,$glossary->id));
+                fwrite ($bf,full_tag("MODTYPE",4,false,"glossary"));
+                fwrite ($bf,full_tag("NAME",4,false,$glossary->name));
+                fwrite ($bf,full_tag("INTRO",4,false,$glossary->intro));
+                fwrite ($bf,full_tag("STUDENTCANPOST",4,false,$glossary->studentcanpost));
+                fwrite ($bf,full_tag("ALLOWDUPLICATEDENTRIES",4,false,$glossary->allowduplicatedentries));
+                fwrite ($bf,full_tag("DISPLAYFORMAT",4,false,$glossary->displayformat));
+                fwrite ($bf,full_tag("MAINGLOSSARY",4,false,$glossary->mainglossary));
+                fwrite ($bf,full_tag("SHOWSPECIAL",4,false,$glossary->showspecial));
+                fwrite ($bf,full_tag("SHOWALPHABET",4,false,$glossary->showalphabet));
+                fwrite ($bf,full_tag("SHOWALL",4,false,$glossary->showall));
+                fwrite ($bf,full_tag("ALLOWCOMMENTS",4,false,$glossary->allowcomments));
+                fwrite ($bf,full_tag("ALLOWPRINTVIEW",4,false,$glossary->allowprintview));
+                fwrite ($bf,full_tag("USEDYNALINK",4,false,$glossary->usedynalink));
+                fwrite ($bf,full_tag("DEFAULTAPPROVAL",4,false,$glossary->defaultapproval));
+                fwrite ($bf,full_tag("GLOBALGLOSSARY",4,false,$glossary->globalglossary));
+                fwrite ($bf,full_tag("ENTBYPAGE",4,false,$glossary->entbypage));
+                fwrite ($bf,full_tag("EDITALWAYS",4,false,$glossary->editalways));
+                fwrite ($bf,full_tag("RSSTYPE",4,false,$glossary->rsstype));
+                fwrite ($bf,full_tag("RSSARTICLES",4,false,$glossary->rssarticles));
+                fwrite ($bf,full_tag("TIMECREATED",4,false,$glossary->timecreated));
+                fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$glossary->timemodified));
+                fwrite ($bf,full_tag("ASSESSED",4,false,$glossary->assessed));
+                fwrite ($bf,full_tag("ASSESSTIMESTART",4,false,$glossary->assesstimestart));
+                fwrite ($bf,full_tag("ASSESSTIMEFINISH",4,false,$glossary->assesstimefinish));
+                fwrite ($bf,full_tag("SCALE",4,false,$glossary->scale));
+               
+                //Only if preferences->backup_users != 2 (none users). Else, teachers entries will be included.
+                if ($preferences->backup_users != 2) { 
+                    backup_glossary_entries($bf,$preferences,$glossary->id, $preferences->mods["glossary"]->userinfo);
                 }
+
+                backup_glossary_categories($bf,$preferences,$glossary->id, $preferences->mods["glossary"]->userinfo);
+
+                //End mod
+                $status =fwrite ($bf,end_tag("MOD",3,true));
             }
         }
-        return $status;
-    }
-
-    function glossary_backup_one_mod($bf,$preferences,$glossary) {
-
-        global $CFG;
-    
-        if (is_numeric($glossary)) {
-            $glossary = get_record('glossary','id',$glossary);
-        }
-    
-        $status = true;
-
-        //Start mod
-        fwrite ($bf,start_tag("MOD",3,true));
-        //Print glossary data
-        fwrite ($bf,full_tag("ID",4,false,$glossary->id));
-        fwrite ($bf,full_tag("MODTYPE",4,false,"glossary"));
-        fwrite ($bf,full_tag("NAME",4,false,$glossary->name));
-        fwrite ($bf,full_tag("INTRO",4,false,$glossary->intro));
-        fwrite ($bf,full_tag("STUDENTCANPOST",4,false,$glossary->studentcanpost));
-        fwrite ($bf,full_tag("ALLOWDUPLICATEDENTRIES",4,false,$glossary->allowduplicatedentries));
-        fwrite ($bf,full_tag("DISPLAYFORMAT",4,false,$glossary->displayformat));
-        fwrite ($bf,full_tag("MAINGLOSSARY",4,false,$glossary->mainglossary));
-        fwrite ($bf,full_tag("SHOWSPECIAL",4,false,$glossary->showspecial));
-        fwrite ($bf,full_tag("SHOWALPHABET",4,false,$glossary->showalphabet));
-        fwrite ($bf,full_tag("SHOWALL",4,false,$glossary->showall));
-        fwrite ($bf,full_tag("ALLOWCOMMENTS",4,false,$glossary->allowcomments));
-        fwrite ($bf,full_tag("ALLOWPRINTVIEW",4,false,$glossary->allowprintview));
-        fwrite ($bf,full_tag("USEDYNALINK",4,false,$glossary->usedynalink));
-        fwrite ($bf,full_tag("DEFAULTAPPROVAL",4,false,$glossary->defaultapproval));
-        fwrite ($bf,full_tag("GLOBALGLOSSARY",4,false,$glossary->globalglossary));
-        fwrite ($bf,full_tag("ENTBYPAGE",4,false,$glossary->entbypage));
-        fwrite ($bf,full_tag("EDITALWAYS",4,false,$glossary->editalways));
-        fwrite ($bf,full_tag("RSSTYPE",4,false,$glossary->rsstype));
-        fwrite ($bf,full_tag("RSSARTICLES",4,false,$glossary->rssarticles));
-        fwrite ($bf,full_tag("TIMECREATED",4,false,$glossary->timecreated));
-        fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$glossary->timemodified));
-        fwrite ($bf,full_tag("ASSESSED",4,false,$glossary->assessed));
-        fwrite ($bf,full_tag("ASSESSTIMESTART",4,false,$glossary->assesstimestart));
-        fwrite ($bf,full_tag("ASSESSTIMEFINISH",4,false,$glossary->assesstimefinish));
-        fwrite ($bf,full_tag("SCALE",4,false,$glossary->scale));
-
-        //Only if preferences->backup_users != 2 (none users). Else, teachers entries will be included.
-        if ($preferences->backup_users != 2) {
-            backup_glossary_entries($bf,$preferences,$glossary->id, $preferences->mods["glossary"]->userinfo);
-        }
-
-        backup_glossary_categories($bf,$preferences,$glossary->id, $preferences->mods["glossary"]->userinfo);
-
-        //End mod
-        $status =fwrite ($bf,end_tag("MOD",3,true));
-
         return $status;
     }
 
@@ -331,14 +314,7 @@
     }
 
    ////Return an array of info (name,value)
-   function glossary_check_backup_mods($course,$user_data=false,$backup_unique_code,$instances=null) {
-      if (!empty($instances) && is_array($instances) && count($instances)) {
-           $info = array();
-           foreach ($instances as $id => $instance) {
-               $info += glossary_check_backup_mods_instances($instance,$backup_unique_code);
-           }
-           return $info;
-       }
+   function glossary_check_backup_mods($course,$user_data=false,$backup_unique_code) {
         //First the course data
         $info[0][0] = get_string("modulenameplural","glossary");
         if ($ids = glossary_ids ($course)) {
@@ -359,42 +335,6 @@
         return $info;
     }
 
-   ////Return an array of info (name,value)
-   function glossary_check_backup_mods_instances($instance,$backup_unique_code) {
-        //First the course data
-        $info[$instance->id.'0'][0] = '<b>'.$instance->name.'</b>';
-        $info[$instance->id.'0'][1] = '';
-
-        //Now, if requested, the user_data
-        if (!empty($instance->userdata)) {
-            $info[$instance->id.'1'][0] = get_string("concepts","glossary");
-            if ($ids = glossary_entries_ids_by_instance ($instance->id)) {
-                $info[$instance->id.'1'][1] = count($ids);
-            } else {
-                $info[$instance->id.'1'][1] = 0;
-            }
-        }
-        return $info;
-    }
-
-    //Return a content encoded to support interactivities linking. Every module
-    //should have its own. They are called automatically from the backup procedure.
-    function glossary_encode_content_links ($content,$preferences) {
-
-        global $CFG;
-
-        $base = preg_quote($CFG->wwwroot,"/");
-
-        //Link to the list of glossarys
-        $buscar="/(".$base."\/mod\/glossary\/index.php\?id\=)([0-9]+)/";
-        $result= preg_replace($buscar,'$@GLOSSARYINDEX*$2@$',$content);
-
-        //Link to glossary view by moduleid
-        $buscar="/(".$base."\/mod\/glossary\/view.php\?id\=)([0-9]+)/";
-        $result= preg_replace($buscar,'$@GLOSSARYVIEWBYID*$2@$',$result);
-
-        return $result;
-    }
 
     // INTERNAL FUNCTIONS. BASED IN THE MOD STRUCTURE
 
@@ -418,15 +358,5 @@
                                       {$CFG->prefix}glossary a
                                  WHERE a.course = '$course' AND
                                        s.glossaryid = a.id");
-    }
-
-    //Returns an array of glossary_answers id
-    function glossary_entries_ids_by_instance ($instanceid) {
-
-        global $CFG;
-
-        return get_records_sql ("SELECT s.id , s.glossaryid
-                                 FROM {$CFG->prefix}glossary_entries s
-                                 WHERE s.glossaryid = $instanceid");
     }
 ?>

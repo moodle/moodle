@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_flatfile.php - created with Moodle 1.5.3+ (2005060230)
+      // enrol_flatfile.php - created with Moodle 1.5 unstable development (2004083000)
 
 
 $string['description'] = 'Aquest mètode comprova repetidament si hi ha un fitxer de text en una ubicació que especifiqueu i quan hi és el processa. Aquest fitxer ha de tenir un format especial. Pot tenir un aspecte semblant a aquest:

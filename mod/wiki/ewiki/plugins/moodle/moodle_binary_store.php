@@ -1,4 +1,4 @@
-<?php // $Id$
+<?php
 
 /*
    This plugin intercepts some of the binary handling functions to

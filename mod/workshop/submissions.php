@@ -1,4 +1,4 @@
-<?php  // $Id$
+<?php  // $Id: lib.php,v 1.1 22 Aug 2003
 
 /*************************************************
     ACTIONS handled are:
@@ -21,14 +21,7 @@
     require("lib.php");
     require("locallib.php");
 
-    $id = required_param('id',PARAM_INT);    // Course Module ID
-    $action = optional_param('action','',PARAM_ALPHA);
-    $sid = optional_param('sid',0,PARAM_INT); //submission id
-    $order = optional_param('order','name',PARAM_ALPHA);
-    $title = optional_param('title','',PARAM_CLEAN);
-    $nentries = optional_param('nentries','',PARAM_ALPHANUM);
-    $anonymous = optional_param('anonymous','',PARAM_CLEAN);
-    $description = optional_param('description','',PARAM_CLEAN);
+    require_variable($id);    // Course Module ID
 
     $timenow = time();
 
@@ -56,6 +49,7 @@
                   "", "", true);
 
     //...get the action or set up an suitable default
+    optional_variable($action);
     if (empty($action)) {
         $action = "listallsubmissions";
     }
@@ -67,17 +61,17 @@
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
         }
-        if (empty($sid)) {
+        if (empty($_GET['sid'])) {
             error("Admin Amend Title: submission id missing");
         }
 
-        $submission = get_record("workshop_submissions", "id", $sid);
+        $submission = get_record("workshop_submissions", "id", $_GET['sid']);
         print_heading(get_string("amendtitle", "workshop"));
         ?>
         <form name="amendtitleform" action="submissions.php" method="post">
         <input type="hidden" name="action" value="adminupdatetitle" />
         <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
-        <input type="hidden" name="sid" value="<?php echo $sid ?>" />
+        <input type="hidden" name="sid" value="<?php echo $_REQUEST['sid'] ?>" />
         <center>
         <table cellpadding="5" border="1">
         <?php
@@ -101,14 +95,14 @@
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
         }
-        if (empty($sid)) {
+        if (empty($_GET['sid'])) {
             error("Admin clear late flag: submission id missing");
         }
 
-        if (!$submission = get_record("workshop_submissions", "id", $sid)) {
+        if (!$submission = get_record("workshop_submissions", "id", $_GET['sid'])) {
             error("Admin clear late flag: can not get submission record");
         }
-        if (set_field("workshop_submissions", "late", 0, "id", $sid)) {
+        if (set_field("workshop_submissions", "late", 0, "id", $_GET['sid'])) {
             print_heading(get_string("clearlateflag", "workshop")." ".get_string("ok"));
         }
 
@@ -121,9 +115,10 @@
     /******************* confirm delete ************************************/
     elseif ($action == 'confirmdelete' ) {
 
-        if (empty($sid)) {
+        if (empty($_GET['sid'])) {
             error("Confirm delete: submission id missing");
             }
+        $sid = $_GET['sid'];
         notice_yesno(get_string("confirmdeletionofthisitem","workshop", get_string("submission", "workshop")),
              "submissions.php?action=delete&amp;id=$cm->id&amp;sid=$sid", "view.php?id=$cm->id#sid=$sid");
         }
@@ -132,11 +127,11 @@
     /******************* delete ************************************/
     elseif ($action == 'delete' ) {
 
-        if (empty($sid)) {
+        if (empty($_GET['sid'])) {
             error("Delete: submission id missing");
         }
 
-        if (!$submission = get_record("workshop_submissions", "id", $sid)) {
+        if (!$submission = get_record("workshop_submissions", "id", $_GET['sid'])) {
             error("Admin delete: can not get submission record");
         }
 
@@ -174,15 +169,15 @@
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
         }
-        if (empty($sid)) {
+        if (empty($_GET['sid'])) {
             error("Admin confirm late flag: submission id missing");
         }
-        if (!$submission = get_record("workshop_submissions", "id", $sid)) {
+        if (!$submission = get_record("workshop_submissions", "id", $_GET['sid'])) {
             error("Admin confirm late flag: can not get submission record");
         }
 
         notice_yesno(get_string("clearlateflag","workshop")."?",
-             "submissions.php?action=adminclearlate&amp;id=$cm->id&amp;sid=$sid",
+             "submissions.php?action=adminclearlate&amp;id=$cm->id&amp;sid=$_GET[sid]",
              "view.php?id=$cm->id");
     }
 
@@ -192,6 +187,12 @@
 
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
+        }
+        if (empty($_GET['order'])) {
+            $order = "name";
+        }
+        else {
+            $order = $_GET['order'];
         }
 
         workshop_list_submissions_for_admin($workshop, $order);
@@ -206,11 +207,11 @@
         if (!isteacher($course->id)) {
             error("Only teachers can look at this page");
         }
-        if (empty($sid)) {
+        if (empty($_POST['sid'])) {
             error("Admin Update Title: submission id missing");
         }
 
-        if (set_field("workshop_submissions", "title", $title, "id", $sid)) {
+        if (set_field("workshop_submissions", "title", $_POST['title'], "id", $_POST['sid'])) {
             print_heading(get_string("amendtitle", "workshop")." ".get_string("ok"));
         }
         print_continue("view.php?id=$cm->id");
@@ -220,15 +221,15 @@
     /******************* confirm remove attachments ************************************/
     elseif ($action == 'confirmremoveattachments' ) {
 
-        if (empty($sid)) {
+        if (empty($_GET['sid'])) {
             error("Admin confirm delete: submission id missing");
         }
-        if (!$submission = get_record("workshop_submissions", "id", $sid)) {
+        if (!$submission = get_record("workshop_submissions", "id", $_GET['sid'])) {
             error("Admin delete: can not get submission record");
         }
 
         notice_yesno(get_string("confirmremoveattachments","workshop"),
-             "submissions.php?action=removeattachments&amp;id=$cm->id&amp;sid=$sid",
+             "submissions.php?action=removeattachments&amp;id=$cm->id&amp;sid=$_GET[sid]",
              "view.php?id=$cm->id");
     }
 
@@ -236,12 +237,12 @@
     /******************* edit submission ************************************/
     elseif ($action == 'editsubmission' ) {
 
-        if (empty($sid)) {
+        if (empty($_GET['sid'])) {
             error("Edit submission: submission id missing");
         }
         $usehtmleditor = can_use_html_editor();
 
-        $submission = get_record("workshop_submissions", "id", $sid);
+        $submission = get_record("workshop_submissions", "id", $_GET['sid']);
         print_heading(get_string("editsubmission", "workshop"));
         if ($submission->userid <> $USER->id) {
             error("Edit submission: Userids do not match");
@@ -253,7 +254,7 @@
         <form name="editform" enctype="multipart/form-data" action="submissions.php" method="post">
         <input type="hidden" name="action" value="updatesubmission" />
         <input type="hidden" name="id" value="<?php echo $cm->id ?>" />
-        <input type="hidden" name="sid" value="<?php echo $sid ?>" />
+        <input type="hidden" name="sid" value="<?php echo $_GET['sid'] ?>" />
         <center>
         <table cellpadding="5" border="1">
         <?php
@@ -381,11 +382,11 @@
     /******************* show submission ************************************/
     elseif ($action == 'showsubmission' ) {
 
-        if (empty($sid)) {
+        if (empty($_GET['sid'])) {
             error("Show submission: submission id missing");
         }
 
-        $submission = get_record("workshop_submissions", "id", $sid);
+        $submission = get_record("workshop_submissions", "id", $_GET['sid']);
         $title = '"'.$submission->title.'" ';
         if (isteacher($course->id)) {
             $title .= get_string('by', 'workshop').' '.workshop_fullname($submission->userid, $course->id);
@@ -404,15 +405,17 @@
             error("Only teachers can look at this page");
         }
 
+        $form = (object)$_POST;
+
         // save number of entries in showleaguetable option
-        if ($nentries == 'All') {
-            $nentries = 99;
+        if ($form->nentries == 'All') {
+            $form->nentries = 99;
         }
-        set_field("workshop", "showleaguetable", $nentries, "id", "$workshop->id");
+        set_field("workshop", "showleaguetable", $form->nentries, "id", "$workshop->id");
 
         // save the anonymous option
-        set_field("workshop", "anonymous", $anonymous, "id", "$workshop->id");
-        add_to_log($course->id, "workshop", "league table", "view.php?id=$cm->id", $nentries, $cm->id);
+        set_field("workshop", "anonymous", $form->anonymous, "id", "$workshop->id");
+        add_to_log($course->id, "workshop", "league table", "view.php?id=$cm->id", $form->nentries, $cm->id);
 
         redirect("view.php?id=$cm->id");
     }
@@ -421,10 +424,12 @@
     /*************** update submission ***************************/
     elseif ($action == 'updatesubmission') {
 
-        if (empty($sid)) {
+        $form = data_submitted();
+
+        if (empty($form->sid)) {
             error("Update submission: submission id missing");
         }
-        $submission = get_record("workshop_submissions", "id", $sid);
+        $submission = get_record("workshop_submissions", "id", $form->sid);
 
         // students are only allowed to update their own submission and only up to the deadline
         if (!(isteacher($course->id) or
@@ -434,11 +439,11 @@
         }
 
         // check existence of title
-        if (empty($title)) {
+        if (empty($form->title)) {
             $title = get_string("notitle", "workshop");
         }
-        set_field("workshop_submissions", "title", $title, "id", $submission->id);
-        set_field("workshop_submissions", "description", trim($description), "id", $submission->id);
+        set_field("workshop_submissions", "title", $form->title, "id", $submission->id);
+        set_field("workshop_submissions", "description", trim($form->description), "id", $submission->id);
         set_field("workshop_submissions", "timecreated", $timenow, "id", $submission->id);
         if ($workshop->nattachments) {
             require_once($CFG->dirroot.'/lib/uploadlib.php');

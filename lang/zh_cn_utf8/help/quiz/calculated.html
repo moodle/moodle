@@ -1,8 +1,12 @@
 <p align="center"><b>计算题</b></p>
 
-<p>计算题提供了一种建立单个数字计算题的方法。题目里可以使用通配符，答题时通配符会被数值替换。
+<p>计算题提供了一种建立计算题的方法，它是用通配符替换的方式完成。
 
-<br />下面是主编辑页面的大致样子，其中有一些简单的输入示例：
+Calculated questions offers a way to create individual numerical question by the use of wildcards that are substituted with individual values when the quiz is taken.
+
+<br />下面是主编辑页面的大致样子，其中有一些简单的输入：
+
+Below is a shrunken view of the main editing page with some example inputs:<br />
 
 <table><tbody>
 <tr valign="top">
@@ -13,7 +17,7 @@
 </td>
 </tr>
 <tr valign="top">
-    <td align="right"><p><b>要显示的图片：</b></p></td>
+    <td align="right"><p><b>要显示的图片</b></p></td>
     <td>
     <select name="image"><option value="" selected="selected">无</option><option value="grevture.gif">grevture.gif</option></select>
     </td>
@@ -35,11 +39,11 @@
 <tr valign="top">
 <td align="right"><p><b>误差类型：</b></p></td>
     <td>
-    <select name="tolerancetype[]"><option value="1" selected="selected">相对误差</option><option value="2">额定误差</option><option value="3">几何误差</option></select>
+    <select name="tolerancetype[]"><option value="1" selected="selected">Relative</option><option value="2">Nominal</option><option value="3">Geometric</option></select>
     </td>
 </tr>
 <tr valign="top">
-<td align="right"><p><b>有效数字：</b></p></td>
+<td align="right"><p><b>重要数字：</b></p></td>
     <td>
     <select name="correctanswerlength[]"><option value="1">1</option><option value="2" selected="selected">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
     </td>
@@ -47,23 +51,23 @@
 </tbody></table>
 
 <br />
-在问题文本和“正确答案公式”中可以看到 {a} 和 {b} 。任何 {name} 都可以用作通配符，在答题时被某个值替换。并且，在题目提交时，替换了“正确答案公式”里的通配符后，公式被当做数值表达式，用来计算正确答案。通配符的取值在后面的计算题“编辑向导”页里生成或设置……
-<br/>上面的公式例子使用了运算符“+”。其它可用的运算符包括“-*/”和“%”(%是求余运算）。也可以使用一些PHP风格的数学运算函数。其中有24个单参数运算函数：<br /><b>
+In the question text input and "Correct Answer Formula" {a} and {b} can be seen. These and any other {name} can be used as a wildcard that is substituted by some value when the quiz is taken. Also, the correct answer is calculated when the quiz is submitted using the expression in "Correct Answer Formula", which is calculated as a numerical expression after the substitution of the wildcards. The possible wildcard values are set or generated on a later page in "editing wizard" for calculated questions...
+<br/>The example formula uses the operator +. Other accepted operators are -*/ and % where % is the modulo operator. It is also possible to use some PHP-style mathematical function. Among these there are 24 single-argument function:<br /><b>
 abs, acos, acosh, asin, asinh, atan, atanh, ceil, cos, cosh, deg2rad, exp, expm1, floor, log, log10, log1p, rad2deg, round, sin, sinh, sprt, tan, tanh
-</b><br />和两个双参数运算函数：<br /><b>
+</b><br />and two two-argument functions<br /><b>
 atan2, pow
-</b><br />和函数<b>min</b>与<b>max</b>可以有两个或更多参数。也可以使用函数<b>pi</b>，它没有任何参数，但不要忘了使用括号——正确的用法是<b>pi()</b>。类似的其它函数必须把参数放到括号中。例如：<b>sin({a}) + cos({b}) * 2</b>。嵌套调用函数也是毫无问题的，例如：<b>cos(deg2rad({a} + 90))</b>等。
-<br />使用PHP风格函数的更多细节可以在<a target="phpmathdoc" href="http://www.php.net/manual/zh/ref.math.php">PHP主页上的文档</a>中找到。
+</b><br />and the functions <b>min</b> and <b>max</b> that can take two or more arguments. It is also possible to use the function <b>pi</b> that takes no arguments but do not forget the use the parentheses - the correct usage is <b>pi()</b>. Similarly the other function must have their argument(s) within parentheses. Possible usage is for example <b>sin({a}) + cos({b}) * 2</b>. It should not be any problem to wrap functions within each other like <b>cos(deg2rad({a} + 90))</b> etc.
+<br />More details on how to use these PHP-style functions can be found in the <a target="phpmathdoc" href="http://www.php.net/manual/en/ref.math.php">documentation at the PHP web site</a>
 <br /><br />
-对数值问题来说，应该可以为答案设定一个范围，在此范围内的解答都可以算作正确。“误差”就是用来处理此问题的。不过，这里有三种不同的误差类型，它们是<b>相对误差、额定误差和几何误差</b>。如果正确答案的计算结果是200，误差被设为0.5，那么不同的误差类型的工作方式为：
-<br /><br /><b>相对误差：</b>误差区间由正确答案乘以0.5得到，也就是说，在此例中我们得到100。因此正确的解答必须在100到300之间(200 ± 100)。<br />
-当正确答案的数值因不同的通配值而变化很大时，这种方式是很有用的。
-<br /><br /><b>额定误差：</b>这是最简单的误差类型，但是能力有限。正确的解答必须在199.5和200.5之间(200 ± 0.5)。<br />
-当不同的正确答案像差很小时，这种方式可以被使用。
-<br /><br /><b>几何误差：</b> 误差的上限计算为200 + 0.5*200，和相对误差一样。下限计算为200/(1 + 0.5)。正确的解答必须在133.33和300之间。<br />
-复变微积分的误差上限可以是1或更多，但很明显下限不能这么多，因为可能所有情况下的正确答案都是0。这种方式就发挥作用了。
+As for numerical questions it is possible to allow a margin within which all responses are accepted as correct. The "Tolerance" field is used for this. However, there are three different types of tolerances. These are <b>Relative, Nominal and Geometric</b>. If we say that the correct answer at quiz time is calculated to 200 and the tolerance is set to 0.5 then the different tolerance types work like this:
+<br /><br /><b>Relative:</b> A tolerance interval is calculated by multiplying the correct answer with 0.5, ie in this case we get 100 so for this tolerance the correct response must be between 100 and 300.  (200 ± 100)<br />
+This is useful if the magnitude of the correct answer can differ greatly between different wildcard values.
+<br /><br /><b>Nominal:</b>  This is the simplest tolerance type but not very powerful. The correct response must be between 199.5 and 200.5 (200 ± 0.5)<br />
+This tolerance type can be useful if the differences between different correct answers are small.
+<br /><br /><b>Geometric:</b> The upper limit of the tolerance interval is calculated as 200 + 0.5*200 and is the same as for the relative case. The lower limit is calculated as 200/(1 + 0.5). The correct response must then be between 133.33 and 300.<br />
+This is useful for complex calculation that must have great tolerances where relative tolerances of 1 or more would be used for the upper limit but clearly not acceptable for the lower limit as it would make zero a correct answer for all cases.
 <br /><br />
-“<b>有效数字</b>”只影响正确答案在回顾和报告时的显示。例如：如果它被设为3，那么正确答案13.333会被显示为13.3；1236会被显示为1240；23会被显示为23.0等等。
+The field <b>Significant Figures</b> does only relate to how the correct answer should be presented in the review or the reports. Examples: If it is set to 3 then the correct answer 13.333 would be presented as 13.3; 1236 would be presented as 1240; 23 would be presented as 23.0 etc.
 <br /><br />
-反馈和可选的单元的功能与数值题里的表现一致。
+The feedback field and the optional unit fields work just like they do for numerical questions.
 <br />

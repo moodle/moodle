@@ -381,7 +381,7 @@ function chat_login_user($chatid, $version, $groupid, $course) {
     global $USER;
     if (($version != 'sockets') and $chatuser = get_record_select('chat_users', "chatid='$chatid' AND userid='$USER->id' AND groupid='$groupid'")) {
         $chatuser->version  = $version;
-        $chatuser->ip       = $USER->lastip;
+        $chatuser->ip       = $USER->lastIP;
         $chatuser->lastping = time();
         $chatuser->lang     = current_language();
 
@@ -397,7 +397,7 @@ function chat_login_user($chatid, $version, $groupid, $course) {
         $chatuser->userid   = $USER->id;
         $chatuser->groupid  = $groupid;
         $chatuser->version  = $version;
-        $chatuser->ip       = $USER->lastip;
+        $chatuser->ip       = $USER->lastIP;
         $chatuser->lastping = $chatuser->firstping = $chatuser->lastmessageping = time();
         $chatuser->sid      = random_string(32);
         $chatuser->course   = $course->id; //caching - needed for current_language too
@@ -493,24 +493,18 @@ function chat_update_chat_times($chatid=0) {
 }
 
 
-function chat_format_message_manually($message, $courseid, $sender, $currentuser, $chat_lastrow=NULL) {
-    global $CFG, $USER;
+function chat_format_message_manually($message, $courseid, $sender, $currentuser) {
+    global $CFG;
 
     $output = New stdClass;
     $output->beep = false;       // by default
     $output->refreshusers = false; // by default
 
-    // Use get_user_timezone() to find the correct timezone for displaying this message:
-    // It's either the current user's timezone or else decided by some Moodle config setting
-    // First, "reset" $USER->timezone (which could have been set by a previous call to here)
-    // because otherwise the value for the previous $currentuser will take precedence over $CFG->timezone
-    $USER->timezone = 99;
-    $tz = get_user_timezone($currentuser->timezone);
+    // Get some additional info
 
-    // Before formatting the message time string, set $USER->timezone to the above.
-    // This will allow dst_offset_on (called by userdate) to work correctly, otherwise the
-    // message times appear off because DST is not taken into account when it should be.
-    $USER->timezone = $tz;
+    // But before that :-) let's override get_user_timezone_offset() for this call... messy stuff...
+    // TODO - FIX THIS TO MANAGE NEW TIMEZONES
+    $tz = ($currentuser->timezone == 99) ? $CFG->timezone : $currentuser->timezone;
     $message->strtime = userdate($message->timestamp, get_string('strftimemessage', 'chat'), $tz);
 
     $message->picture = print_user_picture($sender->id, 0, $sender->picture, false, true, false);
@@ -518,20 +512,13 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
         $message->picture = "<a target=\"_new\" href=\"$CFG->wwwroot/user/view.php?id=$sender->id&amp;course=$courseid\">$message->picture</a>";
     }
 
-    //Calculate the row class
-    if ($chat_lastrow !== NULL) {
-        $rowclass = ' class="r'.$chat_lastrow.'" ';
-    } else {
-        $rowclass = '';
-    }
-
     // Start processing the message
 
     if(!empty($message->system)) {
         // System event
         $output->text = $message->strtime.': '.get_string('message'.$message->message, 'chat', fullname($sender));
-        $output->html  = '<table class="chat-event"><tr'.$rowclass.'><td class="picture">'.$message->picture.'</td><td class="text">';
-        $output->html .= '<span class="event">'.$output->text.'</span></td></tr></table>';
+        $output->html  = '<table><tr><td style="vertical-align: top;">'.$message->picture.'</td><td>';
+        $output->html .= '<font size="2" color="#ccaaaa">'.$output->text.'</font></td></tr></table>';
 
         if($message->message == 'exit' or $message->message == 'enter') {
             $output->refreshusers = true; //force user panel refresh ASAP
@@ -592,17 +579,17 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
 
     $output->text  = strip_tags($outinfo.': '.$outmain);
 
-    $output->html  = "<table class=\"chat-message\"><tr$rowclass><td class=\"picture\">$message->picture</td><td class=\"text\">";
-    $output->html .= "<span class=\"title\">$outinfo</span>";
+    $output->html  = "<table><tr><td valign=\"top\">$message->picture</td><td><font size=\"2\">";
+    $output->html .= "<font color=\"#888888\">$outinfo</font>";
     if ($outmain) {
         $output->html .= ": $outmain";
     }
-    $output->html .= "</td></tr></table>";
+    $output->html .= "</font></td></tr></table>";
 
     return $output;
 }
 
-function chat_format_message($message, $courseid, $currentuser, $chat_lastrow=NULL) {
+function chat_format_message($message, $courseid, $currentuser) {
 /// Given a message object full of information, this function
 /// formats it appropriately into text and html, then
 /// returns the formatted data.
@@ -611,7 +598,7 @@ function chat_format_message($message, $courseid, $currentuser, $chat_lastrow=NU
         return "Error finding user id = $message->userid";
     }
 
-    return chat_format_message_manually($message, $courseid, $user, $currentuser, $chat_lastrow);
+    return chat_format_message_manually($message, $courseid, $user, $currentuser);
 
 }
 
@@ -626,14 +613,6 @@ if (!function_exists('ob_get_clean')) {
             return $cont;
         }
     }
-}
-
-function chat_get_view_actions() {
-    return array('view','view all','report');
-}
-
-function chat_get_post_actions() {
-    return array('talk');
 }
 
 ?>

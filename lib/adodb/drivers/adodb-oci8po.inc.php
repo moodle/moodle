@@ -1,6 +1,6 @@
 <?php
 /*
-V4.66 28 Sept 2005  (c) 2000-2005 John Lim. All rights reserved.
+V4.60 24 Jan 2005  (c) 2000-2005 John Lim. All rights reserved.
   Released under both BSD license and Lesser GPL library license. 
   Whenever there is any discrepancy between the two licenses, 
   the BSD license will take precedence.
@@ -151,19 +151,11 @@ class ADORecordset_oci8po extends ADORecordset_oci8 {
 	/* Optimize SelectLimit() by using OCIFetch() instead of OCIFetchInto() */
 	function &GetArrayLimit($nrows,$offset=-1) 
 	{
-		if ($offset <= 0) {
-			$arr = $this->GetArray($nrows);
-			return $arr;
-		}
+		if ($offset <= 0) return $this->GetArray($nrows);
 		for ($i=1; $i < $offset; $i++) 
-			if (!@OCIFetch($this->_queryID)) {
-				$arr = array();
-				return $arr;
-			}
-		if (!@OCIfetchinto($this->_queryID,$this->fields,$this->fetchMode)) {
-			$arr = array();
-			return $arr;
-		}
+			if (!@OCIFetch($this->_queryID)) return array();
+			
+		if (!@OCIfetchinto($this->_queryID,$this->fields,$this->fetchMode)) return array();
 		if ($this->fetchMode & OCI_ASSOC) $this->_updatefields();
 		$results = array();
 		$cnt = 0;

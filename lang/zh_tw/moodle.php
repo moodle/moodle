@@ -53,6 +53,24 @@ $string['city'] = "¥«/¶mÂí";
 $string['closewindow'] = "Ãö³¬¥»µøµ¡";
 $string['comparelanguage'] = "¤ñ¸û¨Ã½s¿è´À¥N¤å¦r";
 $string['complete'] = "§¹¦¨";
+$string['configcountry'] = "If you set a country here, then this country will be selected by default on new user accounts.  To force users to choose a country, just leave this unset.";
+$string['configerrorlevel'] = "Choose the amount of PHP warnings that you want to be displayed.  Normal is usually the best choice.";
+$string['configgdversion'] = "Indicate the version of GD that is installed.  The version shown by default is the one that has been auto-detected.  Don't change this unless you really know what you're doing.";
+$string['confightmleditor'] = "Choose whether or not to allow use of the embedded HTML text editor. Even if you choose allow, this editor will only appear when the user is using a compatible browser (IE 5.5 or later).  Users can also choose not to use it.";
+$string['configintro'] = "On this page you can specify a number of configuration variables that help make Moodle work properly on your server.  Don't worry too much about it - the defaults will usually work fine and you can always come back to this page later and change these settings.";
+$string['configlang'] = "Choose a default language for the whole site.  Users can override this setting later.";
+$string['configlangdir'] = "Most languages are printed left-to-right, but some, like Arabic and Hebrew, are printed right-to-left.";
+$string['configlocale'] = "Choose a sitewide locale - this will affect the format and language of dates. You need to have this locale data installed on your operating system.  (eg en_US or es_ES).  If you don't know what to choose leave it blank.";
+$string['configlongtimenosee'] = "If students haven't logged in for a very long time, then they are automatically unsubscribed from courses.  This parameter specifies that time limit.";
+$string['configmaxeditingtime'] = "This specifies the amount of time people have to re-edit forum postings, journal feedback etc.  Usually 30 minutes is a good value.";
+$string['configproxyhost'] = "If this <b>server</b> needs to use a proxy computer (eg a firewall) to access the Internet, then provide the proxy hostname and port here.  Otherwise leave it blank.";
+$string['configslasharguments'] = "Files (images, uploads etc) are provided via a script using 'slash arguments' (the second option here). This method allows files to be more easily cached in web browsers, proxy servers etc.  Unfortunately, some PHP servers don't allow this method, so if you have trouble viewing uploaded files or images (eg user pictures), set this variable to the first option";
+$string['configsmtphosts'] = "Give the full name of one or more local SMTP servers that Moodle should use to send mail (eg 'mail.a.com' or 'mail.a.com;mail.b.com'). If you leave it blank, Moodle will use the PHP default method of sending mail.";
+$string['configsmtpuser'] = "If you have specified an SMTP server above, and the server requires authentication, then enter the username and password here.";
+$string['configunzip'] = "Indicate the location of your unzip program (Unix only).  This is needed to unpack zip archives on the server.";
+$string['configvariables'] = "§ïÅÜ¨t²Î°Ñ¼Æ";
+$string['configzip'] = "Indicate the location of your zip program (Unix only).  This is needed to create zip archives on the server.";
+$string['confirmed'] = "Your registration has been confirmed";
 $string['continue'] = "¤U¤@­¶";
 $string['cookiesenabled'] = "ÂsÄý¾¹¥²¶·±Ò°Ê Cookies ¥\¯à";
 $string['copyrightnotice'] = "´¼¼z°]²£ÅvÁn©ú";
@@ -120,8 +138,8 @@ $string['emailconfirmation'] = "§A¦n \$a->firstname,
 Åwªï§Aªº¥[¤J '\$a->sitename' ¨t²ÎºÞ²z­û
 \$a->admin ·q¤W,";
 $string['emailconfirmsent'] = "   <p>¥»¨t²Î¤w¸g°e¥X¹q¤l¶l¥ó¨ì <b>\$a</b>
-   <p>°T®§¤º®e¥]§t¦p¦ó§¹¦¨µù¥U¤âÄò.
-   <p>½Ð¾\Äý§Aªº¨p¤H¶l¥ó «ö¤U½T»{³sµ²«á «K¥iµn¤J¥»¨t²Î, ­Y¬O¦³°ÝÃD½Ð©M¨t²ÎºÞ²zªÌ³sµ¸.";
+   </p><p>°T®§¤º®e¥]§t¦p¦ó§¹¦¨µù¥U¤âÄò.
+   </p><p>½Ð¾\Äý§Aªº¨p¤H¶l¥ó «ö¤U½T»{³sµ²«á «K¥iµn¤J¥»¨t²Î, ­Y¬O¦³°ÝÃD½Ð©M¨t²ÎºÞ²zªÌ³sµ¸.</p>";
 $string['emaildisplay'] = "¹q¤l¶l¥ó°T®§";
 $string['emaildisplaycourse'] = "¶È¤¹³\¨ä¥L­×½Ò¦¨­ûÆ[¬Ý§Úªº¹q¤l¶l¥ó";
 $string['emaildisplayno'] = "ÁôÂÃ§Úªº¹q¤l¶l¥ó,¥ô¦ó¤H³£¤£¯àÆ[¬Ý";
@@ -142,7 +160,7 @@ $string['feedback'] = "¦^õX";
 $string['filemissing'] = "¯Ê¤Ö¤F \$a ";
 $string['files'] = "ÀÉ®×";
 $string['filloutallfields'] = "½Ð¿é¤Jªí®æ¤º©Ò¦³¤º®eªº¹ïÀ³¸ê®Æ";
-$string['firstname'] = "©m";
+$string['firstname'] = "¦W";
 $string['firsttime'] = "¬O§_»Ý­n¥Ó½Ð±b¸¹?";
 $string['followingoptional'] = "¥H¤U¬O¿ï¾Ü©Ê¿é¤J°Ï";
 $string['followingrequired'] = "¥H¤U¬O ¥²­n¶ñ¼g¸ê®Æ";
@@ -158,8 +176,25 @@ $string['frontpagedescription'] = "Front page »¡©ú";
 $string['frontpageformat'] = "Front page ®æ¦¡";
 $string['fulllistofcourses'] = "©Ò¦³½Òµ{";
 $string['fullname'] = "¦WºÙ";
+$string['fullnamedisplay'] = '$a->lastname $a->firstname';
 $string['fullprofile'] = "­Ó¤H§¹¾ã¸ê®Æ";
 $string['fullsitename'] = "ºô¯¸¦WºÙ";
+$string['gd1'] = "GD 1.x is installed";
+$string['gd2'] = "GD 2.x is installed";
+$string['gdnot'] = "GD is not installed";
+$string['gpl'] = "Copyright (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details:
+
+http://www.gnu.org/copyleft/gpl.html";
 $string['grade'] = "¤À¼Æ";
 $string['grades'] = "¤À¼Æ";
 $string['guestskey'] = "¤¹³\¦³½Òµ{±K½XªÌ¶i¤J(¤£»Ýµù¥U¤]¥i¥H)";
@@ -201,7 +236,7 @@ $string['languagegood'] = "This language pack is up-to-date! :-)";
 $string['lastaccess'] = "³Ì«á¨Ï¥Î¬ö¿ý";
 $string['lastedited'] = "³Ì«á½s¿è¬ö¿ý";
 $string['lastmodified'] = "³Ì«á­×§ï¬ö¿ý";
-$string['lastname'] = "¦W";
+$string['lastname'] = "©m";
 $string['latestnews'] = "³Ì·s°T®§";
 $string['leavetokeep'] = "¤£­n¶ñ«h«O¯d­ì¨Ó±K½X";
 $string['license'] = "GPL License";
@@ -219,15 +254,15 @@ $string['loginsteps'] = "§A¦n! ­Y­n¨Ï¥Î¥»ºô¯¸¥\¯à§A¥²¶·¥ý¦b¥»ºô¯¸µù¥U.
    ³¡¤À½Òµ{¥i¯àÁÙ»Ý­n¶}½Ò±Ð®v©Ò³]©wªº±MÄÝ±K½X
    ½Ð¿í´`¥H¤U¨BÆJ:
    <ol>
-   <li>½Ð©ó <a href=\"\$a\">¥Ó½Ð·s±b¸¹</a> ªí®æ¤¤¿é¤J­Ó¤H¬ÛÃö¸ê®Æ.
-   <li>¨Ì¾Ú«ü¥Ü§¹¦¨µù¥U¤âÄò,¶i¦æµn¤J°Ê§@.
+   <li>½Ð©ó <A HREF=\$a>¥Ó½Ð·s±b¸¹</A> ªí®æ¤¤¿é¤J­Ó¤H¬ÛÃö¸ê®Æ.</li>
+   <li>¨Ì¾Ú«ü¥Ü§¹¦¨µù¥U¤âÄò,¶i¦æµn¤J°Ê§@.</li>
    <li>µn¤J«á½Ð¿ï¾Ü·Q­n°Ñ¥[ªº½Òµ{.
    <br />³¡¤À½Òµ{¶}½Ò±Ð®v¥i¯à·|³]©w±MÄÝ±K½X, «h»Ý­n¨ú±o±MÄÝ±K½X«á¤~¯à¶i¤J(¶È»Ýªì¦¸¶i¤J½Òµ{®É¿é¤J)
-   ¶i¤J½Òµ{«á ¥¼¨Ó¥u»Ý­nµn¤J«K¥i¦A¦¸¶i¤J½Òµ{, ¤£»Ý­n¦A¿é¤J½Òµ{±MÄÝ±K½X
+   ¶i¤J½Òµ{«á ¥¼¨Ó¥u»Ý­nµn¤J«K¥i¦A¦¸¶i¤J½Òµ{, ¤£»Ý­n¦A¿é¤J½Òµ{±MÄÝ±K½X</li>
    </ol>";
-$string['loginstepsnone'] = "¶Ù!<p>»Ý­n§¹¦¨µù¥U¤âÄò¤~¥i¯à¶i¤J¥»½Òµ{.
-<p>§A»Ý­n¥Ó½Ð¤@­Ó ±b¸¹¦WºÙ©M±K½X ¥H«K¶i¦æµn¤J¨t²Îªº°Ê§@!<p>
-°²¦p§A©Ò¿ï©w ±b¸¹¦WºÙ¤w¸g¦³¤H¥ýµn°O «h»Ý­n¿é¤J·sªº¦WºÙ.";
+$string['loginstepsnone'] = "<p>¶Ù!</p><p>»Ý­n§¹¦¨µù¥U¤âÄò¤~¥i¯à¶i¤J¥»½Òµ{.</p>
+<p>§A»Ý­n¥Ó½Ð¤@­Ó ±b¸¹¦WºÙ©M±K½X ¥H«K¶i¦æµn¤J¨t²Îªº°Ê§@!</p><p>
+°²¦p§A©Ò¿ï©w ±b¸¹¦WºÙ¤w¸g¦³¤H¥ýµn°O «h»Ý­n¿é¤J·sªº¦WºÙ.</p>";
 $string['loginto'] = "µn¤J \$a";
 $string['loginusing'] = "½Ð¿é¤J ±b¸¹¦WºÙ»P±K½X ¶i¦æµn¤J";
 $string['logout'] = "µn¥X";
@@ -340,10 +375,10 @@ $string['passwordchanged'] = "±K½X¤w¸g³Q­×§ï";
 $string['passwordrecovery'] = "½Ð¨ó§U§Úµn¤J";
 $string['passwordsdiffer'] = "±K½X¤£¬Û²Å";
 $string['passwordsent'] = "¤w¸g°e¥X±K½X";
-$string['passwordsenttext'] = "   <p>¨t²Î¥H¹q¤l¶l¥ó°e¥X¸ê°T¨ì \$a->email.
-   <p><b>½Ð¾\Äý§Aªº¶l¥ó¥HÀò±o·s³]©wªºÁ{®É±K½X</b>
+$string['passwordsenttext'] = "   <p>¨t²Î¥H¹q¤l¶l¥ó°e¥X¸ê°T¨ì \$a->email.</p>
+   <p><b>½Ð¾\Äý§Aªº¶l¥ó¥HÀò±o·s³]©wªºÁ{®É±K½X</b></p>
    <p>­«·sµn¤J«á¥i¥H¶i¤J
-   <a href=\"\$a->link\"> ­×§ï¬°§A­Ó¤H°¾¦nªº±K½X</a>.";
+   <a href=\"$a->link\"> ­×§ï¬°§A­Ó¤H°¾¦nªº±K½X</a>.</p>";
 $string['people'] = "¨Ï¥ÎªÌ";
 $string['personalprofile'] = "­Ó¤H¬ö¿ý";
 $string['phone'] = "¹q¸Ü";
@@ -412,7 +447,7 @@ $string['thanks'] = "ÁÂÁÂ";
 $string['theme'] = "Åã¥Ü®æ¦¡";
 $string['themesaved'] = "Àx¦s·sªºÅã¥Ü®æ¦¡";
 $string['thischarset'] = "Big5";
-$string['thislanguage'] = "&#27491;&#39636;&#20013;&#25991;";
+$string['thislanguage'] = "Taiwan";
 $string['timezone'] = "®É°Ï";
 $string['today'] = "¤µ¤é";
 $string['todaylogs'] = "¤µ¤éªº¬ö¿ý";
@@ -441,7 +476,7 @@ $string['upload'] = "¤W¸ü";
 $string['uploadafile'] = "¤W¸üÀÉ®×";
 $string['uploadthisfile'] = "¤W¸ü¥»ÀÉ®×";
 $string['userdeleted'] = "¥»¨Ï¥ÎªÌ±b¸¹¤w³Q§R°£";
-$string['userdescription'] = "­Ó¤HÂ²¤¶¡G<br />¾Ç¥Í½Ð¼g:<br />¾Ç®Õ/¦~¯Å/¯Z§O<p>¦Ñ®v½Ð¼g:<br />²¦·~¾Ç®Õ¨t¯Å»P<br />¥ô±Ð¾Ç®Õ¤Î¬ì¥Ø";
+$string['userdescription'] = "­Ó¤HÂ²¤¶¡G<br />¾Ç¥Í½Ð¼g:<br />¾Ç®Õ/¦~¯Å/¯Z§O<br />¦Ñ®v½Ð¼g:<br />²¦·~¾Ç®Õ¨t¯Å»P<br />¥ô±Ð¾Ç®Õ¤Î¬ì¥Ø";
 $string['username'] = "±b¸¹¦WºÙ";
 $string['usernameexists'] = "±b¸¹¦WºÙ­«½Æ(¤w³Q¨Ï¥Î), ½Ð¥t¿ï·sªº¦WºÙ";
 $string['userprofilefor'] = " \$a ªº­Ó¤H³]©w";
@@ -485,7 +520,7 @@ $string['studentmodesure']="§A½T©w­n¶i¤J¾Ç¥Í¼Ò¦¡¶Ü? (¶i¤J¾Ç¥Í¼Ò¦¡«á¥²¶·¥ýµn¥X«á¦
 $string['applyteacheraccount']="¥Ó½Ð¤@­Ó±Ð®v±b¸¹";
 $string['entername']="¿é¤J©m¦W";
 $string['donothaveemail']="¨S¦³¹q¤l¶l¥ó:«ö¦¹«Ø¥ß±b¸¹";
-$string['forgotpasswordnoemail']="<hr />·íªì¥Ó½Ð±b¸¹®É¨Ã¥¼¿é¤J¹q¤l¶l¥óªÌ,»Ý
+$string['forgotpasswordnoemail']="·íªì¥Ó½Ð±b¸¹®É¨Ã¥¼¿é¤J¹q¤l¶l¥óªÌ,»Ý
 Ápµ¸§A´¿¶i¤J¥»ºô¯¸½Òµ{ªº±Ð®v¡A½Ð±Ð®v±N§Aªº±K½X­«·s³]©w¡D
 ¥»ºô¯¸½Òµ{¦Ñ®v­«³]±K½X«á¡A·sªº±K½X±N»P½Òµ{±K½X¬Û¦P¡]µn¤J«á¥i¦Û¦æ­×§ï¡^";
 $string['onlinecount']="¥Ø«e¬ì¾Ç¶é½u¤W¤H¼Æ \$a ¤H";

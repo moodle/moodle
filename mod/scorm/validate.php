@@ -1,25 +1,16 @@
 <?php // $Id$
 
-    require_once("../../config.php");
-    require_once('locallib.php');
+require_once("../../config.php");
+require_once("lib.php");
 
-    $courseid = required_param('id', '', PARAM_INT);             // Course Module ID, or
-    $reference = required_param('reference', '', PARAM_PATH);    // Package path
-    $scormid = optional_param('instance', '', PARAM_INT);       // scorm ID
+require_login();
 
-    require_login($courseid, false);
-
-if (confirm_sesskey() && !empty($courseid)) {
+if (confirm_sesskey()) {
+    $reference = clean_param($_POST["reference"], PARAM_PATH);
+    $courseid = $_POST["id"];
     $launch = 0;
-    $validation = new stdClass();
-    if (empty($reference)) {
-        $launch = -1;
-        $validation->result = "packagefile";
-    }
-    if (!empty($scormid)) {  
-        //
-        // SCORM Update
-        //
+    if (isset($_POST["instance"])) {
+        $scormid = $_POST["instance"];
         if (is_file($CFG->dataroot.'/'.$courseid.'/'.$reference)) {
             $fp = fopen($CFG->dataroot.'/'.$courseid.'/'.$reference,"r");
             $fstat = fstat($fp);
@@ -53,36 +44,25 @@ if (confirm_sesskey() && !empty($courseid)) {
         // Package must be validated
         //
 
-        $ext = strtolower(substr(basename($reference),strrpos(basename($reference),'.')));
-        switch ($ext) {
-            case '.pif':
-            case '.zip':
-                // Create a temporary directory to unzip package and validate package
-                $tempdir = '';
-                $scormdir = '';
-                if ($scormdir = make_upload_directory("$courseid/$CFG->moddata/scorm")) {
-                    if ($tempdir = scorm_datadir($scormdir)) {
-                        copy ("$CFG->dataroot/$courseid/$reference", $tempdir."/".basename($reference));
-                        unzip_file($tempdir."/".basename($reference), $tempdir, false);
-                        unlink ($tempdir."/".basename($reference));
-                        $validation = scorm_validate($tempdir);
-                    } else {
-                        $validation->result = "packagedir";
-                    }
+        // Create a temporary directory to unzip package and validate package
+        $tempdir = '';
+        $scormdir = '';
+        if ($scormdir = make_upload_directory("$courseid/$CFG->moddata/scorm")) {
+            if ($tempdir = scorm_datadir($scormdir)) {
+                copy ("$CFG->dataroot/$courseid/$reference", $tempdir."/".basename($reference));
+                $ext = strtolower(substr(basename($reference),strrpos(basename($reference),'.')));
+                if (($ext == '.zip') || ($ext == '.pif')) {
+                    unzip_file($tempdir."/".basename($reference), $tempdir, false);
+                    unlink ($tempdir."/".basename($reference));
+                    $validation = scorm_validate($tempdir);
                 } else {
-                    $validation->result = "datadir";
+                    $validation->result = "packagefile";
                 }
-            break;
-            case '.xml':
-                if (basename($reference) == 'imsmanifest.xml') {
-                    $validation = scorm_validate("$CFG->dataroot/$courseid/".dirname($reference));
-                } else {
-                    $validation->result = "manifestfile";
-                }
-            break;
-            default: 
-                $validation->result = "packagefile";
-            break;
+            } else {
+                $validation->result = "packagedir";
+            }
+        } else {
+            $validation->result = "datadir";
         }
         if (($validation->result != "regular") && ($validation->result != "found")) {
             $validation->result = get_string($validation->result,'scorm');
@@ -91,11 +71,7 @@ if (confirm_sesskey() && !empty($courseid)) {
                 scorm_delete_files($tempdir);
             }
         } else {
-            if ($ext == '.xml') {
-                $datadir = dirname($reference);
-            } else {
-                $datadir = substr($tempdir,strlen($scormdir));
-            }
+            $datadir = substr($tempdir,strlen($scormdir));
         }
     }
     //

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // grades.php - created with Moodle 1.6 development (2005060201)
+      // grades.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['addcategory'] = 'Magdagdag ng Kategoriya';
@@ -29,7 +29,7 @@ $string['errorreprintheadersnonnumeric'] = 'Nakatanggap ng di-bilang na halaga p
 $string['exceptions'] = 'Eksepsiyon';
 $string['excluded'] = 'Iniliban';
 $string['extracredit'] = 'Dagdag na Marka';
-$string['extracreditwarning'] = 'Tandaan: Kapag itinakda mong maging dagdag na marka ang lahat ng aytem ng isang kategoriya, matatanggal ang mga ito sa kuwentahan ng marka.  Dahil walang magiging kabuuang puntos.';
+$string['extracreditwarning'] = 'Tandaan: Ang paglalagay ng lahat ng aytem para sa isang kategoriya, sa dagdag na marka, ay magtatanggal sa mga ito sa kuwenta ng marka.  Dahil walang magiging kabuuan ng puntos.';
 $string['forstudents'] = 'Para sa mga Mag-aaral';
 $string['gradebook'] = 'Markáhan';
 $string['gradebookhiddenerror'] = 'Kasalukuyang nakatakda ang markáhan na itago ang lahat sa mga mag-aaral.';
@@ -38,14 +38,14 @@ $string['gradeexceptions'] = 'Mga Eksepsiyon ng Marka';
 $string['gradeexceptionshelp'] = 'Tulong sa mga Eksepsiyon ng Marka';
 $string['gradehelp'] = 'Tulong sa Marka';
 $string['gradeitem'] = 'Aytem ng Marka';
-$string['gradeitemaddusers'] = 'Iliban sa Pagkuwenta';
-$string['gradeitemmembersselected'] = 'Iniliban sa Pagkuwenta';
-$string['gradeitemnonmembers'] = 'Isinama sa Pagkuwenta';
-$string['gradeitemremovemembers'] = 'Isama sa Pagkuwenta';
+$string['gradeitemaddusers'] = 'Iliban sa Pagmamarka';
+$string['gradeitemmembersselected'] = 'Iniliban sa Pagmamarka';
+$string['gradeitemnonmembers'] = 'Isinama sa Pagmamarka';
+$string['gradeitemremovemembers'] = 'Isama sa Pagmamarka';
 $string['gradeitems'] = 'Mga Aytem ng Marka';
 $string['gradeletter'] = 'Titik na Marka';
 $string['gradeletterhelp'] = 'Tulong sa Titik na Marka';
-$string['gradeletternote'] = 'Para mabura ang titik na marka, blangkuhin lamang <br />ang alinman sa tatlong text area para sa titik na iyon <br />at iklik ang \"isave ang mga pagbabago\".';
+$string['gradeletternote'] = 'Para mabura ang titik na marka, blangkuhin lamang ang alinman<br />sa tatlong text area para sa titik na iyon at iklik ang ipasa.';
 $string['gradepreferenceshelp'] = 'Tulong sa Mas-ibig para sa Marka';
 $string['grades'] = 'Mga Marka';
 $string['gradeweighthelp'] = 'Tulong sa May-timbang na Marka';
@@ -76,7 +76,6 @@ $string['nolettergrade'] = 'Walang titik na marka para sa ';
 $string['nomode'] = 'NA';
 $string['nonnumericweight'] = 'Nakatanggap ng di-bilang na halaga para sa ';
 $string['nonweightedpct'] = 'walang-timbang %%';
-$string['notteachererror'] = 'Dapat ay guro ka para magamit ang katangiang ito.';
 $string['pctoftotalgrade'] = '%% ng kabuuang marka';
 $string['percent'] = 'Bahagdan';
 $string['percentascending'] = 'Pagsunud-sunurin ayon sa bahagdan pataas';
@@ -84,7 +83,7 @@ $string['percentdescending'] = 'Pagsunudsunurin ayon sa bahagdan pababa';
 $string['percentshort'] = '%%';
 $string['points'] = 'mga puntos';
 $string['pointsascending'] = 'Pagsunud-sunurin ayon sa mga puntos pataas';
-$string['pointsdescending'] = 'Pagsunud-sunurin ayon sa mga puntos pababa';
+$string['pointsdescending'] = 'Pagsunud-sunurin ayon sa mg apuntos pababa';
 $string['preferences'] = 'Mas-ibig';
 $string['rawpct'] = 'Hilaw %%';
 $string['reprintheaders'] = 'Muling iprint ang mga Header';
@@ -101,8 +100,8 @@ $string['setweights'] = 'Itakda ang mga Timbang';
 $string['showallstudents'] = 'Ipakita ang Lahat ng Mag-aaral';
 $string['showhiddenitems'] = 'Ipakita ang mga Nakatagong Aytem';
 $string['sort'] = 'pagsunud-sunurin';
-$string['sortbyfirstname'] = 'Pagsunud-sunurin ayon sa unang pangalan';
-$string['sortbylastname'] = 'Pagsunud-sunurin ayon sa apelyido';
+$string['sortbyfirstname'] = 'Pagsunud-sunirin ayon sa Unang pangalan';
+$string['sortbylastname'] = 'pagsunud-sunurin ayon sa Apelyido';
 $string['standarddeviation'] = 'Standard Deviation';
 $string['stats'] = 'Estadistika';
 $string['statslink'] = 'Mga Istat';

@@ -1,71 +1,11 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5.2 + (2005060223)
+      // admin.php - created with Moodle 1.4 (2004083100)
 
 
-$string['adminseesallevents'] = 'Administratorzy widz± wszystkie zdarzenia';
-$string['adminseesownevents'] = 'Administratorzy s± jak inni u¿ytkownicy';
-$string['blockinstances'] = 'instancja';
-$string['blockmultiple'] = 'z³o¿ony';
 $string['cachetext'] = 'D³ugo¶æ ¿ycia cache tekstu';
-$string['calendarsettings'] = 'Kalendarz';
-$string['change'] = 'zmiana';
-$string['configallowcoursethemes'] = 'Je¿eli jest wybrane TAK to umo¿liwiony jest wybór w³asnego  tematu dla kursu (wygl±d strony). Tematy kursu uniewa¿niaj± wybór ogólnego tematu (wygl±d strony, u¿ytkowników, albo tematów sesji ) ';
-$string['configallowemailaddresses'] = 'Je¿eli chcesz ograniczyæ wszystkie nowe adresy e-mail do poszczególnej domeny (przy tworzeniu kont potwierdzanych e-mailem), to wprowad¼ tutaj listê tych domen oddzielon± spacjami. Wszystkie inne domeny bêd± odrzucane. np: <strong>ourcollege.edu.au .gov.au</strong> ';
-$string['configallowunenroll'] = 'Je¿eli jest ustawione \'tak\', studenci mog± samodzielnie wypisywaæ siê z kursów w dowolnym momencie. W przeciwnym wypadku wy³±cznie prowadz±cy i administrotorzy bêd± mieli do tego prawo.';
-$string['configallowuserblockhiding'] = 'Czy chcesz zezwoliæ u¿ytkownikom ukrywaæ/pokazywaæ bloki strony?Ta cecha wymaga u¿ycia Javascript i plików coockies  to wp³ywa na stan bloków i s± widzialne dla danego u¿ytkownika';
-$string['configallowuserthemes'] = 'Je¿eli opcja jest w³±czona to mo¿liwe jest ustawianie w³asnych tematów (wygl±du strony). przez uzytkowników. Tematy u¿ytkowników uniewa¿niaj± ogólny temat strony (ale nie temat kursu)';
-$string['configautologinguests'] = 'Czy odwiedzaj±cy stronê powinni byæ automatycznie logowani do kursów z prawami konta go¶æ?';
-$string['configclamactlikevirus'] = 'Traktuj pliki jako wirusy';
-$string['configclamdonothing'] = 'Traktuj pliki jako nie uszkodzone';
-$string['configcountry'] = 'Je¿eli ustawisz tutaj kraj, to ten kraj bêdzie wybrany jako domy¶lny dla nowego konta u¿ytkownika. Je¿eli chcesz ¿eby u¿ytkownicy ustawiali sami kraj, nic tutaj nie ustawiaj.';
-$string['configdeleteunconfirmed'] = 'Je¿eli u¿ywana jest autoryzacja przez adresy e-mail, tutaj ustawia siê czas w jakim s± przyjmowane potwierdzenia od u¿ytkowników. Po tym czasie niepotwierdzone konta zostan± usuniête.';
-$string['configdenyemailaddresses'] = '¯eby odrzucaæ listy z poszczególnych adresów wymieñ je tutaj. Inne domeny bêd± akceptowane. np <strong>hotmail.com yahoo.co.uk</strong>';
-$string['configdigestmailtime'] = 'Dla tych którzy wybrali wysy³anie streszczenia codziennie mailem. Mo¿na ustawiæ o której godzinnie codziennie streszczenie bêdzie wysy³ane.';
-$string['configdisplayloginfailures'] = 'Bêdzie wy¶wietlaæ informacje wybranego u¿ytkownika o poprzednich nieudanych próbach logowania.';
-$string['configenablerssfeedsdisabled'] = 'To jest niemo¿liwe poniewa¿ wiadomo¶ci RSS s± wy³±czone na tej platformie. Aby to zmieniæ zmieñ ustawienia zmiennych w Konfiguracji Administracji.';
-$string['configextendedusernamechars'] = 'Opcja pozwala na u¿ycie dowolnych znaków w nazwie u¿ytkownika. Domy¶lne ustawienie na \'nie\' ogranicza nazwy u¿ytkowników do znaków alfanumerycznych.';
-$string['configgdversion'] = 'Wskazuje zainstalowan± wersje biblioteki GD. Ta wersja jest pokazywana jako domy¶lna. Nie zmieniaj tej opcji je¶li nie jeste¶ pewny.';
-$string['configlang'] = 'Wybierz domy¶lny jêzyk dla platformy Moodle. U¿ytkownicy mog± zmieniaæ ten wybór pó¼niej w swoich ustawieniach.';
-$string['configlangdir'] = 'Wiêkszo¶æ jêzyków jest pisane od lewej do prawej, ale niektóre, jak Arabski i Hebrajski s± pisane od proawej do lewej.';
-$string['configlanglist'] = 'Pozostaw puste je¿eli chcesz umo¿liwiæ u¿ytkownikom wybór wszystkich dostêpnych jêzyków w tej instalacji Moodla. Je¿eli chcesz skróciæ listê mo¿liwych jêzyków do wyboru wprowad¼ tutaj kody tych jêzyków oddzielone przecinkami. Np: en, es_es,fr,it';
-$string['configsectioninterface'] = 'Interfejs';
-$string['configsectionmail'] = 'poczta';
-$string['configsectionmaintenance'] = 'utrzymywanie (konserwacja)';
-$string['configsectionmisc'] = 'ró¿ne';
-$string['configsectionoperatingsystem'] = 'system operacyjny';
-$string['configsectionpermissions'] = 'pozwolenia';
-$string['configsectionsecurity'] = 'bezpieczeñstwo';
-$string['configsectionuser'] = 'u¿ytkownik';
-$string['configvariables'] = 'Zmienne';
-$string['confirmation'] = 'potwierdzenie';
-$string['edithelpdocs'] = 'edytuj pliki pomocy';
-$string['editstrings'] = 'edytuj ³añcuchy znaków';
-$string['filterall'] = 'filtruj wszystkie ³añcuchy znaków';
 $string['filteruploadedfiles'] = 'Filtruj uploadowane pliki';
-$string['helpadminseesall'] = 'Administrator widzi wszystkie zdarzenia z kalendarza, lub te dotycz±ce jego?';
-$string['helpcalendarsettings'] = 'Konfiguruj kalendarz, datê i czas zwiazane z ró¿nymi aspektami moodle';
-$string['helpforcetimezone'] = 'U¿ytkownicy mogê indywidualnie dobieraæ strefe czasow±, albo jest jedna strefa czasowa dla wszelkiech.';
-$string['helpsitemaintenance'] = 'Uaktualniania i inne prace konserwacyjne platformy';
-$string['helpstartofweek'] = 'Od jakiego dnia zaczyna siê tydzieñ w kalendarzu';
-$string['helpupcominglookahead'] = ' ';
-$string['helpupcomingmaxevents'] = 'Ile (maksymalnie) nadchodz±cych wydarzeñ jest domy¶lnie pokazywanych u¿ytkownikom';
-$string['helpweekenddays'] = 'Które dni tygodnia s± potraktowane jak \"weekend \" i pokazane ró¿nym kolorem?';
-$string['importtimezones'] = 'pobranie listy stref czasowych';
-$string['importtimezonescount'] = '$a->count wej¶æ importowany z $a->source';
-$string['importtimezonesfailed'] = '¯adne ¼ród³a nie zosta³y znalezione';
-$string['incompatibleblocks'] = 'Niezgodne Bloki';
-$string['optionalmaintenancemessage'] = 'Opcjonalna wiadomo¶æ podczas konserwacji platformy';
-$string['pleaseregister'] = 'Proszê zarejestrowaæ swoj± stronê, wtedy przycisk zostanie usuniêty';
-$string['sitemaintenance'] = 'Trwaj± pracê administracyjne i ta strona jest obecnie nie dostêpna';
-$string['sitemaintenancemode'] = 'Modu³ konserwacji';
-$string['sitemaintenanceon'] = 'Obecnie trwaj± prace administracyjne. (tylko adminstrator mo¿e zalogowaæ siê)';
-$string['therewereerrors'] = 'Dane zawieraj± b³êdy';
-$string['timezoneforced'] = 'Strefa czasowa wymuszana przez administratora systemu';
-$string['timezoneisforcedto'] = 'Zmu¶ wszystkich u¿ytkowników do u¿ycia strefy czasowej';
-$string['timezonenotforced'] = 'u¿ytkownik mo¿e wybieraæ swoj± strefê czasow±';
 $string['upgradelogs'] = 'Dla uzyskania pe³nej funkcjonalno¶ci, stare logi powinny zostaæ uaktualnione. <a href=\"$a\">Wiêcej informacji</a>';
 $string['upgradelogsinfo'] = 'Aby móc przegl±daæ stare logi musisz dokonaæ ich aktualizacji. W zale¿no¶ci od konfiguracji twojej strony internetowej proces ten mo¿e potrwaæ parê godzin i mocno wp³yn±æ na wydajno¶æ bazy danych. Gdy rozpoczniesz ju¿ proces aktualizacji, poczekaj a¿ on siê skoñczy (nie zamykaj okna przegl±darki). Strona bêdzie dzia³a³a poprawnie dla innych u¿ytkowników.<br />Czy chcesz teraz dokonaæ aktualizacji logów?';
-$string['upgradingdata'] = 'Uaktualnianie danych';
 $string['upgradinglogs'] = 'Uaktualnianie logów';
 
 ?>

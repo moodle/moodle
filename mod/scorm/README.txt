@@ -3,39 +3,20 @@ SCORM Module by Roberto "Bobo" Pinna
 This module is a SCORM player that import SCORM packages in .zip or .pif format
 (they are the same thing).
 At this time the SCORM module import packages in SCORM1.2, SCORM1.3 (aka SCORM2004) and AICC.
-The SCORM 1.3 support still under development use it carefully.
+It plays SCORM1.2 and launch AICC packages.
 
 Moodle SCORM Module is SCORM Version 1.2 Run-Time Environment Conformant -
 Minimum with All Optional Data Model Elements (LMS-RTE3)
 
-SCORM MODULE IS JAVA FREE.
+THIS MODULE IS JAVA FREE.
 
 ================================================================
 
-FIX TO DO:
-Autocontinue & nav.event call
-
-================================================================
-
-ROAD MAP
-
-Moodle 1.6
-A popup window display mode.             DONE
-New Moodle course format: SCORM.         DONE
-Add prerequisites support to SCORM 1.2.  DONE
-Customizable player page.		 DONE
-Multiple attempt management.
-Complete AICC conformance.
-
-
-Moodle 1.7
-Customizable detailed report page.
-Complete conformity to SCORM 2004 RTE.
-Support of SCORM 2004's sequencing and navigation.
-New package validation subsystem.
-
-Moodle 2.0
-The BIG Boh?!
+Still in development (you can see this as a road map):
+- LMS store for all datamodels for AICC;
+- support for playing SCORM 1.3;
+- navigation/sequencing (prerequisites, objective,etc...);
+- SCORM packages validation (I disabled the old one);
 
 ================================================================
 
@@ -63,7 +44,7 @@ view.php
    ||
    ||
    \/
-player.php -- load --> request.js
+playscorm.php -- load --> request.js
    ||                     api.php -- include --> datamodels/(SCORM1_2.js.php || SCORM1_3.js.php || AICC.js.php)
    ||                       /\
  iframe                     ||
@@ -81,4 +62,4 @@ loadSCO.php |
 
 
 ================================================================
-Updated January 9th 2006
+Updated to April 19 2005

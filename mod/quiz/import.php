@@ -5,7 +5,6 @@
     require_once("locallib.php");
 
     $category = required_param('category', PARAM_INT);
-    $format = optional_param('format','',PARAM_CLEANFILE);
 
     if (! $category = get_record("quiz_categories", "id", $category)) {
         error("This wasn't a valid category!");
@@ -35,11 +34,9 @@
                  "<a href=\"$CFG->wwwroot/mod/quiz/index.php?id=$course->id\">$strquizzes</a>".
                   " -> <a href=\"edit.php\">$streditingquiz</a> -> $strimportquestions");
 
-    if (!empty($format)) {   /// Filename
+    if ($form = data_submitted()) {   /// Filename
 
-        if (!confirm_sesskey()) {
-            error( 'sesskey error' );
-        }
+        $form->format = clean_filename($form->format); // For safety
 
         if (empty($_FILES['newfile'])) {      // file was just uploaded
             notify(get_string("uploadproblem") );
@@ -50,27 +47,27 @@
 
         } else {  // Valid file is found
 
-            if (! is_readable("format/$format/format.php")) {
-                error("Format not known ($format)");
+            if (! is_readable("format/$form->format/format.php")) {
+                error("Format not known ($form->format)");
             }
 
             require("format.php");  // Parent class
-            require("format/$format/format.php");
+            require("format/$form->format/format.php");
 
-            $classname = "quiz_format_$format";
-            $quiz_format = new $classname();
+            $classname = "quiz_format_$form->format";
+            $format = new $classname();
 
-            if (! $quiz_format->importpreprocess($category,$course)) {             // Do anything before that we need to
+            if (! $format->importpreprocess($category)) {             // Do anything before that we need to
                 error("Error occurred during pre-processing!",
                       "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
             }
 
-            if (! $quiz_format->importprocess($_FILES['newfile']['tmp_name'])) {     // Process the uploaded file
+            if (! $format->importprocess($_FILES['newfile']['tmp_name'])) {     // Process the uploaded file
                 error("Error occurred during processing!",
                       "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
             }
 
-            if (! $quiz_format->importpostprocess()) {                     // In case anything needs to be done after
+            if (! $format->importpostprocess()) {                     // In case anything needs to be done after
                 error("Error occurred during post-processing!",
                       "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
             }
@@ -84,29 +81,32 @@
 
     /// Print upload form
 
+    if (!$categories = quiz_get_category_menu($course->id, false)) {
+        error("No categories!");
+    }
+
     // get list of available import formats
     $fileformatnames = get_import_export_formats( 'import' );
 
     print_heading_with_help($strimportquestions, "import", "quiz");
 
     print_simple_box_start("center");
-    echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"import.php\">\n";
-    echo "<input type=\"hidden\" name=\"sesskey\" value=\"" . sesskey() . "\" />\n";
-    echo "<table cellpadding=\"5\">\n";
+    echo "<form enctype=\"multipart/form-data\" method=\"post\" action=\"import.php\">";
+    echo "<table cellpadding=\"5\">";
 
     echo "<tr><td align=\"right\">";
     print_string("category", "quiz");
     echo ":</td><td>";
     // choose_from_menu($categories, "category", "$category->id", "");
     echo quiz_get_category_coursename($category);
-    echo "</tr>\n";
+    echo "</tr>";
 
     echo "<tr><td align=\"right\">";
     print_string("fileformat", "quiz");
     echo ":</td><td>";
     choose_from_menu($fileformatnames, "format", "gift", "");
     helpbutton("import", $strimportquestions, "quiz");
-    echo "</tr>\n";
+    echo "</tr>";
 
     echo "<tr><td align=\"right\">";
     print_string("upload");
@@ -116,10 +116,10 @@
     echo "</tr><tr><td>&nbsp;</td><td>";
     echo " <input type=\"hidden\" name=\"category\" value=\"$category->id\" />";
     echo " <input type=\"submit\" name=\"save\" value=\"".get_string("uploadthisfile")."\" />";
-    echo "</td></tr>\n";
+    echo "</td></tr>";
 
-    echo "</table>\n";
-    echo "</form>\n";
+    echo "</table>";
+    echo "</form>";
     print_simple_box_end();
 
     print_footer($course);

@@ -1,25 +1,16 @@
-<?php //$Id$
+<?PHP //$Id$
 
 class block_activity_modules extends block_list {
     function init() {
         $this->title = get_string('activities');
-        $this->version = 2006011300;
+        $this->version = 2004041000;
     }
 
     function get_content() {
         global $USER, $CFG;
 
-        // TODO: FIX: HACK: (any other tags I should add? :P)
-        // Hacker's improvised caching scheme: avoid fetching the mod
-        // data from db if the course format has already fetched them
-        if(!isset($GLOBALS['modnamesplural']) || !isset($GLOBALS['modnamesused'])) {
-            require_once($CFG->dirroot.'/course/lib.php');
-            get_all_mods($this->instance->pageid, $mods, $modnames, $modnamesplural, $modnamesused);
-        }
-        else {
-            $modnamesplural = $GLOBALS['modnamesplural'];
-            $modnamesused   = $GLOBALS['modnamesused'];
-        }
+        // This is really NOT pretty, but let's do it simple for now...
+        global $modnamesused, $modnamesplural;
 
         if($this->content !== NULL) {
             return $this->content;
@@ -40,10 +31,6 @@ class block_activity_modules extends block_list {
         }
 
         return $this->content;
-    }
-
-    function applicable_formats() {
-        return array('all' => true, 'mod' => false, 'my' => false);
     }
 }
 

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5.3+ (2005060230)
+      // glossary.php - created with Moodle 1.5 unstable development (2004091700)
 
 
 $string['addcomment'] = 'Afegeix un comentari';
@@ -10,7 +10,6 @@ $string['allcategories'] = 'Totes les categories';
 $string['allentries'] = 'TOTES';
 $string['allowcomments'] = 'Permeteu comentaris en les entrades?';
 $string['allowduplicatedentries'] = 'Permeteu entrades duplicades?';
-$string['allowprintview'] = 'Permeteu visualització per a imprimir?';
 $string['allowratings'] = 'Permeteu valorar les entrades?';
 $string['answer'] = 'Resposta';
 $string['approve'] = 'D\'acord';
@@ -130,8 +129,8 @@ $string['noentry'] = 'No s\'ha trobat cap entrada.';
 $string['notcategorised'] = 'No categoritzat';
 $string['numberofentries'] = 'Nombre d\'entrades';
 $string['onebyline'] = '(una per línia)';
+$string['parentlanguage'] = '<<  TRADUCTORS: especifiqueu aquí el codi de l\'idioma que cal fer servir quan el vostre paquet d\'idioma no contingui una cadena. Si deixeu aquest camp en blanc s\'utilitzarà l\'anglès. Per exemple: es >>';
 $string['printerfriendly'] = 'Versió per imprimir';
-$string['printviewnotallowed'] = 'La visualització per a impressora no està autoritzada';
 $string['question'] = 'Qüestió';
 $string['rate'] = 'Valoració';
 $string['rating'] = 'S\'està valorant';
@@ -148,9 +147,9 @@ $string['rsssubscriberss'] = 'Visualitza l\'RSS \'$a\'';
 $string['searchindefinition'] = 'Cerca en tot el text';
 $string['secondaryglossary'] = 'Glossari secundari';
 $string['sendinratings'] = 'Envia les meves darreres valoracions';
-$string['showall'] = 'Mostra l\'enllaç \'Tot\'';
+$string['showall'] = 'Mostra l\'enllaç ';
 $string['showalphabet'] = 'Mostra l\'alfabet';
-$string['showspecial'] = 'Mostra l\'enllaç \'Especial\'';
+$string['showspecial'] = 'Mostra l\'enllaç ';
 $string['sortby'] = 'Ordena per';
 $string['sortbycreation'] = 'Per data de creació';
 $string['sortbylastupdate'] = 'Per l\'última actualització';
@@ -158,6 +157,9 @@ $string['sortchronogically'] = 'Ordena cronològicament';
 $string['special'] = 'Especial';
 $string['standardview'] = 'Navega alfabèticament';
 $string['studentcanpost'] = 'Els estudiants poden afegir entrades';
+$string['thischarset'] = '<< TRADUCTORS: especifiqueu aquí el conjunt de caràcters del vostre idioma. Teniu en compte que tot el text creat mentre aquest idioma sigui actiu s\'emmagatzemarà amb aquest conjunt de caràcters, de manera que és millor no tornar a canviar-lo. Per exemple: iso-8859-1 >>';
+$string['thisdirection'] = '<< TRADUCTORS: aquesta cadena especifica el sentit del text, que pot ser d\'esquerra a dreta (\'ltr\') o de dreta a esquerra (\'rtl\'). >>';
+$string['thislanguage'] = '<< TRADUCTORS: especifiqueu aquí el nom de l\'idioma. Si és possible utilitzeu referències numèriques Unicode >>';
 $string['totalentries'] = 'Total d\'entrades';
 $string['usedynalink'] = 'Enllaça automàticament les entrades del glossari';
 $string['waitingapproval'] = 'Esperant aprovació';

@@ -31,9 +31,6 @@ class block_recent_activity extends block_base {
 
         return $this->content;
     }
-
-    function applicable_formats() {
-        return array('all' => true, 'my' => false);
-    }
 }
+
 ?>

@@ -1,42 +1,48 @@
 MOODLE JAPANESE TRANSLATION
 ----------------------------------------------------------------------
-STARTED                       : November 21, 2002
-LAST MODIFIED                 : January  18, 2006
+STARTED       : November 21, 2002
+LAST MODIFIED : May 24, 2005
+
+Thanks to everyone who have supported our translation project!
+
+
+[TRANSLATORS]
 ----------------------------------------------------------------------
-
 Mitsuhiro Yoshida ( http://mitstek.com/ )
- Translating whole ja and ja_utf8 files, translation management.
+ Translating whole ja files, translation management.
 
-Timothy Takemoto ( http://eigodaigaku.com/ )
- Facilitator of "Japanese Moodle" ( http://moodle.org/course/view.php?id=14 )
+Paul Shew ( http://ac.shew.jp )
  Translation brushup
-
-Paul Tsuchido Shew ( http://shew.jp/ )
- Quiz module GIFT import filter development
- Translation: /lang/ja/help/quiz/formatgift.html
- Translation brushup
+ /lang/ja/help/quiz/formatgift.html
 
 Tatsuya Aoyagi
- Translation: /lang/ja/questionnaire.php
- Translation: /lang/ja/help/questionnaire
  Translation brushup
  Localization
+ /lang/ja/questionnaire.php
+ /lang/ja/help/questionnaire
 
 Masataka Nakaue ( http://ldt.stanford.edu/~mnakauye/ )
- Translation: /lang/ja/book.php
- Translation: /lang/ja/help/book
+ /lang/ja/book.php
+ /lang/ja/help/book
 
 Hiroto Kagotani ( http://www.infsys.cne.okayama-u.ac.jp/~kagotani/ )
- Translation: /lang/ja/help/*
+ Translation brushup
+ /lang/ja/help/*
+
+
+[CONTRIBUTORS]
+----------------------------------------------------------------------
+Timothy Takemoto ( http://eigodaigaku.com )
+ Facilitator of Japanese moodle
  Translation brushup
 
 Thomas N. Robb ( http://www.kyoto-su.ac.jp/~trobb/ )
  Translation brushup
 
 Toshihiro Kita ( http://t-kita.net/ )
- Facilitator of "Japanese Moodle" ( http://moodle.org/course/view.php?id=14 )
- Moodle RPM Package ( http://t-kita.net/rpm/moodle/ )
- /fonts/README2.txt
+ Translation brushup
+
+Minoru Akiyama ( http://www.e-learning-service.co.jp/ )
  Translation brushup
 
 Takahiro Kagoya ( https://manabi.jin-ai.ac.jp/moodle/ )
@@ -48,9 +54,6 @@ Takahito Kashiwagi ( http://www.supertak.com/ )
  Localization
 
 Naoko Ueda ( http://knowledgestudio.biz/ )
- Translation brushup
-
-Haruhiko Okumura ( http://oku.edu.mie-u.ac.jp/~okumura/ )
  Translation brushup
 
 ----------------------------------------------------------------------

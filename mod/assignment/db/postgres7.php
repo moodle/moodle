@@ -152,20 +152,6 @@ function assignment_upgrade($oldversion) {
         table_column('assignment', '', 'preventlate', 'integer', '2', 'unsigned', '0', 'not null', 'resubmit');
     }
 
-    if ($oldversion < 2005060100) {
-        include_once("$CFG->dirroot/mod/assignment/lib.php");
-        assignment_refresh_events();
-    }
-
-    if ($oldversion < 2005060101) { // Mass cleanup of bad upgrade scripts
-        modify_database('','ALTER TABLE prefix_assignment ALTER assignmenttype SET NOT NULL');
-        modify_database('','ALTER TABLE prefix_assignment ALTER emailteachers SET NOT NULL');
-        modify_database('','ALTER TABLE prefix_assignment ALTER preventlate SET NOT NULL');
-        modify_database('','ALTER TABLE prefix_assignment ALTER timeavailable SET NOT NULL');
-        modify_database('','ALTER TABLE prefix_assignment_submissions ALTER data1 SET NOT NULL');
-        modify_database('','ALTER TABLE prefix_assignment_submissions ALTER data2 SET NOT NULL');
-        modify_database('','ALTER TABLE prefix_assignment_submissions ALTER format SET NOT NULL');
-    }
 
 /// These lines ALWAYS need to be here at the end of this file.  Don't mess with them. :-)
     include_once("$CFG->dirroot/mod/assignment/lib.php");

@@ -1,19 +1,15 @@
 <?PHP // $Id$ 
-      // block_quiz_results.php - created with Moodle 1.6 development (2005081700)
+      // block_quiz_results.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['bestgrade'] = 'En yüksek not:';
-$string['bestgrades'] = 'En yüksek $a not:';
+$string['bestgrades'] = 'En yüksek $a notlarý:';
 $string['bestgroupgrade'] = 'En yüksek ortalamalý grup';
 $string['bestgroupgrades'] = 'En yüksek ortalamalý $a grup';
 $string['config_format_absolute'] = 'Tam sayý';
 $string['config_format_fraction'] = 'Kesirli';
 $string['config_format_percentage'] = 'Yüzdelik';
 $string['config_grade_format'] = 'Not görünümü';
-$string['config_name_format'] = 'Gösterilecek sonuçlar için gizlilik seviyesi:';
-$string['config_names_anon'] = 'Anonim sonuçlar';
-$string['config_names_full'] = 'Tam ismi göster';
-$string['config_names_id'] = 'Sadece ID numaralarýný göster';
 $string['config_no_quizzes_in_course'] = 'Bu kursa ait hiç sýnav etkinliði yok. Bu bloðun doðru olarak görülmesi için en az bir tane sýnav eklemelisiniz.';
 $string['config_select_quiz'] = 'Hangi sýnavýn sonuçlarý bu blokta gösterilecek';
 $string['config_show_best'] = 'Kaç tane en yüksek not görünecek (0: etkin deðil)';

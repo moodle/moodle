@@ -8,9 +8,8 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $id = required_param('id',PARAM_INT);               //course
-    $user = optional_param('user', $USER->id, PARAM_INT); //user
-    $confirm = optional_param('confirm','',PARAM_ALPHA);
+    require_variable($id);               //course
+    optional_variable($user, $USER->id); //user
 
     if (! $course = get_record("course", "id", $id) ) {
         error("That's an invalid course id");
@@ -25,11 +24,11 @@
         error("You must be a teacher with editing rights to do this");
     }
 
-    if ($user->id == $USER->id and !$CFG->allowunenroll or $course->metacourse) {
+    if ($user->id == $USER->id and !$CFG->allowunenroll) {
         error("You are not allowed to unenroll");
     }
 
-    if (!empty($confirm) and confirm_sesskey()) {
+    if (isset($confirm) and confirm_sesskey()) {
 
         if (! unenrol_student($user->id, $course->id)) {
             error("An error occurred while trying to unenrol you.");
@@ -57,7 +56,7 @@
         $strunenrolsure = get_string("unenrolsure", "", fullname($user, true));
     }
 
-    notice_yesno ($strunenrolsure, "unenrol.php?id=$id&amp;user=$user->id&amp;confirm=yes&amp;sesskey=$USER->sesskey", $_SERVER['HTTP_REFERER']);
+    notice_yesno ($strunenrolsure, "unenrol.php?id=$id&amp;user=$user->id&amp;confirm=yes&amp;sesskey=$USER->sesskey", "$HTTP_REFERER");
 
     print_footer($course);
 

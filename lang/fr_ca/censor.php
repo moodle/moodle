@@ -3,6 +3,7 @@
 
 
 $string['filtername'] = 'Censure de mots inadéquats';
-
+$string['parentlanguage'] = 'fr';
+$string['thisdirection'] = 'ltr';
 
 ?>

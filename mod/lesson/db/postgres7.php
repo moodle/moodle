@@ -39,35 +39,7 @@ function lesson_upgrade($oldversion) {
     if ($oldversion < 2004032700) {
         table_column("lesson_answers", "", "flags", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "grade");
     }
-    
-    if ($oldversion < 2004060501) {
-        // matching questions need 2 records for responses and the
-        // 2 records must appear before the old ones.  So, delete the old ones,
-        // create the 2 needed, then re-insert the old ones for each matching question.
-        if ($matchingquestions = get_records('lesson_pages', 'qtype', 5)) {  // get our matching questions
-            foreach ($matchingquestions as $matchingquestion) {
-                if ($answers = get_records('lesson_answers', 'pageid', $matchingquestion->id)) { // get answers
-                    if (delete_records('lesson_answers',  'pageid', $matchingquestion->id)) {  // delete them
-                        $time = time();
-                        // make our 2 response answers
-                        $newanswer->lessonid = $matchingquestion->lessonid;
-                        $newanswer->pageid = $matchingquestion->id;
-                        $newanswer->timecreated = $time;
-                        $newanswer->timemodified = 0;
-                        insert_record('lesson_answers', $newanswer);
-                        insert_record('lesson_answers', $newanswer);
-                        // insert our old answers
-                        foreach ($answers as $answer) {
-                            $answer->timecreated = $time;
-                            $answer->timemodified = 0;
-                            insert_record('lesson_answers', (object) array_map('addslashes', (array)$answer));
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
+ // CDC-FLAG
     if ($oldversion < 2004072100) {
         execute_sql(" create table ".$CFG->prefix."lesson_high_scores
                     ( id serial8 primary key,
@@ -202,7 +174,7 @@ function lesson_upgrade($oldversion) {
           maxhighscores int8 NOT NULL default '0'
         )");
     }
-    
+    // CDC-FLAG end    
     if ($oldversion < 2004100400) {
         //execute_sql(" ALTER TABLE `{$CFG->prefix}lesson_attempts` ADD `useranswer` text NOT NULL AFTER correct");
         table_column('lesson_attempts', '', 'useranswer', 'text', '', '', '', 'NOT NULL', 'correct');
@@ -239,64 +211,6 @@ function lesson_upgrade($oldversion) {
         modify_database('','CREATE INDEX prefix_lesson_grades_userid_idx ON prefix_lesson_grades (userid);');
         modify_database('','CREATE INDEX prefix_lesson_pages_lessonid_idx ON prefix_lesson_pages (lessonid);');
    }
-   
-    if ($oldversion < 2005060900) {
-        table_column('lesson_grades', 'grade', 'grade', 'real', '', 'unsigned', '0', 'not null');
-    }
-    
-    if ($oldversion < 2005060901) { // Mass cleanup of bad postgres upgrade scripts
-        modify_database('','ALTER TABLE prefix_lesson ALTER bgcolor SET NOT NULL');
-        modify_database('','ALTER TABLE prefix_lesson ALTER custom SET NOT NULL');
-        table_column('lesson','height','height','integer','16','unsigned','480');
-        modify_database('','ALTER TABLE prefix_lesson ALTER highscores SET NOT NULL');
-        modify_database('','ALTER TABLE prefix_lesson ALTER maxattempts SET DEFAULT 5');
-        table_column('lesson','maxhighscores','maxhighscores','integer','16');
-        modify_database('','ALTER TABLE prefix_lesson ALTER displayleft SET NOT NULL');
-        table_column('lesson','','minquestions','integer','8');
-        table_column('lesson','maxtime','maxtime','integer','16');
-        modify_database('','ALTER TABLE prefix_lesson ALTER ongoing SET NOT NULL');
-        modify_database('','ALTER TABLE prefix_lesson ALTER password SET NOT NULL');
-        modify_database('','ALTER TABLE prefix_lesson ALTER practice SET NOT NULL');
-        modify_database('','ALTER TABLE prefix_lesson ALTER review SET NOT NULL');
-        modify_database('','ALTER TABLE prefix_lesson ALTER slideshow SET NOT NULL');
-        modify_database('','ALTER TABLE prefix_lesson ALTER timed SET NOT NULL');
-        modify_database('','ALTER TABLE prefix_lesson ALTER tree SET NOT NULL');
-        modify_database('','ALTER TABLE prefix_lesson ALTER usepassword SET NOT NULL');
-        modify_database('','ALTER TABLE prefix_lesson ALTER width SET NOT NULL');
-        table_column('lesson','width','width','integer','16','unsigned','640');
-        table_column('lesson_answers','flags','flags','integer','8');
-        table_column('lesson_answers','grade','grade','integer','8');
-        table_column('lesson_answers','score','score','integer','16');
-        modify_database('','ALTER TABLE prefix_lesson_grades ALTER grade SET NOT NULL');
-        modify_database('','ALTER TABLE prefix_lesson_pages ALTER display SET NOT NULL');
-        modify_database('','ALTER TABLE prefix_lesson_pages ALTER layout SET NOT NULL');
-        table_column('lesson_pages','qoption','qoption','integer','8');
-        table_column('lesson_pages','qtype','qtype','integer','8');
-    }
-
-    if ($oldversion < 2005061500) {
-        table_column('lesson', '', 'mediafile', 'varchar', '255', '', '', 'not null', 'tree');
-    }
-    
-    if ($oldversion < 2005063000) {
-        table_column('lesson', '', 'dependency', 'INT', '8', 'unsigned', '0', 'not null', 'usepassword');
-        table_column('lesson', '', 'conditions', 'text', '', '', '', 'not null', 'dependency');
-    }
-    
-    if ($oldversion < 2005101900) {
-        table_column('lesson', '', 'progressbar', 'INT', '3', 'unsigned', '0', 'not null', 'displayleft');
-        table_column('lesson', '', 'displayleftif', 'INT', '3', 'unsigned', '0', 'not null', 'displayleft');
-    }
-    
-    if ($oldversion < 2005102800) {
-        table_column('lesson', '', 'mediaclose', 'INT', '3', 'unsigned', '0', 'not null', 'mediafile');
-        table_column('lesson', '', 'mediaheight', 'INT', '10', 'unsigned', '100', 'not null', 'mediafile');
-        table_column('lesson', '', 'mediawidth', 'INT', '10', 'unsigned', '650', 'not null', 'mediafile');
-    }
-
-	if ($oldversion < 2005110200) {
-        table_column('lesson', '', 'activitylink', 'INT', '10', 'unsigned', '0', 'not null', 'tree');
-	}
 
    return true;
 }

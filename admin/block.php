@@ -14,7 +14,8 @@
         error("Site isn't defined!");
     }
 
-    $blockid = required_param( 'block',PARAM_INT );
+    require_variable($_REQUEST['block']);
+    $blockid = intval($_REQUEST['block']);
    
     if(($blockrecord = blocks_get_record($blockid)) === false) {
         error('This block does not exist');
@@ -47,6 +48,7 @@
             unset($config->$item);
         }
         $block->config_save($config);
+        print_header();
         redirect("$CFG->wwwroot/$CFG->admin/blocks.php", get_string("changessaved"), 1);
         exit;
     }

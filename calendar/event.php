@@ -50,13 +50,10 @@
         redirect(CALENDAR_URL.'view.php?view=upcoming');
     }
 
-    $action = required_param('action', PARAM_ALPHA);
-    $eventid = optional_param('id', 0, PARAM_INT);
+    $action    = required_param('action', PARAM_ALPHA);
+    $eventid   = optional_param('id', 0, PARAM_INT);
     $eventtype = optional_param('type', 'select', PARAM_ALPHA);
     $urlcourse = optional_param('course', 0, PARAM_INT);
-    $cal_y = optional_param('cal_y');
-    $cal_m = optional_param('cal_m');
-    $cal_d = optional_param('cal_d');
 
     if(!$site = get_site()) {
         redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
@@ -116,7 +113,7 @@
 
             if($form = data_submitted()) {
 
-                $form->name = clean_text(strip_tags($form->name,'<lang><span>'));
+                $form->name = strip_tags($form->name,'<lang>');  // Strip all tags, but <lang>
 
                 $form->timestart = make_timestamp($form->startyr, $form->startmon, $form->startday, $form->starthr, $form->startmin);
                 if($form->duration == 1) {
@@ -183,7 +180,7 @@
             $form = data_submitted();
             if(!empty($form) && $form->type == 'defined') {
 
-                $form->name = clean_text(strip_tags($form->name, '<lang><span>'));
+                $form->name = strip_tags($form->name, '<lang>');  // Strip all tags but <lang>
 
                 $form->timestart = make_timestamp($form->startyr, $form->startmon, $form->startday, $form->starthr, $form->startmin);
                 if($form->duration == 1) {
@@ -214,25 +211,22 @@
                     $eventid = insert_record('event', $form, true);
 
                     /// Log the event entry.
-                    add_to_log($form->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventid, stripslashes($form->name));
+                    $form->name = stripslashes($form->name);  //To avoid double-slashes
+                    add_to_log($form->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventid, $form->name);
 
                     if ($form->repeat) {
                         for($i = 1; $i < $form->repeats; $i++) {
-                            // What's the DST offset for the previous repeat?
-                            $dst_offset_prev = dst_offset_on($form->timestart);
-
-                            $form->timestart += WEEKSECS;
-
-                            // If the offset has changed in the meantime, update this repeat accordingly
-                            $form->timestart += $dst_offset_prev - dst_offset_on($form->timestart);
-
+                            // [pj]
+                            // This will not necessarily work correctly because of DST
+                            $form->timestart += 604800;  // add one week
                             /// Get the event id for the log record.
                             $eventid = insert_record('event', $form, true);
-
                             /// Log the event entry.
-                            add_to_log($form->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventid, stripslashes($form->name));
+                            $form->name = stripslashes($form->name);  //To avoid double-slashes
+                            add_to_log($form->courseid, 'calendar', 'add', 'event.php?action=edit&amp;id='.$eventid, $form->name);
                         }
                     }
+
                     // OK, now redirect to day view
                     redirect(CALENDAR_URL.'view.php?view=day&cal_d='.$form->startday.'&cal_m='.$form->startmon.'&cal_y='.$form->startyr);
                 }
@@ -252,13 +246,6 @@
       ($shortname = get_field('course', 'shortname', 'id', $SESSION->cal_course_referer)) !== false) {
         // If we know about the referring course, show a return link
         $nav = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$SESSION->cal_course_referer.'">'.$shortname.'</a> -> '.$nav;
-    }
-
-    if (!empty($SESSION->cal_course_referer)) {
-        // TODO: This is part of the Great $course Hack in Moodle. Replace it at some point.
-        $course = get_record('course', 'id', $SESSION->cal_course_referer);
-    } else {
-        $course = $site;
     }
 
     print_header($site->shortname.': '.$strcalendar.': '.$title, $strcalendar, $nav.' -> '.$title,
@@ -343,9 +330,7 @@
                     $form->minutes = '';
                 }
             }
-
-            if (!empty($form->courseid)) {
-                // TODO: This is part of the Great $course Hack in Moodle. Replace it at some point.
+            if (!empty($form->courseid)) {       // Fixes bug 1488
                 $course = get_record('course', 'id', $form->courseid);
             } else {
                 $course = $site;
@@ -367,15 +352,20 @@
         break;
 
         case 'new':
-            if($cal_y && $cal_m && $cal_d && checkdate($cal_m, $cal_d, $cal_y)) {
-                $form->timestart = make_timestamp($cal_y, $cal_m, $cal_d, 0, 0, 0);
+            optional_variable($_GET['cal_y']);
+            optional_variable($_GET['cal_m']);
+            optional_variable($_GET['cal_d']);
+            optional_variable($form->timestart, -1);
+
+            if($_GET['cal_y'] && $_GET['cal_m'] && $_GET['cal_d'] && checkdate($_GET['cal_m'], $_GET['cal_d'], $_GET['cal_y'])) {
+                $form->timestart = make_timestamp($_GET['cal_y'], $_GET['cal_m'], $_GET['cal_d'], 0, 0, 0);
             }
-            else if($cal_y && $cal_m && checkdate($cal_m, 1, $cal_y)) {
-                if($cal_y == $now['year'] && $cal_m == $now['mon']) {
-                    $form->timestart = make_timestamp($cal_y, $cal_m, $now['mday'], 0, 0, 0);
+            else if($_GET['cal_y'] && $_GET['cal_m'] && checkdate($_GET['cal_m'], 1, $_GET['cal_y'])) {
+                if($_GET['cal_y'] == $now['year'] && $_GET['cal_m'] == $now['mon']) {
+                    $form->timestart = make_timestamp($_GET['cal_y'], $_GET['cal_m'], $now['mday'], 0, 0, 0);
                 }
                 else {
-                    $form->timestart = make_timestamp($cal_y, $cal_m, 1, 0, 0, 0);
+                    $form->timestart = make_timestamp($_GET['cal_y'], $_GET['cal_m'], 1, 0, 0, 0);
                 }
             }
             if($form->timestart < 0) {
@@ -456,7 +446,7 @@
                 case 'site':
                     $form->name = '';
                     $form->description = '';
-                    $form->courseid = SITEID;
+                    $form->courseid = 1;
                     $form->groupid = 0;
                     $form->userid = $USER->id;
                     $form->modulename = '';
@@ -606,13 +596,8 @@ function calendar_get_allowed_types(&$allowed) {
     $allowed->site = isteacher(SITEID);
 
     if(!empty($SESSION->cal_course_referer) && $SESSION->cal_course_referer != SITEID && isteacher($SESSION->cal_course_referer, $USER->id)) {
-        $course = get_record('course', 'id', $SESSION->cal_course_referer);
-
-        $allowed->courses = array($course->id => 1);
-
-        if($course->groupmode != NOGROUPS || !$course->groupmodeforce) {
-            $allowed->groups = get_groups($SESSION->cal_course_referer);
-        }
+        $allowed->courses = array($SESSION->cal_course_referer => 1);
+        $allowed->groups = get_groups($SESSION->cal_course_referer);
     }
 }
 

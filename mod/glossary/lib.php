@@ -751,7 +751,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
     
     if ( (!empty($USER->id) && $glossary->allowcomments && !isguest()) || $isteacher) {
         $output = true;
-        $return .= ' <a title="' . get_string('addcomment','glossary') . '" href="comment.php?id='.$cm->id.'&amp;eid='.$entry->id.'"><img src="comment.gif" height="11" width="11" border="0" alt="'.get_string('addcomment','glossary').'" /></a>';
+        $return .= '<a title="' . get_string('addcomment','glossary') . '" href="comment.php?id='.$cm->id.'&amp;eid='.$entry->id.'"><img src="comment.gif" height="11" width="11" border="0" alt="'.get_string('addcomment','glossary').'" /></a>';
     }
 
 
@@ -761,7 +761,7 @@ function glossary_print_entry_icons($course, $cm, $glossary, $entry, $mode='',$h
             $mainglossary = get_record('glossary','mainglossary',1,'course',$course->id);
             if ( $mainglossary ) {  // if there is a main glossary defined, allow to export the current entry
                 $output = true;
-                $return .= ' <a title="'.get_string('exporttomainglossary','glossary') . '" href="exportentry.php?id='.$cm->id.'&amp;entry='.$entry->id.'&amp;mode='.$mode.'&amp;hook='.$hook.'"><img src="export.gif" height="11" width="11" border="0" alt="'.get_string('exporttomainglossary','glossary').'" /></a>';
+                $return .= '<a title="'.get_string('exporttomainglossary','glossary') . '" href="exportentry.php?id='.$cm->id.'&amp;entry='.$entry->id.'&amp;mode='.$mode.'&amp;hook='.$hook.'"><img src="export.gif" height="11" width="11" border="0" alt="'.get_string('exporttomainglossary','glossary').'" /></a>';
             }
         }
 
@@ -1154,28 +1154,29 @@ function glossary_print_attachments($entry, $return=NULL, $align="left") {
     if ($basedir = glossary_file_area($newentry)) {
         if ($files = get_directory_list($basedir)) {
             $strattachment = get_string("attachment", "glossary");
+            $strpopupwindow = get_string("popupwindow");
             foreach ($files as $file) {
                 $icon = mimeinfo("icon", $file);
                 if ($CFG->slasharguments) {
-                    $ffurl = "$CFG->wwwroot/file.php/$filearea/$file";
+                    $ffurl = "file.php/$filearea/$file";
                 } else {
-                    $ffurl = "$CFG->wwwroot/file.php?file=/$filearea/$file";
+                    $ffurl = "file.php?file=/$filearea/$file";
                 }
-                $image = "<img border=\"0\" src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" alt=\"\" />";
+                $image = "<img border=\"0\" src=\"$CFG->pixpath/f/$icon\" height=\"16\" width=\"16\" alt=\"$strpopupwindow\" />";
 
                 if ($return == "html") {
-                    $output .= "<a href=\"$ffurl\">$image</a> ";
-                    $output .= "<a href=\"$ffurl\">$file</a><br />";
-
+                    $output .= "<a target=\"_image\" href=\"$CFG->wwwroot/$ffurl\">$image</a> ";
+                    $output .= "<a target=\"_image\" href=\"$CFG->wwwroot/$ffurl\">$file</a><br />";
                 } else if ($return == "text") {
-                    $output .= "$strattachment $file:\n$ffurl\n";
+                    $output .= "$strattachment $file:\n$CFG->wwwroot/$ffurl\n";
 
                 } else {
                     if ($icon == "image.gif") {    // Image attachments don't get printed as links
-                        $imagereturn .= "<img src=\"$ffurl\" align=\"$align\" alt=\"\" />";
+                        $imagereturn .= "<img src=\"$CFG->wwwroot/$ffurl\" align=\"$align\" alt=\"\" />";
                     } else {
-                        echo "<a href=\"$ffurl\">$image</a> ";
-                        echo "<a href=\"$ffurl\">$file</a><br />";
+                        link_to_popup_window("/$ffurl", "attachment", $image, 500, 500, $strattachment);
+                        echo "<a target=\"_image\" href=\"$CFG->wwwroot/$ffurl\">$file</a>";
+                        echo "<br />";
                     }
                 }
             }
@@ -1515,12 +1516,8 @@ function glossary_print_comment($course, $cm, $glossary, $entry, $comment) {
     print_user_picture($user->id, $course->id, $user->picture);
     echo '</td>';
     echo '<td class="entryheader">';
-
-    $fullname = fullname($user, isteacher($course->id));
-    $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
-    $by->date = userdate($comment->timemodified);
-    echo '<span class="author">'.get_string('bynameondate', 'forum', $by).'</span>';
-
+    echo "<span class=\"author\"><a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a></span><br />";
+    echo '<span class="time">'.get_string('lastedited').': '.userdate($comment->timemodified).'</span>';
     echo '</td></tr>';
 
     echo '<tr valign="top"><td class="left side">';
@@ -2141,14 +2138,6 @@ function glossary_get_paging_bar($totalcount, $page, $perpage, $baseurl, $maxpag
     }
 
     return $code;
-}
-
-function glossary_get_view_actions() {
-    return array('view','view all','view entry');
-}
-
-function glossary_get_post_actions() {
-    return array('add category','add comment','add entry','approve entry','delete category','delete comment','delete entry','edit category','update comment','update entry');
 }
 
 ?>

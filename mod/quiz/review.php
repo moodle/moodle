@@ -22,16 +22,16 @@
         error("No such attempt ID exists");
     }
     if (! $quiz = get_record("quiz", "id", $attempt->quiz)) {
-        error("The quiz with id $attempt->quiz belonging to attempt $attempt is missing");
+        error("Course module is incorrect");
     }
     if (! $course = get_record("course", "id", $quiz->course)) {
-        error("The course with id $quiz->course that the quiz with id $quiz->id belongs to is missing");
+        error("Course is misconfigured");
     }
     if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
-        error("The course module for the quiz with id $quiz->id is missing");
+        error("Course Module ID was incorrect");
     }
 
-    if (!count_records('quiz_newest_states', 'attemptid', $attempt->uniqueid)) {
+    if (!count_records('quiz_newest_states', 'attemptid', $attempt->id)) {
         // this question has not yet been upgraded to the new model
         quiz_upgrade_states($attempt);
     }
@@ -47,26 +47,18 @@
         // If not even responses are to be shown in review then we
         // don't allow any review
         if (!($quiz->review & QUIZ_REVIEW_RESPONSES)) {
-            if (empty($popup)) {
-                redirect('view.php?q='.$quiz->id);
-            } else {
-                ?><script type="text/javascript">
-                opener.document.location.reload();
-                self.close();
-                </script><?php
-                die();
-            }
+            error(get_string("noreview", "quiz"));
         }
         if ((time() - $attempt->timefinish) > 120) { // always allow review right after attempt
-            if ((!$quiz->timeclose or time() < $quiz->timeclose) and !($quiz->review & QUIZ_REVIEW_OPEN)) {
-                redirect('view.php?q='.$quiz->id, get_string("noreviewuntil", "quiz", userdate($quiz->timeclose)));
+            if (time() < $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_OPEN)) {
+                error(get_string("noreviewuntil", "quiz", userdate($quiz->timeclose)));
             }
-            if ($quiz->timeclose and time() >= $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_CLOSED)) {
-                redirect('view.php?q='.$quiz->id, get_string("noreview", "quiz"));
+            if (time() >= $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_CLOSED)) {
+                error(get_string("noreview", "quiz"));
             }
         }
         if ($attempt->userid != $USER->id) {
-            error("This is not your attempt!", 'view.php?q='.$quiz->id);
+            error("This is not your attempt!");
         }
     }
 
@@ -111,13 +103,20 @@
 
     // load the questions needed by page
     $pagelist = $showall ? quiz_questions_in_quiz($attempt->layout) : quiz_questions_on_page($attempt->layout, $page);
-    $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
-           "  FROM {$CFG->prefix}quiz_questions q,".
-           "       {$CFG->prefix}quiz_question_instances i".
-           " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
-           "   AND q.id IN ($pagelist)";
-    if (!$questions = get_records_sql($sql)) {
+    if (!$questions = get_records_list('quiz_questions', 'id', $pagelist)) {
         error('No questions found');
+    }
+
+    // Get instance information for versioned and unversioned questions (fixes bug 3311)
+    foreach ($questions as $question) {
+        $qid = $question->id;
+        while (!$instance = get_record('quiz_question_instances', 'quiz', $quiz->id, 'question', $qid)) {
+            if (!$qid = get_field('quiz_question_versions', 'newquestion', 'oldquestion', $qid)) {
+                error("No instance of question #$question->id could be found!");
+            }
+        }
+        $question->maxgrade = $instance->grade;
+        $question->instance = $instance->id;
     }
 
     // Load the question type specific information
@@ -127,7 +126,7 @@
 
     // Restore the question sessions to their most recent states
     // creating new sessions where required
-    if (!$states = quiz_get_states($questions, $quiz, $attempt)) {
+    if (!$states = quiz_restore_question_sessions($questions, $quiz, $attempt)) {
         error('Could not restore question sessions');
     }
 
@@ -198,11 +197,6 @@
     }
     print_table($table);
 
-    // print javascript button to close the window, if necessary
-    if (!$isteacher) {
-        include('attempt_close_js.php');
-    }
-
 /// Print the navigation panel if required
     $numpages = quiz_number_of_pages($attempt->layout);
     if ($numpages > 1 and !$showall) {
@@ -217,14 +211,6 @@
     $pagequestions = explode(',', $pagelist);
     $number = quiz_first_questionnumber($attempt->layout, $pagelist);
     foreach ($pagequestions as $i) {
-        if (!isset($questions[$i])) {
-            print_simple_box_start('center', '90%');
-            echo '<b><font size="+1">' . $number . '</font></b><br />';
-            notify(get_string('errormissingquestion', 'quiz', $i));
-            print_simple_box_end();
-            $number++; // Just guessing that the missing question would have lenght 1
-            continue;
-        }
         $options = quiz_get_reviewoptions($quiz, $attempt, $isteacher);
         $options->validation = QUIZ_EVENTVALIDATE === $states[$i]->event;
         $options->history = ($isteacher and !$attempt->preview) ? 'all' : 'graded';

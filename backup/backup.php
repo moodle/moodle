@@ -8,10 +8,10 @@
     require_once ("backuplib.php");
     require_once ("$CFG->libdir/blocklib.php");
 
-    $id = optional_param( 'id' );       // course id
-    $to = optional_param( 'to' ); // id of course to import into afterwards.
-    $cancel = optional_param( 'cancel' );
-    $launch = optional_param( 'launch' );
+    optional_variable($id);       // course id
+    optional_variable($to); // id of course to import into afterwards.
+    optional_variable($cancel);
+    optional_variable($launch);
 
     require_login();
 
@@ -56,20 +56,8 @@
     }
     $stradministration = get_string("administration");
 
-    //If cancel has been selected, go back to course main page (bug 2817)
-    if ($cancel) {
-        if ($id) {
-            $redirecto = $CFG->wwwroot . '/course/view.php?id=' . $id; //Course page
-        } else {
-            $redirecto = $CFG->wwwroot;
-        }
-        redirect ($redirecto, get_string('backupcancelled')); //Site page
-        exit;
-    }
-
-    //If no course has been selected, show a list of available courses
-
-    if (!$id) {
+    //If no course has been selected or cancel button pressed
+    if (!$id or $cancel) {
         print_header("$site->shortname: $strcoursebackup", $site->fullname,
                      "<a href=\"$CFG->wwwroot/$CFG->admin/index.php\">$stradministration</a> -> $strcoursebackup");
 
@@ -116,8 +104,6 @@
 
     //Call the form, depending the step we are
     if (!$launch) {
-        // if we're at the start, clear the cache of prefs
-        unset($SESSION->backupprefs[$course->id]);
         include_once("backup_form.html");
     } else if ($launch == "check") {
         include_once("backup_check.html");

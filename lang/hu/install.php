@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // install.php - created with Moodle 1.4 (2004083100)
 
 
 $string['admindirerror'] = 'A megadott adminisztrátor-könyvtár hibás';
@@ -21,15 +21,6 @@ $string['databasesettings'] = 'Most be kell állítania azt az adatbázist, ahol Mo
 <b>Felhasználó:</b>az Ön adatbázishoz használt azonosítója<br />
 <b>Jelszó:</b> az Ön adatbázishoz használt jelszava<br />
 <b>Táblázat elõtagja:</b> opcionális elõtag az összes táblanévhez	';
-$string['databasecreationsettings'] = '    Most a Moodle adatainak tárolására szánt adatbázis beállításait kell elvégeznie.  
-Ezt az adatbázist a Moodle4Windows telepítõ automatikusan beállítja az alábbiak szerint.<br />
-    <br /> <br />
-       <b>Típus:</b> a telepítõ \"mysql\"-re állítja be<br />
-       <b>Gazdagép:</b> a telepítõ \"localhost\"-ra állítja<br />
-       <b>Név:</b> az adatbázis neve, pl. moodle<br />
-       <b>Felhasználó:</b> a telepítõ  \"root\"-ra állítja<br />
-       <strong>Jelszó:</strong> az Ön jelszava az adatbázishoz<br />
-       <b>Táblázat elõtagja:</b> opcionális elõtag az összes táblázatnévhez';
 $string['dataroot'] = 'Adatkönyvtár';
 $string['datarooterror'] = 'A megadott \'Adatkönyvtár\' nem létezik vagy nem sikerült létrehozni. Módosítsa az útvonalat vagy hozza létre a könyvtárat.';
 $string['dbconnectionerror'] = 'Nem sikerült a megadott adatbázishoz csatlakozni. Ellenõrizze adatbázisának beállításait.';
@@ -47,7 +38,7 @@ Adja meg a teljes webcímet, ahol a Moodle elérhetõ lesz. Ha portálja több URL-rõ
 Adja meg a telepítés teljes útvonalát. Ügyeljen a kis-/nagybetûk különbözésére.</p>
 
 <p><b>Adatkönyvtár:</b>
-Egy helyre lesz szüksége, ahova a Moodle a feltöltött állományokat menti. A könyvtárnak olvashatónak és a webszerver felhasználója által (ez általában \'nobody\' vagy \'apache\') ÍRHATÓNAK kell lennie, ugyanakkor ne legyen az Internetrõl közveltenül elérhetõ.</p>';
+Egy helyre lesz szüksége, ahova a Moodle a feltöltött állományokat menti. A könyvtárnak olvashatónak és a webszerver felhasználója által (ez általában \'nobody\' vagy \'apache\') ÍRHATÓNAK kell lennie, ugyanakkor nem legyen az Internetrõl közveltenül elérhetõ.</p>';
 $string['dirroot'] = 'Moodle-könyvtár';
 $string['dirrooterror'] = 'A \'Moodle-könyvtár\' beállítása feltehetõleg hibás - nem található alatta a Moodle telepítése. Az alábbi értéket visszaállítottuk.';
 $string['download'] = 'Letöltés';
@@ -64,17 +55,6 @@ $string['gdversionhelp'] = '<p>Feltehetõleg szerverén nincs telepítve a GD.</p>
 <p>A GD a PHP számára szükséges könyvtár, mellyel a Moodle képeket (például flehasználói ikonokat) tud feldolgozni és újakat tud készíteni (például naplódiagramokat). A Moodle mûködik GD nélkül is - csak ezek a lehetõség nem lesznek az Ön számára elérhetõk.</p>
 <p>A GD Unix alatti PHP-hez való hozzáadásához a PHP-t fordítsa a --with-gd paraméterrel.</p>
 <p>Windows alatt szerkesztheti a php.ini-t: el kell távolítani a megjegyzésjelet a libgd.dll-re hivatkozó sor elejérõl.</p>';
-$string['globalsquotes'] = 'Globális változók nem biztonságos kezelése';
-$string['globalsquoteserror'] = 'Javítsa ki a PHP beállításait: kapcsoolja ki a disable register_globals és/vagy az enable magic_quotes_gpc opciókat';
-$string['globalsquoteshelp'] = '<p>Nem ajánlottt egyszerre kikapcsolni a Magic Quotes GPC-t és bekapcsolni a Register Globals-t.</p>
-
-<p>Az ajánlott beállítás <b>magic_quotes_gpc = On</b> és <b>register_globals = Off</b> a php.ini-ben.</p>
-
-<p>Ha nem tudja szerkeszteni a php.ini állományt, esetleg megpróbálhatja az alábbi sort beszúrni a Moodle-könyvtárban egy .htaccess állományba:
-   <blockquote>php_value magic_quotes_gpc On</blockquote>
-   <blockquote>php_value register_globals Off</blockquote>
-</p>   
-   ';
 $string['installation'] = 'Telepítés';
 $string['magicquotesruntime'] = 'Futásidejû Magic Quotes';
 $string['magicquotesruntimeerror'] = 'Kikapcsolva kell lennie';
@@ -86,7 +66,6 @@ $string['magicquotesruntimehelp'] = '<p>A futásidejû Magic Quotes-nak kikapcsolv
 called .htaccess within your Moodle directory:
 </p><blockquote>php_value magic_quotes_runtime Off</blockquote>
 ';
-
 $string['memorylimit'] = 'Memóriakorlát';
 $string['memorylimiterror'] = 'A PHP memóriakorlátja túl alacsonyra van állítva... ez a késõbbiekben gondot okozhat.';
 $string['memorylimithelp'] = '<p>Szerverén a PHP memóriakorlátja jelenleg $a.</p>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // grades.php - created with Moodle 1.6 development (2005101200)
+      // grades.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['addcategory'] = '添加类别';
@@ -22,7 +22,7 @@ $string['displayweighted'] = '显示加权成绩';
 $string['dropped'] = '放弃';
 $string['dropxlowest'] = '去掉X个最低分';
 $string['dropxlowestwarning'] = '注意：如果您使用了去掉x个最低分的功能，则评分时会假设分类中的所有项目的满分相同。如果不同，结果将不可预测。';
-$string['errorgradevaluenonnumeric'] = '您输入的低或高分数不是数字';
+$string['errorgradevaluenonnumeric'] = '必须数字给低或高分数';
 $string['errornocategorizedid'] = '无法获得未分类的id！';
 $string['errornocourse'] = '无法获得课程信息';
 $string['errorreprintheadersnonnumeric'] = '重新打印表头的值必须是数字';
@@ -66,7 +66,6 @@ $string['max'] = '最高';
 $string['maxgrade'] = '满分';
 $string['median'] = '中等';
 $string['min'] = '最低';
-$string['mode'] = '模式';
 $string['no'] = '否';
 $string['nocategories'] = '此课程的分数分类无法添加或找不到';
 $string['nocategoryview'] = '无分类可以看';
@@ -75,22 +74,20 @@ $string['nogradesreturned'] = '未找到成绩 ';
 $string['nolettergrade'] = '无分数段给';
 $string['nomode'] = '无';
 $string['nonnumericweight'] = '请输入数值：';
-$string['nonweightedpct'] = '非加权%%';
-$string['notteachererror'] = '只有教师能使用此特性。';
+$string['nonweightedpct'] = '非加权百分比';
 $string['pctoftotalgrade'] = '%%的总分';
 $string['percent'] = '百分比';
 $string['percentascending'] = '百分比升序';
 $string['percentdescending'] = '百分比降序';
-$string['percentshort'] = '%%';
 $string['points'] = '分数';
 $string['pointsascending'] = '分数升序';
 $string['pointsdescending'] = '分数降序';
 $string['preferences'] = '使用偏好';
-$string['rawpct'] = '原%%';
-$string['reprintheaders'] = '重新打印表头';
+$string['rawpct'] = '原百分比';
+$string['reprintheaders'] = '每显示X行重新打印表头';
 $string['savechanges'] = '保存更动';
 $string['savepreferences'] = '保存使用偏好';
-$string['scaledpct'] = '名次%%';
+$string['scaledpct'] = '名次百分比';
 $string['setcategories'] = '设定类别';
 $string['setcategorieserror'] = '在设定权重前必须先设定分类。';
 $string['setgradeletters'] = '设定分数段';
@@ -109,7 +106,7 @@ $string['statslink'] = '统计';
 $string['student'] = '学生';
 $string['total'] = '总分';
 $string['totalweight100'] = '权重之和为100';
-$string['totalweightnot100'] = '权重之和不等于100';
+$string['totalweightnot100'] = '权重之和非100';
 $string['uncategorised'] = '未分类';
 $string['useadvanced'] = '使用高级功能';
 $string['usepercent'] = '使用百分比';
@@ -119,8 +116,8 @@ $string['viewgrades'] = '查看成绩';
 $string['weight'] = '权重';
 $string['weightedascending'] = '加权百分比升序';
 $string['weighteddescending'] = '加权百分比降序';
-$string['weightedpct'] = '加权%%';
-$string['weightedpctcontribution'] = '加权%%份额';
+$string['weightedpct'] = '加权后百分比';
+$string['weightedpctcontribution'] = '加权后百分比';
 $string['writinggradebookinfo'] = '写成绩簿设置';
 $string['yes'] = '是';
 

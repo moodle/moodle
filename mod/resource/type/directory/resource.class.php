@@ -19,8 +19,8 @@ function display() {
     $resource = $this->resource; 
 
     require_once($CFG->libdir.'/filelib.php');
-
-    $subdir = optional_param( 'subdir','' ); 
+ 
+    $subdir = isset($_GET['subdir']) ? $_GET['subdir'] : '';
 
     add_to_log($course->id, "resource", "view", "view.php?id={$cm->id}", $resource->id, $cm->id);
 
@@ -134,7 +134,7 @@ function display() {
         echo $filesize;
         echo '</td>';
         echo '<td align="right" nowrap="nowrap" class="date">';
-        echo userdate(filemtime("$CFG->dataroot/$relativepath/$file"), $strftime);
+        echo userdate(filectime("$CFG->dataroot/$relativepath/$file"), $strftime);
         echo '</td>';
         echo '</tr>';
     }

@@ -5,7 +5,7 @@
 CREATE TABLE prefix_forum (
   id int(10) unsigned NOT NULL auto_increment,
   course int(10) unsigned NOT NULL default '0',
-  type enum('single','news','general','social','eachuser','teacher','qanda') NOT NULL default 'general',
+  type enum('single','news','general','social','eachuser','teacher') NOT NULL default 'general',
   name varchar(255) NOT NULL default '',
   intro text NOT NULL,
   open tinyint(2) unsigned NOT NULL default '2',
@@ -20,9 +20,6 @@ CREATE TABLE prefix_forum (
   rsstype tinyint(2) unsigned NOT NULL default '0',
   rssarticles tinyint(2) unsigned NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',
-  warnafter int(10) unsigned NOT NULL default '0',
-  blockafter int(10) unsigned NOT NULL default '0',
-  blockperiod int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
   UNIQUE KEY id (id),
   KEY course (course)
@@ -44,8 +41,6 @@ CREATE TABLE prefix_forum_discussions (
   assessed tinyint(1) NOT NULL default '1',
   timemodified int(10) unsigned NOT NULL default '0',
   usermodified int(10) unsigned NOT NULL default '0',
-  timestart int(10) unsigned NOT NULL default '0',
-  timeend int(10) unsigned NOT NULL default '0',
   PRIMARY KEY  (id),
   KEY prefix_forum_discussions_forum_idx (forum),
   KEY prefix_forum_discussions_userid_idx (userid)

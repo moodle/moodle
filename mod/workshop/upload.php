@@ -1,10 +1,10 @@
-<?php  // $Id$
+<?php  // $Id: upload.php, v1.0 30th April 2003
 
     require("../../config.php");
     require("lib.php");
     require("locallib.php");
 
-    $id = required_param('id',PARAM_INT);          // CM ID
+    require_variable($id);          // CM ID
 
 
     if (! $cm = get_record("course_modules", "id", $id)) {

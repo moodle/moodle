@@ -1,7 +1,7 @@
 <?php // $Id$
     include("../../../config.php");
 
-    $id = required_param('id', PARAM_INT);
+    $id = required_param('id');
 
     if ($course = get_record("course", "id", $id)) {
         $isteacher = isteacher($course->id);

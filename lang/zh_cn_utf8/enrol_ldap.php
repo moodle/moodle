@@ -36,6 +36,5 @@ $string['enrol_ldap_template'] = '可选：自动创建的课程可以从一个�
 $string['enrol_ldap_updatelocal'] = '更新本地数据';
 $string['enrol_ldap_version'] = '您的服务器使用的LDAP协议的版本';
 $string['enrolname'] = 'LDAP';
-$string['enrol_ldap_general_options'] = "常规选项";
 
 ?>

@@ -2,8 +2,8 @@
 
     require("../config.php");
 
-    $id = optional_param('id',0,PARAM_INT); // course context
-    $file = required_param('file',PARAM_FILE);    // file in this directory to view
+    optional_variable($id);      // course context
+    require_variable($file);    // file in this directory to view
 
     $file = clean_filename($file);
 

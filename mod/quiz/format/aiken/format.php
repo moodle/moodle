@@ -74,7 +74,7 @@ class quiz_format_aiken extends quiz_default_format {
                 } else {
                     //Must be the first line since no leader
                     $question->qtype = MULTICHOICE;
-                    $question->name = addslashes( substr($nowline,0,50) );
+                    $question->name = substr($nowline,0,50);
                     $question->questiontext = $nowline;
                     $question->single = 1;
                     $question->feedback[] = "";

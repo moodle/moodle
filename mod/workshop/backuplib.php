@@ -46,72 +46,57 @@
         $workshops = get_records ("workshop","course",$preferences->backup_course,"id");
         if ($workshops) {
             foreach ($workshops as $workshop) {
-                if (backup_mod_selected($preferences,'workshop',$workshop->id)) {
-                    $status = workshop_backup_one_mod($bf,$preferences,$workshop);
+                //Start mod
+                fwrite ($bf,start_tag("MOD",3,true));
+                //Print workshop data
+                fwrite ($bf,full_tag("ID",4,false,$workshop->id));
+                fwrite ($bf,full_tag("MODTYPE",4,false,"workshop"));
+                fwrite ($bf,full_tag("NAME",4,false,$workshop->name));
+                fwrite ($bf,full_tag("DESCRIPTION",4,false,$workshop->description));
+                fwrite ($bf,full_tag("WTYPE",4,false,$workshop->wtype));
+                fwrite ($bf,full_tag("NELEMENTS",4,false,$workshop->nelements));
+                fwrite ($bf,full_tag("NATTACHMENTS",4,false,$workshop->nattachments));
+                fwrite ($bf,full_tag("FORMAT",4,false,$workshop->format));
+                fwrite ($bf,full_tag("GRADINGSTRATEGY",4,false,$workshop->gradingstrategy));
+                fwrite ($bf,full_tag("RESUBMIT",4,false,$workshop->resubmit));
+                fwrite ($bf,full_tag("AGREEASSESSMENTS",4,false,$workshop->agreeassessments));
+                fwrite ($bf,full_tag("HIDEGRADES",4,false,$workshop->hidegrades));
+                fwrite ($bf,full_tag("ANONYMOUS",4,false,$workshop->anonymous));
+                fwrite ($bf,full_tag("INCLUDESELF",4,false,$workshop->includeself));
+                fwrite ($bf,full_tag("MAXBYTES",4,false,$workshop->maxbytes));
+                fwrite ($bf,full_tag("SUBMISSIONSTART",4,false,$workshop->submissionstart));
+                fwrite ($bf,full_tag("ASSESSMENTSTART",4,false,$workshop->assessmentstart));
+                fwrite ($bf,full_tag("SUBMISSIONEND",4,false,$workshop->submissionend));
+                fwrite ($bf,full_tag("ASSESSMENTEND",4,false,$workshop->assessmentend));
+                fwrite ($bf,full_tag("RELEASEGRADES",4,false,$workshop->releasegrades));
+                fwrite ($bf,full_tag("GRADE",4,false,$workshop->grade));
+                fwrite ($bf,full_tag("GRADINGGRADE",4,false,$workshop->gradinggrade));
+                fwrite ($bf,full_tag("NTASSESSMENTS",4,false,$workshop->ntassessments));
+                fwrite ($bf,full_tag("ASSESSMENTCOMPS",4,false,$workshop->assessmentcomps));
+                fwrite ($bf,full_tag("NSASSESSMENTS",4,false,$workshop->nsassessments));
+                fwrite ($bf,full_tag("OVERALLOCATION",4,false,$workshop->overallocation));
+                fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$workshop->timemodified));
+                fwrite ($bf,full_tag("TEACHERWEIGHT",4,false,$workshop->teacherweight));
+                fwrite ($bf,full_tag("SHOWLEAGUETABLE",4,false,$workshop->showleaguetable));
+                fwrite ($bf,full_tag("USEPASSWORD",4,false,$workshop->usepassword));
+                fwrite ($bf,full_tag("PASSWORD",4,false,$workshop->password));
+                //Now we backup workshop elements
+                $status = backup_workshop_elements($bf,$preferences,$workshop->id);
+                //if we've selected to backup users info, then execute backup_workshop_submisions
+                if ($preferences->mods["workshop"]->userinfo) {
+                    $status = backup_workshop_submissions($bf,$preferences,$workshop->id);
                 }
+                //End mod
+                $status =fwrite ($bf,end_tag("MOD",3,true));
             }
         }
- 
+        //if we've selected to backup users info, then backup files too
+        if ($status) {
+            if ($preferences->mods["workshop"]->userinfo) {
+                $status = backup_workshop_files($bf,$preferences);
+            }
+        }
         return $status;  
-    }
-
-    function workshop_backup_one_mod($bf,$preferences,$workshop) {
-
-        $status = true;
-
-        if (is_numeric($workshop)) {
-            $workshop = get_record('workshop','id',$workshop);
-        }
-        $instanceid = $workshop->id;
-
-        //Start mod
-        fwrite ($bf,start_tag("MOD",3,true));
-        //Print workshop data
-        fwrite ($bf,full_tag("ID",4,false,$workshop->id));
-        fwrite ($bf,full_tag("MODTYPE",4,false,"workshop"));
-        fwrite ($bf,full_tag("NAME",4,false,$workshop->name));
-        fwrite ($bf,full_tag("DESCRIPTION",4,false,$workshop->description));
-        fwrite ($bf,full_tag("WTYPE",4,false,$workshop->wtype));
-        fwrite ($bf,full_tag("NELEMENTS",4,false,$workshop->nelements));
-        fwrite ($bf,full_tag("NATTACHMENTS",4,false,$workshop->nattachments));
-        fwrite ($bf,full_tag("FORMAT",4,false,$workshop->format));
-        fwrite ($bf,full_tag("GRADINGSTRATEGY",4,false,$workshop->gradingstrategy));
-        fwrite ($bf,full_tag("RESUBMIT",4,false,$workshop->resubmit));
-        fwrite ($bf,full_tag("AGREEASSESSMENTS",4,false,$workshop->agreeassessments));
-        fwrite ($bf,full_tag("HIDEGRADES",4,false,$workshop->hidegrades));
-        fwrite ($bf,full_tag("ANONYMOUS",4,false,$workshop->anonymous));
-        fwrite ($bf,full_tag("INCLUDESELF",4,false,$workshop->includeself));
-        fwrite ($bf,full_tag("MAXBYTES",4,false,$workshop->maxbytes));
-        fwrite ($bf,full_tag("SUBMISSIONSTART",4,false,$workshop->submissionstart));
-        fwrite ($bf,full_tag("ASSESSMENTSTART",4,false,$workshop->assessmentstart));
-        fwrite ($bf,full_tag("SUBMISSIONEND",4,false,$workshop->submissionend));
-        fwrite ($bf,full_tag("ASSESSMENTEND",4,false,$workshop->assessmentend));
-        fwrite ($bf,full_tag("RELEASEGRADES",4,false,$workshop->releasegrades));
-        fwrite ($bf,full_tag("GRADE",4,false,$workshop->grade));
-        fwrite ($bf,full_tag("GRADINGGRADE",4,false,$workshop->gradinggrade));
-        fwrite ($bf,full_tag("NTASSESSMENTS",4,false,$workshop->ntassessments));
-        fwrite ($bf,full_tag("ASSESSMENTCOMPS",4,false,$workshop->assessmentcomps));
-        fwrite ($bf,full_tag("NSASSESSMENTS",4,false,$workshop->nsassessments));
-        fwrite ($bf,full_tag("OVERALLOCATION",4,false,$workshop->overallocation));
-        fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$workshop->timemodified));
-        fwrite ($bf,full_tag("TEACHERWEIGHT",4,false,$workshop->teacherweight));
-        fwrite ($bf,full_tag("SHOWLEAGUETABLE",4,false,$workshop->showleaguetable));
-        fwrite ($bf,full_tag("USEPASSWORD",4,false,$workshop->usepassword));
-        fwrite ($bf,full_tag("PASSWORD",4,false,$workshop->password));
-        //Now we backup workshop elements
-        $status = backup_workshop_elements($bf,$preferences,$workshop->id);
-
-        //if we've selected to backup users info, then execute backup_workshop_submisions
-        if (backup_userdata_selected($preferences,'workshop',$workshop->id)) {
-            $ws = array();
-            $status = backup_workshop_submissions($bf,$preferences,$workshop->id,$ws);
-            $status = backup_workshop_files_instance($bf,$preferences,$workshop->id,$ws);
-        }
-        
-        //End mod
-        $status =fwrite ($bf,end_tag("MOD",3,true));
-
-        return $status;
     }
 
     //Backup workshop_elements contents (executed from workshop_backup_mods)
@@ -183,7 +168,7 @@
     }
 
     //Backup workshop_stockcomments contents (executed from backup_workshop_elements)
-    function backup_workshop_stockcomments ($bf,$preferences,$workshop,$elementno) {
+    function backup_workshop_stockcomments ($bf,$preferences,$workshop,$elementid) {
 
         global $CFG;
 
@@ -213,7 +198,7 @@
     }
 
     //Backup workshop_submissions contents (executed from workshop_backup_mods)
-    function backup_workshop_submissions ($bf,$preferences,$workshop,&$workshop_submissions) {
+    function backup_workshop_submissions ($bf,$preferences,$workshop) {
 
         global $CFG;
 
@@ -380,8 +365,8 @@
         if ($status) {
             //Only if it exists !! Thanks to Daniel Miksik.
             if (is_dir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/workshop")) {
-                $status = backup_copy_file($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/workshop/",
-                                           $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/workshop/");
+                $status = backup_copy_file($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/workshop",
+                                           $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/workshop");
             }
         }
 
@@ -389,55 +374,8 @@
 
     } 
 
-    function backup_workshop_files_instance($bf,$preferences,$instanceid,$ws) {
-        global $CFG;
-        
-        $status = true;
-        
-        //First we check to moddata exists and create it as necessary
-        //in temp/backup/$backup_code  dir
-        $status = check_and_create_moddata_dir($preferences->backup_unique_code);
-        $status = check_dir_exists($CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/workshop/",true);
-        //Now copy the forum dir
-        if ($status) {
-            foreach ($ws as $submission) {
-                //Only if it exists !! Thanks to Daniel Miksik.
-                if (is_dir($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/workshop/".$submission->id)) {
-                    $status = backup_copy_file($CFG->dataroot."/".$preferences->backup_course."/".$CFG->moddata."/workshop/".$submission->id,
-                                               $CFG->dataroot."/temp/backup/".$preferences->backup_unique_code."/moddata/workshop/".$submission->id);
-                }
-            }
-        }
-
-        return $status;
-    }
-
-function workshop_check_backup_mods_instances($instance,$backup_unique_code) {
-    //First the course data
-    $info[$instance->id.'0'][0] = $instance->name;
-    $info[$instance->id.'0'][1] = '';
-    //Now, if requested, the user_data
-    if (!empty($instance->userdata)) {
-        $info[$instance->id.'1'][0] = get_string("submissions","workshop");
-        if ($ids = workshop_submission_ids_by_instance ($instance->id)) { 
-            $info[$instance->id.'1'][1] = count($ids);
-        } else {
-            $info[$instance->id.'1'][1] = 0;
-        }
-    }
-    return $info;
-}
-
-
     //Return an array of info (name,value)
-    function workshop_check_backup_mods($course,$user_data=false,$backup_unique_code,$instances=null) {
-        if (!empty($instances) && is_array($instances) && count($instances)) {
-            $info = array();
-            foreach ($instances as $id => $instance) {
-                $info += workshop_check_backup_mods_instances($instance,$backup_unique_code);
-            }
-            return $info;
-        }
+    function workshop_check_backup_mods($course,$user_data=false,$backup_unique_code) {
         //First the course data
         $info[0][0] = get_string("modulenameplural","workshop");
         if ($ids = workshop_ids ($course)) {
@@ -458,24 +396,10 @@ function workshop_check_backup_mods_instances($instance,$backup_unique_code) {
         return $info;
     }
 
-    //Return a content encoded to support interactivities linking. Every module
-    //should have its own. They are called automatically from the backup procedure.
-    function workshop_encode_content_links ($content,$preferences) {
 
-        global $CFG;
 
-        $base = preg_quote($CFG->wwwroot,"/");
 
-        //Link to the list of workshops
-        $buscar="/(".$base."\/mod\/workshop\/index.php\?id\=)([0-9]+)/";
-        $result= preg_replace($buscar,'$@WORKSHOPINDEX*$2@$',$content);
 
-        //Link to workshop view by moduleid
-        $buscar="/(".$base."\/mod\/workshop\/view.php\?id\=)([0-9]+)/";
-        $result= preg_replace($buscar,'$@WORKSHOPVIEWBYID*$2@$',$result);
-
-        return $result;
-    }
 
     // INTERNAL FUNCTIONS. BASED IN THE MOD STRUCTURE
 
@@ -499,14 +423,5 @@ function workshop_check_backup_mods_instances($instance,$backup_unique_code) {
                                       {$CFG->prefix}workshop w
                                  WHERE w.course = '$course' AND
                                        s.workshopid = w.id");
-    }
-
-    function workshop_submission_ids_by_instance ($instanceid) {
-
-        global $CFG;
-
-        return get_records_sql ("SELECT s.id , s.workshopid
-                                 FROM {$CFG->prefix}workshop_submissions s
-                                 WHERE s.workshopid = $instanceid");
     }
 ?>

@@ -3,6 +3,8 @@
 
 
 $string['blockname'] = 'Résumé du cours';
+$string['parentlanguage'] = 'fr';
 $string['siteinfo'] = 'Information sur le site';
+$string['thisdirection'] = 'ltr';
 
 ?>

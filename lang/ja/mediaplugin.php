@@ -3,5 +3,8 @@
 
 
 $string['filtername'] = 'マルチメディアプラグイン';
+$string['thischarset'] = 'EUC-JP';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = 'Japanese';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5.3+ (2005060230)
+      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['admindirerror'] = 'El directorio especificado para admin es incorrecto';
@@ -13,14 +13,6 @@ $string['configfilenotwritten'] = 'El script instalador no ha podido crear autom
 $string['configfilewritten'] = 'config.php se ha creado con éxito';
 $string['configurationcomplete'] = 'Configuración completa';
 $string['database'] = 'Base de datos';
-$string['databasecreationsettings'] = 'Ahora necesita configurar los ajustes de la base de datos donde se almacenarán la mayoría de los datos de Moodle. El instalador creará la base de datos con los ajustes especificados más abajo.<br />
-<br /> <br />
-<b>Tipo:</b> el valor por defecto es \"mysql\"<br />
-<b>Servidor:</b> el valor por defecto es \"localhost\"<br />
-<b>Nombre:</b> nombre de la base de datos, e.g., moodle<br />
-<b>Usuario:</b> el valor por defecto es  \"root\"<br />
-<b>Contraseña:</b> contraseña de la base de datos<br />
-<b>Prefijo de tablas:</b> prefijo opcional para todas las tablas';
 $string['databasesettings'] = 'Ahora necesita configurar la base de datos en la que se almacenará la mayor parte de datos de Moodle. Esta base de datos debe haber sido ya creada, y disponer de un nombre de usuario y de una contraseña de acceso.<br />
 <br /> <br />
 <b>Tipo:</b> mysql o postgres7<br />
@@ -64,16 +56,6 @@ $string['gdversionhelp'] = '<p>Su servidor parece no tener el GD instalado.</p>
 <p>Para agregar GD a PHP en entorno Unix, compile PHP usando el parámetro --with-gd.</p>
 
 <p>En un entorno Windows, puede editar php.ini y quitar los comentarios de la línea referida a libgd.dll.</p>';
-$string['globalsquotes'] = 'Manejo Inseguro de Ajustes Globales';
-$string['globalsquoteserror'] = 'Fije sus ajustes PHP: deshabilite register_globals y/o habilite magic_quotes_gpc';
-$string['globalsquoteshelp'] = '<p>No se recomienda la combinación simultánea de Magic Quotes GPC desactivado y Register Globals activado.</p>
-
-<p>El ajuste recomendado es <b>magic_quotes_gpc = On</b> and <b>register_globals = Off</b> en su php.ini</p>
-
-<p>Si no tiene acceso al php.ini, debería poder escribir la siguiente línea en un archivo denominado .htaccess dentro de su directorio Moodle:
-<blockquote>php_value magic_quotes_gpc On</blockquote>
-<blockquote>php_value register_globals Off</blockquote>
-</p>';
 $string['installation'] = 'Instalación';
 $string['magicquotesruntime'] = 'Magic Quotes Run Time';
 $string['magicquotesruntimeerror'] = 'Debe estar desactivado';

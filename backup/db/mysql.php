@@ -1,4 +1,4 @@
-<?php  //$Id$
+<?PHP  //$Id$
 //
 // This file keeps track of upgrades to Moodle's
 // backup/restore utility.
@@ -101,37 +101,6 @@ function backup_upgrade($oldversion=0) {
                           `info` varchar(255) NOT NULL default '',
                           PRIMARY KEY  (`id`)
                       ) TYPE=MyISAM COMMENT='To store every course backup log info'");
-        }
-    }
-
-    if ($oldversion < 2006011600 and $result) {
-        $result = execute_sql("DROP TABLE {$CFG->prefix}backup_files");
-        if ($result) {
-            $result = execute_sql("CREATE TABLE `{$CFG->prefix}backup_files` (
-                          `id` int(10) unsigned NOT NULL auto_increment,
-                          `backup_code` int(10) unsigned NOT NULL default '0',
-                          `file_type` varchar(10) NOT NULL default '',
-                          `path` varchar(255) NOT NULL default '',
-                          `old_id` int(10) unsigned default NULL,
-                          `new_id` int(10) unsigned default NULL,
-                          PRIMARY KEY  (`id`),
-                          UNIQUE KEY `backup_files_uk` (`backup_code`,`file_type`,`path`)
-                      ) TYPE=MyISAM COMMENT='To store and recode ids to user and course files.'");
-        }
-        if ($result) {
-            $result = execute_sql("DROP TABLE {$CFG->prefix}backup_ids");
-        }
-        if ($result) {
-            $result = execute_sql("CREATE TABLE `{$CFG->prefix}backup_ids` (
-                          `id` int(10) unsigned NOT NULL auto_increment,
-                          `backup_code` int(12) unsigned NOT NULL default '0',
-                          `table_name` varchar(30) NOT NULL default '',
-                          `old_id` int(10) unsigned NOT NULL default '0',
-                          `new_id` int(10) unsigned default NULL,
-                          `info` mediumtext,
-                          PRIMARY KEY  (`id`),
-                          UNIQUE KEY `backup_ids_uk` (`backup_code` ,`table_name`,`old_id`)
-                      ) TYPE=MyISAM COMMENT='To store and convert ids in backup/restore'");
         }
     }
 

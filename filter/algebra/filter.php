@@ -136,8 +136,6 @@ function algebra_filter ($courseid, $text) {
         $algebra = $matches[1][$i] . $matches[2][$i];
         $algebra = str_replace('<nolink>','',$algebra);
         $algebra = str_replace('</nolink>','',$algebra);
-        $algebra = str_replace('<span class="nolink">','',$algebra);
-        $algebra = str_replace('</span>','',$algebra);
         $align = "middle";
         if (preg_match('/^align=bottom /',$algebra)) {
           $align = "text-bottom";

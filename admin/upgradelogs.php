@@ -2,7 +2,7 @@
 
     require("../config.php");
 
-    $confirm = optional_param('confirm');
+    optional_variable($confirm);
 
     require_login();
 
@@ -31,7 +31,7 @@
     print_header("$site->shortname: $stradministration: $strupgradinglogs", "$site->fullname", 
                  "<a href=\"index.php\">$stradministration</a> -> $strupgradinglogs");
 
-    if (empty($confirm)) {
+    if (empty($_GET['confirm'])) {
         notice_yesno(get_string("upgradelogsinfo", "admin"), 
                      "upgradelogs.php?confirm=true&sesskey=$USER->sesskey", 
                      "index.php");

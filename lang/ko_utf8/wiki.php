@@ -1,5 +1,5 @@
-<?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.6 development (2005072000)
+<?php // $Id$ 
+      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
 
 
 $string['action'] = '활동';
@@ -128,6 +128,7 @@ $string['pageslinkingto'] = '이면에서연결된면';
 $string['pagesremoved'] = '지움면';
 $string['pagesreverted'] = '뒤로바꾸다';
 $string['pagesstripped'] = '이면들을버리다';
+$string['parentlanguage'] = '<<번역기 : 만약 당신의 언어가 부모언어를 가지고 있다면 그 무들은 당신의 언어 팩에서 문자열이 사라졌을때 이용되어야 한다, 그리고 여기서 그것을 위해 코드를 명기하라. 만약 당신이 이 빈칸을 남긴다면 영어가 사용될 것이다. 예 : nl>> ';
 $string['plaintext'] = '원문';
 $string['preview'] = '미리보기';
 $string['readonly'] = '이면만읽음';
@@ -146,7 +147,6 @@ $string['safehtml'] = '안전한 HTML';
 $string['save'] = '저장';
 $string['searchwiki'] = '위키 검색';
 $string['setpageflags'] = '페이지 표시문자를 설정하다';
-$string['showversions'] = '버젼 보이기';
 $string['sitemap'] = '사이트맵';
 $string['smfor'] = '~를위한 사이트지도';
 $string['status'] = '상태';
@@ -160,9 +160,11 @@ $string['tabinfo'] = '정보';
 $string['tablinks'] = '링크';
 $string['tabview'] = '보기';
 $string['thanksforcontribution'] = '당신의 공헌에 감사합니다';
+$string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['thispageisntlinkedfromanywhereelse'] = '이 페이지는 어디에도 연계되어 있지 않습니다';
 $string['updatedpages'] = '최신페이지';
-$string['updatedwikipages'] = 'wiki 페이지 업데이트하기';
 $string['uplerror'] = '죄송합니다 파일 업로드중 문제가 발생했습니다';
 $string['uplinsect'] = '업로드경로';
 $string['uplnewnam'] = '다른이름으로 저장합니다';

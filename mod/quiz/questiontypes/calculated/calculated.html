@@ -1,5 +1,7 @@
 <form name="theform" method="post" action="question.php">
 <center>
+<input type="hidden" name="nextwizardpage" value="<?php p($nextwizardpage)?>" />
+<?php foreach ($calculatedmessages as $message) {formerr("$message<br/>");} ?>
 <table cellpadding="5">
 <tr valign="top">
     <td align="right"><b><?php  print_string("category", "quiz") ?>:</b></td>
@@ -75,7 +77,7 @@
 <tr valign="top">
 <td align="right"><b><?php  print_string("correctanswerformula", "quiz") ?>:</b></td>
     <td>
-    <input align="left" type="text" id="formula0" name="answers[]" size="20" value="<?php  p($answers[0]->answer) ?>" alt="<?php  print_string("correctanswerformula", "quiz") ?>" />&nbsp;&nbsp;
+    <input align="left" type="text" id="formula0" name="answer[]" size="20" value="<?php  p($answers[0]->answer) ?>" alt="<?php  print_string("correctanswerformula", "quiz") ?>" />&nbsp;&nbsp;
     <input type="hidden" name="fraction[]" value="1.0" />
     </td>
 </tr>
@@ -151,10 +153,10 @@ for ($i=1; $i<count($units); $i++) {
 } /// END for
 ?>
 </table>
+
 <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey; ?>" />
 <input type="hidden" name="id" value="<?php  p($question->id) ?>" />
 <input type="hidden" name="qtype" value="<?php  p($question->qtype) ?>" />
-<input type="hidden" name="wizardpage" value="question" />
 <input type="submit" onclick="return determineMinAndMax();"  value="<?php  print_string("savechanges") ?>" />
 </center>
 </form>

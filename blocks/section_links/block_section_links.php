@@ -68,9 +68,9 @@ class block_section_links extends block_base {
         if (!empty($display)) {
             $link = $CFG->wwwroot.'/course/view.php?id='.$this->instance->pageid.'&amp;'.$sectionname.'=';
         } else {
-            $link = '#section-';
+            $link = '#';
         }
-        $text = '';
+        $text = '<font size="-1">';
         for ($i = $inc; $i <= $course->numsections; $i += $inc) {
             $isvisible = get_field('course_sections', 'visible', 'course', $this->instance->pageid, 'section', $i);
             if (!$isvisible and !isteacher($this->instance->pageid)) {

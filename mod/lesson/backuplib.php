@@ -45,87 +45,67 @@
         $lessons = get_records("lesson", "course", $preferences->backup_course, "id");
         if ($lessons) {
             foreach ($lessons as $lesson) {
-                if (backup_mod_selected($preferences,'lesson',$lesson->id)) {
-                    $status = lesson_backup_one_mod($bf,$preferences,$lesson);
+                //Start mod
+                fwrite ($bf,start_tag("MOD",3,true));
+                //Print lesson data
+                fwrite ($bf,full_tag("ID",4,false,$lesson->id));
+                fwrite ($bf,full_tag("MODTYPE",4,false,"lesson"));
+                fwrite ($bf,full_tag("NAME",4,false,$lesson->name));
+                fwrite ($bf,full_tag("PRACTICE",4,false,$lesson->practice));
+                fwrite ($bf,full_tag("MODATTEMPTS",4,false,$lesson->modattempts));                
+                fwrite ($bf,full_tag("PASSWORD",4,false,$lesson->password));
+                fwrite ($bf,full_tag("USEPASSWORD",4,false,$lesson->usepassword));
+                fwrite ($bf,full_tag("GRADE",4,false,$lesson->grade));
+                fwrite ($bf,full_tag("CUSTOM",4,false,$lesson->custom));
+                fwrite ($bf,full_tag("ONGOING",4,false,$lesson->ongoing));
+                fwrite ($bf,full_tag("USEMAXGRADE",4,false,$lesson->usemaxgrade));
+                fwrite ($bf,full_tag("MAXANSWERS",4,false,$lesson->maxanswers));
+                fwrite ($bf,full_tag("MAXATTEMPTS",4,false,$lesson->maxattempts));
+                fwrite ($bf,full_tag("REVIEW",4,false,$lesson->review));
+                fwrite ($bf,full_tag("NEXTPAGEDEFAULT",4,false,$lesson->nextpagedefault));
+                fwrite ($bf,full_tag("MINQUESTIONS",4,false,$lesson->minquestions));
+                fwrite ($bf,full_tag("MAXPAGES",4,false,$lesson->maxpages));
+                fwrite ($bf,full_tag("TIMED",4,false,$lesson->timed));
+                fwrite ($bf,full_tag("MAXTIME",4,false,$lesson->maxtime));
+                fwrite ($bf,full_tag("RETAKE",4,false,$lesson->retake));
+                fwrite ($bf,full_tag("TREE",4,false,$lesson->tree));
+                fwrite ($bf,full_tag("SLIDESHOW",4,false,$lesson->slideshow));
+                fwrite ($bf,full_tag("WIDTH",4,false,$lesson->width));
+                fwrite ($bf,full_tag("HEIGHT",4,false,$lesson->height));
+                fwrite ($bf,full_tag("BGCOLOR",4,false,$lesson->bgcolor));
+                fwrite ($bf,full_tag("DISPLAYLEFT",4,false,$lesson->displayleft));
+                fwrite ($bf,full_tag("SHOWHIGHSCORES",4,false,$lesson->highscores));
+                fwrite ($bf,full_tag("MAXHIGHSCORES",4,false,$lesson->maxhighscores));
+                fwrite ($bf,full_tag("AVAILABLE",4,false,$lesson->available));
+                fwrite ($bf,full_tag("DEADLINE",4,false,$lesson->deadline));
+                fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$lesson->timemodified));
+
+                //Now we backup lesson pages
+                $status = backup_lesson_pages($bf,$preferences,$lesson->id);
+                //if we've selected to backup users info, then backup grades, high scores, and timer info
+                if ($status) {
+                    if ($preferences->mods["lesson"]->userinfo) {
+                        if(!backup_lesson_grades($bf, $preferences, $lesson->id)) {
+                            return false;
+                        }
+                        if (!backup_lesson_high_scores($bf, $preferences, $lesson->id)) {
+                            return false;
+                        }
+                        if (!backup_lesson_timer($bf, $preferences, $lesson->id)) {
+                            return false;
+                        }
+                    }
+                    // back up the default for the course.  There might not be one, but if there
+                    //  is, there will only be one.
+                    $status = backup_lesson_default($bf,$preferences);
+                    //End mod
+                    if ($status) {
+                        $status =fwrite ($bf,end_tag("MOD",3,true));
+                    }
                 }
             }
         }
         return $status;  
-    }
-
-    function lesson_backup_one_mod($bf,$preferences,$lesson) {
-
-        global $CFG;
-    
-        if (is_numeric($lesson)) {
-            $lesson = get_record('lesson','id',$lesson);
-        }
-    
-        $status = true;
-
-        //Start mod
-        fwrite ($bf,start_tag("MOD",3,true));
-        //Print lesson data
-        fwrite ($bf,full_tag("ID",4,false,$lesson->id));
-        fwrite ($bf,full_tag("MODTYPE",4,false,"lesson"));
-        fwrite ($bf,full_tag("NAME",4,false,$lesson->name));
-        fwrite ($bf,full_tag("PRACTICE",4,false,$lesson->practice));
-        fwrite ($bf,full_tag("MODATTEMPTS",4,false,$lesson->modattempts));
-        fwrite ($bf,full_tag("PASSWORD",4,false,$lesson->password));
-        fwrite ($bf,full_tag("USEPASSWORD",4,false,$lesson->usepassword));
-        fwrite ($bf,full_tag("DEPENDENCY",4,false,$lesson->dependency));
-        fwrite ($bf,full_tag("CONDITIONS",4,false,$lesson->conditions));
-        fwrite ($bf,full_tag("GRADE",4,false,$lesson->grade));
-        fwrite ($bf,full_tag("CUSTOM",4,false,$lesson->custom));
-        fwrite ($bf,full_tag("ONGOING",4,false,$lesson->ongoing));
-        fwrite ($bf,full_tag("USEMAXGRADE",4,false,$lesson->usemaxgrade));
-        fwrite ($bf,full_tag("MAXANSWERS",4,false,$lesson->maxanswers));
-        fwrite ($bf,full_tag("MAXATTEMPTS",4,false,$lesson->maxattempts));
-        fwrite ($bf,full_tag("REVIEW",4,false,$lesson->review));
-        fwrite ($bf,full_tag("NEXTPAGEDEFAULT",4,false,$lesson->nextpagedefault));
-        fwrite ($bf,full_tag("MINQUESTIONS",4,false,$lesson->minquestions));
-        fwrite ($bf,full_tag("MAXPAGES",4,false,$lesson->maxpages));
-        fwrite ($bf,full_tag("TIMED",4,false,$lesson->timed));
-        fwrite ($bf,full_tag("MAXTIME",4,false,$lesson->maxtime));
-        fwrite ($bf,full_tag("RETAKE",4,false,$lesson->retake));
-        fwrite ($bf,full_tag("TREE",4,false,$lesson->tree));
-        fwrite ($bf,full_tag("MEDIAFILE",4,false,$lesson->mediafile));
-        fwrite ($bf,full_tag("SLIDESHOW",4,false,$lesson->slideshow));
-        fwrite ($bf,full_tag("WIDTH",4,false,$lesson->width));
-        fwrite ($bf,full_tag("HEIGHT",4,false,$lesson->height));
-        fwrite ($bf,full_tag("BGCOLOR",4,false,$lesson->bgcolor));
-        fwrite ($bf,full_tag("DISPLAYLEFT",4,false,$lesson->displayleft));
-        fwrite ($bf,full_tag("SHOWHIGHSCORES",4,false,$lesson->highscores));
-        fwrite ($bf,full_tag("MAXHIGHSCORES",4,false,$lesson->maxhighscores));
-        fwrite ($bf,full_tag("AVAILABLE",4,false,$lesson->available));
-        fwrite ($bf,full_tag("DEADLINE",4,false,$lesson->deadline));
-        fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$lesson->timemodified));
-
-        //Now we backup lesson pages
-        $status = backup_lesson_pages($bf,$preferences,$lesson->id);
-        //if we've selected to backup users info, then backup grades, high scores, and timer info
-        if ($status) {
-            if (backup_userdata_selected($preferences,'lesson',$lesson->id)) {
-                if(!backup_lesson_grades($bf, $preferences, $lesson->id)) {
-                    return false;
-                }
-                if (!backup_lesson_high_scores($bf, $preferences, $lesson->id)) {
-                    return false;
-                }
-                if (!backup_lesson_timer($bf, $preferences, $lesson->id)) {
-                    return false;
-                }
-            }
-            // back up the default for the course.  There might not be one, but if there
-            //  is, there will only be one.
-            $status = backup_lesson_default($bf,$preferences);
-            //End mod
-            if ($status) {
-                $status =fwrite ($bf,end_tag("MOD",3,true));
-            }
-        }
-
-        return $status;
     }
 
     //Backup lesson_pages contents (executed from lesson_backup_mods)
@@ -156,7 +136,7 @@
                 //Now we backup lesson answers for this page
                 $status = backup_lesson_answers($bf, $preferences, $page->id);
                 // backup branch table info for branch tables.
-                if ($status && backup_userdata_selected($preferences,'lesson',$lessonid)) {
+                if ($status && $preferences->mods["lesson"]->userinfo) {
                     if (!backup_lesson_branch($bf, $preferences, $page->id)) {
                         return false;
                     }
@@ -209,7 +189,7 @@
                 fwrite ($bf,full_tag("ANSWERTEXT",8,false,$answer->answer));
                 fwrite ($bf,full_tag("RESPONSE",8,false,$answer->response));
                 //Now we backup any lesson attempts (if student data required)
-                if (backup_userdata_selected($preferences,'lesson',$answer->lessonid)) {
+                if ($preferences->mods["lesson"]->userinfo) {
                     $status = backup_lesson_attempts($bf,$preferences,$answer->id);
                 }
                 //End rubric
@@ -418,14 +398,7 @@
     }
     
     //Return an array of info (name,value)
-    function lesson_check_backup_mods($course,$user_data=false,$backup_unique_code,$instances=null) {
-        if (!empty($instances) && is_array($instances) && count($instances)) {
-            $info = array();
-            foreach ($instances as $id => $instance) {
-                $info += lesson_check_backup_mods_instances($instance,$backup_unique_code);
-            }
-            return $info;
-        }
+    function lesson_check_backup_mods($course,$user_data=false,$backup_unique_code) {
         //First the course data
         $info[0][0] = get_string("modulenameplural","lesson");
         if ($ids = lesson_ids($course)) {
@@ -446,42 +419,7 @@
         return $info;
     }
 
-    //Return an array of info (name,value)
-    function lesson_check_backup_mods_instances($instance,$backup_unique_code) {
-        //First the course data
-        $info[$instance->id.'0'][0] = '<b>'.$instance->name.'</b>';
-        $info[$instance->id.'0'][1] = '';
 
-        //Now, if requested, the user_data
-        if (!empty($instance->userdata)) {
-            $info[$instance->id.'1'][0] = get_string("attempts","lesson");
-            if ($ids = lesson_attempts_ids_by_instance ($instance->id)) { 
-                $info[$instance->id.'1'][1] = count($ids);
-            } else {
-                $info[$instance->id.'1'][1] = 0;
-            }
-        }
-        return $info;
-    }
-
-    //Return a content encoded to support interactivities linking. Every module
-    //should have its own. They are called automatically from the backup procedure.
-    function lesson_encode_content_links ($content,$preferences) {
-
-        global $CFG;
-
-        $base = preg_quote($CFG->wwwroot,"/");
-
-        //Link to the list of lessons
-        $buscar="/(".$base."\/mod\/lesson\/index.php\?id\=)([0-9]+)/";
-        $result= preg_replace($buscar,'$@LESSONINDEX*$2@$',$content);
-
-        //Link to lesson view by moduleid
-        $buscar="/(".$base."\/mod\/lesson\/view.php\?id\=)([0-9]+)/";
-        $result= preg_replace($buscar,'$@LESSONVIEWBYID*$2@$',$result);
-
-        return $result;
-    }
 
     // INTERNAL FUNCTIONS. BASED IN THE MOD STRUCTURE
 
@@ -505,15 +443,5 @@
                                       {$CFG->prefix}lesson l
                                  WHERE l.course = '$course' AND
                                        a.lessonid = l.id");
-    }
-
-    //Returns an array of lesson_submissions id
-    function lesson_attempts_ids_by_instance ($instanceid) {
-
-        global $CFG;
-
-        return get_records_sql ("SELECT a.id , a.lessonid
-                                 FROM {$CFG->prefix}lesson_attempts a
-                                 WHERE a.lessonid = $instanceid");
     }
 ?>

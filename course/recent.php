@@ -5,17 +5,11 @@
     require_once("../config.php");
     require_once("lib.php");
 
-    $id = required_param('id',PARAM_INT);
+    require_variable($id);
 
-    $user = optional_param('user', '0', PARAM_INT);
-    $sortby = optional_param('sortby', 'default');
+    $user          = optional_param('user', '0', PARAM_INT);
+    $sortby        = optional_param('user', 'default');
     $selectedgroup = optional_param('selectedgroup', '');
-    $date = optional_param('date','',PARAM_CLEAN);
-    $advancedfilter = optional_param('advancedfilter',0,PARAM_INT);
-    $modname = optional_param('modname','' );
-    $modid = optional_param('modid','' );
-    $modaction = optional_param('modaction','' );
-    $chooserecent = optional_param('chooserecent',0,PARAM_INT);
 
     if (! $course = get_record("course", "id", $id) ) {
         error("That's an invalid course id");
@@ -30,7 +24,8 @@
     $loggedinas = user_login_string($course, $USER);
 
 
-    if (!empty($chooserecent)) {
+    if (!empty($_GET['chooserecent'])) {
+
         $userinfo = get_string("allparticipants");
         $dateinfo = get_string("alldays");
 
@@ -78,6 +73,9 @@
 
         print_heading(get_string("activitysince", "", userdate($date)));
 
+        if (!isset($advancedfilter)) {
+            $advancedfilter = 0;
+        }
         print_recent_selector_form($course, $advancedfilter);
 
     }
@@ -311,20 +309,12 @@
     print_footer($course);
 
 function compare_activities_by_time_desc($a, $b) {
-    // make sure the activities actually have a timestamp property
-    if ((!object_property_exists($a,'timestamp')) or (!object_property_exists($b,'timestamp'))) {
-      return 0;
-    }
     if ($a->timestamp == $b->timestamp)
         return 0;
     return ($a->timestamp > $b->timestamp) ? -1 : 1;
 }
 
 function compare_activities_by_time_asc($a, $b) {
-    // make sure the activities actually have a timestamp property
-    if ((!object_property_exists($a,'timestamp')) or (!object_property_exists($b,'timestamp'))) {
-      return 0;
-    }
     if ($a->timestamp == $b->timestamp)
         return 0;
     return ($a->timestamp < $b->timestamp) ? -1 : 1;

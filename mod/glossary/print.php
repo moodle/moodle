@@ -5,14 +5,14 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $id            = required_param('id', PARAM_INT);                     // Course Module ID
-    $sortorder     = optional_param('sortorder', 'asc', PARAM_ALPHA);     // Sorting order
-    $offset        = optional_param('offset', 0, PARAM_INT);              // number of entries to bypass
-    $displayformat = optional_param('displayformat',-1, PARAM_INT);
+    require_variable($id);                         // Course Module ID
+    optional_variable($sortorder,"asc");           // Sorting order
+    optional_variable($offset,0,PARAM_INT);        // number of entries to bypass
+    optional_variable($displayformat,-1);
 
-    $mode    = required_param('mode', PARAM_ALPHA);             // mode to show the entries
-    $hook    = optional_param('hook','ALL', PARAM_ALPHANUM);   // what to show
-    $sortkey = optional_param('sortkey','UPDATE', PARAM_ALPHA); // Sorting key
+    $mode    = required_param('mode');             // mode to show the entries
+    $hook    = optional_param('hook','ALL');       // what to show
+    $sortkey = optional_param('sortkey','UPDATE'); // Sorting key
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -33,9 +33,6 @@
     print_header();
 
     require_course_login($course, true, $cm);
-
-/// Loading the textlib singleton instance. We are going to need it.
-    $textlib = textlib_get_instance();
 
     if (!isteacher($course->id) and !$glossary->allowprintview) {
         notice(get_string('printviewnotallowed', 'glossary'));
@@ -153,16 +150,15 @@
             // Setting the pivot for the current entry
             $pivot = $entry->pivot;
             if ( !$fullpivot ) {
-                $pivot = $textlib->substr($pivot, 0, 1, current_charset());
-                $upperpivot = $textlib->strtoupper($pivot, current_charset());
+                $pivot = substr($pivot, 0, 1);
             }            
             
             // If there's  group break
-            if ( $currentpivot != $upperpivot ) {
+            if ( $currentpivot != strtoupper($pivot) ) {
 
                 // print the group break if apply
                 if ( $printpivot )  {
-                    $currentpivot = $upperpivot;
+                    $currentpivot = strtoupper($pivot);
 
                     $pivottoshow = $currentpivot;
                     if ( isset($entry->uid) ) {

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // pix.php - created with Moodle 1.5 ALPHA (2005051500)
+      // pix.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
 
 
 $string['angry'] = '화났어';
@@ -18,6 +18,9 @@ $string['shy'] = '부끄';
 $string['sleepy'] = '잠';
 $string['smiley'] = '방긋';
 $string['surprise'] = '엄마야!(당황)';
+$string['thischarset'] = 'UTF-8';
+$string['thisdirection'] = 'ltr';
+$string['thislanguage'] = '&#54620;&#44397;&#50612;';
 $string['thoughtful'] = '생각에 잠김 ';
 $string['tongueout'] = '아싸';
 $string['wideeyes'] = '놀란(눈이 휘둥그래진)';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5.2 (2005060220)
+      // wiki.php - created with Moodle 1.4.3 + (2004083134)
 
 
 $string['action'] = '-- Händelse --';
@@ -143,12 +143,10 @@ $string['safehtml'] = 'Säker HTML';
 $string['save'] = 'Spara';
 $string['searchwiki'] = 'Sök Wiki';
 $string['setpageflags'] = 'Ställ in flaggor för sida';
-$string['showversions'] = 'Visa versioner';
 $string['sitemap'] = 'Sajtkarta';
 $string['smfor'] = 'Sajtkarta för';
 $string['status'] = 'Status';
 $string['strippagecheck'] = 'Är Du säker på att Du vill ta bort gamla versioner från dessa sidor?';
-$string['strippages'] = 'Alternativ för studenternas administration';
 $string['studentadminoptions'] = 'Alternativ för administration för studenter/elever/deltagare/lärande';
 $string['submit'] = 'Skicka';
 $string['tabattachments'] = 'Bifogade filer';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.6 development (2005101200)
+      // assignment.php - created with Moodle 1.5 ALPHA (2005051500)
 
 
 $string['allowresubmit'] = '║╞─є╜╨дЄ╡Ў▓─д╣ды';
@@ -9,16 +9,17 @@ $string['assignmentmail'] = '$a->teacher дмдвд╩д┐д╬▓▌┬ъб╓ $a->assignment б╫д╦┬╨д
 е╒егб╝е╔е╨е├епд╧двд╩д┐д╬─є╜╨▓▌┬ъд╦─╔▓├д╡дьд╞ддд▐д╣:
 
 $a->url';
-$string['assignmentmailhtml'] = '$a->teacher дмдвд╩д┐д╬▓▌┬ъб╓ <i>$a->assignment</i> б╫ д╦┬╨д╣ды─є╜╨▓▌┬ъд╦е╒егб╝е╔е╨е├епдЄ┼╨╧┐д╖д▐д╖д┐бг<br /><br />е╒егб╝е╔е╨е├епд╧двд╩д┐д╬<a href=\"$a->url\">─є╜╨▓▌┬ъ</a>д╦─╔▓├д╡дьд╞ддд▐д╣бг';
+$string['assignmentmailhtml'] = '$a->teacher дмдвд╩д┐д╬▓▌┬ъб╓ <i>$a->assignment</i> б╫ д╦┬╨д╣ды─є╜╨▓▌┬ъд╦е╒егб╝е╔е╨е├епдЄ┼╨╧┐д╖д▐д╖д┐бг
+<br /><br />
+е╒егб╝е╔е╨е├епд╧двд╩д┐д╬<a href=\"$a->url\">─є╜╨▓▌┬ъ</a>д╦─╔▓├д╡дьд╞ддд▐д╣бг';
 $string['assignmentname'] = '▓▌┬ъ╠╛';
 $string['assignmenttype'] = '▓▌┬ъе┐еде╫';
-$string['availabledate'] = '│л╗╧╞№╗■';
+$string['availabledate'] = '─є╜╨│л╗╧';
 $string['comment'] = 'е│есеєе╚';
 $string['commentinline'] = 'едеєещедеєе│есеєе╚';
-$string['configitemstocount'] = 'екеєещедеє▓▌┬ъд╟ележеєе╚д╡дьды│╪└╕д╬─є╜╨▓▌┬ъд╬╝я╬р';
-$string['configmaxbytes'] = 'д│д╬е╡еде╚д╦дкд▒дыд╣д┘д╞д╬▓▌┬ъд╦┤╪д╣дые╟е╒ейеые╚д╬║╟┬че╡еде║ ( е│б╝е╣└й╕┬дкдшд╙┬╛д╬еэб╝елеы└▀─ъд╦╜╛ддд▐д╣ )';
+$string['configmaxbytes'] = 'д│д╬е╡еде╚д╦дкд▒ды┴┤д╞д╬▓▌┬ъд╦┤╪д╣дые╟е╒ейеые╚д╬║╟┬че╡еде║ ( е│б╝е╣└й╕┬дкдшд╙┬╛д╬еэб╝елеы└▀─ъд╦╜╛ддд▐д╣ )';
 $string['description'] = '╛▄║┘';
-$string['duedate'] = '╜к╬╗╞№╗■';
+$string['duedate'] = '─є╜╨╜к╬╗';
 $string['duedateno'] = '─є╜╨┤№╕┬╠╡д╖';
 $string['early'] = '$a ┴сдп─є╜╨';
 $string['editmysubmission'] = '─є╜╨▓▌┬ъдЄ╩╘╜╕';
@@ -36,8 +37,6 @@ $string['failedupdatefeedback'] = 'ецб╝е╢ $a д╬е╒егб╝е╔е╨е├еп╣╣┐╖д╦╝║╟╘д╖д▐д╖д┐ 
 $string['feedback'] = 'е╒егб╝е╔е╨е├еп';
 $string['feedbackfromteacher'] = '$a д╬е╒егб╝е╔е╨е├еп';
 $string['feedbackupdated'] = '$a д╬╗▓▓├╝╘д╦┬╨д╣дые╒егб╝е╔е╨е├епд╬╣╣┐╖';
-$string['guestnosubmit'] = '┐╜д╖╠їд┤д╢ддд▐д╗дєбве▓е╣е╚д╧▓▌┬ъдЄ─є╜╨д╟днд▐д╗дєбг';
-$string['guestnoupload'] = '┐╜д╖╠їд┤д╢ддд▐д╗дєбве▓е╣е╚д╧еве├е╫еэб╝е╔д╟днд▐д╗дєбг';
 $string['helpoffline'] = '<p>д│д╬е┐еде╫д╬▓▌┬ъд╧бвMoodleд╬│░д╟▓▌┬ъдм╣╘дядьды╗■д╦╩╪═°д╟д╣бг┬╛д╬ежезе╓е╡еде╚╛хд╟д╬▓▌┬ъбв┬╨╠╠д╦дшдъ▓▌д╡дьды▓▌┬ъдм╣═дидщдьд▐д╣бг</p>
 <p>│╪└╕д╧▓▌┬ъд╬└т╠└дЄ╞╔дрд│д╚д╧д╟днд▐д╣дмбве╒ебедеы┼∙дЄеве├е╫еэб╝е╔д╣дыд│д╚д╧д╟днд▐д╗дєбг╔╛─ъд╧─╠╛я─╠дъ╞░║юд╖бв╔╛─ъд╦┤╪д╣ды─╠├╬есб╝еыдм│╪└╕░╕д╦┴ў┐од╡дьд▐д╣бг</p>';
 $string['helponline'] = '<p>д│д╬е┐еде╫д╬▓▌┬ъд╧бвецб╝е╢д╦─╠╛яд╬╩╘╜╕е─б╝еыдЄ╗╚═╤д╖д┐е╞ене╣е╚д╬╩╘╜╕дЄ╡сдсд▐д╣бг╢╡╗╒д╧екеєещедеєд╟д│дьдщдЄ╔╛─ъд╟днбведеєещедеєе│есеєе╚д╬─╔▓├бж╩╤╣╣дЄ╣╘джд│д╚дтд╟днд▐д╣бг</p>
@@ -54,18 +53,16 @@ $string['noattempts'] = 'д│д╬▓▌┬ъд╦д╧─є╜╨╩кдмдвдъд▐д╗дєбг';
 $string['notgradedyet'] = '╠д╔╛▓┴';
 $string['notsubmittedyet'] = '╠д─є╜╨';
 $string['overwritewarning'] = '├э░╒: ║╞┼┘еве├е╫еэб╝е╔д╣дыд│д╚д╦дшдъ╕╜║▀д╬─є╜╨╩кд╧├╓дн┤╣дидщдьд▐д╣бг';
-$string['pagesize'] = '1е┌б╝е╕двд┐дъд╬─є╜╨▓▌┬ъ┐Ї';
-$string['preventlate'] = '─є╜╨┤№╕┬╕хд╬▓▌┬ъ─є╜╨дЄ╡Ў▓─д╖д╩дд';
-$string['quickgrade'] = 'епеде├еп╔╛─ъдЄ╡Ў▓─';
+$string['preventlate'] = '─є╜╨┤№╕┬╕хд╬─є╜╨дЄ╡Ў▓─д╖д╩дд';
 $string['saveallfeedback'] = 'е╒егб╝е╔е╨е├епдЄ╩▌┬╕д╣ды';
-$string['submission'] = '─є╜╨▓▌┬ъ';
-$string['submissionfeedback'] = '─є╜╨▓▌┬ъд╪д╬е╒егб╝е╔е╨е├еп';
-$string['submissions'] = '─є╜╨▓▌┬ъ';
+$string['submission'] = '─є╜╨';
+$string['submissionfeedback'] = '─є╜╨д╬е╒егб╝е╔е╨е├еп';
+$string['submissions'] = '─є╜╨';
 $string['submissionsaved'] = '╩╤╣╣╞т═╞дм╩▌┬╕д╡дьд▐д╖д┐бг';
 $string['submitassignment'] = 'д│д╬е╒ейб╝ердЄ╗╚═╤д╖д╞▓▌┬ъдЄ─є╜╨д╣ды';
 $string['submitted'] = '─є╜╨';
 $string['typeoffline'] = 'еке╒ещедеє│ш╞░';
-$string['typeonline'] = 'екеєещедеєе╞ене╣е╚';
+$string['typeonline'] = 'екеєещедеє│ш╞░';
 $string['typeuploadsingle'] = '├▒░ье╒ебедеыд╬еве├е╫еэб╝е╔';
 $string['uploadbadname'] = '╔╘└╡д╩╩╕╗·дме╒ебедеы╠╛д╦┤▐д▐дьд╞дддыд┐дсбвд│д╬е╒ебедеыдЄеве├е╫еэб╝е╔д╟днд▐д╗дєд╟д╖д┐бг';
 $string['uploadedfiles'] = 'е╒ебедеыдЄеве├е╫еэб╝е╔д╖д▐д╖д┐бг';
@@ -77,6 +74,6 @@ $string['uploadnotregistered'] = 'б╓ $a б╫д╧└╡╛яд╦еве├е╫еэб╝е╔д╡дьд▐д╖д┐дм┼╨╧┐д╡
 $string['uploadsuccess'] = 'б╓ $a б╫д╬еве├е╫еэб╝е╔дм┤░╬╗д╖д▐д╖д┐бг';
 $string['viewfeedback'] = '▓▌┬ъд╬╔╛▓┴д╚е╒егб╝е╔е╨е├епдЄ│╬╟зд╣ды';
 $string['viewsubmissions'] = '$a ╖яд╬─є╜╨▓▌┬ъдЄ│╬╟зд╣ды';
-$string['yoursubmission'] = 'двд╩д┐д╬─є╜╨▓▌┬ъ';
+$string['yoursubmission'] = 'двд╩д┐д╬─є╜╨╩к';
 
 ?>

@@ -41,20 +41,20 @@
     require_once('../config.php');
     require_once($CFG->dirroot.'/calendar/lib.php');
 
-    $from = required_param('from');
-    $var = required_param('var');
-    $value = optional_param('value');
-    $id = optional_param('id');
-    $cal_d = optional_param('cal_d');
-    $cal_m = optional_param('cal_m');
-    $cal_y = optional_param('cal_y');
+    require_variable($_GET['from']);
+    require_variable($_GET['var']);
+    optional_variable($_GET['value']);
+    optional_variable($_GET['id']);
+    optional_variable($_GET['cal_d']);
+    optional_variable($_GET['cal_m']);
+    optional_variable($_GET['cal_y']);
 
-    switch($var) {
+    switch($_GET['var']) {
         case 'setuser':
             // Not implemented yet (or possibly at all)
         break;
         case 'setcourse':
-            $id = intval($id);
+            $id = intval($_GET['id']);
             if($id == 0) {
                 $SESSION->cal_courses_shown = array();
                 calendar_set_referring_course(0);
@@ -94,21 +94,21 @@
         break;
     }
 
-    switch($from) {
+    switch($_GET['from']) {
         case 'event':
-            redirect(CALENDAR_URL.'event.php?action='.$action.'&amp;type='.$type.'&amp;id='.intval($id));
+            redirect(CALENDAR_URL.'event.php?action='.$_GET['action'].'&amp;type='.$_GET['type'].'&amp;id='.intval($_GET['id']));
         break;
         case 'month':
-            redirect(CALENDAR_URL.'view.php?view=month&cal_d='.$cal_d.'&cal_m='.$cal_m.'&cal_y='.$cal_y);
+            redirect(CALENDAR_URL.'view.php?view=month&cal_d='.$_GET['cal_d'].'&cal_m='.$_GET['cal_m'].'&cal_y='.$_GET['cal_y']);
         break;
         case 'upcoming':
             redirect(CALENDAR_URL.'view.php?view=upcoming');
         break;
         case 'day':
-            redirect(CALENDAR_URL.'view.php?view=day&cal_d='.$cal_d.'&cal_m='.$cal_m.'&cal_y='.$cal_y);
+            redirect(CALENDAR_URL.'view.php?view=day&cal_d='.$_GET['cal_d'].'&cal_m='.$_GET['cal_m'].'&cal_y='.$_GET['cal_y']);
         break;
         case 'course':
-            redirect($CFG->wwwroot.'/course/view.php?id='.intval($id));
+            redirect($CFG->wwwroot.'/course/view.php?id='.intval($_GET['id']));
         break;
         default:
 

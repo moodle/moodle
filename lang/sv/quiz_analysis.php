@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz_analysis.php - created with Moodle 1.5.2 (2005060220)
+      // quiz_analysis.php - created with Moodle 1.5 Beta (2005052300)
 
 
 $string['analysisoptions'] = 'Alternativ för analys';
@@ -24,7 +24,7 @@ $string['quizreportdir'] = 'test_rapporter';
 $string['rcounttitle'] = 'R.<br />Counts';
 $string['reportanalysis'] = 'Rapport angående analys av komponenter';
 $string['responsestitle'] = 'Svarets text';
-$string['rfractiontitle'] = 'partial<br />tillgodoräknande';
+$string['rfractiontitle'] = 'parcial<br />tillgodoräknande';
 $string['rpercenttitle'] = 'R.%%';
 $string['stddevtitle'] = 'SD';
 

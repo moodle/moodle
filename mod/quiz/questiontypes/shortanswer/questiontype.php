@@ -26,7 +26,7 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
         }
 
         if (!$question->options->answers = get_records('quiz_answers', 'question',
-         $question->id, 'id ASC')) {
+         $question->id)) {
            notify('Error: Missing question answers!');
            return false;
         }
@@ -89,13 +89,6 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
             }
         }
 
-        // delete old answer records
-        if (!empty($oldanswers)) {
-            foreach($oldanswers as $oa) {
-                delete_records('quiz_answers', 'id', $oa->id);
-            }
-        }
-
         /// Perform sanity checks on fractional grades
         if ($maxfraction != 1) {
             $maxfraction = $maxfraction * 100;
@@ -106,25 +99,26 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
         }
     }
 
-    function print_question_formulation_and_controls(&$question, &$state, $cmoptions, $options) {
+    function print_question_formulation_and_controls(&$question, &$state, $quiz, $options) {
     /// This implementation is also used by question type NUMERICAL
+
         $answers = &$question->options->answers;
         $correctanswers = $this->get_correct_responses($question, $state);
-        $readonly = empty($options->readonly) ? '' : 'readonly="readonly"';
+        $readonly = empty($options->readonly) ? '' : 'disabled="disabled"';
         $nameprefix = $question->name_prefix;
 
         /// Print question text and media
 
         echo format_text($question->questiontext,
                          $question->questiontextformat,
-                         NULL, $cmoptions->course);
-        quiz_print_possible_question_image($question);
+                         NULL, $quiz->course);
+        quiz_print_possible_question_image($quiz->id, $question);
 
         /// Print input controls
 
         $stranswer = get_string("answer", "quiz");
         if (isset($state->responses[''])) {
-            $value = ' value="'.s($state->responses['']).'" ';
+            $value = ' value="'.htmlSpecialChars($state->responses['']).'" ';
         } else {
             $value = ' value="" ';
         }
@@ -170,18 +164,21 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
         return false;
     }
 
-    function grade_responses(&$question, &$state, $cmoptions) {
-        $answers = &$question->options->answers;
+    function grade_responses(&$question, &$state, $quiz) {
+        $answers     = &$question->options->answers;
         $testedstate = clone($state);
         $teststate   = clone($state);
         $state->raw_grade = 0;
-
         foreach($answers as $answer) {
             $teststate->responses[''] = trim($answer->answer);
             if($this->compare_responses($question, $testedstate, $teststate)) {
-                $state->raw_grade = $answer->fraction;
-                break;
+                if (empty($state->raw_grade) && $state->raw_grade < $answer->fraction) {
+                    $state->raw_grade = $answer->fraction;
+                }
             }
+        }
+        if (empty($state->raw_grade)) {
+            $state->raw_grade = 0;
         }
 
         // Make sure we don't assign negative or too high marks
@@ -215,10 +212,10 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
         $replace = array('\\\\', '\+', '\(', '\)', '\[', '\]', '\-');
 
         if (strpos(' '.$response1, '*')) {
-            $response1 = str_replace('\*','@@@@@@',$response1);
-            $response1 = str_replace('*','.*',$response1);
-            $response1 = str_replace($search, $replace, $response1);
-            $response1 = str_replace('@@@@@@', '\*',$response1);
+            $answer0 = str_replace('\*','@@@@@@',$response1);
+            $answer0 = str_replace('*','.*',$response1);
+            $answer0 = str_replace($search, $replace, $response1);
+            $answer0 = str_replace('@@@@@@', '\*',$response1);
 
             if (ereg('^'.$response1.'$', $response0)) {
                 return true;

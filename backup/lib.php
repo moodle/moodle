@@ -1,4 +1,4 @@
-<?php //$Id$
+<?PHP //$Id$
     //This file contains all the general function needed (file manipulation...)
     //not directly part of the backup/restore utility
 
@@ -280,7 +280,7 @@
     //I've copied it from: http://www.php.net/manual/en/function.copy.php
     //Little modifications done
   
-    function backup_copy_file ($from_file,$to_file,$log_clam=false) {
+    function backup_copy_file ($from_file,$to_file) {
 
         global $CFG;
 
@@ -289,11 +289,8 @@
             //$perms=fileperms($from_file);
             //return copy($from_file,$to_file) && chmod($to_file,$perms);
             umask(0000);
-            if (copy($from_file,$to_file)) {
-                chmod($to_file,$CFG->directorypermissions);
-                if (!empty($log_clam)) {
-                    clam_log_upload($to_file,null,true);
-                }
+            if (copy($from_file,$to_file) && chmod($to_file,$CFG->directorypermissions)) {
+                clam_log_upload($to_file,null,true);
                 return true;
             }
             return false;
@@ -430,7 +427,7 @@
             $rec->new_id =$new_id;
             $rec->info = $info_to_save;
             
-            $status = insert_record('backup_ids', $rec, false);
+            $status = insert_record ("backup_ids", $rec, false,"backup_code");
         }
         return $status;
     }
@@ -497,25 +494,17 @@
     //This function is used to check that every necessary function to 
     //backup/restore exists in the current php installation. Thanks to
     //gregb@crowncollege.edu by the idea.
-    function backup_required_functions($justcheck=false) {
+    function backup_required_functions() {
 
         if(!function_exists('utf8_encode')) {
-            if (empty($justcheck)) {
-                error('You need to add XML support to your PHP installation');  
-            } else {
-                return false;
-            }
+            error('You need to add XML support to your PHP installation');  
         }
 
-        return true;
     }
 
     //This function send n white characters to the browser and flush the
     //output buffer. Used to avoid browser timeouts and to show the progress.
     function backup_flush($n=0,$time=false) {
-        if (defined('RESTORE_SILENTLY_NOFLUSH')) {
-            return;
-        }
         if ($time) {
             $ti = strftime("%X",time());
         } else {
@@ -551,108 +540,4 @@
 
         return ($status && $status2);
     }
-
-    /** this function will restore an entire backup.zip into the specified course
-     * using standard moodle backup/restore functions, but silently.
-     * @param string $pathtofile the absolute path to the backup file.
-     * @param int $destinationcourse the course id to restore to.
-     * @param boolean $emptyfirst whether to delete all coursedata first.
-     * @param boolean $userdata whether to include any userdata that may be in the backup file.
-     */
-    function import_backup_file_silently($pathtofile,$destinationcourse,$emptyfirst=false,$userdata=false) {
-        global $CFG,$SESSION,$USER; // is there such a thing on cron? I guess so..
-
-        if (empty($USER)) {
-            $USER = get_admin();
-            $USER->admin = 1; // not sure why, but this doesn't get set
-        }
-
-        define('RESTORE_SILENTLY',true); // don't output all the stuff to us.
-        
-        $debuginfo = 'import_backup_file_silently: ';
-        $cleanupafter = false;
-        $errorstr = ''; // passed by reference to restore_precheck to get errors from.
-
-        if (!$course = get_record('course','id',$destinationcourse)) {
-            mtrace($debuginfo.'Course with id $destinationcourse was not a valid course!');
-            return false;
-        }
-
-        // first check we have a valid file.
-        if (!file_exists($pathtofile) || !is_readable($pathtofile)) {
-            mtrace($debuginfo.'File '.$pathtofile.' either didn\'t exist or wasn\'t readable');
-            return false;
-        }
-
-        // now make sure it's a zip file
-        require_once($CFG->dirroot.'/lib/filelib.php');
-        $filename = substr($pathtofile,strrpos($pathtofile,'/')+1);
-        $mimetype = mimeinfo("type", $filename);
-        if ($mimetype != 'application/zip') {
-            mtrace($debuginfo.'File '.$pathtofile.' was of wrong mimetype ('.$mimetype.')' );
-            return false;
-        }
-
-        // restore_precheck wants this within dataroot, so lets put it there if it's not already..
-        if (strstr($pathtofile,$CFG->dataroot) === false) {
-            // first try and actually move it..
-            if (!check_dir_exists($CFG->dataroot.'/temp/backup/',true)) {
-                mtrace($debuginfo.'File '.$pathtofile.' outside of dataroot and couldn\'t move it! ');
-                return false;
-            }
-            if (!copy($pathtofile,$CFG->dataroot.'/temp/backup/'.$filename)) {
-                mtrace($debuginfo.'File '.$pathtofile.' outside of dataroot and couldn\'t move it! ');
-                return false;
-            } else {
-                $pathtofile = 'temp/backup/'.$filename;
-                $cleanupafter = true;
-            }
-        } else {
-            // it is within dataroot, so take it off the path for restore_precheck.
-            $pathtofile = substr($pathtofile,strlen($CFG->dataroot.'/'));
-        }
-
-        if (!backup_required_functions()) {
-            mtrace($debuginfo.'Required function check failed (see backup_required_functions)');
-            return false;
-        }
-        
-        @ini_set("max_execution_time","3000");
-        raise_memory_limit("128M");
-            
-        if (!$backup_unique_code = restore_precheck($destinationcourse,$pathtofile,$errorstr,true)) {
-            mtrace($debuginfo.'Failed restore_precheck (error was '.$errorstr.')');
-            return false;
-        }
-        
-        restore_setup_for_check($SESSION->restore,$backup_unique_code);
-
-        // add on some extra stuff we need...
-        $SESSION->restore->restoreto = 1;
-        $SESSION->restore->course_id = $destinationcourse; 
-        $SESSION->restore->deleting  = $emptyfirst;
-
-        // maybe we need users (defaults to 2 in restore_setup_for_check)
-        if (!empty($userdata)) {
-            $SESSION->restore->users = 1;
-        }
-
-        // we also need modules...
-        if ($allmods = get_records("modules")) {
-            foreach ($allmods as $mod) {
-                $modname = $mod->name;
-                //Now check that we have that module info in the backup file
-                if (isset($SESSION->info->mods[$modname]) && $SESSION->info->mods[$modname]->backup == "true") {
-                    $SESSION->restore->mods[$modname]->restore = true;
-                    $SESSION->restore->mods[$modname]->userinfo = $userdata;
-                }
-            }
-        }
-        if (!restore_execute($SESSION->restore,$SESSION->info,$SESSION->course_header,$errorstr)) {
-            mtrace($debuginfo.'Failed restore_execute (error was '.$errorstr.')');
-            return false;
-        }
-        return true;
-    }
-
 ?>

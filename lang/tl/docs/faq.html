@@ -1,15 +1,12 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-
+<html>
 <head>
 <title>Moodle Doks: Frequently Asked Questions (FAQ)</title>
 <link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
 <meta http-equiv="Content-Type" content="text/html;
-charset=iso-8859-15" />
+charset=iso-8859-15">
 </head>
 
-<body>
+<body bgcolor="#FFFFFF">
 <h1>Malimit na Itinatanong (FAQ)</h1>
 
 <p class="normaltext">Nilalaman ng pahinang ito ang mga sagot sa ilang
@@ -98,6 +95,7 @@ email ang mga talakayan ko </a></p>
 
 <p class="questionlink">&nbsp;</p>
 
+
 <h3><a name="filenotfound"></a>Kapag tinatangka kong pasukin o tingnan
 ang isang file na inaplowd ko, nakakatanggap ako ng error na &quot;Hindi
 Nahanap ang File (File not Found)&quot; </h3>
@@ -165,6 +163,7 @@ href="http://moodle.org/doc/?file=installamp.html">Redhat Linux</a></p>
 
 <p>&nbsp; </p>
 
+
 <h3><a name="errorgetstring"></a>Naghuhudyat ng mga fatal na error ang
 mga pahina ko, tulad ng: call to undefined function: get_string() </h3>
 
@@ -186,6 +185,7 @@ config.php sa isang program na tulad ng Word upang ma-edit ito, tapos ay
 isinave ito bilang HTML na web page, sa halip na text file. </p>
 
 <p>&nbsp;</p>
+
 
 <h3><a name="headerssent"></a>Bakit palagi akong nakakatanggap ng mga
 hudyat ng error hinggil sa &quot;headers already sent&quot;? </h3>
@@ -225,6 +225,8 @@ direktoryo ng web server. </p>
 
 <p class="answer">&nbsp;</p>
 
+
+
 <h3><a name="quotes" id="quotes"></a>Kapag nagsulat ako ng teksto na may
 apostrophe (') o quote (&quot;), nagbubunga ito ng error o lumilitaw na
 may kasamang slash </h3>
@@ -233,6 +235,7 @@ may kasamang slash </h3>
 mga maling setting ng &quot;magic quotes&quot;. Kailangan ng Moodle ang
 mga sumusunod na setting (na siyang karaniwang default Moodle requires
 the following settings (which :</p>
+
 
 <p class="answercode">magic_quotes_gpc = On<br />
 
@@ -243,6 +246,7 @@ href="./?file=install.html#webserver">pagsasaayos ng webserver </a> sa
 mga doks sa Pag-iinstol para sa dagdag na detalye. </p>
 
 <p class="answer">&nbsp;</p>
+
 
 <h3><a name="sessiontmp"></a>Palagi akong nakakatanggap ng hudyat ng
 error hinggil sa session_start </h3>
@@ -267,6 +271,7 @@ at G:\web\moodle\lib\setup.php:1) in G:\web\moodle\lib\setup.php on line
 /tmp).  Ang kadalasang dahilan ay WALA kang direktoryong /tmp sa
 kompyuter mo.  Kalimitan itong kaso sa mga instalasyon sa Windows.
 
+
 <p class="answer">Ang solusyon ay ayusin ang PHP setting para sa path na
 ito na tumuro sa isang tunay na direktoryo.  Maaari mo itong gawin sa
 iyong php.ini file: </p>
@@ -279,6 +284,7 @@ direktoryo ng moodle: </p>
 <p class="answercode">php_value session.save_path "/home/moodle/sessions"</p>
 
 <p class="answercode">&nbsp;</p>
+
 
 <h3><a name="fixdirroot"></a>Kapag nagpunta ako sa pahinang pang-admin,
 sinasabihan ako na gawing blangko ang dirroot! </h3>
@@ -316,6 +322,7 @@ ang linya (ika-66 na linya) sa file na admin/index.php:</p>
 
 <p class="answercode">&nbsp;</p>
 
+
 <h3><a name="loginsetting"></a>Naglalog-in ako pero hindi lumalabas na
 nakalog-in nga ako.  Nakapaglog-in na ako at nakapag-ikot ng maalwan.
 </h3>
@@ -326,6 +333,7 @@ kapareho nang eksakto ng aktuwal mong ginagamit sa pagpasok sa site mo.
 
 <p class="answer">&nbsp;</p>
 
+
 <h3><a name="resource1"></a>Kapag nagtangka akong magdagdag ng rekurso
 nakakatanggap ako ng hudyat ng error. </h3>
 
@@ -335,6 +343,7 @@ ginagamit sa pagpasok sa site.  Tangkain mo ring patayin ang
 "<b>secureforms</b>" sa mga setting na pang-admin. </p>
 
 <p class="answer">&nbsp;</p>
+
 
 <h3><a name="noadmin"></a>Sa panahon ng panimulang proseso ng
 pagse-set-up, hindi ako kailanman tinanong kung nais kong lumikha ng
@@ -361,6 +370,7 @@ makabubuting i-drop mo ang lahat ng table mo sa database mo at muling
 mag-instol mula sa simula. </p>
 
 <p class="answer">&nbsp;</p>
+
 
 <h3><a name="nologin"></a>Hindi ako makapag-log-in - nananatili lamang
 ako sa log-in screen. </h3>
@@ -434,10 +444,12 @@ talakayan ko </h3>
 
 <p class="answer"><strong>Kailangan</strong> mong iayos ang cron nang
 wasto kung gusto mong magpadala ng mga awtomatikong email ang Moodle
-mula sa mga talakayan, takdang-aralin atbp.  Gumagawa rin ang
+mula sa mga talakayan, diyornal, takdang-aralin atbp.  Gumagawa rin ang
 prosesong ito ng ilang gawaing paglilinis tulad ng pagbura ng lumang
 dinakukumpirmang user, pagsipa sa mga nakaenrol na dating mag-aaral at
 gayon nang gayon. </p>
+
+
 
 <p class="answer">Kailangan mong magsaayos ng isang proseso na regular
 na tatawag sa 
@@ -445,6 +457,7 @@ na tatawag sa
   script http://yoursite/admin/cron.php. Pakitingnan ang <a
 href="./?file=install.html#cron">seksiyon hinggil sa cron sa
 dokumentasyon tungkol sa Pag-iinstol </a>.</p>
+
 
 <p class="answer">Tip: Subukin ninyo ang default na setting sa pahina ng
 mga baryabol ng Moodle . Bayaan ninyong blangko ang smtphost.
@@ -454,7 +467,9 @@ Ito ay magiging katanggap-tanggap para sa mayorya ng user.
 <p class="answer">&nbsp;
 <p class="answer">&nbsp;
 
+
 <hr />
+
 
 <p align="center" class="normaltext"><a
 href='ma&#105&#108t&#111:ma%72%74in@%6d%6fo%64%6c%65.o%72g'
@@ -467,10 +482,20 @@ Salamat kay
 John Eyre para sa pagtulong sa pagmementina ng FAQ ito.
 </em></strong></p>
 
-<p align="center"><font size="1"><a href="." target="_top">
-Dokumentasyon ng Moodle</a></font></p>
-<p align="center"><font size="1">Version: $Id: faq.html,v 1.6 2003/03/30 13:54:28 
-  moodler Exp $</font></p>
+<p align="CENTER"><font size="1"><a href="."
+target="_top">Dokumentasyon ng Moodle
+</a></font></p>
+
+
+
+<p align="CENTER"><font size="1">Bersiyon: $Id: faq.html,v 1.6
+2003/03/30
+13:54:28 
+moodler Exp $</font></p>
+
 
 </body>
+
+
 </html>
+

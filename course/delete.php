@@ -3,8 +3,8 @@
 
     require_once("../config.php");
 
-    $id = required_param('id',PARAM_INT);       // course id
-    $delete = optional_param('delete');   // delete confirmation
+    require_variable($id);       // course id
+    optional_variable($delete);   // delete confirmation
 
     require_login();
 
@@ -40,8 +40,6 @@
         notice_yesno("$strdeletecoursecheck<br /><br />$course->fullname ($course->shortname)", 
                      "delete.php?id=$course->id&amp;delete=".md5($course->timemodified)."&amp;sesskey=$USER->sesskey", 
                      "category.php?id=$course->category");
-
-        print_footer($course);
         exit;
     }
 

@@ -14,10 +14,12 @@
     define('BLOCK_R_MIN_WIDTH', 100);
     define('BLOCK_R_MAX_WIDTH', 210);
 
-    $preferred_width_left  = bounded_number(BLOCK_L_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]),  
-                                            BLOCK_L_MAX_WIDTH);
-    $preferred_width_right = bounded_number(BLOCK_R_MIN_WIDTH, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]), 
-                                            BLOCK_R_MAX_WIDTH);
+    optional_variable($preferred_width_left,  blocks_preferred_width($pageblocks[BLOCK_POS_LEFT]));
+    optional_variable($preferred_width_right, blocks_preferred_width($pageblocks[BLOCK_POS_RIGHT]));
+    $preferred_width_left = min($preferred_width_left, BLOCK_L_MAX_WIDTH);
+    $preferred_width_left = max($preferred_width_left, BLOCK_L_MIN_WIDTH);
+    $preferred_width_right = min($preferred_width_right, BLOCK_R_MAX_WIDTH);
+    $preferred_width_right = max($preferred_width_right, BLOCK_R_MIN_WIDTH);
 
     if (isset($topic)) {
         $displaysection = course_set_display($course->id, $topic);
@@ -91,7 +93,7 @@
     $thissection = $sections[$section];
 
     if ($thissection->summary or $thissection->sequence or isediting($course->id)) {
-        echo '<tr id="section-0" class="section main">';
+        echo '<tr id="section-0" class="section">';
         echo '<td class="left side">&nbsp;</td>';
         echo '<td class="content">';
         
@@ -115,7 +117,7 @@
         echo '</td>';
         echo '<td class="right side">&nbsp;</td>';
         echo '</tr>';
-        echo '<tr class="section separator"><td colspan="3" class="spacer"></td></tr>';
+        echo '<tr class="section"><td colspan="3" class="spacer"></td></tr>';
     }
 
 
@@ -146,7 +148,7 @@
 
         if (!empty($displaysection) and $displaysection != $section) {
             if ($showsection) {
-                $strsummary = strip_tags(format_string($thissection->summary,true));
+                $strsummary = ' - '.strip_tags($thissection->summary);
                 if (strlen($strsummary) < 57) {
                     $strsummary = ' - '.$strsummary;
                 } else {
@@ -170,8 +172,11 @@
                 $sectionstyle = '';
             }
 
-            echo '<tr id="section-'.$section.'" class="section main'.$sectionstyle.'">';
-            echo '<td class="left side">&nbsp;</td>';
+            echo '<tr id="section-'.$section.'" class="section'.$sectionstyle.'">';
+
+            echo '<td class="left side">';
+            echo '<a name="'.$section.'">'.$section.'</a>';
+            echo '</td>';
 
             echo '<td class="content">';
             if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
@@ -197,7 +202,7 @@
 
             echo '<td class="right side">';
             if ($displaysection == $section) {      // Show the zoom boxes
-                echo '<a href="view.php?id='.$course->id.'&amp;topic=all#section-'.$section.'" title="'.$strshowalltopics.'">'.
+                echo '<a href="view.php?id='.$course->id.'&amp;topic=all#'.$section.'" title="'.$strshowalltopics.'">'.
                      '<img src="'.$CFG->pixpath.'/i/all.gif" height="25" width="16" border="0" /></a><br />';
             } else {
                 $strshowonlytopic = get_string('showonlytopic', '', $section);
@@ -207,35 +212,35 @@
 
             if (isediting($course->id)) {
                 if ($course->marker == $section) {  // Show the "light globe" on/off
-                    echo '<a href="view.php?id='.$course->id.'&amp;marker=0&amp;sesskey='.$USER->sesskey.'#section-'.$section.'" title="'.$strmarkedthistopic.'">'.
+                    echo '<a href="view.php?id='.$course->id.'&amp;marker=0&amp;sesskey='.$USER->sesskey.'#'.$section.'" title="'.$strmarkedthistopic.'">'.
                          '<img src="'.$CFG->pixpath.'/i/marked.gif" vspace="3" height="16" width="16" border="0" alt="" /></a><br />';
                 } else {
-                    echo '<a href="view.php?id='.$course->id.'&amp;marker='.$section.'&amp;sesskey='.$USER->sesskey.'#section-'.$section.'" title="'.$strmarkthistopic.'">'.
+                    echo '<a href="view.php?id='.$course->id.'&amp;marker='.$section.'&amp;sesskey='.$USER->sesskey.'#'.$section.'" title="'.$strmarkthistopic.'">'.
                          '<img src="'.$CFG->pixpath.'/i/marker.gif" vspace="3" height="16" width="16" border="0" alt="" /></a><br />';
                 }
 
                 if ($thissection->visible) {        // Show the hide/show eye
-                    echo '<a href="view.php?id='.$course->id.'&amp;hide='.$section.'&amp;sesskey='.$USER->sesskey.'#section-'.$section.'" title="'.$strtopichide.'">'.
+                    echo '<a href="view.php?id='.$course->id.'&amp;hide='.$section.'&amp;sesskey='.$USER->sesskey.'#'.$section.'" title="'.$strtopichide.'">'.
                          '<img src="'.$CFG->pixpath.'/i/hide.gif" vspace="3" height="16" width="16" border="0" alt="" /></a><br />';
                 } else {
-                    echo '<a href="view.php?id='.$course->id.'&amp;show='.$section.'&amp;sesskey='.$USER->sesskey.'#section-'.$section.'" title="'.$strtopichide.'">'.
+                    echo '<a href="view.php?id='.$course->id.'&amp;show='.$section.'&amp;sesskey='.$USER->sesskey.'#'.$section.'" title="'.$strtopichide.'">'.
                          '<img src="'.$CFG->pixpath.'/i/show.gif" vspace="3" height="16" width="16" border="0" alt="" /></a><br />';
                 }
 
                 if ($section > 1) {                       // Add a arrow to move section up
-                    echo '<a href="view.php?id='.$course->id.'&amp;section='.$section.'&amp;move=-1&amp;sesskey='.$USER->sesskey.'#section-'.($section-1).'" title="'.$strmoveup.'">'.
+                    echo '<a href="view.php?id='.$course->id.'&amp;section='.$section.'&amp;move=-1&amp;sesskey='.$USER->sesskey.'#'.($section-1).'" title="'.$strmoveup.'">'.
                          '<img src="'.$CFG->pixpath.'/t/up.gif" vspace="3" height="11" width="11" border="0" alt="" /></a><br />';
                 }
 
                 if ($section < $course->numsections) {    // Add a arrow to move section down
-                    echo '<a href="view.php?id='.$course->id.'&amp;section='.$section.'&amp;move=1&amp;sesskey='.$USER->sesskey.'#section-'.($section+1).'" title="'.$strmovedown.'">'.
+                    echo '<a href="view.php?id='.$course->id.'&amp;section='.$section.'&amp;move=1&amp;sesskey='.$USER->sesskey.'#'.($section+1).'" title="'.$strmovedown.'">'.
                          '<img src="'.$CFG->pixpath.'/t/down.gif" vspace="3" height="11" width="11" border="0" alt="" /></a><br />';
                 }
 
             }
 
             echo '</td></tr>';
-            echo '<tr class="section separator"><td colspan="3" class="spacer"></td></tr>';
+            echo '<tr class="section"><td colspan="3" class="spacer"></td></tr>';
         }
 
         $section++;

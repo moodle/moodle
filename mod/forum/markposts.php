@@ -5,10 +5,10 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    $f = required_param('f',PARAM_INT); // The forum to mark
-    $mark = required_param('mark',PARAM_ALPHA); // Read or unread?
-    $d = optional_param('d',0,PARAM_INT); // Discussion to mark.
-    $returnpage = optional_param('returnpage', 'index.php', PARAM_FILE);    // Page to return to.
+    require_variable($f);                           // The forum to mark
+    require_variable($mark);                        // Read or unread?
+    optional_variable($d);                          // Discussion to mark.
+    optional_variable($returnpage, 'index.php');    // Page to return to.
 
     if (! $forum = get_record("forum", "id", $f)) {
         error("Forum ID was incorrect");

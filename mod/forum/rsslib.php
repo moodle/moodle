@@ -225,7 +225,6 @@
 
         if ($recs = get_records_sql ("SELECT p.id AS postid,
                                              d.id AS discussionid,
-                                             d.name AS discussionname,
                                              u.id AS userid,
                                              u.firstname AS userfirstname,
                                              u.lastname AS userlastname,
@@ -253,7 +252,6 @@
             foreach ($recs as $rec) {
                 unset($item);
                 unset($user);
-                $item->category = $rec->discussionname;
                 $item->title = $rec->postsubject;
                 $user->firstname = $rec->userfirstname;
                 $user->lastname = $rec->userlastname;
@@ -261,23 +259,6 @@
                 $item->pubdate = $rec->postcreated;
                 $item->link = $CFG->wwwroot."/mod/forum/discuss.php?d=".$rec->discussionid."&parent=".$rec->postid;
                 $item->description = format_text($rec->postmessage,$rec->postformat,NULL,$forum->course);
-
-
-                $post_file_area_name = str_replace('//', '/', "$forum->course/$CFG->moddata/$rec->course/forum/$forum->id/$rec->postid");
-                $post_files = get_directory_list("$CFG->dataroot/$post_file_area_name");
-                
-                if (!empty($post_files)) {            
-                    $item->attachments = array();
-                    foreach ($post_files as $file) {                    
-                        if ($CFG->slasharguments) {
-                            $ffurl = "{$CFG->wwwroot}/file.php/$post_file_area_name/$file";
-                        } else {
-                            $ffurl = "{$CFG->wwwroot}/file.php?file=/$post_file_area_name/$file";
-                        }                         
-                        $item->attachments[] = $ffurl;
-                    }
-                }
-
                 $items[] = $item;
                 $articlesleft--;
                 if ($articlesleft < 1) {

@@ -20,16 +20,68 @@
         }
     }
 
-    
-
-    $backupprefs = new StdClass;
-    $count = 0;
-    backup_fetch_prefs_from_request($backupprefs,$count,$course);
 
     //Check site
     if (!$site = get_site()) {
         error("Site not found!");
     }
+
+   //Checks for the required files/functions to backup every mod
+    //And check if there is data about it
+    $count = 0;
+    if ($allmods = get_records("modules") ) {
+        foreach ($allmods as $mod) {
+            $modname = $mod->name;
+            $modfile = "$CFG->dirroot/mod/$modname/backuplib.php";
+            $modbackup = $modname."_backup_mods";
+            $modcheckbackup = $modname."_check_backup_mods";
+            if (file_exists($modfile)) {
+               include_once($modfile);
+               if (function_exists($modbackup) and function_exists($modcheckbackup)) {
+                   $var = "exists_".$modname;
+                   $$var = true;
+                   $count++;
+               }
+            }
+            //Check data
+            //Check module info
+            $var = "backup_".$modname;
+            if (!isset($$var)) {
+                $$var = 1;
+            }
+            //Check include user info
+            $var = "backup_user_info_".$modname;
+            if (!isset($$var)) {
+                $$var = 1;
+            }
+        }
+    }
+
+    //Check other parameters
+    if (!isset($backup_metacourse)) {
+        $backup_metacourse = 1;
+    }
+   
+    if (!isset($backup_users)) {
+        $backup_users = 1;
+    }
+   
+    if (!isset($backup_logs)) {
+        $backup_logs = 0;
+    }
+
+    if (!isset($backup_user_files)) {
+        $backup_user_files = 1;
+   }
+
+    if (!isset($backup_course_files)) {
+        $backup_course_files = 2;
+        }
+
+    if (!isset($backup_messages)) {
+        $backup_messages = 1;
+    }
+
     if ($count == 0) {
         notice("No backupable modules are installed!");
     }
@@ -39,6 +91,46 @@
 <table cellpadding="5">
 <?php
 
+    //Calculate the backup string
+
+    //Calculate the backup word
+    //Take off some characters in the filename !!
+    $takeoff = array(" ", ":", "/", "\\", "|");
+    $backup_word = str_replace($takeoff,"_",strtolower(get_string("backupfilename")));
+    //If non-translated, use "backup"
+    if (substr($backup_word,0,1) == "[") {
+        $backup_word= "backup";
+    }
+
+    //Calculate the date format string
+    $backup_date_format = str_replace(" ","_",get_string("backupnameformat"));
+    //If non-translated, use "%Y%m%d-%H%M"
+    if (substr($backup_date_format,0,1) == "[") {
+        $backup_date_format = "%%Y%%m%%d-%%H%%M";
+    }
+
+    //Calculate the shortname
+    $backup_shortname = clean_filename($course->shortname);
+    if (empty($backup_shortname) or $backup_shortname == '_' ) {
+        $backup_shortname = $course->id;
+    }
+
+    //Calculate the final backup filename
+    //The backup word
+    $backup_name = $backup_word."-";
+    //The shortname
+    $backup_name .= strtolower($backup_shortname)."-";
+    //The date format
+    $backup_name .= userdate(time(),$backup_date_format,99,false);
+    //The extension
+    $backup_name .= ".zip";
+    //And finally, clean everything
+    $backup_name = clean_filename($backup_name);
+
+    //Calculate the backup unique code to allow simultaneus backups (to define
+    //the temp-directory name and records in backup temp tables
+    $backup_unique_code = time();
+
     if (empty($to)) {
         //Now print the Backup Name tr
         echo "<tr>";
@@ -46,7 +138,7 @@
         echo get_string("name").":";
         echo "</b></td><td>";
         //Add as text field
-        echo "<input type=\"text\" name=\"backup_name\" size=\"40\" value=\"".$backupprefs->backup_name."\" />";
+        echo "<input type=\"text\" name=\"backup_name\" size=\"40\" value=\"".$backup_name."\" />";
         echo "</td></tr>";
     
         //Line
@@ -56,30 +148,32 @@
         echo "<tr>";    
         echo "<td colspan=\"2\" align=\"center\"><b>";
 
+    } else {
+        echo '<input type="hidden" name="backup_name" value="'.$backup_name.'" /></b>';
     }
 
 
     //Here we check if backup_users = None. Then, we switch off every module
     //user info, user_files, logs and exercises, workshop and messages backups. A Warning is showed to
     //inform the user.
-    if ($backupprefs->backup_users == 2) {
+    if ($backup_users == 2) {
         if ($allmods = get_records("modules") ) {
             foreach ($allmods as $mod) {
                 $modname = $mod->name;
                 $var = "backup_user_info_".$modname;
-                if (isset($backupprefs->$var)) {
-                    $backupprefs->$var = 0;
+                if (isset($$var)) {
+                    $$var = 0;
                 }
                 $var = "backup_".$modname;
-                if (isset($backupprefs->$var)) {
+                if (isset($$var)) {
                     if ($modname == "exercise" || $modname == "workshop") {
-                        $backupprefs->$var = 0;
+                        $$var = 0;
                     }
                 }
             }
-        $backupprefs->backup_user_files = 0;
-        $backupprefs->backup_logs = 0;
-        $backupprefs->backup_messages = 0;
+        $backup_user_files = 0;
+        $backup_logs = 0;
+        $backup_messages = 0;
         }
         print_simple_box("<font color=\"red\">".get_string("backupnoneusersinfo")."</font>","center", "70%", '', "20", "noticebox");
         echo "<hr />";
@@ -96,24 +190,21 @@
     if ($allmods = get_records("modules") ) {
         foreach ($allmods as $mod) {
             $modname = $mod->name;
-            $modfile = $CFG->dirroot.'/mod/'.$modname.'/backuplib.php';
-            if (!file_exists($modfile)) {
-                continue;
-            }
-            require_once($modfile);
             $modbackup = $modname."_backup_mods";
             //If exists the lib & function
             $var = "exists_".$modname;
-            if (isset($backupprefs->$var) && $backupprefs->$var) {
+            if (isset($$var) && $$var) {
                 $var = "backup_".$modname;
                 //Only if selected
-                if ($backupprefs->$var == 1) {
+                if ($$var == 1) {
                     //Print the full tr
                     echo "<tr>";
                     echo "<td colspan=\"2\">";
                     //Add hidden fields
                     $var = "backup_".$modname;
+                    echo "<input type=\"hidden\" name=\"".$var."\" value=\"".$$var."\" />";
                     $var = "backup_user_info_".$modname;
+                    echo "<input type=\"hidden\" name=\"".$var."\" value=\"".$$var."\" />";
                     //Print the mod name
                     echo "<b>".get_string("include")." ".get_string("modulenameplural",$modname)." ";
                     //Now look for user-data status
@@ -121,29 +212,10 @@
                     $backup_user_options[1] = get_string("withuserdata");
                     $var = "backup_user_info_".$modname;
                     //Print the user info
-                    echo $backup_user_options[$backupprefs->$var]."</b>";
+                    echo $backup_user_options[$$var]."</b>";
                     //Call the check function to show more info
                     $modcheckbackup = $modname."_check_backup_mods";
-                    $var = $modname.'_instances';
-                    $instancestopass = array();
-                    if (!empty($backupprefs->$var) && is_array($backupprefs->$var) && count($backupprefs->$var)) {
-                        $table->data = array();
-                        $countinstances = 0;
-                        foreach ($backupprefs->$var as $instance) {
-                            $var1 = 'backup_'.$modname.'_instance_'.$instance->id;
-                            $var2 = 'backup_user_info_'.$modname.'_instance_'.$instance->id;
-                            if (!empty($backupprefs->$var1)) {
-                                $obj = new StdClass;
-                                $obj->name = $instance->name;
-                                $obj->userdata = $backupprefs->$var2;
-                                $obj->id = $instance->id;
-                                $instancestopass[$instance->id]= $obj;
-                                $countinstances++;
-                                
-                            }
-                        }
-                    } 
-                    $table->data = $modcheckbackup($id,$backupprefs->$var,$backupprefs->backup_unique_code,$instancestopass);
+                    $table->data = $modcheckbackup($id,$$var,$backup_unique_code);
                     print_table($table); 
                     echo "</td></tr>";
                 }
@@ -161,16 +233,16 @@
             $user_options[0] = get_string("includeallusers");
             $user_options[1] = get_string("includecourseusers");
             $user_options[2] = get_string("includenoneusers");
-            echo $user_options[$backupprefs->backup_users].'</b>';
+            echo $user_options[$backup_users].'</b>';
             //Print info
-            $table->data = user_check_backup($id,$backupprefs->backup_unique_code,$backupprefs->backup_users,$backupprefs->backup_messages);  
+            $table->data = user_check_backup($id,$backup_unique_code,$backup_users,$backup_messages);  
             print_table($table); 
             echo "</td></tr>";
             
         }
         
         //Now print the Logs tr conditionally
-        if ($backupprefs->backup_logs && empty($to)) {
+        if ($backup_logs && empty($to)) {
             echo "<tr>";
             echo "<td colspan=\"2\"><b>";
             echo get_string("includelogentries").'</b>';
@@ -181,35 +253,38 @@
         }
 
         //Now print the User Files tr conditionally
-        if ($backupprefs->backup_user_files) {
+        if ($backup_user_files) {
             echo "<tr>";
             echo "<td colspan=\"2\"><b>";
             echo get_string("includeuserfiles").'</b>';
             //Print info
-            $table->data = user_files_check_backup($id,$backupprefs->backup_unique_code);
+            $table->data = user_files_check_backup($id,$backup_unique_code);
             print_table($table);
             echo "</td></tr>";
         }
 
         //Now print the Course Files tr conditionally
-       if ($backupprefs->backup_course_files) {
+       if ($backup_course_files) {
             echo "<tr>";
             echo "<td colspan=\"2\"><b>";
             echo get_string("includecoursefiles").'</b>';
             //Print info
-            $table->data = course_files_check_backup($id,$backupprefs->backup_unique_code);
+            $table->data = course_files_check_backup($id,$backup_unique_code);
             print_table($table);
             echo "</td></tr>";
         }
     }
-
-    // now keep it for next time.
-    $SESSION->backupprefs[$course->id] = $backupprefs;
-
 ?>
 </table>
 <br />
 <center>
+<input type="hidden" name="backup_unique_code" value="<?php p($backup_unique_code) ?>" />
+<input type="hidden" name="backup_metacourse" value="<?php p($backup_metacourse) ?>" />
+<input type="hidden" name="backup_users" value="<?php p($backup_users) ?>" />
+<input type="hidden" name="backup_logs" value="<?php p($backup_logs) ?>" />
+<input type="hidden" name="backup_user_files" value="<?php p($backup_user_files) ?>" />
+<input type="hidden" name="backup_course_files" value="<?php p($backup_course_files) ?>" />
+<input type="hidden" name="backup_messages" value="<?php p($backup_messages) ?>" />
 <input type="hidden" name="to"     value="<?php p($to) ?>" />
 <input type="hidden" name="id"     value="<?php  p($id) ?>" />
 <input type="hidden" name="launch" value="execute" />
