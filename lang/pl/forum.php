@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.3 - (2004052400)
+      // forum.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['addanewdiscussion'] = 'Dodaj nowy temat dyskusji';
@@ -16,6 +16,7 @@ $string['configenablerssfeeds'] = 'Umo¿liwia RSS feeds dla wszystkich forów dysk
 $string['configlongpost'] = ' Ka¿dy post o d³ugo¶ci przekraczaj±cej t± liczbê (nie uwzglêdniaj±c kodu HTML) jest uwa¿any za d³ugi.';
 $string['configmanydiscussions'] = ' Maksymalna ilo¶æ dyskusji pokazywanych na jednej stronie forum.';
 $string['configmaxbytes'] = 'Domy¶lna wielko¶æ plików dla wszystkich za³±czników na tej stronie (chyba, ¿e przedmiot b±d¼ ustawienia strony nak³adaj± jeszcze inne ograniczenia)';
+$string['configreplytouser'] = 'Czy wys³any post powinien zawieraæ email wysy³aj±cego, tak aby mogli do niego osobi¶cie odpowiedzieæ (zamiast poprzez forum)? Nawet przy wyborze \"Tak\" u¿ytkownicy mog± wybraæ w swoich profilach, ¿e chc± ukryæ swój adres email. ';
 $string['configshortpost'] = ' Ka¿dy post o d³ugo¶ci mniejszej od tej liczby (nie uwzglêdniaj±c kodu HTML) jest uwa¿any za krótki';
 $string['couldnotadd'] = 'Nie mo¿na dodaæ twojego postu z powodu nieznanego b³êdu';
 $string['couldnotdeleteratings'] = 'Niestety, nie mo¿na by³o  usun±æ tego postu, gdy¿ zosta³ on ju¿ oceniony przez innych';
@@ -25,8 +26,13 @@ $string['delete'] = 'Usuñ';
 $string['deleteddiscussion'] = 'Usuniêto temat dyskusji';
 $string['deletedpost'] = 'Post zosta³ usuniêty';
 $string['deletesure'] = 'Czy masz pewno¶æ, ¿e chcesz usun±æ te post?';
+$string['digestmailheader'] = 'To jest twóje dzienne streszczenie postów z forum $a-sitename. Aby zmieniæ emailowe preferencje forum, id¼ do $a->userprefs.';
+$string['digestmailprefs'] = 'profil u¿ytkownika';
+$string['digestmailsubject'] = '$a: streszczenie postów';
+$string['digestsentusers'] = 'Wys³ano do u¿ytkownika $a';
 $string['discussion'] = 'Dyskusja';
 $string['discussionmoved'] = 'Dyskusja ta zosta³a przeniesiona do \'$a \'.';
+$string['discussionname'] = 'Nazwa dyskusji';
 $string['discussions'] = 'Dyskusje';
 $string['discussionsstartedby'] = 'Dyskusje rozpoczête przez $a';
 $string['discussionsstartedbyrecent'] = ' Dyskusje rozpoczête ostatnio przez $a';
@@ -73,6 +79,7 @@ $string['nomorepostscontaining'] = ' Nie znaleziono wiêcej postów zawieraj±cych 
 $string['nonews'] = ' Nie umieszczono jeszcze ¿adnych nowo¶ci';
 $string['noposts'] = 'Brak wiadomo¶ci';
 $string['nopostscontaining'] = 'Nie znaleziono wiadomo¶ci zawieraj±cych \'$a \'';
+$string['noreply'] = ' ';
 $string['nosubscribers'] = 'Nikt jeszcze nie zapisa³ siê na to forum';
 $string['notingroup'] = 'Musisz byæ zapisany do grupy aby móc przegl±daæ to forum.';
 $string['nownotsubscribed'] = '$a ->name NIE bêdzie otrzymywaæ kopii \'$a->forum\' poczt± elektroniczn±.';
@@ -91,8 +98,12 @@ $string['postrating1'] = 'Demonstruje g³ównie poznawanie odrêbne';
 $string['postrating2'] = 'Demonstruje w równym stopniu poznawanie odrêbne i powi±zane';
 $string['postrating3'] = 'Demonstruje g³ównie poznawanie powi±zane';
 $string['posts'] = 'Posty';
+$string['posttoforum'] = 'Post do forum';
 $string['postupdated'] = 'Twój post zosta³ zaktualizowany';
+$string['processingdigest'] = 'Przetwa¿anie streszczenia maili u¿ytkownika $a';
 $string['processingpost'] = 'Post $a jest w trakcie przetwarzania';
+$string['prune'] = 'Zerwij';
+$string['pruneheading'] = 'Zerwij post i przejd¼ do nowej dyskusji';
 $string['rate'] = 'Oceñ';
 $string['rating'] = ' Oceny';
 $string['ratingeveryone'] = ' Ka¿dy mo¿e oceniæ posty';
@@ -118,7 +129,7 @@ $string['searchforums'] = 'Szukaj w forach';
 $string['searcholderposts'] = 'Przeszukaj dawniejsze posty...';
 $string['searchresults'] = 'Szukaj w rezultatach';
 $string['sendinratings'] = 'Wy¶lij moje ostatnie oceny';
-$string['showsubscribers'] = 'Wy¶wietl u¿ytkowników zapisanych na forum';
+$string['showsubscribers'] = 'Wy¶wietl/modyfikuj u¿ytkowników zapisanych na forum';
 $string['singleforum'] = 'Pojedyncza prosta dyskusja';
 $string['startedby'] = 'Rozpoczêta przez';
 $string['subject'] = 'Temat';

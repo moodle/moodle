@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.3 - (2004052400)
+      // moodle.php - created with Moodle 1.4 development (2004060400)
 
 
 $string['action'] = 'Akcja';
@@ -143,6 +143,7 @@ $string['configcachetext'] = 'Dla wiêkszych stron lub stron, które u¿ywaj± filtr
 $string['configcountry'] = 'Je¿eli ustawisz tutaj kraj, wówczas ten kraj bêdzie domy¶lny dla nowych u¿ytkowników. Je¿eli chcesz wymusiæ, aby u¿ytkownicy wybierali kraj samodzielnie zostaw to pole niewype³nione.';
 $string['configdebug'] = 'Je¶li w³±czysz t± funkcjê to podniesiony zostanie poziom raportowania b³êdów PHP, dziêki czemu wiêcej ostrze¿eñ bêdzie drukowanych. Ta opcja przydatna jest tylko dla programistów.';
 $string['configdeleteunconfirmed'] = 'Je¶li korzystasz z uwierzytelnienia emailowego, jest to okres przez który przyjmowane bêd± odpowiedzi od u¿ytkowników. Po tym okresie, stare i niepotwierdzone konta zostan± usuniête';
+$string['configdigestmailtime'] = 'Osoby, które zdecyduj± siê na otrzymywanie streszczenia postów w emailach, bêd± mieli je przesy³ane codziennie. Ten parametr decyduje o której godzinie ten email zostanie wys³any.';
 $string['configenablerssfeeds'] = 'W³±czenie tej opcji umo¿liwi stosowanie RSS feeds na ca³ej witrynie. Jednak¿e aby móc w³±czyæ t± opcjê trzeba równie¿ uruchomiæ j± dla pojedynczych modu³ów (Modu³y, Konfiguracja).';
 $string['configenablerssfeedsdisabled'] = 'Niedostêpne poniewa¿ RSS feeds nie s± uruchomione. Aby je w³±czyæ id¼ do Zmienne w Konfiguracji.';
 $string['configerrorlevel'] = 'Wybierz ilo¶æ ostrze¿eñ z PHP, która a byæ wy¶wietlana. Zwykle najlepszym wyborem jest Normalna';
@@ -167,6 +168,7 @@ $string['configloglifetime'] = 'Tutaj mo¿esz zdefiniowaæ okres przez jaki chcesz
 $string['configlongtimenosee'] = 'Je¿eli student nie loguje siê przez bardzo d³ugi okres czasu, jest automatycznie usuwany z wszystkich kursów. Parametr ten okre¶la w³a¶nie ów limit czasu.';
 $string['configmaxbytes'] = 'Ten paramter okre¶la maksymalny rozmiar plików, które mog± byæ przesy³ane. Parametr ten odnosi siê do ca³ej strony i ograniczony jest tylko przez paramter PHP o nazwie: upload_max_filesize oraz parametr Apache: LimitRequestBody. Z drugiej strony, maksymalny rozmiar plików mo¿e byæ zmodyfikowany na poziomie kursu czy te¿ modu³u.';
 $string['configmaxeditingtime'] = 'Okre¶l tutaj limit czasu, w którym u¿ytkownicy mog± dokonywaæ zmian w postach do forum, informacjach zwrotnych w dzienniku itp. Zazwyczaj odpowiednim ograniczeniem jest 30 minut.';
+$string['confignoreplyaddress'] = 'Emaila s± czasami wysy³ane w imieniu u¿ytkownika (n.p. posty forum). Email, który wpiszesz tutaj zostanie wstawiony do pola \"Od\" w przypadkach gdy adresaci nie powinni móc bezpo¶rednio odpowiadaæ u¿ytkownikowi (n.p. gdy u¿ytkownik zdecyduje siê zachowaæ swój adres emailowy w sekrecie).';
 $string['configopentogoogle'] = 'Uaktwynienie tego parametru pozwoli Google wej¶æ na Twoj± stronê w charakterze Go¶cia. Ponadto, internaci, którzy odnajd± Twoj± stronê u¿ywaj±c Google, zostan± automatycznie zalogowani jako Go¶cie. Zauwa¿, ¿e to pozwala na dostêp do kursów, które daj± dostêp Go¶ciom.';
 $string['configproxyhost'] = 'Je¿eli ten <B>serwer</B> wymaga komputera po¶rednicz±cego (np. zabezpieczenie firewall) w celu uzyskania dostêpu do internetu, wpisz tutaj nazwê hosta i port serwera proxy, w przeciwnym przypadku pozostaw to miejsce puste.';
 $string['configsecureforms'] = 'Moodle mo¿e korzystaæ z dodatkowego poziomu zabezpieczeñ, podczas przyjmowania ramek danych z sieci. Je¶li opcja ta jest aktywna, to zmienna HTTP_REFERER w przegl±darce internetowej jest porównywana z aktualnym adresem ramki danych. W bardzo niewielu przypadkach mo¿e to powodowaæ problemy, je¶li u¿ytkownik korzysta z programu typu firewall (np. Zonealarm) skonfigurowanego tak, by usuwaæ HTTP_REFERER ze swojej komunikacji sieciowej. Objawiaæ siê to mo¿e zawi¶niêciem na ramce. Je¶li u¿ytkownicy maj± problemy z stron± logowania(przyk³adowo) mo¿esz zdecydowaæ siê wy³±czyæ t± opcjê, chocia¿ spowoduje to wiêksz± wra¿liwo¶æ twojej strony na bezpo¶rednie ataki na has³o (brute-force password attack).  Je¶li masz w±tpliwo¶ci pozostaw w tym miejscu \'Tak\'.';
@@ -279,6 +281,9 @@ $string['down'] = 'Dó³';
 $string['downloadexcel'] = '¦ci±gnij w formacie Excela';
 $string['downloadtext'] = '¦ci±gnij w formacie tekstowym';
 $string['doyouagree'] = 'Czy przeczyta³e¶(a¶) warunki i rozumiesz je?';
+$string['duplicate'] = 'Duplikuj';
+$string['duplicatinga'] = 'Duplikowanie: $a';
+$string['duplicatingain'] = 'Duplikowanie  $a->what w $a->in';
 $string['edit'] = 'Edytuj $a';
 $string['editcoursesettings'] = 'Zmieñ ustawienia kursu';
 $string['editfiles'] = 'Edytuj pliki';
@@ -303,6 +308,10 @@ W wiêkszo¶ci programów istnieje mo¿liwo¶æ przej¶cia pod powy¿szy adres poprzez k
 Pozdrowienia od administratora serwisu \'$a->sitename\', $a->admin .';
 $string['emailconfirmationsubject'] = 'Potwierdzenie dla konta $a';
 $string['emailconfirmsent'] = ' <P>Zosta³ do Ciebie wys³any e-mail pod adres <B>$a</B> <P>Zawiera on prost± instrukcjê jak dokoñczyæ rejestracjê. <P>Je¿eli nadal bêdziesz mieæ k³opoty skontaktuj siê z administratorem serwisu.';
+$string['emaildigest'] = 'Typ emailowego streszczenia';
+$string['emaildigestcomplete'] = 'Zakoñczono (codzienny email ze wszystkimi postami)';
+$string['emaildigestoff'] = 'Bez streszczenia (jeden email na ka¿dy post)';
+$string['emaildigestsubjects'] = 'Tematy (codzienny email tylko z tematami)';
 $string['emaildisable'] = 'Ten email nie jest uaktywniony';
 $string['emaildisplay'] = 'Wy¶wietlanie adresu e-mail';
 $string['emaildisplaycourse'] = 'Tylko inni uczestnicy kursu mog± zobaczyæ mój e-mail';
