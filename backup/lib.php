@@ -2,6 +2,28 @@
     //This file contains all the general function needed (file manipulation...)
     //not directly part of the backup/restore utility
 
+    //Sets a name/value pair in backup_config table
+    function backup_set_config($name, $value) {
+        if (get_field("backup_config", "name", "name", $name)) {
+            return set_field("backup_config", "value", $value, "name", $name);
+        } else {
+            $config->name = $name;
+            $config->value = $value;
+            return insert_record("backup_config", $config);
+        }
+    }
+
+    //Gets all the information from backup_config table
+    function backup_get_config() {
+        $backup_config = null;
+        if ($configs = get_records('backup_config')) {
+            foreach ($configs as $config) {
+                $backup_config[$config->name] = $config->value;
+            }
+        }
+        return $backup_config;
+    }
+
     //Delete old data in backup tables (if exists)
     //Two days seems to be apropiate
     function backup_delete_old_data() {

@@ -1,0 +1,146 @@
+<?php 
+    //Get some strings
+
+    $yes = get_string("yes");
+    $no  = get_string("no");
+    $withuserdata = get_string("withuserdata");
+    $withoutuserdata = get_string("withoutuserdata");
+    $course = get_string("course");
+    $all = get_string("all");
+    $include = get_string("include");
+    $modules = get_string("modules");
+ 
+    //Get backup_config pairs
+    $backup_config =  backup_get_config();
+
+    //Checks backup_config pairs exist
+    if (empty($backup_config->backup_sche_modules)) {
+        $backup_config->backup_sche_modules = 1;
+    }
+    if (empty($backup_config->backup_sche_withuserdata)) {
+        $backup_config->backup_sche_withuserdata = 1;
+    }
+    if (empty($backup_config->backup_sche_users)) {
+        $backup_config->backup_sche_users = 1;
+    }
+    if (empty($backup_config->backup_sche_logs)) {
+        $backup_config->backup_sche_logs = 0;
+    }
+    if (empty($backup_config->backup_sche_userfiles)) {
+        $backup_config->backup_sche_userfiles = 1;
+    }
+    if (empty($backup_config->backup_sche_coursefiles)) {
+        $backup_config->backup_sche_coursefiles = 1;
+    }
+    if (empty($backup_config->backup_sche_weekdays)) {
+        $backup_config->backup_sche_weekdays = "0000000";
+    }
+
+print_object($backup_config);
+
+    //Yes/no array for use in yes/no menu
+    $yesno_array[0] = $no;
+    $yesno_array[1] = $yes;
+
+    //With user data/without user data array for use in menu
+    $withwithout_array[0] = $withoutuserdata;
+    $withwithout_array[1] = $withuserdata;
+
+    //Course/alla array for use in course/all menu
+    $courseall_array[0] = $all;
+    $courseall_array[1] = $course;
+?>
+<form method="post" action="backup.php" name="form">
+
+<table cellpadding=9 cellspacing=0 >
+<tr valign=top>
+    <td colspan = 3 align=center><strong><?php print_string("settings") ?></strong></td>
+</tr>
+<tr valign=top>
+    <td align=right><p><?php print_string("includemodules") ?>:</td>
+    <td nowrap>
+    <?php choose_from_menu($yesno_array, "backup_sche_modules", $backup_config->backup_sche_modules, "") ?>
+    <?php choose_from_menu($withwithout_array, "backup_sche_withuserdata", $backup_config->backup_sche_withuserdata, "") ?>
+    </td>
+    <td>
+    <?php print_string("backupincludemoduleshelp") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><?php print_string("users") ?>:</td>
+    <td>
+    <?php choose_from_menu($courseall_array, "backup_sche_users", $backup_config->backup_sche_users, "") ?>
+    </td>
+    <td>
+    <?php print_string("backupusershelp") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><?php print_string("logs") ?>:</td>
+    <td>
+    <?php choose_from_menu($yesno_array, "backup_sche_logs", $backup_config->backup_sche_logs, "") ?>
+    </td>
+    <td>
+    <?php print_string("backuplogshelp") ?>  
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><?php print_string("userfiles") ?>:</td>
+    <td>
+    <?php choose_from_menu($yesno_array, "backup_sche_userfiles", $backup_config->backup_sche_userfiles, "") ?>
+    </td>
+    <td>
+    <?php print_string("backupuserfileshelp") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td align=right><p><?php print_string("coursefiles") ?>:</td>
+    <td>
+    <?php choose_from_menu($yesno_array, "backup_sche_coursefiles", $backup_config->backup_sche_coursefiles, "") ?>
+    </td>
+    <td>
+    <?php print_string("backupcuoursefileshelp") ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td colspan = 3 align=center><strong><?php print_string("schedule") ?></strong></td>
+</tr>
+<tr>
+    <td colspan=3 align=center>
+        <?php 
+            //Get first day of week from languaje files
+            //after searching the web I haven't find a sytem to retrieve it in php from locale info
+            $firstdayofweek = get_string("firstdayofweek");
+            //If it is empty ot it is different of 1, default to 0
+            if (empty($firstdayofweek) || $firstdayofweek != 1) {
+                $firstdayofweek = 0;
+            }
+            //Now create the timestamp of a well-know sunday (02/25/2001, my 31th birthday !!)
+            $onesunday = make_timestamp(2001,2,25);
+            $i = 0;
+            $day_names = "";
+            $check_names = "";
+            while ($i<7) {
+                $day_names[] = strftime("%A",$onesunday + (($firstdayofweek+$i)*86400));
+                if (substr($backup_config->backup_sche_weekdays,$i,1) == "1") {
+                    $strchecked = " checked";
+                } else {
+                    $strchecked = "";
+                }
+                $check_names[] = "<input type=\"checkbox\" name=\"dayofweek_$i\" value=\"1\"$strchecked>";
+                $i++;
+            }
+            $table->align = array("center","center","center","center","center","center","center");
+            $table->head = $day_names;
+            $table->data[] = $check_names;
+            print_table($table);
+        ?>
+    </td>
+</tr>
+<tr>
+    <td colspan=3 align=center>
+        <input type="submit" value="<?php print_string("savechanges") ?>"></td>
+</tr>
+</table>
+
+</form>
