@@ -100,7 +100,7 @@
 
 /// If currently moving a file then show the current clipboard
     if (ismoving($course->id)) {
-        $stractivityclipboard = get_string("activityclipboard", "", addslashes($USER->activitycopyname));
+        $stractivityclipboard = strip_tags(get_string("activityclipboard", "", addslashes($USER->activitycopyname)));
         $strcancel= get_string("cancel");
         echo "<tr>";
         echo "<td colspan=3 valign=top bgcolor=\"$THEME->cellcontent\" class=\"topicoutlineclip\" width=\"100%\">";
