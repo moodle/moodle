@@ -122,7 +122,6 @@
             //else, everything is done by name (old approach). This mantains backward compatibility.
 
             if ($quiz_cat->stamp) {
-                $restored_by = "(STAMP)";                          //Debug
                 //STAMP exists, do things using it (1.1)
 
                 //Check for categories and their properties, storing in temporary variables
@@ -188,7 +187,6 @@
                     }
                 }
             } else {
-                $restored_by = "(NAME)";                          //Debug
                 //STAMP doesn't exists, do things by name (pre 1.1)
                 //and calculate and insert STAMP too !!
     
@@ -260,7 +258,7 @@
 
             //Do some output
             if ($status) {
-                echo "<ul><li>".get_string("category")." \"".$quiz_cat->name."\"".$restored_by."<br>";
+                echo "<ul><li>".get_string("category")." \"".$quiz_cat->name."\"<br>";
             } else {
                 //We must never arrive here !!
                 echo "<ul><li>".get_string("category")." \"".$quiz_cat->name."\" Error!<br>";
