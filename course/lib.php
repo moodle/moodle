@@ -85,6 +85,10 @@ function print_recent_selector_form($course, $advancedfilter=0, $selecteduser=0,
                 if ($mod->mod == "label") {
                     continue;
                 }  
+                if (!$mod->visible and !$isteacher) {
+                    continue;
+                }
+
                 if ($mod->section > 0 and $section <> $mod->section) {
                     $activities["section/$mod->section"] = "-------------- $strsection $mod->section --------------";
                 }
