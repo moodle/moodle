@@ -1,5 +1,5 @@
-<?  // $Id$
-    // index.php - the front page.
+<?PHP  // $Id$
+       // index.php - the front page.
     
     require("config.php");
     require("course/lib.php");
@@ -33,7 +33,7 @@
 
 <TABLE WIDTH="100%" BORDER="0" CELLSPACING="5" CELLPADDING="5">
   <TR>
-  <? 
+  <?PHP 
      $sections = get_all_sections($site->id);
   
      if ($site->newsitems > 0 or $sections[0]->sequence or isediting($site->id)) {
@@ -133,5 +133,5 @@
   </TR>
 </TABLE>
 
-<? print_footer("home");     // Please do not modify this line ?>
+<?PHP print_footer("home");     // Please do not modify this line ?>
 
