@@ -26,7 +26,7 @@
         $strexample  = get_string("example", "resource");
         $strresources = get_string("modulenameplural", "resource");
 
-        $form->name = s($form->name);   // remove slashes
+        $form->name = stripslashes($form->name);   // remove slashes
 
         print_header("$course->shortname: $strediting", "$course->shortname: $strediting",
                       "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> -> 
