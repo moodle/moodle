@@ -52,7 +52,7 @@
                 add_to_log($course->id, "choice", "choose", "view.php?id=$cm->id", $choice->id, $cm->id);
             }
         }
-        redirect("$CFG->wwwroot/course/view.php?id=$course->id");
+        redirect("view.php?id=$cm->id");
         exit;
     }
 
@@ -88,9 +88,20 @@
         notice(get_string("activityiscurrentlyhidden"));
     }
 
-    print_simple_box( text_to_html($choice->text) , "center");
+    print_simple_box( format_text($choice->text) , "center");
 
-    if (!$current or !$choice->publish) {  // They haven't made their choice yet
+
+    // print the form
+    
+    if ($choice->timeopen > time() ) {
+        print_simple_box(get_string("notopenyet", "choice", userdate($choice->timeopen)), "center");
+        print_footer();
+        exit;
+    }
+
+    if ( (!$current or $choice->allowupdate) and ($choice->timeclose >= time() or $choice->timeclose == 0) ) { 
+    // They haven't made their choice yet or updates allowed and choice is open
+    
         echo "<CENTER><P><FORM name=\"form\" method=\"post\" action=\"view.php\">";
         echo "<TABLE CELLPADDING=20 CELLSPACING=20><TR>";
 
@@ -105,13 +116,21 @@
     
         echo "</TR></TABLE>";
         echo "<INPUT type=hidden name=id value=\"$cm->id\">";
-        if (!isguest()) {
+        if (isstudent($course->id) or isteacher($course->id, 0, false)) {
             echo "<INPUT type=submit value=\"".get_string("savemychoice","choice")."\">";
         }
         echo "</P></FORM></CENTER>";
 
-    } else {  // Print results.
+    }
 
+    
+
+    // print the results
+
+    if (  $choice->release == CHOICE_RELEASE_ALWAYS or
+        ( $choice->release == CHOICE_RELEASE_AFTER_ANSWER and $current ) or
+        ( $choice->release == CHOICE_RELEASE_AFTER_CLOSE and $choice->timeclose <= time() ) )  {
+    
         print_heading(get_string("responses", "choice"));
 
         if ($currentgroup) {

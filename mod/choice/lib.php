@@ -15,10 +15,10 @@ define("CHOICE_RELEASE_ALWAYS",       "3");
 $CHOICE_PUBLISH = array (CHOICE_PUBLISH_ANONYMOUS  => get_string("publishanonymous", "choice"),
                          CHOICE_PUBLISH_NAMES      => get_string("publishnames", "choice"));
 
-$CHOICE_RELEASE = array (CHOICE_RELEASE_NOT          => get_string("releasenot", "choice"),
-                         CHOICE_RELEASE_AFTER_ANSWER => get_string("releaseafteranswer", "choice"),
-                         CHOICE_RELEASE_AFTER_CLOSE  => get_string("releaseafterclose", "choice"),
-                         CHOICE_RELEASE_ALWAYS       => get_string("releasealways", "choice"));
+$CHOICE_RELEASE = array (CHOICE_RELEASE_NOT          => get_string("publishnot", "choice"),
+                         CHOICE_RELEASE_AFTER_ANSWER => get_string("publishafteranswer", "choice"),
+                         CHOICE_RELEASE_AFTER_CLOSE  => get_string("publishafterclose", "choice"),
+                         CHOICE_RELEASE_ALWAYS       => get_string("publishalways", "choice"));
 
 
 /// Standard functions /////////////////////////////////////////////////////////
@@ -52,6 +52,16 @@ function choice_add_instance($choice) {
 
     $choice->timemodified = time();
 
+    if ($choice->timerestrict) {
+        $choice->timeopen = make_timestamp($choice->openyear, $choice->openmonth, $choice->openday,
+                                     $choice->openhour, $choice->openminute, 0);
+        $choice->timeclose = make_timestamp($choice->closeyear, $choice->closemonth, $choice->closeday,
+                                      $choice->closehour, $choice->closeminute, 0);
+    } else {
+        $choice->timeopen = 0;
+        $choice->timeclose = 0;
+    }
+
     return insert_record("choice", $choice);
 }
 
@@ -63,6 +73,19 @@ function choice_update_instance($choice) {
 
     $choice->id = $choice->instance;
     $choice->timemodified = time();
+
+
+    if ($choice->timerestrict) {
+        $choice->timeopen = make_timestamp($choice->openyear, $choice->openmonth, $choice->openday,
+                                     $choice->openhour, $choice->openminute, 0);
+        $choice->timeclose = make_timestamp($choice->closeyear, $choice->closemonth, $choice->closeday,
+                                      $choice->closehour, $choice->closeminute, 0);
+    } else {
+        $choice->timeopen = 0;
+        $choice->timeclose = 0;
+    }
+    
+//    global $db; $db->debug=true;
 
     return update_record("choice", $choice);
 }

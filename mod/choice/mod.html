@@ -26,8 +26,23 @@
     if (empty($form->answer6)) {
         $form->answer6 = "";
     }
+    if (empty($form->timeopen)) {
+        $form->timeopen = "";
+        $form->timerestrict = 0;
+    } else {
+        $form->timerestrict = 1;
+    }
+    if (empty($form->timeclose)) {
+        $form->timeclose = "";
+    }
     if (empty($form->publish)) {
         $form->publish = 0;
+    }
+    if (empty($form->release)) {
+        $form->release = 0;
+    }
+    if (empty($form->allowupdate)) {
+        $form->allowupdate = 0;
     }
     if (empty($form->showunanswered)) {
         $form->showunanswered = 0;
@@ -127,16 +142,113 @@
         <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
     </td>
 </tr>
+
+<tr valign=top>
+    <td align=right><p><b><?php print_string("timerestrict", "choice") ?>:</b></p></td>
+    <td>
+        <script>
+            var timeitems = ['openday','openmonth','openyear','openhour', 'openminute', 'closeday','closemonth','closeyear','closehour','closeminute'];
+        </script>
+
+        <input name="timerestrict" type="checkbox" value="1" onclick="return lockoptions('form','timerestrict', timeitems)" <?php if ($form->timerestrict) echo "checked"; ?> >
+    <?php
+        helpbutton("timerestrict", get_string("timerestrict","choice"), "choice");
+     ?>
+    </td>
+</tr>
+<tr valign=top>
+    <td><p>&nbsp;</p></td>
+    <td>
+
+        <table>
+            <tr>
+                <td align="right"><p><b><?php print_string("choiceopen", "choice") ?>:</b></p></td>
+                <td>
+                
+    <?php
+        if (!$form->timeopen and $course->format == "weeks") {
+            $form->timeopen  = $course->startdate + (($form->section - 1) * 608400);
+        }
+        print_date_selector("openday", "openmonth", "openyear", $form->timeopen);
+        print_time_selector("openhour", "openminute", $form->timeopen);
+     ?>
+     
+                    <input type="hidden" name="hopenday" value="0">
+                    <input type="hidden" name="hopenmonth" value="0">
+                    <input type="hidden" name="hopenyear" value="0">
+                    <input type="hidden" name="hopenhour" value="0">
+                    <input type="hidden" name="hopenminute" value="0">
+                </td>
+            </tr>
+            <tr>
+                <td align=right><p><b><?php print_string("choiceclose", "choice") ?>:</b></p></td>
+                <td>
+                
+    <?php
+        if (!$form->timeclose and $course->format == "weeks") {
+            $form->timeclose  = $course->startdate + (($form->section) * 608400);
+        }
+        print_date_selector("closeday", "closemonth", "closeyear", $form->timeclose);
+        print_time_selector("closehour", "closeminute", $form->timeclose);
+     ?>
+     
+                    <input type="hidden" name="hcloseday" value="0">
+                    <input type="hidden" name="hclosemonth" value="0">
+                    <input type="hidden" name="hcloseyear" value="0">
+                    <input type="hidden" name="hclosehour" value="0">
+                    <input type="hidden" name="hcloseminute" value="0">
+
+    <?php
+        if (! $form->timerestrict) {
+            echo "<script>";
+            echo "lockoptions('form','timerestrict', timeitems);";
+            echo "</script>\n";
+        }
+    ?>
+
+                </td>
+            </tr>
+        </table>
+
+    </td>
+</tr>
+
 <tr valign=top>
     <td align=right><P><B><?php print_string("publish","choice") ?>:</b></p></td>
     <td>
         <?php
-        require("$CFG->dirroot/mod/choice/lib.php");
+        require_once("$CFG->dirroot/mod/choice/lib.php");
+        choose_from_menu($CHOICE_RELEASE, "release", "$form->release", "");
+        ?>
+        <br />
+    </td>
+</tr>
+
+<tr valign=top>
+    <td align=right><P><B><?php print_string("privacy","choice") ?>:</b></p></td>
+    <td>
+        <?php
+        require_once("$CFG->dirroot/mod/choice/lib.php");
         choose_from_menu($CHOICE_PUBLISH, "publish", "$form->publish", "");
         ?>
         <br />
     </td>
 </tr>
+
+
+<tr valign=top>
+    <td align=right><P><B><?php print_string("allowupdate","choice") ?>:</b></p></td>
+    <td>
+        <?php
+        $options[0] = get_string("no");
+        $options[1] = get_string("yes");
+        choose_from_menu($options, "allowupdate", "$form->allowupdate", "");
+        ?>
+        <br />
+    </td>
+</tr>
+
+
 <tr valign=top>
     <td align=right><P><B><?php print_string("showunanswered","choice") ?>:</b></p></td>
     <td>
