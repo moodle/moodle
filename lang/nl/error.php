@@ -5,6 +5,7 @@
 $string['coursegroupunknown'] = 'Het vak dat met groep $a overeenkomt is niet gespecifieerd';
 $string['erroronline'] = 'Fout op lijn $a';
 $string['fieldrequired'] = '\"$a\" is een vereist veld';
+$string['groupalready'] = 'Deze gebruiker behoort al tot groep $a';
 $string['groupunknown'] = 'Groep $a is niet geassocieerd met de gespecifieerde groep';
 $string['invalidfieldname'] = '\"$a\" is geen geldige veldnaam';
 $string['missingfield'] = 'Veld \"$a\" ontbreekt';
