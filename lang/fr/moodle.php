@@ -114,7 +114,7 @@ $string['configgdversion'] = "Indiquer la version de la librairie GD qui est ins
 $string['confightmleditor'] = "Choisir d'autoriser ou non l'utilisation de l'éditeur HTML intégré. Cependant, même s'il est activé, il n'apparaît que si l'utilisateur utilise un navigateur compatible Internet Explorer 5.5 ou plus. Chaque utilisateur peut également choisir de ne pas l'activer.";
 $string['configidnumber'] = "Cette option précise si (a) les utilisateurs doivent indiquer un numéro d'identification non vide ; (b) les utilisateurs doivent indiquer un numéro d'identification qui peut être vide ; (c) les utilisateurs n'ont pas besoin d'indiquer de numéro d'identification. Le cas échéant, le numéro d'identification est affiché dans le profil de l'utilisateur.";
 $string['configintro'] = "Cette page permet de configurer un certain nombre de variables de configuration permettront à Moodle de fonctionner correctement sur ce serveur. Inutile de trop s'en inquiéter, les paramètres par défaut devraient, la plupart du temps, convenir et il est toujours possible de revenir plus tard sur cette page pour les modifier.";
-$string['configintroadmin'] = "Cette page permet de configurer votre compte administrateur principal qui aura le contrôle total du site. Assurez-vous de lui donner un nom et un mot de passe sûrs, ainsi qu'une adresse e-mail valable. Vous pourrez créer plus tard d'autres comptes administrateur.";
+$string['configintroadmin'] = "Cette page permet de configurer votre compte administrateur principal qui aura le contrôle total du site. Assurez-vous de lui donner un nom et un mot de passe sûrs, ainsi qu'une adresse de courriel valable. Vous pourrez créer plus tard d'autres comptes administrateur.";
 $string['configintrosite'] = "Cette page permet de configurer la page d'accueil et le nom de votre site. Vous pourrez modifier ces paramètres en tout temps en utilisant le lien « Configuration du site » sur la page d'accueil.";
 $string['configlang'] = "Choisir une langue par défaut pour l'ensemble du site. Les utilisateurs ont la possibilité d'en choisir une autre plus tard.";
 $string['configlangdir'] = "La plupart des langues sont écrites de gauche à droite excepté certaines, comme l'Arabe ou l'Hébreu, qui le sont de droite à gauche";
@@ -128,7 +128,7 @@ $string['configproxyhost'] = "Si le serveur qui héberge le site Moodle a besoin 
 $string['configsecureforms'] = "Moodle peut utiliser un niveau additionnel de sécurité pour la gestion des formulaires web. Si cette option est activée, la variable HTTP_REFERRER du navigateur est comparée à l'adresse du formulaire. Cela peut poser des problèmes lors de l'utilisation d'un firewall (p. ex. Zonealarm) configuré pour ôter HTTP_REFERRER de leur traffic web. Le symptôme est alors le « gel » du formulaire. Si vos utilisateurs ont des problèmes de connexion, par exemple sur la page de login, désactiver cette option. Dans le doute, réglez cette option sur « Oui ».";
 $string['configsessiontimeout'] = "Les utilisateurs connectés seront automatiquement déconnectés (leur session sera terminée) après le laps de temps d'inactivités spécifié dans ce champ.";
 $string['configslasharguments'] = "Les fichiers (images, fichiers téléchargés, etc.) sont transmis via un script qui utilise les « slash arguments ». Cette méthode permet à ces fichiers d'être plus facilement pris en compte par le système  de cache des navigateurs Web, proxy, etc. Cependant certains serveurs PHP n'autorisent pas cette méthode. Par conséquent il est nécessaire d'utiliser la première valeur de ce paramètre si des problèmes d'affichage des fichiers ou images téléchargés sont rencontrés.";
-$string['configsmtphosts'] = "Indiquer le nom complet d'un ou plusieurs serveurs SMTP locaux que Moodle devra utiliser pour envoyer des messages par e-mail (par exemple, « mail.a.com » ou « mail.a.com;mail.b.com »). Si ce paramètre est laissé vide, Moodle utilisera la méthode par défaut de PHP pour envoyer des messages par e-mail.";
+$string['configsmtphosts'] = "Indiquer le nom complet d'un ou plusieurs serveurs SMTP locaux que Moodle devra utiliser pour envoyer des courriels (par exemple, « mail.a.com » ou « mail.a.com;mail.b.com »). Si ce paramètre est laissé vide, Moodle utilisera la méthode par défaut de PHP pour envoyer des courriels.";
 $string['configsmtpuser'] = "Si vous avez indiqué un nom de serveur SMTP ci-dessus et qu'il requiert une authentification, entrez ici le nom d'utilisateur et le mot de passe à utiliser.";
 $string['configteacherassignteachers'] = "Les enseignants peuvent-ils choisir d'autres enseignants pour les cours qu'ils donnent ? Si 'Non', seules les responsables de cours et les administrateurs peuvent choisir les enseignants.";
 $string['configunzip'] = "Indiquer le chemin complet du programme « unzip » (seulement pour Unix). Ce programme est requis pour décompresser des archives zip sur le serveur.";
@@ -227,11 +227,11 @@ $string['editsummary'] = "Modifier le résumé";
 $string['editthisactivity'] = "Modifier cette activité";
 $string['editthiscategory'] = "Modifier cette discipline";
 $string['edituser'] = "Modifier les comptes des utilisateurs";
-$string['email'] = "Adresse e-mail";
+$string['email'] = "Adresse de courriel";
 $string['emailconfirm'] = "Confirmer votre enregistrement";
 $string['emailconfirmation'] = "\$a->firstname,
 
-La création d'un compte sur le site « \$a->sitename » a été demandée en utilisant votre adresse e-mail.
+La création d'un compte sur le site « \$a->sitename » a été demandée en utilisant votre adresse de courriel.
 
 Pour confirmer votre enregistrement, merci de visiter l'adresse suivante :
 
@@ -246,21 +246,21 @@ Cordialement,
 \$a->admin
 Administrateur du site « \$a->sitename »";
 $string['emailconfirmationsubject'] = "\$a: confirmation de l'ouverture du compte";
-$string['emailconfirmsent'] = "<p>Un message vous a été envoyé à l'adresse e-mail <b>\$a</b>.
+$string['emailconfirmsent'] = "<p>Un message vous a été envoyé à l'adresse de courriel <b>\$a</b>.
 <p>Il contient les instructions pour terminer votre enregistrement.
 <p>Si vous rencontrez des difficultés, contactez l'administrateur du site.";
-$string['emaildisplay'] = "Affichage de l'adresse e-mail";
-$string['emaildisplaycourse'] = "Seuls les membres du cours sont autorisés à voir mon adresse e-mail";
-$string['emaildisplayno'] = "Cacher mon adresse e-mail à tous";
-$string['emaildisplayyes'] = "Autoriser tout le monde à voir mon adresse e-mail";
+$string['emaildisplay'] = "Affichage de l'adresse de courriel";
+$string['emaildisplaycourse'] = "Seuls les membres du cours sont autorisés à voir mon adresse de courriel";
+$string['emaildisplayno'] = "Cacher mon adresse de courriel à tous";
+$string['emaildisplayyes'] = "Autoriser tout le monde à voir mon adresse de courriel";
 $string['emailexists'] = "Cette adresse est déjà enregistrée.";
-$string['emailformat'] = "Format des messages par e-mail";
-$string['emailmustbereal'] = "Remarque: votre adresse e-mail doit être valide";
+$string['emailformat'] = "Format des courriels";
+$string['emailmustbereal'] = "Remarque: votre adresse de courriel doit être valide";
 $string['emailpasswordconfirmation'] = "Bonjour,
 
 Quelqu'un (vous probablement) a demandé un nouveau mot de passe pour votre compte sur « \$a->sitename ».
 
-Pour confirmer cette demainde et recevoir votre nouveau message par e-mail, visitez l'adresse suivante :
+Pour confirmer cette demande et recevoir votre nouveau mot de passe par courriel, visitez l'adresse suivante :
 
 \$a->link
 
@@ -273,7 +273,7 @@ Cordialement,
 \$a->admin
 Administrateur du site « \$a->sitename »";
 $string['emailpasswordconfirmationsubject'] = "\$a: confirmation du changement de mot de passe";
-$string['emailpasswordconfirmsent'] = "Un message a été envoyé à votre adresse e-mail<b>\$a</b>.
+$string['emailpasswordconfirmsent'] = "Un message a été envoyé à votre adresse de courriel<b>\$a</b>.
 <p>Ce message décrit la marche à suivre pour confirmer et terminer le changement de mot de passe.
 En cas de difficulté, veuillez contacter l'administrateur du site.";
 $string['emailpasswordsent'] = "Merci pour votre confirmation.
@@ -285,10 +285,10 @@ $string['enrolmentkeyfrom'] = "Ce cours nécessite une clef d'inscription, un mot
 $string['enrolmentkeyhint'] = "Cette clef d'inscription est incorrecte, merci d'essayer de nouveau<br />
 (La clef commence par « \$a ».)";
 $string['entercourse'] = "Cliquer pour entrer dans le cours";
-$string['enteremailaddress'] = "Entrez votre adresse e-mail afin qu'un nouveau mot de passe vous soit envoyé par e-mail";
+$string['enteremailaddress'] = "Entrez votre adresse de courriel afin qu'un nouveau mot de passe vous soit envoyé par courriel";
 $string['error'] = "Erreur";
 $string['errortoomanylogins'] = "Désolé, le nombre maximum de tentatives a été atteint. Veuillez redémarrer votre navigateur Web.";
-$string['errorwhenconfirming'] = "Votre inscription n'a pas pu être confirmée en raison d'une erreur. Si vous avez cliqué sur un lien dans un message e-mail pour parvenir à cette page, assurez-vous que la ligne de ce message n'a pas été coupée. Il vous sera peut-être nécessaire de couper et coller pour reconstruire correctement le lien.";
+$string['errorwhenconfirming'] = "Votre inscription n'a pas pu être confirmée en raison d'une erreur. Si vous avez cliqué sur un lien dans un courriel pour parvenir à cette page, assurez-vous que la ligne de ce message n'a pas été coupée. Il vous sera peut-être nécessaire de couper et coller pour reconstruire correctement le lien.";
 $string['existing'] = "Existant";
 $string['existingadmins'] = "Administrateurs existants";
 $string['existingcourse'] = "Cours existant";
@@ -389,7 +389,7 @@ $string['included'] = "Inclus";
 $string['includelogentries'] = "Inclure les journaux d'événements";
 $string['includeneededusers'] = "Inclure les utilisateurs s'il y a lieu";
 $string['includeuserfiles'] = "Inclure les fichiers des utilisateurs";
-$string['invalidemail'] = "Adresse e-mail incorrecte";
+$string['invalidemail'] = "Adresse de courriel incorrecte";
 $string['invalidlogin'] = "Login incorrect, merci d'essayer de nouveau";
 $string['jumpto'] = "Aller à...";
 $string['langltr'] = "La langue est écrite de gauche à droite";
@@ -423,7 +423,7 @@ Voici les étapes à suivre :
 
    <OL size=2>
    <LI>Remplir le formulaire <A HREF=\$a>nouveau compte</A>.
-   <LI>Un message vous sera immédiatement adressé par e-mail.
+   <LI>Un message vous sera immédiatement adressé par courriel.
    <LI>Récupérer ce message et cliquer sur le lien Web qu'il contient.
    <LI>Votre inscription sera alors confirmée et vous serez identifié.
    <LI>Vous pourrez ensuite choisir le cours auquel vous souhaitez vous inscrire.
@@ -456,7 +456,7 @@ $string['missingcategory'] = "Vous devez choisir une catégorie";
 $string['missingcity'] = "La ville ne peut pas &#65533;tre vide";
 $string['missingcountry'] = "Le pays ne peut pas &#65533;tre vide";
 $string['missingdescription'] = "La description ne peut pas &#65533;tre vide";
-$string['missingemail'] = "L'adresse e-mail ne peut pas &#65533;tre vide";
+$string['missingemail'] = "L'adresse de courriel ne peut pas &#65533;tre vide";
 $string['missingfirstname'] = "Le prénom ne peut pas &#65533;tre vide";
 $string['missingfullname'] = "Le nom complet ne peut pas &#65533;tre vide";
 $string['missinglastname'] = "Le nom ne peut pas &#65533;tre vide";
@@ -549,7 +549,7 @@ $string['nopotentialstudents'] = "Aucun étudiant potentiel";
 $string['nopotentialteachers'] = "Aucun enseignant potentiel";
 $string['normal'] = "Normale";
 $string['nostudentsyet'] = "Pas encore d'étudiant inscrit à ce cours";
-$string['nosuchemail'] = "Adresse e-mail inconnue";
+$string['nosuchemail'] = "Adresse de courriel inconnue";
 $string['notavailable'] = "Non disponible";
 $string['noteachersyet'] = "Pas encore de professeur dans ce cours";
 $string['notenrolled'] = "\$a n'est pas inscrit à ce cours.";
@@ -607,12 +607,12 @@ $string['readinginfofrombackup'] = "Lecture des informations du backup";
 $string['readme'] = "LISEZMOI";
 $string['recentactivity'] = "Activité récente";
 $string['registration'] = "Enregistrement de Moodle";
-$string['registrationemail'] = "Notifications par e-mail";
-$string['registrationinfo'] = "<p>Cette page vous permet d'enregistrer votre site Moodle sur moodle.org. L'enregistrement est gratuit. Le principal avantage de l'enregistrement est l'inscription à une liste e-mail utilisée pour d'importantes informations telles que des alertes de sécurité et des mises à jour de Moodle.</p>
+$string['registrationemail'] = "Notifications par courriel";
+$string['registrationinfo'] = "<p>Cette page vous permet d'enregistrer votre site Moodle sur moodle.org. L'enregistrement est gratuit. Le principal avantage de l'enregistrement est l'inscription à une liste de distribution courriel utilisée pour d'importantes informations telles que des alertes de sécurité et des mises à jour de Moodle.</p>
 <p>Vos données seront conservées confidentiellement, et ne seront jamais vendues ou divulguées à quiconque. Ces informations ne sont recueillies que pour l'assistance techniques et à des fins de statistique au sujet de la communauté Moodle.</p>
 <p>Si vous le désirez, le nom de votre site, votre pays et URL peuvent être ajoutés à la liste publique des sites Moodle.</p>
 <p>Les nouveaux enregistrements sont vérifiés manuellement avant d'être ajoutés à la liste. Toutefois, une fois dans cette liste, vous pouvez modifier votre enregistrement en tout temps en remplissant et validant à nouveau ce formulaire.</p>";
-$string['registrationno'] = "Non, je ne désire pas recevoir de messages par e-mail";
+$string['registrationno'] = "Non, je ne désire pas recevoir de courriels";
 $string['registrationsend'] = "Envoyer les informations d'enregistrement à moodle.org";
 $string['registrationyes'] = "Oui, envoyez-moi les informations importantes";
 $string['removeadmin'] = "Supprimer cet administrateur";
@@ -655,7 +655,7 @@ $string['sections'] = "Sections";
 $string['select'] = "Choisir";
 $string['selectacountry'] = "Choisir un pays";
 $string['selectednowmove'] = "\$a fichiers sélectionné pour déplacement. Allez maintenant vers la destination désirée et cliquez sur « Déplacer les fichiers ici »";
-$string['senddetails'] = "Envoyer mes informations par e-mail";
+$string['senddetails'] = "Envoyer mes informations par courriel";
 $string['serverlocaltime'] = "Heure locale du serveur";
 $string['settings'] = "Paramètres";
 $string['shortname'] = "Nom abrégé";

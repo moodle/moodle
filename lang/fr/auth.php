@@ -14,8 +14,8 @@ $string['auth_dbtable'] = "Nom de la table dans la base de données";
 $string['auth_dbtitle'] = "Utiliser une base de données externe";
 $string['auth_dbtype'] = "Type de la base de données (Pour plus d'information, voir la <a href=../lib/adodb/readme.htm#drivers>documentation de ADOdb</a>)";
 $string['auth_dbuser'] = "Compte avec accès en lecture à la base de données";
-$string['auth_emaildescription'] = "La confirmation par e-mail est la méthode d'authentification par défaut. Lorsqu'un utilisateur s'enregistre en choisissant ses nom d'utilisateur et mot de passe, un message de confirmation est envoyé à son adresse e-mail. Ce message contient un lien sécurisé vers une page Web où il peut confirmer son inscription. Les connexions suivantes ne vérifient que les nom d'utilisateur et mot de passe précédemment enregistrés dans la base de données de Moodle.";
-$string['auth_emailtitle'] = "Authentification par e-mail";
+$string['auth_emaildescription'] = "La confirmation par courriel est la méthode d'authentification par défaut. Lorsqu'un utilisateur s'enregistre en choisissant ses nom d'utilisateur et mot de passe, un message de confirmation est envoyé à son adresse de courriel. Ce message contient un lien sécurisé vers une page Web où il peut confirmer son inscription. Les connexions suivantes ne vérifient que les nom d'utilisateur et mot de passe précédemment enregistrés dans la base de données de Moodle.";
+$string['auth_emailtitle'] = "Authentification par courriel";
 $string['auth_imapdescription'] = "Cette méthode utilise un serveur IMAP pour vérifier qu'un nom d'utilisateur et son mot de passe sont valides.";
 $string['auth_imaphost'] = "Adresse du serveur IMAP. Utiliser l'adresse IP et non le nom de la machine.";
 $string['auth_imapport'] = "Numéro de port du serveur IMAP. Il s'agit généralement de 143 ou 993.";
@@ -24,7 +24,7 @@ $string['auth_imaptype'] = "Type de serveur IMAP. Les serveurs IMAP peuvent avoi
 $string['auth_ldap_bind_dn'] = "Si vous souhaitez utiliser une connexion authentifiée au serveur LDAP pour chercher les utilisateurs, indiquez ici son nom de connexion. Quelque chose comme : « cn=ldapuser, o=Organisation, c=FR ».";
 $string['auth_ldap_bind_pw'] = "Mot de passe pour cette connexion";
 $string['auth_ldap_contexts'] = "Liste des noeuds de l'annuaire LDAP, séparés par « ; », où les enregistrements des utilisateurs sont situés. Par exemple : « ou=Étudiants, o=Organisation, c=FR; ou=Professeurs, o=Organisation, c=FR ».";
-$string['auth_ldap_create_context'] = "Lors de l'utilisation de la création d'utilisateurs avec confirmation par e-mail, indiquer ici le noeud où créer les utilisateurs. Pour des raisons de sécurité, ce noeud ne doit pas être le même que celui des autres utilisateurs. Il n'est pas nécessaire d'ajouter ce noeud à la variable ldap_context. Moodle cherchera automatiquement les utilisateurs dans ce noeud.";
+$string['auth_ldap_create_context'] = "Lors de l'utilisation de la création d'utilisateurs avec confirmation par courriel, indiquer ici le noeud où créer les utilisateurs. Pour des raisons de sécurité, ce noeud ne doit pas être le même que celui des autres utilisateurs. Il n'est pas nécessaire d'ajouter ce noeud à la variable ldap_context. Moodle cherchera automatiquement les utilisateurs dans ce noeud.";
 $string['auth_ldap_creators'] = "Liste des groupes dont les membres ont le droit de créer des cours. Les groupes (en général, de la forme « cn=teachers,ou=staff,o=myorg ») sont séparés par des « ; ».";
 $string['auth_ldap_host_url'] = "Indiquer le serveur LDAP sous form d'URL comme ceci :<br>« ldap://ldap.organisation.fr/ »<br>ou :<br>« ldaps://ldap.organisation.fr/ »";
 $string['auth_ldap_memberattribute'] = "Indiquer l'attribut d'appartenance à un groupe. D'habitude cet attribut est « member ».";
@@ -40,7 +40,7 @@ $string['auth_nntpdescription'] = "Cette méthode utilise un serveur NNTP pour vé
 $string['auth_nntphost'] = "L'adresse du serveur NNTP. Utiliser l'adresse IP et non le nom de la machine.";
 $string['auth_nntpport'] = "Numéro de port du serveur NNTP. Il s'agit généralement de 119.";
 $string['auth_nntptitle'] = "Utiliser un serveur NNTP";
-$string['auth_nonedescription'] = "Les utilisateurs peuvent s'enregistrer et créer des comptes valides immédiatement sans aucune authentification ni confirmation par e-mail. Attention ! Lors de l'utilisation de cette méthode, bien penser à toutes les implications (problèmes d'administration et sécurité).";
+$string['auth_nonedescription'] = "Les utilisateurs peuvent s'enregistrer et créer des comptes valides immédiatement sans aucune authentification ni confirmation par courriel. Attention ! Lors de l'utilisation de cette méthode, bien penser à toutes les implications (problèmes d'administration et sécurité).";
 $string['auth_nonetitle'] = "Pas d'authentification";
 $string['auth_pop3description'] = "Cette méthode utilise un serveur POP3 pour vérifier qu'un nom d'utilisateur et son mot de passe sont valides.";
 $string['auth_pop3host'] = "L'adresse du serveur POP3. Utiliser l'adresse IP et non le nom de la machine.";
@@ -48,7 +48,7 @@ $string['auth_pop3port'] = "Numéro de port du serveur POP3. Il s'agit habituelle
 $string['auth_pop3title'] = "Utiliser un serveur POP3";
 $string['auth_pop3type'] = "Type de serveur. Si le serveur POP3 utilise « certificate security », choisir « pop3cert ».";
 $string['auth_user_create'] = "Activer la création des utilisateurs";
-$string['auth_user_creation'] = "Les nouveaux utilisateurs (anonymes) peuvent créer des comptes sur la source d'authentification externe, avec confirmation par e-mail. Ne pas oublier de configurer les éventuelles options dans les différents modules lors de l'activation de cette possibilité.";
+$string['auth_user_creation'] = "Les nouveaux utilisateurs (anonymes) peuvent créer des comptes sur la source d'authentification externe, avec confirmation par courriel. Ne pas oublier de configurer les éventuelles options dans les différents modules lors de l'activation de cette possibilité.";
 $string['auth_usernameexists'] = "Ce nom d'utilisateur existe déjà. Veuillez en choisir un autre.";
 $string['authenticationoptions'] = "Options d'authentification";
 $string['authinstructions'] = "Il vous est possible de fournir ici des instructions à vos utilisateurs afin qu'ils sachent quels nom d'utilisateur et mot de passe utiliser. Ce texte apparaîtra sur la page de connexion. Si vous laissez cette zone vide, aucune instruction ne sera affichée.";
