@@ -26,7 +26,7 @@
                  "<META NAME=\"Description\" CONTENT=\"".stripslashes(strip_tags($site->summary))."\">",
                  true, "", $headerbutton);
 
-    $side = 165;
+    $side = 175;
 
 ?>
 

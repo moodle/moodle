@@ -21,10 +21,10 @@ function print_header ($title="", $heading="", $navigation="", $focus="", $meta=
 // $menu - HTML code for a popup menu 
     global $USER, $CFG, $THEME;
 
-    if (file_exists("$CFG->dirroot/theme/$CFG->theme/styles.css")) {
-        $styles = "$CFG->wwwroot/theme/$CFG->theme/styles.css";
+    if (file_exists($CFG->stylesheet)) {
+        $styles = $CFG->stylesheet;
     } else {
-        $styles = "$CFG->wwwroot/theme/standard/styles.css";
+        $styles = "$CFG->wwwroot/theme/standard/styles.php";
     }
 
     if ($navigation == "home") {
@@ -299,12 +299,12 @@ function print_table($table) {
 
     print_simple_box_start("CENTER", "$table->width", "#FFFFFF", 0);
     echo "<TABLE WIDTH=100% BORDER=0 valign=top align=center ";
-    echo " cellpadding=\"$table->cellpadding\" cellspacing=\"$table->cellspacing\">\n";
+    echo " cellpadding=\"$table->cellpadding\" cellspacing=\"$table->cellspacing\" class=\"generaltable\">\n";
 
     if ($table->head) {
         echo "<TR>";
         foreach ($table->head as $key => $heading) {
-            echo "<TH VALIGN=top ".$align[$key].$size[$key]." NOWRAP>$heading</TH>";
+            echo "<TH VALIGN=top ".$align[$key].$size[$key]." NOWRAP class=\"generaltableheader\">$heading</TH>";
         }
         echo "</TR>\n";
     }
@@ -312,7 +312,7 @@ function print_table($table) {
     foreach ($table->data as $row) {
         echo "<TR VALIGN=TOP>";
         foreach ($row as $key => $item) {
-            echo "<TD ".$align[$key].$size[$key].">$item</TD>";
+            echo "<TD ".$align[$key].$size[$key]." class=\"generaltablecell\">$item</TD>";
         }
         echo "</TR>\n";
     }

@@ -634,7 +634,6 @@ function print_admin_links ($siteid, $width=180) {
 function print_course_admin_links($course, $width=180) {
     global $THEME, $CFG;
 
-    echo "<BR>";
     $adminicon[]="<IMG SRC=\"$CFG->wwwroot/pix/i/edit.gif\" HEIGHT=16 WIDTH=16 ALT=\"\">";
     if (isediting($course->id)) {
         $admindata[]="<A HREF=\"view.php?id=$course->id&edit=off\">".get_string("turneditingoff")."</A>";

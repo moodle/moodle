@@ -209,7 +209,7 @@
             forum_print_latest_discussions($news->id, $course->newsitems, "minimal", "DESC", false);
             echo "</FONT>";
             print_simple_box_end();
-            echo "<BR>";
+            echo "<BR \>";
         }
         
         // Print all the recent activity
@@ -220,7 +220,7 @@
             print_simple_box_end();
         }
     
-        echo "<BR><IMG SRC=\"../pix/spacer.gif\" WIDTH=210 HEIGHT=1>";
+        echo "<BR \><IMG SRC=\"../pix/spacer.gif\" WIDTH=210 HEIGHT=1>";
     }
 
     echo "</TD></TR></TABLE>\n";

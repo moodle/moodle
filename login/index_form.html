@@ -3,16 +3,16 @@
 <TABLE WIDTH="90%" BORDER="0" CELLSPACING="10" CELLPADDING="5" ALIGN="CENTER">
   <TR>
     <? if ($show_instructions) { ?>
-        <TD WIDTH="50%" bgcolor=<?=$THEME->cellheading2?>>
+        <TD WIDTH="50%" bgcolor=<?=$THEME->cellheading2?> class="generaltableheader">
           <P ALIGN="CENTER"><B><FONT SIZE=3><? print_string("returningtosite") ?></FONT></B></P>
         </TD>
-        <TD WIDTH="50%" bgcolor=<?=$THEME->cellheading2?>>
+        <TD WIDTH="50%" bgcolor=<?=$THEME->cellheading2?> class="generaltableheader">
           <P ALIGN="CENTER"><B><FONT SIZE=3><? print_string("firsttime") ?></FONT></B></P>
         </TD>
     <? } ?>
   </TR>
   <TR>
-    <TD WIDTH="50%" VALIGN="TOP" bgcolor="<?=$THEME->cellheading?>"> <FONT SIZE=2> 
+    <TD WIDTH="50%" VALIGN="TOP" bgcolor="<?=$THEME->cellcontent2?>"> <FONT SIZE=2> 
       <P ALIGN="CENTER"><? print_string("loginusing") ?>:<BR>
       (<? print_string("cookiesenabled") ?>)<BR>
 	  <? formerr($errormsg) ?>
@@ -74,7 +74,7 @@
         </BLOCKQUOTE>
       </FONT> </TD>
     <? if ($show_instructions) { ?>
-        <TD WIDTH="50%" VALIGN="TOP" bgcolor="<?=$THEME->cellheading?>">
+        <TD WIDTH="50%" VALIGN="TOP" bgcolor="<?=$THEME->cellcontent2?>">
           <FONT SIZE=2>
           <? switch ($CFG->auth) {
                case "email":             ?>
