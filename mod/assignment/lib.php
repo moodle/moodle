@@ -550,14 +550,14 @@ function assignment_print_upload_form($assignment) {
     echo "</DIV>";
 }
 
-function assignment_get_recent_assignments($sincetime, $assignment="0", $user="") {
-// Returns all submitted assignments since a given time.  If assignment is specified then
+function assignment_get_recent_mod_activity(&$activities, &$index, $sincetime, $courseid, $assignment="0", $user="", $groupid="") {
+// Returns all assignments since a given time.  If assignment is specified then
 // this restricts the results
 
     global $CFG;
 
     if ($assignment) {
-        $assignmentselect = " AND asub.assignment = '$assignment'";
+        $assignmentselect = " AND cm.id = '$assignment'";
     } else {
         $assignmentselect = "";
     }
@@ -566,60 +566,117 @@ function assignment_get_recent_assignments($sincetime, $assignment="0", $user=""
     } else {
         $userselect = "";
     }
+    if ($groupid) {
+        $groupselect = " ";
+    } else {
+        $groupselect = "";
+    }
 
-    return get_records_sql("SELECT asub.*, u.firstname, u.lastname, u.picture, a.grade as maxgrade
-                              FROM {$CFG->prefix}assignment_submissions asub,
-                                   {$CFG->prefix}user u,
-                                   {$CFG->prefix}assignment a
-                             WHERE asub.timemodified > '$sincetime'
-                               AND asub.userid = u.id $userselect 
-                               AND a.id = asub.assignment $assignmentselect
-                             ORDER BY asub.timemodified ASC");
+    $assignments = get_records_sql("SELECT asub.*, u.firstname, u.lastname, u.picture, u.id as userid,
+                                           a.grade as maxgrade, name, cm.instance
+                                  FROM {$CFG->prefix}assignment_submissions asub,
+                                       {$CFG->prefix}user u,
+                                       {$CFG->prefix}assignment a,
+                                       {$CFG->prefix}course_modules cm
+                                 WHERE asub.timemodified > '$sincetime'
+                                   AND asub.userid = u.id $userselect
+                                   AND a.id = asub.assignment $assignmentselect
+                                   AND cm.course = '$courseid'
+                                   AND cm.instance = a.id
+                                 ORDER BY asub.timemodified ASC");
+
+  if (empty($assignments))
+    return;
+
+  foreach ($assignments as $assignment) {
+    $tmpactivity->type = "assignment";
+    $tmpactivity->defaultindex = $index;
+    $tmpactivity->instance = $assignment->instance;
+    $tmpactivity->name = $assignment->name;
+
+    $tmpactivity->content->grade = $assignment->grade;
+    $tmpactivity->content->maxgrade = $assignment->maxgrade;
+
+    $tmpactivity->user->userid = $assignment->userid;
+    $tmpactivity->user->fullname = fullname($assignment);
+    $tmpactivity->user->picture = $assignment->picture;
+
+    $tmpactivity->timestamp = $assignment->timemodified;
+
+    $activities[] = $tmpactivity;
+
+    $index++;
+  }
+
+  return;
 }
 
-
-function assignment_print_recent_instance_activity($assignment, $timestart, $user="") {
-
+function assignment_print_recent_mod_activity($activity, $course, $detail=false) {
     global $CFG, $THEME;
 
-    if (!$assignments = assignment_get_recent_assignments($timestart, $assignment->id, $user)) {
-        return false;
+    echo '<table border="0" cellpadding="3" cellspacing="0">';
+
+    echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"forumpostpicture\" width=\"35\" valign=\"top\">";
+    print_user_picture($activity->user->userid, $course, $activity->user->picture);
+    echo "</td><td width=\"100%\"><font size=2>";
+
+
+    if ($detail) {
+        echo "<img src=\"$CFG->modpixpath/$activity->type/icon.gif\" ".
+             "height=16 width=16 alt=\"$activity->type\">  ";
+        echo "<a href=\"$CFG->wwwroot/mod/assignment/view.php?id=" . $activity->instance . "\">"
+             . $activity->name . "</a> - ";
+
     }
 
-    foreach ($assignments as $anassignment) {
-        echo '<table border="0" cellpadding="3" cellspacing="0" class="sideblock">';
-        echo "<tr><td bgcolor=\"$THEME->cellcontent2\" class=\"\" width=\"35\" valign=\"top\">";
-        print_user_picture($anassignment->userid, $anassignment->course, $assignment->picture);
-        echo "</td>";
+    if (isteacher($USER)) {
+        $grades = "(" .  $activity->content->grade . " / " . $activity->content->maxgrade . ") ";
 
-        echo "<td nowrap bgcolor=\"$THEME->cellheading\" class=\"\" width=\"100%\">";
+        $assignment->id = $activity->instance;
+        $assignment->course = $course;
+        $user->id = $activity->user->userid;
 
-        echo "<p>";
-        echo "<font size=2>";
+        $file = assignment_get_user_file($assignment, $user);
 
-
-        $fullname = fullname($anassignment);
-        echo "<a href=\"$CFG->wwwroot/user/view.php?id=$anassignment->userid&course=$assignment->course\">$fullname</a>";
-
-        if (isteacher($USER)) {
-            $grade = "$anassignment->grade / $anassignment->maxgrade";
-            echo " (<a href=\"$CFG->wwwroot/mod/quiz/submissions.php?id=$anassignment->assignment\">$grade</a>)";
-
-            // setup temporary objects to use in assignment_print_user_files
-            $tmpassignment->course = $assignment->course;
-            $tmpassignment->id = $anassignment->assignment;
-            $tmpuser->id = $anassignment->userid;
-
-            echo " - ";
-
-            assignment_print_user_files($tmpassignment, $tmpuser);
-
-        }
-
-        echo "<br>";
-        echo userdate($anassignment->timemodified);
-
-        echo "</font></p></td></tr></table>";
+        echo "<IMG SRC=\"$CFG->wwwroot/files/pix/$file->icon\" HEIGHT=16 WIDTH=16 BORDER=0 ALT=\"File\">";
+        echo "&nbsp;<A TARGET=\"uploadedfile\" HREF=\"$CFG->wwwroot/$file->url\">$file->name</A>";
+        echo "<BR>";
     }
+    echo "<a href=\"$CFG->wwwroot/user/view.php?id="
+         . $activity->user->userid . "&course=$course\">"
+         . $activity->user->fullname . "</a> ";
+
+    echo " - " . userdate($activity->timestamp);
+
+    echo "</font></td></tr>";
+    echo "</table>";
+
+    return;
 }
+
+function assignment_get_user_file($assignment, $user) {
+    global $CFG;
+
+    $tmpfile = "";
+
+    $filearea = assignment_file_area_name($assignment, $user);
+
+    if ($basedir = assignment_file_area($assignment, $user)) {
+        if ($files = get_directory_list($basedir)) {
+            foreach ($files as $file) {
+                $icon = mimeinfo("icon", $file);
+                if ($CFG->slasharguments) {
+                    $ffurl = "file.php/$filearea/$file";
+                } else {
+                    $ffurl = "file.php?file=/$filearea/$file";
+                }
+                $tmpfile->url  = $ffurl;
+                $tmpfile->name = $file;
+                $tmpfile->icon = $icon;
+            }
+        }
+    }
+    return $tmpfile;
+}
+
 ?>
