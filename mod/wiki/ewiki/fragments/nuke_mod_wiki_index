@@ -1,0 +1,58 @@
+<?php
+
+/*
+
+    This is a PHPNuke5.2 module (don't know if it works with v6) to be
+    copied into the modules directory like the filename implies
+    ( phpnuke/modules/Wiki/ ).
+
+    You should copy the "ewiki.php" into the same directory!
+
+    If you want it to initialize the db correctly you must copy the
+    init-pages/ to there as well.
+
+*/
+
+
+#-- stupid legacy code
+if (!eregi("modules.php", $PHP_SELF)) {
+    die ("You can't access this file directly...");
+}
+
+#-- blocks to the left and to the right?
+$index = 0;
+
+#-- HTML,HEAD,TABLESTART
+include("header.php");       #-- or better "mainfile.php" ???
+
+
+#-- Output -----------------------------------------------------------
+OpenTable();    # do we want to know, what this is for?
+
+
+
+
+chdir("modules/Wiki/");
+
+error_reporting(0);
+define("EWIKI_SCRIPT", "modules.php?op=modload&name=Wiki&file=index&wikipage=");
+
+include("ewiki.php");
+($wikipage = $_REQUEST["wikipage"]) or
+($wikipage = $_REQUEST["page"]) or
+($wikipage = EWIKI_PAGE_INDEX);
+echo ewiki_page($wikipage);
+
+chdir("../..");
+
+
+
+
+CloseTable();   # strange function names ;)
+
+
+# /BODY
+include("footer.php");
+
+
+?>

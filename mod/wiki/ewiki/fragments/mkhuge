@@ -1,0 +1,61 @@
+#!/bin/sh
+#
+# a shell script, which combines the ewiki.php library and some
+# default plugins into a huger include library
+#
+
+
+HUGE_FILE="huge-ewiki.php"
+CORE_FILE="ewiki.php"
+
+
+#-- current dir
+if [ -e "ewiki.php" ] ; then
+	DWP=.
+else
+	DWP=..
+fi
+
+
+#-- help
+if [ "$1" == "-h" -o "$1" == "--help" ] ; then
+	echo "syntax: mkhuge"
+        echo "combines many of the plugins and the core ewiki.php file into a bigger lib."
+	exit
+fi
+
+
+#-- choose size
+N=$1 
+if [ -z "$N" ] ; then
+	N=0
+fi
+if [ "$1" -ge "3" ] ; then
+	PLUGINS="markup_phpwiki.php markup_bbcode.php spellcheck.php $PLUGINS"
+fi
+if [ "$1" -ge "2" ] ; then
+	PLUGINS="more_interwiki.php page_imagegallery.php $PLUGINS"
+fi
+if [ "$1" -ge "1" ] ; then
+	PLUGINS="diff.php page_randompage.php markup_footnotes.php page_wordindex.php $PLUGINS"
+fi
+PLUGINS="strip_wonderful_slashes.php calendar.php email_protect.php like_pages.php page_pageindex.php page_powersearch.php $PLUGINS"
+
+
+#-- proceed
+echo -n "writing: $CORE_FILE"
+cat $DWP/$CORE_FILE > $DWP/$HUGE_FILE
+for ADD in $PLUGINS
+do
+	echo -n "+$ADD"
+	for SUB in plugins fragments ; do
+		if [ -e "$DWP/$SUB/$ADD" ] ; then
+			ADD=$DWP/$SUB/$ADD
+		fi
+	done
+	cat $ADD >> $DWP/$HUGE_FILE
+done
+echo " > $DWP/$HUGE_FILE"
+echo "done."
+
+

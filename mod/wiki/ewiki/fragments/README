@@ -1,0 +1,114 @@
+
+ewiki/fragments/
+================
+
+This directory contains various (code) snippets, which may or may not
+be useful for you. You are on your own, when it comes to make them
+work.
+
+
+
+mkhuge
+¯¯¯¯¯¯
+   Is a shell script to merge the core "ewiki.php" with some of the common
+   extension plugins into a "huge-ewiki.php" script - for lazy people ;->
+
+
+
+core.css
+¯¯¯¯¯¯¯¯
+   Is an example (text/css) stylesheet, which shows how to tweak
+   the look of rendered pages using CSS.
+
+   You could copy it into yoursites.css or do something like this in
+   yoursite.php:
+
+   <HTML>
+   <HEAD>
+     <STYLE TYPE="text/css"><!--
+     <?php
+            include("fragments/core.css");
+     ?>
+     //--></STYLE>
+
+
+
+calendar.css
+¯¯¯¯¯¯¯¯¯¯¯¯
+   These stylesheet definitions show all possible CSS classes that
+   are used within the calendar.php plugin. Use like core.css
+
+
+
+binary.php
+¯¯¯¯¯¯¯¯¯¯
+   If yoursite.php is not designed carefully enough or EWIKI_SCRIPT_BINARY
+   cannot be set correctly, you may want to use this wrapper script to
+   allow for uploading and retrieval of binary content (images) via ewiki.
+
+   Copy it to where the main ewiki.php script is, and set the
+   EWIKI_SCRIPT_BINARY constant to the correct absolute position (possibly
+   including http://server.name/) of "binary.php".
+   (this constant must be set on top of ewiki.php)
+
+   You must set the database access params in here, too.
+
+   It may also be useful if you'd like to divide the database into its
+   two parts again - text content and binary content. You could even
+   let it save binary content in a flat file database, while WikiPages
+   remain in a RDBMS.
+
+
+
+
+homepage.src
+¯¯¯¯¯¯¯¯¯¯¯¯
+   Is an __EXAMPLE__ on how to build a crippled Wiki (using authentication)
+   for a private homepage.
+   There is a lot of infos inside the script. And please remember all
+   files labeled with "example" are just examples!!!!!!! (read: I'm rarely
+   interested in bug reports)
+
+
+
+funcs.inc
+¯¯¯¯¯¯¯¯¯
+   Possibly useful pseudo-external helper functions are collected in here.
+
+   function save_newest_pages()
+   ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+      Reads the recently updated pages list from the database (like
+      "UpdatedPages") and tries to save it in another database table
+      (this example does so in my privately used webcms for speed purposes).
+
+
+
+htaccess
+¯¯¯¯¯¯¯¯
+   Shows how to use mod_rewrite with ewiki.
+
+   * old style:  http://www.example.com/wiki.php?page=WikiPage
+   * PATH_INFO:  http://www.example.com/WikiPage
+
+   Remember to enable EWIKI_USE_PATH_INFO inside ewiki.php - this was
+   disabled once, because of the many broken Apache implementations (they
+   seem to support that broken CGI/1.1 specification, which was for good
+   reasons and luckily never blessed to become an official RFC).
+
+
+
+strip_wonderful_slashes.php
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+   Fixes the very bad "magic_quotes_gpc" setting from php.ini for PHP
+   versions prior to 4.3
+
+   Does not hurt a well configured PHP interpreter setup.
+
+
+
+wiki_format.inc
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+   Stripped version of the wiki rendering core for easier inclusion into
+   your own projects.
+
+

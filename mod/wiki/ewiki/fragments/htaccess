@@ -1,0 +1,25 @@
+# This is file is to be used with the Apache or Nanoweb webserver.
+#
+# Rename it to .htaccess (or .nwaccess for Nanoweb) in a dedicated
+# directory for your Wiki.
+#
+# It uses the mod_rewrite to look a bit more professionall than
+# the usual GET-vars at the end of our URLs. This is highly
+# recommended as things like "script.php?edit=1&id=page" usually 
+# scare search engines and may prevent your Wiki from getting
+# indexed.
+#
+# Please edit ewiki.php and enable EWIKI_USE_PATH_INFO for Apache
+# webservers - the PATH_INFO implementation is very broken for many
+# versions (mostly commercial Unicies and for PHP-CGI variants),
+# because to the Apache Group once choosed to follo that never
+# finished and heavily broken (proposed) CGI/1.1 specification.
+
+#-- enable mod_rewrite (Apache + Nanoweb)
+RewriteEngine On
+
+#-- pass WikiWord-URLs to the wiki wrapper script:
+RewriteRule  ^((\w+/)?[A-Z]+[a-z]+\w*[A-Z]+\w+)$  yoursite.php/$1  [L]
+
+#-- or this one, if there is really nothing else in the same directory:
+#RewriteRule  ^(.*)$  yoursite.php?id=$1  [L]

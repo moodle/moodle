@@ -1,0 +1,23 @@
+ToDo
+Mike:
+ - Group Handling (Mike)
+	> deal with changing group mode on active wikis
+	> handle group mode for teacher wikis
+ - Rating
+ - Commenting
+ - Grading
+
+Michael:
+ - SiteMap
+ - Notify
+
+Unassigned or not ready:
+ - Dump Pages
+ - http://moodle.org/mod/forum/discuss.php?d=7768#36954
+ - Image Thumbnails http://moodle.org/mod/forum/discuss.php?d=8351
+ 
+ 
+ewiki Preparation:
+  - Current Version: 1.01d
+  - rm -r example-1.php examples/ tools/ config.php
+  - rm -r fragments/ patches/ php-patches/ spages/

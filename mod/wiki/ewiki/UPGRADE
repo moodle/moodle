@@ -1,0 +1,2 @@
+If you updated from R1.01c or earlier, then use the "tools/upgrade-101d"
+to convert the plugin file names in your 'config.php' file.

@@ -1,0 +1,22 @@
+Information on how to install and use ErfurtWiki can be found in the
+README, this file only contains notes for the impatient:
+
+Quick Test Installation
+=======================
+
+- just move this newly extracted directory into your webservers docroot:
+  mv ewiki-R1.00f7 /var/www/wiki
+
+- then edit the "config.php" file, you may need to set the correct
+  parameters to access your MySQL database server (db user name and
+  password, and select a database different from "test")
+
+- just go to http://localhost/wiki/
+  (or whereever you did put the files)
+
+
+Warning
+=======
+
+Simply installing these files unchanged onto a public webserver is a bad
+idea, at least the tools/ subdir should be password-protected!

@@ -1,0 +1,819 @@
+
+README.de
+¯¯¯¯¯¯¯¯¯
+Dies ist eine teilweise Übersetzung der README Datei, die weiterhin als
+Referenz verwendet sollte, da hier nur ein paar allgemeine und Setup-
+Informationen enthalten sind.
+
+      1  Was ist das?
+    1.1  Warum "ErfurtWiki"?
+    1.2  WikiAlternativen
+    1.3  Autor
+    1.4  ProjektSeiten
+    1.5  Support bekommen
+    1.6  Lizens
+
+      2  Wie jetzt?
+    2.1  In yoursite.php integrieren
+    2.2  Den WikiSeitenNamen bestimmen
+  2.9.1  WikiSprache einstellen (deutsch)
+
+      3  Im Detail
+    3.1  die ewiki_ Funktionen
+    3.2  $GLOBALS Verschmutzung
+    3.3  die EWIKI_ Konstanten
+    3.4  $ewiki_config[] array
+
+    4.1  Nur die WikiQuelltextTransformation einsetzen
+
+  6.1.2  Ohne MySQL DB verwenden     (WICHTIG)
+  6.1.3  db_fast_files
+  7.3.3  BöseBäckSläshes \\\\"       (WICHTIG)
+
+  9.5.5  Paßwörter und tools/
+
+
+
+  -------------------------------------------------------------------------
+
+
+
+Was ist das?
+¯¯¯¯¯¯¯¯¯¯¯¯
+Dies ist eine "WikiWikiWeb" Bibliothek, die in der PHP Webskriptsprache
+implementiert ist. Ein WikiWiki ist eine Webseite, die von wirklich jedem
+verändert/ergänzt werden kann, der dort vorbeischaut (ohne vorhergehenden
+Registrierungskram).
+
+Es sollte relativ einfach in bestehende Websites integrierbar sein,
+weil es eben kein komplettes Script sondern vielmehr eine Bibliothek
+ist, die kein fertiges Seitenlayout erzwingt. Stattdessen können die
+erzeugten WikiSeiten als Inhalt in das Layout einer bestehenden Seite
+eingebunden werden.
+
+
+
+Warum "ErfurtWiki"?
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Meine Heimatstadt (Erfurt liegt nahe bei Weimar.de) - und das ist wirklich
+nix weiter als ein Name! Der interne Projektname ist übrigens "ewiki".
+
+
+Warum sollte man ausgerechnet dieses Wiki verwenden wollen?
+
+ - es ist wirklich alles notwendige in einer einzigen Skriptdatei, so
+   daß keine 20 anderen Dateien mit herumliegen müssen, wenn man es
+   in die eigene Site einbindet
+
+ - vordefinierte Layouts werden nicht aufgezwungen, es gibt Beispielseiten
+   aber keine Skins oder Themes aus denen man wählen müßte; das Wiki paßt
+   sich wirklich in eine existierende Seite ein
+
+ - es ist vergleichsweise schnell, reguläre Ausdrücke werden zwar auch hier
+   verwendet, aber nicht so exzessiv wie in anderen Wikis
+   (hauptsächlich einfache und flinke String-Funktionen)
+
+ - der Funktionsumfang ist inzwischen beachtlich :)
+
+
+
+WikiAlternativen
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Es gibt auch noch andere hübsche WikiWare, falls jemand hiermit nicht
+glücklich werden tut:
+
+* PhpWiki ist deutlich vollständiger,
+  siehe http://freshmeat.net/projects/phpwiki,
+  unterstützt versch. Datenbanktypen, Lokalisierung, integrierter
+  Administrationsbereich
+
+* Miki ist eine kleine WikiImplementierung in PHP von Jukka
+  Zitting.  http://miki.sourceforge.net/
+
+* http://coWiki.org/ ist tatsächlich mehr ein CMS denn ein Wiki
+
+* Und schließlich: sfWiki - das sourceforge Wiki (daher auch zu finden
+  bei http://sfwiki.sourceforge.net/). Teile der WikiSyntax sieht ein
+  wenig merkwürdig aus, ein paar andere Sachen sind ganz nett; und es
+  unterstützt Benutzerauthentifizierung
+
+* für andere Wikis in anderen Programmiersprachen einfach mal die
+  Suchmaschienen nerven:
+  http://www.freshmeat.net/search/?q=wiki&section=projects
+  http://www.google.com/search?q=wiki
+
+
+
+Autor
+¯¯¯¯¯
+Mario Salzer <milky*erphesfurt·de>
+ICQ95596825 und Yahoo: icq95596825
+
+Und alle anderen wurden in die Datei CREDITS verbannt  ;->
+
+Dies ist ein relativ neues Projekt. Um es zu verbessern, bin ich sehr
+auf Rückmeldungen angewiesen. Jede Mail ist ein wertvoller Beitrag!
+
+
+
+ProjektSeiten
+¯¯¯¯¯¯¯¯¯¯¯¯¯
+freshmeat
+- http://freshmeat.net/ewiki
+
+demo:
+- http://erfurtwiki.sourceforge.net/
+
+neueste Versionen (instabile EnwicklerVersionen):
+- http://erfurtwiki.sourceforge.net/downloads/
+
+
+
+Support bekommen
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Hilfe bei der Installation gibt's natürlich, und selbstverständlich sind
+wir auch dankbar für jeden Hinweis über bestehende Probleme und Fehler
+(bekanntermaßen ist die REAMDE noch nicht ausführlich genug und stellenweise
+überhaupt keine Hilfe).
+Bevor du aber einen BugReport versendest, lies dir bitte folgende Anleitung
+durch (absolut notwendig um KOSTENLOSEN support zu bekommen):
+
+http://www.lugbz.org/documents/smart-questions_de.html
+
+Danach bitte nicht zögern, einen der Autoren zu kontakten oder einfach eine
+Nachricht in BugReports oder UserSuggestion auf unserer ProjektSeite zu
+hinterlassen.
+Wenn du dich auf unserer http://erfurtwiki.sourceforge.net/?MailingList
+anmeldest, hast du die Möglichkeit Hilfe für dein Problem von einer größeren
+Gruppe von Leuten zu bekommen (an- und wieder abmelden geht schnell).
+
+
+
+Lizens
+¯¯¯¯¯¯
+Dieses "Programm" wird als "Public Domain" vertrieben. Public Domain
+ist wie "FreeWare", nur ein bischen mehr frei ;->  Man kann sich das
+vorstellen, wie die GPL ohne an die GPL gebunden zu sein. (Tatsächlich
+wollte ich einfach keine LICENSE Datei mitreinpacken, die größer ist als
+das eigentliche Programm.)
+
+Da dies ein freies (Bier) Stück Software ist, kann mich natürlich
+niemand für irgendwelche Fehler oder all die WIRKLICH SCHLIMMEN
+FESTPLATTEN-SCHÄDEN verantwortlich machen, die bei der Verwendung
+entstehen könnten ;>
+
+
+
+
+  -------------------------------------------------------------------------
+
+
+
+
+Wie jetzt?
+¯¯¯¯¯¯¯¯¯¯
+ewiki benötigt:
+
+- Webserver (Apache, Nanoweb, ...)
+- PHP 4.1 oder neuer
+- nach Mglk. eine MySQL Datenbank (läuft aber auch ohne)
+- deine bereits exitierenden Webseite
+- die wundervollen "magic slashes" in antiken PHP version sollten wirklich
+  abgeschalten sein
+
+Wenn du keine MySQL-Datenbank hast, dann verwende die Erweiterung für
+die Datei-Datenbank.
+
+
+
+In yoursite.php integrieren
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+In den nächsten Abschitten, soll mit dem Begriff "yoursite.php" der
+Teil deiner bestehenden Seite verstanden werden, der das Seitenlayout
+erzeugt (der also zumindest die <html><body> Tags um die Ausgaben von
+ewiki.php bastelt).
+Die schlichteste Lösung findet sich auch noch mal in example-2.php:
+ 
+    <HTML>
+    <BODY>
+    <?php
+
+       mysql_connect("localhost", "DB-USER-NAME", "PASSWORD");
+       mysql_query("use DATABASE-NAME-HERE");
+
+       define("EWIKI_SCRIPT", "yoursite.php?page=);
+       error_reporting(0);
+
+       include("ewiki.php");
+
+       echo   ewiki_page();
+
+    ?>
+    </BODY>
+    </HTML>
+   
+Die ersten beiden Befehle öffnen eine Verbindung zur MySQL-Datenbank,
+normalerweise würde man das Ergebnis von mysql_conect() in einer Variable
+wie "$db" ablegen, aber da PHP ohnehin nicht auf deren Verwendung besteht,
+wenn es nur eine DB-Verbindung gibt, wird eine solche Variable in
+"ewiki.php" auch gar nicht verwendet (und der Name dieser Variable wäre
+damit hier egal).
+
+Der Wert in der define() Zeile sagt ewiki wie die Hyperlinks zu den
+referenzierten WikiSeiten lauten müssen, damit ewiki.php auch für die
+nächste angeklickte WikiSeite aufgerufen wird.
+Wenn du nur ein einziges "yoursite.php" Skript hast, wirst du den Wert
+direkt in "ewiki.php" verändern wollen.
+
+Das error_reporting(0) wird sehr empfohlen.
+
+Das include("ewiki.php") lädt endlich die ewiki "Bibliothek" und setzt
+alle bis hierher noch nicht definierten EWIKI_ Konstanten.
+
+Der Aufruf der ewiki_page() Funktion gibt diejenige WikiSeite zurück, die
+vom Browser angefragt wurde. Du mußt hier "echo" davorsetzen, denn sonst
+wird der Text nicht ausgegeben (verpufft im PHP-Nirvana) - ewiki gibt die
+erzeugte Seite nicht selber aus.
+
+
+
+Den WikiSeitenNamen bestimmen
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Wenn du ewiki_page() einfach so aufrufst wie im oberen Beispiel angegeben
+(empfohlen), dann wird es versuchen, den Namen der angefragten Seite selber
+zu ermmitteln ($_SERVER["PATH_INFO"] oder GET-Variablen '?id=' oder '?name='
+oder '?page=' oder '?file=' in $_REQUEST["name"]). 
+
+Wenn yoursite.php aber einen anderen Weg benutzt (andere Parameternamen),
+um den WikiSeitenNamen zu übergeben, dann kann man ihn schlicht als ersten
+Parameter angeben:
+
+  ewiki_page( $id = "WikiSeitenNanem" );
+
+
+Example-4.php zeigt das beispielsweise, um die Liste der aktualisierten
+Seiten einzubinden.
+
+
+
+
+
+WikiSprache einstellen (deutsch)
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Ich hab es jetzt schon einige Leute behaupten hören, aber auch beim
+IntranetExplodierer kann man die "bevorzugten Sprachen" irgendwo einstellen.
+Wers nicht findet, kann ja auch gleichmal auf einen aktuellen Browser
+wechseln - das lohnt sich nicht nur wegen der vielen Seiten, die es dann
+plötzlich doch auf Deutsch gibt!
+
+Wer es partou nicht hinbekommt, kann natürlich die deutsche Sprache für
+ewiki erzwingen; hilfreich hierfür ist z.B. die include()-Datei
+"fragments/force_lang_de.php".
+
+Es funktioniert aber auch mit diesem Befehl, der irgendwo in ewiki.php,
+config.php oder yoursite.php eingefügt werden kann (nicht empfohlen):
+
+$_SERVER["HTTP_ACCEPT_LANGUAGE"] = "de; q=1.0, en; q=0.2, eo, nl";
+
+
+
+
+  -------------------------------------------------------------------------
+
+
+
+
+Im Detail
+¯¯¯¯¯¯¯¯¯
+Die MySQL DB Tabellenstruktur ist zu einem gewissen Grad kompatibel mit der
+des allseits bekannten »PHPWiki« (normalerweise reicht es EWIKI_DB_TABLE_NAME
+auf "wiki" zu ändern, um PhpWikis DB weiterzuverwenden).
+Dies ist der MySQL Befehl, der die DB-Tabelle erstellt (beim ersten Start,
+automatisch):
+
+    CREATE TABLE ewiki (
+        pagename VARCHAR(160) NOT NULL,
+        version INTEGER UNSIGNED NOT NULL DEFAULT 0,
+        flags INTEGER UNSIGNED DEFAULT 0,
+        content MEDIUMTEXT,
+        author VARCHAR(100) DEFAULT 'ewiki',
+        created INTEGER UNSIGNED DEFAULT 0,
+        lastmodified INTEGER UNSIGNED DEFAULT 0,
+        refs TEXT,
+        meta TEXT,
+        hits INTEGER UNSIGNED DEFAULT 0,
+        PRIMARY KEY id (pagename, version)
+    )
+
+Den Spaltennamen {pagename} mochte ich eigentlich nicht, aber weil das der
+offensichtlich einzige Unterschied zur PhpWiki-Tabelle war, kam mir die Idee
+mit der Kombatibilität un so hab ich das adaptiert.
+Dummerweise muß nun die ewiki_database() Funktion "pagename" ständig von
+und nach "id" übersetzen.
+
+Die Spalte {version} wird zur Speicherung der verschiedenen abgelegten
+Seitenänderungen verwendet. In anderen Wikis gibt es zu diesem Zweck eine
+Bonus-tabelle wie "backup" oder "history", aber ich hab den Sinn von sowas
+bisher nicht verstanden; und daher gibt es in ewiki nur diese eine Tabelle
+(und das scheint absolut zu reichen)!
+Die erste {version} einer Seite erhält die Nummer 1. Eine bestehende
+Seiten {version} wird niemals überschrieben werden => sehr sicherer MySQL-
+Einsatz.
+
+Mehr über die {flags} in dem entsprechenden Abschnitt in der README. Das
+Feld {content} enthält natürlich den WikiSeitenQuelltext. {created} und
+{lastmodified} enthalten die entsprechenden Zeitangaben im UNIX format.
+
+{refs} enthälte eine "\n" - getrennte Liste von referenzierten WikiSeiten.
+Der Code um diese List zu erzeugen ist etwas unsauber, so daß oftmals
+GeisterSeiten aufgeführt sind. Wieauchimmer, daß beeinträchtigt ewiki
+nicht wirklich, und eine Korrektur wäre Zeit- und Geschwindigkeits-
+verschwendung.
+
+{meta} kann Bonusinfos enth, so daß die Tabellenstruktur nicht bei jeder
+Erweiterung geändert werden muß. Aktuell nur für Binärdaten (Bilder)
+verwendet.
+
+{hits} zählt die Seitenaufrufe, und ist nicht in {meta} integriert, weil
+separat schneller und einfacher zu verwenden.
+
+Die ewiki DB Tabelle kann nicht nur Texteseiten enthalten, sondern auch
+binären Inhalt (vornehmlich Bilder), siehe {flags}.
+
+Das Ein-Tabellen-Konzept hat es übrigens auch recht einfach gemacht, das
+Datei-basierte DB-Backend zu entwickeln. Eine Beispieldatei:
+
+   id: WikiPageName
+   version: 1
+   flags: 1
+   author: 127.0.0.1:3054
+   created: 1046532697
+   lastmodified: 1046532697
+   refs: \nErfurtWiki\nNewestPages\n
+   
+   !! WikiSourceContent
+   <more-text>...
+
+
+
+
+ewiki_ Funktionen
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Einige der Basis-Funktionen aus ewiki.php können getrennt von den anderen
+verwendet werden, andere sind ausgelegt um durch bessere Implementierungen
+ersetzt zu werden.
+
+
+   ewiki_page($id)
+   ---------------
+       Hauptfunktion, die die angefragte WikiSeite (oder die mit $id
+       angegebene) aus der DB holt, und mit ewiki_format() die fertige
+       HTML-Seite erzeugt.
+       Wenn die angefragte Seite nicht existert, wird eine edit-Box
+       zurückgegeben.
+
+
+   ewiki_page_...()
+   ----------------
+       Die meisten Fkt. mit diesem Prefix wurden aus der Hauptfkt.
+       herausgetrennt, um ewiki übersichtlicher und leichter erweiterbar
+       zu machen.
+       Die meisten enthalten Code um spezielle/interne Seiten zu erzeugen
+       (Suche, Neuest, Info, und das Edit <FORMular>, ...)
+
+
+   ewiki_script()
+   --------------
+       Erzeugt URL aus angegebener Seiten $id und $action, verwendet dazu
+       die EWIKI_SCRIPT-Konstante. Dieser wrapper ermöglicht es auch die
+       eigentlich reservierten Schrägstriche in Seitennamen zu verwenden.
+
+
+   ewiki_control_links($id, $data)
+   -------------------------------
+       Gibt die Zeile mit "DieseSeiteÄndern, SeitenInfo, ... links" aus.
+
+
+   ewiki_format($wiki_source, $scan_links=1, $html_allowed=0)
+   ----------------------------------------------------------
+       Erzeugt die formatierten (HTML) Ausgabe für den übergebenen
+       WikiQuelltext.
+
+       Der zweite Parameter gibt an, ob nach denen im Quelltext referenzierten
+       WikiLinks in der DB nachgesehen werden soll. Wenn dieser  Parameter 0
+       ist, dann wird eine bereits vorh. $ewiki_links Array stattdessen
+       verwendet, um zu prüfen ob eine Seite in der DB vorh. ist.
+
+
+   ewiki_link_regex_callback()
+   ---------------------------
+       Aufgerufen aus ewiki_format(). Um ewiki_format() {die eigentliche
+       WikiEngine} weiter von der Datenbank zu trennen, verwendet diese
+       Fkt. das globale array in $ewiki_links, in dem normalerweise vorher
+       schon gefundene WikiSeiten eingetragen wurden (siehe zweiter Param.
+       von ewiki_format) um entweder einen normalen Verweis oder einen
+       Fragezeichen-Link auszugeben (wenn die angegebene Seite noch nicht
+       exisitiert).
+
+
+   ewiki_binary()
+   --------------
+       Wird automatisch aufgerufen, wenn das Skript mit dem ?binary= Anhang
+       aufgerufen wird, um referenzierte / hochgeladene Bilder auszugeben.
+
+
+   ewiki_author()
+   --------------
+       erzeugt einen String, der mit REMOTE_ADDR und $ewiki_author
+       angereichert wurde.
+      
+
+   ewiki_database($FUNCTION, $args=array() )
+   ------------------------------------------
+       Diese Funktion ist die "Datenbankabstraktion" in ewiki. Sie enthält
+       ''only'' sechs SQL Kommandos, die ersetzt werden müßtem, wenn du eine
+       andere DB verwenden mußt.
+       Die einzelnen "atomaren" Funktionen sind beschrieben in der
+       orignialen README-Datei.
+
+
+
+
+
+$GLOBALS Verschmutzung
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Zumindest die ewiki_page() Funktion erzeugt einige Variablen im globalen
+Namensraum. Natürlich haben auch diese Namen, die sich mit irgendetwas
+aus yoursite.php überschneiden sollten:
+
+ $ewiki_id      - Enthält die DB-$id der aktuellen Seite, ist nicht
+                  immer identisch mit $ewiki_title.
+
+ $ewiki_action  - Der $action-Parameter, mit dem die Seite angefordert
+                  wurde.
+
+ $ewiki_title   - Wird nach dem ersten Aufruf von ewiki_page() gestzt,
+                  am nützlichsten um in dem <TITLE> Tag ausgegeben
+                  zu werden - dafür muß aber ewiki_page() schon im
+                  Kopfbereich aufgerufen werden, die Ausgabe gepuffert,
+                  damit der Seitentitel noch innerhalb von <HEAD>
+                  ausgegeben werden kann.
+
+ $ewiki_script  - Eine Kopie von EWIKI_SCRIPT.
+
+ $ewiki_links   - Ist ein Arraym daß in ewiki_format() prodiziert wird, und
+                  alle gesuchten WikiSeitenNamen mit einem Wert von 0 oder 1
+                  assoziiert, je nach dem, ob die Seite existiert oder nicht.
+                  Wird diese variable jedoch auf ==true gesetzt (also kein
+                  Array), wird angenommen, daß alle WikiSeiten existieren.
+
+ $ewiki_author  - Der Inhalt dieser Variable wird in der {author}-Spalte
+                  von gespeicherten WikiSeiten abgelegt (zusammen mit
+                  IP:PORT).
+                  Wenn yoursite.php Benutzer kennt und authentifizieren
+                  kann, sollte der Nutzername hier abgelegt werden.
+                  Diese Feld sollte aber NICHT ZUGEMÜLLT werden mit
+                  irgendwelchen Bonusinfos.
+
+ $ewiki_auth_user  - Enthält Namen eines wirklich authentifizierten
+                  Benutzers im _PROTECTED_MODE. Nicht notwendig, wird aber
+                  u.a. gerne von ewiki_auth() und ewiki_auth_user() zur
+                  Vereinfachung verwendet.
+
+ $ewiki_ring    - Berechtigungslevel im _PROTECTED_MODE
+                  3 = nur lesen
+                  2 = normaler Benutzer (lesen, editieren, ...)
+                  1 = Moderator (auch Seiten löschen?)
+                  0 = Administrator (darf alles)
+
+ $ewiki_plugins - Dieses array verbindet Aufgabengruppen (z.B. "database"
+                  oder "image_resize") mit Funktionsnamen.
+                  Dies stellt einen wirklich einfachen und dennoch mächtigen
+                  Weg dar, um ewiki zu erweitern.
+                  Es gibt ein eigenes Kapitel darüber in der orig. README.
+
+ $ewiki_config  - Ersetzt teilweise die EWIKI_ Konstanten.
+
+Folgende gibt's nich mehr (teilweise in $ewiki_config):
+
+ $ewiki_data, $ewiki_interwiki, $ewiki_internal_pages,
+
+
+                  
+
+
+EWIKI_ Konstanten
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+- - WARNUNG - WARNUNG -  WARNUNG - WARNUNG - WARNUNG -  WARNUNG - WARNUNG - -
+WARNUNG: Dieser Abschnitt ist grundsätzlich besonders inaktuell! Von daher
+sollte ein Studium des gleichnamigen Abschnitts in der orig. README-Datei
+wirklich vorgezogen werden!! Viele der neu hinzugekommenen Konstanten werden
+hier schlichtweg nicht erwähnt, oder inzwischen sogar __falsch__ beschrieben.
+- - WARNUNG - WARNUNG -  WARNUNG - WARNUNG - WARNUNG -  WARNUNG - WARNUNG - -
+
+Dieser Abschnitt erklärt einige der Konstanten und wie man sie verwenden
+kann, um ewiki nach der eigenen Pfeife tanzen zu lassen.
+
+Normalerweise solltest diese innherhalb von "ewiki.php" angepaßt werden, einige
+sind jedoch mehr wie Statusvariablen ausgelegt und sollten von "yoursite.php"
+in Abhängigkeit von dort vorhanden Infos gesetzt werden (wenn dort Benutzer
+eingeloggt sind z.B.).
+Dann ist es gut einige der Konstanten vorzudefinieren (einmal def. Konst.
+können nicht wieder geändert werden).
+
+
+ EWIKI_SCRIPT
+     Wichtigste Einstellung. Wird von ewiki.php verwendet, um Links zu
+     anderen WikiSeiten zu erzeugen.
+
+     Es benötigt den Namen von yourscript.php, daß selbst wiederrum
+     ewiki.php geeignet einbindet.
+     Der Name der angefragten WikiSeite wird immer schlicht an den hier
+     definierten TextString angehängt, daher sollter dieser immer in
+     "/" oder "?" oder "?id=" oder "?name=" oder "?page=" enden, damit
+     eine gültige URL dabei herauskommt und der SeitenName von ewiki_page()
+     gefunden wird.
+
+     Wenn auf deinem Server mod_rewrite vorhanden ist und funktioniert,
+     könntest du diese Konst. auch leer lassen, so alle Anfragen zu
+     http://wiki.example.com/ an das richtige Skript übergeben werden.
+     Ansonsten ist es gut, wenn eine URL absolut zum Server-Hauptpfad
+     angegeben ist, also z.B. "/~user/wiki/index.php/", damit Browser
+     keine ungültigen URLs erzeugen, sobald eine $action vor den
+     Seitennamen gesetzt wird (z.B. "edit/DieseSeite").
+
+     Die Konstante wird von ewiki_script() eingesetzt um URLs zu den
+     angegebenen Seiten zu erstellen (wobei einige Fehler abgefangen
+     werden).
+
+ EWIKI_SCRIPT_URL
+     Sollte eine absolute URL enthalten, die ebenfalls zum ewiki-wrapper
+     zeigt, z.B. "http://www.example.com/wiki/?id="
+
+
+ EWIKI_DB_TABLE_NAME
+     Setzt den Namen der MySQL DB Tabelle fest, die erzeugt und verwendet
+     werden soll, um alle WikiSeiten abzulegen.
+
+
+ EWIKI_PAGE_INDEX
+     Definiert den Namen der WikiSeite, die als Startseite angezeigt werden
+     soll.
+ EWIKI_PAGE_NEWEST
+     Name (intern erzeugt) der Seite, die List der zuletzt hinzugefügten
+     Seiten enthält.
+ EWIKI_PAGE_SEARCH
+     Enthält den WikiSeitenNamen für dei SuchFunktion.
+
+
+ EWIKI_CONTROL_LINE
+     Wenn auf 0 gestzt, wird die Zeile unter einer WikiSeite mit
+     "DieseSeiteÄndern, SeitenInfo, ..." nicht angezeigt.
+     In diesem Fall sollte der Edit-Link in yoursite.php erzeugt werden.
+     Besser ist es normalerweise das Aussehen der Ausgabe in
+     ewiki_control_links() selbst zu ändern.
+
+ EWIKI_AUTO_EDIT
+     Bei 1 (voreinstellung) wird automatisch eine Edit-Box für
+     nicht-exisiterende Seiten angezeigt, ansonsten wird eine ZwischenSeite
+     ("Bitte ändere mich!") angezeigt (wie in PhpWiki).
+
+ EWIKI_LIST_LIMIT
+     Maximale Anzahl von Seiten, die in den generierten Listen angezeigt
+     werden sollen (Suche, ...)
+
+ EWIKI_PRINT_TITLE
+     Wenn 0 werden keine SeitenTitel (WikiSeiten und InterneSeiten)
+     angeziegt.
+
+
+ EWIKI_ALLOW_HTML
+     Normalerweise sollte im Wiki keine HTML erlaubt sein - böses JavaScript
+     und <brokenHTML/>, andere Leute nerven.
+
+     Siehe orig. README für mehr Informationen.
+     
+
+ EWIKI_RESCUE_HTML
+     Überholt, siehe plugins/markup_rescuehtml.php
+
+
+ EWIKI_DB_F_TEXT
+     Dieses Flag wird für normale WikiSeiten in der DB gesetzt.
+
+ EWIKI_DB_F_BINARY
+     Für binären Inhalt in der DB.
+    
+ EWIKI_DB_F_DISABLED
+     DB-Eintrage werden hiermit ausgeknippst.
+
+ EWIKI_DB_F_HTML
+     Erlaubt die Verwendung von HTML im WikiQuelltext, unabhängig von
+     EWIKI_ALLOW_HTML.
+
+ EWIKI_DB_F_READONLY
+     WikiSeite kann nicht verändert werden, so dieses Flag gesetzt ist.
+
+ EWIKI_DB_F_WRITEABLE
+     Umkehrung von READONLY, nur nützlich wenn zuvor alle Seiten mit
+     EWIKI_EDIT_AUTHENTICATE schriebgeschützt wurden.
+
+
+ EWIKI_ALLOW_OVERWRITE
+     Für eingeloggte nutzer kann yoursite.php diese Konst. auf 1 setzen, um
+     auch das Ändern von schreibgeschützten Seiten zu erlauben.
+
+ EWIKI_EDIT_AUTHENTICATE
+     Hiermit kann man ewiki dahingehend kaputt machen, daß alle Seiten
+     schreibgeschützt werden, und nur veränderbar sind, so yoursite.php
+     $ewiki_author setzt.
+
+
+ EWIKI_SCRIPT_BINARY
+     Um binäre Daten ausgeben zu können, muß hier ein wrapper-script
+     angegeben werden, daß ein Datenbank-Verbindung öffnet und keine
+     Textausgaben erzeugt, bevor nicht ewiki.php eingebunden wurde,
+     da sonst nur Datenmüll ausgegeben würde.
+
+     Um alle binary-Funktionalität (Bilder hochladen / cachen) loszuwerden,
+     einfach diese Konstante auf "" setzen, und die folgenden zwei auf 0:
+
+
+ EWIKI_CACHE_IMAGES
+     Bilder zwischenspeichern.
+
+ EWIKI_IMAGE_MAXSIZE
+     Maximale Größe von Bildern die in der DB abgelegt werden sollen.
+
+ EWIKI_IMAGE_RESIZE
+     Bilder herunterskalieren, wenn zu groß.
+
+ EWIKI_IDF_INTERNAL 
+     Wird verwendet um hochgeladene Bilder zu identifizieren. Bitte
+     im laufenden Betrieb nicht ändern.
+     
+
+ EWIKI_ADDPARAMDELIM
+     Automatisch definiert, enthält entweder "?" oder "&", abhängig von
+     EWIKI_SCRIPT.
+
+
+ EWIKI_T_*
+     überholt, siehe ewiki_t() und $ewiki_t[] in der englischen README
+
+
+ EWIKI_CHARS_U
+ EWIKI_CHARS_L
+     Erlaubte Zeichen in WikiSeitenNamen (große und kleine Letter). Hiermit
+     kann man das wiki lokalisieren; deutsche Umlaute sind schon enthalten.
+
+ UNIX_MILLENNIUM
+     Sehr wichtiges Ereignis ;)
+    
+
+Im tools/ Ordner ist ein kleines Script, mit dem man die erwähnten
+SeitenFlags ändern kann.
+
+
+
+$ewiki_config[] array
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Einige der EWIKI_ Konstanten wurden durch Einträge im $ewiki_config[] Array
+ersetzt oder ergänzt (die Konstanten können weiterhin zur Voreinstellung
+verwendet werden). Der Vorteil dieses Arrays ist, daß die Einstellungen auch
+zur Laufzeit geändert werden können.
+
+Für eine komplette und (einigermaßen) aktuelle Übersicht bemühe bitte die
+englischsprachige README.
+
+
+
+
+  -------------------------------------------------------------------------
+
+
+
+
+Nur WikiQuelltextTransformation einsetzen
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Die ewiki_format Funktion war entworfen, um sie auch unabhängig von dem
+restlichen WikiSkript einsetzen zu können.
+Benötigt normalerweise nur den "wiki_source" Parmeter und erzeugt die
+HTML-Seite daraus.
+    ewiki_format($wiki_source, 0);
+
+Alles was man noch anpassen muß ist die $ewiki_links Variable. Setze
+$ewiki_links=true ("true" und nicht "1") so daß ewiki_format() später
+annimmt alle WikiSeiten würden existieren.
+
+Wers eilig hat, kann auch die extrahierte Variante fragments/wiki_format.inc
+verwenden, die Frank Luithle beigesteuert hat.
+
+
+
+
+  -------------------------------------------------------------------------
+
+
+
+
+Ohne MySQL DB verwenden
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Sollte dein Provider keine MySQL Datenbank für dich bereithalten, kannst
+du das plugin "db_flat_files.php" verwenden (einfach include("plugins/...");
+aufrufen um es zu laden).
+
+Alle WikiSeiten werden dann in Textdateien in einem nur dafür
+bereitgestelltem Ordner gespeichert. Stelle hierzu noch die Konstante
+EWIKI_DBFILES_DIRECTORY in der Datei "ewiki.php" passend ein ("/tmp" würde
+jedesmal gelöscht, wenn der Server neu startet).
+Das Verzeichnus muß relativ zum ewiki.php script angegeben werden, oder
+absolut zum Serverhauptverzeichnis, nicht aber relativ zum DocumentRoot
+deines Webspeicherplatzes!  In diesem Beispiel wäre "./pages" richtig:
+
+Erstelle ein neues Verzeichnis (via FTP-Programm) und gib dem Webserver
+Schreibzugriff dafür mit dem Befehl " chmod 777 ./pages ".
+ftp> cd .../ewiki
+ftp> mkdir pages
+ftp> chmod 777 pages
+ftp> ls
+-rw----r--    1 deinname deinname    57024 01. Jan 00:00 ewiki.php
+-rw----r--    1 deinname deinname      512 01. Jan 00:00 index.php
+drw----r-x    2 deinname deinname     4096 01. Jan 00:00 init-pages
+drwxrwxrwx    2 deinname deinname     4096 25. Feb 23:59 pages
+drw----r-x    5 deinname deinname     4096 01. Jan 00:00 plugins
+-rw----r--    1 deinname deinname    15826 01. Jan 00:00 README.de
+ftp> quit
+
+Mit einem graphischem FTP-Programm gibt es auch immer die Mglk. die
+"Dateizugriffsrechte" einzustellen.
+
+
+
+db_fast_files
+¯¯¯¯¯¯¯¯¯¯¯¯¯
+Diese neuere Version von db_flat_files, speichert die WikiSeiten
+komprimiert in einem Binär-Format (kann man nicht mehr mit Editor
+ansehen und bearbeiten). Zusätzlich wurde der HitZähler aktiviert.
+
+db_fast_files wurde in db_flat_files integriert, so daß das neue
+Format jetzt nur noch über eine Konstante aktiviert werden muß
+(beide Dateiformate können gleichzeitig in der DB vorhanden sein).
+Für die schnellere Variante aktiviere in "plugins/db_flat_files.php"
+die entsprechende Konstante:
+   define("EWIKI_DB_FAST_FILES", 1);
+(Diese Einstellung könntest du aber auch schon in der "config.php"
+eintragen.)
+
+Zusätzliche Konstante: EWIKI_DBFILES_GZLEVEL sagt wieviel Zeit
+beim Komprimieren verschwendet werden soll:
+0 - keine Komprimierung
+1 - ein ganz klein wenig Kompr.
+2 - Voreinstellung, schnell
+5 - normaler Wert in zlib, gute Komprimierung
+9 - langsam für allerbeste Kompression
+
+Dieses plugin wurde von Carsten Senf beigesteuert.
+
+
+
+
+  --------------------------------------------------------------------------
+
+
+
+
+BöseBäckSläshes
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Wenn auf deinen Seiten pötzlich viele "\" RückwärtsSchrägStriche
+auftauchen liegt das an einer Fehlkonfiguration von PHP. In älteren
+Versionen war leider immer die Option "magic_slashes_gpc" aktiviert
+(siehe auch php.ini).
+
+Bitte am besten deinen WebserverProvider das zu ändern. Wenn du aber bei
+einem der BilligHoster (umsonst wie sourceforge.net oder tripod.com) bist,
+gilt wie immer: einem geschenkten Gaul...
+Dann verwende bitte "fragements/strip_wonderful_slashes.php", um das
+Problem zumindest zu umschiffen, oder ändere deine .htaccess Datei (Apache)
+wie darin beschrieben.
+
+
+
+  --------------------------------------------------------------------------
+
+
+
+Paßwörter und tools/
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Die tools/ sind gefährlich und daher per Voreinstellung nicht ohne weiteres
+Nutzbar. In der Datei "tools/t_config.php" wird das Script
+"fragmenst/funcs/auth.php" geladen, daß für den Browser-Login-Dialog
+verantwortlich ist. Wenn du also die tools/ verwenden willst, mußt du dort
+zuerst einen Benutzer mit Paßwort eintragen, sonst geht nix.
+
+Um hingegen dein Wiki zu schützen, so daß nur einige wenige Personen die
+Seiten editieren können, ließ dir bitte die Datei "plugins/auth/README.auth"
+durch (leider nur in Englisch). Sie beschreibt den _PROTECTED_MODE und
+stellt die entsprechenden Plugins vor.
+
+

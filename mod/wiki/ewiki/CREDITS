@@ -1,0 +1,82 @@
+Who worked on ErfurtWiki
+========================
+(please note that all mail addresses are 'beautified')
+
+
+Mario Salzer <mario*erphesfurt·de> [http://mario.erphesfurt.de/]
+
+ - original author, current maintainer
+
+
+Andy Fundinger <andy*burgiss·com> [http://www.burgiss.com/]
+
+ - compatibility fixes for PHP.A/W32, notify: address protection for info/
+ - markup_css_singleat, action_extracttodo
+ - spellcheck2, phplib_auth, title_calendar
+ - navbar, aview_posts
+ - LiveUser authentication / permission framework plugin
+
+
+Carsten Senf <ewiki*csenf·de> (from Erfurt)
+
+ - db_flat_files.php bugfixes for Win32 systems
+ - calendar.php, db_fast_files.php` code
+ - page_since_updates.php
+
+
+Alex Wan <alex*burgiss·com> [http://www.burgiss.com/]
+
+ - LiveUser framework auth plugin,
+   log viewing plugin
+
+
+Jeremy Mikola <jmikola*arsjerm·net> [http://www.burgiss.com/]
+
+ - aview_piclogocntl, the Burgiss Groups` LiveUser framework auth plugin
+
+
+Culley Harrelson <cully*fastmail·fm>
+
+ - fixes for html code generation bugs,
+   various feature requests
+
+
+Hans B. Pufal <hansp*aconit·org> [http://www.aconit.org/]
+
+ - various enhancements, bugfixes
+ - mpi_calendar
+ - mpi_environment
+ - mpi_plugins
+ - mpi_page_flags
+ - markup_complextbl
+
+
+Vladimir Támara <vtamara*users.sourceforge·net>
+
+ - Spanish translation of core messages and
+   the basic init-pages/
+
+
+Frank 'Sigi' Luithle <sigi*fsinfo.cs.uni-sb·de>
+
+ - contributed the wiki_format.inc (reduced rendering core)
+
+
+Beate Paland <bep*web·de> [http://www.paland.tv/]
+
+ - bug notices and many helpful suggestions
+   (constantly demanded for <pre> support)
+ - phpCMS integration, see http://www.paland.tv/...
+
+
+Markus Ackermann <maol*symlink·ch> [http://www.symlink.ch/]
+
+ - bug reports, improvement suggestions
+
+
+Dominik Eckardt <the.oberon*gmx·de>
+
+ - suggested the TAB indentation
+   (while now SPACEs are supported)
+
+
