@@ -1,0 +1,134 @@
+<p align="center"><b>Hoe om in Wiki formaat te skryf</b></p>
+
+<p>
+  Bladsye met Wiki formaat voorsien 'n maklike en intuïtiewe manier om gewone
+  teks op te merk na 'n maklike leesbare formaat wat omgeskakel sal word na XHTML
+  wanneer dit vertoon word. Die voordeel is dat jy nie hoef&nbsp; HTML te leer
+  om goeie resultate te verkry nie, en die teks wat jy skryf <em>lyk</em> goed,
+  selfs <em>voor</em> dit omgeskakel word. Jy kan dit doen eerder as om Word
+  dokumente as HTML te stoor, nou kan jy nog die hulpbron redigeer in 'n
+  gekoppelde omgewing.
+</p>
+
+<p>Jy skryf basies gewone teks, en voeg dan <em>spesiale</em> karakters by om
+die formatering te doen.</p>
+
+<h3>Paragraaf blok formatering</h3>
+
+<p>
+  Paragraaf blokke word deur ten minste een lyn geskei. Om 'n paragraaf te
+  formateer, voeg een van die spesiale karaketers by in die eerste karakter op
+  die eerste lyn van die paragraaf gevolg deur 'n spasie...
+</p>
+
+<table>
+  <tr><th>Karakter</th><th>Blok Tipe</th></tr>
+  <tr><td>Geen karakter</td><td>Gewone paragraaf</td></tr>
+  <tr><td>&gt;</td><td>Aanhaling</td></tr>
+  <tr><td>Spasie</td><td>Pre-Geformateerde Teks (&quot;Monospaced&quot;)</td></tr>
+  <tr><td>%</td><td>Pre-Geformateerde Teks <em>en</em> Wikki formaat word
+      geignoreer</td></tr>
+  <tr><td>!#</td><td>Opskrif - # is 1-6, dit is die vlak van die opskrif (1 is
+      die grootste)</td></tr>
+  <tr><td>Q.</td><td>Vraag - styl inligting word by die paragraaf gevoeg om
+      vraag/antwoord beter voor te dra (in tema)</td></tr>
+  <tr><td>A.</td><td>Antwoord - soos bogenoemde</td></tr>
+</table>
+
+<h3>Lys Formatering</h3>
+
+<p>Lyste kan maklik opgestel word deur 'n spesiale karakter voor aan die lys by
+te sit gevolg deur 'n spasie. Die lys se einde word deur 'n oop lyn getoon. Lyste kan
+binne in lyste op gestel word. Definisie Lyste se definisies en gewone teks kan
+gemeng word op die regte effek te kry. Die spesiale karakters...</p>
+
+<table>
+  <tr><th>Karakter</th><th>Lys item tipe</th></tr>
+  <tr><td>*</td><td>Ongeordende Lys (&quot;bullets&quot;)</td></tr>
+  <tr><td>#</td><td>Geordende Lys (1,2,3 ens)</td></tr>
+  <tr><td>:</td><td>Definisie Lys, definisie</td></tr>
+  <tr><td>;</td><td>Definisie Lys, teks</td></tr>
+</table>  
+
+<p>Lys binne 'n lys voorbeeld:</p>
+<p><pre>
+  * Eerste Bullet
+  * Tweede Bullet
+  ## lyn 1
+  ## lyn 2
+  * Derde Bullet
+</pre>
+<p>Dit gee:
+<ul><li>Eerste Bullet</li>
+  <li>Tweede Bullet</li>
+  <ol><li>lyn 1</li>
+    <li>lyn 2</li></ol>
+  <li>Derde Bullet
+</ul>
+
+<h3>Spesifieke lyn formatering</h3>
+
+<p>Spesifieke lyn formatering laat 'n sekere deel van 'n lyn 'n sekere styl aan
+neem. Die spesiale karakters wat gebruik word kan enige plek in die lyn voor
+kom, maar die formatering kan nie lyne kruis nie. Die karakters...</p>
+
+<table>
+  <tr><th>Voorbeeld</th><th>Voorbeeld</th><th>Formatering</th></tr>
+  <tr><td>*hello world*</td><td><strong>hello world</strong></td><td>Bold</td></tr>
+  <tr><td>/hello world/</td><td><em>hello world</em></td><td>Italics of
+      Beklemtoning</td></tr>
+  <tr><td>+hello world+</td><td><ins>hello world</ins></td><td>Teks wat ingesit
+      is</td></tr>
+  <tr><td>-hello world-</td><td><del>hello world</del></td><td>Uitgewis of&nbsp;
+      &quot;Strikethrough&quot;</td></tr>
+  <tr><td>hello ~world~</td><td>hello <sub>world</sub></td><td>Subskrif</td></tr>
+  <tr><td>hello ^world^</td><td>hello <sup>world</sup></td><td>Superskrif</td></tr>
+  <tr><td>"hello world"</td><td><q>hello world</q></td><td>Aangehaal</td></tr>
+  <tr><td>%hello world%</td><td><code>hello world</code></td><td>Kode of&nbsp;
+      &quot;Monospaced&quot;</td></tr>
+  <tr><td>@hello world@</td><td><cite>hello world</cite></td><td>Aanhaling</td></tr>
+</table>  
+
+<h3>Akronieme</h3>
+
+<p>Skryf die akroniem in hoofletters gevolg deur die beskrywing in parentese.
+Daar moet geen spasie wees tussen die akroniem en die parentse nie. Voorbeeld...</p>
+
+<p>HTML(Hypertext Markup Language) <br />   <acronym title="Hypertext Markup Language">HTML</acronym></p>
+
+<h3>Hiper Skakels</h3>
+
+Skakels word in teks geplaas en gevolg deur (sonder spasies) die teks wat
+vertoon moet word in hakies. Voorbeeld: http://www.google.com/(Doen Soektog) sal
+omgeskakel word na <a href="http://www.google.com/">Doen Soektog</a>.
+
+<h3>Moodle Module Skakels</h3>
+
+<p>As jy die Moodle id nommer (kyk vir ?id=nn aan die einde van 'n module adres)
+en die module naam ken, kan jy na die hulpbron skakel met:</p>
+
+<p>ModuleName:nn(Beskrywende Teks)</p>
+<p>vb., <em>resource:36(My New Page)</em>   <em>forum:10(Jump to forum)</em></p>
+
+<h3>Moodle Prent Skakels</h3>
+
+<p>Grafiese beelde kan in wiki teks gesit word. Jy moet die prent op laai(let
+die pad (&quot;path&quot;) na die prent). Die kode is:</p>
+
+<p>/<em>..pad na lêer..</em>(teks wat vertoon moet word)</p>
+
+<p>byvoorbeeld, /mypics/graphic.jpg(My Foto)</p>
+
+<h3>Outomatiese Formatering</h3>
+
+<p>Mees algemene funksies word outomaties omgeskakel na hul XHTML ekwivalent..
+Die hoof funksies...</p>
+
+<ul>
+  <li>HTTP skakels word omgeskakel na aktiewe skakels
+  <li> ..., (R), (TM), (C), 1/4, 1/2, 3/4 word omgeskakel na die korrekte
+    karakter
+  <li> syfer x syfer (5 x 5), word omgeskakel na vermenigvuldig simbool
+  <li>'n Lyn wat met vier koppeltekens begin word omgeskakel na een reguit lyn
+</ul>  
+
