@@ -1160,7 +1160,7 @@ function quiz_print_question_list($questionlist, $grades, $allowdelete=true) {
     $strorder = get_string("order");
     $strquestionname = get_string("questionname", "quiz");
     $strgrade = get_string("grade");
-    $strdelete = get_string("delete");
+    $strremove = get_string('remove', 'quiz');
     $stredit = get_string("edit");
     $strmoveup = get_string("moveup");
     $strmovedown = get_string("movedown");
@@ -1210,14 +1210,14 @@ function quiz_print_question_list($questionlist, $grades, $allowdelete=true) {
         echo '<td align="center">';
 
         if ($canedit) {
+            echo "<a title=\"$strpreview\" href=\"#\" onClick=\"openpopup('/mod/quiz/preview.php?id=$qnum','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\">
+                  <img src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>&nbsp;";
             echo "<a title=\"$stredit\" href=\"question.php?id=$qnum\">
                   <img src=\"../../pix/t/edit.gif\" border=\"0\" alt=\"$stredit\" /></a>&nbsp;";
             if ($allowdelete) {
-                echo "<a title=\"$strdelete\" href=\"edit.php?delete=$qnum&amp;sesskey=$USER->sesskey\">
-                      <img src=\"../../pix/t/delete.gif\" border=\"0\" alt=\"$strdelete\" /></a>&nbsp;";
+                echo "<a title=\"$strremove\" href=\"edit.php?delete=$qnum&amp;sesskey=$USER->sesskey\">
+                      <img src=\"../../pix/t/removeright.gif\" border=\"0\" alt=\"$strremove\" /></a>";
             }
-            echo "<a title=\"$strpreview\" href=\"#\" onClick=\"openpopup('/mod/quiz/preview.php?id=$qnum','$strpreview','scrollbars=yes,resizable=yes,width=700,height=480', false)\">
-                  <img src=\"../../pix/t/preview.gif\" border=\"0\" alt=\"$strpreview\" /></a>";
         }
         echo "</td>";
 
