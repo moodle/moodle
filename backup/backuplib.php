@@ -1187,8 +1187,10 @@
                 fwrite ($bf,full_tag("TIMECREATED",4,false,$group->timecreated));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$group->timemodified));
                 
-                //Now, backup groups_members
-                $status2 = backup_groups_members_info($bf,$preferences,$group->id);
+                //Now, backup groups_members, only if users are included
+                if ($preferences->backup_users != 2) {
+                    $status2 = backup_groups_members_info($bf,$preferences,$group->id);
+                }
 
                 //End group tag
                 fwrite ($bf,end_tag("GROUP",3,true));

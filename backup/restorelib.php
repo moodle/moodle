@@ -1267,8 +1267,11 @@
                             backup_putid($restore->backup_unique_code,"group",
                                          $group->id, $newid);
                         }
-                        //Now restore members in the groups_members
-                        $status2 = restore_create_groups_members($newid,$info,$restore);
+                        //Now restore members in the groups_members, only if
+                        //users are included
+                        if ($restore->users != 2) {
+                            $status2 = restore_create_groups_members($newid,$info,$restore);
+                        }
                     }   
                 }
             }
