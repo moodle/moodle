@@ -405,6 +405,21 @@
     </td>
 </tr>
 <tr valign=top>
+	<td align=right><p>extendedusernamechars:</td>
+	<td>
+    <?php 
+       unset($options);
+       $options[0] = get_string("no");
+       $options[1] = get_string("yes");
+
+       choose_from_menu ($options, "extendedusernamechars", $config->extendedusernamechars, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configextendedusernamechars") ?>
+    </td>
+</tr>
+<tr valign=top>
 	<td align=right><p>forcelogin:</td>
 	<td>
     <?php 
@@ -417,6 +432,21 @@
     </td>
     <td>
     <?php print_string("configforcelogin") ?>
+    </td>
+</tr>
+<tr valign=top>
+	<td align=right><p>forceloginforprofiles:</td>
+	<td>
+    <?php 
+       unset($options);
+       $options[0]  = get_string('no');
+       $options[1]  = get_string('yes');
+
+       choose_from_menu ($options, "forceloginforprofiles", $config->forceloginforprofiles, "", "", "");
+    ?>
+    </td>
+    <td>
+    <?php print_string("configforceloginforprofiles") ?>
     </td>
 </tr>
 <tr valign=top>
