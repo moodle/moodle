@@ -19,6 +19,10 @@
         error("Course ID is incorrect - discussion is faulty");
     }
 
+    if ($CFG->forcelogin) {
+        require_login();
+    }
+
     if ($course->category) {
         require_login($course->id);
     }

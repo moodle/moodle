@@ -15,6 +15,10 @@
         }
     }
 
+    if ($CFG->forcelogin) {
+        require_login();
+    }
+
     if ($course->category) {
         require_login($course->id);
     }

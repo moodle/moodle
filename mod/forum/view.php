@@ -52,6 +52,10 @@
         $buttontext = forum_print_search_form($course, $search, true, "plain");
     } 
 
+    if ($CFG->forcelogin) {
+        require_login();
+    }
+
     if ($course->category) {
         require_login($course->id);
         $navigation = "<a href=\"../../course/view.php?id=$course->id\">$course->shortname</a> ->
