@@ -36,7 +36,7 @@
     print_heading($strpolicyagreement);
 
     echo '<center>';
-    echo '<iframe align="center" width="80%" height="70%" src="'.$CFG->sitepolicy.'" />';
+    echo '<iframe align="center" width="90%" height="70%" src="'.$CFG->sitepolicy.'" />';
     echo link_to_popup_window ($CFG->sitepolicy, 'agreement', $strpolicyagreementclick,
                                500, 500, 'Popup window', 'none', true);
     echo '</iframe>';
