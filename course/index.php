@@ -103,6 +103,7 @@
                 notify(get_string("categorydeleted", "", $tempcat->name));
             }
             if ($children = get_records("course_categories", "parent", $tempcat->id)) {
+                // Send the children to live with their grandparent
                 foreach ($children as $childcat) {
                     if (! set_field("course_categories", "parent", $tempcat->parent, "id", $childcat->id)) {
                         notify("Could not update a child category!");
@@ -220,10 +221,15 @@
 
 /// Find any orphan courses that don't yet have a valid category and set to default
     if ($courses = get_courses()) {
+        $foundorphans = false;
         foreach ($courses as $course) {
-            if ($course->category and !isset( $categories[$course->category] )) {
+            if ($course->category and !isset($categories[$course->category])) {
                 set_field("course", "category", $default, "id", $course->id);
+                $foundorphans = true;
             }
+        }
+        if ($foundorphans) {
+            fix_course_sortorder($default);
         }
     }
 

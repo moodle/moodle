@@ -1115,7 +1115,7 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
 
     $categoryselect = "";
     if ($categoryid != "all") {
-        $categoryselect = "c.category = '$categoryid'";
+        $categoryselect = "WHERE c.category = '$categoryid'";
     }
 
     $teachertable = "";
@@ -1131,7 +1131,7 @@ function get_courses($categoryid="all", $sort="c.sortorder ASC", $fields="c.*") 
         $visiblecourses = "AND c.visible > 0";
     }
 
-    $selectsql = "{$CFG->prefix}course c $teachertable WHERE $categoryselect $visiblecourses";
+    $selectsql = "{$CFG->prefix}course c $teachertable $categoryselect $visiblecourses";
 
     return get_records_sql("SELECT $fields FROM $selectsql $teachergroup ORDER BY $sort");
 }
