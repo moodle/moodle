@@ -6,7 +6,10 @@
     //Insert necessary category ids to backup_ids table
     function insert_category_ids ($course,$backup_unique_code) {
         global $CFG;
-        $status = true;
+
+        //Create missing categories and reasign orphaned questions
+        fix_orphaned_questions($course);
+
         $status = execute_sql("INSERT INTO {$CFG->prefix}backup_ids
                                    (backup_code, table_name, old_id)
                                SELECT DISTINCT $backup_unique_code,'quiz_categories',t.category
@@ -17,6 +20,44 @@
                                      g.quiz = q.id AND
                                      g.question = t.id",false);
         return $status;
+    }
+
+    //This function is used to detect orphaned questions (pointing to a
+    //non existing category) and to recreate such category. This function
+    //is used by the backup process, to ensure consistency and should be
+    //executed in the upgrade process and, perhaps in the health center.
+    function fix_orphaned_questions ($course) {
+
+        global $CFG;
+
+        $categories = get_records_sql("SELECT DISTINCT t.category, t.category
+                                       FROM {$CFG->prefix}quiz_questions t,
+                                            {$CFG->prefix}quiz_question_grades g,
+                                            {$CFG->prefix}quiz q
+                                       WHERE q.course = '$course' AND
+                                             g.quiz = q.id AND
+                                             g.question = t.id",false);
+        if ($categories) {
+            foreach ($categories as $key => $category) {
+                $exist = get_record('quiz_categories','id', $key);
+                //If the category doesn't exist
+                if (!$exist) {
+                    //Build a new category
+                    $db_cat->course = $course;
+                    $db_cat->name = get_string('recreatedcategory','',$key);
+                    $db_cat->info = get_string('recreatedcategory','',$key);
+                    $db_cat->publish = 1;
+                    $db_cat->stamp = make_unique_id_code();
+                    //Insert the new category
+                    $catid = insert_record('quiz_categories',$db_cat);
+                    unset ($db_cat);
+                    if ($catid) {
+                        //Reasign orphaned questions to their new category
+                        set_field ('quiz_questions','category',$catid,'category',$key);
+                    }
+                }
+            }
+        }
     }
     
     //Delete category ids from backup_ids table
