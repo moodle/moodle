@@ -138,7 +138,7 @@
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/aview/backlinks.php");
         #include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/markup/css.php");
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/markup/footnotes.php");
-        include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/action/diff.php");
+        include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/moodle/diff.php");
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/page/pageindex.php");
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/page/orphanedpages.php");
         include_once($CFG->dirroot."/mod/wiki/ewiki/plugins/moodle/wantedpages.php");
@@ -273,14 +273,14 @@
           $infoicon= '<img hspace=1 alt="'.get_string("pageinfo","wiki").'" height=16 width=16 border=0 src="'.$CFG->pixpath.'/i/info.gif">';
 
           if($ewiki_action!="edit" && !in_array($wikipage, $specialpages)) {          
-            $iconstr.='<a title="'.get_string("editthispage","wiki").'" href="'.EWIKI_SCRIPT.'&wikipage=edit/'.$ewiki_id.'">'.$editicon."</a>";
+            $iconstr.='<a title="'.get_string("editthispage","wiki").'" href="'.$ewbase.'&wikipage=edit/'.$ewiki_id.'">'.$editicon."</a>";
           }
           else {
             $iconstr.=$editicon;
           }
 
           if($ewiki_action!="info" && !in_array($wikipage, $specialpages)) {                      
-            $iconstr.='<a title="'.get_string("pageinfo","wiki").'" href="'.EWIKI_SCRIPT.'&wikipage=info/'.$ewiki_id.'">'.$infoicon."</a>";
+            $iconstr.='<a title="'.get_string("pageinfo","wiki").'" href="'.$ewbase.'&wikipage=info/'.$ewiki_id.'">'.$infoicon."</a>";
           }
           else {
             $iconstr.=$infoicon;

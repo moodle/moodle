@@ -77,7 +77,7 @@
 
     # Check for dangerous events (hacking) !
     if(in_array($action,array("removepages","strippages","revertpages"))) {
-      if($wiki->wtype!="student" || !isteacher($course->id)) {
+      if($wiki->wtype!="student" && !isteacher($course->id)) {
         error("Hack attack detected !");
       }          
     }

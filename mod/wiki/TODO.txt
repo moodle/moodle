@@ -19,5 +19,3 @@ Unassigned or not ready:
  
 ewiki Preparation:
   - Current Version: 1.01d
-  - rm -r example-1.php examples/ tools/ config.php
-  - rm -r fragments/ patches/ php-patches/ spages/

@@ -161,6 +161,7 @@ $string['binimgtoolarge']='Image file is too large!';
 $string['binnoimg']='This is an inacceptable file format!';
 $string['browse']='Browse';
 $string['fetchback']='Fetch-back';
+$string['differences']="Differences between version \$a->new_ver and \$a->old_ver of \$a->pagename.";
 $string['diff']='Diff';
 $string['author']='Author';
 $string['created']='Created';
