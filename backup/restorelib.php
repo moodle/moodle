@@ -415,7 +415,7 @@
     //user_course_creators and user_admins from xml
     function restore_create_users($restore,$xml_file) {
 
-        global $CFG;   
+        global $CFG, $db;
 
         $status = true;
         //Check it exists
@@ -480,6 +480,17 @@
 
                 //Here, if create_user, do it
                 if ($create_user) {
+                    //We addslashes to necessary fields
+                    $user->username = addslashes($user->username);
+                    $user->firstname = addslashes($user->firstname);
+                    $user->lastname = addslashes($user->lastname);
+                    $user->email = addslashes($user->email);
+                    $user->institution = addslashes($user->institution);
+                    $user->department = addslashes($user->department);
+                    $user->address = addslashes($user->address);
+                    $user->city = addslashes($user->city);
+                    $user->url = addslashes($user->url);
+                    $user->description = addslashes($user->description);
                     //We are going to create the user
                     //The structure is exactly as we need
                     $newid = insert_record ("user",$user);
@@ -674,6 +685,7 @@
             foreach ($info as $mod) {
                 $modrestore = $mod->modtype."_restore_mods";
                 if (function_exists($modrestore)) {
+                    //print_object ($mod);                                                //Debug
                     $status = $modrestore($mod,$restore);
                 } else {
                     //Something was wrong. Function should exist.
@@ -765,6 +777,9 @@
             $this->level++;
             $this->tree[$this->level] = $tagName;
 
+            //Output something to avoid browser timeouts...
+            backup_flush();
+
             //Check if we are into INFO zone
             //if ($this->tree[2] == "INFO")                                                             //Debug
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
@@ -775,6 +790,9 @@
             //Refresh properties
             $this->level++;
             $this->tree[$this->level] = $tagName;
+
+            //Output something to avoid browser timeouts...
+            backup_flush();
 
             //Check if we are into COURSE_HEADER zone
             //if ($this->tree[3] == "HEADER")                                                           //Debug
@@ -787,6 +805,9 @@
             $this->level++;
             $this->tree[$this->level] = $tagName;   
 
+            //Output something to avoid browser timeouts...
+            backup_flush();
+
             //Check if we are into SECTIONS zone
             //if ($this->tree[3] == "SECTIONS")                                                         //Debug
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
@@ -797,6 +818,10 @@
             //Refresh properties     
             $this->level++;
             $this->tree[$this->level] = $tagName;   
+
+            //Output something to avoid browser timeouts...
+            backup_flush();
+
             //Check if we are into USERS zone  
             //if ($this->tree[3] == "USERS")                                                            //Debug
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
@@ -807,9 +832,14 @@
             //Refresh properties
             $this->level++;
             $this->tree[$this->level] = $tagName;
+
+            //Output something to avoid browser timeouts...
+            backup_flush();
+
             //Check if we are into MODULES zone
             //if ($this->tree[3] == "MODULES")                                                          //Debug
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
+
             //If we are under a MOD tag under a MODULES zone, accumule it
             if (($this->tree[4] == "MOD") and ($this->tree[3] == "MODULES")) {
                 $this->temp .= "<".$tagName.">";
@@ -820,6 +850,10 @@
         function startElement($parser, $tagName, $attrs) {
             $this->level++;
             $this->tree[$this->level] = $tagName;
+
+            //Output something to avoid browser timeouts...
+            backup_flush();
+
             echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br>\n";   //Debug
         }
  
@@ -1295,8 +1329,9 @@
                         //Now add slashes
                         $sla_mod_temp = addslashes($mod_temp);
                         //Save to db
-                        backup_putid($this->preferences->backup_unique_code,$mod_type,$mod_id,
+                        $status = backup_putid($this->preferences->backup_unique_code,$mod_type,$mod_id,
                                      null,$sla_mod_temp);
+                        //echo "<p>id: ".$mod_id."-".$mod_type." len.: ".strlen($sla_mod_temp)." to_db: ".$status."<p>";   //Debug
                         //Create returning info
                         $ret_info->id = $mod_id;
                         $ret_info->modtype = $mod_type;
