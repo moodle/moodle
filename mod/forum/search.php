@@ -83,12 +83,14 @@
         if (count($posts) == $perpage) {
             $options = array();
             $options["id"] = $course->id;
-            $options["search"] = urlencode($search);
+            $options["search"] = $search;
             $options["page"] = $page+1;
             $options["perpage"] = $perpage;
             echo "<center>";
             print_single_button("search.php", $options, get_string("searcholderposts", "forum"));
             echo "</center>";
+        } else {
+            print_heading(get_string("nomorepostscontaining", "forum", $search));
         }
     }
 
