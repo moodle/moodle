@@ -904,6 +904,10 @@ function remove_course_contents($courseid, $showfeedback=true) {
 function ismember($groupid, $userid=0) {
     global $USER;
 
+    if (!$groupid) {   // No point doing further checks
+        return false;
+    }
+
     if (!$userid) {
         if (empty($USER->groupmember)) {
             return false;
@@ -972,7 +976,7 @@ function get_current_group($courseid, $full=false) {
 
     if (empty($SESSION->currentgroup[$courseid])) {
         if (empty($USER->groupmember[$courseid])) {
-            return false;
+            return 0;
         } else {
             $SESSION->currentgroup[$courseid] = $USER->groupmember[$courseid];
         }
