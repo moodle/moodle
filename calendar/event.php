@@ -188,15 +188,11 @@
     if(empty($focus)) $focus = '';
 
     // Let's see if we are supposed to provide a referring course link
-    // but NOT for the front page
-
-    if (!empty($SESSION->cal_course_referer)) {
-        if ($course = get_record('course', 'id', $SESSION->cal_course_referer)) {
-            $shortname = $course->shortname;
-            $nav = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$SESSION->cal_course_referer.'">'.$shortname.'</a> -> '.$nav;
-        }
-    } else {
-        $nav = '';
+    // but NOT for the "main page" course
+    if($SESSION->cal_course_referer > 1 &&
+      ($shortname = get_field('course', 'shortname', 'id', $SESSION->cal_course_referer)) !== false) {
+        // If we know about the referring course, show a return link
+        $nav = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$SESSION->cal_course_referer.'">'.$shortname.'</a> -> '.$nav;
     }
 
     print_header(get_string('calendar', 'calendar').': '.$title, $site->fullname, $nav.' -> '.$title,
@@ -294,16 +290,10 @@
                 $form->timestart = time();
             }
 
-            if(!isset($_REQUEST['type'])) {
-                // We don't know what kind of event we want
-                calendar_get_allowed_types($allowed);
-                if(!$allowed->groups && !$allowed->courses && !$allowed->site) {
-                    // Take the shortcut
-                    $_REQUEST['type'] = 'user';
-                }
-                else {
-                    $_REQUEST['type'] = 'select';
-                }
+            calendar_get_allowed_types($allowed);
+            if(!$allowed->groups && !$allowed->courses && !$allowed->site) {
+                // Take the shortcut
+                $_REQUEST['type'] = 'user';
             }
 
             $header = '';
