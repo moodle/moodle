@@ -44,21 +44,21 @@
 
 /// If data submitted, then process and store.
 
-    if (!empty($_GET['hide'])) {
+    if (!empty($_GET['hide']) and confirm_sesskey()) {
         if (!$block = get_record('blocks', 'id', $_GET['hide'])) {
             error("Block doesn't exist!");
         }
         set_field('blocks', 'visible', '0', 'id', $block->id);      // Hide block
     }
 
-    if (!empty($_GET['show'])) {
+    if (!empty($_GET['show']) and confirm_sesskey() ) {
         if (!$block = get_record('blocks', 'id', $_GET['show'])) {
             error("Block doesn't exist!");
         }
         set_field('blocks', 'visible', '1', 'id', $block->id);      // Show block
     }
 
-    if (!empty($delete)) {
+    if (!empty($delete) and confirm_sesskey()) {
 
         if (!$block = get_record('blocks', 'id', $delete)) {
             error("Block doesn't exist!");
@@ -69,7 +69,7 @@
 
         if (!$_GET['confirm']) {
             notice_yesno(get_string('blockdeleteconfirm', '', $strblockname),
-                         'blocks.php?delete='.$block->id.'&amp;confirm=1',
+                         'blocks.php?delete='.$block->id.'&amp;confirm=1&sesskey='.$USER->sesskey,
                          'blocks.php');
             print_footer();
             exit;
@@ -148,7 +148,7 @@
         //$icon = "<img src=\"$modpixpath/$block->name/icon.gif\" hspace=10 height=16 width=16 border=0>";
         $blockobject = $blockobjects[$blockid];
 
-        $delete = '<a href="blocks.php?delete='.$blockid.'">'.$strdelete.'</a>';
+        $delete = '<a href="blocks.php?delete='.$blockid.'&sesskey='.$USER->sesskey.'">'.$strdelete.'</a>';
 
         $settings = ''; // By default, no configuration
         if($blockobject->has_config()) {
@@ -159,10 +159,10 @@
         $class = ''; // Nothing fancy, by default
 
         if ($blocks[$blockid]->visible) {
-            $visible = '<a href="blocks.php?hide='.$blockid.'" title="'.$strhide.'">'.
+            $visible = '<a href="blocks.php?hide='.$blockid.'&sesskey='.$USER->sesskey.'" title="'.$strhide.'">'.
                        '<img src="'.$pixpath.'/i/hide.gif" style="height: 16px; width: 16px;" /></a>';
         } else {
-            $visible = '<a href="blocks.php?show='.$blockid.'" title="'.$strshow.'">'.
+            $visible = '<a href="blocks.php?show='.$blockid.'&sesskey='.$USER->sesskey.'" title="'.$strshow.'">'.
                        '<img src="'.$pixpath.'/i/show.gif" style="height: 16px; width: 16px;" /></a>';
             $class = ' class="dimmed_text"'; // Leading space required!
         }
