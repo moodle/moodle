@@ -170,7 +170,9 @@
     require_once("$CFG->dirroot/enrol/$CFG->enrol/enrol.php");
     $enrol = new enrolment_plugin();
     $enrol->cron();
-    echo $enrol->log;
+    if (!empty($enrol->log)) {
+        echo $enrol->log;
+    }
 
     //Unset session variables and destroy it
     @session_unset();
