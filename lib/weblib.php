@@ -313,7 +313,7 @@ function stripslashes_safe($string) {
 
     $string = str_replace("\\'", "'", $string);
     $string = str_replace('\\"', '"', $string);
-    //$string = str_replace('\\\\', '\\', $string);  // why?
+    $string = str_replace('\\\\', '\\', $string);
     return $string;
 }
 
