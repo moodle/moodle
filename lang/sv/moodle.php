@@ -1,8 +1,8 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.1.1 (2003091111)
+      // moodle.php - created with Moodle 1.2 development (2003111400)
 
 
-$string['action'] = "Handling";
+$string['action'] = "Åtgärd";
 $string['activities'] = "Aktiviteter";
 $string['activity'] = "Aktivitet";
 $string['activityclipboard'] = "Flyttar denna aktivitet <b>\$a</b>";
@@ -31,10 +31,11 @@ $string['adminhelpassigncreators'] = "Kursutvecklare kan skapa nya kurser och un
 $string['adminhelpassignstudents'] = "Gå in i en kurs och lägg till studenter/elever/deltagare/lärande från menyn för administration.";
 $string['adminhelpassignteachers'] = "Hitta en kurs och använd ikonen för att lägga till (distans)lärare.";
 $string['adminhelpauthentication'] = "Du kan använda interna användarkonton eller externa databaser.";
+$string['adminhelpbackup'] = "Konfigurera hur backup(er)  fungerar";
 $string['adminhelpconfiguration'] = "Konfigurera webbplatsens utseende och funktion";
 $string['adminhelpconfigvariables'] = "Konfigurera variabler som påverkar webbplatsen på ett övergripande sätt.";
 $string['adminhelpcourses'] = "Definiera kurser/kategorier. Ge användare tillgång, behörigheter och rättigheter till dem.";
-$string['adminhelpedituser'] = "Gå igenom förteckningen över konton och 
+$string['adminhelpedituser'] = "Gå igenom förteckningen över konton och 
 redigera valfritt konto.";
 $string['adminhelplanguage'] = "För att kontrollera och redigera det aktuella språkpaketet.";
 $string['adminhelplogs'] = "Gå igenom dokumentationen (loggarna)för alla aktiviteter på webbplatsen.";
@@ -56,6 +57,7 @@ $string['allow'] = "Tillåt";
 $string['allowguests'] = "Denna kurs tillåter gäster";
 $string['allownot'] = "Tillåt inte";
 $string['allparticipants'] = "Alla deltagare";
+$string['alphabet'] = "A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,Å,Ä,Ö";
 $string['alphanumerical'] = "Kan endast innehålla alfabetiska bokstäver, eller siffror";
 $string['alreadyconfirmed'] = "Registreringen har redan bekräftats";
 $string['answer'] = "Svar";
@@ -65,7 +67,7 @@ $string['assessment'] = "Rätta/bedöma/(ut)värdera/betygssätta/examinera";
 $string['assignadmins'] = "Registrera administratörer";
 $string['assigncreators'] = "Registrera kursutvecklare";
 $string['assignstudents'] = "Registrera studenter/elever/deltagare/lärande";
-$string['assignstudentsnote'] = "Obs! Det kanske inte är nödvändigt att använda den här sidan, eftersom det är möjligt för studenter/elever/deltagare/lärande att registera sig själva på den här kursen.";
+$string['assignstudentsnote'] = "OBS! Det kanske inte är nödvändigt att använda den här sidan, eftersom det är möjligt för studenter/elever/deltagare/lärande att registera sig själva på den här kursen.";
 $string['assignstudentspass'] = "Allt Du kan tänkas behöva göra är att skicka lösenordet till den här kursen till Dina studenter/elever/deltagare/lärande. Det är för närvarande '\$a'. ";
 $string['assignteachers'] = "Utse (distans)lärare";
 $string['authentication'] = "Autentisering";
@@ -112,6 +114,7 @@ $string['configcountry'] = "Om Du har valt ett land här så kommer detta land att
 $string['configdebug'] = "Om Du aktiverar det här så utökar Du PHP:s felrapportering. Systemet ger då ifrån sig fler varningar. Detta är av värde bara för utvecklare.";
 $string['configerrorlevel'] = "Välj det antal PHP-varningar som Du vill låta visas.  'Normalt' är vanligtvis det bästa valet.";
 $string['configframename'] = "Om Du lägger in Moodle i en ram så skriver Du in namnet på denna ram här. Annars bör Du låta värdet '_top' stå kvar.";
+$string['configfullnamedisplay'] = "Detta definierar hur fullständiga namn visas. För de flesta enspråkiga webbplatser är standardinställningen 'För- och efternamn' den bästa, men Du kan välja att dölja efternamnet helt och hållet eller låta det aktuella språkpaketet avgöra (en del språk har olika konventioner).";
 $string['configgdversion'] = "Detta indikerar vilken version av GD som är installerad.  Versionen som visas som standard är den som har blivit automatiskt upptäckt.  Ändra inte på detta, såvida Du inte verkligen vet vad Du gör.";
 $string['confightmleditor'] = "Välj om Du vill tillåta användning av den inbäddade HTML-redigeraren. Även om Du väljer att tillåta redigeraren, så kommer den bara att uppträda när användaren använder en kompatibel webbklient (IE 5.5 eller senare).  Användare kan också välja att inte använda den.";
 $string['configidnumber'] = "Den här valmöjligheten specificerar följande: (a)Användarnas ska inte alls behöva ange ID-nummer (b) Användarna kan ange ID-nummer eller avstå från det (c) Användarna måste ange ID-nummer. Om användaren anger sitt ID-nummer så visas det i dennes Presentation.";
@@ -129,7 +132,7 @@ $string['configmaxbytes'] = "Detta specificerar den övergipande maximala storlek
 $string['configmaxeditingtime'] = "Detta specificerar tiden folk har på sig att redigera om sina foruminlägg, journalåterkopplingar etc.  Vanligtvis är 30 minuter tillräcklig tid.";
 $string['configproxyhost'] = "Om denna <b>server</b> behöver en proxy (t.ex. en brandvägg) för att nå Internet, ange då proxyns namn (hostname) och port här.  Låt det annars vara tomt.";
 $string['configsecureforms'] = "Moodle kan använda ytterligare en säkerhetsnivå när systemet tar emot data från ett formulär. Om detta är aktiverat så jämförs webbläsarens variabel HTTP_REFERER med det aktuella formulärets adress. I några enstaka fall kan det ge upphov till problem om användaren utnyttjar en brandvägg (t ex Zonealarm) som är inställd på att ta bort HTTP_REFERER från sin webbtrafik,. Symptom på detta är att man \\\"fastnar\\\" på ett formulär. Om Dina användare har problem med loginsidan så kanske Du vill avaktivera den här inställningen även om det öppnar Din sajt för lösenordsattacker. Om Du är tveksam så är det bäst att låta inställningen 'Ja' vara kvar.";
-$string['configsessioncookie'] = "Med den här inställningen kan Du ändra namnet på den 'cookie' som används dör sessioner i Moodle. Detta är valfritt och behövs egentligen bara när Du kör fler än en instans (kopia) av Moodle på samma webbplats.";
+$string['configsessioncookie'] = "Med den här inställningen kan Du ändra namnet på den 'cookie' som används för sessioner i Moodle. Detta är valfritt och behövs egentligen bara när Du kör fler än en instans (kopia) av Moodle på samma webbplats.";
 $string['configsessiontimeout'] = "Om användare som är inloggade på den här webbplatsen är inaktiva under en lång tid (utan att ladda ner sidor) så loggas de automatiskt ut. (Deras session tar slut). Den här variabeln bestämmer hur lång den tiden ska vara.";
 $string['configslasharguments'] = "Filer (bilder, uppladdade filer etc) tillhandahålls via ett skript som använder 'slash arguments' (det andra valet här). Denna metod låter filer lättare bli mellanlagrade i webbklienter, proxyservrar etc.  Dessvärre tillåter vissa PHP-servrar inte denna metod, så om Du har problem att se uppladdade filer eller bilder (t.ex. användares bilder) så bör Du sätta denna variabel till det första valet.";
 $string['configsmtphosts'] = "Ange fullständigt namn på en eller flera lokala SMTP-servrar som Moodle skall använda för att sända e-post (t.ex. 'mail.a.com' eller 'mail.a.com;mail.b.com'). Om Du lämnar det tomt, kommer Moodle att använda standardmetoden för PHP att skicka e-post.";
@@ -164,7 +167,7 @@ $string['courseinfo'] = "Kursinformation";
 $string['courserestore'] = "Återställ kurs";
 $string['courses'] = "Kurser";
 $string['courseupdates'] = "Kursuppdatering";
-$string['courseuploadlimit'] = "Begränsninga av storleken på uppladdade filer";
+$string['courseuploadlimit'] = "Begränsningar av storleken på uppladdade filer";
 $string['create'] = "Skapa";
 $string['createaccount'] = "Skapa mitt nya konto";
 $string['createfolder'] = "Skapa en mapp i \$a";
@@ -186,6 +189,7 @@ $string['currentlocaltime'] = "Din nuvarande lokala tid";
 $string['currentrelease'] = "Aktuell information om 'release'";
 $string['currentversion'] = "Aktuell version";
 $string['databasechecking'] = "Uppgraderar Moodles databas från version \$a->oldversion till \$a->newversion...";
+$string['databaseperformance'] = "Databasens prestanda";
 $string['databasesetup'] = "Sätter upp databas";
 $string['databasesuccess'] = "Databasen har uppgraderats";
 $string['databaseupgradebackups'] = "Backup-versionen är nu \$a";
@@ -234,21 +238,21 @@ $string['editthiscategory'] = "Redigera denna kategori";
 $string['edituser'] = "Redigera användarkonton";
 $string['email'] = "E-postadress";
 $string['emailconfirm'] = "Bekräfta Ditt konto";
-$string['emailconfirmation'] = "Hej \$a->firstname!
-<p>
-Någon har använt Din e-postadress för att beställa ett nytt konto hos '\$a->sitename'.</p>
-<p>
-Om Du vill bekräfta Ditt nya konto, så är Du varmt välkommen att besöka följande webbadress:
-\$a->link
-</p>
-<p>
-I de flesta e-postprogram kommer den att visas som en blå länk som Du bara behöver klicka på. Om det inte fungerar, kan Du klippa ut adressen här och klistra in den i adressfönstret på Din webbläsare, klicka sedan på Gå eller tryck på radmatningen (Enter).
-</p>
-Med vänlig hälsning från '\$a->sitename' administratören,
+$string['emailconfirmation'] = "Hej \$a->firstname!
+<p>
+Någon har använt Din e-postadress för att beställa ett nytt konto hos '\$a->sitename'.</p>
+<p>
+Om Du vill bekräfta Ditt nya konto, så är Du varmt välkommen att besöka följande webbadress:
+\$a->link
+</p>
+<p>
+I de flesta e-postprogram kommer den att visas som en blå länk som Du bara behöver klicka på. Om det inte fungerar, kan Du klippa ut adressen här och klistra in den i adressfönstret på Din webbläsare, klicka sedan på Gå eller tryck på radmatningen (Enter).
+</p>
+Med vänlig hälsning från '\$a->sitename' administratören,
 \$a->admin";
 $string['emailconfirmationsubject'] = "\$a: bekräftelse av konto";
-$string['emailconfirmsent'] = "   <p>Vi har skickat ett e-postbrev till Din adress på <b>\$a</b></p>
-   <p>Det innehåller enkla instruktioner som hjälper Dig att fullfölja Din registrering.</p>
+$string['emailconfirmsent'] = "   <p>Vi har skickat ett e-postbrev till Din adress på <b>\$a</b></p>
+   <p>Det innehåller enkla instruktioner som hjälper Dig att fullfölja Din registrering.</p>
    <p>Om Du stöter på problem, är Du välkommen att kontakta den som ansvarar för webbplatsen, \$a->admin.</p>";
 $string['emaildisplay'] = "Visning av e-post";
 $string['emaildisplaycourse'] = "Tillåt endast andra kursdeltagare att se min e-postadress";
@@ -257,32 +261,32 @@ $string['emaildisplayyes'] = "Tillåt alla att se min e-postadress";
 $string['emailexists'] = "Din e-postadress är redan registrerad.";
 $string['emailformat'] = "E-post format";
 $string['emailmustbereal'] = "Obs: Din e-postadress måste vara giltig";
-$string['emailpasswordconfirmation'] = "Hej \$a->firstname!
-Någon (antagligen Du) har beställt ett nytt lösenord till Ditt konto på '\$a->sitename'.
-Om Du vill bekräfta detta och att vi ska skicka det nya lösenordet med e-post så behöver Du koppla upp Dig till den följande webbadressen: \$a->link
-I de flesta e-postprogram kommer den att visas som en blå
-länk som Du bara behöver klicka på. Om det inte fungerar,
-kan Du klippa ut adressen här och klistra in den i
-adressfönstret på Din webbläsare, klicka sedan på Gå eller
-tryck på radmatningen (Enter).
-
-Om Du behöver hjälp så är Du välkommen att kontakta den som är ansvarig för webbplatsen, \$a->admin
+$string['emailpasswordconfirmation'] = "Hej \$a->firstname!
+Någon (antagligen Du) har beställt ett nytt lösenord till Ditt konto på '\$a->sitename'.
+Om Du vill bekräfta detta och att vi ska skicka det nya lösenordet med e-post så behöver Du koppla upp Dig till den följande webbadressen: \$a->link
+I de flesta e-postprogram kommer den att visas som en blå
+länk som Du bara behöver klicka på. Om det inte fungerar,
+kan Du klippa ut adressen här och klistra in den i
+adressfönstret på Din webbläsare, klicka sedan på Gå eller
+tryck på radmatningen (Enter).
+
+Om Du behöver hjälp så är Du välkommen att kontakta den som är ansvarig för webbplatsen, \$a->admin
 ";
 $string['emailpasswordconfirmationsubject'] = "\$a: ändra bekräftelse av lösenord";
-$string['emailpasswordconfirmsent'] = "<p>Vi har skickat ett e-postbrev till Din adress på <b>\$a</b></p>
-<p>Det innehåller enkla instruktioner för att Du ska kunna bekräfta och fullfölja detta byte av lösenord.</p>
-<p>Om Du stöter på problem, är Du välkommen att kontakta den som ansvarar för webbplatsen, \$a->admin.</p>
+$string['emailpasswordconfirmsent'] = "<p>Vi har skickat ett e-postbrev till Din adress på <b>\$a</b></p>
+<p>Det innehåller enkla instruktioner för att Du ska kunna bekräfta och fullfölja detta byte av lösenord.</p>
+<p>Om Du stöter på problem, är Du välkommen att kontakta den som ansvarar för webbplatsen, \$a->admin.</p>
 ";
-$string['emailpasswordsent'] = "Tack för att Du bekräftade bytet av lösenord.<p>Vi har skickat ett e-postbrev som innehåller lösenordet till Din adress på <b>\$a->email</b></p>
+$string['emailpasswordsent'] = "Tack för att Du bekräftade bytet av lösenord.<p>Vi har skickat ett e-postbrev som innehåller lösenordet till Din adress på <b>\$a->email</b></p>
 <p>Det nya lösenordet har skapats automatiskt - Du kanske vill <a href=\$a->link>byta Ditt lösenord</a> till något som är lättare att komma ihåg";
 $string['enrolmentconfirmation'] = "Du håller på att registrera Dig som student/elev/deltagare/lärande på denna kurs. <br /> Är Du säker på att Du vill fullfölja detta?";
 $string['enrolmentkey'] = "Kursnyckel";
-$string['enrolmentkeyfrom'] = "Denna kurs kräver en 'kursnyckel' - <br />
+$string['enrolmentkeyfrom'] = "Denna kurs kräver en 'kursnyckel' - <br />
 ett engångslösenord som Du borde ha fått från \$a";
-$string['enrolmentkeyhint'] = "Den angivna kursnyckeln var felaktig, var vänlig försök igen<br />
+$string['enrolmentkeyhint'] = "Den angivna kursnyckeln var felaktig, var vänlig försök igen<br />
 (Här är ett tips - det börjar med '\$a')";
 $string['entercourse'] = "Klicka för att nå denna kurs";
-$string['enteremailaddress'] = "Mata in Din e-postadress för att nollställa Ditt
+$string['enteremailaddress'] = "Mata in Din e-postadress för att nollställa Ditt
 lösenord så skickar vi det nya lösenordet till Dig via e-post.";
 $string['error'] = "Fel";
 $string['errortoomanylogins'] = "Du har tyvärr försökt logga in för många gånger. Starta om Din webbläsare och försök igen.";
@@ -323,24 +327,25 @@ $string['frontpageformat'] = "Formattering av första sidan";
 $string['frontpagenews'] = "Visa alla nya element";
 $string['fulllistofcourses'] = "Alla kurser";
 $string['fullname'] = "Hela namnet";
+$string['fullnamedisplay'] = "\$a->firstname \$a->lastname";
 $string['fullprofile'] = "Hela profilen";
 $string['fullsitename'] = "Hela webbplatsnamnet";
 $string['gd1'] = "GD 1.x är installerat";
 $string['gd2'] = "GD 2.x är installerat";
 $string['gdneed'] = "GD måste vara installerat för att Du ska se denna bild.";
 $string['gdnot'] = "GD är inte installerat";
-$string['gpl'] = "Copyright, Upphovsrätt (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)
-
-Det här programmet är fri (gratis) mjukvara. Du har rätt att distribuera det vidare och/eller modifiera(ändra)det i enlighet med villkoren i 
-'the GNU General Public License' (GNU Allmänna Offentliga Licens) såsom den har publicerats av 
-'the Free Software Foundation' ; antingen version 2 av Licensen0, eller (om Du hellre väljer det)
-valfri senare version.
-
-Det här programmet distribueras i förhoppningen att det ska vara användbart och till nytta men 
-UTAN VARJE FORM AV GARANTI
-; utan t o m den (under)förstådda garantin  för 'MERCHANTABILITY' eller 'FITNESS FOR A PARTICULAR PURPOSE' (lämplighet för ett visst ändamål).  Ta del av
-'GNU General Public License' för ytterligare information:
-
+$string['gpl'] = "Copyright, Upphovsrätt (C) 2001-2002  Martin Dougiamas  (http://dougiamas.com)
+
+Det här programmet är fri (gratis) mjukvara. Du har rätt att distribuera det vidare och/eller modifiera(ändra)det i enlighet med villkoren i 
+'the GNU General Public License' (GNU Allmänna Offentliga Licens) såsom den har publicerats av 
+'the Free Software Foundation' ; antingen version 2 av Licensen0, eller (om Du hellre väljer det)
+valfri senare version.
+
+Det här programmet distribueras i förhoppningen att det ska vara användbart och till nytta men 
+UTAN VARJE FORM AV GARANTI
+; utan t o m den (under)förstådda garantin  för 'MERCHANTABILITY' eller 'FITNESS FOR A PARTICULAR PURPOSE' (lämplighet för ett visst ändamål).  Ta del av
+'GNU General Public License' för ytterligare information:
+
 http://www.gnu.org/copyleft/gpl.html";
 $string['grade'] = "Betyg";
 $string['grades'] = "Betyg";
@@ -396,6 +401,7 @@ $string['language'] = "Språk";
 $string['languagegood'] = "Detta språkpaket är det senaste! :-)";
 $string['lastaccess'] = "Senast access";
 $string['lastedited'] = "Senast redigerad";
+$string['lastlogin'] = "Senaste login";
 $string['lastmodified'] = "Senast modifierad";
 $string['lastname'] = "Efternamn";
 $string['latestlanguagepack'] = "Sök efter det senaste språkpaketet på moodle.org";
@@ -414,47 +420,47 @@ $string['login'] = "Logga in";
 $string['loginas'] = "Logga in som";
 $string['loginguest'] = "Logga in som gäst";
 $string['loginsite'] = "Logga in till denna webbplats";
-$string['loginsteps'] = "Hej! 
-<br />
-För att få tillgång till de kurser som Du vill delta
-<br />
-i så måste Du bl a skapa ett nytt användarkonto
-<br />
-på denna webbplats. Varje individuell kurs kan 
-<br />
-också ha en engångsnyckel &quot;kursnyckel&quot;.
-<br /> 
-Den behöver Du dock inte  förrän senare.
-<br />
-   Så här skapar Du Ditt konto:
-   <ol size=\\\"2\\\">
-   <li>Fyll i formuläret på sidan <a href=\$a><br />
-Nytt konto</a> med de efterfrågade<br /> 
-uppgifterna om Dig själv.</li>
-   <li>Ett e-postmeddelande kommer därefter<br />
-omedelbart att sändas till 
-Din e-postadress.</li>
-   <li>Läs din e-post, och klicka på webb-<br />
-länken som den innehåller.</li>
-   <li>Ditt konto kommer därmed att bekräftas<br /> 
-och Du kommer att loggas in.</li>
-   <li>Nu kan Du välja vilken kurs Du<br /> 
-vill delta i.</li>
-   <li>Om Du måste ange en \\\"kursnyckel\\\" - så<br /> 
-får Du använda den som Din lärare  har <br />
-givit Dig. Detta kommer att registrera<br />
-Dig på en sådan kurs kurs som kräver det.</li>
-   <li>Nu kan Du använda hela kursen. <br />
-Från och med nu behöver Du bara skriva <br />
-in Ditt användarnamn och lösenord <br />
-(i formuläret till vänster på denna sida)<br />
-för att logga in och för att nå de kurser<br />
-som Du är registrerad på.</li>
-   </ol>
+$string['loginsteps'] = "Hej! 
+<br />
+För att få tillgång till de kurser som Du vill delta
+<br />
+i så måste Du bl a skapa ett nytt användarkonto
+<br />
+på denna webbplats. Varje individuell kurs kan 
+<br />
+också ha en engångsnyckel &quot;kursnyckel&quot;.
+<br /> 
+Den behöver Du dock inte  förrän senare.
+<br />
+   Så här skapar Du Ditt konto:
+   <ol size=\\\"2\\\">
+   <li>Fyll i formuläret på sidan <a href=\$a><br />
+Nytt konto</a> med de efterfrågade<br /> 
+uppgifterna om Dig själv.</li>
+   <li>Ett e-postmeddelande kommer därefter<br />
+omedelbart att sändas till 
+Din e-postadress.</li>
+   <li>Läs din e-post, och klicka på webb-<br />
+länken som den innehåller.</li>
+   <li>Ditt konto kommer därmed att bekräftas<br /> 
+och Du kommer att loggas in.</li>
+   <li>Nu kan Du välja vilken kurs Du<br /> 
+vill delta i.</li>
+   <li>Om Du måste ange en \\\"kursnyckel\\\" - så<br /> 
+får Du använda den som Din lärare  har <br />
+givit Dig. Detta kommer att registrera<br />
+Dig på en sådan kurs kurs som kräver det.</li>
+   <li>Nu kan Du använda hela kursen. <br />
+Från och med nu behöver Du bara skriva <br />
+in Ditt användarnamn och lösenord <br />
+(i formuläret till vänster på denna sida)<br />
+för att logga in och för att nå de kurser<br />
+som Du är registrerad på.</li>
+   </ol>
 Lycka till!";
-$string['loginstepsnone'] = "Hej!
-<p>För att få full tillgång till de kurser som Du vill delta i måste Du skapa ett användarkonto. </p> 
-<p>Det enda Du behöver göra är att skaffa ett användarnamn och lösenord och använda det i formuläret tilll vänster på denna sida!</p>
+$string['loginstepsnone'] = "Hej!
+<p>För att få full tillgång till de kurser som Du vill delta i måste Du skapa ett användarkonto. </p> 
+<p>Det enda Du behöver göra är att skaffa ett användarnamn och lösenord och använda det i formuläret tilll vänster på denna sida!</p>
 <p>Om någon annan redan har valt Ditt användarnamn så får Du försöka igen med ett annat.</p>";
 $string['loginto'] = "Logga in till \$a";
 $string['loginusing'] = "Logga in här med Ditt användarnamn och lösenord";
@@ -527,26 +533,26 @@ $string['new'] = "Nytt";
 $string['newaccount'] = "Nytt konto";
 $string['newcourse'] = "Ny kurs";
 $string['newpassword'] = "Nytt lösenord";
-$string['newpasswordtext'] = "Hej \$a->firstname,
-
-Ditt lösenord på '\$a->sitename' har blivit återställt
-och Du har fått en nytt tillfälligt lösenord.
-
-Din nuvarande inloggningsinformation är nu:
-   användarnamn: \$a->username
-   lösenord: \$a->newpassword
-
-Var vänlig besök denna sida för att ändra Ditt lösenord:
-   \$a->link
-
-I de flesta e-postprogram kommer det att visas som en blå
-länk som Du bara behöver klicka på. Om det inte fungerar,
-kan Du klippa ut adressen här och klistra in den i
-adressfönstret på Din webbläsare, klicka sedan på Gå eller
-tryck på radmatningen (Enter).
-
-Med vänlig hälsning från '\$a->sitename' administratören,
-\$a->signoff
+$string['newpasswordtext'] = "Hej \$a->firstname,
+
+Ditt lösenord på '\$a->sitename' har blivit återställt
+och Du har fått en nytt tillfälligt lösenord.
+
+Din nuvarande inloggningsinformation är nu:
+   användarnamn: \$a->username
+   lösenord: \$a->newpassword
+
+Var vänlig besök denna sida för att ändra Ditt lösenord:
+   \$a->link
+
+I de flesta e-postprogram kommer det att visas som en blå
+länk som Du bara behöver klicka på. Om det inte fungerar,
+kan Du klippa ut adressen här och klistra in den i
+adressfönstret på Din webbläsare, klicka sedan på Gå eller
+tryck på radmatningen (Enter).
+
+Med vänlig hälsning från '\$a->sitename' administratören,
+\$a->signoff
 ";
 $string['newpicture'] = "Ny bild";
 $string['newsitem'] = "Notis";
@@ -573,6 +579,7 @@ $string['nopotentialcreators'] = "Inga möjliga kursutvecklare";
 $string['nopotentialstudents'] = "Inga möjliga studenter/elever/deltagare/lärande ";
 $string['nopotentialteachers'] = "Inga möjliga distanslärare/handledare/coacher";
 $string['normal'] = "Normal";
+$string['nostudentsfound'] = "Hittade ingen/inga  \$a";
 $string['nostudentsyet'] = "Inga studenter/elever/deltagare/lärande har antagits till denna kurs ännu";
 $string['nosuchemail'] = "Ingen sådan e-postadress";
 $string['notavailable'] = "Ej tillgänglig";
@@ -599,7 +606,6 @@ $string['order'] = "Order";
 $string['other'] = "Annat";
 $string['outline'] = "Disposition";
 $string['page'] = "Sida";
-$string['parentlanguage'] = "\\\"föräldra\\\"-språk";
 $string['participants'] = "Deltagare";
 $string['password'] = "Lösenord";
 $string['passwordchanged'] = "Lösenordet har ändrats";
@@ -607,9 +613,9 @@ $string['passwordconfirmchange'] = "Bekräfta ändring av lösenord";
 $string['passwordrecovery'] = "Ja, hjälp mig att logga in";
 $string['passwordsdiffer'] = "Dessa lösenord matchar inte";
 $string['passwordsent'] = "Lösenord har skickats";
-$string['passwordsenttext'] = "   <p>Vi har skickat ett e-postbrev till Din adress \$a->email.</p>
-   <p><b>Läs e-postmeddelandet för att se Ditt nya lösenord</b>
-   <b>Om Du vill kan Du ändra lösenordet 
+$string['passwordsenttext'] = "   <p>Vi har skickat ett e-postbrev till Din adress \$a->email.</p>
+   <p><b>Läs e-postmeddelandet för att se Ditt nya lösenord</b>
+   <b>Om Du vill kan Du ändra lösenordet 
    <a href=\$a->link> till något som är lättare att komma ihåg</a>.";
 $string['people'] = "Personer";
 $string['personalprofile'] = "Personlig profil";
@@ -634,10 +640,10 @@ $string['readme'] = "LAESMIG";
 $string['recentactivity'] = "Senast aktivitet";
 $string['registration'] = "Moodle registrering";
 $string['registrationemail'] = "Meddelanden via e-post";
-$string['registrationinfo'] = "Den här sidan hjälper Dig att registrera Din Moodle-sajt hos moodle.org. Registreringen är gratis. Den största fördelen med att registrera sajten är att Du kommer med på en e-postlista (som skickar ut ett begränsat antal meddelanden) för utskick av viktig information om säkerhetsvarningar och nya versioner av Moodle.<p>Som standardval så kommer den information som Du lämnar att vara privat och kommer inte att säljas eller överlåtas till någon annan. Den enda anledningen till att vi samlar in den här informationen är för att erbjuda support och för att kunna skapa en statistisk bild av Moodle-gemenskapen i dess helhet.</p>
-<p>
-Om Du så väljer så kan Du tillåta att namnet på Din sajt, Ditt land och Din URL kommer med på listan äöver Moodle-sajter.</p>
-<p>
+$string['registrationinfo'] = "Den här sidan hjälper Dig att registrera Din Moodle-sajt hos moodle.org. Registreringen är gratis. Den största fördelen med att registrera sajten är att Du kommer med på en e-postlista (som skickar ut ett begränsat antal meddelanden) för utskick av viktig information om säkerhetsvarningar och nya versioner av Moodle.<p>Som standardval så kommer den information som Du lämnar att vara privat och kommer inte att säljas eller överlåtas till någon annan. Den enda anledningen till att vi samlar in den här informationen är för att erbjuda support och för att kunna skapa en statistisk bild av Moodle-gemenskapen i dess helhet.</p>
+<p>
+Om Du så väljer så kan Du tillåta att namnet på Din sajt, Ditt land och Din URL kommer med på listan över Moodle-sajter.</p>
+<p>
 Alla nya registreringar bekräftas manuellt innan de bifogas till listan med när Du väl är med så kan Du uppdater Din registrering (och Ditt bidrag till den offentliga listan) när som helst bara genom att fylla i och skicka det här formuläret igen. </p>";
 $string['registrationno'] = "Nej, jag vill inte ha någon e-post";
 $string['registrationsend'] = "Skicka information för registrering till moodle.org";
@@ -700,6 +706,7 @@ $string['showonlyweek'] = "Visa endast vecka \$a";
 $string['showrecent'] = "Visa senaste aktivitet";
 $string['showreports'] = "Visa aktivitetsrapporter";
 $string['showtheselogs'] = "Visa dessa loggar";
+$string['since'] = "Sedan";
 $string['site'] = "Webbplats";
 $string['sitefiles'] = "Webbplatsens filer";
 $string['sitelogs'] = "Webbplatsloggar";
@@ -803,11 +810,11 @@ $string['weekhide'] = "Dölj denna vecka för \$a";
 $string['weeklyoutline'] = "Veckodisposition";
 $string['weekshow'] = "Visa denna vecka för \$a";
 $string['welcometocourse'] = "Välkommen till \$a";
-$string['welcometocoursetext'] = "Varmt välkommen till \$a->coursename!
-
-En av de första sakerna Du bör göra är att ändra Din profilsida
-inuti kursen så att vi kan lära oss mer om Dig:
-
+$string['welcometocoursetext'] = "Varmt välkommen till \$a->coursename!
+
+En av de första sakerna Du bör göra är att ändra Din profilsida
+inuti kursen så att vi kan lära oss mer om Dig:
+
   \$a->profileurl";
 $string['whattocallzip'] = "Vad vill Du kalla  .zip-filen?";
 $string['withchosenfiles'] = "Med valda filer";

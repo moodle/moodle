@@ -1,4 +1,19 @@
 Log för redigering och komplettering av språkpaketet för svenska i Moodle  
+version 3.0 2003-12-19
+Anders Berggren anders@ikt-pedagogen.se
+
+Utgångspunkten är Moodle 1.2 som är en utvecklingsversion.
+
+Alla strängar i programfilerna och i hjälpfilerna för standardmodulerna är översatta t o m ovanstående datum.
+
+Därtill är hjälpfilerna till nedanstående utvecklingsmoduler översatta:
+
+Event (Händelse)
+Exercise (Övningsuppgift)
+Scheduler (Tidsbokare)
+Workshop 
+
+
 version 2.0 , 2003-11-03
 Anders Berggren anders@ikt-pedagogen.se
 

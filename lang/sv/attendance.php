@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.1.1 (2003091111)
+      // attendance.php - created with Moodle 1.2 development (2003111400)
 
 
 $string['absentlong'] = "Frånvarande";
@@ -10,9 +10,10 @@ $string['allmodulename'] = "Alla närvarolistor";
 $string['auto'] = "auto";
 $string['autoattend'] = "Notera närvaron automatiskt, baserat på loggningen av användarnas aktivitet";
 $string['autoattendmulti'] = "Notera närvaron automatiskt för alla listor, baserat på loggningen av användarnas aktivitet";
+$string['autoattendshort'] = "Automatiskt från loggarna";
 $string['choosedays'] = "Vilka veckodagar vill Du föra närvaro för?";
 $string['dayofroll'] = "Vilket datum vill Du föra närvaro för?";
-$string['defaultautoattend'] = "Vill Du som standardval föra närvaron baserat på loggningen av användarnas aktivitet ?";
+$string['defaultautoattend'] = "Vill Du som standardval föra närvaron baserat på loggningen av användarnas aktivitet?";
 $string['defaultdynamicsection'] = "Vill Du som standardval flytta närvarolistorna till rätt vecka?";
 $string['defaultgrade'] = "Vill Du som standardval göra det möjligt att bedöma/värdera/betygssätta närvarolistorna?";
 $string['defaulthoursinclass'] = "Hur många timmar ska det vara som standardval i närvolistan?";
@@ -24,16 +25,19 @@ $string['downloadtextfull'] = "Ladda ner rapport i fulltext";
 $string['downloadtexttotals'] = "Ladda ner rapport som sammanfattande text";
 $string['dynamicsection'] = "Bestäm närvarovecka med utgångspunkt från detta datum";
 $string['dynamicsectionmulti'] = "Placera  automatiskt listorna i sina respektive veckosektioner";
+$string['dynsectionshort'] = "Dynamiskt flyttad till sektion";
 $string['endbeforestart'] = "Slutdatum är före startdatum";
 $string['endmulti'] = "Datum för senaste närvarolista";
 $string['for'] = "för";
 $string['friday'] = "Fre";
-$string['gradevalue'] = "Aktivera  bedömning/värdering/betygssättning för den här listan";
-$string['gradevaluemulti'] = "Aktivera  bedömning/värdering för de här listorna";
-$string['hoursinclass'] = "Antal timmar i en 'class period'";
-$string['hoursineachclass'] = "Antal timmar i varje  'class period'";
+$string['gradeshort'] = "Betygssatt";
+$string['gradevalue'] = "Aktivera  betyg/omdömen för den här listan";
+$string['gradevaluemulti'] = "Aktivera  betyg/omdömen för de här listorna";
+$string['hoursinclass'] = "Antal timmar i en 'lektion'";
+$string['hoursineachclass'] = "Antal timmar i varje  'lektion'";
 $string['hoursinfullreport'] = "Maximalt antal närvarotimmar som Du vill visa på en enskild sida i en rapport";
-$string['maxgradevalue'] = "Maximalt bedömnings/värderings/betygsvärde för full närvaro";
+$string['maxgradeshort'] = "Maxbetyg";
+$string['maxgradevalue'] = "Maximalt betyg/omdöme för full närvaro";
 $string['modulename'] = "Närvaro";
 $string['modulenameplural'] = "Närvarolistor";
 $string['monday'] = "Mån";
@@ -62,6 +66,6 @@ $string['viewsection'] = "Visa alla närvarolistor från den här sektionen";
 $string['viewtable'] = "Visa rapporten som en tabell";
 $string['viewweek'] = "Visa alla närvarolistor från kalenderveckan";
 $string['wednesday'] = "Ons";
-$string['weekmodulename'] = "Alla närvarolistor under för den senaste veckan";
+$string['weekmodulename'] = "Alla närvarolistor  för den senaste veckan";
 
 ?>

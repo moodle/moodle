@@ -113,15 +113,15 @@ $string['colles8'] = " jag är kritisk till idéer i läsningarna.";
 $string['colles8short'] = "jag är kritisk till läsningarna";
 $string['colles9'] = "jag förklarar mina idéer för andra studenter/elever/deltagare/lärande";
 $string['colles9short'] = "jag förklarar mina idéer";
-$string['collesaintro'] = "Syftet med detta frågeformulär är att hjälpa oss förstå hur mycket den här delen av distansutbildningen har underlättat (eller försvårat) Ditt lärande. Vart och ett av de 24 nedanstående påståendena efterfrågan vad Du har för uppfattning om den här modulen.
-Det finns inga 'rätta' eller 'felaktiga' svar; vi är endast intresserade av din åsikt. Dina svar kommer att behandlas med högsta sekretess och kommer inte att påverka Dina betyg eller andra värderingar.
-Dina väl genomtänkta svar kommer att hjälpa oss förbättra hur denna enhet presenteras online i framtiden.
+$string['collesaintro'] = "Syftet med detta frågeformulär är att hjälpa oss förstå hur mycket den här delen av distansutbildningen har underlättat (eller försvårat) Ditt lärande. Genom att ta ställning till vart och ett av de 24 nedanstående påståendena kan Du visa vad Du har för  uppfattning om den här delen av läromiljön (kursen).
+Det finns inga 'rätta' eller 'felaktiga' svar; vi är endast intresserade av Din åsikt. Dina svar kommer att behandlas med högsta sekretess och svaren kommer inte att påverka Dina betyg eller andra värderingar.
+Dina väl genomtänkta svar kommer däremot att hjälpa oss förbättra hur denna del av läromiljön (kursen) presenteras online i framtiden.
 Tack så mycket för Din medverkan.";
 $string['collesaname'] = "Konstruktivistiskt inriktad enkät ang en nätbaserad läromiljö (faktisk)";
-$string['collesapintro'] = "Syftet med detta frågeformulär är att hjälpa oss förstå hur mycket den här delen av distansutbildningen har underlättat (eller försvårat) Ditt lärande. 
-Vart och ett av de 24 nedanstående påståendena ber Dig jämföra Dina behov och förväntningar med det som modulen faktiskt har bidragit med när det gäller Ditt lärande.
-Det finns inga 'rätta' eller 'felaktiga' svar; vi är endast intresserade av din åsikt. Dina svar kommer att behandlas med högsta sekretess och kommer inte att påverka Dina betyg eller andra värderingar.
-Dina väl genomtänkta svar kommer att hjälpa oss förbättra hur denna enhet presenteras online i framtiden.
+$string['collesapintro'] = "Syftet med detta frågeformulär är att hjälpa oss förstå hur mycket den här delen av distansutbildningen har underlättat (eller försvårat) Ditt lärande. 
+Vi ber Dig att jämföra Dina behov och förväntningar med det som den här delen av läromiljön (kursen) faktiskt har bidragit med när det gäller Ditt lärande. Det gör Du genom att ta ställning till vart och ett av de 24 nedanstående påståendena. 
+Det finns inga 'rätta' eller 'felaktiga' svar; vi är endast intresserade av din åsikt. Dina svar kommer att behandlas med högsta sekretess och kommer inte att påverka Dina betyg eller andra värderingar.
+Dina väl genomtänkta svar kommer att hjälpa oss förbättra hur denna del av läromiljön (kursen) presenteras online i framtiden.
 Tack så mycket för Din medverkan.";
 $string['collesapname'] = "Konstruktivistiskt inriktad enkät ang en nätbaserad läromiljö (Önskad och faktisk)";
 $string['collesm1'] = "Relevans";
@@ -137,19 +137,19 @@ $string['collesm5short'] = "Kamratstöd";
 $string['collesm6'] = "Tolkning";
 $string['collesm6short'] = "Tolkning";
 $string['collesmintro'] = "I den här lärandemiljön fungerar det så att";
-$string['collespintro'] = "Syftet med denna enkät är att hjälpa oss förstå vad Du uppskattar hos en webbaserad distansutbildning. 
-Vart och ett av de 24 påståendena nedan efterfrågar vilka sidor av den här modulen Du tycker bäst om.
-Det finns inga 'rätta' eller 'felaktiga' svar; vi är endast intresserade av Din åsikt. Dina svar kommer att behandlas med högsta sekretess och kommer inte att påverka Dina betyg eller andra värderingar.
-Dina väl genomtänkta svar kommer att hjälpa oss förbättra funktionerna i denna enhet i framtiden.
-
+$string['collespintro'] = "Syftet med denna enkät är att hjälpa oss förstå vad Du uppskattar hos en webbaserad distansutbildning. 
+Vart och ett av de 24 påståendena nedan efterfrågar vilka sidor av den här modulen Du tycker bäst om.
+Det finns inga 'rätta' eller 'felaktiga' svar; vi är endast intresserade av Din åsikt. Dina svar kommer att behandlas med högsta sekretess och kommer inte att påverka Dina betyg eller andra värderingar.
+Dina väl genomtänkta svar kommer att hjälpa oss förbättra funktionerna i denna enhet i framtiden.
+
 Tack så mycket för Din medverkan.";
-$string['collespname'] = "Konstruktivistiskt inriktad enkät ang en nätbaserad läromiljö (Önskad)";
+$string['collespname'] = "Konstruktivistiskt inriktad enkät angående en nätbaserad läromiljö (Önskad)";
 $string['done'] = "Färdig";
 $string['download'] = "Ladda ner";
 $string['downloadexcel'] = "Ladda ner data som kalkylark i Excel ";
 $string['downloadinfo'] = "Du kan ladda ner fullständiga rådata för denna enkät i en form lämplig för analys i Excel, SPSS eller annat paket.";
 $string['downloadtext'] = "Ladda ner data som en vanlig textfil";
-$string['editingasurvey'] = "Redigera en enkät";
+$string['editingasurvey'] = "Redigerar en enkät";
 $string['guestsnotallowed'] = "Gäster får inte skicka in enkäter";
 $string['helpsurveys'] = "Hjälp med olika typer av enkäter";
 $string['howlong'] = "Hur lång tid tog det Dig att fylla i denna enkät?";
@@ -162,7 +162,7 @@ $string['modulenameplural'] = "Enkäter";
 $string['name'] = "Namn";
 $string['newsurveyresponses'] = "Nya enkätsvar";
 $string['nobodyyet'] = "Ingen har genomfört denna enkät";
-$string['notdone'] = "Inte ännu genomförd";
+$string['notdone'] = "Inte  genomförd ännu";
 $string['notes'] = "Din privata analys och anteckningar";
 $string['othercomments'] = "Har Du några andra kommentarer?";
 $string['peoplecompleted'] = "\$a person/personer har hittills genomfört denna enkät";
@@ -178,7 +178,7 @@ $string['scaleagree5'] = "Håller inte alls med,Har en något avvikande uppfattnin
 $string['scales'] = "Skalor";
 $string['scaletimes5'] = "Nästan aldrig,Sällan,Ibland,Ofta,Nästan alltid";
 $string['seemoredetail'] = "Klicka här för att se fler detaljer";
-$string['selectedquestions'] = "Utvalda frågor från en skala, alla lärande";
+$string['selectedquestions'] = "Utvalda frågor från en skala, alla studenter/elever/deltagare/lärande";
 $string['summary'] = "Summering";
 $string['surveycompleted'] = "Du har genomfört denna enkät.  Grafen nedan visar en summering av Dina resultat jämfört med ett klassgenomsnitt.";
 $string['surveyname'] = "Enkätnamn";

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // countries.php - created with Moodle 1.1.1 (2003091111)
+      // countries.php - created with Moodle 1.2 development (2003111400)
 
 
 $string['AD'] = "Andorra";
@@ -27,6 +27,7 @@ $string['BM'] = "Bermudas";
 $string['BO'] = "Bolivia";
 $string['BR'] = "Brasilien";
 $string['BW'] = "Botswana";
+$string['BY'] = "Vitryssland";
 $string['CA'] = "Kanada";
 $string['CF'] = "Centralafrikanska Republiken";
 $string['CG'] = "Kongo";
@@ -38,6 +39,7 @@ $string['CN'] = "Kina";
 $string['CO'] = "Colombia";
 $string['CS'] = "Serbien och Montenegro";
 $string['CU'] = "Kuba";
+$string['CV'] = "Kap Verde";
 $string['CY'] = "Cypern";
 $string['CZ'] = "Tjeckien";
 $string['DE'] = "Tyskland";

@@ -1,21 +1,23 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.1.1 (2003091111)
+      // quiz.php - created with Moodle 1.2 development (2003111400)
 
 
 $string['acceptederror'] = "Tillåten felmarginal";
-$string['addingquestions'] = "Det är här som Du kan hantera frågor till testen. Frågorna är ordnade i kategorier för att göra det enklare för Dig att organisera dem. Du kan använda en enskild fråga i samtliga test i kursen. Om frågan dessutom tillhör en kategori som är publicerad så kan den även användas i test på andra kurser.<br/><br/>
+$string['addingquestions'] = "Det är här som Du kan hantera frågor till testen. Frågorna är ordnade i kategorier för att göra det enklare för Dig att organisera dem. Du kan använda en enskild fråga i samtliga test i kursen. Om frågan dessutom tillhör en kategori som är publicerad så kan den även användas i test på andra kurser.<br/><br/>
 När Du har valt eller skapat en kategori så kan Du skapa och redigera frågor, samt välja ut frågor till testet.";
 $string['addquestions'] = "Lägg till frågor";
-$string['addquestionstoquiz'] = "Lägg till frågor till testet";
+$string['addquestionstoquiz'] = "Lägg till frågor till det aktuella testet";
 $string['addselectedtoquiz'] = "Lägg det markerade till testet";
+$string['aiken'] = "Aiken-format";
 $string['allowreview'] = "Tillåt granskning";
 $string['alreadysubmitted'] = "Det är troligt att Du redan har skickat in detta försök för bedömning.";
 $string['alwaysavailable'] = "Alltid tillgängligt";
 $string['answer'] = "Svar";
 $string['answerhowmany'] = "Ett eller flera svar?";
 $string['answersingleno'] = "Flera svar tillåtna";
-$string['answersingleyes'] = "Ett svar endast";
+$string['answersingleyes'] = "Endast ett svar ";
 $string['answerswithacceptederrormarginmustbenumeric'] = "Bara numeriska svar kan ha felmarginal";
+$string['aon'] = "AON-format";
 $string['attempt'] = "Försök \$a";
 $string['attemptfirst'] = "Första försök";
 $string['attemptlast'] = "Senaste försök";
@@ -38,9 +40,11 @@ $string['choice'] = "Val";
 $string['choices'] = "Tillgängliga val";
 $string['correctanswer'] = "Rätt svar";
 $string['correctanswers'] = "Rätt svar";
+$string['corrresp'] = "Rätt svarsreaktion";
 $string['countdown'] = "Tid kvar";
 $string['countdownfinished'] = "Tiden slut, spara Dina svar nu!";
 $string['countdowntenminutes'] = "Tio minuter kvar!";
+$string['coursetestmanager'] = "'Course Test Manager'-format";
 $string['createmultiple'] = "Skapa flera frågor";
 $string['createnewquestion'] = "Skapa ny fråga";
 $string['custom'] = "Standardformat";
@@ -50,6 +54,7 @@ $string['defaultgrade'] = "Normalpoäng";
 $string['defaultinfo'] = "Standardkategori för frågor.";
 $string['deletequestioncheck'] = "Är Du helt säker på att Du vill ta bort '\$a'?";
 $string['description'] = "Beskrivning";
+$string['discrimination'] = "Diskrim. Index";
 $string['eachattemptbuildsonthelast'] = "Varje försök bygger på det senaste";
 $string['editcategories'] = "Redigera kategorier";
 $string['editingdescription'] = "Redigera en beskrivning";
@@ -63,26 +68,30 @@ $string['editingrandom'] = "Redigera en slumpfråga";
 $string['editingrandomsamatch'] = "Redigera en para_ihop-fråga med framslumpade kortsvars-frågor";
 $string['editingshortanswer'] = "Redigera en kortsvars-fråga";
 $string['editingtruefalse'] = "Redigera en sant/falskt-fråga";
+$string['editquestions'] = "Redigera frågor";
 $string['false'] = "Falskt";
 $string['feedback'] = "Återkoppling";
 $string['fileformat'] = "Filformat";
-$string['filloutoneanswer'] = "Du måste fylla i åtminstone ett svar.  Svar som lämnas tomma räknas inte.";
+$string['filloutoneanswer'] = "Du måste fylla i åtminstone ett svar. Svar som lämnas tomma räknas inte.";
 $string['filloutthreequestions'] = "Du måste fylla i minst tre frågor. Frågor som lämnas tomma räknas inte.";
 $string['fillouttwochoices'] = "Du måste fylla i åtminstone två val.  Val som lämnas tomma räknas inte.";
-$string['fractionsaddwrong'] = "De positiva betyg Du valt kan inte summeras till 100%%
-<br />Istället kommer de upp till \$a%%
+$string['fractionsaddwrong'] = "De positiva betyg Du valt kan inte summeras till 100%%
+<br />Istället kommer de upp till \$a%%
 <br />Vill Du gå tillbaka och ändra denna fråga?";
-$string['fractionsnomax'] = "Ett av svaren borde bli 100%%, så det är
-<br />möjligt att få fullt betyg på denna fråga.
+$string['fractionsnomax'] = "Ett av svaren borde bli 100%%, så att det är
+<br />möjligt att få fullt betyg på denna fråga.
 <br />Vill Du gå tillbaka och ändra denna fråga?";
+$string['gift'] = "GIFT-format";
 $string['gradeaverage'] = "Medelbetyg";
 $string['gradehighest'] = "Högsta betyg";
 $string['grademethod'] = "Betygsättningsmetod";
-$string['grades'] = "Poäng";
 $string['guestsno'] = "Tyvärr, gäster kan inte se eller göra test";
 $string['imagedisplay'] = "Bild att visa";
 $string['importquestions'] = "Importera frågor från fil";
+$string['indivresp'] = "Individers svarsreaktioner på varje del";
 $string['introduction'] = "Introduktion";
+$string['itemanal'] = "Analys av svarsreaktioner på delar";
+$string['listitems'] = "Lista på delar";
 $string['marks'] = "Poäng";
 $string['match'] = "Para_ihop";
 $string['matchanswer'] = "Svara på para_ihop-fråga";
@@ -94,15 +103,18 @@ $string['modulename'] = "Test";
 $string['modulenameplural'] = "Test";
 $string['multianswer'] = "Inbäddade svar";
 $string['multichoice'] = "Flera val";
+$string['name'] = "Namn";
 $string['noanswers'] = "Du valde inga svar!";
 $string['noattempts'] = "Inga försök har gjorts med detta test";
 $string['nomoreattempts'] = "Inga fler försök tillåtna";
 $string['noquestions'] = "Inga frågor har ännu lagts till";
+$string['noresponse'] = "Ingen svarsreaktion";
 $string['noreview'] = "Du får inte granska detta test";
 $string['noreviewuntil'] = "Du får inte granska denna test förrän \$a";
-$string['notenoughsubquestions'] = "Otillräckligt antal delfrågor!<br />
+$string['notenoughsubquestions'] = "Otillräckligt antal delfrågor!<br />
 Vill Du gå tillbaka och rätta till den här frågan?";
 $string['numerical'] = "Numerisk";
+$string['percentcorrect'] = "Rätt procent";
 $string['publish'] = "Publicera";
 $string['qti'] = "IMS QTI format";
 $string['question'] = "Fråga";
@@ -123,17 +135,21 @@ $string['randomsamatchintro'] = "Välj rätt svar från menyn för var och en av ned
 $string['randomsamatchnumber'] = "Antal frågor att slumpa fram";
 $string['readytosend'] = "Du är på väg att skicka hela Ditt test för betygsättning.  Är Du säker på att Du vill fortsätta?";
 $string['recentlyaddedquestion'] = "Denna fråga har lagts till nyligen!";
-$string['regrade'] = "Förnya bedömningen/värderingen/betygssättningen för varje försök";
-$string['regradecomplete'] = "Nya betyg satts för varje försök ";
+$string['regrade'] = "Förnya getyg/omdöme för varje försök";
+$string['regradecomplete'] = "Nya betyg/omdömen har givits för varje försök ";
 $string['regradecount'] = "\$a->changed av \$a->attempt betyg ändrades";
 $string['rename'] = "Ändra namn";
 $string['report'] = "Rapporter";
+$string['reportfullstat'] = "Detaljerad statistik";
+$string['reportmulti_percent'] = "Flerfaldiga procent";
+$string['reportmulti_q_x_student'] = "Flerfaldiga val av studenter/elever/deltagare/lärande";
+$string['reportmulti_resp'] = "Individuella svarsreaktioner";
 $string['reportoverview'] = "Översikt";
-$string['reportregrade'] = "Sätt om betygen för försök";
-$string['reportsimplestat'] = "Lite statistik";
+$string['reportregrade'] = "Förnya  betyg/omdömen för försök";
+$string['reportsimplestat'] = "Enkel statistik";
 $string['review'] = "Granska";
 $string['save'] = "Spara";
-$string['savegrades'] = "Spara betyg";
+$string['savegrades'] = "Spara betyg/omdömen";
 $string['savemyanswers'] = "Spara mina svar";
 $string['savequiz'] = "Spara hela detta test";
 $string['score'] = "Rena poäng";
@@ -153,9 +169,10 @@ $string['toomanyrandom'] = "Antalet frågor som skall slumpas fram är fler än ant
 $string['true'] = "Sant";
 $string['truefalse'] = "Sant/Falskt";
 $string['type'] = "Typ";
-$string['viewallanswers'] = "Se \$a genomförda test";
-$string['viewallreports'] = "Se rapporter för \$a försök";
+$string['viewallanswers'] = "Visa \$a genomförda test";
+$string['viewallreports'] = "Visa rapporter för \$a försök";
 $string['webct'] = "WebCT format";
+$string['withsummary'] = "med sammanfattande statistik";
 $string['yourfinalgradeis'] = "Ditt slutgiltiga betyg för detta test är \$a";
 
 ?>

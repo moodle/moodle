@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.1.1 (2003091111)
+      // forum.php - created with Moodle 1.2 development (2003111400)
 
 
 $string['addanewdiscussion'] = "Lägg till ett nytt diskussionsämne";
@@ -33,7 +33,7 @@ $string['discussthistopic'] = "Diskutera detta ämne";
 $string['eachuserforum'] = "Var och en  bidrar med ett  diskussionsämne";
 $string['edit'] = "Redigera";
 $string['editing'] = "Redigering";
-$string['emptymessage'] = "Något var fel med Ditt inlägg.  Kanske lämnade Du skrev Du inte in någon text, eller så var bilagan för stor.  Dina ändringar har INTE sparats.";
+$string['emptymessage'] = "Något var fel med Ditt inlägg.  Kanske skrev Du inte in någon text, eller så var bilagan för stor.  Dina ändringar har INTE sparats.";
 $string['everyonecanchoose'] = "Alla kan välja att prenumerera";
 $string['everyoneissubscribed'] = "Alla prenumererar på detta forum";
 $string['forcesubscribe'] = "Tvinga alla att prenumerera";
@@ -48,7 +48,7 @@ $string['generalforums'] = "Allmänna forum";
 $string['inforum'] = "i \$a";
 $string['intronews'] = "Allmänna nyheter och meddelanden";
 $string['introsocial'] = "Ett öppet forum där Du kan diskutera vad Du vill";
-$string['introteacher'] = "Ett forum endast för lärares anteckningar och diskussionsämnen";
+$string['introteacher'] = "Ett forum endast för distanslärares anteckningar och diskussionsämnen";
 $string['lastpost'] = "Senaste inlägg";
 $string['learningforums'] = "Forum för lärande";
 $string['maxattachmentsize'] = "Maximal storlek på bifogad fil";
@@ -82,9 +82,9 @@ $string['openmode1'] = "Inga diskussionsämnen, men svar är tillåtna";
 $string['openmode2'] = "Diskussionsämnen och svar är tillåtna";
 $string['parent'] = "Visa 'föräldern' till detta inlägg";
 $string['parentofthispost'] = "Föräldern till detta inlägg";
-$string['postadded'] = "Ditt inlägg har lagts till.<P>Du har \$a för att redigera det om Du vill göra ändringar.";
+$string['postadded'] = "Ditt inlägg har lagts till.<p>Du har \$a för att redigera det om Du vill göra ändringar.";
 $string['postincontext'] = "Se detta inlägg i sitt sammanhang";
-$string['postmailinfo'] = "Detta är en kopia på ett meddelande inlagt på \$a webbplats.
+$string['postmailinfo'] = "Detta är en kopia på ett meddelande inlagt på \$a webbplats.
 För att lägga till Ditt svar via webbplatsen, klicka på denna länk:";
 $string['postrating1'] = "Visa mest enskilt, (rationellt) inriktat  vetande (kunskap)";
 $string['postrating2'] = "Enskilt, (rationellt) inriktat  vetande (kunskap) och socialt, (empatiskt) inriktat vetande (kunskap)";

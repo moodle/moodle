@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.1.1 (2003091111)
+      // editor.php - created with Moodle 1.2 development (2003111400)
 
 
 $string['about'] = "Om den här redigeraren";
@@ -25,7 +25,7 @@ $string['createlink'] = "Lägga in en webblänk";
 $string['cut'] = "Klipp ut urvalet";
 $string['forecolor'] = "Färg på typsnittet";
 $string['heading'] = "Rubrik";
-$string['hilitecolor'] = "bakgrundsfärg";
+$string['hilitecolor'] = "Bakgrundsfärg";
 $string['horizontal'] = "Horisontell";
 $string['horizontalrule'] = "Horisontell linje (linjal)";
 $string['htmlmode'] = "Byt till  HTML-källa";

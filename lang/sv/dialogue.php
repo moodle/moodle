@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.1.1 (2003091111)
+      // dialogue.php - created with Moodle 1.2 development (2003111400)
 
 
 $string['addmynewentries'] = "Lägg till mina nya inlägg";
@@ -13,10 +13,10 @@ $string['confirmclosure'] = "Du håller på att avbryta en dialog med \$a. Avbrutn
 $string['deleteafter'] = "Ta bort avbrutna dialoger efter (antal dagar)";
 $string['dialogueclosed'] = "Dialogen är avbruten";
 $string['dialogueintro'] = "Dialogen är påbörjad";
-$string['dialoguemail'] = "\$a->userfrom har gjort ett nytt inlägg i Ditt dialoginlägg för '\$a->dialogue'. Du kan se det som ett tillägg till Ditt dialoginlägg \$a->url
+$string['dialoguemail'] = "\$a->userfrom har gjort ett nytt inlägg i Ditt dialoginlägg för '\$a->dialogue'. Du kan se det som ett tillägg till Ditt dialoginlägg: \$a->url
 ";
-$string['dialoguemailhtml'] = "\$a->userfrom har gjort ett nytt inlägg i Ditt dialoginlägg för <i>\$a->dialogue</i>'<br /><br />
-Du kan se det som ett tillägg till Ditt dialoginlägg <a href=\\\"\$a->url\\\">dialog</a>.
+$string['dialoguemailhtml'] = "\$a->userfrom har gjort ett nytt inlägg i Ditt dialoginlägg för <i>\$a->dialogue</i>'<br /><br />
+Du kan se det som ett tillägg till Din  <a href=\\\"\$a->url\\\">dialog</a>.
 ";
 $string['dialoguename'] = "Dialogens namn";
 $string['dialogueopened'] = "En dialog med \$a har öppnats";

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.1.1 (2003091111)
+      // auth.php - created with Moodle 1.2 development (2003111400)
 
 
 $string['auth_dbdescription'] = "Denna metod använder en extern databastabell för att kontrollera huruvida ett givet användarnamn och lösenord är giltigt.  Om kontot är nytt, så kan information från andra fält också kopieras till Moodle.";
