@@ -135,15 +135,19 @@
                 $addcourse[3] = $user->course4;
                 $addcourse[4] = $user->course5;
                 $courses = get_courses("all");
-                for ($i=0; $i<5; $i++) {$courseid[$i]=0;}
+                for ($i=0; $i<5; $i++) {
+                    $courseid[$i]=0;
+                }
                 foreach ($courses as $course) {
                     for ($i=0; $i<5; $i++) {
-                        if ($course->shortname == $addcourse[$i]) {$courseid[$i] = $course->id;}
+                        if ($course->shortname == $addcourse[$i]) {
+                            $courseid[$i] = $course->id;
+                        }
                     }
                 }
                 for ($i=0; $i<5; $i++) {
                     if ($addcourse[$i] && !$courseid[$i]) {
-                        $notifytext .= "-1," . $addcourse[$i] . " unknown course<br>\n";
+                        $notifytext .= "-1," . $addcourse[$i] . " unknown course<br \>\n";
                     }
                 }
                 if (! $user->id = insert_record("user", $user)) {
@@ -161,7 +165,7 @@
                             $notifytext .= $error_uid . ",failed to add user " . $username . " unknown error";
                         } 
                     }
-                } elseif ($user->username != "changeme") {
+                } else if ($user->username != "changeme") {
                     $notifytext .= $user->id . "," . $user->username . ",";
                     $numusers++;
                 }
@@ -170,13 +174,15 @@
                     if ($courseid[$i]) {
                         if (enrol_student($user->id, $courseid[$i])) {
                             $lbreak = 0;
-                            $notifytext .= ",enroled in course $addcourse[$i]<br>\n";
+                            $notifytext .= ",enroled in course $addcourse[$i]<br \>\n";
                         } else {
-                            $notifytext .= ",error: enrolment in course $addcourse[$i] failed<br>\n";
+                            $notifytext .= ",error: enrolment in course $addcourse[$i] failed<br \>\n";
                         }
                     }
                 }
-                if ($lbreak) {$notifytext .= "<br>\n";}
+                if ($lbreak) {
+                    $notifytext .= "<br \>\n";
+                }
                 unset ($user);
             }
         }
@@ -191,7 +197,7 @@
 
     $maxuploadsize = get_max_upload_file_size();
     echo '<center>';
-    echo '<form METHOD="post" enctype="multipart/form-data" action="uploaduser.php">'.
+    echo '<form method="post" enctype="multipart/form-data" action="uploaduser.php">'.
          $strchoose.':<input type="hidden" name="MAX_FILE_SIZE" value="'.$maxuploadsize.'">'.
          '<input type="file" name="userfile" size=30>'.
          '<input type="submit" value="'.$struploadusers.'">'.
@@ -203,10 +209,14 @@
 
 
 function my_file_get_contents($filename, $use_include_path = 0) {
-    $data = ""; // just to be safe. Dunno, if this is really needed
+/// Returns the file as one big long string
+
+    $data = "";
     $file = @fopen($filename, "rb", $use_include_path);
     if ($file) {
-        while (!feof($file)) $data .= fread($file, 1024);
+        while (!feof($file)) {
+            $data .= fread($file, 1024);
+        }
         fclose($file);
     }
     return $data;
