@@ -38,27 +38,27 @@ CREATE INDEX prefix_choice_course_idx ON prefix_choice (course);
 # Table structure for table `choice_answers`
 #
 
-CREATE TABLE prefix_choice_responses (
+CREATE TABLE prefix_choice_answers (
   id SERIAL PRIMARY KEY,
-  choice integer NOT NULL default '0',
+  choiceid integer NOT NULL default '0',
   userid integer NOT NULL default '0',
-  answerid integer NOT NULL default '0',
+  optionid integer NOT NULL default '0',
   timemodified integer NOT NULL default '0'
 );
 
-CREATE INDEX prefix_choice_responses_choice_idx ON prefix_choice_responses (choice);
+CREATE INDEX prefix_choice_responses_choice_idx ON prefix_choice_responses (choiceid);
 CREATE INDEX prefix_choice_responses_userid_idx ON prefix_choice_responses (userid);
 
 # --------------------------------------------------------
 
 #
-# Table structure for table `choice_answers`
+# Table structure for table `choice_options`
 #
 
-CREATE TABLE prefix_choice_answers (
+CREATE TABLE prefix_choice_options (
   id SERIAL PRIMARY KEY,
-  choice integer NOT NULL default '0',
-  answer TEXT,
+  choiceid integer NOT NULL default '0',
+  `text` TEXT,
   timemodified integer NOT NULL default '0'
 );
 
