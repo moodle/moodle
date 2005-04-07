@@ -58,7 +58,7 @@ CREATE INDEX prefix_choice_responses_userid_idx ON prefix_choice_responses (user
 CREATE TABLE prefix_choice_options (
   id SERIAL PRIMARY KEY,
   choiceid integer NOT NULL default '0',
-  `text` TEXT,
+  text TEXT,
   timemodified integer NOT NULL default '0'
 );
 
