@@ -64,16 +64,16 @@ class WikiToMarkdown {
     $sclose = "";
     switch ($state) {
       case STATE_PARAGRAPH:
-        $sclose =  "</p>\n";
+        $sclose =  "\n";
         break;
       case STATE_BLOCKQUOTE:
-        $sclose =  "</blockquote>\n";
+        $sclose =  "\n";
         break;
       case STATE_PREFORM:
         $sclose =  "</pre>\n";
         break;
       case STATE_NOTIKI:
-        $sclose =  "</pre>\n";
+        $sclose =  "\n";
         break;  
     }
 
@@ -99,6 +99,26 @@ class WikiToMarkdown {
     return $line;
   }
 
+
+  function do_replace_markdown( $line, $mark, $tag ) {
+    // do the regex thingy for things like bold, italic etc
+    // $mark is the magic character, and $tag the HTML tag to insert
+    // MARKDOWN version does not generate HTML tags, just straigt replace
+
+    // BODGE: replace inline $mark characters in places where we want them ignored
+    // they will be put back after main substitutue, stops problems with eg, and/or
+    $bodge = chr(1);
+    $line = eregi_replace( '([[:alnum:]])'.$mark.'([[:alnum:]])', '\\1'.$bodge.'\\2',$line );
+
+    $regex = '(^| |[(.,])'.$mark.'([^'.$mark.']*)'.$mark.'([^[:alnum:]]|$)';
+    $replace = '\\1'.$tag.'\\2'.$tag.'\\3';
+    $line = eregi_replace( $regex, $replace, $line );
+
+    // BODGE: back we go
+    $line = eregi_replace( $bodge, $mark, $line );
+
+    return $line;
+  }
 
 
   function do_replace_sub( $line, $mark, $tag ) {
@@ -189,7 +209,9 @@ class WikiToMarkdown {
   function line_replace( $line ) {
     // return line after various formatting replacements
     // have been made - order is vital to stop them interfering with each other
-   
+  
+    global $CFG;
+ 
     // ---- (at least) means a <hr />
     // MARKDOWN: no change so leave
 
@@ -216,44 +238,33 @@ class WikiToMarkdown {
     // do formatting tags
     // NOTE: The / replacement  *has* to be first, or it will screw the 
     // HTML tags that are added by the other ones
-    $line = $this->do_replace( $line, "/", "em" );
-    $line = $this->do_replace( $line, "\*", "strong" );
+    // MARKDOWN: only bold and italic change, rest are just HTML
+    $line = $this->do_replace_markdown( $line, "\*", "**" );
+    $line = $this->do_replace_markdown( $line, "/", "*" );
     $line = $this->do_replace( $line, "\+", "ins" );
     $line = $this->do_replace( $line, "-", "del" );
     $line = $this->do_replace_sub( $line, "~", "sub" );
     $line = $this->do_replace_sub( $line, "\^", "sup" );
-    // $line = $this->do_replace( $line, "\"", "q" );
-    // $line = $this->do_replace( $line, "'", "q" );
     $line = $this->do_replace( $line, "%", "code" );
     $line = $this->do_replace( $line, "@", "cite" );
-
+    
     // convert urls into proper link with optional link text URL(text)
     // MARDOWN: HTML conversion should work fine
-    // $line = eregi_replace("([[:space:]]|^)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])\(([^)]+)\)",
-    //  "\\1<a href=\"\\2://\\3\\4\" target=\"newpage\">\\5</a>", $line);
     $line = eregi_replace("([[:space:]]|^)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])\(([^)]+)\)",
-      "\\1[\\5](\\2://\\3\\4\)", $line);
-    //$line = eregi_replace("([[:space:]])www\.([^[:space:]]*)([[:alnum:]#?/&=])\(([^)]+)\)", 
-    //  "\\1<a href=\"http://www.\\2\\3\" target=\"newpage\">\\5</a>", $line);
+      "\\1[\\5](\\2://\\3\\4)", $line);
     $line = eregi_replace("([[:space:]])www\.([^[:space:]]*)([[:alnum:]#?/&=])\(([^)]+)\)", 
-      "\\1[\\5](http://www.\\2\\3\)", $line);
+      "\\1[\\5](http://www.\\2\\3)", $line);
 
     // make urls (with and without httpd) into proper links
-    // $line = eregi_replace("([[:space:]]|^)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])",
-    //   "\\1<a href=\"\\2://\\3\\4\" target=\"newpage\">\\2://\\3\\4</a>", $line);
     $line = eregi_replace("([[:space:]]|^)([[:alnum:]]+)://([^[:space:]]*)([[:alnum:]#?/&=])",
       "\\1<\\2://\\3\\4>", $line);
-    // $line = eregi_replace("([[:space:]])www\.([^[:space:]]*)([[:alnum:]#?/&=])", 
-    //   "\\1<a href=\"http://www.\\2\\3\" target=\"newpage\">www.\\2\\3</a>", $line);
     $line = eregi_replace("([[:space:]])www\.([^[:space:]]*)([[:alnum:]#?/&=])", 
       "\\1<http://www.\\2\\3\>", $line);
 
     // make email addresses into mailtos....
-    // $line = eregi_replace("([[:space:]]|^)([[:alnum:]._-]+@[[:alnum:]._-]+)\(([^)]+)\)",
-    //   "\\1<a href=\"mailto:\\2\">\\3</a>", $line);
+    // MARKDOWN doesn't quite support this, so do as html
     $line = eregi_replace("([[:space:]]|^)([[:alnum:]._-]+@[[:alnum:]._-]+)\(([^)]+)\)",
-      "\\1<\\2\">\\3>", $line);
-
+       "\\1<a href=\"mailto:\\2\">\\3</a>", $line);
 
     // !# at the beginning of any lines means a heading
     // MARKDOWN: value (1-6) becomes number of hashes
@@ -267,7 +278,6 @@ class WikiToMarkdown {
     // MARKDOWN: no equiv. so just leave as HTML
     $line = ereg_replace( "([A-Z]+)\(([^)]+)\)", "<acronym title=\"\\2\">\\1</acronym>", $line );
 
-
     // Replace resource link >>##(Description Text)
     // MARKDOWN: change to MD web link style
     $line = eregi_replace( " ([a-zA-Z]+):([0-9]+)\(([^)]+)\)",
@@ -276,19 +286,19 @@ class WikiToMarkdown {
     // Replace picture resource link 
     if ($CFG->slasharguments) {
       $line = eregi_replace( "/([a-zA-Z0-9./_-]+)(png|gif|jpg)\(([^)]+)\)",
-        "![\\3]($CFG->wwwroot/file.php/$this->courseid/\\1\\2)", $line );
+        "![\\3]($CFG->wwwroot/file.php/$this->courseid\\1\\2)", $line );
     } else {
       $line = eregi_replace( "/([a-zA-Z0-9./_-]+)(png|gif|jpg)\(([^)]+)\)",
-        "![\\3]($CFG->wwwroot/file.php\?file=$this->courseid/\\1\\2)", $line );
+        "![\\3]($CFG->wwwroot/file.php\?file=$this->courseid\\1\\2)", $line );
     }
 
-    // Replace everything else resource link
+    // Replace file resource link
     if ($CFG->slasharguments) {
       $line = eregi_replace( "file:/([[:alnum:]/._-]+)\(([^)]+)\)",
-        "[\\2]($CFG->wwwroot/file.php/$this->courseid/\\1)", $line );
+        "[\\2]($CFG->wwwroot/file.php/$this->courseid\\1)", $line );
     } else {
       $line = eregi_replace( "file:/([[:alnum:]/._-]+)\(([^)]+)\)",
-        "[\\2]($CFG->wwwroot/file.php\?file=$this->courseid/\\1)", $line );
+        "[\\2]($CFG->wwwroot/file.php\?file=$this->courseid\\1)", $line );
     }
  
 
@@ -330,13 +340,13 @@ class WikiToMarkdown {
         // first character of line defines block type
         if (eregi( "^> ",$line )) {
           // blockquote
-          $buffer = $buffer . "<blockquote>\n";
-          $buffer = $buffer . $this->line_replace( eregi_replace( "^>","",$line) ). "\n";
+          $buffer = $buffer . $this->line_replace( $line ). "\n";
           $this->block_state = STATE_BLOCKQUOTE;
         }
         else
         if (eregi( "^  ",$line) ) {
           // preformatted text
+	  // MARKDOWN: no real equiv. so just use <pre>
           $buffer = $buffer . "<pre>\n";
           $buffer = $buffer . $this->line_replace($line) . "\n";
           $this->block_state = STATE_PREFORM;
@@ -344,13 +354,12 @@ class WikiToMarkdown {
         else 
         if (eregi("^\% ",$line) ) {
         	// preformatted text - no processing
-        	$buffer = $buffer . "<pre>\n";
-        	$buffer = $buffer . eregi_replace( "^\%","",$line) . "\n";
+		// MARKDOWN: this is MD code form of a paragraph
+        	$buffer = $buffer . "    " . eregi_replace( "^\%","",$line) . "\n";
         	$this->block_state = STATE_NOTIKI;
         } 	
         else {
           // ordinary paragraph
-          $buffer = $buffer . "<p>\n";
           $buffer = $buffer . $this->line_replace($line) . "\n";
           $this->block_state = STATE_PARAGRAPH; 
         }
@@ -364,7 +373,7 @@ class WikiToMarkdown {
         continue;
       }
       elseif ($this->block_state == STATE_NOTIKI) {
-        $buffer = $buffer . $line . "\n";
+        $buffer = $buffer . "    " .$line . "\n";
       }  	
     }
 
@@ -387,10 +396,12 @@ $wiki = new WikiToMarkdown;
 foreach ($resources as $resource) {
   $alltext = $resource->alltext;
   $courseid = $resource->courseid;
-  echo "<pre>$alltext</pre>";
+  echo "<pre>$alltext</pre>\n";
+
+  echo "<hr />\n";
    
   $newtext = $wiki->convert( $alltext, $courseid );
-  echo "<pre>$newtext</pre>";
+  echo "<pre>$newtext</pre>\n";
 }
 
 
