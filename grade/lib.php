@@ -1016,14 +1016,17 @@ function grade_preferences_menu($action, $course, $group=0) {
                            get_string('viewgrades', 'grades'));
     $row[] = new tabobject('prefs', 'index.php?id='.$course->id.'&amp;action=prefs',
                            get_string('setpreferences', 'grades'));
-    $row[] = new tabobject('cats', 'index.php?id='.$course->id.'&amp;action=cats',
-                           get_string('setcategories', 'grades'));
-    $row[] = new tabobject('weights', 'index.php?id='.$course->id.'&amp;action=weights',
-                           get_string('setweights', 'grades'));
-    $row[] = new tabobject('letters', 'index.php?id='.$course->id.'&amp;action=letters',
-                           get_string('setgradeletters', 'grades'));
-    $row[] = new tabobject('excepts', 'exceptions.php?id='.$course->id.'&amp;action=excepts',
-                           get_string('gradeexceptions', 'grades'));
+    // only show the extra options if advanced is turned on, they don't do anything otherwise
+    if (grade_get_preference($course->id, 'use_advanced') == 1) {
+        $row[] = new tabobject('cats', 'index.php?id='.$course->id.'&amp;action=cats',
+                               get_string('setcategories', 'grades'));
+        $row[] = new tabobject('weights', 'index.php?id='.$course->id.'&amp;action=weights',
+                               get_string('setweights', 'grades'));
+        $row[] = new tabobject('letters', 'index.php?id='.$course->id.'&amp;action=letters',
+                               get_string('setgradeletters', 'grades'));
+        $row[] = new tabobject('excepts', 'exceptions.php?id='.$course->id.'&amp;action=excepts',
+                               get_string('gradeexceptions', 'grades'));
+    }
     $tabs[] = $row;
 
     print_tabs($tabs, $curraction);
@@ -1091,153 +1094,211 @@ function grade_nav($course, $action='grades') {
     return $gradenav;    
 }
 
-function grade_download_excel() {
+function grade_download($download, $id) {
     global $CFG;
-    global $course;
 
-    require_once("../lib/excel/Worksheet.php");
-    require_once("../lib/excel/Workbook.php");
-        
+    require_variable($id);              // course id
+    optional_variable($download, "");   // to download data 
+
+    require_login();
+
+    if (! $course = get_record("course", "id", $id)) {
+        error("Course ID was incorrect");
+    }
+
+    if (!isteacher($course->id)) {
+        error("Only teachers can use this page!");
+    }
+
     $strgrades = get_string("grades");
+    $strgrade = get_string("grade");
+    $strmax = get_string("maximumshort");
+    $stractivityreport = get_string("activityreport");
+
+/// Check to see if groups are being used in this course
+    if ($groupmode = groupmode($course)) {   // Groups are being used
+        if (isset($_GET['group'])) {
+            $changegroup = $_GET['group'];  /// 0 or higher
+        } else {
+            $changegroup = -1;              /// This means no group change was specified
+        }
+
+        $currentgroup = get_and_set_current_group($course, $groupmode, $changegroup);
+    } else {
+        $currentgroup = false;
+    }
+
+    if ($currentgroup) {
+        $students = get_group_students($currentgroup, "u.lastname ASC");
+    } else {
+        $students = get_course_students($course->id, "u.lastname ASC");
+    }
+
+    foreach ($students as $student) {
+        $grades[$student->id] = array();    // Collect all grades in this array
+        $gradeshtml[$student->id] = array(); // Collect all grades html formatted in this array
+        $totals[$student->id] = array();    // Collect all totals in this array
+    }
+    $columns = array();     // Accumulate column names in this array.
+    $columnhtml = array();  // Accumulate column html in this array.
+
+
+/// Collect modules data
+    get_all_mods($course->id, $mods, $modnames, $modnamesplural, $modnamesused);
+
+/// Search through all the modules, pulling out grade data
+    $sections = get_all_sections($course->id); // Sort everything the same as the course
+    for ($i=0; $i<=$course->numsections; $i++) {
+        if (isset($sections[$i])) {   // should always be true
+            $section = $sections[$i];
+            if ($section->sequence) {
+                $sectionmods = explode(",", $section->sequence);
+                foreach ($sectionmods as $sectionmod) {
+                    $mod = $mods[$sectionmod];
+                    $instance = get_record("$mod->modname", "id", "$mod->instance");
+                    $libfile = "$CFG->dirroot/mod/$mod->modname/lib.php";    
+                    
+                    if (file_exists($libfile)) {
+                        require_once($libfile);
+                        $gradefunction = $mod->modname."_grades";
+                        if (function_exists($gradefunction)) {   // Skip modules without grade function
+                            if ($modgrades = $gradefunction($mod->instance)) {
+                                if (!empty($modgrades->maxgrade)) {
+                                    if ($mod->visible) {
+                                        $maxgrade = "$strmax: $modgrades->maxgrade";
+                                    } else {
+                                        $maxgrade = "$strmax: $modgrades->maxgrade";
+                                    }
+                                } else {
+                                    $maxgrade = "";
+                                }
+
+                                $columns[] = "$mod->modfullname: $instance->name - $maxgrade";
     
-    if (isteacher($course->id)) {
-        // HTTP headers
+                                foreach ($students as $student) {
+                                    if (!empty($modgrades->grades[$student->id])) {
+                                        $grades[$student->id][] = $currentstudentgrade = $modgrades->grades[$student->id];
+                                    } else {
+                                        $grades[$student->id][] = $currentstudentgrade = "";
+                                        $gradeshtml[$student->id][] = "";
+                                    }
+                                    if (!empty($modgrades->maxgrade)) {
+                                        $totals[$student->id] = (float)($totals[$student->id]) + (float)($currentstudentgrade);
+                                    } else {
+                                        $totals[$student->id] = (float)($totals[$student->id]) + 0;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    } // a new Moodle nesting record? ;-)
+
+/// OK, we have all the data, now present it to the user
+    if ($download == "xls" and confirm_sesskey()) {
+        require_once("../lib/excel/Worksheet.php");
+        require_once("../lib/excel/Workbook.php");
+
+// HTTP headers
         header("Content-type: application/vnd.ms-excel");
         $downloadfilename = clean_filename("$course->shortname $strgrades");
         header("Content-Disposition: attachment; filename=\"$downloadfilename.xls\"");
         header("Expires: 0");
         header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
         header("Pragma: public");
-        
-        /// Creating a workbook
+
+/// Creating a workbook
         $workbook = new Workbook("-");
         $myxls =& $workbook->add_worksheet($strgrades);
-        $first = 0;
-        /// Print names of all the fields
-        list($grades_by_student, $all_categories) = grade_get_formatted_grades();
-        if ($grades_by_student != 0 && $all_categories != 0) {
-            $j = 1;
-            foreach($grades_by_student as $student => $categories) {
-                if ($first == 0) {
-                    ksort($categories);
-                    $myxls->write_string(0,0,get_string("firstname"));
-                    $myxls->write_string(0,1,get_string("lastname"));
-                    $myxls->write_string(0,2,get_string("idnumber"));
-                    $myxls->write_string(0,3,get_string("institution"));
-                    $myxls->write_string(0,4,get_string("department"));
-                    $myxls->write_string(0,5,get_string("email"));
-                    $i = 6;
-                    foreach ($categories as $category => $assignments) {
-                        if ($category != 'student_data') {
-                            foreach ($assignments as $assignment => $info) {
-                                if ($assignment != 'stats') {
-                                    $myxls->write_string(0,$i,$assignment);
-                                    $i++;
-                                }
-                            }
-                        }
-                    }
-                    $first++;
-                }
-            }
-            foreach($grades_by_student as $student => $categories) {
-                $myxls->write_string($j,0,$grades_by_student["$student"]['student_data']['firstname']);
-                $myxls->write_string($j,1,$grades_by_student["$student"]['student_data']['lastname']);
-                $myxls->write_string($j,2,$grades_by_student["$student"]['student_data']['idnumber']);
-                if (isset($grades_by_student["$student"]['student_data']['institution'])) {
-                    $myxls->write_string($j,3,$grades_by_student["$student"]['student_data']['institution']);
-                }
-                $myxls->write_string($j,4,$grades_by_student["$student"]['student_data']['department']);
-                $myxls->write_string($j,5,$grades_by_student["$student"]['student_data']['email']);
-                $i = 6;
-                foreach($categories as $category => $assignments) {
-                    if ($category != 'student_data') {
-                        foreach ($assignments as $assignment => $info) {
-                            if ($assignment != 'stats') {
-                                // account for excluded and untaken items
-                                if (is_numeric($info['grade'])) {
-                                    $myxls->write_number($j,$i,$info['grade']);
-                                }
-                                else {
-                                    $myxls->write_string($j,$i,$info['grade']);
-                                }
-                                $i++;
-                            }
-                        }
-                    }
-                }
-                $j++;
-            }
-        }
-        $workbook->close();
-        exit;
-    }
-}
-
-
-function grade_download_text() {
-    global $CFG;
-    global $course;
-        
-    $strgrades = get_string("grades");
     
-    if (isteacher($course->id)) {
-        // HTTP headers
-        header("Content-type: text/plain");
+/// Print names of all the fields
+
+        $myxls->write_string(0,0,get_string("firstname"));
+        $myxls->write_string(0,1,get_string("lastname"));
+        $myxls->write_string(0,2,get_string("idnumber"));
+        $myxls->write_string(0,3,get_string("institution"));
+        $myxls->write_string(0,4,get_string("department"));
+        $myxls->write_string(0,5,get_string("email"));
+        $pos=6;
+        foreach ($columns as $column) {
+            $myxls->write_string(0,$pos++,strip_tags($column));
+        }
+        $myxls->write_string(0,$pos,get_string("total"));
+    
+    
+/// Print all the lines of data.
+
+        $i = 0;
+        foreach ($grades as $studentid => $studentgrades) {
+            $i++;
+            $student = $students[$studentid];
+            if (empty($totals[$student->id])) {
+                $totals[$student->id] = '';
+            }
+    
+            $myxls->write_string($i,0,$student->firstname);
+            $myxls->write_string($i,1,$student->lastname);
+            $myxls->write_string($i,2,$student->idnumber);
+            $myxls->write_string($i,3,$student->institution);
+            $myxls->write_string($i,4,$student->department);
+            $myxls->write_string($i,5,$student->email);
+            $j=6;
+            foreach ($studentgrades as $grade) {
+                if (is_numeric($grades)) {
+                    $myxls->write_number($i,$j++,strip_tags($grade));
+                }
+                else {
+                    $myxls->write_string($i,$j++,strip_tags($grade));
+                }
+            }
+            $myxls->write_number($i,$j,$totals[$student->id]);
+        }
+        
+        $workbook->close();
+    
+        exit;
+
+    } else if ($download == "txt" and confirm_sesskey()) {
+
+/// Print header to force download
+
+        header("Content-Type: application/download\n"); 
         $downloadfilename = clean_filename("$course->shortname $strgrades");
         header("Content-Disposition: attachment; filename=\"$downloadfilename.txt\"");
-        $first = 0;        
-        
-        /// Print names of all the fields
-        list($grades_by_student, $all_categories) = grade_get_formatted_grades();
-        if ($grades_by_student != 0 && $all_categories != 0) {
-            foreach($grades_by_student as $student => $categories) {
-                if ($first == 0) {
-                    $first++;
-                    ksort($categories);
-                    print_string('firstname')."\t";
-                    print_string('lastname')."\t";
-                    print_string('idnumber')."\t";
-                    print_string('institution')."\t";
-                    print_string('department')."\t";
-                    print_string('email')."\t";
-                    foreach ($categories as $category => $assignments) {
-                        if ($category != 'student_data') {
-                            foreach ($assignments as $assignment => $info) {
-                                if ($assignment != 'stats') {
-                                    echo  $assignment."\t";
-                                }
-                            }
-                        }
-                    }
-                    echo  "\n";
-                }
-                
-            }
-            foreach($grades_by_student as $student => $categories) {
-                echo  $grades_by_student["$student"]['student_data']['firstname']."\t";
-                echo  $grades_by_student["$student"]['student_data']['lastname']."\t";
-                echo  $grades_by_student["$student"]['student_data']['idnumber']."\t";
-                if (isset($grades_by_student["$student"]['student_data']['institution'])) {
-                    echo  $grades_by_student["$student"]['student_data']['institution'];
-                }
-                echo  "\t";
-                echo  $grades_by_student["$student"]['student_data']['department']."\t";
-                echo  $grades_by_student["$student"]['student_data']['email']."\t";
-                foreach($categories as $category => $assignments) {
-                    if ($category != 'student_data') {
-                        foreach ($assignments as $assignment => $info) {
-                            if ($assignment != 'stats') {
-                                // account for excluded and untaken items
-                                echo  $info['grade']."\t";
-                            }
-                        }
-                    }
-                }
-                echo  "\n";
-            }
+
+/// Print names of all the fields
+
+        echo get_string("firstname")."\t".
+             get_string("lastname")."\t".
+             get_string("idnumber")."\t".
+             get_string("institution")."\t".
+             get_string("department")."\t".
+             get_string("email");
+        foreach ($columns as $column) {
+            $column = strip_tags($column);
+            echo "\t$column";
         }
+        echo "\t".get_string("total")."\n";
+    
+/// Print all the lines of data.
+        foreach ($grades as $studentid => $studentgrades) {
+            $student = $students[$studentid];
+            if (empty($totals[$student->id])) {
+                $totals[$student->id] = '';
+            }
+            echo "$student->firstname\t$student->lastname\t$student->idnumber\t$student->institution\t$student->department\t$student->email";
+            foreach ($studentgrades as $grade) {
+                $grade = strip_tags($grade);
+                echo "\t$grade";
+            }
+            echo "\t".$totals[$student->id];
+            echo "\n";
+        }
+    
         exit;
+    
     }
 }
 
@@ -1518,7 +1579,6 @@ function grade_view_category_grades($view_by_student) {
     global $USER;
     global $preferences;
     global $group;
-    
     if (!isteacher($course->id)) {
         $view_by_student = $USER->id;
     }
@@ -2682,7 +2742,7 @@ function grade_set_letter_grades() {
 }
 
 function grade_download_form($type='both') {
-    global $course;
+    global $course,$USER;
     if ($type != 'both' || $type != 'excel' || $type != 'text') {
         $type = 'both';
     }
@@ -2690,6 +2750,7 @@ function grade_download_form($type='both') {
     if (isteacher($course->id)) {
         echo '<table align="center"><tr>';
         $options['id'] = $course->id;
+        $options['sesskey'] = $USER->sesskey;
         
         if ($type = 'both' || $type == 'excel') {
             $options['action'] = 'excel';

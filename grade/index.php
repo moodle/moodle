@@ -37,10 +37,10 @@
         grade_stats();
         exit();
     } else if ($action == 'excel') {
-        grade_download_excel();
+        grade_download('xls', $id);
         exit();
     } else if ($action == 'text') {
-        grade_download_text();
+        grade_download('txt', $id);
         exit();
     }
 
@@ -118,7 +118,12 @@
         if ($preferences->show_weighted || $preferences->show_points || $preferences->show_points) {
 
             if ($preferences->use_advanced == 1) {
-                grade_view_all_grades($USER->id);
+                if($action != 'vcats') {
+                    grade_view_all_grades($USER->id);
+                }
+                else {
+                    grade_view_category_grades($USER->id);
+                }
             } else {
                 grade_view_category_grades($USER->id);
             }

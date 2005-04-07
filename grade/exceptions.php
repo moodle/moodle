@@ -49,10 +49,9 @@
             $selectedgrade_item = $data->grade_itemid;
 
         } else if (!empty($data->membersremove)) {     /// Remove selected people from a particular grade_item
-
             if (!empty($data->members) and !empty($data->grade_itemid)) {
                 foreach ($data->members as $userid) {
-                    delete_records('grade_exceptions', 'userid', $userid, "grade_itemid", $data->grade_itemid, 'course', $course->id);
+                    delete_records('grade_exceptions', 'userid', $userid, "grade_itemid", $data->grade_itemid, 'courseid', $course->id);
                 }
             }
             $selectedgrade_item = $data->grade_itemid;
