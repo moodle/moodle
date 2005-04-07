@@ -139,7 +139,7 @@ $string['categoryadded'] = '「 $a 」 が追加されました。';
 $string['categorydeleted'] = '「 $a 」 が削除されました。';
 $string['categoryduplicate'] = '「$a」は既に登録されています! ';
 $string['censorbadwords'] = 'shit,fucked,fucker,fuck,dickhead,dick,cockhead,cock,cunt,asshole,arsehole,prick,bitch,jism,whore,slut,wanker,wank,bastard,dildo,masturbate,orgasm,penis,nigger,pussy,vagina';
-$string['changedpassword'] = '変更済みパスワード';
+$string['changedpassword'] = 'パスワードの変更を完了しました。';
 $string['changepassword'] = 'パスワードを変更する';
 $string['changessaved'] = '変更内容が保存されました';
 $string['checkingbackup'] = 'バックアップの確認中';
@@ -328,17 +328,17 @@ $string['emailagain'] = 'メールアドレス ( もう一度 )';
 $string['emailconfirm'] = 'アカウントの確定';
 $string['emailconfirmation'] = '$a->firstname さん こんにちは、
 
-「 $a->sitename 」であなたのメールアドレスによるアカウント作成依頼がありました。
+「 $a->sitename 」であなたのメールアドレスによる新しいアカウントの作成が依頼されました。
 
-アカウントの確定を行うためには、下記のアドレスを訪れてください:
+アカウントの確定を行うには、下記のウェブアドレスにアクセスしてください:
 
 $a->link
 
 ほとんどのメールプログラムでは、上記部分はクリックできる青色のリンク表示がなされます。
 
-もし、動作しない場合はコピー&ペーストを使ってブラウザのアドレス欄にアドレスを入力してください。
+動作しない場合は、コピー&ペーストを使ってブラウザのアドレス欄にアドレスを入力してください。
 
-お分かりにならない場合は、 $a->sitename 管理者にご連絡ください。';
+お分かりにならない場合は、 サイト管理者　$a->admin にご連絡ください。';
 $string['emailconfirmationsubject'] = '$a: アカウントの確定';
 $string['emailconfirmsent'] = '<p>メールが <b>$a</b> 宛に送信されました。
 <p>メールには登録の確定を簡単に行うための説明が記述されています。
@@ -368,10 +368,10 @@ $string['emailpasswordconfirmation'] = 'こんにちは $a->firstname さん
 
 $a->link
 
-ほとんどのメールプログラムでは、これはクリック可能な青いリンクとして表示されます。もしクリックできないようでしたらブラウザのアドレスボックスにコピー＆ペーストしてください。
+ほとんどのメールプログラムでは、これはクリック可能な青いリンクとして表示されます。クリックできない場合は、ブラウザのアドレスボックスにコピー＆ペーストしてください。
 
 お分かりにならない場合は、サイト管理者 $a->admin にご連絡ください。';
-$string['emailpasswordconfirmationsubject'] = '$a: パスワード確認の変更';
+$string['emailpasswordconfirmationsubject'] = '$a: パスワード変更の確認';
 $string['emailpasswordconfirmsent'] = 'メールがあなたのアドレス <b>$a</b> 宛に送信されました。<br />送信されたメールにはパスワードの変更を確認・完了するための簡単な説明が書いてあります。問題がある場合はサイト管理者にご連絡ください。';
 $string['emailpasswordsent'] = 'パスワードの変更確認ありがとうございます。
 <p>新しいパスワードが記載されたメールがあなたのメールアドレス<br /><b>$a->email</b>に送信されました。<br />新しいパスワードは自動的に生成されたものです - <a href=$a->link>パスワードの変更</a> で覚えやすいものに変更することができます。';
@@ -715,14 +715,14 @@ $string['newpasswordtext'] = '$a->firstname さんこんにちは、
 
 「 $a->sitename 」のパスワードリセットおよび仮パスワードの作成が完了しました。
 
-あなたの現在のログイン情報は下記の通りです。
+あなたのログイン情報は下記の通りです。
 ユーザ名: username: $a->username
 パスワード: password: $a->newpassword
 
-パスワードを変更する場合、下記のページにアクセスしてください。
+パスワードを変更する場合は、下記のページにアクセスしてください。
 $a->link
 
-ほとんどのメールプログラムではクリックできるように青くリンク表示されますが、クリックできない場合はアドレスをブラウザにコピー＆ペーストしてください。
+ほとんどのメールプログラムでは、これはクリック可能な青いリンクとして表示されます。クリックできない場合は、ブラウザのアドレスボックスにコピー＆ペーストしてください。
 
 「 $a->sitename 」の管理者よりご挨拶でした。
 $a->signoff';
