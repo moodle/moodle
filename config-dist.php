@@ -214,6 +214,26 @@ $CFG->admin = 'admin';
 // Enabling this will make most text-based filters only match the first time
 // a phrase occurs in a given page.  Otherwise all are matched.
 //      $CFG->filtermatchoneperpage = true;
+//
+// Performance profiling 
+// 
+//   If you set Debug to "Yes" in the Configuration->Variables page some
+//   performance profiling data will show up on your footer (in default theme).
+//   With these settings you get more granular control over the capture
+//   and printout of the data
+//
+//   Capture performance profiling data
+//   define('MDL_PERF'  , true);
+//
+//   Capture additional data from DB
+//   define('MDL_PERFDB'  , true);
+//
+//   Print to log (for passive profiling of production servers)
+//   define('MDL_PERFTOLOG'  , true);
+//
+//   Print to footer (works with the default theme)
+//   define('MDL_PERFTOFOOT', true);
+//
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser

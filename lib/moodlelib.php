@@ -5682,7 +5682,7 @@ function get_performance_info() {
 
     if (!empty($PERF->dbqueries)) {
         $info['dbqueries'] = $PERF->dbqueries;
-        $info['html'] .= '<span class="dbqueries">DB queries'.$info['dbqueries'].'</span> ';
+        $info['html'] .= '<span class="dbqueries">DB queries '.$info['dbqueries'].'</span> ';
         $info['txt'] .= 'dbqueries: '.$info['dbqueries'].' ';
     }
 

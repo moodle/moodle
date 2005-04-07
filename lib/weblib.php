@@ -1835,10 +1835,12 @@ function print_footer($course=NULL, $usercourse=NULL) {
 
 /// Provide some performance info if required
     $performanceinfo = '';
-    if (!empty($CFG->perfdebug)) {
+    if (defined('MDL_PERF') || $CFG->debug > 7) {
         $perf = get_performance_info();
-        error_log("PERF: " . $perf['txt']);
-        if ($CFG->debug > 7) {
+        if (defined('MDL_PERFTOLOG')) {
+            error_log("PERF: " . $perf['txt']);
+        }
+        if (defined('MDL_PERFTOFOOT') || $CFG->debug > 7) {
             $performanceinfo = $perf['html'];
         }
     } 

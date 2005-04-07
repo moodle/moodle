@@ -49,6 +49,8 @@ function execute_sql($command, $feedback=true) {
     if (!$feedback) {
         $db->debug = false;
     }
+    
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
     $result = $db->Execute($command);
 
@@ -372,6 +374,8 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
 function column_type($table, $column) {
     global $CFG, $db;
 
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+
     if(!$rs = $db->Execute('SELECT '.$column.' FROM '.$CFG->prefix.$table.' LIMIT 0')) {
         return false;
     }
@@ -429,6 +433,8 @@ function record_exists($table, $field1='', $value1='', $field2='', $value2='', $
 function record_exists_sql($sql) {
 
     global $CFG, $db;
+
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
     if (!$rs = $db->Execute($sql)) {
         if (isset($CFG->debug) and $CFG->debug > 7) {
@@ -510,6 +516,8 @@ function count_records_sql($sql) {
 
     global $CFG, $db;
 
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+
     $rs = $db->Execute($sql);
     if (!$rs) {
         if (isset($CFG->debug) and $CFG->debug > 7) {
@@ -576,6 +584,8 @@ function get_record_sql($sql) {
     } else {
        $limit = ' LIMIT 1';    // Workaround - limit to one record
     }
+
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
     if (!$rs = $db->Execute($sql . $limit)) {
         if (isset($CFG->debug) and $CFG->debug > 7) {    // Debugging mode - print checks
@@ -759,6 +769,8 @@ function get_records_sql($sql) {
 
     global $CFG, $db;
 
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+
     if (!$rs = $db->Execute($sql)) {
         if (isset($CFG->debug) and $CFG->debug > 7) {
             notify($db->ErrorMsg() .'<br /><br />'. $sql);
@@ -863,6 +875,9 @@ function get_records_sql_menu($sql) {
 
     global $CFG, $db;
 
+
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+
     if (!$rs = $db->Execute($sql)) {
         if (isset($CFG->debug) and $CFG->debug > 7) {
             notify($db->ErrorMsg() .'<br /><br />'. $sql);
@@ -910,6 +925,8 @@ function get_field($table, $return, $field1, $value1, $field2='', $value2='', $f
         }
     }
 
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+
     $rs = $db->Execute('SELECT '. $return .' FROM '. $CFG->prefix . $table .' '. $select);
     if (!$rs) {
         if (isset($CFG->debug) and $CFG->debug > 7) {
@@ -938,6 +955,8 @@ function get_field($table, $return, $field1, $value1, $field2='', $value2='', $f
 function get_field_sql($sql) {
 
     global $db, $CFG;
+
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
     $rs = $db->Execute($sql);
     if (!$rs) {
@@ -973,6 +992,8 @@ function set_field($table, $newfield, $newvalue, $field1, $value1, $field2='', $
 
     global $db, $CFG;
 
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+
     $select = 'WHERE '. $field1 .' = \''. $value1 .'\'';
 
     if ($field2) {
@@ -1004,6 +1025,8 @@ function delete_records($table, $field1='', $value1='', $field2='', $value2='', 
 
     global $db, $CFG;
 
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+
     if ($field1) {
         $select = 'WHERE '. $field1 .' = \''. $value1 .'\'';
         if ($field2) {
@@ -1033,6 +1056,8 @@ function delete_records_select($table, $select='') {
 
     global $CFG, $db;
 
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
+
     if ($select) {
         $select = 'WHERE '.$select;
     }
@@ -1056,6 +1081,8 @@ function delete_records_select($table, $select='') {
 function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
 
     global $db, $CFG;
+
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
 /// Execute a dummy query to get an empty recordset
     if (!$rs = $db->Execute('SELECT * FROM '. $CFG->prefix . $table .' WHERE '. $primarykey  .' = \'-1\'')) {
@@ -1152,6 +1179,8 @@ function update_record($table, $dataobject) {
         return false;
     }
     $data = (array)$dataobject;
+
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; };
 
     // Pull out data matching these fields
     foreach ($columns as $column) {
@@ -2648,6 +2677,9 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
     $info = addslashes($info);
     $url = html_entity_decode($url); // for php < 4.3.0 this is defined in moodlelib.php
 
+
+    if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++; $PERF->logwrites++;};
+
     $result = $db->Execute('INSERT INTO '. $CFG->prefix .'log (time, userid, course, ip, module, cmid, action, url, info)
         VALUES (' . "'$timenow', '$userid', '$courseid', '$REMOTE_ADDR', '$module', '$cm', '$action', '$url', '$info')");
 
@@ -2658,6 +2690,7 @@ function add_to_log($courseid, $module, $action, $url='', $info='', $cm=0, $user
         $db->Execute('UPDATE '. $CFG->prefix .'user SET lastIP=\''. $REMOTE_ADDR .'\', lastaccess=\''. $timenow .'\'
                      WHERE id = \''. $userid .'\' ');
         if ($courseid != SITEID && !empty($courseid)) { // logins etc dont't have a courseid and isteacher will break without it.
+            if (defined('MDL_PERFDB')) { global $PERF ; $PERF->dbqueries++;};
             if (isstudent($courseid)) {
                 $db->Execute('UPDATE '. $CFG->prefix .'user_students SET timeaccess = \''. $timenow .'\' '.
                              'WHERE course = \''. $courseid .'\' AND userid = \''. $userid .'\'');
