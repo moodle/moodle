@@ -86,7 +86,7 @@ $string['configvariables'] = 'Variables';
 $string['configwarning'] = 'Sea cuidadoso al modificar estos resultados (valores extraños pueden ocasionar problemas).';
 $string['configzip'] = 'Indique dónde está el programa de compresión -\'Zip-\'  (sólo Unix, opcional). Si se especifica, esto puede usarse para comprimir archivos en el servidor. Si lo deja en blanco, Moodle usará sus rutinas internas.';
 $string['confirmation'] = 'Confirmación';
-$string['cronwarning'] = 'El script de mantenimiento del <a href=\"cron.php\">cron.php </a> no ha sido ejecutado durante las últimas 24 horas. <br />La <a href=\"../doc/?frame=install.html&#8834;=cron\">documentación de instalación</a> explica cómo puede automatizarlo.';
+$string['cronwarning'] = 'El script de mantenimiento del <a href=\"cron.php\">cron.php </a> no ha sido ejecutado durante las últimas 24 horas. <br />La <a href=\"../doc/?frame=install.html&sub=cron\">documentación de instalación</a> explica cómo puede automatizarlo.';
 $string['edithelpdocs'] = 'Editar documentos de ayuda';
 $string['editstrings'] = 'Editar cadenas';
 $string['filteruploadedfiles'] = 'Filtrar archivos subidos';
