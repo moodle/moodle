@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
 $string['action'] = 'Acción';
@@ -346,9 +346,9 @@ Si necesita ayuda, contacte por favor con el administrador
 del sitio,
 $a->admin';
 $string['emailconfirmationsubject'] = 'Confirmación de la cuenta  $a ';
-$string['emailconfirmsent'] = '<P>Hemos enviado un correo electrónico a <B>$a</B>
-<P>En él encontrará instrucciones sencillas para concluir el proceso.
-<P>Si tuviera alguna dificultad, contacte con el Administrador del Sistema.';
+$string['emailconfirmsent'] = '<p>Hemos enviado un correo electrónico a <b>$a</b></p>
+<p>En él encontrará instrucciones sencillas para concluir el proceso.</p>
+<p>Si tuviera alguna dificultad, contacte con el Administrador del Sistema.</p>';
 $string['emaildigest'] = 'Tipo de resumen de correo';
 $string['emaildigestcomplete'] = 'Completo (correo diario con mensajes completos)';
 $string['emaildigestoff'] = 'Sin resumen (un correo por cada mensaje del foro)';
@@ -386,11 +386,11 @@ administrador, $a->admin';
 $string['emailpasswordconfirmationsubject'] = '$a: confirmación de cambio de contraseña';
 $string['emailpasswordconfirmsent'] = 'Hemos enviado un correo a su dirección <b>$a</b>.
 <p>Este mensaje contiene instrucciones sencillas para completar y confirmar el cambio de contraseña.
-Si tuviera alguna dificultad, contacte con el Administrador.';
+Si tuviera alguna dificultad, contacte con el Administrador.</p>';
 $string['emailpasswordsent'] = 'Gracias por confirmar el cambio de contraseña.
-<p>Ya le enviamos un correo con su nueva contraseña a <b>$a->email</b>.
+<p>Ya le enviamos un correo con su nueva contraseña a <b>$a->email</b>.</p>
 <p>La nueva contraseña ha sido generada automáticamente.
-Le recomendamos que <a href=$a->link>cambie su contraseña</a> por otra más fácil de recordar.';
+Le recomendamos que <a href=\"$a->link\">cambie su contraseña</a> por otra más fácil de recordar.</p>';
 $string['enable'] = 'Habilitar';
 $string['encryptedcode'] = 'Código encriptado';
 $string['enrolledincourse'] = 'Inscritos en el curso ';
@@ -408,7 +408,7 @@ $string['enrolmentnewuser'] = '$a->user se ha matriculado en el curso \"$a->cour
 $string['enrolmentnointernal'] = 'Las matriculaciones manuales no están actualmente habilitadas';
 $string['enrolmentnotyet'] = 'Lo sentimos, no puede acceder a este curso hasta <br /> $a';
 $string['enrolments'] = 'Matriculaciones';
-$string['enrolperiod'] = 'Período de matriculación';
+$string['enrolperiod'] = 'Período de vigencia de la matrícula';
 $string['entercourse'] = 'Haga clic aquí para entrar al curso';
 $string['enteremailaddress'] = 'Escriba su dirección de correo electrónico.
 Le enviaremos una nueva contraseña.';
@@ -611,22 +611,22 @@ crear una cuenta.
 Cada curso puede disponer de una \"contraseña\"
 que sólo tendrá que usar la primera vez.
 Estos son los pasos:
-   <OL size=2>
-   <LI>Rellene el <a href=\"$a\">Formulario de Registro</a> con sus datos.
-   <LI>El sistema le enviará un correo para verificar que su dirección sea correcta.</li>
-   <LI>Lea el correo y confirme su matrícula.</li>
-   <li>Su registro será confirmado y usted podrá acceder al curso.</li>
-   <li>Seleccione el curso en el que desea participar.</li>
-   <LI>Si algún curso en particular le solicita una \"contraseña de acceso\"
-   utilice la que le facilitaron cuando se matriculó.
-   Así quedará matriculado.</li>
-   <LI>A partir de ese momento no necesitará utilizar más que su nombre de usuario y contraseña
-   en el formulario de la página
-   para entrar a cualquier curso en el que esté matriculado.</li>
-   </OL>';
+<ol>
+<li>Rellene el <a href=\"$a\">Formulario de Registro</a> con sus datos.</li>
+<li>El sistema le enviará un correo para verificar que su dirección sea correcta.</li>
+<li>Lea el correo y confirme su matrícula.</li>
+<li>Su registro será confirmado y usted podrá acceder al curso.</li>
+<li>Seleccione el curso en el que desea participar.</li>
+<li>Si algún curso en particular le solicita una \"contraseña de acceso\"
+utilice la que le facilitaron cuando se matriculó.
+Así quedará matriculado.</li>
+<li>A partir de ese momento no necesitará utilizar más que su nombre de usuario y contraseña
+en el formulario de la página
+para entrar a cualquier curso en el que esté matriculado.</li>
+</ol>';
 $string['loginstepsnone'] = '<p>¡Hola!</p>
 <p>Para acceder a todos los cursos necesita crear una cuenta.</p>
-<P>Todo lo que tiene que hacer es inscribirse en esta página.</p>
+<p>Todo lo que tiene que hacer es inscribirse en esta página.</p>
 <p>Si alguna otra persona hubiera elegido su nombre de usuario o su contraseña, deberá elegir un nombre de usuario diferente.</p>';
 $string['loginto'] = 'Entrar a $a';
 $string['loginusing'] = 'Entre aquí usando su nombre de usuario y contraseña';
@@ -829,10 +829,10 @@ $string['passwordconfirmchange'] = 'Confirmar cambio de contraseña';
 $string['passwordrecovery'] = 'Sí, ayúdeme a entrar';
 $string['passwordsdiffer'] = 'Las contraseñas son diferentes';
 $string['passwordsent'] = 'Se ha enviado la contraseña';
-$string['passwordsenttext'] = '   <P>El sistema ha enviado un correo electrónico a $a->email.
-   <P><B>Revise su correo para recibir una nueva contraseña</B>
-   <P>La nueva contraseña se genera automáticamente, por lo que tal vez usted desee
-   <A HREF=$a->link>cambiarla</A> por una que le sea más fácil recordar.';
+$string['passwordsenttext'] = '<p>El sistema ha enviado un correo electrónico a $a->email.</p>
+<p><b>Revise su correo para recibir una nueva contraseña</b></p>
+<p>La nueva contraseña se genera automáticamente, por lo que tal vez usted desee
+<a href=\"$a->link\">cambiarla</a> por una que le sea más fácil recordar.</p>';
 $string['pathnotexists'] = '¡Esta ruta no existe en su servidor!';
 $string['pathslasherror'] = '¡La ruta no puede terminar con una barra!';
 $string['paymentinstant'] = '¡Utilice el botón de abajo para pagar y poder matricularse en minutos!';
@@ -876,12 +876,12 @@ $string['registrationcontactyes'] = 'Sí, proporcióneme un formulario de Moodlers
 $string['registrationemail'] = 'Notificaciones por correo electrónico';
 $string['registrationinfo'] = '<p>Esta página le permite registrar si sitio Moodle en moodle.org. El registro es gratuito.
 El principal beneficio del registro es que usted será incluido en una lista de correo de bajo volumen para
-notificaciones importantes como alertas de seguridad y nuevos lanzamientos de Moodle.
+notificaciones importantes como alertas de seguridad y nuevos lanzamientos de Moodle.</p>
 <p>Su información será confidencial, y nunca será vendida o transmitida a nadie más. La única razón para
 recopilar esta información es prestarle apoyo y ayudar a costruir un cuadro estadístico de la comunidad
-Moodle.
-<p>Si lo desea, puede escribir el nombre de su sitio, país y URL para que aparezca en la lista pública de los sitios que usan Moodle.
-<p>Todos los registros son verificados manualmente antes de ser colocados en la lista, pero una vez en ella, puede actualizar su registro (y sus datos en la lista pública) en cualquier momento rellenando de nuevo este formulario.';
+Moodle.</p>
+<p>Si lo desea, puede escribir el nombre de su sitio, país y URL para que aparezca en la lista pública de los sitios que usan Moodle.</p>
+<p>Todos los registros son verificados manualmente antes de ser colocados en la lista, pero una vez en ella, puede actualizar su registro (y sus datos en la lista pública) en cualquier momento rellenando de nuevo este formulario.</p>';
 $string['registrationno'] = 'No deseo recibir notificaciones por correo electrónico';
 $string['registrationsend'] = 'Enviar mi información de registro a moodle.org';
 $string['registrationyes'] = 'Sí, envíeme notificaciones por correo electrónico';
@@ -1016,7 +1016,7 @@ $string['themes'] = 'Temas';
 $string['themesaved'] = 'Se ha guardado el nuevo tema';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Español - Internacional';
+$string['thislanguage'] = 'Espa&#241;ol - Internacional';
 $string['time'] = 'Tiempo';
 $string['timezone'] = 'Zona horaria';
 $string['to'] = 'Hasta';
