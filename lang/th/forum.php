@@ -92,7 +92,7 @@ $string['openmode2'] = 'ตั้งกระทู้ได้ ตอบได้';
 $string['parent'] = 'ความเห็นก่อนหน้า';
 $string['parentlanguage'] = 'en';
 $string['parentofthispost'] = 'โพสต์ที่คุณเขียนตอบ';
-$string['postadded'] = 'เพิ่มโพสต์ของคุณแล้ว<P>คุณมีเวลา $a หากต้องการแก้ไข';
+$string['postadded'] = 'เพิ่มโพสต์ของคุณแล้ว<br />คุณมีเวลา $a หากต้องการแก้ไข';
 $string['postincontext'] = 'ดูเนื้อหาโพสต์';
 $string['postmailinfo'] = 'นี่เป็นก้อปปี้ข้อความ จากโพสต์  $a ใน เว็บไซต์
 หากต้องการตอบคลิกที่ลิงก์';
