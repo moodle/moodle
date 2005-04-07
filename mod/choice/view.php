@@ -133,14 +133,14 @@
                 break;
 
             case CHOICE_DISPLAY_VERTICAL:
-                $options = NULL;
-                $options->para = false;
+                $displayoptions = NULL;
+                $displayoptions->para = false;
                 echo "<table cellpadding=\"10\" cellspacing=\"10\" align=\"center\">";     
                 foreach ($choice->option as $optionid => $text) {
                     if ($text) {
                         echo "<tr><td align=\"left\">";              
-                        echo "<input type=\"radio\" name=\"answer\" value=\"".$optionid."\" ".$answerchecked[$optionid]." alt=\"".strip_tags(format_text($text, FORMAT_MOODLE, $options))."\" />".
-                              format_text($text, FORMAT_MOODLE, $options);
+                        echo "<input type=\"radio\" name=\"answer\" value=\"".$optionid."\" ".$answerchecked[$optionid]." alt=\"".strip_tags(format_text($text, FORMAT_MOODLE, $displayoptions))."\" />".
+                              format_text($text, FORMAT_MOODLE, $displayoptions);
                         echo "</td>";
                         echo "</tr>";
                     }
