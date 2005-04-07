@@ -103,7 +103,7 @@ $string['openmode1'] = 'Inga diskussionsämnen, men svar är tillåtna';
 $string['openmode2'] = 'Diskussionsämnen och svar är tillåtna';
 $string['parent'] = 'Visa \'föräldern\' till detta inlägg';
 $string['parentofthispost'] = 'Föräldern till detta inlägg';
-$string['postadded'] = 'Ditt inlägg har lagts till.<p>Du har $a för att redigera det om Du vill göra ändringar.';
+$string['postadded'] = 'Ditt inlägg har lagts till.<br />Du har $a för att redigera det om Du vill göra ändringar.';
 $string['postincontext'] = 'Se detta inlägg i sitt sammanhang';
 $string['postmailinfo'] = 'Detta är en kopia på ett meddelande inlagt på $a webbplats.
 För att lägga till Ditt svar via webbplatsen, klicka på denna länk:';

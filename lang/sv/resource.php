@@ -55,7 +55,7 @@ $string['newwidth'] = 'Fönstrets aktuella vidd (i pixlar)';
 $string['newwindow'] = 'Nytt fönster';
 $string['newwindowopen'] = 'Visa den här resursen i ett nytt \'pop-up\'-fönster';
 $string['note'] = 'OBS';
-$string['notefile'] = 'För att ladda upp fler filer till kursen (så att de uppträder i denna lista) använd <A HREF=$a >Filhanteraren</A>.';
+$string['notefile'] = 'För att ladda upp fler filer till kursen (så att de uppträder i denna lista) använd <a href=\"$a\" >Filhanteraren</a>.';
 $string['notypechosen'] = 'Du måste välja typ.  Använd tillbakaknappen för att gå tillbaka och försöka igen.';
 $string['pagedisplay'] = 'Visa den här resursen i det aktuella fönstret ';
 $string['pagewindow'] = 'Samma fönster';

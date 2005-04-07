@@ -159,7 +159,7 @@ $string['choosereportfilter'] = 'Välj ett filter för rapporten';
 $string['choosetheme'] = 'Välj layouttema';
 $string['chooseuser'] = 'Välj en användare';
 $string['city'] = 'Stad/ort';
-$string['clambroken'] = 'Din systemadministratör har aktiverat viruskontroll av uppladdade filer men<br> något är felaktigt inställt. Din fil laddades INTE upp på rätt sätt.<br />Din systemadministratör har fått ett e-postmeddelande om detta så det ska gå att rätta till det.<br />Försök att ladda upp Din fil igen senare.';
+$string['clambroken'] = 'Din systemadministratör har aktiverat viruskontroll av uppladdade filer men<br /> något är felaktigt inställt. Din fil laddades INTE upp på rätt sätt.<br />Din systemadministratör har fått ett e-postmeddelande om detta så det ska gå att rätta till det.<br />Försök att ladda upp Din fil igen senare.';
 $string['clamdeletedfile'] = 'Den här filen har tagits bort.';
 $string['clamdeletedfilefailed'] = 'Det gick inte att ta bort den här filen.';
 $string['clamemailsubject'] = '$a :: Clam AV notification';
@@ -385,7 +385,7 @@ $string['emailpasswordconfirmsent'] = '<p>Vi har skickat ett e-postbrev till Din
 <p>Det innehåller enkla instruktioner för att Du ska kunna bekräfta och fullfölja detta byte av lösenord.</p>
 <p>Om Du stöter på problem, är Du välkommen att kontakta den som ansvarar för webbplatsen, $a->admin.</p>';
 $string['emailpasswordsent'] = 'Tack för att Du bekräftade bytet av lösenord.<p>Vi har skickat ett e-postbrev som innehåller lösenordet till Din adress på <b>$a->email</b></p>
-<p>Det nya lösenordet har skapats automatiskt - Du kanske vill <a href=$a->link>byta Ditt lösenord</a> till något som är lättare att komma ihåg';
+<p>Det nya lösenordet har skapats automatiskt - Du kanske vill <a href=\"$a->link\">byta Ditt lösenord</a> till något som är lättare att komma ihåg';
 $string['enable'] = 'Aktivera';
 $string['encryptedcode'] = 'Krypterad kod';
 $string['enrolledincourse'] = 'Registerad på kurs ';
@@ -607,8 +607,8 @@ $string['loginsteps'] = 'Hej!
 <br />
 Du måste bl.a. skapa ett nytt användarkonto på denna webbplats för att få tillgång till de kurser som Du vill delta i. Varje individuell kurs kan också ha en engångsnyckel \"kursnyckel\". Den behöver Du dock inte  förrän senare. 
    Så här skapar Du Ditt konto:
-   <ol size=\"2\">
-   <li>Fyll i formuläret på sidan <a href=$a>
+   <ol>
+   <li>Fyll i formuläret på sidan <a href=\"$a\">
 Nytt konto</a> med de efterfrågade 
 uppgifterna om Dig själv.</li>
    <li>Ett e-postmeddelande kommer därefter
@@ -840,7 +840,7 @@ $string['passwordsent'] = 'Lösenord har skickats';
 $string['passwordsenttext'] = '   <p>Vi har skickat ett e-postbrev till Din adress $a->email.</p>
    <p><b>Läs e-postmeddelandet för att se Ditt nya lösenord</b>
    <p>Om Du vill kan Du ändra lösenordet 
-   <a href=$a->link> till något som är lättare att komma ihåg</a>.</p>';
+   <a href=\"$a->link\"> till något som är lättare att komma ihåg</a>.</p>';
 $string['pathnotexists'] = 'Sökvägen finns inte på Din server!';
 $string['pathslasherror'] = 'Sökvägar kan inte avslutas med snedstreck (slash)!!';
 $string['paymentinstant'] = 'Använd knappen nedan för att betala och bli registrerad inom några minuter!';
@@ -882,7 +882,7 @@ $string['registrationcontact'] = 'Kontakt från användarna';
 $string['registrationcontactno'] = 'Nej, jag vill inte ha något formulär för kontakt i listan över webbplatsen.';
 $string['registrationcontactyes'] = 'Ja, lägg in ett formulär så att presumtiva moodlare kan kontakta mig.';
 $string['registrationemail'] = 'Meddelanden via e-post';
-$string['registrationinfo'] = 'Den här sidan hjälper Dig att registrera Din Moodle-sajt hos moodle.org. Registreringen är gratis. Den största fördelen med att registrera sajten är att Du kommer med på en e-postlista (som skickar ut ett begränsat antal meddelanden) för utskick av viktig information om säkerhetsvarningar och nya versioner av Moodle.<p>Som standardval så kommer den information som Du lämnar att vara privat och kommer inte att säljas eller överlåtas till någon annan. Den enda anledningen till att vi samlar in den här informationen är för att erbjuda support och för att kunna skapa en statistisk bild av Moodle-gemenskapen i dess helhet.</p>
+$string['registrationinfo'] = '<p>Den här sidan hjälper Dig att registrera Din Moodle-sajt hos moodle.org. Registreringen är gratis. Den största fördelen med att registrera sajten är att Du kommer med på en e-postlista (som skickar ut ett begränsat antal meddelanden) för utskick av viktig information om säkerhetsvarningar och nya versioner av Moodle.</p><p>Som standardval så kommer den information som Du lämnar att vara privat och kommer inte att säljas eller överlåtas till någon annan. Den enda anledningen till att vi samlar in den här informationen är för att erbjuda support och för att kunna skapa en statistisk bild av Moodle-gemenskapen i dess helhet.</p>
 <p>
 Om Du så väljer så kan Du tillåta att namnet på Din sajt, Ditt land och Din URL kommer med på listan över Moodle-sajter.</p>
 <p>
