@@ -148,27 +148,37 @@ class WikiToMarkdown {
     
     // find what sort of list this character represents
     $list_tag = "";
+    $list_close_tag = "";
     $item_tag = "";
+    $item_close_tag = "";
     $list_style = LIST_NONE;
     switch ($listchar) {
       case '*':
         $list_tag = "";
+        $list_close_tag = "";
         $item_tag = "*";
+        $item_close_tag = "";
         $list_style = LIST_UNORDERED;
         break;
       case '#':
         $list_tag = "";
+        $list_close_tag = "";
         $item_tag = "1.";
+        $item_close_tag = "";
         $list_style = LIST_ORDERED;
         break;
       case ';':
-        $list_tag = "dl";
-        $item_tag = "dd";
+        $list_tag = "<dl>";
+        $list_close_tag = "</dl>";
+        $item_tag = "<dd>";
+        $item_close_tag = "</dd>";
         $list_style = LIST_DEFINITION;
         break;
       case ':':
-        $list_tag = "dl";
-        $item_tag = "dt";
+        $list_tag = "<dl>";
+        $list_close_tag = "</dl>";
+        $item_tag = "<dt>";
+        $item_close_tag = "</dt>";
         $list_style = LIST_DEFINITION;
         break;  
       }  
@@ -184,8 +194,8 @@ class WikiToMarkdown {
 
     // if depth has increased do number of opens to balance
     for ($i=$this->list_depth; $i<$count; $i++ ) {
-      array_push( $this->list_backtrack, "</$list_tag>" );
-      $tags = $tags . "<$list_tag>";
+      array_push( $this->list_backtrack, "$list_close_tag" );
+      $tags = $tags . "$list_tag";
     }
 
     // ok, so list state is now same as style and depth same as count
@@ -193,13 +203,16 @@ class WikiToMarkdown {
     $this->list_depth = $count;
 
     // apply formatting to remainder of line
-    $line = $this->line_replace( $line );
-    
+    // $line = $this->line_replace( $line );
+   
+    // get indent
+    $indent = substr( "                      ",1,$count-1 );
+ 
     if ($blank) {
       $newline = $tags;
     }
     else {  
-      $newline = $tags . "<$item_tag>" . $line . "</$item_tag>";
+      $newline = $tags . $indent . "$item_tag " . $line . "$item_close_tag";
     }
 
     return $newline;
@@ -396,12 +409,20 @@ $wiki = new WikiToMarkdown;
 foreach ($resources as $resource) {
   $alltext = $resource->alltext;
   $courseid = $resource->courseid;
-  echo "<pre>$alltext</pre>\n";
-
-  echo "<hr />\n";
-   
+  $id = $resource->id;
   $newtext = $wiki->convert( $alltext, $courseid );
-  echo "<pre>$newtext</pre>\n";
+ 
+  $resource->alltext = $newtext;
+  $resource->options = "4"; // 4=Markdown
+  update_record( "resource", $resource); 
+
+  echo "<p>Converted Wiki-Like to Markdown ID=$id</p>";
+
+  // echo "<pre>$alltext</pre>\n";
+  // echo "<hr />\n";
+  // echo "<pre>$newtext</pre>\n";
+
+  
 }
 
 
