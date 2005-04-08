@@ -99,7 +99,7 @@
     asort($presets); // Sort before adding trivial presets because string sorts mess up their order
 
     for($i = -13; $i <= 13; $i += .5) {
-        $tzstring = get_string('unspecifiedlocation').' / GMT';
+        $tzstring = get_string('unspecifiedlocation', 'timezones').' / GMT';
         if($i < 0) {
             $presets["$i"] = $tzstring . $i;
         }
