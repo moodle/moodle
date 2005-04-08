@@ -97,12 +97,7 @@ $string['thursday'] = 'Thursday';
 $string['friday'] = 'Friday';
 $string['saturday'] = 'Saturday';
 
-$string['timezonename'] = 'Timezone';
 $string['notusingdst'] = 'Not using DST';
-$string['dstpresetname'] = 'Preset name';
-$string['dstpresetactivated'] = 'Activation';
-$string['dstpresetdeactivated'] = 'Dectivation';
-$string['dstpresetadjusttime'] = 'Time adjustment';
 
 $string['explain_dstpresetforced'] = 'The site administrator does not allow users to modify this option.';
 $string['explain_dstpreset'] = 'You can select which area to use DST settings for, if any, from the drop-down menu.';
