@@ -848,17 +848,46 @@ function usertimezone($timezone=99) {
  */
 function get_user_timezone($tz = 99) {
 
-    // Variables declared explicitly global here so that if we add
-    // something later we won't forget to global it...
+    global $USER, $CFG;
+
+    $retval = $tz;
+
     $timezones = array(
-        isset($GLOBALS['USER']->timezone) ? $GLOBALS['USER']->timezone : 99,
-        isset($GLOBALS['CFG']->timezone) ? $GLOBALS['CFG']->timezone : 99,
+        // TODO: this first line below needs to go in the end
+        isset($USER->timezonename) ? $USER->timezonename : 99,
+        isset($USER->timezone) ? $USER->timezone : 99,
+        isset($CFG->timezone) ? $CFG->timezone : 99,
         );
-    while($tz == 99 && $next = each($timezones)) {
-        $tz = (float)$next['value'];
+
+    while(($retval == '' || $retval == 99) && $next = each($timezones)) {
+        $retval = $next['value'];
     }
 
-    return $tz;
+    if(is_numeric($retval)) {
+        return (float)$retval;
+    }
+    else {
+        $tzrecord = get_timezone_record($retval);
+        if(empty($tzrecord)) {
+            return 99;
+        }
+        return (float)$tzrecord->gmtoff / HOURSECS;
+    }
+}
+
+function get_timezone_record($timezonename) {
+    global $CFG, $db;
+    static $cache = NULL;
+
+    if($cache === NULL) {
+        $cache = array();
+    }
+
+    if(isset($cache[$timezonename])) {
+        return $cache[$timezonename];
+    }
+
+    return get_record_sql('SELECT * FROM '.$CFG->prefix.'timezone WHERE name = '.$db->qstr($timezonename).' ORDER BY year DESC LIMIT 1');
 }
 
 function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
