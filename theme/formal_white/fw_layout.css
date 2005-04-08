@@ -68,12 +68,21 @@ input {
 }
 
 .navbar {
-  width:100%;
-  padding:3px 0.5em;
-  height:1.3em;
+  padding:0px;
+  height: 25px;
   border-width:1px;
   border-style:solid;
 }
+
+.breadcrumb {
+ padding-top: 3px;
+ padding-left: 3px;
+ }
+ 
+.navbar .navbutton {
+  padding-right: 3px;
+ }
+
 
 /***
  *** Login
