@@ -502,7 +502,8 @@ function chat_format_message_manually($message, $courseid, $sender, $currentuser
 
     // Get some additional info
 
-    // But before that :-) let's override get_user_timezone() for this call... messy stuff...
+    // But before that :-) let's override get_user_timezone_offset() for this call... messy stuff...
+    // TODO - FIX THIS TO MANAGE NEW TIMEZONES
     $tz = ($currentuser->timezone == 99) ? $CFG->timezone : $currentuser->timezone;
     $message->strtime = userdate($message->timestamp, get_string('strftimemessage', 'chat'), $tz);
 

@@ -602,7 +602,7 @@ function get_user_preferences($name=NULL, $default=NULL, $userid=NULL) {
  */
 function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, $timezone=99, $applydst=true) {
 
-    $timezone = get_user_timezone($timezone);
+    $timezone = get_user_timezone_offset($timezone);
 
     if (abs($timezone) > 13) {
         $time = mktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year, 0);
@@ -714,7 +714,7 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
 
     $date += dst_offset_on($date);
 
-    $timezone = get_user_timezone($timezone);
+    $timezone = get_user_timezone_offset($timezone);
 
     if (abs($timezone) > 13) {   /// Server time
         if ($fixday) {
@@ -750,7 +750,7 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
  */
 function usergetdate($time, $timezone=99) {
 
-    $timezone = get_user_timezone($timezone);
+    $timezone = get_user_timezone_offset($timezone);
 
     if (abs($timezone) > 13) {    // Server time
         return getdate($time);
@@ -789,7 +789,7 @@ function usergetdate($time, $timezone=99) {
  */
 function usertime($date, $timezone=99) {
 
-    $timezone = get_user_timezone($timezone);
+    $timezone = get_user_timezone_offset($timezone);
 
     $date -= dst_offset_on($date);
     if (abs($timezone) > 13) {
@@ -808,7 +808,7 @@ function usertime($date, $timezone=99) {
  */
 function usergetmidnight($date, $timezone=99) {
 
-    $timezone = get_user_timezone($timezone);
+    $timezone = get_user_timezone_offset($timezone);
     $userdate = usergetdate($date, $timezone);
 
     // Time of midnight of this user's day, in GMT
@@ -824,7 +824,7 @@ function usergetmidnight($date, $timezone=99) {
  */
 function usertimezone($timezone=99) {
 
-    $timezone = get_user_timezone($timezone);
+    $timezone = get_user_timezone_offset($timezone);
 
     if (abs($timezone) > 13) {
         return 'server time';
@@ -848,7 +848,7 @@ function usertimezone($timezone=99) {
  * @param float $tz The user's timezone
  * @return int
  */
-function get_user_timezone($tz = 99) {
+function get_user_timezone_offset($tz = 99) {
 
     global $USER, $CFG;
 
@@ -1019,7 +1019,7 @@ function dst_changes_for_year($year, $timezone) {
     list($dst_hour, $dst_min) = explode(':', $timezone->dst_time);
     list($std_hour, $std_min) = explode(':', $timezone->std_time);
 
-    $tz      = get_user_timezone(99);
+    $tz      = get_user_timezone_offset(99);
     $timedst = make_timestamp($year, $timezone->dst_month, $monthdaydst, 0, 0, 0, $tz, false);
     $timestd = make_timestamp($year, $timezone->std_month, $monthdaystd, 0, 0, 0, $tz, false);
 
