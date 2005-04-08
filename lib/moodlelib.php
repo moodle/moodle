@@ -852,29 +852,37 @@ function get_user_timezone_offset($tz = 99) {
 
     global $USER, $CFG;
 
-    $retval = $tz;
+    $tz = get_user_timezone($tz);
+    
+    if(is_float($tz)) {
+        return $retval;
+    }
+    else {
+        $tzrecord = get_timezone_record($tz);
+        if(empty($tzrecord)) {
+            return 99.0;
+        }
+        return (float)$tzrecord->gmtoff / HOURSECS;
+    }
+}
+
+function get_user_timezone($tz = 99) {
+    global $USER, $CFG;
 
     $timezones = array(
-        // TODO: this first line below needs to go in the end
-        isset($USER->timezonename) ? $USER->timezonename : 99,
+        $tz,
+        isset($CFG->forcetimezone) ? $CFG->forcetimezone : 99,
         isset($USER->timezone) ? $USER->timezone : 99,
         isset($CFG->timezone) ? $CFG->timezone : 99,
         );
 
-    while(($retval == '' || $retval == 99) && $next = each($timezones)) {
-        $retval = $next['value'];
+    $tz = 99;
+
+    while(($tz == '' || $tz == 99) && $next = each($timezones)) {
+        $tz = $next['value'];
     }
 
-    if(is_numeric($retval)) {
-        return (float)$retval;
-    }
-    else {
-        $tzrecord = get_timezone_record($retval);
-        if(empty($tzrecord)) {
-            return 99;
-        }
-        return (float)$tzrecord->gmtoff / HOURSECS;
-    }
+    return is_numeric($tz) ? (float) $tz : $tz;
 }
 
 function get_timezone_record($timezonename) {
