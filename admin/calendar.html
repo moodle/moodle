@@ -66,7 +66,7 @@
         </div>
         <div>
           <nobr><input type="radio" id="timezone2" name="forcetimezone" value="force" <?php if(!empty($CFG->forcetimezone)) echo 'checked="checked"';?> /> <label for="timezone2"><?php print_string('timezoneisforcedto', 'admin'); ?></label>
-          <?php choose_from_menu($presets, 'timezonepreset', (empty($CFG->forcetimezone) ? 0 : $CFG->forcetimezone), get_string('choose').'...', 'form.timezone2.checked=\'checked\''); ?>
+          <?php choose_from_menu($presets, 'timezonepreset', (empty($CFG->forcetimezone) ? '' : $CFG->forcetimezone), get_string('choose').'...', 'form.timezone2.checked=\'checked\'', ''); ?>
           </nobr>
         </div>
         <?php } ?>

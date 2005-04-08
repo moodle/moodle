@@ -40,10 +40,13 @@
         }
         if(isset($form->forcetimezone)) {
             if($form->forcetimezone == 'force') {
-                $preset = optional_param('timezonepreset', 0, PARAM_INT);
+                $preset = optional_param('timezonepreset', '');
+                // Some replaces to prevent SQL injection
+                $preset = str_replace(';', '', $preset);
+                $preset = str_replace('\'', '', $preset);
             }
             else {
-                $preset = 0;
+                $preset = '';
             }
             set_config('forcetimezone', $preset);
         }
@@ -84,11 +87,27 @@
     require_once('../calendar/lib.php');
 
     // Populate some variables we 're going to need in calendar.html
+    $presets = get_records_sql('SELECT id, name FROM '.$CFG->prefix.'timezone GROUP BY name');
 
-    $presets = get_records('timezone');
     if(!empty($presets)) {
         foreach($presets as $id => $preset) {
-            $presets[$id] = $preset->name;
+            $presets[$preset->name] = get_string($preset->name, 'timezones');
+            unset($presets[$id]);
+        }
+    }
+
+    asort($presets); // Sort before adding trivial presets because string sorts mess up their order
+
+    for($i = -13; $i <= 13; $i += .5) {
+        $tzstring = get_string('unspecifiedlocation').' / GMT';
+        if($i < 0) {
+            $presets["$i"] = $tzstring . $i;
+        }
+        else if($i > 0) {
+            $presets["$i"] = $tzstring . '+' . $i;
+        }
+        else {
+            $presets["$i"] = $tzstring;
         }
     }
 
