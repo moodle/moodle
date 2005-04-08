@@ -5708,7 +5708,7 @@ function get_performance_info() {
     if (is_readable('/proc/loadavg') && $loadavg = @file('/proc/loadavg')) {
         list($server_load) = explode(' ', $loadavg[0]);
         unset($loadavg);
-    } else if ( is_executable('/usr/bin/uptime') && $loadavg = `/usr/bin/uptime` ) {
+    } else if ( function_exists('is_executable') && is_executable('/usr/bin/uptime') && $loadavg = `/usr/bin/uptime` ) {
         if (preg_match('/load averages?: (\d+:\d+)/', $loadavg, $matches)) {
             $server_load = $matches[1];
         } else {
