@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032800)
+      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
 $string['adminseesallevents'] = '管理者に全てのイベントを表示';
@@ -31,6 +31,8 @@ $string['configenablerssfeeds'] = 'ここではRSSフィードの設定を行い
 $string['configenablerssfeedsdisabled'] = 'サイト全てにおいてRSSフィードが利用不可にされているため、利用できません。管理メニュー内の詳細設定でRSSフィードを利用可にすることができます。';
 $string['configerrorlevel'] = '表示したいPHPの警告数を選択してください。通常はNormalが最適です。';
 $string['configextendedusernamechars'] = 'この設定を行うことで、学生はユーザ名にどのような文字でも使用することができます ( 実際の名前には影響しません )。デフォルトは、ユーザ名をアルファベットに制限する「No」が設定されています。';
+$string['configfilterall'] = 'ヘッダ、タイトル、ナビゲーションバーを含む全ての文字をフィルタします。これは多言語フィルタを使用している時に最も便利です。そうでない場合は、あなたのサイトに単に負荷がかかるだけになります。
+';
 $string['configfilteruploadedfiles'] = 'この設定を行った場合、Moodleは全てのアップロードされたHTMLおよびテキストファイルを表示する前にフィルタにかけます。';
 $string['configforcelogin'] = '通常、サイトとコース一覧 ( コースでは無い ) のフロントページはサイトにログインせずに閲覧することができます。全ての動作を行う前にログインを強制したい場合は、この設定を行ってください。';
 $string['configforceloginforprofiles'] = 'この設定を「Yes」にした場合、ユーザプロフィールページを閲覧するには実際のアカウントでログインする必要があります。デフォルトでは、「No」に設定されますので、学生は事前に各コースの教師のプロフィールを閲覧することができます。これはサーチエンジンからもプロフィールページにアクセスできることも意味します。';
@@ -86,9 +88,10 @@ $string['configvariables'] = '詳細設定';
 $string['configwarning'] = '間違った設定はトラブルの原因になりますので、これらの設定を変更する場合は注意してください。';
 $string['configzip'] = 'ZIPプログラムの場所を指定してください ( UNIXのみ、任意 )。これはZIP書庫をサーバ内で作成するために必要です。空白にした場合、Moodleは内部ルーチンを使用します';
 $string['confirmation'] = '確認';
-$string['cronwarning'] = '<a href=\"cron.php\">cron.phpメンテナンススクリプト</a>が少なくとも24時間稼動していません。<br />cron.phpの自動化に関して<a href=\"../doc/?frame=install.html&sub=cron\">インストールドキュメント</a>をご覧ください。';
+$string['cronwarning'] = '<a href=\"cron.php\">cron.phpメンテナンススクリプト</a>が少なくとも24時間稼動していません。<br />cron.phpの自動化に関して<a href=\"../doc/?frame=install.html⊂=cron\">インストールドキュメント</a>をご覧ください。';
 $string['edithelpdocs'] = 'ヘルプ文書の編集';
 $string['editstrings'] = '翻訳ストリングの編集';
+$string['filterall'] = '全ての文字をフィルタする';
 $string['filteruploadedfiles'] = 'アップロードファイルをフィルタする';
 $string['helpadminseesall'] = '管理者は全てのカレンダーイベントを閲覧または自分自身のイベントとすることができますか?';
 $string['helpcalendarsettings'] = 'Moodleのカレンダーの日/時間に関する様々な設定を行います。';
@@ -110,7 +113,7 @@ $string['tabselectedtofront'] = 'タグ付きのテーブルで、現在選択�
 $string['therewereerrors'] = 'データにエラーがあります。';
 $string['timezoneforced'] = 'サイト管理者によって強制されています。';
 $string['timezoneisforcedto'] = 'ユーザに使用を強制';
-$string['timezonenotforced'] = '独自のタイムゾーンを使用';
+$string['timezonenotforced'] = 'ユーザが独自のタイムゾーンを使用';
 $string['updatetimezones'] = '自動的にプロフィールを更新';
 $string['upgradelogs'] = '正常に動作させるためには古いログのアップグレードが必要です。<a href=\"$a\">詳細はこちら</a>';
 $string['upgradelogsinfo'] = 'ログの保存方法に変更点があります。全活動ベースのログを閲覧することができるようにするには、古いログをアップグレードする必要があります。サイトによってはアップグレード作業に長時間(例 数時間)を要し、規模が大きなサイトではデータベースに負担がかかります。処理を開始した場合は終了するまでそのまま(ブラウザを開いたまま)にしてください。心配する必要はありません - ログが更新された後に、あなたのサイトは正常に動作します。<br/><br/>本当にログをアップグレードしてもよろしいですか?';
