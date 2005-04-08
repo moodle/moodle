@@ -790,6 +790,8 @@ function usergetdate($time, $timezone=99) {
 function usertime($date, $timezone=99) {
 
     $timezone = get_user_timezone($timezone);
+
+    $date -= dst_offset_on($date);
     if (abs($timezone) > 13) {
         return $date;
     }
