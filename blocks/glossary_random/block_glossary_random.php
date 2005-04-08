@@ -78,7 +78,7 @@ class block_glossary_random extends block_base {
                 if (empty($this->config->showconcept)) {
                     $text = '';
                 } else {
-                    $text = "<b>$entry->concept</b><br />";
+                    $text = "<h2>$entry->concept</h2>";
                 }  
                 $text .= format_text($entry->definition, $entry->format);
 
