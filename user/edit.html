@@ -204,6 +204,7 @@ if (isadmin()) {
     </td>
 </tr>
 <?php } ?>
+<!--
 <tr>
     <th><?php print_string("timezone") ?>:</th>
     <td><?php
@@ -231,31 +232,35 @@ if (isadmin()) {
     ?>
     </td>
 </tr>
+-->
 <tr>
-    <th><?php print_string('timezonename', 'calendar')?>:</th>
+    <th><?php print_string('timezone', 'calendar')?>:</th>
     <td>
     <?php
-        if(empty($CFG->forcetimezone)) {
-            $presets = $GLOBALS['db']->GetAll('SELECT DISTINCT name FROM '.$CFG->prefix.'timezone ORDER BY name');
-            if(!empty($presets)) {
-                foreach($presets as $preset) {
-                    $presetarray[$preset['name']] = $preset['name'];
-                }
-                choose_from_menu ($presetarray, 'timezonename', empty($user->timezonename) ? 0 : $user->timezonename, '');
-            }
-            else {
-                print_string('nodstpresets');
+        $records = get_records_sql('SELECT id, name FROM '.$CFG->prefix.'timezone GROUP BY name');
+        $presets = array();
+    
+        if(!empty($records)) {
+            foreach($records as $preset) {
+                $presets[$preset->name] = get_string($preset->name, 'timezones');
             }
         }
-        else {
-            $preset = get_record('timezone', 'name', $CFG->forcetimezone);
-            if(empty($preset)) {
-                print_string('nodstpresets');
+    
+        asort($presets); // Sort before adding trivial presets because string sorts mess up their order
+    
+        for($i = -13; $i <= 13; $i += .5) {
+            $tzstring = get_string('unspecifiedlocation', 'timezones').' / GMT';
+            if($i < 0) {
+                $presets[sprintf("%.1f", $i)] = $tzstring . $i;
+            }
+            else if($i > 0) {
+                $presets[sprintf("%.1f", $i)] = $tzstring . '+' . $i;
             }
             else {
-                echo '<strong>'.$preset->name.'</strong> ('.get_string('timezoneforced', 'admin').')';
+                $presets[sprintf("%.1f", $i)] = $tzstring;
             }
         }
+        choose_from_menu($presets, 'timezone', $user->timezone, get_string('serverlocaltime'), '', '99');
     ?>
     </td>
 </tr>
