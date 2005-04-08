@@ -26,7 +26,7 @@ var $maxparameters = 5;
 */
 function set_parameters() {
     global $USER, $CFG;
-    
+
     if (! empty($this->course->lang)) {
         $CFG->courselang = $this->course->lang;
     }
@@ -42,7 +42,7 @@ function set_parameters() {
 
             'label1'          => array('langstr' => get_string('user'),
                                        'value'   => 'optgroup'),
-    
+
             'userid'          => array('langstr' => 'id',
                                        'value'   => $USER->id),
             'userusername'    => array('langstr' => get_string('username'),
@@ -74,7 +74,7 @@ function set_parameters() {
             'usercity'        => array('langstr' => get_string('city'),
                                        'value'   => $USER->city),
             'usertimezone'    => array('langstr' => get_string('timezone'),
-                                       'value'   => get_user_timezone()),
+                                       'value'   => get_user_timezone_offset()),
             'userurl'         => array('langstr' => get_string('webpage'),
                                        'value'   => $USER->url),
 
@@ -82,7 +82,7 @@ function set_parameters() {
                                        'value'   =>'/optgroup'),
             'label3'          => array('langstr' => get_string('course'),
                                        'value'   => 'optgroup'),
-                                                   
+
             'courseid'        => array('langstr' => 'id',
                                        'value'   => $this->course->id),
             'coursefullname'  => array('langstr' => get_string('fullname'),
@@ -103,12 +103,12 @@ function set_parameters() {
                                        'value'   => $this->course->student),
             'coursestudents'  => array('langstr' => get_string('wordforstudents'),
                                        'value'   => $this->course->students),
-                                    
+
             'label4'          => array('langstr' => "",
                                        'value'   =>'/optgroup'),
             'label5'          => array('langstr' => get_string('miscellaneous'),
                                        'value'   => 'optgroup'),
-                                                   
+
             'lang'            => array('langstr' => get_string('preferredlanguage'),
                                        'value'   => current_language()),
             'sitename'        => array('langstr' => get_string('fullsitename'),
@@ -123,7 +123,7 @@ function set_parameters() {
             'label6'          => array('langstr' => "",
                                        'value'   =>'/optgroup')
             );
-                                                   
+
 }
 
 
@@ -144,7 +144,7 @@ function add_instance($resource) {
             $optionlist[] = $resource->$parametername."=".$resource->$parsename;
         }
     }
-    
+
     $resource->alltext = implode(',', $optionlist);
 
     return parent::add_instance($resource);
@@ -160,7 +160,7 @@ function add_instance($resource) {
 */
 function update_instance($resource) {
     $optionlist = array();
-    
+
     for ($i = 0; $i < $this->maxparameters; $i++) {
         $parametername = "parameter$i";
         $parsename = "parse$i";
@@ -168,7 +168,7 @@ function update_instance($resource) {
             $optionlist[] = $resource->$parametername."=".$resource->$parsename;
         }
     }
-    
+
     $resource->alltext = implode(',', $optionlist);
 
     return parent::update_instance($resource);
@@ -190,9 +190,9 @@ function display() {
     parent::display();
 
 /// Set up some shorthand variables
-    $cm = $this->cm;     
+    $cm = $this->cm;
     $course = $this->course;
-    $resource = $this->resource; 
+    $resource = $this->resource;
 
 
     $this->set_parameters(); // set the parameters array
@@ -204,7 +204,7 @@ function display() {
     /// File displayed embedded in a normal page
     /// File displayed in a popup window
     /// File displayed emebedded in a popup window
-            
+
 
     /// First, find out what sort of file we are dealing with.
     require_once($CFG->libdir.'/filelib.php');
@@ -219,15 +219,15 @@ function display() {
         if (in_array($mimetype, array('image/gif','image/jpeg','image/png'))) {  // It's an image
             $resourcetype = "image";
             $embedded = true;
-                
+
         } else if ($mimetype == "audio/mp3") {    // It's an MP3 audio file
             $resourcetype = "mp3";
             $embedded = true;
-                
+
         } else if (substr($mimetype, 0, 10) == "video/x-ms") {   // It's a Media Player file
             $resourcetype = "mediaplayer";
             $embedded = true;
-                
+
         } else if ($mimetype == "video/quicktime") {   // It's a Quicktime file
             $resourcetype = "quicktime";
             $embedded = true;
@@ -250,7 +250,7 @@ function display() {
         $querystring = implode('&', $querys);
     }
 
-    
+
     /// Set up some variables
 
     $inpopup = !empty($_GET["inpopup"]);
@@ -487,7 +487,7 @@ function display() {
             print_spacer(20,20);
             print_footer($course);
         }
-    
+
     } else {              // Display the resource on it's own
         if (!empty($localpath)) {   // Show a link to help work around browser security
             echo '<div align="right" class="helplink">';
@@ -497,7 +497,7 @@ function display() {
         }
         redirect($fullurl);
     }
-    
+
 }
 
 
@@ -519,7 +519,7 @@ function setup($form) {
 
     $this->set_parameters(); // set the parameter array for the form
 
-    
+
     $strfilename = get_string("location");
     $strnote     = get_string("note", "resource");
     $strchooseafile = get_string("chooseafile", "resource");
@@ -533,7 +533,7 @@ function setup($form) {
         $window->$optionname = "";
         $jsoption[] = "\"$optionname\"";
     }
-    
+
     $frameoption = "\"framepage\"";
     $popupoptions = implode(",", $jsoption);
     $jsoption[] = $frameoption;
@@ -609,7 +609,7 @@ function setup($form) {
 //backwards compatible with existing resources
 function set_encrypted_parameter() {
     global $CFG;
-    
+
     if (!empty($this->resource->reference) && file_exists($CFG->dirroot ."/mod/resource//type/file/externserverfile.php")) {
         include $CFG->dirroot ."/mod/resource/type/file/externserverfile.php";
         if (function_exists(extern_server_file)) {
