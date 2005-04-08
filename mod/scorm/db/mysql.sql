@@ -28,10 +28,10 @@ CREATE TABLE prefix_scorm_scoes (
   identifier varchar(255) NOT NULL default '',
   launch varchar(255) NOT NULL default '',
   parameters varchar(255) NOT NULL default '',
-  scormtype set('sco','asset') NOT NULL default '',
+  scormtype varchar(5) NOT NULL default '',
   title varchar(255) NOT NULL default '',
   prerequisites varchar(200) NOT NULL default '',
-  maxtimeallowed set('exit,message','exit,no message','continue,message','continue,no message'),
+  maxtimeallowed varchar(19) NOT NULL dafault '',
   timelimitaction varchar(19) NOT NULL default '',
   datafromlms varchar(255) NOT NULL default '',
   masteryscore varchar(200) NOT NULL default '',
@@ -50,9 +50,11 @@ CREATE TABLE prefix_scorm_scoes_track (
   element varchar(255) NOT NULL default '',
   value longtext NOT NULL default '',
   PRIMARY KEY  (id),
-  UNIQUE (userid, scormid, scoid, element),
-  KEY userdata (userid, scormid, scoid),
-  KEY id (id)
+  KEY userid (userid),
+  KEY scormid (scormid),
+  KEY scoid (scoid),
+  KEY elemeny (element),
+  UNIQUE track (userid, scormid, scoid, element)
 ) TYPE=MyISAM;
 
 #

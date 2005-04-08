@@ -103,6 +103,21 @@ function scorm_upgrade($oldversion) {
        table_column("scorm_scoes", "", "parameters", "VARCHAR", "255", "", "", "NOT NULL", "launch");
     }
     
+    if ($oldversion < 2005040700) {
+        execute_sql("ALTER TABLE {$CFG->prefix}scorm_scoes_track DROP PRIMARY KEY;");
+        execute_sql("ALTER TABLE {$CFG->prefix}scorm_scoes_track DROP KEY userdata;");
+        execute_sql("ALTER TABLE {$CFG->prefix}scorm_scoes_track DROP INDEX userid");
+        modify_database('','ALTER TABLE prefix_scorm_scoes_track ADD UNIQUE track (userid,scormid,scoid,element);');
+        modify_database('','ALTER TABLE prefix_scorm_scoes_track ADD PRIMARY KEY id (id);');
+	modify_database('','ALTER TABLE prefix_scorm_scoes_track ADD INDEX scormid (scormid);');
+        modify_database('','ALTER TABLE prefix_scorm_scoes_track ADD INDEX userid (userid);');
+        modify_database('','ALTER TABLE prefix_scorm_scoes_track ADD INDEX scoid (scoid);');
+        modify_database('','ALTER TABLE prefix_scorm_scoes_track ADD INDEX element (element);');
+        execute_sql("ALTER TABLE {$CFG->prefix}scorm_scoes_track DROP INDEX id;");
+        table_column("scorm_scoes", "timelimitaction", "timelimitaction", "VARCHAR", "19", "", "", "NOT NULL");
+        table_column("scorm_scoes", "scormtype", "scormtype", "VARCHAR", "5", "", "", "NOT NULL");
+    }
+    
     return true;
 }
 
