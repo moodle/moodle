@@ -2,9 +2,12 @@
         // modified by mnielsen @ CDC
         /// Update:  The lib.php now contains only the functions that are
         /// used outside of the lesson module.  All functions (I hope) that are only local
-        /// are now in locallib.php.  All the constants moved there as well.
+        /// are now in locallib.php.
 
 /// Library of functions and constants for module lesson
+
+define("LESSON_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
+
 /// (replace lesson with the name of your module and delete this line)
 
 /*******************************************************************/
@@ -32,7 +35,10 @@ function lesson_add_instance($lesson) {
         unset($lesson->password);
     }
     /// CDC-FLAG ///
-
+	if (!$lesson->id = insert_record("lesson", $lesson)) {
+		return false; // bad
+	}
+	
     if ($lesson->lessondefault) {
         $lessondefault = $lesson;
         unset($lessondefault->lessondefault);
@@ -49,7 +55,39 @@ function lesson_add_instance($lesson) {
         unset($lesson->lessondefault);
     }
     
-    return insert_record("lesson", $lesson);
+	// got this code from quiz, thanks quiz!!!
+	delete_records('event', 'modulename', 'lesson', 'instance', $lesson->id);  // Just in case
+
+    $event = new stdClass;
+    $event->name        = addslashes($lesson->name);
+    $event->description = addslashes($lesson->name);
+    $event->courseid    = $lesson->course;
+    $event->groupid     = 0;
+    $event->userid      = 0;
+    $event->modulename  = 'lesson';
+    $event->instance    = $lesson->id;
+    $event->eventtype   = 'open';
+    $event->timestart   = $lesson->available;
+    $event->visible     = instance_is_visible('lesson', $lesson);
+    $event->timeduration = ($lesson->deadline - $lesson->available);
+
+    if ($event->timeduration > LESSON_MAX_EVENT_LENGTH) {  /// Long durations create two events
+        $event2 = $event;
+
+        $event->name         .= ' ('.get_string('lessonopens', 'lesson').')';
+        $event->timeduration  = 0;
+
+        $event2->timestart    = $lesson->deadline;
+        $event2->eventtype    = 'close';
+        $event2->timeduration = 0;
+        $event2->name        .= ' ('.get_string('lessoncloses', 'lesson').')';
+
+        add_event($event2);
+    }
+
+    add_event($event);
+
+    return $lesson->id;
 }
 
 
@@ -92,6 +130,42 @@ function lesson_update_instance($lesson) {
         unset($lesson->lessondefault);
     }
     
+	// update the calendar events (credit goes to quiz module)
+	if ($events = get_records_select('event', "modulename = 'lesson' and instance = '$lesson->id'")) {
+        foreach($events as $event) {
+            delete_event($event->id);
+        }
+    }
+
+    $event = new stdClass;
+    $event->name        = addslashes($lesson->name);
+    $event->description = addslashes($lesson->name);
+    $event->courseid    = $lesson->course;
+    $event->groupid     = 0;
+    $event->userid      = 0;
+    $event->modulename  = 'lesson';
+    $event->instance    = $lesson->id;
+    $event->eventtype   = 'open';
+    $event->timestart   = $lesson->available;
+    $event->visible     = instance_is_visible('lesson', $lesson);
+    $event->timeduration = ($lesson->deadline - $lesson->available);
+
+    if ($event->timeduration > LESSON_MAX_EVENT_LENGTH) {  /// Long durations create two events
+        $event2 = $event;
+
+        $event->name         .= ' ('.get_string('lessonopens', 'lesson').')';
+        $event->timeduration  = 0;
+
+        $event2->timestart    = $lesson->deadline;
+        $event2->eventtype    = 'close';
+        $event2->timeduration = 0;
+        $event2->name        .= ' ('.get_string('lessoncloses', 'lesson').')';
+
+        add_event($event2);
+    }
+
+    add_event($event);
+
     if (!empty($lesson->deleteattempts)) {
         $subject = "Delete User Attempts";
         $message = "";
@@ -175,6 +249,11 @@ function lesson_delete_instance($id) {
     if (! delete_records("lesson_high_scores", "lessonid", "$lesson->id")) {
             $result = false;
     }
+	if ($events = get_records_select('event', "modulename = 'lesson' and instance = '$lesson->id'")) {
+        foreach($events as $event) {
+            delete_event($event->id);
+        }
+	}
     
 	return $result;
 }
