@@ -102,14 +102,14 @@
         $usernew->timezonename  = clean_param($usernew->timezonename,  PARAM_ALPHAEXT);
 
         foreach ($usernew as $key => $data) {
-            $usernew->$key = addslashes(clean_text(stripslashes($usernew->$key), FORMAT_MOODLE));
+            $usernew->$key = addslashes(clean_text(stripslashes(trim($usernew->$key)), FORMAT_MOODLE));
         }
 
-        $usernew->firstname = trim(strip_tags($usernew->firstname));
-        $usernew->lastname  = trim(strip_tags($usernew->lastname));
+        $usernew->firstname = strip_tags($usernew->firstname);
+        $usernew->lastname  = strip_tags($usernew->lastname);
 
         if (isset($usernew->username)) {
-            $usernew->username = trim(moodle_strtolower($usernew->username));
+            $usernew->username = moodle_strtolower($usernew->username);
         }
 
 
