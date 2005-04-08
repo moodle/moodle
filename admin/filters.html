@@ -131,6 +131,21 @@
     </td>
 </tr>
 <tr valign="top">
+	<td nowrap="nowrap" align="right"><?php p($strfilterall) ?>:</td>
+	<td>
+    <?php 
+       unset($options);
+       $options[0] = get_string('no');
+       $options[1] = get_string('yes');
+
+       choose_from_menu ($options, "filterall", $CFG->filterall, "", "", "");
+    ?>
+    </td>
+    <td>
+	<?php p($strconfigfilterall) ?>
+    </td>
+</tr>
+<tr valign="top">
     <td>&nbsp;</td>
     <td><input type="submit" value="<?php print_string("savechanges") ?>"></td>
     <td>&nbsp;</td>

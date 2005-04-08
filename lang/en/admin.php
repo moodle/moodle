@@ -30,6 +30,7 @@ $string['configenablerssfeeds'] = 'This switch will enable RSS feeds from across
 $string['configenablerssfeedsdisabled'] = ' It is not available because RSS feeds are disabled in all the Site. To enable them, go to the Variables settings under Admin Configuration.';
 $string['configerrorlevel'] = 'Choose the amount of PHP warnings that you want to be displayed.  Normal is usually the best choice.';
 $string['configextendedusernamechars'] = 'Enable this setting to allow students to use any characters in their usernames (note this does not affect their actual names).  The default is \"false\" which restricts usernames to be alphanumeric characters only';
+$string['configfilterall'] = 'Filter all strings, including headings, titles, navigation bar and so on.  This is mostly useful when using the multilang filter, otherwise it will just create extra load on your site for little gain.';
 $string['configfilteruploadedfiles'] = 'Enabling this setting will cause Moodle to process all uploaded HTML and text files with the filters before displaying them.';
 $string['configforcelogin'] = 'Normally, the front page of the site and the course listings (but not courses) can be read by people without logging in to the site.  If you want to force people to log in before they do ANYTHING on the site, then you should enable this setting.';
 $string['configforceloginforprofiles'] = 'Enable this setting to force people to login as a real (non-guest) account before being allowed to see the user profile pages.  By default this is disabled (\"false\") so that prospective students can read about the teachers of each course, but this also means that web search engines can see them.';
@@ -88,6 +89,7 @@ $string['confirmation'] = 'Confirmation';
 $string['cronwarning'] = 'The <a href=\"cron.php\">cron.php maintenance script</a> has not been run for at least 24 hours. <br />The <a href=\"../doc/?frame=install.html&sub=cron\">installation documentation</a> explains how you can automate this.';
 $string['edithelpdocs'] = 'Edit help documents';
 $string['editstrings'] = 'Edit strings';
+$string['filterall'] = 'Filter all strings';
 $string['filteruploadedfiles'] = 'Filter uploaded files';
 $string['helpadminseesall'] = 'Do admins see all calendar events or just those that apply to themselves?';
 $string['helpcalendarsettings'] = 'Configure various calendar and date/time-related aspects of Moodle';

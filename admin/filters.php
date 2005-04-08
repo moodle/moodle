@@ -34,7 +34,9 @@
     $strcachetext = get_string("cachetext", "admin");
     $strconfigcachetext = get_string("configcachetext", 'admin');
     $strfilteruploadedfiles = get_string("filteruploadedfiles", "admin");
+    $strfilterall = get_string("filterall", "admin");
     $strconfigfilteruploadedfiles = get_string("configfilteruploadedfiles", 'admin');
+    $strconfigfilterall = get_string("configfilterall", "admin");
 
     print_header("$site->shortname: $strmanagefilters", "$site->fullname", 
                  "<a href=\"index.php\">$stradministration</a> -> ".
