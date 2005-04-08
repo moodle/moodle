@@ -31,7 +31,7 @@ h4 {
 }
 
 input {
-  background: transparent;
+  
 }
 
 .generalbox {
@@ -67,6 +67,28 @@ input {
   text-align:right;
 }
 
+.navbar {
+  width:100%;
+  padding:3px 0.5em;
+  height:1.3em;
+  border-width:1px;
+  border-style:solid;
+}
+
+/***
+ *** Login
+ ***/
+.loginbox .header {
+  border-width:1px;
+  border-style:solid;
+  border-bottom-width: 0px;
+}
+
+.loginbox .content {
+  border-top-width: 0px;
+}
+
+
 /***
  *** Footer
  ***/
@@ -74,6 +96,7 @@ input {
 #footer {
   text-align:left;
 }
+
 
 /***
  *** Blocks
@@ -88,10 +111,6 @@ input {
   border-style:solid;
 }
 
- /***
- *** Blocks
- ***/
- 
 .sideblock .footer {
   border-top-width:1px;
   border-top-style:dashed;
@@ -148,4 +167,9 @@ table.calendarmonth tr td  {
   border-bottom: solid;
   border-width: 1px;
   padding-top: 7px;
+}
+
+#course-view .section .left {
+  border-right-width: 1px;
+  border-right-style: dashed;
 }

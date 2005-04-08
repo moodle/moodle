@@ -69,7 +69,6 @@ div.header,
 }
 
 
-
 /***
  *** Header
  ***/
@@ -83,6 +82,15 @@ div.header,
 .logininfo,
 #header-home .headermenu font {
    font-size:.8em;
+}
+
+ /***
+ *** Blocks
+ ***/
+ 
+.sideblock .footer {
+  font-size:0.85em;
+  text-align: left;
 }
 
 /***
@@ -110,13 +118,13 @@ table.minicalendar tr td.day {
   font-size:0.7em;
   }
   
- /***
- *** Blocks
+/***
+ *** Course
  ***/
- 
-.sideblock .footer {
-  font-size:0.85em;
-  text-align: left;
+  
+#course-view .section .left {
+  font-weight: bold;
+  font-size: 1.2em;
 }
   
 

@@ -59,7 +59,7 @@ div.header {
   background-color:#C6BDA8;
   border-color:#666666;
   /* height: 20px; */
-  background: url(pix/grad/bg_bread.jpg) repeat-x;
+  /* background: url(pix/grad/bg_bread.jpg) repeat-x; */
 }
 
 .sitetopiccontent {
@@ -74,6 +74,22 @@ div.header {
 
 #header-home, #header {
   background-color: #E3DFD4;
+  border-color:#C6BDA8;
+}
+
+/***
+ *** Login
+ ***/
+
+.loginbox {
+  margin-top: 20px;
+  }
+
+.loginbox .header {
+  border-color:#C6BDA8;
+}
+
+.loginbox .content {
   border-color:#C6BDA8;
 }
 
@@ -183,4 +199,14 @@ table.minicalendar tr td.weekend {
 .categorybox .category,
 .categorybox .category {
   border-color: #C6BDA8;
+}
+
+#course-view .section .content {
+  border-color: #C6BDA8;
+  background-color: #FFFFFF;
+}
+
+#course-view .section .side {
+  border-color: #C6BDA8;
+  background-color: #FFFFFF;
 }
