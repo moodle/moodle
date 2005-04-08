@@ -75,10 +75,10 @@ class block_glossary_random extends block_base {
                                         '     AND approved = 1 '.
                                         'ORDER BY timemodified '.$SORT.' '.$LIMIT)) {
 
-		if ($this->config->showconcept) {
-                    $text = "<b>$entry->concept</b><br />";
-                } else {
+                if (empty($this->config->showconcept)) {
                     $text = '';
+                } else {
+                    $text = "<b>$entry->concept</b><br />";
                 }  
                 $text .= format_text($entry->definition, $entry->format);
 
@@ -168,15 +168,13 @@ class block_glossary_random extends block_base {
 
         //Obtain the visible property from the instance
         if (instance_is_visible('glossary', $tempmod)) {
-
             $cm = get_coursemodule_from_instance('glossary',$glossaryid, $this->course->id) ;
             if ($studentcanpost) {
-                
-		$this->content->footer = '<a href="'.$CFG->wwwroot.'/mod/glossary/edit.php?id='.$cm->id
+                $this->content->footer = '<a href="'.$CFG->wwwroot.'/mod/glossary/edit.php?id='.$cm->id
                 .'" title="'.$this->config->addentry.'">'.$this->config->addentry.'</a><br />';
             } else {
-		$this->content->footer ='';
-	    }	 
+                $this->content->footer = '';
+            }     
             
             $this->content->footer .= '<a href="'.$CFG->wwwroot.'/mod/glossary/view.php?id='.$cm->id
                 .'" title="'.$this->config->viewglossary.'">'.$this->config->viewglossary.'</a>';
