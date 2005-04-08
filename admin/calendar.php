@@ -87,12 +87,12 @@
     require_once('../calendar/lib.php');
 
     // Populate some variables we 're going to need in calendar.html
-    $presets = get_records_sql('SELECT id, name FROM '.$CFG->prefix.'timezone GROUP BY name');
+    $records = get_records_sql('SELECT id, name FROM '.$CFG->prefix.'timezone GROUP BY name');
+    $presets = array();
 
-    if(!empty($presets)) {
-        foreach($presets as $id => $preset) {
+    if(!empty($records)) {
+        foreach($records as $preset) {
             $presets[$preset->name] = get_string($preset->name, 'timezones');
-            unset($presets[$id]);
         }
     }
 
@@ -101,13 +101,13 @@
     for($i = -13; $i <= 13; $i += .5) {
         $tzstring = get_string('unspecifiedlocation', 'timezones').' / GMT';
         if($i < 0) {
-            $presets["$i"] = $tzstring . $i;
+            $presets[sprintf("%.1f", $i)] = $tzstring . $i;
         }
         else if($i > 0) {
-            $presets["$i"] = $tzstring . '+' . $i;
+            $presets[sprintf("%.1f", $i)] = $tzstring . '+' . $i;
         }
         else {
-            $presets["$i"] = $tzstring;
+            $presets[sprintf("%.1f", $i)] = $tzstring;
         }
     }
 
