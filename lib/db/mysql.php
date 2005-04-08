@@ -1318,6 +1318,11 @@ function main_upgrade($oldversion=0) {
          execute_sql('ALTER TABLE `'.$CFG->prefix.'course_modules` DROP `deleted`');    // Old field
     }
 
+    if ($oldversion < 2005040800) {
+        table_column('user', 'timezone', 'timezone', 'varchar', '100', '', '99');
+        execute_sql(" ALTER TABLE `{$CFG->prefix}user` DROP `timezonename` ");
+    }
+
     return $result;
 }
 
