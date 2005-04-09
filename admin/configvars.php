@@ -225,24 +225,30 @@ class configvarrss extends configvar {
         '<input name="locale" type="text" size="10" value="'.s($config->locale).'" alt="locale" />' );
 
 /// timezone
-    if (abs($config->timezone) > 13) {
-        $config->timezone = 99;
-    }
-    $timenow = time();
-    $timeformat = get_string('strftimedaytime');
+    $records = get_records_sql('SELECT id, name FROM '.$CFG->prefix.'timezone GROUP BY name');
+    $timezones = array();
 
-    for ($tz = -26; $tz <= 26; $tz++) {
-        $zone = (float)$tz/2.0;
-        $usertime = $timenow + ($tz * 1800);
-        if ($tz == 0) {
-            $timezones["$zone"] = gmstrftime($timeformat, $usertime)." (GMT)";
-        } else if ($tz < 0) {
-            $timezones["$zone"] = gmstrftime($timeformat, $usertime)." (GMT$zone)";
-        } else {
-            $timezones["$zone"] = gmstrftime($timeformat, $usertime)." (GMT+$zone)";
+    if(!empty($records)) {
+        foreach($records as $preset) {
+            $timezones[$preset->name] = get_string($preset->name, 'timezones');
         }
     }
 
+    asort($timezones); // Sort before adding trivial presets because string sorts mess up their order
+
+    for($i = -13; $i <= 13; $i += .5) {
+        $tzstring = get_string('unspecifiedlocation', 'timezones').' / GMT';
+        if($i < 0) {
+            $timezones[sprintf("%.1f", $i)] = $tzstring . $i;
+        }
+        else if($i > 0) {
+            $timezones[sprintf("%.1f", $i)] = $tzstring . '+' . $i;
+        }
+        else {
+            $timezones[sprintf("%.1f", $i)] = $tzstring;
+        }
+    }
+    
     $interface['timezone'] = new configvar ( get_string('configtimezone', 'admin'),
         choose_from_menu ($timezones, 'timezone', $config->timezone, get_string('serverlocaltime'), '', '99', true ) );
 
