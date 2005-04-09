@@ -904,14 +904,16 @@ function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
         return false;
     }
 
-    if (empty($CFG->forcetimezone)) {
-        if (empty($USER->timezonename)) {
-            return false;
-        }
-        $timezonename = $USER->timezonename;
+    $usertz = get_user_timezone();
 
-    } else {
-        $timezonename = $CFG->forcetimezone;
+    if (is_float($usertz)) {
+        // Trivial timezone, no DST
+        return false;
+    }
+
+    if (!empty($USER->dstoffsettz) && $USER->dstoffsettz != $usertz) {
+        // We have precalculated values, but the user's effective TZ has changed in the meantime, so reset
+        unset($USER->dstoffsets);
     }
 
     if (!empty($USER->dstoffsets) && empty($from_year) && empty($to_year)) {
@@ -921,6 +923,10 @@ function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
     }
 
     // Reaching here means we either need to extend our table or create it from scratch
+
+    // Remember which TZ we calculated these changes for
+    $USER->dstoffsettz = $usertz;
+
     if(empty($USER->dstoffsets)) {
         // If we 're creating from scratch, put the two guard elements in there
         $USER->dstoffsets = array(1 => NULL, 0 => NULL);
@@ -971,7 +977,7 @@ function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
     // Also, the array is sorted in descending timestamp order!
 
     // Get DB data
-    $presetrecords = get_records('timezone', 'name', $timezonename, 'year DESC', 'year, gmtoff, dstoff, dst_month, dst_startday, dst_weekday, dst_skipweeks, dst_time, std_month, std_startday, std_weekday, std_skipweeks, std_time');
+    $presetrecords = get_records('timezone', 'name', $usertz, 'year DESC', 'year, gmtoff, dstoff, dst_month, dst_startday, dst_weekday, dst_skipweeks, dst_time, std_month, std_startday, std_weekday, std_skipweeks, std_time');
     if(empty($presetrecords)) {
         return false;
     }
