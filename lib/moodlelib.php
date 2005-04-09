@@ -854,12 +854,11 @@ function get_user_timezone_offset($tz = 99) {
 
     $tz = get_user_timezone($tz);
     
-    if(is_float($tz)) {
-        return $retval;
-    }
-    else {
+    if (is_float($tz)) {
+        return $tz;
+    } else {
         $tzrecord = get_timezone_record($tz);
-        if(empty($tzrecord)) {
+        if (empty($tzrecord)) {
             return 99.0;
         }
         return (float)$tzrecord->gmtoff / HOURSECS;
