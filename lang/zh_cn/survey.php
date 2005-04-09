@@ -121,7 +121,7 @@ $string['collesaintro'] = "¸ÃÎÊ¾íµ÷²éµÄÄ¿µÄÊÇÎªÁËÁË½âÕâ¸öÔÚÏßµ¥Ôª¶Ô´Ù½øÄãµÄÑ§Ï°Ó
 ·Ç³£¸ÐÐ»£¡";
 $string['collesaname'] = "½¨¹¹Ö÷ÒåÔÚÏßÑ§Ï°»·¾³ÎÊ¾íµ÷²é£¨Êµ¼ÊµÄ£©";
 $string['collesapintro'] = "¸ÃÎÊ¾íµ÷²éµÄÄ¿µÄÊÇÎªÁËÁË½âÕâ¸öÔÚÏßµ¥Ôª¶Ô´Ù½øÄãµÄÑ§Ï°ÓÐ¶à´óµÄ×÷ÓÃ¡£ 
-ÒÔÏÂÓÐ24¸öÎÊÌâ£¬Ã¿¸öÎÊÌâÒªÇóÄã±È½ÏÔÚ´Ëµ¥ÔªÖÐ£¬ÄãËù<B>Ï£ÍûµÄ</B>£¨ÀíÏëµÄ£©ºÍ<B>Êµ¼ÊµÄ</B>Ìå»á¡£
+ÒÔÏÂÓÐ24¸öÎÊÌâ£¬Ã¿¸öÎÊÌâÒªÇóÄã±È½ÏÔÚ´Ëµ¥ÔªÖÐ£¬ÄãËù<b>Ï£ÍûµÄ</b>£¨ÀíÏëµÄ£©ºÍ<b>Êµ¼ÊµÄ</b>Ìå»á¡£
 ÕâÀïÎÞËùÎ½¡°ÕýÈ·¡±»ò¡°´íÎó¡±´ð°¸£»ÎÒÃÇÖ»¶ÔÄãµÄ¹Ûµã¸ÐÐËÈ¤¡£ÇëÏàÐÅÎÒÃÇ¶ÔÄãµÄ»Ø´ð±£³Ö¸ß¶È»úÃÜ£¬Ò²²»±Øµ£ÐÄ»áÓ°Ïì¶ÔÄãµÄÆÀ·Ö¡£
 ÄãÉîË¼ÊìÂÇµÄ»Ø´ð½«ÓÐÖúÓÚÎÒÃÇ¶Ô¸Ãµ¥Ôª×÷½øÒ»²½µÄ¸ÄÉÆ¡£
 ·Ç³£¸ÐÐ»£¡";
@@ -140,7 +140,7 @@ $string['collesm6'] = "½âÊÍµÄÇåÎú³Ì¶È";
 $string['collesm6short'] = "½âÊÍµÄÇåÎú³Ì¶È";
 $string['collesmintro'] = "ÔÚ´ËÔÚÏßµ¥ÔªÖÐ¡­¡­";
 $string['collespintro'] = "¸ÃÎÊ¾íµ÷²éµÄÄ¿µÄÊÇÎªÁËÁË½âÄã¶ÔÍøÉÏÑ§Ï°µÄ¿´·¨ÈçºÎ¡£
-ÒÔÏÂÓÐ24¸öÎÊÌâ£¬Ã¿¸öÎÊÌâÒªÇóÄã»Ø´ðÔÚ´Ëµ¥ÔªÖÐ£¬ÄãËù<B>Ï£ÍûµÄ</B>£¨ÀíÏëµÄ£©¡£
+ÒÔÏÂÓÐ24¸öÎÊÌâ£¬Ã¿¸öÎÊÌâÒªÇóÄã»Ø´ðÔÚ´Ëµ¥ÔªÖÐ£¬ÄãËù<b>Ï£ÍûµÄ</b>£¨ÀíÏëµÄ£©¡£
 ÕâÀïÎÞËùÎ½¡°ÕýÈ·¡±»ò¡°´íÎó¡±´ð°¸£»ÎÒÃÇÖ»¶ÔÄãµÄ¹Ûµã¸ÐÐËÈ¤¡£ÇëÏàÐÅÎÒÃÇ¶ÔÄãµÄ»Ø´ð±£³Ö¸ß¶È»úÃÜ£¬Ò²²»±Øµ£ÐÄ»áÓ°Ïì¶ÔÄãµÄÆÀ·Ö¡£
 ÄãÉîË¼ÊìÂÇµÄ»Ø´ð½«ÓÐÖúÓÚÎÒÃÇ¶Ô¸Ãµ¥Ôª×÷½øÒ»²½µÄ¸ÄÉÆ¡£
 ·Ç³£¸ÐÐ»£¡";
