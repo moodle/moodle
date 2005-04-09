@@ -602,8 +602,6 @@ function get_user_preferences($name=NULL, $default=NULL, $userid=NULL) {
  */
 function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, $timezone=99, $applydst=true) {
 
-    $timezone = get_user_timezone_offset($timezone);
-
     if (abs($timezone) > 13) {
         $time = mktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year, 0);
     } else {
