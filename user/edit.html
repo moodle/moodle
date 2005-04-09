@@ -204,35 +204,6 @@ if (isadmin()) {
     </td>
 </tr>
 <?php } ?>
-<!--
-<tr>
-    <th><?php print_string("timezone") ?>:</th>
-    <td><?php
-       if (abs($user->timezone) > 13) {
-           $user->timezone = 99;
-       }
-       $timenow = time();
-       $timeformat = get_string('strftimedaytime');
-
-       for ($tz = -26; $tz <= 26; $tz++) {
-           $zone = (float)$tz/2.0;
-           $usertime = $timenow + ($tz * 1800);
-           if ($tz == 0) {
-               $timezones["$zone"] = gmstrftime($timeformat, $usertime)." (GMT)";
-           } else if ($tz < 0) {
-               $timezones["$zone"] = gmstrftime($timeformat, $usertime)." (GMT$zone)";
-           } else {
-               $timezones["$zone"] = gmstrftime($timeformat, $usertime)." (GMT+$zone)";
-           }
-       }
-
-       choose_from_menu ($timezones, "timezone", $user->timezone, get_string("serverlocaltime"), "", "99");
-
-       echo "(".get_string("currentlocaltime").")";
-    ?>
-    </td>
-</tr>
--->
 <tr>
     <th><?php print_string('timezone')?>:</th>
     <td>
