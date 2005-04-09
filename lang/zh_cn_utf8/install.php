@@ -65,9 +65,8 @@ $string['magicquotesruntimehelp'] = '<p>运行时的Magic Quotes应当关闭，�
 
 <p>通常缺省时它是关闭的...参考php.ini文件中的<b>magic_quotes_runtime</b>设置。</p>
 
-<p>如果您不能访问php.ini文件，也许您可以把下面的内容添加到Moodle目录中名为.htaccess的文件中:
-<blockquote>php_value magic_quotes_runtime Off</blockquote>
-</p>';
+<p>如果您不能访问php.ini文件，也许您可以把下面的内容添加到Moodle目录中名为.htaccess的文件中:</p>
+<blockquote>php_value magic_quotes_runtime Off</blockquote>';
 $string['memorylimit'] = '内存限制';
 $string['memorylimiterror'] = 'PHP内存限制设置的太低了...以后您会遇到问题的。';
 $string['memorylimithelp'] = '<p>您的服务器的PHP内存限制是${a}。</p>
@@ -79,7 +78,7 @@ $string['memorylimithelp'] = '<p>您的服务器的PHP内存限制是${a}。</p>
 <li>如果可以，重新编译PHP并使用<i>--enable-memory-limit</i>选项。这允许Moodle自己设定内存限制。</li>
 <li>如果可以访问php.ini文件，您可以修改<b>memory_limit</b>的设置为其它值如16M。如果您无法访问，可以让您的管理员帮您修改一下。</li>
 <li>在一些PHP服务器上，您可以在Moodle目录中创建一个.htaccess文件并包含如下内容:
-<p><blockquote>php_value memory_limit 16M</blockquote></p>
+<blockquote>php_value memory_limit 16M</blockquote>
 <p>然而，在一些服务器上这会让<b>所有</b>PHP页面无法正常工作(在访问页面时会有错误)，因此您可能不得不删除.htaccess文件。</p></li>
 </ol>';
 $string['mysqlextensionisnotpresentinphp'] = 'PHP的MySQL扩展并未安装正确，因此无法与MySQL通信。请检查您的php.ini文件或重新编译PHP。';

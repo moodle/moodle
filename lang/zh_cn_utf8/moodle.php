@@ -378,7 +378,7 @@ $string['emailpasswordconfirmation'] = '{$a->lastname}:
 $string['emailpasswordconfirmationsubject'] = '$a: 确认更改密码';
 $string['emailpasswordconfirmsent'] = '一封E-mail已经发送到你的邮箱<b>$a</b>。
 
-<p>其中有关于如何确认并完成本次密码更改的简单说明。
+<br />其中有关于如何确认并完成本次密码更改的简单说明。
 如果你还是有困难，请联系网站管理员。';
 $string['emailpasswordsent'] = '谢谢你对更改密码做了确认。
 一封包含着新密码的邮件已经发送到你的邮箱<br /><b>$a->E-mail</b>中。<br />
@@ -593,7 +593,7 @@ $string['loginguest'] = '作为访客登录';
 $string['loginsite'] = '登录该站';
 $string['loginsteps'] = '嗨，你好! 为了完全访问所有课程，你必须花一两分钟时间申请一个新帐号。各个课程可能还需要一个一次性的“选课密钥”，用过一次以后就不再需要。请按以下步骤进行: 
 
-   <ol size=\"2\">
+   <ol>
 
    <li>填写<a href=\"$a\">注册新帐号</a>上的关于个人情况的表单。</li>
 
@@ -612,7 +612,7 @@ $string['loginsteps'] = '嗨，你好! 为了完全访问所有课程，你必�
    </ol>';
 $string['loginstepsnone'] = '<p>嗨! </p>
 <p>为了完全访问课程你必须申请一个新帐号。</p>
-<p>你所需要做的是创建一个用户名和密码，并在本页面中使用。<p>
+<p>你所需要做的是创建一个用户名和密码，并在本页面中使用。</p>
 <p>如果别人已经申请了相同的用户名，只好请你委屈一下用别的用户名重试。</p>';
 $string['loginto'] = '登录到{$a}';
 $string['loginusing'] = '用你的用户名和密码在此登录';
@@ -892,7 +892,7 @@ $string['screenshot'] = '抓屏';
 $string['search'] = '搜索';
 $string['searchagain'] = '再次搜索';
 $string['searchcourses'] = '搜索课程';
-$string['searchhelp'] = '你可以使用多关键字搜索。<p>word: 搜索任何包含该关键字的内容。<br />+word: 严格匹配。<br />-word: 结果中不含该关键词。';
+$string['searchhelp'] = '你可以使用多关键字搜索。<br />word: 搜索任何包含该关键字的内容。<br />+word: 严格匹配。<br />-word: 结果中不含该关键词。';
 $string['searchresults'] = '搜索结果';
 $string['sec'] = '秒';
 $string['secs'] = '秒';

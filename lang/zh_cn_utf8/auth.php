@@ -75,7 +75,7 @@ $string['auth_ldapdescription'] = '该方法利用一个外部的LDAP服务器�
 该模块可以从LDAP中读取用户属性，并把指定的字段预先填入本系统数据库。
 
 此后的登录只需检验用户名和密码。';
-$string['auth_ldapextrafields'] = '这些字段是可选的。你可以在此指定这些<b>LDAP字段</b>复制到本系统的数据库中。 <p>如果你不选，将使用本系统默认值。</p><p>无论以上何种情况，用户在登录之后都可以修改这些字段。</p>';
+$string['auth_ldapextrafields'] = '这些字段是可选的。你可以在此指定这些<b>LDAP字段</b>复制到本系统的数据库中。 <br />如果你不选，将使用本系统默认值。<br />无论以上何种情况，用户在登录之后都可以修改这些字段。';
 $string['auth_ldaptitle'] = '使用一个LDAP服务器';
 $string['auth_manualdescription'] = '该方法不允许用户以任何方式创建帐号。所有帐号只能由管理员手工创建。';
 $string['auth_manualtitle'] = '只允许手工添加帐号';
@@ -99,7 +99,7 @@ $string['auth_pop3type'] = '服务器类型。如果你的POP3服务器使用安
 $string['auth_shibbolethdescription'] = '使用这个方法可以链接到已有的Shibboleth服务器检查或创建帐号';
 $string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_updatelocal'] = '更新本地数据';
-$string['auth_updatelocal_expl'] = '<p><b>更新本地数据:</b> 如果开启，则用户每次登录或有用户同步时字段将会被更新。设定为本地更新的字段应当被锁住。';
+$string['auth_updatelocal_expl'] = '<p><b>更新本地数据:</b> 如果开启，则用户每次登录或有用户同步时字段将会被更新。设定为本地更新的字段应当被锁住。</p>';
 $string['auth_updateremote'] = '更新外部数据';
 $string['auth_updateremote_expl'] = '<p><b>更新外部数据:</b> 如果开启，则外部认证系统中的用户记录将被更新。要修改这个选项需首先解锁字段。</p>';
 $string['auth_updateremote_ldap'] = '<p><b>注意:</b> 更新外部LDAP数据需要您设定的binddn和binddw是有权限修改所有用户记录的用户。它目前不能保持多值属性的值，会在更新时删除其它的值。</p>';
