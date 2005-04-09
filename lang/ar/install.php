@@ -34,7 +34,7 @@ $string['phpversion'] = 'ÃÕÏÇÑ PHP';
 $string['phpversionerror'] = 'םÌÈ Çה ם‗זה ÅÕÏÇÑ PHP 4.1.0 Úבל ÇבÇÞב ';
 $string['phpversionhelp'] = '<p> םÊØבÈ דזÏב Úבל ÇבÇÞב ÇבÃÕÏÇÑ 4.1.0 בÜ PHP </p>
 <p> ÇהÊ ÊÓÊÎÏד ÇבÃÕÏÇÑ $a </p>
-<p> םÌÈ Úבם‗ ÊÑÞםÉ PHP Ãז ÇבÇהÊÞÇב Åבל דÓÊÙםÝ ÃÎÑ בÏםו ÃÕÏÇÑ ÇÌÏ בÜ PHP.';
+<p> םÌÈ Úבם‗ ÊÑÞםÉ PHP Ãז ÇבÇהÊÞÇב Åבל דÓÊÙםÝ ÃÎÑ בÏםו ÃÕÏÇÑ ÇÌÏ בÜ PHP.</p>';
 $string['safemode'] = 'זÖÚ ÇבÇדÇה';
 $string['safemodeerror'] = 'דה Çבדד‗ה Çה דזÏב םזÇÌו דÔÇ‗ב ÚהÏדÇ ם‗זה זÖÚ ÇבÇדÇה הÔØ';
 $string['sessionautostart'] = 'ÇבÈÏÁ ÇבÂבם בבÌבÓÉ';
