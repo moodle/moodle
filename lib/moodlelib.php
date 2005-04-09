@@ -1024,9 +1024,8 @@ function dst_changes_for_year($year, $timezone) {
     list($dst_hour, $dst_min) = explode(':', $timezone->dst_time);
     list($std_hour, $std_min) = explode(':', $timezone->std_time);
 
-    $tz      = get_user_timezone_offset(99);
-    $timedst = make_timestamp($year, $timezone->dst_month, $monthdaydst, 0, 0, 0, $tz, false);
-    $timestd = make_timestamp($year, $timezone->std_month, $monthdaystd, 0, 0, 0, $tz, false);
+    $timedst = make_timestamp($year, $timezone->dst_month, $monthdaydst, 0, 0, 0, 99, false);
+    $timestd = make_timestamp($year, $timezone->std_month, $monthdaystd, 0, 0, 0, 99, false);
 
     // Instead of putting hour and minute in make_timestamp(), we add them afterwards.
     // This has the advantage of being able to have negative values for hour, i.e. for timezones
