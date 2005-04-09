@@ -99,9 +99,15 @@
         $usernew->htmleditor    = clean_param($usernew->htmleditor,    PARAM_INT);
         $usernew->emailstop     = clean_param($usernew->emailstop,     PARAM_INT);
 
-        // Some replaces to prevent SQL injections
-        $usernew->timezone = str_replace(';', '',  $usernew->timezone);
-        $usernew->timezone = str_replace('\'', '', $usernew->timezone);
+        if(!empty($CFG->forcetimezone) && isset($usernew->timezone)) {
+            // Don't allow changing this in any way if a timezone is forced
+            unset($usernew->timezone);
+        }
+        else {
+            // Some replaces to prevent SQL injections
+            $usernew->timezone = str_replace(';', '',  $usernew->timezone);
+            $usernew->timezone = str_replace('\'', '', $usernew->timezone);
+        }
 
         foreach ($usernew as $key => $data) {
             $usernew->$key = addslashes(clean_text(stripslashes(trim($usernew->$key)), FORMAT_MOODLE));

@@ -234,7 +234,7 @@ if (isadmin()) {
 </tr>
 -->
 <tr>
-    <th><?php print_string('timezone', 'calendar')?>:</th>
+    <th><?php print_string('timezone')?>:</th>
     <td>
     <?php
         $records = get_records_sql('SELECT id, name FROM '.$CFG->prefix.'timezone GROUP BY name');
@@ -260,7 +260,12 @@ if (isadmin()) {
                 $presets[sprintf("%.1f", $i)] = $tzstring;
             }
         }
-        choose_from_menu($presets, 'timezone', $user->timezone, get_string('serverlocaltime'), '', '99');
+        if(!empty($CFG->forcetimezone)) {
+            choose_from_menu($presets, 'timezone', $CFG->forcetimezone, get_string('serverlocaltime'), '', '99', false, true);
+        }
+        else {
+            choose_from_menu($presets, 'timezone', $user->timezone, get_string('serverlocaltime'), '', '99');
+        }
     ?>
     </td>
 </tr>
