@@ -225,32 +225,9 @@ class configvarrss extends configvar {
         '<input name="locale" type="text" size="10" value="'.s($config->locale).'" alt="locale" />' );
 
 /// timezone
-    $records = get_records_sql('SELECT id, name FROM '.$CFG->prefix.'timezone GROUP BY name');
-    $timezones = array();
-
-    if(!empty($records)) {
-        foreach($records as $preset) {
-            $timezones[$preset->name] = get_string($preset->name, 'timezones');
-        }
-    }
-
-    asort($timezones); // Sort before adding trivial presets because string sorts mess up their order
-
-    for($i = -13; $i <= 13; $i += .5) {
-        $tzstring = get_string('unspecifiedlocation', 'timezones').' / GMT';
-        if($i < 0) {
-            $timezones[sprintf("%.1f", $i)] = $tzstring . $i;
-        }
-        else if($i > 0) {
-            $timezones[sprintf("%.1f", $i)] = $tzstring . '+' . $i;
-        }
-        else {
-            $timezones[sprintf("%.1f", $i)] = $tzstring;
-        }
-    }
     
     $interface['timezone'] = new configvar ( get_string('configtimezone', 'admin'),
-        choose_from_menu ($timezones, 'timezone', $config->timezone, get_string('serverlocaltime'), '', '99', true ) );
+        choose_from_menu (get_list_of_timezones(), 'timezone', $config->timezone, get_string('serverlocaltime'), '', '99', true ) );
 
 /// country
     $interface['country'] = new configvar ( get_string('configcountry', 'admin'),

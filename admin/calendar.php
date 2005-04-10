@@ -83,32 +83,7 @@
     require_once($CFG->dirroot.'/calendar/lib.php');
 
     // Populate some variables we 're going to need in calendar.html
-    $records = get_records_sql('SELECT id, name FROM '.$CFG->prefix.'timezone GROUP BY name');
-    $presets = array();
-
-    if (!empty($records)) {
-        foreach($records as $preset) {
-            if (!empty($preset->name)) {
-                $presets[$preset->name] = get_string(strtolower($preset->name), 'timezones');
-                if (substr($presets[$preset->name], 0, 1) == '[') {  // No translation found
-                    $presets[$preset->name] = $preset->name;
-                }
-            }
-        }
-    }
-
-    asort($presets); // Sort before adding trivial presets because string sorts mess up their order
-
-    for ($i = -13; $i <= 13; $i += .5) {
-        $tzstring = 'GMT';
-        if ($i < 0) {
-            $presets[sprintf("%.1f", $i)] = $tzstring . $i;
-        } else if ($i > 0) {
-            $presets[sprintf("%.1f", $i)] = $tzstring . '+' . $i;
-        } else {
-            $presets[sprintf("%.1f", $i)] = $tzstring;
-        }
-    }
+    $timezones = get_list_of_timezones();
 
     $weekdays = array(
         0 => get_string('sunday', 'calendar'),

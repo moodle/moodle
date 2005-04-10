@@ -4283,6 +4283,48 @@ function get_list_of_pixnames() {
 }
 
 /**
+ * Returns a list of picture names in the current language
+ *
+ * @uses $CFG
+ * @return string?
+ * @todo Finish documenting this function.
+ */
+function get_list_of_timezones() {
+    global $CFG;
+
+    $lang = current_language();
+
+    if (!file_exists($CFG->dirroot .'/lang/'. $lang .'/timezones.php')) {
+        if ($parentlang = get_string('parentlanguage')) {
+            if (file_exists($CFG->dirroot .'/lang/'. $parentlang .'/timezones.php')) {
+                $lang = $parentlang;
+            } else {
+                $lang = 'en';  // timezones.php must exist in this pack
+            }
+        } else {
+            $lang = 'en';  // timezones.php must exist in this pack
+        }
+    }
+
+    include_once($CFG->dirroot .'/lang/'. $lang .'/timezones.php');
+
+    asort($string);
+
+    for ($i = -13; $i <= 13; $i += .5) {
+        $tzstring = 'GMT';
+        if ($i < 0) {
+            $string[sprintf("%.1f", $i)] = $tzstring . $i;
+        } else if ($i > 0) {
+            $string[sprintf("%.1f", $i)] = $tzstring . '+' . $i;
+        } else {
+            $string[sprintf("%.1f", $i)] = $tzstring;
+        }
+    }
+
+    return $string;
+}
+
+/**
  * Can include a given document file (depends on second
  * parameter) or just return info about it.
  *
