@@ -1,9 +1,13 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005012800)
+      // wiki.php - created with Moodle 1.4 (2004083100)
 
 
 $string['action'] = '-- Tevékenység --';
 $string['administration'] = 'Adminisztráció';
+$string['allowremovepages'] = '\'laptörlés\' engedélyezése';
+$string['allowrevertchanges'] = '\'tömeges változtatás érvénytelenítése\' engedélyezése';
+$string['allowsetpage'] = '\'oldaljelölõk beállítása\' engedélyezése';
+$string['allowstrippages'] = '\'oldallevágás\' engedélyezése';
 $string['attachments'] = 'Oldal csatolt állományai';
 $string['author'] = 'Szerzõ';
 $string['authorfieldpattern'] = 'Mezõminta szerkesztése';
@@ -33,6 +37,7 @@ $string['deleteversions'] = 'Hány utóbbi változat törlendõ';
 $string['deleteversionserror'] = 'Adjon meg egy megfelelõ változatszámot.';
 $string['diff'] = 'Kül';
 $string['differences'] = 'Különbségek a $a->pagename $a->new_ver és $a->old_ver változata között.';
+$string['disablecamel'] = 'Vegyes írású csatolás kikapcsolása';
 $string['disabledpage'] = 'Ez az oldal most nem elérhetõ.';
 $string['doesnotexist'] = 'Ez az oldal még nem létezik, kattintson a Szerkesztés gombra, ha létre akarja hozni.';
 $string['downloadaszip'] = 'Tömörített állomány letöltése';
@@ -107,6 +112,7 @@ $string['nothingtostrip'] = 'Nincsenek egy változatnál többel rendelkezõ oldalak
 $string['nowikicreated'] = 'Ehhez a wikihez nem készültek bejegyzések.';
 $string['of'] = 'ból';
 $string['offline'] = 'OFFLINE';
+$string['optional'] = 'Választható';
 $string['orphanedpage'] = 'Magányos oldal';
 $string['orphanedpages'] = 'Magányos oldalak';
 $string['otherwikis'] = 'Más wikik';
@@ -145,9 +151,15 @@ $string['strippagecheck'] = 'Biztosan ki akarja iktatni az oldalak régi változat
 $string['strippages'] = 'Oldalak kiiktatása';
 $string['studentadminoptions'] = 'Tanuló adminisztrációs lehetõségei';
 $string['submit'] = 'Beküldés';
+$string['tabattachments'] = 'Csatolt állományok';
+$string['tabedit'] = 'SZerkesztés';
+$string['tabinfo'] = 'Elõzmények';
+$string['tablinks'] = 'Ugrópontok';
+$string['tabview'] = 'Nézet';
 $string['thanksforcontribution'] = 'Köszönjük hozzájárulását.';
 $string['thispageisntlinkedfromanywhereelse'] = 'Ez az oldal semmihez nem kapcsolódik.';
 $string['updatedpages'] = 'Frissített oldalak';
+$string['updatedwikipages'] = 'Wiki-oldalak frissítése';
 $string['uplerror'] = 'Hiba történt a feltöltés során.';
 $string['uplinsect'] = 'Feltöltés helye';
 $string['uplnewnam'] = 'Mentés másként';
@@ -171,8 +183,8 @@ $string['wikiname'] = 'Oldal neve';
 $string['wikistartederror'] = 'A wikiben már vannak bejegyzések - nem lehet módosítani.';
 $string['wikitype'] = 'Típus';
 $string['wikiusage'] = 'Wiki használata';
-$string['withbinaries'] = 'Bináris tartalom csatolása';
-$string['withvirtualpages'] = 'Wiki-ugrópontok csatolása';
+$string['withbinaries'] = 'Bináris tartalom beszúrása';
+$string['withvirtualpages'] = 'Wiki-ugrópontok beszúrása';
 $string['wrongversionrange'] = 'A(z) $a nem megfelelõ tartomány!';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005012800)
+      // glossary.php - created with Moodle 1.4 (2004083100)
 
 
 $string['addcomment'] = 'Megjegyzés hozzáadása';
@@ -10,6 +10,7 @@ $string['allcategories'] = 'Minden kategória';
 $string['allentries'] = 'MIND';
 $string['allowcomments'] = 'Megjegyzés engedélyezése a fogalmakhoz';
 $string['allowduplicatedentries'] = 'Dupla fogalom engedélyezve';
+$string['allowprintview'] = 'Nyomtatási kép engedélyezése';
 $string['allowratings'] = 'Minden fogalom osztályozandó?';
 $string['answer'] = 'Válasz';
 $string['approve'] = 'Elfogadás';
@@ -62,9 +63,16 @@ $string['descending'] = '(csökkenõ)';
 $string['destination'] = 'Cél';
 $string['displayformat'] = 'Kijelzési forma';
 $string['displayformatcontinuous'] = 'Folyamatos, szerzõ nélkül';
+$string['displayformatdictionary'] = 'Egyszerû szótárforma';
+$string['displayformatencyclopedia'] = 'Enciklopédia';
+$string['displayformatentrylist'] = 'Fogalomjegyzék';
+$string['displayformatfaq'] = 'GYFK';
+$string['displayformatfullwithauthor'] = 'Teljes, szerzõvel';
+$string['displayformatfullwithoutauthor'] = 'Teljes, szerzõ nélkül';
 $string['displayformats'] = 'Kijelzési formák';
 $string['displayformatssetup'] = 'Kijelzési formák beállítása';
 $string['duplicateentry'] = 'Dupla fogalom';
+$string['editalways'] = 'Szerkesztés mindig';
 $string['editcategories'] = 'Kategóriák szerkesztése';
 $string['editentry'] = 'Fogalom szerkesztése';
 $string['editingcomment'] = 'Megjegyzés szerkesztése';
@@ -78,12 +86,14 @@ $string['entrydeleted'] = 'A fogalom törölve';
 $string['entryexported'] = 'A fogalom exportálása sikerült';
 $string['entryishidden'] = '(ez a fogalom most rejtve van)';
 $string['entryleveldefaultsettings'] = 'Fogalmi szintû alapbeállítások';
+$string['entrysaved'] = 'A fogalom mentése megtörtént';
+$string['entryupdated'] = 'A fogalom frissítése megtörtént';
 $string['entryusedynalink'] = 'Ezt a fogalmat automatikusan kell kapcsolni';
 $string['explainaddentry'] = 'Új fogalom hozzáadása ehhez a fogalomtárhoz.<br />A gondolat és a meghatározás kötelezõen kitöltendõ.';
 $string['explainall'] = 'MINDEN fogalom megjelenítése egyetlen oldalon';
 $string['explainalphabet'] = 'Fogalomtár böngészése ezzel a mutatóval';
 $string['explainexport'] = 'Elkészült egy fájl.<br />Töltse le és õrizze meg. Akár ezen kurzus, akár más kurzus folyamán bármikor importálhatja.';
-$string['explainimport'] = 'Meg kell adnia az importálandó állományt és meg kell határoznia a folyamat kritériumait.<p>Adja le kérését és tekintse át az eredményeket.</p>';
+$string['explainimport'] = 'Meg kell adnia az importálandó állományt és meg kell határoznia a folyamat kritériumait.<br />Adja le kérését és tekintse át az eredményeket.';
 $string['explainspecial'] = 'Megjeleníti a nem betûvel kezdõdõ fogalmakat';
 $string['exportedentry'] = 'Exportált fogalom';
 $string['exportedfile'] = 'Exportált állomány';
@@ -121,6 +131,7 @@ $string['notcategorised'] = 'Nincs kategorizálva';
 $string['numberofentries'] = 'Fogalmak száma';
 $string['onebyline'] = '(soronként egy)';
 $string['printerfriendly'] = 'Nyomtatásra alkalmas változat';
+$string['printviewnotallowed'] = 'Nyomtatási kép nincs engedélyezve';
 $string['question'] = 'Kérdés';
 $string['rate'] = 'Besorolás';
 $string['rating'] = 'Besorolás';

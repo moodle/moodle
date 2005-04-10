@@ -1,13 +1,12 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.2 + (2004032100)
+      // assignment.php - created with Moodle 1.4 (2004083100)
 
 
 $string['allowresubmit'] = 'Ismételt leadás engedélyezése';
 $string['assignmentdetails'] = 'Leadott munka részletei';
-$string['assignmentmail'] = "\$a->teacher véleményezte a '\$a->assignment\' feladatot. A vélemény a feladathoz csatolva megtekinthetõ itt: \$a->url";
-$string['assignmentmailhtml'] = "\$a->teacher véleményezte a '<i>\$a->assignment</i>' feladatot. <br /><br />
-A vélemény a feladathoz csatolva megtekinthetõ itt:<a href=\\\"\$a->url\\\">feladat</a>.";
-
+$string['assignmentmail'] = '$a->teacher véleményezte a \'$a->assignment\' feladatot. A vélemény a feladathoz csatolva megtekinthetõ itt: $a->url';
+$string['assignmentmailhtml'] = '$a->teacher véleményezte a \'<i>$a->assignment</i>\' feladatot. <br /><br />
+A vélemény a feladathoz csatolva megtekinthetõ itt:<a href=\"$a->url\">feladat</a>.';
 $string['assignmentname'] = 'Feladat neve';
 $string['assignmenttype'] = 'Feladat típusa';
 $string['configmaxbytes'] = 'Az adott portálon az összes feladat alapbeállítás szerinti maximális mérete (a kurzustól és egyéb helyi beállításoktól függõen)';
@@ -15,16 +14,25 @@ $string['description'] = 'Leírás';
 $string['duedate'] = 'Határidõ';
 $string['duedateno'] = 'Nincs határidõ';
 $string['early'] = '$a korai';
+$string['emailteachermail'] = '$a->username frissítette a(z) \'$a->assignment\' feladathoz leadott munkáját
+
+Itt érhetõ el:
+
+$a->url';
+$string['emailteachermailhtml'] = '$a->username frissítette  <i>\'$a->assignment\'</i> feladathoz leeadott munkáját<br /><br />
+Megtalálható <a href=\"$a->url\">ezen a hálószemen</a>.';
+$string['emailteachers'] = 'Tanárok figyelmeztetése e-mailben';
 $string['existingfiledeleted'] = 'Meglévõ fájl törölve: $a';
-$string['failedupdatefeedback'] = 'A leadott munka véleményezésének a frissítése \$a számára nem sikerült';
+$string['failedupdatefeedback'] = 'A leadott munka véleményezésének a frissítése $a számára nem sikerült';
 $string['feedback'] = 'Visszajelzés';
-$string['feedbackupdated'] = 'A leadott munka visszajelzése frissítve \$a számára';
+$string['feedbackupdated'] = 'A leadott munka visszajelzése frissítve $a számára';
 $string['late'] = '$a kései';
 $string['maximumgrade'] = 'Maximális pontszám';
 $string['maximumsize'] = 'Maximális méret';
 $string['modulename'] = 'Feladat';
 $string['modulenameplural'] = 'Feladatok';
-$string['newsubmissions'] = 'Új leadott munkák';
+$string['newsubmissions'] = 'Feladatok leadva';
+$string['noassignments'] = 'Még nincsenek feladatok';
 $string['notgradedyet'] = 'Még nincs pontozva';
 $string['notsubmittedyet'] = 'Még nincs leadva';
 $string['overwritewarning'] = 'Vigyázat: az újrafeltöltés FELÜLÍRJA a most leadott munkát';
@@ -41,12 +49,10 @@ $string['uploaderror'] = 'A fájl szerverre mentése közben hiba történt';
 $string['uploadfailnoupdate'] = 'A feltöltés rendben, de nem lehet frissíteni a leadott munkát!';
 $string['uploadfiletoobig'] = 'A fájl túl nagy (a maximum $a bájt)';
 $string['uploadnofilefound'] = 'Nincs meg a fájl - biztosan kiválasztott egyet feltöltésre?';
-$string['uploadnotregistered'] = "A(z) '\$a' feltöltése sikerült, de a leadott munka nincs regisztrálva!";
-$string['uploadsuccess'] = "A(z) '\$a' feltöltése sikerült";
+$string['uploadnotregistered'] = 'A(z) \'$a\' feltöltése sikerült, de a leadott munka nincs regisztrálva!';
+$string['uploadsuccess'] = 'A(z) \'$a\' feltöltése sikerült';
 $string['viewfeedback'] = 'A feladat pontjainak és a visszajelzéseknek a megtekintése';
-$string['viewsubmissions'] = "A(z) \$a beküldött feladat megtekintése";
+$string['viewsubmissions'] = 'A(z) $a beküldött feladat megtekintése';
 $string['yoursubmission'] = 'Leadott munkája';
 
-
 ?>
-

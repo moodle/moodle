@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.2 development (2003111400)
+      // dialogue.php - created with Moodle 1.4 (2004083100)
 
 
 $string['addmynewentries'] = 'Új szövegeim hozzáadása';
@@ -27,6 +27,7 @@ $string['everybody'] = 'Mindenki';
 $string['furtherinformation'] = 'További információk';
 $string['lastentry'] = 'Utolsó szöveg';
 $string['maildefault'] = 'Levelezési alapbeállítás';
+$string['mailnotification'] = 'Értesítés levél érkezésérõl';
 $string['modulename'] = 'Párbeszéd';
 $string['modulenameplural'] = 'Párbeszédek';
 $string['namehascloseddialogue'] = '$a lezárta a párbeszédet';

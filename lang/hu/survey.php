@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005012800)
+      // survey.php - created with Moodle 1.4 (2004083100)
 
 
 $string['actual'] = 'Aktuális';
@@ -127,7 +127,7 @@ Nincsenek jó és rossz válaszok. A véleményére vagyunk kíváncsiak. Válaszait biza
 Köszönjük!';
 $string['collesaname'] = 'COLLES (aktuális)';
 $string['collesapintro'] = 'Ennek a kérdõívnek az a célja, hogy segítsen bennünket annak felmérésében, hogy ez az online egység mennyire segítette Önt a tanulásban. 
-Az alábbi 24 kijelentés a jelen egységben szerzett <B>kedvezõ</B> (ideális) és <B>tényleges</B> tapasztalatának összehasonlítását kéri.
+Az alábbi 24 kijelentés a jelen egységben szerzett <b>kedvezõ</b> (ideális) és <b>tényleges</b> tapasztalatának összehasonlítását kéri.
 
 Nincsenek jó és rossz válaszok. A véleményére vagyunk kíváncsiak. Válaszait bizalmasan fogjuk kezelni, és nem befolyásolják majd az Ön értékelését. Ha jól átgondolt válaszokat ad, segítségünkre lesz abban, hogy ez az egység a jövõben megfelelõbb formában kerüljön online tálalásra.
 
@@ -146,7 +146,14 @@ $string['collesm5short'] = 'Tanulótársi támogatás';
 $string['collesm6'] = 'Értelmezés';
 $string['collesm6short'] = 'Értelmezés';
 $string['collesmintro'] = 'Ebben az online egységben...';
-$string['collespintro'] = 'Ennek a kérdõívnek az a célja, hogy segítsen bennünket annak felmérésében, hogy mit értékel Ön egy online tanulásban.';
+$string['collespintro'] = 'Ennek a kérdõívnek az a célja, hogy segítsen bennünket annak felmérésében, hogy mit értékel Ön egy online tanulásban.
+
+AZ alábbi 24 megállapítás az egyéggel kapcsolatosan az Ön <b>preferált</b> (ideális) élményére kérdez rá.
+
+Nincsenek \'helyes\' vagy \'rossz\' válaszok; minkezt a véleménye érdekel. Válaszait bizalmasan kezeljük, ezek nem befolyásolják az Ön értékelését.
+Megfontolt válaszaival segít bennünket abban, hogy az egység bemutatását a jövõben tökéletesíthessük.
+
+Köszönjük!';
 $string['collespname'] = 'COLLES (Ideális)';
 $string['done'] = 'Kész';
 $string['download'] = 'Letöltés';
@@ -161,10 +168,10 @@ $string['howlongoptions'] = '1 perc,1-2 perc,2-3 perc,3-4 perc,4-5-perc,5-10 per
 $string['ifoundthat'] = 'Azt találtam';
 $string['introtext'] = 'Bevezetõ szöveg';
 $string['ipreferthat'] = 'Inkább ezt szeretném';
-$string['modulename'] = 'Kérdõív';
-$string['modulenameplural'] = 'Kérdõívek';
+$string['modulename'] = 'Felmérés';
+$string['modulenameplural'] = 'Felmérések';
 $string['name'] = 'Név';
-$string['newsurveyresponses'] = 'Kérdõívre adott új válaszok';
+$string['newsurveyresponses'] = 'Felmérésre adott új válaszok';
 $string['nobodyyet'] = 'Senki nem töltötte még ki ezt a kérdõívet';
 $string['notdone'] = 'Még nincs kész';
 $string['notes'] = 'Az Ön személyes elemzése és megjegyzései';
@@ -176,7 +183,7 @@ $string['preferredstudent'] = 'Ideális $a';
 $string['question'] = 'Kérdés';
 $string['questions'] = 'Kérdések';
 $string['questionsnotanswered'] = 'Néhány feleletválasztós kérdésre nem érkezett válasz.';
-$string['report'] = 'Kérdõívvel kapcsolatos jelentés';
+$string['report'] = 'Felméréssel kapcsolatos jelentés';
 $string['savednotes'] = 'A megjegyzéseit elmentettük ';
 $string['scaleagree5'] = 'Nagyon nem ért egyet,Valamelyest nem ért egyet,Semleges, Valamelyest egyetért,Teljesen egyetért';
 $string['scales'] = 'Skálák';
@@ -185,9 +192,9 @@ $string['seemoredetail'] = 'A részletekért kattintson ide';
 $string['selectedquestions'] = 'Egy skáláról választott kérdések, minden tanuló';
 $string['summary'] = 'Összegzés';
 $string['surveycompleted'] = 'Kitöltötte ezt a kérdõívet. Az alábbi ábra mutatja válaszainak összegzését az osztályátlaggal összevetve.';
-$string['surveyname'] = 'Kérdõív neve';
-$string['surveysaved'] = 'Kérdõív elmentve';
-$string['surveytype'] = 'Kérdõív típusa';
+$string['surveyname'] = 'Felmérés neve';
+$string['surveysaved'] = 'Felmérés elmentve';
+$string['surveytype'] = 'Felmérés típusa';
 $string['thanksforanswers'] = 'Köszönjük a válaszait, $a';
 $string['time'] = 'Idõ';
 $string['viewsurveyresponses'] = '$a válaszainak megtekintése';
