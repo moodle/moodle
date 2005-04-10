@@ -316,6 +316,17 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
             $log->url = "index.php?id=".$log->course;
             $status = true;
             break;
+        case "report":
+            if ($log->cmid) {
+                //Get the new_id of the module (to recode the info field)
+                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
+                if ($mod) {
+                    $log->url = "report.php?id=".$log->cmid;
+                    $log->info = $mod->new_id;
+                    $status = true;
+                }
+            }
+            break;
         default:
             echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
             break;
