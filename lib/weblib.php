@@ -652,9 +652,7 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
     if (!empty($options)) {
         foreach ($options as $value => $label) {
             $output .= '   <option value="'. $value .'"';
-            // The gettype() calls are there because otherwise a numeric zero key is a match for any string value
-            // As gettype() is possibly expensive, only run the check if the simple equality holds true
-            if ($value == $selected && gettype($value) == gettype($selected)) {
+            if ($value == $selected) {
                 $output .= ' selected="selected"';
             }
             if ($label === '') {
