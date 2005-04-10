@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005040800)
 
 
 $string['action'] = '操作';
@@ -883,7 +883,7 @@ $string['rss'] = 'RSS';
 $string['rssarticles'] = '最近の記事のRSS数';
 $string['rsserror'] = 'RSSデータの読み込み中にエラーが発生しました。';
 $string['rsstype'] = 'この活動のRSSフィード';
-$string['savechanges'] = '変更を保存';
+$string['savechanges'] = '変更内容を保存';
 $string['saveto'] = '保存先';
 $string['scale'] = '評価尺度';
 $string['scales'] = '評価尺度';
