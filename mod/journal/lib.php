@@ -148,11 +148,11 @@ function journal_cron () {
 
             unset($journalinfo);
             $journalinfo->teacher = fullname($teacher);
-            $journalinfo->journal = "$entry->name";
+            $journalinfo->journal = format_string($entry->name,true);
             $journalinfo->url = "$CFG->wwwroot/mod/journal/view.php?id=$mod->id";
 
-            $postsubject = "$course->shortname: Journal feedback: $entry->name";
-            $posttext  = "$course->shortname -> Journals -> $entry->name\n";
+            $postsubject = "$course->shortname: Journal feedback: ".format_string($entry->name,true);
+            $posttext  = "$course->shortname -> Journals -> ".format_string($entry->name,true)."\n";
             $posttext .= "---------------------------------------------------------------------\n";
             $posttext .= get_string("journalmail", "journal", $journalinfo)."\n";
             $posttext .= "---------------------------------------------------------------------\n";
@@ -160,7 +160,7 @@ function journal_cron () {
                 $posthtml = "<p><font face=\"sans-serif\">".
                 "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
                 "<a href=\"$CFG->wwwroot/mod/journal/index.php?id=$course->id\">journals</a> ->".
-                "<a href=\"$CFG->wwwroot/mod/journal/view.php?id=$mod->id\">$entry->name</a></font></p>";
+                "<a href=\"$CFG->wwwroot/mod/journal/view.php?id=$mod->id\">".format_string($entry->name,true)."</a></font></p>";
                 $posthtml .= "<hr /><font face=\"sans-serif\">";
                 $posthtml .= "<p>".get_string("journalmailhtml", "journal", $journalinfo)."</p>";
                 $posthtml .= "</font><hr />";
