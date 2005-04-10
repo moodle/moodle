@@ -272,6 +272,19 @@
             $log->url = "index.php?id=".$log->course;
             $status = true;
             break;
+        case "download":
+            if ($log->cmid) {
+                //Get the new_id of the module (to recode the info field)
+                $mod = backup_getid($restore->backup_unique_code,$log->module,$log->info);
+                if ($mod) {
+                    //Rebuild the url, extracting the type (txt, xls)
+                    $filetype = substr($log->url,-3);
+                    $log->url = "download.php?id=".$log->cmid."&amp;type=".$filetype;
+                    $log->info = $mod->new_id;
+                    $status = true;
+                }
+            }
+            break;
         default:
             echo "action (".$log->module."-".$log->action.") unknow. Not restored<br />";                 //Debug
             break;
