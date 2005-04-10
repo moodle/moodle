@@ -4292,37 +4292,35 @@ function get_list_of_pixnames() {
 function get_list_of_timezones() {
     global $CFG;
 
-    $lang = current_language();
+    $timezones = array();
 
-    if (!file_exists($CFG->dirroot .'/lang/'. $lang .'/timezones.php')) {
-        if ($parentlang = get_string('parentlanguage')) {
-            if (file_exists($CFG->dirroot .'/lang/'. $parentlang .'/timezones.php')) {
-                $lang = $parentlang;
-            } else {
-                $lang = 'en';  // timezones.php must exist in this pack
+    if ($rawtimezones = get_records_sql('SELECT id, name FROM '.$CFG->prefix.'timezone GROUP BY name')) {
+        foreach($rawtimezones as $timezone) {
+            if (!empty($timezone->name)) {
+                $timezones[$timezone->name] = get_string(strtolower($timezone->name), 'timezones');
+                if (substr($timezones[$timezone->name], 0, 1) == '[') {  // No translation found
+                    $timezones[$timezone->name] = $timezone->name;
+                }
             }
-        } else {
-            $lang = 'en';  // timezones.php must exist in this pack
         }
     }
 
-    include_once($CFG->dirroot .'/lang/'. $lang .'/timezones.php');
-
-    asort($string);
+    asort($timezones);
 
     for ($i = -13; $i <= 13; $i += .5) {
         $tzstring = 'GMT';
         if ($i < 0) {
-            $string[sprintf("%.1f", $i)] = $tzstring . $i;
+            $timezones[sprintf("%.1f", $i)] = $tzstring . $i;
         } else if ($i > 0) {
-            $string[sprintf("%.1f", $i)] = $tzstring . '+' . $i;
+            $timezones[sprintf("%.1f", $i)] = $tzstring . '+' . $i;
         } else {
-            $string[sprintf("%.1f", $i)] = $tzstring;
+            $timezones[sprintf("%.1f", $i)] = $tzstring;
         }
     }
 
-    return $string;
+    return $timezones;
 }
+
 
 /**
  * Can include a given document file (depends on second
