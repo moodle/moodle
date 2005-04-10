@@ -91,9 +91,7 @@ class block_site_main_menu extends block_list {
                         $this->content->icons[] = '';
                    }
                     $instancename = urldecode($modinfo[$modnumber]->name);
-                    if (!empty($CFG->filterall)) {
-                        $instancename = filter_text('<nolink>'.$instancename.'</nolink>', $this->instance->pageid);
-                    }
+                    $instancename = format_string($instancename, true, $this->instance->pageid);
                     $linkcss = $mod->visible ? '' : ' class="dimmed" ';
                     if (!empty($modinfo[$modnumber]->extra)) {
                         $extra = urldecode($modinfo[$modnumber]->extra);
