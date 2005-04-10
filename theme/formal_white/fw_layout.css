@@ -68,6 +68,8 @@ input {
 }
 
 .navbar {
+  margin-right: 5px;
+  width: 100%; 
   padding:0px;
   height: 25px;
   border-width:1px;
@@ -81,12 +83,18 @@ input {
  
 .navbar .navbutton {
   padding-right: 3px;
+  padding-top: 2px;
  }
 
 
 /***
  *** Login
  ***/
+
+.loginbox {
+  margin-top: 20px;
+  }
+
 .loginbox .header {
   border-width:1px;
   border-style:solid;
