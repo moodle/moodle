@@ -761,7 +761,7 @@ function upgrade_blocks_plugins($continueto) {
             if ( @is_readable($fullblock .'/db/'. $CFG->dbtype .'.php')) {
                 include_once($fullblock .'/db/'. $CFG->dbtype .'.php');  // defines upgrading function
             } else {
-                $notices[] ='Block '. $blockname .': '. $fullblock .'/db/'. $CFG->dbtype .'.php was not readable';
+                //$notices[] ='Block '. $blockname .': '. $fullblock .'/db/'. $CFG->dbtype .'.php was not readable';
                 continue;
             }
         }
