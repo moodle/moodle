@@ -29,22 +29,15 @@
 /// If data submitted, process and store
 
     if (($form = data_submitted()) && confirm_sesskey()) {
-        // Normal configuration, just save the variables
         if(isset($form->adminseesallcourses)) {
             set_config('calendar_adminseesall', intval($form->adminseesallcourses) != 0);
             unset($SESSION->cal_courses_shown);
         }
         if(isset($form->forcetimezone)) {
-            if($form->forcetimezone == 'force') {
-                $preset = optional_param('timezonepreset', '');
-                // Some replaces to prevent SQL injection
-                $preset = str_replace(';', '', $preset);
-                $preset = str_replace('\'', '', $preset);
-            }
-            else {
-                $preset = '';
-            }
-            set_config('forcetimezone', $preset);
+            // To protect from SQL injections ...
+            $form->forcetimezone = str_replace(';', '', $form->forcetimezone);
+            $form->forcetimezone = str_replace('\'', '', $form->forcetimezone);
+            set_config('forcetimezone', $form->forcetimezone);
         }
         if(isset($form->startwday)) {
             $startwday = intval($form->startwday);

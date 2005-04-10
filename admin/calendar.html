@@ -55,17 +55,12 @@
       <td>
         <div><?php print_string('helpforcetimezone', 'admin'); ?></div>
         <p>
-        <?php if(empty($timezones)) { print_string('notimezonesexist', 'admin'); } else { ?>
-        <div>
-          <input type="radio" id="timezone1" name="forcetimezone" value="no" <?php if(empty($CFG->forcetimezone)) echo 'checked="checked"';?> /> <label for="timezone1"><?php print_string('timezonenotforced', 'admin'); ?></label>
+        <?php if (empty($timezones)) { 
+                  print_string('notimezonesexist', 'admin'); 
+              } else {
+                  choose_from_menu($timezones, 'forcetimezone', $CFG->forcetimezone, get_string('timezonenotforced', 'admin'), '', '99');
           
-        </div>
-        <div>
-          <input type="radio" id="timezone2" name="forcetimezone" value="force" <?php if(!empty($CFG->forcetimezone)) echo 'checked="checked"';?> /> <label for="timezone2"><?php print_string('timezoneisforcedto', 'admin'); ?></label>
-          <?php choose_from_menu($timezones, 'timezonepreset', (empty($CFG->forcetimezone) ? '' : $CFG->forcetimezone), get_string('choose').'...', 'form.timezone2.checked=\'checked\'', ''); ?>
-          
-        </div>
-        <?php } ?>
+              } ?>
         </p>
         <p><a href="timezoneimport.php"><?php print_string('importtimezones', 'admin'); ?>...</a> </p>
       </td>
