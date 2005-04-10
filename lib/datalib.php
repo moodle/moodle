@@ -2489,6 +2489,29 @@ function get_scales_menu($courseid=0) {
     return get_records_sql_menu($sql);
 }
 
+
+
+/**
+ * Given a set of timezone records, put them in the database,  replacing what is there
+ *
+ * @uses $CFG
+ * @param array $timezones An array of timezone records
+ */
+function update_timezone_records($timezones) {
+/// Given a set of timezone records, put them in the database
+
+    global $CFG;
+
+/// Clear out all the old stuff
+    execute_sql('TRUNCATE TABLE '.$CFG->prefix.'timezone', false);
+
+/// Insert all the new stuff
+    foreach ($timezones as $timezone) {
+        insert_record('timezone', $timezone);
+    }
+}
+
+
 /// MODULE FUNCTIONS /////////////////////////////////////////////////
 
 /**
