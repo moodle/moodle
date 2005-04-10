@@ -227,12 +227,12 @@ function ewiki_page_wiki_dump_send($exportbinaries=0, $exportformats=0, $withvir
     #}
     
     /// Create/Set Directory
-    $wname=clean_filename($wiki->name);
+    $wname=clean_filename(strip_tags(format_string($wiki->name,true)));
     if($exportdestinations) {
       if(isteacher($course->id)) {
         $exportdir=$CFG->dataroot."/".$course->id."/".$exportdestinations;
       } else {
-        add_to_log($course->id, "wiki", "hack", "", $wiki->name.": Tried to export a wiki as non-teacher into $exportdestinations.");
+        add_to_log($course->id, "wiki", "hack", "", format_string($wiki->name,true).": Tried to export a wiki as non-teacher into $exportdestinations.");
         error("You are not a teacher !");
       }
     } else {

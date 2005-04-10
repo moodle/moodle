@@ -13,12 +13,6 @@
     if (!isset($form->summary)) {
         $form->summary = '';
     }
-    if (!isset($form->pagename)) {
-        $form->pagename = '';
-    }
-    if (!isset($form->pagename)) {
-        $form->pagename = '';
-    }
     if (!isset($form->wtype)) {
         $form->wtype = 'group';
     }
@@ -108,9 +102,10 @@
 <tr valign="top">
     <td align="right">
     <b><?php print_string('htmlmode', 'wiki') ?>:</b></td>
-    <td>
-        <?php
-        $htmlmodes=array( "0" => get_string("nohtml","wiki") , "1" => get_string("safehtml","wiki"), "2" => get_string("htmlonly","wiki"));
+<td>
+    <?php
+    echo "mode".$form->htmlmode;
+        $htmlmodes=array( 0 => get_string("nohtml","wiki") , 1 => get_string("safehtml","wiki"), 2 => get_string("htmlonly","wiki"));
         choose_from_menu($htmlmodes, "htmlmode", $form->htmlmode, "");
         helpbutton('htmlmode', get_string('htmlmode', 'wiki'), 'wiki');
         ?>
@@ -172,7 +167,7 @@
     <td>
         <?php
             if ($wikihasentries) {
-                echo $form->pagename;
+                echo format_string($form->pagename);
             }
             else {
         ?>

@@ -59,7 +59,7 @@
             $newid = insert_record ("wiki",$wiki);
 
             //Do some output
-            echo "<li>".get_string("modulename","wiki")." \"".$wiki->name."\"</li>";
+            echo "<li>".get_string("modulename","wiki")." \"".format_string(stripslashes($wiki->name),true)."\"</li>";
             backup_flush(300);
 
             if ($newid) {

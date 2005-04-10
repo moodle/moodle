@@ -484,7 +484,7 @@ function ewiki_page($id=false) {
    if (!strlen($id)) {
       $id = ewiki_id();
    }
-
+   $id = format_string($id,true);
    #-- page action
    $action = EWIKI_DEFAULT_ACTION;
    if ($delim = strpos($id, EWIKI_ACTION_SEP_CHAR)) {

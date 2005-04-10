@@ -212,24 +212,25 @@
         $content2 = '<div align="center">'.get_string('nowikicreated', 'wiki').'</div>';
     }
 
-
     # Group wiki, ...: No page and no ewiki_title
     if(!isset($ewiki_title)) {
           $ewiki_title="";
     }
 
+
 /// Moodle Log
     add_to_log($course->id, "wiki", $ewiki_action, 
                addslashes("view.php?id=$cm->id&amp;groupid=$groupid&amp;userid=$userid&amp;page=$ewiki_title"),
-               $wiki->name.": ".$ewiki_title, $cm->id, $userid);
+               format_string($wiki->name,true).": ".$ewiki_title, $cm->id, $userid);
 
 /// Print the page header
 
     $strwikis = get_string("modulenameplural", "wiki");
     $strwiki  = get_string("modulename", "wiki");
 
-    print_header_simple(($ewiki_title?$ewiki_title:$wiki->name), "",
-                "<a href=\"index.php?id=$course->id\">$strwikis</a> -> <a href=\"view.php?id=$moodleID\">$wiki->name</a>".($ewiki_title?" -> $ewiki_title":""),
+
+    print_header_simple($ewiki_title?$ewiki_title:format_string($wiki->name), "",
+                "<a href=\"index.php?id=$course->id\">$strwikis</a> -> <a href=\"view.php?id=$moodleID\">".format_string($wiki->name,true)."</a>".($ewiki_title?" -> $ewiki_title":""),
                 "", "", true, update_module_button($cm->id, $course->id, $strwiki),
                 navmenu($course, $cm));
 
