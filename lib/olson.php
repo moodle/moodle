@@ -1,7 +1,7 @@
 <?php //$Id$
 
 /***
- *** olson_todst ($filename)
+ *** olson_to_timezones ($filename)
  ***
  *** Parses the olson files for Zones and DST rules.
  *** It updates the Moodle database with the Zones/DST rules
@@ -9,7 +9,7 @@
  *** Returns true/false
  ***
  */
-function olson_todst ($filename) {
+function olson_to_timezones ($filename) {
 
     $zones = olson_simple_zone_parser($filename);
     $rules = olson_simple_rule_parser($filename);

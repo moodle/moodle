@@ -208,7 +208,7 @@ function get_records_csv($file, $table) {
 function put_records_csv($file, $records, $table = NULL) {
     global $CFG, $db;
 
-    if(empty($records)) {
+    if (empty($records)) {
         return true;
     }
 
@@ -216,6 +216,8 @@ function put_records_csv($file, $records, $table = NULL) {
     if ($table !== NULL && !$metacolumns = $db->MetaColumns($CFG->prefix . $table)) {
         return false;
     }
+
+    echo "x";
 
     if(!($fp = @fopen($CFG->dataroot.'/temp/'.$file, 'w'))) {
         error('put_records_csv failed to open '.$file);
@@ -231,6 +233,7 @@ function put_records_csv($file, $records, $table = NULL) {
     else {
         return false;
     }
+    echo "x";
 
     if(!empty($metacolumns)) {
         $fields_table = array_map(create_function('$a', 'return $a->name;'), $metacolumns);

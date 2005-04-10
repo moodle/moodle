@@ -1,17 +1,13 @@
 <?php // $Id$
 
-    // Automatic update of DST presets
+    // Automatic update of Timezones from a new source
 
     require_once('../config.php');
     require_once($CFG->libdir.'/filelib.php');
     require_once($CFG->libdir.'/olson.php');
 
-    define('STEP_OLSON_TO_CSV',    1);
-    define('STEP_DOWNLOAD_CSV',    2);
-    define('STEP_IMPORT_CSV_LIB',  3);
-    define('STEP_IMPORT_CSV_TEMP', 4);
-    define('STEP_COMPLETED',       5);
-    
+    $ok = optional_param('ok');
+
     require_login();
 
     if (!isadmin()) {
@@ -22,172 +18,122 @@
         error('Site isn\'t defined!');
     }
 
-$ddd = olson_todst($CFG->dataroot.'/temp/olson.txt');
+/// Print headings
 
-execute_sql('TRUNCATE TABLE '.$CFG->prefix.'timezone');
+    $stradministration = get_string('administration');
+    $strconfiguration = get_string('configuration');
+    $strcalendarsettings = get_string('calendarsettings', 'admin');
+    $strimporttimezones = get_string('importtimezones', 'admin');
 
-foreach($ddd as $rec) {
-    print_object($rec);
-    insert_record('timezone', $rec);
-}
+    print_header("$site->shortname: $strcalendarsettings", "$site->fullname",
+                 "<a href=\"index.php\">$stradministration</a> -> ".
+                 "<a href=\"configure.php\">$strconfiguration</a> -> ".
+                 "<a href=\"calendar.php\">$strcalendarsettings</a> -> $strimporttimezones");
 
-die();
+    print_heading($strimporttimezones);
 
-    // These control what kind of operations import_dst_records will be allowed
-    $insert = true;
-    $update = true;
+    if (!$ok or !confirm_sesskey()) {
+        $message = '<p>';
+        $message .= $CFG->dataroot.'/temp/olson.txt<br />';
+        $message .= $CFG->dataroot.'/temp/timezones.txt<br />';
+        $message .= '<a href="http://download.moodle.org/timezones/">http://download.moodle.org/timezones/</a><br />';
+        $message .= '<a href="'.$CFG->wwwroot.'/lib/timezones.txt">'.$CFG->dirroot.'/lib/timezones.txt</a><br />';
+        $message .= '</p>';
 
-    // Actions in REVERSE ORDER of execution
-    $actions = array(STEP_IMPORT_CSV_LIB, STEP_DOWNLOAD_CSV, STEP_IMPORT_CSV_TEMP, STEP_OLSON_TO_CSV);
+        $message = get_string("configintrotimezones", 'admin', $message);
 
-    while(!empty($actions)) {
-        $action = array_pop($actions);
-        switch($action) {
+        notice_yesno($message, 'timezoneimport.php?ok=1&sesskey='.sesskey(), 'calendar.php');
 
-            case STEP_OLSON_TO_CSV:
-                if(is_writable($CFG->dataroot.'/temp/olson.txt')) {
-                    $records = olson_simple_rule_parser($CFG->dataroot.'/temp/olson.txt');
-                    if(put_records_csv('dst.txt', $records, 'dst_preset')) {
-                        // Successful convert
-                        unlink($CFG->dataroot.'/temp/olson.txt');
-                        array_push($actions, STEP_IMPORT_CSV_TEMP);
-                    }
-                    else {
-                        // Error: put_records_csv complained
-                        error('44');
-                    }
-                }
-            break;
+        print_footer();
+        exit;
+    }
 
-            case STEP_IMPORT_CSV_TEMP:
-                if(is_writable($CFG->dataroot.'/temp/dst.txt')) {
-                    $records = get_records_csv($CFG->dataroot.'/temp/dst.txt', 'dst_preset');
-                    // Import and go to summary page
-                    $results = import_dst_records($records, $insert, $update);
-                    unlink($CFG->dataroot.'/temp/dst.txt');
-                    array_push($actions, STEP_COMPLETED);
-                }
-            break;
 
-            case STEP_DOWNLOAD_CSV:
-                if(ini_get('allow_url_fopen')) {
-                    $contents = @file_get_contents('http://download.moodle.org/dst/');
-                    if(!empty($contents)) {
-                        // Got something
-                        if($fp = fopen($CFG->dataroot.'/temp/dst.txt', 'w')) {
-                            fwrite($fp, $contents);
-                            fclose($fp);
-                            array_push($actions, STEP_IMPORT_CSV_TEMP);
-                        }
-                        else {
-                            // Error: Couldn't open file correctly
-                            error('74');
-                        }
-                    }
-                    else {
-                        // Error: nothing from download.moodle.org
-                        error('73');
-                    }
-                }
-            break;
+/// Try to find a source of timezones to import from
 
-            case STEP_IMPORT_CSV_LIB:
-                if(file_exists($CFG->dirroot.'/lib/dst.txt')) {
-                    $records = get_records_csv($CFG->dirroot.'/lib/dst.txt', 'dst_preset');
-                    $results = import_dst_records($records, $insert, $update);
-                    array_push($actions, STEP_COMPLETED);
-                }
-            break;
+    $importdone = false;
 
-            case STEP_COMPLETED:
-                echo get_string('updatedstpresetscompleted');
-                print_object($results);
-                die();
-            break;
+/// First, look for an Olson file locally
+
+    $source = $CFG->dataroot.'/temp/olson.txt';
+    if (!$importdone and is_readable($source)) {
+        if ($timezones = olson_to_timezones($source)) {
+            update_timezone_records($timezones);
+            $importdone = $source;
         }
     }
 
-function import_dst_records(&$records, $allowinsert = true, $allowupdate = true) {
-    $results = array();
-    $proto   = array('insert' => 0, 'update' => 0, 'errors' => 0);
+/// Next, look for a CSV file locally
 
-    foreach($records as $record) {
-
-        if(!check_dst_preset($record)) {
-            continue;
+    $source = $CFG->dataroot.'/temp/timezones.txt';
+    if (!$importdone and is_readable($source)) {
+        if ($timezones = get_records_csv($source, 'timezone')) {
+            update_timezone_records($timezones);
+            $importdone = $source;
         }
-
-        $dbpreset = get_record('dst_preset', 'family', $record->family, 'year', $record->year);
-
-        if(empty($dbpreset)) {
-
-            if(!$allowinsert) {
-                continue;
-            }
-
-            if(!isset($results[$record->family])) {
-                $results[$record->family] = $proto;
-            }
-
-
-            unset($record->id);
-            if(insert_record('dst_preset', $record)) {
-                ++$results[$record->family]['insert'];
-            }
-            else {
-                ++$results[$record->family]['errors'];
-            }
-        }
-
-        else {
-            // Already exists
-
-            if(!$allowupdate) {
-                continue;
-            }
-
-            if(hash_dst_preset($record) != hash_dst_preset($dbpreset)) {
-
-                // And is different
-
-                if(!isset($results[$record->family])) {
-                    $results[$record->family] = $proto;
-                }
-
-                $record->id = $dbpreset->id;
-                if(update_record('dst_preset', $record)) {
-                    ++$results[$record->family]['update'];
-                }
-                else {
-                    ++$results[$record->family]['update'];
-                }
-            }
-
-        }
-
     }
-    return $results;
-}
 
-function hash_dst_preset($record) {
-    return md5(implode('!', array(
-        $record->family,
-        $record->year,
-        $record->apply_offset,
-        $record->activate_index,
-        $record->activate_day,
-        $record->activate_month,
-        $record->activate_time,
-        $record->deactivate_index,
-        $record->deactivate_day,
-        $record->deactivate_month,
-        $record->deactivate_time
-    )));
-}
+/// Otherwise, let's try moodle.org's copy
 
-function check_dst_preset($record) {
-    // TODO: make this a real check
-    return true;
-}
+    $source = 'http://download.moodle.org/timezones/';
+    if (!$importdone and ini_get('allow_url_fopen')) {
+        if ($contents = file_get_contents($source)) {  // Grab whole page
+            if ($file = fopen($CFG->dataroot.'/temp/timezones.txt', 'w')) {            // Make local copy
+                fwrite($file, $contents);
+                fclose($file);
+                if ($timezones = get_records_csv($CFG->dataroot.'/temp/timezones.txt', 'timezone')) {  // Parse it
+                    update_timezone_records($timezones);
+                    $importdone = $source;
+                }
+                unlink($CFG->dataroot.'/temp/timezones.txt');
+            }
+        }
+    }
+
+
+/// Final resort, use the copy included in Moodle
+
+    $source = $CFG->dirroot.'/lib/timezones.txt';
+    if (!$importdone and is_readable($source)) {  // Distribution file
+        if ($timezones = get_records_csv($source)) {
+            update_timezone_records($timezones);
+            $importdone = $source;
+        }
+    }
+
+
+/// That's it!
+
+    if ($importdone) {
+        $a = null;
+        $a->count = count($timezones);
+        $a->source  = $importdone;
+        print_heading(get_string('importtimezonescount', 'admin', $a), '', 3);
+
+        print_continue('calendar.php');
+
+        $timezonelist = array();
+        foreach ($timezones as $timezone) {
+            if (isset($timezonelist[$timezone->name])) {
+                $timezonelist[$timezone->name]++;
+            } else {
+                $timezonelist[$timezone->name] = 1;
+            }
+        }
+        ksort($timezonelist);
+
+        echo "<br />";
+        print_simple_box_start('center');
+        foreach ($timezonelist as $name => $count) {
+            echo "$name ($count)<br />";
+        }
+        print_simple_box_end();
+
+    } else {
+        print_heading(get_string('importtimezonesfailed', 'admin'), '', 3);
+        print_continue('calendar.php');
+    }
+
+    print_footer();
 
 ?>
