@@ -204,23 +204,23 @@ function workshop_cron () {
             // I have taken the following line out because the info is repeated below.
             // $msg .= get_string("mail2", "workshop", $workshop->name)."\n\n";
     
-            $postsubject = "$course->shortname: $strworkshops: $workshop->name";
-            $posttext  = "$course->shortname -> $strworkshops -> $workshop->name\n";
+            $postsubject = "$course->shortname: $strworkshops: ".format_string($workshop->name,true);
+            $posttext  = "$course->shortname -> $strworkshops -> ".format_string($workshop->name,true)."\n";
             $posttext .= "---------------------------------------------------------------------\n";
             $posttext .= $msg;
             // "The comments and grade can be seen in ..."
             $posttext .= get_string("mail2", "workshop", 
-                "$workshop->name,   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id")."\n";
+                format_string($workshop->name,true).",   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id")."\n";
             $posttext .= "---------------------------------------------------------------------\n";
             if ($sendto->mailformat == 1) {  // HTML
                 $posthtml = "<p><font face=\"sans-serif\">".
                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
                     "<a href=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
-                    "<a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a></font></p>";
+                    "<a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">".format_string($workshop->name,true)."</a></font></p>";
                 $posthtml .= "<hr><font face=\"sans-serif\">";
                 $posthtml .= "<p>$msg</p>";
                 $posthtml .= "<p>".get_string("mail2", "workshop",
-                    " <a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a>")."</p></font><hr>";
+                    " <a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">".format_string($workshop->name,true)."</a>")."</p></font><hr>";
             } else {
                 $posthtml = "";
             }
@@ -293,23 +293,23 @@ function workshop_cron () {
             // "Please assess it in the workshop assignment '$workshop->name'
             // $msg .= get_string("mail9", "workshop", $workshop->name)."\n\n";
     
-            $postsubject = "$course->shortname: $strworkshops: $workshop->name";
-            $posttext  = "$course->shortname -> $strworkshops -> $workshop->name\n";
+            $postsubject = "$course->shortname: $strworkshops: ".format_string($workshop->name,true);
+            $posttext  = "$course->shortname -> $strworkshops -> ".format_string($workshop->name,true)."\n";
             $posttext .= "---------------------------------------------------------------------\n";
             $posttext .= $msg;
             // "Please assess it in ..."
             $posttext .= get_string("mail9", "workshop", 
-                           "$workshop->name, $CFG->wwwroot/mod/workshop/view.php?id=$cm->id")."\n";
+                           format_string($workshop->name,true).", $CFG->wwwroot/mod/workshop/view.php?id=$cm->id")."\n";
             $posttext .= "---------------------------------------------------------------------\n";
             if ($sendto->mailformat == 1) {  // HTML
                 $posthtml = "<p><font face=\"sans-serif\">".
                   "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
                   "<a href=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
-                  "<a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a></font></p>";
+                  "<a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">".format_string($workshop->name,true)."</a></font></p>";
                 $posthtml .= "<hr><font face=\"sans-serif\">";
                 $posthtml .= "<p>$msg</p>";
                 $posthtml .= "<p>".get_string("mail9", "workshop",
-                  " <a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a>").'</p></font><hr>';
+                  " <a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">".format_string($workshop->name,true)."</a>").'</p></font><hr>';
             } 
             else {
               $posthtml = "";
@@ -393,23 +393,23 @@ function workshop_cron () {
                 // "The new comment can be seen in the workshop assignment '$workshop->name'
                 // $msg .= get_string("mail5", "workshop", $workshop->name)."\n\n";
     
-                $postsubject = "$course->shortname: $strworkshops: $workshop->name";
-                $posttext  = "$course->shortname -> $strworkshops -> $workshop->name\n";
+                $postsubject = "$course->shortname: $strworkshops: ".format_string($workshop->name,true);
+                $posttext  = "$course->shortname -> $strworkshops -> ".format_string($workshop->name,true)."\n";
                 $posttext .= "---------------------------------------------------------------------\n";
                 $posttext .= $msg;
                 // "The new comment can be seen in ..."
                 $posttext .= get_string("mail5", "workshop",
-                    "$workshop->name,   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id")."\n";
+                    format_string($workshop->name,true).",   $CFG->wwwroot/mod/workshop/view.php?id=$cm->id")."\n";
                 $posttext .= "---------------------------------------------------------------------\n";
                 if ($sendto->mailformat == 1) {  // HTML
                     $posthtml = "<p><font face=\"sans-serif\">".
                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
                     "<a href=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
-                    "<a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a></font></p>";
+                    "<a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">".format_string($workshop->name,true)."</a></font></p>";
                     $posthtml .= "<hr><font face=\"sans-serif\">";
                     $posthtml .= "<p>$msg</p>";
                     $posthtml .= "<p>".get_string("mail5", "workshop",
-                        " <a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a>")
+                        " <a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">".format_string($workshop->name,true)."</a>")
                         ."</p></font><hr>";
                 } 
                 else {
@@ -440,23 +440,23 @@ function workshop_cron () {
                 // "The new comment can be seen in the workshop assignment '$workshop->name'
                 // $msg .= get_string("mail5", "workshop", $workshop->name)."\n\n";
     
-                $postsubject = "$course->shortname: $strworkshops: $workshop->name";
-                $posttext  = "$course->shortname -> $strworkshops -> $workshop->name\n";
+                $postsubject = "$course->shortname: $strworkshops: ".format_string($workshop->name,true);
+                $posttext  = "$course->shortname -> $strworkshops -> ".format_string($workshop->name,true)."\n";
                 $posttext .= "---------------------------------------------------------------------\n";
                 $posttext .= $msg;
                 // "The new comment can be seen in ..."
                 $posttext .= get_string("mail5", "workshop",
-                    "$workshop->name,  $CFG->wwwroot/mod/workshop/view.php?id=$cm->id")."\n";
+                    format_string($workshop->name,true).",  $CFG->wwwroot/mod/workshop/view.php?id=$cm->id")."\n";
                 $posttext .= "---------------------------------------------------------------------\n";
                 if ($sendto->mailformat == 1) {  // HTML
                     $posthtml = "<p><font face=\"sans-serif\">".
                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
                     "<a href=\"$CFG->wwwroot/mod/workshop/index.php?id=$course->id\">$strworkshops</a> ->".
-                    "<a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a></font></p>";
+                    "<a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">".format_string($workshop->name,true)."</a></font></p>";
                     $posthtml .= "<hr><font face=\"sans-serif\">";
                     $posthtml .= "<p>$msg</p>";
                     $posthtml .= "<p>".get_string("mail5", "workshop",
-                        " <a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">$workshop->name</a>")
+                        " <a href=\"$CFG->wwwroot/mod/workshop/view.php?id=$cm->id\">".format_string($workshop->name,true)."</a>")
                         ."</p></font><hr>";
                 } 
                 else {

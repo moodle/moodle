@@ -43,9 +43,9 @@
     $strsubmissions = get_string("submissions", "workshop");
 
     // ... print the header and...
-    print_header_simple("$workshop->name", "",
+    print_header_simple(format_string($workshop->name), "",
                  "<a href=\"index.php?id=$course->id\">$strworkshops</a> ->
-                  <a href=\"view.php?id=$cm->id\">$workshop->name</a> -> $strsubmissions",
+                  <a href=\"view.php?id=$cm->id\">".format_string($workshop->name,true)."</a> -> $strsubmissions",
                   "", "", true);
 
     //...get the action or set up an suitable default

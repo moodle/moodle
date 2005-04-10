@@ -138,7 +138,7 @@
             $newid = insert_record ("workshop",$workshop);
 
             //Do some output     
-            echo "<li>".get_string("modulename","workshop")." \"".$workshop->name."\"</li>";
+            echo "<li>".get_string("modulename","workshop")." \"".format_string(stripslashes($workshop->name),true)."\"</li>";
             backup_flush(300);
 
             if ($newid) {

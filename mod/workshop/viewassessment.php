@@ -37,7 +37,7 @@
     /// Now check whether we need to display a frameset
 
     if (empty($_GET['frameset'])) {
-        echo "<head><title>{$course->shortname}: {$workshop->name}</title></head>\n";
+        echo "<head><title>{$course->shortname}: ".format_string($workshop->name,true)."</title></head>\n";
         echo "<frameset rows=\"90%,*\" border=\"10\">";
         echo "<frame src=\"viewassessment.php?id=$id&amp;aid=$aid&amp;allowcomments=$allowcomments&amp;frameset=top&amp;redirect=$redirect\" border=\"10\">";
         echo "<frame src=\"viewassessment.php?id=$id&amp;aid=$aid&amp;allowcomments=$allowcomments&amp;frameset=bottom&amp;redirect=$redirect\">";
@@ -49,9 +49,9 @@
 
     if (!empty($_GET['frameset']) and $_GET['frameset'] == "top") {
 
-        print_header_simple("$workshop->name", "",
+        print_header_simple(format_string($workshop->name), "",
                      "<a href=\"index.php?id=$course->id\">$strworkshops</a> ->
-                      <a href=\"view.php?id=$cm->id\">$workshop->name</a> -> $strassess",
+                      <a href=\"view.php?id=$cm->id\">".format_string($workshop->name,true)."</a> -> $strassess",
                       "", '<base target="_parent" />', true);
 
         // show assessment but don't allow changes

@@ -68,10 +68,10 @@
                 }
                 if (!$workshop->visible) {
                     //Show dimmed if the mod is hidden
-                    $link = "<a class=\"dimmed\" href=\"view.php?id=$workshop->coursemodule\">$workshop->name</a><br />";
+                    $link = "<a class=\"dimmed\" href=\"view.php?id=$workshop->coursemodule\">".format_string($workshop->name,true)."</a><br />";
                 } else {
                     //Show normal if the mod is visible
-                    $link = "<a href=\"view.php?id=$workshop->coursemodule\">$workshop->name</a><br />";
+                    $link = "<a href=\"view.php?id=$workshop->coursemodule\">".format_string($workshop->name,true)."</a><br />";
                 }
                 if (isstudent($course->id)) {
                     $link .= " ($submission->title)"; // show students the title of their submission(s)
@@ -110,10 +110,10 @@
             $submitted = get_string("no");
             if (!$workshop->visible) {
                 //Show dimmed if the mod is hidden
-                $link = "<a class=\"dimmed\" href=\"view.php?id=$workshop->coursemodule\">$workshop->name</a>";
+                $link = "<a class=\"dimmed\" href=\"view.php?id=$workshop->coursemodule\">".format_string($workshop->name,true)."</a>";
             } else {
                 //Show normal if the mod is visible
-                $link = "<a href=\"view.php?id=$workshop->coursemodule\">$workshop->name</a>";
+                $link = "<a href=\"view.php?id=$workshop->coursemodule\">".format_string($workshop->name,true)."</a>";
             }
             if (isstudent($course->id)) {
                 $info = '0';

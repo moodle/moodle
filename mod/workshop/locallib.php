@@ -2634,7 +2634,7 @@ function workshop_print_assignment_info($workshop) {
         error("Course Module ID was incorrect");
     }
     // print standard assignment heading
-    print_heading($workshop->name, "center");
+    print_heading(format_string($workshop->name), "center");
     print_simple_box_start("center");
 
     // print phase and date info

@@ -67,9 +67,9 @@
     $strassessments = get_string("assessments", "workshop");
 
     // ... print the header and...
-    print_header_simple("$workshop->name", "",
+    print_header_simple(format_string($workshop->name), "",
                  "<a href=\"index.php?id=$course->id\">$strworkshops</a> ->
-                  <a href=\"view.php?id=$cm->id\">$workshop->name</a> -> $strassessments",
+                  <a href=\"view.php?id=$cm->id\">".format_string($workshop->name,true)."</a> -> $strassessments",
                   "", "", true);
 
     //...get the action
@@ -128,7 +128,7 @@
         if (!$assessment = get_record("workshop_assessments", "id", $aid)) {
             error("workshop assessment is misconfigured");
         }
-        $form = data_submitted();
+        $form = data_submitted('nomatch'); //Nomatch because we can come from assess.php
 
         // store the comment in the stock comments table
         if ($elementno == 99) { // it's the general comment
@@ -881,7 +881,7 @@
         if (!$assessment = get_record("workshop_assessments", "id", $aid)) {
             error("workshop assessment is misconfigured");
         }
-        $form = data_submitted();
+        $form = data_submitted('nomatch'); //Nomatch because we can come from assess.php
 
         // delete the comment from the stock comments table
         if (!delete_records("workshop_stockcomments", "id", $stockcommentid)) {
@@ -1080,7 +1080,7 @@
         // don't fiddle about, delete all the old and add the new!
         delete_records("workshop_grades", "assessmentid",  $assessment->id);
 
-        $form = data_submitted();
+        $form = data_submitted('nomatch'); //Nomatch because we can come from assess.php
 
         //determine what kind of grading we have
         switch ($workshop->gradingstrategy) {

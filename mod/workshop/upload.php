@@ -23,9 +23,9 @@
     $strworkshop = get_string('modulename', 'workshop');
     $strsubmission = get_string('submission', 'workshop');
 
-    print_header_simple("$workshop->name : $strsubmission", "",
+    print_header_simple(format_string($workshop->name)." : $strsubmission", "",
                  "<a href=\"index.php?id=$course->id\">$strworkshops</a> ->
-                  <a href=\"view.php?a=$workshop->id\">$workshop->name</a> -> $strsubmission",
+                  <a href=\"view.php?a=$workshop->id\">".format_string($workshop->name,true)."</a> -> $strsubmission",
                   "", "", true);
     $timenow = time();
 

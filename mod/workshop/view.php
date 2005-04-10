@@ -42,9 +42,9 @@
     $straction = ($action) ? '-> '.get_string($action, 'workshop') : '';
 
     // ...display header...
-    print_header_simple("$workshop->name", "",
+    print_header_simple(format_string($workshop->name), "",
                  "<a href=\"index.php?id=$course->id\">$strworkshops</a> ->
-                  <a href=\"view.php?id=$cm->id\">$workshop->name</a> $straction",
+                  <a href=\"view.php?id=$cm->id\">".format_string($workshop->name,true)."</a> $straction",
                   "", "", true, update_module_button($cm->id, $course->id, $strworkshop), navmenu($course, $cm));
 
     // ...and if necessary set default action
@@ -159,7 +159,7 @@
                     echo "<tr align=\"center\" style='color:#DF041E;'><td>".get_string("wrongpassword", "workshop").
                         "</td></tr>";
                 }
-                echo "<tr align=\"center\"><td>".get_string("passwordprotectedworkshop", "workshop", $workshop->name).
+                echo "<tr align=\"center\"><td>".get_string("passwordprotectedworkshop", "workshop", format_string($workshop->name)).
                     "</td></tr>";
                 echo "<tr align=\"center\"><td>".get_string("enterpassword", "workshop").
                     " <input type=\"password\" name=\"userpassword\" /></td></tr>";
