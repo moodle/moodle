@@ -84,9 +84,7 @@ class block_news_items extends block_base {
 
                 $discussion->subject = $discussion->name;
 
-                if (!empty($CFG->filterall)) {
-                    $discussion->subject = filter_text($discussion->subject, $forum->course);
-                }
+                $discussion->subject = format_string($discussion->subject, true, $forum->course);
 
                 $text .= '<div class="post">'.
                          '<div class="head">'.
