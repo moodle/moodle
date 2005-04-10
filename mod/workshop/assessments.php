@@ -752,7 +752,7 @@
         // don't fiddle about, delete all the old and add the new!
         delete_records("workshop_grades", "assessmentid",  $assessment->id);
 
-        $form = data_submitted();
+        $form = data_submitted('nomatch');
         
         //determine what kind of grading we have
         switch ($workshop->gradingstrategy) {
