@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032300)
+      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005040800)
 
 
 $string['adminseesallevents'] = 'Beheerders zien alle gebeurtenissen';
@@ -31,6 +31,7 @@ $string['configenablerssfeeds'] = 'Met deze instelling maak je RSS-feeds mogelij
 $string['configenablerssfeedsdisabled'] = 'Dit is niet beschikbaar omdat RSS voor heel de site is uitgeschakeld. Om RSS in te schakelen ga je naar Configureer variablen onder Beheer Configuratie.';
 $string['configerrorlevel'] = 'Kies hoeveel PHP-waarschuwingen je wilt dat Moodle laat zien. \'Normaal\' is meestal de beste keuze.';
 $string['configextendedusernamechars'] = 'Schakel deze optie in om het mogelijk te maken dat gelijk welke karakters in hun gebruikersnaam gebruikt kunnen worden (merk op dat deze instelling geen invloed heeft op de voornaam of achternaam). De standaardinstelling is \"false\", wat ervoor zorgt dat alleen alfanumerieke tekens kunnen gebruikt worden.';
+$string['configfilterall'] = 'Filter alle strings: hoofdingen, titels, navigatiebalk enz. inbegrepen. Dit is meestal slechts nuttig wanneer je de multilang filter gebruikt. Anders wal het alleen maar een extra belasting op je server veroorzaken zonder meerwaarde.';
 $string['configfilteruploadedfiles'] = 'Door deze optie in te schakelen gaat Moodle alle geüploade HTML- en tekstbestanden door de gekozen filters halen voor ze getoond worden';
 $string['configforcelogin'] = 'Standaard kunnen de startpagina van de site en de lijst van de vakken (maar niet de vakken zelf) bekeken worden door iedereen, zonder zich aan te melden op de site. Als je wil afdwingen dat er moet aangemeld worden voor er maar iets van de site te zien is, dan kan dat door deze instelling aan te zetten.';
 $string['configforceloginforprofiles'] = 'Schakel deze optie in om gebruikers te dwingen zich aan te melden met een echte (niet gast) account voor ze de pagina\'s met gebruikersprofielen kunnen zien. Standaard staat deze instelling uit (\"false\") zodat leerlingen op prospectie de profielen van de leraren bij elk vak kunnen lezen. Dit heeft als gevolg dat ook zoekrobots deze informatie kunnen lezen.';
@@ -89,6 +90,7 @@ $string['confirmation'] = 'Bevestiging';
 $string['cronwarning'] = 'Het onderhoudsscript <a href=\"cron.php\">cron.php</a> heeft de laatste 24 uur niet gelopen. <br />Als je dit nog niet geconfigureerd hebt, lees dan het onderdeel <a href=\"../doc/?frame=install.html&sub=cron\">Cron configureren</a> bij de installatie-instructies.';
 $string['edithelpdocs'] = 'Bewerk helpbestanden';
 $string['editstrings'] = 'Bewerk strings';
+$string['filterall'] = 'Filter alle strings';
 $string['filteruploadedfiles'] = 'Gebruik de filters in geüploade bestanden';
 $string['helpadminseesall'] = 'Zien beheerders alle gebeurtenissen in de kalender of alleen diegene die ze zelf nodig hebben?';
 $string['helpcalendarsettings'] = 'Configureer de kalender en datum/tijd-gerelateerde instellingen van Moodle';

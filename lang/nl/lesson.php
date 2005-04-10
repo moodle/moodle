@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005040800)
 
 
 $string['accesscontrol'] = 'Toegangscontrole';
@@ -105,10 +105,12 @@ $string['leftduringtimed'] = 'Je bent weggegaan tijdens een getimede les. <br />
 $string['leftduringtimednoretake'] = 'Je bent weggegaan tijdens een getimede les.  <br />Je mag niet verder werken.';
 $string['lesson'] = '$a Les';
 $string['lessonclosed'] = 'Deze les sluit op $a.';
+$string['lessoncloses'] = 'Les sluit';
 $string['lessondefault'] = 'Gebruik de instellingen van deze les als standaard';
 $string['lessonformating'] = 'Opmaken van de les';
 $string['lessonmenu'] = 'Lesmenu';
 $string['lessonopen'] = 'Deze les zal openen op $a.';
+$string['lessonopens'] = 'Les opent';
 $string['lessonstats'] = 'Statistieken van de les';
 $string['loginfail'] = 'Login mislukt. Probeer nog eens...';
 $string['lowscore'] = 'Laagste score';
