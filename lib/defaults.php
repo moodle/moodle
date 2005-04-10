@@ -39,6 +39,7 @@
        'filteruploadedfiles'      =>  true,
        'forcelogin'               =>  false,
        'forceloginforprofiles'    =>  false,
+       'forcetimezone'            =>  99,
        'fullnamedisplay'          => 'firstname lastname',
        'framename'                => '_top',
        'frontpage'                =>  0,
