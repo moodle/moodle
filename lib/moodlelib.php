@@ -887,15 +887,15 @@ function get_timezone_record($timezonename) {
     global $CFG, $db;
     static $cache = NULL;
 
-    if($cache === NULL) {
+    if ($cache === NULL) {
         $cache = array();
     }
 
-    if(isset($cache[$timezonename])) {
+    if (isset($cache[$timezonename])) {
         return $cache[$timezonename];
     }
 
-    return get_record_sql('SELECT * FROM '.$CFG->prefix.'timezone WHERE name = '.$db->qstr($timezonename).' ORDER BY year DESC');
+    return get_record_sql('SELECT * FROM '.$CFG->prefix.'timezone WHERE name = '.$db->qstr($timezonename).' ORDER BY year DESC LIMIT 1');
 }
 
 function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
