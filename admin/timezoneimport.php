@@ -77,7 +77,7 @@
 
     $source = 'http://download.moodle.org/timezones/';
     if (!$importdone and ini_get('allow_url_fopen')) {
-        if ($contents = file_get_contents($source)) {  // Grab whole page
+        if (is_readable($source) && $contents = file_get_contents($source)) {  // Grab whole page
             if ($file = fopen($CFG->dataroot.'/temp/timezones.txt', 'w')) {            // Make local copy
                 fwrite($file, $contents);
                 fclose($file);
@@ -95,7 +95,7 @@
 
     $source = $CFG->dirroot.'/lib/timezones.txt';
     if (!$importdone and is_readable($source)) {  // Distribution file
-        if ($timezones = get_records_csv($source)) {
+        if ($timezones = get_records_csv($source, 'timezone')) {
             update_timezone_records($timezones);
             $importdone = $source;
         }
