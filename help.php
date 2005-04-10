@@ -5,14 +5,14 @@
      *
      * Prints a very simple page and includes
      * page content or a string from elsewhere.
-     * Usually this will appear in a popup 
+     * Usually this will appear in a popup
      * See {@link helpbutton()} in {@link lib/moodlelib.php}
      *
      * @author Martin Dougiamas
      * @version $Id$
      * @package moodlecore
      */
- 
+
 
     require_once('config.php');
 
@@ -40,8 +40,11 @@
                 $filepath = $CFG->dirroot .'/lang/'. $lang .'/help/'. $file;
             } else {
                 $filepath = $CFG->dirroot .'/lang/'. $lang .'/help/'. $module .'/'. $file;
+                if (!file_exists($filepath)) {
+                    $filepath = $CFG->dirroot.'/mod/'.$module.'/lang/'. $lang .'/help/'. $module .'/'. $file;
+                }
             }
-  
+
             if (file_exists($filepath)) {
                 $helpfound = true;
                 include($filepath);   // The actual helpfile
