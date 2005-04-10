@@ -29,7 +29,7 @@
     $strchoices = get_string("modulenameplural", "choice");
     $strresponses = get_string("responses", "choice");
 
-    add_to_log($course->id, "choice", "report", "report.php?id=$cm->id", "$choice->id");
+    add_to_log($course->id, "choice", "report", "report.php?id=$cm->id", "$choice->id",$cm->id);
 
     print_header_simple(format_string($choice->name).": $strresponses", "",
                  "<a href=\"index.php?id=$course->id\">$strchoices</a> ->
