@@ -851,7 +851,7 @@ function get_user_timezone_offset($tz = 99) {
     global $USER, $CFG;
 
     $tz = get_user_timezone($tz);
-    
+
     if (is_float($tz)) {
         return $tz;
     } else {
@@ -894,7 +894,7 @@ function get_timezone_record($timezonename) {
         return $cache[$timezonename];
     }
 
-    return get_record_sql('SELECT * FROM '.$CFG->prefix.'timezone WHERE name = '.$db->qstr($timezonename).' ORDER BY year DESC LIMIT 1');
+    return get_record_sql('SELECT * FROM '.$CFG->prefix.'timezone WHERE name = '.$db->qstr($timezonename).' ORDER BY year DESC');
 }
 
 function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
