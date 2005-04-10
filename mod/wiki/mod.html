@@ -104,7 +104,6 @@
     <b><?php print_string('htmlmode', 'wiki') ?>:</b></td>
 <td>
     <?php
-    echo "mode".$form->htmlmode;
         $htmlmodes=array( 0 => get_string("nohtml","wiki") , 1 => get_string("safehtml","wiki"), 2 => get_string("htmlonly","wiki"));
         choose_from_menu($htmlmodes, "htmlmode", $form->htmlmode, "");
         helpbutton('htmlmode', get_string('htmlmode', 'wiki'), 'wiki');
@@ -167,7 +166,7 @@
     <td>
         <?php
             if ($wikihasentries) {
-                echo format_string($form->pagename);
+                echo format_string($form->pagename,true);
             }
             else {
         ?>
