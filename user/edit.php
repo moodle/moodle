@@ -99,11 +99,10 @@
         $usernew->htmleditor    = clean_param($usernew->htmleditor,    PARAM_INT);
         $usernew->emailstop     = clean_param($usernew->emailstop,     PARAM_INT);
 
-        if(!empty($CFG->forcetimezone) && isset($usernew->timezone)) {
+        if (($CFG->forcetimezone != 99) && isset($usernew->timezone)) {
             // Don't allow changing this in any way if a timezone is forced
             unset($usernew->timezone);
-        }
-        else {
+        } else {
             // Some replaces to prevent SQL injections
             $usernew->timezone = str_replace(';', '',  $usernew->timezone);
             $usernew->timezone = str_replace('\'', '', $usernew->timezone);
