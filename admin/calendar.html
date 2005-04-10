@@ -1,10 +1,7 @@
 
 <form method="post" action="calendar.php">
-<?php print_simple_box_start('center', '80%'); ?>
-<p><input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>"></p>
-
+<input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>">
 <table class="formtable">
-  <tbody>
     <tr>
       <th>adminseesall:</th>
       <td>
@@ -29,13 +26,13 @@
       <td>
         <div><?php print_string('helpweekenddays', 'admin'); ?></div>
         <p>
-        <nobr><input type="checkbox" name="weekend[]" value="1" id="weekend1" <?php if(CALENDAR_WEEKEND &  2) echo 'checked="checked"'; ?> /> <label for="weekend1"><?php print_string('monday', 'calendar'); ?></label></nobr>
-        <nobr><input type="checkbox" name="weekend[]" value="2" id="weekend2" <?php if(CALENDAR_WEEKEND &  4) echo 'checked="checked"'; ?> /> <label for="weekend2"><?php print_string('tuesday', 'calendar'); ?></label></nobr>
-        <nobr><input type="checkbox" name="weekend[]" value="3" id="weekend3" <?php if(CALENDAR_WEEKEND &  8) echo 'checked="checked"'; ?> /> <label for="weekend3"><?php print_string('wednesday', 'calendar'); ?></label></nobr>
-        <nobr><input type="checkbox" name="weekend[]" value="4" id="weekend4" <?php if(CALENDAR_WEEKEND & 16) echo 'checked="checked"'; ?> /> <label for="weekend4"><?php print_string('thursday', 'calendar'); ?></label></nobr>
-        <nobr><input type="checkbox" name="weekend[]" value="5" id="weekend5" <?php if(CALENDAR_WEEKEND & 32) echo 'checked="checked"'; ?> /> <label for="weekend5"><?php print_string('friday', 'calendar'); ?></label></nobr>
-        <nobr><input type="checkbox" name="weekend[]" value="6" id="weekend6" <?php if(CALENDAR_WEEKEND & 64) echo 'checked="checked"'; ?> /> <label for="weekend6"><?php print_string('saturday', 'calendar'); ?></label></nobr>
-        <nobr><input type="checkbox" name="weekend[]" value="0" id="weekend0" <?php if(CALENDAR_WEEKEND &  1) echo 'checked="checked"'; ?> /> <label for="weekend0"><?php print_string('sunday', 'calendar'); ?></label></nobr>
+        <input type="checkbox" name="weekend[]" value="1" id="weekend1" <?php if(CALENDAR_WEEKEND &  2) echo 'checked="checked"'; ?> /> <label for="weekend1"><?php print_string('monday', 'calendar'); ?></label>
+        <input type="checkbox" name="weekend[]" value="2" id="weekend2" <?php if(CALENDAR_WEEKEND &  4) echo 'checked="checked"'; ?> /> <label for="weekend2"><?php print_string('tuesday', 'calendar'); ?></label>
+        <input type="checkbox" name="weekend[]" value="3" id="weekend3" <?php if(CALENDAR_WEEKEND &  8) echo 'checked="checked"'; ?> /> <label for="weekend3"><?php print_string('wednesday', 'calendar'); ?></label>
+        <input type="checkbox" name="weekend[]" value="4" id="weekend4" <?php if(CALENDAR_WEEKEND & 16) echo 'checked="checked"'; ?> /> <label for="weekend4"><?php print_string('thursday', 'calendar'); ?></label>
+        <input type="checkbox" name="weekend[]" value="5" id="weekend5" <?php if(CALENDAR_WEEKEND & 32) echo 'checked="checked"'; ?> /> <label for="weekend5"><?php print_string('friday', 'calendar'); ?></label>
+        <input type="checkbox" name="weekend[]" value="6" id="weekend6" <?php if(CALENDAR_WEEKEND & 64) echo 'checked="checked"'; ?> /> <label for="weekend6"><?php print_string('saturday', 'calendar'); ?></label>
+        <input type="checkbox" name="weekend[]" value="0" id="weekend0" <?php if(CALENDAR_WEEKEND &  1) echo 'checked="checked"'; ?> /> <label for="weekend0"><?php print_string('sunday', 'calendar'); ?></label>
         </p>
       </td>
     </tr>
@@ -60,14 +57,13 @@
         <p>
         <?php if(empty($presets)) { print_string('notimezonesexist', 'admin'); } else { ?>
         <div>
-          <nobr>
           <input type="radio" id="timezone1" name="forcetimezone" value="no" <?php if(empty($CFG->forcetimezone)) echo 'checked="checked"';?> /> <label for="timezone1"><?php print_string('timezonenotforced', 'admin'); ?></label>
-          </nobr>
+          
         </div>
         <div>
-          <nobr><input type="radio" id="timezone2" name="forcetimezone" value="force" <?php if(!empty($CFG->forcetimezone)) echo 'checked="checked"';?> /> <label for="timezone2"><?php print_string('timezoneisforcedto', 'admin'); ?></label>
+          <input type="radio" id="timezone2" name="forcetimezone" value="force" <?php if(!empty($CFG->forcetimezone)) echo 'checked="checked"';?> /> <label for="timezone2"><?php print_string('timezoneisforcedto', 'admin'); ?></label>
           <?php choose_from_menu($presets, 'timezonepreset', (empty($CFG->forcetimezone) ? '' : $CFG->forcetimezone), get_string('choose').'...', 'form.timezone2.checked=\'checked\'', ''); ?>
-          </nobr>
+          
         </div>
         <?php } ?>
         </p>
@@ -77,16 +73,13 @@
       <th>managetimezones:</th>
       <td>
         <div><?php print_string('helpmanagetimezones', 'admin'); ?></div>
-        <p>
-          <input type="submit" name="mode_timezone_update" value="<?php print_string('updatetimezones', 'admin'); ?>..." />
-        </p>
+        <p><a href="timezoneimport.php"><?php print_string('updatetimezones', 'admin'); ?>...</a> </p>
       </td>
     </tr>
-  </tbody>
+    <tr>
+      <td colspan="2" align="center">
+          <input type="submit" value="<?php print_string('savechanges'); ?>" />
+      </td>
+    </tr>
 </table>
-<?php print_simple_box_end(); ?>
-<p style="text-align: center;">
-  <input type="submit" value="<?php print_string('savechanges'); ?>" />
-</p>
-
 </form>

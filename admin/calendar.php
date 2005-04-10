@@ -28,11 +28,7 @@
 
 /// If data submitted, process and store
 
-    if(($form = data_submitted()) && confirm_sesskey()) {
-        if(isset($form->mode_timezone_update)) {
-            redirect('dst_update.php');
-            die();
-        }
+    if (($form = data_submitted()) && confirm_sesskey()) {
         // Normal configuration, just save the variables
         if(isset($form->adminseesallcourses)) {
             set_config('calendar_adminseesall', intval($form->adminseesallcourses) != 0);
@@ -84,29 +80,32 @@
     }
 
     // Include the calendar library AFTER modifying the data, so we read the latest values
-    require_once('../calendar/lib.php');
+    require_once($CFG->dirroot.'/calendar/lib.php');
 
     // Populate some variables we 're going to need in calendar.html
     $records = get_records_sql('SELECT id, name FROM '.$CFG->prefix.'timezone GROUP BY name');
     $presets = array();
 
-    if(!empty($records)) {
+    if (!empty($records)) {
         foreach($records as $preset) {
-            $presets[$preset->name] = get_string($preset->name, 'timezones');
+            if (!empty($preset->name)) {
+                $presets[$preset->name] = get_string(strtolower($preset->name), 'timezones');
+                if (substr($presets[$preset->name], 0, 1) == '[') {  // No translation found
+                    $presets[$preset->name] = $preset->name;
+                }
+            }
         }
     }
 
     asort($presets); // Sort before adding trivial presets because string sorts mess up their order
 
-    for($i = -13; $i <= 13; $i += .5) {
-        $tzstring = get_string('unspecifiedlocation', 'timezones').' / GMT';
-        if($i < 0) {
+    for ($i = -13; $i <= 13; $i += .5) {
+        $tzstring = 'GMT';
+        if ($i < 0) {
             $presets[sprintf("%.1f", $i)] = $tzstring . $i;
-        }
-        else if($i > 0) {
+        } else if ($i > 0) {
             $presets[sprintf("%.1f", $i)] = $tzstring . '+' . $i;
-        }
-        else {
+        } else {
             $presets[sprintf("%.1f", $i)] = $tzstring;
         }
     }
@@ -123,7 +122,9 @@
 
     // Main display starts here
 
+    print_simple_box_start("center", "80%");
     include('./calendar.html');
+    print_simple_box_end();
 
     print_footer();
 
