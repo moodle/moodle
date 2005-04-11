@@ -1107,7 +1107,7 @@ function calendar_get_default_courses($ignoreref = false) {
     }
 
     $courses = array();
-    if(!empty($USER->id) && isadmin($USER->id)) {
+    if(isadmin($USER->id)) {
         if(!empty($CFG->calendar_adminseesall)) {
             $courses = get_records_sql('SELECT id, 1 FROM '.$CFG->prefix.'course');
             return $courses;
