@@ -181,6 +181,19 @@ if (isadmin()) {
     </td>
 </tr>
 <tr>
+    <th><?php print_string('timezone')?>:</th>
+    <td>
+    <?php
+        $timezones = get_list_of_timezones();
+        if ($CFG->forcetimezone != 99) {
+            choose_from_menu($timezones, 'timezone', $CFG->forcetimezone, get_string('serverlocaltime'), '', '99', false, true);
+        } else {
+            choose_from_menu($timezones, 'timezone', $user->timezone, get_string('serverlocaltime'), '', '99');
+        }
+    ?>
+    </td>
+</tr>
+<tr>
     <th><?php print_string("preferredlanguage") ?>:</th>
     <td><?php if ($languages = get_list_of_languages()) {
                if (!$user->lang) {
@@ -205,19 +218,6 @@ if (isadmin()) {
 </tr>
 <?php } ?>
 <tr>
-    <th><?php print_string('timezone')?>:</th>
-    <td>
-    <?php
-        $timezones = get_list_of_timezones();
-        if ($CFG->forcetimezone != 99) {
-            choose_from_menu($timezones, 'timezone', $CFG->forcetimezone, get_string('serverlocaltime'), '', '99', false, true);
-        } else {
-            choose_from_menu($timezones, 'timezone', $user->timezone, get_string('serverlocaltime'), '', '99');
-        }
-    ?>
-    </td>
-</tr>
-<tr>
     <th><?php print_string("userdescription") ?>:</th>
     <td><?php 
         if (isset($err["description"])) {
@@ -229,6 +229,11 @@ if (isadmin()) {
     ?>
     </td>
 </tr>
+<tr>
+    <td colspan="2" style="text-align: center;"><input type="submit" value="<?php print_string("updatemyprofile") ?>" /></td>
+</tr>
+
+
 <tr>
     <td colspan="2" align="center"> <br /><b><?php print_string("followingoptional") ?>:</b></td>
 </tr>

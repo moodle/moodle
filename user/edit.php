@@ -99,13 +99,13 @@
         $usernew->htmleditor    = clean_param($usernew->htmleditor,    PARAM_INT);
         $usernew->emailstop     = clean_param($usernew->emailstop,     PARAM_INT);
 
-        if (($CFG->forcetimezone != 99) && isset($usernew->timezone)) {
-            // Don't allow changing this in any way if a timezone is forced
-            unset($usernew->timezone);
-        } else {
-            // Some replaces to prevent SQL injections
-            $usernew->timezone = str_replace(';', '',  $usernew->timezone);
-            $usernew->timezone = str_replace('\'', '', $usernew->timezone);
+        if (isset($usernew->timezone)) {
+            if ($CFG->forcetimezone != 99) { // Don't allow changing this in any way
+                unset($usernew->timezone);
+            } else { // Clean up the data a bit, just in case of injections
+                $usernew->timezone = str_replace(';', '',  $usernew->timezone);
+                $usernew->timezone = str_replace('\'', '', $usernew->timezone);
+            }
         }
 
         foreach ($usernew as $key => $data) {
