@@ -511,11 +511,6 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
         return false;
     }
 
-    if ($ignorehidden) {
-        if (!empty($whereclause)) $whereclause .= ' AND';
-        $whereclause .= ' visible = 1';
-    }
-
     if($withduration) {
         $timeclause = 'timestart + timeduration >= '.$tstart.' AND timestart <= '.$tend;
     }
@@ -531,7 +526,11 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
         $whereclause = $timeclause;
     }
 
-    return empty($whereclause) ? false : $whereclause;
+    if ($ignorehidden) {
+        $whereclause .= ' AND visible = 1';
+    }
+
+    return $whereclause;
 }
 
 function calendar_top_controls($type, $data) {
