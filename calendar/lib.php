@@ -446,21 +446,20 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
     if(is_array($users) && !empty($users)) {
         // Events from a number of users
         if(!empty($whereclause)) $whereclause .= ' OR';
-        $whereclause .= ' userid IN ('.implode(',', $users).') AND courseid = 0 AND groupid = 0';
+        $whereclause .= ' (userid IN ('.implode(',', $users).') AND courseid = 0 AND groupid = 0)';
     }
     else if(is_numeric($users)) {
         // Events from one user
         if(!empty($whereclause)) $whereclause .= ' OR';
-        $whereclause .= ' userid = '.$users.' AND courseid = 0 AND groupid = 0';
+        $whereclause .= ' (userid = '.$users.' AND courseid = 0 AND groupid = 0)';
     }
     else if($users === true) {
         // Events from ALL users
         if(!empty($whereclause)) $whereclause .= ' OR';
-        $whereclause .= ' userid != 0 AND courseid = 0 AND groupid = 0';
+        $whereclause .= ' (userid != 0 AND courseid = 0 AND groupid = 0)';
     }
     else if($users === false) {
-        // No user at all
-        // No need to do anything
+        // No user at all, do nothing
     }
 
     if(is_array($groups) && !empty($groups)) {
@@ -486,7 +485,7 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
             if(!empty($whereclause)) {
                 $whereclause .= ' OR';
             }
-            $whereclause .= ' groupid = 0 AND courseid IN ('.implode(',', $courses).')';
+            $whereclause .= ' (groupid = 0 AND courseid IN ('.implode(',', $courses).'))';
         }
         else {
             // This means NO courses, not that we don't care!
@@ -496,12 +495,12 @@ function calendar_sql_where($tstart, $tend, $users, $groups, $courses, $withdura
     else if(is_numeric($courses)) {
         // One course
         if(!empty($whereclause)) $whereclause .= ' OR';
-        $whereclause .= ' groupid = 0 AND courseid = '.$courses;
+        $whereclause .= ' (groupid = 0 AND courseid = '.$courses.')';
     }
     else if($courses === true) {
         // Events from ALL courses
         if(!empty($whereclause)) $whereclause .= ' OR';
-        $whereclause .= ' groupid = 0 AND courseid != 0';
+        $whereclause .= ' (groupid = 0 AND courseid != 0)';
     }
 
     // Security check: if, by now, we have NOTHING in $whereclause, then it means
