@@ -59,6 +59,12 @@ function resource_upgrade($oldversion) {
         modify_database('','ALTER TABLE prefix_resource ADD INDEX course (course);');
     }
 
+    if ($oldversion < 2005041100) { // replace wiki-like with markdown
+        include_once( "$CFG->dirroot/lib/wiki_to_markdown.php" );
+        $wtm = new WikiToMarkdown();
+        $wtm->update( 'resource','alltext','options' );
+    }
+
     return true;
 }
 
