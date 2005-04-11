@@ -575,11 +575,11 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
  * @param string $sql The SQL string you wish to be executed.
  * @return Found record as object. False if not found or error
  */
-function get_record_sql($sql) {
+function get_record_sql($sql, $expectmultiple=false) {
 
     global $db, $CFG;
 
-    if (isset($CFG->debug) and $CFG->debug > 7) {    // Debugging mode - don't use limit
+    if (isset($CFG->debug) && $CFG->debug > 7 && !$expectmultiple) {    // Debugging mode - don't use limit
        $limit = '';
     } else {
        $limit = ' LIMIT 1';    // Workaround - limit to one record
