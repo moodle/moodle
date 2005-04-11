@@ -402,6 +402,22 @@ function glossary_upgrade($oldversion) {
       modify_database('',"INSERT INTO prefix_log_display VALUES ('glossary', 'view entry', 'glossary_entries', 'concept');");
   }
     
+    if ($oldversion < 2005041100) { // replace wiki-like with markdown
+        include_once( "$CFG->dirroot/lib/wiki_to_markdown.php" );
+        $wtm = new WikiToMarkdown();
+        // update glossary_entries->definition
+        $sql = "select course from {$CFG->prefix}glossary,{$CFG->prefix}glossary_entries ";
+        $sql .= "where glossary.id = glossary_entries.glossaryid ";
+        $sql .= "and glossary_entries.id = ";
+        $wtm->update( 'glossary_entries','definition','format' );
+        // update glossary_comments->text
+        $sql = "select course from {$CFG->prefix}glossary,{$CFG->prefix}glossary_entries,{$CFG->prefix}glossary_comments ";
+        $sql .= "where glossary.id = glossary_entries.glossaryid ";
+        $sql .= "and glossary_entries.id = glossary_comments.entryid ";
+        $sql .= "and glossary_comments.id = ";
+        $wtm->update( 'glossary_comments','text','format',$sql );
+    }
+
   return true;
 }
 
