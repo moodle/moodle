@@ -178,11 +178,11 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
         $cell = '';
         if(CALENDAR_WEEKEND & (1 << ($dayweek % 7))) {
             // Weekend. This is true no matter what the exact range is.
-            $class = 'weekend';
+            $class = 'weekend day';
         }
         else {
             // Normal working day.
-            $class = '';
+            $class = 'day';
         }
 
         // Special visual fx if an event is defined
@@ -233,11 +233,9 @@ function calendar_get_mini($courses, $groups, $users, $cal_month = false, $cal_y
             else if(isset($typesbyday[$day]['startuser'])) {
                 $class .= ' event_user';
             }
-            $class .= ' day';
             $cell = '<a href="'.$dayhref.'" '.$popup.'>'.$day.'</a>';
         }
         else {
-            $class .= ' day';
             $cell = $day;
         }
 
