@@ -251,6 +251,10 @@ table.formtable tbody th
   margin: 2em;
 }
 
+.performanceinfo span {
+  display: block;
+}
+
 
 
 /***
