@@ -31,9 +31,6 @@
 
     add_to_log($course->id, "choice", "report", "report.php?id=$cm->id", "$choice->id",$cm->id);
 
-    print_header_simple(format_string($choice->name).": $strresponses", "",
-                 "<a href=\"index.php?id=$course->id\">$strchoices</a> ->
-                  <a href=\"view.php?id=$cm->id\">".format_string($choice->name,true)."</a> -> $strresponses", "");
 
 /// Check to see if groups are being used in this choice
     if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
@@ -81,6 +78,84 @@
         }
     }
     ksort($useranswer);
+    
+    //print spreadsheet if one is asked for:
+    if ($download == "xls") {
+
+        require_once("$CFG->libdir/excel/Worksheet.php");
+        require_once("$CFG->libdir/excel/Workbook.php");
+  
+      // HTTP headers
+      $filename = $course->shortname."_".$choice->name.".xls";
+  
+      header("Content-type: application/vnd.ms-excel");
+      header("Content-Disposition: attachment; filename=$filename" );
+      header("Expires: 0");
+      header("Cache-Control: must-revalidate, post-check=0,pre-check=0");
+      header("Pragma: public");
+  
+      // Creating a workbook
+      $workbook = new Workbook("-");
+      // Creating the first worksheet
+      $myxls =& $workbook->add_worksheet('Responses');
+
+        $myxls->write_string(0,0,get_string("lastname"));
+        $myxls->write_string(0,1,get_string("firstname"));
+        $myxls->write_string(0,2,get_string("idnumber"));
+        $myxls->write_string(0,3,get_string("choice","choice"));
+              
+        
+    /// generate the data for the body of the spreadsheet
+      $i=0;  
+      $row=1;
+      if ($users) foreach ($users as $user) {
+          if (!($answers[$user->id]->optionid==0 && isadmin($user->id)) && !($answers[$user->id]->optionid==0 && isteacher($course->id, $user->id) && !(isteacheredit($course->id, $user->id)) )  ) { //make sure admins and hidden teachers are not shown in not answered yet column.
+              $myxls->write_string($row,0,$user->lastname);
+              $myxls->write_string($row,1,$user->firstname);
+              $studentid=(($user->idnumber != "") ? $user->idnumber : " ");
+              $myxls->write_string($row,2,$studentid);
+              $useroption = choice_get_option_text($choice, $answers[$user->id]->optionid);
+              if (isset($useroption)) {
+                  $myxls->write_string($row,3,$useroption);
+              }    
+          $row++;
+          }
+         $pos=4;
+      }        
+  
+      $workbook->close();
+      exit;
+    } 
+    // print text file     
+    if ($download == "txt") {
+    $filename = $course->shortname."_".$choice->name.".txt";
+        header("Content-Type: application/download\n"); 
+        header("Content-Disposition: attachment; filename=\"".$filename."\"");
+
+    /// Print names of all the fields
+
+        echo get_string("firstname")."\t".get_string("lastname") . "\t". get_string("idnumber") . "\t";
+        echo get_string("choice","choice"). "\n";        
+        
+    /// generate the data for the body of the spreadsheet
+      $i=0;  
+      $row=1;
+      if ($users) foreach ($users as $user) {
+          if (!($answers[$user->id]->optionid==0 && isadmin($user->id)) && !($answers[$user->id]->optionid==0 && isteacher($course->id, $user->id) && !(isteacheredit($course->id, $user->id)) )  ) { //make sure admins and hidden teachers are not shown in not answered yet column.
+              echo $user->lastname;
+              echo "\t".$user->firstname;
+              $studentid=(($user->idnumber != "") ? $user->idnumber : " ");
+              echo "\t". $studentid."\t";
+              echo choice_get_option_text($choice, $answers[$user->id]->optionid). "\n";
+          }
+      $row++;
+      }      
+  exit;
+}
+    
+    print_header_simple(format_string($choice->name).": $strresponses", "",
+                 "<a href=\"index.php?id=$course->id\">$strchoices</a> ->
+                  <a href=\"view.php?id=$cm->id\">".format_string($choice->name,true)."</a> -> $strresponses", "");
 
     switch ($format) {
         case CHOICE_PUBLISH_NAMES:
@@ -184,7 +259,19 @@
 
             break;
     }
+    
+    echo "<br />\n";
+    echo "<table border=\"0\" align=\"center\"><tr>\n";
+    echo "<td>";
+    unset($options);
+    $options["id"] = "$cm->id";   
+    $options["download"] = "xls";
+    print_single_button("report.php", $options, get_string("downloadexcel"));
+    echo "</td><td>";
+    $options["download"] = "txt";    
+    print_single_button("report.php", $options, get_string("downloadtext"));
 
+    echo "</td></tr></table>";
 print_footer($course);
 
 
