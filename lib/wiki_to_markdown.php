@@ -377,26 +377,24 @@ class WikiToMarkdown {
     // $course = if supplied, the query to get the courseid, if not get from the 'course' field 
     //   ($id of record is tacked on right at the end, so phrase accordingly)
     // returns a count of records converted 
-    define( 'FORMAT_WIKI',3 );
-    define( 'FORMAT_MARKDOWN',4 );
     $count = 0;
-    $records = get_records( $thing,$formatfield,FORMAT_WIKI );
-    foreach( $records as $record ) {
-      $text = $record->$textfield;
-      $id = $record->id;
-      if (!$courseisql) {
-        $courseid = $record->course;
-      }
-      else {
-        $r = get_record( $coursesql . "$id" );
-        $courseid = $r->course;
-      }
-      $newtext = $this->convert( $text,$courseid );
+    if ($records = get_records( $thing,$formatfield,FORMAT_WIKI )) {
+        foreach( $records as $record ) {
+          $text = $record->$textfield;
+          $id = $record->id;
+          if (!$courseisql) {
+            $courseid = $record->course;
+          } else {
+            $r = get_record( $coursesql . "$id" );
+            $courseid = $r->course;
+          }
+          $newtext = $this->convert( $text,$courseid );
       
-      $record->$textfield = $newtext;
-      $record->$formatfield = FORMAT_MARKDOWN;
-      update_record( $thing, addslashes_object( $record ) );
-      $count++;
+          $record->$textfield = $newtext;
+          $record->$formatfield = FORMAT_MARKDOWN;
+          update_record( $thing, addslashes_object( $record ) );
+          $count++;
+        }
     }
     return $count; 
   }
