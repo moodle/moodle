@@ -1146,6 +1146,24 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
     return (integer)$id;
 }
 
+/** 
+ * Escape all dangerous characters in a data record
+ *
+ * $dataobject is an object containing needed data
+ * Run over each field exectuting addslashes() function
+ * to escape SQL unfriendly characters (e.g. quotes)
+ * Handy when writing back data read from the database
+ *
+ * @param $dataobject Object containing the database record
+ * @return object Same object with neccessary characters escaped
+ */
+function addslashes_object( $dataobject ) {
+    $a = get_object_vars( $dataobject);
+    foreach ($a as $key=>$value) {
+      $a[$key] = addslashes( $value );
+    }
+    return (object)$a;
+}
 
 /**
  * Update a record in a table
@@ -1157,7 +1175,7 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
  * @uses $CFG
  * @uses $db
  * @param string $table The database table to be checked against.
- * @param array $dataobject An associative array with contents equal to fieldname=>fieldvalue. Must have an entry for 'id' to map to the table specified.
+ * @param array $dataobject An object with contents equal to fieldname=>fieldvalue. Must have an entry for 'id' to map to the table specified.
  * @return boolean
  * @todo Finish documenting this function. Dataobject is actually an associateive array, correct?
  */
