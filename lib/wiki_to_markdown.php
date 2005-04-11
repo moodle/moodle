@@ -271,26 +271,26 @@ class WikiToMarkdown {
     // Replace picture resource link 
     if ($CFG->slasharguments) {
       $line = eregi_replace( "/([a-zA-Z0-9./_-]+)(png|gif|jpg)\(([^)]+)\)",
-        "![\\3]($CFG->wwwroot/file.php/$this->courseid\\1\\2)", $line );
+        "![\\3]($CFG->wwwroot/file.php/$this->courseid/\\1\\2)", $line );
     } else {
       $line = eregi_replace( "/([a-zA-Z0-9./_-]+)(png|gif|jpg)\(([^)]+)\)",
-        "![\\3]($CFG->wwwroot/file.php\?file=$this->courseid\\1\\2)", $line );
+        "![\\3]($CFG->wwwroot/file.php\?file=$this->courseid/\\1\\2)", $line );
     }
 
     // Replace file resource link
     if ($CFG->slasharguments) {
       $line = eregi_replace( "file:/([[:alnum:]/._-]+)\(([^)]+)\)",
-        "[\\2]($CFG->wwwroot/file.php/$this->courseid\\1)", $line );
+        "[\\2]($CFG->wwwroot/file.php/$this->courseid/\\1)", $line );
     } else {
       $line = eregi_replace( "file:/([[:alnum:]/._-]+)\(([^)]+)\)",
-        "[\\2]($CFG->wwwroot/file.php\?file=$this->courseid\\1)", $line );
+        "[\\2]($CFG->wwwroot/file.php\?file=$this->courseid/\\1)", $line );
     }
  
 
     return $line;
   }
 
-  function convert( $contenti,$courseid ) {
+  function convert( $content,$courseid ) {
 
     // main entry point for processing Wiki-like text
     // $content is string containing text with Wiki-Like formatting
@@ -369,7 +369,7 @@ class WikiToMarkdown {
     return $buffer;
   }
 
-  function convert_moodle_thing( $thing, $textfield, $formatfield, $coursesql='' ) {
+  function update( $thing, $textfield, $formatfield, $coursesql='' ) {
     // converts the text in a particular activity (or sub-activity)
     // $thing = the database name for that 'thing' (eg, resource, choice)
     // $textfield = the name of the field that might hold the wiki-text
@@ -391,14 +391,14 @@ class WikiToMarkdown {
         $r = get_record( $coursesql . "$id" );
         $courseid = $r->course;
       }
-      $newtext = $this->convert( $texti,$courseid );
+      $newtext = $this->convert( $text,$courseid );
       
       $record->$textfield = $newtext;
       $record->$formatfield = FORMAT_MARKDOWN;
-      update_record( $thing, $record );
+      update_record( $thing, addslashes_object( $record ) );
       $count++;
     }
-    return $log; 
+    return $count; 
   }
 }
 ?>
