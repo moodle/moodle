@@ -2446,7 +2446,7 @@ function get_list_of_languages() {
             unset($string);
         }
     }
-    if ( defined('FULLME') && FULLME !== 'cron' && !empty($CFG->langcache)) {
+    if ( defined('FULLME') && FULLME === 'cron' && !empty($CFG->langcache)) {
         if ($file = fopen($CFG->dataroot .'/cache/languages', 'w')) {
             foreach ($languages as $key => $value) {
                 fwrite($file, "$key $value\n");
