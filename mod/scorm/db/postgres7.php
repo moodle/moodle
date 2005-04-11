@@ -102,6 +102,11 @@ function scorm_upgrade($oldversion) {
     if ($oldversion < 2005040400) {
         table_column("scorm_scoes", "", "parameters", "VARCHAR", "255", "", "", "NOT NULL", "launch");
     }
+    
+    if ($oldversion < 2005040700) {
+    	execute_sql("DROP INDEX {$CFG->prefix}scorm_scoes_track_userid_idx;",false); 
+    	modify_database('','CREATE INDEX prefix_scorm_scoes_track_userdata_idx ON  prefix_scorm_scoes_track (userid, scormid, scoid);');
+    }
 
     return true;
 }
