@@ -54,6 +54,7 @@
     optional_variable($_REQUEST['id']);
     optional_variable($_REQUEST['type'], 'select');
     $_REQUEST['id'] = intval($_REQUEST['id']); // Always a good idea, against SQL injections
+    $urlcourse = optional_param('course', 0, PARAM_INT);
 
     if(!$site = get_site()) {
         redirect($CFG->wwwroot.'/'.$CFG->admin.'/index.php');
@@ -74,18 +75,16 @@
     }
 
     // If a course has been supplied in the URL, change the filters to show that one
-    if(!empty($_GET['course'])) {
-        if(is_numeric($_GET['course']) && $_GET['course'] > 0 && record_exists('course', 'id', $_GET['course'])) {
-            if($_GET['course'] == 1) {
-                // If coming from the home page, show all courses
-                $SESSION->cal_courses_shown = calendar_get_default_courses(true);
-                calendar_set_referring_course(0);
-            }
-            else {
-                // Otherwise show just this one
-                $SESSION->cal_courses_shown = intval($_GET['course']);
-                calendar_set_referring_course($SESSION->cal_courses_shown);
-            }
+    if($urlcourse > 0 && record_exists('course', 'id', $urlcourse)) {
+        if($urlcourse == SITEID) {
+            // If coming from the site page, show all courses
+            $SESSION->cal_courses_shown = calendar_get_default_courses(true);
+            calendar_set_referring_course(0);
+        }
+        else {
+            // Otherwise show just this one
+            $SESSION->cal_courses_shown = $urlcourse;
+            calendar_set_referring_course($SESSION->cal_courses_shown);
         }
     }
 
