@@ -59,6 +59,8 @@ define('FORMAT_PLAIN',    '2');   // Plain text (even tags are printed in full)
 
 /**
  * Wiki-formatted text
+ * Deprecated: left here just to note that '3' is not used (at the moment)
+ * and to catch any latent wiki-like text (which generates an error)
  */
 define('FORMAT_WIKI',     '3');   // Wiki-formatted text
 
@@ -940,7 +942,6 @@ function parse_slash_arguments($string, $i=0) {
  * @uses FORMAT_MOODLE
  * @uses FORMAT_HTML
  * @uses FORMAT_PLAIN
- * @uses FORMAT_WIKI
  * @uses FORMAT_MARKDOWN
  * @return array
  */
@@ -949,7 +950,6 @@ function format_text_menu() {
     return array (FORMAT_MOODLE => get_string('formattext'),
                   FORMAT_HTML   => get_string('formathtml'),
                   FORMAT_PLAIN  => get_string('formatplain'),
-                  FORMAT_WIKI   => get_string('formatwiki'),
                   FORMAT_MARKDOWN  => get_string('formatmarkdown'));
 }
 
@@ -1008,12 +1008,8 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
             break;
 
         case FORMAT_WIKI:
-            $text = wiki_to_html($text,$courseid);
-            $text = rebuildnolinktag($text);
-            if (!isset($options->noclean)) {
-                $text = clean_text($text, $format);
-            }
-            $text = filter_text($text, $courseid);
+            // this format is deprecated
+            error( "Wiki-like format is deprecated. This should not happen. Please post a bug report" );
             break;
 
         case FORMAT_MARKDOWN:
@@ -1392,24 +1388,6 @@ function text_to_html($text, $smiley=true, $para=true, $newlines=true) {
     } else {
         return $text;
     }
-}
-
-/**
- * Given Wiki formatted text, make it into XHTML using external function
- *
- * @uses $CFG
- * @param string $text The text to be converted.
- * @param int $courseid The id, as found in 'course' table, of the course this text is being placed in.
- * @return string
- */
-function wiki_to_html($text, $courseid) {
-
-    global $CFG;
-
-    require_once($CFG->libdir .'/wiki.php');
-
-    $wiki = new Wiki;
-    return $wiki->format($text, $courseid);
 }
 
 /**
