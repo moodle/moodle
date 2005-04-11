@@ -1,33 +1,6 @@
 <?php
-///////////////////////////////////////////////////////////////////////////
-// wiki.php - class for Wiki style formatting
-//
-// Transforms input string with Wiki style formatting into HTML
-// 
-//
-///////////////////////////////////////////////////////////////////////////
-//                                                                       //
-// NOTICE OF COPYRIGHT                                                   //
-//                                                                       //
-//                                                                       //
-// Copyright (C) 2003 Howard Miller - GUIDE - University of Glasgow 
-// guide.gla.ac.uk
-//                                                                       //
-// This program is free software; you can redistribute it and/or modify  //
-// it under the terms of the GNU General Public License as published by  //
-// the Free Software Foundation; either version 2 of the License, or     //
-// (at your option) any later version.                                   //
-//                                                                       //
-// This program is distributed in the hope that it will be useful,       //
-// but WITHOUT ANY WARRANTY; without even the implied warranty of        //
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         //
-// GNU General Public License for more details:                          //
-//                                                                       //
-//          http://www.gnu.org/copyleft/gpl.html                         //
-//                                                                       //
-///////////////////////////////////////////////////////////////////////////
-
-require_once( "../config.php" );
+// Utility function to convert wiki-like to Markdown format
+// Howard Miller, 2005
 
 // state defines
 define( "STATE_NONE",1 ); // blank line has been detected, so looking for first line on next para
@@ -47,7 +20,6 @@ class WikiToMarkdown {
   var $block_state;
   var $list_state;
   var $list_depth;
-  var $spelling_on;
   var $list_backtrack;
   var $output; // output buffer
   var $courseid;
@@ -318,7 +290,7 @@ class WikiToMarkdown {
     return $line;
   }
 
-  function convert( $content, $courseid ) {
+  function convert( $contenti,$courseid ) {
 
     // main entry point for processing Wiki-like text
     // $content is string containing text with Wiki-Like formatting
@@ -397,34 +369,37 @@ class WikiToMarkdown {
     return $buffer;
   }
 
+  function convert_moodle_thing( $thing, $textfield, $formatfield, $coursesql='' ) {
+    // converts the text in a particular activity (or sub-activity)
+    // $thing = the database name for that 'thing' (eg, resource, choice)
+    // $textfield = the name of the field that might hold the wiki-text
+    // $formatfield = the name of the field that contains the format type
+    // $course = if supplied, the query to get the courseid, if not get from the 'course' field 
+    //   ($id of record is tacked on right at the end, so phrase accordingly)
+    // returns a count of records converted 
+    define( 'FORMAT_WIKI',3 );
+    define( 'FORMAT_MARKDOWN',4 );
+    $count = 0;
+    $records = get_records( $thing,$formatfield,FORMAT_WIKI );
+    foreach( $records as $record ) {
+      $text = $record->$textfield;
+      $id = $record->id;
+      if (!$courseisql) {
+        $courseid = $record->course;
+      }
+      else {
+        $r = get_record( $coursesql . "$id" );
+        $courseid = $r->course;
+      }
+      $newtext = $this->convert( $texti,$courseid );
+      
+      $record->$textfield = $newtext;
+      $record->$formatfield = FORMAT_MARKDOWN;
+      update_record( $thing, $record );
+      $count++;
+    }
+    return $log; 
+  }
 }
-
-// actual code starts here...
-
-// find the resources that contain wiki-like
-$resources = get_records( "resource", "options", "3" );
-
-$wiki = new WikiToMarkdown; 
-// iterate through and convert
-foreach ($resources as $resource) {
-  $alltext = $resource->alltext;
-  $courseid = $resource->courseid;
-  $id = $resource->id;
-  $newtext = $wiki->convert( $alltext, $courseid );
- 
-  $resource->alltext = $newtext;
-  $resource->options = "4"; // 4=Markdown
-  update_record( "resource", $resource); 
-
-  echo "<p>Converted Wiki-Like to Markdown ID=$id</p>";
-
-  // echo "<pre>$alltext</pre>\n";
-  // echo "<hr />\n";
-  // echo "<pre>$newtext</pre>\n";
-
-  
-}
-
-
 ?>
 
