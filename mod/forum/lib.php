@@ -989,11 +989,17 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
         } else {
             $selectgroup = '';
         }
+        $selectcourse = " AND d.course = '$courseid'";
     } else {
         $notteacherforum = "";
         $selectgroup = '';
         $onlyvisible = "";
         $onlyvisibletable = "";
+        if ($courseid == SITEID && isadmin()) {
+            $selectcourse = '';
+        } else {
+            $selectcourse = " AND d.course = '$courseid'";
+        }
     }
 
     $limit = sql_paging_limit($page, $recordsperpage);
@@ -1038,8 +1044,7 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
                   {$CFG->prefix}forum f $onlyvisibletable
              WHERE ($messagesearch)
                AND p.userid = u.id
-               AND p.discussion = d.id
-               AND d.course = '$courseid'
+               AND p.discussion = d.id $selectcourse
                AND d.forum = f.id $notteacherforum $onlyvisible $selectgroup $extrasql";
 
     $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");

@@ -82,6 +82,11 @@
                     $fullsubject .= " -> <a href=\"discuss.php?d=$post->discussion&amp;parent=$post->id\">".format_string($post->subject,true)."</a>";
                 }
             }
+
+            if (isadmin() && $course->id == SITEID) {
+                $postcoursename = get_field('course', 'shortname', 'id', $forum->course);
+                $fullsubject = '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$forum->course.'">'.$postcoursename.'</a> -> '. $fullsubject;
+            }
     
             $post->subject = $fullsubject;
     
