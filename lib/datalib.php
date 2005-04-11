@@ -366,9 +366,9 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
  *
  * @uses $CFG
  * @uses $db
- * @param string $table ?
- * @param string $column ?
- * @todo Finish documenting this function
+ * @param string $table The name of the database table
+ * @param string $column The name of the field in the table
+ * @return string Field type or false if error
  */
 
 function column_type($table, $column) {
@@ -398,7 +398,7 @@ function column_type($table, $column) {
  * @param string $value2 The value to match if field2 is specified.
  * @param string $field3 The third table field to be checked for a given value. 
  * @param string $value3 The value to match if field3 is specified.
- * @return boolean True is record exists
+ * @return boolean True if record exists
  */
 function record_exists($table, $field1='', $value1='', $field2='', $value2='', $field3='', $value3='') {
 
@@ -448,7 +448,7 @@ function record_exists_sql($sql) {
     } else {
         return false;
     }
-}
+	}
 
 
 /**
@@ -546,7 +546,6 @@ function count_records_sql($sql) {
  * @param    string  $field3 The name of the field for the third criteria
  * @param    string  $value3 The value of the field for the third criteria
  * @return   object(fieldset) A fieldset object containing the first record selected
- * @todo Isn't the return from this function an associative array (array type) ?
  */
 function get_record($table, $field1, $value1, $field2='', $value2='', $field3='', $value3='', $fields='*') {
 
@@ -568,12 +567,13 @@ function get_record($table, $field1, $value1, $field2='', $value2='', $field3=''
  * Get a single record as an object using the specified SQL statement
  *
  * A LIMIT is normally added to only look for 1 record
+ * If debugging is OFF only the first record is returned even if there is
+ * more than one matching record!
  *
  * @uses $CFG
  * @uses $db
  * @param string $sql The SQL string you wish to be executed.
- * @return boolean
- * @todo include code example of SQL calls including using LIMIT for only 1 record
+ * @return Found record as object. False if not found or error
  */
 function get_record_sql($sql) {
 
@@ -622,7 +622,7 @@ function get_record_sql($sql) {
  * @param string $table The database table to be checked against.
  * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return array An associative array with the results from the SQL call.
+ * @return array|false Returns an array of found records (as objects) or false if no records or error occured.
  */
 function get_record_select($table, $select='', $fields='*') {
 
@@ -646,14 +646,13 @@ function get_record_select($table, $select='', $fields='*') {
  *
  * @uses $CFG
  * @param string $table The database table to be checked against.
-  * @param string $field ?
-  * @param string $value ?
-  * @param string $sort ?
+  * @param string $field The database field name to search
+  * @param string $value The value to search for in $field
+  * @param string $sort Sort order (as valid SQL sort parameter)
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @param int $limitfrom ?
- * @param int $limitnum ?
- * @return array|false An associative array with the results from the SQL call or false if error.
- * @todo Finish documenting this function
+ * @param int $limitfrom Return a subset of results starting at this value (*must* set $limitnum)
+ * @param int $limitnum Return a subset of results, return this number (*must* set $limitfrom)
+ * @return array|false Returns an array of found records (as objects) or false if no records or error occured.
  */
 function get_records($table, $field='', $value='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
 
@@ -689,12 +688,11 @@ function get_records($table, $field='', $value='', $sort='', $fields='*', $limit
  * @uses $CFG
  * @param string $table The database table to be checked against.
  * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
- * @param string $sort ?
+ * @param string $sort  Sort order (as valid SQL sort parameter)
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @param int $limitfrom ?
- * @param int $limitnum ?
- * @return array|false An associative array with the results from the SQL call or false if error.
- * @todo Finish documenting this function
+ * @param int $limitfrom Return a subset of results starting at this value (*must* set $limitnum)
+ * @param int $limitnum Return a subset of results, return this number (*must* set $limitfrom)
+ * @return array|false Returns an array of found records (as objects) or false if no records or error occured.
  */
 function get_records_select($table, $select='', $sort='', $fields='*', $limitfrom='', $limitnum='') {
 
@@ -728,12 +726,11 @@ function get_records_select($table, $select='', $sort='', $fields='*', $limitfro
  *
  * @uses $CFG
  * @param string $table The database table to be checked against.
- * @param string $field ?
- * @param string $values ?
- * @param string $sort ?
+ * @param string $field The field to search
+ * @param string $values Comma separated list of possible value
+ * @param string $sort Sort order (as valid SQL sort parameter)
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return array|false An associative array with the results from the SQL call or false if error.
- * @todo Finish documenting this function
+ * @return array|false Returns an array of found records (as objects) or false if no records or error occured.
  */
 function get_records_list($table, $field='', $values='', $sort='', $fields='*') {
 
@@ -763,7 +760,7 @@ function get_records_list($table, $field='', $values='', $sort='', $fields='*') 
  * @uses $CFG
  * @uses $db
  * @param string $sql The SQL string you wish to be executed.
- * @return array|false Returns an associative array with found records or false if no records or error occured.
+ * @return array|false Returns an array of found records (as objects) or false if no records or error occured.
  */
 function get_records_sql($sql) {
 
@@ -793,7 +790,7 @@ function get_records_sql($sql) {
 }
 
 /**
-* Get a number of records as an array of objects
+* Get a number of first two columns in records as an associative array of objects
 *
 * Can optionally be sorted eg "time ASC" or "time DESC"
 * If "fields" is specified, only those fields are returned
@@ -801,12 +798,11 @@ function get_records_sql($sql) {
 *
  * @uses $CFG
  * @param string $table The database table to be checked against.
- * @param string $field ?
- * @param string $value ?
- * @param string $sort ?
+ * @param string $field The name of the field to search
+ * @param string $value The value to search for
+ * @param string $sort Sort order (optional) - a valid SQL order parameter
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return array An associative array with the results from the SQL call.
-* @todo Finish documenting this function
+ * @return array|boolean An associative array with the results from the SQL call. False if error.
 */
 function get_records_menu($table, $field='', $value='', $sort='', $fields='*') {
 
@@ -827,7 +823,7 @@ function get_records_menu($table, $field='', $value='', $sort='', $fields='*') {
 
 
 /**
- * Get a number of records as an array of values
+ * Get a number of records (first 2 columns)  as an associative array of values
  * 
  * Can optionally be sorted eg "time ASC" or "time DESC"
  * "select" is a fragment of SQL to define the selection criteria
@@ -836,10 +832,9 @@ function get_records_menu($table, $field='', $value='', $sort='', $fields='*') {
  * @uses $CFG
  * @param string $table The database table to be checked against.
  * @param string $select A fragment of SQL to be used in a where clause in the SQL call.
- * @param string $sort ?
+ * @param string $sort Sort order (optional) - a valid SQL order parameter
  * @param string $fields A comma separated list of fields to be returned from the chosen table.
- * @return array An associative array with the results from the SQL call.
- * @todo Finish documenting this function
+ * @return array|boolean  An associative array with the results from the SQL call. False if error
  */
 function get_records_select_menu($table, $select='', $sort='', $fields='*') {
 
@@ -858,7 +853,7 @@ function get_records_select_menu($table, $select='', $sort='', $fields='*') {
 
 
 /**
- * Retrieve an array of the first two columns returned from a SQL statment.
+ * Retrieve an associative array of the first two columns returned from a SQL statment.
  *
  * Given a SQL statement, this function returns an associative
  * array of the first two columns.  This is most useful in
@@ -868,7 +863,7 @@ function get_records_select_menu($table, $select='', $sort='', $fields='*') {
  * @uses $CFG
  * @uses $db
  * @param string $sql The SQL string you wish to be executed.
- * @return boolean
+ * @return array|boolean An associative array with the results from the SQL call. False if error.
  * @todo Finish documenting this function
  */
 function get_records_sql_menu($sql) {
