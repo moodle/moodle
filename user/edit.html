@@ -209,7 +209,7 @@ if (isadmin()) {
     <td>
     <?php
         $timezones = get_list_of_timezones();
-        if (!empty($CFG->forcetimezone)) {
+        if ($CFG->forcetimezone != 99) {
             choose_from_menu($timezones, 'timezone', $CFG->forcetimezone, get_string('serverlocaltime'), '', '99', false, true);
         } else {
             choose_from_menu($timezones, 'timezone', $user->timezone, get_string('serverlocaltime'), '', '99');
