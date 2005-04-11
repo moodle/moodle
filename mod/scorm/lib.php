@@ -532,14 +532,14 @@ function scorm_parse($basedir,$file,$scorm_id) {
             $sco->launch = $resources[($scoes[$j]['identifierref'])]['href'];
             
             if (!isset($scoes[$j]['parameters'])) {
-        	$scoes[$j]['paramenters'] = '';
+        	$scoes[$j]['parameters'] = '';
             } 
-            $sco->paramenters = $scoes[$j]['parameters'];
+            $sco->parameters = $scoes[$j]['parameters'];
         
-            if (!isset($resources[($scoes[$j]['identifierref'])]['type'])) {
-        	$resources[($scoes[$j]['identifierref'])]['type'] = '';
+            if (!isset($resources[($scoes[$j]['identifierref'])]['scormtype'])) {
+        	$resources[($scoes[$j]['identifierref'])]['scormtype'] = '';
             }
-    	    $sco->type = $resources[($scoes[$j]['identifierref'])]['type'];
+    	    $sco->scormtype = $resources[($scoes[$j]['identifierref'])]['scormtype'];
     	
     	    if (!isset($scoes[$j]['previous'])) {
         	$scoes[$j]['previous'] = 0;
@@ -566,7 +566,7 @@ function scorm_parse($basedir,$file,$scorm_id) {
     	    	$sco->title = $label;
     	    	$sco->parent = '/';
     	    	$sco->launch = $resource['href'];
-    	    	$sco->type = $resource['type'];
+    	    	$sco->scormtype = $resource['type'];
     	    	$id = insert_record('scorm_scoes',$sco);
     	    	
     	    	if ($launch == 0) {
