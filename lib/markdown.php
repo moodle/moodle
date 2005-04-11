@@ -6,20 +6,19 @@
 # Copyright (c) 2004 John Gruber  
 # <http://daringfireball.net/projects/markdown/>
 #
-# Copyright (c) 2004 Michel Fortin - Translation to PHP  
+# Copyright (c) 2004 Michel Fortin - PHP Port  
 # <http://www.michelf.com/projects/php-markdown/>
 #
-
 
 
 global	$MarkdownPHPVersion, $MarkdownSyntaxVersion,
 		$md_empty_element_suffix, $md_tab_width,
 		$md_nested_brackets_depth, $md_nested_brackets, 
-		$md_escape_table, $md_backslash_escape_table;
+		$md_escape_table, $md_backslash_escape_table, 
+		$md_list_level;
 
-
-$MarkdownPHPVersion    = '1.0'; # Sat 21 Aug 2004
-$MarkdownSyntaxVersion = '1.0'; # Fri 20 Aug 2004
+$MarkdownPHPVersion    = '1.0.1'; # Fri 17 Dec 2004
+$MarkdownSyntaxVersion = '1.0.1'; # Sun 12 Dec 2004
 
 
 #
@@ -34,7 +33,7 @@ $md_tab_width = 4;
 Plugin Name: Markdown
 Plugin URI: http://www.michelf.com/projects/php-markdown/
 Description: <a href="http://daringfireball.net/projects/markdown/syntax">Markdown syntax</a> allows you to write using an easy-to-read, easy-to-write plain text format. Based on the original Perl version by <a href="http://daringfireball.net/">John Gruber</a>. <a href="http://www.michelf.com/projects/php-markdown/">More...</a>
-Version: 1.0
+Version: 1.0.1
 Author: Michel Fortin
 Author URI: http://www.michelf.com/
 */
@@ -48,6 +47,7 @@ if (isset($wp_version)) {
 	add_filter('the_excerpt', 'Markdown', 6);
 	add_filter('comment_text', 'Markdown', 6);
 }
+
 
 # -- bBlog Plugin Info --------------------------------------------------------
 function identify_modifier_markdown() {
@@ -109,7 +109,10 @@ $md_escape_table = array(
 	"]" => md5("]"),
 	"(" => md5("("),
 	")" => md5(")"),
+	">" => md5(">"),
 	"#" => md5("#"),
+	"+" => md5("+"),
+	"-" => md5("-"),
 	"." => md5("."),
 	"!" => md5("!")
 );
@@ -157,10 +160,6 @@ function Markdown($text) {
 	# Strip link definitions, store in hashes.
 	$text = _StripLinkDefinitions($text);
 
-	# _EscapeSpecialChars() must be called very early, to get
-	# backslash escapes processed.
-	$text = _EscapeSpecialChars($text);
-
 	$text = _RunBlockGamut($text);
 
 	$text = _UnescapeSpecialChars($text);
@@ -174,9 +173,12 @@ function _StripLinkDefinitions($text) {
 # Strips link definitions from text, stores the URLs and titles in
 # hash references.
 #
+	global $md_tab_width;
+	$less_than_tab = $md_tab_width - 1;
+
 	# Link defs are in the form: ^[id]: url "optional title"
 	$text = preg_replace_callback('{
-						^[ \t]*\[(.+)\]:	# id = $1
+						^[ ]{0,'.$less_than_tab.'}\[(.+)\]:	# id = $1
 						  [ \t]*
 						  \n?				# maybe *one* newline
 						  [ \t]*
@@ -185,7 +187,7 @@ function _StripLinkDefinitions($text) {
 						  \n?				# maybe one newline
 						  [ \t]*
 						(?:
-							# Todo: Titles are delimited by "quotes" or (parens).
+							(?<=\s)			# lookbehind for whitespace
 							["(]
 							(.+?)			# title = $3
 							[")]
@@ -202,12 +204,15 @@ function _StripLinkDefinitions_callback($matches) {
 	$link_id = strtolower($matches[1]);
 	$md_urls[$link_id] = _EncodeAmpsAndAngles($matches[2]);
 	if (isset($matches[3]))
-		$md_titles[$link_id] = htmlentities($matches[3]);
+		$md_titles[$link_id] = str_replace('"', '&quot;', $matches[3]);
 	return ''; # String that will replace the block
 }
 
 
 function _HashHTMLBlocks($text) {
+	global $md_tab_width;
+	$less_than_tab = $md_tab_width - 1;
+
 	# Hashify HTML blocks:
 	# We only want to do this for block-level HTML tags, such as headers,
 	# lists, and tables. That's because we still want to wrap <p>s around
@@ -270,16 +275,38 @@ function _HashHTMLBlocks($text) {
 					\A\n?			# the beginning of the doc
 				)
 				(						# save in $1
-					[ \t]*
+					[ ]{0,'.$less_than_tab.'}
 					<(hr)				# start tag = $2
 					\b					# word break
 					([^<>])*?			# 
 					/?>					# the matching end tag
+					[ \t]*
 					(?=\n{2,}|\Z)		# followed by a blank line or end of document
 				)
 		}x',
 		'_HashHTMLBlocks_callback',
 		$text);
+
+	# Special case for standalone HTML comments:
+	$text = preg_replace_callback('{
+				(?:
+					(?<=\n\n)		# Starting after a blank line
+					|				# or
+					\A\n?			# the beginning of the doc
+				)
+				(						# save in $1
+					[ ]{0,'.$less_than_tab.'}
+					(?s:
+						<!
+						(--.*?--\s*)+
+						>
+					)
+					[ \t]*
+					(?=\n{2,}|\Z)		# followed by a blank line or end of document
+				)
+			}x',
+			'_HashHTMLBlocks_callback',
+			$text);
 
 	return $text;
 }
@@ -303,9 +330,9 @@ function _RunBlockGamut($text) {
 
 	# Do Horizontal Rules:
 	$text = preg_replace(
-		array('/^( ?\* ?){3,}$/m',
-			  '/^( ?- ?){3,}$/m',
-			  '/^( ?_ ?){3,}$/m'),
+		array('{^[ ]{0,2}([ ]?\*[ ]?){3,}[ \t]*$}mx',
+			  '{^[ ]{0,2}([ ]? -[ ]?){3,}[ \t]*$}mx',
+			  '{^[ ]{0,2}([ ]? _[ ]?){3,}[ \t]*$}mx'),
 		"\n<hr$md_empty_element_suffix\n", 
 		$text);
 
@@ -314,9 +341,6 @@ function _RunBlockGamut($text) {
 	$text = _DoCodeBlocks($text);
 
 	$text = _DoBlockQuotes($text);
-
-	# Make links out of things like `<http://example.com/>`
-	$text = _DoAutoLinks($text);
 
 	# We already ran _HashHTMLBlocks() before, in Markdown(), but that
 	# was to escape raw HTML in the original Markdown source. This time,
@@ -336,16 +360,23 @@ function _RunSpanGamut($text) {
 # tags like paragraphs, headers, and list items.
 #
 	global $md_empty_element_suffix;
+
 	$text = _DoCodeSpans($text);
 
-	# Fix unencoded ampersands and <'s:
-	$text = _EncodeAmpsAndAngles($text);
+	$text = _EscapeSpecialChars($text);
 
 	# Process anchor and image tags. Images must come first,
 	# because ![foo][f] looks like an anchor.
 	$text = _DoImages($text);
 	$text = _DoAnchors($text);
 
+	# Make links out of things like `<http://example.com/>`
+	# Must come after _DoAnchors(), because you can use < and >
+	# delimiters in inline links like [this](<url>).
+	$text = _DoAutoLinks($text);
+
+	# Fix unencoded ampersands and <'s:
+	$text = _EncodeAmpsAndAngles($text);
 
 	$text = _DoItalicsAndBold($text);
 
@@ -420,7 +451,7 @@ function _DoAnchors($text) {
 		  \\]
 		  \\(			# literal paren
 			[ \\t]*
-			<?(.+?)>?	# href = $3
+			<?(.*?)>?	# href = $3
 			[ \\t]*
 			(			# $4
 			  (['\"])	# quote char = $5
@@ -467,10 +498,10 @@ function _DoAnchors_reference_callback($matches) {
 }
 function _DoAnchors_inline_callback($matches) {
 	global $md_escape_table;
-	$whole_match = $matches[1];
-	$link_text   = $matches[2];
-	$url	  		= $matches[3];
-	$title		= $matches[6];
+	$whole_match	= $matches[1];
+	$link_text		= $matches[2];
+	$url			= $matches[3];
+	$title			=& $matches[6];
 
 	# We've got to encode these to avoid conflicting with italics/bold.
 	$url = str_replace(array('*', '_'),
@@ -478,7 +509,7 @@ function _DoAnchors_inline_callback($matches) {
 					   $url);
 	$result = "<a href=\"$url\"";
 	if (isset($title)) {
-		$title = str_replace('"', '&quot', $title);
+		$title = str_replace('"', '&quot;', $title);
 		$title = str_replace(array('*', '_'),
 							 array($md_escape_table['*'], $md_escape_table['_']),
 							 $title);
@@ -577,12 +608,12 @@ function _DoImages_reference_callback($matches) {
 }
 function _DoImages_inline_callback($matches) {
 	global $md_empty_element_suffix, $md_escape_table;
-	$whole_match = $matches[1];
-	$alt_text    = $matches[2];
-	$url	  		= $matches[3];
-	$title		= '';
+	$whole_match	= $matches[1];
+	$alt_text		= $matches[2];
+	$url			= $matches[3];
+	$title			= '';
 	if (isset($matches[6])) {
-		$title = $matches[6];
+		$title		= $matches[6];
 	}
 
 	$alt_text = str_replace('"', '&quot;', $alt_text);
@@ -613,8 +644,8 @@ function _DoHeaders($text) {
 	#	  --------
 	#
 	$text = preg_replace(
-		array("/(.+)[ \t]*\n=+[ \t]*\n+/e",
-			  "/(.+)[ \t]*\n-+[ \t]*\n+/e"),
+		array('{ ^(.+)[ \t]*\n=+[ \t]*\n+ }emx',
+			  '{ ^(.+)[ \t]*\n-+[ \t]*\n+ }emx'),
 		array("'<h1>'._RunSpanGamut(_UnslashQuotes('\\1')).'</h1>\n\n'",
 			  "'<h2>'._RunSpanGamut(_UnslashQuotes('\\1')).'</h2>\n\n'"),
 		$text);
@@ -645,7 +676,7 @@ function _DoLists($text) {
 #
 # Form HTML ordered (numbered) and unordered (bulleted) lists.
 #
-	global $md_tab_width;
+	global $md_tab_width, $md_list_level;
 	$less_than_tab = $md_tab_width - 1;
 
 	# Re-usable patterns to match list item bullets and number markers:
@@ -653,27 +684,45 @@ function _DoLists($text) {
 	$marker_ol  = '\d+[.]';
 	$marker_any = "(?:$marker_ul|$marker_ol)";
 
-	$text = preg_replace_callback("{
-			(								# $1
-			  (								# $2
-				^[ ]{0,$less_than_tab}
-			    ($marker_any)				# $3 - first list item marker
-				[ \\t]+
+	# Re-usable pattern to match any entirel ul or ol list:
+	$whole_list = '
+		(								# $1 = whole list
+		  (								# $2
+			[ ]{0,'.$less_than_tab.'}
+			('.$marker_any.')				# $3 = first list item marker
+			[ \t]+
+		  )
+		  (?s:.+?)
+		  (								# $4
+			  \z
+			|
+			  \n{2,}
+			  (?=\S)
+			  (?!						# Negative lookahead for another list item marker
+				[ \t]*
+				'.$marker_any.'[ \t]+
 			  )
-			  (?s:.+?)
-			  (								# $4
-				  \\z
-				|
-				  \\n{2,}
-				  (?=\\S)
-				  (?!						# Negative lookahead for another list item marker
-				  	[ \\t]*
-				  	{$marker_any}[ \\t]+
-				  )
-			  )
-			)
-		}xm",
-		'_DoLists_callback', $text);
+		  )
+		)
+	'; // mx
+	
+	# We use a different prefix before nested lists than top-level lists.
+	# See extended comment in _ProcessListItems().
+
+	if ($md_list_level) {
+		$text = preg_replace_callback('{
+				^
+				'.$whole_list.'
+			}mx',
+			'_DoLists_callback', $text);
+	}
+	else {
+		$text = preg_replace_callback('{
+				(?:(?<=\n\n)|\A\n?)
+				'.$whole_list.'
+			}mx',
+			'_DoLists_callback', $text);
+	}
 
 	return $text;
 }
@@ -684,17 +733,46 @@ function _DoLists_callback($matches) {
 	$marker_any = "(?:$marker_ul|$marker_ol)";
 	
 	$list = $matches[1];
-	$list_type = preg_match('/[*+-]/', $matches[3]) ? "ul" : "ol";
+	$list_type = preg_match("/$marker_ul/", $matches[3]) ? "ul" : "ol";
 	# Turn double returns into triple returns, so that we can make a
 	# paragraph for the last item in a list, if necessary:
 	$list = preg_replace("/\n{2,}/", "\n\n\n", $list);
 	$result = _ProcessListItems($list, $marker_any);
-	$result = "<$list_type>\n" . $result . "</$list_type>\n\n";
+	$result = "<$list_type>\n" . $result . "</$list_type>\n";
 	return $result;
 }
 
 
 function _ProcessListItems($list_str, $marker_any) {
+#
+#	Process the contents of a single ordered or unordered list, splitting it
+#	into individual list items.
+#
+	global $md_list_level;
+	
+	# The $md_list_level global keeps track of when we're inside a list.
+	# Each time we enter a list, we increment it; when we leave a list,
+	# we decrement. If it's zero, we're not in a list anymore.
+	#
+	# We do this because when we're not inside a list, we want to treat
+	# something like this:
+	#
+	#		I recommend upgrading to version
+	#		8. Oops, now this line is treated
+	#		as a sub-list.
+	#
+	# As a single paragraph, despite the fact that the second line starts
+	# with a digit-period-space sequence.
+	#
+	# Whereas when we're inside a list (or sub-list), that line will be
+	# treated as the start of a sub-list. What a kludge, huh? This is
+	# an aspect of Markdown's syntax that's hard to parse perfectly
+	# without resorting to mind-reading. Perhaps the solution is to
+	# change the syntax rules such that sub-lists must start with a
+	# starting cardinal number; e.g. "1." or "a.".
+	
+	$md_list_level++;
+
 	# trim trailing blank lines:
 	$list_str = preg_replace("/\n{2,}\\z/", "\n", $list_str);
 
@@ -708,16 +786,16 @@ function _ProcessListItems($list_str, $marker_any) {
 		}xm',
 		'_ProcessListItems_callback', $list_str);
 
+	$md_list_level--;
 	return $list_str;
 }
 function _ProcessListItems_callback($matches) {
 	$item = $matches[4];
-	$leading_line = $matches[1];
-	$leading_space = $matches[2];
+	$leading_line =& $matches[1];
+	$leading_space =& $matches[2];
 
 	if ($leading_line || preg_match('/\n{2,}/', $item)) {
 		$item = _RunBlockGamut(_Outdent($item));
-		#$item =~ s/\n+/\n/g;
 	}
 	else {
 		# Recursion for sub-lists:
@@ -753,7 +831,7 @@ function _DoCodeBlocks_callback($matches) {
 	$codeblock = $matches[1];
 
 	$codeblock = _EncodeCode(_Outdent($codeblock));
-	$codeblock = _Detab($codeblock);
+//	$codeblock = _Detab($codeblock);
 	# trim leading newlines and trailing whitespace
 	$codeblock = preg_replace(array('/\A\n+/', '/\s+\z/'), '', $codeblock);
 
@@ -834,7 +912,7 @@ function _EncodeCode($_) {
 
 function _DoItalicsAndBold($text) {
 	# <strong> must go first:
-	$text = preg_replace('{ (\*\*|__) (?=\S) (.+?) (?<=\S) \1 }sx',
+	$text = preg_replace('{ (\*\*|__) (?=\S) (.+?[*_]*) (?<=\S) \1 }sx',
 		'<strong>\2</strong>', $text);
 	# Then <em>:
 	$text = preg_replace('{ (\*|_) (?=\S) (.+?) (?<=\S) \1 }sx',
@@ -890,7 +968,6 @@ function _FormParagraphs($text) {
 	$text = preg_replace(array('/\A\n+/', '/\n+\z/'), '', $text);
 
 	$grafs = preg_split('/\n{2,}/', $text, -1, PREG_SPLIT_NO_EMPTY);
-	$count = count($grafs);
 
 	#
 	# Wrap <p> tags.
@@ -952,6 +1029,7 @@ function _DoAutoLinks($text) {
 	# Email addresses: <address@domain.foo>
 	$text = preg_replace('{
 		<
+        (?:mailto:)?
 		(
 			[-.\w]+
 			\@
@@ -1015,46 +1093,43 @@ function _UnescapeSpecialChars($text) {
 }
 
 
-# Tokenize_HTML is shared between PHP Markdown and PHP SmartyPants.
+# _TokenizeHTML is shared between PHP Markdown and PHP SmartyPants.
 # We only define it if it is not already defined.
-if (!function_exists('_TokenizeHTML')) {
-	function _TokenizeHTML($str) {
-	#
-	#   Parameter:  String containing HTML markup.
-	#   Returns:    An array of the tokens comprising the input
-	#               string. Each token is either a tag (possibly with nested,
-	#               tags contained therein, such as <a href="<MTFoo>">, or a
-	#               run of text between tags. Each element of the array is a
-	#               two-element array; the first is either 'tag' or 'text';
-	#               the second is the actual value.
-	#
-	#
-	#   Regular expression derived from the _tokenize() subroutine in 
-	#   Brad Choate's MTRegex plugin.
-	#   <http://www.bradchoate.com/past/mtregex.php>
-	#
-		$index = 0;
-		$tokens = array();
+if (!function_exists('_TokenizeHTML')) :
+function _TokenizeHTML($str) {
+#
+#   Parameter:  String containing HTML markup.
+#   Returns:    An array of the tokens comprising the input
+#               string. Each token is either a tag (possibly with nested,
+#               tags contained therein, such as <a href="<MTFoo>">, or a
+#               run of text between tags. Each element of the array is a
+#               two-element array; the first is either 'tag' or 'text';
+#               the second is the actual value.
+#
+#
+#   Regular expression derived from the _tokenize() subroutine in 
+#   Brad Choate's MTRegex plugin.
+#   <http://www.bradchoate.com/past/mtregex.php>
+#
+	$index = 0;
+	$tokens = array();
 
-		$depth = 6;
-		$nested_tags = str_repeat('(?:<[a-z\/!$](?:[^<>]|',$depth)
-					   .str_repeat(')*>)', $depth);
-		$match = "(?s:<!(?:--.*?--\s*)+>)|".  # comment
-				 "(?s:<\?.*?\?>)|".         # processing instruction
-				 "$nested_tags";            # nested tags
+	$match = '(?s:<!(?:--.*?--\s*)+>)|'.	# comment
+			 '(?s:<\?.*?\?>)|'.				# processing instruction
+			 '(?:</?[\w:$]+\b(?>[^"\'>]+|"[^"]*"|\'[^\']*\')*>)'; # regular tags
 
-		$parts = preg_split("/($match)/", $str, -1, PREG_SPLIT_DELIM_CAPTURE);
+	$parts = preg_split("{($match)}", $str, -1, PREG_SPLIT_DELIM_CAPTURE);
 
-		foreach ($parts as $part) {
-			if (++$index % 2 && $part != '') 
-				array_push($tokens, array('text', $part));
-			else
-				array_push($tokens, array('tag', $part));
-		}
-
-		return $tokens;
+	foreach ($parts as $part) {
+		if (++$index % 2 && $part != '') 
+			array_push($tokens, array('text', $part));
+		else
+			array_push($tokens, array('tag', $part));
 	}
+
+	return $tokens;
 }
+endif;
 
 
 function _Outdent($text) {
@@ -1068,14 +1143,30 @@ function _Outdent($text) {
 
 function _Detab($text) {
 #
-# Inspired from a post by Bart Lateur:
-# <http://www.nntp.perl.org/group/perl.macperl.anyperl/154>
+# Replace tabs with the appropriate amount of space.
 #
 	global $md_tab_width;
-	$text = preg_replace(
-		"/(.*?)\t/e",
-		"'\\1'.str_repeat(' ', $md_tab_width - strlen('\\1') % $md_tab_width)",
-		$text);
+
+	# For each line we separate the line in blocks delemited by
+	# tab characters. Then we reconstruct the line adding the appropriate
+	# number of space charcters.
+	
+	$lines = explode("\n", $text);
+	$text = "";
+	
+	foreach ($lines as $line) {
+		# Split in blocks.
+		$blocks = explode("\t", $line);
+		# Add each blocks to the line.
+		$line = $blocks[0];
+		unset($blocks[0]); # Do not add first block twice.
+		foreach ($blocks as $block) {
+			# Calculate amount of space, insert spaces, insert block.
+			$amount = $md_tab_width - strlen($line) % $md_tab_width;
+			$line .= str_repeat(" ", $amount) . $block;
+		}
+		$text .= "$line\n";
+	}
 	return $text;
 }
 
@@ -1132,151 +1223,21 @@ expected; (3) the output Markdown actually produced.
 Version History
 --------------- 
 
-1.0: Sat 21 Aug 2004
+See the readme file for detailed release notes for this version.
 
-*	Fixed a couple of bugs in _DoLists() and _ProcessListItems() that
-	caused unordered lists starting with `+` or `-` to be turned into
-	*ordered* lists.
+1.0.1 - 17 Dec 2004
 
-*	Added to the list of block-level HTML tags:
-
-		noscript, form, fieldset, iframe, math
-
-*	Fixed an odd bug where, with input like this:
-
-		> This line starts the blockquote
-		* This list is part of the quote.
-		* Second item.
-		
-		This paragraph is not part of the blockquote.
-
-	The trailing paragraph was incorrectly included in the
-	blockquote. (The solution was to add an extra "\n" after
-	lists.)
-
-*	The contents of `<pre>` tags inside `<blockquote>` are no longer 
-	indented in the HTML output.
-
-*	PHP Markdown can now be used as a modifier by the Smarty 
-	templating engine. Rename the file to "modifier.markdown.php"
-	and put it in your smarty plugins folder.
-
-*	Now works as a bBlog formatter. Rename the file to 
-	"modifier.markdown.php" and place it in the "bBlog_plugins" 
-	folder.
-
-
-1.0fc1: Wed 8 Jul 2004
-
-*	Greatly simplified the rules for code blocks. No more colons
-	necessary; if it's indented (4 spaces or 1 tab), it's a code block.
-
-*	Unordered list items can now be denoted by any of the following
-	bullet markers: [*+-]
-
-*	Replacing `"` with `&quot;` to fix literal quotes within title 
-	attributes.
-
-
-1.0b9: Sun 27 Jun 2004
-
-*	Replacing `"` with `&quot;` to fix literal quotes within img alt 
-	attributes.
-
-
-1.0b8: Wed 23 Jun 2004
-
-*   In WordPress, solved a bug where PHP Markdown did not deactivate 
-	the paragraph filter, converting all returns to a line break.
-	The "texturize" filter was being disabled instead.
-
-*	Added 'math' tags to block-level tag patterns in `_HashHTMLBlocks()`.
-	Please disregard all the 'math'-tag related items in 1.0b7.
-
-*	Commented out some vestigial code in `_EscapeSpecialChars()`
-
-
-1.0b7: Sat 12 Jun 2004
-
-*   Added 'math' to `$tags_to_skip` pattern, for MathML users.
-
-*   Tweaked regex for identifying HTML entities in
-	`_EncodeAmpsAndAngles()`, so as to allow for the very long entity
-	names used by MathML. (Thanks to Jacques Distler for the patch.)
-
-*   Changed the internals of `_TokenizeHTML` to lower the PHP version
-	requirement to PHP 4.0.5.
-
-
-1.0b6: Sun 6 Jun 2004
-
-*   Added a WordPress plugin interface. This means that you can 
-	directly put the "markdown.php" file into the "wp-content/plugins" 
-	directory and then activate it from the administrative interface.
-
-*   Added a Textile compatibility interface. Rename this file to 
-	"classTextile.php" and it can replace Textile anywhere.
-
-*   The title attribute of reference-style links were ignored. 
-	This is now fixed.
-
-*   Changed internal variables names so that they begin with `md_` 
-	instead of `g_`. This should reduce the risk of name collision with 
-	other programs.
-
-
-1.0b5: Sun 2 May 2004
-
-*	Workaround for supporting `<ins>` and `<del>` as block-level tags.
-	This only works if the start and end tags are on lines by
-	themselves.
-
-*	Three or more underscores can now be used for horizontal rules.
-
-*	Lines containing only whitespace are trimmed from blockquotes.
-
-*	You can now optionally wrap URLs with angle brackets -- like so:
-	`<http://example.com>` -- in link definitions and inline links and
-	images.
-
-*	`_` and `*` characters in links and images are no longer escaped
-	as HTML entities. Instead, we use the ridiculous but effective MD5
-	hashing trick that's used to hide these characters elsewhere. The
-	end result is that the HTML output uses the literal `*` and `_`
-	characters, rather than the ugly entities.
-
-*	Passing an empty string to the Markdown function no longer creates 
-	an empty paragraph.
-
-*	Added a global declaration at the beginning of the file. This
-	means you can now `include 'markdown.php'` from inside a function.
-
-
-1.0b4.1: Sun 4 Apr 2004
-
-*	Fixed a bug where image tags did not close.
-
-*	Fixed a bug where brakets `[]` inside a link caused the link to be
-	ignored. PHP Markdown support only 6 (!) level of brakets inside a link
-	(while John's original version of Markdown in Perl support much more).
-
-
-1.0b4: Sat 27 Mar 2004
-
-*	First release of PHP Markdown, based on the 1.0b4 release.
+1.0 - 21 Aug 2004
 
 
 Author & Contributors
 ---------------------
 
-Original version by John Gruber  
+Original Perl version by John Gruber  
 <http://daringfireball.net/>
 
-PHP translation by Michel Fortin  
+PHP port and other contributions by Michel Fortin  
 <http://www.michelf.com/>
-
-First WordPress plugin interface written by Matt Mullenweg  
-<http://photomatt.net/>
 
 
 Copyright and License
@@ -1286,19 +1247,36 @@ Copyright (c) 2004 Michel Fortin
 <http://www.michelf.com/>  
 All rights reserved.
 
-Copyright (c) 2003-2004 John Gruber  
-<http://daringfireball.net/>  
+Copyright (c) 2003-2004 John Gruber   
+<http://daringfireball.net/>   
 All rights reserved.
 
-Markdown is free software; you can redistribute it and/or modify it
-under the terms of the GNU General Public License as published by the
-Free Software Foundation; either version 2 of the License, or (at your
-option) any later version.
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
 
-Markdown is distributed in the hope that it will be useful, but WITHOUT
-ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-for more details.
+*	Redistributions of source code must retain the above copyright notice,
+	this list of conditions and the following disclaimer.
+
+*	Redistributions in binary form must reproduce the above copyright
+	notice, this list of conditions and the following disclaimer in the
+	documentation and/or other materials provided with the distribution.
+
+*	Neither the name "Markdown" nor the names of its contributors may
+	be used to endorse or promote products derived from this software
+	without specific prior written permission.
+
+This software is provided by the copyright holders and contributors "as
+is" and any express or implied warranties, including, but not limited
+to, the implied warranties of merchantability and fitness for a
+particular purpose are disclaimed. In no event shall the copyright owner
+or contributors be liable for any direct, indirect, incidental, special,
+exemplary, or consequential damages (including, but not limited to,
+procurement of substitute goods or services; loss of use, data, or
+profits; or business interruption) however caused and on any theory of
+liability, whether in contract, strict liability, or tort (including
+negligence or otherwise) arising in any way out of the use of this
+software, even if advised of the possibility of such damage.
 
 */
 ?>
