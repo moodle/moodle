@@ -31,7 +31,7 @@ CREATE TABLE prefix_scorm_scoes (
   scormtype varchar(5) NOT NULL default '',
   title varchar(255) NOT NULL default '',
   prerequisites varchar(200) NOT NULL default '',
-  maxtimeallowed varchar(19) NOT NULL dafault '',
+  maxtimeallowed varchar(19) NOT NULL default '',
   timelimitaction varchar(19) NOT NULL default '',
   datafromlms varchar(255) NOT NULL default '',
   masteryscore varchar(200) NOT NULL default '',
