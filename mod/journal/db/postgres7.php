@@ -40,5 +40,17 @@ function journal_upgrade($oldversion) {
         modify_database('','CREATE INDEX prefix_journal_entries_userid_idx ON prefix_journal_entries (userid);');
     }
 
+    if ($oldversion < 2005041100) { // replace wiki-like with markdown
+        include_once( "$CFG->dirroot/lib/wiki_to_markdown.php" );
+        $wtm = new WikiToMarkdown();
+        // journal intro
+        $wtm->update( 'journal','intro','introformat' );
+        // journal entries
+        $sql = "select course from {$CFG->prefix}journal, {$CFG->prefix}journal_entries ";
+        $sql .= "where journal.id = journal_entries.journal ";
+        $sql .= "and journal_entries.id = ";
+        $wtm->update( 'journal_entries', 'text', 'format', $sql );
+    }
+
     return $result;
 }
