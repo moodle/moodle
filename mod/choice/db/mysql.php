@@ -110,6 +110,11 @@ function choice_upgrade($oldversion) {
         }
     }
     
+    if ($oldversion < 2005041100) { // replace wiki-like with markdown
+        include_once( "$CFG->dirroot/lib/wiki_to_markdown.php" );
+        $wtm = new WikiToMarkdown();
+        $wtm->update( 'choice','text','format' );
+    }
 
     return true;
 }
