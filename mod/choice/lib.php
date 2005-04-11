@@ -116,7 +116,9 @@ function choice_update_instance($choice) {
                 $option->choiceid = $choice->id;
                 $option->timemodified = time();
                 update_record("choice_options", $option);                
-            }                                                              
+            } else { //empty old option - needs to be deleted.
+                delete_records("choice_options", "id", substr($name, 9));
+            }                                                          
         } else if (strstr($name, "newoption")) {   /// New option
             if ($value) {
                 $option = NULL;
