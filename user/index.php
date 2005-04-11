@@ -214,7 +214,7 @@
         echo "<center><p align=\"center\">";
         echo get_string("firstname")." : ";
         if ($firstinitial) {
-            echo " <a href=\"index.php?id=$course->id&amp;sort=firstname&amp;dir=ASC&amp;".
+            echo " <a href=\"index.php?id=$course->id&amp;sort=firstname&amp;dir=ASC&amp;group=$currentgroup&amp;".
                    "perpage=$perpage&amp;lastinitial=$lastinitial\">$strall</a> ";
         } else {
             echo " <b>$strall</b> ";
@@ -223,7 +223,7 @@
             if ($letter == $firstinitial) {
                 echo " <b>$letter</b> ";
             } else {
-                echo " <a href=\"index.php?id=$course->id&amp;sort=firstname&amp;dir=ASC&amp;".
+                echo " <a href=\"index.php?id=$course->id&amp;sort=firstname&amp;dir=ASC&amp;group=$currentgroup&amp;".
                        "perpage=$perpage&amp;lastinitial=$lastinitial&amp;firstinitial=$letter\">$letter</a> ";
             }
         }
@@ -233,7 +233,7 @@
 
         echo get_string("lastname")." : ";
         if ($lastinitial) {
-            echo " <a href=\"index.php?id=$course->id&amp;sort=lastname&amp;dir=ASC&amp;".
+            echo " <a href=\"index.php?id=$course->id&amp;sort=lastname&amp;dir=ASC&amp;group=$currentgroup&amp;".
                    "perpage=$perpage&amp;firstinitial=$firstinitial\">$strall</a> ";
         } else {
             echo " <b>$strall</b> ";
@@ -242,7 +242,7 @@
             if ($letter == $lastinitial) {
                 echo " <b>$letter</b> ";
             } else {
-                echo " <a href=\"index.php?id=$course->id&amp;sort=lastname&amp;dir=ASC&amp;".
+                echo " <a href=\"index.php?id=$course->id&amp;sort=lastname&amp;dir=ASC&amp;group=$currentgroup&amp;".
                        "perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$letter\">$letter</a> ";
             }
         }
@@ -250,7 +250,7 @@
         echo "</center>";
 
         print_paging_bar($matchcount, $page, $perpage,
-                         "index.php?id=$course->id&amp;sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;");
+                         "index.php?id=$course->id&amp;sort=$sort&amp;dir=$dir&amp;group=$currentgroup&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;");
 
     }
 
@@ -266,11 +266,11 @@
         print_user_table($students, $isteacher);
 
         print_paging_bar($matchcount, $page, $perpage,
-                         "index.php?id=$course->id&amp;sort=$sort&amp;dir=$dir&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;");
+                         "index.php?id=$course->id&amp;sort=$sort&amp;dir=$dir&amp;group=$currentgroup&amp;perpage=$perpage&amp;firstinitial=$firstinitial&amp;lastinitial=$lastinitial&amp;");
 
         if ($perpage < $totalcount) {
             echo "<center><p>";
-            echo "<a href=\"index.php?id=$course->id&amp;sort=$sort&amp;dir=$dir&amp;perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
+            echo "<a href=\"index.php?id=$course->id&amp;sort=$sort&amp;dir=$dir&amp;group=$currentgroup&amp;perpage=99999\">".get_string("showall", "", $totalcount)."</a>";
             echo "</p></center>";
         }
     }
