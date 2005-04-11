@@ -1039,6 +1039,18 @@ function main_upgrade($oldversion=0) {
         execute_sql(" ALTER TABLE `{$CFG->prefix}user` DROP `timezonename` ");
     }
 
+    if ($oldversion < 2005041101) {
+        require_once($CFG->libdir.'/filelib.php');
+        if (is_readable($CFG->dirroot.'/lib/timezones.txt')) {  // Distribution file
+            if ($timezones = get_records_csv($CFG->dirroot.'/lib/timezones.txt', 'timezone')) {
+                $db->debug = false;
+                update_timezone_records($timezones);
+                notify(count($timezones).' timezones installed');
+                $db->debug = true;
+            }
+        }
+    }
+
     return $result;
 }
 
