@@ -2413,6 +2413,20 @@ function get_list_of_languages() {
 
     $languages = array();
 
+    if ( (!defined('FULLME') || FULLME !== 'cron')
+         && !empty($CFG->langcache) && file_exists($CFG->dataroot .'/cache/languages')) {
+        // read from cache
+        $lines = file($CFG->dataroot .'/cache/languages');
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if (preg_match('/^(\w+)\s+(.+)/', $line, $matches)) {
+                $languages[$matches[1]] = $matches[2];
+            }
+        }
+        unset($lines); unset($line); unset($matches);
+        return $languages;
+    }
+
     if (!empty($CFG->langlist)) {       // use admin's list of languages
         $langlist = explode(',', $CFG->langlist);
         foreach ($langlist as $lang) {
@@ -2432,6 +2446,15 @@ function get_list_of_languages() {
             unset($string);
         }
     }
+    if ( defined('FULLME') && FULLME !== 'cron' && !empty($CFG->langcache)) {
+        if ($file = fopen($CFG->dataroot .'/cache/languages', 'w')) {
+            foreach ($languages as $key => $value) {
+                fwrite($file, "$key $value\n");
+            }
+            fclose($file);
+        } 
+    }
+
 
     return $languages;
 }

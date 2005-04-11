@@ -182,6 +182,15 @@ $CFG->admin = 'admin';
 // settings. Use this if you want to control session configuration
 // from php.ini, httpd.conf or .htaccess files. 
 //     $CFG->respectsessionsettings = true;
+//
+// Generating the language menu consumes a *lot* of memory and queries a 
+// lot of files. if you are looking for performance, and not adding/removing
+// languages often, enable the language menu cache. With the cache enabled, 
+// Moodle only refreshes the list of languages every few invocations of the 
+// cron script. For maximum efficiency, make sure your cron is called from the 
+// commandline, not via HTTP.  
+//     $CFG->langcache = true;
+//
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser

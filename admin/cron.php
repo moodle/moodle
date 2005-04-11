@@ -118,6 +118,11 @@
         }
         flush();
 
+        if (!empty($CFG->langcache)) {
+            get_list_of_languages();
+        }
+        flush();
+
         if (!empty($CFG->notifyloginfailures)) {
             notify_login_failures();
         }
