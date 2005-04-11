@@ -5764,7 +5764,7 @@ function get_performance_info() {
     global $CFG, $PERF;
 
     $info = array();
-    $info['html'] = $_SERVER['REQUEST_URI'] . ' '; // holds userfriendly HTML representation
+    $info['html'] = '<span class="script">'.$_SERVER['REQUEST_URI'].'</span> '; // holds userfriendly HTML representation
     $info['txt']  = $_SERVER['REQUEST_URI'] . ' '; // holds log-friendly representation
 
     $info['realtime'] = microtime_diff($PERF->starttime, microtime());
