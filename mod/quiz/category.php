@@ -19,16 +19,16 @@
     if (!isteacheredit($course->id)) {
         error("Only teachers authorized to edit the course '{$course->fullname}' can use this page!");
     }
-    
+
     /// Header:
     print_header_simple(get_string('editcategories', 'quiz'), '',
                  "<a href=\"index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
                  ' -> '.get_string('editcategories', 'quiz'));
-    
+
     /// CHECK FOR AND ACT UPON VARIABLES SUBMITTED VIA GET OR POST
     $qcobject = new quiz_category_object();
     $qcobject->set_course($course);
-    
+
     // Execute commands, but only if sesskey is o.k.
     if (isset($_REQUEST['sesskey']) and confirm_sesskey()) {
         if (isset($_REQUEST['delete']) and !isset($_REQUEST['cancel'])) {
@@ -90,7 +90,7 @@ class quiz_category_object {
     var $categorystrings;
     var $defaultcategory;
     var $course;
-    
+
 /**
 * Constructor
 *
@@ -99,7 +99,7 @@ class quiz_category_object {
 */
     function quiz_category_object() {
         global $CFG;
-        
+
         $this->tab = str_repeat('&nbsp;', $this->tabsize);
 
         $this->str->course         = get_string('course');
@@ -130,25 +130,25 @@ class quiz_category_object {
 /**
 * Sets the course for this object
 *
-* @param object course 
+* @param object course
 */
     function set_course($course) {
         $this->course = $course;
     }
-    
+
 /**
 * Displays the user interface
 *
-* @param object modform 
+* @param object modform
 */
     function display_user_interface() {
         $this->initialize();
-        
+
         /// Interface for adding a new category:
         print_heading_with_help($this->str->addcategory, 'categories_edit', 'quiz');
         $this->output_new_table();
         echo '<br />';
-    
+
         /// Interface for editing existing categories
         print_heading_with_help($this->str->editcategories, 'categories', 'quiz');
         $this->output_edit_table();
@@ -158,27 +158,27 @@ class quiz_category_object {
 
     }
 
- 
+
 /**
 * Initializes this classes general category-related variables
 *
 */
     function initialize() {
-        
+
         /// Get the existing categories
         if (!$this->defaultcategory = quiz_get_default_category($this->course->id)) {
             error("Error: Could not find or make a category!");
-        } 
+        }
 
         $this->categories = $this->get_quiz_categories(null, "parent, sortorder, name ASC");
 
         $this->categories = $this->arrange_categories($this->categories);
-        
+
         // create the array of id=>full_name strings
         $this->categorystrings = $this->expanded_category_strings($this->categories);
     }
 
-    
+
 
 /**
 * Outputs a table to allow entry of a new category
@@ -188,40 +188,40 @@ class quiz_category_object {
         global $USER;
         $publishoptions[0] = get_string("no");
         $publishoptions[1] = get_string("yes");
-        
+
         $this->newtable->head  = array ($this->str->parent, $this->str->category, $this->str->categoryinfo, $this->str->publish, $this->str->action);
         $this->newtable->width = 200;
         $this->newtable->data[] = array();
         $this->newtable->tablealign = 'center';
-        
+
         /// Each section below adds a data cell to the table row
-        
-        
+
+
         $viableparents[0] = $this->str->top;
         $viableparents = $viableparents + $this->categorystrings;
         $this->newtable->align['parent'] =  "left";
         $this->newtable->wrap['parent'] = "nowrap";
         $row['parent'] = choose_from_menu ($viableparents, "newparent", $this->str->top, "", "", "", true);
-        
+
         $this->newtable->align['category'] =  "left";
         $this->newtable->wrap['category'] = "nowrap";
         $row['category'] = '<input type="text" name="newcategory" value="" size="15" />';
-        
+
         $this->newtable->align['info'] =  "left";
         $this->newtable->wrap['info'] = "nowrap";
         $row['info'] = '<input type="text" name="newinfo" value="" size="50" />';
-        
+
         $this->newtable->align['publish'] =  "left";
         $this->newtable->wrap['publish'] = "nowrap";
         $row['publish'] = choose_from_menu ($publishoptions, "newpublish", "", "", "", "", true);
-        
+
         $this->newtable->align['action'] =  "left";
         $this->newtable->wrap['action'] = "nowrap";
         $row['action'] = '<input type="submit" value="' . $this->str->add . '" />';
-        
-        
+
+
         $this->newtable->data[] = $row;
-        
+
         // wrap the table in a form and output it
         echo '<form action="category.php" method="post">';
         echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
@@ -230,20 +230,20 @@ class quiz_category_object {
         print_table($this->newtable);
         echo '</form>';
     }
-    
+
 /**
 * Outputs a table to allow editing/rearranging of existing categories
 *
 * $this->initialize() must have already been called
 *
-* @param object course 
+* @param object course
 */
     function output_edit_table() {
-        $this->edittable->head  = array ($this->str->course, $this->str->category, $this->str->categoryinfo, $this->str->questions, $this->str->publish, 
+        $this->edittable->head  = array ($this->str->course, $this->str->category, $this->str->categoryinfo, $this->str->questions, $this->str->publish,
                                     $this->str->delete, $this->str->order, $this->str->movecategoryto);
         $this->edittable->width = 200;
         $this->edittable->tablealign = 'center';
-        
+
         // get list of short names to add to the course display.  Only necessary if user has admin view.
         if (isadmin()) {
             $keys = implode(',', $this->get_course_ids($this->categories));
@@ -266,7 +266,7 @@ class quiz_category_object {
         $count = 0;
         $first = true;
         $last = false;
-        
+
         foreach ($categories as $category) {
             $count++;
             if ($count == $countcats) {
@@ -282,7 +282,7 @@ class quiz_category_object {
             }
         }
     }
-    
+
 /**
 * gets all the courseids for the given categories
 *
@@ -299,7 +299,7 @@ class quiz_category_object {
         }
         return $courseids;
     }
-    
+
 /**
 * Constructs each row of the edit-categories table
 *
@@ -311,48 +311,49 @@ class quiz_category_object {
 */
     function quiz_edit_category_row($category, $shortname, $depth, $up = false, $down = false) {
         global $USER;
-        $fill = str_repeat($this->tab, $depth); 
-        
-        $linkcss = $category->publish ? '' : ' class="dimmed"';
-        
+        $fill = str_repeat($this->tab, $depth);
+
+        $linkcss = $category->publish ? '' : ''; // This could be used to give different formatting
+        // to the name of published categories. Not currently used.
+
         /// Each section below adds a data cell to this table row
         $this->edittable->align["$category->id.course"] =  "left";
         $this->edittable->wrap["$category->id.course"] = "nowrap";
         $row["$category->id.course"] = $shortname;
-        
+
         $this->edittable->align["$category->id.name"] =  "left";
         $this->edittable->wrap["$category->id.name"] = "nowrap";
-        $row["$category->id.name"] = '<a ' . $linkcss . 'title="' . $this->str->edit. '" href="category.php?id=' . $this->course->id . 
-            '&amp;edit=' . $category->id . '&amp;sesskey='.$USER->sesskey.'"><img src="' . $this->pixpath . '/t/edit.gif" height="11" width="11" border="0" 
+        $row["$category->id.name"] = '<a ' . $linkcss . 'title="' . $this->str->edit. '" href="category.php?id=' . $this->course->id .
+            '&amp;edit=' . $category->id . '&amp;sesskey='.$USER->sesskey.'"><img src="' . $this->pixpath . '/t/edit.gif" height="11" width="11" border="0"
             alt="' .$this->str->edit. '" /> ' . $fill . $category->name . '</a>';
-        
+
         $this->edittable->align["$category->id.info"] =  "left";
         $this->edittable->wrap["$category->id.info"] = "nowrap";
-        $row["$category->id.info"] = '<a ' . $linkcss . 'title="' . $this->str->edit .'" href="category.php?id=' . $this->course->id . 
+        $row["$category->id.info"] = '<a ' . $linkcss . 'title="' . $this->str->edit .'" href="category.php?id=' . $this->course->id .
             '&amp;edit=' . $category->id . '&amp;sesskey='.$USER->sesskey.'">' . $category->info . '</a>';
-        
+
         $this->edittable->align["$category->id.qcount"] = "center";
         $row["$category->id.qcount"] = $category->questioncount;
-        
+
         $this->edittable->align["$category->id.publish"] =  "center";
         $this->edittable->wrap["$category->id.publish"] = "nowrap";
         if (!empty($category->publish)) {
-              $row["$category->id.publish"] = '<a title="' . $this->str->hide . '" href="category.php?id=' . $this->course->id . '&amp;hide=' . $category->id . 
+              $row["$category->id.publish"] = '<a title="' . $this->str->hide . '" href="category.php?id=' . $this->course->id . '&amp;hide=' . $category->id .
               '&amp;sesskey='.$USER->sesskey.'"><img src="' . $this->pixpath . '/t/hide.gif" height="11" width="11" border="0" alt="' .$this->str->hide. '" /></a> ';
         } else {
             $row["$category->id.publish"] = '<a title="' . $this->str->publish . '" href="category.php?id=' . $this->course->id . '&amp;publish=' . $category->id .
                  '&amp;sesskey='.$USER->sesskey.'"><img src="' . $this->pixpath . '/t/show.gif" height="11" width="11" border="0" alt="' .$this->str->publish. '" /></a> ';
         }
-        
+
         if ($category->id != $this->defaultcategory) {
             $this->edittable->align["$category->id.delete"] =  "center";
             $this->edittable->wrap["$category->id.delete"] = "nowrap";
-            $row["$category->id.delete"] =  '<a title="' . $this->str->delete . '" href="category.php?id=' . $this->course->id . 
+            $row["$category->id.delete"] =  '<a title="' . $this->str->delete . '" href="category.php?id=' . $this->course->id .
                     '&amp;delete=' . $category->id . '&amp;sesskey='.$USER->sesskey.'"><img src="' . $this->pixpath . '/t/delete.gif" height="11" width="11" border="0" alt="' .$this->str->delete. '" /></a> ';
         } else {
             $row["$category->id.delete"] = '';
         }
-             
+
         $this->edittable->align["$category->id.order"] =  "left";
         $this->edittable->wrap["$category->id.order"] = "nowrap";
         $icons = '';
@@ -365,25 +366,25 @@ class quiz_category_object {
                  <img src="' . $this->pixpath . '/t/down.gif" height="11" width="11" border="0" alt="' .$this->str->movedown. '" /></a> ';
         }
         $row["$category->id.order"]= $icons;
-        
+
         $this->edittable->align["$category->id.moveto"] =  "left";
         $this->edittable->wrap["$category->id.moveto"] = "nowrap";
         if ($category->id != $this->defaultcategory) {
             $viableparents = $this->categorystrings;
             $this->set_viable_parents($viableparents, $category);
             $viableparents = array(0=>$this->str->top) + $viableparents;
-        
-            $row["$category->id.moveto"] = popup_form ("category.php?id={$this->course->id}&amp;move={$category->id}&amp;sesskey=$USER->sesskey&amp;moveto=", 
+
+            $row["$category->id.moveto"] = popup_form ("category.php?id={$this->course->id}&amp;move={$category->id}&amp;sesskey=$USER->sesskey&amp;moveto=",
                $viableparents, "moveform{$category->id}", "$category->parent", "", "", "", true);
         } else {
             $row["$category->id.moveto"]='---';
         }
-        
-        
+
+
         $this->edittable->data[$category->id] = $row;
     }
 
-    
+
     function edit_single_category($categoryid) {
     /// Interface for adding a new category
         global $USER;
@@ -408,8 +409,8 @@ class quiz_category_object {
             error("Category $categoryid not found", "category.php?id={$this->course->id}");
         }
     }
-    
-    
+
+
 /**
 * Outputs a table to allow editing of an existing category
 *
@@ -420,7 +421,7 @@ class quiz_category_object {
         $publishoptions[0] = get_string("no");
         $publishoptions[1] = get_string("yes");
         $strupdate = get_string('update');
-        
+
         unset ($edittable);
 
         $edittable->head  = array ($this->str->parent, $this->str->category, $this->str->categoryinfo, $this->str->publish, $this->str->action);
@@ -429,7 +430,7 @@ class quiz_category_object {
         $edittable->tablealign = 'center';
 
         /// Each section below adds a data cell to the table row
-        
+
         $viableparents = $this->categorystrings;
         $this->set_viable_parents($viableparents, $category);
         $viableparents = array(0=>$this->str->top) + $viableparents;
@@ -487,8 +488,8 @@ class quiz_category_object {
         }
         return $categorystrings;
     }
-    
-    
+
+
 /**
 * Arranges the categories into a heirarchical tree
 *
@@ -501,7 +502,7 @@ class quiz_category_object {
     function arrange_categories($records) {
     //todo: get the question count for all records with one sql statement: select category, count(*) from quiz_questions group by category
         $levels = array();
-    
+
         // build a levels array, which places each record according to it's depth from the top level
         $parents = array(0);
         while (!empty($parents)) {
@@ -516,11 +517,11 @@ class quiz_category_object {
             }
             $parents = $children;
         }
-        // if there is no heirarchy (e.g., if all records have parent == 0), set level[0] to these keys 
+        // if there is no heirarchy (e.g., if all records have parent == 0), set level[0] to these keys
         if (empty($levels)) {
             $levels[0] = array_keys($records);
         }
-        
+
         // build a heirarchical array that depicts the parent-child relationships of the categories
         $categorytree = array();
         for ($index = count($levels) - 1; $index >= 0; $index--) {
@@ -538,8 +539,8 @@ class quiz_category_object {
         }
         return $categorytree;
     }
-        
-    
+
+
 /**
 * Sets the viable parents
 *
@@ -547,10 +548,10 @@ class quiz_category_object {
 *  The parentstrings parameter is passed by reference and changed by this function.
 *
 * @param    array parentstrings a list of parentstrings
-* @param   object category 
+* @param   object category
 */
     function set_viable_parents(&$parentstrings, $category) {
-    
+
         unset($parentstrings[$category->id]);
         if (isset($category->children)) {
             foreach ($category->children as $child) {
@@ -562,7 +563,7 @@ class quiz_category_object {
 /**
 * Gets quiz categories
 *
-* @param    int parent - if given, restrict records to those with this parent id.  
+* @param    int parent - if given, restrict records to those with this parent id.
 * @param    string sort - [[sortfield [,sortfield]] {ASC|DESC}]
 * @return   array categories
 */
@@ -575,7 +576,7 @@ class quiz_category_object {
             } else {
                 $categories = get_records("quiz_categories", "parent", $parent, $sort);
             }
-        } else {            
+        } else {
             if (is_null($parent)) {
                 $categories = get_records('quiz_categories', 'course', "{$this->course->id}", $sort);
             } else {
@@ -595,7 +596,7 @@ class quiz_category_object {
 */
     function delete_category($deletecat, $destcategoryid = null) {
         global $USER;
-        
+
         if (!$category = get_record("quiz_categories", "id", $deletecat)) {  // security
             error("No such category $deletecat!", "category.php?id={$this->course->id}");
         }
@@ -629,7 +630,7 @@ class quiz_category_object {
             }
         }
         delete_records("quiz_categories", "id", $category->id);
-        
+
         /// Send the children categories to live with their grandparent
         if ($childcats = get_records("quiz_categories", "parent", $category->id)) {
             foreach ($childcats as $childcat) {
@@ -638,7 +639,7 @@ class quiz_category_object {
                 }
             }
         }
-       
+
         /// Finally delete the category itself
         if (delete_records("quiz_categories", "id", $category->id)) {
             notify(get_string("categorydeleted", "quiz", $category->name), 'green');
@@ -694,16 +695,16 @@ class quiz_category_object {
                 }
                 if (! set_field("quiz_categories", "sortorder", $count, "id", $category->id)) {
                     notify("Could not update that category!");
-                } 
+                }
             }
-        } 
+        }
     }
 
 /**
 * Changes the parent of a category
 *
-* @param    int categoryid 
-* @param    int parentid  
+* @param    int categoryid
+* @param    int parentid
 */
     function move_category($categoryid, $parentid) {
     /// Move a category to a new parent
@@ -720,11 +721,11 @@ class quiz_category_object {
 /**
 * Changes the published status of a category
 *
-* @param    boolean publish  
-* @param    int categoryid 
+* @param    boolean publish
+* @param    int categoryid
 */
     function publish_category($publish, $categoryid) {
-    /// Hide or publish a category 
+    /// Hide or publish a category
 
         $publish = ($publish == false) ? 0 : 1;
         $tempcat = get_record("quiz_categories", "id", $categoryid);
@@ -740,12 +741,12 @@ class quiz_category_object {
 *
 * @param    int newparent
 * @param    string newcategory  the name
-* @param    string newinfo 
+* @param    string newinfo
 * @param    int newpublish
 * @param    int newcourse the id of the associated course
 */
     function add_category($newparent, $newcategory, $newinfo, $newpublish, $newcourse) {
-    
+
         $cat = NULL;
         $cat->parent = $newparent;
         $cat->name = $newcategory;
@@ -761,19 +762,19 @@ class quiz_category_object {
         }
 
     }
-    
+
 /**
 * Updates an existing category with given params
 *
 * @param    int updateid
 * @param    int updateparent
 * @param    string updatename
-* @param    string updateinfo 
+* @param    string updateinfo
 * @param    int updatepublish
 * @param    int courseid the id of the associated course
 */
     function update_category($updateid, $updateparent, $updatename, $updateinfo, $updatepublish, $courseid) {
-    
+
         $cat = NULL;
         $cat->id = $updateid;
         $cat->parent = $updateparent;
@@ -788,5 +789,5 @@ class quiz_category_object {
     }
 
 }
- 
+
 ?>
