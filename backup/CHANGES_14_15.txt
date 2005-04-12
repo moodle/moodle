@@ -58,6 +58,9 @@ Now I show the specific detailed status of every item in the process:
 34. DONE: Group images aren't included at all in backup/restore. Bug 2674.
 35. DONE: New glossary log action: "view_entry".
 36. PROG: Add support for quiz log action: "editquestions". Bug 2778 pending!
+37. DONE: Convert module ids in every Wiki reference to other activities.
+38. DONE: Convert every wiki formatted text to markdown. Bye, wikies! ;-)
+39. TODO: Add backup/restore of new grade tables.
          
 Eloy (stronk7)
 23-01-2004

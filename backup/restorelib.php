@@ -81,15 +81,7 @@
                 }
             }
         }
-
-        //Now I'm going to decode to their new location all the links in wiki texts
-        //having the syntax " modulename:moduleid".
-        echo "<li>Wiki";
-        $status = restore_decode_wiki_texts($restore);
-        echo '</li>';
-
         echo "</ul>";
-
         return $status;
     }
 
@@ -104,8 +96,8 @@
         foreach ($restore->mods as $name => $info) {
             //If the module is being restored
             if ($info->restore == 1) {
-                //Check if the xxxx_convert_wiki2markdown exists
-                $function_name = $name."_convert_wiki2markdown";
+                //Check if the xxxx_restore_wiki2markdown exists
+                $function_name = $name."_restore_wiki2markdown";
                 if (function_exists($function_name)) {
                     echo "<li>".get_string("modulenameplural",$name);
                     $status = $function_name($restore);
@@ -113,116 +105,8 @@
                 }
             }
         }
-
-        return $status;
-    }
-
-    //This function search for some wiki texts in differenct parts of Moodle to
-    //decode them to their new ids.
-    function restore_decode_wiki_texts($restore) {
-
-        global $CFG;
-
-        $status = true;
-
-        echo "<ul>";
-
-        if (file_exists("$CFG->dirroot/mod/resource/lib.php")) {
-            include_once("$CFG->dirroot/mod/resource/lib.php");
-        }
-
-        $formatwiki = FORMAT_WIKI;
- 
-        //FORUM: Decode every POST (message) in the course
-        //Check we are restoring forums
-        if ($restore->mods['forum']->restore == 1) {
-            echo "<li>".get_string("from")." ".get_string("modulenameplural","forum").'</li>';
-            //Get all course posts being restored
-            if ($posts = get_records_sql ("SELECT p.id, p.message
-                                       FROM {$CFG->prefix}forum_posts p,
-                                            {$CFG->prefix}forum_discussions d,
-                                            {$CFG->prefix}backup_ids b
-                                       WHERE d.course = $restore->course_id AND
-                                             p.discussion = d.id AND
-                                             p.format = $formatwiki AND
-                                             b.backup_code = $restore->backup_unique_code AND
-                                             b.table_name = 'forum_posts' AND
-                                             b.new_id = p.id")) {
-                //Iterate over each post->message
-                $i = 0;   //Counter to send some output to the browser to avoid timeouts
-                foreach ($posts as $post) {
-                    //Increment counter
-                    $i++;
-                    $content = $post->message;
-                    //Decode it 
-                    $result = restore_decode_wiki_content($content,$restore);
-
-                    if ($result != $content) {
-                        //Update record
-                        $post->message = addslashes($result);
-                        $status = update_record("forum_posts",$post);
-                        if ($CFG->debug>7) {
-                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
-                        }
-                    }
-                    //Do some output
-                    if (($i+1) % 5 == 0) {
-                        echo ".";
-                        if (($i+1) % 100 == 0) {
-                            echo "<br />";
-                        }
-                        backup_flush(300);
-                    }
-                }
-            }
-        }
-
-        //RESOURCE: Decode every RESOURCE (alltext) in the coure
-
-        //Check we are restoring resources
-        if ($restore->mods['resource']->restore == 1) {
-            echo "<li>".get_string("from")." ".get_string("modulenameplural","resource").'</li>';
-            //Get all course resources of type='text' and options=FORMAT_WIKI being restored
-            if ($resources = get_records_sql ("SELECT r.id, r.alltext
-                                       FROM {$CFG->prefix}resource r,
-                                            {$CFG->prefix}backup_ids b
-                                       WHERE r.course = $restore->course_id AND
-                                             r.type = 'text' AND
-                                             r.options = $formatwiki AND
-                                             b.backup_code = $restore->backup_unique_code AND
-                                             b.table_name = 'resource' AND
-                                             b.new_id = r.id")) {
-                //Iterate over each resource->alltext
-                $i = 0;   //Counter to send some output to the browser to avoid timeouts
-                foreach ($resources as $resource) {
-                    //Increment counter
-                    $i++;
-                    $content = $resource->alltext;
-                    //Decode it
-                    $result = restore_decode_wiki_content($content,$restore);
-                    if ($result != $content) {
-                        //Update record
-                        $resource->alltext = addslashes($result);
-                        $status = update_record("resource",$resource);
-                        if ($CFG->debug>7) {
-                            echo "<br /><hr />".$content."<br />changed to</br>".$result."<hr /><br />";
-                        }
-                    }
-                    //Do some output
-                    if (($i+1) % 5 == 0) {
-                        echo ".";
-                        if (($i+1) % 100 == 0) {
-                            echo "<br />";
-                        }
-                        backup_flush(300);
-                    }
-                }
-            }
-        }
         echo "</ul>";
-
         return $status;
-
     }
 
     //This function receives a wiki text in the restore process and
