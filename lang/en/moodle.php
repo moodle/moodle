@@ -182,6 +182,7 @@ $string['confirmed'] = 'Your registration has been confirmed';
 $string['confirmednot'] = 'Your registration has not yet been confirmed!';
 $string['continue'] = 'Continue';
 $string['continuetocourse'] = 'Click here to enter your course';
+$string['convertingwikitomarkdown'] = 'Converting Wiki to Markdown';
 $string['cookiesenabled'] = 'Cookies must be enabled in your browser';
 $string['cookiesnotenabled'] = 'Unfortunately, cookies are currently not enabled in your browser';
 $string['copy'] = 'copy';
