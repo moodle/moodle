@@ -150,8 +150,8 @@ function journal_cron () {
             $journalinfo->teacher = fullname($teacher);
             $journalinfo->journal = format_string($entry->name,true);
             $journalinfo->url = "$CFG->wwwroot/mod/journal/view.php?id=$mod->id";
-	    $modnamepl = get_string( 'modulenameplural' );
-            $msubject = get_string( 'mailsubject' );
+	    $modnamepl = get_string( 'modulenameplural','journal' );
+            $msubject = get_string( 'mailsubject','journal' );
 
             $postsubject = "$course->shortname: $msubject: ".format_string($entry->name,true);
             $posttext  = "$course->shortname -> $modnamepl -> ".format_string($entry->name,true)."\n";
