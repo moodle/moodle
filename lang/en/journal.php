@@ -23,6 +23,7 @@ $string['journalquestion'] = 'Journal question';
 $string['journalrating1'] = 'Not satisfactory';
 $string['journalrating2'] = 'Satisfactory';
 $string['journalrating3'] = 'Outstanding';
+$string['mailsubject'] = 'Journal feedback';
 $string['modulename'] = 'Journal';
 $string['modulenameplural'] = 'Journals';
 $string['newjournalentries'] = 'New journal entries';
