@@ -283,8 +283,13 @@
             foreach ($useranswer as $optionid => $userlist) {
                 if (!$optionid and !$choice->showunanswered) {
                     continue;
-                }
-                $column[$optionid] = count($userlist);
+                }                
+                $column[$optionid] = 0;
+                foreach ($userlist as $user) {
+                    if (!($optionid==0 && isadmin($user->id)) && !($optionid==0 && isteacher($course->id, $user->id) && !(isteacheredit($course->id, $user->id)) )  ) { //make sure admins and hidden teachers are not shown in not answered yet column.
+                         $column[$optionid]++;
+                    }
+                }                
                 if ($column[$optionid] > $maxcolumn) {
                     $maxcolumn = $column[$optionid];
                 }
