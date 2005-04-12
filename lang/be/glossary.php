@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4.3 + (2004083131)
+      // glossary.php - created with Moodle 1.4.4 (2004083140)
 
 
 $string['addcomment'] = 'Дадаць каментар';
@@ -10,6 +10,7 @@ $string['allcategories'] = 'Усе катэгорыі';
 $string['allentries'] = 'Усе';
 $string['allowcomments'] = 'Дазволеныя каментары да артыкулаў';
 $string['allowduplicatedentries'] = 'Дазволеныя дубліраванныя артыкулы';
+$string['allowprintview'] = 'Дазволіць прагляд перад  друкам';
 $string['allowratings'] = 'Ацэньваць артыкулыі?';
 $string['answer'] = 'Адказ';
 $string['approve'] = 'Дазволіць';
@@ -88,11 +89,11 @@ $string['entryleveldefaultsettings'] = 'Настройкі па-змаўчанні Ўзроўню запісу';
 $string['entrysaved'] = 'Гэты артыкул быў захаваны';
 $string['entryupdated'] = 'Гэты артыкул абнавіліл';
 $string['entryusedynalink'] = 'На гэты артыкул будзе ўстаноўлена аўтаматычная спасылка';
-$string['explainaddentry'] = 'Дадаць новы артыкул у бягучы слоўнік. <br/>Азначэнне і тлумачэнне - абавязковыя палі.';
+$string['explainaddentry'] = 'Дадаць новы артыкул у бягучы слоўнік. <br />Азначэнне і тлумачэнне - абавязковыя палі.';
 $string['explainall'] = 'Паказаць УСЕ артыкулы на адной старонцы';
 $string['explainalphabet'] = 'Прагляд слоўніка, выкарыстоўваючы гэты індэкс';
-$string['explainexport'] = 'Файл быў створаны. <br/>Загрузіце і захавайце яго. Вы можаце імпартаваць яго ў любы час у гэты або іншы курсе.';
-$string['explainimport'] = 'Вы павінны вызначыць файл, каб імпартаваць і вызначыць крытэры гэтага працэсу. <p/> Пашліце Ваш запыт і прагледзьце вынікі.';
+$string['explainexport'] = 'Файл быў створаны. <br />Загрузіце і захавайце яго. Вы можаце імпартаваць яго ў любы час у гэты або іншы курсе.';
+$string['explainimport'] = 'Вы павінны вызначыць файл, каб імпартаваць і вызначыць крытэры гэтага працэсу. <br /> Пашліце Ваш запыт і прагледзьце вынікі.';
 $string['explainspecial'] = 'Пакажыце артыкулы, якія не пачынаюцца з літары';
 $string['exportedentry'] = 'Экспартуемы артыкул';
 $string['exportedfile'] = 'Экспартуемы файл';
@@ -130,6 +131,7 @@ $string['notcategorised'] = 'Не ў катэгорыі';
 $string['numberofentries'] = 'Колькасць артыкулаў';
 $string['onebyline'] = '(адзін на радок)';
 $string['printerfriendly'] = 'Версія для друку';
+$string['printviewnotallowed'] = 'Прагляд перад друкам не дазволены';
 $string['question'] = 'Пытанне';
 $string['rate'] = 'Адзнака';
 $string['rating'] = 'Ацэньванне';

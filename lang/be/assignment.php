@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.4.3 + (2004083131)
+      // assignment.php - created with Moodle 1.4.4 (2004083140)
 
 
 $string['allowresubmit'] = 'Некалькі спробаў';
@@ -13,6 +13,14 @@ $string['description'] = 'Апісанне';
 $string['duedate'] = 'Апошні тэрмін здачы';
 $string['duedateno'] = 'Не мае апошняга тэрміну здачы';
 $string['early'] = '$a рана';
+$string['emailteachermail'] = '$a->username абнавілі свае адказы для
+\'$a->assignment\'
+
+Прагледзець іх магчыма тут: $a->url';
+$string['emailteachermailhtml'] = '$a->username абнавілі свае адказы для <i>\'$a->assignment\'</i><br /><br />
+Яны даступныя па <a href=\"$a->url\">гэтаму адрасу на сайце</a>.
+';
+$string['emailteachers'] = 'Папярэджанні наконт электроннай пошты для выкладчыкаў';
 $string['existingfiledeleted'] = 'Існуючы файл быў выдалены: $a';
 $string['failedupdatefeedback'] = 'Не ўдалося аднавіць адказ карыстальніка $a';
 $string['feedback'] = 'Змяніць';
