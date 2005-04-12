@@ -980,7 +980,9 @@ function calendar_set_referring_course($courseid) {
 }
 
 function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NULL, $groupeventsfrom = NULL, $ignorefilters = false) {
-    global $SESSION, $USER;
+    global $SESSION, $USER, $CFG;
+
+    //$GLOBALS['db']->debug = true;
 
     // Insidious bug-wannabe: setting $SESSION->cal_courses_shown to $course->id would cause
     // the code to function incorrectly UNLESS we convert it to an integer. One case where
@@ -1035,33 +1037,42 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
         else if(is_array($groupeventsfrom)) {
             $groupcourses = array_keys($groupeventsfrom);
         }
-        $grouparray = array();
 
-        // We already have the courses to examine in $courses
-        // For each course...
-        foreach($groupcourses as $courseid) {
-            // If the user is an editing teacher in there,
-            if(!empty($USER->id) && isteacheredit($courseid, $USER->id)) {
-                // Show events from all groups
-                if(($grouprecords = get_groups($courseid)) !== false) {
-                    $grouparray = array_merge($grouparray, array_keys($grouprecords));
-                }
-            }
-            // Otherwise show events from the group he is a member of
-            else if(isset($USER->groupmember[$courseid])) {
-                $grouparray[] = $USER->groupmember[$courseid];
-            }
-        }
-        if(empty($grouparray)) {
-            $group = false;
+        if(isadmin() && !empty($CFG->calendar_adminseesall)) {
+            $group = true;
         }
         else {
-            $group = $grouparray;
+            $grouparray = array();
+    
+            // We already have the courses to examine in $courses
+            // For each course...
+            foreach($groupcourses as $courseid) {
+                // If the user is an editing teacher in there,
+                if(!empty($USER->id) && isteacheredit($courseid, $USER->id)) {
+                    // Show events from all groups
+                    if(($grouprecords = get_groups($courseid)) !== false) {
+                        $grouparray = array_merge($grouparray, array_keys($grouprecords));
+                    }
+                }
+                // Otherwise show events from the group he is a member of
+                else if(isset($USER->groupmember[$courseid])) {
+                    $grouparray[] = $USER->groupmember[$courseid];
+                }
+            }
+            if(empty($grouparray)) {
+                $group = false;
+            }
+            else {
+                $group = $grouparray;
+            }
         }
+        
     }
     else {
         $group = false;
     }
+
+    $GLOBALS['db']->debug = false;
 }
 
 function calendar_edit_event_allowed($event) {
