@@ -11,7 +11,9 @@
     $perpage  = optional_param('perpage', 20);
 
     $strquizzes = get_string('modulenameplural', 'quiz');
-    $strediting = get_string('editquestions', "quiz");
+    $strquiz = get_string('modulename', 'quiz');
+    $streditingquestions = get_string('editquestions', "quiz");
+    $streditingquiz = get_string("editinga", "moodle", $strquiz);
 
     if ($modform = data_submitted() and !empty($modform->course)) { // data submitted
 
@@ -105,7 +107,7 @@
     }
 
     if (isset($_REQUEST['addquestion']) and confirm_sesskey()) { /// Add a single question to the current quiz
-        
+
         // add question to quiz->questions
         $key = $_REQUEST['addquestion'];
         $questions = array();
@@ -119,7 +121,7 @@
         if (!set_field('quiz', 'questions', $modform->questions, 'id', $modform->instance)) {
             error('Could not save question list');
         }
-        
+
         // update question grades
         $questionrecord = get_record("quiz_questions", "id", $key);
         if (!empty($questionrecord->defaultgrade)) {
@@ -222,7 +224,7 @@
                 if ($questionlist = explode(',', $deleteselected)) {
                     // for each question either hide it if it is in use or delete it
                     foreach ($questionlist as $questionid) {
-                        if (record_exists('quiz_responses', 'question', $questionid) or 
+                        if (record_exists('quiz_responses', 'question', $questionid) or
                             record_exists('quiz_responses', 'originalquestion', $questionid) or
                             record_exists('quiz_question_grades', 'question', $questionid)) {
                             if (!set_field('quiz_questions', 'hidden', 1, 'id', $questionid)) {
@@ -239,7 +241,7 @@
             } else {
                 error("Confirmation string was incorrect");
             }
-            
+
         } else { // teacher still has to confirm
             // make a list of all the questions that are selected
             $rawquestions = $_POST;
@@ -251,7 +253,7 @@
                 if (substr($key, 0, 1) == "q") {
                     $key = substr($key,1);
                     $questionlist .= $key.',';
-                    if (record_exists('quiz_responses', 'question', $key) or 
+                    if (record_exists('quiz_responses', 'question', $key) or
                             record_exists('quiz_responses', 'originalquestion', $key) or
                             record_exists('quiz_question_grades', 'question', $key)) {
                         $questionnames .= '* ';
@@ -266,13 +268,13 @@
             $questionlist = rtrim($questionlist, ',');
 
             // Add an explanation about questions in use
-            if ($inuse) { 
+            if ($inuse) {
                 $questionnames .= get_string('questionsinuse', 'quiz');
             }
-            print_header_simple($strediting, '',
+            print_header_simple($streditingquestions, '',
                  "<a href=\"index.php?id=$course->id\">$strquizzes</a>".
-                 " -> $strediting");
-            notice_yesno(get_string("deletequestionscheck", "quiz", $questionnames), 
+                 " -> $streditingquestions");
+            notice_yesno(get_string("deletequestionscheck", "quiz", $questionnames),
                         "edit.php?sesskey=$USER->sesskey&amp;deleteselected=$questionlist&amp;confirm=".md5($questionlist), "edit.php");
             print_footer($course);
             exit;
@@ -322,10 +324,10 @@
 
     if (isset($modform->instance) and record_exists_sql("SELECT * FROM {$CFG->prefix}quiz_attempts WHERE quiz = '$modform->instance' AND NOT (userid = '$USER->id') LIMIT 1")){
     // one column layout with table of questions used in this quiz
-        print_header_simple($strediting, '',
+        print_header_simple($streditingquiz, '',
                  "<a href=\"index.php?id=$course->id\">$strquizzes</a>".
                  " -> <a href=\"view.php?q=$modform->instance\">".format_string($modform->name,true)."</a>".
-                 " -> $strediting");
+                 " -> $streditingquiz");
         print_simple_box_start("center");
         print_heading(format_string($modform->name));
         $attemptcount = count_records_select("quiz_attempts", "quiz = '$modform->instance' AND timefinish > 0");
@@ -352,18 +354,18 @@
 
     if (!isset($modform->instance)) {
         // one column layout for non-quiz-specific editing page
-        print_header_simple($strediting, '',
+        print_header_simple($streditingquestions, '',
                  "<a href=\"index.php?id=$course->id\">$strquizzes</a>".
-                 " -> $strediting");
+                 " -> $streditingquestions");
         echo '<table align="center" border="0" cellpadding="2" cellspacing="0">';
         echo '<tr><td valign="top">';
 
     } else {
         // two column layout with quiz info in left column
-        print_header_simple($strediting, '',
+        print_header_simple($streditingquiz, '',
                  "<a href=\"index.php?id=$course->id\">$strquizzes</a>".
                  " -> <a href=\"view.php?q=$modform->instance\">".format_string($modform->name,true)."</a>".
-                 " -> $strediting");
+                 " -> $streditingquiz");
         echo '<table border="0" width="100%" cellpadding="2" cellspacing="0">';
         echo '<tr><td width="50%" valign="top">';
         print_simple_box_start("center", "100%");
