@@ -374,7 +374,7 @@ class WikiToMarkdown {
     // $thing = the database name for that 'thing' (eg, resource, choice)
     // $textfield = the name of the field that might hold the wiki-text
     // $formatfield = the name of the field that contains the format type
-    // $course = if supplied, the query to get the courseid, if not get from the 'course' field 
+    // $coursesql = if supplied, the query to get the courseid, if not get from the 'course' field 
     //   ($id of record is tacked on right at the end, so phrase accordingly)
     // returns a count of records converted 
     $count = 0;
@@ -382,7 +382,7 @@ class WikiToMarkdown {
         foreach( $records as $record ) {
           $text = $record->$textfield;
           $id = $record->id;
-          if (!$courseisql) {
+          if (!$coursesql) {
             $courseid = $record->course;
           } else {
             $r = get_record( $coursesql . "$id" );
