@@ -1865,6 +1865,44 @@
         return $status;
     }
 
+    //This function converts texts in FORMAT_WIKI to FORMAT_MARKDOWN for
+    //some texts in the module
+    function quiz_restore_wiki2markdown ($restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Convert quiz_questions->questiontext
+        if ($records = get_records_sql ("SELECT q.id, q.questiontext, q.questiontextformat
+                                         FROM {$CFG->prefix}quiz_questions q,
+                                              {$CFG->prefix}backup_ids b
+                                         WHERE b.backup_code = $restore->backup_unique_code AND
+                                               b.table_name = 'quiz_questions' AND
+                                               q.id = b.new_id AND
+                                               q.questiontextformat = ".FORMAT_WIKI)) { 
+            foreach ($records as $record) {
+                //Rebuild wiki links
+                $record->questiontext = restore_decode_wiki_content($record->questiontext, $restore);
+                //Convert to Markdown
+                $wtm = new WikiToMarkdown();
+                $record->questiontext = $wtm->convert($record->questiontext, $restore->course_id);
+                $record->questiontextformat = FORMAT_MARKDOWN; 
+                $status = update_record('quiz_questions', addslashes_object($record));
+                //Do some output
+                $i++;
+                if (($i+1) % 1 == 0) {
+                    echo ".";
+                    if (($i+1) % 20 == 0) {
+                        echo "<br />";
+                    }
+                    backup_flush(300);
+                }
+            }
+        }   
+        return $status;
+    }
+
     //This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
     function quiz_restore_logs($restore,$log) {

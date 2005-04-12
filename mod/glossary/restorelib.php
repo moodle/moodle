@@ -509,6 +509,83 @@
         return $status;
     }
 
+    //This function converts texts in FORMAT_WIKI to FORMAT_MARKDOWN for
+    //some texts in the module
+    function glossary_restore_wiki2markdown ($restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Convert glossary_comments->comment
+        if ($records = get_records_sql ("SELECT c.id, c.comment, c.format
+                                         FROM {$CFG->prefix}glossary_comments c,
+                                              {$CFG->prefix}glossary_entries e,
+                                              {$CFG->prefix}glossary g,
+                                              {$CFG->prefix}backup_ids b
+                                         WHERE e.id = c.entryid AND
+                                               g.id = e.glossaryid AND
+                                               g.course = $restore->course_id AND
+                                               c.format = ".FORMAT_WIKI. " AND
+                                               b.backup_code = $restore->backup_unique_code AND
+                                               b.table_name = 'glossary_comments' AND
+                                               b.new_id = c.id")) {
+            foreach ($records as $record) {
+                //Rebuild wiki links
+                $record->comment = restore_decode_wiki_content($record->comment, $restore);
+                //Convert to Markdown
+                $wtm = new WikiToMarkdown();
+                $record->comment = $wtm->convert($record->comment, $restore->course_id);
+                $record->format = FORMAT_MARKDOWN;
+                $status = update_record('glossary_comments', addslashes_object($record));
+                //Do some output
+                $i++;
+                if (($i+1) % 1 == 0) {
+                    echo ".";
+                    if (($i+1) % 20 == 0) {
+                        echo "<br />";
+                    }
+                    backup_flush(300);
+                }
+            }
+
+        }
+
+        //Convert glossary_entries->definition
+        if ($records = get_records_sql ("SELECT e.id, e.definition, e.format
+                                         FROM {$CFG->prefix}glossary_entries e,
+                                              {$CFG->prefix}glossary g,
+                                              {$CFG->prefix}backup_ids b
+                                         WHERE g.id = e.glossaryid AND
+                                               g.course = $restore->course_id AND
+                                               e.format = ".FORMAT_WIKI. " AND
+                                               b.backup_code = $restore->backup_unique_code AND
+                                               b.table_name = 'glossary_entries' AND
+                                               b.new_id = e.id")) {
+            foreach ($records as $record) {
+                //Rebuild wiki links
+                $record->definition = restore_decode_wiki_content($record->definition, $restore);
+                //Convert to Markdown
+                $wtm = new WikiToMarkdown();
+                $record->definition = $wtm->convert($record->definition, $restore->course_id);
+                $record->format = FORMAT_MARKDOWN;
+                $status = update_record('glossary_entries', addslashes_object($record));
+                //Do some output
+                $i++;
+                if (($i+1) % 1 == 0) {
+                    echo ".";
+                    if (($i+1) % 20 == 0) {
+                        echo "<br />";
+                    }
+                    backup_flush(300);
+                }
+            }
+
+        }
+        
+        return $status;
+    }
+
     //This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
     function glossary_restore_logs($restore,$log) {

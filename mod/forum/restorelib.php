@@ -566,6 +566,50 @@
         return $status;
     }
 
+    //This function converts texts in FORMAT_WIKI to FORMAT_MARKDOWN for
+    //some texts in the module
+    function forum_restore_wiki2markdown ($restore) {
+    
+        global $CFG;
+
+        $status = true;
+
+        //Convert forum_posts->message
+        if ($records = get_records_sql ("SELECT p.id, p.message, p.format
+                                         FROM {$CFG->prefix}forum_posts p,
+                                              {$CFG->prefix}forum_discussions d,
+                                              {$CFG->prefix}forum f,
+                                              {$CFG->prefix}backup_ids b
+                                         WHERE d.id = p.discussion AND
+                                               f.id = d.forum AND
+                                               f.course = $restore->course_id AND
+                                               p.format = ".FORMAT_WIKI. " AND
+                                               b.backup_code = $restore->backup_unique_code AND
+                                               b.table_name = 'forum_posts' AND
+                                               b.new_id = p.id")) {
+            foreach ($records as $record) {
+                //Rebuild wiki links
+                $record->message = restore_decode_wiki_content($record->message, $restore);
+                //Convert to Markdown
+                $wtm = new WikiToMarkdown();
+                $record->message = $wtm->convert($record->message, $restore->course_id);
+                $record->format = FORMAT_MARKDOWN;
+                $status = update_record('forum_posts', addslashes_object($record));
+                //Do some output
+                $i++;
+                if (($i+1) % 1 == 0) {
+                    echo ".";
+                    if (($i+1) % 20 == 0) {
+                        echo "<br />";
+                    }
+                    backup_flush(300);
+                }
+            }
+
+        }
+        return $status;
+    }
+
     //This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
     function forum_restore_logs($restore,$log) {

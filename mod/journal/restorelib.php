@@ -151,6 +151,79 @@
         return $status;
     }
 
+    //This function converts texts in FORMAT_WIKI to FORMAT_MARKDOWN for
+    //some texts in the module
+    function journal_restore_wiki2markdown ($restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Convert journal_entries->text
+        if ($records = get_records_sql ("SELECT e.id, e.text, e.format
+                                         FROM {$CFG->prefix}journal_entries e,
+                                              {$CFG->prefix}journal j,
+                                              {$CFG->prefix}backup_ids b
+                                         WHERE j.id = e.journal AND
+                                               j.course = $restore->course_id AND
+                                               e.format = ".FORMAT_WIKI. " AND
+                                               b.backup_code = $restore->backup_unique_code AND
+                                               b.table_name = 'journal_entries' AND
+                                               b.new_id = e.id")) {
+            foreach ($records as $record) {
+                //Rebuild wiki links
+                $record->text = restore_decode_wiki_content($record->text, $restore);
+                //Convert to Markdown
+                $wtm = new WikiToMarkdown();
+                $record->text = $wtm->convert($record->text, $restore->course_id);
+                $record->format = FORMAT_MARKDOWN;
+                $status = update_record('journal_entries', addslashes_object($record));
+                //Do some output
+                $i++;
+                if (($i+1) % 1 == 0) {
+                    echo ".";
+                    if (($i+1) % 20 == 0) {
+                        echo "<br />";
+                    }
+                    backup_flush(300);
+                }
+            }
+
+        }
+
+        //Convert journal->intro
+        if ($records = get_records_sql ("SELECT j.id, j.intro, j.introformat
+                                         FROM {$CFG->prefix}journal j,
+                                              {$CFG->prefix}backup_ids b
+                                         WHERE j.course = $restore->course_id AND
+                                               j.introformat = ".FORMAT_WIKI. " AND
+                                               b.backup_code = $restore->backup_unique_code AND
+                                               b.table_name = 'journal' AND
+                                               b.new_id = j.id")) {
+            foreach ($records as $record) {
+                //Rebuild wiki links
+                $record->intro = restore_decode_wiki_content($record->intro, $restore);
+                //Convert to Markdown
+                $wtm = new WikiToMarkdown();
+                $record->intro = $wtm->convert($record->intro, $restore->course_id);
+                $record->introformat = FORMAT_MARKDOWN;
+                $status = update_record('journal', addslashes_object($record));
+                //Do some output
+                $i++;
+                if (($i+1) % 1 == 0) {
+                    echo ".";
+                    if (($i+1) % 20 == 0) {
+                        echo "<br />";
+                    }
+                    backup_flush(300);
+                }
+            }
+
+        }
+
+        return $status;
+    }
+
     //This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
     function journal_restore_logs($restore,$log) {

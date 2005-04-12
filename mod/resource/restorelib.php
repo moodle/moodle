@@ -398,6 +398,46 @@
         return $status;
     }
 
+    //This function converts texts in FORMAT_WIKI to FORMAT_MARKDOWN for
+    //some texts in the module
+    function resource_restore_wiki2markdown ($restore) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Convert resource->alltext
+        if ($records = get_records_sql ("SELECT r.id, r.alltext, r.options
+                                         FROM {$CFG->prefix}resource r,
+                                              {$CFG->prefix}backup_ids b
+                                         WHERE r.course = $restore->course_id AND
+                                               options = ".FORMAT_WIKI. " AND
+                                               b.backup_code = $restore->backup_unique_code AND
+                                               b.table_name = 'resource' AND
+                                               b.new_id = r.id")) {
+            foreach ($records as $record) {
+                //Rebuild wiki links
+                $record->alltext = restore_decode_wiki_content($record->alltext, $restore);
+                //Convert to Markdown
+                $wtm = new WikiToMarkdown();
+                $record->alltext = $wtm->convert($record->alltext, $restore->course_id);
+                $record->options = FORMAT_MARKDOWN;
+                $status = update_record('resource', addslashes_object($record));
+                //Do some output
+                $i++;
+                if (($i+1) % 1 == 0) {
+                    echo ".";
+                    if (($i+1) % 20 == 0) {
+                        echo "<br />";
+                    }
+                    backup_flush(300);
+                }
+            }
+
+        }
+        return $status;
+    }
+
 
     //This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
