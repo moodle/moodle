@@ -1009,7 +1009,10 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 
         case FORMAT_WIKI:
             // this format is deprecated
-            error( "Wiki-like format is deprecated. This should not happen. Please post a bug report" );
+            $text = '<p>NOTICE: Wiki-like formatting has been removed from Moodle.  You should not be seeing 
+                     this message as all texts should have been converted to Markdown format instead.  
+                     Please post a bug report to http://moodle.org/bugs with information about where you
+                     saw this message.</p>'.$text;
             break;
 
         case FORMAT_MARKDOWN:
