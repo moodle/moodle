@@ -196,6 +196,12 @@ function workshop_upgrade($oldversion) {
         table_column('workshop_assessments', '', 'teachergraded', 'INTEGER', '4', 'UNSIGNED', '0', 'NOT NULL', 'gradinggrade');
     }
 
+    if ($oldversion < 2005041200) { // replace wiki-like with markdown
+        include_once( "$CFG->dirroot/lib/wiki_to_markdown.php" );
+        $wtm = new WikiToMarkdown();
+        $wtm->update( 'workshop','description','format' );
+    }
+
     return true;
 
 }    
