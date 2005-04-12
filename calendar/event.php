@@ -224,7 +224,8 @@
 
     switch($action) {
         case 'delete':
-            if(!empty($_REQUEST['confirm']) && $_REQUEST['confirm'] == 1) {
+            $confirm = optional_param('confirm', 0, PARAM_INT);
+            if($confirm) {
                 // Kill it and redirect to day view
                 if(($event = get_record('event', 'id', $eventid)) !== false) {
                     /// Log the event delete.
@@ -236,14 +237,8 @@
                     add_to_log($event->courseid, 'calendar', 'delete', '', $event->name);
                 }
 
-                if(checkdate($_REQUEST['m'], $_REQUEST['d'], $_REQUEST['y'])) {
-                    // Being a bit paranoid to check this, but it doesn't hurt
-                    redirect(CALENDAR_URL.'view.php?view=day&cal_d='.$_REQUEST['d'].'&cal_m='.$_REQUEST['m'].'&cal_y='.$_REQUEST['y']);
-                }
-                else {
-                    // Redirect to now
-                    redirect(CALENDAR_URL.'view.php?view=day&cal_d='.$now['mday'].'&cal_m='.$now['mon'].'&cal_y='.$now['year']);
-                }
+                redirect(CALENDAR_URL.'view.php?view=day&cal_d='.$_REQUEST['d'].'&cal_m='.$_REQUEST['m'].'&cal_y='.$_REQUEST['y']);
+
             }
             else {
                 $eventtime = usergetdate($event->timestart);
@@ -346,8 +341,7 @@
                     $header = get_string('typeuser', 'calendar');
                 break;
                 case 'group':
-                    optional_variable($_REQUEST['groupid']);
-                    $groupid = $_REQUEST['groupid'];
+                    $groupid = optional_param('groupid', 0, PARAM_INT);
                     if(!($group = get_record('groups', 'id', $groupid) )) {
                         calendar_get_allowed_types($allowed);
                         $eventtype = 'select';
@@ -370,8 +364,7 @@
                     }
                 break;
                 case 'course':
-                    optional_variable($_REQUEST['courseid']);
-                    $courseid = $_REQUEST['courseid'];
+                    $courseid = optional_param('courseid', 0, PARAM_INT);
                     if(!record_exists('course', 'id', $courseid)) {
                         calendar_get_allowed_types($allowed);
                         $eventtype = 'select';
@@ -431,10 +424,8 @@
                 else {
                     $defaultgroup = user_group($defaultcourse, $USER->id);
                 }
-                optional_variable($_REQUEST['groupid'], $defaultgroup->id);
-                optional_variable($_REQUEST['courseid'], $defaultcourse);
-                $groupid = $_REQUEST['groupid'];
-                $courseid = $_REQUEST['courseid'];
+                $groupid  = optional_param('groupid',  $defaultgroup->id, PARAM_INT);
+                $courseid = optional_param('courseid', $defaultcourse, PARAM_INT);
                 echo '<h2>'.get_string('eventkind', 'calendar').':</h2>';
                 echo '<div id="selecteventtype">';
                 include('event_select.html');
