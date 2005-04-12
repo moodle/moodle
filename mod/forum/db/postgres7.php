@@ -163,8 +163,8 @@ function forum_upgrade($oldversion) {
         include_once( "$CFG->dirroot/lib/wiki_to_markdown.php" );
         $wtm = new WikiToMarkdown();
         $sql = "select course from {$CFG->prefix}forum_discussions, {$CFG->prefix}forum_posts ";
-        $sql .=  "where forum_posts.discussions = forum_discussions.id ";
-        $sql .=  "and forum_posts.id = ";
+        $sql .=  "where {$CFG->prefix}forum_posts.discussions = {$CFG->prefix}forum_discussions.id ";
+        $sql .=  "and {$CFG->prefix}forum_posts.id = ";
         $wtm->update( 'forum_posts','message','format',$sql );
     }
 
