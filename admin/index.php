@@ -318,69 +318,69 @@
     $table->cellspacing = 3;
     $table->width = "40%";
 
-    $configdata  = "<font size=+1>&nbsp;</font><a href=\"config.php\">".get_string("configvariables", 'admin')."</a> - <font size=\"1\">".
+    $configdata  = "<font size=\"+1\">&nbsp;</font><a href=\"config.php\">".get_string("configvariables", 'admin')."</a> - <font size=\"1\">".
                     get_string("adminhelpconfigvariables")."</font><br />";
-    $configdata .= "<font size=+1>&nbsp;</font><a href=\"site.php\">".get_string("sitesettings")."</a> - <font size=\"1\">".
+    $configdata .= "<font size=\"+1\">&nbsp;</font><a href=\"site.php\">".get_string("sitesettings")."</a> - <font size=\"1\">".
                     get_string("adminhelpsitesettings")."</font><br />";
-    $configdata .= "<font size=+1>&nbsp;</font><a href=\"../theme/index.php\">".get_string("themes")."</a> - <font size=\"1\">".
+    $configdata .= "<font size=\"+1\">&nbsp;</font><a href=\"../theme/index.php\">".get_string("themes")."</a> - <font size=\"1\">".
                     get_string("adminhelpthemes")."</font><br />";
-    $configdata .= "<font size=+1>&nbsp;</font><a href=\"lang.php\">".get_string("language")."</a> - <font size=\"1\">".
+    $configdata .= "<font size=\"+1\">&nbsp;</font><a href=\"lang.php\">".get_string("language")."</a> - <font size=\"1\">".
                     get_string("adminhelplanguage")."</font><br />";
-    $configdata .= "<font size=+1>&nbsp;</font><a href=\"modules.php\">".get_string("managemodules")."</a> - <font size=\"1\">".
+    $configdata .= "<font size=\"+1\">&nbsp;</font><a href=\"modules.php\">".get_string("managemodules")."</a> - <font size=\"1\">".
                     get_string("adminhelpmanagemodules")."</font><br />";
-    $configdata .= "<font size=+1>&nbsp;</font><a href=\"blocks.php\">".get_string("manageblocks")."</a> - <font size=\"1\">".
+    $configdata .= "<font size=\"+1\">&nbsp;</font><a href=\"blocks.php\">".get_string("manageblocks")."</a> - <font size=\"1\">".
                     get_string("adminhelpmanageblocks")."</font><br />";
-    $configdata .= "<font size=+1>&nbsp;</font><a href=\"filters.php\">".get_string("managefilters")."</a> - <font size=\"1\">".
+    $configdata .= "<font size=\"+1\">&nbsp;</font><a href=\"filters.php\">".get_string("managefilters")."</a> - <font size=\"1\">".
                     get_string("adminhelpmanagefilters")."</font><br />";
     if (!isset($CFG->disablescheduledbackups)) {
-        $configdata .= "<font size=+1>&nbsp;</font><a href=\"backup.php\">".get_string("backup")."</a> - <font size=\"1\">".
+        $configdata .= "<font size=\"+1\">&nbsp;</font><a href=\"backup.php\">".get_string("backup")."</a> - <font size=\"1\">".
                         get_string("adminhelpbackup")."</font><br />";
     }
-    $configdata .= "<font size=+1>&nbsp;</font><a href=\"editor.php\">". get_string("editorsettings") ."</a> - <font size=\"1\">".
+    $configdata .= "<font size=\"+1\">&nbsp;</font><a href=\"editor.php\">". get_string("editorsettings") ."</a> - <font size=\"1\">".
                     get_string("adminhelpeditorsettings")."</font><br />";
-    $configdata .= "<font size=+1>&nbsp;</font><a href=\"calendar.php\">". get_string('calendarsettings', 'admin') ."</a> - <font size=\"1\">".
+    $configdata .= "<font size=\"+1\">&nbsp;</font><a href=\"calendar.php\">". get_string('calendarsettings', 'admin') ."</a> - <font size=\"1\">".
                     get_string('helpcalendarsettings', 'admin')."</font><br />";
-    $configdata .= "<font size=+1>&nbsp;</font><a href=\"maintenance.php\">". get_string('sitemaintenancemode', 'admin') ."</a> - <font size=\"1\">".
+    $configdata .= "<font size=\"+1\">&nbsp;</font><a href=\"maintenance.php\">". get_string('sitemaintenancemode', 'admin') ."</a> - <font size=\"1\">".
                     get_string('helpsitemaintenance', 'admin')."</font><br />";
 
-    $table->data[] = array("<font size=+1><b><a href=\"configure.php\">".get_string("configuration")."</a></b>",
+    $table->data[] = array("<font size=\"+1\"><b><a href=\"configure.php\">".get_string("configuration")."</a></b></font>",
                             $configdata);
 
 
-    $userdata = "<font size=+1>&nbsp;</font><a href=\"auth.php?sesskey=$USER->sesskey\">".get_string("authentication")."</a> - <font size=\"1\">".
+    $userdata = "<font size=\"+1\">&nbsp;</font><a href=\"auth.php?sesskey=$USER->sesskey\">".get_string("authentication")."</a> - <font size=\"1\">".
                  get_string("adminhelpauthentication")."</font><br />";
-    $userdata .= "<font size=+1>&nbsp;</font><a href=\"user.php\">".get_string("edituser")."</a> - <font size=\"1\">".
+    $userdata .= "<font size=\"+1\">&nbsp;</font><a href=\"user.php\">".get_string("edituser")."</a> - <font size=\"1\">".
                  get_string("adminhelpedituser")."</font><br />";
-    $userdata .= "<font size=+1>&nbsp;</font><a href=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true&amp;sesskey=$USER->sesskey\">".
+    $userdata .= "<font size=\"+1\">&nbsp;</font><a href=\"$CFG->wwwroot/$CFG->admin/user.php?newuser=true&amp;sesskey=$USER->sesskey\">".
                  get_string("addnewuser")."</a> - <font size=\"1\">".
                  get_string("adminhelpaddnewuser")."</font><br />";
-    $userdata .= "<font size=+1>&nbsp;</font><a href=\"$CFG->wwwroot/$CFG->admin/uploaduser.php?sesskey=$USER->sesskey\">".
+    $userdata .= "<font size=\"+1\">&nbsp;</font><a href=\"$CFG->wwwroot/$CFG->admin/uploaduser.php?sesskey=$USER->sesskey\">".
                  get_string("uploadusers")."</a> - <font size=\"1\">".
                  get_string("adminhelpuploadusers")."</font><br />";
 
-    $userdata .= "<hr /><font size=+1>&nbsp;</font><a href=\"enrol.php?sesskey=$USER->sesskey\">".get_string("enrolments")."</a> - <font size=\"1\">".
+    $userdata .= "<hr /><font size=\"+1\">&nbsp;</font><a href=\"enrol.php?sesskey=$USER->sesskey\">".get_string("enrolments")."</a> - <font size=\"1\">".
                  get_string("adminhelpenrolments")."</font><br />";
-    $userdata .= "<font size=+1>&nbsp;</font><a href=\"../course/index.php?edit=off&amp;sesskey=$USER->sesskey\">".get_string("assignstudents")."</a> - <font size=\"1\">".
+    $userdata .= "<font size=\"+1\">&nbsp;</font><a href=\"../course/index.php?edit=off&amp;sesskey=$USER->sesskey\">".get_string("assignstudents")."</a> - <font size=\"1\">".
                  get_string("adminhelpassignstudents")."</font><br />";
 
-    $userdata .= "<font size=+1>&nbsp;</font><a href=\"../course/index.php?edit=on&amp;sesskey=$USER->sesskey\">".get_string("assignteachers")."</a> - <font size=\"1\">".
+    $userdata .= "<font size=\"+1\">&nbsp;</font><a href=\"../course/index.php?edit=on&amp;sesskey=$USER->sesskey\">".get_string("assignteachers")."</a> - <font size=\"1\">".
                  get_string("adminhelpassignteachers").
-                 " <img src=\"../pix/t/user.gif\" height=\"11\" width=\"11\" alt=\"\"></font><br />";
-    $userdata .= "<font size=+1>&nbsp;</font><a href=\"creators.php?sesskey=$USER->sesskey\">".get_string("assigncreators")."</a> - <font size=\"1\">".
+                 " <img src=\"../pix/t/user.gif\" height=\"11\" width=\"11\" alt=\"\" /></font><br />";
+    $userdata .= "<font size=\"+1\">&nbsp;</font><a href=\"creators.php?sesskey=$USER->sesskey\">".get_string("assigncreators")."</a> - <font size=\"1\">".
                  get_string("adminhelpassigncreators")."</font><br />";
-    $userdata .= "<font size=+1>&nbsp;</font><a href=\"admin.php?sesskey=$USER->sesskey\">".get_string("assignadmins")."</a> - <font size=\"1\">".
+    $userdata .= "<font size=\"+1\">&nbsp;</font><a href=\"admin.php?sesskey=$USER->sesskey\">".get_string("assignadmins")."</a> - <font size=\"1\">".
                  get_string("adminhelpassignadmins")."</font><br />";
 
-    $table->data[] = array("<font size=+1><b><a href=\"users.php\">".get_string("users")."</a></b>", $userdata);
+    $table->data[] = array("<font size=\"+1\"><b><a href=\"users.php\">".get_string("users")."</a></b></font>", $userdata);
 
-    $table->data[] = array("<font size=+1><b><a href=\"../course/index.php?edit=on&amp;sesskey=$USER->sesskey\">".get_string("courses")."</a></b>",
-                           "<font size=+1>&nbsp;</font>".get_string("adminhelpcourses"));
-    $table->data[] = array("<font size=+1><b><a href=\"../course/log.php?id=$site->id\">".get_string("logs")."</a></b>",
-                           "<font size=+1>&nbsp;</font>".get_string("adminhelplogs"));
-    $table->data[] = array("<font size=+1><b><a href=\"../files/index.php?id=$site->id\">".get_string("sitefiles")."</a></b>",
-                           "<font size=+1>&nbsp;</font>".get_string("adminhelpsitefiles"));
+    $table->data[] = array("<font size=\"+1\"><b><a href=\"../course/index.php?edit=on&amp;sesskey=$USER->sesskey\">".get_string("courses")."</a></b></font>",
+                           "<font size=\"+1\">&nbsp;</font>".get_string("adminhelpcourses"));
+    $table->data[] = array("<font size=\"+1\"><b><a href=\"../course/log.php?id=$site->id\">".get_string("logs")."</a></b></font>",
+                           "<font size=\"+1\">&nbsp;</font>".get_string("adminhelplogs"));
+    $table->data[] = array("<font size=\"+1\"><b><a href=\"../files/index.php?id=$site->id\">".get_string("sitefiles")."</a></b></font>",
+                           "<font size=\"+1\">&nbsp;</font>".get_string("adminhelpsitefiles"));
     if (file_exists("$CFG->dirroot/$CFG->admin/$CFG->dbtype")) {
-        $table->data[] = array("<font size=+1><b><a href=\"$CFG->dbtype/frame.php\">".get_string("managedatabase")."</a></b>",
+        $table->data[] = array("<font size=+1><b><a href=\"$CFG->dbtype/frame.php\">".get_string("managedatabase")."</a></b></font>",
                                "<font size=+1>&nbsp;</font>".get_string("adminhelpmanagedatabase"));
     }
 
