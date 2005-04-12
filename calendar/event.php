@@ -50,10 +50,9 @@
         redirect(CALENDAR_URL.'view.php?view=upcoming');
     }
 
-    require_variable($_REQUEST['action']);
-    optional_variable($_REQUEST['id']);
-    optional_variable($_REQUEST['type'], 'select');
-    $_REQUEST['id'] = intval($_REQUEST['id']); // Always a good idea, against SQL injections
+    $action    = required_param('action', PARAM_ALPHA);
+    $eventid   = optional_param('id', 0, PARAM_INT);
+    $eventtype = optional_param('type', 'select', PARAM_ALPHA);
     $urlcourse = optional_param('course', 0, PARAM_INT);
 
     if(!$site = get_site()) {
@@ -88,10 +87,10 @@
         }
     }
 
-    switch($_REQUEST['action']) {
+    switch($action) {
         case 'delete':
             $title = get_string('deleteevent', 'calendar');
-            $event = get_record('event', 'id', $_REQUEST['id']);
+            $event = get_record('event', 'id', $eventid);
             if($event === false) {
                 error('Invalid event');
             }
@@ -102,7 +101,7 @@
 
         case 'edit':
             $title = get_string('editevent', 'calendar');
-            $event = get_record('event', 'id', $_REQUEST['id']);
+            $event = get_record('event', 'id', $eventid);
             if($event === false) {
                 error('Invalid event');
             }
@@ -223,14 +222,14 @@
     echo '<table id="calendar">';
     echo '<tr><td class="maincalendar">';
 
-    switch($_REQUEST['action']) {
+    switch($action) {
         case 'delete':
             if(!empty($_REQUEST['confirm']) && $_REQUEST['confirm'] == 1) {
                 // Kill it and redirect to day view
-                if(($event = get_record('event', 'id', $_REQUEST['id'])) !== false) {
+                if(($event = get_record('event', 'id', $eventid)) !== false) {
                     /// Log the event delete.
 
-                    delete_records('event', 'id', $_REQUEST['id']);
+                    delete_records('event', 'id', $eventid);
 
                     // pj - fixed the course id problem, but now we have another one:
                     // what to do with the URL?
@@ -324,12 +323,12 @@
             calendar_get_allowed_types($allowed);
             if(!$allowed->groups && !$allowed->courses && !$allowed->site) {
                 // Take the shortcut
-                $_REQUEST['type'] = 'user';
+                $eventtype = 'user';
             }
 
             $header = '';
 
-            switch($_REQUEST['type']) {
+            switch($eventtype) {
                 case 'user':
                     $form->name = '';
                     $form->description = '';
@@ -351,7 +350,7 @@
                     $groupid = $_REQUEST['groupid'];
                     if(!($group = get_record('groups', 'id', $groupid) )) {
                         calendar_get_allowed_types($allowed);
-                        $_REQUEST['type'] = 'select';
+                        $eventtype = 'select';
                     }
                     else {
                         $form->name = '';
@@ -375,7 +374,7 @@
                     $courseid = $_REQUEST['courseid'];
                     if(!record_exists('course', 'id', $courseid)) {
                         calendar_get_allowed_types($allowed);
-                        $_REQUEST['type'] = 'select';
+                        $eventtype = 'select';
                     }
                     else {
                         $form->name = '';
@@ -424,7 +423,7 @@
 
             echo '<div class="header">'.get_string('newevent', 'calendar').$header.'</div>';
 
-            if($_REQUEST['type'] == 'select') {
+            if($eventtype == 'select') {
                 $defaultcourse = $SESSION->cal_course_referer;
                 if(isteacheredit($defaultcourse, $USER->id)) {
                     $defaultgroup = 0;
@@ -462,7 +461,7 @@
     echo '<td class="sidecalendar">';
     echo '<div class="header">'.get_string('monthlyview', 'calendar').'</div>';
     echo '<div class="filters">';
-    echo calendar_filter_controls('event', 'action='.$_REQUEST['action'].'&amp;type='.$_REQUEST['type'].'&amp;id='.$_REQUEST['id']);
+    echo calendar_filter_controls('event', 'action='.$action.'&amp;type='.$eventtype.'&amp;id='.$eventid);
     echo '</div>';
     
     echo '<div>';
