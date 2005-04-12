@@ -313,8 +313,7 @@ class quiz_category_object {
         global $USER;
         $fill = str_repeat($this->tab, $depth);
 
-        $linkcss = $category->publish ? '' : ''; // This could be used to give different formatting
-        // to the name of published categories. Not currently used.
+        $linkcss = $category->publish ? ' class="published"' : ' class="unpublished"';
 
         /// Each section below adds a data cell to this table row
         $this->edittable->align["$category->id.course"] =  "left";
