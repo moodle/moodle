@@ -1,7 +1,7 @@
 <!-- This page defines the form to create or edit an instance of this module -->
 <!-- It is used from /course/mod.php.  The whole instance is available as $form. -->
 
-<?php 
+<?php
     require_once("$CFG->dirroot/mod/quiz/locallib.php");
 // Ensure that all form variables are initialized
     if (!isset($form->name)) {
@@ -64,27 +64,27 @@
     if (!isset($form->popup)) {
         $form->popup = $CFG->quiz_popup;
     }
-    
+
     $fix = 0; // This will later be set to 1 if some of the variables have been fixed by the admin.
-    
+
     // the following are used for drop-down menus
     $reviewoptions = array();
     $reviewoptions[0] = get_string('reviewnever', 'quiz');
     $reviewoptions[1] = get_string('reviewafter', 'quiz');
     $reviewoptions[2] = get_string('reviewbefore', 'quiz');
     $reviewoptions[3] = get_string('reviewalways', 'quiz');
-    
+
     $yesnooptions = array();
     $yesnooptions[0] = get_string("no");
     $yesnooptions[1] = get_string("yes");
-    
+
     $attemptoptions = array();
     $attemptoptions[0] = get_string("attemptsunlimited", "quiz");
     $attemptoptions[1] = "1 ".strtolower(get_string("attempt", "quiz"));
     for ($i=2;$i<=6;$i++) {
         $attemptoptions[$i] = "$i ".strtolower(get_string("attempts", "quiz"));
     }
-    
+
     $grades = array();
     for ($i=100; $i>=1; $i--) {
         $grades[$i] = $i;
@@ -113,15 +113,15 @@
         if ($usehtmleditor) {
            helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
         } else {
-           helpbutton("text", get_string("helptext"), "moodle", true, true); 
+           helpbutton("text", get_string("helptext"), "moodle", true, true);
            echo '<br />';
            emoticonhelpbutton("form", "description");
            echo '<br />';
-        } 
+        }
       ?>
     </td>
     <td>
-        <?php 
+        <?php
            print_textarea($usehtmleditor, 20, 50, 680, 400, "intro", $form->intro);
         ?>
     </td>
@@ -177,7 +177,7 @@
                 $perpage[$i] = $i;
             }
             $perpage[0] = get_string('allinone', 'quiz');
-    
+
             choose_from_menu($perpage, 'questionsperpage', $form->questionsperpage, '');
             helpbutton('questionsperpage', get_string('questionsperpage'), 'quiz');
          ?>
@@ -423,7 +423,7 @@
                 $perpage[$i] = $i;
             }
             $perpage[0] = get_string('allinone', 'quiz');
-    
+
             choose_from_menu($perpage, 'questionsperpage', $form->questionsperpage, '');
             helpbutton('questionsperpage', get_string('questionsperpage'), 'quiz');
          ?>
@@ -489,6 +489,23 @@
         <?php
             choose_from_menu($QUIZ_GRADE_METHOD, "grademethod", "$form->grademethod", "");
             helpbutton("grademethod", get_string("grademethod","quiz"), "quiz");
+         ?>
+        </td>
+    </tr>
+<?php } ?>
+
+<?php if ($CFG->quiz_fix_decimalpoints) { ?>
+    <tr valign="top">
+        <td align="right"><b><?php print_string("decimalpoints", "quiz") ?>:</b></td>
+        <td>
+         <?php
+            unset($options);
+            $options[0] = '0';
+            $options[1] = '1';
+            $options[2] = '2';
+            $options[3] = '3';
+            choose_from_menu($options, "decimalpoints", "$form->decimalpoints", "");
+            helpbutton("decimalpoints", get_string("decimalpoints","quiz"), "quiz");
          ?>
         </td>
     </tr>
@@ -607,4 +624,4 @@
 
 <script language="javascript" type="text/javascript">
     showhide('optionsettings', true);
-</script> 
+</script>
