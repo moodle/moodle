@@ -93,6 +93,30 @@
         return $status;
     }
 
+    //This function converts all the wiki texts in the restored course
+    //to the Markdown format. Used only for backup files prior 2005041100.
+    //It calls every module xxxx_convert_wiki2markdown function
+    function restore_convert_wiki2markdown($restore) {
+
+        $status = true;
+
+        echo "<ul>";
+        foreach ($restore->mods as $name => $info) {
+            //If the module is being restored
+            if ($info->restore == 1) {
+                //Check if the xxxx_convert_wiki2markdown exists
+                $function_name = $name."_convert_wiki2markdown";
+                if (function_exists($function_name)) {
+                    echo "<li>".get_string("modulenameplural",$name);
+                    $status = $function_name($restore);
+                    echo '</li>';
+                }
+            }
+        }
+
+        return $status;
+    }
+
     //This function search for some wiki texts in differenct parts of Moodle to
     //decode them to their new ids.
     function restore_decode_wiki_texts($restore) {

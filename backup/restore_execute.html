@@ -13,6 +13,9 @@
     //Add info->original_wwwroot to $restore to be able to use it in all the restore process
     //(mainly when decoding internal links)
     $restore->original_wwwroot = $info->original_wwwroot;
+    //Add info->backup_version to $restore to be able to detect versions in the restore process
+    //(to decide when to convert wiki texts to markdown...)
+    $restore->backup_version = $info->backup_backup_version;
 
     //Check login
     require_login();
@@ -327,6 +330,15 @@
         echo "<li>".get_string("decodinginternallinks");
         if (!$status = restore_decode_content_links($restore)) {
             notify("Could not refresh events for activities!");
+        }
+    }
+
+    //Now, with backup files prior to version 2005041100,
+    //convert all the wiki texts in the course to markdown
+    if ($status && $restore->backup_version < 2005041100) {
+        echo "<li>".get_string("convertingwikitomarkdown");
+        if (!$status = restore_convert_wiki2markdown($restore)) {
+            notify("Could not convert wiki texts to markdown!");
         }
     }
 
