@@ -340,8 +340,8 @@ function quiz_upgrade($oldversion) {
         include_once( "$CFG->dirroot/lib/wiki_to_markdown.php" );
         $wtm = new WikiToMarkdown();
         $sql = "select course from {$CFG->prefix}quiz_categories, {$CFG->prefix}quiz_questions ";
-        $sql .= "where quiz_category.id = quiz_questions.category ";
-        $sql .= "and quiz_questions.id = ";
+        $sql .= "where {$CFG->prefix}quiz_category.id = {$CFG->prefix}quiz_questions.category ";
+        $sql .= "and {$CFG->prefix}quiz_questions.id = ";
         $wtm->update( 'quiz_questions', 'questiontext', 'questiontextformat', $sql );
     }
 

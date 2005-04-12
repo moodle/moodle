@@ -64,8 +64,8 @@ function journal_upgrade($oldversion) {
         $wtm->update( 'journal','intro','introformat' );
         // journal entries
         $sql = "select course from {$CFG->prefix}journal, {$CFG->prefix}journal_entries ";
-        $sql .= "where journal.id = journal_entries.journal ";
-        $sql .= "and journal_entries.id = ";
+        $sql .= "where {$CFG->prefix}journal.id = {$CFG->prefix}journal_entries.journal ";
+        $sql .= "and {$CFG->prefix}journal_entries.id = ";
         $wtm->update( 'journal_entries', 'text', 'format', $sql );
     }
 

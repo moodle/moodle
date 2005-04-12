@@ -407,14 +407,14 @@ function glossary_upgrade($oldversion) {
         $wtm = new WikiToMarkdown();
         // update glossary_entries->definition
         $sql = "select course from {$CFG->prefix}glossary,{$CFG->prefix}glossary_entries ";
-        $sql .= "where glossary.id = glossary_entries.glossaryid ";
-        $sql .= "and glossary_entries.id = ";
+        $sql .= "where {$CFG->prefix}glossary.id = {$CFG->prefix}glossary_entries.glossaryid ";
+        $sql .= "and {$CFG->prefix}glossary_entries.id = ";
         $wtm->update( 'glossary_entries','definition','format' );
         // update glossary_comments->text
         $sql = "select course from {$CFG->prefix}glossary,{$CFG->prefix}glossary_entries,{$CFG->prefix}glossary_comments ";
-        $sql .= "where glossary.id = glossary_entries.glossaryid ";
-        $sql .= "and glossary_entries.id = glossary_comments.entryid ";
-        $sql .= "and glossary_comments.id = ";
+        $sql .= "where {$CFG->prefix}glossary.id = {$CFG->prefix}glossary_entries.glossaryid ";
+        $sql .= "and {$CFG->prefix}glossary_entries.id = {$CFG->prefix}glossary_comments.entryid ";
+        $sql .= "and {$CFG->prefix}glossary_comments.id = ";
         $wtm->update( 'glossary_comments','text','format',$sql );
     }
 
