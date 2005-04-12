@@ -336,6 +336,15 @@ function quiz_upgrade($oldversion) {
         modify_database ('', 'ALTER TABLE prefix_quiz_question_version RENAME prefix_quiz_question_versions;');
     }
 
+    if ($oldversion < 2005041200) { // replace wiki-like with markdown
+        include_once( "$CFG->dirroot/lib/wiki_to_markdown.php" );
+        $wtm = new WikiToMarkdown();
+        $sql = "select course from {$CFG->prefix}quiz_categories, {$CFG->prefix}quiz_questions ";
+        $sql .= "where quiz_category.id = quiz_questions.category ";
+        $sql .= "and quiz_questions.id = ";
+        $wtm->update( 'quiz_questions', 'questiontext', 'questiontextformat', $sql );
+    }
+
     return true;
 }
 
