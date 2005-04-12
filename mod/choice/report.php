@@ -109,16 +109,19 @@
       $i=0;  
       $row=1;
       if ($users) foreach ($users as $user) {
-          if (!($answers[$user->id]->optionid==0 && isadmin($user->id)) && !($answers[$user->id]->optionid==0 && isteacher($course->id, $user->id) && !(isteacheredit($course->id, $user->id)) )  ) { //make sure admins and hidden teachers are not shown in not answered yet column.
-              $myxls->write_string($row,0,$user->lastname);
-              $myxls->write_string($row,1,$user->firstname);
-              $studentid=(($user->idnumber != "") ? $user->idnumber : " ");
-              $myxls->write_string($row,2,$studentid);
-              $useroption = choice_get_option_text($choice, $answers[$user->id]->optionid);
-              if (isset($useroption)) {
-                  $myxls->write_string($row,3,$useroption);
-              }    
-          $row++;
+          if (!($answers[$user->id]->optionid==0 && isadmin($user->id)) && 
+              (!($answers[$user->id]->optionid==0 && isteacher($course->id, $user->id) && !(isteacheredit($course->id, $user->id)) ) ) &&  
+              !($choice->showunanswered==0 && $answers[$user->id]->optionid==0)  ) { //make sure admins and hidden teachers are not shown in not answered yet column, and not answered only shown if set in config page.
+
+                  $myxls->write_string($row,0,$user->lastname);
+                  $myxls->write_string($row,1,$user->firstname);
+                  $studentid=(($user->idnumber != "") ? $user->idnumber : " ");
+                  $myxls->write_string($row,2,$studentid);
+                  $useroption = choice_get_option_text($choice, $answers[$user->id]->optionid);
+                  if (isset($useroption)) {
+                      $myxls->write_string($row,3,$useroption);
+                  }                 
+                  $row++;
           }
          $pos=4;
       }        
@@ -141,7 +144,10 @@
       $i=0;  
       $row=1;
       if ($users) foreach ($users as $user) {
-          if (!($answers[$user->id]->optionid==0 && isadmin($user->id)) && !($answers[$user->id]->optionid==0 && isteacher($course->id, $user->id) && !(isteacheredit($course->id, $user->id)) )  ) { //make sure admins and hidden teachers are not shown in not answered yet column.
+          if (!($answers[$user->id]->optionid==0 && isadmin($user->id)) && 
+              (!($answers[$user->id]->optionid==0 && isteacher($course->id, $user->id) && !(isteacheredit($course->id, $user->id)) ) ) &&  
+              !($choice->showunanswered==0 && $answers[$user->id]->optionid==0)  ) { //make sure admins and hidden teachers are not shown in not answered yet column, and not answered only shown if set in config page.
+
               echo $user->lastname;
               echo "\t".$user->firstname;
               $studentid=(($user->idnumber != "") ? $user->idnumber : " ");
