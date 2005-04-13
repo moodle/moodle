@@ -1,4 +1,4 @@
-<?php // $Id$ 
+<?php // $Id$
       // quiz.php - created with Moodle 1.4 development (2004080300)
 
 
@@ -50,7 +50,7 @@ $string['category'] = 'Category';
 $string['categoryadded'] = 'The category \'$a\' was added';
 $string['categorydeleted'] = 'The category \'$a\' was deleted';
 $string['categoryinfo'] = 'Category info';
-$string['categorymove'] = 'The category \'$a->name\' contains $a->count questions.  Please choose another category to move them to.';
+$string['categorymove'] = 'The category \'$a->name\' contains $a->count questions (some of them may be old, hidden, questions that are still in use in some existing quizzes).<br />Please choose another category to move them to.';
 $string['categorymoveto'] = 'Move them to this category';
 $string['categorynoedit'] = 'You do not have editing privileges in the category \'$a\'.';
 $string['categoryupdated'] = 'The category was successfully updated';

@@ -490,7 +490,7 @@ class quiz_category_object {
 
 
 /**
-* Arranges the categories into a heirarchical tree
+* Arranges the categories into a hierarchical tree
 *
 * If a category has children, it's "children" property holds an array of children
 * The questioncount for each category is also calculated
@@ -516,17 +516,17 @@ class quiz_category_object {
             }
             $parents = $children;
         }
-        // if there is no heirarchy (e.g., if all records have parent == 0), set level[0] to these keys
+        // if there is no hierarchy (e.g., if all records have parent == 0), set level[0] to these keys
         if (empty($levels)) {
             $levels[0] = array_keys($records);
         }
 
-        // build a heirarchical array that depicts the parent-child relationships of the categories
+        // build a hierarchical array that depicts the parent-child relationships of the categories
         $categorytree = array();
         for ($index = count($levels) - 1; $index >= 0; $index--) {
             foreach($levels[$index] as $key) {
                 $parentkey = $records[$key]->parent;
-                if (!($records[$key]->questioncount = count_records('quiz_questions', 'category', $records[$key]->id))) {
+                if (!($records[$key]->questioncount = count_records('quiz_questions', 'category', $records[$key]->id, 'hidden', 0))) {
                     $records[$key]->questioncount = 0;
                 }
                 if ($parentkey == 0) {
