@@ -55,7 +55,7 @@
 	  <?php
 	    echo "<tr><td align=\"center\"><b>";
 	    echo get_string("questiontype", "lesson").":</b> \n";
-	    echo helpbutton("questiontype", get_string("questiontype", "lesson"), "lesson")."<br>";
+	    echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br>";
 	    if (isset($_GET['qtype'])) {
 	        $qtype = clean_param($_GET['qtype'], PARAM_INT);
 	        lesson_qtype_menu($LESSON_QUESTION_TYPE, $qtype, 
