@@ -16,7 +16,7 @@
         }
     }
 
-    require_course_login($course->id);
+    require_course_login($course);
 
     $currentgroup = get_current_group($course->id);
 
