@@ -252,12 +252,12 @@
                 $cols=50;
                 if (strstr($value, "\r") or strstr($value, "\n") or $valuelen > $cols) {
                     $rows = ceil($valuelen / $cols);
-                    echo '<textarea name="string-'.$key.'" cols="'.$cols.'" rows="'.$rows.'">'.$value.'</textarea>'."\n";
+                    echo '<textarea name="stringXXX'.$key.'" cols="'.$cols.'" rows="'.$rows.'">'.$value.'</textarea>'."\n";
                 } else {
                     if ($valuelen) {
                         $cols = $valuelen + 2;
                     }
-                    echo '<input type="text" name="string-'.$key.'" value="'.$value.'" size="'.$cols.'" />';
+                    echo '<input type="text" name="stringXXX'.$key.'" value="'.$value.'" size="'.$cols.'" />';
                 }
                 echo '</td>';
 
@@ -305,7 +305,7 @@ function lang_save_file($path, $file, $strings) {
     ksort($strings);
 
     foreach ($strings as $key => $value) {
-        list($id, $stringname) = explode("-",$key);
+        list($id, $stringname) = explode('XXX',$key);
         if ($CFG->lang != "zh_hk" and $CFG->lang != "zh_tw") {  // Some MB languages include backslash bytes
             $value = str_replace("\\","",$value);           // Delete all slashes
         }
