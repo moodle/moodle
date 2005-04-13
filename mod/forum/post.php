@@ -202,7 +202,7 @@
 
         if ($cm = get_coursemodule_from_instance("forum", $forum->id, $course->id)) {
             if (groupmode($course, $cm) and !isteacheredit($course->id)) {   // Make sure user can post here
-                if (mygroupid($course->id) != $discussion->groupid) {
+                if (!((empty($mygroupid) and $discussion->groupid == -1) || ($mygroupid == $discussion->groupid))) {
                     error("Sorry, but you can not post in this discussion.");
                 }
             }
