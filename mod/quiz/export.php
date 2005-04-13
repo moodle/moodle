@@ -58,8 +58,21 @@
             error("Error occurred during post-processing!",
                     "$CFG->wwwroot/mod/quiz/export.php?category=$category->id");
         }
-
         echo "<hr />";
+
+        // link to download the finished file
+        $file_ext = $format->export_file_extension();
+        $download_str = get_string( 'download', 'quiz' );
+        $downloadextra_str = get_string( 'downloadextra','quiz' );
+        if ($CFG->slasharguments) {
+          $efile = "{$CFG->wwwroot}/file.php/$course->id/quiz/$exportfilename".$file_ext;
+        }
+        else {
+          $efile = "{$CFG->wwwroot}/file.php?file=/$course->id/quiz/$exportfilename".$file_ext;
+        }
+        echo "</p><center><a href=\"$efile\">$download_str</a></center></p>";
+        echo "</p><center><font size=\"-1\">$downloadextra_str</font></center></p>";
+
         print_continue("edit.php");
         print_footer($course);
         exit;
