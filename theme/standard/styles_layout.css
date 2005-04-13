@@ -228,6 +228,10 @@ table.formtable tbody th
   margin-top: 4em;
 }
 
+.reportlink {
+  text-align:right;
+}
+
 
 /***
  *** Footer
