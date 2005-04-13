@@ -134,10 +134,12 @@
     }
 
     if ($groupmode and !isteacheredit($course->id)) {   // Groups must be kept separate
+        $mygroupid = mygroupid($course->id);
+
         if ($groupmode == SEPARATEGROUPS) {
             require_login();
 
-            if (mygroupid($course->id) == $discussion->groupid) {
+            if ((empty($mygroupid) and $discussion->groupid == -1) || ($mygroupid == $discussion->groupid)) {
                 $canreply = true;
             } elseif ($discussion->groupid == -1) {
                 $canreply = false;
@@ -148,7 +150,7 @@
             }
 
         } else if ($groupmode == VISIBLEGROUPS) {
-            $canreply = (mygroupid($course->id) == $discussion->groupid);
+            $canreply = ((empty($mygroupid) and $discussion->groupid == -1) || ($mygroupid == $discussion->groupid));
         }
     }
 
