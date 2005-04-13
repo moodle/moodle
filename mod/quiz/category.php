@@ -224,7 +224,7 @@ class quiz_category_object {
 
         // wrap the table in a form and output it
         echo '<form action="category.php" method="post">';
-        echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
+        echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
         echo '<input type="hidden" name="id" value="'. $this->course->id . '" />';
         echo '<input type="hidden" name="addcategory" value="true" />';
         print_table($this->newtable);
@@ -399,7 +399,7 @@ class quiz_category_object {
             $this->output_edit_single_table($category);
             echo '</td></tr></table>';
             echo '<p><div align="center"><form action="category.php" method="get">
-                <input type="hidden" name="sesskey" value="'.$USER->sesskey.'">
+                <input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />
                 <input type="hidden" name="id" value="' . $this->course->id . '" />
                 <input type="submit" value="' . $this->str->cancel . '" /></form></div></p>';
             print_footer($this->course);
@@ -458,7 +458,7 @@ class quiz_category_object {
 
         // wrap the table in a form and output it
         echo '<p><form action="category.php" method="post">';
-        echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
+        echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
         echo '<input type="hidden" name="id" value="'. $this->course->id . '" />';
         echo '<input type="hidden" name="updateid" value=' . $category->id . '" />';
         print_table($edittable);
@@ -617,7 +617,7 @@ class quiz_category_object {
                 $categorystrings = $this->categorystrings;
                 unset ($categorystrings[$category->id]);
                 echo "<p><div align=\"center\"><form action=\"category.php\" method=\"get\">";
-                echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
+                echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\" />";
                 echo "<input type=\"hidden\" name=\"id\" value=\"{$this->course->id}\" />";
                 echo "<input type=\"hidden\" name=\"delete\" value=\"$category->id\" />";
                 choose_from_menu($categorystrings, "confirm", "", "");
