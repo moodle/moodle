@@ -388,7 +388,7 @@
     echo '<br />';
     echo '</center>';
     glossary_print_tabbed_table_end();
-    if ( $debug and isadmin() ) {
+    if ( !empty($debug) and isadmin() ) {
         echo '<p>';
         print_simple_box("$sqlselect<br /> $sqlfrom<br /> $sqlwhere<br /> $sqlorderby<br /> $sqllimit","center","85%");
 
