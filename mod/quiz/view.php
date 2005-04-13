@@ -80,7 +80,7 @@
         $usercount = count_records("quiz_grades", "quiz", "$quiz->id");
         $strusers  = get_string("users");
         $strviewallanswers  = get_string("viewallanswers","quiz",$attemptcount);
-        echo "<p align=\"right\"><a href=\"report.php?id=$cm->id\">$strviewallanswers ($usercount $strusers)</a></p>";
+        echo "<div class=\"reportlink\"><a href=\"report.php?id=$cm->id\">$strviewallanswers ($usercount $strusers)</a></div>";
     } else if (!$cm->visible) {
         notice(get_string("activityiscurrentlyhidden"));
     }

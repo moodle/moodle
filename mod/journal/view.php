@@ -42,7 +42,7 @@
         }
         $entrycount = journal_count_entries($journal, $currentgroup);
 
-        echo '<div class="info"><a href="report.php?id='.$cm->id.'">'.
+        echo '<div class="reportlink"><a href="report.php?id='.$cm->id.'">'.
               get_string('viewallentries','journal', $entrycount)."</a>$groupname</div>";
 
     } else if (!$cm->visible) {

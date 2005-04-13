@@ -64,9 +64,9 @@
         
     	if (isteacher($course->id)) {
     	    if ($sco_users = get_records_select("scorm_scoes_track", "scormid='$scorm->id' GROUP BY userid")) {
-        	echo "<p align=\"right\"><a target=\"{$CFG->framename}\" href=\"report.php?id=$cm->id\">".get_string("viewallreports","scorm",count($sco_users))."</a></p>";
+        	echo "<div class=\"reportlink\"><a target=\"{$CFG->framename}\" href=\"report.php?id=$cm->id\">".get_string("viewallreports","scorm",count($sco_users))."</a></div>";
             } else {
-           	echo "<p align=\"right\">".get_string("noreports","scorm")."</p>";
+           	echo "<div class=\"reportlink\">".get_string("noreports","scorm")."</div>";
             }
     	}
     	// Print the main part of the page

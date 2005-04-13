@@ -78,8 +78,10 @@
     echo '<td id="middle-column">';
 
     if (($chat->studentlogs or isteacher($course->id)) and !isguest()) {
-        echo "<p align=\"right\"><a href=\"report.php?id=$cm->id\">".
-              get_string('viewreport', 'chat').'</a></p>';
+        echo '<div class="reportlink">';
+        echo "<a href=\"report.php?id=$cm->id\">".
+              get_string('viewreport', 'chat').'</a>';
+        echo '</div>';
     }
 
     print_heading(format_string($chat->name));

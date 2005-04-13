@@ -94,7 +94,9 @@
         } else {
             $responsecount = 0;
         }
-        echo "<div align=\"right\"><a href=\"report.php?id=$cm->id\">".get_string("viewallresponses", "choice", $responsecount)."</a></div>";
+        echo '<div class="reportlink">';
+        echo "<a href=\"report.php?id=$cm->id\">".get_string("viewallresponses", "choice", $responsecount)."</a>";
+        echo '</div>';
     } else if (!$cm->visible) {
         notice(get_string("activityiscurrentlyhidden"));
     }

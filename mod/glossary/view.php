@@ -4,10 +4,6 @@
     require_once("lib.php");
     require_once("$CFG->libdir/rsslib.php");
 
-    global $CFG, $USER;
-    $debug = 0;
-    $CFG->startpagetime = microtime();
-
     optional_variable($id);           // Course Module ID
     optional_variable($g);            // Glossary ID
 

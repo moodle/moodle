@@ -43,7 +43,7 @@
                   "", "", true, update_module_button($cm->id, $course->id, $strassignment), navmenu($course, $cm));
 
     if (isteacher($course->id)) {
-        echo '<p align="right">';
+        echo '<div class="reportlink">';
         if ($assignment->type == OFFLINE) {
             echo "<a href=\"submissions.php?id=$assignment->id\">".
                   get_string("viewfeedback", "assignment")."</a>";
@@ -59,7 +59,7 @@
             echo "<a href=\"submissions.php?id=$assignment->id\">".
                   get_string("viewsubmissions", "assignment", $count)."</a>$groupname";
         }
-        echo '</p>';
+        echo '</div>';
     } else if (!$cm->visible) {
         notice(get_string("activityiscurrentlyhidden"));
     }

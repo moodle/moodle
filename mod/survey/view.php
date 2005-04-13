@@ -45,8 +45,8 @@
 
     if (isteacher($course->id)) {
         $numusers = survey_count_responses($survey->id, $currentgroup);
-        echo "<p align=\"right\"><a href=\"report.php?id=$cm->id\">".
-              get_string("viewsurveyresponses", "survey", $numusers)."</a></p>";
+        echo "<div class=\"reportlink\"><a href=\"report.php?id=$cm->id\">".
+              get_string("viewsurveyresponses", "survey", $numusers)."</a></div>";
     } else if (!$cm->visible) {
         notice(get_string("activityiscurrentlyhidden"));
     }
