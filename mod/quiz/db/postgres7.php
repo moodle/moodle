@@ -5,6 +5,7 @@ function quiz_upgrade($oldversion) {
 // older versions to match current functionality
 
     global $CFG;
+    include_once("$CFG->dirroot/mod/quiz/locallib.php");
 
     if ($oldversion < 2003010100) {
         execute_sql(" ALTER TABLE {$CFG->prefix}quiz ADD review integer DEFAULT '0' NOT NULL AFTER `grademethod` ");
