@@ -174,9 +174,6 @@ class WikiToMarkdown {
     $this->list_state = $list_style;
     $this->list_depth = $count;
 
-    // apply formatting to remainder of line
-    // $line = $this->line_replace( $line );
-   
     // get indent
     $indent = substr( "                      ",1,$count-1 );
  
@@ -207,27 +204,26 @@ class WikiToMarkdown {
 
    // typographic conventions
    // MARKDOWN: no equiv. so convert to entity as before
-    $line = str_replace( "--", "&#8212;", $line );
-    $line = str_replace( " - ", " &#8211; ", $line );
+    // $line = str_replace( "--", "&#8212;", $line );
+    // $line = str_replace( " - ", " &#8211; ", $line );
     $line = str_replace( "...", " &#8230; ", $line );
     $line = str_replace( "(R)", "&#174;", $line );
     $line = str_replace( "(r)", "&#174;", $line );
     $line = str_replace( "(TM)", "&#8482;", $line );
     $line = str_replace( "(tm)", "&#8482;", $line );
     $line = str_replace( "(C)", "&#169;", $line );
-    // $line = str_replace( "(c)", "&#169;", $line );
     $line = str_replace( "1/4", "&#188;", $line );
     $line = str_replace( "1/2", "&#189;", $line );
     $line = str_replace( "3/4", "&#190;", $line );
     $line = eregi_replace( "([[:digit:]]+[[:space:]]*)x([[:space:]]*[[:digit:]]+)", "\\1&#215;\\2", $line ); // (digits) x (digits) - multiply    
     // do formatting tags
     // NOTE: The / replacement  *has* to be first, or it will screw the 
-    // HTML tags that are added by the other ones
+    //    HTML tags that are added by the other ones
     // MARKDOWN: only bold and italic change, rest are just HTML
     $line = $this->do_replace_markdown( $line, "\*", "**" );
     $line = $this->do_replace_markdown( $line, "/", "*" );
     $line = $this->do_replace( $line, "\+", "ins" );
-    $line = $this->do_replace( $line, "-", "del" );
+    // $line = $this->do_replace( $line, "-", "del" );
     $line = $this->do_replace_sub( $line, "~", "sub" );
     $line = $this->do_replace_sub( $line, "\^", "sup" );
     $line = $this->do_replace( $line, "%", "code" );
@@ -274,7 +270,7 @@ class WikiToMarkdown {
         "![\\3]($CFG->wwwroot/file.php/$this->courseid/\\1\\2)", $line );
     } else {
       $line = eregi_replace( "/([a-zA-Z0-9./_-]+)(png|gif|jpg)\(([^)]+)\)",
-        "![\\3]($CFG->wwwroot/file.php\?file=$this->courseid/\\1\\2)", $line );
+        "![\\3]($CFG->wwwroot/file.php?file=/$this->courseid/\\1\\2)", $line );
     }
 
     // Replace file resource link
@@ -283,7 +279,7 @@ class WikiToMarkdown {
         "[\\2]($CFG->wwwroot/file.php/$this->courseid/\\1)", $line );
     } else {
       $line = eregi_replace( "file:/([[:alnum:]/._-]+)\(([^)]+)\)",
-        "[\\2]($CFG->wwwroot/file.php\?file=$this->courseid/\\1)", $line );
+        "[\\2]($CFG->wwwroot/file.php?file=/$this->courseid/\\1)", $line );
     }
  
 
