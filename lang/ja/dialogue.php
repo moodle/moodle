@@ -1,11 +1,11 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // dialogue.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['addmynewentries'] = '新しいエントリを追加';
 $string['addmynewentry'] = '新しいエントリを追加';
 $string['addsubject'] = 'テーマの追加';
-$string['allowmultiple'] = '同一人物による複数ダイアログ作成を許可する';
+$string['allowmultiple'] = '同一人物による複数ダイアログを許可する';
 $string['allowstudentdialogues'] = '学生 - 学生のダイアログを許可する';
 $string['close'] = '閉じる';
 $string['closed'] = '閉鎖中';
@@ -24,7 +24,7 @@ $string['dialoguename'] = 'ダイアログ名';
 $string['dialogueopened'] = '$a により開かれたダイアログ';
 $string['dialoguewith'] = '$a とのダイアログ';
 $string['everybody'] = '全員';
-$string['furtherinformation'] = '詳細';
+$string['furtherinformation'] = '詳細情報';
 $string['lastentry'] = '最新エントリ';
 $string['maildefault'] = 'デフォルトメール';
 $string['mailnotification'] = 'メール通知';
@@ -48,7 +48,7 @@ $string['open'] = '開催中';
 $string['openadialoguewith'] = 'ダイアログを開く';
 $string['opendialogue'] = 'ダイアログを開く';
 $string['opendialogueentries'] = 'ダイアログエントリを開く';
-$string['pane0'] = 'ダイアログを開く';
+$string['pane0'] = '開催中のダイアログ';
 $string['pane1'] = 'あなたの返事を待っているダイアログ $a 件';
 $string['pane1one'] = 'あなたの返事を待っているダイアログ 1 件';
 $string['pane2'] = '他の人の返事を待っているダイアログ $a 件';

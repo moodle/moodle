@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -93,6 +93,8 @@ $string['deleteselected'] = '選択したものを削除';
 $string['description'] = '説明';
 $string['discrimination'] = '識別指数';
 $string['displayoptions'] = '表示オプション';
+$string['download'] = 'エクスポートしたカテゴリファイルをダウンロードする';
+$string['downloadextra'] = '( ファイルはコースファイル内の /quizフォルダにも保存されます。 )';
 $string['eachattemptbuildsonthelast'] = '直近の解答内容を反映させる';
 $string['editcategories'] = 'カテゴリの編集';
 $string['editcategory'] = 'カテゴリの編集';
