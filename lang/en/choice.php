@@ -33,4 +33,9 @@ $string['addmorechoices'] = 'Add more choices';
 $string['displaymode'] = 'Display Mode';
 $string['displayhorizontal'] = 'Display horizontally';
 $string['displayvertical'] = 'Display vertically';
+$string['limitanswers'] = 'Limit the number of responses allowed';
+$string['limit'] = 'Limit';
+$string['full'] = '(Full)';
+$string['spacesleft'] = 'spaces available';
+$string['spaceleft'] = 'space available';
 ?>
