@@ -5,6 +5,7 @@ function quiz_upgrade($oldversion) {
 // older versions to match current functionality
 
     global $CFG;
+    include_once("$CFG->dirroot/mod/quiz/locallib.php");
 
     if ($oldversion < 2002101800) {
         execute_sql(" ALTER TABLE `quiz_attempts` ".
@@ -343,6 +344,10 @@ function quiz_upgrade($oldversion) {
         $sql .= "where {$CFG->prefix}quiz_category.id = {$CFG->prefix}quiz_questions.category ";
         $sql .= "and {$CFG->prefix}quiz_questions.id = ";
         $wtm->update( 'quiz_questions', 'questiontext', 'questiontextformat', $sql );
+    }
+
+    if ($oldversion < 2005041304) {
+        modify_database('', "UPDATE prefix_quiz_questions SET hidden = '1' WHERE qtype ='".RANDOM."';");
     }
 
     return true;

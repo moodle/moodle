@@ -609,6 +609,7 @@ class quiz_category_object {
             }
 
         } else {
+            // todo: delete any hidden questions that are not actually in use any more
             if ($count = count_records("quiz_questions", "category", $category->id)) {
                 $vars->name = $category->name;
                 $vars->count = $count;

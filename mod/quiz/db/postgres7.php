@@ -328,6 +328,10 @@ function quiz_upgrade($oldversion) {
         $wtm->update( 'quiz_questions', 'questiontext', 'questiontextformat', $sql );
     }
 
+    if ($oldversion < 2005041300) {
+        modify_database('', "UPDATE prefix_quiz_questions SET hidden = '1' WHERE qtype ='".RANDOM."';");
+    }
+
     return true;
 }
 

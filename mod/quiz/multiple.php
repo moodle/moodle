@@ -67,6 +67,7 @@
                                                             // on whether to include questions in subcategories
                 $question->image = '';
                 $question->defaultgrade = $form->randomgrade;
+                $question->hidden = 1;
                 for ($i=0; $i<$randomcreate; $i++) {
                     $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
                     if (!$newquestionids[] = insert_record('quiz_questions', $question)) {
