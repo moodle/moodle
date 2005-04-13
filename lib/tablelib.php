@@ -122,12 +122,12 @@ class flexible_table {
         if(empty($attributes)) {
             return '';
         }
-    
+
         $string = ' ';
         foreach($attributes as $attr => $value) {
             $string .= ($attr.'="'.$value.'" ');
         }
-    
+
         return $string;
     }
 
@@ -137,7 +137,7 @@ class flexible_table {
         if(empty($this->columns) || empty($this->uniqueid)) {
             return false;
         }
-    
+
         if(!isset($SESSION->flextable) || isset($SESSION->flextable) && $SESSION->flextable->uniqueid != $this->uniqueid) {
             $SESSION->flextable = new stdClass;
             $SESSION->flextable->uniqueid = $this->uniqueid;
@@ -146,7 +146,7 @@ class flexible_table {
             $SESSION->flextable->i_first  = '';
             $SESSION->flextable->i_last   = '';
         }
-    
+
         $this->sess = &$SESSION->flextable;
 
         if(!empty($_GET['tshow']) && isset($this->columns[$_GET['tshow']])) {
@@ -160,7 +160,7 @@ class flexible_table {
                 unset($this->sess->sortby[$_GET['thide']]);
             }
         }
-    
+
         // Now, update the column attributes for collapsed columns
         foreach(array_keys($this->columns) as $column) {
             if(!empty($this->sess->collapse[$column])) {
@@ -169,8 +169,8 @@ class flexible_table {
         }
 
         if(
-            !empty($_GET['tsort']) && 
-            (isset($this->columns[$_GET['tsort']]) || 
+            !empty($_GET['tsort']) &&
+            (isset($this->columns[$_GET['tsort']]) ||
                 (($_GET['tsort'] == 'firstname' || $_GET['tsort'] == 'lastname') && isset($this->columns['fullname']))
             ))
         {
@@ -236,7 +236,7 @@ class flexible_table {
                 $this->reseturl =  $strippedurl.$querystring;
                 $querystring = '?';
             }
-    
+
             $this->baseurl = strip_querystring(qualified_me()) . $querystring;
         }
 
@@ -287,7 +287,7 @@ class flexible_table {
         }
 
         $LIKE = sql_ilike();
-        if(!empty($this->sess->i_first) && !empty($this->sess->i_last)) {    
+        if(!empty($this->sess->i_first) && !empty($this->sess->i_last)) {
             return 'firstname '.$LIKE.' \''.$this->sess->i_first.'%\' AND lastname '.$LIKE.' \''.$this->sess->i_last.'%\'';
         }
         else if(!empty($this->sess->i_first)) {
@@ -332,7 +332,7 @@ class flexible_table {
                 }
             }
             echo '</div>';
-    
+
             // Bar of last initials
 
             echo '<div class="initialbar">'.get_string('lastname').' : ';
@@ -430,7 +430,7 @@ class flexible_table {
                     $this->headers[$index] = '<a href="'.$this->baseurl.'tsort='.$column.'">'.$this->headers[$index].'</a>';
                 }
             }
-            
+
             if($this->headers[$index] === NULL) {
                 echo '<th class="header c'.$index.$this->column_class[$column].'">&nbsp;</th>';
             }
@@ -485,6 +485,10 @@ class flexible_table {
 
         echo '</table>';
 
+        // Paging bar
+        if($this->use_pages) {
+            print_paging_bar($this->totalrows, $this->currpage, $this->pagesize, $this->baseurl);
+        }
     }
 
     function add_data($row) {
