@@ -33,7 +33,7 @@ class block_site_main_menu extends block_list {
         $ismoving  = ismoving($this->instance->pageid);
 
         $sections = get_all_sections($this->instance->pageid);
-        if(empty($sections)) {
+        if(empty($sections) or !isset($sections[0])) {
             return $this->content;
         }
 
