@@ -36,6 +36,7 @@ $string['displayvertical'] = 'Display vertically';
 $string['limitanswers'] = 'Limit the number of responses allowed';
 $string['limit'] = 'Limit';
 $string['full'] = '(Full)';
+$string['taken'] = 'Taken';
 $string['spacesleft'] = 'spaces available';
 $string['spaceleft'] = 'space available';
 ?>
