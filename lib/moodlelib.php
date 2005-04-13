@@ -1356,10 +1356,10 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
  */
 function require_course_login($course, $autologinguest=true, $cm=null) {
     global $CFG;
-    if ($CFG->forcelogin) {
+    if (!empty($CFG->forcelogin)) {
         require_login();
     }
-    if ($course->category) {
+    if (!empty($course->category)) {
         require_login($course->id, $autologinguest, $cm);
     }
 }
