@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // timezones.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005040800)
+      // timezones.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['africa/abidjan'] = 'アフリカ/アビジャン';
@@ -48,7 +48,7 @@ $string['africa/ndjamena'] = 'アフリカ/ンジャメナ';
 $string['africa/niamey'] = 'アフリカ/ニアメー';
 $string['africa/nouakchott'] = 'アフリカ/ヌアクショット';
 $string['africa/ouagadougou'] = 'アフリカ/ワガドーグ';
-$string['africa/porto'] = 'アフリカ・/ポートノボ';
+$string['africa/porto-novo'] = 'アフリカ/ポートノボ';
 $string['africa/sao_tome'] = 'アフリカ/サントメ';
 $string['africa/timbuktu'] = 'アフリカ/ティンブクトゥ';
 $string['africa/tripoli'] = 'アフリカ/トリポリ';
@@ -148,7 +148,7 @@ $string['america/panama'] = 'アメリカ/パナマ';
 $string['america/pangnirtung'] = 'アメリカ/パンナータング';
 $string['america/paramaribo'] = 'アメリカ/パラマリボ';
 $string['america/phoenix'] = 'アメリカ/フェニックス';
-$string['america/port'] = 'アメリカ/ポート・オウ・プリンス';
+$string['america/port-au-prince'] = 'アメリカ/ポート・オウ・プリンス';
 $string['america/port_of_spain'] = 'アメリカ/ポート・オブ・スペイン';
 $string['america/porto_velho'] = 'アメリカ/ポルト・ベリョ';
 $string['america/puerto_rico'] = 'アメリカ/プエルトリコ';
