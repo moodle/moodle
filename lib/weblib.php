@@ -4160,6 +4160,10 @@ class tabobject {
     /// Set the class for the selected cell
         } else if ($selected) {
             $cstr .= ' selected';
+            
+    /// Set the standard class for a cell
+        } else {
+            $cstr .= ' active';
         }
 
 
