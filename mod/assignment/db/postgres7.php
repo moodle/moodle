@@ -115,7 +115,13 @@ function assignment_upgrade($oldversion) {
         table_column('assignment', '', 'emailteachers', 'integer', '2', 'unsigned', 0, 'not null', 'resubmit');
     }
 
-    if ($oldversion < 2005022202) {  // Add new fields for the new refactored version of assignment
+    if ($oldversion < 2005041100) { // replace wiki-like with markdown
+        include_once( "$CFG->dirroot/lib/wiki_to_markdown.php" );
+        $wtm = new WikiToMarkdown();
+        $wtm->update( 'assignment','description','format' );
+    }
+
+    if ($oldversion < 2005041400) {  // Add new fields for the new refactored version of assignment
         table_column('assignment', '', 'timeavailable', 'integer', '10', 'unsigned', 0, 'not null', 'timedue');
         table_column('assignment', '', 'assignmenttype', 'varchar', '50', '', '', 'not null', 'format');
         execute_sql("UPDATE {$CFG->prefix}assignment SET assignmenttype = 'offline' WHERE type = '0';",false);
