@@ -429,7 +429,7 @@ class assignment_base {
 
     /// Check to see if groups are being used in this assignment
         if ($groupmode = groupmode($course, $cm)) {   // Groups are being used
-            $currentgroup = setup_and_print_groups($course, $groupmode, 'submissions.php?id='.$assignment->id.'&amp;sort='.$sort.'&amp;dir='.$dir);
+            $currentgroup = setup_and_print_groups($course, $groupmode, 'submissions.php?id='.$this->cm->id);
         } else {
             $currentgroup = false;
         }
@@ -477,11 +477,14 @@ class assignment_base {
         }
 
 
-        $select = 'SELECT u.id, u.firstname, u.lastname, u.picture ';
+        $select = 'SELECT u.id, u.firstname, u.lastname, u.picture, s.id AS submissionid, s.grade, s.timemodified, s.timemarked ';
         $group  = '';
         $sql = 'FROM '.$CFG->prefix.'user u '.
-               'WHERE '.$where.'u.id IN ('.implode(',', array_keys($users)).')';
+               'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid AND s.assignment = '.$this->assignment->id.' '.
+               'WHERE '.$where.'u.id IN ('.implode(',', array_keys($users)).') ';
 
+
+        echo $select.$sql.$group.$sort;
 
         $total = count_records_sql('SELECT COUNT(u.id) '.$sql);
 
@@ -497,20 +500,16 @@ class assignment_base {
         $strupdate = get_string('update');
         $grademenu = make_grades_menu($this->assignment->grade);
 
-        $ausers = get_records_sql($select.$sql.$sort.$limit);
-
-        $submissions = get_records_sql("SELECT s.userid, s.id, s.grade, s.timemodified, s.timemarked 
-                                          FROM {$CFG->prefix}assignment_submissions s 
-                                         WHERE s.assignment = ".$this->assignment->id." 
-                                           AND s.userid IN (".implode(',', array_keys($ausers)).')');
+        if (($ausers = get_records_sql($select.$sql.$group.$sort.$limit)) === false) {
+            $ausers = array();
+        }
 
         foreach ($ausers as $auser) {
             $picture = print_user_picture($auser->id, $course->id, $auser->picture, false, true);
-            if (!empty($submissions[$auser->id])) {
-                $submission = $submissions[$auser->id];
-                if ($submission->timemodified > 0) {
-                    $studentmodified = '<div id="ts'.$auser->id.'">'.userdate($submission->timemodified).'</div>';
-                    if ($submission->timemarked > $submission->timemodified) {
+            if (!empty($auser->submissionid)) {
+                if ($auser->timemodified > 0) {
+                    $studentmodified = '<div id="ts'.$auser->id.'">'.userdate($auser->timemodified).'</div>';
+                    if ($auser->timemarked > $asuer->timemodified) {
                         $status = '<div id="st'.$auser->id.'">YES</div>';
                     } else {
                         $status = '<div id="st'.$auser->id.'">NO</div>';
@@ -519,13 +518,13 @@ class assignment_base {
                     $studentmodified = '<div id="ts'.$auser->id.'">-</div>';
                     $status          = '<div id="st'.$auser->id.'"></div>';
                 }
-                if ($submission->timemarked > 0) {
-                    $teachermodified = '<div id="tt'.$auser->id.'">'.userdate($submission->timemarked).'</div>';
+                if ($auser->timemarked > 0) {
+                    $teachermodified = '<div id="tt'.$auser->id.'">'.userdate($auser->timemarked).'</div>';
                 } else {
                     $teachermodified = '<div id="tt'.$auser->id.'">-</div>';
                 }
 
-                $grade = choose_from_menu($grademenu, 'g'.$auser->id, $submission->grade, get_string('nograde'), '', 0, true);
+                $grade = choose_from_menu($grademenu, 'g'.$auser->id, $auser->grade, get_string('nograde'), '', 0, true);
 
             } else {
                 $studentmodified = '<div id="ts'.$auser->id.'">-</div>';
@@ -537,9 +536,11 @@ class assignment_base {
             $button = button_to_popup_window ('/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;userid='.$auser->id.'&amp;mode=single', 
                                               'grade'.$auser->id, $strupdate, 450, 600, $strupdate, 'none', true);
 
+
             $row = array($picture, fullname($auser), $grade, $studentmodified, $teachermodified, $status.'&nbsp;'.$button);
             $table->add_data($row);
         }
+
 
 
         $table->print_html();
