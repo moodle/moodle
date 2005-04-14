@@ -3,9 +3,10 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    require_variable($id);   // course module
+    $id = required_param('id');   //moduleid
 
-    $format = optional_param('format', CHOICE_PUBLISH_NAMES, PARAM_INT);
+    $format   = optional_param('format', CHOICE_PUBLISH_NAMES, PARAM_INT);
+    $download = optional_param('download', '', PARAM_ALPHA);
 
     if (! $cm = get_record("course_modules", "id", $id)) {
         error("Course Module ID was incorrect");
@@ -86,7 +87,7 @@
         require_once("$CFG->libdir/excel/Workbook.php");
   
       // HTTP headers
-      $filename = $course->shortname."_".$choice->name.".xls";
+      $filename = clean_filename("$course->shortname ".strip_tags(format_string($choice->name,true))).'.xls';
   
       header("Content-type: application/vnd.ms-excel");
       header("Content-Disposition: attachment; filename=$filename" );
@@ -119,7 +120,7 @@
                   $myxls->write_string($row,2,$studentid);
                   $useroption = choice_get_option_text($choice, $answers[$user->id]->optionid);
                   if (isset($useroption)) {
-                      $myxls->write_string($row,3,$useroption);
+                      $myxls->write_string($row,3,format_string($useroption,true));
                   }                 
                   $row++;
           }
@@ -131,7 +132,7 @@
     } 
     // print text file     
     if ($download == "txt") {
-    $filename = $course->shortname."_".$choice->name.".txt";
+        $filename = clean_filename("$course->shortname ".strip_tags(format_string($choice->name,true))).'.txt';
         header("Content-Type: application/download\n"); 
         header("Content-Disposition: attachment; filename=\"".$filename."\"");
 
@@ -152,7 +153,7 @@
               echo "\t".$user->firstname;
               $studentid=(($user->idnumber != "") ? $user->idnumber : " ");
               echo "\t". $studentid."\t";
-              echo choice_get_option_text($choice, $answers[$user->id]->optionid). "\n";
+              echo format_string(choice_get_option_text($choice, $answers[$user->id]->optionid),true). "\n";
           }
       $row++;
       }      
