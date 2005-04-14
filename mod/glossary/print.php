@@ -150,9 +150,9 @@
             // Setting the pivot for the current entry
             $pivot = $entry->pivot;
             if ( !$fullpivot ) {
-                $pivot = $pivot[0];
-            }
-
+                $pivot = substr($pivot, 0, 1);
+            }            
+            
             // If there's  group break
             if ( $currentpivot != strtoupper($pivot) ) {
 
