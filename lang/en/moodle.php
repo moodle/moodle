@@ -786,6 +786,7 @@ $string['noteachersyet'] = 'No teachers in this course yet';
 $string['notenrolled'] = '$a is not enrolled in this course.';
 $string['noteuserschangednonetocourse'] = 'Note: course users need to be restored when restoring user data (in activities, files or messages). This setting has been changed for you.';
 $string['nothingnew'] = 'Nothing new since your last login';
+$string['nothingtodisplay'] = 'Nothing to display';
 $string['noticenewerbackup'] = 'This backup file has been created with Moodle $a->backuprelease ($a->backupversion) and it\'s newer than your currently installed Moodle $a->serverrelease ($a->serverversion). This could cause some inconsistencies because backwards compatibility of backup files cannot be guaranteed.';
 $string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, User: $a->info';
 $string['notifyloginfailuresmessageend'] = 'You can view these logs at $a/course/log.php?id=1&chooselog=1&modid=site_errors.';
