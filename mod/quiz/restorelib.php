@@ -327,7 +327,7 @@
             $question->hidden = backup_todb($que_info['#']['HIDDEN']['0']['#']);
 
             // If it is a random question then hide it
-            if ($question->qtype = RANDOM) {
+            if ($question->qtype == 4) {
                 $question->hidden = 1;
             }
 
