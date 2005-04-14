@@ -127,6 +127,10 @@ body {
     border-color:#FFFFFF;
 }
 
+.tabs {
+  border:0 none
+}
+
 #layout-table {
     background-color:#FFFFFF;
 }
@@ -186,8 +190,14 @@ body {
 /* summary of a user in a nice little box - weblib.php */
 .userinfobox {
     border-color:#D1D7DC;
+    background-color:#FFFFFF;
 }
 
+#mod-forum-user .forumpost {
+  background-color:#FFFFFF;
+  margin:0;
+  padding:10px 2em
+}
 
 /*****************************
 ***
@@ -195,6 +205,15 @@ body {
 ***
 ******************************/
 
+
+/*****************************
+***
+*** Login
+***
+******************************/
+#login-index .content {
+    background-color:#FFFFFF;
+}
 
 /*****************************
 ***
@@ -295,6 +314,10 @@ body {
 	background-color:#EEF0F2;
 }
 
+.forumpost .content {
+	background-color:#FFFFFF;
+}
+
 .forumpostheadername {
 	background-color:#EEF0F2;
 }
@@ -303,7 +326,8 @@ body {
  	background-color:#EEF0F2;
 }
 
-.forumheaderlist {
+.forumheaderlist,
+.forumheaderlist thead tr th {
     border-color:#D1D7DC;
 }
 
@@ -328,7 +352,7 @@ body {
     background-color:#FFFFFF;
 }
 
-.glossary td,
+/*.glossary td,
 .glossary-edit td {
     background-color:transparent;
 }
@@ -345,7 +369,7 @@ body {
 
 .glossary table.generaltabselected td,
 .glossary form table.generaltabselected td  {
-    background-color:#FFC86C;
+    background-color:#FFC86C;*/
 }
 
 .glossary form table.forumpost td {
@@ -376,6 +400,9 @@ body {
     border-color:#D1D7DC;
 }
 
+.mod-glossary .entrybox {
+  background-color:#FFFFFF;
+}
 
 /* lang, forum */
 .teacheronly {

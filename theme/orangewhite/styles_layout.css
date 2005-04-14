@@ -1,11 +1,9 @@
 /*  $Id$ */
-
 /************************************************* 
 ***
 *** layout
 ***
 **************************************************/
-
 /*************************************************
 ***
 *** This CSS file contains all layout definitions
@@ -27,122 +25,289 @@
 ***
 **************************************************/
 
+/***
+ *** Core
+ ***/
+
+h1.main,
+h2.main,
+h3.main,
+h4.main,
+h5.main,
+h6.main {
+  width:80%;
+  margin-left:auto;
+  margin-right:auto;
+}
+
 /* basic styles */
+
 .clearer {
-    clear:both;
-    margin:0px;
-    padding:0px;
-    height:1px;
-    border:none;
-    background:transparent;
+  clear:both;
+  margin:0;
+  padding:0;
+  border:none;
+  background:transparent;
+  height:1px;
 }
 
 a.autolink:link {
-	border-bottom:dashed 1px;
-	cursor:help;
+  border-bottom:dashed 1px;
+  cursor:help;
 }
 
 a.autolink:visited {
-	border-bottom:dashed 1px;
-	cursor:help;
+  border-bottom:dashed 1px;
+  cursor:help;
 }
 
 a.autolink:hover {
-	border-bottom:solid 1px;
-	cursor:help;
+  border-bottom:solid 1px;
+  cursor:help;
 }
-
 
 /* general styles */
 body {
-	behavior:url(/htc/csshover.htc);
-    margin:10px;
+  margin:10px; /*behavior:url(/htc/csshover.htc);*/
 }
 
 ul {
-   margin-bottom:5px;
-   margin-top:0px;
+  margin-bottom:5px;
+  margin-top:0;
 }
 
 form {
-    margin-bottom:0px;
+  margin-bottom:0;
 }
 
 a img {
-    border:none;
+  border:none;
 }
 
 input {
-	background:transparent;
+  background:transparent;
 }
 
 
+/*******************************************************************
+*** Tabs
+*******************************************************************/
+
+.tabs {
+  width:auto;
+  margin-left:auto;
+  margin-right:auto;
+  margin-bottom:0px;
+}
+
+#user-view .tabs {
+  width:80%;
+}
+
+.tabs tr {
+  border:1px none #FF0000;
+}
+
+.tabs .side {
+  width:50%;
+  background:url(pix/tab/tabsbg.gif) top left repeat-x;
+}
+
+.tabrow {
+  width:100%;
+  margin:0;
+  border-collapse:collapse;
+}
+
+.tabrow td {
+  padding:0 0 0 14px;
+  height:34px;
+}
+
+.tabs .r0 .active {
+  background:url(pix/tab/left.gif) top left no-repeat;
+}
+
+.tabs .r1 .active {
+  background:url(pix/tab/left2.gif) top left no-repeat;
+}
+
+.tabs .r0 .inactive {
+  background:url(pix/tab/left.gif) top left no-repeat;
+}
+
+.tabs .r1 .inactive {
+  background:url(pix/tab/left2.gif) top left no-repeat;
+}
+
+.tabs,
+.tabs tr,
+.tabs .td,
+.tabrow,
+.tabrow tbody,
+.tabrow tr,
+.tabrow td {
+  background-color:transparent;
+}
+
+.tabrow th {
+  display:none;
+}
+
+.tabrow td .tablink {
+  padding:0 14px 0 0;
+  /*display:block;*/
+  white-space:nowrap;
+  line-height:32px;
+  text-align:center;
+  text-decoration:none;
+  height:34px;
+  width:auto;
+}
+
+.tabs .r0 .active .tablink {
+  background:url(pix/tab/right.gif) top right no-repeat;
+}
+
+.tabs .r1 .active .tablink {
+  background:url(pix/tab/right2.gif) top right no-repeat;
+}
+
+.tabs .r0 .inactive .tablink {
+  background:url(pix/tab/right.gif) top right no-repeat;
+}
+
+.tabs .r1 .inactive .tablink {
+  background:url(pix/tab/right2.gif) top right no-repeat;
+}
+
+.tabrow td .tablink a {
+  /*background-color:#00FFFF;*/
+  width:auto;
+  line-height:32px;
+}
+
+.tabs .r0 .active:hover {
+  background-image:url(pix/tab/left_hover.gif);
+}
+
+.tabs .r0 .active:hover .tablink {
+  background-image:url(pix/tab/right_hover.gif);
+  line-height:32px;
+}
+
+.tabs .r0 .inactive:hover {
+  background-image:url(pix/tab/left.gif);
+}
+
+.tabs .r0 .inactive:hover .tablink {
+  background-image:url(pix/tab/right.gif);
+  line-height:32px;
+}
+
+.tabs .r1 .active:hover {
+  background-image:url(pix/tab/left_hover2.gif);
+}
+
+.tabs .r1 .active:hover .tablink {
+  background-image:url(pix/tab/right_hover2.gif);
+  line-height:32px;
+}
+
+.tabrow .last span {
+  padding:0 1px 0 0;
+  display:block;
+  background:url(pix/tab/right_end.gif) top right no-repeat;
+}
+
+.tabs .r0 .selected {
+  background:url(pix/tab/left_active.gif) top left no-repeat;
+}
+
+.tabs .r1 .selected {
+  background:url(pix/tab/left_active2.gif) top left no-repeat;
+}
+
+.tabs .r0 .selected .tablink {
+  background:url(pix/tab/right_active.gif) top right no-repeat;
+  line-height:32px;
+}
+
+.tabs .r1 .selected .tablink {
+  background:url(pix/tab/right_active2.gif) top right no-repeat;
+  line-height:32px;
+}
+
+/*.tabrow td.selected:hover  {
+  background-image:url(pix/tab/left_active.gif) top left no-repeat;
+}
+
+.tabrow td.selected .tablink:hover {
+  background-image:url(pix/tab/right_active.gif) top right no-repeat;
+}*/
+
 /* header styles */
 #header-home {
-    padding:0.5em 0.5em;
-    height:2em;
+  padding:0.5em 0.5em;
+  height:2em;
 }
 
 #header,
 #header-main,
 #nav-bar {
-    margin:0px;
+  margin:0;
 }
 
 #header {
-    padding:0.1em 0.5em;
-    height:50px;
+  padding:0.1em 0.5em;
+  height:50px;
 }
 
 .headermain {
-    float:left;
+  float:left;
 }
 
 #header .headermain {
-    margin:0.2em 0em;
+  margin:0.2em 0;
 }
 
 .headermenu {
-    float:right;
-    padding:0px;
-    margin:0px,
+  float:right;
+  padding:0;
+  margin:0;
 }
 
 #nav-bar {
-    background-image:url(colorstrip.gif);
-    background-position:left;
-    background-repeat:no-repeat;
-    margin-bottom:0px;
-    padding:1px 0.5em;
-    height:3em;
+  margin-bottom:0;
+  padding:1px 0.5em;
+  background:url(colorstrip.gif) left no-repeat;
+  height:3em;
 }
 
 #breadcrumb {
-    float:left;
-    padding-top:13px;
-    margin:0.2em 0em;
+  float:left;
+  padding-top:13px;
+  margin:0.2em 0;
 }
 
 #navbutton {
-    float:right;
-    padding-top:13px;
-    margin:0.2em 0em;
+  float:right;
+  padding-top:13px;
+  margin:0.2em 0;
 }
 
 #nav-bar hr {
-    height:1px;
+  height:1px;
 }
-
 
 /* footer styles */
 #footer br {
-    display:none;
+  display:none;
 }
 
-#footer HR {
-    display:none;
+#footer hr {
+  display:none;
 }
-
 
 /*****************************
 ***
@@ -150,88 +315,145 @@ input {
 ***
 ******************************/
 #content {
-    margin:0px;
-    padding:0px;
-    border:thin solid;
+  margin:0;
+  padding:0;
+  border:thin solid;
 }
-
 
 /* many places */
 .generalbox {
-    margin-left:auto;
-    margin-right:auto;
-    border-width:1px;
-    border-style:solid;
+  margin-left:auto;
+  margin-right:auto;
+  border-width:1px;
+  border-style:solid;
 }
 
 .generalboxcontent {
-    background-image:none;
+  background-image:none;
 }
 
 .noticebox {
-    border-width:1px;
-    border-style:solid;
+  border-width:1px;
+  border-style:solid;
 }
-
 
 /* weblib.php table */
 .tabledivider {
-    border-width:1px;
-    border-style:solid;
-    border-left:0px;
-    border-right:0px;
-    border-top:0px;
+  border-width:1px;
+  border-style:solid;
+  border-left:0;
+  border-right:0;
+  border-top:0;
 }
-
 
 /* entry page */
 #site-index #left-column,
 #site-index #left-column .sideblock {
-    width:250px !important;
+  width:250px !important;
+}
+
+#site-index #left-column .sideblock .content {
+  padding:0.5em;
 }
 
 #site-index #middle-column {
-    width:auto;
-    padding:0em 2.5em;
+  width:auto;
+  padding:0 2.5em;
 }
 
 #site-index #right-column {
-    width:30%;
+  width:30%;
 }
 
 #site-index #middle-column .forumpost {
-    border-width:0px;
-    border-style:none;
+  border-width:0;
+  border-style:none;
 }
 
 #site-index #middle-column .forumpostpicture,
 #site-index #middle-column .forumpostside {
-    display:none;
+  display:none;
 }
 
 #site-index #middle-column .headingblock,
 #site-index #middle-column .forumpostheadertopic {
-    padding:1em;
-    border-width:0px 0px 0px 25px;
-    border-style:solid;
+  padding:1em;
+  border-width:0 0 0 25px;
+  border-style:solid;
 }
-
 
 /* entry-page index.php */ 
 .sitetopic,
-.siteinfo  {
-    border-width:1px;
-    border-style:solid;
+.siteinfo {
+  border-width:1px;
+  border-style:solid;
 }
 
 
-/* summary of a user in a nice little box - weblib.php */
+/***
+ *** User
+ ***/
+
 .userinfobox {
-    margin-bottom:5px;
-    border-width:1px;
-    border-style:solid;
+  margin-bottom:5px;
+  border:1px solid;
+  border-top-width:0;
+  border-collapse: separate;    
 }
 
+.userinfobox .left {
+  padding: 10px;
+  width: 100px;
+  vertical-align: top;
+}
+
+.userinfobox .content {
+  padding: 10px;
+  vertical-align: top;
+}
+
+.userinfobox .links {
+  width: 100px;
+  padding: 5px;
+  vertical-align: bottom;
+}
+
+.userinfobox .list td {
+  padding: 3px;
+}
+
+.userinfobox .username {
+  padding-bottom: 20px;
+}    
+
+
+table.userinfobox {
+  width: 80%;
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+table.groupinfobox {
+  width: 60%;
+  margin-left: 20%;
+  margin-right: 20%;
+  border-width:1px;
+  border-style:solid;
+  margin-bottom: 20px;
+}
+
+.groupinfobox .left {
+  padding: 10px;
+  width: 100px;
+  vertical-align: top;
+}
+body#user-index #longtimenosee {
+  text-align:center;
+}
+
+#user-edit .generalbox {
+  border-top-width:0;
+}
 
 /*****************************
 ***
@@ -240,15 +462,14 @@ input {
 ******************************/
 /* admin, calendar */
 table.formtable td {
-    padding:9px;
+  padding:9px;
 }
-
 
 /* admin */
 .admin #content,
 .admin .generalboxcontent,
 .admin .generalbox {
-    width:auto;
+  width:auto;
 }
 
 
@@ -259,96 +480,100 @@ table.formtable td {
 ******************************/
 /* course, entry-page, login */
 .generaltableheader {
-    background-image:none;
+  background-image:none;
 }
-
 
 /* course */
 #layout-table {
-    width:100%;
-    border-spacing:5px;
-    border-collapse:separate;
+  width:100%;
+  margin:0;
+  border-spacing:5px;
+  border-collapse:separate;
 }
 
 #layout-table tr,
 #layout-table td {
-    vertical-align:top;
+  vertical-align:top;
 }
 
 #left-column,
 #right-column {
-    margin:0px;
-    padding:0px;
-    border:0px;
+  margin:0;
+  padding:0;
+  border:0;
 }
 
 #middle-column {
-    padding:0px 15px;
+  padding:0 15px;
 }
 
 #course-view .headingblock {
-    background-image:none;
-    border-style:none;
-    margin-left:2px;
-    padding-left:1.5em;
-    border-left:1.5em solid;
+  border-style:none;
+  margin-left:2px;
+  padding-left:1.5em;
+  border-left:1.5em solid;
+  background-image:none;
 }
 
 #course-view .activity {
-    border:0px none;
+  border:0 none;
+}
+
+#course-view table.section {
+  border-collapse:collapse;
+  border-spacing:0;
 }
 
 #course-view .section td {
-    vertical-align:top;
+  vertical-align:top;
 }
 
 #course-view .section .content {
-    padding:0px 1em;
+  padding:0 1em;
 }
 
 #course-view .section .side {
 }
 
 #course-view .section .left {
-    width:0em;
-    padding:0em;
-    border-left:1.5em solid;
+  width:0;
+  padding:0;
+  border-left:1.5em solid;
 }
 
 #course-view .section .right {
-    width:2em;
-    padding:0.5em;
-    text-align:center;
+  width:2em;
+  padding:0.5em;
+  text-align:center;
 }
 
 #course-view .current .side {
 }
 
 #course-view .topics {
-    margin-top:9px;
+  margin-top:9px;
 }
 
 #course-view .weeks {
-    margin-top:9px;
+  margin-top:9px;
 }
 
 #course-view .section .spacer {
-    height:2em;
+  height:2em;
 }
 
 #course-view .section .weekdates {
 }
 
 .categorybox {
-    border-width:1px;
-    border-style:solid;
+  border-width:1px;
+  border-style:solid;
 }
 
 .courseboxcontent {
-    border-width:1px;
-    border-style:solid;
+  border-width:1px;
+  border-style:solid;
 }
-
 
 /*****************************
 ***
@@ -358,177 +583,184 @@ table.formtable td {
 /* assignment, forum, glossary */
 .forumpost,
 .forumheaderlist {
-    border-width:1px;
-    border-style:solid;
+  border-width:1px;
+  border-style:solid;
 }
-
 
 /* forum */
 .forum {
-    position:relative;
-    /*width:45em;*/
-    width:100%;
-    margin-left:auto;
-    margin-right:auto;
-    border:1px solid;
+  width:100%;
+  margin-left:auto;
+  margin-right:auto;
+  border:1px solid;
+  position:relative;
+  /*width:45em;*/
 }
 
 /* new */
 .forumheaderlist,
 .forumpost {
-    width:100%;
-    border-width:1px;
-    border-style:solid;
-    border-collapse:separate;
+  width:100%;
+  border-width:1px solid;
+  border-collapse:separate;
+}
+
+.forumheaderlist thead tr th {
+  border:1px solid;
 }
 
 .forumpost {
-    margin-top:15px;
+  margin-top:15px;
 }
 
 .forumpost .topic {
-    padding:4px;
+  padding:4px;
 }
 
-
 .forumpost .commands {
-    padding-top:0.5em;
-    text-align:right;
+  padding-top:0.5em;
+  text-align:right;
 }
 
 .forumpost .ratings {
-    padding-top:1em;
-    text-align:right;
+  padding-top:1em;
+  text-align:right;
 }
 
 .forumpost .content {
-    padding:4px;
+  padding:4px;
 }
 
 .forumpost .footer {
-    padding-top:0.5em;
-    text-align:right;
+  padding-top:0.5em;
+  text-align:right;
 }
 
 .forumpost .left {
-    width:35px;
-    padding:4px;
-    text-align:center;
-    vertical-align:top;
+  width:35px;
+  padding:4px;
+  text-align:center;
+  vertical-align:top;
 }
 
 .forumpostindent {
-    margin-left:45px;
+  margin-left:45px;
 }
 
 .unread {
-    margin-left:1em;
-    border-width:0px 0px 1px 3px;
-    border-style:solid;
+  margin-left:1em;
+  border-width:0 0 1px 3px;
+  border-style:solid;
 }
 
 /* glossary */
-.glossary {
-    position:relative;
-    width:45em;
-    margin-left:auto;
-    margin-right:auto;
-    border:1px solid;
+.mod-glossary #glossary-view {
+  width:45em;
+  margin-left:auto;
+  margin-right:auto;
+  border:1px solid;
+  position:relative;
 }
 
-.glossary table {
+/*.mod-glossary table {
     width:100%;
+}*/
+#mod-glossary-edit {
+  margin:0;
+  width:auto;
 }
 
-#glossary-edit {
-    margin:0px;
-    width:auto;
+.mod-glossary .generaltab,
+.mod-glossary .generaltabselected,
+.mod-glossary .general,
+.mod-glossary .inactive {
+  width:100%;
+  padding:0 1px;
+  text-align:center;
 }
 
-.glossary .generaltab,
-.glossary .generaltabselected,
-.glossary .general,
-.glossary .inactive  {
-  width:25%;
-  padding:0px 1px;
-}
-
-.glossary table.tabs td.separator {
+.mod-glossary table.tabs td.separator {
   width:1%;
 }
 
-.glossary table.tabs {
-    border:1px solid;
+.mod-glossary .glossarydisplay {
+  width:80%;
 }
 
+.mod-glossary .tabs {
+  margin-bottom:0;
+  padding-bottom:0;
+}
+
+.mod-glossary .entryboxheader hr {
+  display:none;
+}
+
+/*
 .glossary .inactive {
     border:1px solid;
-}
-
-
+}*/
 /* quiz */
 table.quiz td {
-    padding-top:0.1em;
-    line-height:1.7em;
+  padding-top:0.1em;
+  line-height:1.7em;
 }
 
 table.quiz input {
-    height:1.7em;
-    padding-top:0.1em;
-    vertical-align:top;
+  padding-top:0.1em;
+  height:1.7em;
+  vertical-align:top;
 }
-
 
 /* wiki */
 .wiki {
-    border-width:1px;
-    border-style:solid;
+  border-width:1px;
+  border-style:solid;
 }
 
 .mwiki .view {
-    margin-left:auto;
-    margin-right:auto;
-    width:35em;
+  margin-left:auto;
+  margin-right:auto;
+  width:35em;
 }
 
 .mwiki .edit {
-    margin-right:auto;
-    margin-left:auto;
-    padding:0em;
+  margin-right:auto;
+  margin-left:auto;
+  padding:0;
 }
 
 .wiki .title {
-	padding:3px;
-	border:1px solid;
+  padding:3px;
+  border:1px solid;
 }
 
 .wiki .upload {
-    padding-top:1em;
+  padding-top:1em;
 }
 
-#wikiPageActions {
-    position:relative;
-    width:auto !important;
-    margin:auto;
+#wikipageactions {
+  width:auto !important;
+  margin:auto;
+  position:relative;
 }
 
-#wikiPageActions td {
-    text-align:left !important;
+#wikipageactions td {
+  text-align:left !important;
 }
 
-#wikiPageActions INPUT {
-    padding:0px;
-    margin:0px;
+#wikipageactions input {
+  padding:0;
+  margin:0;
 }
 
 .mwiki {
-    position:relative;
-    width:45em;
-    margin-left:auto;
-    margin-right:auto;
-    border:1px solid;
+  width:45em;
+  margin-left:auto;
+  margin-right:auto;
+  border:1px solid;
+  position:relative;
 }
-
 
 /*****************************
 ***
@@ -537,197 +769,194 @@ table.quiz input {
 ******************************/
 body.calendar #calendar tr,
 body.calendar #calendar td {
-    vertical-align:top;
+  vertical-align:top;
 }
 
 body.calendar #calendar td.maincalendar {
-    padding:0px 2em;
+  padding:0 2em;
 }
 
 body.calendar #calendar td.maincalendar .buttons {
-    float:right;
+  float:right;
 }
 
 body.calendar #calendar table.calendarmonth {
-    padding:1em 0px;
+  padding:1em 0;
 }
 
-TABLE.minicalendar {
-	  width:100%;
-    margin:0px;
-    padding:0px;
-    border-width:1px;
-    border-style:solid;
+table.minicalendar {
+  width:100%;
+  margin:0;
+  padding:0;
+  border-width:1px;
+  border-style:solid;
 }
 
-TABLE.calendarmonth {
-	  width:100%;
-    margin:0px;
-    padding:0px;
-    border-width:1px;
-    border-style:solid;
+table.calendarmonth {
+  width:100%;
+  margin:0;
+  padding:0;
+  border-width:1px;
+  border-style:solid;
 }
 
-TABLE.minicalendar TBODY TD {
-    width:14%;
-    border-width:1px 0px;
-    border-style:none;
-    vertical-align:center;
+table.minicalendar tbody td {
+  width:14%;
+  border-width:1px 0;
+  border-style:none;
+  vertical-align:center;
 }
 
-TABLE.calendarmonth TBODY TD {
-    width:14%;
-    border-width:1px;
-    border-style:solid;
-    vertical-align:top;
+table.calendarmonth tbody td {
+  width:14%;
+  border-width:1px;
+  border-style:solid;
+  vertical-align:top;
 }
 
-TABLE.calendarmonth TBODY TD TABLE {
-	margin-top:0px;
-	margin-left:0px;
+table.calendarmonth tbody td table {
+  margin-top:0;
+  margin-left:0;
 }
 
-TABLE.calendarmonth TBODY TD TABLE TD {
-    background:none;
-    border:none;
+table.calendarmonth tbody td table td {
+  border:none;
+  background:none;
 }
 
-TABLE.calendarmonth TBODY TD DIV {
-	margin-top:0px;
-	margin-left:0px;
+table.calendarmonth tbody td div {
+  margin-top:0;
+  margin-left:0;
 }
 
-TABLE.minicalendar THEAD TD {
-    vertical-align:center;
+table.minicalendar thead td {
+  vertical-align:center;
 }
 
-TABLE.calendarmonth THEAD TD {
-    padding-bottom:3px;
-    border-bottom:2px solid;
-    vertical-align:center;
+table.calendarmonth thead td {
+  padding-bottom:3px;
+  border-bottom:2px solid;
+  vertical-align:center;
 }
 
 .event_global {
-	border:2px solid !important;
+  border:2px solid !important;
 }
 
 .event_course {
-	border:2px solid !important;
+  border:2px solid !important;
 }
 
 .event_group {
-	border:2px solid !important;
+  border:2px solid !important;
 }
 
 .event_user {
-	border:2px solid !important;
+  border:2px solid !important;
 }
 
 .cal_duration_global {
-	border-top:2px solid !important;
-	border-bottom:2px solid !important;
+  border-top:2px solid !important;
+  border-bottom:2px solid !important;
 }
 
 .cal_duration_course {
-	border-top:2px solid !important;
-	border-bottom:2px solid !important;
+  border-top:2px solid !important;
+  border-bottom:2px solid !important;
 }
 
 .cal_duration_user {
-	border-top:2px solid !important;
-	border-bottom:2px solid !important;
+  border-top:2px solid !important;
+  border-bottom:2px solid !important;
 }
 
 .cal_duration_group {
-	border-top:2px solid !important;
-	border-bottom:2px solid !important;
+  border-top:2px solid !important;
+  border-bottom:2px solid !important;
 }
 
 .cal_today {
-	border:2px solid !important;
+  border:2px solid !important;
 }
 
-.mycalendar TABLE.cal_filters {
-    margin:0px;
-    padding:2px;
-	width:100%;
-    border-width:1px;
-    border-style:solid;
+.mycalendar table.cal_filters {
+  margin:0;
+  padding:2px;
+  width:100%;
+  border-width:1px;
+  border-style:solid;
 }
 
-.mycalendar .cal_filters THEAD TD {
-    margin:0px;
-    padding:2px;
-	border-bottom:2px solid;
+.mycalendar .cal_filters thead td {
+  margin:0;
+  padding:2px;
+  border-bottom:2px solid;
 }
 
 .mycalendar .event_table {
-    margin:0px;
-    padding:2px;
-	width:100%;
-    border-width:1px;
-    border-style:solid;
+  margin:0;
+  padding:2px;
+  width:100%;
+  border-width:1px;
+  border-style:solid;
 }
 
-.mycalendar HR {
-	height:1px;
-	border:none;
-	border-top:1px solid;
-	margin-top:4px;
-	margin-bottom:4px;
+.mycalendar hr {
+  border:none;
+  border-top:1px solid;
+  margin-top:4px;
+  margin-bottom:4px;
+  height:1px;
 }
 
-TD.event_description {
-	width:80%;
-	border-left:2px solid;
-	vertical-align:top;
-	padding:5px;
+td.event_description {
+  width:80%;
+  border-left:2px solid;
+  padding:5px;
+  vertical-align:top;
 }
 
 #calendar .today,
 .minicalendar .today {
-    border:1px solid !important;
+  border:1px solid !important;
 }
 
 .cal_popup_bg {
-	padding:0px;
-	margin:0px;
-	border-top:2px solid;
-	border-left:2px solid;
-	border-right:2px solid;
-	border-bottom:2px solid;
+  padding:0;
+  margin:0;
+  border-top:2px solid;
+  border-left:2px solid;
+  border-right:2px solid;
+  border-bottom:2px solid;
 }
 
 .cal_popup_close {
-	margin-right:5px;
+  margin-right:5px;
 }
 
 .eventfull {
-    border-width:1px;
-    border-style:solid;
+  border-width:1px;
+  border-style:solid;
 }
 
 .eventfullpicture {
-    padding:8px;
+  padding:8px;
 }
 
 table.calendar-controls {
-    width:100%;
-    text-align:center;
+  width:100%;
+  text-align:center;
 }
 
 table.calendar-controls .previous,
-table.calendar-controls .next
-{
-    width:12%;
+table.calendar-controls .next {
+  width:12%;
 }
 
 #calendar .maincalendar .calendar-controls .previous,
-#calendar .maincalendar .calendar-controls .next
-{
-    width:30%;
+#calendar .maincalendar .calendar-controls .next {
+  width:30%;
 }
-
 
 /*****************************
 ***
@@ -736,108 +965,107 @@ table.calendar-controls .next
 ******************************/
 /* sideblock */
 .sideblock {
-    width:100%;
-    border:0 none;
+  width:100%;
+  border:0 none;
 }
 
 .sideblock .header {
-    background-image:none;
-    padding:0px 5px;
-    border:0 none;
+  padding:0 5px;
+  border:0 none;
+  background-image:none;
 }
 
 #right-column .sideblock {
   border:1px solid;
-  
 }
 
 .sideblock .header .hide-show {
-    float:right;
+  float:right;
 }
 
 .sideblock .header .hide-show img.hide-show-image {
-    height:11px;
-    width:11px;
-    padding-top:0.35em;
+  width:11px;
+  padding-top:0.35em;
+  height:11px;
 }
 
 .sideblock .header .hide-show img.hide-show-image {
-    background:url('../../pix/t/switch_minus.gif') no-repeat bottom;
+  background:url('../../pix/t/switch_minus.gif') no-repeat bottom;
 }
 
 .sideblock.hidden .header .hide-show img.hide-show-image {
-    background:url('../../pix/t/switch_plus.gif') no-repeat bottom;
+  background:url('../../pix/t/switch_plus.gif') no-repeat bottom;
 }
 
 .sideblock .header .title {
-    float:left;
-    width:auto;
+  float:left;
+  width:auto;
 }
 
 .sideblock.hidden .content {
-    display:none;
+  display:none;
 }
 
 .sideblock .header .commands {
-    float:right;
-    padding-left:0.2em;
+  float:right;
+  padding-left:0.2em;
 }
 
 .sideblock .header .commands a {
-    cursor:pointer;
-    border-bottom:none;
+  border-bottom:none;
+  cursor:pointer;
 }
 
 .sideblock .header .commands a img {
-    padding-top:0.5em;
+  padding-top:0.5em;
 }
 
 .sideblock .list {
-    width:100%;
+  width:100%;
 }
 
-.sideblockmain HR {
-	height:1px;
-	border:none;
-	border-top:1px solid;
-	margin-top:4px;
-	margin-bottom:4px;
+.sideblockmain hr {
+  border:none;
+  border-top:1px solid;
+  margin-top:4px;
+  margin-bottom:4px;
+  height:1px;
 }
 
 #left-column .sideblock {
-    margin-bottom:0;
+  margin-bottom:0;
 }
 
 #left-column .sideblockmain {
-    padding:1px 0px;
+  padding:1px 0;
 }
 
 #left-column .sideblock .header,
 #left-column .sideblock {
-    border-width:0px 0px 0px 1px;
+  border-width:0 0 0 1px;
 }
 
 #left-column .sideblock .list {
-    padding-left:5px;
+  padding-left:5px;
 }
 
 #right-column .sideblock {
-    margin:1em 0em 0.5em;
+  margin:1em 0 0.5em;
 }
 
 /* glossary random */
 .block_glossary_random .sideblockheading,
 .block_glossary_random .sideblockmain br,
 .block_glossary_random .sideblockmain b {
-    display:none;
+  display:none;
 }
 
 .block_glossary_random .sideblockmain {
-    text-align:center;
+  text-align:center;
 }
-
 
 /* course summary */
 .block_course_summary .sideblockmain {
-    padding:10px;
+  padding:10px;
 }
+
