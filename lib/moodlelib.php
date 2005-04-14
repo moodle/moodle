@@ -860,7 +860,7 @@ function get_user_timezone_offset($tz = 99) {
         if (empty($tzrecord)) {
             return 99.0;
         }
-        return (float)$tzrecord->gmtoff / HOURSECS;
+        return (float)$tzrecord->gmtoff / HOURMINS;
     }
 }
 
@@ -916,6 +916,7 @@ function calculate_user_dst_table($from_year = NULL, $to_year = NULL) {
     if (!empty($USER->dstoffsettz) && $USER->dstoffsettz != $usertz) {
         // We have precalculated values, but the user's effective TZ has changed in the meantime, so reset
         unset($USER->dstoffsets);
+        unset($USER->dstrange);
     }
 
     if (!empty($USER->dstoffsets) && empty($from_year) && empty($to_year)) {
