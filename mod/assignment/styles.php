@@ -11,7 +11,7 @@
 }
 
 #mod-assignment-submissions .s0 {
-  background: green;
+  background: #FFD991;
 }
 
 #mod-assignment-submissions .submissions td,
