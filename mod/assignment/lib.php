@@ -267,15 +267,7 @@ class assignment_base {
             case 'grade':                         // We are in a popup window grading
                 if ($submission = $this->process_feedback()) {
                     print_heading(get_string('changessaved'));
-                    /// Run some Javascript to try and update the parent page
-                    echo '<script type="text/javascript">'."\n<!--\n";
-                    echo 'opener.document.getElementById("ts'.$submission->userid.'").innerHTML="'.userdate($submission->timemodified)."\";\n";
-                    echo 'opener.document.getElementById("tt'.$submission->userid.'").innerHTML="'.userdate($submission->timemarked)."\";\n";
-                    echo 'opener.document.getElementById("g'.$submission->userid.'").innerHTML="'.$this->display_grade($submission->grade)."\";\n";
-                    echo 'opener.document.getElementById("com'.$submission->userid.'").innerHTML="'.shorten_text($submission->comment, 15)."\";\n";
-                    echo 'opener.document.getElementById("up'.$submission->userid.'").className="s1";';
-                    echo "\n-->\n</script>";
-                    fflush();
+                    $this->update_main_listing($submission);
                 }
                 close_window();
                 break;
@@ -290,6 +282,33 @@ class assignment_base {
         }
     }
 
+    function update_main_listing($submission) {
+        global $SESSION;
+
+        /// Run some Javascript to try and update the parent page
+        echo '<script type="text/javascript">'."\n<!--\n";
+        if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['grade'])) {
+            echo 'opener.document.getElementById("g'.$submission->userid.
+                 '").innerHTML="'.$this->display_grade($submission->grade)."\";\n";
+        }
+        if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['comment'])) {
+            echo 'opener.document.getElementById("com'.$submission->userid.
+                 '").innerHTML="'.shorten_text($submission->comment, 15)."\";\n";
+        }
+        if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['timemodified'])) {
+            echo 'opener.document.getElementById("ts'.$submission->userid.
+                 '").innerHTML="'.userdate($submission->timemodified)."\";\n";
+        }
+        if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['timemarked'])) {
+            echo 'opener.document.getElementById("tt'.$submission->userid.
+                 '").innerHTML="'.userdate($submission->timemarked)."\";\n";
+        }
+        if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['status'])) {
+            echo 'opener.document.getElementById("up'.$submission->userid.'").className="s1";';
+        }
+        echo "\n-->\n</script>";
+        fflush();
+    }
 
     /*
      *  Display a grade in user-friendly form, whether it's a scale or not
@@ -564,6 +583,9 @@ class assignment_base {
         }
 
         $table->print_html();
+
+        global $SESSION;
+        print_object($SESSION);
 
         print_footer($this->course);
 
