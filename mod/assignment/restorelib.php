@@ -46,6 +46,7 @@
             $assignment->resubmit = backup_todb($info['MOD']['#']['RESUBMIT']['0']['#']);
             $assignment->emailteachers = backup_todb($info['MOD']['#']['EMAILTEACHERS']['0']['#']);
             $assignment->type = backup_todb($info['MOD']['#']['TYPE']['0']['#']);
+            $assignment->assignmenttype = backup_todb($info['MOD']['#']['ASSIGNMENTTYPE']['0']['#']);
             $assignment->maxbytes = backup_todb($info['MOD']['#']['MAXBYTES']['0']['#']);
             $assignment->timedue = backup_todb($info['MOD']['#']['TIMEDUE']['0']['#']);
             $assignment->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
@@ -56,6 +57,14 @@
                 $scale = backup_getid($restore->backup_unique_code,"scale",abs($assignment->grade));        
                 if ($scale) {
                     $assignment->grade = -($scale->new_id);       
+                }
+            }
+
+            if (empty($assignment->assignmenttype)) {   /// Pre 1.5 assignment
+                if ($assignment->type == 1) {
+                    $assignment->assignmenttype = 'uploadsingle';
+                } else {
+                    $assignment->assignmenttype = 'offline';
                 }
             }
 

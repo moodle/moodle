@@ -1,18 +1,29 @@
 <?php
+    require_once("$CFG->dirroot/mod/assignment/lib.php");
+
     if (empty($form->name)) {
-        $form->name = '';
+        $form->name = "";
     }
     if (empty($form->description)) {
-        $form->description = '';
+        $form->description = "";
     }
     if (empty($form->format)) {
-        $form->format = '';
+        $form->format = "";
     }
-    if (empty($form->type)) {
-        $form->type = '';
+    if (empty($form->assignmenttype)) {
+        $form->assignmenttype = "uploadsingle";
     }
     if (empty($form->resubmit)) {
-        $form->resubmit = '';
+        $form->resubmit = "";
+    }
+    if (!isset($form->grade)) {
+        $form->grade = 100;
+    }
+    if (!isset($form->timedue)) {
+        $form->timedue = time()+7*24*3600;
+    }
+    if (!isset($form->timeavailable)) {
+        $form->timeavailable = time();
     }
     if (!isset($form->grade)) {
         $form->grade = 100;
@@ -21,33 +32,30 @@
         $form->maxbytes = $CFG->assignment_maxbytes;
     }
     if (empty($form->timedue)) {
-        $form->timedue = '';
-    }
-    if (empty($form->emailteachers)) {
-        $form->emailteachers = '';
+        $form->timedue = "";
     }
 ?>
-
-<form name="form" method="post" action="mod.php">
+<form name="form" method="post" action="../mod/assignment/details.php">	
 <table cellpadding="5">
 <tr valign="top">
-    <td align="right"><b><?php print_string('assignmentname', 'assignment') ?>:</b></td>
+    <td align="right"><b><?php print_string("assignmentname", "assignment") ?>:</b></td>
     <td>
-        <input type="text" name="name" size="60" value="<?php p($form->name) ?>" alt="<?php print_string('assignmentname', 'assignment') ?>" />
+        <input type="text" name="name" size=60 value="<?php p($form->name) ?>">
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><b><?php print_string('description', 'assignment') ?>:</b><br /><br />
+    <td align="right"><b><?php print_string("description", "assignment") ?>:</b>
+     <br /><br />
      <?php
-        helpbutton('writing', get_string('helpwriting'), 'moodle', true, true);
-        echo '<br />';
-        helpbutton('questions', get_string('helpquestions'), 'moodle', true, true);
-        echo '<br />';
+        helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
+        echo "<br />";
+        helpbutton("questions", get_string("helpquestions"), "moodle", true, true);
+        echo "<br />";
         if ($usehtmleditor) {
            helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
         } else {
            emoticonhelpbutton("form", "description");
-        }
+        } 
       ?>
     </td>
     <td>
@@ -70,39 +78,8 @@
     ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right"><b><?php print_string("assignmenttype", "assignment") ?>:</b></td>
-    <td>
-    <?php
-       require_once("$CFG->dirroot/mod/assignment/lib.php");
-       asort($ASSIGNMENT_TYPE);
-       choose_from_menu($ASSIGNMENT_TYPE, "type", $form->type, "");
-       helpbutton("assignmenttype", get_string("assignmenttype", "assignment"), "assignment");
-    ?>
-    </td>
-</tr>
-<tr>
-    <td align="right"><b><?php print_string("allowresubmit", "assignment") ?>:</b></td>
-    <td>
-    <?php 
-        $options[0] = get_string("no"); $options[1] = get_string("yes");
-        choose_from_menu($options, "resubmit", $form->resubmit, "");
-        helpbutton("resubmit", get_string("allowresubmit", "assignment"), "assignment");
-    ?>
-    </td>
-</tr>
-<tr>
-    <td align="right"><b><?php print_string("emailteachers", "assignment") ?>:</b></td>
-    <td>
-    <?php 
-        $options[0] = get_string("no"); $options[1] = get_string("yes");
-        choose_from_menu($options, "emailteachers", $form->emailteachers, "");
-        helpbutton("emailteachers", get_string("emailteachers", "assignment"), "assignment");
-    ?>
-    </td>
-</tr>
-<tr valign="top">
-    <td align="right"><b><?php print_string("grade") ?>:</b></td>
+<tr valign=top>
+<td align="right"><b><?php print_string("grade") ?>:</b></td>
     <td>
         <?php
         print_grade_menu($course->id, "grade", "$form->grade");
@@ -110,14 +87,26 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><b><?php print_string("maximumsize", "assignment") ?>:</b></td>
-  <td><?php
-    $choices = get_max_upload_sizes($CFG->maxbytes, $course->maxbytes);
-    choose_from_menu ($choices, "maxbytes", $form->maxbytes, "");
+    <td align="right"><b><?php print_string("assignmenttype", "assignment") ?>:</b></td>
+    <td>
+    <?php
+       $ASSIGNMENT_TYPES = assignment_types();
+       choose_from_menu($ASSIGNMENT_TYPES, "assignmenttype", $form->assignmenttype, "");
+       helpbutton("assignmenttype", get_string("assignmenttype", "assignment"), "assignment");
     ?>
-  </td>
+    </td>
 </tr>
-<tr valign="top">
+
+<tr valign=top>
+   <td align="right"><b><?php print_string("availabledate","assignment") ?>:</b></td>
+    <td><?php
+           print_date_selector("availableday", "availablemonth", "availableyear", $form->timeavailable);
+           echo "&nbsp;-&nbsp;";
+           print_time_selector("availablehour", "availableminute", $form->timeavailable);
+    ?></td>
+</tr>
+
+<tr valign=top>
     <td align="right"><b><?php print_string("duedate", "assignment") ?>:</b></td>
     <td><?php
            print_date_selector("dueday", "duemonth", "dueyear", $form->timedue);
@@ -125,19 +114,19 @@
            print_time_selector("duehour", "dueminute", $form->timedue);
     ?></td>
 </tr>
-<?php print_standard_coursemodule_settings($form); ?>
+
 </table>
 <br />
 <center>
-<input type="hidden" name="course"        value="<?php p($form->course) ?>" />
-<input type="hidden" name="sesskey"       value="<?php p($form->sesskey) ?>" />
-<input type="hidden" name="coursemodule"  value="<?php p($form->coursemodule) ?>" />
-<input type="hidden" name="section"       value="<?php p($form->section) ?>" />
-<input type="hidden" name="module"        value="<?php p($form->module) ?>" />
-<input type="hidden" name="modulename"    value="<?php p($form->modulename) ?>" />
-<input type="hidden" name="instance"      value="<?php p($form->instance) ?>" />
-<input type="hidden" name="mode"          value="<?php p($form->mode) ?>" />
-<input type="submit"                      value="<?php print_string("savechanges") ?>" />
-<input type="submit" name="cancel"        value="<?php print_string("cancel") ?>" />
+<!-- <input type="hidden" name=grade      value="<?php p($form->grade) ?>" /> -->
+<input type="hidden" name="course"       value="<?php p($form->course) ?>" />
+<input type="hidden" name="coursemodule" value="<?php p($form->coursemodule) ?>" />
+<input type="hidden" name="section"      value="<?php p($form->section) ?>" />
+<input type="hidden" name="module"     value="<?php p($form->module) ?>" />
+<input type="hidden" name="modulename" value="<?php p($form->modulename) ?>" />
+<input type="hidden" name="instance"   value="<?php p($form->instance) ?>" />
+<input type="hidden" name="mode"       value="<?php p($form->mode) ?>" />
+<input type="submit" value="<?php print_string('next') ?>" />
+<input type="submit" name=cancel value="<?php print_string('cancel') ?>" />
 </center>
 </form>

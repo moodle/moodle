@@ -52,35 +52,20 @@
     $currentsection = "";
 
     foreach ($assignments as $assignment) {
-        $submitted = get_string("no");
-        if (isteacher($course->id)) {
-            if ($assignment->type == OFFLINE) {
-                $submitted =  "<a href=\"submissions.php?id=$assignment->id\">" .
-                                get_string("viewfeedback", "assignment") . "</a>";
-            } else {
-                $count = assignment_count_real_submissions($assignment, $currentgroup);
-                $submitted = "<a href=\"submissions.php?id=$assignment->id\">" .
-                             get_string("viewsubmissions", "assignment", $count) . "</a>$groupname";
-            }
-        } else {
-            if (isset($USER->id)) {
-                if ($submission = assignment_get_submission($assignment, $USER)) {
-                    if ($submission->timemodified <= $assignment->timedue) {
-                        $submitted = userdate($submission->timemodified);
-                    } else {
-                        $submitted = "<font color=red>".userdate($submission->timemodified)."</font>";
-                    }
-                }
-            }
-        }
+
+        require_once ($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');
+        $assignmentclass = 'assignment_'.$assignment->assignmenttype;
+        $assignmentinstance = new $assignmentclass($assignment->coursemodule);
+    
+        $submitted = $assignmentinstance->submittedlink();
 
         $due = userdate($assignment->timedue);
         if (!$assignment->visible) {
             //Show dimmed if the mod is hidden
-            $link = "<a class=\"dimmed\" href=\"view.php?id=$assignment->coursemodule\">".format_string($assignment->name,true)."</a>";
+            $link = "<a class=\"dimmed\" href=\"view.php?id=$assignment->coursemodule\">$assignment->name</a>";
         } else {
             //Show normal if the mod is visible
-            $link = "<a href=\"view.php?id=$assignment->coursemodule\">".format_string($assignment->name,true)."</a>";
+            $link = "<a href=\"view.php?id=$assignment->coursemodule\">$assignment->name</a>";
         }
 
         $printsection = "";

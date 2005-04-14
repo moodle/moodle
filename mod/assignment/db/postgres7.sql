@@ -8,11 +8,12 @@ CREATE TABLE prefix_assignment (
   name varchar(255) NOT NULL default '',
   description text NOT NULL default '',
   format integer NOT NULL default '0',
+  assignmenttype varchar(50) NOT NULL default '',
   resubmit integer NOT NULL default '0',
   emailteachers integer NOT NULL default '0',
-  type integer NOT NULL default '1',
   maxbytes integer NOT NULL default '100000',
   timedue integer NOT NULL default '0',
+  timeavailable integer NOT NULL default '0',
   grade integer NOT NULL default '0',
   timemodified integer NOT NULL default '0'
 );
