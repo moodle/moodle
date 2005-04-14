@@ -8,8 +8,8 @@ define ('MESSAGE_WINDOW', true);          // We are in a message window (so don'
 if (!isset($CFG->message_contacts_refresh)) {  // Refresh the contacts list every 60 seconds
     $CFG->message_contacts_refresh = 60;
 }
-if (!isset($CFG->message_chat_refresh)) {      // Look for new comments every 20 seconds
-    $CFG->message_chat_refresh = 20;
+if (!isset($CFG->message_chat_refresh)) {      // Look for new comments every 5 seconds
+    $CFG->message_chat_refresh = 5;
 }
 if (!isset($CFG->message_offline_time)) {
     $CFG->message_offline_time = 300;
@@ -74,7 +74,7 @@ function message_print_contacts() {
             print_user_picture($contact->id, SITEID, $contact->picture, 20, false, true, 'userwindow');
             echo '</td>';
             echo '<td class="message_contact">';
-            link_to_popup_window("/message/user.php?id=$contact->id", "message_$contact->id", 
+            link_to_popup_window("/message/discussion.php?id=$contact->id", "message_$contact->id", 
                                  $fullnamelink, 500, 500, get_string('sendmessageto', 'message', $fullname),
                                  'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
             echo '</td>';
@@ -110,7 +110,7 @@ function message_print_contacts() {
             print_user_picture($contact->id, SITEID, $contact->picture, 20, false, true, 'userwindow');
             echo '</td>';
             echo '<td class="message_contact">';
-            link_to_popup_window("/message/user.php?id=$contact->id", "message_$contact->id", 
+            link_to_popup_window("/message/discussion.php?id=$contact->id", "message_$contact->id", 
                                  $fullnamelink, 500, 500, get_string('sendmessageto', 'message', $fullname),
                                  'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
             echo '</td>';
@@ -170,7 +170,7 @@ function message_print_contacts() {
             print_user_picture($messageuser->useridfrom, SITEID, $messageuser->picture, 20, false, true, 'userwindow');
             echo '</td>';
             echo '<td class="message_contact">';
-            link_to_popup_window("/message/user.php?id=$messageuser->useridfrom", "message_$messageuser->useridfrom", 
+            link_to_popup_window("/message/discussion.php?id=$messageuser->useridfrom", "message_$messageuser->useridfrom", 
                                  $fullnamelink, 500, 500, get_string('sendmessageto', 'message', $fullname),
                                  'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
             echo '</td>';
@@ -356,7 +356,7 @@ function message_print_search_results($frm) {
                 print_user_picture($user->id, SITEID, $user->picture, 20, false, true, 'userwindow');
                 echo '</td>';
                 echo '<td class="message_contact">';
-                link_to_popup_window("/message/user.php?id=$user->id", "message_$user->id", fullname($user), 
+                link_to_popup_window("/message/discussion.php?id=$user->id", "message_$user->id", fullname($user), 
                                      500, 500, get_string('sendmessageto', 'message', fullname($user)),
                                      'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
                 echo '</td>';
@@ -527,7 +527,7 @@ function message_print_user ($user=false, $iscontact=false, $isblocked=false) {
             message_contact_link($user->id, 'block');
         }
         echo '<br />';
-        link_to_popup_window("/message/user.php?id=$user->id", "message_$user->id", 
+        link_to_popup_window("/message/discussion.php?id=$user->id", "message_$user->id", 
                              fullname($user), 400, 400, get_string('sendmessageto', 'message', fullname($user)),
                              'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
     }
@@ -535,7 +535,7 @@ function message_print_user ($user=false, $iscontact=false, $isblocked=false) {
 
 
 /// linktype can be: add, remove, block, unblock
-function message_contact_link($userid, $linktype='add', $return=false, $script="index.php?tab=contacts") {
+function message_contact_link($userid, $linktype='add', $return=false, $script="index.php?tab=contacts", $text=false) {
     global $USER, $CFG;
 
     static $str;
@@ -547,29 +547,31 @@ function message_contact_link($userid, $linktype='add', $return=false, $script="
        $str->addcontact     =  get_string('addcontact', 'message');
     }
 
+    $command = $linktype.'contact';
+    $string  = $str->{$command};
+    $text = $text ? '&nbsp;'.$string : '';
+
     switch ($linktype) {
         case 'block':
-            $output = '<a href="'.$script.'&amp;blockcontact='.$userid.
-                   '&amp;sesskey='.$USER->sesskey.'" title="'.$str->blockcontact.'">'.
-                   '<img src="'.$CFG->pixpath.'/t/go.gif" height="11" width="11" border="0"></a>';
+            $icon = '/t/go.gif';
             break;
         case 'unblock':
-            $output = '<a href="'.$script.'&amp;unblockcontact='.$userid.
-                   '&amp;sesskey='.$USER->sesskey.'" title="'.$str->unblockcontact.'">'.
-                   '<img src="'.$CFG->pixpath.'/t/stop.gif" height="11" width="11" border="0"></a>';
+            $icon = '/t/stop.gif';
             break;
         case 'remove':
-            $output = '<a href="'.$script.'&amp;removecontact='.$userid.
-                   '&amp;sesskey='.$USER->sesskey.'" title="'.$str->removecontact.'">'.
-                   '<img src="'.$CFG->pixpath.'/t/user.gif" height="11" width="11" border="0"></a>';
+            $icon = '/t/user.gif';
             break;
         case 'add':
         default:
-            $output = '<a href="'.$script.'&amp;addcontact='.$userid.
-                   '&amp;sesskey='.$USER->sesskey.'" title="'.$str->addcontact.'">'.
-                   '<img src="'.$CFG->pixpath.'/t/usernot.gif" height="11" width="11" border="0"></a>';
-
+            $icon = '/t/usernot.gif';
     }
+
+    $output = '<span class="'.$linktype.'">'.
+              '<a href="'.$script.'&amp;'.$command.'='.$userid.
+              '&amp;sesskey='.sesskey().'" title="'.$string.'">'.
+              '<img src="'.$CFG->pixpath.$icon.'" height="11" width="11" border="0">'.
+              $text.'</a></span>';
+
     if ($return) {
         return $output;
     } else {
@@ -593,15 +595,22 @@ function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords=
         $keywords = "&search=".urlencode($keywords);
     }
 
-    if ($linktext == 'icon') {
-        $linktext = '<img src="'.$CFG->pixpath.'/t/log.gif" height="11" width="11" border="0">';
-    } else if ($linktext == '') {
-        $linktext = $str->messagehistory;
+    $fulllink = '';
+    if ($linktext == 'icon' or $linktext == 'both') {
+        $fulllink .= '<img src="'.$CFG->pixpath.'/t/log.gif" height="11" width="11" border="0">';
+    } 
+    if ($linktext == 'both') {
+        $fulllink .= '&nbsp;';
+    }
+    if ($linktext == '' or $linktext == 'both') {
+        $fulllink .= $str->messagehistory;
     }
 
     $str = link_to_popup_window("/message/history.php?user1=$userid1&user2=$userid2$keywords$position", 
-                    "message_history_$userid1", $linktext, 500, 500, $str->messagehistory, 
+                    "message_history_$userid1", $fulllink, 500, 500, $str->messagehistory, 
                     'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500', true);
+
+    $str = '<span class="history">'.$str.'</span>';
 
     if ($returnstr) {
         return $str;
