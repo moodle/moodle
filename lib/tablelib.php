@@ -359,8 +359,9 @@ class flexible_table {
             print_paging_bar($this->totalrows, $this->currpage, $this->pagesize, $this->baseurl);
         }
 
-        if(empty($this->data)) {
-            return;
+        if (empty($this->data)) {
+            print_heading(get_string('nothingtodisplay'));
+            return true;
         }
 
 
