@@ -89,6 +89,9 @@
 	<td>
     <?php 
        unset($options);
+       $options[604800]  = get_string('numdays', '', 7);
+       $options[86400]  = get_string('numdays', '', 1);
+       $options[43200]  = get_string('numhours', '', 12);
        $options[10800] = get_string('numhours', '', 3);
        $options[7200]  = get_string('numhours', '', 2);
        $options[3600]  = get_string('numhours', '', 1);
