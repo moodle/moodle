@@ -50,6 +50,8 @@
         }
         if (strpos($query,'ShowImage')) {
             tex2image($texexp);
+        } else if (strpos($query,'SlashArguments')) {
+            slasharguments($texexp);
         } else {   
             outputText($output);
         }
@@ -71,7 +73,7 @@
         echo "</pre></body></html>\n";
     }
 
-    function tex2image($texexp) {
+    function tex2image($texexp, $return=false) {
         global $CFG;
         $error_message1 = "Your system is not configured to run mimeTeX. ";
         $error_message1 .= "You need to download the appropriate<br /> executable ";
@@ -128,6 +130,9 @@
             }
             system($cmd, $status);
         }
+	if ($return) {
+	  return $image;
+        }
         if ($texexp && file_exists($pathname)) {
             $lastmodified = filemtime($pathname);
             header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
@@ -167,6 +172,13 @@
         }
     }
 
+    function slasharguments($texexp) {
+        $image = tex2image($texexp,true);
+        echo "<p>If the following image displays correctly, set your Administration->Configuration->Variables Setting for slasharguments to file.php/pic.jpg: <img src=\"pix.php/$image\" align=\"absmiddle\"></p>\n";
+        echo "<p>Otherwise set it to file.php?file=pic.jpg It should display correctly as <img src=\"pix.php?file=$image\" align=\"absmiddle\"></p>\n";
+        echo "<p>If neither equation image displays correctly, please seek further help at moodle.org at the <a href=\"http://moodle.org/mod/forum/view.php?id=752&username=guest\" target=\"_blank\">Mathematics Tools Forum</a></p>";
+    }
+
 ?>
 
 <html>
@@ -185,8 +197,10 @@
                to see the cache_filters database entry for this expression.</li>
            <li>If the database entry looks corrupt, click on this button to delete it:
                <input type="submit" name="DeleteDB" value="Delete DB Entry"></li>
-           <li>Finally click on this button <input type="submit" name="ShowImage" value="Show Image">
+           <li>Then click on this button <input type="submit" name="ShowImage" value="Show Image">
                to show a graphic image of the algebraic expression.</li>
+           <li>Finally check your slash arguments setting
+               <input type="submit" name="SlashArguments" value="Check Slash Arguments"></li>
            </ol>
           </form> <br /> <br />
        <center>
