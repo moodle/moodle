@@ -228,6 +228,15 @@ function qualified_me() {
         notify('Warning: could not find the name of this server!');
         return false;
     }
+
+    if (!empty($url['port'])) {
+        $hostname .= ':'.$url['port'];
+    } else if (!empty($_SERVER['SERVER_PORT'])) {
+        if ($_SERVER['SERVER_PORT'] != 80 && $_SERVER['SERVER_PORT'] != 443) {
+            $hostname .= ':'.$_SERVER['SERVER_PORT'];
+        }
+    }
+
     if (isset($_SERVER['HTTPS'])) {
         $protocol = ($_SERVER['HTTPS'] == 'on') ? 'https://' : 'http://';
     } else if (isset($_SERVER['SERVER_PORT'])) { # Apache2 does not export $_SERVER['HTTPS']
@@ -571,12 +580,12 @@ function link_to_popup_window ($url, $name='popup', $linkname='click here',
  * @param int $width Height to assign to popup window
  * @param string $title Text to be displayed as popup page title
  * @param string $options List of additional options for popup window
- * @todo Add code examples and list of some options that might be used.
+ * @param string $return If true, return as a string, otherwise print
  * @return string
  * @uses $CFG
  */
 function button_to_popup_window ($url, $name='popup', $linkname='click here',
-                                 $height=400, $width=500, $title='Popup window', $options='none') {
+                                 $height=400, $width=500, $title='Popup window', $options='none', $return=false) {
 
     global $CFG;
 
@@ -585,8 +594,13 @@ function button_to_popup_window ($url, $name='popup', $linkname='click here',
     }
     $fullscreen = 0;
 
-    echo '<input type="button" name="popupwindow" title="'. $title .'" value="'. $linkname .' ..." '.
-         "onclick=\"return openpopup('$url', '$name', '$options', $fullscreen);\" />\n";
+    $button = '<input type="button" name="popupwindow" title="'. $title .'" value="'. $linkname .' ..." '.
+              "onclick=\"return openpopup('$url', '$name', '$options', $fullscreen);\" />\n";
+    if ($return) {
+        return $button;
+    } else {
+        echo $button;
+    }
 }
 
 
@@ -643,7 +657,7 @@ function choose_from_menu ($options, $name, $selected='', $nothing='choose', $sc
         $attributes .= ' disabled="disabled"';
     }
 
-    $output = '<select name="'. $name .'" '. $attributes .'>' . "\n";
+    $output = '<select id="menu'.$name.'" name="'. $name .'" '. $attributes .'>' . "\n";
     if ($nothing) {
         $output .= '   <option value="'. $nothingvalue .'"'. "\n";
         if ($nothingvalue === $selected) {
