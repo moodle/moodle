@@ -353,6 +353,16 @@ body#doc-contents ul {
 .message .content {
 }
 
+#message-user .commands span {
+  font-size:0.7em;
+  white-space:nowrap;
+}
+
+#message-user .name {
+  font-weight: normal;
+  font-size:1.1em;
+}
+
 
 /***
  *** Tabs
