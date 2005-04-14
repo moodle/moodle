@@ -507,7 +507,7 @@ class assignment_base {
             if (!empty($auser->submissionid)) {
                 if ($auser->timemodified > 0) {
                     $studentmodified = '<div id="ts'.$auser->id.'">'.userdate($auser->timemodified).'</div>';
-                    if ($auser->timemarked > $asuer->timemodified) {
+                    if ($auser->timemarked > $auser->timemodified) {
                         $status = '<div id="st'.$auser->id.'">YES</div>';
                     } else {
                         $status = '<div id="st'.$auser->id.'">NO</div>';
