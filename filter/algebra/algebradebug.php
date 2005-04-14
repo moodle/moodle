@@ -61,10 +61,14 @@
 	$output = algebra2tex($algebra);
         $output = refineTeX($output);
       }
-      if (strpos($query,'ShowImage')) {
+      if (strpos($query,'ShowImage')||strpos($query,'SlashArguments')) {
 	$output = algebra2tex($algebra);
         $output = refineTeX($output);
-        tex2image($output, $md5);
+        if (strpos($query,'ShowImage')) {
+	  tex2image($output, $md5);
+        } else {
+          slasharguments($output, $md5);
+        }
       } else {   
         outputText($output);
       }
@@ -193,7 +197,7 @@ function outputText($texexp) {
   echo "</pre></body></html>\n";
 }
 
-function tex2image($texexp, $md5) {
+function tex2image($texexp, $md5, $return=false) {
   global $CFG;
   $error_message1 = "Your system is not configured to run mimeTeX. ";
   $error_message1 .= "You need to download the appropriate<br /> executable ";
@@ -250,6 +254,9 @@ function tex2image($texexp, $md5) {
        }
        system($cmd, $status);
   }
+  if ($return) {
+           return $image;
+  }
   if ($texexp && file_exists($pathname)) {
            $lastmodified = filemtime($pathname);
            header("Last-Modified: " . gmdate("D, d M Y H:i:s", $lastmodified) . " GMT");
@@ -288,6 +295,24 @@ function tex2image($texexp, $md5) {
            echo "Image not found!";
    }
 }
+
+function slasharguments($texexp, $md5) {
+  global $CFG;
+  $admin = $CFG->wwwroot . '/' . $CFG->admin . '/config.php';
+  $image = tex2image($texexp,$md5,true);
+  echo "<p>If the following image displays correctly, set your ";
+  echo "<a href=\"$admin\" target=\"_blank\">Administration->Configuration->Variables</a> ";
+  echo "setting for slasharguments to file.php/pic.jpg: ";
+  echo "<img src=\"pix.php/$image\" align=\"absmiddle\"></p>\n";
+  echo "<p>Otherwise set it to file.php?file=pic.jpg ";
+  echo "It should display correctly as ";
+  echo "<img src=\"pix.php?file=$image\" align=\"absmiddle\"></p>\n";
+  echo "<p>If neither equation image displays correctly, please seek ";
+  echo "further help at moodle.org at the ";
+  echo "<a href=\"http://moodle.org/mod/forum/view.php?id=752&username=guest\" target=\"_blank\">";
+  echo "Mathematics Tools Forum</a></p>";
+}
+
 ?>
 
 <html>
@@ -310,8 +335,10 @@ function tex2image($texexp, $md5) {
                A preliminary translation into TeX will appear in the box below.</li>
            <li>Next click on this button <input type="submit" name="TeXStage2" value="Second Stage Tex Translation">.
                A more refined translation into TeX will appear in the box below.</li>
-           <li>Finally click on this button <input type="submit" name="ShowImage" value="Show Image">
+           <li>Then click on this button <input type="submit" name="ShowImage" value="Show Image">
                to show a graphic image of the algebraic expression.</li>
+           <li>Finally check your slash arguments setting
+               <input type="submit" name="SlashArguments" value="Check Slash Arguments"></li>
            </ol>
           </form> <br /> <br />
        <center>
