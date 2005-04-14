@@ -173,10 +173,20 @@
     }
 
     function slasharguments($texexp) {
+        global $CFG;
+        $admin = $CFG->wwwroot . '/' . $CFG->admin . '/config.php';
         $image = tex2image($texexp,true);
-        echo "<p>If the following image displays correctly, set your Administration->Configuration->Variables Setting for slasharguments to file.php/pic.jpg: <img src=\"pix.php/$image\" align=\"absmiddle\"></p>\n";
-        echo "<p>Otherwise set it to file.php?file=pic.jpg It should display correctly as <img src=\"pix.php?file=$image\" align=\"absmiddle\"></p>\n";
-        echo "<p>If neither equation image displays correctly, please seek further help at moodle.org at the <a href=\"http://moodle.org/mod/forum/view.php?id=752&username=guest\" target=\"_blank\">Mathematics Tools Forum</a></p>";
+        echo "<p>If the following image displays correctly, set your ";
+        echo "<a href=\"$admin\" target=\"_blank\">Administration->Configuration->Variables</a> ";
+        echo "setting for slasharguments to file.php/pic.jpg: ";
+        echo "<img src=\"pix.php/$image\" align=\"absmiddle\"></p>\n";
+        echo "<p>Otherwise set it to file.php?file=pic.jpg ";
+        echo "It should display correctly as ";
+        echo "<img src=\"pix.php?file=$image\" align=\"absmiddle\"></p>\n";
+        echo "<p>If neither equation image displays correctly, please seek ";
+        echo "further help at moodle.org at the ";
+        echo "<a href=\"http://moodle.org/mod/forum/view.php?id=752&username=guest\" target=\"_blank\">";
+        echo "Mathematics Tools Forum</a></p>";
     }
 
 ?>
