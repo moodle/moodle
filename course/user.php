@@ -141,7 +141,7 @@
                                                          "height=\"16\" width=\"16\" alt=\"$mod->modfullname\" />";
                                                 echo "<h4>$image $mod->modfullname: ".
                                                      "<a href=\"$CFG->wwwroot/mod/$mod->modname/view.php?id=$mod->id\">".
-                                                     "$instance->name</a></h4>";
+                                                     format_string($instance->name,true)."</a></h4>";
                                                 echo "<ul>";
                                                 $user_complete($course, $user, $mod, $instance);
                                                 echo "</ul>";
@@ -175,7 +175,7 @@ function print_outline_row($mod, $instance, $result) {
     echo "<td valign=\"top\">$image</td>";
     echo "<td valign=\"top\" width=\"300\">";
     echo "   <a title=\"$mod->modfullname\"";
-    echo "   href=\"../mod/$mod->modname/view.php?id=$mod->id\">$instance->name</a></td>";
+    echo "   href=\"../mod/$mod->modname/view.php?id=$mod->id\">".format_string($instance->name,true)."</a></td>";
     echo "<td>&nbsp;&nbsp;&nbsp;</td>";
     echo "<td valign=\"top\" bgcolor=\"white\">";
     if (isset($result->info)) {
