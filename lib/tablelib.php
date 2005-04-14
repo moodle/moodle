@@ -138,16 +138,20 @@ class flexible_table {
             return false;
         }
 
-        if(!isset($SESSION->flextable) || isset($SESSION->flextable) && $SESSION->flextable->uniqueid != $this->uniqueid) {
-            $SESSION->flextable = new stdClass;
-            $SESSION->flextable->uniqueid = $this->uniqueid;
-            $SESSION->flextable->collapse = array();
-            $SESSION->flextable->sortby   = array();
-            $SESSION->flextable->i_first  = '';
-            $SESSION->flextable->i_last   = '';
+        if (!isset($SESSION->flextable)) {
+            $SESSION->flextable = array();
         }
 
-        $this->sess = &$SESSION->flextable;
+        if(!isset($SESSION->flextable[$this->uniqueid])) {
+            $SESSION->flextable[$this->uniqueid] = new stdClass;
+            $SESSION->flextable[$this->uniqueid]->uniqueid = $this->uniqueid;
+            $SESSION->flextable[$this->uniqueid]->collapse = array();
+            $SESSION->flextable[$this->uniqueid]->sortby   = array();
+            $SESSION->flextable[$this->uniqueid]->i_first  = '';
+            $SESSION->flextable[$this->uniqueid]->i_last   = '';
+        }
+
+        $this->sess = &$SESSION->flextable[$this->uniqueid];
 
         if(!empty($_GET['tshow']) && isset($this->columns[$_GET['tshow']])) {
             // Show this column
