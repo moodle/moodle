@@ -584,9 +584,6 @@ class assignment_base {
 
         $table->print_html();
 
-        global $SESSION;
-        print_object($SESSION);
-
         print_footer($this->course);
 
     }
