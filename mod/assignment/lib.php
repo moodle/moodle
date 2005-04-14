@@ -414,10 +414,6 @@ class assignment_base {
 
         $teacherattempts = true; /// Temporary measure
 
-
-        $sort    = optional_param('sort', 'timemodified');
-        $dir     = optional_param('dir', 'DESC');
-        $timenow = optional_param('timenow', 0);
         $page    = optional_param('page', 0);
         $perpage = optional_param('perpage', 10);
 
