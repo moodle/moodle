@@ -1351,15 +1351,16 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
  * the forcelogin option is turned on.
  *
  * @uses $CFG
- * @param int $courseid The course in question
+ * @param object $course The course object in question
  * @param boolean $autologinguest Allow autologin guests if that is wanted
+ * @param object $cm Course activity module if known
  */
 function require_course_login($course, $autologinguest=true, $cm=null) {
     global $CFG;
     if (!empty($CFG->forcelogin)) {
         require_login();
     }
-    if (!empty($course->category)) {
+    if ($course->id != SITEID) {
         require_login($course->id, $autologinguest, $cm);
     }
 }
