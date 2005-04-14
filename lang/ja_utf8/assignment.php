@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005040800)
+      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['allowresubmit'] = '再提出を許可する';
@@ -14,9 +14,10 @@ $string['assignmentmailhtml'] = '$a->teacher があなたの課題「 <i>$a->ass
 フィードバックはあなたの<a href=\"$a->url\">提出課題</a>に追加されています。';
 $string['assignmentname'] = '課題名';
 $string['assignmenttype'] = '課題タイプ';
+$string['availabledate'] = '提出開始';
 $string['configmaxbytes'] = 'このサイトにおける全ての課題に関するデフォルトの最大サイズ ( コース制限および他のローカル設定に従います )';
 $string['description'] = '詳細';
-$string['duedate'] = '提出期限';
+$string['duedate'] = '提出終了';
 $string['duedateno'] = '提出期限無し';
 $string['early'] = '$a 早く提出';
 $string['emailteachermail'] = '$a->username が「 $a->assignment 」の提出課題を更新しました。
@@ -47,6 +48,7 @@ $string['submissions'] = '提出';
 $string['submitassignment'] = 'このフォームを使用して課題を提出する';
 $string['submitted'] = '提出';
 $string['typeoffline'] = 'オフライン活動';
+$string['typeonline'] = 'オンライン活動';
 $string['typeuploadsingle'] = '単一ファイルのアップロード';
 $string['uploadbadname'] = '不正な文字がファイル名に含まれているため、このファイルをアップロードできませんでした。';
 $string['uploadedfiles'] = 'ファイルをアップロードしました。';

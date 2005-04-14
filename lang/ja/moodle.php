@@ -771,6 +771,7 @@ $string['noteachersyet'] = 'このコースにはまだ教師が登録されていません。';
 $string['notenrolled'] = '$a はこのコースには参加していません。';
 $string['noteuserschangednonetocourse'] = '注意:ユーザデータをリストアする場合、コースユーザをリストアする必要があります。あなたの設定が変更されました。';
 $string['nothingnew'] = '最終ログインより更新されたものはありません。';
+$string['nothingtodisplay'] = '表示するデータはありません。';
 $string['noticenewerbackup'] = 'このバックアップファイルは、現在インストールされているMoodle $a->serverrelease ( $a->serverversion ) よりも新しいバージョンMoodle $a->backuprelease ($a->backupversion) により作成されました。旧バージョンへの互換性が保障されないため、バックアップデータの矛盾を生じる恐れがあります。';
 $string['notifyloginfailuresmessage'] = 'a->time, IP: $a->ip, ユーザ: $a->info';
 $string['notifyloginfailuresmessageend'] = 'ログは、$a/course/log.php?id=1&chooselog=1&modid=site_errors で閲覧できます。';
