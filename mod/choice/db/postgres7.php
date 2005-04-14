@@ -86,7 +86,10 @@ function choice_upgrade($oldversion) {
         $wtm = new WikiToMarkdown();
         $wtm->update( 'choice','text','format' );
     }
-
+    if ($oldversion < 2005041500) { //new limit feature
+        table_column('choice', '', 'limitanswers', 'INTEGER', '2', 'unsigned', 0, 'not null', 'showunanswered');
+        table_column('choice_options', '', 'maxanswers', 'INTEGER', '10', 'unsigned', 0, 'null', 'text');
+    }
     return true;
 }
 

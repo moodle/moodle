@@ -24,7 +24,7 @@ CREATE TABLE prefix_choice (
   release tinyint(2) unsigned NOT NULL default '0',
   display tinyint(4) unsigned NOT NULL default '0',
   allowupdate tinyint(2) unsigned NOT NULL default '0',
-  showunanswered tinyint(2) unsigned NOT NULL default '0',
+  showunanswered tinyint(2) unsigned NOT NULL default '0',    limitanswers tinyint(2) unsigned NOT NULL default '0',
   timeopen int(10) unsigned NOT NULL default '0',
   timeclose int(10) unsigned NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',
@@ -62,7 +62,7 @@ CREATE TABLE prefix_choice_answers (
 CREATE TABLE prefix_choice_options (
   id int(10) unsigned NOT NULL auto_increment,
   choiceid int(10) unsigned NOT NULL default '0',
-  `text` TEXT,
+  `text` TEXT,    maxanswers int(10) unsigned NULL default '0',
   timemodified int(10) NOT NULL default '0',
   PRIMARY KEY  (id),
   UNIQUE KEY id (id),

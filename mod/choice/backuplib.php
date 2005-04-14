@@ -49,6 +49,7 @@
                 fwrite ($bf,full_tag("DISPLAY",4,false,$choice->display));
                 fwrite ($bf,full_tag("ALLOWUPDATE",4,false,$choice->allowupdate));
                 fwrite ($bf,full_tag("SHOWUNANSWERED",4,false,$choice->showunanswered));
+                fwrite ($bf,full_tag("LIMITANSWERS",4,false,$choice->limitanswers));
                 fwrite ($bf,full_tag("TIMEOPEN",4,false,$choice->timeopen));
                 fwrite ($bf,full_tag("TIMECLOSE",4,false,$choice->timeclose));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$choice->timemodified));
@@ -117,6 +118,7 @@
                 //Print option contents
                 fwrite ($bf,full_tag("ID",6,false,$cho_opt->id));
                 fwrite ($bf,full_tag("TEXT",6,false,$cho_opt->text));
+                fwrite ($bf,full_tag("MAXANSWERS",6,false,$cho_opt->maxanswers));
                 fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$cho_opt->timemodified));
                 //End answer
                 $status =fwrite ($bf,end_tag("OPTION",5,true));

@@ -53,6 +53,7 @@
             $choice->display = backup_todb($info['MOD']['#']['DISPLAY']['0']['#']);
             $choice->allowupdate = backup_todb($info['MOD']['#']['ALLOWUPDATE']['0']['#']);
             $choice->showunanswered = backup_todb($info['MOD']['#']['SHOWUNANSWERED']['0']['#']);
+            $choice->limitanswers = backup_todb($info['MOD']['#']['LIMITANSWERS']['0']['#']);
             $choice->timeopen = backup_todb($info['MOD']['#']['TIMEOPEN']['0']['#']);
             $choice->timeclose = backup_todb($info['MOD']['#']['TIMECLOSE']['0']['#']);
             $choice->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
@@ -155,6 +156,7 @@ function choice_options_restore_mods($choiceid,$info,$restore) {
             //Now, build the CHOICE_OPTIONS record structure
             $option->choiceid = $choiceid;
             $option->text = backup_todb($opt_info['#']['TEXT']['0']['#']);
+            $option->maxanswers = backup_todb($opt_info['#']['MAXANSWERS']['0']['#']);
             $option->timemodified = backup_todb($opt_info['#']['TIMEMODIFIED']['0']['#']);
 
             //The structure is equal to the db, so insert the choice_options

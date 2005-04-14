@@ -74,6 +74,7 @@ function choice_add_instance($choice) {
                     $option = NULL;
                     $option->text = $value;
                     $option->choiceid = $choice->id;
+                    $option->maxanswers = $choice->{'newlimit'.substr($name, 9)};
                     $option->timemodified = time();
                     insert_record("choice_options", $option);                
                 }
@@ -114,16 +115,18 @@ function choice_update_instance($choice) {
                 $option->id = substr($name, 9); // Get the ID of the answer that needs to be updated.
                 $option->text = $value;
                 $option->choiceid = $choice->id;
+                $option->maxanswers = $choice->{'oldlimit'.substr($name, 9)};
                 $option->timemodified = time();
-                update_record("choice_options", $option);                
+                update_record("choice_options", $option);
             } else { //empty old option - needs to be deleted.
                 delete_records("choice_options", "id", substr($name, 9));
-            }                                                          
+            }
         } else if (strstr($name, "newoption")) {   /// New option
             if ($value) {
                 $option = NULL;
                 $option->text = $value;
                 $option->choiceid = $choice->id;
+                $option->maxanswers = $choice->{'newlimit'.substr($name, 9)};
                 $option->timemodified = time();
                 insert_record("choice_options", $option);                
             }
@@ -196,6 +199,7 @@ function choice_get_choice($choiceid) {
         if ($options = get_records("choice_options", "choiceid", $choiceid, "id")) {
             foreach ($options as $option) {                         
                 $choice->option[$option->id] = $option->text; 
+                $choice->maxanswers[$option->id] = $option->maxanswers;
             }        
             return $choice;
         }

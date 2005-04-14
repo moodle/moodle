@@ -21,6 +21,7 @@ CREATE TABLE prefix_choice (
   text text NOT NULL default '',
   format integer NOT NULL default '0',
   showunanswered integer NOT NULL default '0',
+  limitanswers integer NOT NULL default '0',
   publish integer NOT NULL default '0',
   release integer NOT NULL default '0',
   display integer NOT NULL default '0',
@@ -59,6 +60,7 @@ CREATE TABLE prefix_choice_options (
   id SERIAL PRIMARY KEY,
   choiceid integer NOT NULL default '0',
   text TEXT,
+  maxanswers integer NULL default '0',
   timemodified integer NOT NULL default '0'
 );
 

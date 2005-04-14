@@ -32,8 +32,32 @@
     if (empty($form->showunanswered)) {
         $form->showunanswered = 0;
     }
+    if (empty($form->limitanswers)) {
+        $form->limitanswers = 0;
+    }
 
 ?>
+<script type="text/javascript">
+function lockselects(form, master, subitems) {
+  // subitems is an array of names of sub items
+  // requires that each item in subitems has a
+  // companion hidden item in the form with the
+  // same name but prefixed by "h"
+  // master is the name of the selct
+  // x is the option that is selcted to enforce the lock.
+  if (eval("document."+form+"."+master+".selected")) {   
+    for (i=0; i<subitems.length; i++) {   
+      lockoption(form, subitems[i]);
+    }
+  } else {
+    for (i=0; i<subitems.length; i++) {    
+      unlockoption(form, subitems[i]);
+    }
+  }
+  return(true);
+}
+
+</script>
 <form name="form" method="post" action="mod.php">
 
 <table cellpadding="5">
@@ -84,7 +108,7 @@
 <?php
 $standardblanks = 10;
 $count = 0;
-if ($options = get_records_menu('choice_options','choiceid', $form->instance, 'id', 'id,text')) {
+if (($options = get_records_menu('choice_options','choiceid', $form->instance, 'id', 'id,text')) && ($options2 = get_records_menu('choice_options','choiceid', $form->instance, 'id', 'id,maxanswers')) ) {
     foreach ($options as $id => $text) { 
         $count++;
     ?>
@@ -94,8 +118,14 @@ if ($options = get_records_menu('choice_options','choiceid', $form->instance, 'i
             <input type="text" name="oldoption<?php p($id) ?>" size="60" value="<?php p($text) ?>" id="oldoption<?php p($id) ?>" />
             <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
         </td>
+        <td align="left"><strong><?php p(get_string("limit","choice")) ?>:</strong>
+            <input type="text" name="oldlimit<?php p($id) ?>" size="4" value="<?php p($options2[$id]) ?>" id="oldlimit<?php p($id) ?>" />
+            <?php helpbutton("limit", get_string("limit", "choice"), "choice") ?>
+            <input type="hidden" name="holdlimit<?php p($id) ?>" value="0"/>
+        </td>
     </tr>
     <?php
+    $lim = $lim."'oldlimit".$id."',";              
     } 
     $standardblanks = 2;
 }
@@ -108,10 +138,37 @@ for ($i=1; $i<=$standardblanks; $i++) {
             <input type="text" name="newoption<?php p($i) ?>" size="60" value="" id="newoption<?php p($i) ?>">
             <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
         </td>
+        <td align="left"><strong><?php p(get_string("limit","choice")) ?>:</strong>
+            <input type="text" name="newlimit<?php p($i)?>" size="4" value="10" id="newlimit<?php p($i) ?>" />
+            <?php helpbutton("limit", get_string("limit", "choice"), "choice") ?>
+            <input type="hidden" name="hnewlimit<?php p($i) ?>" value="0" />
+        </td>
     </tr>
     <?php
+    $lim = $lim."'newlimit".$i."',";    
 }
+$lim = trim($lim, ",");
 ?>
+<script type="text/javascript">
+    limititems = [<?php p($lim); ?>];
+</script>
+
+<tr valign="top">
+    <td align="right"><strong><?php print_string("limitanswers", "choice") ?>:</strong></td>
+    <td>
+        <?php
+        $menuoptions[0] = get_string("no");
+        $menuoptions[1] = get_string("yes");
+        choose_from_menu($menuoptions, "limitanswers", "$form->limitanswers", "", "return lockselects('form','limitanswers.options[0]', limititems)");
+        ?>
+    </td>
+</tr>
+
+<?php if ($form->limitanswers == 0) { //lock the limit fields if limit isn't used. ?>
+<script type="text/javascript">
+    lockoptions('form','limitanswers', limititems);
+</script>
+<?php }?>
 
 <tr valign="top">
     <td align="right"><strong><?php print_string("timerestrict", "choice") ?>:</strong></td>
@@ -129,7 +186,6 @@ for ($i=1; $i<=$standardblanks; $i++) {
 <tr valign="top">
     <td>&nbsp;</td>
     <td>
-
         <table>
             <tr>
                 <td align="right"><strong><?php print_string("choiceopen", "choice") ?>:</strong></td>
@@ -194,22 +250,12 @@ for ($i=1; $i<=$standardblanks; $i++) {
     </td>
 </tr>
 
-<script type="text/javascript">
-function lockprivacy() { /* lockoptions() doesn't work with select's so use this method instead.*/
-  if (document.form.release.options[0].selected) {    
-      lockoption('form', 'publish');   
-  } else {
-      unlockoption('form', 'publish');   
-  }
-  return(true);
-}
-</script>
 <tr valign="top">
     <td align="right"><strong><?php print_string("publish","choice") ?>:</strong></td>
     <td>
         <?php
         require_once("$CFG->dirroot/mod/choice/lib.php");
-        choose_from_menu($CHOICE_RELEASE, "release", "$form->release", "", "return lockprivacy()");
+        choose_from_menu($CHOICE_RELEASE, "release", "$form->release", "", "return lockselects('form','release.options[0]',['publish'])");                                                                            
         ?>
         <br />
     </td>
@@ -226,7 +272,9 @@ function lockprivacy() { /* lockoptions() doesn't work with select's so use this
         <input type="hidden" name="hpublish" value="0" />
     </td>
 </tr>
-
+<script type="text/javascript">
+    lockselects('form','release.options[0]',['publish']);
+</script>
 
 <tr valign="top">
     <td align="right"><strong><?php print_string("allowupdate","choice") ?>:</strong></td>
