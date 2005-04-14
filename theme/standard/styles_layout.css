@@ -781,6 +781,11 @@ table.message_search_results td {
   text-align:center;
 }
 
+#message-user .commands span {
+  margin-left:10px;
+  margin-right:10px;
+}
+
 
 /***
  *** Tabs
