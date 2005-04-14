@@ -5082,6 +5082,65 @@ function random_string ($length=15) {
     return $string;
 }
 
+/*
+ * Given some text (which may contain HTML) and an ideal length, 
+ * this function truncates the text neatly on a word boundary if possible
+ */
+function shorten_text($text, $ideal=30) {
+
+   global $CFG;
+
+
+   $i = 0;
+   $tag = false;
+   $length = strlen($text);
+   $count = 0;
+   $stopzone = false;
+   $truncate = 0;
+
+   if ($length <= $ideal) {
+       return $text;
+   }
+
+   for ($i=0; $i<$length; $i++) {
+       $char = $text[$i];
+
+       switch ($char) {
+           case "<":
+               $tag = true;
+               break;
+           case ">":
+               $tag = false;
+               break;
+           default:
+               if (!$tag) {
+                   if ($stopzone) {
+                       if ($char == '.' or $char == ' ') {
+                           $truncate = $i+1;
+                           break 2;
+                       }
+                   }
+                   $count++;
+               }
+               break;
+       }
+       if (!$stopzone) {
+           if ($count > $ideal) {
+               $stopzone = true;
+           }
+       }
+   }
+
+   if (!$truncate) {
+       $truncate = $i;
+   }
+
+   $ellipse = ($truncate < $length) ? '...' : '';
+
+   return substr($text, 0, $truncate).$ellipse;
+}
+
+
 /**
  * Given dates in seconds, how many weeks is the date from startdate
  * The first week is 1, the second 2 etc ...
