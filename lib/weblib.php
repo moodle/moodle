@@ -1732,7 +1732,7 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
 
     $bodytags .= ' class="'.$pageclass.'" id="'.$pageid.'"';
 
-    include ($CFG->themedir. $CFG->theme .'/header.html');
+    include ($CFG->themedir.current_theme().'/header.html');
 
     if (!empty($CFG->messaging)) {
         echo message_popup_window();
@@ -1843,7 +1843,7 @@ function print_footer($course=NULL, $usercourse=NULL) {
 
 /// Include the actual footer file
 
-    include ($CFG->themedir.$CFG->theme.'/footer.html');
+    include ($CFG->themedir.current_theme().'/footer.html');
 
 }
 
