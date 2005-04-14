@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['action'] = 'Actie';
@@ -182,6 +182,7 @@ $string['confirmed'] = 'Je registratie is bevestigd';
 $string['confirmednot'] = 'Je registratie is nog niet bevestigd !';
 $string['continue'] = 'Ga door';
 $string['continuetocourse'] = 'Klik hier om je vak binnen te gaan';
+$string['convertingwikitomarkdown'] = 'Wiki naar Markdown aan het converteren';
 $string['cookiesenabled'] = 'Cookies moeten aan staan in je browser';
 $string['cookiesnotenabled'] = 'Het gebruik van cookies is door je browser niet toegelaten. Met deze instelling kun je deze site niet gebruiken.';
 $string['copy'] = 'Kopie';
@@ -763,6 +764,7 @@ $string['noteachersyet'] = 'Er zijn nog geen leraren voor dit vak';
 $string['notenrolled'] = '$a is geen lid van dit vak.';
 $string['noteuserschangednonetocourse'] = 'Let op: de gebruikers van een vak moeten worden hersteld op het moment dat je gebruikersdata aan het terugzetten bent. Deze instelling is voor je veranderd.';
 $string['nothingnew'] = 'Niets nieuws sinds je laatste log in';
+$string['nothingtodisplay'] = 'Er is niets om te tonen';
 $string['noticenewerbackup'] = 'Dit backupbestand is gemaakt met Moodle $a->backuprelease ($a->backupversion) en is nieuwer dan je geïnstalleerde Moodle $a->serverrelease ($a->serverversion). Dit kan wat problemen veroorzaken omdat terugwaartse compatibiliteit van backupbestanden niet gegarandeerd kan worden.';
 $string['notifyloginfailuresmessage'] = '$a->time, IP-adres: $a->ip, Gebruiker: $a->info';
 $string['notifyloginfailuresmessageend'] = 'Je kunt deze logs bekijken op $a/course/log.php?id=1&chooselog=1&modid=site_errors.';

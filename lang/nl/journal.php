@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // journal.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['alwaysopen'] = 'Altijd geopend';
@@ -19,6 +19,7 @@ $string['journalquestion'] = 'Vraag logboek';
 $string['journalrating1'] = 'Niet tevreden';
 $string['journalrating2'] = 'Tevreden';
 $string['journalrating3'] = 'Zeer tevreden';
+$string['mailsubject'] = 'Logboek feedback';
 $string['modulename'] = 'Logboek';
 $string['modulenameplural'] = 'Logboeken';
 $string['newjournalentries'] = 'Nieuwe logboekbijdragen';
@@ -30,9 +31,6 @@ $string['overallrating'] = 'Totale beoordeling';
 $string['rate'] = 'Beoordeel';
 $string['saveallfeedback'] = 'Bewaar al mijn feedback';
 $string['startoredit'] = 'Begin of wijzig mijn logboek bijdrage';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Nederlands';
 $string['viewallentries'] = 'Bekijk $a logboek bijdragen';
 
 ?>

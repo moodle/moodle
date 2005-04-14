@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['allowresubmit'] = 'Sta herhaald insturen toe';
@@ -11,6 +11,7 @@ $string['assignmentmailhtml'] = '$a->teacher heeft feedback gepost voor je bijdr
 Hij is toegevoegd aan je ingestuurde <a href=\"$a->url\">opdracht</a>.';
 $string['assignmentname'] = 'Naam van de opdracht';
 $string['assignmenttype'] = 'Soort opdracht';
+$string['availabledate'] = 'Beschikbaar vanaf';
 $string['configmaxbytes'] = 'Standaard maximumgrootte voor alle opdrachten op de site (afhankelijk van vaklimieten en andere lokale instellingen)';
 $string['description'] = 'Beschrijving  ';
 $string['duedate'] = 'Uiterste inleverdatum';
@@ -45,6 +46,7 @@ $string['submissions'] = 'Ingestuurde opdrachten';
 $string['submitassignment'] = 'Stuur je opdracht in door dit formulier in te vullen';
 $string['submitted'] = 'Ingestuurd';
 $string['typeoffline'] = 'Off line activiteit';
+$string['typeonline'] = 'On line activiteit';
 $string['typeuploadsingle'] = 'Upload een bestand';
 $string['uploadbadname'] = 'In deze bestandsnaam staan rare tekens, het bestand kon daardoor niet worden geüpload';
 $string['uploadedfiles'] = 'Ingestuurde bestanden';

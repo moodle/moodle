@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005040800)
+      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['adminseesallevents'] = 'Beheerders zien alle gebeurtenissen';
@@ -43,6 +43,7 @@ $string['configidnumber'] = 'De mogelijkheid specificeert of (a) de gebruikers h
 $string['configintro'] = 'Op deze pagina kun je een aantal variabelen voor de configuratie instellen die Moodle kunnen helpen zodat het goed kan werken op jouw server. Maak je er niet teveel zorgen over, de standaardwaarden werken meestal prima en je kunt later altijd nog op deze pagina terugkomen en deze instellingen opnieuw wijzigen.';
 $string['configintroadmin'] = 'Op deze pagina configureer je de account van de beheerder die de volledige controle over de site zal hebben. Geef de beheerder een veilige gebruikersnaam en wachtwoord en een geldig e-mailadres. Je kunt later beheerderaccounts bijmaken.';
 $string['configintrosite'] = 'Op deze pagina configureer je de startpagina en de naam van deze nieuwe site. Je kunt deze instellingen later bijwerken door de \'Site instellingen\'-link te gebruiken op de startpagina.';
+$string['configintrotimezones'] = 'Deze pagina zal zoeken naar nieuwe informatie over tijdzones in de wereld (ook de regels over zomertijd) en zal je lokale databank met deze informatie updaten. Deze bestanden zullen gecontroleerd worden, in volgorde: $a. Deze procedure is veilig en kan geen normale installaties beschadigen. Wil je de tijdzones nu updaten?';
 $string['configlang'] = 'Kies een standaardtaal voor de gehele site. Gebruikers kunnen deze instelling later eventueel voor zichzelf wijzigen.';
 $string['configlangdir'] = 'De meeste talen worden van links naar rechts gedrukt, maar sommige, zoals Arabisch en Hebreeuws, worden van rechts naar links gedrukt.';
 $string['configlanglist'] = 'Laat dit vak blanco om gebruikers de mogelijkheid te geven om te kiezen uit elke beschikbare taal in deze Moodle-installatie. Je kunt het keuzemenu voor talen inkorten door een lijst in te geven met de gewenste talen, gescheiden door komma\'s. Bijvoorbeeld:en,es_es,fr,it,nl';
@@ -87,7 +88,7 @@ $string['configvariables'] = 'Configureer variabelen';
 $string['configwarning'] = 'Wees voorzichtig met het veranderen van deze instellingen. Vreemde waarden kunnen problemen opleveren.';
 $string['configzip'] = 'Geef de locatie van je ZIP-programma (alleen voor UNIX). Dit is nodig om ZIP-archieven op de server te maken.';
 $string['confirmation'] = 'Bevestiging';
-$string['cronwarning'] = 'Het onderhoudsscript <a href=\"cron.php\">cron.php</a> heeft de laatste 24 uur niet gelopen. <br />Als je dit nog niet geconfigureerd hebt, lees dan het onderdeel <a href=\"../doc/?frame=install.html&sub=cron\">Cron configureren</a> bij de installatie-instructies.';
+$string['cronwarning'] = 'Het onderhoudsscript <a href=\"cron.php\">cron.php</a> heeft de laatste 24 uur niet gelopen. <br />Als je dit nog niet geconfigureerd hebt, lees dan het onderdeel <a href=\"../doc/?frame=install.html&#8834;=cron\">Cron configureren</a> bij de installatie-instructies.';
 $string['edithelpdocs'] = 'Bewerk helpbestanden';
 $string['editstrings'] = 'Bewerk strings';
 $string['filterall'] = 'Filter alle strings';
@@ -95,12 +96,14 @@ $string['filteruploadedfiles'] = 'Gebruik de filters in geüploade bestanden';
 $string['helpadminseesall'] = 'Zien beheerders alle gebeurtenissen in de kalender of alleen diegene die ze zelf nodig hebben?';
 $string['helpcalendarsettings'] = 'Configureer de kalender en datum/tijd-gerelateerde instellingen van Moodle';
 $string['helpforcetimezone'] = 'Je kunt je gebruikers elk hun eigen tijdzone laten kiezen of een tijdzone opleggen voor iedereen.';
-$string['helpmanagetimezones'] = 'Je kunt manueel tijdzones voor deze site toevoegen, bewerken en verwijderen of je kunt Moodle automatisch profielen voor tijdzones laten dowloaden  en updaten van moodle.org';
 $string['helpsitemaintenance'] = 'Voor upgrades en ander onderhoud';
 $string['helpstartofweek'] = 'Welke dag start de week in de kalender?';
 $string['helpupcominglookahead'] = 'Hoeveel dagen is de standaardinstelling om kalender vooruit te laten kijken naar aankomende activiteiten?';
 $string['helpupcomingmaxevents'] = 'Hoeveel aankomende activiteiten worden er maximaal getoond aan de gebruikers?';
 $string['helpweekenddays'] = 'Welke dagen van de week worden als \"weekend\" beschouwd en dus in een andere kleur getoond?';
+$string['importtimezones'] = 'Update de volledige lijst van tijdzones';
+$string['importtimezonescount'] = '$a->count items geïmporteerd van $a->source';
+$string['importtimezonesfailed'] = 'Geen bronnen gevonden! (= slecht nieuws)';
 $string['nodstpresetsexist'] = 'Zomertijd is uitgeschakeld voor alle gebruikers omdat er geen voorkeuzes voor zomertijd gedefiniëerd zijn. Je kunt er definiëren door op onderstaande knop te klikken.';
 $string['optionalmaintenancemessage'] = 'Optionele onderhoudsboodschap';
 $string['sitemaintenance'] = 'De site is in onderhoud en is op dit ogenblik niet beschikbaar';
@@ -113,7 +116,6 @@ $string['therewereerrors'] = 'Er waren fouten in je gegevens';
 $string['timezoneforced'] = 'Dit is opgelegd door de site beheerder';
 $string['timezoneisforcedto'] = 'Iedereen gebruikt ';
 $string['timezonenotforced'] = 'Gebruikers kunnen hun eigen tijdzone kiezen';
-$string['updatetimezones'] = 'Update profielen automatisch';
 $string['upgradelogs'] = 'Om volledige functionaliteit te bekomen moeten je oude logbestanden geüpgraded worden. <a href=\"$a\">Meer informatie</a>';
 $string['upgradelogsinfo'] = 'Sommige wijzigingen hebben invloed op de manier waarom de logs worden opgeslagen. Om al je oude logs per activiteit te kunnen bekijken, moeten je oude logs geüpdated worden. Afhankelijk van je site kan dit lang duren (zelfs enkele uren) en voor lange sites kan dat de databank zwaar belasten. Als je het proces start, dan zou je het moeten laten aflopen (door het browservenster open te laten). Maak je geen zorgen, terwijl je de logs upgradet, zal de site blijven werken voor je gebruikers.<br /><br />Wil je je logs nu upgraden?';
 $string['upgradesure'] = 'De bestanden op je Moodleserver zijn gewijzigd en je gaat zo dadelijk je server automatisch upgraden naar versie: <p><b>$a</b></p>

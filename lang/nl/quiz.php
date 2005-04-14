@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -94,6 +94,8 @@ $string['deleteselected'] = 'Selectie verwijderen';
 $string['description'] = 'Beschrijving';
 $string['discrimination'] = 'Discrim. Index';
 $string['displayoptions'] = 'Schermopties';
+$string['download'] = 'Klik om het bestand met de geëxporteerde categorie te downloaden';
+$string['downloadextra'] = '(dit bestand is ook bewaard bij de bestanden van het vak in de map /quiz)';
 $string['eachattemptbuildsonthelast'] = 'Elke poging bouwt voort op de vorige';
 $string['editcategories'] = 'Bewerk de categorieën ';
 $string['editcategory'] = 'Bewerk categorie';

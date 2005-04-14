@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032300)
+      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['calendar'] = 'Kalender';
@@ -14,6 +14,8 @@ $string['daywithnoevents'] = 'Vandaag geen activiteiten';
 $string['default'] = 'Standaard';
 $string['deleteevent'] = 'Wis activiteit';
 $string['detailedmonthview'] = 'Gedetaileerd maandoverzicht';
+$string['dstadjusttime'] = 'Pas de tijd aan';
+$string['dsthumanreadable'] = 'Op de ';
 $string['durationminutes'] = 'Duur in minuten';
 $string['durationnone'] = 'Geen tijdsduur';
 $string['durationuntil'] = 'Tot';
@@ -44,18 +46,22 @@ $string['explain_maxevents'] = 'Deze instelling stelt het maximumaantal komende 
 $string['explain_persistflt'] = 'Als deze optie ingeschakeld is, dan zal Moodle je laatste gebeurtenisfilter opslaan en die telkens wanneer je je aanmeldt automatisch gebruiken.';
 $string['explain_startwday'] = 'Een kalenderweek zal starten op de dag die je hier kiest.';
 $string['explain_timeformat'] = 'Je kunt kiezen of de tijd in 12- of 24-uurformaat wordt weergegeven. Als je voor de standaardinstelling kiest, dan zal het formaat automatisch gekozen worden volgens de taal die je gebruikt op je site.';
+$string['first'] = 'eerst';
 $string['fri'] = 'Vr';
 $string['friday'] = 'Vrijdag';
 $string['globalevents'] = 'Site';
 $string['gotocalendar'] = 'Bekijk de kalender';
 $string['groupevents'] = 'Groep';
 $string['hidden'] = 'verborgen';
+$string['last'] = 'laatst';
 $string['manyevents'] = '$a activiteiten';
 $string['mon'] = 'Ma';
 $string['monday'] = 'Maandag';
 $string['monthlyview'] = 'Per maand';
 $string['newevent'] = 'Nieuwe activiteit';
+$string['notusingdst'] = 'Gebruikt geen zomertijd';
 $string['noupcomingevents'] = 'Er zijn geen activiteiten op komst';
+$string['nth'] = '{$a}ste';
 $string['oneevent'] = '1 activiteit';
 $string['pref_lookahead'] = 'Aantal dagen vooruit kijken naar komende activiteiten';
 $string['pref_maxevents'] = 'maximumaantal getoonde activiteiten';
@@ -77,6 +83,8 @@ $string['thu'] = 'Do';
 $string['thursday'] = 'Donderdag';
 $string['timeformat_12'] = '12-uur (am/pm)';
 $string['timeformat_24'] = '24-uur';
+$string['timeforward'] = 'vooruit';
+$string['timerewind'] = 'achteruit';
 $string['today'] = 'Vandaag';
 $string['tomorrow'] = 'Morgen';
 $string['tt_deleteevent'] = 'Wis activiteit';
