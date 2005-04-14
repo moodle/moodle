@@ -484,8 +484,6 @@ class assignment_base {
                'WHERE '.$where.'u.id IN ('.implode(',', array_keys($users)).') ';
 
 
-        echo $select.$sql.$group.$sort;
-
         $total = count_records_sql('SELECT COUNT(u.id) '.$sql);
 
         $table->pagesize($perpage, $total);
