@@ -271,11 +271,7 @@ class assignment_base {
                     echo '<script type="text/javascript">'."\n<!--\n";
                     echo 'opener.document.getElementById("ts'.$submission->userid.'").innerHTML="'.userdate($submission->timemodified)."\";\n";
                     echo 'opener.document.getElementById("tt'.$submission->userid.'").innerHTML="'.userdate($submission->timemarked)."\";\n";
-                    echo 'grademenu = opener.document.getElementById("menug8");'."\n";
-                    echo 'for (i=0;i<grademenu.options.length;i++)';
-                    echo '  if (grademenu.options[i].value == "'.$submission->grade.'")';
-                    echo '     grademenu.selectedIndex = i;';
-
+                    echo 'opener.document.getElementById("g'.$submission->userid.'").innerHTML="'.$this->display_grade($submission->grade)."\";\n";
                     echo "\n-->\n</script>";
                     fflush();
                 }
@@ -294,11 +290,33 @@ class assignment_base {
 
 
     /*
+     *  Display a grade in user-friendly form, whether it's a scale or not
+     *  
+     */
+    function display_grade($grade) {
+
+        static $scalegrades;   // Cached because we only have one per assignment
+
+        if ($this->assignment->grade >= 0) {    // Normal number
+            return $grade;
+
+        } else {                                // Scale
+            if (empty($scalegrades)) {
+                if ($scale = get_record('scale', 'id', -($this->assignment->grade))) {
+                    $scalegrades = make_menu_from_list($scale->scale);
+                } else {
+                    return '-';
+                }
+            }
+            return $scalegrades[$grade];
+        }
+    }
+
+    /*
      *  Display a single submission, ready for grading on a popup window
      *  
      */
     function display_submission() {
-
         
         $userid = required_param('userid');
 
@@ -477,14 +495,14 @@ class assignment_base {
         }
 
 
-        $select = 'SELECT u.id, u.firstname, u.lastname, u.picture, s.id AS submissionid, s.grade, s.timemodified, s.timemarked ';
-        $group  = '';
+        $select = 'SELECT '.$db->Concat('u.id', '\'#\'', $db->IfNull('s.userid', '0')).' AS uvs, u.id, u.firstname, u.lastname, u.picture, s.id AS submissionid, s.grade, s.timemodified, s.timemarked ';
+        $group  = 'GROUP BY uvs ';
         $sql = 'FROM '.$CFG->prefix.'user u '.
                'LEFT JOIN '.$CFG->prefix.'assignment_submissions s ON u.id = s.userid AND s.assignment = '.$this->assignment->id.' '.
                'WHERE '.$where.'u.id IN ('.implode(',', array_keys($users)).') ';
 
 
-        $total = count_records_sql('SELECT COUNT(u.id) '.$sql);
+        $total = count_records_sql('SELECT COUNT(DISTINCT('.$db->Concat('u.id', '\'#\'', $db->IfNull('s.userid', '0')).')) '.$sql);
 
         $table->pagesize($perpage, $total);
         
@@ -499,46 +517,49 @@ class assignment_base {
         $grademenu = make_grades_menu($this->assignment->grade);
 
         if (($ausers = get_records_sql($select.$sql.$group.$sort.$limit)) === false) {
-            $ausers = array();
-        }
+        
+            $table->add_data(array('No users found')); /// No users to match query
+            
+        } else {
 
-        foreach ($ausers as $auser) {
-            $picture = print_user_picture($auser->id, $course->id, $auser->picture, false, true);
-            if (!empty($auser->submissionid)) {
-                if ($auser->timemodified > 0) {
-                    $studentmodified = '<div id="ts'.$auser->id.'">'.userdate($auser->timemodified).'</div>';
-                    if ($auser->timemarked > $auser->timemodified) {
-                        $status = '<div id="st'.$auser->id.'">YES</div>';
+            foreach ($ausers as $auser) {
+                $picture = print_user_picture($auser->id, $course->id, $auser->picture, false, true);
+                if (!empty($auser->submissionid)) {
+                    if ($auser->timemodified > 0) {
+                        $studentmodified = '<div id="ts'.$auser->id.'">'.userdate($auser->timemodified).'</div>';
+                        if ($auser->timemarked > $auser->timemodified) {
+                            $status = '<div id="st'.$auser->id.'">YES</div>';
+                        } else {
+                            $status = '<div id="st'.$auser->id.'">NO</div>';
+                        }
                     } else {
-                        $status = '<div id="st'.$auser->id.'">NO</div>';
+                        $studentmodified = '<div id="ts'.$auser->id.'">-</div>';
+                        $status          = '<div id="st'.$auser->id.'"></div>';
                     }
+                    if ($auser->timemarked > 0) {
+                        $teachermodified = '<div id="tt'.$auser->id.'">'.userdate($auser->timemarked).'</div>';
+                    } else {
+                        $teachermodified = '<div id="tt'.$auser->id.'">-</div>';
+                    }
+
+                    //$grade = choose_from_menu($grademenu, 'g'.$auser->id, $auser->grade, get_string('nograde'), '', 0, true);
+                    $grade = '<div id="g'.$auser->id.'">'.$this->display_grade($auser->grade).'</div>';
+
                 } else {
                     $studentmodified = '<div id="ts'.$auser->id.'">-</div>';
-                    $status          = '<div id="st'.$auser->id.'"></div>';
-                }
-                if ($auser->timemarked > 0) {
-                    $teachermodified = '<div id="tt'.$auser->id.'">'.userdate($auser->timemarked).'</div>';
-                } else {
                     $teachermodified = '<div id="tt'.$auser->id.'">-</div>';
+                    $status          = '<div id="st'.$auser->id.'"></div>';
+                    $grade           = '<div id="g'.$auser->id.'">-</div>';
                 }
 
-                $grade = choose_from_menu($grademenu, 'g'.$auser->id, $auser->grade, get_string('nograde'), '', 0, true);
+                $button = button_to_popup_window ('/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;userid='.$auser->id.'&amp;mode=single', 
+                        'grade'.$auser->id, $strupdate, 450, 600, $strupdate, 'none', true);
 
-            } else {
-                $studentmodified = '<div id="ts'.$auser->id.'">-</div>';
-                $teachermodified = '<div id="tt'.$auser->id.'">-</div>';
-                $status          = '<div id="st'.$auser->id.'"></div>';
-                $grade = choose_from_menu($grademenu, 'g'.$auser->id, -1, get_string('nograde'), '', 0, true);
+
+                $row = array($picture, fullname($auser), $grade, $studentmodified, $teachermodified, $status.'&nbsp;'.$button);
+                $table->add_data($row);
             }
-
-            $button = button_to_popup_window ('/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;userid='.$auser->id.'&amp;mode=single', 
-                                              'grade'.$auser->id, $strupdate, 450, 600, $strupdate, 'none', true);
-
-
-            $row = array($picture, fullname($auser), $grade, $studentmodified, $teachermodified, $status.'&nbsp;'.$button);
-            $table->add_data($row);
         }
-
 
 
         $table->print_html();
@@ -659,7 +680,7 @@ class assignment_base {
                     AND a.timemodified > 0
                     AND $select a.userid = s.userid ");
         } 
-    }       
+    }
 
 } ////// End of the assignment_base class
 
