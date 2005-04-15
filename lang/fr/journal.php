@@ -16,6 +16,7 @@ $string['journalquestion'] = 'Sujet du journal';
 $string['journalrating1'] = 'Insatisfaisant';
 $string['journalrating2'] = 'Satisfaisant';
 $string['journalrating3'] = 'Excellent';
+$string['mailsubject'] = 'Feedback de journal';
 $string['modulename'] = 'Journal';
 $string['modulenameplural'] = 'Journaux';
 $string['newjournalentries'] = 'Nouvelles contributions au journal';
