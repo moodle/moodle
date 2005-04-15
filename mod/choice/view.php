@@ -343,7 +343,8 @@
                     echo $countanswers;
                     echo "<br>";
                     echo get_string("limit", "choice").":";
-                    echo get_record("choice_options", "id", $optionid)->maxanswers;
+                    $choice_option = get_record("choice_options", "id", $optionid);
+                    echo $choice_option->maxanswers;
                     echo "</td>";
                 }
             }
@@ -415,7 +416,8 @@
                     echo $column[$optionid];
                     echo "<br>";
                     echo get_string("limit", "choice").":";
-                    echo get_record("choice_options", "id", $optionid)->maxanswers;
+                    $choice_option = get_record("choice_options", "id", $optionid);
+                    echo $choice_option->maxanswers;
                     echo "</td>";
                 } else {
                     echo $column[$optionid];
