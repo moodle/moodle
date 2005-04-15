@@ -79,6 +79,7 @@ var $resource;
 function resource_base($cmid=0) {
 
     global $CFG;
+    global $course;   // Ugly hack, needed for course language ugly hack
 
     if ($cmid) {
         if (! $this->cm = get_record("course_modules", "id", $cmid)) {
@@ -88,6 +89,8 @@ function resource_base($cmid=0) {
         if (! $this->course = get_record("course", "id", $this->cm->course)) {
             error("Course is misconfigured");
         }
+
+        $course = $this->course;  // Make it a global so we can see it later
 
         require_course_login($this->course, true, $this->cm);
 
