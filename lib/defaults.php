@@ -81,9 +81,9 @@
        'teacherassignteachers'    =>  true,
        'template'                 => 'default',
        'textfilters'              => 'mod/glossary/dynalink.php',
+       'theme'                    => 'standardwhite',
        'themelist'                => '',
        'timezone'                 =>  99,
-       'theme'                    => 'standardwhite',
        'unzip'                    => '',
        'zip'                      => ''
     );
