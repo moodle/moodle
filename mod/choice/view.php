@@ -116,6 +116,10 @@
         print_simple_box(format_text($choice->text, $choice->format), 'center', '70%', '', 5, 'generalbox', 'intro');
     }
 
+    //if user has already made a selection, and they are not allowed to update it, show their selected answer.
+    if (isset($USER->id) && ($current = get_record('choice_answers', 'choiceid', $choice->id, 'userid', $USER->id)) && !$choice->allowupdate) {
+        print_simple_box(get_string("yourselection", "choice", userdate($choice->timeopen)).": ".format_string(choice_get_option_text($choice, $current->optionid)), "center");
+    }
 
 /// Print the form
 
