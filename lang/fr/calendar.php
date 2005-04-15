@@ -97,4 +97,21 @@ $string['thursday'] = 'Jeudi';
 $string['friday'] = 'Vendredi';
 $string['saturday'] = 'Samedi';
 
+$string['notusingdst'] = 'Pas d\'heure d\'été';
+
+$string['explain_dstpresetforced'] = 'L\'administrateur du site ne permet pas aux utilisateurs de modifier cette option.';
+$string['explain_dstpreset'] = 'Vous pouvez sélectionner votre réglage d\'heure d\'été dans le menu déroulant.';
+$string['nth'] = '{$a}er';
+$string['dsthumanreadable'] = 'Le $a->activate_index $a->activate_weekday de chaque $a->activate_month, $a->direction $a->offset minutes à l\'heure effective. Ce changement dure jusqu\'au $a->deactivate_index $a->deactivate_weekday de $a->deactivate_month.';
+$string['dstadjusttime'] = 'Ajuster l\'heure';
+$string['dstof'] = 'de';
+$string['dstat'] = 'à';
+$string['dstonthe'] = 'Le';
+$string['dstby'] = 'par';
+$string['day'] = 'jour';
+$string['timeforward'] = 'ajouter';
+$string['timerewind'] = 'retirer';
+$string['first'] = 'premier';
+$string['last'] = 'dernier';
+
 ?>
