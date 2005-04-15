@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // message.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+<?PHP // $Id$ 
+      // message.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['addcontact'] = 'コンタクトの追加';
@@ -18,7 +18,7 @@ $string['discussion'] = 'ディスカッション';
 $string['emailmessages'] = 'オフラインの時はメールにメッセージを送信する。';
 $string['emailtagline'] = 'このメールは $a にあなた宛に送信されたメッセージのコピーです。';
 $string['emptysearchstring'] = 'キーワードを入力してください。';
-$string['formorethan'] = '経過時間 ( 以上 )';
+$string['formorethan'] = '経過後';
 $string['includeblockedusers'] = '拒否したユーザも含む';
 $string['incomingcontacts'] = '受信したコンタクト ($a)';
 $string['keywords'] = 'キーワード';
