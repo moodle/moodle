@@ -1188,6 +1188,8 @@ function main_upgrade($oldversion=0) {
         table_column('course', '', 'theme', 'varchar', '50', '', '', '', 'lang');
         table_column('groups', '', 'theme', 'varchar', '50', '', '', '', 'lang');
         table_column('user',   '', 'theme', 'varchar', '50', '', '', '', 'lang');
+
+        set_config('theme', 'standardwhite');         // Reset to a known good theme 
     }
     
     if ($oldversion < 2005021600) {     // course.idnumber should be varchar(100)
