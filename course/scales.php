@@ -189,7 +189,7 @@
         } else {
             $class = "";
         }
-        echo "<td align=\"right\"><p><b>$strname:</b></p></td>";
+        echo "<td align=\"right\"><b>$strname:</b></td>";
         echo "<td $class><input type=\"text\" name=\"name\" size=\"50\" value=\"".s($scale->name)."\" />";
         echo "</td>";
         echo "</tr>";
@@ -199,12 +199,12 @@
         } else {
             $class = "";
         }
-        echo "<td align=\"right\"><p><b>$strscale:</b></p></td>";
+        echo "<td align=\"right\"><b>$strscale:</b></td>";
         echo "<td $class><textarea name=\"scalescale\" cols=\"50\" rows=\"2\" wrap=\"virtual\">".s($scale->scale)."</textarea>";
         echo "</td>";
         echo "</tr>";
         echo "<tr valign=\"top\">";
-        echo "<td align=\"right\"><p><b>$strdescription:</b></p>";
+        echo "<td align=\"right\"><b>$strdescription:</b>";
         helpbutton("text", $strhelptext);
         echo "</td>";
         echo "<td><textarea name=\"description\" cols=\"50\" rows=\"8\" wrap=\"virtual\">".s($scale->description)."</textarea>";
