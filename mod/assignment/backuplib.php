@@ -86,6 +86,8 @@
                 fwrite ($bf,full_tag("TIMECREATED",6,false,$ass_sub->timecreated));       
                 fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$ass_sub->timemodified));       
                 fwrite ($bf,full_tag("NUMFILES",6,false,$ass_sub->numfiles));       
+                fwrite ($bf,full_tag("DATA1",6,false,$ass_sub->data1));       
+                fwrite ($bf,full_tag("DATA2",6,false,$ass_sub->data2));       
                 fwrite ($bf,full_tag("GRADE",6,false,$ass_sub->grade));       
                 fwrite ($bf,full_tag("COMMENT",6,false,$ass_sub->comment));       
                 fwrite ($bf,full_tag("TEACHER",6,false,$ass_sub->teacher));       

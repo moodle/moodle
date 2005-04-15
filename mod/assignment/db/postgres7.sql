@@ -33,6 +33,8 @@ CREATE TABLE prefix_assignment_submissions (
   timecreated integer NOT NULL default '0',
   timemodified integer NOT NULL default '0',
   numfiles integer NOT NULL default '0',
+  data1 text NOT NULL default '',
+  data2 text NOT NULL default '',
   grade integer NOT NULL default '0',
   comment text NOT NULL default '',
   teacher integer NOT NULL default '0',

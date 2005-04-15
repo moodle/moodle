@@ -121,6 +121,8 @@
             $submission->timecreated = backup_todb($sub_info['#']['TIMECREATED']['0']['#']);
             $submission->timemodified = backup_todb($sub_info['#']['TIMEMODIFIED']['0']['#']);
             $submission->numfiles = backup_todb($sub_info['#']['NUMFILES']['0']['#']);
+            $submission->data1 = backup_todb($sub_info['#']['DATA1']['0']['#']);
+            $submission->data2 = backup_todb($sub_info['#']['DATA2']['0']['#']);
             $submission->grade = backup_todb($sub_info['#']['GRADE']['0']['#']);
             $submission->comment = backup_todb($sub_info['#']['COMMENT']['0']['#']);
             $submission->teacher = backup_todb($sub_info['#']['TEACHER']['0']['#']);

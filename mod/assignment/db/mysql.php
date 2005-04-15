@@ -131,6 +131,11 @@ function assignment_upgrade($oldversion) {
         execute_sql('ALTER TABLE '.$CFG->prefix.'assignment DROP type;');
     }
 
+    if ($oldversion < 2005041501) {  // Add two new fields for general data handling, 
+                                     // so most assignment types won't need new fields and backups stay simple
+        table_column('assignment_submissions', '', 'data2', 'MEDIUMTEXT', '', '', '', 'not null', 'numfiles');
+        table_column('assignment_submissions', '', 'data1', 'MEDIUMTEXT', '', '', '', 'not null', 'numfiles');
+    }
 
 
 /// These lines ALWAYS need to be here at the end of this file.  Don't mess with them. :-)

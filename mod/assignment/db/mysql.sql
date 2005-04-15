@@ -32,6 +32,8 @@ CREATE TABLE `prefix_assignment_submissions` (
   `timecreated` int(10) unsigned NOT NULL default '0',
   `timemodified` int(10) unsigned NOT NULL default '0',
   `numfiles` int(10) unsigned NOT NULL default '0',
+  `data1` text NOT NULL,
+  `data2` text NOT NULL,
   `grade` int(11) NOT NULL default '0',
   `comment` text NOT NULL,
   `teacher` int(10) unsigned NOT NULL default '0',
