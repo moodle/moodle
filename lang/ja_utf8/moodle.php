@@ -392,8 +392,8 @@ $string['enrolmentnointernal'] = '手動登録は現在利用できません';
 $string['enrolmentnotyet'] = '申し訳ございません、このコースには下記の日付までアクセスできません。<br  />
 $a';
 $string['enrolments'] = 'ユーザ登録方法';
-$string['enrolperiod'] = '登録継続期間';
-$string['entercourse'] = 'Enterをクリックしてください。';
+$string['enrolperiod'] = '利用有効期間';
+$string['entercourse'] = 'コースに入るにはクリックしてください。';
 $string['enteremailaddress'] = 'パスワードをリセットして新しいパスワードを受け取るために、メールアドレスを入力してください。';
 $string['entries'] = 'エントリ';
 $string['error'] = 'エラー';
