@@ -64,7 +64,7 @@ function lockselects(form, master, subitems) {
 
 <tr valign="top">
     <td align="right"><strong><?php print_string("choicename","choice") ?>:</strong></td>
-    <td>
+    <td colspan="2">
         <input type="text" name="name" size="30" alt="<?php print_string("choicename","choice") ?>" value="<?php p($form->name) ?>" />
     </td>
 </tr>
@@ -84,7 +84,7 @@ function lockselects(form, master, subitems) {
         echo "<br />";
       ?>
     </td>
-    <td>
+    <td colspan="2">
     <?php
        print_textarea($usehtmleditor, 20, 60, 680, 400, "text", $form->text);
 
@@ -108,6 +108,7 @@ function lockselects(form, master, subitems) {
 <?php
 $standardblanks = 10;
 $count = 0;
+$limitfieldlist = '';
 if (($options = get_records_menu('choice_options','choiceid', $form->instance, 'id', 'id,text')) && ($options2 = get_records_menu('choice_options','choiceid', $form->instance, 'id', 'id,maxanswers')) ) {
     foreach ($options as $id => $text) { 
         $count++;
@@ -118,14 +119,13 @@ if (($options = get_records_menu('choice_options','choiceid', $form->instance, '
             <input type="text" name="oldoption<?php p($id) ?>" size="60" value="<?php p($text) ?>" id="oldoption<?php p($id) ?>" />
             <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
         </td>
-        <td align="left"><strong><?php p(get_string("limit","choice")) ?>:</strong>
+        <td align="right"><strong><?php p(get_string("limit","choice")) ?>:</strong>
             <input type="text" name="oldlimit<?php p($id) ?>" size="4" value="<?php p($options2[$id]) ?>" id="oldlimit<?php p($id) ?>" />
-            <?php helpbutton("limit", get_string("limit", "choice"), "choice") ?>
             <input type="hidden" name="holdlimit<?php p($id) ?>" value="0"/>
         </td>
     </tr>
     <?php
-    $lim = $lim."'oldlimit".$id."',";              
+    $limitfieldlist .= "'oldlimit".$id."',";              
     } 
     $standardblanks = 2;
 }
@@ -138,27 +138,28 @@ for ($i=1; $i<=$standardblanks; $i++) {
             <input type="text" name="newoption<?php p($i) ?>" size="60" value="" id="newoption<?php p($i) ?>">
             <?php helpbutton("options", get_string("modulenameplural", "choice"), "choice") ?>
         </td>
-        <td align="left"><strong><?php p(get_string("limit","choice")) ?>:</strong>
-            <input type="text" name="newlimit<?php p($i)?>" size="4" value="10" id="newlimit<?php p($i) ?>" />
-            <?php helpbutton("limit", get_string("limit", "choice"), "choice") ?>
+        <td align="right"><strong><?php p(get_string("limit","choice")) ?>:</strong>
+            <input type="text" name="newlimit<?php p($i)?>" size="4" value="0" id="newlimit<?php p($i) ?>" />
             <input type="hidden" name="hnewlimit<?php p($i) ?>" value="0" />
         </td>
     </tr>
     <?php
-    $lim = $lim."'newlimit".$i."',";    
+    $limitfieldlist .= "'newlimit".$i."',";    
 }
-$lim = trim($lim, ",");
+$lim = trim($limitfieldlist, ",");
 ?>
 <script type="text/javascript">
-    limititems = [<?php p($lim); ?>];
+    limititems = [<?php p($limitfieldlist); ?>];
 </script>
 
 <tr valign="top">
-    <td align="right"><strong><?php print_string("limitanswers", "choice") ?>:</strong></td>
-    <td>
+    <td align="right" colspan="2"><strong><?php print_string("limitanswers", "choice") ?>:</strong></td>
+    <td align="right">
         <?php
-        $menuoptions[0] = get_string("no");
-        $menuoptions[1] = get_string("yes");
+        $menuoptions[0] = get_string("disable");
+        $menuoptions[1] = get_string("enable");
+        helpbutton("limit", get_string("limit", "choice"), "choice");
+        echo '&nbsp;';
         choose_from_menu($menuoptions, "limitanswers", "$form->limitanswers", "", "return lockselects('form','limitanswers.options[0]', limititems)");
         ?>
     </td>
@@ -172,7 +173,7 @@ $lim = trim($lim, ",");
 
 <tr valign="top">
     <td align="right"><strong><?php print_string("timerestrict", "choice") ?>:</strong></td>
-    <td>
+    <td colspan="2">
         <script type="text/javascript">
             var timeitems = ['openday','openmonth','openyear','openhour', 'openminute', 'closeday','closemonth','closeyear','closehour','closeminute'];
         </script>
@@ -185,7 +186,7 @@ $lim = trim($lim, ",");
 </tr>
 <tr valign="top">
     <td>&nbsp;</td>
-    <td>
+    <td colspan="2">
         <table>
             <tr>
                 <td align="right"><strong><?php print_string("choiceopen", "choice") ?>:</strong></td>
@@ -241,7 +242,7 @@ $lim = trim($lim, ",");
 
 <tr valign="top">
     <td align="right"><strong><?php print_string("displaymode","choice") ?>:</strong></td>
-    <td>
+    <td colspan="2">
         <?php
         require_once("$CFG->dirroot/mod/choice/lib.php");
         choose_from_menu($CHOICE_DISPLAY, "display", "$form->display", "");
@@ -252,7 +253,7 @@ $lim = trim($lim, ",");
 
 <tr valign="top">
     <td align="right"><strong><?php print_string("publish","choice") ?>:</strong></td>
-    <td>
+    <td colspan="2">
         <?php
         require_once("$CFG->dirroot/mod/choice/lib.php");
         choose_from_menu($CHOICE_RELEASE, "release", "$form->release", "", "return lockselects('form','release.options[0]',['publish'])");                                                                            
@@ -263,7 +264,7 @@ $lim = trim($lim, ",");
 
 <tr valign="top">
     <td align="right"><strong><?php print_string("privacy","choice") ?>:</strong></td>
-    <td>
+    <td colspan="2">
         <?php
         require_once("$CFG->dirroot/mod/choice/lib.php");
         choose_from_menu($CHOICE_PUBLISH, "publish", "$form->publish", "");
@@ -278,7 +279,7 @@ $lim = trim($lim, ",");
 
 <tr valign="top">
     <td align="right"><strong><?php print_string("allowupdate","choice") ?>:</strong></td>
-    <td>
+    <td colspan="2">
         <?php
         $menuoptions[0] = get_string("no");
         $menuoptions[1] = get_string("yes");
@@ -291,7 +292,7 @@ $lim = trim($lim, ",");
 
 <tr valign="top">
     <td align="right"><strong><?php print_string("showunanswered","choice") ?>:</strong></td>
-    <td>
+    <td colspan="2">
         <?php
         $menuoptions[0] = get_string("no");
         $menuoptions[1] = get_string("yes");
