@@ -13,7 +13,7 @@ $string['choicetext'] = '説明文';
 $string['displayhorizontal'] = '水平に表示';
 $string['displaymode'] = '表示モード';
 $string['displayvertical'] = '垂直に表示';
-$string['full'] = '( フル )';
+$string['full'] = '( 制限無し )';
 $string['havetologin'] = '投票を行う前にログインしてください。';
 $string['limit'] = '制限';
 $string['limitanswers'] = '投票可能回数を制限する';
@@ -34,7 +34,11 @@ $string['responses'] = '投票結果';
 $string['responsesto'] = '$a へ投票する';
 $string['savemychoice'] = '投票する';
 $string['showunanswered'] = '未投票欄を表示する';
+$string['spaceleft'] = '件 ( 投票可能数 )';
+$string['spacesleft'] = '件 ( 投票可能数 )';
+$string['taken'] = '投票済み';
 $string['timerestrict'] = '投票期間を制限する';
 $string['viewallresponses'] = '$a 件の投票内容を表示する';
+$string['yourselection'] = 'あなたの投票';
 
 ?>
