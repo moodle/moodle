@@ -34,6 +34,7 @@ $string['savemychoice'] = 'Enregistrer mon vote';
 $string['showunanswered'] = 'Afficher la colonne des « sans réponse »';
 $string['spaceleft'] = 'espace disponible';
 $string['spacesleft'] = 'espaces disponibles';
+$string['taken'] = 'Effectué';
 $string['timerestrict'] = 'Sondage limité dans le temps';
 $string['viewallresponses'] = 'Voir les $a réponses';
 
