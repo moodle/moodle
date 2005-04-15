@@ -126,32 +126,36 @@ class assignment_base {
         }
 
     /// Print the feedback
+        print_heading(get_string('feedbackfromteacher', 'assignment', $this->course->teacher));
+
         echo '<table cellspacing="0" class="feedback">';
 
         echo '<tr>';
         echo '<td class="left picture">';
         print_user_picture($teacher->id, $this->course->id, $teacher->picture);
         echo '</td>';
-        echo '<td class="feedbackheader">';
-        echo '<span class="author">'.fullname($teacher).'</span>';
-        echo '<span class="time">'.userdate($submission->timemarked).'</span>';
+        echo '<td class="topic">';
+        echo '<div class="author">'.fullname($teacher).'</div>';
+        echo '<div class="time">'.userdate($submission->timemarked).'</div>';
         echo '</td>';
         echo '</tr>';
 
         echo '<tr>';
         echo '<td class="left side">&nbsp;</td>';
-        echo '<td class="feedback">';
+        echo '<td class="content">';
         if ($this->assignment->grade) {
-            echo '<span class="grade">';
+            echo '<div class="grade">';
             if ($submission->grade or $submission->timemarked) {
-                echo get_string("grade").": $submission->grade";
+                echo get_string("grade").': '.$this->display_grade($submission->grade);
             } else {
                 echo get_string("nograde");
             }
-            echo '</span>';
+            echo '</div>';
         }
 
+        echo '<div class="comment">';
         echo text_to_html($submission->comment);
+        echo '</div>';
         echo '</tr>';
 
         echo '</table>';
@@ -305,7 +309,7 @@ class assignment_base {
         }
         if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['status'])) {
             echo 'opener.document.getElementById("up'.$submission->userid.'").className="s1";';
-            echo 'opener.document.getElementById("button'.$submission->userid.'").value="'.get_string('update').'";';
+            echo 'opener.document.getElementById("button'.$submission->userid.'").value="'.get_string('update').' ...";';
         }
         echo "\n-->\n</script>";
         fflush();
