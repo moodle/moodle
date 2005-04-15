@@ -1,14 +1,14 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.4 (2004083100)
+      // journal.php - created with Moodle 1.4.4 + (2004083140)
 
 
 $string['alwaysopen'] = 'Her zaman açýk';
 $string['blankentry'] = 'Boþ kayýt';
 $string['daysavailable'] = 'Kalan gün';
 $string['editingended'] = 'Düzeltme süresi bitti';
-$string['editingends'] = 'Düzeltme süresi bitiyor';
+$string['editingends'] = 'Düzeltme süresi bitiþi';
 $string['entries'] = 'Kayýtlar';
-$string['feedbackupdated'] = '$a kayýtlarý için geribildirim güncellendi';
+$string['feedbackupdated'] = '$a kayýt için geribildirim güncellendi';
 $string['journalmail'] = '$a->teacher, \'$a->journal\' isimli yazýnýz için geribildirim verdi.
 
 $a->url';
@@ -30,6 +30,6 @@ $string['overallrating'] = 'Ayrýntýlý sýnýflandýrma';
 $string['rate'] = 'Sýnýflandýrma';
 $string['saveallfeedback'] = 'Tüm geribildirimlerimi kaydet';
 $string['startoredit'] = 'Yazýya baþla veya düzenle';
-$string['viewallentries'] = '$a\'in yazýlarýný göster';
+$string['viewallentries'] = 'Toplam $a yazýya bak';
 
 ?>

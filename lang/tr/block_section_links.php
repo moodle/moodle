@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_section_links.php - created with Moodle 1.4 (2004083100)
+      // block_section_links.php - created with Moodle 1.4.4 + (2004083140)
 
 
 $string['blockname'] = 'Bölüm baðlantýlarý';
