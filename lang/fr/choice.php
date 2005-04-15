@@ -37,5 +37,6 @@ $string['spacesleft'] = 'espaces disponibles';
 $string['taken'] = 'Effectué';
 $string['timerestrict'] = 'Sondage limité dans le temps';
 $string['viewallresponses'] = 'Voir les $a réponses';
+$string['yourselection'] = 'Votre choix';
 
 ?>
