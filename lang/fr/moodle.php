@@ -180,6 +180,7 @@ $string['confirmed'] = 'Votre enregistrement a été confirmé';
 $string['confirmednot'] = 'Votre enregistrement n\'a pas encore été confirmé';
 $string['continue'] = 'Continuer';
 $string['continuetocourse'] = 'Cliquer ici pour accéder à votre cours';
+$string['convertingwikitomarkdown'] = 'Conversion du format Wiki au Markdown';
 $string['cookiesenabled'] = 'Votre navigateur doit supporter les cookies';
 $string['cookiesnotenabled'] = 'La gestion des cookies n\'est malheureusement pas activée actuellement dans votre navigateur';
 $string['copy'] = 'copie';
