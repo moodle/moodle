@@ -753,6 +753,7 @@ $string['noteachersyet'] = 'Pas encore d\'enseignant dans ce cours';
 $string['notenrolled'] = '$a n\'est pas inscrit à ce cours.';
 $string['noteuserschangednonetocourse'] = 'Remarque : les utilisateurs du cours doivent être restaurés lors de la restauration de données utilisateur (fichiers ou messages, dans les activités). Ce paramètre a été modifié pour vous.';
 $string['nothingnew'] = 'Rien de nouveau depuis votre dernière visite';
+$string['nothingtodisplay'] = 'Rien à afficher';
 $string['noticenewerbackup'] = 'Ce fichier de sauvegarde a été créé avec la version $a->backuprelease ($a->backupversion) de Moodle, qui est plus récente que votre installation actuelle de Moodle $a->serverrelease ($a->serverversion). Ceci peut causer des incohérences, car la compatibilité des fichiers de sauvegarde ne peut dans ce cas pas être garantie.';
 $string['notifyloginfailuresmessage'] = '$a->time, IP : $a->ip, Utilisateur : $a->info';
 $string['notifyloginfailuresmessageend'] = 'Vous pouvez consulter l\'historique de ces tentatives à l\'adresse $a/course/log.php?id=1&chooselog=1&modid=site_errors.';
