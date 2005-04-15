@@ -305,6 +305,7 @@ class assignment_base {
         }
         if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['status'])) {
             echo 'opener.document.getElementById("up'.$submission->userid.'").className="s1";';
+            echo 'opener.document.getElementById("button'.$submission->userid.'").value="'.get_string('update').'";';
         }
         echo "\n-->\n</script>";
         fflush();
@@ -329,7 +330,10 @@ class assignment_base {
                     return '-';
                 }
             }
-            return $scalegrades[$grade];
+            if (isset($scalegrades[$grade])) {
+                return $scalegrades[$grade];
+            }
+            return '';
         }
     }
 
@@ -345,7 +349,7 @@ class assignment_base {
             error('No such user!');
         }
 
-        if (!$submission = $this->get_submission($user->id)) {  // Get or make one
+        if (!$submission = $this->get_submission($user->id, true)) {  // Get one or make one
             error('Could not find submission!');
         }
 
@@ -567,10 +571,15 @@ class assignment_base {
                     $comment         = '<div id="com'.$auser->id.'">&nbsp;</div>';
                 }
 
+                if ($auser->status === NULL) {
+                    $auser->status = 0;
+                }
+
                 $buttontext = ($auser->status == 1) ? $strupdate : $strgrade;
 
                 $button = button_to_popup_window ('/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;userid='.$auser->id.'&amp;mode=single', 
-                        'grade'.$auser->id, $buttontext, 450, 600, $buttontext, 'none', true);
+                        'grade'.$auser->id, $buttontext, 450, 600, $buttontext, 'none', true, 'button'.$auser->id);
+
                 $status  = '<div id="up'.$auser->id.'" class="s'.$auser->status.'">'.$button.'</div>';
 
                 $row = array($picture, fullname($auser), $grade, $comment, $studentmodified, $teachermodified, $status);
@@ -601,7 +610,7 @@ class assignment_base {
             return false;
         }
 
-        $newsubmission = $this->get_submission($feedback->userid);
+        $newsubmission = $this->get_submission($feedback->userid, true);  // Get or make one
 
         $newsubmission->grade      = $feedback->grade;
         $newsubmission->comment    = $feedback->comment;
@@ -625,7 +634,7 @@ class assignment_base {
     }
 
 
-    function get_submission($userid, $createnew=true) {
+    function get_submission($userid, $createnew=false) {
         $submission = get_record('assignment_submissions', 'assignment', $this->assignment->id, 'userid', $userid);
 
         if ($submission || !$createnew) {

@@ -585,16 +585,24 @@ function link_to_popup_window ($url, $name='popup', $linkname='click here',
  * @uses $CFG
  */
 function button_to_popup_window ($url, $name='popup', $linkname='click here',
-                                 $height=400, $width=500, $title='Popup window', $options='none', $return=false) {
+                                 $height=400, $width=500, $title='Popup window', $options='none', $return=false, 
+                                 $id='', $class='') {
 
     global $CFG;
 
     if ($options == 'none') {
         $options = 'menubar=0,location=0,scrollbars,resizable,width='. $width .',height='. $height;
     }
+
+    if ($id) {
+        $id = ' id="'.$id.'" ';
+    }
+    if ($class) {
+        $class = ' class="'.$class.'" ';
+    }
     $fullscreen = 0;
 
-    $button = '<input type="button" name="popupwindow" title="'. $title .'" value="'. $linkname .' ..." '.
+    $button = '<input type="button" name="'.$name.'" title="'. $title .'" value="'. $linkname .' ..." '.$id.$class.
               "onclick=\"return openpopup('$url', '$name', '$options', $fullscreen);\" />\n";
     if ($return) {
         return $button;
