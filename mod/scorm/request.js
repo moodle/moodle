@@ -24,7 +24,12 @@ function DoRequest(httpReq,url,param) {
     //
     // httpReq.open (Method("get","post"), URL(string), Asyncronous(true,false))
     //
-    httpReq.open("post", url,false);
-    httpReq.send(param);
-    return httpReq.responseText;
+    httpReq.open("get", url+'?'+param,false);
+    //httpReq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    httpReq.send(null);
+    if (httpReq.status == 200) {
+    	return httpReq.responseText;
+    } else {
+    	return httpReq.status;
+    }
 }

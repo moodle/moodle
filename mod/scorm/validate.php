@@ -1,24 +1,24 @@
 <?php // $Id$
 
-    require_once("../../config.php");
-    require_once("lib.php");
+require_once("../../config.php");
+require_once("lib.php");
 
-    require_login();
-    
-    
-    $reference = clean_param($_POST["reference"], PARAM_PATH);
-    $courseid = $_POST["id"];
+require_login();
+
+if (confirm_sesskey()) {
+    $reference = clean_param($_GET["reference"], PARAM_PATH);
+    $courseid = $_GET["id"];
     $datadir = '';
-    if (isset($_POST["datadir"])) {
-        $datadir = $_POST["datadir"];
+    if (isset($_GET["datadir"])) {
+        $datadir = $_GET["datadir"];
     }
     
     $scormid = 0;
     $launch = 0;
     $result = '';
     $errorlogs = '';
-    if (isset($_POST["instance"])) {
-	$scormid = $_POST["instance"];
+    if (isset($_GET["instance"])) {
+	$scormid = $_GET["instance"];
 	$launch = 1;
     	$fp = fopen($CFG->dataroot.'/'.$courseid.'/'.$reference,"r");
     	$fstat = fstat($fp);
@@ -80,5 +80,8 @@
     if ($errorlogs != '') {
 	echo $errorlogs;
     }
+} else {
+   print_string('badrequest','scorm');
+}
 ?>
     

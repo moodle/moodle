@@ -82,9 +82,9 @@
 	$result = $sco->launch;
     } else {
 	if ($CFG->slasharguments) {
-	    $result = $CFG->wwwroot.'/file.php/'.$scorm->course.'/moddata/scorm'.$scorm->datadir.'/'.$sco->launch.$connector.$sco->parameters;
+	    $result = $CFG->wwwroot.'/file.php/'.$scorm->course.'/moddata/scorm'.$scorm->id.'/'.$sco->launch.$connector.$sco->parameters;
 	} else {
-	    $result = $CFG->wwwroot.'/file.php?file=/'.$scorm->course.'/moddata/scorm'.$scorm->datadir.'/'.$sco->launch.$connector.$sco->parameters;
+	    $result = $CFG->wwwroot.'/file.php?file=/'.$scorm->course.'/moddata/scorm'.$scorm->id.'/'.$sco->launch.$connector.$sco->parameters;
 	}
     }
 ?>

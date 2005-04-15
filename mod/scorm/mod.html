@@ -24,13 +24,17 @@
     if (empty($form->grademethod)) {
         $form->grademethod = "0";
     }
-    $scormid ='';
+    $scormid = '';
     if (!empty($form->instance)) {
         $scormid = '&instance='.$form->instance;
     }
-    $datadir ='';
+    $datadir = '';
     if (!empty($form->datadir)) {
         $datadir = '&datadir='.$form->datadir;
+    }
+    $sessionkey = '';
+    if (!empty($form->sesskey)) {
+        $sessionkey = '&sesskey='.$form->sesskey;
     }
 ?>
 
@@ -40,7 +44,7 @@
     function validate_scorm(theform,filename) {
     	//alert(filename);
         var myRequest = NewHttpReq();
-    	result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/validate.php","id=<?php p($form->course) ?>&reference="+filename+"<?php echo $scormid.$datadir ?>");
+    	result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/validate.php","id=<?php p($form->course) ?>&reference="+filename+"<?php echo $sessionkey.$scormid.$datadir ?>");
     	//alert(result);
 	results = result.split('\n');
 	if ((results[0] == "found") || (results[0] == "regular")) {

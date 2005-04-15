@@ -45,7 +45,6 @@
                 fwrite ($bf,full_tag("REFERENCE",4,false,$scorm->reference));
                 fwrite ($bf,full_tag("MAXGRADE",4,false,$scorm->reference));
                 fwrite ($bf,full_tag("GRADEMETHOD",4,false,$scorm->reference));
-                fwrite ($bf,full_tag("DATADIR",4,false,$scorm->datadir));
                 fwrite ($bf,full_tag("LAUNCH",4,false,$scorm->launch));
                 fwrite ($bf,full_tag("SUMMARY",4,false,$scorm->summary));
                 fwrite ($bf,full_tag("AUTO",4,false,$scorm->auto));

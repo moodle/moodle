@@ -49,7 +49,6 @@
             $scorm->reference = backup_todb($info['MOD']['#']['REFERENCE']['0']['#']);
             $scorm->reference = backup_todb($info['MOD']['#']['MAXGRADE']['0']['#']);
             $scorm->reference = backup_todb($info['MOD']['#']['GRADEMETHOD']['0']['#']);
-            $scorm->datadir = backup_todb($info['MOD']['#']['DATADIR']['0']['#']);
             $scorm->launch = backup_todb($info['MOD']['#']['LAUNCH']['0']['#']);
             $scorm->summary = backup_todb($info['MOD']['#']['SUMMARY']['0']['#']);
             $scorm->auto = backup_todb($info['MOD']['#']['AUTO']['0']['#']);
@@ -67,7 +66,7 @@
                              $mod->id, $newid);
                              
                 //Now copy moddata associated files
-                $status = scorm_restore_files ($scorm->datadir, $restore);
+                $status = scorm_restore_files ($scorm, $restore);
                 
                 if ($status)
                     $status = scorm_scoes_restore_mods ($newid,$info,$restore);
@@ -206,7 +205,7 @@
     
     //This function copies the scorm related info from backup temp dir to course moddata folder,
     //creating it if needed
-    function scorm_restore_files ($packagedir, $restore) {
+    function scorm_restore_files ($package, $restore) {
 
         global $CFG;
 
@@ -237,7 +236,7 @@
         //Now locate the temp dir we are restoring from
         if ($status) {
             $temp_path = $CFG->dataroot."/temp/backup/".$restore->backup_unique_code.
-                         "/moddata/scorm/".$packagedir;
+                         "/moddata/scorm/".$package->id;
             //Check it exists
             if (is_dir($temp_path)) {
                 $todo = true;
@@ -247,7 +246,7 @@
         //If todo, we create the neccesary dirs in course moddata/scorm
         if ($status and $todo) {
             //Make scorm package directory path
-            $this_scorm_path = $scorm_path."/".$packagedir;
+            $this_scorm_path = $scorm_path."/".$package->id;
        
             $status = backup_copy_file($temp_path, $this_scorm_path);
         }

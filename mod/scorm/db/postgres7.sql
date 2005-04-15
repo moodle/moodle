@@ -9,7 +9,6 @@ CREATE TABLE prefix_scorm (
   reference varchar(255) NOT NULL default '',
   maxgrade real NOT NULL default '0',
   grademethod integer NOT NULL default '0',
-  datadir varchar(255) NOT NULL default '',
   launch integer NOT NULL default '0',
   summary text NOT NULL default '',
   auto integer NOT NULL default '0',

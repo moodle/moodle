@@ -47,10 +47,10 @@ function scorm_upgrade($oldversion) {
 	modify_database('',"ALTER TABLE prefix_scorm_scoes ADD timelimitaction SET('exit,message','exit,no message','continue,message','continue,no message') DEFAULT '' AFTER `maxtimeallowed`");
 	table_column("scorm_scoes", "", "masteryscore", "VARCHAR", "200", "", "", "NOT NULL", "datafromlms");
 	
-	$oldScoesData = get_records_select("scorm_scoes","1","id ASC");
+	$oldscoes = get_records_select("scorm_scoes","1","id ASC");
 	modify_database('',"ALTER TABLE prefix_scorm_scoes CHANGE type scormtype SET('sco','asset') DEFAULT '' NOT NULL");
-	if(!empty($oldScoesData)) {
-    	foreach ($oldScoesData as $sco) {
+	if(!empty($oldscoes)) {
+    	foreach ($oldscoes as $sco) {
     	    $sco->scormtype = $sco->type;
     	    unset($sco->type);
     	    update_record("scorm_scoes",$sco);
@@ -70,23 +70,23 @@ function scorm_upgrade($oldversion) {
 			KEY id (id)
 		     ) TYPE=MyISAM;",false); 
 		     
-	$oldTrackingData = get_records_select("scorm_sco_users","1","id ASC");
-	$oldElementArray = array ('cmi_core_lesson_location','cmi_core_lesson_status','cmi_core_exit','cmi_core_total_time','cmi_core_score_raw','cmi_suspend_data');
+	$oldtrackingdata = get_records_select("scorm_sco_users","1","id ASC");
+	$oldelements = array ('cmi_core_lesson_location','cmi_core_lesson_status','cmi_core_exit','cmi_core_total_time','cmi_core_score_raw','cmi_suspend_data');
 
-    if(!empty($oldTrackingData)) {
-    	foreach ($oldTrackingData as $oldTrack) {
-    	    $newTrack = '';
-       	    $newTrack->userid = $oldTrack->userid;
-       	    $newTrack->scormid = $oldTrack->scormid;
-       	    $newTrack->scoid = $oldTrack->scoid;
+    if(!empty($oldtrackingdata)) {
+    	foreach ($oldtrackingdata as $oldtrack) {
+    	    $newtrack = '';
+       	    $newtrack->userid = $oldtrack->userid;
+       	    $newtrack->scormid = $oldtrack->scormid;
+       	    $newtrack->scoid = $oldtrack->scoid;
        	    
-       	    foreach ( $oldElementArray as $element) {
-       	    	$newTrack->element = $element;
-       	    	$newTrack->value = $oldTrack->$element;
-       	    	if ($newTrack->value == NULL) {
-       	    	    $newTrack->value = '';
+       	    foreach ( $oldelements as $element) {
+       	    	$newtrack->element = $element;
+       	    	$newtrack->value = $oldtrack->$element;
+       	    	if ($newtrack->value == NULL) {
+       	    	    $newtrack->value = '';
        	    	}
-       	    	insert_record("scorm_scoes_track",$newTrack,false);
+       	    	insert_record("scorm_scoes_track",$newtrack,false);
        	    }
     	}
     }
@@ -116,6 +116,19 @@ function scorm_upgrade($oldversion) {
         execute_sql("ALTER TABLE {$CFG->prefix}scorm_scoes_track DROP INDEX id;");
         table_column("scorm_scoes", "timelimitaction", "timelimitaction", "VARCHAR", "19", "", "", "NOT NULL");
         table_column("scorm_scoes", "scormtype", "scormtype", "VARCHAR", "5", "", "", "NOT NULL");
+    }
+    
+    if ($oldversion < 2005041500) {
+    	if ($scorms = get_records_select("scorm","1","id ASC")) {
+    	    foreach ($scorms as $scorm) {
+    	        if (strlen($scorm->datadir) == 14) {
+    	    	    $basedir = $CFG->dataroot.'/'.$scorm->course;
+		    $scormdir = '/moddata/scorm';
+		    rename($basedir.$scormdir.$scorm->datadir,$basedir.$scormdir.'/'.$scorm->id);
+		}
+    	    }
+    	}
+    	execute_sql('ALTER TABLE `'.$CFG->prefix.'scorm` DROP `datadir`');    // Old field
     }
     
     return true;

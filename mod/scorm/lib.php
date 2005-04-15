@@ -7,22 +7,22 @@ define('VALUESCOES', '0');
 define('VALUEHIGHEST', '1');
 define('VALUEAVERAGE', '2');
 define('VALUESUM', '3');
-$SCORM_GRADE_METHOD = array (VALUESCOES => get_string("gradescoes", "scorm"), 
-			     VALUEHIGHEST => get_string("gradehighest", "scorm"),
-                             VALUEAVERAGE => get_string("gradeaverage", "scorm"),
-                             VALUESUM => get_string("gradesum", "scorm"));
+$SCORM_GRADE_METHOD = array (VALUESCOES => get_string('gradescoes', 'scorm'), 
+			     VALUEHIGHEST => get_string('gradehighest', 'scorm'),
+                             VALUEAVERAGE => get_string('gradeaverage', 'scorm'),
+                             VALUESUM => get_string('gradesum', 'scorm'));
 
 if (!isset($CFG->scorm_validate)) {
-    $scorm_validate = 'none';
+    $scormvalidate = 'none';
     //I've commented this out for Moodle 1.4, as I've seen errors in 
     //SCORM packages even though the actual package worked fine. -- Martin Dougiamas
     if (extension_loaded('domxml') && version_compare(phpversion(),'5.0.0','<')) {
-        $scorm_validate = 'domxml';
+        $scormvalidate = 'domxml';
     }
     if (version_compare(phpversion(),'5.0.0','>=')) {
-        $scorm_validate = 'php5';
+        $scormvalidate = 'php5';
     }
-    set_config('scorm_validate', $scorm_validate);
+    set_config('scorm_validate', $scormvalidate);
 }
 
 function scorm_add_instance($scorm) {
@@ -39,13 +39,18 @@ function scorm_add_instance($scorm) {
     $id = insert_record('scorm', $scorm);
     
     //
+    // Rename temp scorm dir to scorm id
+    //
+    
+    $basedir = $CFG->dataroot.'/'.$scorm->course;
+    $scormdir = '/moddata/scorm';
+    rename($basedir.$scormdir.$scorm->datadir,$basedir.$scormdir.'/'.$id);
+    //
     // Parse scorm manifest
     //
     if ($scorm->launch == 0) {
-	$basedir = $CFG->dataroot."/".$scorm->course;
-       	$scormdir = "/moddata/scorm";
-	$scorm->launch = scorm_parse($basedir,$scormdir.$scorm->datadir."/imsmanifest.xml",$id);
-	set_field("scorm","launch",$scorm->launch,"id",$id);
+	$scorm->launch = scorm_parse($basedir,$scormdir.'/'.$id.'/imsmanifest.xml',$id);
+	set_field('scorm','launch',$scorm->launch,'id',$id);
     }
     
     return $id;
@@ -68,9 +73,9 @@ function scorm_update_instance($scorm) {
     // Check if scorm manifest needs to be reparsed
     //
     if ($scorm->launch == 0) {
-	$basedir = $CFG->dataroot."/".$scorm->course;
-       	$scormdir = "/moddata/scorm";
-	$scorm->launch = scorm_parse($basedir,$scormdir.$scorm->datadir."/imsmanifest.xml",$scorm->id);
+	$basedir = $CFG->dataroot.'/'.$scorm->course;
+       	$scormdir = '/moddata/scorm/';
+	$scorm->launch = scorm_parse($basedir,$scormdir.$scorm->id.'/imsmanifest.xml',$scorm->id);
     }
     
     return update_record('scorm', $scorm);
@@ -91,7 +96,7 @@ function scorm_delete_instance($id) {
     $result = true;
 
     # Delete any dependent files #
-    scorm_delete_files($CFG->dataroot.'/'.$scorm->course.'/moddata/scorm'.$scorm->datadir);
+    scorm_delete_files($CFG->dataroot.'/'.$scorm->course.'/moddata/scorm'.$scorm->id);
 
     # Delete any dependent records here #
     if (! delete_records('scorm_scoes_track', 'scormid', $scorm->id)) {
@@ -150,7 +155,7 @@ function scorm_grades($scormid) {
 
     global $CFG;
     
-    if (!$scorm = get_record("scorm", "id", $scormid)) {
+    if (!$scorm = get_record('scorm', 'id', $scormid)) {
         return NULL;
     }
     
@@ -160,24 +165,24 @@ function scorm_grades($scormid) {
     	}
     
     	$return->grades = NULL;
-    	if ($sco_users=get_records_select('scorm_scoes_track', "scormid='$scormid' GROUP BY userid")) {
-            foreach ($sco_users as $sco_user) {
-        	$user_data=get_records_select('scorm_scoes_track',"scormid='$scormid' AND userid='$sco_user->userid' AND element='cmi_core_lesson_status'");
+    	if ($scousers=get_records_select('scorm_scoes_track', "scormid='$scormid' GROUP BY userid")) {
+            foreach ($scousers as $scouser) {
+        	$userdata=get_records_select('scorm_scoes_track',"scormid='$scormid' AND userid='$scouser->userid' AND element='cmi_core_lesson_status'");
             	$scores->completed=0;
             	$scores->browsed=0;
             	$scores->incomplete=0;
             	$scores->failed=0;
             	$scores->notattempted=0;
             	$result='';
-            	$data = current($user_data);
-            	foreach ($user_data as $data) {
+            	$data = current($userdata);
+            	foreach ($userdata as $data) {
                     if ($data->value=='passed')
                     	$scores->completed++;
                     else
                     	$scores->{scorm_remove_spaces($data->value)}++;
             	}
             	if ($scores->completed)
-                    $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/completed.gif\" alt=\"".get_string('completed','scorm')."\" title=\"".get_string('completed','scorm')."\" /> $scores->completed ";
+                    $result.='<img src="'.$CFG->wwwroot.'/mod/scorm/pix/completed.gif" alt="'.get_string('completed','scorm').'" title="'.get_string('completed','scorm').'" /> '.$scores->completed;
             	if ($scores->incomplete)
                     $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/incomplete.gif\" alt=\"".get_string('incomplete','scorm')."\" title=\"".get_string('incomplete','scorm')."\" /> $scores->incomplete ";
             	if ($scores->failed)
@@ -187,12 +192,12 @@ function scorm_grades($scormid) {
             	if ($scores->notattempted)
                     $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/notattempted.gif\" alt=\"".get_string('notattempted','scorm')."\" title=\"".get_string('notattempted','scorm')."\" /> $scores->notattempted ";
             
-            	$return->grades[$sco_user->userid]=$result;
+            	$return->grades[$scouser->userid]=$result;
             }
         
    	}
     } else {
-        $grades = get_records_select("scorm_scoes_track", "scormid=$scormid AND element='cmi_core_score_raw' AND value<>''","","id,userid,value");
+        $grades = get_records_select('scorm_scoes_track', "scormid=$scormid AND element='cmi_core_score_raw' AND value<>''",'','id,userid,value');
         //$grades = get_records_menu("scorm_scoes_track", "scormid",$scormid,"","userid,cmi_core_score_raw");
         $valutations = array();
         foreach ($grades as $grade) {
@@ -254,7 +259,7 @@ function scorm_randstring($len = '8')
 }
 
  
-function scorm_datadir($strPath, $existingdir='', $prefix = 'SCORM')
+function scorm_datadir($strPath, $existingdir='')
 {
     global $CFG;
 
@@ -263,7 +268,7 @@ function scorm_datadir($strPath, $existingdir='', $prefix = 'SCORM')
         
     if (is_dir($strPath)) {
         do {
-            $datadir='/'.$prefix.scorm_randstring();
+            $datadir='/'.scorm_randstring();
         } while (file_exists($strPath.$datadir));
         mkdir($strPath.$datadir, $CFG->directorypermissions);
         @chmod($strPath.$datadir, $CFG->directorypermissions);  // Just in case mkdir didn't do it
@@ -289,12 +294,12 @@ function scorm_validate($manifest)
     if (is_file ($manifest)) {
 	if (file_exists($manifest)) {
 	    if ($CFG->scorm_validate == 'domxml') {
-    	    	$manifest_string = file_get_contents($manifest);
+    	    	$manifeststring = file_get_contents($manifest);
 
 	    	/* Elimino i caratteri speciali di spaziatura e ritorno a capo dal file xml */
 
 	    	$spec = array('\n', '\r', '\t', '\0', '\x0B');
-	    	$content = str_replace($spec, '', $manifest_string);
+	    	$content = str_replace($spec, '', $manifeststring);
 
 	    	if ($xmldoc = domxml_open_mem($content)) {
 		    $root = $xmldoc->document_element();
@@ -582,7 +587,7 @@ function scorm_get_tracks($scoid,$userid) {
 /// Gets all tracks of specified sco and user 
     global $CFG;
     
-    if ($tracks = get_records_select("scorm_scoes_track","userid=$userid AND scoid=$scoid")) {
+    if ($tracks = get_records_select('scorm_scoes_track',"userid=$userid AND scoid=$scoid")) {
     	$user_tracks->userid = $userid;
     	$user_tracks->scoid = $scoid;
     	$user_tracks->score_raw = '';
@@ -590,15 +595,15 @@ function scorm_get_tracks($scoid,$userid) {
 	foreach ($tracks as $track) {
 	    $element = str_replace('.','_',$track->element);
 	    switch ($element) {
-	    case "cmi_core_lesson_status":
-	    case "cmi_completition_status":
+	    case 'cmi_core_lesson_status':
+	    case 'cmi_completition_status':
 	    	if ($track->value == 'not attempted') {
 	    	    $track->value = 'notattempted';
 	    	}
 		$user_tracks->status = $track->value;
 	    break;
-	    case "cmi_core_score_raw":
-	    case "cmi_score_raw":
+	    case 'cmi_core_score_raw':
+	    case 'cmi_score_raw':
 	    	$user_tracks->score_raw = $track->value;
 	    break;
 	    default:
@@ -639,7 +644,7 @@ function scorm_remove_spaces($sourcestr) {
 function scorm_string_round($stringa, $len=11) {
 // Crop a string to $len character and set an anchor title to the full string
     if ( strlen($stringa)>$len ) {
-    return "<a name=\"none\" title=\"$stringa\">".substr($stringa,0,$len-4).'...'.substr($stringa,strlen($stringa)-1,1).'</a>';
+    return '<a name="none" title="'.$stringa.'">'.substr($stringa,0,$len-4).'...'.substr($stringa,strlen($stringa)-1,1).'</a>';
     } else
     return $stringa;
 }
@@ -664,18 +669,18 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
 	
     echo "<ul id='0' class='$liststyle'>";
     $incomplete = false;
-    $organizationSQL = '';
+    $organizationsql = '';
     if (empty($currentorg)) {
     	//
     } else {
-    	$organizationSQL = "AND organization='$currentorg'";
+    	$organizationsql = "AND organization='$currentorg'";
     }
-    if ($scoes = get_records_select('scorm_scoes',"scorm='$scorm->id' $organizationSQL order by id ASC")){
+    if ($scoes = get_records_select('scorm_scoes',"scorm='$scorm->id' $organizationsql order by id ASC")){
     	$level=0;
     	$sublist=1;
     	$previd = 0;
     	$nextid = 0; 
-    	$parents[$level]="/";
+    	$parents[$level]='/';
     	foreach ($scoes as $sco) {
     	    if ($parents[$level]!=$sco->parent) {
     		if ($level>0 && $parents[$level-1]==$sco->parent) {
@@ -689,7 +694,7 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
 	 	    	$i--;
 	 	    }
 	 	    if (($i == 0) && ($sco->parent != $currentorg)) {
-	 	    	echo "\t\t<li><ul id='".$sublist."' class='$liststyle'>\n";
+	 	    	echo "\t\t<li><ul id='$sublist' class='$liststyle'>\n";
     		    	$level++;
     		    } else {
     		    	echo $closelist;
@@ -702,9 +707,9 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
     	    $nextsco = next($scoes);
     	    if (($nextsco !== false) && ($sco->parent != $nextsco->parent) && (($level==0) || (($level>0) && ($nextsco->parent == $sco->identifier)))) {
     		$sublist++;
-    		echo "<a href='#' onClick='expandCollide(img".$sublist.",".$sublist.");'><img id='img".$sublist."' src='pix/minus.gif' alt='$strexpand' title='$strexpand'/></a>";
+    		echo '<a href="#" onClick="expandCollide(img'.$sublist.','.$sublist.');"><img id="img'.$sublist.'" src="pix/minus.gif" alt="'.$strexpand.'" title="'.$strexpand.'"/></a>';
     	    } else {
-    		echo "<img src='pix/spacer.gif' />";
+    		echo '<img src="pix/spacer.gif" />';
     	    }
     	    
     	    if ($sco->launch) {
@@ -723,18 +728,18 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
  			    $scoid = $sco->id;
     			}
  		    }
- 		    if ($user_tracks->score_raw != "") {
+ 		    if ($user_tracks->score_raw != '') {
     			$score = '('.get_string('score','scorm').':&nbsp;'.$user_tracks->score_raw.')';
 		    }
     		} else {
-    		    if ($play && ($mode != 'normal') && empty($scoid)) {
+    		    if ($play && empty($scoid)) {
     	    		$scoid = $sco->id;
     	    	    }
     		    if ($sco->scormtype == 'sco') {
-    			echo "<img src='pix/notattempted.gif' alt='".get_string('notattempted','scorm')."' />";
+    			echo '<img src="pix/notattempted.gif" alt="'.get_string('notattempted','scorm').'" />';
     			$incomplete = true;
     		    } else {
-    			echo "<img src='pix/asset.gif' alt='".get_string('asset','scorm')."' />";
+    			echo '<img src="pix/asset.gif" alt="'.get_string('asset','scorm').'" />';
     		    }
     		}
 
