@@ -14,7 +14,7 @@ function workshop_upgrade($oldversion) {
         CREATE TABLE `{$CFG->prefix}workshop_comments` (
           `id` int(10) unsigned NOT NULL auto_increment,
           # workshopid not necessary just makes deleting instance easier
-          `workshopid` int(10) unsigned NOT NULL default '0', 
+          `workshopid` int(10) unsigned NOT NULL default '0',
           `assessmentid` int(10) unsigned NOT NULL default '0',
           `userid` int(10) unsigned NOT NULL default '0',
           `timecreated` int(10) unsigned NOT NULL default '0',
@@ -38,9 +38,9 @@ function workshop_upgrade($oldversion) {
         ) COMMENT='Info about the rubrics marking scheme'
         ");
     }
-        
+
     if ($oldversion < 2003082200) {
-    
+
         execute_sql(" ALTER TABLE `{$CFG->prefix}workshop_rubrics` CHANGE `elementid` `elementno` INT(10) UNSIGNED NOT NULL DEFAULT '0'");
     }
 
@@ -49,10 +49,10 @@ function workshop_upgrade($oldversion) {
     }
 
     if ($oldversion < 2003100200) {
-    
+
         execute_sql(" ALTER TABLE `{$CFG->prefix}workshop_assessments` ADD `resubmission` TINYINT(3) UNSIGNED NOT NULL DEFAULT '0' AFTER `mailed`");
     }
-        
+
     if ($oldversion < 2003100800) {
         // tidy up log_display entries
         execute_sql("DELETE FROM `{$CFG->prefix}log_display` WHERE `module` = 'workshop'");
@@ -65,13 +65,13 @@ function workshop_upgrade($oldversion) {
         execute_sql("INSERT INTO `{$CFG->prefix}log_display` VALUES ('workshop', 'view', 'workshop', 'name')");
         execute_sql("INSERT INTO `{$CFG->prefix}log_display` VALUES ('workshop', 'update', 'workshop', 'name')");
     }
-    
+
     if ($oldversion < 2003113000) {
-        execute_sql("ALTER TABLE `{$CFG->prefix}workshop` ADD `teacherloading` tinyint(3) unsigned 
+        execute_sql("ALTER TABLE `{$CFG->prefix}workshop` ADD `teacherloading` tinyint(3) unsigned
                 NOT NULL default '5'");
-        execute_sql("ALTER TABLE `{$CFG->prefix}workshop` ADD `assessmentstodrop` tinyint(3) unsigned 
+        execute_sql("ALTER TABLE `{$CFG->prefix}workshop` ADD `assessmentstodrop` tinyint(3) unsigned
                 NOT NULL default '0'");
-        execute_sql("ALTER TABLE `{$CFG->prefix}workshop_assessments` ADD `donotuse` tinyint(3) unsigned 
+        execute_sql("ALTER TABLE `{$CFG->prefix}workshop_assessments` ADD `donotuse` tinyint(3) unsigned
                 NOT NULL default '0' AFTER `resubmission`");
         execute_sql("ALTER TABLE `{$CFG->prefix}workshop_grades` ADD INDEX (`assessmentid`)");
     }
@@ -113,7 +113,7 @@ function workshop_upgrade($oldversion) {
             foreach ($workshops as $workshop) {
                 $wtype = 0; // 3 phases, no grading grades
                 if ($workshop->includeself or $workshop->ntassessments) $wtype = 1; // 3 phases with grading grades
-                if ($workshop->nsassessments) $wtype = 2; // 5 phases with grading grades 
+                if ($workshop->nsassessments) $wtype = 2; // 5 phases with grading grades
                 set_field("workshop", "wtype", $wtype, "id", $workshop->id);
             }
         }
@@ -124,7 +124,7 @@ function workshop_upgrade($oldversion) {
         execute_sql("
         CREATE TABLE `{$CFG->prefix}workshop_stockcomments` (
           `id` int(10) unsigned NOT NULL auto_increment,
-          `workshopid` int(10) unsigned NOT NULL default '0', 
+          `workshopid` int(10) unsigned NOT NULL default '0',
           `elementno` int(10) unsigned NOT NULL default '0',
           `comments` text NOT NULL,
           PRIMARY KEY  (`id`)
@@ -145,17 +145,17 @@ function workshop_upgrade($oldversion) {
 
     if ($oldversion < 2004111200) {
         execute_sql("ALTER TABLE {$CFG->prefix}workshop DROP INDEX course;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}workshop_assessments DROP INDEX userid;",false); 
-        execute_sql("ALTER TABLE {$CFG->prefix}workshop_assessments DROP INDEX workshopid;",false); 
+        execute_sql("ALTER TABLE {$CFG->prefix}workshop_assessments DROP INDEX userid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}workshop_assessments DROP INDEX workshopid;",false);
         execute_sql("ALTER TABLE {$CFG->prefix}workshop_assessments DROP INDEX submissionid;",false);
         execute_sql("ALTER TABLE {$CFG->prefix}workshop_assessments DROP INDEX mailed;",false);
         execute_sql("ALTER TABLE {$CFG->prefix}workshop_comments DROP INDEX workshopid;",false);
         execute_sql("ALTER TABLE {$CFG->prefix}workshop_comments DROP INDEX assessmentid;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}workshop_comments DROP INDEX userid;",false); 
-        execute_sql("ALTER TABLE {$CFG->prefix}workshop_comments DROP INDEX mailed;",false); 
+        execute_sql("ALTER TABLE {$CFG->prefix}workshop_comments DROP INDEX userid;",false);
+        execute_sql("ALTER TABLE {$CFG->prefix}workshop_comments DROP INDEX mailed;",false);
         execute_sql("ALTER TABLE {$CFG->prefix}workshop_elements DROP INDEX workshopid;",false);
         execute_sql("ALTER TABLE {$CFG->prefix}workshop_grades DROP INDEX workshopid;",false);
-        execute_sql("ALTER TABLE {$CFG->prefix}workshop_grades DROP INDEX assessmentid;",false); 
+        execute_sql("ALTER TABLE {$CFG->prefix}workshop_grades DROP INDEX assessmentid;",false);
         execute_sql("ALTER TABLE {$CFG->prefix}workshop_submissions DROP INDEX workshopid;",false);
         execute_sql("ALTER TABLE {$CFG->prefix}workshop_submissions DROP INDEX userid;",false);
         execute_sql("ALTER TABLE {$CFG->prefix}workshop_submissions DROP INDEX mailed;",false);
@@ -165,24 +165,24 @@ function workshop_upgrade($oldversion) {
         modify_database('','ALTER TABLE prefix_workshop_assessments ADD INDEX workshopid (workshopid);');
         modify_database('','ALTER TABLE prefix_workshop_assessments ADD INDEX submissionid (submissionid);');
         modify_database('','ALTER TABLE prefix_workshop_assessments ADD INDEX mailed (mailed);');
-        modify_database('','ALTER TABLE prefix_workshop_comments ADD INDEX workshopid (workshopid);'); 
-        modify_database('','ALTER TABLE prefix_workshop_comments ADD INDEX assessmentid (assessmentid);'); 
-        modify_database('','ALTER TABLE prefix_workshop_comments ADD INDEX userid (userid);'); 
-        modify_database('','ALTER TABLE prefix_workshop_comments ADD INDEX mailed (mailed);'); 
+        modify_database('','ALTER TABLE prefix_workshop_comments ADD INDEX workshopid (workshopid);');
+        modify_database('','ALTER TABLE prefix_workshop_comments ADD INDEX assessmentid (assessmentid);');
+        modify_database('','ALTER TABLE prefix_workshop_comments ADD INDEX userid (userid);');
+        modify_database('','ALTER TABLE prefix_workshop_comments ADD INDEX mailed (mailed);');
         modify_database('','ALTER TABLE prefix_workshop_elements ADD INDEX workshopid (workshopid);');
-        modify_database('','ALTER TABLE prefix_workshop_grades ADD INDEX workshopid (workshopid);'); 
-        modify_database('','ALTER TABLE prefix_workshop_grades ADD INDEX assessmentid (assessmentid);'); 
+        modify_database('','ALTER TABLE prefix_workshop_grades ADD INDEX workshopid (workshopid);');
+        modify_database('','ALTER TABLE prefix_workshop_grades ADD INDEX assessmentid (assessmentid);');
         modify_database('','ALTER TABLE prefix_workshop_submissions ADD INDEX workshopid (workshopid);');
         modify_database('','ALTER TABLE prefix_workshop_submissions ADD INDEX userid (userid);');
         modify_database('','ALTER TABLE prefix_workshop_submissions ADD INDEX mailed (mailed);');
     }
-    
+
     if ($oldversion < 2004120402) {
         table_column('workshop', '', 'submissionstart', 'INTEGER', '10', 'UNSIGNED', '0', 'NOT NULL', 'maxbytes');
         table_column('workshop', '', 'assessmentstart', 'INTEGER', '10', 'UNSIGNED', '0', 'NOT NULL', 'submissionstart');
-        table_column('workshop', 'deadline', 'submissionend', 'INTEGER', '10', 'UNSIGNED', '0', 'NOT NULL', 'assessmentstart');
+        table_column('workshop', 'deadline', 'submissionend', 'INTEGER', '10', 'UNSIGNED', '0', 'NOT NULL');
         table_column('workshop', '', 'assessmentend', 'INTEGER', '10', 'UNSIGNED', '0', 'NOT NULL', 'submissionend');
-        
+
         $workshops = get_records('workshop');
         if(!empty($workshops)) {
             foreach ($workshops as $workshop) {
@@ -195,10 +195,10 @@ function workshop_upgrade($oldversion) {
             }
         }
         execute_sql('ALTER TABLE  '. $CFG->prefix .'workshop DROP COLUMN phase');
-        
+
         execute_sql("UPDATE {$CFG->prefix}event SET eventtype = 'submissionend' WHERE eventtype = 'deadline' AND modulename = 'workshop'", false);
     }
-    
+
     if ($oldversion < 2004120900) {
         table_column('workshop_assessments', '', 'teachergraded', 'INTEGER', '4', 'UNSIGNED', '0', 'NOT NULL', 'gradinggrade');
     }
