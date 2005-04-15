@@ -1,20 +1,32 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.4.4 (2004083140)
+      // install.php - created with Moodle 1.4.4 + (2004083140)
 
 
+$string['admindirerror'] = 'Belirtilen yönetici dizini hatalý';
+$string['admindirname'] = 'Yönetici Dizini';
 $string['caution'] = 'Dikkat';
 $string['chooselanguage'] = 'Bir dil seçin';
 $string['compatibilitysettings'] = 'PHP ayarlarýnýz kontrol ediliyor...';
+$string['configfilewritten'] = 'config.php dosyasý baþarýyla oluþturuldu';
 $string['configurationcomplete'] = 'Yapýlandýrma tamamlandý';
 $string['database'] = 'Veritabaný';
+$string['dataroot'] = 'Veri Dizini';
+$string['dbhost'] = 'Sunucu';
+$string['dbpass'] = 'Þifre';
 $string['dbprefix'] = 'Tablo öneki';
 $string['dbtype'] = 'Tipi';
+$string['dirroot'] = 'Moodle Dizini';
 $string['download'] = 'Ýndir';
+$string['fileuploadserror'] = 'Bu açýk olmalý';
 $string['gdversion'] = 'GD sürümü';
 $string['installation'] = 'Kurulum';
+$string['magicquotesruntimeerror'] = 'Bu kapalý olmalý';
 $string['memorylimit'] = 'Bellek Limiti';
+$string['pass'] = 'Geçti';
 $string['phpversion'] = 'PHP sürümü';
 $string['phpversionerror'] = 'PHP sürümü en az 4.1.0 olmalý';
 $string['sessionautostart'] = 'Oturum Otomatik Baþlama';
+$string['sessionautostarterror'] = 'Bu kapalý olmalý';
+$string['wwwroot'] = 'Web adresi';
 
 ?>

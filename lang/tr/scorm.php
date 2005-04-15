@@ -1,8 +1,8 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4.4 (2004083140)
+      // scorm.php - created with Moodle 1.4.4 + (2004083140)
 
 
-$string['asset'] = 'Deðer';
+$string['asset'] = 'Varlýk';
 $string['attr_error'] = '$a->tag etiketinde ($a->attr) özelliði için hatalý deðer.';
 $string['autocontinue'] = 'Otomatik Devam Et';
 $string['badmanifest'] = 'Manifest hatasý: hata loglarýna bakýn';
@@ -21,9 +21,12 @@ $string['configpopupwidth'] = 'Açýlýr pencereler için varsayýlan geniþlik ne ols
 $string['coursepacket'] = 'Kurs paketi';
 $string['coursestruct'] = 'Ders Yapýsý';
 $string['datadir'] = 'Dosya sistemi hatasý: Kurs veri klasörü oluþturulamadý.';
+$string['display'] = 'Görünüm';
 $string['domxml'] = 'DOMXML harici kütüphanesi';
 $string['entercourse'] = 'SCORM Paketine Gözat';
 $string['errorlogs'] = 'Hata logu';
+$string['exit'] = 'SCORM dersinden çýk';
+$string['expcoll'] = 'Geniþlet/Daralt';
 $string['failed'] = 'Hata oluþtu';
 $string['found'] = 'Manifest bulundu';
 $string['gradeaverage'] = 'Ortalama not';
@@ -52,8 +55,10 @@ $string['noreports'] = 'Gösterilecek rapor yok';
 $string['normal'] = 'Normal';
 $string['not_corr_type'] = '$a->tag etiketi için tip uyumsuzluðu';
 $string['notattempted'] = 'Uygulanmadý';
+$string['organizations'] = 'Düzenlemeler';
 $string['packagedir'] = 'Dosya sistemi hatasý: Klasör oluþturulamýyor';
 $string['passed'] = 'Geçti';
+$string['php5'] = 'PHP 5 (DOMXML\'e özgü kütüphane)';
 $string['position_error'] = '$a->tag etiketi, $a->parent etiketinin yavrusu olamaz.';
 $string['prev'] = 'Önceki';
 $string['regular'] = 'Düzenli Manifest';
