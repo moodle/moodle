@@ -42,10 +42,6 @@ class block_login extends block_base {
                 $signup = '';
         }
 
-        if (get_moodle_cookie() == '') {   
-            set_moodle_cookie('nobody');   // To help search for cookies
-        }
-    
         $username = get_moodle_cookie() === 'nobody' ? '' : get_moodle_cookie();
 
         if (empty($USER->loggedin)) {
