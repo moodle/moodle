@@ -2009,9 +2009,8 @@ function get_users_not_in_group($courseid) {
  *
  * @uses $CFG
  * @param int $groupid The group in question.
- * @param string $sort ?
+ * @param string $sort How to sort the results
  * @return array
- * @todo Finish documenting this function
  */
 function get_group_students($groupid, $sort='u.lastaccess DESC') {
     global $CFG;
@@ -2027,6 +2026,32 @@ function get_group_students($groupid, $sort='u.lastaccess DESC') {
                                AND s.userid = u.id
                           ORDER BY $sort");
 }
+
+
+/**
+ * Returns list of all the teachers who can access a group
+ *
+ * @uses $CFG
+ * @param int $courseid The course in question.
+ * @param int $groupid The group in question.
+ * @return array
+ */
+function get_group_teachers($courseid, $groupid) {
+/// Returns a list of all the teachers who can access a group
+    if ($teachers = get_course_teachers($courseid)) {
+        foreach ($teachers as $key => $teacher) {
+            if ($teacher->editall) {             // These can access anything
+                continue;
+            }
+            if (($teacher->authority > 0) and ismember($groupid, $teacher->id)) {  // Specific group teachers
+                continue;
+            }
+            unset($teacher[$key]);
+        }
+    }
+    return $teachers;
+}
+
 
 /**
  * Returns the user's group in a particular course
