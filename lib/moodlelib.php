@@ -5893,5 +5893,13 @@ function get_performance_info() {
     return $info;
 }
 
+if (!function_exists('file_get_contents')) {
+   function file_get_contents($file) {
+       $file = file($file);
+       return $file ? implode('', $file) : false;
+   }
+}
+
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
