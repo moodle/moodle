@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4.3 (2004083130)
+      // forum.php - created with Moodle 1.4.4 + (2004083140)
 
 
 $string['addanewdiscussion'] = 'Ein neues Diskussionsthema hinzufügen';
@@ -11,13 +11,17 @@ $string['allowsdiscussions'] = 'Jede/r darf in diesem Forum ein neues Diskussion
 $string['anyfile'] = 'Jede Datei';
 $string['attachment'] = 'Anhang';
 $string['bynameondate'] = 'von  $a->name - $a->date ';
+$string['configcleanreadtime'] = 'Zeitpunkt des Tages (Stunde), zu dem alte Beiträge von der \'read\'-Tabelle gelöscht werden.';
 $string['configdisplaymode'] = 'Anzeige für Diskussionen, falls keine eingestellt wurde (Voreinstellung).';
 $string['configenablerssfeeds'] = 'Diese Einstellung ermöglicht die Nutzung der RSS-Feeds für alle Foren. Jedes Forum muss einzeln für den RSS-Feed aktiviert werden.';
 $string['configlongpost'] = 'Jeder Beitrag (ohne HTML-Codierung), der länger ist als diese Einstellung, wird als lang eingestuft.';
 $string['configmanydiscussions'] = 'Maximale Anzahl der Themen eines Forums pro Seite';
 $string['configmaxbytes'] = 'Maximale Größe für alle Anhänge, die zu den Beiträgen auf diese Seite hochgeladen wurden ';
+$string['configoldpostdays'] = 'Zahl der Tage, die eine neue ungelesene Nachricht  als neu gekennzeichnet wird.';
 $string['configreplytouser'] = 'Wenn ein Beitrag aus einem Forum per E-Mail versandt wird, soll er die E-Mail-Adresse des Teilnehmers/der Teilnehmerin enthalten, damit eine Antwort direkt gegeben werden kann und nicht über das Forum erfolgt? Wenn Sie \'Ja\' auswählen, können die Teilnehmer/innen in ihrem Profil festlegen, ob die E-Mail-Adresse veröffentlicht werden soll oder nicht.';
 $string['configshortpost'] = 'Jeder Beitrag (ohne HTML-Codierung), der kürzer ist, wird als kurz eingestuft.';
+$string['configtrackreadposts'] = 'Wählen Sie \'Ja\', damit die Einstellung gelesen/ungelesen für jede/n Nutzer/in zur Verfügung steht';
+$string['configusermarksread'] = 'Die \'Ja\'-Einstellung bewirkt, dass jede/r Nutzer/in eine Ncahricht manuell als gelesen markieren muß. Bei \'Nein\' wird eine Nachricht automatisch als \'gelesen\' markiert, wenn Sie aufgerufen/angezeigt wurde.';
 $string['couldnotadd'] = 'Ihr Eintrag konnte aufgrund eines unbekannten Fehlers nicht hinzugefügt werden';
 $string['couldnotdeleteratings'] = 'Der Eintrag kann nicht gelöscht werden, weil er schon bewertet wurde';
 $string['couldnotdeletereplies'] = 'Der Beitrag kann nicht gelöscht werden, weil darauf schon Anworten geschrieben wurden';
@@ -59,6 +63,8 @@ $string['introsocial'] = 'Ein offenes Forum ohne Themeneinschränkung';
 $string['introteacher'] = 'Ein Forum ausschliesslich für Anmerkungen und Diskussionen der Trainer/innen';
 $string['lastpost'] = 'Letzter Beitrag';
 $string['learningforums'] = 'Lernforum';
+$string['markread'] = 'Gelesene markieren';
+$string['markunread'] = 'Ungelesene markieren';
 $string['maxattachmentsize'] = 'Maximale Größe für ein Upload zu diesem Beitrag';
 $string['maxtimehaspassed'] = 'Die Höchstdauer für die Bearbeitung dieses Eintrags ($a) ist überschritten!';
 $string['message'] = 'Mitteilung';
@@ -146,7 +152,11 @@ $string['subscribestart'] = 'Senden Sie mir Kopien via E-Mail von den Beiträgen 
 $string['subscribestop'] = 'Ich möchte keine Kopien via E-Mail von den Beiträgen zu diesem Forum';
 $string['subscription'] = 'Anmeldung';
 $string['subscriptions'] = 'Anmeldungen';
-$string['unsubscribe'] = 'Ich will künftig keine Emails von Beiträgen aus diesem Forum erhalten';
+$string['unread'] = 'Ungelesen';
+$string['unreadposts'] = 'Ungelesene Nachrichten';
+$string['unreadpostsnumber'] = '$a ungelesene Nachrichten';
+$string['unreadpostsone'] = '1 ungelesene Nachricht';
+$string['unsubscribe'] = 'Ich will künftig keine E-Mails von Beiträgen aus diesem Forum erhalten';
 $string['unsubscribed'] = 'Abgemeldet';
 $string['unsubscribeshort'] = 'Abmelden';
 $string['yesforever'] = 'Ja, für immer';

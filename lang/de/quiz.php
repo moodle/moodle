@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // quiz.php - created with Moodle 1.4.4 + (2004083140)
 
 
 $string['acceptederror'] = 'Akzeptierter Fehler';
@@ -53,6 +53,8 @@ $string['choices'] = 'Verfügbare Auswahl';
 $string['choosedatasetproperties'] = 'Datensatzeigenschaften auswählen';
 $string['close'] = 'Vorschau schließen';
 $string['confirmstartattempt'] = 'Der Test muss in einer festgelegten Zeit abgeschlossen werden. Sind Sie sicher, dass Sie jetzt beginnen wollen?';
+$string['copyingfrom'] = 'Erstellen einer Kopie der Frage \'$a\'';
+$string['copyingquestion'] = 'Eine Frage kopieren';
 $string['correctanswer'] = 'Richtige Antwort';
 $string['correctanswerformula'] = 'Formel für richtige Antwort';
 $string['correctanswerlength'] = 'Signifikante Zahlen';
@@ -147,6 +149,7 @@ $string['keptcategory3'] = 'Ein Link derselben Kategorie wiederverwendbare Menge
 $string['keptlocal1'] = 'Eine Schreibweise derselben Frage nicht öffentliche Menge von Schreibweisen wie zuvor (a literal from the same question private set of literals as before)';
 $string['keptlocal2'] = 'Eine Datei derselben Frage nicht öffentliche Menge von Schreibweisen wie zuvor (a file from the same question private set of files as before)';
 $string['keptlocal3'] = 'Ein Link derselben Frage nicht öffentliche Menge von Links wie zuvor (a link from the same question private set of links as before)';
+$string['learnwise'] = 'Learnwise Format';
 $string['link'] = 'Link';
 $string['listitems'] = 'Liste der Elemente des Tests';
 $string['literal'] = 'Schreibweise';
@@ -210,6 +213,7 @@ $string['questionname'] = 'Titel der Frage';
 $string['questionnametoolong'] = 'Bezeichnung der Frage in Zeile $a ist zu lang (max 255 Zeichen). Sie wurde gekürzt.';
 $string['questions'] = 'Fragen';
 $string['questionsperpage'] = 'Höchstzahl der Fragen / Seite';
+$string['questiontypesetupoptions'] = 'Setup-Optionen für Fragentypen';
 $string['quizavailable'] = 'Dieser Test ist verfügbar bis: $a';
 $string['quizclose'] = 'Test beenden (Datum, Uhrzeit)';
 $string['quizclosed'] = 'Dieser Test schließt am $a';
