@@ -89,163 +89,6 @@ input {
 }
 
 
-/*******************************************************************
-*** Tabs
-*******************************************************************/
-
-.tabs {
-  width:auto;
-  margin-left:auto;
-  margin-right:auto;
-  margin-bottom:0px;
-}
-
-#user-view .tabs {
-  width:80%;
-}
-
-.tabs tr {
-  border:1px none #FF0000;
-}
-
-.tabs .side {
-  width:50%;
-  background:url(pix/tab/tabsbg.gif) top left repeat-x;
-}
-
-.tabrow {
-  width:100%;
-  margin:0;
-  border-collapse:collapse;
-}
-
-.tabrow td {
-  padding:0 0 0 14px;
-  height:34px;
-}
-
-.tabs .r0 .active {
-  background:url(pix/tab/left.gif) top left no-repeat;
-}
-
-.tabs .r1 .active {
-  background:url(pix/tab/left2.gif) top left no-repeat;
-}
-
-.tabs .r0 .inactive {
-  background:url(pix/tab/left.gif) top left no-repeat;
-}
-
-.tabs .r1 .inactive {
-  background:url(pix/tab/left2.gif) top left no-repeat;
-}
-
-.tabs,
-.tabs tr,
-.tabs .td,
-.tabrow,
-.tabrow tbody,
-.tabrow tr,
-.tabrow td {
-  background-color:transparent;
-}
-
-.tabrow th {
-  display:none;
-}
-
-.tabrow td .tablink {
-  padding:0 14px 0 0;
-  /*display:block;*/
-  white-space:nowrap;
-  line-height:32px;
-  text-align:center;
-  text-decoration:none;
-  height:34px;
-  width:auto;
-}
-
-.tabs .r0 .active .tablink {
-  background:url(pix/tab/right.gif) top right no-repeat;
-}
-
-.tabs .r1 .active .tablink {
-  background:url(pix/tab/right2.gif) top right no-repeat;
-}
-
-.tabs .r0 .inactive .tablink {
-  background:url(pix/tab/right.gif) top right no-repeat;
-}
-
-.tabs .r1 .inactive .tablink {
-  background:url(pix/tab/right2.gif) top right no-repeat;
-}
-
-.tabrow td .tablink a {
-  /*background-color:#00FFFF;*/
-  width:auto;
-  line-height:32px;
-}
-
-.tabs .r0 .active:hover {
-  background-image:url(pix/tab/left_hover.gif);
-}
-
-.tabs .r0 .active:hover .tablink {
-  background-image:url(pix/tab/right_hover.gif);
-  line-height:32px;
-}
-
-.tabs .r0 .inactive:hover {
-  background-image:url(pix/tab/left.gif);
-}
-
-.tabs .r0 .inactive:hover .tablink {
-  background-image:url(pix/tab/right.gif);
-  line-height:32px;
-}
-
-.tabs .r1 .active:hover {
-  background-image:url(pix/tab/left_hover2.gif);
-}
-
-.tabs .r1 .active:hover .tablink {
-  background-image:url(pix/tab/right_hover2.gif);
-  line-height:32px;
-}
-
-.tabrow .last span {
-  padding:0 1px 0 0;
-  display:block;
-  background:url(pix/tab/right_end.gif) top right no-repeat;
-}
-
-.tabs .r0 .selected {
-  background:url(pix/tab/left_active.gif) top left no-repeat;
-}
-
-.tabs .r1 .selected {
-  background:url(pix/tab/left_active2.gif) top left no-repeat;
-}
-
-.tabs .r0 .selected .tablink {
-  background:url(pix/tab/right_active.gif) top right no-repeat;
-  line-height:32px;
-}
-
-.tabs .r1 .selected .tablink {
-  background:url(pix/tab/right_active2.gif) top right no-repeat;
-  line-height:32px;
-}
-
-/*.tabrow td.selected:hover  {
-  background-image:url(pix/tab/left_active.gif) top left no-repeat;
-}
-
-.tabrow td.selected .tablink:hover {
-  background-image:url(pix/tab/right_active.gif) top right no-repeat;
-}*/
-
 /* header styles */
 #header-home {
   padding:0.5em 0.5em;
@@ -397,7 +240,6 @@ input {
 .userinfobox {
   margin-bottom:5px;
   border:1px solid;
-  border-top-width:0;
   border-collapse: separate;    
 }
 
@@ -426,8 +268,7 @@ input {
   padding-bottom: 20px;
 }    
 
-
-table.userinfobox {
+.userinfobox {
   width: 80%;
   margin-left: 10%;
   margin-right: 10%;
@@ -469,7 +310,11 @@ table.formtable td {
 .admin #content,
 .admin .generalboxcontent,
 .admin .generalbox {
-  width:auto;
+  width:auto
+}
+
+#user-edit .generalboxcontent {
+  width:100%
 }
 
 
@@ -694,6 +539,11 @@ table.formtable td {
 
 .mod-glossary .entryboxheader hr {
   display:none;
+}
+
+.mod-glossary .entrybox {
+  border:1px solid #D1D7DC;
+  border-top:0 none;
 }
 
 /*
