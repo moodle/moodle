@@ -1,5 +1,5 @@
 #mod-assignment-submissions .submission .content,
-#mod-assignment-submissions .submission .heading,
+#mod-assignment-submissions .submission .topic,
 #mod-assignment-submissions .submission .picture
 {
   padding: 10px;
@@ -8,12 +8,22 @@
   border-color:#DDDDDD;
 }
 
-#mod-assignment-submissions .submission .fullname {
+.mod-assignment .topic .files {
+  float: right;
+  background-color: #EFEFEF;
+  padding:5px;
+}
+
+.mod-assignment .topic .from {
   float: left;
 }
 
-#mod-assignment-submissions .submission .files {
-  float: right;
+.mod-assignment .topic .time {
+  font-size: 0.8em;
+}
+
+.mod-assignment .late {
+  color: red;
 }
 
 #mod-assignment-submissions .generaltable .r1 {

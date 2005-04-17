@@ -151,9 +151,10 @@ class assignment_base {
 
         if (!$submission) { /// Get submission for this assignment
             $submission = $this->get_submission($USER->id);
-            if (empty($submission->timemarked)) {   /// Nothing to show, so print nothing
-                return;
-            }
+        }
+
+        if (empty($submission->timemarked)) {   /// Nothing to show, so print nothing
+            return;
         }
 
     /// We need the teacher info
@@ -172,8 +173,12 @@ class assignment_base {
         print_user_picture($teacher->id, $this->course->id, $teacher->picture);
         echo '</td>';
         echo '<td class="topic">';
+        echo '<div class="from">';
         echo '<div class="fullname">'.fullname($teacher).'</div>';
         echo '<div class="time">'.userdate($submission->timemarked).'</div>';
+        echo '</div>';
+        $this->print_user_files($submission->userid);
+        echo '</td>';
         echo '</td>';
         echo '</tr>';
 
@@ -182,11 +187,7 @@ class assignment_base {
         echo '<td class="content">';
         if ($this->assignment->grade) {
             echo '<div class="grade">';
-            if ($submission->grade or $submission->timemarked) {
-                echo get_string("grade").': '.$this->display_grade($submission->grade);
-            } else {
-                echo get_string("nograde");
-            }
+            echo get_string("grade").': '.$this->display_grade($submission->grade);
             echo '</div>';
         }
 
@@ -411,9 +412,15 @@ class assignment_base {
         echo '<td width="35" valign="top" class="picture user">';
         print_user_picture($user->id, $this->course->id, $user->picture);
         echo '</td>';
-        echo '<td class="heading">';
+        echo '<td class="topic">';
+        echo '<div class="from">';
         echo '<div class="fullname">'.fullname($user, true).'</div>';
-        $this->print_user_files($user);
+        if ($submission->timemodified) {
+            echo '<div class="time">'.userdate($submission->timemodified).
+                                     $this->display_lateness($submission->timemodified).'</div>';
+        }
+        echo '</div>';
+        $this->print_user_files($user->id);
         echo '</td>';
         echo '</tr>';
 
@@ -822,15 +829,15 @@ class assignment_base {
         }
     }
 
-    function print_user_files($user, $return=false) {
+    function print_user_files($userid, $return=false) {
     
         global $CFG;
     
-        $filearea = $this->file_area_name($user);
+        $filearea = $this->file_area_name($userid);
 
         $output = '';
     
-        if ($basedir = $this->file_area($user)) {
+        if ($basedir = $this->file_area($userid)) {
             if ($files = get_directory_list($basedir)) {
                 foreach ($files as $key => $file) {
                     require_once($CFG->libdir.'/filelib.php');
@@ -856,16 +863,28 @@ class assignment_base {
         echo $output;
     }
 
+    function count_user_files($userid) {
+        global $CFG;
 
-    function file_area_name($user) {
+        $filearea = $this->file_area_name($userid);
+
+        if ($basedir = $this->file_area($userid)) {
+            if ($files = get_directory_list($basedir)) {
+                return count($files);
+            }
+        }
+        return 0;
+    }
+
+    function file_area_name($userid) {
     //  Creates a directory file name, suitable for make_upload_directory()
         global $CFG;
     
-        return $this->course->id.'/'.$CFG->moddata.'/assignment/'.$this->assignment->id.'/'.$user->id;
+        return $this->course->id.'/'.$CFG->moddata.'/assignment/'.$this->assignment->id.'/'.$userid;
     }
     
-    function file_area($user) {
-        return make_upload_directory( $this->file_area_name($user) );
+    function file_area($userid) {
+        return make_upload_directory( $this->file_area_name($userid) );
     }
 
     function user_outline($user) {
@@ -882,7 +901,7 @@ class assignment_base {
     
     function user_complete($user) {
         if ($submission = $this->get_submission($user->id)) {
-            if ($basedir = $this->file_area($user)) {
+            if ($basedir = $this->file_area($user->id)) {
                 if ($files = get_directory_list($basedir)) {
                     $countfiles = count($files)." ".get_string("uploadedfiles", "assignment");
                     foreach ($files as $file) {
@@ -894,9 +913,9 @@ class assignment_base {
             print_simple_box_start();
             echo get_string("lastmodified").": ";
             echo userdate($submission->timemodified);
-            echo $this->display_lateness($this->assignment->timedue - $this->submission->timemodified);
+            echo $this->display_lateness($submission->timemodified);
     
-            $this->print_user_files($user);
+            $this->print_user_files($user->id);
     
             echo '<br />';
     
@@ -913,13 +932,14 @@ class assignment_base {
         }
     }
 
-    function display_lateness($time) {
+    function display_lateness($timesubmitted) {
+        $time = $this->assignment->timedue - $timesubmitted;
         if ($time < 0) {
             $timetext = get_string('late', 'assignment', format_time($time));
-            return ' (<span class="timelate">'.$timetext.'</span>)';
+            return ' (<span class="late">'.$timetext.'</span>)';
         } else {
             $timetext = get_string('early', 'assignment', format_time($time));
-            return ' (<span class="timeearly">'.$timetext.'</span>)';
+            return ' (<span class="early">'.$timetext.'</span>)';
         }
     }
 

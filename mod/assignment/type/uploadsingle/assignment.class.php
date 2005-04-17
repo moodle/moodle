@@ -54,6 +54,8 @@ class assignment_uploadsingle extends assignment_base {
 
     function view() {
 
+        global $USER;
+
         $this->view_header();
 
         print_simple_box_start('center');
@@ -71,7 +73,9 @@ class assignment_uploadsingle extends assignment_base {
 
         $this->view_feedback();
 
-        $this->view_upload_form();
+        if (!$this->count_user_files($USER->id) || $this->assignment->resubmit) {
+            $this->view_upload_form();
+        }
 
         $this->view_footer();
     }
@@ -83,39 +87,13 @@ class assignment_uploadsingle extends assignment_base {
         echo '<form enctype="multipart/form-data" method="post" '.
              "action=\"$CFG->wwwroot/mod/assignment/upload.php\">";
         echo '<input type="hidden" name="id" value="'.$this->cm->id.'" />';
-        require_once($CFG->dirroot.'/lib/uploadlib.php');
+        require_once($CFG->libdir.'/uploadlib.php');
         upload_print_form_fragment(1,array('newfile'),false,null,0,$this->assignment->maxbytes,false);
         echo '<input type="submit" name="save" value="'.get_string('uploadthisfile').'" />';
         echo '</form>';
         echo '</center>';
     }
 
-
-    function get_user_file($user) {
-        global $CFG;
-
-        $tmpfile = "";
-
-        $filearea = file_area_name($user);
-
-        if ($basedir = file_area($user)) {
-            if ($files = get_directory_list($basedir)) {
-                foreach ($files as $file) {                 // Just gets the first one
-                    $icon = mimeinfo("icon", $file);
-                    if ($CFG->slasharguments) {
-                        $ffurl = "file.php/$filearea/$file";
-                    } else {
-                        $ffurl = "file.php?file=/$filearea/$file";
-                    }
-                    $tmpfile->url  = $ffurl;
-                    $tmpfile->name = $file;
-                    $tmpfile->icon = $icon;
-                    break;
-                }
-            }
-        }
-        return $tmpfile;
-    }
 
     function upload() {
         global $CFG, $USER;
@@ -128,7 +106,7 @@ class assignment_uploadsingle extends assignment_base {
             }
         }
 
-        $dir = $this->file_area_name($USER);
+        $dir = $this->file_area_name($USER->id);
 
         require_once($CFG->dirroot.'/lib/uploadlib.php');
         $um = new upload_manager('newfile',true,false,$course,false,$this->assignment->maxbytes);
