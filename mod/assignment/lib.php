@@ -193,7 +193,7 @@ class assignment_base {
         }
 
         echo '<div class="comment">';
-        echo text_to_html($submission->comment);
+        echo format_text($submission->comment, $submission->format);
         echo '</div>';
         echo '</tr>';
 
@@ -457,7 +457,17 @@ class assignment_base {
         echo '<div class="clearer"></div>';
 
         echo '<br />';
-        print_textarea($this->usehtmleditor, 15, 58, 0, 0, 'comment', $submission->comment, $this->course->id);
+        print_textarea($this->usehtmleditor, 12, 58, 0, 0, 'comment', $submission->comment, $this->course->id);
+
+        echo '<div align="right" class="format">';
+        if ($this->usehtmleditor) { 
+            print_string('formathtml');
+            echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
+        } else {
+            choose_from_menu(format_text_menu(), "format", $submission->format, "");
+        }
+        helpbutton("textformat", get_string("helpformatting"));
+        echo '</div>';
 
         echo '<div class="buttons" align="center">';
         echo '<input type="submit" name="submit" value="'.get_string('savechanges').'" />';
@@ -683,6 +693,7 @@ class assignment_base {
 
         $newsubmission->grade      = $feedback->grade;
         $newsubmission->comment    = $feedback->comment;
+        $newsubmission->format     = $feedback->format;
         $newsubmission->teacher    = $USER->id;
         $newsubmission->mailed     = 0;       // Make sure mail goes out (again, even)
         $newsubmission->timemarked = time();
