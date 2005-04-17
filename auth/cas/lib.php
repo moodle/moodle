@@ -41,7 +41,7 @@ function cas_ldap_auth_user_login ($username, $password) {
  
     if ($CFG->auth == "cas" && !empty($CFG->cas_enabled)){ //cas specific
        if ($CFG->cas_create_user=="0"){
-          if (get_user_info_from_db("username", $username)){
+          if (record_exists('user', 'username', $username)){
              return true;
           }else{
              return false;
@@ -67,7 +67,7 @@ function cas_ldap_auth_user_login ($username, $password) {
         ldap_close($ldap_connection);
         if ($ldap_login) {
            if ($CFG->cas_create_user=="0"){  //cas specific
-              if (get_user_info_from_db("username", $username)){
+              if (record_exists('user', 'username', $username)){
                 return true;
               }else{
                 return false;
@@ -105,8 +105,8 @@ function cas_authenticate_user_login ($username, $password) {
       phpCAS::authenticateIfNeeded();
    }
    if ($CFG->cas_create_user=="0"){
-      if (get_user_info_from_db("username", phpCAS::getUser())){
-        $user = authenticate_user_login(phpCAS::getUser(), 'cas');
+      if (record_exists('user', 'username', phpCAS::getUser())) {
+         $user = authenticate_user_login(phpCAS::getUser(), 'cas');
       }else{
          //login as guest if CAS but not Moodle and not automatic creation
          if ($CFG->guestloginbutton){
@@ -142,7 +142,7 @@ function cas_automatic_authenticate ($user="") {
         }
         if (phpCAS::isAuthenticated()){
            if ($CFG->cas_create_user=="0"){
-              if (get_user_info_from_db("username", phpCAS::getUser())){
+              if (record_exists('user', 'username', phpCAS::getUser())) {
                  $user = authenticate_user_login(phpCAS::getUser(), 'cas');
               }else{
                  //login as guest if CAS but not Moodle and not automatic creation

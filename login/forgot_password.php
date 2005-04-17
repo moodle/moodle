@@ -9,7 +9,7 @@
 
 		update_login_count();
 
-        $user = get_user_info_from_db("username", "$s");
+        $user = get_complete_user_data("username", "$s");
 
         if (!empty($user)) {
             if ($user->secret == $p) {   // They have provided the secret key to get in
@@ -42,7 +42,7 @@
 
 		if (count((array)$err) == 0) {
 
-			if (!$user = get_user_info_from_db("email", $frm->email)) {
+			if (!$user = get_complete_user_data("email", $frm->email)) {
                 error("No such user with this address:  $frm->email");
             }
 

@@ -22,7 +22,7 @@
             $username = $frm->username;
             $password = md5($frm->newpassword1);
 
-            $user = get_user_info_from_db("username", $username);
+            $user = get_complete_user_data("username", $username);
 
             if (isguest($user->id)) {
                 error("Can't change guest password!");
@@ -55,8 +55,6 @@
             }
             
             $USER = $user;
-            $USER->loggedin = true;
-            $USER->site = $CFG->wwwroot;   // for added security
 
             // register success changing password
             unset_user_preference('auth_forcepasswordchange');

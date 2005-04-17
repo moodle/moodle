@@ -36,7 +36,7 @@
     if (empty($userid) || !isteacher($course->id)) {
     	$user = $USER;
     } else {
-    	$user = get_user_info_from_db('id', $userid);
+    	$user = get_complete_user_data('id', $userid);
     }
 ?>
 

@@ -1671,6 +1671,19 @@ function remove_from_metacourse($metacourseid, $courseid) {
 
 
 /**
+ * Determines if a user is currently logged in
+ *
+ * @uses $USER
+ * @return boolean
+ */
+function isloggedin() {
+    global $USER;
+
+    return (!empty($USER->id));
+}
+
+
+/**
  * Determines if a user an admin
  *
  * @uses $USER
@@ -2097,7 +2110,7 @@ function create_user_record($username, $password, $auth='') {
     $newuser->timemodified = time();
 
     if (insert_record('user', $newuser)) {
-         $user = get_user_info_from_db('username', $newuser->username);
+         $user = get_complete_user_data('username', $newuser->username);
          if($CFG->{'auth_'.$newuser->auth.'_forcechangepassword'}){
              set_user_preference('auth_forcepasswordchange', 1, $user);
          }
@@ -2128,7 +2141,7 @@ function update_user_record($username) {
             }
         }
     }
-    return get_user_info_from_db('username', $username);
+    return get_complete_user_data('username', $username);
 }
 
 function truncate_userinfo($info) {
@@ -2204,7 +2217,7 @@ function authenticate_user_login($username, $password) {
 
     // First try to find the user in the database
 
-    if (!$user = get_user_info_from_db('username', $username)) {
+    if (!$user = get_complete_user_data('username', $username)) {
         $user->id = 0;     // Not a user
         $user->auth = $CFG->auth;
     }
@@ -2273,9 +2286,6 @@ function authenticate_user_login($username, $password) {
                 }
             }
         }
-        if ($user) {
-            $user->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
-        }
         return $user;
 
     } else {
@@ -2284,6 +2294,111 @@ function authenticate_user_login($username, $password) {
         return false;
     }
 }
+
+/**
+ * Get a complete user record, which includes all the info
+ * in the user record, as well as membership information
+ * Intended for setting as $USER session variable
+ *
+ * @uses $CFG
+ * @uses SITEID
+ * @param string $field The user field to be checked for a given value. 
+ * @param string $value The value to match for $field.
+ * @return user A {@link $USER} object.
+ */
+function get_complete_user_data($field, $value) {
+
+    global $CFG;
+
+    if (!$field || !$value) {
+        return false;
+    }
+
+/// Get all the basic user data
+
+    if (! $user = get_record_select('user', $field .' = \''. $value .'\' AND deleted <> \'1\'')) {
+        return false;
+    }
+
+/// Add membership information
+
+    if ($admins = get_records('user_admins', 'userid', $user->id)) {
+        $user->admin = true;
+    }
+
+    $user->student[SITEID] = isstudent(SITEID, $user->id);
+
+/// Determine enrolments based on current enrolment module
+
+    require_once($CFG->dirroot .'/enrol/'. $CFG->enrol .'/enrol.php');
+    $enrol = new enrolment_plugin();
+    $enrol->get_student_courses($user);
+    $enrol->get_teacher_courses($user);
+
+/// Get various settings and preferences
+
+    if ($displays = get_records('course_display', 'userid', $user->id)) {
+        foreach ($displays as $display) {
+            $user->display[$display->course] = $display->display;
+        }
+    }
+
+    if ($preferences = get_records('user_preferences', 'userid', $user->id)) {
+        foreach ($preferences as $preference) {
+            $user->preference[$preference->name] = $preference->value;
+        }
+    }
+
+    if ($groups = get_records('groups_members', 'userid', $user->id)) {
+        foreach ($groups as $groupmember) {
+            $courseid = get_field('groups', 'courseid', 'id', $groupmember->groupid);
+            $user->groupmember[$courseid] = $groupmember->groupid;
+        }
+    }
+
+/// Rewrite some variables if necessary
+    if (!empty($user->description)) {
+        $user->description = true;   // No need to cart all of it around
+    }
+    if ($user->username == 'guest') {
+        $user->lang       = $CFG->lang;               // Guest language always same as site
+        $user->firstname  = get_string('guestuser');  // Name always in current language
+        $user->lastname   = ' ';
+    }
+
+    $user->loggedin = true;
+    $user->site     = $CFG->wwwroot; // for added security, store the site in the session
+    $user->sesskey  = random_string(10);
+    $user->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
+
+    return $user;
+
+}
+
+function get_user_info_from_db($field, $value) {  // For backward compatibility
+    return get_complete_user_data($field, $value);
+}
+
+/* 
+ * When logging in, this function is run to set certain preferences
+ * for the current SESSION
+ */
+function set_login_session_preferences() {
+    global $SESSION;
+
+    $SESSION->justloggedin = true;
+
+    unset($SESSION->lang);
+    unset($SESSION->encoding);
+    $SESSION->encoding = get_string('thischarset');
+
+    // Restore the calendar filters, if saved
+    if (intval(get_user_preferences('calendar_persistflt', 0))) {
+        include_once($CFG->dirroot.'/calendar/lib.php');
+        calendar_set_filters_status(get_user_preferences('calendar_savedflt', 0xff));
+    }
+}
+
 
 /**
  * Enrols (or re-enrols) a student in a given course

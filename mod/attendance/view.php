@@ -115,7 +115,7 @@
   if (isteacher($course->id)){
     $students = attendance_get_course_students($form->course, "u.lastname ASC");
   } else { // must be a student
-    $students[0] = get_user_info_from_db("id", $USER->id);
+    $students[0] = $USER;
   }
   $i=0;
   $A = get_string("absentshort","attendance");

@@ -5,7 +5,7 @@
 
     if (isset($_GET['p']) and isset($_GET['s']) ) {     #  p = user.secret   s = user.username
 
-        $user = get_user_info_from_db("username", $_GET['s']);
+        $user = get_complete_user_data('username', $_GET['s']);
 
         if (!empty($user)) {
 
@@ -34,14 +34,11 @@
 
                 // The user has confirmed successfully, let's log them in
                 
-                if (!$USER = get_user_info_from_db("username", $user->username)) {
+                if (!$USER = get_complete_user_data('username', $user->username)) {
                     error("Something serious is wrong with the database");
                 }
 
                 set_moodle_cookie($USER->username);
-
-                $USER->loggedin = true;
-                $USER->site = $CFG->wwwroot;
 
                 if ( ! empty($SESSION->wantsurl) ) {   // Send them where they were going
                     $goto = $SESSION->wantsurl;

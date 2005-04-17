@@ -114,7 +114,7 @@ if ($dlsub== "all") {
         
 /// generate the attendance rolls for the body of the spreadsheet
   if (isstudent($course->id)) { 
-    $students[0] = get_user_info_from_db("id", $USER->id);
+    $students[0] = $USER;
   } else { // must be a teacher
     $students = attendance_get_course_students($attendance->course, "u.lastname ASC");
   }

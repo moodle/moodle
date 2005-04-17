@@ -17,10 +17,7 @@
     }
 
     if (isset($USER->realuser)) {   /// Reset user back to their real self
-        $USER = get_user_info_from_db("id", $USER->realuser);
-        $USER->loggedin = true;
-        $USER->site = $CFG->wwwroot;
-        $USER->sessionIP = md5(getremoteaddr());     // Store the current IP in the session
+        $USER = get_complete_user_data('id', $USER->realuser);
 
         if (isset($SESSION->oldcurrentgroup)) {      // Restore previous "current group" cache.
             $SESSION->currentgroup = $SESSION->oldcurrentgroup;
@@ -64,11 +61,8 @@
     $teacher_name = fullname($USER, true);
     $teacher_id   = "$USER->id";
 
-    $USER = get_user_info_from_db("id", $user);    // Create the new USER object with all details
-    $USER->loggedin = true;
-    $USER->site = $CFG->wwwroot;
+    $USER = get_complete_user_data('id', $user);    // Create the new USER object with all details
     $USER->realuser = $teacher_id;
-    $USER->sessionIP = md5(getremoteaddr());   // Store the current IP in the session
 
     if (isset($SESSION->currentgroup)) {    // Remember current cache setting for later
         $SESSION->oldcurrentgroup = $SESSION->currentgroup;

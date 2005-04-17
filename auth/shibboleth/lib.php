@@ -5,12 +5,9 @@
 
 function auth_user_login ($username, $password) {
     global $CFG;
-	if($_SERVER[$CFG->shib_user_attribute] == $username) {
-        return true;
-    }
     // Returns false if the username doesn't exist yet
     // Returns true if the username and password work
-    if ($user = get_user_info_from_db("username", $username)) {
+    if ($user = get_record('user', 'username', $username)) {
 		if($user->auth == "shibboleth") {
             return false;
             exit;
@@ -34,7 +31,7 @@ function auth_get_userinfo($username) {
     $search_attribs = array();
   
     foreach ($attrmap as $key=>$value) {
-        $result[$key]=$_SERVER[$value];
+        $result[$key]=utf8_decode($_SERVER[$value]);
     }
     return $result;
 }
@@ -50,8 +47,8 @@ function auth_shib_attributes (){
 
     $moodleattributes = array();
     foreach ($fields as $field) {
-        if ($config["auth_user_$field"]) {
-            $moodleattributes[$field] = $config["auth_user_$field"];
+        if ($config["auth_shib_user_$field"]) {
+            $moodleattributes[$field] = $config["auth_shib_user_$field"];
         }
     }
     $moodleattributes['username']=$config["shib_user_attribute"];

@@ -371,9 +371,7 @@ global $THEME;
         if (empty($_SESSION['USER']->id)) {      // Allow W3CValidator in as user called w3cvalidator (or guest)
             if ((strpos($_SERVER['HTTP_USER_AGENT'], 'W3C_Validator') !== false) or
                 (strpos($_SERVER['HTTP_USER_AGENT'], 'Cynthia') !== false )) {
-                if ($USER = get_user_info_from_db("username", "w3cvalidator")) {
-                    $USER->loggedin = true;
-                    $USER->site = $CFG->wwwroot;
+                if ($USER = get_complete_user_data("username", "w3cvalidator")) {
                     $USER->ignoresesskey = true;
                 } else {
                     $USER = guest_user();

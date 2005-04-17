@@ -7,7 +7,7 @@ function auth_user_login ($username, $password) {
 
     global $CFG;
 
-    if (! $user = get_user_info_from_db("username", $username)) {
+    if (! $user = get_record('user', 'username', $username)) {
         return false;
     }
     
