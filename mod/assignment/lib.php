@@ -363,7 +363,7 @@ class assignment_base {
         static $scalegrades;   // Cached because we only have one per assignment
 
         if ($this->assignment->grade >= 0) {    // Normal number
-            return $grade;
+            return $grade.' / '.$this->assignment->grade;
 
         } else {                                // Scale
             if (empty($scalegrades)) {
