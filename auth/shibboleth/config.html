@@ -1,7 +1,7 @@
 <?php
 // Set default values
-if (!isset($config->auth_shib_instructions)) {
-	$config->auth_shib_instructions = 'Use the <a href="'.$CFG->wwwroot.'/auth/shibboleth/" >Shibboleth login</a> to get access if your university or school supports it.<br>Otherwise use the manual login.';
+if (!isset($config->auth_instructions) or empty($config->shib_user_attribute)) {
+	$config->auth_instructions = get_string('auth_shib_instructions', 'auth', $CFG->wwwroot.'/auth/shibboleth');
 }
 
 if (!isset($config->auth_user_firstname_updatelocal)) {
@@ -386,14 +386,14 @@ if (!isset($config->auth_user_lang_editlock)) {
     </select><br>
     </td>
 </tr>
+
 <tr valign="top">
-    <td align="right"><?php  print_string("auth_shib_login_link", "auth") ?></td>
-    <td>
-    <textarea name="auth_shib_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_shib_instructions) ?></textarea> 
+	<td align="right"><?php  print_string("instructions", "auth") ?>:</td>
+	<td>
+    <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
     </td>
     <td>
-    <?php  print_string("auth_shib_instructions_descriptions","auth") ?>
+    <?php  print_string("auth_shib_instructions_help","auth") ?>
     <?php  helpbutton("text", get_string("helptext")) ?>
     </td>
 </tr>
-

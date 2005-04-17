@@ -101,8 +101,16 @@ $string['auth_pop3mailbox'] = 'Name of the mailbox to attempt a connection with.
 $string['auth_pop3port'] = 'Server port (110 is the most common, 995 is common for SSL)';
 $string['auth_pop3title'] = 'Use a POP3 server';
 $string['auth_pop3type'] = 'Server type. If your server uses certificate security, choose pop3cert.';
-$string['auth_shibbolethdescription'] = 'Using this method you can connect to an existing Shibboleth server to check and create new accounts';
+$string['auth_shibbolethdescription'] = 'Using this method users are created and authenticated using <a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>';
 $string['auth_shibbolethtitle'] = 'Shibboleth';
+$string['auth_shibboleth_login'] = 'Shibboleth Login';
+$string['auth_shibboleth_manual_login'] = 'Manual Login';
+$string['auth_shib_settings'] = 'Be sure to read the <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> file for Shibboleth on how to set up your Moodle with Shibboleth';
+$string['auth_shib_only'] = 'Shibboleth only';
+$string['auth_shib_only_description'] = 'Check this option if a Shibboleth authentication shall be enforced';
+$string['auth_shib_username_description'] = 'Name of the webserver Shibboleth environment variable that shall be used as Moodle username';
+$string['auth_shib_instructions'] = 'Use the <a href=\"$a\">Shibboleth login</a> to get access via Shibboleth, if your institution supports it.<br />Otherwise, use the normal login form shown here.';
+$string['auth_shib_instructions_help'] = 'Here you should provide custom instructions for your users to explain Shibboleth.  It will be shown on the login page in the instructions section.  It should include a link to \"<b>$a</b>\" so that Shibboleth users can login easily.  If you leave it blank, then standard instructions will be used (not Shibboleth-specific)';
 $string['auth_updatelocal'] = 'Update local data';
 $string['auth_updatelocal_expl'] = '<p><b>Update local data:</b> If enabled, the field will be updated (from external auth) every time the user logs in or there is a user synchronization. Fields set to update locally should be locked.</p>';
 $string['auth_updateremote'] = 'Update external data';
