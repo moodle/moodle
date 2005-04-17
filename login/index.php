@@ -1,9 +1,10 @@
 <?php // $Id$
 
     require_once("../config.php");
+
     optional_variable($loginguest, false); // determines whether visitors are logged in as guest automatically
 
-    // Check if the guest user exists.  If not, create one.
+/// Check if the guest user exists.  If not, create one.
     if (! record_exists("user", "username", "guest")) {
         $guest->auth        = "manual"; 
         $guest->username    = "guest"; 
@@ -21,11 +22,23 @@
         }
     }
 
+/// Load alternative login screens if necessary
+
     if ($CFG->auth == 'cas' && !empty($CFG->cas_enabled)) {
         require($CFG->dirroot.'/auth/cas/login.php');
     }
+
+    if ($CFG->auth == 'shibboleth') {
+        if (!empty($SESSION->shibboleth_checked)) {  // Just come from there
+            unset($SESSION->shibboleth_checked);
+        } else {
+            redirect($CFG->wwwroot.'/auth/shibboleth/login.php');
+        }
+    }
     
-    //Define variables used in page
+
+    
+/// Define variables used in page
     if (!$site = get_site()) {
         error("No site found!");
     }
@@ -49,6 +62,8 @@
 
     $frm = false;
     $user = false;
+
+
     if ((!empty($SESSION->wantsurl) and strstr($SESSION->wantsurl,'username=guest')) or $loginguest) {
         /// Log in as guest automatically (idea from Zbigniew Fiedorowicz)
         $frm->username = 'guest';
@@ -68,6 +83,8 @@
         $frm = data_submitted($loginurl);
     }
 
+/// Check if the user has actually submitted login data to us
+
     if ($frm and (get_moodle_cookie() == '')) {    // Login without cookie
 
         $errormsg = get_string("cookiesnotenabled");
@@ -85,7 +102,8 @@
         update_login_count();
 
         if ($user) {
-            if (! $user->confirmed ) {       // they never confirmed via email 
+
+            if (empty($user->confirmed)) {       // This account was never confirmed
                 print_header(get_string("mustconfirm"), get_string("mustconfirm") ); 
                 print_heading(get_string("mustconfirm"));
                 print_simple_box(get_string("emailconfirmsent", "", $user->email), "center");
@@ -93,38 +111,17 @@
                 die;
             }
 
+            // Let's get them all set up.
             $USER = $user;
-            if (!empty($USER->description)) {
-                $USER->description = true;   // No need to cart all of it around
-            }
-            $USER->loggedin = true;
-            $USER->site     = $CFG->wwwroot; // for added security, store the site in the session
-            sesskey();                       // for added security, used to check script parameters
 
-            if ($USER->username == "guest") {
-                $USER->lang       = $CFG->lang;               // Guest language always same as site
-                $USER->firstname  = get_string("guestuser");  // Name always in current language
-                $USER->lastname   = " ";
-            }
-    
-            if (!update_user_login_times()) {
-                error("Wierd error: could not update login records");
-            }
+            add_to_log(SITEID, 'user', 'login', "view.php?id=$USER->id&course=".SITEID, $USER->id, 0, $USER->id);
 
+
+            update_user_login_times();
             set_moodle_cookie($USER->username);
-
-            unset($SESSION->lang);
-            unset($SESSION->encoding);
-
-            $SESSION->justloggedin = true;
-            $SESSION->encoding = get_string('thischarset');
-
-            // Restore the calendar filters, if saved
-            if(intval(get_user_preferences('calendar_persistflt', 0))) {
-                include_once($CFG->dirroot.'/calendar/lib.php');
-                calendar_set_filters_status(get_user_preferences('calendar_savedflt', 0xff));
-            }
-
+            set_login_session_preferences();
+        
+        
             //Select password change url
             if (is_internal_auth() || $CFG->{'auth_'.$USER->auth.'_stdchangepassword'}){
                 $passwordchangeurl=$CFG->wwwroot.'/login/change_password.php';
@@ -132,7 +129,6 @@
                 $passwordchangeurl=$CFG->changepassword;
             } 
             
-
             // check whether the user should be changing password
             if (get_user_preferences('auth_forcepasswordchange', false)){
                 if (isset($passwordchangeurl)) {
@@ -144,8 +140,6 @@
                 }
             }
 
-            
-            add_to_log(SITEID, "user", "login", "view.php?id=$user->id&course=".SITEID, $user->id, 0, $user->id);
 
             if (user_not_fully_set_up($USER)) {
                 $urltogo = $CFG->wwwroot.'/user/edit.php?id='.$USER->id.'&amp;course='.SITEID;
@@ -204,7 +198,7 @@
     }
     
 
-/// Generate the login page
+/// Generate the login page with forms
 
     if (empty($errormsg)) {
         $errormsg = '';
