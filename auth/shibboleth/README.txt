@@ -32,7 +32,7 @@ Moodle Configuration
 How the Shibboleth authentication works
 --------------------------------------------------------------------------------
 For a user to get Shibboleth authenticated in Moodle he first must get 
-redirected to moodle/auth/shibboleth/login.php . When Shibboleth is active
+redirected to moodle/auth/shibboleth/index.php . When Shibboleth is active
 this happens automatically from the normal login page.
 If the user is successfully Shibboleth authenticated he also is authenticated in
 Moodle

@@ -32,7 +32,7 @@
         if (!empty($SESSION->shibboleth_checked)) {  // Just come from there
             unset($SESSION->shibboleth_checked);
         } else {
-            redirect($CFG->wwwroot.'/auth/shibboleth/login.php');
+            redirect($CFG->wwwroot.'/auth/shibboleth/index.php');
         }
     }
     
