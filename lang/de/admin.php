@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.4.3 (2004083130)
+      // admin.php - created with Moodle 1.4.4 + (2004083140)
 
 
 $string['adminseesallevents'] = 'Administratoren sehen alle Termine';
@@ -12,6 +12,7 @@ $string['change'] = 'verändern';
 $string['confirmation'] = 'Bestätigung';
 $string['confirmdeletedst'] = 'Löschen der Voreinstellung <strong>$a</strong> deaktiviert sofort die Einstellungen für die Sommerzeit für alle Nutzer mit dieser Voreinstellung. Dadurch kann u.U. die Zeit ohne Vorankündigung geändert werden. Sind Sie sicher, dass Sie den Vorgang fortsetzen wollen?';
 $string['confirmdeletedstdefault'] = '<strong>Die Einstellung mit Namen $a wird von allen Nutzern dieser Seite verwendet!</strong> Dadurch kann u.U. die Zeit ohne Vorankündigung geändert werden. Sind Sie sicher, dass Sie den Vorgang fortsetzen wollen?';
+$string['cronwarning'] = 'Das Script für den Cron Job <a href=\"cron.php\">cron.php </a> wurde in den letzten 24 Stunden nicht aufgerufen. <br />Die <a href=\"../doc/?frame=install.html&sub=cron\">Installationsdokumentation</a> erklärt wie Sie den Prozess automatisieren können.';
 $string['dstisapreference'] = 'Jeder Nutzer kann die Einstellungen selber wählen';
 $string['dstisforcedto'] = 'Alle Nutzer werden aufgefordert, die Einstellung vorzunehmen';
 $string['dstpresets'] = 'Sommerzeiteinstellungen';
