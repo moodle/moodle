@@ -189,6 +189,7 @@ class assignment_base {
             echo '<div class="grade">';
             echo get_string("grade").': '.$this->display_grade($submission->grade);
             echo '</div>';
+            echo '<div class="clearer"></div>';
         }
 
         echo '<div class="comment">';
@@ -403,10 +404,10 @@ class assignment_base {
             $subtype = 'assignmentold';
         }
 
-        print_header($this->assignment->name.' '.fullname($user, true));
+        print_header(get_string('feedback', 'assignment').':'.fullname($user, true).':'.$this->assignment->name);
 
 
-        echo '<table cellspacing="0" class="submission '.$subtype.'" >';
+        echo '<table cellspacing="0" class="feedback '.$subtype.'" >';
 
         echo '<tr>';
         echo '<td width="35" valign="top" class="picture user">';
@@ -443,15 +444,20 @@ class assignment_base {
         if (!$submission->grade and !$submission->timemarked) {
             $submission->grade = -1;   /// Hack to stop zero being selected on the menu below (so it shows 'no grade')
         }
-        echo get_string('feedback', 'assignment').':';
+        if ($submission->timemarked) {
+            echo '<div class="from">';
+            echo '<div class="fullname">'.fullname($teacher, true).'</div>';
+            echo '<div class="time">'.userdate($submission->timemarked).'</div>';
+            echo '</div>';
+        }
+        echo '<div class="grade">'.get_string('grade').':';
         choose_from_menu(make_grades_menu($this->assignment->grade), 'grade', 
                          $submission->grade, get_string('nograde'));
+        echo '</div>';
+        echo '<div class="clearer"></div>';
 
-        if ($submission->timemarked) {
-            echo '&nbsp;&nbsp;'.userdate($submission->timemarked);
-        }
         echo '<br />';
-        print_textarea($this->usehtmleditor, 10, 60, 0, 0, 'comment', $submission->comment, $this->course->id);
+        print_textarea($this->usehtmleditor, 15, 58, 0, 0, 'comment', $submission->comment, $this->course->id);
 
         echo '<div class="buttons" align="center">';
         echo '<input type="submit" name="submit" value="'.get_string('savechanges').'" />';
@@ -641,7 +647,7 @@ class assignment_base {
                 $buttontext = ($auser->status == 1) ? $strupdate : $strgrade;
 
                 $button = button_to_popup_window ('/mod/assignment/submissions.php?id='.$this->cm->id.'&amp;userid='.$auser->id.'&amp;mode=single', 
-                        'grade'.$auser->id, $buttontext, 450, 600, $buttontext, 'none', true, 'button'.$auser->id);
+                        'grade'.$auser->id, $buttontext, 450, 700, $buttontext, 'none', true, 'button'.$auser->id);
 
                 $status  = '<div id="up'.$auser->id.'" class="s'.$auser->status.'">'.$button.'</div>';
 

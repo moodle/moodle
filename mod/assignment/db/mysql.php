@@ -146,6 +146,10 @@ function assignment_upgrade($oldversion) {
         table_column('assignment', '', 'var1', 'integer', '10', '', 0, 'null', 'emailteachers');
     }
 
+    if ($oldversion < 2005041700) {  // Allow comments to have a formatting
+        table_column('assignment_submissions', '', 'format', 'integer', '4', 'unsigned', '0', 'not null', 'comment');
+    }
+
 
 /// These lines ALWAYS need to be here at the end of this file.  Don't mess with them. :-)
     include_once("$CFG->dirroot/mod/assignment/lib.php");

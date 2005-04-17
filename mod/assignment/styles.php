@@ -1,6 +1,6 @@
-#mod-assignment-submissions .submission .content,
-#mod-assignment-submissions .submission .topic,
-#mod-assignment-submissions .submission .picture
+#mod-assignment-submissions .feedback .content,
+#mod-assignment-submissions .feedback .topic,
+#mod-assignment-submissions .feedback .picture
 {
   padding: 10px;
   border-width:1px;
@@ -8,17 +8,21 @@
   border-color:#DDDDDD;
 }
 
-.mod-assignment .topic .files {
+.mod-assignment .feedback .files {
   float: right;
   background-color: #EFEFEF;
   padding:5px;
 }
 
-.mod-assignment .topic .from {
+.mod-assignment .feedback .grade {
+  float: right;
+}
+
+.mod-assignment .feedback .from {
   float: left;
 }
 
-.mod-assignment .topic .time {
+.mod-assignment .feedback .time {
   font-size: 0.8em;
 }
 
@@ -49,7 +53,7 @@
   padding-right: 5px;
 }
 
-#mod-assignment-submissions .grade {
+#mod-assignment-submissions .submissions .grade {
   text-align: right;
   font-weight:bold;
 }
