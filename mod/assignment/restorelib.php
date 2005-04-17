@@ -49,6 +49,7 @@
             $assignment->assignmenttype = backup_todb($info['MOD']['#']['ASSIGNMENTTYPE']['0']['#']);
             $assignment->maxbytes = backup_todb($info['MOD']['#']['MAXBYTES']['0']['#']);
             $assignment->timedue = backup_todb($info['MOD']['#']['TIMEDUE']['0']['#']);
+            $assignment->timeavailable = backup_todb($info['MOD']['#']['TIMEAVAILABLE']['0']['#']);
             $assignment->grade = backup_todb($info['MOD']['#']['GRADE']['0']['#']);
             $assignment->timemodified = backup_todb($info['MOD']['#']['TIMEMODIFIED']['0']['#']);
 

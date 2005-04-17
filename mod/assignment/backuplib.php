@@ -45,6 +45,7 @@
                 fwrite ($bf,full_tag("ASSIGNMENTTYPE",4,false,$assignment->assignmenttype));
                 fwrite ($bf,full_tag("MAXBYTES",4,false,$assignment->maxbytes));
                 fwrite ($bf,full_tag("TIMEDUE",4,false,$assignment->timedue));
+                fwrite ($bf,full_tag("TIMEAVAILABLE",4,false,$assignment->timeavailable));
                 fwrite ($bf,full_tag("GRADE",4,false,$assignment->grade));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$assignment->timemodified));
                 //if we've selected to backup users info, then execute backup_assignment_submisions
