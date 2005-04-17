@@ -5,7 +5,7 @@
 	require_once("../../config.php");
 	require_once("lib.php");
 
-	if (!$form = data_submitted()) {
+	if (!$form = data_submitted($CFG->wwwroot.'/course/mod.php')) {
         error("This script was called wrongly");
     }
 
