@@ -1,4 +1,4 @@
-<?PHP // $Id$ 
+<?PHP // $Id$
       // moodle.php - created with Moodle 1.4.4 + (2004083140)
 
 
@@ -133,8 +133,8 @@ $string['category'] = 'Bereiche';
 $string['categoryadded'] = 'Die Kategorie \'$a\' wurde angelegt';
 $string['categorydeleted'] = 'Die Kategorie \'$a\' wurde gelöscht';
 $string['categoryduplicate'] = 'Eine Kategorie mit dem Namen \'$a\' existiert bereits!';
-$string['changedpassword'] = 'Passwort geändert';
-$string['changepassword'] = 'Passwort ändern';
+$string['changedpassword'] = 'Kennwort geändert';
+$string['changepassword'] = 'Kennwort ändern';
 $string['changessaved'] = 'Änderungen gespeichert';
 $string['checkingbackup'] = 'Überprüfe Sicherung';
 $string['checkingcourse'] = 'Überprüfe Kurs';
@@ -193,7 +193,7 @@ $string['configgdversion'] = 'Zeigt Ihnen die installierte Version von GD an. Di
 $string['confightmleditor'] = 'Wählen Sie aus, ob Sie die Verwendung des Text-Editors prinzipiell zulassen möchten. Der Editor ist allerdings auf kompatible Browser angewiesen; sonst bleibt er unsichtbar. Die Nutzer können die Verwendung auch individuell ablehnen.';
 $string['configidnumber'] = 'Diese Option legt fest, ob (a) Nutzer nicht nach einer ID Nummer gefragt werden, (b) Nutzer zwar nach einer ID Nummer gefragt werden, das Feld aber leer lassen können oder (c) Nutzer nach einer ID Nummer gefragt werden und dieses Feld nicht leer lassen können. Die ID Nummer des Nutzers wird in seinem Profil angezeigt.';
 $string['configintro'] = 'Auf dieser Seite können Sie eine Anzahl von Konfigurations-Variablen spezifizieren, die Ihnen helfen, dass Moodle auf Ihrem Server zuverlässig arbeitet. Sorgen Sie sich nicht grossartig. Die Standard-Einstellungen funktionieren normalerweise sehr gut. Sie können jederzeit auf diese Seite zurückkommen und Einstellungen ändern.';
-$string['configintroadmin'] = 'Auf dieser Seite sollten Sie den/die Hauptadminstrator/in einrichten, der/die die vollständige Kontrolle über die Site hat. Achten Sie darauf, hier einen sicheren Benutzernamen samt Passwort sowie eine gültige E-Mail-Adresse anzugeben. Weitere Administrator/innen können Sie später festlegen.';
+$string['configintroadmin'] = 'Auf dieser Seite sollten Sie den/die Hauptadminstrator/in einrichten, der/die die vollständige Kontrolle über die Site hat. Achten Sie darauf, hier einen sicheren Anmeldenamen samt Kennwort sowie eine gültige E-Mail-Adresse anzugeben. Weitere Administrator/innen können Sie später festlegen.';
 $string['configintrosite'] = 'Diese Seite erlaubt es Ihnen, die Startseite und den Namen der neuen Site einzurichten. Sie können später über die Startseite (Konfiguration > Seiteneinstellungen) hierher zurückkehren und die Einstellungen jederzeit bearbeiten.';
 $string['configlang'] = 'Wählen Sie die Standard-Sprache für die gesamte Seite. Die Benutzer können diese später überschreiben.';
 $string['configlangdir'] = 'In den meisten Sprachen schreibt man von links nach rechts, aber in einigen anderen, wie Arabisch oder Hebräisch, schreibt man von rechts nach links.';
@@ -226,7 +226,7 @@ $string['configsitepolicy'] = 'Sie können eine Seite mit Nutzungsbedigungen (pol
 $string['configslasharguments'] = 'Dateien (Bilder, Dokumente usw.) können über ein Skript, das \'Slash-Argumente\' benutzt (zweite Option hier) einfacher in Internet-Browsern, Proxy-Servern usw. zwischengespeichert werden.
 Leider erlauben nicht alle PHP-Server diese Methode, so dass Sie, sofern Sie Probleme bei der Anzeige von Dateien oder Bildern (beispielsweise den Benutzer-Fotos) haben, diese Variable auf die erste Option stellen müssen. ';
 $string['configsmtphosts'] = 'Geben Sie hier den vollen Namen von einem oder mehreren lokalen SMTP-Servern an, die Moodle für den E-Mail-Versand benutzen soll (beispielsweise \'E-Mail.a.de\' oder \'E-Mail.a.de;E-Mail.b.de\'). Wenn Sie dieses frei lassen, wird Moodle die Standard-Methode von PHP zum Senden von E-Mails verwenden.';
-$string['configsmtpuser'] = 'Sofern Sie einen SMTP-Server angegeben haben und der Server Zugangsdaten erfordert, dann geben Sie hier Benutzernamen und Passwort an.';
+$string['configsmtpuser'] = 'Sofern Sie einen SMTP-Server angegeben haben und der Server Zugangsdaten erfordert, dann geben Sie hier Anmeldenamen und Kennwort an.';
 $string['configteacherassignteachers'] = 'Sollen Trainer/innen ihren Kursen selbst weitere Kolleg/innen zuordnen können=? Falls \'Nein\', können nur die/der Kursverwalter/in und Administrator/innen den Kursen Trainer/innen zuordnen.';
 $string['configtimezone'] = 'Stellen Sie hier die bevorzugte Zeitzone ein. Sie steuert die Zeitanzeige in Ihren Kursen. Jeder Teilnehmer kann selbst in seinem Profil eine eigene Zeitzone einstellen und damit Ihre Voreinstellung für sich aufheben. Die Einstellung \"Serverzeit\"  verwendet hier die Zeiteinstellung Ihres Internetservers. Die Einstellung \"Serverzeit\" im Nutzerprofil hingegen greift auf die Einstellung Ihres Moodleprogramms an dieser Stelle zurück.';
 $string['configunzip'] = 'Geben Sie hier den Pfad zum Programm unzip an (Nur Unix). Dieser wird für das Entpacken von ZIP-Archiven auf dem Server benötigt.';
@@ -269,7 +269,7 @@ $string['courseuploadlimit'] = 'Maximale Größe der Dateien für den Upload';
 $string['create'] = 'Erstelle';
 $string['createaccount'] = 'Meinen neuen Zugang einrichten';
 $string['createfolder'] = 'Erstelle einen Ordner in $a';
-$string['createuserandpass'] = 'Gewünschter Benutzername und Passwort für das Login';
+$string['createuserandpass'] = 'Gewünschter Anmeldename und Kennwort für das Login';
 $string['createziparchive'] = 'ZIP-Archiv erstellen';
 $string['creatingblocks'] = 'Blöcke erstellen';
 $string['creatingcategoriesandquestions'] = 'Erstelle Kategorien und Fragen';
@@ -430,14 +430,14 @@ Sofern das nicht funktioniert, kopieren Sie die Adresse bitte in die Adresszeile
 
 Sofern Sie Hilfe benötigen, wenden Sie sich bitte an den Verwalter der Seite,
 $a->admin';
-$string['emailpasswordconfirmationsubject'] = '$a: Passwort-Bestätigung ändern';
-$string['emailpasswordconfirmsent'] = 'Eine E-Mail zur Bestätigung der Passwortänderung sollte an Ihre Adresse <b>$a</b> verschickt worden sein.
+$string['emailpasswordconfirmationsubject'] = '$a: Kennwort-Bestätigung ändern';
+$string['emailpasswordconfirmsent'] = 'Eine E-Mail zur Bestätigung der Kennwortänderung sollte an Ihre Adresse <b>$a</b> verschickt worden sein.
 <p>Sie enthält einfache Anweisungen und einen Link, um die Änderung abzuschließen.
 <b>Bei weiteren Problemen kontaktieren Sie bitte die Moodle-Administration.';
-$string['emailpasswordsent'] = 'Danke für Ihre Bestätigung der Passwortänderung.
-<p>Eine E-Mail mit Ihrem neuen Passwort wurde an Ihre Adresse <b>$a->email</b> verschickt.
-<p>Das Passwort wurde automatisch generiert -
-Sie werden wahrscheinlich dieses <a href=$a->link>Passwort ändern</a> wollen, um es sich besser merken zu können.';
+$string['emailpasswordsent'] = 'Danke für Ihre Bestätigung der Kennwortänderung.
+<p>Eine E-Mail mit Ihrem neuen Kennwort wurde an Ihre Adresse <b>$a->email</b> verschickt.
+<p>Das Kennwort wurde automatisch generiert -
+Sie werden wahrscheinlich dieses <a href=$a->link>Kennwort ändern</a> wollen, um es sich besser merken zu können.';
 $string['enable'] = 'Aktivieren';
 $string['encryptedcode'] = 'Verschlüsselter Code';
 $string['enrolledincourse'] = 'Eingeschrieben in Kurs ';
@@ -455,7 +455,7 @@ $string['enrolmentnotyet'] = 'Sie können diesen Kursraum erst am $a betreten. Ha
 $string['enrolments'] = 'Anmeldungen';
 $string['enrolperiod'] = 'Teilnahmedauer';
 $string['entercourse'] = 'Hier klicken, um den Kurs zu betreten';
-$string['enteremailaddress'] = 'Geben Sie hier Ihre E-Mail-Adresse ein, um Ihr Kennwort zurückzusetzen. Ein neues Passwort wird Ihnen per E-Mail zugesendet.';
+$string['enteremailaddress'] = 'Geben Sie hier Ihre E-Mail-Adresse ein, um Ihr Kennwort zurückzusetzen. Ein neues Kennwort wird Ihnen per E-Mail zugesendet.';
 $string['entries'] = 'Eintragungen';
 $string['error'] = 'Fehler';
 $string['errortoomanylogins'] = 'Entschuldigung, aber Sie haben die Anzahl erlaubter Zugangs-Versuche erreicht. Starten Sie Ihren Browser neu.';
@@ -489,9 +489,9 @@ $string['force'] = 'Übergreifend';
 $string['forcedmode'] = 'festgelegter Modus';
 $string['forcelanguage'] = 'Festgelegte Sprache';
 $string['forceno'] = 'Keine';
-$string['forcepasswordchange'] = 'Änderung des Passwortes ist erforderlich';
-$string['forcepasswordchangehelp'] = 'Fordert den Nutzer auf, beim nächsten Login das Passwort zu ändern.';
-$string['forgotten'] = 'Benutzername und Kennwort vergessen?';
+$string['forcepasswordchange'] = 'Änderung des Kennwortes ist erforderlich';
+$string['forcepasswordchangehelp'] = 'Fordert den Nutzer auf, beim nächsten Login das Kennwort zu ändern.';
+$string['forgotten'] = 'Anmeldename und Kennwort vergessen?';
 $string['format'] = 'Format';
 $string['formathtml'] = 'HTML-Format';
 $string['formatmarkdown'] = 'Markdown-Format';
@@ -619,7 +619,7 @@ $string['lastmodified'] = 'Zuletzt geändert';
 $string['lastname'] = 'Nachname';
 $string['latestlanguagepack'] = 'Prüfe auf aktuelle Sprachpakete auf moodle.org';
 $string['latestnews'] = 'Neueste Nachrichten';
-$string['leavetokeep'] = 'Feld leer lassen, um gegenwärtiges Passwort zu behalten';
+$string['leavetokeep'] = 'Feld leer lassen, um gegenwärtiges Kennwort zu behalten';
 $string['license'] = 'GPL-Lizenz';
 $string['list'] = 'Liste';
 $string['listfiles'] = 'Liste der Dateien in $a';
@@ -640,22 +640,22 @@ hier können Sie sich anmelden, um an den verschiedenen Kursen teilzunehmen. Es s
 Gehen Sie bitte wie folgt vor: <OL size=2>
 <LI>
 Füllen Sie das Formular <HREF=$a>Neuer Zugang </A>
-mit Ihren Angaben aus. 
-<LI>Sie erhalten anschließend eine E-Mail an Ihre angegebene E-Mail-Adresse. 
-<LI>Lesen Sie diese E-Mail und klicken Sie den darin enthaltenen Link an. 
-<LI>Ihr Zugang wird dadurch bestätigt und Sie werden automatisch mit Ihren zuvor angegebenen Zugangsdaten auf der Startseite eingeloggt. 
-<LI>Jetzt wählen Sie bitte den Kurs aus, an dem Sie teilnehmen möchten. 
-<LI>Für einige Kurse ist ein Zugangsschlüssel notwendig. Benutzen Sie dazu bitte den Zugangsschlüssel, den Ihnen Ihr/e Trainer/in mitgeteilt hat. Dieser Zugangsschlüssel ermöglicht Ihnen sich für den entsprechenden Kurs \"einzuschreiben\". 
-<LI>Nun können Sie auf den gesamten Kurs zugreifen. Zukünftig brauchen Sie nur den bei Ihrer Anmeldung gewählten Benutzernamen und das Passwort im Formular auf dieser Seite links eingeben, um sich einzuloggen und Zugang zu den verschiedenen Kursen zu erhalten. 
- 
+mit Ihren Angaben aus.
+<LI>Sie erhalten anschließend eine E-Mail an Ihre angegebene E-Mail-Adresse.
+<LI>Lesen Sie diese E-Mail und klicken Sie den darin enthaltenen Link an.
+<LI>Ihr Zugang wird dadurch bestätigt und Sie werden automatisch mit Ihren zuvor angegebenen Zugangsdaten auf der Startseite eingeloggt.
+<LI>Jetzt wählen Sie bitte den Kurs aus, an dem Sie teilnehmen möchten.
+<LI>Für einige Kurse ist ein Zugangsschlüssel notwendig. Benutzen Sie dazu bitte den Zugangsschlüssel, den Ihnen Ihr/e Trainer/in mitgeteilt hat. Dieser Zugangsschlüssel ermöglicht Ihnen sich für den entsprechenden Kurs \"einzuschreiben\".
+<LI>Nun können Sie auf den gesamten Kurs zugreifen. Zukünftig brauchen Sie nur den bei Ihrer Anmeldung gewählten Anmeldenamen und das Kennwort im Formular auf dieser Seite links eingeben, um sich einzuloggen und Zugang zu den verschiedenen Kursen zu erhalten.
+
 </OL>';
-$string['loginstepsnone'] = 'Guten Tag!<P>Für den vollen Zugang zu den Kursen müssen Sie sich einen Zugang anlegen. <P> Alles, was Sie tun müssen, ist einen Benutzernamen und ein  Kennwort zu wählen, das Sie im Formular auf dieser Seite eintragen! <P>Sofern jemand anderes bereits Ihren Benutzernamen gewählt hat, müssen Sie einen anderen Benutzernamen verwenden.';
+$string['loginstepsnone'] = 'Guten Tag!<P>Für den vollen Zugang zu den Kursen müssen Sie sich einen Zugang anlegen. <P> Alles, was Sie tun müssen, ist einen Anmeldenamen und ein  Kennwort zu wählen, das Sie im Formular auf dieser Seite eintragen! <P>Sofern jemand anderes bereits Ihren Anmeldenamen gewählt hat, müssen Sie einen anderen Anmeldenamen verwenden.';
 $string['loginto'] = 'Angemeldet bei $a';
 $string['loginusing'] = 'Bitte beachten Sie, dass es notwendig ist, sich vor dem ersten Moodle-Login einmalig zu registrieren';
 $string['logout'] = 'LogOut';
 $string['logs'] = 'Statistiken';
-$string['logtoomanycourses'] = '	 [ <a href=\"$a->url\">more</a> ]';
-$string['logtoomanyusers'] = '	 [ <a href=\"$a->url\">more</a> ]';
+$string['logtoomanycourses'] = '         [ <a href=\"$a->url\">more</a> ]';
+$string['logtoomanyusers'] = '         [ <a href=\"$a->url\">more</a> ]';
 $string['mailadmins'] = 'Administrator/innen informieren';
 $string['mailstudents'] = 'Teilnehmer/innen informieren';
 $string['mailteachers'] = 'Trainer/innen informieren';
@@ -700,8 +700,8 @@ $string['missingfirstname'] = 'Vorname fehlt';
 $string['missingfullname'] = 'Name fehlt';
 $string['missinglastname'] = 'Nachname fehlt';
 $string['missingname'] = 'Fehlender Name';
-$string['missingnewpassword'] = 'Neues Passwort fehlt';
-$string['missingpassword'] = 'Passwort fehlt';
+$string['missingnewpassword'] = 'Neues Kennwort fehlt';
+$string['missingpassword'] = 'Kennwort fehlt';
 $string['missingshortname'] = 'Kurzer Name fehlt';
 $string['missingshortsitename'] = 'Kurzer Seitenname fehlt';
 $string['missingsitedescription'] = 'Seitenbeschreibung fehlt';
@@ -711,7 +711,7 @@ $string['missingstudent'] = 'Teilnehmer/in fehlt';
 $string['missingsummary'] = 'Zusammenfassung fehlt';
 $string['missingteacher'] = 'Sie müssen etwas auswählen';
 $string['missingurl'] = 'Fehlende URL';
-$string['missingusername'] = 'Benutzername fehlt';
+$string['missingusername'] = 'Anmeldename fehlt';
 $string['modified'] = 'Geändert';
 $string['moduledeleteconfirm'] = 'Sie sind dabei, das Modul \'$a\' vollständig zu löschen. Dies löscht alles in der Datenbank, das mit der Modul-Aktivität verknüpft ist. Sind Sie SICHER, dass Sie fortfahren möchten?';
 $string['moduledeletefiles'] = 'Alle mit dem Modul \'$a->module\' verknüpften Daten wurden aus der Datenbank gelöscht. Um diese Löschung zu vervollständigen (und das Modul daran hindern, sich selbst erneut zu installieren), sollten Sie nun dieses Verzeichnis auf dem Server entfernen: $a->directory';
@@ -732,7 +732,7 @@ $string['moveright'] = 'Einzug rechts';
 $string['moveselectedcoursesto'] = 'Gewählte Kurse verschieben nach ...';
 $string['movetoanotherfolder'] = 'In einen anderen Ordner verschieben';
 $string['moveup'] = 'Nach oben verschieben';
-$string['mustchangepassword'] = 'Das neue Passwort darf nicht mit dem alten Passwort übereinstimmen.';
+$string['mustchangepassword'] = 'Das neue Kennwort darf nicht mit dem alten Kennwort übereinstimmen.';
 $string['mustconfirm'] = 'Sie müssen Ihren Zugang bestätigen';
 $string['mycourses'] = 'Meine Kurse';
 $string['name'] = 'Link (Kursseite)';
@@ -751,10 +751,10 @@ $string['newpasswordtext'] = 'Hallo $a->firstname $a->lastname,
 Ihr Kennwort auf \'$a->sitename\' wurde zurückgesetzt. Ihnen ist ein neues, temporäres Kennwort zugewiesen worden.
 
 Ihre Zugangsdaten lauten jetzt:
-   Benutzername: $a->username
+   Anmeldename: $a->username
    Kennwort: $a->newpassword
 
-Bitte folgen Sie diesem Link und ändern Ihr Passwort:
+Bitte folgen Sie diesem Link und ändern Ihr Kennwort:
 $a->link
 
 [Sollte der Link in Ihrem Mail-Programm nicht klickbar sein, können Sie ihn auch direkt in die Adresszeile Ihres Webbrowsers kopieren.]
@@ -835,12 +835,12 @@ $string['parentcoursenotmetacourse'] = 'Parent-Kurs ist kein Metakurs!';
 $string['parentfolder'] = 'Parent Ordner';
 $string['parentlanguage'] = 'Muttersprache';
 $string['participants'] = 'Teilnehmer/innen';
-$string['password'] = 'Passwort';
-$string['passwordchanged'] = 'Passwort wurde geändert';
-$string['passwordconfirmchange'] = 'Passwortänderung bestätigen';
+$string['password'] = 'Kennwort';
+$string['passwordchanged'] = 'Kennwort wurde geändert';
+$string['passwordconfirmchange'] = 'Kennwortänderung bestätigen';
 $string['passwordrecovery'] = 'Ja, bitte beim Login helfen';
 $string['passwordsdiffer'] = 'Die Passwörter stimmen nicht überein';
-$string['passwordsent'] = 'Passwort wurde verschickt';
+$string['passwordsent'] = 'Kennwort wurde verschickt';
 $string['passwordsenttext'] = '<P>Eine E-Mail wurde an Ihre Adresse $a->email gesendet.
 <P><B>Schauen Sie bitte in Ihrer E-Mail nach Ihrem neuen Kennwort
 
@@ -1099,7 +1099,7 @@ $string['version'] = 'Version';
 $string['view'] = 'Ansicht';
 $string['virusfound'] = 'Achtung Administrator: Clam AV hat einen Virus in einer Datei gefunden. Die Datei wurde von $a->user im Kurs $a->course hochgeladen. Hier ist der Bericht von Clamscan:';
 $string['virusfoundlater'] = 'Eine Datei wurde am  $a->date mit dem Dateinamen $a->filename für den Kurs $a->course hochgeladen. In der Datei wurde ein Virus gefunden. Hier ist eine Zusammenfassung des Berichts über diese Datei: $a->action. Wenn die Datei dennoch genutzt werden soll, können Sie sie erneut dem Kurs zur Verfügung stellen.';
-$string['virusfoundlateradmin'] = 'Achtung Administrator! Eine Datei wurde am  $a->date mit dem Dateinamen $a->filename für den Kurs $a->course hochgeladen. In der Datei wurde ein Virus gefunden. Hier ist eine Zusammenfassung des Berichts über diese Datei: $a->action. 
+$string['virusfoundlateradmin'] = 'Achtung Administrator! Eine Datei wurde am  $a->date mit dem Dateinamen $a->filename für den Kurs $a->course hochgeladen. In der Datei wurde ein Virus gefunden. Hier ist eine Zusammenfassung des Berichts über diese Datei: $a->action.
 Der Nutzer wurde bereits benachrichtigt.';
 $string['virusfoundlateradminnolog'] = 'Achtung Administrator! Eine Datei wurde mit dem Namen $a->filename hochgeladen. In der Datei wurde ein Virus entdeckt. moodle konnte den Fehler/die Datei nicht an den Nutzer zurück geben. Hier ist ein Kurzbericht über den Hintergrund: $a->action';
 $string['virusfoundsubject'] = '$a: Virus entdeckt!';
@@ -1138,7 +1138,7 @@ $string['writingloginfo'] = 'Schreibe Log-Info';
 $string['writingmoduleinfo'] = 'Schreibe Modulinformation';
 $string['writingscalesinfo'] = 'Schreibe Skaleninformation';
 $string['writinguserinfo'] = 'Schreibe Nutzerinformation';
-$string['wrongpassword'] = 'Falsches Kennwort oder Benutzername';
+$string['wrongpassword'] = 'Falsches Kennwort oder Anmeldename';
 $string['yes'] = 'Ja';
 $string['youareabouttocreatezip'] = 'Sie sind dabei, eine zip-Datei anzulegen mit diesem Inhalt ';
 $string['youaregoingtorestorefrom'] = 'Sie stellen wieder her von:';

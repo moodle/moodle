@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.4.3 (2004083130)
+      // journal.php - created with Moodle 1.4.4 + (2004083140)
 
 
 $string['alwaysopen'] = 'Immer offen';
@@ -23,7 +23,7 @@ $string['modulenameplural'] = 'Journale';
 $string['newjournalentries'] = 'Neue Journal-Einträge';
 $string['noentry'] = 'Kein Eintrag';
 $string['noratinggiven'] = 'Keine Beurteilung abgegeben';
-$string['notopenuntil'] = 'Diese Journal wird geschlossen sein bis';
+$string['notopenuntil'] = 'Diese Journal ist geschlossen bis';
 $string['notstarted'] = 'Sie haben mit Ihrem Journal noch nicht begonnen';
 $string['overallrating'] = 'Allgemeine Beurteilung';
 $string['rate'] = 'Beurteilung';
