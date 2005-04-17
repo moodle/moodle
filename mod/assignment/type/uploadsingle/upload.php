@@ -23,9 +23,9 @@
     $strassignment  = get_string("modulename", "assignment");
     $strupload      = get_string("upload");
 
-    print_header_simple("$assignment->name : $strupload", "",
+    print_header_simple(format_string($assignment->name)." : $strupload", "",
                  "<a href=index.php?id=$course->id>$strassignments</a> ->
-                  <a href=\"view.php?a=$assignment->id\">$assignment->name</a> -> $strupload",
+                  <a href=\"view.php?a=$assignment->id\">".format_string($assignment->name,true)."</a> -> $strupload",
                   "", "", true);
 
     if ($submission = get_record("assignment_submissions", "assignment", $assignment->id, "userid", $USER->id)) {

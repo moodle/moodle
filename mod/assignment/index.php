@@ -69,10 +69,10 @@
         $due = userdate($assignment->timedue);
         if (!$assignment->visible) {
             //Show dimmed if the mod is hidden
-            $link = "<a class=\"dimmed\" href=\"view.php?id=$assignment->coursemodule\">$assignment->name</a>";
+            $link = "<a class=\"dimmed\" href=\"view.php?id=$assignment->coursemodule\">".format_string($assignment->name,true)."</a>";
         } else {
             //Show normal if the mod is visible
-            $link = "<a href=\"view.php?id=$assignment->coursemodule\">$assignment->name</a>";
+            $link = "<a href=\"view.php?id=$assignment->coursemodule\">".format_string($assignment->name,true)."</a>";
         }
 
         $printsection = "";
