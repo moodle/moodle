@@ -116,8 +116,7 @@ $string['backupnameformat'] = '%%É%%h%%n-%%Ó%%P';
 $string['backupnoneusersinfo'] = 'Figyelem: Egyetlen felhasználót sem választott ki biztonsági mentésre, ezért minden modul biztonsági mentése \"felhasználói adatok nélkül\" módba kerül. Ügyeljen arra, hogy a \"gyakorlat\" és a \"szeminárium\" moduljai nem felelnek meg ennek a biztonsági mentésfajtának, ezért teljesen ki vannak kapcsolva.';
 $string['backuporiginalname'] = 'Mentés neve';
 $string['backupsavetohelp'] = 'A mentendõ állományok könyvtárához vezetõ teljes útvonal<br />(a kurzus alapkönyvtárába mentéshez hagyja üresen)';
-$string['backuptakealook'] = 'Tekintse meg biztonsági naplóit itt:
-$a';
+$string['backuptakealook'] = 'Tekintse meg biztonsági naplóit itt: $a';
 $string['backupuserfileshelp'] = 'Döntse el, hogy a felhasználói állományok (pl. a profilok) bekerüljenek-e az automatikus biztonsági mentésbe';
 $string['backupusershelp'] = 'Döntse el, hogy minden felhasználó bekerüljön-e a szerverbe, vagy csak az egyes kurzusokhoz szükségesek';
 $string['backupversion'] = 'Mentés verziószáma';
@@ -164,7 +163,7 @@ $string['clamdeletedfile'] = 'Ezt az állományt törölték.';
 $string['clamdeletedfilefailed'] = 'Ezt az állományt nem lehetett törölni.';
 $string['clamemailsubject'] = '$a :: AV-vírusölõ értesítése';
 $string['clamfailed'] = 'Az AV vírusölõ nem futott le. A hibajelzés $a volt. Íme a vírusölõ üzenete:';
-$string['clamlost'] = 'A Moodle feltöltéskor vírusölõvel ellenõrzi az állományt, de az AV megadott $a útvonala érvénytelen.';
+$string['clamlost'] = 'A Moodle feltöltéskor vírusölõvel ellen?rzi az állományt, de az AV megadott $a útvonala érvénytelen.';
 $string['clamlostandactinglikevirus'] = 'Emellett a Moodle úgy van beállítva, hogy a vírusölõ sikertelen lefutásakor az állományokat fertõzöttnek tekinti. Ezek szerint mindaddig nem tölthetnek fel tanulók állományokat, amíg ezt nem sikerül kiküszöbölni.';
 $string['clammovedfile'] = 'Az állomány átkerült a megadott karanténkönyvtárba, az új hely: $a';
 $string['clammovedfilebasic'] = 'Az állomány karanténkönyvtárba került.';
@@ -183,7 +182,7 @@ $string['confirmednot'] = 'A regisztráció visszaigazolása még nem történt meg!';
 $string['continue'] = 'Tovább';
 $string['continuetocourse'] = 'A kurzusba való belépéshez kattintson ide';
 $string['cookiesenabled'] = 'A böngészõjében engedélyeznie kell a sütiket.';
-$string['cookiesnotenabled'] = 'Böngészõjében a sütik használata sajnos nincs engedélyezve';
+$string['cookiesnotenabled'] = 'Böngészõjében a sütik használata nincs engedélyezve.';
 $string['copy'] = 'másolás';
 $string['copyingcoursefiles'] = 'Kurzusfájlok másolása';
 $string['copyinguserfiles'] = 'Felhasználói fájlok másolása';
@@ -352,7 +351,7 @@ $string['emailnotallowed'] = 'Ezeken a doméneken e-mail címek nem használhatók  
 $string['emailonlyallowed'] = 'Ez az e-mail nincs az engedélyezettek között ($a)';
 $string['emailpasswordconfirmation'] = 'Üdvözöljük, $a->firstname. Valaki (feltehetõleg Ön) egy új jelszó létrehozását igényelte a(z) $a->sitename oldalon az Ön azonosítójának a felhasználásával. Ennek megerõsítéséhez és a jelszónak az Ön e-mail címére való elküldéséhez térjen át erre a webes címre: $a->link. Általában a levelezõ programokban ez kék ugrópontként jelenik meg, amelyre csak kattintania kell. Ha ez nem mûködik, másolja ki a böngészõablak tetején lévõ címsorba. Ha segítségre van szüksége, lépjen kapcsolatba a portál adminisztrátorával: $a->admin.';
 $string['emailpasswordconfirmationsubject'] = '$a: jelszómódosítás visszaigazolása';
-$string['emailpasswordconfirmsent'] = '<p>Egy e-mailt kellett kapnia az Ön <b>$a</b> címére. </p><p>A levél a regisztráció kitöltéséhez szükséges egyszerû teendõket tartalmazza. </p> <p>Ha továbbra is nehézségekbe ütközik, lépjen kapcsolatba a portál adminisztrátorával.</p>';
+$string['emailpasswordconfirmsent'] = '<p>Egy e-mailt kellett kapnia az Ön <b>$a</b> címére.</p> <p>A levél a regisztráció kitöltéséhez szükséges egyszerû teendõket tartalmazza. </p> <p>Ha továbbra is nehézségekbe ütközik, lépjen kapcsolatba a portál adminisztrátorával.</p>';
 $string['emailpasswordsent'] = '<p>Köszönjük a jelszómódosítás visszaigazolását.</p>  <p>Egy e-mailt kellett kapnia az Ön <b>$a</b> címére.</p> <p>Az új jelszó automatikusan elkészült - elõfordulhat, hogy szeretné <a href=\"$a->link\">jelszavát kicserélni</a> valamilyen könnyebben megjegyezhetõre.</p>';
 $string['enable'] = 'Bekapcsolás';
 $string['encryptedcode'] = 'Titkosított kód';
@@ -437,8 +436,8 @@ $string['gdneed'] = 'Az ábra megtekintéséhez GD telepítése szükséges';
 $string['gdnot'] = 'GD nincs telepítve';
 $string['go'] = 'Mehet';
 $string['gpl'] = 'Copyright (C) 1999-2004   Martin Dougiamas  (http://dougiamas.com) Ez a program ingyenes szoftver; továbbadhatja és/vagy módosíthatja a Free Software Foundation által kibocsátott GNU General Public License feltételeinek a betartásával; vagy a licenc 2-es, vagy (választhatóan) annak bármely késõbbi verziója szerint. A programot abban a reményben adjuk közre, hogy hasznosnak bizonyul, azonban MINDENNEMÛ GARANCIA VÁLLALÁSA NÉLKÜL; ideértve az ELADHATÓSÁG vagy valamely KONKRÉT CÉLRA VALÓ ALKALMASSÁG garantálását. További részletekért lásd a GNU általános nyilvános licencét: http://www.gnu.org/copyleft/gpl.html';
-$string['grade'] = 'Pontszám';
-$string['grades'] = 'Pontszámok';
+$string['grade'] = 'Pont';
+$string['grades'] = 'Pontok';
 $string['group'] = 'Csoport';
 $string['groupadd'] = 'Új csoport hozzáadása';
 $string['groupaddusers'] = 'A kiválasztott csoport hozzáadása';
@@ -507,7 +506,7 @@ $string['importdata'] = 'Kurzusadatok importálása';
 $string['importdataexported'] = 'A forráskurzusa adatainak exportálása sikerült. <br />Folytassa a célkurzusába való importálással.';
 $string['importdatafinished'] = 'Az importálás megtörtént! ';
 $string['importdatafrom'] = 'Kurzus keresése adatimportálához:';
-$string['importmetacoursenote'] = 'EZen az ûrlapon adhat hozzá kurzusokat a metakurzusához (importálva a beíratkozásokat is)';
+$string['importmetacoursenote'] = 'Ezen az ûrlapon adhat hozzá kurzusokat a metakurzusához (importálva a beíratkozásokat is)';
 $string['inactive'] = 'Nincs bekapcsolva';
 $string['include'] = 'Felvesz';
 $string['includeallusers'] = 'Felvesz minden felhasználót';
@@ -556,7 +555,7 @@ $string['loginguest'] = 'Bejelentkezés vendégként';
 $string['loginsite'] = 'Belépés a portálra';
 $string['loginsteps'] = 'Üdvözüljük! Ahhoz, hogy teljesen hozzáférjen a kurzusokhoz, új felhasználót kell létrehoznia ehhez a weboldalhoz. Minden kurzushoz hozzátartozhat egy egyszeri \"beíratkozó kód\", amelyre egyelõre nincs szüksége. A végrehajtandó lépések: 
 <ol>
-<li>Töltse ki az <a href=$a>Új felhasználó</a> ûrlap adatait. </li>
+<li>Töltse ki az <a href=\"$a\">Új felhasználó</a> ûrlap adatait.</li>
 <li>Egy e-mailt kap a saját címére közvetlenül a kitöltés után.</li>
 <li>Olvassa el az e-mailt és kattintson a benne talált ugrópontra.</li>
 <li>Azonosítóját ekkor a rendszer visszaigazolja, Ön pedig sikeresen be is jelentkezett.</li>
@@ -676,7 +675,7 @@ $string['no'] = 'Nem';
 $string['nobody'] = 'Senki';
 $string['nocoursesfound'] = 'A \'$a\' szavakkal nincsenek kurzusok';
 $string['nocoursesyet'] = 'Ebben a kategóriában nincsenek kurzusok';
-$string['nodstpresets'] = 'Az adminisztrátor nem kapcsolta be nappali mentési idõpont támogatását.';
+$string['nodstpresets'] = 'Az adminisztrátor nem kapcsolta be a nappali mentési idõpont támogatását.';
 $string['noexistingadmins'] = 'Nincs adminisztrátor, ez egy komoly hiba, ennek az üzenetnek soha nem volna szabad megjelennie.';
 $string['noexistingcreators'] = 'Nincsenek készítõk';
 $string['noexistingstudents'] = 'Nincsenek tanulók';
@@ -692,8 +691,7 @@ $string['nopotentialadmins'] = 'Nincs lehetséges adminisztrátor';
 $string['nopotentialcreators'] = 'Nincs lehetséges készítõ';
 $string['nopotentialstudents'] = 'Nincs lehetséges tanuló';
 $string['nopotentialteachers'] = 'Nincs lehetséges tanár';
-$string['noreplybouncemessage'] = 'Választ nem váró e-mail címre válaszolt. Ha fórumra próbált választ küldeni, használja ehelelyett a $a fórumokat.
-E-mailjének tartalma:';
+$string['noreplybouncemessage'] = 'Választ nem váró e-mail címre válaszolt. Ha fórumra próbált választ küldeni, használja ehelelyett a $a fórumokat. E-mailjének tartalma:';
 $string['noreplybouncesubject'] = '$a - visszapattanó e-mail.';
 $string['noreplyname'] = 'Ne válaszoljon erre az e-mailre';
 $string['noresults'] = 'Nincs eredmény';
@@ -748,9 +746,7 @@ $string['passwordconfirmchange'] = 'Jelszóváltoztatás megerõsítése';
 $string['passwordrecovery'] = 'Igen, kérek segítséget a belépéshez';
 $string['passwordsdiffer'] = 'A jelszavak nem megfelelõek';
 $string['passwordsent'] = 'A jelszó elküldve';
-$string['passwordsenttext'] = '<p>Egy e-mailt küldtünk erre a címére: $a->email. </p>
-<p><b>A levélben elolvashatja az új jelszót.</b></p>
-<p>Az új jelszó automatikusan jött létre, így lehet, hogy Ön meg szeretné <a href=\"$a->link\">változtatni egy könnyebben megjegyezhetõre</a>.</p>';
+$string['passwordsenttext'] = '<p>Egy e-mailt küldtünk erre a címére: $a->email. </p><p><b>A levélben elolvashatja az új jelszót.</b></p><p>Az új jelszó automatikusan jött létre, így lehet, hogy Ön meg szeretné <a href=\"$a->link\">változtatni egy könnyebben megjegyezhetõre</a>.</p>';
 $string['pathnotexists'] = 'Az útvonal szerverén nem létezik!';
 $string['pathslasherror'] = 'Az útvonal nem végzõdhet perjellel!';
 $string['paymentinstant'] = 'A fizetéshez és a perceken belüli beíratkozáshoz használja az alábbi gombot!';
@@ -978,13 +974,11 @@ $string['uploadformlimit'] = 'A feltöltött állomány mérete nagyobb, mint az ûrla
 $string['uploadlabel'] = 'Cím:';
 $string['uploadnofilefound'] = 'Nincs ilyen fájl. Biztos benne, hogy kiválasztott egyet feltöltésre?';
 $string['uploadnotallowed'] = 'Feltöltés nincs engedélyezve';
-$string['uploadoldfilesdeleted'] = 'A régi állomány(ok) törlõdtek feltöltési területérõl';
+$string['uploadoldfilesdeleted'] = 'A régi állomány(ok) törlõtek feltöltési területérõl';
 $string['uploadpartialfile'] = 'A(z) $a állomány feltöltése csak részben sikerült';
 $string['uploadproblem'] = 'Ismeretlen probléma lépett fel a(z) \'$a\' fájl feltöltésekor (talán túl nagy a fájl?)';
-$string['uploadrenamedchars'] = 'Érvénytelen karakterek miatt az állomány 
-$a->oldname helyett $a->newname nevet kapott.';
-$string['uploadrenamedcollision'] = 'Névütközés miatt az állomány 
-$a->oldname helyett $a->newname nevet kapott.';
+$string['uploadrenamedchars'] = 'Érvénytelen karakterek miatt az állomány $a->oldname helyett $a->newname nevet kapott.';
+$string['uploadrenamedcollision'] = 'Névütközés miatt az állomány $a->oldname helyett $a->newname nevet kapott.';
 $string['uploadserverlimit'] = 'A feltöltött állomány mérete nagyobb, mint a szerver által megadott';
 $string['uploadthisfile'] = 'A fájl feltöltése';
 $string['uploadusers'] = 'Felhasználók feltöltése';
@@ -1008,22 +1002,9 @@ $string['usingexistingcourse'] = 'Létezõ kurzus használata';
 $string['version'] = 'Változat';
 $string['view'] = 'Nézet';
 $string['virusfound'] = 'Figyelem, adminisztrátor! Az AV vírusölõ vírust talált a(z) $a->user által a(z) $a->course kurzushoz feltöltött állományban. Íme a vírusölõ jelentése:';
-$string['virusfoundlater'] = 'A(z) $a->date idõpontban a(z)$a->course kurzushoz feltöltött $a->filename nevû állományban a rendszer vírust talált. Az állományával a következõ történt:
-
-$a->action
-
-Ha ez leadott munka volt, lehetõsége van újbóli leadásra, hogy a tanára megtekinthesse.';
-$string['virusfoundlateradmin'] = 'Figyelem, adminisztrátor! A(z) $a->date idõpontban a(z)$a->course kurzushoz a(z) $a->user által feltöltött $a->filename nevû állományban a rendszer vírust talált. Az állománnyal a következõ történt:
-
-$a->action
-
-A felhasználót szintén értesítettük.';
-$string['virusfoundlateradminnolog'] = 'Figyelem, adminisztrátor! A(z) $a->filename nevû feltöltött állományban a rendszer vírust talált. A Moodle nem tudta visszajuttatni az aááálományt az azt eredetileg feltöltõ felhasználóhoz.
-Az állománnyal a következõ történt:
-
-$a->action
-
-A felhasználót szintén értesítettük.';
+$string['virusfoundlater'] = 'A(z) $a->date idõpontban a(z)$a->course kurzushoz feltöltött $a->filename nevû állományban a rendszer vírust talált. Az állományával a következõ történt: $a->action Ha ez leadott munka volt, lehetõsége van újbóli leadásra, hogy a tanára megtekinthesse.';
+$string['virusfoundlateradmin'] = 'Figyelem, adminisztrátor! A(z) $a->date idõpontban a(z) $a->course kurzushoz a(z) $a->user által feltöltött $a->filename nevû állományban a rendszer vírust talált. Az állománnyal a következõ történt: $a->action A felhasználót szintén értesítettük.';
+$string['virusfoundlateradminnolog'] = 'Figyelem, adminisztrátor! A(z) $a->filename nevû feltöltött állományban a rendszer vírust talált. A Moodle nem tudta visszajuttatni az állományt az azt eredetileg feltöltõ felhasználóhoz. Az állománnyal a következõ történt: $a->action A felhasználót szintén értesítettük.';
 $string['virusfoundsubject'] = '$a: Vírust találtam!';
 $string['virusfounduser'] = 'Az Ön által feltöltött $a->filename nevû állományban a rendszer vírust talált. Az állomány feltöltése NEM sikerült.';
 $string['virusplaceholder'] = 'A feltöltött $a->filename nevû állományban a rendszer vírust talált. Az állományt töröltük, a  felhasználót értesítettük.';
