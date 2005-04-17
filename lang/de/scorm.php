@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['asset'] = 'Asset';
@@ -21,9 +21,12 @@ $string['configpopupwidth'] = 'Welche Breite sollte ein Popup-Fenster normalerwe
 $string['coursepacket'] = 'Kurspaket';
 $string['coursestruct'] = 'Kursstruktur';
 $string['datadir'] = 'Dateisystemfehler: Verzeichnis für Kursdaten konnte nicht erstellt werden';
+$string['display'] = 'Anzeige';
 $string['domxml'] = 'DOMXML externe Bibliothek';
 $string['entercourse'] = 'SCORM Kurs starten';
 $string['errorlogs'] = 'Fehlerprotokoll';
+$string['exit'] = 'SCORM-Kurs beenden';
+$string['expcoll'] = 'Entfalten/Zusammensetzen';
 $string['failed'] = 'Fehlgeschlagen';
 $string['found'] = 'Manifest gefunden';
 $string['gradeaverage'] = 'Durchschnittsnote';

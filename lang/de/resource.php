@@ -1,10 +1,11 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['addresource'] = 'Material hinzufügen';
 $string['chooseafile'] = 'Wählen Sie ein Datei aus oder laden Sie eine auf den Server';
 $string['chooseparameter'] = 'Parameter auswählen';
+$string['configallowlocalfiles'] = 'Beim Erstellen neuer Arbeitsunterlagen können  Verlinkungen zu lokalen Dateisystemen, Festplatten oder CD-Laufwerken angelegt werden. Das ist sinnvoll wenn in einem Schulungsraum alle Nutzer/innen Zugriff auf gemeinsam Netzwerkverzeichnisse oder CD-Laufwerke haben. Evtl. müssen Sie jedoch Sicherheitseinstelungen des Browsers anpassen.';
 $string['configdefaulturl'] = 'Wenn Sie eine neue URL basierte Ressource anlegen wird dieser Wert als Voreinstellung bereits angezeigt.';
 $string['configfilterexternalpages'] = 'Diese Option wendet den eingestellten Filter (Wörterbuch, Autolinks, etc.) auch für alle externen Quellen (Webseiten und hochgeladene HTML-Seiten) an. Wenn Sie diese Option aktivieren, werden Ihre Kursseiten wesentlich langsamer laufen. Nutzen Sie diese Option daher nur wenn Sie sie wirklich benötigen.';
 $string['configframesize'] = 'Wenn eine Webseite oder eine hochgeladene Datei in einem Frame angezeigt wird, so gibt dieser Wert die Größe des Top-Frames, der die Navigation beinhaltet, in Pixeln an.';
@@ -37,6 +38,12 @@ $string['filtername'] = 'Automatische Verlinkung von Arbeitsunterlagen';
 $string['frameifpossible'] = 'Zeigt das Arbeitsmaterial in einem Frame. Die Seitennavigation bleibt sichtbar';
 $string['fulltext'] = 'Text-/Webseite';
 $string['htmlfragment'] = 'HTML-Teil';
+$string['localfile'] = 'Lokale Datei';
+$string['localfilechoose'] = 'Wählen Sie eine lokale Datei aus (z.B. CD-ROM Laufwerk)';
+$string['localfilehelp'] = 'Hilfe zur Anzeige lokaler Dateien';
+$string['localfileinfo'] = '<p>Wählen Sie eine lokale Datei von Ihrem Computer(-netzwerk). Die Datei wird nicht in das Kursverzeichnis hochgeladen. Beim Aufruf dieser Arbeitsunterlage wird die Datei an dem angegebenen Ort aufgerufen.</p> <p>Dies ist sehr nützlich wenn Sie große Dateien verwenden, die Sie auf CD-ROM an alle Teilnehmer/innen verteilen. Jede/r Teilnehmer/in kann für den Zugriff einen eigenen Pfad für solche Dateien im Nutzerprofil definieren.
+<a href=\"$a\" target=\"_blank\">Nutzerprofil bearbeiten</a>.</p>';
+$string['localfilepath'] = 'Legen Sie den Pfad zu den Arbeitsmaterialien auf Ihrem PC (z.B. CD-Rom-Laufwerk) fest. Wählen Sie dazu irgendeine Datei auf diesem Laufwerk aus. Die Datei wird nicht hochgeladen, aber die Verzeichnisinformation wird abgespeichert und für alle lokalen Dateiressourcen verwandt.';
 $string['maindirectory'] = 'Hauptverzeichnis für Dateien';
 $string['modulename'] = 'Arbeitsmaterial';
 $string['modulenameplural'] = 'Arbeitsmaterialien';
@@ -53,6 +60,7 @@ $string['newtoolbar'] = 'Die Werkzeugleiste anzeigen';
 $string['newwidth'] = 'Standard Fensterbreite (in Pixeln)';
 $string['newwindow'] = 'Neues Fenster';
 $string['newwindowopen'] = 'Dieses Quelle in einem neuen Popup-Fenster anzeigen';
+$string['notallowedlocalfileaccess'] = 'Der Zugriff auf lokale Dateiressourcen ist zur Zeit nicht aktiviert. Daher sind die Materialien nicht verfügbar.';
 $string['note'] = 'Anmerkung';
 $string['notefile'] = 'Um mehr als eine Datei für diesen Kurs hochzuladen (damit dieses in der Liste erscheinen) benutzen Sie bitte den 
 <a href=\"$a\">Datei-Manager</a>.';
@@ -79,6 +87,7 @@ $string['resourcetypehtml'] = 'Erstellen einer Webseite';
 $string['resourcetypelabel'] = 'Bezeichnung einfügen';
 $string['resourcetypetext'] = 'Erstellen einer Textseite';
 $string['searchweb'] = 'Suche nach einer Webseite';
+$string['serverurl'] = 'Server URL ($a->wwwroot)';
 $string['variablename'] = 'Name der Variable';
 
 ?>

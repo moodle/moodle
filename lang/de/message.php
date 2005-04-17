@@ -1,5 +1,5 @@
-<?PHP // $Id$
-      // message.php - created with Moodle 1.4.3 (2004083130)
+<?PHP // $Id$ 
+      // message.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['addcontact'] = 'Kontakt hinzufügen';
@@ -7,6 +7,7 @@ $string['ago'] = '$a beendet';
 $string['allmine'] = 'Alle Mitteilungen an mich oder von mir';
 $string['allstudents'] = 'Alle Mitteilungen unter den Teilnehmer/innen';
 $string['allusers'] = 'Alle Mitteilungen (Teilnehmer/innen und Trainer/innen)';
+$string['backupmessageshelp'] = 'Wenn die Option aktiviert ist, werden die Mitteilungen im Backup eingebunden.';
 $string['beepnewmessage'] = 'Akustisches Signal beim Eingang neuer Nachrichten';
 $string['blockcontact'] = 'Kontakt sperren';
 $string['blockedmessages'] = '$a Mitteilung(en) an/von gesperrten Nutzer/innen';
@@ -40,6 +41,7 @@ $string['onlyfromme'] = 'Nur Mitteilungen von mir';
 $string['onlymycourses'] = 'Nur in meinen Kursen';
 $string['onlytome'] = 'Nur Mitteilungen an mich';
 $string['pagerefreshes'] = 'Diese Seite wird automatisch nach $a Sekunden aktualisiert';
+$string['readmessages'] = '$a gelesene Mitteilungen';
 $string['removecontact'] = 'Kontakt entfernen';
 $string['savemysettings'] = 'Meine Einstellungen speichern';
 $string['search'] = 'Suche';
