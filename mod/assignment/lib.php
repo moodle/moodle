@@ -908,7 +908,7 @@ class assignment_base {
         if ($submission = $this->get_submission($user->id)) {
     
             if ($submission->grade) {
-                $result->info = get_string("grade").": $submission->grade";
+                $result->info = get_string('grade').': '.$this->display_grade($submission->grade);
             }
             $result->time = $submission->timemodified;
             return $result;

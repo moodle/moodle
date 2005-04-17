@@ -29,10 +29,12 @@ class assignment_offline extends assignment_base {
         } else {
             if (isset($USER->id)) {
                 if ($submission = $this->get_submission($USER->id)) {
-                    if ($submission->timemodified <= $this->assignment->timedue) {
-                        $submitted = '<span class="early">'.userdate($submission->timemodified).'</span>';
-                    } else {
-                        $submitted = '<span class="late">'.userdate($submission->timemodified).'</span>';
+                    if ($submission->timemodified) {
+                        if ($submission->timemodified <= $this->assignment->timedue) {
+                            $submitted = '<span class="early">'.userdate($submission->timemodified).'</span>';
+                        } else {
+                            $submitted = '<span class="late">'.userdate($submission->timemodified).'</span>';
+                        }
                     }
                 }
             }

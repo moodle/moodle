@@ -19,6 +19,7 @@
     $strname = get_string("name");
     $strduedate = get_string("duedate", "assignment");
     $strsubmitted = get_string("submitted", "assignment");
+    $strgrade = get_string("grade");
 
 
     print_header_simple($strassignments, "", $strassignments, "", "", true, "", navmenu($course));
@@ -31,14 +32,14 @@
     $timenow = time();
 
     if ($course->format == "weeks") {
-        $table->head  = array ($strweek, $strname, $strduedate, $strsubmitted);
-        $table->align = array ("center", "left", "left", "left");
+        $table->head  = array ($strweek, $strname, $strduedate, $strsubmitted, $strgrade);
+        $table->align = array ("center", "left", "left", "left", "right");
     } else if ($course->format == "topics") {
-        $table->head  = array ($strtopic, $strname, $strduedate, $strsubmitted);
-        $table->align = array ("center", "left", "left", "left");
+        $table->head  = array ($strtopic, $strname, $strduedate, $strsubmitted, $strgrade);
+        $table->align = array ("center", "left", "left", "left", "right");
     } else {
-        $table->head  = array ($strname, $strduedate, $strsubmitted);
-        $table->align = array ("left", "left", "left");
+        $table->head  = array ($strname, $strduedate, $strsubmitted, $strgrade);
+        $table->align = array ("left", "left", "left", "right");
     }
 
     $currentgroup = get_current_group($course->id);
@@ -58,6 +59,12 @@
         $assignmentinstance = new $assignmentclass($assignment->coursemodule);
     
         $submitted = $assignmentinstance->submittedlink();
+
+        if ($submission = $assignmentinstance->get_submission($USER->id)) {
+            $grade = $assignmentinstance->display_grade($submission->grade);
+        } else {
+            $grade = '';
+        }
 
         $due = userdate($assignment->timedue);
         if (!$assignment->visible) {
@@ -80,9 +87,9 @@
         }
 
         if ($course->format == "weeks" or $course->format == "topics") {
-            $table->data[] = array ($printsection, $link, $due, $submitted);
+            $table->data[] = array ($printsection, $link, $due, $submitted, $grade);
         } else {
-            $table->data[] = array ($link, $due, $submitted);
+            $table->data[] = array ($link, $due, $submitted, $grade);
         }
     }
 
