@@ -2,7 +2,7 @@
 
     require_once("../config.php");
 
-    optional_variable($loginguest, false); // determines whether visitors are logged in as guest automatically
+    $loginguest = optional_param('loginguest', false); // determines whether visitors are logged in as guest automatically
 
 /// Check if the guest user exists.  If not, create one.
     if (! record_exists("user", "username", "guest")) {
@@ -29,9 +29,9 @@
     }
 
     if ($CFG->auth == 'shibboleth') {
-        if (!empty($SESSION->shibboleth_checked)) {  // Just come from there
+        if (!empty($SESSION->shibboleth_checked) ) {  // Just come from there
             unset($SESSION->shibboleth_checked);
-        } else {
+        } else if (empty($_POST)) {                   // No incoming data, so redirect
             redirect($CFG->wwwroot.'/auth/shibboleth/index.php');
         }
     }
