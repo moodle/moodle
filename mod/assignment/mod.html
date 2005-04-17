@@ -34,6 +34,7 @@
     if (empty($form->timedue)) {
         $form->timedue = "";
     }
+
 ?>
 <form name="form" method="post" action="../mod/assignment/details.php">	
 <table cellpadding="5">
@@ -86,16 +87,6 @@
         ?>
     </td>
 </tr>
-<tr valign="top">
-    <td align="right"><b><?php print_string("assignmenttype", "assignment") ?>:</b></td>
-    <td>
-    <?php
-       $ASSIGNMENT_TYPES = assignment_types();
-       choose_from_menu($ASSIGNMENT_TYPES, "assignmenttype", $form->assignmenttype, "");
-       helpbutton("assignmenttype", get_string("assignmenttype", "assignment"), "assignment");
-    ?>
-    </td>
-</tr>
 
 <tr valign=top>
    <td align="right"><b><?php print_string("availabledate","assignment") ?>:</b></td>
@@ -113,6 +104,21 @@
            echo "&nbsp;-&nbsp;";
            print_time_selector("duehour", "dueminute", $form->timedue);
     ?></td>
+</tr>
+
+<tr valign="top">
+    <td colspan="2">&nbsp;</td>
+</tr>
+
+<tr valign="top">
+    <td align="right"><b><?php print_string("assignmenttype", "assignment") ?>:</b></td>
+    <td>
+    <?php
+       $ASSIGNMENT_TYPES = assignment_types();
+       choose_from_menu($ASSIGNMENT_TYPES, "assignmenttype", $form->assignmenttype, "");
+       helpbutton("assignmenttype", get_string("assignmenttype", "assignment"), "assignment");
+    ?>
+    </td>
 </tr>
 
 </table>

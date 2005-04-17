@@ -19,14 +19,6 @@
         redirect($CFG->wwwroot.'/course/view.php?id='.$course->id);
     }
 
-/// Set up things for a HTML editor if it's needed
-
-    if ($usehtmleditor = can_use_html_editor()) {
-        $defaultformat = FORMAT_HTML;
-        $editorfields = '';
-    } else {
-        $defaultformat = FORMAT_MOODLE;
-    }
 
 	require_once("$CFG->dirroot/mod/assignment/type/$form->assignmenttype/assignment.class.php");
 

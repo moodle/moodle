@@ -135,6 +135,15 @@ function assignment_upgrade($oldversion) {
         table_column('assignment_submissions', '', 'data1', 'TEXT', '', '', '', 'not null', 'numfiles');
     }
 
+    if ($oldversion < 2005041600) {  // Add five new fields for general assignment parameters
+                                     // so most assignment types won't need new fields and backups stay simple
+        table_column('assignment', '', 'var5', 'integer', '10', '', 0, 'null', 'emailteachers');
+        table_column('assignment', '', 'var4', 'integer', '10', '', 0, 'null', 'emailteachers');
+        table_column('assignment', '', 'var3', 'integer', '10', '', 0, 'null', 'emailteachers');
+        table_column('assignment', '', 'var2', 'integer', '10', '', 0, 'null', 'emailteachers');
+        table_column('assignment', '', 'var1', 'integer', '10', '', 0, 'null', 'emailteachers');
+    }
+
 
 
 /// These lines ALWAYS need to be here at the end of this file.  Don't mess with them. :-)

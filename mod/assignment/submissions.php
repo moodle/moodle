@@ -40,7 +40,7 @@
 /// Load up the required assignment code
     require($CFG->dirroot.'/mod/assignment/type/'.$assignment->assignmenttype.'/assignment.class.php');
     $assignmentclass = 'assignment_'.$assignment->assignmenttype;
-    $assignmentinstance = new $assignmentclass($cm->id);
+    $assignmentinstance = new $assignmentclass($cm->id, $assignment, $cm, $course);
 
     $assignmentinstance->submissions($mode);   // Display or process the submissions
 

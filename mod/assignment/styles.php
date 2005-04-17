@@ -1,5 +1,19 @@
-#mod-assignment-submissions .submission td {
+#mod-assignment-submissions .submission .content,
+#mod-assignment-submissions .submission .heading,
+#mod-assignment-submissions .submission .picture
+{
   padding: 10px;
+  border-width:1px;
+  border-style:solid;
+  border-color:#DDDDDD;
+}
+
+#mod-assignment-submissions .submission .fullname {
+  float: left;
+}
+
+#mod-assignment-submissions .submission .files {
+  float: right;
 }
 
 #mod-assignment-submissions .generaltable .r1 {
@@ -14,8 +28,8 @@
   background: #FFD991;
 }
 
-#mod-assignment-submissions .submissions td,
-#mod-assignment-submissions .submissions th
+#mod-assignment-submissions table.submissions td,
+#mod-assignment-submissions table.submissions th
 {
   border-width: 1px;
   border-style: solid;
@@ -68,7 +82,7 @@
   border-color:#DDDDDD;
 }
 
-#mod-assignment-view .feedback .author {
+#mod-assignment-view .feedback .fullname {
   font-weight: bold;
 }
 

@@ -42,6 +42,11 @@
                 fwrite ($bf,full_tag("FORMAT",4,false,$assignment->format));
                 fwrite ($bf,full_tag("RESUBMIT",4,false,$assignment->resubmit));
                 fwrite ($bf,full_tag("EMAILTEACHERS",4,false,$assignment->emailteachers));
+                fwrite ($bf,full_tag("VAR1",4,false,$assignment->var1));
+                fwrite ($bf,full_tag("VAR2",4,false,$assignment->var2));
+                fwrite ($bf,full_tag("VAR3",4,false,$assignment->var3));
+                fwrite ($bf,full_tag("VAR4",4,false,$assignment->var4));
+                fwrite ($bf,full_tag("VAR5",4,false,$assignment->var5));
                 fwrite ($bf,full_tag("ASSIGNMENTTYPE",4,false,$assignment->assignmenttype));
                 fwrite ($bf,full_tag("MAXBYTES",4,false,$assignment->maxbytes));
                 fwrite ($bf,full_tag("TIMEDUE",4,false,$assignment->timedue));
