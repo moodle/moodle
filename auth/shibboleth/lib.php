@@ -6,11 +6,18 @@
 function auth_user_login ($username, $password) {
     global $CFG;
 
-    // We can only get here if shibboleth has found the 
-    // correct server parameters (see login.php)
-    // Se we can always return true
+/// If we are in the shibboleth directory then we trust the server var
+    if (!empty($_SERVER[$CFG->shib_user_attribute])) {
+        return ($_SERVER[$CFG->shib_user_attribute] == $username);
+    }
 
-    return true;
+/// If we are not, then the server is probably set to not be Shibboleth-only
+/// and the user has used the normal login screen, so we redirect to the shibboleth
+/// directory for a proper check
+    redirect($CFG->wwwroot.'/auth/shibboleth/login.php';
+
+/// There's no point doing anything further here
+    exit;
 }
 
 function auth_get_userinfo($username) {
