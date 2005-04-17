@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
+      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['action'] = '-- ¥¢¥¯¥·¥ç¥ó --';
@@ -74,6 +74,7 @@ $string['flags'] = '¥Õ¥é¥°';
 $string['flagsset'] = '¥Õ¥é¥°¤¬ÊÑ¹¹¤µ¤ì¤Þ¤·¤¿¡£';
 $string['flagtxt'] = 'TXT';
 $string['flagwr'] = 'WR';
+$string['for'] = 'for';
 $string['forbidden'] = '¤³¤Î¥Ú¡¼¥¸¤Ë¥¢¥¯¥»¥¹¤¹¤ë¸¢¸Â¤¬¤¢¤ê¤Þ¤»¤ó¡£';
 $string['groups'] = '¥°¥ë¡¼¥×';
 $string['hits'] = '$a ¥Ò¥Ã¥È';
@@ -109,6 +110,7 @@ $string['noregexp'] = '¥¹¥È¥ê¥ó¥°¤òÄûÀµ¤·¤Æ¤¯¤À¤µ¤¤ ( * ¤ä regex ¤Ï»ÈÍÑ¤Ç¤­¤Þ¤»¤
 $string['notadministratewiki'] = '¤³¤Îwiki¤Î´ÉÍý¤òµö²Ä¤µ¤ì¤Æ¤¤¤Þ¤»¤ó!';
 $string['nothingtostrip'] = '1¤Ä¤Î¥Ð¡¼¥¸¥ç¥ó°Ê³°¤Ë¥Ú¡¼¥¸¤¬¤¢¤ê¤Þ¤»¤ó¡£';
 $string['nowikicreated'] = '¤³¤Îwiki¤Ë¤Ï¥¨¥ó¥È¥ê¤¬¤¢¤ê¤Þ¤»¤ó¡£';
+$string['of'] = 'of';
 $string['offline'] = '¥ª¥Õ¥é¥¤¥ó';
 $string['optional'] = '¥ª¥×¥·¥ç¥ó';
 $string['orphanedpage'] = 'ÌÂ»Ò¥Ú¡¼¥¸';

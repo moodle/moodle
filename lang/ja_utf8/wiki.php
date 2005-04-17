@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
+      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['action'] = '-- アクション --';
@@ -74,6 +74,7 @@ $string['flags'] = 'フラグ';
 $string['flagsset'] = 'フラグが変更されました。';
 $string['flagtxt'] = 'TXT';
 $string['flagwr'] = 'WR';
+$string['for'] = 'for';
 $string['forbidden'] = 'このページにアクセスする権限がありません。';
 $string['groups'] = 'グループ';
 $string['hits'] = '$a ヒット';
@@ -109,6 +110,7 @@ $string['noregexp'] = 'ストリングを訂正してください ( * や regex 
 $string['notadministratewiki'] = 'このwikiの管理を許可されていません!';
 $string['nothingtostrip'] = '1つのバージョン以外にページがありません。';
 $string['nowikicreated'] = 'このwikiにはエントリがありません。';
+$string['of'] = 'of';
 $string['offline'] = 'オフライン';
 $string['optional'] = 'オプション';
 $string['orphanedpage'] = '迷子ページ';
