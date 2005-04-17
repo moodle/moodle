@@ -78,7 +78,7 @@ class block_glossary_random extends block_base {
                 if (empty($this->config->showconcept)) {
                     $text = '';
                 } else {
-                    $text = "<h2>$entry->concept</h2>";
+                    $text = "<h2>".format_string($entry->concept,true)."</h2>";
                 }  
                 $text .= format_text($entry->definition, $entry->format);
 
@@ -116,6 +116,10 @@ class block_glossary_random extends block_base {
 
         // select glossaries to put in dropdown box ...
         $glossaries = get_records_select_menu('glossary', 'course='.$this->course->id,'name','id,name');
+        //format menu texts to avoid html and to filter multilang values
+        foreach($glossaries as $key => $value) {
+            $glossaries[$key] = strip_tags(format_string($value,true));
+        }
 
         // and select quotetypes to put in dropdown box
         $type[0] = get_string('random','block_glossary_random');
