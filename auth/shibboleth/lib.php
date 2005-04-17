@@ -5,19 +5,12 @@
 
 function auth_user_login ($username, $password) {
     global $CFG;
-    // Returns false if the username doesn't exist yet
-    // Returns true if the username and password work
-    if ($user = get_record('user', 'username', $username)) {
-		if($user->auth == "shibboleth") {
-            return false;
-            exit;
-        } else {
-            return ($user->password == md5($password));
-            exit;
-        }
-    }   
 
-    return false;
+    // We can only get here if shibboleth has found the 
+    // correct server parameters (see login.php)
+    // Se we can always return true
+
+    return true;
 }
 
 function auth_get_userinfo($username) {

@@ -1,127 +1,399 @@
-<?PHP
+<?php
+// Set default values
+if (!isset($config->auth_shib_instructions)) {
+	$config->auth_shib_instructions = 'Use the <a href="'.$CFG->wwwroot.'/auth/shibboleth/" >Shibboleth login</a> to get access if your university or school supports it.<br>Otherwise use the manual login.';
+}
+
+if (!isset($config->auth_user_firstname_updatelocal)) {
+	$config->auth_user_firstname_updatelocal = 1;
+}
+
+if (!isset($config->auth_shib_only)) {
+	$config->auth_shib_only = 0;
+}
+
+if (!isset($config->auth_user_firstname_updatelocal)) {
+	$config->auth_user_firstname_updatelocal = 1;
+}
+
+if (!isset($config->auth_user_firstname_editlock)) {
+	$config->auth_user_firstname_editlock = 0;
+}
+
+if (!isset($config->auth_user_lastname_updatelocal)) {
+	$config->auth_user_lastname_updatelocal = 1;
+}
+
+if (!isset($config->auth_user_lastname_editlock)) {
+	$config->auth_user_lastname_editlock = 0;
+}
+
+if (!isset($config->auth_user_email_updatelocal)) {
+	$config->auth_user_email_updatelocal = 1;
+}
+
+if (!isset($config->auth_user_email_editlock)) {
+	$config->auth_user_email_editlock = 0;
+}
+
+if (!isset($config->auth_user_phone1_updatelocal)) {
+	$config->auth_user_phone1_updatelocal = 1;
+}
+
+if (!isset($config->auth_user_phone1_editlock)) {
+	$config->auth_user_phone1_editlock = 0;
+}
+
+if (!isset($config->auth_user_department_updatelocal)) {
+	$config->auth_user_department_updatelocal = 1;
+}
+
+if (!isset($config->auth_user_department_editlock)) {
+	$config->auth_user_department_editlock = 0;
+}
+
+if (!isset($config->auth_user_address_updatelocal)) {
+	$config->auth_user_address_updatelocal = 1;
+}
+
+if (!isset($config->auth_user_address_editlock)) {
+	$config->auth_user_address_editlock = 0;
+}
+
+if (!isset($config->auth_user_city_updatelocal)) {
+	$config->auth_user_city_updatelocal = 1;
+}
+
+if (!isset($config->auth_user_city_editlock)) {
+	$config->auth_user_city_editlock = 0;
+}
+
+if (!isset($config->auth_user_country_updatelocal)) {
+	$config->auth_user_country_updatelocal = 1;
+}
+if (!isset($config->auth_user_country_editlock)) {
+	$config->auth_user_country_editlock = 0;
+}
+
+if (!isset($config->auth_user_description_updatelocal)) {
+	$config->auth_user_description_updatelocal = 1;
+}
+
+if (!isset($config->auth_user_description_editlock)) {
+	$config->auth_user_description_editlock = 0;
+}
+
+if (!isset($config->auth_user_idnumber_updatelocal)) {
+	$config->auth_user_idnumber_updatelocal = 1;
+}
+
+if (!isset($config->auth_user_idnumber_editlock)) {
+	$config->auth_user_idnumber_editlock = 0;
+}
+
+if (!isset($config->auth_user_lang_updatelocal)) {
+	$config->auth_user_lang_updatelocal = 1;
+}
+
+if (!isset($config->auth_user_lang_editlock)) {
+	$config->auth_user_lang_editlock = 0;
+}
+
 ?>
+<tr>
+    <td colspan="3" align="center">
+        <?php  print_string("auth_shib_settings", "auth") ?>
+    </td>
+</tr>
+<tr>
+    <td align="right"><?php  print_string("auth_shib_only", "auth") ?>:</td>
+    <td>
+    <select name="auth_shib_only">
+        <option value="0" <?php echo ($config->auth_shib_only ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_shib_only ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select>
+    </td>
+    <td><?php  print_string("auth_shib_only_description", "auth") ?></td>
+    </td>
+</tr>
+<!--
+<tr>
+    <td align="right">Shibboleth logout url ():</td>
+    <td>
+    <input name="shib_logout_url" type="text" size="30" value="<?php echo $config->shib_logout_url?>">
+    </td>
+    <td></td>                                                                                                                                 </td>
+</tr>
+-->  
+<tr>
+    <td align="right"><?php  print_string("username") ?>:</td>
+    <td>
+    <input name="shib_user_attribute" type="text" size="30" value="<?php echo $config->shib_user_attribute?>">
+    </td>
+    <td><?php  print_string("auth_shib_username_description", "auth") ?></td>
+    </td>
+</tr>
+
+<tr>
+    <td align="right" valign="top"><?php  print_string("firstname") ?>:</td>
+    <td>
+    <input name="auth_shib_user_firstname" type="text" size="30" value="<?php echo $config->auth_shib_user_firstname?>">
+    </td>
+    <td>
+    <?php  print_string("auth_updatelocal", "auth") ?>
+    <select name="auth_user_firstname_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_firstname_updatelocal ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_firstname_updatelocal ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select>
+    <?php  print_string("auth_editlock", "auth") ?>
+    <select name="auth_user_firstname_editlock">
+        <option value="0" <?php echo ($config->auth_user_firstname_editlock ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_firstname_editlock ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>
+    </td>
+</tr>
 <tr valign="top">
-    <TD ALIGN=RIGHT><P>Shibboleth origin url:</TD>
-    <TD>
-        <INPUT name=shib_wayf_url TYPE=text SIZE=30 VALUE="<?php echo $config->shib_wayf_url?>">
-    <?php  if (isset($err["shib_wayf_url"])) formerr($err["shib_wayf_url"]); ?>
-    </TD>
-    <TD>
-    </TD>
-</TR>
-<!--
-<TR>
-    <TD ALIGN=RIGHT><P>Shibboleth logout url ():</TD>
-    <TD>
-    <INPUT name="shib_logout_url" TYPE="text" SIZE="30" VALUE="<?php echo $config->shib_logout_url?>">
-    </TD>
-    <TD rowspan=12 VALIGN=CENTER>                                                                                                                                 </TD>
-</TR>-->  
-<TR>
-    <TD ALIGN=RIGHT><P><?php  print_string("username") ?>:</TD>
-    <TD>
-    <INPUT name="shib_user_attribute" TYPE="text" SIZE="30" VALUE="<?php echo $config->shib_user_attribute?>">
-    </TD>
-    <TD rowspan=12 VALIGN=CENTER>
-    </TD>
-</TR>
+    <td align="right" valign="top"><?php  print_string("lastname") ?>:</td>
+    <td>
+    <input name="auth_shib_user_lastname" type="text" size="30" value="<?php echo $config->auth_shib_user_lastname?>">
+    </td>
+    <td>
+    <?php  print_string("auth_updatelocal", "auth") ?>
+    <select name="auth_user_lastname_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_lastname_updatelocal ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_lastname_updatelocal ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select> 
+    <?php  print_string("auth_editlock","auth") ?>
+    <select name="auth_user_lastname_editlock">
+        <option value="0" <?php echo ($config->auth_user_lastname_editlock ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_lastname_editlock ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>    
+    </td>
+</tr>
 
-<TR>
-    <TD ALIGN=RIGHT><P><?php  print_string("firstname") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_firstname" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_firstname?>">
-    </TD>
-    <TD rowspan=12 VALIGN=CENTER>
-    </TD>
-</TR>
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("lastname") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_lastname" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_lastname?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right" valign="top"><?php  print_string("email") ?>:</td>
+    <td>
+    <input name="auth_shib_user_email" type="text" size="30" value="<?php echo $config->auth_shib_user_email?>">
+    </td>
+    <td>
+    <?php  print_string("auth_updatelocal", "auth") ?>
+    <select name="auth_user_email_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_email_updatelocal ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_email_updatelocal ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select> 
+    <?php  print_string("auth_editlock", "auth") ?>
+    <select name="auth_user_email_editlock">
+        <option value="0" <?php echo ($config->auth_user_email_editlock ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_email_editlock ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>        
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("email") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_email" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_email?>">
-    </TD>
-</TR>
-<!--
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("phone") ?> 1:</TD>
-    <TD>
-    <INPUT name="auth_user_phone1" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_phone1?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><?php  print_string("phone") ?> 1:</td>
+    <td>
+    <input name="auth_shib_user_phone1" type="text" size="30" value="<?php echo $config->auth_shib_user_phone1?>">
+    </td>
+    <td>
+    <?php  print_string("auth_updatelocal", "auth") ?>
+    <select name="auth_user_phone1_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_phone1_updatelocal ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_phone1_updatelocal ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select> 
+    <?php  print_string("auth_editlock", "auth") ?>
+    <select name="auth_user_phone1_editlock">
+        <option value="0" <?php echo ($config->auth_user_phone1_editlock ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_phone1_editlock ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>        
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("phone") ?> 2:</TD>
-    <TD>
-    <INPUT name="auth_user_phone2" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_phone2?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><?php  print_string("department") ?>:</td>
+    <td>
+    <input name="auth_shib_user_department" type="text" size="30" value="<?php echo $config->auth_shib_user_department?>">
+    </td>
+    <td>
+    <?php  print_string("auth_updatelocal", "auth") ?>
+    <select name="auth_user_department_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_department_updatelocal ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_department_updatelocal ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select> 
+    <?php  print_string("auth_editlock", "auth") ?>
+    <select name="auth_user_department_editlock">
+        <option value="0" <?php echo ($config->auth_user_department_editlock ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_department_editlock ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("department") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_department" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_department?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><?php  print_string("address") ?>:</td>
+    <td>
+    <input name="auth_shib_user_address" type="text" size="30" value="<?php echo $config->auth_shib_user_address?>">
+    </td>
+    <td>
+    <?php  print_string("auth_updatelocal", "auth") ?>
+    <select name="auth_user_address_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_address_updatelocal ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_address_updatelocal ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select> 
+    <?php  print_string("auth_editlock", "auth") ?>
+    <select name="auth_user_address_editlock">
+        <option value="0" <?php echo ($config->auth_user_address_editlock ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_address_editlock ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><?php  print_string("city") ?>:</td>
+    <td>
+    <input name="auth_shib_user_city" type="text" size="30" value="<?php echo $config->auth_shib_user_city?>">
+    </td>
+    <td>
+    <?php  print_string("auth_updatelocal", "auth") ?>
+    <select name="auth_user_city_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_city_updatelocal ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_city_updatelocal ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select> 
+    <?php  print_string("auth_editlock", "auth") ?>
+    <select name="auth_user_city_editlock">
+        <option value="0" <?php echo ($config->auth_user_city_editlock ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_city_editlock ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("address") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_address" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_address?>">
-    </TD>
-</TR>
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("city") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_city" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_city?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><?php  print_string("country") ?>:</td>
+    <td>
+    <input name="auth_shib_user_country" type="text" size="30" value="<?php echo $config->auth_shib_user_country?>">
+    </td>
+    <td>
+    <?php  print_string("auth_updatelocal", "auth") ?>
+    <select name="auth_user_country_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_country_updatelocal ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_country_updatelocal ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select> 
+    <?php  print_string("auth_editlock", "auth") ?>
+    <select name="auth_user_country_editlock">
+        <option value="0" <?php echo ($config->auth_user_country_editlock ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_country_editlock ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("country") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_country" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_country?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><?php  print_string("description") ?>:</td>
+    <td>
+    <input name="auth_shib_user_description" type="text" size="30" value="<?php echo $config->auth_shib_user_description?>">
+    </td>
+    <td>
+    <?php  print_string("auth_updatelocal", "auth") ?>
+    <select name="auth_user_description_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_description_updatelocal ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_description_updatelocal ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select> 
+    <?php  print_string("auth_editlock", "auth") ?>
+    <select name="auth_user_description_editlock">
+        <option value="0" <?php echo ($config->auth_user_description_editlock ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_description_editlock ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("description") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_description" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_description?>">
-    </TD>
-</TR>
+<tr valign="top">
+    <td align="right"><?php  print_string("idnumber") ?>:</td>
+    <td>
+    <input name="auth_shib_user_idnumber" type="text" size="30" value="<?php echo $config->auth_shib_user_idnumber?>">
+    </td>
+    <td>
+    <?php  print_string("auth_updatelocal", "auth") ?>
+    <select name="auth_user_idnumber_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_idnumber_updatelocal ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_idnumber_updatelocal ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select> 
+    <?php  print_string("auth_editlock", "auth") ?>
+    <select name="auth_user_idnumber_editlock">
+        <option value="0" <?php echo ($config->auth_user_idnumber_editlock ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_idnumber_editlock ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>
+    </td>
+</tr>
 
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("idnumber") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_idnumber" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_idnumber?>">
-    </TD>
-</TR>
-
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("language") ?>:</TD>
-    <TD>
-    <INPUT name="auth_user_lang" TYPE="text" SIZE="30" VALUE="<?php echo $config->auth_user_lang?>">
-    </TD>
-</TR>
--->
-
-<TR VALIGN=TOP>
-    <TD ALIGN=RIGHT><P><?php  print_string("instructions", "auth") ?>:</TD>
-    <TD>
-    <TEXTAREA NAME=auth_instructions COLS=30 ROWS=10 WRAP=virtual><?php  p($config->auth_instructions) ?></TEXTAREA> 
-    </TD>
-    <TD>
-    <?php  print_string("authinstructions","auth") ?>
+<tr valign="top">
+    <td align="right"><?php  print_string("language") ?>:</td>
+    <td>
+    <input name="auth_shib_user_lang" type="text" size="30" value="<?php echo $config->auth_shib_user_lang?>">
+    </td>
+    <td>
+    <?php  print_string("auth_updatelocal", "auth") ?>
+    <select name="auth_user_lang_updatelocal">
+        <option value="0" <?php echo ($config->auth_user_lang_updatelocal ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_lang_updatelocal ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select> 
+    <?php  print_string("auth_editlock", "auth") ?>
+    <select name="auth_user_lang_editlock">
+        <option value="0" <?php echo ($config->auth_user_lang_editlock ? '' : 'selected="yes"') ?> >
+            <?php  print_string("no")  ?></option>
+        <option value="1" <?php echo ($config->auth_user_lang_editlock ? 'selected="yes"' : '') ?> >
+            <?php  print_string("yes") ?></option>
+    </select><br>
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><?php  print_string("auth_shib_login_link", "auth") ?></td>
+    <td>
+    <textarea name="auth_shib_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_shib_instructions) ?></textarea> 
+    </td>
+    <td>
+    <?php  print_string("auth_shib_instructions_descriptions","auth") ?>
     <?php  helpbutton("text", get_string("helptext")) ?>
-    </TD>
-</TR>
-
-
-
+    </td>
+</tr>
 

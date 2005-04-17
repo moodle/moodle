@@ -1,76 +1,57 @@
-Shibboleth authentication for Moodle
--------------------------------------------------------------------------------
-Requirements
-- Shibboleth target 1.1 or later
-
-SHIBBOLET Target configuration
+Shibboleth Authentication for Moodle
 -------------------------------------------------------------------------------
 
-#### 1. Only shibboleth users are allowed use this Moodle
+Requirements:
+- Moodle 1.5 or later. Versions prior to 1.5 may also work with Shibboleth
+  authentication (contact  Markus Hagman <hagman@hytti.uku.fi> or Lukas 
+  Haemmerle <haemmerle@switch.ch> for further instructions)
+- Shibboleth target 1.1 or later. See documentation for your Shibboleth 
+  federation on how to set up Shibboleth.
+- Modifications to login process by Martin Dougiamas
 
-Just add shibboleth protection against Moodle directory.
-
-#### 2. Shibboleth and manually added users are able to use Moodle
-
-
-You need to use lazy sessions for Moodle directory. Lazy session can be
-turned on by adding lines below to your .htaccess file in Moodle directory:
-
-## Shibboleth lazy session
-AuthType shibboleth
-ShibRequireSession Off
-require shibboleth
-
-Lazy session allows users to access Moodle directory without having to
-authenticate against shibboleth. When user authenticates against Shibboleth
-the attributes which shibboleth provide get accessible ($_SERVER). These
-attributes are used by Moodle to determine users identity.
-
-For envoking shibboleth session:
-
-1. make a directory for example moodle-proxy (in place where it's accessible
-from web)
-2. create index.php and add lines below (redirect to your moodle):
-<?
-header("Location:https://my.domain.com/moodle/login/index.php");
-exit;
-?>
-3. Add .htaccess file in this directory which contains:
-
-## Shibboleth authentication required
-AuthType shibboleth
-ShibRequireSession On
-require valid-user
-
-
-NEW! Modifications to login/index.php
+Moodle Configuration
 -------------------------------------------------------------------------------
-Moodle checks if user theres a shibboleth authenticated session alive. If
-username attribute is found, user is considered authenticated.
+1. As Moodle admin, go to the "Administrations >> Users >> Authentication 
+   Options" and select the "Shibboleth" authentication method from the pop-up. 
+2. Fill in the fields of the form. The fields "Username", "First name", 
+   "Surname", etc should contain the name of the environment variables of the 
+   Shibboleth attributes that you want to map onto the corresponding Moodle 
+   variable.
+   Especially the "Username" field is of great importance because 
+   this attribute is used for the authentication of Shibboleth users.
+   The large text field ('Login link') should contain a link to the 
+   moodle/auth/shibboleth/ directory. This directory is protected 
+   by a .htaccess file and causes the Shibboleth login procedure to start.
+   If only users from one Identity Provider use Shibboleth, you also could 
+   insert a link to the Identity Provier's Handle Server with a 'target' and a 
+   'shire' GET argument so that the users don't have to make the detour over the
+   WAYF server.
 
-Add code after line 31:
+   Save the changes for the Shibboleth authentication method.
 
-    if ($_SERVER[$CFG->shib_user_attribute]) {
-       /// Log in automatically if user is has been shibboleth authenticated
-        $frm->username = $_SERVER[$CFG->shib_user_attribute];
-        $frm->password = "guest";
-    } else {
-        $frm = data_submitted();
-    }
+How the Shibboleth authentication works
+--------------------------------------------------------------------------------
+For a user to get Shibboleth authenticated in Moodle he first must get 
+redirected to moodle/auth/shibboleth/login.php . When Shibboleth is active
+this happens automatically from the normal login page.
+If the user is successfully Shibboleth authenticated he also is authenticated in
+Moodle
+If the user's Moodle account has not existed yet, it gets automatically created.
+To prevent that every Shibboleth user can access your Moodle site you have to
+adapt the 'require valid-user' line in your webserver's config  (see step 1) to 
+allow only specific users. 
+Check the documentation of your Shibboleth federation for further
+assistance on this. Basically you have to exchange the 'require valid-user' by 
+something more constraining, e.g. 'require affiliation student'.
 
+Unless you check the 'Shibboleth only' option in the configuration, you can use
+Shibboleth AND another authentication method (it was tested with manual login 
+only). So if there are a few users that don't have a Shibboleth login, you could
+create manual account for them and they could use the manual login.
 
-MOODLE Authentication options
--------------------------------------------------------------------------------
+In such cases, users get redirected back to the normal Moodle login page to
+login.
 
-Shibboleth origin url: 
-This is were you put the Shibboleth WAYF url address or the Shibboleth Origin
-login url if WAYF is not used. If user selects shibboleth authentication
-method he/she is redirected there to authenticate.
-
-Username, First name, Surname, Email address:
-The fields in authentication options are filled with the names of the
-shibboleth attributes that your server provides for example:
-
-$_SERVER['HTTP_SHIB_PNAME'] is the defined attribute in shibboleth target
-configuration for username use HTTP_SHIB_PNAME in Username field at
-authentication options
+--------------------------------------------------------------------------------
+In case of problems and questions contact Markus Hagman
+<hagman@hytti.uku.fi> or Lukas Haemmerle <haemmerle@switch.ch>
