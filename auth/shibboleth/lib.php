@@ -14,7 +14,7 @@ function auth_user_login ($username, $password) {
 /// If we are not, then the server is probably set to not be Shibboleth-only
 /// and the user has used the normal login screen, so we redirect to the shibboleth
 /// directory for a proper check
-    redirect($CFG->wwwroot.'/auth/shibboleth/index.php';
+    redirect($CFG->wwwroot.'/auth/shibboleth/index.php');
 
 /// There's no point doing anything further here
     exit;
