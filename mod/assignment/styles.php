@@ -77,6 +77,20 @@
   text-align: center;
 }
 
+#mod-assignment-view #online .singlebutton {
+  text-align: center;
+}
+
+#mod-assignment-view #dates {
+  font-size: 0.8em;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+#mod-assignment-view #dates .c0{
+  text-align:right;
+  font-weight:bold;
+}
 
 #mod-assignment-view .feedback {
   border-width:1px;

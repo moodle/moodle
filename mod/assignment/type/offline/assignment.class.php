@@ -10,14 +10,6 @@ class assignment_offline extends assignment_base {
         parent::assignment_base($cmid);
     }
 
-    function setup($form) {
-        global $CFG, $usehtmleditor;
-
-        parent::setup($form);
-        include("$CFG->dirroot/mod/assignment/type/offline/mod.html");
-        parent::setup_end(); 
-    }
-
     function submittedlink() {
         global $USER;
 

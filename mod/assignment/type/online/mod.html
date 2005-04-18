@@ -1,26 +1,16 @@
 <?php
-    if (empty($form->resubmit)) {
-        $form->resubmit = '';
+    if (!isset($form->resubmit)) {
+        $form->resubmit = 1;
     }
-    if (empty($form->maxbytes)) {
-        $form->maxbytes = $CFG->assignment_maxbytes;
+    if (!isset($form->emailteachers)) {
+        $form->emailteachers = 0;
     }
-    if (empty($form->emailteachers)) {
-        $form->emailteachers = '';
+    if (!isset($form->var1)) {
+        $form->var1 = 0;
     }
 ?>
 
 <table align="center" cellpadding="5" cellspacing="0">
-
-<tr valign="top">
-    <td align="right"><b><?php print_string("maximumsize", "assignment") ?>:</b></td>
-    <td>
-    <?php
-        $choices = get_max_upload_sizes($CFG->maxbytes, $this->course->maxbytes);
-        choose_from_menu ($choices, "maxbytes", $form->maxbytes, "");
-    ?>
-  </td>
-</tr>
 
 <tr>
     <td align="right"><b><?php print_string("allowresubmit", "assignment") ?>:</b></td>
@@ -43,6 +33,18 @@
     ?>
     </td>
 </tr>
+
+<tr>
+    <td align="right"><b><?php print_string("commentinline", "assignment") ?>:</b></td>
+    <td>
+    <?php 
+        $options[0] = get_string("no"); $options[1] = get_string("yes");
+        choose_from_menu($options, "var1", $form->var1, "");
+        helpbutton("commentinline", get_string("commentinline", "assignment"), "assignment");
+    ?>
+    </td>
+</tr>
+
 
 </table>
 

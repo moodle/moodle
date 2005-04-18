@@ -116,7 +116,7 @@
     <?php
        $ASSIGNMENT_TYPES = assignment_types();
        choose_from_menu($ASSIGNMENT_TYPES, "assignmenttype", $form->assignmenttype, "");
-       helpbutton("assignmenttype", get_string("assignmenttype", "assignment"), "assignment");
+       helpbutton("assignment/types", get_string("assignmenttype", "assignment"), "moodle");
     ?>
     </td>
 </tr>
@@ -132,7 +132,7 @@
 <input type="hidden" name="modulename" value="<?php p($form->modulename) ?>" />
 <input type="hidden" name="instance"   value="<?php p($form->instance) ?>" />
 <input type="hidden" name="mode"       value="<?php p($form->mode) ?>" />
-<input type="submit" value="<?php print_string('next') ?>" />
+<input type="submit" value="<?php print_string('next') ?> &raquo;" />
 <input type="submit" name=cancel value="<?php print_string('cancel') ?>" />
 </center>
 </form>

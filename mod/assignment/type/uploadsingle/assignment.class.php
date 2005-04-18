@@ -11,17 +11,6 @@ class assignment_uploadsingle extends assignment_base {
 
     }
 
-    function setup($form) {
-        global $CFG, $usehtmleditor;
-
-        parent::setup($form);
-
-        print_simple_box(get_string('', 'assignment'), 'center');
-
-        include("$CFG->dirroot/mod/assignment/type/uploadsingle/mod.html");
-        parent::setup_end(); 
-    }
-
     function submittedlink() {
         global $USER;
 
@@ -58,18 +47,9 @@ class assignment_uploadsingle extends assignment_base {
 
         $this->view_header();
 
-        print_simple_box_start('center');
-        echo format_text($this->assignment->description, $this->assignment->format);
-        print_simple_box_end();
+        $this->view_intro();
 
-        print_simple_box_start('center', '', '', '', 'time');
-        echo '<table>';
-        echo '<tr><td class="c0">'.get_string('availabledate','assignment').':</td>';
-        echo '    <td class="c1">'.userdate($this->assignment->timeavailable).'</td></tr>';
-        echo '<tr><td class="c0">'.get_string('duedate','assignment').':</td>';
-        echo '    <td class="c1">'.userdate($this->assignment->timedue).'</td></tr>';
-        echo '</table>';
-        print_simple_box_end();
+        $this->view_dates();
 
         $this->view_feedback();
 
@@ -164,6 +144,7 @@ class assignment_uploadsingle extends assignment_base {
                 
         $newsubmission->grade      = $feedback->grade;
         $newsubmission->comment    = $feedback->comment;
+        $newsubmission->format     = $feedback->format;
         $newsubmission->teacher    = $USER->id;
         $newsubmission->mailed     = 0;       // Make sure mail goes out (again, even)
         $newsubmission->timemarked = time();

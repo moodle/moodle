@@ -98,22 +98,13 @@ class assignment_base {
 
         $this->view_header();
 
-        print_simple_box_start('center');
-        echo format_text($this->assignment->description, $this->assignment->format);
-        print_simple_box_end();
+        $this->view_intro();
 
-        print_simple_box_start('center', '', '', '', 'time');
-        echo '<table>';
-        echo '<tr><td class="c0">'.get_string('availabledate','assignment').':</td>';
-        echo '    <td class="c1">'.userdate($this->assignment->timeavailable).'</td></tr>';
-        echo '<tr><td class="c0">'.get_string('duedate','assignment').':</td>';
-        echo '    <td class="c1">'.userdate($this->assignment->timedue).'</td></tr>';
-        echo '</table>';
-        print_simple_box_end();
+        $this->view_dates();
 
         $this->view_feedback();
 
-        print_footer($this->course);
+        $this->view_footer();
     }
 
     /*
@@ -135,6 +126,38 @@ class assignment_base {
                      navmenu($this->course, $this->cm));
 
         echo '<div class="reportlink">'.$this->submittedlink().'</div>';
+    }
+
+
+    /*
+     * Display the assignment intro
+     */
+    function view_intro() {
+        print_simple_box_start('center', '', '', '', 'generalbox', 'intro');
+        echo format_text($this->assignment->description, $this->assignment->format);
+        print_simple_box_end();
+    }
+
+    /*
+     * Display the assignment dates
+     */
+    function view_dates() {
+        if (!$this->assignment->timeavailable && !$this->assignment->timedue) {
+            return;
+        }
+
+        print_simple_box_start('center', '', '', '', 'generalbox', 'dates');
+        echo '<table>';
+        if ($this->assignment->timeavailable) {
+            echo '<tr><td class="c0">'.get_string('availabledate','assignment').':</td>';
+            echo '    <td class="c1">'.userdate($this->assignment->timeavailable).'</td></tr>';
+        }
+        if ($this->assignment->timedue) {
+            echo '<tr><td class="c0">'.get_string('duedate','assignment').':</td>';
+            echo '    <td class="c1">'.userdate($this->assignment->timedue).'</td></tr>';
+        }
+        echo '</table>';
+        print_simple_box_end();
     }
 
 
@@ -235,9 +258,13 @@ class assignment_base {
                 "<a href=\"$CFG->wwwroot/course/view.php?id={$this->course->id}\">{$this->course->shortname} </a> -> ".
                 "<a href=\"$CFG->wwwroot/mod/assignment/index.php?id={$this->course->id}\">$strassignments</a> -> $strheading");
 
-        print_simple_box_start("center");
-        print_heading(get_string("type$form->assignmenttype",'assignment'));
+        print_simple_box_start('center', '70%');
+        print_heading(get_string('type'.$form->assignmenttype,'assignment'));
+        print_simple_box(get_string('help'.$form->assignmenttype, 'assignment'), 'center');
         include("$CFG->dirroot/mod/assignment/type/common.html");
+
+        include("$CFG->dirroot/mod/assignment/type/".$form->assignmenttype."/mod.html");
+        $this->setup_end(); 
     }
 
     /*
@@ -459,15 +486,14 @@ class assignment_base {
         echo '<br />';
         print_textarea($this->usehtmleditor, 12, 58, 0, 0, 'comment', $submission->comment, $this->course->id);
 
-        echo '<div align="right" class="format">';
         if ($this->usehtmleditor) { 
-            print_string('formathtml');
             echo '<input type="hidden" name="format" value="'.FORMAT_HTML.'" />';
         } else {
+            echo '<div align="right" class="format">';
             choose_from_menu(format_text_menu(), "format", $submission->format, "");
+            helpbutton("textformat", get_string("helpformatting"));
+            echo '</div>';
         }
-        helpbutton("textformat", get_string("helpformatting"));
-        echo '</div>';
 
         echo '<div class="buttons" align="center">';
         echo '<input type="submit" name="submit" value="'.get_string('savechanges').'" />';
@@ -635,11 +661,12 @@ class assignment_base {
                     }
                     if ($auser->timemarked > 0) {
                         $teachermodified = '<div id="tt'.$auser->id.'">'.userdate($auser->timemarked).'</div>';
+                        $grade = '<div id="g'.$auser->id.'">'.$this->display_grade($auser->grade).'</div>';
                     } else {
                         $teachermodified = '<div id="tt'.$auser->id.'">&nbsp;</div>';
+                        $grade = '<div id="g'.$auser->id.'"></div>';
                     }
                     
-                    $grade = '<div id="g'.$auser->id.'">'.$this->display_grade($auser->grade).'</div>';
                     $comment = '<div id="com'.$auser->id.'">'.shorten_text($auser->comment, 15).'</div>';
 
                 } else {
@@ -714,7 +741,13 @@ class assignment_base {
     }
 
 
-    function get_submission($userid, $createnew=false) {
+    function get_submission($userid=0, $createnew=false) {
+        global $USER;
+
+        if (empty($userid)) {
+            $userid = $USER->id;
+        }
+
         $submission = get_record('assignment_submissions', 'assignment', $this->assignment->id, 'userid', $userid);
 
         if ($submission || !$createnew) {
@@ -902,6 +935,15 @@ class assignment_base {
     
     function file_area($userid) {
         return make_upload_directory( $this->file_area_name($userid) );
+    }
+
+    function isopen() {
+        $time = time();
+        if ($this->assignment->preventlate) {
+            return ($this->assignment->timeavailable <= $time && $time <= $this->assignment->timedue);
+        } else {
+            return ($this->assignment->timeavailable <= $time);
+        }
     }
 
     function user_outline($user) {
