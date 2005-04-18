@@ -381,7 +381,7 @@ class WikiToMarkdown {
           if (!$coursesql) {
             $courseid = $record->course;
           } else {
-            $r = get_record( $coursesql . "$id" );
+            $r = get_record_sql( $coursesql . "$id" );
             $courseid = $r->course;
           }
           $newtext = $this->convert( $text,$courseid );
