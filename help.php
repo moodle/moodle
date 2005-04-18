@@ -78,6 +78,8 @@
                     }
                 }
 
+                // Some horrible hardcoded stuff follows, should be delegated to modules to handle
+
                 if ($module == 'moodle' and ($file == 'resource/types.html')) {  // RESOURCES
                     require_once($CFG->dirroot .'/mod/resource/lib.php');
                     $typelist = resource_get_resource_types();
@@ -95,6 +97,16 @@
                                 break;
                             }
                         }
+                    }
+                }
+                if ($module == 'moodle' and ($file == 'assignment/types.html')) {  // ASSIGNMENTS
+                    require_once($CFG->dirroot .'/mod/assignment/lib.php');
+                    $typelist = assignment_types();
+
+                    foreach ($typelist as $type => $name) {
+                        echo '<p><b>'.$name.'</b></p>';
+                        echo get_string('help'.$type, 'assignment');
+                        echo '<hr size="1" />';
                     }
                 }
                 break;

@@ -16,11 +16,14 @@ You can see it appended to your <a href=\"$a->url\">assignment submission</a>.';
 $string['assignmentname'] = 'Assignment name';
 $string['assignmenttype'] = 'Assignment type';
 $string['availabledate'] = 'Available from';
+$string['comment'] = 'Comment';
+$string['commentinline'] = 'Comment inline';
 $string['configmaxbytes'] = 'Default maximum assignment size for all assignments on the site (subject to course limits and other local settings)';
 $string['description'] = 'Description';
 $string['duedate'] = 'Due date';
 $string['duedateno'] = 'No due date';
 $string['early'] = '$a early';
+$string['editmysubmission'] = 'Edit my submission';
 $string['emailteachers'] = 'Email alerts to teachers';
 $string['emailteachermail'] = '
 $a->username has updated their assignment submission
@@ -35,7 +38,19 @@ It is <a href=\"$a->url\">available on the web site</a>.';
 $string['existingfiledeleted'] = 'Existing file has been deleted: $a';
 $string['failedupdatefeedback'] = 'Failed to update submission feedback for user $a';
 $string['feedback'] = 'Feedback';
+$string['feedbackfromteacher'] = 'Feedback from the $a';
 $string['feedbackupdated'] = 'Submissions feedback updated for $a people';
+$string['helpoffline'] = 'This is useful when the assignment is performed outside of Moodle.  It could be
+   something elsewhere on the web or face-to-face.</p><p>Students can see a description of the assignment, 
+   but can\'t upload files or anything.  Grading works normally, and students will get notifications of 
+   their grades.</p>';
+$string['helponline'] = '<p>This assignment type asks users to edit a text, using the normal
+   editing tools.  Teachers can grade them online, and even add inline comments or changes.</p>
+   <p>(If you are familiar with older versions of Moodle, this Assignment
+   type does the same thing as the old Journal module used to do.)</p>';
+$string['helpuploadsingle'] = '<p>This type of assignment allows each participant to upload a 
+   single file, of any type.</p> <p>This might be a Word processor document, or an image, 
+   a zipped web site, or anything you ask them to submit.</p>';
 $string['late'] = '$a late';
 $string['maximumgrade'] = 'Maximum grade';
 $string['maximumsize'] = 'Maximum size';
@@ -49,10 +64,11 @@ $string['overwritewarning'] = 'Warning: uploading again will REPLACE your curren
 $string['saveallfeedback'] = 'Save all my feedback';
 $string['submissionfeedback'] = 'Submission feedback';
 $string['submissions'] = 'Submissions';
+$string['submissionsaved'] = 'Your changes have been saved';
 $string['submitassignment'] = 'Submit your assignment using this form';
 $string['submitted'] = 'Submitted';
 $string['typeoffline'] = 'Offline activity';
-$string['typeonline'] = 'Online activity';
+$string['typeonline'] = 'Online text';
 $string['typeuploadsingle'] = 'Upload a single file';
 $string['uploadbadname'] = 'This filename contained strange characters and couldn\'t be uploaded';
 $string['uploadedfiles'] = 'uploaded files';
