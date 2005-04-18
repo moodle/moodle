@@ -922,7 +922,7 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
     			$nextid = 0;
     		    }
     	    	}
-    		if ($nextid == 0) {
+    		if (($nextid == 0) && (count($scoes) > 1)) {
     	    	    $previd = $sco->id;
     	    	}
     	    	

@@ -71,7 +71,8 @@
     // Forge SCO URL
     //
     $connector = '';
-    if (!empty($sco->parameters)) {
+    $version = substr($scorm->version,0,4);
+    if (!empty($sco->parameters) || ($version == 'AICC')) {
 	if (stripos($sco->launch,'?') !== false) {
 	    $connector = '&';
 	} else {
@@ -79,7 +80,11 @@
     	}
     }
     if (scorm_external_link($sco->launch)) {
-	$result = $sco->launch;
+	if ($version == 'AICC') {
+	    $result = $sco->launch.$connector.'aicc_sid='.$CFG->sesskey.'&aicc_url='.$CFG->wwwroot.'/mod/scorm/aicc.php&'.$sco->parameters;
+	} else {
+	    $result = $sco->launch.$connector.$sco->parameters;
+	}
     } else {
 	if ($CFG->slasharguments) {
 	    $result = $CFG->wwwroot.'/file.php/'.$scorm->course.'/moddata/scorm/'.$scorm->id.'/'.$sco->launch.$connector.$sco->parameters;
