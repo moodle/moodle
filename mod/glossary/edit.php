@@ -88,7 +88,26 @@ if ( $confirm ) {
 
         print_heading(format_string($glossary->name));
 
+        /// Info box
+        if ( $glossary->intro ) {
+            print_simple_box(format_text($glossary->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
+        }
+        echo '<br />';
+
+        $tab = GLOSSARY_ADDENTRY_VIEW;
+        include("tabs.html");
+
         include("edit.html");
+
+        echo '</center>';
+
+        glossary_print_tabbed_table_end();
+
+        // Lets give IE more time to load the whole page
+        // before trying to load the editor.
+        if ($usehtmleditor) {
+           use_html_editor("text");
+        }
 
         print_footer($course);
         die;
@@ -313,6 +332,7 @@ include("tabs.html");
 include("edit.html");
 
 echo '</center>';
+
 glossary_print_tabbed_table_end();
 
     // Lets give IE more time to load the whole page
