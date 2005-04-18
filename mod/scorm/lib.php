@@ -98,7 +98,7 @@ function scorm_delete_instance($id) {
     $result = true;
 
     # Delete any dependent files #
-    scorm_delete_files($CFG->dataroot.'/'.$scorm->course.'/moddata/scorm'.$scorm->id);
+    scorm_delete_files($CFG->dataroot.'/'.$scorm->course.'/moddata/scorm/'.$scorm->id);
 
     # Delete any dependent records here #
     if (! delete_records('scorm_scoes_track', 'scormid', $scorm->id)) {

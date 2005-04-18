@@ -127,6 +127,10 @@ function scorm_upgrade($oldversion) {
     	}
     	execute_sql('ALTER TABLE '.$CFG->prefix.'scorm DROP datadir');    // Old field
     }
+    
+    if ($oldversion < 2005041600) {
+       table_column("scorm", "", "version", "VARCHAR", "9", "", "SCORM_1.2", "NOT NULL", "reference");
+    }
 
     return true;
 }
