@@ -10,6 +10,7 @@ CREATE TABLE `prefix_assignment` (
   `format` tinyint(4) unsigned NOT NULL default '0',
   `assignmenttype` varchar(50) NOT NULL default '',
   `resubmit` tinyint(2) unsigned NOT NULL default '0',
+  `preventlate` tinyint(2) unsigned NOT NULL default '0',
   `emailteachers` tinyint(2) unsigned NOT NULL default '0',
   `var1` int(10) default '0',
   `var2` int(10) default '0',

@@ -10,6 +10,7 @@ CREATE TABLE prefix_assignment (
   format integer NOT NULL default '0',
   assignmenttype varchar(50) NOT NULL default '',
   resubmit integer NOT NULL default '0',
+  preventlate integer NOT NULL default '0',
   emailteachers integer NOT NULL default '0',
   var1 integer default '0',
   var2 integer default '0',

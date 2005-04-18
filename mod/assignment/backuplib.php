@@ -41,6 +41,7 @@
                 fwrite ($bf,full_tag("DESCRIPTION",4,false,$assignment->description));
                 fwrite ($bf,full_tag("FORMAT",4,false,$assignment->format));
                 fwrite ($bf,full_tag("RESUBMIT",4,false,$assignment->resubmit));
+                fwrite ($bf,full_tag("PREVENTLATE",4,false,$assignment->preventlate));
                 fwrite ($bf,full_tag("EMAILTEACHERS",4,false,$assignment->emailteachers));
                 fwrite ($bf,full_tag("VAR1",4,false,$assignment->var1));
                 fwrite ($bf,full_tag("VAR2",4,false,$assignment->var2));

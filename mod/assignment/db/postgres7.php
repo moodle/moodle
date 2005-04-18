@@ -148,6 +148,10 @@ function assignment_upgrade($oldversion) {
         table_column('assignment_submissions', '', 'format', 'integer', '4', 'unsigned', '0', 'not null', 'comment');
     }
 
+    if ($oldversion < 2005041800) {  // Prevent late submissions?  (default no)
+        table_column('assignment', '', 'preventlate', 'integer', '2', 'unsigned', '0', 'not null', 'resubmit');
+    }
+
 
 /// These lines ALWAYS need to be here at the end of this file.  Don't mess with them. :-)
     include_once("$CFG->dirroot/mod/assignment/lib.php");
