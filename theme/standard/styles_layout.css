@@ -55,6 +55,7 @@ h6.main {
   padding-right:12px;
 }
 
+
 .clearer {
   clear:both;
   margin:0px;
@@ -239,6 +240,7 @@ table.formtable tbody th
 
 #footer {
   text-align:center;
+  margin-top: 100px;
 }
 
 .homelink {
