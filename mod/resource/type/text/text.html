@@ -1,35 +1,37 @@
 
 <tr valign="top">
-    <td align="right" nowrap="nowrap">
-
-
-<script language="javascript" type="text/javascript">
-    function showhide (id, set) {
-        divobj = document.getElementById(id);
-        butobj = document.getElementById(id+'button');
-        prefobj = document.getElementById(id+'pref');
-        if (set == true) {
-            if (prefobj.value == '1') {
-                divobj.style.display = 'block';
-                butobj.value = '<?php print_string("hidesettings") ?>';
+    <td colspan="2">
+    <script language="javascript" type="text/javascript">
+        function showhide (id, set) {
+            divobj = document.getElementById(id);
+            butobj = document.getElementById(id+'button');
+            prefobj = document.getElementById(id+'pref');
+            if (set == true) {
+                if (prefobj.value == '1') {
+                    divobj.style.display = 'block';
+                    butobj.value = '<?php print_string("hidesettings") ?>';
+                } else {
+                    divobj.style.display = 'none';
+                    butobj.value = '<?php print_string("showsettings") ?>...';
+                }
             } else {
-                divobj.style.display = 'none';
-                butobj.value = '<?php print_string("showsettings") ?>...';
-            }
-        } else {
-            if (prefobj.value == '1') {
-                divobj.style.display = 'none';
-                butobj.value = '<?php print_string("showsettings") ?>...';
-                prefobj.value = '0';
-            } else {
-                divobj.style.display = 'block';
-                butobj.value = '<?php print_string("hidesettings") ?>';
-                prefobj.value = '1';
+                if (prefobj.value == '1') {
+                    divobj.style.display = 'none';
+                    butobj.value = '<?php print_string("showsettings") ?>...';
+                    prefobj.value = '0';
+                } else {
+                    divobj.style.display = 'block';
+                    butobj.value = '<?php print_string("hidesettings") ?>';
+                    prefobj.value = '1';
+                }
             }
         }
-    }
-</script>
-
+    </script>
+    <br />
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right" nowrap="nowrap">
 
 
         <b><?php print_string("fulltext", "resource") ?>:</b><br />
