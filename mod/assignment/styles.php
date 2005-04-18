@@ -30,6 +30,10 @@
   color: red;
 }
 
+.mod-assignment .files img {
+  margin-right: 4px;
+}
+
 #mod-assignment-submissions .generaltable .r1 {
   background-color: #FFFFFF;
 }

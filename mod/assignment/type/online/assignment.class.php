@@ -71,7 +71,7 @@ class assignment_online extends assignment_base {
             if ($submission) {
                 echo format_text($submission->data1, $submission->data2);
             } else {
-                print_string('emptysubmission', 'assignment');
+                echo '<center>'.get_string('emptysubmission', 'assignment').'</center>';
             }
             if ($this->isopen()) {
                 print_single_button('view.php', array('id'=>$this->cm->id,'edit'=>'1'), 

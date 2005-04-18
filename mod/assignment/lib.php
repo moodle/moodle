@@ -825,23 +825,19 @@ class assignment_base {
 
         global $CFG;
 
-        if (empty($assignment->emailteachers)) {          // No need to do anything
+        if (empty($this->assignment->emailteachers)) {          // No need to do anything
             return;
         }
 
         $user = get_record('user', 'id', $submission->userid);
 
-        $course = $this->course;              // Shortcuts
-        $assignment = $this->assignment;
-        $cm = $this->cm;
-
-        if (groupmode($course, $cm) == SEPARATEGROUPS) {   // Separate groups are being used
-            if (!$group = user_group($course->id, $user->id)) {             // Try to find a group
+        if (groupmode($this->course, $this->cm) == SEPARATEGROUPS) {   // Separate groups are being used
+            if (!$group = user_group($this->course->id, $user->id)) {             // Try to find a group
                 $group->id = 0;                                             // Not in a group, never mind
             }
-            $teachers = get_group_teachers($course->id, $group->id);        // Works even if not in group
+            $teachers = get_group_teachers($this->course->id, $group->id);        // Works even if not in group
         } else {
-            $teachers = get_course_teachers($course->id);
+            $teachers = get_course_teachers($this->course->id);
         }
 
         if ($teachers) {
@@ -853,35 +849,49 @@ class assignment_base {
             foreach ($teachers as $teacher) {
                 unset($info);
                 $info->username = fullname($user);
-                $info->assignment = format_string($assignment->name,true);
-                $info->url = "$CFG->wwwroot/mod/assignment/submissions.php?id=$assignment->id";
+                $info->assignment = format_string($this->assignment->name,true);
+                $info->url = $CFG->wwwroot.'/mod/assignment/submissions.php?id='.$this->cm->id;
 
-                $postsubject = "$strsubmitted: $info->username -> $assignment->name";
-                $posttext  = "$course->shortname -> $strassignments -> ".format_string($assignment->name,true)."\n";
-                $posttext .= "---------------------------------------------------------------------\n";
-                $posttext .= get_string("emailteachermail", "assignment", $info);
-                $posttext .= "\n---------------------------------------------------------------------\n";
-
-                if ($user->mailformat == 1) {  // HTML
-                    $posthtml = "<p><font face=\"sans-serif\">".
-                        "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->".
-                        "<a href=\"$CFG->wwwroot/mod/assignment/index.php?id=$course->id\">$strassignments</a> ->".
-                        "<a href=\"$CFG->wwwroot/mod/assignment/view.php?id=$cm->id\">".format_string($assignment->name,true)."</a></font></p>";
-                    $posthtml .= "<hr /><font face=\"sans-serif\">";
-                    $posthtml .= "<p>".get_string("emailteachermailhtml", "assignment", $info)."</p>";
-                    $posthtml .= "</font><hr />";
-                } else {
-                    $posthtml = "";
-                }
+                $postsubject = $strsubmitted.': '.$info->username.' -> '.$this->assignment->name;
+                $posttext = $this->email_teachers_text($info);
+                $posthtml = ($teacher->mailformat == 1) ? $this->email_teachers_html($info) : '';
 
                 @email_to_user($teacher, $user, $postsubject, $posttext, $posthtml);  // If it fails, oh well, too bad.
             }
         }
     }
 
-    function print_user_files($userid, $return=false) {
+    function email_teachers_text($info) {
+        $posttext  = $this->course->shortname.' -> '.$this->strassignments.' -> '.
+                     format_string($this->assignment->name, true)."\n";
+        $posttext .= '---------------------------------------------------------------------'."\n";
+        $posttext .= get_string("emailteachermail", "assignment", $info)."\n";
+        $posttext .= '---------------------------------------------------------------------'."\n";
+        return $posttext;
+    }
+
+
+    function email_teachers_html($info) {
+        $posthtml  = '<p><font face="sans-serif">'.
+                     '<a href="'.$CFG->wwwroot.'/course/view.php?id='.$this->course->id.'">'.$course->shortname.'</a> ->'.
+                     '<a href="'.$CFG->wwwroot.'/mod/assignment/index.php?id='.$this->course->id.'">'.$this->strassignments.'</a> ->'.
+                     '<a href="'.$CFG->wwwroot.'/mod/assignment/view.php?id='.$cm->id.'">'.format_string($this->assignment->name,true).'</a></font></p>';
+        $posthtml .= '<hr /><font face="sans-serif">';
+        $posthtml .= '<p>'.get_string('emailteachermailhtml', 'assignment', $info).'</p>';
+        $posthtml .= '</font><hr />';
+    }
+
+
+    function print_user_files($userid=0, $return=false) {
     
-        global $CFG;
+        global $CFG, $USER;
+
+        if (!$userid) {
+            if (!isloggedin()) {
+                return '';
+            }
+            $userid = $USER->id;
+        }
     
         $filearea = $this->file_area_name($userid);
 

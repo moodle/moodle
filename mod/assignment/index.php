@@ -60,10 +60,11 @@
     
         $submitted = $assignmentinstance->submittedlink();
 
+        $grade = '-';
         if ($submission = $assignmentinstance->get_submission($USER->id)) {
-            $grade = $assignmentinstance->display_grade($submission->grade);
-        } else {
-            $grade = '';
+            if ($submission->timemarked) {
+                $grade = $assignmentinstance->display_grade($submission->grade);
+            }
         }
 
         $due = userdate($assignment->timedue);

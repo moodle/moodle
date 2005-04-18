@@ -41,6 +41,7 @@ class assignment_uploadsingle extends assignment_base {
         return $submitted;
     }
 
+
     function view() {
 
         global $USER;
@@ -51,14 +52,23 @@ class assignment_uploadsingle extends assignment_base {
 
         $this->view_dates();
 
-        $this->view_feedback();
+        $filecount = $this->count_user_files($USER->id);
 
-        if (!$this->count_user_files($USER->id) || $this->assignment->resubmit) {
+        if ($submission = $this->get_submission()) {
+            if ($submission->timemarked) {
+                $this->view_feedback();
+            } else if ($filecount) {
+                print_simple_box($this->print_user_files($USER->id, true), 'center');
+            }
+        }
+
+        if ($this->isopen() && (!$filecount || $this->assignment->resubmit)) {
             $this->view_upload_form();
         }
 
         $this->view_footer();
     }
+
 
     function view_upload_form() {
         global $CFG;
