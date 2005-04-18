@@ -177,9 +177,9 @@
                 $switchclick = get_string('emaildisableclick');
                 $switchpix   = 'email.gif';
             }
-            $emailswitch = "&nbsp<a title=\"$switchclick\" ".
-                           "href=\"view.php?id=$user->id&course=$course->id&$switchparam=1\">".
-                           "<img border=\"0\" width=11 height=11 src=\"$CFG->pixpath/t/$switchpix\"></a>";
+            $emailswitch = "&nbsp;<a title=\"$switchclick\" ".
+                           "href=\"view.php?id=$user->id&amp;course=$course->id&amp;$switchparam=1\">".
+                           "<img border=\"0\" width=\"11\" height=\"11\" src=\"$CFG->pixpath/t/$switchpix\" alt=\"\" /></a>";
 
         } else if ($currentuser) {         /// Can only re-enable an email this way
             if ($user->emailstop) {   // Include link that tells how to re-enable their email
@@ -187,8 +187,8 @@
                 $switchtitle = get_string('emaildisable');
                 $switchclick = get_string('emailenableclick');
 
-                $emailswitch = "&nbsp(<a title=\"$switchclick\" ".
-                               "href=\"view.php?id=$user->id&course=$course->id&enable=1\">$switchtitle</a>)";
+                $emailswitch = "&nbsp;(<a title=\"$switchclick\" ".
+                               "href=\"view.php?id=$user->id&amp;course=$course->id&amp;enable=1\">$switchtitle</a>)";
             }
         }
 
@@ -229,7 +229,7 @@
     }
 
     if ($user->lastaccess) {
-        $datestring = userdate($user->lastaccess)."&nbsp (".format_time(time() - $user->lastaccess).")";
+        $datestring = userdate($user->lastaccess)."&nbsp; (".format_time(time() - $user->lastaccess).")";
     } else {
         $datestring = get_string("never");
     }
