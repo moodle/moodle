@@ -477,6 +477,38 @@ class problem_000010 extends problem_base {
     }
 }
 
+class problem_000011 extends problem_base {
+    function title() {
+        return 'Session errors detected';
+    }
+    function exists() {
+        global $CFG;
+        return isset($CFG->session_error_counter);
+    }
+    function severity() {
+        return SEVERITY_ANNOYANCE;
+    }
+    function description() {
+        global $CFG;
+        if (isset($CFG->session_error_counter)) {
+            return 'Session problems were detected. Total count: '.$CFG->session_error_counter;
+        } else {
+            return 'No session errors detected.';
+        }
+    }
+    function solution() {
+        global $CFG;
+        if (isset($_GET['resetsesserrorcounter'])) {
+            if (get_field('config', 'name', 'name', 'session_error_counter')) {
+                delete_records('config', 'name', 'session_error_counter');
+            }
+            return 'Error counter was cleared.';
+        } else {
+            return '<p>Session errors can be caused by:<ul><li>unresolved problem in server software (aka random switching of users),</li><li>blocked or modified cookies,</li><li>deleting of active session files.</li></ul></p><p><a href="'.me().'&resetsesserrorcounter=1">Reset counter.</a></p>';
+        }
+    }
+}
+
 
 class problem_00000x extends problem_base {
     function title() {

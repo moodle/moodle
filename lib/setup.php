@@ -280,6 +280,13 @@ global $THEME;
         @session_start();
         if (! isset($_SESSION['SESSION'])) {
             $_SESSION['SESSION'] = new object;
+            $_SESSION['SESSION']->session_test = random_string(10);
+            if (empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie])) {
+                setcookie('MoodleSessionTest'.$CFG->sessioncookie, $_SESSION['SESSION']->session_test, 0, '/');
+                $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] = $_SESSION['SESSION']->session_test;
+            } else {
+                $_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] = 'error!!';
+            }
         }
         if (! isset($_SESSION['USER']))    {
             $_SESSION['USER']    = new object;
@@ -328,6 +335,35 @@ global $THEME;
     }
 
     theme_setup();  // Sets up theme global variables
+
+/// now do a session test to prevent random user switching
+    function report_session_error() {
+        global $CFG;
+        if (empty($CFG->lang)) {
+            $CFG->lang = "en";
+        }
+        moodle_setlocale();
+        //clear session cookies
+        setcookie('MoodleSession'.$CFG->sessioncookie, '', time() - 3600, '/');
+        setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, '/');
+        //increment database error counters
+        if (!isset($CFG->session_error_counter)) {
+            set_config('session_error_counter', 1);
+        } else {
+            set_config('session_error_counter', 1 + $CFG->session_error_counter);
+        }
+        //TODO: move string to lang/en/error.php
+        $strsessionerroruser = 'Serious session error occured, please login again.';
+        redirect($CFG->wwwroot, $strsessionerroruser, 5);
+    }
+
+    if ($SESSION != NULL) {
+        if (empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie])) {
+            report_session_error();
+        } else if ($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie] != $SESSION->session_test) {
+            report_session_error();
+        }
+    }
 
 
 

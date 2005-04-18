@@ -36,6 +36,9 @@
         $USER = get_admin();      /// Temporarily, to provide environment for this script
     }
 
+    //unset test cookie, user must login again anyway
+    setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, '/');
+
 /// Start output log
 
     $timenow  = time();

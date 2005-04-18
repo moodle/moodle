@@ -18,6 +18,7 @@
         session_unregister("SESSION");
     }
 
+    setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, '/');
     unset($_SESSION['USER']);
     unset($_SESSION['SESSION']);
 
