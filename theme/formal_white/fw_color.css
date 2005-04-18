@@ -176,7 +176,15 @@ table.minicalendar tr td.weekend {
   border-color:#A1BECB !important;
   background-color:#A1BECB;
 }
-  
+
+.cal_popup_fg {
+  background-color:#FEF9F6;
+}
+
+.cal_popup_bg {
+  border-color:#C6BDA8;
+  background-color:#FEF9F6;
+}
 
 
 /***
