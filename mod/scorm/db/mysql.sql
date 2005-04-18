@@ -7,6 +7,7 @@ CREATE TABLE prefix_scorm (
   course int(10) unsigned NOT NULL default '0',
   name varchar(255) NOT NULL default '',
   reference varchar(255) NOT NULL default '',
+  version varchar(9) NOT NULL default '',
   maxgrade float(3) NOT NULL default '0',
   grademethod tinyint(2) NOT NULL default '0',
   launch int(10) unsigned NOT NULL default 0,

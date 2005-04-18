@@ -45,20 +45,52 @@
     	//alert(filename);
         var myRequest = NewHttpReq();
     	result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/validate.php","id=<?php p($form->course) ?>&reference="+filename+"<?php echo $sessionkey.$scormid.$datadir ?>");
-    	//alert(result);
+ 	//alert(result);
 	results = result.split('\n');
-	if ((results[0] == "found") || (results[0] == "regular")) {
-	    theform.datadir.value = results[2];
-	    if (results[1] == 0) {
-	        theform.launch.value = results[1];
+	result = '';
+	errorlogs = '';
+	datadir = '';
+	for (i=0;i<results.length;i++) {
+	    element = results[i].split('=');
+	    //alert(element);
+	    switch(element[0]) {
+		case 'result':
+		   result = element[1];
+		break;
+		case 'launch':
+		   launch = element[1];
+		break;
+		case 'datadir':
+		   datadir = element[1];
+		break;
+		case 'pkgtype':
+		   pkgtype = element[1];    
+		break;
+		case 'errorlogs':
+		    i++;
+		    do {
+			errorlogs.concat(results[i]+'\n');
+			i++;
+		    } while (i<results.lenght());
+			
+		break;
+	    }
+	}
+	if ((result == "found") || (result == "regular")) {
+	    theform.datadir.value = datadir;
+	    theform.pkgtype.value = pkgtype;
+	    theform.launch.value = launch;
+	    if (launch == 0) {
 	        if ('<?php echo $scormid ?>' != '') {
 	            return confirm('<?php print_string('trackingloose','scorm') ?>');
 	        }
 	    }
 	    return true;
 	} else {
-	    result = '<?php print_string('validation','scorm') ?>: '+ results[0] + '\n';
-	    result.concat('<?php print_string('errorlogs','scorm') ?>:\n',results[3]);
+	    result = '<?php print_string('validation','scorm') ?>: '+ result + '\n';
+	    if (errorlogs != '') {
+		result.concat('<?php print_string('errorlogs','scorm') ?>:\n'+errorlogs);
+	    }
 	    alert(result);
 	    return false;
 	}
@@ -136,8 +168,8 @@
 	</tr>
     </table>
     <input type="hidden" name="datadir"	value="<?php p($form->datadir) ?>" />
+    <input type="hidden" name="pkgtype"	value="<?php p($form->pkgtype) ?>" />
     <input type="hidden" name="launch"	value="<?php p($form->launch) ?>" />
-    <input type="hidden" name="auto"	value="<?php p($form->auto) ?>" />
     <input type="hidden" name="maxgrade"	value="<?php p($form->maxgrade) ?>" />
     <input type="hidden" name="grademethod"	value="<?php p($form->grademethod) ?>" />
     
