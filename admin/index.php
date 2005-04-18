@@ -409,7 +409,7 @@
     $options['sesskey'] = $USER->sesskey;
     print_single_button("register.php", $options, get_string("registration"));
     echo "</td>";
-    echo "<tr></table>";
+    echo "</table>";
 
     print_simple_box_end();
 
