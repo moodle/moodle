@@ -857,12 +857,13 @@ function get_all_mods($courseid, &$mods, &$modnames, &$modnamesplural, &$modname
 
     if ($rawmods = get_course_mods($courseid)) {
         foreach($rawmods as $mod) {    // Index the mods
+            if (empty($modnames[$mod->modname])) {
+                continue;
+            }
             $mods[$mod->id] = $mod;
-            if (!empty($modnames[$mod->modname])) {
-                $mods[$mod->id]->modfullname = $modnames[$mod->modname];
-                if ($mod->visible or isteacher($courseid)) {
-                    $modnamesused[$mod->modname] = $modnames[$mod->modname];
-                }
+            $mods[$mod->id]->modfullname = $modnames[$mod->modname];
+            if ($mod->visible or isteacher($courseid)) {
+                $modnamesused[$mod->modname] = $modnames[$mod->modname];
             }
         }
         if ($modnamesused) {
