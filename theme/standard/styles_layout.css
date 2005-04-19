@@ -646,14 +646,6 @@ table.calendar-controls .next {
 #course-view .current .side {
 }
 
-#course-view .topics {
-  margin-top: 9px;
-}
-
-#course-view .weeks {
-  margin-top: 9px;
-}
-
 #course-view .section .spacer {
   height:0.5em;
 }
@@ -715,8 +707,9 @@ body#course-user .section h2 {
   text-align:right;
 }
 
-body#site-index .headingblock {
-  margin-bottom: 8px;
+body#site-index .headingblock,
+body#course-view .headingblock {
+  margin-bottom: 9px;
 }
 
 .coursebox {
