@@ -1,10 +1,15 @@
 <?php
+/**
+ * Smarty plugin
+ * @package Smarty
+ * @subpackage plugins
+ */
 
 /**
  * Smarty {assign} compiler function plugin
  *
- * Type:     compiler function<br />
- * Name:     assign<br />
+ * Type:     compiler function<br>
+ * Name:     assign<br>
  * Purpose:  assign a value to a template variable
  * @link http://smarty.php.net/manual/en/language.custom.functions.php#LANGUAGE.FUNCTION.ASSIGN {assign}
  *       (Smarty online manual)

@@ -9,8 +9,8 @@
 /**
  * Smarty {popup} function plugin
  *
- * Type:     function<br />
- * Name:     popup<br />
+ * Type:     function<br>
+ * Name:     popup<br>
  * Purpose:  make text pop up in windows via overlib
  * @link http://smarty.php.net/manual/en/language.function.popup.php {popup}
  *          (Smarty online manual)
@@ -25,7 +25,11 @@ function smarty_function_popup($params, &$smarty)
         switch ($_key) {
             case 'text':
             case 'trigger':
+            case 'function':
+            case 'inarray':
                 $$_key = (string)$_value;
+                if ($_key == 'function' || $_key == 'inarray')
+                    $append .= ',' . strtoupper($_key) . ",'$_value'";
                 break;
 
             case 'caption':
@@ -42,6 +46,15 @@ function smarty_function_popup($params, &$smarty)
             case 'textfont':
             case 'captionfont':
             case 'closefont':
+            case 'fgbackground':
+            case 'bgbackground':
+            case 'caparray':
+            case 'capicon':
+            case 'background':
+            case 'frame':
+                $append .= ',' . strtoupper($_key) . ",'$_value'";
+                break;
+
             case 'textsize':
             case 'captionsize':
             case 'closesize':
@@ -50,23 +63,15 @@ function smarty_function_popup($params, &$smarty)
             case 'border':
             case 'offsetx':
             case 'offsety':
-            case 'fgbackground':
-            case 'bgbackground':
-            case 'inarray':
-            case 'caparray':
-            case 'capicon':
             case 'snapx':
             case 'snapy':
             case 'fixx':
             case 'fixy':
-            case 'background':
             case 'padx':
             case 'pady':
-            case 'frame':
             case 'timeout':
             case 'delay':
-            case 'function':
-                $append .= ',' . strtoupper($_key) . ",'$_value'";
+                $append .= ',' . strtoupper($_key) . ",$_value";
                 break;
 
             case 'sticky':
@@ -81,6 +86,8 @@ function smarty_function_popup($params, &$smarty)
             case 'fullhtml':
             case 'hauto':
             case 'vauto':
+            case 'mouseoff':
+            case 'followmouse':
                 if ($_value) $append .= ',' . strtoupper($_key);
                 break;
 
@@ -97,7 +104,10 @@ function smarty_function_popup($params, &$smarty)
     if (empty($trigger)) { $trigger = "onmouseover"; }
 
     $retval = $trigger . '="return overlib(\''.preg_replace(array("!'!","![\r\n]!"),array("\'",'\r'),$text).'\'';
-    $retval .= $append . ');" onmouseout="nd();"';
+    $retval .= $append . ');"';
+    if ($trigger == 'onmouseover')
+       $retval .= ' onmouseout="nd();"';
+
 
     return $retval;
 }

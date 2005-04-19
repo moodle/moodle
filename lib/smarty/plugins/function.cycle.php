@@ -8,10 +8,10 @@
 /**
  * Smarty {cycle} function plugin
  *
- * Type:     function<br />
- * Name:     cycle<br />
- * Date:     May 3, 2002<br />
- * Purpose:  cycle through given values<br />
+ * Type:     function<br>
+ * Name:     cycle<br>
+ * Date:     May 3, 2002<br>
+ * Purpose:  cycle through given values<br>
  * Input:
  *         - name = name of cycle (optional)
  *         - values = comma separated list of values to cycle,
@@ -23,8 +23,8 @@
  *         - delimiter = the value delimiter, default is ","
  *         - assign = boolean, assigns to template var instead of
  *                    printed.
- * 
- * Examples:<br />
+ *
+ * Examples:<br>
  * <pre>
  * {cycle values="#eeeeee,#d0d0d0d"}
  * {cycle name=row values="one,two,three" reset=true}
@@ -32,7 +32,7 @@
  * </pre>
  * @link http://smarty.php.net/manual/en/language.function.cycle.php {cycle}
  *       (Smarty online manual)
- * @author Monte Ohrt <monte@ispi.net>
+ * @author Monte Ohrt <monte at ohrt dot com>
  * @author credit to Mark Priatel <mpriatel@rogers.com>
  * @author credit to Gerard <gerard@interfold.com>
  * @author credit to Jason Sweat <jsweat_php@yahoo.com>
@@ -66,7 +66,7 @@ function smarty_function_cycle($params, &$smarty)
     $cycle_vars[$name]['delimiter'] = (isset($params['delimiter'])) ? $params['delimiter'] : ',';
     
     if(is_array($cycle_vars[$name]['values'])) {
-        $cycle_array = $cycle_vars[$name]['values'];    
+        $cycle_array = $cycle_vars[$name]['values'];
     } else {
         $cycle_array = explode($cycle_vars[$name]['delimiter'],$cycle_vars[$name]['values']);
     }
@@ -88,7 +88,7 @@ function smarty_function_cycle($params, &$smarty)
 
     if($advance) {
         if ( $cycle_vars[$name]['index'] >= count($cycle_array) -1 ) {
-            $cycle_vars[$name]['index'] = 0;            
+            $cycle_vars[$name]['index'] = 0;
         } else {
             $cycle_vars[$name]['index']++;
         }

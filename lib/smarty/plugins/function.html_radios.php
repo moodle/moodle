@@ -9,28 +9,29 @@
 /**
  * Smarty {html_radios} function plugin
  *
- * File:       function.html_radios.php<br />
- * Type:       function<br />
- * Name:       html_radios<br />
- * Date:       24.Feb.2003<br />
- * Purpose:    Prints out a list of radio input types<br />
- * Input:<br />
+ * File:       function.html_radios.php<br>
+ * Type:       function<br>
+ * Name:       html_radios<br>
+ * Date:       24.Feb.2003<br>
+ * Purpose:    Prints out a list of radio input types<br>
+ * Input:<br>
  *           - name       (optional) - string default "radio"
  *           - values     (required) - array
  *           - options    (optional) - associative array
  *           - checked    (optional) - array default not set
- *           - separator  (optional) - ie <br /> or &nbsp;
- *           - output     (optional) - without this one the buttons don't have names
+ *           - separator  (optional) - ie <br> or &nbsp;
+ *           - output     (optional) - the output next to each radio button
+ *           - assign     (optional) - assign the output as an array to this variable
  * Examples:
  * <pre>
  * {html_radios values=$ids output=$names}
- * {html_radios values=$ids name='box' separator='<br />' output=$names}
- * {html_radios values=$ids checked=$checked separator='<br />' output=$names}
+ * {html_radios values=$ids name='box' separator='<br>' output=$names}
+ * {html_radios values=$ids checked=$checked separator='<br>' output=$names}
  * </pre>
  * @link http://smarty.php.net/manual/en/language.function.html.radios.php {html_radios}
  *      (Smarty online manual)
  * @author     Christopher Kvarme <christopher.kvarme@flashjab.com>
- * @author credits to Monte Ohrt <monte@ispi.net>
+ * @author credits to Monte Ohrt <monte at ohrt dot com>
  * @version    1.0
  * @param array
  * @param Smarty
@@ -84,6 +85,8 @@ function smarty_function_html_radios($params, &$smarty)
                 $options = (array)$_val;
                 break;
 
+            case 'assign':
+                break;
 
             default:
                 if(!is_array($_val)) {
@@ -98,39 +101,48 @@ function smarty_function_html_radios($params, &$smarty)
     if (!isset($options) && !isset($values))
         return ''; /* raise error here? */
 
-    $_html_result = '';
+    $_html_result = array();
 
-    if (isset($options) && is_array($options)) {
+    if (isset($options)) {
 
-        foreach ((array)$options as $_key=>$_val)
-            $_html_result .= smarty_function_html_radios_output($name, $_key, $_val, $selected, $extra, $separator, $labels);
+        foreach ($options as $_key=>$_val)
+            $_html_result[] = smarty_function_html_radios_output($name, $_key, $_val, $selected, $extra, $separator, $labels);
 
     } else {
 
-        foreach ((array)$values as $_i=>$_key) {
+        foreach ($values as $_i=>$_key) {
             $_val = isset($output[$_i]) ? $output[$_i] : '';
-            $_html_result .= smarty_function_html_radios_output($name, $_key, $_val, $selected, $extra, $separator, $labels);
+            $_html_result[] = smarty_function_html_radios_output($name, $_key, $_val, $selected, $extra, $separator, $labels);
         }
 
     }
 
-    return $_html_result;
+    if(!empty($params['assign'])) {
+        $smarty->assign($params['assign'], $_html_result);
+    } else {
+        return implode("\n",$_html_result);
+    }
 
 }
 
 function smarty_function_html_radios_output($name, $value, $output, $selected, $extra, $separator, $labels) {
     $_output = '';
-    if ($labels) $_output .= '<label>';
-    $_output .= '<input type="radio" name="'
+    if ($labels) {
+      $_id = smarty_function_escape_special_chars($name . '_' . $value);
+      $_output .= '<label for="' . $_id . '">';
+   }
+   $_output .= '<input type="radio" name="'
         . smarty_function_escape_special_chars($name) . '" value="'
         . smarty_function_escape_special_chars($value) . '"';
+
+   if ($labels) $_output .= ' id="' . $_id . '"';
 
     if ($value==$selected) {
         $_output .= ' checked="checked"';
     }
     $_output .= $extra . ' />' . $output;
     if ($labels) $_output .= '</label>';
-    $_output .=  $separator . "\n";
+    $_output .=  $separator;
 
     return $_output;
 }

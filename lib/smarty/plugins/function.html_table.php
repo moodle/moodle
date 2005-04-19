@@ -9,11 +9,11 @@
 /**
  * Smarty {html_table} function plugin
  *
- * Type:     function<br />
- * Name:     html_table<br />
- * Date:     Feb 17, 2003<br />
- * Purpose:  make an html table from an array of data<br />
- * Input:<br />
+ * Type:     function<br>
+ * Name:     html_table<br>
+ * Date:     Feb 17, 2003<br>
+ * Purpose:  make an html table from an array of data<br>
+ * Input:<br>
  *         - loop = array to loop through
  *         - cols = number of columns
  *         - rows = number of rows
@@ -33,7 +33,7 @@
  * {table loop=$data cols=4 tr_attr='"bgcolor=red"'}
  * {table loop=$data cols=4 tr_attr=$colors}
  * </pre>
- * @author   Monte Ohrt <monte@ispi.net>
+ * @author   Monte Ohrt <monte at ohrt dot com>
  * @version  1.0
  * @link http://smarty.php.net/manual/en/language.function.html.table.php {html_table}
  *          (Smarty online manual)
@@ -73,6 +73,7 @@ function smarty_function_html_table($params, &$smarty)
             case 'trailpad':
             case 'hdir':
             case 'vdir':
+            case 'inner':
                 $$_key = (string)$_value;
                 break;
 

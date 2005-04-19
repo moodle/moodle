@@ -8,9 +8,9 @@
 /**
  * Smarty {assign_debug_info} function plugin
  *
- * Type:     function<br />
- * Name:     assign_debug_info<br />
- * Purpose:  assign debug info to the template<br />
+ * Type:     function<br>
+ * Name:     assign_debug_info<br>
+ * Purpose:  assign debug info to the template<br>
  * @param array unused in this plugin, this plugin uses {@link Smarty::$_config},
  *              {@link Smarty::$_tpl_vars} and {@link Smarty::$_smarty_debug_info}
  * @param Smarty
@@ -24,7 +24,7 @@ function smarty_function_assign_debug_info($params, &$smarty)
         ksort($config_vars);
         $smarty->assign("_debug_config_keys", array_keys($config_vars));
         $smarty->assign("_debug_config_vals", array_values($config_vars));
-    }   
+    }
     
     $included_templates = $smarty->_smarty_debug_info;
     

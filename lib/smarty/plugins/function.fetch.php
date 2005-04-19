@@ -9,8 +9,8 @@
 /**
  * Smarty {fetch} plugin
  *
- * Type:     function<br />
- * Name:     fetch<br />
+ * Type:     function<br>
+ * Name:     fetch<br>
  * Purpose:  fetch file, web or ftp data and display results
  * @link http://smarty.php.net/manual/en/language.function.fetch.php {fetch}
  *       (Smarty online manual)
@@ -26,9 +26,10 @@ function smarty_function_fetch($params, &$smarty)
         return;
     }
 
+    $content = '';
     if ($smarty->security && !preg_match('!^(http|ftp)://!i', $params['file'])) {
         $_params = array('resource_type' => 'file', 'resource_name' => $params['file']);
-        require_once(SMARTY_DIR . 'core' . DIRECTORY_SEPARATOR . 'core.is_secure.php');
+        require_once(SMARTY_CORE_DIR . 'core.is_secure.php');
         if(!smarty_core_is_secure($_params, $smarty)) {
             $smarty->_trigger_fatal_error('[plugin] (secure mode) fetch \'' . $params['file'] . '\' is not allowed');
             return;
@@ -63,8 +64,11 @@ function smarty_function_fetch($params, &$smarty)
                 } else {
                     $port = $uri_parts['port'];
                 }
-                if(empty($uri_parts['user'])) {
-                    $user = '';
+                if(!empty($uri_parts['user'])) {
+                    $user = $uri_parts['user'];
+                }
+                if(!empty($uri_parts['pass'])) {
+                    $pass = $uri_parts['pass'];
                 }
                 // loop through parameters, setup headers
                 foreach($params as $param_key => $param_value) {
@@ -171,7 +175,6 @@ function smarty_function_fetch($params, &$smarty)
                         fputs($fp, "Authorization: BASIC ".base64_encode("$user:$pass")."\r\n");
                     }
 
-                    $content = '';
                     fputs($fp, "\r\n");
                     while(!feof($fp)) {
                         $content .= fgets($fp,4096);

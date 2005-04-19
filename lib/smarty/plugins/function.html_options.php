@@ -9,9 +9,9 @@
 /**
  * Smarty {html_options} function plugin
  *
- * Type:     function<br />
- * Name:     html_options<br />
- * Input:<br />
+ * Type:     function<br>
+ * Name:     html_options<br>
+ * Input:<br>
  *           - name       (optional) - string default "select"
  *           - values     (required if no options supplied) - array
  *           - options    (required if no values supplied) - associative array
@@ -72,14 +72,14 @@ function smarty_function_html_options($params, &$smarty)
 
     $_html_result = '';
 
-    if (is_array($options)) {
+    if (isset($options)) {
         
         foreach ($options as $_key=>$_val)
             $_html_result .= smarty_function_html_options_optoutput($_key, $_val, $selected);
 
     } else {
         
-        foreach ((array)$values as $_i=>$_key) {
+        foreach ($values as $_i=>$_key) {
             $_val = isset($output[$_i]) ? $output[$_i] : '';
             $_html_result .= smarty_function_html_options_optoutput($_key, $_val, $selected);
         }
