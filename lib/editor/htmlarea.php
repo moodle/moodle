@@ -2278,7 +2278,13 @@ HTMLArea.getHTML = function(root, outputRoot, editor) {
                     if (typeof root[a.nodeName] != "undefined" && name != "href" && name != "src") {
                         value = root[a.nodeName];
                     } else {
+                        // This seems to be working, but if it does cause
+                        // problems later on return the old value...
+                        if (name.toLowerCase() == "href" && name.toLowerCase() == "src") {
+                            value = root[a.nodeName];
+                        } else {
                         value = a.nodeValue;
+                        }
                         if (HTMLArea.is_ie && (name == "href" || name == "src")) {
                             value = editor.stripBaseURL(value);
                         }
@@ -2314,9 +2320,8 @@ HTMLArea.getHTML = function(root, outputRoot, editor) {
         break;      // skip comments, for now.
     }
 
-    //return HTMLArea.formathtml(html);
-    // formathtml doesn't work properly yet!!!
-    return html;
+    return HTMLArea.formathtml(html);
+    //return html;
 };
 
 HTMLArea.prototype.stripBaseURL = function(string) {
@@ -2450,14 +2455,15 @@ HTMLArea.formathtml = function (html) {
     var format     = new Object();
     format.regex   = new Object();
 
-    format.regex.tagopen  = /\<[^\/](P|DIV|H1|H2|H3|H4|H5|H6|ADDRESS|PRE|OL|UL|LI|TITLE|META|LINK|BASE|SCRIPT|LINK|TD|AREA|OPTION)[^\>]*\>/gi ;
-    format.regex.tagclose = /\<\/{1}(P|DIV|H1|H2|H3|H4|H5|H6|ADDRESS|PRE|OL|UL|LI|TITLE|META|LINK|BASE|SCRIPT|LINK|TD|AREA|OPTION)[^\>]*\>/gi ;
-    format.regex.newlines = /\<(BR|HR)[^\>]\>/gi ;
-    format.regex.tagsmain = /\<\/?(HTML|HEAD|BODY|FORM|TABLE|TBODY|THEAD|TR)[^\>]*\>/gi ;
+    format.regex.tagopen  = /<[^\/](P|DIV|H1|H2|H3|H4|H5|H6|ADDRESS|PRE|OL|UL|LI|TITLE|META|LINK|BASE|SCRIPT|LINK|TD|AREA|OPTION)[^>]*>/gi ;
+    format.regex.tagclose = /<\/{1}(P|DIV|H1|H2|H3|H4|H5|H6|ADDRESS|PRE|OL|UL|LI|TITLE|META|LINK|BASE|SCRIPT|LINK|TD|AREA|OPTION)[^>]*>/gi ;
+    format.regex.newlines = /<(BR|HR)[^>]>/gi ;
+    format.regex.tagsmain = /<\/?(HTML|HEAD|BODY|FORM|TABLE|TBODY|THEAD|TR)[^>]*>/gi ;
     format.regex.splitter = /\s*\n+\s*/g ;
+    format.regex.notouchy = /<\/?(span|font)[^>]*>/gi;
 
-    format.regex.indent = /^\<(HTML|HEAD|BODY|FORM|TABLE|TBODY|THEAD|TR|UL|OL)[ \/\>]/i ;
-    format.regex.unindent = /^\<\/(HTML|HEAD|BODY|FORM|TABLE|TBODY|THEAD|TR|UL|OL)[ \>]/i ;
+    format.regex.indent = /^<(HTML|HEAD|BODY|FORM|TABLE|TBODY|THEAD|TR|UL|OL)[ \/>]/i ;
+    format.regex.unindent = /^<\/(HTML|HEAD|BODY|FORM|TABLE|TBODY|THEAD|TR|UL|OL)[ >]/i ;
     format.regex.inremove = new RegExp( indentchar );
 
     var formatted  = html.replace( format.regex.tagopen, '\n$&' );
@@ -2478,9 +2484,10 @@ HTMLArea.formathtml = function (html) {
             indentation = indentation.replace(format.regex.inremove, '') ;
         }
 
-        line = line.replace(format.regex.tagopen, '\n$&');
-        line = line.replace(format.regex.tagclose, '$&\n');
-        line = line.replace(format.regex.tagsmain, '$&\n');
+        line = !format.regex.notouchy.test(line) ? line.replace(format.regex.tagopen, '\n$&') : line.replace(format.regex.tagopen, '$&');
+        line = !format.regex.notouchy.test(line) ? line.replace(format.regex.tagclose, '$&\n'): line.replace(format.regex.tagclose, '$&');
+        line = !format.regex.notouchy.test(line) ? line.replace(format.regex.tagsmain, '$&\n'): line.replace(format.regex.tagsmain, '$&');
+
         formatted += indentation + line;
 
         if (format.regex.indent.test(line)) {
