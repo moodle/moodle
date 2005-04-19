@@ -35,6 +35,7 @@ It is available here:
 $string['emailteachermailhtml'] = '$a->username has updated their assignment submission
 for <i>\'$a->assignment\'</i><br /><br />
 It is <a href=\"$a->url\">available on the web site</a>.';
+$string['emptysubmission'] = 'Nothing has been entered yet';
 $string['existingfiledeleted'] = 'Existing file has been deleted: $a';
 $string['failedupdatefeedback'] = 'Failed to update submission feedback for user $a';
 $string['feedback'] = 'Feedback';
