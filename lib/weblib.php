@@ -1766,11 +1766,11 @@ function print_header ($title='', $heading='', $navigation='', $focus='', $meta=
 function print_header_simple($title='', $heading='', $navigation='', $focus='', $meta='',
                        $cache=true, $button='&nbsp;', $menu='', $usexml=false, $bodytags='') {
 
-    global $course;                // The same hack is used in print_header
+    global $course,$CFG;                // The same hack is used in print_header
 
     $shortname ='';
     if ($course->category) {
-        $shortname = '<a href="../../course/view.php?id='. $course->id .'">'. $course->shortname .'</a> ->';
+        $shortname = '<a href="'.$CFG->wwwroot.'/course/view.php?id='. $course->id .'">'. $course->shortname .'</a> ->';
     }
 
     print_header($course->shortname .': '. $title, $course->fullname .' '. $heading, $shortname .' '. $navigation, $focus, $meta,

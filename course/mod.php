@@ -471,6 +471,7 @@
         } else {
             $pageheading = get_string("updatinga", "moodle", $fullmodulename);
         }
+        $strnav = "<a href=\"$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id\">$form->name</a> ->";
 
     } else if (isset($_GET['duplicate']) and confirm_sesskey()) {   // value = course module
 
@@ -523,6 +524,7 @@
         } else {
             $pageheading = get_string("duplicatinga", "moodle", $fullmodulename);
         }
+        $strnav = "<a href=\"$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id\">$form->name</a> ->";
 
 
     } else if (isset($_GET['add']) and confirm_sesskey()) {
@@ -565,6 +567,7 @@
         } else {
             $pageheading = get_string("addinganew", "moodle", $fullmodulename);
         }
+        $strnav = '';
 
     } else {
         error("No action was specfied");
@@ -583,15 +586,9 @@
         $focuscursor = "form.name";
     }
 
-    if ($course->category) {
-        print_header("$course->shortname: $streditinga", "$course->fullname",
-                     "<a href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> ->
-                      <a href=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</a> ->
-                      $streditinga", $focuscursor, "", false);
-    } else {
-        print_header("$course->shortname: $streditinga", "$course->fullname",
-                     "$streditinga", $focuscursor, "", false);
-    }
+    print_header_simple($streditinga, '',
+     "<a href=\"$CFG->wwwroot/mod/$module->name/index.php?id=$course->id\">$strmodulenameplural</a> ->
+     $strnav $streditinga", $focuscursor, "", false);
 
     unset($SESSION->modform); // Clear any old ones that may be hanging around.
 
