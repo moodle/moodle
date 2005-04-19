@@ -64,7 +64,7 @@ CREATE TABLE prefix_choice_options (
   timemodified integer NOT NULL default '0'
 );
 
-CREATE INDEX prefix_choice_answers_choice_idx ON prefix_choice_answers (choice);
+CREATE INDEX prefix_choice_options_choice_idx ON prefix_choice_options (choiceid);
 
 #
 # Dumping data for table `log_display`
