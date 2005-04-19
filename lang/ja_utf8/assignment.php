@@ -15,11 +15,14 @@ $string['assignmentmailhtml'] = '$a->teacher があなたの課題「 <i>$a->ass
 $string['assignmentname'] = '課題名';
 $string['assignmenttype'] = '課題タイプ';
 $string['availabledate'] = '提出開始';
+$string['comment'] = 'コメント';
+$string['commentinline'] = 'インラインコメント';
 $string['configmaxbytes'] = 'このサイトにおける全ての課題に関するデフォルトの最大サイズ ( コース制限および他のローカル設定に従います )';
 $string['description'] = '詳細';
 $string['duedate'] = '提出終了';
 $string['duedateno'] = '提出期限無し';
 $string['early'] = '$a 早く提出';
+$string['editmysubmission'] = '提出課題を編集';
 $string['emailteachermail'] = '$a->username が「 $a->assignment 」の提出課題を更新しました。
 
 下記にて閲覧可能です:
@@ -31,7 +34,13 @@ $string['emailteachers'] = '教師にメール通知を行う';
 $string['existingfiledeleted'] = '登録済みファイルが削除されました: $a';
 $string['failedupdatefeedback'] = 'ユーザ $a のフィードバック更新に失敗しました ';
 $string['feedback'] = 'フィードバック';
+$string['feedbackfromteacher'] = '$a のフィードバック';
 $string['feedbackupdated'] = '$a の参加者に対するフィードバックの更新';
+$string['helpoffline'] = '<p>このタイプの課題は、Moodleの外で課題が行われる時に便利です。他のウェブサイト上での課題、対面により課される課題が考えられます。</p>
+<p>学生は課題の説明を読むことはできますが、ファイル等をアップロードすることはできません。評定は通常通り動作し、評定に関する通知メールが学生宛に送信されます。</p>';
+$string['helponline'] = '<p>このタイプの課題は、ユーザに通常の編集ツールを使用したテキストの編集を求めます。教師はオンラインでこれらを評定でき、インラインコメントの追加・変更を行うこともできます。</p>
+<p>(  あなたが古いバージョンのMoodleに慣れているのでしたら、このタイプの課題は、古い日誌モジュールと同じように動作すると考えてください。 )</p>';
+$string['helpuploadsingle'] = '<p>このタイプの課題では、各参加者があらゆる種類の単一ファイルをアップロードすることができます。</p> <p>ワードプロセッサ文書、イメージ、ZIP圧縮したウェブサイト、その他あなたが参加者に提出するように求めたファイルです。</p>';
 $string['late'] = '$a 遅く提出';
 $string['maximumgrade'] = '最大評価';
 $string['maximumsize'] = '最大サイズ';
@@ -45,6 +54,7 @@ $string['overwritewarning'] = '注意: 再度アップロードすることに�
 $string['saveallfeedback'] = 'フィードバックを保存する';
 $string['submissionfeedback'] = '提出のフィードバック';
 $string['submissions'] = '提出';
+$string['submissionsaved'] = '変更内容が保存されました。';
 $string['submitassignment'] = 'このフォームを使用して課題を提出する';
 $string['submitted'] = '提出';
 $string['typeoffline'] = 'オフライン活動';
