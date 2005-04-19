@@ -35,13 +35,12 @@ It is available here:
 $string['emailteachermailhtml'] = '$a->username has updated their assignment submission
 for <i>\'$a->assignment\'</i><br /><br />
 It is <a href=\"$a->url\">available on the web site</a>.';
-$string['emptysubmission'] = 'Nothing has been entered yet';
 $string['existingfiledeleted'] = 'Existing file has been deleted: $a';
 $string['failedupdatefeedback'] = 'Failed to update submission feedback for user $a';
 $string['feedback'] = 'Feedback';
 $string['feedbackfromteacher'] = 'Feedback from the $a';
 $string['feedbackupdated'] = 'Submissions feedback updated for $a people';
-$string['helpoffline'] = 'This is useful when the assignment is performed outside of Moodle.  It could be
+$string['helpoffline'] = '<p>This is useful when the assignment is performed outside of Moodle.  It could be
    something elsewhere on the web or face-to-face.</p><p>Students can see a description of the assignment, 
    but can\'t upload files or anything.  Grading works normally, and students will get notifications of 
    their grades.</p>';
