@@ -33,16 +33,16 @@
 
     echo "<td width=\"*\" valign=\"top\">";
     if ($social = forum_get_course_forum($course->id, "social")) {
-        if (forum_is_subscribed($USER->id, $social->id)) {
-            $subtext = get_string("unsubscribe", "forum");
+        if (forum_is_forcesubscribed($social->id)) {
+            $subtext = get_string('everyoneissubscribed', 'forum');
+        } else if (forum_is_subscribed($USER->id, $social->id)) {
+            $subtext = '<a href="../mod/forum/subscribe.php?id='.$social->id.'">'.get_string('unsubscribe', 'forum').'</a>';
         } else {
-            $subtext = get_string("subscribe", "forum");
+            $subtext = '<a href="../mod/forum/subscribe.php?id='.$social->id.'">'.get_string('subscribe', 'forum').'</a>';
         }
         $headertext = "<table border=0 width=100% cellpadding=0 cellspacing=0 class=headingblockcontent><tr><td>".
                        get_string("socialheadline").
-                       "</td><td align=right><font size=1>".
-                       "<a href=\"../mod/forum/subscribe.php?id=$social->id\">$subtext</a></td>".
-                       "</tr></table>";
+                       "</td><td align=right><font size='1'>$subtext</font></td></tr></table>";
         print_heading_block($headertext);
         echo "<img alt=\"\" height=7 src=\"../pix/spacer.gif\"><br>";
 
