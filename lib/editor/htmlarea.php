@@ -2278,10 +2278,7 @@ HTMLArea.getHTML = function(root, outputRoot, editor) {
                     if (typeof root[a.nodeName] != "undefined" && name != "href" && name != "src") {
                         value = root[a.nodeName];
                     } else {
-                        //value = a.nodeValue;
-                        // This seems to be working, but if it does cause
-                        // problems later on return the old value...
-                        value = root[a.nodeName];
+                        value = a.nodeValue;
                         if (HTMLArea.is_ie && (name == "href" || name == "src")) {
                             value = editor.stripBaseURL(value);
                         }
