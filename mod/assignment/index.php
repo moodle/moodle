@@ -14,6 +14,7 @@
 
     $strassignments = get_string("modulenameplural", "assignment");
     $strassignment = get_string("modulename", "assignment");
+    $strassignmenttype = get_string("assignmenttype", "assignment");
     $strweek = get_string("week");
     $strtopic = get_string("topic");
     $strname = get_string("name");
@@ -32,13 +33,13 @@
     $timenow = time();
 
     if ($course->format == "weeks") {
-        $table->head  = array ($strweek, $strname, $strduedate, $strsubmitted, $strgrade);
+        $table->head  = array ($strweek, $strname, $strassignmenttype, $strduedate, $strsubmitted, $strgrade);
         $table->align = array ("center", "left", "left", "left", "right");
     } else if ($course->format == "topics") {
-        $table->head  = array ($strtopic, $strname, $strduedate, $strsubmitted, $strgrade);
+        $table->head  = array ($strtopic, $strname, $strassignmenttype, $strduedate, $strsubmitted, $strgrade);
         $table->align = array ("center", "left", "left", "left", "right");
     } else {
-        $table->head  = array ($strname, $strduedate, $strsubmitted, $strgrade);
+        $table->head  = array ($strname, $strassignmenttype, $strduedate, $strsubmitted, $strgrade);
         $table->align = array ("left", "left", "left", "right");
     }
 
@@ -51,6 +52,8 @@
     }
 
     $currentsection = "";
+
+    $types = assignment_types();
 
     foreach ($assignments as $assignment) {
 
@@ -66,6 +69,8 @@
                 $grade = $assignmentinstance->display_grade($submission->grade);
             }
         }
+
+        $type = $types[$assignment->assignmenttype];
 
         $due = userdate($assignment->timedue);
         if (!$assignment->visible) {
@@ -88,9 +93,9 @@
         }
 
         if ($course->format == "weeks" or $course->format == "topics") {
-            $table->data[] = array ($printsection, $link, $due, $submitted, $grade);
+            $table->data[] = array ($printsection, $link, $type, $due, $submitted, $grade);
         } else {
-            $table->data[] = array ($link, $due, $submitted, $grade);
+            $table->data[] = array ($link, $type, $due, $submitted, $grade);
         }
     }
 
