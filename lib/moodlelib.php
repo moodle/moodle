@@ -6035,7 +6035,7 @@ function get_performance_info() {
     }
     
 
-    $info['html'] = '<div class="performanceinfo">'.$info['html'].'</span>';
+    $info['html'] = '<div class="performanceinfo">'.$info['html'].'</div>';
     return $info;
 }
 
