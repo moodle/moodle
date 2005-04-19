@@ -262,7 +262,7 @@
     } else {
         echo '<input type="text" name="hook" size="20" value="" alt="'.$strsearch.'" /> ';
     }
-    if ($fullsearch) {
+    if ($fullsearch || $mode != 'search') {
         $fullsearchchecked = 'checked="checked"';
     } else {
         $fullsearchchecked = '';
