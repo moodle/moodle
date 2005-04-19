@@ -57,7 +57,7 @@ function scorm_upgrade($oldversion) {
     	}
     }
 	
-	execute_sql("CREATE TABLE prefix_scorm_scoes_track (
+	execute_sql("CREATE TABLE {$CFG->prefix}scorm_scoes_track (
 			id SERIAL,
 			userid integer NOT NULL default '0',
 			scormid integer NOT NULL default '0',
@@ -66,7 +66,7 @@ function scorm_upgrade($oldversion) {
 			value text NOT NULL default '',
 			PRIMARY KEY (userid, scormid, scoid, element),
 			UNIQUE (userid, scormid, scoid, element)
-		   );",false); 
+		   );",true); 
 		   
 	modify_database('','CREATE INDEX prefix_scorm_scoes_track_userdata_idx ON  prefix_scorm_scoes_track (userid, scormid, scoid);');
 		     
@@ -116,7 +116,7 @@ function scorm_upgrade($oldversion) {
     }
     
     if ($oldversion < 2005041500) {
-    	if ($scorms = get_records_select('scorm','1','id ASC')) {
+    	if ($scorms = get_records_select('scorm',null,'id ASC')) {
     	    foreach ($scorms as $scorm) {
     	        if (strlen($scorm->datadir) == 14) {
     	    	    $basedir = $CFG->dataroot.'/'.$scorm->course;
