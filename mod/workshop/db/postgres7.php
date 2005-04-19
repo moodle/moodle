@@ -91,6 +91,11 @@ function workshop_upgrade($oldversion) {
     if ($oldversion < 2004092400) {
         table_column("workshop", "", "nattachments", "INTEGER", "4", "UNSIGNED", "0", "NOT NULL", "nelements");
         table_column("workshop_submissions", "", "description", "TEXT", "", "", "", "", "mailed");
+        // these need to be dropped first in case we're upgrading from 1.4.3 and they already exist
+        execute_sql("DROP INDEX {$CFG->prefix}workshop_submissions_userid_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}workshop_assessments_submissionid_idx;",false);
+        execute_sql("DROP INDEX {$CFG->prefix}workshop_assessments_userid_idx;",false);
+
         execute_sql("CREATE INDEX {$CFG->prefix}workshop_submissions_userid_idx ON {$CFG->prefix}workshop_submissions (userid)");
         execute_sql("CREATE INDEX {$CFG->prefix}workshop_assessments_submissionid_idx ON {$CFG->prefix}workshop_assessments (submissionid)");
         execute_sql("CREATE INDEX {$CFG->prefix}workshop_assessments_userid_idx ON {$CFG->prefix}workshop_assessments (userid)");
