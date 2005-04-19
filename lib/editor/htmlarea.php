@@ -2294,13 +2294,13 @@ HTMLArea.getHTML = function(root, outputRoot, editor) {
                 }
                 html += " " + name + '="' + value + '"';
             }
-            html += closed ? " />\n" : ">";
+            html += closed ? " />" : ">";
         }
         for (i = root.firstChild; i; i = i.nextSibling) {
             html += HTMLArea.getHTML(i, true, editor);
         }
         if (outputRoot && !closed) {
-            html += "</" + root.tagName.toLowerCase() + ">\n";
+            html += "</" + root.tagName.toLowerCase() + ">";
         }
         break;
         case 3: // Node.TEXT_NODE
