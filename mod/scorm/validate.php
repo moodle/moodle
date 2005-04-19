@@ -37,7 +37,8 @@ if (confirm_sesskey()) {
 	    $validation->result = 'badreference';
 	    $launch = -1;
 	}
-    }
+    } 
+    //$launch = 0;
     if ($launch == 0) {
     	//
     	// Package must be validated
@@ -92,6 +93,9 @@ if (confirm_sesskey()) {
 	    echo get_string($error->type,"scorm",$error->data) . "\n";
 	}
     }	
+    /*if ($validation->pkgtype == 'AICC') {
+	scorm_parse_aicc("$CFG->dataroot/$courseid/$CFG->moddata/scorm$datadir",$scormid);
+    }*/
 } else {
     echo 'result=' . get_string('badrequest','scorm') . "\n"; 
 }

@@ -467,7 +467,7 @@ function scorm_get_aicc_columns($row,$mastername='system_id') {
     return $result;
 }
 
-function scorm_forge_cols_regexp($columns,$remodule='(".*"),') {
+function scorm_forge_cols_regexp($columns,$remodule='(".*")?,') {
     $regexp = '/^';
     foreach ($columns as $column) {
 	$regexp .= $remodule;	
@@ -494,7 +494,7 @@ function scorm_parse_aicc($pkgdir,$scormid){
 	    if (is_file($pkgdir.'/'.$id->crs)) {
 		$rows = file($pkgdir.'/'.$id->crs);
 		foreach ($rows as $row) {
-		    if (preg_match("/^(\w+)=(.+)$/",$row,$matches)) {
+		    if (preg_match("/^(.+)=(.+)$/",$row,$matches)) {
 			switch (strtolower(trim($matches[1]))) {
 			    case 'course_id':
 				$courses[$courseid]->id = trim($matches[2]); 
@@ -518,7 +518,7 @@ function scorm_parse_aicc($pkgdir,$scormid){
 		if (preg_match($regexp,$rows[$i],$matches)) {
 		    for ($j=0;$j<count($columns->columns);$j++) {
 			$column = $columns->columns[$j];
-			$courses[$courseid]->elements[substr($matches[$columns->mastercol+1],1,-1)]->$column = substr($matches[$j+1],1,-1);
+			$courses[$courseid]->elements[substr(trim($matches[$columns->mastercol+1]),1,-1)]->$column = substr(trim($matches[$j+1]),1,-1);
 		    }
 		}
 	    } 
@@ -531,7 +531,7 @@ function scorm_parse_aicc($pkgdir,$scormid){
 		if (preg_match($regexp,$rows[$i],$matches)) {
 		    for ($j=0;$j<count($columns->columns);$j++) {
 			$column = $columns->columns[$j];
-			$courses[$courseid]->elements[substr($matches[$columns->mastercol+1],1,-1)]->$column = substr($matches[$j+1],1,-1);
+			$courses[$courseid]->elements[substr(trim($matches[$columns->mastercol+1]),1,-1)]->$column = substr(trim($matches[$j+1]),1,-1);
 		    }
 		}
 	    }
@@ -539,12 +539,12 @@ function scorm_parse_aicc($pkgdir,$scormid){
 	if (isset($id->cst)) {
 	    $rows = file($pkgdir.'/'.$id->cst);
 	    $columns = scorm_get_aicc_columns($rows[0],'block');
-	    $regexp = scorm_forge_cols_regexp($columns->columns,'(".+")?,');
+	    $regexp = scorm_forge_cols_regexp($columns->columns,'(.+)?,');
 	    for ($i=1;$i<count($rows);$i++) {
 		if (preg_match($regexp,$rows[$i],$matches)) {
 		    for ($j=0;$j<count($columns->columns);$j++) {
 			if ($j != $columns->mastercol) {
-			    $courses[$courseid]->elements[substr($matches[$j+1],1,-1)]->parent = substr($matches[$columns->mastercol+1],1,-1);
+			    $courses[$courseid]->elements[substr(trim($matches[$j+1]),1,-1)]->parent = substr(trim($matches[$columns->mastercol+1]),1,-1);
 			}
 		    }
 		}
@@ -556,10 +556,10 @@ function scorm_parse_aicc($pkgdir,$scormid){
 	if (isset($id->pre)) {
 	    $rows = file($pkgdir.'/'.$id->pre);
 	    $columns = scorm_get_aicc_columns($rows[0],'structure_element');
-	    $regexp = scorm_forge_cols_regexp($columns->columns,'(".+"),');
+	    $regexp = scorm_forge_cols_regexp($columns->columns,'(.+),');
 	    for ($i=1;$i<count($rows);$i++) {
 		if (preg_match($regexp,$rows[$i],$matches)) {
-		    $courses[$courseid]->elements[$columns->mastercol+1]->prerequisites = substr($matches[1-$columns->mastercol+1],1,-1);
+		    $courses[$courseid]->elements[$columns->mastercol+1]->prerequisites = substr(trim($matches[1-$columns->mastercol+1]),1,-1);
 		}
 	    }
 	}
@@ -567,6 +567,7 @@ function scorm_parse_aicc($pkgdir,$scormid){
 	    $rows = file($pkgdir.'/'.$id->cmp);
 	}
     }
+    //print_r($courses);
     $launch = 0;
     if (isset($courses)) {
 	
@@ -579,6 +580,7 @@ function scorm_parse_aicc($pkgdir,$scormid){
 	    $sco->parent = '/';
 	    $sco->launch = '';
     	    $sco->scormtype = '';
+	    //print_r($sco);
     	    $id = insert_record('scorm_scoes',$sco);
     	    if ($launch == 0) {
         	$launch = $id;
@@ -607,7 +609,7 @@ function scorm_parse_aicc($pkgdir,$scormid){
             	    } 
             	    $sco->prerequisites = $element->prerequisites;
 		    if (!isset($element->max_time_allowed)) {
-        		$element->maxtimeallowed = '';
+        		$element->max_time_allowed = '';
             	    } 
             	    $sco->maxtimeallowed = $element->max_time_allowed;
             	    if (!isset($element->time_limit_action)) {
@@ -621,6 +623,7 @@ function scorm_parse_aicc($pkgdir,$scormid){
     	            $sco->previous = 0;
     	    	    $sco->next = 0;
     	
+	    	    //print_r($sco);
         	    $id = insert_record('scorm_scoes',$sco);
 
 		    if ($launch==0) {
@@ -832,6 +835,10 @@ function scorm_external_link($link) {
     return $result;
 }
 
+function scorm_count_launchable($scormid,$organization) {
+    return count_records_select('scorm_scoes',"scorm=$scormid AND organization='$organization' AND launch<>''");
+}
+
 function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mode='normal',$play=false) {
     global $USER;
     
@@ -922,7 +929,7 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
     			$nextid = 0;
     		    }
     	    	}
-    		if (($nextid == 0) && (count($scoes) > 1)) {
+    		if (($nextid == 0) && (scorm_count_launchable($scorm->id,$currentorg) > 1)) {
     	    	    $previd = $sco->id;
     	    	}
     	    	
