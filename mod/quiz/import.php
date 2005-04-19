@@ -4,6 +4,11 @@
     require_once("../../config.php");
     require_once("lib.php");
 
+    // list of supported file formats
+    // if you add another one it must be added here to appear on the list
+    $fileformats = array('aiken','aon','blackboard','coursetestmanager',
+      'gift','learnwise','missingword','webct','xml' );
+
     require_variable($category);
     optional_variable($format);
 
@@ -92,8 +97,6 @@
         error("No categories!");
     }
 
-    $fileformats = get_list_of_plugins("mod/quiz/format");
-    $fileformatname = array();
     foreach ($fileformats as $key => $fileformat) {
         $formatname = get_string($fileformat, 'quiz');
         if ($formatname == "[[$fileformat]]") {

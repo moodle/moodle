@@ -4,6 +4,10 @@
     require_once("../../config.php");
     require_once("lib.php");
 
+    // list formats that are supported for export
+    // need to change this if you add something!
+    $fileformats = array( 'gift', 'xml', 'qti' );
+
     require_variable($category);
     optional_variable($format);
 
@@ -74,8 +78,7 @@
         error("No categories!");
     }
 
-    $fileformats = get_list_of_plugins("mod/quiz/format");
-    $fileformatname = array();
+    // iterate over valid formats to generate dropdown list
     foreach ($fileformats as $key => $fileformat) {
         $formatname = get_string($fileformat, 'quiz');
         if ($formatname == "[[$fileformat]]") {
