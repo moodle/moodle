@@ -2,7 +2,6 @@
 
 //  Edit and save a new post to a discussion
 
-
     require_once("../../config.php");
     require_once("lib.php");
 
@@ -423,13 +422,13 @@
 
     } else if (isset($prune)) {  // Teacher is pruning
 
-        if (! $post = forum_get_post_full($prune)) {
+        if (!$post = forum_get_post_full($prune)) {
             error("Post ID was incorrect");
         }
-        if (! $discussion = get_record("forum_discussions", "id", $post->discussion)) {
+        if (!$discussion = get_record("forum_discussions", "id", $post->discussion)) {
             error("This post is not part of a discussion!");
         }
-        if (! $forum = get_record("forum", "id", $discussion->forum)) {
+        if (!$forum = get_record("forum", "id", $discussion->forum)) {
             error("The forum number was incorrect ($discussion->forum)");
         }
         if (!isteacher($forum->course)) {
@@ -438,8 +437,11 @@
         if (!$post->parent) {
             error('This is already the first post in the discussion');
         }
+        if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $forum->course)) { // For the logs
+            $cm->id = 0;
+        }
 
-        if (isset($_REQUEST['name'])) {    // User has confirmed the prune
+        if (isset($_GET['name'])) {    // User has confirmed the prune
 
             $newdiscussion->course = $discussion->course;
             $newdiscussion->forum = $discussion->forum;
@@ -475,9 +477,6 @@
             set_field('forum_discussions', 'timemodified', $lastpost->time, 'id', $newid);
 
 
-            if (!$cm = get_coursemodule_from_instance("forum", $forum->id, $forum->course)) { // For the logs
-                $cm->id = 0;
-            }
             add_to_log($discussion->course, "forum", "prune post",
                            "discuss.php?d=$newid", "$post->id", $cm->id);
 
