@@ -270,6 +270,14 @@
             }
         }
 
+        //Print gradebook info
+        if ($status) { 
+            echo "<li>".get_string("writinggradebookinfo").'</li>';
+            if (!$status = backup_gradebook_info($backup_file,$preferences)) {
+                notify("An error occurred while backing up gradebook");
+            }
+        }
+
         //Module info, this unique function makes all the work!!
         //db export and module fileis copy
         if ($status) {

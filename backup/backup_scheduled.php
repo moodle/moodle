@@ -634,6 +634,12 @@ function schedule_backup_course_execute($preferences,$starttime = 0) {
             $status = backup_events_info($backup_file,$preferences);
         }
 
+        //Print gradebook info
+        if ($status) {
+            schedule_backup_log($starttime,$preferences->backup_course,"      gradebook");
+            $status = backup_gradebook_info($backup_file,$preferences);
+        }
+
         //Module info, this unique function makes all the work!!
         //db export and module fileis copy
         if ($status) {

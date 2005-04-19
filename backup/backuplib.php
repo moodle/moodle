@@ -1313,6 +1313,191 @@
         return $status;
     }
 
+    //Backup gradebook info
+    function backup_gradebook_info($bf,$preferences) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Gradebook header
+        fwrite ($bf,start_tag("GRADEBOOK",2,true));
+
+        //Output grade_preferences
+        $grade_preferences = get_records("grade_preferences", "courseid", $preferences->backup_course);
+        if ($grade_preferences) {
+            //Begin grade_preferences tag
+            fwrite ($bf,start_tag("GRADE_PREFERENCES",3,true)); 
+            //Iterate for each preference
+            foreach ($grade_preferences as $grade_preference) {
+                //Begin grade_preference
+                fwrite ($bf,start_tag("GRADE_PREFERENCE",4,true)); 
+                //Output individual fields
+                fwrite ($bf,full_tag("PREFERENCE",5,false,$grade_preference->preference));
+                fwrite ($bf,full_tag("VALUE",5,false,$grade_preference->value));
+                //End grade_preference
+                fwrite ($bf,end_tag("GRADE_PREFERENCE",4,true)); 
+            }
+            //End grade_preferences tag
+            $status = fwrite ($bf,end_tag("GRADE_PREFERENCES",3,true));
+        }
+
+        //Output grade_letter
+        $grade_letters = get_records("grade_letter", "courseid", $preferences->backup_course);
+        if ($grade_letters) {
+            //Begin grade_letters tag
+            fwrite ($bf,start_tag("GRADE_LETTERS",3,true)); 
+            //Iterate for each letter
+            foreach ($grade_letters as $grade_letter) {
+                //Begin grade_letter
+                fwrite ($bf,start_tag("GRADE_LETTER",4,true)); 
+                //Output individual fields
+                fwrite ($bf,full_tag("LETTER",5,false,$grade_letter->letter));
+                fwrite ($bf,full_tag("GRADE_HIGH",5,false,$grade_letter->grade_high));
+                fwrite ($bf,full_tag("GRADE_LOW",5,false,$grade_letter->grade_low));
+                //End grade_letter
+                fwrite ($bf,end_tag("GRADE_LETTER",4,true)); 
+            }
+            //End grade_letters tag
+            $status = fwrite ($bf,end_tag("GRADE_LETTERS",3,true));
+        }
+
+        //Output grade_category
+        $grade_categories = get_records("grade_category", "courseid", $preferences->backup_course);
+        if ($grade_categories) {
+            //Begin grade_categories tag
+            fwrite ($bf,start_tag("GRADE_CATEGORIES",3,true)); 
+            //Iterate for each category
+            foreach ($grade_categories as $grade_category) {
+                //Begin grade_category
+                fwrite ($bf,start_tag("GRADE_CATEGORY",4,true)); 
+                //Output individual fields
+                fwrite ($bf,full_tag("NAME",5,false,$grade_category->name));
+                fwrite ($bf,full_tag("DROP_X_LOWEST",5,false,$grade_category->drop_x_lowest));
+                fwrite ($bf,full_tag("BONUS_POINTS",5,false,$grade_category->bonus_points));
+                fwrite ($bf,full_tag("HIDDEN",5,false,$grade_category->hidden));
+                fwrite ($bf,full_tag("WEIGHT",5,false,$grade_category->weight));
+
+                //Now backup grade_item (inside grade_category)
+                $status = backup_gradebook_item_info($bf,$preferences,$grade_category->id);
+
+                //End grade_category
+                fwrite ($bf,end_tag("GRADE_CATEGORY",4,true)); 
+            }
+            //End grade_categories tag
+            $status = fwrite ($bf,end_tag("GRADE_CATEGORIES",3,true));
+        }
+        //Gradebook footer
+        $status = fwrite ($bf,end_tag("GRADEBOOK",2,true));
+        return $status;
+    }
+
+    //Backup gradebook_item (called from backup_gradebook_info
+    function backup_gradebook_item_info($bf,$preferences,$gradecategoryid) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Output grade_item (only for modules included in backup)
+        $grade_items = get_records_sql("SELECT *
+                                    FROM {$CFG->prefix}grade_item
+                                    WHERE courseid = $preferences->backup_course AND
+                                          category = $gradecategoryid");
+        //Filter items about modules not included in backup
+        $inc_grade_items = array();
+        if ($grade_items) {
+            foreach ($grade_items as $grade_item) {
+                //Get modulename
+                $rec_module = get_record("modules", "id", $grade_item->modid);
+                //If it exists and it's included in backup
+                if ($rec_module && $preferences->mods[$rec_module->name]->backup == 1) {
+                    //Set the name and add it
+                    $grade_item->module_name = $rec_module->name;
+                    $inc_grade_items[] = $grade_item;
+                } else {
+                    if ($CFG->debug > 7) {
+                        echo "skipping $grade_item->modid"."-"."$rec_module->name<br />";
+                    }
+                }
+            }
+        }
+        if ($inc_grade_items) {
+            //Begin grade_items tag
+            fwrite ($bf,start_tag("GRADE_ITEMS",5,true)); 
+            //Iterate for each item
+            foreach ($inc_grade_items as $grade_item) {
+                //Begin grade_item
+                fwrite ($bf,start_tag("GRADE_ITEM",6,true)); 
+                //Output individual fields
+                fwrite ($bf,full_tag("MODULE_NAME",7,false,$grade_item->module_name));
+                fwrite ($bf,full_tag("CMINSTANCE",7,false,$grade_item->cminstance));
+                fwrite ($bf,full_tag("SCALE_GRADE",7,false,$grade_item->scale_grade));
+                fwrite ($bf,full_tag("EXTRA_CREDIT",7,false,$grade_item->extra_credit));
+                fwrite ($bf,full_tag("SORT_ORDER",7,false,$grade_item->sort_order));
+ 
+                //Now backup grade_exceptions (inside grade_item)
+                $status = backup_gradebook_exceptions_info($bf,$preferences,$grade_item->id);
+
+                //End grade_item
+                fwrite ($bf,end_tag("GRADE_ITEM",6,true)); 
+            }
+            //End grade_items tag
+            $status = fwrite ($bf,end_tag("GRADE_ITEMS",5,true));
+        }
+
+        return $status;
+    }
+
+    //Backup gradebook_exceptions (called from backup_gradebook_item_info
+    function backup_gradebook_exceptions_info($bf,$preferences,$gradeitemid) {
+
+        global $CFG;
+
+        $status = true;
+
+        //Output grade_exceptions (only for users included in backup)
+        $grade_exceptions = get_records_sql("SELECT *
+                                             FROM {$CFG->prefix}grade_exceptions
+                                             WHERE courseid = $preferences->backup_course AND
+                                                   grade_itemid = $gradeitemid");
+        //Filter exceptions about users not included in backup
+        $inc_grade_exceptions = array();
+        if ($grade_exceptions) {
+            foreach ($grade_exceptions as $grade_exception) {
+                //Check if user has been included in backup
+                $rec_user = get_record ("backup_ids","backup_code",$preferences->backup_unique_code,
+                                        "table_name","user",
+                                        "old_id",$grade_exception->userid);
+                //If it's included in backup
+                if ($rec_user) {
+                    //Add it
+                    $inc_grade_exceptions[] = $grade_exception;
+                } else {
+                    if ($CFG->debug > 7) {
+                        echo "skipping $grade_exception->userid"."-user<br />";
+                    }
+                }
+            }
+        }
+        if ($inc_grade_exceptions) {
+            //Begin grade_exceptions tag
+            fwrite ($bf,start_tag("GRADE_EXCEPTIONS",7,true));
+            //Iterate for each exception
+            foreach ($inc_grade_exceptions as $grade_exception) {
+                //Begin grade_exception
+                fwrite ($bf,start_tag("GRADE_EXCEPTION",8,true));
+                //Output individual fields
+                fwrite ($bf,full_tag("USERID",9,false,$grade_exception->userid));
+                //End grade_exception
+                fwrite ($bf,end_tag("GRADE_EXCEPTION",8,true));
+            }
+            //End grade_exceptions tag
+            $status = fwrite ($bf,end_tag("GRADE_EXCEPTIONS",7,true));
+        }
+
+        return $status;
+    }
 
     //Backup scales info (common and course scales)
     function backup_scales_info($bf,$preferences) {
