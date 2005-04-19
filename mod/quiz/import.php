@@ -21,6 +21,10 @@
         error("Only the teacher can import quiz questions!");
     }
 
+    
+    // ensure the files area exists for this course
+    make_upload_directory( "$course->id" );
+
     $strimportquestions = get_string("importquestions", "quiz");
     $strquestions = get_string("questions", "quiz");
 
