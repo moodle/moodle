@@ -1038,7 +1038,7 @@ function main_upgrade($oldversion=0) {
 
     if ($oldversion < 2005040800) {
         table_column('user', 'timezone', 'timezone', 'varchar', '100', '', '99');
-        execute_sql(" ALTER TABLE `{$CFG->prefix}user` DROP `timezonename` ");
+        execute_sql(" ALTER TABLE {$CFG->prefix}user DROP timezonename ");
     }
 
     if ($oldversion < 2005041101) {
