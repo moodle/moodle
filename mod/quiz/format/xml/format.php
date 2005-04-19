@@ -76,7 +76,7 @@ function import_headers( $question ) {
   $qo->name = $name;
   $qo->questiontext = $qtext;
   $qo->questiontextformat = $this->trans_format( $qformat );
-  $qo->image = $image;
+  $qo->image = ((!empty($image)) ?  $image : '');
 
   return $qo;
 }

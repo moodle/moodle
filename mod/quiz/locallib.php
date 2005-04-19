@@ -1229,7 +1229,7 @@ function quiz_print_question_list($questionlist, $grades, $allowdelete=true, $qu
         echo "<p align=\"center\">";
         print_string("noquestions", "quiz");
         echo "</p>";
-        return;
+        return 0;
     }
 
     $order = explode(",", $questionlist);
@@ -1238,7 +1238,7 @@ function quiz_print_question_list($questionlist, $grades, $allowdelete=true, $qu
         echo "<p align=\"center\">";
         print_string("noquestions", "quiz");
         echo "</p>";
-        return;
+        return 0;
 
     }
 
