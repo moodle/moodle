@@ -47,8 +47,8 @@ CREATE TABLE prefix_choice_answers (
   timemodified integer NOT NULL default '0'
 );
 
-CREATE INDEX prefix_choice_responses_choice_idx ON prefix_choice_responses (choiceid);
-CREATE INDEX prefix_choice_responses_userid_idx ON prefix_choice_responses (userid);
+CREATE INDEX prefix_choice_answers_choice_idx ON prefix_choice_answers (choiceid);
+CREATE INDEX prefix_choice_answers_userid_idx ON prefix_choice_answers (userid);
 
 # --------------------------------------------------------
 
