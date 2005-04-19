@@ -12,13 +12,6 @@
  * @package pages
  */
 
-
-// Start of dirty compatibility hack -- this will be here for a couple of weeks
-if(record_exists('block_instance', 'pagetype', 'course')) {
-    execute_sql('UPDATE '.$GLOBALS['CFG']->prefix.'block_instance SET pagetype = \'course-view\' WHERE pagetype = \'course\'', false);
-}
-// End of dirty compatibility hack -- remove this before 1.5 goes gold
-
 function page_import_types($path) {
     global $CFG;
 
