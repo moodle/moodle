@@ -933,9 +933,9 @@ HTMLArea.prototype._wordClean = function() {
     if (D.indexOf("class=Mso") >= 0 || D.indexOf("mso") >= 0 || D.indexOf("Mso") >= 0) {
 
         // make one line
-        D = D.replace(/\r\n/g, ' ').
-            replace(/\n/g, ' ').
-            replace(/\r/g, ' ').
+        D = D.replace(/\r\n/g, '\[br\]').
+            replace(/\n/g, '').
+            replace(/\r/g, '').
             replace(/\&nbsp\;/g,' ');
 
         // keep tags, strip attributes
@@ -976,6 +976,7 @@ HTMLArea.prototype._wordClean = function() {
         //D = D.replace(/<strong><\/strong>/gi,'').
         //replace(/<i><\/i>/gi,'').
         //replace(/<P[^>]*><\/P>/gi,'');
+        D = D.replace(/<h[1-6]+>\s?<\/h[1-6]+>/gi, ''); // Remove empty headings
 
         // nuke double tags
         oldlen = D.length + 1;
@@ -990,6 +991,28 @@ HTMLArea.prototype._wordClean = function() {
 
         // nuke double spaces
         D = D.replace(/  */gi,' ');
+
+        // Split into lines and remove
+        // empty lines and add carriage returns back
+        var splitter  = /\[br\]/g;
+        var emptyLine = /^\s+\s+$/g;
+        var strHTML   = '';
+        var toLines   = D.split(splitter);
+        for (var i = 0; i < toLines.length; i++) {
+            var line = toLines[i];
+            if (line.length < 1) {
+                continue;
+            }
+
+            if (emptyLine.test(line)) {
+                continue;
+            }
+
+            line = line.replace(/^\s+\s+$/g, '');
+            strHTML += line + '\n';
+        }
+        D = strHTML;
+        strHTML = '';
 
         this.setHTML(D);
         this.updateToolbar();
@@ -1848,9 +1871,11 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
         case "copy":
         case "paste":
         try {
-            if (this.config.killWordOnPaste)
-                this._wordClean();
+            // Paste first then clean
             this._doc.execCommand(cmdID, UI, param);
+            if (this.config.killWordOnPaste) {
+                this._wordClean();
+            }
         } catch (e) {
             if (HTMLArea.is_gecko) {
                 if (confirm("Unprivileged scripts cannot access Cut/Copy/Paste programatically " +
@@ -2288,8 +2313,10 @@ HTMLArea.getHTML = function(root, outputRoot, editor) {
         html = "<!--" + root.data + "-->";
         break;      // skip comments, for now.
     }
-    //html = html.replace(/^\n+/, '');
-    return HTMLArea.formathtml(html);
+
+    //return HTMLArea.formathtml(html);
+    // formathtml doesn't work properly yet!!!
+    return html;
 };
 
 HTMLArea.prototype.stripBaseURL = function(string) {
