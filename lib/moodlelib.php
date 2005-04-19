@@ -3850,6 +3850,37 @@ function get_directory_list($rootdir, $excludefile='', $descend=true, $getdirs=f
 }
 
 /**
+ * Removes the entire contents of a directory - does not delete the directory
+ * itself
+ *
+ * @param string $dirName - full path to directory
+ * @return boolean true if successful, false if error
+**/
+ 
+function delDirContents($dirName) {
+   if(empty($dirName)) {
+       return true;
+   }
+   if(file_exists($dirName)) {
+       $dir = dir($dirName);
+       while($file = $dir->read()) {
+           if($file != '.' && $file != '..') {
+               if(is_dir($dirName.'/'.$file)) {
+                   delDir($dirName.'/'.$file);
+               } else {
+                   @unlink($dirName.'/'.$file) or die('File '.$dirName.'/'.$file.' couldn\'t be deleted!');
+               }
+           }
+       }
+       $dir->close();
+       @rmdir($dirName) or die('Folder '.$dirName.' couldn\'t be deleted!');
+   } else {
+       return false;
+   }
+   return true;
+}
+
+/**
  * Adds up all the files in a directory and works out the size.
  *
  * @param string $rootdir  ?
