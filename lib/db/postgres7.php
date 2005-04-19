@@ -1053,6 +1053,31 @@ function main_upgrade($oldversion=0) {
         }
     }
 
+    if ($oldversion < 2005041900) {  // Copy all Dialogue entries into Messages, and hide Dialogue module
+
+        if ($entries = get_records_sql('SELECT e.id, e.userid, c.recipientid, e.text, e.timecreated
+                                          FROM '.$CFG->prefix.'dialogue_conversations c,
+                                               '.$CFG->prefix.'dialogue_entries e
+                                         WHERE e.conversationid = c.id')) {
+            foreach ($entries as $entry) {
+                $message = NULL;
+                $message->useridfrom    = $entry->userid;
+                $message->useridto      = $entry->recipientid;
+                $message->message       = $entry->text;
+                $message->format        = FORMAT_HTML;
+                $message->timecreated   = $entry->timecreated;
+                $message->messagetype   = 'direct';
+            
+                insert_record('message_read', $message);
+            }
+        }
+
+        set_field('modules', 'visible', 0, 'name', 'dialogue');
+
+        notify('The Dialogue module has been disabled, and all the old Messages from it copied into the new standard Message feature.  If you really want Dialogue back, you can enable it using the "eye" icon here:  Admin >> Modules >> Dialogue');
+
+    }
+
     return $result;
 }
 
