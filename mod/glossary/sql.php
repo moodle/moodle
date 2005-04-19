@@ -167,34 +167,91 @@
 
         switch ( $mode ) {
         case 'search': 
-            //First, look in aliases (bug 2242)
+
+            /// Some differences in syntax for PostgreSQL
+            if ($CFG->dbtype == "postgres7") {
+                $LIKE = "ILIKE";   // case-insensitive
+                $NOTLIKE = "NOT ILIKE";   // case-insensitive
+                $REGEXP = "~*";
+                $NOTREGEXP = "!~*";
+            } else {
+                $LIKE = "LIKE";
+                $NOTLIKE = "NOT LIKE";
+                $REGEXP = "REGEXP";
+                $NOTREGEXP = "NOT REGEXP";
+            }
+
+            $conceptsearch = "";
+            $aliassearch = "";
+            $definitionsearch = "";
+
+            $searchterms = explode(" ",$hook);
+
+            foreach ($searchterms as $searchterm) {
+                if (strlen($searchterm) < 2) {
+                    continue;
+                }
+                if ($conceptsearch) {
+                    $conceptsearch .= " AND ";
+                }
+                if ($aliassearch) {
+                    $aliassearch .= " AND ";
+                }
+                if ($definitionsearch) {
+                    $definitionsearch .= " AND ";
+                }
+                if (substr($searchterm,0,1) == "+") {
+                    $searchterm = substr($searchterm,1);
+                    $conceptsearch .= " ge.concept $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+                    $aliassearch .= " al.alias $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+                    $definitionsearch .= " ge.definition $REGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+                } else if (substr($searchterm,0,1) == "-") {
+                    $searchterm = substr($searchterm,1);
+                    $conceptsearch .= " ge.concept $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+                    $aliassearch .= " al.alias $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+                    $definitionsearch .= " ge.definition $NOTREGEXP '(^|[^a-zA-Z0-9])$searchterm([^a-zA-Z0-9]|$)' ";
+                } else {
+                    $conceptsearch .= " ge.concept $LIKE '%$searchterm%' ";
+                    $aliassearch .= " al.alias $LIKE '%$searchterm%' ";
+                    $definitionsearch .= " ge.definition $LIKE '%$searchterm%' ";
+                }
+            }
+     
+            //Search in aliases first
             $idaliases = '';
             $listaliases = array();
             $recaliases = get_records_sql ("SELECT al.id, al.entryid
                                               FROM {$CFG->prefix}glossary_alias al,
                                                    {$CFG->prefix}glossary_entries ge
-                                              WHERE (ge.glossaryid = '$glossary->id' OR 
+                                              WHERE (ge.glossaryid = '$glossary->id' OR
                                                      ge.sourceglossaryid = '$glossary->id') AND
                                                     (ge.approved != 0 $userid) AND
                                                     ge.id = al.entryid AND
-                                                    al.alias $LIKE '%$hook%'");
+                                                    $aliassearch");
+            //Process aliases id
             if ($recaliases) {
                 foreach ($recaliases as $recalias) {
                     $listaliases[] = $recalias->entryid;
                 }
                 $idaliases = implode (',',$listaliases);
             }
+           
+            //Add seach conditions in concepts and, if needed, in definitions
             $printpivot = 0;
-            $where = "AND ( ge.concept $LIKE '%$hook%'";
-            //Include aliases in resultset (if any)
+            $where = "AND (( $conceptsearch) ";
+
+            //Include aliases id if found
             if (!empty($idaliases)) {
-                $where .= " OR ge.id IN ($idaliases)";
+                $where .= " OR ge.id IN ($idaliases) ";
             }
+
+            //Include search in definitions if requested
             if ( $fullsearch ) {
-                $where .= " OR ge.definition $LIKE '%$hook%')";
+                $where .= " OR ($definitionsearch) )";
             } else {
                 $where .= ")";
             }
+
         break;
         
         case 'term': 

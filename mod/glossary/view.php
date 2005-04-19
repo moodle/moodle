@@ -124,7 +124,9 @@
     case 'search': /// looking for terms containing certain word(s)
         $tab = GLOSSARY_STANDARD_VIEW;
 
-        $searchterms = explode(' ', $hook); // Search for words independently
+        $searchterms = trim(strip_tags($hook));
+
+        $searchterms = explode(' ', $searchterms); // Search for words independently
         foreach ($searchterms as $key => $searchterm) {
             if (strlen($searchterm) < 2) {
                 unset($searchterms[$key]);
