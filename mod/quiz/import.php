@@ -9,8 +9,7 @@
     $fileformats = array('aiken','aon','blackboard','coursetestmanager',
       'gift','learnwise','missingword','webct','xml' );
 
-    require_variable($category);
-    optional_variable($format);
+    $category = required_param('category', PARAM_INT);
 
     if (! $category = get_record("quiz_categories", "id", $category)) {
         error("This wasn't a valid category!");
@@ -42,24 +41,19 @@
 
     if ($form = data_submitted()) {   /// Filename
 
-        if (isset($form->filename)) {                 // file already on server
-            $newfile['tmp_name'] = $form->filename;
-            $newfile['size'] = filesize($form->filename);
+        $form->format = clean_filename($form->format); // For safety
 
-        } else if (!empty($_FILES['newfile'])) {      // file was just uploaded
-            require_once($CFG->dirroot.'/lib/uploadlib.php');
-            $um = new upload_manager('newfile',false,false,$course,false,0,false);
-            if ($um->preprocess_files()) { // validate and virus check!
-                $newfile = $_FILES['newfile'];
-            }
+        if (empty($_FILES['newfile'])) {      // file was just uploaded
+            notify(get_string("uploadproblem") );
         }
+        
+        if ((!is_uploaded_file($_FILES['newfile']['tmp_name']) or $_FILES['newfile']['size'] == 0)) {
+            notify(get_string("uploadnofilefound") );
 
-        if (is_array($newfile)) { // either for file already on server or just uploaded file.
-
-            $form->format = clean_filename($form->format);
+        } else {  // Valid file is found
 
             if (! is_readable("format/$form->format/format.php")) {
-                error('Format not known ('.clean_text($form->format).')');
+                error("Format not known ($form->format)");
             }
 
             require("format.php");  // Parent class
@@ -72,7 +66,7 @@
                       "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
             }
 
-            if (! $format->importprocess($newfile['tmp_name'])) {     // Process the uploaded file
+            if (! $format->importprocess($_FILES['newfile']['tmp_name'])) {     // Process the uploaded file
                 error("Error occurred during processing!",
                       "$CFG->wwwroot/mod/quiz/import.php?category=$category->id");
             }
