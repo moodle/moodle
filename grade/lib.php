@@ -1173,7 +1173,7 @@ function grade_download($download, $id) {
                                     $maxgrade = "";
                                 }
 
-                                $columns[] = "$mod->modfullname: $instance->name - $maxgrade";
+                                $columns[] = "$mod->modfullname: ".format_string($instance->name,true)." - $maxgrade";
     
                                 foreach ($students as $student) {
                                     if (!empty($modgrades->grades[$student->id])) {
@@ -1700,10 +1700,10 @@ function grade_view_category_grades($view_by_student) {
 
                                     $link = $CFG->wwwroot.'/mod/'.$all_categories[$category][$assignment]['modname'].'/view.php?id='.$link_id->id;
                                     if ($all_categories[$category][$assignment]['hidden'] == 0) {
-                                        $header .= '<th colspan="'.$grade_columns.'"><a href="'.$link.'">'.$assignment.'</a>';
+                                        $header .= '<th colspan="'.$grade_columns.'"><a href="'.$link.'">'.format_string($assignment,true).'</a>';
                                     }
                                     else {
-                                        $header .= '<th style="background: #FFFFFF;" colspan="'.$grade_columns.'"><a class="dimmed" href="'.$link.'">'.$assignment.'</a>';
+                                        $header .= '<th style="background: #FFFFFF;" colspan="'.$grade_columns.'"><a class="dimmed" href="'.$link.'">'.format_string($assignment,true).'</a>';
                                     }
                                     if ($all_categories[$category][$assignment]['extra_credit'] == 1) {
                                         $header .= '<font size ="-2">('.get_string('extracredit','grades').')</font>'; 
@@ -2279,7 +2279,7 @@ function grade_set_categories() {
                                     echo  '<tr><td>';
                                     // get instance name from db.
                                     $instance = get_record($mod->modname, 'id', $mod->instance);
-                                    echo  "$instance->name</td>";
+                                    echo  format_string($instance->name)."</td>";
                                     // see if the item is already in the category table and if it is call category select with the id so it is selected
                                     echo  '<td><select name="category'.$itemcount.'">';
                                     $item_cat_id = get_record('grade_item', 'modid', $mod->module, 'courseid', $course->id, 'cminstance', $mod->instance);
