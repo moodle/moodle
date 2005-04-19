@@ -81,7 +81,10 @@
     }
     if (scorm_external_link($sco->launch)) {
 	if ($version == 'AICC') {
-	    $result = $sco->launch.$connector.'aicc_sid='.$CFG->sesskey.'&aicc_url='.$CFG->wwwroot.'/mod/scorm/aicc.php&'.$sco->parameters;
+	    if (!empty($sco->parameters)) {
+		$sco->parameters = '&'. $sco->parameters;
+	    }
+	    $result = $sco->launch.$connector.'aicc_sid='.sesskey().'&aicc_url='.$CFG->wwwroot.'/mod/scorm/aicc.php'.$sco->parameters;
 	} else {
 	    $result = $sco->launch.$connector.$sco->parameters;
 	}

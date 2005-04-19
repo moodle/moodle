@@ -145,7 +145,7 @@
 	    <tr><td nowrap>  
 <?php
     $sco = scorm_display_structure($scorm,'scormlist',$currentorg,$scoid,$mode,true);
-    add_to_log($course->id, 'scorm', 'view', "reviewscorm.php?id=$cm->id&uid=$USER->id&scoid=$sco->id", "$scorm->id");
+    add_to_log($course->id, 'scorm', 'view', "playscorm.php?id=$cm->id&scoid=$sco->id", "$scorm->id");
 ?>
 	    </td></tr>
 	    <tr><td align="center">
@@ -161,7 +161,6 @@
     </td>
     <td class="fullscreen" height="90%">
     	<iframe name="main" class="fullscreen" height="640" src="loadSCO.php?id=<?php echo $cm->id.$scoidstring ?>"></iframe>
-    	<!--<iframe name="main" class="fullscreen" height="100%" src="loadSCO.php?id=<?php echo $cm->id.$scoidstring ?>"></iframe> -->
     </td></tr>
     </table>
 </body>
