@@ -102,7 +102,7 @@ function editor_update_config ($data) {
     $updatedata['editorbackgroundcolor'] = !empty($data->backgroundcolor) ? $data->backgroundcolor : "#ffffff";
     $updatedata['editorfontfamily'] = !empty($data->fontfamily) ? str_replace($nochars,"",$data->fontfamily) : "Times New Roman, Times";
     $updatedata['editorfontsize'] = !empty($data->fontsize) ? $data->fontsize : "";
-    $updatedata['editorkillword'] = !empty($data->killword) ? $data->killword : "true";
+    $updatedata['editorkillword'] = !empty($data->killword) ? $data->killword : 0;
     $updatedata['editorspelling'] = !empty($data->spelling) ? $data->spelling : 0;
     $updatedata['editorfontlist'] = $fontlist;
     $updatedata['editordictionary'] = !empty($data->dictionary) ? $data->dictionary : '';
