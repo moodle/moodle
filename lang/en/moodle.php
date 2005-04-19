@@ -1142,6 +1142,7 @@ $string['writingcategoriesandquestions'] = 'Writing categories and questions';
 $string['writingcoursedata'] = 'Writing course data';
 $string['writingeventsinfo'] = 'Writing events info';
 $string['writinggeneralinfo'] = 'Writing general info';
+$string['writinggradebookinfo'] = 'Writing gradebook info';
 $string['writinggroupsinfo'] = 'Writing groups info';
 $string['writingheader'] = 'Writing header';
 $string['writingloginfo'] = 'Writing logs info';
