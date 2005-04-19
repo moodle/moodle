@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // dialogue.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // dialogue.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
 $string['addmynewentries'] = 'Tilføj mine nye indlæg';
@@ -26,6 +26,7 @@ $string['everybody'] = 'Alle';
 $string['furtherinformation'] = 'Mere information';
 $string['lastentry'] = 'Sidste post';
 $string['maildefault'] = 'Mail Default';
+$string['mailnotification'] = 'Besked med mail';
 $string['modulename'] = 'Dialog';
 $string['modulenameplural'] = 'Dialoger';
 $string['namehascloseddialogue'] = '$a har lukket dialogen';

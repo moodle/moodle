@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.4 (2004083100)
+      // choice.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
+$string['addmorechoices'] = 'Tilføj flere valgmuligheder';
 $string['allowupdate'] = 'Tillad spørgsmålet at blive opdateret';
 $string['answered'] = 'Besvaret';
 $string['choice'] = 'Spørgsmål $a';
@@ -9,6 +10,9 @@ $string['choiceclose'] = 'Indtil';
 $string['choicename'] = 'Spørgsmål navn';
 $string['choiceopen'] = 'Åben';
 $string['choicetext'] = 'Spørgsmål tekst';
+$string['displayhorizontal'] = 'Vis horisontalt';
+$string['displaymode'] = 'Layout';
+$string['displayvertical'] = 'Vis vertikalt';
 $string['havetologin'] = 'Du bliver nødt til at logge på før du kan afgive dit valg.';
 $string['modulename'] = 'Spørgsmål';
 $string['modulenameplural'] = 'Spørgsmål';
