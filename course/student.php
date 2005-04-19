@@ -95,7 +95,7 @@
         }
     }
 
-    $previoussearch = (!empty($frm->search) or ($frm->previoussearch == 1)) ;
+    $previoussearch = (!empty($frm) && (!empty($frm->search) or ($frm->previoussearch == 1))) ;
 
 /// Get all existing students and teachers for this course.
     if (!$students = get_course_students($course->id, "u.firstname ASC, u.lastname ASC", "", 0, 99999,
