@@ -21,6 +21,9 @@
         error("Only the teacher can export quiz questions!");
     }
 
+    // ensure the files area exists for this course
+    make_upload_directory( "$course->id" );
+
     $strexportquestions = get_string("exportquestions", "quiz");
     $strquestions = get_string("questions", "quiz");
 
