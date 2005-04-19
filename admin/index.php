@@ -396,20 +396,19 @@
     //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    echo "<table border=\"0\" align=\"center\" width=\"100%\"><tr>";
-    echo "<td align=\"center\" width=\"33%\">";
-    print_single_button("$CFG->wwwroot/doc", NULL, get_string("documentation"));
-    echo "</td>";
+    echo '<table width="100%"><tr>';
+    echo '<td align="center" width="33%">';
+    print_single_button($CFG->wwwroot.'/doc/', NULL, get_string('documentation'));
+    echo '</td>';
 
-    echo "<td align=\"center\" width=\"33%\">";
-    print_single_button("phpinfo.php", NULL, get_string("phpinfo"));
-    echo "</td>";
+    echo '<td align="center" width="33%">';
+    print_single_button('phpinfo.php', NULL, get_string('phpinfo'));
+    echo '</td>';
 
-    echo "<td align=\"center\" width=\"33%\">";
+    echo '<td align="center" width="33%">';
     $options['sesskey'] = $USER->sesskey;
-    print_single_button("register.php", $options, get_string("registration"));
-    echo "</td>";
-    echo "</table>";
+    print_single_button('register.php', $options, get_string('registration'));
+    echo '</td></tr></table>';
 
     print_simple_box_end();
 
