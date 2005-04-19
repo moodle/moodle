@@ -125,7 +125,7 @@ class quiz_file_format extends quiz_default_format {
     function export_file_extension() {
         // override default type so extension is .xml
         
-        return ".xml";
+        return ".zip";
     }
     
     function get_qtype( $type_id ) {
@@ -137,9 +137,6 @@ class quiz_file_format extends quiz_default_format {
             break;
         case MULTICHOICE:
             $name = 'multichoice';
-            break;
-        case XMULTICHOICE:
-            $name = 'xmultichoice';
             break;
         case SHORTANSWER:
             $name = 'shortanswer';
@@ -153,14 +150,8 @@ class quiz_file_format extends quiz_default_format {
         case DESCRIPTION:
             $name = 'description';
             break;
-        case SIMPLEESSAY:
-            $name = 'simpleessay';
-            break;
         case MULTIANSWER:
             $name = 'multianswer';
-            break;
-        case DRAGDROP:
-            $name = 'dragdrop';
             break;
         default:
             $name = 'Unknown';
@@ -258,7 +249,7 @@ function handle_questions_media(&$questions, $path, $courseid) {
               error("Cannot create path: $path");
             }
         }
-        
+  
         // get the questions (from database) in this category
         // $questions = get_records("quiz_questions","category",$this->category->id);
         $questions = get_questions_category( $this->category );
@@ -293,7 +284,7 @@ function handle_questions_media(&$questions, $path, $courseid) {
             error("Cannot write exported questions to $filepath");
         }
         fclose($fh);
-        
+
         // iterate through questions
         foreach($questions as $question) {
             
@@ -303,7 +294,7 @@ function handle_questions_media(&$questions, $path, $courseid) {
             $expout = $this->writequestion( $question , null, true, $path) . "\n";
             $expout = $this->presave_process( $expout );
             
-            $filepath = $path.'/'.$this->get_assesment_item_id($question) . $this->export_file_extension();
+            $filepath = $path.'/'.$this->get_assesment_item_id($question) . ".xml";
             if (!$fh=fopen($filepath,"w")) {
                 error("Cannot open for writing: $filepath");
             }
@@ -313,6 +304,13 @@ function handle_questions_media(&$questions, $path, $courseid) {
             fclose($fh);
             
         }
+
+        // zip files into single export file
+        zip_files( array($path), "$path.zip" );
+
+     	// remove the temporary directory
+	delDirContents( $path );
+ 
         return true;
     }
     
@@ -548,11 +546,16 @@ function xml_entitize(&$collection) {
                 $answers = $this->shuffle_things($answers);
             }
             
-            $correctresponseid = $question->response[$questionid];
-            if ($answers[0]['id'] == $correctresponseid) {
-                $correctresponse = $answers[0];
-            } else {
-                $correctresponse = $answers[1];
+	    if (isset($question->response)) {
+              $correctresponseid = $question->response[$questionid];
+              if ($answers[0]['id'] == $correctresponseid) {
+                  $correctresponse = $answers[0];
+              } else {
+                  $correctresponse = $answers[1];
+              }
+            }
+            else {
+              $correctresponse = '';
             }
             
             $smarty->assign('correctresponse', $correctresponse);
@@ -573,42 +576,6 @@ function xml_entitize(&$collection) {
             $smarty->assign('answers', $answers);
             $smarty->assign('maxChoices', $question->single ? '1' : count($answers));
             $expout = $smarty->fetch('choiceMultiple.tpl');
-            break;
-        case XMULTICHOICE:
-            $answers = $this->objects_to_array($question->choices);
-            if (!empty($shuffleanswers)) {
-                $answers = $this->shuffle_things($answers);
-            }
-
-            //set the media field to the fully qualified http://etc./etc. path, if it's a quiz-level export
-            if (!$courselevel) {
-                foreach ($answers as $key=>$answer) {
-                    if (!empty($answer['media'])) {
-                        $answers[$key]['media'] = $this->file_full_path($answer['media'], $this->course->id);
-                        if (empty($answer['mediamimetype'])) {
-                            $answers[$key]['mediamimetype'] = mimeinfo('type', $answer['media']);
-                        }
-                    }
-                }
-            } else {
-                // if it's a course level export, copy the media files to the export directory, flattening their file names
-                foreach ($answers as $key=>$answer) {
-                    $result = $this->copy_and_flatten($answers[$key], $path, $this->course->id);
-                    if ($result !== true) {
-                        notify($result);
-                    }
-                }
-            }
-            $correctresponses = $this->get_correct_answers($answers);
-            $correctcount = count($correctresponses);
-            $defaultvalue = -1 * (1 / count($answers));
-
-            $smarty->assign('defaultvalue', $defaultvalue);
-            $smarty->assign('responsedeclarationcardinality', $correctcount > 1 ? 'multiple' : 'single');
-            $smarty->assign('correctresponses', $correctresponses);
-            $smarty->assign('answers', $answers);
-            $smarty->assign('maxChoices', $question->single ? '1' : count($answers));
-            $expout = $smarty->fetch('mmchoiceMultiple.tpl');
             break;
         case SHORTANSWER:
             $answers = $this->objects_to_array($question->answers);
@@ -645,9 +612,6 @@ function xml_entitize(&$collection) {
         case DESCRIPTION:
             $expout = $smarty->fetch('extendedText.tpl');
             break;
-        case SIMPLEESSAY:
-            $expout = $smarty->fetch('extendedText_simpleEssay.tpl');
-            break;
         case MULTIANSWER:
             $answers = $this->get_cloze_answers_array($question);
             $questions = $this->get_cloze_questions($question, $answers, $allowedtags);
@@ -656,38 +620,6 @@ function xml_entitize(&$collection) {
             $smarty->assign('answers', $answers);
             $smarty->assign('questions', $questions);
             $expout = $smarty->fetch('composite.tpl');
-            break;
-        case DRAGDROP:
-            $this->xml_entitize($question->subquestions);
-            $subquestions = $this->objects_to_array($question->subquestions);
-            if (!empty($shuffleanswers)) {
-                $subquestions = $this->shuffle_things($subquestions);
-            }
-            
-            foreach ($subquestions as $key=>$subquestion) {
-                $subquestions[$key]['targetrx'] = $subquestion['targetx'] +  $subquestion['targetwidth'];
-                $subquestions[$key]['targetby'] = $subquestion['targety'] +  $subquestion['targetheight'];
-                //set the media field to the fully qualified http://etc./etc. path, if it's a quiz-level export
-                if (!$courselevel) {
-                    if (!empty($subquestion['media'])) {
-                        $subquestions[$key]['media'] = $this->file_full_path($subquestion['media'], $this->course->id);
-                        if (empty($subquestion['mediamimetype'])) {
-                            $subquestions[$key]['mediamimetype'] = mimeinfo('type', $subquestion['media']);
-                        }
-                    }
-                } else {
-                    // if it's a course level export, copy the media files to the export directory, flattening their file names
-                    $result = $this->copy_and_flatten($subquestions[$key], $path, $this->course->id);
-                    if ($result !== true) {
-                        notify($result);
-                    }
-                }
-            }
-            
-            $smarty->assign('question', $question);
-            $smarty->assign('hotspotmaxmatch', $question->freestyle ? count($subquestions) : 1);
-            $smarty->assign('gapitems', $subquestions);
-            $expout = $smarty->fetch('graphicGapMatch.tpl');
             break;
         default:
             $smarty->assign('questionText', "This question type (Unknown: type $question_type)  has not yet been implemented");
@@ -734,9 +666,17 @@ function xml_entitize(&$collection) {
  */    
     function & init_smarty() {
         global $CFG;
+
+        // create smarty compile dir in dataroot
+        $path = $CFG->dataroot."/smarty_c";
+        if (!is_dir($path)) {
+            if (!mkdir($path, $CFG->directorypermissions)) {
+              error("Cannot create path: $path");
+            }
+        }
         $smarty = new Smarty;
         $smarty->template_dir = "{$CFG->dirroot}/mod/quiz/format/qti/templates";
-        $smarty->compile_dir  = "{$CFG->dirroot}/mod/quiz/format/qti/templates_c";
+        $smarty->compile_dir  = "$path";
         return $smarty;
     }
 
@@ -861,8 +801,8 @@ function xml_entitize(&$collection) {
         switch ($question->qtype) {
             case DESCRIPTION:
                 return 'false';
-            case SIMPLEESSAY:
-                return 'false';
+            //case SIMPLEESSAY:
+            //    return 'false';
             default:
                 return 'true';
         }
