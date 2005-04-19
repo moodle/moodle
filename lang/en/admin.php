@@ -87,7 +87,7 @@ $string['configvariables'] = 'Variables';
 $string['configwarning'] = 'Be careful modifying these settings - strange values could cause problems.';
 $string['configzip'] = 'Indicate the location of your zip program (Unix only, optional).  If specified, this will be used to create zip archives on the server.  If you leave this blank, then Moodle will use internal routines.';
 $string['confirmation'] = 'Confirmation';
-$string['cronwarning'] = 'The <a href=\"cron.php\">cron.php maintenance script</a> has not been run for at least 24 hours. <br />The <a href=\"../doc/?frame=install.html&sub=cron\">installation documentation</a> explains how you can automate this.';
+$string['cronwarning'] = 'The <a href=\"cron.php\">cron.php maintenance script</a> has not been run for at least 24 hours. <br />The <a href=\"../doc/?frame=install.html&amp;sub=cron\">installation documentation</a> explains how you can automate this.';
 $string['edithelpdocs'] = 'Edit help documents';
 $string['editstrings'] = 'Edit strings';
 $string['filterall'] = 'Filter all strings';
