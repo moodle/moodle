@@ -343,13 +343,15 @@
             }
         }
 
+        $replycount = forum_count_replies($post);
+
         if (isset($confirm)) {    // User has confirmed the delete
 
             if ($post->totalscore) {
                 notice(get_string("couldnotdeleteratings", "forum"),
                         forum_go_back_to("discuss.php?d=$post->discussion"));
 
-            } else if (record_exists("forum_posts", "parent", $delete)) {
+            } else if ($replycount && !isteacher($course->id)) {
                 error(get_string("couldnotdeletereplies", "forum"),
                         forum_go_back_to("discuss.php?d=$post->discussion"));
 
@@ -370,13 +372,13 @@
                     redirect("view.php?f=$discussion->forum",
                              get_string("deleteddiscussion", "forum"), 1);
 
-                } else if (forum_delete_post($post)) {
+                } else if (forum_delete_post($post, isteacher($course->id))) {
 
                     add_to_log($discussion->course, "forum", "delete post",
                                "discuss.php?d=$post->discussion", "$post->id", $cm->id);
 
-                    redirect(forum_go_back_to("discuss.php?d=$post->discussion"),
-                             get_string("deletedpost", "forum"), 1);
+                    $feedback = $replycount ? get_string('deletedposts', 'forum') : get_string('deletedpost', 'forum');
+                    redirect(forum_go_back_to("discuss.php?d=$post->discussion"), $feedback, 1);
                 } else {
                     error("An error occurred while deleting record $post->id");
                 }
@@ -387,14 +389,33 @@
 
             forum_set_return();
 
-            print_header();
-            notice_yesno(get_string("deletesure", "forum"),
-                         "post.php?delete=$delete&amp;confirm=$delete",
-                         $_SERVER["HTTP_REFERER"]);
+            if ($replycount) {
+                if (!isteacher($course->id)) {
+                    error(get_string("couldnotdeletereplies", "forum"),
+                          forum_go_back_to("discuss.php?d=$post->discussion"));
+                }
+                print_header();
+                notice_yesno(get_string("deletesureplural", "forum", $replycount+1),
+                             "post.php?delete=$delete&amp;confirm=$delete",
+                             $_SERVER["HTTP_REFERER"]);
 
-            echo "<center><hr />";
-            forum_print_post($post, $forum->course, $ownpost=false, $reply=false, $link=false);
-            echo "</center>";
+                forum_print_post($post, $course->id, $ownpost=false, $reply=false, $link=false);
+                if (empty($post->edit)) {
+                    if ($CFG->forum_trackreadposts) {
+                        $user_read_array = forum_tp_get_discussion_read_records($USER->id, $discussion->id);
+                    } else {
+                        $user_read_array = array();
+                    }
+                    forum_print_posts_nested($post->id, $course->id, false, false, $user_read_array, $forum->id);
+                }
+            } else {
+                print_header();
+                notice_yesno(get_string("deletesure", "forum", $replycount),
+                             "post.php?delete=$delete&amp;confirm=$delete",
+                             $_SERVER["HTTP_REFERER"]);
+                forum_print_post($post, $forum->course, $ownpost=false, $reply=false, $link=false);
+            }
+
         }
         print_footer($course);
         die;

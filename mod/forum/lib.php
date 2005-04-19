@@ -2326,11 +2326,18 @@ function forum_delete_discussion($discussion) {
 }
 
 
-function forum_delete_post($post) {
+function forum_delete_post($post, $children=false) {
+   if ($children) {
+       if ($childposts = get_records('forum_posts', 'parent', $post->id)) {
+           foreach ($childposts as $childpost) {
+               forum_delete_post($childpost, true);
+           }
+       }
+   }
    if (delete_records("forum_posts", "id", $post->id)) {
        delete_records("forum_ratings", "post", $post->id);  // Just in case
 
-        forum_tp_delete_read_records(-1, $post->id);
+       forum_tp_delete_read_records(-1, $post->id);
 
        if ($post->attachment) {
            $discussion = get_record("forum_discussions", "id", $post->discussion);
@@ -2342,6 +2349,24 @@ function forum_delete_post($post) {
    }
    return false;
 }
+
+function forum_count_replies($post, $children=true) {
+    $count = 0;
+
+    if ($children) {
+        if ($childposts = get_records('forum_posts', 'parent', $post->id)) {
+           foreach ($childposts as $childpost) {
+               $count ++;                   // For this child
+               $count += forum_count_replies($childpost, true);
+           }
+        }
+    } else {
+        $count += count_records('forum_posts', 'parent', $post->id);
+    }
+
+    return $count;
+}
+
 
 function forum_forcesubscribe($forumid, $value=1) {
     return set_field("forum", "forcesubscribe", $value, "id", $forumid);
