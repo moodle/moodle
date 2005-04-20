@@ -86,7 +86,7 @@ $string['configvariables'] = 'Paramètres techniques';
 $string['configwarning'] = 'Attention ! Des valeurs bizarres pour ces paramètres peuvent engendrer des problèmes.';
 $string['configzip'] = 'Indiquer le chemin complet du programme « zip » (seulement pour Unix). Ce programme est requis pour réaliser des archives zip sur le serveur.';
 $string['confirmation'] = 'Confirmation';
-$string['cronwarning'] = 'Le <a href=\"cron.php\">script de maintenance cron.php</a> n\'a pas été lancé depuis au moins 24 heures.<br />La <a href=\"../doc/?frame=install.html&sub=cron\">documentation d\'installation</a> explique comment vous pouvez automatiser cette tâche.';
+$string['cronwarning'] = 'Le <a href=\"cron.php\">script de maintenance cron.php</a> n\'a pas été lancé depuis au moins 24 heures.<br />La <a href=\"../doc/?frame=install.html&amp;sub=cron\">documentation d\'installation</a> explique comment vous pouvez automatiser cette tâche.';
 $string['edithelpdocs'] = 'Modifier les fichiers d\'aide';
 $string['editstrings'] = 'Modifier les chaînes de caractères';
 $string['filterall'] = 'Filtrer toutes les chaînes de caractères';
