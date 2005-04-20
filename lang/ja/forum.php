@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -30,7 +30,9 @@ $string['couldnotupdate'] = '未確認エラーのため投稿を更新できませんでした。';
 $string['delete'] = '削除';
 $string['deleteddiscussion'] = 'ディスカッショントピックが削除されました。';
 $string['deletedpost'] = '投稿が削除されました。';
+$string['deletedposts'] = '投稿が削除されました。';
 $string['deletesure'] = 'この投稿を削除してもよろしいですか?';
+$string['deletesureplural'] = 'この投稿および全ての返信を削除してもよろしいですか? (投稿数 $a)';
 $string['digestmailheader'] = 'これは、 $a->sitename フォーラムに投稿された内容のデイリーダイジェストです。メールアドレスを変更する場合は、 $a->userprefs にて設定してください。 ';
 $string['digestmailprefs'] = 'ユーザプロフィール';
 $string['digestmailsubject'] = '$a: フォーラムダイジェスト';
