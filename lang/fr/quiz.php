@@ -315,6 +315,7 @@ $string['webct'] = 'Format WebCT';
 $string['wildcard'] = 'Caractère joker';
 $string['withsummary'] = 'avec des statistiques résumées';
 $string['wronggrade'] = 'Note incorrecte (après la ligne $a) :';
+$string['xhtml'] = 'Format XHTML';
 $string['xml'] = 'Format XML Moodle';
 $string['yourfinalgradeis'] = 'Votre note finale pour ce test est $a';
 $string['zerosignificantfiguresnotallowed'] = 'La bonne réponse ne peut pas n\'avoir aucun chiffre significatif&nbsp;!';
