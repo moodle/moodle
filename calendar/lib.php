@@ -1092,10 +1092,7 @@ function calendar_edit_event_allowed($event) {
         if($group === false) {
             return false;
         }
-        if(isteacher($group->courseid)) {
-            return true;
-        }
-
+        return isteacheredit($group->courseid) || isteacher($group->courseid) && ismember($event->groupid);
     } else if($event->courseid == 0 && $event->groupid == 0 && $event->userid == $USER->id) {
         // User event, owned by this user
         return true;
