@@ -63,9 +63,12 @@
 /// Print out the tabs
     echo '<td>';
     $tabrow = array();
-    $tabrow[] = new tabobject('contacts', $CFG->wwwroot.'/message/index.php?tab=contacts', 'contacts');
-    $tabrow[] = new tabobject('search', $CFG->wwwroot.'/message/index.php?tab=search', 'search');
-    $tabrow[] = new tabobject('settings', $CFG->wwwroot.'/message/index.php?tab=settings', 'settings');
+    $tabrow[] = new tabobject('contacts', $CFG->wwwroot.'/message/index.php?tab=contacts', 
+                               get_string('contacts', 'message'));
+    $tabrow[] = new tabobject('search', $CFG->wwwroot.'/message/index.php?tab=search', 
+                               get_string('search', 'message'));
+    $tabrow[] = new tabobject('settings', $CFG->wwwroot.'/message/index.php?tab=settings', 
+                               get_string('settings', 'message'));
     $tabrows = array($tabrow);
 
     print_tabs($tabrows, $tab);
