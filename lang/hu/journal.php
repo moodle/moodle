@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005012800)
+      // journal.php - created with Moodle 1.4 (2004083100)
 
 
 $string['alwaysopen'] = 'Mindig nyitva';
@@ -20,6 +20,7 @@ $string['journalquestion'] = 'Naplóhoz tartozó kérdés';
 $string['journalrating1'] = 'Elégtelen';
 $string['journalrating2'] = 'Elégséges';
 $string['journalrating3'] = 'Kiváló';
+$string['mailsubject'] = 'Naplóval kapcsolatos visszajelzés';
 $string['modulename'] = 'Napló';
 $string['modulenameplural'] = 'Naplók';
 $string['newjournalentries'] = 'Új naplóbejegyzések';

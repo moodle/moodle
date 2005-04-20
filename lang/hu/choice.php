@@ -13,7 +13,10 @@ $string['choicetext'] = 'Választás szövege';
 $string['displayhorizontal'] = 'Vízszintes kijelzés';
 $string['displaymode'] = 'Kijelzési mód';
 $string['displayvertical'] = 'Függõleges kijelzés';
+$string['full'] = '(Teljes)';
 $string['havetologin'] = 'Válasz megadása elõtt be kell jelentkeznie';
+$string['limit'] = 'Korlát';
+$string['limitanswers'] = 'Megengedett feleletek számának korlátozása';
 $string['modulename'] = 'Válasz';
 $string['modulenameplural'] = 'Válaszok';
 $string['mustchooseone'] = 'Mentés elõtt válasszon egy választ. Nem történt mentés.';
@@ -31,7 +34,11 @@ $string['responses'] = 'Viszontválaszok';
 $string['responsesto'] = 'Viszontválaszok $a részére';
 $string['savemychoice'] = 'Választásom mentése';
 $string['showunanswered'] = 'Válasz nélküli oszlop megmutatása';
+$string['spaceleft'] = 'rendelkezésre álló hely';
+$string['spacesleft'] = 'rendelkezésre álló helyek';
+$string['taken'] = 'Végrehajtva';
 $string['timerestrict'] = 'Válaszadás korlátozása eddig az idõpontig';
 $string['viewallresponses'] = 'A(z) $a viszontválaszainak megtekintése';
+$string['yourselection'] = 'Választása';
 
 ?>

@@ -2,6 +2,8 @@
       // auth.php - created with Moodle 1.4 (2004083100)
 
 
+$string['alternatelogin'] = 'Ha itt URL-t ad meg, az lesz a portál bejelentkezõ oldala. Az oldalon egy ûrlap található, melyen a tevékenység tulajdonságának beállítása <strong>\'$a\'</strong> és a <strong>felhasználónév</strong> és a  <strong>jelszó</strong> mezõket adja vissza.<br />Ügyeljen az URL pontos megadására, ellenkezõ esetben kizárhatja magát errõl a portálról.<br />Az alapbeállítás szerinti bejelentkezõ oldal megtartásához hagyja a mezõt üresen.';
+$string['alternateloginurl'] = 'Alternatív bejelentkezési URL';
 $string['auth_cas_baseuri'] = 'A szerver URI-ja (ha nincs baseUri, akkor semmi)<br />Ha például a CAS-szerver a host.domaine.fr/CAS/-ra válaszol, akkor<br />cas_baseuri = CAS/';
 $string['auth_cas_create_user'] = 'Kapcsolja be, ha CAS által hitelesített felhasználókat kíván beszúrni a Moodle adatbázisába. Ha nem, akkor csak a Moodle adatbázisában már szereplõ felhasználók jelentkezhetnek be.';
 $string['auth_cas_enabled'] = 'Kapcsolja be, ha a CAS általi hitelesítést használni kívánja.';
@@ -57,6 +59,7 @@ $string['auth_ldap_expireattr_desc'] = 'Opcionális: felülírja azt az ldap-attrib
 $string['auth_ldap_graceattr_desc'] = 'Opcionális: felülírja a gracelogin attribútumot';
 $string['auth_ldap_gracelogins_desc'] = 'LDAP-gracelogin támogatásának bekapcsolása. A jelszó lejárata után a felhasználó bejelentkezhet, amíg a gracelogin számlálója 0. Bekapcsolásakor a beállítás megjeleníti a lejárt bejelentkezési üzenetet, ha a jelszó lejárt.';
 $string['auth_ldap_host_url'] = 'LDAP-gazdagép megadása URL-szerûen, pl.\'ldap://ldap.myorg.com/\' vagy \'ldaps://ldap.myorg.com/\' formában';
+$string['auth_ldap_login_settings'] = 'Bejelentkezési beállítások';
 $string['auth_ldap_memberattribute'] = 'Adja meg a felhasználók adott csoporthoz tartozást jellemzõ attribútumát. Ez általában a \'member\' [tag]';
 $string['auth_ldap_objectclass'] = 'Felhasználók elnevezésének/keresésének a szûrõje. Általában objectClass=posixAccount értékre állítandó. Alapbeállítása objectClass=*, amivel az LDAP-bõl minden objektumot visszaad.';
 $string['auth_ldap_opt_deref'] = 'Meghatározza, hogy kereséskor a neveket hogyan kezelje a rendszer. A következõ értékek közül választhat: \"Nem\" (LDAP_DEREF_NEVER) vagy \"Igen\" (LDAP_DEREF_ALWAYS)';
@@ -91,6 +94,14 @@ $string['auth_pop3mailbox'] = 'Az elérendõ levelesláda neve (általában INBOX).';
 $string['auth_pop3port'] = 'Szerverport (általában a 110-es)';
 $string['auth_pop3title'] = 'POP3-szerver használata';
 $string['auth_pop3type'] = 'Szervertípus. Ha a szerver tanúsítványos biztonsági modellt használ, válassza a pop3cert-et.';
+$string['auth_shib_instructions'] = 'Használja a <a href=\"$a\">Shibboleth-bejelentkezést</a> a Shibboleth-en keresztüli hozzáféréshez, ha az adott intézmény ezt támogatja.<br />Egyéb esetben használja az itt megjelenõ szokásos bejelentkezést.';
+$string['auth_shib_instructions_help'] = 'Itt kell megadnia a Shibboleth használatával kapcsolatos utasításokat felhasználói számára. Ez a bejelentkezõ oldalon az utasításokat tartalmazó részben jelenik meg. Egy \"<b>$a</b>\" ugrópontot kell tartalmaznia, hogy a Shibboleth használói könnyen bejelentkezhessenek. Ha üresen hagyja, a rendszer a szokásos (nem Shibboleth-specifikus) utasításokat fogja használni. ';
+$string['auth_shib_only'] = 'Csak Shibboleth';
+$string['auth_shib_only_description'] = 'Jelölje be ezt a lehetõséget, ha Shibboleth-hitelesítést kell használni.';
+$string['auth_shib_settings'] = 'Olvassa el az <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">OLVASS_EL</a> állományt, melybõl megtudhatja, miként kell a Shibboleth használatához beállítani a Moodle-t.';
+$string['auth_shib_username_description'] = 'A webszerver azon Shibboleth környezeti változójának a neve, amelyet Moodle-felhasználónévként fog használni.';
+$string['auth_shibboleth_login'] = 'Bejelentkezés Shibboleth-tel';
+$string['auth_shibboleth_manual_login'] = 'Kézi bejelentkezés';
 $string['auth_shibbolethdescription'] = 'Ezzel a módszerrel meglévõ Shibboleth-szerverhez kapcsolódva ellenõrizhet és létrehozhat felhasználói azonosítókat.';
 $string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_updatelocal'] = 'Helyi adatok frissítése';
