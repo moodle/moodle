@@ -637,8 +637,8 @@ function print_log_graph($course, $userid=0, $type="course.png", $date=0) {
     if (empty($CFG->gdversion)) {
         echo "(".get_string("gdneed").")";
     } else {
-        echo '<img border="0" src="'.$CFG->wwwroot.'/course/loggraph.php?id='.$course->id.
-             '&amp;user='.$userid.'&amp;type='.$type.'&amp;date='.$date.'" alt=\"\" />';
+        echo '<img src="'.$CFG->wwwroot.'/course/loggraph.php?id='.$course->id.
+             '&amp;user='.$userid.'&amp;type='.$type.'&amp;date='.$date.'" alt="" />';
     }
 }
 
