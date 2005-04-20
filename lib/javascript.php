@@ -47,7 +47,14 @@ function inserttext(text) {
 ?>
 }
 
-<?php if (!empty($focus)) { echo "function setfocus() { document.$focus.focus() }\n"; } ?>
+<?php if (!empty($focus)) {
+    if(($pos = strpos($focus, '.')) !== false) {
+        $topelement = substr($focus, 0, $pos);
+    }
+    else {
+        $topelement = $focus;
+    }
+    echo "function setfocus() { if(document.$topelement) document.$focus.focus(); }\n"; } ?>
 
 // done hiding -->
 </script>
