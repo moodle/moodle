@@ -317,6 +317,7 @@ $string['webct'] = 'WebCT format';
 $string['wildcard'] = 'Wild card';
 $string['withsummary'] = 'with Summary Statistics';
 $string['wronggrade'] = 'Wrong grade (after line $a) : ';
+$string['xhtml'] = 'XHTML Format';
 $string['xml'] = 'Moodle XML format';
 $string['yourfinalgradeis'] = 'Your final grade for this quiz is $a';
 $string['zerosignificantfiguresnotallowed'] = 'The correct answer cannot have zero significant figures!';
