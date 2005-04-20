@@ -77,10 +77,11 @@
 
     if (isteacher($course->id)) {
         $attemptcount = count_records_select("quiz_attempts", "quiz = '$quiz->id' AND timefinish > 0");
-        $usercount = count_records("quiz_grades", "quiz", "$quiz->id");
-        $strusers  = get_string("users");
+        $a->count = count_records("quiz_grades", "quiz", "$quiz->id");
+        $a->items = get_string('users');
+        $strusers  = get_string('counteditems', '', $a);
         $strviewallanswers  = get_string("viewallanswers","quiz",$attemptcount);
-        echo "<div class=\"reportlink\"><a href=\"report.php?id=$cm->id\">$strviewallanswers ($usercount $strusers)</a></div>";
+        echo "<div class=\"reportlink\"><a href=\"report.php?id=$cm->id\">$strviewallanswers ($strusers)</a></div>";
     } else if (!$cm->visible) {
         notice(get_string("activityiscurrentlyhidden"));
     }

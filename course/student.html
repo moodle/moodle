@@ -6,11 +6,19 @@
   <table align="center" border="0" cellpadding="5" cellspacing="0">
     <tr>
       <td valign="top">
-          <?php echo count($students) . " ". $strexistingstudents ?>
+          <?php
+              $a->count = count($students);
+              $a->items = $strexistingstudents;
+              print_string('counteditems', '', $a);
+          ?>
       </td>
       <td></td>
       <td valign="top">
-          <?php echo $usercount . " " . $strpotentialstudents ?>
+          <?php
+              $a->count = $usercount;
+              $a->items = $strpotentialstudents;
+              print_string('counteditems', '', $a);
+          ?>
       </td>
     </tr>
     <tr>
@@ -40,7 +48,7 @@
                            document.studentform.remove.disabled=true;
                            document.studentform.removeselect.selectedIndex=-1;">
           <?php
-	    
+      
               if (!empty($searchusers)) {
                   echo "<optgroup label=\"$strsearchresults (" . count($searchusers) . ")\">\n";
                   foreach ($searchusers as $user) {
@@ -49,7 +57,7 @@
                   }
                   echo "</optgroup>\n";
               }
-	      else {
+        else {
                   if ($usercount > MAX_USERS_PER_PAGE) {
                       echo '<optgroup label="'.get_string('toomanytoshow').'"><option></option></optgroup>'."\n"
                           .'<optgroup label="'.get_string('trysearching').'"><option></option></optgroup>'."\n";

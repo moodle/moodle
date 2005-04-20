@@ -5,11 +5,19 @@
   <table align="center" border="0" cellpadding="5" cellspacing="0">
     <tr>
       <td valign="top">
-          <?php echo count($creators) . " ". $strexistingcreators ?>
+          <?php
+              $a->count = count($creators);
+              $a->items = $strexistingcreators;
+              print_string('counteditems', '', $a);
+          ?>
       </td>
       <td></td>
       <td valign="top">
-          <?php echo $usercount . " " . $strpotentialcreators ?>
+          <?php
+              $a->count = $usercount;
+              $a->items = $strpotentialcreators;
+              print_string('counteditems', '', $a);
+          ?>
       </td>
     </tr>
     <tr>
