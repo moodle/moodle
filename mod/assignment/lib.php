@@ -225,6 +225,40 @@ class assignment_base {
 
 
 
+    /* 
+     * Returns a link with info about the state of the assignment submissions
+     */
+    function submittedlink() {
+        global $USER;
+
+        $submitted = '';
+
+        if (isteacher($this->course->id)) {
+            if (!isteacheredit($this->course->id) and user_group($this->course->id, $USER->id)) {
+                $count = $this->count_real_submissions($this->currentgroup);  // Only their group
+            } else {
+                $count = $this->count_real_submissions();                     // Everyone
+            }
+            $submitted = '<a href="submissions.php?id='.$this->cm->id.'">'.
+                         get_string('viewsubmissions', 'assignment', $count).'</a>';
+        } else {
+            if (isset($USER->id)) {
+                if ($submission = $this->get_submission($USER->id)) {
+                    if ($submission->timemodified) {
+                        if ($submission->timemodified <= $this->assignment->timedue) {
+                            $submitted = '<span class="early">'.userdate($submission->timemodified).'</span>';
+                        } else {
+                            $submitted = '<span class="late">'.userdate($submission->timemodified).'</span>';
+                        }
+                    }
+                }
+            }
+        }
+
+        return $submitted;
+    }
+
+
     /*
      * Print the start of the setup form for the current assignment type
      */

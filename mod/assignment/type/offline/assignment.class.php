@@ -10,33 +10,6 @@ class assignment_offline extends assignment_base {
         parent::assignment_base($cmid);
     }
 
-    function submittedlink() {
-        global $USER;
-
-        $submitted = '';
-
-        if (isteacher($this->course->id)) {
-            $submitted =  '<a href="submissions.php?id='.$this->cm->id.'">' .
-                           get_string('viewfeedback', 'assignment') . '</a>';
-        } else {
-            if (isset($USER->id)) {
-                if ($submission = $this->get_submission($USER->id)) {
-                    if ($submission->timemodified) {
-                        if ($submission->timemodified <= $this->assignment->timedue) {
-                            $submitted = '<span class="early">'.userdate($submission->timemodified).'</span>';
-                        } else {
-                            $submitted = '<span class="late">'.userdate($submission->timemodified).'</span>';
-                        }
-                    }
-                }
-            }
-        }
-
-        return $submitted;
-    }
-
-
-
 }
 
 ?>

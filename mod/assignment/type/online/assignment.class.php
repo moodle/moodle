@@ -11,36 +11,6 @@ class assignment_online extends assignment_base {
 
     }
 
-    function submittedlink() {
-        global $USER;
-
-        $submitted = '';
-
-        if (isteacher($this->course->id)) {
-            if ($this->currentgroup and isteacheredit($this->course->id)) {
-                $group = get_record('groups', 'id', $this->currentgroup);
-                $groupname = ' ('.$group->name.')';
-            } else {
-                $groupname = '';
-            }
-            $count = $this->count_real_submissions($this->currentgroup);
-            $submitted = '<a href="submissions.php?id='.$this->cm->id.'">'.
-                         get_string('viewsubmissions', 'assignment', $count).'</a>'.$groupname;
-        } else {
-            if (isset($USER->id)) {
-                if ($submission = $this->get_submission()) {
-                    if ($submission->timemodified <= $this->assignment->timedue) {
-                        $submitted = userdate($submission->timemodified);
-                    } else {
-                        $submitted = '<span class="late">'.userdate($submission->timemodified).'</span>';
-                    }
-                }
-            }
-        }
-
-        return $submitted;
-    }
-
     function view() {
 
         global $USER;
