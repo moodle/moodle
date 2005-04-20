@@ -69,11 +69,11 @@ class block_glossary_random extends block_base {
                     break;
             }
 
-            if ($entry = get_record_sql('  SELECT concept, definition, format '.
-                                        '    FROM '.$CFG->prefix.'glossary_entries'.
-                                        '   WHERE glossaryid = '.$this->config->glossary.
-                                        '     AND approved = 1 '.
-                                        'ORDER BY timemodified '.$SORT.' '.$LIMIT)) {
+            if ($entry = get_records_sql('  SELECT concept, definition, format '.
+                                         '    FROM '.$CFG->prefix.'glossary_entries'.
+                                         '   WHERE glossaryid = '.$this->config->glossary.
+                                         '     AND approved = 1 '.
+                                         'ORDER BY timemodified '.$SORT.' '.$LIMIT)) {
 
                 if (empty($this->config->showconcept)) {
                     $text = '';
