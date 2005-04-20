@@ -91,8 +91,16 @@ $string['auth_pop3mailbox'] = 'Nom de la boîte aux lettres vers laquelle tenter 
 $string['auth_pop3port'] = 'Numéro de port du serveur POP3. Il s\'agit habituellement du port 110, et lors de l\'utilisation de SSL du port 995.';
 $string['auth_pop3title'] = 'Utiliser un serveur POP3';
 $string['auth_pop3type'] = 'Type de serveur. Si le serveur POP3 utilise « certificate security », choisir « pop3cert ».';
-$string['auth_shibbolethdescription'] = 'Cette méthode permet de se connecter à un serveur Shibboleth pour vérifier et créer de nouveaux comptes';
+$string['auth_shibbolethdescription'] = 'Cette méthode permet de créer et d\'authentifier des utilisateurs par l\'intermédiaire d\'un serveur <a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>';
 $string['auth_shibbolethtitle'] = 'Shibboleth';
+$string['auth_shibboleth_login'] = 'Connexion Shibboleth';
+$string['auth_shibboleth_manual_login'] = 'Connexion manuelle';
+$string['auth_shib_settings'] = 'Veuillez lire attentivement le fichier <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> pour apprendre comment configurer Moodle pour authentification Shibboleth';
+$string['auth_shib_only'] = 'Seulement Shibboleth';
+$string['auth_shib_only_description'] = 'Cocher cette option pour imposer l\'authentiication Shibboleth';
+$string['auth_shib_username_description'] = 'Nom de la variable d\'environement du serveur web Shibboleth à utiliser comme nom d\'utilisateur Moodle';
+$string['auth_shib_instructions'] = 'Utilisez la <a href=\"$a\">connexion Shibboleth</a> pour accéder via Shibboleth, si votre institution le permet.<br />Sinon, utilisez la connexion standard de ce formulaire.';
+$string['auth_shib_instructions_help'] = 'Vous pouvez indiquer ici des instructions pour expliquer le fonctionnement de Shibboleth à vos utilisateurs. Ces instructions seront affichées sur la page de connexion, dans la zone adéquate. Le texte devrait contenir un lien vers «&nbsp;<b>$a</b>&nbsp;» afin de permettre aux utilisateurs de se connecter facilement. Si vous laissez ce champ vide, les instructions standard  (sans information sur Shibboleth) seront utilisées';
 $string['auth_updatelocal_expl'] = '<p><strong>Mise à jour des données locales&nbsp;:</strong> lorsque cette option est activée, le champ est mis à jour (depuis la source externe) chaque fois que l\'utilisateur se connecte ou qu\'une synchronisation a lieu. Les champs destinés à être mis à jour ainsi devraient être verrouillés.</p>';
 $string['auth_updatelocal'] = 'Mise à jour des données locales';
 $string['auth_updateremote_expl'] = '<p><strong>Mise à jour des données externes&nbsp;:</strong> lorsque cette option est activée, la source d\'authentification externe est mise à jour chaque fois que les données de l\'utilisateur le sont. Pour permettre leur modification, les champs devraient être déverrouillés.</p>';
