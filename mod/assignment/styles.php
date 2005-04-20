@@ -34,6 +34,10 @@
   margin-right: 4px;
 }
 
+.mod-assignment .files {
+  whitespace:nowrap;
+}
+
 #mod-assignment-submissions .generaltable .r1 {
   background-color: #FFFFFF;
 }

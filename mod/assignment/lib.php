@@ -397,7 +397,7 @@ class assignment_base {
         }
         if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['comment'])) {
             echo 'opener.document.getElementById("com'.$submission->userid.
-                 '").innerHTML="'.shorten_text($submission->comment, 15)."\";\n";
+                 '").innerHTML="'.shorten_text(strip_tags($submission->comment), 15)."\";\n";
         }
         if (empty($SESSION->flextable['mod-assignment-submissions']->collapse['timemodified']) &&
             $submission->timemodified) {
@@ -708,7 +708,7 @@ class assignment_base {
                         $grade = '<div id="g'.$auser->id.'"></div>';
                     }
                     
-                    $comment = '<div id="com'.$auser->id.'">'.shorten_text($auser->comment, 15).'</div>';
+                    $comment = '<div id="com'.$auser->id.'">'.shorten_text(strip_tags($auser->comment), 15).'</div>';
 
                 } else {
                     $studentmodified = '<div id="ts'.$auser->id.'">&nbsp;</div>';
