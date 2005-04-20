@@ -3687,6 +3687,7 @@ function redirect($url, $message='', $delay='0') {
     $message = clean_text($message);
 
     $url = html_entity_decode($url); // for php < 4.3.0 this is defined in moodlelib.php
+    $url = str_replace(array("\n", "\r"), '', $url); // some more cleaning
     $encodedurl = htmlentities($url);
 
     if (empty($message)) {
