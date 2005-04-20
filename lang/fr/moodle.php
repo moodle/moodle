@@ -1098,6 +1098,7 @@ $string['writingcategoriesandquestions'] = 'Écriture des catégories et questions
 $string['writingcoursedata'] = 'Écriture des données du cours';
 $string['writingeventsinfo'] = 'Écriture du calendrier';
 $string['writinggeneralinfo'] = 'Écriture des informations générales';
+$string['writinggradebookinfo'] = 'Écriture des carnets de notes';
 $string['writinggroupsinfo'] = 'Écriture des groupes';
 $string['writingheader'] = 'Écriture de l\'entête';
 $string['writingmessagesinfo'] = 'Écriture des informations des messages';
