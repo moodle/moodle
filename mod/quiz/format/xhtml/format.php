@@ -1,0 +1,127 @@
+<?php 
+// Based on default.php, included by ../import.php
+
+class quiz_format_xhtml extends quiz_default_format {
+
+    function provide_export() {
+      return true;
+    }
+
+function repchar( $text ) {
+    // escapes 'reserved' characters # = ~ { ) and removes new lines
+    $reserved = array( '#','=','~','{','}',"\n","\r" );
+    $escaped = array( '\#','\=','\~','\{','\}',' ','' );
+
+    return str_replace( $reserved, $escaped, $text ); 
+    }
+
+function writequestion( $question ) {
+    // turns question into string
+    // question reflects database fields for general question and specific to type
+
+    // initial string;
+    $expout = "";
+    $id = $question->id;
+
+    // add comment and div tags
+    $expout .= "<!-- question: $id  name: $question->name -->\n";
+    $expout .= "<div class=\"question\">\n";
+
+    // add header
+    $expout .= "<h3>$question->name</h3>\n";
+
+    // add question text
+    $expout .= "<p class=\"questiontext\">$question->questiontext</p>\n"; 
+
+    // selection depends on question type
+    switch($question->qtype) {
+    case TRUEFALSE:
+      $st_true = get_string( 'true','quiz' );
+      $st_false = get_string( 'false','quiz' );
+      $expout .= "<ul class=\"truefalse\">\n";
+      $expout .= "  <li><input name=\"quest_$id\" type=\"radio\" value=\"$st_true\" />$st_true</li>\n";
+      $expout .= "  <li><input name=\"quest_$id\" type=\"radio\" value=\"$st_false\" />$st_false</li>\n";
+      $expout .= "</ul>\n";
+      break;
+    case MULTICHOICE:
+      $expout .= "<ul class=\"multichoice\">\n";
+      foreach($question->answers as $answer) {
+        $ans_text = $this->repchar( $answer->answer );
+        if ($question->single) {
+          $expout .= "  <li><input name=\"quest_$id\" type=\"radio\" value=\"$ans_text\" />$ans_text</li>\n";
+        }
+        else {
+          $expout .= "  <li><input name=\"quest_$id\" type=\"checkbox\" value=\"$ans_text\" />$ans_text</li>\n";
+        }
+      }
+      $expout .= "</ul>\n";
+        break;
+    case SHORTANSWER:
+        $expout .= "<ul class=\"shortanswer\">";
+        $count = 0;
+        foreach($question->answers as $answer) {
+          $ans_text = $this->repchar( $answer->answer );
+          $expout .= "  <li>$ans_text</li><br />\n";
+          $expout .= "  <input name=\"quest_{$id}_$count\" type=\"text\" /></li>\n";
+          ++$count;
+        }
+        $expout .= "</ul>\n";
+        break;
+    case NUMERICAL:
+        $expout .= '<p class="numerical">\n';
+        $expout .= "  <input name=\"quest_$id\" type=\"text\" />\n";
+        $expout .= "</p>\n";
+        break;
+    case MATCH:
+        $expout .= "<ul class=\"match\">";
+        $count = 0;
+        foreach($question->subquestions as $subquestion) {
+          $ans_text = $this->repchar( $subquestion->questiontext );
+          $expout .= "  <li>$ans_text</li><br />\n";
+          $expout .= "  <input name=\"quest_{$id}_$count\" type=\"text\" /></li>\n";
+          ++$count;
+        }
+        $expout .= "</ul>";
+        break;
+    case DESCRIPTION:
+        break;
+    case MULTIANSWER:
+        $expout .= "<!-- CLOZE type is not supported  -->\n";
+        break;
+    default:
+        notify("No handler for qtype $question->qtype for GIFT export" );
+    }
+    // close off div 
+    $expout .= "</div>\n\n\n";
+    return $expout;
+}
+
+
+function presave_process( $content ) {
+  // override method to allow us to add xhtml headers and footers
+
+  $xp =  "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n";
+  $xp .= "	\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n";
+  $xp .= "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n";
+  $xp .= "<head>\n";
+  $xp .= "<title>Moodle Quiz XHTML Export</title>\n";
+  $xp .= "</head>\n";
+  $xp .= "<body>\n";
+  $xp .= "<form action=\"...REPLACE ME...\" method=\"post\">\n\n";
+  $xp .= $content;
+  $xp .= "<p class=\"submit\">\n";
+  $xp .= "  <input type=\"submit\" />\n";
+  $xp .= "</p>\n";
+  $xp .= "</form>\n";
+  $xp .= "</body>\n";
+  $xp .= "</html>\n";
+
+  return $xp;
+}
+
+function export_file_extension() {
+  return ".html";
+}
+
+}
+?>
