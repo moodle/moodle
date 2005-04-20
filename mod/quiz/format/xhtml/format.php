@@ -29,9 +29,12 @@ function writequestion( $question ) {
 
     // add header
     $expout .= "<h3>$question->name</h3>\n";
-
-    // add question text
-    $expout .= "<p class=\"questiontext\">$question->questiontext</p>\n"; 
+ 
+    // format and add question text
+    $questiontext = $question->questiontext;
+    $format = $question->questiontextformat;
+    $formatted_text = format_text( $questiontext, $format );
+    $expout .= "<p class=\"questiontext\">$formatted_text</p>\n"; 
 
     // selection depends on question type
     switch($question->qtype) {
@@ -100,11 +103,18 @@ function writequestion( $question ) {
 function presave_process( $content ) {
   // override method to allow us to add xhtml headers and footers
 
+  global $CFG;
+
+  // get css bit
+  $css_lines = file( "$CFG->dirroot/mod/quiz/format/xhtml/xhtml.css" );
+  $css = implode( ' ',$css_lines ); 
+
   $xp =  "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"\n";
   $xp .= "	\"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n";
   $xp .= "<html xmlns=\"http://www.w3.org/1999/xhtml\">\n";
   $xp .= "<head>\n";
   $xp .= "<title>Moodle Quiz XHTML Export</title>\n";
+  $xp .= $css;
   $xp .= "</head>\n";
   $xp .= "<body>\n";
   $xp .= "<form action=\"...REPLACE ME...\" method=\"post\">\n\n";
