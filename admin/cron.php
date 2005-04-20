@@ -135,10 +135,6 @@
 
     } // End of occasional clean-up tasks
 
-    if (file_exists("$CFG->dataroot/cronextra.php")) {
-        mtrace("Running extra commands in $CFG->dataroot/cronextra.php ...");
-        include("$CFG->dataroot/cronextra.php");
-    }
 
     if (!isset($CFG->disablescheduledbackups)) {   // Defined in config.php
         //Execute backup's cron
