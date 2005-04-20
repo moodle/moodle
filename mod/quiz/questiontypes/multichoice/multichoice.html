@@ -100,7 +100,7 @@
   <tr valign="top">
     <td align="right"><b><?php  echo get_string("choice", "quiz")." $i";  ?>:</b></td>
     <td>
-      <input type="text" name="answer[]" size="50" maxlength="255" value="<?php  p($answers[$i-1]->answer) ?>" alt="<?php  echo get_string("choice", "quiz")." $i";  ?>"/>&nbsp;&nbsp;
+      <input type="text" name="answer[]" size="50" value="<?php  p($answers[$i-1]->answer) ?>" alt="<?php  echo get_string("choice", "quiz")." $i";  ?>"/>&nbsp;&nbsp;
       <?php  
           print_string("grade");
           echo ":&nbsp;";
