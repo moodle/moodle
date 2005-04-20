@@ -75,6 +75,8 @@ class block_glossary_random extends block_base {
                                          '     AND approved = 1 '.
                                          'ORDER BY timemodified '.$SORT.' '.$LIMIT)) {
 
+                $entry = reset($entry);
+
                 if (empty($this->config->showconcept)) {
                     $text = '';
                 } else {
