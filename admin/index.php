@@ -153,6 +153,7 @@
                 if (main_upgrade($CFG->version)) {
                     $db->debug=false;
                     if (set_config("version", $version)) {
+                        remove_dir($CFG->dataroot . '/cache', true); // flush cache
                         notify($strdatabasesuccess, "green");
                         print_continue("index.php");
                         exit;

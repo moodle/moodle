@@ -180,6 +180,7 @@ function upgrade_activity_modules($return) {
                         if (! update_record('modules', $module)) {
                             error('Could not update '. $module->name .' record in modules table!');
                         }
+                        remove_dir($CFG->dataroot . '/cache', true); // flush cache
                         notify(get_string('modulesuccess', '', $module->name), 'notifysuccess');
                         echo '<hr />';
                     } else {

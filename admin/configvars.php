@@ -220,6 +220,9 @@ class configvarrss extends configvar {
     $interface['langlist'] = new configvar ( get_string('configlanglist', 'admin'),
         '<input name="langlist" type="text" size="60" value="'.s($config->langlist).'" alt="langlist" />' );
 
+/// language menu
+    $interface['langcache'] = new configvar ( get_string('configlangcache', 'admin'),
+        choose_from_menu($noyesoptions, 'langcache', $config->langcache, '', '', '', true) );
 /// locale
     $interface['locale'] = new configvar ( get_string('configlocale', 'admin'),
         '<input name="locale" type="text" size="10" value="'.s($config->locale).'" alt="locale" />' );

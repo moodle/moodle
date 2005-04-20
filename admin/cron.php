@@ -69,6 +69,12 @@
     }
     mtrace("Finished activity modules");
 
+    if (!empty($CFG->langcache)) {
+        mtrace('Updating languages cache');
+        get_list_of_languages();
+    }
+
+
 /// Run all core cron jobs, but not every time since they aren't too important.
 /// These don't have a timer to reduce load, so we'll use a random number 
 /// to randomly choose the percentage of times we should run these jobs.
@@ -118,11 +124,6 @@
         if (!empty($CFG->cachetext)) {   // Defined in config.php
             $cachelifetime = time() - $CFG->cachetext;
             delete_records_select("cache_text", "timemodified < '$cachelifetime'");
-        }
-        flush();
-
-        if (!empty($CFG->langcache)) {
-            get_list_of_languages();
         }
         flush();
 

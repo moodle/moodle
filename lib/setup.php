@@ -179,14 +179,19 @@ global $THEME;
         $CFG->directorypermissions = 0777;      // Must be octal (that's why it's here)
     }
 
+/// Setup cache dir for Smarty and others
+    if (!file_exists($CFG->dataroot .'/cache')) {
+        make_upload_directory('cache');
+    }
+
 /// Set up smarty template system
     //require_once($CFG->libdir .'/smarty/Smarty.class.php');
     //$smarty = new Smarty;
     //$smarty->template_dir = $CFG->dirroot .'/templates/'. $CFG->template;
-    //if (!file_exists($CFG->dataroot .'/cache')) {
-    //    make_upload_directory('cache');
+    //if (!file_exists($CFG->dataroot .'/cache/smarty')) {
+    //    make_upload_directory('cache/smarty');
     //}
-    //$smarty->compile_dir = $CFG->dataroot .'/cache';
+    //$smarty->compile_dir = $CFG->dataroot .'/cache/smarty';
 
 /// Set up session handling
     if(empty($CFG->respectsessionsettings)) {

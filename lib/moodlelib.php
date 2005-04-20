@@ -6047,5 +6047,26 @@ if (!function_exists('file_get_contents')) {
 }
 
 
+function remove_dir($dir, $content_only=false) {
+    // if content_only=true then delete all but
+    // the directory itself
+
+    $handle = opendir($dir);
+    while (false!==($item = readdir($handle))) {
+        if($item != '.' && $item != '..') {
+            if(is_dir($dir.'/'.$item)) {
+                remove_dir($dir.'/'.$item);
+            }else{
+                unlink($dir.'/'.$item);
+            }
+        }
+    }
+    closedir($handle);
+    if ($content_only) { 
+        return true;
+    }
+    return rmdir($dir);
+}
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>
