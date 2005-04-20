@@ -169,7 +169,7 @@
     forum_print_mode_form($discussion->id, $displaymode);
 
     echo "</td><td width=\"33%\">";
-    if (isteacher($course->id)) {    // Popup menu to allow discussions to be moved to other forums
+    if (isteacher($course->id) && $forum->type != "teacher") { // Popup menu to move discussions to other forums
         if ($forums = get_all_instances_in_course("forum", $course)) {
             if ($course->format == 'weeks') {
                 $strsection = get_string("week");
