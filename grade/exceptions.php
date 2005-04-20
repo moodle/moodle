@@ -115,6 +115,7 @@
                 // these were items that have since been deleted
                 unset($listgrade_items[$grade_item->id]);
                 delete_records('grade_item', 'id', $grade_item->id);
+                delete_records('grade_exceptions', 'grade_itemid', $grade_item->id, 'courseid', $course->id);
             }
             natcasesort($listmembers[$grade_item->id]);
             natcasesort($nonmembers[$grade_item->id]);

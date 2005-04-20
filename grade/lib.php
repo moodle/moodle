@@ -626,6 +626,7 @@ function grade_get_grades() {
                     else {
                         // delete this item from the grade_item table since it was deleted through the mod interface
                         delete_records('grade_item', 'modid', $mods->modid, 'courseid', $course->id);
+                        delete_records('grade_exceptions', 'grade_itemid', $mod->id, 'courseid', $course->id);
                     }                
                 }
                 else {
@@ -1699,6 +1700,7 @@ function grade_view_category_grades($view_by_student) {
                                     $link_id = grade_get_module_link($course->id, $all_categories[$category][$assignment]['cminstance'], $all_categories[$category][$assignment]['modid']);
 
                                     $link = $CFG->wwwroot.'/mod/'.$all_categories[$category][$assignment]['modname'].'/view.php?id='.$link_id->id;
+                                    $all_categories[$category][$assignment]['link'] = $link;
                                     if ($all_categories[$category][$assignment]['hidden'] == 0) {
                                         $header .= '<th colspan="'.$grade_columns.'"><a href="'.$link.'">'.format_string($assignment,true).'</a>';
                                     }
@@ -1738,7 +1740,7 @@ function grade_view_category_grades($view_by_student) {
 
                                 // display points 
                                 if ($preferences->show_points) { 
-                                    $row .= '<td align="right">' . $items[$assignment]['grade'] . '</td>';
+                                    $row .= '<td align="right"><a href="'.$all_categories[$category][$assignment]['link'].'">' . $items[$assignment]['grade'] . '</a></td>';
                                 }
 
                                 if ($preferences->show_percent) {
