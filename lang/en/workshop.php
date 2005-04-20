@@ -171,6 +171,7 @@ $string['noteonstudentassessments'] = '{Grade from Student / Grading Grade for A
 $string['notgraded'] = 'Not Graded';
 $string['notitle'] = 'No Title';
 $string['notitlegiven'] = 'No Title Given';
+$string['notsubmittedyet'] = 'No submission has been made yet';
 $string['nowork'] = 'The submission period has now ended.<br />You have submitted no work.';
 $string['numberofassessmentelements'] = 'Number of Comments, Assessment Elements, Grade Bands, Criterion Statments or Categories in a Rubric';
 $string['numberofassessments'] = 'Number of Assessments';
