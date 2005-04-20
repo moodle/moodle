@@ -227,6 +227,7 @@ $string['questioninuse'] = 'Die Frage \'$a\' wird momentan benutzt:';
 $string['questionname'] = 'Titel der Frage';
 $string['questionnametoolong'] = 'Bezeichnung der Frage in Zeile $a ist zu lang (max 255 Zeichen). Sie wurde gekürzt.';
 $string['questions'] = 'Fragen';
+$string['questionsinuse'] = '(* Fragen mit einem Sternchen werden in Tests verwandt. DieFragen werden nicht aus diesen Tests gelöscht. Sie werden aber aus der Kategorienliste ausgetragen.)';
 $string['questionsperpage'] = 'Höchstzahl der Fragen / Seite';
 $string['questiontypesetupoptions'] = 'Setup-Optionen für Fragentypen';
 $string['quizavailable'] = 'Dieser Test ist verfügbar bis: $a';

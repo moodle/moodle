@@ -1,7 +1,22 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
+$string['alternatelogin'] = 'Wenn Sie hier eine URL eingeben, wird diese als alternative Login-Seite  verwandt. Die Seite sollte ein Aktionsfeld (Button)auf <strong>\'$a\'</strong> enthalten und Eingabefelder für den <strong>Anmeldenamen</strong> und das <strong>Passwort</strong>.<br />Seien Sie sorgfältig bei der Eingabe der URL. Mit einer falschen URL schließen Sie sich selber vom Zugriff zur Seite aus.<br />Lassen Sie das Feld leer, um die Standardanmeldeseite zu verwenden.';
+$string['alternateloginurl'] = 'Alternative Login URL';
+$string['auth_cas_baseuri'] = 'URI desServers (kein Eintrag wenn es keine baseUri gibt)<br />Zum Beispiel, wenn der CAS Server an host.domaine.fr/CAS/ dann<br />cas_baseuri = CAS/';
+$string['auth_cas_create_user'] = 'Aktivieren Sie die Einstellung, um CAS authentifizierte Nutzer/innen in die moodle Datenbank einzufügen. Wenn nicht, können sich nur die Nutzer/innen einloggen, die in der moodle-Datenbank eingetragen sind.';
+$string['auth_cas_enabled'] = 'Aktivieren Sie die Funktion, um die CAS Authentifizierung zu verwenden';
+$string['auth_cas_hostname'] = 'Hostname des CAS-Servers <br />z.B.: host.domain.fr';
+$string['auth_cas_invalidcaslogin'] = 'Sorry, Ihr Login ist gescheitert - Ihr Zugang konnte nicht bestätigt werden.';
+$string['auth_cas_language'] = 'Ausgewählte Sprache';
+$string['auth_cas_logincas'] = 'Sicherer Zugang';
+$string['auth_cas_port'] = 'Port des CAS Servers';
+$string['auth_cas_server_settings'] = 'CAS Server Konfiguration';
+$string['auth_cas_text'] = 'Sichere Verbindung';
+$string['auth_cas_version'] = 'CAS Version';
+$string['auth_casdescription'] = 'Dieses Verfahren verwendet einen CAS Server (Central Authentification Service) zur Authentifizierung von Nutzer/innen in einer Single-Sign-On Umgebung (SSO). Sie können jedoch auch eine einfache LDAP Authentifizierung verwenden. Wenn der verwandte Nutzername und das Passwort auf CAS als gültig erkannt werden, erstellt moodle einen neuen Nutzereintrag in seiner Datenbank und weitere Nutzerdaten von LDAP, falls erforderlich. Bei späteren Logins werden nur Nutzername und Passwort geprüft.';
+$string['auth_castitle'] = 'CAS Server (SSO) verwenden';
 $string['auth_common_settings'] = 'Gemeinsame Einstellungen';
 $string['auth_data_mapping'] = 'Data mapping';
 $string['auth_dbdescription'] = 'Diese Methode benutzt eine externe Datenbank-Tabelle, um die Gültigkeit eines angegebenen Nutzernamens und Kennwort zu überprüfen, Wenn der Zugang neu ist, werden die Informationen der übrigen Felder ebenso zu Moodle hinüberkopiert.';
@@ -79,6 +94,8 @@ $string['auth_pop3mailbox'] = 'Name der Mailbox mit der eine Verbindung hergeste
 $string['auth_pop3port'] = 'POP3 Serverport-Nummer. Normalerweise ist das 110, für SSL 995.';
 $string['auth_pop3title'] = 'Einen POP3-Server verwenden';
 $string['auth_pop3type'] = 'Servertyp. Wenn Ihr Server Sicherheitszertifikate verwendet, wählen Sie pop3cert.';
+$string['auth_shibbolethdescription'] = 'Mit diesem Verfahren können Sie die Verbindung zu einem bestehenden Shibboleth Server herstellen, um  Zugänge zu prüfen und anzulegen.';
+$string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_updatelocal'] = 'Update lokaler Daten';
 $string['auth_updatelocal_expl'] = '<p><b>Update lokaler Daten:</b> Wenn dieses Feld aktiviert wird, wird das Feld (aus externer Quelle (external auth)) jedes Mal aktualisiert wenn der Teilnehmer sich einloggt oder eine Nutzersynchronisation erfolgt. Dateneinträge, die lokal aktualisiert werden, sollten geschützt werden.</p>';
 $string['auth_updateremote'] = 'Update externer Daten';

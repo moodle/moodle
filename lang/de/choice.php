@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.4.3 (2004083130)
+      // choice.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
+$string['addmorechoices'] = 'Weitere Abstimmungen hinzufügen';
 $string['allowupdate'] = 'Abstimmung kann aktualisiert werden';
 $string['answered'] = 'Beantwortet';
 $string['choice'] = 'Abstimmung  $a';
@@ -9,7 +10,13 @@ $string['choiceclose'] = 'Abstimmungsende (Datum, Uhrzeit)';
 $string['choicename'] = 'Abstimmung';
 $string['choiceopen'] = 'Abstimmungsbeginn (Datum, Uhrzeit)';
 $string['choicetext'] = 'Beschreibung ';
+$string['displayhorizontal'] = 'Horizontal anzeigen';
+$string['displaymode'] = 'Anzeigemodus';
+$string['displayvertical'] = 'Vertikal anzeigen';
+$string['full'] = '(Vollständig)';
 $string['havetologin'] = 'Sie müssen sich erst anmelden, bevor Sie sich an der Abstimmung beteiligen können.';
+$string['limit'] = 'Begrenzung';
+$string['limitanswers'] = 'Begrenzung der Zahl der Antworten zulassen';
 $string['modulename'] = 'Abstimmung';
 $string['modulenameplural'] = 'Abstimmungen';
 $string['mustchooseone'] = 'Sie müssen zuerst eine Antwort auswählen bevor Sie speichern. Es wurde noch nicht gespeichert.';
@@ -26,8 +33,9 @@ $string['publishnot'] = 'Keine Ergebnisse veröffentlichen';
 $string['responses'] = 'Antworten ';
 $string['responsesto'] = 'Antworten zu  $a';
 $string['savemychoice'] = 'Meine Abstimmung speichern';
-$string['showunanswered'] = 'Zeige Spalte für Unbeantwortete';
+$string['showunanswered'] = 'Zeige Spalte mit TN, die noch nicht geantwortet haben';
 $string['timerestrict'] = 'Antworten nur in dieser Periode anzeigen';
 $string['viewallresponses'] = 'Zeige $a Antworten';
+$string['yourselection'] = 'Ihre Auswahl';
 
 ?>

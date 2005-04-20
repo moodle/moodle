@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.4.3 (2004083130)
+      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['allowresubmit'] = 'Erneutes Einreichen erlauben';
@@ -14,6 +14,7 @@ Sie finden diesen im Anhang Ihrer
 <a href=\"$a->url\">eingereichten Aufgabe</a>:.';
 $string['assignmentname'] = 'Link (Kursseite)';
 $string['assignmenttype'] = 'Aufgabentyp';
+$string['availabledate'] = 'Verfügbar von';
 $string['configmaxbytes'] = 'Voreingestellte maximale Größe für alle Einstellungen auf dieser Seite';
 $string['description'] = 'Zusammenfassung';
 $string['duedate'] = 'Abgabetermin (Datum, Zeitpunkt)';
@@ -37,6 +38,7 @@ $string['maximumsize'] = 'Maximale Größe';
 $string['modulename'] = 'Aufgabe';
 $string['modulenameplural'] = 'Aufgaben';
 $string['newsubmissions'] = 'Aufgaben eingereicht';
+$string['noassignments'] = 'Es gibt derzeit keine  Aufgaben';
 $string['notgradedyet'] = 'Noch nicht bewertet';
 $string['notsubmittedyet'] = 'Noch nichts eingereicht';
 $string['overwritewarning'] = 'Hinweis: erneutes hochladen ERSETZT Ihren gegenwärtigen Eintrag ';
@@ -46,6 +48,7 @@ $string['submissions'] = 'Eingereichte Aufgaben';
 $string['submitassignment'] = 'Tragen Sie Ihre Aufgabe unter Verwendung dieses Formulars ein';
 $string['submitted'] = 'Eingereicht';
 $string['typeoffline'] = 'Offline Aktivität ';
+$string['typeonline'] = 'Online-Aktivität';
 $string['typeuploadsingle'] = 'Eine einzige Datei hochladen';
 $string['uploadbadname'] = 'Dieser Dateiname enthält unzulässige Zeichen und kann nicht hochgeladen werden.';
 $string['uploadedfiles'] = 'hochgeladene Dateien';

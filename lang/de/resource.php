@@ -44,6 +44,7 @@ $string['localfilehelp'] = 'Hilfe zur Anzeige lokaler Dateien';
 $string['localfileinfo'] = '<p>Wählen Sie eine lokale Datei von Ihrem Computer(-netzwerk). Die Datei wird nicht in das Kursverzeichnis hochgeladen. Beim Aufruf dieser Arbeitsunterlage wird die Datei an dem angegebenen Ort aufgerufen.</p> <p>Dies ist sehr nützlich wenn Sie große Dateien verwenden, die Sie auf CD-ROM an alle Teilnehmer/innen verteilen. Jede/r Teilnehmer/in kann für den Zugriff einen eigenen Pfad für solche Dateien im Nutzerprofil definieren.
 <a href=\"$a\" target=\"_blank\">Nutzerprofil bearbeiten</a>.</p>';
 $string['localfilepath'] = 'Legen Sie den Pfad zu den Arbeitsmaterialien auf Ihrem PC (z.B. CD-Rom-Laufwerk) fest. Wählen Sie dazu irgendeine Datei auf diesem Laufwerk aus. Die Datei wird nicht hochgeladen, aber die Verzeichnisinformation wird abgespeichert und für alle lokalen Dateiressourcen verwandt.';
+$string['localfileselect'] = 'Diesen Dateipfad auswählen.';
 $string['maindirectory'] = 'Hauptverzeichnis für Dateien';
 $string['modulename'] = 'Arbeitsmaterial';
 $string['modulenameplural'] = 'Arbeitsmaterialien';
@@ -67,6 +68,7 @@ $string['notefile'] = 'Um mehr als eine Datei für diesen Kurs hochzuladen (damit
 $string['notypechosen'] = 'Sie müssen einen Typ auswählen. Verwenden Sie den Zurück-Knopf und probieren Sie es erneut';
 $string['pagedisplay'] = 'Zeigt das Arbeitsmaterial im derzeitigen Fenster';
 $string['pagewindow'] = 'Gleiches Fenster';
+$string['pan'] = 'Pan';
 $string['parameter'] = 'Einstellung';
 $string['parameters'] = 'Einstellungen';
 $string['popupresource'] = 'Diese Quelle erscheint in einem Pop-Up-Fenster';
@@ -89,5 +91,6 @@ $string['resourcetypetext'] = 'Erstellen einer Textseite';
 $string['searchweb'] = 'Suche nach einer Webseite';
 $string['serverurl'] = 'Server URL ($a->wwwroot)';
 $string['variablename'] = 'Name der Variable';
+$string['vol'] = 'Vol';
 
 ?>
