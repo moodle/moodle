@@ -198,7 +198,7 @@
                 }
                 else {
                     foreach ($err as $key => $value) {
-                        $focus = 'form'.$key;
+                        $focus = 'form.'.$key;
                     }
                 }
             }
