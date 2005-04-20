@@ -1,8 +1,10 @@
 <?PHP // $Id$ 
-      // message.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // message.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
 
 
 $string['addcontact'] = 'コンタクトの追加';
+$string['addsomecontacts'] = 'コンタクトリストを使うことにより、名前をクリックするだけで連絡先にメッセージを送信することができます。現在は何も登録されていません。コンタクトリストに名前を追加せずにメッセージを送信したい場合は、送信したい人のユーザプロフィールページにアクセスしてください。簡単にメッセージを送信できるように、あなたのコンタクトリストに誰かを追加したい場合は、<a href=\"$a\">検索タブ</a>を使用して検索してください。';
+$string['addsomecontactsincoming'] = '<strong>あなたのコンタクトリストに登録されていない人から新しいメッセージがあります!</strong> コンタクトに人を追加したい場合は、名前の隣にある「コンタクトの追加」アイコンをクリックしてください。';
 $string['ago'] = '$a 前';
 $string['allmine'] = '全ての送受信メッセージ';
 $string['allstudents'] = 'コースの学生間の全てのメッセージ';
@@ -11,6 +13,7 @@ $string['backupmessageshelp'] = ' 「Yes」にした場合、自動バックア�
 $string['beepnewmessage'] = 'メッセージが届いたら音を鳴らす。';
 $string['blockcontact'] = 'コンタクトの拒否';
 $string['blockedmessages'] = '拒否ユーザの $a 件のto/fromメッセージ';
+$string['contactlistempty'] = 'あなたのコンタクトリストは空です。';
 $string['contacts'] = 'コンタクト';
 $string['context'] = 'コンテクスト';
 $string['deletemessagesdays'] = '古いメッセージを自動削除する経過日数';
