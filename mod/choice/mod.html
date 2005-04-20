@@ -146,7 +146,7 @@ for ($i=1; $i<=$standardblanks; $i++) {
     <?php
     $limitfieldlist .= "'newlimit".$i."',";    
 }
-$lim = trim($limitfieldlist, ",");
+$limitfieldlist = trim($limitfieldlist, ",");
 ?>
 <script type="text/javascript">
     limititems = [<?php p($limitfieldlist); ?>];
