@@ -170,6 +170,13 @@ class assignment_online extends assignment_base {
         echo $output;
     }
 
+    function preprocess_submission(&$submission) {
+        if ($this->assignment->var1 && empty($submission->comment)) {  // comment inline
+            $submission->comment = $submission->data1;   // Copy student data to teacher
+            $submission->format  = $submission->data2;
+        }
+    }
+
 }
 
 ?>

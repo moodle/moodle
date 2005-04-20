@@ -517,6 +517,8 @@ class assignment_base {
         echo '</div>';
         echo '<div class="clearer"></div>';
 
+        $this->preprocess_submission($submission);
+
         echo '<br />';
         print_textarea($this->usehtmleditor, 12, 58, 0, 0, 'comment', $submission->comment, $this->course->id);
 
@@ -547,6 +549,11 @@ class assignment_base {
         print_footer('none');
     }
 
+    /*
+     *  Preprocess submission before grading
+     */
+    function preprocess_submission(&$submission) {
+    }
 
     /*
      *  Display all the submissions ready for grading
