@@ -2,7 +2,7 @@
       // message.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
 
 
-$string['addcontact'] = 'コンタクトへ追加';
+$string['addcontact'] = 'コンタクトリストに追加';
 $string['addsomecontacts'] = 'コンタクトリストを使うことにより、名前をクリックするだけで連絡先にメッセージを送信することができます。現在は何も登録されていません。コンタクトリストに名前を追加せずにメッセージを送信したい場合は、送信したい人のユーザプロフィールページにアクセスしてください。簡単にメッセージを送信できるように、あなたのコンタクトリストに誰かを追加したい場合は、<a href=\"$a\">検索タブ</a>を使用して検索してください。';
 $string['addsomecontactsincoming'] = '<strong>あなたのコンタクトリストに登録されていない人から新しいメッセージがあります!</strong> コンタクトに人を追加したい場合は、名前の隣にある「コンタクトの追加」アイコンをクリックしてください。';
 $string['ago'] = '$a 前';
@@ -11,14 +11,14 @@ $string['allstudents'] = 'コースの学生間の全てのメッセージ';
 $string['allusers'] = '全てのユーザの全てのメッセージ';
 $string['backupmessageshelp'] = ' 「Yes」にした場合、自動バックアップにインスタントメッセージが含まれます。';
 $string['beepnewmessage'] = 'メッセージが届いたら音を鳴らす。';
-$string['blockcontact'] = 'コンタクト拒否';
+$string['blockcontact'] = '受信拒否';
 $string['blockedmessages'] = '拒否ユーザの $a 件のto/fromメッセージ';
 $string['contactlistempty'] = 'あなたのコンタクトリストは空です。';
 $string['contacts'] = 'コンタクト';
 $string['context'] = 'コンテクスト';
 $string['deletemessagesdays'] = '古いメッセージを自動削除する経過日数';
 $string['discussion'] = 'ディスカッション';
-$string['emailmessages'] = 'オフラインの時はメールにメッセージを送信する。';
+$string['emailmessages'] = 'オフライン時は下記メールアドレス宛にメッセージを転送する。';
 $string['emailtagline'] = 'このメールは $a にあなた宛に送信されたメッセージのコピーです。';
 $string['emptysearchstring'] = 'キーワードを入力してください。';
 $string['formorethan'] = '経過後';
@@ -45,12 +45,12 @@ $string['onlymycourses'] = 'マイ コース内のみ';
 $string['onlytome'] = '受信メッセージ';
 $string['pagerefreshes'] = 'このページは $a 秒ごとに自動更新されます。';
 $string['readmessages'] = '既読メッセージ $a';
-$string['removecontact'] = 'コンタクトの削除';
+$string['removecontact'] = 'コンタクトリストから削除';
 $string['savemysettings'] = '設定の保存';
 $string['search'] = '検索';
 $string['searchforperson'] = '人の検索';
 $string['searchmessages'] = 'メッセージの検索';
-$string['sendmessage'] = 'メッセージの送信';
+$string['sendmessage'] = 'メッセージを送信';
 $string['sendmessageto'] = '$a にメッセージを送信';
 $string['settings'] = '設定';
 $string['settingssaved'] = '設定が保存されました。';
