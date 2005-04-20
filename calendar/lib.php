@@ -982,8 +982,6 @@ function calendar_set_referring_course($courseid) {
 function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NULL, $groupeventsfrom = NULL, $ignorefilters = false) {
     global $SESSION, $USER, $CFG;
 
-    //$GLOBALS['db']->debug = true;
-
     // Insidious bug-wannabe: setting $SESSION->cal_courses_shown to $course->id would cause
     // the code to function incorrectly UNLESS we convert it to an integer. One case where
     // PHP's loose type system works against us.
@@ -1071,8 +1069,6 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
     else {
         $group = false;
     }
-
-    $GLOBALS['db']->debug = false;
 }
 
 function calendar_edit_event_allowed($event) {
