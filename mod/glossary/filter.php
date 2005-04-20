@@ -66,13 +66,15 @@
                 $lastglossary = 0;
                 $lastcategory = 0;
                 $cm = '';
-                foreach ( $concepts as $concept ) {
+                foreach ( $concepts as $concept ) {   // See FIXME below - all the database access for this loop 
+                                                      // needs to be retrieved on one database call, otherwise
+                                                      // filters become very very inefficient
                     if ( $concept->category ) {
                         if ( $lastcategory != $concept->id ) {
-                            $category = get_record("glossary_categories","id",$concept->id);
+                            $category = get_record("glossary_categories","id",$concept->id);  // FIXME
                             $lastcategory = $concept->id;
                             if ( empty($cm->instance) || $cm->instance != $category->glossaryid ) {
-                                $gcat = get_record("glossary","id",$category->glossaryid);
+                                $gcat = get_record("glossary","id",$category->glossaryid);  // FIXME
                                 if ( !$cm = get_coursemodule_from_instance("glossary", $category->glossaryid, $gcat->course) ) {
                                     $cm->id = 1;
                                 }
@@ -83,7 +85,7 @@
                         $href_tag_begin = "<a class=\"glossary autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&amp;mode=cat&amp;hook=$concept->id\">";
                     } else {
                         if ( $lastglossary != $concept->glossaryid ) {
-                            $glossary = get_record("glossary","id",$concept->glossaryid);
+                            $glossary = get_record("glossary","id",$concept->glossaryid);  // FIXME
                             $lastglossary = $glossary->id;
                         }
 
@@ -95,7 +97,7 @@
                     $currentconcept = $concept->concept;
                     if ( $currentconcept = trim(strip_tags($currentconcept)) ) {
                         if ( !$concept->category ) {
-                            if ( $aliases = get_records("glossary_alias","entryid",$concept->id, "alias") ) {
+                            if ( $aliases = get_records("glossary_alias","entryid",$concept->id, "alias") ) {  // FIXME
                                 foreach ($aliases as $alias) {
                                     $currentalias = trim(strip_tags($alias->alias));
                                     //Avoid integers < 1000 to be linked. See bug 1446.
