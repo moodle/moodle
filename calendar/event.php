@@ -516,7 +516,14 @@ function calendar_add_event_allowed($courseid, $groupid, $userid) {
     else if($courseid == 0 && $groupid == 0 && $userid == $USER->id) {
         return true;
     }
-    else if($courseid != 0 && isteacheredit($courseid)) {
+    else if($courseid == 0 && $groupid != 0) {
+        $group = get_record('groups', 'id', $groupid);
+        if($group === false) {
+            return false;
+        }
+        return isteacheredit($group->courseid) || isteacher($group->courseid) && ismember($groupid);
+    }
+    else if($courseid != 0 && isteacher($courseid)) {
         return true;
     }
 
@@ -529,9 +536,9 @@ function calendar_get_allowed_types(&$allowed) {
     $allowed->user = true; // User events always allowed
     $allowed->groups = false; // This may change just below
     $allowed->courses = false; // This may change just below
-    $allowed->site = isteacheredit(SITEID);
+    $allowed->site = isteacher(SITEID);
 
-    if(!empty($SESSION->cal_course_referer) && $SESSION->cal_course_referer != SITEID && isteacheredit($SESSION->cal_course_referer, $USER->id)) {
+    if(!empty($SESSION->cal_course_referer) && $SESSION->cal_course_referer != SITEID && isteacher($SESSION->cal_course_referer, $USER->id)) {
         $allowed->courses = array($SESSION->cal_course_referer => 1);
         $allowed->groups = get_groups($SESSION->cal_course_referer);
     }
