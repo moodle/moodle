@@ -349,6 +349,10 @@ function quiz_upgrade($oldversion) {
     if ($oldversion < 2005041304) {
         modify_database('', "UPDATE prefix_quiz_questions SET hidden = '1' WHERE qtype ='".RANDOM."';");
     }
+    
+    if ($oldversion < 2005042002) {
+        table_column('quiz_answers', 'answer', 'answer', 'text', '', '', '', 'not null', '');
+    }
 
     return true;
 }

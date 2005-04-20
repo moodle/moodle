@@ -52,7 +52,7 @@ CREATE INDEX prefix_quiz_course_idx ON prefix_quiz (course);
 CREATE TABLE prefix_quiz_answers (
   id SERIAL PRIMARY KEY,
   question integer NOT NULL default '0',
-  answer varchar(255) NOT NULL default '',
+  answer text NOT NULL default '',
   fraction varchar(10) NOT NULL default '0.0',
   feedback text NOT NULL default ''
 );
