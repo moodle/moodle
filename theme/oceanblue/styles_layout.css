@@ -435,7 +435,8 @@ table.minicalendar td {
 }
 
 #calendar .maincalendar .filters table,
-#calendar .sidecalendar .filters table
+#calendar .sidecalendar .filters table,
+.sideblock.block_calendar_month .filters table
 {
   border-collapse:separate;
   border-spacing: 2px;
