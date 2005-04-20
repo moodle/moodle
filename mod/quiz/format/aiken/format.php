@@ -30,7 +30,11 @@
 
 // Based on format.php, included by ../../import.php
 
-class quiz_file_format extends quiz_default_format {
+class quiz_format_aiken extends quiz_default_format {
+
+  function provide_import() {
+    return true;
+  }
 
 //will this override default function?
     function readquestions($lines){

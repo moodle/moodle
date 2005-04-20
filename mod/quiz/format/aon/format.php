@@ -22,7 +22,11 @@
 
 // Based on format.php, included by ../../import.php
 
-class quiz_file_format extends quiz_default_format {
+class quiz_format_aon extends quiz_default_format {
+
+    function provide_import() {
+        return true;
+    }
 
     function readquestion($lines) {
     /// Given an array of lines known to define a question in 

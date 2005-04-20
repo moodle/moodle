@@ -9,7 +9,11 @@
 
 // Based on format.php, included by ../../import.php
 
-class quiz_file_format extends quiz_default_format {
+class quiz_format_multianswer extends quiz_default_format {
+
+    function provide_import() {
+      return true;
+    }
 
     function readquestions($lines) {
     /// Parses an array of lines into an array of questions.

@@ -32,7 +32,15 @@
 //////////////////////////////////////////////////////////////////////////
 // Based on default.php, included by ../import.php
 
-class quiz_file_format extends quiz_default_format {
+class quiz_format_gift extends quiz_default_format {
+
+    function provide_import() {
+      return true;
+    }
+
+    function provide_export() {
+      return true;
+    }
 
     function answerweightparser(&$answer) {
         $answer = substr($answer, 1);                        // removes initial %

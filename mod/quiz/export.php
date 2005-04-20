@@ -4,10 +4,6 @@
     require_once("../../config.php");
     require_once("locallib.php");
 
-    // list formats that are supported for export
-    // need to change this if you add something!
-    $fileformats = array( 'gift', 'xml', 'qti' );
-
     require_variable($category);
     optional_variable($format);
 
@@ -49,7 +45,8 @@
         require("format.php");  // Parent class
         require("format/$form->format/format.php");
 
-        $format = new quiz_file_format();
+        $classname = "quiz_format_$form->format";
+        $format = new $classname();
 
         if (! $format->exportpreprocess($category, $course)) {   // Do anything before that we need to
             error("Error occurred during pre-processing!",
@@ -91,15 +88,8 @@
         error("No categories!");
     }
 
-    // iterate over valid formats to generate dropdown list
-    foreach ($fileformats as $key => $fileformat) {
-        $formatname = get_string($fileformat, 'quiz');
-        if ($formatname == "[[$fileformat]]") {
-            $formatname = $fileformat;  // Just use the raw folder name
-        }
-        $fileformatnames[$fileformat] = $formatname;
-    }
-    natcasesort($fileformatnames);
+    // get valid formats to generate dropdown list
+    $fileformatnames = get_import_export_formats( "export" );
 
     // get filename
     if (!isset($exportfilename)) {

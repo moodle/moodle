@@ -2013,4 +2013,37 @@ function quiz_parse_fieldname($name, $nameprefix='question') {
         return false;
     }
 }
+
+/**
+ * Get list of available import or export formats
+**/
+function get_import_export_formats( $type ) {
+
+  global $CFG;
+  $fileformats = get_list_of_plugins("mod/quiz/format");
+
+  $fileformatname=array();
+  include_once( "format.php" );
+  foreach ($fileformats as $key => $fileformat) {
+    require_once( $CFG->dirroot."/mod/quiz/format/$fileformat/format.php" );     
+    $classname = "quiz_format_$fileformat";
+    $format_class = new $classname();
+    if ($type=='import') {
+      $provided = $format_class->provide_import();
+    }
+    else {
+      $provided = $format_class->provide_export();
+    }
+    if ($provided) {
+      $formatname = get_string($fileformat, 'quiz');
+      if ($formatname == "[[$fileformat]]") {
+        $formatname = $fileformat;  // Just use the raw folder name
+      }
+      $fileformatnames[$fileformat] = $formatname;
+    }
+  }
+  natcasesort($fileformatnames);
+
+  return $fileformatnames;
+}
 ?>

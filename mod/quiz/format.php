@@ -15,6 +15,17 @@ class quiz_default_format {
     var $course = NULL;
     var $questionids = array();
 
+// functions to indicate import/export functionality
+// override to return true if implemented
+
+    function provide_import() {
+      return false;
+    }
+
+    function provide_export() {
+      return false;
+    }
+
 /// Importing functions
 
     function importpreprocess($category) {

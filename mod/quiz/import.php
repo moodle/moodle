@@ -4,11 +4,6 @@
     require_once("../../config.php");
     require_once("locallib.php");
 
-    // list of supported file formats
-    // if you add another one it must be added here to appear on the list
-    $fileformats = array('aiken','aon','blackboard','coursetestmanager',
-      'gift','learnwise','missingword','webct','xml' );
-
     $category = required_param('category', PARAM_INT);
 
     if (! $category = get_record("quiz_categories", "id", $category)) {
@@ -59,7 +54,8 @@
             require("format.php");  // Parent class
             require("format/$form->format/format.php");
 
-            $format = new quiz_file_format();
+            $classname = "quiz_format_$form->format";
+            $format = new $classname();
 
             if (! $format->importpreprocess($category)) {             // Do anything before that we need to
                 error("Error occurred during pre-processing!",
@@ -89,15 +85,8 @@
         error("No categories!");
     }
 
-    foreach ($fileformats as $key => $fileformat) {
-        $formatname = get_string($fileformat, 'quiz');
-        if ($formatname == "[[$fileformat]]") {
-            $formatname = $fileformat;  // Just use the raw folder name
-        }
-        $fileformatnames[$fileformat] = $formatname;
-    }
-    natcasesort($fileformatnames);
-
+    // get list of available import formats
+    $fileformatnames = get_import_export_formats( 'import' );
 
     print_heading_with_help($strimportquestions, "import", "quiz");
 

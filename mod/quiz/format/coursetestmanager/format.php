@@ -8,7 +8,12 @@
 // Based on format.php, included by ../../import.php
 require_once($CFG->dirroot.'/lib/uploadlib.php');
 
-class quiz_file_format {
+class quiz_format_coursetestmanager extends quiz_default_format {
+
+    function provide_import() {
+      return true;
+    }
+
     function importpreprocess($category) {
         $this->category = $category;  // Important
         return true;

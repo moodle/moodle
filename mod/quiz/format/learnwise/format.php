@@ -6,7 +6,11 @@
 // answer by the total number of options
 // Based on format.php, included by ../../import.php
 
-class quiz_file_format extends quiz_default_format {
+class quiz_format_learnwise extends quiz_default_format {
+
+    function provide_import() {
+      return true;
+    }
 
     function readquestions($lines) {
         $questions = array();

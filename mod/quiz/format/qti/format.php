@@ -10,9 +10,13 @@ require_once("$CFG->dirroot/mod/quiz/format/qti/qt_common.php");
 
 define('CLOZE_TRAILING_TEXT_ID', 9999999);
 
-class quiz_file_format extends quiz_default_format {
+class quiz_format_qti extends quiz_default_format {
     
     var $lang;
+
+    function provide_export() {
+       return true;
+    }
     
     function indent_xhtml($source, $indenter = ' ') { 
         // xml tidier-upper
