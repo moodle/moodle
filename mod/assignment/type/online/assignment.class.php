@@ -108,11 +108,13 @@ class assignment_online extends assignment_base {
 
         $submission = $this->get_submission($USER->id, true);
 
-        $submission->data1  = $data->text;
-        $submission->format = $data->format;
-        $submission->timemodified = time();
+        $update = NULL;
+        $update->id = $submission->id;
+        $update->data1  = $data->text;
+        $update->format = $data->format;
+        $update->timemodified = time();
 
-        return update_record('assignment_submissions', $submission);
+        return update_record('assignment_submissions', $update);
     }
 
 
