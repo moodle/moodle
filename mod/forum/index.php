@@ -138,13 +138,15 @@
                 }
             }
 
-            $forum->intro = format_text(forum_shorten_post($forum->intro));
-            $forum->intro = "<span style=\"font-size:x-small;\">$forum->intro</span>";;
+            $introoptions->para=false;
+            $forum->intro = format_text(shorten_text(trim($forum->intro), $CFG->forum_shortpost), FORMAT_HTML, $introoptions);
 
             if ($forum->visible) {
                 $forumlink = "<a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
+                $discussionlink = "<a href=\"view.php?f=$forum->id\">".$count."</a>";
             } else {
                 $forumlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
+                $discussionlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">".$count."</a>";
             }
 
             //If this forum has RSS activated, calculate it
@@ -185,7 +187,7 @@
                         $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
                     }
                 }
-                $row = array ($forumlink, $forum->intro, "$count");
+                $row = array ($forumlink, $forum->intro, $discussionlink);
                 if ($CFG->forum_trackreadposts) {
                     $row[] = $unreadlink;
                 }
@@ -195,7 +197,7 @@
                 }
                 $generaltable->data[] = $row;
             } else {
-                $row = array ($forumlink, $forum->intro, "$count");
+                $row = array ($forumlink, $forum->intro, $discussionlink);
                 if ($CFG->forum_trackreadposts) {
                     $row[] = $unreadlink;
                 }
@@ -261,8 +263,8 @@
                     }
                 }
 
-                $forum->intro = format_text(forum_shorten_post($forum->intro));
-                $forum->intro = "<span style=\"font-size:x-small;\">$forum->intro</span>";
+                $introoptions->para=false;
+                $forum->intro = format_text(shorten_text(trim($forum->intro), $CFG->forum_shortpost), FORMAT_HTML, $introoptions);
 
                 if ($forum->section != $currentsection) {
                     $printsection = $forum->section;
@@ -276,8 +278,10 @@
 
                 if ($forum->visible) {
                     $forumlink = "<a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
+                    $discussionlink = "<a href=\"view.php?f=$forum->id\">".$count."</a>";
                 } else {
                     $forumlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
+                    $discussionlink = "<a class=\"dimmed\" href=\"view.php?f=$forum->id\">".$count."</a>";
                 }
 
                 //If this forum has RSS activated, calculate it
@@ -321,7 +325,7 @@
                         }
                     }
 
-                    $row = array ($printsection, $forumlink, $forum->intro, $count);
+                    $row = array ($printsection, $forumlink, $forum->intro, $discussionlink);
                     if ($CFG->forum_trackreadposts) {
                         $row[] = $unreadlink;
                     }
@@ -332,7 +336,7 @@
                     $learningtable->data[] = $row;
 
                 } else {
-                    $row = array ($printsection, $forumlink, $forum->intro, $count);
+                    $row = array ($printsection, $forumlink, $forum->intro, $discussionlink);
                     if ($CFG->forum_trackreadposts) {
                         $row[] = $unreadlink;
                     }
