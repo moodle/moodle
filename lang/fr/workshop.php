@@ -169,6 +169,7 @@ $string['noteonstudentassessments'] = '{Note donnée par l\'étudiant / Note du pr
 $string['notgraded'] = 'Sans note';
 $string['notitle'] = 'Pas de titre';
 $string['notitlegiven'] = 'Aucun titre fourni';
+$string['notsubmittedyet'] = 'Aucun travail n\'a encore été remis';
 $string['nowork'] = 'La période de remise est terminée.<br />Vous n\'avez remis aucun travail.';
 $string['numberofassessmentelements'] = 'Nombre de commentaires, d\'éléments d\'évaluation, de critères, de notes ou de catégories dans une rubrique';
 $string['numberofassessments'] = 'Nombre d\'évaluations';
