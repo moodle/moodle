@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
 
 
 $string['adminseesallevents'] = 'Beheerders zien alle gebeurtenissen';
@@ -45,6 +45,7 @@ $string['configintroadmin'] = 'Op deze pagina configureer je de account van de b
 $string['configintrosite'] = 'Op deze pagina configureer je de startpagina en de naam van deze nieuwe site. Je kunt deze instellingen later bijwerken door de \'Site instellingen\'-link te gebruiken op de startpagina.';
 $string['configintrotimezones'] = 'Deze pagina zal zoeken naar nieuwe informatie over tijdzones in de wereld (ook de regels over zomertijd) en zal je lokale databank met deze informatie updaten. Deze bestanden zullen gecontroleerd worden, in volgorde: $a. Deze procedure is veilig en kan geen normale installaties beschadigen. Wil je de tijdzones nu updaten?';
 $string['configlang'] = 'Kies een standaardtaal voor de gehele site. Gebruikers kunnen deze instelling later eventueel voor zichzelf wijzigen.';
+$string['configlangcache'] = 'Cache het taalmenu. Bespaart heel wat geheugen en rekenkracht. Als je dit inschakelt, duurt het wel enkele minuten voor het menu update als je talen toegevoegd of verwijderd hebt.';
 $string['configlangdir'] = 'De meeste talen worden van links naar rechts gedrukt, maar sommige, zoals Arabisch en Hebreeuws, worden van rechts naar links gedrukt.';
 $string['configlanglist'] = 'Laat dit vak blanco om gebruikers de mogelijkheid te geven om te kiezen uit elke beschikbare taal in deze Moodle-installatie. Je kunt het keuzemenu voor talen inkorten door een lijst in te geven met de gewenste talen, gescheiden door komma\'s. Bijvoorbeeld:en,es_es,fr,it,nl';
 $string['configlangmenu'] = 'Kies of je de gebruiker een taalkeuze wil laten maken op de startpagina, de aanmeldpagina enz. Dit neemt de mogelijkheid niet weg dat de gebruiker een taal kan kiezen in zijn eigen profiel.';

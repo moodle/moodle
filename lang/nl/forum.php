@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
 
 
 $string['addanewdiscussion'] = 'Voeg een nieuw onderwerp voor discussie toe';
@@ -30,7 +30,9 @@ $string['couldnotupdate'] = 'Kon je bericht niet bijwerken door een onbekende fo
 $string['delete'] = 'Verwijder';
 $string['deleteddiscussion'] = 'De discussie is verwijderd';
 $string['deletedpost'] = 'De bijdrage is verwijderd';
+$string['deletedposts'] = 'Deze berichten werden verwijderd';
 $string['deletesure'] = 'Weet je zeker dat je dit bericht wilt verwijderen?';
+$string['deletesureplural'] = 'Weet je zeker dat je dit berich en alle antwoorden er op wil verwijdern? ($a berichten)';
 $string['digestmailheader'] = 'Dit is je dagelijkse samenvattende e-mail met de nieuwe berichten van de forums van $a->sitename. Als je jouw voorkeurinstellingen voor de e-maildienst van de forums wil wijzigen, ga dan naar $a->userprefs.';
 $string['digestmailprefs'] = 'Jouw gebruikersprofiel';
 $string['digestmailsubject'] = 'Dagelijkse forumsamenvatting van $a';

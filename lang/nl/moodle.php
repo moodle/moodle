@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
 
 
 $string['action'] = 'Actie';
@@ -1117,6 +1117,7 @@ $string['writingcategoriesandquestions'] = 'Categorieën en vragen schrijven';
 $string['writingcoursedata'] = 'Vak data schrijven';
 $string['writingeventsinfo'] = 'Gebeurtenisseninfo schrijven';
 $string['writinggeneralinfo'] = 'Algemene info schrijven';
+$string['writinggradebookinfo'] = 'Puntenboek info schrijven';
 $string['writinggroupsinfo'] = 'Info groepen schrijven';
 $string['writingheader'] = 'Header schrijven';
 $string['writingloginfo'] = 'Loginfo schrijven';

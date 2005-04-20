@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004121600)
+      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
 
 
 $string['absent'] = 'Afwezig';
@@ -166,6 +166,7 @@ $string['noteonstudentassessments'] = '(Cijfer van de leerling / Cijfer voor de 
 $string['notgraded'] = 'Geen cijfers';
 $string['notitle'] = 'Geen titel';
 $string['notitlegiven'] = 'Geen titel gegeven';
+$string['notsubmittedyet'] = 'Er werd nog geen inzending gedaan';
 $string['nowork'] = 'De inzendingsperiode is nu afgelopen.<br />Je hebt geen werk afgegeven.';
 $string['numberofassessmentelements'] = 'Aantal beoordelingsonderdelen';
 $string['numberofassessments'] = 'Aantal beoordelingen';

@@ -1,0 +1,214 @@
+<h2>Tekst opmaken met Markdown</h2>
+<div id="Main">
+
+<div class="article">
+<p>Met Markdown is het mogelijk op bij eenvoudige tekstinvoer die je in Moodle kunt doen, toch gemakkelijk opmaak (vet, cursief) in te voegen, structuur aan te brengen (opsommingstekens, titels)en links (naar afbeeldingen of andere bronnen op het internet). Je kunt Markdown binnen Moodle op vele plaasten gebruiken door het te kiezen uit het <strong>opmaak</strong> rolmenuutje onderaan de velden voor tekstinvoer.</p>
+
+<ul>
+<li><a href="#concepts">Basicsconcepten</a></li>
+<li><a href="#emphasis">Tekst benadrukken</a></li>
+<li><a href="#headings">Titels</a></li>
+<li><a href="#lists">Lijsten</a></li>
+<li><a href="#quotes">Citaten</a></li>
+<li><a href="#links">Links</a></li>
+<li><a href="#images">Afbeeldingen</a></li>
+<li><a href="#advanced">Voor gevorderden</a></li>
+</ul>
+
+<h2><a id="concepts">Basisconcepten</a></h2>
+
+<p>Om tekst in te voeren, typ je die gewoon in het tekstverster, waarbij je twee keer op de enter-toets klikt om een paragraaf te beëindigen. Laat dus een lege regel tussen de paragrafen.</p>
+
+<h2><a id="emphasis">Tekst benadrukken</a></h2>
+
+<p>Je kan op drie manieren tekst benadrukken met Markdown: <em>cursief</em>, <strong>vet</strong> en  <em><strong>vet en cursief</strong></em>. Dit kun je bereiken door de tekst die je wil benadrukken tussen asterisks te zetten, bijvoorbeeld</p>
+
+<p><strong><code>*cursief*</code></strong> -> <em>cursief</em> <br />
+<strong><code>**vet**</code></strong> -> <strong>vet</strong> <br />
+<strong><code>***vet cursief***</code></strong> -> <strong><em>vet cursief</em></strong></p>
+
+<p>Je kunt een enkel woord benadrukken, een woordenreeks en zelfs een deel van een woord:</p>
+
+<p><strong><code>een *enkel* woord</code></strong> -> een <em>enkel</em> woord <br />
+<strong><code>***een woordenreeks***</code></strong> -> <strong><em>een woordenreeks</em></strong> <br />
+<strong><code>on**deel**baar</code></strong> -> on<strong>deel</strong>baar</p>
+
+<h2><a id="headings">Titels</a></h2>
+
+<p>Met Markdown kun je je tekst onderverdelen met titels; er zijn zes verschillende niveaus mogelijk, maar voor een gewone tekst gebruik je er meestal niet meer dan drie. Zo zijn er bijvoorbeeld drie titelniveaus gebruikt in de tekst die je nu leest.</p>
+
+<p>Je kunt een titel maken door een lijn te beginnen met één of meer hekjes (#). Eén hekje is de grootste en belangrijkste titel, zes hekjes geven je de minst belangrijke of de kleinste titel.</p>
+
+<p><strong><code># Hoofdtitel</code></strong> <br />
+<strong><code>## Ondertitel</code></strong> <br />
+<strong><code>### Nog kleinere titel</code></strong> <br />
+enz.</p>
+
+<p>De eerste twee titelniveaus zijn het meest gebruikt en kunnen aangepast worden zodat ze meer opvallen (de manier van input is dezelfde als de vorige methode). Je kunt nag een lijn van gelijkheidstekens (=) of koppeltekens (-) onder de titel toevoegen.</p>
+
+<p><strong><code>Titel</code></strong> <br />
+<strong><code>=====</code></strong></p>
+
+<p><strong><code>Ondertitel</code></strong> <br />
+<strong><code>----------</code></strong>   </p>
+
+<h2><a id="lists">Lijsten</a></h2>
+
+<h3>Lijst met bolletjes</h3>
+
+<p>Lijsten met bolletjes kun je maken door elke lijn te laten beginnen met een asterisk en een spatie voor de inhoud van dat punt. Merk op dat de spatie er moet staan en zeker niet vergeten mag worden.</p>
+
+<p><strong><code>* eerste punt</code></strong> <br />
+<strong><code>* tweede punt</code></strong> <br />
+<strong><code>* derde punt</code></strong>  </p>
+
+<p>wordt</p>
+
+<ul>
+<li>eerste punt</li>
+<li>tweede punt</li>
+<li>derde punt</li>
+</ul>
+
+<h3>Genummerde lijsten</h3>
+
+<p>Op gelijkaardige wijze kun je genummerde lijsten maken door elke lijn te laten beginnen met een nummer, gevolgd door een spatie en dan de bijhorende tekst.</p>
+
+<p><strong><code>1 eerste punt</code></strong> <br />
+<strong><code>2 tweede punt</code></strong> <br />
+<strong><code>3 derde punt</code></strong></p>
+
+<p>wordt</p>
+
+<ol>
+<li>eerste punt</li>
+<li>tweede punt</li>
+<li>derde punt</li>
+</ol>
+
+<h3>Lijsten met inspringen</h3>
+
+<p>Je kunt lijsten met bolletjes en genummerde lijsten nesten, zelfs mengen binnen dezelfde structuur:</p>
+
+<pre>
+    * bolletje één bovenste niveau
+      * bolletje één onderliggend niveau  
+      * bolletje twee onderliggend niveau 
+    * bolletje twee bovenste niveau  
+    1. genummerd punt één
+       1. genest genummerd punt   
+    2. genummerd punt twee
+</pre>
+<p>wordt</p>
+
+<ul>
+<li>bolletje één bovenste niveau
+<ul>
+<li>bolletje één onderliggend niveau</li>
+<li>bolletje twee onderliggend niveau</li>
+</ul></li>
+<li>bolletje twee bovenste niveau
+<ol>
+<li>genummerd punt één
+<ol>
+<li>genest genummerd punt  </li>
+</ol></li>
+<li>genummerd punt twee</li>
+</ol></li>
+</ul>
+
+<h2><a id="quotes">Citaten</a></h2>
+
+<p>Je kunt een citaat aanduiden door elke lijn te beginnen met een groter dan teken (>). Dit karakter was gekozen omdat veel e-mailprogramma's het gebruiken om een citaat aan te duiden. Meestal zal een citaat aangetoont worden door inspringen van beide marges.</p>
+
+<p><strong><code>> Dit is een citaat</code> <br />
+<code>> verdeeld over twee lijnen</code></strong>  </p>
+
+<p>becomes</p>
+
+<blockquote>
+  <p>Dit is een citaat
+  verdeeld over twee lijnen</p>
+</blockquote>
+
+<p>Je kunt wat op typwerk besparen door alleen als eerste karakter van een alinea een groter dan teken te typen</p>
+
+<p><strong><code>> Al deze tekst is een citaat</code> <br />
+<code>zelfs al is die verdeeld</code> <br />
+<code>over verschillende lijnen.</code></strong></p>
+
+<p>wordt</p>
+
+<blockquote>
+  <p>Al deze tekst is een citaat
+  zelfs al is die verdeeld
+  over verschillende lijnen.</p>
+</blockquote>
+
+<h2><a id="links">Links</a></h2>
+
+<p>Er zijn twee manieren om links te maken naar web-bronnen: De eerste manier is door de link in line in te voegen, waarbij je de tekst waarop je de lezers wil laten klikken tussen vierkante haken zet, en de URL van de pagina naar waar ze gestuurd worden tussen ronde haakjes onmiddellijk na de vierkante haken, zonder spaties tussen de twee sets haken; je kunt ook nog een titel voor de link tussen aanhalingstekens na de URL zetten.</p>
+
+<p><strong><code>Een [voorbeeld-link](http://voorbeeld.be/ "Optionele titel") in een zin.</code></strong></p>
+
+<p>wordt</p>
+
+<p>Een <a href="http://voorbeeld.be/" title="Optionele titel">voorbeeld-link</a> in een zin.</p>
+
+<p>De titel wordt, als die voorzien is, getoond als 'tooltip' als de gebruiker met de muisaanwijzer over de linktekst gaat. Probeer maar met de link die hier boven verschijnt.</p>
+
+<p>Voor langere links kun je het verstoren van de tekst vermijden door, zoals bij een voetnoot, een korte naam als identificatie aan de link koppelen in een tweede set vierkante haakjes (gebruik een kort verklarend woord, een zinnetje of gewoon een nummer).</p>
+
+<p><strong><code>Een [voorbeeld-link][vb] in een zin.</code></strong></p>
+
+<p>Dan kun je gelijk waar in het document de URL definieren, maar bij voorkeur onmiddellijk onder de alinea met de link of in een collectie samen met alle andere links onderaan de pagina:</p>
+
+<p><strong><code>[vb]: http://voorbeeld.be/  "Optionele Titel"</code></strong></p>
+
+Het beeld dat dit tweede voorbeeld geeft is identiek aan het eerste voorbeeld. Het is gewoon een manier om een werkdocument ordelijk georganiseerd te houden en het verder bewerken (vooral als je samenwerkt met anderen) te vergemakkelijken.</p>
+
+<p>Een laatste mogelijkheid: wanneer je in de gelinkte tekst de URL wil tonen, dan plaats je de URL tussen groter dan en kleiner dan tekens:</p>
+
+<p><strong><code><http://moodle.org/></code></strong></p>
+
+<p>wordt</p>
+
+<p><a href="http://moodle.org">http://moodle.org</a></p>
+
+<h2><a id="images">Afbeeldingen</a></h2>
+
+<p>Afbeeldingen worden om een gelijkaardige manier ingevoegd als links, maar worden voorafgegaan door een uitroepteken. De 'alt'-tekst (<em>alt</em> betekent <em>alternatief</em> wordt meegegeven voor gebruikers die om één of ander reden de afbeelding niet kunnen zien. De tekst moet dus een zinnig alternatief voor de afbeelding zijn. Hiermee geef je ook een herinnering of een hint aan die gebruikers die de Markdown-tekst achteraf moeten aanpassen waarvoor de tekening staat.</p>
+
+<p>De 'titel' wordt getoond in een klein popup-venstertje wanneer de gebruiker met de muisaanwijzer over de afbeelding gaat en kan zo aanvullende informatie geven.</p>
+
+<p><strong><code>![alt tekst](/pad/afb.jpg "Optionele titel")</code></strong></p>
+
+<p>En, zoals met links, kun je je document organiseren door alle URLs samen te zetten met een referentie zoals een voetnoot. Geef je afbeelding gewoon een korte, unieke naam:</p>
+
+<p><strong><code>![alt tekst][foto]</code></strong></p>
+
+<p>En gelijk waar in je document kun je die naam associeren met een afbeeldingsbestand:</p>
+
+<p><strong><code>[foto]: /url/naar/afb.jpg "Optionele titel"</code></strong></p>
+
+<p>Hier is een voorbeeld, gevolgd door het beeld in de browser.</p>
+
+<p><strong><code>![Google logo](http://www.google.com/images/logo.gif "Het Google logo")</code></strong></p>
+
+<p><img src="http://www.google.com/images/logo.gif" alt="Google logo" title="Het Google logo" /></p>
+
+<p>De 'alt'-tekst, die erg belangrijk is voor de toegankelijkheid, zal door browsers dikwijls gebruikt worden wanneer links naar afbeeldingen gebroken zijn of tijdelijk niet beschikbaar:</p>
+
+<p><strong><code>![alt tekst voor een onbereikbare afbeelding](http://voorbeeld.be/gebroken.link "Deze afbeelding zal nooit getoond worden")</code></strong></p>
+
+<p>wordt (het juiste beeld hangt af van de gebruikte browser)</p>
+
+<p><img src="http://voorbeeld.be/gebroken.link" alt="alt tekst voor een onbereikbare afbeelding" title="Deze afbeelding zal nooit getoond worden" /></p>
+
+<h2><a id="advanced">Voor gevorderden</a></h2>
+
+<p>Deze korte introductie geeft een overzicht van de Markdown-functies die het meest gebruikt worden. Het is mogelijk om nog veel complexere resultaten te bekomen, zeker als je al weet hoe HTML te schrijven, maar deze mogelijkheden worden beschreven in een apart document over het gebruik van Markdown voor gevorderden.</p>
+
+<p align="right"><a href="help.php?file=advanced_markdown.html">Meer info over gebruik van Markdown voor gevorderden</a></p>
+</div>
+</div>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -323,6 +323,7 @@ $string['webct'] = 'WebCT-opmaak';
 $string['wildcard'] = 'Jokerteken';
 $string['withsummary'] = 'met samenvattende statistieken';
 $string['wronggrade'] = 'Verkeerd cijfer (na lijn $a):';
+$string['xhtml'] = 'XHTML-opmaak';
 $string['xml'] = 'Moodle XML-formaat';
 $string['yourfinalgradeis'] = 'Je eindcijfer voor deze test is $a';
 $string['zerosignificantfiguresnotallowed'] = 'Het juiste antwoord kan geen nul beduidende cijfers hebben!';
