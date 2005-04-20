@@ -442,9 +442,9 @@ class quiz_format_gift extends quiz_default_format {
     }    // end function readquestion($lines)
 
 function repchar( $text ) {
-    // escapes 'reserved' characters # = ~ { )
-    $reserved = array( '#','=','~','{','}' );
-    $escaped = array( '\#','\=','\~','\{','\}' );
+    // escapes 'reserved' characters # = ~ { ) and removes new lines
+    $reserved = array( '#','=','~','{','}',"\n","\r" );
+    $escaped = array( '\#','\=','\~','\{','\}',' ','' );
 
     return str_replace( $reserved, $escaped, $text ); 
     }
