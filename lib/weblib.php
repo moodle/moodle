@@ -585,7 +585,7 @@ function link_to_popup_window ($url, $name='popup', $linkname='click here',
  * @uses $CFG
  */
 function button_to_popup_window ($url, $name='popup', $linkname='click here',
-                                 $height=400, $width=500, $title='Popup window', $options='none', $return=false, 
+                                 $height=400, $width=500, $title='Popup window', $options='none', $return=false,
                                  $id='', $class='') {
 
     global $CFG;
@@ -1031,8 +1031,8 @@ function format_text($text, $format=FORMAT_MOODLE, $options=NULL, $courseid=NULL
 
         case FORMAT_WIKI:
             // this format is deprecated
-            $text = '<p>NOTICE: Wiki-like formatting has been removed from Moodle.  You should not be seeing 
-                     this message as all texts should have been converted to Markdown format instead.  
+            $text = '<p>NOTICE: Wiki-like formatting has been removed from Moodle.  You should not be seeing
+                     this message as all texts should have been converted to Markdown format instead.
                      Please post a bug report to http://moodle.org/bugs with information about where you
                      saw this message.</p>'.$text;
             break;
@@ -1846,7 +1846,7 @@ function print_footer($course=NULL, $usercourse=NULL) {
         if (defined('MDL_PERFTOFOOT') || $CFG->debug > 7) {
             $performanceinfo = $perf['html'];
         }
-    } 
+    }
 
 
 /// Include the actual footer file
@@ -2843,6 +2843,7 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
 /// However, you can set them to zero to override the mincols and minrows values below.
 
     global $CFG, $course;
+    static $scriptcount; // For loading the htmlarea script only once.
 
     $mincols = 65;
     $minrows = 10;
@@ -2853,15 +2854,18 @@ function print_textarea($usehtmleditor, $rows, $cols, $width, $height, $name, $v
         }
     }
 
+    if (empty($scriptcount)) {
+        $scriptcount = 0;
+    }
+
     if ($usehtmleditor) {
         if (!empty($courseid) and isteacher($courseid)) {
-            echo '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea.php?id='. $courseid .'"></script>'."\n";
+            echo ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea.php?id='. $courseid .'"></script>'."\n" : '';
         } else {
-            echo '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea.php"></script>'."\n";
+            echo ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/htmlarea.php"></script>'."\n" : '';
         }
-        echo '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/dialog.js"></script>'."\n";
-        echo '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/lang/en.php"></script>'."\n";
-        echo '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/popupwin.js"></script>'."\n";
+        echo ($scriptcount < 1) ? '<script type="text/javascript" src="'. $CFG->wwwroot .'/lib/editor/lang/en.php"></script>'."\n" : '';
+        $scriptcount++;
 
         if ($height) {    // Usually with legacy calls
             if ($rows < $minrows) {
@@ -4168,7 +4172,7 @@ class tabobject {
     /// Set the class for the selected cell
         } else if ($selected) {
             $cstr .= ' selected';
-            
+
     /// Set the standard class for a cell
         } else {
             $cstr .= ' active';
