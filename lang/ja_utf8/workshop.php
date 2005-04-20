@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
+      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
 
 
 $string['absent'] = '欠席';
@@ -177,6 +177,7 @@ $string['noteonstudentassessments'] = '{学生の評点 / 評価に対する評�
 $string['notgraded'] = '評価無し';
 $string['notitle'] = '題名無し';
 $string['notitlegiven'] = '題名がありません。';
+$string['notsubmittedyet'] = 'まだ提出物はありません。';
 $string['nowork'] = '提出期限が終了しました。<br />あなたは課題を提出していません。';
 $string['numberofassessmentelements'] = '目標規準のコメント数、評価要素数、評価の幅、規準数<br />またはルブリックのカテゴリ数';
 $string['numberofassessments'] = '評価数';

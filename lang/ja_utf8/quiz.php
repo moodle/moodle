@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -319,6 +319,7 @@ $string['webct'] = 'WebCTフォーマット';
 $string['wildcard'] = 'ワイルドカード';
 $string['withsummary'] = '( 統計概要を含む )';
 $string['wronggrade'] = '誤評定 ( $a 以降 ):';
+$string['xhtml'] = 'XHTMLフォーマット';
 $string['xml'] = 'Moodle XMLフォーマット';
 $string['yourfinalgradeis'] = 'あなたの最終評点は $a です。';
 $string['zerosignificantfiguresnotallowed'] = '正解の有効数字にはゼロを設定できません!';
