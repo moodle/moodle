@@ -1203,23 +1203,6 @@ function calendar_format_event_time($event, $now, $morehref, $usecommonwords = t
     return $eventtime;
 }
 
-function calendar_human_readable_dst($preset) {
-    $weekdays = array('sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday');
-
-    $options = new stdClass;
-    $options->activate_index     = ($preset->activate_index == -1) ? get_string('last', 'calendar') : get_string('nth', 'calendar', $preset->activate_index);
-    $options->activate_weekday   = ($preset->activate_day < 0) ? get_string('day', 'calendar') : get_string($weekdays[$preset->activate_day], 'calendar');
-    $options->activate_month     = date('F', mktime(0, 0, 0, $preset->activate_month, 1, 2000));
-    $options->offset             = abs($preset->apply_offset);
-    //$options->direction          = $preset->apply_offset > 0 ? get_string('timeforward', 'calendar') : get_string('timerewind', 'calendar');
-    $options->direction          = get_string('timeforward', 'calendar');
-    $options->deactivate_index   = ($preset->deactivate_index == -1) ? get_string('last', 'calendar') : get_string('nth', 'calendar', $preset->deactivate_index);
-    $options->deactivate_weekday = ($preset->deactivate_day < 0) ? get_string('day', 'calendar') : get_string($weekdays[$preset->deactivate_day], 'calendar');
-    $options->deactivate_month   = date('F', mktime(0, 0, 0, $preset->deactivate_month, 1, 2000));
-
-    return get_string('dsthumanreadable', 'calendar', $options);
-}
-
 function calendar_print_month_selector($name, $selected) {
     
     $months = array();
