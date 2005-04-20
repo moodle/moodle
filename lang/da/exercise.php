@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // exercise.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // exercise.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
 $string['absent'] = 'Fraværende';
@@ -42,6 +42,7 @@ $string['edit'] = 'Ret';
 $string['editingassessmentelements'] = 'Ret vuderings elementer';
 $string['element'] = 'Element';
 $string['elementweight'] = 'Element vægtning';
+$string['enterpassword'] = 'Skriv password';
 $string['entriessaved'] = 'Indlæg gemt';
 $string['errorbanded'] = 'Fejlbehæftet';
 $string['excellent'] = 'Udemærket';
@@ -62,6 +63,7 @@ $string['handlingofmultiplesubmissions'] = 'Behandling af flere afleveringer';
 $string['hidenamesfromstudents'] = 'Skjul navne fra studerende';
 $string['incorrect'] = 'Forkert';
 $string['late'] = 'For sent';
+$string['lax'] = 'Lax';
 $string['leaguetable'] = 'Nivau for afleveringer';
 $string['mail1'] = 'Din opgave \'$a\' er blevet vuderet af';
 $string['mail2'] = 'Kommentare og karakter kan ses i arbejdsopgaven \'$a\'';
@@ -98,6 +100,7 @@ $string['numberofnegativeresponses'] = 'Antal negative svar';
 $string['onesubmission'] = 'En aflevering';
 $string['optionaladjustment'] = 'Valgfri justering';
 $string['overallgrade'] = 'Overordnet karakter';
+$string['passwordprotectedexercise'] = 'Password beskyttet opgave';
 $string['phase'] = 'Fase';
 $string['phase1'] = 'Øvelses opsætning';
 $string['phase1short'] = 'Opsætning';
@@ -162,6 +165,7 @@ $string['unassessed'] = '$a ej bedømt';
 $string['ungradedstudentassessments'] = '$a Elevafleveringer der ikke er blevet bedømt';
 $string['usemaximum'] = 'Brug maksimum';
 $string['usemean'] = 'Brug gennemsnit';
+$string['usepassword'] = 'Benyt password';
 $string['verylax'] = 'Meget afslappet';
 $string['verypoor'] = 'Meget ringe';
 $string['verystrict'] = 'Meget streng';
@@ -174,6 +178,7 @@ $string['weightforteacherassessments'] = 'Vægt af $a vuderinger';
 $string['weights'] = 'Vægtninger';
 $string['weightssaved'] = 'Vægtninher er gemt';
 $string['weightsusedforoverallgrade'] = 'Vægtninger brugt til overordnet karakter';
+$string['wrongpassword'] = 'Forkert password for denne opgave';
 $string['yourassessment'] = 'Din vudering';
 $string['yourfeedbackgoeshere'] = 'Skriv tilbagemelding her';
 $string['yoursubmission'] = 'Din aflevering';
