@@ -424,12 +424,12 @@
             if($eventtype == 'select') {
                 $defaultcourse = $SESSION->cal_course_referer;
                 if(isteacheredit($defaultcourse, $USER->id)) {
-                    $defaultgroup = 0;
+                    $defaultgroup = $groupid = 0;
                 }
                 else {
                     $defaultgroup = user_group($defaultcourse, $USER->id);
+                    $groupid      = optional_param('groupid',  $defaultgroup->id, PARAM_INT);
                 }
-                $groupid  = optional_param('groupid',  $defaultgroup->id, PARAM_INT);
                 $courseid = optional_param('courseid', $defaultcourse, PARAM_INT);
                 echo '<h2>'.get_string('eventkind', 'calendar').':</h2>';
                 echo '<div id="selecteventtype">';
