@@ -337,10 +337,7 @@ class assignment_base {
     }
 
     function delete_instance($assignment) {
-        if (! delete_records("assignment", "id", "$assignment->id")) {
-            $result = false;
-        }
-        return $result;
+        return delete_records('assignment', 'id', $assignment->id);
     }
 
     function update_instance($assignment) {

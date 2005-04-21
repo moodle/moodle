@@ -34,8 +34,8 @@
   margin-right: 4px;
 }
 
-.mod-assignment .files {
-  whitespace:nowrap;
+.mod-assignment .files a {
+  white-space:nowrap;
 }
 
 #mod-assignment-submissions .generaltable .r1 {

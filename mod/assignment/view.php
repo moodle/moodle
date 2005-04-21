@@ -6,9 +6,8 @@
     $id = optional_param('id');    // Course Module ID
     $a  = optional_param('a');
 
-    if (!empty($CFG->forcelogin)) {
-        require_login();
-    }
+    $db->debug = true;
+
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
@@ -33,6 +32,8 @@
             error("Course Module ID was incorrect");
         }
     }
+
+    require_login($course->id);
 
     require ("$CFG->dirroot/mod/assignment/type/$assignment->assignmenttype/assignment.class.php");
     $assignmentclass = "assignment_$assignment->assignmenttype";
