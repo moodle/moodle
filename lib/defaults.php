@@ -47,6 +47,7 @@
        'guestloginbutton'         =>  1,
        'htmleditor'               =>  true,
        'lang'                     => 'en',
+       'langcache'                =>  1,
        'langmenu'                 =>  1,
        'langlist'                 => '',
        'locale'                   => 'en',
