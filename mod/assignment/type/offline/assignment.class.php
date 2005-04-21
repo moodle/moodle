@@ -10,6 +10,10 @@ class assignment_offline extends assignment_base {
         parent::assignment_base($cmid);
     }
 
+    function display_lateness($timesubmitted) {
+        return '';
+    }
+
 }
 
 ?>
