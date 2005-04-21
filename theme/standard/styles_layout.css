@@ -927,6 +927,7 @@ body#user-index #longtimenosee {
 .forumpost .commands {
   padding-top: 0.5em;
   text-align:right;
+  clear: both;
 }
 
 .forumpost .ratings {
