@@ -1333,6 +1333,7 @@
                 //Begin grade_preference
                 fwrite ($bf,start_tag("GRADE_PREFERENCE",4,true)); 
                 //Output individual fields
+                fwrite ($bf,full_tag("ID",5,false,$grade_preference->id));
                 fwrite ($bf,full_tag("PREFERENCE",5,false,$grade_preference->preference));
                 fwrite ($bf,full_tag("VALUE",5,false,$grade_preference->value));
                 //End grade_preference
@@ -1352,6 +1353,7 @@
                 //Begin grade_letter
                 fwrite ($bf,start_tag("GRADE_LETTER",4,true)); 
                 //Output individual fields
+                fwrite ($bf,full_tag("ID",5,false,$grade_letter->id));
                 fwrite ($bf,full_tag("LETTER",5,false,$grade_letter->letter));
                 fwrite ($bf,full_tag("GRADE_HIGH",5,false,$grade_letter->grade_high));
                 fwrite ($bf,full_tag("GRADE_LOW",5,false,$grade_letter->grade_low));
@@ -1372,6 +1374,7 @@
                 //Begin grade_category
                 fwrite ($bf,start_tag("GRADE_CATEGORY",4,true)); 
                 //Output individual fields
+                fwrite ($bf,full_tag("ID",5,false,$grade_category->id));
                 fwrite ($bf,full_tag("NAME",5,false,$grade_category->name));
                 fwrite ($bf,full_tag("DROP_X_LOWEST",5,false,$grade_category->drop_x_lowest));
                 fwrite ($bf,full_tag("BONUS_POINTS",5,false,$grade_category->bonus_points));
