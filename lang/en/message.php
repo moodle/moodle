@@ -1,8 +1,8 @@
 <?php  // $Id$
 
 $string['addcontact'] = 'Add contact';
-$string['addsomecontacts'] = 'Your contact list makes it easy to send messages to your contacts by just clicking their name. However, right now it is empty. If you want to send a message to someone without adding them to your contacts, visit their user profile page. To add some people to your contact list so you can easily message them in the future, search for them using the <a href=\"$a\">search tab</a>.';
-$string['addsomecontactsincoming'] = '<strong>You have new messages from people not in your contact list!</strong> To add these people to your contacts, simply click the \"Add contact\" icon next to their name.';
+$string['addsomecontacts'] = 'To send a message to someone, or to add a shortcut for them on this page, use the <a href=\"$a\">search tab</a> above.';
+$string['addsomecontactsincoming'] = 'These messages are from people who are not in your contact list. To add them to your contacts, click the \"Add contact\" icon next to their name.';
 $string['ago'] = '$a ago';
 $string['allmine'] = 'All messages to me or from me';
 $string['allstudents'] = 'All messages between students in course';
