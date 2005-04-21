@@ -111,6 +111,7 @@ CREATE TABLE prefix_event (
    courseid integer NOT NULL default '0',
    groupid integer NOT NULL default '0',
    userid integer NOT NULL default '0',
+   repeatid integer NOT NULL default '0',
    modulename varchar(20) NOT NULL default '',
    instance integer NOT NULL default '0',
    eventtype varchar(20) NOT NULL default '',

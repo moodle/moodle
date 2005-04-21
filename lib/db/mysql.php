@@ -1362,6 +1362,10 @@ function main_upgrade($oldversion=0) {
 
     }
 
+    if ($oldversion < 2005042100) {
+        $result = table_column('event', '', 'repeatid', 'int', '10', 'unsigned', '0', 'not null', 'userid') && $result;
+    }
+
     return $result;
 }
 

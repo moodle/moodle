@@ -170,6 +170,7 @@ CREATE TABLE `prefix_event` (
   `courseid` int(10) unsigned NOT NULL default '0',
   `groupid` int(10) unsigned NOT NULL default '0',
   `userid` int(10) unsigned NOT NULL default '0',
+  `repeatid` int(10) unsigned NOT NULL default '0',
   `modulename` varchar(20) NOT NULL default '',
   `instance` int(10) unsigned NOT NULL default '0',
   `eventtype` varchar(20) NOT NULL default '',
