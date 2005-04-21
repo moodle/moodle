@@ -102,6 +102,8 @@
         case 'edit':
             $title = get_string('editevent', 'calendar');
             $event = get_record('event', 'id', $eventid);
+            $repeats = optional_param('repeats', 0, PARAM_INT);
+
             if($event === false) {
                 error('Invalid event');
             }
@@ -126,14 +128,41 @@
                 else {
                     $form->timeduration = 0;
                 }
-                validate_form($form, $err);
-                if (count($err) == 0) {
-                    $form->timemodified = time();
-                    update_record('event', $form);
 
-                    /// Log the event update.
-                    $form->name = stripslashes($form->name);  //To avoid double-slashes
-                    add_to_log($form->courseid, 'calendar', 'edit', 'event.php?action=edit&amp;id='.$form->id, $form->name);
+                validate_form($form, $err);
+
+                if (count($err) == 0) {
+
+                    if($event->repeatid && $repeats) {
+                        // Update all
+                        if($form->timestart >= $event->timestart) {
+                            $timestartoffset = 'timestart + '.($form->timestart - $event->timestart);
+                        }
+                        else {
+                            $timestartoffset = 'timestart - '.($event->timestart - $form->timestart);
+                        }
+
+                        execute_sql('UPDATE '.$CFG->prefix.'event SET '.
+                            'name = '.$db->qstr($form->name).','.
+                            'description = '.$db->qstr($form->description).','.
+                            'timestart = '.$timestartoffset.','.
+                            'timeduration = '.$form->timeduration.','.
+                            'timemodified = '.time().' WHERE repeatid = '.$event->repeatid);
+                            
+                        /// Log the event update.
+                        $form->name = stripslashes($form->name);  //To avoid double-slashes
+                        add_to_log($form->courseid, 'calendar', 'edit all', 'event.php?action=edit&amp;id='.$form->id, $form->name);
+                    }
+
+                    else {
+                        // Update this
+                        $form->timemodified = time();
+                        update_record('event', $form);
+    
+                        /// Log the event update.
+                        $form->name = stripslashes($form->name);  //To avoid double-slashes
+                        add_to_log($form->courseid, 'calendar', 'edit', 'event.php?action=edit&amp;id='.$form->id, $form->name);
+                    }
 
                     // OK, now redirect to day view
                     redirect(CALENDAR_URL.'view.php?view=day&cal_d='.$form->startday.'&cal_m='.$form->startmon.'&cal_y='.$form->startyr);
@@ -305,6 +334,14 @@
                 $course = get_record('course', 'id', $form->courseid);
             } else {
                 $course = $site;
+            }
+
+            if($event->repeatid) {
+                $fetch = get_record_sql('SELECT 1, COUNT(id) AS repeatcount FROM '.$CFG->prefix.'event WHERE repeatid = '.$event->repeatid);
+                $repeatcount = $fetch->repeatcount;
+            }
+            else {
+                $repeatcount = 0;
             }
 
             echo '<div class="header">'.get_string('editevent', 'calendar').'</div>';

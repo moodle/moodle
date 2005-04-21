@@ -1,5 +1,5 @@
 <form method="post" action="event.php" name="edit">
-<table cellpadding="5">
+<table cellpadding="5" cellspacing="0">
   <tr>
     <td style="vertical-align: top; text-align: right;">
       <?php print_string('eventname', 'calendar'); ?>:
@@ -58,6 +58,27 @@
       </div>
     </td>
   </tr>
+  <?php if($repeatcount > 1) { ?>
+  <tr>
+    <td style="vertical-align: top; text-align: right;">
+      <?php print_string('eventrepeat', 'calendar'); ?>:
+    </td>
+    <td>
+      <div>
+        <input type="radio" name="repeats" value="1" id="edit_all" checked="checked" />
+        <label for="edit_all">
+          <?php print_string('repeateditall', 'calendar', $repeatcount); ?>
+        </label>
+      </div>
+      <div>
+        <input type="radio" name="repeats" value="0" id="edit_this" />
+        <label for="edit_this">
+          <?php print_string('repeateditthis', 'calendar'); ?>
+        </label>
+      </div>
+    </td>
+  </tr>
+  <?php } ?>
   <tr>
     <td align="center" colspan="2"><p><input type="submit" value="<?php print_string('savechanges') ?>" /></p></td>
   </tr>
