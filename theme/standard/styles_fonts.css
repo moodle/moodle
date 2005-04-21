@@ -180,6 +180,11 @@ table.formtable tbody th {
  *** Blocks
  ***/
 
+.sideblock .header {
+  font-size:0.8em;
+  font-weight: bold;
+}
+
 .sideblock .content {
   font-size:0.9em;
 }
