@@ -60,7 +60,7 @@ function writequestion( $question ) {
       $expout .= "</ul>\n";
         break;
     case SHORTANSWER:
-        $expout .= "<ul class=\"shortanswer\">";
+        $expout .= "<ul class=\"shortanswer\">\n";
         $count = 0;
         foreach($question->answers as $answer) {
           $ans_text = $this->repchar( $answer->answer );
@@ -71,12 +71,12 @@ function writequestion( $question ) {
         $expout .= "</ul>\n";
         break;
     case NUMERICAL:
-        $expout .= '<p class="numerical">\n';
+        $expout .= "<p class=\"numerical\">\n";
         $expout .= "  <input name=\"quest_$id\" type=\"text\" />\n";
         $expout .= "</p>\n";
         break;
     case MATCH:
-        $expout .= "<ul class=\"match\">";
+        $expout .= "<ul class=\"match\">\n";
         $count = 0;
         foreach($question->subquestions as $subquestion) {
           $ans_text = $this->repchar( $subquestion->questiontext );
@@ -84,7 +84,7 @@ function writequestion( $question ) {
           $expout .= "  <input name=\"quest_{$id}_$count\" type=\"text\" /></li>\n";
           ++$count;
         }
-        $expout .= "</ul>";
+        $expout .= "</ul>\n";
         break;
     case DESCRIPTION:
         break;
