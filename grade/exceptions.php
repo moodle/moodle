@@ -110,7 +110,7 @@
                     $countusers++;
                 }
             }
-            $listgrade_items[$grade_item->id] = $grade_item->name." ($countusers)";
+            $listgrade_items[$grade_item->id] = strip_tags(format_string($grade_item->name,true))." ($countusers)";
             if (!isset($grade_item->name)) {
                 // these were items that have since been deleted
                 unset($listgrade_items[$grade_item->id]);
