@@ -387,7 +387,7 @@ function calendar_print_event($event) {
     static $strftimetime;
 
     $event = calendar_add_event_metadata($event);
-    echo '<table class="event">';
+    echo '<table class="event" cellspacing="0">';
     echo '<tr><td class="picture">';
     if (!empty($event->icon)) {
         echo $event->icon;
