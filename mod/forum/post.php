@@ -552,6 +552,9 @@
     $navmiddle = "<a href=\"../forum/index.php?id=$course->id\">$strforums</a> -> <a href=\"view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
 
     if (empty($discussion->name)) {
+        if (empty($discussion)) {
+            $discussion = new object;
+        }
         $discussion->name = $forum->name;
     }
 
