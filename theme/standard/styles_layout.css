@@ -382,6 +382,12 @@ body#admin-config .confighelp {
   border-collapse: separate;
 }
 
+#calendar h2,
+#calendar h3
+{
+  text-align: center;
+}
+
 #calendar .maincalendar,
 #calendar .sidecalendar
 {
