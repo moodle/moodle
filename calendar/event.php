@@ -230,16 +230,19 @@
     switch($action) {
         case 'delete':
             $confirm = optional_param('confirm', 0, PARAM_INT);
+            $repeats = optional_param('repeats', 0, PARAM_INT);
             if($confirm) {
                 // Kill it and redirect to day view
                 if(($event = get_record('event', 'id', $eventid)) !== false) {
-                    /// Log the event delete.
 
-                    delete_records('event', 'id', $eventid);
-
-                    // pj - fixed the course id problem, but now we have another one:
-                    // what to do with the URL?
-                    add_to_log($event->courseid, 'calendar', 'delete', '', $event->name);
+                    if($event->repeatid && $repeats) {
+                        delete_records('event', 'repeatid', $event->repeatid);
+                        add_to_log($event->courseid, 'calendar', 'delete all', '', $event->name);
+                    }
+                    else {
+                        delete_records('event', 'id', $eventid);
+                        add_to_log($event->courseid, 'calendar', 'delete', '', $event->name);
+                    }
                 }
 
                 redirect(CALENDAR_URL.'view.php?view=day&cal_d='.$_REQUEST['d'].'&cal_m='.$_REQUEST['m'].'&cal_y='.$_REQUEST['y']);
@@ -250,9 +253,21 @@
                 $m = $eventtime['mon'];
                 $d = $eventtime['mday'];
                 $y = $eventtime['year'];
+
+                if($event->repeatid) {
+                    $fetch = get_record_sql('SELECT 1, COUNT(id) AS repeatcount FROM '.$CFG->prefix.'event WHERE repeatid = '.$event->repeatid);
+                    $repeatcount = $fetch->repeatcount;
+                }
+                else {
+                    $repeatcount = 0;
+                }
+                
                 // Display confirmation form
                 echo '<div class="header">'.get_string('deleteevent', 'calendar').': '.$event->name.'</div>';
                 echo '<h2>'.get_string('confirmeventdelete', 'calendar').'</h2>';
+                if($repeatcount > 1) {
+                    echo '<p>'.get_string('youcandeleteallrepeats', 'calendar', $repeatcount).'</p>';
+                }
                 echo '<div class="eventlist">';
                 $event->time = calendar_format_event_time($event, time(), '', false);
                 calendar_print_event($event);

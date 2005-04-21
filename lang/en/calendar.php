@@ -81,6 +81,7 @@ $string['typeuser'] = 'User event';
 $string['upcomingevents'] = 'Upcoming Events';
 $string['userevents'] = 'User events';
 $string['yesterday'] = 'Yesterday';
+$string['youcandeleteallrepeats'] = 'This event is part of a repeating event series. You can delete this event only, or all $a events in the series at once.';
 
 $string['sun'] = 'Sun';
 $string['mon'] = 'Mon';
