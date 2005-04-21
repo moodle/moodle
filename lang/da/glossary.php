@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.4 (2004083100)
+      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
 $string['addcomment'] = 'Tilføj kommentar';
@@ -10,6 +10,7 @@ $string['allcategories'] = 'Alle kategorier';
 $string['allentries'] = 'ALLE';
 $string['allowcomments'] = 'Tillad kommentare til opslagsord';
 $string['allowduplicatedentries'] = 'Ens opslagsord er tilladt';
+$string['allowprintview'] = 'Tillad printervenlig';
 $string['allowratings'] = 'Tillad indlæg at blive bedømtEr';
 $string['answer'] = 'Svar';
 $string['approve'] = 'Godkend';
@@ -85,6 +86,8 @@ $string['entrydeleted'] = 'Opslagsord slettet';
 $string['entryexported'] = 'Opslagsord er blevet exporteret';
 $string['entryishidden'] = '(Dette opslagsord er skjult)';
 $string['entryleveldefaultsettings'] = 'Normal indstilling';
+$string['entrysaved'] = 'Indlægget er gemt';
+$string['entryupdated'] = 'Indlægget er blevet opdateret';
 $string['entryusedynalink'] = 'Dette opslagsord skulle blive automatisk linket.';
 $string['explainaddentry'] = 'Tilføj et nyt opslagsord til det nyværende opslagsværk. <br />Koncept og definition skal udfyldes! ';
 $string['explainall'] = 'Vis ALLE opslagsord på en side';
@@ -128,6 +131,7 @@ $string['notcategorised'] = 'Ikke kategoriseret';
 $string['numberofentries'] = 'Antal opslagsord';
 $string['onebyline'] = '(en per linje)';
 $string['printerfriendly'] = 'Printervenlig udgave';
+$string['printviewnotallowed'] = 'Printervenlig visning ikke tilladt';
 $string['question'] = 'Spørgsmål';
 $string['rate'] = 'Vurdering';
 $string['rating'] = 'Vurdering';
