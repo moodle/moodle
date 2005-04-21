@@ -2685,39 +2685,6 @@ function workshop_print_difference($time) {
 
 
 //////////////////////////////////////////////////////////////////////////////////////
-function workshop_print_feedback($course, $submission) {
-    global $CFG, $RATING;
-
-    if (! $teacher = get_record("user", "id", $submission->teacher)) {
-        error("Weird workshop error");
-    }
-
-    echo "\n<table border=\"0\" cellpadding=\"3\" cellspacing=\"0\" class=\"feedbackbox\">";
-
-    echo "\n<tr>";
-    echo "\n<td rowspan=\"3\" class=\"userpicture\" width=\"35\" valign=\"top\">";
-    print_user_picture($teacher->id, $course->id, $teacher->picture);
-    echo "</td>";
-    echo "<td nowrap=\"nowrap\" width=\"100%\" class=\"feedbackby\">".fullname($teacher);
-    echo "&nbsp;&nbsp;<font size=\"2\"><i>".userdate($submission->timemarked)."</i>";
-    echo "</tr>";
-
-    echo "\n<tr><td width=\"100%\" class=\"feedback\">";
-
-    echo "<p align=\"right\"><font size=\"-1\"><i>";
-    if ($submission->grade) {
-        echo get_string("grade").": $submission->grade";
-    } else {
-        echo get_string("nograde");
-    }
-    echo "</i></font></p>";
-
-    echo format_text($submission->assessorcomment);
-    echo "</td></tr></table>";
-}
-
-
-//////////////////////////////////////////////////////////////////////////////////////
 function workshop_print_key($workshop) {
     // print an explaination of the grades
     

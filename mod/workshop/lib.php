@@ -931,7 +931,7 @@ function workshop_user_complete($course, $user, $mod, $workshop) {
     if ($submission = workshop_get_student_submission($workshop, $user)) {
         if ($basedir = workshop_file_area($workshop, $user)) {
             if ($files = get_directory_list($basedir)) {
-                $countfiles = count($files)." ".get_string("submissions", "workshop");
+                $countfiles = count($files).' '.get_string('submissions', 'workshop');
                 foreach ($files as $file) {
                     $countfiles .= "; $file";
                 }
@@ -940,18 +940,64 @@ function workshop_user_complete($course, $user, $mod, $workshop) {
 
         print_simple_box_start();
 
-        //workshop_print_user_files($workshop, $user);
+        echo $submission->description.'<br />';
 
-        echo "Submission was made but no way to show you yet.";   //xxx
-
-        //workshop_print_feedback($course, $submission);
+        if (!empty($countfiles)) {
+            echo $countfiles,'<br />';
+        }
+        
+        workshop_print_feedback($course, $submission);
 
         print_simple_box_end();
 
     } else {
-        print_string("notsubmittedyet", "workshop");
+        print_string('notsubmittedyet', 'workshop');
     }
 }
+
+//////////////////////////////////////////////////////////////////////////////////////
+function workshop_print_feedback($course, $submission) {
+    global $CFG, $RATING;
+
+    if (! $feedbacks = get_records('workshop_assessments', 'submissionid', $submission->id)) {
+        return;
+    }
+
+    $strgrade = get_string('grade');
+    $strnograde = get_string('nograde');
+
+    foreach ($feedbacks as $feedback) {
+        if (! $user = get_record('user', 'id', $feedback->userid)) {
+            /// Weird error but we'll just ignore it and continue with other feedback
+            continue;
+        }
+
+        echo '<table cellspacing="0" class="workshop_feedbackbox">';
+
+        echo '<tr>';
+        echo '<td class="picture left">';
+        print_user_picture($user->id, $course->id, $user->picture);
+        echo '</td>';
+        echo '<td><span class="author">'.fullname($user).'</span>';
+        echo '<span class="time">'.userdate($feedback->timegraded).'</span>';
+        echo '</tr>';
+
+        echo '<tr><td class="left side">&nbsp;</td>';
+        echo '<td class="content">';
+
+        if ($feedback->grade) {
+            echo $strgrade.': '.$feedback->grade;
+        } else {
+            echo $strnograde;
+        }
+
+        echo '<span class="comment">'.format_text($feedback->generalcomment).'</span>';
+        echo '<span class="teachercomment">'.format_text($feedback->teachercomment).'</span>';
+        echo '</td></tr></table>';
+
+    }
+}
+
 
 
 
