@@ -173,6 +173,11 @@
                 if (count($err) == 0) {
                     $form->timemodified = time();
 
+                    if ($form->repeat) {
+                        $fetch = get_record_sql('SELECT 1, MAX(repeatid) AS repeatid FROM '.$CFG->prefix.'event');
+                        $form->repeatid = empty($fetch) ? 1 : $fetch->repeatid + 1;
+                    }
+
                     /// Get the event id for the log record.
                     $eventid = insert_record('event', $form, true);
 
