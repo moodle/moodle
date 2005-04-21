@@ -1,151 +1,163 @@
 <?php // $Id$
 
-    function glossary_filter($courseid, $text) {
-        global $CFG;
+function glossary_filter($courseid, $text) {
+    global $CFG;
 
-        if (empty($courseid)) {
-            $courseid = SITEID;
+    static $nothingtodo;
+
+    if (!empty($nothingtodo)) {   // We've been here in this page already
+        return $text;
+    }
+
+    if (empty($courseid)) {
+        $courseid = SITEID;
+    }
+
+/// Create a list of all the concepts to search for.  It may be cached already.
+
+    if (empty($conceptlist)) {
+
+    /// Find all the glossaries we need to examine
+        if (!$glossaries = get_records_sql_menu ('SELECT g.id, g.name
+                                                    FROM '.$CFG->prefix.'glossary g,
+                                                         '.$CFG->prefix.'course_modules cm,
+                                                         '.$CFG->prefix.'modules m
+                                                    WHERE m.name = \'glossary\' AND
+                                                          cm.module = m.id AND
+                                                          cm.visible = 1 AND
+                                                          g.id = cm.instance AND
+                                                          g.usedynalink != 0 AND
+                                                          (g.course = \''.$courseid.'\' OR g.globalglossary = 1)
+                                                    ORDER BY g.globalglossary, g.id')) {
+            $nothingtodo = true;
+            return $text;
         }
 
-        $GLOSSARY_CONCEPT_IS_ENTRY = 0;
-        $GLOSSARY_CONCEPT_IS_CATEGORY = 1;
-        switch ($CFG->dbtype) {
-            case 'postgres7':
-                $as = 'as';
-                break;
-            case 'mysql':
-                $as = '';
-                break;
+    /// Make a list of glossary IDs for searching
+        $glossarylist = '';
+        foreach ($glossaries as $glossaryid => $glossaryname) {
+            $glossarylist .= $glossaryid.',';
         }
+        $glossarylist = substr($glossarylist,0,-1);
+   
 
-        $conceptlist = array();
+    /// Pull out all the raw data from the database for entries, categories and aliases
+        $entries = get_records_select('glossary_entries', 
+                                      'glossaryid IN ('.$glossarylist.') AND usedynalink != 0 AND '.
+                                      'approved != 0 AND concept != \'\'','',
+                                      'id,glossaryid, concept,casesensitive,0 AS category,fullmatch');
 
-        $glossarieslist = get_records_sql ("SELECT g.* 
-                                            FROM {$CFG->prefix}glossary g,
-                                                 {$CFG->prefix}course_modules cm,
-                                                 {$CFG->prefix}modules m
-                                            WHERE m.name = 'glossary' AND
-                                                  cm.module = m.id AND
-                                                  cm.visible = 1 AND
-                                                  g.id = cm.instance AND                                         
-                                                  g.usedynalink != 0 AND
-                                                  (g.course = '$courseid' OR g.globalglossary = 1)
-                                            ORDER BY g.globalglossary, g.id");
-        if ( $glossarieslist ) {
-            $glossaries = "";
-            foreach ( $glossarieslist as $glossary ) {
-                $glossaries .= "$glossary->id,";
-            }
-            $glossaries=substr($glossaries,0,-1);
-///         sorting by the length of the concept in order to assure that large concepts
-///         are linked first, if they exist in the text to parse
-            switch ($CFG->dbtype) {
-                case "postgres7":
-                case "mysql":
-                    $ebylenght = "CHAR_LENGTH(concept) desc,";
-                    $cbylenght = "CHAR_LENGTH(name) desc,";
-                break;
-                default:
-                    $ebylenght = "";
-                    $cbylenght = "";
-                break;
-            }
+        $categories = get_records_select('glossary_categories', 
+                                         'glossaryid IN ('.$glossarylist.') AND usedynalink != 0', '',
+                                         'id,glossaryid,name AS concept, '.
+                                         '1 AS casesensitive, 1 AS category, 1 AS fullmatch');
+    
+        $aliases = get_records_sql('SELECT ga.id, ge.glossaryid, ga.alias as concept, ge.concept as originalconcept, 
+                                           casesensitive, 0 AS category, fullmatch 
+                                      FROM '.$CFG->prefix.'glossary_alias AS ga, 
+                                           '.$CFG->prefix.'glossary_entries AS ge
+                                     WHERE ga.entryid = ge.id
+                                       AND ge.glossaryid IN ('.$glossarylist.')
+                                       AND ge.usedynalink != 0 
+                                       AND ge.approved != 0
+                                       AND ge.concept != \'\'  ');
 
-            $entries = get_records_select("glossary_entries", "glossaryid IN ($glossaries) AND usedynalink != 0 and approved != 0 and concept != ''","$ebylenght glossaryid","id,glossaryid, concept,casesensitive,$GLOSSARY_CONCEPT_IS_ENTRY $as category,fullmatch");
-            $categories  = get_records_select("glossary_categories", "glossaryid IN ($glossaries) AND usedynalink != 0", "$cbylenght glossaryid","id,glossaryid, name $as concept, 1 $as casesensitive,$GLOSSARY_CONCEPT_IS_CATEGORY $as category, 1 $as fullmatch");
-            if ( $entries and $categories ) {
-                $concepts = array_merge($entries, $categories);
-                usort($concepts,'glossary_sort_entries_by_length');
-            } elseif ( $categories ) {
-                $concepts = $categories;
-            } elseif ( $entries ) {
-                $concepts = $entries;
-            }
 
-            if ( isset($concepts) ) {
-                $lastglossary = 0;
-                $lastcategory = 0;
-                $cm = '';
-                foreach ( $concepts as $concept ) {   // See FIXME below - all the database access for this loop 
-                                                      // needs to be retrieved on one database call, otherwise
-                                                      // filters become very very inefficient
-                    if ( $concept->category ) {
-                        if ( $lastcategory != $concept->id ) {
-                            $category = get_record("glossary_categories","id",$concept->id);  // FIXME
-                            $lastcategory = $concept->id;
-                            if ( empty($cm->instance) || $cm->instance != $category->glossaryid ) {
-                                $gcat = get_record("glossary","id",$category->glossaryid);  // FIXME
-                                if ( !$cm = get_coursemodule_from_instance("glossary", $category->glossaryid, $gcat->course) ) {
-                                    $cm->id = 1;
-                                }
-                            }
-                        }
+    /// Combine them into one big list
+        if ($entries and $categories) {
+            $concepts = array_merge($entries, $categories);
+        } else if ($categories) {
+            $concepts = $categories;
+        } else if ($entries) {
+            $concepts = $entries;
+        }
+    
+        if ($aliases) {
+            $concepts = array_merge($concepts, $aliases);
+        }
+    
+        if (!empty($concepts)) {
+            foreach ($concepts as $key => $concept) {
+            /// Trim empty or unlinkable concepts
+                $currentconcept = trim(strip_tags($concept->concept));
+                if (empty($currentconcept)) {
+                    unset($concepts[$key]);
+                    continue;
+                } else {
+                    $concepts[$key]->concept = $currentconcept;
+                }
 
-                        $title = strip_tags("$glossary->name: " . get_string("category","glossary"). " $category->name");
-                        $href_tag_begin = "<a class=\"glossary autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/view.php?id=$cm->id&amp;mode=cat&amp;hook=$concept->id\">";
-                    } else {
-                        if ( $lastglossary != $concept->glossaryid ) {
-                            $glossary = get_record("glossary","id",$concept->glossaryid);  // FIXME
-                            $lastglossary = $glossary->id;
-                        }
-
-                        $encodedconcept = urlencode($concept->concept);
-                        $title = str_replace('"', "'", strip_tags("$glossary->name: $concept->concept"));
-                        $href_tag_begin = "<a target=\"entry\" class=\"glossary autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/glossary/showentry.php?courseid=$courseid&amp;concept=$encodedconcept\" ".
-                             "onclick=\"return openpopup('/mod/glossary/showentry.php?courseid=$courseid\&amp;concept=$encodedconcept', 'entry', 'menubar=0,location=0,scrollbars,resizable,width=600,height=450', 0);\">";
-                    }
-                    $currentconcept = $concept->concept;
-                    if ( $currentconcept = trim(strip_tags($currentconcept)) ) {
-                        if ( !$concept->category ) {
-                            if ( $aliases = get_records("glossary_alias","entryid",$concept->id, "alias") ) {  // FIXME
-                                foreach ($aliases as $alias) {
-                                    $currentalias = trim(strip_tags($alias->alias));
-                                    //Avoid integers < 1000 to be linked. See bug 1446.
-                                    $intcurrent = intval($currentalias);
-                                    if (!(!empty($intcurrent) && strval($intcurrent) == $currentalias && $intcurrent < 1000)) {
-                                        if ( $currentalias != '' ) {
-                                            $conceptlist[] = new filterobject($currentalias, $href_tag_begin, '</a>', $concept->casesensitive, $concept->fullmatch);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        if ($currentconcept) {
-                            $conceptlist[] = new filterobject($currentconcept, $href_tag_begin, '</a>', $concept->casesensitive, $concept->fullmatch);
-                        }
-                    }
+            /// Rule out any small integers.  See bug 1446
+                $currentint = intval($currentconcept);
+                if ($currentint && (strval($currentint) == $currentconcept) && $currentint < 1000) {
+                    unset($concepts[$key]);
                 }
             }
         }
 
-        /// Remove any duplicate entries
-        $conceptlist = filter_remove_duplicates($conceptlist);
-        
-        //return $text;
-        return filter_phrases($text, $conceptlist);
-    }
-
-
-
-
-
-    function glossary_sort_entries_by_length ( $entry0, $entry1 ) {
-        if ( strlen(trim($entry0->concept)) < strlen(trim($entry1->concept)) ) {
-            return 1;
-        } elseif ( strlen(trim($entry0->concept)) > strlen(trim($entry1->concept)) ) {
-            return -1;
-        } else {
-            return 0;
+        if (empty($concepts)) {
+            $nothingtodo = true;
+            return $text;
         }
-    }
 
-    function glossary_addslashes ( $chars, $text ) {
-        if ( $chars ) {
-            for ($i = 0; $i < strlen($chars); $i++) {
-                $text = str_replace($chars[$i], "\\" . $chars[$i], $text);
+        usort($concepts, 'glossary_sort_entries_by_length');
+
+        $strcategory = get_string('category', 'glossary');
+
+
+    /// Loop through all the concepts, setting up our data structure for the filter
+
+        $conceptlist = array();    /// We will store all the concepts here
+
+        foreach ($concepts as $concept) {
+
+            $glossaryname = $glossaries[$concept->glossaryid];
+
+            if ($concept->category) {       // Link to a category
+                $title = strip_tags($glossaryname.': '.$strcategory.' '.$category->name);
+                $href_tag_begin = '<a class="glossary autolink" title="'.$title.'" '.
+                                  'href="'.$CFG->wwwroot.'/mod/glossary/view.php?g='.$concept->glossaryid.
+                                  '&amp;mode=cat&amp;hook='.$concept->id.'">';
+            } else {
+                if (!empty($concept->originalconcept)) {  // We are dealing with an alias (so show original)
+                    $encodedconcept = urlencode($concept->originalconcept);
+                    $title = str_replace('"', "'", strip_tags($glossaryname.': '.$concept->originalconcept));
+                } else {
+                    $encodedconcept = urlencode($concept->concept);
+                    $title = str_replace('"', "'", strip_tags($glossaryname.': '.$concept->concept));
+                }
+                $href_tag_begin = '<a target="entry" class="glossary autolink" title="'.$title.'" '.
+                                  'href="'.$CFG->wwwroot.'/mod/glossary/showentry.php?courseid='.$courseid.
+                                  '&amp;concept='.$encodedconcept.'" '.
+                                  'onclick="return openpopup(\'/mod/glossary/showentry.php?courseid='.$courseid.
+                                  '\&amp;concept='.$encodedconcept.'\', \'entry\', '.
+                                  '\'menubar=0,location=0,scrollbars,resizable,width=600,height=450\', 0);">';
             }
+
+
+            $conceptlist[] = new filterobject($currentconcept, $href_tag_begin, '</a>', 
+                                              $concept->casesensitive, $concept->fullmatch);
         }
-        return $text;
+
+        $conceptlist = filter_remove_duplicates($conceptlist);
     }
+
+    return filter_phrases($text, $conceptlist);   // Actually search for concepts!
+}
+
+
+function glossary_sort_entries_by_length ($entry0, $entry1) {
+    $len0 = strlen($entry0->concept);
+    $len1 = strlen($entry1->concept);
+
+    if ($len0 < $len1) {
+        return 1;
+    } else if ($len0 > $len1) {
+        return -1;
+    } else {
+        return 0;
+    }
+}
+
 
 ?>
