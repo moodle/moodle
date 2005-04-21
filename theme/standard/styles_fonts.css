@@ -33,8 +33,8 @@
 }
 
 body, td, th, li {
-  font-family:"Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-  font-size:0.95em;
+  font-family:Arial, Verdana, Helvetica, sans-serif;
+  font-size:100%;
 }
 
 th {
@@ -149,7 +149,7 @@ h4 {
 
 .logininfo,
 #header-home .headermenu font {
-  font-size:x-small;
+  font-size:0.8em;
 }
 
 
@@ -180,21 +180,26 @@ table.formtable tbody th {
  *** Blocks
  ***/
 
+.sideblock .content {
+  font-size:0.9em;
+}
+
 .sideblock .content h3,
 .sideblock .content h2 {
   font-size:1.0em;
 }
 .sideblock .header .commands {
-  font-size: 0.75em;
+  font-size:0.9em;
 }
 
 .sideblock .footer {
-  font-size:0.75em;
+  font-size:0.9em;
 }
 
 .sideblock .head,
-.sideblock .info {
-  font-size: 0.85em;
+.sideblock .info,
+.sideblock .event {
+  font-size: 0.9em;
 }
 
 .sideblock .date {
@@ -265,7 +270,7 @@ table.minicalendar {
  ***/
 
 .activitydate, .activityhead {
-  font-size:0.7em;
+  font-size:0.9em;
 }
 
 .weeklydatetext {
@@ -279,11 +284,11 @@ table.minicalendar {
 
 .coursebox .teachers,
 .coursebox .cost {
-  font-size:0.8em;
+  font-size:0.9em;
 }
 
 .coursebox .summary {
-  font-size:0.7em;
+  font-size:0.9em;
 }
 
 
@@ -297,7 +302,7 @@ table.minicalendar {
  *** Doc
  ***/
 body#doc-contents h1 {
-  font-size: 1em;
+  font-size: 0.9em;
 }
 body#doc-contents ul {
   font-size: 0.8em;
@@ -315,31 +320,31 @@ body#doc-contents ul {
  ***/
 
 .message_summary_link {
-  font-size:small;
+  font-size:0.8em;
 }
 
 .message_link {
-  font-size:x-small;
+  font-size:0.8em;
 }
 
 .message_form {
-  font-size:0.78em;
+  font-size:0.8em;
 }
 
 .message_heading {
-  font-size:medium;
+  font-size:1.0em;
   font-weight:bold;
 }
 
 .message_date,
 .message_contact,
 .message_summary {
-  font-size:small;
+  font-size:0.9em;
 }
 
 .message_small_note, 
 .message_pix {
-  font-size:x-small;
+  font-size:0.8em;
 }
 
 .message .author {
@@ -480,7 +485,7 @@ body#mod-forum-search .introcontent {
  ***/
 
 .editorhelptext {
-  font-size:x-small;
+  font-size:0.7em;
 }
 
 
