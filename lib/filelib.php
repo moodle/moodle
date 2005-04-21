@@ -10,10 +10,13 @@ function mimeinfo($element, $filename) {
         'aifc' => array ('type'=>'audio/x-aiff', 'icon'=>'audio.gif'),
         'applescript'  => array ('type'=>'text/plain', 'icon'=>'text.gif'),
         'asc'  => array ('type'=>'text/plain', 'icon'=>'text.gif'),
+        'asm'  => array ('type'=>'text/plain', 'icon'=>'text.gif'),
         'au'   => array ('type'=>'audio/au', 'icon'=>'audio.gif'),
         'avi'  => array ('type'=>'video/x-ms-wm', 'icon'=>'avi.gif'),
         'bmp'  => array ('type'=>'image/bmp', 'icon'=>'image.gif'),
+        'c'    => array ('type'=>'text/plain', 'icon'=>'text.gif'),
         'cct'  => array ('type'=>'shockwave/director', 'icon'=>'flash.gif'),
+        'cpp'  => array ('type'=>'text/plain', 'icon'=>'text.gif'),
         'cs'   => array ('type'=>'application/x-csh', 'icon'=>'text.gif'),
         'css'  => array ('type'=>'text/css', 'icon'=>'text.gif'),
         'dv'   => array ('type'=>'video/x-dv', 'icon'=>'video.gif'),
@@ -28,9 +31,11 @@ function mimeinfo($element, $filename) {
         'gz'   => array ('type'=>'application/g-zip', 'icon'=>'zip.gif'),
         'gzip' => array ('type'=>'application/g-zip', 'icon'=>'zip.gif'),
         'h'    => array ('type'=>'text/plain', 'icon'=>'text.gif'),
+        'hpp'  => array ('type'=>'text/plain', 'icon'=>'text.gif'),
         'hqx'  => array ('type'=>'application/mac-binhex40', 'icon'=>'zip.gif'),
         'html' => array ('type'=>'text/html', 'icon'=>'html.gif'),
         'htm'  => array ('type'=>'text/html', 'icon'=>'html.gif'),
+        'java' => array ('type'=>'text/plain', 'icon'=>'text.gif'),
         'jpe'  => array ('type'=>'image/jpeg', 'icon'=>'image.gif'),
         'jpeg' => array ('type'=>'image/jpeg', 'icon'=>'image.gif'),
         'jpg'  => array ('type'=>'image/jpeg', 'icon'=>'image.gif'),
@@ -82,6 +87,7 @@ function mimeinfo($element, $filename) {
         'xml'  => array ('type'=>'application/xml', 'icon'=>'xml.gif'),
         'xsl'  => array ('type'=>'text/xml', 'icon'=>'xml.gif'),
         'zip'  => array ('type'=>'application/zip', 'icon'=>'zip.gif')
+
     );
 
     if (eregi('\.([a-z0-9]+)$', $filename, $match)) {
