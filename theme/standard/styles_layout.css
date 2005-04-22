@@ -344,7 +344,10 @@ body#admin-config .confighelp {
   border:none;
   border-top:1px solid;
 }
-.sideblock .hidden .content {
+
+#left-column .hidden .content,
+#right-column .hidden .content
+{
   display: none;
 }
 
