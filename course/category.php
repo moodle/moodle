@@ -279,18 +279,18 @@
 
 
         echo '<form name="movecourses" action="category.php" method="post">';
-        echo "<input type=\"hidden\" name=\"sesskey\" value=\"$USER->sesskey\">";
+        echo '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
         echo '<table align="center" border="0" cellspacing="2" cellpadding="4" class="generalbox"><tr>';
-        echo "<th>$strcourses</th>";
+        echo '<th>'.$strcourses.'</th>';
         if ($creatorediting) {
-            echo "<th>$stredit</th>";
+            echo '<th>'.$stredit.'</th>';
             if ($adminediting) {
-                echo "<th>$strselect</th>";
+                echo '<th>'.$strselect.'</th>';
             }
         } else {
-            echo "<th>&nbsp;</th>";
+            echo '<th>&nbsp;</th>';
         }
-        echo "</tr>";
+        echo '</tr>';
 
 
         $count = 0;
@@ -301,8 +301,8 @@
             $up = ($count == 1) ? false : true;
             $down = ($count == $numcourses) ? false : true;
 
-            $linkcss = $acourse->visible ? "" : " class=\"dimmed\" ";
-            echo "<tr>";
+            $linkcss = $acourse->visible ? "" : ' class="dimmed" ';
+            echo '<tr>';
             echo '<td><a '.$linkcss.' href="view.php?id='.$acourse->id.'">'.$acourse->fullname.'</a></td>';
             if ($creatorediting) {
                 if ($adminediting) {
@@ -337,7 +337,7 @@
                              '&amp;moveup='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
                              '<img src="'.$CFG->pixpath.'/t/up.gif" height="11" width="11" border="0" alt="" /></a> ';
                     } else {
-                        echo '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /></a> ';
+                        echo '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /> ';
                     }
 
                     if ($down) {
@@ -345,24 +345,24 @@
                              '&amp;movedown='.$acourse->id.'&amp;sesskey='.$USER->sesskey.'">'.
                              '<img src="'.$CFG->pixpath.'/t/down.gif" height="11" width="11" border="0" alt="" /></a> ';
                     } else {
-                        echo '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /></a> ';
+                        echo '<img src="'.$CFG->wwwroot.'/pix/spacer.gif" height="11" width="11" border="0" alt="" /> ';
                     }
 
-                    echo "</td>";
-                    echo "<td align=\"center\">";
+                    echo '</td>';
+                    echo '<td align="center">';
                     echo '<input type="checkbox" name="c'.$acourse->id.'" />';
                     $abletomovecourses = true;
 
                 } else if (isteacheredit($acourse->id)) {
-                    echo "<td>";
+                    echo '<td>';
                     echo '<a title="'.$strsettings.'" href="'.$CFG->wwwroot.'/course/edit.php?id='.$acourse->id.'">'.
                          '<img src="'.$CFG->pixpath.'/t/edit.gif" height="11" width="11" border="0" alt="" /></a> ';
                     echo '<a title="'.$strassignteachers.'" href="'.$CFG->wwwroot.'/course/teacher.php?id='.$acourse->id.'">'.
                          '<img src="'.$CFG->pixpath.'/t/user.gif" height="11" width="11" border="0" alt="" /></a> ';
                 }
-                echo "</td>";
+                echo '</td>';
             } else {
-                echo "<td align=\"right\">";
+                echo '<td align="right">';
                 if (!empty($acourse->guest)) {
                     echo '<a href="view.php?id='.$acourse->id.'"><img hspace="2" title="'.
                          $strallowguests.'" alt="" height="16" width="16" border="0" src="'.
@@ -384,38 +384,38 @@
         }
 
         if ($abletomovecourses) {
-            echo "<tr><td colspan=\"3\" align=\"right\">";
-            echo "<br />";
+            echo '<tr><td colspan="3" align="right">';
+            echo '<br />';
             unset($displaylist[$category->id]);
             choose_from_menu ($displaylist, "moveto", "", get_string("moveselectedcoursesto"), "javascript:document.movecourses.submit()");
             echo '<input type="hidden" name="id" value="'.$category->id.'" />';
-            echo "</td></tr>";
+            echo '</td></tr>';
         }
 
-        echo "</table>";
-        echo "</form>";
-        echo "<br />";
+        echo '</table>';
+        echo '</form>';
+        echo '<br />';
     }
 
 
-    echo "<center>";
+    echo '<center>';
     if (isadmin() and $numcourses > 1) {           /// Print button to re-sort courses by name
         unset($options);
-        $options["id"] = $category->id;
-        $options["resort"] = "name";
-        $options["sesskey"] = $USER->sesskey;
-        print_single_button("category.php", $options, get_string("resortcoursesbyname"), "get");
+        $options['id'] = $category->id;
+        $options['resort'] = 'name';
+        $options['sesskey'] = $USER->sesskey;
+        print_single_button('category.php', $options, get_string('resortcoursesbyname'), 'get');
     }
 
     if (iscreator()) {         /// Print button to create a new course
         unset($options);
-        $options["category"] = $category->id;
-        print_single_button("edit.php", $options, get_string("addnewcourse"), "get");
-        echo "<br />";
+        $options['category'] = $category->id;
+        print_single_button('edit.php', $options, get_string('addnewcourse'), 'get');
+        echo '<br />';
     }
 
     if (isadmin()) {           /// Print form to rename the category
-        $strrename= get_string("rename");
+        $strrename= get_string('rename');
         echo '<form name="renameform" action="category.php" method="post">';
         echo '<input type="hidden" name="id" value="'.$category->id.'" />';
         echo '<input type="hidden" name="sesskey" value="'.$USER->sesskey.'" />';
@@ -425,8 +425,6 @@
         echo "<br />";
     }
     echo "</center>";
-
-    echo '</div>';  // course wrapper end
 
     print_footer();
 
