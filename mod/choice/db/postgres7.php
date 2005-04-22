@@ -54,7 +54,7 @@ function choice_upgrade($oldversion) {
                 foreach ($choices as $choice) {
                     for ($i=1; $i<=6; $i++) {      // We used to have six columns
                         $option = new stdClass;
-                        $option->text         = $choice->{'answer'.$i};
+                        $option->text         = addslashes($choice->{'answer'.$i});
                         if ($option->text) {   /// Don't bother with blank options
                             $option->choiceid     = $choice->id;
                             $option->timemodified = $choice->timemodified;
