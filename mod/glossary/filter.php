@@ -4,6 +4,7 @@ function glossary_filter($courseid, $text) {
     global $CFG;
 
     static $nothingtodo;
+    static $conceptlist;
 
     if (!empty($nothingtodo)) {   // We've been here in this page already
         return $text;
@@ -135,7 +136,7 @@ function glossary_filter($courseid, $text) {
             }
 
 
-            $conceptlist[] = new filterobject($currentconcept, $href_tag_begin, '</a>', 
+            $conceptlist[] = new filterobject($concept->concept, $href_tag_begin, '</a>', 
                                               $concept->casesensitive, $concept->fullmatch);
         }
 
