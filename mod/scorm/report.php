@@ -80,7 +80,7 @@
             }
 
             foreach ($sco_users as $sco_user) {
-                $user_data = scorm_get_user_track($scorm->id,$sco_user->userid);
+                $user_data = scorm_get_tracks($scorm->id,$sco_user->userid);
 
                 $row = array();
                 $data = current($user_data);
