@@ -62,6 +62,7 @@ $string['notgradedyet'] = 'Not graded yet';
 $string['notsubmittedyet'] = 'Not submitted yet';
 $string['overwritewarning'] = 'Warning: uploading again will REPLACE your current submission';
 $string['saveallfeedback'] = 'Save all my feedback';
+$string['submission'] = 'Submission';
 $string['submissionfeedback'] = 'Submission feedback';
 $string['submissions'] = 'Submissions';
 $string['submissionsaved'] = 'Your changes have been saved';
