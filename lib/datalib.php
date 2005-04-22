@@ -1209,7 +1209,7 @@ function update_record($table, $dataobject) {
 
     foreach ($ddd as $key => $value) {
         $count++;
-        $update .= $key .' = \''. $value .'\'';
+        $update .= $key .' = '. $db->qstr($value);
         if ($count < $numddd) {
             $update .= ', ';
         }
