@@ -66,9 +66,12 @@
         $CFG->version = "";
     }
 
-/// Turn off time limits, sometimes upgrades can be slow.
+/// Turn off time limits and try to flush everything all the time, sometimes upgrades can be slow.
 
     @set_time_limit(0);
+    @ob_implicit_flush(true);
+    @ob_end_flush();
+
 
 /// Check if the main tables have been installed yet or not.
 
