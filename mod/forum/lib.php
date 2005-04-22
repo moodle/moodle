@@ -1253,11 +1253,9 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
     if (empty($userlastmodified)) {  // We don't need to know this
         $umfields = '';
         $umtable = '';
-        $umselect = '';
     } else {
-        $umfields = ',um.firstname AS umfirstname, um.lastname AS umlastname';
-        $umtable = ' ,'.$CFG->prefix.'user um ';
-        $umselect = ' AND (d.usermodified = um.id OR d.usermodified = 0)';
+        $umfields = ', um.firstname AS umfirstname, um.lastname AS umlastname';
+        $umtable = ' LEFT JOIN user um on (d.usermodified = um.id)';
     }
 
     return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
@@ -1269,7 +1267,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
                              WHERE d.forum = '$forum'
                                AND p.discussion = d.id
                                AND p.parent = 0
-                               AND p.userid = u.id $groupselect $userselect $umselect
+                               AND p.userid = u.id $groupselect $userselect 
                           ORDER BY $forumsort $limit");
 }
 
@@ -2535,7 +2533,9 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 
 /// Get all the recent discussions we're allowed to see
 
-    if (! $discussions = forum_get_discussions($forum->id, $sort, 0, $fullpost, $visiblegroups) ) {
+    $getuserlastmodified = ($displayformat == 'header');
+
+    if (! $discussions = forum_get_discussions($forum->id, $sort, 0, $fullpost, $visiblegroups,0,$getuserlastmodified) ) {
         echo '<div class="forumnodiscuss">';
         if ($forum->type == 'news') {
             echo '('.get_string('nonews', 'forum').')';
