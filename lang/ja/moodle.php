@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
 
 
 $string['action'] = '操作';
@@ -220,6 +220,7 @@ $string['creatingblocks'] = 'ブロックの作成';
 $string['creatingcategoriesandquestions'] = 'カテゴリと質問の作成';
 $string['creatingcoursemodules'] = 'コースモジュールの作成';
 $string['creatingevents'] = 'イベントの作成';
+$string['creatinggradebook'] = 'グレードブックの作成';
 $string['creatinggroups'] = 'グループの作成';
 $string['creatinglogentries'] = 'ログエントリの作成';
 $string['creatingmessagesinfo'] = 'メッセージ情報の作成';
