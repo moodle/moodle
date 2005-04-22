@@ -1010,7 +1010,10 @@
                                         $dbrec->value      = backup_todb($info['GRADE_PREFERENCE']['#']['VALUE']['0']['#']);
    
                                         //Structure is equal to db, insert record
-                                        $status = insert_record('grade_preferences',$dbrec);
+                                        //if the preference doesn't exist
+                                        if (!$prerec = get_record('grade_preferences','courseid',$dbrec->courseid,'preference',$dbrec->preference)) {
+                                            $status = insert_record('grade_preferences',$dbrec);
+                                        }
 
                                         //Do some output
                                         $counter++;
@@ -1076,7 +1079,7 @@
                     }
 
                     //Process categories
-                    if ($preferencescount && $continue) {
+                    if ($categoriescount && $continue) {
                         echo '<li>'.get_string('categories','grades').'</li>';
                         $counter = 0;
                         $countercat = 0;
@@ -1110,7 +1113,7 @@
 
                                         if (!$catex) {
                                             //Structure is equal to db, insert record
-                                            $categoryid = insert_record('grade_letter',$dbrec);
+                                            $categoryid = insert_record('grade_category',$dbrec);
                                         } else {
                                             //Simply remap category
                                             $categoryid = $catex->id;
