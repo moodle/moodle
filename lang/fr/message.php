@@ -1,6 +1,8 @@
 <?php  // $Id$
 
 $string['addcontact'] = 'Ajouter ce contact';
+$string['addsomecontacts'] = 'Votre liste de contacts facilite l\'envoi de messages à vos connaissances en cliquant simplement sur leur nom. Votre liste est actuellement vide. Pour envoyer un message à quelqu\'un sans ajouter ses coordonnées à cette liste, veuillez afficher la page de leur profil. Pour ajouter des personnes à cette liste, recherchez-les en utilisant <a href=\"$a\">l\'onglet Recherche</a>.';
+$string['addsomecontactsincoming'] = '<strong>Vous avez reçu des messages de la part de personnes n\'apparaissant pas dans vos contacts&nbsp;!</strong> Pour ajouter ces personnes à vos contacts, cliquez simplement sur l\'icône «&nbsp;Ajouter ce contact&nbsp;» à côté de leur nom.';
 $string['ago'] = 'Il y a $a';
 $string['allmine'] = 'Tous mes messages reçus ou envoyés';
 $string['allstudents'] = 'Tous les messages entre les étudiants du cours';
@@ -10,6 +12,7 @@ $string['beepnewmessage'] = 'Bip à l\'arrivée d\'un message';
 $string['blockcontact'] = 'Bloquer ce contact';
 $string['blockedmessages'] = '$a message(s) de/pour des utilisateurs bloqués';
 $string['context'] = 'Contexte';
+$string['contactlistempty'] = 'Votre liste de contacts est vide';
 $string['contacts'] = 'Contacts';
 $string['deletemessagesdays'] = 'Nombre de jours avant la suppression automatique des anciens messages';
 $string['discussion'] = 'Discussion';
