@@ -2027,6 +2027,7 @@
                         $eve->courseid = $restore->course_id;
                         $eve->groupid = backup_todb($info['EVENT']['#']['GROUPID']['0']['#']);
                         $eve->userid = backup_todb($info['EVENT']['#']['USERID']['0']['#']);
+                        $eve->repeatid = backup_todb($info['EVENT']['#']['REPEATID']['0']['#']);
                         $eve->modulename = "";
                         $eve->instance = 0;
                         $eve->eventtype = backup_todb($info['EVENT']['#']['EVENTTYPE']['0']['#']);
@@ -2053,6 +2054,20 @@
                                 //Assign it to admin
                                 $eve->userid = $adminid;
                             }
+
+                            //We must recode the repeatid if the event has it
+                            if (!empty($eve->repeatid)) {
+                                $repeat_rec = backup_getid($restore->backup_unique_code,"event_repeatid",$eve->repeatid);
+                                if ($repeat_rec) {    //Exists, so use it...
+                                    $eve->repeatid = $repeat_rec->new_id;
+                                } else {              //Doesn't exists, calculate the next and save it
+                                    $oldrepeatid = $eve->repeatid;
+                                    $max_rec = get_record_sql('SELECT 1, MAX(repeatid) AS repeatid FROM '.$CFG->prefix.'event');
+                                    $eve->repeatid = empty($max_rec) ? 1 : $max_rec->repeatid + 1;
+                                    backup_putid($restore->backup_unique_code,"event_repeatid", $oldrepeatid, $eve->repeatid);
+                                }
+                            }
+ 
                             //We have to recode the groupid field
                             $group = backup_getid($restore->backup_unique_code,"group",$eve->groupid);
                             if ($group) {

@@ -1580,6 +1580,7 @@
                 fwrite ($bf,full_tag("FORMAT",4,false,$event->format));
                 fwrite ($bf,full_tag("GROUPID",4,false,$event->groupid));
                 fwrite ($bf,full_tag("USERID",4,false,$event->userid));
+                fwrite ($bf,full_tag("REPEATID",4,false,$event->repeatid));
                 fwrite ($bf,full_tag("EVENTTYPE",4,false,$event->eventtype));
                 fwrite ($bf,full_tag("TIMESTART",4,false,$event->timestart));
                 fwrite ($bf,full_tag("TIMEDURATION",4,false,$event->timeduration));
