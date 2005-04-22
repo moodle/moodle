@@ -63,7 +63,7 @@ class block_calendar_upcoming extends block_base {
         }
 
         if (empty($this->content->text)) {
-            $this->content->text = '<div style="font-size: 0.8em; text-align: center;">'.
+            $this->content->text = '<div class="post">'.
                                    get_string('noupcomingevents', 'calendar').'</div>';
         }
 

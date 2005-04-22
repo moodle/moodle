@@ -290,7 +290,7 @@
 
         $paging = glossary_get_paging_bar($count, $page, $entriesbypage, "view.php?id=$id&mode=$mode&hook=$hook&sortkey=$sortkey&sortorder=$sortorder&fullsearch=$fullsearch&",9999,10,'&nbsp;&nbsp;', get_string("allentries","glossary"), -1);
 
-        echo '<div style="font-size: smaller;">';
+        echo '<div class="paging">';
         echo $paging;
         echo '</div>';
 
@@ -383,7 +383,7 @@
 
     if ( $paging ) {
         echo '<hr />';
-        echo '<div style="font-size: smaller;">';
+        echo '<div class="paging">';
         echo $paging;
         echo '</div>';
     }
