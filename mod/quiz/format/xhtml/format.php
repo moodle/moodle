@@ -61,28 +61,36 @@ function writequestion( $question ) {
         break;
     case SHORTANSWER:
         $expout .= "<ul class=\"shortanswer\">\n";
-        $count = 0;
-        foreach($question->answers as $answer) {
-          $ans_text = $this->repchar( $answer->answer );
-          $expout .= "  <li>$ans_text</li><br />\n";
-          $expout .= "  <input name=\"quest_{$id}_$count\" type=\"text\" /></li>\n";
-          ++$count;
-        }
+        $expout .= "  <li><input name=\"quest_$id\" type=\"text\" /></li>\n";
         $expout .= "</ul>\n";
         break;
     case NUMERICAL:
-        $expout .= "<p class=\"numerical\">\n";
-        $expout .= "  <input name=\"quest_$id\" type=\"text\" />\n";
-        $expout .= "</p>\n";
+        $expout .= "<ul class=\"numerical\">\n";
+        $expout .= "  <li><input name=\"quest_$id\" type=\"text\" /></li>\n";
+        $expout .= "</ul>\n";
         break;
     case MATCH:
         $expout .= "<ul class=\"match\">\n";
-        $count = 0;
+
+        // build answer list
+        $ans_list = array();
         foreach($question->subquestions as $subquestion) {
-          $ans_text = $this->repchar( $subquestion->questiontext );
-          $expout .= "  <li>$ans_text</li><br />\n";
-          $expout .= "  <input name=\"quest_{$id}_$count\" type=\"text\" /></li>\n";
-          ++$count;
+           $ans_list[] = $this->repchar( $subquestion->answertext );
+        } 
+        shuffle( $ans_list ); // random display order
+        
+        // build drop down for answers
+        $dropdown = "<select name=\"quest_$id\">\n";
+        foreach($ans_list as $ans) {
+          $dropdown .= "<option value=\"$ans\">$ans</option>\n";
+        }
+        $dropdown .= "</select>\n";
+
+        // finally display
+        foreach($question->subquestions as $subquestion) {
+          $quest_text = $this->repchar( $subquestion->questiontext );
+          $expout .= "  <li>$quest_text</li>\n";
+          $expout .= $dropdown;
         }
         $expout .= "</ul>\n";
         break;
