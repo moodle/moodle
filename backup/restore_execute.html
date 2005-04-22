@@ -290,6 +290,14 @@
         }
     }
 
+    //Now create gradebook as needed -- AFTER modules!!!
+    if ($status) {
+        echo "<li>".get_string("creatinggradebook");
+        if (!$status = restore_create_gradebook($restore,$xml_file)) {
+            notify("Could not restore gradebook!");
+        }
+    }
+
     //Bring back the course blocks -- do it AFTER the modules!!!
     if($status) {
         //If we are deleting and bringing into a course or making a new course, same situation

@@ -189,6 +189,15 @@
         return $info;
     }
 
+    //This function read the xml file and store its data from the gradebook in a object
+    function restore_read_xml_gradebook ($restore, $xml_file) {
+
+        //We call the main read_xml function, with todo = GRADEBOOK
+        $info = restore_read_xml ($xml_file,"GRADEBOOK",$restore);
+    
+        return $info;
+    }
+
     //This function read the xml file and store its data from the users in 
     //backup_ids->info db (and user's id in $info)
     function restore_read_xml_users ($restore,$xml_file) {
@@ -927,6 +936,285 @@
         return $status;
     }
     
+    //This function creates all the gradebook data from xml, notifying 
+    //about each incidence
+    function restore_create_gradebook($restore,$xml_file) {
+
+        global $CFG,$db;
+
+        $status = true;
+        //Check it exists
+        if (!file_exists($xml_file)) {
+            $status = false;
+        }
+        //Get info from xml
+        if ($status) {
+            //info will contain the number of record to process
+            $info = restore_read_xml_gradebook($restore, $xml_file);
+
+        //If we have info, then process preferences, letters & categories
+            if ($info > 0) {
+                //Count how many we have
+                $preferencescount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_preferences');
+                $letterscount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_letter');
+                $categoriescount = count_records ('backup_ids', 'backup_code', $restore->backup_unique_code, 'table_name', 'grade_category');
+                if ($preferencescount || $letterscount || $categoriescount) {
+                    //Start ul
+                    echo '<ul>';
+                    //Number of records to get in every chunk
+                    $recordset_size = 2;
+                    //Flag to mark if we must continue
+                    $continue = true;
+
+                    //If there aren't preferences, stop
+                    if (!$preferencescount) {
+                        $continue = false;
+                        echo '<li>'.get_string('backupwithoutgradebook','grade').'</li>';
+                    }
+
+                    //If we are restoring to an existing course and it has advanced disabled, stop
+                    if ($restore->restoreto != 2) {
+                        //Fetch the 'use_advanced' preferences (id = 0)
+                        if ($pref_rec = get_record('grade_preferences','courseid',$restore->course_id,'preference',0)) {
+                            if ($pref_rec->value == 0) {
+                                $continue = false;
+                                echo '<li>'.get_string('respectingcurrentdata','grade').'</li>';
+                            }
+                        }
+                    }
+
+                    //Process preferences
+                    if ($preferencescount && $continue) {
+                        echo '<li>'.get_string('preferences','grades').'</li>';
+                        $counter = 0;
+                        while ($counter < $preferencescount) {
+                            //Fetch recordset_size records in each iteration
+                            $recs = get_records_select("backup_ids","table_name = 'grade_preferences' AND backup_code = '$restore->backup_unique_code'",
+                                                       "old_id",
+                                                       "old_id, old_id",
+                                                       $counter,
+                                                       $recordset_size);
+                            if ($recs) {
+                                foreach ($recs as $rec) {
+                                    //Get the full record from backup_ids
+                                    $data = backup_getid($restore->backup_unique_code,'grade_preferences',$rec->old_id);
+                                   if ($data) {
+                                        //Now get completed xmlized object
+                                        $info = $data->info;
+                                        //traverse_xmlize($info);                            //Debug
+                                        //print_object ($GLOBALS['traverse_array']);         //Debug
+                                        //$GLOBALS['traverse_array']="";                     //Debug
+                                        //Now build the GRADE_PREFERENCES record structure
+                                        $dbrec->courseid   = $restore->course_id;
+                                        $dbrec->preference = backup_todb($info['GRADE_PREFERENCE']['#']['PREFERENCE']['0']['#']);
+                                        $dbrec->value      = backup_todb($info['GRADE_PREFERENCE']['#']['VALUE']['0']['#']);
+   
+                                        //Structure is equal to db, insert record
+                                        $status = insert_record('grade_preferences',$dbrec);
+
+                                        //Do some output
+                                        $counter++;
+                                        if ($counter % 1 == 0) {
+                                            echo ".";
+                                            if ($counter % 20 == 0) {
+                                                echo "<br />";
+                                            }
+                                            backup_flush(300);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    //Process letters
+                    //If destination course has letters, skip restoring letters
+                    $hasletters = get_records('grade_letter', 'courseid', $restore->course_id);
+
+                    if ($preferencescount && $continue && !$hasletters) {
+                        echo '<li>'.get_string('letters','grades').'</li>';
+                        $counter = 0;
+                        while ($counter < $letterscount) {
+                            //Fetch recordset_size records in each iteration
+                            $recs = get_records_select("backup_ids","table_name = 'grade_letter' AND backup_code = '$restore->backup_unique_code'",
+                                                       "old_id",
+                                                       "old_id, old_id",
+                                                       $counter,
+                                                       $recordset_size);
+                            if ($recs) {
+                                foreach ($recs as $rec) {
+                                    //Get the full record from backup_ids
+                                    $data = backup_getid($restore->backup_unique_code,'grade_letter',$rec->old_id);
+                                   if ($data) {
+                                        //Now get completed xmlized object
+                                        $info = $data->info;
+                                        //traverse_xmlize($info);                            //Debug
+                                        //print_object ($GLOBALS['traverse_array']);         //Debug
+                                        //$GLOBALS['traverse_array']="";                     //Debug
+                                        //Now build the GRADE_LETTER record structure
+                                        $dbrec->courseid   = $restore->course_id;
+                                        $dbrec->letter     = backup_todb($info['GRADE_LETTER']['#']['LETTER']['0']['#']);
+                                        $dbrec->grade_high = backup_todb($info['GRADE_LETTER']['#']['GRADE_HIGH']['0']['#']);
+                                        $dbrec->grade_low  = backup_todb($info['GRADE_LETTER']['#']['GRADE_LOW']['0']['#']);
+
+                                        //Structure is equal to db, insert record
+                                        $status = insert_record('grade_letter',$dbrec);
+
+                                        //Do some output
+                                        $counter++;
+                                        if ($counter % 1 == 0) {
+                                            echo ".";
+                                            if ($counter % 20 == 0) {
+                                                echo "<br />";
+                                            }
+                                            backup_flush(300);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    //Process categories
+                    if ($preferencescount && $continue) {
+                        echo '<li>'.get_string('categories','grades').'</li>';
+                        $counter = 0;
+                        $countercat = 0;
+                        while ($countercat < $categoriescount) {
+                            //Fetch recordset_size records in each iteration
+                            $recs = get_records_select("backup_ids","table_name = 'grade_category' AND backup_code = '$restore->backup_unique_code'",
+                                                       "old_id",
+                                                       "old_id, old_id",
+                                                       $counter,
+                                                       $recordset_size);
+                            if ($recs) {
+                                foreach ($recs as $rec) {
+                                    //Get the full record from backup_ids
+                                    $data = backup_getid($restore->backup_unique_code,'grade_category',$rec->old_id);
+                                   if ($data) {
+                                        //Now get completed xmlized object
+                                        $info = $data->info;
+                                        //traverse_xmlize($info);                            //Debug
+                                        //print_object ($GLOBALS['traverse_array']);         //Debug
+                                        //$GLOBALS['traverse_array']="";                     //Debug
+                                        //Now build the GRADE_CATEGORY record structure
+                                        $dbrec->courseid     = $restore->course_id;
+                                        $dbrec->name         = backup_todb($info['GRADE_CATEGORY']['#']['NAME']['0']['#']);
+                                        $dbrec->drop_x_lowest= backup_todb($info['GRADE_CATEGORY']['#']['DROP_X_LOWEST']['0']['#']);
+                                        $dbrec->bonus_points = backup_todb($info['GRADE_CATEGORY']['#']['BONUS_POINTS']['0']['#']);
+                                        $dbrec->hidden       = backup_todb($info['GRADE_CATEGORY']['#']['HIDDEN']['0']['#']);
+                                        $dbrec->weight       = backup_todb($info['GRADE_CATEGORY']['#']['WEIGHT']['0']['#']);
+
+                                        //If the grade_category exists in the course (by name), don't insert anything
+                                        $catex = get_record('grade_category','courseid',$dbrec->courseid,'name',$dbrec->name);
+
+                                        if (!$catex) {
+                                            //Structure is equal to db, insert record
+                                            $categoryid = insert_record('grade_letter',$dbrec);
+                                        } else {
+                                            //Simply remap category
+                                            $categoryid = $catex->id;
+                                        }
+
+                                        //Now, restore grade_item
+                                        $items = $info['GRADE_CATEGORY']['#']['GRADE_ITEMS']['0']['#']['GRADE_ITEM'];
+
+                                        //Iterate over items
+                                        for($i = 0; $i < sizeof($items); $i++) {
+                                            $ite_info = $items[$i];
+                                            //traverse_xmlize($ite_info);                                                                 //Debug
+                                            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                                            //$GLOBALS['traverse_array']="";                                                              //Debug
+
+                                            //Now build the GRADE_ITEM record structure
+                                            $item->courseid     = $restore->course_id;
+                                            $item->category     = $categoryid;
+                                            $item->module_name  = backup_todb($ite_info['#']['MODULE_NAME']['0']['#']);
+                                            $item->cminstance   = backup_todb($ite_info['#']['CMINSTANCE']['0']['#']);
+                                            $item->scale_grade  = backup_todb($ite_info['#']['SCALE_GRADE']['0']['#']);
+                                            $item->extra_credit = backup_todb($ite_info['#']['EXTRA_CREDIT']['0']['#']);
+                                            $item->sort_order   = backup_todb($ite_info['#']['SORT_ORDER']['0']['#']);
+
+                                            //Check that the module has been included in the restore
+                                            if ($restore->mods[$item->module_name]->restore) {
+                                                //Get the id of the moduletype
+                                                if ($module = get_record('modules','name',$item->module_name)) {
+                                                    $item->modid = $module->id;
+                                                    //Get the instance id
+                                                    if ($instance = backup_getid($restore->backup_unique_code,$item->module_name,$item->cminstance)) {
+                                                        $item->cminstance = $instance->new_id;
+                                                        //Structure is equal to db, insert record
+                                                        $itemid = insert_record('grade_item',$item);
+
+                                                        //Now process grade_exceptions
+                                                        $exceptions = $ite_info['#']['GRADE_EXCEPTIONS']['0']['#']['GRADE_EXCEPTION'];
+
+                                                        //Iterate over exceptions
+                                                        for($j = 0; $j < sizeof($exceptions); $j++) {
+                                                            $exc_info = $exceptions[$j];
+                                                            //traverse_xmlize($exc_info);                                                                 //Debug
+                                                            //print_object ($GLOBALS['traverse_array']);                                                  //Debug
+                                                            //$GLOBALS['traverse_array']="";                                                              //Debug
+
+                                                            //Now build the GRADE_EXCEPTIONS record structure
+                                                            $exception->courseid     = $restore->course_id;
+                                                            $exception->grade_itemid = $itemid;
+                                                            $exception->userid       = backup_todb($exc_info['#']['USERID']['0']['#']);
+
+                                                            //We have to recode the useridto field
+                                                            $user = backup_getid($restore->backup_unique_code,"user",$exception->userid);
+                                                            if ($user) {
+                                                                $exception->userid = $user->new_id;
+                                                                //Structure is equal to db, insert record
+                                                                $exceptionid = insert_record('grade_exceptions',$exception);
+                                                                //Do some output
+                                                                $counter++;
+                                                                if ($counter % 20 == 0) {
+                                                                    echo ".";
+                                                                    if ($counter % 400 == 0) {
+                                                                        echo "<br />";
+                                                                    }
+                                                                    backup_flush(300);
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        //Re-sort all the grade_items because we can have duplicates
+                                        if ($grade_items = get_records ('grade_item','courseid',$restore->course_id,'sort_order','id,sort_order')) {
+                                            $order = 1;
+                                            foreach ($grade_items as $grade_item) {
+                                                $grade_item->sort_order = $order;
+                                                set_field ('grade_item','sort_order',$grade_item->sort_order,'id',$grade_item->id);
+                                                $order++;
+                                            }
+                                        }
+                                        //Do some output
+                                        $countercat++;
+                                        if ($countercat % 1 == 0) {
+                                            echo ".";
+                                            if ($countercat % 20 == 0) {
+                                                echo "<br />";
+                                            }
+                                            backup_flush(300);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    //End ul
+                    echo '</ul>';
+                }
+            }
+        }                
+     
+        return $status;
+    }
+
     //This function creates all the user, user_students, user_teachers
     //user_course_creators and user_admins from xml
     function restore_create_users($restore,$xml_file) {
@@ -1206,7 +1494,6 @@
                     $recordset_size = 4;
 
                     //Process unread
-                    $db->debug=true;
                     if ($unreadcount) {
                         echo '<li>'.get_string('unreadmessages','message').'</li>';
                         $counter = 0;
@@ -1388,7 +1675,6 @@
                     }
                     //End ul
                     echo '</ul>';
-                    $db->debug=true;
                 }
             }
         }
@@ -2515,6 +2801,31 @@
             //if ($this->tree[3] == "METACOURSE")                                                         //Debug
             //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";   //Debug
         }
+
+        //This is the startTag handler we use where we are reading the gradebook zone (todo="GRADEBOOK")
+        function startElementGradebook($parser, $tagName, $attrs) {
+
+            //Refresh properties
+            $this->level++;
+            $this->tree[$this->level] = $tagName;
+
+            //Output something to avoid browser timeouts...
+            backup_flush();
+
+            //Check if we are into GRADEBOOK zone
+            //if ($this->tree[3] == "GRADEBOOK")                                                         //Debug
+            //    echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;".$tagName."&gt;<br />\n";  //Debug
+
+            //If we are under a GRADE_PREFERENCE, GRADE_LETTER or GRADE_CATEGORY tag under a GRADEBOOK zone, accumule it
+            if (isset($this->tree[5]) and isset($this->tree[3])) {
+                if (($this->tree[5] == "GRADE_PREFERENCE" || $this->tree[5] == "GRADE_LETTER" || $this->tree[5] == "GRADE_CATEGORY" ) && ($this->tree[3] == "GRADEBOOK")) {
+                    if (!isset($this->temp)) {
+                        $this->temp = "";
+                    }
+                    $this->temp .= "<".$tagName.">";
+                }
+            }
+        }
         
         
         //This is the startTag handler we use where we are reading the user zone (todo="USERS")
@@ -2804,17 +3115,17 @@
                 }
             }
 
+            //Stop parsing if todo = INFO and tagName = INFO (en of the tag, of course)
+            //Speed up a lot (avoid parse all)
+            if ($tagName == "INFO") {
+                $this->finished = true;
+            }
 
             //Clear things
             $this->tree[$this->level] = "";
             $this->level--;
             $this->content = "";
 
-            //Stop parsing if todo = INFO and tagName = INFO (en of the tag, of course)
-            //Speed up a lot (avoid parse all)
-            if ($tagName == "INFO") {
-                $this->finished = true;
-            }
         }
 
         //This is the endTag handler we use where we are reading the course_header zone (todo="COURSE_HEADER")
@@ -2939,19 +3250,21 @@
                 }
 
             }
-            //Clear things
-            $this->tree[$this->level] = "";
-            $this->level--;
-            $this->content = "";
 
             //Stop parsing if todo = COURSE_HEADER and tagName = HEADER (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "HEADER") {
                 $this->finished = true;
             }
+
+            //Clear things
+            $this->tree[$this->level] = "";
+            $this->level--;
+            $this->content = "";
+
         }
 
-        //This is the endTag handler we use where we are reading the sections zone (todo="SECTIONS")
+        //This is the endTag handler we use where we are reading the sections zone (todo="BLOCKS")
         function endElementBlocks($parser, $tagName) {
             //Check if we are into BLOCKS zone
             if ($this->tree[3] == 'BLOCKS') {
@@ -2996,10 +3309,6 @@
                     }
                 }
             }
-            //Clear things
-            $this->tree[$this->level] = '';
-            $this->level--;
-            $this->content = "";
 
             //Stop parsing if todo = BLOCKS and tagName = BLOCKS (en of the tag, of course)
             //Speed up a lot (avoid parse all)
@@ -3008,6 +3317,11 @@
             if ($this->tree[3] == 'BLOCKS' && $tagName == 'BLOCKS') {
                 $this->finished = true;
             }
+
+            //Clear things
+            $this->tree[$this->level] = '';
+            $this->level--;
+            $this->content = "";
         }
 
         //This is the endTag handler we use where we are reading the sections zone (todo="SECTIONS")
@@ -3097,16 +3411,18 @@
                     }
                 }
             }
-            //Clear things
-            $this->tree[$this->level] = "";
-            $this->level--;
-            $this->content = "";
 
             //Stop parsing if todo = SECTIONS and tagName = SECTIONS (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($tagName == "SECTIONS") {
                 $this->finished = true;
             }
+
+            //Clear things
+            $this->tree[$this->level] = "";
+            $this->level--;
+            $this->content = "";
+
         }
 
         //This is the endTag handler we use where we are reading the metacourse zone (todo="METACOURSE")
@@ -3147,18 +3463,122 @@
                     }
                 }
             }
-            //Clear things
-            $this->tree[$this->level] = '';
-            $this->level--;
-            $this->content = "";
 
             //Stop parsing if todo = METACOURSE and tagName = METACOURSE (en of the tag, of course)
             //Speed up a lot (avoid parse all)
             if ($this->tree[3] == 'METACOURSE' && $tagName == 'METACOURSE') {
                 $this->finished = true;
             }
+
+            //Clear things
+            $this->tree[$this->level] = '';
+            $this->level--;
+            $this->content = "";
         }
 
+        //This is the endTag handler we use where we are reading the gradebook zone (todo="GRADEBOOK")
+        function endElementGradebook($parser, $tagName) {
+            //Check if we are into GRADEBOOK zone
+            if ($this->tree[3] == "GRADEBOOK") {
+                //if (trim($this->content))                                                             //Debug
+                //    echo "C".str_repeat("&nbsp;",($this->level+2)*2).$this->getContents()."<br />\n"; //Debug
+                //echo $this->level.str_repeat("&nbsp;",$this->level*2)."&lt;/".$tagName."&gt;<br />\n";//Debug
+                //Acumulate data to info (content + close tag)
+                //Reconvert: strip htmlchars again and trim to generate xml data
+                if (!isset($this->temp)) {
+                    $this->temp = "";
+                }
+                $this->temp .= htmlspecialchars(trim($this->content))."</".$tagName.">";
+                //We have finished preferences, letters or categories, reset accumulated
+                //data because they are close tags
+                if ($this->level == 4) {
+                    $this->temp = "";
+                }
+                //If we've finished a message, xmlize it an save to db
+                if (($this->level == 5) and ($tagName == "GRADE_PREFERENCE")) {
+                    //Prepend XML standard header to info gathered
+                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
+                    //Call to xmlize for this portion of xml data (one PREFERENCE)
+                    //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
+                    $data = xmlize($xml_data,0);
+                    //echo strftime ("%X",time())."<p>";                                              //Debug
+                    //traverse_xmlize($data);                                                         //Debug
+                    //print_object ($GLOBALS['traverse_array']);                                      //Debug
+                    //$GLOBALS['traverse_array']="";                                                  //Debug
+                    //Now, save data to db. We'll use it later
+                    //Get id and status from data
+                    $preference_id = $data["GRADE_PREFERENCE"]["#"]["ID"]["0"]["#"];
+                    $this->counter++;
+                    //Save to db
+                    $status = backup_putid($this->preferences->backup_unique_code, 'grade_preferences', $preference_id, 
+                                           null,$data);
+                    //Create returning info
+                    $this->info = $this->counter;
+                    //Reset temp
+                    unset($this->temp);
+                }
+                //If we've finished a grade_letter, xmlize it an save to db
+                if (($this->level == 5) and ($tagName == "GRADE_LETTER")) {
+                    //Prepend XML standard header to info gathered
+                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
+                    //Call to xmlize for this portion of xml data (one LETTER)
+                    //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
+                    $data = xmlize($xml_data,0);
+                    //echo strftime ("%X",time())."<p>";                                              //Debug
+                    //traverse_xmlize($data);                                                         //Debug
+                    //print_object ($GLOBALS['traverse_array']);                                      //Debug
+                    //$GLOBALS['traverse_array']="";                                                  //Debug
+                    //Now, save data to db. We'll use it later
+                    //Get id and status from data
+                    $letter_id = $data["GRADE_LETTER"]["#"]["ID"]["0"]["#"];
+                    $this->counter++;
+                    //Save to db
+                    $status = backup_putid($this->preferences->backup_unique_code, 'grade_letter' ,$letter_id, 
+                                           null,$data);
+                    //Create returning info
+                    $this->info = $this->counter;
+                    //Reset temp
+                    unset($this->temp);
+                }
+
+                //If we've finished a grade_category, xmlize it an save to db
+                if (($this->level == 5) and ($tagName == "GRADE_CATEGORY")) {
+                    //Prepend XML standard header to info gathered
+                    $xml_data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n".$this->temp;
+                    //Call to xmlize for this portion of xml data (one CATECORY)
+                    //echo "-XMLIZE: ".strftime ("%X",time()),"-";                                    //Debug
+                    $data = xmlize($xml_data,0);
+                    //echo strftime ("%X",time())."<p>";                                              //Debug
+                    //traverse_xmlize($data);                                                         //Debug
+                    //print_object ($GLOBALS['traverse_array']);                                      //Debug
+                    //$GLOBALS['traverse_array']="";                                                  //Debug
+                    //Now, save data to db. We'll use it later
+                    //Get id and status from data
+                    $category_id = $data["GRADE_CATEGORY"]["#"]["ID"]["0"]["#"];
+                    $this->counter++;
+                    //Save to db
+                    $status = backup_putid($this->preferences->backup_unique_code, 'grade_category' ,$category_id,
+                                           null,$data);
+                    //Create returning info
+                    $this->info = $this->counter;
+                    //Reset temp
+                    unset($this->temp);
+                }
+            }
+
+            //Stop parsing if todo = GRADEBOOK and tagName = GRADEBOOK (en of the tag, of course)
+            //Speed up a lot (avoid parse all)
+            if ($tagName == "GRADEBOOK" and $this->level == 3) {
+                $this->finished = true;
+                $this->counter = 0;
+            }
+
+            //Clear things
+            $this->tree[$this->level] = "";
+            $this->level--;
+            $this->content = "";
+
+        }
         
         //This is the endTag handler we use where we are reading the users zone (todo="USERS")
         function endElementUsers($parser, $tagName) {
@@ -3398,6 +3818,7 @@
             $this->tree[$this->level] = "";
             $this->level--;
             $this->content = "";
+
         }
 
         //This is the endTag handler we use where we are reading the messages zone (todo="MESSAGES")
@@ -3472,13 +3893,13 @@
             if ($tagName == "MESSAGES" and $this->level == 3) {
                 $this->finished = true;
                 $this->counter = 0;
-
             }
 
             //Clear things
             $this->tree[$this->level] = "";
             $this->level--;
             $this->content = "";
+
         }
 
         //This is the endTag handler we use where we are reading the questions zone (todo="QUESTIONS")  
@@ -3529,6 +3950,7 @@
             $this->tree[$this->level] = "";
             $this->level--;
             $this->content = "";
+
         }
 
         //This is the endTag handler we use where we are reading the scales zone (todo="SCALES")
@@ -3579,6 +4001,7 @@
             $this->tree[$this->level] = "";
             $this->level--;
             $this->content = "";
+
         }
 
         //This is the endTag handler we use where we are reading the groups zone (todo="GROUPS")
@@ -3629,6 +4052,7 @@
             $this->tree[$this->level] = "";
             $this->level--;
             $this->content = "";
+
         }
 
         //This is the endTag handler we use where we are reading the events zone (todo="EVENTS")
@@ -3679,6 +4103,7 @@
             $this->tree[$this->level] = "";
             $this->level--;
             $this->content = "";
+
         }
 
         //This is the endTag handler we use where we are reading the modules zone (todo="MODULES")
@@ -3735,6 +4160,7 @@
             $this->tree[$this->level] = "";
             $this->level--;
             $this->content = "";
+
         }
 
         //This is the endTag handler we use where we are reading the logs zone (todo="LOGS")
@@ -3791,13 +4217,13 @@
             if ($tagName == "LOGS" and $this->level == 3) {
                 $this->finished = true;
                 $this->counter = 0;
-
             }
 
             //Clear things
             $this->tree[$this->level] = "";
             $this->level--;
             $this->content = "";
+
         }
 
         //This is the endTag default handler we use when todo is undefined
@@ -3844,6 +4270,9 @@
         } else if ($todo == "METACOURSE") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementMetacourse", "endElementMetacourse");
+        } else if ($todo == "GRADEBOOK") {
+            //Define handlers to that zone
+            xml_set_element_handler($xml_parser, "startElementGradebook", "endElementGradebook");
         } else if ($todo == "USERS") {
             //Define handlers to that zone
             xml_set_element_handler($xml_parser, "startElementUsers", "endElementUsers");
