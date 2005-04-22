@@ -60,7 +60,8 @@ Now I show the specific detailed status of every item in the process:
 36. PROG: Add support for quiz log action: "editquestions". Bug 2778 pending!
 37. DONE: Convert module ids in every Wiki reference to other activities.
 38. DONE: Convert every wiki formatted text to markdown. Bye, wikies! ;-)
-39. TODO: Add backup/restore of new grade tables.
+39. DONE: Add backup/restore of new grade tables.
+40. TODO: event->repeatid?
          
 Eloy (stronk7)
 23-01-2004
