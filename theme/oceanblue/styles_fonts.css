@@ -33,8 +33,8 @@
 }
 
 body, td, th, li {
-  font-family:Arial, Verdana, Helvetica, sans-serif;
-  font-size:100%;
+  font-family:"Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+  font-size:0.95em;
 }
 
 th {
