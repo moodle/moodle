@@ -35,6 +35,7 @@
 body, td, th, li {
   font-family:Arial, Verdana, Helvetica, sans-serif;
   font-size:100%;
+  letter-spacing:0.02em;
 }
 
 th {
@@ -181,12 +182,13 @@ table.formtable tbody th {
  ***/
 
 .sideblock .header {
-  font-size:0.8em;
+  font-size:0.9em;
   font-weight: bold;
 }
 
 .sideblock .content {
   font-size:0.9em;
+  line-height:1.5em;
 }
 
 .sideblock .content h3,
@@ -239,7 +241,11 @@ table.formtable tbody th {
 }
 
 #calendar .sidecalendar .filters {
-  font-size:0.75em;
+  font-size:0.8em;
+}
+
+.sideblock .filters td {
+  font-size:1.1em;
 }
 
 #calendar .maincalendar .controls {
@@ -273,6 +279,22 @@ table.minicalendar {
 /***
  *** Course
  ***/
+#course-view .section {
+  font-size:0.95em;
+  line-height:1.4em;
+}
+
+#course-view .section .activity {
+  padding:0.2em 0;
+}
+
+#course-view .section .activity a {
+  line-height:1em;
+}
+
+#course-view .section .left {
+  font-weight:bold;
+}
 
 .activitydate, .activityhead {
   font-size:0.9em;
@@ -294,11 +316,6 @@ table.minicalendar {
 
 .coursebox .summary {
   font-size:0.9em;
-}
-
-
-#course-view .section .left {
-  font-weight:bold;
 }
 
 
