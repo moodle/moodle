@@ -87,9 +87,9 @@ class assignment_uploadsingle extends assignment_base {
                 $newsubmission->timecreated  = time();
                 $newsubmission->timemodified = time();
                 $newsubmission->numfiles     = 1;
-                if (insert_record("assignment_submissions", $newsubmission)) {
-                    add_to_log($this->course->id, "assignment", "upload", 
-                               "view.php?a=$this->assignment->id", $this->assignment->id, $this->cm->id);
+                if (insert_record('assignment_submissions', $newsubmission)) {
+                    add_to_log($this->course->id, 'assignment', 'upload', 
+                               'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
                     $this->email_teachers($newsubmission);
                     print_heading(get_string('uploadedfile'));
                 } else {
