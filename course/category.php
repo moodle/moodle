@@ -98,8 +98,6 @@
                      "<a href=\"index.php\">$strcategories</a> -> $category->name", "", "", true, $navbaritem);
     }
 
-    echo '<div class="course-content">';  // course wrapper start
-
 /// Print the category selector
 
     $displaylist = array();
@@ -135,23 +133,25 @@
 
                     $courseid = substr($code, 1);
 
-                    if (! $course  = get_record("course", "id", $courseid)) {
-                        notify("Error finding course $courseid");
+                    if (! record_exists('course', 'id', $courseid)) {
+                        notify('Error finding a course');
                     } else {
                         // figure out a sortorder that we can use in the destination category
                         $sortorder = get_field_sql('SELECT MIN(sortorder)-1 AS min
                                                     FROM ' . $CFG->prefix . 'course WHERE category=' . $destcategory->id) || 1000;
 
-                        $course->category  = $destcategory->id;
-                        $course->sortorder = $sortorder;
+                        $newcourse = NULL;
+                        $newcourse->id        = $courseid;
+                        $newcourse->category  = $destcategory->id;
+                        $newcourse->sortorder = $sortorder;
 
-                        if (!update_record('course', $course)) {
+                        if (!update_record('course', $newcourse)) {
                             notify("An error occurred - course not moved!");
                         }
                         fix_course_sortorder();
-                        $category = get_record("course_categories", "id", $category->id);
                     }
                 }
+                $category = get_record('course_categories', 'id', $category->id);   // Refresh it
             }
         }
 
