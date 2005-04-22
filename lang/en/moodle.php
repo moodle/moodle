@@ -221,6 +221,7 @@ $string['creatingblocks'] = 'Creating blocks';
 $string['creatingcategoriesandquestions'] = 'Creating categories and questions';
 $string['creatingcoursemodules'] = 'Creating course modules';
 $string['creatingevents'] = 'Creating events';
+$string['creatinggradebook'] = 'Creating gradebook';
 $string['creatinggroups'] = 'Creating groups';
 $string['creatinglogentries'] = 'Creating log entries';
 $string['creatingmessagesinfo'] = 'Creating messages info';
