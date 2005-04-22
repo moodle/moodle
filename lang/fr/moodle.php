@@ -219,6 +219,7 @@ $string['creatingblocks'] = 'Création des blocs';
 $string['creatingcategoriesandquestions'] = 'Création des catégories et des questions';
 $string['creatingcoursemodules'] = 'Création des modules de cours';
 $string['creatingevents'] = 'Création du calendrier';
+$string['creatinggradebook'] = 'Création du carnet de notes';
 $string['creatinggroups'] = 'Création des groupes';
 $string['creatinglogentries'] = 'Création des historiques';
 $string['creatingmessagesinfo'] = 'Création des informations des messages';
