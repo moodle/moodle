@@ -55,6 +55,8 @@ $string['pref_startwday'] = 'Premier jour de la semaine';
 $string['pref_timeformat'] = 'Format d\'affichage des heures';
 $string['preferences'] = 'Réglages';
 $string['preferences_available'] = 'Vos réglages personnels';
+$string['repeateditall'] = 'Appliquer les modifications à tous les $a évévements de cette série';
+$string['repeateditthis'] = 'Appliquer les modifications à cet événement seulement';
 $string['repeatnone'] = 'Sans répétition';
 $string['repeatweeksl'] = 'Répétition hebdomadaire, création de tous les ';
 $string['repeatweeksr'] = 'événements';
@@ -81,6 +83,7 @@ $string['typeuser'] = 'Événement privé';
 $string['upcomingevents'] = 'Prochains événements';
 $string['userevents'] = 'Événements privés';
 $string['yesterday'] = 'Hier';
+$string['youcandeleteallrepeats'] = 'Cet événement fait partie d\'une série d\'événements répétés. Vous pouvez supprimer uniquement cet événement ou tous les $a de la série à la fois.';
 
 $string['sun'] = 'Di';
 $string['mon'] = 'Lu';
