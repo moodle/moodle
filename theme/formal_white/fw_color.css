@@ -215,3 +215,92 @@ table.minicalendar tr td.weekend {
   border-color: #C6BDA8;
   background-color: #FFFFFF;
 }
+
+/***
+ *** Tabs
+ ***/
+
+.tabs .side {
+  border-color: #C6BDA8;
+}
+.tabrow td {
+  background:url(pix/tab/left.gif) top left no-repeat;
+}
+.tabrow td .tablink {
+  background:url(pix/tab/right.gif) top right no-repeat;
+}
+.tabrow td:hover {
+  background-image:url(pix/tab/left_hover.gif);
+}
+.tabrow td:hover .tablink {
+  background-image:url(pix/tab/right_hover.gif);
+}
+.tabrow .last span {
+  background:url(pix/tab/right_end.gif) top right no-repeat;
+}
+.tabrow .selected {
+  background:url(pix/tab/left_active.gif) top left no-repeat;
+}
+.tabrow .selected .tablink {
+  background:url(pix/tab/right_active.gif) top right no-repeat;
+}
+.tabrow td.selected:hover {
+  background-image:url(pix/tab/left_active_hover.gif);
+}
+.tabrow td.selected:hover .tablink {
+  background-image:url(pix/tab/right_active_hover.gif);
+}
+
+/***
+ *** Modules: Forum
+ ***/
+
+.forumheaderlist,
+.forumpost {
+  border-color:#C6BDA8;
+}
+
+.forumpost .content {
+  background: #FEF9F6;
+}
+
+.forumpost .left {
+  background:#FEF9F6; 
+}
+
+.forumpost .topic {
+  border-bottom-color: #C6BDA8;
+}
+
+.forumpost .starter {
+  background:#FEF9F6; 
+}
+
+.forumheaderlist .discussion .starter {
+  background:#FEF9F6; 
+}
+
+.forumheaderlist td {
+  border-color: #C6BDA8;
+}
+
+.sideblock .post .head {
+  color:#FEF9F6;
+}
+
+.forumthread .unread {
+  background: #FEF9F6;
+}
+#mod-forum-discuss .forumpost {
+  background: none;
+}
+
+#mod-forum-discuss .forumpost.unread .content {
+  border-color: #C6BDA8; 
+} 
+
+#mod-forum-discuss .forumthread .unread {
+} 
+
+#mod-forum-index .unread {
+}
