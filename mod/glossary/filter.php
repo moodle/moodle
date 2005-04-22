@@ -114,7 +114,7 @@ function glossary_filter($courseid, $text) {
             $glossaryname = $glossaries[$concept->glossaryid];
 
             if ($concept->category) {       // Link to a category
-                $title = strip_tags($glossaryname.': '.$strcategory.' '.$category->name);
+                $title = strip_tags($glossaryname.': '.$strcategory.' '.$concept->name);
                 $href_tag_begin = '<a class="glossary autolink" title="'.$title.'" '.
                                   'href="'.$CFG->wwwroot.'/mod/glossary/view.php?g='.$concept->glossaryid.
                                   '&amp;mode=cat&amp;hook='.$concept->id.'">';
