@@ -1219,7 +1219,7 @@ function forum_count_unrated_posts($discussionid, $userid) {
 }
 
 function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
-                               $user=0, $fullpost=true, $visiblegroups=-1, $limit=0) {
+                               $user=0, $fullpost=true, $visiblegroups=-1, $limit=0, $userlastmodified=false) {
 /// Get all discussions in a forum
     global $CFG;
 
@@ -1250,18 +1250,26 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
         $postdata = "p.*";
     }
 
+    if (empty($userlastmodified)) {  // We don't need to know this
+        $umfields = '';
+        $umtable = '';
+        $umselect = '';
+    } else {
+        $umfields = ',um.firstname AS umfirstname, um.lastname AS umlastname';
+        $umtable = ' ,'.$CFG->prefix.'user um ';
+        $umselect = ' AND (d.usermodified = um.id OR d.usermodified = 0)';
+    }
+
     return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
-                                   u.firstname, u.lastname, u.email, u.picture,
-                                   um.firstname AS umfirstname, um.lastname AS umlastname
+                                   u.firstname, u.lastname, u.email, u.picture $umfields
                               FROM {$CFG->prefix}forum_discussions d,
                                    {$CFG->prefix}forum_posts p,
-                                   {$CFG->prefix}user um,
-                                   {$CFG->prefix}user u
+                                   {$CFG->prefix}user u  
+                                   $umtable
                              WHERE d.forum = '$forum'
                                AND p.discussion = d.id
                                AND p.parent = 0
-                               AND p.userid = u.id $groupselect $userselect
-                               AND (d.usermodified = um.id OR d.usermodified = 0)
+                               AND p.userid = u.id $groupselect $userselect $umselect
                           ORDER BY $forumsort $limit");
 }
 
