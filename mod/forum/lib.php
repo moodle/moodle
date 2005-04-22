@@ -51,7 +51,7 @@ if (!isset($CFG->forum_trackreadposts)) {
 }
 
 if (!isset($CFG->forum_oldpostdays)) {
-    set_config('forum_oldpostdays', 30);  // Default number of days that a post is considered old
+    set_config('forum_oldpostdays', 14);  // Default number of days that a post is considered old
 }
 
 if (!isset($CFG->forum_usermarksread)) {
