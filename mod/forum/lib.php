@@ -3059,30 +3059,31 @@ function forum_tp_add_read_record($userid, $postid, $discussionid=-1, $forumid=-
         $readrecord->firstread = time();
         $readrecord->lastread = $readrecord->firstread;
         return insert_record('forum_read', $readrecord, true);
-    }
-    else {
+
+    } else {
         /// Update read record
         $readrecord = reset($readrecord);
         $readrecord->lastread = time();
 
+        $update = NULL;
+        $update->id = $readrecord->id;
+        $update->lastread = $readrecord->lastread;
+
         /// This shouldn't happen, but just in case...
         if (!$readrecord->firstread) {
-            $readrecord->firstread = $readrecord->lastread;
             /// Update the 'firstread' field.
-            set_field('forum_read', 'firstread', $readrecord->firstread, 'userid', $userid, 'postid', $postid);
+            $update->firstread = $readrecord->lastread;
         }
         if ($discussionid > -1) {
             /// Update the 'discussionid' field.
-            set_field('forum_read', 'discussionid', $discussionid, 'userid', $userid, 'postid', $postid);
+            $update->discussionid = $discussionid;
         }
         if ($forumid > -1) {
             /// Update the 'forumid' field.
-            set_field('forum_read', 'forumid', $forumid, 'userid', $userid, 'postid', $postid);
+            $update->forumid = $discussionid;
         }
 
-        $readrecord->forumid = $forumid;
-        /// Update the 'lastread' field.
-        return set_field('forum_read', 'lastread', $readrecord->lastread, 'userid', $userid, 'postid', $postid);
+        return update_record('forum_read', $update);
     }
 }
 
