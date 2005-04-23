@@ -60,8 +60,8 @@
     if ($discussions = get_records_select('forum_discussions', 'timemodified > '.$dateafter,
                                           'course', 'id,course,forum,groupid,userid')) {
         $dtotal = count($discussions);
-        print_heading('Updating forum post read/unread records for '.$dtotal.' discussions...');
-        print_heading('Please keep this window open until it completes');
+        print_heading('Updating forum post read/unread records for '.$dtotal.' discussions...'.
+                      'Please keep this window open until it completes', '', 3);
 
         $groups = array();
     
@@ -69,10 +69,11 @@
         $users = 0;
         $count = 0;
         $dcount = 0;
-        print_progress($dcount, $dtotal);
 
         foreach ($discussions as $discussion) {
             $dcount++;
+            print_progress($dcount, $dtotal);
+
             if ($discussion->course != $currcourse) {
                 /// Discussions are ordered by course, so we only need to get any course's users once.
                 $currcourse = $discussion->course;
@@ -105,7 +106,9 @@
 
     delete_records('config', 'name', 'upgrade', 'value', 'forumread');
 
-    notify('Log upgrading was successful!');
+    notify('Log upgrading was successful!', 'notifysuccess');
+
+    print_continue('index.php');
 
     print_footer();
 
@@ -138,14 +141,14 @@ function print_progress($done, $total, $updatetime=3, $sleeptime=1) {
 
     $now = time();
 
-    if (($now - $lasttime) >= $updatetime) {
+    if ($done && (($now - $lasttime) >= $updatetime)) {
         $elapsedtime = $now - $starttime;
         $projectedtime = (int)(((float)$total / (float)$done) * $elapsedtime) - $elapsedtime;
         $percentage = format_float((float)$done / (float)$total, 2);
         $width = (int)(500 * $percentage);
 
         echo '<script>';
-        echo 'document.getElementById("text").innerHTML = "'.$count.' done.  Ending in: '.format_time($projectedtime).'";'."\n";
+        echo 'document.getElementById("text").innerHTML = "'.$count.' done.  Ending: '.format_time($projectedtime).'";'."\n";
         echo 'document.getElementById("slider").style.width = \''.$width.'px\';'."\n";
         echo '</script>';
 
