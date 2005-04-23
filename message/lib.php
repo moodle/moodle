@@ -601,7 +601,11 @@ function message_contact_link($userid, $linktype='add', $return=false, $script="
 function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords='', $position='', $linktext='') {
     global $USER, $CFG;
 
-    $str->messagehistory = get_string('messagehistory', 'message');
+    static $strmessagehistory;
+
+    if (empty($strmessagehistory)) {
+        $strmessagehistory = get_string('messagehistory', 'message');
+    }
 
     if (!$userid2) {
         $userid2 = $USER->id;
@@ -613,15 +617,15 @@ function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords=
         $keywords = "&search=".urlencode($keywords);
     }
 
-    $fulllink = '';
-    if ($linktext == 'icon' or $linktext == 'both') {
-        $fulllink .= '<img src="'.$CFG->pixpath.'/t/log.gif" height="11" width="11" border="0">';
-    } 
-    if ($linktext == 'both') {
-        $fulllink .= '&nbsp;';
-    }
-    if ($linktext == '' or $linktext == 'both') {
-        $fulllink .= $str->messagehistory;
+    if ($linktext == 'icon') {  // Icon only
+        $fulllink = '<img src="'.$CFG->pixpath.'/t/log.gif" height="11" width="11" border="0">';
+    } else if ($linktext == 'both') {  // Icon and standard name
+        $fulllink = '<img src="'.$CFG->pixpath.'/t/log.gif" height="11" width="11" border="0">';
+        $fulllink .= '&nbsp;'.$strmessagehistory;
+    } else if ($linktext) {    // Custom name
+        $fulllink = $linktext;
+    } else {                   // Standard name only
+        $fulllink = $strmessagehistory;
     }
 
     $str = link_to_popup_window("/message/history.php?user1=$userid1&user2=$userid2$keywords$position", 
