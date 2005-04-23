@@ -367,13 +367,16 @@ body#doc-contents ul {
 
 .message .author {
   font-weight: bold;
+  font-size:0.8em;
 }
 
 .message .time {
   font-style: italic;
+  font-size:0.8em;
 }
 
 .message .content {
+  font-size:0.8em;
 }
 
 #message-user .commands span {
