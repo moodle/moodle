@@ -26,7 +26,7 @@
                 redirect('index.php', get_string('sitemaintenanceoff','admin'));
             } else {
                 $file = fopen($filename, 'w');
-                fwrite($file, $form->text);
+                fwrite($file, stripslashes($form->text));
                 fclose($file);
                 redirect('index.php', get_string('sitemaintenanceon', 'admin'));
             }
