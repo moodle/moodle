@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -174,7 +174,7 @@ $string['missingcorrectanswer'] = '正しい答えを設定してください。';
 $string['missingname'] = '問題名がありません。';
 $string['missingquestion'] = '$a 以降に問題ラベルがありません。';
 $string['missingquestiontext'] = '問題内容が見つかりません。';
-$string['missingword'] = 'ワードフォーマットが見つかりません。';
+$string['missingword'] = '穴埋め（問題）形式';
 $string['modulename'] = '小テスト';
 $string['modulenameplural'] = '小テスト';
 $string['moveto'] = '移動 >>';
