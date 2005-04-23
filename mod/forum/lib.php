@@ -3272,7 +3272,7 @@ function forum_tp_clean_read_records() {
            'WHERE fp.modified < '.$cutoffdate.' AND fp.id = fr.postid';
     if (($oldreadposts = get_records_sql($sql))) {
         foreach($oldreadposts as $oldreadpost) {
-            delete_records('forum_read', 'userid', $oldreadpost->userid, 'postid', $oldreadpost->postid);
+            delete_records('forum_read', 'id', $oldreadpost->id);
         }
     }
 
