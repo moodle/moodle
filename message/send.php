@@ -101,6 +101,11 @@
     echo '<br /><input type="submit" value="'.get_string('sendmessage', 'message').'" />';
     echo '</form>';
     echo '</center>';
+    
+    echo "\n<script type=\"text/javascript\">\n<!--\n";                  /// Focus on the textarea
+    echo 'document.getElementById("edit-message").focus();'."\n";
+    echo "\n-->\n</script>\n\n";
+
     echo '</body></html>';
 
 ?>

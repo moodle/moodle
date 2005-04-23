@@ -77,7 +77,7 @@
             $playbeep = true;
         }
         echo 'parent.messages.scroll(1,5000000);'."\n";
-        echo 'parent.focus();'."\n";
+        echo 'parent.send.focus();'."\n";
         $wait = MESSAGE_DEFAULT_REFRESH;
     } else {
         if ($wait < 300) {                     // Until the wait is five minutes
