@@ -5166,7 +5166,9 @@ function moodle_setlocale($locale='') {
         $CFG->locale = get_string('locale');
     } else if (empty($CFG->locale)) {
         $CFG->locale = get_string('locale');
-        set_config('locale', $CFG->locale);   // cache it to save lookups in future
+        if (!get_field('config', 'value', 'name', 'locale')) {  // Make SURE there isn't one already
+            set_config('locale', $CFG->locale);                 // Cache it to save lookups in future
+        }
     }
     setlocale (LC_TIME, $CFG->locale);
     setlocale (LC_COLLATE, $CFG->locale);
