@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004100800)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['addresource'] = 'הוספת משאב';
@@ -16,6 +16,7 @@ $string['filename'] = 'שם קובץ';
 $string['frameifpossible'] = 'הצג את המשאב במסגרת בכדי לשמר את יכולות הניווט באתר';
 $string['fulltext'] = 'טקסט מלא';
 $string['htmlfragment'] = 'מקטע HTML';
+$string['localfile'] = 'קובץ מקומי';
 $string['maindirectory'] = 'ספריית קבצים ראשית';
 $string['modulename'] = 'משאב';
 $string['modulenameplural'] = 'משאבים';
@@ -37,7 +38,6 @@ $string['pagedisplay'] = 'הצג משאב זה בתוך החלון הנוכחי';
 $string['pagewindow'] = 'אותו חלון';
 $string['parameter'] = 'משתנה';
 $string['parameters'] = 'משתנים';
-$string['parentlanguage'] = 'en';
 $string['resourcetype'] = 'סוג המשאב';
 $string['resourcetype1'] = 'אסמכתא';
 $string['resourcetype2'] = 'דף אינטרנט';
@@ -54,9 +54,6 @@ $string['resourcetypehtml'] = 'כתוב דף HTML';
 $string['resourcetypelabel'] = 'הכנסת כותרת';
 $string['resourcetypetext'] = 'כתוב דף טקסט';
 $string['searchweb'] = 'חיפוש דף באינטרנט';
-$string['thischarset'] = 'ISO-8859-8-I';
-$string['thisdirection'] = 'rtl';
-$string['thislanguage'] = '&#1506;&#1489;&#1512;&#1497;&#1514;';
 $string['variablename'] = 'שם משתנה';
 
 ?>
