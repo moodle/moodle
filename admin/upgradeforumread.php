@@ -60,7 +60,8 @@
     if ($discussions = get_records_select('forum_discussions', 'timemodified > '.$dateafter,
                                           'course', 'id,course,forum,groupid,userid')) {
         $dtotal = count($discussions);
-        notify('Updating forum read/unread records for '.$dtotal.' discussions...');
+        print_heading('Updating forum post read/unread records for '.$dtotal.' discussions...');
+        print_heading('Please keep this window open until it completes');
 
         $groups = array();
     
