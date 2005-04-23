@@ -39,6 +39,12 @@
             exit;
         }
     }
+    if (get_user_preferences('message_blocknoncontacts', 0, $user->id)) {  // User is blocking non-contacts
+        if (empty($contact)) {   // We are not a contact!
+            print_heading(get_string('userisblockingyounoncontact', 'message'));
+            exit;
+        }
+    }
 
     if ($message and confirm_sesskey()) {   /// Current user has just sent a message
 

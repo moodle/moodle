@@ -10,6 +10,7 @@ $string['allusers'] = 'All messages from all users';
 $string['backupmessageshelp'] = 'If enabled, then instant messages will be included in SITE automated backups';
 $string['beepnewmessage'] = 'Beep when a new message comes in';
 $string['blockcontact'] = 'Block contact';
+$string['blocknoncontacts'] = 'Block all new messages from people who are not on my contact list';
 $string['blockedmessages'] = '$a message(s) to/from blocked users';
 $string['context'] = 'context';
 $string['contactlistempty'] = 'Your contact list is currently empty';
@@ -59,6 +60,7 @@ $string['timesent'] = 'Time Sent';
 $string['unblockcontact'] = 'Unblock contact';
 $string['unreadmessages'] = '$a unread messages';
 $string['userisblockingyou'] = 'This user has blocked you from sending messages to them';
+$string['userisblockingyounoncontact'] = 'This user is only accepting messages from people listed as contacts, and you are not currently on the list.';
 $string['userssearchresults'] = 'Search results: $a users found';
 
 
