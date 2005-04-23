@@ -116,7 +116,7 @@
 
 
 
-function print_progress($done, $total, $updatetime=3, $sleeptime=1) {
+function print_progress($done, $total, $updatetime=5, $sleeptime=1) {
     static $count;
     static $starttime;
     static $lasttime;
