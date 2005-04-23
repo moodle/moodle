@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
+      // moodle.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['action'] = 'Actie';
@@ -221,6 +221,7 @@ $string['creatingblocks'] = 'Blokken maken';
 $string['creatingcategoriesandquestions'] = 'Categorieën en vragen maken';
 $string['creatingcoursemodules'] = 'Vakmodulen maken';
 $string['creatingevents'] = 'Gebeurtenissen maken';
+$string['creatinggradebook'] = 'Puntenboek maken';
 $string['creatinggroups'] = 'Groepen maken';
 $string['creatinglogentries'] = 'Loginvoer maken';
 $string['creatingmessagesinfo'] = 'Informatie voor berichten maken';

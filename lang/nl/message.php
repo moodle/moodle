@@ -1,8 +1,10 @@
 <?PHP // $Id$ 
-      // message.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+      // message.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['addcontact'] = 'Voeg een contactpersoon toe';
+$string['addsomecontacts'] = 'Gebruik het tabblad <a href=\"$a\">Zoek</a> om iemand een berichtje te sturen of om  µop deze pagina een snelkoppeling naar iemand te maken.';
+$string['addsomecontactsincoming'] = 'Deze berichten zijn van mensen die niet in je contactenlijst zitten. Om ze toe te voegen klik je op het \"Voeg contactpersoon toe\" -icoontje naast hun naam.';
 $string['ago'] = '$a geleden';
 $string['allmine'] = 'Alle berichten aan mij of van mij';
 $string['allstudents'] = 'Alle berichten tussen leerlingen binnen een vak';
@@ -11,6 +13,8 @@ $string['backupmessageshelp'] = 'Als dit ingeschakeld is, dan zullen berichten i
 $string['beepnewmessage'] = 'Geluidssignaal als er een nieuw bericht binnenkomt';
 $string['blockcontact'] = 'Blokkeer contactpersoon';
 $string['blockedmessages'] = '$a bericht(en) van/aan geblokkeerde gebruikers';
+$string['blocknoncontacts'] = 'Blokkeer alle nieuwe berichten van mensen die niet op mijn lijst contactenpersonen staan.';
+$string['contactlistempty'] = 'Je lijst met contactpersonen is leeg';
 $string['contacts'] = 'Contactpersonen';
 $string['context'] = 'context';
 $string['deletemessagesdays'] = 'Aantal dagen voor oude boodschappen automatisch verwijderd worden';
@@ -58,6 +62,7 @@ $string['timesent'] = 'Tijd verstuurd';
 $string['unblockcontact'] = 'deblokkeer deze contactpersoon';
 $string['unreadmessages'] = '$a ongelezen berichten';
 $string['userisblockingyou'] = 'Deze gebruiker heeft je geblokkeerd om berichten naar hem te sturen';
+$string['userisblockingyounoncontact'] = 'Deze gebruiker aanvaard alleen berichten van mensen uit zijn lijst met contactpersonen en je staat nu niet op die lijst.';
 $string['userssearchresults'] = 'Zoekresultaten: $a gebruikers gevonden';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // calendar.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['calendar'] = 'Kalender';
@@ -8,14 +8,11 @@ $string['clickhide'] = 'Verberg';
 $string['clickshow'] = 'Toon';
 $string['confirmeventdelete'] = 'Wil je deze activiteit echt wissen?';
 $string['courseevents'] = 'Vak';
-$string['day'] = 'dag';
 $string['dayview'] = 'Per dag';
 $string['daywithnoevents'] = 'Vandaag geen activiteiten';
 $string['default'] = 'Standaard';
 $string['deleteevent'] = 'Wis activiteit';
 $string['detailedmonthview'] = 'Gedetaileerd maandoverzicht';
-$string['dstadjusttime'] = 'Pas de tijd aan';
-$string['dsthumanreadable'] = 'Op de ';
 $string['durationminutes'] = 'Duur in minuten';
 $string['durationnone'] = 'Geen tijdsduur';
 $string['durationuntil'] = 'Tot';
@@ -39,29 +36,23 @@ $string['eventstarttime'] = 'Startuur';
 $string['eventtime'] = 'Uur';
 $string['eventview'] = 'Details';
 $string['expired'] = 'Verloopt';
-$string['explain_dstpreset'] = 'Je kunt uit het rolmenuutje de regio kiezenwaarvoor je de zomertijdinstellingen gebruikt. ';
-$string['explain_dstpresetforced'] = 'De site-beheerder laat gebruikers niet toe deze optie te wijzigen.';
 $string['explain_lookahead'] = 'Met deze instelling stel je het (maximum) aantal dagen in de toekomst in dat een activiteit moet starten om weergegeven te worden als een komende activiteit. Activiteiten die later dan dat aantal dagen zullen gebeuren, worden niet getoond als komende activiteit. Merk op dat <strong> er geen garantie is </strong> dat alle activiteiten in dit tijdskader getoond zullen worden; als er teveel zijn (meer dan de instelling \"maximumaantal getoonde activiteiten \") dan zullen de activiteiten die het verst in de toekomst liggen niet getoond worden.';
 $string['explain_maxevents'] = 'Deze instelling stelt het maximumaantal komende activiteiten in dat getoond kan worden. Als je hier een groot getal ingeeft, dan is het mogelijk dat het tonen van de komende activiteiten een groot deel van je scherm zal innemen.';
 $string['explain_persistflt'] = 'Als deze optie ingeschakeld is, dan zal Moodle je laatste gebeurtenisfilter opslaan en die telkens wanneer je je aanmeldt automatisch gebruiken.';
 $string['explain_startwday'] = 'Een kalenderweek zal starten op de dag die je hier kiest.';
 $string['explain_timeformat'] = 'Je kunt kiezen of de tijd in 12- of 24-uurformaat wordt weergegeven. Als je voor de standaardinstelling kiest, dan zal het formaat automatisch gekozen worden volgens de taal die je gebruikt op je site.';
-$string['first'] = 'eerst';
 $string['fri'] = 'Vr';
 $string['friday'] = 'Vrijdag';
 $string['globalevents'] = 'Site';
 $string['gotocalendar'] = 'Bekijk de kalender';
 $string['groupevents'] = 'Groep';
 $string['hidden'] = 'verborgen';
-$string['last'] = 'laatst';
 $string['manyevents'] = '$a activiteiten';
 $string['mon'] = 'Ma';
 $string['monday'] = 'Maandag';
 $string['monthlyview'] = 'Per maand';
 $string['newevent'] = 'Nieuwe activiteit';
-$string['notusingdst'] = 'Gebruikt geen zomertijd';
 $string['noupcomingevents'] = 'Er zijn geen activiteiten op komst';
-$string['nth'] = '{$a}ste';
 $string['oneevent'] = '1 activiteit';
 $string['pref_lookahead'] = 'Aantal dagen vooruit kijken naar komende activiteiten';
 $string['pref_maxevents'] = 'maximumaantal getoonde activiteiten';
@@ -70,6 +61,8 @@ $string['pref_startwday'] = 'Eerste dag van de week';
 $string['pref_timeformat'] = 'Tijdsweergave';
 $string['preferences'] = 'Voorkeuren';
 $string['preferences_available'] = 'Persoonlijke voorkeuren';
+$string['repeateditall'] = 'Pas de wijzigingen toe op alle $a gebeurtenissen in deze reeks herhalingen';
+$string['repeateditthis'] = 'Pas de wijzigingen alleen op deze gebeurtenis toe';
 $string['repeatnone'] = 'Geen herhalingen';
 $string['repeatweeksl'] = 'Herhaal deze activiteit';
 $string['repeatweeksr'] = 'weken';
@@ -83,8 +76,6 @@ $string['thu'] = 'Do';
 $string['thursday'] = 'Donderdag';
 $string['timeformat_12'] = '12-uur (am/pm)';
 $string['timeformat_24'] = '24-uur';
-$string['timeforward'] = 'vooruit';
-$string['timerewind'] = 'achteruit';
 $string['today'] = 'Vandaag';
 $string['tomorrow'] = 'Morgen';
 $string['tt_deleteevent'] = 'Wis activiteit';
@@ -108,5 +99,6 @@ $string['userevents'] = 'Persoonlijk';
 $string['wed'] = 'Wo';
 $string['wednesday'] = 'Woensdag';
 $string['yesterday'] = 'Gisteren';
+$string['youcandeleteallrepeats'] = 'Deze gebeurtenis is er één uit een herhalingsreeks. Je kunt alleen deze gebeurtenis of alle $a gebeurtenissen van deze reeks tegelijk verwijderen.';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
+      // assignment.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['allowresubmit'] = 'Sta herhaald insturen toe';
@@ -49,6 +49,7 @@ $string['notgradedyet'] = 'Nog niet beoordeeld';
 $string['notsubmittedyet'] = 'Nog niet ingestuurd';
 $string['overwritewarning'] = 'Waarschuwing: als je opnieuw een opdracht instuurt OVERSCHRIJFT deze de huidige ingestuurde opdracht';
 $string['saveallfeedback'] = 'Bewaar al mijn feedback';
+$string['submission'] = 'Ingestuurde opdracht';
 $string['submissionfeedback'] = 'Feedback op de ingestuurde opdracht';
 $string['submissions'] = 'Ingestuurde opdrachten';
 $string['submissionsaved'] = 'Je wijzigingen zijn bewaard';
