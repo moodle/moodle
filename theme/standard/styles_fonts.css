@@ -341,11 +341,7 @@ body#doc-contents ul {
  *** Message
  ***/
 
-.message_summary_link {
-  font-size:0.8em;
-}
-
-.message_link {
+.message .link {
   font-size:0.8em;
 }
 
@@ -353,19 +349,19 @@ body#doc-contents ul {
   font-size:0.8em;
 }
 
-.message_heading {
+.message .heading {
   font-size:1.0em;
   font-weight:bold;
 }
 
-.message_date,
-.message_contact,
-.message_summary {
+.message .date,
+.message .contact,
+.message .summary {
   font-size:0.9em;
 }
 
-.message_small_note, 
-.message_pix {
+.message .note, 
+.message .pix {
   font-size:0.8em;
 }
 

@@ -77,10 +77,10 @@ function message_print_contacts() {
     }
 
     if ($countonlinecontacts + $countofflinecontacts == 0) {
-        echo '<div class="message_heading">';
+        echo '<div class="heading">';
         print_string('contactlistempty', 'message');
         echo '</div>';
-        echo '<div class="message_text">';
+        echo '<div class="note">';
         print_string('addsomecontacts', 'message', $CFG->wwwroot.'/message/index.php?tab=search');
         echo '</div>';
     }
@@ -92,7 +92,7 @@ function message_print_contacts() {
         if(!empty($onlinecontacts)) {
             /// print out list of online contacts
     
-            echo '<tr><td colspan="3" class="message_heading">';
+            echo '<tr><td colspan="3" class="heading">';
             echo get_string('onlinecontacts', 'message', $countonlinecontacts);
             echo '</td></tr>';
             
@@ -109,15 +109,15 @@ function message_print_contacts() {
                     $strcontact = message_contact_link($contact->id, 'remove', true);
                     $strhistory = message_history_link($contact->id, 0, true, '', '', 'icon');
                     
-                    echo '<tr><td class="message_pix">';
+                    echo '<tr><td class="pix">';
                     print_user_picture($contact->id, SITEID, $contact->picture, 20, false, true, 'userwindow');
                     echo '</td>';
-                    echo '<td class="message_contact">';
+                    echo '<td class="contact">';
                     link_to_popup_window("/message/discussion.php?id=$contact->id", "message_$contact->id", 
                                          $fullnamelink, 500, 500, get_string('sendmessageto', 'message', $fullname),
                                          'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
                     echo '</td>';
-                    echo '<td class="message_link">'.$strcontact.'&nbsp;'.$strhistory.'</td>';
+                    echo '<td class="link">'.$strcontact.'&nbsp;'.$strhistory.'</td>';
                     echo '</tr>';
                 }
             }
@@ -127,7 +127,7 @@ function message_print_contacts() {
         if (!empty($offlinecontacts)) {
             /// print out list of offline contacts
 
-            echo '<tr><td colspan="3" class="message_heading">';
+            echo '<tr><td colspan="3" class="heading">';
             echo get_string('offlinecontacts', 'message', $countofflinecontacts);
             echo '</td></tr>';
 
@@ -143,15 +143,15 @@ function message_print_contacts() {
                 $strcontact = message_contact_link($contact->id, 'remove', true);
                 $strhistory = message_history_link($contact->id, 0, true, '', '', 'icon');
 
-                echo '<tr><td class="message_pix">';
+                echo '<tr><td class="pix">';
                 print_user_picture($contact->id, SITEID, $contact->picture, 20, false, true, 'userwindow');
                 echo '</td>';
-                echo '<td class="message_contact">';
+                echo '<td class="contact">';
                 link_to_popup_window("/message/discussion.php?id=$contact->id", "message_$contact->id", 
                         $fullnamelink, 500, 500, get_string('sendmessageto', 'message', $fullname),
                         'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
                 echo '</td>';
-                echo '<td class="message_link">'.$strcontact.'&nbsp;'.$strhistory.'</td>';
+                echo '<td class="link">'.$strcontact.'&nbsp;'.$strhistory.'</td>';
                 echo '</tr>';
             }
             echo '<tr><td colspan="3">&nbsp;</td></tr>';
@@ -160,16 +160,10 @@ function message_print_contacts() {
     
         /// print out list of incoming contacts
         if (!empty($unknownmessages)) {
-            echo '<tr><td colspan="3" class="message_heading">';
+            echo '<tr><td colspan="3" class="heading">';
             echo get_string('incomingcontacts', 'message', count($unknownmessages));
             echo '</td></tr>';
 
-            if ($countonlinecontacts + $countofflinecontacts == 0) {  // Extra help
-                echo '<tr><td colspan="3" class="message_text">';
-                print_string('addsomecontactsincoming', 'message');
-                echo '</td></tr>';
-            }
-    
             foreach ($unknownmessages as $messageuser) {
                 $fullname = fullname($messageuser);
                 $fullnamelink = $fullname;
@@ -182,24 +176,31 @@ function message_print_contacts() {
                 $strblock   = message_contact_link($messageuser->useridfrom, 'block', true);
                 $strhistory = message_history_link($messageuser->useridfrom, 0, true, '', '', 'icon');
                 
-                echo '<tr><td class="message_pix">';
+                echo '<tr><td class="pix">';
                 print_user_picture($messageuser->useridfrom, SITEID, $messageuser->picture, 20, false, true, 'userwindow');
                 echo '</td>';
-                echo '<td class="message_contact">';
+                echo '<td class="contact">';
                 link_to_popup_window("/message/discussion.php?id=$messageuser->useridfrom", "message_$messageuser->useridfrom", 
                                      $fullnamelink, 500, 500, get_string('sendmessageto', 'message', $fullname),
                                      'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
                 echo '</td>';
-                echo '<td class="message_link">&nbsp;'.$strcontact.'&nbsp;'.$strblock.'&nbsp;'.$strhistory.'</td>';
+                echo '<td class="link">&nbsp;'.$strcontact.'&nbsp;'.$strblock.'&nbsp;'.$strhistory.'</td>';
                 echo '</tr>';
             }
         }
 
         echo '</table>';
+        
+        if (!empty($unknownmessages) && ($countonlinecontacts + $countofflinecontacts == 0)) {  // Extra help
+            echo '<div class="note">(';
+            print_string('addsomecontactsincoming', 'message');
+            echo ')</div>';
+        }
+    
 
     }
 
-    echo '<br /><p align="center" class="message_small_note">'.get_string('pagerefreshes', 'message', $CFG->message_contacts_refresh).'</p>';
+    echo '<br /><p align="center" class="note">'.get_string('pagerefreshes', 'message', $CFG->message_contacts_refresh).'</p>';
 
 }
 
@@ -372,18 +373,18 @@ function message_print_search_results($frm) {
                 }
                 $strhistory = message_history_link($user->id, 0, true, '', '', 'icon');
                 
-                echo '<tr><td class="message_pix">';
+                echo '<tr><td class="pix">';
                 print_user_picture($user->id, SITEID, $user->picture, 20, false, true, 'userwindow');
                 echo '</td>';
-                echo '<td class="message_contact">';
+                echo '<td class="contact">';
                 link_to_popup_window("/message/discussion.php?id=$user->id", "message_$user->id", fullname($user), 
                                      500, 500, get_string('sendmessageto', 'message', fullname($user)),
                                      'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500');
                 echo '</td>';
                 
-                echo '<td class="message_link">'.$strcontact.'</td>';
-                echo '<td class="message_link">'.$strblock.'</td>';
-                echo '<td class="message_link">'.$strhistory.'</td>';
+                echo '<td class="link">'.$strcontact.'</td>';
+                echo '<td class="link">'.$strblock.'</td>';
+                echo '<td class="link">'.$strhistory.'</td>';
                 echo '</tr>';
             }
             echo '</table>';
@@ -431,10 +432,10 @@ function message_print_search_results($frm) {
             }
 
         /// print heading with number of results
-            echo '<p class="message_heading">'.get_string('keywordssearchresults', 'message', count($messages)).' ("'.s($keywordstring).'")</p>';
+            echo '<p class="heading">'.get_string('keywordssearchresults', 'message', count($messages)).' ("'.s($keywordstring).'")</p>';
 
         /// print table headings
-            echo '<table class="message_search_results" cellspacing="0">';
+            echo '<table class="searchresults" cellspacing="0">';
             echo '<tr>';
             echo '<td><strong>'.get_string('from').'</strong></td>';
             echo '<td><strong>'.get_string('to').'</strong></td>';
@@ -489,19 +490,19 @@ function message_print_search_results($frm) {
 
             /// print out message row
                 echo '<tr valign="top">';
-                echo '<td class="message_contact">';
+                echo '<td class="contact">';
                 message_print_user($userfrom, $fromcontact, $fromblocked);
                 echo '</td>';
-                echo '<td class="message_contact">';
+                echo '<td class="contact">';
                 message_print_user($userto, $tocontact, $toblocked);
                 echo '</td>';
-                echo '<td class="message_summary">'.message_get_fragment($message->message, $keywords);
-                echo '<br /><div class="message_summary_link">';
+                echo '<td class="summary">'.message_get_fragment($message->message, $keywords);
+                echo '<br /><div class="link">';
                 message_history_link($message->useridto, $message->useridfrom, false, 
                                      $keywordstring, 'm'.$message->id, $strcontext);
                 echo '</div>';
                 echo '</td>';
-                echo '<td class="message_date">'.userdate($message->timecreated, $dateformat).'</td>';
+                echo '<td class="date">'.userdate($message->timecreated, $dateformat).'</td>';
                 echo "</tr>\n";
             }
             
@@ -631,7 +632,7 @@ function message_history_link($userid1, $userid2=0, $returnstr=false, $keywords=
     }
 
     $str = link_to_popup_window("/message/history.php?user1=$userid1&user2=$userid2$keywords$position", 
-                    "message_history_$userid1", $fulllink, 500, 500, $str->messagehistory, 
+                    "message_history_$userid1", $fulllink, 500, 500, $strmessagehistory, 
                     'menubar=0,location=0,status,scrollbars,resizable,width=500,height=500', true);
 
     $str = '<span class="history">'.$str.'</span>';
