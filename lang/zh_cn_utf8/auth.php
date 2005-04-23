@@ -1,7 +1,9 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
 
 
+$string['alternatelogin'] = '如果你在此输入一个URL，它将被用于本站的登录。这个页面上应当有一个表单，表单的action一项应设定为<strong>“{$a}”</strong>，并且返回的字段中应当有<strong>username</strong>和<strong>password</strong>。<br />小心宾不要输入错误的URL，否则你可能会被锁在站点之外。<br />要使用缺省的登录页面请为此设置保留空白。';
+$string['alternateloginurl'] = '换用其它登录链接';
 $string['auth_cas_baseuri'] = '服务器的URI<br />例如，如果CAS服务器位于 host.domaine.fr/CAS/ 那么<br />cas_baseuri = CAS/';
 $string['auth_cas_create_user'] = '如果你希望将CAS认证用户加入到Moodle数据库中，否则只有已经存在于Moodle数据库中的用户可以登录。';
 $string['auth_cas_enabled'] = '如果你希望使用CAS认证请开启此选项。';
@@ -58,7 +60,8 @@ $string['auth_ldap_graceattr_desc'] = '可选: 覆盖宽限登录属性';
 $string['auth_ldap_gracelogins_desc'] = '激活LDAP gracelogin支持。在密码过期后，在宽限登录为0前用户仍可以登录。激活这个选项后，当密码过期时将显示gracelogin信息。';
 $string['auth_ldap_host_url'] = '以URL形式指定LDAP主机，类似于：‘ldap://ldap.myorg.com/’或‘ldaps://ldap.myorg.com/’';
 $string['auth_ldap_login_settings'] = '登录设置';
-$string['auth_ldap_memberattribute'] = '指定从属于某个组的用户属性,一般是\'member\'';
+$string['auth_ldap_memberattribute'] = '可选的：指定从属于某个组的用户属性,一般是\'member\'';
+$string['auth_ldap_objectclass'] = '可选的：指定objectClass以外的属性在ldap_user_type中搜索用户。通常你不需修改这个选项。';
 $string['auth_ldap_opt_deref'] = '检查在搜索时如何处理别名。选择下列值之一: “否”(LDAP_DEREF_NEVER)或“是”(LDAP_DEREF_ALWAYS)。';
 $string['auth_ldap_passwdexpire_settings'] = 'LDAP密码过期设置。';
 $string['auth_ldap_search_sub'] = '如果你想从次级上下文中搜索用户，设值<> 0。';
@@ -96,7 +99,14 @@ $string['auth_pop3mailbox'] = '要连接的邮箱名称。(通常是INBOX)';
 $string['auth_pop3port'] = '服务器端口（通常是110）';
 $string['auth_pop3title'] = '使用一个POP3服务器';
 $string['auth_pop3type'] = '服务器类型。如果你的POP3服务器使用安全验证，请选择pop3cert。';
-$string['auth_shibbolethdescription'] = '使用这个方法可以链接到已有的Shibboleth服务器检查或创建帐号';
+$string['auth_shib_instructions'] = '如果您的学院支持Shibboleth，可以使用<a href=\"$a\">Shibboleth登录</a>来访问它。<br />否则请使用普通的登录表格。';
+$string['auth_shib_instructions_help'] = '应当在此为你的用户提供关于Shibboleth的解释。在登录屏幕上，将会显示这些提示。其中应当包含一个指向“<b>$a</b>”的链接，这样Shibboleth用户可以轻松等如。如果此项为空，缺省的指示信息将会被是用(并非为Shibboleth定制)。';
+$string['auth_shib_only'] = '只用Shibboleth';
+$string['auth_shib_only_description'] = '如果只是用Shibboleth认证方式，请设定此选项。';
+$string['auth_shib_settings'] = '在设定你的Moodle是用Shibboleth前，请仔细阅读<a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a>文件。';
+$string['auth_shibboleth_login'] = 'Shibboleth登录';
+$string['auth_shibboleth_manual_login'] = '手工登录';
+$string['auth_shibbolethdescription'] = '是用这个方法，用户的创建和验证是使用<a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>进行的';
 $string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_updatelocal'] = '更新本地数据';
 $string['auth_updatelocal_expl'] = '<p><b>更新本地数据:</b> 如果开启，则用户每次登录或有用户同步时字段将会被更新。设定为本地更新的字段应当被锁住。</p>';
