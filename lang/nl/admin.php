@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
+      // admin.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['adminseesallevents'] = 'Beheerders zien alle gebeurtenissen';
@@ -117,11 +117,14 @@ $string['therewereerrors'] = 'Er waren fouten in je gegevens';
 $string['timezoneforced'] = 'Dit is opgelegd door de site beheerder';
 $string['timezoneisforcedto'] = 'Iedereen gebruikt ';
 $string['timezonenotforced'] = 'Gebruikers kunnen hun eigen tijdzone kiezen';
+$string['upgradeforumread'] = 'Vanaf Moodle 1.5 kun je bijhouden of forumberichten al gelezen zijn of niet.<br /> Om deze functie te kunnen gebruiken moet je <a href=\"$a\">je tabellen upgraden</a>.';
+$string['upgradeforumreadinfo'] = 'Vanaf Moodle 1.5 kun je bijhouden of forumberichten al gelezen zijn of niet.<br /> Om deze functie te kunnen gebruiken moet je je tabellen upgraden met alle niet gelezen/gelezen informatie voor de bestaande berichten. Afhankelijk van de grootte van je site kan dit lang duren (uren) en kan je databank behoorlijk belasten. Het is dus aangeraden dit te doen tijdens een rustige periode. Je site zal blijven werken tijdens deze upgrade en je gebruikers zullen er weinig hinder van ondervinden. Als je dit proces start moet je het laten aflopen (laat je browser-venster open). Geen paniek als je het proces toch zou stoppen door je venster te sluiten: je kunt terug opnieuw beginnen .<br /><br />Wil je het upgrade-proces nu starten?';
 $string['upgradelogs'] = 'Om volledige functionaliteit te bekomen moeten je oude logbestanden geüpgraded worden. <a href=\"$a\">Meer informatie</a>';
 $string['upgradelogsinfo'] = 'Sommige wijzigingen hebben invloed op de manier waarom de logs worden opgeslagen. Om al je oude logs per activiteit te kunnen bekijken, moeten je oude logs geüpdated worden. Afhankelijk van je site kan dit lang duren (zelfs enkele uren) en voor lange sites kan dat de databank zwaar belasten. Als je het proces start, dan zou je het moeten laten aflopen (door het browservenster open te laten). Maak je geen zorgen, terwijl je de logs upgradet, zal de site blijven werken voor je gebruikers.<br /><br />Wil je je logs nu upgraden?';
 $string['upgradesure'] = 'De bestanden op je Moodleserver zijn gewijzigd en je gaat zo dadelijk je server automatisch upgraden naar versie: <p><b>$a</b></p>
 <p>Als je dit doet, kun je niet meer terug.</p>
 <p>Ber jer er zeker van dat je deze server naar die versie wil upgraden?</p>';
+$string['upgradingdata'] = 'Bezig met het upgraden van de gegevens';
 $string['upgradinglogs'] = 'Bezig met upgraden van logs';
 
 ?>
