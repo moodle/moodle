@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // message.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
+      // message.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['addcontact'] = '¥³¥ó¥¿¥¯¥È¥ê¥¹¥È¤ËÄÉ²Ã';
@@ -13,6 +13,7 @@ $string['backupmessageshelp'] = ' ¡ÖYes¡×¤Ë¤·¤¿¾ì¹ç¡¢¼«Æ°¥Ð¥Ã¥¯¥¢¥Ã¥×¤Ë¥¤¥ó¥¹¥¿¥
 $string['beepnewmessage'] = '¥á¥Ã¥»¡¼¥¸¤¬ÆÏ¤¤¤¿¤é²»¤òÌÄ¤é¤¹¡£';
 $string['blockcontact'] = '¼õ¿®µñÈÝ';
 $string['blockedmessages'] = 'µñÈÝ¥æ¡¼¥¶¤Î $a ·ï¤Îto/from¥á¥Ã¥»¡¼¥¸';
+$string['blocknoncontacts'] = '¥³¥ó¥¿¥¯¥È¥ê¥¹¥È¤ËÅÐÏ¿¤µ¤ì¤Æ¤¤¤Ê¤¤¥æ¡¼¥¶¤«¤éÁ÷¿®¤µ¤ì¤ëÁ´¤Æ¤Î¥á¥Ã¥»¡¼¥¸¤òµñÈÝ¤¹¤ë¡£';
 $string['contactlistempty'] = '¤¢¤Ê¤¿¤Î¥³¥ó¥¿¥¯¥È¥ê¥¹¥È¤Ï¶õ¤Ç¤¹¡£';
 $string['contacts'] = '¥³¥ó¥¿¥¯¥È';
 $string['context'] = '¥³¥ó¥Æ¥¯¥¹¥È';
@@ -61,6 +62,7 @@ $string['timesent'] = 'Á÷¿®²ó¿ô';
 $string['unblockcontact'] = '¥³¥ó¥¿¥¯¥È¤ÎµñÈÝ²ò½ü';
 $string['unreadmessages'] = 'Ì¤ÆÉ¥á¥Ã¥»¡¼¥¸ $a';
 $string['userisblockingyou'] = '¤³¤Î¥æ¡¼¥¶¤Ï¥á¥Ã¥»¡¼¥¸¤ÎÁ÷¿®¤ò¶Ø»ß¤µ¤ì¤Æ¤¤¤Þ¤¹¡£';
+$string['userisblockingyounoncontact'] = '¤³¤Î¥æ¡¼¥¶¤Ï¥³¥ó¥¿¥¯¥È¥ê¥¹¥È¤ËÅÐÏ¿¤µ¤ì¤¿¥æ¡¼¥¶¤«¤é¤Î¤ß¥á¥Ã¥»¡¼¥¸¤ò¼õ¿®¤·¤Þ¤¹¡£¤¢¤Ê¤¿¤Ï¸½ºß¥³¥ó¥¿¥¯¥È¥ê¥¹¥È¤ËÅÐÏ¿¤µ¤ì¤Æ¤¤¤Þ¤»¤ó¡£';
 $string['userssearchresults'] = '¸¡º÷·ë²Ì: $a ·ï¤Î¥æ¡¼¥¶¤¬¸«¤Ä¤«¤ê¤Þ¤·¤¿¡£';
 
 ?>

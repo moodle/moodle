@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // message.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
+      // message.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['addcontact'] = 'コンタクトリストに追加';
@@ -13,6 +13,7 @@ $string['backupmessageshelp'] = ' 「Yes」にした場合、自動バックア�
 $string['beepnewmessage'] = 'メッセージが届いたら音を鳴らす。';
 $string['blockcontact'] = '受信拒否';
 $string['blockedmessages'] = '拒否ユーザの $a 件のto/fromメッセージ';
+$string['blocknoncontacts'] = 'コンタクトリストに登録されていないユーザから送信される全てのメッセージを拒否する。';
 $string['contactlistempty'] = 'あなたのコンタクトリストは空です。';
 $string['contacts'] = 'コンタクト';
 $string['context'] = 'コンテクスト';
@@ -61,6 +62,7 @@ $string['timesent'] = '送信回数';
 $string['unblockcontact'] = 'コンタクトの拒否解除';
 $string['unreadmessages'] = '未読メッセージ $a';
 $string['userisblockingyou'] = 'このユーザはメッセージの送信を禁止されています。';
+$string['userisblockingyounoncontact'] = 'このユーザはコンタクトリストに登録されたユーザからのみメッセージを受信します。あなたは現在コンタクトリストに登録されていません。';
 $string['userssearchresults'] = '検索結果: $a 件のユーザが見つかりました。';
 
 ?>
