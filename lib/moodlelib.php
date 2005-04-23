@@ -6068,5 +6068,24 @@ function remove_dir($dir, $content_only=false) {
     return rmdir($dir);
 }
 
+function report_session_error() {
+    global $CFG;
+    if (empty($CFG->lang)) {
+        $CFG->lang = "en";
+    }
+    moodle_setlocale();
+    //clear session cookies
+    setcookie('MoodleSession'.$CFG->sessioncookie, '', time() - 3600, '/');
+    setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, '/');
+    //increment database error counters
+    if (isset($CFG->session_error_counter)) {
+        set_config('session_error_counter', 1 + $CFG->session_error_counter);
+    } else {
+        set_config('session_error_counter', 1);
+    }
+    redirect($CFG->wwwroot, get_string('sessionerroruser', 'error'), 5);
+}
+
+
 // vim:autoindent:expandtab:shiftwidth=4:tabstop=4:tw=140:
 ?>

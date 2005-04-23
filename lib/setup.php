@@ -342,26 +342,6 @@ global $THEME;
     theme_setup();  // Sets up theme global variables
 
 /// now do a session test to prevent random user switching
-    function report_session_error() {
-        global $CFG;
-        if (empty($CFG->lang)) {
-            $CFG->lang = "en";
-        }
-        moodle_setlocale();
-        //clear session cookies
-        setcookie('MoodleSession'.$CFG->sessioncookie, '', time() - 3600, '/');
-        setcookie('MoodleSessionTest'.$CFG->sessioncookie, '', time() - 3600, '/');
-        //increment database error counters
-        if (!isset($CFG->session_error_counter)) {
-            set_config('session_error_counter', 1);
-        } else {
-            set_config('session_error_counter', 1 + $CFG->session_error_counter);
-        }
-        //TODO: move string to lang/en/error.php
-        $strsessionerroruser = 'Serious session error occured, please login again.';
-        redirect($CFG->wwwroot, $strsessionerroruser, 5);
-    }
-
     if ($SESSION != NULL) {
         if (empty($_COOKIE['MoodleSessionTest'.$CFG->sessioncookie])) {
             report_session_error();
