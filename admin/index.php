@@ -318,8 +318,8 @@
     $table->tablealign = "right";
     $table->align = array ("right", "left");
     $table->wrap = array ("nowrap", "nowrap");
-    $table->cellpadding = 4;
-    $table->cellspacing = 3;
+    $table->cellpadding = 5;
+    $table->cellspacing = 0;
     $table->width = "40%";
 
     $configdata  = "<font size=\"+1\">&nbsp;</font><a href=\"config.php\">".get_string("configvariables", 'admin')."</a> - <font size=\"1\">".
@@ -400,7 +400,7 @@
     //////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    echo '<table width="100%"><tr>';
+    echo '<table width="100%" cellspacing="0"><tr>';
     echo '<td align="center" width="33%">';
     print_single_button($CFG->wwwroot.'/doc/', NULL, get_string('documentation'));
     echo '</td>';

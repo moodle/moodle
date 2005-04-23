@@ -116,73 +116,22 @@ function forum_upgrade($oldversion) {
       modify_database('','CREATE INDEX prefix_forum_user_discussion_idx ON prefix_forum_read (userid, discussionid);');
       modify_database('','CREATE INDEX prefix_forum_user_post_idx ON prefix_forum_read (userid, postid);');
 
-      modify_database('','TRUNCATE TABLE prefix_forum_read;');   // Just in case this is being re-run
-
-      /// Enter initial read records for all posts older than 1 day.
-
-      require $CFG->dirroot.'/mod/forum/lib.php';
-      /// Timestamp for old posts (and therefore considered read).
-      $dateafter = time() - ($CFG->forum_oldpostdays*24*60*60);
-      /// Timestamp for one day ago.
-      $onedayago = time() - (24*60*60);
-
-      /// Get all discussions that have had posts since the old post date.
-      if ($discussions = get_records_select('forum_discussions', 'timemodified > '.$dateafter,
-                                            'course', 'id,course,forum,groupid,userid')) {
-          $roughposts = count_records_select('forum_posts', 'modified < '.$onedayago.' AND modified > '.$dateafter);
-          notify('Updating forum read/unread records for approx '.$roughposts.' posts...');
-
-          $db->debug = false;   // Too much to look at!
-          $currcourse = 0;
-          $users = 0;
-          $count = 0;
-          foreach ($discussions as $discussion) {
-              if ($discussion->course != $currcourse) {
-                  /// Discussions are ordered by course, so we only need to get any course's users once.
-                  $currcourse = $discussion->course;
-                  $users = get_course_users($currcourse, '', '', 'id,id');
-              }
-              /// If this course has users, and posts more than a day old, mark them for each user.
-              if ($users &&
-                      ($posts = get_records_select('forum_posts', 'discussion = '.$discussion->id.
-                                                   ' AND modified < '.$onedayago.' AND modified > '.$dateafter, 
-                                                   '', 'id,discussion,modified'))) {
-                  foreach ($users as $user) {
-                      /// If its a group discussion, make sure the user is in the group.
-                      if (!$discussion->groupid || 
-                           $discussion->userid == $user->id || 
-                           ismember($discussion->groupid, $user->id)) {
-                          foreach ($posts as $post) {
-                              $count++;
-                              if ($count % 100 == 0) {
-                                  echo $count.'<br />';
-                              } else {
-                                  echo '.';
-                              }
-                              forum_tp_mark_post_read($user->id, $post, $discussion->forum);
-                          }
-                      }
-                  }
-              }
-          }
-          $db->debug = true;
-      }
+      set_config('upgrade', 'forumread');   // The upgrade of this table will be done later by admin/upgradeforumread.php
   }
 
   if ($oldversion < 2005032900) {
       modify_database('','CREATE INDEX prefix_forum_posts_created_idx ON prefix_forum_posts (created);');
       modify_database('','CREATE INDEX prefix_forum_posts_mailed_idx ON prefix_forum_posts (mailed);');
-
   }
 
-    if ($oldversion < 2005041100) { // replace wiki-like with markdown
-        include_once( "$CFG->dirroot/lib/wiki_to_markdown.php" );
-        $wtm = new WikiToMarkdown();
-        $sql = "select course from {$CFG->prefix}forum_discussions, {$CFG->prefix}forum_posts ";
-        $sql .=  "where {$CFG->prefix}forum_posts.discussion = {$CFG->prefix}forum_discussions.id ";
-        $sql .=  "and {$CFG->prefix}forum_posts.id = ";
-        $wtm->update( 'forum_posts','message','format',$sql );
-    }
+  if ($oldversion < 2005041100) { // replace wiki-like with markdown
+      include_once( "$CFG->dirroot/lib/wiki_to_markdown.php" );
+      $wtm = new WikiToMarkdown();
+      $sql = "select course from {$CFG->prefix}forum_discussions, {$CFG->prefix}forum_posts ";
+      $sql .=  "where {$CFG->prefix}forum_posts.discussion = {$CFG->prefix}forum_discussions.id ";
+      $sql .=  "and {$CFG->prefix}forum_posts.id = ";
+      $wtm->update( 'forum_posts','message','format',$sql );
+  }
 
   return true;
 

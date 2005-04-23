@@ -3135,6 +3135,10 @@ function forum_tp_mark_post_read($userid, &$post, $forumid) {
     }
 }
 
+function forum_tp_mark_forum_read($userid, $forumid) {
+/// We need a proper LEFT JOIN in here to find posts without read records
+}
+
 function forum_tp_is_post_read($userid, &$post) {
     return (forum_tp_is_post_old($post) ||
             (get_record('forum_read', 'userid', $userid, 'postid', $post->id) !== false));
