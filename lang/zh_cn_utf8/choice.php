@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // choice.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
+$string['addmorechoices'] = '更多选项';
 $string['allowupdate'] = '允许更新投票';
 $string['answered'] = '已答';
 $string['choice'] = '投票{$a}';
@@ -9,7 +10,13 @@ $string['choiceclose'] = '直到';
 $string['choicename'] = '投票名称';
 $string['choiceopen'] = '开启';
 $string['choicetext'] = '投票本文';
+$string['displayhorizontal'] = '水平显示';
+$string['displaymode'] = '显示方式';
+$string['displayvertical'] = '垂直显示';
+$string['full'] = '(已满)';
 $string['havetologin'] = '只有登录后才能提交您的选择';
+$string['limit'] = '限制';
+$string['limitanswers'] = '限制允许的最多次数';
 $string['modulename'] = '投票';
 $string['modulenameplural'] = '投票';
 $string['mustchooseone'] = '保存前必须先选择一个答案。保存失败。';
@@ -27,7 +34,9 @@ $string['responses'] = '回答';
 $string['responsesto'] = '回答{$a}';
 $string['savemychoice'] = '保存我的选择';
 $string['showunanswered'] = '显示未被回答的问题的列';
+$string['taken'] = '已选';
 $string['timerestrict'] = '必须在此时间之间回答';
 $string['viewallresponses'] = '查看{$a}回复';
+$string['yourselection'] = '您的选择';
 
 ?>
