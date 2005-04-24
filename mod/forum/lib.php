@@ -1727,7 +1727,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 }
 
 
-function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring="") {
+function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring="", $forumtracked=true) {
 /// This function prints the overview of a discussion in the forum listing.
 /// It needs some discussion information and some post information, these
 /// happen to be combined for efficiency in the $post parameter by the function
@@ -1784,13 +1784,17 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
 
         if ($CFG->forum_trackreadposts) {
             echo '<td class="replies">';
-            echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#unread">';
-            if ($post->unread > 0) {
-                echo '<span class="unread">'.$post->unread.'</span>';
+            if ($forumtracked) {
+                echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#unread">';
+                if ($post->unread > 0) {
+                    echo '<span class="unread">'.$post->unread.'</span>';
+                } else {
+                    echo $post->unread;
+                }
+                echo '</a>';
             } else {
-                echo $post->unread;
+                echo 'n/a';
             }
-            echo '</a>';
             echo "</td>\n";
         }
 
@@ -2577,6 +2581,13 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
     $olddiscussionlink = false;
     $strdatestring = get_string('strftimerecentfull');
 
+    /// Check if the forum is tracked.
+    if ($CFG->forum_trackreadposts) {
+        $forumtracked = forum_tp_is_tracked($forum->id, $USER->id);
+    } else {
+        $forumtracked = false;
+    }
+
     if ($displayformat == 'header') {
         echo '<table cellspacing="0" class="forumheaderlist">';
         echo '<thead>';
@@ -2624,7 +2635,9 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
         if ($CFG->forum_trackreadposts) {
         /// SPECIAL CASE: The front page can display a news item post to non-logged in users.
         /// All posts are read in this case.
-            if (empty($USER)) {
+            if (!$forumtracked) {
+                $discussion->unread = 'n/a';
+            } else if (empty($USER)) {
                 $discussion->unread = 0;
             } else {
                 $discussion->unread = forum_tp_count_discussion_unread_posts($USER->id, $discussion->discussion);
@@ -2650,7 +2663,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
                 } else {
                     $group = -1;
                 }
-                forum_print_discussion_header($discussion, $forum, $group, $strdatestring);
+                forum_print_discussion_header($discussion, $forum, $group, $strdatestring, $forumtracked);
             break;
             default:
                 if ($canreply or $discussion->replies) {
