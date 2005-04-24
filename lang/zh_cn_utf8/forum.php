@@ -1,9 +1,10 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+      // forum.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['addanewdiscussion'] = '添加一个新的讨论话题';
 $string['addanewtopic'] = '添加一个新主题';
+$string['allforums'] = '全部讨论区';
 $string['allowchoice'] = '允许每个人选择';
 $string['allowdiscussions'] = '允许{$a}在此讨论区发贴吗?';
 $string['allowratings'] = '允许对贴子评分吗?';
@@ -29,7 +30,9 @@ $string['couldnotupdate'] = '由于一个未知的错误，您的贴子无法更
 $string['delete'] = '删除';
 $string['deleteddiscussion'] = '讨论话题已被删除';
 $string['deletedpost'] = '贴子已删除';
+$string['deletedposts'] = '那些帖子已删除';
 $string['deletesure'] = '您确定要删除该贴吗?';
+$string['deletesureplural'] = '您确定要删除这个帖子及其回复么?({$a提交})';
 $string['digestmailheader'] = '这是{$a->sitename}论坛的每日新帖摘要。要修改您的关于论坛点自由软件方面的偏好，请访问{$a->userprefs}。';
 $string['digestmailprefs'] = '您的用户信息';
 $string['digestmailsubject'] = '$a: 论坛摘要';
@@ -54,6 +57,7 @@ $string['forcesubscribeq'] = '强制每个人都订阅吗?';
 $string['forum'] = '讨论区';
 $string['forumintro'] = '讨论区简介';
 $string['forumname'] = '讨论区名称';
+$string['forumposts'] = '讨论区帖子';
 $string['forums'] = '讨论区';
 $string['forumtype'] = '讨论区类型';
 $string['generalforum'] = '一般用途的标准讨论区';
@@ -84,6 +88,7 @@ $string['nameteacher'] = '教师讨论区';
 $string['newforumposts'] = '新贴子';
 $string['nodiscussions'] = '该讨论区尚无讨论话题';
 $string['noguestpost'] = '抱歉，访客不允许发贴';
+$string['noguestsubscribe'] = '抱歉，系统不允许访客订阅并接受讨论区的帖子(用电子邮件)';
 $string['nomorepostscontaining'] = '未找到关键词是‘{$a}’的帖子';
 $string['nonews'] = '尚无消息发布';
 $string['noposts'] = '没有贴子';
@@ -94,6 +99,7 @@ $string['nownotsubscribed'] = '{$a->name}将<b>不</b>会收到‘$a->forum’�
 $string['nowsubscribed'] = '{$a->name}将收到‘$a->forum’复件的电子邮件。';
 $string['numposts'] = '{$a}个贴子';
 $string['olderdiscussions'] = '旧的讨论话题';
+$string['oldertopics'] = '旧些的话题';
 $string['openmode0'] = '不能发起新话题，也不能回贴';
 $string['openmode1'] = '不能发起新话题，但允许回复';
 $string['openmode2'] = '发起新话题和回贴均允许';
@@ -137,9 +143,21 @@ $string['replyforum'] = '回复到论坛';
 $string['rsssubscriberssdiscussions'] = '显示话题‘{$a}’的RSS种子';
 $string['rsssubscriberssposts'] = '显示帖子‘{$a}’的RSS种子';
 $string['search'] = '搜索';
+$string['searchdatefrom'] = '帖子必须比此后发布';
+$string['searchdateto'] = '帖子必须小于';
+$string['searchforumintro'] = '请在下面的一个或多个项目中输入词条';
 $string['searchforums'] = '搜索讨论区';
+$string['searchfullwords'] = '这些词应当作为完整的词出现';
+$string['searchnotwords'] = '这些词应当不包含在其中';
 $string['searcholderposts'] = '搜索旧帖子...';
+$string['searchphrase'] = '这个词组必须出现在帖子中';
 $string['searchresults'] = '搜索结果';
+$string['searchsubject'] = '这些文字可以在标题中是用';
+$string['searchuser'] = '名称需和作者匹配';
+$string['searchuserid'] = '作者的Moodle ID';
+$string['searchwhichforums'] = '选择要搜索哪个讨论区';
+$string['searchwords'] = '这些文字可以在帖子的任何位置出现';
+$string['seeallposts'] = '查看此用户发表的全部帖子';
 $string['sendinratings'] = '呈送我的最新评分';
 $string['showsubscribers'] = '显示/修改订阅者';
 $string['singleforum'] = '单个简单话题';
