@@ -1,9 +1,10 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
+      // forum.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['addanewdiscussion'] = 'Voeg een nieuw onderwerp voor discussie toe';
 $string['addanewtopic'] = 'Voeg een nieuw onderwerp toe';
+$string['advancedsearch'] = 'Uitgebreid zoeken';
 $string['allforums'] = 'Alle forums';
 $string['allowchoice'] = 'Sta iedereen toe om te kiezen';
 $string['allowdiscussions'] = 'Mag een $a berichten posten?';
@@ -89,14 +90,18 @@ $string['newforumposts'] = 'Nieuwe forumberichten';
 $string['nodiscussions'] = 'Er zijn nog geen discussies in dit forum';
 $string['noguestpost'] = 'Sorry, gasten mogen geen berichten posten';
 $string['noguestsubscribe'] = 'Sorry, gasten mogen zich niet inschrijven om forumberichten via mail te kunnen ontvangen.';
+$string['noguesttracking'] = 'Sorry, gasten kunnen de instellingen voor het opvolgen van forumberichten niet wijzigen.';
 $string['nomorepostscontaining'] = 'Er zijn geen berichten met \'$a\' meer gevonden';
 $string['nonews'] = 'Er zijn nog geen nieuwsberichten';
 $string['noposts'] = 'Geen berichten';
 $string['nopostscontaining'] = 'Er zijn geen berichten met \'$a\' gevonden';
 $string['nosubscribers'] = 'Er is nog niemand lid van dit forum';
 $string['notingroup'] = 'Sorry, je moet bij een groep horen om dit forum te kunnen zien.';
+$string['notrackforum'] = 'Schakel opvolgen van ongelezen berichten uit';
 $string['nownotsubscribed'] = '$a->name zal via e-mail GEEN bijdragen aan \'$a->forum\' ontvangen.';
+$string['nownottracking'] = '$a->name volgt niet langer het forum \'$a->forum\'.';
 $string['nowsubscribed'] = '$a->naam zal bijdragen aan \'$a->forum\' ontvangen via e-mail.';
+$string['nowtracking'] = '$a->name volgt nu het forum \'$a->forum\'.';
 $string['numposts'] = '$a berichten';
 $string['olderdiscussions'] = 'Oudere discussies';
 $string['oldertopics'] = 'Oudere onderwerpen';
@@ -173,6 +178,8 @@ $string['subscribestart'] = 'Stuur me een kopie per e-mail wanneer iemand post o
 $string['subscribestop'] = 'Ik wil geen kopie van inzendingen op dit forum per e-mail ontvangen';
 $string['subscription'] = 'Lid worden';
 $string['subscriptions'] = 'Inschrijvingen';
+$string['trackforum'] = 'Volg ongelezen berichten op';
+$string['tracking'] = 'Opvolgen';
 $string['unread'] = 'Niet gelezen';
 $string['unreadposts'] = 'Niet gelezen berichten';
 $string['unreadpostsnumber'] = '$a berichten niet gelezen';
