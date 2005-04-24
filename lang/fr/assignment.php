@@ -47,6 +47,7 @@ $string['notgradedyet'] = 'Pas encore de note';
 $string['notsubmittedyet'] = 'Pas encore rendu';
 $string['overwritewarning'] = 'Attention ! un nouvel envoi remplacera votre devoir déjà remis';
 $string['saveallfeedback'] = 'Enregistrer tous mes feedbacks';
+$string['submission'] = 'Devoir rendu';
 $string['submissionfeedback'] = 'Feedback du devoir';
 $string['submissions'] = 'Devoirs rendus';
 $string['submissionsaved'] = 'Vos modifications ont été enregistrées';
