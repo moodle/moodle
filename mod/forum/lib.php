@@ -1255,7 +1255,7 @@ function forum_get_discussions($forum="0", $forumsort="d.timemodified DESC",
         $umtable = '';
     } else {
         $umfields = ', um.firstname AS umfirstname, um.lastname AS umlastname';
-        $umtable = ' LEFT JOIN user um on (d.usermodified = um.id)';
+        $umtable = ' LEFT JOIN '.$CFG->prefix.'user um on (d.usermodified = um.id)';
     }
 
     return get_records_sql("SELECT $postdata, d.name, d.timemodified, d.usermodified, d.groupid,
