@@ -26,7 +26,7 @@
         if (count($err) == 0) {
 
             set_config("frontpage", $form->frontpage);
-            if ($form->frontpage = FRONTPAGETOPICONLY) {
+            if ($form->frontpage == FRONTPAGETOPICONLY) {
                 $form->numsections = 1;    // Force the topic display for this format
             }
 
