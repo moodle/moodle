@@ -1892,7 +1892,7 @@ function current_theme() {
  * @param int $lifetime ?
  * @param string $thename ?
  */
-function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $forceconfig='') {
+function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $forceconfig='', $lang='') {
 
     global $CFG, $THEME;
 
@@ -1979,7 +1979,6 @@ function style_sheet_setup($lastmodified=0, $lifetime=300, $themename='', $force
         }
 
         if (!empty($THEME->langsheets)) {     // Search for styles.php within the current language
-            $lang = current_language();
             if (file_exists($CFG->dirroot.'/lang/'.$lang.'/styles.php')) {
                 $files[] = array($CFG->dirroot, '/lang/'.$lang.'/styles.php');
             }
@@ -2019,6 +2018,10 @@ function theme_setup($theme = '', $params=NULL) {
         $theme = current_theme();
     }
 
+/// Load up the theme config
+    $THEME = NULL;   // Just to be sure
+    include($CFG->themedir. $theme .'/config.php');  // Main config for current theme
+
 /// Put together the parameters
     if (!$params) {
         $params = array();
@@ -2026,15 +2029,18 @@ function theme_setup($theme = '', $params=NULL) {
     if ($theme != $CFG->theme) {
         $params[] = 'forceconfig='.$theme;
     }
+
+/// Force language too if required
+    if (!empty($THEME->langsheets)) {
+        $params[] = 'lang='.current_language();
+    }
+
+/// Convert params to string
     if ($params) {
-        $paramstring = '?'.implode('&amp;', $params);
+        $paramstring = '?'.implode('&', $params);
     } else {
         $paramstring = '';
     }
-
-/// Load up the theme config
-    $THEME = NULL;   // Just to be sure
-    include($CFG->themedir. $theme .'/config.php');  // Main config for current theme
 
 /// Set up image paths
     if (empty($CFG->custompix)) {    // Could be set in the above file
