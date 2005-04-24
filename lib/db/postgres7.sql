@@ -390,6 +390,7 @@ CREATE TABLE prefix_user (
    maildisplay integer NOT NULL default '2',
    htmleditor integer NOT NULL default '1',
    autosubscribe integer NOT NULL default '1',
+   trackforums integer NOT NULL default '1',
    timemodified integer NOT NULL default '0'
 );
 
