@@ -1528,7 +1528,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         $strmarkunread = get_string('markunread', 'forum');
     }
 
-    if ($CFG->forum_trackreadposts) {
+    if ($CFG->forum_trackreadposts && forum_tp_is_tracked($post->forum, $USER->id)) {
         if ($post_read == -99) {    // If we don't know yet...
         /// The front page can display a news item post to non-logged in users. This should
         /// always appear as 'read'.
@@ -2733,14 +2733,15 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
 
     $post->subject = format_string($post->subject);
 
-    if ($CFG->forum_trackreadposts) {
+    $forumtracked = forum_tp_is_tracked($forum->id, $USER->id);
+    if ($CFG->forum_trackreadposts && $forumtracked) {
         $user_read_array = forum_tp_get_discussion_read_records($USER->id, $post->discussion);
     } else {
         $user_read_array = array();
     }
 
     if (forum_print_post($post, $course->id, $ownpost, $reply, $link=false, $ratings,
-                         '', '', (isset($user_read_array[$post->id]) || forum_tp_is_post_old($post)))) {
+                         '', '', (!$forumtracked || isset($user_read_array[$post->id]) || forum_tp_is_post_old($post)))) {
         $ratingsmenuused = true;
     }
 
