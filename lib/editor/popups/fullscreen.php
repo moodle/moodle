@@ -3,6 +3,7 @@
 ?>
 <html>
 <head><title><?php print_string("fullscreen","editor");?></title>
+<meta http-equiv="content-type" content="text/html; charset=<?php print_string("thischarset");?>" />
 <style type="text/css">
 @import url(../htmlarea.css);
 html, body {    margin: 0px; border: 0px; background-color: buttonface; } </style>
