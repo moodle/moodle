@@ -1,9 +1,10 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
+      // forum.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
 $string['addanewtopic'] = 'トピックの追加';
+$string['advancedsearch'] = '検索オプション';
 $string['allforums'] = '全てのフォーラム';
 $string['allowchoice'] = '選択可能';
 $string['allowdiscussions'] = '$a  はこのフォーラムに投稿可能ですか?';
@@ -89,14 +90,18 @@ $string['newforumposts'] = '新しい投稿';
 $string['nodiscussions'] = 'トピックはありません。';
 $string['noguestpost'] = '申し訳ございません、ゲストは投稿できません。';
 $string['noguestsubscribe'] = '申し訳ございません、ゲストはフォーラムの投稿内容をメールで受信できません。';
+$string['noguesttracking'] = '申し訳ございません、ゲストはトラッキングオプションを設定できません。';
 $string['nomorepostscontaining'] = 'これ以上「 $a 」 を含んだ投稿はありません。';
 $string['nonews'] = '新しいニュースはありません。';
 $string['noposts'] = '投稿がありません。';
 $string['nopostscontaining'] = '「 $a 」 が含まれる投稿は見つかりませんでした。';
 $string['nosubscribers'] = 'このフォーラムには登録者はいません。';
 $string['notingroup'] = '申し訳ございません。グループ以外の方はこのフォーラムを閲覧できません。';
+$string['notrackforum'] = '未読メッセージを追跡しない';
 $string['nownotsubscribed'] = '$a->name 宛に「 $a->forum 」の投稿記事はメール送信されません。';
+$string['nownottracking'] = '$a->name は、もう 「 $a->forum 」を追跡していません。';
 $string['nowsubscribed'] = '$a->name 宛に「 $a->forum 」の投稿記事がメール送信されます。';
+$string['nowtracking'] = '$a->name は、現在「 $a->forum 」を追跡しています。';
 $string['numposts'] = '$a 投稿';
 $string['olderdiscussions'] = '過去のディスカッション';
 $string['oldertopics'] = '過去のトピック';
@@ -171,6 +176,8 @@ $string['subscribestart'] = 'フォーラムの投稿記事をメール送信す
 $string['subscribestop'] = 'フォーラムの投稿記事をメール送信しない';
 $string['subscription'] = 'メール通知登録';
 $string['subscriptions'] = 'メール通知登録';
+$string['trackforum'] = '未読メッセージを追跡する';
+$string['tracking'] = '追跡';
 $string['unread'] = '未読';
 $string['unreadposts'] = '未読の投稿';
 $string['unreadpostsnumber'] = '未読件数 $a';
