@@ -602,4 +602,17 @@ function chat_format_message($message, $courseid, $currentuser) {
 
 }
 
+if (!function_exists('ob_get_clean')) {
+/// Compatibility function for PHP < 4.3.0
+    function ob_get_clean() {
+        $cont = ob_get_contents();
+        if ($cont !== false) {
+            ob_end_clean();
+            return $cont;
+        } else {
+            return $cont;
+        }
+    }
+}
+
 ?>
