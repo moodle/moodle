@@ -7,6 +7,7 @@
     $search = trim(optional_param('search', '', PARAM_NOTAGS));  // search string
     $page = optional_param('page', 0, PARAM_INT);   // which page to show
     $perpage = optional_param('perpage', 20, PARAM_INT);   // which page to show
+    $showform = optional_param('showform', 0, PARAM_INT);   // Just show the form
 
     $user    = trim(optional_param('user', '', PARAM_NOTAGS));    // Names to search for
     $userid  = trim(optional_param('userid', 0, PARAM_INT));      // UserID to search for
@@ -96,7 +97,7 @@
     $strsearchresults = get_string("searchresults", "forum");
     $strpage = get_string("page");
 
-    if (!$search) {
+    if (!$search || $showform) {
         print_header_simple("$strsearch", "",
                  "<a href=\"index.php?id=$course->id\">$strforums</a> -> $strsearch", 'search.words',
                   "", "", "&nbsp;", navmenu($course));
@@ -141,6 +142,22 @@
             "<a href=\"index.php?id=$course->id\">$strforums</a> ->
             <a href=\"search.php?id=$course->id\">$strsearch</a> -> ".s($search), '',
             "", "",  $searchform, navmenu($course));
+
+    echo '<div class="reportlink">';
+    echo '<a href="search.php?id='.$course->id.
+                             '&amp;user='.urlencode($user).
+                             '&amp;userid='.$userid.
+                             '&amp;forumid='.$forumid.
+                             '&amp;subject='.urlencode($subject).
+                             '&amp;phrase='.urlencode($phrase).
+                             '&amp;words='.urlencode($words).
+                             '&amp;fullwords='.urlencode($fullwords).
+                             '&amp;notwords='.urlencode($notwords).
+                             '&amp;dateto='.$dateto.
+                             '&amp;datefrom='.$datefrom.
+                             '&amp;showform=1'.
+                             '">'.get_string('advancedsearch','forum').'...</a>';
+    echo '</div>';
 
     print_heading("$strsearchresults: $totalcount");
 

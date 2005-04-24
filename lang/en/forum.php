@@ -4,6 +4,7 @@
 
 $string['addanewdiscussion'] = 'Add a new discussion topic';
 $string['addanewtopic'] = 'Add a new topic';
+$string['advancedsearch'] = 'Advanced search';
 $string['allforums'] = 'All forums';
 $string['allowchoice'] = 'Allow everyone to choose';
 $string['allowdiscussions'] = 'Can a $a post to this forum?';
