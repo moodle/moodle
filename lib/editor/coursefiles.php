@@ -263,9 +263,12 @@
                     printfilelist($USER->filelist);
                     print_simple_box_end();
                     echo "<br />";
+                    $frameold = $CFG->framename;
+                    $CFG->framename = "ibrowser";
                     notice_yesno (get_string("deletecheckfiles"),
                                 "coursefiles.php?id=$id&amp;wdir=$wdir&amp;action=delete&amp;confirm=1&amp;sesskey=$USER->sesskey",
                                 "coursefiles.php?id=$id&amp;wdir=$wdir&amp;action=cancel");
+                    $CFG->framename = $frameold;
                 } else {
                     displaydir($wdir);
                 }
@@ -609,7 +612,10 @@ function setfilelist($VARS) {
     foreach ($VARS as $key => $val) {
         if (substr($key,0,4) == "file") {
             $count++;
-            $USER->filelist[] = rawurldecode($val);
+            $val = rawurldecode($val);
+            if (!detect_munged_arguments($val, 0)) {
+                $USER->filelist[] = $val;
+            }
         }
     }
     return $count;
