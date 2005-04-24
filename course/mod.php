@@ -471,7 +471,7 @@
         } else {
             $pageheading = get_string("updatinga", "moodle", $fullmodulename);
         }
-        $strnav = "<a href=\"$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id\">$form->name</a> ->";
+        $strnav = "<a href=\"$CFG->wwwroot/mod/$module->name/view.php?id=$cm->id\">".format_string($form->name,true)."</a> ->";
 
     } else if (isset($_GET['duplicate']) and confirm_sesskey()) {   // value = course module
 
