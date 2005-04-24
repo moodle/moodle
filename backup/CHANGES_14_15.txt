@@ -63,6 +63,8 @@ Now I show the specific detailed status of every item in the process:
 39. DONE: Add backup/restore of new grade tables.
 40. DONE: event->repeatid.
 41. TODO: Add support to forum_track_prefs.
+42. DONE: Add user->trackforums.
+43. TODO: Review SCORM module.
          
 Eloy (stronk7)
 23-01-2004
