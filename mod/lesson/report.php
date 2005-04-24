@@ -64,13 +64,13 @@
            '<input type="hidden" name="return" value="true" />'.
            '<input type="submit" value="'. get_string('editlessonsettings', 'lesson') .'" /></form>';
 
-    print_header($course->shortname .': '. $lesson->name, $course->fullname,
-                 "$navigation <A HREF=index.php?id=$course->id>$strlessons</A> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>
+    print_header($course->shortname .': '. format_string($lesson->name), $course->fullname,
+                 "$navigation <A HREF=index.php?id=$course->id>$strlessons</A> -> <a href=\"view.php?id=$cm->id\">".format_string($lesson->name,true)."</a>
                  -> <a href=\"report.php?id=$cm->id\">".get_string("report", "lesson")."</a>",
                   '', '', true, $button,
                   navmenu($course, $cm));
 
-    print_heading(get_string("lesson", "lesson", $lesson->name), "center", 5);
+    print_heading(get_string("lesson", "lesson", format_string($lesson->name)), "center", 5);
 
     // navigational links
     $detaillink = "<a href=\"report.php?id=$cm->id&amp;action=detail\">".get_string("detailedstats", "lesson")."</a>";

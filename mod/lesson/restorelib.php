@@ -87,7 +87,7 @@
             $newid = insert_record("lesson", $lesson);
 
             //Do some output
-            echo "<li>".get_string("modulename","lesson")." \"".$lesson->name."\"</li>";
+            echo "<li>".get_string("modulename","lesson")." \"".format_string(stripslashes($lesson->name),true)."\"</li>";
             backup_flush(300);
 
             if ($newid) {

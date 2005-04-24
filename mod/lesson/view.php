@@ -38,9 +38,9 @@
         if (isteacher($course->id)) {
             $action = 'teacherview';
         } elseif  (time() < $lesson->available) {
-            print_header($course->shortname .': '. $lesson->name, $course->fullname,
+            print_header($course->shortname .': '. format_string($lesson->name), $course->fullname,
                          $navigation .'<a href="index.php?id='. $course->id .'">'. $strlessons .'</a> -> '.
-                         '<a href="view.php?id='. $cm->id .'">'. $lesson->name .'</a>', 
+                         '<a href="view.php?id='. $cm->id .'">'. format_string($lesson->name,true) .'</a>', 
                          '', '', true, '', navmenu($course, $cm));
             print_simple_box_start('center');
             echo '<div align="center">';
@@ -51,8 +51,8 @@
             print_footer($course);
             exit();
         } elseif (time() > $lesson->deadline) {
-            print_header($course->shortname .': '. $lesson->name, $course->fullname,
-                         "$navigation <a href=\"index.php?id=$course->id\">$strlessons</a> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>", '', "", true,
+            print_header($course->shortname .': '. format_string($lesson->name), $course->fullname,
+                         "$navigation <a href=\"index.php?id=$course->id\">$strlessons</a> -> <a href=\"view.php?id=$cm->id\">".format_string($lesson->name,true)."</a>", '', "", true,
                           '', navmenu($course, $cm));
             print_simple_box_start('center');
             echo '<div align="center">';
@@ -90,8 +90,8 @@
         $button = '';
     }
 
-    print_header($course->shortname .': '. $lesson->name, $course->fullname,
-                 "$navigation <a href=\"index.php?id=$course->id\">$strlessons</a> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>", '', '', true,
+    print_header($course->shortname .': '. format_string($lesson->name), $course->fullname,
+                 "$navigation <a href=\"index.php?id=$course->id\">$strlessons</a> -> <a href=\"view.php?id=$cm->id\">".format_string($lesson->name,true)."</a>", '', '', true,
                  $button, // took out update_module_button($cm->id, $course->id, $strlesson) and replaced it with $button
                   navmenu($course, $cm));
 
@@ -122,7 +122,7 @@
                 if (isset($_POST['userpassword'])) {
                     echo "<tr align=\"center\" style='color:#DF041E;'><td>".get_string('loginfail', 'lesson') .'</td></tr>';
                 }
-                echo '<tr align="center"><td>'. get_string('passwordprotectedlesson', 'lesson', $lesson->name) .'</td></tr>';
+                echo '<tr align="center"><td>'. get_string('passwordprotectedlesson', 'lesson', format_string($lesson->name)) .'</td></tr>';
                 echo '<tr align="center"><td>'. get_string('enterpassword', 'lesson').' <input type="password" name="userpassword" /></td></tr>';
                         
                 echo '<tr align="center"><td>';
@@ -142,7 +142,6 @@
         // display individual pages and their sets of answers
         // if pageid is EOL then the end of the lesson has been reached
                // for flow, changed to simple echo for flow styles, michaelp, moved lesson name and page title down
-       //print_heading($lesson->name);
        $timedflag = false;
        $attemptflag = false;
         if (empty($pageid)) {
@@ -547,7 +546,7 @@
             // now starting to print the page's contents   
             echo "<div align=\"center\">";            
             echo "<em><strong>";
-            echo ($lesson->name) . "</strong></em>";
+            echo format_string($lesson->name) . "</strong></em>";
             if ($page->qtype == LESSON_BRANCHTABLE) {
                 echo ":<br />";
                 print_heading($page->title);
@@ -1035,7 +1034,6 @@
                         }
                     }
                 } else {
-                    //print_string("noattemptrecordsfound", "lesson");                    
                     if ($lesson->timed) {
                         if (isset($_GET["outoftime"])) {
                             if ($_GET["outoftime"] == "normal") {
@@ -1131,7 +1129,7 @@
 
     /*******************teacher view **************************************/
     elseif ($action == 'teacherview') {
-        print_heading_with_help($lesson->name, "overview", "lesson");        
+        print_heading_with_help(format_string($lesson->name,true), "overview", "lesson");        
         // get number of pages
         if ($page = get_record_select("lesson_pages", "lessonid = $lesson->id AND prevpageid = 0")) {
             $npages = 1;
@@ -1531,7 +1529,7 @@
 
     /*******************essay view **************************************/ // 6/29/04
     elseif ($action == 'essayview') {
-        print_heading_with_help($lesson->name, "overview", "lesson");
+        print_heading_with_help(format_string($lesson->name,true), "overview", "lesson");
 
         // get lesson pages that are essay
         if (!$pages = get_records_select("lesson_pages", "lessonid = $lesson->id AND qtype = ".LESSON_ESSAY)) {
@@ -1614,7 +1612,7 @@
     
     /*******************grade essays **************************************/ // 6/29/04
     elseif ($action == 'essaygrade') {
-        print_heading_with_help($lesson->name, "overview", "lesson");
+        print_heading_with_help(format_string($lesson->name,true), "overview", "lesson");
         
         $attemptid = required_param('attemptid', PARAM_INT);
 
@@ -1692,7 +1690,7 @@
 
     /*******************update grade**************************************/ // 6/29/04
     elseif ($action == 'updategrade') {
-        print_heading_with_help($lesson->name, "overview", "lesson");
+        print_heading_with_help(format_string($lesson->name,true), "overview", "lesson");
         
         confirm_sesskey();
         
@@ -1742,7 +1740,7 @@
 
     /*******************email essay **************************************/ // 6/29/04
     elseif ($action == 'emailessay') {
-        print_heading_with_help($lesson->name, "overview", "lesson");
+        print_heading_with_help(format_string($lesson->name,true), "overview", "lesson");
    
            confirm_sesskey();
     
@@ -1821,7 +1819,7 @@
 
     /*******************high scores **************************************/
     elseif ($action == 'highscores') {
-        print_heading_with_help($lesson->name, "overview", "lesson");
+        print_heading_with_help(format_string($lesson->name,true), "overview", "lesson");
 
         if (!$grades = get_records_select("lesson_grades", "lessonid = $lesson->id", "completed")) {
             $grades = array();
@@ -1829,7 +1827,7 @@
     
         echo "<div align=\"center\">";
         $titleinfo->maxhighscores = $lesson->maxhighscores;
-        $titleinfo->name = $lesson->name;
+        $titleinfo->name = format_string($lesson->name);
         echo get_string("topscorestitle", "lesson", $titleinfo)."<br><br>";
 
         if (!$highscores = get_records_select("lesson_high_scores", "lessonid = $lesson->id")) {
@@ -1870,7 +1868,7 @@
     }
     /*******************update high scores **************************************/
     elseif ($action == 'updatehighscores') {
-        print_heading_with_help($lesson->name, "overview", "lesson");
+        print_heading_with_help(format_string($lesson->name,true), "overview", "lesson");
     
         confirm_sesskey();
 
@@ -1949,7 +1947,7 @@
     }
     /*******************name for highscores **************************************/
     elseif ($action == 'nameforhighscores') {
-        print_heading_with_help($lesson->name, "overview", "lesson");
+        print_heading_with_help(format_string($lesson->name,true), "overview", "lesson");
         echo "<div align=\"center\">";
         if (isset($_POST['name'])) {
             $name = trim(clean_param($_POST['name'], PARAM_CLEAN));

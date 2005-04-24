@@ -30,7 +30,7 @@
     $strlessons = get_string("modulenameplural", "lesson");
 
     print_header_simple("$strimportquestions", " $strimportquestions",
-                 "<A HREF=index.php?id=$course->id>$strlessons</A> -> <a href=\"view.php?id=$cm->id\">$lesson->name</a>-> $strimportquestions");
+                 "<a href=index.php?id=$course->id>$strlessons</a> -> <a href=\"view.php?id=$cm->id\">".format_string($lesson->name,true)."</a>-> $strimportquestions");
 
     if ($form = data_submitted()) {   /// Filename
 

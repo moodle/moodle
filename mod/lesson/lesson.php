@@ -53,9 +53,9 @@
     $strlessonname = $lesson->name;
     
     // ... print the header and...
-    print_header("$course->shortname: $lesson->name", "$course->fullname",
+    print_header("$course->shortname: ".format_string($lesson->name), "$course->fullname",
                  "$navigation <a href=index.php?id=$course->id>$strlessons</a> -> 
-                  <a href=\"view.php?id=$cm->id\">$lesson->name</a>", "", "", true);
+                  <a href=\"view.php?id=$cm->id\">".format_string($lesson->name,true)."</a>", "", "", true);
 
 	// include the appropriate action (check to make sure the file is there first)
 	if (file_exists($CFG->dirroot.'/mod/lesson/action/'.$action.'.php')) {

@@ -61,10 +61,10 @@
     foreach ($lessons as $lesson) {
         if (!$lesson->visible) {
             //Show dimmed if the mod is hidden
-            $link = "<A class=\"dimmed\" HREF=\"view.php?id=$lesson->coursemodule\">$lesson->name</A>";
+            $link = "<a class=\"dimmed\" href=\"view.php?id=$lesson->coursemodule\">".format_string($lesson->name,true)."</a>";
         } else {
             //Show normal if the mod is visible
-            $link = "<A HREF=\"view.php?id=$lesson->coursemodule\">$lesson->name</A>";
+            $link = "<a href=\"view.php?id=$lesson->coursemodule\">".format_string($lesson->name,true)."</a>";
         }
 
         if ($lesson->deadline > $timenow) {

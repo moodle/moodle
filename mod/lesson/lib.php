@@ -173,24 +173,24 @@ function lesson_update_instance($lesson) {
         if ($userid = get_field("user", "id", "username", $lesson->deleteattempts)) {
             if (delete_records("lesson_attempts", "lessonid", $lesson->id, "userid", $userid)) {
                 // email good
-                $message .= "Successfully deleted attempts from \"$lesson->name\" lesson!<br />";
+                $message .= "Successfully deleted attempts from \"".format_string($lesson->name)."\" lesson!<br />";
             } else {
                 // email couldnt delete
-                $message .= "Failed to delete attempts from \"$lesson->name\" lesson!<br />";
+                $message .= "Failed to delete attempts from \"".format_string($lesson->name)."\" lesson!<br />";
             }
             if (delete_records("lesson_grades", "lessonid", $lesson->id, "userid", $userid)) {
                 // email good
-                $message .= "Successfully deleted grades from \"$lesson->name\" lesson!<br />";
+                $message .= "Successfully deleted grades from \"".format_string($lesson->name)."\" lesson!<br />";
             } else {
                 // email couldnt delete
-                $message .= "Failed to delete grades from \"$lesson->name\" lesson!<br />";
+                $message .= "Failed to delete grades from \"".format_string($lesson->name)."\" lesson!<br />";
             }
             if (delete_records("lesson_timer", "lessonid", $lesson->id, "userid", $userid)) {
                 // email good
-                $message .= "Successfully deleted time records from \"$lesson->name\" lesson!<br />";
+                $message .= "Successfully deleted time records from \"".format_string($lesson->name)."\" lesson!<br />";
             } else {
                 // email couldnt delete
-                $message .= "Failed to delete time records from \"$lesson->name\" lesson!<br />";
+                $message .= "Failed to delete time records from \"".format_string($lesson->name)."\" lesson!<br />";
             }
 
         } else {
