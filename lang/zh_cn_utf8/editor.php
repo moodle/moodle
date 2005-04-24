@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021000)
+      // editor.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['about'] = '关于此编辑器';
@@ -22,6 +22,7 @@ $string['cellspacing'] = '边距';
 $string['choosechar'] = '选择字符';
 $string['chooseicon'] = '选择要插入的表情符';
 $string['close'] = '关闭';
+$string['closeafterreplace'] = '替换后关闭';
 $string['cols'] = '列';
 $string['copy'] = '复制所选项';
 $string['createanchor'] = '创建链接点';
@@ -30,6 +31,7 @@ $string['createlink'] = '插入链接';
 $string['cut'] = '剪切所选项';
 $string['delete'] = '删除';
 $string['filebrowser'] = '文件浏览';
+$string['findwhat'] = '查找';
 $string['fontname'] = '字体名';
 $string['fontsize'] = '字号';
 $string['forecolor'] = '字体颜色';
@@ -49,6 +51,7 @@ $string['insertlink'] = '插入链接';
 $string['insertsmile'] = '插入表情符';
 $string['inserttable'] = '插入表格';
 $string['italic'] = '斜体字';
+$string['itemsreplaced'] = '项目被替换';
 $string['justifycenter'] = '正中';
 $string['justifyfull'] = '两端对齐';
 $string['justifyleft'] = '正左';
@@ -65,6 +68,7 @@ $string['linktargetself'] = '同一框架';
 $string['linktargettop'] = '同一窗口';
 $string['linktitle'] = '标题';
 $string['linkurl'] = 'URL';
+$string['matchcase'] = '匹配大小写';
 $string['middle'] = '中央';
 $string['minimize'] = '最小化编辑器';
 $string['move'] = '移动';
@@ -73,6 +77,7 @@ $string['normal'] = '常规';
 $string['notimage'] = '所选文件不是图片. 请选则一张图片!';
 $string['notset'] = '未设置';
 $string['ok'] = '确定';
+$string['options'] = '选项';
 $string['orderedlist'] = '列表编号';
 $string['outdent'] = '减少缩进量';
 $string['paste'] = '粘贴';
@@ -84,11 +89,16 @@ $string['preformatted'] = '默认段落字体';
 $string['preview'] = '预览';
 $string['properties'] = '属性';
 $string['redo'] = '重做';
+$string['regularexpressions'] = '使用正则表达式';
 $string['removelink'] = '删除连接';
 $string['rename'] = '重命名';
+$string['replaceall'] = '替换全部';
+$string['replacewith'] = '替换';
 $string['right'] = '右';
 $string['righttoleft'] = '从右向左';
 $string['rows'] = '行';
+$string['searchandreplace'] = '搜索和替换';
+$string['searchnotfound'] = '未找到字符串！';
 $string['selectcolor'] = '选择颜色';
 $string['selection'] = '选择';
 $string['showhelp'] = '编辑器使用帮助';
