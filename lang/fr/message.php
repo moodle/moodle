@@ -10,6 +10,7 @@ $string['allusers'] = 'Tous les messages de tous les utilisateurs';
 $string['backupmessageshelp'] = 'Si ce paramètre est activé, les messages instantanés seront inclus dans les sauvegardes automatiques du site';
 $string['beepnewmessage'] = 'Bip à l\'arrivée d\'un message';
 $string['blockcontact'] = 'Bloquer ce contact';
+$string['blocknoncontacts'] = 'Bloquer les messages de personnes n\'appartenant pas à ma liste de contacts';
 $string['blockedmessages'] = '$a message(s) de/pour des utilisateurs bloqués';
 $string['context'] = 'Contexte';
 $string['contactlistempty'] = 'Votre liste de contacts est vide';
@@ -59,6 +60,7 @@ $string['timesent'] = 'Heure d\'envoi';
 $string['unblockcontact'] = 'Débloquer ce contact';
 $string['unreadmessages'] = '$a messages non lus';
 $string['userisblockingyou'] = 'Cet utisateur vous a retiré le droit de lui envoyer des messages';
+$string['userisblockingyounoncontact'] = 'Cet utisateur n\'accepte de messages que de personnes de sa liste de contacts, dans laquelle vous ne figurez pas actuellement.';
 $string['userssearchresults'] = 'Résultats de recherche&nbsp;: $a utilisateur(s) trouvé(s)';
 
 ?>
