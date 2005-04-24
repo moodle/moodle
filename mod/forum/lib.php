@@ -3104,7 +3104,7 @@ function forum_tp_add_read_record($userid, $postid, $discussionid=-1, $forumid=-
         }
         if ($forumid > -1) {
             /// Update the 'forumid' field.
-            $update->forumid = $discussionid;
+            $update->forumid = $forumid;
         }
 
         return update_record('forum_read', $update);
