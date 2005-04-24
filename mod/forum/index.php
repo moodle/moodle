@@ -30,6 +30,7 @@
     $strdiscussions = get_string("discussions", "forum");
     $strsubscribed = get_string("subscribed", "forum");
     $strunreadposts = get_string("unreadposts", "forum");
+    $strtracking = get_string('tracking', 'forum');
     $strrss = get_string("rss");
 
     $searchform = forum_search_form($course);
@@ -42,6 +43,10 @@
 
     if ($CFG->forum_trackreadposts) {
         $generaltable->head[] = $strunreadposts;
+        $generaltable->align[] = 'center';
+
+        $untracked = forum_tp_get_untracked_forums($USER->id);
+        $generaltable->head[] = $strtracking;
         $generaltable->align[] = 'center';
     }
 
@@ -127,12 +132,20 @@
             }
 
             if ($CFG->forum_trackreadposts) {
-                $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
-                $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
-                if ($unread > 0) {
-                    $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
+                if (!isset($untracked[$forum->id])) {
+                    $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
+                    $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
+                    if ($unread > 0) {
+                        $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
+                    } else {
+                        $unreadlink = '<span class="read"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
+                    }
+                    $trackedlink = '<a title="'.get_string('notrackforum', 'forum').'" ' .
+                                   'href="settracking.php?id='.$forum->id.'">'.get_string('yes').'</a>';
                 } else {
-                    $unreadlink = '<span class="read"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
+                    $unreadlink = 'n/a';
+                    $trackedlink = '<a title="'.get_string('trackforum', 'forum').'" ' .
+                                   'href="settracking.php?id='.$forum->id.'">'.get_string('no').'</a>';
                 }
             }
 
@@ -188,6 +201,7 @@
                 $row = array ($forumlink, $forum->intro, $discussionlink);
                 if ($CFG->forum_trackreadposts) {
                     $row[] = $unreadlink;
+                    $row[] = $trackedlink;    // Tracking.
                 }
                 $row[] = $sublink;
                 if (!empty($rsslink)) {
@@ -198,6 +212,7 @@
                 $row = array ($forumlink, $forum->intro, $discussionlink);
                 if ($CFG->forum_trackreadposts) {
                     $row[] = $unreadlink;
+                    $row[] = $trackedlink;    // Tracking.
                 }
                 if (!empty($rsslink)) {
                     $row[] = $rsslink;
@@ -214,6 +229,9 @@
 
     if ($CFG->forum_trackreadposts) {
         $learningtable->head[] = $strunreadposts;
+        $learningtable->align[] = 'center';
+
+        $learningtable->head[] = $strtracking;
         $learningtable->align[] = 'center';
     }
 
@@ -250,12 +268,20 @@
                 }
 
                 if ($CFG->forum_trackreadposts) {
-                    $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
-                    $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
-                    if ($unread > 0) {
-                        $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
+                    if (!isset($untracked[$forum->id])) {
+                        $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
+                        $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
+                        if ($unread > 0) {
+                            $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
+                        } else {
+                            $unreadlink = '<span class="read"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
+                        }
+                        $trackedlink = '<a title="'.get_string('notrackforum', 'forum').'" ' .
+                                       'href="settracking.php?id='.$forum->id.'">'.get_string('yes').'</a>';
                     } else {
-                        $unreadlink = '<span class="read"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
+                        $unreadlink = 'n/a';
+                        $trackedlink = '<a title="'.get_string('trackforum', 'forum').'" ' .
+                                       'href="settracking.php?id='.$forum->id.'">'.get_string('no').'</a>';
                     }
                 }
 
@@ -324,6 +350,7 @@
                     $row = array ($printsection, $forumlink, $forum->intro, $discussionlink);
                     if ($CFG->forum_trackreadposts) {
                         $row[] = $unreadlink;
+                        $row[] = $trackedlink;    // Tracking.
                     }
                     $row[] = $sublink;
                     if (!empty($rsslink)) {
@@ -335,6 +362,7 @@
                     $row = array ($printsection, $forumlink, $forum->intro, $discussionlink);
                     if ($CFG->forum_trackreadposts) {
                         $row[] = $unreadlink;
+                        $row[] = $trackedlink;    // Tracking.
                     }
                     if (!empty($rsslink)) {
                         $row[] = $rsslink;

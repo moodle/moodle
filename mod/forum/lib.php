@@ -3056,6 +3056,8 @@ function forum_add_user($userid, $courseid) {
     }
 }
 
+/// Functions to do with read tracking.
+
 function forum_tp_add_read_record($userid, $postid, $discussionid=-1, $forumid=-1) {
     if (($readrecord = forum_tp_get_read_records($userid, $postid)) === false) {
         /// New read record
@@ -3264,6 +3266,49 @@ function forum_tp_delete_read_records($userid=-1, $postid=-1, $discussionid=-1, 
         return delete_records_select('forum_read', $select);
     }
 }
+
+/// Get a list of forums not being tracked by the user.
+function forum_tp_get_untracked_forums($userid) {
+    return get_records('forum_track_prefs', 'userid', $userid, '', 'forumid,userid');
+}
+
+function forum_tp_is_tracked($forumid, $userid=false) {
+    global $USER;
+
+    if ($userid === false) {
+        $userid = $USER->id;
+    }
+
+    return (get_record('forum_track_prefs', 'userid', $userid, 'forumid', $forumid) === false);
+}
+
+function forum_tp_start_tracking($forumid, $userid=false) {
+    global $USER;
+
+    if ($userid === false) {
+        $userid = $USER->id;
+    }
+
+    return delete_records('forum_track_prefs', 'userid', $userid, 'forumid', $forumid);
+}
+
+function forum_tp_stop_tracking($forumid, $userid=false) {
+    global $USER;
+
+    if ($userid === false) {
+        $userid = $USER->id;
+    }
+
+    $track_prefs = new stdClass;
+    $track_prefs->userid = $userid;
+    $track_prefs->forumid = $forumid;
+    if (insert_record('forum_track_prefs', $track_prefs)) {
+        return forum_tp_delete_read_records($userid, -1, -1, $forumid);
+    } else {
+        return false;
+    }
+}
+
 
 /// Clean old records from the forum_read table.
 function forum_tp_clean_read_records() {

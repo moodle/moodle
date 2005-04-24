@@ -137,6 +137,17 @@ CREATE TABLE prefix_forum_read (
 ) COMMENT='Tracks each users read posts';
 
 #
+# Table structure for table `forum_track_prefs`
+#
+CREATE TABLE prefix_forum_track_prefs (
+  `id` int(10) unsigned NOT NULL auto_increment, 
+  `userid` int(10) NOT NULL default '0',
+  `forumid` int(10) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `user_forum_idx` (`userid`,`forumid`)
+) COMMENT='Tracks each users untracked forums.';
+
+#
 # Dumping data for table `log_display`
 #
 
