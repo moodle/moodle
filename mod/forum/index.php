@@ -45,7 +45,9 @@
         $generaltable->head[] = $strunreadposts;
         $generaltable->align[] = 'center';
 
-        $untracked = forum_tp_get_untracked_forums($USER->id);
+        if (forum_tp_is_tracked()) {
+            $untracked = forum_tp_get_untracked_forums($USER->id);
+        }
         $generaltable->head[] = $strtracking;
         $generaltable->align[] = 'center';
     }
@@ -132,7 +134,7 @@
             }
 
             if ($CFG->forum_trackreadposts) {
-                if (!isset($untracked[$forum->id])) {
+                if (forum_tp_is_tracked() && !isset($untracked[$forum->id])) {
                     $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
                     $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
                     if ($unread > 0) {
@@ -268,7 +270,7 @@
                 }
 
                 if ($CFG->forum_trackreadposts) {
-                    if (!isset($untracked[$forum->id])) {
+                    if (forum_tp_is_tracked() && !isset($untracked[$forum->id])) {
                         $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
                         $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
                         if ($unread > 0) {

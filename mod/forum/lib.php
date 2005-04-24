@@ -3286,14 +3286,22 @@ function forum_tp_get_untracked_forums($userid) {
     return get_records('forum_track_prefs', 'userid', $userid, '', 'forumid,userid');
 }
 
-function forum_tp_is_tracked($forumid, $userid=false) {
-    global $USER;
+/// Tells whether a specific forum is tracked, or if no forum specified, whether
+/// it is configured to allow tracking.
+function forum_tp_is_tracked($forumid=0, $userid=false) {
+    global $USER, $CFG;
 
     if ($userid === false) {
         $userid = $USER->id;
     }
 
-    return (get_record('forum_track_prefs', 'userid', $userid, 'forumid', $forumid) === false);
+    if (!$CFG->forum_trackreadposts || !$USER->trackforums) {
+        return false;
+    } else if (empty($forumid)) {
+        return true;
+    } else {
+        return (get_record('forum_track_prefs', 'userid', $userid, 'forumid', $forumid) === false);
+    }
 }
 
 function forum_tp_start_tracking($forumid, $userid=false) {

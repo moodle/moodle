@@ -133,6 +133,14 @@ function forum_upgrade($oldversion) {
       $wtm->update( 'forum_posts','message','format',$sql );
   }
 
+  if ($oldversion < 2005042300) { // Add tracking prefs table
+      modify_database('','CREATE TABLE prefix_forum_track_prefs (
+                          id SERIAL PRIMARY KEY, 
+                          userid integer default 0 NOT NULL,
+                          forumid integer default 0 NOT NULL
+                        );');
+  }
+
   return true;
 
 }

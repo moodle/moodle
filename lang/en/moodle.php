@@ -1031,6 +1031,7 @@ $string['topichide'] = 'Hide this topic from $a';
 $string['topicoutline'] = 'Topic outline';
 $string['topicshow'] = 'Show this topic to $a';
 $string['total'] = 'Total';
+$string['trackforums'] = 'Track read/unread posts';
 $string['trysearching'] = 'Try searching instead.';
 $string['turneditingoff'] = 'Turn editing off';
 $string['turneditingon'] = 'Turn editing on';

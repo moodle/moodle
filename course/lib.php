@@ -1028,7 +1028,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     $groupid = ($groupmode == SEPARATEGROUPS && !isteacheredit($course->id)) ?
                         get_current_group($course->id) : false;
 
-                    if (!isset($untracked[$mod->instance])) {
+                    if (forum_tp_is_tracked() && !isset($untracked[$mod->instance])) {
                         $unread = forum_tp_count_forum_unread_posts($USER->id, $mod->instance, $groupid);
                         if ($unread) {
                             echo '<span class="unread"> <a href="'.$CFG->wwwroot.'/mod/forum/view.php?id='.$mod->id.'">';

@@ -144,6 +144,21 @@ CREATE INDEX prefix_forum_user_post_idx ON prefix_forum_read (userid, postid);
 
 # --------------------------------------------------------
 
+
+#
+# Table structure for table `forum_track_prefs`
+#
+
+CREATE TABLE prefix_forum_track_prefs (
+  id SERIAL PRIMARY KEY,
+  userid integer NOT NULL default '0',
+  forumid integer NOT NULL default '0'
+);
+
+CREATE INDEX user_forum_idx ON prefix_forum_track_prefs (userid, forumid);
+
+
+# --------------------------------------------------------
 #
 # Dumping data for table `log_display`
 #
