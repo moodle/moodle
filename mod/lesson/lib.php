@@ -55,12 +55,12 @@ function lesson_add_instance($lesson) {
         unset($lesson->lessondefault);
     }
     
-	// got this code from quiz, thanks quiz!!!
-	delete_records('event', 'modulename', 'lesson', 'instance', $lesson->id);  // Just in case
+    // got this code from quiz, thanks quiz!!!
+    delete_records('event', 'modulename', 'lesson', 'instance', $lesson->id);  // Just in case
 
     $event = new stdClass;
-    $event->name        = addslashes($lesson->name);
-    $event->description = addslashes($lesson->name);
+    $event->name        = $lesson->name;
+    $event->description = $lesson->name;
     $event->courseid    = $lesson->course;
     $event->groupid     = 0;
     $event->userid      = 0;
@@ -138,8 +138,8 @@ function lesson_update_instance($lesson) {
     }
 
     $event = new stdClass;
-    $event->name        = addslashes($lesson->name);
-    $event->description = addslashes($lesson->name);
+    $event->name        = $lesson->name;
+    $event->description = $lesson->name;
     $event->courseid    = $lesson->course;
     $event->groupid     = 0;
     $event->userid      = 0;
