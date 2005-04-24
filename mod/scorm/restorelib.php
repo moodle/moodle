@@ -57,7 +57,7 @@
             //The structure is equal to the db, so insert the scorm
             $newid = insert_record ("scorm",$scorm);
             //Do some output     
-            echo "<li>".get_string("modulename","scorm")." \"".$scorm->name."\"</li>";
+            echo "<li>".get_string("modulename","scorm")." \"".format_string(stripslashes($scorm->name),true)."\"</li>";
             backup_flush(300);
 
             if ($newid) {

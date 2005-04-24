@@ -53,12 +53,12 @@
         $strscorm  = get_string("modulename", "scorm");
         $strreport  = get_string("report", "scorm");
 
-        print_header("$course->shortname: $scorm->name", "$course->fullname",
+        print_header("$course->shortname: ".format_string($scorm->name), "$course->fullname",
                      "$navigation <a href=\"index.php?id=$course->id\">$strscorms</a>
-                      -> <a href=\"view.php?id=$cm->id\">$scorm->name</a> -> $strreport",
+                      -> <a href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a> -> $strreport",
                      "", "", true);
 
-        print_heading($scorm->name);
+        print_heading(format_string($scorm->name));
     }
     if ($scoes =get_records_select("scorm_scoes","scorm='$scorm->id' ORDER BY id")) {
         if ($sco_users=get_records_select("scorm_scoes_track", "scormid='$scorm->id' GROUP BY userid")) {

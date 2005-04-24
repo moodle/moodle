@@ -46,10 +46,10 @@
         $navigation = "<a target=\"{$CFG->framename}\" href=\"index.php?id=$course->id\">$strscorms</a> ->";
     }
 
-    $pagetitle = strip_tags("$course->shortname: $scorm->name");
+    $pagetitle = strip_tags("$course->shortname: ".format_string($scorm->name));
 
     if (!$cm->visible and !isteacher($course->id)) {
-        print_header($pagetitle, "$course->fullname", "$navigation $scorm->name", '', '', true, 
+        print_header($pagetitle, "$course->fullname", "$navigation ".format_string($scorm->name), '', '', true, 
                      update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
         notice(get_string("activityiscurrentlyhidden"));
     }
@@ -83,7 +83,7 @@
     //
     $bodyscripts = "onUnload='SCOFinish();'";
     print_header($pagetitle, "$course->fullname",
-	"$navigation <a target='{$CFG->framename}' href='view.php?id=$cm->id'>$scorm->name</a>",
+	"$navigation <a target='{$CFG->framename}' href='view.php?id=$cm->id'>".format_string($scorm->name,true)."</a>",
 	'', '', true, update_module_button($cm->id, $course->id, $strscorm), "", "", $bodyscripts);
 ?>
     <style type="text/css">
@@ -129,7 +129,7 @@
     <script language="JavaScript" type="text/javascript" src="api.php?id=<?php echo $cm->id ?>"></script>
     <table class="fullscreen" height="90%">
     <tr><td valign="top">
-    	<p><?php echo text_to_html($scorm->summary, false, false) ?></p>
+    	<p><?php echo format_text($scorm->summary) ?></p>
     	<p><?php echo $mode == 'browse' ? get_string('browsemode','scorm') : '&nbsp;'; ?></p>
 	<table class='generalbox' cellpadding='5' cellspacing='0'>
 	    <tr>

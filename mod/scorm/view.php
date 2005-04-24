@@ -47,7 +47,7 @@
         $navigation = "<a target=\"{$CFG->framename}\" href=\"index.php?id=$course->id\">$strscorms</a> ->";
     }
 
-    $pagetitle = strip_tags("$course->shortname: $scorm->name");
+    $pagetitle = strip_tags("$course->shortname: ".format_string($scorm->name));
     
     add_to_log($course->id, "scorm", "pre-view", "view.php?id=$cm->id", "$scorm->id");
     
@@ -55,11 +55,11 @@
     // Print the page header
     //
     if (!$cm->visible and !isteacher($course->id)) {
-        print_header($pagetitle, "$course->fullname", "$navigation $scorm->name", "", "", true, 
+        print_header($pagetitle, "$course->fullname", "$navigation ".format_string($scorm->name), "", "", true, 
         	     update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
         notice(get_string("activityiscurrentlyhidden"));
     } else {
-    	print_header($pagetitle, "$course->fullname","$navigation <a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id\">$scorm->name</a>",
+    	print_header($pagetitle, "$course->fullname","$navigation <a target=\"{$CFG->framename}\" href=\"view.php?id=$cm->id\">".format_string($scorm->name,true)."</a>",
        	         "", "", true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
         
     	if (isteacher($course->id)) {
@@ -71,7 +71,7 @@
     	}
     	// Print the main part of the page
 
-    	print_heading($scorm->name);
+    	print_heading(format_string($scorm->name));
 
     	print_simple_box(format_text($scorm->summary), 'center', '70%', '', 5, 'generalbox', 'intro');
 

@@ -57,12 +57,12 @@
         }
         if (!$scorm->visible) {
            //Show dimmed if the mod is hidden
-           $table->data[] = array ($tt, "<a class=\"dimmed\" href=\"view.php?id=$scorm->coursemodule\">$scorm->name</a>",
-                                   text_to_html($scorm->summary) );
+           $table->data[] = array ($tt, "<a class=\"dimmed\" href=\"view.php?id=$scorm->coursemodule\">".format_string($scorm->name,true)."</a>",
+                                   format_text($scorm->summary));
         } else {
            //Show normal if the mod is visible
-           $table->data[] = array ($tt, "<a href=\"view.php?id=$scorm->coursemodule\">$scorm->name</a>",
-                                   text_to_html($scorm->summary) );
+           $table->data[] = array ($tt, "<a href=\"view.php?id=$scorm->coursemodule\">".format_string($scorm->name,true)."</a>",
+                                   format_text($scorm->summary));
         }
     }
 
