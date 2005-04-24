@@ -937,6 +937,8 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     static $strmovefull;
     static $strunreadpostsone;
 
+    static $untracked;
+
     $labelformatoptions = New stdClass;
 
     if (!isset($isteacher)) {
@@ -954,6 +956,13 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     $labelformatoptions->noclean = true;
 
     $modinfo = unserialize($course->modinfo);
+
+    if ($CFG->forum_trackreadposts) {
+        include_once($CFG->dirroot.'/mod/forum/lib.php');
+        if (empty($untracked)) {
+            $untracked = forum_tp_get_untracked_forums($USER->id);
+        }
+    }
 
     echo '<table width="'.$width.'" class="section">';
     if (!empty($section->sequence)) {
@@ -1018,18 +1027,18 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     $groupmode = groupmode($course, $mod);
                     $groupid = ($groupmode == SEPARATEGROUPS && !isteacheredit($course->id)) ?
                         get_current_group($course->id) : false;
-//                    $unread = forum_tp_count_forum_posts($mod->instance, $groupid) -
-//                        forum_tp_count_forum_read_records($USER->id, $mod->instance, $groupid);
-                    include_once($CFG->dirroot.'/mod/forum/lib.php');
-                    $unread = forum_tp_count_forum_unread_posts($USER->id, $mod->instance, $groupid);
-                    if ($unread) {
-                        echo '<span class="unread"> <a href="'.$CFG->wwwroot.'/mod/forum/view.php?id='.$mod->id.'">';
-                        if ($unread == 1) {
-                            echo $strunreadpostsone;
-                        } else {
-                            print_string('unreadpostsnumber', 'forum', $unread);
+
+                    if (!isset($untracked[$mod->instance])) {
+                        $unread = forum_tp_count_forum_unread_posts($USER->id, $mod->instance, $groupid);
+                        if ($unread) {
+                            echo '<span class="unread"> <a href="'.$CFG->wwwroot.'/mod/forum/view.php?id='.$mod->id.'">';
+                            if ($unread == 1) {
+                                echo $strunreadpostsone;
+                            } else {
+                                print_string('unreadpostsnumber', 'forum', $unread);
+                            }
+                            echo '</a> </span>';
                         }
-                        echo '</a> </span>';
                     }
                 }
 
