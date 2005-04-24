@@ -1020,6 +1020,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                         get_current_group($course->id) : false;
 //                    $unread = forum_tp_count_forum_posts($mod->instance, $groupid) -
 //                        forum_tp_count_forum_read_records($USER->id, $mod->instance, $groupid);
+                    include_once($CFG->dirroot.'/mod/forum/lib.php');
                     $unread = forum_tp_count_forum_unread_posts($USER->id, $mod->instance, $groupid);
                     if ($unread) {
                         echo '<span class="unread"> <a href="'.$CFG->wwwroot.'/mod/forum/view.php?id='.$mod->id.'">';
