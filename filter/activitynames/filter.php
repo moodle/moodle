@@ -8,6 +8,8 @@
 
         global $CFG;
 
+        static $activitylist;
+
         if (empty($courseid)) {
             $courseid = SITEID;
         }
@@ -17,12 +19,11 @@
 
         if (!empty($modinfo)) {
 
-            $linkarray = array();
+            $activitylist = array();      /// We will store all the activities here
 
             //Sort modinfo by name length
             usort($modinfo,'comparemodulenamesbylength');
 
-            $cm = '';
             foreach ($modinfo as $activity) {
                 //Exclude labels and hidden items
                 if ($activity->mod != "label" && $activity->visible) {
@@ -31,11 +32,11 @@
                     $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/$activity->mod/view.php?id=$activity->cm\">";
                     $currentname = urldecode($activity->name);
                     if ($currentname = trim($currentname)) {
-                        $linkarray[] = new filterobject($currentname, $href_tag_begin, '</a>', false, true);
+                        $activitylist[] = new filterobject($currentname, $href_tag_begin, '</a>', false, true);
                     }
                 }
             }
-            $text = filter_phrases ($text, $linkarray);
+            $text = filter_phrases ($text, $activitylist);
         }
         return $text;
     }
