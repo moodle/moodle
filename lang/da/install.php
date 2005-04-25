@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
 $string['admindirerror'] = 'Det angivede admin biblioteket er forkert';
@@ -84,6 +84,7 @@ indstillingen så der er minimum 16Mb til rådighed. Hvis du ikke har direkte adga
 <li>På nogle servere kan du oprette en \'.htaccess\' fil, gemme den i moodle biblioteket med linjen <p><blockquote>php_value memory_limit 16M</blockquote></p>
 <p>Det kan dog på nogle servere forårsage en fejl på <b>alle</b> PHPsiderne. i så fald kan du blive nødt til at fjerne \'.htaccess\' filen igen.</p></li>
 </ol>';
+$string['mysqlextensionisnotpresentinphp'] = 'PHP er ikke blevet ordentligt konfigureret med MySQL  udvidelsen så den kan kommunikere med MySQL. Det kan skyldes at MySQL extension/dll ikke er loadet. Kontroller venlist phpinfo() og php.ini filen eller rekompiler PHP.';
 $string['pass'] = 'OK';
 $string['phpversion'] = 'PHP version';
 $string['phpversionerror'] = 'PHP versionen skal være nyere end 4.1.0';
