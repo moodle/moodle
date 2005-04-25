@@ -1744,9 +1744,11 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
     global $USER, $CFG;
 
     static $rowcount;
+    static $strmarkalldread;
 
     if (!isset($rowcount)) {
         $rowcount = 0;
+        $strmarkalldread = get_string('markalldread', 'forum');
     } else {
         $rowcount = ($rowcount + 1) % 2;
     }
@@ -1793,23 +1795,23 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
             echo '<td class="replies">';
             if ($forumtracked) {
                 if ($post->unread > 0) {
-                    echo '<table align="center" cellpadding="0" cellspacing="0" border="0"><tr><td>';
-                    echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#unread">';
-                    echo '<span class="unread">'.$post->unread.'</span>';
-                    echo '</a>';
-                    echo '&nbsp;</td><td align="center">';
-                    echo '<span class="lastpost">'.
-                         '<a title="'.get_string('markalldread', 'forum').'" href="markposts.php?id='.
-                         $forum->id.'&d='.$post->discussion.'&mark=read&returnpage=view.php">' .
-                         get_string('markreadbutton', 'forum').'</a></span>';
-                    echo '</td></tr></table>';
-                } else {
+                    echo '<span class="unread">';
                     echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#unread">';
                     echo $post->unread;
                     echo '</a>';
+                    echo '<a title="'.$strmarkalldread.'" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?id='.
+                         $forum->id.'&amp;d='.$post->discussion.'&amp;mark=read&amp;returnpage=view.php">' .
+                         '<img src="'.$CFG->pixpath.'/t/clear.gif" height="11" width="11" border="0" /></a>';
+                    echo '</span>';
+                } else {
+                    echo '<span class="read">';
+                    echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#unread">';
+                    echo $post->unread;
+                    echo '</a>';
+                    echo '</span>';
                 }
             } else {
-                echo 'n/a';
+                echo '-';
             }
             echo "</td>\n";
         }
