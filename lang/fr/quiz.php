@@ -140,6 +140,7 @@ $string['gradeaverage'] = 'Note moyenne';
 $string['gradehighest'] = 'Note la plus haute';
 $string['grademethod'] = 'Méthode de notation';
 $string['guestsno'] = 'Désolé, les utilisateurs anonymes n\'ont pas accès aux tests';
+$string['hotpot'] = 'Format Hot Potatoes';
 $string['illegalformulasyntax'] = 'Syntaxe de la formule incorrecte (l\'erreur commence à « $a »)';
 $string['imagedisplay'] = 'Image à afficher';
 $string['imagemissing'] = 'Image non disponible à la ligne $a. Le fichier sera ignoré';
