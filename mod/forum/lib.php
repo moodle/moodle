@@ -525,7 +525,7 @@ function forum_cron () {
                         } else {
                             // The full treatment
                             $posttext .= forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $userto, true);
-                            $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, $canreply, false, false);
+                            $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, $canreply, true, false);
 
                         /// Create an array of postid's for this user to mark as read.
                             if ($CFG->forum_trackreadposts && !$CFG->forum_usermarksread) {
@@ -679,7 +679,7 @@ function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $u
         } else {
             $posthtml .= " &raquo; <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">".format_string($discussion->name,true)."</a></font></p>";
         }
-        $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, $canreply, false, false);
+        $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, $canreply, true, false);
 
         if ($canunsubscribe) {
             $posthtml .= "\n<br /><hr size=\"1\" noshade /><p align=\"right\"><font size=\"1\"><a href=\"$CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\">".get_string("unsubscribe", "forum")."</a></font></p>";
@@ -1428,78 +1428,84 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
         $formattedtextid = $post->id;
     }
 
-    $output = "";
+    $output = '<table border="0" cellpadding="3" cellspacing="0" class="forumpost">';
 
-    $output .= '<table border="0" cellpadding="3" cellspacing="0" class="forumpost">';
-
-    $output .= "<tr><td width=\"35\" valign=\"top\" class=\"forumpostpicture\">";
+    $output .= '<tr class="header"><td width="35" valign="top" class="picture left">';
     $output .= print_user_picture($user->id, $course->id, $user->picture, false, true);
-    $output .= "</td>";
+    $output .= '</td>';
 
     if ($post->parent) {
-        $output .= "<td nowrap=\"nowrap\" class=\"forumpostheader\">";
+        $output .= '<td class="topic">';
     } else {
-        $output .= "<td nowrap=\"nowrap\" class=\"forumpostheadertopic\">";
+        $output .= '<td class="topic starter">';
     }
-    $output .= "<p>";
-    $output .= "<font size=\"3\"><b>".format_string($post->subject)."</b></font><br />";
-    $output .= "<font size=\"2\">";
+    $output .= '<div class="subject">'.format_string($post->subject).'</div>';
 
     $fullname = fullname($user, isteacher($course->id));
-    $by->name = "<a href=\"$CFG->wwwroot/user/view.php?id=$user->id&amp;course=$course->id\">$fullname</a>";
-    $by->date = userdate($post->modified, "", $touser->timezone);
-    $output .= get_string("bynameondate", "forum", $by);
+    $by->name = '<a href="'.$CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id.'">'.$fullname.'</a>';
+    $by->date = userdate($post->modified, '', $touser->timezone);
+    $output .= '<div class="author">'.get_string('bynameondate', 'forum', $by).'</div>';
 
-    $output .= "</font></p></td></tr>";
-    $output .= "<tr><td width=\"10\" class=\"forumpostside\">";
-    $output .= "&nbsp;";
-    $output .= "</td><td class=\"forumpostmessage\">\n";
+    $output .= '</td></tr>';
+
+    $output .= '<tr><td class="left side">';
+    if ($group = user_group($course->id, $user->id)) {
+        $output .= print_group_picture($group, $courseid, false, true, true);
+    } else {
+        $output .= '&nbsp;';
+    }
+
+    $output .= '</td><td class="content">';
 
     if ($post->attachment) {
         $post->course = $course->id;
-        $post->forum = get_field("forum_discussions", "forum", "id", $post->discussion);
-        $output .= "<div align=\"right\">";
-        $output .= forum_print_attachments($post, "html");
+        $post->forum = get_field('forum_discussions', 'forum', 'id', $post->discussion);
+        $output .= '<div class="attachments">';
+        $output .= forum_print_attachments($post, 'html');
         $output .= "</div>";
     }
 
     $output .= $formattedtext;
 
-    $output .= "<p align=\"right\"><font size=\"-1\">";
+
+/// Commands
+
+    $commands = array();
 
     if ($post->parent) {
-        $output .= "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion&amp;parent=$post->parent\">".get_string("parent", "forum")."</a> | ";
+        $commands[] = '<a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.
+                      $post->discussion.'&amp;parent='.$post->parent.'">'.get_string('parent', 'forum').'</a>';
     }
 
-    $age = time() - $post->created;
     if ($ownpost) {
-        $output .= "<a href=\"$CFG->wwwroot/mod/forum/post.php?delete=$post->id\">".get_string("delete", "forum")."</a>";
-        if ($reply) {
-            $output .= "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("replyforum", "forum")."</a>";
-        }
-        $output .= "&nbsp;&nbsp;";
-    } else {
-        if ($reply) {
-            $output .= "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/post.php?reply=$post->id\">".get_string("replyforum", "forum")."</a>&nbsp;&nbsp;";
-        }
+        $commands[] = '<a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/post.php?delete='.$post->id.'">'.
+                      get_string('delete', 'forum').'</a>';
     }
 
-    $output .= "</p>";
-    $output .= "<div align=\"right\"><p align=\"right\">";
+    if ($reply) {
+        $commands[] = '<a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/post.php?reply='.$post->id.'">'.
+                      get_string('reply', 'forum').'</a>';
+    }
+
+    $output .= '<div class="commands">';
+    $output .= implode(' | ', $commands);
+    $output .= '</div>';
+
+
+/// Context link to post if required
 
     if ($link) {
-        if ($post->replies == 1) {
-            $replystring = get_string("repliesone", "forum", $post->replies);
-        } else {
-            $replystring = get_string("repliesmany", "forum", $post->replies);
-        }
-        $output .= "<a href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$post->discussion\"><b>".get_string("discussthistopic", "forum")."</b></a> ($replystring)&nbsp;&nbsp;";
+        $output .= '<div class="link">';
+        $output .= '<a href="discuss.php?d='.$post->discussion.'#'.$post->id.'">'.
+                     get_string('postincontext', 'forum').'</a>';   
+        $output .= '</div>';
     }
-    $output .= "</p></div>";
+
     if ($footer) {
-        $output .= "<p>$footer</p>";
+        $output .= '<div class="footer">'.$footer.'</div>';
     }
-    $output .= "</td></tr></table>\n\n";
+    $output .= '</td></tr></table>'."\n\n";
+
 
     return $output;
 }
