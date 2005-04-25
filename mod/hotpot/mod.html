@@ -1,0 +1,289 @@
+<!-- This page defines the form to create or edit an instance of this module -->
+<!-- It is used from /course/mod.php.The whole instance is available as $form. -->
+
+<?php 
+require_once(
+	$CFG->dirroot.DIRECTORY_SEPARATOR.'mod'.DIRECTORY_SEPARATOR.'hotpot'.DIRECTORY_SEPARATOR.'lib.php'
+);
+
+// set default values in form fields, if necessary
+set_form_fields($form);
+
+// commonly used array of <SELECT> options
+$yes_no_options = array(
+	HOTPOT_NO => get_string("no"), 
+	HOTPOT_YES => get_string("yes")
+);
+
+?>
+<CENTER>
+<FORM name="form" method="post" action="<?php echo $ME ?>">
+<TABLE cellpadding="5">
+	<TR valign="top">
+		<TD align="right"><B><?php print_string("name") ?>:</B></TD>
+		<TD align="left">
+			<INPUT type="text" name="name" size=40 value="<?php p($form->name) ?>">
+		</TD>
+	</TR>
+	<TR valign="top">
+		<TD align="right">
+			<B><?php 
+				print_string("summary") 
+			?>:</B>
+			<FONT size="1"><?php
+				helpbutton("summary", get_string("summary"), "resource", true, true);
+				echo '<BR />';
+				helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
+				echo '<BR />';
+				if (isset($usehtmleditor) && $usehtmleditor) {
+					helpbutton("richtext", get_string("helprichtext"), "moodle", true, true);
+					echo '<BR />';
+				} else {
+					helpbutton("text", get_string("helptext"), "moodle", true, true); 
+					echo '<BR />';
+					emoticonhelpbutton("form", "description");
+					echo '<BR />';
+				} 
+			?></FONT>
+		</TD>
+		<TD align="left"><?php 
+			if (function_exists("print_textarea") && isset($usehtmleditor)) {
+				print_textarea($usehtmleditor, 10, 65, 680, 400, "summary", $form->summary);
+			} else {
+				// Moodle 1.1.1 (original size was rows="5" cols="50")
+				print '<TEXTAREA name="summary" rows="10" cols="65" wrap="virtual">'.$form->summary.'</TEXTAREA>';
+			}
+		?></TD>
+	</TR>
+	<TR valign="top">
+		<TD align="right"><B><?php print_string("quizopen", "quiz") ?>:</B></TD>
+		<TD align="left"><?php
+			if (!$form->timeopen and $course->format == "weeks") {
+				$form->timeopen= $course->startdate + (($form->section - 1) * 608400);
+			}
+			print_date_selector("openday", "openmonth", "openyear", $form->timeopen);
+			print ' - ';
+			print_time_selector("openhour", "openminute", $form->timeopen);
+			helpbutton("timeopen", get_string("quizopen","quiz"), "quiz");
+		?></TD>
+	</TR>
+	<TR valign="top">
+		<TD align="right"><B><?php print_string("quizclose", "quiz") ?>:</B></TD>
+		<TD align="left"><?php
+			if (!$form->timeclose and $course->format == "weeks") {
+				$form->timeclose= $course->startdate + (($form->section) * 608400);
+			}
+			print_date_selector("closeday", "closemonth", "closeyear", $form->timeclose);
+			print ' - ';
+			print_time_selector("closehour", "closeminute", $form->timeclose);
+			helpbutton("timeopen", get_string("quizclose","quiz"), "quiz");
+		?></TD>
+	</TR>
+	<TR valign="top">
+		<TD align="right" nowrap>
+			<B><?php echo get_string("location","hotpot") ?>:</B>
+		</TD>
+		<TD align="left"><?php
+
+
+			if (isadmin()) {
+				$site = get_site();
+				if ($course->id==$site->id) {
+					$id = $site->id;
+					$location = HOTPOT_LOCATION_SITEFILES;
+				} else {
+					$id = "'+(getObjValue(this.form.location)==".HOTPOT_LOCATION_SITEFILES."?".$site->id.":".$course->id.")+'";
+					$location = '';
+				}
+			} else { // ordinary teacher or content creator
+					$id = $course->id;
+					$location = HOTPOT_LOCATION_COURSEFILES;
+			}
+
+			if (array_key_exists($location, $HOTPOT_LOCATION)) {
+				echo '<INPUT type="hidden" name="location" value="'.$location.'" />';
+				echo '<i><font size="-1">'.$HOTPOT_LOCATION[$location].'</font></i> &nbsp; ';
+
+			} else { // admin can select from "site" or "course" files
+				choose_from_menu($HOTPOT_LOCATION, "location", "$form->location", "");
+			}
+
+
+			if (function_exists("button_to_popup_window")) {
+
+				// use javascript to extract wdir from the reference field
+				$wdir = "'+getDir(getObjValue(this.form.reference))+'";
+
+				// set button url depending on Moodle version
+				if ($CFG->version < 2004083125) { // version may need refining
+					// up to and including Moodle 1.4.1
+					$url = "/mod/resource/coursefiles.php?id=$id&wdir=$wdir";
+				} else {
+					// Moodle 1.4.2 and beyond
+					$url = "/files/index.php?id=$id&wdir=$wdir&choose=form.reference";
+				}
+
+				$strchooseafile = get_string("chooseafile", "resource");
+				button_to_popup_window ($url, 'coursefiles', $strchooseafile, 500, 750, $strchooseafile);
+			}
+		?></TD>
+	</TR>
+	<TR valign="top">
+		<TD align="right" nowrap>
+			<B><?php print_string("filename", "resource") ?>:</B>
+		</TD>
+		<TD align="left"><?php
+			if (function_exists("button_to_popup_window")) {
+				echo "<input name=\"reference\" size=\"50\" value=\"$form->reference\">&nbsp;";
+
+			} else if (function_exists("get_directory_list")) {
+				// Moodle 1.1 (and perhaps some others)
+				$dirs = get_directory_list("$CFG->dataroot/$course->id");
+				$options = array();
+				foreach ($dirs as $dir) {
+					$options["$dir"] = $dir;
+				}
+				choose_from_menu ($options, "reference", $form->reference);
+
+			} else {
+				// a very old Moodle (may be none left :-)
+				echo "<input name=\"reference\" size=\"50\" value=\"$form->reference\">&nbsp;";
+			}
+			echo '<BR>';
+			hotpot_print_show_links($form->course, $form->location, $form->reference, '', ' &nbsp; ', true);
+		?></TD>
+	</TR>
+	<TR valign="top">
+		<TD align="right"><B><?php print_string("navigation", "hotpot") ?>:</B></TD>
+		<TD align="left"><?php
+			choose_from_menu($HOTPOT_NAVIGATION, "navigation", "$form->navigation", "");
+			helpbutton("navigation", get_string("navigation","hotpot"), "hotpot");
+		?></TD>
+	</TR>
+	<TR valign="top">
+		<TD align="right"><B><?php print_string("outputformat", "hotpot") ?>:</B></TD>
+		<TD align="left"><?php
+			choose_from_menu($HOTPOT_OUTPUTFORMAT, "outputformat", "$form->outputformat", "");
+			helpbutton("outputformat", get_string("outputformat","hotpot"), "hotpot");
+		?></TD>
+	</TR>
+	<TR valign="top">
+		<TD align="right"><B><?php print_string("forceplugins", "hotpot") ?>:</B></TD>
+		<TD align="left"><?php
+			choose_from_menu($yes_no_options, "forceplugins", "$form->forceplugins", "");
+			helpbutton("forceplugins", get_string("forceplugins","hotpot"), "hotpot");
+		?></TD>
+	</TR>
+	<TR valign="top">
+		<TD align="right"><B><?php print_string("shownextquiz", "hotpot") ?>:</B></TD>
+		<TD align="left"><?php
+			choose_from_menu($yes_no_options, "shownextquiz", "$form->shownextquiz", "");
+			helpbutton("shownextquiz", get_string("shownextquiz","hotpot"), "hotpot");
+		?></TD>
+	</TR>
+	<TR valign="top">
+		<TD align="right"><B><?php print_string("allowreview", "quiz") ?>:</B></TD>
+		<TD align="left"><?php
+			choose_from_menu($yes_no_options, "review", "$form->review", "");
+			helpbutton("review", get_string("allowreview","quiz"), "quiz");
+		?></TD>
+	</TR>
+	<TR valign="top">
+		<TD align="right"><B><?php print_string("maximumgrade") ?>:</B></TD>
+		<TD align="left"><?php
+			$options = array();
+			for ($i=100; $i>=1; $i--) {
+				$options[$i] = $i;
+			}
+			$options[0] = get_string("nograde");
+			
+			choose_from_menu($options, "grade", "$form->grade", "");
+			helpbutton("maxgrade", get_string("maximumgrade"), "quiz");
+		?></TD>
+	</TR>
+	<TR valign="top">
+		<TD align="right"><B><?php print_string("grademethod", "quiz") ?>:</B></TD>
+		<TD align="left"><?php
+			choose_from_menu($HOTPOT_GRADEMETHOD, "grademethod", "$form->grademethod", "");
+			helpbutton("grademethod", get_string("grademethod","quiz"), "quiz");
+		?></TD>
+	</TR>
+	<TR valign="top">
+		<TD align="right"><B><?php print_string("attemptsallowed", "quiz") ?>:</B></TD>
+		<TD align="left"><?php
+			$options = array(
+				0 => get_string("attemptsunlimited", "quiz"),
+				1 => '1 '.strtolower(get_string("attempt", "quiz"))
+			);
+			for ($i=2; $i<=10; $i++) {
+				$options[$i] = "$i ".strtolower(get_string("attempts", "quiz"));
+			}
+			choose_from_menu($options, "attempts", "$form->attempts", "");
+			helpbutton("attempts", get_string("attemptsallowed","quiz"), "quiz");
+		?></TD>
+	</TR>
+	<TR valign="top">
+		<TD align="right"><B><?php print_string("requirepassword", "quiz") ?>:</B></TD>
+		<TD align="left">
+			<INPUT type="text" name="password" size=40 value="<?php p($form->password) ?>">
+			<?php helpbutton("requirepassword", get_string("requirepassword", "quiz"), "quiz"); ?>
+		</TD>
+	</TR>
+	<TR valign="top">
+		<TD align="right"><B><?php print_string("requiresubnet", "quiz") ?>:</B></TD>
+		<TD align="left">
+			<INPUT type="text" name="subnet" size=40 value="<?php p($form->subnet) ?>">
+			<?php helpbutton("requiresubnet", get_string("requiresubnet", "quiz"), "quiz"); ?>
+		</TD>
+	</TR>
+</TABLE>
+
+<!-- hidden fields -->
+<INPUT type="hidden" name="course"        value="<?php p($form->course) ?>">
+<INPUT type="hidden" name="coursemodule"  value="<?php p($form->coursemodule) ?>">
+<INPUT type="hidden" name="section"       value="<?php p($form->section) ?>">
+<INPUT type="hidden" name="module"        value="<?php p($form->module) ?>">
+<INPUT type="hidden" name="modulename"    value="<?php p($form->modulename) ?>">
+<INPUT type="hidden" name="instance"      value="<?php p($form->instance) ?>">
+<INPUT type="hidden" name="mode"          value="<?php p($form->mode) ?>">
+<?php if (isset($USER->sesskey)) { ?>
+<INPUT type="hidden" name="sesskey"       value="<?php p($USER->sesskey) ?>">
+<?php } ?>
+
+<!-- buttons -->
+<INPUT type="submit" value="<?php print_string("savechanges") ?>"> &nbsp;
+<INPUT type="submit" name="cancel" value="<?php print_string("cancel") ?>" />
+
+</FORM>
+</CENTER>
+<?php
+
+// ======================
+//	functions
+// ======================
+
+function set_form_fields(&$form) {
+	set_form_field($form, 'name');
+	set_form_field($form, 'summary');
+	set_form_field($form, 'timeopen');
+	set_form_field($form, 'timeclose');
+	set_form_field($form, 'location', HOTPOT_LOCATION_COURSEFILES);
+	set_form_field($form, 'reference');
+	set_form_field($form, 'navigation', HOTPOT_NAVIGATION_BAR);
+	set_form_field($form, 'outputformat', HOTPOT_OUTPUTFORMAT_BEST);
+	set_form_field($form, 'forceplugins', HOTPOT_NO);
+	set_form_field($form, 'shownextquiz', HOTPOT_NO);
+	set_form_field($form, 'review', HOTPOT_YES);
+	set_form_field($form, 'grade', 100);
+	set_form_field($form, 'grademethod', HOTPOT_GRADEMETHOD_HIGHEST);
+	set_form_field($form, 'attempts', 0); // unlimited
+	set_form_field($form, 'password');
+	set_form_field($form, 'subnet');
+}
+function set_form_field(&$form, $fieldname, $defaultvalue='') {
+	if (!isset($form->$fieldname)) {
+		$form->$fieldname = $defaultvalue;
+	}
+}
+
+?>
