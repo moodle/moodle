@@ -284,7 +284,11 @@
 function print_user_table($users, $isteacher) {
         // Print one big table with abbreviated info
         global $mode, $sort, $course, $dir, $CFG;
-
+        if (isset($_GET['group'])) {
+             $group_param = "&amp;group=".$_GET['group'];
+        } else {
+	     $group_param = "";
+	}
         $columns = array("firstname", "lastname", "city", "country", "lastaccess");
 
         $countries = get_list_of_countries();
@@ -318,7 +322,7 @@ function print_user_table($users, $isteacher) {
                 }
                 $columnicon = " <img src=\"$CFG->pixpath/t/$columnicon.gif\" alt=\"\"/>";
             }
-            $$column = "<a href=\"index.php?id=$course->id&amp;sort=$column&amp;dir=$columndir\">".$colname["$column"]."</a>$columnicon";
+            $$column = "<a href=\"index.php?id=$course->id&amp;sort=$column&amp;dir=$columndir$group_param\">".$colname["$column"]."</a>$columnicon";
         }
 
         foreach ($users as $key => $user) {
