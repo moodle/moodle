@@ -656,40 +656,39 @@ function forum_make_mail_text($course, $forum, $discussion, $post, $userfrom, $u
 function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $userto) {
     global $CFG;
 
-    if ($userto->mailformat == 1) {  // HTML
-
-        $strforums = get_string('forums', 'forum');
-        $canreply = forum_user_can_post($forum, $userto);
-        $canunsubscribe = ! forum_is_forcesubscribed($forum->id);
-
-        $posthtml = '';
-        $posthtml .= '<head>';
-        foreach ($CFG->stylesheets as $stylesheet) {
-            $posthtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />'."\n";
-        }
-        $posthtml .= '</head>';
-        $posthtml .= "\n<body>\n\n";
-
-        $posthtml .= "<p><font face=\"sans-serif\">".
-        "<a target=\"_blank\" href=\"$CFG->wwwroot/course/view.php?id=$course->id\">$course->shortname</a> &raquo; ".
-        "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/index.php?id=$course->id\">$strforums</a> &raquo; ".
-        "<a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/view.php?f=$forum->id\">".format_string($forum->name,true)."</a>";
-        if ($discussion->name == $forum->name) {
-            $posthtml .= "</font></p>";
-        } else {
-            $posthtml .= " &raquo; <a target=\"_blank\" href=\"$CFG->wwwroot/mod/forum/discuss.php?d=$discussion->id\">".format_string($discussion->name,true)."</a></font></p>";
-        }
-        $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, $canreply, true, false);
-
-        if ($canunsubscribe) {
-            $posthtml .= "\n<br /><hr size=\"1\" noshade /><p align=\"right\"><font size=\"1\"><a href=\"$CFG->wwwroot/mod/forum/subscribe.php?id=$forum->id\">".get_string("unsubscribe", "forum")."</a></font></p>";
-        }
-
-        return $posthtml;
-
-    } else {
+    if ($userto->mailformat != 1) {  // Needs to be HTML
         return '';
     }
+
+    $strforums = get_string('forums', 'forum');
+    $canreply = forum_user_can_post($forum, $userto);
+    $canunsubscribe = ! forum_is_forcesubscribed($forum->id);
+
+    $posthtml = '<head>';
+    foreach ($CFG->stylesheets as $stylesheet) {
+        $posthtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />'."\n";
+    }
+    $posthtml .= '</head>';
+    $posthtml .= "\n<body>\n\n";
+
+    $posthtml .= '<div class="mail navbar">'.
+    '<a target="_blank" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> &raquo; '.
+    '<a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/index.php?id='.$course->id.'">'.$strforums.'</a> &raquo; '.
+    '<a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id.'">'.format_string($forum->name,true).'</a>';
+    if ($discussion->name == $forum->name) {
+        $posthtml .= '</div>';
+    } else {
+        $posthtml .= ' &raquo; <a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->id.'">'.
+                     format_string($discussion->name,true).'</a></div>';
+    }
+    $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, $canreply, true, false);
+
+    if ($canunsubscribe) {
+        $posthtml .= '<br /><div class="unsubscribelink"><a href="'.$CFG->wwwroot.'/mod/forum/subscribe.php?id='.$forum->id.'">'.
+                     get_string('unsubscribe', 'forum').'</a></div>';
+    }
+
+    return $posthtml;
 }
 
 function forum_user_outline($course, $user, $mod, $forum) {
@@ -3157,7 +3156,7 @@ function forum_tp_mark_post_read($userid, &$post, $forumid) {
 }
 
 function forum_tp_mark_forum_read($userid, $forumid, $groupid=false) {
-/// We need a proper LEFT JOIN in here to find posts without read records
+/// Marks a whole forum as read, for a given user
     global $CFG;
 
     $cutoffdate = isset($CFG->forum_oldpostdays) ? (time() - ($CFG->forum_oldpostdays*24*60*60)) : 0;
