@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
+      // admin.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['adminseesallevents'] = '管理员看到所有事件';
@@ -117,12 +117,15 @@ $string['therewereerrors'] = '在您的数据中有错误。';
 $string['timezoneforced'] = '站点管理员规定必须这样做。';
 $string['timezoneisforcedto'] = '强制所有用户使用';
 $string['timezonenotforced'] = '用户可以选择自己的时区';
+$string['upgradeforumread'] = '在Moodle 1.5中增加了一项新的功能，它可以跟踪论坛帖子是否已经阅读。<br />为了使用这个功能，您需要<a href=\"$a\">升级您的表格</a>。';
+$string['upgradeforumreadinfo'] = '在Moodle 1.5中增加了一项新的功能，它可以跟踪论坛帖子是否已经阅读。为了使用这个功能，您需要升级您的表格为已经存在的帖子添加这一信息。如果您的站点很大，这会花费很长的时间(数小时)，并且给数据库服务器带来很大负担，因此最好在夜深人静时再做这个工作。当然，在您的站点升级时，它还是可以继续工作的，用户不会受到任何影响。一旦您开始了这个工作，就必须让它结束(一直开启浏览器)。当然，如果您中途关闭了浏览器：不用担心，重新开始就可以了。<br /><br />您现在要开始升级么？';
 $string['upgradelogs'] = '要获得完整功能，您的就日志必须升级。<a href=\"$a\">更多信息</a>';
 $string['upgradelogsinfo'] = '网站的变动记录保存在日志中.升级它以便查看最新的完整记录。升级较大规模网站的日志文件或许费时较长，耐心一些，升级过程中不要关闭浏览器--升级会顺利的，它不会影响升级后用户的访问<br /><br />打算升级日志文件吗?';
 $string['upgradesure'] = '您的Moodle文件已经被修改了，您正在准备自动升级您的服务器为如下版本:
 <p><b>$a</b></p>
 <p>您一旦执行了这个操作就不能再返回到先前的版本了。</p>
 <p>您确定要将服务器升级到这个版本么?</p>';
+$string['upgradingdata'] = '升级数据';
 $string['upgradinglogs'] = '升级日志';
 
 ?>
