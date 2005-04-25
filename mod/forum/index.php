@@ -48,13 +48,12 @@
     $generaltable->head  = array ($strforum, $strdescription, $strdiscussions);
     $generaltable->align = array ('left', 'left', 'center');
 
-    if ($CFG->forum_trackreadposts) {
+    if ($usetracking = forum_tp_can_track_forums()) {
+        $untracked = forum_tp_get_untracked_forums($USER->id);
+
         $generaltable->head[] = $strunreadposts;
         $generaltable->align[] = 'center';
 
-        if (forum_tp_can_track_forums($USER->id)) {
-            $untracked = forum_tp_get_untracked_forums($USER->id);
-        }
         $generaltable->head[] = $strtracking;
         $generaltable->align[] = 'center';
     }
@@ -140,8 +139,8 @@
                 $count = count_records("forum_discussions", "forum", "$forum->id");
             }
 
-            if ($CFG->forum_trackreadposts) {
-                if (forum_tp_is_tracked() && !isset($untracked[$forum->id])) {
+            if (forum_tp_can_track_forums()) {
+                if (forum_tp_is_tracked($forum->id) && !isset($untracked[$forum->id])) {
                     $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
                     $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
                     if ($unread > 0) {
@@ -208,7 +207,7 @@
                     }
                 }
                 $row = array ($forumlink, $forum->intro, $discussionlink);
-                if ($CFG->forum_trackreadposts) {
+                if ($usetracking) {
                     $row[] = $unreadlink;
                     $row[] = $trackedlink;    // Tracking.
                 }
@@ -219,7 +218,7 @@
                 $generaltable->data[] = $row;
             } else {
                 $row = array ($forumlink, $forum->intro, $discussionlink);
-                if ($CFG->forum_trackreadposts) {
+                if ($usetracking) {
                     $row[] = $unreadlink;
                     $row[] = $trackedlink;    // Tracking.
                 }
@@ -236,7 +235,7 @@
     $learningtable->head  = array ($strforum, $strdescription, $strdiscussions);
     $learningtable->align = array ("left", "left", "center");
 
-    if ($CFG->forum_trackreadposts) {
+    if ($usetracking) {
         $learningtable->head[] = $strunreadposts;
         $learningtable->align[] = 'center';
 
@@ -276,8 +275,8 @@
                     $count = count_records("forum_discussions", "forum", "$forum->id");
                 }
 
-                if ($CFG->forum_trackreadposts) {
-                    if (forum_tp_can_track_forums($USER->id) && !isset($untracked[$forum->id])) {
+                if (forum_tp_can_track_forums()) {
+                    if (!isset($untracked[$forum->id])) {
                         $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
                         $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
                         if ($unread > 0) {
@@ -357,7 +356,7 @@
                     }
 
                     $row = array ($printsection, $forumlink, $forum->intro, $discussionlink);
-                    if ($CFG->forum_trackreadposts) {
+                    if ($usetracking) {
                         $row[] = $unreadlink;
                         $row[] = $trackedlink;    // Tracking.
                     }
@@ -369,7 +368,7 @@
 
                 } else {
                     $row = array ($printsection, $forumlink, $forum->intro, $discussionlink);
-                    if ($CFG->forum_trackreadposts) {
+                    if ($usetracking) {
                         $row[] = $unreadlink;
                         $row[] = $trackedlink;    // Tracking.
                     }
