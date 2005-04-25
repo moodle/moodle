@@ -45,7 +45,7 @@
         $generaltable->head[] = $strunreadposts;
         $generaltable->align[] = 'center';
 
-        if (forum_tp_is_tracked()) {
+        if (forum_tp_can_track_forums($USER->id)) {
             $untracked = forum_tp_get_untracked_forums($USER->id);
         }
         $generaltable->head[] = $strtracking;
@@ -140,8 +140,8 @@
                     if ($unread > 0) {
                         $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a></span>';
                         $unreadlink .= ' <span style="font-size: 75%">' .
-                                       '<a title="Mark all read" href="markposts.php?id='.
-                                       $forum->id.'&mark=read">mark read</a></span>';
+                                       '<a title="'.get_string('markallread', 'forum').'" href="markposts.php?id='.
+                                       $forum->id.'&mark=read">'.get_string('markread', 'forum').'</a></span>';
                     } else {
                         $unreadlink = '<span class="read"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
                     }
@@ -273,14 +273,14 @@
                 }
 
                 if ($CFG->forum_trackreadposts) {
-                    if (forum_tp_is_tracked() && !isset($untracked[$forum->id])) {
+                    if (forum_tp_can_track_forums($USER->id) && !isset($untracked[$forum->id])) {
                         $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
                         $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
                         if ($unread > 0) {
                             $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a></span>';
                             $unreadlink .= ' <span style="font-size: 75%">' .
-                                           '<a title="Mark all read" href="markposts.php?id='.
-                                           $forum->id.'&mark=read">mark read</a></span>';
+                                           '<a title="'.get_string('markallread', 'forum').'" href="markposts.php?id='.
+                                           $forum->id.'&mark=read">'.get_string('markread', 'forum').'</a></span>';
                         } else {
                             $unreadlink = '<span class="read"><a href="view.php?f='.$forum->id.'">'.$unread.'</a></span>';
                         }

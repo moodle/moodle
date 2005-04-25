@@ -1535,7 +1535,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         $strmarkunread = get_string('markunread', 'forum');
     }
 
-    if ($CFG->forum_trackreadposts && forum_tp_is_tracked($post->forum, $USER->id)) {
+    if (forum_tp_can_track_forums($USER->id) && forum_tp_is_tracked($post->forum, $USER->id)) {
         if ($post_read == -99) {    // If we don't know yet...
         /// The front page can display a news item post to non-logged in users. This should
         /// always appear as 'read'.
@@ -2588,7 +2588,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
     $strdatestring = get_string('strftimerecentfull');
 
     /// Check if the forum is tracked.
-    if ($CFG->forum_trackreadposts) {
+    if (forum_tp_can_track_forums($USER->id)) {
         $forumtracked = forum_tp_is_tracked($forum->id, $USER->id);
     } else {
         $forumtracked = false;
@@ -2740,7 +2740,7 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
     $post->subject = format_string($post->subject);
 
     $forumtracked = forum_tp_is_tracked($forum->id, $USER->id);
-    if ($CFG->forum_trackreadposts && $forumtracked) {
+    if (forum_tp_can_track_forums($USER->id) && $forumtracked) {
         $user_read_array = forum_tp_get_discussion_read_records($USER->id, $post->discussion);
     } else {
         $user_read_array = array();
@@ -3314,8 +3314,14 @@ function forum_tp_get_untracked_forums($userid) {
     return get_records('forum_track_prefs', 'userid', $userid, '', 'forumid,userid');
 }
 
-/// Tells whether a specific forum is tracked, or if no forum specified, whether
-/// it is configured to allow tracking.
+/// Tells whether a user can track forums based on config variables.
+function forum_tp_can_track_forums($courseid=false, $forumid=false) {
+    global $USER, $CFG;
+
+    return ($CFG->forum_trackreadposts && $USER->trackforums);
+}
+
+/// Tells whether a specific forum is tracked.
 function forum_tp_is_tracked($forumid=0, $userid=false) {
     global $USER, $CFG;
 
@@ -3323,13 +3329,7 @@ function forum_tp_is_tracked($forumid=0, $userid=false) {
         $userid = $USER->id;
     }
 
-    if (!$CFG->forum_trackreadposts || !$USER->trackforums) {
-        return false;
-    } else if (empty($forumid)) {
-        return true;
-    } else {
-        return (get_record('forum_track_prefs', 'userid', $userid, 'forumid', $forumid) === false);
-    }
+    return (get_record('forum_track_prefs', 'userid', $userid, 'forumid', $forumid) === false);
 }
 
 function forum_tp_start_tracking($forumid, $userid=false) {

@@ -5,7 +5,8 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    require_variable($id);      // The forum to subscribe or unsubscribe to
+    require_variable($id);                          // The forum to subscribe or unsubscribe to
+    optional_variable($returnpage, 'index.php');    // Page to return to.
 
     if (! $forum = get_record("forum", "id", $id)) {
         error("Forum ID was incorrect");
@@ -46,7 +47,7 @@
         exit;
     }
 
-    $returnto = forum_go_back_to("index.php?id=$course->id");
+    $returnto = forum_go_back_to($returnpage.'?id='.$course->id.'&f='.$forum->id);
 
     $info->name  = fullname($user);
     $info->forum = format_string($forum->name);

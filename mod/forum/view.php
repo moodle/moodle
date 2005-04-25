@@ -153,6 +153,20 @@
             echo "<span class=\"helplink\"><a title=\"$subtexttitle\" href=\"subscribe.php?id=$forum->id\">$subtext</a></span>";
         }
 
+        if (forum_tp_can_track_forums($USER->id)) {
+            if (forum_tp_is_tracked($forum->id, $USER->id)) {
+                $trtitle = get_string('notrackforum', 'forum');
+                $trackedlink = '<a title="'.get_string('notrackforum', 'forum').'" href="settracking.php?id='.
+                               $forum->id.'&returnpage=view.php">'.get_string('notrackforum', 'forum').'</a>';
+            } else {
+                $trtitle = get_string('trackforum', 'forum');
+                $trackedlink = '<a title="'.get_string('trackforum', 'forum').'" href="settracking.php?id='.
+                               $forum->id.'&returnpage=view.php">'.get_string('trackforum', 'forum').'</a>';
+            }
+            echo "<br />";
+            echo "<span class=\"helplink\">$trackedlink</span>";
+        }
+
         echo '</td>';
     }
 

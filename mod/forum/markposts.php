@@ -60,6 +60,7 @@
             error("Could not mark that forum read.", $_SERVER["HTTP_REFERER"]);
         }
 
+/// FUTURE - Add ability to mark them as unread.
 //    } else { // subscribe
 //        if (forum_tp_start_tracking($forum->id, $user->id)) {
 //            add_to_log($course->id, "forum", "mark unread", "view.php?f=$forum->id", $forum->id, $cm->id);
