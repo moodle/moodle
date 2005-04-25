@@ -1496,7 +1496,7 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
 
     if ($link) {
         $output .= '<div class="link">';
-        $output .= '<a href="discuss.php?d='.$post->discussion.'#'.$post->id.'">'.
+        $output .= '<a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#'.$post->id.'">'.
                      get_string('postincontext', 'forum').'</a>';   
         $output .= '</div>';
     }
