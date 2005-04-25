@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
+      // moodle.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['action'] = '操作';
@@ -1010,6 +1010,7 @@ $string['topichide'] = '$a よりこのトピックを隠す';
 $string['topicoutline'] = 'トピックの概要';
 $string['topicshow'] = '$a にこのトピックを表示する';
 $string['total'] = '合計';
+$string['trackforums'] = '既読/未読の投稿を追跡する';
 $string['trysearching'] = '代わりに検索する。';
 $string['turneditingoff'] = '編集モード OFF';
 $string['turneditingon'] = '編集モード ON';

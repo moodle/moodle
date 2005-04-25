@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
+      // quiz.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -143,6 +143,7 @@ $string['gradeaverage'] = '平均評点';
 $string['gradehighest'] = '最高評点';
 $string['grademethod'] = '評定方法';
 $string['guestsno'] = '申し訳ございません、ゲストユーザは小テストの閲覧および解答ができません。';
+$string['hotpot'] = 'Hot Potatoesフォーマット';
 $string['illegalformulasyntax'] = '「 $a 」で始まる不正なシンタックスの式です。';
 $string['imagedisplay'] = '表示イメージ';
 $string['imagemissing'] = '$a 行のイメージが使用できません。ファイル名は無視されます。';
