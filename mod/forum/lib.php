@@ -1792,13 +1792,22 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
         if ($CFG->forum_trackreadposts) {
             echo '<td class="replies">';
             if ($forumtracked) {
-                echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#unread">';
                 if ($post->unread > 0) {
+                    echo '<table align="center" cellpadding="0" cellspacing="0" border="0"><tr><td>';
+                    echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#unread">';
                     echo '<span class="unread">'.$post->unread.'</span>';
+                    echo '</a>';
+                    echo '&nbsp;</td><td align="center">';
+                    echo '<span class="lastpost">'.
+                         '<a title="'.get_string('markalldread', 'forum').'" href="markposts.php?id='.
+                         $forum->id.'&d='.$post->discussion.'&mark=read&returnpage=view.php">' .
+                         get_string('markreadbutton', 'forum').'</a></span>';
+                    echo '</td></tr></table>';
                 } else {
+                    echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#unread">';
                     echo $post->unread;
+                    echo '</a>';
                 }
-                echo '</a>';
             } else {
                 echo 'n/a';
             }
@@ -3178,6 +3187,26 @@ function forum_tp_mark_forum_read($userid, $forumid, $groupid=false) {
     if ($posts = get_records_sql($sql)) {
         foreach ($posts as $post) {
             forum_tp_add_read_record($userid, $post->postid, $post->discussionid, $post->forumid);
+        }
+        return true;
+    }
+}
+
+function forum_tp_mark_discussion_read($userid, $discussionid, $forumid) {
+/// Marks a whole discussion as read, for a given user
+    global $CFG;
+
+    $cutoffdate = isset($CFG->forum_oldpostdays) ? (time() - ($CFG->forum_oldpostdays*24*60*60)) : 0;
+
+    $sql = 'SELECT p.id as postid, p.discussion as discussionid '.
+           'FROM '.$CFG->prefix.'forum_posts p '.
+           'LEFT JOIN '.$CFG->prefix.'forum_read r ON r.postid = p.id AND r.userid = '.$userid.' '.
+           'WHERE p.discussion = '.$discussionid.' '.
+                'AND p.modified >= '.$cutoffdate.' AND r.id is NULL';
+
+    if ($posts = get_records_sql($sql)) {
+        foreach ($posts as $post) {
+            forum_tp_add_read_record($userid, $post->postid, $post->discussionid, $forumid);
         }
         return true;
     }

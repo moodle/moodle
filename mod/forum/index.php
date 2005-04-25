@@ -139,7 +139,7 @@
                     $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
                     if ($unread > 0) {
                         $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a></span>';
-                        $unreadlink .= ' <span style="font-size: 75%">' .
+                        $unreadlink .= ' <span style="font-size: 0.7em">' .
                                        '<a title="'.get_string('markallread', 'forum').'" href="markposts.php?id='.
                                        $forum->id.'&mark=read">'.get_string('markread', 'forum').'</a></span>';
                     } else {
@@ -278,7 +278,7 @@
                         $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
                         if ($unread > 0) {
                             $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a></span>';
-                            $unreadlink .= ' <span style="font-size: 75%">' .
+                            $unreadlink .= ' <span style="font-size: 0.7em">' .
                                            '<a title="'.get_string('markallread', 'forum').'" href="markposts.php?id='.
                                            $forum->id.'&mark=read">'.get_string('markread', 'forum').'</a></span>';
                         } else {

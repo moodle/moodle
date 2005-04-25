@@ -5,8 +5,10 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    require_variable($id);      // The forum to mark
-    require_variable($mark);    // Read or unread?
+    require_variable($id);                          // The forum to mark
+    require_variable($mark);                        // Read or unread?
+    optional_variable($d);                          // Discussion to mark.
+    optional_variable($returnpage, 'index.php');    // Page to return to.
 
     if (! $forum = get_record("forum", "id", $id)) {
         error("Forum ID was incorrect");
@@ -47,17 +49,26 @@
         exit;
     }
 
-    $returnto = forum_go_back_to("index.php?id=$course->id");
+    $returnto = forum_go_back_to($returnpage.'?id='.$course->id.'&f='.$forum->id);
 
     $info->name  = fullname($user);
     $info->forum = format_string($forum->name);
 
     if ($mark == 'read') {
-        if (forum_tp_mark_forum_read($user->id, $forum->id)) {
-            add_to_log($course->id, "forum", "mark read", "view.php?f=$forum->id", $forum->id, $cm->id);
-            redirect($returnto);
+        if (!empty($d)) {
+            if (forum_tp_mark_discussion_read($user->id, $d, $forum->id)) {
+                add_to_log($course->id, "discussion", "mark read", "view.php?f=$forum->id", $d, $cm->id);
+                redirect($returnto);
+            } else {
+                error("Could not mark that forum read.", $_SERVER["HTTP_REFERER"]);
+            }
         } else {
-            error("Could not mark that forum read.", $_SERVER["HTTP_REFERER"]);
+            if (forum_tp_mark_forum_read($user->id, $forum->id)) {
+                add_to_log($course->id, "forum", "mark read", "view.php?f=$forum->id", $forum->id, $cm->id);
+                redirect($returnto);
+            } else {
+                error("Could not mark that forum read.", $_SERVER["HTTP_REFERER"]);
+            }
         }
 
 /// FUTURE - Add ability to mark them as unread.
