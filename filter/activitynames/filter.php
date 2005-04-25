@@ -14,31 +14,36 @@
             $courseid = SITEID;
         }
 
-        $course = get_record("course","id",$courseid);
-        $modinfo = unserialize($course->modinfo);
+        /// It may be cached
 
-        if (!empty($modinfo)) {
+        if (empty($activitylist)) {
 
-            $activitylist = array();      /// We will store all the activities here
+            $course = get_record("course","id",$courseid);
+            $modinfo = unserialize($course->modinfo);
 
-            //Sort modinfo by name length
-            usort($modinfo,'comparemodulenamesbylength');
+            if (!empty($modinfo)) {
 
-            foreach ($modinfo as $activity) {
-                //Exclude labels and hidden items
-                if ($activity->mod != "label" && $activity->visible) {
-                    $title = strip_tags(urldecode($activity->name));
-                    $title = str_replace('"', "'", $title);
-                    $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/$activity->mod/view.php?id=$activity->cm\">";
-                    $currentname = urldecode($activity->name);
-                    if ($currentname = trim($currentname)) {
-                        $activitylist[] = new filterobject($currentname, $href_tag_begin, '</a>', false, true);
+                $activitylist = array();      /// We will store all the activities here
+
+                //Sort modinfo by name length
+                usort($modinfo,'comparemodulenamesbylength');
+
+                foreach ($modinfo as $activity) {
+                    //Exclude labels and hidden items
+                    if ($activity->mod != "label" && $activity->visible) {
+                        $title = strip_tags(urldecode($activity->name));
+                        $title = str_replace('"', "'", $title);
+                        $href_tag_begin = "<a class=\"autolink\" title=\"$title\" href=\"$CFG->wwwroot/mod/$activity->mod/view.php?id=$activity->cm\">";
+                        $currentname = urldecode($activity->name);
+                        if ($currentname = trim($currentname)) {
+                            $activitylist[] = new filterobject($currentname, $href_tag_begin, '</a>', false, true);
+                        }
                     }
                 }
             }
-            $text = filter_phrases ($text, $activitylist);
         }
-        return $text;
+
+        return $text = filter_phrases ($text, $activitylist);
     }
 
 
