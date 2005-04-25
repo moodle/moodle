@@ -89,4 +89,3 @@ CREATE TABLE prefix_hotpot_strings (
   PRIMARY KEY  (id)
 ) TYPE=MyISAM COMMENT='strings used in Hot Potatatoes questions and responses';
 
-    

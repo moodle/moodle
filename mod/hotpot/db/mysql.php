@@ -3,25 +3,17 @@
 function hotpot_upgrade($oldversion) {
 	global $CFG;
 	$ok = true;
-    $newinstall = true;
 
 	if ($oldversion < 2004021400) {
 		execute_sql(" ALTER TABLE `{$CFG->prefix}hotpot_events` ADD `starttime` INT(10) unsigned NOT NULL DEFAULT '0' AFTER `time`");
 		execute_sql(" ALTER TABLE `{$CFG->prefix}hotpot_events` ADD `endtime` INT(10) unsigned NOT NULL DEFAULT '0' AFTER `time`");
-        $newinstall = false;
 	}
 
 	// update from HotPot v1 to HotPot v2
 	if ($oldversion < 2005031400) {
 		$ok = $ok && hotpot_get_update_to_v2();
 		$ok = $ok && hotpot_update_to_v2_from_v1();
-
-        $newinstall = false;
 	}
-
-    if ($newinstall) {   /// Disable this module by default in new installs
-        @set_field('modules', 'visible', '0', 'name', 'hotpot');
-    }
 
 	return $ok;
 }

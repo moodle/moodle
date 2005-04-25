@@ -2,19 +2,13 @@
 
 function hotpot_upgrade($oldversion) {
 	$ok = true;
-    $newinstall = true;
 
 	// update from HotPot v1 to HotPot v2
 	if ($oldversion < 2005031400) {
 		$ok = $ok && hotpot_get_update_to_v2();
 		$ok = $ok && hotpot_update_to_v2_from_v1();
-        $newinstall = false;
 	}
 
-
-    if ($newinstall) {   /// Disable this module by default in new installs
-        @set_field('modules', 'visible', '0', 'name', 'hotpot');
-    }
 
 	return $ok;
 }
