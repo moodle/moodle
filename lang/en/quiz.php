@@ -142,6 +142,7 @@ $string['gradeaverage'] = 'Average grade';
 $string['gradehighest'] = 'Highest grade';
 $string['grademethod'] = 'Grading method';
 $string['guestsno'] = 'Sorry, guests can not see or attempt quizzes';
+$string['hotpot'] = 'Hot Potatoes format';
 $string['illegalformulasyntax'] = 'Illegal formula syntax starting with \'$a\'';
 $string['imagedisplay'] = 'Image to display';
 $string['imagemissing'] = 'Image not available at line $a. The filename will be ignored';
