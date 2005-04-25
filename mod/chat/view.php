@@ -109,7 +109,17 @@
                               "chat$course->id$chat->id$groupparam", "$strenterchat", 500, 700, get_string('modulename', 'chat'));
         print_simple_box_end();
     } else {
-        notice(get_string('noguests', 'chat'));
+
+        $wwwroot = $CFG->wwwroot.'/login/index.php';
+        if (!empty($CFG->loginhttps)) {
+            $wwwroot = str_replace('http','https', $wwwroot);
+        }
+
+        notice_yesno(get_string('noguests', 'chat').'<br /><br />'.get_string('liketologin'),
+                     $wwwroot, $_SERVER['HTTP_REFERER']);
+                     
+        print_footer($course);
+        exit;
     }
 
 
