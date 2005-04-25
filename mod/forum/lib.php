@@ -1803,7 +1803,6 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
             }
             echo "</td>\n";
         }
-
     }
 
     echo '<td class="lastpost">';
@@ -2605,9 +2604,9 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
         }
         if ($forum->open or $forum->type == 'teacher') {
             echo '<th class="header replies">'.get_string('replies', 'forum').'</th>';
-        }
-        if ($CFG->forum_trackreadposts) {
-            echo '<th class="header replies">'.get_string('unread', 'forum').'</th>';
+            if ($CFG->forum_trackreadposts) {
+                echo '<th class="header replies">'.get_string('unread', 'forum').'</th>';
+            }
         }
         echo '<th class="header lastpost">'.get_string('lastpost', 'forum').'</th>';
         echo '</tr>';
