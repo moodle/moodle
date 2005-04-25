@@ -69,6 +69,7 @@ $string['introsocial'] = 'An open forum for chatting about anything you want to'
 $string['introteacher'] = 'A forum for teacher-only notes and discussion';
 $string['lastpost'] = 'Last post';
 $string['learningforums'] = 'Learning forums';
+$string['markallread'] = 'Mark all posts in this forum read.';
 $string['markread'] = 'Mark read';
 $string['markunread'] = 'Mark unread';
 $string['maxattachmentsize'] = 'Maximum attachment size';
