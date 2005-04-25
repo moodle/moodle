@@ -31,6 +31,13 @@
     $strsubscribed = get_string("subscribed", "forum");
     $strunreadposts = get_string("unreadposts", "forum");
     $strtracking = get_string('tracking', 'forum');
+    $strmarkallread = get_string('markallread', 'forum');
+    $strtrackforum = get_string('trackforum', 'forum');
+    $strnotrackforum = get_string('notrackforum', 'forum');
+    $strsubscribe = get_string('subscribe', 'forum');
+    $strunsubscribe = get_string('unsubscribe', 'forum');
+    $stryes = get_string('yes');
+    $strno = get_string('no');
     $strrss = get_string("rss");
 
     $searchform = forum_search_form($course);
@@ -138,19 +145,16 @@
                     $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
                     $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
                     if ($unread > 0) {
-                        $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a></span>';
-                        $unreadlink .= ' <span style="font-size: 0.7em">' .
-                                       '<a title="'.get_string('markallread', 'forum').'" href="markposts.php?id='.
-                                       $forum->id.'&mark=read">'.get_string('markread', 'forum').'</a></span>';
+                        $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
+                        $unreadlink .= '<a title="'.$strmarkallread.'" href="markposts.php?id='.
+                                       $forum->id.'&amp;mark=read"><img src="'.$CFG->pixpath.'/t/clear.gif" alt="" /></a></span>';
                     } else {
                         $unreadlink = '<span class="read"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
                     }
-                    $trackedlink = '<a title="'.get_string('notrackforum', 'forum').'" ' .
-                                   'href="settracking.php?id='.$forum->id.'">'.get_string('yes').'</a>';
+                    $trackedlink = '<a title="'.$strnotrackforum.'" href="settracking.php?id='.$forum->id.'">'.$stryes.'</a>';
                 } else {
-                    $unreadlink = 'n/a';
-                    $trackedlink = '<a title="'.get_string('trackforum', 'forum').'" ' .
-                                   'href="settracking.php?id='.$forum->id.'">'.get_string('no').'</a>';
+                    $unreadlink = '-';
+                    $trackedlink = '<a title="'.$strtrackforum.'" href="settracking.php?id='.$forum->id.'">'.$strno.'</a>';
                 }
             }
 
@@ -187,17 +191,17 @@
 
             if ($can_subscribe) {
                 if (forum_is_forcesubscribed($forum->id)) {
-                    $sublink = get_string("yes");
+                    $sublink = $stryes;
                 } else {
                     if ($groupmode and !isteacheredit($course->id) and !mygroupid($course->id)) {
-                        $sublink = get_string("no");   // Can't subscribe to a group forum (not in a group)
+                        $sublink = $strno;   // Can't subscribe to a group forum (not in a group)
                         $forumlink = format_string($forum->name,true);
                     } else {
                         if (forum_is_subscribed($USER->id, $forum->id)) {
-                            $subscribed = get_string("yes");
+                            $subscribed = $stryes;
                             $subtitle = get_string("unsubscribe", "forum");
                         } else {
-                            $subscribed = get_string("no");
+                            $subscribed = $strno;
                             $subtitle = get_string("subscribe", "forum");
                         }
                         $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
@@ -277,19 +281,16 @@
                         $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
                         $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
                         if ($unread > 0) {
-                            $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a></span>';
-                            $unreadlink .= ' <span style="font-size: 0.7em">' .
-                                           '<a title="'.get_string('markallread', 'forum').'" href="markposts.php?id='.
-                                           $forum->id.'&mark=read">'.get_string('markread', 'forum').'</a></span>';
+                            $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
+                            $unreadlink .= '<a title="'.$strmarkallread.'" href="markposts.php?id='.
+                                           $forum->id.'&amp;mark=read"><img src="'.$CFG->pixpath.'/t/clear.gif" alt="" /></a></span>';
                         } else {
                             $unreadlink = '<span class="read"><a href="view.php?f='.$forum->id.'">'.$unread.'</a></span>';
                         }
-                        $trackedlink = '<a title="'.get_string('notrackforum', 'forum').'" ' .
-                                       'href="settracking.php?id='.$forum->id.'">'.get_string('yes').'</a>';
+                        $trackedlink = '<a title="'.$strnotrackforum.'" href="settracking.php?id='.$forum->id.'">'.$stryes.'</a>';
                     } else {
-                        $unreadlink = 'n/a';
-                        $trackedlink = '<a title="'.get_string('trackforum', 'forum').'" ' .
-                                       'href="settracking.php?id='.$forum->id.'">'.get_string('no').'</a>';
+                        $unreadlink = '-';
+                        $trackedlink = '<a title="'.$strtrackforum.'" href="settracking.php?id='.$forum->id.'">'.$strno.'</a>';
                     }
                 }
 
@@ -336,20 +337,20 @@
 
                 if ($can_subscribe) {
                     if (forum_is_forcesubscribed($forum->id)) {
-                        $sublink = get_string("yes");
+                        $sublink = $stryes;
                     } else {
                         if ($groupmode and !isteacheredit($course->id) and !mygroupid($course->id)) {
-                            $sublink = get_string("no");   // Can't subscribe to a group forum (not in a group)
+                            $sublink = $strno;   // Can't subscribe to a group forum (not in a group)
                             if ($groupmode == SEPARATEGROUPS) {
                                 $forumlink = format_string($forum->name,true);
                             }
                         } else {
                             if (forum_is_subscribed($USER->id, $forum->id)) {
-                                $subscribed = get_string("yes");
-                                $subtitle = get_string("unsubscribe", "forum");
+                                $subscribed = $stryes;
+                                $subtitle = $strunsubscribe;
                             } else {
-                                $subscribed = get_string("no");
-                                $subtitle = get_string("subscribe", "forum");
+                                $subscribed = $strno;
+                                $subtitle = $strsubscribe;
                             }
                             $sublink = "<a title=\"$subtitle\" href=\"subscribe.php?id=$forum->id\">$subscribed</a>";
                         }
