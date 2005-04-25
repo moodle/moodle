@@ -114,7 +114,9 @@
 
 
     if ($chat->chattime and $chat->schedule) {  // A chat is scheduled
-        if (abs($USER->timezone) > 13) {
+        if (floatval($USER->timezone) !== $USER->timezone) {  // Text value
+            $timezone = $USER->timezone;
+        } else if (abs($USER->timezone) > 13) {
             $timezone = get_string('serverlocaltime');
         } else if ($USER->timezone < 0) {
             $timezone = 'GMT'.$USER->timezone;
