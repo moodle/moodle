@@ -29,9 +29,9 @@
 
 
 /* basic styles */
-font {
+/*font {
     font-size:100% !important;
-}
+}*/
 
 .clearer {
     font-size:1px;
@@ -49,7 +49,7 @@ font {
 /* general styles */
 body {
     font-family:"Lucida Grande", Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif !important;
-    font-size:1em;
+    font-size:100%;
     line-height:1.2em;
     letter-spacing:0.02em;
 }
@@ -86,17 +86,21 @@ a.autolink:hover {
 
 h2 {
 	font-size:150%;
-    font-weight:bold;
+  font-weight:bold;
 }
 
 h3 {
 	font-size:130%;
-    font-weight:bold;
+  font-weight:bold;
 }
 
 h4 {
 	font-size:110%;
-    font-weight:bold;
+  font-weight:bold;
+}
+
+h2.main {
+	font-size:110%;
 }
 
 
@@ -176,6 +180,11 @@ h4 {
     line-height:1.5em;
 }
 
+* html #site-index .subject,
+* html #site-index .author {
+  font-style:normal;
+  font-weight:normal;
+}
 
 /*****************************
 ***

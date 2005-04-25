@@ -28,7 +28,7 @@
 /***
  *** Core
  ***/
-
+ 
 h1.main,
 h2.main,
 h3.main,
@@ -43,6 +43,7 @@ h6.main {
 /* basic styles */
 
 .clearer {
+  float:none;
   clear:both;
   margin:0;
   padding:0;
@@ -204,22 +205,26 @@ input {
   padding:0 2.5em;
 }
 
+* html #site-index #middle-column {
+  padding:0;
+  border:0 2.5em solid #FFF;
+}
+
 #site-index #right-column {
   width:30%;
 }
 
 #site-index #middle-column .forumpost {
-  border-width:0;
-  border-style:none;
+  border:0 none;
 }
 
-#site-index #middle-column .forumpostpicture,
-#site-index #middle-column .forumpostside {
+#site-index #middle-column .forumpost .picture,
+#site-index #middle-column .forumpost .side {
   display:none;
 }
 
 #site-index #middle-column .headingblock,
-#site-index #middle-column .forumpostheadertopic {
+#site-index #middle-column .header {
   padding:1em;
   border-width:0 0 0 25px;
   border-style:solid;
@@ -238,40 +243,37 @@ input {
  ***/
 
 .userinfobox {
+  width:80%;
+  margin-left:auto;
+  margin-right:auto;
   margin-bottom:5px;
   border:1px solid;
-  border-collapse: separate;    
+  border-collapse:separate;    
 }
 
 .userinfobox .left {
-  padding: 10px;
-  width: 100px;
-  vertical-align: top;
+  padding:10px;
+  width:100px;
+  vertical-align:top;
 }
 
 .userinfobox .content {
-  padding: 10px;
-  vertical-align: top;
+  padding:10px;
+  vertical-align:top;
 }
 
 .userinfobox .links {
-  width: 100px;
-  padding: 5px;
-  vertical-align: bottom;
+  width:100px;
+  padding:5px;
+  vertical-align:bottom;
 }
 
 .userinfobox .list td {
-  padding: 3px;
+  padding:3px;
 }
 
 .userinfobox .username {
-  padding-bottom: 20px;
-}    
-
-.userinfobox {
-  width: 80%;
-  margin-left: 10%;
-  margin-right: 10%;
+  padding-bottom:20px;
 }
 
 table.groupinfobox {

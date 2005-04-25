@@ -37,15 +37,18 @@
   margin-left:auto;
   margin-right:auto;
   margin-bottom:0;
+  padding-bottom:0;
+  border-bottom:0 none;
 }
 
 #user-view .tabs {
   width:80%;
 }
 
-.tabs tr {
-  border:1px none #FF0000;
-  background:url(pix/tab/tabsbg_x2.gif) bottom left repeat-x;
+.tabs tr,
+.tabs .left,
+.tabs .right {
+  background:url(pix/tab/tabsbg_x2.gif) bottom left repeat-x
 }
 
 .tabs .left {
