@@ -11,7 +11,11 @@
 
 require_once ("$CFG->libdir/xmlize.php");
 
-class quiz_file_format extends quiz_default_format {
+class quiz__format_hotpot extends quiz_default_format {
+
+	function provide_import() {
+  	    return true;
+	}
 
 	function readquestions ($lines) {
 		/// Parses an array of lines into an array of questions,
