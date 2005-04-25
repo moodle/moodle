@@ -2,6 +2,7 @@
 
 $string['addanewdiscussion'] = 'Ajouter un nouveau sujet de discussion';
 $string['addanewtopic'] = 'Ajouter un nouveau sujet';
+$string['advancedsearch'] = 'Recherche avancée';
 $string['allforums'] = 'Tous les forums';
 $string['allowchoice'] = 'Autoriser tout le monde à choisir de s\'abonner ou non';
 $string['allowdiscussions'] = 'Interventions autorisées';
