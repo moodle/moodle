@@ -669,9 +669,9 @@ function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $u
         $posthtml .= '<link rel="stylesheet" type="text/css" href="'.$stylesheet.'" />'."\n";
     }
     $posthtml .= '</head>';
-    $posthtml .= "\n<body>\n\n";
+    $posthtml .= "\n<body id=\"email\">\n\n";
 
-    $posthtml .= '<div class="mail navbar">'.
+    $posthtml .= '<div class="navbar">'.
     '<a target="_blank" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">'.$course->shortname.'</a> &raquo; '.
     '<a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/index.php?id='.$course->id.'">'.$strforums.'</a> &raquo; '.
     '<a target="_blank" href="'.$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id.'">'.format_string($forum->name,true).'</a>';
@@ -687,6 +687,8 @@ function forum_make_mail_html($course, $forum, $discussion, $post, $userfrom, $u
         $posthtml .= '<br /><div class="unsubscribelink"><a href="'.$CFG->wwwroot.'/mod/forum/subscribe.php?id='.$forum->id.'">'.
                      get_string('unsubscribe', 'forum').'</a></div>';
     }
+
+    $posthtml .= '</body>';
 
     return $posthtml;
 }

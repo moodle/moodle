@@ -1,6 +1,6 @@
-<?php
+<?php // $Id$
 
-//  Set tracking option for the forum.
+      //  Set tracking option for the forum.
 
     require_once("../../config.php");
     require_once("lib.php");
