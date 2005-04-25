@@ -153,8 +153,8 @@ if (isadmin()) {
     <th><?php print_string("trackforums") ?>:</th>
     <td><?php
     unset($choices);
-    $choices["1"] = get_string("yes");
-    $choices["0"] = get_string("no");
+    $choices["1"] = get_string("trackforumsyes");
+    $choices["0"] = get_string("trackforumsno");
     choose_from_menu ($choices, "trackforums", $user->trackforums, "") ?>
     </td>
 </tr>
