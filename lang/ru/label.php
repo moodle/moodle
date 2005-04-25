@@ -1,9 +1,9 @@
 <?PHP // $Id$ 
-      // label.php - created with Moodle 1.3.1 + (2004052501)
+      // label.php - created with Moodle 1.4.4 (2004083140)
 
 
-$string['labeltext'] = 'Текст надписи';
-$string['modulename'] = 'Надпись';
-$string['modulenameplural'] = 'Надписи ';
+$string['labeltext'] = 'Текст пояснения';
+$string['modulename'] = 'Пояснение';
+$string['modulenameplural'] = 'Пояснения';
 
 ?>

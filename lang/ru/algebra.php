@@ -1,7 +1,7 @@
 <?PHP // $Id$ 
-      // algebra.php - created with Moodle 1.2.1 (2004032500)
+      // algebra.php - created with Moodle 1.4.3 + (2004083132)
 
 
-$string['filtername'] = 'Алгебраические знаки ';
+$string['filtername'] = 'Формулы в алгебраическом формате';
 
 ?>

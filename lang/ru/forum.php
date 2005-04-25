@@ -4,8 +4,8 @@
 
 $string['addanewdiscussion'] = 'Добавить тему для обсуждения';
 $string['addanewtopic'] = 'Добавить новую тему';
-$string['allowchoice'] = 'Разрешить выбор всем';
-$string['allowdiscussions'] = '$a может отправить по почте на этот форум?';
+$string['allowchoice'] = 'Разрешить самостоятельно управлять подпиской';
+$string['allowdiscussions'] = 'Что может делать $a на этом форуме?';
 $string['allowratings'] = 'Разрешено ли оценивать сообщения?';
 $string['allowsdiscussions'] = 'В этом форуме каждый может создать одну тему для обсуждения';
 $string['anyfile'] = 'Любые файлы';
