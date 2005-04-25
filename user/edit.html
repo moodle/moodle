@@ -148,6 +148,17 @@ if (isadmin()) {
     choose_from_menu ($choices, "autosubscribe", $user->autosubscribe, "") ?>
     </td>
 </tr>
+<?php if ($CFG->forum_trackreadposts) { ?>
+<tr>
+    <th><?php print_string("trackforums") ?>:</th>
+    <td><?php
+    unset($choices);
+    $choices["1"] = get_string("yes");
+    $choices["0"] = get_string("no");
+    choose_from_menu ($choices, "trackforums", $user->trackforums, "") ?>
+    </td>
+</tr>
+<?php } ?>
 <?php if ($CFG->htmleditor) { ?>
 <tr>
     <th><?php print_string("textediting") ?>:</th>

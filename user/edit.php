@@ -191,6 +191,12 @@
                     set_send_count($usernew,true);
                 }
 
+                /// Update forum track preference.
+                if (($usernew->trackforums != $USER->trackforums) && !$usernew->trackforums) {
+                    require_once($CFG->dirroot.'/mod/forum/lib.php');
+                    forum_tp_delete_read_records($USER->id);
+                }
+
                 add_to_log($course->id, "user", "update", "view.php?id=$user->id&course=$course->id", "");
 
                 if ($user->id == $USER->id) {
