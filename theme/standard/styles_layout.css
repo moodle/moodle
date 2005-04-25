@@ -1034,6 +1034,10 @@ body#mod-forum-search .introcontent {
   border-width: 2px;
 }
 
+#email .unsubscribelink {
+  text-align:right;
+}
+
 
 /***
  *** Modules: Glossary
