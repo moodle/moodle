@@ -988,6 +988,7 @@ $string['topichide'] = 'Cacher ce thème de $a';
 $string['topicoutline'] = 'Aperçu des thèmes';
 $string['topicshow'] = 'Afficher ce thème pour $a';
 $string['total'] = 'Total';
+$string['trackforums'] = 'Signaler les messages lus/non lus';
 $string['trysearching'] = 'Essayez plutôt la recherche.';
 $string['turneditingoff'] = 'Quitter le mode édition';
 $string['turneditingon'] = 'Activer le mode édition';
