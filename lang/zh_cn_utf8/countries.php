@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // countries.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // countries.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['AD'] = '安道尔';
@@ -178,6 +178,7 @@ $string['PT'] = '葡萄牙';
 $string['PW'] = '帕劳群岛';
 $string['PY'] = '巴拉圭';
 $string['QA'] = '卡塔尔';
+$string['RE'] = '留尼旺岛';
 $string['RO'] = '罗马尼亚';
 $string['RU'] = '俄罗斯';
 $string['RW'] = '卢旺达';
