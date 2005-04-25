@@ -1082,6 +1082,10 @@ function main_upgrade($oldversion=0) {
         $result = table_column('event', '', 'repeatid', 'int', '10', 'unsigned', '0', 'not null', 'userid') && $result;
     }
 
+    if ($oldversion < 2005042400) {  // Add user tracking prefs field.
+        table_column('user', '', 'trackforums', 'int', '4', 'unsigned', '1', 'not null', 'autosubscribe');
+    }
+
     return $result;
 }
 

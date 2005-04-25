@@ -201,10 +201,6 @@ function forum_upgrade($oldversion) {
                   ) COMMENT=\'Tracks each users untracked forums.\';');
   }
 
-  if ($oldversion < 2005042301) { // Add user tracking prefs field.
-      modify_database('','ALTER TABLE prefix_user ADD
-                         `trackforums` TINYINT( 1 ) UNSIGNED DEFAULT \'1\' NOT NULL AFTER `autosubscribe` ;');
-  }
 
   return true;
   

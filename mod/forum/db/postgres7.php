@@ -141,10 +141,6 @@ function forum_upgrade($oldversion) {
                         );');
   }
 
-  if ($oldversion < 2005042301) { // Add user tracking prefs field.
-      modify_database('','ALTER TABLE prefix_user ADD
-                         trackforums integer default 0 NOT NULL;');
-  }
 
   return true;
 
