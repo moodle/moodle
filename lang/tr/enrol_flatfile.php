@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // enrol_flatfile.php - created with Moodle 1.4.4 + (2004083140)
+      // enrol_flatfile.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['description'] = 'Bu yöntem aþaðýda özel olarak biçimlendirilmiþ dosyayý belirli aralýklarla kontrol edecek ve iþleme alacaktýr. Bu dosya þu þekilde olabilir:

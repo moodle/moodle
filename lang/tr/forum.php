@@ -1,9 +1,11 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4.4 (2004083140)
+      // forum.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['addanewdiscussion'] = 'Yeni tartýþma konusu ekle';
 $string['addanewtopic'] = 'Yeni konu ekle';
+$string['advancedsearch'] = 'Geliþmiþ arama';
+$string['allforums'] = 'Tüm forumlar';
 $string['allowchoice'] = 'Herkesin seçmesine izin ver';
 $string['allowdiscussions'] = 'Bir $a bu foruma yazabilir mi?';
 $string['allowratings'] = 'Mesajlarýn puanlanmasýna izin ver?';
@@ -32,6 +34,7 @@ $string['discussionsstartedbyrecent'] = '$a tarafýndan yakýnda baþlatýlan tartýþ
 $string['discussthistopic'] = 'Bu konuyu tartýþ';
 $string['eachuserforum'] = 'Bu tartýþmaya herkes tek mesaj gönderebilir';
 $string['edit'] = 'Düzelt';
+$string['editedby'] = 'Düzenleyen: $a->name - $a->date';
 $string['editing'] = 'Düzenleme';
 $string['emptymessage'] = 'Mesajýnýzda bir sorun var.  Muhtemelen metin yazmadýnýz yada ekiniz çok büyük.  Deðiþiklikleriniz KAYDEDÝLMEDÝ.';
 $string['everyonecanchoose'] = 'Bu foruma herkes abone olabilir';
@@ -42,6 +45,7 @@ $string['forcesubscribeq'] = 'Herkes abone olmaya zorunlu mu?';
 $string['forum'] = 'Forum';
 $string['forumintro'] = 'Forum tanýtýmý';
 $string['forumname'] = 'Forum adý';
+$string['forumposts'] = 'Forum mesajlarý';
 $string['forums'] = 'Forumlar';
 $string['forumtype'] = 'Forum türü';
 $string['generalforum'] = 'Genel amaçlý standard forum';
@@ -81,6 +85,7 @@ $string['nownotsubscribed'] = 'Kullanýcý $a->name, \'$a->forum\' baþlýklý forumu
 $string['nowsubscribed'] = 'Kullanýcý $a->name, \'$a->forum\' baþlýklý forumun kopyasýný epostayla alacaktýr.';
 $string['numposts'] = '$a mesajlar';
 $string['olderdiscussions'] = 'Eski tartýþmalar';
+$string['oldertopics'] = 'Eski konular';
 $string['openmode0'] = 'Tartýþma ve yanýt yok';
 $string['openmode1'] = 'Tartýþma yok, yanýt verilebilir';
 $string['openmode2'] = 'Tartýþma açýlabilir ve yanýt verilebilir';
@@ -122,9 +127,21 @@ $string['replyforum'] = 'Forumu yanýtla';
 $string['rsssubscriberssdiscussions'] = '\'$a\' tartýþmalarýný RSS olarak göster';
 $string['rsssubscriberssposts'] = '\'$a\' mesajlarýný RSS olarak göster';
 $string['search'] = 'Ara';
+$string['searchdatefrom'] = 'Mesajlar bu tarihten yeni olmalý';
+$string['searchdateto'] = 'Mesajlar bu tarihten eski olmalý';
+$string['searchforumintro'] = 'Lütfen aþaðýdaki alanlarýn birine veya birden fazlasýna arama terimlerini giriniz';
 $string['searchforums'] = 'Forumlarý ara';
+$string['searchfullwords'] = 'Bu sözcüklere aynen uymalý';
+$string['searchnotwords'] = 'Bu sözcükler geçmeMEli';
 $string['searcholderposts'] = 'Eski mesajlarý ara...';
+$string['searchphrase'] = 'Buraya yazdýðýmla mesajda görünmeli';
 $string['searchresults'] = 'Arama sonuçlarý';
+$string['searchsubject'] = 'Bu sözcük konuda geçmeli';
+$string['searchuser'] = 'Bu sözcük yazar adýyla eþleþmeli';
+$string['searchuserid'] = 'Yazarýn ID numarasý';
+$string['searchwhichforums'] = 'Hangi forum aranacak';
+$string['searchwords'] = 'Bu sözcükler mesajýn herhangi bir yerinde olabilir';
+$string['seeallposts'] = 'Bu kullanýcý tarafýndan gönderilmiþ bütün mesajlar';
 $string['sendinratings'] = 'Derecelendirmemi gönder';
 $string['showsubscribers'] = 'Aboneleri göster';
 $string['singleforum'] = 'Tek bir tartýþma';
@@ -140,6 +157,8 @@ $string['subscribestart'] = 'Bu foruma gönderilen mesajlarýn kopyasýný emailime 
 $string['subscribestop'] = 'Bu foruma gönderilen mesajlarýn kopyasýný istemiyorum';
 $string['subscription'] = 'Abonelik';
 $string['subscriptions'] = 'Abonelikler';
+$string['trackforum'] = 'Okunmamýþ mesajlarý izle';
+$string['tracking'] = 'Ýzle';
 $string['unread'] = 'Okunmamýþ';
 $string['unreadposts'] = 'Okunmamýþ mesajlar';
 $string['unreadpostsnumber'] = '$a okunmamýþ mesaj';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // journal.php - created with Moodle 1.4.4 (2004083140)
+      // journal.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['alwaysopen'] = 'Her zaman açýk';
@@ -19,8 +19,9 @@ $string['journalquestion'] = 'Yazý sorusu';
 $string['journalrating1'] = 'Yeterli deðil';
 $string['journalrating2'] = 'Yeterli';
 $string['journalrating3'] = 'Çok iyi';
-$string['modulename'] = 'Günlük';
-$string['modulenameplural'] = 'Günlükler';
+$string['mailsubject'] = 'Yazý geribildirimi';
+$string['modulename'] = 'Yazý';
+$string['modulenameplural'] = 'Yazýlar';
 $string['newjournalentries'] = 'Yeni yazý giriþi';
 $string['noentry'] = 'Boþ';
 $string['noratinggiven'] = 'Sýnýflandýrma yapýlmadý';

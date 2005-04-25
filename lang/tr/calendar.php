@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.4.4 (2004083140)
+      // calendar.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['calendar'] = 'Takvim';
@@ -7,14 +7,12 @@ $string['calendarheading'] = '$a Takvimi';
 $string['clickhide'] = 'gizlemek için týkla';
 $string['clickshow'] = 'göstermek için týkla';
 $string['confirmeventdelete'] = 'Bu olayý silmek istediðinizden emin misiniz?';
-$string['courseevents'] = 'Ders Olaylarý';
-$string['day'] = 'gün';
+$string['courseevents'] = 'Ders olaylarý';
 $string['dayview'] = 'Günlük Görünüm';
 $string['daywithnoevents'] = 'Bugün bir olay yok.';
 $string['default'] = 'Varsayýlan';
 $string['deleteevent'] = 'Olayý sil';
 $string['detailedmonthview'] = 'Ayrýntýlý Aylýk Görünüm';
-$string['dstpresetadjusttime'] = 'Zaman ayarý';
 $string['durationminutes'] = 'Dakika süreli';
 $string['durationnone'] = 'Süresiz';
 $string['durationuntil'] = 'Süreli';
@@ -42,24 +40,19 @@ $string['explain_maxevents'] = 'Yaklaþan olaylarýn görüntülenme sayýsý sýnýrýný 
 $string['explain_persistflt'] = 'Bu ayarýn etkin olmasý durumunda, son filtreleme ayarlarýnýz hatýrlanacak ve her giriþ yaptýðýnýzda bu ayarlara dönülecektir.';
 $string['explain_startwday'] = 'Burada seçtiðiniz gün, haftanýn ilk günü olarak görünecektir.';
 $string['explain_timeformat'] = 'Saatin 12 veya 24 þeklinde görünmesini ayarlayabilirsiniz. Varsayýlaný seçerseniz siteyi kullandýðýnýz dilin ayarlarýna göre saat biçimi belirecektir.';
-$string['first'] = 'ilk';
 $string['fri'] = 'Cum';
 $string['friday'] = 'Cuma';
 $string['globalevents'] = 'Genel olaylar';
 $string['gotocalendar'] = 'Takvime git';
 $string['groupevents'] = 'Grup olaylarý';
 $string['hidden'] = 'gizli';
-$string['last'] = 'son';
 $string['manyevents'] = '$a olaylarý';
 $string['mon'] = 'Pzt';
 $string['monday'] = 'Pazartesi';
 $string['monthlyview'] = 'Aylýk Görünüm';
 $string['newevent'] = 'Yeni Olay';
-$string['notusingdst'] = 'Yaz saati uygulamasý yok';
 $string['noupcomingevents'] = 'Yakýn zamanda olay yok';
-$string['nth'] = '{$a}.';
 $string['oneevent'] = '1 olay';
-$string['pref_dstpreset'] = 'Yaz Saati Uygulamasý';
 $string['pref_lookahead'] = 'Yaklaþan olay görünümü';
 $string['pref_maxevents'] = 'En fazla olay';
 $string['pref_persistflt'] = 'Filtreleme ayarlarýný hatýrla';
@@ -67,6 +60,7 @@ $string['pref_startwday'] = 'Haftanýn ilk günü';
 $string['pref_timeformat'] = 'Zaman gösterim biçimi';
 $string['preferences'] = 'Seçenekler';
 $string['preferences_available'] = 'Kiþisel tercihleriniz';
+$string['repeateditthis'] = 'Deðiþiklikleri sadece bu olaya uygula';
 $string['repeatnone'] = 'Tekrar yok';
 $string['repeatweeksl'] = 'Haftalýk tekrarla, gerçekleþme sayýsý:';
 $string['repeatweeksr'] = 'olay';
@@ -80,8 +74,6 @@ $string['thu'] = 'Prþ';
 $string['thursday'] = 'Perþembe';
 $string['timeformat_12'] = '12-saat (öö/ös)';
 $string['timeformat_24'] = '24-saat';
-$string['timeforward'] = 'ileri';
-$string['timerewind'] = 'geri';
 $string['today'] = 'Bugün';
 $string['tomorrow'] = 'Yarýn';
 $string['tt_deleteevent'] = 'Olayý sil';

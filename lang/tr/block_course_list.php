@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_course_list.php - created with Moodle 1.4.4 (2004083140)
+      // block_course_list.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['allcourses'] = 'Yöneticiler bütün dersleri görür';

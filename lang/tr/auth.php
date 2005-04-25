@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.4.4 (2004083140)
+      // auth.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['auth_common_settings'] = 'Genel Ayarlar';

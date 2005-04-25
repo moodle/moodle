@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.4.4 (2004083140)
+      // assignment.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['allowresubmit'] = 'Tekrar göndermeye izin ver';
@@ -12,11 +12,15 @@ $string['assignmentmailhtml'] = '$a->teacher, \'<i>$a->assignment</i>\' isimli ö
 <a href=\"$a->url\">Ayrýntýlar</a>.';
 $string['assignmentname'] = 'Ödev adý';
 $string['assignmenttype'] = 'Ödev türü';
+$string['availabledate'] = 'Baþlangýç Tarihi';
+$string['comment'] = 'Yorum';
+$string['commentinline'] = 'Satýriçi yorum';
 $string['configmaxbytes'] = 'Sitedeki tüm ödevler için varsayýlan en yüksek ödev boyutu (ders limitleri ve diðer yerel ayarlar içindir)';
 $string['description'] = 'Açýklama';
 $string['duedate'] = 'Teslim tarihi';
 $string['duedateno'] = 'Bitiþ süresi yok';
 $string['early'] = '$a öncesi';
+$string['editmysubmission'] = 'Gönderimi düzenle';
 $string['emailteachermail'] = '$a->username, \'$a->assignment\'
 isimli gönderesini güncelledi.
 
@@ -31,22 +35,36 @@ $string['emailteachers'] = 'Eðitmenlere eposta uyarýsý';
 $string['existingfiledeleted'] = 'Varolan dosya silindi: $a';
 $string['failedupdatefeedback'] = 'Bu kullanýcýnýn gönderdiði geribildirim güncellenemedi $a';
 $string['feedback'] = 'Geribildirim';
+$string['feedbackfromteacher'] = '$a \'den geribildirim';
 $string['feedbackupdated'] = 'Bu kullanýcýnýn gönderdiði geribildirim güncellenmiþtir $a kiþi';
+$string['helpoffline'] = '<p>Bu ödev türü site dýþý bir ödev verdiðinizde kullanýþlýdýr.</p>
+<p>Öðrenciler ödev ile ilgili açýklamayý okurlar ancak herhangi bir dosya yükleyemezler.
+Bu ödev türünde öðrenciye bir ödev verip size getirmelerini isteyebilirsiniz. Daha sonra
+her bir öðrenciye site üzerinden ödevleriyle ilgili not ve geribildirim verebilirsiniz.</p>';
+$string['helponline'] = '<p>Bu ödev türünde normal yazý editörü kullanýlarak kullanýcýlardan ödev isteyebilirsiniz.</p>
+<p>Eðitimciler ödevleri düzenleyerek ve ödevlere satýriçi yorum ekleyerek ödevi çevrimiçi notlandýrabilirler.</p>
+<p>(Bu uzaktan eðitim programýnýn eski sürümünü kullanýyorsanýz, bu ödev türünün eski Yazý ödevi ile ayný olduðunu göreceksiniz.)</p>';
+$string['helpuploadsingle'] = '<p>Bu ödev türü tüm öðrencilerin herhangi bir tipte bir dosya göndermelerine izin verir.</p>
+<p>Bir Word belgesi, resim dosyasý, zip veya öðrencilerden ne tür bir dosya göndermelerini istediyseniz o dosyayý göndermelerine izin verebilirsiniz.</p>';
 $string['late'] = '$a sonrasý';
 $string['maximumgrade'] = 'En yüksek not';
 $string['maximumsize'] = 'En yüksek boyut';
 $string['modulename'] = 'Ödev';
 $string['modulenameplural'] = 'Ödevler';
 $string['newsubmissions'] = 'Gönderilmiþ Ödevler';
+$string['noassignments'] = 'Henüz bir ödev yok';
 $string['notgradedyet'] = 'Henüz notlandýrýlmamýþ';
 $string['notsubmittedyet'] = 'Henüz gönderilmemiþ';
 $string['overwritewarning'] = 'Uyarý: Yüklediðiniz dosyayla DEÐÝÞTÝRÝLECEKTÝR';
 $string['saveallfeedback'] = 'Tüm geribildirimlerimi kaydet';
+$string['submission'] = 'Gönderi';
 $string['submissionfeedback'] = 'Geribildirim Gönderimi';
-$string['submissions'] = 'Gönderimler';
+$string['submissions'] = 'Gönderiler';
+$string['submissionsaved'] = 'Deðiþiklikler kaydedildi';
 $string['submitassignment'] = 'Bu formu kullanarak ödevinizi gönderiniz';
 $string['submitted'] = 'Gönderilmiþ';
 $string['typeoffline'] = 'Çevrimdýþý Etkinlikler';
+$string['typeonline'] = 'Çevrimiçi yazý';
 $string['typeuploadsingle'] = 'Bir Dosya Yükle';
 $string['uploadbadname'] = 'Dosya adý geçersiz karakterler içerdiðinden gönderilemedi.';
 $string['uploadedfiles'] = 'yüklenmiþ dosyalar';

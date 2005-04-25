@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // censor.php - created with Moodle 1.4 + (2004083100)
+      // censor.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['filtername'] = 'Sansürlü Kelime';

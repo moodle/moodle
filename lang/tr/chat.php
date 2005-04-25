@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // chat.php - created with Moodle 1.4.4 (2004083140)
+      // chat.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
+$string['beep'] = 'biip';
 $string['chatintro'] = 'Giriþ metni';
 $string['chatname'] = 'Sohbet odasýnýn adý';
 $string['chatreport'] = 'Sohbet oturumlarý';

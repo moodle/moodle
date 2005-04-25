@@ -1,8 +1,8 @@
 <?PHP // $Id$ 
-      // block_course_summary.php - created with Moodle 1.4.3 + (2004083134)
+      // block_course_summary.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
-$string['blockname'] = 'Ders Özeti';
+$string['coursesummary'] = 'Kurs Özeti';
 $string['pagedescription'] = 'Ders/Site Açýklamasý';
 
 ?>

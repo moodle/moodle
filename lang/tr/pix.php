@@ -1,26 +1,26 @@
 <?PHP // $Id$ 
-      // pix.php - created with Moodle 1.4.4 + (2004083140)
+      // pix.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['angry'] = 'kýzgýn';
 $string['approve'] = 'onaylamýþ';
 $string['biggrin'] = 'sýrýtýyor';
-$string['blackeye'] = 'siyah göz';
+$string['blackeye'] = 'siyahgöz';
 $string['blush'] = 'utanmýþ';
 $string['clown'] = 'soytarý';
 $string['cool'] = 'havalý';
 $string['dead'] = 'ölmüþ';
-$string['evil'] = 'cinlik düþünüyor';
+$string['evil'] = 'þeytanca';
 $string['kiss'] = 'öpüyor';
-$string['mixed'] = 'kafasý karýþmýþ';
+$string['mixed'] = 'kafasýkarýþmýþ';
 $string['sad'] = 'üzgün';
 $string['shy'] = 'çekingen';
 $string['sleepy'] = 'uyukluyor';
 $string['smiley'] = 'gülüyor';
 $string['surprise'] = 'þaþýrmýþ';
 $string['thoughtful'] = 'düþünüyor';
-$string['tongueout'] = 'dilini çýkarýyor';
-$string['wideeyes'] = 'gözleri açýlmýþ';
-$string['wink'] = 'göz kýrpýyor';
+$string['tongueout'] = 'diliniçýkarýyor';
+$string['wideeyes'] = 'gözleriaçýlmýþ';
+$string['wink'] = 'gözkýrpýyor';
 
 ?>

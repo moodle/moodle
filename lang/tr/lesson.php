@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.4.4 + (2004083140)
+      // lesson.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['accesscontrol'] = 'Eriþim Kontrolü';
@@ -85,6 +85,7 @@ $string['here'] = 'buraya';
 $string['highscore'] = 'Yüksek Not';
 $string['hightime'] = 'Kesin Süre';
 $string['importquestions'] = 'Soru Yükle';
+$string['insertedpage'] = 'Eklenmiþ sayfa';
 $string['jump'] = 'Geç';
 $string['jumptsto'] = 'þuraya git';
 $string['leftduringtimed'] = 'Zamanlý bir dersin süresini aþtýnýz.<br/>Dersi tekrar baþlatmak için Devam Et butonuna týklayýn.';
