@@ -3157,8 +3157,30 @@ function forum_tp_mark_post_read($userid, &$post, $forumid) {
     }
 }
 
-function forum_tp_mark_forum_read($userid, $forumid) {
+function forum_tp_mark_forum_read($userid, $forumid, $groupid=false) {
 /// We need a proper LEFT JOIN in here to find posts without read records
+    global $CFG;
+
+    $cutoffdate = isset($CFG->forum_oldpostdays) ? (time() - ($CFG->forum_oldpostdays*24*60*60)) : 0;
+
+    $groupsel = '';
+    if ($groupid !== false) {
+        $groupsel = ' AND (d.groupid = '.$groupid.' OR d.groupid = -1)';
+    }
+
+    $sql = 'SELECT p.id as postid, d.id as discussionid, d.forum as forumid '.
+           'FROM '.$CFG->prefix.'forum_posts p '.
+           'LEFT JOIN '.$CFG->prefix.'forum_discussions d ON p.discussion = d.id '.
+           'LEFT JOIN '.$CFG->prefix.'forum_read r ON r.postid = p.id AND r.userid = '.$userid.' '.
+           'WHERE d.forum = '.$forumid.$groupsel.
+                ' AND p.modified >= '.$cutoffdate.' AND r.id is NULL';
+
+    if ($posts = get_records_sql($sql)) {
+        foreach ($posts as $post) {
+            forum_tp_add_read_record($userid, $post->postid, $post->discussionid, $post->forumid);
+        }
+        return true;
+    }
 }
 
 function forum_tp_is_post_read($userid, &$post) {

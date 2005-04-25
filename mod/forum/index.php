@@ -138,7 +138,10 @@
                     $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
                     $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
                     if ($unread > 0) {
-                        $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
+                        $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a></span>';
+                        $unreadlink .= ' <span style="font-size: 75%">' .
+                                       '<a title="Mark all read" href="markposts.php?id='.
+                                       $forum->id.'&mark=read">mark read</a></span>';
                     } else {
                         $unreadlink = '<span class="read"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
                     }
@@ -274,9 +277,12 @@
                         $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
                         $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
                         if ($unread > 0) {
-                            $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
+                            $unreadlink = '<span class="unread"><a href="view.php?f='.$forum->id.'">'.$unread.'</a></span>';
+                            $unreadlink .= ' <span style="font-size: 75%">' .
+                                           '<a title="Mark all read" href="markposts.php?id='.
+                                           $forum->id.'&mark=read">mark read</a></span>';
                         } else {
-                            $unreadlink = '<span class="read"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
+                            $unreadlink = '<span class="read"><a href="view.php?f='.$forum->id.'">'.$unread.'</a></span>';
                         }
                         $trackedlink = '<a title="'.get_string('notrackforum', 'forum').'" ' .
                                        'href="settracking.php?id='.$forum->id.'">'.get_string('yes').'</a>';
