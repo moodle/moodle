@@ -370,7 +370,10 @@
 	    /// CDC-FLAG /// 6/14/04  -- added responses    
 	    case LESSON_MATCHING :
 	        if (isset($_POST['response']) && is_array($_POST['response'])) { // only arrays should be submitted
-	            $response = $_POST['response'];
+				$response = array();
+	            foreach ($_POST['response'] as $key => $value) {
+					$response[$key] = stripslashes($value);
+				}
 	        } else {
 	            $noanswer = true;
 	            break;
@@ -379,6 +382,7 @@
 	        if (!$answers = get_records("lesson_answers", "pageid", $pageid, "id")) {
 	            error("Continue: No answers found");
 	        }
+
 	        $ncorrect = 0;
 	        $i = 0;
 	        foreach ($answers as $answer) {

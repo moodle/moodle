@@ -678,7 +678,7 @@
                         }
                         shuffle($responses);
                         $responses = array_unique($responses);
-                        
+
                         if (isset($USER->modattempts[$lesson->id])) {
                             $useranswers = explode(",", $attempt->useranswer);
                             $t = 0;
@@ -690,17 +690,17 @@
                                 echo "<label for=\"response[$answer->id]\" class=\"hidden-label\">response[$answer->id]</label><select id=\"response[$answer->id]\" name=\"response[$answer->id]\">"; //CDC hidden label added.
                                 if (isset($USER->modattempts[$lesson->id])) {
                                     $selected = trim($answers[$useranswers[$t]]->response);                                    
-                                    echo "<option value=\"$selected\" selected=\"selected\">$selected</option>";
+                                    echo "<option value=\"".htmlspecialchars($response)."\" selected=\"selected\">$selected</option>";
                                     foreach ($responses as $response) {
                                         if (trim($answers[$useranswers[$t]]->response) != $response) {
-                                            echo "<option value=\"$response\">$response</option>";
+                                            echo "<option value=\"".htmlspecialchars($response)."\">$response</option>";
                                         }
                                     }
                                     $t++;
                                 } else {
                                     echo "<option value=\"0\" selected=\"selected\">Choose...</option>";
                                     foreach ($responses as $response) {
-                                        echo "<option value=\"$response\">$response</option>";
+                                        echo "<option value=\"".htmlspecialchars($response)."\">$response</option>";
                                     }
                                 }
                                 echo "</select>";
