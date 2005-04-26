@@ -7,8 +7,9 @@
 
     require_variable($id);
 
-    optional_variable($user);
-    optional_variable($sortby, 'default');
+    $user          = optional_param('user', '0', PARAM_INT);
+    $sortby        = optional_param('user', 'default');
+    $selectedgroup = optional_param('selectedgroup', '');
 
     if (! $course = get_record("course", "id", $id) ) {
         error("That's an invalid course id");
@@ -46,7 +47,7 @@
                          "<a href=\"recent.php?id=$course->id\">$strrecentactivity</a> -> $userinfo, $dateinfo", "");
         }
 
-        print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")");
+        print_heading("$course->fullname: $userinfo, $dateinfo (".usertimezone().")", '', 3);
         $advancedfilter = 1;
         print_recent_selector_form($course, $advancedfilter, $user, $date, $modname, $modid, $modaction, $selectedgroup, $sortby);
 
