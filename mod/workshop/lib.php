@@ -1086,7 +1086,7 @@ function workshop_get_recent_mod_activity(&$activities, &$index, $sincetime, $co
             {$CFG->prefix}workshop w
             WHERE s.timecreated  > '$sincetime' $workshopselect
             AND s.userid = u.id $userselect
-            AND w.course = '$courseid' $groupselect
+            AND w.course = '$courseid' 
             AND cm.instance = w.id
             AND cm.course = w.course
             AND s.workshopid = w.id
