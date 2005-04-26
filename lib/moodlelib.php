@@ -3111,7 +3111,7 @@ function get_current_group($courseid, $full=false) {
     global $SESSION, $USER;
 
     if (!isset($SESSION->currentgroup[$courseid])) {
-        if (empty($USER->groupmember[$courseid])) {
+        if (empty($USER->groupmember[$courseid]) or isteacheredit($courseid)) {
             return 0;
         } else {
             $SESSION->currentgroup[$courseid] = $USER->groupmember[$courseid];
