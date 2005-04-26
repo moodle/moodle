@@ -2,8 +2,10 @@
 
 //  Edit and save a new post to a discussion
 
-    require_once("../../config.php");
-    require_once("lib.php");
+    require_once('../../config.php');
+    require_once('lib.php');
+
+    $reply = optional_param('reply', 0, PARAM_INT);
 
     if (isguest()) {
         $wwwroot = $CFG->wwwroot.'/login/index.php';
@@ -15,7 +17,7 @@
             if (! $forum = get_record('forum', 'id', $forum)) {
                 error('The forum number was incorrect');
             }
-        } else if (isset($reply)) {      // User is writing a new reply
+        } else if (!empty($reply)) {      // User is writing a new reply
             if (! $parent = forum_get_post_full($reply)) {
                 error('Parent post ID was incorrect');
             }
@@ -233,7 +235,7 @@
 
         forum_set_return();
 
-    } else if (isset($reply)) {      // User is writing a new reply
+    } else if (!empty($reply)) {      // User is writing a new reply
 
         if (! $parent = forum_get_post_full($reply)) {
             error("Parent post ID was incorrect");
