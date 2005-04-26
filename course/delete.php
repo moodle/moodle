@@ -73,6 +73,10 @@
         notify("An error occurred while deleting the main course record.");
     }
 
+    if (!fulldelete($CFG->dataroot.'/'.$course->id)) {
+        notify("An error occurred while deleting the course files.");
+    }
+
     print_heading( get_string("deletedcourse", "", $course->shortname) );
 
     print_continue("category.php?id=$course->category");
