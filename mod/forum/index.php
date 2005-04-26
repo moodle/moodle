@@ -150,9 +150,13 @@
                     } else {
                         $unreadlink = '<span class="read"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
                     }
+
                     if ($forum->trackingtype == FORUM_TRACKING_OPTIONAL) {
                         $trackedlink = '<a title="'.$strnotrackforum.'" href="settracking.php?id='.
                                        $forum->id.'">'.$stryes.'</a>';
+                    }
+                    else {
+                        $trackedlink = $stryes;
                     }
                 } else {
                     $unreadlink = '-';
