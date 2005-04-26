@@ -32,7 +32,7 @@
         $page->display = 0;
     }
     /// CDC-FLAG ///        
-    $page->title = clean_param($form->title, PARAM_CLEAN);
+    $page->title = clean_param($form->title, PARAM_CLEANHTML);
     $page->contents = clean_param(trim($form->contents), PARAM_CLEANHTML);
     if (!update_record("lesson_pages", $page)) {
         error("Update page: page not updated");

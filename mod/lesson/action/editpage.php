@@ -112,7 +112,7 @@
 	<tr><td align="center">
 	<tr valign="top">
 	<td><b><?php print_string("pagetitle", "lesson"); ?>:</b><br />
-	<!-- //CDC hidden-label added.--><label for="title" class="hidden-label">Title</label><input type="text" id="title" name="title" size="80" maxsize="255" value="<?PHP echo $page->title ?>"></td>
+	<!-- //CDC hidden-label added.--><label for="title" class="hidden-label">Title</label><input type="text" id="title" name="title" size="80" maxsize="255" value="<?php p($page->title) ?>"></td>
 	</tr>
 	<?PHP
 	echo "<tr><td><b>";
