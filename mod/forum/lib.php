@@ -960,23 +960,25 @@ function forum_get_discussion_posts($discussion, $sort) {
 /// Gets posts with all info ready for forum_print_post
     global $CFG;
 
-    return get_records_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture
-                              FROM {$CFG->prefix}forum_posts p,
-                                   {$CFG->prefix}user u
+    return get_records_sql("SELECT p.*, f.id AS forum, u.firstname, u.lastname, u.email, u.picture
+                              FROM {$CFG->prefix}forum_posts p
+                         LEFT JOIN {$CFG->prefix}forum_discussions d ON p.discussion = d.id
+                         LEFT JOIN {$CFG->prefix}forum f ON d.forum = f.id
+                         LEFT JOIN {$CFG->prefix}user u ON p.userid = u.id
                              WHERE p.discussion = $discussion
-                               AND p.parent > 0
-                               AND p.userid = u.id $sort");
+                               AND p.parent > 0 $sort");
 }
 
 function forum_get_child_posts($parent) {
 /// Gets posts with all info ready for forum_print_post
     global $CFG;
 
-    return get_records_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture
-                              FROM {$CFG->prefix}forum_posts p,
-                                   {$CFG->prefix}user u
+    return get_records_sql("SELECT p.*, f.id AS forum, u.firstname, u.lastname, u.email, u.picture
+                              FROM {$CFG->prefix}forum_posts p
+                         LEFT JOIN {$CFG->prefix}forum_discussions d ON p.discussion = d.id
+                         LEFT JOIN {$CFG->prefix}forum f ON d.forum = f.id
+                         LEFT JOIN {$CFG->prefix}user u ON p.userid = u.id
                              WHERE p.parent = '$parent'
-                               AND p.userid = u.id
                           ORDER BY p.created ASC");
 }
 
