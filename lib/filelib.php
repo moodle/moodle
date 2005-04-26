@@ -278,11 +278,44 @@ function put_records_csv($file, $records, $table = NULL) {
     return true;
 }
 
+
 if (!function_exists('file_get_contents')) {
    function file_get_contents($file) {
        $file = file($file);
        return !$file ? false : implode('', $file);
    }
 }
+
+
+function fulldelete($location) { 
+    if (is_dir($location)) {
+        $currdir = opendir($location);
+        while (false !== ($file = readdir($currdir))) {
+            if ($file <> ".." && $file <> ".") {
+                $fullfile = $location."/".$file;
+                if (is_dir($fullfile)) { 
+                    if (!fulldelete($fullfile)) {
+                        return false;
+                    }
+                } else {
+                    if (!unlink($fullfile)) {
+                        return false;
+                    }
+                } 
+            }
+        } 
+        closedir($currdir);
+        if (! rmdir($location)) {
+            return false;
+        }
+
+    } else {
+        if (!unlink($location)) {
+            return false;
+        }
+    }
+    return true;
+}
+
 
 ?>
