@@ -948,11 +948,12 @@ function forum_get_post_full($postid) {
 /// Gets a post with all info ready for forum_print_post
     global $CFG;
 
-    return get_record_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture
-                            FROM {$CFG->prefix}forum_posts p,
-                                 {$CFG->prefix}user u
-                           WHERE p.id = '$postid'
-                             AND p.userid = u.id");
+    return get_record_sql("SELECT p.*, f.id AS forum, u.firstname, u.lastname, u.email, u.picture
+                            FROM {$CFG->prefix}forum_posts p
+                       LEFT JOIN {$CFG->prefix}forum_discussions d ON p.discussion = d.id
+                       LEFT JOIN {$CFG->prefix}forum f ON d.forum = f.id
+                       LEFT JOIN {$CFG->prefix}user u ON p.userid = u.id
+                           WHERE p.id = '$postid'");
 }
 
 function forum_get_discussion_posts($discussion, $sort) {
@@ -3443,6 +3444,7 @@ function forum_tp_can_track_forums($forum=false, $user=false) {
         if (is_numeric($forum)) {
             $forum = get_record('forum', 'id', $forum);
         }
+
         $forumallows = ($forum->trackingtype == FORUM_TRACKING_OPTIONAL);
         $forumforced = ($forum->trackingtype == FORUM_TRACKING_ON);
     }
