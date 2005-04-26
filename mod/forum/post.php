@@ -169,9 +169,6 @@
         $defaultformat = FORMAT_MOODLE;
     }
 
-    $parent = new stdClass;  // Initialise some things
-
-
     if (isset($post->error)) {     // User is re-editing a failed posting
 
         // Set up all the required objects again, and reuse the same $post
