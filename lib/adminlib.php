@@ -219,9 +219,11 @@ function upgrade_activity_modules($return) {
             // Insert default values for any important configuration variables
             unset($defaults);
             include_once($fullmod .'/defaults.php'); 
-            foreach ($defaults as $name => $value) {
-                if (!isset($CFG->$name)) {
-                    set_config($name, $value);
+            if (!empty($defaults)) {
+                foreach ($defaults as $name => $value) {
+                    if (!isset($CFG->$name)) {
+                        set_config($name, $value);
+                    }
                 }
             }
         }
