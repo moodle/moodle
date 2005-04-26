@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020800)
+      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['allowresubmit'] = 'Permet tornar a trametre';
@@ -13,6 +13,7 @@ $string['assignmentmailhtml'] = '$a->teacher ha posat certa retroacció sobre la 
 Podeu veure-ho adjunts a la vostra <a href=\"$a->url\">tramesa</a>.';
 $string['assignmentname'] = 'Nom de la tasca';
 $string['assignmenttype'] = 'Tipus de tasca';
+$string['availabledate'] = 'Disponible des de';
 $string['configmaxbytes'] = 'Mida màxima per defecte de la tasca per a totes les tasques del lloc (subjecta als límits del curs i a altres paràmetres locals)';
 $string['description'] = 'Descripció';
 $string['duedate'] = 'Data de venciment';
@@ -36,6 +37,7 @@ $string['maximumsize'] = 'Mida màxima';
 $string['modulename'] = 'Tasca';
 $string['modulenameplural'] = 'Tasques';
 $string['newsubmissions'] = 'Tasques trameses';
+$string['noassignments'] = 'Encara no hi tasques';
 $string['notgradedyet'] = 'No s\'ha qualificat encara';
 $string['notsubmittedyet'] = 'No s\'ha tramès encara';
 $string['overwritewarning'] = 'Avís: si torneu a penjar un fitxer REEMPLAÇAREU la tramesa existent';
@@ -45,6 +47,7 @@ $string['submissions'] = 'Trameses';
 $string['submitassignment'] = 'Trameteu la vostra tasca per mitjà d\'aquest formulari';
 $string['submitted'] = 'S\'ha tramès';
 $string['typeoffline'] = 'Activitat fora de línia';
+$string['typeonline'] = 'Activitat en línia';
 $string['typeuploadsingle'] = 'Penjar un fitxer';
 $string['uploadbadname'] = 'El nom d\'aquest fitxer contenia caràcters estranys i no s\'ha pogut penjar';
 $string['uploadedfiles'] = 'fitxers penjats';

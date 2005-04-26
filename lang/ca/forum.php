@@ -1,9 +1,10 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020800)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['addanewdiscussion'] = 'Afegeix un nou tema de debat';
 $string['addanewtopic'] = 'Afegeix un nou tema';
+$string['allforums'] = 'Tots els fòrums';
 $string['allowchoice'] = 'Permet triar a tothom';
 $string['allowdiscussions'] = 'Pot un $a enviar un missatge a aquest fòrum?';
 $string['allowratings'] = 'Permeteu valorar els missatges?';
@@ -43,6 +44,7 @@ $string['discussionsstartedbyrecent'] = 'Debats iniciats recentment per $a';
 $string['discussthistopic'] = 'Debat aquest tema';
 $string['eachuserforum'] = 'Cada persona inicia un debat';
 $string['edit'] = 'Edita';
+$string['editedby'] = 'Editat per $a->name - $a->date';
 $string['editing'] = 'S\'està editant';
 $string['emptymessage'] = 'El vostre missatge presentava algun problema. Potser l\'havíeu deixat en blanc, o el fitxer adjunt era massa gran. Els canvis NO s\'han desat.';
 $string['everyonecanchoose'] = 'Cadascú pot triar subscriure\'s';
@@ -53,6 +55,7 @@ $string['forcesubscribeq'] = 'Imposeu que tothom estigui subscrit?';
 $string['forum'] = 'Fòrum';
 $string['forumintro'] = 'Introducció al fòrum';
 $string['forumname'] = 'Nom del fòrum';
+$string['forumposts'] = 'Missatges del fòrum';
 $string['forums'] = 'Fòrums';
 $string['forumtype'] = 'Tipus de fòrum';
 $string['generalforum'] = 'Fòrum estàndard per a ús general';
@@ -82,7 +85,8 @@ $string['namesocial'] = 'Fòrum social';
 $string['nameteacher'] = 'Fòrum del professorat';
 $string['newforumposts'] = 'Nous missatges dels fòrums';
 $string['nodiscussions'] = 'Encara no hi ha cap tema de debat en aquest fòrum';
-$string['noguestpost'] = 'Els usuaris visitants no poden enviar missatges';
+$string['noguestpost'] = 'Els visitants no poden enviar missatges.';
+$string['noguestsubscribe'] = 'Els visitants no poden subscriure\'s per rebre els missatges del fòrum per correu electrònic.';
 $string['nomorepostscontaining'] = 'No s\'han trobat més missatges que continguin \'$a\'';
 $string['nonews'] = 'Encara no s\'han enviat notícies';
 $string['noposts'] = 'No hi ha missatges';
@@ -93,6 +97,7 @@ $string['nownotsubscribed'] = '$a->name NO rebrà còpies de \'$a->forum\' per cor
 $string['nowsubscribed'] = '$a->name rebrà còpies de \'$a->forum\' per correu electrònic.';
 $string['numposts'] = '$a missatges';
 $string['olderdiscussions'] = 'Debats anteriors';
+$string['oldertopics'] = 'Temes anteriors';
 $string['openmode0'] = 'Debats no, respostes no';
 $string['openmode1'] = 'Debats no, però respostes sí';
 $string['openmode2'] = 'Debats i respostes sí';
@@ -135,9 +140,21 @@ $string['replyforum'] = 'Contesta al fòrum';
 $string['rsssubscriberssdiscussions'] = 'Visualitza l\'RSS dels debats \'$a\'';
 $string['rsssubscriberssposts'] = 'Visualitza l\'RSS dels missatges \'$a\'';
 $string['search'] = 'Cerca';
+$string['searchdatefrom'] = 'Missatges posteriors a aquesta data';
+$string['searchdateto'] = 'Missatges anteriors a aquesta data';
+$string['searchforumintro'] = 'Introduïu els termes de la cerca en els camps següents:';
 $string['searchforums'] = 'Cerca als fòrums';
+$string['searchfullwords'] = 'Aquests mots haurien d\'aparèìxer com a mots complets';
+$string['searchnotwords'] = 'Aquests mots NO s\'hi haurien d\'incloure';
 $string['searcholderposts'] = 'Cerca missatges anteriors...';
+$string['searchphrase'] = 'Aquesta frase exacta ha d\'aparèixer al missatge';
 $string['searchresults'] = 'Resultats de la recerca';
+$string['searchsubject'] = 'Aquests mots haurien de ser a l\'assumpte';
+$string['searchuser'] = 'Aquest nom hauria de coincidir amb l\'autor';
+$string['searchuserid'] = 'Moodle ID de l\'autor';
+$string['searchwhichforums'] = 'Trieu quins fòrums voleu cercar';
+$string['searchwords'] = 'Aquests mots poden aparèixer en qualsevol part del missatge';
+$string['seeallposts'] = 'Visualitza tots els missatges d\'aquest usuari';
 $string['sendinratings'] = 'Envia les meves darreres valoracions';
 $string['showsubscribers'] = 'Mostra/edita els subscriptors';
 $string['singleforum'] = 'Un debat simple';

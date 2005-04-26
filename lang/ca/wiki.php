@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
+      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['action'] = '-- Acció --';
@@ -159,6 +159,7 @@ $string['tabview'] = 'Visualitza';
 $string['thanksforcontribution'] = 'Gràcies per la vostra col·laboració';
 $string['thispageisntlinkedfromanywhereelse'] = 'No hi ha cap enllaç que meni a aquesta pàgina.';
 $string['updatedpages'] = 'Pàgines actualitzades';
+$string['updatedwikipages'] = 'Pàgines wiki actualitzades';
 $string['uplerror'] = 'Alguna cosa no ha funcionat bé durant la càrrega del fitxer.';
 $string['uplinsect'] = 'Penja en';
 $string['uplnewnam'] = 'Desa amb un altre nom';

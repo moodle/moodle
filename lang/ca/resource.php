@@ -1,10 +1,11 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005010100)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['addresource'] = 'Afegeix un recurs';
 $string['chooseafile'] = 'Trieu o pengeu un fitxer';
 $string['chooseparameter'] = 'Trieu un paràmetre';
+$string['configallowlocalfiles'] = 'Quan creeu un nou recurs de tipus fitxer, són permesos els enllaços a fitxers d\'un sistema local com ara un CD-ROM o un disc dur? Això pot ser útil en una aula on tots els estudiants tenen accés a un CD-ROM o a dispositius en xarxa comuns. La utilització d\'aquesta característica pot requerir canvis en els paràmetres de seguretat dels navegadors.';
 $string['configdefaulturl'] = 'Aquest valor s\'utilitza per omplir per defecte el camp URL quan s\'està creant un nou recurs basat en URL.';
 $string['configfilterexternalpages'] = 'Si habiliteu aquest paràmetre, tots els recursos externs (pàgines web, fitxers HTML penjats) seran processats pels filtres definits en aquest lloc (p. e. s\'hi podran afegir enllaços automàtics a un glossari). Activar aquesta opció pot alentir significativament les pàgines dels cursos; utilitzeu-la amb precaució i només si realment la necessiteu.';
 $string['configframesize'] = 'Quan una pàgina web o un fitxer penjat es visualitzen dins d\'un marc, aquest valor és la mida (en píxels) del marc superior (el que conté la navegació).';
@@ -37,6 +38,12 @@ $string['filtername'] = 'Enllaços automàtics a recursos';
 $string['frameifpossible'] = 'Posa el recurs en un marc per mantenir visible la navegació local';
 $string['fulltext'] = 'Text complet';
 $string['htmlfragment'] = 'Fragment HTML';
+$string['localfile'] = 'Fitxer local';
+$string['localfilechoose'] = 'Trieu un fitxer local (CD-ROM)';
+$string['localfilehelp'] = 'Ajuda per a la visualització de fitxers locals';
+$string['localfileinfo'] = '<p>Trieu un fitxer local del vostre ordinador. El fitxer no es penjarà al servidor web, sinó que Moodle el buscarà a l\'ordinador de qualsevol usuari que vulgui visualitzar aquest recurs.</p><p>Útil sobretot si teniu fitxers grans, p. ex. vídeo, emmagatzemats en un CD-ROM estàndard que distribuïu a tots els participants. Cada participant pot definir el camí local d\'aquests fitxers en el seu ordinador, <a href=\"$a\" target=\"_blank\">editant el seu perfil d\'usuari</a>.</p>';
+$string['localfilepath'] = 'Per definir el camí local d\'aquest recurs, trieu qualsevol fitxer del disc (generalment un CD-ROM) amb el vostre ordinador. El fitxer no es penjarà, però la informació s\'emmagatzemarà i s\'utilitzarà amb els recursos de fitxers locals.';
+$string['localfileselect'] = 'Trieu el camí d\'aquest fitxer';
 $string['maindirectory'] = 'Directori principal';
 $string['modulename'] = 'Recurs';
 $string['modulenameplural'] = 'Recursos';
@@ -53,6 +60,7 @@ $string['newtoolbar'] = 'Mostra la barra d\'eines';
 $string['newwidth'] = 'Amplada de la finestra (en píxels)';
 $string['newwindow'] = 'Nova finestra';
 $string['newwindowopen'] = 'Mostra el material en una nova finestra emergent';
+$string['notallowedlocalfileaccess'] = 'Actualment l\'accés als fitxers locals està inhabilitat, així que aquest recurs no està disponible.';
 $string['note'] = 'Nota';
 $string['notefile'] = 'Per penjar més fitxers al curs (de manera que apareguin en aquesta llista) feu servir l\'<a href=\"$a\">Gestor de fitxers</a>.';
 $string['notypechosen'] = 'Heu de triar un tipus. Torneu enrere i proveu una altra vegada.';
@@ -78,6 +86,7 @@ $string['resourcetypehtml'] = 'Compon una pàgina web';
 $string['resourcetypelabel'] = 'Insereix una etiqueta';
 $string['resourcetypetext'] = 'Compon una pàgina de text';
 $string['searchweb'] = 'Cerca una pàgina web';
+$string['serverurl'] = 'URL del servidor ($a->wwwroot)';
 $string['variablename'] = 'Nom de variable';
 
 ?>
