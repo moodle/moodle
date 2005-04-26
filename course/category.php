@@ -140,7 +140,7 @@
                         $sortorder = get_field_sql('SELECT MIN(sortorder)-1 AS min
                                                     FROM ' . $CFG->prefix . 'course WHERE category=' . $destcategory->id) || 1000;
 
-                        $newcourse = NULL;
+                        $newcourse = new stdClass;
                         $newcourse->id        = $courseid;
                         $newcourse->category  = $destcategory->id;
                         $newcourse->sortorder = $sortorder;
@@ -154,7 +154,6 @@
                 $category = get_record('course_categories', 'id', $category->id);   // Refresh it
             }
         }
-
 
     /// Hide or show a course
 
