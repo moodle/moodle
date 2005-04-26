@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 ALPHA (2005042300)
+      // forum.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['addanewdiscussion'] = '¥Ç¥£¥¹¥«¥Ã¥·¥ç¥ó¥È¥Ô¥Ã¥¯¤òÄÉ²Ã';
@@ -22,7 +22,7 @@ $string['configmaxbytes'] = 'Á´¤Æ¤Î¥Õ¥©¡¼¥é¥àÅºÉÕ¥Õ¥¡¥¤¥ë¤Ë´Ø¤¹¤ë¥Ç¥Õ¥©¥ë¥È¤ÎºÇÂ
 $string['configoldpostdays'] = '¸Å¤¤Åê¹Æ¤ò´ûÆÉ¤È¤¹¤ëÆü¿ô';
 $string['configreplytouser'] = '¥Õ¥©¡¼¥é¥à¤ÎÅê¹Æ¤¬¥á¡¼¥ëÁ÷¿®¤µ¤ì¤ë¾ì¹ç¡¢¼õ¿®¼Ô¤¬¥Õ¥©¡¼¥é¥à¤òÄÌ¤µ¤º¤Ë¸Ä¿ÍÅª¤ËÊÖ¿®¤Ç¤­¤ë¤è¤¦¤Ë¡¢¥á¡¼¥ë¤Ë¥æ¡¼¥¶¥á¡¼¥ë¥¢¥É¥ì¥¹¤òÉ½¼¨¤·¤¿Êı¤¬ÎÉ¤¤¤Ç¤¹¤«?¡¡¡ÖYes¡×¤ËÀßÄê¤·¤¿¾ì¹ç¤Ç¤â¡¢¥æ¡¼¥¶¤Ï¥×¥í¥Õ¥£¡¼¥ëÆâ¤Î¥á¡¼¥ë¥¢¥É¥ì¥¹¤ò±£¤¹¤³¤È¤¬¤Ç¤­¤Ş¤¹¡£';
 $string['configshortpost'] = '¤³¤ÎÊ¸»úÄ¹°Ê²¼¤ÎÄ¹¤µ ( HTML¤Ï´Ş¤Ş¤Ê¤¤ ) ¤ÏÃ»¤¤¤È¹Í¤¨¤é¤ì¤Ş¤¹¡£';
-$string['configtrackreadposts'] = '³Æ¥æ¡¼¥¶¤Î´ûÆÉ/Ì¤ÆÉ¤òÄÉÀ×¤¹¤ë¾ì¹ç¤Ï¡ÖYes¡×¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤¡£';
+$string['configtrackreadposts'] = '³Æ¥æ¡¼¥¶¤Î´ûÆÉ/Ì¤ÆÉ¤ò¥È¥é¥Ã¥¯¤¹¤ë¾ì¹ç¤Ï¡ÖYes¡×¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤¡£';
 $string['configusermarksread'] = '¡ÖYes¡×¤ËÀßÄê¤·¤¿¾ì¹ç¡¢¥æ¡¼¥¶¤Ï¼êÆ°¤ÇÅê¹Æ¤ò´ûÆÉ¤Ë¤¹¤ëÉ¬Í×¤¬¤¢¤ê¤Ş¤¹¡£¡ÖNo¡×¤ËÀßÄê¤·¤¿¾ì¹ç¡¢Åê¹Æ¤¬±ÜÍ÷¤µ¤ì¤¿»şÅÀ¤Ç´ûÆÉ¤Ë¤µ¤ì¤Ş¤¹¡£';
 $string['couldnotadd'] = '¥¨¥é¡¼¤Î¤¿¤áÅê¹Æ¤Ç¤­¤Ş¤»¤ó¤Ç¤·¤¿¡£';
 $string['couldnotdeleteratings'] = '¿½¤·Ìõ¤´¤¶¤¤¤Ş¤»¤ó¡¢É¾²ÁºÑ¤ß¤Î¤¿¤áºï½ü¤Ç¤­¤Ş¤»¤ó¤Ç¤·¤¿¡£';
@@ -101,11 +101,11 @@ $string['noposts'] = 'Åê¹Æ¤¬¤¢¤ê¤Ş¤»¤ó¡£';
 $string['nopostscontaining'] = '¡Ö $a ¡× ¤¬´Ş¤Ş¤ì¤ëÅê¹Æ¤Ï¸«¤Ä¤«¤ê¤Ş¤»¤ó¤Ç¤·¤¿¡£';
 $string['nosubscribers'] = '¤³¤Î¥Õ¥©¡¼¥é¥à¤Ë¤ÏÅĞÏ¿¼Ô¤Ï¤¤¤Ş¤»¤ó¡£';
 $string['notingroup'] = '¿½¤·Ìõ¤´¤¶¤¤¤Ş¤»¤ó¡£¥°¥ë¡¼¥×°Ê³°¤ÎÊı¤Ï¤³¤Î¥Õ¥©¡¼¥é¥à¤ò±ÜÍ÷¤Ç¤­¤Ş¤»¤ó¡£';
-$string['notrackforum'] = 'Ì¤ÆÉ¥á¥Ã¥»¡¼¥¸¤òÄÉÀ×¤·¤Ê¤¤';
+$string['notrackforum'] = 'Ì¤ÆÉ¥á¥Ã¥»¡¼¥¸¤ò¥È¥é¥Ã¥¯¤·¤Ê¤¤';
 $string['nownotsubscribed'] = '$a->name °¸¤Ë¡Ö $a->forum ¡×¤ÎÅê¹Æµ­»ö¤Ï¥á¡¼¥ëÁ÷¿®¤µ¤ì¤Ş¤»¤ó¡£';
-$string['nownottracking'] = '$a->name ¤Ï¡¢¤â¤¦ ¡Ö $a->forum ¡×¤òÄÉÀ×¤·¤Æ¤¤¤Ş¤»¤ó¡£';
+$string['nownottracking'] = '$a->name ¤Ï ¡Ö $a->forum ¡×¤ò¥È¥é¥Ã¥¯¤·¤Æ¤¤¤Ş¤»¤ó¡£';
 $string['nowsubscribed'] = '$a->name °¸¤Ë¡Ö $a->forum ¡×¤ÎÅê¹Æµ­»ö¤¬¥á¡¼¥ëÁ÷¿®¤µ¤ì¤Ş¤¹¡£';
-$string['nowtracking'] = '$a->name ¤Ï¡¢¸½ºß¡Ö $a->forum ¡×¤òÄÉÀ×¤·¤Æ¤¤¤Ş¤¹¡£';
+$string['nowtracking'] = '$a->name ¤Ï¡¢¸½ºß¡Ö $a->forum ¡×¤ò¥È¥é¥Ã¥¯¤·¤Æ¤¤¤Ş¤¹¡£';
 $string['numposts'] = '$a Åê¹Æ';
 $string['olderdiscussions'] = '²áµî¤Î¥Ç¥£¥¹¥«¥Ã¥·¥ç¥ó';
 $string['oldertopics'] = '²áµî¤Î¥È¥Ô¥Ã¥¯';
@@ -180,8 +180,12 @@ $string['subscribestart'] = '¥Õ¥©¡¼¥é¥à¤ÎÅê¹Æµ­»ö¤ò¥á¡¼¥ëÁ÷¿®¤¹¤ë';
 $string['subscribestop'] = '¥Õ¥©¡¼¥é¥à¤ÎÅê¹Æµ­»ö¤ò¥á¡¼¥ëÁ÷¿®¤·¤Ê¤¤';
 $string['subscription'] = '¥á¡¼¥ëÄÌÃÎÅĞÏ¿';
 $string['subscriptions'] = '¥á¡¼¥ëÄÌÃÎÅĞÏ¿';
-$string['trackforum'] = 'Ì¤ÆÉ¥á¥Ã¥»¡¼¥¸¤òÄÉÀ×¤¹¤ë';
-$string['tracking'] = 'ÄÉÀ×';
+$string['trackforum'] = 'Ì¤ÆÉ¥á¥Ã¥»¡¼¥¸¤ò¥È¥é¥Ã¥¯¤¹¤ë';
+$string['tracking'] = '¥È¥é¥Ã¥¯';
+$string['trackingoff'] = 'OFF';
+$string['trackingon'] = 'ON';
+$string['trackingoptional'] = '¥ª¥×¥·¥ç¥ó';
+$string['trackingtype'] = '¤³¤Î¥Õ¥©¡¼¥é¥à¤Î¥È¥é¥Ã¥­¥ó¥°¤òÆÉ¤ß¤Ş¤¹¤«?';
 $string['unread'] = 'Ì¤ÆÉ';
 $string['unreadposts'] = 'Ì¤ÆÉ¤ÎÅê¹Æ';
 $string['unreadpostsnumber'] = 'Ì¤ÆÉ·ï¿ô $a';

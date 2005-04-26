@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 ALPHA (2005042300)
+      // forum.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['addanewdiscussion'] = 'ディスカッショントピックを追加';
@@ -22,7 +22,7 @@ $string['configmaxbytes'] = '全てのフォーラム添付ファイルに関す
 $string['configoldpostdays'] = '古い投稿を既読とする日数';
 $string['configreplytouser'] = 'フォーラムの投稿がメール送信される場合、受信者がフォーラムを通さずに個人的に返信できるように、メールにユーザメールアドレスを表示した方が良いですか?　「Yes」に設定した場合でも、ユーザはプロフィール内のメールアドレスを隠すことができます。';
 $string['configshortpost'] = 'この文字長以下の長さ ( HTMLは含まない ) は短いと考えられます。';
-$string['configtrackreadposts'] = '各ユーザの既読/未読を追跡する場合は「Yes」を選択してください。';
+$string['configtrackreadposts'] = '各ユーザの既読/未読をトラックする場合は「Yes」を選択してください。';
 $string['configusermarksread'] = '「Yes」に設定した場合、ユーザは手動で投稿を既読にする必要があります。「No」に設定した場合、投稿が閲覧された時点で既読にされます。';
 $string['couldnotadd'] = 'エラーのため投稿できませんでした。';
 $string['couldnotdeleteratings'] = '申し訳ございません、評価済みのため削除できませんでした。';
@@ -101,11 +101,11 @@ $string['noposts'] = '投稿がありません。';
 $string['nopostscontaining'] = '「 $a 」 が含まれる投稿は見つかりませんでした。';
 $string['nosubscribers'] = 'このフォーラムには登録者はいません。';
 $string['notingroup'] = '申し訳ございません。グループ以外の方はこのフォーラムを閲覧できません。';
-$string['notrackforum'] = '未読メッセージを追跡しない';
+$string['notrackforum'] = '未読メッセージをトラックしない';
 $string['nownotsubscribed'] = '$a->name 宛に「 $a->forum 」の投稿記事はメール送信されません。';
-$string['nownottracking'] = '$a->name は、もう 「 $a->forum 」を追跡していません。';
+$string['nownottracking'] = '$a->name は 「 $a->forum 」をトラックしていません。';
 $string['nowsubscribed'] = '$a->name 宛に「 $a->forum 」の投稿記事がメール送信されます。';
-$string['nowtracking'] = '$a->name は、現在「 $a->forum 」を追跡しています。';
+$string['nowtracking'] = '$a->name は、現在「 $a->forum 」をトラックしています。';
 $string['numposts'] = '$a 投稿';
 $string['olderdiscussions'] = '過去のディスカッション';
 $string['oldertopics'] = '過去のトピック';
@@ -180,8 +180,12 @@ $string['subscribestart'] = 'フォーラムの投稿記事をメール送信す
 $string['subscribestop'] = 'フォーラムの投稿記事をメール送信しない';
 $string['subscription'] = 'メール通知登録';
 $string['subscriptions'] = 'メール通知登録';
-$string['trackforum'] = '未読メッセージを追跡する';
-$string['tracking'] = '追跡';
+$string['trackforum'] = '未読メッセージをトラックする';
+$string['tracking'] = 'トラック';
+$string['trackingoff'] = 'OFF';
+$string['trackingon'] = 'ON';
+$string['trackingoptional'] = 'オプション';
+$string['trackingtype'] = 'このフォーラムのトラッキングを読みますか?';
 $string['unread'] = '未読';
 $string['unreadposts'] = '未読の投稿';
 $string['unreadpostsnumber'] = '未読件数 $a';
