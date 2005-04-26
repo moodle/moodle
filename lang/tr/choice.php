@@ -16,6 +16,7 @@ $string['displayvertical'] = 'Dikey görüntüle';
 $string['full'] = '(Tam)';
 $string['havetologin'] = 'Ankete katýlmadan önce giriþ yapmalýsýnýz';
 $string['limit'] = 'Sýnýr';
+$string['limitanswers'] = 'Ýzin verilen yanýt sayýsýný sýnýrla';
 $string['modulename'] = 'Anket';
 $string['modulenameplural'] = 'Anketler';
 $string['mustchooseone'] = 'Kaydetmeden önce bir cevap seçmelisiniz. Hiçbirþey kaydedilmedi.';

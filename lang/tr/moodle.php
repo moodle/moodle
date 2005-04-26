@@ -133,6 +133,7 @@ $string['category'] = 'Kategori';
 $string['categoryadded'] = '\'$a\' kategorisi eklendi';
 $string['categorydeleted'] = '\'$a\' kategorisi silindi';
 $string['categoryduplicate'] = '\'$a\' isminde bir kategori zaten var!';
+$string['censorbadwords'] = 'bok,sikik,sikici,sikme,sikkafa,sik,amcýk,göt,göt herif,hýyar,kancýk,oruspu,fahiþe,kahpe,sürtük,kaltak,þýrfýntý,mastürbasyon,otuzbir,otuzbirci,otuzbir çek,piç,puþt,orgazm,vajina';
 $string['changedpassword'] = 'Þifre deðiþti';
 $string['changepassword'] = 'Þifre deðiþtir';
 $string['changessaved'] = 'Deðiþiklikler kaydedildi';
@@ -335,11 +336,13 @@ $string['emailenableclick'] = 'Bu adrese gönderilen tüm epostalarý tekrar aktif 
 $string['emailexists'] = 'Bu eposta adresi daha önce kaydedilmiþtir.';
 $string['emailformat'] = 'Eposta formatý';
 $string['emailmustbereal'] = 'Uyarý: Eposta adresiniz gerçek olmalýdýr';
+$string['emailnotallowed'] = 'Bu alan adýndaki email adreslerine izin verilmemektedir ($a)';
+$string['emailonlyallowed'] = 'Bu email adresi þu izin verilenlerden biri deðildir ($a)';
 $string['emailpasswordconfirmation'] = 'Merhaba $a->firstname,
 
 Birisi (büyük ihtimal siz) \'$a->sitename\' hesabýnýz için yeni bir þifre isteðinde bulundu.
 
-Bunu onaylamak ve yeni bir þifrenin email adresinize postalanmasýný istiyorsanýz, aþaðýdaki linki takip edin:
+Bunu onaylamak ve yeni bir þifrenin email adresinize gönderilmesini istiyorsanýz, aþaðýdaki linki takip edin:
 
 $a->link
 
@@ -414,18 +417,21 @@ $string['forcetheme'] = 'Tema zorunluluðu';
 $string['forgotten'] = 'Kullanýcý adý veya þifrenizi mi unuttunuz?';
 $string['format'] = 'Biçim';
 $string['formathtml'] = 'HTML biçimi';
+$string['formatmarkdown'] = 'Markdown biçimi';
 $string['formatplain'] = 'Düzyazý biçimi';
 $string['formatsocial'] = 'Sosya format';
 $string['formattext'] = 'Program auto-format';
 $string['formattexttype'] = 'Biçim';
 $string['formattopics'] = 'Konu formatý';
 $string['formatweeks'] = 'Haftalýk format';
+$string['formatwiki'] = 'Wiki-like biçimi';
 $string['from'] = 'Baþlangýç';
 $string['frontpagecategorynames'] = 'Bölümleri göster';
 $string['frontpagecourselist'] = 'Bölümleri & Dersleri göster';
 $string['frontpagedescription'] = 'Giriþ sayfasý açýklamalarý';
 $string['frontpageformat'] = 'Giriþ sayfasý formatý';
 $string['frontpagenews'] = 'Haberleri göster';
+$string['frontpagetopiconly'] = 'Seçeneðe baðlý HTML veya etkinlikleri göster (konu bölümü)';
 $string['fulllistofcourses'] = 'Tüm kurslar';
 $string['fullname'] = 'Tam adý';
 $string['fullnamedisplay'] = '$a->firstname $a->lastname';
@@ -717,7 +723,7 @@ $string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, Kullanýcý: $a->in
 $string['notifyloginfailuressubject'] = '$a :: Hatalý giriþ bildirimi';
 $string['notincluded'] = 'Dahil edilmedi';
 $string['notingroup'] = 'Üzgünüz, bu etkinliði görebilmeniz için bir grubun üyesi olmanýz gerekiyor.';
-$string['notpublic'] = 'Herkese açaýk deðildir!';
+$string['notpublic'] = 'Herkese açýk deðildir!';
 $string['nousersmatching'] = '\'$a\' ile eþleþen kullanýcý yok';
 $string['nousersyet'] = 'Henüz bir kullanýcý yok';
 $string['now'] = 'þimdi';

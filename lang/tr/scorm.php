@@ -2,7 +2,7 @@
       // scorm.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
-$string['asset'] = 'Deðer';
+$string['asset'] = 'Varlýk';
 $string['attr_error'] = '$a->tag etiketinde ($a->attr) özelliði için hatalý deðer.';
 $string['autocontinue'] = 'Otomatik Devam Et';
 $string['badmanifest'] = 'Manifest hatasý: hata loglarýna bakýn';
@@ -23,15 +23,16 @@ $string['coursestruct'] = 'Ders Yapýsý';
 $string['datadir'] = 'Dosya sistemi hatasý: Kurs veri klasörü oluþturulamadý.';
 $string['display'] = 'Görünüm';
 $string['domxml'] = 'DOMXML harici kütüphanesi';
-$string['entercourse'] = 'SCORM Paketine Gözat';
+$string['entercourse'] = 'SCORM Paketine giriþ';
 $string['errorlogs'] = 'Hata logu';
-$string['exit'] = 'SCORM kursundan çýk';
+$string['exit'] = 'SCORM Paketinden Çýkýþ';
 $string['expcoll'] = 'Geniþlet/Daralt';
 $string['failed'] = 'Hata oluþtu';
 $string['found'] = 'Manifest bulundu';
 $string['gradeaverage'] = 'Ortalama not';
 $string['gradehighest'] = 'En yüksek not';
-$string['grademethod'] = 'Not verme metodu';
+$string['grademethod'] = 'Not verme yöntemi';
+$string['gradescoes'] = 'Pylþ.Ýçr.Nesn durumu';
 $string['gradesum'] = 'Notlarý topla';
 $string['guestsno'] = 'Konuk kullanýcýlar SCORM derslerini göremezler';
 $string['incomplete'] = 'Tamamlanmadý';

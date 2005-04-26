@@ -3,5 +3,7 @@
 
 
 $string['feedback'] = 'Geribildirim';
+$string['modulename'] = 'Randevu';
+$string['modulenameplural'] = 'Randevular';
 
 ?>

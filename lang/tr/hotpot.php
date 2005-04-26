@@ -4,5 +4,9 @@
 
 $string['clearall'] = 'Tümünü temizle';
 $string['deleteall'] = 'Tümünü sil';
+$string['modulename'] = 'Hot Potatoes Sýnavý';
+$string['modulenameplural'] = 'Hot Potatoes Sýnavlarý';
+$string['really'] = 'Bu sýnav için bütün sonuçlarý silmek istediðiniziden gerçekten emin misiniz?';
+$string['strattemptlabel'] = 'Denemeler: Puan, Tarih Zaman (Süre), Cezalalar';
 
 ?>

@@ -3,5 +3,7 @@
 
 
 $string['lastentry'] = 'Son Girdi';
+$string['modulename'] = 'Söyleþi';
+$string['modulenameplural'] = 'Söyleþiler';
 
 ?>

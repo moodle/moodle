@@ -3,5 +3,9 @@
 
 
 $string['absent'] = 'Yok';
+$string['late'] = 'Geç';
+$string['modulename'] = 'Alýþtýrma';
+$string['modulenameplural'] = 'Alýþtýrmalar';
+$string['present'] = 'Var';
 
 ?>

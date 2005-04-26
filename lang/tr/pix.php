@@ -12,15 +12,15 @@ $string['cool'] = 'havalý';
 $string['dead'] = 'ölmüþ';
 $string['evil'] = 'þeytanca';
 $string['kiss'] = 'öpüyor';
-$string['mixed'] = 'kafasýkarýþmýþ';
+$string['mixed'] = 'kafasýkarýþýk';
 $string['sad'] = 'üzgün';
 $string['shy'] = 'çekingen';
 $string['sleepy'] = 'uyukluyor';
 $string['smiley'] = 'gülüyor';
 $string['surprise'] = 'þaþýrmýþ';
 $string['thoughtful'] = 'düþünüyor';
-$string['tongueout'] = 'diliniçýkarýyor';
-$string['wideeyes'] = 'gözleriaçýlmýþ';
+$string['tongueout'] = 'dilçýkarýyor';
+$string['wideeyes'] = 'gözüaçýlmýþ';
 $string['wink'] = 'gözkýrpýyor';
 
 ?>

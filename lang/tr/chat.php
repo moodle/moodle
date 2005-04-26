@@ -21,6 +21,7 @@ $string['messagebeepsyou'] = '$a sizi uyardý!';
 $string['messageenter'] = '$a odaya girdi';
 $string['messageexit'] = '$a odadan ayrýldý';
 $string['messages'] = 'Mesajlar';
+$string['methodnormal'] = 'Normal yöntem';
 $string['modulename'] = 'Sohbet';
 $string['modulenameplural'] = 'Sohbetler';
 $string['neverdeletemessages'] = 'Asla mesajlarý silme';
