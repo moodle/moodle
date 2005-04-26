@@ -132,17 +132,34 @@ GOOD: $assignments (for an array of objects)<br />
       $var = 'a very, very long string with a '.$single.' variable in it';<br />
       $var = &quot;some $text with $many variables $within it&quot;; </font></p>
   </li>
-  <li class="spaced"><strong>Comments</strong> should use two or three slashes 
-    and line up nicely with the code. 
-    <p class="examplecode"><font color="#006600">function </font><font color="#0000BB">forum_get_ratings_mean</font><font color="#007700">(</font><font color="#0000BB">$postid</font><font color="#007700">, 
+
+
+  <li class="spaced"><strong>Comments</strong> should be added as much as is 
+     practical, to explain the code flow and the purpose of functions and variables. 
+     <ul>
+     <li>Every function (and class) should use the popular 
+         <a target="_blank" href="http://www.phpdoc.org/">phpDoc format</a>.
+         This allows code documentation to be generated automatically.</li>
+     <li>Inline comments should use the // style, laid out neatly 
+         so that it fits among the code and lines up with it.</li>
+     </ul>
+  
+   <p class="examplecode"><font color="#FF8000">
+/**<br />
+ * The description should be first, with asterisks laid out exactly<br />
+ * like this example.  If you want to refer to a another function,<br />
+ * do it like this: {@link clean_param()}.  Then, add descriptions <br />
+ * for each parameter as follows.<br />
+ *<br />
+ * @param int    $postid The PHP type is followed by the variable name<br />
+ * @param array  $scale The PHP type is followed by the variable name<br />
+ * @param array  $ratings The PHP type is followed by the variable name<br />
+ * @return mixed<br />
+ */</font><br />
+<font color="#006600">function </font><font color="#0000BB">forum_get_ratings_mean</font><font color="#007700">(</font><font color="#0000BB">$postid</font><font color="#007700">, 
       </font><font color="#0000BB">$scale</font><font color="#007700">, </font><font color="#0000BB">$ratings</font><font color="#007700">=</font><font color="#0000BB">NULL</font><font color="#007700">) 
-      {<br />
-      </font><font color="#FF8000">/// Return the mean rating of a post given 
-      to the current user by others.<br />
-      /// Scale is an array of possible ratings in the scale<br />
-      /// Ratings is an optional simple array of actual ratings (just integers)<br />
-      <br />
-      &nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#007700">if (!</font><font color="#0000BB">$ratings</font><font color="#007700">) 
+      {<br /></font>
+      &nbsp;&nbsp;&nbsp;&nbsp;<font color="#007700">if (!</font><font color="#0000BB">$ratings</font><font color="#007700">) 
       {<br />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$ratings 
       </font><font color="#007700">= array(); &nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#FF8000">// 
@@ -158,6 +175,7 @@ GOOD: $assignments (for an array of objects)<br />
       {</font> <br />
       ....etc </p>
   </li>
+  
   <li class="spaced"><strong>Space</strong> should be used liberally - don't be 
     afraid to spread things out a little to gain some clarity. Generally, there 
     should be one space between brackets and normal statements, but no space between 
