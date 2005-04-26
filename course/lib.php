@@ -938,6 +938,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
     static $strunreadpostsone;
 
     static $untracked;
+    static $usetracking;
 
     $labelformatoptions = New stdClass;
 
@@ -951,18 +952,16 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             $strmovehere = get_string("movehere");
             $strmovefull = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
         }
-        $strunreadpostsone    = get_string('unreadpostsone', 'forum');
+        $usetracking = ($CFG->forum_trackreadposts && isloggedin());
+        if ($usetracking) {
+            $strunreadpostsone    = get_string('unreadpostsone', 'forum');
+            include_once($CFG->dirroot.'/mod/forum/lib.php');
+            $untracked = forum_tp_get_untracked_forums($USER->id);
+        }
     }
     $labelformatoptions->noclean = true;
 
     $modinfo = unserialize($course->modinfo);
-
-    if ($CFG->forum_trackreadposts) {
-        include_once($CFG->dirroot.'/mod/forum/lib.php');
-        if (empty($untracked)) {
-            $untracked = forum_tp_get_untracked_forums($USER->id);
-        }
-    }
 
     echo '<table width="'.$width.'" class="section">';
     if (!empty($section->sequence)) {
@@ -1023,10 +1022,10 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                          ' href="'.$CFG->wwwroot.'/mod/'.$mod->modname.'/view.php?id='.$mod->id.'">'.
                          $instancename.'</a>';
                 }
-                if ($CFG->forum_trackreadposts && $mod->modname == 'forum') {
+                if ($usetracking && $mod->modname == 'forum') {
                     $groupmode = groupmode($course, $mod);
                     $groupid = ($groupmode == SEPARATEGROUPS && !isteacheredit($course->id)) ?
-                        get_current_group($course->id) : false;
+                               get_current_group($course->id) : false;
 
                     if (forum_tp_can_track_forums($USER->id) && !isset($untracked[$mod->instance])) {
                         $unread = forum_tp_count_forum_unread_posts($USER->id, $mod->instance, $groupid);
