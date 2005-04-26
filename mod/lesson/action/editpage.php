@@ -44,7 +44,7 @@
 	        }
 	        /// CDC-FLAG /// 6/15/04 removed != LESSON_ENDOFBRANCH...
 	        if (trim($page->title)) { // ...nor nuffin pages
-	            $jump[$apageid] = $apage->title;
+	            $jump[$apageid] = strip_tags(format_string($apage->title,true));
 	        }
 	        $apageid = $apage->nextpageid;
 	    } else {

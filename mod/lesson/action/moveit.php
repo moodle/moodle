@@ -14,7 +14,7 @@
     }
     $after = required_param('after', PARAM_INT); // target page
 
-    print_heading(get_string("moving", "lesson", $page->title));
+    print_heading(get_string("moving", "lesson", format_string($page->title)));
     
     // first step. determine the new first page
     // (this is done first as the current first page will be lost in the next step)

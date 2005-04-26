@@ -40,7 +40,7 @@
             $newpage->display = 0;
         }
         /// CDC-FLAG ///
-        $newpage->title = clean_param($form->title, PARAM_CLEAN);
+        $newpage->title = clean_param($form->title, PARAM_CLEANHTML);
         $newpage->contents = clean_param(trim($form->contents), PARAM_CLEANHTML);
         $newpageid = insert_record("lesson_pages", $newpage);
         if (!$newpageid) {
@@ -83,7 +83,7 @@
                 $newpage->display = 0;
             }                
             /// CDC-FLAG ///
-            $newpage->title = clean_param($form->title, PARAM_CLEAN);
+            $newpage->title = clean_param($form->title, PARAM_CLEANHTML);
             $newpage->contents = clean_param(trim($form->contents), PARAM_CLEANHTML);
             $newpageid = insert_record("lesson_pages", $newpage);
             if (!$newpageid) {
@@ -113,7 +113,7 @@
                 $newpage->display = 0;
             }                
             /// CDC-FLAG ///
-            $newpage->title = clean_param($form->title, PARAM_CLEAN);
+            $newpage->title = clean_param($form->title, PARAM_CLEANHTML);
             $newpage->contents = clean_param(trim($form->contents), PARAM_CLEANHTML);
             $newpageid = insert_record("lesson_pages", $newpage);
             if (!$newpageid) {

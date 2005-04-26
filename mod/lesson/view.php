@@ -549,7 +549,7 @@
             echo format_string($lesson->name) . "</strong></em>";
             if ($page->qtype == LESSON_BRANCHTABLE) {
                 echo ":<br />";
-                print_heading($page->title);
+                print_heading(format_string($page->title));
             }
             echo "</div><br />";
             
@@ -1255,7 +1255,7 @@
                 /// CDC-FLAG /// end tree code    (note, there is an "}" below for an else above)
             while (true) {
                 echo "<tr><td>\n";
-                echo "<table width=\"100%\" border=\"1\"><tr><th colspan=\"2\">$page->title&nbsp;&nbsp;\n";
+                echo "<table width=\"100%\" border=\"1\"><tr><th colspan=\"2\">".format_string($page->title)."&nbsp;&nbsp;\n";
                 if (isteacheredit($course->id)) {
                     if ($npages > 1) {
                         echo "<a title=\"".get_string("move")."\" href=\"lesson.php?id=$cm->id&amp;action=move&amp;pageid=$page->id\">\n".
@@ -1592,7 +1592,7 @@
                         $style = "style='color:#999999;'";
                     }
                     // link for each essay
-                    $essaylinks[] = "<a $style href=\"view.php?id=$cm->id&amp;action=essaygrade&attemptid=$essay->id\">".$pages[$essay->pageid]->title."</a>";
+                    $essaylinks[] = "<a $style href=\"view.php?id=$cm->id&amp;action=essaygrade&attemptid=$essay->id\">".format_string($pages[$essay->pageid]->title,true)."</a>";
                 }
             }
             // email link for this user
@@ -1774,7 +1774,7 @@
         foreach ($essayattempts as $essay) {
             $essayinfo = unserialize($essay->useranswer);
             if ($essayinfo->graded && !$essayinfo->sent) {
-                $subject = get_string('essayemailsubject', 'lesson', $pages[$essay->pageid]->title);
+                $subject = get_string('essayemailsubject', 'lesson', format_string($pages[$essay->pageid]->title,true));
                 $message = get_string('question', 'lesson').":<br>";
                 $message .= $pages[$essay->pageid]->contents;
                 $message .= "<br><br>";

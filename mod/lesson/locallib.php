@@ -927,7 +927,7 @@ function lesson_print_tree_link_menu($page, $id, $showpages=false) {
         } 
     }
     
-    $output .= "<a href=\"view.php?id=$id&amp;action=navigation&amp;pageid=$page->id\">".$page->title."</a>\n"; 
+    $output .= "<a href=\"view.php?id=$id&amp;action=navigation&amp;pageid=$page->id\">".format_string($page->title,true)."</a>\n"; 
     
     if($close) {
         $output.="</em>";
@@ -951,9 +951,9 @@ function lesson_print_tree($pageid, $lessonid, $cmid, $pixpath) {
     while ($pageid != 0) {
         echo "<tr><td>";
         if(($pages[$pageid]->qtype != LESSON_BRANCHTABLE) && ($pages[$pageid]->qtype != LESSON_ENDOFBRANCH)) {
-            $output = "<a style='color:#DF041E;' href=\"view.php?id=$cmid&display=".$pages[$pageid]->id."\">".$pages[$pageid]->title."</a>\n";
+            $output = "<a style='color:#DF041E;' href=\"view.php?id=$cmid&display=".$pages[$pageid]->id."\">".format_string($pages[$pageid]->title,true)."</a>\n";
         } else {
-            $output = "<a href=\"view.php?id=$cmid&display=".$pages[$pageid]->id."\">".$pages[$pageid]->title."</a>\n";
+            $output = "<a href=\"view.php?id=$cmid&display=".$pages[$pageid]->id."\">".format_string($pages[$pageid]->title,true)."</a>\n";
             
             if($answers = get_records_select("lesson_answers", "lessonid = $lessonid and pageid = $pageid")) {
                 $output .= "Jumps to: ";
@@ -976,7 +976,7 @@ function lesson_print_tree($pageid, $lessonid, $cmid, $pixpath) {
                     } elseif ($answer->jumpto == LESSON_CLUSTERJUMP) {
                         $output .= get_string("clusterjump", "lesson");            
                     } else {
-                        $output .= $pages[$answer->jumpto]->title;
+                        $output .= format_string($pages[$answer->jumpto]->title);
                     }
                     if ($answer->id != $end->id) {
                         $output .= ", ";

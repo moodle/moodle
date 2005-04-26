@@ -12,7 +12,7 @@
 	if (!$thispage = get_record("lesson_pages", "id", $pageid)) {
 	    error("Confirm delete: the page record not found");
 	}
-	print_heading(get_string("deletingpage", "lesson", $thispage->title));
+	print_heading(get_string("deletingpage", "lesson", format_string($thispage->title)));
 	// print the jumps to this page
 	if ($answers = get_records_select("lesson_answers", "lessonid = $lesson->id AND jumpto = $pageid + 1")) {
 	    print_heading(get_string("thefollowingpagesjumptothispage", "lesson"));

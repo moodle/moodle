@@ -32,7 +32,7 @@
 	    while (true) {
 	        if ($apageid) {
 	            $title = get_field("lesson_pages", "title", "id", $apageid);
-	            $jump[$apageid] = $title;
+	            $jump[$apageid] = strip_tags(format_string($title,true));
 	            $apageid = get_field("lesson_pages", "nextpageid", "id", $apageid);
 	        } else {
 	            // last page reached

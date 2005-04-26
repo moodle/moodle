@@ -8,7 +8,7 @@
 
     $pageid = required_param('pageid', PARAM_INT);
     $title = get_field("lesson_pages", "title", "id", $pageid);
-    print_heading(get_string("moving", "lesson", $title));
+    print_heading(get_string("moving", "lesson", format_string($title)));
    
     if (!$page = get_record_select("lesson_pages", "lessonid = $lesson->id AND prevpageid = 0")) {
         error("Move: first page not found");
@@ -19,7 +19,7 @@
         get_string("movepagehere", "lesson")."</small></a></td></tr>\n";
     while (true) {
         if ($page->id != $pageid) {
-            if (!$title = trim($page->title)) {
+            if (!$title = trim(format_string($page->title))) {
                 $title = "<< ".get_string("notitle", "lesson")."  >>";
             }
             echo "<tr><td><b>$title</b></td></tr>\n";

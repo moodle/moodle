@@ -406,7 +406,7 @@
             $data ='';
             $answerdata = new stdClass;
 
-            $answerpage->title = $page->title;
+            $answerpage->title = format_string($page->title);
             $answerpage->contents = $page->contents;
 
             // get the page qtype
@@ -741,7 +741,7 @@
                             } elseif ($answer->jumpto == LESSON_CLUSTERJUMP) {
                                 $data .= get_string("clusterjump", "lesson");
                             } else {
-                                $data .= $lessonpages[$answer->jumpto]->title." ".get_string("page", "lesson");
+                                $data .= format_string($lessonpages[$answer->jumpto]->title)." ".get_string("page", "lesson");
                             }
 
                             $answerdata->answers[] = array($data, "");
@@ -768,7 +768,7 @@
                             } elseif ($answer->jumpto == LESSON_CLUSTERJUMP) {
                                 $data .= get_string("clusterjump", "lesson");
                             } else {
-                                $data .= $lessonpages[$answer->jumpto]->title." ".get_string("page", "lesson");
+                                $data .= format_string($lessonpages[$answer->jumpto]->title)." ".get_string("page", "lesson");
                             }
                             $answerdata->answers[] = array($data, "");
                             $answerpage->grayout = 1; // always grayed out
@@ -843,7 +843,7 @@
                 $fontend2 = "";
             }
 
-            $table->head = array($fontstart2.$page->qtype.": ".$page->title.$fontend2, $fontstart2.get_string("classstats", "lesson").$fontend2);
+            $table->head = array($fontstart2.$page->qtype.": ".format_string($page->title).$fontend2, $fontstart2.get_string("classstats", "lesson").$fontend2);
             $table->data[] = array($fontstart.get_string("question", "lesson").": <br />".$fontend.$fontstart2.$page->contents.$fontend2, " ");
             $table->data[] = array($fontstart.get_string("answer", "lesson").":".$fontend);
             // apply the font to each answer
