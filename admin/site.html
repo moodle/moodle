@@ -13,8 +13,7 @@
     </td>
 </tr>
 <tr valign="top">
-    <td align="right"><?php print_string("frontpagedescription") ?>:<br />
-     <font size="1">
+    <td align="right"><?php print_string("frontpagedescription") ?>:<br /><br />
      <?PHP
         helpbutton("writing", get_string("helpwriting"), "moodle", true, true);
         echo "<br />";
@@ -23,9 +22,8 @@
         } else {
            helpbutton("html", get_string("helphtml"), "moodle", true, true);
         }
+        echo "<br />";
       ?>
-      <br />
-     </font>
     </td>
     <td><?php  print_textarea($usehtmleditor, 20, 50, 600, 400, "summary", $form->summary); ?></td>
 </tr>
