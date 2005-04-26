@@ -201,6 +201,10 @@ function forum_upgrade($oldversion) {
                   ) COMMENT=\'Tracks each users untracked forums.\';');
   }
 
+  if ($oldversion < 2005042500) {
+      modify_database('','ALTER TABLE prefix_forum ADD `trackingtype` TINYINT(2) UNSIGNED DEFAULT \'2\' NOT NULL AFTER `forcesubscribe`;');
+  }
+
 
   return true;
   

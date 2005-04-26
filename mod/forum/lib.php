@@ -12,6 +12,10 @@ define('FORUM_MODE_NESTED', 3);
 define('FORUM_FORCESUBSCRIBE', 1);
 define('FORUM_INITIALSUBSCRIBE', 2);
 
+define('FORUM_TRACKING_OFF', 0);
+define('FORUM_TRACKING_OPTIONAL', 1);
+define('FORUM_TRACKING_ON', 2);
+
 $FORUM_LAYOUT_MODES = array ( FORUM_MODE_FLATOLDEST => get_string('modeflatoldestfirst', 'forum'),
                               FORUM_MODE_FLATNEWEST => get_string('modeflatnewestfirst', 'forum'),
                               FORUM_MODE_THREADED   => get_string('modethreaded', 'forum'),
@@ -353,7 +357,8 @@ function forum_cron () {
                         $mailcount++;
 
                     /// Mark post as read if forum_usermarksread is set off
-                        if ($CFG->forum_trackreadposts && !$CFG->forum_usermarksread) {
+                        if (!$CFG->forum_usermarksread && forum_tp_can_track_forums($forum, $userto) && 
+                            forum_tp_is_tracked($forum, $userto->id)) {
                             if (!forum_tp_mark_post_read($userto->id, $post, $forum->id)) {
                                 mtrace("Error: mod/forum/cron.php: Could not mark post $post->id read for user $userto->id".
                                      " while sending email.");
@@ -528,7 +533,9 @@ function forum_cron () {
                             $posthtml .= forum_make_mail_post($post, $userfrom, $userto, $course, false, $canreply, true, false);
 
                         /// Create an array of postid's for this user to mark as read.
-                            if ($CFG->forum_trackreadposts && !$CFG->forum_usermarksread) {
+                            if (!$CFG->forum_usermarksread && 
+                                forum_tp_can_track_forums($forum, $userto) && 
+                                forum_tp_is_tracked($forum, $userto->id)) {
                                 $markread[$post->id]->post = $post;
                                 $markread[$post->id]->forumid = $forum->id;
                             }
@@ -560,7 +567,9 @@ function forum_cron () {
                     $usermailcount++;
 
                     /// Mark post as read if forum_usermarksread is set off
-                        if ($CFG->forum_trackreadposts && !$CFG->forum_usermarksread) {
+                        if (!$CFG->forum_usermarksread && 
+                            forum_tp_can_track_forums($postinfo->forumid, $userto) && 
+                            forum_tp_is_tracked($postinfo->forumid, $userto->id)) {
                             foreach ($markread as $postinfo) {
                                 if (!forum_tp_mark_post_read($userto->id, $postinfo->post, $postinfo->forumid)) {
                                     mtrace("Error: mod/forum/cron.php: Could not mark post $postid read for user $userto->id".
@@ -1521,7 +1530,12 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
     static $stredit, $strdelete, $strreply, $strparent, $strprune, $strpruneheading, $threadedmode, $isteacher, $adminedit;
 
-    static $strmarkread, $strmarkunread;
+    static $strmarkread, $strmarkunread, $istracked='new';
+
+    if ($istracked == 'new') {
+        $istracked = (forum_tp_can_track_forums($post->forum) && 
+                      forum_tp_is_tracked($post->forum, $USER->id));
+    }
 
     if (empty($stredit)) {
         $stredit = get_string('edit', 'forum');
@@ -1537,7 +1551,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         $strmarkunread = get_string('markunread', 'forum');
     }
 
-    if (forum_tp_can_track_forums() && forum_tp_is_tracked($post->forum, $USER->id)) {
+    if ($istracked) {
         if ($post_read == -99) {    // If we don't know yet...
         /// The front page can display a news item post to non-logged in users. This should
         /// always appear as 'read'.
@@ -1622,7 +1636,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
     $commands = array();
 
-    if ($CFG->forum_trackreadposts) {
+    if ($istracked) {
         /// SPECIAL CASE: The front page can display a news item post to non-logged in users.
         /// Don't display the mark read / unread controls in this case.
         if ($CFG->forum_usermarksread && !empty($USER)) {
@@ -1730,20 +1744,26 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     }
     echo '</td></tr></table>'."\n\n";
 
-    if ($CFG->forum_trackreadposts && !$CFG->forum_usermarksread && !empty($post->forum)) {
+    if ($istracked && !$CFG->forum_usermarksread && !empty($post->forum)) {
         forum_tp_mark_post_read($USER->id, $post, $post->forum);
     }
 
     return $ratingsmenuused;
 }
-
-
-function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring="", $forumtracked=true) {
-/// This function prints the overview of a discussion in the forum listing.
-/// It needs some discussion information and some post information, these
-/// happen to be combined for efficiency in the $post parameter by the function
-/// that calls this one
-///   forum_print_latest_discussions()
+/**
+* This function prints the overview of a discussion in the forum listing.
+* It needs some discussion information and some post information, these
+* happen to be combined for efficiency in the $post parameter by the function
+* that calls this one: forum_print_latest_discussions()
+* 
+* @param object $post The post object (passed by reference for speed).
+* @param object $forum The forum object.
+* @param int $group Current group.
+* @param string $datestring Format to use for the dates.
+* @param boolean $cantrack Is tracking enabled for this forum.
+* @param boolean $forumtracked Is the user tracking this forum.
+*/
+function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring="", $cantrack=true, $forumtracked=true) {
 
     global $USER, $CFG;
 
@@ -1795,22 +1815,28 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
         echo $post->replies.'</a>';
         echo "</td>\n";
 
-        if ($CFG->forum_trackreadposts and $forumtracked) {
+        if ($cantrack) {
             echo '<td class="replies">';
-            if ($post->unread > 0) {
-                echo '<span class="unread">';
-                echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#unread">';
-                echo $post->unread;
-                echo '</a>';
-                echo '<a title="'.$strmarkalldread.'" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?id='.
-                     $forum->id.'&amp;d='.$post->discussion.'&amp;mark=read&amp;returnpage=view.php">' .
-                     '<img src="'.$CFG->pixpath.'/t/clear.gif" height="11" width="11" border="0" /></a>';
-                echo '</span>';
+            if ($forumtracked) {
+                if ($post->unread > 0) {
+                    echo '<span class="unread">';
+                    echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#unread">';
+                    echo $post->unread;
+                    echo '</a>';
+                    echo '<a title="'.$strmarkalldread.'" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?id='.
+                         $forum->id.'&amp;d='.$post->discussion.'&amp;mark=read&amp;returnpage=view.php">' .
+                         '<img src="'.$CFG->pixpath.'/t/clear.gif" height="11" width="11" border="0" /></a>';
+                    echo '</span>';
+                } else {
+                    echo '<span class="read">';
+                    echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#unread">';
+                    echo $post->unread;
+                    echo '</a>';
+                    echo '</span>';
+                }
             } else {
                 echo '<span class="read">';
-                echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#unread">';
-                echo $post->unread;
-                echo '</a>';
+                echo '-';
                 echo '</span>';
             }
             echo "</td>\n";
@@ -2219,7 +2245,7 @@ function forum_add_new_post($post,&$message) {
     set_field("forum_discussions", "timemodified", $post->modified, "id", $post->discussion);
     set_field("forum_discussions", "usermodified", $post->userid, "id", $post->discussion);
 
-    if ($CFG->forum_trackreadposts) {
+    if (forum_tp_can_track_forums($post->forum) && forum_tp_is_tracked($post->forum)) {
         forum_tp_mark_post_read($post->userid, $post, $post->forum);
     }
 
@@ -2258,7 +2284,7 @@ function forum_update_post($post,&$message) {
     set_field("forum_discussions", "timemodified", $post->modified, "id", $post->discussion);
     set_field("forum_discussions", "usermodified", $post->userid, "id", $post->discussion);
 
-    if ($CFG->forum_trackreadposts) {
+    if (forum_tp_can_track_forums($post->forum) && forum_tp_is_tracked($post->forum)) {
         forum_tp_mark_post_read($post->userid, $post, $post->forum);
     }
 
@@ -2317,7 +2343,7 @@ function forum_add_discussion($discussion,&$message) {
         return 0;
     }
 
-    if ($CFG->forum_trackreadposts) {
+    if (forum_tp_can_track_forums($post->forum) && forum_tp_is_tracked($post->forum)) {
         forum_tp_mark_post_read($post->userid, $post, $post->forum);
     }
 
@@ -2499,6 +2525,19 @@ function forum_user_can_post($forum, $user=NULL) {
 }
 
 
+/**
+* Prints the discussion view screen for a forum.
+* 
+* @param object $course The current course object.
+* @param object $forum Forum to be printed.
+* @param int $maxdiscussions The maximum number of discussions per page(optional).
+* @param string $displayformat The display format to use (optional). 
+* @param string $sort Sort arguments for database query (optional).
+* @param int $currentgroup Group to display discussions for (optional).
+* @param int $groupmode Group mode of the forum (optional).
+* @param int $page Page mode, page to display (optional).
+* 
+*/
 function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $displayformat='plain', $sort='',
                                         $currentgroup=-1, $groupmode=-1, $page=-1) {
     global $CFG, $USER;
@@ -2599,8 +2638,8 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
     $strdatestring = get_string('strftimerecentfull');
 
     /// Check if the forum is tracked.
-    if (forum_tp_can_track_forums()) {
-        $forumtracked = forum_tp_is_tracked($forum->id, $USER->id);
+    if ($cantrack = forum_tp_can_track_forums($forum)) {
+        $forumtracked = forum_tp_is_tracked($forum, $USER->id);
     } else {
         $forumtracked = false;
     }
@@ -2616,7 +2655,8 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
         }
         if ($forum->open or $forum->type == 'teacher') {
             echo '<th class="header replies">'.get_string('replies', 'forum').'</th>';
-            if ($CFG->forum_trackreadposts and $forumtracked) {
+            /// If the forum can be tracked, display the unread column.
+            if ($cantrack) {
                 echo '<th class="header replies">'.get_string('unread', 'forum').'</th>';
             }
         }
@@ -2649,16 +2689,14 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
             $discussion->replies = 0;
         }
 
-        if ($CFG->forum_trackreadposts) {
         /// SPECIAL CASE: The front page can display a news item post to non-logged in users.
         /// All posts are read in this case.
-            if (!$forumtracked) {
-                $discussion->unread = '-';
-            } else if (empty($USER)) {
-                $discussion->unread = 0;
-            } else {
-                $discussion->unread = forum_tp_count_discussion_unread_posts($USER->id, $discussion->discussion);
-            }
+        if (!$forumtracked) {
+            $discussion->unread = '-';
+        } else if (empty($USER)) {
+            $discussion->unread = 0;
+        } else {
+            $discussion->unread = forum_tp_count_discussion_unread_posts($USER->id, $discussion->discussion);
         }
 
         if (!empty($USER->id)) {
@@ -2680,7 +2718,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
                 } else {
                     $group = -1;
                 }
-                forum_print_discussion_header($discussion, $forum, $group, $strdatestring, $forumtracked);
+                forum_print_discussion_header($discussion, $forum, $group, $strdatestring, $cantrack, $forumtracked);
             break;
             default:
                 if ($canreply or $discussion->replies) {
@@ -2750,10 +2788,14 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
 
     $post->subject = format_string($post->subject);
 
-    $forumtracked = forum_tp_is_tracked($forum->id, $USER->id);
-    if (forum_tp_can_track_forums() && $forumtracked) {
-        $user_read_array = forum_tp_get_discussion_read_records($USER->id, $post->discussion);
+    if (forum_tp_can_track_forums($forum)) {
+        if ($forumtracked = forum_tp_is_tracked($forum, $USER->id)) {
+            $user_read_array = forum_tp_get_discussion_read_records($USER->id, $post->discussion);
+        } else {
+            $user_read_array = array();
+        }
     } else {
+        $forumtracked = false;
         $user_read_array = array();
     }
 
@@ -2844,6 +2886,7 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
     $link  = false;
     $ratingsmenuused = false;
 
+    $istracking = forum_tp_can_track_forums($forumid) && forum_tp_is_tracked($forumid);
     if ($posts = forum_get_child_posts($parent)) {
         foreach ($posts as $post) {
 
@@ -2867,7 +2910,7 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
                 $by->name = fullname($post, isteacher($courseid));
                 $by->date = userdate($post->modified);
 
-                if ($CFG->forum_trackreadposts) {
+                if ($istracking) {
                     if (isset($user_read_array[$post->id]) || forum_tp_is_post_old($post)) {
                         $style = '<span class="forumthread read">';
                     } else {
@@ -3339,28 +3382,98 @@ function forum_tp_delete_read_records($userid=-1, $postid=-1, $discussionid=-1, 
         return delete_records_select('forum_read', $select);
     }
 }
+/**
+* Get a list of forums not tracked by the user.
+* 
+* @param int $userid The id of the user to use.
+* @param int $courseid The id of the course being checked (optional).
+* @return mixed An array indexed by forum id, or false.
+*/
+function forum_tp_get_untracked_forums($userid, $courseid=false) {
+    global $CFG;
 
-/// Get a list of forums not being tracked by the user.
-function forum_tp_get_untracked_forums($userid) {
-    return get_records('forum_track_prefs', 'userid', $userid, '', 'forumid,userid');
+    /// If a course is specified, get the forums with tracking turned off.
+    if ($courseid !== false) {
+        $select = 'course = '.$courseid.' AND trackingtype = '.FORUM_TRACKING_OFF;
+        $forced = get_records_select('forum', $select, '', 'id,course');
+    } else {
+        $forced = false;
+    }
+
+    /// Get the forums that the user has turned off.
+    $sql = 'SELECT ft.forumid, ft.userid '.
+           'FROM '.$CFG->prefix.'forum_track_prefs ft, '.$CFG->prefix.'forum f '.
+           'WHERE ft.userid = '.$userid.' AND f.id = ft.forumid ' .
+                'AND f.trackingtype != '.FORUM_TRACKING_ON;
+    $useroff = get_records_sql($sql);
+    if (!$forced) {
+        return $useroff;
+    } else if (!$useroff) {
+        return $forced;
+    } else {
+        return ($useroff + $forced);
+    }
 }
 
-/// Tells whether a user can track forums based on config variables.
-function forum_tp_can_track_forums() {
+/**
+* Determine if a user can track forums and optionally a particular forum.
+* Checks the site settings, the user settings and the forum settings (if
+* requested).
+*
+* @param mixed $forum The forum object to test, or the int id (optional).
+* @param mixed $userid The user object to check for (optional).
+* @return boolean
+*/
+function forum_tp_can_track_forums($forum=false, $user=false) {
     global $USER, $CFG;
 
-    return ($CFG->forum_trackreadposts && $USER->trackforums);
+    if ($user === false) {
+        /// Must be logged in and not a guest.
+        $isauser = isloggedin() && !isguest();
+        $user = $USER;
+    } else {
+        $isauser = true;
+    }
+
+    if ($forum === false) {
+        $forumallows = true;
+        $forumforced = false;
+    } else {
+        /// Work toward always passing an object...
+        if (is_numeric($forum)) {
+            $forum = get_record('forum', 'id', $forum);
+        }
+        $forumallows = ($forum->trackingtype == FORUM_TRACKING_OPTIONAL);
+        $forumforced = ($forum->trackingtype == FORUM_TRACKING_ON);
+    }
+
+    return ($isauser && $CFG->forum_trackreadposts && 
+            ($forumforced || ($forumallows && $user->trackforums)));
 }
 
-/// Tells whether a specific forum is tracked.
-function forum_tp_is_tracked($forumid=0, $userid=false) {
+/**
+* Tells whether a specific forum is tracked by the user. A user can optionally
+* be specified. If not specified, the current user is assumed.
+* 
+* @param mixed $forum If int, the id of the forum being checked; if object, the forum object
+* @param int $userid The id of the user being checked (optional).
+* @return boolean
+*/
+function forum_tp_is_tracked($forum, $userid=false) {
     global $USER, $CFG;
 
     if ($userid === false) {
         $userid = $USER->id;
     }
 
-    return (get_record('forum_track_prefs', 'userid', $userid, 'forumid', $forumid) === false);
+    /// Work toward always passing an object...
+    if (is_numeric($forum)) {
+        $forum = get_record('forum', 'id', $forum);
+    }
+
+    return (($forum->trackingtype == FORUM_TRACKING_ON) ||
+            ($forum->trackingtype == FORUM_TRACKING_OPTIONAL &&
+             get_record('forum_track_prefs', 'userid', $userid, 'forumid', $forum->id) === false));
 }
 
 function forum_tp_start_tracking($forumid, $userid=false) {

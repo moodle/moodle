@@ -114,6 +114,21 @@
         ?>
     </td>
 </tr>
+<?php if ($CFG->forum_trackreadposts) { ?>
+<tr>
+    <td align="right"><b><?php print_string('trackingtype', 'forum') ?>:</b></td>
+    <td>
+        <?php
+            unset($options);
+            $options[FORUM_TRACKING_OPTIONAL] = get_string('trackingoptional', 'forum');
+            $options[FORUM_TRACKING_OFF] = get_string('trackingoff', 'forum');
+            $options[FORUM_TRACKING_ON] = get_string('trackingon', 'forum');
+            choose_from_menu($options, 'trackingtype', $form->trackingtype, '');
+            helpbutton('trackingtype', get_string('trackingtype', 'forum'), 'forum');
+        ?>
+    </td>
+</tr>
+<?php } ?>
 <tr valign="top">
     <td align="right"><b><?php  print_string("maxattachmentsize", "forum") ?>:</b></td>
     <td>

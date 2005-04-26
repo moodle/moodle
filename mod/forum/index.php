@@ -49,7 +49,7 @@
     $generaltable->align = array ('left', 'left', 'center');
 
     if ($usetracking = forum_tp_can_track_forums()) {
-        $untracked = forum_tp_get_untracked_forums($USER->id);
+        $untracked = forum_tp_get_untracked_forums($USER->id, $course->id);
 
         $generaltable->head[] = $strunreadposts;
         $generaltable->align[] = 'center';
@@ -139,8 +139,8 @@
                 $count = count_records("forum_discussions", "forum", "$forum->id");
             }
 
-            if (forum_tp_can_track_forums()) {
-                if (forum_tp_is_tracked($forum->id) && !isset($untracked[$forum->id])) {
+            if ($usetracking) {
+                if (($forum->trackingtype == FORUM_TRACKING_ON) || !isset($untracked[$forum->id])) {
                     $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
                     $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
                     if ($unread > 0) {
@@ -150,10 +150,14 @@
                     } else {
                         $unreadlink = '<span class="read"><a href="view.php?f='.$forum->id.'">'.$unread.'</a>';
                     }
-                    $trackedlink = '<a title="'.$strnotrackforum.'" href="settracking.php?id='.$forum->id.'">'.$stryes.'</a>';
+                    if ($forum->trackingtype == FORUM_TRACKING_OPTIONAL) {
+                        $trackedlink = '<a title="'.$strnotrackforum.'" href="settracking.php?id='.
+                                       $forum->id.'">'.$stryes.'</a>';
+                    }
                 } else {
                     $unreadlink = '-';
-                    $trackedlink = '<a title="'.$strtrackforum.'" href="settracking.php?id='.$forum->id.'">'.$strno.'</a>';
+                    $trackedlink = '<a title="'.$strtrackforum.'" href="settracking.php?id='.
+                                   $forum->id.'">'.$strno.'</a>';
                 }
             }
 
@@ -275,8 +279,9 @@
                     $count = count_records("forum_discussions", "forum", "$forum->id");
                 }
 
-                if (forum_tp_can_track_forums()) {
-                    if (!isset($untracked[$forum->id])) {
+                if ($usetracking) {
+                    if (($forum->trackingtype == FORUM_TRACKING_ON) || 
+                        !isset($untracked[$forum->id])) {
                         $groupid = ($groupmode==SEPARATEGROUPS && !isteacheredit($course->id)) ? $currentgroup : false;
                         $unread = forum_tp_count_forum_unread_posts($USER->id, $forum->id, $groupid);
                         if ($unread > 0) {
@@ -286,7 +291,10 @@
                         } else {
                             $unreadlink = '<span class="read"><a href="view.php?f='.$forum->id.'">'.$unread.'</a></span>';
                         }
-                        $trackedlink = '<a title="'.$strnotrackforum.'" href="settracking.php?id='.$forum->id.'">'.$stryes.'</a>';
+                        if ($forum->trackingtype == FORUM_TRACKING_OPTIONAL) {
+                            $trackedlink = '<a title="'.$strnotrackforum.'" href="settracking.php?id='.
+                                           $forum->id.'">'.$stryes.'</a>';
+                        }
                     } else {
                         $unreadlink = '-';
                         $trackedlink = '<a title="'.$strtrackforum.'" href="settracking.php?id='.$forum->id.'">'.$strno.'</a>';

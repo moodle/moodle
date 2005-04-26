@@ -400,7 +400,7 @@
 
                 forum_print_post($post, $course->id, $ownpost=false, $reply=false, $link=false);
                 if (empty($post->edit)) {
-                    if ($CFG->forum_trackreadposts) {
+                    if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
                         $user_read_array = forum_tp_get_discussion_read_records($USER->id, $discussion->id);
                     } else {
                         $user_read_array = array();
@@ -572,7 +572,7 @@
     if (!empty($parent)) {
         forum_print_post($parent, $course->id, $ownpost=false, $reply=false, $link=false);
         if (empty($post->edit)) {
-            if ($CFG->forum_trackreadposts) {
+            if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
                 $user_read_array = forum_tp_get_discussion_read_records($USER->id, $discussion->id);
             } else {
                 $user_read_array = array();

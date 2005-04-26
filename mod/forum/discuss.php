@@ -95,7 +95,8 @@
         error("Discussion no longer exists", "$CFG->wwwroot/mod/forum/view.php?f=$forum->id");
     }
 
-    if ($CFG->forum_trackreadposts && $CFG->forum_usermarksread) {
+    if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum) && 
+        $CFG->forum_usermarksread) {
         if ($mark == 'read') {
             forum_tp_add_read_record($USER->id, $postid, $discussion->id, $forum->id);
         } else if ($mark == 'unread') {
