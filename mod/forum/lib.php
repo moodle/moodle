@@ -1425,7 +1425,9 @@ function forum_make_mail_post(&$post, $user, $touser, $course,
     static $formattedtextid;      // The ID number of the post
 
     if (empty($formattedtextid) or $formattedtextid != $post->id) {    // Recalculate the formatting
-        $formattedtext = format_text($post->message, $post->format, NULL, $course->id);
+        $options = new Object;
+        $options->para = true;
+        $formattedtext = format_text($post->message, $post->format, $options, $course->id);
         $formattedtextid = $post->id;
     }
 
@@ -1596,9 +1598,11 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     }
 
 
+    $options = new Object;
+    $options->para = false;
     if ($link and (strlen(strip_tags($post->message)) > $CFG->forum_longpost)) {
         // Print shortened version
-        echo format_text(forum_shorten_post($post->message), $post->format, NULL, $courseid);
+        echo format_text(forum_shorten_post($post->message), $post->format, $options, $courseid);
         $numwords = count_words(strip_tags($post->message));
         echo '<p><a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'">';
         echo get_string('readtherest', 'forum');
@@ -1606,9 +1610,9 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
     } else {
         // Print whole message
         if ($highlight) {
-            echo highlight($highlight, format_text($post->message, $post->format, NULL, $courseid));
+            echo highlight($highlight, format_text($post->message, $post->format, $options, $courseid));
         } else {
-            echo format_text($post->message, $post->format, NULL, $courseid);
+            echo format_text($post->message, $post->format, $options, $courseid);
         }
         echo $attachedimages;
     }
