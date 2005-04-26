@@ -18,25 +18,29 @@
 body {
     background-color:#FFFFFF;
 }
+p, a {
+    font-size:small;
+}
 
 h1, h2, h3 {
+    padding-left:0px;
     background-color:transparent;
     color:#000000;
 }
 
 h1 {
-    font-size: 2em; 
-    margin: .67em 0;
+    font-size:1.7em; 
+    margin:0.5em 0 0;
 }
 
 h2 {
-    font-size: 1.5em;
-    margin: .75em 0;
+    font-size:1.4em;
+    margin:0.5em 0 0;
 }
 
 h3 {
-    font-size: 1.17em;
-    margin: .83em 0;
+    font-size:1.2em;
+    margin:0.5em 0 0;
 }
 
 
@@ -87,6 +91,7 @@ ul {
 	border: thin dashed #999999;
 	background-color: #FBFBFB;
 	margin: auto;
+    margin-top: 0.5em;
 	padding: 30px;
 	height: auto;
 	width: auto;
