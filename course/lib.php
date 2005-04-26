@@ -952,11 +952,10 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
             $strmovehere = get_string("movehere");
             $strmovefull = strip_tags(get_string("movefull", "", "'$USER->activitycopyname'"));
         }
-        $usetracking = ($CFG->forum_trackreadposts && isloggedin());
-        if ($usetracking) {
+        include_once($CFG->dirroot.'/mod/forum/lib.php');
+        if ($usetracking = forum_tp_can_track_forums()) {
             $strunreadpostsone    = get_string('unreadpostsone', 'forum');
-            include_once($CFG->dirroot.'/mod/forum/lib.php');
-            $untracked = forum_tp_get_untracked_forums($USER->id);
+            $untracked = forum_tp_get_untracked_forums($USER->id, $course->id);
         }
     }
     $labelformatoptions->noclean = true;
@@ -1027,7 +1026,7 @@ function print_section($course, $section, $mods, $modnamesused, $absolute=false,
                     $groupid = ($groupmode == SEPARATEGROUPS && !isteacheredit($course->id)) ?
                                get_current_group($course->id) : false;
 
-                    if (forum_tp_can_track_forums($USER->id) && !isset($untracked[$mod->instance])) {
+                    if (forum_tp_can_track_forums() && !isset($untracked[$mod->instance])) {
                         $unread = forum_tp_count_forum_unread_posts($USER->id, $mod->instance, $groupid);
                         if ($unread) {
                             echo '<span class="unread"> <a href="'.$CFG->wwwroot.'/mod/forum/view.php?id='.$mod->id.'">';
