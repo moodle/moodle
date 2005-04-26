@@ -869,9 +869,7 @@
                     }
                 }
             }
-            if (isset($USER->lessonloggedin[$lesson->id])) {
-                unset($USER->lessonloggedin[$lesson->id]);
-            }
+
             // Update the clock / get time information for this user
             if (!isteacher($course->id)) {
                 unset($USER->startlesson[$lesson->id]);
