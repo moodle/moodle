@@ -3,6 +3,7 @@
 //  Lists all the users within a given course
 
     require_once("../config.php");
+    require_once($CFG->libdir.'/tablelib.php');
 
     define('USER_SMALL_CLASS', 20);   // Below this is considered small
     define('USER_LARGE_CLASS', 200);  // Above this is considered large
@@ -16,7 +17,6 @@
     optional_variable($perpage, "20");       // how many per page
     optional_variable($group, "-1");         // Group to show
     $mode = optional_param('mode', NULL);    // '0' for less details, '1' for more
-
 
     if (! $course = get_record("course", "id", $id)) {
         error("Course ID is incorrect");
@@ -37,6 +37,19 @@
 
     $isteacher = isteacher($course->id);
     $showteachers = ($page == 0 and $sort == "lastaccess" and $dir == "desc");
+
+    $countries = get_list_of_countries();
+
+    $strnever = get_string("never");
+
+    $datestring->day   = get_string("day");
+    $datestring->days  = get_string("days");
+    $datestring->hour  = get_string("hour");
+    $datestring->hours = get_string("hours");
+    $datestring->min   = get_string("min");
+    $datestring->mins  = get_string("mins");
+    $datestring->sec   = get_string("sec");
+    $datestring->secs  = get_string("secs");
 
     if ($showteachers) {
         $participantslink = get_string("participants");
@@ -126,8 +139,56 @@
 
     $exceptions = ''; // This will be a list of userids that are shown as teachers and thus
                       // do not have to be shown as users as well. Only relevant on site course.
-    if ($showteachers) {
-        if ($teachers = get_course_teachers($course->id)) {
+
+    if($showteachers) {
+
+echo '<style type="text/css"> body#user-index table#teachers { margin: auto; width: 80%; } body#user-index table#teachers td, body#user-index table#teachers th {vertical-align: middle; padding: 4px;}</style>';
+
+        $tablecolumns = array('picture', 'fullname', 'city', 'country', 'lastaccess');
+        $tableheaders = array('', get_string('fullname'), get_string('city'), get_string('country'), get_string('lastaccess'));
+
+        $table = new flexible_table('user-index-teacher');
+
+        $table->define_columns($tablecolumns);
+        $table->define_headers($tableheaders);
+        $table->define_baseurl($CFG->wwwroot.'/user/index.php?id='.$course->id);
+
+        $table->sortable(true);
+
+        $table->set_attribute('cellspacing', '0');
+        $table->set_attribute('id', 'teachers');
+        $table->set_attribute('class', 'generaltable generalbox');
+
+        $table->setup();
+
+        if($whereclause = $table->get_sql_where()) {
+            $whereclause .= ' AND ';
+        }
+
+        $teachersql = "SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.maildigest,
+                                   u.email, u.city, u.country, u.lastlogin, u.picture, u.lang, u.timezone,
+                                   u.emailstop, t.authority,t.role,t.editall,t.timeaccess as lastaccess, m.groupid
+                            FROM {$CFG->prefix}user u
+                       LEFT JOIN {$CFG->prefix}user_teachers t ON t.userid = u.id 
+                       LEFT JOIN {$CFG->prefix}groups_members m ON m.userid = u.id ";
+
+        if($isseparategroups) {
+            $whereclause .= '(t.editall OR groupid = '.$currentgroup.') AND ';
+        }
+        else if ($currentgroup) {    // Displaying a group by choice
+            $whereclause .= 'groupid = '.$currentgroup.' AND ';
+        }
+
+        $teachersql .= 'WHERE '.$whereclause.' t.course = '.$course->id.' AND u.deleted = 0 AND u.confirmed = 1 AND t.authority > 0';
+
+        if($sortclause = $table->get_sql_sort()) {
+            $teachersql .= ' ORDER BY '.$sortclause;
+        }
+
+        $teachers = get_records_sql($teachersql);
+
+        if(!empty($teachers)) {
+
             echo "<h2 align=\"center\">$course->teachers";
             if (isadmin() or ($course->category and (iscreator() or (isteacheredit($course->id) and !empty($CFG->teacherassignteachers))))) {
                 echo ' <a href="../course/teacher.php?id='.$course->id.'">';
@@ -135,29 +196,32 @@
             }
             echo '</h2>';
 
-            foreach ($teachers as $key => $teacher) {
-                if ($isseparategroups) {
-                    if ($teacher->editall or ismember($currentgroup, $teacher->id) and ($teacher->authority > 0)) {
-                        continue;
-                    }
-                } else if ($currentgroup) {    // Displaying a group by choice
-                    if (ismember($currentgroup, $teacher->id) and ($teacher->authority > 0)) {
-                        continue;
-                    }
-                } else if ($teacher->authority > 0) {    // Don't print teachers with no authority
-                    continue;
-                }
-                unset($teachers[$key]);
-            }
-
             $exceptions .= implode(',', array_keys($teachers));
+
             if ($fullmode) {
                 foreach ($teachers as $key => $teacher) {
                     print_user($teacher, $course);
                 }
             } else {
-                print_user_table($teachers, $isteacher);
+                foreach ($teachers as $teacher) {
+        
+                    if ($teacher->lastaccess) {
+                        $lastaccess = format_time(time() - $teacher->lastaccess, $datestring);
+                    } else {
+                        $lastaccess = $strnever;
+                    }
+        
+                    $table->add_data(array (
+                                    //'<input type="checkbox" name="userid[]" value="'.$teacher->id.'" />',
+                                    print_user_picture($teacher->id, $course->id, $teacher->picture, false, true),
+                                    '<strong><a href="'.$CFG->wwwroot.'/user/view.php?id='.$teacher->id.'&amp;course='.$course->id.'">'.fullname($teacher, $isteacher).'</a></strong>',
+                                    $teacher->city,
+                                    $teacher->country ? $countries[$teacher->country] : '',
+                                    $lastaccess));
+                }
             }
+            
+            $table->print_html();
         }
     }
 
@@ -287,8 +351,8 @@ function print_user_table($users, $isteacher) {
         if (isset($_GET['group'])) {
              $group_param = "&amp;group=".$_GET['group'];
         } else {
-	     $group_param = "";
-	}
+             $group_param = "";
+        }
         $columns = array("firstname", "lastname", "city", "country", "lastaccess");
 
         $countries = get_list_of_countries();
