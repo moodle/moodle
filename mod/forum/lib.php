@@ -136,7 +136,7 @@ function forum_update_instance($forum) {
     $forum->timemodified = time();
     $forum->id = $forum->instance;
 
-    if (!$forum->userating) {
+    if (empty($forum->userating)) {
         $forum->assessed = 0;
     }
 
