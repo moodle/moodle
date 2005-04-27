@@ -3,8 +3,16 @@
 
 
 $string['adminseesallevents'] = 'Yöneticiler bütün olaylarý görür';
+$string['adminseesownevents'] = 'Yöneticiler diðer kullanýcýlar gibidir';
+$string['blockinstances'] = 'Kullaným';
+$string['blockmultiple'] = 'Çoklu';
+$string['cachetext'] = 'Yazý önbelleði ömrü';
 $string['calendarsettings'] = 'Takvim';
+$string['change'] = 'deðiþtir';
 $string['configallowunenroll'] = 'Bu seçenek \'Evet\' ise öðrenciler istedikleri zaman kendi kendilerine kurstan kayýtlarýný sildirebilirler. Diðer durumda buna izin verilmez ve sadece yöneticiler ve eðitimciler bu iþi yapmalýdýr.';
+$string['configclamactlikevirus'] = 'Dosya VÝRÜS olarak muamele görsün';
+$string['configclamdonothing'] = 'Dosya SAÐLAM olarak muamele görsün';
+$string['configclamfailureonupload'] = 'Clam\'ý yüklenen dosyalarý taramasý için yapýlandýrdýysanýz, fakat yol yanlýþ belirtilir veya programýn çalýþmasý sýrasýnda bilinmeyen bir sebepten dolayý hata oluþursa nasýl davranýlacak? \'Dosya VÝRÜS olarak muamele görsün\'ü seçerseniz dosya karantina klasörüne taþýnýr ya da silinir. \'Dosya SAÐLAM olarak muamele görsün\'ü seçerseniz dosya normal þekilde yüklenir. Ayný zamanda yöneticilere clam programýnda hata oluþtuðu bildirilir. \'Dosya VÝRÜS olarak muamele görsün\'ü seçer ve bazý sebeplerden dolayý clamýn çalýþmasý hata ile sonuçlanýrsa (genellikle pathtoclam yolu yanlýþ girilirse olur), TÜM dosyalar belirtilen karantina klasörüne taþýnýr ya da silinir. Bu ayarý deðiþtirirken DÝKKATLÝ olun.';
 $string['configcountry'] = 'Buradan bir ülke seçerseniz, yeni kullanýcýlar için bu ülke varsayýlan olarak seçili olacaktýr. Ülke seçmeyi zorunlu tutmak istiyorsanýz, bu seçeneði ayarlamayýn.';
 $string['configdebug'] = 'Bu seçeneði açýk tutarsanýz PHP\'deki error_reporting metodu daha fazla uyarý mesajý gösterecektir. Bu, geliþtiriciler için kullanýþlýdýr.';
 $string['configdeleteunconfirmed'] = 'Bu, email yetkilendirmesi kullanýyorsanýz, kullanýcýnýn ne kadar sürede bu emali onaylamasý gerektiðini belirtir. Bu süreden sonra, onyalanmaýþ eski hesaplar silinecektir.';
@@ -16,7 +24,11 @@ $string['configlanglist'] = 'Kurulumla birlikte gelen dillerin herhangi birinin 
 $string['configlangmenu'] = 'Ana sayfa, giriþ sayfasý vb. yerlerde dil menüsünün görünüp görünmeyeceðini belirtin. Bu, kullanýcýnýn kendi profilinde düzenleyebileceði dil tercihini etkilemeyecektir.';
 $string['configlocale'] = 'Sitenin tamamýnda geçerli olan yerelleþtirme kodunu girin. Bu, gün biçimini ve dilini etkileyecektir. Ýþletim sisteminde bu yerelleþtirmenin var olmasý gerekmektedir. Eðer neyi seçeneðinizi bilmiyorsanýz boþ býrakýnýz.
 <br /> Örnekler: Linux için: de_DE, en_US, tr_TR; Windows için: turkish, german, spanish';
+$string['configmessaging'] = 'Sitede kullanýcýlar arasý mesajlaþma etkinleþtirilsin mi?';
 $string['configopentogoogle'] = 'Bu ayar etkinleþtirilirse, Google, siteye konuk kullanýcý olarak giriþ yapabilecektir. Ek olarak, sitenize Google aracýlýðýyla gelen kullanýcýlar da konuk kullanýcý olarak giriþ yapabileceklerdir. Not: Bu, zaten ziyaretçi giriþine açýk olan kurslara eriþimi Google açýsýndan þeffaflaþtýrýr.';
+$string['configpathtoclam'] = 'Clam AV\'in yolu. Büyük ihtimal /usr/bin/clamscan veya /usr/bin/clamdscan olmasý gerekiyor. Clam AV\'in çalýþmasý için bunu belirtmeniz gerekir.';
+$string['configquarantinedir'] = 'Clam AV\'in virüs bulaþmýþ dosyalarý karantina klasörüne taþýmasýný istiyorsanýz buraya yolu yazýnýz. Bu klasör Web sunucu tarafýndan yazýlabilir olmalý. Burayý boþ býrakýrsanýz veya olmayan bir klasörü girerseniz ya da klasör yazýlabilir deðilse, virüslü dosyalar silinir. Klasörün sonuna slash (/) ekleMEyin.';
+$string['configrunclamonupload'] = 'Dosya yüklemelerinde Clam AV çalýþtýrýlsýn mý? Bunun için doðru bir pathtoclam yolu belirtmeniz gerekiyor. (Clam AV, http://www.clamav.net/ sitesinden indirebileceðiniz ücretsiz bir virüs tarama programýdýr.)';
 $string['configsectioninterface'] = 'Arayüz';
 $string['configsectionmail'] = 'Mail';
 $string['configsectionmaintenance'] = 'Bakým';
@@ -34,8 +46,12 @@ $string['configvariables'] = 'Deðiþkenler';
 $string['configwarning'] = 'Bu ayarlarý deðiþtirirken dikkatli olun. Bilmediðiniz deðerleri girmeniz sorunlara sebep olabilir.';
 $string['configzip'] = 'Zip programýnýn yerini belirtin (Sadece Unix için, isteðe baðlýdýr). Belirtilirse, sunucuda zip arþivi oluþturmak için bu kullanýlacaktýr. Boþ býrakýrsanýz, zip arþivi oluþturmak için dahili iþlemler kullanýlacaktýr.';
 $string['confirmation'] = 'Onay';
+$string['cronwarning'] = '<a href=\"cron.php\">cron.php bakým programý</a> son 24 saattir çalýþmýyor. <br /><a href=\"../doc/?frame=install.html&sub=cron\">Kurulum belgesi</a> bunu nasýl otomatikleþtireceðinizi açýklýyor.';
 $string['edithelpdocs'] = 'Yardým belgelerini düzenle';
 $string['editstrings'] = 'Ýfadeleri düzenle';
+$string['filterall'] = 'Tüm ifadeleri filtrele';
+$string['filteruploadedfiles'] = 'Tüm gönderilen dosyalarý filtrele';
+$string['helpsitemaintenance'] = 'Güncellemeler ve diðer çalýþmalar için';
 $string['sitemaintenancemode'] = 'Bakým modu';
 
 ?>
