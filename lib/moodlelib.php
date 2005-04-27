@@ -823,19 +823,31 @@ function usergetmidnight($date, $timezone=99) {
  */
 function usertimezone($timezone=99) {
 
-    $timezone = get_user_timezone_offset($timezone);
+    $tz = get_user_timezone($timezone);
 
-    if (abs($timezone) > 13) {
-        return 'server time';
+    if (!is_float($tz)) {
+        return $tz;
     }
-    if (abs($timezone) < 0.5) {
+
+    if(abs($tz) > 13) { // Server time
+        return get_string('serverlocaltime');
+    }
+
+    if($tz == intval($tz)) {
+        // Don't show .0 for whole hours
+        $tz = intval($tz);
+    }
+
+    if($tz == 0) {
         return 'GMT';
     }
-    if ($timezone > 0) {
-        return 'GMT+'. $timezone;
-    } else {
-        return 'GMT'. $timezone;
+    else if($tz > 0) {
+        return 'GMT+'.$tz;
     }
+    else {
+        return 'GMT'.$tz;
+    }
+        
 }
 
 /**
