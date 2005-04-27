@@ -742,9 +742,9 @@ HTMLArea.prototype.generate = function () {
     }
 
     // size the IFRAME according to user's prefs or initial textarea
-    var height = (this.config.height == "auto" ? (this._ta_size.h + "px") : this.config.height);
+    var height = (this.config.height == "auto" ? (this._ta_size.h) : this.config.height);
     height = parseInt(height);
-    var width = (this.config.width == "auto" ? (this._ta_size.w + 52 + "px") : this.config.width);
+    var width = (this.config.width == "auto" ? (this._toolbar.offsetWidth) : this.config.width);
     width = parseInt(width);
 
     if (!HTMLArea.is_ie) {
