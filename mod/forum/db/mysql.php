@@ -202,7 +202,7 @@ function forum_upgrade($oldversion) {
   }
 
   if ($oldversion < 2005042500) {
-      modify_database('','ALTER TABLE prefix_forum ADD `trackingtype` TINYINT(2) UNSIGNED DEFAULT \'2\' NOT NULL AFTER `forcesubscribe`;');
+      table_column('forum','','trackingtype','tinyint','2', 'unsigned', '1', '', 'forcesubscribe');
   }
 
 

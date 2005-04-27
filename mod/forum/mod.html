@@ -38,6 +38,9 @@
     if (!isset($form->assesstimefinish)) {
         $form->assesstimefinish = 0;
     }
+    if (!isset($form->trackingtype)) {
+        $form->trackingtype = FORUM_TRACKING_OPTIONAL;
+    }
 ?>
 <form name="form" method="post" action="mod.php">
 <table cellpadding="5">

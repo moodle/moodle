@@ -16,6 +16,7 @@ CREATE TABLE prefix_forum (
   scale int(10) NOT NULL default '0',
   maxbytes int(10) unsigned NOT NULL default '0',
   forcesubscribe tinyint(1) unsigned NOT NULL default '0',
+  trackingtype tinyint(2) unsigned NOT NULL default '1',
   rsstype tinyint(2) unsigned NOT NULL default '0',
   rssarticles tinyint(2) unsigned NOT NULL default '0',
   timemodified int(10) unsigned NOT NULL default '0',
