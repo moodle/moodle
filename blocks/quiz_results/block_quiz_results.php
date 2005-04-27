@@ -298,7 +298,11 @@ class block_quiz_results extends block_base {
                         break;
                         default:
                         case GRADE_FORMAT_PCT:
-                            $this->content->text .= round((float)$grades[$gradeid]->grade / (float)$quiz->grade * 100).'%';
+                            if ($quiz->grade) {
+                                $this->content->text .= round((float)$grades[$gradeid]->grade / (float)$quiz->grade * 100).'%';
+                            } else {
+                                $this->content->text .= '--%';
+                            }
                         break;
                     }
                     $this->content->text .= '</td></tr>';
