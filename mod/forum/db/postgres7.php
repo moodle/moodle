@@ -142,7 +142,7 @@ function forum_upgrade($oldversion) {
   }
 
   if ($oldversion < 2005042600) {
-      table_column('forum','','trackingtype','tinyint','2', 'unsigned', '1', '', 'forcesubscribe');
+      table_column('forum','','trackingtype','integer','2', 'unsigned', '1', '', 'forcesubscribe');
       modify_database('','CREATE INDEX prefix_forum_track_user_forum_idx ON prefix_forum_track_prefs (userid, forumid);');
   }
 
