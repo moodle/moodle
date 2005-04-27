@@ -259,6 +259,7 @@ function table_column($table, $oldfield, $field, $type='integer', $size='10',
             $oldfield = '"'. $oldfield .'"';
 
             switch (strtolower($type)) {
+                case 'tinyint':
                 case 'integer':
                     if ($size <= 4) {
                         $type = 'INT2';
