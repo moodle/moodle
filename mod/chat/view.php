@@ -124,16 +124,7 @@
 
 
     if ($chat->chattime and $chat->schedule) {  // A chat is scheduled
-        if (floatval($USER->timezone) !== $USER->timezone) {  // Text value
-            $timezone = $USER->timezone;
-        } else if (abs($USER->timezone) > 13) {
-            $timezone = get_string('serverlocaltime');
-        } else if ($USER->timezone < 0) {
-            $timezone = 'GMT'.$USER->timezone;
-        } else {
-            $timezone = 'GMT+'.$USER->timezone;
-        }
-        echo "<p align=\"center\">$strnextsession: ".userdate($chat->chattime)." ($timezone)</p>";
+        echo "<p align=\"center\">$strnextsession: ".userdate($chat->chattime).' ('.usertimezone($USER->timezone).')</p>';
     } else {
         echo '<br />';
     }
