@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
+$string['adminprimarynoedit'] = 'L\'administrador primari no pot ser editat per altres usuaris';
 $string['confirmsesskeybad'] = 'No s\'ha pogut confirmar la vostra clau de sessió per portar a terme aquesta acció. Aquesta característica de seguretat impedeix que s\'executin funcions importants en el vostre nom de manera accidental o fraudulenta. Si us plau confirmeu que volíeu realment executar aquesta funció.';
 $string['coursegroupunknown'] = 'No s\'ha especificat el curs corresponent al grup $a';
 $string['erroronline'] = 'Error a la línia $a';
@@ -13,6 +14,8 @@ $string['invalidfieldname'] = '\"$a\" no és un nom vàlid per a un camp';
 $string['missingfield'] = 'Falta el camp \"$a\"';
 $string['modulerequirementsnotmet'] = 'El mòdul \"$a->modulename\" ($a->moduleversion) no s\'ha pogut instal·lar. Requereix una versió més nova de Moodle (esteu utilitzant la $a->currentmoodle i necessiteu la  $a->requiremoodle).';
 $string['notavailable'] = 'Això no està disponible actualment';
+$string['onlyeditown'] = 'Només podeu editar la vostra pròpia informació';
+$string['processingstops'] = 'El processament acaba aquí. Els registres que resten s\'ignoraran.';
 $string['restricteduser'] = 'Al vostre compte \"$a\" no li és permès de fer això.';
 $string['sessionipnomatch'] = 'Sembla que el vostre número IP ha canviat des que heu entrat. Aquesta característica de seguretat impedeix que un <i>cracker</i> suplanti la vostra identitat després que heu entrat en Moodle. Els usuaris normals no haurien de veure aquest missatge: demaneu ajuda a l\'administrador del lloc.';
 $string['unknowncourse'] = 'El curs \"$a\" és desconegut';

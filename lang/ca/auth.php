@@ -1,7 +1,22 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
+$string['alternatelogin'] = 'Si introduïu un URL aquí, s\'utilitzarà com a pàgina d\'entrada d\'aquest lloc. Aquesta pàgina hauria de contenir un formulari, amb la propietat \'action\' igual a <strong>$a</strong> i que retornés els camps <strong>username</strong> i <strong>password</strong>.<br />Tingueu cura de no escriure un URL incorrecte, ja que podríeu impedir l\'entrada dels usuaris en aquest lloc.<br />Si deixeu en blanc aquest paràmetre s\'utilitzarà la pàgina d\'entrada per defecte.';
+$string['alternateloginurl'] = 'URL d\'entrada alternatiu';
+$string['auth_cas_baseuri'] = 'URI del servidor (en blanc si no té baseUri)<br />Per exemple, si el servidor CAS respon a l\'adreça ordinador.domini.cat/CAS/ llavors <br />auth_cas_baseuri = CAS/';
+$string['auth_cas_create_user'] = 'Activeu aquesta opció si voleu inserir usuaris autenticats per CAS en la base de dades del Moodle. Si no, només podran entrar els usuaris que ja existeixin a la base de dades del Moodle.';
+$string['auth_cas_enabled'] = 'Activeu aquesta opció si voleu utilitzar autenticació CAS.';
+$string['auth_cas_hostname'] = 'Nom del servidor CAS <br />P. ex. ordinador.domini.cat';
+$string['auth_cas_invalidcaslogin'] = 'Entrada errònia. Potser no esteu autoritzat.';
+$string['auth_cas_language'] = 'Idioma seleccionat';
+$string['auth_cas_logincas'] = 'Accés a la connexió segura';
+$string['auth_cas_port'] = 'Port del servidor CAS';
+$string['auth_cas_server_settings'] = 'Configuració del servidor CAS';
+$string['auth_cas_text'] = 'Connexió segura';
+$string['auth_cas_version'] = 'Versió de CAS';
+$string['auth_casdescription'] = 'Aquest mètode utilitza un servidor CAS (Central Authentication Service, Servei Central d\'Autenticació) per autenticar els usuaris en un entorn Single Sign On (SSO, inscripció única). També podeu fer servir autenticació LDAP. Si el nom d\'usuari i la contrasenya són vàlids d\'acord amb el CAS, Moodle crea un nou usuari en la seva base de dades i si escau agafa els atributs del LDAP. En les entrades següents només es verifiquen el nom d\'usuari i la contrasenya.';
+$string['auth_castitle'] = 'Servidor CAS (SSO)';
 $string['auth_common_settings'] = 'Paràmetres comuns';
 $string['auth_data_mapping'] = 'Mapatge de dades';
 $string['auth_dbdescription'] = 'Aquest mètode utilitza una taula d\'una base de dades externa per comprovar si un nom d\'usuari i una contrasenya són vàlids. Si el compte és nou, aleshores també es pot copiar en Moodle informació d\'altres camps.';
@@ -38,24 +53,27 @@ $string['auth_ldap_bind_settings'] = 'Paràmetres de vinculació';
 $string['auth_ldap_contexts'] = 'Llista de contextos en què estan ubicats els usuaris. Separeu els contextos amb \';\'. Per exemple: \'ou=users,o=org; ou=others,o=org\'';
 $string['auth_ldap_create_context'] = 'Si activeu la creació d\'usuaris mitjançant confirmació per correu electrònic, especifiqueu en quin context s\'han de crear els usuaris. Aquest context ha de ser diferent del d\'altres usuaris per tal de prevenir problemes de seguretat. No cal afegir aquest context a ldap_context-variable. Moodle cercarà els usuaris en aquest context automàticament.';
 $string['auth_ldap_creators'] = 'Llista de grups als membres dels quals els és permès  crear nous cursos. Separeu els grups amb \';\'. Generalment una cosa semblant a \'cn=teachers,ou=staff,o=myorg\'';
-$string['auth_ldap_host_url'] = 'Especifiqueu l\'hoste LDAP en format URL, per exemple \'ldap://ldap.myorg.com/\' o \'ldaps://ldap.myorg.com/\' ';
+$string['auth_ldap_expiration_desc'] = 'Seleccioneu \'No\' per inhabilitar la comprovació de contrasenyes vençudes o \'LDAP\' per consultar la data de venciment de la contrasenya directament a l\'LDAP.';
+$string['auth_ldap_expiration_warning_desc'] = 'Nombre de dies abans que surti l\'avís de venciment de la contrasenya.';
+$string['auth_ldap_expireattr_desc'] = 'Opcional: substitueix l\'atribut de l\'LDAP que emmagatzema la data de venciment de la contrasenya (passwordExpirationTime)';
+$string['auth_ldap_graceattr_desc'] = 'Opcional: susbstitueix l\'atribut gracelogin';
+$string['auth_ldap_gracelogins_desc'] = 'Fa que funcioni el gracelogin de l\'LDAP. Després que hagi vençut la contrasenya, l\'usuari pot seguir entrant fins que el compte del gracelogin és 0. Si habiliteu aquest paràmetre es visualitzarà un missatge d\'avís quan venci la contrasenya.';
+$string['auth_ldap_host_url'] = 'Especifiqueu l\'ordinador central LDAP en format URL, per exemple \'ldap://ldap.myorg.com/\' o \'ldaps://ldap.myorg.com/\' ';
 $string['auth_ldap_login_settings'] = 'Paràmetres d\'entrada';
 $string['auth_ldap_memberattribute'] = 'Especifiqueu l\'atribut de membre de l\'usuari, quan els usuaris pertanyen a un grup. Generalment \'member\'';
 $string['auth_ldap_objectclass'] = 'Filtre utilitzat per nomenar/cercar usuaris. Generalment es defineix quelcom semblant a objectClass=posixAccount. Per defecte objectClass=*, que retorna tots els objectes de LDAP.';
+$string['auth_ldap_opt_deref'] = 'Determina com es manegen els àlies en les cerques. Seleccioneu un dels valors següents: \"No\" (LDAP_DEREF_NEVER) o \"Sí\" (LDAP_DEREF_ALWAYS)';
+$string['auth_ldap_passwdexpire_settings'] = 'Paràmetres LDAP de venciment de contrasenyes';
 $string['auth_ldap_search_sub'] = 'Poseu el valor <> 0 si voleu cercar els usuaris en subcontextos.';
 $string['auth_ldap_server_settings'] = 'Paràmetres del servidor LDAP';
-$string['auth_ldap_update_userinfo'] = 'Passar les dades de l\'usuari (nom, cognoms, adreça...) de LDAP a Moodle. Informació sobre mapatge en /auth/ldap/attr_mappings.php';
-$string['auth_ldap_user_attribute'] = 'L\'atribut utilitzat per anomenar/cercar usuaris. Generalment \'cn\'.';
+$string['auth_ldap_update_userinfo'] = 'Actualitzeu la informació dels usuaris (nom, cognoms, adreça...) d\'LDAP a Moodle. Especifiqueu els paràmetres de \"Mapatge de dades\" segons les vostres necessitats.';
+$string['auth_ldap_user_attribute'] = 'Opcional: substitueix l\'atribut utilitzat per anomenar/cercar usuaris. Generalment \'cn\'.';
+$string['auth_ldap_user_settings'] = 'Paràmetres de consulta d\'usuaris';
+$string['auth_ldap_user_type'] = 'Seleccioneu com s\'emmagatzemen els usuaris en LDAP. Aquest paràmetre també especifica com funcionarà el venciment de les contrasenyes, el període de gràcia i la creació d\'usuaris.';
 $string['auth_ldap_version'] = 'La versió del protocol LDAP que està utilitzant el servidor.';
 $string['auth_ldapdescription'] = 'Aquest mètode proporciona autenticació contra un servidor LDAP extern.
 
-                                  Si un nom d\'usuari i una contrasenya són vàlids, Moodle crea una entrada per a un nou usuari 
-
-                                  a la seva base de dades. Aquest mòdul pot llegir atributs de l\'usuari del LDAP i omplir 
-
-                                  els camps corresponents de Moodle. En connexions successives només es comproven  
-
-                                  el nom d\'usuari i la contrasenya.';
+Si un nom d\'usuari i una contrasenya són vàlids, Moodle crea una entrada per a un nou usuari a la seva base de dades. Aquest mòdul pot llegir atributs de l\'usuari del LDAP i omplir els camps corresponents de Moodle. En connexions successives només es comproven el nom d\'usuari i la contrasenya.';
 $string['auth_ldapextrafields'] = 'Aquests camps són opcionals. Podeu triar d\'omplir alguns camps d\'usuari de Moodle amb informació dels <b>camps LDAP</b> especificats aquí. <p>Si els deixeu en blanc, aleshores s\'utilitzaran valors per defecte.<p>En tot cas, l\'usuari podrà editar tots aquests camps quan es connecti.';
 $string['auth_ldaptitle'] = 'Utilitza un servidor LDAP';
 $string['auth_manualdescription'] = 'Aquest mètode impedeix que els usuaris puguin crear-se comptes. Tots els comptes han de ser creats manualment per l\'usuari administrador.';
@@ -77,6 +95,8 @@ $string['auth_pop3mailbox'] = 'Nom de la bústia amb la qual es fa la connexió (g
 $string['auth_pop3port'] = 'Número de port del servidor (el 110 és el més habitual)';
 $string['auth_pop3title'] = 'Utilitza un servidor POP3';
 $string['auth_pop3type'] = 'Tipus de servidor. Si el vostre servidor utilitza seguretat per certificat, trieu pop3cert.';
+$string['auth_shibbolethdescription'] = 'Amb aquest mètode us podeu connectar a un servidor Shibboleth per verificar i crear nous comptes';
+$string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_updatelocal'] = 'Actualitza dades locals';
 $string['auth_updatelocal_expl'] = '<p><b>Actualitza dades locals:</b> si habiliteu aquesta opció, el camp s\'actualitzarà (amb les dades externes d\'autenticació) cada vegada que l\'usuari entri o quan es faci una sincronització d\'usuaris. Els camps definits per actualitzar-se localment haurien d\'estar bloquejats.</p>';
 $string['auth_updateremote'] = 'Actualitza dades externes';

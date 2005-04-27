@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // message.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020800)
+      // message.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['addcontact'] = 'Afegeix contacte';
@@ -7,6 +7,7 @@ $string['ago'] = 'Fa $a';
 $string['allmine'] = 'Tots els missatges escrits per mi o adreçats a mi';
 $string['allstudents'] = 'Tots els missatges entre estudiants del curs';
 $string['allusers'] = 'Tots els missatges de tots els usuaris';
+$string['backupmessageshelp'] = 'Si habiliteu aquesta opció, els missatges instantanis s\'inclouran en les còpies de seguretat automàtiques del lloc.';
 $string['beepnewmessage'] = 'Fes un bip quan arriba un nou missatge';
 $string['blockcontact'] = 'Bloca un contacte';
 $string['blockedmessages'] = '$a missatge/s de/a usuaris blocats';
@@ -40,6 +41,7 @@ $string['onlyfromme'] = 'Només missatges escrits per mi';
 $string['onlymycourses'] = 'Només en els meus cursos';
 $string['onlytome'] = 'Només missatges adreçats a mi';
 $string['pagerefreshes'] = 'Aquesta pàgina es refresca automàticament cada $a segons';
+$string['readmessages'] = '$a missatges llegits';
 $string['removecontact'] = 'Suprimeix contacte';
 $string['savemysettings'] = 'Desa els meus paràmetres';
 $string['search'] = 'Cerca';

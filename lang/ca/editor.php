@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020800)
+      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['about'] = 'Referent a aquest editor';
@@ -22,6 +22,7 @@ $string['cellspacing'] = 'Cellspacing';
 $string['choosechar'] = 'Tria un caràcter';
 $string['chooseicon'] = 'Tria una icona per inserir';
 $string['close'] = 'Tanca';
+$string['closeafterreplace'] = 'Tanca després de reemplaçar';
 $string['cols'] = 'Cols';
 $string['copy'] = 'Copia la selecció';
 $string['createanchor'] = 'Crea àncora';
@@ -30,6 +31,7 @@ $string['createlink'] = 'Insereix un enllaç web';
 $string['cut'] = 'Talla la selecció';
 $string['delete'] = 'Suprimeix';
 $string['filebrowser'] = 'Explorador de fitxers';
+$string['findwhat'] = 'Cerca';
 $string['fontname'] = 'Nom de la font';
 $string['fontsize'] = 'Mida de la lletra';
 $string['forecolor'] = 'Color de la lletra';
@@ -49,6 +51,7 @@ $string['insertlink'] = 'Insereix un enllaç';
 $string['insertsmile'] = 'Insereix una emoticona';
 $string['inserttable'] = 'Insereix una taula';
 $string['italic'] = 'Cursiva';
+$string['itemsreplaced'] = 'elements reemplaçats';
 $string['justifycenter'] = 'Justifica al centre';
 $string['justifyfull'] = 'Justifica a ambdós costats';
 $string['justifyleft'] = 'Justifica a l\'esquerra';
@@ -65,14 +68,16 @@ $string['linktargetself'] = 'El mateix marc';
 $string['linktargettop'] = 'La mateixa finestra';
 $string['linktitle'] = 'Títol';
 $string['linkurl'] = 'URL';
+$string['matchcase'] = 'Majúscules/minúscules';
 $string['middle'] = 'Centre';
 $string['minimize'] = 'Minimitza l\'editor';
 $string['move'] = 'Mou';
 $string['nolink'] = 'Impedir enllaços automàtics';
 $string['normal'] = 'Normal';
-$string['notimage'] = 'El fitxer seleccionat no és una imatge. Si us plau trieu-ne un altre!';
-$string['notset'] = 'No seleccionat';
+$string['notimage'] = 'El fitxer seleccionat no és una imatge. Si us plau trieu-ne un altre.';
+$string['notset'] = 'No definit';
 $string['ok'] = 'D\'acord';
+$string['options'] = 'Opcions';
 $string['orderedlist'] = 'Llista numerada';
 $string['outdent'] = 'Disminueix el sagnat';
 $string['paste'] = 'Enganxa des del porta-retalls';
@@ -84,11 +89,16 @@ $string['preformatted'] = 'Preformatat';
 $string['preview'] = 'Visualització prèvia';
 $string['properties'] = 'Propietats';
 $string['redo'] = 'Refés la darrera acció';
+$string['regularexpressions'] = 'Utilitza expressions regulars';
 $string['removelink'] = 'Suprimeix enllaç';
 $string['rename'] = 'Canvia el nom';
+$string['replaceall'] = 'Reemplaça-ho tot';
+$string['replacewith'] = 'Reemplaça';
 $string['right'] = 'Right';
 $string['righttoleft'] = 'Sentit de dreta a esquerra';
 $string['rows'] = 'Files';
+$string['searchandreplace'] = 'Cerca i reemplaça';
+$string['searchnotfound'] = 'No s\'ha trobat la cadena cercada';
 $string['selectcolor'] = 'Selecciona el color';
 $string['selection'] = 'Selecció';
 $string['showhelp'] = 'Ajuda de l\'editor';
