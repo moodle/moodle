@@ -207,7 +207,7 @@ class block_rss_client extends block_base {
 
             if (!empty($rss->channel['link'])) {
                 if (!empty($this->config) && isset($this->config->block_rss_client_show_channel_link) && $this->config->block_rss_client_show_channel_link) {
-                    $returnstring .=  '<div class="channellink"><br /><a href="'. $rss->channel['link'] .'">'. get_string('block_rss_client_channel_link', 'block_rss_client') .'</a></div>';
+                    $this->content->footer =  '<a href="'. $rss->channel['link'] .'">'. get_string('block_rss_client_channel_link', 'block_rss_client') .'</a>';
                 } 
                 if (!empty($feedtitle) ) {
                     $feedtitle = '<a href="'. $rss->channel['link'] .'">'. $feedtitle .'</a>';
