@@ -42,7 +42,7 @@ function multilang_filter($courseid, $text) {
     global $CFG;
 
 /// Do a quick check using stripos to avoid unnecessary work
-    if (stripos($text, '<lang') === false) {
+    if (stripos($text, '<lang') === false && stripos($text, '<span lang') === false) {
         return $text;
     }
 
@@ -69,7 +69,7 @@ function multilang_filter($courseid, $text) {
     }
 
 /// Break the text into lang sections
-    $search = '/<lang lang="([a-zA-Z_]*)".*?>(.+?)<\/lang>/is';
+    $search = '/<(?:lang|span) lang="([a-zA-Z_]*)".*?>(.+?)<\/(?:lang|span)>/is';
     preg_match_all($search,$text,$list_of_langs);
 
 /// Get the existing sections langs
