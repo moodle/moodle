@@ -49,7 +49,7 @@
         exit;
     }
 
-    $returnto = forum_go_back_to($returnpage.'?id='.$course->id.'&f='.$forum->id);
+    $returnto = forum_go_back_to($returnpage.'?id='.$cm->id.'&f='.$forum->id);
 
     $info->name  = fullname($user);
     $info->forum = format_string($forum->name);
