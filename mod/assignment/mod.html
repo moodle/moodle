@@ -25,6 +25,9 @@
     if (!isset($form->timeavailable)) {
         $form->timeavailable = time();
     }
+    if (!isset($form->preventlate)) {
+        $form->preventlate = 0;
+    }
     if (!isset($form->grade)) {
         $form->grade = 100;
     }
@@ -36,6 +39,11 @@
     }
 
 ?>
+<script type="text/javascript" language="javascript">
+    var dueitems = ['dueday','duemonth','dueyear','duehour', 'dueminute', 'preventlate'];
+    var availableitems = ['availableday','availablemonth','availableyear','availablehour', 'availableminute'];
+</script>
+
 <form name="form" method="post" action="../mod/assignment/details.php">	
 <table cellpadding="5">
 <tr valign="top">
@@ -90,20 +98,47 @@
 
 <tr valign=top>
    <td align="right"><b><?php print_string("availabledate","assignment") ?>:</b></td>
-    <td><?php
+    <td>
+        <input name="availableenable" type="checkbox" value="1" alt="<?php print_string('availabledate', 'assignment') ?>" onclick="return lockoptions('form', 'availableenable', availableitems)" <?php if ($form->timeavailable) echo 'checked="checked"' ?> />
+    <?php
            print_date_selector("availableday", "availablemonth", "availableyear", $form->timeavailable);
            echo "&nbsp;-&nbsp;";
            print_time_selector("availablehour", "availableminute", $form->timeavailable);
-    ?></td>
+    ?>
+        <input type="hidden" name="havailableday"    value="0" />
+        <input type="hidden" name="havailablemonth"  value="0" />
+        <input type="hidden" name="havailableyear"   value="0" />
+        <input type="hidden" name="havailablehour"   value="0" />
+        <input type="hidden" name="havailableminute" value="0" />
+    </td>
 </tr>
 
 <tr valign=top>
     <td align="right"><b><?php print_string("duedate", "assignment") ?>:</b></td>
-    <td><?php
+    <td>
+        <input name="dueenable" type="checkbox" value="1" alt="<?php print_string('duedate', 'assignment') ?>" onclick="return lockoptions('form', 'dueenable', dueitems)" <?php if ($form->timedue) echo 'checked="checked"' ?> />
+    <?php
            print_date_selector("dueday", "duemonth", "dueyear", $form->timedue);
            echo "&nbsp;-&nbsp;";
            print_time_selector("duehour", "dueminute", $form->timedue);
-    ?></td>
+    ?>
+        <input type="hidden" name="hdueday"    value="0" />
+        <input type="hidden" name="hduemonth"  value="0" />
+        <input type="hidden" name="hdueyear"   value="0" />
+        <input type="hidden" name="hduehour"   value="0" />
+        <input type="hidden" name="hdueminute" value="0" />
+    </td>
+</tr>
+
+<tr valign="top">
+    <td>&nbsp;</td>
+    <td><?php print_string('preventlate', 'assignment') ?>:
+    <?php 
+        $options[0] = get_string('no'); $options[1] = get_string('yes');
+        choose_from_menu($options, 'preventlate', $form->preventlate, '');
+    ?>
+    <input type="hidden" name="hpreventlate" value="0" />
+    </td>
 </tr>
 
 <tr valign="top">
@@ -115,8 +150,8 @@
     <td>
     <?php
        $ASSIGNMENT_TYPES = assignment_types();
-       choose_from_menu($ASSIGNMENT_TYPES, "assignmenttype", $form->assignmenttype, "");
-       helpbutton("assignment/types", get_string("assignmenttype", "assignment"), "moodle");
+       choose_from_menu($ASSIGNMENT_TYPES, 'assignmenttype', $form->assignmenttype, '');
+       helpbutton('assignment/types', get_string('assignmenttype', 'assignment'), 'moodle');
     ?>
     </td>
 </tr>
@@ -125,6 +160,14 @@
 <br />
 <center>
 <!-- <input type="hidden" name=grade      value="<?php p($form->grade) ?>" /> -->
+<input type="hidden" name="resubmit"        value="<?php p($form->resubmit) ?>" />
+<input type="hidden" name="emailteachers"   value="<?php p($form->emailteachers) ?>" />
+<input type="hidden" name="maxbytes"        value="<?php p($form->maxbytes) ?>" />
+<input type="hidden" name="var1"        value="<?php p($form->var1) ?>" />
+<input type="hidden" name="var2"        value="<?php p($form->var2) ?>" />
+<input type="hidden" name="var3"        value="<?php p($form->var3) ?>" />
+<input type="hidden" name="var4"        value="<?php p($form->var4) ?>" />
+<input type="hidden" name="var5"        value="<?php p($form->var5) ?>" />
 <input type="hidden" name="course"       value="<?php p($form->course) ?>" />
 <input type="hidden" name="coursemodule" value="<?php p($form->coursemodule) ?>" />
 <input type="hidden" name="section"      value="<?php p($form->section) ?>" />
@@ -133,6 +176,14 @@
 <input type="hidden" name="instance"   value="<?php p($form->instance) ?>" />
 <input type="hidden" name="mode"       value="<?php p($form->mode) ?>" />
 <input type="submit" value="<?php print_string('next') ?> &raquo;" />
-<input type="submit" name=cancel value="<?php print_string('cancel') ?>" />
+<input type="submit" name="cancel" value="<?php print_string('cancel') ?>" />
 </center>
 </form>
+
+<script type="text/javascript">
+<?php 
+    if (!$form->timedue) echo "lockoptions('form','dueenable', dueitems);";
+    if (!$form->timeavailable) echo "lockoptions('form','availableenable', availableitems);";
+?>
+</script>
+

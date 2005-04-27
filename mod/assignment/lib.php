@@ -326,14 +326,23 @@ class assignment_base {
         // of the new instance.
 
         $assignment->timemodified = time();
-        $assignment->timedue = make_timestamp($assignment->dueyear, $assignment->duemonth, 
-                                              $assignment->dueday, $assignment->duehour, 
-                                              $assignment->dueminute);
-        $assignment->timeavailable = make_timestamp($assignment->availableyear, $assignment->availablemonth, 
-                                                    $assignment->availableday, $assignment->availablehour, 
-                                                    $assignment->availableminute);
+        if (empty($assignment->dueenable)) {
+            $assignment->timedue = 0;
+        } else {
+            $assignment->timedue = make_timestamp($assignment->dueyear, $assignment->duemonth, 
+                                                  $assignment->dueday, $assignment->duehour, 
+                                                  $assignment->dueminute);
+        }
+        if (empty($assignment->availableenable)) {
+            $assignment->timeavailable = 0;
+            $assignment->preventlate = 0;
+        } else {
+            $assignment->timeavailable = make_timestamp($assignment->availableyear, $assignment->availablemonth, 
+                                                        $assignment->availableday, $assignment->availablehour, 
+                                                        $assignment->availableminute);
+        }
 
-        return insert_record("assignment", $assignment);
+        return insert_record('assignment', $assignment);
     }
 
     function delete_instance($assignment) {
@@ -347,14 +356,25 @@ class assignment_base {
         // of the new instance.
 
         $assignment->timemodified = time();
-        $assignment->timedue = make_timestamp($assignment->dueyear, $assignment->duemonth, 
-                                              $assignment->dueday, $assignment->duehour, 
-                                              $assignment->dueminute);
-        $assignment->timeavailable = make_timestamp($assignment->availableyear, $assignment->availablemonth, 
-                                                    $assignment->availableday, $assignment->availablehour, 
-                                                    $assignment->availableminute);
+        $assignment->timemodified = time();
+        if (empty($assignment->dueenable)) {
+            $assignment->timedue = 0;
+        } else {
+            $assignment->timedue = make_timestamp($assignment->dueyear, $assignment->duemonth, 
+                                                  $assignment->dueday, $assignment->duehour, 
+                                                  $assignment->dueminute);
+        }
+        if (empty($assignment->availableenable)) {
+            $assignment->timeavailable = 0;
+            $assignment->preventlate = 0;
+        } else {
+            $assignment->timeavailable = make_timestamp($assignment->availableyear, $assignment->availablemonth, 
+                                                        $assignment->availableday, $assignment->availablehour, 
+                                                        $assignment->availableminute);
+        }
+
         $assignment->id = $assignment->instance;
-        return update_record("assignment", $assignment);
+        return update_record('assignment', $assignment);
     }
 
 

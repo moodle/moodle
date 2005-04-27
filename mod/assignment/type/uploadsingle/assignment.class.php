@@ -59,41 +59,45 @@ class assignment_uploadsingle extends assignment_base {
 
         $this->view_header(get_string('upload'));
 
-        if ($submission = $this->get_submission($USER->id)) {
-            if ($submission->grade and !$this->assignment->resubmit) {
-                notify(get_string('alreadygraded', 'assignment'));
-            }
-        }
-
-        $dir = $this->file_area_name($USER->id);
-
-        require_once($CFG->dirroot.'/lib/uploadlib.php');
-        $um = new upload_manager('newfile',true,false,$course,false,$this->assignment->maxbytes);
-        if ($um->process_file_uploads($dir)) {
-            $newfile_name = $um->get_new_filename();
-            if ($submission) {
-                $submission->timemodified = time();
-                $submission->numfiles     = 1;
-                $submission->comment = addslashes($submission->comment);
-                if (update_record("assignment_submissions", $submission)) {
-                    $this->email_teachers($submission);
-                    print_heading(get_string('uploadedfile'));
-                } else {
-                    notify(get_string("uploadfailnoupdate", "assignment"));
+        if (!$this->isopen()) {
+            notify(get_string("uploadfailnoupdate", "assignment"));
+        } else {
+            if ($submission = $this->get_submission($USER->id)) {
+                if ($submission->grade and !$this->assignment->resubmit) {
+                    notify(get_string('alreadygraded', 'assignment'));
                 }
-            } else {
-                $newsubmission->assignment   = $this->assignment->id;
-                $newsubmission->userid       = $USER->id;
-                $newsubmission->timecreated  = time();
-                $newsubmission->timemodified = time();
-                $newsubmission->numfiles     = 1;
-                if (insert_record('assignment_submissions', $newsubmission)) {
-                    add_to_log($this->course->id, 'assignment', 'upload', 
-                               'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
-                    $this->email_teachers($newsubmission);
-                    print_heading(get_string('uploadedfile'));
+            }
+
+            $dir = $this->file_area_name($USER->id);
+
+            require_once($CFG->dirroot.'/lib/uploadlib.php');
+            $um = new upload_manager('newfile',true,false,$course,false,$this->assignment->maxbytes);
+            if ($um->process_file_uploads($dir)) {
+                $newfile_name = $um->get_new_filename();
+                if ($submission) {
+                    $submission->timemodified = time();
+                    $submission->numfiles     = 1;
+                    $submission->comment = addslashes($submission->comment);
+                    if (update_record("assignment_submissions", $submission)) {
+                        $this->email_teachers($submission);
+                        print_heading(get_string('uploadedfile'));
+                    } else {
+                        notify(get_string("uploadfailnoupdate", "assignment"));
+                    }
                 } else {
-                    notify(get_string("uploadnotregistered", "assignment", $newfile_name) );
+                    $newsubmission->assignment   = $this->assignment->id;
+                    $newsubmission->userid       = $USER->id;
+                    $newsubmission->timecreated  = time();
+                    $newsubmission->timemodified = time();
+                    $newsubmission->numfiles     = 1;
+                    if (insert_record('assignment_submissions', $newsubmission)) {
+                        add_to_log($this->course->id, 'assignment', 'upload', 
+                                'view.php?a='.$this->assignment->id, $this->assignment->id, $this->cm->id);
+                        $this->email_teachers($newsubmission);
+                        print_heading(get_string('uploadedfile'));
+                    } else {
+                        notify(get_string("uploadnotregistered", "assignment", $newfile_name) );
+                    }
                 }
             }
         }
