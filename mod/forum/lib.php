@@ -721,9 +721,7 @@ function forum_user_complete($course, $user, $mod, $forum) {
     if ($posts = forum_get_user_posts($forum->id, $user->id)) {
         foreach ($posts as $post) {
 
-    /// Add the forum id to the post object - used by read tracking.
             $post->forum = $forum->id;
-
             forum_print_post($post, $course->id, $ownpost=false, $reply=false, $link=false, $rate=false);
         }
 
@@ -946,6 +944,7 @@ function forum_scale_used ($forumid,$scaleid) {
 
 function forum_get_post_full($postid) {
 /// Gets a post with all info ready for forum_print_post
+/// Most of these joins are just to get the forum id
     global $CFG;
 
     return get_record_sql("SELECT p.*, f.id AS forum, u.firstname, u.lastname, u.email, u.picture
@@ -956,27 +955,27 @@ function forum_get_post_full($postid) {
                            WHERE p.id = '$postid'");
 }
 
-function forum_get_discussion_posts($discussion, $sort) {
+function forum_get_discussion_posts($discussion, $sort, $forumid) {
 /// Gets posts with all info ready for forum_print_post
+/// We pass forumid in because we always know it so no need to make a 
+/// complicated join to find it out.
     global $CFG;
 
-    return get_records_sql("SELECT p.*, f.id AS forum, u.firstname, u.lastname, u.email, u.picture
+    return get_records_sql("SELECT p.*, $forumid AS forum, u.firstname, u.lastname, u.email, u.picture
                               FROM {$CFG->prefix}forum_posts p
-                         LEFT JOIN {$CFG->prefix}forum_discussions d ON p.discussion = d.id
-                         LEFT JOIN {$CFG->prefix}forum f ON d.forum = f.id
                          LEFT JOIN {$CFG->prefix}user u ON p.userid = u.id
                              WHERE p.discussion = $discussion
                                AND p.parent > 0 $sort");
 }
 
-function forum_get_child_posts($parent) {
+function forum_get_child_posts($parent, $forumid) {
 /// Gets posts with all info ready for forum_print_post
+/// We pass forumid in because we always know it so no need to make a 
+/// complicated join to find it out.
     global $CFG;
 
-    return get_records_sql("SELECT p.*, f.id AS forum, u.firstname, u.lastname, u.email, u.picture
+    return get_records_sql("SELECT p.*, $forumid AS forum, u.firstname, u.lastname, u.email, u.picture
                               FROM {$CFG->prefix}forum_posts p
-                         LEFT JOIN {$CFG->prefix}forum_discussions d ON p.discussion = d.id
-                         LEFT JOIN {$CFG->prefix}forum f ON d.forum = f.id
                          LEFT JOIN {$CFG->prefix}user u ON p.userid = u.id
                              WHERE p.parent = '$parent'
                           ORDER BY p.created ASC");
@@ -1062,7 +1061,7 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
 
     $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
 
-    return get_records_sql("SELECT p.*,u.firstname,u.lastname,u.email,u.picture FROM
+    return get_records_sql("SELECT p.*,d.forum, u.firstname,u.lastname,u.email,u.picture FROM
                             $selectsql ORDER BY p.modified DESC $limit");
 }
 
@@ -1103,7 +1102,7 @@ function forum_get_user_posts($forumid, $userid) {
 /// Get all the posts for a user in a forum suitable for forum_print_post
     global $CFG;
 
-    return get_records_sql("SELECT p.*, u.firstname, u.lastname, u.email, u.picture
+    return get_records_sql("SELECT p.*, d.forum, u.firstname, u.lastname, u.email, u.picture
                               FROM {$CFG->prefix}forum f,
                                    {$CFG->prefix}forum_discussions d,
                                    {$CFG->prefix}forum_posts p,
@@ -1533,12 +1532,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
 
     static $stredit, $strdelete, $strreply, $strparent, $strprune, $strpruneheading, $threadedmode, $isteacher, $adminedit;
 
-    static $strmarkread, $strmarkunread, $istracked='new';
-
-    if ($istracked == 'new') {
-        $istracked = (forum_tp_can_track_forums($post->forum) && 
-                      forum_tp_is_tracked($post->forum, $USER->id));
-    }
+    static $strmarkread, $strmarkunread, $istracked;
 
     if (empty($stredit)) {
         $stredit = get_string('edit', 'forum');
@@ -1552,6 +1546,13 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         $adminedit = (isadmin() and !empty($CFG->admineditalways));
         $strmarkread = get_string('markread', 'forum');
         $strmarkunread = get_string('markunread', 'forum');
+
+        if (!empty($post->forum)) {
+            $istracked = (forum_tp_can_track_forums($post->forum) && 
+                          forum_tp_is_tracked($post->forum));
+        } else {
+            $istracked = false;
+        }
     }
 
     if ($istracked) {
@@ -2642,7 +2643,7 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
 
     /// Check if the forum is tracked.
     if ($cantrack = forum_tp_can_track_forums($forum)) {
-        $forumtracked = forum_tp_is_tracked($forum, $USER->id);
+        $forumtracked = forum_tp_is_tracked($forum);
     } else {
         $forumtracked = false;
     }
@@ -2730,7 +2731,6 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
                     $link = false;
                 }
 
-            /// Need to add in the forum id for forum_print_post.
                 $discussion->forum = $forum->id;
 
                 forum_print_post($discussion, $course->id, $ownpost, $reply=0, $link, $assessed=false);
@@ -2786,13 +2786,12 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
         }
     }
 
-/// Add the forum id to the post object - used by read tracking.
-    $post->forum = $forum->id;
+    $post->forum = $forum->id;   // Add the forum id to the post object, later used by forum_print_post
 
     $post->subject = format_string($post->subject);
 
     if (forum_tp_can_track_forums($forum)) {
-        if ($forumtracked = forum_tp_is_tracked($forum, $USER->id)) {
+        if ($forumtracked = forum_tp_is_tracked($forum)) {
             $user_read_array = forum_tp_get_discussion_read_records($USER->id, $post->discussion);
         } else {
             $user_read_array = array();
@@ -2844,8 +2843,7 @@ function forum_print_discussion($course, $forum, $discussion, $post, $mode, $can
     }
 }
 
-/// Add the forum id to the argument list, for use in 'forum_print_post'.
-/// Add the user_read_array to the argument list.
+
 function forum_print_posts_flat($discussion, $courseid, $direction, $ratings, $reply, &$user_read_array, $forumid=0) {
     global $USER, $CFG;
 
@@ -2858,15 +2856,8 @@ function forum_print_posts_flat($discussion, $courseid, $direction, $ratings, $r
         $sort = "ORDER BY created ASC";
     }
 
-    if ($posts = forum_get_discussion_posts($discussion, $sort)) {
+    if ($posts = forum_get_discussion_posts($discussion, $sort, $forumid)) {
         foreach ($posts as $post) {
-
-        /// Add the forum id to the post object - used by read tracking.
-            if (!$CFG->forum_usermarksread) {
-                $post->forum = $forumid;
-            } else {
-                $post->forum = 0;
-            }
 
             $post->subject = format_string($post->subject);
 
@@ -2881,8 +2872,7 @@ function forum_print_posts_flat($discussion, $courseid, $direction, $ratings, $r
     return $ratingsmenuused;
 }
 
-/// Add the forum id to the argument list, for use in 'forum_print_post'.
-/// Add the user_read_array to the argument list.
+
 function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply, &$user_read_array, $forumid=0) {
     global $USER, $CFG;
 
@@ -2890,18 +2880,13 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
     $ratingsmenuused = false;
 
     $istracking = forum_tp_can_track_forums($forumid) && forum_tp_is_tracked($forumid);
-    if ($posts = forum_get_child_posts($parent)) {
+
+    if ($posts = forum_get_child_posts($parent, $forumid)) {
         foreach ($posts as $post) {
 
             echo '<div class="indent">';
             if ($depth > 0) {
                 $ownpost = ($USER->id == $post->userid);
-
-                if (!$CFG->forum_usermarksread) {
-                    $post->forum = $forumid;
-                } else {
-                    $post->forum = 0;
-                }
 
                 $post->subject = format_string($post->subject);
 
@@ -2938,15 +2923,13 @@ function forum_print_posts_threaded($parent, $courseid, $depth, $ratings, $reply
     return $ratingsmenuused;
 }
 
-/// Add the forum id to the argument list, for use in 'forum_print_post'.
-/// Add the user_read_array to the argument list.
 function forum_print_posts_nested($parent, $courseid, $ratings, $reply, &$user_read_array, $forumid=0) {
     global $USER, $CFG;
 
     $link  = false;
     $ratingsmenuused = false;
 
-    if ($posts = forum_get_child_posts($parent)) {
+    if ($posts = forum_get_child_posts($parent, $forumid)) {
         foreach ($posts as $post) {
 
             echo '<div class="indent">';
@@ -2954,13 +2937,6 @@ function forum_print_posts_nested($parent, $courseid, $ratings, $reply, &$user_r
                 $ownpost = false;
             } else {
                 $ownpost = ($USER->id == $post->userid);
-            }
-
-        /// Add the forum id to the post object - used by read tracking.
-            if (!$CFG->forum_usermarksread) {
-                $post->forum = $forumid;
-            } else {
-                $post->forum = 0;
             }
  
             $post->subject = format_string($post->subject);
@@ -3467,6 +3443,9 @@ function forum_tp_is_tracked($forum, $userid=false) {
     global $USER, $CFG;
 
     if ($userid === false) {
+        if (empty($USER->id)) {
+            return false;
+        }
         $userid = $USER->id;
     }
 

@@ -90,9 +90,6 @@
     
             $post->subject = $fullsubject;
     
-            /// Add the forum id to the post object - used by read tracking.
-            $post->forum = $forum->id;
-    
             $fulllink = "<a href=\"discuss.php?d=$post->discussion#$post->id\">".
                          get_string("postincontext", "forum")."</a>";
 

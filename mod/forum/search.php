@@ -199,9 +199,6 @@
 
         $post->subject = $fullsubject;
 
-        /// Add the forum id to the post object - used by read tracking.
-        $post->forum = $forum->id;
-
         //Indicate search terms only found in HTML markup
         //Use highlight() with nonsense tags to spot search terms in the
         //actual text content first.          fiedorow - 9/2/2005
