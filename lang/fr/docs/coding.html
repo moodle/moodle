@@ -110,16 +110,27 @@
       $var = "some $text with $many variables $within it"; </font></p>
 </li>
 
-<li class="spaced">Les <strong>commentaires</strong> doivent utiliser deux ou trois barres obliques et &ecirc;tre align&eacute;s avec le code.
-    <p class="examplecode"><font color="#006600">function </font><font color="#0000BB">forum_get_ratings_mean</font><font color="#007700">(</font><font color="#0000BB">$postid</font><font color="#007700">, 
+<li class="spaced">Les <strong>commentaires</strong> doivent être ajoutés autant que possible, dans le but d'expliciter le fonctionnement du code et le pourquoi des fonctions et variables.
+    <ul>
+       <li>Toutes les fonctions (et les classes) doivent utiliser le format très répandu <a target="_blank" href="http://www.phpdoc.org/">phpDoc</a>, qui permet la génération automatique de la documentation du code.</li>
+       <li>Dans le code lui-même, il convient d'utiliser le style //, formatté proprement, de sorte que les commentaires soient bien ajustés et alignés avec le code.</li>
+    </ul>
+    <p class="examplecode"><font color="#ff8800">
+  	 /**<br />
+  	  * La description doit apparaître d'abord, avec des astérisques positionnés<br />
+  	  * exactement comme dans cet exemple. Pour vous référer à une autre fonction,<br />
+  	  * utiliser cette syntaxe : {@link clean_param()}. Après la description de la<br />
+  	  * fonction, ajouter celle de chacun des paramètre de la façon suivante.<br />
+  	  *<br />
+  	  * @param int    $postid Le type PHP est suivi du nom de la variable<br />
+  	  * @param array  $scale Le type PHP est suivi du nom de la variable<br />
+  	  * @param array  $ratings Le type PHP est suivi du nom de la variable<br />
+  	  * @return mixed<br />
+  	  */</font><br />
+<font color="#006600">function </font><font color="#0000BB">forum_get_ratings_mean</font><font color="#007700">(</font><font color="#0000BB">$postid</font><font color="#007700">, 
       </font><font color="#0000BB">$scale</font><font color="#007700">, </font><font color="#0000BB">$ratings</font><font color="#007700">=</font><font color="#0000BB">NULL</font><font color="#007700">) 
-      {<br />
-      </font><font color="#FF8000">/// Return the mean rating of a post given 
-      to the current user by others.<br />
-      /// Scale is an array of possible ratings in the scale<br />
-      /// Ratings is an optional simple array of actual ratings (just integers)<br />
-      <br />
-      &nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#007700">if (!</font><font color="#0000BB">$ratings</font><font color="#007700">) 
+      {<br /></font>
+      &nbsp;&nbsp;&nbsp;&nbsp;<font color="#007700">if (!</font><font color="#0000BB">$ratings</font><font color="#007700">) 
       {<br />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$ratings 
       </font><font color="#007700">= array(); &nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#FF8000">// 
