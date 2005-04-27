@@ -947,10 +947,9 @@ function forum_get_post_full($postid) {
 /// Most of these joins are just to get the forum id
     global $CFG;
 
-    return get_record_sql("SELECT p.*, f.id AS forum, u.firstname, u.lastname, u.email, u.picture
+    return get_record_sql("SELECT p.*, d.forum, u.firstname, u.lastname, u.email, u.picture
                             FROM {$CFG->prefix}forum_posts p
                        LEFT JOIN {$CFG->prefix}forum_discussions d ON p.discussion = d.id
-                       LEFT JOIN {$CFG->prefix}forum f ON d.forum = f.id
                        LEFT JOIN {$CFG->prefix}user u ON p.userid = u.id
                            WHERE p.id = '$postid'");
 }
