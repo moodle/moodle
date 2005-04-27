@@ -25,9 +25,8 @@ http://moodle.org/mod/forum/view.php?id=1683
 TODO
   Entre autres :
   - trouver une bonne traduction de "Reflective Thinking" ;
-  - traduire les fichiers d'aide des modules "Dialogue" et "Exercise" ;
-  - traduire la documentation du module "Attendance" (non inclus en
-    standard).
+  - traduire les fichiers d'aide qui ne le sont pas encore ;
+  - 
 
 Voici quelques liens utilisés :
   - Le grand dictionnaire terminologique
@@ -43,7 +42,8 @@ Quelques conventions :
   - pour la ponctuation de fin de texte et les majuscules,
     on essaie de suivre strictement le texte anglais original ;
   - les majuscules *sont* accentuées ;
-  - les guillemets français sont « ».
+  - les guillemets français sont « », avec les espaces insécables
+    si possible (à coder &nbsp;).
 
 Quelques liens en français qui traitent du constructivisme social :
   - http://www.acelf.ca/revue/XXV1/articles/rxxv1-10.html
