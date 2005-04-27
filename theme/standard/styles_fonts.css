@@ -318,6 +318,11 @@ table.minicalendar {
   font-size:0.9em;
 }
 
+#course-recent h2.main {
+  font-size:1.1em;
+}
+
+
 
 
 /***
@@ -441,6 +446,9 @@ body#doc-contents ul {
 }
 body#mod-forum-search .introcontent {
   font-weight:bold;
+}
+body#mod-forum-index .generalbox .cell {
+  font-size: 0.85em;
 }
 
 
