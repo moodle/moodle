@@ -93,6 +93,7 @@ a img {
 .generalbox {
   border-width:1px;
   border-style:solid;
+  margin-bottom: 15px;
 }
 
 .generalbox#intro {
@@ -770,25 +771,27 @@ body#doc-contents ul {
  *** Message
  ***/
 
-.message_link {
+.message .link {
   vertical-align:middle;
 }
 
-.message_search_results {
-  border-collapse:collapse;
-  border-spacing:0px;
-}
-
-table.message_search_results td {
+table.message .searchresults td {
   padding:5px;
   border-width:1px;
   border-style:solid;
+  border-collapse:collapse;
+  border-spacing:0px;
 }
-.message_summary_link {
+.message .summary .link {
   text-align:right;
 }
-.message_heading {
+.message .heading {
   text-align:center;
+}
+
+.message .note {
+  text-align:center;
+  padding:10px;
 }
 
 #message-user .commands span {
@@ -1035,6 +1038,15 @@ body#mod-forum-search .introcontent {
 #mod-forum-discuss .forumpost.unread .content {
   border-style: solid;
   border-width: 2px;
+}
+#mod-forum-index .unread img,
+#mod-forum-view .unread img 
+{
+  margin-left: 5px;
+}
+
+#email .unsubscribelink {
+  text-align:right;
 }
 
 
