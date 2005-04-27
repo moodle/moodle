@@ -187,6 +187,7 @@ table.formtable tbody th {
 
 .sideblock .content {
   font-size:0.9em;
+  line-height:1.2em;
 }
 
 .sideblock .content h3,
@@ -242,6 +243,10 @@ table.formtable tbody th {
   font-size:0.75em;
 }
 
+.sideblock .filters td {
+  font-size:1.1em;
+}
+
 #calendar .maincalendar .controls {
   font-size:1.2em;
 }
@@ -273,6 +278,22 @@ table.minicalendar {
 /***
  *** Course
  ***/
+#course-view .section {
+  font-size:0.95em;
+  line-height:1.2em;
+}
+
+#course-view .section .activity {
+  padding:0.2em 0;
+}
+
+#course-view .section .activity a {
+  line-height:1em;
+}
+
+#course-view .section .left {
+  font-weight:bold;
+}
 
 .activitydate, .activityhead {
   font-size:0.9em;
@@ -296,10 +317,10 @@ table.minicalendar {
   font-size:0.9em;
 }
 
-
-#course-view .section .left {
-  font-weight:normal;
+#course-recent h2.main {
+  font-size:1.1em;
 }
+
 
 
 
@@ -324,11 +345,7 @@ body#doc-contents ul {
  *** Message
  ***/
 
-.message_summary_link {
-  font-size:0.8em;
-}
-
-.message_link {
+.message .link {
   font-size:0.8em;
 }
 
@@ -336,31 +353,34 @@ body#doc-contents ul {
   font-size:0.8em;
 }
 
-.message_heading {
+.message .heading {
   font-size:1.0em;
   font-weight:normal;
 }
 
-.message_date,
-.message_contact,
-.message_summary {
+.message .date,
+.message .contact,
+.message .summary {
   font-size:0.9em;
 }
 
-.message_small_note, 
-.message_pix {
+.message .note, 
+.message .pix {
   font-size:0.8em;
 }
 
 .message .author {
   font-weight: normal;
+  font-size:0.8em;
 }
 
 .message .time {
   font-style: italic;
+  font-size:0.8em;
 }
 
 .message .content {
+  font-size:0.8em;
 }
 
 #message-user .commands span {
@@ -425,6 +445,9 @@ body#doc-contents ul {
 }
 body#mod-forum-search .introcontent {
   font-weight:normal;
+}
+body#mod-forum-index .generalbox .cell {
+  font-size: 0.85em;
 }
 
 
