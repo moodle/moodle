@@ -8,7 +8,9 @@
         error('No such course!');
     }
 
-    require_login($id);
+    if (empty($USER->preference['auth_forcepasswordchange'])) {  // Don't redirect if they just got sent here
+        require_login($id);
+    }
     
     if ($frm = data_submitted()) {
 
