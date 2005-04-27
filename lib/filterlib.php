@@ -191,7 +191,7 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
         }
         $newtagsprefix = (string)(count($newtagsarray) + 1);
         $newtags = array();
-        preg_match_all('/<(.+?)>/is',$text,$list_of_newtags);
+        preg_match_all('/<[^\#\|\%](.+?)>/is',$text,$list_of_newtags);
         foreach (array_unique($list_of_newtags[0]) as $ntkey=>$value) {
             $newtags['<%'.$newtagsprefix.'.'.$ntkey.'%>'] = $value;
         }
