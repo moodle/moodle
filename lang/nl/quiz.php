@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
+      // quiz.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -148,6 +148,7 @@ $string['gradeaverage'] = 'Gemiddelde cijfer';
 $string['gradehighest'] = 'Hoogste cijfer';
 $string['grademethod'] = 'Beoordelingsmethode';
 $string['guestsno'] = 'Sorry, gasten kunnen testen niet bekijken noch een poging wagen';
+$string['hotpot'] = 'Hot Potatoes opmaak';
 $string['illegalformulasyntax'] = 'De syntax van de formule is fout, beginnend met \'$a\'';
 $string['imagedisplay'] = 'Weer te geven afbeelding';
 $string['imagemissing'] = 'Afbeelding niet beschikbaar op lijn $a. De bestandsnaam zal genegeerd worden';

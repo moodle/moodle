@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005031000)
+      // error.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['adminprimarynoedit'] = 'Het profiel van de beheerder met het kleinste gebruikersnummer kan door de andere beheerders niet gewijzigd worden';
@@ -17,6 +17,7 @@ $string['notavailable'] = 'Dat is nu niet beschikbaar';
 $string['onlyeditown'] = 'Je kunt enkel je eigen informatie bewerken';
 $string['processingstops'] = 'Verwerking stopt hier. De overgebleven records worden genegeerd';
 $string['restricteduser'] = 'Sorry, maar je hebt onvoldoende rechten om dat te doen.';
+$string['sessionerroruser'] = 'Je sessie bleef te lang zonder activiteit of er is iets fout gelopen. Je moet je terug inloggen.';
 $string['sessionipnomatch'] = 'Sorry, maar je IP-adres is gewijzigd sinds je aangemeld bent. Deze beveiligingsmethode voorkomt dat crackers je identiteit stelen terwijl je aangemeld bent op deze site. Gewone gebruikers zouden deze melding niet mogen zien - vraag je sitebeheerder om hulp.';
 $string['unknowncourse'] = 'Onbekend vak \"$a\"';
 $string['usernotaddederror'] = 'Gebruiker \"$a\" niet toegevoegd - onbekende fout';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005042300)
+      // moodle.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['action'] = 'Actie';
@@ -1007,6 +1007,9 @@ $string['topichide'] = 'Verberg dit onderwerp voor $a';
 $string['topicoutline'] = 'Overzicht van het onderwerp';
 $string['topicshow'] = 'Toon dit onderwerp aan $a';
 $string['total'] = 'Totaal';
+$string['trackforums'] = 'Forum opvolgen';
+$string['trackforumsno'] = 'Nee: hou niet bij welke berichten ik al heb gelezen';
+$string['trackforumsyes'] = 'Ja: markeer berichten die ik nog niet heb gelezen';
 $string['trysearching'] = 'Probeer te zoeken';
 $string['turneditingoff'] = 'Zet wijzigen uit';
 $string['turneditingon'] = 'Zet wijzigen aan';

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 ALPHA (2005042300)
+      // forum.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['addanewdiscussion'] = 'Voeg een nieuw onderwerp voor discussie toe';
@@ -69,8 +69,12 @@ $string['introsocial'] = 'Een open forum om te chatten over wat je maar wilt';
 $string['introteacher'] = 'Een forum alleen bestemd voor discussies en aantekeningen van leraren';
 $string['lastpost'] = 'Laatste bericht';
 $string['learningforums'] = 'Leerforums';
+$string['markalldread'] = 'Markeer alle berichten in deze discussie als gelezen';
+$string['markallread'] = 'Markeer alle berichten in dit forum als gelezen';
 $string['markread'] = 'Markeer als gelezen';
-$string['markunread'] = 'Markeer als ongelezen';
+$string['markreadbutton'] = 'Markeer als<br />gelezen';
+$string['markunread'] = 'Markeer als niet gelezen';
+$string['markunreadbutton'] = 'Marjeer aks<br />niet gelezen';
 $string['maxattachmentsize'] = 'Maximum grootte van bijlagen';
 $string['maxtimehaspassed'] = 'Helaas is de maximale tijd voor het wijzigen van dit bericht ($a) verstreken!';
 $string['message'] = 'Bericht';
@@ -180,6 +184,10 @@ $string['subscription'] = 'Lid worden';
 $string['subscriptions'] = 'Inschrijvingen';
 $string['trackforum'] = 'Volg ongelezen berichten op';
 $string['tracking'] = 'Opvolgen';
+$string['trackingoff'] = 'Uit';
+$string['trackingon'] = 'Aan';
+$string['trackingoptional'] = 'Optionneel';
+$string['trackingtype'] = 'Lezen van dit forum opvolgen?';
 $string['unread'] = 'Niet gelezen';
 $string['unreadposts'] = 'Niet gelezen berichten';
 $string['unreadpostsnumber'] = '$a berichten niet gelezen';
