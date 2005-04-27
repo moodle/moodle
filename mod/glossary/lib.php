@@ -604,6 +604,7 @@ function glossary_print_entry_definition($entry) {
 
     $definition = $entry->definition;
 
+    $links = array();
     $tags = array();
     $urls = array();
     $addrs = array();
@@ -622,6 +623,20 @@ function glossary_print_entry_definition($entry) {
         }
     }
 
+    
+    //Extract <a>..><a> tags from definition
+    preg_match_all('/<a[^>]+?>(.*?)<\/a>/is',$definition,$list_of_a);
+    
+    //Save them into links array to use them later
+    foreach (array_unique($list_of_a[0]) as $key=>$value) {
+        $links['<#'.$key.'#>'] = $value;
+    }
+    //Take off every link from definition
+    if ( $links ) {
+        $definition = str_replace($links,array_keys($links),$definition);
+    }
+
+
     //Extract all tags from definition
     preg_match_all('/(<.*?>)/is',$definition,$list_of_tags);
 
@@ -629,11 +644,11 @@ function glossary_print_entry_definition($entry) {
     foreach (array_unique($list_of_tags[0]) as $key=>$value) {
         $tags['<@'.$key.'@>'] = $value;
     }
-
     //Take off every tag from definition
     if ( $tags ) {
         $definition = str_replace($tags,array_keys($tags),$definition);
     }
+
 
     //Extract all URLS with protocol (http://domain.com) from definition
     preg_match_all('/([[:space:]]|^|\(|\[)([[:alnum:]]+):\/\/([^[:space:]]*)([[:alnum:]#?\/&=])/is',$definition,$list_of_urls);
@@ -642,11 +657,11 @@ function glossary_print_entry_definition($entry) {
     foreach (array_unique($list_of_urls[0]) as $key=>$value) {
         $urls['<*'.$key.'*>'] = $value;
     }
-
     //Take off every url from definition
     if ( $urls ) {
         $definition = str_replace($urls,array_keys($urls),$definition);
     }
+
 
     //Extract all WEB ADDRESSES (www.domain.com) from definition
     preg_match_all('/([[:space:]]|^|\(|\[)www\.([^[:space:]]*)([[:alnum:]#?\/&=])/is',$definition,$list_of_addresses);
@@ -655,11 +670,11 @@ function glossary_print_entry_definition($entry) {
     foreach (array_unique($list_of_addresses[0]) as $key=>$value) {
         $addrs['<+'.$key.'+>'] = $value;
     }
-
     //Take off every addr from definition
     if ( $addrs ) {
         $definition = str_replace($addrs,array_keys($addrs),$definition);
     }
+
 
     //Put doNolinks (concept + aliases) enclosed by <nolink> tag
     $definition= preg_replace($doNolinks,'<span class="nolink">$1</span>',$definition);
@@ -679,7 +694,13 @@ function glossary_print_entry_definition($entry) {
         $definition = str_replace(array_keys($tags),$tags,$definition);
     }
 
+    //Restore links
+    if ( $links ) {
+        $definition = str_replace(array_keys($links),$links,$definition);
+    }
+
     $options->para = false;
+
     $text = format_text($definition, $entry->format,$options);
     if (!empty($entry->highlight)) {
         $text = highlight($entry->highlight, $text);
