@@ -62,9 +62,10 @@ Now I show the specific detailed status of every item in the process:
 38. DONE: Convert every wiki formatted text to markdown. Bye, wikies! ;-)
 39. DONE: Add backup/restore of new grade tables.
 40. DONE: event->repeatid.
-41. TODO: Add support to forum_track_prefs.
-42. DONE: Add user->trackforums.
-43. TODO: Review SCORM module.
+41. TODO: Add support to forum_track_prefs table. Is it needed?
+42. DONE: Add user->trackforums (MD did).
+43. TODO: Add forum->trackingtype
+44. TODO: Review SCORM module.
          
 Eloy (stronk7)
 23-01-2004
