@@ -161,17 +161,31 @@
       $var = 'a very, very long string with a '.$single.' variable in it';<br />
       $var = &quot;some $text with $many variables $within it&quot;; </font></p>
   </li>
-  <li class="spaced"><strong>Los comentarios</strong> utilizar&aacute;n dos o tres barras
-    y estar&aacute;n alineados con el c&oacute;digo
-    <p class="examplecode"><font color="#006600">function </font><font color="#0000BB">forum_get_ratings_mean</font><font color="#007700">(</font><font color="#0000BB">$postid</font><font color="#007700">, 
+  
+  
+    <li class="spaced"><strong>Los comentarios</strong> deben ser a&ntilde;adidos de forma que resulten pr&aacute;cticos, para explicar el flujo del c&oacute;digo y el prop&oacute;sito de las funciones y variables.
+      <ul>
+     <li>Cada funci&oacute;n (y cada clase) deber&iacute;a utilizar el popular <a target="_blank" href="http://www.phpdoc.org/">formato phpDoc</a>.
+         Esto permite que la documentaci&oacute;n sea generada autom&aacute;ticamente.</li>
+     <li>Los comentarios en l&iacute;nea deber&iacute;an utilizar los caracteres  //, alineados con cuidado por encima de las l&iacute;neas de c&oacute;digo que comenta.</li>
+     </ul>
+  
+   <p class="examplecode"><font color="#FF8000">
+/**<br />
+ * The description should be first, with asterisks laid out exactly<br />
+ * like this example.  If you want to refer to a another function,<br />
+ * do it like this: {@link clean_param()}.  Then, add descriptions <br />
+ * for each parameter as follows.<br />
+ *<br />
+ * @param int    $postid The PHP type is followed by the variable name<br />
+ * @param array  $scale The PHP type is followed by the variable name<br />
+ * @param array  $ratings The PHP type is followed by the variable name<br />
+ * @return mixed<br />
+ */</font><br />
+<font color="#006600">function </font><font color="#0000BB">forum_get_ratings_mean</font><font color="#007700">(</font><font color="#0000BB">$postid</font><font color="#007700">, 
       </font><font color="#0000BB">$scale</font><font color="#007700">, </font><font color="#0000BB">$ratings</font><font color="#007700">=</font><font color="#0000BB">NULL</font><font color="#007700">) 
-      {<br />
-      </font><font color="#FF8000">/// Return the mean rating of a post given 
-      to the current user by others.<br />
-      /// Scale is an array of possible ratings in the scale<br />
-      /// Ratings is an optional simple array of actual ratings (just integers)<br />
-      <br />
-      &nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#007700">if (!</font><font color="#0000BB">$ratings</font><font color="#007700">) 
+      {<br /></font>
+      &nbsp;&nbsp;&nbsp;&nbsp;<font color="#007700">if (!</font><font color="#0000BB">$ratings</font><font color="#007700">) 
       {<br />
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$ratings 
       </font><font color="#007700">= array(); &nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#FF8000">// 
@@ -187,6 +201,8 @@
       {</font> <br />
       ....etc </p>
   </li>
+  
+  
   <li class="spaced"><strong>El espacio en blanco</strong> se puede utilizar
     con bastante libertad - no te preocupes por separar las cosas un poco para
     ganar en claridad. Generalmente, deber&iacute;a haber un espacio entre llaves y
