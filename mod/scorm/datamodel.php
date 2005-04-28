@@ -3,7 +3,7 @@
     require_once('lib.php');
     
     optional_variable($id);    // Course Module ID, or
-    optional_variable($a);     // scorm ID
+    optional_variable($a);     // scorm IDa
 
     if ($id) {
         if (! $cm = get_record('course_modules', 'id', $id)) {
@@ -32,14 +32,31 @@
 
     require_login($course->id, false, $cm);
     
-    
-    if (isset($_GET['call']) && confirm_sesskey()) {
-	if (strstr($_GET['call'],'LMS') !== false) {
-	    // SCORM 1.2 Call
-	    //require_once('datamodels/scorm1_2.php');
+    if (confirm_sesskey() && (isset($SESSION->scorm_scoid))) {
+	$scoid = $SESSION->scorm_scoid;
+	$result = true;
+	foreach ($_GET as $element => $value) {
+	    if (substr($element,0,3) == 'cmi') {
+	        $element = str_replace('__','.',$element);
+		$element = preg_replace('/_(\d+)/',".\$1",$element);
+		if ($track = get_record_select('scorm_scoes_track',"userid='$USER->id' AND scormid='$scorm->id' AND scoid='$scoid' AND element='$element'")) {
+		    $track->value = $value;
+		    $result = update_record('scorm_scoes_track',$track) && $result;
+		} else {
+		    $track->userid = $USER->id;
+		    $track->scormid = $scorm->id;
+		    $track->scoid = $scoid;
+		    $track->element = $element;
+		    $track->value = $value;
+		    $result = insert_record('scorm_scoes_track',$track) && $result;
+		}
+		//print_r($track);
+	    }
+	}
+	if ($result) {
+	    echo "true\n0";
 	} else {
-	    // SCORM 1.3 (aka SCORM 2004) Call
-	    //require_once('datamodels/scorm1_3.php');
+	    echo "false\n101";
 	}
     }
 ?>

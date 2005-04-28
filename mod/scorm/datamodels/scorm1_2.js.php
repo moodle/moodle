@@ -1,3 +1,20 @@
+<?php
+    if (isset($userdata->status)) {
+	if ($userdata->status == '') {
+	    $userdata->entry = 'ab-initio';
+	} else {
+	    if (isset($userdata->{'cmi.core.exit'}) && ($userdata->{'cmi.core.exit'} == 'suspend')) {
+		$userdata->entry = 'resume';
+	    } else {
+		$userdata->entry = '';		
+	    }
+	}
+    }
+?>
+//
+// SCORM 1.2 API Implementation
+//
+function SCORMapi1_2() {
     // Standard Data Type Definition
     CMIString255 = '^.{0,255}$';
     CMIString4096 = '^[.|\\n|\\r]{0,4096}$';
@@ -5,7 +22,8 @@
     CMITimespan = '^([0-9]{2,4}):([0-9]{2}):([0-9]{2})(\.[0-9]{1,2})?$';
     CMIInteger = '^\\d+$';
     CMISInteger = '^-?([0-9]+)$';
-    CMIDecimal = '^[0-9]?(\.[0-9]{1,2})?$';
+    //CMIDecimal = '^([0-9]{0,3})?(\.[0-9]{1,2})?$';
+    CMIDecimal = '^([0-9]{0,3})(\.[0-9]{1,2})?$';
     CMIIdentifier = '^\\w{0,255}$';
     CMIFeedback = CMIString255; // This must be redefined
     CMIIndex = '.\\d+.';
@@ -32,23 +50,23 @@
 	'cmi._children':{'defaultvalue':cmi_children, 'mod':'r', 'writeerror':'402'},
 	'cmi._version':{'defaultvalue':'3.4', 'mod':'r', 'writeerror':'402'},
 	'cmi.core._children':{'defaultvalue':core_children, 'mod':'r', 'writeerror':'402'},
-	'cmi.core.student_id':{'defaultvalue':'<?php echo $user->username ?>', 'mod':'r', 'writeerror':'403'},
-	'cmi.core.student_name':{'defaultvalue':'<?php echo $user->lastname.', '.$user->firstname ?>', 'mod':'r', 'writeerror':'403'},
-	'cmi.core.lesson_location':{'format':CMIString255, 'mod':'rw', 'writeerror':'405'},
-	'cmi.core.credit':{'mod':'r', 'writeerror':'403'},
-	'cmi.core.lesson_status':{'format':CMIStatus, 'mod':'rw', 'writeerror':'405'},
-	'cmi.core.entry':{'mod':'r', 'writeerror':'403'},
+	'cmi.core.student_id':{'defaultvalue':'<?php echo $userdata->student_id ?>', 'mod':'r', 'writeerror':'403'},
+	'cmi.core.student_name':{'defaultvalue':'<?php echo $userdata->student_name ?>', 'mod':'r', 'writeerror':'403'},
+	'cmi.core.lesson_location':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.lesson_location'})?$userdata->{'cmi.core.lesson_location'}:'' ?>', 'format':CMIString255, 'mod':'rw', 'writeerror':'405'},
+	'cmi.core.credit':{'defaultvalue':'<?php echo $userdata->credit ?>', 'mod':'r', 'writeerror':'403'},
+	'cmi.core.lesson_status':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.lesson_status'})?$userdata->{'cmi.core.lesson_status'}:'' ?>', 'format':CMIStatus, 'mod':'rw', 'writeerror':'405'},
+	'cmi.core.entry':{'defaultvalue':'<?php echo $userdata->entry ?>', 'mod':'r', 'writeerror':'403'},
 	'cmi.core.score._children':{'defaultvalue':score_children, 'mod':'r', 'writeerror':'402'},
-	'cmi.core.score.raw':{'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
-	'cmi.core.score.max':{'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
-	'cmi.core.score.min':{'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
-	'cmi.core.total_time':{'mod':'r', 'writeerror':'403'},
-	'cmi.core.lesson_mode':{'mod':'r', 'writeerror':'405'},
-	'cmi.core.exit':{'format':CMIExit, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
+	'cmi.core.score.raw':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.score.raw'})?$userdata->{'cmi.core.score.raw'}:'' ?>', 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
+	'cmi.core.score.max':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.score.max'})?$userdata->{'cmi.core.score.max'}:'' ?>', 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
+	'cmi.core.score.min':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.score.min'})?$userdata->{'cmi.core.score.min'}:'' ?>', 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
+	'cmi.core.total_time':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.total_time'})?$userdata->{'cmi.core.total_time'}:'00:00:00' ?>', 'mod':'r', 'writeerror':'403'},
+	'cmi.core.lesson_mode':{'defaultvalue':'<?php echo $userdata->mode ?>', 'mod':'r', 'writeerror':'405'},
+	'cmi.core.exit':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.exit'})?$userdata->{'cmi.core.exit'}:'' ?>', 'format':CMIExit, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
 	'cmi.core.session_time':{'format':CMITimespan, 'mod':'w', 'defaultvalue':'00:00:00', 'readerror':'404', 'writeerror':'405'},
-	'cmi.suspend_data':{'format':CMIString4096, 'mod':'rw', 'writeerror':'405'},
-	'cmi.launch_data':{'mod':'r', 'writeerror':'403'},
-	'cmi.comments':{'format':CMIString4096, 'mod':'rw', 'writeerror':'405'},
+	'cmi.suspend_data':{'defaultvalue':'<?php echo isset($userdata->{'cmi.suspend_data'})?$userdata->{'cmi.suspend_data'}:'' ?>', 'format':CMIString4096, 'mod':'rw', 'writeerror':'405'},
+	'cmi.launch_data':{'defaultvalue':'<?php echo $userdata->datafromlms ?>', 'mod':'r', 'writeerror':'403'},
+	'cmi.comments':{'defaultvalue':'<?php echo isset($userdata->{'cmi.comments'})?$userdata->{'cmi.comments'}:'' ?>', 'format':CMIString4096, 'mod':'rw', 'writeerror':'405'},
 	'cmi.comments_from_lms':{'mod':'r', 'writeerror':'403'},
 	'cmi.objectives._children':{'defaultvalue':objectives_children, 'mod':'r', 'writeerror':'403'},
 	'cmi.objectives._count':{'mod':'r', 'defaultvalue':'0', 'writeerror':'402'},
@@ -59,14 +77,14 @@
 	'cmi.objectives.n.score.max':{'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
 	'cmi.objectives.n.status':{'pattern':CMIIndex, 'format':CMIStatus, 'mod':'rw', 'writeerror':'405'},
 	'cmi.student_data._children':{'defaultvalue':student_data_children, 'mod':'r', 'writeerror':'403'},
-	'cmi.student_data.mastery_score':{'mod':'r', 'writeerror':'403'},
-	'cmi.student_data.max_time_allowed':{'mod':'r', 'writeerror':'403'},
-	'cmi.student_data.time_limit_action':{'mod':'r', 'writeerror':'403'},
+	'cmi.student_data.mastery_score':{'defaultvalue':'<?php echo $userdata->masteryscore ?>', 'mod':'r', 'writeerror':'403'},
+	'cmi.student_data.max_time_allowed':{'defaultvalue':'<?php echo $userdata->maxtimeallowed ?>', 'mod':'r', 'writeerror':'403'},
+	'cmi.student_data.time_limit_action':{'defaultvalue':'<?php echo $userdata->timelimitaction ?>', 'mod':'r', 'writeerror':'403'},
 	'cmi.student_preference._children':{'defaultvalue':student_preference_children, 'mod':'r', 'writeerror':'403'},
-	'cmi.student_preference.audio':{'format':CMISInteger, 'range':audio_range, 'mod':'rw', 'writeerror':'405'},
-	'cmi.student_preference.language':{'format':CMIString255, 'mod':'rw', 'writeerror':'405'},
-	'cmi.student_preference.speed':{'format':CMISInteger, 'range':speed_range, 'mod':'rw', 'writeerror':'405'},
-	'cmi.student_preference.text':{'format':CMISInteger, 'range':text_range, 'mod':'rw', 'writeerror':'405'},
+	'cmi.student_preference.audio':{'defaultvalue':'0', 'format':CMISInteger, 'range':audio_range, 'mod':'rw', 'writeerror':'405'},
+	'cmi.student_preference.language':{'defaultvalue':'', 'format':CMIString255, 'mod':'rw', 'writeerror':'405'},
+	'cmi.student_preference.speed':{'defaultvalue':'0', 'format':CMISInteger, 'range':speed_range, 'mod':'rw', 'writeerror':'405'},
+	'cmi.student_preference.text':{'defaultvalue':'0', 'format':CMISInteger, 'range':text_range, 'mod':'rw', 'writeerror':'405'},
 	'cmi.interactions._children':{'defaultvalue':interactions_children, 'mod':'r', 'writeerror':'403'},
 	'cmi.interactions._count':{'mod':'r', 'defaultvalue':'0', 'writeerror':'402'},
 	'cmi.interactions.n.id':{'pattern':CMIIndex, 'format':CMIIdentifier, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
@@ -102,6 +120,9 @@
 	    }
 	    //alert (element+' = '+eval(element));
 	}
+    }
+    if (cmi.core.lesson_status == '') {
+	cmi.core.lesson_status = 'not attempted';
     } 
     
     //
@@ -127,10 +148,8 @@
     function LMSFinish (param) {
 	if (param == "") {
             if (Initialized) {
-		LMSCommit("");
         	Initialized = false;
-        	errorCode = "0";
-        	return "true";
+        	return StoreData('API',cmi,true);
             } else {
         	errorCode = "301";
             }
@@ -184,7 +203,9 @@
 				    elementIndex = elementIndexes[i];
 				    //alert(elementIndex+' '+elementIndexes[i+1]);
 				    if (elementIndexes[i+1].match(/^\d+$/)) {
-				    	if ((typeof eval(subelement+'.'+elementIndex+'._count')) == "undefined") {
+				        //alert('Matched: '+elementIndexes[i+1]);
+					//alert('Check: '+subelement+'.'+elementIndex);
+				    	if ((typeof eval(subelement+'.'+elementIndex)) == "undefined") {
 				    	    eval(subelement+'.'+elementIndex+' = new Object();');
 					    eval(subelement+'.'+elementIndex+'._count = 0;');
 					}
@@ -198,22 +219,23 @@
 				    } else {
 					subelement = subelement.concat('.'+elementIndex);
 				    }
-				    alert(subelement);
+				    //alert(subelement);
 				    if ((typeof eval(subelement)) == "undefined") {
 					eval(subelement+' = new Object();');
 				    }
 				}
 				element = subelement.concat('.'+elementIndexes[elementIndexes.length-1]);
-				alert('LMSSetValue: '+element+'\nModel: '+elementmodel+'\nValue: '+value+'\nMatches: '+matches);
+				//alert('LMSSetValue: '+element+'\nModel: '+elementmodel+'\nValue: '+value+'\nMatches: '+matches);
 			    }
 			    //Store data
 			    if ((typeof eval('datamodel["'+elementmodel+'"].range')) != "undefined") {
 				range = eval('datamodel["'+elementmodel+'"].range');
 				ranges = range.split('#');
-				value = value+0.0;
+				value = value*1.0;
 				if ((value >= ranges[0]) && (value <= ranges[1])) {
  				    eval(element+'="'+value+'";');
 				    errorCode = "0";
+				    //alert('LMSSetValue: '+element+'\nModel: '+elementmodel+'\nValue: '+value);
 	    			    return "true";
 				} else {
 		 		    errorCode = eval('datamodel["'+elementmodel+'"].writeerror');
@@ -221,6 +243,7 @@
 			    } else {
 				eval(element+'="'+value+'";');
 				errorCode = "0";
+				//alert('LMSSetValue: '+element+'\nModel: '+elementmodel+'\nValue: '+value);
 	    			return "true";
 			    }
 			} else {
@@ -238,16 +261,14 @@
 	} else {
             errorCode = "301";
         }
-	alert('LMSSetValue: '+element+'\nValue: '+value+'\nPattern: '+expression+'\nMatches: '+matches+'\nError Code: '+errorCode);
+	//alert('LMSSetValue: '+element+'\nValue: '+value+'\nPattern: '+expression+'\nMatches: '+matches+'\nError Code: '+errorCode);
 	return "false";
     }
     
     function LMSCommit (param) {
 	if (param == "") {
             if (Initialized) {
-                
-        	errorCode = "0";
-        	return "true";
+		return StoreData('API',cmi,false);
             } else {
         	errorCode = "301";
 	    }
@@ -287,6 +308,15 @@
 	}
 	return param;
     }
+
+    function TotalTime() {
+        total_time = AddTime(cmi.core.total_time, cmi.core.session_time);
+	//////////////alert (cmi.core.total_time+' '+cmi.core.session_time+' '+total_time);
+	return '&'+underscore('cmi.core.total_time')+'='+escape(total_time);
+    }
+
+    this.datamodel = datamodel;
+    this.TotalTime = TotalTime;
     
     this.LMSInitialize = LMSInitialize;
     this.LMSFinish = LMSFinish;
@@ -296,3 +326,6 @@
     this.LMSGetLastError = LMSGetLastError;
     this.LMSGetErrorString = LMSGetErrorString;
     this.LMSGetDiagnostic = LMSGetDiagnostic;
+}
+
+var API = new SCORMapi1_2();

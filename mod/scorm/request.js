@@ -33,3 +33,10 @@ function DoRequest(httpReq,url,param) {
     	return httpReq.status;
     }
 }
+
+function popupwin(content) {
+    op = window.open();
+    op.document.open('text/plain');
+    op.document.write(content);
+    op.document.close();
+}

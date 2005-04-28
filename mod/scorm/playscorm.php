@@ -34,7 +34,6 @@
     }
 
     require_login($course->id, false, $cm);
-
     
     $strscorms = get_string('modulenameplural', 'scorm');
     $strscorm  = get_string('modulename', 'scorm');
@@ -81,10 +80,10 @@
     //
     // Print the page header
     //
-    $bodyscripts = "onUnload='SCOFinish();'";
+    //$bodyscripts = "onUnload='SCOFinish();'";
     print_header($pagetitle, "$course->fullname",
 	"$navigation <a target='{$CFG->framename}' href='view.php?id=$cm->id'>".format_string($scorm->name,true)."</a>",
-	'', '', true, update_module_button($cm->id, $course->id, $strscorm), "", "", $bodyscripts);
+	'', '', true, update_module_button($cm->id, $course->id, $strscorm));
 ?>
     <style type="text/css">
         .scormlist { 
@@ -125,8 +124,6 @@
     -->
     </script>
 
-    <script language="JavaScript" type="text/javascript" src="request.js"></script>
-    <script language="JavaScript" type="text/javascript" src="api.php?id=<?php echo $cm->id ?>"></script>
     <table class="fullscreen" height="90%">
     <tr><td valign="top">
     	<p><?php echo format_text($scorm->summary) ?></p>
@@ -136,9 +133,7 @@
 	        <th>
 	            <div style='float: left;'><?php print_string('coursestruct','scorm') ?></div>
 	    	    <div style='float:right;'>
-	    	    	<a href='#' onClick='expandCollide(imgmain,0);'>
-	    	    	     <img id='imgmain' src="pix/minus.gif" alt="<?php echo $strexpand ?>" title="<?php echo $strexpand ?>"/>
-	    	    	</a>
+	    	    	<a href='#' onClick='expandCollide(imgmain,0);'><img id='imgmain' src="pix/minus.gif" alt="<?php echo $strexpand ?>" title="<?php echo $strexpand ?>"/></a>
 	    	    </div>
 	    	</th>
 	    </tr>
@@ -146,6 +141,9 @@
 <?php
     $sco = scorm_display_structure($scorm,'scormlist',$currentorg,$scoid,$mode,true);
     add_to_log($course->id, 'scorm', 'view', "playscorm.php?id=$cm->id&scoid=$sco->id", "$scorm->id");
+    $scoidstring = '&scoid='.$sco->id;
+
+    $SESSION->scorm_scoid = $sco->id;
 ?>
 	    </td></tr>
 	    <tr><td align="center">
@@ -154,7 +152,8 @@
 		    <input name="currentorg" type="hidden" value="<?php echo $currentorg ?>" />
 		    <input name="mode" type="hidden" value="<?php echo $mode ?>" />
 		    <input name="prev" type="<?php if ($sco->prev == 0) { echo 'hidden'; } else { echo 'button'; } ?>" value="<?php print_string('prev','scorm') ?>" onClick="playSCO(<?php echo $sco->prev ?>);" />
-		    <input name="next" type="button" value="<?php if ($sco->next == 0) { print_string('exit','scorm'); } else { print_string('next','scorm'); } ?>" onClick="playSCO(<?php echo $sco->next ?>)" />
+		    <input name="next" type="<?php if ($sco->next == 0) { echo 'hidden'; } else { echo 'button'; } ?>" value="<?php print_string('next','scorm') ?>" onClick="playSCO(<?php echo $sco->next ?>);" /><br />
+		    <input name="exit" type="button" value="<?php print_string('exit','scorm') ?>" onClick="playSCO(0)" />
 		</form>
 	    </td></tr>
 	</table>
@@ -163,5 +162,7 @@
     	<iframe name="main" class="fullscreen" height="640" src="loadSCO.php?id=<?php echo $cm->id.$scoidstring ?>"></iframe>
     </td></tr>
     </table>
+    <script language="JavaScript" type="text/javascript" src="request.js"></script>
+    <script language="JavaScript" type="text/javascript" src="api.php?id=<?php echo $cm->id.$scoidstring ?>"></script>
 </body>
 </html>

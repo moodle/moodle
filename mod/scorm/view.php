@@ -35,7 +35,10 @@
     }
 
     require_login($course->id, false, $cm);
-
+    
+    if (isset($SESSION->scorm_scoid)) {
+	unset($SESSION->scorm_scoid);
+    }
     
     $strscorms = get_string("modulenameplural", "scorm");
     $strscorm  = get_string("modulename", "scorm");

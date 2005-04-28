@@ -122,7 +122,7 @@ function scorm_user_outline($course, $user, $mod, $scorm) {
 /// $return->time = the time they did it
 /// $return->info = a short text description
 
-    return true;   // TO FIX
+    return NULL;   // TO FIX
 }
 
 function scorm_user_complete($course, $user, $mod, $scorm) {
@@ -760,27 +760,38 @@ function scorm_get_tracks($scoid,$userid) {
 /// Gets all tracks of specified sco and user 
     global $CFG;
     
-    if ($tracks = get_records_select('scorm_scoes_track',"userid=$userid AND scoid=$scoid")) {
+    if ($tracks = get_records_select('scorm_scoes_track',"userid=$userid AND scoid=$scoid",'element ASC')) {
+    	//print_r($tracks);
     	$usertrack->userid = $userid;
     	$usertrack->scoid = $scoid;
     	$usertrack->score_raw = '';
     	$usertrack->status = '';
+    	$usertrack->total_time = '00:00:00';
+    	$usertrack->session_time = '00:00:00';
 	foreach ($tracks as $track) {
-	    $element = str_replace('.','_',$track->element);
+	    //$element = str_replace('.','_',$track->element);
+	    $element = $track->element;
+	    $usertrack->{$element} = $track->value;
 	    switch ($element) {
-	    case 'cmi_core_lesson_status':
-	    case 'cmi_completition_status':
-	    	if ($track->value == 'not attempted') {
-	    	    $track->value = 'notattempted';
-	    	}
-		$usertrack->status = $track->value;
-	    break;
-	    case 'cmi_core_score_raw':
-	    case 'cmi_score_raw':
-	    	$usertrack->score_raw = $track->value;
-	    break;
-	    default:
-		$usertrack->{$element} = $track->value;
+		case 'cmi.core.lesson_status':
+		case 'cmi.completition_status':
+		    if ($track->value == 'not attempted') {
+			$track->value = 'notattempted';
+		    }
+		    $usertrack->status = $track->value;
+		break;
+		case 'cmi.core.score.raw':
+		case 'cmi.score.raw':
+		    $usertrack->score_raw = $track->value;
+		break;
+		case 'cmi.core.session_time':
+		case 'cmi.session_time':
+		    $usertrack->session_time = $track->value;
+		break;
+		case 'cmi.core.total_time':
+		case 'cmi.total_time':
+		    $usertrack->total_time = $track->value;
+		break;
 	    }
 	}
 	//print_r($usertrack);
@@ -790,18 +801,11 @@ function scorm_get_tracks($scoid,$userid) {
     }
 }
 
-function scorm_get_scoes_records($scouser) {
-/// Gets all info required to display the table of scorm results
+function scorm_get_user_data($userid) {
+/// Gets user info required to display the table of scorm results
 /// for report.php
-    global $CFG;
 
-    return get_records_sql("SELECT su.*, u.firstname, u.lastname, u.picture 
-                            FROM {$CFG->prefix}scorm_scoes_track su, 
-                                 {$CFG->prefix}user u
-                            WHERE su.scormid = '$scouser->scormid'
-                              AND su.userid = u.id
-                              AND su.userid = '$scouser->userid'
-                              ORDER BY scoid");
+    return get_record('user','id',$userid,'','','','','firstname, lastname, picture'); 
 }
 
 function scorm_remove_spaces($sourcestr) {
