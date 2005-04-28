@@ -5,12 +5,12 @@
     require_once("../../config.php");
     require_once("lib.php");
 
-    require_variable($id);                          // The forum to mark
+    require_variable($f);                           // The forum to mark
     require_variable($mark);                        // Read or unread?
     optional_variable($d);                          // Discussion to mark.
     optional_variable($returnpage, 'index.php');    // Page to return to.
 
-    if (! $forum = get_record("forum", "id", $id)) {
+    if (! $forum = get_record("forum", "id", $f)) {
         error("Forum ID was incorrect");
     }
 
@@ -49,7 +49,11 @@
         exit;
     }
 
-    $returnto = forum_go_back_to($returnpage.'?id='.$cm->id.'&f='.$forum->id);
+    if ($returnpage == 'index.php') {
+        $returnto = forum_go_back_to($returnpage.'?id='.$course->id);
+    } else {
+        $returnto = forum_go_back_to($returnpage.'?f='.$forum->id);
+    }
 
     $info->name  = fullname($user);
     $info->forum = format_string($forum->name);

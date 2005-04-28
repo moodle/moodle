@@ -1826,7 +1826,7 @@ function forum_print_discussion_header(&$post, $forum, $group=-1, $datestring=""
                     echo '<a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$post->discussion.'#unread">';
                     echo $post->unread;
                     echo '</a>';
-                    echo '<a title="'.$strmarkalldread.'" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?id='.
+                    echo '<a title="'.$strmarkalldread.'" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?f='.
                          $forum->id.'&amp;d='.$post->discussion.'&amp;mark=read&amp;returnpage=view.php">' .
                          '<img src="'.$CFG->pixpath.'/t/clear.gif" height="11" width="11" border="0" /></a>';
                     echo '</span>';
