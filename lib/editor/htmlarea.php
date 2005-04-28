@@ -2216,7 +2216,7 @@ HTMLArea.isBlockElement = function(el) {
 };
 
 HTMLArea.needsClosingTag = function(el) {
-    var closingTags = " head script style div span tr td tbody table em strong font a title ";
+    var closingTags = " head script style div span tr td tbody table em strong font a title iframe object applet ";
     return (closingTags.indexOf(" " + el.tagName.toLowerCase() + " ") != -1);
 };
 
