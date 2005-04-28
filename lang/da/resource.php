@@ -1,13 +1,15 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
 $string['addresource'] = 'Tilføj materiale';
 $string['chooseafile'] = 'Vælg eller upload en fil';
 $string['chooseparameter'] = 'Vælg parametre';
+$string['configallowlocalfiles'] = 'Når du laver en ny resourcefil, så er det en god ide at tillade links til filer på det lokale filsystem såsom CDROM drev, netværksdrev eller på harddisken. Det kan være brugbart i et klasseværelse hvor alle elever har mappet det samme netværksdrev eller hvor filerne ligger på en udleveret CD. Brug af denne feature kan kræve nogle ændringer af browserens sikkerhedsindstillinger.';
 $string['configdefaulturl'] = 'Denne værdi bruges til at indsætte i URL formen når en ny URL-baseret resource laves.';
 $string['configfilterexternalpages'] = 'Hvis du bruger denne setting vil alle externe resourcer (websider, uploaded HTMLfiler) blive behandlet af det nuværende sidefiltre (såsom ordbogs autolinks, for eksempel). Brugen af denne setting kan forårsage at sidevisningen bliver betydeligt langsommere. Brug den med omtanke og når det virkeligt er nødvendigt.';
 $string['configframesize'] = 'Når en webside eller en uploadet fil vises i en frame, så angiver denne værdi højden på topbaren (den øverste frame som indeholder navigationen)';
+$string['configparametersettings'] = 'Denne angiver standardværdien for parameterpanelet i dialogen når der tilføjes nye resourcer. Efter første gang bliver disse individuelle brugerbestemte indstillinger.';
 $string['configpopup'] = 'Når en ny resource bliver tilføjet som kan vises i et vindue, skal denne mulighed være aktiveret som udgangspunkt?';
 $string['configpopupdirectories'] = 'Skal popupvinduer vise bibliotekslinks som standard?';
 $string['configpopupheight'] = 'Hvad skal den normale højde for popupvinduer være?';
@@ -18,7 +20,10 @@ $string['configpopupscrollbars'] = 'Skal popupvinduer kunne scrolles som standar
 $string['configpopupstatus'] = 'Skal popupvinduer vide statusbaren som standart?';
 $string['configpopuptoolbar'] = 'Skal popupvinduer vise værktøjslinjen som standart?';
 $string['configpopupwidth'] = 'Hvilken bredde skal popupvinduer have som standart?';
+$string['configsecretphrase'] = 'Denne hemmelige sætning bliver brugt til at generere en krypteret nøgle der kan overføres som parameter til nogle resourcer. Den krypterede nøgle bliver lavet med en md5 kryptering af den nuværende brugers IP sammensat med den hemmelige sætning. Som følger: code = md5(IP.secretphrase) 
+Dette tillader den modtagne resource at verificere at den eer kaldt fra moodle.';
 $string['configwebsearch'] = 'Når der tilføjes en URL som en webside eller weblink, vil denne lokation tilbydes som et sted der kan hjælpe brugeren med at søge efter den URL de ønsker.';
+$string['configwindowsettings'] = 'Dette sætter standardværdien for vindue-indstillings panelet, når en ny resource bliver tilføjet. Efter første gang bliver dette individuelle brugerindstillinger.';
 $string['directlink'] = 'Direkte link til denne fil';
 $string['directoryinfo'] = 'Alle filer i det valgte bibliotek vil blive vist';
 $string['display'] = 'Vindue';
@@ -31,8 +36,15 @@ $string['fetcherror'] = 'Der er opstået en fejl i forbindelse med hentningen af 
 $string['fetchservererror'] = 'Der er opstået en fejl på serveren i forbindelse med hentningen af websiden (måske en programfejl).<p>';
 $string['filename'] = 'Filnavn';
 $string['filtername'] = 'Resource autolinkning';
+$string['frameifpossible'] = 'Put resourcen i en frame for at beholde navigationsbaren synlig.';
 $string['fulltext'] = 'Fuld tekst';
 $string['htmlfragment'] = 'HTML del';
+$string['localfile'] = 'Lokal fil';
+$string['localfilechoose'] = 'Vælg en lokal fil (CD-ROM)';
+$string['localfilehelp'] = 'Hjælp ved at vise lokale filer.';
+$string['localfileinfo'] = '<p>Vælg en lokal fil fra computeren. Filen vil ikke blive uploadet til websitet, men Moodle vil formode at den samme fil findes i forvejen på alle de computere som henter resourcen.</p><p>Dette er især brugbart hvis det drejer sig om store multimediefiler og animationer der ligger på en standart CD-ROM som bliver delt ud til alle deltagerne. Hver deltager kan så vælge deres egen lokale sti til disse filer, hvis f.eks. CD-ROM drevet ikke har samme drevbogstaver ell. Det gøres ved at <a href=\"$a\" target=\"_blank\">rette bruger profil</a>.</p>';
+$string['localfilepath'] = 'For at angive din egen lokale sti til denne resource skal du vælge en fil fra drevet. (som regel CD-ROM drevet) på din computer hvor der skal være adgang til resourcen. Filen vil ikke blive uploadet men stien vil blive gemt så du ikke skal finde den igen næste gang.';
+$string['localfileselect'] = 'Vælg stien til filen';
 $string['maindirectory'] = 'Main directory';
 $string['modulename'] = 'Materiale';
 $string['modulenameplural'] = 'Materialer';
@@ -49,11 +61,13 @@ $string['newtoolbar'] = 'Vis toolbar';
 $string['newwidth'] = 'Almindelig vinduebredde (i pixels)';
 $string['newwindow'] = 'Nyt vindue';
 $string['newwindowopen'] = 'Vis denne resource i et nyt popupvindue';
+$string['notallowedlocalfileaccess'] = 'Adgang til lokale filer er ikke muligt, så denne resource er ikke tilgængelig.';
 $string['note'] = 'Note';
 $string['notefile'] = 'For at uploade filer til kurset(så de vises i denne liste) brug<a href=\"$a\" >File Manager</a>.';
 $string['notypechosen'] = 'Du skal vælge en type. Brug tilbage knappen og prøv igen';
 $string['pagedisplay'] = 'Vis denne resource i dette vindue';
 $string['pagewindow'] = 'Samme vindue';
+$string['pan'] = 'Panorèr';
 $string['parameter'] = 'Parameter';
 $string['parameters'] = 'Parametre';
 $string['popupresource'] = 'Dette materiale skal  vises i et popupvindue.';
@@ -74,6 +88,8 @@ $string['resourcetypehtml'] = 'Webside';
 $string['resourcetypelabel'] = 'Overskrift';
 $string['resourcetypetext'] = 'Tekstside';
 $string['searchweb'] = 'Søge';
+$string['serverurl'] = 'Server URL ($a->wwwroot)';
 $string['variablename'] = 'Variabel navn';
+$string['vol'] = 'vol';
 
 ?>

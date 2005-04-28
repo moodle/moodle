@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 (2004083100)
+      // wiki.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
 $string['action'] = '-- Action --';
@@ -158,7 +158,8 @@ $string['tablinks'] = 'Links';
 $string['tabview'] = 'Vis';
 $string['thanksforcontribution'] = 'Tak for dit bidrag.';
 $string['thispageisntlinkedfromanywhereelse'] = 'Der er ikke nogle referencer til denne side';
-$string['updatedpages'] = 'Updaterede sider';
+$string['updatedpages'] = 'Opdaterede sider';
+$string['updatedwikipages'] = 'Opdaterede wikisider';
 $string['uplerror'] = 'Der er desværre gået noget galt under upload af filen.';
 $string['uplinsect'] = 'Upload til';
 $string['uplnewnam'] = 'Gem med et andet filnavn';

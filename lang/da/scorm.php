@@ -1,8 +1,11 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.3.3 (2004052503)
+      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
+$string['asset'] = 'Aktiver';
+$string['attr_error'] = 'Forkert værdi for attribut ($a->attr) i tag $a->tag.';
 $string['autocontinue'] = 'Auto-fortsæt';
+$string['badmanifest'] = 'Fejl i manifestet: se fejllog';
 $string['browse'] = 'Vis';
 $string['browsed'] = 'Vist';
 $string['browsemode'] = 'Visnings tilstand';
@@ -18,9 +21,23 @@ $string['configpopupwidth'] = 'Hvad skal standartbredden være for et nyt popupvi
 $string['coursepacket'] = 'Kursuspakke';
 $string['coursestruct'] = 'Kursusstruktur';
 $string['datadir'] = 'Filsystems fejl: Kan ikke oprette et bibliotek til kursusdata.';
+$string['display'] = 'Display';
+$string['domxml'] = 'Externt DOMXML library';
 $string['entercourse'] = 'Skriv SCORM kursus';
+$string['errorlogs'] = 'Fejl log';
+$string['exit'] = 'Forlad SCORM kursus';
+$string['expcoll'] = 'Udvis / Kollaps';
 $string['failed'] = 'Dumpet';
+$string['found'] = 'Manifest fundet';
+$string['gradeaverage'] = 'Gennemsnitlig bedømmelse';
+$string['gradehighest'] = 'Højeste bedømmelse';
+$string['grademethod'] = 'Bedømmelsesmetode';
+$string['gradescoes'] = 'Scores sitaution';
+$string['gradesum'] = 'Samlet bedømmelse';
+$string['guestsno'] = 'Gæster kan ikke se SCORMkurset';
 $string['incomplete'] = 'Ukomplet';
+$string['missing_attribute'] = 'Mangler attribut $a->attr i tag $a->tag';
+$string['missing_tag'] = 'Mangler tag $a->tag';
 $string['mode'] = 'Tilstand';
 $string['modulename'] = 'Scorm';
 $string['modulenameplural'] = 'Scorms';
@@ -32,21 +49,33 @@ $string['newwidth'] = 'Standart vinduesbredde (i pixels)';
 $string['newwindow'] = 'Nyt vindue';
 $string['newwindowopen'] = 'Vis denne scormpakke i et nyt popupvindue';
 $string['next'] = 'Fortsæt';
+$string['no_attributes'] = 'Tagget $a->tag kræver attributter';
+$string['no_children'] = 'Tagget $a->tag kræver undertags';
 $string['nomanifest'] = 'Manifest ikke fundet';
 $string['noreports'] = 'Ingen rapport at vise';
 $string['normal'] = 'Normal';
+$string['not_corr_type'] = 'Type rod i tag $a->tag';
 $string['notattempted'] = 'Ikke forsøgt';
+$string['organizations'] = 'Organisationer';
 $string['packagedir'] = 'Filsystemfejl: Kan ikke lave bibliotek til pakken.';
 $string['passed'] = 'Godkendt';
+$string['php5'] = 'PHP 5 (DOMXML native library)';
+$string['position_error'] = 'Tagget $a->tag kan ikke stå inde i et $a->parent tag 	';
 $string['prev'] = 'Forrige';
 $string['regular'] = 'Regulært manifest';
 $string['report'] = 'Rapport';
 $string['review'] = 'Gennemse';
 $string['scoes'] = 'Scoes';
 $string['score'] = 'Score';
+$string['syntax'] = 'Syntaks fejl';
+$string['tag_error'] = 'Ukendt tag ($a->tag) med indholdet: $a->value';
+$string['too_many_attributes'] = 'Tagget $a->tag har for mange attributter';
+$string['too_many_children'] = 'Tagget $a->tag har for mange undertags';
 $string['trackingloose'] = 'ADVARSEL: Data fra denne SCORM pakke vil gå tabt';
 $string['validateascorm'] = 'Validér en SCORMpakke';
 $string['validation'] = 'Validerings resultat';
+$string['validationtype'] = 'Disse indstillinger kontroller DOMXML biblioteket, det bruges til at validere SCORM Manifestet. Hvis du ikke er helt sikker er det bedst at lade dem være.';
+$string['versionwarning'] = 'Manifestversionen er ældre end version 1.3. Advarsel ved $a->tag tagget.';
 $string['viewallreports'] = 'Vis rapport for $a forsøg';
 
 ?>
