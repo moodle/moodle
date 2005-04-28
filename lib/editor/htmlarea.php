@@ -2466,13 +2466,13 @@ HTMLArea.formathtml = function (html) {
     format.regex.unindent = /^<\/(HTML|HEAD|BODY|FORM|TABLE|TBODY|THEAD|TR|UL|OL)[ >]/i ;
     format.regex.inremove = new RegExp( indentchar );
 
-    var formatted  = html.replace( format.regex.tagopen, '\n$&' );
-    formatted      = formatted.replace( format.regex.tagclose, '$&\n' );
-    formatted      = formatted.replace( format.regex.taglines, '$&\n' );
-    formatted      = formatted.replace( format.regex.tagsmain, '\n$&\n' );
+    //var formatted  = html.replace( format.regex.tagopen, '\n$&' );
+    //formatted      = formatted.replace( format.regex.tagclose, '$&\n' );
+    //formatted      = formatted.replace( format.regex.taglines, '$&\n' );
+    //formatted      = formatted.replace( format.regex.tagsmain, '\n$&\n' );
 
     var indentation = '';
-    var tolines = formatted.split(format.regex.splitter);
+    var tolines = html.split(format.regex.splitter);
     var formatted = '';
 
     for (var i = 0; i < tolines.length; i++) {
@@ -2480,13 +2480,13 @@ HTMLArea.formathtml = function (html) {
         if (line.length < 1) {
             continue;
         }
-        if (format.regex.unindent.test(line)) {
+        if (format.regex.unindent.test(line) && !format.regex.notouchy.test(line)) {
             indentation = indentation.replace(format.regex.inremove, '') ;
         }
 
-        line = !format.regex.notouchy.test(line) ? line.replace(format.regex.tagopen, '\n$&') : line.replace(format.regex.tagopen, '$&');
-        line = !format.regex.notouchy.test(line) ? line.replace(format.regex.tagclose, '$&\n'): line.replace(format.regex.tagclose, '$&');
-        line = !format.regex.notouchy.test(line) ? line.replace(format.regex.tagsmain, '$&\n'): line.replace(format.regex.tagsmain, '$&');
+        line = !format.regex.notouchy.test(line) ? line.replace(format.regex.tagopen, '\n$&') : line;
+        line = !format.regex.notouchy.test(line) ? line.replace(format.regex.tagclose, '$&\n'): line;
+        line = !format.regex.notouchy.test(line) ? line.replace(format.regex.tagsmain, '$&\n'): line;
 
         formatted += indentation + line;
 
