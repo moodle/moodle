@@ -157,18 +157,15 @@
     <pre class="code">class block_simplehtml extends block_base {
     function init() {
         $this->title = get_string('simplehtml', 'block_simplehtml');
-        $this->content_type = BLOCK_TYPE_TEXT;
         $this->version = 2004111200;
     }
 }</pre>
 
     <p>The first line is our block class definition; it must be named exactly in the manner shown. Again, only the "simplehtml" part can (and indeed must) change; everything else is standardized.</p>
 
-    <p>Our class is then given a small method: <a class="function_title" href="#method_init">init</a>. This is essential for all blocks, and its function is to set the three class member variables listed inside it. But what do these values actually mean? Here's a more detailed description.</p>
+    <p>Our class is then given a small method: <a class="function_title" href="#method_init">init</a>. This is essential for all blocks, and its purpose is to set the two class member variables listed inside it. But what do these values actually mean? Here's a more detailed description.</p>
 
     <p><a class="variable_title" href="#variable_title">$this->title</a> is the title displayed in the header of our block. We can set it to whatever we like; in this case it's set to read the actual title from a language file we are presumably distributing together with the block. I 'll skip ahead a bit here and say that if you want your block to display <strong>no</strong> title at all, then you should set this to any descriptive value you want (but <strong>not</strong> make it an empty string). We will later see <a href="#section_eye_candy">how to disable the title's display</a>.</p>
-
-    <p><a class="variable_title" href="#variable_content_type">$this->content_type</a> tells Moodle what kind of content to expect from this block. Here we have two simple choices. Either we set it to <a class="named_constant" href="#constant_block_type_text">BLOCK_TYPE_TEXT</a>, which tells Moodle to just take our content and display it on screen as-is; or we set it to <a class="named_constant" href="#constant_block_type_list">BLOCK_TYPE_LIST</a>, which tells Moodle that we want our block to display a nicely formatted list of items with optional icons next to each one. We can use <a class="named_constant" href="#constant_block_type_text">BLOCK_TYPE_TEXT</a> to manually create any content we want (do not be fooled by the name; HTML is allowed in the block's content without restriction) or use <a class="named_constant" href="#constant_block_type_list">BLOCK_TYPE_LIST</a> to easily create a simple menu.</p>
 
     <p><a class="variable_title" href="#variable_version">$this->version</a> is the version of our block. This actually would only make a difference if your block wanted to keep its own data in special tables in the database (i.e. for very complex blocks). In that case the version number is used exactly as it's used in activities; an upgrade script uses it to incrementally upgrade an "old" version of the block's data to the latest. We will outline this process further ahead, since blocks tend to be relatively simple and not hold their own private data. In our example, this is certainly the case so we just set <a class="variable_title" href="#variable_version">$this->version</a> to <strong>YYYYMMDD00</strong> and forget about it.</p>
 
@@ -279,7 +276,7 @@ $this->content->footer = '';</pre>
 
     <p>Implementing instance configuration for the block's contents was good enough to whet our apetite, but who wants to stop there? Why not customize the block's title, too?</p>
 
-    <p>Why not, indeed. Well, our first attempt is natural enough: let's add another field to <span class="filename">/blocks/simplehtml/config_instance.html</span>. Here goes:</p>
+    <p>Why not, indeed. Well, our first attempt to achieve this is natural enough: let's add another field to <span class="filename">/blocks/simplehtml/config_instance.html</span>. Here goes:</p>
 
     <pre class="code">
 &lt;tr valign="top"&gt;
@@ -311,17 +308,9 @@ function specialization() {
 
     <p>Now would be a good time to mention another nifty technique that can be used in blocks, and which comes in handy quite often. Specifically, it may be the case that our block will have something interesting to display some of the time; but in some other cases, it won't have anything useful to say. (An example here would be the "Recent Activity" block, in the case where no recent activity in fact exists. However in that case the block chooses to explicitly inform you of the lack of said activity, which is arguably useful). It would be nice, then, to be able to have our block "disappear" if it's not needed to display it.</p>
 
-    <p>This is indeed possible, and the way to do it is to make sure that after the <a class="function_title" href="#method_get_content">get_content</a> method is called, the block is completely void of content. Specifically:</p>
+    <p>This is indeed possible, and the way to do it is to make sure that after the <a class="function_title" href="#method_get_content">get_content</a> method is called, the block is completely void of content. Specifically, "void of content" means that both $this->content->text and $this->content->footer are each equal to the empty string (''). Moodle performs this check by calling the block's <a class="function_title" href="#method_is_empty">is_empty()</a> method, and if the block is indeed empty then it is not displayed at all.</p>
 
-    <ul>
-
-    <li>If <a class="variable_title" href="#variable_content_type">$this->content_type</a> equals <a class="named_constant" href="#constant_block_type_text">BLOCK_TYPE_TEXT</a>, then "void of content" means that both $this->content->text and $this->content->footer are each equal to the empty string ('').</li>
-
-    <li>If <a class="variable_title" href="#variable_content_type">$this->content_type</a> equals <a class="named_constant" href="#constant_block_type_list">BLOCK_TYPE_LIST</a>, then "void of content" means that $this->content->items is an empty array and $this->content->footer is equal to the empty string ('').</li>
-    
-    </ul>
-
-    <p>Refer to <a href="#ready_set_go">Part 3</a> which explains the <a class="function_title" href="#method_init">init</a> function for more information on <a class="variable_title" href="#variable_content_type">$this->content_type</a> and its significance. Note that the exact value of the block's title and the presence or absence of a <a class="function_title" href="#method_hide_header">hide_header</a> method do <em>not</em> affect this behavior. A block is considered empty if it has no content, irrespective of anything else.</p>
+    <p>Note that the exact value of the block's title and the presence or absence of a <a class="function_title" href="#method_hide_header">hide_header</a> method do <em>not</em> affect this behavior. A block is considered empty if it has no content, irrespective of anything else.</p>
 
 </li>
 
@@ -554,13 +543,21 @@ function applicable_formats() {
 
     <h3>Lists and Icons</h3>
 
-    <p>In this final part of the guide, we will briefly discuss what the differences between blocks of <a class="named_constant" href="#constant_block_type_text">BLOCK_TYPE_TEXT</a> and those of <a class="named_constant" href="#constant_block_type_list">BLOCK_TYPE_LIST</a> are. The vast majority of the techniques and options discussed before apply to any block; the only difference is in the handling of the <a class="variable_title" href="#variable_content">$this->content</a> variable.</p>
+    <p>In this final part of the guide we will briefly discuss an additional capability of Moodle's block system, namely the ability to very easily create blocks that display a list of choices to the user. This list is displayed with one item per line, and an optional image (icon) next to the item. An example of such a <em>list block</em> is the standard Moodle "admin" block, which illustrates all the points discussed in this section.</p>
+    
+    <p>As we have seen so far, blocks of use two properties of <a class="variable_title" href="#variable_content">$this->content</a>: "text" and "footer". The text is displayed as-is as the block content, and the footer is displayed below the content in a smaller font size. List blocks use $this->content->footer in the exact same way, but they ignore $this->content->text.</p>
 
-    <p>As we have seen, blocks of <a class="named_constant" href="#constant_block_type_text">BLOCK_TYPE_TEXT</a> use two properties of <a class="variable_title" href="#variable_content">$this->content</a>: "text" and "footer". The text is displayed as-is as the block content, and the footer goes below in smaller font size. Blocks of <a class="named_constant" href="#constant_block_type_list">BLOCK_TYPE_LIST</a> use $this->content->footer in the exact same way, but they ignore $this->content->text.</p>
+    <p>Instead, Moodle expects such blocks to set two other properties when the <a class="function_title" href="#method_get_content">get_content</a> method is called: $this->content->items and $this->content->icons. $this->content->items should be a numerically indexed array containing elements that represent the HTML for each item in the list that is going to be displayed. Usually these items will be HTML anchor tags which provide links to some page. $this->content->icons should also be a numerically indexed array, with exactly as many items as $this->content->items has. Each of these items should be a fully qualified HTML &lt;img&gt; tag, with "src", "height", "width" and "alt" attributes. Obviously, it makes sense to keep the images small and of a uniform size.</p>
 
-    <p>Instead, Moodle expects such blocks to set two other properties when the <a class="function_title" href="#method_get_content">get_content</a> method is called. $this->content->items should be a numerically indexed array containing elements that represent the HTML for each item in the list that is going to be displayed. Usually these items will be links, so being free to write HTML allows us to provide anchor tags as list items. $this->content->icons should also be a numerically indexed array, with exactly as many items as $this->content->items has. Each of these items should be a fully qualified HTML &lt;img&gt; tag, with "src", "height", "width" and "alt" attributes. Obviously, it makes sense to keep the images small and of a uniform size.</p>
+    <p>In order to tell Moodle that we want to have a list block instead of the standard text block, we need to make a small change to our block class declaration. Instead of extending class <strong>block_base</strong>, our block will extend class <strong>block_list</strong>. For example:</p>
 
-    <p>Thus, if we were to create a list block, our <a class="function_title" href="#method_get_content">get_content</a> method might read:</p>
+    <pre class="code">
+class block_my_menu extends block_list {
+    // The init() method does not need to change at all
+}
+</pre>
+
+    <p>In addition to making this change, we must of course also modify the <a class="function_title" href="#method_get_content">get_content</a> method to construct the <a class="variable_title" href="#variable_content">$this->content</a> variable as discussed above:</p>    
 
     <pre class="code">
 function get_content() {
@@ -581,7 +578,7 @@ function get_content() {
     return $this->content;
 }</pre>
 
-    <p>The end result when such a block is printed will be a list of items with the corresponding icons before each one, and an optional footer below. For a real world block of this type, there is no better example than the "admin" block which illustrates all of the above.</p>
+    <p>To summarize, if we want to create a list block instead of a text block, we just need to change the block class declaration and the <a class="function_title" href="#method_get_content">get_content</a> method. Adding the mandatory <a class="function_title" href="#method_init">init</a> method as discussed earlier will then give us our first list block in no time!</p>
 
 </li>
 
@@ -687,9 +684,9 @@ function get_content() {
 
     <p>This method should, when called, populate the <a class="variable_title" href="#variable_content">$this->content</a> variable of your block. Populating the variable means:
 
-    <p><strong>EITHER</strong><br />defining $this->content->text and $this->content->footer if your block is of type <a class="named_constant" href="#constant_block_type_text">BLOCK_TYPE_TEXT</a>. Both of these should be strings, and can contain arbitrary HTML.</p>
+    <p><strong>EITHER</strong><br />defining $this->content->text and $this->content->footer if your block derives from <strong>block_base</strong>. Both of these should be strings, and can contain arbitrary HTML.</p>
 
-    <p><strong>OR</strong><br />defining $this->content->items, $this->content->icons and $this->content->footer if your block is of type <a class="named_constant" href="#constant_block_type_list">BLOCK_TYPE_LIST</a>. The first two should be numerically indexed arrays having the exact same number of elements. $this->content->items is an array of strings that can contain arbitrary HTML while $this->content->icons also contains should strings, but those must be fully-qualified HTML &lt;img&gt; tags <strong>and nothing else</strong>. $this->content->footer is a string, as above.</p>
+    <p><strong>OR</strong><br />defining $this->content->items, $this->content->icons and $this->content->footer if your block derives from <strong>block_list</strong>. The first two should be numerically indexed arrays having the exact same number of elements. $this->content->items is an array of strings that can contain arbitrary HTML while $this->content->icons also contains should strings, but those must be fully-qualified HTML &lt;img&gt; tags <strong>and nothing else</strong>. $this->content->footer is a string, as above.</p>
 
     <p>If you set <em>all</em> of these variables to their default "empty" values (empty arrays for the arrays and empty strings for the strings), the block will <strong>not</strong> be displayed at all except to editing users. This is a good way of having your block hide itself to unclutter the screen if there is no reason to have it displayed.</p>
 
@@ -758,11 +755,10 @@ function html_attributes() {
     <pre class="code">
 function init() {
     $this->title = get_string('simplehtml', 'block_simplehtml');
-    $this->content_type = BLOCK_TYPE_TEXT;
     $this->version = 2004111200;
 }</pre>
 
-    <p>This method must be implemented for all blocks. It has to assign meaningful values to the object variables <a class="variable_title" href="#variable_title">$this->title</a>, <a class="variable_title" href="#variable_content_type">$this->content_type</a> (which must be either <a class="named_constant" href="#constant_block_type_text">BLOCK_TYPE_TEXT</a> or <a class="named_constant" href="#constant_block_type_list">BLOCK_TYPE_LIST</a>) and <a class="variable_title" href="#variable_version">$this->version</a> (which is used by Moodle for performing automatic updates when available).</p>
+    <p>This method must be implemented for all blocks. It has to assign meaningful values to the object variables <a class="variable_title" href="#variable_title">$this->title</a> and <a class="variable_title" href="#variable_version">$this->version</a> (which is used by Moodle for performing automatic updates when available).</p>
 
     <p>No return value is expected from this method.</p>
 
@@ -948,6 +944,27 @@ function get_version() {
     <p>This method returns the value of <a class="variable_title" href="#variable_version">$this->version</a>, and is the preferred way of accessing that variable. It is guaranteed to always work, now and forever. Directly accessing the variable is <strong>not recommended</strong>; future library changes may break compatibility with code that does so.</p>
 
 </li>
+
+<li id="method_is_empty">
+    <div class="function_title">is_empty</div>
+    <p>For blocks that extend class <strong>block_base</strong>:</p>
+    <pre class="code">
+function is_empty() {
+    $this->get_content();
+    return(empty($this->content->text) && empty($this->content->footer));
+}</pre>
+    <p>For blocks that extend class <strong>block_list</strong>:</p>
+    <pre class="code">
+function is_empty() {
+    $this->get_content();
+    return (empty($this->content->items) && empty($this->content->footer));
+}
+</pre>
+
+    <p>This method returns the a boolean true/false value, depending on whether the block has any content at all to display. Blocks without content are not displayed by the framework.</p>
+
+</li>
+
 <li id="method_name">
     <div class="function_title">name</div>
     <pre class="code">
@@ -1016,7 +1033,7 @@ function name() {
 
     <div class="variable_title">$this->content_type</div>
 
-    <p>This variable instructs Moodle on what type of content it should assume the block has. It is essential that it has a meaningful value, as Moodle depends on this for correctly displaying the block on screen. Consequently, this variable is closely tied with the varaible <a class="variable_title" href="#variable_content">$this->content</a>. The variable is expected to have a valid value after the framework calls the <a class="function_title" href="#method_init">init</a> method for each block.</p>
+    <p>This variable instructs Moodle on what type of content it should assume the block has, and is used to differentiate text blocks from list blocks. It is essential that it has a meaningful value, as Moodle depends on this for correctly displaying the block on screen. Consequently, this variable is closely tied with the variable <a class="variable_title" href="#variable_content">$this->content</a>. The variable is expected to have a valid value after the framework calls the <a class="function_title" href="#method_init">init</a> method for each block.</p>
 
     <p>The only valid values for this variable are the two named constants <a class="named_constant" href="#constant_block_type_text">BLOCK_TYPE_TEXT</a> and <a class="named_constant" href="#constant_block_type_list">BLOCK_TYPE_LIST</a>.</p>
   </li>
@@ -1132,6 +1149,12 @@ class CourseBlock_online_users extends MoodleBlock { ... }
 
     <pre class="code">
 class block_online_users extends block_base { ... }
+</pre>
+
+    <p>An exception to the above is the special case where the block is intended to display a list of items instead of arbitrary text; in this case the block class must derive from class <strong>block_list</strong> instead, like this:<p>
+    
+    <pre class="code">
+class block_admin extends block_list { ... }
 </pre>
 
 </li>
