@@ -20,21 +20,36 @@
         if (!confirm_sesskey()) {
             error(get_string('confirmsesskeybad', 'error'));
         }
+        
+        if ($module = optional_param('module', '', PARAM_CLEANFILE)) {
+            // if the config.html contains a hidden form field giving
+            // the module name then the form does not have to prefix all
+            // its variable names, we will do it here.
+            $moduleprefix = $module.'_';
+            // let the module process the form data if it has to,
+            // $config is passed to this function by reference
+            require_once("$CFG->dirroot/mod/$module/lib.php");
+            $moduleconfig = $module.'_process_options';
+            if (function_exists($moduleconfig)) {
+                $moduleconfig($config);
+            }
+        } else {
+            $moduleprefix = '';
+        }
+
         print_header();
+
         foreach ($config as $name => $value) {
-            set_config($name, $value);
+            set_config($moduleprefix.$name, $value);
         }
         redirect("$CFG->wwwroot/$CFG->admin/modules.php", get_string("changessaved"), 1);
         exit;
-	}
+    }
 
 /// Otherwise print the form.
 
-    require_variable($module);
-
-    $module = clean_filename($module);
-	require_once("$CFG->dirroot/mod/$module/lib.php");
-
+    $module = required_param('module', '', PARAM_CLEANFILE);
+    require_once("$CFG->dirroot/mod/$module/lib.php");
 
     $stradmin = get_string("administration");
     $strconfiguration = get_string("configuration");
@@ -52,7 +67,7 @@
     echo "<br />";
 
     print_simple_box_start("center", "");
-	include("$CFG->dirroot/mod/$module/config.html");
+    include("$CFG->dirroot/mod/$module/config.html");
     print_simple_box_end();
 
     print_footer();
