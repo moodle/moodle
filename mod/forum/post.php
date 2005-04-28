@@ -465,16 +465,9 @@
 
             forum_change_discussionid($post->id, $newid);
 
-            // set timemodified to time of last post in each discussion
-            $lastpost = get_record_sql("SELECT MAX(modified) AS time
-                                              FROM {$CFG->prefix}forum_posts
-                                              WHERE discussion = '$discussion->id'");
-            set_field('forum_discussions', 'timemodified', $lastpost->time, 'id', $discussion->id);
-            $lastpost = get_record_sql("SELECT MAX(modified) AS time
-                                              FROM {$CFG->prefix}forum_posts
-                                              WHERE discussion = '$newid'");
-            set_field('forum_discussions', 'timemodified', $lastpost->time, 'id', $newid);
-
+            // update last post in each discussion
+            forum_discussion_update_last_post($discussion->id);
+            forum_discussion_update_last_post($newid);
 
             add_to_log($discussion->course, "forum", "prune post",
                            "discuss.php?d=$newid", "$post->id", $cm->id);

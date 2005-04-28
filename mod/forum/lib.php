@@ -2383,11 +2383,13 @@ function forum_delete_discussion($discussion) {
 
 
 function forum_delete_post($post, $children=false) {
-   if ($children) {
-       if ($childposts = get_records('forum_posts', 'parent', $post->id)) {
+   if ($childposts = get_records('forum_posts', 'parent', $post->id)) {
+       if ($children) {
            foreach ($childposts as $childpost) {
                forum_delete_post($childpost, true);
            }
+       } else {
+           return false;
        }
    }
    if (delete_records("forum_posts", "id", $post->id)) {
@@ -2401,6 +2403,10 @@ function forum_delete_post($post, $children=false) {
            $post->forum  = $discussion->forum;
            forum_delete_old_attachments($post);
        }
+
+   /// Just in case we are deleting the last post
+       forum_discussion_update_last_post($post->discussion);
+
        return true;
    }
    return false;
@@ -3502,5 +3508,39 @@ function forum_tp_clean_read_records() {
     }
 
 }    
+
+
+/**
+ * Sets the last post for a given discussion
+ **/
+function forum_discussion_update_last_post($discussionid) {
+    global $CFG, $db;
+
+/// Check the given discussion exists
+    if (!record_exists('forum_discussions', 'id', $discussionid)) {
+        return false;
+    }
+    
+/// Use SQL to find the last post for this discussion
+    $sql = 'SELECT `id`, `userid`, `modified` '.
+           'FROM '.$CFG->prefix.'forum_posts '.
+           'WHERE `discussion`='.$discussionid.' '.
+           'ORDER BY `modified` DESC ';
+
+/// Lets go find the last post
+    if (($lastpost = get_record_sql($sql, true))) {
+        $discussionobject = new Object;
+        $discussionobject->id = $discussionid;
+        $discussionobject->usermodified = $lastpost->userid;
+        $discussionobject->timemodified = $lastpost->modified;
+        if (update_record('forum_discussions', $discussionobject)) {
+            return $lastpost->id;
+        }
+    }
+
+/// To get here either we couldn't find a post for the discussion (weird)
+/// or we couldn't update the discussion record (weird x2)
+    return false;
+}
          
 ?>
