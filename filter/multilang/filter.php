@@ -69,7 +69,7 @@ function multilang_filter($courseid, $text) {
     }
 
 /// Break the text into lang sections
-    $search = '/<(?:lang|span) lang="([a-zA-Z_]*)".*?>(.+?)<\/(?:lang|span)>/is';
+    $search = '/<(?:lang|span) lang="([a-zA-Z_-]*)".*?>(.+?)<\/(?:lang|span)>/is';
     preg_match_all($search,$text,$list_of_langs);
 
 /// Get the existing sections langs
@@ -77,6 +77,9 @@ function multilang_filter($courseid, $text) {
     $bestkey   = 0;
     //Iterate
     foreach ($list_of_langs[1] as $key => $lang) {
+        //Normalize: Moodle's langs are always lowercase and they use the underscore
+        //Should we be stricter?
+        $lang = strtolower(str_replace('-','_',$lang));
         $foundkey = array_search($lang, $preflangs);
         if ($foundkey !== false && $foundkey !== NULL && $foundkey < $minpref) {
             $minpref = $foundkey;
@@ -87,7 +90,10 @@ function multilang_filter($courseid, $text) {
         }
     }
 
-    $text = trim($list_of_langs[2][$bestkey]);
+    //If we have found some lang
+    if (!empty($lang)) {
+        $text = trim($list_of_langs[2][$bestkey]);
+    }
 
     return $text;
 }
