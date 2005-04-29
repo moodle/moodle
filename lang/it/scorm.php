@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4 ready tomorrow (2004083000)
+      // scorm.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['asset'] = 'Asset';
@@ -21,12 +21,17 @@ $string['configpopupwidth'] = 'Larghezza standard per le nuove finestre di popup
 $string['coursepacket'] = 'Pacchetto del corso';
 $string['coursestruct'] = 'Struttura del corso';
 $string['datadir'] = 'Errore Filesystem: non è possibile creare la directory dei dati';
+$string['details'] = 'Dettagli tracciamento SCO';
 $string['display'] = 'Visualizzazione';
 $string['domxml'] = 'Libreria esterna DOMXML';
+$string['enablebrowse'] = 'Abilita il modo Visita';
 $string['entercourse'] = 'Segui corso SCORM';
 $string['errorlogs'] = 'Errori';
+$string['exit'] = 'Esci dal corso SCORM';
+$string['expcoll'] = 'Espandi/Collidi';
 $string['failed'] = 'Fallito';
 $string['found'] = 'Manifest trovato';
+$string['frameheight'] = 'Questa preferenza imposta l\'altezza del frame degli SCO';
 $string['gradeaverage'] = 'Media dei voti';
 $string['gradehighest'] = 'Il voto più alto';
 $string['grademethod'] = 'Metodo di valutazione';
