@@ -270,6 +270,9 @@
 
     **************************************************************************/
     else if ($action == 'detail') {
+
+        $formattextdefoptions->para = false;  //I'll use it widely in this page
+
         $userid = optional_param('userid', NULL, PARAM_INT); // if empty, then will display the general detailed view
         $try    = optional_param('try', NULL, PARAM_INT);
 
@@ -407,7 +410,7 @@
             $answerdata = new stdClass;
 
             $answerpage->title = format_string($page->title);
-            $answerpage->contents = $page->contents;
+            $answerpage->contents = format_text($page->contents);
 
             // get the page qtype
             switch ($page->qtype) {
@@ -517,9 +520,9 @@
                                     $data = "<input type=\"checkbox\" readonly=\"readonly\" name=\"answer[$i]\" value=\"0\" disabled=\"disabled\" />";
                                 }
                                 if (($answer->score > 0 && $lesson->custom) || (lesson_iscorrect($page->id, $answer->jumpto) && !$lesson->custom)) {
-                                    $data .= "<font class=highlight>$answer->answer</font>";
+                                    $data .= "<font class=highlight>".format_text($answer->answer,FORMAT_MOODLE,$formattextdefoptions)."</font>";
                                 } else {
-                                    $data .= $answer->answer;
+                                    $data .= format_text($answer->answer,FORMAT_MOODLE,$formattextdefoptions);
                                 }
                             } else {
                                 if ($answer->id == $useranswer->answerid) {
@@ -546,9 +549,9 @@
                                     $data = "<input type=\"checkbox\" readonly=\"readonly\" name=\"answer[$i]\" value=\"0\" disabled=\"disabled\" />";
                                 }
                                 if (($answer->score > 0 && $lesson->custom) || (lesson_iscorrect($page->id, $answer->jumpto) && !$lesson->custom)) {
-                                    $data .= "<font class=\"highlight\">$answer->answer</font>";
+                                    $data .= "<font class=\"highlight\">".format_text($answer->answer,FORMAT_MOODLE,$formattextdefoptions)."</font>";
                                 } else {
-                                    $data .= $answer->answer;
+                                    $data .= format_text($answer->answer,FORMAT_MOODLE,$formattextdefoptions);
                                 }
                             }
                             if (isset($pagestats[$page->id][$answer->id])) {
@@ -655,12 +658,12 @@
                                         $answerdata->score = get_string("didnotreceivecredit", "lesson");
                                     }
                                 }
-                                $data = "<select disabled=\"disabled\"><option selected>$answer->answer</option></select>";
+                                $data = "<select disabled=\"disabled\"><option selected>".strip_tags(format_text($answer->answer,FORMAT_MOODLE,$formattextdefoptions))."</option></select>";
                                 if ($useranswer != NULL) {
                                     $userresponse = explode(",", $useranswer->useranswer);
-                                    $data .= "<select disabled=\"disabled\"><option selected>".$answers[$userresponse[$i]]->response."</option></select>";
+                                    $data .= "<select disabled=\"disabled\"><option selected>".strip_tags(format_string($answers[$userresponse[$i]]->response,FORMAT_PLAIN,$formattextdefoptions))."</option></select>";
                                 } else {
-                                    $data .= "<select disabled=\"disabled\"><option selected>$answer->response</option></select>";
+                                    $data .= "<select disabled=\"disabled\"><option selected>".strip_tags(format_string($answer->response,FORMAT_PLAIN,$formattextdefoptions))."</option></select>";
                                 }
 
                                 if ($n == 2) {
@@ -722,7 +725,7 @@
                             $answerdata->answers[] = array($essayinfo->answer, $avescore);
                             break;
                         case LESSON_BRANCHTABLE :
-                            $data = "<input type=\"button\" name=\"$answer->id\" value=\"$answer->answer\" disabled=\"disabled\"> ";
+                            $data = "<input type=\"button\" name=\"$answer->id\" value=\"".strip_tags(format_text($answer->answer, FORMAT_MOODLE,$formattextdefoptions))."\" disabled=\"disabled\"> ";
                             $data .= get_string("jumptsto", "lesson").": ";
                             if ($answer->jumpto == 0) {
                                 $data .= get_string("thispage", "lesson");
@@ -856,7 +859,7 @@
                 $table->data[] = $modified;
             }
             if ($page->answerdata->response != NULL) {
-                $table->data[] = array($fontstart.get_string("response", "lesson").": <br />".$fontend.$fontstart2.$page->answerdata->response.$fontend2, " ");
+                $table->data[] = array($fontstart.get_string("response", "lesson").": <br />".$fontend.$fontstart2.format_text($page->answerdata->response,FORMAT_MOODLE,$formattextdefoptions).$fontend2, " ");
             }
             $table->data[] = array($page->answerdata->score, " ");
             print_table($table);

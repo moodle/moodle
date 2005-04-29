@@ -686,7 +686,8 @@
                         foreach ($answers as $answer) {
                             if ($answer->response != NULL) {
                                 echo "<tr><td align=\"right\">";
-                                echo "<b>$answer->answer: </b></td><td valign=\"bottom\">";
+                                $options->para = false;
+                                echo "<b>".format_text($answer->answer,FORMAT_MOODLE,$options).": </b></td><td valign=\"bottom\">";
                                 echo "<label for=\"response[$answer->id]\" class=\"hidden-label\">response[$answer->id]</label><select id=\"response[$answer->id]\" name=\"response[$answer->id]\">"; //CDC hidden label added.
                                 if (isset($USER->modattempts[$lesson->id])) {
                                     $selected = trim($answers[$useranswers[$t]]->response);                                    
@@ -743,9 +744,10 @@
                                 }
                             }
                             echo "<td align=\"center\"><table><tr>";
+                            $options->para=false;
                             foreach ($otherjumps as $otherjump) {
                                     echo "<td><input type=\"button\" onclick=\"document.answerform.jumpto.value=$otherjump->jumpto;document.answerform.submit();\"".
-                                         "value = \"$otherjump->answer\" /></td>";
+                                         "value = \"".strip_tags(format_text($otherjump->answer,FORMAT_MOODLE,$options))."\" /></td>";
                             }
                             echo "</tr></table></td>";
                             foreach ($nextprevious as $jump) {
@@ -762,10 +764,11 @@
                                     echo "<tr><td><input type=\"button\" onclick=\"document.answerform.jumpto.value=$jump->jumpto;document.answerform.submit();\"".
                                          "value = \"$jump->answer\" /></td></tr>";
                                 }
-                            }
+                            }   
+                            $options->para = false;
                             foreach ($otherjumps as $otherjump) {
                                     echo "<tr><td><input type=\"button\" onclick=\"document.answerform.jumpto.value=$otherjump->jumpto;document.answerform.submit();\"".
-                                         "value = \"$otherjump->answer\" /></td></tr>";
+                                         "value = \"".strip_tags(format_text($otherjump->answer,FORMAT_MOODLE,$options))."\" /></td></tr>";
                             }
                             foreach ($nextprevious as $jump) {
                                 if ($jump->jumpto == LESSON_PREVIOUSPAGE) {
@@ -776,9 +779,10 @@
                         }
                         
                        /* if(!$lesson->slideshow) {
+                            $options->para = false;
                             foreach ($answers as $answer) {
                                 echo "<tr><td align=\"center\">";
-                                echo "<input type=\"button\" value=\"$answer->answer\"";
+                                echo "<input type=\"button\" value=\"".strip_tags(format_text($answer->answer,FORMAT_MOODLE,$options))."\"";
                                 echo "onclick=\"document.answerform.jumpto.value=$answer->jumpto;document.answerform.submit();\" />";
                                 echo "</td></tr>";
                             }
@@ -1411,6 +1415,7 @@
                                 $jumptitle = "<b>".get_string("notdefined", "lesson")."</b>";
                             }
                         }
+                        $jumptitle = format_string($jumptitle,true);
                         /// CDC-FLAG ///
                         if ($page->qtype == LESSON_MATCHING) {
                             if ($i == 1) {
@@ -1661,7 +1666,7 @@
         unset($table->data);
 
         $table->head = array(get_string("comments", "lesson"));
-        $table->data[] = array("<textarea id=\"answer\" name=\"response\" align=\"center\" rows=\"15\" cols=\"60\">".$essayinfo->response."</textarea>\n");    
+        $table->data[] = array("<textarea id=\"answer\" name=\"response\" rows=\"15\" cols=\"60\">".$essayinfo->response."</textarea>\n");    
         if ($lesson->custom) {
             for ($i=$answer->score; $i>=0; $i--) {
                 $options[$i] = $i;
@@ -1779,10 +1784,10 @@
                 $message .= $pages[$essay->pageid]->contents;
                 $message .= "<br><br>";
                 $message .= get_string('yourresponse', 'lesson').":<br>";
-                $message .= $essayinfo->answer;
+                $message .= format_text($essayinfo->answer);
                 $message .= "<br><br>";
                 $message .= get_string('commentswithname', 'lesson', $USER).":<br>";
-                $message .= $essayinfo->response;
+                $message .= format_text($essayinfo->response);
                 $message .= "<br><br>";
                 $grades = get_records_select("lesson_grades", "lessonid = $lesson->id and userid = $essay->userid", "completed", "*", $essay->retry, 1);
                 $grade = current($grades);
