@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004101900)
+      // error.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
+$string['adminprimarynoedit'] = 'L\'amministratore principale non può essere modificato dagli altri';
 $string['confirmsesskeybad'] = 'Spiacente, ma la vostra chiave di sessione non può essere confermata per completare questa operazione. Questa caratteristica di sicurezza previene l\'esecuzione accidentale o maligna di funzioni importanti a vostro nome. Assicuratevi di voler eseguirre realmente questa funzione.';
 $string['coursegroupunknown'] = 'Il corso corrisponde a un gruppo $a non specificato';
 $string['erroronline'] = 'Errore alla linea $a';
