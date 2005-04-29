@@ -17,6 +17,11 @@
     optional_variable($groupid, 0);    // Group wiki.
     optional_variable($canceledit,"");    // Editing has been cancelled
 
+/// Only want to add edit log entries if we have made some changes ie submitted a form
+    $editsave = optional_param('thankyou');
+    
+
+
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
@@ -219,9 +224,16 @@
 
 
 /// Moodle Log
-    add_to_log($course->id, "wiki", $ewiki_action, 
+    if ($editsave != NULL) { /// We've submitted an edit and have been redirected back here
+        add_to_log($course->id, "wiki", 'edit', 
                addslashes("view.php?id=$cm->id&amp;groupid=$groupid&amp;userid=$userid&amp;page=$ewiki_title"),
                format_string($wiki->name,true).": ".$ewiki_title, $cm->id, $userid);
+    } else if ($ewiki_action != 'edit') {
+        add_to_log($course->id, "wiki", $ewiki_action, 
+               addslashes("view.php?id=$cm->id&amp;groupid=$groupid&amp;userid=$userid&amp;page=$ewiki_title"),
+               format_string($wiki->name,true).": ".$ewiki_title, $cm->id, $userid);
+    } 
+
 
 /// Print the page header
 
