@@ -31,7 +31,7 @@
 
         $timenow = time();
 
-        $form->text = clean_text($form->text, $form->format);
+        //$form->text = clean_text($form->text, $form->format);
 
         if ($entry) {
             $newentry->id = $entry->id;
