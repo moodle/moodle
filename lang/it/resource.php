@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4 beta (2004082900)
+      // resource.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['addresource'] = 'Aggiungi risorsa';
@@ -37,6 +37,10 @@ $string['filtername'] = 'Auto-collegamento alla risorsa';
 $string['frameifpossible'] = 'Metti la risorsa in un frame per mantere la navigazione del sito visibile';
 $string['fulltext'] = 'Testo integrale';
 $string['htmlfragment'] = 'Codice HTML';
+$string['localfile'] = 'File locale';
+$string['localfilechoose'] = 'Scegliere un file locale (CD-ROM)';
+$string['localfilehelp'] = 'Aiuto per la visualizzazione di file locali';
+$string['localfileselect'] = 'Scegliere il percorso del file.';
 $string['maindirectory'] = 'Cartella principale';
 $string['modulename'] = 'Risorsa';
 $string['modulenameplural'] = 'Risorse';
@@ -53,6 +57,7 @@ $string['newtoolbar'] = 'Mostra pulsanti';
 $string['newwidth'] = 'Larghezza standard della finestra (in pixel)';
 $string['newwindow'] = 'Nuova finestra';
 $string['newwindowopen'] = 'Visualizza questa risorsa in una nuova finestra';
+$string['notallowedlocalfileaccess'] = 'L\'accesso ai file locali è attualmente disabilitato, così questa risorsa non risulta disponibile.';
 $string['note'] = 'Nota';
 $string['notefile'] = 'Per trasferire altri files nell\'archivio del
 
@@ -62,6 +67,7 @@ $string['notypechosen'] = 'È necessario che tu scelga un tipo. Usa il
 pulsante indietro per ritornare alla pagina precedente e riprovare.';
 $string['pagedisplay'] = 'Mostra questa risorsa nella finestra corrente';
 $string['pagewindow'] = 'Stessa finestra';
+$string['pan'] = 'Bilanciamento';
 $string['parameter'] = 'Parametro';
 $string['parameters'] = 'Parametri';
 $string['popupresource'] = 'Questa risorsa deve apparire in una finestra di popup';
@@ -82,6 +88,8 @@ $string['resourcetypehtml'] = 'Componi una pagina web';
 $string['resourcetypelabel'] = 'Inserisci una etichetta';
 $string['resourcetypetext'] = 'Componi una pagina di testo';
 $string['searchweb'] = 'Cerca una pagina web';
+$string['serverurl'] = 'Indirizzo server ($a->wwwroot)';
 $string['variablename'] = 'Nome variabile';
+$string['vol'] = 'Volume';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.4 beta (2004082300)
+      // wiki.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['action'] = '-- Azione --';
@@ -159,6 +159,7 @@ $string['tabview'] = 'Visualizza';
 $string['thanksforcontribution'] = 'Grazie per il tuo contributo.';
 $string['thispageisntlinkedfromanywhereelse'] = 'Questa pagina non è collegata da nessuna parte.';
 $string['updatedpages'] = 'Pagine aggiornate';
+$string['updatedwikipages'] = 'Pagine wiki aggiornate';
 $string['uplerror'] = 'Siamo spiacenti, ma qualcosa è andato storto durante il trasferimento del file.';
 $string['uplinsect'] = 'Trasferisci in';
 $string['uplnewnam'] = 'Salva con un nome diverso';
