@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005042300)
+      // moodle.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['action'] = 'Eylem';
@@ -111,9 +111,13 @@ $string['backupkeephelp'] = 'Herbir ders için son yedeklemelerden kaç tanesini g
 $string['backuplogdetailed'] = 'Ayrýntýlý çalýþtýrma kaydý';
 $string['backuploglaststatus'] = 'Son çalýþtýrma kaydý';
 $string['backuplogshelp'] = 'Etkinleþtirilirse kurs loglarý otomatik yedek içinde dahil edilecek';
+$string['backupmetacoursehelp'] = 'Etkinleþtirirse, metakurs bilgisi (miras kayýtlar) otomatik yedeklemelere dahil edilecek';
 $string['backupnameformat'] = '%%Y%%m%%d-%%H%%M';
 $string['backuporiginalname'] = 'Yedek Adý';
 $string['backupsavetohelp'] = 'Yedeði kaydetmek istediðiniz klasörün tam adresi<br />(kurs dizinine varsayýlan olarak kaydedilsin istiyorsanýz boþ býrakýn)';
+$string['backuptakealook'] = 'Yedek kayýtlarýnýza lütfen bir göz atýn:
+$a';
+$string['backupuserfileshelp'] = 'Kullanýcý dosyalarýnýn (ör: profil resimleri) otomatik yedeklemelere dahil edilip edilmeyeceðini seçin';
 $string['backupversion'] = 'Yedek Sürümü';
 $string['blockconfiga'] = '$a bloðu yapýlandýrýlýyor';
 $string['blockconfigbad'] = 'Bu blok doðru olarak kurulmadý ve bu yüzden bir yapýlandýrma arayüzü saðlayamaz.';
@@ -152,10 +156,16 @@ $string['choosereportfilter'] = 'Rapor için bir filtre seçiniz';
 $string['choosetheme'] = 'Tema seçiniz';
 $string['chooseuser'] = 'Kullanýcý seçiniz';
 $string['city'] = 'Þehir';
+$string['clambroken'] = 'Yöneticiniz virüs kontrolünü etkinleþtirmiþ fakat bazý þeyler yanlýþ ayarlanmýþ.<br />Dosyanýz baþarýlý bir þekilde GÖNDERÝLMEDÝ. Bu durum hakkýnda yöneticinize bu sorunu düzeltmesi için bir email iletildi.<br />Bu dosyayý daha sonra göndermeyi deneyebilirsiniz.';
 $string['clamdeletedfile'] = 'Dosya silindi';
 $string['clamdeletedfilefailed'] = 'Dosya silinemedi';
 $string['clamemailsubject'] = '$a :: Clam AV uyarisi';
+$string['clamfailed'] = 'Clam AV çalýþtýrýlýrken hata oluþtu. Geri dönen hata mesajý $a. Clam çýktýsý:';
+$string['clamlost'] = 'Site, dosya yüklemelerinde clam programýný çalýþtýrýlmak için yapýlandýrýldý, ancak Clam AV için belirtilen yol ($a) hatalýdýr.';
+$string['clamlostandactinglikevirus'] = 'Ek olarak, Clam\'ýn çalýþmasý esnasýnda hata oluþursa site, gönderilen dosyalar virüs olarak muamele görsün þeklinde yapýlandýrýldý. Bunun anlamý, bu sorunu düzeltmezseniz öðrencilerin hiçbiri dosya gönderemeyecek.';
+$string['clammovedfile'] = 'Dosya, belirtiðiniz karantina klasörüne taþýndý. Dosyanýn yeni yeri: $a';
 $string['clammovedfilebasic'] = 'Dosya karantina dizinine taþýndý.';
+$string['clamquarantinedirfailed'] = 'Dosya, belirtilen karantina klasörüne taþýnamadý: $a. Bunu, dosyada virüs bulunduðunda dosyalar silinsin olarak düzeltmek durumundasýnýz.';
 $string['clamunknownerror'] = 'Antivirus yazýlýmýnda bilinmeyen bir hata var.';
 $string['cleaningtempdata'] = 'Geçici veri temizleniyor';
 $string['clicktochange'] = 'Büyütmek için týkla';
@@ -211,6 +221,7 @@ $string['creatinggradebook'] = 'Not defteri oluþturuluyor';
 $string['creatinggroups'] = 'Gruplar oluþturuluyor';
 $string['creatinglogentries'] = 'Log kayýtlarý oluþturuluyor';
 $string['creatingmessagesinfo'] = 'Mesaj bilgileri oluþturuluyor';
+$string['creatingmetacoursedata'] = 'Metakurs bilgisi oluþturuluyor';
 $string['creatingnewcourse'] = 'Yeni kurs oluþturuluyor';
 $string['creatingscales'] = 'Ölçek oluþturuluyor';
 $string['creatingsections'] = 'Bölümler oluþturuluyor';
@@ -218,6 +229,8 @@ $string['creatingtemporarystructures'] = 'Geçici yapýlar oluþturuluyor';
 $string['creatingusers'] = 'Kullanýcýlar oluþturuluyor';
 $string['creatingxmlfile'] = 'XML dosyasý oluþturuluyor';
 $string['currency'] = 'Para birimi';
+$string['currentcourseadding'] = 'Var olan kurs, bilgiyi ekle';
+$string['currentcoursedeleting'] = 'Var olan kurs, önceki dersi sil';
 $string['currentlanguage'] = 'Geçerli dil';
 $string['currentlocaltime'] = 'bölgesel saatiniz';
 $string['currentpicture'] = 'Resim';
@@ -246,6 +259,7 @@ $string['defaultcourseteacher'] = 'Eðitmen';
 $string['defaultcourseteachers'] = 'Eðitmen(ler)';
 $string['delete'] = 'Sil';
 $string['deleteall'] = 'Tümünü sil';
+$string['deletecategorycheck'] = '<b>\'$a\'</b> kategosini tamamen silmek istediðinizden emin misiniz?<br />Bu kategoride herhangi bir kurs varsa bu kurslar \'Ana kategori\'ye veya \'Çeþitli kategorisi\'ne taþýnacak.';
 $string['deletecheck'] = '$a silinsin mi?';
 $string['deletecheckfiles'] = 'Bu dosyalarý silmek istediðinizden emin misiniz?';
 $string['deletecheckfull'] = '$a tamamen silinecek. Emin misiniz?';
@@ -279,6 +293,12 @@ $string['doyouagree'] = 'Þartlarý okuyup kabul ediyor musunuz?';
 $string['duplicate'] = 'Kopyasýný çýkar';
 $string['duplicatinga'] = 'Kopyasý çýkartýlýyor: $a';
 $string['duplicatingain'] = '$a->in içindeki $a->what \'nýn kopyasý çýkartýlýyor';
+$string['edhelpaspellpath'] = 'Sözcük-denetimini kullanabilmeniz için sunucuda <strong>aspell 0.50</strong> veya daha yeni bir sürümünün olmasý ve aspell programýnýn doðru yolunun belirtilmesi gerekiyor. Bu genellikle Unix/Linux sistemlerinde <strong>/usr/bin/aspell</strong> yolundadýr fakat bazen baþka bir yerde olabilir.';
+$string['edhelpbgcolor'] = 'Düzenleme alanýnýn arkaplan rengini tanýmlayýn. <br />Geçerli deðerlere örnekler: #FFFFFF veya white';
+$string['edhelpcleanword'] = 'Bu, Word\'e ait biçimlendirme filtresini etkinleþtirir.';
+$string['edhelpenablespelling'] = 'Sözcük denetimini etkinleþtirin veya pasifleþtirin. Etkinleþtirildiðinde <strong>aspell</strong> sunucuda kurulu olmalýdýr. Ýkinci deðer <strong>varsayýlan sözlük</strong>tür. Aspell kullanýcýnýn kendinin belirtiði dile sahip deðilse, buradaki deðer kullanýlacaktýr.';
+$string['edhelpfontlist'] = 'Editörde kullanýlacak fontlarý tanýmlayýn.';
+$string['edhelpfontsize'] = 'Font için varsayýlan yazý boyutu. <br />Geçerli deðerlere örnekler: medium, large, smaller, larger, 10pt, 11px.';
 $string['edit'] = '$a Düzenle';
 $string['editcoursesettings'] = 'Kurs ayarlarýný düzenle';
 $string['editfiles'] = 'Dosyalarý düzenle';
@@ -545,6 +565,7 @@ $string['latestlanguagepack'] = 'Son dil paketlerini kontrol et';
 $string['latestnews'] = 'Son haberler';
 $string['leavetokeep'] = 'Geçerli þifrenizi sürdürmek için boþ býrakýnýz';
 $string['license'] = 'GPL Lisansý';
+$string['liketologin'] = 'Þimdi, tam kullanýcý hesabý ile girmek ister misiniz?';
 $string['list'] = 'Listele';
 $string['listfiles'] = '$a\'nýn içindeki dosyalar';
 $string['listofallpeople'] = 'Tam kullanýcý listesi';
@@ -593,6 +614,8 @@ bu dosyayý doðrudan bu sayfada düzenleyebilirsiniz';
 $string['manageblocks'] = 'Bloklar';
 $string['managedatabase'] = 'Veritabanýný yönet';
 $string['managefilters'] = 'Filtreler';
+$string['managemeta'] = 'Bu bir meta kurs mu?';
+$string['managemetadisabled'] = 'Bu kurs zaten bir meta kurs içinde olduðundan dolayý pasifleþtirildi';
 $string['managemodules'] = 'Modüller';
 $string['markedthistopic'] = 'Bu konu güncel konu olarak belirlendi';
 $string['markthistopic'] = 'Bu konuyu güncel konu olarak belirle';
@@ -601,6 +624,13 @@ $string['maximumgrade'] = 'En yüksek not';
 $string['maximumshort'] = 'Max';
 $string['maximumupload'] = 'En fazla yükleme boyutu';
 $string['maxsize'] = 'En çok: $a';
+$string['metaaddcourse'] = 'Bu kursu ekle';
+$string['metaalreadyhasenrolments'] = 'Bu kurs zaten normal kayýtlara sahip.';
+$string['metaalreadyinmeta'] = 'Bu kurs zaten meta kursun bir parçasý';
+$string['metacourse'] = 'Metakurs';
+$string['metanopotentialcourses'] = 'Açýk kurs yok';
+$string['metapotentialcourses'] = 'Açýlan kurslar';
+$string['metaremovecourse'] = 'Bu kursu sil';
 $string['min'] = 'dk';
 $string['mins'] = 'dk';
 $string['minutes'] = 'dakika';
@@ -630,7 +660,7 @@ $string['modified'] = 'Deðiþtirilme';
 $string['moduledeleteconfirm'] = '\'$a\' modülünü tamamen silmek üzeresiniz. Bu etkinlik modülüyle ilgili bütün kayýtlar veritabanýndan silinecektir. Devam etmek istediðinizden emin misiniz?';
 $string['moduledeletefiles'] = '\'$a->module\' modülüyle ilgili bütün veriler veritabanýndan silindi. Silme iþlemini tamamlamak ve bu modülün kendi kendini tekrar kurmasýný engellemek için þimdi bu dizini sunucudan kaldýrmanýz gerekiyor: $a->directory';
 $string['modulesetup'] = 'Modül tablolarý ayarlanýyor';
-$string['modulesuccess'] = '$a adet tablo doðru olarak kuruldu';
+$string['modulesuccess'] = '$a tablolarý doðru olarak kuruldu';
 $string['moodleversion'] = 'Sürüm: ';
 $string['more'] = 'daha';
 $string['mostrecently'] = 'en yakýn';
@@ -746,6 +776,8 @@ $string['outline'] = 'Ana hatlar';
 $string['outlinereport'] = 'Anahat raporu';
 $string['page'] = 'Sayfa';
 $string['pageheaderconfigablock'] = '%%fullname%% içindeki bir blok yapýlandýrýlýyor';
+$string['parentcoursenotfound'] = 'Ana kurs bulunamadý!';
+$string['parentcoursenotmetacourse'] = 'Ana kurs, bir metakurs deðildir!';
 $string['parentfolder'] = 'Ana klasör';
 $string['participants'] = 'Katýlýmcýlar';
 $string['password'] = 'Þifre';
@@ -945,6 +977,8 @@ $string['topicoutline'] = 'Konu ana hatlarý';
 $string['topicshow'] = 'Bu konuyu hafta $a de göster';
 $string['total'] = 'Toplam';
 $string['trackforums'] = 'okunmuþ/okunmamýþ mesajlarý izle';
+$string['trackforumsno'] = 'Hayýr: Gördüðüm mesajlarý izlemeyi býrak';
+$string['trackforumsyes'] = 'Evet: Yeni mesajlarý benim için parlak göster';
 $string['trysearching'] = 'Aramayý deneyin.';
 $string['turneditingoff'] = 'Düzenlemeyi kapat';
 $string['turneditingon'] = 'Düzenlemeyi aç';
@@ -976,6 +1010,7 @@ $string['uploadafile'] = 'Bir dosya yükle';
 $string['uploadedfile'] = 'Dosya baþarýyla yüklendi';
 $string['uploadedfileto'] = '$a->file, $a->directory dizinine yüklendi';
 $string['uploadedfiletoobig'] = 'Üzgünüz bu dosya çok büyük (limit: $a byte)';
+$string['uploadfailednotrecovering'] = 'Dosyalarýndan bir tanesinde, $a->name, sorun olduðu için dosya yüklemesi baþarýsýz oldu. <br />Sorunla ilgili hata kayýtlrý:<br />$a->problem<br />Dosya kurtarýlamadý.';
 $string['uploadfilelog'] = '$a dosyasý için yükleme kaydý';
 $string['uploadformlimit'] = 'Gönderilen dosya formdaki dosya boyutu sýnýrýný aþýyor';
 $string['uploadlabel'] = 'Baþlýk:';
@@ -1008,6 +1043,23 @@ $string['usethiscourse'] = 'Bu kursu kullan';
 $string['usingexistingcourse'] = 'Var olan kurs kullanýlýyor';
 $string['version'] = 'Sürüm';
 $string['view'] = 'Bak';
+$string['virusfound'] = 'Yöneticinin dikkatine! Clam AV, $a->course kursu için $a->user kullanýcýsý tarafýndan gönderilen dosyada  bir virüs buldu. Clamscan çýktýsý:';
+$string['virusfoundlater'] = '$a->course kursu için, $a->date tarihinde $a->filename olarak gönderdiðiniz dosyada bir virüs bulundu. Dosyanýza ne olduðu ile ilgili özet bilgi:
+
+$a->action
+
+Bu çalýþma gönderildiyse, eðitimcinin bunu görüp deðerlendirmesi için tekrar gönderebilirsiniz.';
+$string['virusfoundlateradmin'] = 'Yöneticinin dikkatine! $a->course kursu için, $a->date tarihinde $a->user kullanýcý tarafýndan $a->filename olarak gönderilen dosyada bir virüs bulundu. Dosyaya ne olduðu ile ilgili özet bilgi:
+
+$a->action
+
+Bu konu hakkýnda kullanýcý da bilgilendirildi.';
+$string['virusfoundlateradminnolog'] = 'Yöneticinin dikkatine! $a->filename olarak gönderilen dosyada bir virüs bulundu. 
+
+Kullanýcý tarafýndan orijinal olarak yüklenen dosyadaki sorun çözülemedi.
+
+Dosyaya ne olduðu ile ilgili özet bilgi:
+$a->action';
 $string['virusfoundsubject'] = '$a: Virüs bulundu!';
 $string['virusfounduser'] = 'Yüklediðiniz dosya ($a->filename) virüs kontrolünden geçirildi ve virüslü olduðu algýlandý. Dosya yükleme BAÞARISIZ.';
 $string['virusplaceholder'] = 'Yüklenen dosyada virüs olduðu algýlandý. Dosya silindi veya taþýndý ayrýca kullanýcý bilgilendirildi.';
