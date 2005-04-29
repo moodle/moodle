@@ -4,7 +4,6 @@
 //CHANGELOG:
 //05.03.2005 replace /login/index.php
 
-    require_once($CFG->dirroot.'/auth/cas/lib.php');
 
     //Define variables used in page
     if (!$site = get_site()) {
@@ -61,6 +60,7 @@
             $frm = false;
         } else if (!$user) {
             if ($CFG->auth == "cas" && $frm->username != 'guest'){ /// Cas SSO case
+               require_once($CFG->dirroot.'/auth/cas/lib.php');
                $user = cas_authenticate_user_login($frm->username, $frm->password);
             }else{
                $user = authenticate_user_login($frm->username, $frm->password);
@@ -168,6 +168,7 @@
     
         } else {
           if ($CFG->auth == "cas" ){ /// CAS error login
+            require_once($CFG->dirroot.'/auth/cas/lib.php');
             $errormsg = get_string("invalidcaslogin");
             phpCAS::logout("$CFG->wwwroot/auth/cas/forbidden.php");
           }else{
@@ -175,7 +176,7 @@
           }
         }
     }
-
+    require_once($CFG->dirroot.'/auth/cas/lib.php');
     $user=cas_automatic_authenticate($user);
     if ($user) {
         if (! $user->confirmed ) {       // they never confirmed via email 
