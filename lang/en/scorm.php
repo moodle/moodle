@@ -9,7 +9,7 @@ $string['asset'] = 'Asset';
 $string['attr_error'] = 'Bad value for attribute ($a->attr) in tag $a->tag.';
 $string['autocontinue'] = 'Auto-Continue';
 $string['badmanifest'] ='Some manifest errors: see errors log';
-$string['browse'] = 'Browse';
+$string['browse'] = 'Preview';
 $string['browsed'] = 'Browsed';
 $string['browsemode'] = 'Browse Mode';
 $string['chooseapacket'] = 'Choose or update a SCORM package';
@@ -78,4 +78,7 @@ $string['viewallreports'] = 'View reports for $a attempts';
 $string['display'] = 'Display';
 $string['expcoll'] = 'Expand/Collide';
 $string['exit'] = 'Exit from SCORM course';
+$string['details'] = 'SCO track details';
+$string['enablebrowse'] = 'Enable preview mode';
+$string['frameheight'] = 'This preference set the height of SCO\'s frame';
 ?>
