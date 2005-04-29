@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 ALPHA (2005042300)
+      // admin.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['adminseesallevents'] = 'Yöneticiler bütün olaylarý görür';
@@ -19,6 +19,7 @@ $string['configdeleteunconfirmed'] = 'Bu, email yetkilendirmesi kullanýyorsanýz,
 $string['configdisplayloginfailures'] = 'Bu, seçilen kullanýcýnýn önceden yapmýþ olduðu giriþ hatalarý hakkýnda ekranda bilgi gösterir.';
 $string['configextendedusernamechars'] = 'Öðrencilerin kullanýcý adlarýnda isteði herhangi bir karakteri seçebilmesini istiyorsanýz bu ayarý etkinleþtirin. (Not: Adý ve soyadýný etkilemez, giriþ için kullanýlan kullanýcý adýný etkiler) Bu ayar \'hayýr\' ise sadece ingilizceki alfanümerik karakterler kullanýlabilecektir.';
 $string['configgdversion'] = 'Kurulu olan GD sürümünü seçiniz. Varsayýlan olarak seçilen otomatik olarak algýlanmýþtýr. Ne yaptýðýnýzý bilmiyorsanýz burayý deðiþtirmeyiniz.';
+$string['configintrotimezones'] = 'Bu sayfa dünya zaman dilimleri (yaz saati uygulamasý dahil) hakkýnda yeni bilgiyi arayacak ve yerel veritabanýný bu bilgi ile güncelleyecek. Bu kontrol þu sýraya göre yapýlacak: $a Bu iþlem genel olarak çok güvenlidir ve normal kurulumlarý bozmaz. Þimdi zaman dilimlerini güncellemek ister misiniz?';
 $string['configlang'] = 'Sitenin tamamýnda geçerli olan varsayýlan bir dil seçin. Kullanýcýlar daha sonra istedikleri dili seçebilirler.';
 $string['configlanglist'] = 'Kurulumla birlikte gelen dillerin herhangi birinin seçilebilmesi için burayý boþ býrakýn. Ancak dil menüsünü kýsýtlamak istiyorsanýz buraya dil listesini virgülle ayýrarak girin. Örnek: tr,fr,de,en_us';
 $string['configlangmenu'] = 'Ana sayfa, giriþ sayfasý vb. yerlerde dil menüsünün görünüp görünmeyeceðini belirtin. Bu, kullanýcýnýn kendi profilinde düzenleyebileceði dil tercihini etkilemeyecektir.';
@@ -51,7 +52,25 @@ $string['edithelpdocs'] = 'Yardým belgelerini düzenle';
 $string['editstrings'] = 'Ýfadeleri düzenle';
 $string['filterall'] = 'Tüm ifadeleri filtrele';
 $string['filteruploadedfiles'] = 'Tüm gönderilen dosyalarý filtrele';
+$string['helpadminseesall'] = 'Yöneticiler tüm olaylarý mý yoksa sadece kendine ait olaylarý mý görsün?';
+$string['helpcalendarsettings'] = 'Moodle\'a iliþkin tarih/saat ve takvim ayarlarýný yapýlandýrýn';
+$string['helpforcetimezone'] = 'Kullanýcýlarýn bireysel olarak zaman dilimlerini seçmelerine izin verebilir ya da herkesin ayný zaman dilimini kullanmasýný zorunlu tutabilirsiniz.';
 $string['helpsitemaintenance'] = 'Güncellemeler ve diðer çalýþmalar için';
+$string['helpstartofweek'] = 'Takvimde hafta hangi günle baþlýyor?';
+$string['helpupcomingmaxevents'] = 'Varsayýlan olarak en fazla kaç tane yaklaþan olay kullanýcýlara gösterilecek?';
+$string['helpweekenddays'] = 'Hangi günler \"Hafta sonu\" olarak deðerlendirilecek ve farklý bir renkte görünecek?';
+$string['importtimezones'] = 'Zaman dilimleri listesinin tamamýný güncelle';
+$string['importtimezonescount'] = '$a->source \'dan $a->count kayýt çýkartýldý';
+$string['importtimezonesfailed'] = 'Hiç kaynak bulunamadý! (Kötü haber)';
+$string['nodstpresetsexist'] = 'YSU (Yaz Saati Uygulamasý) önceden ayarlanmadýðý için YSU desteði kaldýrýldý. Aþaðýdaki butonu kullanarak bir kaç ön ayar yapmanýz gerekiyor. ';
+$string['optionalmaintenancemessage'] = 'Ýsteðe baðlý bakým mesajý';
+$string['sitemaintenance'] = 'Bu siteye þu anda bakým yapýlýyor ve þimdilik eriþilemez';
 $string['sitemaintenancemode'] = 'Bakým modu';
+$string['sitemaintenanceoff'] = 'Bakým modu pasifleþtirildi ve site þu anda tekrar normal çalýþýyor';
+$string['sitemaintenanceon'] = 'Siteniz þu anda bakým modunda (sadece yöneticiler girþ yapabilir ve siteyi kullanabilir)';
+$string['sitemaintenancewarning'] = 'Siteniz þu anda bakým modunda (sadece yöneticiler girþ yapabilir). Bu siteyi normal haline döndürmek için <a href=\"maintenance.php\">bakým modunu pasifleþtirin</a>.';
+$string['timezoneforced'] = 'Bu site yöneticisi tarafýndan zorunlu tutuldu';
+$string['timezoneisforcedto'] = 'Bütün kullanýcýlarý kullanmaya zorunlu tut';
+$string['timezonenotforced'] = 'Kullanýcýlar kendi zaman dilimini seçebilsin';
 
 ?>

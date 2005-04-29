@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // wiki.php - created with Moodle 1.5 ALPHA (2005042300)
+      // wiki.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['action'] = '-- Eylem --';
@@ -31,7 +31,7 @@ $string['downloadaszip'] = 'Ýndirilebilir zip arþivi';
 $string['downloadtimes'] = '$a kez indirildi';
 $string['dwnlnofiles'] = 'Henüz dosya yüklenmedi.';
 $string['dwnlsection'] = 'Ýndirme bölümü';
-$string['editform1'] = 'Þu anda biçimlendirme için uðraþmanýza gerek yok. Daha sonra bu sayfayý düzenleyebilirsiniz.';
+$string['editform1'] = 'Þu anda biçimlendirme için fazla uðraþmanýza gerek yok. Daha sonra bu sayfayý geliþtirebilirsiniz.';
 $string['editthispage'] = 'Bu sayfayi düzenle';
 $string['emptypage'] = 'Boþ sayfa';
 $string['errorbinandtxt'] = 'Bayrak hatasý: Sayfa tipi BIN ve TXT';
@@ -40,15 +40,22 @@ $string['errornotype'] = 'Bayrak hatasý: BIN yada TXT deðil';
 $string['errororreason'] = 'Hata sebebi';
 $string['errorsize'] = 'Dosya boyutu 64k\'dan büyük';
 $string['ewikiacceptbinary'] = 'Binary dosyalara izin ver';
+$string['export'] = 'Çýkart';
+$string['exportformats'] = 'Çýkarma biçimleri';
+$string['exportsuccessful'] = 'Çýkarma baþarýlý';
+$string['exportto'] = 'Buraya çýkar';
 $string['file'] = 'Dosya';
 $string['filedownload'] = 'Dosya Ýndirme';
 $string['fileisoftype'] = 'Dosyanýn tipi';
 $string['filtername'] = 'Wiki Sayfasý Otomatik-Linkleme';
 $string['flagbin'] = 'BIN';
 $string['flaghtm'] = 'HTM';
+$string['flagoff'] = 'OFF';
+$string['flagro'] = 'RO';
 $string['flags'] = 'Bayraklar';
 $string['flagsset'] = 'Bayraklar deðiþtirildi';
 $string['flagtxt'] = 'TXT';
+$string['flagwr'] = 'WR';
 $string['forbidden'] = 'Bu sayfaya eriþmeye hakkýnýz yok';
 $string['groups'] = 'Gruplar';
 $string['hits'] = '$a hit';
@@ -63,6 +70,7 @@ $string['linkdead'] = 'ÖLÜ';
 $string['linkok'] = 'TAMAM';
 $string['linkschecked'] = 'Baðlantýlar kontrol edildi';
 $string['listall'] = 'Tümünü listele';
+$string['meta'] = 'Meta verisi';
 $string['moduledirectory'] = 'Modül Dizini';
 $string['modulename'] = 'Wiki';
 $string['modulenameplural'] = 'Wikiler';
@@ -104,8 +112,11 @@ $string['tabview'] = 'Bak';
 $string['thanksforcontribution'] = 'Yardýmýnýz için teþekkürler.';
 $string['thispageisntlinkedfromanywhereelse'] = 'Bu sayfaya baþka bir yerden link verilmemiþ.';
 $string['updatedpages'] = 'Güncellenmiþ sayfalar';
+$string['updatedwikipages'] = 'Güncellenmiþ wiki sayfalarý';
 $string['uplerror'] = 'Üzgünüz, dosya yüklenirken bir þeyler yanlýþ gitti';
+$string['uplinsect'] = 'Buraya yükle';
 $string['uplnewnam'] = 'Farklý dosya adýyla kaydet';
+$string['upload0'] = 'Wiki\'ye isteðe baðlý bir dosya göndermek için bu formu kullanýn';
 $string['uploadedon'] = 'Yüklenme:';
 $string['uploadpicturebutton'] = 'Yükle';
 $string['uplok'] = 'Dosyanýz doðru olarak yüklendi';
@@ -116,8 +127,11 @@ $string['versionstodelete'] = 'Silinecek sürüm(ler)';
 $string['viewpage'] = 'Sayfaya Bak';
 $string['viewsmfor'] = 'Site haritasýna bak:';
 $string['wantedpages'] = 'Ýstenen Sayfalar';
+$string['wikiexport'] = 'Sayfalarý çýkar';
 $string['wikilinkoptions'] = 'Otomatik-linkleme seçenekleri';
 $string['wikiname'] = 'Sayfa Adý';
 $string['wikitype'] = 'Tip';
+$string['wikiusage'] = 'Wiki kullanýmý';
+$string['wrongversionrange'] = '$a geçerli bir aralýkta deðil!';
 
 ?>
