@@ -133,7 +133,7 @@ function scorm_upgrade($oldversion) {
     }
 
     if ($oldversion < 2005042700) {
-	$trackingdata = get_records_select("scorm_scoes_track","1","id ASC");
+	$trackingdata = get_records_select("scorm_scoes_track","","id ASC");
 	if (!empty($trackingdata)) {
 	    $oldelements = array ('cmi_core_lesson_location','cmi_core_lesson_status','cmi_core_exit','cmi_core_total_time','cmi_core_score_raw','cmi_suspend_data');
 	    $newelements = array ('cmi.core.lesson_location','cmi.core.lesson_status','cmi.core.exit','cmi.core.total_time','cmi.core.score.raw','cmi.suspend_data');
