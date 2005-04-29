@@ -1,8 +1,13 @@
+<?php
+    if (empty($CFG->scorm_frameheight)) {
+	$CFG->scorm_frameheight = 640;
+    }
+?>
 <form method="post" action="module.php" name="form">
 <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>">
 
 <table cellpadding="9" cellspacing="0" >
-<tr valign="top">
+<!--<tr valign="top">
     <td align="right">scorm_validate:</td>
     <td>
     <?php
@@ -19,6 +24,15 @@
     </td>
     <td>
     <?php print_string("validationtype", "scorm") ?>
+    </td>
+</tr> -->
+<tr valign="top">
+    <td align="right">scorm_frameheight:</td>
+    <td>
+	<input type="text" name="scorm_frameheight" value="<?php echo $CFG->scorm_frameheight ?>" size="4" />
+    </td>
+    <td>
+    <?php print_string("frameheight", "scorm") ?>
     </td>
 </tr>
 <tr>

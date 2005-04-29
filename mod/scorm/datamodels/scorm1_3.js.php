@@ -1,4 +1,8 @@
-    // Standard Data Type Definition
+//
+// SCORM 1.3 API Implementation
+//
+function SCORMapi1_3() {
+   // Standard Data Type Definition
     CMIString255 = '^.{0,255}$';
     CMIString4096 = '^[.|\\n|\\r]{0,4096}$';
     CMITime = '^([0-9]{2}):([0-9]{2}):([0-9]{2})(\.[0-9]{1,2})?$';
@@ -27,7 +31,7 @@
     audio_range = '-1#100';
     speed_range = '-100#100';
     text_range = '-1#1';
-    // The SCORM 1.2 data model
+    // The SCORM 1.3 data model
     var datamodel =  {
 	'cmi._children':{'defaultvalue':cmi_children, 'mod':'r', 'writeerror':'402'},
 	'cmi._version':{'defaultvalue':'3.4', 'mod':'r', 'writeerror':'402'},
@@ -303,3 +307,6 @@
     this.GetLastError = GetLastError;
     this.GetErrorString = GetErrorString;
     this.GetDiagnostic = GetDiagnostic;
+}
+
+var API_1484_11 = new SCORMapi1_3();

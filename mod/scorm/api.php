@@ -84,28 +84,6 @@ function underscore(str) {
     return str.replace(/\./g,"__");
 }
 
-function CollectData(apiname,data,parent) {
-    var datastring = '';
-    for (property in data) {
-	if (typeof data[property] == 'object') {
-	    datastring += CollectData(apiname,data[property],parent+'.'+property);
-	} else {
-		element = parent+'.'+property;
-		expression = new RegExp(CMIIndex,'g');
-		elementmodel = element.replace(expression,'.n.');
-		if ((typeof eval(apiname+'.datamodel["'+elementmodel+'"]')) != "undefined") {
-	            if (eval(apiname+'.datamodel["'+elementmodel+'"].mod') != 'r') {
-			if (eval(apiname+'.datamodel["'+elementmodel+'"].defaultvalue') != data[property]) {
-			    datastring += '&'+underscore(element)+'='+escape(data[property]);
-			    //alert(element+'='+data[property]);
-			}
-		    }
-		}
-	}
-    }
-    return datastring;
-}
-
 function AddTime (first, second) {
     var sFirst = first.split(":");
     var sSecond = second.split(":");
@@ -127,16 +105,13 @@ function AddTime (first, second) {
     return hours + ":" + mins + ":" + secs;
 }
 
-function StoreData(apiname,data,storetotaltime) {
-    datastring = CollectData(apiname,data,'cmi');
-    if (storetotaltime) {
-	datastring += eval(apiname+'.TotalTime();');
+/*
+function SCOFinish() {
+    // Workaround for Safari
+    if (typeof API != 'undefined') {
+    	result = API.LMSFinish('');
+    } else {
+    	result = API_1484_11.Terminate('');
     }
-    //popupwin(datastring);
-    var myRequest = NewHttpReq();
-    result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&sesskey=<?php p($USER->sesskey) ?>"+datastring);
-    results = result.split('\n');
-    //alert(results);
-    errorCode = results[1];
-    return results[0]; 
 }
+*/

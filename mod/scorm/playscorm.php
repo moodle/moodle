@@ -80,10 +80,12 @@
     //
     // Print the page header
     //
-    //$bodyscripts = "onUnload='SCOFinish();'";
+    
+    //$bodyscripts = "onunload='SCOFinish();'";
+    $bodyscripts = '';
     print_header($pagetitle, "$course->fullname",
 	"$navigation <a target='{$CFG->framename}' href='view.php?id=$cm->id'>".format_string($scorm->name,true)."</a>",
-	'', '', true, update_module_button($cm->id, $course->id, $strscorm));
+	'', '', true, update_module_button($cm->id, $course->id, $strscorm),'',false,$bodyscripts);
 ?>
     <style type="text/css">
         .scormlist { 
@@ -140,8 +142,16 @@
 	    <tr><td nowrap>  
 <?php
     $sco = scorm_display_structure($scorm,'scormlist',$currentorg,$scoid,$mode,true);
+    if ($mode == 'normal') {
+	if ($trackdata = scorm_get_tracks($USER->id,$sco->id)) {
+	    if (($trackdata->status == 'completed') || ($trackdata->status == 'passed') || ($trackdata->status == 'failed')) {
+		$mode = 'review';
+	    }
+	}
+    }
     add_to_log($course->id, 'scorm', 'view', "playscorm.php?id=$cm->id&scoid=$sco->id", "$scorm->id");
     $scoidstring = '&scoid='.$sco->id;
+    $modestring = '&mode='.$mode;
 
     $SESSION->scorm_scoid = $sco->id;
 ?>
@@ -159,10 +169,10 @@
 	</table>
     </td>
     <td class="fullscreen" height="90%">
-    	<iframe name="main" class="fullscreen" height="640" src="loadSCO.php?id=<?php echo $cm->id.$scoidstring ?>"></iframe>
+    	<iframe name="main" class="fullscreen" height="<?php echo $CFG->scorm_frameheight ?>" src="loadSCO.php?id=<?php echo $cm->id.$scoidstring ?>"></iframe>
     </td></tr>
     </table>
     <script language="JavaScript" type="text/javascript" src="request.js"></script>
-    <script language="JavaScript" type="text/javascript" src="api.php?id=<?php echo $cm->id.$scoidstring ?>"></script>
+    <script language="JavaScript" type="text/javascript" src="api.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>"></script>
 </body>
 </html>

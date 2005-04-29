@@ -43,10 +43,12 @@
                 fwrite ($bf,full_tag("MODTYPE",4,false,"scorm"));
                 fwrite ($bf,full_tag("NAME",4,false,$scorm->name));
                 fwrite ($bf,full_tag("REFERENCE",4,false,$scorm->reference));
-                fwrite ($bf,full_tag("MAXGRADE",4,false,$scorm->reference));
-                fwrite ($bf,full_tag("GRADEMETHOD",4,false,$scorm->reference));
+                fwrite ($bf,full_tag("VERSION",4,false,$scorm->version));
+                fwrite ($bf,full_tag("MAXGRADE",4,false,$scorm->maxgrade));
+                fwrite ($bf,full_tag("GRADEMETHOD",4,false,$scorm->grademethod));
                 fwrite ($bf,full_tag("LAUNCH",4,false,$scorm->launch));
                 fwrite ($bf,full_tag("SUMMARY",4,false,$scorm->summary));
+                fwrite ($bf,full_tag("BROWSEMODE",4,false,$scorm->browsemode));
                 fwrite ($bf,full_tag("AUTO",4,false,$scorm->auto));
                 fwrite ($bf,full_tag("TIMEMODIFIED",4,false,$scorm->timemodified));
                 $status = backup_scorm_scoes($bf,$preferences,$scorm->id);
@@ -92,6 +94,7 @@
                 fwrite ($bf,full_tag("PARENT",6,false,$sco->parent));
                 fwrite ($bf,full_tag("IDENTIFIER",6,false,$sco->identifier));
                 fwrite ($bf,full_tag("LAUNCH",6,false,$sco->launch));
+                fwrite ($bf,full_tag("PARAMETERS",6,false,$sco->parameters));
                 fwrite ($bf,full_tag("SCORMTYPE",6,false,$sco->scormtype));
                 fwrite ($bf,full_tag("TITLE",6,false,$sco->title));
                 fwrite ($bf,full_tag("PREREQUISITES",6,false,$sco->prerequisites));

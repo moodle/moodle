@@ -149,7 +149,7 @@ function SCORMapi1_2() {
 	if (param == "") {
             if (Initialized) {
         	Initialized = false;
-        	return StoreData('API',cmi,true);
+        	return StoreData(cmi,true);
             } else {
         	errorCode = "301";
             }
@@ -203,8 +203,6 @@ function SCORMapi1_2() {
 				    elementIndex = elementIndexes[i];
 				    //alert(elementIndex+' '+elementIndexes[i+1]);
 				    if (elementIndexes[i+1].match(/^\d+$/)) {
-				        //alert('Matched: '+elementIndexes[i+1]);
-					//alert('Check: '+subelement+'.'+elementIndex);
 				    	if ((typeof eval(subelement+'.'+elementIndex)) == "undefined") {
 				    	    eval(subelement+'.'+elementIndex+' = new Object();');
 					    eval(subelement+'.'+elementIndex+'._count = 0;');
@@ -241,7 +239,11 @@ function SCORMapi1_2() {
 		 		    errorCode = eval('datamodel["'+elementmodel+'"].writeerror');
 				}
 			    } else {
-				eval(element+'="'+value+'";');
+				if (element == 'cmi.comments') {
+				    eval(element+'+="'+value+'";');
+				} else {
+				    eval(element+'="'+value+'";');
+				}
 				errorCode = "0";
 				//alert('LMSSetValue: '+element+'\nModel: '+elementmodel+'\nValue: '+value);
 	    			return "true";
@@ -268,7 +270,7 @@ function SCORMapi1_2() {
     function LMSCommit (param) {
 	if (param == "") {
             if (Initialized) {
-		return StoreData('API',cmi,false);
+		return StoreData(cmi,false);
             } else {
         	errorCode = "301";
 	    }
@@ -311,13 +313,64 @@ function SCORMapi1_2() {
 
     function TotalTime() {
         total_time = AddTime(cmi.core.total_time, cmi.core.session_time);
-	//////////////alert (cmi.core.total_time+' '+cmi.core.session_time+' '+total_time);
 	return '&'+underscore('cmi.core.total_time')+'='+escape(total_time);
     }
 
-    this.datamodel = datamodel;
-    this.TotalTime = TotalTime;
-    
+    function CollectData(data,parent) {
+	var datastring = '';
+	for (property in data) {
+	    if (typeof data[property] == 'object') {
+		datastring += CollectData(data[property],parent+'.'+property);
+	    } else {
+		element = parent+'.'+property;
+		expression = new RegExp(CMIIndex,'g');
+		elementmodel = element.replace(expression,'.n.');
+		if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
+	            if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
+			if (eval('datamodel["'+elementmodel+'"].defaultvalue') != data[property]) {
+			    datastring += '&'+underscore(element)+'='+escape(data[property]);
+			    //alert(element+'='+data[property]);
+			}
+		    }
+		}
+	    }
+	}
+	return datastring;
+    }
+
+    function StoreData(data,storetotaltime) {
+	if (storetotaltime) {
+	    if (cmi.core.lesson_mode == 'normal') {
+		if (cmi.core.credit == 'credit') {
+		    cmi.core.lesson_status = 'completed';
+		    if (cmi.student_data.mastery_score != '') {
+			if (cmi.core.score.raw >= cmi.student_data.mastery_score) {
+			    cmi.core.lesson_status = 'passed';
+			} else {
+			    cmi.core.lesson_status = 'failed';
+			}
+		    }
+		}
+	    }
+	    if (cmi.core.lesson_mode == 'browse') {
+		if (datamodel['cmi.core.lesson_status'].defaultvalue == '') {
+		    cmi.core.lesson_status = 'browsed';
+		}
+	    }
+	    datastring = CollectData(data,'cmi');
+	    datastring += TotalTime();
+	} else {
+	    datastring = CollectData(data,'cmi');
+	}
+	//popupwin(datastring);
+	var myRequest = NewHttpReq();
+	result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&sesskey=<?php p($USER->sesskey) ?>"+datastring);
+	results = result.split('\n');
+	//alert(results);
+	errorCode = results[1];
+	return results[0]; 
+    }
+
     this.LMSInitialize = LMSInitialize;
     this.LMSFinish = LMSFinish;
     this.LMSGetValue = LMSGetValue;

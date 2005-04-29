@@ -149,6 +149,10 @@ function scorm_upgrade($oldversion) {
 	}
     }
 
+    if ($oldversion < 2005042800) {
+       table_column("scorm", "", "browsemode", "TINYINT", "2", "", "1", "NOT NULL", "summary");
+    }
+
     return true;
 }
 ?>

@@ -14,8 +14,6 @@ $SCORM_GRADE_METHOD = array (VALUESCOES => get_string('gradescoes', 'scorm'),
 
 if (!isset($CFG->scorm_validate)) {
     $scormvalidate = 'none';
-    //I've commented this out for Moodle 1.4, as I've seen errors in 
-    //SCORM packages even though the actual package worked fine. -- Martin Dougiamas
     if (extension_loaded('domxml') && version_compare(phpversion(),'5.0.0','<')) {
         $scormvalidate = 'domxml';
     }
@@ -23,6 +21,10 @@ if (!isset($CFG->scorm_validate)) {
         $scormvalidate = 'php5';
     }
     set_config('scorm_validate', $scormvalidate);
+}
+
+if (!isset($CFG->scorm_frameheight)) {
+    set_config('scorm_frameheight','640');
 }
 
 function scorm_add_instance($scorm) {
@@ -903,7 +905,7 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
     	    	    }
     	    	    $strstatus = get_string($usertrack->status,'scorm');
     		    echo "<img src='pix/".$usertrack->status.".gif' alt='$strstatus' title='$strstatus' />";
- 		    if (($usertrack->status == 'notattempted') || ($usertrack->status == 'incomplete')) {
+ 		    if (($usertrack->status == 'notattempted') || ($usertrack->status == 'incomplete') || ($usertrack->status == 'browsed')) {
  			$incomplete = true;
  			if ($play && empty($scoid)) {
  			    $scoid = $sco->id;
@@ -917,10 +919,10 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
     	    		$scoid = $sco->id;
     	    	    }
     		    if ($sco->scormtype == 'sco') {
-    			echo '<img src="pix/notattempted.gif" alt="'.get_string('notattempted','scorm').'" />';
+    			echo '<img src="pix/notattempted.gif" alt="'.get_string('notattempted','scorm').'" title="'.get_string('notattempted','scorm').'" />';
     			$incomplete = true;
     		    } else {
-    			echo '<img src="pix/asset.gif" alt="'.get_string('asset','scorm').'" />';
+    			echo '<img src="pix/asset.gif" alt="'.get_string('asset','scorm').'" title="'.get_string('asset','scorm').'" />';
     		    }
     		}
 

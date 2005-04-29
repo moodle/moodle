@@ -114,13 +114,21 @@
     	print_simple_box_end();
     	echo "<form name=\"theform\" method=\"post\" action=\"playscorm.php?id=$cm->id\">\n";
     	echo "<table align=\"center\">\n<tr>\n<td align=\"center\">";
-    	print_string("mode","scorm");
-        echo ": <input type=\"radio\" id=\"b\" name=\"mode\" value=\"browse\" /><label for=\"b\">".get_string("browse","scorm")."</label>\n";
-        if ($incomplete === true) {
-            echo "<input type=\"radio\" id=\"n\" name=\"mode\" value=\"normal\" checked=\"checked\" /><label for=\"n\">".get_string("normal","scorm")."</label>\n";
-        } else {
-            echo "<input type=\"radio\" id=\"r\" name=\"mode\" value=\"review\" checked=\"checked\" /><label for=\"r\">".get_string("review","scorm")."</label>\n";
-	}
+	if ($scorm->browsemode == 1) {
+	    print_string("mode","scorm");
+	    echo ": <input type=\"radio\" id=\"b\" name=\"mode\" value=\"browse\" /><label for=\"b\">".get_string("browse","scorm")."</label>\n";
+            if ($incomplete === true) {
+        	echo "<input type=\"radio\" id=\"n\" name=\"mode\" value=\"normal\" checked=\"checked\" /><label for=\"n\">".get_string("normal","scorm")."</label>\n";
+            } else {
+        	echo "<input type=\"radio\" id=\"r\" name=\"mode\" value=\"review\" checked=\"checked\" /><label for=\"r\">".get_string("review","scorm")."</label>\n";
+	    }
+	} else {
+            if ($incomplete === true) {
+		echo '<input type="hidden" name="mode" value="normal" />'."\n";
+	    } else {
+		echo '<input type="hidden" name="mode" value="review" />'."\n";
+	    }
+	}    
 	echo "</td>\n</tr>\n<tr><td align=\"center\">";
 	echo '<input type="hidden" name="scoid" />
 	<input type="hidden" name="currentorg" value="'.$orgidentifier.'" />

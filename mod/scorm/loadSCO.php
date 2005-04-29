@@ -99,10 +99,9 @@
 <html>
     <head>
 	<title>LoadSCO</title>
+	<meta http-equiv="refresh" content="1;URL=<?php echo $result ?>" />
     </head>
     <body>
-	<script language="javascript">
-	    document.location='<?php echo $result ?>';
-	</script>
+	&nbsp;
     </body>
 </html>

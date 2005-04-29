@@ -24,6 +24,9 @@
     if (empty($form->grademethod)) {
         $form->grademethod = "0";
     }
+    if (empty($form->browsemode)) {
+        $form->browsemode = "1";
+    }
     $scormid = '';
     if (!empty($form->instance)) {
         $scormid = '&instance='.$form->instance;
@@ -161,8 +164,20 @@
                 $options = array();
                 $options[0]=get_string("no");
                 $options[1]=get_string("yes");
-                choose_from_menu ($options, "auto", $form->auto);
+                choose_from_menu ($options, "auto", $form->auto,'');
                 helpbutton("autocontinue", get_string("autocontinue", "scorm"), "scorm", true);
+            ?>
+	    </td>
+	</tr>
+	<tr>
+            <td align="right"><b><?php print_string("enablebrowse","scorm") ?>:</b></td>
+            <td>
+            <?php
+                $options = array();
+                $options[0]=get_string("no");
+                $options[1]=get_string("yes");
+                choose_from_menu ($options, "browsemode", $form->browsemode, '');
+                helpbutton("browsemode", get_string("browsemode", "scorm"), "scorm", true);
             ?>
 	    </td>
 	</tr>
@@ -170,8 +185,8 @@
     <input type="hidden" name="datadir"	value="<?php p($form->datadir) ?>" />
     <input type="hidden" name="pkgtype"	value="<?php p($form->pkgtype) ?>" />
     <input type="hidden" name="launch"	value="<?php p($form->launch) ?>" />
-    <input type="hidden" name="maxgrade"	value="<?php p($form->maxgrade) ?>" />
-    <input type="hidden" name="grademethod"	value="<?php p($form->grademethod) ?>" />
+   <!-- <input type="hidden" name="maxgrade"	value="<?php p($form->maxgrade) ?>" />
+    <input type="hidden" name="grademethod"	value="<?php p($form->grademethod) ?>" />-->
     
     <input type="hidden" name="course"	value="<?php p($form->course) ?>" />
     <input type="hidden" name="sesskey"	value="<?php p($form->sesskey) ?>" />
