@@ -1041,18 +1041,27 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
         }
         else {
             $grouparray = array();
-    
+            $groupmodes = NULL;
+
             // We already have the courses to examine in $courses
             // For each course...
             foreach($groupcourses as $courseid) {
+
                 // If the user is an editing teacher in there,
                 if(!empty($USER->id) && isteacheredit($courseid, $USER->id)) {
-                    // Show events from all groups
-                    if(($grouprecords = get_groups($courseid)) !== false) {
+
+                    // The first time we get in here, retrieve all groupmodes at once
+                    if($groupmodes === NULL) {
+                        $groupmodes = get_records_list('course', 'id', implode(',', $groupcourses), '', 'id, groupmode');
+                    }
+
+                    // If this course has groups, show events from all of them
+                    if($groupmodes[$courseid]->groupmode != NOGROUPS && ($grouprecords = get_groups($courseid)) !== false) {
                         $grouparray = array_merge($grouparray, array_keys($grouprecords));
                     }
                 }
-                // Otherwise show events from the group he is a member of
+
+                // Otherwise (not editing teacher) show events from the group he is a member of
                 else if(isset($USER->groupmember[$courseid])) {
                     $grouparray[] = $USER->groupmember[$courseid];
                 }
