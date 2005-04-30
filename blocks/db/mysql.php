@@ -130,6 +130,19 @@ global $CFG;
         execute_sql('UPDATE '.$CFG->prefix.'block_instance SET pagetype = \''.PAGE_COURSE_VIEW.'\' WHERE pagetype = \'\'');
     }
 
+    if ($oldversion < 2005043000 && $result) {
+        $records = get_records('block');
+        if(!empty($records)) {
+            foreach($records as $block) {
+                if(!block_is_compatible($block->name)) {
+                    $block->visible = 0;
+                    update_record('block', $block);
+                    notify('The '.$block->name.' block has been disabled because it is not compatible with Moodle 1.5 and needs to be updated by a programmer.');
+                }
+            }
+        }
+    }
+
     //Finally, return result
     return $result;
 }
