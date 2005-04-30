@@ -2,7 +2,7 @@
 
 class block_search_forums extends block_base {
     function init() {
-        $this->title = get_string('search', 'forum');
+        $this->title = get_string('searchforums', 'forum');
         $this->version = 2005030900;
     }
 
@@ -21,12 +21,15 @@ class block_search_forums extends block_base {
             return $this->content;
         }
 
+        $advancedsearch = get_string('advancedsearch', 'forum');
+        $advancedsearch = 'Advanced search';
         $this->content->text  = '<div class="searchform">';
         $this->content->text .= '<form name="search" action="'.$CFG->wwwroot.'/mod/forum/search.php" style="display:inline">';
-        $this->content->text .= '<input name="search" type="text" size="18" value="" alt="search" /> ';
-        $this->content->text .= '<input value="'.get_string('searchforums', 'forum').'" type="submit" />';
-        $this->content->text .= helpbutton('search', get_string('search'), 'moodle', true, false, '', true);
-        $this->content->text .= '<input name="id" type="hidden" value="'.$this->instance->pageid.'" />';
+        $this->content->text .= '<input name="id" type="hidden" value="'.$this->instance->pageid.'" />';  // course
+        $this->content->text .= '<input name="search" type="text" size="16" value="" alt="search" />';
+        $this->content->text .= '<input value=">" type="submit" /><br />';
+        $this->content->text .= '<a href="'.$CFG->wwwroot.'/mod/forum/search.php?id='.$this->instance->pageid.'">'.$advancedsearch.'</a>';
+        $this->content->text .= helpbutton('search', $advancedsearch, 'moodle', true, false, '', true);
         $this->content->text .= '</form></div>';
 
         return $this->content;
