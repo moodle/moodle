@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 ALPHA (2005042300)
+      // forum.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['addanewdiscussion'] = 'Yeni tartýþma konusu ekle';
@@ -13,6 +13,7 @@ $string['allowsdiscussions'] = 'Bu forum her bir kiþinin bir tartýþma konusu baþ
 $string['anyfile'] = 'Herhangi bir dosya';
 $string['attachment'] = 'Ek';
 $string['bynameondate'] = 'yazan $a->name - $a->date';
+$string['configdisplaymode'] = 'Hiç ayarlanmamýþsa tartýþmalar için görünüm modu';
 $string['couldnotadd'] = 'Bilinmeyen bir nedenle mesajýnýz eklenemedi';
 $string['couldnotdeleteratings'] = 'Bir kullanýcý bunu puanladýðý için silinemez';
 $string['couldnotdeletereplies'] = 'Bir kullanýcý bunu yanýtladýðý için silinemez';
@@ -58,8 +59,12 @@ $string['introsocial'] = 'Ýstediðiniz herhangi bir konuda tartýþabileceðiniz açý
 $string['introteacher'] = 'Eðitmenler için sadece not ve tartýþma forumu';
 $string['lastpost'] = 'Son mesaj';
 $string['learningforums'] = 'Öðrenme forumlarý';
+$string['markalldread'] = 'Bu tartýþmadaki bütün mesajlarý okundu olarak iþaretle';
+$string['markallread'] = 'Bu forumdaki bütün mesajlarý okundu olarak iþaretle';
 $string['markread'] = 'Okundu olarak iþaretle';
+$string['markreadbutton'] = 'Okundu<br />olarak iþaretle';
 $string['markunread'] = 'Okunmadý olarak iþaretle';
+$string['markunreadbutton'] = 'Okunmadý <br />olarak iþaretle';
 $string['maxattachmentsize'] = 'En fazla dosya boyutu';
 $string['maxtimehaspassed'] = '($a) için düzenleme süresi doldu!';
 $string['message'] = 'Mesaj';
@@ -113,6 +118,7 @@ $string['processingdigest'] = '$a kullanýcýsý için email özetleri iþleniyor';
 $string['processingpost'] = '$a mesajý iþleniyor';
 $string['prune'] = 'Ayýr';
 $string['prunedpost'] = 'Yeni bir tartýþma þu mesajdan oluþturuldu';
+$string['pruneheading'] = 'Tartýþmayý böl ve mesajý yeni bir tartýþmaya taþý';
 $string['rate'] = 'Derecelendir';
 $string['rating'] = 'Derecelendirme';
 $string['ratingeveryone'] = 'Herkes derecelendirebilir';
@@ -124,7 +130,7 @@ $string['ratings'] = 'Derecelendirmeler';
 $string['ratingssaved'] = 'Derecelendir kaydedildi';
 $string['ratingsuse'] = 'Derecelendirme kullan';
 $string['ratingtime'] = 'Mesaj derecelendirmelerini bu tarih arasýnda sýnýrla.';
-$string['re'] = 'Yanýt:';
+$string['re'] = 'Ynt:';
 $string['readtherest'] = 'Devamýný oku';
 $string['replies'] = 'Yanýtlar';
 $string['repliesmany'] = 'Þu ana kadar yanýtlar $a';
@@ -166,6 +172,9 @@ $string['subscription'] = 'Abonelik';
 $string['subscriptions'] = 'Abonelikler';
 $string['trackforum'] = 'Okunmamýþ mesajlarý izle';
 $string['tracking'] = 'Ýzle';
+$string['trackingoff'] = 'Kapalý';
+$string['trackingon'] = 'Açýk';
+$string['trackingoptional'] = 'Ýsteðe baðlý';
 $string['unread'] = 'Okunmamýþ';
 $string['unreadposts'] = 'Okunmamýþ mesajlar';
 $string['unreadpostsnumber'] = '$a okunmamýþ mesaj';

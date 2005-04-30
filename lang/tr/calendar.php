@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 ALPHA (2005042300)
+      // calendar.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['calendar'] = 'Takvim';
@@ -78,14 +78,14 @@ $string['today'] = 'Bugün';
 $string['tomorrow'] = 'Yarýn';
 $string['tt_deleteevent'] = 'Olayý sil';
 $string['tt_editevent'] = 'Olayý düzelt';
-$string['tt_hidecourse'] = 'Ders olaylarý gösteriliyor (gizlemek için týkla)';
-$string['tt_hideglobal'] = 'Genel olaylar gösteriliyor (gizlemek için týkla)';
-$string['tt_hidegroups'] = 'Grup olaylarý gösteriliyor (gizlemek için týkla)';
-$string['tt_hideuser'] = 'Kullanýcý olaylarý gösteriliyor (gizlemek için týkla)';
-$string['tt_showcourse'] = 'Ders olaylarý gizli (göstermek için týkla)';
-$string['tt_showglobal'] = 'Genel olaylar gizli (göstermek için týkla)';
-$string['tt_showgroups'] = 'Grup olaylarý gizli (göstermek için týkla)';
-$string['tt_showuser'] = 'Kullanýcý olaylarý gizli (göstermek için týkla)';
+$string['tt_hidecourse'] = 'Ders olaylarý gösteriliyor (gizle)';
+$string['tt_hideglobal'] = 'Genel olaylar gösteriliyor (gizle)';
+$string['tt_hidegroups'] = 'Grup olaylarý gösteriliyor (gizle)';
+$string['tt_hideuser'] = 'Kullanýcý olaylarý gösteriliyor (gizle)';
+$string['tt_showcourse'] = 'Ders olaylarý gizli (göster)';
+$string['tt_showglobal'] = 'Genel olaylar gizli (göster)';
+$string['tt_showgroups'] = 'Grup olaylarý gizli (göster)';
+$string['tt_showuser'] = 'Kullanýcý olaylarý gizli (göster)';
 $string['tue'] = 'Sal';
 $string['tuesday'] = 'Salý';
 $string['typecourse'] = 'Ders olayý';

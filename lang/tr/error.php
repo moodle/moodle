@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.5 ALPHA (2005042300)
+      // error.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['adminprimarynoedit'] = 'Ana yönetici baþka kullanýcýlar tarafýndan düzenlenemez';
@@ -17,6 +17,7 @@ $string['notavailable'] = 'Þu anda eriþilemez';
 $string['onlyeditown'] = 'Sadece kendi bilgilerinizi düzenleyebilirsiniz.';
 $string['processingstops'] = 'Ýþlem burada sona erer. Kalan kayýtlar yoksayýlýr.';
 $string['restricteduser'] = 'Üzgünüz, ancak þu anki \"$a\" hesabýnýz bunu yapmak için sýnýrlandýrýlmýþtýr.';
+$string['sessionerroruser'] = 'Oturumunuz zaman aþýmýna uðradý ya da bir hata oluþtu. Lütfen tekrar giriþ yapýnýz.';
 $string['sessionipnomatch'] = 'Üzgünüz, IP numaranýz ilk girdiðinizden farklýdýr. Bu güvenlik özelliði siteye girdiðinizde crackerlarýn sizin kimlik bilgilerinizi çalmalarýný engellemek içindir. Normal kullanýcýlarýn bu mesajý görmemeleri gerekir - lütfen yardým için site yöneticisine baþvurun.';
 $string['unknowncourse'] = '\"$a\" adlý kurs bilinmiyor';
 $string['usernotaddederror'] = '\"$a\" kullanýcýsý eklenmedi - bilinmeyen hata';

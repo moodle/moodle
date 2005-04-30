@@ -1,0 +1,71 @@
+<?PHP // $Id$ 
+      // grades.php - created with Moodle 1.5 ALPHA (2005042400)
+
+
+$string['addcategory'] = 'Kategori Ekle';
+$string['addcategoryerror'] = 'Kategori eklenemedi';
+$string['allgrades'] = 'Kategorilere göre tüm notlar';
+$string['allstudents'] = 'Tüm Öðrenciler';
+$string['average'] = 'Fark';
+$string['bonuspoints'] = 'Bonus Puanlar';
+$string['categories'] = 'Kategoriler';
+$string['category'] = 'Kategori';
+$string['choosecategory'] = 'Kategori Seç';
+$string['creatinggradebooksettings'] = 'Notdefteri ayarlarý oluþturuluyor';
+$string['deletecategory'] = 'Kategoriyi Sil';
+$string['displaylettergrade'] = 'Harfli Notlarý Göster';
+$string['displaypercent'] = 'Yüzdelikleri Göster';
+$string['displaypoints'] = 'Puanlarý Göster';
+$string['exceptions'] = 'Ýstisnalar';
+$string['extracredit'] = 'Ekstra Kredi';
+$string['forstudents'] = 'Öðrenciler Ýçin';
+$string['gradebook'] = 'Notdefteri';
+$string['grades'] = 'Notlar';
+$string['hidecategory'] = 'Gizli';
+$string['highgradeletter'] = 'Yüksek';
+$string['item'] = 'Öge';
+$string['items'] = 'Ogeler';
+$string['letters'] = 'Harfler';
+$string['lowest'] = 'En düþük';
+$string['lowgradeletter'] = 'Düþük';
+$string['max'] = 'En yüksek';
+$string['maxgrade'] = 'Max Not';
+$string['median'] = 'Ortalama';
+$string['min'] = 'En düþük';
+$string['mode'] = 'Mod';
+$string['no'] = 'Hayýr';
+$string['percent'] = 'Yüzde';
+$string['percentascending'] = 'Yüzdeye göre artan sýralama';
+$string['percentdescending'] = 'Yüzdeye göre azalan sýralama';
+$string['percentshort'] = '%%';
+$string['points'] = 'puanlar';
+$string['preferences'] = 'Seçenekler';
+$string['rawpct'] = 'Ham %%';
+$string['savechanges'] = 'Deðiþiklikleri Kaydet';
+$string['savepreferences'] = 'Seçenekleri Kaydet';
+$string['setcategories'] = 'Kategorileri Ayarla';
+$string['setting'] = 'Ayar';
+$string['settings'] = 'Ayarlar';
+$string['showallstudents'] = 'Tüm Öðrencileri Göster';
+$string['showhiddenitems'] = 'Gizli Ögeleri Göster';
+$string['sort'] = 'sýrala';
+$string['sortbyfirstname'] = 'Ada göre sýrala';
+$string['sortbylastname'] = 'Soyada göre sýrala';
+$string['standarddeviation'] = 'Standart Sapma';
+$string['stats'] = 'Ýstatistikler';
+$string['statslink'] = 'Ýstatistikler';
+$string['student'] = 'Öðrenci';
+$string['total'] = 'Toplam';
+$string['totalweight100'] = 'toplam aðýrlýk 100\'e eþittir';
+$string['totalweightnot100'] = 'Toplam aðýrlýk 100\'e eþit deðildir';
+$string['uncategorised'] = 'Kategorilendirilmemiþ';
+$string['useadvanced'] = 'Geliþmiþ Özellikleri Kullan';
+$string['usepercent'] = 'Yüzde Kullan';
+$string['viewbygroup'] = 'Grup';
+$string['viewgrades'] = 'Notlara Bak';
+$string['weight'] = 'aðýrlýk';
+$string['weightedascending'] = 'Aðýrlýklý yüzdeye göre artan sýralama';
+$string['weighteddescending'] = 'Aðýrlýklý yüzdeye göre azalan sýralama';
+$string['yes'] = 'Evet';
+
+?>
