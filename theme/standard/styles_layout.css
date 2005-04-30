@@ -825,7 +825,7 @@ table.message .searchresults td {
 .tabrow td .tablink {
   display:block;
   height:34px;
-  line-height:38px;
+  line-height:34px;
   padding:0 14px 0 0;
   text-align:center;
   white-space:nowrap;
@@ -837,7 +837,7 @@ table.message .searchresults td {
 }
           
 .tabrow .selected .tablink {
-  line-height:38px;
+  line-height:34px;
 }
 
 
