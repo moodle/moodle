@@ -279,15 +279,18 @@ function blocks_preferred_width(&$instances) {
     if(empty($instances) || !is_array($instances)) {
         return 0;
     }
+
+    $blocks = blocks_get_record();
+
     foreach($instances as $instance) {
         if(!$instance->visible) {
             continue;
         }
-        $block = blocks_get_record($instance->blockid);
-        if(!$block->visible) {
+
+        if(!$blocks[$instance->blockid]->visible) {
             continue;
         }
-        $pref = block_method_result($block->name, 'preferred_width');
+        $pref = block_method_result($blocks[$instance->blockid]->name, 'preferred_width');
         if($pref === NULL) {
             continue;
         }
