@@ -2,6 +2,7 @@
       // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
 
 
+
 $string['addanewdiscussion'] = 'Add a new discussion topic';
 $string['addanewtopic'] = 'Add a new topic';
 $string['advancedsearch'] = 'Advanced search';
@@ -16,12 +17,12 @@ $string['bynameondate'] = 'by $a->name - $a->date';
 $string['configcleanreadtime'] = 'The hour of the day to clean old posts from the \'read\' table.';
 $string['configdisplaymode'] = 'The default display mode for discussions if one isn\'t set.';
 $string['configenablerssfeeds'] = 'This switch will enable the possibility of RSS feeds for all forums.  You will still need to turn feeds on manually in the settings for each forum.';
-$string['configlongpost'] = 'Any post over this length (not including HTML) is considered long.';
+$string['configlongpost'] = 'Any post over this length (in characters not including HTML) is considered long. Posts displayed on the site front page, social format course pages, or user profiles are shortened to a natural break somewhere between the forum_shortpost and forum_longpost values.';
 $string['configmanydiscussions'] = 'Maximum number of discussions shown in a forum per page';
 $string['configmaxbytes'] = 'Default maximum size for all forum attachments on the site (subject to course limits and other local settings)';
 $string['configoldpostdays'] = 'Number of days old any post is considered read.';
 $string['configreplytouser'] = 'When a forum post is mailed out, should it contain the user\'s email address so that recipients can reply personally rather than via the forum? Even if set to \'Yes\' users can choose in their profile to keep their email address secret.';
-$string['configshortpost'] = 'Any post under this length (not including HTML) is considered short.';
+$string['configshortpost'] = 'Any post under this length (in characters not including HTML) is considered short (see below).';
 $string['configtrackreadposts'] = 'Set to \'yes\' if you want to track read/unread for each user.';
 $string['configusermarksread'] = 'If \'yes\', the user must manually mark a post as read. If \'no\', when the post is viewed it is marked as read.';
 $string['couldnotadd'] = 'Could not add your post due to an unknown error';
