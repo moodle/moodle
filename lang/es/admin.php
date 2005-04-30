@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // admin.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
 
 
 $string['adminseesallevents'] = 'Los administradores ven todos los eventos';
@@ -31,6 +31,7 @@ $string['configenablerssfeeds'] = 'Esta opción posibilita el acceso a canales RS
 $string['configenablerssfeedsdisabled'] = 'No está disponible porque los canales RSS están desactivados en todo el sitio. Para activarlos, vaya a Variables en Admin - Configuración.';
 $string['configerrorlevel'] = 'Seleccionar la cantidad de advertencias PHP que desea mostrar. La mejor elección es \'Normal\'.';
 $string['configextendedusernamechars'] = 'Este ajuste permite a los estudiantes usar cualesquiera caracteres en sus nombres de usuario (note que eso no afecta a sus nombres reales). El valor por defecto es \"false\", lo que restringe los nombres de usuario a caracteres alfanuméricos.';
+$string['configfilterall'] = 'Filtrar todas las cadenas, incluyendo cabeceras, títulos, barra de navegación, etc. Esto resulta muy útil cuando se usa el filtro multi-idioma; de otro modo, únicamente se ocasionará una sobrecarga en el sitio para obtener escasas ganancias.';
 $string['configfilteruploadedfiles'] = 'Esta opción posibilita que Moodle procese con los filtros todos los archivos HTML y de texto subidos antes de mostrarlos.';
 $string['configforcelogin'] = 'Normalmente la página principal del sitio y las listas de los cursos (pero no los cursos) pueden ser leídos por cualquiera sin necesidad de escribir su nombre de usuario y contraseña. Si desea forzar a los visitantes a acceder al sitio antes de poder ver CUALQUIER CONTENIDO, debería activar esta opción.';
 $string['configforceloginforprofiles'] = 'Esta opción obliga a acceder al sitio con cuentas válidas (no como invitados) antes de poder ver las páginas de los perfiles de usuario. El valor por defecto es \"false\", de modo que los futuros estudiantes pueden ver los profesores de cada curso, pero eso supone asimismo que los motores de búsqueda también pueden verlos.';
@@ -42,7 +43,9 @@ $string['configidnumber'] = 'Esta opción especifica si (a) No se pide a los usua
 $string['configintro'] = 'En esta página puede especificar un número de variables de configuración que ayudan a Moodle a trabajar adecuadamente en su servidor. Que esto no le preocupe demasiado: los valores por defecto funcionarán bien y, en todo caso, siempre podrá volver a esta página y cambiar los ajustes.';
 $string['configintroadmin'] = 'En esta página debería configurar su cuenta de administrador principal -que le dará un control absoluto sobre el sitio-. Asegúrese de que usa un nombre de usuario y contraseña seguros, así como una dirección de correo electrónico válida. Más adelante podrá crear más cuentas de administrador.';
 $string['configintrosite'] = 'Esta página le permite configurar la página principal y dar un nombre a su nuevo sitio. Puede volver más adelante y cambiar estos ajustes utilizando el enlace \'Ajustes del Sitio\' en la página de inicio.';
+$string['configintrotimezones'] = 'Esta página buscará nueva información sobre zonas horarias (incluyendo reglas para ahorrar energía aprovechando la luz solar) y actualizará su base de datos local con esta información. Dichas zonas serán comprobadas en orden: $a Este procedimiento es en general muy seguro y no puede afectar a las instalaciones normales. ¿Desea actualizar ahora las zonas horarias?';
 $string['configlang'] = 'Elija un idioma por defecto para el sitio completo. Los usuarios pueden más tarde elegir otra opción.';
+$string['configlangcache'] = 'Caché del menú de idioma. Ahorra mucha memoria y potencia de procesamiento. Si lo activa, el menú tardará unos minutos en actualizarse una vez que usted haya añadido o eliminado idiomas.';
 $string['configlangdir'] = 'La mayor parte de los idiomas se escriben de izquierda a derecha, pero algunos (e.g., árabe, hebreo) se escriben al revés.';
 $string['configlanglist'] = 'Deje esto en blanco para dejar que los usuarios elijan cualquier idioma presente en la instalación de Moodle. Sin embargo, puede acortar el menú escribiendo una lista de códigos de los idiomas que desee separada por comas. Por ejemplo, en,es_es,fr,it';
 $string['configlangmenu'] = 'Decida si quiere o no mostrar el menú de idiomas de propósito general en la página de inicio, en la de acceso, etc. Esto no afecta a la posibilidad que los usuarios tienen de elegir su idioma preferido en su propio perfil.';
@@ -86,19 +89,22 @@ $string['configvariables'] = 'Variables';
 $string['configwarning'] = 'Sea cuidadoso al modificar estos resultados (valores extraños pueden ocasionar problemas).';
 $string['configzip'] = 'Indique dónde está el programa de compresión -\'Zip-\'  (sólo Unix, opcional). Si se especifica, esto puede usarse para comprimir archivos en el servidor. Si lo deja en blanco, Moodle usará sus rutinas internas.';
 $string['confirmation'] = 'Confirmación';
-$string['cronwarning'] = 'El script de mantenimiento del <a href=\"cron.php\">cron.php </a> no ha sido ejecutado durante las últimas 24 horas. <br />La <a href=\"../doc/?frame=install.html&sub=cron\">documentación de instalación</a> explica cómo puede automatizarlo.';
+$string['cronwarning'] = 'El script de mantenimiento del <a href=\"cron.php\">cron.php </a> no ha sido ejecutado durante las últimas 24 horas. <br />La <a href=\"../doc/?frame=install.html&#8834;=cron\">documentación de instalación</a> explica cómo puede automatizarlo.';
 $string['edithelpdocs'] = 'Editar documentos de ayuda';
 $string['editstrings'] = 'Editar cadenas';
+$string['filterall'] = 'Filtrar todas las cadenas';
 $string['filteruploadedfiles'] = 'Filtrar archivos subidos';
 $string['helpadminseesall'] = '¿Pueden los administradores ver todos los eventos del calendario o sólo los que les conciernen?';
 $string['helpcalendarsettings'] = 'Configurar varios aspectos de Moodle relacionados con el calendario y con fechas';
 $string['helpforcetimezone'] = 'Puede permitir que los usuarios seleccionen su zona horaria, o forzarla para todos.';
-$string['helpmanagetimezones'] = 'Puede dejar que Moodle actualice y descargue automáticamente nuevos perfiles de moodle.org';
 $string['helpsitemaintenance'] = 'Para actualizaciones y otras tareas';
 $string['helpstartofweek'] = '¿Qué día comienza la semana?';
 $string['helpupcominglookahead'] = '¿Cuántos días debe considerar el calendario por defecto para eventos próximos?';
 $string['helpupcomingmaxevents'] = '¿Cuántos eventos próximos se mostrarán como máximo a los usuarios?';
 $string['helpweekenddays'] = '¿Cuántos días de la semana se considerarán como \'fin de semana\' y se mostrarán con un color diferente?';
+$string['importtimezones'] = 'Actualizar la lista completa de zonas horarias';
+$string['importtimezonescount'] = '$a->count entradas importadas desde $a->source';
+$string['importtimezonesfailed'] = '¡No se encuentran fuentes! (malas noticias)';
 $string['nodstpresetsexist'] = 'El soporte DST está desactivado para todos los usuarios porque no hay ajustes previos DST definidos. Puede definir algunos usando el botón de abajo.';
 $string['optionalmaintenancemessage'] = 'Mensaje de mantenimiento opcional';
 $string['sitemaintenance'] = 'Este sitio está en fase de mantenimiento y no está disponible en este momento';
@@ -111,7 +117,6 @@ $string['therewereerrors'] = 'Hay errores en sus datos';
 $string['timezoneforced'] = 'Esta opción está forzada por el administrador del sitio';
 $string['timezoneisforcedto'] = 'Forzar a todos los usuarios a utilizar';
 $string['timezonenotforced'] = 'Los usuarios pueden elegir su propia zona horaria';
-$string['updatetimezones'] = 'Actualizar perfiles automáticamente';
 $string['upgradelogs'] = 'Para conseguir una funcionalidad total, sus registros antiguos deben ser actualizados. <a href=\"$a\">Más información</a>';
 $string['upgradelogsinfo'] = 'Recientemente se han llevado a cabo algunos cambios en la forma en que se almacenan los registros. Para poder ver sus registros antiguos clasificados por actividad, esos registros se deben actualizar. Dependiendo del tamaño de su sitio este proceso puede tardar bastante tiempo (e.g., varias horas) puesto que habrá de consultar continuamente la base de datos. Una vez iniciado el proceso debe permitir que llegue a su fin (manteniendo la ventana de su navegador abierta). No se preocupe: durante este proceso su sitio funcionará correctamente para los otros usuarios.<br /><br /> ¿Desea actualizar sus registros ahora?';
 $string['upgradesure'] = 'Sus archivos Moodle han sido modificados, y usted está a punto de actualizar automáticamente su servidor a esta versión:

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
 
 
 $string['calendar'] = 'Calendario';
@@ -8,7 +8,6 @@ $string['clickhide'] = 'clic para ocultar';
 $string['clickshow'] = 'clic para mostrar';
 $string['confirmeventdelete'] = '¿Está seguro de que desea eliminar este evento?';
 $string['courseevents'] = 'Eventos de curso';
-$string['day'] = 'día';
 $string['dayview'] = 'Vista de Día';
 $string['daywithnoevents'] = 'No hay eventos este día.';
 $string['default'] = 'Por defecto';
@@ -37,8 +36,6 @@ $string['eventstarttime'] = 'Hora de comienzo';
 $string['eventtime'] = 'Hora';
 $string['eventview'] = 'Detalles del evento';
 $string['expired'] = 'Expirado';
-$string['explain_dstpreset'] = 'Puede, en su caso, seleccionar en el menú para qué área utilizar los ajustes DST.';
-$string['explain_dstpresetforced'] = 'El administrador del sitio no permite a los usuarios modificar esta opción.';
 $string['explain_lookahead'] = 'Esta preferencia establece el número máximo de días en que un evento debe comenzar para mostrarse como un evento próximo. Los eventos que comienzan más tarde de esa fecha no se mostrarán como próximos. Por favor, advierta que <strong>no se garantiza</strong> que se muestren todos los eventos que comienzan en ese rango de fechas; si son demasiados (más que los fijados en la preferencia \"Número máximo de eventos próximos\") entonces los eventos más distantes no se mostrarán.';
 $string['explain_maxevents'] = 'Esta preferencia establece el número máximo de eventos próximos a mostrar. Si selecciona un número alto, es posible que se ocupe un amplio espacio de la pantalla.';
 $string['explain_persistflt'] = 'Si está habilitado, Moodle recordará los últimos ajustes de filtro de evento y los restaurará automáticamente cada vez que acceda.';
@@ -57,7 +54,6 @@ $string['monthlyview'] = 'Vista de Mes';
 $string['newevent'] = 'Nuevo evento';
 $string['noupcomingevents'] = 'No hay eventos próximos';
 $string['oneevent'] = '1 evento';
-$string['parentlanguage'] = 'es';
 $string['pref_lookahead'] = 'Plazo de comienzo de eventos próximos';
 $string['pref_maxevents'] = 'Nº máximo de eventos próximos';
 $string['pref_persistflt'] = 'Recordar ajustes de filtro';
@@ -65,6 +61,8 @@ $string['pref_startwday'] = 'Primer día de la semana';
 $string['pref_timeformat'] = 'Formato de hora';
 $string['preferences'] = 'Preferencias';
 $string['preferences_available'] = 'Sus preferencias personales';
+$string['repeateditall'] = 'Aplicar los cambios a todos los eventos $a de la serie';
+$string['repeateditthis'] = 'Aplicar los cambios sólo a este evento';
 $string['repeatnone'] = 'No repeticiones';
 $string['repeatweeksl'] = 'Repetir semanalmente, creando juntos';
 $string['repeatweeksr'] = 'eventos';
@@ -101,5 +99,6 @@ $string['userevents'] = 'Eventos de usuario';
 $string['wed'] = 'Mié';
 $string['wednesday'] = 'Miércoles';
 $string['yesterday'] = 'Ayer';
+$string['youcandeleteallrepeats'] = 'Este evento es parte de una serie de eventos repetidos. Puede eliminar sólo este evento, o todos los eventos $a de la serie de una vez.';
 
 ?>

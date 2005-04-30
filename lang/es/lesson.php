@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // lesson.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
 
 
 $string['accesscontrol'] = 'Control de Acceso';
@@ -105,10 +105,12 @@ $string['leftduringtimed'] = 'Se ha interrumpido una lección con tiempo fijo.<br
 $string['leftduringtimednoretake'] = 'Se ha interrumpido una lección con tiempo fijo y<br>no se permite volver a empezar o continuar la lección.';
 $string['lesson'] = 'Lección $a';
 $string['lessonclosed'] = 'Esta lección se cerró el $a.';
+$string['lessoncloses'] = 'La lección se cierra';
 $string['lessondefault'] = 'Utilizar los ajustes de esta lección como valores por defecto';
 $string['lessonformating'] = 'Formateado de la Lección';
 $string['lessonmenu'] = 'Menú Lección';
 $string['lessonopen'] = 'Esta lección se abrirá el $a.';
+$string['lessonopens'] = 'La lección se abre';
 $string['lessonstats'] = 'Estadísticas de la lección';
 $string['loginfail'] = 'Acceso fallido, por favor pruebe de nuevo...';
 $string['lowscore'] = 'Puntuación baja';
@@ -165,7 +167,6 @@ $string['page'] = 'Página: $a';
 $string['pagecontents'] = 'Contenido de la página';
 $string['pages'] = 'Páginas';
 $string['pagetitle'] = 'Título de la página';
-$string['parentlanguage'] = 'es';
 $string['password'] = 'Contraseña';
 $string['passwordprotectedlesson'] = '$a es una lección protegida con contraseña.';
 $string['pleasecheckoneanswer'] = 'Seleccione una respuesta';
@@ -219,9 +220,6 @@ $string['teachertimerwarning'] = 'El temporizador sólo funciona con estudiantes.
 $string['thatsthecorrectanswer'] = 'Esta es la respuesta correcta';
 $string['thatsthewronganswer'] = 'Esta es la respuesta equivocada';
 $string['thefollowingpagesjumptothispage'] = 'Las páginas siguientes saltan a esta página';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'es';
 $string['thispage'] = 'Esta página';
 $string['timed'] = 'Con límite de tiempo';
 $string['timeremaining'] = 'Tiempo restante';

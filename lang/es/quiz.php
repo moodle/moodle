@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // quiz.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
 
 
 $string['acceptederror'] = 'Margen de error';
@@ -92,6 +92,8 @@ $string['deleteselected'] = 'Eliminar seleccionados';
 $string['description'] = 'Descripción';
 $string['discrimination'] = 'Índice Discrim.';
 $string['displayoptions'] = 'Mostrar opciones';
+$string['download'] = 'Haga clic para descargar el archivo de categorías exportadas';
+$string['downloadextra'] = '(el archivo se almacena también en el directorio /quiz de archivos del curso)';
 $string['eachattemptbuildsonthelast'] = 'Cada intento se basa en el anterior';
 $string['editcategories'] = 'Editar categorías';
 $string['editcategory'] = 'Editar categoría';
@@ -290,8 +292,6 @@ $string['significantfigures'] = 'con $a';
 $string['significantfiguresformat'] = 'dígitos significativos';
 $string['subneterror'] = 'Lo sentimos, este cuestionario ha sido bloqueado de modo que sólo es accesible desde ciertas direcciones. En este momento su ordenador no está autorizado para usar este cuestionario.';
 $string['substitutedby'] = 'serán sustituídas por';
-$string['thischarset'] = 'iso-8859-1';
-$string['thislanguage'] = 'e';
 $string['time'] = 'Tiempo';
 $string['timecompleted'] = 'Completado';
 $string['timeleft'] = 'Tiempo restante';
@@ -317,6 +317,7 @@ $string['webct'] = 'Formato WebCT';
 $string['wildcard'] = 'Wild card';
 $string['withsummary'] = 'con estadísticas resumidas';
 $string['wronggrade'] = 'Calificación equivocada (después de la línea $a) :';
+$string['xhtml'] = 'Formato XHTML';
 $string['xml'] = 'Formato Moodle XML';
 $string['yourfinalgradeis'] = 'Su calificación final en este cuestionario es $a';
 $string['zerosignificantfiguresnotallowed'] = '¡La respuesta correcta no puede tener cero dígitos significativos!';

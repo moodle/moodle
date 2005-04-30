@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // workshop.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
 
 
 $string['absent'] = 'Ausente';
@@ -166,6 +166,7 @@ $string['noteonstudentassessments'] = '{Calificación del estudiante / Calificaci
 $string['notgraded'] = 'No Calificado';
 $string['notitle'] = 'Sin título';
 $string['notitlegiven'] = 'Aún no tiene Título';
+$string['notsubmittedyet'] = 'Aún no se ha hecho ningún envío';
 $string['nowork'] = 'El período de envío ha terminado.<br />No ha enviado ningún trabajo.';
 $string['numberofassessmentelements'] = 'Número de Comentarios, Elementos de Evaluación, Franjas de Calificación o Declaraciones de Criterio o Categorías en una Rúbrica';
 $string['numberofassessments'] = 'Número de Evaluaciones';
@@ -189,7 +190,6 @@ $string['overallocation'] = 'Nivel de Asignación por Exceso';
 $string['overallpeergrade'] = 'Calificación Total de los Compañeros: $a';
 $string['overallteachergrade'] = 'Calificación Total del Profesor: $a';
 $string['ownwork'] = 'Trabajo Propio';
-$string['parentlanguage'] = 'es';
 $string['passmnts'] = 'Evaluaciones<br />Compañeros';
 $string['passwordprotectedworkshop'] = 'Taller protegido con contraseña';
 $string['percentageofassessments'] = 'Porcentaje de Evaluaciones a desechar';
@@ -278,10 +278,7 @@ $string['teachersubmissionsforassessment'] = '$a Envíos del Profesor para Evalua
 $string['thegradeforthisassessmentis'] = 'La calificación para esta evaluación es $a';
 $string['thegradeis'] = 'La Calificación es $a';
 $string['theseasessmentsaregradedbytheteacher'] = 'Estas Evaluaciones están calificadas por el $a';
-$string['thischarset'] = 'iso-8859-1';
-$string['thisdirection'] = 'ltr';
 $string['thisisadroppedassessment'] = 'Esta es una evaluación dejada.';
-$string['thislanguage'] = 'es';
 $string['timeassessed'] = 'Tiempo Evaluado';
 $string['title'] = 'Título';
 $string['typeofscale'] = 'Tipo de Escala';

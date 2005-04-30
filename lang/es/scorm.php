@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 unstable development (2004083000)
+      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['asset'] = 'Asset';
@@ -21,9 +21,12 @@ $string['configpopupwidth'] = '¿Cuál debería ser la anchura por defecto de las n
 $string['coursepacket'] = 'Paquete de curso';
 $string['coursestruct'] = 'Estructura de curso';
 $string['datadir'] = 'Error del Sistema: No se puede crear un directorio de datos del curso';
+$string['display'] = 'Mostrar';
 $string['domxml'] = 'Librería externa DOMXML';
 $string['entercourse'] = 'Introducir el curso SCORM';
 $string['errorlogs'] = 'Registro de errores';
+$string['exit'] = 'Salir del curso SCORM';
+$string['expcoll'] = 'Expandir/Chocar';
 $string['failed'] = 'Error';
 $string['found'] = 'Encontrado manifiesto';
 $string['gradeaverage'] = 'Calificación promedio';

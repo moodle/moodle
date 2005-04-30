@@ -1,8 +1,10 @@
 <?PHP // $Id$ 
-      // message.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // message.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
 
 
 $string['addcontact'] = 'Añadir contacto';
+$string['addsomecontacts'] = 'Para enviar un mensaje a alguien, o para añadir un atajo en esta página, utilice la <a href=\"$a\">search tab</a> de más arriba.';
+$string['addsomecontactsincoming'] = 'Estos mensajes provienen de personas que no están en su lista de contactos. Para agregarlos a sus contactos, haga clic en el icono \"Agregar contacto\" al lado de su nombre.';
 $string['ago'] = 'hace $a';
 $string['allmine'] = 'Todos los mensajes (hacia mí o desde mí)';
 $string['allstudents'] = 'Todos los mensajes entre los estudiantes del curso';
@@ -11,6 +13,7 @@ $string['backupmessageshelp'] = 'Si se activa, los mensajes instantáneos serán i
 $string['beepnewmessage'] = '\'Beep\' cuando llegue un mensaje nuevo';
 $string['blockcontact'] = 'Bloquear contacto';
 $string['blockedmessages'] = '$a mensaje(s) hacia/de usuarios bloqueados';
+$string['contactlistempty'] = 'Su lista de contactos está vacía';
 $string['contacts'] = 'Contactos';
 $string['context'] = 'contexto';
 $string['deletemessagesdays'] = 'Número de días antes de eliminar automáticamente los mensajes antiguos';
@@ -41,7 +44,6 @@ $string['onlyfromme'] = 'Sólo mensajes enviados por mí';
 $string['onlymycourses'] = 'Sólo en mis cursos';
 $string['onlytome'] = 'Sólo mensajes dirigidos a mí';
 $string['pagerefreshes'] = 'Esta página se actualiza automáticamente cada $a segundos';
-$string['parentlanguage'] = 'es';
 $string['readmessages'] = '$a mensajes leídos';
 $string['removecontact'] = 'Eliminar contacto';
 $string['savemysettings'] = 'Guardar mis ajustes';

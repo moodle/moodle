@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // forum.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
 
 
 $string['addanewdiscussion'] = 'Colocar un nuevo tema de discusión aquí';
@@ -30,7 +30,9 @@ $string['couldnotupdate'] = 'No se ha podido actualizar su mensaje debido a un e
 $string['delete'] = 'Borrar ';
 $string['deleteddiscussion'] = 'El tema se ha borrado';
 $string['deletedpost'] = 'El mensaje se ha borrado';
+$string['deletedposts'] = 'Los mensajes han sido borrados';
 $string['deletesure'] = '¿Está seguro de que desea borrar este mensaje?';
+$string['deletesureplural'] = '¿Está seguro de que desea borrar este mensaje y todas las respuestas? ($a mensajes)';
 $string['digestmailheader'] = 'Éste es su resumen diario por correo de los nuevos mensajes de los foros de $a->sitename. Si desea cambiar sus preferencias de foro por correo, hágalo en $a->userprefs.';
 $string['digestmailprefs'] = 'su perfil de usuario';
 $string['digestmailsubject'] = 'Resumen diario del foro de $a';

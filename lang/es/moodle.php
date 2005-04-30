@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
+      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
 
 
 $string['action'] = 'Acción';
@@ -184,6 +184,7 @@ $string['confirmed'] = 'Registro confirmado';
 $string['confirmednot'] = 'Su registro no se ha confirmado aún.';
 $string['continue'] = 'Continuar';
 $string['continuetocourse'] = 'Haga clic aquí para entrar a su curso';
+$string['convertingwikitomarkdown'] = 'Convirtiendo Wiki a Markdown';
 $string['cookiesenabled'] = 'Las Cookies deben estar habilitadas en su navegador';
 $string['cookiesnotenabled'] = 'Las cookies no están habilitadea en su navegador';
 $string['copy'] = 'copiar';
@@ -222,6 +223,7 @@ $string['creatingblocks'] = 'Creando bloques';
 $string['creatingcategoriesandquestions'] = 'Creando categorías y preguntas';
 $string['creatingcoursemodules'] = 'Creando módulos de curso';
 $string['creatingevents'] = 'Creando eventos';
+$string['creatinggradebook'] = 'Creando libro de calificaciones';
 $string['creatinggroups'] = 'Creando grupos';
 $string['creatinglogentries'] = 'Creando entradas de registro';
 $string['creatingmessagesinfo'] = 'Creando información sobre mensajes';
@@ -465,6 +467,7 @@ $string['frontpagecourselist'] = 'Mostrar la lista de cursos';
 $string['frontpagedescription'] = 'Descripción de la página principal';
 $string['frontpageformat'] = 'Formato de la página principal';
 $string['frontpagenews'] = 'Mostrar ítems de noticias';
+$string['frontpagetopiconly'] = 'Mostrar HTML o actividades arbitrarios (sección de temas)';
 $string['fulllistofcourses'] = 'Todos los cursos';
 $string['fullname'] = 'Nombre completo';
 $string['fullnamedisplay'] = '$a->firstname $a->lastname';
@@ -788,6 +791,7 @@ $string['noteachersyet'] = 'Aún no hay profesores en este curso';
 $string['notenrolled'] = '$a no está matriculado en este curso.';
 $string['noteuserschangednonetocourse'] = 'Nota: Los alumnos de los cursos deben ser restaurados cuando se restauran los datos. Esta configuración ha sido cambiada para usted.';
 $string['nothingnew'] = 'Sin novedades desde el último acceso';
+$string['nothingtodisplay'] = 'Nada que mostrar';
 $string['noticenewerbackup'] = 'Esta copia de seguridad ha sido creada con Moodle $a->backuprelease ($a->backupversion) y es más reciente que la versión instalada de Moodle $a->serverrelease ($a->serverversion). Esto podría ocasionar algunas inconsistencias debido a que no se puede garantizar la compatibilidad retrospectiva de las copias de seguridad.';
 $string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, Usuario: $a->info';
 $string['notifyloginfailuresmessageend'] = 'Puede ver estos registros en $a/course/log.php?id=1&chooselog=1&modid=site_errors.';
@@ -1016,14 +1020,16 @@ $string['themes'] = 'Temas';
 $string['themesaved'] = 'Se ha guardado el nuevo tema';
 $string['thischarset'] = 'iso-8859-1';
 $string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Espa&#241;ol - Internacional';
+$string['thislanguage'] = 'Español - Internacional';
 $string['time'] = 'Tiempo';
 $string['timezone'] = 'Zona horaria';
 $string['to'] = 'Hasta';
 $string['today'] = 'Hoy';
 $string['todaylogs'] = 'Registros de hoy';
+$string['toeveryone'] = 'a todos';
 $string['toomanybounces'] = 'Esta dirección de correo ha tenido muchas devoluciones. <b>Debe</b> cambiarla para continuar.';
 $string['toomanytoshow'] = 'Hay demasiados usuarios para mostrarlos aquí';
+$string['toonly'] = 'sólo a $a';
 $string['top'] = 'Top';
 $string['topic'] = 'Tema';
 $string['topichide'] = 'Ocultar este tema a $a';
@@ -1142,6 +1148,7 @@ $string['writingcategoriesandquestions'] = 'Escribiendo categorías y preguntas';
 $string['writingcoursedata'] = 'Escribiendo información del curso';
 $string['writingeventsinfo'] = 'Escribiendo información del evento';
 $string['writinggeneralinfo'] = 'Escribiendo información general';
+$string['writinggradebookinfo'] = 'Escribiendo información del libro de calificaciones';
 $string['writinggroupsinfo'] = 'Escribiendo información de grupos';
 $string['writingheader'] = 'Escribiento el encabezado';
 $string['writingloginfo'] = 'Escribiendo información de registros';

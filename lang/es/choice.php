@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.5 unstable development (2004083000)
+      // choice.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
 
 
+$string['addmorechoices'] = 'Añadir más opciones';
 $string['allowupdate'] = 'Permitir la actualización de la consulta';
 $string['answered'] = 'Contestado';
 $string['choice'] = 'Opción $a';
@@ -9,7 +10,13 @@ $string['choiceclose'] = 'Hasta';
 $string['choicename'] = 'Título de la consulta';
 $string['choiceopen'] = 'Abrir';
 $string['choicetext'] = 'Pregunta a responder';
+$string['displayhorizontal'] = 'Mostrar horizontalmente';
+$string['displaymode'] = 'Modo Mostrar';
+$string['displayvertical'] = 'Mostrar verticalmente';
+$string['full'] = '(Lleno)';
 $string['havetologin'] = 'Debe entrar antes de remitir su elección';
+$string['limit'] = 'Límite';
+$string['limitanswers'] = 'Limitar el número de respuestas permitidas';
 $string['modulename'] = 'Consulta';
 $string['modulenameplural'] = 'Consultas';
 $string['mustchooseone'] = 'Debe elegir una respuesta antes de guardar. No se ha guardado nada.';
@@ -27,7 +34,11 @@ $string['responses'] = 'Respuestas';
 $string['responsesto'] = 'Respuestas para $a';
 $string['savemychoice'] = 'Guardar mi elección';
 $string['showunanswered'] = 'Mostrar columna de no respondidas';
+$string['spaceleft'] = 'espacio disponible';
+$string['spacesleft'] = 'espacios disponibles';
+$string['taken'] = 'Tomadas';
 $string['timerestrict'] = 'Restringir la respuesta a este período';
 $string['viewallresponses'] = 'Ver $a respuestas';
+$string['yourselection'] = 'Su selección';
 
 ?>

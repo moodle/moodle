@@ -1,7 +1,9 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
+      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005042100)
 
 
+$string['alternatelogin'] = 'Si introduce aquí una URL, se usará como página de acceso al sitio. La página debería contener un formulario cuya propiedad de acción está ajustada a <strong>\'$a\'</strong> y devuelve los campos <strong>nombre de usuario</strong> y <strong>contraseña</strong>.<br />Procure no introducir una URL incorrecta puesto que hacerlo supondrá su expulsión del sitio.<br />Deje el ajuste en blanco para utilizar la página de acceso por defecto.';
+$string['alternateloginurl'] = 'URL de acceso alternativo';
 $string['auth_cas_baseuri'] = 'URI del servidor (en blanco si no hay baseUri)<br />Por ejemplo, si el servidor CAS responde a host.domaine.fr/CAS/ entonces<br />cas_baseuri = CAS/';
 $string['auth_cas_create_user'] = 'Activar si se desea insertar usuarios autentificados con CAS en la base de datos de Moodle. En caso contrario, sólo tendrán acceso los usuarios que ya existen en la base de datos de Moodle.';
 $string['auth_cas_enabled'] = 'Activar si se desea usar la autentificación CAS.';
@@ -93,6 +95,14 @@ $string['auth_pop3mailbox'] = 'Nombre de la bandeja de entrada con la que intent
 $string['auth_pop3port'] = 'Puerto del Servidor (110 es el más habitual)';
 $string['auth_pop3title'] = 'Usar un servidor POP3';
 $string['auth_pop3type'] = 'Tipo de servidor. Si su servidor utiliza certificado de seguridad, escoja pop3cert.';
+$string['auth_shib_instructions'] = 'Utilice el <a href=\"$a\">login Shibboleth</a> para acceder vía Shibboleth si su institución lo admite.<br />En caso contrario, utilice el formulario de entrada normal que aquí se muestra.';
+$string['auth_shib_instructions_help'] = 'Aquí debería proporcionar a sus usuarios instrucciones personalizadas para explicar Shibboleth. Deberían aparecer en la sección de instrucciones de la página de acceso, e incluir un enlace a \"<b>$a</b>\", de modo que los usuarios de Shibboleth pudieran acceder con facilidad. Si lo deja en blanco, se utilizarán las instrucciones estándar (no las específicas de Shibboleth)';
+$string['auth_shib_only'] = 'Sólo Shibboleth';
+$string['auth_shib_only_description'] = 'Marque esta opción si desea forzar la autenticación Shibboleth';
+$string['auth_shib_settings'] = 'Asegúrese de leer el archivo <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> acerca del modo de configurar Moodle con Shibboleth';
+$string['auth_shib_username_description'] = 'Nombre de la variable contextual del servidor Shibboleth que se utilizará como nombre de usuario en Moodle';
+$string['auth_shibboleth_login'] = 'Acceso Shibboleth';
+$string['auth_shibboleth_manual_login'] = 'Acceso manual';
 $string['auth_shibbolethdescription'] = 'Con este método puede conectarse a un servidor Shibboleth para comprobar y crear nuevas cuentas';
 $string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_updatelocal'] = 'Actualizar datos locales';
@@ -114,7 +124,6 @@ $string['forcechangepasswordfirst_help'] = 'Forzar a los usuarios a cambiar la c
 $string['guestloginbutton'] = 'Botón de entrada para invitados';
 $string['instructions'] = 'Instrucciones';
 $string['md5'] = 'Encriptación MD5';
-$string['parentlanguage'] = 'es';
 $string['plaintext'] = 'Texto plano';
 $string['showguestlogin'] = 'Puede ocultar o mostrar el botón de entrada para invitados en la página de acceso.';
 $string['stdchangepassword'] = 'Utilizar Página de cambio de contraseña estándar';

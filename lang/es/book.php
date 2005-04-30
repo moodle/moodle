@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // book.php - created with Moodle 1.5 unstable development (2004083000)
+      // book.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004093001)
 
 
 $string['addafter'] = 'Agregar un nuevo capítulo';
@@ -22,6 +22,7 @@ $string['importingchapters'] = 'Importando capítulos al libro';
 $string['maindirectory'] = 'Directorio principal';
 $string['modulename'] = 'Libro';
 $string['modulenameplural'] = 'Libros';
+$string['navexit'] = 'Salir';
 $string['navnext'] = 'Siguiente';
 $string['navprev'] = 'Anterior';
 $string['numbering'] = 'Número del capítulo';
