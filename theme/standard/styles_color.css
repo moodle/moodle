@@ -465,7 +465,8 @@ table.message_search_results td {
 .selected .tablink a:visited {
   color:#000000;
 }
-.tabs .side {
+.tabs .side,
+.tabrow td {
   border-color: #AAAAAA;
 }
 .tabrow td {
