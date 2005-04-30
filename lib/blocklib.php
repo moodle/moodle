@@ -13,6 +13,30 @@ define('BLOCK_POS_RIGHT', 'r');
 
 require_once($CFG->libdir.'/pagelib.php');
 
+
+// Returns false if this block is incompatible with the current version of Moodle.
+function block_is_compatible($blockname) {
+    global $CFG;
+
+    $file = file($CFG->dirroot.'/blocks/'.$blockname.'/block_'.$blockname.'.php');
+    if(empty($file)) {
+        return NULL;
+    }
+
+    foreach($file as $line) {
+        // If you find MoodleBlock (appearing in the class declaration) it's not compatible
+        if(strpos($line, 'MoodleBlock')) {
+            return false;
+        }
+        // But if we find a { it means the class declaration is over, so it's compatible
+        else if(strpos($line, '{')) {
+            return true;
+        }
+    }
+
+    return NULL;
+}
+
 // Returns the case-sensitive name of the class' constructor function. This includes both
 // PHP5- and PHP4-style constructors. If no appropriate constructor can be found, returns NULL.
 // If there is no such class, returns boolean false.
@@ -748,6 +772,13 @@ function upgrade_blocks_plugins($continueto) {
             continue;
         }
 
+        if(!block_is_compatible($blockname)) {
+            // This is an old-style block
+            //$notices[] = 'Block '. $blockname .' is not compatible with the current version of Mooodle and needs to be updated by a programmer.';
+            $invalidblocks[] = $blockname;
+            continue;
+        }
+
         $fullblock = $CFG->dirroot .'/blocks/'. $blockname;
 
         if ( is_readable($fullblock.'/block_'.$blockname.'.php')) {
@@ -779,13 +810,6 @@ function upgrade_blocks_plugins($continueto) {
         if(empty($constructor)) {
             // No constructor
             $notices[] = 'Block '. $blockname .': class does not have a constructor';
-            $invalidblocks[] = $blockname;
-            continue;
-        }
-        $methods = get_class_methods($classname);
-        if(!in_array('init', $methods)) {
-            // This is an old-style block
-            $notices[] = 'Block '. $blockname .' is an old style block and needs to be updated by a programmer.';
             $invalidblocks[] = $blockname;
             continue;
         }
