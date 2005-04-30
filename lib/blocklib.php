@@ -284,6 +284,9 @@ function blocks_preferred_width(&$instances) {
             continue;
         }
         $block = blocks_get_record($instance->blockid);
+        if(!$block->visible) {
+            continue;
+        }
         $pref = block_method_result($block->name, 'preferred_width');
         if($pref === NULL) {
             continue;
