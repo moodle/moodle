@@ -802,6 +802,7 @@ table.message .searchresults td {
 .tabs {
   width: auto;
   margin-bottom: 15px;
+  border-collapse: collapse;
 }
 .tabs .side {
   border-style: solid;

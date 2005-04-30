@@ -341,6 +341,10 @@ body#doc-contents ul {
  *** Login
  ***/
 
+#login-index .content {
+  font-size: 0.85em;
+}
+
 
 /***
  *** Message
@@ -440,6 +444,9 @@ body#doc-contents ul {
 }
 .forumpost .topic .author {
   font-size: 0.8em;
+}
+.forumpost .commands {
+  font-size: 0.9em;
 }
 .forumheaderlist .discussion .lastpost {
   font-size: 0.7em;
