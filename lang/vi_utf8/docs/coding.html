@@ -1,206 +1,313 @@
 ﻿<html>
-<head>
-<title>Tài liệu Moodle: Các hướng dẫn Code</title>
-<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-</head>
-<body bgcolor="#FFFFFF">
-<h1>Các hướng dẫn về coding trong Moodle</h1>
-<p class="normaltext">Bất kỳ một dự án nào cũng cần tính nhất quán và ổn định 
-  để có thể tồn tại lâu dài.</p>
-<p class="normaltext">Các hướng dẫn sau cung cấp một mục tiêu chung để tất cả các mã Moodle 
-  có thể phát triển tốt. Sự thật là một vài các đoạn mã tồn tại trước đó chưa đáp ứng được
-  một vài yêu cầu, tuy nhiên nó sẽ được sửa sau này. Tất cả các mã mới phải tuân theo
-  một cách hoàn toàn các chuẩn dưới đây càng chính xác càng tốt.</p>
-<h2>General Rules</h2>
-<ol class="normaltext">
-  <li class="spaced">Tất cả các file mã phải sử dụng phần mở rộng .php.</li>
-  <li class="spaced">Tất cả các file mẫu phải sử dụng phần mở rộng .html.</li>
-  <li class="spaced">Tẩt các file text nên sử dụng định dạng kiểu Unix (đa số
-    các bộ soạn thảo text có lựa chọn này).</li>
-  <li class="spaced">Tất cả các thẻ PHP phải là các thẻ 'đầy đủ' giống như <font color="#339900">&lt;?php 
-    ?&gt;</font> ... không phải là các thẻ 'ngắn' giống như <font color="#339900">&lt;? ?&gt;</font>. 
-  </li>
-  <li class="spaced">Tất cả các chú thích về bản quyền phải được giữ nguyên. Bạn có thể 
-    đưa thêm của bạn vào nếu cần thiết.</li>
-  <li class="spaced">Mỗi file nên gồm file chính config.php.</li>
-  <li class="spaced">Mỗi file nên kiểm tra rằng người dùng được chứng thực đúng đắn, 
-    sử dụng require_login() và isadmin(), isteacher(), iscreator() hoặc isstudent().</li>
-  <li class="spaced">Tất cả các truy cập tới các cơ sở dữ liệu phải sử dụng các hàm trong lib/datalib.php 
-    bất cứ khi nào có thể - nó đảm bảo tính khả chuyển giữa nhiều cơ sở dữ liệu khác nhau. 
-    Bạn có thể tìm thấy đa số mọi thứ là có thể bằng cách sử dụng các hàm này. Nếu bạn phải viết mã SQL hãy đảm bảo rằng: không phụ thuộc nền; hạn chế các hàm cụ thể
-    ngay trong file của bạn (thương là trong lib.php ); và được đánh dấu, chú thích cẩn thận, rõ ràng.</li>
-  <li class="spaced">Đừng tạo hoặc sử dụng các biến toàn cục trừ các biến chuẩn
-    $CFG, $SESSION, $THEME và $USER.</li>
-  <li class="spaced">Tất cả các biến nên được khởi tạo hoặc ít nhất được thử
-    tính tồn tại thông qua sử dụng isset() hoặc empty() trước khi chúng được sử dụng.</li>
-  <li class="spaced">Tẩt cả các xâu nên có thể dịch được - tạo các text mới trong
-    các file &quot;lang/en&quot;  với các tên tiếng Anh chính xác chữ thường và lấy chúng từ mã
-    thông qua sử dụng get_string() hoặc print_string().</li>
-  <li class="spaced">Tất cả các file trợ giúp nên có thể dịch được  - tạo các text mới 
-    trong thư mục &quot;en/help&quot; và gọi chúng sử dụng helpbutton().
-    <p>Nếu bạn cần cập nhật một file trợ giúp: 
-    <ul>
-    <li>với một sự thay đổi nhỏ, nơi mà bản dịch cũ
-        của file vẫn có ý nghĩa, thì có thể thực hiện thay đổi trên bản dịch cũ
-        nhưng phải thông báo cho translation@moodle.org</li>
-    <li>với một sự thay đổi lớn bạn nên tạo một file mới bằng cách đưa vào
-        một số tăng (ví dụ filename2.html) sao cho các người dịch
-        có thể dễ dàng nhìn thấy phiên bản mới của file.  Hiển nhiên
-        mã mới và các chỉ sổ file trợ giúp nên được thay đổi để chỉ ra phiên  
-        tới phiên bản mới nhất.</li>
-    </ul>
-    </p>
-</li>
-  <li class="spaced">Các dữ liệu đến từ trình duyệt (được gửi thông qua GET hoặc POST) tự động
-    được xử lý bằng magic_quotes (không quan tâm tới việc thiết lập trong PHP) sao cho bạn có thể
-    chèn chúng an toàn vào cơ sở dữ liệu.  Tất cả các dữ liệu thô khác (từ các files, hoặc từ các cơ sở dữ liệu)
-    phải được thoát bởi <font color="#339900">addslashes()</font> trước khi chèn nó vào cơ sở dữ liệu.</li>
-  <li class="spaced">QUAN TRỌNG:  Mọi text bên trong Moodle, đặc biệt là xuất phát từ 
-    người dùng, sẽ được in sử dụng hàm format_text().  Điều này đảm bảo rằng 
-    text được lọc và xoá theo đúng cách.</li>
-</ol>
-<p>&nbsp;</p>
-<h2>Phong cách coding</h2>
-<p class="normaltext">Tôi biết có thể khó chịu cho bạn khi thay đổi phong cách 
-  nếu bạn đã quen với cái gì đó, nhưng bù lại mọi người sau này sẽ dễ tiếp cận 
-  với mã. 
-  Hiển nhiên có nhiều lí do mà mọi người nên theo một phong cách viết mã thống nhất , 
-  chúng sẽ được quy định dưới đây <strong>như sau</strong>, xin hãy tuân thủ theo nó. </p>
-<ol class="normaltext">
-  <li class="spaced"><strong>Indenting</strong> should be consistently 4 spaces. 
-    Don't use tabs AT ALL. </li>
-  <li class="spaced"><strong>Variable names</strong> should always be easy-to-read, 
-    meaningful lowercase English words. If you really need more than one word 
-    then run them together, but keep them short as possible. Use
-plural names for arrays of objects.
-    <p class="examplecode"><font color="#006600">GOOD: $quiz<br />
-      GOOD: $errorstring<br />
-GOOD: $assignments (for an array of objects)<br />
-      GOOD: $i (but only in little loops)<br />
-      <br />
-      BAD: $Quiz <br />
-      BAD: $aReallyLongVariableNameWithoutAGoodReason<br />
-      BAD: $error_string</font></p>
-  </li>
-  <li class="spaced"><strong>Constants</strong> should always be in upper case, 
-    and always start with the name of the module. They should have words separated 
-    by underscores. 
-    <p class="examplecode"><font color="#006600">define(&quot;FORUM_MODE_FLATOLDEST&quot;, 
-      1);</font></p>
-  </li>
-  <li class="spaced"><strong>Function names</strong> should be simple English 
-    lowercase words, and start with the name of the module to avoid conflicts between modules. 
-    Words should be separated by underscores. Parameters should always have sensible 
-    defaults if possible. Note there is no space between the function name and 
-    the following (brackets). <br />
-    <p class="examplecode"> <font color="#007700">function </font><font color="#0000BB">forum_set_display_mode</font><font color="#007700">(</font><font color="#0000BB">$mode</font><font color="#007700">=</font><font color="#0000BB">0</font><font color="#007700">) 
-      {<br />
-      &nbsp;&nbsp;&nbsp;&nbsp;global </font><font color="#0000BB">$USER</font><font color="#007700">, 
-      </font><font color="#0000BB">$CFG</font><font color="#007700">;<br />
-      <br />
-      &nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000BB">$mode</font><font color="#007700">) 
-      {<br />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$USER</font><font color="#007700">-&gt;</font><font color="#0000BB">mode 
-      </font><font color="#007700">= </font><font color="#0000BB">$mode</font><font color="#007700">;<br />
-      &nbsp;&nbsp;&nbsp;&nbsp;} else if (empty(</font><font color="#0000BB">$USER</font><font color="#007700">-&gt;</font><font color="#0000BB">mode</font><font color="#007700">)) 
-      {<br />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$USER</font><font color="#007700">-&gt;</font><font color="#0000BB">mode 
-      </font><font color="#007700">= </font><font color="#0000BB">$CFG</font><font color="#007700">-&gt;</font><font color="#0000BB">forum_displaymode</font><font color="#007700">;<br />
-      &nbsp;&nbsp;&nbsp;&nbsp;}<br />
-      }</font></p>
-  </li>
-  <li class="spaced"><strong>Blocks</strong> must always be enclosed in curly 
-    braces (even if there is only one line). Moodle uses this style: 
-    <p class="examplecode"> <font color="#006600">if (</font><font color="#0000CC">$quiz</font><font color="#006600">-&gt;</font><font color="#0000CC">attempts</font><font color="#006600">) 
-      {<br />
-      &nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000CC">$numattempts </font><font color="#006600">&gt; 
-      </font><font color="#0000CC">$quiz</font><font color="#006600">-&gt;</font><font color="#0000CC">attempts</font><font color="#006600">) 
-      {<br />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000CC">error</font><font color="#006600">(</font><font color="#0000BB">$strtoomanyattempts</font><font color="#006600">, 
-      </font><font color="#CC0000">"view.php?id=$cm</font><font color="#006600">-&gt;</font><font color="#CC0000">id"</font><font color="#006600">);<br />
-      &nbsp;&nbsp;&nbsp;&nbsp;}<br />
-      }</font></p>
-  </li>
-  <li class="spaced"><strong>Strings</strong> should be defined using single quotes 
-    where possible, for increased speed.<br />
-    <p class="examplecode"> <font color="#006600">$var = 'some text without any 
-      variables';<br />
-      $var = &quot;with special characters like a new line \n&quot;;<br />
-      $var = 'a very, very long string with a '.$single.' variable in it';<br />
-      $var = &quot;some $text with $many variables $within it&quot;; </font></p>
-  </li>
-  <li class="spaced"><strong>Comments</strong> should use two or three slashes 
-    and line up nicely with the code. 
-    <p class="examplecode"><font color="#006600">function </font><font color="#0000BB">forum_get_ratings_mean</font><font color="#007700">(</font><font color="#0000BB">$postid</font><font color="#007700">, 
-      </font><font color="#0000BB">$scale</font><font color="#007700">, </font><font color="#0000BB">$ratings</font><font color="#007700">=</font><font color="#0000BB">NULL</font><font color="#007700">) 
-      {<br />
-      </font><font color="#FF8000">/// Return the mean rating of a post given 
-      to the current user by others.<br />
-      /// Scale is an array of possible ratings in the scale<br />
-      /// Ratings is an optional simple array of actual ratings (just integers)<br />
-      <br />
-      &nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#007700">if (!</font><font color="#0000BB">$ratings</font><font color="#007700">) 
-      {<br />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$ratings 
-      </font><font color="#007700">= array(); &nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#FF8000">// 
-      Initialize the empty array</font><font color="#007700"><br />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000BB">$rates 
-      </font><font color="#007700">= </font><font color="#0000BB">get_records</font><font color="#007700">(</font><font color="#DD0000">"forum_ratings"</font><font color="#007700">, 
-      </font><font color="#DD0000">"post"</font><font color="#007700">, </font><font color="#0000BB">$postid</font><font color="#007700">)) 
-      {<br />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#FF8000">// 
-      Process each rating in turn</font><font color="#007700"><br />
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach 
-      (</font><font color="#0000BB">$rates </font><font color="#007700">as </font><font color="#0000BB">$rate</font><font color="#007700">) 
-      {</font> <br />
-      ....etc </p>
-  </li>
-  <li class="spaced"><strong>Space</strong> should be used liberally - don't be 
-    afraid to spread things out a little to gain some clarity. Generally, there 
-    should be one space between brackets and normal statements, but no space between 
-    brackets and variables or functions:<br />
-    <p class="examplecode"> <font color="#007700">foreach (</font><font color="#0000BB">$objects 
-      </font><font color="#007700">as </font><font color="#0000BB">$key </font><font color="#007700">=&gt;</font><font color="#0000BB"> 
-      $thing</font><font color="#007700">)</font><font color="#006600"> {<br />
-      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">process($thing);</font><font color="#006600"> 
-      <br />
-      } <br />
-      <br />
-      </font><font color="#007700">if (</font><font color="#0000BB">$x </font><font color="#007700">== 
-      </font><font color="#0000BB">$y</font><font color="#007700">)</font><font color="#006600"> 
-      {<br />
-      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a 
-      </font><font color="#007700">= </font><font color="#0000BB">$b</font><font color="#007700">;</font><font color="#006600"><br />
-      } else if (</font><font color="#0000BB">$x </font><font color="#007700">== 
-      </font><font color="#0000BB">$z</font><font color="#006600">) {<br />
-      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a 
-      </font><font color="#007700">= </font><font color="#0000BB">$c</font><font color="#007700">;</font><font color="#006600"><br />
-      } else {<br />
-      </font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$a 
-      </font><font color="#007700">= </font><font color="#0000BB">$d</font><font color="#007700">;</font><font color="#006600"><br />
-      } </font></p>
-  </li>
-</ol>
-<p>&nbsp;</p>
-<h2>Database structures</h2>
-<ol class="normaltext">
-  <li class="spaced">Every table must have an auto-incrementing <strong>id</strong> field (INT10) as primary index.</li>
-  <li class="spaced">The main table containing instances of each module must have the same name as the module (eg <strong>widget</strong>) and contain the following minimum fields:
-    <ul>
-      <li><strong>id</strong> - as described above</li>
-      <li><strong>course</strong> - the id of the course that each instance belongs to</li>
-      <li><strong>name</strong> - the full name of each instance of the module</li>
-    </ul>
-  </li>
-  <li class="spaced">Other tables associated with a module that contain information about 'things' should be named <strong>widget_things</strong> (note the plural).</li>
-  <li class="spaced">Column names should be simple and short, following the same rules as for variable names.</li>
-  <li class="spaced">Where possible, columns that contain a reference to the id field of another table (eg <strong>widget</strong>) should be called <strong>widgetid</strong>. (Note that this convention is newish and not followed in some older tables)</li>
-  <li class="spaced">Boolean fields should be implemented as small integer fields (eg INT4) containing 0 or 1, to allow for later expansion of values if necessary.</li>
-  <li class="spaced">Most tables should have a <strong>timemodified</strong> field (INT10) which is updated with a current timestamp obtained with the PHP <strong>time</strong>() function.</li>
-</ol>
-<hr />
-<p align="CENTER"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
-<p align="CENTER"><font size="1">Version: $Id$</font></p>
-</body>
+	<head>
+		<title>Tài li&#7879;u Moodle: Các h&#432;&#7899;ng d&#7851;n Code</title>
+		<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+			<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	</head>
+	<body bgcolor="#ffffff">
+		<h1>Các h&#432;&#7899;ng d&#7851;n v&#7873; coding trong Moodle</h1>
+		<p class="normaltext">B&#7845;t k&#7923; m&#7897;t d&#7921; án nào c&#361;ng 
+			c&#7847;n tính nh&#7845;t quán và &#7893;n &#273;&#7883;nh &#273;&#7875; có 
+			th&#7875; t&#7891;n t&#7841;i lâu dài.</p>
+		<p class="normaltext">Các h&#432;&#7899;ng d&#7851;n sau cung c&#7845;p m&#7897;t 
+			m&#7909;c tiêu chung &#273;&#7875; t&#7845;t c&#7843; các mã Moodle có 
+			th&#7875; phát tri&#7875;n t&#7889;t. S&#7921; th&#7853;t là m&#7897;t vài các 
+			&#273;o&#7841;n mã t&#7891;n t&#7841;i tr&#432;&#7899;c &#273;ó ch&#432;a 
+			&#273;áp &#7913;ng &#273;&#432;&#7907;c m&#7897;t vài yêu c&#7847;u, tuy nhiên 
+			nó s&#7869; &#273;&#432;&#7907;c s&#7917;a sau này. T&#7845;t c&#7843; các mã 
+			m&#7899;i ph&#7843;i tuân theo m&#7897;t cách hoàn toàn các chu&#7849;n 
+			d&#432;&#7899;i &#273;ây càng chính xác càng t&#7889;t.</p>
+		<h2>General Rules</h2>
+		<ol class="normaltext">
+			<li class="spaced">
+			T&#7845;t c&#7843; các file mã ph&#7843;i s&#7917; d&#7909;ng ph&#7847;n 
+			m&#7903; r&#7897;ng .php.
+			<li class="spaced">
+			T&#7845;t c&#7843; các file m&#7851;u ph&#7843;i s&#7917; d&#7909;ng ph&#7847;n 
+			m&#7903; r&#7897;ng .html.
+			<li class="spaced">
+			T&#7849;t các file text nên s&#7917; d&#7909;ng &#273;&#7883;nh d&#7841;ng 
+			ki&#7875;u Unix (&#273;a s&#7889; các b&#7897; so&#7841;n th&#7843;o text có 
+			l&#7921;a ch&#7885;n này).
+			<li class="spaced">
+				T&#7845;t c&#7843; các th&#7867; PHP ph&#7843;i là các th&#7867; 
+				'&#273;&#7847;y &#273;&#7911;' gi&#7889;ng nh&#432; <font color="#339900">&lt;?php 
+					?&gt;</font> ... không ph&#7843;i là các th&#7867; 'ng&#7855;n' gi&#7889;ng 
+				nh&#432; <font color="#339900">&lt;? ?&gt;</font>.
+			<li class="spaced">
+			T&#7845;t c&#7843; các chú thích v&#7873; b&#7843;n quy&#7873;n ph&#7843;i 
+			&#273;&#432;&#7907;c gi&#7919; nguyên. B&#7841;n có th&#7875; &#273;&#432;a 
+			thêm c&#7911;a b&#7841;n vào n&#7871;u c&#7847;n thi&#7871;t.
+			<li class="spaced">
+			M&#7895;i file nên g&#7891;m file chính config.php.
+			<li class="spaced">
+			M&#7895;i file nên ki&#7875;m tra r&#7857;ng ng&#432;&#7901;i dùng 
+			&#273;&#432;&#7907;c ch&#7913;ng th&#7921;c &#273;úng &#273;&#7855;n, s&#7917; 
+			d&#7909;ng require_login() và isadmin(), isteacher(), iscreator() ho&#7863;c 
+			isstudent().
+			<li class="spaced">
+			T&#7845;t c&#7843; các truy c&#7853;p t&#7899;i các c&#417; s&#7903; d&#7919; 
+			li&#7879;u ph&#7843;i s&#7917; d&#7909;ng các hàm trong lib/datalib.php 
+			b&#7845;t c&#7913; khi nào có th&#7875; - nó &#273;&#7843;m b&#7843;o tính 
+			kh&#7843; chuy&#7875;n gi&#7919;a nhi&#7873;u c&#417; s&#7903; d&#7919; 
+			li&#7879;u khác nhau. B&#7841;n có th&#7875; tìm th&#7845;y &#273;a s&#7889; 
+			m&#7885;i th&#7913; là có th&#7875; b&#7857;ng cách s&#7917; d&#7909;ng các hàm 
+			này. N&#7871;u b&#7841;n ph&#7843;i vi&#7871;t mã SQL hãy &#273;&#7843;m 
+			b&#7843;o r&#7857;ng: không ph&#7909; thu&#7897;c n&#7873;n; h&#7841;n 
+			ch&#7871; các hàm c&#7909; th&#7875; ngay trong file c&#7911;a b&#7841;n 
+			(th&#432;&#417;ng là trong lib.php ); và &#273;&#432;&#7907;c &#273;ánh 
+			d&#7845;u, chú thích c&#7849;n th&#7853;n, rõ ràng.
+			<li class="spaced">
+			&#272;&#7915;ng t&#7841;o ho&#7863;c s&#7917; d&#7909;ng các bi&#7871;n toàn 
+			c&#7909;c tr&#7915; các bi&#7871;n chu&#7849;n $CFG, $SESSION, $THEME và $USER.
+			<li class="spaced">
+			T&#7845;t c&#7843; các bi&#7871;n nên &#273;&#432;&#7907;c kh&#7903;i t&#7841;o 
+			ho&#7863;c ít nh&#7845;t &#273;&#432;&#7907;c th&#7917; tính t&#7891;n 
+			t&#7841;i thông qua s&#7917; d&#7909;ng isset() ho&#7863;c empty() 
+			tr&#432;&#7899;c khi chúng &#273;&#432;&#7907;c s&#7917; d&#7909;ng.
+			<li class="spaced">
+			T&#7849;t c&#7843; các xâu nên có th&#7875; d&#7883;ch &#273;&#432;&#7907;c - 
+			t&#7841;o các text m&#7899;i trong các file "lang/en" v&#7899;i các tên 
+			ti&#7871;ng Anh chính xác ch&#7919; th&#432;&#7901;ng và l&#7845;y chúng 
+			t&#7915; mã thông qua s&#7917; d&#7909;ng get_string() ho&#7863;c 
+			print_string().
+			<li class="spaced">
+				T&#7845;t c&#7843; các file tr&#7907; giúp nên có th&#7875; d&#7883;ch 
+				&#273;&#432;&#7907;c - t&#7841;o các text m&#7899;i trong th&#432; m&#7909;c 
+				"en/help" và g&#7885;i chúng s&#7917; d&#7909;ng helpbutton().
+				<p>N&#7871;u b&#7841;n c&#7847;n c&#7853;p nh&#7853;t m&#7897;t file tr&#7907; 
+					giúp:
+					<ul>
+						<li>
+						v&#7899;i m&#7897;t s&#7921; thay &#273;&#7893;i nh&#7887;, n&#417;i mà 
+						b&#7843;n d&#7883;ch c&#361; c&#7911;a file v&#7851;n có ý ngh&#297;a, thì có 
+						th&#7875; th&#7921;c hi&#7879;n thay &#273;&#7893;i trên b&#7843;n d&#7883;ch 
+						c&#361; nh&#432;ng ph&#7843;i thông báo cho translation@moodle.org
+						<li>
+							v&#7899;i m&#7897;t s&#7921; thay &#273;&#7893;i l&#7899;n b&#7841;n nên 
+							t&#7841;o m&#7897;t file m&#7899;i b&#7857;ng cách &#273;&#432;a vào m&#7897;t 
+							s&#7889; t&#259;ng (ví d&#7909; filename2.html) sao cho các ng&#432;&#7901;i 
+							d&#7883;ch có th&#7875; d&#7877; dàng nhìn th&#7845;y phiên b&#7843;n m&#7899;i 
+							c&#7911;a file. Hi&#7875;n nhiên mã m&#7899;i và các ch&#7881; s&#7893; file 
+							tr&#7907; giúp nên &#273;&#432;&#7907;c thay &#273;&#7893;i &#273;&#7875; 
+							ch&#7881; ra phiên t&#7899;i phiên b&#7843;n m&#7899;i nh&#7845;t.</li>
+					</ul>
+				<P></P>
+			<li class="spaced">
+				Các d&#7919; li&#7879;u &#273;&#7871;n t&#7915; trình duy&#7879;t 
+				(&#273;&#432;&#7907;c g&#7917;i thông qua GET ho&#7863;c POST) t&#7921; 
+				&#273;&#7897;ng &#273;&#432;&#7907;c x&#7917; lý b&#7857;ng magic_quotes (không 
+				quan tâm t&#7899;i vi&#7879;c thi&#7871;t l&#7853;p trong PHP) sao cho 
+				b&#7841;n có th&#7875; chèn chúng an toàn vào c&#417; s&#7903; d&#7919; 
+				li&#7879;u. T&#7845;t c&#7843; các d&#7919; li&#7879;u thô khác (t&#7915; các 
+				files, ho&#7863;c t&#7915; các c&#417; s&#7903; d&#7919; li&#7879;u) ph&#7843;i 
+				&#273;&#432;&#7907;c thoát b&#7903;i <font color="#339900">addslashes()</font>
+			tr&#432;&#7899;c khi chèn nó vào c&#417; s&#7903; d&#7919; li&#7879;u.
+			<li class="spaced">
+				QUAN TR&#7884;NG: M&#7885;i text bên trong Moodle, &#273;&#7863;c bi&#7879;t là 
+				xu&#7845;t phát t&#7915; ng&#432;&#7901;i dùng, s&#7869; &#273;&#432;&#7907;c 
+				in s&#7917; d&#7909;ng hàm format_text(). &#272;i&#7873;u này &#273;&#7843;m 
+				b&#7843;o r&#7857;ng text &#273;&#432;&#7907;c l&#7885;c và xoá theo &#273;úng 
+				cách.</li>
+		</ol>
+		<p>&nbsp;</p>
+		<h2>Phong cách coding</h2>
+		<p class="normaltext">Tôi bi&#7871;t có th&#7875; khó ch&#7883;u cho b&#7841;n khi 
+			thay &#273;&#7893;i phong cách n&#7871;u b&#7841;n &#273;ã quen v&#7899;i cái 
+			gì &#273;ó, nh&#432;ng bù l&#7841;i m&#7885;i ng&#432;&#7901;i sau này s&#7869; 
+			d&#7877; ti&#7871;p c&#7853;n v&#7899;i mã. Hi&#7875;n nhiên có nhi&#7873;u lí 
+			do mà m&#7885;i ng&#432;&#7901;i nên theo m&#7897;t phong cách vi&#7871;t mã 
+			th&#7889;ng nh&#7845;t , chúng s&#7869; &#273;&#432;&#7907;c quy 
+			&#273;&#7883;nh d&#432;&#7899;i &#273;ây <strong>nh&#432; sau</strong>, xin hãy 
+			tuân th&#7911; theo nó.
+		</p>
+		<ol class="normaltext">
+			<li class="spaced">
+				<strong>Indenting</strong>
+			should be consistently 4 spaces. Don't use tabs AT ALL.
+			<li class="spaced">
+				<strong>Variable names</strong> should always be easy-to-read, meaningful 
+				lowercase English words. If you really need more than one word then run them 
+				together, but keep them short as possible. Use plural names for arrays of 
+				objects.
+				<p class="examplecode"><font color="#006600">GOOD: $quiz<br>
+						GOOD: $errorstring<br>
+						GOOD: $assignments (for an array of objects)<br>
+						GOOD: $i (but only in little loops)<br>
+						<br>
+						BAD: $Quiz
+						<br>
+						BAD: $aReallyLongVariableNameWithoutAGoodReason<br>
+						BAD: $error_string</font></p>
+			<li class="spaced">
+				<strong>Constants</strong> should always be in upper case, and always start 
+				with the name of the module. They should have words separated by underscores.
+				<p class="examplecode"><font color="#006600">define("FORUM_MODE_FLATOLDEST", 1);</font></p>
+			<li class="spaced">
+				<strong>Function names</strong> should be simple English lowercase words, and 
+				start with the name of the module to avoid conflicts between modules. Words 
+				should be separated by underscores. Parameters should always have sensible 
+				defaults if possible. Note there is no space between the function name and the 
+				following (brackets).
+				<br>
+				<p class="examplecode">
+					<font color="#007700">function </font><font color="#0000bb">forum_set_display_mode</font><font color="#007700">(</font><font color="#0000bb">$mode</font><font color="#007700">=</font><font color="#0000bb">0</font><font color="#007700">) 
+						{<br>
+						&nbsp;&nbsp;&nbsp;&nbsp;global </font><font color="#0000bb">$USER</font><font color="#007700">,
+					</font><font color="#0000bb">$CFG</font><font color="#007700">;<br>
+						<br>
+						&nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000bb">$mode</font><font color="#007700">) 
+						{<br>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000bb">$USER</font><font color="#007700">-&gt;</font><font color="#0000bb">mode
+					</font><font color="#007700">= </font><font color="#0000bb">$mode</font><font color="#007700">;<br>
+						&nbsp;&nbsp;&nbsp;&nbsp;} else if (empty(</font><font color="#0000bb">$USER</font><font color="#007700">-&gt;</font><font color="#0000bb">mode</font><font color="#007700">)) 
+						{<br>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000bb">$USER</font><font color="#007700">-&gt;</font><font color="#0000bb">mode
+					</font><font color="#007700">= </font><font color="#0000bb">$CFG</font><font color="#007700">-&gt;</font><font color="#0000bb">forum_displaymode</font><font color="#007700">;<br>
+						&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+						}</font></p>
+			<li class="spaced">
+				<strong>Blocks</strong> must always be enclosed in curly braces (even if there 
+				is only one line). Moodle uses this style:
+				<p class="examplecode">
+					<font color="#006600">if (</font><font color="#0000cc">$quiz</font><font color="#006600">-&gt;</font><font color="#0000cc">attempts</font><font color="#006600">) 
+						{<br>
+						&nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000cc">$numattempts </font>
+					<font color="#006600">&gt; </font><font color="#0000cc">$quiz</font><font color="#006600">-&gt;</font><font color="#0000cc">attempts</font><font color="#006600">) 
+						{<br>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000cc">error</font><font color="#006600">(</font><font color="#0000bb">$strtoomanyattempts</font><font color="#006600">,
+					</font><font color="#cc0000">"view.php?id=$cm</font><font color="#006600">-&gt;</font><font color="#cc0000">id"</font><font color="#006600">);<br>
+						&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+						}</font></p>
+			<li class="spaced">
+				<strong>Các chuỗi</strong> nên được định nghĩa sử dụng các dấu nháy đơn khi mà có thể, 
+				để tăng tốc độ.<br>
+				<p class="examplecode">
+					<font color="#006600">$var = 'some text without any variables';<br>
+						$var = "with special characters like a new line \n";<br>
+						$var = 'a very, very long string with a '.$single.' variable in it';<br>
+						$var = "some $text with $many variables $within it"; </font>
+				</p>
+			
+			<strong>
+				<li class="spaced">
+					<strong>Các chú thích</strong> nên được đưa vào càng nhiều càng tốt là rất thực tế, to giúp 
+					giải thích mã và mục đích của các hàm và các biến.
+					<ul>
+						<li>
+							Mỗi hàm (và lớp) nên dùng <a target="_blank" href="http://www.phpdoc.org/">
+								định dạng phpDoc</a>. Điều này cho phép tài liệu mã được sinh
+							tự động.</li>
+						<li>
+							Các chú thích inline nên sử dụng phong cách //, được trình bày gọn gàng sao cho nó thích hợp 
+							với mã và đưa ra các dòng riêng cho nó.</li>
+					</ul>
+					<p class="examplecode"><font color="#FF8000"> /**<br />
+							* Mô tả nên đặt đầu, với dấu * được đặt chính xác<br />
+							* như ví dụ này. Nếu bạn muốn tham chiếu tới các hàm khác,<br />
+							* thì hãy dùng: {@link clean_param()}. Sau đó, đưa các mô tả
+							<br />
+							* cho mỗi tham số như sau.<br />
+							*<br />
+							* @param int $postid The PHP type is followed by the variable name<br />
+							* @param array $scale The PHP type is followed by the variable name<br />
+							* @param array $ratings The PHP type is followed by the variable name<br />
+							* @return mixed<br />
+							*/</font><br />
+						<font color="#006600">function </font><font color="#0000BB">forum_get_ratings_mean</font><font color="#007700">(</font><font color="#0000BB">$postid</font><font color="#007700">,
+						</font><font color="#0000BB">$scale</font><font color="#007700">, </font><font color="#0000BB">
+							$ratings</font><font color="#007700">=</font><font color="#0000BB">NULL</font><font color="#007700">) 
+							{<br />
+						</font>&nbsp;&nbsp;&nbsp;&nbsp;<font color="#007700">if (!</font><font color="#0000BB">$ratings</font><font color="#007700">) 
+							{<br />
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000BB">$ratings
+						</font><font color="#007700">= array(); &nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#FF8000">// 
+							Initialize the empty array</font><font color="#007700"><br />
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (</font><font color="#0000BB">$rates
+						</font><font color="#007700">= </font><font color="#0000BB">get_records</font><font color="#007700">(</font><font color="#DD0000">"forum_ratings"</font><font color="#007700">,
+						</font><font color="#DD0000">"post"</font><font color="#007700">, </font><font color="#0000BB">
+							$postid</font><font color="#007700">)) {<br />
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#FF8000">// 
+							Process each rating in turn</font><font color="#007700"><br />
+							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;foreach 
+							(</font><font color="#0000BB">$rates </font><font color="#007700">as </font>
+						<font color="#0000BB">$rate</font><font color="#007700">) {</font>
+						<br />
+						....etc
+					</p>
+				</li>
+				<LI class="spaced">
+				Khoảng trống</strong> nên được sử dụng tự do - đừng ngại mở rộng
+			thêm để bù lại chúng ta sẽ được sự rõ ràng hơn. Nói chung, nên có một khoảng trống giữa các 
+			dấu ngoặc và các statement bình thường, nhưng không có khoảng trống giữa các dấu ngoặc và các biến hoặc 
+			các hàm:<br>
+			<p class="examplecode">
+				<font color="#007700">foreach (</font><font color="#0000bb">$objects </font><font color="#007700">
+					as </font><font color="#0000bb">$key </font><font color="#007700">=&gt;</font><font color="#0000bb">
+					$thing</font><font color="#007700">)</font><font color="#006600"> {<br>
+				</font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000bb">process($thing);</font><font color="#006600">
+					<br>
+					}
+					<br>
+					<br>
+				</font><font color="#007700">if (</font><font color="#0000bb">$x </font><font color="#007700">
+					== </font><font color="#0000bb">$y</font><font color="#007700">)</font><font color="#006600">
+					{<br>
+				</font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000bb">$a
+				</font><font color="#007700">= </font><font color="#0000bb">$b</font><font color="#007700">;</font><font color="#006600"><br>
+					} else if (</font><font color="#0000bb">$x </font><font color="#007700">== </font>
+				<font color="#0000bb">$z</font><font color="#006600">) {<br>
+				</font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000bb">$a
+				</font><font color="#007700">= </font><font color="#0000bb">$c</font><font color="#007700">;</font><font color="#006600"><br>
+					} else {<br>
+				</font><font color="#007700">&nbsp;&nbsp;&nbsp;&nbsp;</font><font color="#0000bb">$a
+				</font><font color="#007700">= </font><font color="#0000bb">$d</font><font color="#007700">;</font><font color="#006600"><br>
+					} </font>
+			</p>
+			</li>
+		</ol>
+		<p>&nbsp;</p>
+		<h2>Cấu trúc cơ sở dữ liệu</h2>
+		<ol class="normaltext">
+			<li class="spaced">
+				Every table must have an auto-incrementing <strong>id</strong>
+			field (INT10) as primary index.
+			<li class="spaced">
+				The main table containing instances of each module must have the same name as 
+				the module (eg <strong>widget</strong>) and contain the following minimum 
+				fields:
+				<ul>
+					<li>
+						<strong>id</strong>
+					- as described above
+					<li>
+						<strong>course</strong>
+					- the id of the course that each instance belongs to
+					<li>
+						<strong>name</strong> - the full name of each instance of the module</li>
+				</ul>
+			<li class="spaced">
+				Other tables associated with a module that contain information about 'things' 
+				should be named <strong>widget_things</strong>
+			(note the plural).
+			<li class="spaced">
+			Column names should be simple and short, following the same rules as for 
+			variable names.
+			<li class="spaced">
+				Where possible, columns that contain a reference to the id field of another 
+				table (eg <strong>widget</strong>) should be called <strong>widgetid</strong>. 
+			(Note that this convention is newish and not followed in some older tables)
+			<li class="spaced">
+			Boolean fields should be implemented as small integer fields (eg INT4) 
+			containing 0 or 1, to allow for later expansion of values if necessary.
+			<li class="spaced">
+				Most tables should have a <strong>timemodified</strong> field (INT10) which is 
+				updated with a current timestamp obtained with the PHP <strong>time</strong>() 
+				function.</li>
+		</ol>
+		<hr>
+		<p align="center"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+		<p align="center"><font size="1">Version: $Id: coding.html,v 1.1 2005/03/20 22:55:53 
+				koenr Exp $</font></p>
+	</body>
 </html>
