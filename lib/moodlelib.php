@@ -605,14 +605,13 @@ function make_timestamp($year, $month=1, $day=1, $hour=0, $minute=0, $second=0, 
     $timezone = get_user_timezone_offset($timezone);
 
     if (abs($timezone) > 13) {
-        $time = mktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year, 0);
+        $time = mktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year);
     } else {
-        $time = gmmktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year, 0);
+        $time = gmmktime((int)$hour,(int)$minute,(int)$second,(int)$month,(int)$day,(int)$year);
         $time = usertime($time, $timezone);
-    }
-
-    if($applydst) {
-        $time -= dst_offset_on($time);
+        if($applydst) {
+            $time -= dst_offset_on($time);
+        }
     }
 
     return $time;
