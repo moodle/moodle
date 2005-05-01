@@ -372,6 +372,7 @@ id,name,year,rule,gmtoff,dstoff,dst_month,dst_startday,dst_weekday,dst_skipweeks
 373,Asia/Gaza,1999,Palestine,120,60,4,15,5,0,02:00,10,15,5,0,01:00
 374,Asia/Manila,1970,Phil,480,60,4,12,-1,0,08:00,7,1,-1,0,07:00
 375,Asia/Manila,1978,Phil,480,60,3,22,-1,0,08:00,9,21,-1,0,07:00
+1698,Asia/Manila,2005,,480,0,0,0,0,0,00:00,0,0,0,0,00:00
 376,Asia/Qatar,1970,,240,0,0,0,0,0,00:00,0,0,0,0,00:00
 377,Asia/Qatar,1972,,180,0,0,0,0,0,00:00,0,0,0,0,00:00
 378,Asia/Riyadh,1970,,180,0,0,0,0,0,00:00,0,0,0,0,00:00
@@ -706,6 +707,9 @@ id,name,year,rule,gmtoff,dstoff,dst_month,dst_startday,dst_weekday,dst_skipweeks
 743,Europe/Helsinki,1981,EU,120,60,3,-1,0,0,1:00,9,-1,0,0,1:00
 744,Europe/Helsinki,1996,EU,120,60,3,-1,0,0,1:00,10,-1,0,0,1:00
 745,Europe/Paris,1970,,9,0,0,0,0,0,00:00,0,0,0,0,00:00
+1699,Europe/Paris,1979,EU,60,60,4,1,0,0,1:00,9,-1,0,0,1:00
+1700,Europe/Paris,1981,EU,60,60,3,-1,0,0,1:00,9,-1,0,0,1:00
+1701,Europe/Paris,1996,EU,60,60,3,-1,0,0,1:00,10,-1,0,0,1:00
 746,Europe/Berlin,1970,Germany,60,60,4,10,-1,0,03:00,10,1,0,0,03:00
 747,Europe/Berlin,1980,EU,60,60,4,1,0,0,1:00,9,-1,0,0,1:00
 748,Europe/Berlin,1981,EU,60,60,3,-1,0,0,1:00,9,-1,0,0,1:00
