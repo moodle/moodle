@@ -124,31 +124,31 @@
 		<ol class="normaltext">
 			<li class="spaced">
 				<strong>Indenting</strong>
-			should be consistently 4 spaces. Don't use tabs AT ALL.
+			nên là 4 khoảng trống một cách nhất quán. Đừng dùng các tab.
 			<li class="spaced">
-				<strong>Variable names</strong> should always be easy-to-read, meaningful 
-				lowercase English words. If you really need more than one word then run them 
-				together, but keep them short as possible. Use plural names for arrays of 
-				objects.
-				<p class="examplecode"><font color="#006600">GOOD: $quiz<br>
-						GOOD: $errorstring<br>
-						GOOD: $assignments (for an array of objects)<br>
-						GOOD: $i (but only in little loops)<br>
+				<strong>Các tên biến</strong> nên dễ đọc, có ý nghĩa
+				là các từ tiếng Anh thấp. Nếu bạn cần nhiều hơn một từ thì hãy dùng chúng
+				với nhau, nhưng giữ chúng càng ngắn càng tốt. Dùng các tên số nhiều cho các dãy
+			    đối tượng.
+				<p class="examplecode"><font color="#006600">TỐT: $quiz<br>
+						TỐT: $errorstring<br>
+						TỐT: $assignments (for an array of objects)<br>
+						TỐT: $i (but only in little loops)<br>
 						<br>
-						BAD: $Quiz
+						TỒI: $Quiz
 						<br>
-						BAD: $aReallyLongVariableNameWithoutAGoodReason<br>
-						BAD: $error_string</font></p>
+						TỒI: $aReallyLongVariableNameWithoutAGoodReason<br>
+						TỒI: $error_string</font></p>
 			<li class="spaced">
-				<strong>Constants</strong> should always be in upper case, and always start 
-				with the name of the module. They should have words separated by underscores.
+				<strong>Các hằng số</strong> nên là các chữ hoa, và luôn bắt đầu bằng
+				tên các module. Chúng là các từ được phân cách với nhau bằng dấu gạch chân.
 				<p class="examplecode"><font color="#006600">define("FORUM_MODE_FLATOLDEST", 1);</font></p>
 			<li class="spaced">
-				<strong>Function names</strong> should be simple English lowercase words, and 
-				start with the name of the module to avoid conflicts between modules. Words 
-				should be separated by underscores. Parameters should always have sensible 
-				defaults if possible. Note there is no space between the function name and the 
-				following (brackets).
+				<strong>Tên các hàm</strong> nên là các từ tiếng Anh bình thường, và
+				bắt đầu bằng tên module để tránh xung đột với các module. Các từ
+				phải được phân cách bằng dấu gạch chân. Các tham số nên được đặt một cách 
+				cẩn thận nếu có thể. Chú ý không có khoảng trống giữa tên hàm và
+				các dấu ngoặc như dưới đây.
 				<br>
 				<p class="examplecode">
 					<font color="#007700">function </font><font color="#0000bb">forum_set_display_mode</font><font color="#007700">(</font><font color="#0000bb">$mode</font><font color="#007700">=</font><font color="#0000bb">0</font><font color="#007700">) 
@@ -167,8 +167,8 @@
 						&nbsp;&nbsp;&nbsp;&nbsp;}<br>
 						}</font></p>
 			<li class="spaced">
-				<strong>Blocks</strong> must always be enclosed in curly braces (even if there 
-				is only one line). Moodle uses this style:
+				<strong>Các khối</strong> luôn luôn được đóng bởi các ngoặc nhọn (thậm chí nếu
+				chỉ có một dòng). Moodle sử dụng style dưới đây:
 				<p class="examplecode">
 					<font color="#006600">if (</font><font color="#0000cc">$quiz</font><font color="#006600">-&gt;</font><font color="#0000cc">attempts</font><font color="#006600">) 
 						{<br>
@@ -270,43 +270,43 @@
 		<h2>Cấu trúc cơ sở dữ liệu</h2>
 		<ol class="normaltext">
 			<li class="spaced">
-				Every table must have an auto-incrementing <strong>id</strong>
-			field (INT10) as primary index.
+				Mọi bảng phải có một <strong>id</strong> tự tăng
+			như là một trường (INT10) là index chính.
 			<li class="spaced">
-				The main table containing instances of each module must have the same name as 
-				the module (eg <strong>widget</strong>) and contain the following minimum 
-				fields:
+				Bảng chính chứa các instance của mỗi module phải có tên trùng với
+				tên module (ví dụ <strong>widget</strong>) và chứa tối thiểu các trường sau
+			    :
 				<ul>
 					<li>
 						<strong>id</strong>
-					- as described above
+					- như mô tả ở trên
 					<li>
 						<strong>course</strong>
-					- the id of the course that each instance belongs to
+					- id của cua học mà mỗi instance thuộc về
 					<li>
-						<strong>name</strong> - the full name of each instance of the module</li>
+						<strong>name</strong> - tên đầy đủ của mỗi instance của module</li>
 				</ul>
 			<li class="spaced">
-				Other tables associated with a module that contain information about 'things' 
-				should be named <strong>widget_things</strong>
-			(note the plural).
+				Các bảng khác gắn liền với một module chứa các thông tin về 'things' 
+				nên được đặt tên là <strong>widget_things</strong>
+			(chú ý về số nhiều).
 			<li class="spaced">
-			Column names should be simple and short, following the same rules as for 
-			variable names.
+			Các tên cột phải đơn giản và ngắn gọn, hãy tuân theo các luật giống như
+			tên các biến.
 			<li class="spaced">
-				Where possible, columns that contain a reference to the id field of another 
-				table (eg <strong>widget</strong>) should be called <strong>widgetid</strong>. 
-			(Note that this convention is newish and not followed in some older tables)
+				Khi có thể, các cột chứa một tham chiếu tới trường id  của bảng khác
+				(ví dụ <strong>widget</strong>) nên được gọi là <strong>widgetid</strong>. 
+			(Chú ý rằng các quy ước này mới và không được tuân theo ở một số bảng cũ)
 			<li class="spaced">
-			Boolean fields should be implemented as small integer fields (eg INT4) 
-			containing 0 or 1, to allow for later expansion of values if necessary.
+			Các trường boolean nên được thực thi như là các trường số nguyên nhỏ (eg INT4) 
+			chứa 0 hoặc 1, cho phép mở rộng sau này khi cần thiết.
 			<li class="spaced">
-				Most tables should have a <strong>timemodified</strong> field (INT10) which is 
-				updated with a current timestamp obtained with the PHP <strong>time</strong>() 
-				function.</li>
+				Đa số các bảng phải có trường <strong>timemodified</strong> (INT10) được 
+				cập nhật với timestamp hiện thời lấy được thông qua hàm <strong>time</strong>() 
+				của PHP.</li>
 		</ol>
 		<hr>
-		<p align="center"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
+		<p align="center"><font size="1"><a href="." target="_top">Tài liệu của Moodle</a></font></p>
 		<p align="center"><font size="1">Version: $Id: coding.html,v 1.1 2005/03/20 22:55:53 
 				koenr Exp $</font></p>
 	</body>
