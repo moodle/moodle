@@ -1,10 +1,11 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.4.3 + (2004083134)
+      // resource.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
 $string['addresource'] = 'Lägg till resurs';
 $string['chooseafile'] = 'Välj eller ladda upp en fil';
 $string['chooseparameter'] = 'Välj parameter';
+$string['configallowlocalfiles'] = 'När Du skapar en ny fil som resurs så kan Du tillåta länkar till filer på en lokal filhanterare som t.ex. en CD eller en hårddisk. Detta kan vara användbart i ett klassrum där alla studenter/elever/deltagare/lärande har tillgång till en gemensam nätverkskälla eller där filer på en CD måste vara tillgängliga. Användning av den här egenskapen kan kräva att Du ändrar på säkerhetsinställningarna på Din webbläsare.';
 $string['configdefaulturl'] = 'Det här värdet används för att fylla i en URL i formuläret när Du skapar en ny URL-baserad resurs.';
 $string['configfilterexternalpages'] = 'Om Du aktiverar den här inställningen så kommer alla externa resurser(webbsidor, uppladdade HTML-filer att bearbetas (processas) av de filter som är definierade för webbplatsen (som t ex ord- och begreppslistans automatiska länkar). Om Du väljer detta alternativ så kan det leda till att Dina kurssidor visas märkbart långsammare. Var försiktig och använd detta alternativ endast när Du verkligen behöver det.';
 $string['configframesize'] = 'Det här värdet är storleken (i pixlar)på den översta ramen (som innehåller navigationsverktygen)  när en webbsida eller en uppladdad fil visas i en ram.';
@@ -38,6 +39,12 @@ $string['frameifpossible'] = 'Placera en resurs i en ram för att webbplatsens
 navigation ska fortsätta att vara synlig';
 $string['fulltext'] = 'Full text';
 $string['htmlfragment'] = 'HTML-fragment';
+$string['localfile'] = 'Lokal fil';
+$string['localfilechoose'] = 'Välj en lokal fil (CD-ROM)';
+$string['localfilehelp'] = 'Hjälp till att visa lokala filer';
+$string['localfileinfo'] = '<p>Välj en lokal fil på Din dator. Filen kommer inte att laddas upp till webbplatsen men Moodle kommer att söka efter samma fil varje gång någon visar den här resursen.</p><p>Det här är framförallt användbart när Du har stora mediafiler lagrade på CD-ROM/DVD som Du vill distribuera till alla deltagare. Varje deltagare kan välja sin egen sökväg till sådana filer. genom att <a href=\"$a\" target=\"_blank\">redigera sin användarprofil</a></p>';
+$string['localfilepath'] = 'För att ställa in Din egen lokala sökväg, så kan Du välja vilken fil som helst från källan (vanligtvis en CD-ROM/DVD). Filen kommer inte att laddas upp men informationen om källan kommer att lagras och användas för alla lokala filresurser. ';
+$string['localfileselect'] = 'Välj den här sökvägen för filer';
 $string['maindirectory'] = 'HTML fragment';
 $string['modulename'] = 'Resurs';
 $string['modulenameplural'] = 'Resurser';
@@ -54,11 +61,13 @@ $string['newtoolbar'] = 'Visa verktygsraden';
 $string['newwidth'] = 'Fönstrets aktuella vidd (i pixlar)';
 $string['newwindow'] = 'Nytt fönster';
 $string['newwindowopen'] = 'Visa den här resursen i ett nytt \'pop-up\'-fönster';
+$string['notallowedlocalfileaccess'] = 'Tillgången till lokala filer är f.n. avaktiverad så den här resursen är inte tillgänglig.';
 $string['note'] = 'OBS';
-$string['notefile'] = 'För att ladda upp fler filer till kursen (så att de uppträder i denna lista) använd <a href=\"$a\" >Filhanteraren</a>.';
+$string['notefile'] = 'För att ladda upp fler filer till kursen (så att de uppträder i denna lista) använd <A HREF=$a >Filhanteraren</A>.';
 $string['notypechosen'] = 'Du måste välja typ.  Använd tillbakaknappen för att gå tillbaka och försöka igen.';
 $string['pagedisplay'] = 'Visa den här resursen i det aktuella fönstret ';
 $string['pagewindow'] = 'Samma fönster';
+$string['pan'] = 'Pan';
 $string['parameter'] = 'Parameter';
 $string['parameters'] = 'Parametrar';
 $string['popupresource'] = 'Den här resursen bör dyka upp i ett snabbfönster.';
@@ -74,12 +83,13 @@ $string['resourcetype7'] = 'Program';
 $string['resourcetype8'] = 'Wiki text';
 $string['resourcetype9'] = 'Katalog';
 $string['resourcetypedirectory'] = 'Visa en katalog';
-$string['resourcetypefile'] = 'Länk till en fil eller en webbplats';
+$string['resourcetypefile'] = 'Länk till  fil eller  webbplats';
 $string['resourcetypehtml'] = 'Utforma en webbsida';
 $string['resourcetypelabel'] = 'Infoga en etikett';
 $string['resourcetypetext'] = 'Utforma en textsida';
 $string['searchweb'] = 'Sök en webbsida';
 $string['serverurl'] = 'URL till servern ($a->wwwroot)';
 $string['variablename'] = 'Namn på variabel';
+$string['vol'] = 'Vol';
 
 ?>

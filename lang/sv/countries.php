@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // countries.php - created with Moodle 1.4.3 + (2004083131)
+      // countries.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['AD'] = 'Andorra';
@@ -26,6 +26,7 @@ $string['BJ'] = 'Benin';
 $string['BM'] = 'Bermudas';
 $string['BO'] = 'Bolivia';
 $string['BR'] = 'Brasilien';
+$string['BS'] = 'Bahamas';
 $string['BW'] = 'Botswana';
 $string['BY'] = 'Vitryssland';
 $string['CA'] = 'Kanada';
@@ -73,7 +74,9 @@ $string['GN'] = 'Guinea';
 $string['GP'] = 'Guadeloupe';
 $string['GR'] = 'Grekland';
 $string['GT'] = 'Guatemala';
+$string['GU'] = 'Guam';
 $string['GW'] = 'Guinea-Bissau';
+$string['GY'] = 'Guyana';
 $string['HK'] = 'Hong Kong';
 $string['HN'] = 'Honduras';
 $string['HR'] = 'Kroatien';
@@ -133,18 +136,21 @@ $string['NO'] = 'Norge';
 $string['NP'] = 'Nepal';
 $string['NZ'] = 'Nya Zeeland';
 $string['OM'] = 'Oman';
-$string['PA'] = 'Peru';
+$string['PA'] = 'Panama';
+$string['PE'] = 'Peru';
 $string['PG'] = 'Papua Nya Guinea';
 $string['PH'] = 'Filipinerna';
 $string['PK'] = 'Pakistan';
 $string['PL'] = 'Polen';
 $string['PR'] = 'Puerto Rico';
+$string['PS'] = 'Palestina';
 $string['PT'] = 'Portugal';
 $string['PY'] = 'Paraguay';
 $string['RO'] = 'Rumänien';
 $string['RU'] = 'Ryssland';
 $string['RW'] = 'Rwanda';
 $string['SA'] = 'Saudiarabien';
+$string['SC'] = 'Seychellerna';
 $string['SD'] = 'Sudan ';
 $string['SE'] = 'Sverige';
 $string['SG'] = 'Singapore';
@@ -161,6 +167,7 @@ $string['SV'] = 'El Salvador';
 $string['SY'] = 'Syrien';
 $string['SZ'] = ' Swaziland ';
 $string['TD'] = 'Tcad';
+$string['TG'] = 'Togo';
 $string['TH'] = 'Thailand';
 $string['TM'] = 'Turkmenistan';
 $string['TN'] = 'Tunisien';
@@ -173,6 +180,7 @@ $string['UA'] = 'Ukraina';
 $string['UG'] = 'Uganda';
 $string['US'] = 'USA';
 $string['UY'] = 'Uruguay';
+$string['UZ'] = 'Uzbekistan';
 $string['VA'] = 'Vatikanen';
 $string['VE'] = 'Venezuela';
 $string['VN'] = 'Vietnam';

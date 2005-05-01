@@ -37,7 +37,7 @@ Ta inte inte med något avslutande vänsterlutat snedstreck \"/\".</p>
 Ange den fullständiga sökvägen till den här installationen. Kontrollera att det stämmer med sådant som är skiftlägeskänsligt (stor/liten bokstav).
 </p>
 <p><b>Katalogen för data</b>
-Du behöver ett utrymme där Moodle kan spara uppladdade filer. Till denna katalog bör det finnas läs- OCH SKRIV-rättigheter för användaren av webbservern (vanligtvis \'nobody\' eller  \'apache\') men katalogen bör inte vara tillgänglig direkt via webben.</p> ';
+Du behöver ett utrymme där Moodle kan spara uppladdade filer. Till denna katalog bör det finnas läs- OCH SKRIV-rättigheter för användaren av webbservern (vanligtvis \'nobody\' eller  \'apache\') men katalogen bör inte vara tillgänglig direkt via webben. ';
 $string['dirroot'] = 'Katalogen för Moodle';
 $string['dirrooterror'] = 'Inställningarna för \"Katalogen för Moodle\" tycks vara felaktiga - det går inte att hitta någon installation av Moodle där. Värdet här nedan har återställts.';
 $string['download'] = 'Ladda ner';

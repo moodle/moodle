@@ -1,0 +1,19 @@
+<p align="center">
+	<b>Relativa URL:er, mediaspelare och Hot Potatoes</b></p>
+<p><b>Definitioner</b></p>
+<dl>
+	<dt><i>URL</i></dt>
+	<dd>adressen till en resurs på Internet, t.ex. en webbsida, bild- eller ljudfil.</dd>
+	<dt><i>absolut URL</i></dt>
+	<dd>en URL som börjar "http://" kallas för en absolut URL. Var den än används så refererar den alltid till samma målresurs.</dd>
+	<dt><i>relativ URL</i></dt>
+	<dd>en URL som inte börjar "http://" kallas för en relativ URL. Den går att kombinera med den absoluta URL:en för en "bas"-sida, för att få fram den absoluta URL:en till målresursen.</dd>
+</dl>
+<p><b>Relativa URL:er i test av typ Hot Potatoes </b></p>
+<p>Relativa URL:er erbjuder ett bekvämt sätt att ange bilder, ljud och videor i ett test av typ Hot Potatoes, eftersom de gör det möjligt att visa och provköra testet på en lokal PC, innan det laddas upp till en Moodlesajt. När testet laddas upp till Moodlesajten måste man ladda upp multimedia-filerna också, så att de är tillgängliga när testet administreras via Moodle.</p>
+<p>För säkerhets skull, så tillåter inte Moodle direkt tillgång till kursfiler. Alla förfrågningar angående filer i en viss given kurs passerar genom ett övervakande skript som kontrollerar att den person som efterfrågar filen är registrerad på kursen. Denna mekanism kan emellertid bryta ev relativa länkar som  används i testet, eftersom de vanliga reglerna för att utläsa en absolut URL från en relativ URL inte fungerar.</p>
+<p>Lösningen är nog så enkel: <font color="red"><b>alla relativa URL:er måste konverteras till absoluta URL:er </b></font> i det ögonblick då testet anländer till webbläsaren. I fallet med test av typ Hot Potatoes, kommer URL:erna att konverteras av Moodle, vilket innebär att de som utvecklar innehåll inte behöver bekymra sig om detta tidskrävande arbete. </p>
+<p><b>Mediaspelae i test av typ Hot Potatoes</b></p>
+<p>En del mediaspelare kommer inte att acceptera mediafilen om den kommer via det skript som kontrollerar tillgången till kursfilerna. I en sådan situation, är det nödvändigt att byta ut mediaspelaren mot en som är kompatibel med Moodle. Det kan Du göra själv genom att modifiera referensen till mediaspelaren i testet, eller också kan Du tvinga Moodle att göra det genom att
+ställa in alternativet "Tvinga fram mediaplugins" till "Ja" på sidan för inställningar av testet.</p>
+<p> </p>

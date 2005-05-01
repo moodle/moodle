@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.4.3 + (2004083134)
+      // quiz.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['acceptederror'] = 'Tillåten felmarginal';
@@ -93,6 +93,8 @@ $string['deleteselected'] = 'Ta bort de/t markerade';
 $string['description'] = 'Beskrivning';
 $string['discrimination'] = 'Diskrim. Index';
 $string['displayoptions'] = 'Alternativ för visning';
+$string['download'] = 'Klicka för att ladda ner den exporterade filen för kategorier';
+$string['downloadextra'] = '(filen är också lagrad in \'kursens filer\' i katalogen /test)';
 $string['eachattemptbuildsonthelast'] = 'Varje försök bygger på det senaste';
 $string['editcategories'] = 'Redigera kategorier';
 $string['editcategory'] = 'Redigera kategori';
@@ -146,6 +148,7 @@ $string['gradeaverage'] = 'Medelbetyg';
 $string['gradehighest'] = 'Högsta betyg';
 $string['grademethod'] = 'Betygsättningsmetod';
 $string['guestsno'] = 'Tyvärr, gäster kan inte se eller göra test';
+$string['hotpot'] = 'Hot Potatoes-format';
 $string['illegalformulasyntax'] = 'Ogiltig formelsyntax som börjar med \'$a\'';
 $string['imagedisplay'] = 'Bild att visa';
 $string['imagemissing'] = 'Ingen bild tillgänglig på rad $a. Hänsyn kommer inte att tas till filnamnet. ';
@@ -322,6 +325,7 @@ $string['webct'] = 'WebCT format';
 $string['wildcard'] = 'Wild card';
 $string['withsummary'] = 'med sammanfattande statistik';
 $string['wronggrade'] = 'Fel betyg (efter rad $a)';
+$string['xhtml'] = 'XHTML-format';
 $string['xml'] = 'XML-format för Moodle';
 $string['yourfinalgradeis'] = 'Ditt slutgiltiga betyg för detta test är $a';
 $string['zerosignificantfiguresnotallowed'] = 'Det rätta svaret kan inte ha 0 signifikanta siffror.';

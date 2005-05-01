@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.4 (2004083100)
+      // choice.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
 
 
+$string['addmorechoices'] = 'Lägg till fler opinionsundersökningar';
 $string['allowupdate'] = 'Tillåt uppdatering av opinionsundersökning';
 $string['answered'] = 'Besvarade';
 $string['choice'] = 'Svarsalternativ $a';
@@ -9,7 +10,13 @@ $string['choiceclose'] = 'Till';
 $string['choicename'] = 'Opinionsundersökningens namn';
 $string['choiceopen'] = 'Öppna';
 $string['choicetext'] = 'Opinionsundersökningens text';
+$string['displayhorizontal'] = 'Visa horisontellt';
+$string['displaymode'] = 'Visningsläge';
+$string['displayvertical'] = 'Visa vertikalt';
+$string['full'] = '(Full)';
 $string['havetologin'] = 'Du måste logga in innan Du kan skicka Ditt/Dina svar';
+$string['limit'] = 'Begränsning';
+$string['limitanswers'] = 'Begränsa det antal svar som är tillåtna';
 $string['modulename'] = 'Opinionsundersökning';
 $string['modulenameplural'] = 'Opinionsundersökningar';
 $string['mustchooseone'] = 'Du måste välja ett svar innan Du kan svara. Ingenting sparades.';
@@ -27,7 +34,11 @@ $string['responses'] = 'Svar';
 $string['responsesto'] = 'Svar till $a';
 $string['savemychoice'] = 'Spara min opinionsundersökning';
 $string['showunanswered'] = 'Visa kolumn för icke besvarade';
+$string['spaceleft'] = 'Tillgängligt utrymme';
+$string['spacesleft'] = 'Tillgängliga utrymmen';
+$string['taken'] = 'Upptagen';
 $string['timerestrict'] = 'Begränsa möjligheten att svara till denna tidsperiod';
 $string['viewallresponses'] = 'Visa $a svar';
+$string['yourselection'] = 'Ditt urval';
 
 ?>

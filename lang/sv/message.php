@@ -1,8 +1,10 @@
 <?PHP // $Id$ 
-      // message.php - created with Moodle 1.4.3 + (2004083134)
+      // message.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['addcontact'] = 'Lägg till kontakt';
+$string['addsomecontacts'] = 'För att skicka ett meddelande till någon, eller lägga till en genväg till dem på den här sidan så använder Du <a href=\"$a\">Sök </a> här ovan.';
+$string['addsomecontactsincoming'] = 'De här meddelandena är från personer som inte finns med i Din kontaktlista. För att lägga till dem till Dina kontakter så ska Du klicka på ikonen \"Lägg till kontakt\" som Du hittar intill deras namn.';
 $string['ago'] = 'För $a sedan';
 $string['allmine'] = 'Alla meddelanden från mig till mig';
 $string['allstudents'] = 'Alla meddelanden mellan studenter/elever/deltagare/lärande i kursen';
@@ -11,6 +13,8 @@ $string['backupmessageshelp'] = 'Om detta är altiverat så kommer snabbmeddelande
 $string['beepnewmessage'] = 'Avge en ljudsignal när det kommer in ett nytt meddelande';
 $string['blockcontact'] = 'Blockera kontakt';
 $string['blockedmessages'] = '$a meddelande(n) till/från blockerade användare';
+$string['blocknoncontacts'] = 'Blockera alla nya meddelanden från personer som inte finns med på min kontaktlista.';
+$string['contactlistempty'] = 'Din kontaktlista är f.n, tom.';
 $string['contacts'] = 'Kontakter';
 $string['context'] = 'Sammanhang';
 $string['deletemessagesdays'] = 'Antal dagar innan gamla meddelanden tas bort automatiskt';
@@ -58,6 +62,7 @@ $string['timesent'] = 'Tid för avsändning';
 $string['unblockcontact'] = 'Ta bort blockering av användare';
 $string['unreadmessages'] = '$a olästa meddelanden';
 $string['userisblockingyou'] = 'Den här användaren har blockerat Dig från att skicka meddelanden till dem';
+$string['userisblockingyounoncontact'] = 'Den här användaren accepterar bara meddelanden från personer på sin kontaktlista och där finns Du f.n. inte med.';
 $string['userssearchresults'] = 'Sökresultat: $a användare hittades';
 
 ?>

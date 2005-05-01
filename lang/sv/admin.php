@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // admin.php - created with Moodle 1.4.3 + (2004083134)
+      // admin.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['adminseesallevents'] = 'Administratörer ser alla händelser';
@@ -32,6 +32,7 @@ $string['configenablerssfeeds'] = 'Den här omkopplaren kommer att aktivera RSS-i
 $string['configenablerssfeedsdisabled'] = 'Detta är inte tillgängligt eftersom RSS-inmatningar är avaktiverade på hela webbplatsen. För att aktivera dem behöver Du gå till inställning av variabler i Administration->konfiguration';
 $string['configerrorlevel'] = 'Välj det antal PHP-varningar som Du vill låta visas. \'Normalt\' är vanligtvis det bästa valet.';
 $string['configextendedusernamechars'] = 'Aktivera den här inställningen för att låta studenter/elever/deltagare/lärande att använda vilka tecken de vill i sina användarnamn (lägg märke till att detta inte påverkar deras riktiga namn). Standardvalet är \"falskt\" vilket innebär att man bara kan använda alfanumeriska tecken.';
+$string['configfilterall'] = 'Filtrera alla strängar inklusive rubriker, navigationsrader osv. Detta är som mest användbart när Du använder multilang filtret. I andra fall kommer det att belasta Din server utan att tillföra så mycket.';
 $string['configfilteruploadedfiles'] = 'Om Du aktiverar detta så kommer Moodle att bearbeta alla uppladdade HTML- och textfiler genom dessa filter innan de visas.';
 $string['configforcelogin'] = 'I normalfallet så kan folk, utan att logga in, se webbplatsens första sida och listan över kurser (men inte kurserna). Om Du vill tvinga dem att logga in innan de kan se någonting alls på webbplatsen så ska Du aktivera den här inställningen.';
 $string['configforceloginforprofiles'] = 'Aktivera den här inställningen för att tvinga besökare att logga in via ett riktigt användarkonto (och inte som gäster) innan de får se sidan med användarnas profiler. Som standardval är detta avaktiverat (\"falskt\") så att presumptiva studenter/elever/deltagare/lärande kan läsa om (distans)lärarna på varje kurs men detta innebär också att sökmotorerna på Internet kan se dessa profiler';
@@ -43,12 +44,14 @@ $string['configidnumber'] = 'Den här valmöjligheten specificerar följande: (a)An
 $string['configintro'] = 'På denna sida kan Du ange ett antal konfigurationsvariabler som hjälper Moodle att fungera tillfredställande på Din server. Bekymra Dig inte så mycket om det - standardvalen brukar fungera bra och Du kan alltid återvända senare till denna sida för att ändra inställningarna.';
 $string['configintroadmin'] = 'På den här sidan kan Du konfigurera Ditt konto som administratör. Som administratör har Du fullständig kontroll över webbapplikationen. Se till att Du har ett säkert användarnamn och lösenord liksom en giltig e-postadress. Du kan skapa fler konton för administratörer senare.';
 $string['configintrosite'] = 'Den här sidan låter Dig konfigurera första sidan på webbapplikationen och namnet på den här nya webbplatsen. Du kan komma tillbaka hit senare och ändra på inställningarna. Länken hit heter \'Webbplatsinställningar\'.';
+$string['configintrotimezones'] = 'Den här sidan kommer att söka efter ny information om tidszoner i världen (inklusive regler för \'daylight savings time\'). Dessa platser kommer att kontrolleras, den här ordningen $a Den här proceduren är normalt sett mycket säker och stör inte normala installationer. Vill Du uppdatera Dina tidszoner nu?';
 $string['configlang'] = 'Välj ett förvalt språk för hela webbplatsen: Användarna kan välja ett annat språk senare.';
+$string['configlangcache'] = 'Cacha språkmenyn. Det sparar massor av minne och processorkraft. Om Du aktiverar detta så tar det några minuter att uppdatera menyn efter det att Du har lagt till eller tagit bort språk.';
 $string['configlangdir'] = 'De flesta språk skrivs från vänster-till-höger, men några som arabiska och hebreiska skrivs från höger-till-vänster.';
 $string['configlanglist'] = 'Låt det här vara tomt om Du vill låta användare välja vilket språk de vill. Om Du vill kan Du dock förkorta språkvalsmenyn genom att mata in en komma-separerad lista med de språkkoder Du vill ha med. Ex. en, es_es,fr,it';
 $string['configlangmenu'] = 'Välj om Du vill eller inte vill visa den generella språkmenyn på hemsidan, login-sidan osv. Detta påverkar inte användarnas möjlighet att välja språk i sina egna profiler.';
 $string['configlocale'] = 'Välj en webbplats regionsinställning (locale) - detta kommer att påverka format och språk för datum. Du måste ha denna regionsinställning installerad på Ditt operativsystem. (T.ex. en_US eller es_ES). Om Du inte vet vad Du skall välja, låt det vara tomt.';
-$string['configloginhttps'] = 'Om Du aktivera detta så kommer Moodle att använda en säkers https anslutning bara för sidan för inloggning (för att tillhandahålla säker inloggning). Sedan återgår systemet till den vanliga http-URLen för att snabba upp nerladdningen av sidor. VARNING: Den här inställningen KRÄVER att https är uttryckligen aktiverat på webbservern - om det inte är det så KAN DU STÄNGA DIG UTE FRÅN DIN EGEN WEBBPLATS.';
+$string['configloginhttps'] = 'Om Du aktiverar detta så kommer Moodle att använda en säkers https anslutning bara för sidan för inloggning (för att tillhandahålla säker inloggning). Sedan återgår systemet till den vanliga http-URLen för att snabba upp nerladdningen av sidor. VARNING: Den här inställningen KRÄVER att https är uttryckligen aktiverat på webbservern - om det inte är det så KAN DU STÄNGA DIG UTE FRÅN DIN EGEN WEBBPLATS.';
 $string['configloglifetime'] = 'Detta specificerar hur länge Du vill spara loggar om användarnas aktiviteter. Loggar som är äldre än så raderas automatiskt. Det bästa är att spara loggarna så länge som möjligt ifall Du skulle behöva dem. Om Du emellertid har en hårt belastad server och får problem med dess prestanda kanske Du måste ta bort loggar för att spara systemresurser.';
 $string['configlongtimenosee'] = 'Om studenter/elever/deltagare/lärande inte har loggat in på mycket lång tid, så kommer de automatiskt att tas bort från kurser. Denna parameter specificerar den tidsbegränsningen.';
 $string['configmaxbytes'] = 'Detta specificerar den övergipande maximala storleken på bifogade filer på hela webbsajten. Den här inställningen begränsas av inställningen i PHP-funktionen upload_max_filesize och inställningen i Apache-funktionen LimiRequestBody. Därutöver så begränsar \'maxbytes\' vilken skala som kan väljas på kurs- eller modulnivå. ';
@@ -87,31 +90,24 @@ $string['configvariables'] = 'Variabler';
 $string['configwarning'] = 'Var försiktig med att ändra dessa inställningar - konstiga värden kan leda till problem.';
 $string['configzip'] = 'Indikera var Ditt zip-program finns (bara för UNIX valfritt). Om Du har angivit detta så kommer det att användas för att skapa zip-arkiv på servern. Om Du lämnar detta tomt så kommer Moodle att använda interna rutiner.';
 $string['confirmation'] = 'Bekräftelse';
-$string['confirmdeletedst'] = 'Om Du tar bort det förinställda värde som kallas <strong>$a</strong> så avaktiverar detta omedelbart DST för alla användare av det förinställda. Detta kan, utan varning, ändra hur de uppfattar tiden. Är Du säker på att Du vill fortsätta?';
-$string['confirmdeletedstdefault'] = '<strong>Det förinställda värde som kallas $a används för alla användare på den här webbplatsen! </strong>Om Du tar bort det ändrar, utan varning, hur de uppfattar tiden. Är Du säker på att Du vill fortsätta?';
 $string['cronwarning'] = 'Skriptet <a href=\"cron.php\">cron.php skript för underhåll</a> har inte körts under de senaste 24 timmarna.<br />I <a href=\"../doc/?frame=install.html&sub=cron\">dokumentation för installation </a> kan Du hitta förklaringar om hur Du kan automatisera detta. ';
-$string['dstpresetforced'] = 'Denna inställning har låsts av webbplatsens administratör';
 $string['edithelpdocs'] = 'Redigera hjälpdokument';
-$string['editingtimezone'] = 'Redigerar en tidszon';
 $string['editstrings'] = 'Redigera strängar';
-$string['emptydstlist'] = 'Det finns f.n. inga förinställda värden för DST som har definierats. Du kan lägga till ett genom att klicka på knappen \"Lägg till\".';
-$string['errordstpresetactivateearlier'] = 'Månaden för aktivering måste vara av ett senare datum än månaden för avaktivering. ';
-$string['errordstpresetnameempty'] = 'Namnet på ett förinställt värde kan inte vara tomt';
-$string['errordstpresetnameexists'] = 'Ett annat förinställt värde med det namnet finns redan';
+$string['filterall'] = 'Filtrera alla strängar';
 $string['filteruploadedfiles'] = 'Filtrera uppladdade filer';
 $string['helpadminseesall'] = 'Kan administratörerna se alla händelser för kalendrar eller bara de som berör dem själva?';
 $string['helpcalendarsettings'] = 'Att konfigurera olika aspekter på Moodle som har med kalender och datum/tid att göra.';
 $string['helpforcetimezone'] = 'Du kan antingen tillåta användare att välja sina tidszoner individuellt eller \"diktera\" en tidszom som gäller för alla.';
-$string['helpmanagetimezones'] = 'Du kan antingen manuellt lägga till, redigera och ta bort profilerna för tidszonerna för den här webbplatsen, eller låta Moodle uppdatera och ladda ner nya profiler automatiskt från moodle.org';
 $string['helpsitemaintenance'] = 'För uppgraderingar och annat arbete';
 $string['helpstartofweek'] = 'Vilken dag inleder veckan i kalendern?';
 $string['helpupcominglookahead'] = 'Hur många dagar framåt i tiden övervakar kalendern som standard när det gäller kommande händelser?';
 $string['helpupcomingmaxevents'] = 'Hur många (maximalt) kommande händelser visas för användarna som standard?';
 $string['helpweekenddays'] = 'Vilka dagar i veckan markeras som \"helgdagar\" och visas med en annan färg?';
-$string['managetimezones'] = 'Administrera profiler för tidszoner';
+$string['importtimezones'] = 'Uppdatera hela listan med tidszoner';
+$string['importtimezonescount'] = '$a->count inlägg importerade från $a->source';
+$string['importtimezonesfailed'] = 'Det gick inte att hitta några källor (Dåliga nyheter)';
 $string['nodstpresetsexist'] = 'Stödet för DST är avaktiverat för alla användare eftersom det inte finns några förinställda värden. Du kan definiera några förinställda värden genom att använda knappen här nedan.';
 $string['optionalmaintenancemessage'] = 'Valfritt meddelande angående underhåll';
-$string['returntocalendaroptions'] = 'Gå tillbaka till alternativen för kalender';
 $string['sitemaintenance'] = 'Det pågår f.n underhålll på webbplasen och det är för tillfället inte tillgänglig.';
 $string['sitemaintenancemode'] = 'Mod för underhåll';
 $string['sitemaintenanceoff'] = 'Läget för underhåll har avaktiverats och webbplatsen fungerar normalt igen.';
@@ -119,16 +115,18 @@ $string['sitemaintenanceon'] = 'Din webbplats är f.n. i ett läge för underhåll. 
 $string['sitemaintenancewarning'] = 'Din webbplats är f.n. i ett läge för underhåll. (bara adminstratörer kan logga in). För att återställa den här webbplatsen till normalt operativt läge  <a href=\"maintenance.php\">avaktivera läget för underhåll</a>.';
 $string['tabselectedtofront'] = 'På tabeller med tabbar bör raden med den för tillfället valda taggen placeras längst fram.';
 $string['therewereerrors'] = 'Det fanns fel i Dina data';
+$string['timezoneforced'] = 'Det här är fastställt av systemadministratören';
 $string['timezoneisforcedto'] = 'Tvinga alla användare att använda samma tidszon';
 $string['timezonenotforced'] = 'Användare kan själva välja sin egen tidszon';
-$string['timezones'] = 'Tidszoner';
-$string['updatetimezones'] = 'Uppdatera profiler automatiskt';
+$string['upgradeforumread'] = 'En ny egenskap har lagts till i Moodle 1.5. Den innebär att man kan spåra lästa/olästa inlägg. <br />För att använda denna funktion behöver du <a href=\"$a\">uppdatera dina tabeller</a>.';
+$string['upgradeforumreadinfo'] = 'En ny egenskap har lagts till i Moodle 1.5. Den innebär att man kan spåra lästa/olästa inlägg. För att använda denna funktion behöver du uppdatera dina tabeller med all spårande information för befintliga inlägg. Beroende på hur stor Din webbplats är så kan detta ta en hel del tid och utgöra en belastning på Din databas. Därför är det bäst om Du kan göra detta under en lugn period. Din webbplats kommer emellertid att fortsätta att fungera under denna uppgradering och användarna kommer inte att påverkas. När Du väl har påbörjat denna process så bör Du också fullfölja den (lämna webbläsarens fönter öppet). Skulle Du råka stänga det och avbryta processen så är det ingen stor olycka. Du kan börja om igen. Vill Du påbörja processen för uppgradering nu?';
 $string['upgradelogs'] = 'För att Du ska kunna utnyttja all funktionalitet så måste Dina gamla loggar uppgraderas. <a href=\"$a\">Mer information</a>';
 $string['upgradelogsinfo'] = 'En del förändringar har nyligen gjorts när det gäller hur loggarna lagras. För att Du ska kunna se alla Dina gamla loggar per aktivitet s a s så måste Dina gamla loggar uppgraderas. Detta kan ta lång tid, beroende på hur Din webbplats fungerar och det kan vara rätt krävande för databasen om det är en stor webbplats. När Du väl har påbörjat den här processen så bör Du också slutföra den (genom att hålla webbläsarens fönster öppet). Var dock inte orolig för Dina användare, webbplatsen bör fungera normalt för dem medan detta pågår. <br /><br /> Vill Du uppdatera Dina loggar nu?';
 $string['upgradesure'] = 'Dina Moodle-filer har ändrats och Du håller på att automatiskt uppgradera Din server till den här versionen:
 <p><b>$a</b></p>
 <p>Du kan inte ångra detta.</p>
 <p>Är Du säker på att Du vill uppgradera servern till den här versionen?</p>';
+$string['upgradingdata'] = 'Uppgraderar data';
 $string['upgradinglogs'] = 'Uppgraderar loggarna';
 
 ?>

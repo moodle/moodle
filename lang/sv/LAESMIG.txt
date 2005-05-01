@@ -9,6 +9,13 @@ Anders Berggren, IKT-Pedagogen underhållit översättningen.
 Slut Creative Commons
 ___________________________________________________________________________________________
 
+Log för redigering och komplettering av språkpaketet för svenska i Moodle 1.5 alfa
+version 8.0 2005-05-01 
+Anders Berggren andersbe@ikt-pedagogen.se
+
+Översättningen uppdaterad och nästan komplett.
+___________________________________________________________________________________________
+
 Log för redigering och komplettering av språkpaketet för svenska i Moodle 1.4.3+
 version 7.0 2005-03-22 
 Anders Berggren andersbe@ikt-pedagogen.se
@@ -16,10 +23,10 @@ Anders Berggren andersbe@ikt-pedagogen.se
 Alla strängar i programfilerna fr.o.m. 2005-03-22 är översatta. Några 
 enstaka hjälpfiler är fortfarande på engelska liksom katalogen "docs".
  
-Större delen av katalogen 'docs' som innehåller det som kallas 
-'Dokumentation' innehåller information om sådant man kan göra men som 
-ändå kräver god behärskning av engelska. Därför har jag ingen hög prio-
-ritet när det gäller att översätta detta.
+Större delen av innehållet i katalogen 'docs' (den länk som kallas
+'Dokumentation') utgörs av information om sådant man kan göra men 
+som ändå kräver god behärskning av engelska. Därför har jag ingen 
+hög prioritet när det gäller att översätta detta.
 
 Om Du vill använda utvecklingsmoduler som inte ingår i huvuddistributionen
 av Moodle, som t.ex. Bok (Book), Dialog (Dialogue), Övningsuppgift (Exercise),

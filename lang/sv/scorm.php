@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.4 (2004083100)
+      // scorm.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['asset'] = 'Tillgång';
@@ -21,11 +21,17 @@ $string['configpopupwidth'] = 'Vilken bredd ska nys popup-fönster ha som förinst
 $string['coursepacket'] = 'Kurspaket';
 $string['coursestruct'] = 'Struktur på kurs';
 $string['datadir'] = 'Fel i filsystemet: det går inte att skapa en datakatalog för kursen';
+$string['details'] = 'Detaljerad SCO spårning';
+$string['display'] = 'Visa';
 $string['domxml'] = 'DOMXML externt bibliotek';
+$string['enablebrowse'] = 'Aktivera mod för förhandsgranskning';
 $string['entercourse'] = 'Mata in en SCORM-kurs';
 $string['errorlogs'] = 'Logg över fel';
+$string['exit'] = 'Avsluta SCORM-kurs';
+$string['expcoll'] = 'Utvidga/Fäll ihop';
 $string['failed'] = 'Det fungerade inte';
 $string['found'] = 'Manifestet hittades';
+$string['frameheight'] = 'Det här alternativet ställer in höjden på ramen på en SCO';
 $string['gradeaverage'] = 'Medelbetyg/omdöme';
 $string['gradehighest'] = 'Högsta betyg/omdöme';
 $string['grademethod'] = 'Metod för betyg/omdömen';

@@ -1,9 +1,10 @@
 <?PHP // $Id$ 
-      // forum.php - created with Moodle 1.4.3 + (2004083134)
+      // forum.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['addanewdiscussion'] = 'Lägg till ett nytt diskussionsämne';
 $string['addanewtopic'] = 'Lägg till ett nytt ämne';
+$string['advancedsearch'] = 'Avancerad sökning';
 $string['allforums'] = 'Alla forum';
 $string['allowchoice'] = 'Tillåt alla att välja';
 $string['allowdiscussions'] = 'Kan en $a göra inlägg i detta forum?';
@@ -30,7 +31,9 @@ $string['couldnotupdate'] = 'Det gick inte att uppdatera Ditt inlägg på grund av
 $string['delete'] = 'Ta bort';
 $string['deleteddiscussion'] = 'Diskussionsämnet har tagits bort';
 $string['deletedpost'] = 'Inlägget har tagits bort';
+$string['deletedposts'] = 'De inläggen har tagits bort';
 $string['deletesure'] = 'Är Du säker på att Du vill ta bort detta inlägg?';
+$string['deletesureplural'] = 'Är Du säker på att Du vill ta bort detta inlägg och alla svar? ($a inlägg)';
 $string['digestmailheader'] = 'Det här är Din dagliga sammanfattning av nya inlägg  i $a->sitename forum. För att ändra på Dina val a e-post från forum - gå till $a->userprefs ';
 $string['digestmailprefs'] = 'Din användarprofil';
 $string['digestmailsubject'] = '$a: sammanfattning av forum';
@@ -66,8 +69,12 @@ $string['introsocial'] = 'Ett öppet forum där Du kan diskutera vad Du vill';
 $string['introteacher'] = 'Ett forum endast för distanslärares anteckningar och diskussionsämnen';
 $string['lastpost'] = 'Senaste inlägg';
 $string['learningforums'] = 'Forum för lärande';
+$string['markalldread'] = 'Markera alla inlägg i detta diskussionsämne som lästa';
+$string['markallread'] = 'Markera alla inlägg i detta forum som lästa';
 $string['markread'] = 'Markera som läst';
-$string['markunread'] = 'Markera som loäst';
+$string['markreadbutton'] = 'Markera som <br  /> läst';
+$string['markunread'] = 'Markera som oläst';
+$string['markunreadbutton'] = 'Markera <br  />som oläst';
 $string['maxattachmentsize'] = 'Maximal storlek på bifogad fil';
 $string['maxtimehaspassed'] = 'Tyvärr, men maximitiden för att redigera detta inlägg ($a) har passerat!';
 $string['message'] = 'Meddelande';
@@ -87,14 +94,18 @@ $string['newforumposts'] = 'Nya inlägg i forum';
 $string['nodiscussions'] = 'Det finns ännu inga diskussionsämnen i detta forum';
 $string['noguestpost'] = 'Tyvärr, gäster har ingen behörighet att göra inlägg här';
 $string['noguestsubscribe'] = 'Gäster får tyvärr inte prenumerera för att få inlägg i forum skickade med e-post.';
+$string['noguesttracking'] = 'Tyvärr, gäster får inte ställa in alternativ för spårning.';
 $string['nomorepostscontaining'] = 'Det gick inte att hitta några inlägg som innehåller \'$a\' ';
 $string['nonews'] = 'Inga nya inlägg ännu';
 $string['noposts'] = 'Inga inlägg';
 $string['nopostscontaining'] = 'Det gick inte att hitta  några inlägg som innehåller \'$a\' ';
 $string['nosubscribers'] = 'Det finns ännu inga prenumeranter på detta forum';
 $string['notingroup'] = 'Du måste tyvärr vara med i en grupp för att se detta forum.';
+$string['notrackforum'] = 'Spåra inte olästa meddelanden';
 $string['nownotsubscribed'] = '$a->name kommmer INTE få kopior av \'$a->forum\' med e-post.';
+$string['nownottracking'] = ' $a->name spårar inte längre \'$a->forum\'. ';
 $string['nowsubscribed'] = '$a->name kommer få kopior av \'$a->forum\' med e-post.';
+$string['nowtracking'] = '$a->name spårar nu \'$a->forum\'.';
 $string['numposts'] = '$a inlägg';
 $string['olderdiscussions'] = 'Äldre diskussionsämnen';
 $string['oldertopics'] = 'Äldre ämnen';
@@ -103,7 +114,7 @@ $string['openmode1'] = 'Inga diskussionsämnen, men svar är tillåtna';
 $string['openmode2'] = 'Diskussionsämnen och svar är tillåtna';
 $string['parent'] = 'Visa \'föräldern\' till detta inlägg';
 $string['parentofthispost'] = 'Föräldern till detta inlägg';
-$string['postadded'] = 'Ditt inlägg har lagts till.<br />Du har $a för att redigera det om Du vill göra ändringar.';
+$string['postadded'] = 'Ditt inlägg har lagts till.<p>Du har $a för att redigera det om Du vill göra ändringar.';
 $string['postincontext'] = 'Se detta inlägg i sitt sammanhang';
 $string['postmailinfo'] = 'Detta är en kopia på ett meddelande inlagt på $a webbplats.
 För att lägga till Ditt svar via webbplatsen, klicka på denna länk:';
@@ -170,6 +181,12 @@ $string['subscribestart'] = 'Skicka e-postkopior av inlägg i detta forum till mi
 $string['subscribestop'] = 'Skicka INTE e-postkopior av inlägg i detta forum  till mig ';
 $string['subscription'] = 'Prenumeration';
 $string['subscriptions'] = 'Prenumerationer';
+$string['trackforum'] = 'Spåra olästa meddelanden';
+$string['tracking'] = 'Spåra';
+$string['trackingoff'] = 'Av';
+$string['trackingon'] = 'På';
+$string['trackingoptional'] = 'Valfri';
+$string['trackingtype'] = 'Spåra läsningen av detta forum?';
 $string['unread'] = 'Oläst ';
 $string['unreadposts'] = 'Olästa inlägg';
 $string['unreadpostsnumber'] = '$a olästa inlägg';

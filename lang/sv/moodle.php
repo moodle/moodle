@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.4.3 + (2004083134)
+      // moodle.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['action'] = 'Åtgärd';
@@ -159,7 +159,7 @@ $string['choosereportfilter'] = 'Välj ett filter för rapporten';
 $string['choosetheme'] = 'Välj layouttema';
 $string['chooseuser'] = 'Välj en användare';
 $string['city'] = 'Stad/ort';
-$string['clambroken'] = 'Din systemadministratör har aktiverat viruskontroll av uppladdade filer men<br /> något är felaktigt inställt. Din fil laddades INTE upp på rätt sätt.<br />Din systemadministratör har fått ett e-postmeddelande om detta så det ska gå att rätta till det.<br />Försök att ladda upp Din fil igen senare.';
+$string['clambroken'] = 'Din systemadministratör har aktiverat viruskontroll av uppladdade filer men<br> något är felaktigt inställt. Din fil laddades INTE upp på rätt sätt.<br />Din systemadministratör har fått ett e-postmeddelande om detta så det ska gå att rätta till det.<br />Försök att ladda upp Din fil igen senare.';
 $string['clamdeletedfile'] = 'Den här filen har tagits bort.';
 $string['clamdeletedfilefailed'] = 'Det gick inte att ta bort den här filen.';
 $string['clamemailsubject'] = '$a :: Clam AV notification';
@@ -180,8 +180,9 @@ $string['configuration'] = 'Konfiguration';
 $string['confirm'] = 'Bekräfta';
 $string['confirmed'] = 'Din registrering har blivit bekräftad';
 $string['confirmednot'] = 'Din registrering har ännu inte blivit bekräftad.';
-$string['continue'] = 'Fortsätt';
+$string['continue'] = 'Nästa';
 $string['continuetocourse'] = 'Klicka här för få tillträde till Din kurs';
+$string['convertingwikitomarkdown'] = 'Konverterar Wiki till Markdown';
 $string['cookiesenabled'] = 'Du måste aktivera \'Cookies\' i inställningarna till din webbläsare';
 $string['cookiesnotenabled'] = 'Cookies är f.n. tyvärr inte aktiverade i inställningarna till Din webbläsare';
 $string['copy'] = 'Kopiera';
@@ -220,6 +221,7 @@ $string['creatingblocks'] = 'Skapar block';
 $string['creatingcategoriesandquestions'] = 'Skapar kategorier och frågor...';
 $string['creatingcoursemodules'] = 'Skapar kursmoduler...';
 $string['creatingevents'] = 'Skapar händelser';
+$string['creatinggradebook'] = 'Skapar betygs/omdömeskatalog';
 $string['creatinggroups'] = 'Skapar grupper';
 $string['creatinglogentries'] = 'Skapar log \'entries\'...';
 $string['creatingmessagesinfo'] = 'Skapar info om meddelanden';
@@ -385,7 +387,7 @@ $string['emailpasswordconfirmsent'] = '<p>Vi har skickat ett e-postbrev till Din
 <p>Det innehåller enkla instruktioner för att Du ska kunna bekräfta och fullfölja detta byte av lösenord.</p>
 <p>Om Du stöter på problem, är Du välkommen att kontakta den som ansvarar för webbplatsen, $a->admin.</p>';
 $string['emailpasswordsent'] = 'Tack för att Du bekräftade bytet av lösenord.<p>Vi har skickat ett e-postbrev som innehåller lösenordet till Din adress på <b>$a->email</b></p>
-<p>Det nya lösenordet har skapats automatiskt - Du kanske vill <a href=\"$a->link\">byta Ditt lösenord</a> till något som är lättare att komma ihåg';
+<p>Det nya lösenordet har skapats automatiskt - Du kanske vill <a href=$a->link>byta Ditt lösenord</a> till något som är lättare att komma ihåg';
 $string['enable'] = 'Aktivera';
 $string['encryptedcode'] = 'Krypterad kod';
 $string['enrolledincourse'] = 'Registerad på kurs ';
@@ -461,8 +463,9 @@ $string['from'] = 'Från';
 $string['frontpagecategorynames'] = 'Visa en förteckning över kategorier';
 $string['frontpagecourselist'] = 'Visa en kursförteckning';
 $string['frontpagedescription'] = 'Beskrivning av första sidan';
-$string['frontpageformat'] = 'Formattering av första sidan';
+$string['frontpageformat'] = 'Formatering av första sidan';
 $string['frontpagenews'] = 'Visa alla nya element';
+$string['frontpagetopiconly'] = 'Visa godtycklig HTML eller aktiviteter (sektionen för ämnen)';
 $string['fulllistofcourses'] = 'Alla kurser';
 $string['fullname'] = 'Hela namnet';
 $string['fullnamedisplay'] = '$a->firstname $a->lastname';
@@ -494,6 +497,7 @@ $string['groupadd'] = 'Lägg till en ny grupp';
 $string['groupaddusers'] = 'Lägg till det valda till grupp';
 $string['groupfor'] = 'för grupp';
 $string['groupinfo'] = 'Info om vald grupp';
+$string['groupinfoedit'] = 'Redigera inställningar för grupp';
 $string['groupinfomembers'] = 'Info om valda medlemmar';
 $string['groupinfopeople'] = 'Info om valda personer';
 $string['groupmembers'] = 'Gruppmedlemmar';
@@ -607,8 +611,8 @@ $string['loginsteps'] = 'Hej!
 <br />
 Du måste bl.a. skapa ett nytt användarkonto på denna webbplats för att få tillgång till de kurser som Du vill delta i. Varje individuell kurs kan också ha en engångsnyckel \"kursnyckel\". Den behöver Du dock inte  förrän senare. 
    Så här skapar Du Ditt konto:
-   <ol>
-   <li>Fyll i formuläret på sidan <a href=\"$a\">
+   <ol size=\"2\">
+   <li>Fyll i formuläret på sidan <a href=$a>
 Nytt konto</a> med de efterfrågade 
 uppgifterna om Dig själv.</li>
    <li>Ett e-postmeddelande kommer därefter
@@ -797,6 +801,7 @@ $string['noteachersyet'] = 'Inga distanslärare/handledare/coacher för denna kurs
 $string['notenrolled'] = '$a har inte antagits till denna kurs.';
 $string['noteuserschangednonetocourse'] = 'OBS! När användardata återställs så måste användarna av denna kurs också återställas. Denna inställning har ändrats för Dig';
 $string['nothingnew'] = 'Inget nytt sedan Din senaste inloggning';
+$string['nothingtodisplay'] = 'Inget att visa';
 $string['noticenewerbackup'] = 'Den här säkerhetskopierade filen har skapats med Moodles $a->backuprelease ($a->backupversion)och den är nyare än Din nyligen installerade Moodle $a->serverrelease ($a->serverversion). Det här kan skapa en del ev oönskade förändringar eftersom det inte går att garantera bakåtkompatibilitet för säkerhetskopierade filer.';
 $string['notifyloginfailuresmessage'] = '$a->time, IP: $a->ip, Användare: $a->info';
 $string['notifyloginfailuresmessageend'] = 'Du kan se dessa loggar på $a/course/log.php?id=1&chooselog=1&modid=site_errors.';
@@ -840,7 +845,7 @@ $string['passwordsent'] = 'Lösenord har skickats';
 $string['passwordsenttext'] = '   <p>Vi har skickat ett e-postbrev till Din adress $a->email.</p>
    <p><b>Läs e-postmeddelandet för att se Ditt nya lösenord</b>
    <p>Om Du vill kan Du ändra lösenordet 
-   <a href=\"$a->link\"> till något som är lättare att komma ihåg</a>.</p>';
+   <a href=$a->link> till något som är lättare att komma ihåg</a>.</p>';
 $string['pathnotexists'] = 'Sökvägen finns inte på Din server!';
 $string['pathslasherror'] = 'Sökvägar kan inte avslutas med snedstreck (slash)!!';
 $string['paymentinstant'] = 'Använd knappen nedan för att betala och bli registrerad inom några minuter!';
@@ -882,7 +887,7 @@ $string['registrationcontact'] = 'Kontakt från användarna';
 $string['registrationcontactno'] = 'Nej, jag vill inte ha något formulär för kontakt i listan över webbplatsen.';
 $string['registrationcontactyes'] = 'Ja, lägg in ett formulär så att presumtiva moodlare kan kontakta mig.';
 $string['registrationemail'] = 'Meddelanden via e-post';
-$string['registrationinfo'] = '<p>Den här sidan hjälper Dig att registrera Din Moodle-sajt hos moodle.org. Registreringen är gratis. Den största fördelen med att registrera sajten är att Du kommer med på en e-postlista (som skickar ut ett begränsat antal meddelanden) för utskick av viktig information om säkerhetsvarningar och nya versioner av Moodle.</p><p>Som standardval så kommer den information som Du lämnar att vara privat och kommer inte att säljas eller överlåtas till någon annan. Den enda anledningen till att vi samlar in den här informationen är för att erbjuda support och för att kunna skapa en statistisk bild av Moodle-gemenskapen i dess helhet.</p>
+$string['registrationinfo'] = 'Den här sidan hjälper Dig att registrera Din Moodle-sajt hos moodle.org. Registreringen är gratis. Den största fördelen med att registrera sajten är att Du kommer med på en e-postlista (som skickar ut ett begränsat antal meddelanden) för utskick av viktig information om säkerhetsvarningar och nya versioner av Moodle.<p>Som standardval så kommer den information som Du lämnar att vara privat och kommer inte att säljas eller överlåtas till någon annan. Den enda anledningen till att vi samlar in den här informationen är för att erbjuda support och för att kunna skapa en statistisk bild av Moodle-gemenskapen i dess helhet.</p>
 <p>
 Om Du så väljer så kan Du tillåta att namnet på Din sajt, Ditt land och Din URL kommer med på listan över Moodle-sajter.</p>
 <p>
@@ -923,7 +928,7 @@ $string['scalescustomno'] = 'Inga egendefinierade skalor har ännu lagts till';
 $string['scalesstandard'] = 'Standardskalor';
 $string['scalestip'] = 'För att skapa egendefinierade skalor så får Du använda länken \'Skalor\' på menyn för administration av Din kurs.';
 $string['schedule'] = 'Schema';
-$string['scheduledbackupstatus'] = 'Status för schemalagd backup';
+$string['scheduledbackupstatus'] = 'Status för schemalagd säkerhetskopiering';
 $string['screenshot'] = 'Skärmdump';
 $string['search'] = 'Sök';
 $string['searchagain'] = 'Sök igen';
@@ -1014,7 +1019,7 @@ $string['teacherroles'] = '$a roller';
 $string['teachers'] = 'Distanslärare/handledare/coacher';
 $string['textediting'] = 'När Du redigerar text';
 $string['texteditor'] = 'Använd vanliga webbformulär';
-$string['textformat'] = 'Vanligt text format';
+$string['textformat'] = 'Vanligt textformat';
 $string['thanks'] = 'Tack';
 $string['theme'] = 'Layouttema';
 $string['themes'] = 'Layoutteman';
@@ -1027,14 +1032,19 @@ $string['timezone'] = 'Tidszon';
 $string['to'] = 'Till';
 $string['today'] = 'Idag';
 $string['todaylogs'] = 'Dagens loggar';
+$string['toeveryone'] = 'till alla';
 $string['toomanybounces'] = 'Den här e-postadressen har returnerat för många meddelanden. Du <b>måste</b> ändra den för att kunna fortsätta. ';
 $string['toomanytoshow'] = 'Det finns för många användare att visa';
+$string['toonly'] = 'endast till $a';
 $string['top'] = 'Överst';
 $string['topic'] = 'Tema';
 $string['topichide'] = 'Dölj detta ämne för $a';
 $string['topicoutline'] = 'Ämnesdisposition';
 $string['topicshow'] = 'Visa detta ämne för $a';
 $string['total'] = 'Totalt';
+$string['trackforums'] = 'Spårning av forum';
+$string['trackforumsno'] = 'Nej; spåra inte inlägg som jag har sett';
+$string['trackforumsyes'] = 'Ja: markera nya inlägg år mig.';
 $string['trysearching'] = 'Prova med att söka istället';
 $string['turneditingoff'] = 'Stäng av redigering';
 $string['turneditingon'] = 'Aktivera redigering';
@@ -1140,6 +1150,7 @@ $string['writingcategoriesandquestions'] = 'Skriver kategorier och frågor';
 $string['writingcoursedata'] = 'Skriver kursdata';
 $string['writingeventsinfo'] = 'Skriver info om händelser';
 $string['writinggeneralinfo'] = 'Skriver allmän information';
+$string['writinggradebookinfo'] = 'Skriver in info i betygs/omdömeskatalogen';
 $string['writinggroupsinfo'] = 'Skriver info om grupper';
 $string['writingheader'] = 'Skriver huvudrubrik';
 $string['writingloginfo'] = 'Skriver info om loggar';

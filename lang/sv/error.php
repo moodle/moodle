@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.4.3 + (2004083134)
+      // error.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['adminprimarynoedit'] = 'Ingen kan redigera huvudadministratören';
@@ -17,6 +17,7 @@ $string['notavailable'] = 'Detta är inte tillgängligt f.n.';
 $string['onlyeditown'] = 'Du kan bara redigera Din egen information.';
 $string['processingstops'] = 'Processandet upphör här.  De återstående posterna har inte ändrats.';
 $string['restricteduser'] = 'Ditt nuvarande konto \"$a\" tillåter tyvärr inte detta. ';
+$string['sessionerroruser'] = 'Tiden för Din session har tagit slut eller stötte på ett fel. Var snäll och logga in igen.';
 $string['sessionipnomatch'] = 'Beklagar, men Ditt IP-nummer tycks ha ändrats sedan Du först loggade in. Det här är en säkerhetsåtgärd för att förebygga att \'crackers\' stjäl Din identitet medan Du är inloggad på den här webbplatsen. Vanliga användare bör inte få se detta meddelande - var snäll och be administratören för Din webbplats om hjälp.';
 $string['unknowncourse'] = 'Okänd kurs som kallas \"$a\"';
 $string['usernotaddederror'] = 'Användaren \"$a\" har inte lagts till, detta p.g. a. ett okänt fel.';

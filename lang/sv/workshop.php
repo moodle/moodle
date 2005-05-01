@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // workshop.php - created with Moodle 1.4.3 + (2004083131)
+      // workshop.php - created with Moodle 1.5 ALPHA (2005042400)
 
 
 $string['absent'] = 'Frånvarande';
@@ -167,6 +167,7 @@ $string['noteonstudentassessments'] = '{Betyg/omdöme av student,elevdeltagare,lä
 $string['notgraded'] = 'Inte betygssatt, inget omdöme';
 $string['notitle'] = 'Ingen titel';
 $string['notitlegiven'] = 'Du har inte angivit någon titel ';
+$string['notsubmittedyet'] = 'Det har inte skickats in någon uppgiftslösning än.';
 $string['nowork'] = 'Tidsperioden för inskickning av uppgiftslösningar har gått ut.<br />Du har inte skickat in någon uppgiftslösning.';
 $string['numberofassessmentelements'] = 'Antal kommentarer, komponenter, betygsskalor, kriterie-satser eller kategorier i en rubrik';
 $string['numberofassessments'] = 'Antal bedömningar/värderingar/betygssättningar';
