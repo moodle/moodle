@@ -395,7 +395,7 @@ function find_form_errors(&$user, &$usernew, &$err, &$um) {
         foreach ($fields as $field) {
             $configvariable = 'auth_user_'.$field.'_editlock';
             if (!empty($CFG->$configvariable)) {
-                if ($user->$field !== $usernew->$field) {
+                if (isset($usernew->$field) && $user->$field !== $usernew->$field) {
                     $err[$field] = get_string("editlock");
                 }
             }
