@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
+      // scorm.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['asset'] = 'アセット';
@@ -11,7 +11,7 @@ $string['browsed'] = '閲覧済み';
 $string['browsemode'] = '閲覧モード';
 $string['chooseapacket'] = 'SCORMパッケージの選択または更新';
 $string['completed'] = '完了';
-$string['configframesize'] = 'この値は、SCORMパッケージを使用する時の、ナビゲーションを含むトップフレームのサイズ ( ピクセル )';
+$string['configframesize'] = 'SCORMパッケージを使用する時の、ナビゲーションを含むトップフレームのサイズ ( ピクセル )';
 $string['configpopup'] = '新しいSCORMパッケージを追加する場合、ポップアップウインドウに表示できる場合は表示しますか?';
 $string['configpopupheight'] = '新しいポップアップウインドウのデフォルト高は?';
 $string['configpopupresizable'] = 'ポップアップウインドウをデフォルトでリサイズ可能にしますか?';
@@ -21,14 +21,17 @@ $string['configpopupwidth'] = '新しいポップアップウインドウのデフォルト幅は?';
 $string['coursepacket'] = 'コースパッケージ';
 $string['coursestruct'] = 'コース構造';
 $string['datadir'] = 'ファイルシステムエラー: コースデータディレクトリを作成できません。';
+$string['details'] = 'SCOトラック詳細';
 $string['display'] = '表示';
 $string['domxml'] = 'DOMXML外部ライブラリ';
+$string['enablebrowse'] = 'プレビューモードを使用';
 $string['entercourse'] = 'SCORMコースの入力';
 $string['errorlogs'] = 'エラーログ';
 $string['exit'] = 'SCORMコースから抜ける';
 $string['expcoll'] = '展開する/折りたたむ';
 $string['failed'] = '失敗';
 $string['found'] = 'マニフェストファイルが見つかりました';
+$string['frameheight'] = 'SCOフレームの高さ';
 $string['gradeaverage'] = '平均得点';
 $string['gradehighest'] = '最高得点';
 $string['grademethod'] = '評価方法';
