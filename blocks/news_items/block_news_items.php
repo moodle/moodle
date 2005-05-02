@@ -7,7 +7,7 @@ class block_news_items extends block_base {
     }
 
     function get_content() {
-        global $CFG;
+        global $CFG, $USER;
 
         if ($this->content !== NULL) {
             return $this->content;
@@ -33,6 +33,7 @@ class block_news_items extends block_base {
             if (!$forum = forum_get_course_forum($course->id, 'news')) {
                 return $this->content;
             }
+
 
         /// First work out whether we can post to this group and if so, include a link
 
@@ -100,6 +101,23 @@ class block_news_items extends block_base {
 
             $this->content->footer = '<a href="'.$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id.'">'.
                                       get_string('oldertopics', 'forum').'</a> ...';
+
+        /// If RSS is activated at site and forum level and this forum has rss defined, show link
+            if (isset($CFG->enablerssfeeds) && isset($CFG->forum_enablerssfeeds) &&
+                $CFG->enablerssfeeds && $CFG->forum_enablerssfeeds && $forum->rsstype && $forum->rssarticles) {
+                require_once($CFG->dirroot.'/lib/rsslib.php');   // We'll need this
+                if ($forum->rsstype == 1) {
+                    $tooltiptext = get_string('rsssubscriberssdiscussions','forum',format_string($forum->name));
+                } else {
+                    $tooltiptext = get_string('rsssubscriberssposts','forum',format_string($forum->name));
+                }
+                if (empty($USER->id)) {
+                    $userid = 0;
+                } else {
+                    $userid = $USER->id;
+                }
+                $this->content->footer .= '<br />'.rss_get_link($course->id, $userid, 'forum', $forum->id, $tooltiptext);
+            }
 
         }
 
