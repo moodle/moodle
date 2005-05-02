@@ -470,17 +470,20 @@ body#mod-forum-index .generalbox .cell {
  ***/
 
 .glossarypost .commands {
-  font-size: 0.7em;
+  font-size: 0.8em;
 }
-.glossarypost .entryheader .author {
-  font-size: 0.7em;
+.glossarypost .entryheader .author,
+.glossarypost .entryheader .time {
+  font-size: 0.8em;
+}
+.glossarypost .entryheader .time {
   font-style: italic;
 }
 .concept {
   font-weight: bold;
 }
 .glossarycomment .time {
-  font-size: 0.7em;
+  font-size: 0.8em;
   font-style: italic;
 }
 .entrylowersection .aliases {
