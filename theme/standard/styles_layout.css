@@ -1053,7 +1053,10 @@ body#mod-forum-search .introcontent {
 }
 
 #email .unsubscribelink {
-  text-align:right;
+  margin-top:20px;
+  border-width: 0px 1px 0px 0px;
+  border-style: solid;
+  text-align:center;
 }
 
 
