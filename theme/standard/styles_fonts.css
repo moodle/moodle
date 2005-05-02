@@ -445,7 +445,8 @@ body#doc-contents ul {
 .forumpost .topic .author {
   font-size: 0.8em;
 }
-.forumpost .commands {
+.forumpost .commands,
+.forumpost .footer {
   font-size: 0.9em;
 }
 .forumheaderlist .discussion .lastpost {
