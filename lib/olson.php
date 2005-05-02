@@ -360,7 +360,10 @@ function olson_simple_zone_parser ($filename) {
 
     while ($line = fgets($file)) {
         // skip obvious non-zone lines
-        if (preg_match('/^(?:#|Rule|Link|Leap)/',$line)) {
+        if (preg_match('/^#/', $line)) {
+            continue;
+        }
+        if (preg_match('/^(?:Rule|Link|Leap)/',$line)) {
             $lastzone = NULL; // reset lastzone
             continue;
         }
