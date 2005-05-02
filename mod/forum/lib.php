@@ -1539,7 +1539,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         $strreply = get_string('reply', 'forum');
         $strparent = get_string('parent', 'forum');
         $strpruneheading = get_string('pruneheading', 'forum');
-        $strprune = get_tring('prune', 'forum');
+        $strprune = get_string('prune', 'forum');
         $threadedmode = (!empty($USER->mode) and ($USER->mode == FORUM_MODE_THREADED));
         $isteacher = isteacher($courseid);
         $adminedit = (isadmin() and !empty($CFG->admineditalways));
