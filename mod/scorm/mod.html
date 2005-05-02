@@ -41,8 +41,7 @@
     }
 ?>
 
-<script type="text/javascript" src="<?php p($CFG->wwwroot) ?>/mod/scorm/request.js" >
-</script>
+<script type="text/javascript" src="<?php p($CFG->wwwroot) ?>/mod/scorm/request.js" ></script>
 <script type="text/javascript">
     function validate_scorm(theform,filename) {
     	//alert(filename);
@@ -98,6 +97,14 @@
 	    return false;
 	}
     }
+
+    function checkmethod (grademethod,maxgrade) {
+	if (grademethod.options[grademethod.selectedIndex].value == 0) {
+	    maxgrade.disabled=true;
+	} else {
+	    maxgrade.disabled=false;
+	}
+    }
 </script>
 
 <form name="form" method="post" action="mod.php" onsubmit="return validate_scorm(document.form,document.form.reference.value);">
@@ -139,7 +146,7 @@
             <td align="right"><b><?php print_string("grademethod", "scorm") ?>:</b></td>
             <td>
             <?php
-                choose_from_menu($SCORM_GRADE_METHOD, "grademethod", "$form->grademethod", "");
+                choose_from_menu($SCORM_GRADE_METHOD, 'grademethod', "$form->grademethod", '','checkmethod(this,document.form.maxgrade);');
                 helpbutton("grademethod", get_string("grademethod","scorm"), "scorm");
             ?>
             </td>
@@ -151,9 +158,9 @@
                 for ($i=100; $i>=1; $i--) {
                     $grades[$i] = $i;
                 }
-
-                choose_from_menu($grades, "maxgrade", "$form->maxgrade", "");
-                helpbutton("maxgrade", get_string("maximumgrade"), "scorm");
+		$disabled = $form->grademethod=='0';
+                choose_from_menu($grades, 'maxgrade', "$form->maxgrade", '','','0',false,$disabled);
+                helpbutton('maxgrade', get_string('maximumgrade'), 'scorm');
             ?>
             </td>
         </tr>    
@@ -185,8 +192,6 @@
     <input type="hidden" name="datadir"	value="<?php p($form->datadir) ?>" />
     <input type="hidden" name="pkgtype"	value="<?php p($form->pkgtype) ?>" />
     <input type="hidden" name="launch"	value="<?php p($form->launch) ?>" />
-   <!-- <input type="hidden" name="maxgrade"	value="<?php p($form->maxgrade) ?>" />
-    <input type="hidden" name="grademethod"	value="<?php p($form->grademethod) ?>" />-->
     
     <input type="hidden" name="course"	value="<?php p($form->course) ?>" />
     <input type="hidden" name="sesskey"	value="<?php p($form->sesskey) ?>" />

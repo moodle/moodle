@@ -91,6 +91,7 @@
 
 		foreach ($scousers as $scouser) {
 		    if ($userdata = scorm_get_user_data($scouser->userid)) {
+			$row = '';
 			$row[] = print_user_picture($scouser->userid, $course->id, $userdata->picture, false, true);
 			$row[] = "<a href=\"$CFG->wwwroot/user/view.php?id=$scouser->userid&course=$course->id\">".
 			     "$userdata->firstname $userdata->lastname</a>";

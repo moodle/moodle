@@ -11,6 +11,7 @@ CREATE TABLE prefix_scorm (
   grademethod integer NOT NULL default '0',
   launch integer NOT NULL default '0',
   summary text NOT NULL default '',
+  browsemode integer NOT NULL default '0',
   auto integer NOT NULL default '0',
   timemodified integer NOT NULL default '0'
 );

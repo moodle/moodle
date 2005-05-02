@@ -162,80 +162,57 @@ function scorm_grades($scormid) {
     if (!$scorm = get_record('scorm', 'id', $scormid)) {
         return NULL;
     }
-    
+    if (!$scoes = get_records('scorm_scoes','scorm',$scormid)) {
+	return NULL;
+    }
+
     if ($scorm->grademethod == VALUESCOES) {
     	if (!$return->maxgrade = count_records_select('scorm_scoes',"scorm='$scormid' AND launch<>''")) {
             return NULL;
     	}
-    
-    	$return->grades = NULL;
-    	if ($scousers=get_records_select('scorm_scoes_track', "scormid='$scormid' GROUP BY userid")) {
-            foreach ($scousers as $scouser) {
-        	$userdata=get_records_select('scorm_scoes_track',"scormid='$scormid' AND userid='$scouser->userid' AND element='cmi_core_lesson_status'");
-            	$scores->completed=0;
-            	$scores->browsed=0;
-            	$scores->incomplete=0;
-            	$scores->failed=0;
-            	$scores->notattempted=0;
-            	$result='';
-            	$data = current($userdata);
-            	foreach ($userdata as $data) {
-                    if ($data->value=='passed')
-                    	$scores->completed++;
-                    else
-                    	$scores->{scorm_remove_spaces($data->value)}++;
-            	}
-            	if ($scores->completed)
-                    $result.='<img src="'.$CFG->wwwroot.'/mod/scorm/pix/completed.gif" alt="'.get_string('completed','scorm').'" title="'.get_string('completed','scorm').'" /> '.$scores->completed;
-            	if ($scores->incomplete)
-                    $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/incomplete.gif\" alt=\"".get_string('incomplete','scorm')."\" title=\"".get_string('incomplete','scorm')."\" /> $scores->incomplete ";
-            	if ($scores->failed)
-                    $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/failed.gif\" alt=\"".get_string('failed','scorm')."\" title=\"".get_string('failed','scorm')."\" /> $scores->failed ";
-            	if ($scores->browsed)
-                    $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/browsed.gif\" alt=\"".get_string('browsed','scorm')."\" title=\"".get_string('browsed','scorm')."\" /> $scores->browsed ";
-            	if ($scores->notattempted)
-                    $result.="<img src=\"$CFG->wwwroot/mod/scorm/pix/notattempted.gif\" alt=\"".get_string('notattempted','scorm')."\" title=\"".get_string('notattempted','scorm')."\" /> $scores->notattempted ";
-            
-            	$return->grades[$scouser->userid]=$result;
-            }
-        
-   	}
     } else {
-        $grades = get_records_select('scorm_scoes_track', "scormid=$scormid AND element='cmi_core_score_raw' AND value<>''",'','id,userid,value');
-        //$grades = get_records_menu("scorm_scoes_track", "scormid",$scormid,"","userid,cmi_core_score_raw");
-        $valutations = array();
-        foreach ($grades as $grade) {
-            if (!isset($valutations[$grade->userid])) {
-            	if ($scorm->grademethod == VALUEAVERAGE) {
-            	    $values = array();
-            	    $values[$grade->userid]->grade = 0;
-            	    $values[$grade->userid]->values = 0;
-            	}
-            	$valutations[$grade->userid] = 0;
-            }
-            switch ($scorm->grademethod) {
-            	case VALUEHIGHEST:
-            	    if ($grade->value > $valutations[$grade->userid]) {
-            	    	$valutations[$grade->userid] = $grade->value;
-            	    }
-            	break;
-            	case VALUEAVERAGE:
-            	    $values[$grade->userid]->grade += $grade->value;
-            	    $values[$grade->userid]->values++;
-            	break;
-            	case VALUESUM:
-            	    $valutations[$grade->userid] += $grade->value;
-            	break;
-            }
-        }
-        if ($scorm->grademethod == VALUEAVERAGE) {
-            foreach($values as $userid => $value) {
-            	$valutations[$userid] = $value->grade/$value->values;
-            }
-        }
-	//print_r($grades);
-	$return->grades = $valutations;
 	$return->maxgrade = $scorm->maxgrade;
+    }
+    
+    $return->grades = NULL;
+    if ($scousers=get_records_select('scorm_scoes_track', "scormid='$scormid' GROUP BY userid")) {
+        foreach ($scousers as $scouser) {
+	    $scores = NULL;
+            $scores->scoes = 0;
+	    $scores->values = 0;
+	    $scores->max = 0;
+	    $scores->sum = 0;
+	    
+	    foreach ($scoes as $sco) {
+        	$userdata=scorm_get_tracks($sco->id, $scouser->userid);
+		if (($userdata->status == 'completed') || ($userdata->status == 'passed')) { 
+		    $scores->scoes++;
+		}
+		if (!empty($userdata->score_raw)) {
+		    $scores->values++;
+		    $scores->sum += $userdata->score_raw;
+		    $scores->max = ($userdata->score_raw > $scores->max)?$userdata->score_raw:$scores->max;
+		}
+            }
+	    switch ($scorm->grademethod) {
+		case VALUEHIGHEST:
+		    $return->grades[$scouser->userid] = $scores->max;
+		break;
+		case VALUEAVERAGE:
+		    if ($score->values > 0) {
+			$return->grades[$scouser->userid] = $scores->sum/$scores->values;
+		    } else {
+			$return->grades[$scouser->userid] = 0;
+		    }
+		break;
+		case VALUESUM:
+		    $return->grades[$scouser->userid] = $scores->sum;
+		break;
+		case VALUESCOES:
+		    $return->grades[$scouser->userid] = $scores->scoes;
+		break;
+	    }
+   	}
     }
     return $return;
 }
