@@ -402,6 +402,10 @@ body#doc-contents ul {
 /***
  *** Tabs
  ***/
+.tablink {
+  font-size:0.8em;
+}
+
 .tablink a:hover {
   text-decoration: none;
 }
