@@ -2260,6 +2260,9 @@ function grade_set_categories() {
             if ($section->sequence) {
                 $sectionmods = explode(",", $section->sequence);
                 foreach ($sectionmods as $sectionmod) {
+                    if (empty($mods[$sectionmod])) {
+                        continue;
+                    }
                     $mod = $mods[$sectionmod];
                     $instance = get_record("$mod->modname", "id", "$mod->instance");
                     $libfile = "$CFG->dirroot/mod/$mod->modname/lib.php";
