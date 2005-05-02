@@ -1331,7 +1331,7 @@ function forum_subscribed_users($course, $forum, $groupid=0) {
         }
     }
     return get_records_sql("SELECT u.id, u.username, u.firstname, u.lastname, u.maildisplay, u.mailformat, u.maildigest, u.emailstop,
-                                   u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture, u.timezone, u.lang
+                                   u.email, u.city, u.country, u.lastaccess, u.lastlogin, u.picture, u.timezone, u.lang, u.trackforums
                               FROM {$CFG->prefix}user u,
                                    {$CFG->prefix}forum_subscriptions s $grouptables
                              WHERE s.forum = '$forum->id'
@@ -1539,7 +1539,7 @@ function forum_print_post(&$post, $courseid, $ownpost=false, $reply=false, $link
         $strreply = get_string('reply', 'forum');
         $strparent = get_string('parent', 'forum');
         $strpruneheading = get_string('pruneheading', 'forum');
-        $strprune = get_string('prune', 'forum');
+        $strprune = get_tring('prune', 'forum');
         $threadedmode = (!empty($USER->mode) and ($USER->mode == FORUM_MODE_THREADED));
         $isteacher = isteacher($courseid);
         $adminedit = (isadmin() and !empty($CFG->admineditalways));
