@@ -33,12 +33,13 @@
 }
 
 body, td, th, li {
-  font-family:"Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-  font-size:0.95em;
+  font-family:Arial, Verdana, Helvetica, sans-serif;
+  font-size:100%;
+  letter-spacing:0.02em;
 }
 
 th {
-  font-weight: normal;
+  font-weight: bold;
 }
 
 a:link,
@@ -56,7 +57,7 @@ h3.main,
 h4.main,
 h5.main,
 h6.main {
-  font-weight:normal;
+  font-weight:bold;
 }
 
 h1 {
@@ -78,27 +79,27 @@ h4 {
 }
 
 .warning {
-  font-weight: normal;
+  font-weight: bold;
   font-style: italic;
 }
 
 .errorbox .title {
-  font-weight: normal;
+  font-weight: bold;
   font-size: 1.2em;
   text-align: center;
 }
 
 .pagingbar .title {
-  font-weight: normal;
+  font-weight: bold;
 }
 .pagingbar .thispage {
-  font-weight: normal;
+  font-weight: bold;
 }
 
 .categorybox .category,
 .categorybox .category {
   font-size:1.2em;
-  font-weight:normal;
+  font-weight:bold;
 }
 
 .helplink {
@@ -106,7 +107,7 @@ h4 {
 }
 
 .headingblock {
-  font-weight: normal;
+  font-weight: bold;
 }
 
 .headingblock .link {
@@ -122,7 +123,7 @@ h4 {
 }
 
 .files .folder .size {
-  font-weight: normal;
+  font-weight: bold;
 }
 
 
@@ -131,7 +132,7 @@ h4 {
  ***/
 
 .headermain {
-  font-weight:normal;
+  font-weight:bold;
 }
 
 #header-home .headermain {
@@ -144,7 +145,7 @@ h4 {
 
 .breadcrumb {
   font-size:0.9em;
-  font-weight:normal;
+  font-weight:bold;
 }
 
 .logininfo,
@@ -181,8 +182,8 @@ table.formtable tbody th {
  ***/
 
 .sideblock .header {
-  font-size:0.8em;
-  font-weight: normal;
+  font-size:0.9em;
+  font-weight: bold;
 }
 
 .sideblock .content {
@@ -219,7 +220,7 @@ table.formtable tbody th {
  ***/
 
 #calendar .maincalendar .eventlist .event .referer {
-  font-weight:normal;
+  font-weight:bold;
 }
 
 #calendar .maincalendar .eventlist .event .course {
@@ -236,11 +237,11 @@ table.formtable tbody th {
 
 #calendar div.header
 {
-  font-weight:normal;
+  font-weight:bold;
 }
 
 #calendar .sidecalendar .filters {
-  font-size:0.75em;
+  font-size:0.8em;
 }
 
 .sideblock .filters td {
@@ -252,7 +253,7 @@ table.formtable tbody th {
 }
 
 #calendar .maincalendar .day {
-  font-weight: normal;
+  font-weight: bold;
 }
 
 table.minicalendar {
@@ -262,16 +263,16 @@ table.minicalendar {
 .cal_popup_caption {
   font-family:sans-serif;
   font-size:0.8em;
-  font-weight:normal;
+  font-weight:bold;
 }
 
 .cal_popup_close {
   font-family:sans-serif;
   font-size:0.8em;
-  font-weight:normal;
+  font-weight:bold;
 }
 #calendar .maincalendar .calendar-controls .current {
-  font-weight: normal;
+  font-weight: bold;
 }
 
 
@@ -301,7 +302,7 @@ table.minicalendar {
 
 .weeklydatetext {
   font-size:0.9em;
-  font-weight:normal;
+  font-weight:bold;
 }
 
 .coursebox .info {
@@ -340,6 +341,10 @@ body#doc-contents ul {
  *** Login
  ***/
 
+#login-index .content {
+  font-size: 0.85em;
+}
+
 
 /***
  *** Message
@@ -355,7 +360,7 @@ body#doc-contents ul {
 
 .message .heading {
   font-size:1.0em;
-  font-weight:normal;
+  font-weight:bold;
 }
 
 .message .date,
@@ -370,7 +375,7 @@ body#doc-contents ul {
 }
 
 .message .author {
-  font-weight: normal;
+  font-weight: bold;
   font-size:0.8em;
 }
 
@@ -389,7 +394,7 @@ body#doc-contents ul {
 }
 
 #message-user .name {
-  font-weight: normal;
+  font-weight: bold;
   font-size:1.1em;
 }
 
@@ -397,6 +402,10 @@ body#doc-contents ul {
 /***
  *** Tabs
  ***/
+.tablink {
+  font-size:0.8em;
+}
+
 .tablink a:hover {
   text-decoration: none;
 }
@@ -407,7 +416,7 @@ body#doc-contents ul {
  ***/
 
 .userinfobox .username {
-  font-weight: normal;
+  font-weight: bold;
 }
 
 .userinfobox .links {
@@ -432,19 +441,23 @@ body#doc-contents ul {
  ***/
 
 .forumnodiscuss{
-  font-weight:normal;
+  font-weight:bold;
 }
 .forumpost .topic .subject {
-  font-weight: normal;
+  font-weight: bold;
 }
 .forumpost .topic .author {
   font-size: 0.8em;
+}
+.forumpost .commands,
+.forumpost .link {
+  font-size: 0.9em;
 }
 .forumheaderlist .discussion .lastpost {
   font-size: 0.7em;
 }
 body#mod-forum-search .introcontent {
-  font-weight:normal;
+  font-weight:bold;
 }
 body#mod-forum-index .generalbox .cell {
   font-size: 0.85em;
@@ -457,17 +470,20 @@ body#mod-forum-index .generalbox .cell {
  ***/
 
 .glossarypost .commands {
-  font-size: 0.7em;
+  font-size: 0.8em;
 }
-.glossarypost .entryheader .author {
-  font-size: 0.7em;
+.glossarypost .entryheader .author,
+.glossarypost .entryheader .time {
+  font-size: 0.8em;
+}
+.glossarypost .entryheader .time {
   font-style: italic;
 }
 .concept {
-  font-weight: normal;
+  font-weight: bold;
 }
 .glossarycomment .time {
-  font-size: 0.7em;
+  font-size: 0.8em;
   font-style: italic;
 }
 .entrylowersection .aliases {
@@ -489,14 +505,14 @@ body#mod-forum-index .generalbox .cell {
 }
 #mod-journal-view .author {
   font-size: 1em;
-  font-weight: normal;
+  font-weight: bold;
 }
 #mod-journal-view .time {
   font-size: 0.7em;
   font-style: italic;
 }
 #mod-journal-view .grade {
-  font-weight: normal;
+  font-weight: bold;
   font-style: italic;
 }
 

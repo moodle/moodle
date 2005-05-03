@@ -67,9 +67,11 @@ div.header {
   background-color:#EEEEEE;
   border-color:#DDDDDD;
 }
+
 table.formtable tbody th {
   background: none;
 }
+
 .highlight {
   background-color:#AAFFAA;
 }
@@ -90,7 +92,6 @@ table.formtable tbody th {
 .notifyproblem {
   color:#660000;
 }
-
 .notifysuccess {
   color:#006600;
 }
@@ -204,6 +205,7 @@ table.formtable tbody th {
 .admin .generalboxcontent {
   background-color:#EEEEEE; 
 }
+
 .admin .generalbox {
   border-color:#BBBBBB; 
 }
@@ -212,6 +214,7 @@ table.formtable tbody th {
   border-color:#BBBBBB; 
   background-color:#FFFFFF; 
 }
+
 body#admin-index .c0 {
   background-color: #FAFAFA;
 }
@@ -350,6 +353,7 @@ table.minicalendar {
   border-color:#000000;
   background-color:#FFFFFF;
 }
+
 #calendar .maincalendar .filters table,
 #calendar .sidecalendar .filters table,
 .block_calendar_month .filters table {
@@ -464,7 +468,8 @@ table.message_search_results td {
 .selected .tablink a:visited {
   color:#000000;
 }
-.tabs .side {
+.tabs .side,
+.tabrow td {
   border-color: #AAAAAA;
 }
 .tabrow td {
@@ -712,6 +717,4 @@ body#mod-quiz-report table#attempts .r1 {
 .workshopassessmentheading {
   background-color:#DDDDDD;
 }
-
-
 
