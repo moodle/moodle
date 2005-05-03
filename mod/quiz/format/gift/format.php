@@ -63,6 +63,21 @@ class quiz_format_gift extends quiz_default_format {
         }
         return $comment;
     }
+
+    function split_truefalse_comment($comment){
+      // splits up comment around # marks
+      // returns an array of true/false feedback
+      $feedback = explode('#',$comment);
+      if (count($feedback)>=2) {
+        $true_feedback = $feedback[0];
+        $false_feedback = $feedback[1];
+      }
+      else {
+        $true_feedback = $feedback[0];
+        $false_feedback = '';
+      }
+      return array( 'true'=>$true_feedback, 'false'=>$false_feedback );
+    }
     
     function escapedchar_pre($string) {
         //Replaces escaped control characters with a placeholder BEFORE processing
@@ -82,6 +97,29 @@ class quiz_format_gift extends quiz_default_format {
         $characters   = array("#",      "=",      "{",      "}",      "~"     );
         $string = str_replace($placeholders, $characters, $string);
         return $string;
+    }
+
+    function check_answer_count( $min, $answers, $text ) {
+      // max is always 10 of course!
+      $countanswers = count($answers);
+      if ($countanswers < $min) {
+        if ($this->displayerrors) {
+          $errormessage = get_string( 'importminerror', 'quiz' );
+            echo "<p>$text</p>\n"; 
+            echo "<p>$errormessage</p>\n"; 
+         }
+         return false;
+       }
+
+       if ($countanswers>10) {
+         if ($this->displayerrors) {
+           $errormessage = get_string( 'importmax10error', 'quiz' );
+             echo "<p>$text</p>\n";
+             echo "<p>$errormessage</p>";
+           }
+           return false;
+         }
+       return true;
     }
 
 
@@ -224,16 +262,12 @@ class quiz_format_gift extends quiz_default_format {
                 }
     
                 $countanswers = count($answers);
-                if ($countanswers < 2) {
-                    if ($this->displayerrors) {
-                        echo "<p>$text<p>Found tilde for multiple choice, 
-                            but too few answers for Multiple Choice.<br />
-                            Found <u>$countanswers</u> answers in answertext.";
-                    }
-                    return false;
-                    break;
+                
+		if (!$this->check_answer_count( 2,$answers,$text )) {
+  		  return false;
+ 		  break;
                 }
-    
+
                 foreach ($answers as $key => $answer) {
                     $answer = trim($answer);
 
@@ -267,15 +301,9 @@ class quiz_format_gift extends quiz_default_format {
                     array_shift($answers);
                 }
     
-                $countanswers = count($answers);
-                if ($countanswers < 3) {
-                    if ($this->displayerrors) {
-                        echo "<p>$text<p>Found markers for Matching format 
-                            (= and ->), but too few answers -- must be at least 3.<br />
-                            Found <u>$countanswers</u> answers in answertext.";
-                    }
-                    return false;
-                    break;
+		if (!$this->check_answer_count( 2,$answers,$text )) {
+  		  return false;
+ 		  break;
                 }
     
                 foreach ($answers as $key => $answer) {
@@ -303,15 +331,16 @@ class quiz_format_gift extends quiz_default_format {
             case TRUEFALSE:
                 $answer = $answertext;
                 $comment = $this->commentparser($answer); // commentparser also removes comment from $answer
+                $feedback = $this->splot_truefalse_comment( $comment );
 
                 if ($answer == "T" OR $answer == "TRUE") {
                     $question->answer = 1;
-                    $question->feedbackfalse = $comment; //feedback if answer is wrong
-                    $question->feedbacktrue = ""; // make sure this exists to stop notifications
+                    $question->feedbackfalse = $feedback['true'];; //feedback if answer is wrong
+                    $question->feedbacktrue = $feedback['false']; // make sure this exists to stop notifications
                 } else {
                     $question->answer = 0;
-                    $question->feedbacktrue = $comment; //feedback if answer is wrong
-                    $question->feedbackfalse = ""; // make sure this exists to stop notifications
+                    $question->feedbacktrue = $feedback['true']; //feedback if answer is wrong
+                    $question->feedbackfalse = $feedback['false']; // make sure this exists to stop notifications
                 }
                 $question->defaultgrade = 1;
                 $question->image = "";   // No images with this format
@@ -328,13 +357,9 @@ class quiz_format_gift extends quiz_default_format {
                     array_shift($answers);
                 }
     
-                if (count($answers) == 0) {
-                    // invalid question
-                    if ($this->displayerrors) {
-                        echo "<p>$text<p>Found equals=, but no answers in answertext";
-                    }
-                    return false;
-                    break;
+		if (!$this->check_answer_count( 1,$answers,$text )) {
+  		  return false;
+ 		  break;
                 }
 
                 foreach ($answers as $key => $answer) {
