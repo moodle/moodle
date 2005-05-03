@@ -29,7 +29,7 @@ class search_token {
   // Need to think about this some more. 
 
   function sanitize($userstring){
-    return htmlentities(addslashes($userstring));
+    return htmlspecialchars(addslashes($userstring));
   }
   function getValue(){  
     return $this->value;

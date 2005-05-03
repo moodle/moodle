@@ -1481,7 +1481,8 @@ function highlight($needle, $haystack, $case=0,
         return $haystack;
     }
 
-    $list_of_words = eregi_replace("[^-a-zA-Z0-9&.']", " ", $needle);
+    //$list_of_words = eregi_replace("[^-a-zA-Z0-9&.']", " ", $needle);  // bug 3101
+    $list_of_words = $needle;
     $list_array = explode(' ', $list_of_words);
     for ($i=0; $i<sizeof($list_array); $i++) {
         if (strlen($list_array[$i]) == 1) {
