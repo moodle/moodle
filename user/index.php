@@ -126,9 +126,11 @@
                 print_group_picture($group, $course->id, true, false, false);
                 echo '</td><td class="content">';
                 echo '<h3>'.$group->name;
-                echo '&nbsp;<a title="'.get_string('editgroupprofile').'" href="../course/groups.php?id='.$course->id.'&amp;group='.$group->id.'">';
-                echo '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="" border="0">';
-                echo '</a>';
+                if (isteacheredit($course->id)) {
+                    echo '&nbsp;<a title="'.get_string('editgroupprofile').'" href="../course/groups.php?id='.$course->id.'&amp;group='.$group->id.'">';
+                    echo '<img src="'.$CFG->pixpath.'/t/edit.gif" alt="" border="0">';
+                    echo '</a>';
+                }
                 echo '</h3>';
                 echo format_text($group->description);
                 echo '</td></tr></table>';
