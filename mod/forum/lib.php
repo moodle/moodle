@@ -2666,7 +2666,14 @@ function forum_print_latest_discussions($course, $forum, $maxdiscussions=5, $dis
             echo '<th class="header replies">'.get_string('replies', 'forum').'</th>';
             /// If the forum can be tracked, display the unread column.
             if ($cantrack) {
-                echo '<th class="header replies">'.get_string('unread', 'forum').'</th>';
+                echo '<th class="header replies">'.get_string('unread', 'forum');
+                if ($forumtracked) {
+                    echo '&nbsp;<a title="'.get_string('markallread', 'forum').
+                         '" href="'.$CFG->wwwroot.'/mod/forum/markposts.php?f='.
+                         $forum->id.'&amp;mark=read&amp;returnpage=view.php">'.
+                         '<img src="'.$CFG->pixpath.'/t/clear.gif" height="11" width="11" border="0" /></a>';
+                }
+                echo '</th>';
             }
         }
         echo '<th class="header lastpost">'.get_string('lastpost', 'forum').'</th>';

@@ -62,16 +62,10 @@
         if (!empty($d)) {
             if (forum_tp_mark_discussion_read($user->id, $d, $forum->id)) {
                 add_to_log($course->id, "discussion", "mark read", "view.php?f=$forum->id", $d, $cm->id);
-                redirect($returnto);
-            } else {
-                error("Could not mark that forum read.", $_SERVER["HTTP_REFERER"]);
             }
         } else {
             if (forum_tp_mark_forum_read($user->id, $forum->id)) {
                 add_to_log($course->id, "forum", "mark read", "view.php?f=$forum->id", $forum->id, $cm->id);
-                redirect($returnto);
-            } else {
-                error("Could not mark that forum read.", $_SERVER["HTTP_REFERER"]);
             }
         }
 
@@ -84,5 +78,7 @@
 //            error("Could not start tracking that forum", $_SERVER["HTTP_REFERER"]);
 //        }
     }
+
+    redirect($returnto);
 
 ?>
