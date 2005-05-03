@@ -1,5 +1,5 @@
 <?php  
-require_once("$CFG->dirroot/mod/quiz/format/qti/qt_common.php");
+require_once("$CFG->dirroot/mod/quiz/format/qti2/qt_common.php");
 ////////////////////////////////////////////////////////////////////////////
 /// IMS QTI 2.0 FORMAT
 ///
