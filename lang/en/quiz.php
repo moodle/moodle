@@ -216,6 +216,7 @@ $string['previewquestion'] = 'Preview question';
 $string['publish'] = 'Publish';
 $string['publishedit'] = 'You must have permission in the publishing course to add or edit questions in this category';
 $string['qti'] = 'IMS QTI format';
+$string['qti2'] = 'IMS QTI 2.0 format';
 $string['question'] = 'Question';
 $string['questioninuse'] = 'The question \'$a->questionname\' is currently being used in: <br />$a->quiznames<br />The question will not be deleted from these quizzes but only from the category list.';
 $string['questionname'] = 'Question name';
