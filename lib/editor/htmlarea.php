@@ -1712,8 +1712,12 @@ HTMLArea.prototype._searchReplace = function() {
 
     var editor = this;
     var selectedtxt = "";
-    var strReplaced = '<?php print_string('itemsreplaced','editor'); ?>';
-    var strNotfound = '<?php print_string('searchnotfound','editor');?>';
+    <?php
+    $strreplaced = addslashes(get_string('itemsreplaced','editor'));
+    $strnotfound = addslashes(get_string('searchnotfound','editor'));
+    ?>
+    var strReplaced = '<?php echo $strreplaced ?>';
+    var strNotfound = '<?php echo $strnotfound ?>';
     var ile;
 
     //in source mode mozilla show errors, try diffrent method
