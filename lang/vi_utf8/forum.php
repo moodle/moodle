@@ -2,7 +2,8 @@
       // forum.php - created with Moodle 1.2 development (2003111400)
 
 
-$string['addanewdiscussion'] = ' Thêm một chủ đề thảo luận mới'; 
+$string['addanewdiscussion'] = ' Thêm một chủ đề thảo luận mới';
+$string['advancedsearch'] = 'Tìm kiếm nâng cao'; 
 $string['addanewtopic'] = '  Thêm một chủ đề mới ';
 $string['allowchoice'] = ' Cho phép tất cả mọi người lựa chọn ';
 $string['allowdiscussions'] = ' Có thể một $a gửi bài viết lên diễn đàn ?';
@@ -11,6 +12,7 @@ $string['allowsdiscussions'] = ' Diễn đàn này cho phép tạo một chủ �
 $string['anyfile'] = 'Bất kỳ file nào ';
 $string['attachment'] = 'File đính kèm ';
 $string['bynameondate'] = 'Bởi $a->name - $a->date';
+$string['configcleanreadtime'] = 'Giờ của ngày để xoá các bài viết cũ từ bảng \'read\'.';
 $string['configdisplaymode'] = ' Chế độ hiển thị mặc định cho các thảo luận khi không được đặt.';
 $string['configenablerssfeeds'] = ' Sự chuyển đổi này cho phép lấy  các tin về theo chuẩn RSS đối với tất cả các diễn đàn. Bạn cũng cần lấy tin về bằng tay theo cấu hình của mỗi diễn đàn.';
 $string['configlongpost'] = ' Bất kỳ bài viết nào vượt quá chiều dài này thì coi là dài.';
@@ -131,6 +133,17 @@ $string['rsssubscriberssposts'] = ' Hiển thị các thông tin theo chuẩn RS
 $string['search'] = 'Các diễn đàn';
 $string['searchforums'] = ' Tìm kiếm ';
 $string['searcholderposts'] = ' Tìm kiếm các bài viết cũ hơn...';
+$string['searchdatefrom'] = 'Các bài viết phải mới hơn';
+$string['searchforumintro'] = 'Hãy điền các từ tìm kiếm vào một hoặc nhiều hơn các trường dưới đây:';
+$string['searchfullwords'] = 'Các từ này phải được xuất hiện như toàn bộ các từ';
+$string['searchnotwords'] = 'Các từ này không bao gồm';
+$string['searchphrase'] = 'Cụm từ chính xác này phải được xuất hiện trong bài viết';
+$string['searchsubject'] = 'Các từ này phải xuất hiện trong chủ đề';
+$string['searchuser'] = 'Tên này phải trùng với tên tác giả';
+$string['searchuserid'] = 'Moodle ID của tác giả';
+$string['searchwords'] = 'Các từ này có thể xuất hiện đâu đó trong bài viết ';
+$string['searcholderposts'] = 'Tìm các bài viết cũ...';
+$string['searchwhichforums'] = 'Chọn diễn đàn nào để tìm kiếm';
 $string['searchresults'] = ' Các kết quả tìm kiếm ';
 $string['sendinratings'] = ' Gửi các đánh giá mới nhất của tôi ';
 $string['showsubscribers'] = ' Xem / chỉnh sửa những người đăng ký hiện tại ';
