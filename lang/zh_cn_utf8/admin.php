@@ -87,7 +87,7 @@ $string['configtimezone'] = '您可以在此设定缺省时区。这是只是用
 $string['configunzip'] = 'unzip程序的位置(仅针对Unix系统，可选)。如果指定了，将用它来解压服务器上的zip文件。如果留空，则Moodle使用内部函数解压。';
 $string['configvariables'] = '变量';
 $string['configwarning'] = '不要随便修改此项——未知变量可能导致错误。';
-$string['configzip'] = 'zip程序的位置(仅针对Unix系统，可选)。如果指定了，将用它来创建服务器上的zip文件。如果留空，则Moodle使用内部函数解压。';
+$string['configzip'] = 'zip程序的位置(仅针对Unix系统，可选)。如果指定了，将用它来创建服务器上的zip文件。如果留空，则Moodle使用内部函数压缩。';
 $string['confirmation'] = '确认';
 $string['cronwarning'] = '<a href=\"cron.php\">cron.php维护脚本</a>已经有最少24个小时都没有运行过了。<br /><a href=\"../doc/?frame=install.html⊂=cron\">安装文档</a>中解释了如何自动运行它。';
 $string['edithelpdocs'] = '编辑帮助文档';
