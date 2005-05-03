@@ -110,7 +110,7 @@ function block_load_class($blockname) {
         return false;
     }
 
-    include_once($CFG->dirroot.'/blocks/moodleblock.class.php');
+    require_once($CFG->dirroot.'/blocks/moodleblock.class.php');
     $classname = 'block_'.$blockname;
     include_once($CFG->dirroot.'/blocks/'.$blockname.'/block_'.$blockname.'.php');
 
