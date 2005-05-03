@@ -39,8 +39,7 @@
 	<input type="hidden" name="pageid" value="<?PHP echo $pageid ?>" />
 	<input type="hidden" name="qtype" value="<?PHP echo LESSON_BRANCHTABLE ?>" />
 	<input type="hidden" name="sesskey" value="<?PHP echo $USER->sesskey ?>" />
-	<center><table cellpadding=5 border=1>
-	<tr><td align="center">
+	<center><table class="generalbox" cellpadding=5 border=1>
 	<tr valign="top">
 	<td><b><?php print_string("pagetitle", "lesson"); ?>:</b><br />
 	<!-- //CDC hidden-label added.--><label for="title" class="hidden-label">Title</label><input type="text" id="title" name="title" size="80" maxsize="255" value="" /></td></tr>

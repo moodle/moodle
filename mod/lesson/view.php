@@ -1296,7 +1296,7 @@
                 /// CDC-FLAG /// end tree code    (note, there is an "}" below for an else above)
             while (true) {
                 echo "<tr><td>\n";
-                echo "<table width=\"100%\" border=\"1\"><tr><th colspan=\"2\">".format_string($page->title)."&nbsp;&nbsp;\n";
+                echo "<table width=\"100%\" border=\"1\" class=\"generalbox\"><tr><th colspan=\"2\">".format_string($page->title)."&nbsp;&nbsp;\n";
                 if (isteacheredit($course->id)) {
                     if ($npages > 1) {
                         echo "<a title=\"".get_string("move")."\" href=\"lesson.php?id=$cm->id&amp;action=move&amp;pageid=$page->id\">\n".

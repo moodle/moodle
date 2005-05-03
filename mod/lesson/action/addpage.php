@@ -51,10 +51,9 @@
 	<input type="hidden" name="action" value="insertpage">
 	<input type="hidden" name="pageid" value="<?PHP echo $pageid ?>">
 	<input type="hidden" name="sesskey" value="<?PHP echo $USER->sesskey ?>">
-	<center><table cellpadding=5 border=1>
+	<center>
 	  <?php
-	    echo "<tr><td align=\"center\"><b>";
-	    echo get_string("questiontype", "lesson").":</b> \n";
+	    echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
 	    echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br>";
 	    if (isset($_GET['qtype'])) {
 	        $qtype = clean_param($_GET['qtype'], PARAM_INT);
@@ -62,13 +61,15 @@
 	                          "lesson.php?id=$cm->id&action=addpage&pageid=".$pageid.$linkadd);
 	        // NoticeFix rearraged
 	        if ( $qtype == LESSON_SHORTANSWER || $qtype == LESSON_MULTICHOICE ) {  // only display this option for Multichoice and shortanswer
+				echo '<p>';
 	            if ($qtype == LESSON_SHORTANSWER) {
-	                echo "<br><br><b>".get_string("casesensitive", "lesson").":</b> \n";
+	                echo "<b>".get_string("casesensitive", "lesson").":</b> \n";
 	            } else {
-	                echo "<br><br><b>".get_string("multianswer", "lesson").":</b> \n";
+	                echo "<b>".get_string("multianswer", "lesson").":</b> \n";
 	            }
 	            echo " <label for=\"qoption\" class=\"hidden-label\">Question Option</label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\"/>"; //CDC hidden label added.
 	            helpbutton("questionoption", get_string("questionoption", "lesson"), "lesson");
+				echo '</p>';
 	        }
 	    } else {
 	        lesson_qtype_menu($LESSON_QUESTION_TYPE, LESSON_MULTICHOICE, 
@@ -77,9 +78,8 @@
 	        echo " <label for=\"qoption\" class=\"hidden-label\">Question Option</label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\"/>"; //CDC hidden label added.
 	        helpbutton("questionoption", get_string("questionoption", "lesson"), "lesson");
 	    }
-	    echo "</td></tr>\n";
 	?>
-	<tr><td align="center">
+	<table cellpadding="5" class="generalbox" border="1">
 	<tr valign="top">
 	<td><b><?php print_string("pagetitle", "lesson"); ?>:</b><br />
 	<!-- //CDC hidden-label added.--><label for="title" class="hidden-label">Title</label><input type="text" id="title" name="title" size="80" maxsize="255" value=""></td></tr>

@@ -60,56 +60,52 @@
 	<input type="hidden" name="pageid" value="<?PHP echo $pageid ?>">
 	<input type="hidden" name="sesskey" value="<?PHP echo $USER->sesskey ?>">        
 	<input type="hidden" name="redisplay" value="0">
-	<center><table cellpadding=5 border=1>
+	<center>
 	   <?php
 	    switch ($page->qtype) {
 	        case LESSON_MULTICHOICE :
-	            echo "<tr><td align=\"center\"><b>";
-	            echo get_string("questiontype", "lesson").":</b> \n";
+	            echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
 	            echo helpbutton("questiontypes", get_string("questiontype", "lesson"), "lesson")."<br>";
 	            lesson_qtype_menu($LESSON_QUESTION_TYPE, $page->qtype, 
 	                              "lesson.php?id=$cm->id&action=editpage&pageid=$page->id",
 	                              "document.editpage.redisplay.value=1;document.editpage.submit();");
-	            echo "<br><br><b>".get_string("multianswer", "lesson").":</b> \n";
+	            echo "<p><b>".get_string("multianswer", "lesson").":</b> \n";
 	            if ($page->qoption) {
 	                echo "<label for=\"qoption\" class=\"hidden-label\">Question Option</label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\" checked=\"checked\"/>"; //CDC hidden label added.
 	            } else {
 	                echo "<label for=\"qoption\" class=\"hidden-label\">Question Option</label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\"/>"; //CDC hidden label added.
 	            }
 	            helpbutton("questionoption", get_string("questionoption", "lesson"), "lesson");
-	            echo "</td></tr>\n";
+	            echo "</p>\n";
 	            break;
 	        case LESSON_SHORTANSWER :
-	            echo "<tr><td align=\"center\"><b>";
-	            echo get_string("questiontype", "lesson").":</b> \n";
+	            echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
 	            echo helpbutton("questiontype", get_string("questiontype", "lesson"), "lesson")."<br>";
 	            lesson_qtype_menu($LESSON_QUESTION_TYPE, $page->qtype, 
 	                              "lesson.php?id=$cm->id&action=editpage&pageid=$page->id",
 	                              "document.editpage.redisplay.value=1;document.editpage.submit();");
-	            echo "<br><br><b>".get_string("casesensitive", "lesson").":</b> \n";
+	            echo "<p><b>".get_string("casesensitive", "lesson").":</b> \n";
 	            if ($page->qoption) {
 	                echo "<label for=\"qoption\" class=\"hidden-label\">Question Option</label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\" checked=\"checked\"/>"; //CDC hidden label added.
 	            } else {
 	                echo "<label for=\"qoption\" class=\"hidden-label\">Question Option</label><input type=\"checkbox\" id=\"qoption\" name=\"qoption\" value=\"1\"/>"; //CDC hidden label added.
 	            }
 	            helpbutton("questionoption", get_string("questionoption", "lesson"), "lesson");
-	            echo "</td></tr>\n";
+	            echo "</p>\n";
 	            break;
 	        case LESSON_TRUEFALSE :
 	        case LESSON_ESSAY :
 	        case LESSON_MATCHING :
 	        case LESSON_NUMERICAL :
-	            echo "<tr><td align=\"center\"><b>";
-	            echo get_string("questiontype", "lesson").":</b> \n";
+	            echo '<b>'.get_string("questiontype", "lesson").":</b> \n";
 	            echo helpbutton("questiontype", get_string("questiontype", "lesson"), "lesson")."<br>";
 	            lesson_qtype_menu($LESSON_QUESTION_TYPE, $page->qtype, 
 	                              "lesson.php?id=$cm->id&action=editpage&pageid=$page->id",
 	                              "document.editpage.redisplay.value=1;document.editpage.submit();");
-	            echo "</td></tr>\n";
 	            break;
 	    }
 	?>
-	<tr><td align="center">
+	<table cellpadding="5" class="generalbox" border="1">
 	<tr valign="top">
 	<td><b><?php print_string("pagetitle", "lesson"); ?>:</b><br />
 	<!-- //CDC hidden-label added.--><label for="title" class="hidden-label">Title</label><input type="text" id="title" name="title" size="80" maxsize="255" value="<?php p($page->title) ?>"></td>

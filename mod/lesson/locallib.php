@@ -1113,20 +1113,16 @@ function lesson_calculate_ongoing_score($lesson, $userid, $retries, $return=fals
 /*******************************************************************/
 function lesson_qtype_menu($qtypes, $selected="", $link="", $onclick="") {
 // prints the question types for when editing and adding a page
-
-    $output = "";
-    foreach ($qtypes as $value => $label) {
-        if ($value == $selected) {
-            $output .= "<b>$label</b>";
-            $output .= "<input type=\"hidden\" name=\"qtype\" value=\"$value\" /> \n";
-        } else {
-            $output .= "<a onClick=\"$onclick\" href=\"$link"."&qtype=$value\">$label</a>";
-        }
-        if ($label != end($qtypes)) {
-            $output .= " | ";
-        }
+	$tabs = array();
+	$tabrows = array();
+	
+    foreach ($qtypes as $qtype => $qtypename) {
+		$tabrows[] = new tabobject($qtype, "$link&amp;qtype=$qtype\" onClick=\"$onclick\"", $qtypename);
     }
-    echo $output;
+	$tabs[] = $tabrows;
+	print_tabs($tabs, $selected);
+	echo "<input type=\"hidden\" name=\"qtype\" value=\"$selected\" /> \n";
+
 }
 
 /*******************************************************************/
