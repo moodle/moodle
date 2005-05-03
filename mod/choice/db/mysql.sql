@@ -21,7 +21,7 @@ CREATE TABLE prefix_choice (
   text text NOT NULL,
   format tinyint(2) unsigned NOT NULL default '0',
   publish tinyint(2) unsigned NOT NULL default '0',
-  release tinyint(2) unsigned NOT NULL default '0',
+  `release` tinyint(2) unsigned NOT NULL default '0',
   display tinyint(4) unsigned NOT NULL default '0',
   allowupdate tinyint(2) unsigned NOT NULL default '0',
   showunanswered tinyint(2) unsigned NOT NULL default '0',    limitanswers tinyint(2) unsigned NOT NULL default '0',
