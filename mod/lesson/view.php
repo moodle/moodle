@@ -1131,8 +1131,56 @@
 
     /*******************teacher view **************************************/
     elseif ($action == 'teacherview') {
-        print_heading_with_help(format_string($lesson->name,true), "overview", "lesson");        
-        // get number of pages
+        /// CDC-FLAG /// link to grade essay questions and to report
+        if ($userattempts = get_records("lesson_attempts", "lessonid", $lesson->id)) { // just check to see if anyone has answered any questions.
+			$usercount = array();
+			foreach ($userattempts as $userattempts) {
+				$usercount[$userattempts->userid] = 0;
+			}
+			$a = new stdClass;
+			$a->users = count($usercount);
+			$a->usersname = $course->students;
+			echo "<div align=\"right\"><a href=\"report.php?id=$cm->id\">".get_string("viewlessonstats", "lesson", $a)."</a></div>";
+       	}
+        if ($essaypages = get_records_select("lesson_pages", "lessonid = $lesson->id AND qtype = ".LESSON_ESSAY)) { // get pages that are essay
+        	// get only the attempts that are in response to essay questions
+        	$essaypageids = implode(",", array_keys($essaypages)); // all the pageids in comma seperated list
+        	if ($essayattempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND pageid IN($essaypageids)")) {
+		        $studentessays = array();
+				// makes an array that organizes essayattempts by grouping userid, then pageid, then try count
+		        foreach ($essayattempts as $essayattempt) {
+		            $studentessays[$essayattempt->userid][$essayattempt->pageid][$essayattempt->retry][] = $essayattempt;            
+		        }
+				$a = new stdClass;
+				$a->notgradedcount = 0;
+				$a->notsentcount = 0;
+				foreach ($studentessays as $pages) {  // students
+					foreach ($pages as $tries) {  // pages
+	                	// go through each essay per page
+	                	foreach($tries as $try) {  // actual attempts
+		                    // make sure they didn't answer it more than the max number of attmepts
+		                    if (count($try) > $lesson->maxattempts) {
+		                        $essay = $try[$lesson->maxattempts-1];
+		                    } else {
+		                        $essay = end($try);
+		                    }
+							$essayinfo = unserialize($essay->useranswer);
+							if ($essayinfo->graded == 0) {
+								$a->notgradedcount++;
+							}
+							if ($essayinfo->sent == 0) {
+								$a->notsentcount++;	
+							}
+						}
+					}
+				}
+	           	echo "<div align=\"right\"><a href=\"view.php?id=$cm->id&amp;action=essayview\">".get_string("gradeessay", "lesson", $a)."</a></div><br />";
+           	}
+       	}
+
+        print_heading_with_help(format_string($lesson->name,true), "overview", "lesson");   
+
+		// get number of pages
         if ($page = get_record_select("lesson_pages", "lessonid = $lesson->id AND prevpageid = 0")) {
             $npages = 1;
             while (true) {
@@ -1173,17 +1221,6 @@
             echo "<input type=\"hidden\" name=\"id\" value=\"$cm->id\" />\n";
             echo "<input type=\"hidden\" name=\"action\" value=\"navigation\" />\n";
             echo "<input type=\"hidden\" name=\"pageid\" />\n";
-            /// CDC-FLAG /// link to grade essay questions and to report
-            if ($testattempts = get_records("lesson_attempts", "lessonid", $lesson->id)) { // just check to see if anyone has answered any questions.
-                echo "<div align=\"center\"><a href=\"report.php?id=$cm->id\">".get_string("viewlessonstats", "lesson")."</a></div>";
-            }
-            if ($essaypages = get_records_select("lesson_pages", "lessonid = $lesson->id AND qtype = ".LESSON_ESSAY)) { // get pages that are essay
-                // get only the attempts that are in response to essay questions
-                $essaypageids = implode(",", array_keys($essaypages)); // all the pageids in comma seperated list
-                if ($essayattempts = get_records_select("lesson_attempts", "lessonid = $lesson->id AND pageid IN($essaypageids)")) {
-                    echo "<div align=\"center\"><a href=\"view.php?id=$cm->id&amp;action=essayview\">".get_string("gradeessay", "lesson")."</a></div><br />";
-                }
-            }
             /// CDC-FLAG /// tree code - in final release, will use lang file for all text output.
             // NoticeFix next two lines and bowth viewAlls
             $branch = false;
