@@ -757,7 +757,7 @@ function hotpot_db_remove_field($table, $field, $feedback=true) {
 }
 function hotpot_db_update_field_type($table, $oldfield, $field, $type, $size, $unsigned, $notnull, $default=NULL, $after=NULL) {
 	$ok = true;
-	global $CFG;
+	global $CFG,$db;
 
 	// check validity of arguments, and adjust if necessary
 
@@ -849,7 +849,7 @@ function hotpot_db_update_field_type($table, $oldfield, $field, $type, $size, $u
 			$dbversion = substr($dbinfo['version'],0,3);
 
 			// prevent conflicts with reserved words
-			$tmpfield = "\"temporary_$field_".time()."\"";
+			$tmpfield = "\"temporary_{$field}_".time()."\"";
 			$oldfield = "\"$oldfield\"";
 			$field    = "\"$field\"";
 
