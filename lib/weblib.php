@@ -1269,7 +1269,7 @@ function cleanAttributes2($htmlTag){
     global $CFG, $ALLOWED_PROTOCOLS;
     require_once($CFG->libdir .'/kses.php');
 
-    $htmlTag = kses_stripslashes($htmlTag);
+    $htmlTag = str_replace('\\\\"', '"', $htmlTag);
     if (substr($htmlTag, 0, 1) != '<') {
         return '&gt;';  //a single character ">" detected
     }
