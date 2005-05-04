@@ -2300,7 +2300,7 @@ function authenticate_user_login($username, $password) {
         return $user;
 
     } else {
-        add_to_log(0, 'login', 'error', $_SERVER['HTTP_REFERER'], $username);
+        add_to_log(0, 'login', 'error', 'index.php', $username);
         error_log('[client '.$_SERVER['REMOTE_ADDR']."]  $CFG->wwwroot  Failed Login:  $username  ".$_SERVER['HTTP_USER_AGENT']);
         return false;
     }
