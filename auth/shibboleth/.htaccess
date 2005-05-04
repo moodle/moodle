@@ -1,0 +1,7 @@
+# Requires a Shibboleth session
+# Be sure to read moodle/auth/shibboleth/README.txt for instructions
+# on how to configure Moodle for Shibboleth authentication
+AuthType shibboleth
+ShibRequireSession Off
+require shibboleth
+
