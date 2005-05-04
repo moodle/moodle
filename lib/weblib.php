@@ -1247,9 +1247,9 @@ function clean_text($text, $format=FORMAT_MOODLE) {
  * @return string
  */
 function cleanAttributes($str){
-    $result = preg_replace(
-            '%(<[^>]*(>|$)|>)%me', #search for html tags
-            "cleanAttributes2('\\1')",
+    $result = preg_replace_callback(
+            '%(<[^>]*(>|$)|>)%m', #search for html tags
+            "cleanAttributes2",
             $str
             );
     return  $result;
@@ -1261,15 +1261,16 @@ function cleanAttributes($str){
  * It calls ancillary functions in kses which are prefixed by kses
 *        17/08/2004              ::          Eamon DOT Costello AT dcu DOT ie
  *
- * @param string $htmlTag An html tag to be examined
+ * @param array $htmlArray An array from {@link cleanAttributes()}, containing in its 1st
+ *              element the html to be cleared
  * @return string
  */
-function cleanAttributes2($htmlTag){
+function cleanAttributes2($htmlArray){
 
     global $CFG, $ALLOWED_PROTOCOLS;
     require_once($CFG->libdir .'/kses.php');
 
-    $htmlTag = str_replace('\\\\"', '"', $htmlTag);
+    $htmlTag = $htmlArray[1];
     if (substr($htmlTag, 0, 1) != '<') {
         return '&gt;';  //a single character ">" detected
     }

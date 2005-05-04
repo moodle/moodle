@@ -193,10 +193,9 @@ function clean_param($param, $options) {
     }
 
     if ($options & PARAM_CLEAN) {
+        $param = stripslashes($param);
         $param = clean_text($param);     // Sweep for scripts, etc
-        $param = str_replace('"', '\\\\"', $param);  // Because clean_text will strip them 
-                                                     // when checking HTML tags ...  I'm not 
-                                                     // sure if this is really necessary to replace
+        $param = addslashes($param);
     }
 
     if ($options & PARAM_INT) {
