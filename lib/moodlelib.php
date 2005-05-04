@@ -193,9 +193,9 @@ function clean_param($param, $options) {
     }
 
     if ($options & PARAM_CLEAN) {
-        $param = stripslashes($param);
+        $param = stripslashes($param);   // Needed by kses to work fine
         $param = clean_text($param);     // Sweep for scripts, etc
-        $param = addslashes($param);
+        $param = addslashes($param);     // Restore original request parameter slashes
     }
 
     if ($options & PARAM_INT) {
