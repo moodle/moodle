@@ -57,7 +57,7 @@
             $printmessage = format_text($message->message, $message->format, $options, 0);
             $printmessage = str_replace("\r", ' ', $printmessage);
             $printmessage = str_replace("\n", ' ', $printmessage);
-            $printmessage = '<div class="message"><span class="author">'.s($userfullname).'</span> '.
+            $printmessage = '<div class="message other"><span class="author">'.s($userfullname).'</span> '.
                 '<span class="time">['.$time.']</span>: '.
                 '<span class="content">'.$printmessage.'</span></div>';
             $printmessage = addslashes($printmessage);                 // So Javascript can write it

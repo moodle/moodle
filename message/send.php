@@ -60,7 +60,7 @@
         $message = str_replace("\r", ' ', $message);
         $message = str_replace("\n", ' ', $message);
         $time = userdate(time(), get_string('strftimedaytime'));
-        $message = '<div class="message"><span class="author">'.fullname($USER).'</span> '.
+        $message = '<div class="message me"><span class="author">'.fullname($USER).'</span> '.
                    '<span class="time">['.$time.']</span>: '.
                    '<span class="content">'.$message.'</span></div>';
         $message = addslashes($message);                 // So Javascript can write it
