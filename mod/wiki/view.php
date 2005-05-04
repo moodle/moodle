@@ -323,8 +323,6 @@
     // The wiki Contents
 
     if (!empty($canedit)) {   /// Print tabs with commands for this page
-        $tabstyle = ' style="padding-left: 5px;padding-right: 5px" ';
-
         $tabs = array('view', 'edit','links','info');
         if ($wiki->ewikiacceptbinary) {
             $tabs[] = 'attachments';
@@ -343,11 +341,10 @@
         $tabrows[] = $row;
 
         print_tabs($tabrows, $currenttab);
-
     }
 
     
-    print_simple_box_start( 'right', '100%', '', '20');
+    print_simple_box_start('center', '100%', '', '20');
 
     /// Don't filter any pages containing wiki actions (except view). A wiki page containing
     /// actions will have the form [action]/[pagename]. If the '/' isn't there, or the action
