@@ -123,6 +123,21 @@
         require_once($CFG->dirroot.'/lib/uploadlib.php');
         $um = new upload_manager('imagefile',false,false,null,false,0,true,true);
 
+        // override locked values
+        if (!isadmin()) {      
+            $fields = get_user_fieldnames();
+            foreach ($fields as $field) {
+                $configvariable = 'auth_user_'.$field.'_editlock';
+                if (!empty($CFG->$configvariable)) {
+                    if (isset($usernew->$field) && $user->$field !== $usernew->$field) {
+                        $usernew->$field = $user->$field;                    
+                    }
+                }
+            }
+            unset($fields);
+            unset($field);
+            unset($configvariable);
+        }
         if (find_form_errors($user, $usernew, $err, $um)) {
             if (empty($err['imagefile']) && $usernew->picture = save_profile_image($user->id, $um,'users')) {
                 set_field('user', 'picture', $usernew->picture, 'id', $user->id);  /// Note picture in DB
@@ -387,19 +402,6 @@ function find_form_errors(&$user, &$usernew, &$err, &$um) {
 
     if (!$um->preprocess_files()) {
         $err['imagefile'] = $um->notify;
-    }
-
-    if (!isadmin()) {      /// Make sure that locked fields are not being edited
-        $fields = get_user_fieldnames();
-
-        foreach ($fields as $field) {
-            $configvariable = 'auth_user_'.$field.'_editlock';
-            if (!empty($CFG->$configvariable)) {
-                if (isset($usernew->$field) && $user->$field !== $usernew->$field) {
-                    $err[$field] = get_string("editlock");
-                }
-            }
-        }
     }
 
     $user->email = $usernew->email;
