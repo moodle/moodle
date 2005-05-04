@@ -10,7 +10,7 @@ Du kan se evt. kommentarer i slutningen af det du har afleveret på
 
 $a->url';
 $string['assignmentmailhtml'] = '$a->teacher har kikket det du har afleveret igennem og kommenteret det: \'<i>$a->assignment</i>\'<br /><br />
-Du kan se evt kommentarer i slutningen på <a href=\"$a->url\">det du har afleveret</a>.';
+Du kan se evt. kommentarer i slutningen på <a href=\"$a->url\">det du har afleveret</a>.';
 $string['assignmentname'] = 'Opgave navn';
 $string['assignmenttype'] = 'Opgave type';
 $string['configmaxbytes'] = 'General maksimum filstørrelse for alle afleveringsopgaver på sitet (Underlagt kursus begrænsninger og andre lokale indstillinger)';
@@ -21,17 +21,16 @@ $string['early'] = '$a for tidlig';
 $string['emailteachermail'] = '$a->username har opdateret deres opgaveafleveringer for \'$a->assignment\'
 
 Det kan hentes her:
-$a->url
-';
+$a->url';
 $string['emailteachermailhtml'] = '$a->username har opdateret deres opgaveaflevering for <i>\'$a->assignment\'</i><br /><br />Det kan hentes på <a href=\"$a->url\">websiden</a>.';
-$string['emailteachers'] = 'Email advarsel til lærere';
+$string['emailteachers'] = 'E-mail advarsel til lærere';
 $string['existingfiledeleted'] = 'Eksisterende fil er blevet slettet: $a';
 $string['failedupdatefeedback'] = 'Mislykkedes at opdatere feedback på aflevering for bruger $a';
 $string['feedback'] = 'Feedback';
 $string['feedbackupdated'] = 'Afleverings feedback opdateret for $a ';
 $string['late'] = '$a for sent';
-$string['maximumgrade'] = 'Maximum karakterer';
-$string['maximumsize'] = 'Maximum størrelse';
+$string['maximumgrade'] = 'Maksimum karakterer';
+$string['maximumsize'] = 'Maksimum størrelse';
 $string['modulename'] = 'Opgave';
 $string['modulenameplural'] = 'Opgaver';
 $string['newsubmissions'] = 'Opgaver afleveret';

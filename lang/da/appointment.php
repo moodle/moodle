@@ -1,10 +1,10 @@
 <?PHP // $Id$ 
-      // appointment.php - created with Moodle 1.4 (2004083100)
+      // appointment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
 $string['allowresubmit'] = 'Tillad gentagelser';
 $string['appointmentdetails'] = 'Aftale detaljer';
-$string['appointmentlocation'] = 'Aftales lokation';
+$string['appointmentlocation'] = 'Aftalens location';
 $string['appointmentname'] = 'Aftales navn';
 $string['date'] = 'Dato for aftalen';
 $string['description'] = 'Beskrivelse';
