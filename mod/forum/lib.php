@@ -991,22 +991,26 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
     if (!isteacher($courseid)) {
         $notteacherforum = "AND f.type <> 'teacher'";
         $forummodule = get_record("modules", "name", "forum");
-        $onlyvisible = " AND f.id = cm.instance AND cm.visible = 1 AND cm.module = $forummodule->id";
-        $onlyvisibletable = ", {$CFG->prefix}course_modules cm";
+        $onlyvisible = "AND d.forum = f.id AND f.id = cm.instance AND cm.visible = 1 AND cm.module = $forummodule->id";
+        $onlyvisibletable = ", {$CFG->prefix}course_modules cm, {$CFG->prefix}forum f";
         if ($groupid) {
             $separategroups = SEPARATEGROUPS;
             $selectgroup = " AND ( NOT (cm.groupmode='$separategroups'".
                                       " OR (c.groupmode='$separategroups' AND c.groupmodeforce='1') )".
                                  " OR d.groupid = '$groupid')";
+            $selectcourse = " AND d.course = '$courseid' AND c.id='$courseid'";
+            $coursetable = ", {$CFG->prefix}course c";
         } else {
             $selectgroup = '';
+            $selectcourse = " AND d.course = '$courseid'";
+            $coursetable = '';
         }
-        $selectcourse = " AND d.course = '$courseid' AND c.id='$courseid'";
     } else {
         $notteacherforum = "";
         $selectgroup = '';
         $onlyvisible = "";
         $onlyvisibletable = "";
+        $coursetable = '';
         if ($courseid == SITEID && isadmin()) {
             $selectcourse = '';
         } else {
@@ -1052,13 +1056,10 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
 
     $selectsql = "{$CFG->prefix}forum_posts p,
                   {$CFG->prefix}forum_discussions d,
-                  {$CFG->prefix}user u,
-                  {$CFG->prefix}course c,
-                  {$CFG->prefix}forum f $onlyvisibletable
+                  {$CFG->prefix}user u $onlyvisibletable $coursetable
              WHERE ($messagesearch)
                AND p.userid = u.id
-               AND p.discussion = d.id $selectcourse
-               AND d.forum = f.id $notteacherforum $onlyvisible $selectgroup $extrasql";
+               AND p.discussion = d.id $selectcourse $notteacherforum $onlyvisible $selectgroup $extrasql";
 
     $totalcount = count_records_sql("SELECT COUNT(*) FROM $selectsql");
 
