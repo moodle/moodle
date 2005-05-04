@@ -110,7 +110,7 @@ $string['auth_shib_only'] = 'Shibboleth only';
 $string['auth_shib_only_description'] = 'Check this option if a Shibboleth authentication shall be enforced';
 $string['auth_shib_username_description'] = 'Name of the webserver Shibboleth environment variable that shall be used as Moodle username';
 $string['auth_shib_instructions'] = 'Use the <a href=\"$a\">Shibboleth login</a> to get access via Shibboleth, if your institution supports it.<br />Otherwise, use the normal login form shown here.';
-$string['auth_shib_instructions_help'] = 'Here you should provide custom instructions for your users to explain Shibboleth.  It will be shown on the login page in the instructions section.  It should include a link to \"<b>$a</b>\" so that Shibboleth users can login easily.  If you leave it blank, then standard instructions will be used (not Shibboleth-specific)';
+$string['auth_shib_instructions_help'] = 'Here you should provide custom instructions for your users to explain Shibboleth.  It will be shown on the login page in the instructions section.  It should include a link to a Shibboleth-protected resource that redirects users to \"<b>$a</b>\" so that Shibboleth users can login in Moodle.  If you leave it blank, then standard instructions will be used (not Shibboleth-specific)';
 $string['auth_updatelocal'] = 'Update local data';
 $string['auth_updatelocal_expl'] = '<p><b>Update local data:</b> If enabled, the field will be updated (from external auth) every time the user logs in or there is a user synchronization. Fields set to update locally should be locked.</p>';
 $string['auth_updateremote'] = 'Update external data';
