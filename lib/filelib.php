@@ -56,6 +56,22 @@ function mimeinfo($element, $filename) {
         'mpeg' => array ('type'=>'video/mpeg', 'icon'=>'video.gif'),
         'mpe'  => array ('type'=>'video/mpeg', 'icon'=>'video.gif'),
         'mpg'  => array ('type'=>'video/mpeg', 'icon'=>'video.gif'),
+
+        'odt'  => array ('type'=>'application/vnd.oasis.opendocument.text', 'icon'=>'odt.gif'),
+        'ott'  => array ('type'=>'application/vnd.oasis.opendocument.text-template', 'icon'=>'odt.gif'),
+        'oth'  => array ('type'=>'application/vnd.oasis.opendocument.text-web', 'icon'=>'odt.gif'),
+        'odm'  => array ('type'=>'application/vnd.oasis.opendocument.text-master', 'icon'=>'odt.gif'),
+        'odg'  => array ('type'=>'application/vnd.oasis.opendocument.graphics', 'icon'=>'odt.gif'),
+        'otg'  => array ('type'=>'application/vnd.oasis.opendocument.graphics-template', 'icon'=>'odt.gif'),
+        'odp'  => array ('type'=>'application/vnd.oasis.opendocument.presentation', 'icon'=>'odt.gif'),
+        'otp'  => array ('type'=>'application/vnd.oasis.opendocument.presentation-template', 'icon'=>'odt.gif'),
+        'ods'  => array ('type'=>'application/vnd.oasis.opendocument.spreadsheet', 'icon'=>'odt.gif'),
+        'ots'  => array ('type'=>'application/vnd.oasis.opendocument.spreadsheet-template', 'icon'=>'odt.gif'),
+        'odc'  => array ('type'=>'application/vnd.oasis.opendocument.chart', 'icon'=>'odt.gif'),
+        'odf'  => array ('type'=>'application/vnd.oasis.opendocument.formula', 'icon'=>'odt.gif'),
+        'odb'  => array ('type'=>'application/vnd.oasis.opendocument.database', 'icon'=>'odt.gif'),
+        'odi'  => array ('type'=>'application/vnd.oasis.opendocument.image', 'icon'=>'odt.gif'),
+
         'pct'  => array ('type'=>'image/pict', 'icon'=>'image.gif'),
         'pdf'  => array ('type'=>'application/pdf', 'icon'=>'pdf.gif'),
         'php'  => array ('type'=>'text/plain', 'icon'=>'text.gif'),
@@ -80,6 +96,18 @@ function mimeinfo($element, $filename) {
         'swa'  => array ('type'=>'application/x-director', 'icon'=>'flash.gif'),
         'swf'  => array ('type'=>'application/x-shockwave-flash', 'icon'=>'flash.gif'),
         'swfl' => array ('type'=>'application/x-shockwave-flash', 'icon'=>'flash.gif'),
+
+        'sxw'  => array ('type'=>'application/vnd.sun.xml.writer', 'icon'=>'odt.gif'),
+        'stw'  => array ('type'=>'application/vnd.sun.xml.writer.template', 'icon'=>'odt.gif'),
+        'sxc'  => array ('type'=>'application/vnd.sun.xml.calc', 'icon'=>'odt.gif'),
+        'stc'  => array ('type'=>'application/vnd.sun.xml.calc.template', 'icon'=>'odt.gif'),
+        'sxd'  => array ('type'=>'application/vnd.sun.xml.draw', 'icon'=>'odt.gif'),
+        'std'  => array ('type'=>'application/vnd.sun.xml.draw.template', 'icon'=>'odt.gif'),
+        'sxi'  => array ('type'=>'application/vnd.sun.xml.impress', 'icon'=>'odt.gif'),
+        'sti'  => array ('type'=>'application/vnd.sun.xml.impress.template', 'icon'=>'odt.gif'),
+        'sxg'  => array ('type'=>'application/vnd.sun.xml.writer.global', 'icon'=>'odt.gif'),
+        'sxm'  => array ('type'=>'application/vnd.sun.xml.math', 'icon'=>'odt.gif'),
+
         'tar'  => array ('type'=>'application/x-tar', 'icon'=>'zip.gif'),
         'tif'  => array ('type'=>'image/tiff', 'icon'=>'image.gif'),
         'tiff' => array ('type'=>'image/tiff', 'icon'=>'image.gif'),
@@ -95,7 +123,6 @@ function mimeinfo($element, $filename) {
         'xml'  => array ('type'=>'application/xml', 'icon'=>'xml.gif'),
         'xsl'  => array ('type'=>'text/xml', 'icon'=>'xml.gif'),
         'zip'  => array ('type'=>'application/zip', 'icon'=>'zip.gif')
-
     );
 
     if (eregi('\.([a-z0-9]+)$', $filename, $match)) {
