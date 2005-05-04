@@ -440,7 +440,11 @@ table.message_search_results td {
   border-color:#DDDDDD;
 }
 
-.message .author {
+.message.other .author {
+  color: #8888CC;
+}
+
+.message.me .author {
   color: #999999;
 }
 

@@ -794,6 +794,10 @@ table.message .searchresults td {
   margin-right:10px;
 }
 
+body#message-messages {
+  padding:10px;
+}
+
 
 /***
  *** Tabs
