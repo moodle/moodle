@@ -214,6 +214,7 @@ $string['previewquestion'] = 'Prévisualiser la question';
 $string['publish'] = 'Publier';
 $string['publishedit'] = 'Pour ajouter ou modifier une question de cette catégorie, vous devez avoir ces permissions dans le cours publiant cette catégorie.';
 $string['qti'] = 'Format IMS QTI';
+$string['qti2'] = 'Format IMS QTI 2.0';
 $string['question'] = 'Libellé de la question';
 $string['questioninuse'] = 'La question «&nbsp;$a->questionname&nbsp;» est actuellement utilisée dans<br />$a->quiznames<br />Elle ne sera pas retirée de ce(s) test(s), mais seulement de la catégorie.';
 $string['questionname'] = 'Nom de la question';
