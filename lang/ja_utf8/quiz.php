@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 ALPHA (2005042300)
+      // quiz.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -147,6 +147,8 @@ $string['hotpot'] = 'Hot Potatoesフォーマット';
 $string['illegalformulasyntax'] = '「 $a 」で始まる不正なシンタックスの式です。';
 $string['imagedisplay'] = '表示イメージ';
 $string['imagemissing'] = '$a 行のイメージが使用できません。ファイル名は無視されます。';
+$string['importmax10error'] = '問題にエラーがあります。10以上の答えを設定することはできません。';
+$string['importminerror'] = '問題にエラーがあります。この問題タイプに必要な数の答えがありません。';
 $string['importquestions'] = 'ファイルから問題をインポートする';
 $string['indivresp'] = '各問題に対する各個人の解答';
 $string['introduction'] = '説明';
@@ -218,6 +220,7 @@ $string['previewquestion'] = '問題のプレビュー';
 $string['publish'] = '公開';
 $string['publishedit'] = 'このカテゴリへの問題の追加・編集を行うためにはコース公開に関する権限を有する必要があります。';
 $string['qti'] = 'IMS QTIフォーマット';
+$string['qti2'] = 'IMS QTI 2.0フォーマット';
 $string['question'] = '問題';
 $string['questioninuse'] = '問題  \'$a\' は現在使用中です：';
 $string['questionname'] = '問題名';
