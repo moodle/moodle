@@ -37,6 +37,11 @@ function print_entry($course) {
         print_header($strloginto, $course->fullname, 
                      "<a href=\"$CFG->wwwroot/course/\">$strcourses</a> -> $strloginto");
         print_course($course, "80%");
+
+        if ($course->password) {  // Presenting two options
+            print_simple_box(get_string('costorkey', 'enrol_paypal'), 'center');
+        }
+
         print_simple_box_start("center");
 
         //Sanitise some fields before building the PayPal form
@@ -48,9 +53,15 @@ function print_entry($course) {
         $useraddress     = $this->sanitise_for_paypal($USER->address);
         $usercity        = $this->sanitise_for_paypal($USER->city);
 
-        include("$CFG->dirroot/enrol/paypal/enrol.html");
+        include($CFG->dirroot.'/enrol/paypal/enrol.html');
 
         print_simple_box_end();
+
+        if ($course->password) {  // Second option
+            $password = '';
+            include($CFG->dirroot.'/enrol/internal/enrol.html');
+        }
+
         print_footer();
 
     }
@@ -92,8 +103,8 @@ function get_access_icons($course) {
            default:    $currency = '$'; break;
         }
         
-        $str .= '<span class="courseboxcost" title="'.$strrequirespayment.'">'.$strcost.': ';
-        $str .= $currency.format_float($cost,2).'</span>';
+        $str .= '<div class="cost" title="'.$strrequirespayment.'">'.$strcost.': ';
+        $str .= $currency.format_float($cost,2).'</div>';
         
     }
 
