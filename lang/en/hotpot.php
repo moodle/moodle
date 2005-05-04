@@ -26,7 +26,7 @@ $string['navigation_none'] = 'None';
 
 $string['giveup'] = 'Give Up';
 $string['location'] = 'File location';
-$string['shownextquiz'] = 'Show next quiz?';
+$string['shownextquiz'] = 'Show next quiz';
 $string['forceplugins'] = "Force media plugins";
 
 $string['resultssaved'] = 'Quiz results were saved';
