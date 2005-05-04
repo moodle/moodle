@@ -873,17 +873,17 @@ function grade_set_preference($courseid, $name, $value) {
 }
 
 function grade_get_preference($courseid, $name) {
-    global $GRADEPREFS;
+    global $GRADEPREFS, $GRADEPREFSDEFAULTS;
 
     if (false !== ($key = array_search($name, $GRADEPREFS))) {
-        if ($record = get_record('grade_preferences', 'courseid', $courseid, 'preference', $key)) {
-            return $record->value;
-        } else {   // Make a new one
+        if (!($record = get_record('grade_preferences', 'courseid', $courseid, 'preference', $key))) {
+            // Make a new one
             $record->preference = $key;
             $record->courseid = $courseid;
-            $record->value = $value;
+            $record->value = $GRADEPREFSDEFAULTS[$name];
             insert_record('grade_preferences', $record);
         }
+        return $record->value;
     }
     return NULL;
 }
