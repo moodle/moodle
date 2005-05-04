@@ -995,7 +995,6 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
         $onlyvisibletable = ", {$CFG->prefix}course_modules cm";
         if ($groupid) {
             $separategroups = SEPARATEGROUPS;
-            //$selectgroup = " AND (cm.groupmode <> '$separategroups' OR d.groupid = '$groupid')";
             $selectgroup = " AND ( NOT (cm.groupmode='$separategroups'".
                                       " OR (c.groupmode='$separategroups' AND c.groupmodeforce='1') )".
                                  " OR d.groupid = '$groupid')";
