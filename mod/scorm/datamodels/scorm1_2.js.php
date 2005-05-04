@@ -207,13 +207,16 @@ function SCORMapi1_2() {
 				    	    eval(subelement+'.'+elementIndex+' = new Object();');
 					    eval(subelement+'.'+elementIndex+'._count = 0;');
 					}
-					if (elementIndexes[i+1] <= eval(subelement+'.'+elementIndex+'._count')) {
-					    if (elementIndexes[i+1] == eval(subelement+'.'+elementIndex+'._count')) {
-						eval(subelement+'.'+elementIndex+'._count++;');
-					    }
-				            subelement = subelement.concat('.'+elementIndex+'_'+elementIndexes[i+1]);
-					    i++;
+					//alert ('Count:'+eval(subelement+'.'+elementIndex+'._count'));
+					if (elementIndexes[i+1] == eval(subelement+'.'+elementIndex+'._count')*1.0+1) {
+					    //alert('Index:'+elementIndexes[i+1]);
+					    eval(subelement+'.'+elementIndex+'._count++;');
 					} 
+					if (elementIndexes[i+1] > eval(subelement+'.'+elementIndex+'._count')) {
+					    errorCode = eval('datamodel["'+elementmodel+'"].writeerror');
+					}
+				    	subelement = subelement.concat('.'+elementIndex+'_'+elementIndexes[i+1]);
+					i++;
 				    } else {
 					subelement = subelement.concat('.'+elementIndex);
 				    }
@@ -226,27 +229,29 @@ function SCORMapi1_2() {
 				//alert('LMSSetValue: '+element+'\nModel: '+elementmodel+'\nValue: '+value+'\nMatches: '+matches);
 			    }
 			    //Store data
-			    if ((typeof eval('datamodel["'+elementmodel+'"].range')) != "undefined") {
-				range = eval('datamodel["'+elementmodel+'"].range');
-				ranges = range.split('#');
-				value = value*1.0;
-				if ((value >= ranges[0]) && (value <= ranges[1])) {
- 				    eval(element+'="'+value+'";');
+			    if (errorCode == 0) {
+			    	if ((typeof eval('datamodel["'+elementmodel+'"].range')) != "undefined") {
+				    range = eval('datamodel["'+elementmodel+'"].range');
+				    ranges = range.split('#');
+				    value = value*1.0;
+				    if ((value >= ranges[0]) && (value <= ranges[1])) {
+ 				    	eval(element+'="'+value+'";');
+				    	errorCode = "0";
+				    	//alert('LMSSetValue: '+element+'\nModel: '+elementmodel+'\nValue: '+value);
+	    			    	return "true";
+				    } else {
+		 			errorCode = eval('datamodel["'+elementmodel+'"].writeerror');
+				    }
+			    	} else {
+				    if (element == 'cmi.comments') {
+				    	eval(element+'+="'+value+'";');
+				    } else {
+				    	eval(element+'="'+value+'";');
+				    }
 				    errorCode = "0";
 				    //alert('LMSSetValue: '+element+'\nModel: '+elementmodel+'\nValue: '+value);
 	    			    return "true";
-				} else {
-		 		    errorCode = eval('datamodel["'+elementmodel+'"].writeerror');
 				}
-			    } else {
-				if (element == 'cmi.comments') {
-				    eval(element+'+="'+value+'";');
-				} else {
-				    eval(element+'="'+value+'";');
-				}
-				errorCode = "0";
-				//alert('LMSSetValue: '+element+'\nModel: '+elementmodel+'\nValue: '+value);
-	    			return "true";
 			    }
 			} else {
 			    errorCode = eval('datamodel["'+elementmodel+'"].writeerror');
