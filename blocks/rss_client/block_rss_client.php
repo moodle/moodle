@@ -129,6 +129,9 @@ class block_rss_client extends block_base {
         $now = time();
         require_once($CFG->libdir .'/rsslib.php');
         require_once(MAGPIE_DIR .'rss_fetch.inc');
+        if (!defined('MAGPIE_OUTPUT_ENCODING')) {
+            define('MAGPIE_OUTPUT_ENCODING', get_string('thischarset'));  // see bug 3107
+        }
         
         // Check if there is a cached string which has not timed out.
         if (BLOCK_RSS_SECONDARY_CACHE_ENABLED &&

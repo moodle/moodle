@@ -22,6 +22,10 @@
     optional_variable($url);
     optional_variable($preferredtitle, '');
     optional_variable($item);
+
+    if (!defined('MAGPIE_OUTPUT_ENCODING')) {
+        define('MAGPIE_OUTPUT_ENCODING', get_string('thischarset'));  // see bug 3107
+    }
     
     $straddedit = get_string('block_rss_feeds_add_edit', 'block_rss_client');
     if ( isadmin() ) {
