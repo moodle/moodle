@@ -443,7 +443,11 @@ table.message_search_results td {
   border-color:#9999FF;
 }
 
-.message .author {
+.message.other .author {
+  color: #8888CC;
+}
+
+.message.me .author {
   color: #999999;
 }
 
