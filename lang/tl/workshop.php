@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // workshop.php - created with Moodle 1.2 development (2004013101)
+<?PHP // $Id$ 
+      // workshop.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['absent'] = 'Walâ';
@@ -42,8 +42,8 @@ $string['assessmentstart'] = 'Umpisa ng pagtatasa';
 $string['assessmentstartevent'] = 'Umpisa ng pagtatasa para sa $a';
 $string['assessmentwasagreedon'] = 'Sinang-ayunan ang Pagtatasa noong $a';
 $string['assessor'] = 'Tagatasa';
-$string['assessthissubmission'] = 'Tasahin ang ipinasang ito';
 $string['assessthisassessment'] = 'Markahan ang pagtatasang ito';
+$string['assessthissubmission'] = 'Tasahin ang ipinasang ito';
 $string['assignmentnotinthecorrectphase'] = 'Hindi nasa Wastong Bahagi ang Takdang-aralin';
 $string['assmnts'] = 'Mga Pagtatasa';
 $string['attachment'] = 'Kalakip';
@@ -75,9 +75,9 @@ $string['deleting'] = 'Binubura';
 $string['description'] = 'Deskripsiyon';
 $string['detailsofassessment'] = 'Mga Detalye ng Pagtatasa';
 $string['disagreewiththisassessment'] = 'Huwag umayon sa Pagtatasang ito';
-$string['displayofgrades'] = 'Pagpapakita ng mga Marka';
 $string['displayofcurrentgrades'] = 'Pagpapakita ng mga Kasalukuyang Marka';
 $string['displayoffinalgrades'] = 'Pagpapakita ng mga Huling Marka';
+$string['displayofgrades'] = 'Pagpapakita ng mga Marka';
 $string['dontshowgrades'] = 'Huwag Ipakita ang mga Marka';
 $string['edit'] = 'Iedit';
 $string['editacomment'] = 'Iedit ang isang Opinyon';
@@ -101,12 +101,12 @@ $string['grade'] = 'Marka';
 $string['gradeassessment'] = 'Markahan ang Pagtatasa';
 $string['graded'] = 'Minarkahan';
 $string['gradedbyteacher'] = 'Minarkahan ni $a';
-$string['gradegiventoassessment'] = 'Markang ibinigay sa Pagtatasa';
 $string['gradeforassessments'] = 'Marka para sa mga Pagtatasa';
 $string['gradeforbias'] = 'Marka para sa Bias';
 $string['gradeforreliability'] = 'Marka para sa Reliability';
 $string['gradeforstudentsassessment'] = 'Marka para sa Pagtatasa ng Mag-aaral';
 $string['gradeforsubmission'] = 'Marka para sa Ipinasa';
+$string['gradegiventoassessment'] = 'Markang ibinigay sa Pagtatasa';
 $string['gradeofsubmission'] = 'Marka ng Pagtatasa: $a';
 $string['grades'] = 'Mga Marka';
 $string['gradesforassessmentsare'] = 'Ang mga Marka para sa mga Pagtatasa ay ayon sa pinakamataas na bilang na $a';
@@ -131,13 +131,13 @@ $string['listofallsubmissions'] = 'Listahan ng lahat ng Ipinasa';
 $string['liststudentsassessments'] = 'Ilista ang mga Pagtatasa ng Mag-aaral';
 $string['loadingforteacherassessments'] = 'Loading para sa $a na Pagtatasa';
 $string['mail1'] = 'Ang takdang-aralin mo na \'$a\' ay tinasa ni';
-$string['mail10'] = 'Maari mo itong tasahin sa iyong takdang-araling pangworkshop';  //not used in 1.5
+$string['mail10'] = 'Maari mo itong tasahin sa iyong takdang-araling pangworkshop';
 $string['mail2'] = 'Makikita ang mga opinyon at marka sa Takdang-Araling Pangworkshop \'$a\'.';
-$string['mail3'] = 'Makikita mo ito sa iyong Takdang-Araling Pangworkshop'; //not used in 1.5
+$string['mail3'] = 'Makikita mo ito sa iyong Takdang-Araling Pangworkshop';
 $string['mail4'] = 'May opinyon na idinagdag sa takdang aralin na \'$a\' ni';
 $string['mail5'] = 'Ang bagong opinyon ay makikita sa Takdang-Araling Pangworkshop na \'$a\'.';
-$string['mail6'] = 'Narebyu na ang pagtatasa mo sa takdang aralin na \'$a\'.'; //not used in 1.5
-$string['mail7'] = 'Ang mga opinyong ibinigay ng $a ay makikita sa Takdang-Araling Pangworkshop ';  //not used in 1.5
+$string['mail6'] = 'Narebyu na ang pagtatasa mo sa takdang aralin na \'$a\'.';
+$string['mail7'] = 'Ang mga opinyong ibinigay ng $a ay makikita sa Takdang-Araling Pangworkshop ';
 $string['mail8'] = 'Ang takdang-aralin  na $a ay isang binagong gawa.';
 $string['mail9'] = 'Pakitasa ito sa takdang-araling pangworkshop \'$a\'.';
 $string['managingassignment'] = 'Pamamahala ng Workshop';
@@ -168,19 +168,20 @@ bago ibigay ang takdang-aralin sa mga mag-aaral.  Ginagawa ito<br />
 sa pamamagitan ng pagklik sa takdang-aralin sa kurso; kung walang elemento,<br />
 hihilingan kang idagdag ang mga ito.  Maaari mong baguhin ang bilang ng mga elemento<br />
 sa pamamagitan ng screen na Iedit ang Takdang-Aralin, ang mga elemento<br />
-mismo ay maaaring mabago sa pamamagitan ng screen na &quot;Pamamahala ng Pagtatasa&quot;. ';
+mismo ay maaaring mabago sa pamamagitan ng screen na \"Pamamahala ng Pagtatasa\". ';
 $string['noteonstudentassessments'] = '{Marka mula Mag-aaral / Marka ng Pagmamarka para sa Pagtatasa}';
 $string['notgraded'] = 'Hindi Minarkahan';
 $string['notitle'] = 'Walang Pamagat';
 $string['notitlegiven'] = 'Walang Ibinigay na Pamagat';
+$string['notsubmittedyet'] = 'Walâ pang ipinapasa';
 $string['nowork'] = 'Tapos na ang pagpapasa ng mga gawa.<br />Walâ kang ipinasang gawa.';
 $string['numberofassessmentelements'] = 'Bilang ng mga Opinyon, Mga Elemento ng Pagtatasa, Mga Banda ng Marka, Mga Pamantayang Pahayag o Kategoriya sa isang Rubric';
 $string['numberofassessments'] = 'Bilang ng Pagtatasa';
 $string['numberofassessmentschanged'] = 'Bilang ng Pagtatasang Binago: $a';
 $string['numberofassessmentsdropped'] = 'Bilang ng Pagtatasang itinapon: $a';
 $string['numberofassessmentsofstudentsubmissions'] = 'Bilang ng Pagtatasa ng mga Ipinasa ng Mag-aaral';
-$string['numberofassessmentsweighted'] = 'Bilang ng Pagtatasa (may timbang): $a';
 $string['numberofassessmentsofteachersexamples'] = 'Bilang ng mga Pagtatasa ng mga Halimbawa mula sa Gurò';
+$string['numberofassessmentsweighted'] = 'Bilang ng Pagtatasa (may timbang): $a';
 $string['numberofattachments'] = 'Bilang ng Kalakip na inaahasan sa mga Ipapasa';
 $string['numberofentries'] = 'Bilang ng Entry';
 $string['numberofnegativeresponses'] = 'Bilang ng Negatibong Tugon';
@@ -196,8 +197,8 @@ $string['overallocation'] = 'Lampas sa Alokasyon';
 $string['overallpeergrade'] = 'Pangkalahatang Marka mula sa Kapwa: $a';
 $string['overallteachergrade'] = 'Pangkalahatang Marka mula sa Gurò: $a';
 $string['ownwork'] = 'Sariling Gawa';
-$string['passwordprotectedworkshop'] = 'Workshop na may Password';
 $string['passmnts'] = 'Pagtatasa<br />mula Kapwa';
+$string['passwordprotectedworkshop'] = 'Workshop na may Password';
 $string['percentageofassessments'] = 'Bahagdan ng Pagtatakda na Itatapon';
 $string['phase'] = 'Bahagi';
 $string['phase0'] = 'Di-aktibo';
@@ -252,8 +253,8 @@ $string['showgrades'] = 'Ipakita ang mga Marka';
 $string['showsubmission'] = 'Ipakita ang mga Ipinasa: $a';
 $string['specimenassessmentform'] = 'Halimbawang Form ng Pagtatasa';
 $string['standarddeviation'] = 'Standard Deviation';
-$string['standarddeviationofelement'] = 'Standard deviation ng Elemento $a:';
 $string['standarddeviationnote'] = 'Ang mga elemento na may standard deviation na sero o napakaliit na halaga ay maaaring makasira sa pagsusuri.<br /> Hindi isinama ang Elementong ito sa pagsusuri.';
+$string['standarddeviationofelement'] = 'Standard deviation ng Elemento $a:';
 $string['strict'] = 'Istrikto';
 $string['studentassessments'] = '$a Pagtatasa';
 $string['studentgrades'] = '$a Marka';
@@ -281,14 +282,14 @@ $string['teachergradeforassessment'] = '$a marka para sa pagtatasa';
 $string['teacherscomment'] = 'Opinyon ng Gurò';
 $string['teachersgrade'] = 'Marka ng Gurò';
 $string['teachersubmissionsforassessment'] = '$a Ipinasa ng Gurò para sa Pagtatasa';
-$string['thegradeis'] = 'Ang Marka ay $a';
 $string['thegradeforthisassessmentis'] = 'Ang marka para sa pagtatasang ito ay $a';
+$string['thegradeis'] = 'Ang Marka ay $a';
 $string['theseasessmentsaregradedbytheteacher'] = 'Ang mga Pagtatasang ito ay minarkahan ng $a';
 $string['thisisadroppedassessment'] = 'Ito ay itinapong Pagtatasa.';
 $string['timeassessed'] = 'Oras na Tinasa';
 $string['title'] = 'Pamagat ng Ipinasa';
 $string['typeofscale'] = 'Uri ng Iskala';
-$string['unassessed'] = '\$a Di-natasa';
+$string['unassessed'] = '$a Di-natasa';
 $string['ungradedassessments'] = '$a Di-minarkahang Pagtatasa';
 $string['ungradedassessmentsofstudentsubmissions'] = '$a Di-minarkahang Pagtatasa ng mga Ipinasa ng Mag-aaral';
 $string['ungradedassessmentsofteachersubmissions'] = '$a Di-minarkahang Pagtatasa ng mga Ipinasa ng Gurò';
@@ -319,8 +320,8 @@ $string['workshopfeedback'] = 'Puna na Pangworkshop';
 $string['workshopsubmissions'] = 'Mga Ipinasang Pangworkshop';
 $string['wrongpassword'] = 'Mali ang password para sa Workshop na ito';
 $string['yourassessments'] = 'Ang mga pagtatasa mo ng gawa ng iyong kapwa';
-$string['yoursubmissions'] = 'Ang mga Ipinasa mo';
 $string['yourassessmentsofexamplesfromtheteacher'] = 'Ang mga Pagtatasa mo ng mga Halimbawa mula sa $a';
 $string['yourfeedbackgoeshere'] = 'Dito ilagay ang iyong Puna';
+$string['yoursubmissions'] = 'Ang mga Ipinasa mo';
 
 ?>

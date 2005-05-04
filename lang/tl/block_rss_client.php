@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_rss_client.php - created with Moodle 1.4.4 (2004083140)
+      // block_rss_client.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['block_rss_add_feed'] = 'Magdagdag ng URL ng balitang feed:';

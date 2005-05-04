@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // journal.php - created with Moodle 1.2 + (2004032100)
+<?PHP // $Id$ 
+      // journal.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['alwaysopen'] = 'Palaging bukas';
@@ -23,6 +23,7 @@ $string['journalquestion'] = 'Tanong sa diyornal';
 $string['journalrating1'] = 'Hindi katanggap-tanggap';
 $string['journalrating2'] = 'Katanggap-tanggap';
 $string['journalrating3'] = 'Napakagaling';
+$string['mailsubject'] = 'Puna sa Diyornal';
 $string['modulename'] = 'Diyornal';
 $string['modulenameplural'] = 'Mga Diyornal';
 $string['newjournalentries'] = 'Mga bagong talâ sa diyornal';

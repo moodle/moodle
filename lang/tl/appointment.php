@@ -1,15 +1,13 @@
-<?php // $Id$ 
-      // appointment.php - created with Moodle 1.0.5 dev (2002092300)
+<?PHP // $Id$ 
+      // appointment.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['allowresubmit'] = 'Pahintulutan ang muling pagpapasa';
 $string['appointmentdetails'] = 'Mga detalye ng pagtitiyáp';
-$string['appointmentname'] = 'Pangalan ng pagtitiyáp';
 $string['appointmentlocation'] = 'Pook ng pagtitiyáp';
-$string['description'] = 'Deskripsiyon';
+$string['appointmentname'] = 'Pangalan ng pagtitiyáp';
 $string['date'] = 'Petsa ng pagtitiyáp';
-$string['timestart'] = 'Simula ng pagtitiyáp';
-$string['timeend'] = 'Katapusan ng pagtitiyáp';
+$string['description'] = 'Deskripsiyon';
 $string['early'] = '$a maaga';
 $string['failedupdatefeedback'] = 'Nabigô ang pagbabago sa puna sa ipinasa para sa user $a';
 $string['feedback'] = 'Puna';
@@ -28,6 +26,8 @@ $string['submissionfeedback'] = 'Puna sa ipinasa';
 $string['submissions'] = 'Mga ipinasa';
 $string['submitappointment'] = 'Ipasa ang pagtitiyáp mo gamit ang form na ito';
 $string['submitted'] = 'Ipinasa na';
+$string['timeend'] = 'Katapusan ng pagtitiyáp';
+$string['timestart'] = 'Simula ng pagtitiyáp';
 $string['typeoffline'] = 'Offline na aktibidad';
 $string['typeuploadsingle'] = 'Mag-aplowd ng isang file lamang';
 $string['uploadbadname'] = 'Naglalaman ang file na ito ng mga dikilalang titik at hindi ito maiaplowd';

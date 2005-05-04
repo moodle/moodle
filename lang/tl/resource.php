@@ -1,10 +1,11 @@
-<?php // $Id$ 
-      // resource.php - created with Moodle 1.2 development (2003120700)
+<?PHP // $Id$ 
+      // resource.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['addresource'] = 'Magdagdag ng rekurso';
 $string['chooseafile'] = 'Pumilì o mag-aplowd ng file';
 $string['chooseparameter'] = 'Pumilì ng parameter';
+$string['configallowlocalfiles'] = 'Kapag lumilikha ng bagong file na rekurso, pinahihintulutan ang mga link sa mga file na nasa isang lokal na sistema ng file tulad ng sa CD drive o sa hard drive.  Kapakipakinabang  ito sa isang silid aralan kung saan ang mga mag-aaral ay makakapasok sa isang pinagsasaluhang network na drive o sa isang file sa CD na kailangang pasukin.  Ang paggamit ng katangiang ito ay maaaring mangailangan ng pagbabago sa kaayusang pangseguridad ng browser ninyo.';
 $string['configdefaulturl'] = 'Nakalagay na ang halagang ito sa URL form kapag lumilikha ng bagong rekurso na nakabatay sa URL.';
 $string['configfilterexternalpages'] = 'Ang pagbuhay ng kaayusang ito ay magbubunga ng pagproseso sa lahat ng panlabas na rekurso (pahinang pangweb, inaplowd na HTML file) ng kasalukuyang itinakdang filter ng site (tulad ng awtolink ng talahulugan, bilang halimbawa).  Kapag binuhay mo ang opsiyong ito maaaring magpabagal ito nang labis sa iyong mga pahina ng kurso - mag-ingat sa paggamit at gamitin kung kinakailangan mo lamang talaga ito.';
 $string['configframesize'] = 'Kapag idinispley ang isang pahinang pangweb o inaplowd na file sa loob ng isang frame, ang halagang ito ang laki (sa piksel) ng frame na nasa tuktok (na naglalaman ng nabigasyon).';
@@ -33,10 +34,16 @@ $string['fetchclienterror'] = 'May natagpuang error sa web client mo habang tina
 $string['fetcherror'] = 'May natagpuang error habang tinatangkang kunin ang pahinang pangweb.';
 $string['fetchservererror'] = 'May natagpuang error sa remote server habang tinatangkang kunin ang pahinang pangweb (marahil ay isang error ng program). </p>';
 $string['filename'] = 'Pangalan ng file';
-$string['filtername'] = "Awto-link ng mga Pangalan ng Rekurso";
+$string['filtername'] = 'Awto-link ng mga Pangalan ng Rekurso';
 $string['frameifpossible'] = 'Ilagay ang rekurso sa isang frame upang mapanatiling nakikita ang nabigasyon ng site';
 $string['fulltext'] = 'Buong teksto';
 $string['htmlfragment'] = 'Piraso ng HTML';
+$string['localfile'] = 'Local na file';
+$string['localfilechoose'] = 'Pumilì ng isang lokal na file (CD-ROM)';
+$string['localfilehelp'] = 'Tulong sa pagpapakita ng mga lokal na file';
+$string['localfileinfo'] = '<p>Pumilì ng lokal na file sa iyong kompyuter. Hindi iaaplowd ang file sa web site, nguni\'t hahanapin ng Moodle ang parehong file sa kompyuter ng sinumang tumitingin sa rekursong ito.</p><p>Kapakipakinabang ito kapag may malalaki kang media file na nakaimbak sa isang istandard na CD-ROM na ipinamamahagi mo sa lahat ng kalahok.  Maaaring pumilì ang bawat kalahok ng kanilang lokal na landas para sa file na ganito, sa pamamagitan ng   <a href=\"$a\" target=\"_blank\">ineedit ang kanilang pagkakakilanlan ng   user</a>.</p>';
+$string['localfilepath'] = 'Para maitakda ang sarili mong lokal na landas para sa rekursong ito, piliin ang alinmang file sa drive (kadalasan ay CD_ROM) sa kompyuter mo kung saan naroroon ang rekurso.  Hindi iaaplowd ang file pero ang impormasyon hinggil sa drive ay iiimbak at gagamitin para sa alinmang lokal na rekursong file';
+$string['localfileselect'] = 'Piliin ang landas ng file na ito';
 $string['maindirectory'] = 'Punong direktoryo ng mga file';
 $string['modulename'] = 'Rekurso';
 $string['modulenameplural'] = 'Mga Rekurso';
@@ -53,11 +60,13 @@ $string['newtoolbar'] = 'Ipakita ang toolbar';
 $string['newwidth'] = 'Default na lapad ng window (sa piksel)';
 $string['newwindow'] = 'Bagong window';
 $string['newwindowopen'] = 'Ipakita ang rekursong ito sa isang bagong popup na window';
+$string['notallowedlocalfileaccess'] = 'Ang pagpasok sa mga lokal na file ay kasalukuyang patay, kaya\'t ang rekursong ito ay hindi magagamit.';
 $string['note'] = 'Talâ';
 $string['notefile'] = 'Upang makapagaplowd ng marami pang file sa kurso (upang lumitaw ang mga ito sa listahan) gamitin ang <a href=\"$a\">Tagapamahala ng File</a>.';
 $string['notypechosen'] = 'Kailangan mong pumili ng uri.  Gamitin mo ang iyong back button para makabalik at makaulit.';
 $string['pagedisplay'] = 'Ipakita ang rekursong ito sa loob ng kasalukuyang window';
 $string['pagewindow'] = 'Sa window ring iyon';
+$string['pan'] = 'Pan';
 $string['parameter'] = 'Parameter';
 $string['parameters'] = 'Mga Parameter';
 $string['popupresource'] = 'Dapat lumitaw ang rekursong ito sa isang popup window.';
@@ -78,5 +87,8 @@ $string['resourcetypehtml'] = 'Gumawa ng web page';
 $string['resourcetypelabel'] = 'Magsingit ng etiketa';
 $string['resourcetypetext'] = 'Gumawa ng pahinang teksto';
 $string['searchweb'] = 'Maghanap ng pahinang pangweb';
+$string['serverurl'] = 'URL ng Server  ($a->wwwroot)';
 $string['variablename'] = 'Pangalan ng baryabol';
+$string['vol'] = 'Vol';
+
 ?>

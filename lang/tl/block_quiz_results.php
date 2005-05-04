@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // block_quiz_results.php - created with Moodle 1.4.4 (2004083140)
+      // block_quiz_results.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['bestgrade'] = 'Ang pinakamataas na marka:';

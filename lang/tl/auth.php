@@ -1,7 +1,22 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004110200)
+      // auth.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
+$string['alternatelogin'] = 'Kapag nagpasok ka ng URL dito, gagamitin ito bilang pahinang panglog-in para sa site na ito.  Dapat maglaman ang pahina ng isang form na ang action property ay nakatakda sa <strong>\'$a\'</strong> at mga  return field na <strong>username</strong> at <strong>password</strong>.<br />Ingatan na huwag makapagpasok ng maling URL, kundi\'y masasarhan kayo ng site na ito.<br />Iwanang blangko ang kaayusang ito upang gamitin ang default na pahinang panglog-in.';
+$string['alternateloginurl'] = 'Alternatibong PinaglaLog-inan na URL';
+$string['auth_cas_baseuri'] = 'URL ng server (wala kung walang baseUri)<br />halimbawa, kung ang CAS server ay tumutugon sa host.domaine.fr/CAS/ , samakatuwid ay <br />cas_baseuri = CAS/';
+$string['auth_cas_create_user'] = 'Buhayin ito kung nais mong magsingit ng mga CAS-authenticated na user sa Moodle database.  Kung hindi ay tanging ang mga user na nasa Moodle database na, ang maaaring maglog-in.';
+$string['auth_cas_enabled'] = 'Buhayin ito kung nais mong gumamit ng CAS na pag-aauthenticate.';
+$string['auth_cas_hostname'] = 'Hostname ng CAS server <br />hal:host.domain.fr';
+$string['auth_cas_invalidcaslogin'] = 'Paumanhin, nabigo ang paglalog-in mo - hindi ka ma-authorise';
+$string['auth_cas_language'] = 'Piniling wika';
+$string['auth_cas_logincas'] = 'Pagpasok na may ligtas na koneksiyon';
+$string['auth_cas_port'] = 'Port ng CAS server';
+$string['auth_cas_server_settings'] = 'Kaayusan ng CAS server';
+$string['auth_cas_text'] = 'Ligtas na koneksiyon';
+$string['auth_cas_version'] = 'Bersiyon ng CAS';
+$string['auth_casdescription'] = 'Ang paraang ito ay gumagait ng CAS server (Central Authentication Service) upang ma-authenticate ang mga user sa isang Single Sign On environment (SSO). Maaari ka ring gumamit ng simpleng LDAP na pag-aauthenticate, kung ang ibinigay na username at password ay tanggap ayon sa CAS, lilikha ang Moodle ng bagong user entry sa database nito, gamit ang mga user attribute mula sa LDAP kung kinakailangan.  Sa mga susunod na paglog-in, tanging ang username at password ang tsetsekin.';
+$string['auth_castitle'] = 'Gumamit ng CAS server (SSO)';
 $string['auth_common_settings'] = 'Kaayusang para sa lahat';
 $string['auth_data_mapping'] = 'Data mapping';
 $string['auth_dbdescription'] = 'Gumagamit ang paraang ito ng panlabas na database teybol upang masuri kung ang ibinigay na username at password ay tanggap.  Kung bago ang account, ang impormasyon sa iba pang field ay maaari ring kopyahin ng Moodle.';
@@ -66,7 +81,7 @@ $string['auth_ldaptitle'] = 'Gumamit ng LDAP server';
 $string['auth_manualdescription'] = 'Inaalis ng paraang ito ang anumang paraan para makalikha ang mga user ng sarili nilang account.  Lahat ng user ay kailangang likhain nang mano-mano ng admin user.';
 $string['auth_manualtitle'] = 'Tanging mano-mano na account';
 $string['auth_multiplehosts'] = 'Maaring magtakda ng maraming host O address (hal. host1.com;host2.com;host3.com) o (hal. xxx.xxx.xxx.xxx;xxx.xxx.xxx.xxx)';
-$string['auth_nntpdescription'] = 'Gumagamit ang paraang ito ng NTTP server upang matsek kung tanggap ang ibinigay na username at password.'; 
+$string['auth_nntpdescription'] = 'Gumagamit ang paraang ito ng NTTP server upang matsek kung tanggap ang ibinigay na username at password.';
 $string['auth_nntphost'] = 'Ang address ng NNTP server.  Gamitin ang IP numver, huwag ang DNS name.';
 $string['auth_nntpport'] = 'Server port (119 ang pinakakaraniwan)';
 $string['auth_nntptitle'] = 'Gumamit ng NNTP server';
@@ -82,6 +97,16 @@ $string['auth_pop3mailbox'] = 'Pangalan ng mailbox na pagtatangkaang magkipagkon
 $string['auth_pop3port'] = 'Server port (110 ang pinakakaraniwan, 995 ay karaniwan sa SSL)';
 $string['auth_pop3title'] = 'Gumamit ng POP3 server';
 $string['auth_pop3type'] = 'Uri ng server.  Kung gumagamit ng certificate security ang server mo, piliin ang pop3cert.';
+$string['auth_shib_instructions'] = 'Gamitin ang <a href=\"$a\">Shibboleth log-in</a> upang makapasok sa pamamagitan ng Shibboleth, kung sinusuportahan ito ng isntitusyon mo. <br />Kung hindi, gamitin ang normal na form ng log-in na ipinapakita rito.';
+$string['auth_shib_instructions_help'] = 'Dito ay dapat kang magbigay ng pasadyang panuto para sa user mo na nagpapaliwanag ng Shibboleth.  Ipapakita ito sa pahinang panglog-in sa may seksiyon ng panuto.  Dapat itong magkaroon ng link na \"<b>$a</b>\" upang makapaglog-in ng madali ang mga user ng Shibboleth.  Kapag iniwan mo itong blangko, ang mga istandard na panuto ang gagamitin (hindi ang partikular sa Shibboleth)';
+$string['auth_shib_only'] = 'Shibboleth lamang';
+$string['auth_shib_only_description'] = 'Tsekan ang opsiyon na ito kung ipatutupad ang isang Shibboleth na pag-aauthenticate';
+$string['auth_shib_settings'] = 'Tiyakin na nabasa ninyo ang <a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a> file para sa Shibboleth.  Tinatalakay nito kung paano iayos ang Moodle mo na may Shibboleth.';
+$string['auth_shib_username_description'] = 'Pangalan ng webserver Shibboleth environment baryabol na gagamitin bilang Moodle username';
+$string['auth_shibboleth_login'] = 'Shibboleth Log-in';
+$string['auth_shibboleth_manual_login'] = 'Mano-manong Log-in';
+$string['auth_shibbolethdescription'] = 'Sa pamamagitan ng paraang ito, ang mga user ay lilikhain at iaauthenticate sa pamamagitan ng <a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>';
+$string['auth_shibbolethtitle'] = 'Shibboleth';
 $string['auth_updatelocal'] = 'Baguhin ang lokal na datos';
 $string['auth_updatelocal_expl'] = '<p><b>Baguhin ang lokal na datos:</b> Kapag binuhay, ang field ay babaguhin (mula sa panlabas na auth) tuwing maglalog-in ang user o may user synchronization.  Dapat ikandado ang field na inayos na lokal ang pagbabago.</p>';
 $string['auth_updateremote'] = 'Baguhin ang panlabas na datos';

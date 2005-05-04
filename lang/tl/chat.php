@@ -1,4 +1,6 @@
-<?php // $Id$ 
+<?PHP // $Id$ 
+      // chat.php - created with Moodle 1.5 ALPHA (2005043000)
+
 
 $string['beep'] = 'beep';
 $string['chatintro'] = 'Panimulang teksto';
@@ -7,7 +9,7 @@ $string['chatreport'] = 'Sesyon ng Chat';
 $string['chattime'] = 'Susunod na oras ng chat';
 $string['configmethod'] = 'Ang normal na paraan ng chat ay regular na kinkontak ng mga kliyente ang server para sa mga pagbabago.  Hindi nito kailangang isaayos at gumagana sa lahat ng lugar, nguni\'t makapagpapabigat ito sa load ng server kung maraming nagchachat.  Ang paggamit ng server daemon ay nangangailangan ng shell access sa Unix, subali\'t nagreresulta ito sa isang mabilis at nai-scale na kapaligirang pangchat.';
 $string['configoldping'] = 'Ano ang maksimum na oras na kailangang lumipas bago namin maramdaman na ang isang user ay dina konektado (sa segundo)?  Pantaas na limitasyon lamang ito, dahil kadalasan ay nararamdaman kaagad ang pagdisconnect nang madali.  Ang mas mababang halaga ay mas matrabaho para sa iyong server.  Kung ginagamit mo ang normal na paraan, <strong>huwag kailanman</strong> itatakda ito nang mas mababa sa 2 * chat_refresh_room.';
-$string['configrefreshroom'] = 'Gaano kalimit sasariwain ang mismong chat room? (sa segundo).  Mukhang mabilis ang chat room kapag itinakda ito na mababa, nguni\'t maaaring magpabigat ito sa trabaho ng web server mo kung marami ang nagchachat'; 
+$string['configrefreshroom'] = 'Gaano kalimit sasariwain ang mismong chat room? (sa segundo).  Mukhang mabilis ang chat room kapag itinakda ito na mababa, nguni\'t maaaring magpabigat ito sa trabaho ng web server mo kung marami ang nagchachat';
 $string['configrefreshuserlist'] = 'Gaano kalimit dapat sariwain ang listahan ng mga user? (sa segundo)';
 $string['configserverhost'] = 'Ang hostname ng kompyuter kung saan naroon ang server daemon';
 $string['configserverip'] = 'Ang numerong IP address na katugma ng hostname sa itaas';
@@ -31,8 +33,8 @@ $string['messagebeepsyou'] = 'Bineep ka ni $a !';
 $string['messageenter'] = 'Pumasok si $a sa chat na ito';
 $string['messageexit'] = 'Umalis na si $a sa chat na ito';
 $string['messages'] = 'Mga Mensahe';
-$string['methodnormal'] = 'Normal na paraan';
 $string['methoddaemon'] = 'Chat server daemon';
+$string['methodnormal'] = 'Normal na paraan';
 $string['modulename'] = 'Chat';
 $string['modulenameplural'] = 'Mga Chat';
 $string['neverdeletemessages'] = 'Huwag kailanmang buburahin ang mga mensahe';

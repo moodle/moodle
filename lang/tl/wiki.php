@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // wiki.php - created with Moodle 1.4 alpha (2004081900)
+<?PHP // $Id$ 
+      // wiki.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['action'] = '-- Aksiyon --';
@@ -15,7 +15,7 @@ $string['authorfieldpatternerror'] = 'Magpasok ng awtor.';
 $string['backlinks'] = 'Mga nagrerefer na link';
 $string['binimgtoolarge'] = 'Labis na malaki ang file ng larawan!';
 $string['binnoimg'] = 'Hindi ito matatanggap na format ng file!';
-$string['browse'] = 'Tingnan-tingan';
+$string['browse'] = 'Tumingin';
 $string['canceledit'] = 'Balewalain';
 $string['cannotchangepage'] = 'Hindi mababago ang pahinang ito.';
 $string['changes'] = '$a pagbabago';
@@ -159,6 +159,7 @@ $string['tabview'] = 'Tingnan';
 $string['thanksforcontribution'] = 'Salamat sa iyong inambag.';
 $string['thispageisntlinkedfromanywhereelse'] = 'Hindi nakalink ang pahinang ito kahit saan.';
 $string['updatedpages'] = 'Mga binagong pahina';
+$string['updatedwikipages'] = 'Mga binagong pahinang wiki';
 $string['uplerror'] = 'Paumanhin, pero may nangyaring pagkakamali habang inaaplowd ang file.';
 $string['uplinsect'] = 'Impo ng pag-aaplowd';
 $string['uplnewnam'] = 'Isave na may ibang filename';

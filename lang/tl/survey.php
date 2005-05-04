@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // survey.php - created with Moodle 1.2 development (2003111400)
+<?PHP // $Id$ 
+      // survey.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['actual'] = 'Aktuwal';
@@ -32,7 +32,7 @@ $string['attls18short'] = 'pag-unawa mula sa pakikiramay';
 $string['attls19'] = 'Kapag nakatagpo ako ng mga taong naiiba ang opinyon sa akin, pinipilit kong isipin kung sakaling ako ang taong iyon, upang maunawaan kung bakit may ganoon silang opinyon.';
 $string['attls19short'] = 'piliting maging ibang tao';
 $string['attls1short'] = 'bigyang-diin ang kalidad ng argumento';
-$string['attls2'] = 'Gusto kong magpanggap na kontra - salungatin ang sinasabi ng iba.'; 
+$string['attls2'] = 'Gusto kong magpanggap na kontra - salungatin ang sinasabi ng iba.';
 $string['attls20'] = 'Nagbubusisi ako sa pag-alam kung ano ang \'mali\' sa mga bagay-bagay.  Halimbawa, susuriin ko ang isang interpretasyon ng panitik upang makakita ng isang bagay na di gaanong nabigyan ng katwiran.';
 $string['attls20short'] = 'ano ang malî?';
 $string['attls2short'] = 'magkontrapelo';
@@ -173,7 +173,6 @@ $string['guestsnotallowed'] = 'Hindi pinapahintulutan ang mga bisitang magpasa n
 $string['helpsurveys'] = 'Tulong sa iba\'t-ibang uri ng sarbey';
 $string['howlong'] = 'Gaano katagal bago mo nakumpleto ang sarbey na ito?';
 $string['howlongoptions'] = 'kulang sa 1 min,1-2 min,2-3 min,3-4 min,4-5-min,5-10 min,lagpas sa 10';
-
 $string['ifoundthat'] = 'Napagtanto ko na';
 $string['introtext'] = 'Panimulang teksto';
 $string['ipreferthat'] = 'Mas ibig ko na';
@@ -205,7 +204,6 @@ $string['surveyname'] = 'Pangalan ng sarbey';
 $string['surveysaved'] = 'Nasave na ang sarbey';
 $string['surveytype'] = 'Uri ng sarbey type';
 $string['thanksforanswers'] = 'Salamat po sa pagsagot sa sarbey na ito, $a';
-
 $string['time'] = 'Oras';
 $string['viewsurveyresponses'] = 'Tingnan ang $a tugon sa sarbey';
 

@@ -1,5 +1,5 @@
-<?php // $Id$ 
-      // dialogue.php - created with Moodle 1.2 development (2003111400)
+<?PHP // $Id$ 
+      // dialogue.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['addmynewentries'] = 'Idagdag ang mga Bago kong Entry';
@@ -9,8 +9,7 @@ $string['allowmultiple'] = 'Pahintulutan ang higit sa isang Dayalogo sa parehong
 $string['allowstudentdialogues'] = 'Pahintulutan ang Mag-aaral-sa-Mag-aaral na Dayalogo';
 $string['close'] = 'Isara';
 $string['closed'] = 'Sarado';
-$string['confirmclosure'] = 'Isasara mo ang isang dayalogo kay $a.  Ang mga isinarang dayalogo ay hindi na muling mabubuksan.  Kapag isinara mo ang dayalogong ito maaari mo itong tingnan nguni\'t hindi mo ito maidadagdag, at kakailanganin mong magumpisa ng isa pang dayalogo para maipagpatuloy ang &quot;pakikipag-usap&quot; sa taong ito.<br /><br />Talaga bang nais mong isara ang dayalogong ito?';
-
+$string['confirmclosure'] = 'Isasara mo ang isang dayalogo kay $a.  Ang mga isinarang dayalogo ay hindi na muling mabubuksan.  Kapag isinara mo ang dayalogong ito maaari mo itong tingnan nguni\'t hindi mo ito maidadagdag, at kakailanganin mong magumpisa ng isa pang dayalogo para maipagpatuloy ang \"pakikipag-usap\" sa taong ito.<br /><br />Talaga bang nais mong isara ang dayalogong ito?';
 $string['deleteafter'] = 'Burahin ang mga Isinarang Dayalogo matapos ang (Araw)';
 $string['dialogueclosed'] = 'Isinara na ang Dayalogo';
 $string['dialogueintro'] = 'Panimula ng Dayalogo';
@@ -18,11 +17,7 @@ $string['dialoguemail'] = 'Si $a->userfrom ay nagpost ng bagong entry sa iyong
 
 pandayalogong entry para sa \'$a->dialogue\'
 
-
-
 Makikita mo itong nakakabit sa iyong pandayalogong entry:
-
-
 
     $a->url';
 $string['dialoguemailhtml'] = 'Si $a->userfrom ay nagpost ng bagong entry sa iyong

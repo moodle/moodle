@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // calendar.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
+      // calendar.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['calendar'] = 'Kalendaryo';

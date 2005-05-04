@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // lesson.php - created with Moodle 1.4.4 (2004083140)
+      // lesson.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['accesscontrol'] = 'Kontrol ng Pagpasok';
@@ -8,6 +8,11 @@ $string['addabranchtable'] = 'Magdagdag ng Manghad ng Sanga';
 $string['addanendofbranch'] = 'Magdagdag ng Dulo ng Sanga';
 $string['addaquestionpage'] = 'Magdagdag ng Pahina ng Tanong';
 $string['addcluster'] = 'Magdagdag ng Cluster';
+$string['addedabranchtable'] = 'Nagdagdag ng Manghad ng Sanga';
+$string['addedanendofbranch'] = 'Nagdagdag ng Dulo ng Sanga';
+$string['addedaquestionpage'] = 'Nagdagdag ng Pahina ng Tanong';
+$string['addedcluster'] = 'Nagdagdag ng Cluster';
+$string['addedendofcluster'] = 'Nagdagdag ng Dulo ng Cluster';
 $string['addendofcluster'] = 'Magdagdag ng Dulo ng Cluster';
 $string['answer'] = 'Sagot';
 $string['answeredcorrectly'] = 'nasagot nang wasto.';
@@ -43,7 +48,9 @@ $string['correctanswerscore'] = 'Iwasto ang Iskor ng Sagot';
 $string['correctresponse'] = 'Iwasto ang Tugon';
 $string['customscoring'] = 'Pasadyang Pag-iiskor';
 $string['deadline'] = 'Huling araw';
+$string['defaultessayresponse'] = 'Mamarkahan ang sanaysay mo ng gurò ng kurso';
 $string['deleteattempts'] = 'Burahin ang mga pagkuha ng mag-aaral para sa aralín na ito (user id)';
+$string['deletedpage'] = 'Binura ang pahina';
 $string['deleting'] = 'Binubura';
 $string['deletingpage'] = 'Binubura ang pahina: $a';
 $string['description'] = 'Deskripsiyon';
@@ -91,16 +98,19 @@ $string['here'] = 'dito';
 $string['highscore'] = 'Mataas na Iskor';
 $string['hightime'] = 'Mataas na Oras';
 $string['importquestions'] = 'Mag-angkat ng mga Tanong';
+$string['insertedpage'] = 'Isiningit ang pahina';
 $string['jump'] = 'Jump';
 $string['jumptsto'] = 'lulukso sa';
 $string['leftduringtimed'] = 'Umalis ka sa isang inorasang aralín.<br />Iklik ang Ituloy upang masimulan mulî ang aralín.';
 $string['leftduringtimednoretake'] = 'Umalis ka sa isang inorasang aralín at hindi ka na<br />pinahihintulutan na kuhanin ito ulî o ipagpatuloy ang aralín.';
 $string['lesson'] = '$a Aralín';
 $string['lessonclosed'] = 'Nagsara na ang aralíng ito noong $a.';
+$string['lessoncloses'] = 'Magsasara ang aralín sa';
 $string['lessondefault'] = 'Gamitin ang kaayusan ng aralíng ito bilang default';
 $string['lessonformating'] = 'format ng Aralín';
 $string['lessonmenu'] = 'Menu ng Aralín';
 $string['lessonopen'] = 'Magbubukas ang aralíng ito sa $a.';
+$string['lessonopens'] = 'Magbubukas ang aralín sa ';
 $string['lessonstats'] = 'Estadistika ng Aralín';
 $string['loginfail'] = 'Nabigo ang Paglalog-in, ulitin...';
 $string['lowscore'] = 'Mababang Iskor';
@@ -117,6 +127,7 @@ $string['modattempts'] = 'Pahintulutan ang pagrebyu ng mag-aaral';
 $string['modattemptsnoteacher'] = 'Ang pagrebyu ng mag-aaral ay gagana lamang para sa mga mag-aaral.';
 $string['modulename'] = 'Aralín';
 $string['modulenameplural'] = 'Mga Aralín';
+$string['movedpage'] = 'Inilipat ang pahina';
 $string['movepagehere'] = 'Ilipat ang pahina dito';
 $string['moving'] = 'Inililipat ang pahina: $a';
 $string['movingtonextpage'] = 'Lumilipat na sa Susunod na Pahina';
@@ -216,6 +227,7 @@ $string['timetaken'] = 'Oras kinuha';
 $string['topscorestitle'] = 'Pinakamataas na $a->maxhighscores iskor para sa  $a->name na aralín.';
 $string['treeview'] = 'Parang Puno na Tanaw';
 $string['unseenpageinbranch'] = 'Nakatagong Tanong sa loob ng isang Sanga';
+$string['updatedpage'] = 'Binago ang pahina';
 $string['updatefailed'] = 'Bigo ang Pagbabago';
 $string['updatesuccess'] = 'Tagumpay ang Pagbabago';
 $string['useeditor'] = 'Gamitin ang Editor';

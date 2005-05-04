@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.4.4 (2004083140)
+      // assignment.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['allowresubmit'] = 'Pahintulutang maípasa mulî';
@@ -15,11 +15,15 @@ takdang-aralin para sa \'<i>$a->assignment</i>\'<br /><br />
 Makikita mo itong nakakabit sa <a href=\"$a->url\">ipinasa mong takdang-aralin</a>.';
 $string['assignmentname'] = 'Pangalan ng takdang-aralin';
 $string['assignmenttype'] = 'Uri ng takdang-aralin';
+$string['availabledate'] = 'Magagamit mula ';
+$string['comment'] = 'Opinyon';
+$string['commentinline'] = 'Opinyong inline';
 $string['configmaxbytes'] = 'Default na maksimum na laki ng takdang-aralin para sa lahat ng takdang-aralin na nasa site (alinsunod sa limitasyon sa kurso at iba pang lokal na kaayusan)';
 $string['description'] = 'Deskripsiyon';
 $string['duedate'] = 'Huling araw ng pasahan';
 $string['duedateno'] = 'Walang huling araw ng pasahan';
 $string['early'] = '$a maaga';
+$string['editmysubmission'] = 'Iedit ang ipinasa ko';
 $string['emailteachermail'] = 'Binago ni $a->username ang ipinasa niyang takdang -aralin para sa \'$a->assignment\'
 
 Makukuha ito rito:
@@ -31,22 +35,30 @@ $string['emailteachers'] = 'Hudyat na email para sa mga guro';
 $string['existingfiledeleted'] = 'Ang kasalukuyang file ay binura na: $a';
 $string['failedupdatefeedback'] = 'Nabigong baguhin ang puna sa ipinasa ni user $a';
 $string['feedback'] = 'Puna';
+$string['feedbackfromteacher'] = 'Puna mula sa $a';
 $string['feedbackupdated'] = 'Nabago na ang puna sa mga ipinasa ng $a tao';
+$string['helpoffline'] = '<p>Kapakipakinabang ito kapag ang takdang-aralin ay ginagawa sa labas ng Moodle.  Maaari itong isang bagay sa iba pang lugar sa web o harapan.</p><p>Maaaring makakita ng deskripsyon ng takdang-aralin ang mga mag-aaral, nguni hindi puwedeng mag-aplowd ng file o anupaman.  Gumagana ng normal ang pagmamarka, at tatanggap ng patalastas hinggil sa marka nila ang mga mag-aaral</p>';
+$string['helponline'] = '<p>Ang uri ng takdang-aralin na ito ay humihiling sa mga user na mag-edit ng teksto, gamit ang mga normal na editing tool.  Maaari itong markahan ng mga guro nang online, at puwede ring magdagdag ng inline na puno o pagbabago.</p><p>(Kung pamilyar ka sa mga lumang bersiyon ng Moodle, pareho ang silbi ng uri ng Takdang-aralin na ito sa lumang diyornal na modyul.)</p>';
+$string['helpuploadsingle'] = '<p>Ang uri ng takdang-aralin na ito ay pinapahintulutan ang bawat kalahok na mag-aplowd ng isang file, anuman ang uri.</p><p>Maaari itong maging Word processor na dokumento, o isang larawan, isang nakazip na web site, o anumang bagay na hilingin mong ipasa nila.</p>';
 $string['late'] = '$a huli';
 $string['maximumgrade'] = 'Pinakamataas na marka';
 $string['maximumsize'] = 'Pinakamataas na laki';
 $string['modulename'] = 'Takdang-aralin';
 $string['modulenameplural'] = 'Mga takdang-aralin';
 $string['newsubmissions'] = 'Ipinasang takdang-aralin';
+$string['noassignments'] = 'Wala pang takdang-aralin';
 $string['notgradedyet'] = 'Hindi pa namamarkahan';
 $string['notsubmittedyet'] = 'Hindi pa naipapasa';
 $string['overwritewarning'] = 'Babala: kung mag-aaplowd kang mulî, MAPAPALITAN nito ang kasalukuyan mong ipinasa';
 $string['saveallfeedback'] = 'Isave ang lahat ng aking puna';
+$string['submission'] = 'Ipinasa';
 $string['submissionfeedback'] = 'Puna sa ipinasa';
 $string['submissions'] = 'Mga ipinasa';
+$string['submissionsaved'] = 'Naisave na ang mga pagbabago mo';
 $string['submitassignment'] = 'Ipasa ang iyong takdang-aralin sa pamamagitan ng form na ito';
 $string['submitted'] = 'Naipasa na';
 $string['typeoffline'] = 'Offline na aktibidad';
+$string['typeonline'] = 'Online na teksto';
 $string['typeuploadsingle'] = 'Mag-aplowd ng isang file lamang';
 $string['uploadbadname'] = 'May mga kakaibang titik ang filename na ito at hindi puwedeng maiaplowd';
 $string['uploadedfiles'] = 'mga naiaplowd nang file';

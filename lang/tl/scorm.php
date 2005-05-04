@@ -1,18 +1,16 @@
-<?php // $Id$
+<?PHP // $Id$ 
+      // scorm.php - created with Moodle 1.5 ALPHA (2005043000)
 
-#------------------------------------------------------------
-$string['modulename'] = 'Scorm';
-$string['modulenameplural'] = 'Mga Scorm';
-#------------------------------------------------------------
 
 $string['asset'] = 'Asset';
 $string['attr_error'] = 'Masamang halaga para sa attribute na ($a->attr) sa tag na $a->tag.';
 $string['autocontinue'] = 'Awto-Pagpapatuloy';
-$string['badmanifest'] ='Ilang manifest error: tingnan ang log ng mga error';
-$string['browse'] = 'Tingnan-tingnan';
+$string['badmanifest'] = 'Ilang manifest error: tingnan ang log ng mga error';
+$string['browse'] = 'Silipin';
 $string['browsed'] = 'Natingnan-tingnan';
 $string['browsemode'] = 'Patingin-tingin na Mode';
 $string['chooseapacket'] = 'Pumilì o baguhin ang isang paketeng SCORM';
+$string['completed'] = 'Nakumpleto';
 $string['configframesize'] = 'Ang halagang ito ang laki (sa piksel) ng tuktok na frame (na naglalaman ng nabigasyon) kapag nagpatakbo ka ng paketeng scorm.';
 $string['configpopup'] = 'Kapag nagdagdag ka ng bagong paketeng scorm maipapakita ito sa isang popup na window; dapat bang buhayin ang opsiyong ito bilang default?';
 $string['configpopupheight'] = 'Ano ang dapat maging default na taas ng mga bagong popup na window?';
@@ -20,14 +18,20 @@ $string['configpopupresizable'] = 'Dapat bang maging default ang kapabilidad na 
 $string['configpopupscrollbars'] = 'Dapat bang maging default ang kapabilidad na mai-scroll ang mga popup na window?';
 $string['configpopupstatus'] = 'Dapat bang maging default ang pagpapakita ng status bar ng mga popup na window?';
 $string['configpopupwidth'] = 'Ano ang dapat maging default na lapad ng mga bagong popup na window?';
-$string['completed'] = 'Nakumpleto';
-$string['coursestruct'] = 'Balangkas ng Kurso';
 $string['coursepacket'] = 'Pakete ng Kurso';
+$string['coursestruct'] = 'Balangkas ng Kurso';
 $string['datadir'] = 'Filesystem Error: Hindi malikha ang direktoryo ng datos ng kurso';
+$string['details'] = 'Mga detalye ng SCO track';
+$string['display'] = 'Ipakita';
+$string['domxml'] = 'DOMXML external library';
+$string['enablebrowse'] = 'Buhayin ang mode na pagsilip';
 $string['entercourse'] = 'Ipasok ang kursong SCORM';
 $string['errorlogs'] = 'Log ng mga error';
+$string['exit'] = 'Lumabas sa kursong SCORM';
+$string['expcoll'] = 'Palawakin/Paliitin';
 $string['failed'] = 'Bigô';
 $string['found'] = 'Natagpuan ang manifest';
+$string['frameheight'] = 'Itinatakda ng mas-ibig na ito ang taas ng frame ng SCO';
 $string['gradeaverage'] = 'Katamtamang marka';
 $string['gradehighest'] = 'PInakamataas na marka';
 $string['grademethod'] = 'Paraan ng pagmamarka';
@@ -35,6 +39,11 @@ $string['gradescoes'] = 'Sitwasyon ng Scoes';
 $string['gradesum'] = 'Kabuuang marka';
 $string['guestsno'] = 'Hindi maaaring makita ng mga bisita ang mga kursong scorm';
 $string['incomplete'] = 'Dikumpleto';
+$string['missing_attribute'] = 'Nawawala ang attribute na $a->attr sa tag na $a->tag';
+$string['missing_tag'] = 'Nawawala ang tag na $a->tag';
+$string['mode'] = 'Mode';
+$string['modulename'] = 'Scorm';
+$string['modulenameplural'] = 'Mga Scorm';
 $string['newheight'] = 'Default na taas ng window (sa piksel)';
 $string['newresizable'] = 'Pahintulutan na mabago ang laki ng window';
 $string['newscrollbars'] = 'Pahintulutan na mai-scroll ang window';
@@ -48,17 +57,14 @@ $string['no_children'] = 'Kailangan ay may anak ang tag na $a->tag';
 $string['nomanifest'] = 'Hindi natagpuan ang manifest';
 $string['noreports'] = 'Walang ulat na maipapakita';
 $string['normal'] = 'Normal';
-$string['notattempted'] = 'Hind kinuha';
 $string['not_corr_type'] = 'Hindi tugma ang uri para sa tag na $a->tag';
-$string['missing_attribute'] = 'Nawawala ang attribute na $a->attr sa tag na $a->tag';
-$string['missing_tag'] = 'Nawawala ang tag na $a->tag';
-$string['mode'] = 'Mode';
+$string['notattempted'] = 'Hind kinuha';
 $string['organizations'] = 'Mga organisasyon';
 $string['packagedir'] = 'Filesystem Error: Hindi malikha ang direktoryo ng pakete';
 $string['passed'] = 'Pasado';
 $string['php5'] = 'PHP 5 (DOMXML native library)';
-$string['prev'] = 'Nakaraan';
 $string['position_error'] = 'Ang $a->tag na tag ay hindi maaaring maging anak ng $a->parent na tag';
+$string['prev'] = 'Nakaraan';
 $string['regular'] = 'Regular na Manifest';
 $string['report'] = 'Ulat';
 $string['review'] = 'Irebyu';
@@ -69,10 +75,9 @@ $string['tag_error'] = 'Dikilalang tag ($a->tag) na may ganitong laman: $a->valu
 $string['too_many_attributes'] = 'Labis ang attribute ng tag na $a->tag';
 $string['too_many_children'] = 'Labis ang anak ng tag na $a->tag';
 $string['trackingloose'] = 'Babalâ: Mawawala ang tracking data ng paketeng SCORM na ito!';
-$string['domxml'] = 'DOMXML external library';
+$string['validateascorm'] = 'Suriin kung tanggap ang paketeng SCORM';
 $string['validation'] = 'Resulta ng pagsusuri kung tanggap';
 $string['validationtype'] = 'Ang mas-ibig na ito ay itinatakda ang DOMXML library na ginagamit sa pagtiyak kung tanggap ang SCORM Manifest. Kung hindi mo alam kung ano ito, pabayaan ang pinilì na.';
-$string['validateascorm'] = 'Suriin kung tanggap ang paketeng SCORM';
 $string['versionwarning'] = 'Ang bersiyon ng manifest ay mas luma sa 1.3, babala sa $a->tag na tag';
 $string['viewallreports'] = 'Tingnan ang mga ulat para sa $a na pagkuha';
 

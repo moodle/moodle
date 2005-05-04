@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
+      // moodle.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['action'] = 'Aksiyon';
@@ -355,7 +355,7 @@ $string['emaildigestoff'] = 'Walang digest (isahang email bawat post sa talakaya
 $string['emaildigestsubjects'] = 'Paksa (arawang email na paksa lamang)';
 $string['emaildisable'] = 'Hindi gumagana ang email address na ito';
 $string['emaildisableclick'] = 'Iklik ito upang hindi ipadala ang lahat ng email sa address na ito';
-$string['emaildisplay'] = 'Email displey';
+$string['emaildisplay'] = 'Pagdidispley ng Email';
 $string['emaildisplaycourse'] = 'Tanging ang mga kasapi ng kurso ang pahintulutang makakita ng aking email address';
 $string['emaildisplayno'] = 'Itago ang aking email address sa lahat';
 $string['emaildisplayyes'] = 'Pahintulutan ang lahat na makita ang aking email address';
@@ -1031,6 +1031,9 @@ $string['topichide'] = 'Itago ang paksang ito sa $a';
 $string['topicoutline'] = 'Balangkas ng paksa';
 $string['topicshow'] = 'Ipakita ang paksang ito sa $a';
 $string['total'] = 'Kabuuan';
+$string['trackforums'] = 'Pagsubaybay sa Talakayan';
+$string['trackforumsno'] = 'Hindî: huwag subaybayan ang mga post na nakita ko na';
+$string['trackforumsyes'] = 'Oo: ihighlight ang mga bagong post para sa akin';
 $string['trysearching'] = 'Sa halip ay tangkain mong maghanap.';
 $string['turneditingoff'] = 'Patayin ang pag-eedit';
 $string['turneditingon'] = 'Buhayin ang pag-eedit';
