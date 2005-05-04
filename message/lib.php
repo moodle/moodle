@@ -940,7 +940,7 @@ function message_get_history($user1, $user2) {
     return $messages;
 }
 
-function message_format_message(&$message, &$user, $format='', $keywords='') {
+function message_format_message(&$message, &$user, $format='', $keywords='', $class='other') {
 
     static $dateformat;
 
@@ -957,7 +957,7 @@ function message_format_message(&$message, &$user, $format='', $keywords='') {
     if ($keywords) {
         $messagetext = highlight($keywords, $messagetext);
     }
-    return '<div class="message"><a name="m'.$message->id.'"></a><span class="author">'.s(fullname($user)).'</span> <span class="time">['.$time.']</span>: <span class="content">'.$messagetext.'</span></div>';
+    return '<div class="message '.$class.'"><a name="m'.$message->id.'"></a><span class="author">'.s(fullname($user)).'</span> <span class="time">['.$time.']</span>: <span class="content">'.$messagetext.'</span></div>';
 }
 
 /*

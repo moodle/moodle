@@ -75,9 +75,9 @@
                 print_heading(userdate($message->timecreated, $blockdate), 'center', 4);
             }
             if ($message->useridfrom == $user1->id) {
-                echo message_format_message($message, $user1, $messagedate, $search);
+                echo message_format_message($message, $user1, $messagedate, $search, 'other');
             } else {
-                echo message_format_message($message, $user2, $messagedate, $search);
+                echo message_format_message($message, $user2, $messagedate, $search, 'me');
             }
         }
     } else {
