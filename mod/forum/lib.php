@@ -985,7 +985,6 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
 /// Returns a list of posts found using an array of search terms
 /// eg   word  +word -word
 ///
-
     global $CFG;
     require_once($CFG->libdir.'/searchlib.php');
 
@@ -996,11 +995,14 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
         $onlyvisibletable = ", {$CFG->prefix}course_modules cm";
         if ($groupid) {
             $separategroups = SEPARATEGROUPS;
-            $selectgroup = " AND (cm.groupmode <> '$separategroups' OR d.groupid = '$groupid')";
+            //$selectgroup = " AND (cm.groupmode <> '$separategroups' OR d.groupid = '$groupid')";
+            $selectgroup = " AND ( NOT (cm.groupmode='$separategroups'".
+                                      " OR (c.groupmode='$separategroups' AND c.groupmodeforce='1') )".
+                                 " OR d.groupid = '$groupid')";
         } else {
             $selectgroup = '';
         }
-        $selectcourse = " AND d.course = '$courseid'";
+        $selectcourse = " AND d.course = '$courseid' AND c.id='$courseid'";
     } else {
         $notteacherforum = "";
         $selectgroup = '';
@@ -1052,6 +1054,7 @@ function forum_search_posts($searchterms, $courseid, $page=0, $recordsperpage=50
     $selectsql = "{$CFG->prefix}forum_posts p,
                   {$CFG->prefix}forum_discussions d,
                   {$CFG->prefix}user u,
+                  {$CFG->prefix}course c,
                   {$CFG->prefix}forum f $onlyvisibletable
              WHERE ($messagesearch)
                AND p.userid = u.id
