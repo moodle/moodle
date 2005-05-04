@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // attendance.php - created with Moodle 1.3.3 (2004052503)
+      // attendance.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
 $string['absentlong'] = 'Fraværende';
@@ -14,8 +14,8 @@ $string['autoattendshort'] = 'Automatisk fra log';
 $string['choosedays'] = 'Hvilke dage på ugen skal der føres protekol over.';
 $string['dayofroll'] = 'Dato for fraværsliste';
 $string['defaultautoattend'] = 'Skal fraværslisterne flyttes til de korrekte uger som standard?';
-$string['defaultdynamicsection'] = 'Skal protekollerne flyttes ud de de respektive uger som standard?';
-$string['defaultgrade'] = 'Skal protekollerne tælle med i vuderingen som standard?';
+$string['defaultdynamicsection'] = 'Skal protokollerne flyttes ud de de respektive uger som standard?';
+$string['defaultgrade'] = 'Skal protokollerne tælle med i vurderingen som standard?';
 $string['defaulthoursinclass'] = 'Hvor mange timer/lektioner skal der som udgangspunkt være i en fraværsliste?';
 $string['defaultmaxgrade'] = 'Hvad skal maksimumkarakteren være for fuldt fremmøde?';
 $string['defaultstudentstatus'] = 'Den almindelige fraværsstatus på nye fraværsskemaer.';
@@ -34,7 +34,7 @@ $string['gradeshort'] = 'Vurderet';
 $string['gradevalue'] = 'Skal denne fraværsliste kunne bedømmes?';
 $string['gradevaluemulti'] = 'Skal disse fraværslister kunne bedømmes?';
 $string['hoursinclass'] = 'Antal timer/lektioner i en periode';
-$string['hoursineachclass'] = 'Antal tilmer i hver periode';
+$string['hoursineachclass'] = 'Antal timer i hver periode';
 $string['hoursinfullreport'] = 'Det maksimale antal fraværstimer der skal vises på en enkelt side af fraværslisten.';
 $string['maxgradeshort'] = 'Maksimum karakter';
 $string['maxgradevalue'] = 'Maksimum karakter for fuldt fremmøde.';
@@ -42,8 +42,8 @@ $string['modulename'] = 'Fraværsliste';
 $string['modulenameplural'] = 'Fraværslister';
 $string['monday'] = 'Man';
 $string['norolls'] = 'Der er ingen fraværslister i dette kursus.';
-$string['notes'] = 'Special informaion';
-$string['notesfor'] = 'Special informaion for';
+$string['notes'] = 'Speciel informaion';
+$string['notesfor'] = 'Speciel informaion for';
 $string['noviews'] = 'Der er desværre ikke nogen data for din profil her.';
 $string['of'] = 'af';
 $string['pages'] = 'Sider';
@@ -53,8 +53,8 @@ $string['saturday'] = 'Lør';
 $string['startafterend'] = 'Startdagen er efter slutningen af dette kursus';
 $string['startmulti'] = 'Dato for første fraværsliste.';
 $string['sunday'] = 'Søn';
-$string['takeroll'] = 'Før protekol for denne dag';
-$string['tardiesperabsence'] = 'Hvor mange gange skal man møde forsent før det tæller som fravær?';
+$string['takeroll'] = 'Før protokol for denne dag';
+$string['tardiesperabsence'] = 'Hvor mange gange skal man møde for sent før det tæller som fravær?';
 $string['tardylong'] = 'Sent';
 $string['tardyshort'] = '?';
 $string['teacheredit'] = 'Udfyld fraværsliste';
