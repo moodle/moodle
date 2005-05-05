@@ -13,6 +13,15 @@
   border-top:0 none;
 }
 
+#course-user .section {
+  background-color:#fff;
+  padding:1em;
+}
+
+#course-user .section h2 {
+  margin-top:0;
+}
+
 #user-view .tabs td,
 #user-edit .tabs td,
 #mod-forum-user .tabs td {
@@ -23,13 +32,19 @@
   width:100%
 }
 
-#mod-glossary-view .glossarydisplay tr,
-#mod-glossary-view .glossarydisplay td {
+.mod-glossary .glossarydisplay tr,
+.mod-glossary .glossarydisplay td {
   border:0 none !important;
+  padding-bottom:0;
 }
 
-#mod-glossary-view .entryboxheader {
-  display:none;
+.mod-glossary td.entryboxheader {
+  height:0 !important;
+  background-color:#fff;
+}
+
+.mod-glossary .entrybox {
+  padding:0;
 }
 
 .tabs {
@@ -49,6 +64,10 @@
 .tabs .left,
 .tabs .right {
   background:url(pix/tab/tabsbg_x2.gif) bottom left repeat-x
+}
+
+.tabs td {
+  padding:0
 }
 
 .tabs .left {
@@ -90,6 +109,14 @@
   background:url(pix/tab/left_inactive2.gif) bottom left no-repeat;
 }
 
+.tabs .r0 .activetwo {
+  background:url(pix/tab/left_active2.gif) bottom left no-repeat;
+}
+
+.tabs .r1 .activetwo {
+  background:url(pix/tab/left_active2.gif) bottom left no-repeat;
+}
+
 .tabs,
 .tabs tr,
 .tabs .td,
@@ -129,6 +156,14 @@
 
 .tabs .r1 .inactive .tablink {
   background:url(pix/tab/right_inactive2.gif) bottom right no-repeat;
+}
+
+.tabs .r0 .activetwo .tablink {
+  background:url(pix/tab/right_active2.gif) bottom right no-repeat;
+}
+
+.tabs .r1 .activetwo .tablink {
+  background:url(pix/tab/right_active2.gif) bottom right no-repeat;
 }
 
 .tabrow td .tablink a {
@@ -195,10 +230,16 @@
   background:url(pix/tab/right_active.gif) bottom right no-repeat;
 }
 
+.user-content h2 {
+  margin:0;
+  padding:0 1em;
+}
 
-
-.tabs {
-  border:0 none
+.user-content {
+  background-color:#FFFFFF;
+  border:1px solid #D1D7DC;
+  border-top-width:0;
+  padding:0.5em
 }
 
 
