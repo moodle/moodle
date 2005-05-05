@@ -601,6 +601,7 @@ $string['livelogs'] = 'Live logs from the past hour';
 $string['locale'] = 'en';
 $string['location'] = 'Location';
 $string['loggedinas'] = 'You are logged in as $a ';
+$string['loggedinasguest'] = 'You are currently using guest access';
 $string['loggedinnot'] = 'You are not logged in.';
 $string['login'] = 'Login';
 $string['login_failure_logs'] = 'Login failure logs';
