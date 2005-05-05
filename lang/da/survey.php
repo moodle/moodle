@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // survey.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005020101)
+      // survey.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
 $string['actual'] = 'Aktuel';
@@ -10,14 +10,14 @@ $string['allscales'] = 'Alle svar, alle studerende';
 $string['alreadysubmitted'] = 'Du har allerede indgivet svar på denne evaluering';
 $string['analysisof'] = 'Analyse af $a';
 $string['answers'] = 'Svar';
-$string['attls1'] = 'Når jeg bedømmer hvad andre siger, fokuserer jeg på kvaliteten af det siger og ikke på persone, der siger det.';
+$string['attls1'] = 'Når jeg bedømmer hvad andre siger, fokuserer jeg på kvaliteten af det siger og ikke på personen, der siger det.';
 $string['attls10'] = 'Det er vigtigt for mig at forblive objektiv, når jeg analyserer noget.';
 $string['attls10short'] = 'forblive objektiv';
-$string['attls11'] = 'Jeg prøver at tænke med andre istedet for mod andre.';
+$string['attls11'] = 'Jeg prøver at tænke med andre i stedet for mod andre.';
 $string['attls11short'] = 'tænk MED andre';
 $string['attls12'] = 'Jeg vurderer argumenter ud fra bestemte kriterier.';
 $string['attls12short'] = 'brug kriterier i evalueringer';
-$string['attls13'] = 'Jeg prøver på at forstå andre meninger istedet for at vurdere på dem.';
+$string['attls13'] = 'Jeg prøver på at forstå andre meninger i stedet for at vurdere på dem.';
 $string['attls13short'] = 'prøv at forstå';
 $string['attls14'] = 'Jeg fokuserer på svagheder i andres argumenter i stedet for at hjælpe dem ved at klargøre argumenterne.';
 $string['attls14short'] = 'fokuserer på svagheder';
@@ -48,7 +48,7 @@ $string['attls7'] = 'Jeg kan styrke min egen position ved at argumentere med fol
 $string['attls7short'] = 'styrke ved argumentation';
 $string['attls8'] = 'Jeg er altid interesseret i at vide, hvorfor folk tror og siger, hvad de gør';
 $string['attls8short'] = 'vide hvad folk gør';
-$string['attls9'] = 'Jeg oplever ofte, at jeg argumenterer med forfatterere til de bøger, jeg læser - prøver på en logisk måde at finde ud af, hvorfor de ikke har ret.';
+$string['attls9'] = 'Jeg oplever ofte, at jeg argumenterer med forfatterne til de bøger, jeg læser - prøver på en logisk måde at finde ud af, hvorfor de ikke har ret.';
 $string['attls9short'] = 'argumenterer med forfattere';
 $string['attlsintro'] = 'Meningen med denne evaluering er at finde ud af dine holdninger til det at tænke og lære.
 
@@ -59,12 +59,12 @@ $string['attlsm3'] = 'Individuel læring';
 $string['attlsmintro'] = 'I diskussion...';
 $string['attlsname'] = 'ATTLS (20 item version)';
 $string['ciq1'] = 'På hvilket tidspunkt i klassen var du mest engageret for at lære noget?';
-$string['ciq1short'] = 'Mest angageret';
+$string['ciq1short'] = 'Mest engageret';
 $string['ciq2'] = 'På hvilket tidspunkt i klassen syntes du mest distanceret som elev?';
 $string['ciq2short'] = 'Mest distancerede';
 $string['ciq3'] = 'Hvilken handling fra nogen i forummer fandt du mest hjælpsomt?';
 $string['ciq3short'] = 'Hjælpsomt øjeblik';
-$string['ciq4'] = 'Hvilken handlig fra nogle i forummer fandt du mest underlig eller forvirrende?';
+$string['ciq4'] = 'Hvilken handling fra nogle i forummer fandt du mest underlig eller forvirrende?';
 $string['ciq4short'] = 'Forvirrende øjeblik';
 $string['ciq5'] = 'Hvad overraskede dig mest?';
 $string['ciq5short'] = 'Overraskende øjeblik';
@@ -84,16 +84,16 @@ $string['colles13short'] = 'læreren stimulerer min tænkeproces';
 $string['colles14'] = 'læreren får mig til at deltage aktivt.';
 $string['colles14short'] = 'læreren aktiverer mig';
 $string['colles15'] = 'læreren opfordrer til gode samtaler.';
-$string['colles15short'] = 'tlæreren opfordrer til samtaler';
+$string['colles15short'] = 'læreren opfordrer til samtaler';
 $string['colles16'] = 'læreren ansporer til kritisk selv refleksion.';
 $string['colles16short'] = 'læreren ansporer til selv refleksion';
 $string['colles17'] = 'andre studerende støtter min deltagelse.';
 $string['colles17short'] = 'andre studerende støtter mig';
-$string['colles18'] = 'andre studerende anderkender mine bidrag.';
-$string['colles18short'] = 'andre studerende anderkender mig';
+$string['colles18'] = 'andre studerende anerkender mine bidrag.';
+$string['colles18short'] = 'andre studerende anerkender mig';
 $string['colles19'] = 'andre studerende værdsætter mine bidrag.';
 $string['colles19short'] = 'jeg er værdsat af andre studerende';
-$string['colles1short'] = 'ffokus på interessante emner';
+$string['colles1short'] = 'fokus på interessante emner';
 $string['colles2'] = 'Det, jeg lærer, har betydning for mine praktiske færdigheder.';
 $string['colles20'] = 'andre studerende har indlevelse i at, at jeg forsøger at lære.';
 $string['colles20short'] = 'indlevende studerende';
@@ -122,7 +122,7 @@ $string['colles9'] = 'Jeg forklarer mine ideer for andre studerende.';
 $string['colles9short'] = 'Jeg forklarer mine ideer';
 $string['collesaintro'] = 'Formålet med disse spørgsmål er, at vi gerne vil undersøge, hvor meget du har lært ved at følge dette online modul. 
 
-Hver af de 24 udsagne nedenfor giver dig mulighed for at komme med dine erfaringer med dette modul.
+Hver af de 24 udsagn nedenfor giver dig mulighed for at komme med dine erfaringer med dette modul.
 
 Der er ingen \'rigtige\' eller \'forkerte\' svar; vi er interesserede i din mening. Dine svar vil blive behandlet fortroligt og , vil ikke have indflydelse på bedømmelsen af dig.
 
@@ -132,7 +132,7 @@ På forhånd tak.';
 $string['collesaname'] = 'COLLES (Aktuelle)';
 $string['collesapintro'] = 'Formålet med disse spørgsmål er, at vi gerne vil undersøge, hvor meget du har lært ved at følge dette online modul. 
 
-Hver af de 24 udsagn nedenfor vil få dig til at sammneligne <b>foretrukne</b> (ideelle) og <b>aktuelle</b> oplevelse i dette modul.
+Hver af de 24 udsagn nedenfor vil få dig til at sammenligne <b>foretrukne</b> (ideelle) og <b>aktuelle</b> oplevelse i dette modul.
 
 Der er ingen \'rigtige\' eller \'forkerte\' svar; vi er interesserede i din mening. Dine svar vil blive behandlet fortroligt og , vil ikke have indflydelse på bedømmelsen af dig.
 
