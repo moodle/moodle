@@ -288,26 +288,29 @@
 
             $tablewidth = (int) (100.0 / count($useranswer));
 
-            echo "<table cellpadding=\"5\" cellspacing=\"10\" align=\"center\">";
+            echo "<table cellpadding=\"5\" cellspacing=\"10\" align=\"center\" class=\"results names\">";
             echo "<tr>";
+            $count = 0;
             foreach ($useranswer as $optionid => $userlist) {
                 if ($optionid) {
-                    echo "<th class=\"col$optionid\" width=\"$tablewidth%\">";
+                    echo "<th class=\"col$count header\" width=\"$tablewidth%\">";
                 } else if ($choice->showunanswered) {
-                    echo "<th class=\"col$optionid\" width=\"$tablewidth%\">";
+                    echo "<th class=\"col$count header\" width=\"$tablewidth%\">";
                 } else {
                     continue;
                 }
                 echo format_string(choice_get_option_text($choice, $optionid));
                 echo "</th>";
+                $count++;
             }
             echo "</tr><tr>";
 
+            $count = 0;
             foreach ($useranswer as $optionid => $userlist) {
                 if ($optionid) {
-                    echo "<td class=\"col$optionid\" width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\">";
+                    echo "<td class=\"col$count data\" width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\">";
                 } else if ($choice->showunanswered) {
-                    echo "<td class=\"col$optionid\" width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\">";
+                    echo "<td class=\"col$count data\" width=\"$tablewidth%\" valign=\"top\" nowrap=\"nowrap\">";
                 } else {
                     continue;
                 }
@@ -315,29 +318,26 @@
                 echo "<table width=\"100%\">";
                 foreach ($userlist as $user) {
                     if (!($optionid==0 && isadmin($user->id)) && !($optionid==0 && isteacher($course->id, $user->id) && !(isteacheredit($course->id, $user->id)) )  ) { //make sure admins and hidden teachers are not shown in not answered yet column.
-                        echo "<tr><td width=\"10\" nowrap=\"nowrap\">";
+                        echo "<tr><td width=\"10\" nowrap=\"nowrap\" class=\"picture\">";
                         print_user_picture($user->id, $course->id, $user->picture);
-                        echo "</td><td width=\"100%\" nowrap=\"nowrap\">";
+                        echo "</td><td width=\"100%\" nowrap=\"nowrap\" class=\"fullname\">";
                         echo fullname($user, $isteacher);
                         echo "</td></tr>";
                     }
                 }
+                $count++;
                 echo "</table>";
 
                 echo "</td>";
             }
             echo "</tr><tr>";
+            $count = 0;
             foreach ($useranswer as $optionid => $userlist) {
                 if (!$optionid and !$choice->showunanswered) {
                     continue;
                 }
-                echo "<td align=\"center\">";
-                $countanswers = get_records("choice_answers", "optionid", $optionid);
-                    if ($countanswers) {
-                        $countanswers = count($countanswers);
-                    } else {
-                        $countanswers = 0;
-                    }
+                echo "<td align=\"center\" class=\"count\">";
+                $countanswers = count_records("choice_answers", "optionid", $optionid);
                 if ($choice->limitanswers && !$optionid==0) {
                     echo get_string("taken", "choice").":";
                     echo $countanswers;
@@ -345,8 +345,9 @@
                     echo get_string("limit", "choice").":";
                     $choice_option = get_record("choice_options", "id", $optionid);
                     echo $choice_option->maxanswers;
-                    echo "</td>";
                 }
+                echo "</td>";
+                $count++;
             }
             
             
@@ -359,18 +360,20 @@
           case CHOICE_PUBLISH_ANONYMOUS:
             $tablewidth = (int) (100.0 / count($useranswer));
 
-            echo "<table cellpadding=\"5\" cellspacing=\"10\" align=\"center\">";
+            echo "<table cellpadding=\"5\" cellspacing=\"10\" align=\"center\" class=\"results anonymous\">";
             echo "<tr>";
+            $count = 0;
             foreach ($useranswer as $optionid => $userlist) {
                 if ($optionid) {
-                    echo "<th width=\"$tablewidth%\">";
+                    echo "<th width=\"$tablewidth%\" class=\"col$count header\">";
                 } else if ($choice->showunanswered) {
-                    echo "<th width=\"$tablewidth%\">";
+                    echo "<th width=\"$tablewidth%\" class=\"col$count header\">";
                 } else {
                     continue;
                 }
                 echo format_string(choice_get_option_text($choice, $optionid));
                 echo "</th>";
+                $count++;
             }
             echo "</tr><tr>";
 
@@ -391,6 +394,7 @@
             }
 
             echo "</tr><tr>";
+            $count = 0;
             foreach ($useranswer as $optionid => $userlist) {
                 if (!$optionid and !$choice->showunanswered) {
                     continue;
@@ -399,18 +403,20 @@
                 if ($maxcolumn) {
                     $height = $COLUMN_HEIGHT * ((float)$column[$optionid] / (float)$maxcolumn);
                 }
-                echo "<td valign=\"bottom\" align=\"center\">";
+                echo "<td valign=\"bottom\" align=\"center\" class=\"col$count data\">";
                 echo "<img src=\"column.png\" height=\"$height\" width=\"49\" alt=\"\" />";
                 echo "</td>";
+                $count++;
             }
             echo "</tr>";
 
             echo "<tr>";
+            $count = 0;
             foreach ($useranswer as $optionid => $userlist) {
                 if (!$optionid and !$choice->showunanswered) {
                     continue;
                 }
-                echo "<td align=\"center\">";
+                echo "<td align=\"center\" class=\"col$count count\">";
                 if ($choice->limitanswers && !$optionid==0) {
                     echo get_string("taken", "choice").":";
                     echo $column[$optionid];
@@ -418,10 +424,11 @@
                     echo get_string("limit", "choice").":";
                     $choice_option = get_record("choice_options", "id", $optionid);
                     echo $choice_option->maxanswers;
-                    echo "</td>";
                 } else {
                     echo $column[$optionid];
                 }
+                echo "</td>";
+                $count++;
             }
             echo "</tr></table>";
 
