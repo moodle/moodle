@@ -32,7 +32,7 @@ $string['enrol_ldap_teacher_memberattribute'] = 'Medlems felt, når en bruger til
 $string['enrol_ldap_teacher_settings'] = 'Indstillinger for tilmelding af lærere';
 $string['enrol_ldap_template'] = 'Valgfrit: Automatisk oprettede kurser kan kopiere deres indstillinger fra et \'skabelon\' kursus.';
 $string['enrol_ldap_updatelocal'] = 'Opdater lokale data';
-$string['enrol_ldap_version'] = 'Versionen af LDAP protokollen som din server bruger.';
+$string['enrol_ldap_version'] = 'Versionen af LDAP-protokollen som din server bruger.';
 $string['enrolname'] = 'LDAP';
 
 ?>
