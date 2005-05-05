@@ -2,50 +2,50 @@
       // install.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
 
 
-$string['admindirerror'] = 'Det angivede admin biblioteket er forkert';
+$string['admindirerror'] = 'Det angivende admin biblioteket er forkert';
 $string['admindirname'] = 'Adminbibliotek';
-$string['admindirsetting'] = 'Nogle få webhoteller bruger /admin som en speciel URL til at administrere webhotellet. Det er et problem da moodle også bruger /admin som standard til administrationssiderne. Hvis det er så kan du omdøbe adminbiblioteket og så angive den nye sti til admin biblioteket her. For eksempel: <br/> <br /><b>moodleadmin</b><br /> <br />
-Dette vil rette admin linksene i moodle.';
+$string['admindirsetting'] = 'Nogle få web-hoteller bruger /admin som en speciel URL til at administrere web-hotellet. Det er et problem da moodle også bruger /admin som standard til administrationssiderne. Hvis det er så kan du omdøbe adminbiblioteket og så angive den nye sti til admin biblioteket her. For eksempel: <br/> <br /><b>moodleadmin</b><br /> <br />
+Dette vil rette admin linkene i moodle.';
 $string['caution'] = 'Pas på';
 $string['chooselanguage'] = 'Vælg et sprog';
 $string['compatibilitysettings'] = 'Kontrollere dine PHP indstillinger';
-$string['configfilenotwritten'] = 'Installationsscriptet var ikke i stand til at oprette config.php filen der indeholder de valgte indstillinger, sansynligvis fordi den bruger hvis apache(PHP) kører med (apache, nobody ell) ikke har rettigheder til til at skrive til moodlebiblioteket. Du manuelt kopiere den følgene kode ind i en fil med navnet \"config.php\" i roden af moodlebiblioteket.';
+$string['configfilenotwritten'] = 'Installationsscriptet var ikke i stand til at oprette config.php filen der indeholder de valgte indstillinger, sandsynligvis fordi den bruger hvis apache(PHP) kører med (apache, nobody ell) ikke har rettigheder til at skrive til moodlebiblioteket. Du kan manuelt kopiere den følgende kode ind i en fil med navnet \"config.php\" i roden af moodle-biblioteket.';
 $string['configfilewritten'] = 'config.php er blevet oprettet';
 $string['configurationcomplete'] = 'Konfigurationen er færdig.';
 $string['database'] = 'Database';
-$string['databasesettings'] = 'Du skal nu konfigurere databasen hvor det meste af moodles data vil blive gemt. Databaseserveren skal allerede være oprettet og du skal bruge brugernavn og password til en brugerkonto der har rettigheder til at oprette og hente data.<br/>
+$string['databasesettings'] = 'Du skal nu konfigurere databasen hvor det meste af moodle\'s data vil blive gemt. Databaseserveren skal allerede være oprettet og du skal bruge brugernavn og password til en brugerkonto der har rettigheder til at oprette og hente data.<br/>
 <br /> <br />
 <b>Type:</b> mysql eller postgres7<br />
 <b>Vært:</b> f.eks. localhost eller db.isp.com<br />
 <b>Database:</b> database navn, f.eks. moodle<br />
 <b>Bruger:</b> Brugernavnet til databasen<br />
 <b>Password:</b> Password til databasebrugeren<br />
-<b>Tabel Prefix:</b> Valgfrit fornavn der bliver sat foran alle tabelnavne hvis der er flere systemer der skal bruge samme database.';
+<b>Tabel Præfix:</b> Valgfrit fornavn der bliver sat foran alle tabelnavne hvis der er flere systemer der skal bruge samme database.';
 $string['dataroot'] = 'DataBibliotek';
 $string['datarooterror'] = 'DataBiblioteket du specificerede kan ikke findes eller oprettes. Ret stien til biblioteket eller opret det manuelt.';
-$string['dbconnectionerror'] = 'Den angive database kunne ikke kontaktes. Kontroller eller ret venlist databaseinformationerne.';
+$string['dbconnectionerror'] = 'Den angive database kunne ikke kontaktes. Kontroller eller ret venligst databaseinformationerne.';
 $string['dbcreationerror'] = 'Fejl ved oprettelse af databasen. Kan ikke oprette den givne database med de angivne indstillinger.';
 $string['dbhost'] = 'Værts Server';
 $string['dbpass'] = 'Password';
-$string['dbprefix'] = 'prefix for tabeller';
+$string['dbprefix'] = 'præfix for tabeller';
 $string['dbtype'] = 'Type';
-$string['directorysettings'] = '<p>Kontroller venlist installationsplaceringen af moodle.</p>
+$string['directorysettings'] = '<p>Kontroller venligst installationsplaceringen af moodle.</p>
 
 <p><b>Web adresse:<b>
-Angiv den fulde webadresse (URL) hvor moodle kan findes. Hvis sitet kan tilgås fra flere URL\'er så vælg den mest naturlige, den som de studerende oftest vil bruge. Der skal ikke være en skråstreg til sidst.</p>
+Angiv den fulde web-adresse (URL) hvor moodle kan findes. Hvis sitet kan tilgås fra flere URL\'er så vælg den mest naturlige, den som de studerende oftest vil bruge. Der skal ikke være en skråstreg til sidst.</p>
 
 <p><b>Moodle bibliotek:</b>
-Angiv den fulde bibliotekssti til moodleinstallationen. Stien er casesensitiv.</p>
+Angiv den fulde bibliotekssti til moodle-installationen. Stien er casesensitiv.</p>
 
 <p><b>Moodle Databibliotek</b>
-Det bibliotek hvor moodle kan gemme uploadede filer. Dette bibliotek skal være læsbar OG SKRIVBAR af den bruger apache kører under, ¨(typisk \'nobody\' eller \'apache\') men det bør ikke være adgang til det direkte fra webserveren.</p>';
+Det bibliotek hvor moodle kan gemme uploadede filer. Dette bibliotek skal være læsbar OG SKRIVBAR af den bruger apache kører under, ¨(typisk \'nobody\' eller \'apache\') men der bør ikke være direkte adgang til det fra webserveren.</p>';
 $string['dirroot'] = 'Moodle bibliotek';
-$string['dirrooterror'] = 'Det angivne moodlebibliotek lader ikke til at være rigtigt - der kan ikke findes en Moodleinstallation. Den nedestående værdi er blevet fjernet.';
+$string['dirrooterror'] = 'Det angivne moodle-bibliotek lader ikke til at være rigtigt - der kan ikke findes en Moodle-installation. Den nedenstående værdi er blevet fjernet.';
 $string['download'] = 'Download';
 $string['fail'] = 'Mislykkedes';
-$string['fileuploads'] = 'File uploads';
+$string['fileuploads'] = 'Fil uploads';
 $string['fileuploadserror'] = 'Denne skulle være aktiveret';
-$string['fileuploadshelp'] = '<p>Filupload lader til at være slået fra på din server.</p>
+$string['fileuploadshelp'] = '<p>Fil-upload lader til at være slået fra på din server.</p>
 
 <p>Moodle kan stadig installeres, men uden uploade kursusfiler og profilbilleder.</p>
 
@@ -66,10 +66,10 @@ $string['magicquotesruntimehelp'] = '<p>\'Magic quotes runtime\' bør slås fra fo
 
 <p>Normalt er denne indstilling slået fra som standard. Den slås til og fra vha. indstillingen <b>\'magic_quotes_runtime\'</b> i din php.ini fil.</p>
 
-<p>Hvis du ikke har adgang til webserverens php.ini fil kan du evt lave en tekstfil, kalde den .htaccess og gemme den i moodlebiblioteket. Den skal indholde linjen. <blockquote>php_value magic_quotes_runtime Off</blockquote>
+<p>Hvis du ikke har adgang til webserverens php.ini fil kan du evt. lave en tekstfil, kalde den .htaccess og gemme den i moodlebiblioteket. Den skal indholde linjen. <blockquote>php_value magic_quotes_runtime Off</blockquote>
 </p> ';
 $string['memorylimit'] = 'Hukommelses begrænsning';
-$string['memorylimiterror'] = 'Den tilgængelige hukommelse til PHP er ret lav... Det kan værer at der opstår problemer senere.';
+$string['memorylimiterror'] = 'Den tilgængelige hukommelse til PHP er ret lav... Det kan være at der opstår problemer senere.';
 $string['memorylimithelp'] = '<p>Mængden af hukommelse som PHP kan bruge er sat til $a.</p>
 
 <p>Dette kan forårsage at der opstår problemer senere, især hvis du har mange moduler installeret eller mange brugere.</p>
