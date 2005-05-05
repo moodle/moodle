@@ -10,6 +10,7 @@ $string['assignstudentsnote'] = 'Note: it may not be necessary to use this page,
 $string['assignstudentspass'] = 'All you may need to do is notify your students of the enrollment key for this course, which is currently set to: \'$a\'';
 $string['backupmetacoursehelp'] = 'If enabled, then metacourse info (inherited enrollments) will be included in automated backups';
 $string['chooseenrolmethod'] = 'Primary method of enrollment';
+$string['enrolme'] = 'Enroll me in this course';
 $string['enrolmentkey'] = 'Enrollment key';
 $string['enrolmentkeyfrom'] = 'This course requires an \'enrollment key\' - a one-time<br />
 password that you should have received from $a';
