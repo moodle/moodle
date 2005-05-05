@@ -62,7 +62,7 @@ class block_admin extends block_list {
                 $this->content->items[] = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/'.$CFG->dbtype.'/frame.php">'.get_string('managedatabase').'</a>';
                 $this->content->icons[] = '<img src="'.$CFG->pixpath.'/i/db.gif" height="16" width="16" alt="" />';
             }
-            $this->content->footer = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/">'.get_string('admin').'</a>';
+            $this->content->footer = '<a href="'.$CFG->wwwroot.'/'.$CFG->admin.'/">'.get_string('admin').'...</a>';
         }
     }
 
