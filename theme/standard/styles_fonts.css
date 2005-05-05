@@ -428,13 +428,25 @@ body#doc-contents ul {
  *** Modules: Assignment
  ***/
 
+#mod-assignment-index .cell {
+  font-size:0.8em;
+}
+
 /***
  *** Modules: Chat
  ***/
 
+#mod-chat-index .cell {
+  font-size:0.8em;
+}
+
 /***
  *** Modules: Choice
  ***/
+
+#mod-choice-index .cell {
+  font-size:0.8em;
+}
   
 /***
  *** Modules: Forum
@@ -460,7 +472,7 @@ body#mod-forum-search .introcontent {
   font-weight:bold;
 }
 body#mod-forum-index .generalbox .cell {
-  font-size: 0.85em;
+  font-size: 0.80em;
 }
 
 
@@ -494,6 +506,9 @@ body#mod-forum-index .generalbox .cell {
   font-size: 0.8em;
 }
 
+#mod-glossary-index .cell {
+  font-size:0.8em;
+}
 
 
 /***
@@ -516,6 +531,10 @@ body#mod-forum-index .generalbox .cell {
   font-style: italic;
 }
 
+#mod-journal-index .cell {
+  font-size:0.8em;
+}
+
 /***
  *** Modules: Label
  ***/
@@ -524,12 +543,20 @@ body#mod-forum-index .generalbox .cell {
  *** Modules: Lesson
  ***/
 
+#mod-lesson-index .cell {
+  font-size:0.8em;
+}
+
 /***
  *** Modules: Quiz
  ***/
 
 .editorhelptext {
   font-size:0.7em;
+}
+
+#mod-quiz-index .cell {
+  font-size:0.8em;
 }
 
 
@@ -546,15 +573,31 @@ body#mod-forum-index .generalbox .cell {
  *** Modules: Scorm
  ***/
 
+#mod-scorm-index .cell {
+  font-size:0.8em;
+}
+
 /***
  *** Modules: Survey
  ***/
+
+#mod-survey-index .cell {
+  font-size:0.8em;
+}
 
 /***
  *** Modules: Wiki
  ***/
 
+#mod-wiki-index .cell {
+  font-size:0.8em;
+}
+
 /***
  *** Modules: Workshop
  ***/
+
+#mod-workshop-index .cell {
+  font-size:0.8em;
+}
 
