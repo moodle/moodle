@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005042400)
+      // moodle.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['action'] = '操作';
@@ -583,6 +583,7 @@ $string['livelogs'] = 'リアルタイムログの表示';
 $string['locale'] = 'ja_JP.utf8';
 $string['location'] = 'ロケーション';
 $string['loggedinas'] = 'ログイン名 $a ';
+$string['loggedinasguest'] = '現在ゲストとしてログインしています。';
 $string['loggedinnot'] = 'ログインしていません。';
 $string['login'] = 'ログイン';
 $string['login_failure_logs'] = 'ログイン失敗ログ';
