@@ -11,6 +11,9 @@
    if (!isset($user->theme)) {
        $user->theme = '';
    }
+   if (!isset($user->trackforums)) {
+       $user->trackforums = 0;
+   }
 
 ?>
 
@@ -43,8 +46,9 @@ if (isadmin()) {
     } 
     if (!$adminself) {    /// Main admin is ALWAYS default manual
         echo '<tr>';
-        echo '<th>'.get_string("chooseauthmethod","auth").'</th>' . "\n<td>";
-        choose_from_menu ($auth_options, "auth", $user->auth);
+        echo '<th>'.get_string("chooseauthmethod","auth").':</th>' . "\n<td>";
+        choose_from_menu ($auth_options, 'auth', $user->auth);
+        helpbutton('authchange', get_string('chooseauthmethod', 'auth'));
         echo "</td></tr>\n";
     }
 
@@ -153,8 +157,8 @@ if (isadmin()) {
     <th><?php print_string("trackforums") ?>:</th>
     <td><?php
     unset($choices);
-    $choices["1"] = get_string("trackforumsyes");
     $choices["0"] = get_string("trackforumsno");
+    $choices["1"] = get_string("trackforumsyes");
     choose_from_menu ($choices, "trackforums", $user->trackforums, "") ?>
     </td>
 </tr>
