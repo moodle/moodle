@@ -4160,13 +4160,13 @@ class tabobject {
 
     /// a method to look after the messy business of setting up a tab cell
     /// with all the appropriate classes and things
-    function createtab ($selected=false, $inactive=false, $last=false) {
+    function createtab ($selected=false, $inactive=false, $activetwo=false, $last=false) {
         $str  = '';
         $astr = '';
         $cstr = '';
 
     /// The text and anchor for this tab
-        if ($inactive) {
+        if ($inactive || $activetwo) {
             $astr .= $this->text;
         } else {
             $astr .= '<a href="'.$this->link.'" title="'.$this->text.'">'.$this->text.'</a>';
@@ -4179,6 +4179,11 @@ class tabobject {
     /// Set the class for inactive cells
         if ($inactive) {
             $cstr .= ' inactive';
+            
+        /// Set the class for active cells in the second row
+            if ($activetwo) {
+                $cstr .= ' activetwo';
+            }
 
     /// Set the class for the selected cell
         } else if ($selected) {
@@ -4220,7 +4225,7 @@ class tabobject {
  * @param string $selected  The id of the selected tab
  * @param array $inactive  Ids of inactive tabs
 **/
-function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $return=false) {
+function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $activetwo=NULL, $return=false) {
     global $CFG;
 
 /// Bring the row with the selected tab to the front
@@ -4248,6 +4253,11 @@ function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $return=false) {
     if (!is_array($inactive)) {
         $inactive = array();
     }
+    
+/// $activetwo must be an array
+    if (!is_array($activetwo)) {
+        $activetwo = array();
+    }
 
 /// A table to encapsulate the tabs
     $str = '<table class="tabs" cellspacing="0">';
@@ -4272,9 +4282,7 @@ function print_tabs($tabrows, $selected=NULL, $inactive=NULL, $return=false) {
         foreach ($row as $tab) {
             $currenttab++;
 
-            $str .= $tab->createtab( ($selected == $tab->id),
-                                     (in_array($tab->id, $inactive)),
-                                     ($currenttab == $numberoftabs) );
+            $str .= $tab->createtab( ($selected == $tab->id), (in_array($tab->id, $inactive)), (in_array($tab->id, $activetwo)), ($currenttab == $numberoftabs) );
         }
 
         $str .= '</tr>';
