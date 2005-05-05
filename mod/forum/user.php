@@ -61,7 +61,8 @@
             $extrasql = 'AND p.parent = 0';
             break;
     }
-
+    
+    echo '<div class="user-content">';
     if ($posts = forum_search_posts($searchterms, $course->id, $page*$perpage, $perpage, 
                                     $totalcount, $groupid, $extrasql)) {
         print_paging_bar($totalcount, $page, $perpage, 
@@ -103,6 +104,7 @@
     } else {
         print_heading(get_string('noposts', 'forum'));
     }
+    echo '</div>';
     print_footer($course);
 
 ?>

@@ -12,6 +12,7 @@
 //if (!empty($USER) and (isteacher($course->id) or (($USER->id == $user->id) and !isguest()))) { // tabs are shown
 
     $inactive = NULL;
+    $activetwo = NULL;
     $toprow = array();
 
     $toprow[] = new tabobject('profile', $CFG->wwwroot.'/user/view.php?id='.$user->id.'&amp;course='.$course->id, 
@@ -44,6 +45,7 @@
 
     if (in_array($currenttab, array('posts', 'discussions'))) {
         $inactive = array('forumposts');
+        $activetwo = array('forumposts');
 
         $secondrow = array();
         $secondrow[] = new tabobject('posts', $CFG->wwwroot.'/mod/forum/user.php?course='.$course->id.
@@ -61,6 +63,7 @@
 
         if (in_array($currenttab, array('outline', 'complete', 'todaylogs', 'alllogs'))) {
             $inactive = array('reports');
+            $activetwo = array('reports');
 
             $secondrow = array();
             $secondrow[] = new tabobject('outline', $CFG->wwwroot.'/course/user.php?id='.$course->id.
@@ -87,6 +90,6 @@
 
 /// Print out the tabs and continue!
 
-    print_tabs($tabs, $currenttab, $inactive);
+    print_tabs($tabs, $currenttab, $inactive, $activetwo);
 
 ?>
