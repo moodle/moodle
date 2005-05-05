@@ -537,6 +537,11 @@ body#mod-forum-index .generalbox .cell {
  *** Modules: Resource
  ***/
 
+#mod-resource-index .cell {
+  font-size:0.8em;
+}
+
+
 /***
  *** Modules: Scorm
  ***/
