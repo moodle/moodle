@@ -2520,7 +2520,7 @@ function print_group_picture($group, $courseid, $large=false, $returnstring=fals
     }
 
     if ($link or $isteacheredit) {
-        $output = '<a href="'. $CFG->wwwroot .'/course/group.php?id='. $courseid .'&amp;group='. $group->id .'">';
+        $output = '<a href="'. $CFG->wwwroot .'/user/index.php?id='. $courseid .'&amp;group='. $group->id .'">';
     } else {
         $output = '';
     }
