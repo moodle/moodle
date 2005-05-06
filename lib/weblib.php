@@ -3704,6 +3704,7 @@ function redirect($url, $message='', $delay='0') {
         echo '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />';
         echo '<script type="text/javascript">'. "\n" .'<!--'. "\n". "location.replace('$url');". "\n". '//-->'. "\n". '</script>';   // To cope with Mozilla bug
     } else {
+        
         if (empty($delay)) {
             $delay = 3;  // There's no point having a message with no delay
         }
@@ -3712,9 +3713,19 @@ function redirect($url, $message='', $delay='0') {
         echo '<p>'. $message .'</p>';
         echo '<p>( <a href="'. $encodedurl .'">'. get_string('continue') .'</a> )</p>';
         echo '</center>';
-        flush();
-        sleep($delay);
-        echo '<script type="text/javascript">'."\n".'<!--'."\nlocation.replace('$url');\n".'//-->'."\n".'</script>';   // To cope with Mozilla bug
+
+?>
+<script type="text/javascript">
+<!--
+
+  function redirect() {
+      document.location.replace('<?php echo $url ?>');
+  }
+  setTimeout("redirect()", <?php echo ($delay * 1000) ?>);
+-->
+</script>
+<?php
+
     }
     die;
 }
