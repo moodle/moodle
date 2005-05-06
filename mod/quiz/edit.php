@@ -82,7 +82,7 @@
     } else {
         // no quiz or course was specified so we need to use the stored modform
         if (!isset($SESSION->modform)) {
-            error(get_string('wronguse', 'quiz'), '../../course/view.php?id='.$course->id);
+            error(get_string('wronguse', 'quiz'));
         }
         $modform = $SESSION->modform;
     }
