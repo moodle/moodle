@@ -13,25 +13,24 @@
 
 class quiz_shortanswer_qtype extends quiz_default_questiontype {
 
-    function get_answers($question, $addedcondition='') {
-        // The added condition is one addition that has been added
-        // to the behaviour of this question type in order to make
-        // it embeddable within a multianswer (embedded cloze) question
-
-        global $CFG;
-
-        // There can be multiple answers
-        return get_records_sql("SELECT a.*, sa.usecase
-                                FROM {$CFG->prefix}quiz_shortanswer sa,
-                                     {$CFG->prefix}quiz_answers a
-                                WHERE sa.question = '$question->id'
-                                  AND sa.question = a.question "
-                                      . $addedcondition);
-
-    }
-
     function name() {
         return 'shortanswer';
+    }
+
+    function get_question_options(&$question) {
+        // Get additional information from database
+        // and attach it to the question object
+        if (!$question->options = get_record('quiz_shortanswer', 'question', $question->id)) {
+            notify('Error: Missing question options!');
+            return false;
+        }
+
+        if (!$question->options->answers = get_records('quiz_answers', 'question',
+         $question->id)) {
+           notify('Error: Missing question answers!');
+           return false;
+        }
+        return true;
     }
 
     function save_question_options($question) {
@@ -100,9 +99,13 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
         }
     }
 
-    function print_question_formulation_and_controls($question,
-            $quiz, $readonly, $answers, $correctanswers, $nameprefix) {
+    function print_question_formulation_and_controls(&$question, &$state, $quiz, $options) {
     /// This implementation is also used by question type NUMERICAL
+
+        $answers = &$question->options->answers;
+        $correctanswers = $this->get_correct_responses($question, $state);
+        $readonly = empty($options->readonly) ? '' : 'disabled="disabled"';
+        $nameprefix = $question->name_prefix;
 
         /// Print question text and media
 
@@ -114,84 +117,106 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
         /// Print input controls
 
         $stranswer = get_string("answer", "quiz");
-        if (isset($question->response[$nameprefix])) {
-            $value = ' value="'.htmlSpecialChars($question->response[$nameprefix]).'" ';
+        if (isset($state->responses[''])) {
+            $value = ' value="'.htmlSpecialChars($state->responses['']).'" ';
         } else {
             $value = ' value="" ';
         }
         $inputname = ' name="'.$nameprefix.'" ';
         echo "<p align=\"right\">$stranswer: <input type=\"text\" $readonly $inputname size=\"80\" $value /></p>";
 
-        if ($quiz->feedback && isset($answers[$nameprefix])
-                && $feedback = $answers[$nameprefix]->feedback) {
-           quiz_print_comment($feedback);
+        if ($options->feedback) {
+            $testedstate = clone($state);
+            $teststate   = clone($state);
+            foreach($answers as $answer) {
+                $teststate->responses[''] = trim($answer->answer);
+                if($this->compare_responses($question, $testedstate, $teststate)) {
+                    quiz_print_comment($answer->feedback);
+                    break;
+                }
+            }
         }
-        if ($readonly && $quiz->correctanswers) {
+
+        if ($options->readonly && $options->correct_responses) {
             $delimiter = '';
             $correct = '';
-            foreach ($correctanswers as $correctanswer) {
-                $correct .= $delimiter.$correctanswer->answer;
-                $delimiter = ', ';
+            if ($correctanswers) {
+                foreach ($correctanswers as $correctanswer) {
+                    $correct .= $delimiter.$correctanswer;
+                    $delimiter = ', ';
+                }
             }
             quiz_print_correctanswer($correct);
         }
     }
 
-    function grade_response($question, $nameprefix, $addedanswercondition='') {
+    function grade_responses(&$question, &$state, $quiz) {
+        $answers     = &$question->options->answers;
+        $testedstate = clone($state);
+        $teststate   = clone($state);
 
-        if (isset($question->response[$nameprefix])) {
-            $response0 = trim(stripslashes($question->response[$nameprefix]));
-        } else {
-            $response0 = '';
-        }
-        $answers = $this->get_answers($question, $addedanswercondition);
-
-        /// Determine ->answers[]
-        $result->answers = array();
-        if ('' !== $response0) {
-
-            /// These are things to protect in the strings when wildcards are used
-            $search = array('\\', '+', '(', ')', '[', ']', '-');
-            $replace = array('\\\\', '\+', '\(', '\)', '\[', '\]', '\-');
-
-            foreach ($answers as $answer) {
-
-                $answer->answer = trim($answer->answer);  // Just in case
-
-                if (empty($result->answers) || $answer->fraction
-                        > $result->answers[$nameprefix]->fraction) {
-
-                    if (!$answer->usecase) { // Don't compare case
-                        $response0 = strtolower($response0);
-                        $answer0 = strtolower($answer->answer);
-                    } else {
-                        $answer0 = $answer->answer;
-                    }
-
-                    if (strpos(' '.$answer0, '*')) {
-                        $answer0 = str_replace('\*','@@@@@@',$answer0);
-                        $answer0 = str_replace('*','.*',$answer0);
-                        $answer0 = str_replace($search, $replace, $answer0);
-                        $answer0 = str_replace('@@@@@@', '\*',$answer0);
-
-                        if (ereg('^'.$answer0.'$', $response0)) {
-                            $result->answers[$nameprefix] = $answer;
-                        }
-
-                    } else if ($answer0 == $response0) {
-                        $result->answers[$nameprefix] = $answer;
-                    }
+        foreach($answers as $answer) {
+            $teststate->responses[''] = trim($answer->answer);
+            if($this->compare_responses($question, $testedstate, $teststate)) {
+                if (empty($state->raw_grade) && $state->raw_grade < $answer->fraction) {
+                    $state->raw_grade = $answer->fraction;
                 }
             }
         }
+        if (empty($state->raw_grade)) {
+            $state->raw_grade = 0;
+        }
 
+        // Make sure we don't assign negative or too high marks
+        $state->raw_grade = min(max((float) $state->raw_grade,
+                            0.0), 1.0) * $question->maxgrade;
+        $state->penalty = $question->penalty;
+        // Only allow one attempt at the question
+        // $state->event = QUIZ_EVENTCLOSE;
+        return true;
+    }
 
-        $result->grade = isset($result->answers[$nameprefix])
-                ?   $result->answers[$nameprefix]->fraction
-                :   0.0;
-        $result->correctanswers = quiz_extract_correctanswers($answers,
-                                                              $nameprefix);
-        return $result;
+    function compare_responses(&$question, &$state, &$teststate) {
+        if (isset($state->responses[''])) {
+            $response0 = trim(stripslashes($state->responses['']));
+        } else {
+            $response0 = '';
+        }
+
+        if (isset($teststate->responses[''])) {
+            $response1 = trim(stripslashes($teststate->responses['']));
+        } else {
+            $response1 = '';
+        }
+
+        if (!$question->options->usecase) { // Don't compare case
+            $response0 = strtolower($response0);
+            $response1 = strtolower($response1);
+        }
+
+        /// These are things to protect in the strings when wildcards are used
+        $search = array('\\', '+', '(', ')', '[', ']', '-');
+        $replace = array('\\\\', '\+', '\(', '\)', '\[', '\]', '\-');
+
+        if (strpos(' '.$response1, '*')) {
+            $answer0 = str_replace('\*','@@@@@@',$response1);
+            $answer0 = str_replace('*','.*',$response1);
+            $answer0 = str_replace($search, $replace, $response1);
+            $answer0 = str_replace('@@@@@@', '\*',$response1);
+
+            if (ereg('^'.$response1.'$', $response0)) {
+                return true;
+            }
+
+        } else if ($response1 == $response0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    function print_question_grading_details(&$question, &$state, $quiz, $options) {
+        // do nothing
     }
 }
 //// END OF CLASS ////

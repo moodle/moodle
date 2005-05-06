@@ -1,5 +1,61 @@
 <?php
     require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+
+    if (!isset($form->timeopen)) {
+        $form->timeopen = "";
+    }
+    if (!isset($form->timeclose)) {
+        $form->timeclose = "";
+    }
+    if (!isset($form->attempts)) {
+        $form->attempts = $CFG->quiz_attempts;
+    }
+    if (!isset($form->attemptonlast)) {
+        $form->attemptonlast = $CFG->quiz_attemptonlast;
+    }
+    if (!isset($form->grademethod)) {
+        $form->grademethod = $CFG->quiz_grademethod;
+    }
+    if (!isset($form->decimalpoints)) {
+        $form->decimalpoints = $CFG->quiz_decimalpoints;
+    }
+    if (!isset($form->review)) {
+        $form->review = $CFG->quiz_review;
+    }
+    if (!isset($form->questionsperpage)) {
+        $form->questionsperpage = $CFG->quiz_questionsperpage;
+    }
+    if (!isset($form->shufflequestions)) {
+        $form->shufflequestions = $CFG->quiz_shufflequestions;
+    }
+    if (!isset($form->shuffleanswers)) {
+        $form->shuffleanswers = $CFG->quiz_shuffleanswers;
+    }
+    if (!isset($form->grade)) {
+        $form->grade = $CFG->quiz_maximumgrade;
+    }
+    if (!isset($form->questions)) {
+        $form->questions = "";
+    }
+    if (!isset($form->password)) {
+        $form->password = $CFG->quiz_password;
+    }
+    if (!isset($form->subnet)) {
+        $form->subnet = $CFG->quiz_subnet;
+    }
+    if (!isset($form->timelimit)) {
+        $form->timelimit = $CFG->quiz_timelimit;
+    }
+    if (!isset($form->popup)) {
+        $form->popup = $CFG->quiz_popup;
+    }
+    if (!isset($form->optionflags)) {
+        $form->optionflags = $CFG->quiz_optionflags;
+    }
+    if (!isset($form->penaltyscheme)) {
+        $form->penaltyscheme = $CFG->quiz_penaltyscheme;
+    }
+
 ?>
 <form method="post" action="module.php" name="form">
 <input type="hidden" name="sesskey" value="<?php echo $USER->sesskey ?>">
@@ -75,6 +131,26 @@
 
 <!-- Table of default values -->
 
+<?php
+    // the following are used for drop-down menus
+
+    $yesnooptions = array();
+    $yesnooptions[0] = get_string("no");
+    $yesnooptions[1] = get_string("yes");
+
+    $attemptoptions = array();
+    $attemptoptions[0] = get_string("attemptsunlimited", "quiz");
+    $attemptoptions[1] = "1 ".strtolower(get_string("attempt", "quiz"));
+    for ($i=2;$i<=6;$i++) {
+        $attemptoptions[$i] = "$i ".strtolower(get_string("attempts", "quiz"));
+    }
+
+    $penaltyoptions = array();
+    $penaltyoptions[QUIZ_PENALTYNONE] = get_string('penaltynone', 'quiz');
+    $penaltyoptions[QUIZ_PENALTYMULTIPLY] = get_string('penaltymultiply', 'quiz');
+    $penaltyoptions[QUIZ_PENALTYSUBTRACT] = get_string('penaltysubtract', 'quiz');
+?>
+
 <table cellpadding="9" cellspacing="0" align="center">
 
 <tr valign="top">
@@ -85,19 +161,19 @@
   <th align="center">
     <?php print_string('advancedsettings'); helpbutton("advancedsettings"); ?>
   </th>
-</tr>    
+</tr>
 
 <tr valign="top">
   <td align="right"><b><?php print_string("timelimit", "quiz") ?>:</b></td>
   <td>
-    <?php 
-      print_timer_selector($CFG->quiz_timelimit, get_string("minutes","quiz"), 'quiz_timelimit');
+    <?php
+      print_timer_selector($form->timelimit, get_string("minutes","quiz"), 'timelimit');
       helpbutton("timelimit", get_string("quiztimer","quiz"), "quiz");
     ?>
   </td>
   <td align="center">
-    <input type="hidden" name="quiz_fix_timelimit" value="0">
-    <input type="checkbox" name="quiz_fix_timelimit" value="1" <?php p($CFG->quiz_fix_timelimit ? "checked" : "") ?> />
+    <input type="hidden" name="fix_timelimit" value="0">
+    <input type="checkbox" name="fix_timelimit" value="1" <?php p($form->fix_timelimit ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -111,13 +187,13 @@
         }
         $perpage[0] = get_string('allinone', 'quiz');
 
-        choose_from_menu($perpage, 'questionsperpage', $CFG->quiz_questionsperpage, '');
+        choose_from_menu($perpage, 'questionsperpage', $form->questionsperpage, '');
         helpbutton('questionsperpage', get_string('questionsperpage'), 'quiz');
      ?>
     </td>
   <td align="center">
-    <input type="hidden" name="quiz_fix_questionsperpage" value="0">
-    <input type="checkbox" name="quiz_fix_questionsperpage" value="1" <?php p($CFG->quiz_fix_questionsperpage ? "checked" : "") ?> />
+    <input type="hidden" name="fix_questionsperpage" value="0">
+    <input type="checkbox" name="fix_questionsperpage" value="1" <?php p($form->fix_questionsperpage ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -128,13 +204,13 @@
        unset($options);
        $options[0] = get_string("no");
        $options[1] = get_string("yes");
-       choose_from_menu ($options, "quiz_shufflequestions", $CFG->quiz_shufflequestions, "", "", "");
+       choose_from_menu ($options, "shufflequestions", $form->shufflequestions, "", "", "");
        helpbutton("shufflequestions", get_string("shufflequestions","quiz"), "quiz");
     ?>
   </td>
   <td align="center">
-    <input type="hidden" name="quiz_fix_shufflequestions" value="0">
-    <input type="checkbox" name="quiz_fix_shufflequestions" value="1" <?php p($CFG->quiz_fix_shufflequestions ? "checked" : "") ?> />
+    <input type="hidden" name="fix_shufflequestions" value="0">
+    <input type="checkbox" name="fix_shufflequestions" value="1" <?php p($form->fix_shufflequestions ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -145,13 +221,13 @@
        unset($options);
        $options[0] = get_string("no");
        $options[1] = get_string("yes");
-       choose_from_menu ($options, "quiz_shuffleanswers", $CFG->quiz_shuffleanswers, "", "", "");
+       choose_from_menu ($options, "shuffleanswers", $form->shuffleanswers, "", "", "");
        helpbutton("attempts", get_string("attemptsallowed","quiz"), "quiz");
     ?>
   </td>
   <td align="center">
-    <input type="hidden" name="quiz_fix_shuffleanswers" value="0">
-    <input type="checkbox" name="quiz_fix_shuffleanswers" value="1" <?php p($CFG->quiz_fix_shuffleanswers ? "checked" : "") ?> />
+    <input type="hidden" name="fix_shuffleanswers" value="0">
+    <input type="checkbox" name="fix_shuffleanswers" value="1" <?php p($form->fix_shuffleanswers ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -165,13 +241,13 @@
         for ($i=2;$i<=6;$i++) {
             $options[$i] = "$i ".strtolower(get_string("attempts", "quiz"));
         }
-        choose_from_menu ($options, "quiz_attempts", $CFG->quiz_attempts, "", "", "");
+        choose_from_menu ($options, "attempts", $form->attempts, "", "", "");
         helpbutton("attempts", get_string("attemptsallowed","quiz"), "quiz");
     ?>
   </td>
   <td align="center">
-    <input type="hidden" name="quiz_fix_attempts" value="0">
-    <input type="checkbox" name="quiz_fix_attempts" value="1" <?php p($CFG->quiz_fix_attempts ? "checked" : "") ?> />
+    <input type="hidden" name="fix_attempts" value="0">
+    <input type="checkbox" name="fix_attempts" value="1" <?php p($form->fix_attempts ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -182,13 +258,13 @@
        unset($options);
        $options[0] = get_string("no");
        $options[1] = get_string("yes");
-       choose_from_menu ($options, "quiz_attemptonlast", $CFG->quiz_attemptonlast, "", "", "");
+       choose_from_menu ($options, "attemptonlast", $form->attemptonlast, "", "", "");
        helpbutton("repeatattempts", get_string("eachattemptbuildsonthelast", "quiz"), "quiz");
     ?>
   </td>
   <td align="center">
-    <input type="hidden" name="quiz_fix_attemptonlast" value="0">
-    <input type="checkbox" name="quiz_fix_attemptonlast" value="1" <?php p($CFG->quiz_fix_attemptonlast ? "checked" : "") ?> />
+    <input type="hidden" name="fix_attemptonlast" value="0">
+    <input type="checkbox" name="fix_attemptonlast" value="1" <?php p($form->fix_attemptonlast ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -196,13 +272,41 @@
   <td align="right"><b><?php print_string("grademethod", "quiz") ?>:</b></td>
   <td>
     <?php
-       choose_from_menu ($QUIZ_GRADE_METHOD, "quiz_grademethod", $CFG->quiz_grademethod, "", "", "");
+       choose_from_menu ($QUIZ_GRADE_METHOD, "grademethod", $form->grademethod, "", "", "");
        helpbutton("grademethod", get_string("grademethod","quiz"), "quiz");
     ?>
   </td>
   <td align="center">
-    <input type="hidden" name="quiz_fix_grademethod" value="0">
-    <input type="checkbox" name="quiz_fix_grademethod" value="1" <?php p($CFG->quiz_fix_grademethod ? "checked" : "") ?> />
+    <input type="hidden" name="fix_grademethod" value="0">
+    <input type="checkbox" name="fix_grademethod" value="1" <?php p($form->fix_grademethod ? "checked" : "") ?> />
+  </td>
+</tr>
+
+<tr valign="top">
+  <td align="right"><b><?php print_string("adaptive", "quiz") ?>:</b></td>
+  <td>
+    <?php
+        choose_from_menu($yesnooptions, "adaptive", $CFG->quiz_optionflags & QUIZ_ADAPTIVE, "");
+        helpbutton("adaptive", get_string("adaptive","quiz"), "quiz");
+    ?>
+  </td>
+  <td align="center">
+    <input type="hidden" name="fix_adaptive" value="0">
+    <input type="checkbox" name="fix_adaptive" value="1" <?php p($form->fix_adaptive ? "checked" : "") ?> />
+  </td>
+</tr>
+
+<tr valign="top">
+  <td align="right"><b><?php print_string("penaltyscheme", "quiz") ?>:</b></td>
+  <td>
+    <?php
+        choose_from_menu($penaltyoptions, "penaltyscheme", "$form->penaltyscheme", "");
+        helpbutton("penaltyscheme", get_string("penaltyscheme","quiz"), "quiz");
+    ?>
+  </td>
+  <td align="center">
+    <input type="hidden" name="fix_penaltyscheme" value="0">
+    <input type="checkbox" name="fix_penaltyscheme" value="1" <?php p($form->fix_penaltyscheme ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -215,13 +319,13 @@
        $options[1] = '1';
        $options[2] = '2';
        $options[3] = '3';
-       choose_from_menu ($options, "quiz_decimalpoints", $CFG->quiz_decimalpoints, "", "", "");
+       choose_from_menu ($options, "decimalpoints", $form->decimalpoints, "", "", "");
        helpbutton("decimalpoints", get_string("decimalpoints","quiz"), "quiz");
     ?>
   </td>
   <td align="center">
-    <input type="hidden" name="quiz_fix_decimalpoints" value="0">
-    <input type="checkbox" name="quiz_fix_decimalpoints" value="1" <?php p($CFG->quiz_fix_decimalpoints ? "checked" : "") ?> />
+    <input type="hidden" name="fix_decimalpoints" value="0">
+    <input type="checkbox" name="fix_decimalpoints" value="1" <?php p($form->fix_decimalpoints ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -232,13 +336,13 @@
        unset($options);
        $options[0] = get_string("no");
        $options[1] = get_string("yes");
-       choose_from_menu ($options, "quiz_showfeedback", $CFG->quiz_showfeedback, "", "", "");
+       choose_from_menu ($options, "showfeedback", $form->showfeedback, "", "", "");
        helpbutton("feedback", get_string("showfeedback","quiz"), "quiz");
     ?>
   </td>
   <td align="center">
-    <input type="hidden" name="quiz_fix_showfeedback" value="0">
-    <input type="checkbox" name="quiz_fix_showfeedback" value="1" <?php p($CFG->quiz_fix_showfeedback ? "checked" : "") ?> />
+    <input type="hidden" name="fix_showfeedback" value="0">
+    <input type="checkbox" name="fix_showfeedback" value="1" <?php p($form->fix_showfeedback ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -249,51 +353,21 @@
        unset($options);
        $options[0] = get_string("no");
        $options[1] = get_string("yes");
-       choose_from_menu ($options, "quiz_showanswer", $CFG->quiz_showanswer, "", "", "");
+       choose_from_menu ($options, "showanswer", $form->showanswer, "", "", "");
        helpbutton("correctanswers", get_string("showcorrectanswer","quiz"), "quiz");
     ?>
   </td>
   <td align="center">
-    <input type="hidden" name="quiz_fix_showanswer" value="0">
-    <input type="checkbox" name="quiz_fix_showanswer" value="1" <?php p($CFG->quiz_fix_showanswer ? "checked" : "") ?> />
+    <input type="hidden" name="fix_showanswer" value="0">
+    <input type="checkbox" name="fix_showanswer" value="1" <?php p($form->fix_showanswer ? "checked" : "") ?> />
   </td>
 </tr>
 
 <tr valign="top">
-  <td align="right"><b><?php print_string("allowreview", "quiz") ?>:</b></td>
-  <td>
-    <?php
-       $reviewoptions = array();
-       $reviewoptions[0] = get_string('reviewnever', 'quiz');
-       $reviewoptions[1] = get_string('reviewafter', 'quiz');
-       $reviewoptions[2] = get_string('reviewbefore', 'quiz');
-       $reviewoptions[3] = get_string('reviewalways', 'quiz');
-       choose_from_menu ($reviewoptions, "quiz_allowreview", $CFG->quiz_allowreview, "", "", "");
-       helpbutton("review2", get_string("allowreview","quiz"), "quiz");
-    ?>
-  </td>
+  <?php include('reviewoptions.html'); ?>
   <td align="center">
-    <input type="hidden" name="quiz_fix_allowreview" value="0">
-    <input type="checkbox" name="quiz_fix_allowreview" value="1" <?php p($CFG->quiz_fix_allowreview ? "checked" : "") ?> />
-  </td>
-</tr>
-
-<tr valign="top">
-  <td align="right"><b><?php print_string("maximumgrade") ?>:</b></td>
-  <td>
-    <?php
-       unset($grades);
-        for ($i=100; $i>=1; $i--) {
-            $grades[$i] = $i;
-        }
-        $grades[0] = get_string("nograde");
-       choose_from_menu ($grades, "quiz_maximumgrade", $CFG->quiz_maximumgrade, "", "", "");
-       helpbutton("maxgrade", get_string("maximumgrade"), "quiz");
-    ?>
-  </td>
-  <td align="center">
-    <input type="hidden" name="quiz_fix_maximumgrade" value="0">
-    <input type="checkbox" name="quiz_fix_maximumgrade" value="1" <?php p($CFG->quiz_fix_maximumgrade ? "checked" : "") ?> />
+    <input type="hidden" name="fix_review" value="0">
+    <input type="checkbox" name="fix_review" value="1" <?php p($form->fix_review ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -304,42 +378,65 @@
        unset($options);
        $options[0] = get_string("no");
        $options[1] = get_string("yes");
-       choose_from_menu ($options, "quiz_popup", $CFG->quiz_popup, "", "", "");
+       choose_from_menu ($options, "popup", $form->popup, "", "", "");
        helpbutton("popup", get_string("popup","quiz"), "quiz");
     ?>
   </td>
   <td align="center">
-    <input type="hidden" name="quiz_fix_popup" value="0">
-    <input type="checkbox" name="quiz_fix_popup" value="1" <?php p($CFG->quiz_fix_popup ? "checked" : "") ?> />
+    <input type="hidden" name="fix_popup" value="0">
+    <input type="checkbox" name="fix_popup" value="1" <?php p($form->fix_popup ? "checked" : "") ?> />
   </td>
 </tr>
 
 <tr valign="top">
   <td align="right"><b><?php print_string("requirepassword", "quiz") ?>:</b></td>
   <td>
-    <input type="text" name="quiz_password" size="20" value="<?php p($CFG->quiz_password) ?>" />
+    <input type="text" name="password" size="20" value="<?php p($form->password) ?>" />
     <?php helpbutton("requirepassword", get_string("requirepassword", "quiz"), "quiz"); ?>
   </td>
   <td align="center">
-    <input type="hidden" name="quiz_fix_password" value="0">
-    <input type="checkbox" name="quiz_fix_password" value="1" <?php p($CFG->quiz_fix_password ? "checked" : "") ?> />
+    <input type="hidden" name="fix_password" value="0">
+    <input type="checkbox" name="fix_password" value="1" <?php p($form->fix_password ? "checked" : "") ?> />
   </td>
 </tr>
 
 <tr valign="top">
   <td align="right"><b><?php print_string("requiresubnet", "quiz") ?>:</b></td>
   <td>
-    <input type="text" name="quiz_subnet" size="20" value="<?php p($CFG->quiz_subnet) ?>" />
+    <input type="text" name="subnet" size="20" value="<?php p($form->subnet) ?>" />
     <?php helpbutton("requiresubnet", get_string("requiresubnet", "quiz"), "quiz"); ?>
   </td>
   <td align="center">
-    <input type="hidden" name="quiz_fix_subnet" value="0">
-    <input type="checkbox" name="quiz_fix_subnet" value="1" <?php p($CFG->quiz_fix_subnet ? "checked" : "") ?> />
+    <input type="hidden" name="fix_subnet" value="0">
+    <input type="checkbox" name="fix_subnet" value="1" <?php p($form->fix_subnet ? "checked" : "") ?> />
   </td>
+</tr>
+
+
+<tr valign="top">
+  <td align="right"><b><?php print_string("maximumgrade") ?>:</b></td>
+  <td>
+    <?php
+       unset($grades);
+        for ($i=100; $i>=1; $i--) {
+            $grades[$i] = $i;
+        }
+        $grades[0] = get_string("nograde");
+       choose_from_menu ($grades, "maximumgrade", $form->maximumgrade, "", "", "");
+       helpbutton("maxgrade", get_string("maximumgrade"), "quiz");
+    ?>
+  </td>
+<!-- Can't hide this setting, it always shows up on edit.php
+  <td align="center">
+    <input type="hidden" name="fix_maximumgrade" value="0">
+    <input type="checkbox" name="fix_maximumgrade" value="1" <?php p($form->fix_maximumgrade ? "checked" : "") ?> />
+  </td>
+-->
 </tr>
 
 <tr>
   <td colspan="3" align="center">
+    <input type="hidden" name="module" value="quiz" /> </input>
     <input type="submit" value="<?php print_string("savechanges") ?>" />
   </td>
 </tr>

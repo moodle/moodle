@@ -63,9 +63,7 @@ class page_quiz extends page_generic_activity {
         }
 
         if(empty($morebreadcrumbs) && $this->user_allowed_editing()) {
-            $buttons = '<table><tr><td><form target="'.$CFG->framename.'" method="get" action="edit.php">'.
-               '<input type="hidden" name="quizid" value="'.$this->activityrecord->id.'" />'.
-               '<input type="submit" value="'.get_string('editquestions', 'quiz').'" /></form></td><td>'.
+            $buttons = '<table><tr><td>'.
                update_module_button($this->modulerecord->id, $this->courserecord->id, get_string('modulename', 'quiz')).'</td>';
             if(!empty($CFG->showblocksonmodpages)) {
                $buttons .= '<td><form target="'.$CFG->framename.'" method="get" action="view.php">'.

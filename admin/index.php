@@ -144,7 +144,7 @@
             if (empty($_GET['confirmupgrade'])) {
                 print_header($strdatabasechecking, $stradministration, $strdatabasechecking,
                         "", "", false, "&nbsp;", "&nbsp;");
-                notice_yesno(get_string('upgradesure', 'admin', $a->newversion), 'index.php?confirmupgrade=yes', 'index.php');
+                notice_yesno(get_string('upgradesure', 'admin', $a->newversion).'<br />'.get_string('upgradesure', 'quiz'), 'index.php?confirmupgrade=yes', 'index.php');
                 exit;
 
             } else {
@@ -260,11 +260,11 @@
     if (empty($CFG->siteidentifier)) {    // Unique site identification code
         set_config('siteidentifier', random_string(32));
     }
-    
+
 /// Check if the guest user exists.  If not, create one.
     if (! record_exists("user", "username", "guest")) {
-        $guest->auth        = "manual"; 
-        $guest->username    = "guest"; 
+        $guest->auth        = "manual";
+        $guest->username    = "guest";
         $guest->password    = md5("guest");
         $guest->firstname   = addslashes(get_string("guestuser"));
         $guest->lastname    = " ";

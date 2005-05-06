@@ -78,92 +78,156 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
         return true;
     }
 
-    function print_question_formulation_and_controls($question,
-            $quiz, $readonly, $answers, $correctanswers, $nameprefix) {
-
+    /**
+    * Loads the question type specific options for the question.
+    */
+    function get_question_options(&$question) {
         // Get additional information from database
+        // and attach it to the question object
+        if (!$question->options = get_record('quiz_truefalse', 'question',
+         $question->id)) {
+            notify('Error: Missing question options!');
+            return false;
+        }
+        // Load possible answers
+        if (!$answers = get_records('quiz_answers', 'question',
+         $question->id)) {
+           notify('Error: Missing question answers!');
+           return false;
+        }
+        $question->options->answers = array(
+         'true' => $answers[$question->options->trueanswer],
+         'false' => $answers[$question->options->falseanswer]);
 
-        if (!$options = get_record("quiz_truefalse", "question", $question->id)) {
-           notify("Error: Missing question options!");
-        }
-        if (!$true = get_record("quiz_answers", "id", $options->trueanswer)) {
-           notify("Error: Missing question answers!");
-        }
-        if (!$false = get_record("quiz_answers", "id", $options->falseanswer)) {
-           notify("Error: Missing question answers!");
-        }
+        return true;
+    }
+
+
+    /**
+    * Prints the main content of the question including any interactions
+    */
+    function print_question_formulation_and_controls(&$question, &$state,
+            $quiz, $options) {
+
+        $answers = &$question->options->answers;
+        $correctanswers = $this->get_correct_responses($question, $state);
+        $readonly = $options->readonly ? ' disabled="disabled"' : '';
 
         // Print question formulation
-
         echo format_text($question->questiontext,
                          $question->questiontextformat,
                          NULL, $quiz->course);
         quiz_print_possible_question_image($quiz->id, $question);
 
-        // Print input controls
+        // Update the answer strings
+        $stranswer = get_string('answer', 'quiz');
+        $strlastanswer = get_string('lastanswer', 'quiz');
 
-        $stranswer = get_string("answer", "quiz");
-
-        if (!$true->answer) {
-           $true->answer = get_string("true", "quiz");
+        if (!$answers['true']->answer) {
+           $answers['true']->answer = get_string('true', 'quiz');
         }
-        if (!$false->answer) {
-           $false->answer = get_string("false", "quiz");
-        }
-
-        $truechecked = "";
-        $falsechecked = "";
-
-        if (!isset($question->response[$nameprefix])) {
-            $question->response[$nameprefix] = '';
-        }
-        if ($true->id == $question->response[$nameprefix]) {
-           $truechecked = 'checked="checked"';
-        } else if ($false->id == $question->response[$nameprefix]) {
-           $falsechecked = 'checked="checked"';
+        if (!$answers['false']->answer) {
+           $answers['false']->answer = get_string('false', 'quiz');
         }
 
-        $truecorrect = "";
-        $falsecorrect = "";
-        if ($readonly && $quiz->correctanswers) {
-           if (!empty($correctanswers[$nameprefix.$true->id])) {
-               $truecorrect = 'class="highlight"';
-           }
-           if (!empty($correctanswers[$nameprefix.$false->id])) {
-               $falsecorrect = 'class="highlight"';
-           }
+        // Work out the selected answer and last marked answer
+        $selected = '';
+        $marked = '';
+        $teststate = clone($state);
+        $teststate->responses[''] = $answers['true']->answer;
+        if ($this->compare_responses($question, $state, $teststate)) {
+            $selected = 'true';
         }
-        $inputname = ' name="'.$nameprefix.'" ';
-        echo "<table align=\"right\" cellpadding=\"5\"><tr><td align=\"right\">$stranswer:&nbsp;&nbsp;</td>";
-        echo "<td $truecorrect>";
-        echo "<input $truechecked type=\"radio\" $readonly $inputname value=\"$true->id\" alt=\"".s($true->answer)."\" />$true->answer";
-        echo "</td><td $falsecorrect>";
-        echo "<input $falsechecked type=\"radio\"  $readonly $inputname value=\"$false->id\" alt=\"".s($false->answer)."\" />$false->answer";
-        echo "</td></tr></table><br clear=\"all\" />";// changed from clear=ALL jm
-        if ($quiz->feedback && isset($answers[$nameprefix])
-                && $feedback = $answers[$nameprefix]->feedback) {
-           quiz_print_comment(
-                    "$feedback");
+        if ($this->compare_responses($question, $state->last_graded,
+         $teststate)) {
+            $marked = 'true';
+        }
+        $teststate->responses[''] = $answers['false']->answer;
+        if ($this->compare_responses($question, $state, $teststate)) {
+            $selected = 'false';
+        }
+        if ($this->compare_responses($question, $state->last_graded,
+         $teststate)) {
+            $marked = 'false';
+        }
+
+        /* Work out the correct answer if feedback or correct responses are
+        requested */
+        if ($options->feedback || $options->correct_responses) {
+            $correctstate = clone($state);
+            $correctstate->responses[''] = $correctanswers[''];
+            $correct = '';
+            if (!is_null($correctstate->responses)) {
+                $teststate->responses[''] = $answers['true']->answer;
+                if ($this->compare_responses($question, $correctstate,
+                 $teststate)) {
+                    $correct = 'true';
+                }
+                $teststate->responses[''] = $answers['false']->answer;
+                if ($this->compare_responses($question, $correctstate,
+                 $teststate)) {
+                    $correct = 'false';
+                }
+            }
+        }
+
+        // Work out which radio button to select (if either)
+        $truechecked = ('true' === $selected) ? ' checked="checked"' : '';
+        $falsechecked = ('false' === $selected) ? ' checked="checked"' : '';
+
+        // Work out which answer is correct if we need to highlight it
+        if ($options->correct_responses) {
+            $truecorrect = ('true' === $correct) ? ' class="highlight"' : '';
+            $falsecorrect = ('false' === $correct) ? ' class="highlight"' : '';
+        } else {
+            $truecorrect = '';
+            $falsecorrect = '';
+        }
+
+        // Print the controls
+        $inputname = ' name="'.$question->name_prefix.'" ';
+        echo '<table align="right" cellpadding="5"><tr><td align="right">';
+        echo $stranswer . ':&nbsp;&nbsp;</td>';
+        echo '<td' . $truecorrect . '>';
+        echo '<input type="radio"' . $truechecked . $readonly . $inputname;
+        echo 'value="' . $answers['true']->answer . '" alt="';
+        echo s($answers['true']->answer) . '" />' . s($answers['true']->answer);
+        echo '</td><td' . $falsecorrect . '>';
+        echo '<input type="radio"' . $falsechecked . $readonly . $inputname;
+        echo 'value="' . $answers['false']->answer . '" alt="';
+        echo s($answers['false']->answer) . '" />';
+        p($answers['false']->answer);
+        if (!empty($marked) && (!$options->readonly || $marked !== $selected)) {
+            /* This should never happen but it is here both for robustness and
+            to serve as an example for question type authors */
+            echo '</td></tr><tr><td><font size="1">';
+            echo $strlastanswer . ':&nbsp;&nbsp;</font></td>';
+            echo '</td>';
+            if ('true' === $marked) {
+                echo '<td><font size="1">' . $answers['true']->answer;
+                echo '</font></td><td></td>';
+            } else {
+                echo '<td></td><td><font size="1">';
+                echo $answers['false']->answer . '</font></td>';
+            }
+        }
+        echo '</td></tr></table><br clear="all" />';
+
+        if ($options->feedback && !empty($marked)) {
+            quiz_print_comment($answers[$marked]->feedback);
         }
     }
 
-    function grade_response($question, $nameprefix) {
-
-        $answers = get_records("quiz_answers", "question", $question->id);
-        if (isset($question->response[$nameprefix])
-                && isset($answers[$question->response[$nameprefix]])) {
-            $result->answers = array($nameprefix
-                               => $answers[$question->response[$nameprefix]]);
-            $result->grade = $result->answers[$nameprefix]->fraction;
-
-        } else {
-            $result->answers = array();
-            $result->grade = 0.0;
-        }
-        $result->correctanswers = quiz_extract_correctanswers($answers,
-                                                              $nameprefix);
-
-        return $result;
+    /**
+    * This questiontype does not have to print any additional grading details
+    *
+    * @param object $question
+    * @param object $state
+    * @param object $quiz
+    * @param object $options
+    */
+    function print_question_grading_details(&$question, &$state, $quiz, $options) {
+        // do nothing
     }
 }
 //// END OF CLASS ////

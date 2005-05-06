@@ -314,6 +314,7 @@ $string['uniform'] = 'decimals, from a uniform distribution';
 $string['unit'] = 'Unit';
 $string['unknowntype'] = 'Question type not supported at line $a. The question will be ignored';
 $string['unsupportedformulafunction'] = 'The function $a is not supported';
+$string['upgradesure'] = '<div style=\"color: red;\">In particular the quiz module will perform an extensive change of the quiz tables and this upgrade has not yet been sufficiently tested. You are very strongly urged to backup your database tables before proceeding.</div>';
 $string['viewallanswers'] = 'View $a completed quizzes';
 $string['viewallreports'] = 'View reports for $a attempts';
 $string['warningsdetected'] = '$a warning(s) detected';

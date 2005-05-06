@@ -1,12 +1,69 @@
 <?php  // $Id$
-
-/// Library of function for module quiz
+/**
+* Library of functions for the quiz module.
+*
+* This contains functions that are called also from outside the quiz module
+* Functions that are only called by the quiz module itself are in {@link locallib.php}
+* @version $Id$
+* @author Martin Dougiamas and many others.
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @package quiz
+*/
 
 require_once($CFG->libdir.'/pagelib.php');
 
 /// CONSTANTS ///////////////////////////////////////////////////////////////////
 
+
+/**#@+
+* Option flags for $quiz->optionflags
+*/
+/**
+* Whether the quiz is to be run in adaptive mode
+*/
+define('QUIZ_ADAPTIVE', 1);
+
+/**
+* Determines if when checking whether an answer should
+* be checked against all previous ones to see if it is duplicate
+*/
+define('QUIZ_IGNORE_DUPRESP', 2);
+
+/**#@-*/
+
+/**
+* If start and end date for the quiz are more than this many seconds apart
+* they will be represented by two separate events in the calendar
+*/
 define("QUIZ_MAX_EVENT_LENGTH", "432000");   // 5 days maximum
+
+/**#@+
+* The different review options are stored in the bits of $quiz->review
+* These constants help to extract the options
+*/
+/**
+* The first 6 bits refer to the time immediately after the attempt
+*/
+define('QUIZ_REVIEW_IMMEDIATELY', 64-1);
+/**
+* the next 6 bits refer to the time after the attempt but while the quiz is open
+*/
+define('QUIZ_REVIEW_OPEN', 4096-64);
+/**
+* the final 6 bits refer to the time after the quiz closes
+*/
+define('QUIZ_REVIEW_CLOSED', 262144-4096);
+
+// within each group of 6 bits we determine what should be shown
+define('QUIZ_REVIEW_RESPONSES', 1+64+4096);    // Show responses
+define('QUIZ_REVIEW_SCORES', 2*4161);   // Show scores
+define('QUIZ_REVIEW_FEEDBACK', 4*4161); // Show feedback
+define('QUIZ_REVIEW_ANSWERS', 8*4161);  // Show correct answers
+// Some handling of worked solutions is already in the code but not yet fully supported
+// and not switched on in the user interface.
+define('QUIZ_REVIEW_SOLUTIONS', 16*4161);  // Show solutions
+// the 6th bit is as yet unused
+/**#@-*/
 
 /// FUNCTIONS ///////////////////////////////////////////////////////////////////
 
@@ -15,6 +72,8 @@ function quiz_add_instance($quiz) {
 /// (defined by the form in mod.html) this function
 /// will create a new instance and return the id number
 /// of the new instance.
+
+    quiz_process_options($quiz);
 
     $quiz->created      = time();
     $quiz->timemodified = time();
@@ -80,6 +139,8 @@ function quiz_update_instance($quiz) {
 /// (defined by the form in mod.html or edit.php) this function
 /// will update an existing instance with new data.
 
+    quiz_process_options($quiz);
+
     $quiz->timemodified = time();
     if (isset($quiz->openyear)) { // this would not be set if we come from edit.php
         $quiz->timeopen = make_timestamp($quiz->openyear, $quiz->openmonth, $quiz->openday,
@@ -92,6 +153,9 @@ function quiz_update_instance($quiz) {
     if (!update_record("quiz", $quiz)) {
         return false;  // some error occurred
     }
+
+    // Delete any preview attempts
+    delete_records('quiz_attempts', 'preview', '1', 'quiz', $quiz->id);
 
     if (isset($quiz->optionsettingspref)) {
         set_user_preference('quiz_optionsettingspref', $quiz->optionsettingspref);
@@ -150,7 +214,7 @@ function quiz_delete_instance($id) {
 
     if ($attempts = get_records("quiz_attempts", "quiz", "$quiz->id")) {
         foreach ($attempts as $attempt) {
-            if (! delete_records("quiz_responses", "attempt", "$attempt->id")) {
+            if (! delete_records("quiz_states", "attempt", "$attempt->id")) {
                 $result = false;
             }
         }
@@ -164,7 +228,7 @@ function quiz_delete_instance($id) {
         $result = false;
     }
 
-    if (! delete_records("quiz_question_grades", "quiz", "$quiz->id")) {
+    if (! delete_records("quiz_question_instances", "quiz", "$quiz->id")) {
         $result = false;
     }
 
@@ -235,12 +299,31 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
 
 }
 
+
 function quiz_user_complete($course, $user, $mod, $quiz) {
 /// Print a detailed representation of what a  user has done with
 /// a given particular instance of this module, for user activity reports.
 
+    if ($attempts = get_records_select('quiz_attempts', "userid='$user->id' AND quiz='$quiz->id'", 'attempt ASC')) {
+        if ($quiz->grade != 0 && $grade = get_record('quiz_grades', 'userid', $user->id, 'quiz', $quiz->id)) {
+            echo get_string('grade').': '.format_float($grade->grade, $quiz->decimalpoints).'/'.$quiz->grade.'<br />';
+        }
+        foreach ($attempts as $attempt) {
+            echo get_string('attempt', 'quiz').' '.$attempt->attempt.': ';
+            if ($attempt->timefinish == 0) {
+                print_string('unfinished');
+            } else {
+                echo format_float($attempt->sumgrades, $quiz->decimalpoints).'/'.$quiz->sumgrades;
+            }
+            echo ' - '.userdate($attempt->timemodified).'<br />';
+        }
+    } else {
+       print_string('noattempts', 'quiz');
+    }
+
     return true;
 }
+
 
 function quiz_cron () {
 /// Function to be run periodically according to the moodle cron
@@ -480,5 +563,94 @@ function quiz_print_recent_mod_activity($activity, $course, $detail=false) {
 
     return;
 }
+
+/**
+* Pre-process the options form data
+*
+* Encode the review options from the setup form into the bits of $form->review
+* and other options into $form->optionflags
+* The form data is passed by reference and modified by this function
+* @return integer
+* @param object $form  The variables set on the form.
+*/
+function quiz_process_options(&$form) {
+    $optionflags = 0;
+    $review = 0;
+
+    if (!empty($form->adaptive)) {
+        $optionflags += QUIZ_ADAPTIVE;
+    }
+
+    if (isset($form->responsesimmediately)) {
+        $review += (QUIZ_REVIEW_RESPONSES & QUIZ_REVIEW_IMMEDIATELY);
+        unset($form->responsesimmediately);
+    }
+    if (isset($form->responsesopen)) {
+        $review += (QUIZ_REVIEW_RESPONSES & QUIZ_REVIEW_OPEN);
+        unset($form->responsesopen);
+    }
+    if (isset($form->responsesclosed)) {
+        $review += (QUIZ_REVIEW_RESPONSES & QUIZ_REVIEW_CLOSED);
+        unset($form->responsesclosed);
+    }
+
+    if (isset($form->scoreimmediately)) {
+        $review += (QUIZ_REVIEW_SCORES & QUIZ_REVIEW_IMMEDIATELY);
+        unset($form->scoreimmediately);
+    }
+    if (isset($form->scoreopen)) {
+        $review += (QUIZ_REVIEW_SCORES & QUIZ_REVIEW_OPEN);
+        unset($form->scoreopen);
+    }
+    if (isset($form->scoreclosed)) {
+        $review += (QUIZ_REVIEW_SCORES & QUIZ_REVIEW_CLOSED);
+        unset($form->scoreclosed);
+    }
+
+    if (isset($form->feedbackimmediately)) {
+        $review += (QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_IMMEDIATELY);
+        unset($form->feedbackimmediately);
+    }
+    if (isset($form->feedbackopen)) {
+        $review += (QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_OPEN);
+        unset($form->feedbackopen);
+    }
+    if (isset($form->feedbackclosed)) {
+        $review += (QUIZ_REVIEW_FEEDBACK & QUIZ_REVIEW_CLOSED);
+        unset($form->feedbackclosed);
+    }
+
+    if (isset($form->answersimmediately)) {
+        $review += (QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_IMMEDIATELY);
+        unset($form->answersimmediately);
+    }
+    if (isset($form->answersopen)) {
+        $review += (QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_OPEN);
+        unset($form->answersopen);
+    }
+    if (isset($form->answersclosed)) {
+        $review += (QUIZ_REVIEW_ANSWERS & QUIZ_REVIEW_CLOSED);
+        unset($form->answersclosed);
+    }
+
+    if (isset($form->solutionsimmediately)) {
+        $review += (QUIZ_REVIEW_SOLUTIONS & QUIZ_REVIEW_IMMEDIATELY);
+        unset($form->solutionsimmediately);
+    }
+    if (isset($form->solutionsopen)) {
+        $review += (QUIZ_REVIEW_SOLUTIONS & QUIZ_REVIEW_OPEN);
+        unset($form->solutionsopen);
+    }
+    if (isset($form->solutionsclosed)) {
+        $review += (QUIZ_REVIEW_SOLUTIONS & QUIZ_REVIEW_CLOSED);
+        unset($form->solutionsclosed);
+    }
+
+    $form->review = $review;
+    $form->optionflags = $optionflags;
+
+}
+
+
 
 ?>

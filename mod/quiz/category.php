@@ -25,6 +25,10 @@
                  "<a href=\"index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
                  ' -> '.get_string('editcategories', 'quiz'));
 
+    if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {
+        include('tabs.php');
+    }
+
     /// CHECK FOR AND ACT UPON VARIABLES SUBMITTED VIA GET OR POST
     $qcobject = new quiz_category_object();
     $qcobject->set_course($course);
@@ -239,19 +243,14 @@ class quiz_category_object {
 * @param object course
 */
     function output_edit_table() {
-        $this->edittable->head  = array ($this->str->course, $this->str->category, $this->str->categoryinfo, $this->str->questions, $this->str->publish,
+        $this->edittable->head  = array ($this->str->category, $this->str->categoryinfo, $this->str->questions, $this->str->publish,
                                     $this->str->delete, $this->str->order, $this->str->movecategoryto);
         $this->edittable->width = 200;
         $this->edittable->tablealign = 'center';
 
-        // get list of short names to add to the course display.  Only necessary if user has admin view.
-        if (isadmin()) {
-            $keys = implode(',', $this->get_course_ids($this->categories));
-            $courses = get_records_select_menu('course', "id in ($keys)", '', 'id, shortname');
-        } else {
-            $courses = $this->course->shortname;
-        }
-        $this->build_edit_table_body($this->categories, $courses);
+        $courses = $this->course->shortname;
+
+        $this->build_edit_table_body($this->categories);
         print_table($this->edittable);
     }
 /**
@@ -261,7 +260,7 @@ class quiz_category_object {
 * @param mixed courses String with shortname of course | array containing courseid=>shortname
 * @param int depth controls the indenting
 */
-    function build_edit_table_body($categories, $courses, $depth = 0) {
+    function build_edit_table_body($categories, $depth = 0) {
         $countcats = count($categories);
         $count = 0;
         $first = true;
@@ -275,10 +274,9 @@ class quiz_category_object {
             $up = $first ? false : true;
             $down = $last ? false : true;
             $first = false;
-            $courseshortname = is_string($courses) ? $courses : $courses[$category->course];
-            $this->quiz_edit_category_row($category, $courseshortname, $depth, $up, $down);
+            $this->quiz_edit_category_row($category, $depth, $up, $down);
             if (isset($category->children)) {
-                $this->build_edit_table_body($category->children, $courses, $depth + 1);
+                $this->build_edit_table_body($category->children, $depth + 1);
             }
         }
     }
@@ -309,16 +307,13 @@ class quiz_category_object {
 * @param boolean up can it be moved up?
 * @param boolean down can it be moved down?
 */
-    function quiz_edit_category_row($category, $shortname, $depth, $up = false, $down = false) {
+    function quiz_edit_category_row($category, $depth, $up = false, $down = false) {
         global $USER;
         $fill = str_repeat($this->tab, $depth);
 
         $linkcss = $category->publish ? ' class="published"' : ' class="unpublished"';
 
         /// Each section below adds a data cell to this table row
-        $this->edittable->align["$category->id.course"] =  "left";
-        $this->edittable->wrap["$category->id.course"] = "nowrap";
-        $row["$category->id.course"] = $shortname;
 
         $this->edittable->align["$category->id.name"] =  "left";
         $this->edittable->wrap["$category->id.name"] = "nowrap";
@@ -526,7 +521,7 @@ class quiz_category_object {
         for ($index = count($levels) - 1; $index >= 0; $index--) {
             foreach($levels[$index] as $key) {
                 $parentkey = $records[$key]->parent;
-                if (!($records[$key]->questioncount = count_records('quiz_questions', 'category', $records[$key]->id, 'hidden', 0))) {
+                if (!($records[$key]->questioncount = count_records('quiz_questions', 'category', $records[$key]->id, 'hidden', 0, 'parent', '0'))) {
                     $records[$key]->questioncount = 0;
                 }
                 if ($parentkey == 0) {
@@ -568,20 +563,11 @@ class quiz_category_object {
 */
     function get_quiz_categories($parent=null, $sort="sortorder ASC") {
 
-        $admin = isadmin();
-        if ($admin) {
-            if (is_null($parent)) {
-                $categories = get_records("quiz_categories", "", "", $sort);
-            } else {
-                $categories = get_records("quiz_categories", "parent", $parent, $sort);
-            }
+        if (is_null($parent)) {
+            $categories = get_records('quiz_categories', 'course', "{$this->course->id}", $sort);
         } else {
-            if (is_null($parent)) {
-                $categories = get_records('quiz_categories', 'course', "{$this->course->id}", $sort);
-            } else {
-                $select = "parent = '$parent' AND course = '{$this->course->id}'";
-                $categories = get_records_select('quiz_categories', $select, $sort);
-            }
+            $select = "parent = '$parent' AND course = '{$this->course->id}'";
+            $categories = get_records_select('quiz_categories', $select, $sort);
         }
         return $categories;
     }

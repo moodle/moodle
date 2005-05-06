@@ -44,16 +44,16 @@ function showtime() {
 
         var hours = Math.floor( current / 3600 );
         current = current - (hours*3600);
-    
+
         var minutes =   Math.floor( current / 60 );
         current = current - (minutes*60);
-    
+
         var seconds = current;
-    
+
         var timeValue = "" + hours;
         timeValue  += ((minutes < 10) ? ":0" : ":") + minutes;
         timeValue  += ((seconds < 10) ? ":0" : ":") + seconds;
-    
+
         document.title = titlebefore+timeValue+' '+titleafter;
         timerID = setTimeout("showtime()",1000);
         timerRunning = true;

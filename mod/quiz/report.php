@@ -8,7 +8,7 @@
     optional_variable($id);    // Course Module ID, or
     optional_variable($q);     // quiz ID
 
-    optional_variable($mode, "overview");        // Report mode
+    optional_variable($mode, "simplestat");        // Report mode
 
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
@@ -41,50 +41,29 @@
         error("You are not allowed to use this script");
     }
 
-    add_to_log($course->id, "quiz", "report", "report.php?id=$cm->id", "$quiz->id", "$cm->id");
-
-/// Print the page header
-    if (empty($noheader)) {
-
-        $strquizzes = get_string("modulenameplural", "quiz");
-        $strquiz  = get_string("modulename", "quiz");
-        $strreport  = get_string("report", "quiz");
-
-        print_header_simple(format_string($quiz->name), "",
-                     "<a href=\"index.php?id=$course->id\">$strquizzes</a>
-                      -> <a href=\"view.php?id=$cm->id\">".format_string($quiz->name,true)."</a> -> $strreport",
-                     "", "", true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
-
-        print_heading(format_string($quiz->name));
-
-
-    /// Print list of available quiz reports
-
-        $allreports = get_list_of_plugins("mod/quiz/report");
-        $reportlist = array ("overview", "regrade");   // Standard reports we want to show first
-
-        foreach ($allreports as $report) {
-            if (!in_array($report, $reportlist)) {
-                $reportlist[] = $report;
-            }
-        }
-
-        $tabs = array();
-        $row  = array();
-        $currenttab = '';
-        foreach ($reportlist as $report) {
-            $row[] = new tabobject($report, "report.php?id=$cm->id&amp;mode=$report", 
-                                    get_string("report$report", "quiz"));
-            if ($report == $mode) {
-                $currenttab = $report;
-            }
-        }
-        $tabs[] = $row;
-
-        print_tabs($tabs, $currenttab);
-
+    // if no questions have been set up yet redirect to edit.php
+    if (!$quiz->questions and isteacheredit($course->id)) {
+        redirect('edit.php?quizid='.$quiz->id);
     }
 
+    add_to_log($course->id, "quiz", "report", "report.php?id=$cm->id", "$quiz->id", "$cm->id");
+
+/// Define some strings
+
+    $strquizzes = get_string("modulenameplural", "quiz");
+    $strquiz  = get_string("modulename", "quiz");
+
+/// Print the page header
+
+    print_header_simple(format_string($quiz->name), "",
+                 "<a href=\"index.php?id=$course->id\">$strquizzes</a>
+                  -> ".format_string($quiz->name),
+                 "", "", true, update_module_button($cm->id, $course->id, $strquiz), navmenu($course, $cm));
+
+/// Print the tabs
+
+    $currenttab = 'reports';
+    include('tabs.php');
 
 /// Open the selected quiz report and display it
 
@@ -103,9 +82,8 @@
         error("Error occurred during pre-processing!");
     }
 
-    if (empty($noheader)) {
-        print_footer($course);
-    }
+/// Print footer
 
+    print_footer($course);
 
 ?>

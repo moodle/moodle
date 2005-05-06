@@ -11,6 +11,10 @@ class quiz_match_qtype extends quiz_default_questiontype {
         return 'match';
     }
 
+    function get_question_options(&$question) {
+        return true;
+    }
+
     function save_question_options($question) {
 
         if (!$oldsubquestions = get_records("quiz_match_sub", "question", $question->id, "id ASC")) {
@@ -81,21 +85,104 @@ class quiz_match_qtype extends quiz_default_questiontype {
         return true;
     }
 
-    function convert_to_response_answer_field($questionresponse) {
-    /// This method, together with extract_response, should be
-    /// obsolete as soon as we get a better response storage
+    function create_session_and_responses(&$question, &$state, $quiz, $attempt) {
+        if (!$state->options->subquestions = get_records('quiz_match_sub',
+         'question', $question->id)) {
+           notify('Error: Missing subquestions!');
+           return false;
+        }
 
-        $delimiter = '';
-        $responseanswerfield = '';
-        foreach ($questionresponse as $key => $value) {
-            if ($matchid = $this->extract_response_id($key)) {
-                $responseanswerfield .= "$delimiter$matchid-$value";
-                $delimiter = ',';
-            } else {
-                notify("Error: Illegal match key $key detected");
+        foreach ($state->options->subquestions as $key => $subquestion) {
+            // This seems rather over complicated, but it is useful for the
+            // randomsamatch questiontype, which can then inherit the print
+            // and grading functions. This way it is possible to define multiple
+            // answers per question, each with different marks and feedback.
+            $answer = new stdClass();
+            $answer->id       = $subquestion->id;
+            $answer->answer   = $subquestion->answertext;
+            $answer->fraction = 1.0;
+            $state->options->subquestions[$key]->options
+             ->answers[$subquestion->id] = clone($answer);
+        }
+
+        // Shuffle the answers if required
+        $subquestionids = array_values(array_map(create_function('$val',
+         'return $val->id;'), $state->options->subquestions));
+        if ($quiz->shuffleanswers) {
+           $subquestionids = swapshuffle($subquestionids);
+        }
+        $state->options->order = $subquestionids;
+        // Create empty responses
+        foreach ($subquestionids as $val) {
+            $state->responses[$val] = '';
+        }
+        return true;
+    }
+
+    function restore_session_and_responses(&$question, &$state) {
+        // The serialized format for matching questions is a comma separated
+        // list of question answer pairs (e.g. 1-1,2-3,3-2), where the ids of
+        // both refer to the id in the table quiz_match_sub.
+        $responses = explode(',', $state->responses['']);
+        $responses = array_map(create_function('$val',
+         'return explode("-", $val);'), $responses);
+
+        // Restore the previous responses
+        $state->responses = array();
+        foreach ($responses as $response) {
+            $state->responses[$response[0]] = $response[1];
+        }
+
+        if (!$state->options->subquestions = get_records('quiz_match_sub',
+         'question', $question->id)) {
+           notify('Error: Missing subquestions!');
+           return false;
+        }
+
+        foreach ($state->options->subquestions as $key => $subquestion) {
+            // This seems rather over complicated, but it is useful for the
+            // randomsamatch questiontype, which can then inherit the print
+            // and grading functions. This way it is possible to define multiple
+            // answers per question, each with different marks and feedback.
+            $answer = new stdClass();
+            $answer->id       = $subquestion->id;
+            $answer->answer   = $subquestion->answertext;
+            $answer->fraction = 1.0;
+            $state->options->subquestions[$key]->options
+             ->answers[$subquestion->id] = clone($answer);
+        }
+
+        return true;
+    }
+
+    function save_session_and_responses(&$question, &$state) {
+        // Serialize responses
+        $responses = array();
+        foreach ($state->responses as $key => $val) {
+            if ($key != '') {
+                $responses[] = "$key-$val";
             }
         }
-        return $responseanswerfield;
+        $responses = implode(',', $responses);
+
+        // Set the legacy answer field
+        if (!set_field('quiz_states', 'answer', $responses, 'id',
+         $state->id)) {
+            return false;
+        }
+        return true;
+    }
+
+    function get_correct_responses(&$question, &$state) {
+        $responses = array();
+        foreach ($state->options->subquestions as $sub) {
+            foreach ($sub->options->answers as $answer) {
+                if (1 == $answer->fraction) {
+                    $responses[$sub->id] = $answer->id;
+                }
+            }
+        }
+        return empty($responses) ? null : $responses;
     }
 
     function extract_response($rawresponse, $nameprefix) {
@@ -114,8 +201,19 @@ class quiz_match_qtype extends quiz_default_questiontype {
         return $response;
     }
 
-    function print_question_formulation_and_controls($question,
-            $quiz, $readonly, $answers, $correctanswers, $nameprefix) {
+    function print_question_formulation_and_controls(&$question, &$state, $quiz, $options) {
+        $subquestions   = $state->options->subquestions;
+        $correctanswers = $this->get_correct_responses($question, $state);
+        $nameprefix     = $question->name_prefix;
+        $answers        = array();
+        foreach ($subquestions as $subquestion) {
+            foreach ($subquestion->options->answers as $sub) {
+                $answers[$sub->id] = $sub->answer;
+            }
+        }
+
+        // Shuffle the answers
+        $answers = draw_rand_array($answers, count($answers));
 
         // Print question text and possible image
         if (!empty($question->questiontext)) {
@@ -125,37 +223,7 @@ class quiz_match_qtype extends quiz_default_questiontype {
         }
         quiz_print_possible_question_image($quiz->id, $question);
 
-        // It so happens to be that $correctanswers for this question type also
-        // contains the subqustions, which we need to make sure we have:
-        if (empty($correctanswers)) {
-            $options = get_record('quiz_match', 'question', $question->id)
-            and $subquestions = get_records_list('quiz_match_sub', 'id',
-                                                   $options->subquestions);
-        } else {
-            $subquestions = $correctanswers;
-        }
-
-        /// Check whether everything turned out alright:
-        if (empty($subquestions)) {
-            notify("Error: Missing subquestions for this question!");
-
-        } else {
-            /// Everything is fine -
-            /// Set up $subquestions and $answers and do the shuffling:
-
-            if ($quiz->shuffleanswers) {
-                $subquestions = draw_rand_array($subquestions,
-                                                count($subquestions));
-            }
-            foreach ($subquestions as $key => $subquestion) {
-                unset($answers[$key]);
-                $answers[$subquestion->id] = $subquestion->answertext;
-            }
-            $answers = draw_rand_array($answers, count($answers));
-        }
-
         ///// Print the input controls //////
-
         echo '<table border="0" cellpadding="10" align="right">';
         foreach ($subquestions as $subquestion) {
 
@@ -167,76 +235,60 @@ class quiz_match_qtype extends quiz_default_questiontype {
 
             /// Drop-down list:
             $menuname = $nameprefix.$subquestion->id;
-            $response = isset($question->response[$menuname])
-                        ? $question->response[$menuname] : '0';
-            if ($readonly
-                and $quiz->correctanswers
-                and isset($correctanswers[$menuname])
-                and ($correctanswers[$menuname]->id == $response)) {
+            $response = isset($state->responses[$subquestion->id])
+                        ? $state->responses[$subquestion->id] : '0';
+            if ($options->readonly
+                and $options->correct_responses
+                and isset($correctanswers[$subquestion->id])
+                and ($correctanswers[$subquestion->id] == $response)) {
                 $class = ' class="highlight" ';
             } else {
                 $class = '';
             }
             echo "<td align=\"right\" valign=\"top\" $class>";
-            choose_from_menu($answers, $menuname, $response);
-            if ($quiz->feedback && isset($answers[$menuname])
-                    && $answers[$menuname]->feedback) {
-                quiz_print_comment($answers[$menuname]->feedback);
+
+            choose_from_menu($answers, $menuname, $response, 'choose', '', 0,
+             false, $options->readonly);
+            /* There is currently no feedback for this questiontype.
+            if ($quiz->feedback && isset($subquestion->feedback)) {
+                quiz_print_comment($subquestion->feedback);
             }
+            */
             echo '</td></tr>';
         }
         echo '</table>';
     }
 
-    function grade_response($question, $nameprefix) {
-    /// This question type does not use the table quiz_answers
-    /// but we will take some measures to emulate that record anyway.
+    function grade_responses(&$question, &$state, $quiz) {
+        $subquestions = $state->options->subquestions;
+        $responses    = &$state->responses;
 
-        $result->grade = 0.0;
-        $result->answers = array();
-        $result->correctanswers = array();
-
-        if (!($options = get_record('quiz_match', 'question', $question->id)
-                and $subquestions = get_records_list('quiz_match_sub',
-                                          'id', $options->subquestions))) {
-            notify("Error: Cannot find match options and subquestions
-                    for question $question->id");
-            return $result;
-        }
-
-        $fraction = 1.0 / count($subquestions);
-
-        /// Populate correctanswers arrays:
+        $answers = array();
         foreach ($subquestions as $subquestion) {
-            $subquestion->fraction = $fraction;
-            $subquestion->answer = $subquestion->answertext;
-            $subquestion->feedback = '';
-            $result->correctanswers[$nameprefix.$subquestion->id] =
-                    $subquestion;
-        }
-
-        foreach ($question->response as $responsekey => $answerid) {
-
-            if ($answerid and $answer =
-                    $result->correctanswers[$nameprefix.$answerid]) {
-
-                if ($result->correctanswers[$responsekey]->answer
-                        == $answer->answer) {
-
-                    /// The response was correct!
-                    $result->answers[$responsekey] =
-                            $result->correctanswers[$responsekey];
-                    $result->grade += $fraction;
-
-                } else {
-                    /// The response was incorrect:
-                    $answer->fraction = 0.0;
-                    $result->answers[$responsekey] = $answer;
-                }
-
+            foreach ($subquestion->options->answers as $sub) {
+                $answers[$sub->id] = $sub->answer;
             }
         }
-        return $result;
+
+        $sumgrade = 0;
+        foreach ($subquestions as $key => $sub) {
+            if (isset($sub->options->answers[$responses[$key]])) {
+                $sumgrade += $sub->options->answers[$responses[$key]]->fraction;
+            }
+        }
+
+        $state->raw_grade = $sumgrade/count($subquestions);
+        if (empty($state->raw_grade)) {
+            $state->raw_grade = 0;
+        }
+
+        // Make sure we don't assign negative or too high marks
+        $state->raw_grade = min(max((float) $state->raw_grade,
+                            0.0), 1.0) * $question->maxgrade;
+        $state->penalty = 0;
+        // Only allow one attempt at the question
+        $state->event = QUIZ_EVENTCLOSE;
+        return true;
     }
 }
 //// END OF CLASS ////

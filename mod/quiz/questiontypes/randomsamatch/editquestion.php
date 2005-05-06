@@ -4,7 +4,9 @@
     } else {
         $options->choose = "";
     }
-    $numberavailable = count_records("quiz_questions", "category", $category->id, "qtype", SHORTANSWER);
+    $saquestions = $QUIZ_QTYPES[RANDOMSAMATCH]->get_sa_candidates($category->id);
+    $numberavailable = count($saquestions);
+    unset($saquestions);
     print_heading_with_help(get_string("editingrandomsamatch", "quiz"), "randomsamatch", "quiz");
     require("$CFG->dirroot/mod/quiz/questiontypes/randomsamatch/randomsamatch.html");
 

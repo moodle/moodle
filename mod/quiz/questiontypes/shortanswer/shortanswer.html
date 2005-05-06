@@ -31,7 +31,7 @@
     </td>
     <td>
         <?php  if (isset($err["questiontext"])) {
-               formerr($err["questiontext"]); 
+               formerr($err["questiontext"]);
                echo "<br />";
            }
            print_textarea($usehtmleditor, 15, 60, 630, 300, "questiontext", $question->questiontext);
@@ -65,7 +65,7 @@
 <tr valign="top">
     <td align="right"><b><?php  print_string("casesensitive", "quiz") ?>:</b></td>
     <td>
-    <?php 
+    <?php
         unset($menu);
         $menu[0] = get_string("caseno", "quiz");
         $menu[1] = get_string("caseyes", "quiz");
@@ -74,12 +74,20 @@
     </td>
 </tr>
 <tr valign="top">
+    <td align="right"><b><?php  print_string("penalty", "quiz") ?>:</b></td>
+    <td>
+        <input type="text" name="penalty" size="3" value="<?php  p($question->penalty) ?>" alt="<?php  print_string("penalty", "quiz") ?>" />
+        <?php helpbutton('penalty', get_string('penalty', 'quiz'), 'quiz'); ?>
+        <?php  if (isset($err["penalty"])) formerr($err["penalty"]); ?>
+    </td>
+</tr>
+<tr valign="top">
     <td align="right"><b><?php  print_string("correctanswers", "quiz") ?></b>:</td>
     <td>
         <?php  print_string("filloutoneanswer", "quiz") ?>
     </td>
 </tr>
-<?php 
+<?php
     for ($i=1; $i<=QUIZ_MAX_NUMBER_ANSWERS; $i++) {
 ?>
 <tr valign="top">
@@ -115,7 +123,7 @@
 <?php
     }
 ?>
-<?php 
+<?php
     $QUIZ_QTYPES[$question->qtype]->print_replacement_options($question, $course, $contextquiz);
     $QUIZ_QTYPES[$question->qtype]->print_question_form_end($question);
 ?>

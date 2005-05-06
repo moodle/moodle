@@ -1,6 +1,12 @@
 <?php // $Id$
-
-// This page lists all the instances of quiz in a particular course
+/**
+* This page lists all the instances of quiz in a particular course
+*
+* @version $Id$
+* @author Martin Dougiamas and many others.
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @package quiz
+*/
 
     require_once("../../config.php");
     require_once("locallib.php");
@@ -49,32 +55,32 @@
     $strbestgrade  = get_string("bestgrade", "quiz");
     $strquizcloses = get_string("quizcloses", "quiz");
     $strattempts = get_string("attempts", "quiz");
-    $strusers  = get_string("users");
+    $strusers  = $course->students;
 
     if (isteacher($course->id)) {
         $gradecol = $strattempts;
     } else {
         $gradecol = $strbestgrade;
     }
-  
+
     if ($course->format == "weeks") {
         $table->head  = array ($strweek, $strname, $strquizcloses, $gradecol);
         $table->align = array ("center", "left", "left", "left");
-        $table->size = array (10, "*", "*", "*");
+        $table->size = array (10, "", "", "");
     } else if ($course->format == "topics") {
         $table->head  = array ($strtopic, $strname, $strquizcloses, $gradecol);
         $table->align = array ("center", "left", "left", "left");
-        $table->size = array (10, "*", "*", "*");
+        $table->size = array (10, "", "", "");
     } else {
         $table->head  = array ($strname, $strquizcloses, $gradecol);
         $table->align = array ("left", "left", "left");
-        $table->size = array ("*", "*", "*");
+        $table->size = array ("", "", "");
     }
 
     $currentsection = "";
 
     foreach ($quizzes as $quiz) {
-        if (!$quiz->visible) { 
+        if (!$quiz->visible) {
             //Show dimmed if the mod is hidden
             $link = "<a class=\"dimmed\" href=\"view.php?id=$quiz->coursemodule\">".format_string($quiz->name,true)."</a>";
         } else {
@@ -98,15 +104,15 @@
         $closequiz = userdate($quiz->timeclose);
 
         if (isteacher($course->id)) {
-            if ($usercount = count_records('quiz_grades', 'quiz', $quiz->id)) {
-                $attemptcount = count_records_select('quiz_attempts', 'quiz = '.$quiz->id.' AND timefinish > 0');
-                $strviewallanswers  = get_string('viewallanswers', 'quiz', $attemptcount);
-                $gradecol = "<a href=\"report.php?q=$quiz->id\">$strviewallanswers ($usercount $strusers)</a>";
+            if ($usercount = count_records_select('quiz_attempts', "quiz = '$quiz->id' AND preview = '0'", 'COUNT(DISTINCT userid)')) {
+                $attemptcount = count_records('quiz_attempts', 'quiz', $quiz->id, 'preview', 0);
+                $strviewallreports  = get_string('viewallreports', 'quiz', $attemptcount);
+                $gradecol = "<a href=\"attempts.php?q=$quiz->id\">$strviewallreports ($usercount $strusers)</a>";
             } else {
                 $answercount = 0;
                 $gradecol = "";
             }
-        } else { 
+        } else {
             if ($bestgrade === NULL || $quiz->grade == 0) {
                 $gradecol = "";
             } else {

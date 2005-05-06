@@ -1,0 +1,83 @@
+<?php
+if (empty($types)) { // display an error if no types have been defined
+    echo '<p><b>' . get_string('notypes', 'quiz') . "</b></p>\n";
+    if (isadmin()) {
+        echo '<p align="center"><a href="questiontypes/rqp/edittype.php?sesskey='.sesskey().'">'.get_string('additemtype', 'quiz')."</a></p>\n";
+    }
+}
+else { // otherwise display the page as normal
+?>
+<form name="theform" method="post" action="question.php">
+<table cellpadding="5">
+
+<tr valign="top">
+    <td align="right"><b><?php  print_string('category', 'quiz'); ?>:</b></td>
+    <td>
+    <?php   quiz_category_select_menu($course->id, true, true, $question->category); ?>
+    </td>
+</tr>
+
+<tr valign="top">
+    <td align="right"><b><?php  print_string('questionname', 'quiz'); ?>:</b></td>
+    <td>
+        <input type="text" name="name" size="50" value="<?php  p($question->name); ?>" />
+        <input type="hidden" name="questiontext" value="" />
+        <input type="hidden" name="questiontextformat" value="0" />
+        <input type="hidden" name="image" value="" />
+        <?php
+            if (isset($err['name'])) {
+                formerr($err['name']);
+            }
+        ?>
+    </td>
+</tr>
+
+<tr valign="top">
+    <td align="right"><b><?php  print_string('itemtype', 'quiz'); ?>:</b>
+    </td>
+    <td>
+    <?php
+        echo "<select name=\"type\">\n";
+        foreach ($types as $type) {
+            echo '<option value="' . s($type->id) . '"' . ($type->id === $question->options->type ? ' selected="selected"' : '') . '>' . s($type->name) . "</option>\n";
+        }
+        echo "</select>\n";
+        if (isset($err['type'])) {
+            formerr($err['type']);
+        }
+    ?>
+    </td>
+</tr>
+
+<tr valign="top">
+    <td align="right"><b><?php  print_string('itemsource', 'quiz'); ?>:</b>
+    </td>
+    <td>
+    <?php
+        print_textarea(false, 20, 60, 630, 300, "source", $question->options->source);
+        echo "<br />\n";
+        if (isset($err['source'])) {
+            formerr($err['source']);
+        }
+    ?>
+    </td>
+</tr>
+
+<tr valign="top">
+    <td align="right"><b><?php  print_string('itemsourceformat', 'quiz'); ?></b>
+    </td>
+    <td><input name="format" type="text" size="50" maxLength="255" value="<?php p($question->options->format); ?>" />
+    <?php
+        if (isset($err['format'])) {
+            formerr($err['format']);
+        }
+    ?>
+    </td>
+</tr>
+<?php
+    $QUIZ_QTYPES[$question->qtype]->print_replacement_options($question, $course, $contextquiz);
+    $QUIZ_QTYPES[$question->qtype]->print_question_form_end($question);
+} // end of else block for when some types have been defined
+?>
+</table>
+</form>

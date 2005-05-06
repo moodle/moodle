@@ -8,6 +8,9 @@
 class quiz_report extends quiz_default_report {
 
     function display($quiz, $cm, $course) {     /// This function just displays the report
+    
+    print_heading('Not yet implemented');
+    return true;
 
     global $CFG;
     global $download, $quests,$qtally,$table_colcount,$max_choices, $analysis,$qs_in_order,$total_user_count,$match_number, $thismin,$thismax,$myxls,$match_qs,$formatbc,$workbook,$strquestion,$showtext,$debug;
@@ -29,7 +32,7 @@ class quiz_report extends quiz_default_report {
     $strdiscrimination = get_string('discrimination', 'quiz');
 
     //Get the question ids
-    //$showtext causes M/C text to whos in top table.  
+    //$showtext causes M/C text to whos in top table.
     //This could be made into a user toggle if we want to complicate matters
     $showtext = 1;
     $containsMCTF = 0;  //used to toggle title in final listing
@@ -86,7 +89,7 @@ class quiz_report extends quiz_default_report {
                         }
                     }
                 }
-            } 
+            }
         }
     }
 
@@ -102,7 +105,7 @@ class quiz_report extends quiz_default_report {
             $userdata[$thisresp->userid][$thisresp->attemptno]['name']=fullname($thisresp);
             $userdata[$thisresp->userid][$thisresp->attemptno]['attemptid']=$thisresp->aid;
         }
-    
+
         if($debug and !$download){
         print("<h3>User Data</h3>");
         print_object($userdata);
@@ -114,7 +117,7 @@ class quiz_report extends quiz_default_report {
     //            //print_object($thisattempt);
                 $reportline++;
                 $data_tally[$reportline][$thisattempt['attemptid']][] = $thisattempt['name'];
-                $data_tally[$reportline][$thisattempt['attemptid']][] =round(($thisattempt['grade']/$quiz->sumgrades)*100,0); 
+                $data_tally[$reportline][$thisattempt['attemptid']][] =round(($thisattempt['grade']/$quiz->sumgrades)*100,0);
                 //now for each question, record response as it should be printed and whether right, wrong or skipped
                 //SHORTASNSWER the answer as in $userdata; TF or MULTI need response looked by from cid from $quests
                 //MATCH needs elaborate processing
@@ -173,7 +176,7 @@ class quiz_report extends quiz_default_report {
         print("<h3>Data Tally</h3>");
         print_object($data_tally);
         }
-    
+
         //Create a list of all attempts with their scores for item analysis
         //Also create $data2 that has attempt id as key
         foreach ($data_tally as $thistally){
@@ -184,7 +187,7 @@ class quiz_report extends quiz_default_report {
             }
         }
     }
-    
+
     //now go through scores from top to bottom and from $data2 accumulate number correct for top 1/3 and bottom 1/3 of scorers
     if ($scores) {
         arsort($scores);
@@ -223,7 +226,7 @@ class quiz_report extends quiz_default_report {
             }
         }
     }
-    
+
     if($debug and !$download){
     print("<h3>Scores</h3>");
     print_object($scores);
@@ -232,7 +235,7 @@ class quiz_report extends quiz_default_report {
     print("<h3>Bottom Scores</h3>");
     print_object($bott_scores);
     }
-    
+
     //Create here an array with the response analysis data for use with both screen display & Excel
     //  2 dimensional array has as many cells across as items + title, as many down as $max_choices
     // plus one row [0] for correct items
@@ -297,7 +300,7 @@ class quiz_report extends quiz_default_report {
                     $current_column += $match_number[$qid] -1;
                     break;
                 default:
-                
+
                 break;
             }
         }
@@ -325,7 +328,7 @@ class quiz_report extends quiz_default_report {
         $format =& $workbook->add_format();
         $format->set_bold(0);
         $formaty =& $workbook->add_format();
-        $formaty->set_bg_color('yellow'); 
+        $formaty->set_bg_color('yellow');
         $formatyc =& $workbook->add_format();
         $formatyc->set_bg_color('yellow'); //bold text on yellow bg
         $formatyc->set_bold(1);
@@ -392,7 +395,7 @@ class quiz_report extends quiz_default_report {
         }
 
         //now print the lines of answers
-        
+
         $row = 2;
         foreach ($data_tally as $thisuserno=>$thisuser){
             foreach($thisuser as $thisattemptno=>$thisattempt){
@@ -401,7 +404,7 @@ class quiz_report extends quiz_default_report {
                     //$thisitemkeys 1 & 2 are name and total score
                     //There needs to be a 3-way branch, keys0 & 1 just print $thisitem
                     //else if $thisitem['qtype'] = 5, then processing for MATCH is needed
-                    //else the data to be printed is in $thisitem['data'] and 
+                    //else the data to be printed is in $thisitem['data'] and
                     //$thisitem['score'] == 1 shows that the item was correct
                     if ($thisitem['score'] < 1) {$thiscolor = $formatred;} else {$thiscolor = $formatblue;}
                     $col++;
@@ -571,7 +574,7 @@ class quiz_report extends quiz_default_report {
         if ($download == "txt") {
         /// Print header to force download
 
-        header("Content-Type: application/download\n"); 
+        header("Content-Type: application/download\n");
         $downloadfilename = clean_filename("$course->shortname ".format_string($quiz->name,true));
         header("Content-Disposition: attachment; filename=\"$downloadfilename.txt\"");
         header("Expires: 0");
@@ -582,7 +585,7 @@ class quiz_report extends quiz_default_report {
 
         echo format_string($quiz->name,true);
         echo "\n";
-        
+
         /// Print all the user data
         $colcount = count($question_ids);
         foreach ($data_tally as $thisuserno=>$thisuser){
@@ -697,9 +700,9 @@ class quiz_report extends quiz_default_report {
             print("</tr>\n");
         }
     }
-     
+
     print("</table><br />\n");
-        
+
     if($debug and !$download){
     print("<h3>Qtally</h3>");
     print_object($qtally);
@@ -730,7 +733,7 @@ class quiz_report extends quiz_default_report {
            $nowdata = $analysis[$i][$j];
            if (strpos($nowdata,"//")>0) {$nowdata = str_replace("//","<br />",$nowdata);}
            print("<td align=\"center\">&nbsp;$nowdata</td>");
-        
+
         }
     }
     print("</tr>\n");
@@ -797,7 +800,7 @@ class quiz_report extends quiz_default_report {
         }
     }
     print("</table>\n");
-    
+
     echo "<br />\n";
     echo "<table border=\"0\" align=\"center\"><tr>\n";
     echo "<td>";
@@ -821,7 +824,7 @@ function qr_quiz_responses($quiz) {
 // Given any quiz number, get all responses and place in
 // $response object
     global $CFG;
-   
+
    $resp_recs =get_records_sql("SELECT r.id as rid, r.attempt, r.answer, r.question, a.attempt as attemptno, a.id as aid, a.quiz, a.userid, a.sumgrades, u.id as uid, u.lastname, u.firstname FROM {$CFG->prefix}quiz_responses r, {$CFG->prefix}quiz_attempts a, {$CFG->prefix}user u WHERE a.id = r.attempt AND a.quiz = '$quiz' AND a.userid = u.id ORDER BY u.lastname ASC, u.firstname ASC, r.id ASC");
     return $resp_recs;
 }

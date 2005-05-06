@@ -13,28 +13,30 @@
 
 class quiz_multichoice_qtype extends quiz_default_questiontype {
 
-    function get_answers($question, $addedcondition= '') {
-        // The added condition is one addition that has been added
-        // to the behaviour of this question type in order to make
-        // it embeddable within a multianswer (embedded cloze) question
-
-        global $CFG;
-
-        // There should be multiple answers
-        return get_records_sql("SELECT a.*, mc.single
-                                  FROM {$CFG->prefix}quiz_multichoice mc,
-                                       {$CFG->prefix}quiz_answers a
-                                 WHERE mc.question = '$question->id'
-                                   AND mc.question = a.question "
-                                       . $addedcondition);
-    }
-
     function name() {
         return 'multichoice';
     }
 
+    function get_question_options(&$question) {
+        // Get additional information from database
+        // and attach it to the question object
+        if (!$question->options = get_record('quiz_multichoice', 'question',
+         $question->id)) {
+            notify('Error: Missing question options!');
+            return false;
+        }
+
+        if (!$question->options->answers = get_records('quiz_answers', 'question',
+         $question->id)) {
+           notify('Error: Missing question answers!');
+           return false;
+        }
+
+        return true;
+    }
+
     function save_question_options($question) {
-        
+
         if (!$oldanswers = get_records("quiz_answers", "question",
                                        $question->id, "id ASC")) {
             $oldanswers = array();
@@ -130,6 +132,85 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         return true;
     }
 
+    function create_session_and_responses(&$question, &$state, $quiz, $attempt) {
+        // Shuffle the answers if required
+        $answerids = array_values(array_map(create_function('$val',
+         'return $val->id;'), $question->options->answers));
+        if ($quiz->shuffleanswers) {
+           $answerids = swapshuffle($answerids);
+        }
+        $state->options->order = $answerids;
+        // Create empty responses
+        if ($question->options->single) {
+            $state->responses = array('' => '');
+        } else {
+            $state->responses = array();
+        }
+        return true;
+    }
+
+
+    function restore_session_and_responses(&$question, &$state) {
+        // The serialized format for multiple choice quetsions
+        // is (optionally) a comma separated list of answer ids
+        // followed by a colon, followed by another comma separated
+        // list of answer ids, which are the radio/checkboxes that were
+        // ticked.
+        // E.g. 1,3,2,4:2,4 means that the answers were shown in the order
+        // 1, 3, 2 and then 4 and the answers 2 and 4 were checked.
+
+        $pos = strpos($state->responses[''], ':');
+        if (false === $pos) { // No order of answers is given, so use the default
+            $state->options->order = array_keys($question->options->answers);
+        } else { // Restore the order of the answers
+            $state->options->order = explode(',', substr($state->responses[''], 0,
+             $pos));
+            $state->responses[''] = substr($state->responses[''], $pos + 1);
+        }
+        // Restore the responses
+        if (empty($state->responses[''])) { // No previous responses
+            if ($question->options->single) {
+                $state->responses = array('' => '');
+            } else {
+                $state->responses = array();
+            }
+        } else {
+            if ($question->options->single) {
+                $state->responses = array('' => $state->responses['']);
+            } else {
+                // Get array of answer ids
+                $state->responses = explode(',', $state->responses);
+                // Create an array indexed by these answer ids
+                $state->responses = array_flip($state->responses);
+                // Set the value of each element to be equal to the index
+                array_walk($state->responses, create_function('&$a, $b',
+                 '$a = $b;'));
+            }
+        }
+        return true;
+    }
+
+    function save_session_and_responses(&$question, &$state) {
+        // Bundle the answer order and the responses into the legacy answer
+        // field.
+        // The serialized format for multiple choice quetsions
+        // is (optionally) a comma separated list of answer ids
+        // followed by a colon, followed by another comma separated
+        // list of answer ids, which are the radio/checkboxes that were
+        // ticked.
+        // E.g. 1,3,2,4:2,4 means that the answers were shown in the order
+        // 1, 3, 2 and then 4 and the answers 2 and 4 were checked.
+        $responses  = implode(',', $state->options->order) . ':';
+        $responses .= implode(',', $state->responses);
+
+        // Set the legacy answer field
+        if (!set_field('quiz_states', 'answer', $responses, 'id',
+         $state->id)) {
+            return false;
+        }
+        return true;
+    }
+
     function extract_response($rawresponse, $nameprefix) {
         // Fetch additional details from the database...
         if (!$options = get_record("quiz_multichoice",
@@ -153,16 +234,33 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         }
     }
 
-    function print_question_formulation_and_controls($question,
-            $quiz, $readonly, $answers, $correctanswers, $nameprefix) {
+    function get_correct_responses(&$question, &$state) {
+        if ($question->options->single) {
+            foreach ($question->options->answers as $answer) {
+                if (((int) $answer->fraction) === 1) {
+                    return array('' => $answer->id);
+                }
+            }
+            return null;
+        } else {
+            $responses = array();
+            foreach ($question->options->answers as $answer) {
+                if (((float) $answer->fraction) > 0.0) {
+                    $responses[$answer->id] = (string) $answer->id;
+                }
+            }
+            return empty($responses) ? null : $responses;
+        }
+    }
 
-        // Fetch additional details from the database...
-        if (!$options = get_record("quiz_multichoice", "question", $question->id)) {
-           notify("Error: Missing question options!");
-        }
-        if (!$answers = get_records_list("quiz_answers", "id", $options->answers)) {
-           notify("Error: Missing question answers!");
-        }
+    function print_question_formulation_and_controls(&$question, &$state, $quiz, $options) {
+
+        $answers = &$question->options->answers;
+        $correctanswers = $this->get_correct_responses($question, $state);
+        $readonly = empty($options->readonly) ? '' : 'disabled="disabled"';
+
+        $formatoptions = new stdClass;
+        $formatoptions->para = false;
 
         // Print formulation
         echo format_text($question->questiontext,
@@ -171,97 +269,106 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         quiz_print_possible_question_image($quiz->id, $question);
 
         // Print input controls and alternatives
-        echo "<table align=\"right\">";
-        $stranswer = get_string("answer", "quiz");
+        echo '<table align="right">';
+        $stranswer = get_string('answer', 'quiz');
         echo "<tr><td valign=\"top\">$stranswer:&nbsp;&nbsp;</td><td>";
-        echo "<table>";
-        $answerids = explode(",", $options->answers);
+        echo '<table>';
 
-        if ($quiz->shuffleanswers) {
-           $answerids = swapshuffle($answerids);
-        }
-
-        // Handle the case of unanswered single-choice questions:
-        if ($options->single) {
-            $singleresponse = isset($question->response[$nameprefix])
-                    ? $question->response[$nameprefix] : '0';
-        }
-
-        foreach ($answerids as $key => $aid) {
-            $answer = $answers[$aid];
+        // Print each answer in a separate row
+        foreach ($state->options->order as $key => $aid) {
+            $answer = &$answers[$aid];
             $qnumchar = chr(ord('a') + $key);
 
             echo '<tr><td valign="top">';
 
-            if ($options->single) {
-                $type = ' type="radio" ';
-                $name = " name=\"$nameprefix\" ";
-                $checked = $singleresponse == $aid
-                        ? ' checked="checked" ' : '';
+            if ($question->options->single) {
+                $type = 'type="radio"';
+                $name = "name=\"{$question->name_prefix}\"";
+                $checked = $aid == $state->responses['']
+                         ? 'checked="checked"' : '';
             } else {
                 $type = ' type="checkbox" ';
-                $name = " name=\"$nameprefix$aid\" ";
-                $checked = !empty($question->response[$nameprefix.$aid])
-                        ? ' checked="checked" ' : '';
+                $name = "name=\"{$question->name_prefix}$aid\"";
+                $checked = isset($state->responses[$aid])
+                         ? 'checked="checked"' : '';
             }
-            echo "<input $readonly $name $checked $type  value=\"$answer->id\" alt=\"".s($answer->answer)."\" />";
-           
-            echo "</td>";
-            
-            /// remove para tags - not needed
-            $options->para = false;
-            
-            if ($readonly and $quiz->correctanswers and !empty($correctanswers[$nameprefix.$aid])) {
-                echo '<td valign="top" class="highlight">'.format_text("$qnumchar. $answer->answer", FORMAT_MOODLE , $options).'</td>';
+
+
+            // Print the control
+            echo "<input $readonly $name $checked $type value=\"$aid\" alt=\""
+             . s($answer->answer) . '" />';
+
+            echo '</td>';
+
+            // Print the text by the control highlighting if correct responses
+            // should be shown and the current answer is the correct answer in
+            // the single selection case or has a positive score in the multiple
+            // selection case
+            if ($options->readonly && $options->correct_responses &&
+             in_array($aid, $correctanswers)) {
+                echo '<td valign="top" class="highlight">' .
+                 format_text("$qnumchar. $answer->answer", FORMAT_MOODLE ,
+                 $formatoptions) . '</td>';
             } else {
-                echo '<td valign="top">'.format_text("$qnumchar. $answer->answer", FORMAT_MOODLE, $options).'</td>';
+                echo '<td valign="top">' .
+                 format_text("$qnumchar. $answer->answer", FORMAT_MOODLE,
+                 $formatoptions) . '</td>';
             }
-            if ($quiz->feedback) {
-               echo "<td valign=\"top\">&nbsp;";
-               if ($checked) { // Simpliest condition to use here
-                   quiz_print_comment($answer->feedback);
-               }
-               echo "</td>";
+
+            // Print feedback by selected options if feedback is on
+            if (($options->feedback || $options->correct_responses) &&
+             $checked) {
+               echo '<td valign="top">&nbsp;';
+               quiz_print_comment($answer->feedback);
+               echo '</td>';
            }
-           echo "</tr>";
+
+           echo '</tr>';
         }
-        echo "</table>";
-        echo "</td></tr></table>";
+        echo '</table>';
+        echo '</td></tr></table>';
     }
 
-    function grade_response($question, $nameprefix, $addedanswercondition='') {
+    function grade_responses(&$question, &$state, $quiz) {
+        $answers      = $question->options->answers;
+        $testedstate = clone($state);
+        $teststate    = clone($state);
 
-        $result->correctanswers = array();
-        $result->answers = array();
-        $result->grade = 0.0;
-
-        $answers = $this->get_answers($question, $addedanswercondition);
-
-        /// Set ->answers[] and ->grade
-        if (!empty($question->response)) {
-            foreach ($question->response as $name => $response) {
-                if (isset($answers[$response])) {
-                    $result->answers[$name] = $answers[$response];
-                    $result->grade += $answers[$response]->fraction;
+        foreach($answers as $answer) {
+            $teststate->responses[''] = $answer->id;
+            if($question->options->single) {
+                if($this->compare_responses($question, $testedstate,
+                 $teststate)) {
+                    $state->raw_grade = $answer->fraction;
+                    break;
                 }
-            }
-        }
-
-        /// Set ->correctanswers[]
-        foreach ($answers as $answer) {
-
-            if ($answer->single) {
-                $result->correctanswers =
-                        quiz_extract_correctanswers($answers, $nameprefix);
-                break;
-
             } else {
-                if ($answer->fraction > 0.0) {
-                    $result->correctanswers[$nameprefix.$answer->id] = $answer;
+                foreach($state->responses as $response) {
+                    $testedstate->responses = array('' => $response);
+                    if($this->compare_responses($question, $testedstate,
+                     $teststate)) {
+                        $state->raw_grade += $answer->fraction;
+                         break;
+                    }
                 }
             }
         }
-        return $result;
+        if (empty($state->raw_grade)) {
+            $state->raw_grade = 0;
+        }
+
+        // Make sure we don't assign negative or too high marks
+        $state->raw_grade = min(max((float) $state->raw_grade,
+                            0.0), 1.0) * $question->maxgrade;
+        // Apply the penalty for this attempt
+        $state->penalty = 0;
+        // Only allow one attempt at the question
+        $state->event = QUIZ_EVENTCLOSE;
+        return true;
+    }
+
+    function print_question_grading_details(&$question, &$state, $quiz, $options) {
+        // do nothing
     }
 }
 //// END OF CLASS ////

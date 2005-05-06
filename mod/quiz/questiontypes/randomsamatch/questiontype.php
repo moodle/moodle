@@ -13,18 +13,34 @@
 class quiz_randomsamatch_qtype extends quiz_match_qtype {
 /// Extends MATCH as there are quite a few simularities...
 
-    // $catrandoms carries question ids for shortanswer questions
-    // available as random questios.
-    // They are sorted by category.
-    var $catrandoms = array();
-
     function name() {
         return 'randomsamatch';
+    }
+
+    function get_question_options(&$question) {
+        if (!$question->options->choose = get_field('quiz_randomsamatch',
+         'choose', 'question', $question->id)) {
+            notify('Error: Missing question options!');
+            return false;
+        }
+
+        // This could be included as a flag in the database. It's already
+        // supported by the code.
+        // Recurse subcategories: 0 = no recursion, 1 = recursion
+        $question->options->subcats = 1;
+        return true;
+
     }
 
     function save_question_options($question) {
         $options->question = $question->id;
         $options->choose = $question->choose;
+
+        if (2 > $question->choose) {
+            $result->error = "At least two shortanswer questions need to be chosen!";
+            return $result;
+        }
+
         if ($existing = get_record("quiz_randomsamatch",
                                    "question", $options->question)) {
             $options->id = $existing->id;
@@ -40,66 +56,117 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
         }
         return true;
     }
-    
-    function wrapped_questions($question) {
-        if (empty($question->response)) {
-            return false;
-        } else {
-            $wrapped = '';
-            $delimiter = '';
-            foreach ($question->response as $rkey => $response) {
-                $wrapped .= $delimiter.$this->extract_response_id($rkey);
-                $delimiter = ',';
-            }
-            return $wrapped;
+
+    function create_session_and_responses(&$question, &$state, $quiz, $attempt) {
+        // Choose a random shortanswer question from the category:
+        // We need to make sure that no question is used more than once in the
+        // quiz. Therfore the following need to be excluded:
+        // 1. All questions that are explicitly assigned to the quiz
+        // 2. All random questions
+        // 3. All questions that are already chosen by an other random question
+        global $QUIZ_QTYPES;
+        if (!isset($quiz->questionsinuse)) {
+            $quiz->questionsinuse = $quiz->questions;
         }
+
+        if ($question->options->subcats) {
+            // recurse into subcategories
+            $categorylist = quiz_categorylist($question->category);
+        } else {
+            $categorylist = $question->category;
+        }
+
+        $saquestions = $this->get_sa_candidates($categorylist, $quiz->questionsinuse);
+
+        $count  = count($saquestions);
+        $wanted = $question->options->choose;
+        if ($count < $wanted && isteacherinanycourse()) {
+            notify("Error: could not get enough Short-Answer questions!
+             Got $count Short-Answer questions, but wanted $wanted.
+             Reducing number to choose from to $count!");
+            $question->options->choose = $count;
+        }
+
+        $saquestions =
+         draw_rand_array($saquestions, $question->options->choose); // from bug 1889
+
+        foreach ($saquestions as $key => $wrappedquestion) {
+            if (!$QUIZ_QTYPES[$wrappedquestion->qtype]
+             ->get_question_options($wrappedquestion)) {
+                return false;
+            }
+
+            // Now we overwrite the $question->options->answers field to only
+            // *one* (the first) correct answer. This loop can be deleted to
+            // take all answers into account (i.e. put them all into the
+            // drop-down menu.
+            $foundcorrect = false;
+            foreach ($wrappedquestion->options->answers as $answer) {
+                if ($foundcorrect || $answer->fraction != 1.0) {
+                    unset($wrappedquestion->options->answers[$answer->id]);
+                } else if (!$foundcorrect) {
+                    $foundcorrect = true;
+                }
+            }
+
+            if (!$QUIZ_QTYPES[$wrappedquestion->qtype]
+             ->create_session_and_responses($wrappedquestion, $state, $quiz,
+             $attempt)) {
+                return false;
+            }
+            $wrappedquestion->name_prefix = $question->name_prefix;
+            $wrappedquestion->maxgrade    = $question->maxgrade;
+            $quiz->questionsinuse .= ",$wrappedquestion->id";
+            $state->options->subquestions[$key] = clone($wrappedquestion);
+        }
+
+        // Shuffle the answers if required
+        $subquestionids = array_values(array_map(create_function('$val',
+         'return $val->id;'), $state->options->subquestions));
+        if ($quiz->shuffleanswers) {
+           $subquestionids = swapshuffle($subquestionids);
+        }
+        $state->options->order = $subquestionids;
+        // Create empty responses
+        foreach ($subquestionids as $val) {
+            $state->responses[$val] = '';
+        }
+        return true;
     }
 
-    function create_response($question, $nameprefix, $questionsinuse) {
-    // It's for question types like RANDOMSAMATCH and RANDOM that
-    // the true power of the pattern with this function comes to the surface.
-    // This implementation will stand even after a possible exclusion of
-    // the funtions extract_response and convert_to_response_answer_field
+    function restore_session_and_responses(&$question, &$state) {
+        global $QUIZ_QTYPES;
+        $responses = explode(',', $state->responses['']);
+        $responses = array_map(create_function('$val',
+         'return explode("-", $val);'), $responses);
 
-        if (!isset($this->catrandoms[$question->category])) {
-            /// Need to fetch the shortanswer question ids for the category:
-
-            $saquestions = get_records_select('quiz_questions',
-                    " category='$question->category'
-                      AND qtype='".SHORTANSWER."'
-                      AND id NOT IN ($questionsinuse) ");
-            $this->catrandoms[$question->category] = array_keys($saquestions);
-            shuffle($this->catrandoms[$question->category]);
-        }
-
-        /// Access question options to find out how many short-answer
-        /// questions we are supposed to pick...
-        if ($options = get_record('quiz_randomsamatch',
-                                  'question', $question->id)) {
-            $questionstopick = $options->choose;
-        } else {
-            notify("Error: Missing question options! - Try to pick two shortanswer questions anyway");
-            $questionstopick = 2;
-        }
-
-        /// Pick the short-answer question ids and create the $response array
-        $response = array();
-        while ($questionstopick) {
-            $said = array_pop($this->catrandoms[$question->category]);
-            if (!ereg("(^|,)$said(,|$)", $questionsinuse)) {
-                $response[$nameprefix.$said] = '0';
-                --$questionstopick;
+        // Restore the previous responses
+        $state->responses = array();
+        foreach ($responses as $response) {
+            $state->responses[$response[0]] = $response[1];
+            $state->options->order[] = $response[0];
+            if (!$wrappedquestion = get_record('quiz_questions', 'id',
+             $response[0])) {
+                notify("Couldn't get question (id=$response[0])!");
+                return false;
             }
-        }
+            if (!$QUIZ_QTYPES[$wrappedquestion->qtype]
+             ->get_question_options($wrappedquestion)) {
+                notify("Couldn't get question options (id=$response[0])!");
+                return false;
+            }
+            if (!$QUIZ_QTYPES[$wrappedquestion->qtype]
+             ->restore_session_and_responses($wrappedquestion, $state)) {
+                notify("Couldn't restore session of question (id=$response[0])!");
+                return false;
+            }
+            $wrappedquestion->name_prefix = $question->name_prefix;
+            $wrappedquestion->maxgrade    = $question->maxgrade;
 
-        if ($questionstopick) {
-            notify("Error: could not get enough Short-Answer questions!");
-            $count = count($response);
-            $wanted = $count + $questionstopick;
-            notify("Got $count Short-Answer questions, but wanted $wanted.");
+            $state->options->subquestions[$wrappedquestion->id] =
+             clone($wrappedquestion);
         }
-
-        return $response;
+        return true;
     }
 
     function extract_response($rawresponse, $nameprefix) {
@@ -115,112 +182,16 @@ class quiz_randomsamatch_qtype extends quiz_match_qtype {
         return $response;
     }
 
-    function print_question_formulation_and_controls($question,
-            $quiz, $readonly, $answers, $correctanswers, $nameprefix) {
-
-        // Print question formulation
-
-        echo format_text($question->questiontext,
-                         $question->questiontextformat, NULL, $quiz->course);
-        quiz_print_possible_question_image($quiz->id, $question);
-
-        // Summarize shortanswer questions answer alternatives:
-        if (empty($correctanswers)) {
-            // Get them using the grade_response method
-            $tempresult = $this->grade_response($question, $nameprefix);
-            $saanswers = $tempresult->correctanswers;
-        } else {
-            $saanswers = $correctanswers;
-        }
-        foreach ($saanswers as $key => $saanswer) {
-            unset($saanswers[$key]); // Unsets the nameprefix occurence
-            $saanswers[$saanswer->id] = trim($saanswer->answer);
-        }
-        $saanswers = draw_rand_array($saanswers, count($saanswers));
-
-        // Print the shortanswer questions and input controls:
-        echo '<table border="0" cellpadding="10">';
-        foreach ($question->response as $inputname => $response) {
-            if (!($saquestion = get_record('quiz_questions', 'id',
-                    quiz_extract_posted_id($inputname, $nameprefix)))) {
-                notify("Error: cannot find shortanswer question for $inputname ");
-                continue;
-            }
-            
-            echo '<tr><td align="left" valign="top">';
-            echo $saquestion->questiontext;
-            echo '</td>';
-            echo '<td align="right" valign="top">';
-            if (!empty($correctanswers)
-                    && $correctanswers[$inputname]->id == $response) {
-                echo '<span="highlight">';
-                choose_from_menu($saanswers, $inputname, $response);
-                echo '</span><br />';
-            } else {
-                choose_from_menu($saanswers, $inputname, $response);
-                if ($readonly && $quiz->correctanswers
-                        && isset($correctanswer[$inputname])) {
-                    quiz_print_correctanswer($correctanswer[$inputname]->answer);
-                }
-            }
-            if ($quiz->feedback && isset($answers[$inputname])
-                    && $answers[$inputname]->feedback) {
-                quiz_print_comment($answers[$inputname]->feedback);
-            }
-            echo '</td></tr>';
-        }
-        echo '</table>';
-    }
-
-    function grade_response($question, $nameprefix) {
-        global $QUIZ_QTYPES;
-
-        $result->answers = array();
-        $result->correctanswers = array();
-        $result->grade = 0.0;
-        
-        foreach ($question->response as $inputname => $subresponse) {
-            if ($subquestion = get_record('quiz_questions',
-                    'id', quiz_extract_posted_id($inputname, $nameprefix),
-                    // These two query conditions are security checks that prevents cheating...
-                    'qtype', SHORTANSWER,
-                    'category', $question->category)) {
-
-                if ($subresponse = get_record('quiz_answers',
-                                              'id', $subresponse)) {
-                    $subquestion->response[$inputname] = $subresponse->answer;
-                } else {
-                    $subquestion->response[$inputname] = '';
-                }
-
-                // Use the shortanswer framework to for grading...
-                $subresult = $QUIZ_QTYPES[SHORTANSWER]
-                            ->grade_response($subquestion, $inputname);
-
-                // Summarize shortanswer results
-                if (isset($subresult->answers[$inputname])) {
-                    $result->answers[$inputname] =
-                            $subresult->answers[$inputname];
-                    $result->grade += $result->answers[$inputname]->fraction;
-                    if ($result->answers[$inputname]->fraction >= 1.0) {
-                        $result->correctanswers[$inputname] =
-                                $result->answers[$inputname];
-                        continue;
-                    }
-                }
-                // Pick the first correctanswer:
-                foreach ($subresult->correctanswers as $correct) {
-                    $result->correctanswers[$inputname] = $correct;
-                    break;
-                }
-            }
-        }
-        if ($result->grade) {
-            $result->grade /= count($question->response);
-        }
-        return $result;
+    function get_sa_candidates($categorylist, $questionsinuse=0) {
+        return get_records_select('quiz_questions',
+         "qtype = '".SHORTANSWER."' " .
+         "AND category IN ($categorylist) " .
+         "AND parent = '0' " .
+         "AND hidden = '0'" .
+         "AND id NOT IN ($questionsinuse)");
     }
 }
+
 //// END OF CLASS ////
 
 //////////////////////////////////////////////////////////////////////////

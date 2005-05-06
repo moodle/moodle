@@ -15,99 +15,81 @@
 /// QUESTION TYPE CLASS //////////////////
 class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
 
-    function get_answers($question) {
-    // This function is not used by any other function within this class.
-    // It is possible that it is used by some report that uses the 
-    // function quiz_get_answers in lib.php
-
-        /// The returned answers includes subanswers...
-        // As this question type embedds some other question types,
-        // it is necessary to have access to those:
-        global $QUIZ_QTYPES;
-
-        $answers = array();
-
-        $virtualquestion->id = $question->id;
-
-        if ($multianswers = get_records('quiz_multianswers', 'question', $question->id)) {
-            foreach ($multianswers as $multianswer) {
-                $virtualquestion->qtype = $multianswer->answertype;
-                // Call to other question type for subanswers
-                $addedcondition = " AND a.id IN ($multianswer->answers) ";
-                $multianswer->subanswers =
-                    $QUIZ_QTYPES[$multianswer->answertype]
-                    ->get_answers($virtualquestion, $addedcondition);
-                $answers[] = $multianswer;
-            }
-        }
-        return $answers;
-    }
-
-    function get_position_multianswer($questionid, $positionkey) {
-    // As a separate function in order to make it overridable
-
-        return get_record('quiz_multianswers', 'question', $questionid,
-                                               'positionkey', $positionkey);
-    }
-
-    function get_multianswers($questionid) {
-    // As a separate function in order to make it overridable
-        return get_records('quiz_multianswers', 'question', $questionid);
-    }
-
     function name() {
         return 'multianswer';
     }
 
+    function get_question_options(&$question) {
+        // Get relevant data indexed by positionkey from the multianswers table
+        if (!$sequence = get_field('quiz_multianswers', 'sequence', 'question',
+         $question->id)) {
+            notify('Error: Missing question options!');
+            return false;
+        }
+
+        global $QUIZ_QTYPES;
+        // Temporary solution to be replaced with commented out version after
+        // redundant wrapped questions are deleted when necessary.
+        // $wrappedquestions = get_records('quiz_questions', 'parent', $question->id);
+        $wrappedquestions = get_records_list('quiz_questions', 'id', $sequence);
+
+        // We want an array with question ids as index and the positions as values
+        $sequence = array_flip(explode(',', $sequence));
+        array_walk($sequence, create_function('&$val', '$val++;'));
+
+        foreach ($wrappedquestions as $wrapped) {
+            if (!$QUIZ_QTYPES[$wrapped->qtype]
+             ->get_question_options($wrapped)) {
+                error("Unable to recognized questiontype " .
+                $wrapped->qtype);
+            }
+            $wrapped->maxgrade = $wrapped->defaultgrade;
+            $question->options->questions[$sequence[$wrapped->id]] = clone($wrapped);
+        }
+
+        return true;
+    }
+
     function save_question_options($question) {
-        if (!$oldmultianswers = get_records("quiz_multianswers", "question", $question->id, "id ASC")) {
-            $oldmultianswers = array();
+        global $QUIZ_QTYPES;
+        if (!$oldwrappedids =
+         get_records('quiz_questions', 'parent', $question->id, '', 'id, id')) {
+         // We need to select 'id, id' because the first one is consumed by
+         // get_records.
+            $oldwrappedids = array();
         }
-        
-        if (empty($question->name)) {
-            $result->notice = get_string("missingname", "quiz");
-            return $result;
+        $oldwrappedids = array_keys($oldwrappedids);
+        $sequence = array();
+        foreach($question->options->questions as $wrapped) {
+            if ($oldwrappedid = array_shift($oldwrappedids)) {
+                $wrapped->id = $oldwrappedid;
+            }
+            $wrapped->name     = $question->name;
+            $wrapped->parent   = $question->id;
+            $wrapped->category = $question->category;
+            $wrapped->version  = $question->version;
+            $wrapped = $QUIZ_QTYPES[$wrapped->qtype]->save_question($wrapped,
+             $wrapped, $question->course);
+            $sequence[] = $wrapped->id;
         }
-        if (!$question->answers) {
-            $result->notice = get_string('noquestionintext', 'quiz');
-            return $result;
-        }
-        
-        // Insert all the new multi answers
-        foreach ($question->answers as $dataanswer) {
-            if ($oldmultianswer = array_shift($oldmultianswers)) {  // Existing answer, so reuse it
-                $multianswer = $oldmultianswer;
-                $multianswer->positionkey = $dataanswer->positionkey;
-                $multianswer->norm = $dataanswer->norm;
-                $multianswer->answertype = $dataanswer->answertype;
 
-                if (! $multianswer->answers =
-                        quiz_qtype_multianswer_save_alternatives
-                        ($question->id, $dataanswer->answertype,
-                         $dataanswer->alternatives, $oldmultianswer->answers))
-                {
-                    $result->error = "Could not update multianswer alternatives! (id=$multianswer->id)";
-                    return $result;
-                }
+        // Delete redundant wrapped questions
+        $oldwrappedids = implode(',', $oldwrappedids);
+        delete_records_select('quiz_questions', "id IN ($oldwrappedids)");
+
+        if (!empty($sequence)) {
+            $multianswer = new stdClass;
+            $multianswer->question = $question->id;
+            $multianswer->sequence = implode(',', $sequence);
+            if ($oldid =
+             get_field('quiz_multianswers', 'id', 'question', $question->id)) {
+                $multianswer->id = $oldid;
                 if (!update_record("quiz_multianswers", $multianswer)) {
-                    $result->error = "Could not update quiz multianswer! (id=$multianswer->id)";
+                    $result->error = "Could not update quiz multianswer! " .
+                     "(id=$multianswer->id)";
                     return $result;
                 }
-            } else {    // This is a completely new answer
-                unset($multianswer);
-                $multianswer->question = $question->id;
-                $multianswer->positionkey = $dataanswer->positionkey;
-                $multianswer->norm = $dataanswer->norm;
-                $multianswer->answertype = $dataanswer->answertype;
-
-                if (! $multianswer->answers =
-                        quiz_qtype_multianswer_save_alternatives
-                        ($question->id, $dataanswer->answertype,
-                         $dataanswer->alternatives))
-                {
-                    $result->error = "Could not insert multianswer alternatives! (questionid=$question->id)";
-                    return $result;
-                }
+            } else {
                 if (!insert_record("quiz_multianswers", $multianswer)) {
                     $result->error = "Could not insert quiz multianswer!";
                     return $result;
@@ -115,75 +97,66 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
             }
         }
     }
-    
-    function save_question($authorizedquestion, $form, $course) {
 
-        $question = quiz_qtype_multianswer_extract_question
-                                     ($form->questiontext);
+    function save_question($authorizedquestion, $form, $course) {
+        $question =
+         quiz_qtype_multianswer_extract_question ($form->questiontext);
         if (isset($authorizedquestion->id)) {
             $question->id = $authorizedquestion->id;
-        }
-        $question->qtype = $authorizedquestion->qtype;
-        $question->category = $authorizedquestion->category;
-
-        $question->name = $form->name;
-        if (empty($form->image)) {
-            $question->image = "";
+            $question->version = $form->version = $authorizedquestion->version;
         } else {
-            $question->image = $form->image;
+            $question->version = $form->version = 1;
         }
 
-        if (!empty($question->id)) { // Question already exists
-            if (!update_record("quiz_questions", $question)) {
-                error("Could not update question!");
-            }
-        } else {         // Question is a new one
-            $question->stamp = make_unique_id_code();  // Set the unique code (not to be changed)
-            if (!$question->id = insert_record("quiz_questions", $question)) {
-                error("Could not insert new question!");
-            }
-        }
 
-        // Now to save all the answers and type-specific options
-        
-        $form->id       = $question->id;
-        $form->qtype    = $question->qtype;
-        $form->category = $question->category;
-        
-        $result = $this->save_question_options($question);
-
-        if (!empty($result->error)) {
-            error($result->error);
-        }
-
-        if (!empty($result->notice)) {
-            notice($result->notice, "question.php?id=$question->id");
-        }
-
-        if (!empty($result->noticeyesno)) {
-            notice_yesno($result->noticeyesno, "question.php?id=$question->id", "edit.php");
-            print_footer($course);
-            exit;
-        }
-        
-        return $question;
+        $question->category = $authorizedquestion->category;
+        $form->course = $course; // To pass the course object to
+                                 // save_question_options, where it is
+                                 // needed to call type specific
+                                 // save_question methods.
+        $form->defaultgrade = $question->defaultgrade;
+        $form->questiontext = $question->questiontext;
+        $form->questiontextformat = 0;
+        $form->options      = clone($question->options);
+        unset($question->options);
+        return parent::save_question($question, $form, $course);
     }
-    
-    function convert_to_response_answer_field($questionresponse) {
-    /// This method, together with extract_response, should be
-    /// obsolete as soon as we get a better response storage
 
-        $delimiter = '';
-        $responseanswerfield = '';
-        foreach ($questionresponse as $key => $value) {
-            if ($multianswerid = $this->extract_response_id($key)) {
-                $responseanswerfield .= "$delimiter$multianswerid-$value";
-                $delimiter = ',';
-            } else {
-                notify("Error: Illegal match key $key detected");
-            }
+    function create_session_and_responses(&$question, &$state, $quiz, $attempt) {
+        $state->responses = array();
+        foreach ($question->options->questions as $key => $wrapped) {
+            $state->responses[$key] = '';
         }
-        return $responseanswerfield;
+        return true;
+    }
+
+    function restore_session_and_responses(&$question, &$state) {
+        $responses = explode(',', $state->responses['']);
+        $state->responses = array();
+        foreach ($responses as $response) {
+            $tmp = explode("-", $response);
+            // restore encoded characters
+            $state->responses[$tmp[0]] =
+             str_replace(array("&#0044;", "&#0045;"), array(",", "-"), $tmp[1]);
+        }
+        return true;
+    }
+
+    function save_session_and_responses(&$question, &$state) {
+        $responses = $state->responses;
+        array_walk($responses, create_function('&$val, $key',
+         // encode - (hyphen) and , (comma) to &#0045; because they are used as
+         // delimiters
+         '$val = str_replace(array(",", "-"), array("&#0044;", "&#0045;"), $val);
+          $val = "$key-$val";'));
+        $responses = implode(',', $responses);
+
+        // Set the legacy answer field
+        if (!set_field('quiz_states', 'answer', $responses, 'id',
+         $state->id)) {
+            return false;
+        }
+        return true;
     }
 
     function extract_response($rawresponse, $nameprefix) {
@@ -204,8 +177,22 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         return $response;
     }
 
-    function print_question_formulation_and_controls($question,
-            $quiz, $readonly, $answers, $correctanswers, $nameprefix) {
+    function get_correct_responses(&$question, &$state) {
+        global $QUIZ_QTYPES;
+        $responses = array();
+        foreach($question->options->questions as $key => $wrapped) {
+            $correct = $QUIZ_QTYPES[$wrapped->qtype]
+             ->get_correct_responses($wrapped, $state);
+            $responses[$key] = $correct[''];
+        }
+        return $responses;
+    }
+
+    function print_question_formulation_and_controls(&$question, &$state, $quiz,
+     $options) {
+        global $QUIZ_QTYPES;
+        $readonly = empty($options->readonly) ? '' : 'disabled="disabled"';
+        $nameprefix = $question->name_prefix;
 
         // For this question type, we better print the image on top:
         quiz_print_possible_question_image($quiz->id, $question);
@@ -224,45 +211,77 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
             echo $qtextsplits[0];
             $qtextremaining = $qtextsplits[1];
 
-            $multianswer = $this->get_position_multianswer($question->id, $regs[1]);
+            $positionkey = $regs[1];
+            $wrapped = &$question->options->questions[$positionkey];
+            $answers = &$wrapped->options->answers;
+            $correctanswers = $QUIZ_QTYPES[$wrapped->qtype]
+             ->get_correct_responses($wrapped, $state);
 
-            $inputname = $nameprefix.$multianswer->id;
-            $response = isset($question->response[$inputname])
-                    ? $question->response[$inputname] : '';
+            $inputname = $nameprefix.$positionkey;
+            $response = isset($state->responses[$positionkey])
+                    ? $state->responses[$positionkey] : null;
 
-            /// Determine style
-            if (!empty($correctanswers) && '' !== $response) {
-
-                if (!isset($answers[$inputname])
-                        || $answers[$inputname]->fraction <= 0.0) {
-                    // The response must have been totally wrong:
-                    $style = ' style="background-color:red" ';
-                
-                } else if ($answers[$inputname]->fraction >= 1.0) {
-                    // The response must was correct!!
-                    $style = 'style="background-color:lime"';
-
-                } else {
-                    // This response did at least give some credit:
-                    $style = 'style="background-color:yellow"';
-                }
-            } else {
-                // No colorish feedback is to be used
-                $style = '';
-            }
 
             // Determine feedback popup if any
-            if ($quiz->feedback && isset($answers[$inputname])
-                    && '' !== $answers[$inputname]->feedback) {
-                $title = str_replace("'", "\\'", $answers[$inputname]->feedback);
-                $popup = " onmouseover=\"return overlib('$title', CAPTION, '$strfeedback', FGCOLOR);\" ".
-                         " onmouseout=\"return nd();\" ";
-            } else {
-                $popup = '';
+            $popup = '';
+            $style = '';
+            if ($options->feedback) {
+                $chosenanswer = null;
+                switch ($wrapped->qtype) {
+                    case NUMERICAL:
+                    case SHORTANSWER:
+                        $testedstate = clone($state);
+                        $testedstate->responses[''] = $response;
+                        $teststate   = clone($state);
+                        $raw_grade   = 0;
+                        foreach ($answers as $answer) {
+                            $teststate->responses[''] = trim($answer->answer);
+                            if($QUIZ_QTYPES[$wrapped->qtype]
+                             ->compare_responses($wrapped, $testedstate, $teststate)) {
+                                if (empty($raw_grade) || $raw_grade < $answer->fraction) {
+                                //var_dump($teststate->responses['']);
+                                //var_dump($testedstate->responses['']);
+                                    $chosenanswer = clone($answer);
+                                }
+                            }
+                        }
+                        break;
+                    case MULTICHOICE:
+                        if (isset($answers[$response])) {
+                            $chosenanswer = clone($answers[$response]);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+                if (!empty($chosenanswer->feedback)) {
+                    $feedback = str_replace("'", "\\'", $chosenanswer->feedback);
+                    $popup = " onmouseover=\"return overlib('$feedback', CAPTION, '$strfeedback', FGCOLOR);\" ".
+                             " onmouseout=\"return nd();\" ";
+                }
+
+                /// Determine style
+                if (!empty($chosenanswer)) {
+                    if (!isset($chosenanswer->fraction)
+                            || $chosenanswer->fraction <= 0.0) {
+                        // The response must have been totally wrong:
+                        $style = ' style="background-color:red" ';
+
+                    } else if ($chosenanswer->fraction >= 1.0) {
+                        // The response was correct!!
+                        $style = 'style="background-color:lime"';
+
+                    } else {
+                        // This response did at least give some credit:
+                        $style = 'style="background-color:yellow"';
+                    }
+                }
+
             }
 
             // Print the input control
-            switch ($multianswer->answertype) {
+            switch ($wrapped->qtype) {
                 case SHORTANSWER:
                 case NUMERICAL:
                     echo " <input $style $readonly $popup name=\"$inputname\"
@@ -270,13 +289,12 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
                     break;
                 case MULTICHOICE:
                     $outputoptions = '<option></option>'; // Default empty option
-                    $mcanswers = get_records_list("quiz_answers", "id", $multianswer->answers);
-                    foreach ($mcanswers as $mcanswer) {
+                    foreach ($answers as $mcanswer) {
                         $selected = $response == $mcanswer->id
                                 ? ' selected="selected" ' : '';
                         $outputoptions .= "<option value=\"$mcanswer->id\" $selected>$mcanswer->answer</option>";
                     }
-                   echo "<select $popup $style name=\"$inputname\">";
+                   echo "<select $popup $readonly $style name=\"$inputname\">";
                    echo $outputoptions;
                    echo '</select>';
                    break;
@@ -290,56 +308,30 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         echo $qtextremaining;
     }
 
-    function grade_response($question, $nameprefix) {
-
+    function grade_responses(&$question, &$state, $quiz) {
         global $QUIZ_QTYPES;
-
-        $result->grade = 0.0;
-        $result->answers = array();
-        $result->correctanswers = array();
-
-        $multianswers = $this->get_multianswers($question->id);
-        // Default settings:
-        $subquestion->id = $question->id;
-        $normsum = 0;
-
-        // Grade each multianswer
-        foreach ($multianswers as $multianswer) {
-            $name = $nameprefix.$multianswer->id;
-            $subquestion->response[$nameprefix] =
-                    isset($question->response[$name])
-                    ?   $question->response[$name] : '';
-            
-            $subresult = $QUIZ_QTYPES[$multianswer->answertype]
-                    ->grade_response($subquestion, $nameprefix,
-                                           " AND a.id IN ($multianswer->answers) ");
-
-            // Summarize subquestion results:
-            
-            if (isset($subresult->answers[$nameprefix])) {
-
-                /// Answer was found:
-                $result->answers[$name] = $subresult->answers[$nameprefix];
-
-                if ($result->answers[$name]->fraction >= 1.0) {
-                    // This is also the correct answer:
-                    $result->correctanswers[$name] = $result->answers[$name];
-                }
+        $teststate = clone($state);
+        $state->raw_grade = 0;
+        foreach($question->options->questions as $key => $wrapped) {
+            $teststate->responses = array('' => $state->responses[$key]);
+            $teststate->raw_grade = 0;
+            if (false === $QUIZ_QTYPES[$wrapped->qtype]
+             ->grade_responses($wrapped, $teststate, $quiz)) {
+                return false;
             }
-
-            if (!isset($result->correctanswers[$name])) {
-                // Pick the first correctanswer:
-                foreach ($subresult->correctanswers as $correctanswer) {
-                    $result->correctanswers[$name] = $correctanswer;
-                    break;
-                }
-            }
-            $result->grade += $multianswer->norm * $subresult->grade;
-            $normsum += $multianswer->norm;
+            $state->raw_grade += $teststate->raw_grade;
         }
-        $result->grade /= $normsum;
+        $state->raw_grade /= $question->defaultgrade;
+        $state->raw_grade = min(max((float) $state->raw_grade, 0.0), 1.0)
+         * $question->maxgrade;
 
-        return $result;
+        if (empty($state->raw_grade)) {
+            $state->raw_grade = 0.0;
+        }
+        $state->penalty = 0;
+        // Only allow one attempt at the question
+        $state->event = QUIZ_EVENTCLOSE;
+        return true;
     }
 }
 //// END OF CLASS ////
@@ -359,6 +351,7 @@ $QUIZ_QTYPES[MULTIANSWER]= new quiz_embedded_cloze_qtype();
 //// They are not in the class as they are not
 //// likely to be subject for overriding.
 /////////////////////////////////////////////////////////////
+
 
 function quiz_qtype_multianswer_extract_question($text) {
 
@@ -428,216 +421,77 @@ function quiz_qtype_multianswer_extract_question($text) {
 //// Start of the actual function
 ////////////////////////////////////////
 
-    $question = NULL;
+    $question = new stdClass;
     $question->qtype= MULTIANSWER;
     $question->questiontext= $text;
-    $question->answers= array();
+    $question->options->questions = array();
     $question->defaultgrade = 0; // Will be increased for each answer norm
 
     for ($positionkey=1
         ; ereg(ANSWER_REGEX, $question->questiontext, $answerregs)
-        ; ++$positionkey )
-    {
-        unset($multianswer);
-
-        $multianswer->positionkey = $positionkey;
-        $multianswer->norm = $answerregs[ANSWER_REGEX_NORM]
-            or $multianswer->norm = '1';
+        ; ++$positionkey ) {
+        $wrapped = new stdClass;
+        $wrapped->defaultgrade = $answerregs[ANSWER_REGEX_NORM]
+            or $wrapped->defaultgrade = '1';
         if ($answerregs[ANSWER_REGEX_ANSWER_TYPE_NUMERICAL]) {
-            $multianswer->answertype = NUMERICAL;
+            $wrapped->qtype = NUMERICAL;
+            $wrapped->multiplier = array();
+            $wrapped->units      = array();
         } else if($answerregs[ANSWER_REGEX_ANSWER_TYPE_SHORTANSWER]) {
-            $multianswer->answertype = SHORTANSWER;
+            $wrapped->qtype = SHORTANSWER;
+            $wrapped->usecase = 0;
         } else if($answerregs[ANSWER_REGEX_ANSWER_TYPE_MULTICHOICE]){
-            $multianswer->answertype = MULTICHOICE;
+            $wrapped->qtype = MULTICHOICE;
+            $wrapped->single = 1;
         } else {
-            error("Cannot identify answertype $answerregs[2]");
+            error("Cannot identify qtype $answerregs[2]");
             return false;
         }
 
-        $multianswer->alternatives= array();
+        // Each $wrapped simulates a $form that can be processed by the
+        // respective save_question and save_question_options methods of the
+        // wrapped questiontypes
+        $wrapped->answer   = array();
+        $wrapped->fraction = array();
+        $wrapped->feedback = array();
+        $wrapped->questiontext = $answerregs[0];
+        $wrapped->questiontextformat = 0;
+
         $remainingalts = $answerregs[ANSWER_REGEX_ALTERNATIVES];
         while (ereg(ANSWER_ALTERNATIVE_REGEX, $remainingalts, $altregs)) {
-            unset($alternative);
-            
             if ('=' == $altregs[ANSWER_ALTERNATIVE_REGEX_FRACTION]) {
-                $alternative->fraction = '1';
+                $wrapped->fraction[] = '1';
+            } else if ($percentile =
+             $altregs[ANSWER_ALTERNATIVE_REGEX_PERCENTILE_FRACTION]){
+                $wrapped->fraction[] = .01 * $percentile;
             } else {
-                $alternative->fraction = .01 *
-                        $altregs[ANSWER_ALTERNATIVE_REGEX_PERCENTILE_FRACTION]
-                    or $alternative->fraction = '0';
+                $wrapped->fraction[] = '0';
             }
-            $alternative->feedback = $altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK];
+            $wrapped->feedback[] = $altregs[ANSWER_ALTERNATIVE_REGEX_FEEDBACK];
             if ($answerregs[ANSWER_REGEX_ANSWER_TYPE_NUMERICAL]
                     && ereg(NUMERICAL_ALTERNATIVE_REGEX,
                             $altregs[ANSWER_ALTERNATIVE_REGEX_ANSWER],
                             $numregs) )
             {
-                $alternative->answer = $numregs[NUMERICAL_CORRECT_ANSWER];
+                $wrapped->answer[] = $numregs[NUMERICAL_CORRECT_ANSWER];
                 if ($numregs[NUMERICAL_ABS_ERROR_MARGIN]) {
-                    $alternative->min = $numregs[NUMERICAL_CORRECT_ANSWER]
-                                      - $numregs[NUMERICAL_ABS_ERROR_MARGIN];
-                    $alternative->max = $numregs[NUMERICAL_CORRECT_ANSWER]
-                                      + $numregs[NUMERICAL_ABS_ERROR_MARGIN];
+                    $wrapped->tolerance = $numregs[NUMERICAL_ABS_ERROR_MARGIN];
                 } else {
-                    $alternative->min = $numregs[NUMERICAL_CORRECT_ANSWER];
-                    $alternative->max = $numregs[NUMERICAL_CORRECT_ANSWER];
+                    $wrapped->tolerance = 0;
                 }
-            } else { // Min and max must stay undefined...
-                $alternative->answer =
-                        $altregs[ANSWER_ALTERNATIVE_REGEX_ANSWER];
+            } else { // Tolerance can stay undefined for non numerical questions
+                $wrapped->answer[] = $altregs[ANSWER_ALTERNATIVE_REGEX_ANSWER];
             }
-            
-            $multianswer->alternatives[] = $alternative;
             $tmp = explode($altregs[0], $remainingalts, 2);
             $remainingalts = $tmp[1];
         }
 
-        $question->defaultgrade += $multianswer->norm;
-        $question->answers[] = $multianswer;
+        $question->defaultgrade += $wrapped->defaultgrade;
+        $question->options->questions[$positionkey] = clone($wrapped);
         $question->questiontext = implode("{#$positionkey}",
                     explode($answerregs[0], $question->questiontext, 2));
     }
     return $question;
-}
-
-function quiz_qtype_multianswer_save_alternatives($questionid,
-        $answertype, $alternatives, $oldalternativeids= NULL) {
-// Returns false if something goes wrong,
-// otherwise the ids of the answers.
-
-    if (empty($oldalternativeids)
-        or !($oldalternatives =
-                get_records_list('quiz_answers', 'id', $oldalternativeids)))
-    {
-        $oldalternatives = array();
-    }
-
-    $alternativeids = array();
-
-    foreach ($alternatives as $altdata) {
-
-        if ($altold = array_shift($oldalternatives)) { // Use existing one...
-            $alt = $altold;
-            $alt->answer = $altdata->answer;
-            $alt->fraction = $altdata->fraction;
-            $alt->feedback = $altdata->feedback;
-            if (!update_record("quiz_answers", $alt)) {
-                return false;
-            }
-
-        } else { // Completely new one
-            unset($alt);
-            $alt->question= $questionid;
-            $alt->answer = $altdata->answer;
-            $alt->fraction = $altdata->fraction;
-            $alt->feedback = $altdata->feedback;
-            if (!($alt->id = insert_record("quiz_answers", $alt))) {
-                return false;
-            }
-        }
-
-        // For the answer type numerical, each alternative has individual options:
-        if ($answertype == NUMERICAL) {
-            if ($numericaloptions =
-                    get_record('quiz_numerical', 'answer', $alt->id))
-            {
-                // Reuse existing numerical options
-                $numericaloptions->min = $altdata->min;
-                $numericaloptions->max = $altdata->max;
-                if (!update_record('quiz_numerical', $numericaloptions)) {
-                    return false;
-                }
-            } else {
-                // New numerical options
-                $numericaloptions->answer = $alt->id;
-                $numericaloptions->question = $questionid;
-                $numericaloptions->min = $altdata->min;
-                $numericaloptions->max = $altdata->max;
-                if (!insert_record("quiz_numerical", $numericaloptions)) {
-                    return false;
-                }
-            }
-        } else { // Delete obsolete numerical options
-            delete_records('quiz_numerical', 'answer', $alt->id);
-        } // end if NUMERICAL
-
-        $alternativeids[] = $alt->id;
-    } // end foreach $alternatives
-    $answers = implode(',', $alternativeids);
-
-    // Removal of obsolete alternatives from answers and quiz_numerical:
-    while ($altobsolete = array_shift($oldalternatives)) {
-        delete_records("quiz_answers", "id", $altobsolete->id);
-
-        // Possibly obsolute numerical options are also to be deleted:
-        delete_records("quiz_numerical", 'answer', $altobsolete->id);
-    }
-
-    // Common alternative options and removal of obsolete options
-    switch ($answertype) {
-        case NUMERICAL:
-            if (!empty($oldalternativeids)) {
-                delete_records('quiz_shortanswer', 'answers',
-$oldalternativeids);
-                delete_records('quiz_multichoice', 'answers',
-$oldalternativeids);
-            }
-            break;
-        case SHORTANSWER:
-            if (!empty($oldalternativeids)) {
-                delete_records('quiz_multichoice', 'answers',
-$oldalternativeids);
-                $options = get_record('quiz_shortanswer',
-                                      'answers', $oldalternativeids);
-            } else {
-                unset($options);
-            }
-            if (empty($options)) {
-                // Create new shortanswer options
-                $options->question = $questionid;
-                $options->usecase = 0;
-                $options->answers = $answers;
-                if (!insert_record('quiz_shortanswer', $options)) {
-                    return false;
-                }
-            } else if ($answers != $oldalternativeids) {
-                // Shortanswer options needs update:
-                $options->answers = $answers;
-                if (!update_record('quiz_shortanswer', $options)) {
-                    return false;
-                }
-            }
-            break;
-        case MULTICHOICE:
-            if (!empty($oldalternativeids)) {
-                delete_records('quiz_shortanswer', 'answers',
-$oldalternativeids);
-                $options = get_record('quiz_multichoice',
-                                      'answers', $oldalternativeids);
-            } else {
-                unset($options);
-            }
-            if (empty($options)) {
-                // Create new multichoice options
-                $options->question = $questionid;
-                $options->layout = 0;
-                $options->single = 1;
-                $options->answers = $answers;
-                if (!insert_record('quiz_multichoice', $options)) {
-                    return false;
-                }
-            } else if ($answers != $oldalternativeids) {
-                // Multichoice options needs update:
-                $options->answers = $answers;
-                if (!update_record('quiz_multichoice', $options)) {
-                    return false;
-                }
-            }
-            break;
-        default:
-            return false;
-    }
-    return $answers;
 }
 
 ?>

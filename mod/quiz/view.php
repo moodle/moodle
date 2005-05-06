@@ -11,15 +11,16 @@
     $q           = optional_param('q',  0, PARAM_INT);  // quiz ID
     $edit        = optional_param('edit', '');
 
+
     if ($id) {
         if (! $cm = get_record("course_modules", "id", $id)) {
             error("Course Module ID was incorrect");
         }
-    
+
         if (! $course = get_record("course", "id", $cm->course)) {
             error("Course is misconfigured");
         }
-    
+
         if (! $quiz = get_record("quiz", "id", $cm->instance)) {
             error("Course module is incorrect");
         }
@@ -37,7 +38,8 @@
     }
 
     require_login($course->id, false, $cm);
-    
+    $isteacher = isteacher($course->id);
+
     // if no questions have been set up yet redirect to edit.php
     if (!$quiz->questions and isteacheredit($course->id)) {
         redirect('edit.php?quizid='.$quiz->id);
@@ -75,30 +77,54 @@
 
     echo '<td id="middle-column">';
 
-    if (isteacher($course->id)) {
-        $attemptcount = count_records_select("quiz_attempts", "quiz = '$quiz->id' AND timefinish > 0");
-        $a->count = count_records("quiz_grades", "quiz", "$quiz->id");
-        $a->items = get_string('users');
-        $strusers  = get_string('counteditems', '', $a);
-        $strviewallanswers  = get_string("viewallanswers","quiz",$attemptcount);
-        echo "<div class=\"reportlink\"><a href=\"report.php?id=$cm->id\">$strviewallanswers ($strusers)</a></div>";
-    } else if (!$cm->visible) {
-        notice(get_string("activityiscurrentlyhidden"));
-    }
-
-    $available = ($quiz->timeopen < $timenow and $timenow < $quiz->timeclose) || isteacher($course->id);
+    $available = ($quiz->timeopen < $timenow and $timenow < $quiz->timeclose) || $isteacher;
 
 // Print the main part of the page
 
+    // Print heading and tabs for teacher
+    if ($isteacher) {
+        $currenttab = 'info';
+        include('tabs.php');
+    }
     print_heading(format_string($quiz->name));
 
     if (trim(strip_tags($quiz->intro))) {
-        print_simple_box(format_text($quiz->intro), 'center', '70%', '', 5, 'generalbox', 'intro');
+        print_simple_box(format_text($quiz->intro), "center");
+    }
+
+    if ($quiz->attempts > 1) {
+        echo "<p align=\"center\">".get_string("attemptsallowed", "quiz").": $quiz->attempts</p>";
+        echo "<p align=\"center\">".get_string("grademethod", "quiz").": ".$QUIZ_GRADE_METHOD[$quiz->grademethod]."</p>";
+    } else {
+        echo "<br />";
+    }
+    if ($available) {
+        if ($quiz->timelimit) {
+            echo "<p align=\"center\">".get_string("quiztimelimit","quiz", format_time($quiz->timelimit * 60))."</p>";
+        }
+        echo "<p align=\"center\">".get_string("quizavailable", "quiz", userdate($quiz->timeclose));
+    } else if ($timenow < $quiz->timeopen) {
+        echo "<p align=\"center\">".get_string("quiznotavailable", "quiz", userdate($quiz->timeopen));
+    } else {
+        echo "<p align=\"center\">".get_string("quizclosed", "quiz", userdate($quiz->timeclose));
     }
 
 
+    // This is all the teacher will get
+    if ($isteacher) {
+        print_footer($course);
+        exit;
+    }
+
     if (isguest()) {
-        print_heading(get_string("guestsno", "quiz"));
+
+        $wwwroot = $CFG->wwwroot.'/login/index.php';
+        if (!empty($CFG->loginhttps)) {
+            $wwwroot = str_replace('http','https', $wwwroot);
+        }
+
+        notice_yesno(get_string('guestno', 'quiz').'<br /><br />'.get_string('liketologin'),
+                     $wwwroot, $_SERVER['HTTP_REFERER']);
         print_footer($course);
         exit;
     }
@@ -109,11 +135,10 @@
         $numattempts = 0;
     }
 
-    if ($quiz->attempts > 1) {
-        echo "<p align=\"center\">".get_string("attemptsallowed", "quiz").": $quiz->attempts</p>";
-        echo "<p align=\"center\">".get_string("grademethod", "quiz").": ".$QUIZ_GRADE_METHOD[$quiz->grademethod]."</p>";
-    } else {
-        echo "<br />";
+    $unfinished = false;
+    if ($unfinishedattempt =  quiz_get_user_attempt_unfinished($quiz->id, $USER->id)) {
+        $attempts[] = $unfinishedattempt;
+        $unfinished = true;
     }
 
     $strattempt       = get_string("attempt", "quiz");
@@ -125,7 +150,7 @@
 
     $mygrade = quiz_get_best_grade($quiz, $USER->id);
 
-    if ($numattempts) { 
+    if ($numattempts) {
         if ($quiz->grade and $quiz->sumgrades) {
             if ($quiz->grade <> $quiz->sumgrades) {
                 $table->head = array($strattempt, $strtimetaken, $strtimecompleted, "$strmarks / $quiz->sumgrades", "$strgrade / $quiz->grade");
@@ -142,61 +167,88 @@
             $table->size = array("", "", "");
         }
         foreach ($attempts as $attempt) {
-            if ($timetaken = ($attempt->timefinish - $attempt->timestart)) {
-                $timetaken = format_time($timetaken);
+            $timetaken = '';
+            $datecompleted = '';
+            if ($attempt->timefinish > 0) {
+                $timetaken = format_time($attempt->timefinish - $attempt->timestart);
+                $datecompleted = userdate($attempt->timefinish);
+            } else if ($available) {
+                $timetaken = format_time(time() - $attempt->timestart);
+                $strconfirmstartattempt = addslashes(get_string("confirmstartattempt","quiz"));
+                $datecompleted  = "\n".'<script language="javascript" type="text/javascript">';
+                $datecompleted .= "\n<!--\n"; // -->
+                if (!empty($quiz->popup)) {
+                    $datecompleted .= "var windowoptions = 'left=0, top=0, height='+window.screen.height+
+                     ', width='+window.screen.width+', channelmode=yes, fullscreen=yes, scrollbars=yes, '+
+                     'resizeable=no, directories=no, toolbar=no, titlebar=no, location=no, status=no, '+
+                     'menubar=no';\n";
+                    $jslink  = 'javascript:';
+                    if ($quiz->timelimit) {
+                        $jslink .=  "if (confirm('$strconfirmstartattempt')) ";
+                    }
+                    $jslink .= "var popup = window.open(\\'attempt.php?id=$cm->id\\', \\'quizpopup\\', windowoptions);";
+                } else {
+                    $jslink = "attempt.php?id=$cm->id";
+                }
+
+                $linktext = get_string('continueattemptquiz', 'quiz');
+                $datecompleted .= "document.write('<a href=\"$jslink\" alt=\"$linktext\">$linktext</a>');";
+                $datecompleted .= "\n-->\n";
+                $datecompleted .= '</script>';
+                $datecompleted .= '<noscript>';
+                $datecompleted .= '<strong>'.get_string('noscript', 'quiz').'</strong>';
+                $datecompleted .= '</noscript>';
             } else {
-                $timetaken = "-";
+                $timetaken = format_time($quiz->timeclose - $attempt->timestart);
+                $datecompleted = userdate($quiz->timeclose);
             }
+
             if ($quiz->grade and $quiz->sumgrades) {
-                $attemptmark  = '';
+                $attemptmark  = format_float($attempt->sumgrades,$quiz->decimalpoints);
                 $attemptgrade = format_float(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade,$quiz->decimalpoints);
                 if ($attemptgrade == $mygrade) {
                     $attemptgrade = "<span class=\"highlight\">$attemptgrade</span>";
                 }
-                if (quiz_review_allowed($quiz)) {
-                    $attemptmark = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">$attempt->sumgrades</a>";
+
+                // if attempt is closed and review is allowed then make attemptnumber and 
+                // mark and grade into links to review page
+                if (quiz_review_allowed($quiz) and $attempt->timefinish > 0) {
+                    $attemptmark = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">".format_float($attempt->sumgrades,$quiz->decimalpoints).'</a>';
                     $attemptgrade = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">$attemptgrade</a>";
                     $attempt->attempt = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">#$attempt->attempt</a>";
                 }
+
                 if ($quiz->grade <> $quiz->sumgrades) {
-                    $table->data[] = array( $attempt->attempt, 
-                                            format_time($attempt->timefinish - $attempt->timestart),
-                                            userdate($attempt->timefinish), 
+                    $table->data[] = array( $attempt->attempt,
+                                            $timetaken,
+                                            $datecompleted,
                                             $attemptmark, $attemptgrade);
                 } else {
-                    $table->data[] = array( $attempt->attempt, 
-                                            format_time($attempt->timefinish - $attempt->timestart),
-                                            userdate($attempt->timefinish), 
+                    $table->data[] = array( $attempt->attempt,
+                                            $timetaken,
+                                            $datecompleted,
                                             $attemptgrade);
                 }
             } else {  // No grades are being used
                 if (quiz_review_allowed($quiz)) {
-                    $attempt->attempt = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">#$attempt->attempt</a>";
+                    if($attempt->timefinish > 0) {
+                        $attempt->attempt = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">#$attempt->attempt</a>";
+                    } else {
+                        $attempt->attempt = "<a href=\"attempt.php?id=$id\">#$attempt->attempt</a>";
+                    }
                 }
-                $table->data[] = array( $attempt->attempt, 
-                                        format_time($attempt->timefinish - $attempt->timestart),
-                                        userdate($attempt->timefinish));
+                $table->data[] = array( $attempt->attempt,
+                                        $timetaken,
+                                        $datecompleted);
             }
         }
         print_table($table);
     }
 
-    if ($available) {
-        if ($quiz->timelimit) {
-            echo "<p align=\"center\">".get_string("quiztimelimit","quiz", format_time($quiz->timelimit * 60))."</p>";
-        }
-        echo "<p align=\"center\">".get_string("quizavailable", "quiz", userdate($quiz->timeclose));
-    } else if ($timenow < $quiz->timeopen) {
-        echo "<p align=\"center\">".get_string("quiznotavailable", "quiz", userdate($quiz->timeopen));
-    } else {
-        echo "<p align=\"center\">".get_string("quizclosed", "quiz", userdate($quiz->timeclose));
-    }
-
-
     if (!$quiz->questions) {
         print_heading(get_string("noquestions", "quiz"));
     } else {
-        if ($numattempts < $quiz->attempts or !$quiz->attempts) { 
+        if ($numattempts < $quiz->attempts or !$quiz->attempts) {
             if ($available) {
                 $options["id"] = $cm->id;
                 if ($numattempts and $quiz->grade) {
@@ -216,22 +268,24 @@
             if ($quiz->grade) {
                 print_heading(get_string("yourfinalgradeis", "quiz", "$mygrade / $quiz->grade"));
             }
+            print_continue('../../course/view.php?id='.$course->id);
         }
     }
-
 // Finish the page
     echo '</td></tr></table>';
 
     print_footer($course);
-    
+
     function quiz_review_allowed($quiz) {
-        if (!$quiz->review) {
+        // If not even responses are to be shown in review then we
+        // don't allow any review
+        if (!($quiz->review & QUIZ_REVIEW_RESPONSES)) {
             return false;
         }
-        if ((time() < $quiz->timeclose) and ($quiz->review == QUIZ_REVIEW_AFTER)) {
+        if ((time() < $quiz->timeclose) and !($quiz->review & QUIZ_REVIEW_OPEN)) {
             return false;
         }
-        if ((time() > $quiz->timeclose) and ($quiz->review == QUIZ_REVIEW_BEFORE)) {
+        if ((time() > $quiz->timeclose) and !($quiz->review & QUIZ_REVIEW_CLOSED)) {
             return false;
         }
         return true;

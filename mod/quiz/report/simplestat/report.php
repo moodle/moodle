@@ -20,11 +20,11 @@ function quiz_report_simplestat_get_attempt_responses($attempt) {
     global $CFG;
 
     if (!$responses = get_records_sql("SELECT q.id, q.qtype, q.category, q.questiontext,
-                                              q.defaultgrade, q.image, r.answer
-                                        FROM {$CFG->prefix}quiz_responses r,
+                                              q.defaultgrade, q.image, s.answer
+                                        FROM {$CFG->prefix}quiz_states s,
                                              {$CFG->prefix}quiz_questions q
                                        WHERE r.attempt = '$attempt->id'
-                                         AND q.id = r.question")) {
+                                         AND q.id = s.question")) {
         notify("Could not find any responses for that attempt!");
         return false;
     }
@@ -402,7 +402,7 @@ function quiz_report_simplestat_grade_attempt_results($quiz, $questions) {
         error("No questions!");
     }
 
-    if (!$grades = get_records_menu("quiz_question_grades", "quiz", $quiz->id, "", "question,grade")) {
+    if (!$grades = get_records_menu('quiz_question_instances', 'quiz', $quiz->id, '', 'question,grade')) {
         error("No grades defined for these quiz questions!");
     }
 
@@ -447,6 +447,9 @@ class quiz_report extends quiz_default_report {
 
         global $CFG;
         global $download;
+
+        print_heading('Not yet implemented');
+        return true;
 
         optional_variable($download, "");
 
@@ -550,12 +553,12 @@ class quiz_report extends quiz_default_report {
         /// Print names of all the fields
             $myxls->write_string(0,0,format_string($quiz->name,true));
             $myxls->set_column(0,0,25);
-                
+
             $myxls->set_column(1,$count,9);
             for ($i=1; $i<=$count; $i++) {
                 $myxls->write_string(0,$i,$i);
             }
-        
+
         /// Print all the user data
 
             $row=1;
@@ -587,16 +590,16 @@ class quiz_report extends quiz_default_report {
             }
 
             $workbook->close();
-        
+
             exit;
         }
-    
+
 
     /// If a text file is wanted, produce one
         if ($download == "txt") {
         /// Print header to force download
-    
-            header("Content-Type: application/download\n"); 
+
+            header("Content-Type: application/download\n");
             $downloadfilename = clean_filename("$course->shortname ".format_string($quiz->name,true));
             header("Content-Disposition: attachment; filename=$downloadfilename.txt");
             header("Expires: 0");
@@ -605,13 +608,13 @@ class quiz_report extends quiz_default_report {
 
 
         /// Print names of all the fields
-    
+
             echo format_string($quiz->name,true);
             for ($i=1; $i<=$count; $i++) {
                 echo "\t$i";
             }
             echo "\n";
-        
+
         /// Print all the user data
 
             foreach ($data as $userid => $datum) {
@@ -639,7 +642,7 @@ class quiz_report extends quiz_default_report {
                 echo "\t$percent";
             }
             echo "\n";
-        
+
             exit;
         }
 
@@ -697,7 +700,7 @@ class quiz_report extends quiz_default_report {
         $options["download"] = "txt";
         print_single_button("report.php", $options, get_string("downloadtext"));
         echo "</table>";
-    
+
 
         return true;
     }

@@ -1,56 +1,64 @@
 <?php  // $Id$
-
-// This page prints a review of a particular quiz attempt
+/**
+* This page prints a review of a particular quiz attempt
+*
+* @version $Id$
+* @author Martin Dougiamas and many others. This has recently been completely
+*         rewritten by Alex Smith, Julian Sedding and Gustav Delius as part of
+*         the Serving Mathematics project
+*         {@link http://maths.york.ac.uk/serving_maths}
+* @license http://www.gnu.org/copyleft/gpl.html GNU Public License
+* @package quiz
+*/
 
     require_once("../../config.php");
     require_once("locallib.php");
 
-    optional_variable($id);    // Course Module ID, or
-    optional_variable($q);     // quiz ID
-
-    require_variable($attempt);    // A particular attempt ID for review
-
-    if ($id) {
-        if (! $cm = get_record("course_modules", "id", $id)) {
-            error("Course Module ID was incorrect");
-        }
-
-        if (! $course = get_record("course", "id", $cm->course)) {
-            error("Course is misconfigured");
-        }
-
-        if (! $quiz = get_record("quiz", "id", $cm->instance)) {
-            error("Course module is incorrect");
-        }
-
-    } else {
-        if (! $quiz = get_record("quiz", "id", $q)) {
-            error("Course module is incorrect");
-        }
-        if (! $course = get_record("course", "id", $quiz->course)) {
-            error("Course is misconfigured");
-        }
-        if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
-            error("Course Module ID was incorrect");
-        }
-    }
+    $attempt = required_param('attempt', PARAM_INT);    // A particular attempt ID for review
+    $page = optional_param('page', 0, PARAM_INT); // The required page
+    $showall = optional_param('showall', 0, PARAM_BOOL);
 
     if (! $attempt = get_record("quiz_attempts", "id", $attempt)) {
         error("No such attempt ID exists");
     }
+    if (! $quiz = get_record("quiz", "id", $attempt->quiz)) {
+        error("Course module is incorrect");
+    }
+    if (! $course = get_record("course", "id", $quiz->course)) {
+        error("Course is misconfigured");
+    }
+    if (! $cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
+        error("Course Module ID was incorrect");
+    }
 
+    if (!count_records('quiz_newest_states', 'attemptid', $attempt->id)) {
+        // this question has not yet been upgraded to the new model
+        quiz_upgrade_states($attempt);
+    }
 
     require_login($course->id, false, $cm);
+    $isteacher = isteacher($course->id);
+    $popup = false; // controls whether the protected window is used
 
-    if (!isteacher($course->id)) {
-        if (!$quiz->review) {
+    if (!$isteacher) {
+        if (!$attempt->timefinish) {
+            redirect('attempt.php?q='.$quiz->id);
+        }
+        // If not even responses are to be shown in review then we
+        // don't allow any review
+        if (!($quiz->review & QUIZ_REVIEW_RESPONSES)) {
             error(get_string("noreview", "quiz"));
         }
-        if (time() < $quiz->timeclose and $quiz->review == QUIZ_REVIEW_AFTER) {
-            error(get_string("noreviewuntil", "quiz", userdate($quiz->timeclose)));
-        }
-        if (time() > $quiz->timeclose and $quiz->review == QUIZ_REVIEW_BEFORE) {
-            error(get_string("noreview", "quiz"));
+        if ((time() - $attempt->timefinish) > 120) { // always allow review right after attempt
+            if (time() < $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_OPEN)) {
+                error(get_string("noreviewuntil", "quiz", userdate($quiz->timeclose)));
+            }
+            if (time() >= $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_CLOSED)) {
+                error(get_string("noreview", "quiz"));
+            }
+        } else {
+            // immediately after the attempt the review should be in the protected window if required
+            $popup = $quiz->popup;
         }
         if ($attempt->userid != $USER->id) {
             error("This is not your attempt!");
@@ -59,57 +67,82 @@
 
     add_to_log($course->id, "quiz", "review", "review.php?id=$cm->id&amp;attempt=$attempt->id", "$quiz->id", "$cm->id");
 
-
-// Print the page header
+/// Print the page header
 
     $strquizzes = get_string("modulenameplural", "quiz");
-    $strquiz  = get_string("modulename", "quiz");
-    $strreport  = get_string("report", "quiz");
     $strreview  = get_string("review", "quiz");
-    $strname  = get_string("name");
-    $strattempts  = get_string("attempts", "quiz");
     $strscore  = get_string("score", "quiz");
     $strgrade  = get_string("grade");
     $strbestgrade  = get_string("bestgrade", "quiz");
     $strtimetaken     = get_string("timetaken", "quiz");
-    $strtimecompleted = get_string("timecompleted", "quiz");
+    $strtimecompleted = get_string("completedon", "quiz");
     $stroverdue = get_string("overdue", "quiz");
 
-    print_header_simple(format_string($quiz->name), "",
+    if (!empty($popup)) {
+        define('MESSAGE_WINDOW', true);  // This prevents the message window coming up
+        print_header($course->shortname.': '.format_string($quiz->name), '', '', '', '', false, '', '', false, '');
+        /// Include Javascript protection for this page
+        include('protect_js.php');
+    } else {
+        $strupdatemodule = isteacheredit($course->id)
+                    ? update_module_button($cm->id, $course->id, get_string('modulename', 'quiz'))
+                    : "";
+        print_header_simple(format_string($quiz->name), "",
                  "<a href=\"index.php?id=$course->id\">$strquizzes</a>
                   -> <a href=\"view.php?id=$cm->id\">".format_string($quiz->name,true)."</a> -> $strreview",
-                 "", "", true);
-
+                 "", "", true, $strupdatemodule);
+    }
     echo '<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>'; // for overlib
 
-    print_heading(format_string($quiz->name));
-
-
-/// Include Javascript protection for this page if required
-
-    if (!empty($quiz->popup)) {
-        include("protect_js.php");
+/// Print heading and tabs if this is part of a preview
+    if ($isteacher) {
+        $currenttab = ($attempt->userid == $USER->id) ? 'preview' : '';
+        include('tabs.php');
+    } else {
+        print_heading(format_string($quiz->name));
     }
 
-    if (!($questions = quiz_get_attempt_questions($quiz, $attempt))) {
-        error("Unable to get questions from database for quiz $quiz->id attempt $attempt->id number $attempt->attempt");
+/// Load all the questions and states needed by this script
+
+    // load the questions needed by page
+    $pagelist = $showall ? quiz_questions_in_quiz($attempt->layout) : quiz_questions_on_page($attempt->layout, $page);
+    $sql = "SELECT q.*, i.grade AS maxgrade, i.id AS instance".
+           "  FROM {$CFG->prefix}quiz_questions q,".
+           "       {$CFG->prefix}quiz_question_instances i".
+           " WHERE i.quiz = '$quiz->id' AND q.id = i.question".
+           "   AND q.id IN ($pagelist)";
+    if (!$questions = get_records_sql($sql)) {
+        error('No questions found');
     }
 
-    if (!$result = quiz_grade_responses($quiz, $questions)) {
-        error("Could not re-grade this quiz attempt!");
+    // Load the question type specific information
+    if (!quiz_get_question_options($questions)) {
+        error('Could not load question options');
     }
+
+    // Restore the question sessions to their most recent states
+    // creating new sessions where required
+    if (!$states = quiz_restore_question_sessions($questions, $quiz, $attempt)) {
+        error('Could not restore question sessions');
+    }
+
+/// Print infobox
 
     $timelimit = (int)$quiz->timelimit * 60;
     $overtime = 0;
 
-    if ($timetaken = ($attempt->timefinish - $attempt->timestart)) {
-        if($timelimit && $timetaken > ($timelimit + 60)) {
-            $overtime = $timetaken - $timelimit;
-            $overtime = format_time($overtime);
+    if ($attempt->timefinish) {
+        if ($timetaken = ($attempt->timefinish - $attempt->timestart)) {
+            if($timelimit && $timetaken > ($timelimit + 60)) {
+                $overtime = $timetaken - $timelimit;
+                $overtime = format_time($overtime);
+            }
+            $timetaken = format_time($timetaken);
+        } else {
+            $timetaken = "-";
         }
-        $timetaken = format_time($timetaken);
     } else {
-        $timetaken = "-";
+        $timetaken = get_string('unfinished', 'quiz');
     }
 
     $table->align  = array("right", "left");
@@ -118,41 +151,84 @@
        $picture = print_user_picture($student->id, $course->id, $student->picture, false, true);
        $table->data[] = array($picture, fullname($student, true));
     }
-    $table->data[] = array("$strtimetaken:", $timetaken);
-    $table->data[] = array("$strtimecompleted:", userdate($attempt->timefinish));
+    if ($isteacher and count($attempts = get_records_select('quiz_attempts', "quiz = '$quiz->id' AND userid = '$attempt->userid'", 'attempt ASC')) > 1) {
+        // print list of attempts
+        $attemptlist = '';
+        foreach ($attempts as $at) {
+            $attemptlist .= ($at->id == $attempt->id)
+                ? '<b>'.$at->attempt.'</b>, '
+                : '<a href="review.php?attempt='.$at->id.($showall?'&amp;showall=true':'').'">'.$at->attempt.'</a>, ';
+        }
+        $table->data[] = array(get_string('attempts', 'quiz').':', trim($attemptlist, ' ,'));
+    }
+
+    $table->data[] = array(get_string('startedon', 'quiz').':', userdate($attempt->timestart));
+    if ($attempt->timefinish) {
+        $table->data[] = array("$strtimecompleted:", userdate($attempt->timefinish));
+        $table->data[] = array("$strtimetaken:", $timetaken);
+    }
     if (!empty($overtime)) {
         $table->data[] = array("$stroverdue:", $overtime);
     }
     if ($quiz->grade) {
         if($overtime) {
             $result->sumgrades = "0";
-            $result->percentage = "0";
             $result->grade = "0.0";
         }
-        $table->data[] = array("$strscore:", "$result->sumgrades/$quiz->sumgrades ($result->percentage %)");
-        $table->data[] = array("$strgrade:", "$result->grade/$quiz->grade");
+        $percentage = format_float(($attempt->sumgrades/$quiz->sumgrades)*100, 0);
+        $grade = format_float(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade, $CFG->quiz_decimalpoints);
+        $table->data[] = array("$strscore:", "$attempt->sumgrades/$quiz->sumgrades ($percentage %)");
+        $table->data[] = array("$strgrade:", $grade.get_string('outof', 'quiz').$quiz->grade);
     }
-
+    if ($isteacher and $attempt->userid == $USER->id) {
+        // the teacher is at the end of a preview. Print button to start new preview
+        unset($buttonoptions);
+        $buttonoptions['q'] = $quiz->id;
+        $buttonoptions['forcenew'] = true;
+        echo '<center>';
+        print_single_button($CFG->wwwroot.'/mod/quiz/attempt.php', $buttonoptions, get_string('startagain', 'quiz'));
+        echo '</center>';
+    } else { // print number of the attempt
+        print_heading(get_string('reviewofattempt', 'quiz', $attempt->attempt));
+    }
     print_table($table);
 
-    if (isteacher($course->id)) {
-        print_continue("report.php?q=$quiz->id");
-    } else {
-        print_continue("view.php?q=$quiz->id");
+/// Print the navigation panel if required
+    $numpages = quiz_number_of_pages($attempt->layout);
+    if ($numpages > 1 and !$showall) {
+        print_paging_bar($numpages, $page, 1, 'review.php?attempt='.$attempt->id.'&amp;');
+        echo '<center><a href="review.php?attempt='.$attempt->id.'&amp;showall=true">';
+        print_string('showall', 'quiz');
+        echo '</a></center>';
     }
 
-    $quiz->feedback = true;
-    $quiz->correctanswers = true;
-    $quiz->shuffleanswers = false;
-    $quiz->shufflequestions = false;
-    quiz_print_quiz_questions($quiz, $questions, $result);
+/// Print all the questions
 
-    if (isteacher($course->id)) {
-        print_continue("report.php?q=$quiz->id");
-    } else {
-        print_continue("view.php?q=$quiz->id");
+    $pagequestions = explode(',', $pagelist);
+    $number = quiz_first_questionnumber($attempt->layout, $pagelist);
+    foreach ($pagequestions as $i) {
+        $options = quiz_get_reviewoptions($quiz, $attempt, $isteacher);
+        $options->validation = QUIZ_EVENTVALIDATE === $states[$i]->event;
+        $options->history = ($isteacher and !$attempt->preview) ? 'all' : 'graded';
+        // Print the question
+        if ($i > 0) {
+            echo "<br />\n";
+        }
+        quiz_print_quiz_question($questions[$i], $states[$i], $number, $quiz, $options);
+        $number += $questions[$i]->length;
     }
 
-    print_footer($course);
+    // Print the navigation panel if required
+    if ($numpages > 1 and !$showall) {
+        print_paging_bar($numpages, $page, 1, 'review.php?attempt='.$attempt->id.'&amp;');
+    }
 
+    // print javascript button to close the window, if necessary
+    if (!$isteacher) {
+        include('attempt_close_js.php');
+    }
+
+    if (empty($popup)) {
+        print_footer($course);
+    }
 ?>

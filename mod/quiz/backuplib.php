@@ -90,7 +90,7 @@
     //     - quiz_question_grades
     //     - quiz_attempts
     //     - quiz_grades
-    //     - quiz_responses
+    //     - quiz_states
     //    This step is the standard mod backup. (course dependent).
 
     //STEP 1. Backup categories/questions and associated structures
@@ -618,31 +618,62 @@
         return $status;
     }
 
-    //Backup quiz_question_grades contents (executed from quiz_backup_mods)
-    function backup_quiz_question_grades ($bf,$preferences,$quiz) {
+    //Backup quiz_question_instances contents (executed from quiz_backup_mods)
+    function backup_quiz_question_instances ($bf,$preferences,$quiz) {
 
         global $CFG;
 
         $status = true;
 
-        $quiz_question_grades = get_records("quiz_question_grades","quiz",$quiz,"id");
-        //If there are question_grades
-        if ($quiz_question_grades) {
+        $quiz_question_instances = get_records("quiz_question_instances","quiz",$quiz,"id");
+        //If there are question_instances
+        if ($quiz_question_instances) {
             //Write start tag
-            $status =fwrite ($bf,start_tag("QUESTION_GRADES",4,true));
-            //Iterate over each question_grade
-            foreach ($quiz_question_grades as $que_gra) {
-                //Start question grade
-                $status =fwrite ($bf,start_tag("QUESTION_GRADE",5,true));
-                //Print question_grade contents
-                fwrite ($bf,full_tag("ID",6,false,$que_gra->id));
-                fwrite ($bf,full_tag("QUESTION",6,false,$que_gra->question));
-                fwrite ($bf,full_tag("GRADE",6,false,$que_gra->grade));
-                //End question grade
-                $status =fwrite ($bf,end_tag("QUESTION_GRADE",5,true));
+            $status =fwrite ($bf,start_tag("QUESTION_INSTANCES",4,true));
+            //Iterate over each question_instance
+            foreach ($quiz_question_instances as $que_ins) {
+                //Start question instance
+                $status =fwrite ($bf,start_tag("QUESTION_INSTANCE",5,true));
+                //Print question_instance contents
+                fwrite ($bf,full_tag("ID",6,false,$que_ins->id));
+                fwrite ($bf,full_tag("QUESTION",6,false,$que_ins->question));
+                fwrite ($bf,full_tag("GRADE",6,false,$que_ins->grade));
+                //End question instance
+                $status =fwrite ($bf,end_tag("QUESTION_INSTANCE",5,true));
             }
             //Write end tag
-            $status =fwrite ($bf,end_tag("QUESTION_GRADES",4,true));
+            $status =fwrite ($bf,end_tag("QUESTION_INSTANCES",4,true));
+        }
+        return $status;
+    }
+
+    //Backup quiz_question_versions contents (executed from quiz_backup_mods)
+    function backup_quiz_question_versions ($bf,$preferences,$quiz) {
+
+        global $CFG;
+
+        $status = true;
+
+        $quiz_question_versions = get_records("quiz_question_versions","quiz",$quiz,"id");
+        //If there are question_versions
+        if ($quiz_question_versions) {
+            //Write start tag
+            $status =fwrite ($bf,start_tag("QUESTION_VERSIONS",4,true));
+            //Iterate over each question_version
+            foreach ($quiz_question_versions as $que_ver) {
+                //Start question version
+                $status =fwrite ($bf,start_tag("QUESTION_VERSION",5,true));
+                //Print question_version contents
+                fwrite ($bf,full_tag("ID",6,false,$que_ver->id));
+                fwrite ($bf,full_tag("OLDQUESTION",6,false,$que_ver->oldquestion));
+                fwrite ($bf,full_tag("NEWQUESTION",6,false,$que_ver->newquestion));
+                fwrite ($bf,full_tag("USERID",6,false,$que_ver->userid));
+                fwrite ($bf,full_tag("TIMESTAMP",6,false,$que_ver->timestamp));
+                //End question version
+                $status =fwrite ($bf,end_tag("QUESTION_VERSION",5,true));
+            }
+            //Write end tag
+            $status =fwrite ($bf,end_tag("QUESTION_VERSIONS",4,true));
         }
         return $status;
     }
@@ -732,8 +763,8 @@
                 fwrite ($bf,full_tag("TIMESTART",6,false,$attempt->timestart));
                 fwrite ($bf,full_tag("TIMEFINISH",6,false,$attempt->timefinish));
                 fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$attempt->timemodified));
-                //Now write to xml the responses (in this attempt)
-                $status = backup_quiz_responses ($bf,$preferences,$attempt->id);
+                //Now write to xml the states (in this attempt)
+                $status = backup_quiz_states ($bf,$preferences,$attempt->id);
                 //End attempt
                 $status =fwrite ($bf,end_tag("ATTEMPT",5,true));
             }
@@ -743,16 +774,16 @@
         return $status;
     }
 
-    //Backup quiz_responses contents (executed from backup_quiz_attempts)
-    function backup_quiz_responses ($bf,$preferences,$attempt) {
+    //Backup quiz_states contents (executed from backup_quiz_attempts)
+    function backup_quiz_states ($bf,$preferences,$attempt) {
 
         global $CFG;
 
         $status = true;
 
-        $quiz_responses = get_records("quiz_responses","attempt",$attempt,"id");
-        //If there are responses
-        if ($quiz_responses) {
+        $quiz_states = get_records("quiz_states","attempt",$attempt,"id");
+        //If there are states
+        if ($quiz_states) {
             //Write start tag
             $status =fwrite ($bf,start_tag("RESPONSES",6,true));
             //Iterate over each response
@@ -769,7 +800,7 @@
                 $status =fwrite ($bf,end_tag("RESPONSE",7,true));
             }
             //Write end tag
-            $status =fwrite ($bf,end_tag("RESPONSES",6,true));
+            $status =fwrite ($bf,end_tag("STATES",6,true));
         }
         return $status;
     }
