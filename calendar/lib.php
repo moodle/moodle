@@ -1056,7 +1056,7 @@ function calendar_set_filters(&$courses, &$group, &$user, $courseeventsfrom = NU
                     }
 
                     // If this course has groups, show events from all of them
-                    if($groupmodes[$courseid]->groupmode != NOGROUPS && ($grouprecords = get_groups($courseid)) !== false) {
+                    if(isset($groupmodes[$courseid]) && $groupmodes[$courseid]->groupmode != NOGROUPS && ($grouprecords = get_groups($courseid)) !== false) {
                         $grouparray = array_merge($grouparray, array_keys($grouprecords));
                     }
                 }
