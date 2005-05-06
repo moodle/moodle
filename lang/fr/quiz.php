@@ -312,6 +312,7 @@ $string['uniform'] = 'décimales, en distribution uniforme';
 $string['unit'] = 'Unité';
 $string['unknowntype'] = 'Type de question non supporté à la ligne $a. La question sera ignorée';
 $string['unsupportedformulafunction'] = 'La fonction $a n\'est pas supportée';
+$string['upgradesure'] = '<div style=\"color: red;\">ATTENTION&nbsp;! Les tables du module Test seront considérablement modifiées, et cette mise à jour n\'a pas encore été suffisamment testée. Nous vous recommandons instamment de faire une copie de sauvegarde de votre base de données avant de continuer&nbsp;!</div>';
 $string['viewallanswers'] = 'Afficher les $a tests terminés';
 $string['viewallreports'] = 'Afficher le rapport des $a tentatives';
 $string['warningsdetected'] = '$a alerte(s) détectées';
