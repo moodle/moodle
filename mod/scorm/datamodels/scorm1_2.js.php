@@ -26,7 +26,7 @@ function SCORMapi1_2() {
     CMIDecimal = '^([0-9]{0,3})(\.[0-9]{1,2})?$';
     CMIIdentifier = '^\\w{0,255}$';
     CMIFeedback = CMIString255; // This must be redefined
-    CMIIndex = '.\\d+.';
+    CMIIndex = '.(\\d+).';
     // Vocabulary Data Type Definition
     CMIStatus = '^passed|completed|failed|incomplete|browsed|not attempted$';
     CMIExit = '^time-out|suspend|logout|$';
@@ -123,16 +123,6 @@ function SCORMapi1_2() {
 	}
     }
     
-<?php
-	foreach($userdata as $element => $value) {
-	    if (substr($element,0,14) == 'cmi.objectives') {
-?>
-    
-<?php
-	    }
-	}
-?>
-    
     if (cmi.core.lesson_status == '') {
 	cmi.core.lesson_status = 'not attempted';
     } 
@@ -174,15 +164,26 @@ function SCORMapi1_2() {
 	if (Initialized) {
 	    if (element !="") {
 		expression = new RegExp(CMIIndex,'g');
-		dataelement = element.replace(expression,'.n.');
-		if ((typeof eval('datamodel["'+dataelement+'"]')) != "undefined") {
-	            if (eval('datamodel["'+dataelement+'"].mod') != 'w') {
+		elementmodel = element.replace(expression,'.n.');
+		if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
+	            if (eval('datamodel["'+elementmodel+'"].mod') != 'w') {
 	            	element = element.replace(expression, "_$1.");
 	            	//alert ('Element: '+element);
-			errorCode = "0";
-			return eval(element);
+	            	elementIndexes = element.split('.');
+			subelement = 'cmi';
+			i = 1;
+			while ((i < elementIndexes.length) && (typeof eval(subelement) != "undefined")) {
+			    subelement += '.'+elementIndexes[i++];
+			}
+			//alert ('Element: '+subelement);
+	            	if (subelement == element) {
+			    errorCode = "0";
+			    return eval(element);
+			} else {
+			    errorCode = "401"; // Need to check if it is the right error code
+			}
 	            } else {
-			errorCode = eval('datamodel["'+element+'"].readerror');
+			errorCode = eval('datamodel["'+elementmodel+'"].readerror');
 		    }
 	        } else {
 		    errorCode = "401"
@@ -224,7 +225,7 @@ function SCORMapi1_2() {
 					    //alert('Object: '+subelement+'.'+elementIndex);
 					}
 					//alert ('Count:'+eval(subelement+'.'+elementIndex+'._count'));
-					if (elementIndexes[i+1] == eval(subelement+'.'+elementIndex+'._count')*1.0+1) {
+					if (elementIndexes[i+1] == eval(subelement+'.'+elementIndex+'._count')) {
 					    //alert('Index:'+elementIndexes[i+1]);
 					    eval(subelement+'.'+elementIndex+'._count++;');
 					} 
@@ -236,9 +237,16 @@ function SCORMapi1_2() {
 				    } else {
 					subelement = subelement.concat('.'+elementIndex);
 				    }
-				    alert('Subelement: '+subelement);
+				    //alert('Subelement: '+subelement);
 				    if ((typeof eval(subelement)) == "undefined") {
 					eval(subelement+' = new Object();');
+					if (element.substr(0,14) == 'cmi.objectives') {
+					    eval(subelement+'.score = new Object();');
+					    eval(subelement+'.score._children = "raw,min,max";');
+					    eval(subelement+'.score.raw = "";');
+					    eval(subelement+'.score.min = "";');
+					    eval(subelement+'.score.max = "";');
+					}
 				    }
 				}
 				element = subelement.concat('.'+elementIndexes[elementIndexes.length-1]);

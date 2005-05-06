@@ -5,6 +5,7 @@
     optional_variable($id);    // Course Module ID, or
     optional_variable($a);     // scorm ID
     optional_variable($scoid); // sco ID
+    optional_variable($mode); // lesson mode
 
     if ($id) {
 	if (! $cm = get_record("course_modules", "id", $id)) {
@@ -32,6 +33,7 @@
     }
 
     require_login($course->id, false, $cm);
+    
 
     if (!empty($scoid)) {	
     //

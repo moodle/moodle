@@ -5,7 +5,7 @@
 
     optional_variable($id);    // Course Module ID, or
     optional_variable($a);     // scorm ID
-    //require_variable($scoid);  // sco ID
+    require_variable($scoid);  // sco ID
     optional_variable($mode);  // navigation mode
 
     if ($id) {
@@ -34,7 +34,6 @@
     }
 
     require_login($course->id, false, $cm);
-    $scoid = $SESSION->scorm_scoid;
     
     if ($usertrack=scorm_get_tracks($scoid,$USER->id)) {
 	$userdata = $usertrack;

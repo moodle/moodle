@@ -139,7 +139,7 @@
 	    	    </div>
 	    	</th>
 	    </tr>
-	    <tr><td nowrap>  
+	    <tr><td>  
 <?php
     $sco = scorm_display_structure($scorm,'scormlist',$currentorg,$scoid,$mode,true);
     if ($mode == 'normal') {
@@ -169,7 +169,7 @@
 	</table>
     </td>
     <td class="fullscreen" height="90%">
-    	<iframe name="main" class="fullscreen" height="<?php echo $CFG->scorm_frameheight ?>" src="loadSCO.php?id=<?php echo $cm->id.$scoidstring ?>"></iframe>
+    	<iframe name="main" class="fullscreen" height="<?php echo $CFG->scorm_frameheight ?>" src="loadSCO.php?id=<?php echo $cm->id.$scoidstring.$modestring ?>"></iframe>
     </td></tr>
     </table>
     <script language="JavaScript" type="text/javascript" src="request.js"></script>

@@ -876,6 +876,9 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
     	        $startbold = '';
     	        $endbold = '';
     	        $score = '';
+    	        if (empty($scoid) && ($mode != 'normal')) {
+    		    $scoid = $sco->id;
+    		}
     		if ($usertrack=scorm_get_tracks($sco->id,$USER->id)) {
     		    if ( $usertrack->status == '') {
     	    		$usertrack->status = 'notattempted';
