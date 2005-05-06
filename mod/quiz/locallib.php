@@ -588,7 +588,7 @@ class quiz_default_questiontype {
         if (isteacher($quiz->course)) {
             echo ' <font size="1">( ';
             link_to_popup_window ('/mod/quiz/question.php?id=' . $question->id,
-             'editquestion', $question->id, 450, 550, get_string('edit', 'quiz'));
+             'editquestion', $question->id, 450, 550, get_string('edit'));
             echo ')</font>';
         }
         if ($question->maxgrade and $options->scores) {
