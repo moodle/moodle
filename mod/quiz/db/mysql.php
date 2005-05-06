@@ -4,7 +4,7 @@ function quiz_upgrade($oldversion) {
 // This function does anything necessary to upgrade
 // older versions to match current functionality
 
-    global $CFG, $QUIZ_QTYPES;
+    global $CFG, $QUIZ_QTYPES, $db;
     require_once("$CFG->dirroot/mod/quiz/locallib.php");
 
     if ($oldversion < 2002101800) {
@@ -365,9 +365,40 @@ function quiz_upgrade($oldversion) {
 
         // The review options are now all stored in the bits of the review field
         table_column('quiz', 'review', 'review', 'integer', 10, 'unsigned', 0, 'not null', '');
-        // We need to set the bits using the data in the existing fields
+
+    /// Changes to quiz_attempts table
+
+        // The preview flag marks teacher previews
+        table_column('quiz_attempts', '', 'preview', 'tinyint', '2', 'unsigned', '0', 'not null', 'timemodified');
+
+        // The layout is the list of questions with inserted page breaks.
+        table_column('quiz_attempts', '', 'layout', 'text', '', '', '', 'not null', 'timemodified');
+        // For old quiz attempts we will set this to the repaginated question list from $quiz->questions
+
+    /// The following updates of field values require a loop through all quizzes
+        // This is because earlier versions of mysql don't allow joins in UPDATE
         if ($quizzes = get_records('quiz')) {
+
+            // turn reporting off temporarily to avoid one line output per set_field
+            $olddebug = $db->debug;
+            $db->debug = false;
             foreach ($quizzes as $quiz) {
+
+                // repaginate
+                $quiz->questions = ($quiz->questionsperpage) ? quiz_repaginate($quiz->questions, $quiz->questionsperpage) : $quiz->questions;
+                if ($quiz->questionsperpage) {
+                    $quiz->questions = quiz_repaginate($quiz->questions, $quiz->questionsperpage);
+                    set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->id);
+                }
+                set_field('quiz_attempts', 'layout', $quiz->questions, 'quiz', $quiz->id);
+
+                // set preview flag
+                if ($teachers = get_course_teachers($quiz->course)) {
+                    $teacherids = implode(',', array_keys($teachers));
+                    execute_sql("UPDATE {$CFG->prefix}quiz_attempts SET preview = 1 WHERE userid IN ($teacherids)");
+                }
+
+                // set review flags in quiz table
                 $review = (QUIZ_REVIEW_IMMEDIATELY & (QUIZ_REVIEW_RESPONSES + QUIZ_REVIEW_SCORES));
                 if ($quiz->feedback) {
                     $review += (QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_FEEDBACK);
@@ -383,54 +414,12 @@ function quiz_upgrade($oldversion) {
                 }
                 set_field('quiz', 'review', $review, 'id', $quiz->id);
             }
+            $db->debug = $olddebug;
         }
-        // update the default settings in $CFG
-        $review = (QUIZ_REVIEW_IMMEDIATELY & (QUIZ_REVIEW_RESPONSES + QUIZ_REVIEW_SCORES));
-        if (!empty($CFG->quiz_feedback)) {
-            $review += (QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_FEEDBACK);
-        }
-        if (!empty($CFG->quiz_correctanswers)) {
-            $review += (QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_ANSWERS);
-        }
-        if (isset($CFG->quiz_review) and ($CFG->quiz_review & 1)) {
-            $review += QUIZ_REVIEW_CLOSED;
-        }
-        if (isset($CFG->quiz_review) and ($CFG->quiz_review & 2)) {
-            $review += QUIZ_REVIEW_OPEN;
-        }
-        set_config('quiz_review', $review);
 
         // We can now drop the fields whose data has been moved to the review field
         execute_sql(" ALTER TABLE `{$CFG->prefix}quiz` DROP feedback");
         execute_sql(" ALTER TABLE `{$CFG->prefix}quiz` DROP correctanswers");
-
-    /// Changes to quiz_attempts table
-
-        // The preview flag marks teacher previews
-        table_column('quiz_attempts', '', 'preview', 'tinyint', '2', 'unsigned', '0', 'not null', 'timemodified');
-
-        // The layout is the list of questions with inserted page breaks.
-        table_column('quiz_attempts', '', 'layout', 'text', '', '', '', 'not null', 'timemodified');
-        // For old quiz attempts we will set this to the repaginated question list from $quiz->questions
-
-        if ($quizzes) {
-            $quiz->questions = ($quiz->questionsperpage) ? quiz_repaginate($quiz->questions, $quiz->questionsperpage) : $quiz->questions;
-            foreach ($quizzes as $quiz) {
-
-                // repaginate
-                if ($quiz->questionsperpage) {
-                    $quiz->questions = quiz_repaginate($quiz->questions, $quiz->questionsperpage);
-                    set_field('quiz', 'questions', $quiz->questions, 'id', $quiz->id);
-                }
-                set_field('quiz_attempts', 'layout', $quiz->questions, 'quiz', $quiz->id);
-
-                // set preview flag
-                if ($teachers = get_course_teachers($quiz->course)) {
-                    $teacherids = implode(',', array_keys($teachers));
-                    execute_sql("UPDATE {$CFG->prefix}quiz_attempts SET preview = 1 WHERE userid IN ($teacherids)");
-                }
-            }
-        }
 
     /// Renaming tables
 
@@ -475,12 +464,16 @@ function quiz_upgrade($oldversion) {
                              UNIQUE KEY `attemptid` (`attemptid`,`questionid`)
                            ) TYPE=MyISAM COMMENT='Gives ids of the newest open and newest graded states';");
 
-    /// Now upgrade states and newest_states where necessary
+    /// Now upgrade some fields in states and newest_states tables where necessary
         // to save time on large sites only do this for attempts that have not yet been finished.
         if ($attempts = get_records_select('quiz_attempts', 'timefinish = 0')) {
+            // turn reporting off temporarily to avoid one line output per set_field
+            $olddebug = $db->debug;
+            $db->debug = false;
             foreach ($attempts as $attempt) {
                 quiz_upgrade_states($attempt);
             }
+            $db->debug = $olddebug;
         }
 
     /// Entries for the log_display table
@@ -489,15 +482,25 @@ function quiz_upgrade($oldversion) {
         modify_database('', " INSERT INTO prefix_log_display VALUES ('quiz', 'start attempt', 'quiz', 'name');");
         modify_database('', " INSERT INTO prefix_log_display VALUES ('quiz', 'close attempt', 'quiz', 'name');");
 
-    /// Fix numerical question type
-        table_column('quiz_numerical', '', 'tolerance', 'varchar', '255', '', '0.0', 'not null', 'question');
-        if($rows = get_records('quiz_numerical')) {
-            foreach ($rows as $row) {
-                $row->tolerance = ((float)$row->min + (float)$row->max)/2;
-                set_field('quiz_numerical', 'tolerance', $row->tolerance, 'id', $row->id);
-            }
+    /// update the default settings in $CFG
+        $review = (QUIZ_REVIEW_IMMEDIATELY & (QUIZ_REVIEW_RESPONSES + QUIZ_REVIEW_SCORES));
+        if (!empty($CFG->quiz_feedback)) {
+            $review += (QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_FEEDBACK);
         }
-        // modify_database('', 'ALTER TABLE `prefix_quiz_numerical` DROP `answer`'); // There is no need for it at all
+        if (!empty($CFG->quiz_correctanswers)) {
+            $review += (QUIZ_REVIEW_IMMEDIATELY & QUIZ_REVIEW_ANSWERS);
+        }
+        if (isset($CFG->quiz_review) and ($CFG->quiz_review & 1)) {
+            $review += QUIZ_REVIEW_CLOSED;
+        }
+        if (isset($CFG->quiz_review) and ($CFG->quiz_review & 2)) {
+            $review += QUIZ_REVIEW_OPEN;
+        }
+        set_config('quiz_review', $review);
+
+    /// Use tolerance instead of min and max in numerical question type
+        table_column('quiz_numerical', '', 'tolerance', 'varchar', '255', '', '0.0', 'not null', 'question');
+        execute_sql("UPDATE {$CFG->prefix}quiz_numerical SET tolerance = (min+max)/2");
         modify_database('', 'ALTER TABLE `prefix_quiz_numerical` DROP `min`'); // Replaced by tolerance
         modify_database('', 'ALTER TABLE `prefix_quiz_numerical` DROP `max`'); // Replaced by tolerance
 
@@ -559,9 +562,8 @@ function quiz_upgrade($oldversion) {
             $sequence = array();
 
             // turn reporting off temporarily to avoid one line output per set_field
-            global $db;
             $olddebug = $db->debug;
-            // $db->debug = false;
+            $db->debug = false;
             for ($i = 0; $i < $n; $i++) {
                 $answers = $multianswers[$i]->answers; unset($multianswers[$i]->answers);
                 $pos = $multianswers[$i]->positionkey; unset($multianswers[$i]->positionkey);
