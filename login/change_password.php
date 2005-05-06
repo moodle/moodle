@@ -134,7 +134,7 @@ function validate_form($frm, &$err) {
     if (empty($frm->username)){
         $err->username = get_string('missingusername');
     } else {
-        if (empty($frm->password)){
+        if (!isadmin() and empty($frm->password)){
             $err->password = get_string('missingpassword');
         } else {  
             //require non adminusers to give valid password
@@ -154,7 +154,7 @@ function validate_form($frm, &$err) {
         if ($frm->newpassword1 <> $frm->newpassword2) {
             $err->newpassword2 = get_string('passwordsdiffer');
         } else {
-            if($frm->password === $frm->newpassword1){
+            if(!isadmin() and ($frm->password === $frm->newpassword1)){
                 $err->newpassword1 = get_string('mustchangepassword');
             }
         }
