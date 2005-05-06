@@ -593,9 +593,12 @@ class quiz_default_questiontype {
         }
         if ($question->maxgrade and $options->scores) {
             echo '<div class="grade">';
-            echo get_string('marks', 'quiz').':<br />&nbsp;';
-            echo ('' === $state->last_graded->grade) ? '--' : format_float($state->last_graded->grade, $quiz->decimalpoints);
-            echo '/'.$question->maxgrade.'</div>';
+            echo get_string('marks', 'quiz').': ';
+            if ($quiz->optionflags & QUIZ_ADAPTIVE) {
+                echo '<br />&nbsp;';
+                echo ('' === $state->last_graded->grade) ? '--/' : format_float($state->last_graded->grade, $quiz->decimalpoints).'/';
+            }
+            echo $question->maxgrade.'</div>';
         }
 
         echo '</td><td valign="top">';
@@ -2627,7 +2630,7 @@ function get_import_export_formats( $type ) {
   $fileformatname=array();
   include_once( "format.php" );
   foreach ($fileformats as $key => $fileformat) {
-    require_once( $CFG->dirroot."/mod/quiz/format/$fileformat/format.php" );     
+    require_once( $CFG->dirroot."/mod/quiz/format/$fileformat/format.php" );
     $classname = "quiz_format_$fileformat";
     $format_class = new $classname();
     if ($type=='import') {
