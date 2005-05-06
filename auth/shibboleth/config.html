@@ -1,7 +1,7 @@
 <?php
 // Set default values
 if (!isset($config->auth_instructions) or empty($config->shib_user_attribute)) {
-	$config->auth_instructions = get_string('auth_shib_instructions', 'auth', $CFG->wwwroot.'/auth/shibboleth');
+	$config->auth_instructions = get_string('auth_shib_instructions', 'auth', $CFG->wwwroot.'/auth/shibboleth/shib-protected.php');
 }
 
 if (!isset($config->auth_user_firstname_updatelocal)) {
@@ -394,7 +394,7 @@ if (!isset($config->auth_user_lang_editlock)) {
     <textarea name="auth_instructions" cols="30" rows="10" wrap="virtual"><?php  p($config->auth_instructions) ?></textarea> 
     </td>
     <td>
-    <?php  print_string("auth_shib_instructions_help","auth", htmlspecialchars($CFG->wwwroot.'/auth/shibboleth/index.php')) ?>
+    <?php  print_string("auth_shib_instructions_help","auth", htmlspecialchars($CFG->wwwroot.'/auth/shibboleth')) ?>
     <?php  helpbutton("text", get_string("helptext")) ?>
     </td>
 </tr>
