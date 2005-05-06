@@ -62,7 +62,7 @@
             print_simple_box_end();
             print_footer($course);
             exit();
-        } elseif ($lesson->highscores) {
+        } elseif ($lesson->highscores && !$lesson->practice) {
             $action = 'highscores';
         } else {
             $action = 'navigation';
@@ -1069,7 +1069,7 @@
             }
 
             ///CDC-FLAG /// high scores code
-            if ($lesson->highscores && !isteacher($course->id)) {
+            if ($lesson->highscores && !isteacher($course->id) && !$lesson->practice) {
                 echo "<div align=\"center\"><br>";
                 if (!$grades = get_records_select("lesson_grades", "lessonid = $lesson->id", "completed")) {
                     echo get_string("youmadehighscore", "lesson", $lesson->maxhighscores)."<br>";
@@ -1309,7 +1309,7 @@
                 }
                 echo "</th></tr>\n";             
                 echo "<tr><td colspan=\"2\">\n";
-                print_simple_box(format_text($page->contents), "center");
+                print_simple_box(format_text($page->contents, FORMAT_HTML), "center");
                 echo "</td></tr>\n";
                 // get the answers in a set order, the id order
                 if ($answers = get_records("lesson_answers", "pageid", $page->id, "id")) {
