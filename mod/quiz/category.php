@@ -725,13 +725,18 @@ class quiz_category_object {
 /**
 * Creates a new category with given params
 *
-* @param    int newparent
-* @param    string newcategory  the name
-* @param    string newinfo
-* @param    int newpublish
-* @param    int newcourse the id of the associated course
+* @param int $newparent       id of the parent category
+* @param string $newcategory  the name for the new category
+* @param string $newinfo      the info field for the new category
+* @param int $newpublish      whether to publish the category
+* @param int $newcourse       the id of the associated course
 */
     function add_category($newparent, $newcategory, $newinfo, $newpublish, $newcourse) {
+
+        // first check that the parent category is in the correct course
+        if(!(get_field('quiz_categories', 'course', 'id', $newparent) == $newcourse)) {
+            return false;
+        }
 
         $cat = NULL;
         $cat->parent = $newparent;
