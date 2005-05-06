@@ -313,7 +313,7 @@ function quiz_print_question_list($quiz, $allowdelete=true, $showbreaks=true) {
     }
     echo ' onchange="document.showbreaks.submit(); return true;" />';
     print_string('showbreaks', 'quiz');
-    echo ' <input type="submit" value="'. get_string('go') .'" />';
+    echo ' <noscript><input type="submit" value="'. get_string('go') .'" /></noscript>';
 
     if ($showbreaks) {
         $perpage= array();
@@ -389,9 +389,9 @@ function quiz_print_category_form($course, $current, $recurse=1, $showhidden=fal
     }
     echo ' onchange="document.displayoptions.submit(); return true;" />';
     print_string('showhidden', 'quiz');
-    echo '</td><td valign="center">';
+    echo '</td><noscript><td valign="center">';
     echo ' <input type="submit" value="'. get_string('go') .'" />';
-    echo '</td></tr></table></form>';
+    echo '</td></noscript></tr></table></form>';
 }
 
 
