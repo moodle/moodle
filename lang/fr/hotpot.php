@@ -24,7 +24,7 @@ $string['navigation_none'] = 'Aucune';
   	 
 $string['giveup'] = 'Abandonner';
 $string['location'] = 'Emplacement du fichier';
-$string['shownextquiz'] = 'Afficher test suivant&nbsp;?';
+$string['shownextquiz'] = 'Afficher test suivant';
 $string['forceplugins'] = 'Imposer les plugins de médias';
   	 
 $string['resultssaved'] = 'Les résultats du test ont été enregistrés';
