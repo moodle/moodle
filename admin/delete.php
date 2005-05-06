@@ -3,31 +3,38 @@
 // Deletes the moodledata directory, COMPLETELY!!
 // BE VERY CAREFUL USING THIS!
 
-    require_once("../config.php");
+    require_once('../config.php');
 
     require_login();
 
+    $sure = optional_param('sure', '');
+    $reallysure = optional_param('reallysure', '');
+
     if (!isadmin()) {
-        error("You must be admin to use this script!");
+        error('You must be admin to use this script!');
     }
 
     $deletedir = $CFG->dataroot;   // The directory to delete!
 
-    if (!$sure) {
-        notice_yesno ("Are you completely sure you want to delete everything inside the directory $deletedir ?", "delete.php?sure=yes", "index.php");
+    if (empty($sure)) {
+        notice_yesno ('Are you completely sure you want to delete everything inside the directory '. $deletedir .' ?', 'delete.php?sure=yes&amp;sesskey='.sesskey(), 'index.php');
         exit;
     }
 
-    if (!$reallysure) {
-        notice_yesno ("Are you REALLY REALLY completely sure you want to delete everything inside the directory $deletedir (this includes all user images, and any other course files that have been created) ?", "delete.php?sure=yes&reallysure=yes", "index.php");
+    if (empty($reallysure)) {
+        notice_yesno ('Are you REALLY REALLY completely sure you want to delete everything inside the directory '. $deletedir .' (this includes all user images, and any other course files that have been created) ?', 'delete.php?sure=yes&amp;reallysure=yes&amp;sesskey='.sesskey(), 'index.php');
         exit;
+    }
+
+    if (!confirm_sesskey()) {
+        error('This script was called wrongly');
     }
 
     /// OK, here goes ...
 
     delete_subdirectories($deletedir);
 
-    echo "<H1 align=center>Done!</H1>";
+    echo '<h1 align="center">Done!</h1>';
     print_continue($CFG->wwwroot);
     exit;
 
@@ -37,22 +44,22 @@ function delete_subdirectories($rootdir) {
     $dir = opendir($rootdir);
 
     while ($file = readdir($dir)) {
-        if ($file != "." and $file != "..") {
-            $fullfile = "$rootdir/$file";
-            if (filetype($fullfile) == "dir") {
+        if ($file != '.' and $file != '..') {
+            $fullfile = $rootdir .'/'. $file;
+            if (filetype($fullfile) == 'dir') {
                 delete_subdirectories($fullfile);
-                echo "Deleting $fullfile ... ";
+                echo 'Deleting '. $fullfile .' ... ';
                 if (rmdir($fullfile)) {
-                    echo "Done.<BR>";
+                    echo 'Done.<br />';
                 } else {
-                    echo "FAILED.<BR>";
+                    echo 'FAILED.<br />';
                 }
             } else {
-                echo "Deleting $fullfile ... ";
-                if (unlink("$fullfile")) {
-                    echo "Done.<BR>";
+                echo 'Deleting '. $fullfile .' ... ';
+                if (unlink($fullfile)) {
+                    echo 'Done.<br />';
                 } else {
-                    echo "FAILED.<BR>";
+                    echo 'FAILED.<br />';
                 }
             }
         }
