@@ -580,6 +580,7 @@ $string['livelogs'] = 'Actions effectuées durant l\'heure écoulée';
 $string['locale'] = 'fr_FR';
 $string['location'] = 'Localisation';
 $string['loggedinas'] = 'Connecté sous le nom « $a »';
+$string['loggedinasguest'] = 'Vous êtes connecté en tant qu\'invité';
 $string['loggedinnot'] = 'Non connecté.';
 $string['login'] = 'Connexion';
 $string['login_failure_logs'] = 'Historique des tentatives de connexion';
