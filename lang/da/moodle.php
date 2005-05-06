@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
+      // moodle.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['action'] = 'Hændelse';
@@ -140,8 +140,8 @@ $string['categoryadded'] = 'Kategorien \'$a\' blev tilføjet';
 $string['categorydeleted'] = 'Kategorien \'$a\' blev slettet';
 $string['categoryduplicate'] = 'Kategorien \'$a\' eksistere allerede';
 $string['censorbadwords'] = 'lort,luder,røvhul,perker,pik,kusse,narrøv,møgluder,shit,fucked,fucker,fuck,dickhead, dick,cockhead,cock,cunt,asshole,arsehole,prick,bitch, jism,whore,slut,wanker, wank,bastard,dildo,masturbate, orgasm,penis,nigger, pussy,vagina';
-$string['changedpassword'] = 'Ændret password';
-$string['changepassword'] = 'Ændre password';
+$string['changedpassword'] = 'Password ændret';
+$string['changepassword'] = 'Skift password';
 $string['changessaved'] = 'Ændringer gemt';
 $string['checkingbackup'] = 'Kontrollere backup';
 $string['checkingcourse'] = 'Kontrollere kursus';
@@ -1023,7 +1023,7 @@ $string['undecided'] = 'Ubestemt';
 $string['unenrol'] = 'Frameld';
 $string['unenrolallstudents'] = 'Frameld alle studerende';
 $string['unenrolallstudentssure'] = 'Er du sikker på at du vil framelde alle studerende fra dette kursus.';
-$string['unenrolme'] = 'Fjern mig fra $a';
+$string['unenrolme'] = 'Frameld mig fra $a';
 $string['unenrolsure'] = 'Er du sikker på at du vil fjerne $a fra dette kursus?';
 $string['unfinished'] = 'Ufærdigt';
 $string['unknowncategory'] = 'Ukendt kategori';
