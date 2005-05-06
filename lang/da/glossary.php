@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // glossary.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
+      // glossary.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['addcomment'] = 'Tilføj kommentar';
@@ -39,7 +39,7 @@ $string['cnffullmatch'] = 'Definere om et opslagsord, når det er linket, skal ma
 $string['cnflinkentry'] = 'Definere om et opslagsord automatisk skal linkes.';
 $string['cnflinkglossaries'] = 'Definere om et opslagsværk automatisk skal linkes.';
 $string['cnfrelatedview'] = 'Vælg det normale format til brug for automatisk linkning.';
-$string['cnfshowgroup'] = 'Angiv og gruppe adskillelse skal vises eller ej.';
+$string['cnfshowgroup'] = 'Angiv om gruppeadskillelse skal vises eller ej.';
 $string['cnfsortkey'] = 'Vælg standard sorterings felt';
 $string['cnfsortorder'] = 'Vælg standard sorteringsorden.';
 $string['cnfstudentcanpost'] = 'Definere om studerende kan tilføje opslagsord som standard.';
@@ -116,8 +116,8 @@ $string['isglobal'] = 'Er dette opslagsværk globalt';
 $string['linkcategory'] = 'Link automatisk til denne kategori';
 $string['mainglossary'] = 'Hovedopslagsværk';
 $string['maxtimehaspassed'] = 'Desværre er den tidsfristen for redigering af denne ($a) kommentar gået';
-$string['modulename'] = 'opslagsværk';
-$string['modulenameplural'] = 'opslagsværk';
+$string['modulename'] = 'Opslagsværk';
+$string['modulenameplural'] = 'Opslagsværker';
 $string['newentries'] = 'Nye ordbogs ord';
 $string['newglossary'] = 'Ny ordbog';
 $string['newglossarycreated'] = 'Ny ordbog oprettet';
