@@ -112,9 +112,9 @@ $string['configwarning'] = 'Fate attenzione a modificare queste impostazioni, va
 $string['configzip'] = 'Indica il percorso del programma Zip di compressione dati (Solo per Unix).
 Se specificato, questo programma si occuperà di creare archivi di files compressi lato server. Se lasciato in bianco, Moodle utilizzerà le proprie routine interne.';
 $string['confirmation'] = 'Conferma';
-$string['cronwarning'] = 'Lo  <a href=\"cron.php\">script della routine cron.php</a> non è stato lanciato nelle ultime 24 ore.  <br />La <a href=\"../doc/?frame=install.html&sub=cron\">documentazione di installazione</a> vi spiegherà come fare ad automatizzare questo processo.';
-$string['edithelpdocs'] = 'Edita documenti di Help';
-$string['editstrings'] = 'Edita stringhe';
+$string['cronwarning'] = 'Lo  <a href=\"cron.php\">script della routine cron.php</a> non è stato lanciato nelle ultime 24 ore.  <br />La <a href=\"../doc/?frame=install.html?=cron\">documentazione di installazione</a> vi spiegherà come fare ad automatizzare questo processo.';
+$string['edithelpdocs'] = 'Modifica documenti di Help';
+$string['editstrings'] = 'Modifica stringhe';
 $string['filterall'] = 'Filtra tute le stringhe';
 $string['filteruploadedfiles'] = 'Applica filtro sui file inviati';
 $string['helpadminseesall'] = 'Gli amministratori visualizzano tutti gli eventi calendario o solo quelli a loro stessi collegati?';
