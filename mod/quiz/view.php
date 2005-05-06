@@ -206,7 +206,7 @@
             if ($quiz->grade and $quiz->sumgrades) {
                 $attemptmark  = format_float($attempt->sumgrades,$quiz->decimalpoints);
                 $attemptgrade = format_float(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade,$quiz->decimalpoints);
-                if ($attemptgrade == $mygrade) {
+                if ($attemptgrade == $mygrade and ($quiz->grademethod == QUIZ_GRADEHIGHEST)) {
                     $attemptgrade = "<span class=\"highlight\">$attemptgrade</span>";
                 }
 
