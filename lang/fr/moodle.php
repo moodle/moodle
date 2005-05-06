@@ -983,6 +983,7 @@ $string['todaylogs'] = 'Historique d\'aujourd\'hui';
 $string['toeveryone'] = 'pour tout le monde';
 $string['toomanybounces'] = 'Cette adresse de courriel a généré trop de rebonds. Vous <b>devez</b> la changer pour continuer.';
 $string['toomanytoshow'] = 'Trop d\'utilisateurs pour les afficher tous.';
+$string['toonly'] = 'Seulement pour les $a';
 $string['top'] = 'Niveau supérieur';
 $string['topic'] = 'Sujet';
 $string['topichide'] = 'Cacher ce thème de $a';
