@@ -6,7 +6,7 @@
     $id = required_param('id', PARAM_INT);                  // course id
     $search = trim(optional_param('search', '', PARAM_NOTAGS));  // search string
     $page = optional_param('page', 0, PARAM_INT);   // which page to show
-    $perpage = optional_param('perpage', 20, PARAM_INT);   // which page to show
+    $perpage = optional_param('perpage', 10, PARAM_INT);   // how many per page
     $showform = optional_param('showform', 0, PARAM_INT);   // Just show the form
 
     $user    = trim(optional_param('user', '', PARAM_NOTAGS));    // Names to search for
