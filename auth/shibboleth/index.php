@@ -12,21 +12,20 @@
 
 	if ($CFG->auth == 'shibboleth' and !empty($CFG->auth_shib_only)) {
         if (empty($CFG->shib_user_attribute)) {
-            error('Shibboleth authentication (shib_user_attribute) is not set up correctly');
+            error('Shibboleth authentication (\'shib_user_attribute\') is not set up correctly. You probably haven\'t yet configured the Shibboleth authentication. Please consult the README in moodle/auth/shibboleth for further instructions on how to set up Shibboleth authentication.');
         }
         if (empty($_SERVER[$CFG->shib_user_attribute])) {
-            error('Shibboleth authentication is not set up correctly (could not find $_SERVER[\''.$CFG->shib_user_attribute.'\'])');
+            error('Shibboleth authentication is not set up correctly (could not find $_SERVER[\''.$CFG->shib_user_attribute.'\']) or your moodle/auth/shibboleth/index.php is not protected by Shibboleth. Please consult the README in moodle/auth/shibboleth for further instructions on how to set up Shibboleth authentication.');
         }
 	}
 
-/// If we can find some Shibboleth information, save it in session and return to main login page
+/// If we can find the Shibboleth attribute, save it in session and return to main login page
 
     if (!empty($_SERVER[$CFG->shib_user_attribute])) {    // Shibboleth auto-login
         $frm->username = $_SERVER[$CFG->shib_user_attribute];
         $frm->password = substr(base64_encode($_SERVER[$CFG->shib_user_attribute]),0,8);
         // The random password consists of the first 8 letters of the base 64 encoded user ID
         // This password is never used unless the user account is converted to manual 
-
 
     /// Check if the user has actually submitted login data to us
     
