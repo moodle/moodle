@@ -44,15 +44,15 @@ $string['noactivity'] = 'No activity';
 $string['inprogress'] = 'in progress';
 $string['abandoned'] = 'abandoned';
 
-$string['correct'] = 'correct';
-$string['ignored'] = 'ignored';
-$string['wrong'] = 'wrong';
-$string['score'] = 'score';
-$string['weighting'] = 'weighting';
-$string['hints'] = 'hints';
-$string['clues'] = 'clues';
-$string['checks'] = 'checks';
-$string['penalties'] = 'penalties';
+$string['correct'] = 'Correct';
+$string['ignored'] = 'Ignored';
+$string['wrong'] = 'Wrong';
+$string['score'] = 'Score';
+$string['weighting'] = 'Weighting';
+$string['hints'] = 'Hints';
+$string['clues'] = 'Clues';
+$string['checks'] = 'Checks';
+$string['penalties'] = 'Penalties';
 
 // report.php
 $string['deletedattempts'] = '$a attempts were deleted';
