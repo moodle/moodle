@@ -565,6 +565,10 @@ function set_user_sesskey() {
     return $USER->sesskey;
 }
 
+function sesskey() {  // Forward compatibiity with 1.5
+    return set_user_sesskey();
+}
+
 function require_login($courseid=0, $autologinguest=true) {
 /// This function checks that the current user is logged in, and optionally
 /// whether they are "logged in" or allowed to be in a particular course.
