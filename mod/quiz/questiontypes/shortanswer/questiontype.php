@@ -170,7 +170,7 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
         // Make sure we don't assign negative or too high marks
         $state->raw_grade = min(max((float) $state->raw_grade,
                             0.0), 1.0) * $question->maxgrade;
-        $state->penalty = $question->penalty;
+        $state->penalty = $question->penalty * $question->maxgrade;
         // Only allow one attempt at the question
         // $state->event = QUIZ_EVENTCLOSE;
         return true;
@@ -215,9 +215,6 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
         return false;
     }
 
-    function print_question_grading_details(&$question, &$state, $quiz, $options) {
-        // do nothing
-    }
 }
 //// END OF CLASS ////
 

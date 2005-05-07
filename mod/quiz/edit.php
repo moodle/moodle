@@ -335,7 +335,7 @@
     }
 
 /// Delete any teacher preview attempts if the quiz has been modified
-    if (isset($_REQUEST['delete']) or isset($_REQUEST['repaginate']) or isset($_REQUEST['addrandom']) or isset($_REQUEST['addquestion']) or isset($_REQUEST['up']) or isset($_REQUEST['down']) or isset($_REQUEST['add'])) {
+    if (isset($_REQUEST['setgrades']) or isset($_REQUEST['delete']) or isset($_REQUEST['repaginate']) or isset($_REQUEST['addrandom']) or isset($_REQUEST['addquestion']) or isset($_REQUEST['up']) or isset($_REQUEST['down']) or isset($_REQUEST['add'])) {
         delete_records('quiz_attempts', 'preview', '1', 'quiz', $modform->id);
     }
 

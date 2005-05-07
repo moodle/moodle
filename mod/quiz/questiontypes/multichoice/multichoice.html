@@ -13,7 +13,7 @@
       <?php   quiz_category_select_menu($course->id, true, true, $question->category); ?>
     </td>
   </tr>
-  
+
   <tr valign="top">
     <td align="right"><b><?php  print_string("questionname", "quiz") ?>:</b></td>
     <td>
@@ -21,7 +21,7 @@
       <?php  if (isset($err["name"])) formerr($err["name"]); ?>
     </td>
   </tr>
-  
+
   <tr valign="top">
     <td align="right"><b><?php  print_string("question", "quiz") ?>:</b>
       <br /><br /><br /><font size="1">
@@ -35,7 +35,7 @@
       </font>
     </td>
     <td>
-      <?php  
+      <?php
           if (isset($err["questiontext"])) {
               formerr($err["questiontext"]);
               echo "<br />";
@@ -57,7 +57,7 @@
       ?>
     </td>
   </tr>
-  
+
   <tr valign="top">
     <td align="right"><b><?php  print_string("imagedisplay", "quiz") ?>:</b></td>
     <td>
@@ -70,7 +70,14 @@
       ?>
     </td>
   </tr>
-  
+<tr valign="top">
+    <td align="right"><b><?php  print_string("penalty", "quiz") ?>:</b></td>
+    <td>
+        <input type="text" name="penalty" size="3" value="<?php  p($question->penalty) ?>" alt="<?php  print_string("penalty", "quiz") ?>" />
+        <?php helpbutton('penalty', get_string('penalty', 'quiz'), 'quiz'); ?>
+        <?php  if (isset($err["penalty"])) formerr($err["penalty"]); ?>
+    </td>
+</tr>
   <tr valign="top">
     <td align="right"><b><?php  print_string("answerhowmany", "quiz") ?>:</b></td>
     <td>
@@ -82,7 +89,7 @@
       ?>
     </td>
   </tr>
-  
+
   <tr valign="top">
     <td align="right"><b><?php  print_string("choices", "quiz") ?></b>:</td>
     <td><?php  print_string("fillouttwochoices", "quiz") ?></td>
@@ -101,7 +108,7 @@
     <td align="right"><b><?php  echo get_string("choice", "quiz")." $i";  ?>:</b></td>
     <td>
       <input type="text" name="answer[]" size="50" value="<?php  p($answers[$i-1]->answer) ?>" alt="<?php  echo get_string("choice", "quiz")." $i";  ?>"/>&nbsp;&nbsp;
-      <?php  
+      <?php
           print_string("grade");
           echo ":&nbsp;";
           choose_from_menu($gradeoptionsfull, "fraction[]", $answers[$i-1]->fraction, "");
@@ -109,14 +116,14 @@
       <br />
     </td>
   </tr>
-  
+
   <tr valign="top">
     <td align="right"><b><?php  print_string("feedback", "quiz") ?>:</b></td>
     <td>
       <textarea name="feedback[]" rows="2" cols="50"><?php  p($answers[$i-1]->feedback) ?></textarea>
     </td>
   </tr>
-  
+
   <tr valign="top">
     <td colspan="2">&nbsp;</td>
   </tr>

@@ -361,15 +361,12 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
         $state->raw_grade = min(max((float) $state->raw_grade,
                             0.0), 1.0) * $question->maxgrade;
         // Apply the penalty for this attempt
-        $state->penalty = 0;
+        $state->penalty = $question->penalty * $question->maxgrade;
         // Only allow one attempt at the question
-        $state->event = QUIZ_EVENTCLOSE;
+        // $state->event = QUIZ_EVENTCLOSE;
         return true;
     }
 
-    function print_question_grading_details(&$question, &$state, $quiz, $options) {
-        // do nothing
-    }
 }
 //// END OF CLASS ////
 

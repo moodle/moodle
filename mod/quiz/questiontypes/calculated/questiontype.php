@@ -429,9 +429,6 @@ class quiz_calculated_qtype extends quiz_dataset_dependent_questiontype {
         return $str;
     }
 
-    function print_question_grading_details(&$question, &$state, $quiz, $options) {
-        // do nothing
-    }
 }
 //// END OF CLASS ////
 

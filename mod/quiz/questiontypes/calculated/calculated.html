@@ -33,7 +33,7 @@
     </td>
     <td>
         <?php  if (isset($err["questiontext"])) {
-               formerr($err["questiontext"]); 
+               formerr($err["questiontext"]);
                echo "<br />";
            }
 
@@ -66,7 +66,14 @@
     ?>
     </td>
 </tr>
-
+<tr valign="top">
+    <td align="right"><b><?php  print_string("penalty", "quiz") ?>:</b></td>
+    <td>
+        <input type="text" name="penalty" size="3" value="<?php  p($question->penalty) ?>" alt="<?php  print_string("penalty", "quiz") ?>" />
+        <?php helpbutton('penalty', get_string('penalty', 'quiz'), 'quiz'); ?>
+        <?php  if (isset($err["penalty"])) formerr($err["penalty"]); ?>
+    </td>
+</tr>
 <tr valign="top">
 <td align="right"><b><?php  print_string("correctanswerformula", "quiz") ?>:</b></td>
     <td>
@@ -113,7 +120,7 @@
     <td>
         <input type="hidden" name="multiplier[]" value="1.0" />
         <input align="left" type="text" id="defaultunit" name="unit[]"
-                size="5" value="<?php  p($units[0]->unit) ?>" 
+                size="5" value="<?php  p($units[0]->unit) ?>"
                 alt="<?php  print_string("unit", "quiz") ?>" />
         <b>(<?php  print_string("optional", "quiz") ?>)</b>
     </td>
@@ -133,12 +140,12 @@ for ($i=1; $i<count($units); $i++) {
         <b><?php  print_string("multiplier", "quiz") ?>:</b>
         <input type="text" id="<?php  p("multiplier$i") ?>" size="10"
                 align="right" name="multiplier[]"
-                value="<?php  p($unit->multiplier) ?>" 
+                value="<?php  p($unit->multiplier) ?>"
                 alt="<?php  print_string("multiplier", "quiz") ?>" />
         <b>&nbsp;&nbsp;&nbsp;<?php  print_string("unit", "quiz") ?>:</b>
         <input align="left" type="text" id="<?php  p("unit$i") ?>"
                 name="unit[]"
-                size="5" value="<?php  p($unit->unit) ?>" 
+                size="5" value="<?php  p($unit->unit) ?>"
                 alt="<?php  print_string("unit", "quiz") ?>" />
     </td>
 </tr>
@@ -164,7 +171,7 @@ function determineMinAndMax() {
             /* It could perhaps be an idea to parse the formula here
              * but as it is necessary at the server anyway, we can
              * it leave like this for the moment. */
-            
+
         } else if (''!=defaultunit.value && !isNaN(defaultunit.value)) {
             alert('<?php  print_string("unitmustnotbenumeric","quiz") ?>');
             return false;

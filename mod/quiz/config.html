@@ -145,10 +145,6 @@
         $attemptoptions[$i] = "$i ".strtolower(get_string("attempts", "quiz"));
     }
 
-    $penaltyoptions = array();
-    $penaltyoptions[QUIZ_PENALTYNONE] = get_string('penaltynone', 'quiz');
-    $penaltyoptions[QUIZ_PENALTYMULTIPLY] = get_string('penaltymultiply', 'quiz');
-    $penaltyoptions[QUIZ_PENALTYSUBTRACT] = get_string('penaltysubtract', 'quiz');
 ?>
 
 <table cellpadding="9" cellspacing="0" align="center">
@@ -300,7 +296,7 @@
   <td align="right"><b><?php print_string("penaltyscheme", "quiz") ?>:</b></td>
   <td>
     <?php
-        choose_from_menu($penaltyoptions, "penaltyscheme", "$form->penaltyscheme", "");
+        choose_from_menu($yesnooptions, "penaltyscheme", "$form->penaltyscheme", "");
         helpbutton("penaltyscheme", get_string("penaltyscheme","quiz"), "quiz");
     ?>
   </td>

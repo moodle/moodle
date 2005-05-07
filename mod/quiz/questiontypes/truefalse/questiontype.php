@@ -218,17 +218,6 @@ class quiz_truefalse_qtype extends quiz_default_questiontype {
         }
     }
 
-    /**
-    * This questiontype does not have to print any additional grading details
-    *
-    * @param object $question
-    * @param object $state
-    * @param object $quiz
-    * @param object $options
-    */
-    function print_question_grading_details(&$question, &$state, $quiz, $options) {
-        // do nothing
-    }
 }
 //// END OF CLASS ////
 

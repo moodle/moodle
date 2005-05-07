@@ -47,14 +47,6 @@ define('QUIZ_EVENTCLOSE', '6');
 /**#@-*/
 
 /**#@+
-* The different penalty schemes
-*/
-define('QUIZ_PENALTYNONE',     '0');
-define('QUIZ_PENALTYMULTIPLY', '1');
-define('QUIZ_PENALTYSUBTRACT', '2');
-/**#@-*/
-
-/**#@+
 * The defined question types
 *
 * @todo It would be nicer to have a fully automatic plug-in system
@@ -595,7 +587,7 @@ class quiz_default_questiontype {
             echo '<div class="grade">';
             echo get_string('marks', 'quiz').': ';
             if ($quiz->optionflags & QUIZ_ADAPTIVE) {
-                echo '<br />&nbsp;';
+                echo '<br />';
                 echo ('' === $state->last_graded->grade) ? '--/' : format_float($state->last_graded->grade, $quiz->decimalpoints).'/';
             }
             echo $question->maxgrade.'</div>';
@@ -608,7 +600,7 @@ class quiz_default_questiontype {
 
         echo '</td></tr><tr><td valign="top">';
 
-        if ($options->scores) {
+        if ($question->maxgrade and $options->scores and ($quiz->optionflags & QUIZ_ADAPTIVE)) {
             $this->print_question_grading_details($question, $state, $quiz, $options);
         }
 
@@ -699,14 +691,7 @@ class quiz_default_questiontype {
     * @param object $quiz     The quiz to which the question belongs. The
     *                         grading details may be rendered differently
     *                         depending on the quiz settings.
-    * @param object $options  An object describing the rendering options. The
-    *                         fields are:
-    *                         ->readonly          Review / interactive mode
-    *                         ->feedback          Show feedback
-    *                         ->validation        Show how the response was
-    *                                             interpreted
-    *                         ->correct_responses Show solutions
-    *                         These are all boolean values.
+    * @param object $options  An object describing the rendering options.
     */
     function print_question_grading_details(&$question, &$state, $quiz, $options) {
         /* The default implementation prints the number of marks if no attempt
@@ -716,35 +701,46 @@ class quiz_default_questiontype {
         responses (and penalties) */
 
         if (!empty($question->maxgrade)) {
-            echo '<div class="grading_details">';
             if (!('' === $state->last_graded->grade)) {
                 // Display the grading details from the last graded state
                 $grade->cur = format_float($state->last_graded->grade, $quiz->decimalpoints);
                 $grade->max = $question->maxgrade;
                 $grade->raw = format_float($state->last_graded->raw_grade, $quiz->decimalpoints);
-                if (QUIZ_EVENTCLOSE == $state->event) {
-                    /* No further attempts are possible so don't bother
-                    displaying the penalty */
-                    print_string('gradingdetailsnopenalty', 'quiz', $grade);
-                } else if ('' !== $state->last_graded->penalty && ((float)
-                 $state->last_graded->penalty) > 0.0) {
-                    // A penalty was applied so display it
-                    $grade->penalty = $state->last_graded->penalty;
-                    print_string('gradingdetailspenalty', 'quiz', $grade);
-                } else if ($state->last_graded->raw_grade >=
-                 $question->maxgrade) {
-                    /* No penalty was applied because the response was
-                    correct so don't bother noting that no penalty was
-                    applied for the attempt */
-                    print_string('gradingdetailsnopenalty', 'quiz', $grade);
+
+                // let student know wether the answer was correct
+                echo '<div class="correctness">';
+                if ($state->last_graded->raw_grade >= $question->maxgrade) {
+                    print_string('correct', 'quiz');
+                } else if ($state->last_graded->raw_grade > 0) {
+                    print_string('partiallycorrect', 'quiz');
                 } else {
-                    /* No penalty was applied even though the answer was
-                    not correct (eg. a syntax error) so tell the student
-                    that they were not penalised for the attempt */
-                    print_string('gradingdetailszeropenalty', 'quiz', $grade);
+                    print_string('incorrect', 'quiz');
                 }
+                echo '</div>';
+
+
+                echo '<div class="gradingdetails">';
+                // print grade for this submission
+                print_string('gradingdetails', 'quiz', $grade);
+                // print details of grade adjustment due to penalties
+                if ($state->last_graded->raw_grade > $state->last_graded->grade){
+                    print_string('gradingdetailsadjustment', 'quiz', $grade);
+                }
+                // print info about new penalty
+                // penalty is relevant only if the answer is not correct and further attempts are possible
+                if (($state->last_graded->raw_grade < $question->maxgrade) and (QUIZ_EVENTCLOSE !== $state->event)) {
+                    if ('' !== $state->last_graded->penalty && ((float)$state->last_graded->penalty) > 0.0) {
+                        // A penalty was applied so display it
+                        print_string('gradingdetailspenalty', 'quiz', $state->last_graded->penalty);
+                    } else {
+                        /* No penalty was applied even though the answer was
+                        not correct (eg. a syntax error) so tell the student
+                        that they were not penalised for the attempt */
+                        print_string('gradingdetailszeropenalty', 'quiz');
+                    }
+                }
+                echo '</div>';
             }
-            echo '</div>';
         }
     }
 
@@ -779,14 +775,6 @@ class quiz_default_questiontype {
     *                         question will likely be rendered differently
     *                         depending on the quiz settings.
     * @param object $options  An object describing the rendering options.
-    *                         The fields are:
-    *                         ->readonly          Review / interactive mode
-    *                         ->feedback          Show feedback for the graded
-    *                                             responses
-    *                         ->validation        Show how the current responses
-    *                                             responses were interpreted
-    *                         ->correct_responses Show solutions
-    *                         These are all boolean values.
     */
     function print_question_formulation_and_controls(&$question, &$state, $quiz, $options) {
         /* This default implementation prints an error and must be overridden
@@ -818,14 +806,7 @@ class quiz_default_questiontype {
     * @param object $quiz     The quiz to which the question belongs. The
     *                         choice of buttons will likely depend on the quiz
     *                         settings.
-    * @param object $options  An object describing the rendering options. The
-    *                         fields are:
-    *                         ->readonly          Review / interactive mode
-    *                         ->feedback          Show feedback
-    *                         ->validation        Show how the response was
-    *                                             interpreted
-    *                         ->correct_responses Show solutions
-    *                         These are all boolean values.
+    * @param object $options  An object describing the rendering options.
     */
     function print_question_submit_buttons(&$question, &$state, $quiz, $options) {
         /* The default implementation should be suitable for most question
@@ -959,7 +940,7 @@ class quiz_default_questiontype {
         if (empty($state->raw_grade)) {
             $state->raw_grade = 0.0;
         }
-        $state->penalty = 0;
+        $state->penalty = $question->penalty * $question->maxgrade;
         // Only allow one attempt at the question
         $state->event = QUIZ_EVENTCLOSE;
         return true;
@@ -1378,7 +1359,8 @@ function quiz_restore_state(&$question, &$state) {
 *
 * The state object representing the current state of the session for the
 * question is saved to the quiz_states table with ->responses[''] saved
-* to the answer field of the database table.
+* to the answer field of the database table. The information in the
+* quiz_newest_states table is updated.
 * The question type specific data is then saved.
 * @return boolean         Indicates success or failure.
 * @param object $question The question for which session is to be saved.
@@ -1411,7 +1393,7 @@ function quiz_save_question_session(&$question, &$state) {
         $new->questionid = $question->id;
         $new->new = $state->id;
         $new->newgraded = $state->id;
-        $new->sumpenalty = '0.0';
+        $new->sumpenalty = $state->sumpenalty;
         if (!insert_record('quiz_newest_states', $new)) {
             error('Could not insert entry in quiz_newest_states');
         }
@@ -1785,19 +1767,11 @@ function quiz_search_for_duplicate_responses(&$question, &$state) {
 *                         scheme to apply is given by the ->penaltyscheme field.
 */
 function quiz_apply_penalty(&$question, &$state, $quiz) {
-    switch ($quiz->penaltyscheme) {
-        case QUIZ_PENALTYMULTIPLY:
-            $state->grade = (1 - $state->sumpenalty) * $state->raw_grade;
-            $state->sumpenalty += $state->penalty * (1-$state->sumpenalty);
-            break;
-        case QUIZ_PENALTYSUBTRACT:
-            $state->grade = $state->raw_grade - ($question->maxgrade * $state->sumpenalty);
+    if ($quiz->penaltyscheme) {
+            $state->grade = $state->raw_grade - $state->sumpenalty;
             $state->sumpenalty += (float) $state->penalty;
-            break;
-        case QUIZ_PENALTYNONE:
-        default:
-            $state->grade = $state->raw_grade;
-            break;
+    } else {
+        $state->grade = $state->raw_grade;
     }
     // Ensure that the grade does not go down
     $state->grade = max($state->grade, $state->last_graded->grade);

@@ -232,14 +232,6 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
     *                         responses are in ->last_graded->responses).
     * @param object $quiz     The quiz to which the question belongs.
     * @param object $options  An object describing the rendering options.
-    *                         The fields are:
-    *                         ->readonly          Review / interactive mode
-    *                         ->feedback          Show feedback for the graded
-    *                                             responses
-    *                         ->validation        Show how the current responses
-    *                                             responses were interpreted
-    *                         ->correct_responses Show solutions
-    *                         These are all boolean values.
     */
     function print_question_formulation_and_controls(&$question, &$state,
      $quiz, $options) {
@@ -414,7 +406,7 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
              'rawScore'][0];
             if (isset($output->outcomeVars[RQP_URI_OUTCOME . 'penalty'])) {
                 $state->penalty = (float) $output->outcomeVars[RQP_URI_OUTCOME .
-                 'penalty'][0];
+                 'penalty'][0] * $question->maxgrade;
             } else {
                 $state->penalty = 0;
             }

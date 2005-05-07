@@ -30,6 +30,14 @@ body#mod-quiz-attempts table#attempts td {
   border-right-style: solid;
   vertical-align: bottom;
 }
+
+.grade {
+  font-size: small;
+  margin-top: 10pt
+}
+.gradingdetails {
+  font-size: small;
+}
 .feedbacktext {
   text-align:right;
 }
