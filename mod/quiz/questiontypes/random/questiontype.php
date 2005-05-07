@@ -163,7 +163,7 @@ class quiz_random_qtype extends quiz_default_questiontype {
          ->get_correct_responses($wrappedquestion, $state);
     }
 
-    function print_question(&$question, &$state, &$number, $quiz, $options) {
+    function print_question(&$question, &$state, $number, $quiz, $options) {
         global $QUIZ_QTYPES;
         $wrappedquestion = &$state->options->question;
         $QUIZ_QTYPES[$wrappedquestion->qtype]

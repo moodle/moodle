@@ -27,7 +27,7 @@ class quiz_description_qtype extends quiz_default_questiontype {
         return true;
     }
 
-    function print_question(&$question, &$state, &$number, $quiz, $options) {
+    function print_question(&$question, &$state, $number, $quiz, $options) {
         print_simple_box_start('center', '90%');
         echo format_text($question->questiontext,
                          $question->questiontextformat,

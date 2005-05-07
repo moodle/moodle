@@ -98,98 +98,6 @@ define("QUIZ_CATEGORIES_SORTORDER", "999");
 */
 $QUIZ_QTYPES= array();
 
-/// Objects used by the quiz module /////////
-
-/**
-* Holds run-time information about a question used in a particular quiz
-*
-* In addition to the data from the quiz_questions table a question object
-* has extra variables for data from the quiz_question_instances table
-* and further run-time information.
-*/
-class question extends object {
-
-    /**
-    * The question id number
-    * @var integer int(10)
-    */
-    var $id;
-
-    /**
-    * The id of the question category in the quiz_categories table
-    * @var integer int(10)
-    */
-    var $category;
-
-    /**
-    * The name given to the question by the teacher.
-    * This name is not shown to the student
-    * @var string varchar(255)
-    */
-    var $name;
-
-    /**
-    * The text of the question shown to the student
-    * @var string text
-    */
-    var $questiontext;
-
-    /**
-    * The text format for the question text.
-    * Formats are defined at the top of {@link weblib.php}
-    * @var integer tinyint(2)
-    */
-    var $questiontextformat;
-
-    /**
-    * URL to the question image
-    * @var string varchar(255)
-    */
-    var $image;
-
-    /**
-    * The default maximal grade for the question.
-    * This can be changed by the teacher when putting the question
-    * into a particular quiz to {@link maxgrade}
-    * @var integer int(10)
-    */
-    var $defaultgrade;
-
-    /**
-    * The question type.
-    * @var integer smallint(6)
-    */
-    var $qtype;
-
-    /**
-    * A globally unique identifier used for backup for example
-    * @var string varchar(255)
-    */
-    var $stamp;
-
-    /**
-    * A version number.
-    * This is increased each time a question is modified
-    * Since the introduction of the quiz_question_versions table
-    * this field is no longer of any use
-    * @var int(10)
-    */
-    var $version;
-
-    /**
-    * A flag that determines whether the question should be shown
-    * in the list of questions on the right hand side of the
-    * quiz editing page.
-    * Usually hidden questions are old versions of questions
-    * that are kept around because there are already student responses
-    * for them
-    * @var integer int(1)
-    */
-    var $hidden;
-
-}
-
-
 
 /// Question type class //////////////////////////////////////////////
 
@@ -221,35 +129,14 @@ class quiz_default_questiontype {
     }
 
     /**
-    * Saves options set by the teacher for a question
+    * Saves or updates a question after editing by a teacher
     *
     * Given some question info and some data about the answers
     * this function parses, organises and saves the question
-    * It is used by {@link question.php} through {@link save_question()} when
-    * saving new data from a form, and also by {@link import.php} when
-    * importing questions
-    * @return object $result->error or $result->noticeyesno or $result->notice
-    * @param object $question
-    */
-    function save_question_options($question) {
-    /// If this is an update, and old answers already exist, then
-    /// these are overwritten using an update().  To do this, it
-    /// it is assumed that the IDs in quiz_answers are in the same
-    /// sort order as the new answers being saved.  This should always
-    /// be true, but it's something to keep in mind if fiddling with
-    /// question.php
-
-        /// This default implementation must be overridden:
-
-        $result->error = "Unsupported question type ($question->qtype)!";
-        return $result;
-    }
-
-    /**
-    * Saves or updates a question after editing by a teacher
-    *
-    * This is used by {@link question.php} to save the data from the
-    * question editing form.
+    * It is used by {@link question.php} when saving new data from
+    * a form, and also by {@link import.php} when importing questions
+    * This function in turn calls {@link save_question_options}
+    * to save question-type specific options
     * @return object A {@link question} object
     * @param object $question   The question object which should be updated
     * @param object $form       The form submitted by the teacher
@@ -328,11 +215,27 @@ class quiz_default_questiontype {
     }
 
     /**
+    * Saves question-type specific options
+    *
+    * This is called by {@link save_question()} to save the question-type specific data
+    * @return object $result->error or $result->noticeyesno or $result->notice
+    * @param object $question  This holds the information from the editing form,
+    *                          it is not a standard question object.
+    */
+    function save_question_options($question) {
+        /// This default implementation must be overridden:
+
+        $result->error = "Unsupported question type ($question->qtype)!";
+        return $result;
+    }
+
+
+    /**
     * Loads the question type specific options for the question.
     *
-    * This function should load any question type specific options for the
+    * This function loads any question type specific options for the
     * question from the database into the question object. This information
-    * should be contained in the $question->options field. A questiontype is
+    * is placed in the $question->options field. A question type is
     * free, however, to decide on a internal structure of the options field.
     * @return bool            Indicates success or failure.
     * @param object $question The question object for the question. This object
@@ -355,7 +258,7 @@ class quiz_default_questiontype {
     /**
     * Returns the number of question numbers which are used by the question
     *
-    * This function should return the number of question numbers to be assigned
+    * This function returns the number of question numbers to be assigned
     * to the question. Most question types will have length one; they will be
     * assigned one number. The DESCRIPTION type, however does not use up a
     * number and so has a length of zero. Other question types may wish to
@@ -374,10 +277,10 @@ class quiz_default_questiontype {
     * Creates empty session and response information for the question
     *
     * This function is called to start a question session. Empty question type
-    * specific session data (if any) and empty response data should be added to the
+    * specific session data (if any) and empty response data will be added to the
     * state object. Session data is any data which must persist throughout the
     * quiz attempt possibly with updates as the user interacts with the
-    * question. This function should NOT create new entries in the database for
+    * question. This function does NOT create new entries in the database for
     * the session; a call to the {@link save_session_and_responses} member will
     * occur to do this.
     * @return bool            Indicates success or failure.
@@ -386,16 +289,16 @@ class quiz_default_questiontype {
     *                         included.
     * @param object $state    The state to create the session for. Note that
     *                         this will not have been saved in the database so
-    *                         there will be no id. This object should be updated
+    *                         there will be no id. This object will be updated
     *                         to include the question type specific information
     *                         (it is passed by reference). In particular, empty
-    *                         responses must be created in the ->responses
+    *                         responses will be created in the ->responses
     *                         field.
     * @param object $quiz     The quiz for which the session is to be started.
-    *                         Questions may wish to initialise the session in
+    *                         Questions may wish to initialize the session in
     *                         different ways depending on quiz settings.
     * @param object $attempt  The quiz attempt for which the session is to be
-    *                         started. Questions may wish to initialise the
+    *                         started. Questions may wish to initialize the
     *                         session in different ways depending on the user id
     *                         or time available for the attempt.
     */
@@ -412,10 +315,10 @@ class quiz_default_questiontype {
     /**
     * Restores the session data and most recent responses for the given state
     *
-    * This function should load any session data associated with the question
-    * session in the given state into the state object. It should also load
-    * the responses given (or generated) for the given state into the
-    * ->responses member of the state object.
+    * This function loads any session data associated with the question
+    * session in the given state from the database into the state object. 
+    * In particular it loads the responses that have been saved for the given
+    * state into the ->responses member of the state object.
     *
     * Question types with only a single form field for the student's response
     * will not need not restore the responses; the value of the answer
@@ -437,11 +340,10 @@ class quiz_default_questiontype {
     }
 
     /**
-    * Saves the session data and responses for the question in the newly created
-    * state
+    * Saves the session data and responses for the given question and state
     *
-    * This function should save the question type specific session data from the
-    * state object. In particular for most question types it should also save the
+    * This function saves the question type specific session data from the
+    * state object to the database. In particular for most question types it saves the
     * responses from the ->responses member of the state object. The question type
     * non-specific data for the state has already been saved in the quiz_states
     * table and the state object contains the corresponding id and
@@ -491,23 +393,21 @@ class quiz_default_questiontype {
     }
 
     /**
-    * Return a value or array of values which will give full marks if graded as
+    * Returns an array of values which will give full marks if graded as
     * the $state->responses field
     *
-    * The correct answer to the question, or an example of a correct answer if
-    * there are many correct answers, is found and the value of the ->responses
-    * member of the state object which corresponds to that answer is returned.
+    * The correct answer to the question in the given state, or an example of 
+    * a correct answer if there are many, is returned. This is used by some question
+    * types in the {@link grade_responses()} function but it is also used by the
+    * question preview screen to fill in correct responses.
     * @return mixed           An array of values giving the responses corresponding
-    *                         to the (or a) correct answer to the question. If the
-    *                         question type overrides the {@link grade_responses}
-    *                         member and does not wish to provide this information
-    *                         null can be returned.
+    *                         to the (or a) correct answer to the question. If there is
+    *                         no correct answer that scores 100% then null is returned.
     * @param object $question The question for which the correct answer is to
     *                         be retrieved. Question type specific information is
     *                         available.
-    * @param object $state    The state object that corresponds to the question,
-    *                         for which a correct answer is needed. Question
-    *                         type specific information is included.
+    * @param object $state    The state of the question, for which a correct answer is 
+    *                         needed. Question type specific information is included.
     */
     function get_correct_responses(&$question, &$state) {
         /* The default implementation returns the response for the first answer
@@ -524,7 +424,7 @@ class quiz_default_questiontype {
     * Prints the question including the number, grading details, content,
     * feedback and interactions
     *
-    * This function should print the question including the question number,
+    * This function prints the question including the question number,
     * grading details, content for the question, any feedback for the previously
     * submitted responses and the interactions. The default implementation calls
     * various other methods to print each of these parts and most question types
@@ -536,26 +436,21 @@ class quiz_default_questiontype {
     *                         prefix for any named elements is in ->name_prefix.
     * @param object $state    The state to render the question in. The grading
     *                         information is in ->grade, ->raw_grade and
-    *                         ->penalty. The currently responses are in
-    *                         ->responses. This will be an associative array
-    *                         (except in the case of no responses submitted when
-    *                         this will be an empty string rather than an empty
-    *                         array; this might occur when radio buttons are the
-    *                         only interactions for a question and none are
-    *                         selected for example). The last graded state is in
+    *                         ->penalty. The current responses are in
+    *                         ->responses. This is an associative array (or the
+    *                         empty string or null in the case of no responses 
+    *                         submitted). The last graded state is in
     *                         ->last_graded (hence the most recently graded
     *                         responses are in ->last_graded->responses). The
     *                         question type specific information is also
     *                         included.
-    * @param integer $number  The number for this question. This is passed by
-    *                         reference and should be increased by this method
-    *                         to the number of the next question.
+    * @param integer $number  The number for this question.
     * @param object $quiz     The quiz to which the question belongs. The
     *                         question will likely be rendered differently
     *                         depending on the quiz settings.
     * @param object $options  An object describing the rendering options.
     */
-    function print_question(&$question, &$state, &$number, $quiz, $options) {
+    function print_question(&$question, &$state, $number, $quiz, $options) {
         /* The default implementation should work for most question types
         provided the member functions it calls are overridden where required.
         The question number is printed in the first cell of a table.
@@ -661,24 +556,10 @@ class quiz_default_questiontype {
 
 
     /**
-    * Summary of the student response
-    *
-    * This function returns a short string of no more than 80 characters that
-    * summarizes the student's response
-    * @return string
-    * @param object $state
-    */
-    function response_summary($state) {
-        // This should almost certainly be overridden
-        return substr($state->answer, 0, 80);
-    }
-
-
-    /**
     * Prints the score obtained and maximum score available plus any penalty
     * information
     *
-    * This function should print a summary of the scoring in the most recently
+    * This function prints a summary of the scoring in the most recently
     * graded state (the question may not have been submitted for marking at
     * the current state). The default implementation should be suitable for most
     * question types.
@@ -718,7 +599,6 @@ class quiz_default_questiontype {
                 }
                 echo '</div>';
 
-
                 echo '<div class="gradingdetails">';
                 // print grade for this submission
                 print_string('gradingdetails', 'quiz', $grade);
@@ -747,32 +627,28 @@ class quiz_default_questiontype {
     /**
     * Prints the main content of the question including any interactions
     *
-    * This function should print the main content of the question including the
-    * interactions for the question in the state given (unless the readonly
-    * option is set). The last graded responses should be printed or indicated
-    * and (except when the readonly option is set) the current responses should
-    * be selected or filled in. Any names (eg. for any form elements) should be
-    * prefixed with the unique prefix for the question in
-    * $question->name_prefix. This method is called from the print_question
-    * method by default; the question type may override print_question so that
-    * this method is not used.
+    * This function prints the main content of the question including the
+    * interactions for the question in the state given. The last graded responses
+    * are printed or indicated and the current responses are selected or filled in.
+    * Any names (eg. for any form elements) are prefixed with $question->name_prefix. 
+    * This method is called from the print_question method.
     * @param object $question The question to be rendered. Question type
     *                         specific information is included. The name
     *                         prefix for any named elements is in ->name_prefix.
     * @param object $state    The state to render the question in. The grading
     *                         information is in ->grade, ->raw_grade and
     *                         ->penalty. The current responses are in
-    *                         ->responses. This will be an associative array
-    *                         (except in the case of no responses submitted when
-    *                         this will be an empty string rather than an empty
-    *                         array; this might occur when radio buttons are the
-    *                         only interactions for a question and none are
-    *                         selected for example). The last graded state is in
+    *                         ->responses. This is an associative array (or the
+    *                         empty string or null in the case of no responses
+    *                         submitted). The last graded state is in
     *                         ->last_graded (hence the most recently graded
     *                         responses are in ->last_graded->responses). The
-    *                         question type specific information is in $state->options.
+    *                         question type specific information is also
+    *                         included.
+    *                         The state is passed by reference because some adaptive
+    *                         questions may want to update it during rendering
     * @param object $quiz     The quiz to which the question belongs. The
-    *                         question will likely be rendered differently
+    *                         question might be rendered differently
     *                         depending on the quiz settings.
     * @param object $options  An object describing the rendering options.
     */
@@ -788,8 +664,8 @@ class quiz_default_questiontype {
     /**
     * Prints the submit button(s) for the question in the given state
     *
-    * This function should print the submit button(s) for the question in the
-    * given state. The name of any button created should be prefixed with the
+    * This function prints the submit button(s) for the question in the
+    * given state. The name of any button created will be prefixed with the
     * unique prefix for the question in $question->name_prefix. The suffix
     * 'mark' is reserved for the single question mark button and the suffix
     * 'validate' is reserved for the single question validate button (for
@@ -804,7 +680,7 @@ class quiz_default_questiontype {
     *                         question type specific information is also
     *                         included.
     * @param object $quiz     The quiz to which the question belongs. The
-    *                         choice of buttons will likely depend on the quiz
+    *                         choice of buttons may depend on the quiz
     *                         settings.
     * @param object $options  An object describing the rendering options.
     */
@@ -820,6 +696,22 @@ class quiz_default_questiontype {
             print_string('mark', 'quiz');
             echo '" />';
         }
+    }
+
+
+    /**
+    * Return a summary of the student response
+    *
+    * This function returns a short string of no more than a given length that
+    * summarizes the student's response in the given $state. This is used for
+    * example in the response history table
+    * @return string         The summary of the student response
+    * @param object $state   The state whose responses are to be summarized
+    * @param int $length     The maximum length of the returned string
+    */
+    function response_summary($state, $length=80) {
+        // This should almost certainly be overridden
+        return substr($state->answer, 0, $length);
     }
 
     /**
@@ -861,22 +753,8 @@ class quiz_default_questiontype {
     * @param object $question  The question for which the states are to be
     *                          compared. Question type specific information is
     *                          included.
-    * @param object $state     The state of the question. The grading
-    *                          information is in ->grade, ->raw_grade and
-    *                          ->penalty. The currently responses are in
-    *                          ->responses. For legacy question types with only
-    *                          one response and use only the name prefix for the
-    *                          name of the interaction this will be a single
-    *                          value. Otherwise it will be an associative array
-    *                          (except in the case of no responses submitted
-    *                          when this will be an empty string rather than an
-    *                          empty array; this might occur when radio buttons
-    *                          are the only interactions for a question and none
-    *                          are selected for example). The last graded state
-    *                          is in ->last_graded (hence the most recently
-    *                          graded responses are in
-    *                          ->last_graded->responses). The question type
-    *                          specific information is also included.
+    * @param object $state     The state of the question. The responses are in
+    *                          ->responses. 
     * @param object $teststate The state whose responses are to be
     *                          compared. The state will be of the same age or
     *                          older than $state.
@@ -892,28 +770,18 @@ class quiz_default_questiontype {
     /**
     * Performs response processing and grading
     *
-    * This function should perform response processing and grading and update
+    * This function performs response processing and grading and updates
     * the state accordingly.
     * @return boolean         Indicates success or failure.
     * @param object $question The question to be graded. Question type
     *                         specific information is included.
-    * @param object $state    The state of the question to grade. The grading
-    *                         information is in ->grade, ->raw_grade and
-    *                         ->penalty. The currently responses are in
-    *                         ->responses. It will be an associative array
-    *                         (except in the case of no responses submitted when
-    *                         this will be an empty string rather than an empty
-    *                         array; this might occur when radio buttons are the
-    *                         only interactions for a question and none are
-    *                         selected for example). The last graded state is in
-    *                         ->last_graded (hence the most recently graded
+    * @param object $state    The state of the question to grade. The current
+    *                         responses are in ->responses. The last graded state
+    *                         is in ->last_graded (hence the most recently graded
     *                         responses are in ->last_graded->responses). The
     *                         question type specific information is also
     *                         included. The ->raw_grade and ->penalty fields
-    *                         must be updated. The ->grade field is computed
-    *                         automatically. The cumulative penalty must be set
-    *                         in ->penalty by adding to the penalty from the
-    *                         most recently graded state. The method is able to
+    *                         must be updated. The method is able to
     *                         close the question session (preventing any further
     *                         attempts at this question) by setting
     *                         $state->event to QUIZ_EVENTCLOSE.
@@ -942,7 +810,7 @@ class quiz_default_questiontype {
         }
         // Only allow one attempt at the question
         $state->penalty = 1;
-        
+
         return true;
     }
 
@@ -992,7 +860,7 @@ class quiz_default_questiontype {
     * question.php to decide whether we can regrade any states of the edited
     * question and redirect to edit.php.
     *
-    * The  dataset dependent question-type, which is extended by the calculated
+    * The dataset dependent question-type, which is extended by the calculated
     * question-type, overwrites this method because it uses multiple pages (i.e.
     * a wizard) to set up the question and associated datasets.
     *

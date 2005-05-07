@@ -372,18 +372,13 @@ class quiz_rqp_qtype extends quiz_default_questiontype {
     * it is needed later.
     * @return boolean         Indicates success or failure.
     * @param object $question The question to be graded.
-    * @param object $state    The state to render the question in. The grading
-    *                         information is in ->grade, ->raw_grade and
-    *                         ->penalty. The currently responses are in
-    *                         ->responses. The last graded state is in
-    *                         ->last_graded (hence the most recently graded
+    * @param object $state    The state of the question to grade. The current
+    *                         responses are in ->responses. The last graded state
+    *                         is in ->last_graded (hence the most recently graded
     *                         responses are in ->last_graded->responses). The
     *                         question type specific information is also
     *                         included. The ->raw_grade and ->penalty fields
-    *                         are updated. The ->grade field is computed
-    *                         automatically. The cumulative penalty is set
-    *                         in ->penalty by adding to the penalty from the
-    *                         most recently graded state. The method is able to
+    *                         must be updated. The method is able to
     *                         close the question session (preventing any further
     *                         attempts at this question) by setting
     *                         $state->event to QUIZ_EVENTCLOSE.
