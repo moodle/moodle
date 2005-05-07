@@ -1,14 +1,19 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title>
       Moodle Documentatie: Installatie
     </title>
     <link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-  </head>
-  <body bgcolor="#FFFFFF">
+ <style type="text/css">
+<!--
+.style3 {color: #660000}
+-->
+</style> 
+</head>
+<body>
     <h1>
       Moodle Installeren
     </h1>
@@ -26,7 +31,7 @@
         Een andere mogelijkheid is het contacteren van een <a target="_blank" href="http://moodle.com/hosting/">webhostingfirma</a> die je Moodlesite helemaal kan installeren en onderhouden, zodat je dit allemaal kunt negeren en onmiddellijk kunt beginnen met lesgeven!
       </p>
       <p>
-        &nbsp;
+         
       </p>
       <p>
         Rubrieken:
@@ -64,7 +69,7 @@
         </li>
       </ol>
       <p>
-        &nbsp;
+         
       </p>
     </blockquote>
     <h3 class="sectionheading">
@@ -93,7 +98,7 @@
         Als je Moodle op je eigen computer wil laten lopen en dit lijkt je allemaal wat moeilijk, raadpleeg dan onze gids: <a href="http://moodle.org/doc/?file=installamp.html">Installing Apache, MySQL and PHP</a>. Die geeft stap voor stap informatie om dit te installeren op de meest gebruikte platforms.
       </p>
       <p>
-        &nbsp;
+         
       </p>
     </blockquote>
     <h3 class="sectionheading">
@@ -114,7 +119,7 @@
       </p>
     </blockquote>
     <p>
-      &nbsp;
+       
     </p>
     <h3 class="sectionheading">
       <a name="site" id="site"></a>3. Sitestructuur
@@ -196,7 +201,7 @@
         </li>
       </ul>
       <p>
-        &nbsp;
+         
       </p>
     </blockquote>
     <h3 class="sectionheading">
@@ -263,9 +268,9 @@ session.bug_compat_warn = 0
           <pre>
 DirectoryIndex index.php index.html index.htm
 
-&lt;IfDefine APACHE2&gt;
+<IfDefine APACHE2>
      <b>AcceptPathInfo</b> on
-&lt;/IfDefine&gt;
+</IfDefine>
 
 php_flag magic_quotes_gpc 1
 php_flag magic_quotes_runtime 0
@@ -328,10 +333,10 @@ cp lib/htaccess .htaccess
       </p>
       <pre>
    # mysql -u root -p
-   &gt; CREATE DATABASE moodle; 
-   &gt; GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER ON moodle.* 
+   > CREATE DATABASE moodle; 
+   > GRANT SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER ON moodle.* 
            TO moodleuser@localhost IDENTIFIED BY 'yourpassword'; 
-   &gt; quit 
+   > quit 
    # mysqladmin -p reload
 </pre>
       <p>
@@ -339,9 +344,9 @@ cp lib/htaccess .htaccess
       </p>
       <pre>
    # su - postgres
-   &gt; psql -c "create user moodleuser createdb;" template1
-   &gt; psql -c "create database moodle;" -U moodleuser template1
-   &gt; psql -c "alter user moodleuser nocreatedb;" template1
+   > psql -c "create user moodleuser createdb;" template1
+   > psql -c "create database moodle;" -U moodleuser template1
+   > psql -c "alter user moodleuser nocreatedb;" template1
 </pre>
       <p>
         (Voor MySQL raad ik ten zeerste <a href="http://phpmyadmin.sourceforge.net/">phpMyAdmin</a> aan voor het beheer van je databank - Je kunt dit dan allemaal doen via een webinterface).
@@ -351,7 +356,7 @@ cp lib/htaccess .htaccess
       </p>
     </blockquote>
     <p>
-      &nbsp;
+       
     </p>
     <h3 class="sectionheading">
       <a name="data" id="data"></a>4.3 Een gegevensmap maken
@@ -369,14 +374,14 @@ deny from all
 </pre>
       </blockquote>
       <p>
-        Om er zeker van te zijn dat Moodle bestanden kan uploaden naar deze map, kijk je best na of de webserver (bijvoorbeeld Apache) het recht heeft om te schrijven in deze map. Voor Unixmachines betekent dit de instellingen voor de eigenaar van de map op "nobody&amp;quaot; of "apache" zetten.
+        Om er zeker van te zijn dat Moodle bestanden kan uploaden naar deze map, kijk je best na of de webserver (bijvoorbeeld Apache) het recht heeft om te schrijven in deze map. Voor Unixmachines betekent dit de instellingen voor de eigenaar van de map op "nobody&quaot; of "apache" zetten.
       </p>
       <p>
         Op veel gedeelde hostservers zul je waarschijnlijk alle bestandstoegang moeten beperken tot jouw groep (om te verhinderen dat andere klanten van je host je bestanden kunnen komen bekijken en wijzigen), maar volledig lees- en schrijfrecht geven aan alle anderen (wat de webserver zal toelaten tot jouw bestanden) Spreek er over met de beheerder van je server als je problemen hebt met dit veilig in te stellen.
       </p>
     </blockquote>
     <p>
-      &nbsp;
+       
     </p>
     <h3 class="sectionheading">
       <a name="admin" id="admin"></a>5. Ga naar de adminpagina om de configuratie verder af te werken
@@ -404,7 +409,7 @@ deny from all
       </p>
       <blockquote>
         <p class="style3">
-          Als je dit niet ziet, dan moet er wat fout zijn met de databank of de instellingen die je gedefinieerd hebt voor config.php. Controleer of PHP niet in "Safe Mode" staat (commerciële webhosts schakelen dit soms in). Je kunt je PHP-instellingen controleren door een bestandje te maken dat <strong>&lt;?php phpinfo() ?&gt;</strong> bevat en dat te bekijken via een browser. Controleer dit en probeer dan nog eens.
+          Als je dit niet ziet, dan moet er wat fout zijn met de databank of de instellingen die je gedefinieerd hebt voor config.php. Controleer of PHP niet in "Safe Mode" staat (commerciële webhosts schakelen dit soms in). Je kunt je PHP-instellingen controleren door een bestandje te maken dat <strong><?php phpinfo() ?></strong> bevat en dat te bekijken via een browser. Controleer dit en probeer dan nog eens.
         </p>
       </blockquote>
       <p>
@@ -464,10 +469,10 @@ deny from all
       </p>
     </blockquote>
     <p>
-      &nbsp;
+       
     </p>
     <p>
-      &nbsp;
+       
     </p>
     <h3 class="sectionheading">
       <a name="cron" id="cron"></a>6. Cron installeren -- BELANGRIJK!
@@ -515,7 +520,7 @@ wget -q -O /dev/null http://example.com/moodle/admin/cron.php
       </p>
       <blockquote>
         <pre>
-lynx -dump http://example.com/moodle/admin/cron.php &gt; /dev/null
+lynx -dump http://example.com/moodle/admin/cron.php > /dev/null
 </pre>
       </blockquote>
       <p>
@@ -525,8 +530,7 @@ lynx -dump http://example.com/moodle/admin/cron.php &gt; /dev/null
         <pre>
 /opt/bin/php /web/moodle/admin/cron.php
 
-
-(Windows) C:\apache\php\php.exe C:\apache\htdocs\moodle\admin\cron.php
+(Windows) C:apachephpphp.exe C:apachehtdocsmoodleadmincron.php
 
 </pre>
       </blockquote>
@@ -575,7 +579,7 @@ lynx -dump http://example.com/moodle/admin/cron.php &gt; /dev/null
       </p>
     </blockquote>
     <p>
-      &nbsp;
+       
     </p>
     <p align="center">
       <a href="." target="_top"><font size="1">Moodle Documentation</font></a>

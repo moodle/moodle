@@ -1,13 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-    <title>Moodle Docs: Upgrading</title>
+    <title>Moodle Docs: Upgraden</title>
 	<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 </head>
 
-<body bgcolor="#FFFFFF">
+<body>
 <h1>Moodle Upgraden</h1>
 
 <blockquote>
@@ -30,12 +30,11 @@
       </blockquote>
       <p><strong>3. Je databank</strong></p>
       <blockquote>
-        <p>De meeste Moodleüpgrades zullen de databanktabellen wijzigen door velden toe te voegen of te wijzigen. Een databank kan op verschillende manieren geback-upt worden. Eén manier om een MySQL-databank te back-uppen is een 'dump' te maken naar een SQL-bestand. In volgend voorbeeld zie je de Unixcommando's om een dump te maken van een databank die &quot;Moodle&quot; heet:</p>
+        <p>De meeste Moodleüpgrades zullen de databanktabellen wijzigen door velden toe te voegen of te wijzigen. Een databank kan op verschillende manieren geback-upt worden. Eén manier om een MySQL-databank te back-uppen is een 'dump' te maken naar een SQL-bestand. In volgend voorbeeld zie je de Unixcommando's om een dump te maken van een databank die "Moodle" heet:</p>
         <blockquote>
-          <p><font face="Courier New, Courier, mono">mysqldump moodle &gt; moodle-backup-2002-10-26.sql</font></p>
+          <p><font face="Courier New, Courier, mono">mysqldump moodle > moodle-backup-2002-10-26.sql</font></p>
         </blockquote>
-        <p>Je kunt ook de &quot;Export&quot;-functie van de optionele &quot;Database&quot;-webinterface van Moodle gebruiken om hetzelfde te doen op alle besturingssystemen.</p>
-        <p>&nbsp;</p>
+        <p>Je kunt ook de "Export"-functie van de optionele "Database"-webinterface van Moodle gebruiken om hetzelfde te doen op alle besturingssystemen.</p>
       </blockquote>
     </blockquote>
   </blockquote>
@@ -60,10 +59,10 @@
       <blockquote>
         <p><font face="Courier New, Courier, mono">cvs update -dP</font></p>
       </blockquote>
-      <p>Zorg er in elk geval voor dat je de &quot;d&quot;-parameter om eventuele nieuwe mappen aan te maken gebruikt en de &quot;P&quot;-parameter om lege mappen weg te gooien.</p>
+      <p>Zorg er in elk geval voor dat je de "d"-parameter om eventuele nieuwe mappen aan te maken gebruikt en de "P"-parameter om lege mappen weg te gooien.</p>
       <p>ALs je zelf de Moodlebestanden bewerkt hebt, let dan goed op de boodschappen om mogelijke conflicten op te sporen. Al je aangepaste thema's en afwijkende plugins zullen bewaard blijven.</p>
     </blockquote>
-    <p>&nbsp;</p>
+    
   </blockquote>
   <h3 class="sectionheading">3. De upgrade afronden</h3>
   <blockquote>
@@ -75,13 +74,12 @@
     <p>Je hoeft hiervoor niet als beheerder aangemeld te zijn.</p>
     <p> Moodle zal de nieuwe versie automatisch detecteren en daarna alle database-updates en benodigde updates van het bestandssysteem uitvoeren. Als het upgradeproces bepaalde stappen niet zelf kan doen (heel zelden), dan zul je boodschappen zien met aanwijzingen over wat je moet doen.</p>
   </blockquote>
-  <p>&nbsp; </p>
+  
   <p>Als alles goed gegaan is (geen foutmeldingen) dan kun je je nieuwe Moodle gaan gebruiken en van de nieuwe mogelijkheden gaan genieten! </p>
   <p>Als je toch moeilijkheden zou ondervinden met je upgrade, ga dan naar <a target=_top href="http://moodle.org/">moodle.org</a> en post hierover op het <a target=_top href="http://moodle.org/mod/forum/view.php?id=28">Installation 
   Support Forum</a> in Using Moodle.</p>
 </blockquote>
-<p>&nbsp;</p>
-<p>&nbsp;</p>
+<br />
 <p align="center"><font size="1"><a href="." target="_top">Moodle Documentation</a></font></p>
 <p align="center"><font size="1">Version: $Id$</font></p>
 
