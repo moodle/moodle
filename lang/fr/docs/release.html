@@ -24,6 +24,66 @@
 
 <h1>Notes de mise &agrave; jour actuelles</h1>
 
+<h3>Moodle 1.4.5 (7 mai 2005)</h3>
+  	 
+     <p>(Cette version comporte d'importantes corrections concernant la sécurité. Pour cette raison, nous recommandons vivement aux responsables de sites utilisant une version antérieure, quelle qu'elle soit, d'effectuer au plus vite la mise à jour vers cette version.)</p>
+  	 
+  	 
+  	   <dl>
+  	     <dt>Quelques importantes corrections concernant la sécurité</dt>
+  	     <dd>
+  	       <ul>
+  	         <li>Mesures préventives contre les attaques contre les fonctions d'administration.</li>
+  	         <li>Leçons&nbsp;: masquage plus sûr des leçons (bogue 2733).</li>
+  	       </ul>
+  	     </dd>
+  	 
+  	     <dt>Quelques nouveautés</dt>
+  	     <dd>
+  	       <ul>
+  	         <li>Lecteur multémédia Flash&nbsp;: la lecture peut commencer avant la fin du téléchargement de la séquence.</li>
+  	         <li>Ajout/mise à jour des langues allemande (DE) et turque (TR).</li>
+  	       </ul>
+  	     </dd>
+
+  	    <dt>Améliorations de performance</dt>
+  	     <dd>
+  	       <ul>
+  	         <li>Ajout d'une option permettant la mise en cache de la liste des langues. Cette nouveauté permet d'économiser environ 10 Mo de mémoire et 40 inclusions de fichier. Voir le fichier config-dist.php pour les details de l'activation.</li>
+  	         <li>Améliorations majeures de la performance des insertions avec les bases de données Postgres. Correction de nombreux appels de la fonction insert_record() n'utilisant pas l'identifiant de l'enregistrement (id) pour ne pas en faire la demande.</li>
+  	       </ul>
+  	     </dd>
+  	 
+  	     <dt>Corrections d'autres bogues</dt>
+  	     <dd>
+  	       <ul>
+  	         <li>Éditeur WYSIWYG&nbsp;: correction de quelques problèmes d'encodage.</li>
+  	         <li>Test&nbsp;: correction au menu déroulant d'exportation/importation (bogue 2963).</li>
+  	         <li>Test&nbsp;: n'abandonne pas lors d'une erreur sur un question inconnue, essaie en revanche de continuer.</li>
+  	         <li>Forum d'un cours informel&nbsp;: suppression d'un lien trompeur pour se désabonner (bogue 2945).</li>
+  	         <li>Traductions supplémentaires/augmentées.</li>
+  	         <li>Forums et groupes&nbsp;: les étudiants ne faisant partie d'aucun groupe ont l'autorisation d'écrire des messages dans des discussions ne faisant pas non plus partie de groupes, même si le cours utilise des groupes.</li>
+  	         <li>Réglages globaux de l'éditeur WYSIWYG&nbsp;: correction du bogue <a href="http://moodle.org/mod/forum/discuss.php?d=21359" target="_blank">Impossible de modifier la configuration de l'éditeur</a>.</li>
+  	         <li>Cron&nbsp;: suppression de quelques avertissements.</li>
+  	         <li>Sondage&nbsp;: sondage donnant un faux nombre de réponses (bogue 2452).</li>
+  	         <li>Meilleur support de PHP5&nbsp;: le dépôt de fichiers utilise maintenant la variable $_FILES au lieu de $HTTP_POST_FILES (bogue 2828).</li>
+  	         <li>Sauvegarde/restauration&nbsp;: les liens manuels des pages des leçons vers des ressources sont maintenant partout préservés entre les sauvegardes/restaurations. Voir <a href="http://moodle.org/mod/forum/discuss.php?d=21044" target="_blank">cette discussion</a>.</li>
+  	         <li>Quelques corrections concernant le nommage en Postgres.</li>
+  	         <li>Support internationalisation&nbsp;: l'encodage adéquat est correctement fixé lors de la connexion (bogue 2770).</li>
+  	         <li>Support internationalisation&nbsp;: plusieurs correctifs pour des caractères utf-8 brouillés par l'éditeur WYSIWYG (bogue 2763)</li>
+  	         <li>Lecteur multémédia Flash&nbsp;: le chargement automatique des fichiers audio est désactivé.</li>
+  	         <li>Lecteur multémédia Flash&nbsp;: meilleur traitement des noms de fichier.</li>
+  	         <li>Postgres&nbsp;: correction de séquences dans un ordre erroné (bogue 2742).</li>
+  	         <li>Sauvegarde&nbsp;: correction du dépassement de la limite de mémoire dans la page de configuration.</li>
+  	         <li>Forums&nbsp;: correction d'un message d'avertissement lorsqu'un enseignant poste un message dans un forum (bogue 2723).</li>
+  	       </ul>
+  	     </dd>
+  	 
+  	   </dl>
+  	 
+  	 
+  	 <p>&nbsp;</p>
+
 <h3>Moodle 1.4.4 (7 mars 2005)</h3>
   	 
      <p>(Cette version comporte d'importantes corrections concernant la sécurité. Pour cette raison, nous recommandons vivement aux responsables de sites utilisant une version antérieure, quelle qu'elle soit, d'effectuer au plus vite la mise à jour vers cette version.)</p>
@@ -101,7 +161,7 @@
   	 
   	 <p>&nbsp;</p>
   	 
-  	 <h3>Moodle 1.4.3 (17 décembre 2004)</h3>
+<h3>Moodle 1.4.3 (17 décembre 2004)</h3>
 
 <p>(Cette version comporte d'importantes corrections concernant la sécurité. Pour cette raison, nous recommandons vivement que les responsables de sites utilisant une version antérieure, quelle qu'elle soit, effectuent au plus vite la mise à jour vers cette version.)</p>
 
