@@ -17,12 +17,12 @@
     $deletedir = $CFG->dataroot;   // The directory to delete!
 
     if (empty($sure)) {
-        notice_yesno ('Are you completely sure you want to delete everything inside the directory '. $deletedir .' ?', 'delete.php?sure=yes&amp;sesskey='.sesskey(), 'index.php');
+        notice_yesno ('Are you completely sure you want to delete everything inside the directory '. $deletedir .' ?', 'delete.php?sure=yes&amp;sesskey='.set_user_sesskey(), 'index.php');
         exit;
     }
 
     if (empty($reallysure)) {
-        notice_yesno ('Are you REALLY REALLY completely sure you want to delete everything inside the directory '. $deletedir .' (this includes all user images, and any other course files that have been created) ?', 'delete.php?sure=yes&amp;reallysure=yes&amp;sesskey='.sesskey(), 'index.php');
+        notice_yesno ('Are you REALLY REALLY completely sure you want to delete everything inside the directory '. $deletedir .' (this includes all user images, and any other course files that have been created) ?', 'delete.php?sure=yes&amp;reallysure=yes&amp;sesskey='.set_user_sesskey(), 'index.php');
         exit;
     }
 
