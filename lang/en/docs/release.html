@@ -22,6 +22,68 @@
 <body>
 <h1>Latest Release notes</h1>
 
+<h3>Moodle 1.4.5 (7th May, 2005)</h3>
+
+<p>(Because this release contains important security fixes, we highly advise that sites using any 
+    previous version of Moodle upgrade to this version as soon as possible.)</p>
+
+
+  <dl>
+    <dt>Some important security fixes</dt>
+    <dd>
+      <ul>
+        <li>Preventative measures against attacks to admin functions.</li>
+	<li>Lesson: Safer hiding of lessons (#2733)</li>  
+      </ul>
+    </dd>
+
+    <dt>A few new things</dt>
+    <dd>
+      <ul>
+        <li>Flash Media Player:  Now playing can start before the download is complete.</li>   
+        <li>Added/updated language support for German (DE) and Turkish (TR).</li>
+      </ul>
+    </dd>	
+   <dt>Performance improvements</dt>
+    <dd>
+      <ul>
+ 	<li>Added option to cache the languages list. Saves around 10MB of memory and 40 includes. See config-dist.php for details on how to enable.</li>
+        <li>Major efficiency improvements for Postgres databases on insert. Also fixed many calls to insert_record() which discard the returned record id to not ask for the record id.</li>
+      </ul>
+    </dd>
+
+    <dt>Other bug fixes</dt>
+    <dd>
+      <ul>
+	<li>HTML Editor: Fixes to some character encoding problems.</li>
+	<li>Quiz: fixes to export/import dropdown (#2963)</li> 
+	<li>Quiz:  Don't throw a fatal error on unknown question, try to continue.</li> 
+	<li>Course Social Forum: Removed misleading link to unsubscribe (#2945).</li> 	
+	<li>Additional/updated translations.</li> 
+	<li>Forums and Groups: Allow students not in a group to post into a discussion which is also not in a group, even if the course is using groups.</li>
+	<li>Sitewide HTML Editor settings: Fixed <a href="http://moodle.org/mod/forum/discuss.php?d=21359" target="_blank">Can't save changes in editor configuration</a> form bug.</li>
+	<li>Cron: Removed some warnings.</li> 
+	<li>Choice: Choice shows a bad number of answers (#2452).</li> 
+	<li>Better support for PHP5: Files uploads now use $_FILES rather than deprecated $HTTP_POST_FILES (#2828)</li> 
+	<li>Backup/Restore: Manual links from lesson pages to resources are now preserved between backup/restore anywhere. (see <a href="http://moodle.org/mod/forum/discuss.php?d=21044" target="_blank">this discussion</a>)</li> 
+	<li>Some fixes for Postgres constraint naming.</li> 
+	<li>I18N support: Reset proper encoding	upon login (#2770).</li> 
+	<li>I18N support: Fixed some instances of garbled characters when using utf-8 in HTML Editor (#2763)</li> 
+	<li>Flash Media Player: Turn off the autoloading of sound files.</li> 
+	<li>Flash Media Player: Better handling of filenames files.</li> 
+	<li>Postgres: Fixed sequences out of sequence (#2742).</li>   
+	<li>Backup: Fixed memory limit overrun in backup config page.</li>  
+	<li>Forums: Fixed error warnings when a teacher posts to a forum (#2723).</li>  
+      </ul>
+    </dd>
+
+ 
+
+  </dl>
+
+
+<p>&nbsp;</p>
+
 <h3>Moodle 1.4.4 (7th March, 2005)</h3>
 
 <p>(Because this release contains important security fixes, we highly advise that sites using any 
