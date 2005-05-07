@@ -2016,6 +2016,10 @@ function fullname($user, $override=false) {
 function set_moodle_cookie($thing) {
     global $CFG;
 
+    if ($thing == 'guest') {  // Ignore guest account
+        return;
+    }
+
     $cookiename = 'MOODLEID_'.$CFG->sessioncookie;
 
     $days = 60;
@@ -2039,7 +2043,8 @@ function get_moodle_cookie() {
     if (empty($_COOKIE[$cookiename])) {
         return '';
     } else {
-        return rc4decrypt($_COOKIE[$cookiename]);
+        $thing = rc4decrypt($_COOKIE[$cookiename]);
+        return ($thing == 'guest') ? '': $thing;  // Ignore guest account
     }
 }
 
