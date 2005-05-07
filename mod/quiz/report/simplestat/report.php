@@ -433,8 +433,8 @@ function quiz_report_simplestat_grade_attempt_results($quiz, $questions) {
     }
 
     $fraction = (float)($result->sumgrades / $quiz->sumgrades);
-    $result->percentage = format_float($fraction * 100.0);
-    $result->grade      = format_float($fraction * $quiz->grade);
+    $result->percentage = round($fraction * 100.0);
+    $result->grade      = round($fraction * $quiz->grade);
     $result->sumgrades = round($result->sumgrades, 2);
 
     return $result;
@@ -531,7 +531,7 @@ class quiz_report extends quiz_default_report {
 
         if ($datacount) {
             foreach ($total as $key => $sum) {
-                $average[$key] = format_float($sum/$datacount, 2);
+                $average[$key] = round($sum/$datacount, 2);
             }
         }
 
@@ -584,7 +584,7 @@ class quiz_report extends quiz_default_report {
             $row++;
             $myxls->write_string($row,0,"%");
             for ($i=1; $i<=$count; $i++) {
-//                $percent = format_float($average[$i] * 100);
+//                $percent = round($average[$i] * 100);
 //                $myxls->write_text($row,$i,"$percent%");
                 $myxls->write_number($row,$i,$average[$i],$formatot);
             }
@@ -638,7 +638,7 @@ class quiz_report extends quiz_default_report {
         /// Print all the averages as percentages
             echo "\t%";
             for ($i=1; $i<=$count; $i++) {
-                $percent = format_float($average[$i] * 100);
+                $percent = round($average[$i] * 100);
                 echo "\t$percent";
             }
             echo "\n";

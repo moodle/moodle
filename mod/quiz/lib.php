@@ -290,7 +290,7 @@ function quiz_user_outline($course, $user, $mod, $quiz) {
     if ($grade = get_record('quiz_grades', 'userid', $user->id, 'quiz', $quiz->id)) {
 
         if ((float)$grade->grade) {
-            $result->info = get_string('grade').':&nbsp;'.format_float($grade->grade, $quiz->decimalpoints);
+            $result->info = get_string('grade').':&nbsp;'.round($grade->grade, $quiz->decimalpoints);
         }
         $result->time = $grade->timemodified;
         return $result;
@@ -306,14 +306,14 @@ function quiz_user_complete($course, $user, $mod, $quiz) {
 
     if ($attempts = get_records_select('quiz_attempts', "userid='$user->id' AND quiz='$quiz->id'", 'attempt ASC')) {
         if ($quiz->grade != 0 && $grade = get_record('quiz_grades', 'userid', $user->id, 'quiz', $quiz->id)) {
-            echo get_string('grade').': '.format_float($grade->grade, $quiz->decimalpoints).'/'.$quiz->grade.'<br />';
+            echo get_string('grade').': '.round($grade->grade, $quiz->decimalpoints).'/'.$quiz->grade.'<br />';
         }
         foreach ($attempts as $attempt) {
             echo get_string('attempt', 'quiz').' '.$attempt->attempt.': ';
             if ($attempt->timefinish == 0) {
                 print_string('unfinished');
             } else {
-                echo format_float($attempt->sumgrades, $quiz->decimalpoints).'/'.$quiz->sumgrades;
+                echo round($attempt->sumgrades, $quiz->decimalpoints).'/'.$quiz->sumgrades;
             }
             echo ' - '.userdate($attempt->timemodified).'<br />';
         }

@@ -204,8 +204,8 @@
             }
 
             if ($quiz->grade and $quiz->sumgrades) {
-                $attemptmark  = format_float($attempt->sumgrades,$quiz->decimalpoints);
-                $attemptgrade = format_float(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade,$quiz->decimalpoints);
+                $attemptmark  = round($attempt->sumgrades,$quiz->decimalpoints);
+                $attemptgrade = round(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade,$quiz->decimalpoints);
                 if ($attemptgrade == $mygrade and ($quiz->grademethod == QUIZ_GRADEHIGHEST)) {
                     $attemptgrade = "<span class=\"highlight\">$attemptgrade</span>";
                 }
@@ -213,7 +213,7 @@
                 // if attempt is closed and review is allowed then make attemptnumber and 
                 // mark and grade into links to review page
                 if (quiz_review_allowed($quiz) and $attempt->timefinish > 0) {
-                    $attemptmark = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">".format_float($attempt->sumgrades,$quiz->decimalpoints).'</a>';
+                    $attemptmark = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">".round($attempt->sumgrades,$quiz->decimalpoints).'</a>';
                     $attemptgrade = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">$attemptgrade</a>";
                     $attempt->attempt = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">#$attempt->attempt</a>";
                 }

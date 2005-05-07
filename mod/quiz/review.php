@@ -175,8 +175,8 @@
             $result->sumgrades = "0";
             $result->grade = "0.0";
         }
-        $percentage = format_float(($attempt->sumgrades/$quiz->sumgrades)*100, 0);
-        $grade = format_float(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade, $CFG->quiz_decimalpoints);
+        $percentage = round(($attempt->sumgrades/$quiz->sumgrades)*100, 0);
+        $grade = round(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade, $CFG->quiz_decimalpoints);
         $table->data[] = array("$strscore:", "$attempt->sumgrades/$quiz->sumgrades ($percentage %)");
         $table->data[] = array("$strgrade:", $grade.get_string('outof', 'quiz').$quiz->grade);
     }

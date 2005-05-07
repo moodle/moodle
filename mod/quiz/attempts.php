@@ -289,7 +289,7 @@
                    );
 
             if ($quiz->grade) {
-                $row[] = $attempt->sumgrades === NULL ? '-' : '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.format_float($attempt->sumgrades / $quiz->sumgrades * $quiz->grade,$quiz->decimalpoints).'</a>';
+                $row[] = $attempt->sumgrades === NULL ? '-' : '<a href="review.php?q='.$quiz->id.'&amp;attempt='.$attempt->attempt.'">'.round($attempt->sumgrades / $quiz->sumgrades * $quiz->grade,$quiz->decimalpoints).'</a>';
             }
 
             if($detailedmarks) {
@@ -301,10 +301,10 @@
                 else {
                     foreach($questionids as $questionid) {
                         if ($gradedstateid = get_field('quiz_newest_states', 'newgraded', 'attemptid', $attempt->attempt, 'questionid', $questionid)) {
-                            $grade = format_float(get_field('quiz_states', 'grade', 'id', $gradedstateid), $quiz->decimalpoints);
+                            $grade = round(get_field('quiz_states', 'grade', 'id', $gradedstateid), $quiz->decimalpoints);
                         } else { 
                             // This is an old-style attempt
-                            $grade = format_float(get_field('quiz_states', 'grade', 'attempt', $attempt->attempt, 'question', $questionid), $quiz->decimalpoints);
+                            $grade = round(get_field('quiz_states', 'grade', 'attempt', $attempt->attempt, 'question', $questionid), $quiz->decimalpoints);
                         }
                         $row[] = link_to_popup_window ('/mod/quiz/reviewquestion.php?state='.$gradedstateid.'&amp;number='.$questions[$questionid]->number, 'reviewquestion', $grade, 450, 650, $strreviewquestion, 'none', true);
                     }

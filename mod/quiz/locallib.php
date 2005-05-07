@@ -588,7 +588,7 @@ class quiz_default_questiontype {
             echo get_string('marks', 'quiz').': ';
             if ($quiz->optionflags & QUIZ_ADAPTIVE) {
                 echo '<br />';
-                echo ('' === $state->last_graded->grade) ? '--/' : format_float($state->last_graded->grade, $quiz->decimalpoints).'/';
+                echo ('' === $state->last_graded->grade) ? '--/' : round($state->last_graded->grade, $quiz->decimalpoints).'/';
             }
             echo $question->maxgrade.'</div>';
         }
@@ -646,9 +646,9 @@ class quiz_default_questiontype {
                         $b.get_string('event'.$st->event, 'quiz').$be,
                         $b.$this->response_summary($st).$be,
                         $b.userdate($st->timestamp, get_string('timestr', 'quiz')).$be,
-                        $b.format_float($st->raw_grade, $quiz->decimalpoints).$be,
-                        $b.format_float($st->penalty, $quiz->decimalpoints).$be,
-                        $b.format_float($st->grade, $quiz->decimalpoints).$be
+                        $b.round($st->raw_grade, $quiz->decimalpoints).$be,
+                        $b.round($st->penalty, $quiz->decimalpoints).$be,
+                        $b.round($st->grade, $quiz->decimalpoints).$be
                     );
                 }
                 echo '</td></tr><tr><td colspan="2" valign="top">';
@@ -703,9 +703,9 @@ class quiz_default_questiontype {
         if (!empty($question->maxgrade)) {
             if (!('' === $state->last_graded->grade)) {
                 // Display the grading details from the last graded state
-                $grade->cur = format_float($state->last_graded->grade, $quiz->decimalpoints);
+                $grade->cur = round($state->last_graded->grade, $quiz->decimalpoints);
                 $grade->max = $question->maxgrade;
-                $grade->raw = format_float($state->last_graded->raw_grade, $quiz->decimalpoints);
+                $grade->raw = round($state->last_graded->raw_grade, $quiz->decimalpoints);
 
                 // let student know wether the answer was correct
                 echo '<div class="correctness">';
@@ -2154,7 +2154,7 @@ if (!$grade = get_record('quiz_grades', 'quiz', $quiz->id, 'userid', $userid)) {
         return NULL;
     }
 
-    return (format_float($grade->grade,$quiz->decimalpoints));
+    return (round($grade->grade,$quiz->decimalpoints));
 }
 
 /**
