@@ -236,27 +236,33 @@
   	     <dt>Test</dt>
   	     <dd>
   	       <ul>
-  	         <li>New interface structure that clearly separates quiz configuration from question editing</li>
-  	         <li>New "improved security" mode shows quiz in a separate full-screen window, with many browser features disabled</li>
-  	         <li>Quizzes can be presented to students in several pages. The number of questions per page is selectable by the teacher.</li>
-  	         <li>Blocks can now be added to quiz pages (to show results table, or additional information etc)</li>
-  	         <li>Revamped question categories structures and editing interface.</li>
-  	         <li>Categories now can contain unlimited subcategories</li>
-  	         <li>Better and cleaner interface for question selection and management in the database. Selected questions can be added to quiz, moved to other categories or deleted en mass.</li>
-  	         <li>Random questions are now added to the quiz question list with a dedicated button, leaving a cleaner interface at questions database without phantom placeholders</li>
-  	         <li>Final grade can be a fractional number, with teacher-defined decimal figures</li>
-  	         <li>Improved results page with user-selectable display of columns, cleaner sorting and new mark display options</li>
-  	         <li>Questions can be edited with one click from the improved quiz preview screens.</li>
-  	         <li>Questions can be copied with one click, to allow question variations to be created with ease.</li>
-  	         <li>Quiz categories, and the new sub-categories, can be reordered.</li>
-  	         <li>It is possible to select whether questions from categories, and or their subcategories are displayed on the question edit page.</li>
-  	         <li>It is now possible to select whether to add random questions from a parent category alone, or from a parent category and its sub-categories.</li>
-  	         <li>Quiz creators are prevented from changing the question set of quizes that have had student responses.</li>
-  	         <li>Recognition, and rejection, of overlapping/redundant questions has been improved.</li>
-  	         <li>The display of questions in longer quiz categories is now paginated.</li>
-  	         <li>Changes to quiz instances, such as their start and stop dates, can be saved without proceeding to the quiz question screen.</li>
-  	         <li>New export types - IMS QTI (2.0) and xhtml. Improvements &amp; fixes to others.</li>
-  	         <li>New import type - Hot Potato. Improvements &amp; fixes to others.</li>
+  	         <li>Can handle adaptive questions, i.e., questions that allow the student to interact with them repeatedly within the same quiz attempt and that can change in response to student answers.</li>
+             <li>Student can be allowed to try a question again immediately within the same quiz attempt until they get the answer right.</li>
+             <li>There is a penalty mechanism that deducts a specified fraction of the mark for each wrong attempt at a question.</li>
+             <li>Allows questions rendered and scored externally (e.g., by mathematical assessment engines) to be integrated seamlessly into Moodle quizzes via the RQP web services protocol.</li>
+             <li>Is prepared for the handling of IMS QTI questions once web services for these become available.</li>
+             <li>New tabbed teacher interface for previewing, editing, and reviewing quizzes.</li>
+             <li>New "improved security" mode shows quiz in a separate full-screen window, with many browser features disabled</li>
+             <li>Quizzes can be presented to students in several pages. The number of questions per page is selectable by the teacher.</li>
+             <li>Blocks can now be added to quiz pages (to show results table, or additional information etc)</li>
+             <li>Better and cleaner interface for question selection and management in the database. Selected questions can be added to quiz, moved to other categories or deleted en mass.</li>
+             <li>When a question is edited that is already in use the teacher can choose in which quizzes to replace the exising version with the new one.</li>
+             <li>If a question is edited that already has student responses, these responses and a copy of the original version of the question are kept for auditing purposes.</li>
+             <li>When a teacher makes changes to a quiz that already has student attempts these attempts are automatically remarked.</li>
+             <li>Random questions are now added to the quiz question list with a dedicated button, leaving a cleaner interface at questions database without phantom placeholders</li>
+             <li>Final grade can be a fractional number, with teacher-defined decimal figures</li>
+             <li>Improved results page with user-selectable display of columns, cleaner sorting and new mark display options</li>
+             <li>Questions can be edited with one click from the improved quiz preview and question preview screens.</li>
+             <li>Questions can be copied with one click, to allow question variations to be created with ease.</li>
+             <li>Revamped question categories structures and editing interface.</li>
+             <li>Categories now can contain nested subcategories and can be re-ordered.</li>
+             <li>It is possible to select whether questions from categories, and or their subcategories are displayed on the question edit page.</li>
+             <li>It is now possible to select whether to add random questions from a parent category alone, or from a parent category and its sub-categories.</li>
+             <li>Quiz creators are prevented from changing the question set of quizes that have had student responses.</li>
+             <li>Recognition, and rejection, of overlapping/redundant questions has been improved.</li>
+             <li>The display of questions in longer quiz categories on the quiz editing page is now paginated.</li>
+             <li>New export types - IMS QTI (2.0) and xhtml. Improvements & fixes to others.</li>
+             <li>New import type - Hot Potato. Improvements & fixes to others.</li>
   	       </ul>
   	     </dd>
   	 
