@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // grades.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032800)
+      // grades.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['addcategory'] = 'Voeg categorie toe';
@@ -85,7 +85,7 @@ $string['scaledpct'] = 'Procentuele schaal';
 $string['setcategories'] = 'Maak categorieën';
 $string['setcategorieserror'] = 'Je moet eerst de categorieën voor je vak instellen voor je er wegingen kan aan geven.';
 $string['setgradeletters'] = 'Maak cijferbeoordeling';
-$string['setpreferences'] = 'instellingen';
+$string['setpreferences'] = 'Kies instellingen';
 $string['setting'] = 'Instelling';
 $string['settings'] = 'Instellingen';
 $string['setweights'] = 'Kies wegingen';
