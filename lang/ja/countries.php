@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // countries.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2004112900)
+      // countries.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['AD'] = 'アンドラ公国';
@@ -109,7 +109,7 @@ $string['IS'] = 'アイスランド共和国';
 $string['IT'] = 'イタリア共和国';
 $string['JM'] = 'ジャマイカ';
 $string['JO'] = 'ヨルダン・ハシミテ王国';
-$string['JP'] = '日本国';
+$string['JP'] = '日本';
 $string['KE'] = 'ケニア共和国';
 $string['KG'] = 'キルギスタン共和国';
 $string['KH'] = 'カンボジア王国';
@@ -200,7 +200,7 @@ $string['SL'] = 'シエラレオネ共和国';
 $string['SM'] = 'サンマリノ共和国';
 $string['SN'] = 'セネガル共和国';
 $string['SO'] = 'ソマリア民主共和国';
-$string['SR'] = 'ム共和国';
+$string['SR'] = 'スリナム共和国';
 $string['ST'] = 'サントメ・プリンシペ民主共和国';
 $string['SV'] = 'エルサルバドル共和国';
 $string['SY'] = 'シリア・アラブ共和国';

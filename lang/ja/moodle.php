@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005043000)
+      // moodle.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['action'] = '操作';
@@ -352,7 +352,7 @@ $string['emaildigestsubjects'] = '題名 ( 題名のみを毎日メール )';
 $string['emaildisable'] = 'このメールアドレスは無効です';
 $string['emaildisableclick'] = 'このメールアドレスにメールが送信されないようにする';
 $string['emaildisplay'] = 'メール公開';
-$string['emaildisplaycourse'] = 'コース内の他のメーンバーにのみメールアドレスを表示する';
+$string['emaildisplaycourse'] = '同じコースの受講者にだけメールアドレスを公開する';
 $string['emaildisplayno'] = 'メールアドレスを隠す';
 $string['emaildisplayyes'] = 'メールアドレスを公開する';
 $string['emailenable'] = 'このメールアドレスは有効です';
