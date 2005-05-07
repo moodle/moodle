@@ -18,7 +18,7 @@
     <td align="right"><b><?php  print_string("question", "quiz") ?>:</b></td>
     <td>
         <?php  if (isset($err["questiontext"])) {
-               formerr($err["questiontext"]); 
+               formerr($err["questiontext"]);
                echo "<br />";
            }
            print_textarea($usehtmleditor, 15, 60, 630, 300, "questiontext", $question->questiontext);
@@ -41,7 +41,15 @@
     ?>
     </td>
 </tr>
-<?php 
+<tr valign="top">
+    <td align="right"><b><?php  print_string("penalty", "quiz") ?>:</b></td>
+    <td>
+        <input type="text" name="penalty" size="3" value="<?php  p($question->penalty) ?>" alt="<?php  print_string("penalty", "quiz") ?>" />
+        <?php helpbutton('penalty', get_string('penalty', 'quiz'), 'quiz'); ?>
+        <?php  if (isset($err["penalty"])) formerr($err["penalty"]); ?>
+    </td>
+</tr>
+<?php
     $QUIZ_QTYPES[$question->qtype]->print_replacement_options($question, $course, $contextquiz);
     $QUIZ_QTYPES[$question->qtype]->print_question_form_end($question);
 ?>

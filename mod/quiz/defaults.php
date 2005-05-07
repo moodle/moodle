@@ -18,7 +18,7 @@
        'quiz_subnet' => '',
        'quiz_timelimit' => 0,
        'quiz_optionflags' => 1,
-       'quiz_penaltyscheme' => 0,
+       'quiz_penaltyscheme' => 1,
        'quiz_adaptive' => 1,
 
        'quiz_fix_review' => 0,

@@ -59,6 +59,14 @@
     </td>
 </tr>
 <tr valign="top">
+    <td align="right"><b><?php  print_string("penalty", "quiz") ?>:</b></td>
+    <td>
+        <input type="text" name="penalty" size="3" value="<?php  p($question->penalty) ?>" alt="<?php  print_string("penalty", "quiz") ?>" />
+        <?php helpbutton('penalty', get_string('penalty', 'quiz'), 'quiz'); ?>
+        <?php  if (isset($err["penalty"])) formerr($err["penalty"]); ?>
+    </td>
+</tr>
+<tr valign="top">
     <td align="right"><b><?php  print_string("randomsamatchnumber", "quiz") ?>:</b></td>
     <td>
     <?php

@@ -171,8 +171,7 @@ class quiz_shortanswer_qtype extends quiz_default_questiontype {
         $state->raw_grade = min(max((float) $state->raw_grade,
                             0.0), 1.0) * $question->maxgrade;
         $state->penalty = $question->penalty * $question->maxgrade;
-        // Only allow one attempt at the question
-        // $state->event = QUIZ_EVENTCLOSE;
+
         return true;
     }
 

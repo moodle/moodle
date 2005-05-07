@@ -940,9 +940,9 @@ class quiz_default_questiontype {
         if (empty($state->raw_grade)) {
             $state->raw_grade = 0.0;
         }
-        $state->penalty = $question->penalty * $question->maxgrade;
         // Only allow one attempt at the question
-        $state->event = QUIZ_EVENTCLOSE;
+        $state->penalty = 1;
+        
         return true;
     }
 

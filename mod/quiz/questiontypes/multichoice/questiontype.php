@@ -362,8 +362,7 @@ class quiz_multichoice_qtype extends quiz_default_questiontype {
                             0.0), 1.0) * $question->maxgrade;
         // Apply the penalty for this attempt
         $state->penalty = $question->penalty * $question->maxgrade;
-        // Only allow one attempt at the question
-        // $state->event = QUIZ_EVENTCLOSE;
+
         return true;
     }
 

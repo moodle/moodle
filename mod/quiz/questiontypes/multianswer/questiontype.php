@@ -328,9 +328,8 @@ class quiz_embedded_cloze_qtype extends quiz_default_questiontype {
         if (empty($state->raw_grade)) {
             $state->raw_grade = 0.0;
         }
-        $state->penalty = 0;
-        // Only allow one attempt at the question
-        $state->event = QUIZ_EVENTCLOSE;
+        $state->penalty = $question->penalty * $question->maxgrade;
+
         return true;
     }
 }
