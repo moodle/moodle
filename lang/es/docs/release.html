@@ -1,25 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     
-<title>Moodle Docs: notas sobre la versi&oacute;n actual</title>
+<title>Moodle Docs: Notas sobre las versiones</title>
 	
-<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS">
+<link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
     
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
     
 <style type="text/css">
-<!--       dt {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; font-weight: bold;}
-       dd {margin-bottom:1em;} 
+<!-- 
+      dt {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; font-weight: bold;}
+      dd {margin-bottom:1em;} 
+      dl {margin-left: 40px;}
 .style1 {font-weight: bold}
 -->
 </style>
 </head>
 
-<body bgcolor="#FFFFFF">
+<body>
 <h1>Notas sobre versiones</h1>
 
-<h3>Moodle 1.4.4 (7 de Marzo de 2005)</h3>
+<!-- 
+Note to release notes maintainers
 
-<p>(Dado que esta versi&oacute;n incluye importantes cambios relativos a la seguridad, recomendamos que los sitios que est&eacute;n utilizando versiones anteriores de Moodle sean actualizados lo m&aacute;s pronto posible)</p>
+ - This command-line Perl trick substitutes non-linked #NNNN with a proper link to the bugtracker
+   perl -pi -e 's/(?<!\>)\#(\d+)/<a href="http:\/\/moodle.org\/bugs\/bug.php\?op=show&bugid=$1" target="_blank">#$1<\/a>/g' lang/en/docs/release.html
+
+-->
+
+<h3>Moodle 1.4.5 (7 de Mayo de 2005)</h3>
+
+<p>(Dado que esta versi&oacute;n incluye importantes cambios relativos a la seguridad, recomendamos que los sitios 
+que est&eacute;n utilizando versiones anteriores de Moodle sean actualizados lo m&aacute;s pronto posible)</p>
+
+  <dl>
+    <dt>Algunos problemas de seguridad solucionados</dt></dt>
+    <dd>
+      <ul>
+        <li>Medidad preventivas contra ataques a p&aacute;ginas de administraci&oacute;n.</li>
+	    <li>M&oacute;dulo Lecci&oacute;n: Son ocultadas de forma m&aacute;s segura (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2733" target="_blank">#2733</a>).</li>  
+      </ul>
+    </dd>
+
+    <dt>Unas pocas cosas nuevas</dt>
+    <dd>
+      <ul>
+        <li>Reproductor Flash:  Ahora la reproducci&oacute;n puede comenzar antes de
+          que la descarga se haya completado.</li>   
+        <li>A&ntilde;adido/actualizado soporte idiom&aacute;tico de  alem&aacute;n (DE) y 
+          turco (TR).</li>
+	    <li>Las notas sobre versiones ahora enlazan con los bugs relevantes.</li>
+        <li>La t&eacute;cnica de predescarga de peticiones (&quot;prefetching&quot;) desde Google,
+          Mozilla, ... etc., ahora no es permitida.</li>
+      </ul>
+    </dd>	
+   <dt>Mejoras en el rendimiento</dt>
+    <dd>
+      <ul>
+ 	<li>Inclu&iacute;da opci&oacute;n para almacenar la lista de idiomas. Esto ahorra unos 10
+ 	  MB de memoria y la inclusi&oacute;n de 40 archivos php. Mira config-dist.php para
+ 	  ver los detalles de c&oacute;mo activar esta opci&oacute;n.</li>
+        <li>Importante mejora de eficiencia en la inserci&oacute;n de datos en bases
+          de datos Postgres. Modificadas muchas llamadas a  insert_record()
+          para que no mantengan el registro insertado si no se est&aacute; solicitando
+          su identificador como salida.</li>
+      </ul>
+    </dd>
+
+    <dt>Otros problemas solucionados</dt>
+    <dd>
+      <ul>
+	<li>Editor HTML: Solucionados algunos problemas de codificaci&oacute;n de caracteres.</li>
+	<li>Cuestionario: Mejoras al men&uacute; de importaci&oacute;n/exportaci&oacute;n (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2963" target="_blank">#2963</a>).</li> 
+	<li>Cuestionario:  No muestra un error fatal con las preguntas desconocidad,
+	  intenta continuar.</li> 
+	<li>Foro del formato de curso social: Eliminado enlace incorrecto a la opci&oacute;n
+	  de borrarse (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2945" target="_blank">#2945</a>).</li> 	
+	<li>Traducciones mejoradas.</li> 
+	<li>Foros y Grupos: Se permite a los estudiantes que no est&aacute;n en un grupo escribir
+	  en discusiones que tampoco est&aacute; en un grupo, incluso si el curso est&aacute; utilizando
+	  grupos.</li>
+	<li>Configuraci&oacute;n de Editor HTML: Solucionado el bug del formulario <a href="http://moodle.org/mod/forum/discuss.php?d=21359" target="_blank">No
+	    puedo guardar cambios en los ajustes del editor</a>.</li>
+	<li>Cron: Eliminados algunos avisos.</li> 
+	<li>Consulta: Ahora muestra el n&uacute;mero correcto de respuestas (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2452" target="_blank">#2452</a>).</li> 
+	<li>Mejorado el soporte a  PHP5: Los archivos subidos ahora utilizan $_FILES
+	  en lugar del anterior
+	  $HTTP_POST_FILES (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2828" target="_blank">#2828</a>)</li> 
+	<li>Copia de seguridad: Enlaces manuales desde las p&aacute;ginas de la lecci&oacute;n a recursos
+	  ahora son mantenidos por la copia de seguridad (mira <a href="http://moodle.org/mod/forum/discuss.php?d=21044" target="_blank">esta
+	  discusi&oacute;n</a>).</li> 
+	<li>Algunas mejoras en el nombre de las restricciones de Postgres.</li> 
+	<li>Soporte I18N: Tras validarse se cambia a la codificaci&oacute;n correcta de caracteres
+	  (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2770" target="_blank">#2770</a>).</li> 
+	<li>Soporte I18N: Solucionados algunos problemas con caracteres incorrectos
+	  al utilizar utf-8 en el Editor HTML (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2763" target="_blank">#2763</a>).</li> 
+	<li>Reproductor Flash: Desactivada la autocarga de archivos de sonido.</li> 
+	<li>Reproductor Flash: Mejor manejo de los nombres de archivos.</li> 
+	<li>Postgres: Arregladas las secuencias fuera de secuencia (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2742" target="_blank">#2742</a>).</li>   
+	<li>Backup: Solucionado problema de memoria en la p&aacute;gina de configuraci&oacute;n.</li>  
+	<li>Foros: Eliminados avisos de error cuando un profesor enviaba un mensaje
+	  a un foro (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2723" target="_blank">#2723</a>).</li>  
+      </ul>
+    </dd>
+
+ 
+
+  </dl>
+
+
+<p>&nbsp;</p>
+
+<h3>Moodle 1.4.4 (7 de Marzo de 2005)</h3>
 
   <dl>
     <dt>Algunos problemas de seguridad solucionados</dt>
@@ -56,41 +150,41 @@
     <dt>Y problemas solucionados</dt>
     <dd>
       <ul>
-	<li>Instalador: Muchas mejoras incorporadas desde HEAD (incluyendo #2625) .</li>
+	<li>Instalador: Muchas mejoras incorporadas desde HEAD (incluyendo <a href="http://moodle.org/bugs/bug.php?op=show&bugid=2625" target="_blank">#2625</a>) .</li>
 	<li>Instalador: Ahora se comprueba el estado de  allow_url_fopen() antes de intentar validar URLs propias.</li>
 
         <li>Solucionados algunos problemas en las b&uacute;squedas de los foros.</li>
-	<li>Solucionados algunos problemas de ordenaci&oacute;n en los foros  (#2613).</li>
+	<li>Solucionados algunos problemas de ordenaci&oacute;n en los foros  (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2613" target="_blank">#2613</a>).</li>
 
         <li>Solucionados problemas en la b&uacute;squeda de usuarios con espacios en el nombre.</li>
         <li>Arregladas algunas llamadas existentes en el c&oacute;digo al directorio  &quot;/admin&quot;.</li>
-	<li>Solucionados algunos bugs relacionados con los grupos  (#2133, #2550, #2363)</li>
+	<li>Solucionados algunos bugs relacionados con los grupos  (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2133" target="_blank">#2133</a>, <a href="http://moodle.org/bugs/bug.php?op=show&bugid=2550" target="_blank">#2550</a>, <a href="http://moodle.org/bugs/bug.php?op=show&bugid=2363" target="_blank">#2363</a>)</li>
 	<li>Corregido el env&iacute;o de los res&uacute;menes de los foros en formato HTML a usuarios que quieren recibir el correo en formato texto plano.</li>
 
 	<li>M&oacute;dulo SCORM - solucionado problema con la barra de navegaci&oacute;n.</li>
 
         <li>Chat: Incrementado el tama&ntilde;o del buffer de entrada para prevenir p&aacute;ginas vac&iacute;as y mensajes repetidos.</li>
-	<li>Archivos: Inclu&iacute;do un icono para la &quot;carpeta superior&quot;, (#2491).</li>
+	<li>Archivos: Inclu&iacute;do un icono para la &quot;carpeta superior&quot;, (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2491" target="_blank">#2491</a>).</li>
 
 	<li>Soporte Postgres: Solucionados problemas de consistencia en la tabla de registros.</li>
 
 	<li>Autenticaci&oacute;n: Mejor limpieza y truncamiento de los datos.</li>
 	<li>Autenticaci&oacute;n: Solucionado problema con la autenticaci&oacute;n externa &mdash; accediendo como invitado, la autenticaci&oacute;n externa fallaba si era el primer acceso de la cuenta.</li>
 	<li>Autenticaci&oacute;n LDAP: Solucionado un problema introducido en 1.4.3 que produc&iacute;a que algunos caracteres (&quot;;&quot;) en algunos campos de la configuraci&oacute;n impidiera el correcto funcionamiento de la autenticaci&oacute;n. </li>
-        <li>Autenticaci&oacute;n Base Datos: Ahora recupera la informaci&oacute;n del usuario correctamente (#2319).</li>
+        <li>Autenticaci&oacute;n Base Datos: Ahora recupera la informaci&oacute;n del usuario correctamente (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2319" target="_blank">#2319</a>).</li>
 
         <li>M&oacute;dulo de pago PayPal: Ahora el texto enviado a PayPal es &quot;limpiado&quot; para evitar algunos diacr&iacute;ticos (Espa&ntilde;ol, por ahora) que interrump&iacute;an el el proceso de matriculaci&oacute;n. &Uacute;nicamente los diacr&iacute;ticos Alemanes y Franceses son soportados oficialmente por PayPal. Esta funcionalidad puede ser facilmente expandida a otros caracteres.</li>
 
-	<li>Copias de seguridad/restauraci&oacute;n: Si el usuario no es un administrador y el curso restaurado no tiene profesores, a&ntilde;adir al usuario como profesor (#2381).</li>
+	<li>Copias de seguridad/restauraci&oacute;n: Si el usuario no es un administrador y el curso restaurado no tiene profesores, a&ntilde;adir al usuario como profesor (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2381" target="_blank">#2381</a>).</li>
 	<li>Copias de seguridad/restauraci&oacute;n: Solucionados problemas con cursos con ap&oacute;strofes en el nombre.</li>
-	<li>Copias de seguridad/restauraci&oacute;n: Ahora los miembros de los grupos son inclu&iacute;dos &uacute;nicamente si se ha seleccionado incluir usuarios (#2486).</li>
+	<li>Copias de seguridad/restauraci&oacute;n: Ahora los miembros de los grupos son inclu&iacute;dos &uacute;nicamente si se ha seleccionado incluir usuarios (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2486" target="_blank">#2486</a>).</li>
 	<li>Copias de seguridad/restauraci&oacute;n: Varias mejoras menores.</li>
 
-	<li>Glosario: Ahora las calificaciones de 0 son soportadas (#2582) y el funcionamiento bajo PHP5 ha sido mejorado (#2581).</li>
-	<li>Glosario: Mejoras en la importaci&oacute;n de conceptos (#2310).</li>
+	<li>Glosario: Ahora las calificaciones de 0 son soportadas (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2582" target="_blank">#2582</a>) y el funcionamiento bajo PHP5 ha sido mejorado (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2581" target="_blank">#2581</a>).</li>
+	<li>Glosario: Mejoras en la importaci&oacute;n de conceptos (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2310" target="_blank">#2310</a>).</li>
 
 	<li>Calendario: Mejora en la detecci&oacute;n y manejo de informaci&oacute;n incorrecta.</li>
-	<li>Calendario: Mejoras en el HTML (#2350).</li>
+	<li>Calendario: Mejoras en el HTML (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2350" target="_blank">#2350</a>).</li>
 
 	<li>La ordenaci&oacute;n de cursos era defectuosa en la versi&oacute;n 1.4.3 y, en algunas ocasiones, pod&iacute;a impedir la creaci&oacute;n de nuevos cursos &mdash; todos los problemas conocidos relacionados con esto est&aacute;n ahora solucionados. </li>
 
@@ -105,10 +199,6 @@
 <p>&nbsp;</p>
 
 <h3>Moodle 1.4.3 (21 Diciembre de 2004)</h3>
-
-<p>(Dado que esta versi&oacute;n incluye importantes cambios relativos a la seguridad,
-  recomendamos que los sitios que est&eacute;n utilizando versiones anteriores
-de Moodle sean actualizados lo m&aacute;s pronto posible)</p>
 
 <ul>
   <dl>
