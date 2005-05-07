@@ -2,7 +2,7 @@
 
 class block_search_forums extends block_base {
     function init() {
-        $this->title = get_string('searchforums', 'forum');
+        $this->title = get_string('blocktitle', 'block_search_forums');
         $this->version = 2005030900;
     }
 
@@ -21,8 +21,8 @@ class block_search_forums extends block_base {
             return $this->content;
         }
 
-        $advancedsearch = get_string('advancedsearch', 'forum');
-        $advancedsearch = 'Advanced search';
+        $advancedsearch = get_string('advancedsearch', 'block_search_forums');
+
         $this->content->text  = '<div class="searchform">';
         $this->content->text .= '<form name="search" action="'.$CFG->wwwroot.'/mod/forum/search.php" style="display:inline">';
         $this->content->text .= '<input name="id" type="hidden" value="'.$this->instance->pageid.'" />';  // course
