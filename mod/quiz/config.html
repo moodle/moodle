@@ -55,6 +55,9 @@
     if (!isset($form->penaltyscheme)) {
         $form->penaltyscheme = $CFG->quiz_penaltyscheme;
     }
+    if (!isset($form->maximumgrade)) {
+        $form->maximumgrade = $CFG->quiz_maximumgrade;
+    }
 
 ?>
 <form method="post" action="module.php" name="form">
@@ -169,7 +172,7 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_timelimit" value="0">
-    <input type="checkbox" name="fix_timelimit" value="1" <?php p($form->fix_timelimit ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_timelimit" value="1" <?php p($CFG->quiz_fix_timelimit ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -189,7 +192,7 @@
     </td>
   <td align="center">
     <input type="hidden" name="fix_questionsperpage" value="0">
-    <input type="checkbox" name="fix_questionsperpage" value="1" <?php p($form->fix_questionsperpage ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_questionsperpage" value="1" <?php p($CFG->quiz_fix_questionsperpage ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -206,7 +209,7 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_shufflequestions" value="0">
-    <input type="checkbox" name="fix_shufflequestions" value="1" <?php p($form->fix_shufflequestions ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_shufflequestions" value="1" <?php p($CFG->quiz_fix_shufflequestions ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -223,7 +226,7 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_shuffleanswers" value="0">
-    <input type="checkbox" name="fix_shuffleanswers" value="1" <?php p($form->fix_shuffleanswers ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_shuffleanswers" value="1" <?php p($CFG->quiz_fix_shuffleanswers ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -243,7 +246,7 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_attempts" value="0">
-    <input type="checkbox" name="fix_attempts" value="1" <?php p($form->fix_attempts ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_attempts" value="1" <?php p($CFG->quiz_fix_attempts ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -260,7 +263,7 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_attemptonlast" value="0">
-    <input type="checkbox" name="fix_attemptonlast" value="1" <?php p($form->fix_attemptonlast ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_attemptonlast" value="1" <?php p($CFG->quiz_fix_attemptonlast ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -274,7 +277,7 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_grademethod" value="0">
-    <input type="checkbox" name="fix_grademethod" value="1" <?php p($form->fix_grademethod ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_grademethod" value="1" <?php p($CFG->quiz_fix_grademethod ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -288,7 +291,7 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_adaptive" value="0">
-    <input type="checkbox" name="fix_adaptive" value="1" <?php p($form->fix_adaptive ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_adaptive" value="1" <?php p($CFG->quiz_fix_adaptive ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -302,7 +305,7 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_penaltyscheme" value="0">
-    <input type="checkbox" name="fix_penaltyscheme" value="1" <?php p($form->fix_penaltyscheme ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_penaltyscheme" value="1" <?php p($CFG->quiz_fix_penaltyscheme ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -321,49 +324,16 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_decimalpoints" value="0">
-    <input type="checkbox" name="fix_decimalpoints" value="1" <?php p($form->fix_decimalpoints ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_decimalpoints" value="1" <?php p($CFG->quiz_fix_decimalpoints ? "checked" : "") ?> />
   </td>
 </tr>
 
-<tr valign="top">
-  <td align="right"><b><?php print_string("showfeedback", "quiz") ?>:</b></td>
-  <td>
-    <?php
-       unset($options);
-       $options[0] = get_string("no");
-       $options[1] = get_string("yes");
-       choose_from_menu ($options, "showfeedback", $form->showfeedback, "", "", "");
-       helpbutton("feedback", get_string("showfeedback","quiz"), "quiz");
-    ?>
-  </td>
-  <td align="center">
-    <input type="hidden" name="fix_showfeedback" value="0">
-    <input type="checkbox" name="fix_showfeedback" value="1" <?php p($form->fix_showfeedback ? "checked" : "") ?> />
-  </td>
-</tr>
-
-<tr valign="top">
-  <td align="right"><b><?php print_string("showcorrectanswer", "quiz") ?>:</b></td>
-  <td>
-    <?php
-       unset($options);
-       $options[0] = get_string("no");
-       $options[1] = get_string("yes");
-       choose_from_menu ($options, "showanswer", $form->showanswer, "", "", "");
-       helpbutton("correctanswers", get_string("showcorrectanswer","quiz"), "quiz");
-    ?>
-  </td>
-  <td align="center">
-    <input type="hidden" name="fix_showanswer" value="0">
-    <input type="checkbox" name="fix_showanswer" value="1" <?php p($form->fix_showanswer ? "checked" : "") ?> />
-  </td>
-</tr>
 
 <tr valign="top">
   <?php include('reviewoptions.html'); ?>
   <td align="center">
     <input type="hidden" name="fix_review" value="0">
-    <input type="checkbox" name="fix_review" value="1" <?php p($form->fix_review ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_review" value="1" <?php p($CFG->quiz_fix_review ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -380,7 +350,7 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_popup" value="0">
-    <input type="checkbox" name="fix_popup" value="1" <?php p($form->fix_popup ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_popup" value="1" <?php p($CFG->quiz_fix_popup ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -392,7 +362,7 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_password" value="0">
-    <input type="checkbox" name="fix_password" value="1" <?php p($form->fix_password ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_password" value="1" <?php p($CFG->quiz_fix_password ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -404,7 +374,7 @@
   </td>
   <td align="center">
     <input type="hidden" name="fix_subnet" value="0">
-    <input type="checkbox" name="fix_subnet" value="1" <?php p($form->fix_subnet ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_subnet" value="1" <?php p($CFG->quiz_fix_subnet ? "checked" : "") ?> />
   </td>
 </tr>
 
@@ -425,7 +395,7 @@
 <!-- Can't hide this setting, it always shows up on edit.php
   <td align="center">
     <input type="hidden" name="fix_maximumgrade" value="0">
-    <input type="checkbox" name="fix_maximumgrade" value="1" <?php p($form->fix_maximumgrade ? "checked" : "") ?> />
+    <input type="checkbox" name="fix_maximumgrade" value="1" <?php p($CFG->quiz_fix_maximumgrade ? "checked" : "") ?> />
   </td>
 -->
 </tr>
