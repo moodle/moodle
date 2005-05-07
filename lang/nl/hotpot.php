@@ -1,14 +1,17 @@
 <?PHP // $Id$ 
-      // hotpot.php - created with Moodle 1.5 ALPHA (2005042400)
+      // hotpot.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
+$string['abandoned'] = 'verlaten';
 $string['allattempts'] = 'alle pogingen';
 $string['allmycourses'] = 'al mijn vakken';
 $string['average'] = 'Gemiddelde';
 $string['bestattempt'] = 'beste poging';
 $string['checks'] = 'controles';
-$string['clues'] = 'ideeën';
+$string['clues'] = 'Ideeën';
 $string['correct'] = 'juist';
+$string['deleteabandoned'] = 'Verwijder verlaten';
+$string['deleteabandonedcheck'] = 'Wil je echt alle $a verlaten pogingen verwijderen?';
 $string['deletedattempts'] = '$a pogingen werden verwijderd';
 $string['deletedresponses'] = '$a antwoorden werden verwijderd';
 $string['enterafilename'] = 'Geef een bestandsnaam';
@@ -17,7 +20,7 @@ $string['forceplugins'] = 'Verplicht mediaplugins';
 $string['giveup'] = 'Geef op';
 $string['hints'] = 'hints';
 $string['ignored'] = 'genegeerd';
-$string['inprogress'] = 'bezig';
+$string['inprogress'] = 'lopend';
 $string['location'] = 'Bestandslocatie';
 $string['modulename'] = 'Hot Potatoes test';
 $string['modulenameplural'] = 'Hot Potatoes testen';

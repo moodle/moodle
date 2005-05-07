@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005042400)
+      // moodle.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['action'] = 'Actie';
@@ -584,6 +584,7 @@ $string['livelogs'] = 'Actief logboek van het afgelopen uur';
 $string['locale'] = 'nl_NL';
 $string['location'] = 'Plaats';
 $string['loggedinas'] = 'Je bent ingelogd als $a';
+$string['loggedinasguest'] = 'Je gebruikt nu de gast-account';
 $string['loggedinnot'] = 'Je bent niet ingelogd';
 $string['login'] = 'Log in';
 $string['login_failure_logs'] = 'Logs mislukte aanmelding';

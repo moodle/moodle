@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 ALPHA (2005042400)
+      // quiz.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['acceptederror'] = 'Geaccepteerde fout';
@@ -152,10 +152,12 @@ $string['hotpot'] = 'Hot Potatoes opmaak';
 $string['illegalformulasyntax'] = 'De syntax van de formule is fout, beginnend met \'$a\'';
 $string['imagedisplay'] = 'Weer te geven afbeelding';
 $string['imagemissing'] = 'Afbeelding niet beschikbaar op lijn $a. De bestandsnaam zal genegeerd worden';
+$string['importmax10error'] = 'Er zit een fout in de vraag. Je mag niet meer dan tien mogelijke antwoorden geven.';
+$string['importminerror'] = 'Er zit een fout in de vraag. Je hebt niet genoeg mogelijke antwoorden gegeven voor dit type vraag.';
 $string['importquestions'] = 'Importeer vragen uit een bestand';
 $string['indivresp'] = 'Reacties van ieder afzonderlijk op elk item';
 $string['introduction'] = 'Inleiding';
-$string['itemanal'] = 'Analyse van de reacties op de items';
+$string['itemanal'] = 'Analyse van de antwoorden';
 $string['itemdefinition'] = 'Definitie';
 $string['keptcategory1'] = 'een jokerteken uit dezelfde categorie met herbruikbare reeksen jokertekens als hiervoor';
 $string['keptcategory2'] = 'een bestand uit dezelfde categorie met herbruikbare reeksen bestanden als hiervoor';
@@ -222,6 +224,7 @@ $string['previewquestion'] = 'Weergave van een vraag testen';
 $string['publish'] = 'Publiceer  ';
 $string['publishedit'] = 'Je moet rechten hebben in het vak dat deze vragen publiceert om in deze categorie vragen te kunnen toevoegen of bewerken.';
 $string['qti'] = 'IMS QTI-opmaak';
+$string['qti2'] = 'IMS QTI 2.0-opmaak';
 $string['question'] = 'Vraag';
 $string['questioninuse'] = 'De vraag \'$a\' is op dit moment al in gebruik:';
 $string['questionname'] = 'Naam vraag';

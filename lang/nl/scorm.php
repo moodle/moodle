@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005033100)
+      // scorm.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['asset'] = 'Bezit';
@@ -21,14 +21,17 @@ $string['configpopupwidth'] = 'Welke breedte wil je als standaardwaarde voor nie
 $string['coursepacket'] = 'Cursuspakket';
 $string['coursestruct'] = 'cursusstructuur';
 $string['datadir'] = 'Fout van het bestandssysteem: de gegevensfolder van de cursus kan niet gemaakt worden';
+$string['details'] = 'SCO opvolgdetails';
 $string['display'] = 'Toon';
 $string['domxml'] = 'DOMXML externe bibliotheek';
+$string['enablebrowse'] = 'Maak op voorhand kijken mogelijk';
 $string['entercourse'] = 'Voeg een SCORM-cursus toe';
 $string['errorlogs'] = 'Foutenlogboek';
 $string['exit'] = 'Verlaat de SCORM-cursus';
 $string['expcoll'] = 'Maximaliseer/Minimaliseer';
 $string['failed'] = 'Mislukt';
 $string['found'] = 'Manifest gevonden';
+$string['frameheight'] = 'Met deze instelling kies je de hoogte van het SCO frame';
 $string['gradeaverage'] = 'Gemiddeld cijfer';
 $string['gradehighest'] = 'Hoogste cijfer';
 $string['grademethod'] = 'Beoordelingsmethode';
