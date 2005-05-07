@@ -24,17 +24,25 @@
 
 <h1>Notes de mise &agrave; jour actuelles</h1>
 
+
+<!--
+     Note au traducteur :
+  	 
+     La commande Perl substitue les "bogues NNNN" non liés par un lien correct vers le traqueur de bogues.
+  	    perl -pi -e 's/(?<!\>)bogue (\d+)/<a href="http:\/\/moodle.org\/bugs\/bug.php\?op=show&bugid=$1" target="_blank">bogue $1<\/a>/g' lang/fr/docs/release.html
+
+-->
+
 <h3>Moodle 1.4.5 (7 mai 2005)</h3>
   	 
      <p>(Cette version comporte d'importantes corrections concernant la sécurité. Pour cette raison, nous recommandons vivement aux responsables de sites utilisant une version antérieure, quelle qu'elle soit, d'effectuer au plus vite la mise à jour vers cette version.)</p>
-  	 
-  	 
+  	   	 
   	   <dl>
   	     <dt>Quelques importantes corrections concernant la sécurité</dt>
   	     <dd>
   	       <ul>
   	         <li>Mesures préventives contre les attaques contre les fonctions d'administration.</li>
-  	         <li>Leçons&nbsp;: masquage plus sûr des leçons (bogue 2733).</li>
+  	         <li>Leçons&nbsp;: masquage plus sûr des leçons (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2733" target="_blank">bogue 2733</a>).</li>
   	       </ul>
   	     </dd>
   	 
@@ -43,6 +51,7 @@
   	       <ul>
   	         <li>Lecteur multémédia Flash&nbsp;: la lecture peut commencer avant la fin du téléchargement de la séquence.</li>
   	         <li>Ajout/mise à jour des langues allemande (DE) et turque (TR).</li>
+  	         <li>Les notes de mise à jour indiquent maintenant les liens vers les bogues concernés.</li>
   	       </ul>
   	     </dd>
 
@@ -58,24 +67,24 @@
   	     <dd>
   	       <ul>
   	         <li>Éditeur WYSIWYG&nbsp;: correction de quelques problèmes d'encodage.</li>
-  	         <li>Test&nbsp;: correction au menu déroulant d'exportation/importation (bogue 2963).</li>
+  	         <li>Test&nbsp;: correction au menu déroulant d'exportation/importation (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2963" target="_blank">bogue 2963</a>).</li>
   	         <li>Test&nbsp;: n'abandonne pas lors d'une erreur sur un question inconnue, essaie en revanche de continuer.</li>
-  	         <li>Forum d'un cours informel&nbsp;: suppression d'un lien trompeur pour se désabonner (bogue 2945).</li>
+  	         <li>Forum d'un cours informel&nbsp;: suppression d'un lien trompeur pour se désabonner (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2945" target="_blank">bogue 2945</a>).</li>
   	         <li>Traductions supplémentaires/augmentées.</li>
   	         <li>Forums et groupes&nbsp;: les étudiants ne faisant partie d'aucun groupe ont l'autorisation d'écrire des messages dans des discussions ne faisant pas non plus partie de groupes, même si le cours utilise des groupes.</li>
   	         <li>Réglages globaux de l'éditeur WYSIWYG&nbsp;: correction du bogue <a href="http://moodle.org/mod/forum/discuss.php?d=21359" target="_blank">Impossible de modifier la configuration de l'éditeur</a>.</li>
   	         <li>Cron&nbsp;: suppression de quelques avertissements.</li>
-  	         <li>Sondage&nbsp;: sondage donnant un faux nombre de réponses (bogue 2452).</li>
-  	         <li>Meilleur support de PHP5&nbsp;: le dépôt de fichiers utilise maintenant la variable $_FILES au lieu de $HTTP_POST_FILES (bogue 2828).</li>
+  	         <li>Sondage&nbsp;: sondage donnant un faux nombre de réponses (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2452" target="_blank">bogue 2452</a>).</li>
+  	         <li>Meilleur support de PHP5&nbsp;: le dépôt de fichiers utilise maintenant la variable $_FILES au lieu de $HTTP_POST_FILES (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2828" target="_blank">bogue 2828</a>).</li>
   	         <li>Sauvegarde/restauration&nbsp;: les liens manuels des pages des leçons vers des ressources sont maintenant partout préservés entre les sauvegardes/restaurations. Voir <a href="http://moodle.org/mod/forum/discuss.php?d=21044" target="_blank">cette discussion</a>.</li>
   	         <li>Quelques corrections concernant le nommage en Postgres.</li>
-  	         <li>Support internationalisation&nbsp;: l'encodage adéquat est correctement fixé lors de la connexion (bogue 2770).</li>
-  	         <li>Support internationalisation&nbsp;: plusieurs correctifs pour des caractères utf-8 brouillés par l'éditeur WYSIWYG (bogue 2763)</li>
+  	         <li>Support internationalisation&nbsp;: l'encodage adéquat est correctement fixé lors de la connexion (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2770" target="_blank">bogue 2770</a>).</li>
+  	         <li>Support internationalisation&nbsp;: plusieurs correctifs pour des caractères utf-8 brouillés par l'éditeur WYSIWYG (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2763" target="_blank">bogue 2763</a>)</li>
   	         <li>Lecteur multémédia Flash&nbsp;: le chargement automatique des fichiers audio est désactivé.</li>
   	         <li>Lecteur multémédia Flash&nbsp;: meilleur traitement des noms de fichier.</li>
-  	         <li>Postgres&nbsp;: correction de séquences dans un ordre erroné (bogue 2742).</li>
+  	         <li>Postgres&nbsp;: correction de séquences dans un ordre erroné (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2742" target="_blank">bogue 2742</a>).</li>
   	         <li>Sauvegarde&nbsp;: correction du dépassement de la limite de mémoire dans la page de configuration.</li>
-  	         <li>Forums&nbsp;: correction d'un message d'avertissement lorsqu'un enseignant poste un message dans un forum (bogue 2723).</li>
+  	         <li>Forums&nbsp;: correction d'un message d'avertissement lorsqu'un enseignant poste un message dans un forum (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2723" target="_blank">bogue 2723</a>).</li>
   	       </ul>
   	     </dd>
   	 
@@ -124,31 +133,31 @@
   	     <dt>Corrections d'autres bogues</dt>
   	     <dd>
   	       <ul>
-  	         <li>Installeur&nbsp;: nombreuses corrections et mises à jour tirées du tronc (y compris le bogue 2625)</li>
+  	         <li>Installeur&nbsp;: nombreuses corrections et mises à jour tirées du tronc (y compris le <a href="http://moodle.org/bugs/bug.php?op=show&bugid=2625" target="_blank">bogue 2625</a>)</li>
   	         <li>Installeur&nbsp;: une vérification est effectuée sur allow_url_fopen() avant d'essayer de valider l'URL de l'installation</li>  	 
   	         <li>Correction de certains problèmes dans la recherche des forums</li>
-  	         <li>Correction d'un bogue de tri sur les forums (bogue 2613)</li>  	 
+  	         <li>Correction d'un bogue de tri sur les forums (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2613" target="_blank">bogue 2613</a>)</li>  	 
   	         <li>Correction de problèmes dans la recherche des utilisateurs avec des espaces finaux</li>
   	         <li>Correction de quelques chemins vers /admin codés en dur</li>
   	         <li>Correction de quelques bogues en relation avec les groupes (bogues 2133, 2550, 2363)</li>
   	         <li>Moodle n'envoie plus des résumés en HTML aux personnes désirant des courriels en texte pur</li>  	 
   	         <li>Correction d'une erreur de la barre de navigation dans le module SCORM</li>  	 
   	         <li>Chat&nbsp;: la taille maximale de lecture de l'interface de connexion (socket) a été augmentée, afin d'éviter les pages vides et les répétitions de messages</li>
-  	         <li>Fichiers&nbsp;: ajout d'une icône pour le dossier parent (bogue 2491)</li>  	 
+  	         <li>Fichiers&nbsp;: ajout d'une icône pour le dossier parent (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2491" target="_blank">bogue 2491</a>)</li>  	 
   	         <li>Support de Postgres&nbsp;: correction de la cohérence dans la table mdl_log</li>  	 
   	         <li>Plugins d'authentification&nbsp;: meilleur nettoyage et troncage des données</li>
   	         <li>Plugins d'authentification&nbsp;: correction d'un problème d'authentification externe &mdash; un utilisateur connecté comme anonyme ne pouvait se connecter par une authenfication externe lors de la toute première connexion avec un compte</li>
   	         <li>Authentification LDAP&nbsp;: correction d'une régression depuis 1.4.2, où un point-virgule final dans certains champs empêchait l'authentification</li>
-  	         <li>Authentification par base de données&nbsp;: cette authentification n'allait pas chercher correctement les champs de données de l'utilisateur (bogue 2319)</li>  	 
+  	         <li>Authentification par base de données&nbsp;: cette authentification n'allait pas chercher correctement les champs de données de l'utilisateur (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2319" target="_blank">bogue 2319</a>)</li>  	 
   	         <li>Plugin d'inscription PayPal&nbsp;: le texte envoyé à PayPal peut maintenant être nettoyé pour éviter certaines marques diacritiques (espagnoles pour l'instant) qui empêchent le déroulement des inscriptions. Actuellement, seules les marques diacritiques françaises et allemandes sont supportées par PayPal. Cette fonctionnalité peut être facilement étendue à d'autres caractères</li>  	 
-  	         <li>Sauvegarde/restauration&nbsp;: si l'utilisateur n'est pas un administrateur et si le cours restauré ne comporte pas d'enseignant, l'utilisateur effectuant la restauration y est automatiquement ajouté comme enseignant (bogue 2381)</li>
+  	         <li>Sauvegarde/restauration&nbsp;: si l'utilisateur n'est pas un administrateur et si le cours restauré ne comporte pas d'enseignant, l'utilisateur effectuant la restauration y est automatiquement ajouté comme enseignant (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2381" target="_blank">bogue 2381</a>)</li>
   	         <li>Sauvegarde/restauration&nbsp;: erreurs corrigées avec les cours dont le nom comporte des apostrophes</li>
-  	         <li>Sauvegarde/restauration&nbsp;: les membres des groupes ne sont maintenant inclus (lors de la sauvegarde et de la restauration) que si l'incorporation des utilisateurs a été choisie (bogue 2486)</li>
+  	         <li>Sauvegarde/restauration&nbsp;: les membres des groupes ne sont maintenant inclus (lors de la sauvegarde et de la restauration) que si l'incorporation des utilisateurs a été choisie (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2486" target="_blank">bogue 2486</a>)</li>
   	         <li>Sauvegarde/restauration&nbsp;: nettoyage général du code</li>  	 
-  	         <li>Glossaire&nbsp;: la note 0 est maintenant supportée (bogue 2582), et PHP5 est mieux supporté (bogue 2581)</li>
-  	         <li>Glossaire &amp; Blackboard&nbsp;: corrections dans l'importation (bogue 2310)</li>
+  	         <li>Glossaire&nbsp;: la note 0 est maintenant supportée (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2582" target="_blank">bogue 2582</a>), et PHP5 est mieux supporté (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2581" target="_blank">bogue 2581</a>)</li>
+  	         <li>Glossaire &amp; Blackboard&nbsp;: corrections dans l'importation (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2310" target="_blank">bogue 2310</a>)</li>
   	         <li>Calendrier&nbsp;: traitement plus robuste de données erronées</li>
-  	         <li>Calendrier&nbsp;: corrections dans le code HTML (bogue 2350)</li>  	 
+  	         <li>Calendrier&nbsp;: corrections dans le code HTML (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2350" target="_blank">bogue 2350</a>)</li>  	 
   	         <li>L'ordre de tri des cours était défectueux dans la version 1.4.3. Cela perturbait parfois la création des cours. Tous les problèmes connus avec l'ordre de tri sont maintenant corrigés. Quelques corrections ont été également effectuées dans les appels de la fonction get_categories(), qui apparaissaient parfois dans la liste «&nbsp;Mes cours&nbsp;»</li>  	 
   	         <li>Wiki&nbsp;: plusieurs corrections</li>
   	         <li>La lecture des historiques en direct possède maintenant un pied de page adéquat</li>  	 
