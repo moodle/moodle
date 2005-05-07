@@ -18,8 +18,9 @@
     error_reporting(E_ALL);
 
 /// Just say no to link prefetching (Moz prefetching, Google Web Accelerator, others)
+/// http://www.google.com/webmasters/faq.html#prefetchblock
     if (!empty($_SERVER['HTTP_X_moz']) && $_SERVER['HTTP_X_moz'] === 'prefetch'){
-        header($_SERVER['SERVER_PROTOCOL'] . ' 403 Prefetch Forbidden');        
+        header($_SERVER['SERVER_PROTOCOL'] . ' 404 Prefetch Forbidden'); 
         trigger_error('Prefetch request forbidden.');
         exit;
     }
