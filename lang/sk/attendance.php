@@ -1,0 +1,72 @@
+<?PHP // $Id$ 
+      // attendance.php - created with Moodle 1.5 ALPHA (2005043000)
+
+
+$string['absentlong'] = 'Nie je k dispozícii';
+$string['absentshort'] = 'A';
+$string['addingmultiple'] = 'Pridávajú sa zoznamy o viacnásobnej úèasti u¾ívateµov v kurze';
+$string['addmultiple'] = 'Prida» zoznamy o viacnásobnej úèasti u¾ívateµov v kurze';
+$string['allmodulename'] = 'V¹etky zoznamy o úèasti u¾ívateµov v kurze';
+$string['auto'] = 'automaticky';
+$string['autoattend'] = 'Automaticky zapísa» do kurzu na základe záznamov o aktivite u¾ívateµov';
+$string['autoattendmulti'] = 'Automaticky zapísa» do kurzu v¹etkých u¾ívateµov na zozname na základe záznamov o ich aktivite';
+$string['autoattendshort'] = 'Automaticky zo záznamov o prihláseniach';
+$string['choosedays'] = 'Dni v tý¾dni, poèas ktorých je mo¾nos» zúèastni» sa kurzu';
+$string['dayofroll'] = 'Dátum, kedy je mo¾né zapísa» sa do kurzu';
+$string['defaultautoattend'] = 'Èi sa majú u¾ívatelia implicitne zapisova» do kurzov na základe ich aktivity';
+$string['defaultdynamicsection'] = 'Èi sa má implicitne presunú» zoznam u¾ívateµov kurzu  do správneho tý¾dòa ';
+$string['defaultgrade'] = 'Èi majú by» u¾ívatelia kurzu implicitne zotriedení v zozname';
+$string['defaulthoursinclass'] = 'Koµko hodín by tam mali by» v zozname u¾ívateµov kurzu (podµa východiskového nastavenia)';
+$string['defaultmaxgrade'] = 'Aká by mala by» maximálna hodnota známky za plnú úèas» v kurze';
+$string['defaultstudentstatus'] = 'Východiskový status u¾ívateµa kurzu na novom zozname  zápisov do kurzu';
+$string['downloadexcelfull'] = 'Stiahnu» kompletný hárok v Exceli o aktivite v kurze';
+$string['downloadexceltotals'] = 'Stiahnu» sumárny hárok v Exceli o aktivite v kurze';
+$string['downloadtextfull'] = 'Stiahnu» kompletnú textovú správu o aktivite v kurze';
+$string['downloadtexttotals'] = 'Stiahnu» sumárnu textovú správu o aktivite v kurze';
+$string['dynamicsection'] = 'Urèi» tý¾deò pre úèas» v kurze zalo¾enej na tomto dni';
+$string['dynamicsectionmulti'] = 'Automaticky umiestni» zoznamy u¾ívateµov do ich tý¾dennej sekcie';
+$string['dynsectionshort'] = 'Dynamicky presunuté do sekcie';
+$string['endbeforestart'] = 'Dátum ukonèenia je pred dátumom zaèatia';
+$string['endmulti'] = 'Dátum poslednej úèasti v kurze';
+$string['for'] = 'pre';
+$string['friday'] = 'Pia';
+$string['gradeshort'] = 'Zotriedený';
+$string['gradevalue'] = 'Zotriedi» tento zoznam zapísaných u¾ívateµov';
+$string['gradevaluemulti'] = 'Zotriedi» tieto zoznamy zapísaných u¾ívateµov';
+$string['hoursinclass'] = 'Poèet hodín v kurze';
+$string['hoursineachclass'] = 'Poèet hodín v ka¾dom kurze';
+$string['hoursinfullreport'] = 'Maximálne mno¾stvo hodín v kurze, ktoré by malo by» zobrazené na samostatnej strane správy o aktivite v kurze';
+$string['maxgradeshort'] = 'Maximálna známka';
+$string['maxgradevalue'] = 'Maximálna hodnota známky za plnú úèas» v kurze';
+$string['modulename'] = 'Úèas» v kurze';
+$string['modulenameplural'] = 'Zoznamy  zapísaných u¾ívateµov kurzov ';
+$string['monday'] = 'Pon';
+$string['norolls'] = 'Do tohto kurze e¹te nie je nikto zapísaný';
+$string['notes'] = '©pecifické informácie';
+$string['notesfor'] = '©pecifické informácie pre ';
+$string['noviews'] = 'Prepáète, ale pre Vá¹ u¾ívateµský úèet neexistujú ¾iadne údaje';
+$string['of'] = 'z';
+$string['pages'] = 'Strany';
+$string['presentlong'] = 'Prítomný';
+$string['presentshort'] = 'P';
+$string['saturday'] = 'So';
+$string['startafterend'] = 'Dátum zaèatia je po dátume ukonèenia kurzu';
+$string['startmulti'] = 'Dátum prvého zápisu do kurzu';
+$string['sunday'] = 'Ne';
+$string['takeroll'] = 'Zapísa» sa do kurzu na tento deò?';
+$string['tardiesperabsence'] = 'Koµko oneskorení sa poèíta ako jedna absencia';
+$string['tardylong'] = 'Oneskorenie';
+$string['tardyshort'] = 'T';
+$string['teacheredit'] = 'Zúèastni» sa';
+$string['thursday'] = '©tv';
+$string['tuesday'] = 'Ut';
+$string['viewall'] = 'Prezrie» si v¹etkých u¾ívateµov zapísaných do kurzu';
+$string['viewmulti'] = 'Prezrie» si správu na viacerých stranách';
+$string['viewone'] = 'Prezrie» si v¹etky strany správy';
+$string['viewsection'] = 'Prezrie» si v¹etkých u¾ívateµov zapísaných do kurzu z tejto sekcie';
+$string['viewtable'] = 'Prezrie» si správu ako jednu tabuµku';
+$string['viewweek'] = 'Prezrie» si v¹etkých u¾ívateµov zapísaných do kurzu z tý¾denného kalendára';
+$string['wednesday'] = 'Str';
+$string['weekmodulename'] = 'Prezrie» si v¹etkých u¾ívateµov zapísaných do kurzu v poslednom tý¾dni';
+
+?>
