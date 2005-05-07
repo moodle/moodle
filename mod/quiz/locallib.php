@@ -316,7 +316,7 @@ class quiz_default_questiontype {
     * Restores the session data and most recent responses for the given state
     *
     * This function loads any session data associated with the question
-    * session in the given state from the database into the state object. 
+    * session in the given state from the database into the state object.
     * In particular it loads the responses that have been saved for the given
     * state into the ->responses member of the state object.
     *
@@ -396,7 +396,7 @@ class quiz_default_questiontype {
     * Returns an array of values which will give full marks if graded as
     * the $state->responses field
     *
-    * The correct answer to the question in the given state, or an example of 
+    * The correct answer to the question in the given state, or an example of
     * a correct answer if there are many, is returned. This is used by some question
     * types in the {@link grade_responses()} function but it is also used by the
     * question preview screen to fill in correct responses.
@@ -406,7 +406,7 @@ class quiz_default_questiontype {
     * @param object $question The question for which the correct answer is to
     *                         be retrieved. Question type specific information is
     *                         available.
-    * @param object $state    The state of the question, for which a correct answer is 
+    * @param object $state    The state of the question, for which a correct answer is
     *                         needed. Question type specific information is included.
     */
     function get_correct_responses(&$question, &$state) {
@@ -438,7 +438,7 @@ class quiz_default_questiontype {
     *                         information is in ->grade, ->raw_grade and
     *                         ->penalty. The current responses are in
     *                         ->responses. This is an associative array (or the
-    *                         empty string or null in the case of no responses 
+    *                         empty string or null in the case of no responses
     *                         submitted). The last graded state is in
     *                         ->last_graded (hence the most recently graded
     *                         responses are in ->last_graded->responses). The
@@ -630,7 +630,7 @@ class quiz_default_questiontype {
     * This function prints the main content of the question including the
     * interactions for the question in the state given. The last graded responses
     * are printed or indicated and the current responses are selected or filled in.
-    * Any names (eg. for any form elements) are prefixed with $question->name_prefix. 
+    * Any names (eg. for any form elements) are prefixed with $question->name_prefix.
     * This method is called from the print_question method.
     * @param object $question The question to be rendered. Question type
     *                         specific information is included. The name
@@ -754,7 +754,7 @@ class quiz_default_questiontype {
     *                          compared. Question type specific information is
     *                          included.
     * @param object $state     The state of the question. The responses are in
-    *                          ->responses. 
+    *                          ->responses.
     * @param object $teststate The state whose responses are to be
     *                          compared. The state will be of the same age or
     *                          older than $state.
@@ -1073,8 +1073,6 @@ function quiz_get_question_options(&$questions) {
 * Creates an attempt object to represent an attempt at the quiz by the current
 * user starting at the current time. The ->id field is not set. The object is
 * NOT written to the database.
-* @todo Allow new attempt to be based on previous attempt
-* @todo Allow question shuffling
 * @return object                The newly created attempt object.
 * @param object $quiz           The quiz to create an attempt for.
 * @param integer $attemptnumber The sequence number for the attempt.
@@ -1082,22 +1080,28 @@ function quiz_get_question_options(&$questions) {
 function quiz_create_attempt($quiz, $attemptnumber) {
     global $USER;
 
+    if (!$attemptnumber > 1 or !$quiz->attemptonlast or !$attempt = get_record('quiz_attempts', 'quiz', $quiz->id, 'userid', $USER->id, 'attempt', $attemptnumber-1)) {
+        // we are not building on last attempt so create a new attempt
+        $attempt->quiz = $quiz->id;
+        $attempt->userid = $USER->id;
+        $attempt->preview = 0;
+        if ($quiz->shufflequestions) {
+            $attempt->layout = quiz_repaginate($quiz->questions, $quiz->questionsperpage, true);
+        } else {
+            $attempt->layout = $quiz->questions;
+        }
+    }
+
     $timenow = time();
-    $attempt->quiz = $quiz->id;
-    $attempt->userid = $USER->id;
     $attempt->attempt = $attemptnumber;
     $attempt->sumgrades = 0.0;
-    $attempt->preview = 0;
     $attempt->timestart = $timenow;
     $attempt->timefinish = 0;
     $attempt->timemodified = $timenow;
-    if ($quiz->shufflequestions) {
-        $attempt->layout = quiz_repaginate($quiz->questions, $quiz->questionsperpage, true);
-    } else {
-        $attempt->layout = $quiz->questions;
-    }
+
     return $attempt;
 }
+
 
 /**
 * Loads the most recent state of each question session from the database
@@ -1161,28 +1165,66 @@ function quiz_restore_question_sessions(&$questions, $quiz, $attempt) {
                 error('No graded state could be found!');
             }
         } else {
-            // Create an empty state object
-            $states[$i] = new object;
-            $states[$i]->attempt = $attempt->id;
-            $states[$i]->question = (int) $i;
-            $states[$i]->seq_number = 0;
-            $states[$i]->timestamp = $attempt->timestart;
-            $states[$i]->event = ($attempt->timefinish) ? QUIZ_EVENTCLOSE : QUIZ_EVENTOPEN;
-            $states[$i]->grade = '';
-            $states[$i]->raw_grade = '';
-            $states[$i]->penalty = '';
-            $states[$i]->sumpenalty = '0.0';
-            $states[$i]->responses = array('' => '');
-            // Prevent further changes to the session from incrementing the
-            // sequence number
-            $states[$i]->changed = true;
+            // Create a new state object
+            if ($quiz->attemptonlast and $attempt->attempt > 1) {
+                // build on states from last attempt
+                if (empty($lastattemptid)) {
+                    $lastattemptid = get_field('quiz_attempts', 'id', 'quiz', $attempt->quiz, 'userid', $attempt->userid, 'attempt', $attempt->attempt-1);
+                }
+                // Load the last graded state for the question
+                $sql = "SELECT $statefields".
+                       "  FROM {$CFG->prefix}quiz_states s,".
+                       "       {$CFG->prefix}quiz_newest_states n".
+                       " WHERE s.id = n.newgraded".
+                       "   AND n.attemptid = '$lastattemptid'".
+                       "   AND n.questionid = '$i'";
+                $states[$i] = get_record_sql($sql);
+                quiz_restore_state($questions[$i], $states[$i]);
+                $states[$i]->attempt = $attempt->id;
+                $states[$i]->question = (int) $i;
+                $states[$i]->seq_number = 0;
+                $states[$i]->timestamp = $attempt->timestart;
+                $states[$i]->event = ($attempt->timefinish) ? QUIZ_EVENTCLOSE : QUIZ_EVENTOPEN;
+                $states[$i]->grade = '';
+                $states[$i]->raw_grade = '';
+                $states[$i]->penalty = '';
+                $states[$i]->sumpenalty = '0.0';
+                $states[$i]->last_graded = new object;
+                $states[$i]->last_graded->attempt = $attempt->id;
+                $states[$i]->last_graded->question = (int) $i;
+                $states[$i]->last_graded->seq_number = 0;
+                $states[$i]->last_graded->timestamp = $attempt->timestart;
+                $states[$i]->last_graded->event = ($attempt->timefinish) ? QUIZ_EVENTCLOSE : QUIZ_EVENTOPEN;
+                $states[$i]->last_graded->grade = '';
+                $states[$i]->last_graded->raw_grade = '';
+                $states[$i]->last_graded->penalty = '';
+                $states[$i]->last_graded->sumpenalty = '0.0';
+                $states[$i]->last_graded->responses = array('' => '');
 
-            // Create the empty question type specific information
-            if (!$QUIZ_QTYPES[$questions[$i]->qtype]
-             ->create_session_and_responses($questions[$i], $states[$i], $quiz, $attempt)) {
-                return false;
+            } else {
+                // create a new empty state
+                $states[$i] = new object;
+                $states[$i]->attempt = $attempt->id;
+                $states[$i]->question = (int) $i;
+                $states[$i]->seq_number = 0;
+                $states[$i]->timestamp = $attempt->timestart;
+                $states[$i]->event = ($attempt->timefinish) ? QUIZ_EVENTCLOSE : QUIZ_EVENTOPEN;
+                $states[$i]->grade = '';
+                $states[$i]->raw_grade = '';
+                $states[$i]->penalty = '';
+                $states[$i]->sumpenalty = '0.0';
+                $states[$i]->responses = array('' => '');
+                // Prevent further changes to the session from incrementing the
+                // sequence number
+                $states[$i]->changed = true;
+
+                // Create the empty question type specific information
+                if (!$QUIZ_QTYPES[$questions[$i]->qtype]
+                 ->create_session_and_responses($questions[$i], $states[$i], $quiz, $attempt)) {
+                    return false;
+                }
+                $states[$i]->last_graded = clone($states[$i]);
             }
-            $states[$i]->last_graded = clone($states[$i]);
         }
     }
 
