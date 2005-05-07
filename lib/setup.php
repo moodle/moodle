@@ -17,6 +17,13 @@
 /// If there are any errors in the standard libraries we want to know!
     error_reporting(E_ALL);
 
+/// Just say no to link prefetching (Moz prefetching, Google Web Accelerator, others)
+    if (!empty($_SERVER['HTTP_X_moz']) && $_SERVER['HTTP_X_moz'] === 'prefetch'){
+        header($_SERVER['SERVER_PROTOCOL'] . ' 403 Prefetch Forbidden');        
+        trigger_error('Prefetch request forbidden.');
+        exit;
+    }
+
 /// Connect to the database using adodb
 
     $CFG->libdir   = "$CFG->dirroot/lib";
