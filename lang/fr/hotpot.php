@@ -42,15 +42,15 @@ $string['noactivity'] = 'Aucune activité';
 $string['inprogress'] = 'en cours';
 $string['abandoned'] = 'abandonné';
   	 
-$string['correct'] = 'correct';
-$string['ignored'] = 'ignoré';
-$string['wrong'] = 'faux';
-$string['score'] = 'score';
-$string['weighting'] = 'pondération';
-$string['hints'] = 'conseils';
-$string['clues'] = 'indices';
-$string['checks'] = 'vérifications';
-$string['penalties'] = 'pénalités';
+$string['correct'] = 'Correct';
+$string['ignored'] = 'Ignoré';
+$string['wrong'] = 'Faux';
+$string['score'] = 'Score';
+$string['weighting'] = 'Pondération';
+$string['hints'] = 'Conseils';
+$string['clues'] = 'Indices';
+$string['checks'] = 'Vérifications';
+$string['penalties'] = 'Pénalités';
   	 
   	 // report.php
 $string['deletedattempts'] = '$a tentatives ont été supprimées';
