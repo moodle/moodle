@@ -2324,8 +2324,9 @@ HTMLArea.getHTML = function(root, outputRoot, editor) {
         break;      // skip comments, for now.
     }
 
-    return HTMLArea.formathtml(html);
-    //return html;
+    // Still not workin' correctly...
+    //return HTMLArea.formathtml(html);
+    return html;
 };
 
 HTMLArea.prototype.stripBaseURL = function(string) {
