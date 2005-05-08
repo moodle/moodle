@@ -32,6 +32,7 @@ class filterobject {
         $this->casesensitive    = $casesensitive;
         $this->fullmatch        = $fullmatch;
         $this->work_calculated  = false;
+
     }
 }
 
@@ -109,7 +110,7 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
 
     /// Set some defaults if certain properties are missing
     /// Properties may be missing if the filterobject class has not been used to construct the object
-        if (!isset($linkobject->phrase)) {
+        if (empty($linkobject->phrase)) {
             continue;
         }
 
@@ -128,12 +129,12 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
                 $linkobject->work_hreftagbegin = $linkobject->hreftagbegin;
                 $linkobject->work_hreftagend   = $linkobject->hreftagend;
             }
-            if (!isset($linkobject->casesensitive)) {
+            if (empty($linkobject->casesensitive)) {
                 $linkobject->work_casesensitive = false;
             } else {
                 $linkobject->work_casesensitive = true;
             }
-            if (!isset($linkobject->fullmatch)) {
+            if (empty($linkobject->fullmatch)) {
                 $linkobject->work_fullmatch = false;
             } else {
                 $linkobject->work_fullmatch = true;
@@ -240,7 +241,6 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
     }
 
     return $text;
-
 }
 
 
