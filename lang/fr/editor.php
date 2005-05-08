@@ -27,6 +27,7 @@ $string['createanchor'] = 'Créer un ancrage';
 $string['createfolder'] = 'Nouveau dossier';
 $string['createlink'] = 'Insérer un lien web';
 $string['cut'] = 'Couper la sélection';
+$string['cutpastemozilla'] = 'Il est malheureusement impossible d\'utiliser les raccourcis clavier (ou même le bouton Coller) pour coller du texte dans l\éditeur WYSIWYG, en raison d\'une fonction de sécurité incluse dans certaines versions des navigateurs Mozilla et Firefox.<br /><br />Vous pouvez contourner ce problème de trois façons&nbsp;:<br /> (1) au lieu d\'utiliser Ctrl-v ou Cmd-v, utiliser Maj-Insérer&nbsp;;<br /> (2) utiliser le menu Édition -> Coller de votre navigateur&nbsp;;<br /> (3) changer les préférences de votre navigateur en modifiant votre fichier user.js.<br /><br />Pour plus d\'aide à ce sujet, cliquer le bouton OK ci-dessous, ou Annuler pour retourner à l\'éditeur';
 $string['delete'] = 'Supprimer';
 $string['filebrowser'] = 'Sélection des fichiers';
 $string['findwhat'] = 'Rechercher';
