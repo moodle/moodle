@@ -500,7 +500,7 @@ function quiz_upgrade($oldversion) {
 
     /// Use tolerance instead of min and max in numerical question type
         table_column('quiz_numerical', '', 'tolerance', 'varchar', '255', '', '0.0', 'not null', 'question');
-        execute_sql("UPDATE {$CFG->prefix}quiz_numerical SET tolerance = (min+max)/2");
+        execute_sql("UPDATE {$CFG->prefix}quiz_numerical SET tolerance = (max-min)/2");
         modify_database('', 'ALTER TABLE `prefix_quiz_numerical` DROP `min`'); // Replaced by tolerance
         modify_database('', 'ALTER TABLE `prefix_quiz_numerical` DROP `max`'); // Replaced by tolerance
 
