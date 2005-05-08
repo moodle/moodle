@@ -139,7 +139,6 @@ $string['category'] = 'Categorie  ';
 $string['categoryadded'] = 'De categorie \'$a\'  werd toegevoegd';
 $string['categorydeleted'] = 'De categorie \'$a\'  werd verwijdered';
 $string['categoryduplicate'] = 'Er bestaat al een categorie met de naam \'$a\'!';
-$string['censorbadwords'] = 'klootzak,shit,slet,lul,kut';
 $string['changedpassword'] = 'Het wachtwoord is veranderd';
 $string['changepassword'] = 'Verander wachtwoord  ';
 $string['changessaved'] = 'De veranderingen zijn bewaard';

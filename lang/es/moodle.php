@@ -138,10 +138,6 @@ $string['category'] = 'Categoría';
 $string['categoryadded'] = 'Se instaló la categoría \'$a\'';
 $string['categorydeleted'] = 'Se ha borrado la categoría \'$a\'';
 $string['categoryduplicate'] = 'Ya existe una categoría llamada \'$a\'.';
-$string['censorbadwords'] = 'mierda,jodido,joder,follar,capullo,
-polla,nabo,cipote,coño,culo,verga,puta,
-fulana,zorra,corrida,gilipollas,cerdo,vibrador,
-masturbación,orgasmo,pene,negro,chocho,vagina';
 $string['changedpassword'] = 'Contraseña actualizada';
 $string['changepassword'] = 'Cambiar contraseña';
 $string['changessaved'] = 'Cambios actualizados';

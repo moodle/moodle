@@ -137,7 +137,6 @@ $string['category'] = 'Kategori';
 $string['categoryadded'] = '\'$a\' kategorisi eklendi';
 $string['categorydeleted'] = '\'$a\' kategorisi silindi';
 $string['categoryduplicate'] = '\'$a\' isminde bir kategori zaten var!';
-$string['censorbadwords'] = 'bok,sikik,sikici,sikme,sikkafa,sik,amcýk,göt,göt herif,hýyar,kancýk,oruspu,fahiþe,kahpe,sürtük,kaltak,þýrfýntý,mastürbasyon,otuzbir,otuzbirci,otuzbir çek,piç,puþt,orgazm,vajina';
 $string['changedpassword'] = 'Þifre deðiþti';
 $string['changepassword'] = 'Þifre deðiþtir';
 $string['changessaved'] = 'Deðiþiklikler kaydedildi';

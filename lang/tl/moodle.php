@@ -138,7 +138,6 @@ $string['category'] = 'Kategoriya';
 $string['categoryadded'] = 'Ang kategoriyang \'$a\' ay idinagdag';
 $string['categorydeleted'] = 'Ang kategoriyang \'$a\' ay binura';
 $string['categoryduplicate'] = 'Mayroon nang kategoryang may pangalang \'$a\' !';
-$string['censorbadwords'] = 'shit,fucked,fucker,fuck,dickhead, dick,cockhead,cock,cunt,asshole,arsehole,prick,bitch, jism,whore,slut,wanker, wank,bastard,dildo,masturbate, orgasm,penis,nigger, pussy,vagina,putangina,puta,putang-ina, puke,pekpek,titi,gago,tarantado,tangnamo,kiki, burat,tarugo,kantot,hindot';
 $string['changedpassword'] = 'Binago ang password';
 $string['changepassword'] = 'Baguhin ang password';
 $string['changessaved'] = 'Nai-save na ang mga pagbabago';

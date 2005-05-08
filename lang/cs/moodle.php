@@ -138,7 +138,6 @@ $string['category'] = 'Kategorie';
 $string['categoryadded'] = 'Kategorie \'$a\' byla pøidána';
 $string['categorydeleted'] = 'Kategorie \'$a\' byla odstranìna';
 $string['categoryduplicate'] = 'Kategorie \'$a\' ji¾ existuje!';
-$string['censorbadwords'] = 'sraèka,mrdat,jebat,èurák,pièa,píèa,kokot';
 $string['changedpassword'] = 'Heslo zmìnìno';
 $string['changepassword'] = 'Zmìnit heslo';
 $string['changessaved'] = 'Zmìny ulo¾eny';

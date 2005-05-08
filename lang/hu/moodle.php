@@ -138,7 +138,6 @@ $string['category'] = 'Kategória';
 $string['categoryadded'] = 'A(z) \'$a\' kategória hozzáadása megtörtént';
 $string['categorydeleted'] = 'A(z) \'$a\' kategória törlése megtörtént';
 $string['categoryduplicate'] = '\'$a\' nevû kategória már létezik!';
-$string['censorbadwords'] = 'szar,baszik,baszott,fasz,picsa,pina,geci,kurva,elbaszott,pöcs,punci,segg,seggfej,baszd meg,kibaszott,szemétláda,takony,orgazmus,maszturbál,kiveri,';
 $string['changedpassword'] = 'Megváltozott jelszó';
 $string['changepassword'] = 'Jelszó megváltoztatása';
 $string['changessaved'] = 'Változások mentése';

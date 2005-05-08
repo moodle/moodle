@@ -139,7 +139,6 @@ $string['category'] = 'Kategori';
 $string['categoryadded'] = 'Kategorien \'$a\' blev tilføjet';
 $string['categorydeleted'] = 'Kategorien \'$a\' blev slettet';
 $string['categoryduplicate'] = 'Kategorien \'$a\' eksistere allerede';
-$string['censorbadwords'] = 'lort,luder,røvhul,perker,pik,kusse,narrøv,møgluder,shit,fucked,fucker,fuck,dickhead, dick,cockhead,cock,cunt,asshole,arsehole,prick,bitch, jism,whore,slut,wanker, wank,bastard,dildo,masturbate, orgasm,penis,nigger, pussy,vagina';
 $string['changedpassword'] = 'Password ændret';
 $string['changepassword'] = 'Skift password';
 $string['changessaved'] = 'Ændringer gemt';

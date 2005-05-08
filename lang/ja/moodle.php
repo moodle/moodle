@@ -138,7 +138,6 @@ $string['category'] = 'カテゴリ';
 $string['categoryadded'] = '「 $a 」 が追加されました。';
 $string['categorydeleted'] = '「 $a 」 が削除されました。';
 $string['categoryduplicate'] = '「$a」は既に登録されています! ';
-$string['censorbadwords'] = 'shit,fucked,fucker,fuck,dickhead,dick,cockhead,cock,cunt,asshole,arsehole,prick,bitch,jism,whore,slut,wanker,wank,bastard,dildo,masturbate,orgasm,penis,nigger,pussy,vagina';
 $string['changedpassword'] = 'パスワードの変更を完了しました。';
 $string['changepassword'] = 'パスワードを変更する';
 $string['changessaved'] = '変更内容が保存されました';

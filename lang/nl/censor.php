@@ -3,5 +3,6 @@
 
 
 $string['filtername'] = 'Woordcensuur';
+$string['badwords'] = 'klootzak,shit,slet,lul,kut';
 
 ?>

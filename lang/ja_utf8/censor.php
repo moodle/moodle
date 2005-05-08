@@ -3,8 +3,6 @@
 
 
 $string['filtername'] = '単語検閲';
-$string['thischarset'] = 'UTF-8';
-$string['thisdirection'] = 'ltr';
-$string['thislanguage'] = 'Japanese';
+$string['badwords'] = 'shit,fucked,fucker,fuck,dickhead,dick,cockhead,cock,cunt,asshole,arsehole,prick,bitch,jism,whore,slut,wanker,wank,bastard,dildo,masturbate,orgasm,penis,nigger,pussy,vagina';
 
 ?>

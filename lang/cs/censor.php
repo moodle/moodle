@@ -3,5 +3,6 @@
 
 
 $string['filtername'] = 'Slovní cenzura';
+$string['badwords'] = 'sraèka,mrdat,jebat,èurák,pièa,píèa,kokot';
 
 ?>
