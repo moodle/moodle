@@ -252,7 +252,7 @@ CREATE TABLE prefix_quiz_newest_states (
   id SERIAL PRIMARY KEY,
   attemptid integer NOT NULL default '0',
   questionid integer NOT NULL default '0',
-  new integer NOT NULL default '0',
+  newest integer NOT NULL default '0',
   newgraded integer NOT NULL default '0',
   sumpenalty varchar(10) NOT NULL default '0.0'
 );
