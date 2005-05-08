@@ -13,6 +13,12 @@ class filterobject {
     var $hreftagend;
     var $casesensitive;
     var $fullmatch;
+    var $work_phrase;
+    var $work_hreftagbegin;
+    var $work_hreftagend;
+    var $work_casesensitive;
+    var $work_fullmatch;
+    var $work_calculated;
 
     /// a constructor just because I like constructing
     function filterobject($phrase, $hreftagbegin='<span class="highlight">', 
@@ -20,14 +26,14 @@ class filterobject {
                                    $casesensitive=false, 
                                    $fullmatch=false) {
 
-        $this->phrase        = $phrase;
-        $this->hreftagbegin  = $hreftagbegin;
-        $this->hreftagend    = $hreftagend;
-        $this->casesensitive = $casesensitive;
-        $this->fullmatch     = $fullmatch;
+        $this->phrase           = $phrase;
+        $this->hreftagbegin     = $hreftagbegin;
+        $this->hreftagend       = $hreftagend;
+        $this->casesensitive    = $casesensitive;
+        $this->fullmatch        = $fullmatch;
+        $this->work_calculated  = false;
     }
 }
-
 
 /**
  * Process phrases intelligently found within a HTML text (such as adding links)
@@ -106,17 +112,6 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
         if (!isset($linkobject->phrase)) {
             continue;
         }
-        if (!isset($linkobject->hreftagbegin) or !isset($linkobject->hreftagend)) {
-            $linkobject->hreftagbegin = '<span class="highlight"';
-            $linkobject->hreftagend   = '</span>';
-        }
-        if (!isset($linkobject->casesensitive)) {
-            $linkobject->casesensitive = false;
-        }
-        if (!isset($linkobject->fullmatch)) {
-            $linkobject->fullmatch = false;
-        }
-
 
     /// Avoid integers < 1000 to be linked. See bug 1446.
         $intcurrent = intval($linkobject->phrase);
@@ -124,28 +119,52 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
             continue;
         }
 
+    /// All this work has to be done ONLY it it hasn't been done before
+	if (!$linkobject->work_calculated) {
+            if (!isset($linkobject->hreftagbegin) or !isset($linkobject->hreftagend)) {
+                $linkobject->work_hreftagbegin = '<span class="highlight"';
+                $linkobject->work_hreftagend   = '</span>';
+            } else {
+                $linkobject->work_hreftagbegin = $linkobject->hreftagbegin;
+                $linkobject->work_hreftagend   = $linkobject->hreftagend;
+            }
+            if (!isset($linkobject->casesensitive)) {
+                $linkobject->work_casesensitive = false;
+            } else {
+                $linkobject->work_casesensitive = true;
+            }
+            if (!isset($linkobject->fullmatch)) {
+                $linkobject->work_fullmatch = false;
+            } else {
+                $linkobject->work_fullmatch = true;
+            }
 
-    /// Strip tags out of the phrase
-        $linkobject->phrase = strip_tags($linkobject->phrase);
+        /// Strip tags out of the phrase
+            $linkobject->work_phrase = strip_tags($linkobject->phrase);
 
-    /// Quote any regular expression characters and the delimiter
-        $linkobject->phrase = preg_quote($linkobject->phrase, '/');
+        /// Quote any regular expression characters and the delimiter
+            $linkobject->work_phrase = preg_quote($linkobject->work_phrase, '/');
+
+        /// Work calculated
+            $linkobject->work_calculated = true;
     
+        }
+
     /// If $CFG->filtermatchoneperpage, avoid previously (request) linked phrases
         if (!empty($CFG->filtermatchoneperpage)) {
-            if (!empty($usedphrases) && in_array($linkobject->phrase,$usedphrases)) {
+            if (!empty($usedphrases) && in_array($linkobject->work_phrase,$usedphrases)) {
                 continue;
             }
         }
 
     /// Regular expression modifiers
-        $modifiers = ($linkobject->casesensitive) ? 's' : 'is';
-    
+        $modifiers = ($linkobject->work_casesensitive) ? 's' : 'is';
+
     /// Do we need to do a fullmatch?
     /// If yes then go through and remove any non full matching entries
-        if ($linkobject->fullmatch) {
+        if ($linkobject->work_fullmatch) {
             $notfullmatches = array();
-            $regexp = '/'.$filterinvalidprefixes.'('.$linkobject->phrase.')|('.$linkobject->phrase.')'.$filterinvalidsuffixes.'/'.$modifiers;
+            $regexp = '/'.$filterinvalidprefixes.'('.$linkobject->work_phrase.')|('.$linkobject->work_phrase.')'.$filterinvalidsuffixes.'/'.$modifiers;
 
             preg_match_all($regexp,$text,$list_of_notfullmatches);
 
@@ -161,17 +180,17 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
 
     /// Finally we do our highlighting
         if (!empty($CFG->filtermatchonepertext) || !empty($CFG->filtermatchoneperpage)) {
-            $resulttext = preg_replace('/('.$linkobject->phrase.')/'.$modifiers, 
-                                      $linkobject->hreftagbegin.'$1'.$linkobject->hreftagend, $text, 1);
+            $resulttext = preg_replace('/('.$linkobject->work_phrase.')/'.$modifiers, 
+                                      $linkobject->work_hreftagbegin.'$1'.$linkobject->work_hreftagend, $text, 1);
         } else {
-            $resulttext = preg_replace('/('.$linkobject->phrase.')/'.$modifiers, 
-                                      $linkobject->hreftagbegin.'$1'.$linkobject->hreftagend, $text);
+            $resulttext = preg_replace('/('.$linkobject->work_phrase.')/'.$modifiers, 
+                                      $linkobject->work_hreftagbegin.'$1'.$linkobject->work_hreftagend, $text);
         }
 
     /// If $CFG->filtermatchoneperpage, save linked phrases to request
         if (!empty($CFG->filtermatchoneperpage)) {
             if ($resulttext != $text) { //Texts are different so we have linked the phrase
-                $usedphrases[] = $linkobject->phrase;
+                $usedphrases[] = $linkobject->work_phrase;
             }
         }
 
