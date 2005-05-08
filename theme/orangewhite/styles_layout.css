@@ -37,7 +37,7 @@ h5.main,
 h6.main {
   width:80%;
   margin-left:auto;
-  margin-right:auto;
+  margin-right:auto
 }
 
 /* basic styles */
@@ -49,108 +49,108 @@ h6.main {
   padding:0;
   border:none;
   background:transparent;
-  height:1px;
+  height:1px
 }
 
 a.autolink:link {
   border-bottom:dashed 1px;
-  cursor:help;
+  cursor:help
 }
 
 a.autolink:visited {
   border-bottom:dashed 1px;
-  cursor:help;
+  cursor:help
 }
 
 a.autolink:hover {
   border-bottom:solid 1px;
-  cursor:help;
+  cursor:help
 }
 
 /* general styles */
 body {
-  margin:10px; /*behavior:url(/htc/csshover.htc);*/
+  margin:10px /*behavior:url(/htc/csshover.htc);*/
 }
 
 ul {
   margin-bottom:5px;
-  margin-top:0;
+  margin-top:0
 }
 
 form {
-  margin-bottom:0;
+  margin-bottom:0
 }
 
 a img {
-  border:none;
+  border:none
 }
 
 input {
-  background:transparent;
+  background:transparent
 }
 
 
 /* header styles */
 #header-home {
   padding:0.5em 0.5em;
-  height:2em;
+  height:2em
 }
 
 #header,
 #header-main,
 #nav-bar {
-  margin:0;
+  margin:0
 }
 
 #header {
   padding:0.1em 0.5em;
-  height:50px;
+  height:50px
 }
 
 .headermain {
-  float:left;
+  float:left
 }
 
 #header .headermain {
-  margin:0.2em 0;
+  margin:0.2em 0
 }
 
 .headermenu {
   float:right;
   padding:0;
-  margin:0;
+  margin:0
 }
 
 #nav-bar {
   margin-bottom:0;
   padding:1px 0.5em;
   background:url(colorstrip.gif) left no-repeat;
-  height:3em;
+  height:3em
 }
 
 #breadcrumb {
   float:left;
   padding-top:13px;
-  margin:0.2em 0;
+  margin:0.2em 0
 }
 
 #navbutton {
   float:right;
   padding-top:13px;
-  margin:0.2em 0;
+  margin:0.2em 0
 }
 
 #nav-bar hr {
-  height:1px;
+  height:1px
 }
 
 /* footer styles */
 #footer br {
-  display:none;
+  display:none
 }
 
 #footer hr {
-  display:none;
+  display:none
 }
 
 /*****************************
@@ -161,7 +161,7 @@ input {
 #content {
   margin:0;
   padding:0;
-  border:thin solid;
+  border:thin solid
 }
 
 /* many places */
@@ -169,16 +169,16 @@ input {
   margin-left:auto;
   margin-right:auto;
   border-width:1px;
-  border-style:solid;
+  border-style:solid
 }
 
 .generalboxcontent {
-  background-image:none;
+  background-image:none
 }
 
 .noticebox {
   border-width:1px;
-  border-style:solid;
+  border-style:solid
 }
 
 /* weblib.php table */
@@ -187,61 +187,55 @@ input {
   border-style:solid;
   border-left:0;
   border-right:0;
-  border-top:0;
+  border-top:0
 }
 
 /* entry page */
-#site-index #left-column,
-#site-index #left-column .sideblock {
-  width:250px !important;
-}
-
 #site-index #left-column .sideblock .content {
-  padding:0.5em;
+  padding:0.5em
 }
 
 #site-index #middle-column {
   width:auto;
-  padding:0 2.5em;
+  padding:0 2.5em
 }
 
 * html #site-index #middle-column {
   padding:0;
-  border:0 2.5em solid #FFF;
+  border:0 2.5em solid #FFF
 }
 
 #site-index #right-column {
-  width:30%;
+  width:30%
 }
 
 #site-index #middle-column .forumpost {
-  border:0 none;
+  border:0 none
 }
 
 #site-index #middle-column .forumpost .picture,
 #site-index #middle-column .forumpost .side {
-  display:none;
+  display:none
 }
 
 #site-index #middle-column .headingblock,
 #site-index #middle-column .header {
   padding:1em;
   border-width:0 0 0 25px;
-  border-style:solid;
+  border-style:solid
 }
 
 /* entry-page index.php */ 
 .sitetopic,
 .siteinfo {
   border-width:1px;
-  border-style:solid;
+  border-style:solid
 }
 
 
 /***
  *** User
  ***/
-
 .userinfobox {
   width:80%;
   margin-left:auto;
@@ -254,26 +248,26 @@ input {
 .userinfobox .left {
   padding:10px;
   width:100px;
-  vertical-align:top;
+  vertical-align:top
 }
 
 .userinfobox .content {
   padding:10px;
-  vertical-align:top;
+  vertical-align:top
 }
 
 .userinfobox .links {
   width:100px;
   padding:5px;
-  vertical-align:bottom;
+  vertical-align:bottom
 }
 
 .userinfobox .list td {
-  padding:3px;
+  padding:3px
 }
 
 .userinfobox .username {
-  padding-bottom:20px;
+  padding-bottom:20px
 }
 
 table.groupinfobox {
@@ -282,20 +276,20 @@ table.groupinfobox {
   margin-right: 20%;
   border-width:1px;
   border-style:solid;
-  margin-bottom: 20px;
+  margin-bottom: 20px
 }
 
 .groupinfobox .left {
   padding: 10px;
   width: 100px;
-  vertical-align: top;
+  vertical-align: top
 }
 body#user-index #longtimenosee {
-  text-align:center;
+  text-align:center
 }
 
 #user-edit .generalbox {
-  border-top-width:0;
+  border-top-width:0
 }
 
 /*****************************
@@ -305,7 +299,7 @@ body#user-index #longtimenosee {
 ******************************/
 /* admin, calendar */
 table.formtable td {
-  padding:9px;
+  padding:9px
 }
 
 /* admin */
@@ -327,7 +321,7 @@ table.formtable td {
 ******************************/
 /* course, entry-page, login */
 .generaltableheader {
-  background-image:none;
+  background-image:none
 }
 
 /* course */
@@ -335,23 +329,23 @@ table.formtable td {
   width:100%;
   margin:0;
   border-spacing:5px;
-  border-collapse:separate;
+  border-collapse:separate
 }
 
 #layout-table tr,
 #layout-table td {
-  vertical-align:top;
+  vertical-align:top
 }
 
 #left-column,
 #right-column {
   margin:0;
   padding:0;
-  border:0;
+  border:0
 }
 
 #middle-column {
-  padding:0 15px;
+  padding:0 15px
 }
 
 #course-view .headingblock {
@@ -359,24 +353,24 @@ table.formtable td {
   margin-left:2px;
   padding-left:1.5em;
   border-left:1.5em solid;
-  background-image:none;
+  background-image:none
 }
 
 #course-view .activity {
-  border:0 none;
+  border:0 none
 }
 
 #course-view table.section {
   border-collapse:collapse;
-  border-spacing:0;
+  border-spacing:0
 }
 
 #course-view .section td {
-  vertical-align:top;
+  vertical-align:top
 }
 
 #course-view .section .content {
-  padding:0 1em;
+  padding:0 1em
 }
 
 #course-view .section .side {
@@ -385,28 +379,28 @@ table.formtable td {
 #course-view .section .left {
   width:0;
   padding:0;
-  border-left:1.5em solid;
+  border-left:1.5em solid
 }
 
 #course-view .section .right {
   width:2em;
   padding:0.5em;
-  text-align:center;
+  text-align:center
 }
 
 #course-view .current .side {
 }
 
 #course-view .topics {
-  margin-top:9px;
+  margin-top:9px
 }
 
 #course-view .weeks {
-  margin-top:9px;
+  margin-top:9px
 }
 
-#course-view .section .spacer {
-  height:2em;
+#course-view .section td.spacer {
+  height:2em
 }
 
 #course-view .section .weekdates {
@@ -414,12 +408,12 @@ table.formtable td {
 
 .categorybox {
   border-width:1px;
-  border-style:solid;
+  border-style:solid
 }
 
 .courseboxcontent {
   border-width:1px;
-  border-style:solid;
+  border-style:solid
 }
 
 /*****************************
@@ -431,7 +425,7 @@ table.formtable td {
 .forumpost,
 .forumheaderlist {
   border-width:1px;
-  border-style:solid;
+  border-style:solid
 }
 
 /* forum */
@@ -449,55 +443,55 @@ table.formtable td {
 .forumpost {
   width:100%;
   border-width:1px solid;
-  border-collapse:separate;
+  border-collapse:separate
 }
 
 .forumheaderlist thead tr th {
-  border:1px solid;
+  border:1px solid
 }
 
 .forumpost {
-  margin-top:15px;
+  margin-top:15px
 }
 
 .forumpost .topic {
-  padding:4px;
+  padding:4px
 }
 
 .forumpost .commands {
   padding-top:0.5em;
-  text-align:right;
+  text-align:right
 }
 
 .forumpost .ratings {
   padding-top:1em;
-  text-align:right;
+  text-align:right
 }
 
 .forumpost .content {
-  padding:4px;
+  padding:4px
 }
 
 .forumpost .footer {
   padding-top:0.5em;
-  text-align:right;
+  text-align:right
 }
 
 .forumpost .left {
   width:35px;
   padding:4px;
   text-align:center;
-  vertical-align:top;
+  vertical-align:top
 }
 
 .forumpostindent {
-  margin-left:45px;
+  margin-left:45px
 }
 
 .unread {
   margin-left:1em;
   border-width:0 0 1px 3px;
-  border-style:solid;
+  border-style:solid
 }
 
 /* glossary */
@@ -506,15 +500,15 @@ table.formtable td {
   margin-left:auto;
   margin-right:auto;
   border:1px solid;
-  position:relative;
+  position:relative
 }
 
 /*.mod-glossary table {
-    width:100%;
+    width:100%
 }*/
 #mod-glossary-edit {
   margin:0;
-  width:auto;
+  width:auto
 }
 
 .mod-glossary .generaltab,
@@ -523,87 +517,87 @@ table.formtable td {
 .mod-glossary .inactive {
   width:100%;
   padding:0 1px;
-  text-align:center;
+  text-align:center
 }
 
 .mod-glossary table.tabs td.separator {
-  width:1%;
+  width:1%
 }
 
 .mod-glossary .glossarydisplay {
-  width:80%;
+  width:80%
 }
 
 .mod-glossary .tabs {
   margin-bottom:0;
-  padding-bottom:0;
+  padding-bottom:0
 }
 
 .mod-glossary .entryboxheader hr {
-  display:none;
+  display:none
 }
 
 .mod-glossary .entrybox {
   border:1px solid #D1D7DC;
-  border-top:0 none;
+  border-top:0 none
 }
 
 /*
 .glossary .inactive {
-    border:1px solid;
+    border:1px solid
 }*/
 /* quiz */
 table.quiz td {
   padding-top:0.1em;
-  line-height:1.7em;
+  line-height:1.7em
 }
 
 table.quiz input {
   padding-top:0.1em;
   height:1.7em;
-  vertical-align:top;
+  vertical-align:top
 }
 
 /* wiki */
 .wiki {
   border-width:1px;
-  border-style:solid;
+  border-style:solid
 }
 
 .mwiki .view {
   margin-left:auto;
   margin-right:auto;
-  width:35em;
+  width:35em
 }
 
 .mwiki .edit {
   margin-right:auto;
   margin-left:auto;
-  padding:0;
+  padding:0
 }
 
 .wiki .title {
   padding:3px;
-  border:1px solid;
+  border:1px solid
 }
 
 .wiki .upload {
-  padding-top:1em;
+  padding-top:1em
 }
 
 #wikipageactions {
   width:auto !important;
   margin:auto;
-  position:relative;
+  position:relative
 }
 
 #wikipageactions td {
-  text-align:left !important;
+  text-align:left !important
 }
 
 #wikipageactions input {
   padding:0;
-  margin:0;
+  margin:0
 }
 
 .mwiki {
@@ -611,7 +605,7 @@ table.quiz input {
   margin-left:auto;
   margin-right:auto;
   border:1px solid;
-  position:relative;
+  position:relative
 }
 
 /*****************************
@@ -621,19 +615,19 @@ table.quiz input {
 ******************************/
 body.calendar #calendar tr,
 body.calendar #calendar td {
-  vertical-align:top;
+  vertical-align:top
 }
 
 body.calendar #calendar td.maincalendar {
-  padding:0 2em;
+  padding:0 2em
 }
 
 body.calendar #calendar td.maincalendar .buttons {
-  float:right;
+  float:right
 }
 
 body.calendar #calendar table.calendarmonth {
-  padding:1em 0;
+  padding:1em 0
 }
 
 table.minicalendar {
@@ -641,7 +635,7 @@ table.minicalendar {
   margin:0;
   padding:0;
   border-width:1px;
-  border-style:solid;
+  border-style:solid
 }
 
 table.calendarmonth {
@@ -649,86 +643,86 @@ table.calendarmonth {
   margin:0;
   padding:0;
   border-width:1px;
-  border-style:solid;
+  border-style:solid
 }
 
 table.minicalendar tbody td {
   width:14%;
   border-width:1px 0;
   border-style:none;
-  vertical-align:center;
+  vertical-align:center
 }
 
 table.calendarmonth tbody td {
   width:14%;
   border-width:1px;
   border-style:solid;
-  vertical-align:top;
+  vertical-align:top
 }
 
 table.calendarmonth tbody td table {
   margin-top:0;
-  margin-left:0;
+  margin-left:0
 }
 
 table.calendarmonth tbody td table td {
   border:none;
-  background:none;
+  background:none
 }
 
 table.calendarmonth tbody td div {
   margin-top:0;
-  margin-left:0;
+  margin-left:0
 }
 
 table.minicalendar thead td {
-  vertical-align:center;
+  vertical-align:center
 }
 
 table.calendarmonth thead td {
   padding-bottom:3px;
   border-bottom:2px solid;
-  vertical-align:center;
+  vertical-align:center
 }
 
 .event_global {
-  border:2px solid !important;
+  border:2px solid !important
 }
 
 .event_course {
-  border:2px solid !important;
+  border:2px solid !important
 }
 
 .event_group {
-  border:2px solid !important;
+  border:2px solid !important
 }
 
 .event_user {
-  border:2px solid !important;
+  border:2px solid !important
 }
 
 .cal_duration_global {
   border-top:2px solid !important;
-  border-bottom:2px solid !important;
+  border-bottom:2px solid !important
 }
 
 .cal_duration_course {
   border-top:2px solid !important;
-  border-bottom:2px solid !important;
+  border-bottom:2px solid !important
 }
 
 .cal_duration_user {
   border-top:2px solid !important;
-  border-bottom:2px solid !important;
+  border-bottom:2px solid !important
 }
 
 .cal_duration_group {
   border-top:2px solid !important;
-  border-bottom:2px solid !important;
+  border-bottom:2px solid !important
 }
 
 .cal_today {
-  border:2px solid !important;
+  border:2px solid !important
 }
 
 .mycalendar table.cal_filters {
@@ -736,13 +730,13 @@ table.calendarmonth thead td {
   padding:2px;
   width:100%;
   border-width:1px;
-  border-style:solid;
+  border-style:solid
 }
 
 .mycalendar .cal_filters thead td {
   margin:0;
   padding:2px;
-  border-bottom:2px solid;
+  border-bottom:2px solid
 }
 
 .mycalendar .event_table {
@@ -750,7 +744,7 @@ table.calendarmonth thead td {
   padding:2px;
   width:100%;
   border-width:1px;
-  border-style:solid;
+  border-style:solid
 }
 
 .mycalendar hr {
@@ -758,19 +752,19 @@ table.calendarmonth thead td {
   border-top:1px solid;
   margin-top:4px;
   margin-bottom:4px;
-  height:1px;
+  height:1px
 }
 
 td.event_description {
   width:80%;
   border-left:2px solid;
   padding:5px;
-  vertical-align:top;
+  vertical-align:top
 }
 
 #calendar .today,
 .minicalendar .today {
-  border:1px solid !important;
+  border:1px solid !important
 }
 
 .cal_popup_bg {
@@ -779,35 +773,35 @@ td.event_description {
   border-top:2px solid;
   border-left:2px solid;
   border-right:2px solid;
-  border-bottom:2px solid;
+  border-bottom:2px solid
 }
 
 .cal_popup_close {
-  margin-right:5px;
+  margin-right:5px
 }
 
 .eventfull {
   border-width:1px;
-  border-style:solid;
+  border-style:solid
 }
 
 .eventfullpicture {
-  padding:8px;
+  padding:8px
 }
 
 table.calendar-controls {
   width:100%;
-  text-align:center;
+  text-align:center
 }
 
 table.calendar-controls .previous,
 table.calendar-controls .next {
-  width:12%;
+  width:12%
 }
 
 #calendar .maincalendar .calendar-controls .previous,
 #calendar .maincalendar .calendar-controls .next {
-  width:30%;
+  width:30%
 }
 
 /*****************************
@@ -818,62 +812,70 @@ table.calendar-controls .next {
 /* sideblock */
 .sideblock {
   width:100%;
-  border:0 none;
+  border:0 none
 }
 
 .sideblock .header {
   padding:0 5px;
   border:0 none;
-  background-image:none;
+  background-image:none
+}
+
+.sideblock .content {
+  padding:0.3em 0.5em
+}
+
+.sideblock .content .link {
+  border-top:1px solid
 }
 
 #right-column .sideblock {
-  border:1px solid;
+  border:1px solid
 }
 
 .sideblock .header .hide-show {
-  float:right;
+  float:right
 }
 
 .sideblock .header .hide-show img.hide-show-image {
   width:11px;
   padding-top:0.35em;
-  height:11px;
+  height:11px
 }
 
 .sideblock .header .hide-show img.hide-show-image {
-  background:url('../../pix/t/switch_minus.gif') no-repeat bottom;
+  background:url('../../pix/t/switch_minus.gif') no-repeat bottom
 }
 
 .sideblock.hidden .header .hide-show img.hide-show-image {
-  background:url('../../pix/t/switch_plus.gif') no-repeat bottom;
+  background:url('../../pix/t/switch_plus.gif') no-repeat bottom
 }
 
 .sideblock .header .title {
   float:left;
-  width:auto;
+  width:auto
 }
 
 .sideblock.hidden .content {
-  display:none;
+  display:none
 }
 
 .sideblock .header .commands {
   float:right;
-  padding-left:0.2em;
+  padding-left:0.2em
 }
 
 .sideblock .header .commands a {
   border-bottom:none;
-  cursor:pointer;
+  cursor:pointer
 }
 
 .sideblock .header .commands a img {
-  padding-top:0.5em;
+  padding-top:0.5em
 }
 
 .sideblock .list {
-  width:100%;
+  width:100%
 }
 
 .sideblockmain hr {
@@ -881,43 +883,38 @@ table.calendar-controls .next {
   border-top:1px solid;
   margin-top:4px;
   margin-bottom:4px;
-  height:1px;
+  height:1px
 }
 
 #left-column .sideblock {
-  margin-bottom:0;
+  margin-bottom:0
 }
 
 #left-column .sideblockmain {
-  padding:1px 0;
+  padding:1px 0
 }
 
-#left-column .sideblock .header,
-#left-column .sideblock {
-  border-width:0 0 0 1px;
-}
-
-#left-column .sideblock .list {
-  padding-left:5px;
+#left-column .sideblock .header {
+  border-top:1px solid
 }
 
 #right-column .sideblock {
-  margin:1em 0 0.5em;
+  margin:1em 0 0.5em
 }
 
 /* glossary random */
 .block_glossary_random .sideblockheading,
 .block_glossary_random .sideblockmain br,
 .block_glossary_random .sideblockmain b {
-  display:none;
+  display:none
 }
 
 .block_glossary_random .sideblockmain {
-  text-align:center;
+  text-align:center
 }
 
 /* course summary */
 .block_course_summary .sideblockmain {
-  padding:10px;
+  padding:10px
 }
 
