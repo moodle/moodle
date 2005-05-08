@@ -11,46 +11,46 @@
     //                            |                                                              |
     //           -------------------------------------------------------------------             |
     //           |                        |                    |                   |             |.......................................
-    //           |                        |                    |                   |             |                                      .
-    //           |                        |                    |                   |             |                                      .
-    //      quiz_attempts        quiz_grades    quiz_question_instances  quiz_question_versions  |    ----quiz_question_datasets----    .
-    // (UL,pk->id, fk->quiz) (UL,pk->id,fk->quiz)  (CL,pk->id,fk->quiz)    (CL,pk->id,fk->quiz)  |    |  (CL,pk->id,fk->question,  |    .
-    //             |                                              |                      .       |    |   fk->dataset_definition)  |    .
+    //           |               quiz_grades                   |        quiz_question_versions   |                                      .
+    //           |           (UL,pk->id,fk->quiz)              |         (CL,pk->id,fk->quiz)    |                                      .
+    //           |                                             |                         .       |    ----quiz_question_datasets----    .
+    //      quiz_attempts                          quiz_question_instances               .       |    |  (CL,pk->id,fk->question,  |    .
+    //  (UL,pk->id,fk->quiz)                    (CL,pk->id,fk->quiz,question)            .       |    |   fk->dataset_definition)  |    .
     //             |                                              |                      .       |    |                            |    .
-    //             |                   quiz_newest_states         |                      .       |    |                            |    .
-    //             |----------------(UL,pk->id,fk->attempt)------ |                      .       |    |                            |    .
-    //             |                        .                     |                      .       |    |                       quiz_dataset_definitions 
-    //             |                        .                     |                      .       |    |                      (CL,pk->id,fk->category)  
-    //             |                    quiz_states               |                      quiz_questions                                 |              
-    //             -------------- (UL,pk->id,fk->attempt)--------------------------(CL,pk->id,fk->category,files)                       |              
-    //                                      |                                                    |                             quiz_dataset_items      
-    //                                      |                                                    |                          (CL,pk->id,fk->definition) 
+    //             |               quiz_newest_states             |                      .       |    |                            |    .
+    //             |---------(UL,pk->id,fk->attempt,question)-----|                      .       |    |                            |    .
+    //             |                        .                     |                      .       |    |                       quiz_dataset_definitions
+    //             |                        .                     |                      .       |    |                      (CL,pk->id,fk->category)
+    //             |                    quiz_states               |                      quiz_questions                                 |
+    //             ----------(UL,pk->id,fk->attempt,question)--------------------------(CL,pk->id,fk->category,files)                   |
+    //                                      |                                                    |                             quiz_dataset_items
+    //                                      |                                                    |                          (CL,pk->id,fk->definition)
     //                              ---------                                                    |
     //                              |                                                            |
     //                        quiz_rqp_states                                                    |
-    //                    (UL,pk->id,fk->stateid)                                                |                                   quiz_rqp_type 
-    //                                                                                           |                                    (SL,pk->id)  
-    //                                                                                           |                                         |       
+    //                    (UL,pk->id,fk->stateid)                                                |                                   quiz_rqp_type
+    //                                                                                           |                                    (SL,pk->id)
+    //                                                                                           |                                         |
     //             --------------------------------------------------------------------------------------------------------------          |
-    //             |             |              |              |                       |                  |                     |        quiz_rqp           
-    //             |             |              |              |                       |                  |                     |--(CL,pk->id,fk->question) 
-    //             |             |              |              |                 quiz_calculated          |                     |                           
-    //      quiz_truefalse       |       quiz_multichoice      |             (CL,pl->id,fk->question)     |                     |                           
-    // (CL,pl->id,fk->question)  |   (CL,pl->id,fk->question)  |                       .                  |                     |    quiz_randomsamatch     
-    //             .             |              .              |                       .                  |                     |--(CL,pl->id,fk->question) 
+    //             |             |              |              |                       |                  |                     |        quiz_rqp
+    //             |             |              |              |                       |                  |                     |--(CL,pk->id,fk->question)
+    //             |             |              |              |                 quiz_calculated          |                     |
+    //      quiz_truefalse       |       quiz_multichoice      |             (CL,pl->id,fk->question)     |                     |
+    // (CL,pk->id,fk->question)  |   (CL,pk->id,fk->question)  |                       .                  |                     |    quiz_randomsamatch
+    //             .             |              .              |                       .                  |                     |--(CL,pk->id,fk->question)
     //             .      quiz_shortanswer      .       quiz_numerical                 .            quiz_multianswer.           |
-    //             .  (CL,pl->id,fk->question)  .  (CL,pl->id,fk->question)            .        (CL,pl->id,fk->question)        |
-    //             .             .              .              .                       .                  .                     |         quiz_match        
-    //             .             .              .              .                       .                  .                     |--(CL,pl->id,fk->question) 
-    //             .             .              .              .                       .                  .                     |             .             
-    //             .             .              .              .                       .                  .                     |             .             
-    //             .             .              .              .                       .                  .                     |             .             
-    //             .             .              .              .                       .                  .                     |       quiz_match_sub      
-    //             ........................................................................................                     |--(CL,pl->id,fk->question) 
+    //             .  (CL,pk->id,fk->question)  .  (CL,pk->id,fk->question)            .        (CL,pk->id,fk->question)        |
+    //             .             .              .              .                       .                  .                     |         quiz_match
+    //             .             .              .              .                       .                  .                     |--(CL,pk->id,fk->question)
+    //             .             .              .              .                       .                  .                     |             .
+    //             .             .              .              .                       .                  .                     |             .
+    //             .             .              .              .                       .                  .                     |             .
+    //             .             .              .              .                       .                  .                     |       quiz_match_sub
+    //             ........................................................................................                     |--(CL,pk->id,fk->question)
     //                                                   .                                                                      |
     //                                                   .                                                                      |
     //                                                   .                                                                      |    quiz_numerical_units
-    //                                                quiz_answers                                                              |--(CL,pl->id,fk->question)
+    //                                                quiz_answers                                                              |--(CL,pk->id,fk->question)
     //                                         (CL,pk->id,fk->question)----------------------------------------------------------
     //
     // Meaning: pk->primary key field of the table
