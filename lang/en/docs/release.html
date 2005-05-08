@@ -50,10 +50,10 @@
   <ul type="circle">
   <li> New "maintenance mode" allows the admin to temporarily disable a site (during upgrades, for example).</li>
 
-  <li> Moodle can automatically download a new list of timezones from moodle.org or elsewhere and install it to the database</a></li>
+  <li> Moodle can automatically download a new list of timezones from moodle.org or elsewhere and install it to the database</li>
   <li> New version of Moodle MySQL Admin module (available separately)</li>
 
-  <li> New calendar</a> options page provides user interface</a></a> to configure the behavior of the calendar</a>  </li>
+  <li> New calendar options page provides user interface to configure the behavior of the calendar  </li>
   </ul>
 
 <h4>Authentication</h4>
@@ -65,8 +65,8 @@
   <li> Improved LDAP integration, so that LDAP can now control course creation, group assignments. Increased performance and scalability performing user synchronisation.</li>
 
   <li> Certain user fields can be locked by the admin when using external authentication</li>
-  <li> Improved session handling now detects "crossover" sessions that we have found in some buggy PHP</a> installations and prevents them</li>
-  <li> Sessions can now be stored in the database</a> (good for clustered installations!)</li>
+  <li> Improved session handling now detects "crossover" sessions that we have found in some buggy PHP installations and prevents them</li>
+  <li> Sessions can now be stored in the database (good for clustered installations!)</li>
 
   <li> Users can be forced to change their password  </li>
   </ul>
@@ -76,34 +76,34 @@
   <li> Standardised file browsing in all areas</li>
   <li> Improved uploading, with support for automated Virus scanning of new documents using ClamAV.</li>
 
-  <li> Slasharguments</a> now work also on IIS (upgrade to PHP</a> 4.3.11 needed for ISAPI)  </li>
+  <li> Slasharguments now work also on IIS (upgrade to PHP 4.3.11 needed for ISAPI)  </li>
   </ul>
 
 <h4>Filters</h4>
   <ul type="circle">
-  <li> Standardised filter</a> library makes it trivial to write new filters that require searching and highlighting of text.</li>
+  <li> Standardised filter library makes it trivial to write new filters that require searching and highlighting of text.</li>
 
-  <li> Huge efficiency improvements for complex filters like the Glossary filter</a></li>
-  <li> New Tidy filter</a> uses the W3C Tidy program to (optionally) clean all user-entered texts throughout the site and convert it to valid XHTML</a> code</li>
-  <li> Improved censorship filter</a>, now "blacks out" words using styles and uses a word list from the language packs.</li>
+  <li> Huge efficiency improvements for complex filters like the Glossary filter</li>
+  <li> New Tidy filter uses the W3C Tidy program to (optionally) clean all user-entered texts throughout the site and convert it to valid XHTML code</li>
+  <li> Improved censorship filter, now "blacks out" words using styles and uses a word list from the language packs.</li>
 
   <li> Improved Flash MP3 player, now shows progress bar while downloading and playing</li>
-  <li> Improved Multi-language filter</a> is faster, more forgiving of syntax errors, and uses new editor-friendly syntax:  &lt;span lang="en"&gt;&lt;/span&gt;</li>
-  <li> Auto-linking</a> filters (glossary, activities</a>) can work to link all the occurrences (old behaviour), once for each text block or only once for the whole page ($CFG-&gt;filtermatchonepertext, $CFG-&gt;filtermatchoneperpage).</li>
+  <li> Improved Multi-language filter is faster, more forgiving of syntax errors, and uses new editor-friendly syntax:  &lt;span lang="en"&gt;&lt;/span&gt;</li>
+  <li> Auto-linking filters (glossary, activities) can work to link all the occurrences (old behaviour), once for each text block or only once for the whole page ($CFG-&gt;filtermatchonepertext, $CFG-&gt;filtermatchoneperpage).</li>
 
   <li> More text can now be filtered in Moodle, including activity names, headings and other such small texts.  This makes it possible to design completely multi-lingual sites in Moodle that fully appears in the user's chosen language.  </li>
   </ul>
 
-<h4>Themes</a></h4>
+<h4>Themes</h4>
   <ul type="circle">
   <li> Modules can provide standard styles </li>
-  <li> Themes</a> can override required styles of other themes</a></li>
+  <li> Themes can override required styles of other themes</li>
 
-  <li> Users and courses can choose their own themes</a> if the admin allows it</li>
-  <li> Implementation of tabs interface</a> on many pages  </li>
+  <li> Users and courses can choose their own themes if the admin allows it</li>
+  <li> Implementation of tabs interface on many pages  </li>
   </ul>
 
-<h4> HTML Editor</a></h4>
+<h4> HTML Editor</h4>
   <ul type="circle">
   <li> The toolbuttons offered in the editor toolbar are now configurable by the admin</li>
   <li> Search and Replace text within the editor text area (with optional use of regular expressions)  </li>
@@ -117,37 +117,37 @@
   <li> New tool to copy content from a course to other.  </li>
   </ul>
 
-<h4> New blocks</a> </h4>
+<h4> New blocks </h4>
   <ul type="circle">
   <li> HTML block: allowing to place arbitrary content (text, images links)  in any course mainpage </li>
-  <li> Remote RSS</a> feed: allows to display external news channels inside a Moodle course</li>
+  <li> Remote RSS feed: allows to display external news channels inside a Moodle course</li>
 
   <li> Glossary Selection: to choose and display content from a Moodle glossary in course mainpage  </li>
   </ul>
 
-<h4> Calendar</a></h4>
+<h4> Calendar</h4>
   <ul type="circle">
-  <li> Major speed improvements for sites with a large number of courses using groups</a></li>
+  <li> Major speed improvements for sites with a large number of courses using groups</li>
 
   <li> Repeating events can now be modified or deleted all at the same time or separately as before</li>
-  <li> New "remember filter</a> settings" preference that allows calendar</a> filters to remember their status between logins  </li>
+  <li> New "remember filter settings" preference that allows calendar filters to remember their status between logins  </li>
   </ul>
 
 <h3> Activity Module Improvements</h3>
 <h4>Assignment</h4>
   <ul type="circle">
   <li> Completely refactored into a new class-based design, allowing new plugin-assignment types</li>
-  <li> New Online Text assignment type that doesn't require files and allows inline comments when grading - this new type effectively replaces the old Journal module</a></li>
-  <li> Vastly improved grading interface</a> for handling large classes</li>
+  <li> New Online Text assignment type that doesn't require files and allows inline comments when grading - this new type effectively replaces the old Journal module</li>
+  <li> Vastly improved grading interface for handling large classes</li>
 
   <li> New configuration options to disable late submission and to e-mail alerts to teachers when students submit new work  </li>
   </ul>
 
 <h4>Chat</h4>
   <ul type="circle">
-  <li> Streamlined interface</a> looks smoother, works faster, even without using the optional server</a> daemon</li>
+  <li> Streamlined interface looks smoother, works faster, even without using the optional server daemon</li>
 
-  <li> Blocks</a> can now be added to chat pages (e.g. for additional information)  </li>
+  <li> Blocks can now be added to chat pages (e.g. for additional information)  </li>
   </ul>
 
 <h4>Choice</h4>
@@ -155,7 +155,7 @@
   <li> Rewritten to allow any number of choices</li>
 
   <li> The number of users per choice can be limited, which allows it to be used as tool for "signing up" to an array of options.</li>
-  <li> You can now download</a> the results of the choice to XLS or a TXT file  </li>
+  <li> You can now download the results of the choice to XLS or a TXT file  </li>
   </ul>
 
 <h4>Forum</h4>
@@ -176,25 +176,25 @@
   <li> New setting to enable/disable the print view of each glossary.</li>
 
   <li> New search system looks for words everywhere (instead of doing exact phrase match).</li>
-  <li> More information is sent to logs</a> to be able to track activity better.  </li>
+  <li> More information is sent to logs to be able to track activity better.  </li>
   </ul>
 
 <h4>Journal</h4>
-<h4>Lesson</a></h4>
+<h4>Lesson</h4>
 
   <ul type="circle">
   <li> Now supports timed Lessons</li>
   <li> Can create practice Lessons (grades are not stored)</li>
-  <li> Option for students to view points earned while taking the Lesson</a></li>
-  <li> Allow students to review their answers before submitting the Lesson</a></li>
+  <li> Option for students to view points earned while taking the Lesson</li>
+  <li> Allow students to review their answers before submitting the Lesson</li>
 
   <li> New Slide Show Mode (only branch tables are displayed as slides)</li>
   <li> New Left Menu (for enabled branch tables only)</li>
   <li> Lessons can now be Password Protected</li>
-  <li> A Tree View can be used for the Lesson</a> creation screen</li>
+  <li> A Tree View can be used for the Lesson creation screen</li>
 
   <li> Students can post their high scores</li>
-  <li> New option to save a Lesson</a>'s settings as defaults for new lessons in the same course</li>
+  <li> New option to save a Lesson's settings as defaults for new lessons in the same course</li>
   <li> Can delete a student's attempts</li>
   <li> New page Jumps:
     <ul type="circle">
@@ -206,9 +206,9 @@
     </ul>
 
   </li>
-  <li> Added functionality to view Lesson</a> statistics</li>
+  <li> Added functionality to view Lesson statistics</li>
   <li> New question type: Essay.  Teachers can view each essay and write comments, assign a grade, and then email it all to the student</li>
-  <li> New question creation interface</a>  </li>
+  <li> New question creation interface  </li>
 
   </ul>
 
@@ -221,23 +221,23 @@
 
   <li> Allows questions rendered and scored externally (e.g., by mathematical assessment engines) to be integrated seamlessly into Moodle quizzes via the RQP web services protocol.</li>
   <li> Is prepared for the handling of IMS QTI questions once web services for these become available.</li>
-  <li> New tabbed teacher interface</a> for previewing, editing, and reviewing quizzes.</li>
+  <li> New tabbed teacher interface for previewing, editing, and reviewing quizzes.</li>
   <li> New "improved security" mode shows quiz in a separate full-screen window, with many browser features disabled</li>
 
   <li> Quizzes can be presented to students in several pages. The number of questions per page is selectable by the teacher.</li>
-  <li> Blocks</a> can now be added to quiz pages (to show results table, or additional information etc)</li>
-  <li> Better and cleaner interface</a> for question selection and management in the database</a>. Selected questions can be added to quiz, moved to other categories or deleted en mass.</li>
+  <li> Blocks can now be added to quiz pages (to show results table, or additional information etc)</li>
+  <li> Better and cleaner interface for question selection and management in the database. Selected questions can be added to quiz, moved to other categories or deleted en mass.</li>
 
   <li> When a question is edited that is already in use the teacher can choose in which quizzes to replace the exising version with the new one.</li>
   <li> If a question is edited that already has student responses, these responses and a copy of the original version of the question are kept for auditing purposes.</li>
   <li> When a teacher makes changes to a quiz that already has student attempts these attempts are automatically remarked.</li>
-  <li> Random questions are now added to the quiz question list with a dedicated button, leaving a cleaner interface</a> at questions database</a> without phantom placeholders</li>
+  <li> Random questions are now added to the quiz question list with a dedicated button, leaving a cleaner interface at questions database without phantom placeholders</li>
 
   <li> Final grade can be a fractional number, with teacher-defined decimal figures </li>
   <li> Improved results page with user-selectable display of columns, cleaner sorting and new mark display options </li>
   <li> Questions can be edited with one click from the improved quiz preview and question preview screens.</li>
   <li> Questions can be copied with one click, to allow question variations to be created with ease.</li>
-  <li> Revamped question categories structures and editing interface</a>. </li>
+  <li> Revamped question categories structures and editing interface. </li>
 
   <li> Categories now can contain nested subcategories and can be re-ordered. </li>
   <li> It is possible to select whether questions from categories, and or their subcategories are displayed on the question edit page. </li>
@@ -246,14 +246,14 @@
   <li> Recognition, and rejection, of overlapping/redundant questions has been improved. </li>
 
   <li> The display of questions in longer quiz categories on the quiz editing page is now paginated. </li>
-  <li> New export types - IMS QTI (2.0) and xhtml</a>. Improvements &amp; fixes to others.</li>
+  <li> New export types - IMS QTI (2.0) and xhtml. Improvements &amp; fixes to others.</li>
   <li> New import type - Hot Potato. Improvements &amp; fixes to others.  </li>
 
   </ul>
 
 <h4>Scorm </h4>
   <ul type="circle">
-  <li> Improvements to user result data storage and reporting. Now Moodle SCORM module</a> supports AICC standard  </li>
+  <li> Improvements to user result data storage and reporting. Now Moodle SCORM module supports AICC standard  </li>
   </ul>
 
 <h4>Survey</h4>
