@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // editor.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032300)
+      // editor.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['about'] = 'Info';
@@ -29,6 +29,7 @@ $string['createanchor'] = 'Maak een anker';
 $string['createfolder'] = 'Maak een map';
 $string['createlink'] = 'Weblink invoegen';
 $string['cut'] = 'Knippen';
+$string['cutpastemozilla'] = 'Jammer genoeg kun je de normale toetsenbordcombinatie (of zelfs de knop \"plakken\") niet gebruiken om tekst te plakken in deze editor. Dit is het gevolg van een beveiligingsfunctie die ingebouwd is in sommige versies van Mozilla en Firefoxbrowsers.<br /><br />Er zijn drie bekende manieren om dit te omzeilen:<br />(1) Gebruik SHIFT-Insert in de plaats van CTRL-v <br />(2)Gebruik het Bewerken -> Plakken menu in je browser<br />(3) Wijzig de voorkeursinstellingen van je browser door het bestand user.js te wijzigen.<br /><br />Klik op de OK-knop voor meer hulp of op Negeren om naar de editor terug te keren.';
 $string['delete'] = 'Verwijder';
 $string['filebrowser'] = 'Bladeren in bestanden';
 $string['findwhat'] = 'Zoek';
