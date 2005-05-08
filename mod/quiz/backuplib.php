@@ -13,47 +13,50 @@
     //           |                        |                    |                   |             |.......................................
     //           |                        |                    |                   |             |                                      .
     //           |                        |                    |                   |             |                                      .
-    //      quiz_attempts        quiz_grades       quiz_question_grades   quiz_question_versions  |    ----quiz_question_datasets----    .
+    //      quiz_attempts        quiz_grades    quiz_question_instances  quiz_question_versions  |    ----quiz_question_datasets----    .
     // (UL,pk->id, fk->quiz) (UL,pk->id,fk->quiz)  (CL,pk->id,fk->quiz)    (CL,pk->id,fk->quiz)  |    |  (CL,pk->id,fk->question,  |    .
-    //             |                                              |                      .       |    |   fk->dataset_definition)  |    .             
+    //             |                                              |                      .       |    |   fk->dataset_definition)  |    .
     //             |                                              |                      .       |    |                            |    .
-    //             |                                              |                      .       |    |                            |    .
-    //             |                                              |                      .       |    |                            |    .
-    //       quiz_responses                                       |                      quiz_questions                       quiz_dataset_definitions 
-    //  (UL,pk->id, fk->attempt)----------------------------------------------------(CL,pk->id,fk->category,files)            (CL,pk->id,fk->category)   
-    //                                                                                           |                                      |
-    //                                                                                           |                                      |
-    //                                                                                           |                                      |
-    //                                                                                           |                               quiz_dataset_items
-    //                                                                                           |                            (CL,pk->id,fk->definition) 
-    //                                                                                           |                    
-    //                                                                                           |                    
-    //                                                                                           |                    
-    //             --------------------------------------------------------------------------------------------------------------
-    //             |             |              |              |                       |                  |                     |    
-    //             |             |              |              |                       |                  |                     |
-    //             |             |              |              |                 quiz_calculated          |                     |    quiz_randomsamatch
-    //      quiz_truefalse       |       quiz_multichoice      |             (CL,pl->id,fk->question)     |                     |--(CL,pl->id,fk->question)
-    // (CL,pl->id,fk->question)  |   (CL,pl->id,fk->question)  |                       .                  |                     |
-    //             .             |              .              |                       .                  |                     |
+    //             |                   quiz_newest_states         |                      .       |    |                            |    .
+    //             |----------------(UL,pk->id,fk->attempt)------ |                      .       |    |                            |    .
+    //             |                        .                     |                      .       |    |                       quiz_dataset_definitions 
+    //             |                        .                     |                      .       |    |                      (CL,pk->id,fk->category)  
+    //             |                    quiz_states               |                      quiz_questions                                 |              
+    //             -------------- (UL,pk->id,fk->attempt)--------------------------(CL,pk->id,fk->category,files)                       |              
+    //                                      |                                                    |                             quiz_dataset_items      
+    //                                      |                                                    |                          (CL,pk->id,fk->definition) 
+    //                              ---------                                                    |
+    //                              |                                                            |
+    //                        quiz_rqp_states                                                    |
+    //                    (UL,pk->id,fk->stateid)                                                |                                   quiz_rqp_type 
+    //                                                                                           |                                    (SL,pk->id)  
+    //                                                                                           |                                         |       
+    //             --------------------------------------------------------------------------------------------------------------          |
+    //             |             |              |              |                       |                  |                     |        quiz_rqp           
+    //             |             |              |              |                       |                  |                     |--(CL,pk->id,fk->question) 
+    //             |             |              |              |                 quiz_calculated          |                     |                           
+    //      quiz_truefalse       |       quiz_multichoice      |             (CL,pl->id,fk->question)     |                     |                           
+    // (CL,pl->id,fk->question)  |   (CL,pl->id,fk->question)  |                       .                  |                     |    quiz_randomsamatch     
+    //             .             |              .              |                       .                  |                     |--(CL,pl->id,fk->question) 
     //             .      quiz_shortanswer      .       quiz_numerical                 .            quiz_multianswer.           |
-    //             .  (CL,pl->id,fk->question)  .  (CL,pl->id,fk->question)            .        (CL,pl->id,fk->question)        |         quiz_match 
-    //             .             .              .              .                       .                  .                     |--(CL,pl->id,fk->question)
-    //             .             .              .              .                       .                  .                     |             .
-    //             .             .              .              .                       .                  .                     |             .
-    //             .             .              .              .                       .                  .                     |             .
-    //             .             .              .              .                       .                  .                     |       quiz_match_sub
-    //             .             .              .              .                       .                  .                     |--(CL,pl->id,fk->question)
-    //             ........................................................................................                     |
+    //             .  (CL,pl->id,fk->question)  .  (CL,pl->id,fk->question)            .        (CL,pl->id,fk->question)        |
+    //             .             .              .              .                       .                  .                     |         quiz_match        
+    //             .             .              .              .                       .                  .                     |--(CL,pl->id,fk->question) 
+    //             .             .              .              .                       .                  .                     |             .             
+    //             .             .              .              .                       .                  .                     |             .             
+    //             .             .              .              .                       .                  .                     |             .             
+    //             .             .              .              .                       .                  .                     |       quiz_match_sub      
+    //             ........................................................................................                     |--(CL,pl->id,fk->question) 
     //                                                   .                                                                      |
     //                                                   .                                                                      |
     //                                                   .                                                                      |    quiz_numerical_units
     //                                                quiz_answers                                                              |--(CL,pl->id,fk->question)
     //                                         (CL,pk->id,fk->question)----------------------------------------------------------
-    // 
+    //
     // Meaning: pk->primary key field of the table
     //          fk->foreign key to link with parent
     //          nt->nested field (recursive data)
+    //          SL->site level info
     //          CL->course level info
     //          UL->user level info
     //          files->table may have files
@@ -66,6 +69,7 @@
     // 1.-We backup every category and their questions (complete structure). It includes this tables:
     //     - quiz_categories
     //     - quiz_questions
+    //     - quiz_rqp
     //     - quiz_truefalse
     //     - quiz_shortanswer
     //     - quiz_multianswer
@@ -87,10 +91,11 @@
     // 2.-Standard module backup (Invoked via quiz_backup_mods). It includes this tables:
     //     - quiz
     //     - quiz_question_versions
-    //     - quiz_question_grades
+    //     - quiz_question_instances
     //     - quiz_attempts
     //     - quiz_grades
     //     - quiz_states
+    //     - quiz_newest_states
     //    This step is the standard mod backup. (course dependent).
 
     //STEP 1. Backup categories/questions and associated structures
@@ -103,7 +108,7 @@
 
         //First, we get the used categories from backup_ids
         $categories = quiz_category_ids_by_backup ($preferences->backup_unique_code);
-      
+
         //If we've categories
         if ($categories) {
              //Write start tag
@@ -127,15 +132,15 @@
                 //End category
                 $status =fwrite ($bf,end_tag("QUESTION_CATEGORY",3,true));
             }
-            //Write end tag    
+            //Write end tag
             $status =fwrite ($bf,end_tag("QUESTION_CATEGORIES",2,true));
         }
 
         return $status;
     }
-    
+
     //This function backups all the questions in selected category and their
-    //asociated data 
+    //asociated data
     function quiz_backup_question($bf,$preferences,$category) {
 
         global $CFG;
@@ -154,12 +159,15 @@
                 $status =fwrite ($bf,start_tag("QUESTION",5,true));
                 //Print question contents
                 fwrite ($bf,full_tag("ID",6,false,$question->id));
+                fwrite ($bf,full_tag("PARENT",6,false,$question->parent));
                 fwrite ($bf,full_tag("NAME",6,false,$question->name));
                 fwrite ($bf,full_tag("QUESTIONTEXT",6,false,$question->questiontext));
                 fwrite ($bf,full_tag("QUESTIONTEXTFORMAT",6,false,$question->questiontextformat));
                 fwrite ($bf,full_tag("IMAGE",6,false,$question->image));
                 fwrite ($bf,full_tag("DEFAULTGRADE",6,false,$question->defaultgrade));
+                fwrite ($bf,full_tag("PENALTY",6,false,$question->penalty));
                 fwrite ($bf,full_tag("QTYPE",6,false,$question->qtype));
+                fwrite ($bf,full_tag("LENGTH",6,false,$question->length));
                 fwrite ($bf,full_tag("STAMP",6,false,$question->stamp));
                 fwrite ($bf,full_tag("VERSION",6,false,$question->version));
                 fwrite ($bf,full_tag("HIDDEN",6,false,$question->hidden));
@@ -184,13 +192,15 @@
                     $status = quiz_backup_multianswer($bf,$preferences,$question->id);
                 } else if ($question->qtype == "10") {
                     $status = quiz_backup_calculated($bf,$preferences,$question->id);
+                } else if ($question->qtype == "11") {
+                    $status = quiz_backup_rqp($bf,$preferences,$question->id);
                 }
                 //End question
                 $status =fwrite ($bf,end_tag("QUESTION",5,true));
                 //Do some output
                 $counter++;
                 if ($counter % 10 == 0) {
-                    echo ".";            
+                    echo ".";
                     if ($counter % 200 == 0) {
                         echo "<br />";
                     }
@@ -253,7 +263,7 @@
             }
         }
         return $status;
-    } 
+    }
 
     //This function backups the data in a multichoice question (qtype=3) and its
     //asociated data
@@ -361,7 +371,7 @@
         return $status;
     }
 
-    //This function backups the data in a multianswer question (qtype=9) and its      
+    //This function backups the data in a multianswer question (qtype=9) and its
     //asociated data
     function quiz_backup_multianswer($bf,$preferences,$question) {
 
@@ -434,6 +444,32 @@
             //Now print quiz_answers
             if ($include_answers) {
                 $status = quiz_backup_answers($bf,$preferences,$question);
+            }
+        }
+        return $status;
+    }
+
+    //This function backups the data in an rqp question (qtype=11) and its
+    //asociated data
+    function quiz_backup_rqp($bf,$preferences,$question) {
+
+        global $CFG;
+
+        $status = true;
+
+        $rqp = get_records("quiz_rqp","question",$question,"id");
+        //If there are rqps
+        if ($rqps) {
+            //Iterate over each rqp
+            foreach ($rqps as $rqp) {
+                $status =fwrite ($bf,start_tag("RQP",6,true));
+                //Print rqp contents
+                fwrite ($bf,full_tag("TYPE",7,false,$rqp->type));
+                fwrite ($bf,full_tag("SOURCE",7,false,$rqp->source));
+                fwrite ($bf,full_tag("FORMAT",7,false,$rqp->format));
+                fwrite ($bf,full_tag("FLAGS",7,false,$rqp->flags));
+                fwrite ($bf,full_tag("MAXSCORE",7,false,$rqp->maxscore));
+                $status =fwrite ($bf,end_tag("RQP",6,true));
             }
         }
         return $status;
@@ -579,10 +615,10 @@
                 fwrite ($bf,full_tag("INTRO",4,false,$quiz->intro));
                 fwrite ($bf,full_tag("TIMEOPEN",4,false,$quiz->timeopen));
                 fwrite ($bf,full_tag("TIMECLOSE",4,false,$quiz->timeclose));
+                fwrite ($bf,full_tag("OPTIONFLAGS",4,false,$quiz->optionflags));
+                fwrite ($bf,full_tag("PENALTYSCHEME",4,false,$quiz->penaltyscheme));
                 fwrite ($bf,full_tag("ATTEMPTS_NUMBER",4,false,$quiz->attempts));
                 fwrite ($bf,full_tag("ATTEMPTONLAST",4,false,$quiz->attemptonlast));
-                fwrite ($bf,full_tag("FEEDBACK",4,false,$quiz->feedback));
-                fwrite ($bf,full_tag("CORRECTANSWERS",4,false,$quiz->correctanswers));
                 fwrite ($bf,full_tag("GRADEMETHOD",4,false,$quiz->grademethod));
                 fwrite ($bf,full_tag("DECIMALPOINTS",4,false,$quiz->decimalpoints));
                 fwrite ($bf,full_tag("REVIEW",4,false,$quiz->review));
@@ -598,8 +634,8 @@
                 fwrite ($bf,full_tag("PASSWORD",4,false,$quiz->password));
                 fwrite ($bf,full_tag("SUBNET",4,false,$quiz->subnet));
                 fwrite ($bf,full_tag("POPUP",4,false,$quiz->popup));
-                //Now we print to xml question_grades (Course Level)
-                $status = backup_quiz_question_grades($bf,$preferences,$quiz->id);
+                //Now we print to xml question_instances (Course Level)
+                $status = backup_quiz_question_instances($bf,$preferences,$quiz->id);
                 //Now we print to xml question_versions (Course Level)
                 $status = backup_quiz_question_versions($bf,$preferences,$quiz->id);
                 //if we've selected to backup users info, then execute:
@@ -678,36 +714,6 @@
         return $status;
     }
 
-    //Backup quiz_question_versions contents (executed from quiz_backup_mods)
-    function backup_quiz_question_versions ($bf,$preferences,$quiz) {
-
-        global $CFG;
-
-        $status = true;
-
-        $quiz_question_versions = get_records("quiz_question_versions","quiz",$quiz,"id");
-        //If there are question_versions
-        if ($quiz_question_versions) {
-            //Write start tag
-            $status =fwrite ($bf,start_tag("QUESTION_VERSIONS",4,true));
-            //Iterate over each question_version
-            foreach ($quiz_question_versions as $que_ver) {
-                //Start question version
-                $status =fwrite ($bf,start_tag("QUESTION_VERSION",5,true));
-                //Print question_version contents
-                fwrite ($bf,full_tag("ID",6,false,$que_ver->id));
-                fwrite ($bf,full_tag("OLDQUESTION",6,false,$que_ver->oldquestion));
-                fwrite ($bf,full_tag("NEWQUESTION",6,false,$que_ver->newquestion));
-                fwrite ($bf,full_tag("USERID",6,false,$que_ver->userid));
-                fwrite ($bf,full_tag("TIMESTAMP",6,false,$que_ver->timestamp));
-                //End question version
-                $status =fwrite ($bf,end_tag("QUESTION_VERSION",5,true));
-            }
-            //Write end tag
-            $status =fwrite ($bf,end_tag("QUESTION_VERSIONS",4,true));
-        }
-        return $status;
-    }
 
     //Backup quiz_grades contents (executed from quiz_backup_mods)
     function backup_quiz_grades ($bf,$preferences,$quiz) {
@@ -763,6 +769,8 @@
                 fwrite ($bf,full_tag("TIMESTART",6,false,$attempt->timestart));
                 fwrite ($bf,full_tag("TIMEFINISH",6,false,$attempt->timefinish));
                 fwrite ($bf,full_tag("TIMEMODIFIED",6,false,$attempt->timemodified));
+                fwrite ($bf,full_tag("LAYOUT",6,false,$attempt->layout));
+                fwrite ($bf,full_tag("PREVIEW",6,false,$attempt->preview));
                 //Now write to xml the states (in this attempt)
                 $status = backup_quiz_states ($bf,$preferences,$attempt->id);
                 //End attempt
@@ -785,28 +793,76 @@
         //If there are states
         if ($quiz_states) {
             //Write start tag
-            $status =fwrite ($bf,start_tag("RESPONSES",6,true));
-            //Iterate over each response
-            foreach ($quiz_responses as $response) {
-                //Start response
-                $status =fwrite ($bf,start_tag("RESPONSE",7,true));
-                //Print response contents
-                fwrite ($bf,full_tag("ID",8,false,$response->id));
-                fwrite ($bf,full_tag("QUESTION",8,false,$response->question));
-                fwrite ($bf,full_tag("ORIGINALQUESTION",8,false,$response->originalquestion));
-                fwrite ($bf,full_tag("ANSWER",8,false,$response->answer));
-                fwrite ($bf,full_tag("GRADE",8,false,$response->grade));
-                //End response
-                $status =fwrite ($bf,end_tag("RESPONSE",7,true));
+            $status =fwrite ($bf,start_tag("STATES",6,true));
+            //Iterate over each state
+            foreach ($quiz_states as $state) {
+                //Start state
+                $status =fwrite ($bf,start_tag("STATE",7,true));
+                //Print state contents
+                fwrite ($bf,full_tag("ID",8,false,$state->id));
+                fwrite ($bf,full_tag("QUESTION",8,false,$state->question));
+                fwrite ($bf,full_tag("ORIGINALQUESTION",8,false,$state->originalquestion));
+                fwrite ($bf,full_tag("SEQNUMBER",8,false,$state->seq_number));
+                fwrite ($bf,full_tag("ANSWER",8,false,$state->answer));
+                fwrite ($bf,full_tag("TIMESTAMP",8,false,$state->timestamp));
+                fwrite ($bf,full_tag("EVENT",8,false,$state->event));
+                fwrite ($bf,full_tag("GRADE",8,false,$state->grade));
+                fwrite ($bf,full_tag("RAWGRADE",8,false,$state->raw_grade));
+                fwrite ($bf,full_tag("PENALTY",8,false,$state->penalty));
+                // now back up question type specific state information
+                $status = backup_quiz_rqp_state ($bf,$preferences,$state->id);
+                //End state
+                $status =fwrite ($bf,end_tag("STATE",7,true));
             }
             //Write end tag
             $status =fwrite ($bf,end_tag("STATES",6,true));
+        }
+        $quiz_newest_states = get_records("quiz_newest_states","attempt",$attempt,"id");
+        //If there are newest_states
+        if ($quiz_newest_states) {
+            //Write start tag
+            $status =fwrite ($bf,start_tag("NEWEST_STATES",6,true));
+            //Iterate over each newest_state
+            foreach ($quiz_newest_states as $newest_state) {
+                //Start newest_state
+                $status =fwrite ($bf,start_tag("NEWEST_STATE",7,true));
+                //Print newest_state contents
+                fwrite ($bf,full_tag("ID",8,false,$newest_state->id));
+                fwrite ($bf,full_tag("QUESTIONID",8,false,$newest_state->questionid));
+                fwrite ($bf,full_tag("NEWEST",8,false,$newest_state->newest));
+                fwrite ($bf,full_tag("NEWESTGRADED",8,false,$newest_state->newestgraded));
+                fwrite ($bf,full_tag("SUMPENALTY",8,false,$newest_state->sumpenalty));
+                //End newest_state
+                $status =fwrite ($bf,end_tag("NEWEST_STATE",7,true));
+            }
+            //Write end tag
+            $status =fwrite ($bf,end_tag("NEWEST_STATES",6,true));
         }
         return $status;
     }
 
 
+    //Backup quiz_rqp_state contents (executed from backup_quiz_states)
+    function backup_quiz_rqp_state ($bf,$preferences,$state) {
 
+        global $CFG;
+
+        $status = true;
+
+        $rqp_state = get_record("quiz_rqp_states","stateid",$state,"id");
+        //If there is a state
+        if ($rqp_state) {
+            //Write start tag
+            $status =fwrite ($bf,start_tag("RQP_STATE",8,true));
+            //Print state contents
+            fwrite ($bf,full_tag("RESPONSES",9,false,$rqp_state->responses));
+            fwrite ($bf,full_tag("PERSISTENT_DATA",9,false,$rqp_state->persistent_data));
+            fwrite ($bf,full_tag("TEMPLATE_VARS",9,false,$rqp_state->template_vars));
+            //Write end tag
+            $status =fwrite ($bf,end_tag("RQP_STATE",8,true));
+        }
+        return $status;
+    }
 
 
 
@@ -840,9 +896,9 @@
 
         //Now, if requested, the user_data
         if ($user_data) {
-            //Grades 
-            $info[3][0] = get_string("grades"); 
-            if ($ids = quiz_grade_ids_by_course ($course)) { 
+            //Grades
+            $info[3][0] = get_string("grades");
+            if ($ids = quiz_grade_ids_by_course ($course)) {
                 $info[3][1] = count($ids);
             } else {
                 $info[3][1] = 0;
@@ -888,7 +944,7 @@
                                  FROM {$CFG->prefix}backup_ids a,
                                       {$CFG->prefix}quiz_questions q
                                  WHERE a.backup_code = '$backup_unique_code' AND
-                                       q.category = a.old_id AND 
+                                       q.category = a.old_id AND
                                        a.table_name = 'quiz_categories'");
     }
 
@@ -896,7 +952,7 @@
 
         global $CFG;
 
-        return get_records_sql ("SELECT g.id, g.quiz 
+        return get_records_sql ("SELECT g.id, g.quiz
                                  FROM {$CFG->prefix}quiz a,
                                       {$CFG->prefix}quiz_grades g
                                  WHERE a.course = '$course' and
