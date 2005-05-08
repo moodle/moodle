@@ -1882,12 +1882,8 @@ HTMLArea.prototype.execCommand = function(cmdID, UI, param) {
             }
         } catch (e) {
             if (HTMLArea.is_gecko) {
-                if (confirm("Unprivileged scripts cannot access Cut/Copy/Paste programatically " +
-                        "for security reasons.  Click OK to see a technical note at mozilla.org " +
-                        "which shows you how to allow a script to access the clipboard." +
-                        "\n\nFor more information HOW TO enable Cut/Copy/Paste see moodle -discussion: " +
-                        "\nhttp://moodle.org/mod/forum/discuss.php?d=5880"))
-                    window.open("http://mozilla.org/editor/midasdemo/securityprefs.html");
+                if (confirm("<?php echo str_replace('<br />', '\\n', get_string('cutpastemozilla','editor')) ?>"))
+                    window.open("http://moodle.org/mozillahelp");
             }
         }
         break;
