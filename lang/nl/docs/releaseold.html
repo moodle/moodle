@@ -2,12 +2,533 @@
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Moodle Docs: Old Release notes</title>
+<title>Moodle Docs: Oude Release notes</title>
 <link rel="stylesheet" href="docstyles.css" type="TEXT/CSS" />
+    
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    
+<style type="text/css">
+       dt {font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif; font-weight: bold;}
+       dd {margin-bottom:1em;}
+       dl {margin-left: 40px} 
+    </style>
 </head>
-<body bgcolor="#FFFFFF">
-<h1>Old Release notes</h1>
+<body>
+<h1>Oude Release notes</h1>
+
+
+<h3>Moodle 1.4.5 (7 mei 2005)</h3>
+
+<p>(Omdat deze release belangrijke beveiligingsproblemen oplost, raden we aan de vorige Moodle-versie zo snel mogelijk te upgraden.)</p>
+
+
+  <dl>
+    <dt>Enkele belangrijke beveiligingsproblemen opgelost</dt>
+    <dd>
+      <ul>
+        <li>Voorzorgsmaatregelen tegen aanvallen op beheersfuncties.</li>
+	<li>Les: Veiliger verbergen van lessen (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2733" target="_blank">#2733</a>)</li>  
+      </ul>
+    </dd>
+
+    <dt>Enkele nieuwigheden</dt>
+    <dd>
+      <ul>
+        <li>Flash Media Player:  Het afspelen kan nu beginnen voor het bestand volledig is gedownload.</li>   
+        <li>Toegevoegde en geüpdate ondersteuning voor Duits en Turks.</li>
+	<li>Release notes verwijzen nu naar de bijhorende fouten.</li>
+        <li>Voorlaad aanvragen van Google Web Accelerator, Mozilla enz worden verhinderd.</li>
+      </ul>
+    </dd>	
+   <dt>Performantieverbeteringen</dt>
+    <dd>
+      <ul>
+ 	<li>Optie toegevoegd om de taallijst te cachen. Dit bespaart ongeveer 10MB geheugen en 40 includes. Bekijk config-dist.php voor de details over hoe je dit moet inschakelen.</li>
+        <li>Belangrijke verbeteringen naar eficiëntie voor Postgres databases bij invoeren. Ook heel wat aanroepen naar insert_record() die het record id niet nodig hebben aangepast met het niet meer vragen naar het record id.</li>
+      </ul>
+    </dd>
+
+    <dt>Andere herstelde fouten</dt>
+    <dd>
+      <ul>
+	<li>HTML Editor: problemen met sommige karaktercoderingen opgelost.</li>
+	<li>Test: fouten opgelost aan  export/import menu (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2963" target="_blank">#2963</a>)</li> 
+	<li>Test: geef geen fatale fout bij een onbekend vraagtype, maar probeer verder te gaan.</li> 
+	<li>Vak Sociaal Forum: misleidende link naar lidmaatschap opzeggen verwijderd (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2945" target="_blank">#2945</a>).</li> 	
+	<li>Bijkomende / aangepaste vertalingen.</li> 
+	<li>Forums en Groepen: Laat leerlingen die niet in een groep zitten toe te posten in een forum dat niet in groepen verdeeld is, zelfs al is het vak zelf wel in groepen verdeeld.</li>
+	<li>HTML Editor instellingen voor de site: Hersteld <a href="http://moodle.org/mod/forum/discuss.php?d=21359" target="_blank">Kan de wijzigingen in de configuratie van de editor niet bewaren</a> formulierfout.</li>
+	<li>Cron: Enkele waarschuwingen verwijderd.</li> 
+	<li>Keuze: Keuze toont een fout aantal antwoorden (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2452" target="_blank">#2452</a>).</li> 
+	<li>Betere ondersteuning voor PHP5: Upload van bestanden gebruikt nu $_FILES, eerder dan de niet meer ondersteunde $HTTP_POST_FILES (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2828" target="_blank">#2828</a>)</li> 
+	<li>Backup/Restore: Manuele links van lessen naar bronnen worden nu overal behouden tussen een backup en een restore. (zie <a href="http://moodle.org/mod/forum/discuss.php?d=21044" target="_blank">deze discussie</a>)</li> 
+	<li>Naamgeving voor Postgres hersteld.</li> 
+	<li>I18N support: Codering tijdens login juist zetten (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2770" target="_blank">#2770</a>).</li> 
+	<li>I18N support: Sommige verknoeide karakters hersteld bij het gebruiken van utf-8 in HTML Editor (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2763" target="_blank">#2763</a>)</li> 
+	<li>Flash Media Player: Automatisch laden van geluidsbestanden uitschakelen.</li> 
+	<li>Flash Media Player: Betere afhandeling van bestandsnamen.</li> 
+	<li>Postgres: Sequences uit sequence hersteld(<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2742" target="_blank">#2742</a>).</li>   
+	<li>Backup: Memory limit overrun hersteld in de backup configuratiepagina.</li>  
+	<li>Forums: Foutwaarschuwingen hersteld wanneer een leraar in een forum post (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2723" target="_blank">#2723</a>).</li>  
+      </ul>
+    </dd>
+
+ 
+
+  </dl>
+
+
+<p>&nbsp;</p>
+
+<h3>Moodle 1.4.4 (7th Maart, 2005)</h3>
+
+  <dl>
+    <dt>Belangrijke herstellingen aan de beveiliging</dt>
+    <dd>
+      <ul>
+        <li>Sterke validatiefuncties voor URL's toegevoegd.</li>
+	<li>Voorzorgsmaatregels tegen tampering van instellingen.</li>
+	<li>Tighter input validation in Quiz, HTML editor and course edit.</li>
+	<li>Meer controle over de taalinstellingen van gebruikers.</li>
+	<li>Veiliger opkuisen van invoer met  HTML-opmaak.</li>
+      </ul>
+    </dd>
+
+    <dt>Enkele nieuwigheden</dt>
+    <dd>
+      <ul>
+        <li>NNieuwe MP3 filter met Flashgebaseerde mp3-speler.</li>
+	<li>Beter tonen van opties in de keuzemodule.</li>
+	<li>UI verbeteringen in de tabeleditor van de HTML-Editor.</li>
+	<li>$CFG instellingen in config.php gaan nu boven de databankinstellingen.</li>
+        <li>Garbage collection voor Debian-systemen ingeschakeld, met de optie om ze uit te schakelen. Dit lost sessieproblemen op.</li>
+      </ul>
+    </dd>
+	
+   <dt>Performantieverbeteringen</dt>
+    <dd>
+      <ul>
+        <li>Belangrijke performantieverbeteringen in de forumcode.</li>
+        <li>Verschillende verbeteringen door het verwijderen van onnodige vragen en sorteringen in de databank.</li>
+	<li>Belangrijke verbeteringen in het behandelen van sessies. Het downloaden van grote bestanden of het bekijken van de live logs zal niet langer het navigeren door andere vensters vertragen.</li>
+      </ul>
+    </dd>
+
+    <dt>Andere herstelde fouten</dt>
+    <dd>
+      <ul>
+	<li>Installer: Vele verbeteringen uit HEAD (inbegrepen <a href="http://moodle.org/bugs/bug.php?op=show&bugid=2625" target="_blank">#2625</a>) .</li>
+	<li>Installer: We controleren nu alow_url_fopen() voor we proberen onze eigen URL te valideren.</li>
+        <li>Enkele zoekproblemen in forums hersteld.</li>
+	<li>Sorteren van fouten in forums hersteld(<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2613" target="_blank">#2613</a>).</li>
+
+        <li>Problemen met het zoeken naar gebruikers met spaties achteraan opgelost.</li>
+        <li>Enkele problemen met hardgecodeerd /admin pad hersteld.</li>
+	<li>Enkele groepgerelateerde fouten hersteld(<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2133" target="_blank">#2133</a>, <a href="http://moodle.org/bugs/bug.php?op=show&bugid=2550" target="_blank">#2550</a>, <a href="http://moodle.org/bugs/bug.php?op=show&bugid=2363" target="_blank">#2363</a>)</li>
+	<li>Geen HTML digests sturen naar mensen die platte tekst mail willen.</li>
+
+	<li>SCORM module &mdash; fout in navigatiebalk hersteld.</li>
+
+        <li>Chat: Maximum socket read size verhoogd om lege pagina's en herhaalde boodschappen te voorkomen.</li>
+	<li>Bestanden:  &quot;Parent Folder&quot; icoon toegevoegd, (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2491" target="_blank">#2491</a>).</li>
+
+	<li>Postgres ondersteuning: consistentie hersteld in mdl_log table.</li>
+
+	<li>Authenticatie plugins: Beter opkuisen en inkorten van gegevens.</li>
+	<li>Authenticatie plugins: Extern authenticatie probleem opgelost &mdash; wanneer aangemeld als gast, inloggenals een extern geauthenticeerde gebruiker faalt als het de eerste keer is dat die account aanmeld. </li>
+	<li>Authenticatie LDAP: Een teruggekeerde fout uit 1.4.2 hersteld waarbij een puntkomma op het einde van sommige velden de authenticatie verhinderd.</li>
+        <li>Authenticatie DB: Databank Authenticatie haalt de gebruikersgegevens niet correct op (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2319" target="_blank">#2319</a>).</li>
+
+        <li>Paypal aanmeldingsplugin: Nu kan tekst die naar PayPal gestuurd wordt, opgekuist worden om sommige diacritische tekens te vermijden (tot nu voor Spaans) die het aanmeldingsproces kunnen doen mislopen. Enkel Duitse en Franse diacritische tekens worden nu door Paypal ondersteund. Deze functie kan gemakkelijk uitgebreid worden naar andere tekens. </li>
+
+	<li>Backup/restore: Als de gebruiker geen beheerder is en het teruggezette vak bevat geen leraren, voeg dan een leraar toe (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2381" target="_blank">#2381</a>)</li>
+	<li>Backup/restore: Fouten hersteld in vakken met apostrophes in de volledig naam.</li>
+	<li>Backup/restore: Nu worden groepleden enkel toegevoegd als we gekozen hebben om gebruikers mee in te voegen (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2486" target="_blank">#2486</a>).</li>
+	<li>Backup/Restore: Algemene opkuis.</li>
+
+	<li>Glossary: Nu worden 0 waarderingen ondersteund in de woordenlijst (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2582" target="_blank">#2582</a>) en beter PHP5 ondersteuning (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2581" target="_blank">#2581</a>).</li>
+	<li>Woordenlijst & Blackboard: herstellingen aan import (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2310" target="_blank">#2310</a>).</li>
+
+	<li>Kalender: robuuster afhandeling van foute gegevens.</li>
+	<li>Kalender: HTML hersteld (<a href="http://moodle.org/bugs/bug.php?op=show&bugid=2350" target="_blank">#2350</a>).</li>
+
+	<li>Sorteren en volgorde van vakken was stuk in 1.4.3 en kon soms verhinderen dat vakken aangemaakt werden &mdash; alle bekende problemen met sorteren zijn nu hersteld, inclusief sommige  get_categories() calls die soms verschijnen in  &quot;Mijn vakken&quot; lijst.</li>
+
+	<li>Wiki: Verschillende herstelde fouten.</li>
+	<li>Loglive heeft nu een geschikte voettekst.</li>
+
+	<li>Algemene opkuis van de code.</li>
+      </ul>
+    </dd>
+
+ 
+
+  </dl>
+
+
+<h3>Moodle 1.4.3 (21 December, 2004)</h3>
+
+<p>(Omdat in deze release heel wat belangrijke beveiligingsproblemen zijn opgelost, is het ten sterkste aangeraden je oudere Moodleversie zo vlug mogelijk te upgraden tot deze versie.)</p>
+  <dl>
+    <dt>Enkele belangrijke herstellingen aan de beveiliging</dt>
+    <dd>
+      <ul>
+        <li>Betere controle/opkuis van de cookiegegevens</li>
+	<li>Preventieve maatregelen voor problemen met sessies</li>
+        <li>Betere controle/opkuis van de parameters voor RSS, IP-atlas, woordenlijkst, forum, themakeuze, SCORM-module, documentenviewer</li>
+        <li>Beveiliging geïntroduceerd voor het bekijken van geüploade bestanden</li>
+        <li>Bescherming tegen directory traversal toegevoegd</li>
+        <li>Herstelling aan de $FULLME-variable die nodig is voor cron</li>
+        <li>Bescherming tegen het rechtstreeks aanroepen van interne bibliotheken.</li>
+        <li>Bescherming tegen het bekijken van een woordenlijst die verborgen is gezet.</li>
+        <li>Verborgen secties ook verborgen in recente activiteiten voor leerlingen</li>
+        <li>Probleem opgelost van de gastgebruiker die de calender kan zien</li>
+        <li>Het encoderen van TEX-uitdrukkingen hersteld</li>
+      </ul>
+    </dd>
+
+    <dt>Enkele nieuwigheden</dt>
+    <dd>
+      <ul>
+        <li>Gedwongen uniciteit van de aanmelding, dit verbetert ook de performantie</li>
+        <li>Transactieondersteuning voor PostgreSQL toegevoegd</li>
+        <li>Aanmelden en afmelden worden nu ook gelogd</li>
+        <li>Wiki en SCORM gebruiken nu een nieuwe zip-code - Dit herstelt ook een aantal SCORM-problemen</li>
+        <li>Nieuw paginasysteem voor woordenlijst</li>
+        <li>De gebruikersinformatie van LDAP wordt verpakt voor invoer in Moodle om gegevensverlies te voorkomen</li>
+        <li>Pclzip geüpdatet naar een nieuwere versie</li>
+        <li>Geheugenlimiet kan nu overschreven worden door hogere waarden dan in de configuratie van php.ini, commandline,  httpd.conf, .htaccess</li>
+        <li>Nieuwe vertalingen: Maori, Albanees, Vietnamees, Kannada</li>
+        <li>Veel toegevoegd aan andere taalpakketten</li>
+        <li>Leraren kunnen nu testen altijd proberen, zelfs als ze nog niet open zijn</li>
+        <li>Het afdrukscherm van de woordenlijst is nu verschillend voor elke opmaak.</li>
+        <li>Zoeken in de woordenlijsten zoekt nu ook in aliassen</li>
+        <li>Sterk verbeterde multilang filter, wat toleranter voor de syntax </li>
+      </ul>
+    </dd>
+	
+   <dt>Verbeteringen aan de performantie</dt>
+    <dd>
+      <ul>
+        <li>Betere caching van de headers geeft een belangrijke performantiewinst op alle pagina's wanneer je de terug-toets van je browser gebruikt</li>
+        <li>Database indexen op vele plaatsen toegevoegd, waardoor je grotere performantie krijgt bij grote installaties</li>
+        <li>Overal in Moodle performantieverbeteringen wanneer lijsten van vakken getoond worden</li>
+        <li>Verschillende verbeteringen door het verwijderen van onnodig ondervragen van de databank en onnodig sorteren</li>
+      </ul>
+    </dd>
+
+    <dt>Andere herstellingen</dt>
+    <dd>
+      <ul>
+        <li>Het genereren van dubbele course ID-nummers door het terugzetten van een backup hersteld</li>
+        <li>Veel kleine Postgres-problemen opgelost</li>
+        <li>Onnodige meldingen in debugmode hersteld</li>
+        <li>Meer PHP5 problemen opgelost</li>
+        <li>Ondersteuning voor apostrophes, aanhalingstekens en backslashes in LDAP-gebruikersgegevens</li>
+        <li>Paginering van zoeken door vakken hersteld voor Postgres </li>
+        <li>Probleem met witte ruimte bij het zoeken in gebruikers hersteld</li>
+        <li>Probleem waarbij chatgebruikers in meerdere chatrooms verschenen opgelost</li>
+        <li>Fout in installatiescript hersteld</li>
+        <li>Hoofdlettergevoelige  gebruikersnamen in bulk gebruikersimport hersteld</li>
+        <li>Een fout hersteld in de redirectie na het beoordelen van een forumbericht</li>
+        <li>Een fout hersteld in testen met koppelvragen</li>
+        <li>Een fout hersteld in de preview van testen</li>
+        <li>Een fout hersteld bij het bewerken van talen</li>
+        <li>Vele kleine herstellingen aan de SCORM-module</li>
+        <li>SCORM-module toont nu de foto van de gebruiker zoals het hoort</li>
+        <li>Namen van activiteiten nu alfabetisch gerangschikt in de activiteitenfilter</li>
+        <li>Zoeken in de woordenlijst zoekt nu ook in aliassen</li>
+        <li>RSS-fouten resulteren nu in een geldige RSS-foutmelding, eerder dan in foute RSS</li>
+        <li>Probleem met validatie van SCORM-pakketten en PHP5 hersteld</li>
+        <li>Probleem met backup/restore en lege categorieën hersteld</li>
+        <li>Betere XHTML in wiki</li>
+        <li>Herstelde fout in chatrapporten voor de eerste chatsessie</li>
+        <li>Een probleem met SCORM hersteld bij het verwijderen van veel of grote bestanden</li>
+        <li>Enkele problemen met de encyclopedieopmaak in de woordenlijst hersteld</li>
+        <li>Een probleem hersteld bij SCORM-integratie met gezipte code</li>
+        <li>Fout hersteld bij e-mailnotificaties in platte tekst door de dialoogmodule</li>
+        <li>Ontbrekende sesskey-variable hersteld in het sociale activiteitenblok</li>
+        <li>Overbodige secties van een vak worden nu verborgen in het navigatiemenu</li>
+        <li>Oplossing voor zomertijd aan kalender toegevoegd</li>
+        <li>De eerste test in een nieuw vak krijgt een standaard.categorie toegewezen</li>
+        <li>Een fout in de paypal=module bij het aanvaarden van de betaling hersteld</li>
+        <li>Een fout hersteld in de bestanden van de vakken bug</li>
+      </ul>
+    </dd>
+
+ 
+
+  </dl>
+<br />
+
+
+<h3> Moodle 1.4.2   (5 November 2004)</h3>
+<p>(Omdat deze release enkele belangrijke beveiligingslekken dicht, is het belangrijk dat sites met oudere Moodleversies zo vlug mogelijk geüpdatet worden.)
+
+ <dl>
+    <dt>Enkele belangrijke herstellingen aan de beveiliging</dt>
+    <dd> 
+      <ul>
+        <li>Betere controle/filtering van scriptparameteres die op heel wat plaatsen gebruikt worden. binnen Moodle (Dank aan Petr Skoda voor zijn beveiligingsaudit!)</li>
+        <li>Verbeteringen aan een aantal SQL parameters in de woordenlijstmodule</li>
+      </ul>
+    </dd>
+    <dt>Enkele kleine nieuwigheden</dt>
+    <dd> 
+      <ul>
+        <li>Nieuwe PAM authenticatiemodule voor rechtstreekse authenticatie op Unix/Linux</li>
+        <li>Vakaanmakers kunnen nu een backup terugplaaten naar zowel bestaande als nieuwe vakken</li>
+        <li>Forumberichten hebben nu gedetailleerde berichtkoppen zodat ze in draden kunnen gezet wordend door e-mailprogramma's</li>
+      </ul>
+    </dd>
+
+
+    <dt>En een hele reeks kleine herstellingen</dt>
+    <dd> 
+      <ul>
+        <li>Backup is nu wat meer bestand tegen fouten (bv als de backup onderbroken wordt) 
+            en kan nu foute bestanden opruimen</li>
+        <li>Herstellingen aan de databank voor authenticatie tegen een PostgreSQL databank</li>
+        <li>Herstellingen aan de installatie met gebruik van PostgreSQL</li>
+        <li>Onderwerplijnen van forumberichten worden nu alleen nog in het recente activiteitenvenster afgebroken</li>
+        <li>Vakaanmeldingen op basis van databanken werkt nu eindelijk  :-)</li>
+        <li>SQL-herstellingen voor het maken van RSS-feeds vanuit PostgreSQL</li>
+        <li>rtsp toegevoegd aand e lijst van toegelaten protocollen gekuiste HTML-tekst</li>
+        <li>Gebruikersprofiel en de pagina om het profiel te bewerken kunnen nu zonder parameters geopend worden</li>
+        <li>xmlize library geüpgradet tot de laatste versie</li>
+        <li>phpmailer library geüpgradet tot de laatste versie</li>
+        <li>Veel stukjes code gestructureerd</li>
+        <li>Beheermenu kan nu een backup en restore doen van de site startpagina</li>
+        <li>Een bug hersteld in het tonen van de index van de forums met PHP5</li>
+        <li>De highlight-functie  (bv na zoeken) verwijderde backslashes</li>
+        <li>Informatie van LDAP wordt nu vanuit utf8 gedecodeerd</li>
+        <li>Vaklijsten werken nu beter met erg lange vaklijsten</li>
+        <li>Twee SCORM-fouten hersteld (een typefout en een een probleem met onbeforeunload)</li>
+        <li>Wat opkuis bij het afdrukken van tekst, koppen en variablen in de lesmodule</li>
+        <li>De kalender werkt nu zoals verwacht, zelfs als je je aanmeldt als iemand anders</li>
+        <li>Nog enkele verkorte PHP tags weggewerkt</li>
+        <li>Betere willekeurigheid bij willekeurige vragen (herstelling van een fout die er bij 1.4 ingeslopen is)</li>
+        <li>Wanneer een leraar uit een vak verwijderd wordt, wordt die nu ook uit alle groepen in dat vak verwijderd.</li>
+        <li>De strip_pages bug is hersteld in Wiki</li>
+        <li>Fouten hersteld voor charset detectie in backups en multilang filter met PHP5</li>
+      </ul>
+    </dd>
+
+  </dl>
+<br />
+<h3> Moodle 1.4.1   (12 September 2004)</h3>
+
+<dl>
+    <dt>Enkele nieuwigheden</dt>
+    <dd> 
+      <ul>
+        <li>Nieuwe "Email Protection" filter die alle  e-mailaddressen in alle teksten verbergt (om het automatisch oogsten van adressen te verhinderen)</li>
+        <li>Toegelaten e-mailadressen kan nu beperkt worden (zie config-dist.php voor details)</li>
+        <li>Extra instructies voor vertalers in de vertalersinterface geplaatst</li>
+        <li>Nieuw helpbestand voor paden van mappen</li>
+      </ul>
+    </dd>
+    <dt>En sommige fouten hersteld</dt>
+    <dd> 
+      <ul>
+        <li>Verbeterde performantie bij het bekijken van logs</li>
+        <li>Verbeterde performantie in woordenlijsten</li>
+        <li>De items van woordenlijsten worden nu juist getoond als ze in meerdere categorieën staan</li>
+        <li>Auth_user_login wordt niet opnieuw gedeclareerd bij mislukte aanmelding</li>
+        <li>Twee ontbrekende icoontjes aangevuld in cordoroy blue</li>
+        <li>Ontbrekende "Nieuwe gebeurtenis"-knop geplaatst op de pagina met nieuwe gebeurtenissen</li>
+        <li>Voeg altijd schuine strepen toe bij chatboodschappen bij daemongebruikers voor ze in de db te zetten.</li>
+        <li>Problemen hersteld voor het afhandelen van vaste aanmeldingsperiodes wanneer dit ingesteld is voor een vak</li>
+        <li>Site vak ID (gedefinieerd als SITEID) moet niet meer altijd 1 zijn</li>
+        <li>Standaard geheugenbeperkingen zijn verhoogd boven 16M, pm Moodle te laten voortwerken, zelfs wanneer er onverwachte geheugenproblemen zijn.</li>
+        <li>Smileys worden nu als afbeeldingen verwerk in Markdownteksten</li>
+        <li>Workshops werken terug met recente activiteiten</li>
+        <li>file.php kan nu alleen maar data binnen vakken verwerken</li>
+        <li>Verbeterd gedrag van kalenderblokken op de vakpagina</li>
+        <li>Aanhalingstekenfout met PostgreSQL databank, veroorzaakt door de installer is hersteld</li>
+        <li>Het soms niet tonen van juiste antwoorden bij het nalezen van testen is hersteld</li>
+        <li>&lt;tt> and &lt;code> zijn nu toegelaten tags</li>
+        <li>Uit sectiesamenvattingen, vakbeschrijvingen en labels wordt terug geen javascript meer gefilterd</li>
+        <li>Een zeldzame LDAP fout hersteld die er voor zorgde dat nieuwe accounts niet konden gemaakt worden</li>
+      </ul>
+    </dd>
+  </dl>
+<br />
+<h3> Moodle 1.4   (31 Augustus 2004)</h3>
+
+<dl>
+    <dt>Hoofdpunten</dt>
+    <dd> 
+      <ul>
+        <li>Compatibiliteit met PHP 5</li>
+        <li>Nieuwe eenvoudige installatiewizard om het configuratiebestand aan te maken</li>
+        <li>Installatieproces kan gebeuren in een taal naar keuze</li>
+        <li>Compleet herwerkte bronmodule maakt het mogelijk om bronnen toe te voegen en er data naar te sturen.</li>
+        <li>Nieuwe aanmeldingsprocedure voor vakken met modules, zoals volledig geautomatiseerde Paypal betalingen, scannen van tekstbestand of controle via een externe databank.</li>
+        <li>Blokken werken nu ook op de startpagina, bovendien kun je nu ook een onderwerpsectie boven het middendeel plaatsen.</li>
+        <li>Bij de Chat zit nu een server-side daemon (in PHP) voor een schaalbare, instant chat</li>
+        <li>Nieuwe Wiki module!</li>
+        <li>Nieuwe ondersteuning voor het bewerken van tekst door gebruik te maken van het Markdown formaat</li>
+        <li>Herstelling van heel wat kleine fouten</li>
+      </ul>
+    </dd>
+
+    <dt>Onder de hoed</dt>
+    <dd> 
+      <ul>
+        <li>De bronmodule heeft nu zijn eigen menu om nieuwe bronnen toe te voegen en gebruikt class-gebaseerde submodules, waardoor het veel gemakkelijker zal zijn om nieuwe brontypes aan dit menu toe te voegen.</li>
+        <li>De testmodule is herbouwd tot class-gebaseerde plugins voor de verschillende vraagtypes.</li>
+        <li>Aanmeldingsproces is herbouwd tot class-gebaseerde aanmeldingsplugins.</li>
+        <li>De woordenlijst opmaakformaten zijn nu naamgebaseerd, zodat het eenvoudiger is om er nieuwe als plugin toe te voegen.</li>
+        <li>Een verbeterd gedrag voor veel modules wanneer die op de startpagina gebruikt worden.</li>
+        <li>Een verbeterde filterstructuur is sneller en nu compatibel met Turck MMcache.</li>
+        <li>Bij het toevoegen van activiteiten is het nu minder noodzakelijk om alle velden in te vullen.</li>
+        <li>We kunnen nu PostgreSQL kolommen wijzigen naar wens met table_column()</li>
+        <li>RSS genereren is veel sneller geworden met veel minder belastin op het cron proces</li>
+        <li>Sommige grote modules hebben lib.php opgesplitst naar locallib.php voor minder geheugengebruik.</li>
+      </ul>
+    </dd>
+
+    <dt>Talen en localisaties</dt>
+    <dd> 
+      <ul>
+        <li>Updates aan nagenoeg elk taalpakket</li>
+        <li>Moodle kan de standaard karakterset van Apache omzeilen, zodat de talen betrouwbaarder worden.</li>
+        <li>Multibyte talen worden nu beter verpakt</li>
+        <li>Beter afhandelen van localisaties en encodering op multitalensites (zoals moodle.org)</li>
+        <li>Nieuwe talen: Sloveens en Hebrews! </li>
+      </ul>
+    </dd>
+
+    <dt>Beveiligingsproblemen opgelost</dt>
+    <dd> 
+      <ul>
+        <li>Enkele mogelijke XSS ingangen en open paden hersteld</li>
+        <li>Attributen van HTML-tags worden nu nog betere doorlopen om schadelijke scripts uit te schakelen</li>
+        <li>Gebruikersprofielen zijn standaard niet meer toegankelijk voor gasten</li>
+        <li>Alle tekst wordt nu opgeschoond bij output (en niet alleen bij input)</li>
+        <li>E-mail addressen worden niet meer gebruikt voor vertrekkende mail als de gebruiker dat niet wil.</li>
+        <li>Nieuwe instelling <strong>loginhttps</strong> zal veilige https gebruiken voor de aanmelding en dan terug naar http omschakelen.</li>
+      </ul>
+    </dd>
+
+    <dt>Beheer</dt>
+    <dd> 
+      <ul>
+        <li>Verbeterde interfaces voor toevoegen/verwijderen van leerlingen, vakaanmakers en beheerders</li>
+        <li>Mislukte logins worden nu gelogd en kunnen aan gebruikers getoond worden bij aanmelden met succes</li>
+        <li>Logs ondersteunen nu tonen per groep en per fouten</li>
+        <li>Modules gedragen zich beter op de startpagina van de site.</li>
+        <li>Voorpagina&quot;leerlingen&quot; kunnen alle gebruikers van de site of alle gebruikers in minstens één vak op de site</li>
+        <li>E-mail sturen kan nu ingeschakeld/uitgeschakeld worden in het profiel van elke gebruiker</li>
+        <li>Bezoekers kunnen automatisch als gast aangemeld worden.</li>
+        <li>Ga naar menu toont nu altijd "Ga naar" om aan te geven waarvoor het dient.</li>
+        <li>Ga naar menu heeft nu een duidelijke manier om activiteiten in secties op te splitsen.</li>
+      </ul>
+    </dd>
+
+    <dt>Authenticatie</dt>
+    <dd> 
+      <ul>
+        <li>Alle authenticatiemethodes kunnen nu samenwerken met intern gecreeerde accounts</li>
+        <li>Nieuwe ondersteuning voor authenticatie tegen First Class servers</li>
+        <li>Herstelde fouten voor POP3 authenticatie</li>
+      </ul>
+    </dd>
+
+    <dt>Blokken</dt>
+    <dd> 
+      <ul>
+        <li>Bloksysteem kan nu omgaan met aangepaste vakindeling en wijzigingen in de opmaak.</li>
+        <li>Nieuw loginblok maakt login mogelijk van de voorpagina van de site.</li>
+        <li>Gebruikers online blok op de voorpagina toont alle gebruikers van de hele site</li>
+      </ul>
+    </dd>
+
+    <dt>Editor</dt>
+    <dd> 
+      <ul>
+        <li>Nieuw editorconfiguratiescherm voor de beheerder</li>
+        <li>Nieuwe ondersteuning voor ankers binnen de paginas.</li>
+        <li>Spell-checking is nu mogelijk in de editor, het gebruikt aspel op het server besturingssysteem</li>
+      </ul>
+    </dd>
+
+    <dt>Chat</dt>
+    <dd> 
+      <ul>
+        <li>Chat komt nu met een server-side daemon (in PHP) voor schaalbare instante chat</li>
+      </ul>
+    </dd>
+
+    <dt>Keuze</dt>
+    <dd> 
+      <ul>
+        <li>Nieuwe stijl, meer nut en met meer opties</li>
+      </ul>
+    </dd>
+
+    <dt>Forum</dt>
+    <dd> 
+      <ul>
+        <li>Verschillende herstelde fouten in groepen</li>
+        <li>Gebruikeres kunnen kiezen of ze forums dagelijks als digest krijgen van onderwerplijnen of hele berichten.</li>
+        <li>Discussielijsten zijn nu per pagina.</li>
+        <li>leraren hebben nu volledige controle over forum inschrijvingen en kunnen iedereen naar believen inschrijven.</li>
+        <li>"Laatste bericht" -datum is ingekort en gelinkt naar het laatste bericht.</li>
+        <li>Forums tonen nu RSS-feeds op de indexpagina</li>
+        <li>Betere look van HTML-mail door het volledige stylesheet te gebruiken</li>
+        <li>Forum mail ouder dan twee dagen wordt niet gemaild (om een ongewenste e-mailstroom te voorkomen)</li>
+        <li>Geblokkeerde mail wordt gelogd, zodat leraren dat kunnen zien</li>
+        <li>Discussietakken kunnen afgesplitst worden van de hoofddiscussies en in een nieuwe discussie gezet worden</li>
+      </ul>
+    </dd>
+
+    <dt>Woordenlijst</dt>
+    <dd> 
+      <ul>
+        <li>Woordenlijstingangen kunnen "altijd bewerkbaar" gezet worden</li>
+        <li>Woordenlijsten tonen nu RSS-feeds op de indexpagina.</li>
+        <li>Veel herstelde fouten.</li>
+      </ul>
+    </dd>
+
+    <dt>Test</dt>
+    <dd> 
+      <ul>
+        <li>Nieuwe timer voor getimede testen</li>
+        <li>Pogingen van testen kunnen nu beperkt worden tot bepaalde computers.</li>
+        <li>Testen kunnen nu van een wachtwoord voorzien worden.</li>
+        <li>Nieuw vraagtype voor berekende vragen.</li>
+        <li>Numerieke vragen ondersteunen nu eenheden</li>
+        <li>Vragen kunnen nu getest worden vanuit de bewerkingspagina's.</li>
+        <li>Vragen kunnen nu in verschillende formaten geëxporteerd worden.</li>
+        <li>Meer inteligentie bij het behandelen van categorielijsten tijdens het bewerken van vragen.</li>
+        <li>Nieuw (en nog onvolledig) XML exportformaat, zal ooit alle testmogelijkheden bevatten</li>
+        <li>Korte antwoorden kunnen nu alle soorten vreemde karakters bevatten.</li>
+      </ul>
+    </dd>
+
+    <dt>Bron</dt>
+    <dd> 
+      <ul>
+        <li>Toevoegen van bronnen is nu een ééntrapsproces met meer controle.</li>
+        <li>Webpagina, weblink geüploaded bestand en programmabron zijn in één type gecombineerd!</li>
+        <li>Programmabronnen zijn vervangen door parameters die het mogelijk maken om interessante interactie met externe bronnen te doen, zowel buiten als binnen Moodle. </li>
+        <li>Inklapbare formulieren met geheugen om formulieren minder groot voor beginnens te maken zonder de ervaren gebruikers te vertragen.</li>
+      </ul>
+    </dd>
+
+    <dt>SCORM</dt>
+    <dd> 
+      <ul>
+        <li>Veel herstelde fouten en verbeteringen - werkt nu met een nog bredere waaier van paketten.</li>
+        <li>Optioneel extra verificatie van het manifestbestand</li>
+      </ul>
+    </dd>
+    </dl>
+<br />
+
 <h3>Nieuw in Moodle 1.3.4 (11 Augustus, 2004)</h3>
 <div style="margin-left: 2em">
 <dl>
