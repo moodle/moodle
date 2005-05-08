@@ -638,6 +638,11 @@ function quiz_upgrade($oldversion) {
     if ($oldversion < 2005050500) {
         table_column('quiz_questions', '', 'penalty', 'float', '', '', '0.1', 'not null', 'defaultgrade');
     }
+
+    if ($oldversion < 2005050800) {
+        table_column('quiz_newest_states', 'new', 'newest', 'integer', '10', 'unsigned', '0', 'not null');
+    }
+
     return true;
 }
 

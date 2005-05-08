@@ -255,7 +255,7 @@ CREATE TABLE prefix_quiz_newest_states (
   id int(10) unsigned NOT NULL auto_increment,
   attemptid int(10) unsigned NOT NULL default '0',
   questionid int(10) unsigned NOT NULL default '0',
-  new int(10) unsigned NOT NULL default '0',
+  newest int(10) unsigned NOT NULL default '0',
   newgraded int(10) unsigned NOT NULL default '0',
   sumpenalty varchar(10) NOT NULL default '0.0',
   PRIMARY KEY  (id),

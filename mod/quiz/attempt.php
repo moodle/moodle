@@ -301,7 +301,7 @@
         // Find all the questions for this attempt for which the newest
         // state is not also the newest graded state
         if ($closequestions = get_records_select('quiz_newest_states',
-         "attemptid = $attempt->id AND new != newgraded", '', 'questionid, questionid')) {
+         "attemptid = $attempt->id AND newest != newgraded", '', 'questionid, questionid')) {
 
             // load all the questions
             $closequestionlist = implode(',', array_keys($closequestions));

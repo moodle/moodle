@@ -1140,7 +1140,7 @@ function quiz_restore_question_sessions(&$questions, $quiz, $attempt) {
     $sql = "SELECT $statefields".
            "  FROM {$CFG->prefix}quiz_states s,".
            "       {$CFG->prefix}quiz_newest_states n".
-           " WHERE s.id = n.new".
+           " WHERE s.id = n.newest".
            "   AND n.attemptid = '$attempt->id'".
            "   AND n.questionid IN ($questionlist)";
     $states = get_records_sql($sql);
@@ -1301,14 +1301,14 @@ function quiz_save_question_session(&$question, &$state) {
      $state->attempt, 'questionid', $question->id)) {
         $new->attemptid = $state->attempt;
         $new->questionid = $question->id;
-        $new->new = $state->id;
+        $new->newest = $state->id;
         $new->newgraded = $state->id;
         $new->sumpenalty = $state->sumpenalty;
         if (!insert_record('quiz_newest_states', $new)) {
             error('Could not insert entry in quiz_newest_states');
         }
     } else {
-        set_field('quiz_newest_states', 'new', $state->id, 'attemptid',
+        set_field('quiz_newest_states', 'newest', $state->id, 'attemptid',
          $state->attempt, 'questionid', $question->id);
     }
     if (quiz_state_is_graded($state)) {
@@ -2496,7 +2496,7 @@ function quiz_upgrade_states($attempt) {
     if ($states = get_records('quiz_states', 'attempt', $attempt->id)) {
         foreach ($states as $state) {
             $newest->newgraded = $state->id;
-            $newest->new = $state->id;
+            $newest->newest = $state->id;
             $newest->questionid = $state->question;
             insert_record('quiz_newest_states', $newest, false);
         }
