@@ -1,0 +1,82 @@
+<style type="text/css">
+<!--
+	DD {font-size:0.8em; margin-top:0.5em;}
+-->
+</style>
+
+<p align="center"> <b>Selecting a Report</b></p>
+
+<p>Sie k&ouml;nnen unterschiedliche Auswahlkriterien festlegen und unterschiedliche Formate f&uuml;r den Hot Potatoes-Bericht ausw&auml;hlen.&nbsp;</p>
+
+<?php if (isadmin()) { // only admins can select a course ?>
+<dl>
+	<dt><b>Einen Kurs ausw&auml;hlen</b></dt>
+	<dd>
+		<b>Dieser Kurs</b><br>
+		The report will show responses by participants in the current course
+	</dd>
+	<dd>
+		<b>Alle meine Kurse</b><br>
+		The report will show responses by participants for all courses which
+		use this quiz and in which you are a teacher. To be used in several
+		courses, the quiz must be located in the Site files directory. This
+		option is only available to site administrators. 
+	</dd>
+</dl>
+<?php } ?>
+<dl>
+	<dt><b>User ausw&auml;hlen</b></dt>
+	<dd>
+		<b>Lernende</b><br>
+		The report will show responses by students taking this course.
+		Teacher's responses will not be included in the report 
+	</dd>
+	<dd>
+		<b>Alle Teilnehmer</b><br>
+		The report will show responses by students, teachers, course creators
+		and administrators. Responses by the "guest" user, if any, will also be
+		included. 
+	</dd>
+</dl>
+<dl>
+	<dt><b>Bewertungen ausw&auml;hlen</b></dt>
+	<dd>
+		<b>Bester Versuch</b><br>
+		The report will only include the responses from the best attempt by each user
+	</dd>
+	<dd>
+		<b>Alle Versuche</b><br>
+		The report will include the responses from all attempts by each user
+	</dd>
+</dl>
+<dl>
+	<dt><b>Ausgabeformat ausw&auml;hlen</b></dt>
+	<dd>
+		<b>&Uuml;berblick</b><br>
+		This report is a list of attempts at this quiz. "abandoned" attempts
+		are included, but "in progress" attempts are not shown. It shows the
+		picture, name and best score for each user, and the score, time and
+		duration of each attempt. Attempts may be selected and then deleted if
+		required. 
+	</dd>
+	<dd>
+		<b>Einfache Statistik</b><br>
+		This report is a list of all completed attempts at this quiz. Attempts
+		marked as "abandoned" or "in progress" are not included. The report
+		shows the name and best score for each user, and the score of each
+		question in each attempt. It also gives the averages scores of the
+		individual questions and the quiz as a whole. Details of the attempts
+		may be downloaded in Excel or text format. 
+	</dd>
+	<dd>
+		<b>Detailierte Statistik</b><br>
+		This report shows full details of all completed attempts at this quiz,
+		Attempts marked as "abandoned" or "in progress" are not included. The
+		report contains the following tables:
+		<ul>
+			<li> the <b>responses table</b>, which shows how each user responded to each question in each of their attempts at the quiz. </li>
+			<li> the <b>item analysis table</b>, which lists the responses to each question and the frequency of each response. </li>
+		</ul>
+		The details shown in this report may be downloaded in Excel or text format. 
+	</dd>
+</dl>
