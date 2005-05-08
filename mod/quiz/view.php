@@ -148,10 +148,16 @@
     $strmarks          = get_string('marks', 'quiz');
     $strbestgrade     = $QUIZ_GRADE_METHOD[$quiz->grademethod];
 
+    $windowoptions = "left=0, top=0, channelmode=yes, fullscreen=yes, scrollbars=yes, resizeable=no, directories=no, toolbar=no, titlebar=no, location=no, status=no, menubar=no";
+
     $mygrade = quiz_get_best_grade($quiz, $USER->id);
 
+/// Now print table with existing attempts
+
     if ($numattempts) {
-        if ($quiz->grade and $quiz->sumgrades) {
+
+    /// prepare table header
+        if ($quiz->grade and $quiz->sumgrades) { // Grades used so have more columns in table
             if ($quiz->grade <> $quiz->sumgrades) {
                 $table->head = array($strattempt, $strtimetaken, $strtimecompleted, "$strmarks / $quiz->sumgrades", "$strgrade / $quiz->grade");
                 $table->align = array("center", "center", "left", "right", "right");
@@ -161,18 +167,23 @@
                 $table->align = array("center", "center", "left", "right");
                 $table->size = array("", "", "", "");
             }
+
         } else {  // No grades are being used
             $table->head = array($strattempt, $strtimetaken, $strtimecompleted);
             $table->align = array("center", "center", "left");
             $table->size = array("", "", "");
         }
+
+    /// One row for each attempt
         foreach ($attempts as $attempt) {
+
+        /// prepare strings for time taken and date completed
             $timetaken = '';
             $datecompleted = '';
-            if ($attempt->timefinish > 0) {
+            if ($attempt->timefinish > 0) { // attempt has finished
                 $timetaken = format_time($attempt->timefinish - $attempt->timestart);
                 $datecompleted = userdate($attempt->timefinish);
-            } else if ($available) {
+            } else if ($available) { // The student can continue this attempt, so put appropriate link
                 $timetaken = format_time(time() - $attempt->timestart);
                 $strconfirmstartattempt = addslashes(get_string("confirmstartattempt","quiz"));
                 $datecompleted  = "\n".'<script language="javascript" type="text/javascript">';
@@ -198,24 +209,33 @@
                 $datecompleted .= '<noscript>';
                 $datecompleted .= '<strong>'.get_string('noscript', 'quiz').'</strong>';
                 $datecompleted .= '</noscript>';
-            } else {
+            } else { // attempt was not completed but is also not available any more.
                 $timetaken = format_time($quiz->timeclose - $attempt->timestart);
                 $datecompleted = userdate($quiz->timeclose);
             }
 
+        /// prepare strings for attempt number, mark and grade
             if ($quiz->grade and $quiz->sumgrades) {
                 $attemptmark  = round($attempt->sumgrades,$quiz->decimalpoints);
                 $attemptgrade = round(($attempt->sumgrades/$quiz->sumgrades)*$quiz->grade,$quiz->decimalpoints);
+
+                // highlight the highest grade if appropriate
                 if ($attemptgrade == $mygrade and ($quiz->grademethod == QUIZ_GRADEHIGHEST)) {
                     $attemptgrade = "<span class=\"highlight\">$attemptgrade</span>";
                 }
 
-                // if attempt is closed and review is allowed then make attemptnumber and 
+                // if attempt is closed and review is allowed then make attemptnumber and
                 // mark and grade into links to review page
                 if (quiz_review_allowed($quiz) and $attempt->timefinish > 0) {
-                    $attemptmark = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">".round($attempt->sumgrades,$quiz->decimalpoints).'</a>';
-                    $attemptgrade = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">$attemptgrade</a>";
-                    $attempt->attempt = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">#$attempt->attempt</a>";
+                    if ($quiz->popup) { // need to link to popup window
+                        $attemptmark = link_to_popup_window ("/mod/quiz/review.php?q=$quiz->id&amp;attempt=$attempt->id", 'quizpopup', round($attempt->sumgrades,$quiz->decimalpoints), '+window.screen.height+', '+window.screen.width+', '', $windowoptions, true);
+                        $attemptgrade = link_to_popup_window ("/mod/quiz/review.php?q=$quiz->id&amp;attempt=$attempt->id", 'quizpopup', $attemptgrade, '+window.screen.height+', '+window.screen.width+', '', $windowoptions, true);
+                        $attempt->attempt = link_to_popup_window ("/mod/quiz/review.php?q=$quiz->id&amp;attempt=$attempt->id", 'quizpopup', "#$attempt->attempt", '+window.screen.height+', '+window.screen.width+', '', $windowoptions, true);
+                    } else {
+                        $attemptmark = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">".round($attempt->sumgrades,$quiz->decimalpoints).'</a>';
+                        $attemptgrade = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">$attemptgrade</a>";
+                        $attempt->attempt = "<a href=\"review.php?q=$quiz->id&amp;attempt=$attempt->id\">#$attempt->attempt</a>";
+                    }
                 }
 
                 if ($quiz->grade <> $quiz->sumgrades) {

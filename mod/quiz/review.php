@@ -38,7 +38,7 @@
 
     require_login($course->id, false, $cm);
     $isteacher = isteacher($course->id);
-    $popup = false; // controls whether the protected window is used
+    $popup = $isteacher ? 0 : $quiz->popup; // Controls whether this is shown in a javascript-protected window.
 
     if (!$isteacher) {
         if (!$attempt->timefinish) {
@@ -56,9 +56,6 @@
             if (time() >= $quiz->timeclose and !($quiz->review & QUIZ_REVIEW_CLOSED)) {
                 error(get_string("noreview", "quiz"));
             }
-        } else {
-            // immediately after the attempt the review should be in the protected window if required
-            $popup = $quiz->popup;
         }
         if ($attempt->userid != $USER->id) {
             error("This is not your attempt!");
