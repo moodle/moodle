@@ -4868,9 +4868,7 @@ function get_list_of_plugins($plugin='mod', $exclude='') {
  * @todo Finish documenting this function
  */
 function check_php_version($version='4.1.0') {
-    $minversion = intval(str_replace('.', '', $version));
-    $curversion = intval(str_replace('.', '', phpversion()));
-    return ($curversion >= $minversion);
+    return (version_compare(phpversion(), $version) >= 0);
 }
 
 
