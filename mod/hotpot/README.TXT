@@ -1,5 +1,5 @@
-This is v2.0.6 (beta) of the HotPot module
-   It has been tested on Moodle 1.1 thru 1.5, MySQL and PostGres7 databases and PHP 4.1 thru 5.0
+This is v2.0.7 of the HotPot module
+   It has been tested on Moodle 1.1 thru 1.5, MySQL and PostGres7 databases and PHP 4.1 thru 5.0.4
 
    This module may be distributed under the terms of the General Public License
    (see http://www.gnu.org/licenses/gpl.txt for details)
@@ -10,11 +10,6 @@ This is v2.0.6 (beta) of the HotPot module
 IMPORTANT NOTES
 ===============
 * Please be sure to use Hot Potatoes according to the conditions of use which are listed at the end of this file. If you restrict use via a required Moodle login, you most likely can still meet the 'freely available' condition if you make the same material on a separate URL that permits free access.  Otherwise, please purchase a license.
-
-* This is beta software, so please do not use it on live Moodle sites.
-
-* If you decide to install it on your test Moodle site, please back up your entire Moodle database, and your current "moodle/mod/hotpot" folder, before attempting the install.
-
 
 TO INSTALL OR UPDATE THIS MODULE
 
@@ -68,7 +63,7 @@ TO INSTALL OR UPDATE THIS MODULE
    (c) open the "moodle/lang/en/quiz.php" file on your Moodle site with a text editor
    (d) insert the following line just BEFORE the final line which reads "?>":
 
-        $string['hotpot'] = 'Hot Potatoes format';
+        $string['hotpot'] = 'Hot Potatoes XML format';
 
    (d) save the changes and close the file
 
