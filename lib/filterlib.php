@@ -50,6 +50,9 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
 
     static $usedphrases;
 
+    $ignoretags = array();  //To store all the enclosig tags to be completely ignored
+    $tags = array();        //To store all the simple tags to be ignored
+
 /// A list of open/close tags that we should not replace within
 /// No reason why you can't put full preg expressions in here too
 /// eg '<script(.+?)>' to match any type of script tag
@@ -75,34 +78,11 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
     }
 
 
-/// Remove everything enclosed by the ignore tags from $text
-    $ignoretags = array();
-    foreach ($filterignoretagsopen as $ikey=>$opentag) {
-        $closetag = $filterignoretagsclose[$ikey];
-    /// form regular expression
-        $opentag  = str_replace('/','\/',$opentag); // delimit forward slashes
-        $closetag = str_replace('/','\/',$closetag); // delimit forward slashes
-        $pregexp = '/'.$opentag.'(.+?)'.$closetag.'/is';
-        
-        preg_match_all($pregexp, $text, $list_of_ignores);
-        foreach (array_unique($list_of_ignores[0]) as $key=>$value) {
-            $ignoretags['<#'.$ikey.'.'.$key.'#>'] = $value;
-        }
-        if (!empty($ignoretags)) {
-            $text = str_replace($ignoretags,array_keys($ignoretags),$text);
-        }
-    }
-
+////Remove everything enclosed by the ignore tags from $text    
+    filter_save_ignore_tags($text,$filterignoretagsopen,$filterignoretagsclose,$ignoretags);
 
 /// Remove tags from $text
-    $tags = array();
-    preg_match_all('/<[^\#](.*?)>/is',$text,$list_of_tags);
-    foreach (array_unique($list_of_tags[0]) as $key=>$value) {
-        $tags['<|'.$key.'|>'] = $value;
-    }
-    if (!empty($tags)) {
-        $text = str_replace($tags,array_keys($tags),$text);
-    }
+    filter_save_tags($text,$tags);
 
 
 /// Time to cycle through each phrase to be linked
@@ -188,59 +168,41 @@ function filter_phrases ($text, $link_array, $ignoretagsopen=NULL, $ignoretagscl
                                       $linkobject->work_hreftagbegin.'$1'.$linkobject->work_hreftagend, $text);
         }
 
-    /// If $CFG->filtermatchoneperpage, save linked phrases to request
-        if (!empty($CFG->filtermatchoneperpage)) {
-            if ($resulttext != $text) { //Texts are different so we have linked the phrase
+
+    /// If the text has changed we have to look for links again
+        if ($resulttext != $text) {
+        /// Set $text to $resulttext
+            $text = $resulttext;
+        /// Remove everything enclosed by the ignore tags from $text    
+            filter_save_ignore_tags($text,$filterignoretagsopen,$filterignoretagsclose,$ignoretags);
+        /// Remove tags from $text
+            filter_save_tags($text,$tags);
+        /// If $CFG->filtermatchoneperpage, save linked phrases to request
+            if (!empty($CFG->filtermatchoneperpage)) {
                 $usedphrases[] = $linkobject->work_phrase;
             }
         }
 
-    /// Set $text to $resulttext
-        $text = $resulttext;
 
     /// Replace the not full matches before cycling to next link object
         if (!empty($notfullmatches)) {
             $text = str_replace(array_keys($notfullmatches),$notfullmatches,$text);
             unset($notfullmatches);
         }
-
-
-    /// We need to remove any tags we've just added
-        if (!isset($newtagsarray)) {
-            $newtagsarray = array();
-        }
-        $newtagsprefix = (string)(count($newtagsarray) + 1);
-        $newtags = array();
-        preg_match_all('/<[^\#\|\%](.+?)>/is',$text,$list_of_newtags);
-        foreach (array_unique($list_of_newtags[0]) as $ntkey=>$value) {
-            $newtags['<%'.$newtagsprefix.'.'.$ntkey.'%>'] = $value;
-        }
-        if (!empty($newtags)) {
-            $text = str_replace($newtags,array_keys($newtags),$text);
-            $newtagsarray[] = $newtags;
-        }
-        unset($newtags);
-    
     }
-
 
 /// Rebuild the text with all the excluded areas
 
-    if (!empty($newtagsarray)) {
-        $newtagsarray = array_reverse($newtagsarray, true);
-        foreach ($newtagsarray as $newtags) {
-            $text = str_replace(array_keys($newtags), $newtags, $text);
-        }
+    if (!empty($tags)) {
+        $text = str_replace(array_keys($tags), $tags, $text);
     }
 
-    if (!empty($tags)) {
-        $text = str_replace(array_keys($tags),$tags,$text);
-    }
     if (!empty($ignoretags)) {
         $text = str_replace(array_keys($ignoretags),$ignoretags,$text);
     }
 
     return $text;
+
 }
 
 
@@ -267,6 +229,58 @@ function filter_remove_duplicates($linkarray) {
     }
 
     return $cleanlinks;
+}
+
+/**
+ * Extract open/lose tags and their contents to avoid being processed by filters.
+ * Useful to extract pieces of code like <a>...</a> tags. It returns the text
+ * converted with some <#x.x#> codes replacing the extracted text. Such extracted
+ * texts are returned in the ignoretags array (as values), with codes as keys.
+ *
+ * param  text                  the text that we are filtering (in/out)
+ * param  filterignoretagsopen  an array of open tags to start searching
+ * param  filterignoretagsclose an array of close tags to end searching 
+ * param  ignoretags            an array of saved strings useful to rebuild the original text (in/out)
+ **/
+function filter_save_ignore_tags(&$text,$filterignoretagsopen,$filterignoretagsclose,&$ignoretags) {
+
+/// Remove everything enclosed by the ignore tags from $text
+    foreach ($filterignoretagsopen as $ikey=>$opentag) {
+        $closetag = $filterignoretagsclose[$ikey];
+    /// form regular expression
+        $opentag  = str_replace('/','\/',$opentag); // delimit forward slashes
+        $closetag = str_replace('/','\/',$closetag); // delimit forward slashes
+        $pregexp = '/'.$opentag.'(.+?)'.$closetag.'/is';
+        
+        preg_match_all($pregexp, $text, $list_of_ignores);
+        foreach (array_unique($list_of_ignores[0]) as $key=>$value) {
+            $prefix = (string)(count($ignoretags) + 1);
+            $ignoretags['<#'.$prefix.'.'.$key.'#>'] = $value;
+        }
+        if (!empty($ignoretags)) {
+            $text = str_replace($ignoretags,array_keys($ignoretags),$text);
+        }
+    }
+}
+
+/**
+ * Extract tags (any text enclosed by < and > to avoid being processed by filters.
+ * It returns the text converted with some <%x.x%> codes replacing the extracted text. Such extracted
+ * texts are returned in the tags array (as values), with codes as keys.
+ *      
+ * param  text   the text that we are filtering (in/out)
+ * param  tags   an array of saved strings useful to rebuild the original text (in/out)
+ **/
+function filter_save_tags(&$text,&$tags) {
+
+    preg_match_all('/<([^#%*].*?)>/is',$text,$list_of_newtags);
+    foreach (array_unique($list_of_newtags[0]) as $ntkey=>$value) {
+        $prefix = (string)(count($tags) + 1);
+        $tags['<%'.$prefix.'.'.$ntkey.'%>'] = $value;
+    }
+    if (!empty($tags)) {
+        $text = str_replace($tags,array_keys($tags),$text);
+    }
 }
 
 ?>
