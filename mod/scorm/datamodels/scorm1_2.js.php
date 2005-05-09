@@ -22,16 +22,16 @@ function SCORMapi1_2() {
     CMITimespan = '^([0-9]{2,4}):([0-9]{2}):([0-9]{2})(\.[0-9]{1,2})?$';
     CMIInteger = '^\\d+$';
     CMISInteger = '^-?([0-9]+)$';
-    //CMIDecimal = '^([0-9]{0,3})?(\.[0-9]{1,2})?$';
     CMIDecimal = '^([0-9]{0,3})(\.[0-9]{1,2})?$';
     CMIIdentifier = '^\\w{0,255}$';
     CMIFeedback = CMIString255; // This must be redefined
-    CMIIndex = '.(\\d+).';
+    CMIIndex = '[._](\\d+).';
     // Vocabulary Data Type Definition
     CMIStatus = '^passed|completed|failed|incomplete|browsed|not attempted$';
     CMIExit = '^time-out|suspend|logout|$';
     CMIType = '^true-false|choice|fill-in|matching|performance|sequencing|likert|numeric$';
     CMIResult = '^correct|wrong|unanticipated|neutral|[0-9]?(\.[0-9]{1,2})?$';
+    NAVEvent = '^previous|continue$';
     // Children lists
     cmi_children = 'core, suspend_data, launch_data, comments, objectives, student_data, student_preference, interactions';
     core_children = 'student_id, student_name, lesson_location, credit, lesson_status, entry, score, total_time, lesson_mode, exit, session_time';
@@ -53,8 +53,8 @@ function SCORMapi1_2() {
 	'cmi.core.student_id':{'defaultvalue':'<?php echo $userdata->student_id ?>', 'mod':'r', 'writeerror':'403'},
 	'cmi.core.student_name':{'defaultvalue':'<?php echo $userdata->student_name ?>', 'mod':'r', 'writeerror':'403'},
 	'cmi.core.lesson_location':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.lesson_location'})?$userdata->{'cmi.core.lesson_location'}:'' ?>', 'format':CMIString255, 'mod':'rw', 'writeerror':'405'},
-	//'cmi.core.credit':{'defaultvalue':'<?php echo $userdata->credit ?>', 'mod':'r', 'writeerror':'403'},
-	'cmi.core.credit':{'defaultvalue':'credit', 'mod':'r', 'writeerror':'403'},
+	'cmi.core.credit':{'defaultvalue':'<?php echo $userdata->credit ?>', 'mod':'r', 'writeerror':'403'},
+	//'cmi.core.credit':{'defaultvalue':'credit', 'mod':'r', 'writeerror':'403'},  
 	'cmi.core.lesson_status':{'defaultvalue':'<?php echo isset($userdata->{'cmi.core.lesson_status'})?$userdata->{'cmi.core.lesson_status'}:'' ?>', 'format':CMIStatus, 'mod':'rw', 'writeerror':'405'},
 	'cmi.core.entry':{'defaultvalue':'<?php echo $userdata->entry ?>', 'mod':'r', 'writeerror':'403'},
 	'cmi.core.score._children':{'defaultvalue':score_children, 'mod':'r', 'writeerror':'402'},
@@ -72,10 +72,10 @@ function SCORMapi1_2() {
 	'cmi.objectives._children':{'defaultvalue':objectives_children, 'mod':'r', 'writeerror':'403'},
 	'cmi.objectives._count':{'mod':'r', 'defaultvalue':'0', 'writeerror':'402'},
 	'cmi.objectives.n.id':{'pattern':CMIIndex, 'format':CMIIdentifier, 'mod':'rw', 'writeerror':'405'},
-	'cmi.objectives.n.score._children':{'pattern':CMIIndex, 'defaultvalue':score_children, 'mod':'r', 'writeerror':'402'},
-	'cmi.objectives.n.score.raw':{'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
-	'cmi.objectives.n.score.min':{'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
-	'cmi.objectives.n.score.max':{'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
+	'cmi.objectives.n.score._children':{'pattern':CMIIndex, 'mod':'r', 'writeerror':'402'},
+	'cmi.objectives.n.score.raw':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
+	'cmi.objectives.n.score.min':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
+	'cmi.objectives.n.score.max':{'defaultvalue':'', 'pattern':CMIIndex, 'format':CMIDecimal, 'range':score_range, 'mod':'rw', 'writeerror':'405'},
 	'cmi.objectives.n.status':{'pattern':CMIIndex, 'format':CMIStatus, 'mod':'rw', 'writeerror':'405'},
 	'cmi.student_data._children':{'defaultvalue':student_data_children, 'mod':'r', 'writeerror':'403'},
 	'cmi.student_data.mastery_score':{'defaultvalue':'<?php echo $userdata->masteryscore ?>', 'mod':'r', 'writeerror':'403'},
@@ -98,7 +98,8 @@ function SCORMapi1_2() {
 	'cmi.interactions.n.weighting':{'pattern':CMIIndex, 'format':CMIDecimal, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
 	'cmi.interactions.n.student_response':{'pattern':CMIIndex, 'format':CMIFeedback, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
 	'cmi.interactions.n.result':{'pattern':CMIIndex, 'format':CMIResult, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
-	'cmi.interactions.n.latency':{'pattern':CMIIndex, 'format':CMITimespan, 'mod':'w', 'readerror':'404', 'writeerror':'405'}
+	'cmi.interactions.n.latency':{'pattern':CMIIndex, 'format':CMITimespan, 'mod':'w', 'readerror':'404', 'writeerror':'405'},
+	'nav.event':{'defaultvalue':'', 'format':NAVEvent, 'mod':'w', 'readerror':'404', 'writeerror':'405'}
     };
     //
     // Datamodel inizialization
@@ -110,7 +111,10 @@ function SCORMapi1_2() {
 	cmi.student_data = new Object();
 	cmi.student_preference = new Object();
 	cmi.interactions = new Object();
+
+    // Navigation Object
     var nav = new Object();
+
     for (element in datamodel) {
 	if (element.match(/\.n\./) == null) {
 	    //alert (element+' = '+eval('datamodel["'+element+'"].defaultvalue'));
@@ -122,7 +126,33 @@ function SCORMapi1_2() {
 	    //alert (element+' = '+eval(element));
 	}
     }
-    
+
+<?php
+    $count = 0;
+    $objectives = '';
+    foreach($userdata as $element => $value){
+	if (substr($element,0,14) == 'cmi.objectives') {
+	    preg_match('/.(\d+)./',$element,$matches);
+	    $element = preg_replace('/.(\d+)./',"_\$1.",$element);
+	    if ($matches[1] == $count) {
+		$count++;
+		$end = strpos($element,$matches[1])+strlen($matches[1]);
+		$subelement = substr($element,0,$end);
+		echo '    '.$subelement." = new Object();\n";
+		echo '    '.$subelement.".score = new Object();\n";
+	 	echo '    '.$subelement.".score._children = score_children;\n";
+		echo '    '.$subelement.".score.raw = '';\n";
+		echo '    '.$subelement.".score.min = '';\n";
+		echo '    '.$subelement.".score.max = '';\n";
+	    }
+	    echo '    '.$element.' = \''.$value."';\n";
+	}
+    }
+    if ($count > 0) {
+	echo '    cmi.objectives._count = '.$count.";\n";
+    }
+?>
+
     if (cmi.core.lesson_status == '') {
 	cmi.core.lesson_status = 'not attempted';
     } 
@@ -151,7 +181,19 @@ function SCORMapi1_2() {
 	if (param == "") {
             if (Initialized) {
         	Initialized = false;
-        	return StoreData(cmi,true);
+		result = StoreData(cmi,true);
+		if (nav.event != '') {
+		    if (nav.event == 'continue') {
+		        setTimeout('top.nextSCO();',500);
+		    } else {
+		        setTimeout('top.prevSCO();',500);
+		    }
+		} else {
+		    if (<?php echo $scorm->auto ?> == 1) {
+			setTimeout('top.nextSCO();',500);
+		    }
+		}    
+        	return result;
             } else {
         	errorCode = "301";
             }
@@ -168,14 +210,12 @@ function SCORMapi1_2() {
 		if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
 	            if (eval('datamodel["'+elementmodel+'"].mod') != 'w') {
 	            	element = element.replace(expression, "_$1.");
-	            	//alert ('Element: '+element);
 	            	elementIndexes = element.split('.');
 			subelement = 'cmi';
 			i = 1;
 			while ((i < elementIndexes.length) && (typeof eval(subelement) != "undefined")) {
 			    subelement += '.'+elementIndexes[i++];
 			}
-			//alert ('Element: '+subelement);
 	            	if (subelement == element) {
 			    errorCode = "0";
 			    return eval(element);
@@ -200,7 +240,6 @@ function SCORMapi1_2() {
     function LMSSetValue (element,value) {
 	if (Initialized) {
 	    if (element != "") {
-	        //alert('LMSSetValue: '+element+'\nValue: '+value);
 		expression = new RegExp(CMIIndex,'g');
 		elementmodel = element.replace(expression,'.n.');
 		if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
@@ -212,21 +251,15 @@ function SCORMapi1_2() {
 			    //Create dynamic data model element
 			    if (element != elementmodel) {
 				elementIndexes = element.split('.');
-				//alert('Indexes: '+elementIndexes);
 				subelement = 'cmi';
 				for (i=1;i < elementIndexes.length-1;i++) {
 				    elementIndex = elementIndexes[i];
-				    //alert('Current: '+elementIndex+' Next: '+elementIndexes[i+1]);
 				    if (elementIndexes[i+1].match(/^\d+$/)) {
-				    	
 				    	if ((typeof eval(subelement+'.'+elementIndex)) == "undefined") {
 				    	    eval(subelement+'.'+elementIndex+' = new Object();');
 					    eval(subelement+'.'+elementIndex+'._count = 0;');
-					    //alert('Object: '+subelement+'.'+elementIndex);
 					}
-					//alert ('Count:'+eval(subelement+'.'+elementIndex+'._count'));
 					if (elementIndexes[i+1] == eval(subelement+'.'+elementIndex+'._count')) {
-					    //alert('Index:'+elementIndexes[i+1]);
 					    eval(subelement+'.'+elementIndex+'._count++;');
 					} 
 					if (elementIndexes[i+1] > eval(subelement+'.'+elementIndex+'._count')) {
@@ -237,12 +270,11 @@ function SCORMapi1_2() {
 				    } else {
 					subelement = subelement.concat('.'+elementIndex);
 				    }
-				    //alert('Subelement: '+subelement);
 				    if ((typeof eval(subelement)) == "undefined") {
 					eval(subelement+' = new Object();');
-					if (element.substr(0,14) == 'cmi.objectives') {
+					if (subelement.substr(0,14) == 'cmi.objectives') {
 					    eval(subelement+'.score = new Object();');
-					    eval(subelement+'.score._children = "raw,min,max";');
+					    eval(subelement+'.score._children = score_children;');
 					    eval(subelement+'.score.raw = "";');
 					    eval(subelement+'.score.min = "";');
 					    eval(subelement+'.score.max = "";');
@@ -250,7 +282,6 @@ function SCORMapi1_2() {
 				    }
 				}
 				element = subelement.concat('.'+elementIndexes[elementIndexes.length-1]);
-				//alert('LMSSetValue: '+element+'\nModel: '+elementmodel+'\nValue: '+value+'\nMatches: '+matches);
 			    }
 			    //Store data
 			    if (errorCode == "0") {
@@ -261,7 +292,6 @@ function SCORMapi1_2() {
 				    if ((value >= ranges[0]) && (value <= ranges[1])) {
  				    	eval(element+'="'+value+'";');
 				    	errorCode = "0";
-				    	//alert('LMSSetValue: '+element+'\nModel: '+elementmodel+'\nValue: '+value);
 	    			    	return "true";
 				    } else {
 		 			errorCode = eval('datamodel["'+elementmodel+'"].writeerror');
@@ -273,7 +303,6 @@ function SCORMapi1_2() {
 				    	eval(element+'="'+value+'";');
 				    }
 				    errorCode = "0";
-				    //alert('LMSSetValue: '+element+'\nModel: '+elementmodel+'\nValue: '+value);
 	    			    return "true";
 				}
 			    }
@@ -292,7 +321,6 @@ function SCORMapi1_2() {
 	} else {
             errorCode = "301";
         }
-	//alert('LMSSetValue: '+element+'\nValue: '+value+'\nPattern: '+expression+'\nMatches: '+matches+'\nError Code: '+errorCode);
 	return "false";
     }
     
@@ -358,7 +386,6 @@ function SCORMapi1_2() {
 	            if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
 			if (eval('datamodel["'+elementmodel+'"].defaultvalue') != data[property]) {
 			    datastring += '&'+underscore(element)+'='+escape(data[property]);
-			    //alert(element+'='+data[property]);
 			}
 		    }
 		}
@@ -395,7 +422,6 @@ function SCORMapi1_2() {
 	var myRequest = NewHttpReq();
 	result = DoRequest(myRequest,"<?php p($CFG->wwwroot) ?>/mod/scorm/datamodel.php","id=<?php p($id) ?>&sesskey=<?php p($USER->sesskey) ?>"+datastring);
 	results = result.split('\n');
-	//alert(results);
 	errorCode = results[1];
 	return results[0]; 
     }

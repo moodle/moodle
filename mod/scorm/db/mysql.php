@@ -153,6 +153,11 @@ function scorm_upgrade($oldversion) {
        table_column("scorm", "", "browsemode", "TINYINT", "2", "", "1", "NOT NULL", "summary");
     }
 
+    if ($oldversion < 2005050800) {
+       table_column("scorm", "", "width", "INT", "10", "", "800", "NOT NULL", "auto");
+       table_column("scorm", "", "height", "INT", "10", "", "600", "NOT NULL", "width");
+    }
+
     return true;
 }
 ?>

@@ -24,7 +24,11 @@ if (!isset($CFG->scorm_validate)) {
 }
 
 if (!isset($CFG->scorm_frameheight)) {
-    set_config('scorm_frameheight','640');
+    set_config('scorm_frameheight','600');
+}
+
+if (!isset($CFG->scorm_framewidth)) {
+    set_config('scorm_framewidth','800');
 }
 
 function scorm_add_instance($scorm) {
@@ -907,13 +911,15 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
     		}
 
     		if ($sco->id == $scoid) {
-    		    $startbold = '&gt; <b>';
-    		    $endbold = '</b> &lt;';
+    		    $startbold = '<b>';
+    		    $endbold = '</b>';
     		    if ($nextsco !== false) {
     			$nextid = $nextsco->id;
     		    } else {
     			$nextid = 0;
     		    }
+		    $shownext = $sco->next;
+		    $showprev = $sco->previous;
     	    	}
     		if (($nextid == 0) && (scorm_count_launchable($scorm->id,$currentorg) > 1)) {
     	    	    $previd = $sco->id;
@@ -933,6 +939,8 @@ function scorm_display_structure($scorm,$liststyle,$currentorg='',$scoid='',$mod
         $result->id = $scoid;
         $result->prev = $previd;
         $result->next = $nextid;
+	$result->showprev = $showprev;
+	$result->shownext = $shownext;
 	return $result;
     } else {
     	return $incomplete;

@@ -27,6 +27,13 @@
     if (empty($form->browsemode)) {
         $form->browsemode = "1";
     }
+    if (empty($form->width)) {
+        $form->width = $CFG->scorm_framewidth;
+    }
+    if (empty($form->height)) {
+        $form->height = $CFG->scorm_frameheight;
+    }
+
     $scormid = '';
     if (!empty($form->instance)) {
         $scormid = '&instance='.$form->instance;
@@ -186,6 +193,20 @@
                 choose_from_menu ($options, "browsemode", $form->browsemode, '');
                 helpbutton("browsemode", get_string("browsemode", "scorm"), "scorm", true);
             ?>
+	    </td>
+	</tr>
+	<tr valign="top">
+            <td align="right"><b><?php print_string("width","scorm") ?>:</b></td>
+	    <td>
+		<input type="text" name="width" value="<?php echo $form->width ?>" size="4" />
+                <?php helpbutton("width", get_string("width", "scorm"), "scorm", true); ?>
+	    </td>
+	</tr>
+	<tr valign="top">
+            <td align="right"><b><?php print_string("height","scorm") ?>:</b></td>
+	    <td>
+		<input type="text" name="height" value="<?php echo $form->height ?>" size="4" />
+                <?php helpbutton("height", get_string("height", "scorm"), "scorm", true); ?>
 	    </td>
 	</tr>
     </table>
