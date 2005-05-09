@@ -1,8 +1,8 @@
 <?php // $Id$
 
 #------------------------------------------------------------
-$string['modulename'] = 'Scorm';
-$string['modulenameplural'] = 'Scorms';
+$string['modulename'] = 'SCORM/AICC';
+$string['modulenameplural'] = 'SCORMs/AICCs';
 #------------------------------------------------------------
 
 $string['asset'] = 'Élément';
@@ -12,42 +12,33 @@ $string['badmanifest'] ='Erreurs dans le fichier « manifest » : veuillez consult
 $string['browse'] = 'Prévisualiser';
 $string['browsed'] = 'Consulté';
 $string['browsemode'] = 'Mode consultation';
-$string['chooseapacket'] = 'Sélectionner ou mettre à jour un paquet SCORM';
-$string['configframesize'] = 'Cette valeur est la taille (en pixels) du cadre supérieur (contenant la navigation) lors de l\'affichage d\'un paquet scorm.';
-$string['configpopup'] = 'Si un paquet scorm peut s\'afficher dans une fenêtre pop-up, cette option doit-elle être activée par défaut lors de l\'ajout d\un paquet scorm ?';
-$string['configpopupheight'] = 'Hauteur par défaut des fenêtres pop-up ?';
-$string['configpopupresizable'] = 'Les fenêtres pop-up doivent-elles être redimensionnables par défaut ?';
-$string['configpopupscrollbars'] = 'Les fenêtres pop-up doivent-elles avoir des barres de défilement par défaut ?';
-$string['configpopupstatus'] = 'Les fenêtres pop-up doivent-elles avoir une barre d\'état par défaut ?';
-$string['configpopupwidth'] = 'Largeur par défaut des nouvelles fenêtres pop-up ?';
+$string['chooseapacket'] = 'Sélectionner ou mettre à jour un paquet';
 $string['completed'] = 'Terminé';
 $string['coursestruct'] = 'Structure du cours';
 $string['coursepacket'] = 'Paquet du cours';
 $string['datadir'] = 'Erreur du système de fichier : impossible de créer le dossier des données du cours';
 $string['details'] = 'Détails SCO';
+$string['display'] = 'Affichage';
 $string['domxml'] = 'Librairie externe DOMXML';
 $string['enablebrowse'] = 'Activer mode prévisualisation';
-$string['entercourse'] = 'Entrer dans le cours SCORM';
+$string['entercourse'] = 'Commencer le cours';
 $string['errorlogs'] = 'Historique des erreurs';
+$string['exit'] = 'Terminer le cours SCORM';
+$string['expcoll'] = 'Développer/Minimiser';
 $string['failed'] = 'Échec';
 $string['found'] = 'Fichier « manifest » trouvé';
-$string['frameheight'] = 'Ce réglage détermine la hauteur du cadre SCO';
+$string['frameheight'] = 'Ce réglage détermine la hauteur par défaut du cadre SCO';
+$string['framewidth'] = 'Ce réglage détermine la largeur par défaut du cadre SCO';
 $string['gradeaverage'] = 'Note moyenne';
 $string['gradehighest'] = 'Note la plus haute';
 $string['grademethod'] = 'Méthode de notation';
 $string['gradescoes'] = 'Situation des SCOs';
 $string['gradesum'] = 'Note totale';
 $string['guestsno'] = 'Les visiteurs anonymes ne peuvent accéder aux cours SCORM';
+$string['height'] = 'Hauteur';
 $string['incomplete'] = 'Incomplet';
 $string['missing_attribute'] = 'Attribut $a->attr manquant dans la balise $a->tag';
 $string['missing_tag'] = 'Balise $a->tag manquante';
-$string['newheight'] = 'Hauteur par défaut (en pixels)';
-$string['newresizable'] = 'Permettre le redimensionnement de la fenêtre';
-$string['newscrollbars'] = 'Afficher les barres de défilement';
-$string['newstatus'] = 'Afficher la barre d\'état';
-$string['newwidth'] = 'Largeur par défaut (en pixels)';
-$string['newwindow'] = 'Nouvelle fenêtre';
-$string['newwindowopen'] = 'Afficher ce paquet scorm dans une nouvelle fenêtre';
 $string['next'] = 'Continuer';
 $string['no_attributes'] = 'La balise $a->tag doit avoir des attributs';
 $string['no_children'] = 'La balise $a->tag doit avoir des descendants';
@@ -61,6 +52,7 @@ $string['organizations'] = 'Organisations';
 $string['packagedir'] = 'Erreur du système de fichier : impossible de créer le dossier du paquet';
 $string['passed'] = 'Réussi';
 $string['php5'] = 'PHP 5 (librairie DOMXML native)';
+$string['popup'] = 'Ouvrir le SCO actuel dans une nouvelle fenêtre';
 $string['position_error'] = 'La balise $a->tag ne peut pas être un descendant de la balise $a->parent';
 $string['prev'] = 'Précédent';
 $string['regular'] = 'Descriptif normal';
@@ -72,14 +64,12 @@ $string['syntax'] = 'Erreur de syntaxe';
 $string['tag_error'] = 'Balise inconne ($a->tag) avec ce contenu : $a->value';
 $string['too_many_attributes'] = 'La balise $a->tag a trop d\'attributs';
 $string['too_many_children'] = 'La balise $a->tag a trop de descendants';
-$string['trackingloose'] = 'Attention ! Les données du suivi de ce paquet SCORM seront perdues !';
+$string['trackingloose'] = 'Attention ! Les données du suivi de ce paquet seront perdues !';
+$string['validateascorm'] = 'Valider un paquet';
 $string['validation'] = 'Résultat de la validation';
 $string['validationtype'] = 'Ce réglage détermine la librairie DOMXML utilisée pour la validation du fichier « manifest » des SCORM. Si vous ne savez pas de quoi il s\'agit, ne modifiez pas la valeur.';
-$string['validateascorm'] = 'Valider un paquet SCORM';
 $string['versionwarning'] = 'La version du fichier « manifest » est antérieure à 1.3, avertissement à la balise $a->tag';
 $string['viewallreports'] = 'Afficher les rapports des $a tentatives';
-$string['display'] = 'Affichage';
-$string['expcoll'] = 'Développer/Minimiser';
-$string['exit'] = 'Sortir du cours SCORM';
+$string['width'] = 'Largeur';
 
 ?>
