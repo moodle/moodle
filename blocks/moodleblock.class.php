@@ -234,7 +234,7 @@ class block_base {
         if ($this->edit_controls !== NULL) {
             $title .= $this->edit_controls;
         }
-        print_side_block($title, '&nbsp;', NULL, NULL, '');
+        print_side_block($title, '&nbsp;', NULL, NULL, '', array('class' => 'hidden'));
     }
 
     /**
