@@ -35,7 +35,7 @@
     $page->title = clean_param($form->title, PARAM_CLEANHTML);
     $page->contents = clean_param(trim($form->contents), PARAM_CLEANHTML);
 	$page->title = addslashes($page->title);
-	$page->contents = addslashes($page->title);
+	$page->contents = addslashes($page->contents);
     if (!update_record("lesson_pages", $page)) {
         error("Update page: page not updated");
     }
