@@ -2264,8 +2264,8 @@ function get_questions_category( $category ) {
         // iterate through questions, getting stuff we need
         foreach($questions as $question) {
             $questiontype = $QUIZ_QTYPES[$question->qtype];
-            $new_question = $questiontype->get_question_options( $question );
-            $qresults[] = $new_question;
+            $questiontype->get_question_options( $question );
+            $qresults[] = $question;
         }
     }
 
