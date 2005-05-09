@@ -6,10 +6,11 @@ This is v2.0.7 of the HotPot module
 
    This software is provided "AS IS" without a warranty of any kind.
 
-===============
-IMPORTANT NOTES
-===============
+================
+IMPORTANT NOTICE
+================
 * Please be sure to use Hot Potatoes according to the conditions of use which are listed at the end of this file. If you restrict use via a required Moodle login, you most likely can still meet the 'freely available' condition if you make the same material on a separate URL that permits free access.  Otherwise, please purchase a license.
+
 
 TO INSTALL OR UPDATE THIS MODULE
 
@@ -78,7 +79,7 @@ TO INSTALL OR UPDATE THIS MODULE
 
    b) If you are updating the module, you will probably see messages indicating the progress of the update
    
-   c) If you get error messages, please copy and save them to a file on your PC, and then ask for help on Moodle HotPot supprot forum:
+   c) If you get error messages, please copy and save them to a file on your PC, and then ask for help on Moodle's HotPot support forum:
       go to http://moodle.org 
       then click "Free Support",
       then click "HotPot"
