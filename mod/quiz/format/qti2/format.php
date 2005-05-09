@@ -619,8 +619,10 @@ function xml_entitize(&$collection) {
         case DESCRIPTION:
             $expout = $smarty->fetch('extendedText.tpl');
             break;
+        // loss of get_answers() from quiz_embedded_close_qtype class during
+        // Gustav's refactor breaks MULTIANSWER badly - one for another day!!
+        /*
         case MULTIANSWER:
-            // echo "<pre>"; print_r( $question ); echo "</pre>"; die();
             $answers = $this->get_cloze_answers_array($question);
             $questions = $this->get_cloze_questions($question, $answers, $allowedtags);
             
@@ -628,7 +630,7 @@ function xml_entitize(&$collection) {
             $smarty->assign('answers', $answers);
             $smarty->assign('questions', $questions);
             $expout = $smarty->fetch('composite.tpl');
-            break;
+            break; */
         default:
             $smarty->assign('questionText', "This question type (Unknown: type $question_type)  has not yet been implemented");
             $expout = $smarty->fetch('notimplemented.tpl');
@@ -710,7 +712,7 @@ function xml_entitize(&$collection) {
  * @return array - an array of answer arrays
  */    
     function get_cloze_answers_array($question) {
-        $answers = quiz_embedded_cloze_qtype::get_answers($question);
+        $answers = $this->get_answers($question);
         $this->xml_entitize($answers);
         foreach ($answers as $answerkey => $answer) {
             $answers[$answerkey]->subanswers = $this->objects_to_array($answer->subanswers);
@@ -919,6 +921,7 @@ function xml_entitize(&$collection) {
         }
         return $url;
     }
+
 }
 
 ?>
