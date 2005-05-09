@@ -12,6 +12,8 @@ class quiz_match_qtype extends quiz_default_questiontype {
     }
 
     function get_question_options(&$question) {
+        $subquestions = get_records("quiz_match_sub", "question", $question->id, "id ASC" );
+        $question->options->subquestions = $subquestions;
         return true;
     }
 
