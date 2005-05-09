@@ -1,0 +1,44 @@
+<p align="center"><?php if (! empty($this->errormsg)) {formerr($this->errormsg);} ?></p>
+
+<div align="center">
+
+<p><?php print_string("paymentrequired") ?></p>
+<p><b><?php echo get_string("cost").": $CFG->enrol_currency $cost"; ?></b></p>
+<p><?php print_string("paymentinstant") ?></p>
+
+<form name="form" method="post" action="enrol.php" autocomplete="off">
+<input type="hidden" name="id" value="<?php p($course->id) ?>" />
+<table align="center" width="100%" border=0>
+<tr>
+  <td align="right"><?php print_string("nameoncard", "enrol_authorize") ?>: </td>
+  <td align="left"><input type="text" name="ccfirstname" size="16" value="<?php p($userfirstname) ?>"  />
+		   <input type="text" name="cclastname" size="16" value="<?php p($userlastname) ?>"  /></td>
+</tr>
+<tr>
+  <td align="right"><?php print_string("ccno", "enrol_authorize") ?>: </td>
+  <td align="left"><input type="text" name="cc" size="16" value="<?php p($form->cc) ?>"  /></td>
+</tr>
+<tr>
+  <td align="right"><?php print_string("ccexpire", "enrol_authorize") ?>: </td>
+  <td align="left"><?php
+    for ($i=1; $i<=12; $i++) {
+        $months[$i] = userdate(gmmktime(12,0,0,$i,1,2000), "%B");
+    }
+    choose_from_menu($months, 'ccexpiremm', $form->ccexpiremm, '');
+    ?> <input type="text" name="ccexpireyyyy" size="4" maxlength="4" value="<?php p($form->ccexpireyyyy) ?>"  /></td>
+</tr>
+<tr>
+  <td align="right"><?php print_string("ccvv", "enrol_authorize") ?>: </td>
+  <td align="left"><input type="text" name="cvv" size="4" maxlength="4" value="<?php p($form->cvv) ?>" />
+		   <font size=1><?php print_string("ccvvhelp", "enrol_authorize") ?></font></td>
+</tr>
+<tr>
+  <td align="right"><?php print_string("zipcode", "enrol_authorize") ?>: </td>
+  <td align="left"><input type="text" name="cczip" size="5" value="<?php p($form->cczip) ?>" /></td>
+</tr>
+
+</table>
+<input type="submit" value="<?php print_string("sendpaymentbutton", "enrol_authorize") ?>">
+</form>
+
+</div>

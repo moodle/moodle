@@ -1,0 +1,107 @@
+<table cellspacing="0" cellpadding="5" border="0" align="center">
+
+<tr valign="top">
+	<td align="right">enrol_cost:</td>
+	<td>
+        <input type="text" size="5" name="enrol_cost" value="<?php p($frm->enrol_cost) ?>" />
+    </td>
+    <td>
+    <?php  print_string("costdefault") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td align="right">enrol_currency:</td>
+	<td>
+    <?php choose_from_menu ($paypalcurrencies, "enrol_currency", $frm->enrol_currency, "","", "") ?>
+    </td>
+    <td>
+    <?php  print_string("currency") ?>
+    </td>
+</tr>
+
+
+
+
+<tr valign="top">
+	<td align="right">an_login:</td>
+	<td>
+        <input type="text" name="an_login" value="<?php echo $frm->an_login ?>" />
+    </td>
+    <td>
+    <?php  print_string("anlogin", "enrol_authorize") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td align="right">an_tran_key:</td>
+	<td>
+        <input type="text" name="an_tran_key" value="<?php echo $frm->an_tran_key ?>" />
+    </td>
+    <td>
+    <?php  print_string("antrankey", "enrol_authorize") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td align="right">an_password:</td>
+	<td>
+        <input type="text" name="an_password" value="<?php echo $frm->an_password ?>" />
+    </td>
+    <td>
+    <?php  print_string("anpassword", "enrol_authorize") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td align="right">an_test:</td>
+	<td>
+        <input type="checkbox" value=1 name="an_test" <?php if ($frm->an_test) echo "checked=\"true\"" ?> />
+    </td>
+    <td>
+    <?php  print_string("antestmode", "enrol_authorize") ?>
+    </td>
+</tr>
+
+
+<tr valign="top">
+	<td align="right">enrol_mailstudents:</td>
+	<td>
+        <input type="checkbox" value=1 name="enrol_mailstudents" <?php if ($frm->enrol_mailstudents) echo "checked=\"true\"" ?> />
+    </td>
+    <td>
+    <?php  print_string("mailstudents") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td align="right">enrol_mailteachers:</td>
+	<td>
+        <input type="checkbox" value=1 name="enrol_mailteachers" <?php if ($frm->enrol_mailteachers) echo "checked=\"true\"" ?> />
+    </td>
+    <td>
+    <?php  print_string("mailteachers") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td align="right">enrol_mailadmins:</td>
+	<td>
+        <input type="checkbox" value=1 name="enrol_mailadmins" <?php if ($frm->enrol_mailadmins) echo "checked=\"true\"" ?> />
+    </td>
+    <td>
+    <?php  print_string("mailadmins") ?>
+    </td>
+</tr>
+
+<tr valign="top">
+	<td align="right">enrol_allowinternal:</td>
+	<td>
+        <input type="checkbox" value="1" name="enrol_allowinternal" <?php if ($frm->enrol_allowinternal) echo "checked=\"true\"" ?> />
+    </td>
+    <td>
+    <?php  print_string('allowinternal') ?>
+    </td>
+</tr>
+
+</table>
