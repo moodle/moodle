@@ -116,8 +116,7 @@ class block_social_activities extends block_list {
         }
 
         if ($isediting && $modnames) {
-            $this->content->footer = '<div style="text-align: right;">'.
-                print_section_add_menus($course, 0, $modnames, true, true).'</div>';
+            $this->content->footer = print_section_add_menus($course, 0, $modnames, true, true);
         } else {
             $this->content->footer = '';
         }
