@@ -387,6 +387,13 @@
         }
         notify("$strattemptsexist<br /><a href=\"attempts.php?id=$cm->id\">$strviewallanswers ($usercount $strusers)</a>");
 
+        echo "<center>\n";
+        echo "<form target=\"_parent\" method=\"get\" action=\"$CFG->wwwroot/mod/quiz/edit.php\">\n";
+        echo "    <input type=\"hidden\" name=\"courseid\" value=\"$course->id\" />\n";
+        echo "    <input type=\"submit\" value=\"".get_string("editcatquestions", "quiz")."\" />\n";
+        echo "</form>";
+        echo "</center>\n";
+
         $sumgrades = quiz_print_question_list($modform, false, $SESSION->quiz_showbreaks);
         if (!set_field('quiz', 'sumgrades', $sumgrades, 'id', $modform->instance)) {
             error('Failed to set sumgrades');
