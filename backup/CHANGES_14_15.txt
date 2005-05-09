@@ -35,10 +35,12 @@ Now I show the specific detailed status of every item in the process:
           one when restoring old files!! (sent to Michael, Mark and Martin).
 21. DONE: Review the workshop module completely! Check the upgrade process to
           mimic it.
-22. PROG: Review the wiki module fully. Now the wiki backup & restore seems to
+22. DONE: Review the wiki module fully. Now the wiki backup & restore seems to
           be working fine. About binary contents loaded directly to DB, I
           haven't found HOW TO LOAD them. I've opened Bug 2634 to see if
-          somebody can tell me how to reproduce it!
+          somebody can tell me how to reproduce it! After chat with MD, the
+          option to upload everything to filesystem seems to be the correct
+          approach. Sent to the bug.
 23. DONE: Add support for metacourses in backup and restore. Show a new option
           to decide what to do (ignore, process).
 24. DONE: Take out THEME from backup directory.
@@ -49,9 +51,11 @@ Now I show the specific detailed status of every item in the process:
 28. DONE: Add course->theme, groups->them and user->theme. If no present,
           default blank.
 29. DONE: Add support for block instances in modules. Bug 2517. By Jon.
-30. DELAY:Add support for user->dstpreset. After talking with Jon, delayed
+30. DONE: Add support for user->dstpreset. After talking with Jon, delayed
           because there isn't possible to recode it to destination server. But
           sometime we should think in a solution (STAMPS or CHECKSUMS of DSTs).
+          Not needed due to the final timezone/dst schema (it uses common names
+          consistent between servers). PJ. Skipped.
 31. DONE: Change mail's priority (bug 2647) if something goes wrong in scheduled backups.
 32. DONE: quiz_questions->hidden and quiz_responses->originalquestion
 33. DONE: quiz_question_version
@@ -62,10 +66,13 @@ Now I show the specific detailed status of every item in the process:
 38. DONE: Convert every wiki formatted text to markdown. Bye, wikies! ;-)
 39. DONE: Add backup/restore of new grade tables.
 40. DONE: event->repeatid.
-41. TODO: Add support to forum_track_prefs table. Is it needed?
+41. DONE: Add support to forum_track_prefs table. Not necessary. MD. Skipped.
 42. DONE: Add user->trackforums (MD did).
 43. TODO: Add forum->trackingtype
 44. TODO: Review SCORM module.
+45. TODO: Modify QUIZ  module (Gustav's team will do 1.5 <==> 1.5 and I start
+          with pre1.5 restore).
+46. TODO: Orphan categories thing in quiz module need final solution.
          
 Eloy (stronk7)
 23-01-2004
