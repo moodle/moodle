@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // assignment.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005021601)
+      // assignment.php - created with Moodle 1.5 ALPHA (2005042300)
 
 
 $string['allowresubmit'] = '允许重交';
@@ -12,20 +12,31 @@ $string['assignmentmailhtml'] = '{$a->teacher}已经在<i>“{$a->assignment}”
 你可以在<a href=\"$a->url\">你交的作业</a>后面看到反馈意见。';
 $string['assignmentname'] = '作业名称';
 $string['assignmenttype'] = '作业类型';
+$string['availabledate'] = '开始日期';
+$string['comment'] = '点评';
+$string['commentinline'] = '内嵌点评';
+$string['availabledate'] = '开始日期';
+$string['comment'] = '评论';
 $string['configmaxbytes'] = '缺省情况下站点中作业的最大尺寸(同时受课程和其它本地设置的限制)';
 $string['description'] = '描述';
 $string['duedate'] = '截止日期';
+$string['editmysubmission'] = '修改已提交的作业';
 $string['duedateno'] = '无截止日期';
 $string['early'] = '$a 之前';
 $string['emailteachermail'] = '{$a->username}更新了他为作业“{$a->assignment}”提交的内容。新内容位于:
 
 $a->url';
 $string['emailteachermailhtml'] = '{$a->username}更新了他为作业<i>“{$a->assignment}”</i>提交的内容。<br /><br />它位于<a href=\"$a->url\">Web服务器</a>上。';
-$string['emailteachers'] = 'E-mail提醒教师';
-$string['existingfiledeleted'] = '已被删除的已经存在的文件: $a';
-$string['failedupdatefeedback'] = '为用户{$a}更新上交反馈失败';
+$string['emailteachers'] = '用E-mail提醒教师';
+$string['existingfiledeleted'] = '文件“{$a}”已被删除';
+$string['failedupdatefeedback'] = '为用户{$a}更新反馈失败';
 $string['feedback'] = '反馈';
+$string['feedbackfromteacher'] = '来自{$a}的反馈';
 $string['feedbackupdated'] = '为{$a}个人更新上交反馈';
+$string['helpoffline'] = '<p>如果学生在Moodle之外完成作业（比如在其它网站，或者与教师直接交流），那么可以使用这种类型的作业。</p><p> 学生可以看到作业的描述，但不能上传包括文件在内的任何信息。教师依然可以对作业评分，学生也会得到关于他们的分数的通知。</p>';
+$string['helponline'] = '<p>这种类型的作业让学生使用普通的编辑工具来编辑文本。教师可以对作业在线评分，甚至可以修改和嵌入点评到学生的答案里。</p>
+<p>（如果你熟悉旧版本的Moodle，那么这种类型的作业完成和旧的日志模块相同的工作。）</p>';
+$string['helpuploadsingle'] = '<p>这种类型的作业允许每个参与者上传任何类型的一个文件。</p> <p>可以是一个Word文档，一个图片，一个打包了的网站，或者任何你想让他们提交的。</p>';
 $string['late'] = '$a 之后';
 $string['maximumgrade'] = '最高得分';
 $string['maximumsize'] = '大小限制';
@@ -37,16 +48,20 @@ $string['notgradedyet'] = '没有评分';
 $string['notsubmittedyet'] = '未交';
 $string['overwritewarning'] = '警告: 重新上载将覆盖你已交的作业';
 $string['saveallfeedback'] = '保存我的所有反馈';
-$string['submissionfeedback'] = '上交反馈';
-$string['submissions'] = '上交';
+$string['submission'] = '提交';
+$string['submissionfeedback'] = '对提交信息的反馈';
+$string['submissions'] = '提交信息';
+$string['submissionsaved'] = '已经保存了你的修改';
 $string['submitassignment'] = '用此表单上交作业';
 $string['submitted'] = '已交';
 $string['typeoffline'] = '离线活动项目';
+$string['typeonline'] = '在线文本';
+$string['typeonline'] = '在线文本';
 $string['typeuploadsingle'] = '上载单个文件';
 $string['uploadbadname'] = '该文件名含有怪异字符，无法上载';
 $string['uploadedfiles'] = '已上载的文件';
 $string['uploaderror'] = '在服务器上保存文件时有错误发生';
-$string['uploadfailnoupdate'] = '文件上载成功但无法更新你的上交信息！';
+$string['uploadfailnoupdate'] = '文件上载成功但无法更新你的提交信息！';
 $string['uploadfiletoobig'] = '抱歉，文件太大(最大不超过{$a}字节)';
 $string['uploadnofilefound'] = '未发现任何文件——你能确定已选取了一个上载文件吗?';
 $string['uploadnotregistered'] = '“{$a}”上载成功，但尚未登记!';

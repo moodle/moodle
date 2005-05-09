@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.5 ALPHA (2005042300)
+      // choice.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['addmorechoices'] = '更多选项';
@@ -34,6 +34,8 @@ $string['responses'] = '回答';
 $string['responsesto'] = '回答{$a}';
 $string['savemychoice'] = '保存我的选择';
 $string['showunanswered'] = '显示未被回答的问题的列';
+$string['spaceleft'] = '个可用空间';
+$string['spacesleft'] = '个可用空间';
 $string['taken'] = '已选';
 $string['timerestrict'] = '必须在此时间之间回答';
 $string['viewallresponses'] = '查看{$a}回复';

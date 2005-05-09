@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041900)
+      // auth.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['alternatelogin'] = '如果你在此输入一个URL，它将被用于本站的登录。这个页面上应当有一个表单，表单的action一项应设定为<strong>“{$a}”</strong>，并且返回的字段中应当有<strong>username</strong>和<strong>password</strong>。<br />小心宾不要输入错误的URL，否则你可能会被锁在站点之外。<br />要使用缺省的登录页面请为此设置保留空白。';
@@ -96,14 +96,15 @@ $string['auth_passwordwillexpire'] = '您的密码将在{$a}天后过期，现�
 $string['auth_pop3description'] = '该方法使用一个POP3服务器来检验用户名和密码。';
 $string['auth_pop3host'] = 'POP3服务器地址。用IP地址，不要用域名。';
 $string['auth_pop3mailbox'] = '要连接的邮箱名称。(通常是INBOX)';
-$string['auth_pop3port'] = '服务器端口（通常是110）';
+$string['auth_pop3port'] = '服务器端口（一般是110，SSL常用995）';
 $string['auth_pop3title'] = '使用一个POP3服务器';
 $string['auth_pop3type'] = '服务器类型。如果你的POP3服务器使用安全验证，请选择pop3cert。';
-$string['auth_shib_instructions'] = '如果您的学院支持Shibboleth，可以使用<a href=\"$a\">Shibboleth登录</a>来访问它。<br />否则请使用普通的登录表格。';
+$string['auth_shib_instructions'] = '如果您的学校支持Shibboleth，可以使用<a href=\"$a\">Shibboleth登录</a>来访问它。<br />否则请使用普通的登录表格。';
 $string['auth_shib_instructions_help'] = '应当在此为你的用户提供关于Shibboleth的解释。在登录屏幕上，将会显示这些提示。其中应当包含一个指向“<b>$a</b>”的链接，这样Shibboleth用户可以轻松等如。如果此项为空，缺省的指示信息将会被是用(并非为Shibboleth定制)。';
 $string['auth_shib_only'] = '只用Shibboleth';
 $string['auth_shib_only_description'] = '如果只是用Shibboleth认证方式，请设定此选项。';
 $string['auth_shib_settings'] = '在设定你的Moodle是用Shibboleth前，请仔细阅读<a href=\"../auth/shibboleth/README.txt\" target=\"_blank\">README</a>文件。';
+$string['auth_shib_username_description'] = '用在Moodle中当作用户名的Shibboleth环境变量名';
 $string['auth_shibboleth_login'] = 'Shibboleth登录';
 $string['auth_shibboleth_manual_login'] = '手工登录';
 $string['auth_shibbolethdescription'] = '是用这个方法，用户的创建和验证是使用<a href=\"http://shibboleth.internet2.edu/\" target=\"_blank\">Shibboleth</a>进行的';

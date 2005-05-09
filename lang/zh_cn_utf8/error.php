@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // error.php - created with Moodle 1.5 ALPHA (2005042300)
+      // error.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['adminprimarynoedit'] = '其他人不能修改主管理员信息';
@@ -17,6 +17,7 @@ $string['notavailable'] = '目前它已经不存在了';
 $string['onlyeditown'] = '你只能修改您自己的信息';
 $string['processingstops'] = '处理到此结束。剩余记录将被忽略。';
 $string['restricteduser'] = '抱歉,你的当前帐号“{$a}”无权进行上述操作。';
+$string['sessionerroruser'] = '你长时间未活动，请重新登录。';
 $string['sessionipnomatch'] = '对不起，但您的IP地址已经和您第一次登录时所使用的不同了。这个安全功能可以防止骇客在登录到网站后窃取您的身份信息。普通用户看不到这个消息——请找站点管理员来以获得更多帮助。';
 $string['unknowncourse'] = '未知的课程命名为：“{a}”';
 $string['usernotaddederror'] = '用户“{$a｝”添加失败——未知的错误';

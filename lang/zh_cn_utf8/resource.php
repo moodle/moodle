@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // resource.php - created with Moodle 1.5 ALPHA (2005042300)
+      // resource.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['addresource'] = '添加资源';
@@ -67,6 +67,7 @@ $string['notefile'] = '要上载更多文件到课程中（这样它们就会出
 $string['notypechosen'] = '你必需选择一个类型。用浏览器的后退按钮退回并重试。';
 $string['pagedisplay'] = '在当前窗口显示此资源';
 $string['pagewindow'] = '同一窗口';
+$string['pan'] = '平衡';
 $string['parameter'] = '参数';
 $string['parameters'] = '参数';
 $string['popupresource'] = '该资源将出现在一个弹出窗口中.';
@@ -89,5 +90,6 @@ $string['resourcetypetext'] = '编写文本页';
 $string['searchweb'] = '搜索网页';
 $string['serverurl'] = '服务器链接($a->wwwroot)';
 $string['variablename'] = '变量名';
+$string['vol'] = '音量';
 
 ?>

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // countries.php - created with Moodle 1.5 ALPHA (2005042300)
+      // countries.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['AD'] = '安道尔';
@@ -35,12 +35,14 @@ $string['BS'] = '巴哈马';
 $string['BT'] = '不丹';
 $string['BV'] = '波沃特岛';
 $string['BW'] = '波札那';
+$string['BY'] = '白俄罗斯';
 $string['BZ'] = '百里斯';
 $string['CA'] = '加拿大';
 $string['CC'] = '格陵岛';
 $string['CF'] = '中非';
 $string['CG'] = '刚果';
 $string['CH'] = '瑞士';
+$string['CI'] = '科特迪瓦';
 $string['CK'] = '库克岛';
 $string['CL'] = '智利';
 $string['CM'] = '喀麦隆';
@@ -119,6 +121,7 @@ $string['KP'] = '韩国';
 $string['KR'] = '朝鲜';
 $string['KW'] = '科威特';
 $string['KY'] = '开曼群岛';
+$string['KZ'] = '哈萨克斯坦';
 $string['LA'] = '老挝';
 $string['LB'] = '黎巴嫩';
 $string['LC'] = '圣卢西亚';
@@ -172,6 +175,7 @@ $string['PH'] = '菲律宾';
 $string['PK'] = '巴基斯坦';
 $string['PL'] = '波兰';
 $string['PM'] = '密客隆岛';
+$string['PN'] = '皮特凯恩';
 $string['PR'] = '波多黎各';
 $string['PS'] = '巴勒斯坦';
 $string['PT'] = '葡萄牙';
