@@ -95,6 +95,7 @@ $string['downloadextra'] = '(le fichier est aussi déposé dans les fichiers du co
 $string['eachattemptbuildsonthelast'] = 'Chaque tentative complète la précédente';
 $string['editcategories'] = 'Modifier les catégories';
 $string['editcategory'] = 'Modifier la catégorie';
+$string['editcatquestions'] = 'Modifier les questions de la catégorie';
 $string['editdatasets'] = 'Modifier les jeux de données';
 $string['editingcalculated'] = 'Modifier une question calculée';
 $string['editingdescription'] = 'Modifier une description';
