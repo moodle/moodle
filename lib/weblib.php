@@ -1873,7 +1873,7 @@ function current_theme() {
     if (!empty($CFG->pagetheme)) {  // Page theme is for special page-only themes set by code
         return $CFG->pagetheme;
 
-    else if (!empty($CFG->coursetheme) and !empty($CFG->allowcoursethemes)) {  // Course themes override others
+    } else if (!empty($CFG->coursetheme) and !empty($CFG->allowcoursethemes)) {  // Course themes override others
         return $CFG->coursetheme;
 
     } else if (!empty($SESSION->theme)) {    // Session theme can override other settings
