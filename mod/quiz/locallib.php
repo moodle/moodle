@@ -2253,6 +2253,8 @@ function default_export_filename($course,$category) {
 */
 function get_questions_category( $category ) {
 
+    global $QUIZ_QTYPES;
+
     // questions will be added to an array
     $qresults = array();
 
@@ -2261,13 +2263,16 @@ function get_questions_category( $category ) {
 
         // iterate through questions, getting stuff we need
         foreach($questions as $question) {
-            $new_question = get_question_data( $question );
+            $questiontype = $QUIZ_QTYPES[$question->qtype];
+            $new_question = $questiontype->get_question_options( $question );
             $qresults[] = $new_question;
         }
     }
 
     return $qresults;
 }
+
+
 
 /**
 * Get question data for export
