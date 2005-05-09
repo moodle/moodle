@@ -1,0 +1,77 @@
+<p align="center"><b>Exportação de perguntas de uma
+Categoria</b></p>
+
+<p>Esta função permite-lhe exportar uma categoria completa de
+perguntas para um ficheiro de texto.</p>
+
+<p>Por favor, tenha em atenção que em muitos formatos de
+ficheiros se perdem algumas informações quando as perguntas
+são exportadas. Isto acontece quando os formatos não
+possuem as características que existem nas perguntas Moodle.
+Ao importar e exportar perguntas não julgue que elas são
+idênticas. Pode mesmo acontecer não ser possível exportar
+alguns tipos de perguntas. Aconselha-se que verifique os
+dados exportados antes de os utilizar num contexto de
+produção.</p>
+
+<p>Os formatos aceites actualmente são:</p>
+
+<dl>
+<dt><b>Formato GIFT</b></dt>
+<dd>
+<p>GIFT é o formato de importação/exportação mais completo que existe
+à disposição, para exportar perguntas de mini-testes Moodle para
+um ficheiro. Foi criado para facilmente os professores escreverem
+perguntas num ficheiro. Aceita Escolha-Múltipla, Verdadeiro-Falso,
+Resposta Breve, Correspondências Directas e Perguntas Numéricas,
+bem como a inserção de _____ para a palavra que falta. Repare que
+as perguntas "Cloze" não são normalmente aceites. Podem-se misturar
+vários tipos de perguntas num único ficheiro e o formato também
+aceita comentários, nomes de perguntas, "feedback" e avaliações a
+nível de percentagem. Seguem-se alguns exemplos:</p>
+<pre>
+Quem está enterrado no túmulo de Grant?{~Grant ~Jefferson =ninguém}
+
+Grant está {~enterrado =sepultado ~vivo} no túmulo de Grant.
+
+Grant está enterrado no túmulo de Grant.{FALSO}
+
+Quem está enterrado no túmulo de Grant?{= nenhuma pessoa = ninguém}
+
+Quando nasceu Ulysses S. Grant?{# 1822}
+</pre>
+
+<p align="right"><a href="help.php?file=formatgift.html&amp;module=quiz">Informação
+adicional sobre o formato GIFT</a></p>
+</dd>
+
+<dt><b>Formato Moodle XML</b></dt>
+<dd>
+<p>Este formato específico do Moodle exporta perguntas de mini-teste
+num formato XML simples. As perguntas assim exportadas podem ser
+importadas para outra categoria de perguntas, ou usadas em outros
+processos tais como transformações XSLT.</p>
+</dd>
+
+<dt><b>IMS QTI 2.0</b></dt>
+<dd>
+<p>Exporta usando o formato padrão IMS QTI (versão 2.0). Repare que
+serão gerados um grupo de ficheiros dentro de um único arquivo 'zip'.</p>
+<p align="right"><a href="http://www.imsglobal.org/question/" target="_qti">Mais
+informações encontram-se no sítio do IMS QTI</a>
+ (sítio externo numa nova janela)</p>
+</dd>
+
+<dt><b>XHTML</b></dt>
+<dd>
+<p>Exporta a categoria como uma única página com XHTML 'estricto'.
+Cada pergunta é colocada dentro da sua própria etiqueta &lt;div&gt;.
+Se quiser usar essa página tal qual, precisará pelo menos editar a
+etiqueta &lt;form&gt; no início da secção &lt;body&gt;, para que
+seja realizada alguma acção apropriada (por exemplo, enviar uma
+mensagem, usando 'mailto').</p>
+</dd>
+</dl>
+
+<p>Mais formatos deverão aparecer, incluindo WebCT e qualquer outro
+que os utilizadores de Moodle possam contribuir!</p>

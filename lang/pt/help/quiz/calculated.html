@@ -1,0 +1,106 @@
+<p align="center"><b>Perguntas Calculadas</b></p>
+<p>As Perguntas Calculadas permitem uma forma de criar uma pergunta numérica individual utilizando
+“wildcards” que são substituídos com valores individuais quando alguém se submete ao mini-teste.</p>
+<p>Segue-se uma apresentação abreviada da página inicial com alguns exemplos de entrada de dados:</p>
+<table><tbody>
+<tr valign="top">
+    <td align="right"><p><b>Pergunta:</b></p>
+    </td>
+    <td>
+        <textarea id="questiontext" name="questiontext" rows="5" cols="40" wrap="virtual">Quanto é {a} + {b} ?</textarea>
+</td>
+</tr>
+<tr valign="top">
+    <td align="right"><p><b>Imagem a Visualizar:</b></p></td>
+    <td>
+    <select name="image"><option value="" selected="selected">Nenhuma</option><option value="grevture.gif">grevture.gif</option></select>
+    </td>
+</tr>
+
+<tr valign="top">
+<td align="right"><p><b>Fórmula da Resposta Correcta:</b></p></td>
+    <td>
+    <input align="left" type="text" id="formula0" name="answer[]" size="20" value="{a} + {b}">&nbsp;&nbsp;
+    <input type="hidden" name="fraction[]" value="1.0">
+    </td>
+</tr>
+<tr valign="top">
+    <td align="right"><p><b>Tolerância:</b></p></td>
+    <td>
+    <input align="left" type="text" id="tolerance0&quot;" name="tolerance[]" size="15" value="0.01">±
+    </td>
+</tr>
+<tr valign="top">
+<td align="right"><p><b>Tipo de Tolerância:</b></p></td>
+    <td>
+    <select name="tolerancetype[]"><option value="1" selected="selected">Relativa</option><option value="2">Nominal</option><option value="3">Geometrica</option></select>
+    </td>
+</tr>
+<tr valign="top">
+<td align="right"><p><b>Algarismos Significativos:</b></p></td>
+    <td>
+    <select name="correctanswerlength[]"><option value="1">1</option><option value="2" selected="selected">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select>
+    </td>
+</tr>
+</tbody></table>
+<p>
+Na entrada de dados do texto da pergunta e na “Fórmula da Resposta Correcta” podem ver-se {a} e {b}.
+Estas e qualquer outro {nome} podem ser usados como “wildcard” que é substituído por um valor
+quando se acede ao mini-teste. Além disso, ao submeter-se ao mini-teste , a “resposta correcta” é calculada utilizando a expressão  “Fórmula  da Resposta Correcta”, que é calculada como uma expressão numérica após a substituição dos “wildcards”. Os possíveis valores do “wildcard” são fixados ou produzidos numa página posterior “Assistente de Edição” para perguntas calculadas…
+</p>
+<p>
+A fórmula de exemplo utiliza o operador +. Outros operadores aceites são -*/ e % em que % é o operador módulo. É também possível utilizar algumas das funções matemáticas do PHP. Entre estas existem 24 funções de argumento único:
+</p>
+<p>
+<b>abs, acos, acosh, asin, asinh, atan, atanh, ceil, cos, cosh, deg2rad, exp, expm1, floor, log, log10, log1p, rad2deg, round, sin, sinh, sprt, tan, tanh</b>
+</p> 
+<p>2 funções de dois  argumentos:</p>
+<p><b>atan2, pow</b></p>
+<p>
+e as funções <b>min</b> e <b>max</b> que podem ter dois ou mais argumentos. É igualmente possível
+utilizar a função <b>pi</b> que não tem qualquer argumento mas não esqueça o uso dos parênteses
+- <b>pi()</b> é  o uso correcto. Do mesmo modo, as outras funções têm de ter os seus argumentos
+entre parênteses. Uma utilização possível  é, por exemplo, <b>sin({a}) + cos({b}) * 2</b>. Não
+deverá ocorrer nenhum problema ao introduzir funções umas nas outras tais como: <b>cos(deg2rad({a} + 90))</b> etc.
+</p>
+<p>
+Encontram-se mais pormenores sobre a utilização destas funções PHP na <a target="phpmathdoc" href="http://www.php.net/manual/en/ref.math.php">documentação no sítio Web do PHP</a>
+</p>
+<p>
+Quanto às perguntas numéricas é possível permitir uma margem em que todas as respostas são aceites como correctas. O campo “Tolerância” é utilizado para esse fim. Contudo, existem três tipos diferentes de tolerâncias. O <b>Relativo</b>, o <b>Nominal</b> e o <b>Geométrico</b>. Se, durante
+o mini-teste, a resposta correcta calculada é 200 e a tolerância é fixada para 0.5 , então os diferentes tipos de tolerância funcionam da seguinte forma:
+</p>
+<dl>
+<dt><b>Relativo:</b></dt>
+<dd>
+<p>Um intervalo de tolerância é calculado multiplicando a resposta por 0.5,
+isto é, neste caso obtem-se 100, portanto, para esta tolerância a resposta correcta tem de ser
+entre 100 e 300 (200 ± 100).</p>
+<p>Isto é útil se a magnitude da resposta correcta diferir substancialmente entre os diferentes
+valores dos “wildcards”.</p>
+</dd>
+<dt><b>Nominal:</b></dt>
+<dd>
+<p>Este é o tipo de tolerância mais simples mas não muito forte. A resposta correcta tem de ser
+entre 199.5 e 200.5 (200 ± 0.5).</p>
+<p>Este tipo de tolerância pode ser útil se as diferenças entre as diversas respostas correctas
+forem pequenas.</p>
+</dd>
+<dt><b>Geométrico:</b></dt>
+<dd>
+<p>O limite mais elevado do espaço de tolerância é calculado como 200 + 0.5*200 e é o mesmo como
+para o caso relativo. O limite mais baixo é calculado como 200/(1 + 0.5).
+A resposta correcta tem , portanto, de se situar entre 133.33 e 300.</p>
+<p>Isto é útil para um cálculo complexo que tem de ter grandes tolerâncias, onde tolerâncias
+relativas de 1 ou mais seriam usadas para o limite máximo mas evidentemente não aceitáveis para o
+limite mínimo, uma vez que resultaria zero  numa resposta correcta em todos os casos.</p>
+</dd>
+</dl>
+<p>
+O campo <b>Algarismos Significativos</b> apenas indica como deve ser apresentada a resposta
+correcta na revisão ou nos relatórios. Exemplos: Se está fixada para 3 então a resposta correcta
+13.333  seria apresentada como 13.3; 1236 seria apresentada como 1240; 23 seria apresentada como 23.0 etc.
+</p>
+<p>
+O campo “feedback” e os campos opcionais de unidades funcionam exactamente da mesma forma como para as perguntas numéricas.
+</p>

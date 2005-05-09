@@ -1,0 +1,25 @@
+<p align="center"><b>Índice Discriminatório</b></p>
+
+<p>Isto providencia uma estimativa do desempenho
+em cada alínea. É calculado através da contagem do número
+dos alunos do terço superior que acertaram em cada
+pergunta do mini-teste e dividindo este número pelo 
+número dos alunos no último terço que acertaram.</p>
+
+<p>Por exemplo, se 30 alunos fizerem o mini-teste, haverá
+10 alunos nos primeiros três lugares e outros 10 nos últimos.
+Se, na pergunta #1, 9 dos melhores alunos acertarem, mas se
+apenas 3 dos mais fracos também o conseguirem, o índice
+discriminatório será 9/3 = 3.0. Os números entre parênteses
+são: (respostas correctas do topo superior/respostas correctas
+do terço inferiore).</p>
+
+<p>Se o índice é inferior a 1.0 significa que mais dos alunos
+fracos conseguiram  acertar, em relação aos alunos considerados
+mais aplicados. Tais perguntas devem ser banidas como inválidas.
+Na realidade, elas reduzem a precisão da classificação global
+do mini-teste.</p>
+
+<p> Se nenhum dos alunos fracos acertar na resposta, o
+denominador será 0, o que irá produzir um resultado de infinito.
+O programa substitui um "10" para cada um desses casos.</p>
