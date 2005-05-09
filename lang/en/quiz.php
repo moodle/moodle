@@ -111,6 +111,7 @@ $string['editingrandomsamatch'] = 'Editing a Random Short-Answer Matching questi
 $string['editingshortanswer'] = 'Editing a Short-Answer question';
 $string['editingtruefalse'] = 'Editing a True/False question';
 $string['editquestions'] = 'Edit questions';
+$string['editcatquestions'] = 'Edit category questions';
 $string['errorsdetected'] = '$a error(s) detected';
 $string['existingcategory1'] = 'a literal from an already existing set of literals that are also used by other questions in this category';
 $string['existingcategory2'] = 'a file from an already existing set of files that are also used by other questions in this category';
