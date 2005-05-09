@@ -1,0 +1,19 @@
+<?PHP // $Id$ 
+      // enrol_authorize.php - created with Moodle 1.5 ALPHA (2005050600)
+
+
+$string['anlogin'] = 'Authorize.net: ログイン名';
+$string['anpassword'] = 'Authorize.net: パスワード ( 不要 )';
+$string['antestmode'] = 'Authorize.net: テストトランザクション';
+$string['antrankey'] = 'Authorize.net: トランザクションキー';
+$string['ccexpire'] = '有効期限';
+$string['ccno'] = 'クレジットカード番号';
+$string['ccvv'] = 'CV2';
+$string['ccvvhelp'] = 'カードの裏面 ( 3桁の数字 ) をご覧ください。';
+$string['description'] = 'Authorize.netモジュールでは、クレジットカード経由でコースの支払いを行うことができます。コースの受講料がゼロの場合、学生に対して受講登録に関する支払いは求められません。サイト全体の利用料をデフォルトとしてここで設定して、コースごとに受講料を設定することができます。コース受講料を設定した場合、コース受講料はサイト利用料に優先します。';
+$string['enrolname'] = 'Authorize.net クレジットカード・ゲイトウェイ';
+$string['nameoncard'] = 'クレジットカード名義';
+$string['sendpaymentbutton'] = '支払いの送信';
+$string['zipcode'] = '郵便番号';
+
+?>

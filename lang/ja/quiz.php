@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 ALPHA (2005043000)
+      // quiz.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['acceptederror'] = 'エラー範囲';
@@ -98,6 +98,7 @@ $string['downloadextra'] = '( ファイルはコースファイル内の /quizフォルダにも保存
 $string['eachattemptbuildsonthelast'] = '直近の解答内容を反映させる';
 $string['editcategories'] = 'カテゴリの編集';
 $string['editcategory'] = 'カテゴリの編集';
+$string['editcatquestions'] = 'カテゴリ問題の編集';
 $string['editdatasets'] = 'データセットの編集';
 $string['editingcalculated'] = '計算問題の編集';
 $string['editingdescription'] = '説明の編集';

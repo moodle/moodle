@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 ALPHA (2005043000)
+      // scorm.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['asset'] = 'アセット';
@@ -11,13 +11,6 @@ $string['browsed'] = '閲覧済み';
 $string['browsemode'] = '閲覧モード';
 $string['chooseapacket'] = 'SCORMパッケージの選択または更新';
 $string['completed'] = '完了';
-$string['configframesize'] = 'SCORMパッケージを使用する時の、ナビゲーションを含むトップフレームのサイズ ( ピクセル )';
-$string['configpopup'] = '新しいSCORMパッケージを追加する場合、ポップアップウインドウに表示できる場合は表示しますか?';
-$string['configpopupheight'] = '新しいポップアップウインドウのデフォルト高は?';
-$string['configpopupresizable'] = 'ポップアップウインドウをデフォルトでリサイズ可能にしますか?';
-$string['configpopupscrollbars'] = 'ポップアップウインドウをデフォルトでスクロール可能にしますか?';
-$string['configpopupstatus'] = 'ポップアップウインドウにデフォルトでステータスバーを表示しますか?';
-$string['configpopupwidth'] = '新しいポップアップウインドウのデフォルト幅は?';
 $string['coursepacket'] = 'コースパッケージ';
 $string['coursestruct'] = 'コース構造';
 $string['datadir'] = 'ファイルシステムエラー: コースデータディレクトリを作成できません。';
@@ -32,25 +25,20 @@ $string['expcoll'] = '展開する/折りたたむ';
 $string['failed'] = '失敗';
 $string['found'] = 'マニフェストファイルが見つかりました';
 $string['frameheight'] = 'SCOフレームの高さ';
+$string['framewidth'] = 'SCOフレームの幅';
 $string['gradeaverage'] = '平均得点';
 $string['gradehighest'] = '最高得点';
 $string['grademethod'] = '評価方法';
 $string['gradescoes'] = 'SCOの状態';
 $string['gradesum'] = '評点の合計';
 $string['guestsno'] = 'ゲストはscormのコースを閲覧できません';
+$string['height'] = '高さ';
 $string['incomplete'] = '不完全';
 $string['missing_attribute'] = 'タグ $a->tag に属性 $a->attr がありません';
 $string['missing_tag'] = 'タグ無し $a->tag';
 $string['mode'] = 'モード';
 $string['modulename'] = 'Scorm';
 $string['modulenameplural'] = 'Scorm';
-$string['newheight'] = 'デフォルトウインドウ高 ( ピクセル )';
-$string['newresizable'] = 'ウインドウのリサイズを許可';
-$string['newscrollbars'] = 'ウインドウのスクロールを許可';
-$string['newstatus'] = 'ステータスバーを表示';
-$string['newwidth'] = 'デフォルトウインドウ幅 ( ピクセル )';
-$string['newwindow'] = '新しいウインドウ';
-$string['newwindowopen'] = 'このSCORMパッケージを新しいポップアップウインドウで表示する';
 $string['next'] = '続ける';
 $string['no_attributes'] = 'タグ $a->tag にアトリビュートがありません';
 $string['no_children'] = 'タグ $a->tag に子タグがありません';
@@ -63,6 +51,7 @@ $string['organizations'] = '組織';
 $string['packagedir'] = 'ファイルシステムエラー: パッケージディレクトリを作成できません。';
 $string['passed'] = 'パス';
 $string['php5'] = 'PHP 5 ( DOMXMLネイティブライブラリ )';
+$string['popup'] = 'SCOを新しいウインドウで開く';
 $string['position_error'] = '$a->tag タグは $a->parent タグの子タグになりません';
 $string['prev'] = '前の';
 $string['regular'] = '標準マニフェストファイル';
@@ -80,5 +69,6 @@ $string['validation'] = '確認結果';
 $string['validationtype'] = 'ここではSCORMマニフェストファイルを確認するDOMXMLライブラリを設定します。分からない場合は、このままにしてください。';
 $string['versionwarning'] = 'マニフェストファイルのバージョンが1.3より古いため、$a->tag タグに警告があります。';
 $string['viewallreports'] = '$a 回分のレポートを表示';
+$string['width'] = '幅';
 
 ?>
