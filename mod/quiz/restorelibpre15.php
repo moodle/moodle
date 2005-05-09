@@ -93,7 +93,7 @@
 
     //STEP 1. Restore categories/questions and associated structures
     //    (course independent)
-    function quiz_restore_question_categories($category,$restore) {
+    function quiz_restore_pre15_question_categories($category,$restore) {
 
         global $CFG;
 
@@ -295,7 +295,7 @@
         return $status;
     }
 
-    function quiz_restore_questions ($old_category_id,$new_category_id,$info,$restore) {
+    function quiz_restore_pre15_questions ($old_category_id,$new_category_id,$info,$restore) {
 
         global $CFG;
 
@@ -431,7 +431,7 @@
         return $status;
     }
 
-    function quiz_restore_answers ($old_question_id,$new_question_id,$info,$restore) {
+    function quiz_restore_pre15_answers ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -482,7 +482,7 @@
         return $status;
     }
 
-    function quiz_restore_map_answers ($old_question_id,$new_question_id,$info,$restore) {
+    function quiz_restore_pre15_map_answers ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -541,7 +541,7 @@
         return $status;
     }
 
-    function quiz_restore_shortanswer ($old_question_id,$new_question_id,$info,$restore) {
+    function quiz_restore_pre15_shortanswer ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -604,7 +604,7 @@
         return $status;
     }
 
-    function quiz_restore_truefalse ($old_question_id,$new_question_id,$info,$restore) {
+    function quiz_restore_pre15_truefalse ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -657,7 +657,7 @@
         return $status;
     }
 
-    function quiz_restore_multichoice ($old_question_id,$new_question_id,$info,$restore) {
+    function quiz_restore_pre15_multichoice ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -721,7 +721,7 @@
         return $status;
     }
 
-    function quiz_restore_match ($old_question_id,$new_question_id,$info,$restore) {
+    function quiz_restore_pre15_match ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -791,7 +791,7 @@
         return $status;
     }
 
-    function quiz_restore_map_match ($old_question_id,$new_question_id,$info,$restore) {
+    function quiz_restore_pre15_map_match ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -850,7 +850,7 @@
         return $status;
     }
 
-    function quiz_restore_map_multianswer ($old_question_id,$new_question_id,$info,$restore) {
+    function quiz_restore_pre15_map_multianswer ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -905,7 +905,7 @@
         return $status;
     }
 
-    function quiz_restore_randomsamatch ($old_question_id,$new_question_id,$info,$restore) {
+    function quiz_restore_pre15_randomsamatch ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -945,7 +945,7 @@
         return $status;
     }
 
-    function quiz_restore_numerical ($old_question_id,$new_question_id,$info,$restore) {
+    function quiz_restore_pre15_numerical ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -996,7 +996,7 @@
         return $status;
     }
 
-    function quiz_restore_calculated ($old_question_id,$new_question_id,$info,$restore) {
+    function quiz_restore_pre15_calculated ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -1054,7 +1054,7 @@
         return $status;
     }
 
-    function quiz_restore_multianswer ($old_question_id,$new_question_id,$info,$restore) {
+    function quiz_restore_pre15_multianswer ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -1137,7 +1137,7 @@
         return $status;
     }
 
-    function quiz_restore_numerical_units ($old_question_id,$new_question_id,$info,$restore) {
+    function quiz_restore_pre15_numerical_units ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -1169,7 +1169,7 @@
         return $status;
     }
 
-    function quiz_restore_dataset_definitions ($old_question_id,$new_question_id,$info,$restore) {
+    function quiz_restore_pre15_dataset_definitions ($old_question_id,$new_question_id,$info,$restore) {
 
         global $CFG;
 
@@ -1256,7 +1256,7 @@
         return $status;
     }
 
-    function quiz_restore_dataset_items ($definitionid,$info,$restore) {
+    function quiz_restore_pre15_dataset_items ($definitionid,$info,$restore) {
 
         global $CFG;
 
@@ -1290,7 +1290,7 @@
 
     //STEP 2. Restore quizzes and associated structures
     //    (course dependent)
-    function quiz_restore_mods($mod,$restore) {
+    function quiz_restore_pre15_mods($mod,$restore) {
 
         global $CFG;
 
@@ -1395,7 +1395,7 @@
     }
 
     //This function restores the quiz_question_grades
-    function quiz_question_grades_restore_mods($quiz_id,$info,$restore) {
+    function quiz_question_grades_restore_pre15_mods($quiz_id,$info,$restore) {
 
         global $CFG;
 
@@ -1450,7 +1450,7 @@
     }
 
     //This function restores the quiz_question_versions
-    function quiz_question_versions_restore_mods($quiz_id,$info,$restore) {
+    function quiz_question_versions_restore_pre15_mods($quiz_id,$info,$restore) {
 
         global $CFG, $USER;
 
@@ -1521,7 +1521,7 @@
     }
 
     //This function restores the quiz_attempts
-    function quiz_attempts_restore_mods($quiz_id,$info,$restore) {
+    function quiz_attempts_restore_pre15_mods($quiz_id,$info,$restore) {
 
         global $CFG;
 
@@ -1583,7 +1583,7 @@
     }
 
     //This function restores the quiz_responses
-    function quiz_responses_restore_mods($attempt_id,$info,$restore) {
+    function quiz_responses_restore_pre15_mods($attempt_id,$info,$restore) {
 
         global $CFG;
 
@@ -1814,7 +1814,7 @@
     }
 
     //This function restores the quiz_grades
-    function quiz_grades_restore_mods($quiz_id,$info,$restore) {
+    function quiz_grades_restore_pre15_mods($quiz_id,$info,$restore) {
 
         global $CFG;
 
@@ -1872,7 +1872,7 @@
 
     //This function converts texts in FORMAT_WIKI to FORMAT_MARKDOWN for
     //some texts in the module
-    function quiz_restore_wiki2markdown ($restore) {
+    function quiz_restore_pre15_wiki2markdown ($restore) {
 
         global $CFG;
 
@@ -1910,7 +1910,7 @@
 
     //This function returns a log record with all the necessay transformations
     //done. It's used by restore_log_module() to restore modules log.
-    function quiz_restore_logs($restore,$log) {
+    function quiz_restore_pre15_logs($restore,$log) {
 
         $status = false;
 
