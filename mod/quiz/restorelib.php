@@ -1294,6 +1294,11 @@
 
         global $CFG;
 
+        if (empty($CFG->enablerestorequiz)) {
+            print_simple_box ('Restore of quizzes temporary disabled <br />(under development)','center', '', 'red');
+            return true;
+        }
+
         $status = true;
 
         //Get record from backup_ids
