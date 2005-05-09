@@ -1870,9 +1870,10 @@ function print_footer($course=NULL, $usercourse=NULL) {
 function current_theme() {
     global $CFG, $USER, $SESSION, $course;
 
-/// Logic for this will probably change to accomodate local theme rules.
+    if (!empty($CFG->pagetheme)) {  // Page theme is for special page-only themes set by code
+        return $CFG->pagetheme;
 
-    if (!empty($CFG->coursetheme) and !empty($CFG->allowcoursethemes)) {  // Course theme can override all others
+    else if (!empty($CFG->coursetheme) and !empty($CFG->allowcoursethemes)) {  // Course themes override others
         return $CFG->coursetheme;
 
     } else if (!empty($SESSION->theme)) {    // Session theme can override other settings
