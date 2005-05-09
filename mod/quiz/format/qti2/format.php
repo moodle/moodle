@@ -270,7 +270,7 @@ function handle_questions_media(&$questions, $path, $courseid) {
         if ($result !== true) {
             notify(implode("<br />", $result));
         }
-        
+       
         $manifestquestions = $this->objects_to_array($questions);
         $manifestid = str_replace(array(':', '/'), array('-','_'), "question_category_{$this->category->id}---{$CFG->wwwroot}");
         $smarty->assign('externalfiles', 1);
@@ -279,6 +279,7 @@ function handle_questions_media(&$questions, $path, $courseid) {
         $smarty->assign('quizinfo', "All questions in category {$this->category->id}");
         $smarty->assign('questions', $manifestquestions);
         $smarty->assign('lang', $this->lang);
+        $smarty->error_reporting = 99;
         $expout = $smarty->fetch('imsmanifest.tpl');
         $filepath = $path.'/imsmanifest.xml';
         if (!$fh=fopen($filepath,"w")) {
@@ -541,9 +542,10 @@ function xml_entitize(&$collection) {
         // output depends on question type
         switch($question->qtype) {
         case TRUEFALSE:
-            $answers[0] = (array)$question->trueanswer;
+            $qanswers = $question->options->answers;
+            $answers[0] = (array)$qanswers['true'];
             $answers[0]['answer'] = get_string("true", "quiz");
-            $answers[1] = (array)$question->falseanswer;
+            $answers[1] = (array)$qanswers['false'];
             $answers[1]['answer'] = get_string("false", "quiz");
             
             if (!empty($shuffleanswers)) {
@@ -567,7 +569,7 @@ function xml_entitize(&$collection) {
             $expout = $smarty->fetch('choice.tpl');
             break;
         case MULTICHOICE:
-            $answers = $this->objects_to_array($question->answers);
+            $answers = $this->objects_to_array($question->options->answers);
             if (!empty($shuffleanswers)) {
                 $answers = $this->shuffle_things($answers);
             }
@@ -578,11 +580,11 @@ function xml_entitize(&$collection) {
             $smarty->assign('responsedeclarationcardinality', $correctcount > 1 ? 'multiple' : 'single');
             $smarty->assign('correctresponses', $correctresponses);
             $smarty->assign('answers', $answers);
-            $smarty->assign('maxChoices', $question->single ? '1' : count($answers));
+            $smarty->assign('maxChoices', $question->options->single ? '1' : count($answers));
             $expout = $smarty->fetch('choiceMultiple.tpl');
             break;
         case SHORTANSWER:
-            $answers = $this->objects_to_array($question->answers);
+            $answers = $this->objects_to_array($question->options->answers);
             if (!empty($shuffleanswers)) {
                 $answers = $this->shuffle_things($answers);
             }
@@ -596,14 +598,15 @@ function xml_entitize(&$collection) {
             $expout = $smarty->fetch('textEntry.tpl');
             break;
         case NUMERICAL:
-            $smarty->assign('lowerbound', $question->min);        
-            $smarty->assign('upperbound', $question->max);        
-            $smarty->assign('answer', $question->answer);        
+            $qanswer = array_pop( $question->options->answers );
+            $smarty->assign('lowerbound', $qanswer->answer - $question->options->tolerance);        
+            $smarty->assign('upperbound', $qanswer->answer + $question->options->tolerance);        
+            $smarty->assign('answer', $qanswer->answer);        
             $expout = $smarty->fetch('numerical.tpl');
             break;
         case MATCH:
-            $this->xml_entitize($question->subquestions);
-            $subquestions = $this->objects_to_array($question->subquestions);
+            $this->xml_entitize($question->options->subquestions);
+            $subquestions = $this->objects_to_array($question->options->subquestions);
             if (!empty($shuffleanswers)) {
                 $subquestions = $this->shuffle_things($subquestions);
             }
@@ -617,6 +620,7 @@ function xml_entitize(&$collection) {
             $expout = $smarty->fetch('extendedText.tpl');
             break;
         case MULTIANSWER:
+            // echo "<pre>"; print_r( $question ); echo "</pre>"; die();
             $answers = $this->get_cloze_answers_array($question);
             $questions = $this->get_cloze_questions($question, $answers, $allowedtags);
             
@@ -679,7 +683,7 @@ function xml_entitize(&$collection) {
             }
         }
         $smarty = new Smarty;
-        $smarty->template_dir = "{$CFG->dirroot}/mod/quiz/format/qti/templates";
+        $smarty->template_dir = "{$CFG->dirroot}/mod/quiz/format/qti2/templates";
         $smarty->compile_dir  = "$path";
         return $smarty;
     }
@@ -805,8 +809,6 @@ function xml_entitize(&$collection) {
         switch ($question->qtype) {
             case DESCRIPTION:
                 return 'false';
-            //case SIMPLEESSAY:
-            //    return 'false';
             default:
                 return 'true';
         }
@@ -826,8 +828,6 @@ function xml_entitize(&$collection) {
                 return 'true';
             case MULTICHOICE:
                 return 'true';
-            case XMULTICHOICE:
-                return 'true';
             case SHORTANSWER:
                 return 'true';
             case NUMERICAL:
@@ -836,11 +836,7 @@ function xml_entitize(&$collection) {
                 return 'true';
             case DESCRIPTION:
                 return 'false';
-            case SIMPLEESSAY:
-                return 'false';
             case MULTIANSWER:
-                return 'true';
-            case DRAGDROP:
                 return 'true';
             default:
                 return 'true';
@@ -862,9 +858,6 @@ function xml_entitize(&$collection) {
         case MULTICHOICE:
             $name = 'choiceInteraction';
             break;
-        case XMULTICHOICE:
-            $name = 'choiceInteraction';
-            break;
         case SHORTANSWER:
             $name = 'textInteraction';
             break;
@@ -877,14 +870,8 @@ function xml_entitize(&$collection) {
         case DESCRIPTION:
             $name = 'extendedTextInteraction';
             break;
-        case SIMPLEESSAY:
-            $name = 'extendedTextInteraction';
-            break;
         case MULTIANSWER:
             $name = 'textInteraction';
-            break;
-        case DRAGDROP:
-            $name = 'graphicGapMatchInteraction';
             break;
         default:
             $name = 'textInteraction';
