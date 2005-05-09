@@ -1,7 +1,7 @@
 <?php
 
-# kses 0.2.1 - HTML/XHTML filter that only allows some elements and attributes
-# Copyright (C) 2002, 2003  Ulf Harnhammar
+# kses 0.2.2 - HTML/XHTML filter that only allows some elements and attributes
+# Copyright (C) 2002, 2003, 2005  Ulf Harnhammar
 #
 # This program is free software and open source software; you can redistribute
 # it and/or modify it under the terms of the GNU General Public License as
@@ -22,7 +22,10 @@
 #
 # E-mail:      metaur at users dot sourceforge dot net
 # Web page:    http://sourceforge.net/projects/kses
-# Paper mail:  (not at the moment)
+# Paper mail:  Ulf Harnhammar
+#              Ymergatan 17 C
+#              753 25  Uppsala
+#              SWEDEN
 #
 # [kses strips evil scripts!]
 
@@ -60,7 +63,7 @@ function kses_version()
 # This function returns kses' version number.
 ###############################################################################
 {
-  return '0.2.1';
+  return '0.2.2';
 } # function kses_version
 
 
@@ -101,12 +104,14 @@ function kses_split2($string, $allowed_html, $allowed_protocols)
   $slash = trim($matches[1]);
   $elem = $matches[2];
   $attrlist = $matches[3];
- 
-  		
-	  if ( !is_array($allowed_html[strtolower($elem)]))
-		return '';
-		# They are using a not allowed HTML element
 
+  if (!@isset($allowed_html[strtolower($elem)]))
+    return '';
+    # They are using a not allowed HTML element
+
+  if ($slash != '')
+    return "<$slash$elem>";
+  # No attributes are allowed for closing elements
 
   return kses_attr("$slash$elem", $attrlist, $allowed_html,
                    $allowed_protocols);
@@ -131,7 +136,7 @@ function kses_attr($element, $attr, $allowed_html, $allowed_protocols)
 
 # Are any attributes allowed at all for this element?
 
-  if (count($allowed_html[strtolower($element)]) == 0)
+  if (@count($allowed_html[strtolower($element)]) == 0)
     return "<$element$xhtml_slash>";
 
 # Split it
@@ -145,10 +150,12 @@ function kses_attr($element, $attr, $allowed_html, $allowed_protocols)
 
   foreach ($attrarr as $arreach)
   {
+    if (!@isset($allowed_html[strtolower($element)]
+                            [strtolower($arreach['name'])]))
+      continue; # the attribute is not allowed
+
     $current = $allowed_html[strtolower($element)]
                             [strtolower($arreach['name'])];
-    if ($current == '')
-      continue; # the attribute is not allowed
 
     if (!is_array($current))
       $attr2 .= ' '.$arreach['whole'];
@@ -376,7 +383,9 @@ function kses_bad_protocol($string, $allowed_protocols)
 ###############################################################################
 {
   $string = kses_no_null($string);
+  $string = preg_replace('/\xad+/', '', $string); # deals with Opera "feature"
   $string2 = $string.'a';
+
   while ($string != $string2)
   {
     $string2 = $string;
@@ -389,13 +398,11 @@ function kses_bad_protocol($string, $allowed_protocols)
 
 function kses_no_null($string)
 ###############################################################################
-# This function removes any NULL or chr(173) characters in $string.
+# This function removes any NULL characters in $string.
 ###############################################################################
 {
   $string = preg_replace('/\0+/', '', $string);
   $string = preg_replace('/(\\\\0)+/', '', $string);
-
-  $string = preg_replace('/\xad+/', '', $string); # deals with Opera "feature"
 
   return $string;
 } # function kses_no_null
@@ -478,6 +485,8 @@ function kses_bad_protocol_once2($string, $allowed_protocols)
   $string2 = kses_decode_entities($string);
   $string2 = preg_replace('/\s/', '', $string2);
   $string2 = kses_no_null($string2);
+  $string2 = preg_replace('/\xad+/', '', $string2);
+   # deals with Opera "feature"
   $string2 = strtolower($string2);
 
   $allowed = false;
