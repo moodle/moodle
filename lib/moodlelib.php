@@ -6101,7 +6101,7 @@ function report_session_error() {
     } else {
         set_config('session_error_counter', 1);
     }
-    redirect($CFG->wwwroot, get_string('sessionerroruser', 'error'), 5);
+    redirect($CFG->wwwroot.'/login/index.php', get_string('sessionerroruser', 'error'), 2);
 }
 
 
