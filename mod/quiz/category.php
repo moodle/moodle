@@ -733,9 +733,11 @@ class quiz_category_object {
 */
     function add_category($newparent, $newcategory, $newinfo, $newpublish, $newcourse) {
 
-        // first check that the parent category is in the correct course
-        if(!(get_field('quiz_categories', 'course', 'id', $newparent) == $newcourse)) {
-            return false;
+        if ($newparent) {
+        	// first check that the parent category is in the correct course
+            if(!(get_field('quiz_categories', 'course', 'id', $newparent) == $newcourse)) {
+                return false;
+            }
         }
 
         $cat = NULL;
