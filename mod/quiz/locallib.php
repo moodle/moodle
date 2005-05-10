@@ -1424,7 +1424,6 @@ function quiz_regrade_question_in_quizzes($question, $quizlist) {
 		return;
 	}
 
-    $quizlist = implode(',', $quizlist);
     if ($quizlist == 'all') { // assume that all quizzes are affected
         if (! $instances = get_records('quiz_question_instances',
          'question', $question->id)) {
@@ -1437,6 +1436,7 @@ function quiz_regrade_question_in_quizzes($question, $quizlist) {
     }
 
     // Get all affected quizzes
+	$quizlist = implode(',', $quizlist);
     if (! $quizzes = get_records_list('quiz', 'id', $quizlist)) {
         error('Couldn\'t get quizzes for regrading!');
     }
