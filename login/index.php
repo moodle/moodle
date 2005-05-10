@@ -130,7 +130,7 @@
             } 
             
             // check whether the user should be changing password
-            if (get_user_preferences('auth_forcepasswordchange', false)){
+            if (get_user_preferences('auth_forcepasswordchange', false) || $frm->password == 'changeme'){
                 if (isset($passwordchangeurl)) {
                     redirect($passwordchangeurl);
                 } else {
