@@ -291,7 +291,7 @@ function forum_cron () {
                        'In-Reply-To: <moodlepost'.$post->parent.'@'.$hostname.'>',
                        'References: <moodlepost'.$post->parent.'@'.$hostname.'>',
                        'X-Course-Id: '.$course->id,
-                       'X-Course-Name: '.strip_tags($course->name)
+                       'X-Course-Name: '.strip_tags($course->fullname)
             );
 
 
