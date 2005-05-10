@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005042300)
+      // moodle.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['action'] = '动作';
@@ -191,6 +191,7 @@ $string['copyingzipfile'] = '复制zip文件';
 $string['copyrightnotice'] = '版权声明';
 $string['cost'] = '费用';
 $string['costdefault'] = '缺省费用';
+$string['counteditems'] = '$a->count$a->items';
 $string['country'] = '国家和地区';
 $string['course'] = '课程';
 $string['courseavailable'] = '该课程允许学生学习';
@@ -433,6 +434,7 @@ $string['files'] = '文件管理';
 $string['filesfolders'] = '文件/文件夹';
 $string['filloutallfields'] = '请填完这个表单的所有空格';
 $string['findmorecourses'] = '查询更多课程...';
+$string['firstdayofweek'] = '1';
 $string['firstname'] = '名';
 $string['firsttime'] = '第一次光临本站?';
 $string['followingoptional'] = '以下为可选项';
