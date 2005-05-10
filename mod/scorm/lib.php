@@ -194,7 +194,7 @@ function scorm_grades($scormid) {
     	}
     
     	$return->grades = NULL;
-    	if ($sco_users=get_records_select('scorm_sco_users', "scormid='$scormid' GROUP BY userid")) {
+    	if ($sco_users=get_records_select('scorm_sco_users', "scormid='$scormid' GROUP BY userid", "", "userid,null")) {
             foreach ($sco_users as $sco_user) {
         	$user_data=get_records_select('scorm_sco_users',"scormid='$scormid' AND userid='$sco_user->userid'");
             	$scores->completed=0;

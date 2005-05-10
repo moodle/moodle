@@ -61,7 +61,7 @@
         print_heading($scorm->name);
     }
     if ($scoes =get_records_select("scorm_scoes","scorm='$scorm->id' ORDER BY id")) {
-    	if ($sco_users=get_records_select("scorm_sco_users", "scormid='$scorm->id' GROUP BY userid")) {
+    	if ($sco_users=get_records_select("scorm_sco_users", "scormid='$scorm->id' GROUP BY userid,scormid", "", "userid,scormid")) {
         		
         	$strname  = get_string("name");
 

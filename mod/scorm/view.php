@@ -71,8 +71,8 @@
        	         "", "", true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
         
     	if (isteacher($course->id)) {
-    	    if ($sco_users = get_records_select("scorm_sco_users", "scormid='$scorm->id' GROUP BY userid")) {
-        	echo "<p align=right><a target=\"{$CFG->framename}\" href=\"report.php?id=$cm->id\">".get_string("viewallreports","scorm",count($sco_users))."</a></p>";
+    	    if ($sco_users = count_records_select("scorm_sco_users", "scormid='$scorm->id' GROUP BY userid", "COUNT(userid)")) {
+        	echo "<p align=right><a target=\"{$CFG->framename}\" href=\"report.php?id=$cm->id\">".get_string("viewallreports","scorm",$sco_users)."</a></p>";
             } else {
            	echo "<p align=right>".get_string("noreports","scorm")."</p>";
             }
