@@ -60,7 +60,8 @@ body {
 th.header,
 td.header,
 div.header {
-  background-color:#EEEEEE;
+  background-color:#AAAAFF;
+  border-color:#9999FF;
 }
 
 .navbar {
