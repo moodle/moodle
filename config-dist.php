@@ -234,6 +234,11 @@ $CFG->admin = 'admin';
 //   Print to footer (works with the default theme)
 //   define('MDL_PERFTOFOOT', true);
 //
+// Force displayed usernames
+//   A little hack to anonymise user names for all students.  If you set these 
+//   then all non-teachers will always see these for every person.
+//       $CFG->forcefirstname = 'Bruce';
+//       $CFG->forcelastname  = 'Simpson';
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser

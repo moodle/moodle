@@ -1984,6 +1984,15 @@ function fullname($user, $override=false) {
         return '';
     }
 
+    if (!$override) {
+        if (!empty($CFG->forcefirstname)) {
+            $user->firstname = $CFG->forcefirstname;
+        }
+        if (!empty($CFG->forcelastname)) {
+            $user->lastname = $CFG->forcelastname;
+        }
+    }
+
     if (!empty($SESSION->fullnamedisplay)) {
         $CFG->fullnamedisplay = $SESSION->fullnamedisplay;
     }
