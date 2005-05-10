@@ -48,9 +48,9 @@ function writequestion( $question ) {
       break;
     case MULTICHOICE:
       $expout .= "<ul class=\"multichoice\">\n";
-      foreach($question->answers as $answer) {
+      foreach($question->options->answers as $answer) {
         $ans_text = $this->repchar( $answer->answer );
-        if ($question->single) {
+        if ($question->options->single) {
           $expout .= "  <li><input name=\"quest_$id\" type=\"radio\" value=\"$ans_text\" />$ans_text</li>\n";
         }
         else {
@@ -74,7 +74,7 @@ function writequestion( $question ) {
 
         // build answer list
         $ans_list = array();
-        foreach($question->subquestions as $subquestion) {
+        foreach($question->options->subquestions as $subquestion) {
            $ans_list[] = $this->repchar( $subquestion->answertext );
         } 
         shuffle( $ans_list ); // random display order
@@ -87,7 +87,7 @@ function writequestion( $question ) {
         $dropdown .= "</select>\n";
 
         // finally display
-        foreach($question->subquestions as $subquestion) {
+        foreach($question->options->subquestions as $subquestion) {
           $quest_text = $this->repchar( $subquestion->questiontext );
           $expout .= "  <li>$quest_text</li>\n";
           $expout .= $dropdown;
