@@ -3892,13 +3892,6 @@ function rebuildnolinktag($text) {
     return $text;
 }
 
-
-
-
-// ================================================
-// THREE FUNCTIONS MOVED HERE FROM course/lib.php
-// ================================================
-
 /**
  * Prints a nice side block with an optional header.  The content can either
  * be a block of HTML or a list of text with optional icons.
@@ -3990,19 +3983,6 @@ function print_side_block_start($heading='', $attributes = array()) {
     }
     echo '<div class="content">';
         
-/*
-    echo '<table cellspacing="0" '.$attrtext.'>';  // cellspacing is to fix IE bug  :-(
-    if ($heading) {
-        echo '<tr><th class="header">'.$heading;
-        if (!empty($CFG->allowuserblockhiding)) {
-            echo '<div class="hide-show"><a href="#" onclick="elementToggleHide(this, true, function(el) {return findParentNode(el, \'TABLE\', \'sideblock\'); } ); return false;"><img src="'.$CFG->pixpath.'/spacer.gif" alt="" class="hide-show-image" /></a></div>';
-        }
-        echo '</th></tr>';
-    }
-
-    echo '<tr><td class="content">';
-*/
-
 }
 
 
@@ -4013,9 +3993,7 @@ function print_side_block_end($attributes) {
     global $CFG;
 
     echo '</div></div>';
-/*
-    echo '</td></tr></table>';
-*/
+
     // IE workaround: if I do it THIS way, it works! WTF?
     if (!empty($CFG->allowuserblockhiding) && isset($attributes['id'])) {
         echo '<script type="text/javascript"><!-- '."\n".'elementCookieHide("'.$attributes['id'].'"); '."\n".'--></script>';
