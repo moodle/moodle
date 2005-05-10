@@ -331,7 +331,7 @@ class quiz_format_gift extends quiz_default_format {
             case TRUEFALSE:
                 $answer = $answertext;
                 $comment = $this->commentparser($answer); // commentparser also removes comment from $answer
-                $feedback = $this->splot_truefalse_comment( $comment );
+                $feedback = $this->split_truefalse_comment( $comment );
 
                 if ($answer == "T" OR $answer == "TRUE") {
                     $question->answer = 1;
