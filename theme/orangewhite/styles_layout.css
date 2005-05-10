@@ -69,7 +69,8 @@ a.autolink:hover {
 
 /* general styles */
 body {
-  margin:10px /*behavior:url(/htc/csshover.htc);*/
+  behavior:url(<?php echo "$CFG->wwwroot/theme/$CFG->theme" ?>/csshover.htc);
+  margin:10px
 }
 
 ul {
@@ -816,12 +817,14 @@ table.calendar-controls .next {
 }
 
 .sideblock .header {
+  height:2em;
   padding:0 5px;
   border:0 none;
   background-image:none
 }
 
 .sideblock .content {
+  clear:both;
   padding:0.3em 0.5em
 }
 
