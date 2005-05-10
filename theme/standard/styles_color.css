@@ -59,11 +59,10 @@ body {
 th.header,
 td.header,
 div.header {
-  background-color:#EEEEEE;
+  border-color:#DDDDDD;
 }
 
 .navbar {
-  background-color:#EEEEEE;
   border-color:#DDDDDD;
 }
 
@@ -177,7 +176,6 @@ table.formtable tbody th {
 .homelink a:link,
 .homelink a:visited,
 .homelink a:hover {
-  background-color: #dddddd;
   color: #000;
   text-decoration: none;
 }
@@ -381,7 +379,6 @@ table.minicalendar {
 }
 
 #course-view .section .side {
-  background: #EEEEEE;
 }
 
 #course-view .section .left {
@@ -410,7 +407,6 @@ table.minicalendar {
 .categoryboxcontent,
 .courseboxcontent {
   border-color:#DDDDDD;
-  background: #FFFFFF;
 }
 body#course-user .section {
   border-color:#AAAAAA;
@@ -506,36 +502,13 @@ table.message_search_results td {
  ***/
 
 .userpicture {
-  background:#EEEEEE; 
 }
 
 .userinfobox {
   border-color: #DDDDDD;
-  background-color: #F7F7F7;
 }
 .groupinfobox {
   border-color: #DDDDDD;
-  background-color: #FCFCFC;
-}
-
-
-/***
- *** Modules: Assignment
- ***/
-
-.assignmentsubmission {
-}
-
-.assignmentnew .assignmentfeedback{
-  background-color:#DDDDDD;
-}   
-  
-.assignmentold .assignmentfeedback{
-  background-color:#BBBBBB;
-}
-
-.assignmentheading {
-  background-color:#BBBBBB;
 }
 
 
