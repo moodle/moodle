@@ -234,7 +234,10 @@ body#admin-index .c0 {
   border-top-color:#999999;
 }
 
-.sideblock .list {
+#left-column .hidden .header,
+#right-column .hidden .header
+{
+  border-bottom-color: #dddddd;
 }
 
 .sideblock .header .hide-show img.hide-show-image {

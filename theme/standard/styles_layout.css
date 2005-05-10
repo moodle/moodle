@@ -334,9 +334,6 @@ body#admin-config .confighelp {
   clear: both;
 }
 
-.sideblock .header .title {
-}
-
 .sideblock .header .commands a {
   margin: 0px 2px;
 }
@@ -353,6 +350,13 @@ body#admin-config .confighelp {
   margin-bottom:4px;
   border:none;
   border-top:1px solid;
+}
+
+#left-column .hidden .header,
+#right-column .hidden .header
+{
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
 }
 
 #left-column .hidden .content,
