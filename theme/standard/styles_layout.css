@@ -188,6 +188,10 @@ table.formtable tbody th
   vertical-align: top;
 }
 
+.helplink img {
+  vertical-align: middle;
+  margin: 0px 2px;
+}
 
 /***
  *** Header
@@ -309,6 +313,12 @@ body#admin-config .confighelp {
 .sideblock .header {
   text-align: left;
   padding:4px;
+  float: left;
+}
+
+.sideblock .subhead {
+  clear: both;
+  height: 0px;
 }
 
 .sideblock .header .hide-show {
@@ -1289,4 +1299,3 @@ body#mod-quiz-report .controls {
 /***
  *** Modules: Workshop
  ***/
-
