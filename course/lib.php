@@ -1090,19 +1090,22 @@ function print_section_add_menus($course, $section, $modnames, $vertical=false, 
         $resources['label'] = get_string('resourcetypelabel', 'resource');
     }
 
-    $output = '';
-
-    $output .= '<div style="text-align: right">';
+    $output  = '<div style="text-align: right">';
     $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&amp;sesskey=$USER->sesskey&amp;add=",
                 $resources, "ressection$section", "", $straddresource, 'resource/types', $straddresource, true);
 
     if ($vertical) {
-        $output .= '<br />';
+        $output .= '<div>';
     }
 
     $output .= ' ';
     $output .= popup_form("$CFG->wwwroot/course/mod.php?id=$course->id&amp;section=$section&amp;sesskey=$USER->sesskey&amp;add=",
                 $modnames, "section$section", "", $straddactivity, 'mods', $straddactivity, true);
+
+    if ($vertical) {
+        $output .= '</div>';
+    }
+
     $output .= '</div>';
 
     if ($return) {
