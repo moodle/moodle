@@ -23,6 +23,7 @@
     /// Header:
     print_header_simple(get_string('editcategories', 'quiz'), '',
                  "<a href=\"index.php?id=$course->id\">".get_string('modulenameplural', 'quiz').'</a>'.
+		 '-> <a href="edit.php">'.get_string('editquestions', 'quiz').'</a>'.
                  ' -> '.get_string('editcategories', 'quiz'));
 
     if (isset($SESSION->modform->instance) and $quiz = get_record('quiz', 'id', $SESSION->modform->instance)) {

@@ -53,7 +53,7 @@
         $SESSION->modform = $modform;    // Save the form in the current session
 
     } else if ($quizid) {
-        if (isset($SESSION->modform) and $SESSION->modform->id == $quizid) {
+        if (isset($SESSION->modform->id) and $SESSION->modform->id == $quizid) {
             // modform for this quiz already exists, use it
             $modform = $SESSION->modform;
         } else {
