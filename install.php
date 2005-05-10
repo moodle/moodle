@@ -635,7 +635,7 @@ function install_helpbutton($url, $title='') {
         $title = get_string('help');
     }
     echo "<a href=\"javascript: void(0)\">";
-    echo "<img src=\"./pix/help.gif\" height=\"17\" width=\"22\" alt=\"$title\"";
+    echo "<img src=\"./pix/help.gif\" height=\"17\" width=\"17\" alt=\"$title\"";
     echo "border=\"0\" align=\"middle\" title=\"$title\" ";
     echo "onClick=\"return window.open('$url', 'Help', 'menubar=0,location=0,scrollbars,resizable,width=500,height=400')\">";
     echo "</a>\n";
