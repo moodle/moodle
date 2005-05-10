@@ -448,13 +448,14 @@ function writequestion( $question ) {
     // output depends on question type
     switch($question->qtype) {
     case TRUEFALSE:
-        $true_percent = round( $question->trueanswer->fraction * 100 );
-        $false_percent = round( $question->falseanswer->fraction * 100 );
+        $answer = $question->options->answers;
+        $true_percent = round( $answer['true']->fraction * 100 );
+        $false_percent = round( $answer['false']->fraction * 100 );
         // true answer
         $expout .= "    <answer fraction=\"$true_percent\">\n";
         $expout .= $this->writetext("true",3)."\n";
         $expout .= "      <feedback>\n";
-        $expout .= $this->writetext( $question->trueanswer->feedback,4,false );
+        $expout .= $this->writetext( $answer['true']->feedback,4,false );
         $expout .= "      </feedback>\n";
         $expout .= "    </answer>\n";
 
@@ -463,13 +464,13 @@ function writequestion( $question ) {
         $expout .= "    <answer fraction=\"$false_percent\">\n";
         $expout .= $this->writetext("false")."\n";
         $expout .= "      <feedback>\n";
-        $expout .= $this->writetext( $question->falseanswer->feedback,4,false );
+        $expout .= $this->writetext( $answer['false']->feedback,4,false );
         $expout .= "      </feedback>\n";
         $expout .= "    </answer>\n";
         break;
     case MULTICHOICE:
-        $expout .= "    <single>".$this->get_single($question->single)."</single>\n";
-        foreach($question->answers as $answer) {
+        $expout .= "    <single>".$this->get_single($question->options->single)."</single>\n";
+        foreach($question->options->answers as $answer) {
             $percent = $answer->fraction * 100;
             $expout .= "      <answer fraction=\"$percent\">\n";
             $expout .= $this->writetext( $answer->answer,4,false );
@@ -480,7 +481,7 @@ function writequestion( $question ) {
             }
         break;
     case SHORTANSWER:
-        foreach($question->answers as $answer) {
+        foreach($question->options->answers as $answer) {
             $percent = 100 * $answer->fraction;
             $expout .= "    <answer fraction=\"$percent\">\n";
             $expout .= $this->writetext( $answer->answer,3,false );
@@ -491,12 +492,16 @@ function writequestion( $question ) {
         }
         break;
     case NUMERICAL:
-        $expout .= "<min>$question->min</min>\n";
-        $expout .= "<max>$question->max</max>\n";
-        $expout .= "<feedback>".$this->writetext( $question->answer->feedback )."</feedback>\n";
+        $answer = array_pop( $question->options->answers );
+        $tolerance = $question->options->tolerance;
+        $min = $answer->answer - $tolerance;
+        $max = $answer->answer + $tolerance;
+        $expout .= "<min>$min</min>\n";
+        $expout .= "<max>$max</max>\n";
+        $expout .= "<feedback>".$this->writetext( $answer->feedback )."</feedback>\n";
         break;
     case MATCH:
-        foreach($question->subquestions as $subquestion) {
+        foreach($question->options->subquestions as $subquestion) {
             $expout .= "<subquestion>\n";
             $expout .= $this->writetext( $subquestion->questiontext );
             $expout .= "<answer>".$this->writetext( $subquestion->answertext )."</answer>\n";
