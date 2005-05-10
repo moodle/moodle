@@ -66,8 +66,8 @@
        	         "", "", true, update_module_button($cm->id, $course->id, $strscorm), navmenu($course, $cm));
         
     	if (isteacher($course->id)) {
-    	    if ($sco_users = get_records_select("scorm_scoes_track", "scormid='$scorm->id' GROUP BY userid")) {
-        	echo "<div class=\"reportlink\"><a target=\"{$CFG->framename}\" href=\"report.php?id=$cm->id\">".get_string("viewallreports","scorm",count($sco_users))."</a></div>";
+    	    if ($sco_users = count_records_select("scorm_scoes_track", "scormid='$scorm->id' GROUP BY userid", "COUNT(userid)")) {
+        	echo "<div class=\"reportlink\"><a target=\"{$CFG->framename}\" href=\"report.php?id=$cm->id\">".get_string("viewallreports","scorm",$sco_users)."</a></div>";
             } else {
            	echo "<div class=\"reportlink\">".get_string("noreports","scorm")."</div>";
             }

@@ -179,7 +179,7 @@ function scorm_grades($scormid) {
     }
     
     $return->grades = NULL;
-    if ($scousers=get_records_select('scorm_scoes_track', "scormid='$scormid' GROUP BY userid")) {
+    if ($scousers=get_records_select('scorm_scoes_track', "scormid='$scormid' GROUP BY userid", "", "userid,null")) {
         foreach ($scousers as $scouser) {
 	    $scores = NULL;
             $scores->scoes = 0;

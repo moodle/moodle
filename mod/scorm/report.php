@@ -74,7 +74,7 @@
     }
     if (!empty($id)) {
 	if ($scoes = get_records_select("scorm_scoes","scorm='$scorm->id' ORDER BY id")) {
-            if ($scousers=get_records_select("scorm_scoes_track", "scormid='$scorm->id' GROUP BY userid")) {
+            if ($scousers=get_records_select("scorm_scoes_track", "scormid='$scorm->id' GROUP BY userid,scormid", "", "userid,scormid")) {
         	$table->head = array('&nbsp;', $strname);
         	$table->align = array('center', 'left');
         	$table->wrap = array('nowrap', 'nowrap');
