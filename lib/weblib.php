@@ -3453,8 +3453,7 @@ function print_grade_menu($courseid, $name, $current, $includenograde=true) {
     }
     choose_from_menu($grades, $name, $current, '');
 
-    $helpicon = $CFG->pixpath .'/help.gif';
-    $linkobject = "<img align=\"middle\" border=\"0\" height=\"17\" width=\"22\" alt=\"$strscales\" src=\"$helpicon\" />";
+    $linkobject = '<span class="helplink"><img height="17" width="17" alt="'.$strscales.'" src="'.$CFG->pixpath .'/help.gif" /></span>';
     link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true', 'ratingscales',
                           $linkobject, 400, 500, $strscales);
 }
@@ -3474,8 +3473,8 @@ function print_scale_menu($courseid, $name, $current) {
 
     $strscales = get_string('scales');
     choose_from_menu(get_scales_menu($courseid), $name, $current, '');
-    $helpicon = $CFG->pixpath .'/help.gif';
-    $linkobject = '<img align="middle" border="0" height="17" width="22" alt="'. $strscales .'" src="'. $helpicon .'" />';
+
+    $linkobject = '<span class="helplink"><img height="17" width="17" alt="'.$strscales.'" src="'.$CFG->pixpath .'/help.gif" /></span>';
     link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true', 'ratingscales',
                           $linkobject, 400, 500, $strscales);
 }
@@ -3493,8 +3492,8 @@ function print_scale_menu_helpbutton($courseid, $scale) {
     global $CFG;
 
     $strscales = get_string('scales');
-    $helpicon = $CFG->pixpath .'/help.gif';
-    $linkobject = "<img align=\"middle\" border=\"0\" height=\"17\" width=\"22\" alt=\"$scale->name\" src=\"$helpicon\" />";
+
+    $linkobject = '<span class="helplink"><img height="17" width="17" alt="'.$scale->name.'" src="'.$CFG->pixpath .'/help.gif" /></span>';
     link_to_popup_window ('/course/scales.php?id='. $courseid .'&amp;list=true&amp;scale='. $scale->id, 'ratingscale',
                           $linkobject, 400, 500, $scale->name);
 }
@@ -3574,7 +3573,7 @@ function helpbutton ($page, $title='', $module='moodle', $image=true, $linktext=
 
     if ($image) {
         if ($imagetext == '') {
-            $imagetext = '<img align="middle" border="0" height="17" width="22" alt="'.$title.'" src="'.
+            $imagetext = '<img height="17" width="17" alt="'.$title.'" src="'.
                           $CFG->pixpath .'/help.gif" />';
         }
         if ($linktext) {
@@ -3985,6 +3984,18 @@ function print_side_block_start($heading='', $attributes = array()) {
         $attrtext .= ' '.$attr.'="'.$val.'"';
     }
 
+    echo '<div '.$attrtext.'>';
+    if ($heading) {
+        echo '<div class="header">'.$heading;
+        if (!empty($CFG->allowuserblockhiding)) {
+            echo '<div class="hide-show"><a href="#" onclick="elementToggleHide(this, true, function(el) {return findParentNode(el, \'TABLE\', \'sideblock\'); } ); return false;"><img src="'.$CFG->pixpath.'/spacer.gif" alt="" class="hide-show-image" /></a></div>';
+        }
+        echo '</div>';
+        echo '<div class="subhead"> </div>';
+    }
+    echo '<div class="content">';
+        
+/*
     echo '<table cellspacing="0" '.$attrtext.'>';  // cellspacing is to fix IE bug  :-(
     if ($heading) {
         echo '<tr><th class="header">'.$heading;
@@ -3995,6 +4006,8 @@ function print_side_block_start($heading='', $attributes = array()) {
     }
 
     echo '<tr><td class="content">';
+*/
+
 }
 
 
@@ -4004,11 +4017,15 @@ function print_side_block_start($heading='', $attributes = array()) {
 function print_side_block_end($attributes) {
     global $CFG;
 
+    echo '</div></div>';
+/*
     echo '</td></tr></table>';
+*/
     // IE workaround: if I do it THIS way, it works! WTF?
     if (!empty($CFG->allowuserblockhiding) && isset($attributes['id'])) {
         echo '<script type="text/javascript"><!-- '."\n".'elementCookieHide("'.$attributes['id'].'"); '."\n".'--></script>';
     }
+
 }
 
 
