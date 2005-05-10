@@ -495,7 +495,7 @@ class quiz_default_questiontype {
 
         echo '</td></tr><tr><td valign="top">';
 
-        if ($question->maxgrade and $options->scores and ($quiz->optionflags & QUIZ_ADAPTIVE)) {
+        if ($question->maxgrade and $options->scores) {
             $this->print_question_grading_details($question, $state, $quiz, $options);
         }
 
