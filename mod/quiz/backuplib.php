@@ -247,8 +247,11 @@
 
         $status = true;
 
-        $questions = get_records("quiz_questions","category",$category,"id");
-        //If there is questions
+	// We'll fetch the questions sorted by parent so that questions with no parents
+	// (these are the ones which could be parents themselves) are backed up first. This
+	// is important for the recoding of the parent field during the restore process
+        $questions = get_records("quiz_questions","category",$category,"parent ASC, id");
+        //If there are questions
         if ($questions) {
             //Write start tag
             $status =fwrite ($bf,start_tag("QUESTIONS",4,true));

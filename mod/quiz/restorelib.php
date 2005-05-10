@@ -203,6 +203,8 @@
             $question->hidden = backup_todb($que_info['#']['HIDDEN']['0']['#']);
 
             ////We have to recode the parent field
+	    // This should work alright because we ordered the questions appropriately during backup so that
+	    // questions that can be parents are restored first
             if ($question->parent and $parent = backup_getid($restore->backup_unique_code,"quiz_questions",$question->parent)) {
                 $question->parent = $parent->new_id;
             }
