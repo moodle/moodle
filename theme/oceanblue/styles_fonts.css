@@ -213,7 +213,9 @@ table.formtable tbody th {
   font-style: italic;
 }
 
-
+.block_site_main_menu .footer select {
+  font-size: 0.8em;
+}
 
 /***
  *** Calendar

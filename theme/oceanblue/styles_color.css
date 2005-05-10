@@ -230,9 +230,11 @@ body#admin-index .c0 {
 }
 
 .sideblock .header {
+  border-color: #dddddd;
 }
 
 .sideblock .content {
+  border-color: #dddddd;
   background-color:#FCFCFC;
 }
 
@@ -242,6 +244,7 @@ body#admin-index .c0 {
 
 .sideblock .list {
 }
+
 .sideblock .header .hide-show img.hide-show-image {
   background: url('../../pix/t/switch_minus.gif') no-repeat bottom;
 }
@@ -519,27 +522,6 @@ table.message_search_results td {
 }
 .groupinfobox {
   border-color: #DDDDDD;
-  background-color: #FCFCFC;
-}
-
-
-/***
- *** Modules: Assignment
- ***/
-
-.assignmentsubmission {
-}
-
-.assignmentnew .assignmentfeedback{
-  background-color:#DDDDDD;
-}   
-  
-.assignmentold .assignmentfeedback{
-  background-color:#BBBBBB;
-}
-
-.assignmentheading {
-  background-color:#BBBBBB;
 }
 
 
