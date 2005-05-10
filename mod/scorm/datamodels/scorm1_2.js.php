@@ -244,7 +244,7 @@ function SCORMapi1_2() {
 		elementmodel = element.replace(expression,'.n.');
 		if ((typeof eval('datamodel["'+elementmodel+'"]')) != "undefined") {
 	            if (eval('datamodel["'+elementmodel+'"].mod') != 'r') {
-			expression.compile(eval('datamodel["'+elementmodel+'"].format'));
+			expression = new RegExp(eval('datamodel["'+elementmodel+'"].format'));
 			value = value+'';
 			matches = value.match(expression);
 			if (matches != null) {
