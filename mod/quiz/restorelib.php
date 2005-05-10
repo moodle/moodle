@@ -110,6 +110,12 @@
 
         $status = true;
 
+        //Hook to call Moodle < 1.5 Quiz Restore
+        if ($restore->backup_version < 2005043000) {
+            include_once("restorelibpre15.php");
+            return quiz_restore_pre15_question_categories($category,$restore);
+        }
+
         //Get record from backup_ids
         $data = backup_getid($restore->backup_unique_code,"quiz_categories",$category->id);
 
@@ -1215,6 +1221,12 @@
         }
 
         $status = true;
+
+        //Hook to call Moodle < 1.5 Quiz Restore
+        if ($restore->backup_version < 2005043000) {
+            include_once("restorelibpre15.php");
+            return quiz_restore_pre15_mods($mod,$restore);
+        }
 
         //Get record from backup_ids
         $data = backup_getid($restore->backup_unique_code,$mod->modtype,$mod->id);
