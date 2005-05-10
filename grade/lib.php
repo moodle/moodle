@@ -3,7 +3,7 @@
 require_once('../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 
-define('UNCATEGORISED', 'uncategorised');
+define('UNCATEGORISED', get_string('uncategorised','grades'));
 
 $GRADEPREFS = array('use_advanced',                // Only add new preferences to the end of this array!
                     'use_weighted_for_letter',     // as the order counts and will affect backward compatibility
