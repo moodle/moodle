@@ -193,6 +193,10 @@ table.formtable tbody th
   margin: 0px 2px;
 }
 
+form.popupform {
+  display: inline;
+}
+
 /***
  *** Header
  ***/
@@ -374,6 +378,7 @@ body#admin-config .confighelp {
   margin-top:4px;
   text-align:center;
 }
+
 .sideblock .header .icon.hide,
 .sideblock .header .icon.edit {
   margin-right: 6px;
