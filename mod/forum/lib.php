@@ -266,14 +266,6 @@ function forum_cron () {
             }
 
 
-            $userfrom->customheaders = array (  // Headers to make emails easier to track
-                       "Precedence: Bulk",
-                       "List-id: <moodlecourse{$post->course}@$hostname>",
-                       "Message-Id: <moodlepost{$post->id}@$hostname>",
-                       "In-Reply-To: <moodlepost{$post->parent}@$hostname>",
-                       "References: <moodlepost{$post->parent}@$hostname>"
-            );
-
 
             if (! $discussion = get_record("forum_discussions", "id", "$post->discussion")) {
                 mtrace("Could not find discussion $post->discussion");
@@ -289,6 +281,19 @@ function forum_cron () {
                 mtrace("Could not find course $forum->course");
                 continue;
             }
+
+            $cleanforumname = str_replace('"', "'", strip_tags($forum->name));
+            $userfrom->customheaders = array (  // Headers to make emails easier to track
+                       'Precedence: Bulk',
+                       'List-Id: "'.$cleanforumname.'" <moodleforum'.$forum->id.'@'.$hostname.'>',
+                       'List-Help: '.$CFG->wwwroot.'/mod/forum/view.php?f='.$forum->id,
+                       'Message-Id: <moodlepost'.$post->id.'@'.$hostname.'>',
+                       'In-Reply-To: <moodlepost'.$post->parent.'@'.$hostname.'>',
+                       'References: <moodlepost'.$post->parent.'@'.$hostname.'>',
+                       'X-Course-Id: '.$course->id,
+                       'X-Course-Name: '.strip_tags($course->name)
+            );
+
 
             if (!empty($course->lang)) {
                 $CFG->courselang = $course->lang;
