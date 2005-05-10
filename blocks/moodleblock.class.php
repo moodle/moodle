@@ -197,13 +197,6 @@ class block_base {
      * Display the block!
      */
     function _print_block() {
-        // Wrap the title in a floating DIV, in case we have edit controls to display
-        // These controls will always be wrapped on a right-floating DIV
-        $title = '<div class="title">'.$this->title.'</div>';
-        if ($this->edit_controls !== NULL) {
-            $title .= $this->edit_controls;
-        }
-
         // is_empty() includes a call to get_content()
         if ($this->is_empty()) {
             if (empty($this->edit_controls)) {
@@ -219,7 +212,7 @@ class block_base {
                 print_side_block(NULL, $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes());
             } else {
                 // The full treatment, please
-                print_side_block($title, $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes());
+                print_side_block($this->_title_html(), $this->content->text, NULL, NULL, $this->content->footer, $this->html_attributes());
             }
         }
     }
@@ -230,11 +223,28 @@ class block_base {
      * block is in place, even if empty.
      */
     function _print_shadow() {
-        $title = '<div class="title">'.$this->title.'</div>';
+        print_side_block($this->_title_html(), '&nbsp;', NULL, NULL, '', array('class' => 'hidden'));
+    }
+
+
+    function _title_html() {
+        global $CFG;
+
+        $title = '<div class="title">';
+        
+        if (!empty($CFG->allowuserblockhiding)) {
+            $title .= '<div class="hide-show"><a href="#" onclick="elementToggleHide(this, true, function(el) {return findParentNode(el, \'DIV\', \'sideblock\'); } ); return false;"><img src="'.$CFG->pixpath.'/spacer.gif" alt="" class="hide-show-image" /></a></div>';
+        }
+
+        $title .= $this->title;
+
         if ($this->edit_controls !== NULL) {
             $title .= $this->edit_controls;
         }
-        print_side_block($title, '&nbsp;', NULL, NULL, '', array('class' => 'hidden'));
+
+        $title .= '</div>';
+
+        return $title;
     }
 
     /**
@@ -552,13 +562,6 @@ class block_list extends block_base {
     }
 
     function _print_block() {
-        // Wrap the title in a floating DIV, in case we have edit controls to display
-        // These controls will always be wrapped on a right-floating DIV
-        $title = '<div class="title">'.$this->title.'</div>';
-        if ($this->edit_controls !== NULL) {
-            $title .= $this->edit_controls;
-        }
-
         // is_empty() includes a call to get_content()
         if ($this->is_empty()) {
             if (empty($this->edit_controls)) {
@@ -574,7 +577,7 @@ class block_list extends block_base {
                 print_side_block(NULL, '', $this->content->items, $this->content->icons, $this->content->footer, $this->html_attributes());
             } else {
                 // The full treatment, please
-                print_side_block($title, '', $this->content->items, $this->content->icons, $this->content->footer, $this->html_attributes());
+                print_side_block($this->_title_html(), '', $this->content->items, $this->content->icons, $this->content->footer, $this->html_attributes());
             }
         }
     }

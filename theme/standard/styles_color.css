@@ -223,14 +223,12 @@ body#admin-index .c0 {
  *** Blocks
  ***/
 
-.sideblock {
-  border-color:#DDDDDD;
-}
-
 .sideblock .header {
+  border-color: #dddddd;
 }
 
 .sideblock .content {
+  border-color: #dddddd;
   background-color:#FCFCFC;
 }
 
@@ -240,6 +238,7 @@ body#admin-index .c0 {
 
 .sideblock .list {
 }
+
 .sideblock .header .hide-show img.hide-show-image {
   background: url('../../pix/t/switch_minus.gif') no-repeat bottom;
 }

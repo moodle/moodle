@@ -116,25 +116,15 @@
 /***
  *** Blocks
  ***/
-.sideblock {
-  -moz-border-radius-bottomleft:20px;
-  -moz-border-radius-bottomright:20px;
-}
 
 .sideblock.hidden {
   -moz-border-radius: 0px;
-}
-
-.sideblock {
-  -moz-border-radius-bottomleft:20px;
-  -moz-border-radius-bottomright:20px;
 }
 
 .sideblock .content {
   -moz-border-radius-bottomleft:20px;
   -moz-border-radius-bottomright:20px;
 }
-
 
 .block_course_summary, .block_course_summary .content {
   -moz-border-radius:20px;

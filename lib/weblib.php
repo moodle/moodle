@@ -738,7 +738,7 @@ function popup_form($common, $options, $formname, $selected='', $nothing='choose
                         ' method="get"'.
                         ' target="'.$CFG->framename.'"'.
                         ' name="'.$formname.'"'.
-                        ' class="popupform" style="display: inline;">';
+                        ' class="popupform">';
 
     $output = '<select name="jump" onchange="'.$targetwindow.'.location=document.'.$formname.
                        '.jump.options[document.'.$formname.'.jump.selectedIndex].value;">'."\n";
@@ -3986,12 +3986,7 @@ function print_side_block_start($heading='', $attributes = array()) {
 
     echo '<div '.$attrtext.'>';
     if ($heading) {
-        echo '<div class="header">'.$heading;
-        if (!empty($CFG->allowuserblockhiding)) {
-            echo '<div class="hide-show"><a href="#" onclick="elementToggleHide(this, true, function(el) {return findParentNode(el, \'TABLE\', \'sideblock\'); } ); return false;"><img src="'.$CFG->pixpath.'/spacer.gif" alt="" class="hide-show-image" /></a></div>';
-        }
-        echo '</div>';
-        echo '<div class="subhead"> </div>';
+        echo '<div class="header">'.$heading.'</div>';
     }
     echo '<div class="content">';
         
