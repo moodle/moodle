@@ -2,9 +2,9 @@
     //This php script contains all the stuff to backup/restore
     //quiz mods
 
+//This is the "graphical" structure of the quiz mod:
     //To see, put your terminal to 160cc
 
-    //This is the "graphical" structure of the quiz mod:
     //
     //                           quiz                                                      quiz_categories
     //                        (CL,pk->id)                                                   (CL,pk->id)
@@ -63,6 +63,7 @@
     //
     //-----------------------------------------------------------
 
+// Comments:
     //THIS MOD BACKUP NEEDS TO USE THE mdl_backup_ids TABLE
 
     //This module is special, because we make the backup in two steps:
@@ -98,8 +99,107 @@
     //     - quiz_newest_states
     //    This step is the standard mod backup. (course dependent).
 
-    //STEP 1. Backup categories/questions and associated structures
+//STEP 1. Backup categories/questions and associated structures
     //    (course independent)
+
+    //Insert necessary category ids to backup_ids table
+    function insert_category_ids ($course,$backup_unique_code) {
+        global $CFG;
+
+        //Create missing categories and reasign orphaned questions
+        fix_orphaned_questions($course);
+
+        //Detect used categories (by category in questions)
+        $status = execute_sql("INSERT INTO {$CFG->prefix}backup_ids
+                                   (backup_code, table_name, old_id)
+                               SELECT DISTINCT $backup_unique_code,'quiz_categories',t.category
+                               FROM {$CFG->prefix}quiz_questions t,
+                                    {$CFG->prefix}quiz_question_instances g,
+                                    {$CFG->prefix}quiz q
+                               WHERE q.course = '$course' AND
+                                     g.quiz = q.id AND
+                                     g.question = t.id",false);
+
+        //Now, foreach detected category, we look for their parents upto 0 (top category)
+        $categories = get_records_sql("SELECT old_id, old_id 
+                                       FROM {$CFG->prefix}backup_ids
+                                       WHERE backup_code = $backup_unique_code AND
+                                             table_name = 'quiz_categories'");
+
+        if ($categories) {
+            foreach ($categories as $category) {
+                if ($dbcat = get_record('quiz_categories','id',$category->old_id)) {
+                    //echo $dbcat->name;      //Debug
+                    //Go up to 0
+                    while ($dbcat->parent != 0) {
+                        //echo '->';              //Debug
+                        $current = $dbcat->id;
+                        if ($dbcat = get_record('quiz_categories','id',$dbcat->parent)) {
+                            //Found parent, add it to backup_ids (by using backup_putid
+                            //we ensure no duplicates!)
+                            $status = backup_putid($backup_unique_code,'quiz_categories',$dbcat->id,0);
+                            //echo $dbcat->name;      //Debug
+                        } else {
+                            //Parent not found, fix it (set its parent to 0)
+                            set_field ('quiz_categories','parent',0,'id',$current);
+                            //echo 'assigned to top!';          //Debug
+                        }
+                    }
+                    //echo '<br />';          //Debug
+                }
+            }
+        }
+
+        return $status;
+    }
+
+    //This function is used to detect orphaned questions (pointing to a
+    //non existing category) and to recreate such category. This function
+    //is used by the backup process, to ensure consistency and should be
+    //executed in the upgrade process and, perhaps in the health center.
+    function fix_orphaned_questions ($course) {
+
+        global $CFG;
+
+        $categories = get_records_sql("SELECT DISTINCT t.category, t.category
+                                       FROM {$CFG->prefix}quiz_questions t,
+                                            {$CFG->prefix}quiz_question_instances g,
+                                            {$CFG->prefix}quiz q
+                                       WHERE q.course = '$course' AND
+                                             g.quiz = q.id AND
+                                             g.question = t.id",false);
+        if ($categories) {
+            foreach ($categories as $key => $category) {
+                $exist = get_record('quiz_categories','id', $key);
+                //If the category doesn't exist
+                if (!$exist) {
+                    //Build a new category
+                    $db_cat->course = $course;
+                    $db_cat->name = get_string('recreatedcategory','',$key);
+                    $db_cat->info = get_string('recreatedcategory','',$key);
+                    $db_cat->publish = 1;
+                    $db_cat->stamp = make_unique_id_code();
+                    //Insert the new category
+                    $catid = insert_record('quiz_categories',$db_cat);
+                    unset ($db_cat);
+                    if ($catid) {
+                        //Reasign orphaned questions to their new category
+                        set_field ('quiz_questions','category',$catid,'category',$key);
+                    }
+                }
+            }
+        }
+    }
+    
+    //Delete category ids from backup_ids table
+    function delete_category_ids ($backup_unique_code) {
+        global $CFG;
+        $status = true;
+        $status = execute_sql("DELETE FROM {$CFG->prefix}backup_ids
+                               WHERE backup_code = '$backup_unique_code'",false);
+        return $status;
+    }
+
     function quiz_backup_question_categories($bf,$preferences) {
 
         global $CFG;
@@ -594,7 +694,7 @@
 
     }
 
-    //STEP 2. Backup quizzes and associated structures
+//STEP 2. Backup quizzes and associated structures
     //    (course dependent)
     function quiz_backup_mods($bf,$preferences) {
 
@@ -802,12 +902,12 @@
                 fwrite ($bf,full_tag("ID",8,false,$state->id));
                 fwrite ($bf,full_tag("QUESTION",8,false,$state->question));
                 fwrite ($bf,full_tag("ORIGINALQUESTION",8,false,$state->originalquestion));
-                fwrite ($bf,full_tag("SEQNUMBER",8,false,$state->seq_number));
+                fwrite ($bf,full_tag("SEQ_NUMBER",8,false,$state->seq_number));
                 fwrite ($bf,full_tag("ANSWER",8,false,$state->answer));
                 fwrite ($bf,full_tag("TIMESTAMP",8,false,$state->timestamp));
                 fwrite ($bf,full_tag("EVENT",8,false,$state->event));
                 fwrite ($bf,full_tag("GRADE",8,false,$state->grade));
-                fwrite ($bf,full_tag("RAWGRADE",8,false,$state->raw_grade));
+                fwrite ($bf,full_tag("RAW_GRADE",8,false,$state->raw_grade));
                 fwrite ($bf,full_tag("PENALTY",8,false,$state->penalty));
                 // now back up question type specific state information
                 $status = backup_quiz_rqp_state ($bf,$preferences,$state->id);
@@ -817,7 +917,7 @@
             //Write end tag
             $status =fwrite ($bf,end_tag("STATES",6,true));
         }
-        $quiz_newest_states = get_records("quiz_newest_states","attempt",$attempt,"id");
+        $quiz_newest_states = get_records("quiz_newest_states","attemptid",$attempt,"id");
         //If there are newest_states
         if ($quiz_newest_states) {
             //Write start tag
@@ -909,11 +1009,7 @@
     }
 
 
-
-
-
-
-    // INTERNAL FUNCTIONS. BASED IN THE MOD STRUCTURE
+// INTERNAL FUNCTIONS. BASED IN THE MOD STRUCTURE
 
     //Returns an array of quiz id
     function quiz_ids ($course) {
