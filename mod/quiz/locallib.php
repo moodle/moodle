@@ -1420,8 +1420,12 @@ function quiz_extract_responses($questions, $responses, $defaultevent) {
 */
 function quiz_regrade_question_in_quizzes($question, $quizlist) {
 
+	if (empty($quizlist)) {
+		return;
+	}
+
     $quizlist = implode(',', $quizlist);
-    if (empty($quizlist)) { // assume that all quizzes are affected
+    if ($quizlist == 'all') { // assume that all quizzes are affected
         if (! $instances = get_records('quiz_question_instances',
          'question', $question->id)) {
             // No instances were found, so it successfully regraded all of them

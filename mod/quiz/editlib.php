@@ -486,6 +486,14 @@ function quiz_print_cat_question_list($course, $categoryid, $quizselected=true,
 
     // hide-feature
     $showhidden = $showhidden ? '' : " AND hidden = '0'";
+
+    if (!$totalnumber = count_records_select('quiz_questions', "category IN ($categorylist) AND parent = '0' $showhidden")) {
+        echo "<p align=\"center\">";
+        print_string("noquestions", "quiz");
+        echo "</p>";
+        return;
+    }
+
     if (!$questions = get_records_select('quiz_questions', "category IN ($categorylist) AND parent = '0' $showhidden", 'qtype, name ASC', '*', $page*$perpage, $perpage)) {
         echo "<p align=\"center\">";
         print_string("noquestions", "quiz");
@@ -557,9 +565,7 @@ function quiz_print_cat_question_list($course, $categoryid, $quizselected=true,
     quiz_category_select_menu($course->id, false, true, $category->id);
     echo "</td></tr></table>";
 
-    $numquestions = count($questions);
-
-    print_paging_bar($numquestions, $page, $perpage,
+    print_paging_bar($totalnumber, $page, $perpage,
                 "edit.php?perpage=$perpage&amp;");
 
     if ($quizselected) {

@@ -207,48 +207,48 @@
                 }
 
                 /// now update the question references in the quizzes
-                if (empty($replaceinquiz) || !$quizzes = get_records_list("quiz", "id", implode(',', $replaceinquiz))) {
-                    $quizzes = array();
-                }
+                if (!empty($replaceinquiz) and $quizzes = get_records_list("quiz", "id", implode(',', $replaceinquiz))) {
 
-                foreach($quizzes as $quiz) {
-                    $questionlist = ",$quiz->questions,"; // a little hack with the commas here. not nice but effective
-                    $questionlist = str_replace(",$oldquestionid,", ",$question->id,", $questionlist);
-                    $questionlist = substr($questionlist, 1, -1); // and get rid of the surrounding commas again
-                    if (!set_field("quiz", 'questions', $questionlist, 'id', $quiz->id)) {
-                        error("Could not update questionlist in quiz $quiz->id!");
-                    }
-
-                    // the quiz_question_instances table needs to be updated too (aah, the joys of duplication :)
-                    if (!set_field('quiz_question_instances', 'question', $question->id, 'quiz', $quiz->id, 'question', $oldquestionid)) {
-                        error("Could not update question instance!");
-                    }
-                    if (isset($SESSION->modform) && (int)$SESSION->modform->instance === (int)$quiz->id) {
-                        $SESSION->modform->questions = $questionlist;
-                        $SESSION->modform->grades[$question->id] = $SESSION->modform->grades[$oldquestionid];
-                        unset($SESSION->modform->grades[$oldquestionid]);
-                    }
-                }
-
-                // set originalquestion in states
-                if ($attempts = get_records_list('quiz_attempts', 'quiz', implode(',', $replaceinquiz))) {
-                    foreach ($attempts as $attempt) {
-                        set_field('quiz_states', 'originalquestion', $oldquestionid, 'attempt', $attempt->id, 'question', $question->id, 'originalquestion', '0');
-                    }
-                }
+					foreach($quizzes as $quiz) {
+						$questionlist = ",$quiz->questions,"; // a little hack with the commas here. not nice but effective
+						$questionlist = str_replace(",$oldquestionid,", ",$question->id,", $questionlist);
+						$questionlist = substr($questionlist, 1, -1); // and get rid of the surrounding commas again
+						if (!set_field("quiz", 'questions', $questionlist, 'id', $quiz->id)) {
+						error("Could not update questionlist in quiz $quiz->id!");
+						}
+			
+						// the quiz_question_instances table needs to be updated too (aah, the joys of duplication :)
+						if (!set_field('quiz_question_instances', 'question', $question->id, 'quiz', $quiz->id, 'question', $oldquestionid)) {
+						error("Could not update question instance!");
+						}
+						if (isset($SESSION->modform) && (int)$SESSION->modform->instance === (int)$quiz->id) {
+						$SESSION->modform->questions = $questionlist;
+						$SESSION->modform->grades[$question->id] = $SESSION->modform->grades[$oldquestionid];
+						unset($SESSION->modform->grades[$oldquestionid]);
+						}
+					}
+			
+					// set originalquestion in states
+					if ($attempts = get_records_list('quiz_attempts', 'quiz', implode(',', $replaceinquiz))) {
+						foreach ($attempts as $attempt) {
+						set_field('quiz_states', 'originalquestion', $oldquestionid, 'attempt', $attempt->id, 'question', $question->id, 'originalquestion', '0');
+						}
+					}
+				}
             }
         } else {
             // use the old code which simply overwrites old versions
             // it is also used for creating new questions
             $question = $QUIZ_QTYPES[$qtype]->save_question($question, $form, $course);
-            $quizlist = array();
+			$replaceinquiz = 'all';
         }
 
-        if (empty($question->errors) &&
-         $QUIZ_QTYPES[$qtype]->finished_edit_wizard($form)) {
-            $QUIZ_QTYPES[$question->qtype]->get_question_options($question);
+        if (empty($question->errors) && $QUIZ_QTYPES[$qtype]->finished_edit_wizard($form)) {
             // Automagically regrade all attempts (and states) in the affected quizzes
-            quiz_regrade_question_in_quizzes($question, $quizlist);
+			if (!empty($replaceinquiz)) {
+                $QUIZ_QTYPES[$question->qtype]->get_question_options($question);
+                quiz_regrade_question_in_quizzes($question, $replaceinquiz);
+			}
             redirect("edit.php");
         }
     }
