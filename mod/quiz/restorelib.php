@@ -143,7 +143,7 @@
             $cat = get_record('quiz_categories', 'stamp', $quiz_cat->stamp);
 	    // Check that category exists and either belongs to this course or is published and belongs to 
 	    // a course in which the user has editing privileges
-	    if ($cat and ($cat->course == $restore->course_id or ($cat->publish and isteacheredit($restore->course_id)))) {
+	    if ($cat and ($cat->course == $restore->course_id or ($cat->publish and isteacheredit($cat->course)))) {
 		$newid = $cat->id;
 	    } else { // need to create new category
 		$newid = insert_record ("quiz_categories",$quiz_cat);

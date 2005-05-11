@@ -13,7 +13,7 @@
     //           |                        |                    |                   |             |.......................................
     //           |                        |                    |                   |             |                                      .
     //           |                        |                    |                   |             |                                      .
-    //      quiz_attempts        quiz_grades       quiz_question_grades   quiz_question_versions  |    ----quiz_question_datasets----    .
+    //      quiz_attempts        quiz_grades       quiz_question_grades   quiz_question_versions |    ----quiz_question_datasets----    .
     // (UL,pk->id, fk->quiz) (UL,pk->id,fk->quiz)  (CL,pk->id,fk->quiz)    (CL,pk->id,fk->quiz)  |    |  (CL,pk->id,fk->question,  |    .
     //             |                                              |                      .       |    |   fk->dataset_definition)  |    .
     //             |                                              |                      .       |    |                            |    .
@@ -94,6 +94,8 @@
     //STEP 1. Restore categories/questions and associated structures
     //    (course independent)
     function quiz_restore_pre15_question_categories($category,$restore) {
+
+echo "PRE15!!";
 
         global $CFG;
 
@@ -1291,6 +1293,7 @@
     //STEP 2. Restore quizzes and associated structures
     //    (course dependent)
     function quiz_restore_pre15_mods($mod,$restore) {
+echo "PRE15!!";
 
         global $CFG;
 
