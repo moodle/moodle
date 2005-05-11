@@ -27,49 +27,45 @@ class block_login extends block_base {
             $wwwroot = str_replace("http://", "https://", $CFG->wwwroot);
         }
 
-        switch ($CFG->auth) {
-            // I'm not sure if user can create an account
-            // him/her self when using ldap authentication.
-            // If true, then there should be a method for it.
-            case "email":
-                $signup = $wwwroot . '/login/signup.php';
-                break;
-            case "none":
-                // just for the user to see instructions!
-                $signup = $wwwroot . '/login/index.php';
-                break;
-            default:
-                $signup = '';
+        if (is_internal_auth()) {
+            $signup = $wwwroot . '/login/signup.php';
+            $forgot = $wwwroot . '/login/forgot_password.php';
+        } else {
+            if (!empty($CFG->changepassword)) {
+                $forgot = $CFG->changepassword;
+            } else {
+                $forgot = '';
+            }
+            $signup = $wwwroot . '/login/index.php';  // to see instructions!
         }
 
         $username = get_moodle_cookie() === 'nobody' ? '' : get_moodle_cookie();
 
-        if (empty($USER->loggedin)) {
-            $this->content->text  = "<form name=\"blocklogin\" method=\"post\"";
-            $this->content->text .= " action=\"". $wwwroot ."/login/index.php\">\n";
-            $this->content->text .= "<table border=\"0\" cellpadding=\"1\" cellspacing=\"1\"";
-            $this->content->text .= " width=\"100%\" style=\"font-size: small;\">\n";
-            $this->content->text .= "<tr>\n<td>". get_string("username") .":</td>\n</tr>\n";
-            $this->content->text .= "<tr>\n<td><input type=\"text\" name=\"username\" value=\"";
-            $this->content->text .=  $username . "\" /></td>\n</tr>\n";
-            $this->content->text .= "<tr>\n<td>". get_string("password") .":</td>\n</tr>\n";
-            $this->content->text .= "<tr>\n<td><input type=\"password\" name=\"password\" /></td>\n</tr>\n";
-            $this->content->text .= "<tr>\n<td align=\"center\"><input type=\"submit\" value=\"";
-            $this->content->text .= get_string("login");
-            $this->content->text .= "\" /></td>\n</tr>\n";
-            if (!empty($signup)) {
-                $this->content->text .= "<tr><td align=\"center\"><a href=\"". $signup ."\">";
-                $this->content->text .= get_string('startsignup');
-                $this->content->text .= "</a></td></tr>\n";
-            }
-            $this->content->text .= "</table>\n";
-            $this->content->text .= "</form>\n";
-        } else {
-            $this->content->text = ''; // It's time to dissapear!
-                                       // And keep the self test happy by
-                                       // passing empty string!
-        }
         $this->content->footer = '';
+        $this->content->text = '';
+
+        if (empty($USER->loggedin)) {   // Show the block
+            $this->content->text .= '<form name="login" method="post" action="'.$wwwroot.'/login/index.php">';
+            $this->content->text .= '<table align="center" class="loginform">';
+
+            $this->content->text .= '<tr><td class="c0 r0" align="right">'.get_string('username').':</td>';
+            $this->content->text .= '<td class="c1 r0"><input type="text" name="username" size="10" value="'.$username.'" /></td></tr>';
+
+            $this->content->text .= '<tr><td class="c0 r1" align="right">'.get_string('password').':</td>';
+            $this->content->text .= '<td class="c1 r1"><input type="password" name="password" size="10" value="" /></td></tr>';
+
+            $this->content->text .= '<tr><td class="c0 r2">&nbsp;</td><td class="c1 r2" align="left"><input type="submit" value="'.get_string('login').'" /></td></tr>';
+
+            $this->content->text .= '</table></form>';
+
+            if (!empty($signup)) {
+                $this->content->footer .= '<div><a href="'.$signup.'">'.get_string('startsignup').'</a></div>';
+            }
+            if (!empty($forgot)) {
+                $this->content->footer .= '<div><a href="'.$forgot.'">'.get_string('forgotaccount').'</a></div>';
+            }
+        }
+
         return $this->content;
     }
 }
