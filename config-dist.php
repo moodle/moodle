@@ -239,6 +239,11 @@ $CFG->admin = 'admin';
 //   then all non-teachers will always see these for every person.
 //       $CFG->forcefirstname = 'Bruce';
 //       $CFG->forcelastname  = 'Simpson';
+//
+// The following setting will turn SQL Error logging on. This will output an
+// entry in apache error log indicating the position of the error and the statement
+// called. This option will action disregarding error_reporting setting.
+//     $CFG->dblogerror = true;
 
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser

@@ -65,6 +65,10 @@ function execute_sql($command, $feedback=true) {
         if ($feedback) {
             echo '<p><font color="red"><strong>'. get_string('error') .'</strong></font></p>';
         }
+        if (!empty($CFG->dblogerror)) {
+            $debug=end(debug_backtrace());
+            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $command");
+        }
         return false;
     }
 }
@@ -441,6 +445,10 @@ function record_exists_sql($sql) {
         if (isset($CFG->debug) and $CFG->debug > 7) {
             notify($db->ErrorMsg().'<br /><br />'.$sql);
         }
+        if (!empty($CFG->dblogerror)) {
+            $debug=end(debug_backtrace());
+            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
+        }
         return false;
     }
 
@@ -524,6 +532,10 @@ function count_records_sql($sql) {
         if (isset($CFG->debug) and $CFG->debug > 7) {
             notify($db->ErrorMsg() .'<br /><br />'. $sql);
         }
+        if (!empty($CFG->dblogerror)) {
+            $debug=end(debug_backtrace());
+            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
+        }
         return 0;
     }
 
@@ -591,6 +603,10 @@ function get_record_sql($sql, $expectmultiple=false) {
     if (!$rs = $db->Execute($sql . $limit)) {
         if (isset($CFG->debug) and $CFG->debug > 7) {    // Debugging mode - print checks
             notify( $db->ErrorMsg() . '<br /><br />'. $sql . $limit );
+        }
+        if (!empty($CFG->dblogerror)) {
+            $debug=end(debug_backtrace());
+            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql$limit");
         }
         return false;
     }
@@ -773,6 +789,10 @@ function get_records_sql($sql) {
         if (isset($CFG->debug) and $CFG->debug > 7) {
             notify($db->ErrorMsg() .'<br /><br />'. $sql);
         }
+        if (!empty($CFG->dblogerror)) {
+            $debug=end(debug_backtrace());
+            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
+        }
         return false;
     }
 
@@ -878,6 +898,10 @@ function get_records_sql_menu($sql) {
         if (isset($CFG->debug) and $CFG->debug > 7) {
             notify($db->ErrorMsg() .'<br /><br />'. $sql);
         }
+        if (!empty($CFG->dblogerror)) {
+            $debug=end(debug_backtrace());
+            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
+        }
         return false;
     }
 
@@ -928,6 +952,10 @@ function get_field($table, $return, $field1, $value1, $field2='', $value2='', $f
         if (isset($CFG->debug) and $CFG->debug > 7) {
             notify($db->ErrorMsg() .'<br /><br />SELECT '. $return .' FROM '. $CFG->prefix . $table .' '. $select);
         }
+        if (!empty($CFG->dblogerror)) {
+            $debug=end(debug_backtrace());
+            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  SELECT $return FROM $CFG->prefix$table $select");
+        }
         return false;
     }
 
@@ -958,6 +986,10 @@ function get_field_sql($sql) {
     if (!$rs) {
         if (isset($CFG->debug) and $CFG->debug > 7) {
             notify($db->ErrorMsg() .'<br /><br />'. $sql);
+        }
+        if (!empty($CFG->dblogerror)) {
+            $debug=end(debug_backtrace());
+            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $sql");
         }
         return false;
     }
@@ -1113,6 +1145,10 @@ function insert_record($table, $dataobject, $returnid=true, $primarykey='id') {
         if (isset($CFG->debug) and $CFG->debug > 7) {
             notify($db->ErrorMsg() .'<br /><br />'.$insertSQL);
         }
+        if (!empty($CFG->dblogerror)) {
+            $debug=end(debug_backtrace());
+            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  $insertSQL");
+        }
         return false;
     }
 
@@ -1221,6 +1257,10 @@ function update_record($table, $dataobject) {
     } else {
         if (isset($CFG->debug) and $CFG->debug > 7) {
             notify($db->ErrorMsg() .'<br /><br />UPDATE '. $CFG->prefix . $table .' SET '. $update .' WHERE id = \''. $dataobject->id .'\'');
+        }
+        if (!empty($CFG->dblogerror)) {
+            $debug=end(debug_backtrace());
+            error_log("SQL ".$db->ErrorMsg()." in {$debug['file']} on line {$debug['line']}. STATEMENT:  UPDATE $CFG->prefix$table SET $update WHERE id = '$dataobject->id'");
         }
         return false;
     }
