@@ -79,12 +79,14 @@ function import_headers( $question ) {
   $qtext = $this->import_text( $question['#']['questiontext'][0]['#']['text'] );
   $qformat = $question['#']['questiontext'][0]['@']['format'];
   $image = $question['#']['image'][0]['#'];
+  $penalty = $question['#']['penalty'][0]['#'];
 
   $qo = null;
   $qo->name = $name;
   $qo->questiontext = $qtext;
   $qo->questiontextformat = $this->trans_format( $qformat );
   $qo->image = ((!empty($image)) ?  $image : '');
+  $qo->penalty = $penalty;
 
   return $qo;
 }
@@ -170,6 +172,9 @@ function import_shortanswer( $question ) {
   // header parts particular to shortanswer
   $qo->qtype = SHORTANSWER;
 
+  // get usecase
+  $qo->usecase = $question['#']['usecase'][0]['#'];
+
   // run through the answers
   $answers = $question['#']['answer'];  
   $a_count = 0;
@@ -179,6 +184,42 @@ function import_shortanswer( $question ) {
      $qo->fraction[$a_count] = $ans->fraction;
      $qo->feedback[$a_count] = $ans->feedback;
      ++$a_count;
+  }
+
+  return $qo;
+}
+
+function import_numerical( $question ) {
+  // import numerical question
+
+  // get common parts
+  $qo = $this->import_headers( $question );
+
+  // header parts particular to numerical
+  $qo->qtype = NUMERICAL;
+
+  // work out answer and tolerance
+  $min = $question['#']['min'][0]['#'];
+  $max = $question['#']['max'][0]['#'];
+
+  $answer = round( ($min + $max) / 2 );
+  $tolerance = abs( $max - $answer );
+
+  // add to object 
+  $qo->answer = array( $answer );
+  $qo->tolerance = $tolerance;
+
+  // other info
+  $qo->feedback = array( $question['#']['feedback'][0]['#']['text'][0]['#'] );
+  $qo->fraction = array( $question['#']['fraction'][0]['#'] );
+
+  // get units array
+  $units = $question['#']['units'][0]['#']['unit'];
+  $qo->unit = array();
+  $qo->multiplier = array();
+  foreach ($units as $unit) {
+    $qo->multiplier[] = $unit['#']['multiplier'][0]['#'];
+    $qo->unit[] = $unit['#']['unit_name'][0]['#'];
   }
 
   return $qo;
@@ -204,7 +245,7 @@ function readquestions($lines) {
   // iterate through questions
   foreach ($xml['quiz']['#']['question'] as $question) {
     $question_type = $question['@']['type'];
-    echo "<b>question type = $question_type</b>"; 
+    echo "<p>question type = $question_type</p>"; 
 
     if ($question_type=='multichoice') {
       $qo = $this->import_multichoice( $question );
@@ -215,13 +256,18 @@ function readquestions($lines) {
     elseif ($question_type=='shortanswer') {
       $qo = $this->import_shortanswer( $question );
     }
+    elseif ($question_type=='numerical') {
+      $qo = $this->import_numerical( $question );
+    }
     else {
       echo "<p>Question type $question_type not currently supported for xml import</p>";
       $qo = null;
     }
 
     // stick the result in the $questions array
-    $questions[] = $qo;
+    if ($qo) {
+      $questions[] = $qo;
+    }
   }
 
   return $questions;
@@ -444,6 +490,8 @@ function writequestion( $question ) {
     $expout .= $question_text;
     $expout .= "    </questiontext>\n";   
     $expout .= "    <image>".$question->image."</image>\n";
+    $expout .= "    <penalty>{$question->penalty}</penalty>\n";
+    $expout .= "    <hidden>{$question->hidden}</hidden>\n";
 
     // output depends on question type
     switch($question->qtype) {
@@ -481,6 +529,7 @@ function writequestion( $question ) {
             }
         break;
     case SHORTANSWER:
+        $expout .= "    <usecase>{$question->options->usecase}</usecase>\n ";
         foreach($question->options->answers as $answer) {
             $percent = 100 * $answer->fraction;
             $expout .= "    <answer fraction=\"$percent\">\n";
@@ -498,7 +547,21 @@ function writequestion( $question ) {
         $max = $answer->answer + $tolerance;
         $expout .= "<min>$min</min>\n";
         $expout .= "<max>$max</max>\n";
+        $expout .= "<answer>{$answer->answer}</answer>\n";
+        $expout .= "<tolerance>$tolerance</tolerance>\n";
         $expout .= "<feedback>".$this->writetext( $answer->feedback )."</feedback>\n";
+        $expout .= "<fraction>{$answer->fraction}</fraction>\n";
+        $units = $question->options->units;
+        if (count($units)) {
+          $expout .= "<units>\n";
+          foreach ($units as $unit) {
+            $expout .= "  <unit>\n";
+            $expout .= "    <multiplier>{$unit->multiplier}</multiplier>\n";
+            $expout .= "    <unit_name>{$unit->unit}</unit_name>\n";
+            $expout .= "  </unit>\n";
+          }
+          $expout .= "</units>\n";
+        }
         break;
     case MATCH:
         foreach($question->options->subquestions as $subquestion) {
