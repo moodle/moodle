@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // quiz.php - created with Moodle 1.5 ALPHA (2005042300)
+      // quiz.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['addcategory'] = '增加类别';
@@ -69,6 +69,7 @@ $string['deleteattemptcheck'] = '确认完全删除该尝试吗?';
 $string['deletequestioncheck'] = '你真的确定要删除“{$a}”吗？';
 $string['description'] = '描述';
 $string['discrimination'] = '索引';
+$string['displayoptions'] = '显示选项';
 $string['eachattemptbuildsonthelast'] = '在上一次回答的基础上作答';
 $string['editcategories'] = '编辑类别';
 $string['editingdescription'] = '编辑描述';
@@ -113,6 +114,7 @@ $string['indivresp'] = '每条的个人回复';
 $string['introduction'] = '介绍';
 $string['itemanal'] = '栏目回复分析';
 $string['listitems'] = '列出测试项';
+$string['makecopy'] = '另存为一个新题目';
 $string['marks'] = '分';
 $string['match'] = '匹配题';
 $string['matchanswer'] = '匹配答案';
@@ -195,8 +197,10 @@ $string['selectcategoryabove'] = '在上面选一个类别';
 $string['shortanswer'] = '填空题';
 $string['show'] = '显示';
 $string['showcorrectanswer'] = '在反馈信息中显示正确答案吗？';
+$string['showdetailedmarks'] = '显示分数细节';
 $string['showfeedback'] = '回答之后显示反馈信息吗？';
 $string['showhidden'] = '显示旧问题';
+$string['shownoattempts'] = '显示未试答的学生';
 $string['shuffleanswers'] = '随机排列答案';
 $string['shufflequestions'] = '随机排列题目';
 $string['time'] = '时间';
