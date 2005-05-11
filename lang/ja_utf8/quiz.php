@@ -229,6 +229,7 @@ $string['questionnametoolong'] = '$a 行の問題名が長過ぎます ( 最大�
 $string['questions'] = '問題';
 $string['questionsinuse'] = '(* アスタリスクが付いている問題はすでに小テストで使用されています。これらの問題は小テストからは削除されませんが、カテゴリ一覧から削除されます。)';
 $string['questionsperpage'] = '1ページあたりの最大問題数';
+$string['questiontype'] = '問題タイプ $a';
 $string['questiontypesetupoptions'] = '問題タイプのオプション設定';
 $string['quizavailable'] = '小テストは $a まで利用できます。';
 $string['quizclose'] = '小テスト終了';
@@ -326,6 +327,7 @@ $string['withsummary'] = '( 統計概要を含む )';
 $string['wronggrade'] = '誤評定 ( $a 以降 ):';
 $string['xhtml'] = 'XHTMLフォーマット';
 $string['xml'] = 'Moodle XMLフォーマット';
+$string['xmltypeunsupported'] = '問題タイプ $a はxmlインポートでサポートされていません。';
 $string['yourfinalgradeis'] = 'あなたの最終評点は $a です。';
 $string['zerosignificantfiguresnotallowed'] = '正解の有効数字にはゼロを設定できません!';
 

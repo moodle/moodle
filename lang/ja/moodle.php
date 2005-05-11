@@ -431,6 +431,7 @@ $string['forceno'] = '強制しない';
 $string['forcepasswordchange'] = 'パスワードの変更を強制';
 $string['forcepasswordchangehelp'] = '次のログイン時にパスワード変更を促す';
 $string['forcetheme'] = 'テーマの強制';
+$string['forgotaccount'] = 'パスワードを忘れました?';
 $string['forgotten'] = 'ユーザ名またはパスワードを忘れましたか?';
 $string['format'] = 'フォーマット';
 $string['formathtml'] = 'HTMLフォーマット';
