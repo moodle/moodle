@@ -328,7 +328,7 @@ $string['email'] = 'E-mail地址';
 $string['emailactive'] = 'E-mail已激活';
 $string['emailagain'] = 'E-mail (重复)';
 $string['emailconfirm'] = '确认你的帐号';
-$string['emailconfirmation'] = '{$a->firstname:
+$string['emailconfirmation'] = '{$a->firstname}:
 
 你好! 
 
