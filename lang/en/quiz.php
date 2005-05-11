@@ -227,6 +227,7 @@ $string['questionnametoolong'] = 'Question name too long at line $a (255 char. m
 $string['questions'] = 'Questions';
 $string['questionsinuse'] = '(* Questions marked by an asterix are already in use in some quizzes. These question will not be deleted from these quizzes but only from the category list.)';
 $string['questionsperpage'] = 'Questions per page';
+$string['questiontype'] = 'Question type $a';
 $string['questiontypesetupoptions'] = 'Setup options for question types:';
 $string['quizavailable'] = 'The quiz is available until: $a';
 $string['quizclose'] = 'Close the quiz';
@@ -325,6 +326,7 @@ $string['withsummary'] = 'with Summary Statistics';
 $string['wronggrade'] = 'Wrong grade (after line $a) : ';
 $string['xhtml'] = 'XHTML Format';
 $string['xml'] = 'Moodle XML format';
+$string['xmltypeunsupported'] = 'Question type $a is not supported by xml import';
 $string['yourfinalgradeis'] = 'Your final grade for this quiz is $a';
 $string['zerosignificantfiguresnotallowed'] = 'The correct answer cannot have zero significant figures!';
 
