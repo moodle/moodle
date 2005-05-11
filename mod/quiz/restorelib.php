@@ -135,11 +135,6 @@
             $quiz_cat->parent = backup_todb($info['QUESTION_CATEGORY']['#']['PARENT']['0']['#']);
             $quiz_cat->sortorder = backup_todb($info['QUESTION_CATEGORY']['#']['SORTORDER']['0']['#']);
 
-            ////We have to recode the parent field
-            if ($parent = backup_getid($restore->backup_unique_code,"quiz_categories",$quiz_cat->parent)) {
-                $quiz_cat->parent = $parent->new_id;
-            }
-
             $cat = get_record('quiz_categories', 'stamp', $quiz_cat->stamp);
 	    // Check that category exists and either belongs to this course or is published and belongs to 
 	    // a course in which the user has editing privileges
@@ -840,14 +835,13 @@
 
             //Now, build the QUIZ_NUMERICAL record structure
             $numerical->question = $new_question_id;
-            $numerical->answer = backup_todb($num_info['#']['ANSWER']['0']['#']);
-            $numerical->min = backup_todb($num_info['#']['MIN']['0']['#']);
-            $numerical->max = backup_todb($num_info['#']['MAX']['0']['#']);
+            $numerical->answers = backup_todb($num_info['#']['ANSWERS']['0']['#']);
+            $numerical->tolerance = backup_todb($num_info['#']['TOLERANCE']['0']['#']);
 
             ////We have to recode the answer field
-            $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$numerical->answer);
+            $answer = backup_getid($restore->backup_unique_code,"quiz_answers",$numerical->answers);
             if ($answer) {
-                $numerical->answer = $answer->new_id;
+                $numerical->answers = $answer->new_id;
             }
 
             //The structure is equal to the db, so insert the quiz_numerical
