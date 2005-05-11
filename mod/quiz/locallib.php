@@ -2253,17 +2253,25 @@ function default_export_filename($course,$category) {
 /**
 * Function to read all questions for category into big array
 *
+* @param int $category category number
+* @param bool @noparent if true only questions with NO parent will be selected 
 * @author added by Howard Miller June 2004
 */
-function get_questions_category( $category ) {
+function get_questions_category( $category, $noparent=false ) {
 
     global $QUIZ_QTYPES;
 
     // questions will be added to an array
     $qresults = array();
 
+    // build sql bit for $noparent
+    $npsql = '';
+    if ($noparent) {
+      $npsql = " and parent='0' ";
+    }
+
     // get the list of questions for the category
-    if ($questions = get_records("quiz_questions","category",$category->id)) {
+    if ($questions = get_records_select("quiz_questions","category={$category->id} $npsql", "qtype, name ASC")) {
 
         // iterate through questions, getting stuff we need
         foreach($questions as $question) {
