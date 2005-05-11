@@ -44,9 +44,9 @@ class block_login extends block_base {
         $this->content->footer = '';
         $this->content->text = '';
 
-        if (empty($USER->loggedin)) {   // Show the block
-            $this->content->text .= '<form name="login" method="post" action="'.$wwwroot.'/login/index.php">';
-            $this->content->text .= '<table align="center" class="loginform">';
+        if (empty($USER->loggedin) or isguest()) {   // Show the block
+            $this->content->text .= '<form class="loginform" name="login" method="post" action="'.$wwwroot.'/login/index.php">';
+            $this->content->text .= '<table align="center" cellpadding="2" cellspacing="0" class="logintable">';
 
             $this->content->text .= '<tr><td class="c0 r0" align="right">'.get_string('username').':</td>';
             $this->content->text .= '<td class="c1 r0"><input type="text" name="username" size="10" value="'.$username.'" /></td></tr>';
