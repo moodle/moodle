@@ -1501,13 +1501,13 @@ HTMLArea.prototype._insertImage = function(image) {
     if(!empty($id)) {
         if(isteacher($id)) {
             echo "insert_image.php?id=";
-            print(isset($id) && !empty($id)) ? $id : "";
+            print(isset($id) && !empty($id)) ? $id : "0";
         } else {
             echo "insert_image_std.php?id=";
-            print(isset($id) && !empty($id)) ? $id : "";
+            print(isset($id) && !empty($id)) ? $id : "0";
         }
     } else {
-        echo "insert_image_std.php?id=";
+        echo "insert_image_std.php?id=0";
     }?>", function(param) {
         if (!param) {   // user must have pressed Cancel
             return false;
