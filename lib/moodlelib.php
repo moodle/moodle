@@ -1280,7 +1280,7 @@ function require_login($courseid=0, $autologinguest=true, $cm=null) {
 
     // If the site is currently under maintenance, then print a message
     if (!isadmin()) {
-        if (file_exists($CFG->dataroot.'/1/maintenance.html')) {
+        if (file_exists($CFG->dataroot.'/'.SITEID.'/maintenance.html')) {
             print_maintenance_message();
             exit;
         }

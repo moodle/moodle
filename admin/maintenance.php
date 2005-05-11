@@ -17,7 +17,7 @@
             error("Could not create site folder.  The site administrator needs to fix the file permissions");
         }
 
-    $filename = $CFG->dataroot.'/1/maintenance.html';
+    $filename = $CFG->dataroot.'/'.SITEID.'/maintenance.html';
 
     if ($form = data_submitted()) {
         if (confirm_sesskey()) {
