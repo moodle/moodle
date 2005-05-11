@@ -225,6 +225,7 @@ $string['questionnametoolong'] = 'Nom de la question à la ligne $a trop long (25
 $string['questions'] = 'Questions';
 $string['questionsinuse'] = '(* Les questions marquées d\un astérisque sont utilisées dans certains tests. Ces questions ne seront pas supprimées de ces tests, mais seulement de la catégorie.)';
 $string['questionsperpage'] = 'Questions par page';
+$string['questiontype'] = 'Question de type $a';
 $string['questiontypesetupoptions'] = 'Options pour les types de questions&nbsp;:';
 $string['quizavailable'] = 'Le test est disponible jusqu\'au $a';
 $string['quizclose'] = 'Fermer le test';
@@ -323,6 +324,7 @@ $string['withsummary'] = 'avec des statistiques résumées';
 $string['wronggrade'] = 'Note incorrecte (après la ligne $a) :';
 $string['xhtml'] = 'Format XHTML';
 $string['xml'] = 'Format XML Moodle';
+$string['xmltypeunsupported'] = 'L\'importation xml est impossible pour le type de question $a';
 $string['yourfinalgradeis'] = 'Votre note finale pour ce test est $a';
 $string['zerosignificantfiguresnotallowed'] = 'La bonne réponse ne peut pas n\'avoir aucun chiffre significatif&nbsp;!';
 
