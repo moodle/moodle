@@ -459,9 +459,8 @@
             foreach ($numericals as $numerical) {
                 $status =fwrite ($bf,start_tag("NUMERICAL",$level,true));
                 //Print numerical contents
-                fwrite ($bf,full_tag("ANSWER",$level+1,false,$numerical->answer));
-                fwrite ($bf,full_tag("MIN",$level+1,false,$numerical->min));
-                fwrite ($bf,full_tag("MAX",$level+1,false,$numerical->max));
+                fwrite ($bf,full_tag("ANSWERS",$level+1,false,$numerical->answers));
+                fwrite ($bf,full_tag("TOLERANCE",$level+1,false,$numerical->tolerance));
                 //Now backup numerical_units
                 $status = quiz_backup_numerical_units($bf,$preferences,$question,7);
                 $status =fwrite ($bf,end_tag("NUMERICAL",$level,true));
