@@ -91,11 +91,12 @@
     //     - quiz_responses
     //    This step is the standard mod backup. (course dependent).
 
+    //We are going to nedd quiz libs to be able to mimic the upgrade process
+    require_once("$CFG->dirroot/mod/quiz/locallib.php");
+
     //STEP 1. Restore categories/questions and associated structures
     //    (course independent)
     function quiz_restore_pre15_question_categories($category,$restore) {
-
-echo "PRE15!!";
 
         global $CFG;
 
@@ -120,155 +121,28 @@ echo "PRE15!!";
             $quiz_cat->parent = backup_todb($info['QUESTION_CATEGORY']['#']['PARENT']['0']['#']);
             $quiz_cat->sortorder = backup_todb($info['QUESTION_CATEGORY']['#']['SORTORDER']['0']['#']);
 
-            //Now, we are going to do some calculations to decide when to create the category or no.
-            //Based in the next logic:
-            //  + If the category doesn't exists, create it in $restore->course_id course and remap questions here.
-            //  + If the category exists:
-            //      - If it belongs to $restore->course_id course simply remap questions here.
-            //      - If it doesn't belongs to $restore->course_id course:
-            //          - If its publish field is set to No (0), create a new category in $restore->course_id course and remap questions here.
-            //          - If its publish field is set to Yes (1), simply remap questions here.
-            //
-            //This was decided 2003/08/26, Eloy and Martin
+            //Decide if we have to create a new category or no. Works by stamp or name.
+            if ($quiz_cat->stamp) { //First, by stamp (standard since Moodle 1.1)
 
-            //Eloy's NOTE: I could be done code below more compact, but I've preffered do this to allow
-            //easy future modifications.
-
-            //If backup contains category_stamps then everythig is done by stamp (current approach from 1.1 final)
-            //else, everything is done by name (old approach). This mantains backward compatibility.
-
-            if ($quiz_cat->stamp) {
-                //STAMP exists, do things using it (1.1)
-
-                //Check for categories and their properties, storing in temporary variables
-                //Count categories with the same stamp
-
-                $count_cat = count_records("quiz_categories","stamp",$quiz_cat->stamp);
-                //Count categories with the same stamp in the same course
-                $count_cat_same_course = count_records("quiz_categories","course",$restore->course_id,"stamp",$quiz_cat->stamp);
-                //Count categories with the same stamp in other course
-                $count_cat_other_course = $count_cat - $count_cat_same_course;
-
-                //Get categories with the same stamp in the same course
-                if ($count_cat_same_course > 0) {
-                    //Eloy's NOTE: Due to this select *must* be retrive only one record, we could have used get_record(), but
-                    //             mantain this to be as simmilar as possible with old code (comparing by name) to be
-                    //             able to modify both in the same manner.
-                    $cats_same_course = get_records_sql("SELECT c.* FROM {$CFG->prefix}quiz_categories c
-                                                         WHERE c.course = '$restore->course_id' AND
-                                                               c.stamp = '$quiz_cat->stamp'
-                                                         ORDER BY c.id DESC");
-
-                } else {
-                    $cats_same_course = false;
-                }
-                //Get category with the same stamp in other course
-                //The last record will be the oldest category with publish=1
-                if ($count_cat_other_course > 0) {
-                    $cats_other_course = get_records_sql("SELECT c.* FROM {$CFG->prefix}quiz_categories c
-                                                          WHERE c.course != '$restore->course_id' AND
-                                                                c.stamp = '$quiz_cat->stamp'
-                                                          ORDER BY c.publish ASC, c.id DESC");
-                } else {
-                    $cats_other_course = false;
-                }
-
-                if ($count_cat == 0) {
-                    //The category doesn't exist, create it.
-                    //The structure is equal to the db, so insert the quiz_categories
+                $cat = get_record('quiz_categories', 'stamp', $quiz_cat->stamp);
+                // Check that category exists and either belongs to this course or is published and belongs to
+                // a course in which the user has editing privileges
+                if ($cat and ($cat->course == $restore->course_id or ($cat->publish and isteacheredit($cat->course)))) {
+                    $newid = $cat->id;
+                } else { // need to create new category
                     $newid = insert_record ("quiz_categories",$quiz_cat);
-                } else {
-                    //The category exist, check if it belongs to the same course
-                    if ($count_cat_same_course > 0) {
-                        //The category belongs to the same course, get the last record (oldest)
-                        foreach ($cats_same_course as $cat) {
-                            $newid = $cat->id;
-                        }
-                    } else if ($count_cat_other_course > 0) {
-                        //The category belongs to other course, get the last record (oldest)
-                        foreach ($cats_other_course as $cat) {
-                            $other_course_cat = $cat;
-                        }
-                        //Now check the publish field
-                        if ($other_course_cat->publish == 0) {
-                            //The category has its publish to No (0). Create a new local one.
-                            $newid = insert_record ("quiz_categories",$quiz_cat);
-                        } else {
-                            //The category has its publish to Yes(1). Use it.
-                            $newid = $other_course_cat->id;
-                        }
-                    } else {
-                        //We must never arrive here !!
-                        $status = false;
-                    }
-                }
-            } else {
-                //STAMP doesn't exists, do things by name (pre 1.1)
-                //and calculate and insert STAMP too !!
-
-                //Check for categories and their properties, storing in temporary variables
-                //Count categories with the same name
-
-                $count_cat = count_records("quiz_categories","name",$quiz_cat->name);
-                //Count categories with the same name in the same course
-                $count_cat_same_course = count_records("quiz_categories","course",$restore->course_id,"name",$quiz_cat->name);
-                //Count categories with the same name in other course
-                $count_cat_other_course = $count_cat - $count_cat_same_course;
-
-                //Get categories with the same name in the same course
-                //The last record will be the oldest category
-                if ($count_cat_same_course > 0) {
-                    $cats_same_course = get_records_sql("SELECT c.* FROM {$CFG->prefix}quiz_categories c
-                                                         WHERE c.course = '$restore->course_id' AND
-                                                               c.name = '$quiz_cat->name'
-                                                         ORDER BY c.id DESC");
-                } else {
-                    $cats_same_course = false;
-                }
-                //Get categories with the same name in other course
-                //The last record will be the oldest category with publish=1
-                if ($count_cat_other_course > 0) {
-                    $cats_other_course = get_records_sql("SELECT c.* FROM {$CFG->prefix}quiz_categories c
-                                                          WHERE c.course != '$restore->course_id' AND
-                                                                c.name = '$quiz_cat->name'
-                                                          ORDER BY c.publish ASC, c.id DESC");
-                } else {
-                    $cats_other_course = false;
                 }
 
-                if ($count_cat == 0) {
-                    //The category doesn't exist, create it.
-                    //First, calculate the STAMP field
-                    $quiz_cat->stamp = make_unique_id_code();
-                    //The structure is equal to the db, so insert the quiz_categories
+            } else {  //Now, by name (for old pre 1.1 courses)
+
+                $cat = get_record('quiz_categories', 'name', $quiz_cat->name);
+                // Check that category exists and either belongs to this course or is published and belongs to
+                // a course in which the user has editing privileges
+                if ($cat and ($cat->course == $restore->course_id or ($cat->publish and isteacheredit($cat->course)))) {
+                    $newid = $cat->id;
+                } else { // need to create new category (adding to it the stamp)
+                    $quiz_cat->stamp = make_unique_id_code();   
                     $newid = insert_record ("quiz_categories",$quiz_cat);
-                } else {
-                    //The category exist, check if it belongs to the same course
-                    if ($count_cat_same_course > 0) {
-                        //The category belongs to the same course, get the last record (oldest)
-                        foreach ($cats_same_course as $cat) {
-                            $newid = $cat->id;
-                        }
-                    } else if ($count_cat_other_course > 0) {
-                        //The category belongs to other course, get the last record (oldest)
-                        foreach ($cats_other_course as $cat) {
-                            $other_course_cat = $cat;
-                        }
-                        //Now check the publish field
-                        if ($other_course_cat->publish == 0) {
-                            //The category has its publish to No (0). Create a new local one.
-                            //First, calculate the STAMP field
-                            $quiz_cat->stamp = make_unique_id_code();
-                            //The structure is equal to the db, so insert the quiz_categories
-                            $newid = insert_record ("quiz_categories",$quiz_cat);
-                        } else {
-                            //The category has its publish to Yes(1). Use it.
-                            $newid = $other_course_cat->id;
-                        }
-                    } else {
-                        //We must never arrive here !!
-                        $status = false;
-                    }
                 }
             }
 
@@ -287,7 +161,7 @@ echo "PRE15!!";
                 backup_putid($restore->backup_unique_code,"quiz_categories",
                              $category->id, $newid);
                 //Now restore quiz_questions
-                $status = quiz_restore_questions ($category->id, $newid,$info,$restore);
+                $status = quiz_restore_pre15_questions ($category->id, $newid,$info,$restore);
             } else {
                 $status = false;
             }
@@ -318,19 +192,41 @@ echo "PRE15!!";
 
             //Now, build the QUIZ_QUESTIONS record structure
             $question->category = $new_category_id;
+            $question->parent = backup_todb($que_info['#']['PARENT']['0']['#']);
             $question->name = backup_todb($que_info['#']['NAME']['0']['#']);
             $question->questiontext = backup_todb($que_info['#']['QUESTIONTEXT']['0']['#']);
             $question->questiontextformat = backup_todb($que_info['#']['QUESTIONTEXTFORMAT']['0']['#']);
             $question->image = backup_todb($que_info['#']['IMAGE']['0']['#']);
             $question->defaultgrade = backup_todb($que_info['#']['DEFAULTGRADE']['0']['#']);
+            $question->penalty = backup_todb($que_info['#']['PENALTY']['0']['#']);
             $question->qtype = backup_todb($que_info['#']['QTYPE']['0']['#']);
+            $question->length = backup_todb($que_info['#']['LENGTH']['0']['#']);
             $question->stamp = backup_todb($que_info['#']['STAMP']['0']['#']);
             $question->version = backup_todb($que_info['#']['VERSION']['0']['#']);
             $question->hidden = backup_todb($que_info['#']['HIDDEN']['0']['#']);
 
+            //Although only a few backups can have questions with parent, we try to recode it
+            //if it contains something
+            if ($question->parent and $parent = backup_getid($restore->backup_unique_code,"quiz_questions",$question->parent)) {
+                $question->parent = $parent->new_id;
+            }
+
             // If it is a random question then hide it
-            if ($question->qtype == 4) {
+            if ($question->qtype == RANDOM) {
                 $question->hidden = 1;
+            }
+
+            //If the question was formatted as Wiki, convert it to Markdown in 1.5
+            if ($question->questiontextformat == FORMAT_WIKI) {
+                include_once("$CFG->dirroot/lib/wiki_to_markdown.php");
+                $wtm = new WikiToMarkdown();
+                $question->questiontext = $wtm->convert($question->questiontext, $restore->course);
+                $question->questiontextformat = FORMAT_MARKDOWN;
+            }
+
+            //If it is a description question, length = 0
+            if ($question->qtype == DESCRIPTION) {
+                $question->length = 0;
             }
 
             //Check if the question exists
@@ -340,7 +236,6 @@ echo "PRE15!!";
             //If the stamp doesn't exists, check if question exists
             //by category, name and questiontext and calculate stamp
             //Mantains pre Beta 1.1 compatibility !!
-            //TO TAKE OUT SOMETIME IN THE FUTURE !!
             if (!$question->stamp) {
                 $question->stamp = make_unique_id_code();
                 $question->version = 1;
@@ -348,6 +243,7 @@ echo "PRE15!!";
                                                                 "name",$question->name,
                                                                 "questiontext",$question->questiontext);
             }
+
             //If the question exists, only record its id
             if ($question_exists) {
                 $newid = $question_exists->id;
@@ -356,6 +252,10 @@ echo "PRE15!!";
             } else {
                 //The structure is equal to the db, so insert the quiz_questions
                 $newid = insert_record ("quiz_questions",$question);
+                //If it is a random question, parent = id
+                if ($newid && $question->qtype == RANDOM) {
+                    set_field ('questions', 'parent', $newid, 'id', $newid);
+                }
                 $creatingnewquestion = true;
             }
 
@@ -376,28 +276,29 @@ echo "PRE15!!";
             //If it's a new question in the DB, restore it
             if ($creatingnewquestion) {
                 //Now, restore every quiz_answers in this question
-                $status = quiz_restore_answers($oldid,$newid,$que_info,$restore);
+                $status = quiz_restore_pre15_answers($oldid,$newid,$que_info,$restore);
                 //Now, depending of the type of questions, invoke different functions
                 if ($question->qtype == "1") {
-                    $status = quiz_restore_shortanswer($oldid,$newid,$que_info,$restore);
+                    $status = quiz_restore_pre15_shortanswer($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "2") {
-                    $status = quiz_restore_truefalse($oldid,$newid,$que_info,$restore);
+                    $status = quiz_restore_pre15_truefalse($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "3") {
-                    $status = quiz_restore_multichoice($oldid,$newid,$que_info,$restore);
+                    $status = quiz_restore_pre15_multichoice($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "4") {
                     //Random question. Nothing to do.
                 } else if ($question->qtype == "5") {
-                    $status = quiz_restore_match($oldid,$newid,$que_info,$restore);
+                    $status = quiz_restore_pre15_match($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "6") {
-                    $status = quiz_restore_randomsamatch($oldid,$newid,$que_info,$restore);
+                    $status = quiz_restore_pre15_randomsamatch($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "7") {
                     //Description question. Nothing to do.
                 } else if ($question->qtype == "8") {
-                    $status = quiz_restore_numerical($oldid,$newid,$que_info,$restore);
+                    $status = quiz_restore_pre15_numerical($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "9") {
-                    $status = quiz_restore_multianswer($oldid,$newid,$que_info,$restore);
+echo "Cloze questions not working!!!";
+                    $status = quiz_restore_pre15_multianswer($oldid,$newid,$que_info,$restore);
                 } else if ($question->qtype == "10") {
-                    $status = quiz_restore_calculated($oldid,$newid,$que_info,$restore);
+                    $status = quiz_restore_pre15_calculated($oldid,$newid,$que_info,$restore);
                 }
             } else {
                 //We are NOT creating the question, but we need to know every quiz_answers
@@ -975,6 +876,12 @@ echo "PRE15!!";
                 $numerical->answer = $answer->new_id;
             }
 
+            //Answer goes to answers in 1.5 (although it continues being only one!)
+            $numerical->answers = $numerical->answer;
+
+            //We have to calculate the tolerance field of the numerical question
+            $numerical->tolerance = ($numerical->max - $numerical->min)/2;
+
             //The structure is equal to the db, so insert the quiz_numerical
             $newid = insert_record ("quiz_numerical",$numerical);
 
@@ -988,7 +895,7 @@ echo "PRE15!!";
             }
 
             //Now restore numerical_units
-            $status = quiz_restore_numerical_units ($old_question_id,$new_question_id,$num_info,$restore);
+            $status = quiz_restore_pre15_numerical_units ($old_question_id,$new_question_id,$num_info,$restore);
 
             if (!$newid) {
                 $status = false;
@@ -1028,6 +935,11 @@ echo "PRE15!!";
                 $calculated->answer = $answer->new_id;
             }
 
+            //If we haven't correctanswerformat, it defaults to 2 (in DB)
+            if (empty($calculated->correctanswerformat)) {
+                $calculated->correctanswerformat = 2;
+            }
+
             //The structure is equal to the db, so insert the quiz_calculated
             $newid = insert_record ("quiz_calculated",$calculated);
 
@@ -1041,11 +953,11 @@ echo "PRE15!!";
             }
 
             //Now restore numerical_units
-            $status = quiz_restore_numerical_units ($old_question_id,$new_question_id,$cal_info,$restore);
+            $status = quiz_restore_pre15_numerical_units ($old_question_id,$new_question_id,$cal_info,$restore);
 
             //Now restore dataset_definitions
             if ($status && $newid) {
-                $status = quiz_restore_dataset_definitions ($old_question_id,$new_question_id,$cal_info,$restore);
+                $status = quiz_restore_pre15_dataset_definitions ($old_question_id,$new_question_id,$cal_info,$restore);
             }
 
             if (!$newid) {
@@ -1238,7 +1150,7 @@ echo "PRE15!!";
                 $newid = insert_record ("quiz_dataset_definitions",$dataset_definition);
                 if ($newid) {
                     //Restore quiz_dataset_items
-                    $status = quiz_restore_dataset_items($newid,$dd_info,$restore);
+                    $status = quiz_restore_pre15_dataset_items($newid,$dd_info,$restore);
                 }
             }
 
