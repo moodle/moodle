@@ -199,8 +199,8 @@ class quiz_default_format {
         }
 
         // get the questions (from database) in this category
-        // $questions = get_records("quiz_questions","category",$this->category->id);
-        $questions = get_questions_category( $this->category );
+        // only get q's with no parents (no cloze subquestions specifically)
+        $questions = get_questions_category( $this->category, true );
 
         notify("Exporting questions.");
         if (!count($questions)) {
