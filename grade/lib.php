@@ -3,7 +3,7 @@
 require_once('../config.php');
 require_once($CFG->dirroot.'/course/lib.php');
 
-define('UNCATEGORISED', get_string('uncategorised','grades'));
+define('UNCATEGORISED', 'uncategorised');
 
 $GRADEPREFS = array('use_advanced',                // Only add new preferences to the end of this array!
                     'use_weighted_for_letter',     // as the order counts and will affect backward compatibility
@@ -2207,6 +2207,9 @@ function grade_display_grade_weights() {
                         
             // make names form safe
             $form_catname = str_replace(' ', '_', $category->name);
+            if ($category->name == UNCATEGORISED) {
+                $category->name = get_string(UNCATEGORISED, 'grades');
+            }
             echo  '<tr><td>'.$category->name.'</td>';
             echo  '<td align="right"><input type="text" size="5" name="'.$form_catname.'" value="'.$val.'" /></td>';
             echo  '<td align="right"><input type="text" size="5" name="drop_x_lowest'.$form_catname.'" value="'.$category->drop_x_lowest.'" /></td>';
