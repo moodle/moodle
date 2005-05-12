@@ -462,6 +462,14 @@ table.message_search_results td {
 .message .content {
 }
 
+/***
+ *** Logs
+ ***/
+
+.logtable .r1 {
+  background-color:#EEEEEE;
+}
+
 
 /***
  *** Tabs
@@ -492,8 +500,8 @@ table.message_search_results td {
 .tabrow td:hover .tablink {
   background-image:url(pix/tab/right_hover.gif);
 }
-.tabrow .last span {
-  background:url(pix/tab/right_end.gif) top right no-repeat;
+.tabrow .last {
+  background: transparent url(pix/tab/right_end.gif) top right no-repeat;
 }
 .tabrow .selected {
   background:url(pix/tab/left_active.gif) top left no-repeat;

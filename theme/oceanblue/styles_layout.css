@@ -336,9 +336,6 @@ body#admin-config .confighelp {
   clear: both;
 }
 
-.sideblock .header .title {
-}
-
 .sideblock .header .commands a {
   margin: 0px 2px;
 }
@@ -355,6 +352,13 @@ body#admin-config .confighelp {
   margin-bottom:4px;
   border:none;
   border-top:1px solid;
+}
+
+#left-column .hidden .header,
+#right-column .hidden .header
+{
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
 }
 
 #left-column .hidden .content,
@@ -740,6 +744,9 @@ body#course-view .headingblock {
   border-style:solid;
 }
 
+.courseboxcontent .cost {
+  padding-top: 20px;
+}
 
 
 /***
@@ -810,6 +817,20 @@ body#message-messages {
 
 
 /***
+ *** Logs
+ ***/
+
+.logtable td,
+.logtable th {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.logtable th {
+  text-align:left;
+}
+
+/***
  *** Tabs
  ***/
 
@@ -832,7 +853,7 @@ body#message-messages {
 .tabrow {
   border-collapse:collapse;
   width:100%;
-  margin:0px;
+  margin: 1px 0px 0px 0px;
 }
 
 .tabrow td {
@@ -851,7 +872,7 @@ body#message-messages {
   white-space:nowrap;
   text-decoration:none;
 }
-.tabrow .last span {
+.tabrow .last {
   display:block;
   padding:0px 1px 0px 0px;
 }
