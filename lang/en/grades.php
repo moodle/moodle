@@ -49,6 +49,7 @@ $string['gradeletternote'] = 'To delete a grade letter just empty any of the<br 
 $string['gradepreferenceshelp'] = 'Grade Preferences Help';
 $string['grades'] = 'Grades';
 $string['gradeweighthelp'] = 'Grade Weight Help';
+$string['hideadvanced'] = 'Hide Advanced Features';
 $string['hidecategory'] = 'Hidden';
 $string['highgradeascending'] = 'Sort by high grade ascending';
 $string['highgradedescending'] = 'Sort by high grade descending';
