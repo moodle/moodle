@@ -96,10 +96,6 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
                 $answer->answer   = trim($dataanswer);
                 $answer->fraction = $question->fraction[$key];
                 $answer->feedback = trim($question->feedback[$key]);
-                if (!is_numeric($answer->answer)) {
-                    $result->error = "The answer '$answer->answer' is not numeric!";
-                    return $result;
-                }
 
                 if ($oldanswer = array_shift($oldanswers)) {  // Existing answer, so reuse it
                     $answer->id = $oldanswer->id;
@@ -216,8 +212,17 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
              && $teststate->options->max >= $response) {
                 return true;
             }
+        } else {
+            return ($response == $testresponse);
         }
-        return false;
+    }
+
+    function get_correct_responses(&$question, &$state) {
+        $correct = parent::get_correct_responses($question, $state);
+        if ($unit = $this->get_default_numerical_unit($question)) {
+            $correct[''] .= ' '.$unit->unit;
+        }
+        return $correct;
     }
 
     function get_tolerance_interval(&$question, &$state) {
@@ -266,10 +271,6 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
     *                             account as a float.
     */
     function apply_unit($rawresponse, $units) {
-        if (!is_numeric($rawresponse)) {
-            return $rawresponse;
-        }
-
         // Make units more useful
         $tmpunits = array();
         foreach ($units as $unit) {
@@ -284,12 +285,12 @@ class quiz_numerical_qtype extends quiz_shortanswer_qtype {
          $rawresponse, $responseparts)) {
             $responsenum  = (float)$responseparts[1];
             if (isset($tmpunits[$responseparts[5]])) {
-                return (float)$responseparts[1]*$tmpunits[$responseparts[5]];
+                return (float)$responseparts[1] / $tmpunits[$responseparts[5]];
             } else {
                 return (float)$responseparts[1];
             }
         }
-        return (float)$rawresponse;
+        return $rawresponse;
     }
 }
 //// END OF CLASS ////
