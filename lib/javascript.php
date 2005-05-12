@@ -14,9 +14,11 @@
 <script language="JavaScript" type="text/javascript" src="<?php echo $CFG->wwwroot ?>/lib/overlib.js"></script>
 <script language="JavaScript" type="text/javascript" src="<?php echo $CFG->wwwroot ?>/lib/cookies.js"></script>
 
-<script language="JavaScript" type="text/javascript">
+<script language="JavaScript" type="text/javascript" defer="defer">
 
 <!-- // Non-Static Javascript functions
+
+setTimeout('fix_column_widths()', 20);
 
 function openpopup(url,name,options,fullscreen) {
   fullurl = "<?php echo $CFG->wwwroot ?>" + url;
