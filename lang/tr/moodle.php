@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005042400)
+      // moodle.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
 $string['action'] = 'Eylem';
@@ -532,6 +532,11 @@ $string['htmleditordisabledbrowser'] = 'Internet Explorer 5.5 ve yukarýsý olmadý
 $string['htmlformat'] = 'Kolay HTML formatý';
 $string['icqnumber'] = 'ICQ numarasý';
 $string['idnumber'] = 'ID numarasý';
+$string['importdata'] = 'Kurs verisi yükle';
+$string['importdataexported'] = '\'Kaynak\' kurstan veriler baþarýyla alýndý. <br /> \'Hedef\' kursa verileri aktarmak için devam edin.';
+$string['importdatafinished'] = 'Alma tamamlandý! Kursunuza devam edin';
+$string['importdatafrom'] = 'Kurs verisinin alýnacaðý kurs:';
+$string['importmetacoursenote'] = 'Meta kursunuza yeni kurslar eklemek için bu formu kullanýn (öðrenci kayýt iþlemleri de alýnacak)';
 $string['inactive'] = 'Etkin deðil';
 $string['include'] = 'Dahil et';
 $string['includeallusers'] = 'Tüm kullanýcýlarý dahil et';
@@ -615,6 +620,7 @@ $string['managedatabase'] = 'Veritabanýný yönet';
 $string['managefilters'] = 'Filtreler';
 $string['managemeta'] = 'Bu bir meta kurs mu?';
 $string['managemetadisabled'] = 'Bu kurs zaten bir meta kurs içinde olduðundan dolayý pasifleþtirildi';
+$string['managemetaexplan'] = '(Anlamý: Öðrenci kayýt iþlemleri, baþka kurslardan çekilmiþtir.)';
 $string['managemodules'] = 'Modüller';
 $string['markedthistopic'] = 'Bu konu güncel konu olarak belirlendi';
 $string['markthistopic'] = 'Bu konuyu güncel konu olarak belirle';
