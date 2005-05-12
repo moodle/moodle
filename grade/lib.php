@@ -2512,22 +2512,36 @@ function grade_display_grade_preferences($course, $preferences) {
     global $CFG;
     global $USER;
 
-    print_heading_with_help(get_string('setpreferences','grades'), 'coursegradepreferences', 'grades');
+    if ($preferences->use_advanced == 0) {
+        $useadvanced = 1;
+        $buttonlabel = get_string('useadvanced', 'grades');
+    } else {
+        $useadvanced = 0;
+        $buttonlabel = get_String('hideadvanced', 'grades');
+    }
 
-    echo  '<table align="center" class="gradeprefs">';
+    $buttonoptions = array('action'  => 'set_grade_preferences',
+                           'id'      => $course->id,
+                           'sesskey' => sesskey(),
+                           'use_advanced' => $useadvanced);
+                           
+
+    print_heading_with_help(get_string('setpreferences','grades'), 'coursegradepreferences', 'grades');
+    
+    echo '<center>';
+    print_single_button('index.php', $buttonoptions, $buttonlabel, 'post');
+    echo '<br /></center>';
+
     echo  '<form name="set_grade_preferences" method="post" action="./index.php">';
     echo  '<input type="hidden" name="action" value="set_grade_preferences" />';
-    echo  '<input type="hidden" name="id" value='.$course->id.' />';
+    echo  '<input type="hidden" name="id" value="'.$course->id.'" />';
     echo  '<input type="hidden" name="sesskey" value="'.sesskey().'" />';
+    echo  '<table align="center" class="gradeprefs">';
     
     $optionsyesno = NULL;
     $optionsyesno[0] = get_string('no');
     $optionsyesno[1] = get_string('yes');
-        
-    echo  '<tr><td class="c0">'.get_string('useadvanced','grades').'</td>';
-    echo  '<td class="c1">';
-    choose_from_menu($optionsyesno, 'use_advanced', $preferences->use_advanced, '');
-    echo  '</td></tr>';
+
     
     if ($preferences->use_advanced) {
         $options = NULL;
@@ -2587,7 +2601,7 @@ function grade_display_grade_preferences($course, $preferences) {
     choose_from_menu($optionsyesno, 'show_hidden', $preferences->show_hidden, '');
     echo  '</td></tr>';
     
-    echo  '<tr><td colspan="3" align="center"><input type="submit" value="'.get_string('savepreferences','grades').'" /></td></tr></form></table>';
+    echo  '<tr><td colspan="3" align="center"><input type="submit" value="'.get_string('savepreferences','grades').'" /></td></tr></table></form>';
 }
 
 
