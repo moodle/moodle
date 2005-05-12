@@ -21,7 +21,7 @@
     //           |                        |                    |                   |             |.......................................
     //           |               quiz_grades                   |        quiz_question_versions   |                                      .
     //           |           (UL,pk->id,fk->quiz)              |         (CL,pk->id,fk->quiz)    |                                      .
-    //           |                                             |                         .       |    ----s----    .
+    //           |                                             |                         .       |    ----quiz_question_datasets----    .
     //      quiz_attempts                          quiz_question_instances               .       |    |  (CL,pk->id,fk->question,  |    .
     //  (UL,pk->id,fk->quiz)                    (CL,pk->id,fk->quiz,question)            .       |    |   fk->dataset_definition)  |    .
     //             |                                              |                      .       |    |                            |    .
@@ -87,7 +87,7 @@
     //     - quiz_calculated
     //     - quiz_answers
     //     - quiz_numerical_units
-    //     - s
+    //     - quiz_question_datasets
     //     - quiz_dataset_definitions
     //     - quiz_dataset_items
     //    All this backup info has its own section in moodle.xml (QUESTION_CATEGORIES) and it's generated
@@ -1156,12 +1156,12 @@
                 }
             }
 
-            //Now, we must have a definition (created o reused). Its id is in newid. Create the s record
+            //Now, we must have a definition (created o reused). Its id is in newid. Create the quiz_question_datasets record
             //to join the question and the dataset_definition
             if ($newid) {
                 $question_dataset->question = $new_question_id;
                 $question_dataset->datasetdefinition = $newid;
-                $newid = insert_record ("s",$question_dataset);
+                $newid = insert_record ("quiz_question_datasets",$question_dataset);
             }
 
             if (!$newid) {
