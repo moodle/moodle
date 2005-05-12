@@ -96,7 +96,8 @@
         echo '<tr id="section-0" class="section">';
         echo '<td class="left side">&nbsp;</td>';
         echo '<td class="content">';
-
+        
+        echo '<div class="summary">';
         $summaryformatoptions->noclean = true;
         echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
 
@@ -105,6 +106,7 @@
                  ' href="editsection.php?id='.$thissection->id.'"><img src="'.$CFG->pixpath.'/t/edit.gif" '.
                  ' height="11" width="11" border="0" alt="'.$streditsummary.'" /></a><br /><br />';
         }
+        echo '</div>';
 
         print_section($course, $thissection, $mods, $modnamesused);
 
@@ -180,6 +182,7 @@
             if (!isteacher($course->id) and !$thissection->visible) {   // Hidden for students
                 echo get_string('notavailable');
             } else {
+                echo '<div class="summary">';
                 $summaryformatoptions->noclean = true;
                 echo format_text($thissection->summary, FORMAT_HTML, $summaryformatoptions);
 
@@ -187,6 +190,7 @@
                     echo ' <a title="'.$streditsummary.'" href="editsection.php?id='.$thissection->id.'">'.
                          '<img src="'.$CFG->pixpath.'/t/edit.gif" border="0" height="11" width="11" alt="" /></a><br /><br />';
                 }
+                echo '</div>';
 
                 print_section($course, $thissection, $mods, $modnamesused);
 
