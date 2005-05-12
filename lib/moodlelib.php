@@ -708,8 +708,10 @@ function userdate($date, $format='', $timezone=99, $fixday = true) {
         $format = $strftimedaydatetime;
     }
 
-    $formatnoday = str_replace('%d', 'DD', $format);
-    if ($fixday and empty($CFG->nofixday)) {    // Config.php can force %d not to be fixed.
+    if (!empty($CFG->nofixday)) {  // Config.php can force %d not to be fixed.
+        $fixday = false;
+    } else if ($fixday) {
+        $formatnoday = str_replace('%d', 'DD', $format);
         $fixday = ($formatnoday != $format);
     }
 
