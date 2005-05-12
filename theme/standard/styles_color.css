@@ -453,6 +453,14 @@ table.message_search_results td {
 .message .content {
 }
 
+/***
+ *** Logs
+ ***/
+
+.logtable .r1 {
+  background-color:#EEEEEE;
+}
+
 
 /***
  *** Tabs

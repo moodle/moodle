@@ -808,6 +808,20 @@ body#message-messages {
 
 
 /***
+ *** Logs
+ ***/
+
+.logtable td,
+.logtable th {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.logtable th {
+  text-align:left;
+}
+
+/***
  *** Tabs
  ***/
 
