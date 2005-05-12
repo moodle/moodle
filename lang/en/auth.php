@@ -55,7 +55,7 @@ $string['auth_ldap_create_context'] = 'If you enable user creation with email co
 $string['auth_ldap_creators'] = 'List of groups whose members are allowed to create new courses. Separate multiple groups with \';\'. Usually something like \'cn=teachers,ou=staff,o=myorg\'';
 $string['auth_ldap_expiration_desc'] = 'Select No to disable expired password checking or LDAP to read passwordexpiration time directly from LDAP';
 $string['auth_ldap_expiration_warning_desc'] = 'Number of days before password expiration warning is issued.';
-$string['auth_ldap_expireattr_desc'] = 'Optional: overrides ldap-attribute what stores password expiration time asswordAxpirationTime';
+$string['auth_ldap_expireattr_desc'] = 'Optional: overrides ldap-attribute what stores password expiration time passwordExpirationTime';
 $string['auth_ldap_graceattr_desc'] = 'Optional: Overrides  gracelogin attribute';
 $string['auth_ldap_gracelogins_desc'] = 'Enable LDAP gracelogin support. After password has expired user can login until gracelogin count is 0. Enabling this setting displays grace login message if password is exprired.';
 $string['auth_ldap_host_url'] = 'Specify LDAP host in URL-form like \'ldap://ldap.myorg.com/\' or \'ldaps://ldap.myorg.com/\' Separate multipleservers with \';\' to get failover support. ';
