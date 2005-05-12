@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // grades.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005032800)
+      // grades.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['addcategory'] = 'カテゴリの追加';
@@ -49,6 +49,7 @@ $string['gradeletternote'] = '評定文字を削除するには、テキスト�
 $string['gradepreferenceshelp'] = '評定オプションヘルプ';
 $string['grades'] = '評定';
 $string['gradeweighthelp'] = '評定比重ヘルプ';
+$string['hideadvanced'] = '拡張機能を隠す';
 $string['hidecategory'] = '隠す';
 $string['highgradeascending'] = '高評点の昇順で並び替え';
 $string['highgradedescending'] = '高評点の降順で並び替え';

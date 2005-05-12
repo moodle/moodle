@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // auth.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['alternatelogin'] = '¤³¤³¤ËURL¤òÆþÎÏ¤·¤¿¾ì¹ç¡¢¤³¤Î¥µ¥¤¥È¤Î¥í¥°¥¤¥ó¥Ú¡¼¥¸¤È¤·¤Æ»ÈÍÑ¤µ¤ì¤Þ¤¹¡£¥í¥°¥¤¥ó¥Ú¡¼¥¸¤Ç¤Ï¡¢actionÂ°À­¤Ë<strong>¡Ö $a ¡×</strong>¤ò¥»¥Ã¥È¤·¤Æ¡¢ <strong>username</strong>¥Õ¥£¡¼¥ë¥É¤ª¤è¤Ó<strong>password</strong>¥Õ¥£¡¼¥ë¥É¤òÅ¬ÀÚ¤ËMoodle¤ËÅÏ¤¹É¬Í×¤¬¤¢¤ê¤Þ¤¹¡£<br />´Ö°ã¤Ã¤¿URL¤òÀßÄê¤¹¤ë¤È¡¢¤¢¤Ê¤¿¤Î¥µ¥¤¥È¤«¤éÄù¤á½Ð¤µ¤ì¤ë¤³¤È¤Ë¤Ê¤ê¤Þ¤¹¤Î¤ÇÃí°Õ¤·¤Æ¤¯¤À¤µ¤¤¡£<br />¥Ç¥Õ¥©¥ë¥È¤Î¥í¥°¥¤¥ó²èÌÌ¤ò»ÈÍÑ¤¹¤ë¾ì¹ç¤Ï¡¢¶õÇò¤Î¤Þ¤Þ¤Ë¤·¤Æ¤¯¤À¤µ¤¤¡£';
@@ -55,7 +55,7 @@ $string['auth_ldap_create_context'] = '¥æ¡¼¥¶ºîÀ®¤ò¥á¡¼¥ë¤Ë¤è¤ëÇ§¾Ú¤Ç¹Ô¤¦¾ì¹ç¡¢¥
 $string['auth_ldap_creators'] = '¥á¥ó¥Ð¡¼¤¬¿·¤·¤¤¥³¡¼¥¹¤ÎºîÀ®¤òµö¤µ¤ì¤Æ¤¤¤ë¥°¥ë¡¼¥×¤Î¥ê¥¹¥È¤Ç¤¹¡£Ê£¿ô¤Î¥°¥ë¡¼¥×¤Ï¡Ö;¡×¤ÇÊ¬¤±¤é¤ì¤Æ¤¤¤Þ¤¹¡£ÄÌ¾ï¤Ï\'cn=teachers,ou=staff,o=myorg\'¤Î¤è¤¦¤Ë¤Ê¤ê¤Þ¤¹¡£';
 $string['auth_ldap_expiration_desc'] = '¥Ñ¥¹¥ï¡¼¥É¥Á¥§¥Ã¥¯¤ÎÍ­¸ú´ü¸Â¤òÌµ¸ú¤Ë¤¹¤ë¾ì¹ç¡¢¤Þ¤¿¤ÏLDAP¤¬LDAP¥µ¡¼¥Ð¤«¤éÄ¾ÀÜpasswordexpiration¤ò»²¾È¤¹¤ë¾ì¹ç¤Ï¡¢¡ÖNo¡×¤òÁªÂò¤·¤Æ¤¯¤À¤µ¤¤¡£É¬¤ºÂ°À­Ì¾¤Ëldap_expireattr¤òÆþÎÏ¤·¤Æ¤¯¤À¤µ¤¤¡£';
 $string['auth_ldap_expiration_warning_desc'] = '¥Ñ¥¹¥ï¡¼¥É¤ÎÍ­¸ú´ü¸ÂÀÚ¤ì¤ò·Ù¹ð¤¹¤ë¤Þ¤Ç¤ÎÆü¿ô¤òÆþÎÏ¤·¤Æ¤¯¤À¤µ¤¤¡£';
-$string['auth_ldap_expireattr_desc'] = 'Ldap-attribute¤Ï¥Ñ¥¹¥ï¡¼¥É¤ÎÍ­¸ú´ü¸ÂPasswordAxpirationTime¤òÊÝÂ¸¤·¤Þ¤¹¡£';
+$string['auth_ldap_expireattr_desc'] = '¥ª¥×¥·¥ç¥ó: ldap-attribute¤Ï¥Ñ¥¹¥ï¡¼¥É¤ÎÍ­¸ú´ü¸ÂpasswordExpirationTime¤òÊÝÂ¸¤·¤Þ¤¹¡£';
 $string['auth_ldap_graceattr_desc'] = 'LDAP Í±Í½¥í¥°¥¤¥óÂ°À­';
 $string['auth_ldap_gracelogins_desc'] = 'LDAP¤ÎÍ±Í½¥í¥°¥¤¥ó¥µ¥Ý¡¼¥È¤òÍ­¸ú¤Ë¤·¤Þ¤¹¡£¥Ñ¥¹¥ï¡¼¥É¤ÎÍ­¸ú´ü¸Â¤¬ÀÚ¤ì¤¿¸å¡¢Í±Í½¥í¥°¥¤¥ó¥«¥¦¥ó¥È¤¬¥¼¥í¤Ë¤Ê¤ë¤Þ¤Ç¥í¥°¥¤¥ó¤¹¤ë¤³¤È¤¬¤Ç¤­¤Þ¤¹¡£¤³¤ÎÀßÄê¤ò¡ÖYes¡×¤Ë¤¹¤ë¤È¡¢¥Ñ¥¹¥ï¡¼¥É¤¬´ü¸ÂÀÚ¤ì¤Ë¤Ê¤Ã¤¿¾ì¹ç¤ËÍ±Í½¥í¥°¥¤¥ó¥á¥Ã¥»¡¼¥¸¤¬É½¼¨¤µ¤ì¤Þ¤¹¡£';
 $string['auth_ldap_host_url'] = 'LDAP¥Û¥¹¥È¤ÎURL¤ò²¼µ­¤Î¤è¤¦¤ËÌÀ¼¨¤·¤Æ¤¯¤À¤µ¤¤¡£

@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // auth.php - created with Moodle 1.5 UNSTABLE DEVELOPMENT (2005041101)
+      // auth.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['alternatelogin'] = 'ここにURLを入力した場合、このサイトのログインページとして使用されます。ログインページでは、action属性に<strong>「 $a 」</strong>をセットして、 <strong>username</strong>フィールドおよび<strong>password</strong>フィールドを適切にMoodleに渡す必要があります。<br />間違ったURLを設定すると、あなたのサイトから締め出されることになりますので注意してください。<br />デフォルトのログイン画面を使用する場合は、空白のままにしてください。';
@@ -55,7 +55,7 @@ $string['auth_ldap_create_context'] = 'ユーザ作成をメールによる認�
 $string['auth_ldap_creators'] = 'メンバーが新しいコースの作成を許されているグループのリストです。複数のグループは「;」で分けられています。通常は\'cn=teachers,ou=staff,o=myorg\'のようになります。';
 $string['auth_ldap_expiration_desc'] = 'パスワードチェックの有効期限を無効にする場合、またはLDAPがLDAPサーバから直接passwordexpirationを参照する場合は、「No」を選択してください。必ず属性名にldap_expireattrを入力してください。';
 $string['auth_ldap_expiration_warning_desc'] = 'パスワードの有効期限切れを警告するまでの日数を入力してください。';
-$string['auth_ldap_expireattr_desc'] = 'Ldap-attributeはパスワードの有効期限PasswordAxpirationTimeを保存します。';
+$string['auth_ldap_expireattr_desc'] = 'オプション: ldap-attributeはパスワードの有効期限passwordExpirationTimeを保存します。';
 $string['auth_ldap_graceattr_desc'] = 'LDAP 猶予ログイン属性';
 $string['auth_ldap_gracelogins_desc'] = 'LDAPの猶予ログインサポートを有効にします。パスワードの有効期限が切れた後、猶予ログインカウントがゼロになるまでログインすることができます。この設定を「Yes」にすると、パスワードが期限切れになった場合に猶予ログインメッセージが表示されます。';
 $string['auth_ldap_host_url'] = 'LDAPホストのURLを下記のように明示してください。
