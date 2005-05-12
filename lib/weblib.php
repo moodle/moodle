@@ -4199,8 +4199,7 @@ class tabobject {
 
     /// Are we on the last tab in this row?
         if ($last) {
-            $cstr .= ' last';
-            $astr = '<span>'.$astr.'</span>';
+            $astr = '<div class="last">'.$astr.'</div>';
         }
 
     /// Lets set up the tab cell
