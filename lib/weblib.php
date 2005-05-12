@@ -4168,7 +4168,7 @@ class tabobject {
         $cstr = '';
 
     /// The text and anchor for this tab
-        if ($inactive || $activetwo) {
+        if ($inactive || $activetwo || $selected) {
             $astr .= $this->text;
         } else {
             $astr .= '<a href="'.$this->link.'" title="'.$this->text.'">'.$this->text.'</a>';
