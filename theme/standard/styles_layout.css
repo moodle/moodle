@@ -741,6 +741,9 @@ body#course-view .headingblock {
   border-style:solid;
 }
 
+.courseboxcontent .cost {
+  padding-top: 20px;
+}
 
 
 /***
@@ -844,7 +847,7 @@ body#message-messages {
 .tabrow {
   border-collapse:collapse;
   width:100%;
-  margin:0px;
+  margin: 1px 0px 0px 0px;
 }
 
 .tabrow td {
@@ -863,7 +866,7 @@ body#message-messages {
   white-space:nowrap;
   text-decoration:none;
 }
-.tabrow .last span {
+.tabrow .last {
   display:block;
   padding:0px 1px 0px 0px;
 }
