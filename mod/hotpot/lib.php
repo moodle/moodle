@@ -1,4 +1,4 @@
-<?PHP  // $Id$
+z<?PHP  // $Id$
 
 /// Library of functions and constants for module hotpot
 
@@ -35,6 +35,16 @@ $HOTPOT_OUTPUTFORMAT = array (
 	// HOTPOT_OUTPUTFORMAT_V3      => get_string("outputformat_v3", "hotpot"),
 	// HOTPOT_OUTPUTFORMAT_FLASH   => get_string("outputformat_flash", "hotpot"),
 	// HOTPOT_OUTPUTFORMAT_MOBILE  => get_string("outputformat_mobile", "hotpot"),
+);
+
+$HOTPOT_OUTPUTFORMAT_DIR = array (
+	HOTPOT_OUTPUTFORMAT_V6_PLUS => 'v6',
+	HOTPOT_OUTPUTFORMAT_V6      => 'v6',
+	// HOTPOT_OUTPUTFORMAT_V5      => 'v5',
+	// HOTPOT_OUTPUTFORMAT_V4      => 'v4',
+	// HOTPOT_OUTPUTFORMAT_V3      => 'v3',
+	// HOTPOT_OUTPUTFORMAT_FLASH   => 'flash',
+	// HOTPOT_OUTPUTFORMAT_MOBILE  => 'mobile',
 );
 
 define("HOTPOT_NAVIGATION_BAR",     "1");
@@ -619,7 +629,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 	function hotpot_xml_quiz(&$obj) {
 		// obj can be the $_GET array or a form object/array
 
-		global $CFG, $HOTPOT_OUTPUTFORMAT;
+		global $CFG, $HOTPOT_OUTPUTFORMAT, $HOTPOT_OUTPUTFORMAT_DIR;
 
 		// check xmlize functions are available
 		if (! function_exists("xmlize")) {
@@ -748,7 +758,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 		if (
 			empty($this->real_outputformat) ||
 			$this->real_outputformat==HOTPOT_OUTPUTFORMAT_BEST || 
-			empty($HOTPOT_OUTPUTFORMAT[$this->real_outputformat])
+			empty($HOTPOT_OUTPUTFORMAT_DIR[$this->real_outputformat])
 		) {
 			// set the best output format for this browser
 			// see http://jp2.php.net/function.get-browser
@@ -781,9 +791,9 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 			$this->real_outputformat = HOTPOT_OUTPUTFORMAT_V6;
 		}
 
-		// set source directory
-		$this->real_outputformat_txt = $HOTPOT_OUTPUTFORMAT[$this->real_outputformat];
-		$this->source_dir = $CFG->hotpotroot.DIRECTORY_SEPARATOR.$this->real_outputformat_txt;
+		// set template source directory
+		$this->template_dir = $HOTPOT_OUTPUTFORMAT_DIR[$this->real_outputformat];
+		$this->template_dir_path = $CFG->hotpotroot.DIRECTORY_SEPARATOR.$this->template_dir.DIRECTORY_SEPARATOR.'source';
 
 		// set the output html
 		$this->html = '';
@@ -791,12 +801,12 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 			$this->html = &$this->source;
 
 		} else {
-			$method = $this->real_outputformat_txt.'_create_html';
+			$method = $this->template_dir.'_create_html';
 			if (method_exists($this, $method)) {
 				eval('$this->'.$method.'();');
 			} else {
 				error(
-					$method.'Could not create quiz in &quot;'.$this->real_outputformat_txt.'&quot; format', 
+					$method.'Could not create quiz in &quot;'.$this->template_dir.'&quot; format',
 					$this->course_homeurl
 				);
 			}
@@ -805,13 +815,13 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 	} // end constructor function
 
 	function read_template($filename, $tag='temporary') {
-		// create the file path
-		$filepath = $this->source_dir.DIRECTORY_SEPARATOR.'source'.DIRECTORY_SEPARATOR.$filename;
+		// create the file path to the template
+		$filepath = $this->template_dir_path.DIRECTORY_SEPARATOR.$filename;
 
 		// try and open the template file
 		if (!file_exists($filepath) || !$fp = fopen($filepath, "r")) {
 			error(
-				'Could not open the '.$this->real_outputformat_txt.' template file &quot;'.$filename.'&quot;',
+				'Could not open the '.$this->template_dir.' template file &quot;'.$filename.'&quot;',
 				$this->course_homeurl
 			);
 		}
@@ -842,7 +852,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 		$i_max = count($names[0]);
 		for ($i=0; $i<$i_max; $i++) {
 
-			$method = $this->real_outputformat_txt.'_expand_'.$names[3][$i];
+			$method = $this->template_dir.'_expand_'.$names[3][$i];
 			if (method_exists($this, $method)) {
 
 				eval('$value=$this->'.$method.'();');
@@ -872,7 +882,7 @@ class hotpot_xml_quiz extends hotpot_xml_tree {
 		$i_max = count($matches[0]);
 		for ($i=0; $i<$i_max; $i++) {
 
-			$method = $this->real_outputformat_txt.'_expand_'.$matches[1][$i];
+			$method = $this->template_dir.'_expand_'.$matches[1][$i];
 			if (method_exists($this, $method)) {
 
 				eval('$replace=$this->'.$method.'();');
