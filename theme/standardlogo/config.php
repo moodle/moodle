@@ -28,7 +28,7 @@ $THEME->standardsheets = array('styles_layout','styles_fonts','styles_color','st
 ////////////////////////////////////////////////////////////////////////////////
 
 
-$THEME->parent = '';  
+$THEME->parent = 'standardwhite';  
 
 /// This variable can be set to the name of a parent theme
 /// which you want to have included before the current theme.
@@ -39,7 +39,7 @@ $THEME->parent = '';
 ////////////////////////////////////////////////////////////////////////////////
 
 
-$THEME->parentsheets = false;  
+$THEME->parentsheets = array('gradients');  
 
 /// This variable can be set to an array containing
 /// filenames from a chosen *PARENT* theme.  If the 
