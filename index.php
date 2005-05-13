@@ -151,7 +151,7 @@
         case FRONTPAGECOURSELIST:
         case FRONTPAGECATEGORYNAMES:
 
-            if (isset($USER->id) and !isset($USER->admin)) {
+            if (isloggedin() && !isset($USER->admin) && empty($CFG->disablemycourses)) {
                 print_heading_block(get_string('mycourses'));
                 print_my_moodle();
             } else {
