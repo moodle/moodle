@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // scorm.php - created with Moodle 1.5 ALPHA (2005042400)
+      // scorm.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['asset'] = 'Asset';
@@ -11,13 +11,6 @@ $string['browsed'] = 'Navigato';
 $string['browsemode'] = 'Modalità di visita corso';
 $string['chooseapacket'] = 'Scegli o aggiorna un pacchetto SCORM';
 $string['completed'] = 'Completato';
-$string['configframesize'] = 'Quando un pacchetto scorm é visualizzato in un frame, questa é la dimensione (in pixel) del frame superiore (che contiene la navigazione).';
-$string['configpopup'] = 'Imposta automaticamente la visualizzazione del pacchetto scorm in una nuova finestra?';
-$string['configpopupheight'] = 'Altezza standard per le nuove finestre di popup';
-$string['configpopupresizable'] = 'Le finestre di popup possono essere ridimensionate?';
-$string['configpopupscrollbars'] = 'Le finestre di popup possono avere la barra di scorrimento?';
-$string['configpopupstatus'] = 'Le finestre di popup possono mostrare la barra di stato?';
-$string['configpopupwidth'] = 'Larghezza standard per le nuove finestre di popup';
 $string['coursepacket'] = 'Pacchetto del corso';
 $string['coursestruct'] = 'Struttura del corso';
 $string['datadir'] = 'Errore Filesystem: non è possibile creare la directory dei dati';
@@ -31,26 +24,21 @@ $string['exit'] = 'Esci dal corso SCORM';
 $string['expcoll'] = 'Espandi/Collidi';
 $string['failed'] = 'Fallito';
 $string['found'] = 'Manifest trovato';
-$string['frameheight'] = 'Questa preferenza imposta l\'altezza del frame degli SCO';
+$string['frameheight'] = 'Questa preferenza imposta l\'altezza standard del frame degli SCO';
+$string['framewidth'] = 'Questa preferenza imposta la larghezza standard del frame degli SCO';
 $string['gradeaverage'] = 'Media dei voti';
 $string['gradehighest'] = 'Il voto più alto';
 $string['grademethod'] = 'Metodo di valutazione';
 $string['gradescoes'] = 'Situazione degli sco';
 $string['gradesum'] = 'Somma dei voti';
 $string['guestsno'] = 'Gli ospiti non possono visualizzare i corsi scorm';
+$string['height'] = 'Altezza';
 $string['incomplete'] = 'Incompleto';
 $string['missing_attribute'] = 'Attributo mancante $a->attr al tag $a->tag';
 $string['missing_tag'] = 'Tag mancante $a->tag';
 $string['mode'] = 'Modalità';
 $string['modulename'] = 'Scorm';
 $string['modulenameplural'] = 'Scorms';
-$string['newheight'] = 'Altezza standard della finestra (in pixel)';
-$string['newresizable'] = 'Permetti che la finestra sia ridimensionata';
-$string['newscrollbars'] = 'Permetti lo scorrimento della finestra';
-$string['newstatus'] = 'Mostra barra di stato';
-$string['newwidth'] = 'Larghezza standard della finestra (in pixel)';
-$string['newwindow'] = 'Nuova finestra';
-$string['newwindowopen'] = 'Visualizza questo pacchetto scorm in una nuova finestra';
 $string['next'] = 'Continua';
 $string['no_attributes'] = 'Il tag $a->tag deve avere degli attributi';
 $string['no_children'] = 'Il tag $a->tag deve avere dei figli';
@@ -63,6 +51,7 @@ $string['organizations'] = 'Organizzazioni';
 $string['packagedir'] = 'Errore Filesystem: non è possibile creare la directory del pacchetto SCORM';
 $string['passed'] = 'Superato';
 $string['php5'] = 'PHP5 (libreria DOMXML nativa)';
+$string['popup'] = 'Apri lo SCO corrente in una nuova finestra';
 $string['position_error'] = 'It tag $a->tag non può essere figlio del tag $a->parent';
 $string['prev'] = 'Precedente';
 $string['regular'] = 'Manifest corretto';
@@ -80,5 +69,6 @@ $string['validation'] = 'Risultato controllo';
 $string['validationtype'] = 'Questa impostazione abilita l\'utilizzo di una libreria DOMXML per validare il manifest. Se non conosci quale libreria è installata sul tuo server lascia la preselezione.';
 $string['versionwarning'] = 'La versione del manifest è precedente alla 1.3, avviso rilevato al tag $a->tag';
 $string['viewallreports'] = 'Vedi lo stato dei $a tentativi';
+$string['width'] = 'Larghezza';
 
 ?>

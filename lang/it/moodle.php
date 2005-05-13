@@ -1,5 +1,5 @@
 <?PHP // $Id$ 
-      // moodle.php - created with Moodle 1.5 ALPHA (2005043000)
+      // moodle.php - created with Moodle 1.5 ALPHA (2005050600)
 
 
 $string['action'] = 'Azione';
@@ -437,6 +437,7 @@ $string['forceno'] = 'Non forzare';
 $string['forcepasswordchange'] = 'Forza il cambiamento della password';
 $string['forcepasswordchangehelp'] = 'Chiede al utente di cambiare la password al prossimo accesso';
 $string['forcetheme'] = 'Tema obbligato';
+$string['forgotaccount'] = 'Dimenticato la password?';
 $string['forgotten'] = 'Dimenticato il tuo username o la password?';
 $string['format'] = 'Formato';
 $string['formathtml'] = 'Formato HTML';
@@ -588,6 +589,7 @@ $string['livelogs'] = 'Logs della ultima ora';
 $string['locale'] = 'it_IT';
 $string['location'] = 'Località';
 $string['loggedinas'] = 'Sei collegato come $a.';
+$string['loggedinasguest'] = 'Stai utilizzando un accesso da ospite';
 $string['loggedinnot'] = 'Non sei collegato.';
 $string['login'] = 'Login';
 $string['login_failure_logs'] = 'Log accessi falliti';

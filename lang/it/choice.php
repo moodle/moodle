@@ -1,7 +1,8 @@
 <?PHP // $Id$ 
-      // choice.php - created with Moodle 1.4 beta (2004082300)
+      // choice.php - created with Moodle 1.5 ALPHA (2005043000)
 
 
+$string['addmorechoices'] = 'Aggiungi più scelte';
 $string['allowupdate'] = 'Permetti che le scelte vengano aggiornate ';
 $string['answered'] = 'Risposta';
 $string['choice'] = 'Proposta $a';
@@ -9,7 +10,13 @@ $string['choiceclose'] = 'Fino al';
 $string['choicename'] = 'Nome della scelta';
 $string['choiceopen'] = 'Aperta';
 $string['choicetext'] = 'Testo della domanda';
-$string['havetologin'] = 'Devi effettuare il Login prima di sottomettere la tua scelta ';
+$string['displayhorizontal'] = 'Mostra orizzontalmente';
+$string['displaymode'] = 'modalità di visualizzazione';
+$string['displayvertical'] = 'Mostra verticalmente';
+$string['full'] = '(Completo)';
+$string['havetologin'] = 'Bisogna effettuare il Login prima di sottomettere la vostra scelta ';
+$string['limit'] = 'Limite';
+$string['limitanswers'] = 'Limita il numero delle risposte consentite';
 $string['modulename'] = 'Scelta';
 $string['modulenameplural'] = 'Scelte';
 $string['mustchooseone'] = 'Bisogna scegliere una risposta prima di salvare. Non è stato salvato nulla.';
@@ -27,7 +34,11 @@ $string['responses'] = 'Risposte';
 $string['responsesto'] = 'Risposte a $a';
 $string['savemychoice'] = 'Salva la mia risposta';
 $string['showunanswered'] = 'Mostra colonna di chi non ha risposto';
+$string['spaceleft'] = 'spazio disponibile';
+$string['spacesleft'] = 'spazi disponibili';
+$string['taken'] = 'Preso';
 $string['timerestrict'] = 'Permetti la risposta in questo periodo di tempo';
 $string['viewallresponses'] = 'Vedi $a risposte';
+$string['yourselection'] = 'La vostra selezione';
 
 ?>
